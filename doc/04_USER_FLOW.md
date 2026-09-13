@@ -1154,6 +1154,7 @@ stateDiagram-v2
     Blocked --> Pending: 条件解除并重新规划
     Running --> Completed
     Running --> Failed
+    Running --> Blocked: 剩余单元仅有可解除阻塞
     Running --> Cancelled
     Running --> Interrupted
     Running --> CompletedWithFailures

@@ -96,6 +96,14 @@ try {
     }
     Write-Output 'PASS: 12 contract sections, required tokens, coverage matrix, and V01-V19 present; no placeholders'
 
+    $taskTechnical = Read-TaskText 'doc/02_TECHNICAL_ARCHITECTURE_.md'
+    foreach ($taskToken in @('Pending --> Blocked', 'Running --> Blocked', 'Paused --> Cancelled', 'Interrupted --> Cancelled',
+        'TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md')) {
+        if (-not $taskTechnical.Contains($taskToken)) { throw "Technical architecture not synchronized: $taskToken" }
+    }
+    if ($taskTechnical.Contains('Restart / Abandon 的完整落库语义，由 TASK-002 冻结')) {
+        throw 'Technical architecture still marks Restart/Abandon unresolved'
+    }
     $taskPipeline = Read-TaskText 'doc/06_TRANSLATION_PIPELINE.md'
     foreach ($taskToken in @('SKIP_LOCK', 'blocked_page_count', 'restart_after_interruption',
         'abandoned_after_interruption', 'OUTPUT_MAPPING_MISMATCH', 'StepResultCandidate')) {
@@ -108,11 +116,19 @@ try {
     if ($taskFlow.Contains('Restart / Abandon 的完整语义留待 TASK-002 冻结')) {
         throw 'Crash semantics still marked unresolved'
     }
+    if (-not $taskFlow.Contains('Running --> Blocked')) { throw 'User flow lacks running-to-blocked aggregation' }
     $taskMaps = Read-TaskText 'doc/11_ARCHITECTURE_MAPS.md'
-    if ($taskMaps.Contains('Restart/Abandon 的落库方式') -or $taskMaps.Contains('candidate 或 needs_review 的具体存储仍是')) {
+    if ($taskMaps.Contains('Restart/Abandon 的落库方式') -or
+        $taskMaps.Contains('candidate 或 needs_review 的具体存储仍是') -or
+        $taskMaps.Contains('interrupted --> interrupted')) {
         throw 'Derived architecture still marks frozen semantics unresolved'
     }
-    Write-Output 'PASS: D03/D04/D05/D06/D08/D11 reference the frozen contract without known stale conflicts'
+    if (-not $taskMaps.Contains('running --> blocked')) { throw 'Derived state machine lacks running-to-blocked aggregation' }
+    $taskUi = Read-TaskText 'doc/05_UI_MAPPING.md'
+    foreach ($taskToken in @('## Blocked', '阻塞 1', '[查看原因] [重新规划]', '## Cancelled / Failed')) {
+        if (-not $taskUi.Contains($taskToken)) { throw "UI mapping not synchronized: $taskToken" }
+    }
+    Write-Output 'PASS: D02-D06/D08/D11 reference the frozen contract without known stale conflicts'
 
     $taskAC = Read-TaskText 'doc/08_ACCEPTANCE_CRITERIA.md'
     $taskACBase = Read-BaselineText 'doc/08_ACCEPTANCE_CRITERIA.md'
@@ -122,6 +138,7 @@ try {
     if ($taskHeaders.Count -ne 185 -or ($taskHeaders -join "`n") -cne ($taskOldHeaders -join "`n")) {
         throw 'AC IDs, priorities or titles changed'
     }
+    if (-not $taskAC.Contains('阻塞页数与原因')) { throw 'AC-PROGRESS-002 does not cover blocked progress' }
     $taskGaps = Read-TaskText 'doc/10_CURRENT_STATE_AND_GAPS.md'
     foreach ($taskGap in 6..13) {
         if ($taskGaps -notmatch "(?m)^\| G$('{0:d2}' -f $taskGap) \|") { throw "Missing TASK-002 disposition for G$taskGap" }

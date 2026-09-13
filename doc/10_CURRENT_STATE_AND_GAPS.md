@@ -139,7 +139,7 @@ DeepSeek 首次独立 Review 绑定 `496b4ed..615a073`，结论为 `changes_requ
 
 ## 10. TASK-002 最小契约冻结
 
-用户于 2026-09-13 允许启动 TASK-002，并批准 Codex 依据既有需求完成后续最小设计取舍。冻结真源为 [TASK-002 最小数据与执行契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)；D03/D04/D05/D06/D08/D11 只同步各自职责内的入口和关键枚举，不复制整份契约。
+用户于 2026-09-13 允许启动 TASK-002，并批准 Codex 依据既有需求完成后续最小设计取舍。冻结真源为 [TASK-002 最小数据与执行契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)；D02/D03/D04/D05/D06/D08/D11 只同步各自职责内的入口和关键枚举，不复制整份契约。
 
 | Gap / Review | 冻结位置 | 结果边界 |
 |---|---|---|

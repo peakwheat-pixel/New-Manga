@@ -2158,7 +2158,7 @@ Run 级致命错误
 
 ### blocked
 
-无可运行单元且存在可由用户解除的 Planner BLOCKED；解除后可在原 Run 重新规划。Page/Region Lock 使用 SKIP_LOCK，不产生 blocked。
+无可运行单元且存在可由用户解除的 Planner BLOCKED；解除后按 TASK-002 契约 §5.3 重新评估原 Run 的冻结目标与快照。采用新的 current Revision 或设置时创建新 Run。Page/Region Lock 使用 SKIP_LOCK，不产生 blocked。
 
 ---
 

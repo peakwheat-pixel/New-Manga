@@ -356,17 +356,22 @@ interrupted
 stateDiagram-v2
     [*] --> Pending
     Pending --> Running
+    Pending --> Blocked: 缺少输入或 Provider 不可用
+    Blocked --> Pending: 修复条件后重新规划
     Running --> Paused: Pause at safe boundary
     Paused --> Running: Continue
+    Paused --> Cancelled: Stop
     Running --> Completed
     Running --> CompletedWithFailures
     Running --> Failed
+    Running --> Blocked: 剩余单元仅有可解除阻塞
     Running --> Cancelled: Stop
     Running --> Interrupted: App exits unexpectedly
     Interrupted --> Running: Resume after recovery validation
+    Interrupted --> Cancelled: Abandon
 ```
 
-此图展示 Run 的业务状态结果；Interrupted 恢复是否经过中间调度状态，以及 Restart / Abandon 的完整落库语义，由 TASK-002 冻结。
+此图展示 Run 的业务状态结果；完整枚举、聚合优先级及 Restart / Abandon 落库语义以 [TASK-002 最小契约 §5～§6](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 为准。Restart 不改变原 interrupted Run 的状态，而是标记 disposition 并创建新 Run。
 
 控制语义：
 

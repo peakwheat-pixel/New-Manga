@@ -278,16 +278,18 @@ stateDiagram-v2
     running --> completed: 正常终结且无失败
     running --> completed_with_failures: 批量终结且部分失败
     running --> failed: Run级致命错误
+    running --> blocked: 剩余单元仅有可解除阻塞
     running --> cancelled: stop并安全结束
     running --> interrupted: 异常退出后识别
     interrupted --> running: 用户继续并通过恢复检查
-    interrupted --> interrupted: Restart创建新Run并标记restarted
     interrupted --> cancelled: Abandon
     completed --> [*]
     completed_with_failures --> [*]
     failed --> [*]
     cancelled --> [*]
 ~~~
+
+Restart 不构成原 Run 的状态转换：原 Run 保持 `interrupted` 并记录 `interruption_disposition=restarted`，新 Run 独立创建。
 
 Continue 使用原 Run/快照；Restart 保留原 interrupted Run并创建新 Run；Abandon 将原 Run 置 cancelled。Stop 与最后一步并发时按事务提交顺序确定 completed 或 cancelled，已提交成果均保留。
 

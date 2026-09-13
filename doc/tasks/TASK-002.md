@@ -2,7 +2,7 @@
 id: TASK-002
 title: 冻结最小数据与执行契约
 kind: design
-status: in_review
+status: in_progress
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -37,6 +37,7 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
 
 - doc/03_DATA_MODEL.md
+- doc/02_TECHNICAL_ARCHITECTURE_.md
 - doc/04_USER_FLOW.md
 - doc/05_UI_MAPPING.md
 - doc/06_TRANSLATION_PIPELINE.md
@@ -76,6 +77,6 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 ## 交付与运行记录
 
 - Handoff：[TASK-002-c335315](../handoffs/TASK-002-c335315.md)，固定 `base_commit=b1b3f5d`、`reviewed_head=c335315`。
-- Review：等待 DeepSeek Harness 在独立 linked worktree 写入 `doc/reviews/TASK-002-c335315.md`。
+- Review：[TASK-002-c335315](../reviews/TASK-002-c335315.md)，decision=`changes_requested`；P1 F-01 与 P2 F-02～F-07 正在由 Codex 处理。
 - 实际执行：`pwsh -NoProfile -File ./verification/TASK-002/verify.ps1` 在 `c335315` 退出码 0；产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
-- 最近状态：2026-09-13 作者交付与自查完成，状态 `in_review`；其他 25 个 Task 保持 proposed。
+- 最近状态：2026-09-13 首次独立 Review 完成，状态 `in_progress`；只修订 F-01～F-07，其他 25 个 Task 保持 proposed。

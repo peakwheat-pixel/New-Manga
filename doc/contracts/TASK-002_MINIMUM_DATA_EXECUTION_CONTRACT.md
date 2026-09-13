@@ -168,7 +168,7 @@ overall_progress = terminal_step_units / planned_step_units
 terminal = completed | failed | cancelled | skip_valid | skip_lock | skip_policy
 ```
 
-- `blocked` 不算 terminal，解除后原 Run 可重新规划。
+- `blocked` 不算 terminal。`PlanPipelineRun(mode=resume_blocked)` 可重新评估原 Run 的冻结目标、快照和外部可用性，不改写冻结数据；若修复必须采用新的 current Revision 或设置，则原 Run 保持 blocked，由 UI 以原选择调用 `CreatePipelineRun` 创建新 Run。
 - 全部因 Lock/Policy 合法跳过时，Run 为 `completed`、进度 100%，skipped 数量单独显示。
 - 空选择不创建 Run，因此不进入零分母计算。
 - 同一 Page 只进入一个主计数：failed > processing > blocked > completed > skipped > waiting。
@@ -233,11 +233,11 @@ Restart 新 Run 设置 `source_run_id=<原 Run>`、`retry_reason=restart_after_i
 写唯一临时文件
 → 验证/Hash
 → 原子移动到不可变 Managed Path
-→ BEGIN IMMEDIATE
+→ 进入同一立即写事务（SQLite 可用 `BEGIN IMMEDIATE`）
 → 重新读取全部 primary current revision 与 Lock
 → 全部匹配：插入 Revision/Ref、更新 current 与 StageState
 → 任一不匹配：写 StepResultCandidate，不更新 current
-→ COMMIT
+→ 提交事务
 ```
 
 数据库事务失败时旧 current 不变；已移动但未被数据库引用的文件进入 orphan 清理，不能覆盖已有正式文件。最终 `save` 只汇总 Run/Task 状态及需要的 Page 合成，不再次“提交”已成功 Step。
@@ -258,7 +258,7 @@ created_at
 resolved_at?
 ```
 
-接受 Candidate 时重新执行同一 compare-and-write；成功后创建新 Revision，不直接修改历史 Revision。
+Candidate 通过 `CommitStepResult` 的处置变体处理：输入 `candidate_id` 与 `decision=accept|reject`，Accept 另带用户看到的 `expected_current_refs`。Reject 只把 Candidate 标为 rejected；Accept 仅在 Candidate 仍为 pending、Lock 允许且 expected refs 未变化时重新执行 compare-and-write，创建新的 machine / needs_review Revision 并更新 current；再次冲突时 current 不变且 Candidate 保持 pending。清理 orphan 或历史版本属于 Infrastructure 内部维护，不新增 Application Port。
 
 ### 8.2 单 Region Page 合成
 
@@ -272,9 +272,9 @@ resolved_at?
 | 接口 | 输入 | 输出 |
 |---|---|---|
 | `CreatePipelineRun` | command_type、scope、selected_ids、overrides | run_id、冻结 target/snapshot 摘要或错误 |
-| `PlanPipelineRun` | run_id | Task、PlanDecision、planned_step_units、blocked reasons |
+| `PlanPipelineRun` | run_id、mode=`initial|resume_blocked` | Task、PlanDecision、planned_step_units、blocked reasons；resume_blocked 不改写冻结快照 |
 | `RecordStepAttempt` | task_id、step_type、input refs、provider/options snapshot | step_run_id |
-| `CommitStepResult` | step_run_id、expected input refs、output mapping、temp artifact metadata | committed revision refs 或 candidate_id/conflict |
+| `CommitStepResult` | 结果提交：step_run_id、expected input refs、output mapping、temp artifact metadata；Candidate 处置：candidate_id、decision=`accept|reject`，Accept 另带 expected_current_refs | committed revision refs、candidate_id/conflict 或 Candidate disposition |
 | `ControlPipelineRun` | run_id、action=`pause|continue|stop|restart|abandon` | 原/新 run_id、最终状态 |
 | `GetTaskProgress` | run_id | 从 Run/Target/Task/Step/Stage 派生的只读快照 |
 
@@ -318,7 +318,7 @@ resolved_at?
 
 | ID | 类型 | 覆盖契约 | Given / When | Then |
 |---|---|---|---|---|
-| V01 | 失败 | §2、§8、§10 | Translation 从 RegionRevision 10 启动；用户保存 Revision 12；后台返回 | 产生 `INPUT_REVISION_CHANGED` Candidate；current 保持 12；ReviewState 不被机器结果覆盖 |
+| V01 | 失败 | §2、§8～§10 | Translation 从 RegionRevision 10 启动；用户保存 Revision 12；后台返回；随后分别以 expected current 12 拒绝或接受 Candidate | 冲突先产生 `INPUT_REVISION_CHANGED` Candidate 且 current 保持 12；Reject 不改 current；Accept 在二次比较通过时创建 Revision 13（machine / needs_review），再次冲突则 Candidate 保持 pending |
 | V02 | 边界 | §3、§5 | 目标全部 Page/Region Lock，计划 Step 为零 | 所有 Task skipped；Run completed；progress=100%；skipped 计数等于目标数 |
 | V03 | 失败 | §3、§10 | 空选择、Book 展开后无叶子或选中目标已软删除 | 不创建 Run；分别返回 `EMPTY_TARGET_SELECTION` 或 `TARGET_DELETED` |
 | V04 | 边界 | §3 | Book 创建 Run 后新增 Page | 原 RunTarget 不增加；新 Page 只进入后续新 Run |
@@ -332,7 +332,7 @@ resolved_at?
 | V12 | 边界/失败 | §7、§10 | SFX skip/manual 的批量任务尝试自动写图 | Translation/Mask/Inpaint/Translated Render 均 skip_policy；原图文字不被擦除 |
 | V13 | 边界 | §8、§10 | Region A 局部合成期间 Region B 更新 Page artifact | `COMPOSITION_BASE_CHANGED`；旧 Page current 保持；重读新底图后方可重试 |
 | V14 | 失败 | §2、§8、§10 | Managed file Hash 失败或 DB commit 失败 | 无新 current；无效文件不入库，孤儿文件可清理 |
-| V15 | 边界 | §3、§6 | Run 创建后修改 Settings/Constraint | Continue 使用原快照；Restart 使用当前值并形成新快照 |
+| V15 | 边界 | §3、§5、§6、§9 | Run 因冻结 Provider 暂不可用而 blocked；恢复其可用性，同时修改 Settings/Constraint；调用 `PlanPipelineRun(mode=resume_blocked)` | 原 Run 使用原快照重新规划；Restart 或以原选择创建的新 Run 才使用当前设置并形成新快照 |
 | V16 | 正常 | §2～§10 | 两个 Region 形成 Context Group；使用 active 且 confirmed 的 TM；输出映射完整；所有 Step 成功 | 每个 Step 独立原子提交且更新正确 current；Run completed；progress=100%；六个 Port 的输入输出均可追溯 |
 | V17 | 边界 | §2、§8 | 历史 Revision 已 pinned；执行候选、孤儿及历史清理 | pinned Revision 及其受管 Artifact 均保留；未引用且未 pinned 的孤儿才可清理 |
 | V18 | 边界/失败 | §2、§10 | active confirmed TM、disabled TM 并存，并尝试写入非法 status | 仅 active confirmed 参与匹配；disabled 历史保留；非法枚举被存储约束拒绝 |
