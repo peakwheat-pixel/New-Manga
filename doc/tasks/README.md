@@ -1,12 +1,12 @@
 # Task 索引
 
-TASK-001、TASK-002 已完成；尚未释放下一项任务，其余 25 个任务保持 proposed / pending_user_review。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
+TASK-001、TASK-002 已完成；仅 TASK-003 已释放给 DeepSeek Harness，其余 24 个任务保持 proposed / pending_user_review。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
 | [TASK-001](TASK-001.md) | 修订目标文档引用与已确定的一致性问题 | Codex | 已释放；状态见 Task |
 | [TASK-002](TASK-002.md) | 冻结最小数据与执行契约 | Codex | done；integration `7927169` |
-| [TASK-003](TASK-003.md) | 补齐验收规格与测试素材规范 | DeepSeek Harness | TASK-002 |
+| [TASK-003](TASK-003.md) | 补齐验收规格与测试素材规范，并关闭 F-08 | DeepSeek Harness（已分派） | TASK-002（done） |
 | [TASK-004](TASK-004.md) | 验证 Windows 运行环境与打包路线 | DeepSeek Harness | TASK-002 |
 | [TASK-005](TASK-005.md) | 建立最小工程入口与架构守卫 | Codex | TASK-002, TASK-003, TASK-004 |
 | [TASK-006](TASK-006.md) | 实现持久化与 Artifact 安全提交基础 | Codex | TASK-005 |
