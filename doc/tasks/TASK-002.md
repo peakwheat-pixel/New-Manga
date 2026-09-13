@@ -2,7 +2,7 @@
 id: TASK-002
 title: 冻结最小数据与执行契约
 kind: design
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -76,7 +76,7 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 
 ## 交付与运行记录
 
-- Handoff：[TASK-002-c335315](../handoffs/TASK-002-c335315.md)，固定 `base_commit=b1b3f5d`、`reviewed_head=c335315`。
-- Review：[TASK-002-c335315](../reviews/TASK-002-c335315.md)，decision=`changes_requested`；P1 F-01 与 P2 F-02～F-07 正在由 Codex 处理。
-- 实际执行：`pwsh -NoProfile -File ./verification/TASK-002/verify.ps1` 在 `c335315` 退出码 0；产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
-- 最近状态：2026-09-13 首次独立 Review 完成，状态 `in_progress`；只修订 F-01～F-07，其他 25 个 Task 保持 proposed。
+- Handoff：[TASK-002-885c9a9](../handoffs/TASK-002-885c9a9.md)，固定 `base_commit=b1b3f5d`、`reviewed_head=885c9a9`；首次 Handoff `c335315` 保留为历史。
+- Review：[TASK-002-c335315](../reviews/TASK-002-c335315.md) decision=`changes_requested`；F-01～F-07 已由 `885c9a9` 修订，等待 `doc/reviews/TASK-002-885c9a9.md` 独立复审。
+- 实际执行：`pwsh -NoProfile -File ./verification/TASK-002/verify.ps1` 在 `885c9a9` 退出码 0；产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 最近状态：2026-09-13 Review 修订与作者验证完成，状态 `in_review`；其他 25 个 Task 保持 proposed。
