@@ -2,7 +2,7 @@
 id: TASK-001
 title: 修订目标文档引用与已确定的一致性问题
 kind: design
-status: in_review
+status: approved
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -79,6 +79,7 @@ Reviewer 获准运行 `pwsh -NoProfile -File ./verification/TASK-001/verify.ps1`
 ## 交付与运行记录
 
 - Handoff：[首次交付 615a073](../handoffs/TASK-001-615a073.md)；[复审交付 cdc736c](../handoffs/TASK-001-cdc736c.md)。
-- Review：[615a073 独立 Review](../reviews/TASK-001-615a073.md) 已完成，decision=`changes_requested`（P0=0、P1=1、P2=9）；R-001～R-010 已逐项处置，等待 `cdc736c` 复审。
-- 实际执行：已修订 D01～D08 及索引/Gap/派生视图；[检查脚本](../../verification/TASK-001/verify.ps1) 已执行，退出码 0。勾选项为作者完成并自查，尚非独立批准。
-- 最近状态：2026-09-13 Owner 修订提交 `cdc736c` 已完成，状态回到 in_review；独立复审与集成未完成，integration_commit 仍为空。
+- Review：[615a073 独立 Review](../reviews/TASK-001-615a073.md) 为 `changes_requested`；[cdc736c 独立复审](../reviews/TASK-001-cdc736c.md) 为 `approved`，R-001～R-010 全部 resolved，无 P0/P1 未解决。
+- 实际执行：已修订 D01～D08 及索引/Gap/派生视图；[检查脚本](../../verification/TASK-001/verify.ps1) 已执行，退出码 0。脚本结果属于作者检查；独立批准证据见复审报告。
+- 新增 P2 处置：R-011 的 Restart 落库语义保持待冻结，归 TASK-002；为保持批准 head 不变，本 Task 不改 D04。R-012 的脚本输出只视为作者回归护栏，独立批准证据仅为复审报告；不在批准后改写验证脚本。
+- 最近状态：2026-09-13 `cdc736c` 已获独立批准，等待 Codex 集成；integration_commit 仍为空。

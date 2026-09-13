@@ -4,7 +4,7 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-001 首次 Review 修订已交付，等待独立复审 |
+| 阶段 | TASK-001 独立复审已批准，等待 Codex 集成 |
 | 当前授权 | 提交初始 Git 基线并执行 TASK-001；其余 Task 与功能开发未授权 |
 | 接管审核 | approved |
 | 用户审核记录 | 2026-09-13：允许提交初始 Git 基线并启动 TASK-001 |
@@ -14,9 +14,9 @@
 | TASK-001 交付提交 | 首次 615a073；Review 修订 cdc736c；master 保持 496b4ed，未合并 |
 | Git remote | 未配置 |
 | 文档版本状态 | 初始接管基线与 TASK-001 作者交付均已提交 |
-| 任务分派 / 执行 | TASK-001：Codex / in_review；其余 26 个 Task 保持 proposed |
+| 任务分派 / 执行 | TASK-001：Codex / approved；其余 26 个 Task 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | DeepSeek 已在同仓 linked worktree 接入；ZCode 尚未接入或调度 |
-| 本次 Review | DeepSeek 已审查 `496b4ed..615a073`；changes_requested（P0=0、P1=1、P2=9）。复审对象固定为 `496b4ed..cdc736c` |
+| 本次 Review | DeepSeek 已批准 `496b4ed..cdc736c`；R-001～R-010 全部 resolved。R-011 延至 TASK-002 冻结，R-012 按作者回归护栏解释，均为非阻塞 P2 |
 | 产品发布状态 | NOT READY，无可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
