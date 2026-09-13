@@ -2573,7 +2573,7 @@ Provider 状态
 
 ```text
 启动时间
-四一级页面切换
+四个一级页面切换
 2,000 Book 搜索
 1,000 Page List
 500 Page 连续滚动
@@ -2869,21 +2869,7 @@ Release Notes
 
 # 115. 对 03 / 06 的同步核验与未冻结边界
 
-以下内容已在 [D03 数据模型](03_DATA_MODEL.md) 中出现，不再作为待补项重复添加：
-
-| 同步项 | D03 证据 |
-|---|---|
-| StageState `stale` | §10.2/10.3 |
-| Region command type | §20.3 |
-| `input_region_revision_id` 与写回前复查 | §24/24.1 |
-| `app_version / schema_version` | §22、§34.1/34.2 |
-| Artifact integrity metadata | §17.4 |
-| Backup metadata | §34.3 |
-| Cache metadata / quota state | §34.4 |
-| Diagnostic Settings | §34.5 |
-| ModelInstallationState | §34.6 |
-
-这里只核验文档存在性。正式 SQL、约束、事务及状态边界仍待 TASK-002 冻结；Settings / Infrastructure metadata 不因本次同步核验而变成独立漫画业务 Domain Entity。
+字段与 Infrastructure metadata 的存在性及 D03 位置只在 [Gap Analysis §5](10_CURRENT_STATE_AND_GAPS.md) 维护；本文件不复制该映射。正式 SQL、约束、事务及状态边界仍待 TASK-002 冻结；Settings / Infrastructure metadata 不因本次同步核验而变成独立漫画业务 Domain Entity。
 
 ---
 

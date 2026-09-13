@@ -93,6 +93,33 @@ try {
         throw 'AC IDs, priorities or titles changed'
     }
     Write-Output 'PASS: all 185 AC IDs, priorities and titles preserved'
+
+    $taskIndex = Read-TaskText 'doc/tasks/README.md'
+    $taskRoadmap = Read-TaskText 'doc/12_ROADMAP.md'
+    if ($taskIndex.Contains('27 个任务均为 proposed') -or $taskRoadmap.Contains('状态都为 proposed')) {
+        throw 'Stale all-tasks-proposed assertion'
+    }
+    $taskFlow = Read-TaskText 'doc/04_USER_FLOW.md'
+    if ($taskFlow.Contains('恢复 / 重试 / 放弃') -or $taskFlow.Contains('恢复/重试/放弃')) {
+        throw 'Crash action vocabulary is stale'
+    }
+    $taskMaps = Read-TaskText 'doc/11_ARCHITECTURE_MAPS.md'
+    if ($taskMaps -match '(?m)^\s*paused\s*-->\s*cancelled') { throw 'Unsupported paused-to-cancelled transition' }
+    if ($taskAC.Contains('字段存在性核验完成')) { throw 'Acceptance spec contains an author verification result' }
+    $taskTrace = Read-TaskText 'doc/13_ACCEPTANCE_TRACEABILITY.md'
+    if ($taskTrace.Contains('依据 G05/G06')) { throw 'AC-DOC-002 evidence is stale' }
+    $taskFunctional = Read-TaskText 'doc/01_FUNCTIONAL_ARCHITECTURE.md'
+    if (-not $taskFunctional.Contains('历史材料引用（本仓库无此文件）')) { throw 'Historical source paths are not labelled' }
+    $taskNfr = Read-TaskText 'doc/07_NON_FUNCTIONAL_REQUIREMENTS.md'
+    if ($taskNfr.Contains('四一级页面')) { throw 'Known NFR typo remains' }
+    if (-not $taskSpec.Contains('- doc/reviews/TASK-001-*.md')) { throw 'Review report path is not reusable for re-review' }
+    $taskHandoff = Read-TaskText 'doc/handoffs/TASK-001-615a073.md'
+    if (-not $taskHandoff.Contains('SHA256（LF 行尾归一化）')) { throw 'Handoff hash normalization is undocumented' }
+    if ($taskPipeline.Contains('| 同步项 | D03 证据 |') -or $taskNfr.Contains('| 同步项 | D03 证据 |')) {
+        throw 'D03 synchronization mapping is duplicated'
+    }
+    Write-Output 'PASS: independent review regressions R-001 through R-010 addressed'
+
     & git diff --check 496b4ed --
     if ($LASTEXITCODE -ne 0) { throw 'Whitespace errors in tracked diff' }
     Write-Output 'PASS: git diff --check (tracked changes); semantic review still required'

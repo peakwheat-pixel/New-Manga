@@ -3098,23 +3098,7 @@ Abandon
 
 # 105. 06 对 03 的同步核验
 
-以下项目已在 [D03 数据模型](03_DATA_MODEL.md) 中出现，不再作为待补字段重复提出。
-
-## 105.1 StageState `stale`：已同步
-
-D03 §10.2/10.3 已包含 `stale`，用于区分“从未执行”和“曾成功但上游变化后已失效”；历史 Revision 仍保留。本文件 §71 已同步枚举。
-
-## 105.2 Region command type：已同步
-
-D03 §20.3 已列出 `ocr_region / retranslate_region / retranslate_region_full / reinpaint_region / rerender_region`，无需重复增加。
-
-## 105.3 Retry 来源：已同步
-
-D03 §22 已列出 PipelineRun 字段 `source_run_id / retry_reason`，并要求用户重试失败页时创建新 Run、保留原 Run 历史；本文件 §58 使用同一规则。
-
-## 105.4 Optimistic Write Guard：已同步，存储契约待冻结
-
-D03 §24/24.1 已定义 Step 的 `input_region_revision_id` 与写回前复查规则。具体事务 compare-and-write、多 Region 输入映射及相关 SQL 约束仍由 TASK-002 冻结；字段存在不代表并发保护已经实现。
+字段存在性与 D03 位置只在 [Gap Analysis §5](10_CURRENT_STATE_AND_GAPS.md) 维护；本协议直接引用 D03 定义，不复制该映射。当前不再提出重复加字段，但正式 SQL、事务 compare-and-write、多 Region 输入映射及状态聚合边界仍由 TASK-002 冻结。
 
 ---
 

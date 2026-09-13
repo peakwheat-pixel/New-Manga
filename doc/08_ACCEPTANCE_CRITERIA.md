@@ -2874,15 +2874,13 @@ Inpaint Lock
 
 # 67. AC-SYNC：06/07 对 03 的同步核验与 Schema 冻结 Gate
 
-06 / 07 提出的下列同步项已在 D03 中出现；字段存在性核验完成：
-
-对应位置：
+在进入正式 Schema 实现前，应核验 D03 是否定义以下项目；当前核验结果与证据只记录在 [Gap Analysis §5](10_CURRENT_STATE_AND_GAPS.md)，本验收规格不声明 PASS：
 
 ```text
-StageState stale：D03 §10.2/10.3
-Region command type：D03 §20.3
-input_region_revision_id / optimistic guard：D03 §24/24.1
-source_run_id / retry provenance：D03 §22
+StageState stale
+Region command type
+input_region_revision_id / optimistic guard
+source_run_id / retry provenance
 ```
 
 字段存在不等于最终 Schema 已冻结。正式 SQL 类型、FK/唯一性/NULL 约束、事务 compare-and-write、多 Region 映射与状态聚合边界仍待 TASK-002 明确；冻结 Gate 完成前：

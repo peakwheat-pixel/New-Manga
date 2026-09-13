@@ -1,6 +1,6 @@
 # 下一阶段可执行 Roadmap
 
-提案日期：2026-09-13。当前仍是接管审核阶段，所有 Task 未启动。此路线依据 D01～D08 和 [Gap Register](10_CURRENT_STATE_AND_GAPS.md)，没有排入无来源的新产品能力，也不承诺未经验证的日期/工期。
+提案日期：2026-09-13。接管已获批准，当前仅 TASK-001 获授权；其准确状态见 [TASK-001](tasks/TASK-001.md)，其余 26 个 Task 未启动。此路线依据 D01～D08 和 [Gap Register](10_CURRENT_STATE_AND_GAPS.md)，没有排入无来源的新产品能力，也不承诺未经验证的日期/工期。
 
 ## 1. 阶段与退出条件
 
@@ -32,9 +32,9 @@ flowchart LR
 
 此图是依赖概览，不是所有工作必须阶段串行。例如 TASK-021 依赖006/011/015，可早于020；TASK-023在007/009/012/024后即可进行。精确依赖见 [Task索引](tasks/README.md)。
 
-## 2. 第一批释放建议（尚未授权）
+## 2. 第一批释放状态与后续建议
 
-用户接受接管后，Codex先提交已审核文档基线，使 master 有真实 commit；再将批准的具体任务由 proposed改ready。首批建议仅释放 TASK-001，之后 TASK-002。确定契约后释放 TASK-003/004/024，完成S0评审再进入应用开发。
+初始接管基线已经提交，用户只释放了 TASK-001。TASK-002 及其后续任务继续保持 proposed；TASK-001 集成完成后，再由用户决定是否释放下一项。确定契约后释放 TASK-003/004/024，完成S0评审再进入应用开发。
 
 这里的顺序是建议，不以用户批准接管推定其批准全部开发。用户若明确批准一组任务，Codex据此持续完成该组，无需重复请求同一授权。
 
@@ -46,13 +46,13 @@ flowchart LR
 | ZCode | 独立Feature：书架/编辑/配置/知识/渲染/UI/阅读/Provider/Webtoon等 | 依赖已done且路径不重叠；同一ZCode实例仍按任务顺序执行 |
 | DeepSeek Harness | 规格/环境实验→OCR/Translation/Inpaint实验→各切片Review→最终验证 | 使用独立worktree和实验数据根；不能把三个实验同时视为三个额外Agent |
 
-不要求本阶段连接或启动 ZCode/DeepSeek；工具可用性尚未验证。当前只有Codex完成接管自查，没有独立Review结论。
+DeepSeek Harness 已为 TASK-001 接入独立 linked worktree 并完成首次 Review；ZCode 尚未接入或调度。当前连接事实与 Review 状态见 STATUS 和对应 Task，不在本路线图维护第二份进度。
 
 典型协作窗口：Codex集成存储/契约后，ZCode做独立Feature，DeepSeek做已有明确数据/环境的实验。Code Review 插入各 Task 的 in_review 阶段，不拖到 TASK-026 才首次审查。
 
 ## 4. 依赖与修改范围规则
 
-- 所有 Task 文件包含硬依赖、Acceptance Criteria、允许路径、测试要求与阻塞；状态都为proposed。
+- 所有 Task 文件包含硬依赖、Acceptance Criteria、允许路径、测试要求与阻塞；当前仅 TASK-001 已释放，其余 26 个 Task 为 proposed。
 - 当前没有源码，路径来自D02/D05建议结构。具体文件/包边界在TASK-002/005确定，ready前核对并更新Task；不能以“路径只是建议”为由越界修改。
 - 全局接口、Schema迁移、依赖清单和bootstrap修改需Codex明确分配；不能通过给各Agent整个src目录写权限实现所谓独立开发。
 - 测试/实验首先使用临时独立数据目录；真实用户文件只读导入。Git共享不意味着各进程共享写入测试DB。

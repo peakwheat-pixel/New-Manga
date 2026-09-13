@@ -210,7 +210,7 @@ flowchart TB
 > 本仓库未提供下表引用的旧源码路径；它们仅是历史材料中的迁移参考，当前不可核验，也不构成本仓库已实现能力。除明确写为目标规划的条目外，具体引擎、Provider 数量、默认值与阈值均须由后续源码或实验重新证明。
 
 ### OCR（历史迁移参考 + 目标扩展）
-| 引擎 ID | 目标能力 / 实现方式 | 来源状态 / 规划 |
+| 引擎 ID | 目标能力 / 实现方式 | 历史材料引用（本仓库无此文件）/ 目标规划 |
 |---|---|---|
 | `manga_ocr` | manga_ocr 库,GPU 自动检测 | `manga_ocr_interface.py:44-67` |
 | `48px_ocr` | 本地 ckpt,含文字色预测 | `ocr_48px/interface.py:121` |
@@ -227,7 +227,7 @@ flowchart TB
 - 本地特殊:sakura(硬编码轻小说提示词,`translation.py:318-325`)
 - 逐条 adapter:caiyun、baidu_translate、youdao_translate
 - 非 translation 能力:gpt2api/newapi(imageGen)、jina/cohere(rerank)
-- 证据:`src/shared/ai_provider_manifest.json`;`ai_providers.py:52-230`
+- 历史材料引用（本仓库无此文件）：`src/shared/ai_provider_manifest.json`；`ai_providers.py:52-230`
 
 ### 图片文字消除 / 修复（目标多级策略）
 
@@ -252,6 +252,6 @@ Router 应根据背景复杂度、Mask 面积、线稿/网点、彩色 Webtoon�
 自动修复不得覆盖已经人工确认的修复结果；原图必须保留，允许按 Region / Page 重跑与回退。
 
 ### 检测（历史迁移参考 + 目标衔接）
-`default`(DBNet ResNet34,**默认**)、`ctd`、`yolo`(YSGYolo)、`saber_yolo`(仅二阶段纠错);辅助:aux_yolo 融合(默认关,`constants.py:455`)、大图切片(缩放比>2.5 或长宽比>3.0 时,`constants.py:494-495`)——`detector/registry.py:18-33`。
+历史材料引用（本仓库无此文件）：`default`(DBNet ResNet34,**默认**)、`ctd`、`yolo`(YSGYolo)、`saber_yolo`(仅二阶段纠错);辅助:aux_yolo 融合(默认关,`constants.py:455`)、大图切片(缩放比>2.5 或长宽比>3.0 时,`constants.py:494-495`)——`detector/registry.py:18-33`。
 
 目标架构中，文字检测结果继续进入 **Text Segmentation → Mask Refinement**，为图片文字消除/修复提供高质量 Mask。
