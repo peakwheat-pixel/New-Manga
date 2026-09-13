@@ -2,7 +2,7 @@
 id: TASK-001
 title: 修订目标文档引用与已确定的一致性问题
 kind: design
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -72,7 +72,7 @@ Reviewer 预留为 DeepSeek Harness；当前可调用工具中没有 DeepSeek/ZC
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
+- Handoff：[TASK-001-615a073](../handoffs/TASK-001-615a073.md)，交付提交 `615a073c0cef479157d472d3fc9823e0087b46a1`。
+- Review：待 DeepSeek Harness；`reviewer_unavailable`，无独立报告。
 - 实际执行：已修订 D01～D08 及索引/Gap/派生视图；[检查脚本](../../verification/TASK-001/verify.ps1) 已执行，退出码 0。勾选项为作者完成并自查，尚非独立批准。
-- 最近状态：2026-09-13 用户批准；Codex 从基线 `496b4ed` 开始执行，状态 in_progress。
+- 最近状态：2026-09-13 作者修订、自查和固定提交已完成，in_review；独立 Review 与集成未完成，integration_commit 仍为空。
