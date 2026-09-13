@@ -2,21 +2,21 @@
 id: TASK-002
 title: 冻结最小数据与执行契约
 kind: design
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: Codex
+reviewer: DeepSeek Harness
 depends_on: [TASK-001]
-base_commit: null
-branch: null
-worktree: null
+base_commit: b1b3f5d
+branch: agent/codex/TASK-002-contract-freeze
+worktree: G:/CODEX/New Manga
 integration_commit: null
 ---
 
 # TASK-002：冻结最小数据与执行契约
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已由用户于 2026-09-13 授权，由 Codex 执行；其他 Task 与功能开发继续冻结。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -37,13 +37,21 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
 
 - doc/03_DATA_MODEL.md
+- doc/04_USER_FLOW.md
 - doc/05_UI_MAPPING.md
 - doc/06_TRANSLATION_PIPELINE.md
 - doc/08_ACCEPTANCE_CRITERIA.md
+- doc/00_INDEX.md
+- doc/10_CURRENT_STATE_AND_GAPS.md
 - doc/11_ARCHITECTURE_MAPS.md
+- doc/12_ROADMAP.md
+- doc/13_ACCEPTANCE_TRACEABILITY.md
+- doc/STATUS.md
 - doc/contracts/**
+- doc/tasks/README.md
 - doc/tasks/TASK-002.md
 - doc/handoffs/TASK-002-*.md
+- doc/reviews/TASK-002-*.md
 - verification/TASK-002/**
 
 ## 禁止范围
@@ -59,15 +67,15 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 
 ## 依赖、风险与阻塞
 
-硬依赖：[TASK-001](TASK-001.md)。依赖必须已经集成 done 才可开始。
+硬依赖：[TASK-001](TASK-001.md)，已在 `a1cb24c` 集成并标记 done；本 Task 基线为 `b1b3f5d`。
 
 未解决的用户选择阻止相关契约冻结；不能仅增加一个字段就宣称并发保护完成。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+用户已批准后续 TASK-002 设计取舍由 Codex 依据现有需求作最小冻结，不再逐项询问；不得据此扩大到其他 Task 或功能开发。
 
 ## 交付与运行记录
 
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-13 用户批准启动；Codex 已认领，状态 `in_progress`。Reviewer 预留为 DeepSeek Harness。
