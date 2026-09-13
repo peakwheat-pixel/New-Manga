@@ -2,7 +2,7 @@
 id: TASK-002
 title: 冻结最小数据与执行契约
 kind: design
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -26,10 +26,10 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 
 ## Acceptance Criteria
 
-- [ ] 定义 Region current revision、每目标输入/输出映射、原子 compare-and-write、人工来源/确认状态、Pin 与 TM 禁用存储；列出 FK/唯一性/NULL/枚举约束。
-- [ ] 给出 Run/Task/Step/Stage/Decision 的分层状态表，覆盖 paused/cancelled/blocked/skip、空计划、全锁定、部分失败、Region/Book target 展开、Restart/Abandon。
-- [ ] 统一几何/样式失效矩阵、SFX skip/manual 的图像处理策略、每 Step commit 与最终 Save、Region局部合成和故障清理契约。
-- [ ] 记录最小 DTO/Port 和错误码、设置/Provider/Constraint 快照时点；每个契约给正常、边界、失败测试向量，更新对应 AC 后提交用户审核冻结。
+- [x] 定义 Region current revision、每目标输入/输出映射、原子 compare-and-write、人工来源/确认状态、Pin 与 TM 禁用存储；列出 FK/唯一性/NULL/枚举约束。
+- [x] 给出 Run/Task/Step/Stage/Decision 的分层状态表，覆盖 paused/cancelled/blocked/skip、空计划、全锁定、部分失败、Region/Book target 展开、Restart/Abandon。
+- [x] 统一几何/样式失效矩阵、SFX skip/manual 的图像处理策略、每 Step commit 与最终 Save、Region局部合成和故障清理契约。
+- [x] 记录最小 DTO/Port 和错误码、设置/Provider/Constraint 快照时点；每个契约给正常、边界、失败测试向量，更新对应 AC 后提交用户审核冻结。
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
@@ -75,7 +75,7 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 用户批准启动；Codex 已认领，状态 `in_progress`。Reviewer 预留为 DeepSeek Harness。
+- Handoff：[TASK-002-c335315](../handoffs/TASK-002-c335315.md)，固定 `base_commit=b1b3f5d`、`reviewed_head=c335315`。
+- Review：等待 DeepSeek Harness 在独立 linked worktree 写入 `doc/reviews/TASK-002-c335315.md`。
+- 实际执行：`pwsh -NoProfile -File ./verification/TASK-002/verify.ps1` 在 `c335315` 退出码 0；产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 最近状态：2026-09-13 作者交付与自查完成，状态 `in_review`；其他 25 个 Task 保持 proposed。
