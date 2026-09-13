@@ -4,24 +4,24 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-001 独立复审已批准，等待 Codex 集成 |
+| 阶段 | TASK-001 已集成并完成验证；等待用户决定是否释放下一 Task |
 | 当前授权 | 提交初始 Git 基线并执行 TASK-001；其余 Task 与功能开发未授权 |
 | 接管审核 | approved |
 | 用户审核记录 | 2026-09-13：允许提交初始 Git 基线并启动 TASK-001 |
 | 目标基线冻结 | 未冻结；见 Gap Analysis |
 | 应用源代码 / 可执行测试 | 均不存在 |
-| 项目 Git 分支 / 初始基线 | agent/codex/TASK-001-doc-consistency；初始基线 496b4ed |
-| TASK-001 交付提交 | 首次 615a073；Review 修订 cdc736c；master 保持 496b4ed，未合并 |
+| 项目 Git 分支 / 初始基线 | master；初始基线 496b4ed；来源分支保留 |
+| TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
-| 文档版本状态 | 初始接管基线与 TASK-001 作者交付均已提交 |
-| 任务分派 / 执行 | TASK-001：Codex / approved；其余 26 个 Task 保持 proposed |
+| 文档版本状态 | TASK-001 已合并到 master；集成后文档检查通过 |
+| 任务分派 / 执行 | TASK-001：Codex / done；其余 26 个 Task 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | DeepSeek 已在同仓 linked worktree 接入；ZCode 尚未接入或调度 |
 | 本次 Review | DeepSeek 已批准 `496b4ed..cdc736c`；R-001～R-010 全部 resolved。R-011 延至 TASK-002 冻结，R-012 按作者回归护栏解释，均为非阻塞 P2 |
 | 产品发布状态 | NOT READY，无可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
 
-当前交付入口：[TASK-001 复审 Handoff](handoffs/TASK-001-cdc736c.md)，包含固定提交、Finding 处置、实际验证与遗留项。
+已集成交付入口：[TASK-001 复审 Handoff](handoffs/TASK-001-cdc736c.md)，包含固定提交、Finding 处置、独立批准与集成结果。
 
 DeepSeek Review 工作区：`G:/CODEX/New Manga.worktrees/TASK-001-deepseek-review`；分支 `agent/deepseek/TASK-001-review`。首次报告为 [TASK-001-615a073](reviews/TASK-001-615a073.md)；复审报告写入 `doc/reviews/TASK-001-*.md`，每份报告必须绑定自己的 `base_commit` 与 `reviewed_head`。
 

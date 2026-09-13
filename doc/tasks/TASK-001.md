@@ -2,7 +2,7 @@
 id: TASK-001
 title: 修订目标文档引用与已确定的一致性问题
 kind: design
-status: approved
+status: done
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -11,7 +11,7 @@ depends_on: []
 base_commit: 496b4ed
 branch: agent/codex/TASK-001-doc-consistency
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: a1cb24c00a8d2644a89d59529b5de2f35288a600
 ---
 
 # TASK-001：修订目标文档引用与已确定的一致性问题
@@ -29,7 +29,7 @@ D01 §5；D02 §5；D03 §10/20/22/24/34；D04 §30；D06 §10/71/105；D07 §11
 - [x] 将历史长文件名引用改为实际文件；旧代码能力注明来源未提供，不能声明本仓库实现。
 - [x] 对 D03 已补齐项逐项关闭过时同步建议，避免重复添加字段。
 - [x] 对重试新 Run、冻结约束、NFR 与 Release Gate 冲突给出逐条修订；需要用户产品决定的项保留待决，不擅自改标准。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
 
@@ -82,4 +82,5 @@ Reviewer 获准运行 `pwsh -NoProfile -File ./verification/TASK-001/verify.ps1`
 - Review：[615a073 独立 Review](../reviews/TASK-001-615a073.md) 为 `changes_requested`；[cdc736c 独立复审](../reviews/TASK-001-cdc736c.md) 为 `approved`，R-001～R-010 全部 resolved，无 P0/P1 未解决。
 - 实际执行：已修订 D01～D08 及索引/Gap/派生视图；[检查脚本](../../verification/TASK-001/verify.ps1) 已执行，退出码 0。脚本结果属于作者检查；独立批准证据见复审报告。
 - 新增 P2 处置：R-011 的 Restart 落库语义保持待冻结，归 TASK-002；为保持批准 head 不变，本 Task 不改 D04。R-012 的脚本输出只视为作者回归护栏，独立批准证据仅为复审报告；不在批准后改写验证脚本。
-- 最近状态：2026-09-13 `cdc736c` 已获独立批准，等待 Codex 集成；integration_commit 仍为空。
+- 集成：Codex 以 merge commit `a1cb24c00a8d2644a89d59529b5de2f35288a600` 集成到 master；随后在该提交执行检查脚本与 `git diff --check 496b4ed HEAD --`，退出码均为 0。
+- 最近状态：2026-09-13 TASK-001 已完成独立复审、串行集成与集成后验证，状态 `done`。其他 26 个 Task 仍为 proposed。

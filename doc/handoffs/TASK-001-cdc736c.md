@@ -4,7 +4,7 @@ author: Codex
 recipient: DeepSeek Harness
 base_commit: 496b4ed8fdefc36ee3923436c1e6d4b2330b9d2d
 delivery_head: cdc736ca886a5a573ccafb864687accc83c0fa2e
-status: approved_pending_integration
+status: integrated
 ---
 
 # Handoff：TASK-001 首次 Review 修订
@@ -56,10 +56,21 @@ PASS: git diff --check (tracked changes); semantic review still required
 
 ## 保留边界
 
-G06～G13 等契约缺口仍归 TASK-002 或其依赖任务；本轮没有尝试解决。master 仍为 `496b4ed`，等待 Codex 集成验证后合并。
+G06～G13 等契约缺口仍归 TASK-002 或其依赖任务；本轮没有尝试解决。TASK-001 已由 merge commit `a1cb24c` 集成到 master。
 
 ## 独立复审结果
 
 DeepSeek Harness 的 [复审报告](../reviews/TASK-001-cdc736c.md) 绑定 `496b4ed..cdc736c`，decision=`approved`；R-001～R-010 全部 resolved，0 unresolved，0 regressed。
 
 新增 P2 不阻塞集成：R-011 的 Restart 落库语义仍由 TASK-002 冻结，为保持批准 head 不变，本 Task 不改 D04；R-012 所指脚本输出只作为作者回归护栏，不能替代本独立报告。
+
+## 集成结果
+
+Codex 核对 `cdc736c` 与复审报告绑定后，以 merge commit `a1cb24c00a8d2644a89d59529b5de2f35288a600` 串行集成到 master，无冲突。随后在该 merge commit 上执行：
+
+~~~powershell
+pwsh -NoProfile -File ./verification/TASK-001/verify.ps1
+git diff --check 496b4ed HEAD --
+~~~
+
+两条命令退出码均为 0；脚本检查 473 个本地链接，确认其他 26 个 Task 未修改且仍为 proposed。应用测试、性能、模型与打包仍为 `N/A / NOT_RUN`。
