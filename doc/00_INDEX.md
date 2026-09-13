@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-状态：接管提案，待用户审核。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
+状态：初始接管基线 `496b4ed` 已获批并提交；只授权执行 TASK-001。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
 
 ## 原始目标文档（已完整检查）
 
@@ -11,11 +11,11 @@
 | D03 | [03 数据模型](03_DATA_MODEL.md) | 实体、字段、数据不变量、持久化归属 | To-Be，尚无 SQL 或迁移；不是冻结 Schema |
 | D04 | [04 用户流程](04_USER_FLOW.md) | 操作意图、用户流程、对象范围 | To-Be |
 | D05 | [05 UI 映射](05_UI_MAPPING.md) | Screen、Panel、Window、动作与 ViewModel 映射 | To-Be；内含线框示意，非实际 QML |
-| D06 | [06 Pipeline](06_TRANSLATION_PIPELINE.md) | 命令语义、DAG、Lock、失效、重试与进度协议 | To-Be；部分同步建议已过时 |
+| D06 | [06 Pipeline](06_TRANSLATION_PIPELINE.md) | 命令语义、DAG、Lock、失效、重试与进度协议 | To-Be；已核对 D03 同步项，执行契约仍待冻结 |
 | D07 | [07 非功能需求](07_NON_FUNCTIONAL_REQUIREMENTS.md) | 性能、容量、可靠性、安全、Windows 与打包 | 目标数值，未经 Benchmark 验证 |
 | D08 | [08 验收标准](08_ACCEPTANCE_CRITERIA.md) | 验收预期、证据要求与发布 Gate | 验收规格，不是测试实现或 PASS 报告 |
 
-历史长文件名出现在 D03～D08 的“基于”列表中，本仓库没有这些文件。应使用上表实际文件；这些对应关系只做主题导航，不证明与历史版本逐字一致。
+TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表实际文件；这只恢复当前项目导航，不证明与未提供的历史版本逐字一致。原始引用保存在基线 `496b4ed`。
 
 ## 接管与执行文档
 
@@ -29,7 +29,8 @@
 | [12 Roadmap](12_ROADMAP.md) | 阶段 Gate、依赖和范围取舍 |
 | [13 验收追踪](13_ACCEPTANCE_TRACEABILITY.md) | D08 条目到计划 Task 的映射；不代表已验收 |
 | [14 接管验证](14_TAKEOVER_VERIFICATION.md) | 本次文档自检结果、复现命令与验证边界 |
-| [接管自检脚本](verify_takeover.ps1) | 复验本次接管快照的原文指纹、链接、任务依赖与AC覆盖 |
+| [接管自检脚本](verify_takeover.ps1) | 仅适用于初始接管快照；TASK-001 已修改文档与授权，其 Hash/冻结断言不再适用于当前工作区 |
+| [TASK-001 检查](../verification/TASK-001/verify.ps1) | 验证文档引用、状态枚举、AC 编号/优先级及修改范围 |
 | [任务目录](tasks/README.md) | 27 个 Task 索引；单个文件是任务状态真值 |
 | [Task 模板](templates/TASK.md) | 新任务创建 |
 | [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
@@ -56,7 +57,7 @@ handoffs、reviews、verification、research 等目录在首次真实产出时�
 ## 文档维护规则
 
 - 新事实标明 As-Is（代码/测试）、To-Be（目标）、Proposal（本次建议）或 Unknown（无证据）。
-- 原始 01～08 本次不改写；接管报告保存原始 SHA256，保留审核依据。
+- 原始 01～08 已保存在初始基线；后续仅按已授权 Task 修订。接管报告的 SHA256 是修订前指纹，不是当前文件必须保持的值。
 - 架构图与矩阵是派生视图；出现实现后补充 source/test 路径与 commit，才能标为代码生成。
 - 代码、测试和文档同一 Task 一起交付。涉及未分配的共享文档，先交 Codex协调写权限。
 - 同一个结论只维护一个权威位置，其余位置使用链接；STATUS 管阶段，Task 管进度，Review 管审查结论。

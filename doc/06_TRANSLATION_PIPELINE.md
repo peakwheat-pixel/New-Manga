@@ -4,10 +4,10 @@
 >
 > 本文件直接承接：
 >
-> - `01_FUNCTIONAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `02_TECHNICAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `03_DATA_MODEL_任务进度同步版.md`
-> - `04_USER_FLOW_任务进度同步版.md`
+> - `01_FUNCTIONAL_ARCHITECTURE.md`
+> - `02_TECHNICAL_ARCHITECTURE_.md`
+> - `03_DATA_MODEL.md`
+> - `04_USER_FLOW.md`
 > - `05_UI_MAPPING.md`
 >
 > 已确认业务语义保持不变，包括：
@@ -1745,6 +1745,7 @@ TaskProgressPanel
 
 ```text
 收集失败 Page
+→ 创建新的 PipelineRun，记录 source_run_id + retry_reason
 → 创建新的 PipelineRunTarget
 → 从第一个仍需执行的失败 / stale Step 开始
 → 复用有效上游结果
@@ -1752,7 +1753,7 @@ TaskProgressPanel
 
 原失败 Run 保留历史。
 
-新 Run 在 provenance / summary 中引用来源 Run。
+新 Run 使用 D03 §22 的 `source_run_id / retry_reason` 字段引用来源 Run；summary 可补充说明，但不替代这两个目标字段。
 
 ---
 
@@ -2055,26 +2056,21 @@ Translated Artifact
 
 PageStageState / RegionStageState 用于细粒度 UI 与 Pipeline 判断。
 
-现有状态：
+与 D03 §10.2 同步后的目标状态：
 
 ```text
 not_started
 pending
 running
 completed
+stale
 failed
 skipped
 interrupted
 cancelled
 ```
 
-06 建议增加：
-
-```text
-stale
-```
-
-用于：
+其中 `stale` 用于：
 
 > 曾经成功，但上游变化后结果不再是当前有效结果。
 
@@ -3100,74 +3096,25 @@ Abandon
 
 ---
 
-# 105. 06 对 03 的同步建议
+# 105. 06 对 03 的同步核验
 
-为了让数据模型完全表达本执行协议，下一次同步 03 时建议补充以下内容。
+以下项目已在 [D03 数据模型](03_DATA_MODEL.md) 中出现，不再作为待补字段重复提出。
 
-## 105.1 StageState 增加 `stale`
+## 105.1 StageState `stale`：已同步
 
-现有：
+D03 §10.2/10.3 已包含 `stale`，用于区分“从未执行”和“曾成功但上游变化后已失效”；历史 Revision 仍保留。本文件 §71 已同步枚举。
 
-```text
-not_started
-pending
-running
-completed
-failed
-skipped
-interrupted
-cancelled
-```
+## 105.2 Region command type：已同步
 
-建议增加：
+D03 §20.3 已列出 `ocr_region / retranslate_region / retranslate_region_full / reinpaint_region / rerender_region`，无需重复增加。
 
-```text
-stale
-```
+## 105.3 Retry 来源：已同步
 
-原因：
+D03 §22 已列出 PipelineRun 字段 `source_run_id / retry_reason`，并要求用户重试失败页时创建新 Run、保留原 Run 历史；本文件 §58 使用同一规则。
 
-> “从未执行”与“执行过但因上游改变而失效”必须区分。
+## 105.4 Optimistic Write Guard：已同步，存储契约待冻结
 
-## 105.2 补齐 Region command type
-
-03 已有 Region UI 能力，但 command type 列表只正式列出了：
-
-```text
-retranslate_region_full
-```
-
-建议补充：
-
-```text
-ocr_region
-retranslate_region
-reinpaint_region
-rerender_region
-```
-
-这样 Region Inspector 的四类独立动作也能进入统一 PipelineRun / Task / StepRun 审计。
-
-## 105.3 Retry 来源
-
-用户点击“重试失败页”创建新 PipelineRun 时，建议在 Run provenance / summary 中记录：
-
-```text
-source_run_id
-retry_reason
-```
-
-不一定必须单独加列，也可进入现有 `summary_json / provenance`。
-
-## 105.4 Optimistic Write Guard
-
-建议在 Step provenance 中记录：
-
-```text
-input_region_revision_id
-```
-
-写入时对比 current RegionRevision，防止后台结果覆盖任务运行期间的人工编辑。
+D03 §24/24.1 已定义 Step 的 `input_region_revision_id` 与写回前复查规则。具体事务 compare-and-write、多 Region 输入映射及相关 SQL 约束仍由 TASK-002 冻结；字段存在不代表并发保护已经实现。
 
 ---
 

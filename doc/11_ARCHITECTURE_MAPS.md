@@ -264,7 +264,7 @@ flowchart TB
 
 ## 10. State Machine（To-Be；不冒充已冻结状态协议）
 
-来源：D03 §22.1/24.1、D06 §59～65/73、D08 AC-RETRY。图示采用明确的 Run 终态规则；G05/G06 仍需同步回原始文档。失败重试另建 Run，不画成原 failed→pending。
+来源：D03 §22.1/24.1、D06 §59～65/73、D08 AC-RETRY。TASK-001 已把失败页重试新建 Run 的规则同步到 D02/D04/D06；G05 的 Restart/Abandon 及 G06 的完整状态契约仍待 TASK-002。失败页重试另建 Run，不画成原 failed→pending。
 
 ~~~mermaid
 stateDiagram-v2

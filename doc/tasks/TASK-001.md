@@ -2,21 +2,21 @@
 id: TASK-001
 title: 修订目标文档引用与已确定的一致性问题
 kind: design
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: Codex
+reviewer: DeepSeek Harness
 depends_on: []
-base_commit: null
-branch: null
-worktree: null
+base_commit: 496b4ed
+branch: agent/codex/TASK-001-doc-consistency
+worktree: G:/CODEX/New Manga
 integration_commit: null
 ---
 
 # TASK-001：修订目标文档引用与已确定的一致性问题
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已由用户于 2026-09-13 授权，由 Codex 执行；其他 Task 与新功能开发继续冻结。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -26,14 +26,14 @@ D01 §5；D02 §5；D03 §10/20/22/24/34；D04 §30；D06 §10/71/105；D07 §11
 
 ## Acceptance Criteria
 
-- [ ] 将历史长文件名引用改为实际文件；旧代码能力注明来源未提供，不能声明本仓库实现。
-- [ ] 对 D03 已补齐项逐项关闭过时同步建议，避免重复添加字段。
-- [ ] 对重试新 Run、冻结约束、NFR 与 Release Gate 冲突给出逐条修订；需要用户产品决定的项保留待决，不擅自改标准。
+- [x] 将历史长文件名引用改为实际文件；旧代码能力注明来源未提供，不能声明本仓库实现。
+- [x] 对 D03 已补齐项逐项关闭过时同步建议，避免重复添加字段。
+- [x] 对重试新 Run、冻结约束、NFR 与 Release Gate 冲突给出逐条修订；需要用户产品决定的项保留待决，不擅自改标准。
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
 
-以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
+以下为相对仓库根目录的允许路径。Codex 于 2026-09-13 核对范围，仅补入 `doc/STATUS.md` 用于登记本 Task 授权与进度；不涉及应用源码。
 
 - doc/01_FUNCTIONAL_ARCHITECTURE.md
 - doc/02_TECHNICAL_ARCHITECTURE_.md
@@ -46,6 +46,7 @@ D01 §5；D02 §5；D03 §10/20/22/24/34；D04 §30；D06 §10/71/105；D07 §11
 - doc/00_INDEX.md
 - doc/10_CURRENT_STATE_AND_GAPS.md
 - doc/11_ARCHITECTURE_MAPS.md
+- doc/STATUS.md
 - doc/tasks/TASK-001.md
 - doc/handoffs/TASK-001-*.md
 - verification/TASK-001/**
@@ -58,20 +59,20 @@ D01 §5；D02 §5；D03 §10/20/22/24/34；D04 §30；D06 §10/71/105；D07 §11
 
 - 逐份检查受影响段落与链接，并比较原始指纹快照。
 - 列出修改前后语义及对应 D08 条目；独立 Reviewer 确认未扩大/缩减产品范围。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 在 `verification/TASK-001/` 留下可重复执行的最小文档检查。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
 
-硬依赖：无前置 Task，但仍需用户审核与阶段释放。依赖必须已经集成 done 才可开始。
+硬依赖：无前置 Task；用户已释放本 Task。其他 Task 必须继续保持 proposed。
 
-无项目 HEAD，先由 Codex在获准后提交接管基线；本任务修改目标文档不代表冻结 Schema。
+初始项目基线为 `496b4ed`；本任务修改目标文档不代表冻结 Schema。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+Reviewer 预留为 DeepSeek Harness；当前可调用工具中没有 DeepSeek/ZCode 连接，记录 `reviewer_unavailable`。Codex 可完成文档修订与自查，但不得自行填写独立批准或集成 done。
 
 ## 交付与运行记录
 
 - Handoff：尚无。
 - Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 实际执行：已修订 D01～D08 及索引/Gap/派生视图；[检查脚本](../../verification/TASK-001/verify.ps1) 已执行，退出码 0。勾选项为作者完成并自查，尚非独立批准。
+- 最近状态：2026-09-13 用户批准；Codex 从基线 `496b4ed` 开始执行，状态 in_progress。

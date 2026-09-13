@@ -293,8 +293,8 @@ flowchart LR
 1. 自动术语识别从 OCR / 上下文中发现候选术语。
 2. 候选术语经规则处理后写入或更新作品的术语表。
 3. 用户可以在书架或工作台人工维护术语表与不译表。
-4. 每次翻译任务创建 Prompt / Request 前读取当前有效约束。
-5. 后续页面、连续多页翻译、单气泡重译都必须使用同一作品约束。
+4. PipelineRun 在准备阶段读取当前有效约束并生成 `effective constraint snapshot`；该 Run 内每次创建 Prompt / Request 都读取这份冻结快照。
+5. 快照冻结后的约束修改默认只影响下一次 Run；单气泡重译等新 Run 在各自准备阶段生成快照（D06 §10）。
 6. 人工修改过的术语优先于自动识别结果；自动流程不得静默覆盖人工锁定值。
 
 ---
@@ -363,15 +363,17 @@ stateDiagram-v2
     Running --> Failed
     Running --> Cancelled: Stop
     Running --> Interrupted: App exits unexpectedly
-    Failed --> Pending: Retry
-    Interrupted --> Pending: Resume / Retry
+    Interrupted --> Running: Resume after recovery validation
 ```
+
+此图展示 Run 的业务状态结果；Interrupted 恢复是否经过中间调度状态，以及 Restart / Abandon 的完整落库语义，由 TASK-002 冻结。
 
 控制语义：
 
 - **暂停 Pause**：设置 Run 级 pause request；不再启动新的 Step / Page。正在执行且无法安全取消的 Step 允许完成后再进入 `paused`。
 - **继续 Continue**：清除 pause request，从持久化断点继续。
 - **停止 Stop**：设置 Run 级 cancel request；停止启动后续工作，剩余 Pending Task 转为 Cancelled；已经完成的 Page、Region、ArtifactRevision 和 Revision 全部保留，不回滚。
+- **重试失败页**：创建新的 PipelineRun，仅包含失败目标，以 `source_run_id + retry_reason` 关联来源；原 Run 历史不改写（D03 §22、D06 §58、D08 AC-RETRY-002）。Step 自动重试属于原 Run 内的有限重试，复用相同输入与设置（D06 §56/57）。
 - UI 控制命令通过 Application / Task Manager 下发，不由 QML 直接修改 Task 数据库状态。
 
 ### 5.4 工作台固定任务进度面板

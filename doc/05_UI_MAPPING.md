@@ -4,10 +4,10 @@
 >
 > 本文件基于：
 >
-> - `01_FUNCTIONAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `02_TECHNICAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `03_DATA_MODEL_任务进度同步版.md`
-> - `04_USER_FLOW_任务进度同步版.md`
+> - `01_FUNCTIONAL_ARCHITECTURE.md`
+> - `02_TECHNICAL_ARCHITECTURE_.md`
+> - `03_DATA_MODEL.md`
+> - `04_USER_FLOW.md`
 >
 > 核心约束：
 >

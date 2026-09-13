@@ -4,10 +4,10 @@
 >
 > 本文件基于：
 >
-> - `01_FUNCTIONAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `02_TECHNICAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `03_DATA_MODEL_任务进度同步版.md`
-> - `04_USER_FLOW_任务进度同步版.md`
+> - `01_FUNCTIONAL_ARCHITECTURE.md`
+> - `02_TECHNICAL_ARCHITECTURE_.md`
+> - `03_DATA_MODEL.md`
+> - `04_USER_FLOW.md`
 > - `05_UI_MAPPING.md`
 > - `06_TRANSLATION_PIPELINE.md`
 >
@@ -22,6 +22,8 @@
 > - **MUST**：第一版必须满足。
 > - **SHOULD**：推荐目标，若达不到必须记录原因。
 > - **TUNABLE**：默认值，可在设置中调整。
+>
+> 上述等级描述 NFR 目标，不自动改变 D08 的发布优先级。映射为 P0/P1 的项目在当前 Release Gate 下仍要求 PASS；原因说明或调参本身不等于验收通过。D08 AC-PERF-001 的正式豁免与 P1 全通过规则存在待决边界，须经用户明确批准并同步文档后才可生效；TASK-001 不批准任何豁免，也不修改数值或优先级。
 >
 > 尚未经过真实硬件基准测试的数值均属于**目标基线**，后续必须通过 Benchmark 校准，不应把预测值当成已经达到的性能。
 
@@ -2865,35 +2867,23 @@ Release Notes
 
 ---
 
-# 115. 对 03 / 06 的后续同步建议
+# 115. 对 03 / 06 的同步核验与未冻结边界
 
-06 已提出：
+以下内容已在 [D03 数据模型](03_DATA_MODEL.md) 中出现，不再作为待补项重复添加：
 
-```text
-StageState 增加 stale
-Region command type 补齐
-input_region_revision_id
-```
+| 同步项 | D03 证据 |
+|---|---|
+| StageState `stale` | §10.2/10.3 |
+| Region command type | §20.3 |
+| `input_region_revision_id` 与写回前复查 | §24/24.1 |
+| `app_version / schema_version` | §22、§34.1/34.2 |
+| Artifact integrity metadata | §17.4 |
+| Backup metadata | §34.3 |
+| Cache metadata / quota state | §34.4 |
+| Diagnostic Settings | §34.5 |
+| ModelInstallationState | §34.6 |
 
-07 再建议在实现数据模型时考虑：
-
-```text
-app_version
-schema_version
-artifact integrity metadata
-backup metadata
-cache metadata / quota state
-diagnostic settings
-model installation state
-```
-
-这些可以：
-
-```text
-放入 Settings / Infrastructure metadata
-```
-
-不一定需要全部成为独立 Domain Entity。
+这里只核验文档存在性。正式 SQL、约束、事务及状态边界仍待 TASK-002 冻结；Settings / Infrastructure metadata 不因本次同步核验而变成独立漫画业务 Domain Entity。
 
 ---
 
