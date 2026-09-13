@@ -15,13 +15,15 @@
 | Git remote | 未配置 |
 | 文档版本状态 | 初始接管基线与 TASK-001 作者交付均已提交 |
 | 任务分派 / 执行 | TASK-001：Codex / in_review；其余 26 个 Task 保持 proposed |
-| ZCode / DeepSeek Harness 连接 | 当前无可调用连接，未调度；reviewer_unavailable |
-| 本次 Review | Codex 文档自查通过；独立 Review 尚未发生 |
+| ZCode / DeepSeek Harness 连接 | DeepSeek 已在同仓 linked worktree 接入；ZCode 尚未接入或调度 |
+| 本次 Review | DeepSeek 接入核验完成；固定审查 `496b4ed..615a073`，正式 Review 尚未开始 |
 | 产品发布状态 | NOT READY，无可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
 
 当前交付入口：[TASK-001 Handoff](handoffs/TASK-001-615a073.md)，包含固定提交、修订对照、实际验证与遗留项。
+
+DeepSeek Review 工作区：`G:/CODEX/New Manga.worktrees/TASK-001-deepseek-review`；分支 `agent/deepseek/TASK-001-review`；报告仅写入 `doc/reviews/TASK-001-615a073.md`。当前 checkout `b9ddd29` 提供交接元数据，reviewed_head 仍固定为 `615a073`。
 
 用户审核后，Codex在本文件追加日期、决定原文摘要和允许启动的 Task；再在相应 Task 记录 release、owner、base_commit。若仅同意接管，保持其余 Task 为 proposed。
 

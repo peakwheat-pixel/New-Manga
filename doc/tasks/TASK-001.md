@@ -49,6 +49,7 @@ D01 §5；D02 §5；D03 §10/20/22/24/34；D04 §30；D06 §10/71/105；D07 §11
 - doc/STATUS.md
 - doc/tasks/TASK-001.md
 - doc/handoffs/TASK-001-*.md
+- doc/reviews/TASK-001-615a073.md
 - verification/TASK-001/**
 
 ## 禁止范围
@@ -68,11 +69,13 @@ D01 §5；D02 §5；D03 §10/20/22/24/34；D04 §30；D06 §10/71/105；D07 §11
 
 初始项目基线为 `496b4ed`；本任务修改目标文档不代表冻结 Schema。
 
-Reviewer 预留为 DeepSeek Harness；当前可调用工具中没有 DeepSeek/ZCode 连接，记录 `reviewer_unavailable`。Codex 可完成文档修订与自查，但不得自行填写独立批准或集成 done。
+DeepSeek Harness 已在 `G:/CODEX/New Manga.worktrees/TASK-001-deepseek-review` 接入同一 Git common directory，分支为 `agent/deepseek/TASK-001-review`。Review 对象固定为 `base_commit=496b4ed`、`reviewed_head=615a073`；worktree 当前 HEAD `b9ddd29` 仅用于读取本 Task、STATUS 与 Handoff，不属于被审 diff。
+
+Reviewer 获准运行 `pwsh -NoProfile -File ./verification/TASK-001/verify.ps1`，并且只在 `doc/reviews/TASK-001-615a073.md` 写独立 Review 报告。发现问题时记录 finding，不修改 TASK-001 作者交付。
 
 ## 交付与运行记录
 
 - Handoff：[TASK-001-615a073](../handoffs/TASK-001-615a073.md)，交付提交 `615a073c0cef479157d472d3fc9823e0087b46a1`。
-- Review：待 DeepSeek Harness；`reviewer_unavailable`，无独立报告。
+- Review：DeepSeek Harness 已完成接入核验，尚未开始正式 Review；报告路径为 `doc/reviews/TASK-001-615a073.md`。
 - 实际执行：已修订 D01～D08 及索引/Gap/派生视图；[检查脚本](../../verification/TASK-001/verify.ps1) 已执行，退出码 0。勾选项为作者完成并自查，尚非独立批准。
 - 最近状态：2026-09-13 作者修订、自查和固定提交已完成，in_review；独立 Review 与集成未完成，integration_commit 仍为空。
