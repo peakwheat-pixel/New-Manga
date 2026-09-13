@@ -2,7 +2,7 @@
 id: TASK-002
 title: 冻结最小数据与执行契约
 kind: design
-status: in_review
+status: done
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -11,7 +11,7 @@ depends_on: [TASK-001]
 base_commit: b1b3f5d
 branch: agent/codex/TASK-002-contract-freeze
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 7927169e13ade1afb8f78d368465191508f8aabd
 ---
 
 # TASK-002：冻结最小数据与执行契约
@@ -30,7 +30,7 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 - [x] 给出 Run/Task/Step/Stage/Decision 的分层状态表，覆盖 paused/cancelled/blocked/skip、空计划、全锁定、部分失败、Region/Book target 展开、Restart/Abandon。
 - [x] 统一几何/样式失效矩阵、SFX skip/manual 的图像处理策略、每 Step commit 与最终 Save、Region局部合成和故障清理契约。
 - [x] 记录最小 DTO/Port 和错误码、设置/Provider/Constraint 快照时点；每个契约给正常、边界、失败测试向量，更新对应 AC 后提交用户审核冻结。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
 
@@ -63,7 +63,7 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 
 - 用纸面事件序列演算：Revision10→人工12→后台返回、全锁定零 Step、38成功2失败、暂停/停止竞态、单 Region 合成。
 - 检查所有新增数据字段/命令能映射至 UI、协议和 AC；不生成 SQL 或业务代码。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- V01～V19 已作为文档级事件序列检查并由 DeepSeek 独立复核；产品、SQL、模型、性能与打包仍为 NOT_RUN / N/A。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -77,6 +77,6 @@ D03 §6～24/38～43；D06 §24～33/48～79/85～94；D05 §14/30/53；G06～G1
 ## 交付与运行记录
 
 - Handoff：[TASK-002-885c9a9](../handoffs/TASK-002-885c9a9.md)，固定 `base_commit=b1b3f5d`、`reviewed_head=885c9a9`；首次 Handoff `c335315` 保留为历史。
-- Review：[TASK-002-c335315](../reviews/TASK-002-c335315.md) decision=`changes_requested`；F-01～F-07 已由 `885c9a9` 修订，等待 `doc/reviews/TASK-002-885c9a9.md` 独立复审。
-- 实际执行：`pwsh -NoProfile -File ./verification/TASK-002/verify.ps1` 在 `885c9a9` 退出码 0；产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
-- 最近状态：2026-09-13 Review 修订与作者验证完成，状态 `in_review`；其他 25 个 Task 保持 proposed。
+- Review：[首次报告](../reviews/TASK-002-c335315.md) decision=`changes_requested`；[复审报告](../reviews/TASK-002-885c9a9.md) decision=`approved`，F-01～F-07 resolved。F-08 accepted/deferred，F-09 resolved。
+- 实际执行：原脚本在 reviewed slice 退出码 0；merge `7927169` 上确认被审内容与 `885c9a9` 一致、`git diff --check` 通过、其他 25 个 Task 仍 proposed。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 最近状态：2026-09-13 Codex 已以 `7927169` 集成并完成切片验证，状态 `done`；其他 25 个 Task 保持 proposed。

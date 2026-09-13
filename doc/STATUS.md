@@ -4,26 +4,26 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-002 Review 修订完成，等待独立复审 |
-| 当前授权 | TASK-001 已完成；仅执行 TASK-002 契约冻结，其他 Task 与功能开发未授权 |
+| 阶段 | TASK-002 已完成并集成，等待用户审核下一阶段 |
+| 当前授权 | TASK-001、TASK-002 已完成；TASK-003～TASK-027 与功能开发尚未授权 |
 | 接管审核 | approved |
 | 用户审核记录 | 2026-09-13：TASK-001 审核通过；允许启动 TASK-002，并预先批准其后续最小设计取舍 |
 | 目标基线冻结 | 未冻结；见 Gap Analysis |
 | 应用源代码 / 可执行测试 | 均不存在 |
-| 项目 Git 分支 / TASK-002 基线 | agent/codex/TASK-002-contract-freeze；base_commit b1b3f5d |
+| 项目 Git 分支 / TASK-002 基线 | master；base_commit b1b3f5d |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
-| 文档版本状态 | TASK-002 修订 head `885c9a9` 已固定，尚未集成 master |
-| 任务分派 / 执行 | TASK-001：done；TASK-002：Codex / in_review；其余 25 个 Task 保持 proposed |
+| 文档版本状态 | TASK-002 reviewed head `885c9a9` 已由 merge commit `7927169` 集成 master |
+| 任务分派 / 执行 | TASK-001：done；TASK-002：done；其余 25 个 Task 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | DeepSeek 已在同仓 linked worktree 接入；ZCode 尚未接入或调度 |
-| 本次 Review | DeepSeek 对 `c335315` 要求修改；F-01～F-07 已在 `885c9a9` 处理，等待绑定 `b1b3f5d..885c9a9` 的独立复审 |
+| 本次 Review | DeepSeek 已批准 `b1b3f5d..885c9a9`；F-01～F-07 resolved。F-08 为非阻塞派生图缺口，保留跟踪；F-09 已由 master `c39ba99` 关闭 |
 | 产品发布状态 | NOT READY，无可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
 
 已集成交付入口：[TASK-001 复审 Handoff](handoffs/TASK-001-cdc736c.md)，包含固定提交、Finding 处置、独立批准与集成结果。
 
-待审交付入口：[TASK-002 复审 Handoff](handoffs/TASK-002-885c9a9.md)，固定 `base_commit=b1b3f5d`、`reviewed_head=885c9a9`；尚无批准或 integration_commit。
+已集成交付入口：[TASK-002 复审 Handoff](handoffs/TASK-002-885c9a9.md)，固定 `base_commit=b1b3f5d`、`reviewed_head=885c9a9`、`integration_commit=7927169`。
 
 当前 DeepSeek Review 工作区：`G:/CODEX/New Manga.worktrees/TASK-002-deepseek-review`；分支 `agent/deepseek/TASK-002-review`。首次报告为 [TASK-002-c335315](reviews/TASK-002-c335315.md)；复审报告写入 `doc/reviews/TASK-002-*.md`，每份报告必须绑定自己的 `base_commit` 与 `reviewed_head`。
 

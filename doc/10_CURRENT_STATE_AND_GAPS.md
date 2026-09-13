@@ -152,5 +152,7 @@ DeepSeek 首次独立 Review 绑定 `496b4ed..615a073`，结论为 `changes_requ
 | G12 | 契约 §2～4、§9～10 | 最小关系约束、Port/DTO 与错误码明确；未生成 SQL |
 | G13 | 契约 §8 | 每 Step 独立提交、最终汇总、不可变文件与 Region 局部合成明确 |
 | R-011 | 契约 §6.2 | Restart 创建新 Run，沿用目标并重读 current/Lock/配置；原 interrupted Run 保留 |
+| F-08 / P2 | 复审报告；待后续授权文档同步 | canonical 契约与 D05 已允许 blocked Stop；D02/D04/D11 派生图尚缺 `blocked → cancelled`，不阻塞本次冻结 |
+| F-09 / P2 | master `c39ba99` | AGENTS 当前授权改为只回指 STATUS/Task，避免阶段状态再次过期 |
 
-以上是 Owner 设计修订，仍需固定 commit 的 DeepSeek Harness 独立 Review；Review 前不把 AC-DOC-002 或 AC-SYNC 标为独立 PASS。TASK-003～027 未授权、未启动，仓库仍无应用源码、SQL、测试框架或可执行产品。
+DeepSeek Harness 已批准 `b1b3f5d..885c9a9`，F-01～F-07 全部 resolved；Codex 以 `7927169` 集成并完成切片验证。TASK-003～027 未授权、未启动，仓库仍无应用源码、SQL、测试框架或可执行产品。
