@@ -2,7 +2,7 @@
 
 基线：2026-09-13，原始文档指纹见 [审计报告](10_CURRENT_STATE_AND_GAPS.md)。下文 D01～D08 对应 [文档索引](00_INDEX.md)。
 
-**证据边界：当前没有应用源代码、测试或数据库。除 §0 仓库图外，所有图和矩阵均为从已有设计整理的 To-Be，全部未实现、未验证；不是代码逆向结果，也不是新批准的设计。** 实际 Schema、进程/线程模型、Service 签名与文件名尚未确定。发现的冲突保留在 Gap Register，不以绘图代替裁决。
+**证据边界：当前没有应用源代码、测试或数据库。除 §0 仓库图外，所有图和矩阵均为 To-Be，未实现、未验证；不是代码逆向结果。** G06～G13 的最小实现语义来自 [TASK-002 契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)；实际 SQL、进程/线程实现与文件名仍未确定。
 
 ## 0. As-Is：真实仓库
 
@@ -64,7 +64,7 @@ flowchart TB
     ADAPTER --> MODEL["Device / Model Manager：可选依赖延迟加载"]
 ~~~
 
-UI 不直接访问 SQL/文件/模型；Domain 不依赖 Qt/SQLite/httpx/ML。Windows 桌面内部主通道是 Python/Qt 调用，目标不要求 Flask/localhost 总线。依赖版本、实际包名、进程隔离方式交 TASK-002/004 决定。
+UI 不直接访问 SQL/文件/模型；Domain 不依赖 Qt/SQLite/httpx/ML。Windows 桌面内部主通道是 Python/Qt 调用，目标不要求 Flask/localhost 总线。依赖版本、实际包名、进程隔离方式交 TASK-004/005 决定。
 
 内部处理依赖来自 D06 §3/10：
 
@@ -89,7 +89,7 @@ flowchart LR
 
 ## 3. ER / Data Model（To-Be 逻辑模型）
 
-来源：[D03 §2/38/39](03_DATA_MODEL.md)。以下仅展示确定的主从关系，未绘制未冻结的可空字段/多态 FK/current 循环约束；不是完整 SQL Schema。
+来源：[D03 §2/38/39](03_DATA_MODEL.md)与 [TASK-002 契约 §2～4](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)。以下只展示主从关系；可空字段、复合 FK 与 current 指针以契约为准，不是已实现 SQL Schema。
 
 ~~~mermaid
 erDiagram
@@ -125,7 +125,7 @@ erDiagram
 | 可靠性 | SchemaMigration、ApplicationMetadata、BackupRecord、CacheQuotaState、ModelInstallationState、AuditEvent | Infrastructure metadata；Cache 可重建，不能作为唯一业务真值 |
 | UI 本机状态 | WindowLayoutState | 窗口位置，不复制漫画业务数据 |
 
-完整字段继续以 D03 为唯一目标来源。实体间可选关系与参照完整性在 TASK-002/006 落实，不凭图猜测。
+目标实体字段见 D03；G06～G13 的参照完整性与写回不变量见 TASK-002 契约，实际 SQL 在 TASK-006 落实，不凭图猜测。
 
 ## 4. Screen Map（To-Be）
 
@@ -262,29 +262,36 @@ flowchart TB
     RETRY --> PROGRESS
 ~~~
 
-## 10. State Machine（To-Be；不冒充已冻结状态协议）
+## 10. State Machine（TASK-002 最小契约已冻结；尚未实现）
 
-来源：D03 §22.1/24.1、D06 §59～65/73、D08 AC-RETRY。TASK-001 已把失败页重试新建 Run 的规则同步到 D02/D04/D06；G05 的 Restart/Abandon 及 G06 的完整状态契约仍待 TASK-002。失败页重试另建 Run，不画成原 failed→pending。
+来源：[TASK-002 契约 §5～6](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)、D03 §22.1/24.1、D06 §59～65/73、D08 AC-RETRY。失败页重试与 Restart 都创建新 Run，但目标与快照规则不同；原 failed 不回到 pending。
 
 ~~~mermaid
 stateDiagram-v2
     [*] --> pending
     pending --> running: 调度
+    pending --> blocked: 无可运行单元且存在可解除阻塞
+    blocked --> pending: 条件解除并重新规划
     running --> paused: pause请求且到安全边界
     paused --> running: continue并验证断点
+    paused --> cancelled: stop
     running --> completed: 正常终结且无失败
     running --> completed_with_failures: 批量终结且部分失败
     running --> failed: Run级致命错误
+    running --> blocked: 剩余单元仅有可解除阻塞
     running --> cancelled: stop并安全结束
     running --> interrupted: 异常退出后识别
     interrupted --> running: 用户继续并通过恢复检查
+    interrupted --> cancelled: Abandon
     completed --> [*]
     completed_with_failures --> [*]
     failed --> [*]
     cancelled --> [*]
 ~~~
 
-Interrupted Resume 是否先经过 pending、Restart/Abandon 的落库方式、paused 状态下 Stop 的转换，以及取消与完成同时发生的优先级尚需 TASK-002 定义；图中 interrupted→running 是业务结果，不规定中间调度状态。
+Restart 不构成原 Run 的状态转换：原 Run 保持 `interrupted` 并记录 `interruption_disposition=restarted`，新 Run 独立创建。
+
+Continue 使用原 Run/快照；Restart 保留原 interrupted Run并创建新 Run；Abandon 将原 Run 置 cancelled。Stop 与最后一步并发时按事务提交顺序确定 completed 或 cancelled，已提交成果均保留。
 
 StageState 的已确认有效性关系来自 D03 §10、D06 §25～30/88：
 
@@ -300,7 +307,7 @@ stateDiagram-v2
     running --> interrupted: 无安全提交而中断
 ~~~
 
-此图只表达关键路径，不是完整转移表。failed/interrupted 不删除旧可用 Revision；历史输出有效性与最新 Step 执行结果必须在 TASK-002 中明确分离。UI Dirty 状态由 D05 §55 单独定义，不复用 Pipeline 状态。
+此图只表达关键路径；完整枚举与聚合优先级见 TASK-002 契约 §5。failed/interrupted 不删除旧可用 Revision；StageState、StepRunStatus 与 ReviewState 已分层。UI Dirty 状态由 D05 §55 单独定义，不复用 Pipeline 状态。
 
 ## 11. 关键 Sequence Diagram（To-Be）
 
@@ -354,7 +361,7 @@ sequenceDiagram
 
 ### 11.3 后台结果与人工修改冲突
 
-来源：D03 §24.1、D06 §89～91、D08 AC-CONFLICT-001。candidate 或 needs_review 的具体存储仍是 G06/G07。
+来源：D03 §24.1、D06 §89～91、D08 AC-CONFLICT-001、TASK-002 契约 §8。Candidate 与 ReviewState 已冻结，尚未实现。
 
 ~~~mermaid
 sequenceDiagram
@@ -375,7 +382,7 @@ sequenceDiagram
 
 ### 11.4 Artifact 原子性与失败保留
 
-来源：D03 §17、D06 §24/88/94、D07 §30～32。正式路径必须能保留旧版本；具体文件命名和孤儿文件回收由 TASK-002/006 定义。
+来源：D03 §17、D06 §24/88/94、D07 §30～32、TASK-002 契约 §8。不可变正式路径和孤儿文件处理语义已冻结；具体命名与实现由 TASK-006 定义。
 
 ~~~mermaid
 sequenceDiagram

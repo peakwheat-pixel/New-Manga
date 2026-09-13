@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-状态：初始接管基线 `496b4ed` 已获批并提交；只授权执行 TASK-001。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
+状态：TASK-001 已完成；当前只授权执行 TASK-002。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
 
 ## 原始目标文档（已完整检查）
 
@@ -8,10 +8,10 @@
 |---|---|---|---|
 | D01 | [01 功能架构](01_FUNCTIONAL_ARCHITECTURE.md) | 产品能力范围、入口、扩展能力 | To-Be；§5 的旧代码引用不能证明本仓库实现 |
 | D02 | [02 技术架构](02_TECHNICAL_ARCHITECTURE_.md) | 分层、技术选型、依赖边界、运行拓扑 | To-Be，非已安装技术栈 |
-| D03 | [03 数据模型](03_DATA_MODEL.md) | 实体、字段、数据不变量、持久化归属 | To-Be，尚无 SQL 或迁移；不是冻结 Schema |
+| D03 | [03 数据模型](03_DATA_MODEL.md) | 实体、字段、数据不变量、持久化归属 | To-Be；G06～G13 的最小实现契约由 TASK-002 冻结，尚无 SQL 或迁移 |
 | D04 | [04 用户流程](04_USER_FLOW.md) | 操作意图、用户流程、对象范围 | To-Be |
 | D05 | [05 UI 映射](05_UI_MAPPING.md) | Screen、Panel、Window、动作与 ViewModel 映射 | To-Be；内含线框示意，非实际 QML |
-| D06 | [06 Pipeline](06_TRANSLATION_PIPELINE.md) | 命令语义、DAG、Lock、失效、重试与进度协议 | To-Be；已核对 D03 同步项，执行契约仍待冻结 |
+| D06 | [06 Pipeline](06_TRANSLATION_PIPELINE.md) | 命令语义、DAG、Lock、失效、重试与进度协议 | To-Be；G06～G13 的最小执行契约由 TASK-002 冻结 |
 | D07 | [07 非功能需求](07_NON_FUNCTIONAL_REQUIREMENTS.md) | 性能、容量、可靠性、安全、Windows 与打包 | 目标数值，未经 Benchmark 验证 |
 | D08 | [08 验收标准](08_ACCEPTANCE_CRITERIA.md) | 验收预期、证据要求与发布 Gate | 验收规格，不是测试实现或 PASS 报告 |
 
@@ -31,6 +31,7 @@ TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表�
 | [14 接管验证](14_TAKEOVER_VERIFICATION.md) | 本次文档自检结果、复现命令与验证边界 |
 | [接管自检脚本](verify_takeover.ps1) | 仅适用于初始接管快照；TASK-001 已修改文档与授权，其 Hash/冻结断言不再适用于当前工作区 |
 | [TASK-001 检查](../verification/TASK-001/verify.ps1) | 验证文档引用、状态枚举、AC 编号/优先级及修改范围 |
+| [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | G06～G13、R-011 的冻结语义；后续 Schema/Pipeline/UI/测试共同输入 |
 | [任务目录](tasks/README.md) | 27 个 Task 索引；单个文件是任务状态真值 |
 | [Task 模板](templates/TASK.md) | 新任务创建 |
 | [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
@@ -44,7 +45,7 @@ handoffs、reviews、verification、research 等目录在首次真实产出时�
 |---|---|---|
 | 当前实际做到了什么 | 当前项目 commit 的源代码、迁移、配置与同 commit 测试证据；工作区变化单独说明 | To-Be 图、旧项目能力表、Agent 自述 |
 | 产品应该做什么 | D01/D04/D05；冲突提交用户决策并在相关权威文档修订 | 实现中的偶然行为、测试中的猜测 |
-| 架构及数据怎么约束 | D02/D03/D06 按职责管理 | 任意 Agent 的私有笔记 |
+| 架构及数据怎么约束 | D02/D03/D06 按职责管理；已冻结缺口以对应 `doc/contracts/` 文件解释 | 任意 Agent 的私有笔记 |
 | 什么算达标 | D07/D08 与可复现 verification 记录 | 仅有测试文件或“本地通过”口头描述 |
 | 谁在做什么、可改哪里 | STATUS 的阶段授权 + 单个 Task 文件 | 看板截图、聊天中的认领 |
 | 交付了什么 | Handoff 中固定 commit、文件与测试结果 | 分支名称本身、作者概述 |

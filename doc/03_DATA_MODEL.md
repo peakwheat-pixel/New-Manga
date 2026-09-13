@@ -8,6 +8,7 @@
 > - 已确认的产品规则与交互规则
 >
 > 本文件描述“什么数据是系统真值、实体之间如何关联、状态如何演进、哪些数据进入 SQLite、哪些数据进入 Managed File Storage”。
+> G06～G13 涉及的最小字段、枚举、约束和原子写回规则以 [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 为冻结解释。
 >
 > 核心约束：
 > 1. 单用户、本机架构，不引入 User / Account / Permission 业务表。
@@ -160,6 +161,7 @@ erDiagram
         boolean inpaint_locked
         boolean manual_edited
         string review_state
+        string current_revision_id FK
         datetime deleted_at
     }
 
@@ -475,6 +477,10 @@ OCR 自动检测顺序只作为初始值。
 用户可人工修改。
 
 上下文翻译必须使用最终 `reading_order`，不能盲目使用检测器返回顺序。
+
+### 6.6 Current Revision 与校对状态
+
+`Region.current_revision_id` 指向当前可见的 `RegionRevision`，在 Region 创建事务提交时必须非空。Current Revision 的 `review_state` 只允许 `unreviewed / needs_review / confirmed`；机器写回默认 needs_review，人工明确确认后才是 confirmed。完整约束见 TASK-002 契约 §2。
 
 ---
 
@@ -865,6 +871,7 @@ constraint_kind:
 | 字段 | 说明 |
 |---|---|
 | `constraint_id` | 主键 |
+| `current_revision_id` | 当前 ConstraintRevision；创建事务提交时非空 |
 | `scope_type` | `global / book / chapter` |
 | `scope_id` | Book/Chapter ID；global 时为空 |
 | `constraint_kind` | 术语 / 不译 |
@@ -923,6 +930,7 @@ revision_no
 snapshot_json
 change_reason
 source_run_id
+is_pinned
 created_at
 ```
 
@@ -996,6 +1004,7 @@ Fuzzy Match
 | `source_region_id` | 来源 Region，可空 |
 | `source_region_revision_id` | 来源版本，可空 |
 | `is_confirmed` | 正式 TM 必须为 true |
+| `status` | `active / disabled`；disabled 不参与匹配但保留历史 |
 | `usage_count` | 使用次数 |
 | `last_used_at` | 最近使用 |
 | `created_at` | 创建 |
@@ -1020,6 +1029,8 @@ Fuzzy Match
 - TextStyle
 - Lock
 - Review State
+
+最小 Revision 元数据还包括 `origin / review_state / source_run_id / source_step_run_id / restored_from_revision_id / is_pinned`；枚举与约束见 TASK-002 契约 §2。
 
 ### 15.2 建版本时机
 
@@ -1314,29 +1325,19 @@ rerender_region
 
 ## 21. PipelineRunTarget（任务目标快照）
 
-页面多选可能是非连续选择，因此不能只存 `page_range`。
+页面多选可能是非连续选择，因此不能只存 `page_range`。原始选择保存在 `PipelineRun.requested_targets_json`；Run 创建事务将 Book/Chapter/PageSelection 展开为稳定叶子目标：
 
 ```text
 PipelineRunTarget
 - run_target_id
 - pipeline_run_id
-- target_type
-- target_id
+- target_type: page | region
+- page_id
+- region_id?
 - target_order
 ```
 
-`target_type`：
-
-```text
-book
-chapter
-page
-region
-```
-
-这样可以恢复：
-
-> 用户当时到底选了哪几张图片。
+`page_id` 始终非空；`region_id` 仅 Region 目标非空。`UNIQUE(pipeline_run_id, target_order)`，相同叶子不得重复。空选择或展开后无叶子不创建 Run。这样既能恢复用户当时的选择，也不会因后续书库增删改变既有 Run。
 
 ---
 
@@ -1349,6 +1350,7 @@ region
 | `scope_type` | Book/Chapter/PageSelection/Page/Region |
 | `book_id` | Book |
 | `chapter_id` | Chapter |
+| `requested_targets_json` | 用户原始 scope 与选择；RunTarget 保存展开后的叶子 |
 | `status` | Run 聚合状态 |
 | `progress` | 综合进度（缓存 / 投影值） |
 | `pause_requested` | 是否请求在安全边界暂停 |
@@ -1359,6 +1361,8 @@ region
 | `context_policy_json` | 上下文策略 |
 | `source_run_id` | 可空；失败页重试 / 派生 Run 的来源 PipelineRun |
 | `retry_reason` | 可空；本次重试或派生 Run 的原因 |
+| `interruption_disposition` | 可空；`restarted` 表示原 interrupted Run 已由新 Run 取代 |
+| `termination_reason` | 可空；含 `abandoned_after_interruption` 等终止原因 |
 | `app_version` | 创建本 Run 时的软件版本，用于诊断与复现 |
 | `schema_version` | 创建本 Run 时的数据库 Schema 版本 |
 | `created_at` | 创建 |
@@ -1386,6 +1390,7 @@ PipelineRun 聚合状态：
 pending
 running
 paused
+blocked
 completed
 completed_with_failures
 failed
@@ -1400,6 +1405,7 @@ interrupted
 - `failed`：Run 发生无法继续的致命错误。
 - `cancelled`：用户主动停止剩余任务；已完成成果保留。
 - `interrupted`：程序异常退出等导致运行中断。
+- `blocked`：无可运行单元且存在可由用户解除的前置阻塞；不是 failed 或 skipped。
 
 工作台“任务进度面板”不新增独立业务表，而由以下真值实时投影：
 
@@ -1426,7 +1432,9 @@ total_page_count
 completed_page_count
 failed_page_count
 skipped_page_count
+blocked_page_count
 waiting_page_count
+processing_page_count
 
 current_task_id
 current_page_id
@@ -1503,9 +1511,10 @@ finished_at
 ```text
 pending
 running
-paused
 completed
 failed
+blocked
+skipped
 cancelled
 interrupted
 ```
@@ -1548,7 +1557,8 @@ model_name
 device
 input_artifact_revision_ids
 output_artifact_revision_ids
-input_region_revision_id
+input_refs
+output_refs
 options_json
 started_at
 finished_at
@@ -1557,6 +1567,8 @@ error_code
 error_message
 retry_no
 ```
+
+状态只允许 `pending / running / completed / failed / cancelled / interrupted`。`blocked / skipped` 属 PlanDecision 或 PipelineTask；Pause 只属于 PipelineRun。多 Region Context 使用有序 `StepRunInputRef / StepRunOutputRef`，不能压回单个 revision 字段。
 
 价值：
 
@@ -1569,16 +1581,12 @@ retry_no
 
 ### 24.1 Optimistic Write Guard
 
-对于会写回 Region 的异步 Step（尤其 OCR / Translation / Geometry / Style 相关操作），Step 开始时记录：
+对于会写回 Region 的异步 Step（尤其 OCR / Translation / Geometry / Style 相关操作），Step 开始时为每个 primary 目标记录 `StepRunInputRef.region_revision_id`；Context 输入只读。
+
+写回前在同一数据库事务中再次读取全部 primary Region 当前 Revision 与 Lock：
 
 ```text
-input_region_revision_id
-```
-
-写回前必须再次读取目标 Region 当前 Revision：
-
-```text
-Step 启动时：input_region_revision_id = 10
+Step 启动时：primary StepRunInputRef.region_revision_id = 10
 
 Provider 返回时：
 current_region_revision_id = 10
@@ -1587,10 +1595,10 @@ current_region_revision_id = 10
 current_region_revision_id = 12
 → 说明任务执行期间发生人工编辑或其他写入
 → 不得直接覆盖 Revision 12
-→ 保存为候选 / 冲突结果，或将 Step 标记为需要人工检查
+→ 保存 StepResultCandidate，ReviewState 标记需要人工检查
 ```
 
-该检查与 Lock Gate 同时存在：
+任一 primary 输入不匹配时，本次提交对所有目标均不更新 current。Provider 输出存在未知、重复或缺失目标时以 `OUTPUT_MAPPING_MISMATCH` 失败。该检查与 Lock Gate 同时存在：
 
 - 任务开始前检查 Lock；
 - 实际写入前再次检查 Lock；
@@ -2298,6 +2306,7 @@ erDiagram
         string status
         float progress
         string settings_snapshot_json
+        string requested_targets_json
         string source_run_id
         string retry_reason
         string app_version
@@ -2309,7 +2318,8 @@ erDiagram
         string run_target_id PK
         string pipeline_run_id FK
         string target_type
-        string target_id
+        string page_id FK
+        string region_id FK
         integer target_order
     }
 
@@ -2331,7 +2341,8 @@ erDiagram
         string provider_profile_id FK
         string model_name
         string device
-        string input_region_revision_id
+        string input_refs
+        string output_refs
         string options_json
     }
 
@@ -2694,7 +2705,7 @@ Permanent Webtoon Tile
 - StageState `stale`
 - Region 独立 command types
 - Retry provenance：`source_run_id / retry_reason`
-- Optimistic Write Guard：`input_region_revision_id`
+- Optimistic Write Guard：有序 `StepRunInputRef / StepRunOutputRef`
 - `app_version / schema_version`
 - Artifact 完整性 metadata
 - Backup metadata

@@ -191,7 +191,7 @@
 | AC-CLOSE-001 | P0 | 运行任务关闭 | [TASK-022](tasks/TASK-022.md) | NOT_RUN | 无应用/测试 |
 | AC-CLOSE-002 | P0 | Dirty + Running 分离 | [TASK-022](tasks/TASK-022.md) | NOT_RUN | 无应用/测试 |
 | AC-DOC-001 | P1 | 01~08 文件齐全 | [TASK-001](tasks/TASK-001.md) | PASS | 8份文件存在；审计§2 |
-| AC-DOC-002 | P1 | 核心术语统一 | [TASK-002](tasks/TASK-002.md) | FAIL | G06：完整状态与聚合契约尚未冻结；G05 的失败页重试术语已由 TASK-001 修订 |
+| AC-DOC-002 | P1 | 核心术语统一 | [TASK-002](tasks/TASK-002.md) | AUTHOR_PASS / REVIEW_NOT_RUN | TASK-002 契约 §1/5/6 已统一执行、决定、有效性、校对与 Restart 术语；待独立 Review |
 | AC-DOC-003 | P1 | 四个一级页面统一 | [TASK-001](tasks/TASK-001.md) | PASS | 全文核对四个入口与默认书架；审计§7 |
 
 ## 无独立编号的 AC 主题要求
@@ -209,7 +209,7 @@ D08有61个AC主题标题，以下主题没有独立编号子项；不得因上�
 | AC-ERROR | §62 | [TASK-011](tasks/TASK-011.md) | 错误分类 | NOT_RUN |
 | AC-ERRUI | §63 | [TASK-013](tasks/TASK-013.md) | 错误在页面/进度/详情可定位 | NOT_RUN |
 | AC-AUTO | §64 | [TASK-008](tasks/TASK-008.md) | Autosave条件性要求或明确保存 | NOT_RUN |
-| AC-SYNC | §67 | [TASK-002](tasks/TASK-002.md) | 06/07增量同步与冻结Gate | BLOCKED：字段已有，契约及文档冻结未完成 |
+| AC-SYNC | §67 | [TASK-002](tasks/TASK-002.md) | 06/07增量同步与冻结Gate | AUTHOR_PASS / REVIEW_NOT_RUN：最小契约、覆盖矩阵与 V01～V19 已成文，实际 Schema/测试仍不存在 |
 
 其他所有适用附加规则仍以D08正文为准：§68自动化最低覆盖、§69 UI/ViewModel最低覆盖、§70视觉、§71 Benchmark、§72数据安全、§73发布清单、§76 READY。由TASK-003细化追踪，TASK-026验证，TASK-027执行最终发布Gate。
 
