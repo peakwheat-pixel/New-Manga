@@ -2,7 +2,7 @@
 id: TASK-001
 title: 修订目标文档引用与已确定的一致性问题
 kind: design
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -72,13 +72,13 @@ D01 §5；D02 §5；D03 §10/20/22/24/34；D04 §30；D06 §10/71/105；D07 §11
 
 初始项目基线为 `496b4ed`；本任务修改目标文档不代表冻结 Schema。
 
-DeepSeek Harness 已在 `G:/CODEX/New Manga.worktrees/TASK-001-deepseek-review` 接入同一 Git common directory，分支为 `agent/deepseek/TASK-001-review`。首次 Review 固定 `base_commit=496b4ed`、`reviewed_head=615a073`，decision 为 `changes_requested`。
+DeepSeek Harness 已在 `G:/CODEX/New Manga.worktrees/TASK-001-deepseek-review` 接入同一 Git common directory，分支为 `agent/deepseek/TASK-001-review`。首次 Review 固定 `base_commit=496b4ed`、`reviewed_head=615a073`，decision 为 `changes_requested`；复审固定 `base_commit=496b4ed`、`reviewed_head=cdc736c`。
 
 Reviewer 获准运行 `pwsh -NoProfile -File ./verification/TASK-001/verify.ps1`，并且只在 `doc/reviews/TASK-001-*.md` 写本 Task 的独立 Review / 复审报告。每份报告固定自己的 reviewed_head；发现问题时记录 finding，不修改 TASK-001 作者交付。
 
 ## 交付与运行记录
 
-- Handoff：[TASK-001-615a073](../handoffs/TASK-001-615a073.md)，交付提交 `615a073c0cef479157d472d3fc9823e0087b46a1`。
-- Review：[615a073 独立 Review](../reviews/TASK-001-615a073.md) 已完成，decision=`changes_requested`（P0=0、P1=1、P2=9）；Codex 正在逐项修订，之后提交新 head 复审。
+- Handoff：[首次交付 615a073](../handoffs/TASK-001-615a073.md)；[复审交付 cdc736c](../handoffs/TASK-001-cdc736c.md)。
+- Review：[615a073 独立 Review](../reviews/TASK-001-615a073.md) 已完成，decision=`changes_requested`（P0=0、P1=1、P2=9）；R-001～R-010 已逐项处置，等待 `cdc736c` 复审。
 - 实际执行：已修订 D01～D08 及索引/Gap/派生视图；[检查脚本](../../verification/TASK-001/verify.ps1) 已执行，退出码 0。勾选项为作者完成并自查，尚非独立批准。
-- 最近状态：2026-09-13 DeepSeek Review 要求修改；Owner 已恢复 in_progress。独立复审与集成未完成，integration_commit 仍为空。
+- 最近状态：2026-09-13 Owner 修订提交 `cdc736c` 已完成，状态回到 in_review；独立复审与集成未完成，integration_commit 仍为空。
