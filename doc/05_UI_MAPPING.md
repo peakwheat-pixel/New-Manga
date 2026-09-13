@@ -20,6 +20,7 @@
 > 7. 工作台必须有固定任务进度面板，显示总体进度、当前流程、当前页、已完成页、失败页、跳过页、等待页，并提供暂停 / 停止 / 继续。
 > 8. QML/UI 只绑定 ViewModel 状态，不直接访问 SQLite、Managed File Storage 或具体 AI Provider。
 > 9. 人工修改、Lock、Revision、Translation Memory、ArtifactRevision 等数据保护规则必须在 UI 中可见、可理解、可操作。
+> 10. Task/Progress/Revision UI 使用 [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 的状态、控制动作与 current/candidate 语义。
 
 ---
 
@@ -1158,6 +1159,12 @@ Pin
 ```text
 [继续] [重新开始] [放弃]
 ```
+
+- 继续：恢复原 Run 与原快照。
+- 重新开始：创建新 Run，沿用目标但重新读取当前配置、Revision 与 Lock。
+- 放弃：原 Run 进入 cancelled，保留已提交成果。
+
+存在 blocked 目标时，进度面板单独显示 blocked 数量和原因，不归入失败或跳过。
 
 ---
 

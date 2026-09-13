@@ -9,6 +9,7 @@
 > - `03_DATA_MODEL.md`
 > - `04_USER_FLOW.md`
 > - `05_UI_MAPPING.md`
+> - [TASK-002 最小数据与执行契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)（G06～G13 的冻结解释）
 >
 > 已确认业务语义保持不变，包括：
 >
@@ -837,7 +838,7 @@ Translated / Render Preview ArtifactRevision
 
 `save` 不只是“写一个文件”。
 
-它负责把一次成功 Step 的结果安全提交为新的当前版本。
+它负责把每一次成功 Step 的结果安全提交为新的当前版本；`save` 只做 Run/Task 汇总和必要的 Page 合成，不重复提交已经持久化的 Step。
 
 推荐提交协议：
 
@@ -897,6 +898,7 @@ Lock / Policy 允许复用
 ```text
 RUN
 SKIP_VALID
+SKIP_LOCK
 SKIP_POLICY
 BLOCKED
 ```
@@ -918,13 +920,15 @@ translate_untranslated 遇到已完成 Page
 SFX policy = skip
 ```
 
+### SKIP_LOCK
+
+Page / Region / Translation / Inpaint Lock 明确跳过适用 Step；它是正常跳过，不是阻塞或失败。
+
 ### BLOCKED
 
 无法执行，例如：
 
 ```text
-Page Lock
-Region Lock
 必要输入缺失且无法自动补齐
 Provider 不可用
 ```
@@ -979,7 +983,8 @@ current 结果可继续查看
 | 发生变化 | 失效内容 |
 |---|---|
 | Original Artifact 改变 | Detect 及全部下游 |
-| Region 几何改变 | OCR、Color、Segment、Mask、Inpaint、Render；Translation 视 OCR 是否改变而判断 |
+| Region 内容几何（bbox/polygon/crop）改变 | OCR、Color、Segment、Mask、Inpaint、Render；Translation 在新 OCR 文本改变后失效 |
+| 仅排版几何/样式改变 | Render |
 | `ocr_text` 改变 | Term Extract、Translation；现有人工 final 保留但标记源文可能失配 |
 | Translation Constraint 改变 | 后续新 Translation 使用新约束；已有译文不自动覆盖 |
 | Translation Memory 改变 | 不强制失效已有译文，只影响后续 Translation |
@@ -1544,6 +1549,7 @@ PipelineRun 创建时冻结：
 settings_snapshot_json
 provider_binding_snapshot_json
 context_policy_json
+constraint_snapshot_ref
 ```
 
 目的：
@@ -1910,6 +1916,14 @@ UI：
 [放弃]
 ```
 
+动作语义：
+
+- **继续**：原 Run 使用原冻结快照恢复。
+- **重新开始**：创建新 Run，沿用原叶子目标，但重新读取 current Region/Lock/Settings/Provider/Constraint 并重新规划；原 Run 保持 interrupted 并记录 `interruption_disposition=restarted`。
+- **放弃**：原 Run 转为 cancelled，记录 `termination_reason=abandoned_after_interruption`；不创建新 Run，不删除或回滚成果。
+
+Restart 新 Run 使用 `source_run_id` 指向原 Run，`retry_reason=restart_after_interruption`。这与仅复制失败目标的“重试失败页”不同。
+
 ---
 
 # 65. Crash Resume
@@ -2110,6 +2124,7 @@ Page Lock
 pending
 running
 paused
+blocked
 completed
 completed_with_failures
 failed
@@ -2141,6 +2156,10 @@ Run 级致命错误
 导致整个 Run 无法形成正常终态
 ```
 
+### blocked
+
+无可运行单元且存在可由用户解除的 Planner BLOCKED；解除后可在原 Run 重新规划。Page/Region Lock 使用 SKIP_LOCK，不产生 blocked。
+
 ---
 
 # 74. TaskProgress 页数统计
@@ -2152,6 +2171,7 @@ total_page_count
 completed_page_count
 failed_page_count
 skipped_page_count
+blocked_page_count
 waiting_page_count
 processing_page_count
 ```
@@ -2164,6 +2184,8 @@ processing_page_count
 failed
 >
 processing
+>
+blocked
 >
 completed
 >
@@ -2212,6 +2234,8 @@ cancelled
 ```
 
 失败 / 跳过仍是“已经得到终态”，但 UI 必须通过独立计数显示它不是成功。
+
+空选择或展开后无叶子目标不创建 Run。若全部计划单元因 Lock/Policy 合法跳过，则分母为跳过单元数、进度 100%、Run completed；`planned_step_units = 0` 不作为普通除法输入。
 
 ---
 
@@ -2432,14 +2456,16 @@ region_type = sfx
 ### skip
 
 ```text
-Translation Step → SKIP_POLICY
+Translation / Mask / Inpaint / Translated Render → SKIP_POLICY
+保留原图文字
 ```
 
 ### manual
 
 ```text
-自动 Translation → SKIP_POLICY
-用户可以人工输入
+Detect/OCR 可供人工参考
+自动 Translation / Mask / Inpaint / Translated Render → SKIP_POLICY
+用户保存人工 final 并明确发起替换后才可进入图像处理
 ```
 
 ### translate
@@ -2452,11 +2478,11 @@ Translation Step → SKIP_POLICY
 
 # 86. 自动字号失效规则
 
-如果变化：
+如果仅排版几何/样式变化：
 
 ```text
 ocr / source style estimate
-Region geometry
+layout offset / rotation
 final_translation
 font_size_offset
 font
@@ -2566,10 +2592,11 @@ Current Revision
 
 # 90. Optimistic Write Guard
 
-建议写入时比较：
+写入时必须在同一事务比较全部 primary 输入：
 
 ```text
-目标 Region revision
+StepRunInputRef 中的目标 Region revision
+当前 Lock
 ```
 
 如果：
@@ -2590,12 +2617,11 @@ Step 开始时 revision = 10
 应：
 
 ```text
-生成冲突结果 / candidate
-或
-标记 Step needs_review
+生成 StepResultCandidate
+并将对应 ReviewState 标记 needs_review
 ```
 
-这是保护人工编辑的重要最后防线。
+任一 primary 输入不匹配时，同一 Step 的所有目标均不得更新 current。多 Region 输出存在未知、重复或缺失映射时以 `OUTPUT_MAPPING_MISMATCH` 失败。这是保护人工编辑的重要最后防线。
 
 ---
 
@@ -3098,7 +3124,7 @@ Abandon
 
 # 105. 06 对 03 的同步核验
 
-字段存在性与 D03 位置只在 [Gap Analysis §5](10_CURRENT_STATE_AND_GAPS.md) 维护；本协议直接引用 D03 定义，不复制该映射。当前不再提出重复加字段，但正式 SQL、事务 compare-and-write、多 Region 输入映射及状态聚合边界仍由 TASK-002 冻结。
+字段存在性与 D03 位置只在 [Gap Analysis §5](10_CURRENT_STATE_AND_GAPS.md) 维护；G06～G13 的枚举、事务 compare-and-write、多 Region 输入映射及状态聚合边界由 [TASK-002 契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 冻结。正式 SQL 与运行实现仍由后续 Task 完成。
 
 ---
 

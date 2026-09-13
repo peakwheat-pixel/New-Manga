@@ -1149,15 +1149,19 @@ stateDiagram-v2
     Pending --> Running
     Running --> Paused
     Paused --> Running
+    Paused --> Cancelled: 停止
+    Pending --> Blocked: 计划无可运行单元
+    Blocked --> Pending: 条件解除并重新规划
     Running --> Completed
     Running --> Failed
     Running --> Cancelled
     Running --> Interrupted
     Running --> CompletedWithFailures
     Interrupted --> Running: 校验后恢复原 Run
+    Interrupted --> Cancelled: 放弃
 ```
 
-“重试失败页”新建 PipelineRun，仅包含失败目标，通过 `source_run_id + retry_reason` 保留来源，原 Run 历史不改写；Step 自动重试在原 Run 内按相同输入与设置执行。Interrupted 恢复后的业务结果为 running；中间调度状态和 Restart / Abandon 的完整语义留待 TASK-002 冻结。
+“重试失败页”新建 PipelineRun，仅包含失败目标，通过 `source_run_id + retry_reason` 保留来源，原 Run 历史不改写；Step 自动重试在原 Run 内按相同输入与设置执行。Interrupted 的 Continue / Restart / Abandon 语义及竞态优先级按 [TASK-002 契约 §6](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 执行。
 
 ### 30.2 异常退出
 

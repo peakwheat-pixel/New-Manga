@@ -13,6 +13,7 @@
 > - `07_NON_FUNCTIONAL_REQUIREMENTS.md`
 >
 > 本文件不重新设计产品。若验收项与前述文档发生冲突，应先修正文档，再修改验收标准，不能用测试代码“替代设计决策”。
+> G06～G13 的验收前置语义以 [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 为冻结解释。
 
 ---
 
@@ -2874,20 +2875,22 @@ Inpaint Lock
 
 # 67. AC-SYNC：06/07 对 03 的同步核验与 Schema 冻结 Gate
 
-在进入正式 Schema 实现前，应核验 D03 是否定义以下项目；当前核验结果与证据只记录在 [Gap Analysis §5](10_CURRENT_STATE_AND_GAPS.md)，本验收规格不声明 PASS：
+在进入正式 Schema 实现前，应以 [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) 核验：
 
 ```text
 StageState stale
 Region command type
-input_region_revision_id / optimistic guard
+current revision / 多目标 input-output refs / 原子 optimistic guard
 source_run_id / retry provenance
+Run/Task/Step/Decision/Stage/Review 分层状态
+Pin / TM disabled / SFX / invalidation / 每 Step commit
 ```
 
-字段存在不等于最终 Schema 已冻结。正式 SQL 类型、FK/唯一性/NULL 约束、事务 compare-and-write、多 Region 映射与状态聚合边界仍待 TASK-002 明确；冻结 Gate 完成前：
+TASK-002 冻结的是实现必须遵守的最小字段、枚举、关系与事务语义，不是已运行的 SQL Schema。正式实现只有同时满足该契约 §2～§10 的 FK/唯一性/NULL/枚举、compare-and-write、多 Region 映射与状态聚合，并通过 §11 验证向量，才可通过本 Gate：
 
 ```text
-允许设计阶段继续
-不允许把 03 宣称为最终冻结 Schema
+允许后续 Schema 设计与实现
+不允许把目标文档或字段清单冒充已验证数据库
 ```
 
 ---

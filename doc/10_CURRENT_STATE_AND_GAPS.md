@@ -2,7 +2,7 @@
 
 审计日期：2026-09-13，Asia/Shanghai。范围仅为 G:/CODEX/New Manga 及其 Git 元数据。D01～D08 的定义与实际文件路径见 [索引](00_INDEX.md)。本报告是本次接管快照，持续状态见 [STATUS](STATUS.md)。
 
-§1～8 保留接管时观察，行号和原始指纹对应初始基线 `496b4ed`；TASK-001 后续修订见 §9。历史“未提交/未授权”描述不代表当前状态。
+§1～8 保留接管时观察，行号和原始指纹对应初始基线 `496b4ed`；TASK-001 后续修订见 §9，TASK-002 契约冻结见 §10。历史“未提交/未授权”描述不代表当前状态。
 
 ## 1. 结论
 
@@ -136,3 +136,21 @@ D08 中按二级标题提取到 185 个编号条目：P0=104、P1=81、P2=0。�
 DeepSeek 首次独立 Review 绑定 `496b4ed..615a073`，结论为 `changes_requested`（P0=0、P1=1、P2=9），详见 [Review 报告](reviews/TASK-001-615a073.md)。本节记录的后续修订须绑定新 head 复审，不能沿用首次结论。G06～G13 等契约缺口仍存在，AC-DOC-002 仍 FAIL；AC-DOC-001/003 可作本次文档检查，其他产品 AC 继续 NOT_RUN。所有 TASK-002～027 保持 proposed。
 
 复现入口：[TASK-001](tasks/TASK-001.md)、[文档检查脚本](../verification/TASK-001/verify.ps1)。初始 [接管验证记录](14_TAKEOVER_VERIFICATION.md) 是历史快照，不作为当前修订的验证结果。
+
+## 10. TASK-002 最小契约冻结
+
+用户于 2026-09-13 允许启动 TASK-002，并批准 Codex 依据既有需求完成后续最小设计取舍。冻结真源为 [TASK-002 最小数据与执行契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)；D03/D04/D05/D06/D08/D11 只同步各自职责内的入口和关键枚举，不复制整份契约。
+
+| Gap / Review | 冻结位置 | 结果边界 |
+|---|---|---|
+| G06 | 契约 §5～6 | Run/Task/Step/Decision/Stage/Review 分层；blocked/skip/零计划/竞态与聚合明确 |
+| G07 | 契约 §2、§4、§8 | current 指针、多目标输入输出、事务内 compare-and-write 与 Candidate 明确 |
+| G08 | 契约 §2 | Region/Constraint Revision Pin、TM disabled、来源与 ReviewState 明确 |
+| G09 | 契约 §3 | Run 创建时冻结快照；Continue 复用、Restart 重读当前配置 |
+| G10 | 契约 §7.1 | 内容几何与仅排版几何分开，失效矩阵统一 |
+| G11 | 契约 §7.2 | SFX skip/manual 不自动擦除图像文字 |
+| G12 | 契约 §2～4、§9～10 | 最小关系约束、Port/DTO 与错误码明确；未生成 SQL |
+| G13 | 契约 §8 | 每 Step 独立提交、最终汇总、不可变文件与 Region 局部合成明确 |
+| R-011 | 契约 §6.2 | Restart 创建新 Run，沿用目标并重读 current/Lock/配置；原 interrupted Run 保留 |
+
+以上是 Owner 设计修订，仍需固定 commit 的 DeepSeek Harness 独立 Review；Review 前不把 AC-DOC-002 或 AC-SYNC 标为独立 PASS。TASK-003～027 未授权、未启动，仓库仍无应用源码、SQL、测试框架或可执行产品。
