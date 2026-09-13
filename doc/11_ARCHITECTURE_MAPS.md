@@ -264,7 +264,7 @@ flowchart TB
 
 ## 10. State Machine（To-Be；不冒充已冻结状态协议）
 
-来源：D03 §22.1/24.1、D06 §59～65/73、D08 AC-RETRY。图示采用明确的 Run 终态规则；G05/G06 仍需同步回原始文档。失败重试另建 Run，不画成原 failed→pending。
+来源：D03 §22.1/24.1、D06 §59～65/73、D08 AC-RETRY。TASK-001 已把失败页重试新建 Run 的规则同步到 D02/D04/D06；G05 的 Restart/Abandon 及 G06 的完整状态契约仍待 TASK-002。失败页重试另建 Run，不画成原 failed→pending。
 
 ~~~mermaid
 stateDiagram-v2
@@ -276,7 +276,6 @@ stateDiagram-v2
     running --> completed_with_failures: 批量终结且部分失败
     running --> failed: Run级致命错误
     running --> cancelled: stop并安全结束
-    paused --> cancelled: stop
     running --> interrupted: 异常退出后识别
     interrupted --> running: 用户继续并通过恢复检查
     completed --> [*]
@@ -285,7 +284,7 @@ stateDiagram-v2
     cancelled --> [*]
 ~~~
 
-Interrupted Resume 是否先经过 pending、Restart/Abandon 的落库方式、取消与完成同时发生的优先级尚需 TASK-002 定义；图中 interrupted→running 是业务结果，不规定中间调度状态。
+Interrupted Resume 是否先经过 pending、Restart/Abandon 的落库方式、paused 状态下 Stop 的转换，以及取消与完成同时发生的优先级尚需 TASK-002 定义；图中 interrupted→running 是业务结果，不规定中间调度状态。
 
 StageState 的已确认有效性关系来自 D03 §10、D06 §25～30/88：
 

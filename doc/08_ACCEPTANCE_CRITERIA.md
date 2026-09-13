@@ -4,10 +4,10 @@
 >
 > 本文件基于：
 >
-> - `01_FUNCTIONAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `02_TECHNICAL_ARCHITECTURE_To-Be_同步03_任务进度版.md`
-> - `03_DATA_MODEL_任务进度同步版.md`
-> - `04_USER_FLOW_任务进度同步版.md`
+> - `01_FUNCTIONAL_ARCHITECTURE.md`
+> - `02_TECHNICAL_ARCHITECTURE_.md`
+> - `03_DATA_MODEL.md`
+> - `04_USER_FLOW.md`
 > - `05_UI_MAPPING.md`
 > - `06_TRANSLATION_PIPELINE.md`
 > - `07_NON_FUNCTIONAL_REQUIREMENTS.md`
@@ -2142,7 +2142,7 @@ P95 ≤ 3 秒
 FAIL 或记录正式豁免
 ```
 
-不能口头忽略。
+不能口头忽略。“正式豁免”如何影响 §5 的 P1 = 100% PASS 仍待用户决定；当前没有生效的豁免，未达到阈值按 FAIL 记录并阻塞 Release。后续如批准例外，必须同步 D07、本条与 Release Gate，不能仅凭一条豁免备注把 FAIL 改为 PASS。TASK-001 保留现有阈值和 P1 优先级。
 
 ---
 
@@ -2872,20 +2872,18 @@ Inpaint Lock
 
 ---
 
-# 67. AC-SYNC：06/07 对 03 的同步 Gate
+# 67. AC-SYNC：06/07 对 03 的同步核验与 Schema 冻结 Gate
 
-在进入正式 Schema 实现前，必须处理 06 / 07 已提出的数据模型同步项。
-
-至少确认：
+在进入正式 Schema 实现前，应核验 D03 是否定义以下项目；当前核验结果与证据只记录在 [Gap Analysis §5](10_CURRENT_STATE_AND_GAPS.md)，本验收规格不声明 PASS：
 
 ```text
-StageState 是否正式加入 stale
-Region command type 是否补齐
-input_region_revision_id / optimistic guard 如何落库
-source_run_id / retry provenance 如何记录
+StageState stale
+Region command type
+input_region_revision_id / optimistic guard
+source_run_id / retry provenance
 ```
 
-未同步完成前：
+字段存在不等于最终 Schema 已冻结。正式 SQL 类型、FK/唯一性/NULL 约束、事务 compare-and-write、多 Region 映射与状态聚合边界仍待 TASK-002 明确；冻结 Gate 完成前：
 
 ```text
 允许设计阶段继续

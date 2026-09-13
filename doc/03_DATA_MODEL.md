@@ -3,8 +3,8 @@
 > 本文件定义新漫画翻译软件的目标数据模型（To-Be），用于指导 SQLite Schema、Repository、Domain Model、Pipeline 状态、Revision、Managed Copy、阅读进度、Provider/Profile、网络代理与后续 UI 映射设计。
 >
 > 本文件基于：
-> - `01_FUNCTIONAL_ARCHITECTURE_To-Be_同步02版.md`
-> - `02_TECHNICAL_ARCHITECTURE_To-Be_总体架构排版优化版.md`
+> - `01_FUNCTIONAL_ARCHITECTURE.md`
+> - `02_TECHNICAL_ARCHITECTURE_.md`
 > - 已确认的产品规则与交互规则
 >
 > 本文件描述“什么数据是系统真值、实体之间如何关联、状态如何演进、哪些数据进入 SQLite、哪些数据进入 Managed File Storage”。

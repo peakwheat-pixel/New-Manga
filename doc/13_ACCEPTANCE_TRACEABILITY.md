@@ -191,7 +191,7 @@
 | AC-CLOSE-001 | P0 | 运行任务关闭 | [TASK-022](tasks/TASK-022.md) | NOT_RUN | 无应用/测试 |
 | AC-CLOSE-002 | P0 | Dirty + Running 分离 | [TASK-022](tasks/TASK-022.md) | NOT_RUN | 无应用/测试 |
 | AC-DOC-001 | P1 | 01~08 文件齐全 | [TASK-001](tasks/TASK-001.md) | PASS | 8份文件存在；审计§2 |
-| AC-DOC-002 | P1 | 核心术语统一 | [TASK-002](tasks/TASK-002.md) | FAIL | G05/G06：重试与状态语义不一致 |
+| AC-DOC-002 | P1 | 核心术语统一 | [TASK-002](tasks/TASK-002.md) | FAIL | G06：完整状态与聚合契约尚未冻结；G05 的失败页重试术语已由 TASK-001 修订 |
 | AC-DOC-003 | P1 | 四个一级页面统一 | [TASK-001](tasks/TASK-001.md) | PASS | 全文核对四个入口与默认书架；审计§7 |
 
 ## 无独立编号的 AC 主题要求

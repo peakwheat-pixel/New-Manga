@@ -4,8 +4,8 @@
 >
 > 本文件基于：
 >
-> - `01_FUNCTIONAL_ARCHITECTURE_To-Be_同步02版.md`
-> - `02_TECHNICAL_ARCHITECTURE_To-Be_总体架构排版优化版.md`
+> - `01_FUNCTIONAL_ARCHITECTURE.md`
+> - `02_TECHNICAL_ARCHITECTURE_.md`
 > - `03_DATA_MODEL.md`
 > - 已确认的导航、悬浮窗、批处理、锁定、Revision、Webtoon、自动字号与多 Provider / 网络代理规则
 >
@@ -742,7 +742,7 @@ flowchart TB
     E["低：Pending"]
     F["用户确认 / 修改 / 拒绝"]
     G["进入有效约束"]
-    H["后续翻译使用"]
+    H["Run 准备阶段冻结快照后供翻译使用"]
 
     A --> B --> C
     C -->|"高"| D --> G
@@ -1153,9 +1153,11 @@ stateDiagram-v2
     Running --> Failed
     Running --> Cancelled
     Running --> Interrupted
-    Failed --> Pending: 重试
-    Interrupted --> Pending: 恢复 / 重试
+    Running --> CompletedWithFailures
+    Interrupted --> Running: 校验后恢复原 Run
 ```
+
+“重试失败页”新建 PipelineRun，仅包含失败目标，通过 `source_run_id + retry_reason` 保留来源，原 Run 历史不改写；Step 自动重试在原 Run 内按相同输入与设置执行。Interrupted 恢复后的业务结果为 running；中间调度状态和 Restart / Abandon 的完整语义留待 TASK-002 冻结。
 
 ### 30.2 异常退出
 
@@ -1165,13 +1167,13 @@ stateDiagram-v2
 下次启动
 → 识别为 Interrupted
 → 不误判 Completed
-→ 用户选择恢复 / 重试 / 放弃
+→ 用户选择继续（Resume 原 Run）/ 重新开始（Restart 新 Run）/ 放弃（Abandon）
 ```
 
 ---
 
 
-## 30.1 工作台固定任务进度面板
+### 30.3 工作台固定任务进度面板
 
 工作台必须提供固定的**任务进度面板**。推荐默认位于工作台底部，可折叠成紧凑进度条；不使用独立页面，也不要求弹出 Modal。
 
@@ -1877,8 +1879,8 @@ flowchart TB
 → 下次启动进入书架
 → 任务状态提示
 → 用户打开任务详情
-→ 选择恢复 / 重试 / 放弃
-→ Pipeline 从可恢复 Step 继续
+→ 选择继续 / 重新开始 / 放弃
+→ 选择继续时，Pipeline 从可恢复 Step 继续
 ```
 
 ---
