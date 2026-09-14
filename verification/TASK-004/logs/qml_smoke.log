@@ -1,0 +1,6 @@
+== QML smoke py312 ==
+{"qt_version": "6.11.2", "python_version": "3.12.3", "platform_name": "windows", "plugins_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/venv-py312/Lib/site-packages/PySide6/plugins", "qwindows_dll_present": true, "qml_imports_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/venv-py312/Lib/site-packages/PySide6/qml", "frozen": false, "qml_file": "G:\\CODEX\\New Manga.worktrees\\TASK-004-zcode\\experiments\\TASK-004\\qml_min\\main.qml", "window_title": "TASK-004 QML Smoke", "window_visible": true, "result": "PASS"}
+rc312=0
+== QML smoke py314 ==
+{"qt_version": "6.11.2", "python_version": "3.14.0", "platform_name": "windows", "plugins_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/venv-py314/Lib/site-packages/PySide6/plugins", "qwindows_dll_present": true, "qml_imports_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/venv-py314/Lib/site-packages/PySide6/qml", "frozen": false, "qml_file": "G:\\CODEX\\New Manga.worktrees\\TASK-004-zcode\\experiments\\TASK-004\\qml_min\\main.qml", "window_title": "TASK-004 QML Smoke", "window_visible": true, "result": "PASS"}
+rc314=0

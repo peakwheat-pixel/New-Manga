@@ -1,0 +1,16 @@
+== freeze (Essentials-only venv) ==
+colorama==0.4.6
+iniconfig==2.3.0
+packaging==26.3
+pluggy==1.6.0
+Pygments==2.21.0
+PySide6_Essentials==6.11.2
+pytest==9.1.1
+shiboken6==6.11.2
+== QML smoke (Essentials-only) ==
+{"qt_version": "6.11.2", "python_version": "3.12.3", "platform_name": "windows", "plugins_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/venv-py312-ess/Lib/site-packages/PySide6/plugins", "qwindows_dll_present": true, "qml_imports_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/venv-py312-ess/Lib/site-packages/PySide6/qml", "frozen": false, "qml_file": "G:\\CODEX\\New Manga.worktrees\\TASK-004-zcode\\experiments\\TASK-004\\qml_min\\main.qml", "window_title": "TASK-004 QML Smoke", "window_visible": true, "result": "PASS"}
+rc_qml_ess=0
+== pytest (Essentials-only) ==
+...                                                                      [100%]
+3 passed in 0.10s
+rc_pytest_ess=0

@@ -1,0 +1,76 @@
+== check_qt_files venv-py312 ==
+{
+  "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages",
+  "layout": "pyside6",
+  "dll_dir_exists": true,
+  "qt_core_dlls": {
+    "Qt6Core.dll": "present",
+    "Qt6Gui.dll": "present",
+    "Qt6Qml.dll": "present",
+    "Qt6Quick.dll": "present",
+    "Qt6QuickControls2.dll": "present"
+  },
+  "plugins": {
+    "platforms/qwindows.dll": "present",
+    "platforms/qoffscreen.dll": "present"
+  },
+  "qml_dirs": {
+    "QtQuick": "present",
+    "QtQuick/Controls": "present",
+    "QtQuick/Window": "present"
+  },
+  "missing": [],
+  "result": "PASS"
+}
+rc_assets312=0
+== check_qt_files venv-py314 ==
+{
+  "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py314\\Lib\\site-packages",
+  "layout": "pyside6",
+  "dll_dir_exists": true,
+  "qt_core_dlls": {
+    "Qt6Core.dll": "present",
+    "Qt6Gui.dll": "present",
+    "Qt6Qml.dll": "present",
+    "Qt6Quick.dll": "present",
+    "Qt6QuickControls2.dll": "present"
+  },
+  "plugins": {
+    "platforms/qwindows.dll": "present",
+    "platforms/qoffscreen.dll": "present"
+  },
+  "qml_dirs": {
+    "QtQuick": "present",
+    "QtQuick/Controls": "present",
+    "QtQuick/Window": "present"
+  },
+  "missing": [],
+  "result": "PASS"
+}
+rc_assets314=0
+== pytest py312 ==
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\49745\AppData\Local\Temp\task004-zcode\venv-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\TASK-004-zcode
+collecting ... collected 3 items
+
+experiments/TASK-004/test_smoke.py::test_import_pyside6 PASSED           [ 33%]
+experiments/TASK-004/test_smoke.py::test_qt_core_basics PASSED           [ 66%]
+experiments/TASK-004/test_smoke.py::test_qml_engine_loads_min_qml[offscreen] PASSED [100%]
+
+============================== 3 passed in 0.11s ==============================
+rc_pytest312=0
+== pytest py314 ==
+============================= test session starts =============================
+platform win32 -- Python 3.14.0, pytest-9.1.1, pluggy-1.6.0 -- C:\Users\49745\AppData\Local\Temp\task004-zcode\venv-py314\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\TASK-004-zcode
+collecting ... collected 3 items
+
+experiments/TASK-004/test_smoke.py::test_import_pyside6 PASSED           [ 33%]
+experiments/TASK-004/test_smoke.py::test_qt_core_basics PASSED           [ 66%]
+experiments/TASK-004/test_smoke.py::test_qml_engine_loads_min_qml[offscreen] PASSED [100%]
+
+============================== 3 passed in 0.11s ==============================
+rc_pytest314=0

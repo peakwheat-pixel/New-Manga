@@ -1,0 +1,34 @@
+== check_qt_files onedir ==
+{
+  "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\build-area\\dist\\task004_smoke",
+  "layout": "onedir",
+  "dll_dir_exists": true,
+  "qt_core_dlls": {
+    "Qt6Core.dll": "present",
+    "Qt6Gui.dll": "present",
+    "Qt6Qml.dll": "present",
+    "Qt6Quick.dll": "present",
+    "Qt6QuickControls2.dll": "present"
+  },
+  "plugins": {
+    "platforms/qwindows.dll": "present",
+    "platforms/qoffscreen.dll": "present"
+  },
+  "qml_dirs": {
+    "QtQuick": "present",
+    "QtQuick/Controls": "present",
+    "QtQuick/Window": "present"
+  },
+  "missing": [],
+  "result": "PASS"
+}
+rc_assets_ondir=0
+== size ==
+397M	/tmp/task004-zcode/build-area/dist/task004_smoke
+2824
+== run onedir (normal env) ==
+{"qt_version": "6.11.2", "python_version": "3.12.3", "platform_name": "windows", "plugins_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/build-area/dist/task004_smoke/_internal/PySide6/plugins", "qwindows_dll_present": true, "qml_imports_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/build-area/dist/task004_smoke/_internal/PySide6/qml", "frozen": true, "qml_file": "C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\build-area\\dist\\task004_smoke\\_internal\\main.qml", "window_title": "TASK-004 QML Smoke", "window_visible": true, "result": "PASS"}
+rc_run_normal=0
+== run onedir (clean-PATH simulation) ==
+{"qt_version": "6.11.2", "python_version": "3.12.3", "platform_name": "windows", "plugins_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/build-area/dist/task004_smoke/_internal/PySide6/plugins", "qwindows_dll_present": true, "qml_imports_path": "C:/Users/49745/AppData/Local/Temp/task004-zcode/build-area/dist/task004_smoke/_internal/PySide6/qml", "frozen": true, "qml_file": "C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\build-area\\dist\\task004_smoke\\_internal\\main.qml", "window_title": "TASK-004 QML Smoke", "window_visible": true, "result": "PASS"}
+rc_run_cleanpath=0

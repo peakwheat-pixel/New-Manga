@@ -1,0 +1,75 @@
+82 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.7
+82 INFO: Python: 3.12.3
+99 INFO: Platform: Windows-11-10.0.26200-SP0
+99 INFO: Python environment: C:\Users\49745\AppData\Local\Temp\task004-zcode\venv-py312
+100 INFO: wrote C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\task004_smoke.spec
+107 INFO: Module search paths (PYTHONPATH):
+['C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Scripts\\pyinstaller.exe',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312',
+ 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages',
+ 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\build-area']
+287 INFO: Appending 'datas' from .spec
+287 INFO: checking Analysis
+287 INFO: Building Analysis because Analysis-00.toc is non existent
+287 INFO: Looking for Python shared library...
+287 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+287 INFO: Running Analysis Analysis-00.toc
+287 INFO: Target bytecode optimization level: 0
+287 INFO: Initializing module dependency graph...
+287 INFO: Initializing module graph hook caches...
+305 INFO: Analyzing modules for base_library.zip ...
+1010 INFO: Processing standard module hook 'hook-encodings.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+1410 INFO: Processing standard module hook 'hook-math.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+2153 INFO: Processing standard module hook 'hook-pickle.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+2922 INFO: Processing standard module hook 'hook-heapq.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+3703 INFO: Caching module dependency graph...
+3724 INFO: Analyzing C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\main.py
+3759 INFO: Processing standard module hook 'hook-PySide6.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+3865 INFO: Processing standard module hook 'hook-shiboken6.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+3955 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+4907 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+6195 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+10988 INFO: Processing standard module hook 'hook-PySide6.QtQml.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+11634 WARNING: QtLibraryInfo(PySide6): QML plugin binary 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PySide6\\qml\\Qt\\labs\\assetdownloader\\qmlassetdownloaderprivateplugin.dll' does not exist!
+15706 INFO: Processing module hooks (post-graph stage)...
+15723 INFO: Performing binary vs. data reclassification (2677 entries)
+22942 INFO: Looking for ctypes DLLs
+22946 INFO: Analyzing run-time hooks ...
+22946 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+22949 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+22951 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+22951 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+22992 INFO: Creating base_library.zip...
+23004 INFO: Looking for dynamic libraries
+23128 INFO: Extra DLL search directories (AddDllDirectory): ['C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\shiboken6']
+23128 INFO: Extra DLL search directories (PATH): ['C:\\Users\\49745\\AppData\\Local\\Temp\\task004-zcode\\venv-py312\\Lib\\site-packages\\PySide6']
+25742 INFO: Warnings written to C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\build\task004_smoke\warn-task004_smoke.txt
+25753 INFO: Graph cross-reference written to C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\build\task004_smoke\xref-task004_smoke.html
+25798 INFO: checking PYZ
+25798 INFO: Building PYZ because PYZ-00.toc is non existent
+25798 INFO: Building PYZ (ZlibArchive) C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\build\task004_smoke\PYZ-00.pyz
+25882 INFO: Building PYZ (ZlibArchive) C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\build\task004_smoke\PYZ-00.pyz completed successfully.
+25885 INFO: checking PKG
+25885 INFO: Building PKG because PKG-00.toc is non existent
+25885 INFO: Building PKG (CArchive) task004_smoke.pkg
+25897 INFO: Building PKG (CArchive) task004_smoke.pkg completed successfully.
+25899 INFO: Bootloader C:\Users\49745\AppData\Local\Temp\task004-zcode\venv-py312\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+25899 INFO: checking EXE
+25899 INFO: Building EXE because EXE-00.toc is non existent
+25899 INFO: Building EXE from EXE-00.toc
+25899 INFO: Copying bootloader EXE to C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\build\task004_smoke\task004_smoke.exe
+25945 INFO: Copying icon to EXE
+25971 INFO: Copying 0 resources to EXE
+25971 INFO: Embedding manifest in EXE
+25992 INFO: Appending PKG archive to EXE
+26015 INFO: Fixing EXE headers
+26128 INFO: Building EXE from EXE-00.toc completed successfully.
+26143 INFO: checking COLLECT
+26143 INFO: Building COLLECT because COLLECT-00.toc is non existent
+26143 INFO: Building COLLECT COLLECT-00.toc
+27898 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+27943 INFO: Build complete! The results are available in: C:\Users\49745\AppData\Local\Temp\task004-zcode\build-area\dist
