@@ -2,13 +2,13 @@
 id: TASK-005
 title: 建立最小工程入口与架构守卫
 kind: implementation
-status: ready
+status: approved
 approval: approved
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
 depends_on: [TASK-002, TASK-003, TASK-004]
-base_commit: null
+base_commit: d65901b953e6fb26043344ed3d668520847eb295
 branch: agent/codex/TASK-005-minimal-bootstrap
 worktree: G:/CODEX/New Manga.worktrees/TASK-005-codex
 integration_commit: null
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-005：建立最小工程入口与架构守卫
 
-本 Task 已获用户授权，方案 A 与书面规格均已批准；Codex 已登记实现分支/worktree，状态为 `ready`。Owner 在指定 linked worktree 核验基线后写入实际 `base_commit` 并进入 `in_progress`。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户授权，方案 A 与书面规格均已批准；新固定 head 已通过 DeepSeek Harness 独立复审，当前等待 Codex 集成。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -26,9 +26,9 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 
 ## Acceptance Criteria
 
-- [ ] 采用 TASK-004 获批版本提供可重复安装/运行/测试入口；只使用精确版本 requirements 文件锁定依赖，不引入第二套依赖/锁定工具。
-- [ ] Core 无 torch/transformers 等重型可选依赖仍可启动；按需建模块，不批量生成空实现。
-- [ ] 建立 Domain 禁止导入 Qt/SQLite/ML、UI 禁止直连具体存储/Provider 的可运行守卫。
+- [x] 采用 TASK-004 获批版本提供可重复安装/运行/测试入口；只使用精确版本 requirements 文件锁定依赖，不引入第二套依赖/锁定工具。（`requirements*.txt` 精确锁定；Python 3.12.3 `pip check` 与完整验证 PASS）
+- [x] Core 无 torch/transformers 等重型可选依赖仍可启动；按需建模块，不批量生成空实现。（干净 TASK-005 venv 中三者均缺失，真实 QML smoke PASS；只创建 bootstrap/domain/ui 当前必需边界）
+- [x] 建立 Domain 禁止导入 Qt/SQLite/ML、UI 禁止直连具体存储/Provider 的可运行守卫。（R-001 已补 `ImportFrom.module=None` 相对 alias 回归；完整 core 测试由独立复审确认通过）
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 已批准设计：方案 A
@@ -52,6 +52,7 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 - Domain 禁止导入 `PySide6`、`sqlite3`、`torch`、`transformers`、`onnxruntime`。
 - UI 禁止直接导入 `infrastructure` 下的具体存储或 Provider；UI 可依赖 Application/Ports 的后续接口。
 - 违规输出必须包含文件、行号与被禁止模块。测试使用临时合成违规文件证明守卫会检测失败，同时扫描真实 `src/domain` 与 `src/ui`。
+- 本守卫用于阻止常见静态 import 违规，不是 Python 安全边界；`importlib.import_module` / `__import__` 等动态导入不在 TASK-005 授权范围，后续若出现真实用例再扩展。
 
 ### 测试与错误边界
 
@@ -83,9 +84,9 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 
 ## 测试要求
 
-- 计划：在仓库外创建干净 Python 3.12 venv，分别执行 `python -m pip install -r requirements.txt`、`python -m bootstrap.app --smoke-test` 与开发环境中的 `python -m pytest tests/core`。
-- 至少一个 Domain 和一个 UI 合成边界违规会被守卫检测；实际源码扫描无违规；QML 缺失时产生含路径的可诊断错误和非零退出码。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 已执行：仓库外 Python 3.12.3 venv 安装 `requirements-dev.txt`，`pip check` PASS；固定 head 上运行 `verification/TASK-005/verify.ps1` 退出码 0。
+- Domain/UI 两个合成边界违规均被守卫检测；实际源码扫描无违规；QML 缺失时返回非零并输出绝对路径；完整 core 测试全部通过。
+- PyInstaller、干净 Windows VM、模型质量、SQL 和性能测试仍为 NOT_RUN/N/A，详见作者验证与 Handoff；TASK-004 结果未冒充本 head 证据。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -98,7 +99,7 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 用户审核通过书面规格，允许创建 worktree、编写实施计划并开始 TDD 实现；Owner=Codex，Reviewer=DeepSeek Harness。状态 `ready`，等待 Owner 接管时绑定实际基线。
+- Handoff：首次 [TASK-005-e914f39](../handoffs/TASK-005-e914f39.md)；修订 [TASK-005-f343008](../handoffs/TASK-005-f343008.md)，绑定 `base_commit=d65901b` / `reviewed_head=f343008`。
+- Review：DeepSeek Harness 对首次 head 给出 [changes_requested](../reviews/TASK-005-e914f39.md)：P0=0、P1=1、P2=3；对新 head 给出 [approved](../reviews/TASK-005-f343008.md)：P0=0、P1=0、P2=2。
+- 实际执行/实验/测试：[作者验证](../../verification/TASK-005/author-verification.md)；新固定 head 复跑 `verify.ps1` 退出码 0，6 passed。
+- 最近状态：2026-09-14 新 `reviewed_head=f3430080d88f07d789c21e76d5b5b4310fbf3458` 已获独立复审批准。R-001/R-002/R-003 fixed；R-004 deferred（全仓只有 CLI 调用，应用参数由 argparse 消费，不转交 Qt；出现程序化/Qt 参数调用者时再定义接口）。复审 F-01 已由复审 Handoff 后的 Task 元数据关闭；F-02 以不复制测试数量的表述关闭。状态 `in_review → approved`；等待 Codex 集成，TASK-006～TASK-027 未释放。
