@@ -2,7 +2,7 @@
 id: TASK-004
 title: 验证 Windows 运行环境与打包路线
 kind: experiment
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -68,4 +68,4 @@ TASK-003 与 TASK-004 分别由 DeepSeek Harness 与 ZCode 执行，必须使用
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 用户澄清本任务分派给 ZCode；Reviewer DeepSeek Harness；ready，等待 Owner 在指定 worktree 开始。
+- 最近状态：2026-09-14 ZCode 在指定 worktree 接管开始执行。基线核验通过：toplevel=`G:/CODEX/New Manga.worktrees/TASK-004-zcode`，common dir=`G:/CODEX/New Manga/.git`，分支 `agent/zcode/TASK-004-windows-packaging`，HEAD=`27b3948db290227cbd51e687f79fdda3338564b8`（= 派单 starting_head，base `8addf1b` 为其祖先），工作区干净。状态 ready → in_progress。
