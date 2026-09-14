@@ -179,28 +179,19 @@ git commit -m "test(TASK-005): enforce minimal architecture boundaries"
 - Consumes: `PYTHONPATH=src`、Qt offscreen platform、`src/ui/qml/Main.qml`。
 - Produces: `bootstrap.app.main(argv: Sequence[str] | None = None) -> int`；CLI `python -m bootstrap.app [--smoke-test]`。
 
-- [ ] **Step 1: 写真实 subprocess 启动测试**
+- [x] **Step 1: 写真实 subprocess 成功启动测试**
 
-`tests/core/test_bootstrap.py` 用当前 Python 子进程和 `QT_QPA_PLATFORM=offscreen` 执行真实 module，包含：
+`tests/core/test_bootstrap.py` 用当前 Python 子进程和 `QT_QPA_PLATFORM=offscreen` 执行真实 module，先加入：
 
 ```python
 def test_smoke_startup_loads_qml_and_exits_zero() -> None:
     result = run_app(SRC_ROOT)
     assert result.returncode == 0, result.stderr
-
-
-def test_missing_qml_returns_nonzero_with_path(tmp_path: Path) -> None:
-    isolated_src = tmp_path / "src"
-    shutil.copytree(SRC_ROOT / "bootstrap", isolated_src / "bootstrap")
-    result = run_app(isolated_src)
-    expected = isolated_src / "ui" / "qml" / "Main.qml"
-    assert result.returncode != 0
-    assert str(expected) in result.stderr
 ```
 
 `run_app` 固定执行 `[sys.executable, "-m", "bootstrap.app", "--smoke-test"]`，将传入目录置于 `PYTHONPATH`，并设置 `QT_QPA_PLATFORM=offscreen`。
 
-- [ ] **Step 2: 运行 RED，确认入口缺失**
+- [x] **Step 2: 运行 RED，确认入口缺失**
 
 Run:
 
@@ -210,9 +201,9 @@ Run:
 
 Expected: `test_smoke_startup_loads_qml_and_exits_zero` 因 `No module named bootstrap` 而 FAIL；不接受测试收集错误作为 RED。
 
-- [ ] **Step 3: 写最小启动实现**
+- [x] **Step 3: 写最小成功启动实现**
 
-`src/bootstrap/app.py` 使用 `argparse` 接受唯一可选参数 `--smoke-test`，创建 `QGuiApplication` 与 `QQmlApplicationEngine`，从模块位置计算 `src/ui/qml/Main.qml`。加载后若 `rootObjects()` 为空，向 stderr 输出 `Failed to load QML:` 和计算出的绝对路径并返回 1；smoke 模式用 `QTimer.singleShot(0, app.quit)`，其余情况进入正常事件循环。
+`src/bootstrap/app.py` 使用 `argparse` 接受唯一可选参数 `--smoke-test`，创建 `QGuiApplication` 与 `QQmlApplicationEngine`，从模块位置计算 `src/ui/qml/Main.qml`。smoke 模式用 `QTimer.singleShot(0, app.quit)`，其余情况进入正常事件循环；此步尚不实现缺失 QML 的专用错误分支。
 
 `src/ui/qml/Main.qml`：
 
@@ -228,7 +219,41 @@ ApplicationWindow {
 }
 ```
 
-- [ ] **Step 4: 运行 GREEN 与完整 core 测试**
+- [x] **Step 4: 运行成功启动 GREEN**
+
+Run:
+
+```powershell
+& 'G:/CODEX/New Manga.task-envs/TASK-005-py312/Scripts/python.exe' -m pytest tests/core/test_bootstrap.py -v
+```
+
+Expected: 启动测试 1 passed。
+
+- [x] **Step 5: 写缺失 QML 测试**
+
+追加：
+
+```python
+def test_missing_qml_returns_nonzero_with_path(tmp_path: Path) -> None:
+    isolated_src = tmp_path / "src"
+    shutil.copytree(SRC_ROOT / "bootstrap", isolated_src / "bootstrap")
+    result = run_app(isolated_src)
+    expected = isolated_src / "ui" / "qml" / "Main.qml"
+    assert result.returncode != 0
+    assert str(expected) in result.stderr
+```
+
+- [x] **Step 6: 运行错误分支 RED**
+
+Run: 与 Step 4 相同。
+
+Expected: 成功启动测试 PASS；缺失 QML 测试因当前进程返回 0 或 stderr 缺少确定路径而 FAIL。
+
+- [x] **Step 7: 写最小错误处理**
+
+加载后若 `engine.rootObjects()` 为空，向 stderr 输出 `Failed to load QML:` 和计算出的绝对路径并返回 1；不增加错误类型层级或日志框架。
+
+- [x] **Step 8: 运行完整 GREEN**
 
 Run:
 
@@ -239,7 +264,7 @@ Run:
 
 Expected: 启动测试 2 passed；完整 core 5 passed；无 warning/error。
 
-- [ ] **Step 5: 提交启动入口**
+- [x] **Step 9: 提交启动入口**
 
 ```powershell
 git add -- src/bootstrap/__init__.py src/bootstrap/app.py src/ui/qml/Main.qml tests/core/test_bootstrap.py
