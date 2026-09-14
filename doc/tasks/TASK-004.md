@@ -8,7 +8,7 @@ suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness
 depends_on: [TASK-002]
-base_commit: null
+base_commit: 8addf1b7d87c07f51d3acf8275030375be08adda
 branch: agent/zcode/TASK-004-windows-packaging
 worktree: G:/CODEX/New Manga.worktrees/TASK-004-zcode
 integration_commit: null
