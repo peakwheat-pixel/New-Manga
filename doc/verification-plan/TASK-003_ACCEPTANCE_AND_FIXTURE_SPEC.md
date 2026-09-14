@@ -1,6 +1,6 @@
 # TASK-003 验收方法与素材规范
 
-状态：**Frozen for verification planning**（TASK-003 交付，待 Codex 独立 Review）。本文件定义验收**方法、环境、证据口径、性能测量协议、模型阈值状态与组级标识**，不代表任何产品行为已经通过。
+状态：**Frozen for verification planning**（TASK-003 已完成独立 Review，并由 merge commit `db269e9` 集成）。本文件定义验收**方法、环境、证据口径、性能测量协议、模型阈值状态与组级标识**，不代表任何产品行为已经通过。
 
 依据：[D08 验收标准](../08_ACCEPTANCE_CRITERIA.md)、[D07 §97～101](../07_NON_FUNCTIONAL_REQUIREMENTS.md)、[D13 追踪](../13_ACCEPTANCE_TRACEABILITY.md)、[TASK-002 最小契约](../contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)、[TASK-002 复审 F-08](../reviews/TASK-002-885c9a9.md)、[协作协议 §4/§6](../09_COLLABORATION.md)。
 

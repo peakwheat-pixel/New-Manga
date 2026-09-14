@@ -77,4 +77,4 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 - Handoff：[TASK-003-9c6a73b](../handoffs/TASK-003-9c6a73b.md)，固定 `base_commit=9472df5`、`reviewed_head=9c6a73b`（取代 `f620c69`；此前交付为 `588383f`、`6caefe1`）。
 - Review：前三次 Review 由 Codex 请求修订（`f56bef4`→R-001～R-010、`8f24be4`→R-011～R-014、`84795fb`→R-015～R-018）；最终固定 head `9c6a73b` 的独立 Review 为 [approved](../reviews/TASK-003-9c6a73b.md)（commit `658a0ea`）。R-019 延后到首个真实 Fixture 入库 Task 处理，不阻塞本设计任务。
 - 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `9c6a73b` 独立干净检出退出码 0（12 条 PASS）；`git diff --check 9472df5 9c6a73b --` 退出码 0；20 个 Fixture ID、来源 allowlist、F-08 三文件 3 新增 / 0 删除均独立核验通过。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
-- 集成：Codex 以 merge commit `db269e98aa6783151f86ed922691840f52930afc` 串行集成；被审路径与 owner head 树一致，仓库 Markdown 链接与围栏检查通过。TASK-003 的范围脚本绑定原始 base，合并后的 master 含更早并行授权元数据，故不以 master 重跑结果替代固定 head 的独立 PASS。
+- 集成：Codex 以 merge commit `db269e98aa6783151f86ed922691840f52930afc` 串行集成；被审路径与 owner head 树一致。被测 commit、环境、命令、退出码与未跑项见 [集成验证证据](../../verification/TASK-003/integration-e3c8de7.md)。

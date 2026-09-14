@@ -66,8 +66,8 @@ TASK-003 与 TASK-004 分别由 DeepSeek Harness 与 ZCode 执行，必须使用
 ## 交付与运行记录
 
 - Handoff：[TASK-004-181a356](../handoffs/TASK-004-181a356.md)（delivery_head=`181a356cdb91725aa63961d123605ac179074286`）。
-- Review：DeepSeek Harness 最终复审 [approved](../reviews/TASK-004-181a356.md)（commit `5f4db0f`）；R-001 fixed，R-002 deferred。干净 Windows 仍是发布 Gate 的 `BLOCKED`，不伪装为已验证。
+- Review：DeepSeek Harness 最终复审 [approved](../reviews/TASK-004-181a356.md)（commit `5f4db0f`）；R-001 fixed，R-002 在 reviewed head 时 deferred，其通用证据规则已于集成收口写入 [协作协议 §5](../09_COLLABORATION.md)。干净 Windows 仍是发布 Gate 的 `BLOCKED`，不伪装为已验证。
 - 实际执行/实验/测试：[research/TASK-004.md](../research/TASK-004.md)（结果总表 E1～E18）+ [verification/TASK-004](../../verification/TASK-004/)（env_report.txt 与 logs/）。
-- 集成：Codex 以 merge commit `a501372dd09086e93f86d41937c43cb41e41e563` 串行集成。Python 3.12 QML、pytest（3 passed）、Qt 资源、Python 3.14 QML、Essentials-only QML、PyInstaller onedir 正常启动及仅系统 PATH 启动均 PASS。
+- 集成：Codex 以 merge commit `a501372dd09086e93f86d41937c43cb41e41e563` 串行集成。Python 3.12 QML、pytest（3 passed）、Qt 资源、Python 3.14 QML、Essentials-only QML、PyInstaller onedir 正常启动及仅系统 PATH 启动均 PASS；被测 commit、环境、命令和退出码见 [集成验证证据](../../verification/TASK-004/integration-e3c8de7.md)。
 - 集成诊断：首次 Codex 打包被桌面运行时注入 PATH 中的 ICU/UCRT DLL 污染并导致 QtCore 加载失败；移除该运行时 PATH 后重建 PASS，且污染 DLL 未进入最终实验产物。该结果不改变干净 Windows 机器验证的 `BLOCKED` 状态。
 - 最近状态（历史）：2026-09-14 ZCode 完成全部计划内隔离实验：Python 3.12.3 / 3.14.0 + PySide6 6.11.2 + pytest 9.1.1（3.12 另加 PyInstaller 6.22.3）下，QML 真实窗口启停、Qt DLL/plugin 完整性、pytest、onedir 构建与启动（含清除开发 PATH 模拟）全部 PASS；`PySide6_Essentials` 单独支撑 QML PASS；干净 Windows 环境验证 BLOCKED（环境不可得，未用开发机结果替代）。reviewed_head=`18a9dff`。状态 in_progress → in_review，等待独立 Review。

@@ -16,7 +16,7 @@
 | 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成 |
 | 任务分派 / 执行 | TASK-001～TASK-004：done；其余 23 个 Task 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | DeepSeek 已完成 TASK-003；ZCode 已完成 TASK-004；各 linked worktree 暂保留 |
-| 本次 Review | TASK-003 最终 Review `658a0ea` approved；TASK-004 最终 Review `5f4db0f` approved |
+| 本次 Review | TASK-003 最终 Review `658a0ea` approved；TASK-004 最终 Review `5f4db0f` approved；集成审计的验证证据 P1 与两个文档 P2 已收口，单值 pytest 参数化建议按用户决定暂不处理 |
 | 产品发布状态 | NOT READY，无可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
@@ -46,3 +46,4 @@ TASK-004 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-004-zcode`；分�
 | 2026-09-14 | 用户 | 允许 TASK-004 与 TASK-003 并行执行；其他 Task 和功能开发继续冻结 | 用户本次审核指令 |
 | 2026-09-14 | 用户 | 澄清 TASK-004 应分派给 ZCode，而非 DeepSeek Harness；并行与冻结范围不变 | 用户本次纠正指令 |
 | 2026-09-14 | 用户 | 批准 Codex 独立复审并串行集成 TASK-003、TASK-004；TASK-005 及其他 Task 继续冻结 | 用户本次批准指令 |
+| 2026-09-14 | 用户 | 批准 Codex 基于 `e3c8de7` 仅修订文档与验证证据，关闭集成审计 P1 和两个文档 P2；暂不处理 pytest 单值参数化建议，不释放 TASK-005 | 用户本次批准指令 |
