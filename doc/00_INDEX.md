@@ -1,13 +1,13 @@
 # 项目文档索引与 Source of Truth
 
-状态：TASK-001～TASK-004 已完成并集成；TASK-005 方案 A 与书面规格已批准，状态 `ready`，等待 Owner worktree 接管；TASK-006～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
+状态：TASK-001～TASK-005 已完成并集成；TASK-005 仅交付最小 Python/PySide6 QML 入口与架构守卫；TASK-006～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
 
 ## 原始目标文档（已完整检查）
 
 | 证据编号 | 文档 | 权威职责 | 当前性质 |
 |---|---|---|---|
 | D01 | [01 功能架构](01_FUNCTIONAL_ARCHITECTURE.md) | 产品能力范围、入口、扩展能力 | To-Be；§5 的旧代码引用不能证明本仓库实现 |
-| D02 | [02 技术架构](02_TECHNICAL_ARCHITECTURE_.md) | 分层、技术选型、依赖边界、运行拓扑 | To-Be，非已安装技术栈 |
+| D02 | [02 技术架构](02_TECHNICAL_ARCHITECTURE_.md) | 分层、技术选型、依赖边界、运行拓扑 | To-Be；TASK-005 仅实证最小 Python/PySide6 Core 入口与当前包边界 |
 | D03 | [03 数据模型](03_DATA_MODEL.md) | 实体、字段、数据不变量、持久化归属 | To-Be；G06～G13 的最小实现契约由 TASK-002 冻结，尚无 SQL 或迁移 |
 | D04 | [04 用户流程](04_USER_FLOW.md) | 操作意图、用户流程、对象范围 | To-Be |
 | D05 | [05 UI 映射](05_UI_MAPPING.md) | Screen、Panel、Window、动作与 ViewModel 映射 | To-Be；内含线框示意，非实际 QML |
@@ -25,7 +25,7 @@ TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表�
 | [STATUS](STATUS.md) | 当前授权、开发阶段、用户审核记录 |
 | [09 协作协议](09_COLLABORATION.md) | 角色、Git、Task/Handoff/Review 生命周期 |
 | [10 当前状态与 Gap Analysis](10_CURRENT_STATE_AND_GAPS.md) | 本次盘点、证据指纹、代码与目标差距、审核清单 |
-| [11 架构与交互地图](11_ARCHITECTURE_MAPS.md) | 11 类视图；明确当前无运行实现，附有来源的目标设计 |
+| [11 架构与交互地图](11_ARCHITECTURE_MAPS.md) | 11 类接管基线视图；目标设计仍不得冒充 TASK-005 最小骨架的实际能力 |
 | [12 Roadmap](12_ROADMAP.md) | 阶段 Gate、依赖和范围取舍 |
 | [13 验收追踪](13_ACCEPTANCE_TRACEABILITY.md) | D08 条目到计划 Task 的映射；不代表已验收 |
 | [14 接管验证](14_TAKEOVER_VERIFICATION.md) | 本次文档自检结果、复现命令与验证边界 |
@@ -37,7 +37,7 @@ TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表�
 | [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
 | [Review 模板](templates/REVIEW.md) | 按固定 commit 独立审查和复审 |
 
-handoffs、reviews、verification、research 等目录在首次真实产出时创建；目录名称出现不表示已有报告。
+handoffs、reviews、verification 已包含固定提交的真实交付；目录或文件名本身仍不等于审查/验证通过。
 
 ## Source of Truth 按问题区分
 

@@ -4,20 +4,20 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-001～TASK-004 已完成并集成；TASK-005 书面规格已批准并释放为 `ready` |
-| 当前授权 | 仅 TASK-005 可建立最小工程入口与架构守卫；Owner=Codex、Reviewer=DeepSeek Harness；TASK-006～TASK-027 与其他业务功能开发继续冻结 |
+| 阶段 | TASK-001～TASK-005 已完成并集成 |
+| 当前授权 | 无进行中 Task；TASK-006～TASK-027 与其他业务功能开发继续冻结 |
 | 接管审核 | approved |
 | 用户审核记录 | 2026-09-14：允许启动 TASK-005，批准方案 A 及书面规格，并允许建立 worktree、编写计划和 TDD 实现；TASK-006～TASK-027 继续冻结 |
 | 目标基线冻结 | 未冻结；见 Gap Analysis |
-| 应用源代码 / 可执行测试 | 生产应用源代码不存在；TASK-003 文档护栏与 TASK-004 隔离实验/测试已入库 |
-| 项目 Git 分支 / 当前 Task 基线 | master；TASK-005 分支 `agent/codex/TASK-005-minimal-bootstrap`，基线由 Owner 接管提交绑定 |
+| 应用源代码 / 可执行测试 | TASK-005 最小 Python/PySide6 QML 启动入口与 Core 架构守卫已入库；仅为无业务功能的工程骨架 |
+| 项目 Git 分支 / 当前 Task 基线 | master；TASK-005 基线 `d65901b`、reviewed head `f343008`、integration commit `6607f75` |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
-| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成 |
-| 任务分派 / 执行 | TASK-001～TASK-004：done；TASK-005：ready；其余 22 个 Task 保持 proposed |
+| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成 |
+| 任务分派 / 执行 | TASK-001～TASK-005：done；其余 22 个 Task 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | DeepSeek 已完成 TASK-003；ZCode 已完成 TASK-004；各 linked worktree 暂保留 |
-| 本次 Review | TASK-003 最终 Review `658a0ea` approved；TASK-004 最终 Review `5f4db0f` approved；集成审计的验证证据 P1 与两个文档 P2 已收口，单值 pytest 参数化建议按用户决定暂不处理 |
-| 产品发布状态 | NOT READY，无可发布应用 |
+| 本次 Review | TASK-005 首次 Review `480f432` changes_requested；固定 head `f343008` 的复审 `118038f` approved，P0/P1=0，两个文档 P2 已收口 |
+| 产品发布状态 | NOT READY；仅有最小启动骨架，无业务功能或可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
 
@@ -27,13 +27,15 @@
 
 已集成交付入口：[TASK-003 Handoff](handoffs/TASK-003-9c6a73b.md)，固定 `reviewed_head=9c6a73b`、`integration_commit=db269e9`；[TASK-004 Handoff](handoffs/TASK-004-181a356.md)，固定 `reviewed_head=181a356`、`integration_commit=a501372`。
 
+已集成交付入口：[TASK-005 Handoff](handoffs/TASK-005-f343008.md)，固定 `base_commit=d65901b`、`reviewed_head=f343008`、`integration_commit=6607f75`；[集成验证](../verification/TASK-005/integration-6607f75.md)记录主线复验。
+
 当前 DeepSeek Review 工作区：`G:/CODEX/New Manga.worktrees/TASK-002-deepseek-review`；分支 `agent/deepseek/TASK-002-review`。首次报告为 [TASK-002-c335315](reviews/TASK-002-c335315.md)；复审报告写入 `doc/reviews/TASK-002-*.md`，每份报告必须绑定自己的 `base_commit` 与 `reviewed_head`。
 
 TASK-003 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-003-deepseek`；分支 `agent/deepseek/TASK-003-verification-spec`。Task 已集成，工作区暂保留供审计。
 
 TASK-004 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-004-zcode`；分支 `agent/zcode/TASK-004-windows-packaging`。Task 已集成，工作区暂保留供审计。
 
-TASK-005 Owner 工作区固定为 `G:/CODEX/New Manga.worktrees/TASK-005-codex`；分支 `agent/codex/TASK-005-minimal-bootstrap`。Owner 核验同仓 common directory 与固定基线后，将 Task 从 `ready` 改为 `in_progress`。
+TASK-005 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-005-codex`，Reviewer 工作区为 `G:/CODEX/New Manga.worktrees/TASK-005-deepseek-review`；Task 已集成，两个 worktree 暂保留供审计。
 
 用户审核后，Codex在本文件追加日期、决定原文摘要和允许启动的 Task；再在相应 Task 记录 release、owner、base_commit。若仅同意接管，保持其余 Task 为 proposed。
 

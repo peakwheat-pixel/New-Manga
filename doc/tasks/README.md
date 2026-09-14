@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-004 已完成并集成；仅 TASK-005 已释放为 `ready`，其余 22 个任务保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
+TASK-001～TASK-005 已完成并集成；其余 22 个任务保持 `proposed`，尚未释放。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -8,7 +8,7 @@ TASK-001～TASK-004 已完成并集成；仅 TASK-005 已释放为 `ready`，其
 | [TASK-002](TASK-002.md) | 冻结最小数据与执行契约 | Codex | done；integration `7927169` |
 | [TASK-003](TASK-003.md) | 补齐验收规格与测试素材规范，并关闭 F-08 | DeepSeek Harness | done；integration `db269e9` |
 | [TASK-004](TASK-004.md) | 验证 Windows 运行环境与打包路线 | ZCode | done；integration `a501372` |
-| [TASK-005](TASK-005.md) | 建立最小工程入口与架构守卫 | Codex | TASK-002, TASK-003, TASK-004 |
+| [TASK-005](TASK-005.md) | 建立最小工程入口与架构守卫 | Codex | done；integration `6607f75` |
 | [TASK-006](TASK-006.md) | 实现持久化与 Artifact 安全提交基础 | Codex | TASK-005 |
 | [TASK-007](TASK-007.md) | 实现书架领域与本地图片导入 | ZCode | TASK-006 |
 | [TASK-008](TASK-008.md) | 实现 Region 编辑、Revision 与人工保护 | ZCode | TASK-007 |
@@ -32,4 +32,4 @@ TASK-001～TASK-004 已完成并集成；仅 TASK-005 已释放为 `ready`，其
 | [TASK-026](TASK-026.md) | 独立集成审查与质量/性能验收 | DeepSeek Harness | TASK-020, TASK-021, TASK-022, TASK-023, TASK-025 |
 | [TASK-027](TASK-027.md) | 发布候选集成、打包与最终验收 | Codex | TASK-026 |
 
-每个任务含具体 Acceptance Criteria、允许修改路径与测试要求。实际源码尚不存在，所列 src/tests 路径是依据 D02 §16 的拟议所有权边界；ready 前由 Codex对照实际结构确认。Task 不能越过依赖、冻结状态或扩大允许范围。
+每个任务含具体 Acceptance Criteria、允许修改路径与测试要求。TASK-005 已建立最小 `src/bootstrap`、`src/domain`、`src/ui` 与 `tests/core`；其余路径仍是拟议所有权边界，ready 前由 Codex 对照实际结构确认。Task 不能越过依赖、冻结状态或扩大允许范围。
