@@ -1,6 +1,7 @@
 # TASK-005 Minimal Bootstrap Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> 上述名称只记录 Codex Desktop 本地执行流程，不是本项目 Source of Truth、依赖或其他 Agent 的必需工具；项目协作规则只以 `AGENTS.md` 与 `doc/09_COLLABORATION.md` 为准。
 
 **Goal:** 建立可由 Python 3.12 启动的最小 PySide6/QML 工程入口，以及可运行的 Domain/UI import 架构守卫。
 

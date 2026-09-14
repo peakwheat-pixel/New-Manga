@@ -5,7 +5,8 @@
 | 项目 | 实际值 |
 |---|---|
 | `base_commit` | `d65901b953e6fb26043344ed3d668520847eb295` |
-| 被测生产/测试提交 | `b318bdd5782681df6ff5398b80f8c597366c5b0b` |
+| 首次被测生产/测试提交 | `b318bdd5782681df6ff5398b80f8c597366c5b0b` |
+| 首次 `reviewed_head` | `e914f39a0c721f717c45a01229cd6d0b82f0045e`；固定 head 复跑见 [Handoff](../../doc/handoffs/TASK-005-e914f39.md) 与 [独立 Review](../../doc/reviews/TASK-005-e914f39.md) |
 | 分支 / worktree | `agent/codex/TASK-005-minimal-bootstrap` / `G:/CODEX/New Manga.worktrees/TASK-005-codex` |
 | Git common directory | `G:/CODEX/New Manga/.git` |
 | OS | Microsoft Windows NT 10.0.26200.0，AMD64 |
@@ -13,7 +14,7 @@
 | Python | 3.12.3，`G:/CODEX/New Manga.task-envs/TASK-005-py312/Scripts/python.exe` |
 | Qt / PySide6 / pytest | 6.11.2 / 6.11.2 / 9.1.1 |
 
-本文件与 `verify.ps1` 会在被测生产/测试提交之后提交；最终 `reviewed_head` 上的复跑结果写入 Handoff，不能用本文件自己的未生成 commit 充当被测 SHA。
+本文件与 `verify.ps1` 在首次生产/测试提交之后提交，因此上表明确区分两者；首次 `reviewed_head=e914f39` 的作者复跑记录在 Handoff，DeepSeek 独立复跑记录在 Review，不把较早的 `b318bdd` PASS 误引为固定 head 证据。Review 修订后的新固定 head 由对应新 Handoff 记录。
 
 ## TDD 记录
 
@@ -26,6 +27,8 @@
 | Bootstrap RED 2 | 同上 | 退出码 1；有效 QML PASS，缺失 QML 错误返回 0，1 passed / 1 failed |
 | Bootstrap GREEN 2 | 同上 | 退出码 0；2 passed |
 | Core GREEN | `python -m pytest tests/core -v` | 退出码 0；5 passed，无 warning/error |
+| Review R-001 RED | `python -m pytest tests/core/test_architecture.py::test_relative_from_import_reports_forbidden_alias -v` | 退出码 1；期望两个相对 alias 违规，实际扫描结果为空 |
+| Review R-001 GREEN | 同上，然后 `python -m pytest tests/core -v` | 退出码 0；目标测试 1 passed，完整 core 6 passed |
 
 以上命令中的 `python` 均为表中 Python 3.12 venv 的绝对解释器路径。
 

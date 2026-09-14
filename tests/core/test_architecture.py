@@ -24,12 +24,17 @@ def find_forbidden_imports(
             if isinstance(node, ast.Import):
                 modules = [alias.name for alias in node.names]
             elif isinstance(node, ast.ImportFrom):
-                modules = [node.module] if node.module else []
+                prefix = "." * node.level
+                modules = (
+                    [f"{prefix}{node.module}"]
+                    if node.module
+                    else [f"{prefix}{alias.name}" for alias in node.names]
+                )
             else:
                 continue
 
             for module in modules:
-                if module.split(".", 1)[0] in forbidden_roots:
+                if module.lstrip(".").split(".", 1)[0] in forbidden_roots:
                     violations.append(
                         f"{path}:{node.lineno}: forbidden import {module}"
                     )
@@ -57,4 +62,16 @@ def test_ui_violation_reports_file_line_and_module(tmp_path: Path) -> None:
     source.write_text("import infrastructure.sqlite_repository\n", encoding="utf-8")
     assert find_forbidden_imports(tmp_path, UI_FORBIDDEN) == [
         f"{source}:1: forbidden import infrastructure.sqlite_repository"
+    ]
+
+
+def test_relative_from_import_reports_forbidden_alias(tmp_path: Path) -> None:
+    source = tmp_path / "relative_ui.py"
+    source.write_text(
+        "from . import infrastructure\nfrom .. import infrastructure\n",
+        encoding="utf-8",
+    )
+    assert find_forbidden_imports(tmp_path, UI_FORBIDDEN) == [
+        f"{source}:1: forbidden import .infrastructure",
+        f"{source}:2: forbidden import ..infrastructure",
     ]
