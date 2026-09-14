@@ -2,21 +2,21 @@
 id: TASK-004
 title: 验证 Windows 运行环境与打包路线
 kind: experiment
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: DeepSeek Harness
-owner: null
-reviewer: null
+owner: DeepSeek Harness
+reviewer: Codex
 depends_on: [TASK-002]
 base_commit: null
-branch: null
-worktree: null
+branch: agent/deepseek/TASK-004-windows-packaging
+worktree: G:/CODEX/New Manga.worktrees/TASK-004-deepseek
 integration_commit: null
 ---
 
 # TASK-004：验证 Windows 运行环境与打包路线
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已由用户授权，可与 TASK-003 在独立 worktree 并行；当前为 `ready`，Owner 在指定工作区核验基线后改为 `in_progress`。本 Task 只做隔离实验，不创建生产应用骨架，不释放 TASK-005 或其他后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -39,6 +39,7 @@ D02 §1/13；D07 §2/81～85/107；G18。D 编号对应 [文档索引](../00_IND
 - doc/research/TASK-004.md
 - doc/tasks/TASK-004.md
 - doc/handoffs/TASK-004-*.md
+- doc/reviews/TASK-004-*.md
 - verification/TASK-004/**
 
 ## 禁止范围
@@ -58,6 +59,8 @@ D02 §1/13；D07 §2/81～85/107；G18。D 编号对应 [文档索引](../00_IND
 
 不把当前机器 Python 版本直接视为项目选型；实验不得向生产 src 写代码。
 
+TASK-003 与 TASK-004 必须使用不同 DeepSeek 会话、worktree、虚拟环境、缓存和输出目录；不得切换或清理另一 Task 的 checkout。干净 Windows 环境不可取得时必须记录 `BLOCKED`，不能用当前开发机结果替代。
+
 如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
 
 ## 交付与运行记录
@@ -65,4 +68,4 @@ D02 §1/13；D07 §2/81～85/107；G18。D 编号对应 [文档索引](../00_IND
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-14 用户允许与 TASK-003 并行；Owner DeepSeek Harness，Reviewer Codex；ready，等待 Owner 在指定 worktree 开始。
