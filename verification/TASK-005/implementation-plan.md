@@ -32,7 +32,7 @@
 - Consumes: TASK-004 已验证的 Python 3.12.3 / Qt 6.11.2 / pytest 9.1.1 / PyInstaller 6.22.3 组合。
 - Produces: 仓库外 `G:/CODEX/New Manga.task-envs/TASK-005-py312` 解释器，供后续全部测试与验证使用。
 
-- [ ] **Step 1: 写入唯一 requirements 锁定**
+- [x] **Step 1: 写入唯一 requirements 锁定**
 
 `requirements.txt`：
 
@@ -70,7 +70,7 @@ build/
 dist/
 ```
 
-- [ ] **Step 2: 创建并安装 Python 3.12 隔离环境**
+- [x] **Step 2: 创建并安装 Python 3.12 隔离环境**
 
 Run:
 
@@ -81,7 +81,7 @@ py -3.12 -m venv 'G:/CODEX/New Manga.task-envs/TASK-005-py312'
 
 Expected: 两条命令退出码均为 0，安装不包含 `PySide6_Addons`、torch、transformers 或 onnxruntime。
 
-- [ ] **Step 3: 核对锁定环境**
+- [x] **Step 3: 核对锁定环境**
 
 Run:
 
@@ -93,7 +93,7 @@ Run:
 
 Expected: Python 3.12.3；`pip check` 为 `No broken requirements found.`；freeze 与两个 requirements 文件的闭包一致。
 
-- [ ] **Step 4: 提交依赖入口**
+- [x] **Step 4: 提交依赖入口**
 
 ```powershell
 git add -- .gitignore requirements.txt requirements-dev.txt
