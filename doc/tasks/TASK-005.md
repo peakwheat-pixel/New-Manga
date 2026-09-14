@@ -2,21 +2,21 @@
 id: TASK-005
 title: 建立最小工程入口与架构守卫
 kind: implementation
-status: proposed
+status: ready
 approval: approved
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
 depends_on: [TASK-002, TASK-003, TASK-004]
-base_commit: d761fc1e28c1f922595a0b09fc8a2ab3fe7172ba
-branch: null
-worktree: null
+base_commit: null
+branch: agent/codex/TASK-005-minimal-bootstrap
+worktree: G:/CODEX/New Manga.worktrees/TASK-005-codex
 integration_commit: null
 ---
 
 # TASK-005：建立最小工程入口与架构守卫
 
-本 Task 已获用户授权并批准方案 A；当前只完成书面规格，尚未建立实现分支/worktree，也未实施。用户确认本规格后，Codex 才登记实际分支/worktree 并进入 `ready`。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户授权，方案 A 与书面规格均已批准；Codex 已登记实现分支/worktree，状态为 `ready`。Owner 在指定 linked worktree 核验基线后写入实际 `base_commit` 并进入 `in_progress`。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -101,4 +101,4 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 用户授权 TASK-005 并批准方案 A；Owner=Codex，Reviewer=DeepSeek Harness，固定 `base_commit=d761fc1`。书面规格等待用户确认；实现分支/worktree 尚未创建，状态保持 proposed。
+- 最近状态：2026-09-14 用户审核通过书面规格，允许创建 worktree、编写实施计划并开始 TDD 实现；Owner=Codex，Reviewer=DeepSeek Harness。状态 `ready`，等待 Owner 接管时绑定实际基线。

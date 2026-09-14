@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-004 已完成并集成；其余 23 个任务保持 proposed / pending_user_review。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
+TASK-001～TASK-004 已完成并集成；仅 TASK-005 已释放为 `ready`，其余 22 个任务保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
