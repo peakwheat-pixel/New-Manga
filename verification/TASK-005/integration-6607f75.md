@@ -16,4 +16,14 @@
 | `git diff --name-only d65901b 6607f75` | PASS；18 个路径；未修改 TASK-006～TASK-027 |
 | merge | PASS；`ort` 无冲突 |
 
+### verify.ps1 完整复现命令
+
+固定 base/head 复跑所用完整命令如下。该命令在 `integration_commit=6607f75` 的主线（master）环境复跑：工作区当时 checkout `6607f75`，`-ReviewedHead` 显式传入 `f343008`（而非默认 `HEAD`），保证被验证对象严格为被审 head 而非 merge commit：
+
+```bash
+pwsh -NoProfile -File ./verification/TASK-005/verify.ps1 -BaseCommit d65901b953e6fb26043344ed3d668520847eb295 -ReviewedHead f3430080d88f07d789c21e76d5b5b4310fbf3458 -PythonExe 'G:/CODEX/New Manga.task-envs/TASK-005-py312/Scripts/python.exe'
+```
+
+实际结果以上表为准，保持不变：退出码 0；依赖检查（`pip check` 与 torch/transformers/onnxruntime 缺失断言）PASS；`tests/core` 6 tests passed；真实 QML smoke PASS。
+
 PyInstaller、干净 Windows VM、正常交互窗口、SQL、Provider、模型质量与性能仍为 `NOT_RUN` / `N/A`；本 Task 只证明最小工程入口和架构守卫，不证明业务功能或发布就绪。
