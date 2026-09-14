@@ -2,7 +2,7 @@
 id: TASK-003
 title: 补齐验收规格与测试素材规范
 kind: verification-design
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -28,10 +28,10 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 
 ## Acceptance Criteria
 
-- [ ] 审阅现有185条及所有组级要求，补齐未编号要求的稳定标识、执行方式、环境与证据口径；不降低 P0/P1。
-- [ ] 为日漫/韩漫/Webtoon/损坏图/透明PNG/Unicode/重复图/大metadata提供素材清单、许可与生成方案；未取得素材标缺失。
-- [ ] 为模型质量制定可审查的评估方法和待批准阈值，为性能固定运行次数/环境/P95口径；未测量不填结果。
-- [ ] 关闭 F-08：仅在 D02 §5.3、D04 §30.1、D11 §10 的派生状态图补齐与冻结契约一致的 `Blocked → Cancelled`，不引入其他状态或转换。
+- [x] 审阅现有185条及所有组级要求，补齐未编号要求的稳定标识、执行方式、环境与证据口径；不降低 P0/P1。
+- [x] 为日漫/韩漫/Webtoon/损坏图/透明PNG/Unicode/重复图/大metadata提供素材清单、许可与生成方案；未取得素材标缺失。
+- [x] 为模型质量制定可审查的评估方法和待批准阈值，为性能固定运行次数/环境/P95口径；未测量不填结果。
+- [x] 关闭 F-08：仅在 D02 §5.3、D04 §30.1、D11 §10 的派生状态图补齐与冻结契约一致的 `Blocked → Cancelled`，不引入其他状态或转换。
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
@@ -74,7 +74,7 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 用户批准 TASK-003 及最小设计；Owner DeepSeek Harness，Reviewer Codex；ready，等待 Owner 在指定 worktree 开始。
+- Handoff：[TASK-003-588383f](../handoffs/TASK-003-588383f.md)，固定 `base_commit=9472df5`、`reviewed_head=588383f`。
+- Review：尚无；等待 Codex 在固定 head 上写入 `doc/reviews/TASK-003-*.md`。Owner 不自审、不批准自己的交付。
+- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `588383f` 干净工作区退出码 0（8 条 PASS）；`git diff --check 9472df5 HEAD --` 退出码 0。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 最近状态：2026-09-14 Owner 交付验收规范、Fixture 清单、10 个 `ACG-*` 稳定标识与 F-08 状态边，内容提交 `588383f`，状态 `in_review`；其他 24 个 Task 保持 proposed。
