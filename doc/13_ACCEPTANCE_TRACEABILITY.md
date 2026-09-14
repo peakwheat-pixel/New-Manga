@@ -6,6 +6,8 @@
 
 验收方法、环境档位、证据口径、性能测量协议、模型阈值状态与组级执行方式由 [TASK-003 验收方法与素材规范](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md) 定义；本文件只维护追踪路由与当前结果，不复制这些方法或产品定义。素材与许可见 [Fixture Manifest](fixtures/MANIFEST.md)。
 
+**结果真值规则**：AC / ACG 的"当前结果"只在本文件或绑定固定 commit 的 Handoff / Review 报告中维护；结果只能取 `PASS / FAIL / BLOCKED / NOT_RUN / N/A` 之一，不写复合状态。方法规范与 Fixture 清单都不得出现结果副本或结果摘要。
+
 ## 编号条目
 
 | AC ID | 级别 | 原始标题 | 主责任 Task | 当前结果 | 当前证据 |
@@ -198,33 +200,53 @@
 
 ## 无独立编号的 AC 主题要求
 
-D08有61个AC主题标题，以下 10 个主题没有独立编号子项；不得因上表只提取编号而遗漏。TASK-003 已为它们分配稳定组标识 `ACG-*`（不发明新的产品 ID 或优先级）；执行方式、环境与证据口径见[验收方法与素材规范 §8](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)，本表只保留追踪回链。
+D08有61个AC主题标题，其中 10 个主题没有独立编号子项；不得因上表只提取编号而遗漏。TASK-003 已为全部未编号要求分配稳定组标识（不发明新的产品 ID 或优先级）：10 个零编号主题、7 个 D08 §68～§73/§76 全局规范、7 个扩展项，共 24 个。执行方式、环境与证据口径见[验收方法与素材规范 §8](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)，本表只保留追踪回链与结果。
+
+### 零编号 AC 主题（10）
 
 | 组标识 | 原主题 | D08章节 | 主责任Task | 要求 | 当前结果 |
 |---|---|---|---|---|---|
 | `ACG-DPI` | AC-DPI | §51 | [TASK-022](tasks/TASK-022.md) | 100～200%显示缩放与多屏可达性 | NOT_RUN |
 | `ACG-SMOKE` | AC-SMOKE | §53 | [TASK-027](tasks/TASK-027.md) | 干净Windows发布包完整主流程 | NOT_RUN |
 | `ACG-OFFLINE` | AC-OFFLINE | §56 | [TASK-026](tasks/TASK-026.md) | 离线本地能力可用、远程不可用状态 | NOT_RUN |
-| `ACG-PRIVACY` | AC-PRIVACY | §57 | [TASK-009](tasks/TASK-009.md) | 远程Provider数据类型提示 | NOT_RUN |
+| `ACG-PRIVACY` | AC-PRIVACY | §57 | [TASK-009](tasks/TASK-009.md) | Provider 设置页说明上传给远程 Provider 的数据类型 | NOT_RUN |
 | `ACG-SET` | AC-SET | §59 | [TASK-009](tasks/TASK-009.md) | 设置继承和值来源 | NOT_RUN |
 | `ACG-PROV` | AC-PROV | §60 | [TASK-011](tasks/TASK-011.md) | OCR/Translation/Inpaint/Render来源链 | NOT_RUN |
 | `ACG-ERROR` | AC-ERROR | §62 | [TASK-011](tasks/TASK-011.md) | 错误分类 | NOT_RUN |
 | `ACG-ERRUI` | AC-ERRUI | §63 | [TASK-013](tasks/TASK-013.md) | 错误在页面/进度/详情可定位 | NOT_RUN |
 | `ACG-AUTO` | AC-AUTO | §64 | [TASK-008](tasks/TASK-008.md) | Autosave条件性要求或明确保存 | NOT_RUN |
-| `ACG-SYNC` | AC-SYNC | §67 | [TASK-002](tasks/TASK-002.md) | 06/07增量同步与冻结Gate | PASS（契约层）：最小契约、覆盖矩阵与 V01～V19 已独立 Review 并集成；实际 Schema/产品测试仍不存在 |
+| `ACG-SYNC` | AC-SYNC | §67 | [TASK-002](tasks/TASK-002.md) | 06/07增量同步与冻结Gate | NOT_RUN |
 
-其他所有适用附加规则仍以D08正文为准：§68自动化最低覆盖、§69 UI/ViewModel最低覆盖、§70视觉、§71 Benchmark、§72数据安全、§73发布清单、§76 READY。稳定标识与验收方式已由 TASK-003 登记（`ACG-*` 共 10 个），TASK-026验证，TASK-027执行最终发布Gate。
+`ACG-SYNC` 证据：TASK-002 最小契约已独立批准（`b1b3f5d..885c9a9`）并由 `7927169` 集成。契约获批**只是证据**，不等于 Gate 通过——D08 §67 要求正式实现满足契约 §2～§10 并通过 §11 验证向量后才可通过该 Gate；当前无 Schema 与产品实现，因此结果为 `NOT_RUN`。
+
+### D08 未编号全局规范（§68～§73、§76）
+
+| 组标识 | D08章节 | 主责任Task | 要求 | 当前结果 |
+|---|---|---|---|---|
+| `ACG-AUTOTEST` | §68 | [TASK-026](tasks/TASK-026.md) | 自动化测试最低覆盖 18 类 | NOT_RUN |
+| `ACG-UITEST` | §69 | [TASK-026](tasks/TASK-026.md) | UI/ViewModel 最低覆盖 11 项 | NOT_RUN |
+| `ACG-VISUAL` | §70 | [TASK-022](tasks/TASK-022.md) | 手工视觉验收（DPI/双屏/长文本/多语言/状态） | NOT_RUN |
+| `ACG-BENCH` | §71 | [TASK-026](tasks/TASK-026.md) | 每个 Release Candidate 生成 benchmark-report.md | NOT_RUN |
+| `ACG-DATASAFE` | §72 | [TASK-026](tasks/TASK-026.md) | 数据安全 Gate 八项全 PASS，任一 FAIL 阻塞发布 | NOT_RUN |
+| `ACG-RELEASECHECK` | §73 | [TASK-027](tasks/TASK-027.md) | 最终 Release Checklist 18 项 | NOT_RUN |
+| `ACG-READY` | §76 | [TASK-027](tasks/TASK-027.md) | READY 判定条件 | NOT_RUN |
+
+D08 §74（建议验收结果目录）与 §75（verification-summary.md 推荐格式）为建议性章节，**不作为独立验收项**，理由见规范 §8.2；其内容要求已由 `ACG-RELEASECHECK` 与 `ACG-READY` 覆盖。
+
+标识合计 24 个（10 + 7 + 7）；TASK-026 验证，TASK-027 执行最终发布 Gate。
 
 ## 01～07 中需补充验收的内容
 
-| 已有来源 | 内容 | 后续处理 |
-|---|---|---|
-| D01 §2；D04 §8；D05 §52 | 图片/文件夹以外的 PDF、MOBI、网页导入 | TASK-024定义支持矩阵/AC，TASK-023实现 |
-| D01 §2；D02 §12；D07 §72 | Plugin/Hooks、AI生成插件Agent | TASK-024确认条件和AC，TASK-025按获批范围实现 |
-| D01 §2；D05 §48 | 字体上传和资源处理 | TASK-024确认AC，TASK-022实现 |
-| D01 §2；D02 §11 | Sakura服务监控、模型/设备就绪状态 | TASK-024明确监控范围，TASK-019落实批准部分 |
-| D06 §6/8 | 检测、配色和SourceStyle本身的正确性 | TASK-003补测试向量，TASK-016/019与TASK-014验证 |
-| D03/D06，G06～G13 | 状态、复合写回、Pin/TM/Review、SFX等未闭合契约 | TASK-002修订设计；TASK-003补精确AC |
-| D07目标数值与D08发布要求 | SHOULD/P1/豁免的口径及基准环境 | TASK-001/003核对并形成用户可审核规则，TASK-026实测 |
+以下条目尚未成为编号 AC，已分配稳定扩展标识；执行方式见[验收方法与素材规范 §8.4](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)。
+
+| 组标识 | 已有来源 | 内容 | 后续处理 | 当前结果 |
+|---|---|---|---|---|
+| `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | 图片/文件夹以外的 PDF、MOBI、网页导入 | TASK-024定义支持矩阵/AC，TASK-023实现 | NOT_RUN |
+| `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin/Hooks、AI生成插件Agent | TASK-024确认条件和AC，TASK-025按获批范围实现 | NOT_RUN |
+| `ACG-EXT-FONT` | D01 §2；D05 §48 | 字体上传和资源处理 | TASK-024确认AC，TASK-022实现 | NOT_RUN |
+| `ACG-EXT-SAKURA` | D01 §2；D02 §11 | Sakura服务监控、模型/设备就绪状态 | TASK-024明确监控范围，TASK-019落实批准部分 | NOT_RUN |
+| `ACG-EXT-DETECT` | D06 §6/8 | 检测、配色和SourceStyle本身的正确性 | 质量方法见规范 §7；TASK-016/019与TASK-014验证 | NOT_RUN |
+| `ACG-EXT-CONTRACT` | D03/D06，G06～G13 | 状态、复合写回、Pin/TM/Review、SFX等未闭合契约 | TASK-002已冻结契约；精确AC待TASK-003/024补齐 | NOT_RUN |
+| `ACG-EXT-NFR` | D07目标数值与D08发布要求 | SHOULD/P1/豁免的口径及基准环境 | TASK-001/003核对并形成用户可审核规则，TASK-026实测 | NOT_RUN |
 
 没有明确验收不等于没有需求。新增/延期/豁免必须回写权威文档并保留用户决定，不能静默标N/A。算法实验通过也不替代真实产品端到端验收。
