@@ -2,7 +2,7 @@
 id: TASK-005
 title: 建立最小工程入口与架构守卫
 kind: implementation
-status: in_review
+status: changes_requested
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-005：建立最小工程入口与架构守卫
 
-本 Task 已获用户授权，方案 A 与书面规格均已批准；Codex 已在指定 linked worktree 核验基线并进入 `in_progress`。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户授权，方案 A 与书面规格均已批准；首次独立 Review 对架构守卫提出一个 P1，当前为 `changes_requested`。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -28,7 +28,7 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 
 - [x] 采用 TASK-004 获批版本提供可重复安装/运行/测试入口；只使用精确版本 requirements 文件锁定依赖，不引入第二套依赖/锁定工具。（`requirements*.txt` 精确锁定；Python 3.12.3 `pip check` 与完整验证 PASS）
 - [x] Core 无 torch/transformers 等重型可选依赖仍可启动；按需建模块，不批量生成空实现。（干净 TASK-005 venv 中三者均缺失，真实 QML smoke PASS；只创建 bootstrap/domain/ui 当前必需边界）
-- [x] 建立 Domain 禁止导入 Qt/SQLite/ML、UI 禁止直连具体存储/Provider 的可运行守卫。（stdlib AST 真实扫描与两个合成违规测试 PASS）
+- [ ] 建立 Domain 禁止导入 Qt/SQLite/ML、UI 禁止直连具体存储/Provider 的可运行守卫。（首次 Review R-001：`ImportFrom.module=None` 的相对形式存在漏检，修订后复审）
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 已批准设计：方案 A
@@ -99,6 +99,6 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 ## 交付与运行记录
 
 - Handoff：[TASK-005-e914f39](../handoffs/TASK-005-e914f39.md)，绑定 `base_commit=d65901b` / `reviewed_head=e914f39`。
-- Review：尚无；等待 DeepSeek Harness 在独立 linked worktree 审查固定 head，只写 `doc/reviews/TASK-005-e914f39.md`。
+- Review：DeepSeek Harness 对首次 head 给出 [changes_requested](../reviews/TASK-005-e914f39.md)：P0=0、P1=1（R-001）、P2=3（R-002～R-004）。
 - 实际执行/实验/测试：[作者验证](../../verification/TASK-005/author-verification.md)；固定 head 复跑 `verify.ps1` 退出码 0，5 passed。
-- 最近状态：2026-09-14 `reviewed_head=e914f39a0c721f717c45a01229cd6d0b82f0045e` 已固定；Task 状态 `in_progress → in_review`。被审实现不再修改，等待 DeepSeek Harness 独立 Review；TASK-006～TASK-027 未释放。
+- 最近状态：2026-09-14 首次 Review commit `480f432e0e19e78aaebf8474857dc91c47fa208a` 已原样入库；decision=`changes_requested`。Codex 将用 TDD 修复 R-001，澄清 R-002/R-003，并把 R-004 以“当前仅 CLI 调用，避免把应用参数传给 Qt”的理由 deferred。任何修订均生成新 reviewed head 与 Handoff；TASK-006～TASK-027 未释放。
