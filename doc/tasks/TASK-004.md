@@ -8,7 +8,7 @@ suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
 reviewer: Codex
 depends_on: [TASK-002]
-base_commit: null
+base_commit: 20a02321ce72e9f12fa44296612cbdb42e412563
 branch: agent/deepseek/TASK-004-windows-packaging
 worktree: G:/CODEX/New Manga.worktrees/TASK-004-deepseek
 integration_commit: null
