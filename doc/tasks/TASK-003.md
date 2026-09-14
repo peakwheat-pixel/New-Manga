@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-003：补齐验收规格与测试素材规范
 
-本 Task 已由用户授权并分派给 DeepSeek Harness；当前为 `ready`，Owner 在指定 linked worktree 核验基线后改为 `in_progress`。本 Task 不开发应用功能，不释放任何后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已由用户授权并分派给 DeepSeek Harness；当前状态以 frontmatter 为准（`in_review`，等待 Codex 独立 Review）。Owner 已在指定 linked worktree 完成基线核验、交付与 Review 修订。本 Task 不开发应用功能，不释放任何后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 

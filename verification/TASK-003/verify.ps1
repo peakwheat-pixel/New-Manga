@@ -138,6 +138,18 @@ try {
     if ($taskFixtures -match '(?m)^planned\s') { throw 'Fixture manifest still defines a planned state' }
     $fxRows = @([regex]::Matches($taskFixtures, '(?m)^\| `(?:FX|DS)-[A-Z0-9-]+` \|.*$'))
     if ($fxRows.Count -lt 20) { throw "Fixture manifest: expected at least 20 inventory rows, found $($fxRows.Count)" }
+    $expectedFx = @(
+        'FX-MANGA-BW-001', 'FX-MANGA-SCREEN-002', 'FX-MANGA-SFX-003', 'FX-MANGA-TB-004', 'FX-KR-WEBTOON-005',
+        'FX-WEBTOON-LONG-006', 'FX-PNG-ALPHA-007', 'FX-JPEG-008', 'FX-UNICODE-009', 'FX-DUP-010',
+        'FX-CORRUPT-011', 'FX-MANY-SMALL-012', 'FX-LARGE-SINGLE-013', 'FX-META-LARGE-014',
+        'DS-A', 'DS-B', 'DS-B2', 'DS-C', 'DS-D', 'DS-E'
+    )
+    $fxIds = @($fxRows | ForEach-Object { $_.Value.Trim('|').Split('|')[0].Trim().Trim('`') })
+    if ($fxIds.Count -ne ($fxIds | Select-Object -Unique).Count) { throw 'Fixture manifest contains duplicate IDs' }
+    if ((($fxIds | Sort-Object) -join ',') -cne (($expectedFx | Sort-Object) -join ',')) {
+        throw 'Fixture ID set does not match the frozen 20-ID set'
+    }
+    $fxAllowlist = @('generated / 自制（项目生成）', 'acquired / CC0', 'acquired / 用户授权')
     $fxAvailable = 0
     foreach ($row in $fxRows) {
         $cells = @($row.Value.Trim('|').Split('|') | ForEach-Object { $_.Trim() })
@@ -146,27 +158,33 @@ try {
         if ($fxState -notin @('missing', 'available', 'rejected')) {
             throw "Fixture row has an unknown state: $fxId -> $fxState"
         }
+        if ($fxAllowlist -notcontains $fxSource) {
+            throw "Fixture source is not allowlisted: $fxId -> '$fxSource'"
+        }
         if ($fxState -eq 'missing') {
             if ($fxHash -ne 'NOT_AVAILABLE') { throw "Fixture row claims a content hash before acquisition: $fxId" }
         }
         if ($fxState -eq 'available') {
             $fxAvailable++
-            if ($fxSource -match '待定') { throw "available fixture has unconfirmed licence: $fxId" }
             if ($fxHash -notmatch '^[0-9a-f]{64}$') { throw "available fixture lacks a real SHA256: $fxId" }
             if ($fxMethod.Length -lt 4 -or $fxMethod -match '^(TBD|TODO|待补|N/?A|-|—|无)$') {
                 throw "available fixture lacks a reproducible acquisition method: $fxId"
             }
-            if ($fxSource -match '^generated' -and $fxMethod -notmatch '脚本') {
-                throw "generated fixture must name its generation script: $fxId"
+            if ($fxSource -like 'generated*') {
+                if ($fxMethod -notmatch '\.(py|ps1|sh|js|cmd)' -or $fxMethod -notmatch '(--|参数|seed)') {
+                    throw "generated fixture must name its script path and parameters: $fxId"
+                }
             }
-            if ($fxSource -match '^acquired' -and $fxMethod -notmatch '取得|授权|来源') {
-                throw "acquired fixture must name its acquisition path: $fxId"
+            if ($fxSource -like 'acquired*') {
+                if ($fxMethod -notmatch '取得|来源' -or $fxMethod -notmatch '版本' -or $fxMethod -notmatch '授权') {
+                    throw "acquired fixture must document acquisition path, version and licence basis: $fxId"
+                }
             }
         }
     }
     if ($taskFixtures -notmatch 'NOT_AVAILABLE') { throw 'Fixture manifest: unacquired hash marker missing' }
     if ($taskFixtures -notmatch '(?m)^\| 未取得（missing） \|') { throw 'Fixture manifest: missing-state summary row absent' }
-    Write-Output "PASS: fixture manifest fields/states, $($fxRows.Count) rows, hash discipline and licence rule ($fxAvailable available)"
+    Write-Output "PASS: fixture manifest fields/states, frozen 20-ID set, source allowlist, hash and method discipline ($fxAvailable available)"
 
     # --- 9. Capacity routing: every numbered AC-CAP has a dataset -------------
     foreach ($pair in @('AC-CAP-001→DS-E', 'AC-CAP-002→DS-B2', 'AC-CAP-003→DS-C', 'AC-CAP-004→DS-D')) {
