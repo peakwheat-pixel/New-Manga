@@ -14,8 +14,8 @@
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
 | 文档版本状态 | TASK-002 reviewed head `885c9a9` 已由 merge commit `7927169` 集成 master |
-| 任务分派 / 执行 | TASK-001：done；TASK-002：done；TASK-003、TASK-004：ready，Owner DeepSeek Harness，Reviewer Codex；其余 23 个 Task 保持 proposed |
-| ZCode / DeepSeek Harness 连接 | DeepSeek 已在同仓 linked worktree 接入；ZCode 尚未接入或调度 |
+| 任务分派 / 执行 | TASK-001：done；TASK-002：done；TASK-003：ready，Owner DeepSeek Harness、Reviewer Codex；TASK-004：ready，Owner ZCode、Reviewer DeepSeek Harness；其余 23 个 Task 保持 proposed |
+| ZCode / DeepSeek Harness 连接 | DeepSeek 已为 TASK-003 接入；ZCode 已分派 TASK-004 独立 linked worktree，等待首次接入 |
 | 本次 Review | TASK-002 已批准并集成；F-08 纳入 TASK-003，限于同步 D02/D04/D11 的 `Blocked → Cancelled` 派生状态边；F-09 已由 master `c39ba99` 关闭 |
 | 产品发布状态 | NOT READY，无可发布应用 |
 
@@ -29,7 +29,7 @@
 
 TASK-003 执行工作区固定为 `G:/CODEX/New Manga.worktrees/TASK-003-deepseek`；分支 `agent/deepseek/TASK-003-verification-spec`。这是 Owner 工作区，后续由 Codex 在固定交付 head 上独立 Review。
 
-TASK-004 执行工作区固定为 `G:/CODEX/New Manga.worktrees/TASK-004-deepseek`；分支 `agent/deepseek/TASK-004-windows-packaging`。TASK-003 与 TASK-004 使用不同 DeepSeek 会话、worktree、虚拟环境和实验输出；任何单一会话一次只写一个 checkout。
+TASK-004 执行工作区固定为 `G:/CODEX/New Manga.worktrees/TASK-004-zcode`；分支 `agent/zcode/TASK-004-windows-packaging`。TASK-003 由 DeepSeek Harness 执行，TASK-004 由 ZCode 执行；二者使用不同 worktree、虚拟环境、缓存和实验输出。
 
 用户审核后，Codex在本文件追加日期、决定原文摘要和允许启动的 Task；再在相应 Task 记录 release、owner、base_commit。若仅同意接管，保持其余 Task 为 proposed。
 
@@ -42,3 +42,4 @@ TASK-004 执行工作区固定为 `G:/CODEX/New Manga.worktrees/TASK-004-deepsee
 | 2026-09-13 | 用户 | TASK-001 审核通过；允许启动 TASK-002，仅冻结最小数据与执行契约；其他 Task 和功能开发继续冻结。TASK-002 后续设计取舍均批准，不再逐项询问 | 用户本次审核指令 |
 | 2026-09-14 | 用户 | TASK-002 审核通过；允许启动 TASK-003，并在其范围内关闭 F-08；批准“单一权威验收规范 + Fixture Manifest + 现有文档回链”设计。其他 Task 和功能开发继续冻结 | 用户本次审核指令 |
 | 2026-09-14 | 用户 | 允许 TASK-004 与 TASK-003 并行执行；其他 Task 和功能开发继续冻结 | 用户本次审核指令 |
+| 2026-09-14 | 用户 | 澄清 TASK-004 应分派给 ZCode，而非 DeepSeek Harness；并行与冻结范围不变 | 用户本次纠正指令 |

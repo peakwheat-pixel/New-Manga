@@ -4,13 +4,13 @@ title: 验证 Windows 运行环境与打包路线
 kind: experiment
 status: ready
 approval: approved
-suggested_owner: DeepSeek Harness
-owner: DeepSeek Harness
-reviewer: Codex
+suggested_owner: ZCode
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-002]
-base_commit: 20a02321ce72e9f12fa44296612cbdb42e412563
-branch: agent/deepseek/TASK-004-windows-packaging
-worktree: G:/CODEX/New Manga.worktrees/TASK-004-deepseek
+base_commit: null
+branch: agent/zcode/TASK-004-windows-packaging
+worktree: G:/CODEX/New Manga.worktrees/TASK-004-zcode
 integration_commit: null
 ---
 
@@ -59,7 +59,7 @@ D02 §1/13；D07 §2/81～85/107；G18。D 编号对应 [文档索引](../00_IND
 
 不把当前机器 Python 版本直接视为项目选型；实验不得向生产 src 写代码。
 
-TASK-003 与 TASK-004 必须使用不同 DeepSeek 会话、worktree、虚拟环境、缓存和输出目录；不得切换或清理另一 Task 的 checkout。干净 Windows 环境不可取得时必须记录 `BLOCKED`，不能用当前开发机结果替代。
+TASK-003 与 TASK-004 分别由 DeepSeek Harness 与 ZCode 执行，必须使用不同 worktree、虚拟环境、缓存和输出目录；不得切换或清理另一 Task 的 checkout。干净 Windows 环境不可取得时必须记录 `BLOCKED`，不能用当前开发机结果替代。
 
 如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
 
@@ -68,4 +68,4 @@ TASK-003 与 TASK-004 必须使用不同 DeepSeek 会话、worktree、虚拟环�
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 用户允许与 TASK-003 并行；Owner DeepSeek Harness，Reviewer Codex；ready，等待 Owner 在指定 worktree 开始。
+- 最近状态：2026-09-14 用户澄清本任务分派给 ZCode；Reviewer DeepSeek Harness；ready，等待 Owner 在指定 worktree 开始。
