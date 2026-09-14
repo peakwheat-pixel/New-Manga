@@ -74,7 +74,7 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 
 ## 交付与运行记录
 
-- Handoff：[TASK-003-f620c69](../handoffs/TASK-003-f620c69.md)，固定 `base_commit=9472df5`、`reviewed_head=f620c69`（取代 `6caefe1`；首次交付为 `588383f`）。
-- Review：第一次 Review（commit `f56bef4`，`doc/reviews/TASK-003-588383f.md`，P1×7/P2×3）由 R-001～R-010 处置；第二次 Review（commit `8f24be4`，`doc/reviews/TASK-003-6caefe1.md`，P1×1/P2×3）由 R-011～R-014 处置。两份报告均位于 Reviewer 分支，不在本分支。Owner 不自审、不批准自己的交付。
-- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `f620c69` 干净工作区退出码 0（12 条 PASS）；`git diff --check 9472df5 f620c69 --` 退出码 0；F-08 三文件 3 新增 / 0 删除。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
-- 最近状态：2026-09-14 按第二次 Review 修订（删除 `planned` 状态并拒绝绕过、`available` 三项条件校验、固定 24-ID 集合、派生文档不再复制 D08 条目数量），内容提交 `f620c69`，状态 `in_review`；其他 24 个 Task 保持 proposed。
+- Handoff：[TASK-003-9c6a73b](../handoffs/TASK-003-9c6a73b.md)，固定 `base_commit=9472df5`、`reviewed_head=9c6a73b`（取代 `f620c69`；此前交付为 `588383f`、`6caefe1`）。
+- Review：前三次 Review 均由 Codex 完成（`f56bef4`→R-001～R-010、`8f24be4`→R-011～R-014、`84795fb`→R-015～R-018）；报告位于 Reviewer 分支，不在本分支。Owner 不自审、不批准自己的交付。
+- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `9c6a73b` 干净工作区退出码 0（12 条 PASS）；`git diff --check 9472df5 9c6a73b --` 退出码 0；F-08 三文件 3 新增 / 0 删除。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 最近状态：2026-09-14 按第三次 Review 修订（来源 allowlist 拒绝未知/未授权/待定、固定 20 个 Fixture ID 并拒绝重复、正文状态措辞对齐 frontmatter、generated/acquired 生成方式要求），内容提交 `9c6a73b`，状态 `in_review`；其他 24 个 Task 保持 proposed。
