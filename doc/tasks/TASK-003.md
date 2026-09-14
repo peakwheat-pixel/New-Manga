@@ -2,7 +2,7 @@
 id: TASK-003
 title: 补齐验收规格与测试素材规范
 kind: verification-design
-status: ready
+status: in_review
 approval: approved
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-003：补齐验收规格与测试素材规范
 
-本 Task 已由用户授权并分派给 DeepSeek Harness；当前为 `ready`，Owner 在指定 linked worktree 核验基线后改为 `in_progress`。本 Task 不开发应用功能，不释放任何后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已由用户授权并分派给 DeepSeek Harness；当前状态以 frontmatter 为准（`in_review`，等待 Codex 独立 Review）。Owner 已在指定 linked worktree 完成基线核验、交付与 Review 修订。本 Task 不开发应用功能，不释放任何后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -28,10 +28,10 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 
 ## Acceptance Criteria
 
-- [ ] 审阅现有185条及所有组级要求，补齐未编号要求的稳定标识、执行方式、环境与证据口径；不降低 P0/P1。
-- [ ] 为日漫/韩漫/Webtoon/损坏图/透明PNG/Unicode/重复图/大metadata提供素材清单、许可与生成方案；未取得素材标缺失。
-- [ ] 为模型质量制定可审查的评估方法和待批准阈值，为性能固定运行次数/环境/P95口径；未测量不填结果。
-- [ ] 关闭 F-08：仅在 D02 §5.3、D04 §30.1、D11 §10 的派生状态图补齐与冻结契约一致的 `Blocked → Cancelled`，不引入其他状态或转换。
+- [x] 审阅现有185条及所有组级要求，补齐未编号要求的稳定标识、执行方式、环境与证据口径；不降低 P0/P1。
+- [x] 为日漫/韩漫/Webtoon/损坏图/透明PNG/Unicode/重复图/大metadata提供素材清单、许可与生成方案；未取得素材标缺失。
+- [x] 为模型质量制定可审查的评估方法和待批准阈值，为性能固定运行次数/环境/P95口径；未测量不填结果。
+- [x] 关闭 F-08：仅在 D02 §5.3、D04 §30.1、D11 §10 的派生状态图补齐与冻结契约一致的 `Blocked → Cancelled`，不引入其他状态或转换。
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
@@ -74,7 +74,7 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 用户批准 TASK-003 及最小设计；Owner DeepSeek Harness，Reviewer Codex；ready，等待 Owner 在指定 worktree 开始。
+- Handoff：[TASK-003-9c6a73b](../handoffs/TASK-003-9c6a73b.md)，固定 `base_commit=9472df5`、`reviewed_head=9c6a73b`（取代 `f620c69`；此前交付为 `588383f`、`6caefe1`）。
+- Review：前三次 Review 均由 Codex 完成（`f56bef4`→R-001～R-010、`8f24be4`→R-011～R-014、`84795fb`→R-015～R-018）；报告位于 Reviewer 分支，不在本分支。Owner 不自审、不批准自己的交付。
+- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `9c6a73b` 干净工作区退出码 0（12 条 PASS）；`git diff --check 9472df5 9c6a73b --` 退出码 0；F-08 三文件 3 新增 / 0 删除。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 最近状态：2026-09-14 按第三次 Review 修订（来源 allowlist 拒绝未知/未授权/待定、固定 20 个 Fixture ID 并拒绝重复、正文状态措辞对齐 frontmatter、generated/acquired 生成方式要求），内容提交 `9c6a73b`，状态 `in_review`；其他 24 个 Task 保持 proposed。

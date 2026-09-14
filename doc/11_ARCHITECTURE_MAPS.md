@@ -272,6 +272,7 @@ stateDiagram-v2
     pending --> running: 调度
     pending --> blocked: 无可运行单元且存在可解除阻塞
     blocked --> pending: 条件解除并重新规划
+    blocked --> cancelled: stop
     running --> paused: pause请求且到安全边界
     paused --> running: continue并验证断点
     paused --> cancelled: stop
