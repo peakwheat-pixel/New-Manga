@@ -2,7 +2,7 @@
 id: TASK-004
 title: 验证 Windows 运行环境与打包路线
 kind: experiment
-status: in_review
+status: done
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -11,12 +11,12 @@ depends_on: [TASK-002]
 base_commit: 8addf1b7d87c07f51d3acf8275030375be08adda
 branch: agent/zcode/TASK-004-windows-packaging
 worktree: G:/CODEX/New Manga.worktrees/TASK-004-zcode
-integration_commit: null
+integration_commit: a501372dd09086e93f86d41937c43cb41e41e563
 ---
 
 # TASK-004：验证 Windows 运行环境与打包路线
 
-本 Task 已由用户授权，可与 TASK-003 在独立 worktree 并行；当前为 `ready`，Owner 在指定工作区核验基线后改为 `in_progress`。本 Task 只做隔离实验，不创建生产应用骨架，不释放 TASK-005 或其他后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已完成独立 Review 与 Codex 集成验证，状态为 `done`。本 Task 只包含隔离实验，未创建生产应用骨架，也未自动释放 TASK-005 或其他后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -29,7 +29,7 @@ D02 §1/13；D07 §2/81～85/107；G18。D 编号对应 [文档索引](../00_IND
 - [x] 在隔离实验目录验证 Python/PySide6/QML/pytest/PyInstaller 的具体兼容版本，记录 OS/架构与准确命令。（PASS；Python 3.12.3 / 3.14.0 × PySide6 6.11.2 × pytest 9.1.1 × PyInstaller 6.22.3，见 [research §3～§4](../research/TASK-004.md)）
 - [x] 无重型 AI 依赖能打开最小 QML 验证窗口；打包 onedir 在可取得的干净 Windows 环境验证，否则明确 BLOCKED。（QML 真实窗口 ×2 个 Python 版本、onedir 构建与无开发 PATH 启动均 PASS；干净 Windows 机器不可得，已明确 [BLOCKED](../research/TASK-004.md) 并附解除条件）
 - [x] 给出 Core/可选 ML 依赖分离、字体/Qt资源/路径方案和锁定版本建议；由 Codex审核后供工程使用。（[research §5](../research/TASK-004.md) Proposal，含 Essentials-only 实测证据）
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Handoff 已交付 [TASK-004-18a9dff](../handoffs/TASK-004-18a9dff.md)；待 DeepSeek Review + Codex 集成后本 Task 方可 done）
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（最终 Handoff：[TASK-004-181a356](../handoffs/TASK-004-181a356.md)）
 
 ## 允许修改范围
 
@@ -65,8 +65,9 @@ TASK-003 与 TASK-004 分别由 DeepSeek Harness 与 ZCode 执行，必须使用
 
 ## 交付与运行记录
 
-- Handoff：[TASK-004-18a9dff](../handoffs/TASK-004-18a9dff.md)（delivery_head=`18a9dff83fc43a4c5f1fcd7be1aa0a7fe850cf96`）。
-- Review：尚无；等待 DeepSeek Harness 独立 Review，报告将写入 `doc/reviews/TASK-004-*.md`（Owner 不写该路径）。
+- Handoff：[TASK-004-181a356](../handoffs/TASK-004-181a356.md)（delivery_head=`181a356cdb91725aa63961d123605ac179074286`）。
+- Review：DeepSeek Harness 最终复审 [approved](../reviews/TASK-004-181a356.md)（commit `5f4db0f`）；R-001 fixed，R-002 deferred。干净 Windows 仍是发布 Gate 的 `BLOCKED`，不伪装为已验证。
 - 实际执行/实验/测试：[research/TASK-004.md](../research/TASK-004.md)（结果总表 E1～E18）+ [verification/TASK-004](../../verification/TASK-004/)（env_report.txt 与 logs/）。
-- 最近状态：2026-09-14（修订轮）按 Review R-001 收口：`181a356` 删除 `env_report.txt:14` 行尾空格（纯空白修订，`git diff -w` 为空；`git diff --check 8addf1b 181a356` 退出码 0）。R-001 fixed；R-002 deferred，附"Handoff 证据必须入库"约束声明（见 [Handoff 181a356](../handoffs/TASK-004-181a356.md)）。本轮产品与打包实验 NOT_RUN（纯格式修订）。状态保持 in_review，等待 DeepSeek 最小复审后交 Codex 集成。
+- 集成：Codex 以 merge commit `a501372dd09086e93f86d41937c43cb41e41e563` 串行集成。Python 3.12 QML、pytest（3 passed）、Qt 资源、Python 3.14 QML、Essentials-only QML、PyInstaller onedir 正常启动及仅系统 PATH 启动均 PASS。
+- 集成诊断：首次 Codex 打包被桌面运行时注入 PATH 中的 ICU/UCRT DLL 污染并导致 QtCore 加载失败；移除该运行时 PATH 后重建 PASS，且污染 DLL 未进入最终实验产物。该结果不改变干净 Windows 机器验证的 `BLOCKED` 状态。
 - 最近状态（历史）：2026-09-14 ZCode 完成全部计划内隔离实验：Python 3.12.3 / 3.14.0 + PySide6 6.11.2 + pytest 9.1.1（3.12 另加 PyInstaller 6.22.3）下，QML 真实窗口启停、Qt DLL/plugin 完整性、pytest、onedir 构建与启动（含清除开发 PATH 模拟）全部 PASS；`PySide6_Essentials` 单独支撑 QML PASS；干净 Windows 环境验证 BLOCKED（环境不可得，未用开发机结果替代）。reviewed_head=`18a9dff`。状态 in_progress → in_review，等待独立 Review。

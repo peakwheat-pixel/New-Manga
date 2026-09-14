@@ -2,7 +2,7 @@
 id: TASK-003
 title: 补齐验收规格与测试素材规范
 kind: verification-design
-status: in_review
+status: done
 approval: approved
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,12 +11,12 @@ depends_on: [TASK-002]
 base_commit: 9472df5c44a1bad24cda639201b0824a9ea5eecc
 branch: agent/deepseek/TASK-003-verification-spec
 worktree: G:/CODEX/New Manga.worktrees/TASK-003-deepseek
-integration_commit: null
+integration_commit: db269e98aa6783151f86ed922691840f52930afc
 ---
 
 # TASK-003：补齐验收规格与测试素材规范
 
-本 Task 已由用户授权并分派给 DeepSeek Harness；当前状态以 frontmatter 为准（`in_review`，等待 Codex 独立 Review）。Owner 已在指定 linked worktree 完成基线核验、交付与 Review 修订。本 Task 不开发应用功能，不释放任何后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已完成独立 Review 与 Codex 集成验证，状态为 `done`。本 Task 未开发应用功能，也未自动释放任何后续 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -32,7 +32,7 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 - [x] 为日漫/韩漫/Webtoon/损坏图/透明PNG/Unicode/重复图/大metadata提供素材清单、许可与生成方案；未取得素材标缺失。
 - [x] 为模型质量制定可审查的评估方法和待批准阈值，为性能固定运行次数/环境/P95口径；未测量不填结果。
 - [x] 关闭 F-08：仅在 D02 §5.3、D04 §30.1、D11 §10 的派生状态图补齐与冻结契约一致的 `Blocked → Cancelled`，不引入其他状态或转换。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
 
@@ -75,6 +75,6 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 ## 交付与运行记录
 
 - Handoff：[TASK-003-9c6a73b](../handoffs/TASK-003-9c6a73b.md)，固定 `base_commit=9472df5`、`reviewed_head=9c6a73b`（取代 `f620c69`；此前交付为 `588383f`、`6caefe1`）。
-- Review：前三次 Review 均由 Codex 完成（`f56bef4`→R-001～R-010、`8f24be4`→R-011～R-014、`84795fb`→R-015～R-018）；报告位于 Reviewer 分支，不在本分支。Owner 不自审、不批准自己的交付。
-- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `9c6a73b` 干净工作区退出码 0（12 条 PASS）；`git diff --check 9472df5 9c6a73b --` 退出码 0；F-08 三文件 3 新增 / 0 删除。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
-- 最近状态：2026-09-14 按第三次 Review 修订（来源 allowlist 拒绝未知/未授权/待定、固定 20 个 Fixture ID 并拒绝重复、正文状态措辞对齐 frontmatter、generated/acquired 生成方式要求），内容提交 `9c6a73b`，状态 `in_review`；其他 24 个 Task 保持 proposed。
+- Review：前三次 Review 由 Codex 请求修订（`f56bef4`→R-001～R-010、`8f24be4`→R-011～R-014、`84795fb`→R-015～R-018）；最终固定 head `9c6a73b` 的独立 Review 为 [approved](../reviews/TASK-003-9c6a73b.md)（commit `658a0ea`）。R-019 延后到首个真实 Fixture 入库 Task 处理，不阻塞本设计任务。
+- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `9c6a73b` 独立干净检出退出码 0（12 条 PASS）；`git diff --check 9472df5 9c6a73b --` 退出码 0；20 个 Fixture ID、来源 allowlist、F-08 三文件 3 新增 / 0 删除均独立核验通过。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 集成：Codex 以 merge commit `db269e98aa6783151f86ed922691840f52930afc` 串行集成；被审路径与 owner head 树一致，仓库 Markdown 链接与围栏检查通过。TASK-003 的范围脚本绑定原始 base，合并后的 master 含更早并行授权元数据，故不以 master 重跑结果替代固定 head 的独立 PASS。
