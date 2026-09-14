@@ -85,6 +85,16 @@ try {
     $acgGlobal = @($specAcg | Where-Object { $_ -in @('ACG-AUTOTEST', 'ACG-UITEST', 'ACG-VISUAL', 'ACG-BENCH', 'ACG-DATASAFE', 'ACG-RELEASECHECK', 'ACG-READY') })
     if ($acgExt.Count -ne 7) { throw "Expected 7 ACG-EXT identifiers, found $($acgExt.Count)" }
     if ($acgGlobal.Count -ne 7) { throw "Expected 7 D08 global-spec ACG identifiers, found $($acgGlobal.Count)" }
+    $expectedAcg = @(
+        'ACG-DPI', 'ACG-SMOKE', 'ACG-OFFLINE', 'ACG-PRIVACY', 'ACG-SET', 'ACG-PROV', 'ACG-ERROR', 'ACG-ERRUI', 'ACG-AUTO', 'ACG-SYNC',
+        'ACG-AUTOTEST', 'ACG-UITEST', 'ACG-VISUAL', 'ACG-BENCH', 'ACG-DATASAFE', 'ACG-RELEASECHECK', 'ACG-READY',
+        'ACG-EXT-IMPORT', 'ACG-EXT-PLUGIN', 'ACG-EXT-FONT', 'ACG-EXT-SAKURA', 'ACG-EXT-DETECT', 'ACG-EXT-CONTRACT', 'ACG-EXT-NFR'
+    )
+    foreach ($tableAcg in @($specAcg, $traceAcg)) {
+        if ((($tableAcg | Sort-Object) -join ',') -cne (($expectedAcg | Sort-Object) -join ',')) {
+            throw 'ACG identifier set does not match the frozen 24-ID set'
+        }
+    }
     if ($taskTrace -match '(?m)^\| AC-DPI \|') { throw 'D13 still uses the old non-stable group label' }
     if ($taskSpec3 -notmatch '§74' -or $taskSpec3 -notmatch '§75') {
         throw 'Spec must document why D08 §74/§75 are excluded'
@@ -122,26 +132,36 @@ try {
     if ($taskFixtures -notmatch '(?m)^\| ID \| 场景 \| 来源/许可 \| 生成方式 \| 预期属性 \| Hash \| 状态 \|$') {
         throw 'Fixture manifest: inventory table header is not the required 7-column form'
     }
-    foreach ($state in @('planned', 'missing', 'available', 'rejected')) {
+    foreach ($state in @('missing', 'available', 'rejected')) {
         if ($taskFixtures -notmatch "(?m)^$state\s") { throw "Fixture manifest: state not enumerated: $state" }
     }
+    if ($taskFixtures -match '(?m)^planned\s') { throw 'Fixture manifest still defines a planned state' }
     $fxRows = @([regex]::Matches($taskFixtures, '(?m)^\| `(?:FX|DS)-[A-Z0-9-]+` \|.*$'))
     if ($fxRows.Count -lt 20) { throw "Fixture manifest: expected at least 20 inventory rows, found $($fxRows.Count)" }
     $fxAvailable = 0
     foreach ($row in $fxRows) {
         $cells = @($row.Value.Trim('|').Split('|') | ForEach-Object { $_.Trim() })
         if ($cells.Count -ne 7) { throw "Fixture row does not have 7 columns: $($row.Value)" }
-        $fxId = $cells[0]; $fxSource = $cells[2]; $fxHash = $cells[5]; $fxState = $cells[6]
-        if ($resultEnum -notcontains $fxState -and $fxState -notin @('planned', 'missing', 'available', 'rejected')) {
+        $fxId = $cells[0]; $fxSource = $cells[2]; $fxMethod = $cells[3]; $fxHash = $cells[5]; $fxState = $cells[6]
+        if ($fxState -notin @('missing', 'available', 'rejected')) {
             throw "Fixture row has an unknown state: $fxId -> $fxState"
         }
-        if ($fxState -in @('planned', 'missing')) {
+        if ($fxState -eq 'missing') {
             if ($fxHash -ne 'NOT_AVAILABLE') { throw "Fixture row claims a content hash before acquisition: $fxId" }
         }
         if ($fxState -eq 'available') {
             $fxAvailable++
             if ($fxSource -match '待定') { throw "available fixture has unconfirmed licence: $fxId" }
             if ($fxHash -notmatch '^[0-9a-f]{64}$') { throw "available fixture lacks a real SHA256: $fxId" }
+            if ($fxMethod.Length -lt 4 -or $fxMethod -match '^(TBD|TODO|待补|N/?A|-|—|无)$') {
+                throw "available fixture lacks a reproducible acquisition method: $fxId"
+            }
+            if ($fxSource -match '^generated' -and $fxMethod -notmatch '脚本') {
+                throw "generated fixture must name its generation script: $fxId"
+            }
+            if ($fxSource -match '^acquired' -and $fxMethod -notmatch '取得|授权|来源') {
+                throw "acquired fixture must name its acquisition path: $fxId"
+            }
         }
     }
     if ($taskFixtures -notmatch 'NOT_AVAILABLE') { throw 'Fixture manifest: unacquired hash marker missing' }
@@ -201,6 +221,11 @@ try {
         throw 'Spec contains an invented model quality threshold'
     }
     if ($taskSpec3 -match '首次使用提示') { throw 'Spec contains the unapproved privacy prompt' }
+    foreach ($doc in @{ N = 'method spec'; T = $taskSpec3 }, @{ N = 'D13'; T = $taskTrace }) {
+        if ($doc.T -match '(Release Checklist|最低覆盖)\s*\d+\s*(项|类|个)') {
+            throw "Derived document copies a D08 item count ($($doc.N)); link D08 instead"
+        }
+    }
     Write-Output 'PASS: result enum, full performance protocol, UNAPPROVED_THRESHOLD and scope discipline intact'
 
     # --- 13. Documentation links and code fences ------------------------------

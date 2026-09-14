@@ -223,12 +223,12 @@ D08有61个AC主题标题，其中 10 个主题没有独立编号子项；不得
 
 | 组标识 | D08章节 | 主责任Task | 要求 | 当前结果 |
 |---|---|---|---|---|
-| `ACG-AUTOTEST` | §68 | [TASK-026](tasks/TASK-026.md) | 自动化测试最低覆盖 18 类 | NOT_RUN |
-| `ACG-UITEST` | §69 | [TASK-026](tasks/TASK-026.md) | UI/ViewModel 最低覆盖 11 项 | NOT_RUN |
+| `ACG-AUTOTEST` | §68 | [TASK-026](tasks/TASK-026.md) | 按 D08 §68 自动化测试最低覆盖清单 | NOT_RUN |
+| `ACG-UITEST` | §69 | [TASK-026](tasks/TASK-026.md) | 按 D08 §69 UI/ViewModel 最低覆盖清单 | NOT_RUN |
 | `ACG-VISUAL` | §70 | [TASK-022](tasks/TASK-022.md) | 手工视觉验收（DPI/双屏/长文本/多语言/状态） | NOT_RUN |
 | `ACG-BENCH` | §71 | [TASK-026](tasks/TASK-026.md) | 每个 Release Candidate 生成 benchmark-report.md | NOT_RUN |
-| `ACG-DATASAFE` | §72 | [TASK-026](tasks/TASK-026.md) | 数据安全 Gate 八项全 PASS，任一 FAIL 阻塞发布 | NOT_RUN |
-| `ACG-RELEASECHECK` | §73 | [TASK-027](tasks/TASK-027.md) | 最终 Release Checklist 18 项 | NOT_RUN |
+| `ACG-DATASAFE` | §72 | [TASK-026](tasks/TASK-026.md) | 按 D08 §72 数据安全 Gate 逐项核对，任一 FAIL 阻塞发布 | NOT_RUN |
+| `ACG-RELEASECHECK` | §73 | [TASK-027](tasks/TASK-027.md) | 按 D08 §73 最终 Release Checklist | NOT_RUN |
 | `ACG-READY` | §76 | [TASK-027](tasks/TASK-027.md) | READY 判定条件 | NOT_RUN |
 
 D08 §74（建议验收结果目录）与 §75（verification-summary.md 推荐格式）为建议性章节，**不作为独立验收项**，理由见规范 §8.2；其内容要求已由 `ACG-RELEASECHECK` 与 `ACG-READY` 覆盖。

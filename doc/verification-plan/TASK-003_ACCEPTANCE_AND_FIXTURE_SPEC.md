@@ -178,12 +178,12 @@ D08 中以下主题没有编号子项，使用稳定组标识；产品要求仍�
 
 | ACG ID | D08 章节 | 要求要点 | 执行方式 | 环境 | 证据 |
 |---|---|---|---|---|---|
-| `ACG-AUTOTEST` | §68 | 自动化测试最低覆盖（18 类：Domain rules、Repository CRUD、Soft Delete、Lock、Revision、Constraint 优先级、TM 写入规则、Pipeline 计划、Step skip/stale、Pause/Continue/Stop、Crash Recovery、Retry、Artifact 原子提交、Provider 解析、Proxy 策略、Context 写回范围、Webtoon 坐标映射、Task 进度聚合） | 建立覆盖矩阵，逐类给出用例或明确缺失 | ENV-A | 覆盖矩阵 + 测试输出 |
-| `ACG-UITEST` | §69 | UI/ViewModel 最低覆盖（默认导航书架、4 一级页面、Book→Chapter→Workbench、Book→Chapter→Reader、PageList 多选、Region Inspector 绑定、TaskProgress 状态、暂停/停止/继续 enable state、失败页筛选、Dirty Close、Settings inheritance display） | 同上 | ENV-A | 覆盖矩阵 + 测试输出 |
+| `ACG-AUTOTEST` | §68 | 按 D08 §68 的自动化测试最低覆盖清单（Domain rules、Repository CRUD、Soft Delete、Lock、Revision、Constraint 优先级、TM 写入规则、Pipeline 计划、Step skip/stale、Pause/Continue/Stop、Crash Recovery、Retry、Artifact 原子提交、Provider 解析、Proxy 策略、Context 写回范围、Webtoon 坐标映射、Task 进度聚合） | 建立覆盖矩阵，逐类给出用例或明确缺失 | ENV-A | 覆盖矩阵 + 测试输出 |
+| `ACG-UITEST` | §69 | 按 D08 §69 的 UI/ViewModel 最低覆盖清单（默认导航书架、4 一级页面、Book→Chapter→Workbench、Book→Chapter→Reader、PageList 多选、Region Inspector 绑定、TaskProgress 状态、暂停/停止/继续 enable state、失败页筛选、Dirty Close、Settings inheritance display） | 同上 | ENV-A | 覆盖矩阵 + 测试输出 |
 | `ACG-VISUAL` | §70 | 手工视觉验收（100～200% DPI、双屏、长文本、中/日/韩、超长文件名、空状态、Loading、Error、Disabled、Hovered、Selected、Focused） | 手工检查清单逐项 | ENV-C | 截图集 + 清单 |
 | `ACG-BENCH` | §71 | 每个 Release Candidate 生成 `benchmark-report.md`（Cold Start、Page Switch、Book Search、Large PageList、Webtoon Memory、TaskProgress Update、DB Query、Peak RAM、Peak VRAM） | 按 §6 协议执行并产出报告；无数据不得写"性能已优化/达标" | ENV-B/D | benchmark-report.md |
-| `ACG-DATASAFE` | §72 | 数据安全 Gate 八项全部 PASS（源文件 Hash 不变、人工译文不被覆盖、current Revision 不被破坏、Pinned 不被清理、Stop 不回滚、Crash 不误判、Migration 可恢复、Secret 不入库不入日志） | 逐项执行；任一 FAIL 即 BLOCK RELEASE | ENV-A | 测试输出 + Hash + 扫描 |
-| `ACG-RELEASECHECK` | §73 | 最终 Release Checklist 18 项 | 发布前逐项核对并链接证据 | ENV-C | 清单 + 证据链接 |
+| `ACG-DATASAFE` | §72 | 按 D08 §72 的数据安全 Gate 逐项执行（源文件 Hash 不变、人工译文不被覆盖、current Revision 不被破坏、Pinned 不被清理、Stop 不回滚、Crash 不误判、Migration 可恢复、Secret 不入库不入日志） | 逐项执行；任一 FAIL 即 BLOCK RELEASE | ENV-A | 测试输出 + Hash + 扫描 |
+| `ACG-RELEASECHECK` | §73 | 按 D08 §73 的最终 Release Checklist 逐项核对 | 发布前逐项核对并链接证据 | ENV-C | 清单 + 证据链接 |
 | `ACG-READY` | §76 | READY 判定条件（P0 全 PASS、P1 全 PASS、无数据安全/人工覆盖/源文件破坏/数据库损坏 Blocker、干净 Windows Smoke PASS） | 汇总判定；不满足即 NOT READY | 静态 | verification-summary + 判定 |
 
 **明确排除（非验收项）**：
