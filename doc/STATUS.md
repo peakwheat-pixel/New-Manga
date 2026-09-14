@@ -1,6 +1,6 @@
 # 当前开发状态
 
-更新日期：2026-09-14（Asia/Shanghai）
+更新日期：2026-09-15（Asia/Shanghai）
 
 | 项目 | 状态 |
 |---|---|
@@ -13,7 +13,7 @@
 | 项目 Git 分支 / 当前 Task 基线 | master；TASK-005 基线 `d65901b`、reviewed head `f343008`、integration commit `6607f75` |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
-| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成 |
+| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并 |
 | 任务分派 / 执行 | TASK-001～TASK-005：done；其余 22 个 Task 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | DeepSeek 已完成 TASK-003；ZCode 已完成 TASK-004；各 linked worktree 暂保留 |
 | 本次 Review | TASK-005 首次 Review `480f432` changes_requested；固定 head `f343008` 的复审 `118038f` approved，P0/P1=0，两个文档 P2 已收口 |
@@ -54,3 +54,4 @@ TASK-005 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-005-codex`，Revi
 | 2026-09-14 | 用户 | 审核通过 TASK-003/004 集成收口；允许启动 TASK-005，仅建立最小工程入口与架构守卫；Codex 实施、DeepSeek Harness 独立 Review；TASK-006～TASK-027 与业务功能继续冻结 | 用户本次授权指令 |
 | 2026-09-14 | 用户 | 批准 TASK-005 方案 A：Python 3.12 + requirements 精确锁定 + PySide6 Essentials 最小 QML 入口 + stdlib AST 架构守卫 | 用户本次设计决定 |
 | 2026-09-14 | 用户 | TASK-005 书面规格审核通过；允许创建 worktree、编写实施计划并开始 TDD 实现；TASK-006～TASK-027 继续冻结 | 用户本次批准指令 |
+| 2026-09-15 | 用户 | TASK-005 集成审计后的文档收口改由 ZCode 执行：合并 `9fa6835` 到 master 并更新 TASK-005/STATUS 元数据；TASK-006～TASK-027 与业务功能继续冻结，不释放 TASK-006 | 用户本次指令 |
