@@ -11,7 +11,7 @@ OSArchitecture : 64 λ
 
 
 -- CPU --
-AMD Ryzen 9 7950X3D 16-Core Processor          
+AMD Ryzen 9 7950X3D 16-Core Processor
 -- RAM bytes --
 33981210624
 -- system python --
