@@ -111,7 +111,7 @@ git commit -m "build(TASK-005): lock minimal core dependencies"
 - Consumes: 仓库根下的 `src/domain` 与 `src/ui` Python 文件。
 - Produces: `find_forbidden_imports(root: Path, forbidden_roots: frozenset[str]) -> list[str]` 测试守卫；违规文本依次包含实际路径、实际行号、`forbidden import` 与实际模块名。
 
-- [ ] **Step 1: 写架构守卫与合成违规测试**
+- [x] **Step 1: 写架构守卫与合成违规测试**
 
 `tests/core/test_architecture.py` 使用 `ast.parse` 遍历 `Import`/`ImportFrom`；Domain 禁止根模块 `PySide6/sqlite3/torch/transformers/onnxruntime`，UI 禁止根模块 `infrastructure`。测试必须包含：
 
@@ -140,7 +140,7 @@ def test_ui_violation_reports_file_line_and_module(tmp_path: Path) -> None:
     ]
 ```
 
-- [ ] **Step 2: 运行 RED，确认真实包边界缺失**
+- [x] **Step 2: 运行 RED，确认真实包边界缺失**
 
 Run:
 
@@ -150,17 +150,17 @@ Run:
 
 Expected: `test_source_packages_exist_and_respect_boundaries` 因 `src/domain` 或 `src/ui` 不存在而 FAIL；两个合成违规测试 PASS。
 
-- [ ] **Step 3: 写最小包边界**
+- [x] **Step 3: 写最小包边界**
 
 创建空的 `src/domain/__init__.py` 和 `src/ui/__init__.py`；不创建未来层目录或占位类。
 
-- [ ] **Step 4: 运行 GREEN**
+- [x] **Step 4: 运行 GREEN**
 
 Run: 与 Step 2 相同。
 
 Expected: 3 passed。
 
-- [ ] **Step 5: 提交架构守卫**
+- [x] **Step 5: 提交架构守卫**
 
 ```powershell
 git add -- src/domain/__init__.py src/ui/__init__.py tests/core/test_architecture.py
