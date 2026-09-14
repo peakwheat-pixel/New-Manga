@@ -281,7 +281,7 @@ git commit -m "feat(TASK-005): add minimal QML bootstrap"
 - Consumes: 参数 `-BaseCommit`（默认 TASK 基线）、`-ReviewedHead`（默认 `HEAD`）、`-PythonExe`（默认 `python`）。
 - Produces: allowed-path、锁定依赖、可选依赖缺失、架构测试、真实 QML smoke、链接/围栏和 `git diff --check` 的退出码证据。
 
-- [ ] **Step 1: 写 PowerShell 验证脚本**
+- [x] **Step 1: 写 PowerShell 验证脚本**
 
 脚本必须：
 
@@ -293,7 +293,7 @@ git commit -m "feat(TASK-005): add minimal QML bootstrap"
 6. 核对 TASK-005 相关 Markdown 本地链接与代码围栏；
 7. 使用解析后的 base/head 运行 `git diff --check`，任一子命令非零即整体非零。
 
-- [ ] **Step 2: 运行完整验证**
+- [x] **Step 2: 运行完整验证**
 
 Run:
 
@@ -303,11 +303,11 @@ pwsh -NoProfile -File ./verification/TASK-005/verify.ps1 -BaseCommit d65901b953e
 
 Expected: 退出码 0；每项打印 `PASS`；pytest 报告 5 passed。
 
-- [ ] **Step 3: 记录作者验证证据**
+- [x] **Step 3: 记录作者验证证据**
 
 `author-verification.md` 写入实际 `git rev-parse HEAD`、Windows/CPU、Python/Qt/pytest 版本、完整命令、退出码和结果。模型质量、SQL、性能、打包与干净 Windows 机器验证明确写 `NOT_RUN`；不得把 TASK-004 的实验结果冒充本 head 结果。
 
-- [ ] **Step 4: 提交验证内容并固定 reviewed head**
+- [x] **Step 4: 提交验证内容并固定 reviewed head**
 
 ```powershell
 git add -- verification/TASK-005/verify.ps1 verification/TASK-005/author-verification.md
