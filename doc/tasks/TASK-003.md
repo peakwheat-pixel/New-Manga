@@ -2,7 +2,7 @@
 id: TASK-003
 title: 补齐验收规格与测试素材规范
 kind: verification-design
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness

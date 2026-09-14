@@ -1152,6 +1152,7 @@ stateDiagram-v2
     Paused --> Cancelled: 停止
     Pending --> Blocked: 计划无可运行单元
     Blocked --> Pending: 条件解除并重新规划
+    Blocked --> Cancelled: 停止
     Running --> Completed
     Running --> Failed
     Running --> Blocked: 剩余单元仅有可解除阻塞

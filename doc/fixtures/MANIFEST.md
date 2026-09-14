@@ -1,0 +1,82 @@
+# Fixture 素材清单
+
+状态：**规划中（planned / missing）**。当前**未取得任何素材**，仓库中不存在也**不得提交**任何未授权的漫画原图（[D07 §98](../07_NON_FUNCTIONAL_REQUIREMENTS.md)）。本文件只登记素材元数据、许可、生成方案与预期属性。
+
+依据：[D07 §98 最小真实测试资产集](../07_NON_FUNCTIONAL_REQUIREMENTS.md)、[D07 §99 性能 Benchmark 数据集](../07_NON_FUNCTIONAL_REQUIREMENTS.md)、[TASK-003 验收方法与素材规范](../verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)。
+
+## 1. 字段定义（必需字段）
+
+| 字段 | 含义 | 取值规则 |
+|---|---|---|
+| `ID` | 素材唯一标识 | `FX-*`（功能素材）/ `DS-*`（数据集）；一经登记不得重命名 |
+| `场景` | 覆盖的测试场景 | 对应 D07 §98 的场景或验收规范中的用途 |
+| `来源/许可` | 素材出处与许可状态 | `自制（项目生成）` / `用户授权` / `CC0` / `待定`；未确认许可写 `待定`，不得使用 |
+| `生成方式` | 确定性生成脚本或取得途径 | 脚本名与参数摘要；不得依赖随机不可复现过程 |
+| `预期属性` | 供验证断言的稳定属性 | 尺寸、编码、Region/Page 数量级、元数据规模等；不得填写未测量的实测值 |
+| `Hash` | 内容指纹 | 未生成写 `NOT_AVAILABLE`；取得后填 SHA256 |
+| `状态` | 素材生命周期 | `planned` / `missing` / `available` / `rejected` |
+
+状态枚举：
+
+```text
+planned    已定义生成或取得方案，尚未执行
+missing    尚未取得，且暂无确定方案或许可未确认
+available  已取得、Hash 已记录、许可已确认
+rejected   评估后不采用（保留记录，说明原因）
+```
+
+**规则**：未取得素材一律为 `planned` 或 `missing`；`Hash` 未生成时只能写 `NOT_AVAILABLE`，不得填写推测值；不得把 `planned` 当作已完成素材用于任何 PASS 结论。
+
+## 2. 功能与场景素材
+
+| ID | 场景 | 来源/许可 | 生成方式 | 预期属性 | Hash | 状态 |
+|---|---|---|---|---|---|---|
+| `FX-MANGA-BW-001` | 日漫黑白页，含横排与竖排对白 | 自制（项目生成） | 合成脚本绘制对话框、竖排文本、网点背景 | 约 1200×1800 px、PNG 灰度、≥8 Region、含 2 处竖排 | NOT_AVAILABLE | planned |
+| `FX-MANGA-SCREEN-002` | 黑白网点（复杂底纹） | 自制（项目生成） | 合成网点图案 + 文本叠加 | 约 1200×1800 px、PNG、网点覆盖率固定 | NOT_AVAILABLE | planned |
+| `FX-MANGA-SFX-003` | 复杂拟声词（艺术字） | 自制（项目生成） | 手绘风格字形合成 | 含 ≥3 个 `region_type=sfx`，含描边与渐变 | NOT_AVAILABLE | planned |
+| `FX-MANGA-TB-004` | 竖排对白专项 | 自制（项目生成） | 竖排文本列合成 | 单页 ≥6 竖排列，列间距固定 | NOT_AVAILABLE | planned |
+| `FX-KR-WEBTOON-005` | 韩国彩色 Webtoon | 自制（项目生成） | 彩色长条合成 + 韩文文本 | 约 800×6000 px、PNG 彩色、含横排韩文 | NOT_AVAILABLE | planned |
+| `FX-WEBTOON-LONG-006` | 超长 Webtoon（Dataset D） | 自制（项目生成） | 分块合成后拼接 | 约 1600×200000 px、PNG、单逻辑 Page | NOT_AVAILABLE | planned |
+| `FX-PNG-ALPHA-007` | 透明 PNG | 自制（项目生成） | Alpha 通道合成 | 含半透明与完全透明区域，RGBA PNG | NOT_AVAILABLE | planned |
+| `FX-JPEG-008` | JPEG 有损压缩 | 自制（项目生成） | 由 001 导出为 JPEG（固定质量） | 有损压缩、固定 quality 参数、含压缩伪影 | NOT_AVAILABLE | planned |
+| `FX-UNICODE-009` | Unicode 文件名 | 自制（项目生成） | 文件重命名（日文/韩文/中文/emoji 组合） | 文件名含多脚本字符与空格，路径长度受控 | NOT_AVAILABLE | planned |
+| `FX-DUP-010` | 重复图片 | 自制（项目生成） | 由 001 生成字节级副本与近似副本 | 至少 1 组完全相同、1 组仅元数据不同 | NOT_AVAILABLE | planned |
+| `FX-CORRUPT-011` | 损坏图片 | 自制（项目生成） | 截断/篡改头部字节 | 至少 3 种损坏形态（截断、头部损坏、CRC 错误） | NOT_AVAILABLE | planned |
+| `FX-MANY-SMALL-012` | 大量小图 | 自制（项目生成） | 批量生成小尺寸页 | ≥500 张小图（可复用同一模板，尺寸固定） | NOT_AVAILABLE | planned |
+| `FX-LARGE-SINGLE-013` | 大分辨率单图 | 自制（项目生成） | 高分辨率合成 | 约 8000×12000 px、PNG | NOT_AVAILABLE | planned |
+| `FX-META-LARGE-014` | 大 metadata（Dataset E） | 自制（项目生成） | 直接生成 SQLite 元数据（无真实图片或占位文件） | 2,000 Book / 20,000 Chapter / 100,000 Page 记录 | NOT_AVAILABLE | planned |
+
+## 3. 基准数据集（性能与容量）
+
+| ID | 场景 | 来源/许可 | 生成方式 | 预期属性 | Hash | 状态 |
+|---|---|---|---|---|---|---|
+| `DS-A` | 普通日漫 | 自制（项目生成） | 由 `FX-MANGA-BW-001` 复制并生成页码/Region 元数据 | 50 Page、每页约 10 Region | NOT_AVAILABLE | planned |
+| `DS-B` | 大 Chapter | 自制（项目生成） | 由模板批量生成 + 缩略图与 metadata | 500 Page，含缩略图与元数据 | NOT_AVAILABLE | planned |
+| `DS-C` | Region 压力 | 自制（项目生成） | 单页叠加 200 个 Region 标注 | 1 Page、200 Region | NOT_AVAILABLE | planned |
+| `DS-D` | Webtoon | 自制（项目生成） | 复用 `FX-WEBTOON-LONG-006` | 1 Page、约 1600×200000 px | NOT_AVAILABLE | planned |
+| `DS-E` | Library | 自制（项目生成） | 复用 `FX-META-LARGE-014` | 2,000 Book / 20,000 Chapter / 100,000 Page | NOT_AVAILABLE | planned |
+
+## 4. 生成与校验规则
+
+- 所有素材必须由**确定性脚本**生成（固定随机种子、固定参数），脚本随对应实现/实验 Task 提交；素材本体按需生成并校验 Hash。
+- 生成脚本必须记录：脚本路径、提交、参数、输出 Hash、生成环境；同一参数重复生成必须得到相同 Hash。
+- 素材入库前必须完成：许可确认（`来源/许可` 不为 `待定`）、体积评估（避免超大二进制进入 Git）、Hash 登记。
+- 体积超过仓库策略的素材（如 `FX-WEBTOON-LONG-006`、`DS-B`、`DS-E`）默认**按需生成**，不入库；只提交脚本与本清单记录。
+- 素材变更必须更新本清单的 `Hash` 与 `状态`，不得静默替换。
+
+## 5. 许可与合规
+
+- **不得提交未授权的漫画原图或扫描件**（D07 §98）；本清单全部条目为自制或待授权，`待定` 许可的素材不得用于任何 PASS 证据。
+- 如后续引入用户提供或第三方素材，必须在该条目的 `来源/许可` 写明授权范围与来源，必要时先在 Task 中取得用户或 Codex 确认。
+- 涉及真实作品的 OCR / 翻译 / Inpainting 质量评估，必须使用授权素材；未取得时对应质量项结果为 `BLOCKED` 或 `NOT_RUN`，不得用近似素材冒充。
+
+## 6. 当前状态摘要
+
+| 项 | 数量 | 说明 |
+|---|---|---|
+| 已取得（available） | 0 | 仓库内无任何素材文件 |
+| 已规划（planned） | 19 | 14 个功能素材 + 5 个数据集，均有生成方案 |
+| 缺失（missing） | 0 | 暂无标记为 missing 的条目；许可待定的条目在取得前重新评估 |
+| 已拒绝（rejected） | 0 | — |
+
+素材取得与 Hash 登记由后续已授权 Task 执行；本文件当前不构成任何质量或性能证据。

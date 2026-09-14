@@ -358,6 +358,7 @@ stateDiagram-v2
     Pending --> Running
     Pending --> Blocked: 缺少输入或 Provider 不可用
     Blocked --> Pending: 修复条件后重新规划
+    Blocked --> Cancelled: Stop
     Running --> Paused: Pause at safe boundary
     Paused --> Running: Continue
     Paused --> Cancelled: Stop

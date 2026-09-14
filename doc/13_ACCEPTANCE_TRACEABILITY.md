@@ -4,6 +4,8 @@
 
 此表是派生的覆盖路由，不重新定义验收预期。产品测试结果当前均NOT_RUN；仅3个文档AC进行了实际检查。后续每项证据必须绑定测试commit/环境/命令/产物，当前不能用文档证据证明产品行为。
 
+验收方法、环境档位、证据口径、性能测量协议、模型阈值状态与组级执行方式由 [TASK-003 验收方法与素材规范](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md) 定义；本文件只维护追踪路由与当前结果，不复制这些方法或产品定义。素材与许可见 [Fixture Manifest](fixtures/MANIFEST.md)。
+
 ## 编号条目
 
 | AC ID | 级别 | 原始标题 | 主责任 Task | 当前结果 | 当前证据 |
@@ -196,22 +198,22 @@
 
 ## 无独立编号的 AC 主题要求
 
-D08有61个AC主题标题，以下主题没有独立编号子项；不得因上表只提取编号而遗漏。此处使用原主题标识，不擅自发明已获批的新 AC ID 或优先级。TASK-003负责细化稳定测试标识和验收方式。
+D08有61个AC主题标题，以下 10 个主题没有独立编号子项；不得因上表只提取编号而遗漏。TASK-003 已为它们分配稳定组标识 `ACG-*`（不发明新的产品 ID 或优先级）；执行方式、环境与证据口径见[验收方法与素材规范 §8](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)，本表只保留追踪回链。
 
-| 原主题 | D08章节 | 主责任Task | 要求 | 当前结果 |
-|---|---|---|---|---|
-| AC-DPI | §51 | [TASK-022](tasks/TASK-022.md) | 100～200%显示缩放与多屏可达性 | NOT_RUN |
-| AC-SMOKE | §53 | [TASK-027](tasks/TASK-027.md) | 干净Windows发布包完整主流程 | NOT_RUN |
-| AC-OFFLINE | §56 | [TASK-026](tasks/TASK-026.md) | 离线本地能力可用、远程不可用状态 | NOT_RUN |
-| AC-PRIVACY | §57 | [TASK-009](tasks/TASK-009.md) | 远程Provider数据类型提示 | NOT_RUN |
-| AC-SET | §59 | [TASK-009](tasks/TASK-009.md) | 设置继承和值来源 | NOT_RUN |
-| AC-PROV | §60 | [TASK-011](tasks/TASK-011.md) | OCR/Translation/Inpaint/Render来源链 | NOT_RUN |
-| AC-ERROR | §62 | [TASK-011](tasks/TASK-011.md) | 错误分类 | NOT_RUN |
-| AC-ERRUI | §63 | [TASK-013](tasks/TASK-013.md) | 错误在页面/进度/详情可定位 | NOT_RUN |
-| AC-AUTO | §64 | [TASK-008](tasks/TASK-008.md) | Autosave条件性要求或明确保存 | NOT_RUN |
-| AC-SYNC | §67 | [TASK-002](tasks/TASK-002.md) | 06/07增量同步与冻结Gate | PASS（契约层）：最小契约、覆盖矩阵与 V01～V19 已独立 Review 并集成；实际 Schema/产品测试仍不存在 |
+| 组标识 | 原主题 | D08章节 | 主责任Task | 要求 | 当前结果 |
+|---|---|---|---|---|---|
+| `ACG-DPI` | AC-DPI | §51 | [TASK-022](tasks/TASK-022.md) | 100～200%显示缩放与多屏可达性 | NOT_RUN |
+| `ACG-SMOKE` | AC-SMOKE | §53 | [TASK-027](tasks/TASK-027.md) | 干净Windows发布包完整主流程 | NOT_RUN |
+| `ACG-OFFLINE` | AC-OFFLINE | §56 | [TASK-026](tasks/TASK-026.md) | 离线本地能力可用、远程不可用状态 | NOT_RUN |
+| `ACG-PRIVACY` | AC-PRIVACY | §57 | [TASK-009](tasks/TASK-009.md) | 远程Provider数据类型提示 | NOT_RUN |
+| `ACG-SET` | AC-SET | §59 | [TASK-009](tasks/TASK-009.md) | 设置继承和值来源 | NOT_RUN |
+| `ACG-PROV` | AC-PROV | §60 | [TASK-011](tasks/TASK-011.md) | OCR/Translation/Inpaint/Render来源链 | NOT_RUN |
+| `ACG-ERROR` | AC-ERROR | §62 | [TASK-011](tasks/TASK-011.md) | 错误分类 | NOT_RUN |
+| `ACG-ERRUI` | AC-ERRUI | §63 | [TASK-013](tasks/TASK-013.md) | 错误在页面/进度/详情可定位 | NOT_RUN |
+| `ACG-AUTO` | AC-AUTO | §64 | [TASK-008](tasks/TASK-008.md) | Autosave条件性要求或明确保存 | NOT_RUN |
+| `ACG-SYNC` | AC-SYNC | §67 | [TASK-002](tasks/TASK-002.md) | 06/07增量同步与冻结Gate | PASS（契约层）：最小契约、覆盖矩阵与 V01～V19 已独立 Review 并集成；实际 Schema/产品测试仍不存在 |
 
-其他所有适用附加规则仍以D08正文为准：§68自动化最低覆盖、§69 UI/ViewModel最低覆盖、§70视觉、§71 Benchmark、§72数据安全、§73发布清单、§76 READY。由TASK-003细化追踪，TASK-026验证，TASK-027执行最终发布Gate。
+其他所有适用附加规则仍以D08正文为准：§68自动化最低覆盖、§69 UI/ViewModel最低覆盖、§70视觉、§71 Benchmark、§72数据安全、§73发布清单、§76 READY。稳定标识与验收方式已由 TASK-003 登记（`ACG-*` 共 10 个），TASK-026验证，TASK-027执行最终发布Gate。
 
 ## 01～07 中需补充验收的内容
 
