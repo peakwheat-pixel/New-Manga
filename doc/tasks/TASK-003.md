@@ -74,7 +74,7 @@ D08 全文，尤其 §4/6/67～72；D07 §98～101；G14/G17；TASK-002 独立�
 
 ## 交付与运行记录
 
-- Handoff：[TASK-003-588383f](../handoffs/TASK-003-588383f.md)，固定 `base_commit=9472df5`、`reviewed_head=588383f`。
-- Review：尚无；等待 Codex 在固定 head 上写入 `doc/reviews/TASK-003-*.md`。Owner 不自审、不批准自己的交付。
-- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `588383f` 干净工作区退出码 0（8 条 PASS）；`git diff --check 9472df5 HEAD --` 退出码 0。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
-- 最近状态：2026-09-14 Owner 交付验收规范、Fixture 清单、10 个 `ACG-*` 稳定标识与 F-08 状态边，内容提交 `588383f`，状态 `in_review`；其他 24 个 Task 保持 proposed。
+- Handoff：[TASK-003-6caefe1](../handoffs/TASK-003-6caefe1.md)，固定 `base_commit=9472df5`、`reviewed_head=6caefe1`（取代首次交付 `588383f`）。
+- Review：首次 Review 见 [TASK-003-588383f](../reviews/TASK-003-588383f.md)（Codex，`f56bef4`，decision=`changes_requested`，P1×7/P2×3）；R-001～R-010 已逐项处置，等待固定 head 复审。Owner 不自审、不批准自己的交付。
+- 实际执行：`pwsh -NoProfile -File ./verification/TASK-003/verify.ps1` 在 `6caefe1` 干净工作区退出码 0（12 条 PASS）；`git diff --check 9472df5 6caefe1 --` 退出码 0；F-08 三文件 3 新增 / 0 删除。产品、SQL、模型、性能与打包测试 `NOT_RUN / N/A`。
+- 最近状态：2026-09-14 按首次 Review 修订（方法规范去除结果副本、`ACG-*` 扩至 24 个并补执行路由、性能协议补 estimator/计时边界/冷启动、Fixture 全部标 `missing` 并加许可与 SHA256 防线、护栏拒绝删除与去重假通过），内容提交 `6caefe1`，状态 `in_review`；其他 24 个 Task 保持 proposed。
