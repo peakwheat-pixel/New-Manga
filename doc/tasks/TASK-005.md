@@ -2,13 +2,13 @@
 id: TASK-005
 title: 建立最小工程入口与架构守卫
 kind: implementation
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
 depends_on: [TASK-002, TASK-003, TASK-004]
-base_commit: null
+base_commit: d65901b953e6fb26043344ed3d668520847eb295
 branch: agent/codex/TASK-005-minimal-bootstrap
 worktree: G:/CODEX/New Manga.worktrees/TASK-005-codex
 integration_commit: null
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-005：建立最小工程入口与架构守卫
 
-本 Task 已获用户授权，方案 A 与书面规格均已批准；Codex 已登记实现分支/worktree，状态为 `ready`。Owner 在指定 linked worktree 核验基线后写入实际 `base_commit` 并进入 `in_progress`。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户授权，方案 A 与书面规格均已批准；Codex 已在指定 linked worktree 核验基线并进入 `in_progress`。本 Task 不释放 TASK-006～TASK-027。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -101,4 +101,4 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 用户审核通过书面规格，允许创建 worktree、编写实施计划并开始 TDD 实现；Owner=Codex，Reviewer=DeepSeek Harness。状态 `ready`，等待 Owner 接管时绑定实际基线。
+- 最近状态：2026-09-14 Owner 已在 `G:/CODEX/New Manga.worktrees/TASK-005-codex` 核验 linked worktree：分支 `agent/codex/TASK-005-minimal-bootstrap`，Git common directory `G:/CODEX/New Manga/.git`，固定 `base_commit=d65901b953e6fb26043344ed3d668520847eb295`。状态 `ready → in_progress`；实施计划位于 [verification/TASK-005/implementation-plan.md](../../verification/TASK-005/implementation-plan.md)。默认 Python 3.14 环境运行旧 TASK-004 pytest 因缺少 PySide6 得到 3 failures；TASK-005 将使用仓库外独立 Python 3.12 venv 安装获批锁定依赖，不把该环境缺失误记为生产回归。
