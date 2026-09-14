@@ -2,7 +2,7 @@
 id: TASK-005
 title: 建立最小工程入口与架构守卫
 kind: implementation
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -26,9 +26,9 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 
 ## Acceptance Criteria
 
-- [ ] 采用 TASK-004 获批版本提供可重复安装/运行/测试入口；只使用精确版本 requirements 文件锁定依赖，不引入第二套依赖/锁定工具。
-- [ ] Core 无 torch/transformers 等重型可选依赖仍可启动；按需建模块，不批量生成空实现。
-- [ ] 建立 Domain 禁止导入 Qt/SQLite/ML、UI 禁止直连具体存储/Provider 的可运行守卫。
+- [x] 采用 TASK-004 获批版本提供可重复安装/运行/测试入口；只使用精确版本 requirements 文件锁定依赖，不引入第二套依赖/锁定工具。（`requirements*.txt` 精确锁定；Python 3.12.3 `pip check` 与完整验证 PASS）
+- [x] Core 无 torch/transformers 等重型可选依赖仍可启动；按需建模块，不批量生成空实现。（干净 TASK-005 venv 中三者均缺失，真实 QML smoke PASS；只创建 bootstrap/domain/ui 当前必需边界）
+- [x] 建立 Domain 禁止导入 Qt/SQLite/ML、UI 禁止直连具体存储/Provider 的可运行守卫。（stdlib AST 真实扫描与两个合成违规测试 PASS）
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 已批准设计：方案 A
@@ -83,9 +83,9 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 
 ## 测试要求
 
-- 计划：在仓库外创建干净 Python 3.12 venv，分别执行 `python -m pip install -r requirements.txt`、`python -m bootstrap.app --smoke-test` 与开发环境中的 `python -m pytest tests/core`。
-- 至少一个 Domain 和一个 UI 合成边界违规会被守卫检测；实际源码扫描无违规；QML 缺失时产生含路径的可诊断错误和非零退出码。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 已执行：仓库外 Python 3.12.3 venv 安装 `requirements-dev.txt`，`pip check` PASS；固定 head 上运行 `verification/TASK-005/verify.ps1` 退出码 0。
+- Domain/UI 两个合成边界违规均被守卫检测；实际源码扫描无违规；QML 缺失时返回非零并输出绝对路径；完整 core 测试 5 passed。
+- PyInstaller、干净 Windows VM、模型质量、SQL 和性能测试仍为 NOT_RUN/N/A，详见作者验证与 Handoff；TASK-004 结果未冒充本 head 证据。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -98,7 +98,7 @@ D02 §1/14/16；D07 §83；D08 AC-OPTIONAL；G01/G18。D 编号对应 [文档索
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-14 Owner 已在 `G:/CODEX/New Manga.worktrees/TASK-005-codex` 核验 linked worktree：分支 `agent/codex/TASK-005-minimal-bootstrap`，Git common directory `G:/CODEX/New Manga/.git`，固定 `base_commit=d65901b953e6fb26043344ed3d668520847eb295`。状态 `ready → in_progress`；实施计划位于 [verification/TASK-005/implementation-plan.md](../../verification/TASK-005/implementation-plan.md)。默认 Python 3.14 环境运行旧 TASK-004 pytest 因缺少 PySide6 得到 3 failures；TASK-005 将使用仓库外独立 Python 3.12 venv 安装获批锁定依赖，不把该环境缺失误记为生产回归。
+- Handoff：[TASK-005-e914f39](../handoffs/TASK-005-e914f39.md)，绑定 `base_commit=d65901b` / `reviewed_head=e914f39`。
+- Review：尚无；等待 DeepSeek Harness 在独立 linked worktree 审查固定 head，只写 `doc/reviews/TASK-005-e914f39.md`。
+- 实际执行/实验/测试：[作者验证](../../verification/TASK-005/author-verification.md)；固定 head 复跑 `verify.ps1` 退出码 0，5 passed。
+- 最近状态：2026-09-14 `reviewed_head=e914f39a0c721f717c45a01229cd6d0b82f0045e` 已固定；Task 状态 `in_progress → in_review`。被审实现不再修改，等待 DeepSeek Harness 独立 Review；TASK-006～TASK-027 未释放。
