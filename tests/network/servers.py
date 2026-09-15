@@ -222,7 +222,10 @@ class ControlledProxyServer(_Acceptor):
                 return
 
             # absolute-form GET http://host:port/path
-            url = request_line.split(" ")[1]
+            parts_of_line = request_line.split(" ")
+            if len(parts_of_line) < 2 or "://" not in parts_of_line[1]:
+                return  # not an absolute-form request (e.g. stray bytes)
+            url = parts_of_line[1]
             if not self._authed(headers):
                 with self._lock:
                     self.auth_failures += 1
