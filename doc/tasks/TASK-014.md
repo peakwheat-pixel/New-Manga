@@ -2,21 +2,21 @@
 id: TASK-014
 title: 实现配色与文字排版渲染
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-008]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 29592c929745410ef0045266da94f21ed97ffdcb
+branch: agent/zcode/TASK-014-rendering-style
+worktree: G:/CODEX/New Manga.worktrees/TASK-014-rendering-style
 integration_commit: null
 ---
 
 # TASK-014：实现配色与文字排版渲染
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并释放给 ZCode；2026-09-15 ZCode 已接管，状态为 `in_progress`。Reviewer=DeepSeek Harness。本 worktree 基于 base=`29592c9`；主线 release 登记（`c77b40b`）晚于 base，本文件元数据已与 release 对齐。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -69,3 +69,4 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户批准释放（主线 `c77b40b`）；ZCode 接管，`ready` → `in_progress`，开始需求阅读与 TDD 实施。
