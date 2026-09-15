@@ -2,7 +2,7 @@
 id: TASK-010
 title: 实现翻译约束、TM 与 Context
 kind: implementation
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -67,4 +67,5 @@ Exact/Fuzzy阈值依获批规格，不能自行添加Embedding/RAG。
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-15 用户批准释放；`ready`，等待 ZCode 在指定 worktree 认领并转 `in_progress`。
+- 最近状态：2026-09-15 ZCode 在指定 worktree 接管开始执行，状态 ready → in_progress。基线核验通过：HEAD=`2cceb1e`（release commit）、base=`2bdfd6f` 为祖先，分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。白名单核对：src/domain/constraints、src/application/translation/{context,knowledge} 与 tests/knowledge 当前均不存在，属本 Task 拟议新增边界。
+- 认领记录：2026-09-15 ZCode 认领实施，Reviewer=DeepSeek Harness（非作者）。
