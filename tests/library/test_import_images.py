@@ -5,6 +5,8 @@ import hashlib
 
 import pytest
 
+pytest.importorskip("PySide6", reason="real PNG decode via Qt")
+
 from application.importing.images.service import DuplicatePolicy
 from application.importing.images.sorting import collect_image_files, natural_sort_key
 

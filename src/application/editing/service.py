@@ -155,9 +155,17 @@ class RegionEditingService:
         committer: RegionRevisionCommitter | None = None,
     ) -> None:
         self._repo = repository
-        self._committer: RegionRevisionCommitter = (
-            committer if committer is not None else InMemoryRegionCommitter(repository)
-        )
+        if committer is not None:
+            self._committer = committer
+        elif hasattr(repository, "commit_region_revision"):
+            # F-01: a repository that implements the atomic seam IS the
+            # correct committer for itself. Falling back to the in-memory
+            # committer against SQLite would insert revisions while silently
+            # skipping the revision-owned state/pointer update (SQLite's
+            # update_region only writes soft-delete metadata).
+            self._committer = repository
+        else:
+            self._committer = InMemoryRegionCommitter(repository)
 
     # ------------------------------------------------------------------
     # internal helpers

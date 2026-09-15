@@ -269,14 +269,16 @@ class SqliteRegionRepository:
                  region.region_id),
             )
             conn.commit()
-        except sqlite3.Error as error:
+        except Exception as error:
+            # F-02: non-sqlite3 failures (e.g. serialization) must also
+            # release the IMMEDIATE transaction before surfacing.
             conn.rollback()
             return RegionCommitResult(
-                RegionCommitStatus.DB_FAILED, detail=str(error)
+                RegionCommitStatus.DB_FAILED, detail=repr(error)
             )
-        # Keep the caller's object view consistent with the committed state.
+        # Carry the new pointer back on the caller's object; the service
+        # layer (_sync_region_state) finalises the full object view.
         region.current_revision_id = stored_revision.region_revision_id
-        region.updated_at = region.updated_at
         return RegionCommitResult(
             RegionCommitStatus.APPLIED, revision_no=stored_revision.revision_no
         )
