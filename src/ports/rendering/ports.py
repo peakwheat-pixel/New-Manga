@@ -131,9 +131,15 @@ class SourceStyle:
 
 
 class SourceStyleAnalyzer(Protocol):
-    """Analyze a cropped original-image region for style hints (D06 §8)."""
+    """Analyze a region of the original image for style hints (D06 §8).
 
-    def analyze(self, crop_png: bytes) -> SourceStyle: ...
+    ``box`` is the region bbox (x, y, w, h) in original-image pixels;
+    implementations clamp it to the image bounds themselves.
+    """
+
+    def analyze(
+        self, original_png: bytes, box: tuple[int, int, int, int]
+    ) -> SourceStyle: ...
 
 
 class PageArtifactLocator(Protocol):
