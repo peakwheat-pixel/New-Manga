@@ -4,19 +4,19 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-001～TASK-009、TASK-014、TASK-028 设计与 TASK-029 已完成并集成；TASK-010 已批准释放、待实施；其他业务功能继续冻结 |
-| 当前授权 | TASK-010 已按用户批准释放给 ZCode，TASK-009、TASK-014 已完成集成；TASK-011～TASK-013、TASK-015～TASK-027 及其他业务功能仍冻结；不得释放 TASK-013/TASK-015 等冻结任务 |
+| 阶段 | TASK-001～TASK-009、TASK-014、TASK-028 设计与 TASK-029 已完成并集成；TASK-010 实施中；TASK-012 已批准释放、待实施；其他业务功能继续冻结 |
+| 当前授权 | TASK-010 已按用户批准由 ZCode 实施；TASK-012 已批准与 TASK-010 并行执行；TASK-009、TASK-014 已完成集成；TASK-011、TASK-013、TASK-015～TASK-027 及其他业务功能仍冻结；不得释放 TASK-013/TASK-015 等冻结任务 |
 | 接管审核 | approved |
-| 用户审核记录 | 2026-09-15：TASK-008 已按批准范围完成 Review 与 Codex 集成；TASK-028 统一 SQLite 持久化设计冻结；随后授权的 TASK-029 已由 ZCode 实施、DSH approved Review、Codex 集成收口；TASK-009 已释放、完成独立 Review 并集成收口；本次批准释放 TASK-014；本次继续批准释放 TASK-010；TASK-011～TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结 |
+| 用户审核记录 | 2026-09-15：TASK-008 已按批准范围完成 Review 与 Codex 集成；TASK-028 统一 SQLite 持久化设计冻结；随后授权的 TASK-029 已由 ZCode 实施、DSH approved Review、Codex 集成收口；TASK-009 已释放、完成独立 Review 并集成收口；本次批准释放 TASK-014；本次继续批准释放 TASK-010；本次批准 TASK-012 与 TASK-010 并行执行；TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结 |
 | 目标基线冻结 | 未冻结；见 Gap Analysis |
 | 应用源代码 / 可执行测试 | TASK-005 最小入口与守卫、TASK-006 持久化与 Artifact 基础、TASK-007 书架领域与本地图片导入、TASK-008 Region 编辑/Revision/人工保护、TASK-009 Provider 配置/网络策略/凭据边界、TASK-014 渲染切片、TASK-029 统一 SQLite v2 持久化已入库；尚无完整产品功能 |
-| 项目 Git 分支 / 当前 Task 基线 | master；TASK-009 base=`3de750a`，reviewed_head=`b42fc32`，implementation merge=`dea1dee`，integration_commit=`6c732be`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；TASK-010 base=`2bdfd6f`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，branch=`agent/zcode/TASK-010-translation-context`；TASK-014 base=`29592c9`，reviewed_head=`72cb2be`，implementation merge=`a61216a`，integration_commit=`a943297`；TASK-029 base=`79529bc`，reviewed_head=`5abc173`，implementation merge=`2ea5445`，integration_commit=`0b0b855` |
+| 项目 Git 分支 / 当前 Task 基线 | master；TASK-009 base=`3de750a`，reviewed_head=`b42fc32`，implementation merge=`dea1dee`，integration_commit=`6c732be`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；TASK-010 base=`2bdfd6f`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，branch=`agent/zcode/TASK-010-translation-context`；TASK-012 base=`2cceb1e`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，branch=`agent/zcode/TASK-012-navigation-library-ui`；TASK-014 base=`29592c9`，reviewed_head=`72cb2be`，implementation merge=`a61216a`，integration_commit=`a943297`；TASK-029 base=`79529bc`，reviewed_head=`5abc173`，implementation merge=`2ea5445`，integration_commit=`0b0b855` |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
 | 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口；TASK-008 reviewed head `1f373ac` 由 `06ba2e7` 收口；TASK-009 reviewed head `b42fc32`，实现合并 `dea1dee`，Review/集成收口 `6c732be`；TASK-014 reviewed head `72cb2be`，实现合并 `a61216a`，Review/集成收口 `a943297`；TASK-028 reviewed head `e7f9e41` 由 `509de66` 收口；TASK-029 reviewed head `5abc173`，实现合并 `2ea5445`，Review/集成收口 `0b0b855` |
-| 任务分派 / 执行 | TASK-001～TASK-009：done（TASK-009 integration=`6c732be`）；TASK-010：ready，已批准释放给 ZCode；TASK-014：done（integration=`a943297`）；TASK-028 设计：done（integration=`509de66`）；TASK-029：done（integration=`0b0b855`）；TASK-011～TASK-013、TASK-015～TASK-027 保持 proposed |
-| ZCode / DeepSeek Harness 连接 | TASK-008、TASK-009、TASK-014 与 TASK-029 已交付并集成；TASK-010 已分派 ZCode，Reviewer 为 DeepSeek Harness，worktree 待使用 |
-| 本次 Review | TASK-007、TASK-008、TASK-009、TASK-014、TASK-028、TASK-029 Review 均已按 STATUS 记录 approved；TASK-010 尚未进入 Review |
+| 任务分派 / 执行 | TASK-001～TASK-009：done（TASK-009 integration=`6c732be`）；TASK-010：in_progress，已批准由 ZCode 实施；TASK-012：ready，已批准与 TASK-010 并行；TASK-014：done（integration=`a943297`）；TASK-028 设计：done（integration=`509de66`）；TASK-029：done（integration=`0b0b855`）；TASK-011、TASK-013、TASK-015～TASK-027 保持 proposed |
+| ZCode / DeepSeek Harness 连接 | TASK-008、TASK-009、TASK-014 与 TASK-029 已交付并集成；TASK-010 已在 `G:/CODEX/New Manga.worktrees/TASK-010-zcode` 实施；TASK-012 已分派 ZCode，Reviewer 为 DeepSeek Harness，worktree 待使用 |
+| 本次 Review | TASK-007、TASK-008、TASK-009、TASK-014、TASK-028、TASK-029 Review 均已按 STATUS 记录 approved；TASK-010、TASK-012 尚未进入 Review |
 | 产品发布状态 | NOT READY；仅有最小启动骨架，无业务功能或可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
@@ -65,6 +65,8 @@ TASK-009 已完成并收口：[TASK-009](tasks/TASK-009.md) 固定 `base_commit=
 
 TASK-010 已批准释放：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，分支为 `agent/zcode/TASK-010-translation-context`，工作树为 `G:/CODEX/New Manga.worktrees/TASK-010-zcode`；状态 `ready`，尚未开始实施。
 
+TASK-012 已批准释放：[TASK-012](tasks/TASK-012.md) 固定 `base_commit=2cceb1e734c5079870662b7a28da316e46444810`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，分支为 `agent/zcode/TASK-012-navigation-library-ui`，工作树为 `G:/CODEX/New Manga.worktrees/TASK-012-zcode`；状态 `ready`，与 TASK-010 并行执行，尚未开始实施。
+
 TASK-014 已集成：[TASK-014](tasks/TASK-014.md) 固定 `base_commit=29592c929745410ef0045266da94f21ed97ffdcb`、`reviewed_head=72cb2be`、`integration_commit=a943297`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。
 
 TASK-028 Review 已归档：[首轮 Review `TASK-028-f9f2811`](reviews/TASK-028-f9f2811.md) 为 `changes_requested`；[复审 `TASK-028-e7f9e41`](reviews/TASK-028-e7f9e41.md) 固定 `reviewed_head=e7f9e41`、`report_commit=09108d1`，decision=`approved`。Codex 已以 `509de668ea9529e7b2a38abd2368df0ff02a64ae` 串行集成报告并将 TASK-028 置 `done`；TASK-029 已在其冻结设计上完成实现并独立复审通过。
@@ -106,3 +108,4 @@ TASK-009 Review 已归档：[首轮 Review `TASK-009-f1dd602`](reviews/TASK-009-
 | 2026-09-15 | 用户 | 要求按协议 §6.6 串行集成 TASK-014：固定 `base_commit=29592c9`、approved `reviewed_head=72cb2be`、Review `report_commit=5276a18`；保留 merge 提交并记录 `integration_commit`；执行 F-01/F-02/F-04 收口、登记 F-03/F-05 遗留；不启动其他 Task、不释放 TASK-013/TASK-015、不 push | 用户本次集成指令 |
 | 2026-09-15 | 用户 | 要求按协议 §6.6 串行集成 TASK-009：固定 `base_commit=3de750a`、approved `reviewed_head=b42fc32`、首轮报告 `2da1a39`、复审 `report_commit=d2fe13c`；完成 D02 §2 stdlib 偏差登记、F-01 计数勘误、文档 disposition 回填；不启动其他 Task、不释放冻结任务、不 push | 用户本次集成指令 |
 | 2026-09-15 | 用户 | 批准释放 TASK-010；由 ZCode 实施、DeepSeek Harness 独立 Review；固定 base=`2bdfd6f`，仅执行 TASK-010 白名单，TASK-011～TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结 | 用户本次批准指令 |
+| 2026-09-15 | 用户 | 批准 TASK-012 与 TASK-010 并行执行；由 ZCode 实施、DeepSeek Harness 独立 Review；固定 base=`2cceb1e`，使用独立 worktree，仅执行 TASK-012 白名单，TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结 | 用户本次批准指令 |

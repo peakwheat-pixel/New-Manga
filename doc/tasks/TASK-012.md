@@ -2,21 +2,21 @@
 id: TASK-012
 title: 实现四页导航与书架 UI
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-005, TASK-007]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 2cceb1e734c5079870662b7a28da316e46444810
+branch: agent/zcode/TASK-012-navigation-library-ui
+worktree: G:/CODEX/New Manga.worktrees/TASK-012-zcode
 integration_commit: null
 ---
 
 # TASK-012：实现四页导航与书架 UI
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准释放，当前状态为 `ready`；尚未认领或实施。Owner 为 ZCode，Reviewer 为 DeepSeek Harness，并与 TASK-010 并行执行。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -75,4 +75,4 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户批准与 TASK-010 并行释放；`ready`，等待 ZCode 在指定 worktree 认领并转 `in_progress`。

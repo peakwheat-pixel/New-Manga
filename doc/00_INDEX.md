@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-状态：TASK-001～TASK-009、TASK-014、TASK-028 设计与 TASK-029 统一 SQLite 持久化实现已完成并集成；TASK-010 已批准释放为 `ready`；TASK-011～TASK-013、TASK-015～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
+状态：TASK-001～TASK-009、TASK-014、TASK-028 设计与 TASK-029 统一 SQLite 持久化实现已完成并集成；TASK-010 实施中，TASK-012 已批准释放为 `ready`；TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
 
 ## 原始目标文档（已完整检查）
 
