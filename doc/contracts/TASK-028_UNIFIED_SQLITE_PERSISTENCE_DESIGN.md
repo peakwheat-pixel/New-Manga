@@ -65,11 +65,10 @@ v1 可能已有仅供 Artifact 外键使用的“结构占位 Page”。迁移�
 
 这里保留 TASK-007 当前已集成的 `managed_original_ref` 语义：它是 Managed Storage 的相对路径/引用，不是 `media_artifacts` 的 ID；本切片不因建库而自动创建 `original` Artifact。D03 §5.2 使用的 `managed_original_artifact_id` 是 To-Be 模型名称，与当前 Domain/`ManagedCopyStore` 契约不一致，必须在后续文档同步或产品决策 Task 中显式收敛；在收敛前不得把两者静默当作同一字段。
 
-v2 对新增字段的最低映射约束固定如下：Book/Chapter 的可选文字字段使用 `TEXT NOT NULL DEFAULT ''`，时间字段 `last_opened_at`/`deleted_at` 可为 NULL；Book/Chapter 的枚举使用 `TEXT NOT NULL` 加值域 CHECK，布尔使用 `INTEGER NOT NULL DEFAULT 0 CHECK (... IN (0, 1))`。Page 为兼容 v1 占位行，新增导入字段保持可 NULL，但非 NULL 值必须满足 Hash 非空、尺寸大于 0、大小和顺序不小于 0、引用非空的基本 CHECK；Adapter 的新建入口必须一次写入完整 Page，不能依赖数据库默认值生成伪造导入信息。Region 的 JSON 字段与枚举/布尔字段均为 NOT NULL 并带 Domain 对应默认值/值域 CHECK；只有 `current_revision_id` 在首次 Revision 同事务完成前可为 NULL，Revision 的 source/restored 引用字段可为 NULL。
+v2 对新增字段的最低映射约束固定如下：Book/Chapter 的可选文字字段使用 `TEXT NOT NULL DEFAULT ''`，时间字段 `last_opened_at`/`deleted_at` 可为 NULL；Book/Chapter 的枚举使用 `TEXT NOT NULL` 加值域 CHECK，布尔使用 `INTEGER NOT NULL DEFAULT 0 CHECK (... IN (0, 1))`。Page 为兼容 v1 占位行，新增导入字段保持可 NULL，但非 NULL 值必须满足 Hash 非空、尺寸大于 0、大小和顺序不小于 0、引用非空的基本 CHECK；`review_state` 的非 NULL 值限定为 `unreviewed / needs_review / confirmed`，`overall_status` 的非 NULL 值限定为 `not_started / pending / running / completed / stale / failed / skipped / interrupted / cancelled`。Adapter 的新建入口必须一次写入完整 Page，不能依赖数据库默认值生成伪造导入信息。Region 的 JSON 字段与枚举/布尔字段均为 NOT NULL 并带 Domain 对应默认值/值域 CHECK；只有 `current_revision_id` 在首次 Revision 同事务完成前可为 NULL，Revision 的 source/restored 引用字段可为 NULL。
 
 ### 3.2 新增书架关系表
 
-- `tags(tag_id TEXT PRIMARY KEY, name TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`。
 - `tags(tag_id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`；本设计不新增 `UNIQUE(name)` 数据库约束，避免超出现有 Domain/Repository 契约。`LibraryService` 已通过 `DuplicateTagName` 负责正常创建/重命名路径的重复检查。
 - `book_tags(book_id TEXT NOT NULL REFERENCES books(book_id), tag_id TEXT NOT NULL REFERENCES tags(tag_id), PRIMARY KEY(book_id, tag_id))`。
 - Tag 删除与其 `book_tags` 关系删除必须是同一事务；不得删除 Book。
@@ -109,8 +108,8 @@ v2 对新增字段的最低映射约束固定如下：Book/Chapter 的可选文�
 必须有：
 
 - `UNIQUE(region_id, revision_no)`；
-- `current_revision_id` 与 `region_id` 的复合外键，确保 current 属于同一 Region；
-- `restored_from_revision_id` 与 `region_id` 的复合外键，确保恢复来源属于同一 Region；
+- `current_revision_id` 与 `region_id` 的复合外键，确保 current 属于同一 Region；该外键与 TASK-006 的 current 外键同型，使用 `DEFERRABLE INITIALLY DEFERRED`，以支持首次 Revision 插入与 current pointer 更新在同一事务内完成；
+- `restored_from_revision_id` 与 `region_id` 的复合外键，确保恢复来源属于同一 Region，并使用同型的 `DEFERRABLE INITIALLY DEFERRED` 约束；
 - 首次 Revision 与 Region current pointer 的原子提交边界；
 - current pointer 一旦建立不得清回 NULL；
 - Pin 只改变 `is_pinned`，不改写历史 snapshot；
@@ -148,6 +147,8 @@ Region current state 与 revision snapshot 有意各存一份：前者服务当�
 ## 5. Adapter 与代码边界
 
 后续实现 Task 的最小允许范围拟为：
+
+本设计不预留实现 Task 编号，也不直接释放实现。后续实现必须由 Codex 新建一个独立的 implementation Task；在该 Task 进入 `ready` 前，必须回填本 Task 与 `doc/tasks/README.md`、`doc/STATUS.md` 的承接编号，并明确新的 owner、reviewer、当前集成 master `base_commit`、branch/worktree、收紧后的 `allowed_paths`、禁止范围和逐项验收证据。未完成这项登记前，不得据本设计启动 ZCode 或修改 SQLite 源码。
 
 - `src/infrastructure/sqlite/**`：v2 migration、Library/Page adapter、Region adapter；复用现有 connection/migrator/artifact 实现；
 - `src/application/library/ports.py`、`src/application/importing/images/ports.py`、`src/application/editing/ports.py` 及必要的 editing service：仅在原子 Region commit seam 或类型映射确实需要时修改；

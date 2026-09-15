@@ -2,15 +2,16 @@
 id: TASK-028
 title: 冻结统一 SQLite 持久化设计
 kind: design
-status: proposed
+status: changes_requested
 approval: approved
 suggested_owner: Codex
 owner: Codex
-reviewer: null
+reviewer: DeepSeek Harness
 depends_on: [TASK-002, TASK-006, TASK-007, TASK-008]
 base_commit: 4a1df8fb5bc90e1542113c5ae3b15cb837146f79
 branch: master
 worktree: G:/CODEX/New Manga
+reviewed_head: f9f28115304b90f25a36bdd186cc55dbd2cee72e
 integration_commit: null
 ---
 
@@ -69,10 +70,16 @@ integration_commit: null
 
 主要风险是把已有两个 Region Repository 调用误当作一个 SQLite 原子提交；设计已将确切的 `commit_region_revision` 逻辑 seam 列为后续实现前置条件。v1 结构占位 Page 不得通过猜测源数据回填；`managed_original_ref` 与 D03 字段名差异在产品文档同步前不得静默合并。
 
+## 首轮 Review findings disposition
+
+- **F-01 fixed in this revision**：删除重复且含 `UNIQUE(name)` 的 `tags` 表定义，保留应用层 `DuplicateTagName` 检查；待 DeepSeek Harness 复审。
+- **F-02 fixed in this revision**：补齐 Page `review_state`/`overall_status` 非 NULL 值域 CHECK 约定，并明确 Region current/restored 复合外键使用 `DEFERRABLE INITIALLY DEFERRED`；待 DeepSeek Harness 复审。
+- **F-03 fixed in this revision**：明确不预留实现 Task 编号；后续实现必须由 Codex 新建 implementation Task，并在 `ready` 前登记承接编号、owner、reviewer、基线和收紧范围；待 DeepSeek Harness 复审。
+
 ## 交付与运行记录
 
 - 设计：[TASK-028 统一 SQLite 持久化设计](../contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md)。
 - Handoff：尚无；当前未释放实现。
-- Review：尚无；`reviewer=null` 是事实记录，不代表已审查通过。
+- Review：[TASK-028-f9f2811](../reviews/TASK-028-f9f2811.md)，`report_commit=52754ca`，`reviewed_head=f9f2811`，decision=`changes_requested`；报告已归档，修订后需以新 head 复审。
 - 实际测试：本次预审已发现并修订 Tag 约束、Page Port/Managed Copy 映射、v2 默认值与 Region 原子 seam；修订提交后执行文档 diff 与路径核对。产品 SQLite 测试仍 NOT_RUN。
-- 最近状态：2026-09-15 用户要求先审阅 TASK-028；Codex 预审提出 P1 设计问题并完成文档修订。本 Task 保持 `proposed`，仅冻结设计，不启动 ZCode/DeepSeek Harness 实现；正式独立 Review 仍待分配。
+- 最近状态：2026-09-15 首轮 DeepSeek Harness Review 固定 `reviewed_head=f9f2811`、报告提交 `52754ca`，结论为 `changes_requested`；Codex 已按 F-01～F-03 修订设计，当前等待新 head 复审。本 Task 仍不释放实现，不启动 ZCode。
