@@ -2,15 +2,15 @@
 id: TASK-006
 title: 实现持久化与 Artifact 安全提交基础
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-005]
-base_commit: null
-branch: null
-worktree: null
+base_commit: fb29dfedc496cde61cea9ea2558ef274e94eb49e
+branch: agent/zcode/TASK-006-persistence-artifact
+worktree: G:/CODEX/New Manga.worktrees/TASK-006-zcode
 integration_commit: null
 ---
 
@@ -67,4 +67,4 @@ D03 §16～18/34/37～43；D07 §28～38；D08 AC-ART/DB/REV。D 编号对应 [�
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 Codex 派单开始执行（base_commit=`fb29dfe`、worktree 与分支如上，Owner ZCode、Reviewer DeepSeek Harness）。基线核验通过：HEAD=`fb29dfe`（=派单 base）、工作区干净、common dir=`G:/CODEX/New Manga/.git`。流转补记：派单时本文件仍为 `proposed/pending_user_review`（ready 未单独落盘），按派单口径将 owner/approval/base/branch/worktree 填入并直接置 `in_progress`；ready 的释放事实以 Codex 派单指令为准。允许范围即本文件白名单，未扩大。
