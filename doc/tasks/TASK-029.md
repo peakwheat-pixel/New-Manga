@@ -89,6 +89,6 @@ integration_commit: 0b0b85558e1211a6267f018a332a4cb7c307b67e
 - Handoff：修订交付 [TASK-029-5abc173](../handoffs/TASK-029-5abc173.md)，固定 `base_commit=79529bc`、`delivery_head=5abc173`；已在 `0b0b855` 记录为 integrated。
 - Review：首轮 [TASK-029-a2348e9](../reviews/TASK-029-a2348e9.md) 为 `changes_requested`；复审 [TASK-029-5abc173](../reviews/TASK-029-5abc173.md) 为 `approved`，均已归档到 master。
 - 实际测试：ZCode/DSH 与 Codex 主工作区均复验四条命令退出码 0：storage 33 / library 32 / editing 26 / 全量 97 passed；证据见 [author-verification](../../verification/TASK-029/author-verification.md) 与 [集成验证](../../verification/TASK-029/integration-0b0b855.md)。
-- 最近状态：2026-09-15 修订轮处理 F-01～F-05，`reviewed_head=5abc173`；DSH 复审 approved，F-06 为非阻塞文档建议，未产生新的 reviewed head。
+- 最近状态：2026-09-15 修订轮处理 F-01～F-05，`reviewed_head=5abc173`；DSH 复审 approved。复审新增的 F-06（`test_page_order.py` docstring 降级）与「软删页对去重/序号取值」次要观察已在集成后小改提交 `0e79f9d` 关闭（importorskip 移至 docstring 之后；`ImportPageSink` docstring 明确 `existing_source_hashes`/`max_source_order` 有意保留软删页可见性），未产生新的 reviewed head、未触碰被审实现与 v1/v2 SQL。
 - Codex 集成：实现合并 `2ea5445`；Review 报告合并 `integration_commit=0b0b855`；主工作区复验通过，TASK-029 置 `done`。并发多连接、bootstrap 装配、损坏库恢复、性能、ref 命名收敛及 R-201/R-202 仍按 Review 标为 NOT_RUN/N/A，未被改写为 PASS。
 - 认领记录：2026-09-15 ZCode 在指定 worktree 接管开始执行。基线核验通过：HEAD=`c6db2c0`（=release commit，含 base `79529bc` 与 TASK-028 集成），分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。状态 ready → in_progress。
