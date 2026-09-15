@@ -117,6 +117,7 @@ class LocalTargetServer(_Acceptor):
                 conn.recv(length)
             with self._lock:
                 self.requests.append((method, path, headers))
+            forced_status = int(headers.get("x-test-status", "200") or 200)
             body = (
                 b'{"server": "target", "method": "'
                 + method.encode()
@@ -124,8 +125,15 @@ class LocalTargetServer(_Acceptor):
                 + path.encode()
                 + b'"}'
             )
+            reason = {200: b"OK", 401: b"Unauthorized", 403: b"Forbidden"}.get(
+                forced_status, b"Status"
+            )
             conn.sendall(
-                b"HTTP/1.1 200 OK\r\n"
+                b"HTTP/1.1 "
+                + str(forced_status).encode()
+                + b" "
+                + reason
+                + b"\r\n"
                 b"Content-Type: application/json\r\n"
                 b"Content-Length: "
                 + str(len(body)).encode()

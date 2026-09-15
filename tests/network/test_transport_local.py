@@ -27,13 +27,6 @@ from helpers import MODE_HTTP, MODE_SOCKS5, make_network_profile
 
 
 @pytest.fixture()
-def target():
-    server = servers.LocalTargetServer()
-    yield server
-    server.close()
-
-
-@pytest.fixture()
 def transport():
     return StdlibTransport()
 
