@@ -7,9 +7,14 @@ Frozen rules implemented here:
   repointing history.
 - D06 §87: revisions are created on OCR save, accepted machine result,
   manual save, final confirmation, geometry/style save and lock changes.
-- D06 §89/§90: automatic writes re-check the current revision and the
-  locks inside the use case; on mismatch nothing is overwritten and the
-  payload is reported for StepResultCandidate persistence (TASK-011).
+- D06 §89/§90: automatic writes go through the atomic commit seam, which
+  re-checks the current revision and the locks inside the transaction; on
+  mismatch nothing is overwritten and the payload is reported for
+  StepResultCandidate persistence (TASK-011).
+- TASK-028 §3.4/§4.2: revision-owned state is only synced through
+  ``commit_region_revision`` (so reordering creates user revisions), pin is
+  a dedicated single-purpose repository call, and no path upserts immutable
+  history.
 - D03 §8.3/§8.4: confirmed non-blank manual text wins as final; a manual
   save arms manual_edited + translation_locked automatically.
 """
@@ -17,14 +22,26 @@ Frozen rules implemented here:
 from __future__ import annotations
 
 import uuid
+from dataclasses import replace
 
-from application.editing.errors import GuardStatus, GuardedWriteOutcome, RegionNotFound
-from application.editing.ports import RegionRepository
+from application.editing.errors import (
+    GuardStatus,
+    GuardedWriteOutcome,
+    RegionNotFound,
+)
+from application.editing.ports import (
+    RegionCommitResult,
+    RegionCommitStatus,
+    RegionLockSnapshot,
+    RegionRepository,
+    RegionRevisionCommitter,
+)
 from domain.regions.entities import (
     Region,
     RegionGeometry,
     RegionOrigin,
     RegionRevision,
+    RegionText,
     RegionType,
     ReviewState,
     SfxPolicy,
@@ -36,9 +53,111 @@ def _new_id() -> str:
     return uuid.uuid4().hex
 
 
-class RegionEditingService:
+def _clone_region(region: Region) -> Region:
+    """Deep copy for optimistic writes: on conflict the caller's object
+    stays exactly as it was."""
+    clone = Region(
+        region_id=region.region_id,
+        page_id=region.page_id,
+        created_at=region.created_at,
+        updated_at=region.updated_at,
+        deleted_at=region.deleted_at,
+    )
+    clone.restore_from_snapshot(region.snapshot_state())
+    clone.current_revision_id = region.current_revision_id
+    return clone
+
+
+def _sync_region_state(region: Region, staged: Region) -> None:
+    """Copy committed staged state back onto the caller's object."""
+    region.restore_from_snapshot(staged.snapshot_state())
+    region.current_revision_id = staged.current_revision_id
+    region.updated_at = staged.updated_at
+
+
+def _guard_status_of(result: RegionCommitResult) -> GuardStatus:
+    return {
+        RegionCommitStatus.LOCK_CHANGED: GuardStatus.LOCK_CHANGED,
+    }.get(result.status, GuardStatus.INPUT_REVISION_CHANGED)
+
+
+class InMemoryRegionCommitter:
+    """Contract-faithful committer for in-memory repositories: same guard
+    order and pointer semantics as the SQLite seam, without transactions."""
+
     def __init__(self, repository: RegionRepository) -> None:
         self._repo = repository
+
+    def commit_region_revision(
+        self,
+        region: Region,
+        revision: RegionRevision,
+        *,
+        expected_current_revision_id: str | None = None,
+        lock_snapshot: RegionLockSnapshot | None = None,
+    ) -> RegionCommitResult:
+        stored = self._repo.get_region(region.region_id)
+        if stored is None:
+            return RegionCommitResult(
+                RegionCommitStatus.DB_FAILED,
+                detail=f"region {region.region_id} is not persisted",
+            )
+        if (
+            expected_current_revision_id is not None
+            and stored.current_revision_id != expected_current_revision_id
+        ):
+            return RegionCommitResult(
+                RegionCommitStatus.INPUT_REVISION_CHANGED,
+                detail=(
+                    f"expected current {expected_current_revision_id!r},"
+                    f" stored current {stored.current_revision_id!r}"
+                ),
+            )
+        if lock_snapshot is not None:
+            stored_locks = RegionLockSnapshot(
+                region_locked=stored.region_locked,
+                translation_locked=stored.translation_locked,
+                inpaint_locked=stored.inpaint_locked,
+            )
+            if stored_locks != lock_snapshot:
+                return RegionCommitResult(
+                    RegionCommitStatus.LOCK_CHANGED,
+                    detail=(
+                        f"locks changed: stored {stored_locks} vs expected {lock_snapshot}"
+                    ),
+                )
+
+        revision_no = max(
+            (rev.revision_no for rev in self._repo.list_revisions(region.region_id)),
+            default=0,
+        ) + 1
+        stored_revision = replace(revision, revision_no=revision_no)
+        self._repo.add_revision(stored_revision)
+        # Sync revision-owned state INTO the stored object itself: replacing
+        # the repository's object reference would orphan the caller's region
+        # and break subsequent reads (reference stability). The staged view
+        # also carries the new pointer back to the service.
+        stored.restore_from_snapshot(region.snapshot_state())
+        stored.current_revision_id = stored_revision.region_revision_id
+        stored.updated_at = revision.created_at
+        region.current_revision_id = stored_revision.region_revision_id
+        region.updated_at = revision.created_at
+        self._repo.update_region(stored)
+        return RegionCommitResult(
+            RegionCommitStatus.APPLIED, revision_no=stored_revision.revision_no
+        )
+
+
+class RegionEditingService:
+    def __init__(
+        self,
+        repository: RegionRepository,
+        committer: RegionRevisionCommitter | None = None,
+    ) -> None:
+        self._repo = repository
+        self._committer: RegionRevisionCommitter = (
+            committer if committer is not None else InMemoryRegionCommitter(repository)
+        )
 
     # ------------------------------------------------------------------
     # internal helpers
@@ -50,13 +169,9 @@ class RegionEditingService:
             raise RegionNotFound(region_id)
         return region
 
-    def _next_revision_no(self, region_id: str) -> int:
-        revisions = self._repo.list_revisions(region_id)
-        return max((rev.revision_no for rev in revisions), default=0) + 1
-
-    def _commit_revision(
+    def _build_revision(
         self,
-        region: Region,
+        staged: Region,
         origin: RegionOrigin,
         review_state: ReviewState,
         *,
@@ -64,23 +179,58 @@ class RegionEditingService:
         source_step_run_id: str | None = None,
         restored_from_revision_id: str | None = None,
     ) -> RegionRevision:
-        revision_no = self._next_revision_no(region.region_id)
-        revision = RegionRevision(
+        return RegionRevision(
             region_revision_id=_new_id(),
-            region_id=region.region_id,
-            revision_no=revision_no,
-            snapshot=region.snapshot_state(),
+            region_id=staged.region_id,
+            revision_no=0,  # assigned inside the commit seam transaction
+            snapshot=staged.snapshot_state(),
             origin=origin,
             review_state=review_state,
             source_run_id=source_run_id,
             source_step_run_id=source_step_run_id,
             restored_from_revision_id=restored_from_revision_id,
         )
-        self._repo.add_revision(revision)
-        region.current_revision_id = revision.region_revision_id
-        region.updated_at = revision.created_at
-        self._repo.update_region(region)
-        return revision
+
+    def _commit(
+        self,
+        region: Region,
+        staged: Region,
+        revision: RegionRevision,
+        *,
+        expected_current_revision_id: str | None = None,
+        lock_snapshot: RegionLockSnapshot | None = None,
+    ) -> RegionCommitResult:
+        """Single commit path for every revision write (TASK-028 §4.2)."""
+        result = self._committer.commit_region_revision(
+            staged,
+            revision,
+            expected_current_revision_id=expected_current_revision_id,
+            lock_snapshot=lock_snapshot,
+        )
+        if result.status is RegionCommitStatus.APPLIED:
+            _sync_region_state(region, staged)
+        return result
+
+    def _commit_user_or_raise(
+        self,
+        region: Region,
+        staged: Region,
+        origin: RegionOrigin,
+        review_state: ReviewState,
+        *,
+        restored_from_revision_id: str | None = None,
+    ) -> RegionRevision:
+        """User-initiated writes: no optimistic expectation; a database
+        failure surfaces as an exception instead of a silent no-op."""
+        revision = self._build_revision(
+            staged, origin, review_state,
+            restored_from_revision_id=restored_from_revision_id,
+        )
+        result = self._committer.commit_region_revision(staged, revision)
+        if result.status is not RegionCommitStatus.APPLIED:
+            raise RuntimeError(f"region revision commit failed: {result.detail}")
+        _sync_region_state(region, staged)
+        return replace(revision, revision_no=result.revision_no or 0)
 
     # ------------------------------------------------------------------
     # creation / deletion (AC-REGION-001/002)
@@ -108,8 +258,11 @@ class RegionEditingService:
             sfx_policy=SfxPolicy(sfx_policy),
         )
         self._repo.add_region(region)
-        # TASK-002 §2.1: current pointer must be non-null at creation.
-        self._commit_revision(region, RegionOrigin(origin), ReviewState.UNREVIEWED)
+        # TASK-002 §2.1: first revision + pointer in one atomic commit.
+        staged = _clone_region(region)
+        self._commit_user_or_raise(
+            region, staged, RegionOrigin(origin), ReviewState.UNREVIEWED
+        )
         return region
 
     def get_region(self, region_id: str) -> Region:
@@ -136,17 +289,20 @@ class RegionEditingService:
         expected_current_revision_id: str | None = None,
     ) -> GuardedWriteOutcome:
         region = self._require_region(region_id)
-        if (
-            expected_current_revision_id is not None
-            and region.current_revision_id != expected_current_revision_id
-        ):
+        staged = _clone_region(region)
+        staged.geometry = geometry
+        revision = self._build_revision(staged, RegionOrigin.USER, ReviewState.UNREVIEWED)
+        result = self._commit(
+            region, staged, revision,
+            expected_current_revision_id=expected_current_revision_id,
+        )
+        if result.status is not RegionCommitStatus.APPLIED:
             return GuardedWriteOutcome(
-                GuardStatus.INPUT_REVISION_CHANGED,
-                detail="geometry edited against a stale current revision",
+                _guard_status_of(result), detail=result.detail
             )
-        region.geometry = geometry
-        revision = self._commit_revision(region, RegionOrigin.USER, ReviewState.UNREVIEWED)
-        return GuardedWriteOutcome(GuardStatus.APPLIED, revision_no=revision.revision_no)
+        return GuardedWriteOutcome(
+            GuardStatus.APPLIED, revision_no=result.revision_no
+        )
 
     def merge_regions(
         self, page_id: str, region_ids: list[str]
@@ -154,9 +310,10 @@ class RegionEditingService:
         """Merge regions of one page into a new region (D03 §6.4).
 
         Geometry: covering bbox + concatenated polygons. Text: OCR text and
-        machine translation join with a separator; manual edits from any
-        source keep protection. Old regions are soft-deleted; the merged
-        region starts its own revision history with reading_order = min.
+        machine translation join with a separator; manual protection from
+        any source carries over (the merged region still needs its own
+        confirmation). Old regions are soft-deleted; the merged region
+        starts its own revision history with reading_order = min.
         """
         if len(region_ids) < 2:
             raise ValueError("merge needs at least two regions")
@@ -184,7 +341,8 @@ class RegionEditingService:
             if region.text.machine_translation
         )
         if any(region.text.manual_edited for region in regions):
-            # Preserve the strongest protection across the merged set.
+            # Preserve the strongest protection across the merged set; the
+            # confirmation state itself is re-earned on the merged region.
             merged.text.manual_edited = True
             merged.text.translation_locked = True
             manuals = [r.text.edited_translation for r in regions if r.text.edited_translation]
@@ -192,7 +350,10 @@ class RegionEditingService:
         merged.text.refresh_final()
 
         self._repo.add_region(merged)
-        self._commit_revision(merged, RegionOrigin.USER, ReviewState.UNREVIEWED)
+        staged = _clone_region(merged)
+        self._commit_user_or_raise(
+            merged, staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+        )
         deleted_ids = []
         for region in regions:
             region.soft_delete()
@@ -221,24 +382,29 @@ class RegionEditingService:
                 geometry=geometry,
                 sfx_policy=source.sfx_policy,
             )
-            part.text = type(source.text)(
+            part.text = RegionText(
                 ocr_text=source.text.ocr_text,
                 manual_edited=source.text.manual_edited,
                 translation_locked=source.text.translation_locked,
             )
             part.text.refresh_final()
             self._repo.add_region(part)
-            self._commit_revision(part, RegionOrigin.USER, ReviewState.UNREVIEWED)
+            staged = _clone_region(part)
+            self._commit_user_or_raise(
+                part, staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+            )
             created.append(part)
         source.soft_delete()
         self._repo.update_region(source)
         return tuple(created)
 
     # ------------------------------------------------------------------
-    # reading order (AC-REGION-003)
+    # reading order (AC-REGION-003, TASK-028 §3.4)
     # ------------------------------------------------------------------
 
     def reorder_regions(self, page_id: str, ordered_region_ids: list[str]) -> list[Region]:
+        """reading_order is revision-owned state: every changed region gets a
+        new user revision through the atomic seam (TASK-028 §3.4)."""
         regions = {region.region_id: region for region in self.list_regions(page_id)}
         missing = [rid for rid in ordered_region_ids if rid not in regions]
         if missing:
@@ -246,10 +412,14 @@ class RegionEditingService:
         reordered = []
         for position, region_id in enumerate(ordered_region_ids, start=1):
             region = regions[region_id]
-            if region.reading_order != position:
-                region.reading_order = position
-                region.updated_at = utc_now()
-                self._repo.update_region(region)
+            if region.reading_order == position:
+                reordered.append(region)
+                continue
+            staged = _clone_region(region)
+            staged.reading_order = position
+            self._commit_user_or_raise(
+                region, staged, RegionOrigin.USER, ReviewState.UNREVIEWED
+            )
             reordered.append(region)
         return reordered
 
@@ -272,22 +442,22 @@ class RegionEditingService:
         source_step_run_id: str | None = None,
     ) -> GuardedWriteOutcome:
         region = self._require_region(region_id)
-        guard = self._optimistic_guard(region, expected_current_revision_id)
-        if guard is not None:
-            return guard
-        changed = region.text.apply_ocr(ocr_text)
-        revision = self._commit_revision(
-            region,
-            RegionOrigin.MACHINE,
-            ReviewState.NEEDS_REVIEW,
-            source_run_id=source_run_id,
-            source_step_run_id=source_step_run_id,
+        staged = _clone_region(region)
+        changed = staged.text.apply_ocr(ocr_text)
+        revision = self._build_revision(
+            staged, RegionOrigin.MACHINE, ReviewState.NEEDS_REVIEW,
+            source_run_id=source_run_id, source_step_run_id=source_step_run_id,
         )
+        result = self._commit(region, staged, revision)
+        if result.status is not RegionCommitStatus.APPLIED:
+            return GuardedWriteOutcome(
+                _guard_status_of(result), detail=result.detail
+            )
         return GuardedWriteOutcome(
             GuardStatus.APPLIED,
-            revision_no=revision.revision_no,
+            revision_no=result.revision_no,
             # AC-OCR-002: changed source text with a manual译文 → hint.
-            retranslate_hint=changed and region.text.manual_edited,
+            retranslate_hint=changed and staged.text.manual_edited,
         )
 
     def apply_machine_translation(
@@ -300,30 +470,54 @@ class RegionEditingService:
         source_step_run_id: str | None = None,
     ) -> GuardedWriteOutcome:
         region = self._require_region(region_id)
-        guard = self._optimistic_guard(region, expected_current_revision_id)
-        if guard is not None:
-            return guard
-        if region.text.translation_locked or region.region_locked:
+        staged = _clone_region(region)
+        # D06 §90 order: a stale revision expectation outranks the lock.
+        if (
+            expected_current_revision_id is not None
+            and staged.current_revision_id != expected_current_revision_id
+        ):
+            return GuardedWriteOutcome(
+                GuardStatus.INPUT_REVISION_CHANGED,
+                conflicts=(region.region_id,),
+            )
+        if staged.text.translation_locked or staged.region_locked:
             # D06 §89: saved as candidate/provenance only, never overwrite.
             return GuardedWriteOutcome(
                 GuardStatus.LOCK_CHANGED,
                 detail="translation_locked — persist as StepResultCandidate (TASK-011)",
             )
-        region.text.apply_machine_translation(translation)
-        revision = self._commit_revision(
-            region,
-            RegionOrigin.MACHINE,
-            ReviewState.NEEDS_REVIEW,
-            source_run_id=source_run_id,
-            source_step_run_id=source_step_run_id,
+        staged.text.apply_machine_translation(translation)
+        revision = self._build_revision(
+            staged, RegionOrigin.MACHINE, ReviewState.NEEDS_REVIEW,
+            source_run_id=source_run_id, source_step_run_id=source_step_run_id,
         )
-        return GuardedWriteOutcome(GuardStatus.APPLIED, revision_no=revision.revision_no)
+        # Carry the locks observed now; the seam re-reads them in-transaction.
+        lock_snapshot = RegionLockSnapshot(
+            region_locked=staged.region_locked,
+            translation_locked=staged.translation_locked,
+            inpaint_locked=staged.inpaint_locked,
+        )
+        result = self._commit(
+            region, staged, revision,
+            expected_current_revision_id=expected_current_revision_id,
+            lock_snapshot=lock_snapshot,
+        )
+        if result.status is not RegionCommitStatus.APPLIED:
+            return GuardedWriteOutcome(
+                _guard_status_of(result), detail=result.detail
+            )
+        return GuardedWriteOutcome(
+            GuardStatus.APPLIED, revision_no=result.revision_no
+        )
 
     def save_manual_translation(self, region_id: str, edited: str) -> int:
         """User save → new user revision; arms manual protection (§8.4)."""
         region = self._require_region(region_id)
-        region.text.save_manual_translation(edited)
-        revision = self._commit_revision(region, RegionOrigin.USER, ReviewState.NEEDS_REVIEW)
+        staged = _clone_region(region)
+        staged.text.save_manual_translation(edited)
+        revision = self._commit_user_or_raise(
+            region, staged, RegionOrigin.USER, ReviewState.NEEDS_REVIEW
+        )
         return revision.revision_no
 
     def confirm_final(self, region_id: str) -> int:
@@ -331,11 +525,14 @@ class RegionEditingService:
         A non-blank edited text becomes the confirmed final (D03 §8.3);
         confirming a region without manual text just locks the review state."""
         region = self._require_region(region_id)
-        if region.text.edited_translation.strip():
-            region.text.confirm_edited_translation()
+        staged = _clone_region(region)
+        if staged.text.edited_translation.strip():
+            staged.text.confirm_edited_translation()
         else:
-            region.text.refresh_final()
-        revision = self._commit_revision(region, RegionOrigin.USER, ReviewState.CONFIRMED)
+            staged.text.refresh_final()
+        revision = self._commit_user_or_raise(
+            region, staged, RegionOrigin.USER, ReviewState.CONFIRMED
+        )
         return revision.revision_no
 
     # ------------------------------------------------------------------
@@ -349,62 +546,27 @@ class RegionEditingService:
         source = self._repo.get_revision(region_id, revision_no)
         if source is None:
             raise ValueError(f"revision {revision_no} not found for {region_id}")
-        region.restore_from_snapshot(dict(source.snapshot))
+        staged = _clone_region(region)
+        staged.restore_from_snapshot(dict(source.snapshot))
         revision = RegionRevision(
             region_revision_id=_new_id(),
             region_id=region_id,
-            revision_no=self._next_revision_no(region_id),
+            revision_no=0,  # assigned by the seam transaction
             snapshot=dict(source.snapshot),
             origin=RegionOrigin.RESTORED,
             review_state=ReviewState.NEEDS_REVIEW,
             restored_from_revision_id=source.region_revision_id,
         )
-        self._repo.add_revision(revision)
-        region.current_revision_id = revision.region_revision_id
-        region.updated_at = revision.created_at
-        self._repo.update_region(region)
+        result = self._committer.commit_region_revision(staged, revision)
+        if result.status is not RegionCommitStatus.APPLIED:
+            raise RuntimeError(f"region revision commit failed: {result.detail}")
+        _sync_region_state(region, staged)
         return region
 
     def set_revision_pinned(self, region_id: str, revision_no: int, pinned: bool) -> None:
-        """AC-REV-003: pinned revisions are exempt from future cleanup."""
-        revision = self._repo.get_revision(region_id, revision_no)
-        if revision is None:
-            raise ValueError(f"revision {revision_no} not found for {region_id}")
-        updated = RegionRevision(
-            region_revision_id=revision.region_revision_id,
-            region_id=revision.region_id,
-            revision_no=revision.revision_no,
-            snapshot=revision.snapshot,
-            origin=revision.origin,
-            review_state=revision.review_state,
-            is_pinned=pinned,
-            source_run_id=revision.source_run_id,
-            source_step_run_id=revision.source_step_run_id,
-            restored_from_revision_id=revision.restored_from_revision_id,
-            created_at=revision.created_at,
-        )
-        self._repo.add_revision(updated)
-
-    # ------------------------------------------------------------------
-    # optimistic guard (D06 §90)
-    # ------------------------------------------------------------------
-
-    def _optimistic_guard(
-        self, region: Region, expected_current_revision_id: str | None
-    ) -> GuardedWriteOutcome | None:
-        if (
-            expected_current_revision_id is not None
-            and region.current_revision_id != expected_current_revision_id
-        ):
-            return GuardedWriteOutcome(
-                GuardStatus.INPUT_REVISION_CHANGED,
-                detail=(
-                    f"step started at revision {expected_current_revision_id!r}, "
-                    f"current is {region.current_revision_id!r}"
-                ),
-                conflicts=(region.region_id,),
-            )
-        return None
+        """AC-REV-003: pin is a dedicated single-purpose transaction that
+        only flips is_pinned — immutable history is never upserted."""
+        self._repo.set_revision_pinned(region_id, revision_no, pinned)
 
 
 class EditingSession:

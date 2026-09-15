@@ -1,16 +1,17 @@
-"""Versioned schema definitions for TASK-006's first storage slice.
+"""Versioned schema definitions for the unified SQLite persistence.
 
-Only tables this slice actually uses are created (D03: books/chapters/pages
-as the minimal FK chain for artifacts, the artifact revision tables, and the
-infrastructure metadata tables). Everything else arrives through later
-versioned migrations (TASK-007/008/011...).
+v1 (TASK-006, immutable): books/chapters/pages as the minimal FK chain for
+artifacts, the artifact revision tables, and the infrastructure metadata
+tables. The v1 DDL encodes the TASK-002 §2.1 frozen invariant "the current
+pointer must reference a revision of the same artifact" as a composite
+foreign key ``media_artifacts(current_revision_id, artifact_id) →
+artifact_revisions(artifact_revision_id, artifact_id)`` (DEFERRABLE).
 
-The v1 DDL encodes the TASK-002 §2.1 frozen invariant "the current pointer
-must reference a revision of the same artifact" as a composite foreign key
-``media_artifacts(current_revision_id, artifact_id) →
-artifact_revisions(artifact_revision_id, artifact_id)``. It is DEFERRABLE so
-the first revision insert and the pointer update can happen in one
-transaction.
+v2 (TASK-029, per the frozen TASK-028 design §3): completes Book/Chapter
+columns, adds full Page import columns (NULL-tolerant for v1 structural
+placeholder pages), tags/book_tags, and regions/region_revisions with the
+same composite deferred FK pattern plus a no-current-clearing trigger.
+v1 statements are never edited; each version is an additive migration.
 """
 
 from __future__ import annotations
@@ -19,6 +20,7 @@ import hashlib
 from dataclasses import dataclass
 
 SCHEMA_VERSION_V1 = 1
+SCHEMA_VERSION_V2 = 2
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -138,6 +140,141 @@ END;
 """
 
 
+MIGRATION_V2_NAME = "v2__library_region_persistence"
+
+MIGRATION_V2_SQL = """
+-- TASK-028 §3.1: complete Book entity columns (v1 rows keep defaults).
+ALTER TABLE books ADD COLUMN original_title TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN author TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN publisher TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN series_title TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN description TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN source_language TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN target_language TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN source_url TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN notes TEXT NOT NULL DEFAULT '';
+ALTER TABLE books ADD COLUMN default_chapter_type TEXT NOT NULL DEFAULT 'paged'
+    CHECK (default_chapter_type IN ('paged', 'webtoon'));
+ALTER TABLE books ADD COLUMN default_reading_direction TEXT NOT NULL DEFAULT 'rtl'
+    CHECK (default_reading_direction IN ('rtl', 'ltr', 'vertical'));
+ALTER TABLE books ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0
+    CHECK (is_favorite IN (0, 1));
+ALTER TABLE books ADD COLUMN is_archived INTEGER NOT NULL DEFAULT 0
+    CHECK (is_archived IN (0, 1));
+ALTER TABLE books ADD COLUMN last_opened_at TEXT;
+
+-- TASK-028 §3.1: complete Chapter entity columns.
+ALTER TABLE chapters ADD COLUMN chapter_number TEXT NOT NULL DEFAULT '';
+ALTER TABLE chapters ADD COLUMN subtitle TEXT NOT NULL DEFAULT '';
+ALTER TABLE chapters ADD COLUMN import_order INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE chapters ADD COLUMN chapter_type TEXT NOT NULL DEFAULT 'paged'
+    CHECK (chapter_type IN ('paged', 'webtoon'));
+ALTER TABLE chapters ADD COLUMN reading_direction TEXT NOT NULL DEFAULT 'rtl'
+    CHECK (reading_direction IN ('rtl', 'ltr', 'vertical'));
+ALTER TABLE chapters ADD COLUMN notes TEXT NOT NULL DEFAULT '';
+
+-- TASK-028 §3.1: Page import columns. NULL-tolerant so v1 structural
+-- placeholder pages (artifact FK anchors) survive without forged provenance;
+-- non-NULL values must satisfy the basic integrity CHECKs.
+ALTER TABLE pages ADD COLUMN source_filename TEXT;
+ALTER TABLE pages ADD COLUMN source_order INTEGER
+    CHECK (source_order IS NULL OR source_order >= 0);
+ALTER TABLE pages ADD COLUMN source_hash TEXT
+    CHECK (source_hash IS NULL OR length(source_hash) > 0);
+ALTER TABLE pages ADD COLUMN source_size_bytes INTEGER
+    CHECK (source_size_bytes IS NULL OR source_size_bytes >= 0);
+ALTER TABLE pages ADD COLUMN width INTEGER CHECK (width IS NULL OR width > 0);
+ALTER TABLE pages ADD COLUMN height INTEGER CHECK (height IS NULL OR height > 0);
+ALTER TABLE pages ADD COLUMN managed_original_ref TEXT
+    CHECK (managed_original_ref IS NULL OR length(managed_original_ref) > 0);
+ALTER TABLE pages ADD COLUMN page_locked INTEGER NOT NULL DEFAULT 0
+    CHECK (page_locked IN (0, 1));
+ALTER TABLE pages ADD COLUMN review_state TEXT
+    CHECK (review_state IS NULL OR review_state IN
+        ('unreviewed', 'needs_review', 'confirmed'));
+ALTER TABLE pages ADD COLUMN overall_status TEXT
+    CHECK (overall_status IS NULL OR overall_status IN
+        ('not_started', 'pending', 'running', 'completed', 'stale',
+         'failed', 'skipped', 'interrupted', 'cancelled'));
+CREATE INDEX idx_pages_chapter_source_order ON pages(chapter_id, source_order);
+
+-- TASK-028 §3.2: free-form user tags. No UNIQUE(name): LibraryService owns
+-- duplicate checks via DuplicateTagName (exact match, no normalization).
+CREATE TABLE tags (
+    tag_id TEXT PRIMARY KEY CHECK (length(tag_id) > 0),
+    name TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+CREATE TABLE book_tags (
+    book_id TEXT NOT NULL REFERENCES books(book_id),
+    tag_id TEXT NOT NULL REFERENCES tags(tag_id),
+    PRIMARY KEY (book_id, tag_id)
+);
+CREATE INDEX idx_book_tags_tag_id ON book_tags(tag_id);
+
+-- TASK-028 §3.4: region current state (queryable) + immutable history.
+CREATE TABLE regions (
+    region_id TEXT PRIMARY KEY CHECK (length(region_id) > 0),
+    page_id TEXT NOT NULL REFERENCES pages(page_id),
+    region_type TEXT NOT NULL
+        CHECK (region_type IN ('speech', 'narration', 'sfx', 'title', 'note', 'other')),
+    reading_order INTEGER NOT NULL DEFAULT 0,
+    geometry_json TEXT NOT NULL CHECK (length(geometry_json) > 0),
+    text_json TEXT NOT NULL CHECK (length(text_json) > 0),
+    style_json TEXT NOT NULL CHECK (length(style_json) > 0),
+    sfx_policy TEXT NOT NULL DEFAULT 'skip'
+        CHECK (sfx_policy IN ('skip', 'translate', 'manual')),
+    region_locked INTEGER NOT NULL DEFAULT 0 CHECK (region_locked IN (0, 1)),
+    translation_locked INTEGER NOT NULL DEFAULT 0 CHECK (translation_locked IN (0, 1)),
+    inpaint_locked INTEGER NOT NULL DEFAULT 0 CHECK (inpaint_locked IN (0, 1)),
+    current_revision_id TEXT,
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    deleted_at TEXT,
+    -- TASK-002 §2.1 composite deferred FK (same pattern as media_artifacts):
+    -- current must reference a revision of the same region; NULL is legal
+    -- only until the first revision lands in the same transaction. SQLite
+    -- resolves the forward reference to region_revisions at runtime.
+    FOREIGN KEY (current_revision_id, region_id) REFERENCES
+        region_revisions(region_revision_id, region_id) DEFERRABLE INITIALLY DEFERRED
+);
+CREATE INDEX idx_regions_page_order ON regions(page_id, reading_order);
+
+CREATE TABLE region_revisions (
+    region_revision_id TEXT PRIMARY KEY CHECK (length(region_revision_id) > 0),
+    region_id TEXT NOT NULL REFERENCES regions(region_id),
+    revision_no INTEGER NOT NULL CHECK (revision_no >= 1),
+    snapshot_json TEXT NOT NULL CHECK (length(snapshot_json) > 0),
+    origin TEXT NOT NULL
+        CHECK (origin IN ('machine', 'user', 'imported', 'restored')),
+    review_state TEXT NOT NULL
+        CHECK (review_state IN ('unreviewed', 'needs_review', 'confirmed')),
+    is_pinned INTEGER NOT NULL DEFAULT 0 CHECK (is_pinned IN (0, 1)),
+    source_run_id TEXT,
+    source_step_run_id TEXT,
+    restored_from_revision_id TEXT,
+    created_at TEXT NOT NULL,
+    UNIQUE (region_id, revision_no),
+    UNIQUE (region_revision_id, region_id),
+    -- Restore provenance must reference a revision of the same region.
+    FOREIGN KEY (restored_from_revision_id, region_id) REFERENCES
+        region_revisions(region_revision_id, region_id) DEFERRABLE INITIALLY DEFERRED
+);
+CREATE INDEX idx_region_revisions_region ON region_revisions(region_id, revision_no);
+
+-- TASK-002 §2.1: an established current pointer is never cleared to NULL
+-- (the composite FK cannot see the NULL direction).
+CREATE TRIGGER trg_regions_current_not_clearable
+BEFORE UPDATE ON regions
+FOR EACH ROW
+WHEN OLD.current_revision_id IS NOT NULL AND NEW.current_revision_id IS NULL
+BEGIN
+    SELECT RAISE(ABORT, 'regions.current_revision_id cannot be cleared once set');
+END;
+"""
+
+
 @dataclass(frozen=True)
 class Migration:
     schema_version: int
@@ -150,4 +287,7 @@ class Migration:
 
 
 def default_migrations() -> tuple[Migration, ...]:
-    return (Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),)
+    return (
+        Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
+        Migration(SCHEMA_VERSION_V2, MIGRATION_V2_NAME, MIGRATION_V2_SQL),
+    )
