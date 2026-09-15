@@ -1,8 +1,8 @@
+"""Page ordering: source_order frozen, sort_order user-owned (AC-PAGE-001)."""
+
 import pytest
 
 pytest.importorskip("PySide6", reason="real PNG decode via Qt")
-
-"""Page ordering: source_order frozen, sort_order user-owned (AC-PAGE-001)."""
 
 from helpers import make_png, make_source
 

@@ -46,7 +46,15 @@ class ManagedCopyStore(Protocol):
 
 
 class ImportPageSink(Protocol):
-    """Persistence boundary for imported pages."""
+    """Persistence boundary for imported pages.
+
+    Soft-deleted pages deliberately stay visible to
+    ``existing_source_hashes`` and ``max_source_order``: their source
+    hashes keep blocking re-import of the same file and their source
+    orders keep later imports appended after them. Only ``PageRepository``
+    reads hide soft-deleted pages; recycle/restore views are a later
+    slice. These three methods must not filter on ``deleted_at``.
+    """
 
     def existing_source_hashes(self, chapter_id: str) -> set[str]: ...
 
