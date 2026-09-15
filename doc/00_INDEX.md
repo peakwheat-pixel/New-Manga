@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-状态：TASK-001～TASK-008 已完成并集成；TASK-028 统一 SQLite 持久化设计已冻结但实现未释放；TASK-009～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
+状态：TASK-001～TASK-008 与 TASK-028 设计已完成并集成；TASK-029 统一 SQLite 持久化实现已授权并处于 ready；TASK-009～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
 
 ## 原始目标文档（已完整检查）
 
@@ -32,8 +32,9 @@ TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表�
 | [接管自检脚本](verify_takeover.ps1) | 仅适用于初始接管快照；TASK-001 已修改文档与授权，其 Hash/冻结断言不再适用于当前工作区 |
 | [TASK-001 检查](../verification/TASK-001/verify.ps1) | 验证文档引用、状态枚举、AC 编号/优先级及修改范围 |
 | [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | G06～G13、R-011 的冻结语义；后续 Schema/Pipeline/UI/测试共同输入 |
-| [TASK-028 统一 SQLite 设计](contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md) | TASK-006/007/008 的 SQLite 收敛设计；实现未释放 |
-| [任务目录](tasks/README.md) | 28 个 Task 索引；单个文件是任务状态真值 |
+| [TASK-028 统一 SQLite 设计](contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md) | TASK-006/007/008 的 SQLite 收敛设计；实现由 TASK-029 承接 |
+| [TASK-029 统一 SQLite 实现](tasks/TASK-029.md) | 按 TASK-028 实现 v2 migration、Library/Page/Region adapter 与原子 Revision seam |
+| [任务目录](tasks/README.md) | 29 个 Task 索引；单个文件是任务状态真值 |
 | [Task 模板](templates/TASK.md) | 新任务创建 |
 | [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
 | [Review 模板](templates/REVIEW.md) | 按固定 commit 独立审查和复审 |
