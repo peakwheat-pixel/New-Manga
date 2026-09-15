@@ -2,21 +2,21 @@
 id: TASK-009
 title: 实现 Provider 配置、网络策略与凭据边界
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-006]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 3de750ab7558f4c90841b96005dbbe58b8064e71
+branch: agent/zcode/TASK-009-provider-network-credentials
+worktree: G:/CODEX/New Manga.worktrees/TASK-009-zcode
 integration_commit: null
 ---
 
 # TASK-009：实现 Provider 配置、网络策略与凭据边界
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已按现有任务序列释放，状态为 `ready`，等待 ZCode 接管实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -33,7 +33,7 @@ D03 §25～28；D06 §49～57；D07 §63～72/87～89；D08 AC-PROVIDER/NET/SEC/
 
 ## 允许修改范围
 
-以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
+以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。2026-09-15 ready 核对确认：当前仓库尚无上述 settings/network/transport/credentials/providers 与 tests/network 目录，因此它们仅作为本 Task 可新增的明确边界；不能自行扩展到整个 src/tests。
 
 - src/application/settings/**
 - src/infrastructure/network/**
@@ -70,4 +70,4 @@ UI由TASK-022接入；具体OCR/Translation模型适配在TASK-019。
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户要求放弃插队制度并继续现有任务序列；TASK-009 已释放给 ZCode，等待接管。
