@@ -12,6 +12,7 @@ then the outcome records a visible :class:`FallbackEvent` (AC-NET-003).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from typing import Protocol
 
 
 class TransportError(Exception):

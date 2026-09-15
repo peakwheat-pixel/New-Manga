@@ -57,23 +57,25 @@ class NetworkProfile:
             raise ValueError(f"unknown network mode: {self.mode!r}")
         if self.timeout_seconds <= 0:
             raise ValueError("timeout_seconds must be positive")
-        if self.mode in (MODE_HTTP, MODE_HTTPS) and not (
-            self.http_proxy or self.https_proxy
-        ):
-            raise ValueError(f"mode {self.mode} requires an http(s)_proxy URL")
-        if self.mode == MODE_SOCKS5 and not self.socks5_proxy:
-            raise ValueError("mode socks5 requires a socks5_proxy URL")
+        if self.mode in (MODE_HTTP, MODE_HTTPS):
+            if not (self.http_proxy or self.https_proxy) and not self.inherit_system:
+                raise ValueError(
+                    f"mode {self.mode} requires an http(s)_proxy URL or "
+                    "inherit_system=true"
+                )
+        if self.mode == MODE_SOCKS5 and not self.socks5_proxy and not self.inherit_system:
+            raise ValueError("mode socks5 requires a socks5_proxy URL or inherit_system=true")
 
     def is_bypassed(self, host: str) -> bool:
         """True when ``host`` skips the proxy entirely (D03 §27).
 
         Exact match, or ``.suffix`` wildcard against the host's tail so
-        ``.internal`` covers ``a.internal``. The default set always wins
-        on top of the configured one.
+        ``.internal`` covers ``a.internal``. Only this profile's
+        configured set counts; the localhost default comes from the
+        constructor default, so callers can explicitly disable it.
         """
         host = host.lower().rstrip(".")
-        candidates = set(self.bypass_hosts) | set(DEFAULT_BYPASS_HOSTS)
-        for entry in candidates:
+        for entry in self.bypass_hosts:
             entry = entry.lower()
             if entry.startswith("."):
                 if host.endswith(entry) or host == entry[1:]:

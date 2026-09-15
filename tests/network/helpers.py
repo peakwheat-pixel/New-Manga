@@ -147,12 +147,14 @@ def make_network_profile(
     *,
     name: str = "直连",
     mode: str = MODE_DIRECT,
+    bypass_hosts: frozenset[str] = frozenset(),  # tests hit 127.0.0.1 endpoints
     **kwargs,
 ) -> NetworkProfile:
     return NetworkProfile(
         network_profile_id=network_profile_id,
         name=name,
         mode=mode,
+        bypass_hosts=bypass_hosts,
         **kwargs,
     )
 
