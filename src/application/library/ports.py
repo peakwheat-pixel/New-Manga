@@ -48,7 +48,9 @@ class PageRepository(Protocol):
     Implemented structurally by ``SqliteLibraryRepository`` alongside
     ``ImportPageSink``; never merges into ``LibraryRepository``. Incomplete
     v1 placeholder rows (no source hash / managed reference) are not valid
-    pages: readers skip them instead of fabricating provenance.
+    pages: readers skip them instead of fabricating provenance. Soft-deleted
+    pages are likewise not returned by this contract (get_page agrees with
+    list_pages, F-03); recycle-bin/restore views belong to a later slice.
     """
 
     def get_page(self, page_id: str) -> Page | None: ...

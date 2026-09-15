@@ -324,9 +324,13 @@ class SqliteLibraryRepository:
             )
 
     def get_page(self, page_id: str) -> Page | None:
+        # Soft-deleted pages are hidden here too, consistent with
+        # list_pages (AC-IMPORT semantics; recycle-bin/restore views are a
+        # later slice with their own queries).
         row = self._conn.execute(
             "SELECT " + self._PAGE_COLUMNS + " FROM pages"
-            " WHERE page_id = ? AND " + self._COMPLETE_PAGE_WHERE,
+            " WHERE page_id = ? AND deleted_at IS NULL AND "
+            + self._COMPLETE_PAGE_WHERE,
             (page_id,),
         ).fetchone()
         return self._page_from_row(row) if row else None

@@ -268,3 +268,36 @@ def test_region_json_and_enum_roundtrip(db_path):
     assert stored.sfx_policy.value == "manual"
     assert stored.geometry.polygon == ((1, 1), (20, 0), (10, 15))
     assert stored.text.final_source == "none"
+
+
+def test_default_construction_uses_repository_seam(db_path):
+    """F-01 (P1): constructing the service WITHOUT an explicit committer
+    against a SQLite repository must use the repository's own atomic seam.
+    The old in-memory fallback inserted revisions while silently skipping
+    the revision-owned state/pointer update (SQLite update_region only
+    writes soft-delete metadata)."""
+    conn, repo = make_repo(db_path)
+    seed_page(conn)
+    service = RegionEditingService(repo)  # no committer kwarg on purpose
+
+    region = service.create_region("page-1", geo(5, 5, 70, 90))
+    row = conn.execute(
+        "SELECT current_revision_id FROM regions WHERE region_id = ?",
+        (region.region_id,),
+    ).fetchone()
+    assert row["current_revision_id"] is not None, (
+        "default construction must not silently skip the pointer update"
+    )
+
+    service.save_geometry(region.region_id, geo(6, 6, 70, 80))
+    stored = repo.get_region(region.region_id)
+    assert stored.geometry.bbox.as_tuple() == (6, 6, 70, 80)
+    row = conn.execute(
+        "SELECT current_revision_id FROM regions WHERE region_id = ?",
+        (region.region_id,),
+    ).fetchone()
+    assert row["current_revision_id"] == stored.current_revision_id
+    assert conn.execute(
+        "SELECT COUNT(*) FROM region_revisions WHERE region_id = ?",
+        (region.region_id,),
+    ).fetchone()[0] == 2
