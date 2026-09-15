@@ -70,7 +70,7 @@ Exact/Fuzzy 阈值已在 D03 §12.5/§14.4 登记为 `0.90`/`0.80` 的可调实�
 - Handoff：[TASK-010-cd76d30.md](../handoffs/TASK-010-cd76d30.md)（delivery_head=`cd76d30fdc561eb8f22a849eeb5989473957dc5b`，已集成）。
 - Review：[TASK-010-cd76d30.md](../reviews/TASK-010-cd76d30.md)，`report_commit=008b101`，decision=`approved`，无 P0/P1。
 - 实际执行/实验/测试：[verification/TASK-010/author-verification.md](../../verification/TASK-010/author-verification.md)——2026-09-15，Windows 10.0.26200，Python 3.12.3 / pytest 9.1.1；tests/knowledge 78 passed；全量 322 passed, 6 skipped×3 稳定（6 项均因 `openssl unavailable`）；架构守卫 4 passed；`git diff --check 2cceb1e..cd76d30` 无输出。集成复验见 [integration-a225790.md](../../verification/TASK-010/integration-a225790.md)。
-- 最近状态：2026-09-15 实现合并 `1ea9c80`、Review 报告合并并收口 `a225790`；F-01/F-02 已关闭。tests/rendering 顺序依赖未复现，已要求最小复现，期间不修改该套件，见 [rendering-order-repro.md](../../verification/TASK-010/rendering-order-repro.md)。
+- 最近状态：2026-09-16 实现合并 `1ea9c80`、Review 报告合并并收口 `a225790`；F-01/F-02 已关闭。tests/rendering 顺序依赖仍未复现，已指派 ZCode 补充最小复现，期间不修改该套件，见 [rendering-order-repro.md](../../verification/TASK-010/rendering-order-repro.md)。
 - 认领记录：2026-09-15 ZCode 认领实施，Reviewer=DeepSeek Harness（非作者）。
 
 ## Review findings disposition

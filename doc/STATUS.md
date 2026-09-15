@@ -1,6 +1,6 @@
 # 当前开发状态
 
-更新日期：2026-09-15（Asia/Shanghai）
+更新日期：2026-09-16（Asia/Shanghai）
 
 | 项目 | 状态 |
 |---|---|
@@ -65,7 +65,7 @@ TASK-029 已完成并收口：[TASK-029](tasks/TASK-029.md) 固定 base=`79529bc
 
 TASK-009 已完成并收口：[TASK-009](tasks/TASK-009.md) 固定 `base_commit=3de750ab7558f4c90841b96005dbbe58b8064e71`、`reviewed_head=b42fc321b37562e9596ca3bb678be1f5cda22828`、实现合并 `dea1dee`、`integration_commit=6c732be`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。
 
-TASK-010 已完成并收口：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`、`reviewed_head=cd76d30`、实现合并 `1ea9c80`、`integration_commit=a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。
+TASK-010 已完成并收口：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`、`reviewed_head=cd76d30`、实现合并 `1ea9c80`、`integration_commit=a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。移交项 `tests/rendering` 顺序依赖仍为 `NOT_REPRODUCED`，已指派 ZCode 补充最小复现；未授权修改测试套件或创建新 Task。
 
 TASK-012 已批准释放：[TASK-012](tasks/TASK-012.md) 固定 `base_commit=2cceb1e734c5079870662b7a28da316e46444810`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，分支为 `agent/zcode/TASK-012-navigation-library-ui`，工作树为 `G:/CODEX/New Manga.worktrees/TASK-012-zcode`；按批准范围独立执行，未纳入本次 TASK-010 集成。
 
@@ -112,3 +112,4 @@ TASK-009 Review 已归档：[首轮 Review `TASK-009-f1dd602`](reviews/TASK-009-
 | 2026-09-15 | 用户 | 批准释放 TASK-010；由 ZCode 实施、DeepSeek Harness 独立 Review；固定 base=`2bdfd6f`，仅执行 TASK-010 白名单，TASK-011～TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结 | 用户本次批准指令 |
 | 2026-09-15 | 用户 | 批准 TASK-012 与 TASK-010 并行执行；由 ZCode 实施、DeepSeek Harness 独立 Review；固定 base=`2cceb1e`，使用独立 worktree，仅执行 TASK-012 白名单，TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结 | 用户本次批准指令 |
 | 2026-09-15 | 用户 | 要求按协议 §6.6 串行集成 TASK-010：固定被审范围 `2cceb1e..cd76d30`、approved `reviewed_head=cd76d30`、Review `report_commit=008b101`；更正 F-01、登记 F-02、回填 decision/disposition；要求 rendering 顺序依赖最小复现且在此之前不改测试套件；不启动其他 Task、不释放冻结任务、不 push | 用户本次集成指令 |
+| 2026-09-16 | 用户 | 要求 Codex 处置 TASK-010 的 rendering 顺序依赖移交项：指派 ZCode 补充最小复现；证据到位前维持 `NOT_REPRODUCED`，不改测试套件、不据此创建新 Task；临时 worktree 删除前必须保存精确命令与原始输出 | 用户本次取证指令 |
