@@ -88,6 +88,7 @@ class ResolvedRoute:
 
 
 def _parse_proxy_url(url: str) -> tuple[str, str, int]:
+    _reject_userinfo(url, "proxy URL")
     parts = urllib.parse.urlsplit(url)
     scheme = parts.scheme.lower()
     if scheme not in (MODE_HTTP, MODE_HTTPS):
@@ -97,6 +98,22 @@ def _parse_proxy_url(url: str) -> tuple[str, str, int]:
         raise TransportError(f"proxy URL has no host: {url!r}")
     port = parts.port or (_HTTPS_PORT if scheme == MODE_HTTPS else _HTTP_PORT)
     return scheme, host, port
+
+
+def _reject_userinfo(url: str, what: str) -> None:
+    """Reject ``user:password@host`` forms (R-008).
+
+    Proxy passwords must come from the credential vault via
+    ``credential_ref``; userinfo in a proxy URL would smuggle a secret
+    into the profile model, its repr and eventually SQLite/logs.
+    """
+    netloc = url.split("://", 1)[-1].split("/", 1)[0]
+    if "@" in netloc:
+        raise TransportError(
+            f"{what} must not carry user:password userinfo; store proxy "
+            "credentials in the credential vault and reference them via "
+            "credential_ref"
+        )
 
 
 class StdlibTransport:
@@ -189,6 +206,7 @@ class StdlibTransport:
         return ""
 
     def _socks_endpoint(self, profile: NetworkProfile) -> tuple[str, int]:
+        _reject_userinfo(profile.socks5_proxy, "socks5_proxy")
         parts = urllib.parse.urlsplit("//" + profile.socks5_proxy.lstrip("/"))
         host = parts.hostname
         if not host:
@@ -239,6 +257,7 @@ class StdlibTransport:
                     network_profile_id=profile.network_profile_id,
                     reason="proxy_failure",
                     fallback_to="direct",
+                    detail=str(err),
                 )
                 return TransportOutcome(response, (event,))
             raise
@@ -254,7 +273,9 @@ class StdlibTransport:
         profile: NetworkProfile,
         route: ResolvedRoute,
     ) -> TransportResponse:
-        sock, selector, host_header = self._establish(request, profile, route)
+        sock, selector, host_header, proxy_auth = self._establish(
+            request, profile, route
+        )
         try:
             conn = http.client.HTTPConnection(
                 route.target_host, route.target_port, timeout=profile.timeout_seconds
@@ -262,16 +283,51 @@ class StdlibTransport:
             conn.sock = sock
             headers = {"Host": host_header, "Connection": "close"}
             headers.update(request.headers)
+            if proxy_auth:
+                # R-001: absolute-form via a plain HTTP proxy must carry
+                # proxy credentials just like a CONNECT tunnel would.
+                headers["Proxy-Authorization"] = proxy_auth
             try:
                 conn.request(
                     request.method, selector, body=request.body, headers=headers
                 )
                 resp = conn.getresponse()
                 body = resp.read()
+            except (TimeoutError, socket.timeout) as err:
+                # R-003: post-connect read/write timeouts must be typed
+                # so proxy-hop failures can enter the fallback gate.
+                hop = self._hop_label(route)
+                raise TransportTimeoutError(
+                    f"exchange with {hop} timed out after "
+                    f"{profile.timeout_seconds}s: {err}"
+                ) from err
+            except OSError as err:
+                hop = self._hop_label(route)
+                raise TcpConnectionError(
+                    f"connection lost during exchange with {hop}: {err}"
+                ) from err
             except http.client.HTTPException as err:
                 raise TransportError(f"http exchange failed: {err}") from err
             finally:
                 conn.close()
+            if route.via_proxy and resp.status == 407:
+                # R-001: a 407 that arrives through the exchange (e.g.
+                # absolute-form without valid credentials) is a proxy
+                # auth failure, not a plain response.
+                raise ProxyAuthenticationError(
+                    "proxy rejected credentials (HTTP 407 during request "
+                    "exchange)"
+                )
+            if (
+                route.via_proxy
+                and self._absolute_form(route)
+                and resp.status in (502, 504)
+            ):
+                # The proxy could not reach the target: treat it as a
+                # proxy failure so the explicit fallback gate applies.
+                raise ProxyTunnelError(
+                    f"proxy returned {resp.status} for absolute-form request"
+                )
             return TransportResponse(
                 status=resp.status,
                 headers={k.lower(): v for k, v in resp.getheaders()},
@@ -283,10 +339,25 @@ class StdlibTransport:
             except OSError:
                 pass
 
+    @staticmethod
+    def _hop_label(route: ResolvedRoute) -> str:
+        if route.via_proxy:
+            return f"proxy {route.proxy_host}:{route.proxy_port}"
+        return f"target {route.target_host}:{route.target_port}"
+
+    @staticmethod
+    def _absolute_form(route: ResolvedRoute) -> bool:
+        """True for a plain-HTTP target sent through an HTTP(S) proxy."""
+        return route.via_proxy and route.target_scheme == "http"
+
     def _establish(
         self, request: TransportRequest, profile: NetworkProfile, route: ResolvedRoute
-    ) -> tuple[socket.socket, str, str]:
-        """Return (socket, request-selector, Host header value)."""
+    ) -> tuple[socket.socket, str, str, str | None]:
+        """Return (socket, request-selector, Host header, proxy-auth-token).
+
+        R-002: any failure inside this method closes the socket it had
+        already opened before propagating the typed error.
+        """
         parts = urllib.parse.urlsplit(request.url)
         path = parts.path or "/"
         if parts.query:
@@ -294,35 +365,60 @@ class StdlibTransport:
         host_header = f"{route.target_host}:{route.target_port}"
         tls_to_target = route.target_scheme == "https"
 
-        if not route.via_proxy:
-            sock = self._tcp_connect(
-                route.target_host, route.target_port, profile.timeout_seconds
-            )
+        sock = None
+        try:
+            if not route.via_proxy:
+                sock = self._tcp_connect(
+                    route.target_host, route.target_port, profile.timeout_seconds
+                )
+                if tls_to_target:
+                    sock = self._tls_wrap(
+                        sock, route.target_host, profile, stage="target-tls"
+                    )
+                return sock, path, host_header, None
+
+            if route.proxy_kind == MODE_SOCKS5:
+                sock = self._socks5_connect(route, profile)
+            else:
+                sock = self._tcp_connect(
+                    route.proxy_host, route.proxy_port, profile.timeout_seconds
+                )
+                if route.proxy_kind == MODE_HTTPS:
+                    sock = self._tls_wrap(
+                        sock, route.proxy_host, profile, stage="proxy-tls"
+                    )
+                if tls_to_target:
+                    self._http_connect_tunnel(sock, route, profile)
+                else:
+                    # Absolute-form through a plain HTTP proxy.
+                    return (
+                        sock,
+                        request.url,
+                        host_header,
+                        self._proxy_auth_token(profile),
+                    )
+
             if tls_to_target:
                 sock = self._tls_wrap(
                     sock, route.target_host, profile, stage="target-tls"
                 )
-            return sock, path, host_header
+            return sock, path, host_header, None
+        except BaseException:
+            if sock is not None:
+                try:
+                    sock.close()
+                except OSError:
+                    pass
+            raise
 
-        if route.proxy_kind == MODE_SOCKS5:
-            sock = self._socks5_connect(route, profile)
-        else:
-            sock = self._tcp_connect(
-                route.proxy_host, route.proxy_port, profile.timeout_seconds
-            )
-            if route.proxy_kind == MODE_HTTPS:
-                sock = self._tls_wrap(
-                    sock, route.proxy_host, profile, stage="proxy-tls"
-                )
-            if tls_to_target:
-                self._http_connect_tunnel(sock, route, profile)
-            else:
-                # Absolute-form through a plain HTTP proxy.
-                return sock, request.url, host_header
-
-        if tls_to_target:
-            sock = self._tls_wrap(sock, route.target_host, profile, stage="target-tls")
-        return sock, path, host_header
+    def _proxy_auth_token(self, profile: NetworkProfile) -> str | None:
+        """Basic proxy credential header value, from the protected vault."""
+        if not profile.username and not profile.credential_ref:
+            return None
+        token = base64.b64encode(
+            f"{profile.username}:{self._proxy_password(profile)}".encode()
+        ).decode()
+        return f"Basic {token}"
 
     # ------------------------------------------------------------------
     # stages
@@ -388,12 +484,8 @@ class StdlibTransport:
     def _http_connect_tunnel(
         self, sock: socket.socket, route: ResolvedRoute, profile: NetworkProfile
     ) -> None:
-        auth = ""
-        if profile.username:
-            token = base64.b64encode(
-                f"{profile.username}:{self._proxy_password(profile)}".encode()
-            ).decode()
-            auth = f"Proxy-Authorization: Basic {token}\r\n"
+        auth_value = self._proxy_auth_token(profile)
+        auth = f"Proxy-Authorization: {auth_value}\r\n" if auth_value else ""
         target = f"{route.target_host}:{route.target_port}"
         request = (
             f"CONNECT {target} HTTP/1.1\r\n"

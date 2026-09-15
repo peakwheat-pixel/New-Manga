@@ -57,6 +57,18 @@ class ProxyAuthenticationError(TransportError):
     error_code = "PROXY_AUTH_FAILED"
 
 
+class ProviderAuthenticationError(TransportError):
+    """Target provider rejected credentials (HTTP 401/403 during the
+    provider-auth diagnostic stage or an authenticated exchange).
+
+    Kept separate from :class:`ProxyAuthenticationError` so diagnostics
+    and retry policy can tell proxy-hop auth from provider auth apart
+    (D02 §6.2.5/§6.2.7 layering).
+    """
+
+    error_code = "PROVIDER_AUTH_FAILED"
+
+
 class MissingCredentialError(TransportError):
     """Profile references a credential that is not in the vault."""
 
@@ -82,14 +94,16 @@ class TransportResponse:
 class FallbackEvent:
     """A visible, auditable direct retry after proxy failure (AC-NET-003).
 
-    ``reason`` is currently always ``proxy_failure``; the event exists so
-    UI and provenance can show that this request bypassed the configured
-    proxy (D06 §55, D07 §67).
+    ``reason`` is currently always ``proxy_failure``; ``detail`` carries
+    the original proxy-hop error description so UI/provenance can show
+    what actually failed, not just that a fallback happened (D06 §55,
+    D07 §67).
     """
 
     network_profile_id: str
     reason: str = "proxy_failure"
     fallback_to: str = "direct"
+    detail: str = ""
 
 
 @dataclass(frozen=True)

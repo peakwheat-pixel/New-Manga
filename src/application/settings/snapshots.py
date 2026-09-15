@@ -14,6 +14,7 @@ rebinding decision.
 
 from __future__ import annotations
 
+from types import MappingProxyType
 from dataclasses import dataclass, field
 
 from ports.network.profiles import NetworkProfile
@@ -25,13 +26,29 @@ from .models import EffectiveSetting
 
 @dataclass(frozen=True)
 class SettingsSnapshot:
-    """Everything a run needs to reproduce its configuration (D06 §49)."""
+    """Everything a run needs to reproduce its configuration (D06 §49).
+
+    The mappings are wrapped in ``MappingProxyType`` on construction
+    (R-006): the snapshot holder — e.g. an in-flight run — cannot have
+    its providers or settings silently replaced by mutation.
+    """
 
     settings: dict[str, EffectiveSetting] = field(default_factory=dict)
     bindings: dict[str, BindingResolution] = field(default_factory=dict)  # by capability
     provider_profiles: dict[str, ProviderProfile] = field(default_factory=dict)
     network_profiles: dict[str, NetworkProfile] = field(default_factory=dict)
     created_at: str = ""
+
+    def __post_init__(self) -> None:
+        for name in (
+            "settings",
+            "bindings",
+            "provider_profiles",
+            "network_profiles",
+        ):
+            object.__setattr__(
+                self, name, MappingProxyType(dict(getattr(self, name)))
+            )
 
 
 @dataclass(frozen=True)
