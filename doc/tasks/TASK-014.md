@@ -70,3 +70,22 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 - 最近状态：2026-09-15 用户批准释放（主线 `c77b40b`）；ZCode 接管，`ready` → `in_progress`，开始需求阅读与 TDD 实施。
+
+## 实施计划（in_progress，ZCode）
+
+边界结论（对照 base=`29592c9` 实际结构核对）：
+
+- `src/domain/regions/entities.py` 的 `TextStyle` 是最小子集且不在本 Task 白名单内；本切片在 `src/application/rendering/style.py` 定义完整渲染样式 `RenderTextStyle`（D03 §11.5 字段），经 `from_domain()` 兼容 TASK-008 已持久化的最小样式。不修改 domain/SQLite schema。
+- 渲染产物通过现有 `SqliteArtifactRepository.commit_revision`（TASK-002 §8.1 compare-and-write）提交为新 `translated` ArtifactRevision；失败/conflict 保留旧 current（复用已集成 seam，不重写）。
+- page→artifact 定位：现有 `ArtifactRepositoryPort` 无按 page 查询方法；新增只读 `PageArtifactLocator` port（`src/ports/rendering/`）+ SQLite 读适配（`src/infrastructure/rendering/locator.py`），不改共享 port 文件。
+- 图像栈：PySide6 QtGui（QImage/QPainter/QTextLayout），已在 requirements 锁定，不新增依赖；测试用 `QT_QPA_PLATFORM=offscreen`。
+
+模块与 TDD 顺序：
+
+1. `src/application/rendering/style.py`：字号解析链（D03 §11.1、AC-STYLE-001..005）——detected→fallback 26→offset(-5..+5 校验)→溢出→shrink-to-fit→final；auto 关闭用手动字号。
+2. `src/ports/rendering/ports.py`：TextLayoutEngine / ImageCompositor / SourceStyleAnalyzer / FontCatalog / PageArtifactLocator 协议 + DTO。
+3. `src/infrastructure/rendering/qt_layout.py`：横/竖排折行与度量；`font_catalog.py`：字体可用性与 fallback 诊断。
+4. `src/application/translation/color/`：SourceStyle 提取用例（D06 §8：detected_source_font_size、confidence、颜色、方向提示、fallback 决策）；`src/infrastructure/rendering/pixel_source_style.py`：灰度行投影像素分析。
+5. `src/infrastructure/rendering/qt_compositor.py`：页级多 Region 合成与单 Region 局部合成（描边/竖排绘制），输出 PNG。
+6. `src/application/rendering/service.py`：`RenderService.rerender_page` / `rerender_region`——缺 Clean → BLOCKED（D06 §41）；SFX skip/manual 批量跳过（§85）；单 Region 合成 base 变化 → 冲突不更新（§8.2）；依赖闭包无任何 AI provider（AC-RENDER-001）。
+7. `tests/rendering/`：style 解析、方向/折行、SourceStyle、合成像素断言、rerender 行为、SFX、冲突保留旧 current、AI spy。
