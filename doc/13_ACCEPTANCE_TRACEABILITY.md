@@ -2,7 +2,7 @@
 
 来源：[D08 验收标准](08_ACCEPTANCE_CRITERIA.md)。2026-09-13 从二级标题读取185个带编号条目：104个P0、81个P1、0个P2。主责任 Task 用于安排最终行为交付；设计、底层存储及 UI 等依赖仍须共同验证。任务完成不自动将AC改成PASS。
 
-此表是派生的覆盖路由，不重新定义验收预期。产品测试结果当前均NOT_RUN；仅3个文档AC进行了实际检查。后续每项证据必须绑定测试commit/环境/命令/产物，当前不能用文档证据证明产品行为。
+此表是派生的覆盖路由，不重新定义验收预期。TASK-008 切片相关条目已绑定固定 reviewed_head、Review 与主线集成验证；其余产品级验收结果仍为 NOT_RUN。后续每项证据必须绑定测试commit/环境/命令/产物，不能用文档证据替代未执行的产品行为验证。
 
 验收方法、环境档位、证据口径、性能测量协议、模型阈值状态与组级执行方式由 [TASK-003 验收方法与素材规范](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md) 定义；本文件只维护追踪路由与当前结果，不复制这些方法或产品定义。素材与许可见 [Fixture Manifest](fixtures/MANIFEST.md)。
 
@@ -42,12 +42,12 @@
 | AC-WEBTOON-003 | P0 | 坐标回映 | [TASK-020](tasks/TASK-020.md) | NOT_RUN | 无应用/测试 |
 | AC-WEBTOON-004 | P1 | 按宽缩放 | [TASK-020](tasks/TASK-020.md) | NOT_RUN | 无应用/测试 |
 | AC-WEBTOON-005 | P1 | Scroll 恢复 | [TASK-020](tasks/TASK-020.md) | NOT_RUN | 无应用/测试 |
-| AC-REGION-001 | P0 | Region 统一模型 | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
-| AC-REGION-002 | P1 | 几何编辑 | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
-| AC-REGION-003 | P1 | Reading Order | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
-| AC-REGION-004 | P1 | Region Type | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
+| AC-REGION-001 | P0 | Region 统一模型 | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
+| AC-REGION-002 | P1 | 几何编辑 | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
+| AC-REGION-003 | P1 | Reading Order | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
+| AC-REGION-004 | P1 | Region Type | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
 | AC-OCR-001 | P0 | 单 Region OCR | [TASK-019](tasks/TASK-019.md) | NOT_RUN | 无应用/测试 |
-| AC-OCR-002 | P0 | Re-OCR 不覆盖人工译文 | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
+| AC-OCR-002 | P0 | Re-OCR 不覆盖人工译文 | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
 | AC-OCR-003 | P1 | OCR Provider 优先级 | [TASK-009](tasks/TASK-009.md) | NOT_RUN | 无应用/测试 |
 | AC-OCR-004 | P1 | 韩漫 OCR | [TASK-019](tasks/TASK-019.md) | NOT_RUN | 无应用/测试 |
 | AC-SFX-001 | P1 | 默认 Skip | [TASK-010](tasks/TASK-010.md) | NOT_RUN | 无应用/测试 |
@@ -61,8 +61,8 @@
 | AC-TM-002 | P0 | 人工确认写 TM | [TASK-010](tasks/TASK-010.md) | NOT_RUN | 无应用/测试 |
 | AC-TM-003 | P1 | 查询优先级 | [TASK-010](tasks/TASK-010.md) | NOT_RUN | 无应用/测试 |
 | AC-TM-004 | P1 | TM 不覆盖人工译文 | [TASK-010](tasks/TASK-010.md) | NOT_RUN | 无应用/测试 |
-| AC-TRANS-001 | P0 | 四级文本 | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
-| AC-TRANS-002 | P0 | 人工编辑自动保护 | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
+| AC-TRANS-001 | P0 | 四级文本 | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
+| AC-TRANS-002 | P0 | 人工编辑自动保护 | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
 | AC-TRANS-003 | P0 | Context 与 Write Scope | [TASK-010](tasks/TASK-010.md) | NOT_RUN | 无应用/测试 |
 | AC-TRANS-004 | P1 | 多页上下文排序 | [TASK-010](tasks/TASK-010.md) | NOT_RUN | 无应用/测试 |
 | AC-LOCK-001 | P0 | Page Lock | [TASK-011](tasks/TASK-011.md) | NOT_RUN | 无应用/测试 |
@@ -72,8 +72,8 @@
 | AC-LOCK-005 | P0 | 写入时再次检查 Lock | [TASK-011](tasks/TASK-011.md) | NOT_RUN | 无应用/测试 |
 | AC-REV-001 | P0 | 成功重跑创建新 Revision | [TASK-006](tasks/TASK-006.md) | NOT_RUN | 无应用/测试 |
 | AC-REV-002 | P0 | 失败不改变 current | [TASK-006](tasks/TASK-006.md) | NOT_RUN | 无应用/测试 |
-| AC-REV-003 | P1 | Pin | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
-| AC-REV-004 | P1 | 恢复 Revision | [TASK-008](tasks/TASK-008.md) | NOT_RUN | 无应用/测试 |
+| AC-REV-003 | P1 | Pin | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
+| AC-REV-004 | P1 | 恢复 Revision | [TASK-008](tasks/TASK-008.md) | PASS | [TASK-008 集成验证](../verification/TASK-008/integration-06ba2e7.md)；Review `f9e5977` |
 | AC-STYLE-001 | P0 | 自动字号 | [TASK-014](tasks/TASK-014.md) | NOT_RUN | 无应用/测试 |
 | AC-STYLE-002 | P1 | Offset 范围 | [TASK-014](tasks/TASK-014.md) | NOT_RUN | 无应用/测试 |
 | AC-STYLE-003 | P0 | Shrink-to-fit | [TASK-014](tasks/TASK-014.md) | NOT_RUN | 无应用/测试 |

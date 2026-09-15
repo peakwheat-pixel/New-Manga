@@ -2,7 +2,7 @@
 id: TASK-008
 title: 实现 Region 编辑、Revision 与人工保护
 kind: implementation
-status: in_review
+status: done
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -11,12 +11,12 @@ depends_on: [TASK-007]
 base_commit: f129ae96900fb567288f91a78d55c0ff4ecafe6d
 branch: agent/zcode/TASK-008-region-editing
 worktree: G:/CODEX/New Manga.worktrees/TASK-008-zcode
-integration_commit: null
+integration_commit: 06ba2e7322e5f565feda1808094e9edd282b3c0b
 ---
 
 # TASK-008：实现 Region 编辑、Revision 与人工保护
 
-本 Task 已获用户批准并释放给 ZCode；当前为 `ready`，尚未开始实施。Reviewer=DeepSeek Harness，待实现 head 固定后独立 Review。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已完成并集成。Owner=ZCode，Reviewer=DeepSeek Harness；当前阶段见 [STATUS](../STATUS.md)，共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -29,7 +29,7 @@ D03 §6～11/15；D06 §29/87～90；D08 AC-REGION/TRANS/REV/AUTO。D 编号对�
 - [x] 实现统一Region几何、类型、阅读顺序及新建/删除/合并/拆分，按原图坐标保存并重启恢复。（统一 Region 模型 BBox+Polygon；六类型；合并=覆盖 BBox+拼接+最强保护继承、拆分=调用方几何+保护继承、源软删；模拟重启恢复测试通过）
 - [x] 保存/确认四级文本与样式时产生正确Revision，人工编辑自动translation_locked；明确保存或获批autosave在切换前flush。（四级文本+edited_confirmed 确认语义（D03 §8.3）；人工保存自动置 manual_edited+translation_locked；EditingSession dirty 跟踪与 flush/discard）
 - [x] 通过已冻结的原子写入契约检查输入Revision与Lock；恢复历史保留可追踪记录并按契约处理Pin/失效。（Optimistic Write Guard 重读 current 与锁（D06 §90），冲突返回 INPUT_REVISION_CHANGED/LOCK_CHANGED 且 current 不动（Candidate 落库属 TASK-011）；恢复=新 Revision+溯源（AC-REV-004）；Pin 标志（AC-REV-003，清理执行属 TASK-021））
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Handoff 已交付 [TASK-008-1f373ac](../handoffs/TASK-008-1f373ac.md)；待 DeepSeek Review + Codex 集成）
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Handoff、DeepSeek approved Review 与 Codex 集成验证均已归档）
 
 ## 允许修改范围
 
@@ -64,7 +64,15 @@ D03 §6～11/15；D06 §29/87～90；D08 AC-REGION/TRANS/REV/AUTO。D 编号对�
 ## 交付与运行记录
 
 - Handoff：[TASK-008-1f373ac](../handoffs/TASK-008-1f373ac.md)（delivery_head=`1f373ac2240fb5fc6304e447b7d0fd873310aef1`）。
-- Review：尚无；等待 DeepSeek Harness 独立 Review，报告将写入 `doc/reviews/TASK-008-*.md`（Owner 不写该路径）。
-- 实际执行/实验/测试：[verification/TASK-008/author-verification.md](../../verification/TASK-008/author-verification.md)（命令、退出码、环境、NOT_RUN/N-A 清单）。
-- 最近状态：2026-09-15 ZCode 完成实现并交付：domain/regions（统一 Region 模型+RegionRevision 快照+final 确认语义）+ application/editing（RegionEditingService：几何保存/合并拆分/reading_order/受守卫机器写入/恢复/Pin/EditingSession flush）+ 17 项 editing 测试全过、全量 79 passed。开发中一次 tests/library 同名模块改名已自查回退（最终 diff 零触碰）。reviewed_head=`1f373ac`，状态 in_progress → in_review；未合并 master。
-- 最近状态：2026-09-15 Codex 派单开始执行（base=`f129ae9`，含 TASK-007 集成收口；分支/worktree 如上，Owner ZCode、Reviewer DeepSeek Harness）。基线核验通过：HEAD=base、工作区干净、common dir 正确。流转补记：派单时本文件仍为 `proposed/pending_user_review`，按派单口径填入并直接置 `in_progress`（同 TASK-006/007 先例）。切片边界声明：允许路径不含 infrastructure/ports——Region 持久化契约消费侧定义于 `src/application/editing/ports.py`，测试以契约 fake 驱动（含模拟重启）；SQLite RegionRepository 落地与 schema 扩展需 Codex 协调 TASK-006 边界后另行授权；StepResultCandidate 落库属 TASK-011，本切片冲突以结果对象表达。
+- Review：[TASK-008-1f373ac](../reviews/TASK-008-1f373ac.md)（report_commit=`f9e59770e7617744178b0f56fc10af558a416298`，reviewed_head=`1f373ac2240fb5fc6304e447b7d0fd873310aef1`，decision=`approved`）。
+- 实际执行/实验/测试：[verification/TASK-008/author-verification.md](../../verification/TASK-008/author-verification.md)；Codex 集成验证见 [integration-06ba2e7.md](../../verification/TASK-008/integration-06ba2e7.md)。
+- 最近状态：2026-09-15 Codex 已按协作协议 §6 串行集成实现与 approved Review，`integration_commit=06ba2e7322e5f565feda1808094e9edd282b3c0b`，TASK-008=`done`。
+- 派单记录：2026-09-15 基线=`f129ae9`，Owner=ZCode，Reviewer=DeepSeek Harness；SQLite Region/Revision 持久化与 StepResultCandidate 落库仍属后续授权范围。
+
+## Codex 集成验证与 Finding 处置
+
+- 固定范围：`base_commit=f129ae96900fb567288f91a78d55c0ff4ecafe6d`、`reviewed_head=1f373ac2240fb5fc6304e447b7d0fd873310aef1`、`integration_commit=06ba2e7322e5f565feda1808094e9edd282b3c0b`。
+- Codex 先以 `--no-ff` 合并 ZCode 分支，产生实现集成提交 `604ca6d`；再以 `--no-ff` 合并 DeepSeek Review 分支，产生 `06ba2e7`。两次来源提交均保留。
+- Review 报告：[TASK-008-1f373ac.md](../reviews/TASK-008-1f373ac.md)，report_commit=`f9e5977`，与 `reviewed_head=1f373ac` 一致；集成复验见 [integration-06ba2e7.md](../../verification/TASK-008/integration-06ba2e7.md)。
+- **R-201 noted / deferred**：合并后 `edited_confirmed` 不自动继承；当前行为不阻塞本切片，后续产品语义裁决时明确确认态继承规则。
+- **R-202 noted / deferred**：拆分后的 `reading_order` 可能与既有 Region 重叠；后续编辑器切片考虑归一化，不阻塞本切片。

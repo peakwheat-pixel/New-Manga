@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-007 已完成并集成；TASK-008 为 `ready`，由 ZCode 承接；TASK-009～TASK-027 保持 `proposed`，尚未释放。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
+TASK-001～TASK-008 已完成并集成；TASK-009～TASK-027 保持 `proposed`，尚未释放。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -11,7 +11,7 @@ TASK-001～TASK-007 已完成并集成；TASK-008 为 `ready`，由 ZCode 承接
 | [TASK-005](TASK-005.md) | 建立最小工程入口与架构守卫 | Codex | done；integration `6607f75` |
 | [TASK-006](TASK-006.md) | 实现持久化与 Artifact 安全提交基础 | ZCode | done；integration `32a7314`；TASK-005 |
 | [TASK-007](TASK-007.md) | 实现书架领域与本地图片导入 | ZCode | done；integration `2b64b0f`；TASK-006 |
-| [TASK-008](TASK-008.md) | 实现 Region 编辑、Revision 与人工保护 | ZCode | ready；基线 `f129ae9`；TASK-007 |
+| [TASK-008](TASK-008.md) | 实现 Region 编辑、Revision 与人工保护 | ZCode | done；integration `06ba2e7`；TASK-007 |
 | [TASK-009](TASK-009.md) | 实现 Provider 配置、网络策略与凭据边界 | ZCode | TASK-006 |
 | [TASK-010](TASK-010.md) | 实现翻译约束、TM 与 Context | ZCode | TASK-008, TASK-009 |
 | [TASK-011](TASK-011.md) | 实现命令计划、任务调度与可恢复进度 | Codex | TASK-008, TASK-009, TASK-010 |
