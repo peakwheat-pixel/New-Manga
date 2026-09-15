@@ -3,6 +3,7 @@ id: TASK-009
 title: 实现 Provider 配置、网络策略与凭据边界
 kind: implementation
 status: done
+decision: approved
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
