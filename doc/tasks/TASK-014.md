@@ -2,7 +2,7 @@
 id: TASK-014
 title: 实现配色与文字排版渲染
 kind: implementation
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -26,10 +26,10 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 
 ## Acceptance Criteria
 
-- [ ] 实现SourceStyle提取/字号fallback、最终文本、字体/描边/方向/行距和-5..+5偏移；shrink-to-fit符合已确认规则。
-- [ ] rerender仅使用有效Clean+final+TextStyle，缺Clean可诊断阻止，不触发OCR/Translation/Inpaint。
-- [ ] 页级与Region级合成遵守TASK-002协议，输出新ArtifactRevision，失败保留旧current。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 实现SourceStyle提取/字号fallback、最终文本、字体/描边/方向/行距和-5..+5偏移；shrink-to-fit符合已确认规则。
+- [x] rerender仅使用有效Clean+final+TextStyle，缺Clean可诊断阻止，不触发OCR/Translation/Inpaint。
+- [x] 页级与Region级合成遵守TASK-002协议，输出新ArtifactRevision，失败保留旧current。
+- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Handoff 已交，Review/集成待完成）
 
 ## 允许修改范围
 
@@ -50,10 +50,10 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 
 ## 测试要求
 
-- 计划：python -m pytest tests/rendering；横/竖排、多语言、长文本、手动字号、offset边界、缺字体诊断。
-- spy验证rerender不调用AI；非目标Region内容保持；保存重开渲染产物可读。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
-- 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
+- executed：`python -m pytest tests/rendering -v` → 56 passed（style 解析 18 / 方向+Qt 排版 14 / SourceStyle 9 / 合成器 6 / rerender 11）；横/竖排、多语言（CJK+Latin）、长文本折行、offset 边界与越界、缺字体诊断均覆盖。
+- executed：AI spy 验证 rerender 全路径零 OCR/Translation/Inpaint 调用 + 服务依赖闭包无 provider 引用；单 Region 合成邻区像素逐像素保持；渲染产物经 managed storage 落盘并在测试中读回断言（保存重开可读）。
+- executed：`python -m pytest tests`（全仓库回归，含架构守卫）→ 153 passed，退出码 0。
+- 环境：Windows 10.0.26200、Python 3.12.3（`G:/CODEX/New Manga.task-envs/TASK-014-py312`）、PySide6 6.11.2、pytest 9.1.1，被测 head `72cb2be`；逐条输出见 [author-verification](../../verification/TASK-014/author-verification.md)。
 
 ## 依赖、风险与阻塞
 
@@ -65,9 +65,10 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
+- Handoff：[TASK-014-72cb2be](../handoffs/TASK-014-72cb2be.md)，实现 head `72cb2be`（7 个实现/修复提交自 base 起），验证证据 [author-verification](../../verification/TASK-014/author-verification.md)。
+- Review：待 DeepSeek Harness 独立 Review（固定 base=`29592c9`、reviewed_head=`72cb2be`）。
+- 实际执行/实验/测试：rendering 56 passed；全仓库 153 passed（环境与逐条输出见 author-verification）。
+- 最近状态：2026-09-15 ZCode 完成实现并交 Handoff，状态 `in_progress` → `in_review`。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 - 最近状态：2026-09-15 用户批准释放（主线 `c77b40b`）；ZCode 接管，`ready` → `in_progress`，开始需求阅读与 TDD 实施。
 
