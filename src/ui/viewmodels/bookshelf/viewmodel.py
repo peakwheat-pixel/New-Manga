@@ -10,6 +10,8 @@ Book+Chapter context (D05 §67, D05 §8). No business logic lives in QML
 
 from __future__ import annotations
 
+from pathlib import Path
+
 from PySide6.QtCore import Property, QObject, Signal, Slot
 
 from application.importing.images.ports import ImportSource
@@ -24,6 +26,7 @@ class BookshelfViewModel(QObject):
     selectedBookChanged = Signal()
     searchTextChanged = Signal()
     archivedFilterChanged = Signal()
+    favoritesOnlyChanged = Signal()
     sortByChanged = Signal()
     viewModeChanged = Signal()
     importSummaryChanged = Signal()
@@ -46,6 +49,7 @@ class BookshelfViewModel(QObject):
         self._selected_book: dict = {}
         self._search_text = ""
         self._archived_filter = False
+        self._favorites_only = False
         self._sort_by = "recent"
         self._view_mode = "grid"
         self._import_summary = ""
@@ -103,6 +107,23 @@ class BookshelfViewModel(QObject):
     archivedFilter = Property(
         bool, get_archived_filter, set_archived_filter, notify=archivedFilterChanged
     )
+
+    def get_favorites_only(self) -> bool:
+        return self._favorites_only
+
+    def set_favorites_only(self, enabled: bool) -> None:
+        if self._favorites_only != bool(enabled):
+            self._favorites_only = bool(enabled)
+            self.favoritesOnlyChanged.emit()
+            self._apply_books()
+
+    favoritesOnly = Property(
+        bool, get_favorites_only, set_favorites_only, notify=favoritesOnlyChanged
+    )
+
+    @Slot(bool)
+    def setFavoritesOnly(self, enabled: bool) -> None:
+        self.set_favorites_only(enabled)
 
     def get_sort_by(self) -> str:
         return self._sort_by
@@ -178,6 +199,8 @@ class BookshelfViewModel(QObject):
             books = [book for book in books if book.is_archived]
         else:
             books = [book for book in books if not book.is_archived]
+        if self._favorites_only:
+            books = [book for book in books if book.is_favorite]
         if self._search_text:
             needle = self._search_text.casefold()
             books = [
@@ -203,7 +226,11 @@ class BookshelfViewModel(QObject):
             "original_title": book.original_title,
             "is_favorite": book.is_favorite,
             "is_archived": book.is_archived,
-            "last_opened_at": book.last_opened_at,
+            # QML delegates bind strings: a raw datetime arrives as
+            # undefined in QML, so expose ISO text ("" when never opened).
+            "last_opened_at": (
+                book.last_opened_at.isoformat() if book.last_opened_at else ""
+            ),
             # no reading-progress field exists yet (TASK-007); render "—"
             "progress": None,
         }
@@ -223,7 +250,9 @@ class BookshelfViewModel(QObject):
             "description": book.description,
             "is_favorite": book.is_favorite,
             "is_archived": book.is_archived,
-            "last_opened_at": book.last_opened_at,
+            "last_opened_at": (
+                book.last_opened_at.isoformat() if book.last_opened_at else ""
+            ),
             "progress": None,  # D05 §7.1 阅读进度 — 字段未落地，诚实显示
             "tags": [tag.name for tag in self._library.tags_of_book(book_id)],
         }
@@ -314,6 +343,35 @@ class BookshelfViewModel(QObject):
         )
         self.importSummaryChanged.emit()
         return report
+
+    @Slot(str, "QVariantList", result="QVariantMap")
+    def importFilesFromUrls(self, chapter_id: str, urls: list) -> dict:
+        """QML import entry: local file URLs → ImportSource (bytes read via
+        a data provider; the source file is only ever read, TASK-007 D07
+        §37). Returns a QML-friendly summary map."""
+        self._library.get_chapter(chapter_id)  # unknown chapter → error
+        sources = [
+            ImportSource(
+                filename=Path(url.toLocalFile()).name,
+                data_provider=lambda path=Path(url.toLocalFile()): path.read_bytes(),
+            )
+            for url in urls
+        ]
+        report = self._importer.import_files(chapter_id, sources)
+        return {
+            "imported": len(report.imported),
+            "skipped": len(report.skipped_duplicates),
+            "failed": len(report.failed),
+            "summary": self._format_summary(report),
+        }
+
+    @staticmethod
+    def _format_summary(report) -> str:
+        return (
+            f"导入 {len(report.imported)} 页，"
+            f"跳过 {len(report.skipped_duplicates)} 个重复，"
+            f"失败 {len(report.failed)} 个"
+        )
 
     # ------------------------------------------------------------------
     # shelf → workbench / reader (D05 §8, §67)

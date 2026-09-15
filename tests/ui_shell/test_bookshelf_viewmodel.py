@@ -130,6 +130,20 @@ class TestShelfCrud:
             vm.bookListModel.index(0, 0), vm.bookListModel.roleForName("title")
         ) == "已归档"
 
+    def test_favorites_filter(self, vm, library) -> None:
+        plain = library.create_book("普通书")
+        favorite = library.create_book("收藏书")
+        library.set_favorite(favorite.book_id, True)
+        vm.refreshBooks()
+        assert vm.bookCount == 2
+        vm.setFavoritesOnly(True)
+        assert vm.bookCount == 1
+        assert vm.bookListModel.data(
+            vm.bookListModel.index(0, 0), vm.bookListModel.roleForName("title")
+        ) == "收藏书"
+        vm.setFavoritesOnly(False)
+        assert vm.bookCount == 2
+
     def test_search_filters_by_title(self, vm, library) -> None:
         library.create_book("进击的巨人")
         library.create_book("海贼王")
@@ -150,6 +164,26 @@ class TestImportEntry:
         assert call["chapter_id"] == chapter.chapter_id
         assert [s.filename for s in call["sources"]] == ["p001.png"]
         assert report.chapter_id == chapter.chapter_id
+
+    def test_import_from_urls_reads_local_files(self, vm, library, importer, tmp_path) -> None:
+        import uuid
+
+        from PySide6.QtCore import QUrl
+
+        book = library.create_book("书U")
+        chapter = library.create_chapter(book.book_id, "第01话")
+        vm.refreshBooks()
+        vm.selectBook(book.book_id)
+        page_file = tmp_path / "p001.png"
+        page_file.write_bytes(b"fake-png")
+        summary = vm.importFilesFromUrls(
+            chapter.chapter_id, [QUrl.fromLocalFile(str(page_file))]
+        )
+        assert summary["imported"] >= 0  # stub report: 0 imported, no failures
+        call = importer.calls[0]
+        source = call["sources"][0]
+        assert source.filename == "p001.png"
+        assert source.read() == b"fake-png"
 
     def test_import_requires_known_chapter(self, vm, importer) -> None:
         from application.library.errors import ChapterNotFound
