@@ -62,6 +62,8 @@ class TranslationMemoryEntry:
     updated_at: str = ""
 
     def __post_init__(self) -> None:
+        object.__setattr__(self, "scope_type", TmScope(self.scope_type))
+        object.__setattr__(self, "status", TmStatus(self.status))
         if self.scope_type is TmScope.BOOK and not self.book_id:
             raise ValueError("book-scoped TM entries require a book_id")
         if self.scope_type is TmScope.GLOBAL and self.book_id:
