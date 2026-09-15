@@ -2,15 +2,15 @@
 id: TASK-007
 title: 实现书架领域与本地图片导入
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-006]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 6b123fe55f2e6373335b044fc5e5f169b5d108e0
+branch: agent/zcode/TASK-007-library-import
+worktree: G:/CODEX/New Manga.worktrees/TASK-007-zcode
 integration_commit: null
 ---
 
@@ -68,4 +68,4 @@ PDF/MOBI/网页导入属于 TASK-023；Schema新增需Codex协调 TASK-006边界
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 Codex 派单开始执行（base=`6b123fe`，分支/worktree 如上，Owner ZCode、Reviewer DeepSeek Harness）。基线核验通过：HEAD=`6b123fe`（=派单 base，含 TASK-006 集成与收口），工作区干净，common dir 正确。流转补记：派单时本文件仍为 `proposed/pending_user_review`，按派单口径填入 owner/approval/base/branch/worktree 并直接置 `in_progress`（与 TASK-006 派单先例一致，ready 未单独落盘）。切片边界声明：本 Task 允许路径不含 infrastructure/ports，因此 Repository 契约在 `src/application/library/ports.py`（消费侧 Protocol）定义，持久化由契约实现注入；SQLite BookRepository 落地与 schema 扩展需 Codex 协调 TASK-006 边界后另行授权（本 Task 测试以契约 fake 验证用例行为，含模拟重启重载）。
