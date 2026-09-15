@@ -2,7 +2,7 @@
 id: TASK-014
 title: 实现配色与文字排版渲染
 kind: implementation
-status: in_review
+status: done
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -11,12 +11,14 @@ depends_on: [TASK-008]
 base_commit: 29592c929745410ef0045266da94f21ed97ffdcb
 branch: agent/zcode/TASK-014-rendering-style
 worktree: G:/CODEX/New Manga.worktrees/TASK-014-rendering-style
-integration_commit: null
+reviewed_head: 72cb2bee0cea56749961392dc899e379383b6fb8
+implementation_merge: a61216afce9d78819e62cc2907a371fa01e46dfb
+integration_commit: a9432971ebf6450d7cc3afa23a245af917ffad2e
 ---
 
 # TASK-014：实现配色与文字排版渲染
 
-本 Task 已获用户批准并释放给 ZCode；2026-09-15 ZCode 已接管，状态为 `in_progress`。Reviewer=DeepSeek Harness。本 worktree 基于 base=`29592c9`；主线 release 登记（`c77b40b`）晚于 base，本文件元数据已与 release 对齐。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并由 ZCode 交付；2026-09-15 已完成串行集成并置 `done`。Reviewer=DeepSeek Harness，固定 `base_commit=29592c9`、`reviewed_head=72cb2be`。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -29,7 +31,7 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 - [x] 实现SourceStyle提取/字号fallback、最终文本、字体/描边/方向/行距和-5..+5偏移；shrink-to-fit符合已确认规则。
 - [x] rerender仅使用有效Clean+final+TextStyle，缺Clean可诊断阻止，不触发OCR/Translation/Inpaint。
 - [x] 页级与Region级合成遵守TASK-002协议，输出新ArtifactRevision，失败保留旧current。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Handoff 已交，Review/集成待完成）
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Review approved；集成验证 153 passed）
 
 ## 允许修改范围
 
@@ -53,7 +55,9 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 - executed：`python -m pytest tests/rendering -v` → 56 passed（style 解析 18 / 方向+Qt 排版 14 / SourceStyle 9 / 合成器 6 / rerender 11）；横/竖排、多语言（CJK+Latin）、长文本折行、offset 边界与越界、缺字体诊断均覆盖。
 - executed：AI spy 验证 rerender 全路径零 OCR/Translation/Inpaint 调用 + 服务依赖闭包无 provider 引用；单 Region 合成邻区像素逐像素保持；渲染产物经 managed storage 落盘并在测试中读回断言（保存重开可读）。
 - executed：`python -m pytest tests`（全仓库回归，含架构守卫）→ 153 passed，退出码 0。
-- 环境：Windows 10.0.26200、Python 3.12.3（`G:/CODEX/New Manga.task-envs/TASK-014-py312`）、PySide6 6.11.2、pytest 9.1.1，被测 head `72cb2be`；逐条输出见 [author-verification](../../verification/TASK-014/author-verification.md)。
+- executed（Codex 集成复验）：`G:/CODEX/New Manga.task-envs/TASK-014-py312/Scripts/python.exe -m pytest tests -q` → 153 passed，退出码 0；默认 Windows Qt 平台，未设置 `QT_QPA_PLATFORM`。
+- executed（固定对象检查）：`git diff --check 29592c9 72cb2be --` → 退出码 0。
+- 环境：Windows 10.0.26200、Python 3.12.3、PySide6 6.11.2、pytest 9.1.1；作者逐条输出见 [author-verification](../../verification/TASK-014/author-verification.md)，主线复验见 [integration verification](../../verification/TASK-014/integration-a943297.md)。
 
 ## 依赖、风险与阻塞
 
@@ -63,16 +67,25 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 
 如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
 
+## Review findings disposition
+
+- **F-01 fixed**：纯 `TextDirection` 下沉至 `src/ports/rendering/direction.py`；application 保留导入兼容，ports 与 infrastructure 不再反向依赖 application。
+- **F-02 fixed**：单 Region 的 Region current 复查及 Page artifact compare-and-write 冲突统一返回 `COMPOSITION_BASE_CHANGED`；页级 rerender 的一般 §8.1 输入冲突仍保留 `INPUT_REVISION_CHANGED`。
+- **F-03 deferred**：Region current 复查与 Artifact 提交尚未进入同一事务；需要扩展 TASK-029 seam 或未来获批编排 Task，本次不启动其他 Task。
+- **F-04 fixed**：已将测试平台更正为默认 Windows Qt，并明确 `offscreen` 无字体库不可用。
+- **F-05 deferred**：ports/application 的 Qt/sqlite 自动架构守卫需另行由 Codex 协调；扩展会触及 `tests/core`，本次不越过 TASK-014 白名单。
+
 ## 交付与运行记录
 
 - Handoff：[TASK-014-72cb2be](../handoffs/TASK-014-72cb2be.md)，实现 head `72cb2be`（7 个实现/修复提交自 base 起），验证证据 [author-verification](../../verification/TASK-014/author-verification.md)。
-- Review：待 DeepSeek Harness 独立 Review（固定 base=`29592c9`、reviewed_head=`72cb2be`）。
-- 实际执行/实验/测试：rendering 56 passed；全仓库 153 passed（环境与逐条输出见 author-verification）。
-- 最近状态：2026-09-15 ZCode 完成实现并交 Handoff，状态 `in_progress` → `in_review`。
+- Review：[TASK-014-72cb2be](../reviews/TASK-014-72cb2be.md)，`report_commit=5276a18`，decision=`approved`。
+- 实际执行/实验/测试：rendering 56 passed；作者全仓库 153 passed；Codex 集成复验 153 passed；未运行项按 Review 保持 NOT_RUN/N/A。
+- 集成：实现 merge=`a61216a`；Review 报告 merge=`a943297`（`integration_commit`）；F-01/F-02/F-04 收口=`524d03f`。
+- 最近状态：2026-09-15 DSH Review approved；Codex 串行集成并完成主线复验，状态 `approved` → `done`。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 - 最近状态：2026-09-15 用户批准释放（主线 `c77b40b`）；ZCode 接管，`ready` → `in_progress`，开始需求阅读与 TDD 实施。
 
-## 实施计划（in_progress，ZCode）
+## 实施与集成记录
 
 边界结论（对照 base=`29592c9` 实际结构核对）：
 
