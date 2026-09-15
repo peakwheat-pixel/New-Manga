@@ -7,7 +7,7 @@ numbers (D03 §3.1, AC-CH-001).
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field, replace
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 
@@ -161,29 +161,6 @@ class Chapter:
     @property
     def deleted(self) -> bool:
         return self.deleted_at is not None
-
-    def with_inherited_defaults(
-        self, book_default_type: ChapterType, book_default_direction: ReadingDirection
-    ) -> "Chapter":
-        """Return a copy with unset type/direction resolved from the book.
-
-        Paged chapters inherit the book direction only when it is rtl/ltr;
-        a webtoon book default does not force vertical onto paged chapters
-        (D03 §4.4: paged direction comes from the work settings, rtl/ltr).
-        """
-        chapter_type = self.chapter_type or book_default_type
-        reading_direction = self.reading_direction
-        if reading_direction is None:
-            if chapter_type is ChapterType.WEBTOON:
-                reading_direction = ReadingDirection.VERTICAL
-            elif book_default_direction is not ReadingDirection.VERTICAL:
-                reading_direction = book_default_direction
-            else:
-                reading_direction = ReadingDirection.RTL
-        return replace(
-            self, chapter_type=chapter_type, reading_direction=reading_direction
-        )
-
 
 @dataclass
 class Tag:

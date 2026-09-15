@@ -63,6 +63,12 @@ def test_type_defaults_inherit_from_book(library):
     paged = library.create_chapter(webtoon_book.book_id, "番外分页", chapter_type="paged")
     assert paged.reading_direction is ReadingDirection.RTL
 
+    ltr_book = library.create_book(
+        "左开漫画", default_chapter_type="paged", default_reading_direction="ltr"
+    )
+    inherited_ltr = library.create_chapter(ltr_book.book_id, "第1话")
+    assert inherited_ltr.reading_direction is ReadingDirection.LTR
+
 
 def test_chapter_reorder_keeps_import_order(library, book):
     first = library.create_chapter(book.book_id, "第1话")

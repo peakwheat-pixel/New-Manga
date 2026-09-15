@@ -89,9 +89,9 @@ def test_favorite_and_archive_are_system_states(library, book):
     assert [t.name for t in library.tags_of_book(book.book_id)] == ["收藏夹"]
 
 
-def test_simulated_restart_keeps_persisted_state(library, book):
-    # Persistence contract: a fresh service over the same repository sees
-    # the same data (real SQLite wiring arrives with the infra slice).
+def test_service_restart_reuses_repository_state(library, book):
+    # Service restart semantics over the same repository; real SQLite wiring
+    # arrives with the infrastructure slice.
     repo = type(library._repo)()  # same contract implementation, fresh store
     first = LibraryService(repo)
     created = first.create_book("重启持久化", source_language="ko", target_language="zh")

@@ -4,7 +4,8 @@ author: ZCode
 recipient: Codex（转 DeepSeek Harness 独立 Review）
 base_commit: 6b123fe55f2e6373335b044fc5e5f169b5d108e0
 delivery_head: 6ea4dd9241c0a24f60964b570cb768bb48dfa0f3
-status: in_review
+status: integrated
+integration_commit: 2b64b0f7e419d8179633bd86928a49195b09414e
 ---
 
 # Handoff：TASK-007（书架领域与本地图片导入）
@@ -32,7 +33,7 @@ status: in_review
 - **AC-IMPORT-004 Unicode 路径**：**满足**。中文/日本語/한국어/emoji/空格/括号组合路径与文件名全部导入成功（`test_unicode_paths_and_filenames`）。
 - **AC-IMPORT-005 重复检测**：**满足**。source_hash 去重，策略 `skip`（默认）与 `import_as_new` 可选（`test_duplicate_detection_by_hash`）。
 - **AC-PAGE-001 Page 顺序**：**满足**。source_order 冻结、sort_order 用户重排互不干扰（`test_reorder_pages_keeps_source_order`）；文件夹收集按自然排序（page2 < page10）。
-- **AC4 Handoff/Review/集成**：本 Handoff 交付；状态 `in_review`，done 待 DeepSeek 非作者 Review + Codex 集成。
+- **AC4 Handoff/Review/集成**：本 Handoff 交付；DeepSeek Harness Review `approved`；Codex 已按 `--no-ff` 串行集成，主线 `integration_commit=2b64b0f7e419d8179633bd86928a49195b09414e`。
 
 ## 验证证据
 
@@ -44,6 +45,17 @@ status: in_review
 | 全量回归（含 TASK-005/006 全部测试） | `PYTHONPATH=src python -m pytest tests` | 同上 | PASS，退出码 0，62 passed | 同上 #2 |
 | whitespace 与范围 | `git diff --check 6b123fe 6ea4dd9 --`；`git status` | 本 worktree | PASS（0 / 仅允许路径） | 同上 #3~4 |
 | 架构边界 | grep domain/application 禁用 import；全量 core 守卫 | 同上 | PASS（domain/application 无 sqlite3/PySide6 实际导入） | 同上 #5 |
+
+## Codex 集成验证与 Finding 处置
+
+集成范围固定为 `base_commit=6b123fe55f2e6373335b044fc5e5f169b5d108e0`、`reviewed_head=6ea4dd9241c0a24f60964b570cb768bb48dfa0f3`；实现 merge 与 Review 报告 merge 均保留。主线复验见 [integration-2b64b0f.md](../../verification/TASK-007/integration-2b64b0f.md)：library 25 passed，全量 62 passed，`git diff --check` 通过。
+
+- **F-01 resolved**：删除无调用且无法接收未设置字段的 `Chapter.with_inherited_defaults`；方向继承只保留 `LibraryService` 路径。
+- **F-02 resolved**：更正服务重启测试名称与注释，并增加默认 `ltr` 到 paged Chapter 的继承断言。
+- **F-03 resolved**：测试辅助中的 PySide6 导入延迟到 Qt 解码和 PNG 工厂使用处。
+- **F-04 deferred**：本切片的 application consumer-side Protocol 保留在 `src/application/**/ports.py`；共享 infrastructure/repository ports 继续归 `src/ports/repositories/**`，SQLite adapter 前由后续获批 Task 统一或明确映射。
+
+AC1～AC4 已在 TASK-007 中勾选；未执行项仍按原记录标注 `NOT_RUN`/`N/A`。
 
 NOT_RUN / N/A：SQLite BookRepository 落地与 schema 扩展（允许路径不含 infrastructure/ports；契约在 application 侧定义、fake 驱动含模拟重启——SQLite 落地需 Codex 协调 TASK-006 边界后授权）；生产 ImageDecoder 装配（端口已定义，Qt 适配器在测试中验证真实解码）；书架 UI/搜索/回收站（TASK-012+）；AC-LIB-004 阅读摘要（非本 Task 主责 AC，属阅读器切片，`last_opened_at` 字段已就位）；PDF/MOBI/网页导入（TASK-023）；容量/性能（Benchmark 阶段）。
 

@@ -12,9 +12,6 @@ SRC_ROOT = Path(__file__).resolve().parents[2] / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from PySide6.QtCore import QBuffer, QIODevice  # noqa: E402
-from PySide6.QtGui import QColor, QImage  # noqa: E402
-
 from application.importing.images.ports import DecodedImage, ImageDecodeError  # noqa: E402
 from domain.books.entities import Book, Chapter, Tag  # noqa: E402  (annotations)
 from domain.pages.entities import Page  # noqa: E402
@@ -121,6 +118,8 @@ class QtImageDecoder:
     """Real decode validation through Qt (dimensions from the bitmap)."""
 
     def decode(self, data: bytes) -> DecodedImage:
+        from PySide6.QtGui import QImage
+
         image = QImage.fromData(data)
         if image.isNull():
             raise ImageDecodeError("bytes are not a decodable image")
@@ -133,6 +132,9 @@ class QtImageDecoder:
 
 
 def make_png(width: int = 4, height: int = 3, *, with_alpha: bool = True) -> bytes:
+    from PySide6.QtCore import QBuffer, QIODevice
+    from PySide6.QtGui import QColor, QImage
+
     image = QImage(width, height, QImage.Format_RGBA8888 if with_alpha else QImage.Format_RGB32)
     image.fill(QColor(12, 34, 56, 200 if with_alpha else 255))
     buffer = QBuffer()

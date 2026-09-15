@@ -4,19 +4,19 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-001～TASK-006 已完成并集成；TASK-007 已释放，等待 Owner 开始实施 |
-| 当前授权 | 仅允许 TASK-007 由 ZCode 实现书架领域与本地图片导入；DeepSeek Harness 独立 Review；TASK-008～TASK-027 与其他业务功能开发继续冻结 |
+| 阶段 | TASK-001～TASK-007 已完成并集成；TASK-008～TASK-027 与其他业务功能开发继续冻结 |
+| 当前授权 | 当前无已释放实现 Task；TASK-008～TASK-027 与其他业务功能开发继续冻结，等待用户单独授权 |
 | 接管审核 | approved |
-| 用户审核记录 | 2026-09-15：审核通过 TASK-006；批准释放 TASK-007，由 ZCode 承接并由 DeepSeek Harness 独立 Review；TASK-008～TASK-027 与其他业务功能继续冻结 |
+| 用户审核记录 | 2026-09-15：审核通过 TASK-007 集成收口；TASK-008～TASK-027 与其他业务功能继续冻结，是否释放 TASK-008 另行决定 |
 | 目标基线冻结 | 未冻结；见 Gap Analysis |
-| 应用源代码 / 可执行测试 | TASK-005 最小 Python/PySide6 QML 启动入口与 Core 架构守卫，以及 TASK-006 持久化与 Artifact 安全提交基础已入库；仍无业务功能 |
-| 项目 Git 分支 / 当前 Task 基线 | master；TASK-007 base=`6b123fe`；Owner=`ZCode`，Reviewer=`DeepSeek Harness`，分支=`agent/zcode/TASK-007-library-import` |
+| 应用源代码 / 可执行测试 | TASK-005 最小入口与守卫、TASK-006 持久化与 Artifact 基础、TASK-007 书架领域与本地图片导入已入库；尚无完整产品功能 |
+| 项目 Git 分支 / 当前 Task 基线 | master；TASK-007 reviewed_head=`6ea4dd9`；integration_commit=`2b64b0f`；当前无在执行 Task |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
-| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口 |
-| 任务分派 / 执行 | TASK-001～TASK-006：done；TASK-007：ready；TASK-008～TASK-027 保持 proposed |
-| ZCode / DeepSeek Harness 连接 | ZCode 已接收 TASK-007 Owner worktree；DeepSeek Harness 将在固定 reviewed head 后建立独立 Review worktree；TASK-006 相关 linked worktree 暂保留供审计 |
-| 本次 Review | TASK-006 复审 `baeef13` approved；TASK-007 尚未进入 Review |
+| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口 |
+| 任务分派 / 执行 | TASK-001～TASK-007：done；TASK-008～TASK-027 保持 proposed |
+| ZCode / DeepSeek Harness 连接 | TASK-007 Owner 与 Review worktree 暂保留供审计；当前无新 Task 分派 |
+| 本次 Review | TASK-007 `doc/reviews/TASK-007-6ea4dd9.md` approved；F-01～F-03 resolved，F-04 deferred |
 | 产品发布状态 | NOT READY；仅有最小启动骨架，无业务功能或可发布应用 |
 
 接管审核入口：[接管审计与差距](10_CURRENT_STATE_AND_GAPS.md)、[路线图](12_ROADMAP.md)、[任务目录](tasks/README.md)。
@@ -31,6 +31,8 @@
 
 已集成交付入口：[TASK-006 Handoff](handoffs/TASK-006-e1d3e2c.md)，固定 `base_commit=fb29dfe`、`reviewed_head=e1d3e2c`、`integration_commit=32a7314`；[集成验证](../verification/TASK-006/integration-32a7314.md)记录主线复验。
 
+已集成交付入口：[TASK-007 Handoff](handoffs/TASK-007-6ea4dd9.md)，固定 `base_commit=6b123fe`、`reviewed_head=6ea4dd9`、`integration_commit=2b64b0f`；[独立 Review](reviews/TASK-007-6ea4dd9.md) 为 approved；[集成验证](../verification/TASK-007/integration-2b64b0f.md)记录主线复验。
+
 TASK-006 Review 已完成：首轮报告 `doc/reviews/TASK-006-ba1e769.md` 为 changes_requested，复审报告 `doc/reviews/TASK-006-e1d3e2c.md` 为 approved；两个报告均已纳入 master。
 
 TASK-003 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-003-deepseek`；分支 `agent/deepseek/TASK-003-verification-spec`。Task 已集成，工作区暂保留供审计。
@@ -41,7 +43,7 @@ TASK-005 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-005-codex`，Revi
 
 TASK-006 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-006-zcode`；Reviewer 工作区为 `G:/CODEX/New Manga.worktrees/TASK-006-deepseek-review`；Task 已集成，两个 worktree 暂保留供审计。
 
-TASK-007 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-007-zcode`；分支 `agent/zcode/TASK-007-library-import`；基线为 `6b123fe55f2e6373335b044fc5e5f169b5d108e0`。Task 当前为 `ready`，尚未开始实施；Reviewer=DeepSeek Harness。
+TASK-007 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-007-zcode`；分支 `agent/zcode/TASK-007-library-import`；基线为 `6b123fe55f2e6373335b044fc5e5f169b5d108e0`。Task 已集成完成；Reviewer=DeepSeek Harness，Review worktree 为 `G:/CODEX/New Manga.worktrees/TASK-007-deepseek-review`，两个 worktree 暂保留供审计。
 
 用户审核后，Codex在本文件追加日期、决定原文摘要和允许启动的 Task；再在相应 Task 记录 release、owner、base_commit。若仅同意接管，保持其余 Task 为 proposed。
 
@@ -64,3 +66,4 @@ TASK-007 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-007-zcode`；分�
 | 2026-09-15 | 用户 | 审核通过 TASK-005 最终收口；批准释放 TASK-006，由 ZCode 承接、DeepSeek Harness 独立 Review；仅执行持久化与 Artifact 安全提交基础，TASK-007～TASK-027 与业务功能继续冻结 | 用户本次批准指令 |
 | 2026-09-15 | 用户 | TASK-006 集成与收尾：固定 `base_commit=fb29dfe`、approved `reviewed_head=e1d3e2c`；纳入两份 Review 报告；关闭 F-01；不启动其他 Task | 用户本次集成指令 |
 | 2026-09-15 | 用户 | 审核通过 TASK-006；允许启动 TASK-007，仅实现书架领域与本地图片导入，由 ZCode 实施、DeepSeek Harness 独立 Review；TASK-008～TASK-027 与其他业务功能继续冻结 | 用户本次批准指令 |
+| 2026-09-15 | 用户 | TASK-007 集成与收尾：固定 `base_commit=6b123fe`、approved `reviewed_head=6ea4dd9`；纳入 Review 报告；关闭 F-01～F-04（F-04 按端口位置规则 deferred）；不启动 TASK-008～TASK-027 | 用户本次集成指令 |
