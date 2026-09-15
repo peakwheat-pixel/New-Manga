@@ -26,7 +26,7 @@ D03 §16～18/34/37～43；D07 §28～38；D08 AC-ART/DB/REV。D 编号对应 [�
 
 ## Acceptance Criteria
 
-- [x] 实现首个切片实际使用的 Schema、外键、索引和短事务边界；按 TASK-002 的契约使用不可变版本路径及 current 引用。（v1 迁移最小表集；复合 DEFERRABLE FK 编码「current 同属」不变量；`BEGIN IMMEDIATE` 短事务；Managed 路径按 revision_id 命名且不可覆盖）
+- [x] 实现首个切片实际使用的 Schema、外键、索引和短事务边界；按 TASK-002 的契约使用不可变版本路径及 current 引用。（v1 迁移最小表集；复合 DEFERRABLE FK 编码「current 同属」不变量 + 触发器禁止清空已建立 current；`BEGIN IMMEDIATE` 短事务；Managed 路径按 D03 §18 布局（`books/{book}/chapters/{chapter}/{固定目录}/`，export 走 book 级 `exports/`）且不可覆盖）
 - [x] Artifact 写入/验证/正式版本发布/metadata commit 任一点失败均保留旧 current；数据库不能指向不存在的新文件。（失败矩阵 11 项测试全过：写失败、声明 hash 不符、发布后 DB 前崩溃注入、冲突、重复 revision_no、非法 FK、跨 artifact current 等；失败文件以 orphan 路径返回、不入库）
 - [x] 定义 migration 版本/checksum与备份入口、新 Schema 旧 App 拒写；保护 current/pinned/活动输入引用。（checksummed MigrationRunner + pre-migration 备份钩子 + SQLite backup API BackupRecord；`TOO_NEW` 库以 query_only 只读打开（AC-DB-005）；pinned/完整性字段与备份入口就位，清理/恢复执行属 TASK-021）
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Handoff 已交付 [TASK-006-ba1e769](../handoffs/TASK-006-ba1e769.md)；待 DeepSeek Review + Codex 集成）
@@ -67,5 +67,6 @@ D03 §16～18/34/37～43；D07 §28～38；D08 AC-ART/DB/REV。D 编号对应 [�
 - Handoff：[TASK-006-ba1e769](../handoffs/TASK-006-ba1e769.md)（delivery_head=`ba1e7695a1ad806a2640fe077811ade95d3b90d4`）。
 - Review：尚无；等待 DeepSeek Harness 独立 Review，报告将写入 `doc/reviews/TASK-006-*.md`（Owner 不写该路径）。
 - 实际执行/实验/测试：[verification/TASK-006/author-verification.md](../../verification/TASK-006/author-verification.md)（命令、退出码、环境、NOT_RUN/N-A 清单）。
-- 最近状态：2026-09-15 ZCode 完成实现并交付：ports（artifacts/storage/database 契约）+ SQLite 基础设施（PRAGMA 组合、v1 checksummed 迁移、pre-migration 备份入口、旧 App 只读门、§8.1 原子提交 ArtifactRepository）+ ManagedFileStorage（不可变发布、Unicode、完整性）+ 29 项 storage 测试全过、全量 35 passed。reviewed_head=`ba1e769`，状态 in_progress → in_review，等待独立 Review；未合并 master。
+- 最近状态：2026-09-15 修订轮（R-101～R-106）：按 DeepSeek 对 `ba1e769` 的 changes_requested（Review 报告 `047d8c3`）交付 `e1d3e2c`：R-101（P1，必做）改为对齐 D03 §18 布局（补 `books/` 层级 + `ARTIFACT_TYPE_DIRS` 显式目录映射 + export 走 book 级 `exports/`，未修订 D03）；R-102 复用 §10 `TARGET_NOT_FOUND`；R-103 在 `artifacts.py` docstring 与本记录登记 Lock（TASK-007/008 落库、TASK-011 消费）与 StepResultCandidate（TASK-011）承接切片；R-104 迁移拆句改 `sqlite3.complete_statement`；R-105 `backup_records.managed_path` 改记 `backups/{id}.db` 受管相对路径；R-106 新增 DB 触发器禁止清空已建立 current（责任在 DB 层）+ 双向负向测试。disposition 全部 fixed。验证：`python -m pytest tests/storage` 退出码 0（31 passed）、`PYTHONPATH=src python -m pytest tests` 退出码 0（37 passed）。新 reviewed_head=`e1d3e2c`，状态保持 in_review，见 [Handoff e1d3e2c](../handoffs/TASK-006-e1d3e2c.md)。
+- 最近状态（历史）：2026-09-15 ZCode 完成实现并交付：ports（artifacts/storage/database 契约）+ SQLite 基础设施（PRAGMA 组合、v1 checksummed 迁移、pre-migration 备份入口、旧 App 只读门、§8.1 原子提交 ArtifactRepository）+ ManagedFileStorage + 29 项 storage 测试全过、全量 35 passed。reviewed_head=`ba1e769`（后被 Review 拒绝，见修订轮），状态 in_review。
 - 最近状态：2026-09-15 Codex 派单开始执行（base_commit=`fb29dfe`、worktree 与分支如上，Owner ZCode、Reviewer DeepSeek Harness）。基线核验通过：HEAD=`fb29dfe`（=派单 base）、工作区干净、common dir=`G:/CODEX/New Manga/.git`。流转补记：派单时本文件仍为 `proposed/pending_user_review`（ready 未单独落盘），按派单口径将 owner/approval/base/branch/worktree 填入并直接置 `in_progress`；ready 的释放事实以 Codex 派单指令为准。允许范围即本文件白名单，未扩大。

@@ -28,3 +28,16 @@
 | Restore / 回收 / 清理对 current/pinned 的保护执行 | N/A | 清理器与恢复流程属 TASK-021；本切片提供 pinned 字段、完整性字段与备份入口 |
 | 大数据量 / 性能 | N/A | 无性能 AC；D07 数值留 Benchmark |
 | Region/Constraint Revision、StepResultCandidate 持久化 | N/A（范围决策） | 本切片无使用方：Region 属 TASK-008，PipelineRun/StepRun 属 TASK-011；表结构契约已在 TASK-002 冻结待后续切片实现 |
+
+## 修订轮（R-101～R-106，reviewed_head `e1d3e2c`）
+
+按 DeepSeek Review（`047d8c3`，changes_requested）修订后在最终 head 复跑：
+
+| # | 命令 | 退出码 | 结果 |
+|---|---|---|---|
+| 5 | `python -m pytest tests/storage`（3.12 任务环境；head `e1d3e2c`） | 0 | **31 passed**（新增 R-101 路径布局、R-106 清空/首版 NULL 双向等 3 项，移除 1 项被 R-102 取代的枚举覆盖测试） |
+| 6 | `PYTHONPATH=src python -m pytest tests` | 0 | **37 passed**（core 6 + storage 31） |
+| 7 | `git diff --check fb29dfe e1d3e2c --` | 0 | PASS |
+| 8 | `git diff --name-only fb29dfe HEAD` 越界过滤（D03/D08/AGENTS/STATUS/其他 Task/TASK-005 代码/domain/ui/bootstrap/tests/core/requirements） | — | 0 命中 |
+
+v1 DDL 变更说明：新增 `trg_media_artifacts_current_not_clearable` 触发器（R-106），`schema_migrations.checksum` 与代码内 `default_migrations()[0].checksum` 一致更新；被拒 head `ba1e769` 从未集成主线，无已应用迁移的 checksum 漂移。
