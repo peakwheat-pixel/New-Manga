@@ -28,7 +28,7 @@
 | Adapter | 实现的现有契约 | 责任 |
 |---|---|---|
 | `SqliteArtifactRepository`（已存在） | `ArtifactRepositoryPort` | Artifact 元数据、不可变文件引用、ArtifactRevision current pointer |
-| `SqliteLibraryRepository`（拟议） | `LibraryRepository`、`ImportPageSink` | Book/Chapter/Tag/BookTag 与 Page 导入持久化 |
+| `SqliteLibraryRepository`（拟议） | `LibraryRepository`、`ImportPageSink`、`PageRepository` | Book/Chapter/Tag/BookTag 与 Page 持久化 |
 | `SqliteRegionRepository`（拟议） | `RegionRepository` | Region current state、RegionRevision 历史、Pin/恢复所需字段 |
 
 Adapter 接收注入的 `sqlite3.Connection`；不创建全局单例、不在 Domain/Application 中导入 `sqlite3`，也不建立一个包含所有对象操作的“万能 Repository”。这保留深模块 seam：Application 只依赖已有消费侧接口，SQLite 细节留在 Infrastructure。
@@ -63,14 +63,30 @@ Adapter 接收注入的 `sqlite3.Connection`；不创建全局单例、不在 Do
 
 v1 可能已有仅供 Artifact 外键使用的“结构占位 Page”。迁移不得伪造源文件 Hash、Managed Copy 引用或图像尺寸：新增字段对这类旧行允许为 NULL；新建 Page 必须由 Adapter 写入完整非空值，并由 `Page` mapper 拒绝不完整记录。`existing_source_hashes()` 与 `max_source_order()` 只读取完整导入行。后续若要把旧占位行转成可显示 Page，必须另有明确的回填/迁移 Task，不能在本切片猜测原始文件。
 
+这里保留 TASK-007 当前已集成的 `managed_original_ref` 语义：它是 Managed Storage 的相对路径/引用，不是 `media_artifacts` 的 ID；本切片不因建库而自动创建 `original` Artifact。D03 §5.2 使用的 `managed_original_artifact_id` 是 To-Be 模型名称，与当前 Domain/`ManagedCopyStore` 契约不一致，必须在后续文档同步或产品决策 Task 中显式收敛；在收敛前不得把两者静默当作同一字段。
+
+v2 对新增字段的最低映射约束固定如下：Book/Chapter 的可选文字字段使用 `TEXT NOT NULL DEFAULT ''`，时间字段 `last_opened_at`/`deleted_at` 可为 NULL；Book/Chapter 的枚举使用 `TEXT NOT NULL` 加值域 CHECK，布尔使用 `INTEGER NOT NULL DEFAULT 0 CHECK (... IN (0, 1))`。Page 为兼容 v1 占位行，新增导入字段保持可 NULL，但非 NULL 值必须满足 Hash 非空、尺寸大于 0、大小和顺序不小于 0、引用非空的基本 CHECK；Adapter 的新建入口必须一次写入完整 Page，不能依赖数据库默认值生成伪造导入信息。Region 的 JSON 字段与枚举/布尔字段均为 NOT NULL 并带 Domain 对应默认值/值域 CHECK；只有 `current_revision_id` 在首次 Revision 同事务完成前可为 NULL，Revision 的 source/restored 引用字段可为 NULL。
+
 ### 3.2 新增书架关系表
 
 - `tags(tag_id TEXT PRIMARY KEY, name TEXT NOT NULL UNIQUE, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`。
+- `tags(tag_id TEXT PRIMARY KEY, name TEXT NOT NULL, created_at TEXT NOT NULL, updated_at TEXT NOT NULL)`；本设计不新增 `UNIQUE(name)` 数据库约束，避免超出现有 Domain/Repository 契约。`LibraryService` 已通过 `DuplicateTagName` 负责正常创建/重命名路径的重复检查。
 - `book_tags(book_id TEXT NOT NULL REFERENCES books(book_id), tag_id TEXT NOT NULL REFERENCES tags(tag_id), PRIMARY KEY(book_id, tag_id))`。
 - Tag 删除与其 `book_tags` 关系删除必须是同一事务；不得删除 Book。
 - `find_tag_by_name()` 使用精确名称匹配，不在 Adapter 中暗自做大小写、语言或空白归一化。
 
-### 3.3 Region 与 RegionRevision
+### 3.3 Page 读取 seam
+
+`ImportPageSink` 保持现有三个方法不变，只承担导入的查重、顺序读取和新增。为使统一持久化具备可验证的 Page round-trip，后续实现必须在 `src/application/library/ports.py` 增加独立的消费侧 `PageRepository` Protocol，最小方法为：
+
+- `get_page(page_id) -> Page | None`；
+- `list_pages(chapter_id) -> list[Page]`；
+- `update_page(page) -> None`；
+- `soft_delete_page(page_id) -> None`。
+
+`SqliteLibraryRepository` 同时以结构化方式实现 `ImportPageSink` 与 `PageRepository`，不把 Page 方法塞进已有 `LibraryRepository`，也不让测试通过直接读 SQLite 私有表代替 Port。`IMPORT_AS_NEW` 允许同一 Chapter 出现相同 `source_hash`，因此不建立 Chapter+Hash 唯一约束；并发导入协调不在本 Task 内扩大。
+
+### 3.4 Region 与 RegionRevision
 
 `regions` 保存 Region 的当前可查询状态：
 
@@ -88,18 +104,21 @@ v1 可能已有仅供 Artifact 外键使用的“结构占位 Page”。迁移�
 
 `region_revision_id`、`region_id`、`revision_no`、`snapshot_json`、`origin`、`review_state`、`is_pinned`、`source_run_id`、`source_step_run_id`、`restored_from_revision_id`、`created_at`。
 
+`regions` 的 `geometry_json`、`text_json`、`style_json`、枚举、Lock、时间字段均不能为空（`deleted_at` 除外）；`reading_order` 默认 `0`，Lock 默认 `0`，`current_revision_id` 只在首次原子创建窗口内为空。`region_revisions` 的 `snapshot_json`、`origin`、`review_state`、`created_at` 非空，`revision_no >= 1`，`is_pinned` 为 `0/1`；source/restored 引用仅在有来源时写入。
+
 必须有：
 
 - `UNIQUE(region_id, revision_no)`；
 - `current_revision_id` 与 `region_id` 的复合外键，确保 current 属于同一 Region；
+- `restored_from_revision_id` 与 `region_id` 的复合外键，确保恢复来源属于同一 Region；
 - 首次 Revision 与 Region current pointer 的原子提交边界；
 - current pointer 一旦建立不得清回 NULL；
 - Pin 只改变 `is_pinned`，不改写历史 snapshot；
 - 恢复通过新增 `origin=restored` Revision 并写入 `restored_from_revision_id`，不得把 current 直接重指向旧历史。
 
-Region current state 与 revision snapshot 有意各存一份：前者服务当前查询和软删除，后者保证历史不可变。两者只允许由同一 Revision commit 操作更新，不能由两个不相关的写入路径各自维护。
+Region current state 与 revision snapshot 有意各存一份：前者服务当前查询和软删除，后者保证历史不可变。`Region.snapshot_state()` 覆盖的字段（包括 `reading_order`）只能由 Revision commit 操作同步更新；因此后续实现必须让 `reorder_regions()` 为变更的 Region 创建新的 user Revision。`deleted_at` 是不在 snapshot 内的软删除元数据，允许由独立的短事务更新。除此之外不能由两个不相关的写入路径各自维护同一份 revision-owned state。
 
-### 3.4 Artifact 关系
+### 3.5 Artifact 关系
 
 `media_artifacts`、`artifact_revisions` 继续使用 TASK-006 v1 结构和已验证的复合 current 外键。它们通过同一 `pages` 表与 Region 关联，但 Artifact 文件仍在 Managed Storage，SQLite 只保存路径、Hash、尺寸、来源和 provenance 元数据。
 
@@ -116,7 +135,7 @@ Region current state 与 revision snapshot 有意各存一份：前者服务当�
 
 当前 `RegionEditingService` 的内存实现按 `add_revision()` 后 `update_region()` 两次调用表达一次逻辑提交。SQLite 实现不得把这两个调用分别提交后就声称满足 TASK-002 的原子 current 语义。
 
-后续实现 Task 必须在最小范围内提供一个“Region + Revision + current pointer”原子提交操作（可在 `RegionRepository` 增加 `commit_region_revision` 之类的明确方法），至少接收调用方的 `expected_current_revision_id`，并在同一 `BEGIN IMMEDIATE` 内：
+后续实现 Task 必须在最小范围内提供一个名为 `commit_region_revision` 的“Region + Revision + current pointer”原子提交操作。其逻辑输入固定为 `region`、`revision`、`expected_current_revision_id`，以及自动写入可选的三项 Lock 快照（`region_locked`、`translation_locked`、`inpaint_locked`）；输出至少区分 `APPLIED`、`INPUT_REVISION_CHANGED`、`LOCK_CHANGED`、`DB_FAILED`。该操作在同一 `BEGIN IMMEDIATE` 内：
 
 1. 重新读取 Region current；
 2. 检查 expected current 是否仍匹配；
@@ -124,7 +143,7 @@ Region current state 与 revision snapshot 有意各存一份：前者服务当�
 4. 更新 current pointer；
 5. 冲突或数据库失败时整体回滚并保留旧 current。
 
-应用层应把现有两调用路径收敛到这个 seam；不得为了维持旧调用形状而隐藏一个未提交事务，也不得让 `add_revision()` 隐式覆盖 current。自动 Pipeline 写入的 Lock 重读、Candidate 落库和 Step 语义仍由 TASK-011 负责，TASK-028 不把它们提前宣称完成。
+应用层应把现有两调用路径收敛到这个 seam；不得为了维持旧调用形状而隐藏一个未提交事务，也不得让 `add_revision()` 隐式覆盖 current。`add_revision()` 只负责明确的新历史插入；Pin 使用独立的 `set_revision_pinned()` 单事务更新 `is_pinned`，不得用同 ID upsert 伪装不可变历史。自动写入若传入 Lock 快照，事务内必须重新读取并比较；冲突映射到 `LOCK_CHANGED`，current 不动。Candidate 落库和完整 Step 语义仍由 TASK-011 负责，TASK-028 不把它们提前宣称完成。
 
 ## 5. Adapter 与代码边界
 
@@ -143,7 +162,7 @@ Region current state 与 revision snapshot 有意各存一份：前者服务当�
 后续实现至少必须提供以下证据；这些条目不把当前 TASK-006/007/008 的内存 fake 测试改标为 SQLite PASS：
 
 - v1 空库初始化、v1→v2 升级、迁移前备份、checksum、失败回滚和旧程序打开新 Schema 的 `TOO_NEW/query_only` 行为；
-- 同一数据库重启后 Book/Chapter/Tag/BookTag/Page 与 Region/RegionRevision 的 round-trip；
+- 同一数据库重启后 Book/Chapter/Tag/BookTag/Page 与 Region/RegionRevision 的 round-trip，且通过 `PageRepository`/现有消费侧 Port 验证，不直接依赖私有 SQL；
 - FK、软删除、排序、Page source order 与 sort order 分离，源文件未被写入；
 - Region 首次 Revision、连续历史、Pin、恢复新 Revision、current 不可清空及冲突回滚；
 - 现有 Artifact safe commit 测试在 v2 数据库上回归通过；

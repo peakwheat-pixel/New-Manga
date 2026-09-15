@@ -31,6 +31,6 @@ TASK-001～TASK-008 已完成并集成；TASK-028 的统一 SQLite 持久化设�
 | [TASK-025](TASK-025.md) | 按批准契约实现 Plugin/Hooks 与可选扩展 | ZCode | TASK-019, TASK-022, TASK-024 |
 | [TASK-026](TASK-026.md) | 独立集成审查与质量/性能验收 | DeepSeek Harness | TASK-020, TASK-021, TASK-022, TASK-023, TASK-025 |
 | [TASK-027](TASK-027.md) | 发布候选集成、打包与最终验收 | Codex | TASK-026 |
-| [TASK-028](TASK-028.md) | 冻结统一 SQLite 持久化设计（实现未释放） | Codex | TASK-006, TASK-007, TASK-008 |
+| [TASK-028](TASK-028.md) | 冻结统一 SQLite 持久化设计（实现未释放） | Codex | TASK-002, TASK-006, TASK-007, TASK-008 |
 
 每个任务含具体 Acceptance Criteria、允许修改路径与测试要求。TASK-005 已建立最小 `src/bootstrap`、`src/domain`、`src/ui` 与 `tests/core`；其余路径仍是拟议所有权边界，ready 前由 Codex 对照实际结构确认。Task 不能越过依赖、冻结状态或扩大允许范围。
