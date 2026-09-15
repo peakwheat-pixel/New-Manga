@@ -2,21 +2,21 @@
 id: TASK-006
 title: 实现持久化与 Artifact 安全提交基础
 kind: implementation
-status: proposed
-approval: pending_user_review
-suggested_owner: Codex
-owner: null
-reviewer: null
+status: ready
+approval: approved
+suggested_owner: ZCode
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-005]
-base_commit: null
-branch: null
-worktree: null
+base_commit: fb29dfedc496cde61cea9ea2558ef274e94eb49e
+branch: agent/zcode/TASK-006-persistence-artifact
+worktree: G:/CODEX/New Manga.worktrees/TASK-006-zcode
 integration_commit: null
 ---
 
 # TASK-006：实现持久化与 Artifact 安全提交基础
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并释放，由 ZCode 承接；当前仅完成交接准备，尚未开始实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -60,11 +60,11 @@ D03 §16～18/34/37～43；D07 §28～38；D08 AC-ART/DB/REV。D 编号对应 [�
 
 初版仅建实际切片需要的表，剩余表通过版本化迁移；迁移/恢复端到端由 TASK-021补足。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+如本 Task 需要新的契约或用户范围决定而输入仍未就绪，登记具体 blocker 并停止实施；不得借此扩大允许范围。Owner 与 Reviewer 必须保持不同。
 
 ## 交付与运行记录
 
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户批准释放；ready，Owner=ZCode，Reviewer=DeepSeek Harness，base=`fb29dfedc496cde61cea9ea2558ef274e94eb49e`；尚未开始实施。

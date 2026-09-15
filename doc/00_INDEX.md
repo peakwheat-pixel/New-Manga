@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-状态：TASK-001～TASK-005 已完成并集成；TASK-005 仅交付最小 Python/PySide6 QML 入口与架构守卫；TASK-006～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
+状态：TASK-001～TASK-005 已完成并集成；TASK-005 仅交付最小 Python/PySide6 QML 入口与架构守卫；TASK-006 已释放给 ZCode 实施持久化与 Artifact 安全提交基础；TASK-007～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
 
 ## 原始目标文档（已完整检查）
 
