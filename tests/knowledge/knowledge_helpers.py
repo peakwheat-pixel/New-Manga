@@ -27,6 +27,68 @@ from domain.regions.entities import (  # noqa: E402
     RegionType,
     SfxPolicy,
 )
+from application.translation.knowledge.tm import (  # noqa: E402
+    TranslationMemoryEntry,
+    TranslationMemoryStore,
+    TmScope,
+    TmStatus,
+)
+
+
+class InMemoryTmStore(TranslationMemoryStore):
+    """Structural fake over a dict; ``list_entries`` keeps insertion order."""
+
+    def __init__(self) -> None:
+        self.entries: dict[str, TranslationMemoryEntry] = {}
+
+    def add(self, entry: TranslationMemoryEntry) -> None:
+        self.entries[entry.tm_id] = entry
+
+    def get(self, tm_id: str):
+        return self.entries.get(tm_id)
+
+    def find_by_source_hash(self, source_hash: str, *, scope_type: TmScope, book_id: str | None):
+        return [
+            e
+            for e in self.entries.values()
+            if e.source_hash == source_hash
+            and e.scope_type is scope_type
+            and e.book_id == book_id
+        ]
+
+    def list_entries(self, *, scope_type: TmScope, book_id: str | None):
+        return [
+            e
+            for e in self.entries.values()
+            if e.scope_type is scope_type and e.book_id == book_id
+        ]
+
+    def update(self, entry: TranslationMemoryEntry) -> None:
+        self.entries[entry.tm_id] = entry
+
+
+class FixedClock:
+    """Deterministic ISO timestamps: t001, t002, ... in call order."""
+
+    def __init__(self) -> None:
+        self.calls = 0
+
+    def __call__(self) -> str:
+        self.calls += 1
+        return f"2026-09-15T00:00:{self.calls:02d}"
+
+
+def make_tm_service(start_ids: int = 0):
+    from application.translation.knowledge.tm import TranslationMemoryService
+
+    counter = start_ids
+
+    def id_factory() -> str:
+        nonlocal counter
+        counter += 1
+        return f"tm-{counter:03d}"
+
+    return TranslationMemoryService(InMemoryTmStore(), clock=FixedClock(), id_factory=id_factory)
 
 
 def make_constraint(
