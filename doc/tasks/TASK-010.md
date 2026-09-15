@@ -2,21 +2,21 @@
 id: TASK-010
 title: 实现翻译约束、TM 与 Context
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-008, TASK-009]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 2bdfd6f82b67a550c0550ee930d49bdb12656322
+branch: agent/zcode/TASK-010-translation-context
+worktree: G:/CODEX/New Manga.worktrees/TASK-010-zcode
 integration_commit: null
 ---
 
 # TASK-010：实现翻译约束、TM 与 Context
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准释放，当前状态为 `ready`；尚未认领或实施。Owner 为 ZCode，Reviewer 为 DeepSeek Harness。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -67,4 +67,4 @@ Exact/Fuzzy阈值依获批规格，不能自行添加Embedding/RAG。
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户批准释放；`ready`，等待 ZCode 在指定 worktree 认领并转 `in_progress`。
