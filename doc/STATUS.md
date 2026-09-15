@@ -13,7 +13,7 @@
 | 项目 Git 分支 / 当前 Task 基线 | master；TASK-008 base=`f129ae9`；Owner=`ZCode`，Reviewer=`DeepSeek Harness`，分支=`agent/zcode/TASK-008-region-editing` |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
-| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口；TASK-008 reviewed head `1f373ac` 由 `06ba2e7` 收口 |
+| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口；TASK-008 reviewed head `1f373ac` 由 `06ba2e7` 收口；TASK-028 reviewed head `e7f9e41` 由 `509de66` 收口 |
 | 任务分派 / 执行 | TASK-001～TASK-008：done；TASK-028 设计：done（integration=`509de66`），未释放实现；TASK-009～TASK-027 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | TASK-008 Owner 与 Review worktree 均已交付并集成；两个 worktree 及 TASK-007 相关 worktree 暂保留供审计 |
 | 本次 Review | TASK-007 `doc/reviews/TASK-007-6ea4dd9.md` approved；TASK-008 `doc/reviews/TASK-008-1f373ac.md` approved；TASK-028 `doc/reviews/TASK-028-e7f9e41.md` approved |
@@ -34,6 +34,8 @@
 已集成交付入口：[TASK-007 Handoff](handoffs/TASK-007-6ea4dd9.md)，固定 `base_commit=6b123fe`、`reviewed_head=6ea4dd9`、`integration_commit=2b64b0f`；[独立 Review](reviews/TASK-007-6ea4dd9.md) 为 approved；[集成验证](../verification/TASK-007/integration-2b64b0f.md)记录主线复验。
 
 已集成交付入口：[TASK-008 Handoff](handoffs/TASK-008-1f373ac.md)，固定 `base_commit=f129ae9`、`reviewed_head=1f373ac`、`integration_commit=06ba2e7`；[独立 Review](reviews/TASK-008-1f373ac.md) 为 approved；[集成验证](../verification/TASK-008/integration-06ba2e7.md)记录主线复验。
+
+已集成交付入口：[TASK-028](tasks/TASK-028.md)，固定 `base_commit=4a1df8f`、`reviewed_head=e7f9e41`、`integration_commit=509de66`；[独立 Review](reviews/TASK-028-e7f9e41.md) 为 approved。该 Task 仅完成设计冻结，SQLite 实现仍未释放。
 
 TASK-006 Review 已完成：首轮报告 `doc/reviews/TASK-006-ba1e769.md` 为 changes_requested，复审报告 `doc/reviews/TASK-006-e1d3e2c.md` 为 approved；两个报告均已纳入 master。
 
