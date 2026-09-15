@@ -19,7 +19,7 @@ from infrastructure.network.diagnostics import (
 from infrastructure.transport.stdlib import StdlibTransport
 
 import servers
-from helpers import MODE_SOCKS5, make_network_profile
+from net_helpers import MODE_SOCKS5, make_network_profile
 
 openssl = shutil.which("openssl")
 pytestmark_tls = pytest.mark.skipif(openssl is None, reason="openssl unavailable")

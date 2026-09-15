@@ -10,9 +10,7 @@ from __future__ import annotations
 
 import io
 import logging
-import sqlite3
 import sys
-import uuid
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
@@ -24,7 +22,7 @@ from ports.network.profiles import MODE_HTTP, NetworkProfile  # noqa: E402
 from ports.providers.credentials import SecretValue, make_credential_ref  # noqa: E402
 from ports.providers.profiles import ProviderProfile  # noqa: E402
 
-import helpers  # noqa: E402  (after src path insert)
+import net_helpers  # noqa: E402  (after src path insert)
 
 SECRET_TEXT = "sk-SECRET-DO-NOT-LEAK-9f1c"
 
@@ -54,7 +52,7 @@ def test_sqlite_and_logs_stay_secret_free(tmp_path):
         base_url="https://api.example.com",
         credential_ref=cred_ref,
     )
-    vault = helpers.InMemoryCredentialStore()
+    vault = net_helpers.InMemoryCredentialStore()
     vault.store_credential(cred_ref, SecretValue(SECRET_TEXT))
     resolved = vault.resolve_credential(profile.credential_ref)
 

@@ -8,7 +8,7 @@ import pytest
 from application.settings.bindings import ProviderBinding, ProviderBindingResolver
 from application.settings.errors import UnresolvedCapabilityError
 
-from helpers import make_provider_profile
+from net_helpers import make_provider_profile
 
 
 def seed_profiles(store):

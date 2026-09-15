@@ -9,7 +9,7 @@ import pytest
 
 from infrastructure.transport.stdlib import StdlibTransport
 
-from helpers import (
+from net_helpers import (
     MODE_DIRECT,
     MODE_HTTP,
     MODE_HTTPS,

@@ -17,7 +17,7 @@ from infrastructure.transport.stdlib import StdlibTransport
 from ports.network.transport import TlsError
 
 import servers
-from helpers import MODE_HTTP, make_network_profile
+from net_helpers import MODE_HTTP, make_network_profile
 
 openssl = shutil.which("openssl")
 pytestmark = pytest.mark.skipif(openssl is None, reason="openssl unavailable")

@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from application.settings.privacy import describe_provider_data
 
-from helpers import make_provider_profile
+from net_helpers import make_provider_profile
 
 
 def test_local_provider_sends_nothing():

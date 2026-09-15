@@ -13,7 +13,7 @@ from application.settings.network import (
     ProviderNetworkResolver,
 )
 
-from helpers import make_network_profile, make_provider_profile
+from net_helpers import make_network_profile, make_provider_profile
 
 
 @pytest.fixture()

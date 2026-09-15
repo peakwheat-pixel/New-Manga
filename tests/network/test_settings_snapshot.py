@@ -9,7 +9,7 @@ from application.settings.bindings import ProviderBinding
 from application.settings.models import EffectiveSetting
 from application.settings.snapshots import build_snapshot, validate_snapshot
 
-from helpers import make_provider_profile
+from net_helpers import make_provider_profile
 
 
 def make_resolved_snapshot(provider_store, binding_resolver):

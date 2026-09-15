@@ -15,7 +15,7 @@ import pytest
 
 from ports.providers.credentials import SecretValue, make_credential_ref
 
-import helpers
+import net_helpers
 from infrastructure.credentials.windows import (
     CredentialNotFoundError,
     WindowsCredentialStore,
@@ -25,7 +25,7 @@ from infrastructure.credentials.windows import (
 def _ref(vault, purpose: str) -> str:
     """Windows vault entries use the throwaway ``test`` kind; the fake
     only accepts the two production kinds, so it reuses ``provider``."""
-    if isinstance(vault, helpers.InMemoryCredentialStore):
+    if isinstance(vault, net_helpers.InMemoryCredentialStore):
         return make_credential_ref("provider", f"{purpose}-{uuid.uuid4().hex[:8]}")
     return f"NewManga/test/{purpose}-{uuid.uuid4().hex[:8]}"
 
@@ -33,7 +33,7 @@ def _ref(vault, purpose: str) -> str:
 @pytest.fixture(params=["memory", "windows"])
 def vault(request):
     if request.param == "memory":
-        yield helpers.InMemoryCredentialStore()
+        yield net_helpers.InMemoryCredentialStore()
     else:
         base = WindowsCredentialStore()
         created: list[str] = []

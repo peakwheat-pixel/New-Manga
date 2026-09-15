@@ -21,9 +21,9 @@ from ports.network.transport import (
     TransportTimeoutError,
 )
 
-import helpers
+import net_helpers
 import servers
-from helpers import MODE_HTTP, MODE_SOCKS5, make_network_profile
+from net_helpers import MODE_HTTP, MODE_SOCKS5, make_network_profile
 
 
 @pytest.fixture()
@@ -74,7 +74,7 @@ def test_proxy_407_maps_to_auth_error_without_fallback(transport, target):
     proxy = servers.ControlledProxyServer(
         mode="tunnel", username="tester", password="correct-password"
     )
-    vault = helpers.InMemoryCredentialStore()
+    vault = net_helpers.InMemoryCredentialStore()
     try:
         from ports.providers.credentials import SecretValue, make_credential_ref
 
@@ -137,7 +137,7 @@ def test_socks5_circuit_plain_http(transport, target):
 
 def test_socks5_user_pass_auth(transport, target):
     socks = servers.MiniSocks5Server(username="mega", password="secret-pw")
-    vault = helpers.InMemoryCredentialStore()
+    vault = net_helpers.InMemoryCredentialStore()
     try:
         from ports.providers.credentials import SecretValue, make_credential_ref
 
@@ -162,7 +162,7 @@ def test_socks5_user_pass_auth(transport, target):
 
 def test_socks5_bad_password_rejected(transport, target):
     socks = servers.MiniSocks5Server(username="mega", password="right")
-    vault = helpers.InMemoryCredentialStore()
+    vault = net_helpers.InMemoryCredentialStore()
     try:
         from ports.providers.credentials import SecretValue, make_credential_ref
 
