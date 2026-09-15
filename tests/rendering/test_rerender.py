@@ -11,7 +11,7 @@ import json
 import sys
 from pathlib import Path
 
-import helpers  # noqa: F401  (sys.path injection)
+import rendering_helpers  # noqa: F401  (sys.path injection)
 import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "editing"))

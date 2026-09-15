@@ -7,7 +7,7 @@ pixels must compare equal to the base outside it.
 
 from __future__ import annotations
 
-import helpers  # noqa: F401  (sys.path injection)
+import rendering_helpers  # noqa: F401  (sys.path injection)
 
 import pytest
 

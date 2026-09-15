@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-import helpers  # noqa: F401  (sys.path injection)
+import rendering_helpers  # noqa: F401  (sys.path injection)
 
 from application.rendering.style import (
     DEFAULT_FALLBACK_FONT_SIZE,
@@ -17,7 +17,7 @@ from application.rendering.style import (
     StyleResolutionError,
     resolve_font_size,
 )
-from helpers import make_probe
+from rendering_helpers import make_probe
 
 
 def style(**overrides) -> RenderTextStyle:
