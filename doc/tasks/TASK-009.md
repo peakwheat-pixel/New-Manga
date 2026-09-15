@@ -2,7 +2,7 @@
 id: TASK-009
 title: 实现 Provider 配置、网络策略与凭据边界
 kind: implementation
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -70,4 +70,5 @@ UI由TASK-022接入；具体OCR/Translation模型适配在TASK-019。
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-15 用户要求放弃插队制度并继续现有任务序列；TASK-009 已释放给 ZCode，等待接管。
+- 最近状态：2026-09-15 ZCode 在指定 worktree 接管开始执行，状态 ready → in_progress。基线核验通过：HEAD=`57896ef`（release commit）、base=`3de750a` 为祖先，分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。白名单核对：settings/network/transport/credentials/ports 与 tests/network 目录当前均不存在，属本 Task 拟议新增边界。
+- 认领记录：2026-09-15 ZCode 认领实施，Reviewer=DeepSeek Harness（非作者）。
