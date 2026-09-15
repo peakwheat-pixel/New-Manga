@@ -77,3 +77,22 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-15 用户批准与 TASK-010 并行释放；`ready`，等待 ZCode 在指定 worktree 认领并转 `in_progress`。
 - 最近状态：2026-09-15 ZCode 认领（`in_progress`），开始 D05/D08 需求阅读与 TDD 实施。
+
+## 实施计划（in_progress，ZCode）
+
+边界结论（对照 base=`2cceb1e` 实际结构核对）：
+
+- 现有 UI 仅有 TASK-005 的 `src/ui/qml/Main.qml`（空 ApplicationWindow）与 `src/bootstrap/app.py`（加载 Main.qml）。两者均**不在白名单**。
+- 装配方案：本切片交付完整 `shell/AppShell.qml`（含四页导航与书架），通过上下文属性消费 `navigationViewModel`/`bookshelfViewModel`；`Main.qml` 与 bootstrap 装配保持原状。
+- **范围变更请求（待 Codex 裁决，本切片不实施）**：应用真正展示新 Shell 需要两处白名单外改动——`src/ui/qml/Main.qml` 改为加载 `shell/AppShell.qml`（约 3 行）、`src/bootstrap/app.py` 构造服务与 ViewModel 并 `setContextProperty`。已按协议暂停越界部分，其余全部在白名单内完成；AppShell 可在测试中独立加载验证（tests/ui_shell 注入真实 ViewModel）。
+- 架构守卫：`src/ui/**` 不 import `infrastructure`（tests/core 守卫已覆盖）；QML 不写业务逻辑，全部经 ViewModel；ViewModel 依赖 application 层用例（LibraryService、ImportImagesUseCase、NavigationService），不依赖 sqlite/文件系统。
+
+模块与 TDD 顺序：
+
+1. `src/application/navigation/service.py`：`NavigationService`——四页枚举（bookshelf/workbench/reader/settings）、默认 bookshelf（AC-NAV-001）、拒绝第五 Route（AC-NAV-002）、切换保留 Book/Chapter/Page 上下文（AC-NAV-003）、`enter_workbench(book,chapter)` / `enter_reader(book,chapter,page)` 携带上下文（D05 §67）。
+2. `src/ui/viewmodels/navigation/`：`NavigationViewModel(QObject)`——currentPage/pages 属性、navigate 槽、workbench/reader 上下文属性与信号。
+3. `src/ui/models/library/`：`BookListModel` / `ChapterListModel`（QAbstractListModel，角色绑定 D05 §7.1/§9 字段；阅读进度 TASK-007 无字段，诚实显示“—”，不虚构）。
+4. `src/ui/viewmodels/bookshelf/`：`BookshelfViewModel(QObject)`——绑定 LibraryService + importer（ImportImagesUseCase 的调用方 seam）+ NavigationService；搜索/收藏/归档筛选、排序、Grid/List；CRUD 槽（新建/删除/收藏/归档/新建章节/删除章节）；导入入口（调用 importer 并暴露报告摘要）；空状态（D05 §62）；选中同步 Detail。
+5. QML（白名单内，全部薄绑定）：`shell/AppShell.qml`、`shell/PrimaryNavigationRail.qml`（固定四入口+worktail 徽标占位）；`bookshelf/BookshelfView|BookshelfToolbar|BookGrid|BookCard|BookDetailPanel|ChapterList.qml`；`common/EmptyState.qml`；`workbench/WorkbenchView.qml`、`reader/ReaderView.qml`（§62 空状态骨架）、`settings/SettingsView.qml`（§43.1 固定分类列表+占位面板）。键盘 Tab/方向键焦点与 disabled 态随绑定给出。
+6. `tests/ui_shell/`：navigation service/VM、bookshelf VM（内存 repo fake + stub importer）、列表模型角色、QML AppShell 装载测试（QQmlComponent + 注入 VM）。
+7. `doc/ui-baseline.md`：最小视觉基线（D05 §3.1/§7 布局、颜色/字体/间距/状态），明确标注“新设计基线，非既有截图”。
