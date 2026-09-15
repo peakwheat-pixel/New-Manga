@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-009：实现 Provider 配置、网络策略与凭据边界
 
-本 Task 已按现有任务序列释放，状态为 `ready`，等待 ZCode 接管实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已完成 ZCode 实施与一轮 DeepSeek Harness Review 修订，状态为 `in_review`（等待复审）。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -60,9 +60,9 @@ D03 §25～28；D06 §49～57；D07 §63～72/87～89；D08 AC-PROVIDER/NET/SEC/
 
 | 场景 | 命令 | 结果 | 证据 |
 |---|---|---|---|
-| 本 Task 测试 | `PYTHONPATH=src python -m pytest tests/network -q` | 81 passed | [author-verification](../../verification/TASK-009/author-verification.md) |
+| 本 Task 测试 | `PYTHONPATH=src python -m pytest tests/network -q` | 97 passed（修订轮后） | [author-verification](../../verification/TASK-009/author-verification.md) |
 | 既有切片回归 | `PYTHONPATH=src python -m pytest tests/storage tests/library tests/editing -q` | 91 passed | 同上 |
-| 全量回归 | `PYTHONPATH=src python -m pytest tests -q` | 178 passed | 同上 |
+| 全量回归 | `PYTHONPATH=src python -m pytest tests -q` | 194 passed（修订轮后） | 同上 |
 | whitespace / 范围 | `git diff --check 3de750a f1dd602 --`；name-only 过滤 | PASS（0；实现范围 37 文件全在白名单） | 同上 + [Handoff](../handoffs/TASK-009-f1dd602.md) |
 
 本地可控端点（127.0.0.1）：受控 HTTP 目标（可注入状态码）、HTTP 代理（绝对形式/CONNECT/407/502/静默）、SOCKS5 mini 服务器（user-pass）、openssl 自签 TLS 目标；未访问真实付费 API。未执行项（真实远程 Provider 端到端、Provider adapter 本体、UI、Profile 的 SQLite 持久化、并发 vault 写、打包回归）如实记录 NOT_RUN/N/A，见 author-verification。
@@ -77,8 +77,8 @@ UI由TASK-022接入；具体OCR/Translation模型适配在TASK-019。
 
 ## 交付与运行记录
 
-- Handoff：[TASK-009-f1dd602](../handoffs/TASK-009-f1dd602.md)，固定 `base_commit=3de750a`、`delivery_head=f1dd602`，status=in_review。
-- Review：尚无（等待 DeepSeek Harness 独立 Review）。
+- Handoff：修订轮 [TASK-009-b42fc32](../handoffs/TASK-009-b42fc32.md)（当前，`delivery_head=b42fc32`）；首轮 [TASK-009-f1dd602](../handoffs/TASK-009-f1dd602.md)（`f1dd602` 已被 Review 拒绝，作审计记录）。
+- Review：首轮 [TASK-009-f1dd602](../reviews/TASK-009-f1dd602.md)（DeepSeek Harness，commit `2da1a39`）为 changes_requested，R-001～R-008 P1；复审待新 head。
 - 实际执行/实验/测试：[author-verification](../../verification/TASK-009/author-verification.md)（四条命令全过：network 81 / 回归 91 / 全量 178 / diff --check 0）。
-- 最近状态：2026-09-15 实现完成，状态 in_progress → in_review。AC1～AC3 已勾；AC4 待非作者 Review approved 与 Codex 集成后勾选。
+- 最近状态：2026-09-15 首轮 Review（`2da1a39`）changes_requested（R-001～R-008 P1 + R-009～R-012 P2）；修订轮 `b42fc32` 关闭 R-001～R-010 与 R-012（R-011 httpx 偏差 deferred 交 Codex 裁决），状态维持 in_review 等待复审。AC1～AC3 已勾；AC4 待非作者 Review approved 与 Codex 集成后勾选。
 - 认领记录：2026-09-15 ZCode 在指定 worktree 接管开始执行，状态 ready → in_progress。基线核验通过：HEAD=`57896ef`（release commit）、base=`3de750a` 为祖先，分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。白名单核对：settings/network/transport/credentials/ports 与 tests/network 目录当前均不存在，属本 Task 拟议新增边界。

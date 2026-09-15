@@ -51,3 +51,18 @@ environment: Windows 10.0.26200 x64 / Python 3.12.3（G:/CODEX/New Manga.task-en
 | 多进程并发写 Credential Manager | NOT_RUN | 单实例桌面模型（D07 §79）；Windows 适配器对 CredWrite 已做存在性预检 |
 | settings.json 等导出文件 Secret 扫描 | N/A | 本 Task 未实现任何导出；SQLite/日志扫描已覆盖现有落盘物 |
 | PyInstaller 打包下的 ctypes/SSL 行为 | NOT_RUN | TASK-004 实验已验证打包路线；打包回归属后续发布 Task |
+
+---
+
+## 修订轮验证（R-001～R-010 修复，`b42fc32`）
+
+DSH Review `2da1a39` changes_requested 后的修订轮（[Handoff TASK-009-b42fc32](../../doc/handoffs/TASK-009-b42fc32.md)）：
+
+| # | 命令 | 结果 | 退出码 |
+|---|---|---|---|
+| 1 | `PYTHONPATH=src python -m pytest tests/network -q` | 97 passed（81 + 16 新回归，tests/network/test_review_revision.py 按 R-001～R-010 逐项命名） | 0 |
+| 2 | `PYTHONPATH=src python -m pytest tests/storage tests/library tests/editing -q` | 91 passed | 0 |
+| 3 | `PYTHONPATH=src python -m pytest tests -q` | 194 passed | 0 |
+| 4 | `git diff --check 3de750a b42fc32 --` | 无输出 | 0 |
+
+修订变更范围：`git diff --name-only 150c789 b42fc32` = 11 文件（8 源 + 3 测试），全部在 TASK-009 白名单。R-011（httpx 选型偏差）deferred 交 Codex 裁决；R-012 随元数据提交修正。NOT_RUN/N/A 维持上表，未被改写。
