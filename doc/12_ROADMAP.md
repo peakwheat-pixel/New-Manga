@@ -1,6 +1,6 @@
 # 下一阶段可执行 Roadmap
 
-更新日期：2026-09-15。TASK-001～TASK-008 与 TASK-028 设计已完成并集成；TASK-029 统一 SQLite 持久化实现已授权并处于 ready；TASK-009～TASK-027 未启动。此路线依据 D01～D08 和 [Gap Register](10_CURRENT_STATE_AND_GAPS.md)，没有排入无来源的新产品能力，也不承诺未经验证的日期/工期。
+更新日期：2026-09-15。TASK-001～TASK-008、TASK-028 设计与 TASK-029 统一 SQLite 持久化实现已完成并集成；TASK-009～TASK-027 未启动。此路线依据 D01～D08 和 [Gap Register](10_CURRENT_STATE_AND_GAPS.md)，没有排入无来源的新产品能力，也不承诺未经验证的日期/工期。
 
 ## 1. 阶段与退出条件
 
@@ -34,7 +34,7 @@ flowchart LR
 
 ## 2. 第一批释放状态与后续建议
 
-TASK-001～TASK-008 已集成完成：TASK-003 冻结验收/证据与 Fixture 规范并关闭 F-08；TASK-004 完成 Windows/PySide6/打包隔离实验；TASK-005 按方案 A 建立最小工程入口与架构守卫；TASK-006 完成持久化与 Artifact 安全提交基础；TASK-007 完成书架领域与本地图片导入，并关闭 F-01～F-03，按规则 deferred F-04；TASK-008 完成 Region 编辑、Revision 与人工保护，R-201/R-202 按 Review 记录 deferred。TASK-028 已完成统一 SQLite 设计冻结；TASK-029 已获授权并 ready，尚未产生实现交付；TASK-009 及其他业务功能继续冻结。
+TASK-001～TASK-008 已集成完成：TASK-003 冻结验收/证据与 Fixture 规范并关闭 F-08；TASK-004 完成 Windows/PySide6/打包隔离实验；TASK-005 按方案 A 建立最小工程入口与架构守卫；TASK-006 完成持久化与 Artifact 安全提交基础；TASK-007 完成书架领域与本地图片导入，并关闭 F-01～F-03，按规则 deferred F-04；TASK-008 完成 Region 编辑、Revision 与人工保护，R-201/R-202 按 Review 记录 deferred。TASK-028 已完成统一 SQLite 设计冻结；TASK-029 已按该设计完成实现、独立 Review 与 Codex 集成（实现 `2ea5445`，收口 `0b0b855`）；TASK-009 及其他业务功能继续冻结。
 
 这里的顺序是建议，不以用户批准接管推定其批准全部开发。用户若明确批准一组任务，Codex据此持续完成该组，无需重复请求同一授权。
 
@@ -52,7 +52,7 @@ DeepSeek Harness 与 ZCode 已分别完成 TASK-003、TASK-004；当前连接事
 
 ## 4. 依赖与修改范围规则
 
-- 所有 Task 文件包含硬依赖、Acceptance Criteria、允许路径、测试要求与阻塞；TASK-001～TASK-008、TASK-028 已 done，TASK-029 为 ready，TASK-009～TASK-027 为 proposed。
+- 所有 Task 文件包含硬依赖、Acceptance Criteria、允许路径、测试要求与阻塞；TASK-001～TASK-008、TASK-028、TASK-029 已 done，TASK-009～TASK-027 为 proposed。
 - 当前仅有 TASK-005 的最小启动与包边界源码；其余路径来自 D02/D05 建议结构，ready 前仍须核对并更新 Task，不能以“路径只是建议”为由越界修改。
 - 全局接口、Schema迁移、依赖清单和bootstrap修改需Codex明确分配；不能通过给各Agent整个src目录写权限实现所谓独立开发。
 - 测试/实验首先使用临时独立数据目录；真实用户文件只读导入。Git共享不意味着各进程共享写入测试DB。

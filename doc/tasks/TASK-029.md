@@ -2,7 +2,7 @@
 id: TASK-029
 title: 实现统一 SQLite 持久化
 kind: implementation
-status: in_review
+status: done
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -12,12 +12,12 @@ base_commit: 79529bc9805fda6b72b99860f649fca0922c6cf9
 branch: agent/zcode/TASK-029-unified-sqlite-persistence
 worktree: G:/CODEX/New Manga.worktrees/TASK-029-zcode
 reviewed_head: 5abc173497e112db4da1c00beac3c19fbcccf455
-integration_commit: null
+integration_commit: 0b0b85558e1211a6267f018a332a4cb7c307b67e
 ---
 
 # TASK-029：实现统一 SQLite 持久化
 
-本 Task 已获用户授权并进入 `ready`；由 ZCode 实施、DeepSeek Harness 独立 Review、Codex 串行集成。它只实现已冻结的 TASK-028 统一 SQLite 持久化设计，不扩展产品功能。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已完成 ZCode 实施、DeepSeek Harness 独立 Review 与 Codex 串行集成，状态为 `done`。实现合并为 `2ea5445`，Review 报告归档合并为 `0b0b855`。它只实现已冻结的 TASK-028 统一 SQLite 持久化设计，不扩展产品功能。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -36,7 +36,7 @@ integration_commit: null
 - [x] 在既有消费侧 editing Port 与必要的 `RegionEditingService` seam 中实现 `commit_region_revision`：使用 `BEGIN IMMEDIATE`，事务内重读 current/Lock，区分 `APPLIED`、`INPUT_REVISION_CHANGED`、`LOCK_CHANGED`、`DB_FAILED`，冲突或失败保留旧 current；不得用 `add_revision()` + `update_region()` 两次独立提交冒充原子操作。（SQLite seam + InMemory committer 同契约；全部写路径收敛单一提交路径；staged-copy 冲突语义测试）
 - [x] 让保存、自动写回、恢复、Pin 和 `reorder_regions()` 遵守 TASK-028：revision-owned 状态只能通过 Revision commit 同步，重排产生新的 user Revision，Pin 只更新 `is_pinned`，不得同 ID upsert 改写不可变历史。（`test_reorder_creates_user_revisions`、`test_pin_updates_flag_only`、`test_restore_appends_and_keeps_history_on_sqlite`）
 - [x] 在 v2 数据库上回归 TASK-006 Artifact safe commit 及既有 storage/library/editing 测试；失败、冲突、取消不能改变 current，数据库不能指向不存在文件。（`db_conn` fixture 即 v2；Artifact 12 项 + 探针全过；越界表边界检查）
-- [ ] 提供绑定 delivery head 的 Handoff、verification 证据和未运行项；实现完成不等于 done，必须等待 DeepSeek Harness 非作者 Review approved 与 Codex 集成。（已交付 [TASK-029-a2348e9](../handoffs/TASK-029-a2348e9.md)；待 Review + 集成）
+- [x] 提供绑定 delivery head 的 Handoff、verification 证据和未运行项；实现完成不等于 done，必须等待 DeepSeek Harness 非作者 Review approved 与 Codex 集成。（修订交付 `5abc173`；最终 Review approved；Codex 已集成）
 
 ## 允许修改范围
 
@@ -69,12 +69,12 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| v1 空库与 v1→v2 迁移 | `python -m pytest tests/storage/test_schema_migration.py -v` 及 v1/v2 探针 | Python 3.12.3、独立临时 DB | NOT_RUN | 待交付 verification |
-| Library/Page Port round-trip 与重启 | `python -m pytest tests/library -v` | v2 adapter、独立临时 DB/Managed Storage | NOT_RUN | 待交付 verification |
-| Region Revision 原子性、Lock、Pin、恢复、重排 | `python -m pytest tests/editing -v` 及冲突/回滚探针 | v2 adapter、并发连接隔离 | NOT_RUN | 待交付 verification |
-| Artifact v2 回归与源文件保护 | `python -m pytest tests/storage -v` | v2 数据库、独立源文件 | NOT_RUN | 待交付 verification |
-| 全量回归 | `PYTHONPATH=src python -m pytest tests` | Python 3.12.3 | NOT_RUN | 待交付 verification |
-| 范围与空白 | `git diff --check <base> <delivery_head>`；检查变更路径 | 固定 delivery head | NOT_RUN | Handoff/Review |
+| v1 空库与 v1→v2 迁移 | `python -m pytest tests/storage/test_schema_migration.py -v` 及 v1/v2 探针 | Python 3.12.3、独立临时 DB | PASS（storage 33 passed；v1 SQL 冻结与迁移门控断言通过） | [Review](../reviews/TASK-029-5abc173.md)、[集成验证](../../verification/TASK-029/integration-0b0b855.md) |
+| Library/Page Port round-trip 与重启 | `python -m pytest tests/library -v` | v2 adapter、独立临时 DB/Managed Storage | PASS（32 passed） | [集成验证](../../verification/TASK-029/integration-0b0b855.md) |
+| Region Revision 原子性、Lock、Pin、恢复、重排 | `python -m pytest tests/editing -v` 及冲突/回滚探针 | v2 adapter、并发连接隔离 | PASS（26 passed；事务/冲突探针见 Review） | [Review](../reviews/TASK-029-5abc173.md)、[集成验证](../../verification/TASK-029/integration-0b0b855.md) |
+| Artifact v2 回归与源文件保护 | `python -m pytest tests/storage -v` | v2 数据库、独立源文件 | PASS（33 passed） | [集成验证](../../verification/TASK-029/integration-0b0b855.md) |
+| 全量回归 | `PYTHONPATH=src python -m pytest tests` | Python 3.12.3 | PASS（97 passed） | [集成验证](../../verification/TASK-029/integration-0b0b855.md) |
+| 范围与空白 | `git diff --check <base> <delivery_head>`；检查变更路径 | 固定 delivery head | PASS（delivery 范围与集成文档检查通过） | [Handoff](../handoffs/TASK-029-5abc173.md)、[Review](../reviews/TASK-029-5abc173.md) |
 
 必须额外覆盖：迁移备份/checksum/失败回滚/旧程序只读、Page v1 占位兼容、FK/软删除/顺序分离、Region current 冲突和 Lock 冲突回滚、Pin 不改 snapshot、恢复新增 Revision、Artifact 失败保留旧 current，以及 SQLite 不写入 Pipeline/Secret/二进制内容。任何未执行项必须保留 `NOT_RUN`，不能改写为 PASS。
 
@@ -86,10 +86,9 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无；ZCode 完成后新增 `doc/handoffs/TASK-029-<delivery-head>.md`，引用固定 delivery head。
-- Review：尚无；DeepSeek Harness 必须在独立 worktree 按固定 base/delivery head 审查，不能审核自己的变更。
-- 实际测试：已回填——四条命令退出码 0：storage 33 / library 32 / editing 25 passed、全量 95 passed；证据见 [verification/TASK-029/author-verification.md](../../verification/TASK-029/author-verification.md)。
-- 最近状态：2026-09-15 修订轮（F-01～F-05）：按 DeepSeek 对 `a2348e9` 的 changes_requested（报告 commit `2652973`）交付 `5abc173`：F-01（P1）默认构造优先采用 repository 自身原子 seam（旧 InMemory 回退对 SQLite 会静默跳过 revision-owned 状态/指针更新，Reviewer 探针缺陷反转为通过+正向测试）；F-02 异常回滚放宽+去 no-op；F-03 get_page 与 list_pages 软删一致+契约写明；F-04 回归计数勘误（97）；F-05 Qt 用例 importorskip。disposition 全部 fixed。验证：四条命令退出码 0（33/32/26/97）。reviewed_head=`5abc173`，状态保持 in_review，见 [Handoff 5abc173](../handoffs/TASK-029-5abc173.md)。
-- 最近状态（历史）：2026-09-15 ZCode 完成实现并交付：v2 迁移（v1 冻结验证）+ SqliteLibraryRepository（三契约）+ SqliteRegionRepository（原子 seam）+ editing 服务收敛单一提交路径 + 12 项 SQLite 集成测试。reviewed_head=`a2348e9`，状态 in_progress → in_review；未合并 master。
-- Codex 集成：尚无；只有 Review approved、Handoff/verification 完整且 Codex 集成验证通过后，才能填写 `integration_commit` 并置 `done`。
+- Handoff：修订交付 [TASK-029-5abc173](../handoffs/TASK-029-5abc173.md)，固定 `base_commit=79529bc`、`delivery_head=5abc173`；已在 `0b0b855` 记录为 integrated。
+- Review：首轮 [TASK-029-a2348e9](../reviews/TASK-029-a2348e9.md) 为 `changes_requested`；复审 [TASK-029-5abc173](../reviews/TASK-029-5abc173.md) 为 `approved`，均已归档到 master。
+- 实际测试：ZCode/DSH 与 Codex 主工作区均复验四条命令退出码 0：storage 33 / library 32 / editing 26 / 全量 97 passed；证据见 [author-verification](../../verification/TASK-029/author-verification.md) 与 [集成验证](../../verification/TASK-029/integration-0b0b855.md)。
+- 最近状态：2026-09-15 修订轮处理 F-01～F-05，`reviewed_head=5abc173`；DSH 复审 approved，F-06 为非阻塞文档建议，未产生新的 reviewed head。
+- Codex 集成：实现合并 `2ea5445`；Review 报告合并 `integration_commit=0b0b855`；主工作区复验通过，TASK-029 置 `done`。并发多连接、bootstrap 装配、损坏库恢复、性能、ref 命名收敛及 R-201/R-202 仍按 Review 标为 NOT_RUN/N/A，未被改写为 PASS。
 - 认领记录：2026-09-15 ZCode 在指定 worktree 接管开始执行。基线核验通过：HEAD=`c6db2c0`（=release commit，含 base `79529bc` 与 TASK-028 集成），分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。状态 ready → in_progress。
