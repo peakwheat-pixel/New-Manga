@@ -14,13 +14,13 @@ import re
 
 from PySide6.QtGui import QFont, QFontMetrics
 
-from application.rendering.style import TextDirection
 from ports.rendering.ports import (
     DrawItem,
     FontCatalog,
     LayoutRequest,
     LayoutResult,
 )
+from ports.rendering.direction import TextDirection
 
 _WORD_RE = re.compile(r"\S+|\s")
 

@@ -9,8 +9,9 @@ fit probe — no Qt/sqlite imports in this package (TASK-005 guards).
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import Enum
 from typing import Callable, TYPE_CHECKING
+
+from ports.rendering.direction import TextDirection
 
 if TYPE_CHECKING:  # pragma: no cover - typing only
     from domain.regions.entities import TextStyle
@@ -46,14 +47,6 @@ _MIN_FONT_SIZE = 1.0
 
 class StyleResolutionError(ValueError):
     """Diagnosable style failure (missing manual size, unfittable text)."""
-
-
-class TextDirection(str, Enum):
-    """D03 §11.5 ``text_direction``: auto / horizontal / vertical."""
-
-    AUTO = "auto"
-    HORIZONTAL = "horizontal"
-    VERTICAL = "vertical"
 
 
 @dataclass(frozen=True)

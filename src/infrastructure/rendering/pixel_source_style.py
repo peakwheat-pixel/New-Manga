@@ -24,7 +24,7 @@ from statistics import median, pstdev
 from PySide6.QtGui import QImage
 
 from ports.rendering.ports import SourceStyle, SourceStyleAnalyzer
-from application.rendering.style import TextDirection
+from ports.rendering.direction import TextDirection
 
 _BACKGROUND_TOLERANCE = 60  # brightness distance to count as ink
 _QUANT = 32  # color quantization step for dominant-color voting

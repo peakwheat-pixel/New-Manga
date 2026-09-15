@@ -79,7 +79,7 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 - `src/domain/regions/entities.py` 的 `TextStyle` 是最小子集且不在本 Task 白名单内；本切片在 `src/application/rendering/style.py` 定义完整渲染样式 `RenderTextStyle`（D03 §11.5 字段），经 `from_domain()` 兼容 TASK-008 已持久化的最小样式。不修改 domain/SQLite schema。
 - 渲染产物通过现有 `SqliteArtifactRepository.commit_revision`（TASK-002 §8.1 compare-and-write）提交为新 `translated` ArtifactRevision；失败/conflict 保留旧 current（复用已集成 seam，不重写）。
 - page→artifact 定位：现有 `ArtifactRepositoryPort` 无按 page 查询方法；新增只读 `PageArtifactLocator` port（`src/ports/rendering/`）+ SQLite 读适配（`src/infrastructure/rendering/locator.py`），不改共享 port 文件。
-- 图像栈：PySide6 QtGui（QImage/QPainter/QTextLayout），已在 requirements 锁定，不新增依赖；测试用 `QT_QPA_PLATFORM=offscreen`。
+- 图像栈：PySide6 QtGui（QImage/QPainter/QTextLayout），已在 requirements 锁定，不新增依赖；测试使用默认 Windows 平台（`offscreen` 无字体库不可用）。
 
 模块与 TDD 顺序：
 

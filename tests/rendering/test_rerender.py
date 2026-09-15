@@ -437,7 +437,7 @@ class TestRerenderRegion:
         service._compositor = RegionMutatingCompositor()
         outcome = service.rerender_region("r-x")
         assert outcome.status is RenderStatus.CONFLICT
-        assert outcome.error_code == "INPUT_REVISION_CHANGED"
+        assert outcome.error_code == "COMPOSITION_BASE_CHANGED"
         _, revision = stack["locator"].locate_current(
             ids["page_id"], ArtifactType.TRANSLATED
         )

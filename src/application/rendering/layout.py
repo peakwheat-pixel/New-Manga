@@ -6,8 +6,8 @@ Pure decision helper: explicit settings win, then the SourceStyle hint
 
 from __future__ import annotations
 
-from application.rendering.style import TextDirection
 from ports.rendering.ports import SourceStyle
+from ports.rendering.direction import TextDirection
 
 #: A region at least this much taller than wide defaults to vertical.
 VERTICAL_ASPECT_THRESHOLD = 1.5

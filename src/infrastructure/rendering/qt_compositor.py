@@ -25,8 +25,8 @@ from PySide6.QtGui import (
     QPen,
 )
 
-from application.rendering.style import TextDirection
 from ports.rendering.ports import ImageCompositor, RenderOp
+from ports.rendering.direction import TextDirection
 
 
 def _to_png(image: QImage) -> bytes:

@@ -10,12 +10,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Protocol, Sequence
 
-from application.rendering.style import TextDirection
 from ports.repositories.artifacts import (
     ArtifactRecord,
     ArtifactRevisionRecord,
     ArtifactType,
 )
+from ports.rendering.direction import TextDirection
 
 
 @dataclass(frozen=True)
@@ -166,5 +166,6 @@ __all__ = [
     "ResolvedFont",
     "SourceStyle",
     "SourceStyleAnalyzer",
+    "TextDirection",
     "TextLayoutEngine",
 ]

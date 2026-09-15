@@ -15,7 +15,7 @@ Frozen behaviour implemented here:
 - single-region render (§8.2): the page's current translated image is
   the composition base; only the target region's box is restored from
   Clean and redrawn; a moved-on region revision or page artifact base
-  yields ``INPUT_REVISION_CHANGED`` without updating any current.
+  yields ``COMPOSITION_BASE_CHANGED`` without updating any current.
 - SFX policy gate (§85): ``skip``/``manual`` regions are skipped by
   batch renders (``skip_policy``); a manual-SFX region renders only on
   an explicit single-region command with ``allow_manual_sfx=True``.
@@ -34,7 +34,6 @@ from application.rendering.style import (
     FontSizeResolution,
     RenderTextStyle,
     StyleResolutionError,
-    TextDirection,
     resolve_font_size,
 )
 from application.translation.color.service import SourceStyleService
@@ -59,6 +58,7 @@ from ports.rendering.ports import (
     RenderOp,
     TextLayoutEngine,
 )
+from ports.rendering.direction import TextDirection
 
 _RENDERED = "rendered"
 _SKIPPED = "skipped"
@@ -284,7 +284,7 @@ class RenderService:
         if current is None or current.current_revision_id != snapshot_revision_id:
             return RenderOutcome(
                 status=RenderStatus.CONFLICT,
-                error_code="INPUT_REVISION_CHANGED",
+                error_code="COMPOSITION_BASE_CHANGED",
                 detail="region revision moved on during composition",
                 reports=(prepared.report,),
             )
@@ -295,6 +295,7 @@ class RenderService:
             content=composed,
             clean_revision_id=clean_revision.artifact_revision_id,
             reports=(prepared.report,),
+            composition_base_changed=True,
         )
 
     # ------------------------------------------------------------------
@@ -445,6 +446,7 @@ class RenderService:
         content: bytes,
         clean_revision_id: str,
         reports: tuple[RegionRenderReport, ...],
+        composition_base_changed: bool = False,
     ) -> RenderOutcome:
         provenance = {
             "step": "render",
@@ -491,7 +493,11 @@ class RenderService:
         }[outcome.status]
         return RenderOutcome(
             status=status,
-            error_code=outcome.error_code,
+            error_code=(
+                "COMPOSITION_BASE_CHANGED"
+                if composition_base_changed and outcome.status is CommitStatus.CONFLICT
+                else outcome.error_code
+            ),
             detail=outcome.detail,
             reports=reports,
         )
