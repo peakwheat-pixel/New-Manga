@@ -2,7 +2,7 @@
 id: TASK-012
 title: 实现四页导航与书架 UI
 kind: implementation
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -18,6 +18,8 @@ integration_commit: null
 
 本 Task 已获用户批准释放；2026-09-15 ZCode 在指定 worktree 认领，状态 `ready` → `in_progress`，与 TASK-010（另一 ZCode 会话）并行。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
+2026-09-15 实施完成，状态 `in_progress` → `in_review`，delivery head `ca5848b`，已交 DeepSeek Harness 独立 Review（见 [Handoff](../handoffs/TASK-012-ca5848b.md)）。
+
 ## 来源与目标
 
 D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引](../00_INDEX.md)；依赖交付物是后续输入，当前并不存在。
@@ -26,9 +28,9 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 
 ## Acceptance Criteria
 
-- [ ] 启动默认书架且只有四个同级入口；无上下文时显示文档规定的空状态，切换保留上下文。
-- [ ] 书架包含Toolbar/虚拟化作品列表/固定BookDetail/ChapterList，接入TASK-007用例和导入入口。
-- [ ] 依据D05建立最小视觉基线，标清新设计而非既有截图；关键键盘操作、焦点、空/加载/错误/禁用可用。
+- [x] 启动默认书架且只有四个同级入口；无上下文时显示文档规定的空状态，切换保留上下文。（python 服务层 + QML 装载双层测试）
+- [x] 书架包含Toolbar/虚拟化作品列表/固定BookDetail/ChapterList，接入TASK-007用例和导入入口。
+- [x] 依据D05建立最小视觉基线，标清新设计而非既有截图（[ui-baseline](../ui-baseline.md)）；空/禁用态已验证；键盘焦点全量矩阵 NOT_RUN，归 TASK-022。
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
@@ -59,7 +61,7 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 
 - 计划：python -m pytest tests/ui_shell；导航、CRUD/导入绑定、Book+Chapter跳转、切换后上下文。
 - 100%/150%/200%DPI初验并保存截图；完整多屏矩阵在TASK-022/026。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- ~~以上均为计划，当前结果全部 NOT_RUN~~ → 实际结果（2026-09-15）：`pytest tests/ui_shell` 46 passed、`pytest tests` 296 passed（exit 0），见 [author-verification](../../verification/TASK-012/author-verification.md)；100%/150%/200% DPI 截图初验仍 NOT_RUN（BLOCKED：Main.qml/bootstrap 装配 scope-change 待裁决），完整多屏矩阵在 TASK-022/026。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -72,11 +74,12 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
+- Handoff：[TASK-012-ca5848b](../handoffs/TASK-012-ca5848b.md)（delivery head `ca5848b`，待 DSH Review）。
+- Review：尚无（2026-09-15 已交付 DSH，owner≠reviewer）。
+- 实际执行/实验/测试：[author-verification.md](../../verification/TASK-012/author-verification.md) —— 全仓 `pytest tests` 296 passed（exit 0，含架构守卫）、`pytest tests/ui_shell` 46 passed（exit 0，35 python + 11 QML 装载/行为）；AC 对照与 NOT_RUN 清单见该文件；pytest 输出原文随存于 verification/TASK-012/。
 - 最近状态：2026-09-15 用户批准与 TASK-010 并行释放；`ready`，等待 ZCode 在指定 worktree 认领并转 `in_progress`。
 - 最近状态：2026-09-15 ZCode 认领（`in_progress`），开始 D05/D08 需求阅读与 TDD 实施。
+- 最近状态：2026-09-15 实施完成置 `in_review`（01f5bdb 认领 → c9b3fac 计划+scope-change → cf0df63/17a4a48 TDD → 967dbc0 QML+装载测试 → ca5848b 基线+证据）：四页常驻导航（仅切 visible）、书架 Toolbar/Grid/Card/DetailPanel/ChapterList/新建Dialog/导入入口、三骨架页 §62 空状态、EmptyState；`Main.qml`/`bootstrap` 装配 scope-change request 待 Codex 裁决，DPI 截图初验因此 BLOCKED（NOT_RUN），键盘全量归 TASK-022。
 
 ## 实施计划（in_progress，ZCode）
 
