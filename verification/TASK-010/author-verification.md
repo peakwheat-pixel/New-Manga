@@ -22,7 +22,7 @@
 | # | 命令 | 结果 | 退出码 |
 |---|---|---|---|
 | 1 | `PYTHONPATH=src python -m pytest tests/knowledge -q` | 78 passed | 0 |
-| 2 | `PYTHONPATH=src python -m pytest tests -q`（全量） | 328 passed（连续 3 次） | 0 |
+| 2 | `PYTHONPATH=src python -m pytest tests -q`（全量） | 322 passed, 6 skipped（连续 3 次；6 项均因 `openssl unavailable`） | 0 |
 | 3 | `PYTHONPATH=src python -m pytest tests/core/test_architecture.py -q` | 4 passed | 0 |
 | 4 | `git diff --check 2cceb1e..cd76d30 --` | 无输出 | 0 |
 | 5 | `git diff --name-only 2cceb1e..HEAD` 范围核对 | 全部位于 TASK-010 白名单 | 0 |
@@ -54,13 +54,13 @@ Task 附加测试要求：优先级冲突、重复 Rejected、未确认 TM 不�
 ## 提交范围与全量运行观察（如实记录）
 
 1. base `2bdfd6f` 干净树（临时 worktree，已删除）全量 `2 failed, 251 passed`：失败为 `tests/rendering/test_source_style.py::TestPixelAnalyzer::test_two_horizontal_lines_estimate_size_and_direction` 等两例，仅在与其他套件同跑时出现、单独跑 `tests/rendering` 时 56 passed 全过——**pre-existing 测试顺序依赖，早于本 Task 存在，与本 Task 代码无关**（本 Task 全部为新增文件）。按协作协议未顺手修改非白名单文件，移交 Codex 处置。
-2. 最终实现 HEAD `cd76d30` 上全量连续 3 次 `328 passed, 0 failed`。早前一次运行曾观察到 `2 failed, 329 passed`（收集 331）的瞬态结果，与最终稳定态相差 rendering 顺序依赖 2 例 + 收集计数 3 例；最终 HEAD 上未复现，以三次稳定结果为准。
+2. 最终实现 HEAD `cd76d30` 上全量连续 3 次 `322 passed, 6 skipped, 0 failed`；6 项均因环境缺少 OpenSSL（`openssl unavailable`）跳过。早前一次运行曾观察到 `2 failed, 329 passed`（收集 331）的瞬态结果，与最终稳定态相差 rendering 顺序依赖 2 例 + 收集计数 3 例；最终 HEAD 上未复现，以三次稳定结果为准。
 3. 模型/视觉/性能类结果：不适用（本 Task 无模型推理、无渲染像素、无性能指标），未以 Mock 冒充。
 
 ## 设计取舍（需 Review 与 Codex 确认）
 
-- **Fuzzy 阈值**：获批规格（D03 §14.4/D06 §12）只定「Exact + Fuzzy、不要求 Embedding」未给数值；实现默认 `0.80`（`TranslationMemoryService.DEFAULT_FUZZY_THRESHOLD`，可配置），相似度用 `difflib.SequenceMatcher`（标准库）。
-- **自动候选高置信阈值**：D03 §12.5 只定状态不定数值；默认 `AUTO_ACTIVE_CONFIDENCE = 0.90`，可配置。
+- **Fuzzy 阈值**：获批规格（D03 §14.4/D06 §12）只定「Exact + Fuzzy、不要求 Embedding」未给数值；D03 §14.4 登记实现默认 `0.80`（`TranslationMemoryService.DEFAULT_FUZZY_THRESHOLD`，可配置），相似度用 `difflib.SequenceMatcher`（标准库）。
+- **自动候选高置信阈值**：D03 §12.5 只定状态不定数值；已登记默认 `AUTO_ACTIVE_CONFIDENCE = 0.90`，可配置；两者均非冻结产品契约。
 - **TM 模型位置**：白名单无 domain/tm 路径，TM 记录模型与 Store 协议置于 application 层（consumer-side port），持久化适配器留待后续基础设施 Task。
 - **Token 预算单位**：1 token ≈ 1 字符（CJK 友好、确定性），estimator 可注入；真实 tokenizer 属 Provider 适配层。
 - **Webtoon chunk 重叠**：D06 §17「前一 Chunk 的 OCR + 当前 Chunk + 后一小段」为"允许"而非必须；本版实现连续 Region 窗口 + 预算切块，chunk 间文本重叠留待 Provider 适配层。
@@ -70,4 +70,4 @@ Task 附加测试要求：优先级冲突、重复 Rejected、未确认 TM 不�
 
 - TM/约束的 SQLite 持久化适配器：不在本 Task 白名单（属后续持久化 Task）。
 - 真实 Provider 端到端翻译：依赖后续 Provider 适配 Task；本 Task 仅完成编排与映射守卫。
-- rendering 套件顺序依赖缺陷：pre-existing，证据见上文第 1 条，移交 Codex。
+- rendering 套件顺序依赖缺陷：Reviewer 与 Codex 集成后均未复现；要求原报告者提供最小复现，期间不修改 `tests/rendering`。详见 [rendering-order-repro.md](rendering-order-repro.md)。

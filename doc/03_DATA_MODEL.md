@@ -905,6 +905,10 @@ status = rejected
 
 Rejected 保留标准化键，避免 AI 反复推荐同一错误术语。
 
+实现参数登记：`AUTO_ACTIVE_CONFIDENCE` 默认值为 `0.90`，用于区分自动
+`active` 与 `pending`。该值是可调实现参数，不是冻结的产品契约；变更需有
+批准的规格或 Task 依据。
+
 ### 12.6 人工优先
 
 ```text
@@ -987,6 +991,10 @@ Fuzzy Match
 ```
 
 不要求 Embedding / Vector DB。
+
+实现参数登记：`DEFAULT_FUZZY_THRESHOLD` 默认值为 `0.80`，作为 Fuzzy
+相似度下限，调用方可覆盖。该值是可调实现参数，不是冻结的产品契约；
+Exact + Fuzzy 且不要求 Embedding / Vector DB 的边界不变。
 
 ### 14.5 字段
 
