@@ -1187,6 +1187,8 @@ data/
 └─ backups/
 ```
 
+目录归属约束：`detection_overlay` 归置于 `books/{book_id}/chapters/{chapter_id}/previews/`，与 `render_preview` 共用 `previews/`；两者通过 `artifact_type` 区分。该归置使 D03 §16.1 的类型枚举与本节固定目录集保持一致，且不新增第二套目录定义。
+
 Webtoon 切片：
 
 - 仅为处理缓存。

@@ -4,7 +4,8 @@ author: ZCode
 recipient: Codex（转 DeepSeek Harness 复审）
 base_commit: fb29dfedc496cde61cea9ea2558ef274e94eb49e
 delivery_head: e1d3e2c99116d9b65140b0ae64a2188555f3c791
-status: in_review
+status: integrated
+integration_commit: 32a73148b0685cf3a63e07cbf1bca25d8553b194
 ---
 
 # Handoff：TASK-006 修订轮（R-101～R-106）
@@ -40,6 +41,13 @@ status: in_review
 | 范围 | `git diff --stat fb29dfe e1d3e2c` | 本 worktree | 全部在 TASK-006 allowed_paths；D03/D08/AGENTS/STATUS/其他 Task/TASK-005 代码零触碰 | 同上 |
 
 NOT_RUN / N/A 维持首轮声明不变（并发竞争、v1→v2 升级链、清理/恢复执行、性能、Region/Candidate 持久化承接 TASK-008/011/021）。
+
+## 集成收口
+
+- DeepSeek Harness 复审报告 `doc/reviews/TASK-006-e1d3e2c.md`：`approved`；首轮报告 `doc/reviews/TASK-006-ba1e769.md`：`changes_requested`，两份报告均已纳入 master。
+- Codex 串行集成：实现 merge=`3f97369`；Review reports merge=`32a7314`，作为本 Task 的 `integration_commit`。
+- AC1～AC4：**已满足**；F-01：**resolved**，D03 §18 已明确 `detection_overlay` 归置于 `previews/` 的理由。
+- 集成后验证：Python 3.12.3 下 `python -m pytest tests/storage` 为 31 passed；`PYTHONPATH=src python -m pytest tests` 为 37 passed；固定范围 `git diff --check fb29dfe e1d3e2c --` 通过。详见 [integration-32a7314](../../verification/TASK-006/integration-32a7314.md)。
 
 ## 复审建议
 
