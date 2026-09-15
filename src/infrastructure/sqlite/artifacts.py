@@ -1,6 +1,7 @@
 """SQLite artifact repository implementing the TASK-002 atomic commit.
 
-``commit_revision`` follows the frozen §8.1 sequence:
+This repository implements the **artifact current-pointer subset** of the
+frozen §8.1 sequence:
 
     write unique temp file
     → verify (hash/size)
@@ -8,6 +9,13 @@
     → BEGIN IMMEDIATE, re-read the artifact's current revision
     → matches the caller's expectation: insert revision, update pointer
     → mismatch: roll back, keep the old current, report the orphan file
+
+Deliberately NOT part of this slice (registered for later slices, see the
+TASK-006 task file): §8.1's Lock re-read (Page/Region Lock tables arrive
+with TASK-007/008 and gate planning in TASK-011) and the
+``StepResultCandidate`` fallback write (StepRun tables arrive with
+TASK-011). Until then a mismatch is reported as a port-level conflict and
+no candidate row is created.
 
 Any database failure leaves the previous current unchanged (AC-REV-002,
 AC-ART-002); published-but-unreferenced files are returned as orphans for a
@@ -113,8 +121,9 @@ class SqliteArtifactRepository(ArtifactRepositoryPort):
     def commit_revision(self, commit: PendingArtifactCommit) -> CommitOutcome:
         artifact = self.get_artifact(commit.artifact_id)
         if artifact is None:
+            # Frozen §10 code; no contract-external error codes are used.
             return CommitOutcome(
-                CommitStatus.ARTIFACT_NOT_FOUND, error_code="ARTIFACT_NOT_FOUND"
+                CommitStatus.TARGET_NOT_FOUND, error_code="TARGET_NOT_FOUND"
             )
 
         # 1. write the unique temp file.

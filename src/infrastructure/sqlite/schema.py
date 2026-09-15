@@ -123,6 +123,18 @@ CREATE TABLE backup_records (
     completed_at TEXT,
     source_reason TEXT
 );
+
+-- TASK-002 §2.1: "失败、冲突或取消不得改变任何 current 指针". The composite
+-- deferred FK cannot see the NULL direction (SQLite MATCH SIMPLE), so the
+-- database itself enforces that an established current pointer is never
+-- cleared back to NULL; the first-version NULL remains legal.
+CREATE TRIGGER trg_media_artifacts_current_not_clearable
+BEFORE UPDATE ON media_artifacts
+FOR EACH ROW
+WHEN OLD.current_revision_id IS NOT NULL AND NEW.current_revision_id IS NULL
+BEGIN
+    SELECT RAISE(ABORT, 'media_artifacts.current_revision_id cannot be cleared once set');
+END;
 """
 
 

@@ -238,7 +238,10 @@ def test_commit_to_unknown_artifact_is_rejected(make_commit):
         outcome = repository.commit_revision(
             make_commit("missing-artifact", b"x", expected_current=None)
         )
-        assert outcome.status is CommitStatus.ARTIFACT_NOT_FOUND
+        # R-102: reuse the frozen §10 code TARGET_NOT_FOUND; no contract-
+        # external error codes are introduced.
+        assert outcome.status is CommitStatus.TARGET_NOT_FOUND
+        assert outcome.error_code == "TARGET_NOT_FOUND"
         conn.close()
 
 

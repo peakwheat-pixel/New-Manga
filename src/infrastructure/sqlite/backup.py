@@ -42,6 +42,9 @@ class SqliteBackupService:
             raise ValueError(f"unsupported backup_type: {backup_type}")
         backup_id = uuid.uuid4().hex
         target = self._backup_root / f"{backup_id}.db"
+        # managed_path is the storage-relative managed path (D03 §34.3), not
+        # a bare file name, so later restore/cleanup slices can resolve it.
+        managed_path = f"{self._backup_root.name}/{target.name}"
         destination = sqlite3.connect(str(target))
         try:
             self._conn.backup(destination)
@@ -67,7 +70,7 @@ class SqliteBackupService:
                 (
                     backup_id,
                     backup_type,
-                    target.name,
+                    managed_path,
                     app_version,
                     schema_version,
                     database_hash,

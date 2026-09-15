@@ -45,6 +45,47 @@ def test_publish_refuses_to_overwrite_committed_revision(tmp_path):
     assert published.read_bytes() == b"first"
 
 
+def test_revision_paths_follow_d03_layout(tmp_path):
+    """R-101: every artifact type lands in the D03 §18 directory set under
+    ``books/{book_id}/chapters/{chapter_id}/``; exports go to the book-level
+    ``exports/`` directory; unknown types are rejected."""
+    from infrastructure.filesystem.managed_storage import ARTIFACT_TYPE_DIRS
+
+    storage = ManagedFileStorage(tmp_path / "storage")
+    legal_dirs = {"original", "masks", "clean", "translated", "thumbnails", "previews", "debug"}
+
+    for artifact_type in ARTIFACT_TYPE_DIRS:
+        path = storage.new_revision_relative_path(
+            "BOOK1", "CH1", artifact_type, "REV1", ".png"
+        )
+        parts = path.split("/")
+        assert parts[0] == "books", path
+        if artifact_type == "export":
+            assert path == "books/BOOK1/exports/REV1.png"
+            continue
+        assert parts[2:4] == ["chapters", "CH1"], path
+        assert parts[4] in legal_dirs, f"{artifact_type} -> {parts[4]} not in D03 §18 set"
+        assert parts[5] == "REV1.png"
+
+    expected = {
+        "original": "original",
+        "thumbnail": "thumbnails",
+        "mask": "masks",
+        "clean": "clean",
+        "translated": "translated",
+        "render_preview": "previews",
+        "detection_overlay": "previews",
+        "debug_ocr": "debug",
+        "debug_detection": "debug",
+    }
+    for artifact_type, directory in expected.items():
+        path = storage.new_revision_relative_path("B", "C", artifact_type, "R", ".png")
+        assert path.split("/")[4] == directory, path
+
+    with pytest.raises(ValueError):
+        storage.new_revision_relative_path("B", "C", "sticker", "R", ".png")
+
+
 def test_unicode_paths_round_trip(tmp_path):
     unicode_root = tmp_path / "漫画库" / "【作品テスト】" / "第１話 🇯🇵"
     storage = ManagedFileStorage(unicode_root)
@@ -68,7 +109,8 @@ def test_source_file_hash_is_untouched_by_storage(tmp_path):
     storage = ManagedFileStorage(tmp_path / "storage")
     storage.ensure_layout()
     content = source.read_bytes()
-    storage.publish(storage.write_temp(content), "b1/c1/original/r1.png")
+    relative = storage.new_revision_relative_path("b1", "c1", "original", "r1", ".png")
+    storage.publish(storage.write_temp(content), relative)
 
     assert source.read_bytes() == original
     assert _sha256(source.read_bytes()) == hash_before

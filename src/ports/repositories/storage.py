@@ -1,4 +1,10 @@
-"""Managed file storage port (D03 §18, D07 §31~36)."""
+"""Managed file storage port (D03 §18, D07 §31~36).
+
+Revision paths follow the D03 §18 managed layout: ``books/{book_id}/
+chapters/{chapter_id}/{fixed type directory}/`` with ``original/ masks/
+clean/ translated/ thumbnails/ previews/ debug/`` as the fixed directory
+set, and book-level ``books/{book_id}/exports/`` for export artifacts.
+"""
 
 from __future__ import annotations
 

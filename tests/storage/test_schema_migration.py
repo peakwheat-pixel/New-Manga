@@ -137,7 +137,9 @@ def test_post_schema_backup_is_recorded(tmp_path):
     assert record["status"] == "completed"
     assert record["schema_version"] == LATEST_KNOWN
     assert record["size_bytes"] > 0 and record["database_hash"]
-    assert (backups / record["managed_path"]).is_file()
+    # R-105: managed_path is the storage-relative managed path.
+    assert record["managed_path"] == f"backups/{backup_id}.db"
+    assert (backups / record["managed_path"].split("/", 1)[1]).is_file()
     conn.close()
 
 

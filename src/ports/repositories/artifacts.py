@@ -113,13 +113,17 @@ class ContentProvider:
 
 
 class CommitStatus(str, Enum):
-    """Terminal outcomes of ``commit_revision`` (TASK-002 §8.1/§10)."""
+    """Terminal outcomes of ``commit_revision`` (TASK-002 §8.1/§10).
+
+    ``TARGET_NOT_FOUND`` reuses the frozen §10 error code for a missing
+    artifact; no codes outside the §10 table are introduced.
+    """
 
     COMMITTED = "committed"
     CONFLICT = "conflict"
     WRITE_FAILED = "write_failed"
     HASH_MISMATCH = "hash_mismatch"
-    ARTIFACT_NOT_FOUND = "artifact_not_found"
+    TARGET_NOT_FOUND = "target_not_found"
     DB_FAILED = "db_failed"
 
 

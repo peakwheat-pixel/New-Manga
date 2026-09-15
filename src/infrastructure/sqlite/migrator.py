@@ -99,6 +99,28 @@ class MigrationRunner:
             )
         return applied
 
+    @staticmethod
+    def _split_statements(sql: str) -> list[str]:
+        """Split a migration script into complete statements.
+
+        Uses :func:`sqlite3.complete_statement` so semicolons inside string
+        literals or ``BEGIN...END`` trigger bodies (future migrations) do not
+        split a statement prematurely.
+        """
+        statements: list[str] = []
+        buffer = ""
+        for line in sql.splitlines(keepends=True):
+            buffer += line
+            if sqlite3.complete_statement(buffer):
+                stripped = buffer.strip()
+                if stripped:
+                    statements.append(stripped)
+                buffer = ""
+        tail = buffer.strip()
+        if tail:
+            statements.append(tail)
+        return statements
+
     def _verify_checksum(self, migration: Migration) -> None:
         """Detect an edited migration history; nothing to check pre-v1."""
         table = self._conn.execute(
@@ -120,7 +142,7 @@ class MigrationRunner:
         conn = self._conn
         conn.execute("BEGIN IMMEDIATE")
         try:
-            for statement in filter(None, (s.strip() for s in migration.sql.split(";"))):
+            for statement in self._split_statements(migration.sql):
                 conn.execute(statement)
             conn.execute(
                 "INSERT INTO schema_migrations (schema_version, migration_name, applied_at, checksum)"

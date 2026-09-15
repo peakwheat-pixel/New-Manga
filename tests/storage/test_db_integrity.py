@@ -95,10 +95,50 @@ def test_deferred_current_fk_holds_inside_transaction(db_conn, seeded_page):
     assert db_conn.execute("PRAGMA foreign_key_check").fetchall() == []
 
 
-def test_failed_commit_reports_status_enum_coverage(repo, artifact_id, make_commit):
-    """Sanity: every terminal CommitStatus is reachable through the port's
-    outcome object, keeping error handling explicit (TASK-002 §10)."""
-    outcome = repo.commit_revision(
-        make_commit("ghost", b"x", expected_current=None)
+def test_established_current_cannot_be_cleared_to_null(
+    repo, db_conn, artifact_id, make_commit
+):
+    """R-106: TASK-002 §2.1 forbids changing an established current pointer;
+    the composite deferred FK cannot see the NULL direction, so a DB trigger
+    (not an application-layer guard) rejects clearing it."""
+    committed = repo.commit_revision(make_commit(artifact_id, b"v1", expected_current=None))
+    assert committed.status is CommitStatus.COMMITTED
+    assert repo.get_current_revision(artifact_id) is not None
+
+    with pytest.raises(sqlite3.IntegrityError):
+        with db_conn:
+            db_conn.execute(
+                "UPDATE media_artifacts SET current_revision_id = NULL WHERE artifact_id = ?",
+                (artifact_id,),
+            )
+
+    # State untouched after the rejected attempt.
+    assert repo.get_current_revision(artifact_id).artifact_revision_id == (
+        committed.revision.artifact_revision_id
     )
-    assert outcome.status is CommitStatus.ARTIFACT_NOT_FOUND
+    assert db_conn.execute("PRAGMA integrity_check").fetchone()[0] == "ok"
+
+
+def test_first_version_null_current_still_legal(db_conn, seeded_page):
+    """The NULL direction stays open before any revision exists (§2.1:
+    'empty only means no usable version yet')."""
+    now = "2026-01-01T00:00:00.000+00:00"
+    with db_conn:
+        db_conn.execute(
+            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+            " artifact_type, created_at, updated_at) VALUES ('a-null', ?, ?, ?, 'mask', ?, ?)",
+            (
+                seeded_page["book_id"],
+                seeded_page["chapter_id"],
+                seeded_page["page_id"],
+                now,
+                now,
+            ),
+        )
+        db_conn.execute(
+            "UPDATE media_artifacts SET current_revision_id = NULL WHERE artifact_id = 'a-null'"
+        )
+    row = db_conn.execute(
+        "SELECT current_revision_id FROM media_artifacts WHERE artifact_id = 'a-null'"
+    ).fetchone()
+    assert row["current_revision_id"] is None
