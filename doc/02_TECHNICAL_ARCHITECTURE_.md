@@ -213,6 +213,14 @@ flowchart TB
 - Repository 不负责业务流程编排。
 - 所有外部 HTTP/HTTPS/SOCKS 网络访问必须经过统一 Network/Proxy Manager；禁止各 Provider 在业务层散落自定义代理逻辑。
 
+### TASK-009 网络客户端选型偏差登记（As-Is / Decision）
+
+D02 §1 的目标技术栈仍将通用 HTTP 外呼记录为 `httpx`；TASK-009（`base_commit=3de750a`，`reviewed_head=b42fc32`）接受一项局部实现偏差：Provider 网络外呼采用 Python 标准库 `socket` / `http.client` / `ssl`，而不是 `httpx`。
+
+该偏差经 Codex 集成裁决为 **accepted**：本切片需要的 HTTP/HTTPS、HTTP 与 SOCKS5 代理、CONNECT 隧道、absolute-form、TLS 校验、连接/读/写超时、类型化错误、显式 fallback 与阶段 trace 均已在统一 Network/Proxy Manager 中实现并测试；当前产品路径未使用 `httpx` 的异步、连接池、HTTP/2 或自动重定向能力。标准库实现不引入新依赖，保持精确锁定依赖策略；改回 `httpx` 将重写 transport 的代理与错误映射 seam，增加回归风险而不改变本 Task 的产品行为。
+
+该登记仅裁决 TASK-009 的 As-Is 实现边界，不将标准库实现扩展为全局依赖变更，也不改变所有外部网络必须经过统一 Network/Proxy Manager 的架构约束。
+
 ---
 
 ## 3. 一级界面与导航架构

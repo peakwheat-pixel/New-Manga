@@ -2,7 +2,7 @@
 id: TASK-009
 title: 实现 Provider 配置、网络策略与凭据边界
 kind: implementation
-status: in_review
+status: done
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -11,12 +11,15 @@ depends_on: [TASK-006]
 base_commit: 3de750ab7558f4c90841b96005dbbe58b8064e71
 branch: agent/zcode/TASK-009-provider-network-credentials
 worktree: G:/CODEX/New Manga.worktrees/TASK-009-zcode
-integration_commit: null
+reviewed_head: b42fc321b37562e9596ca3bb678be1f5cda22828
+implementation_merge: dea1dee73d839f5c7fe8a0f31a054c837644ea11
+integration_commit: 6c732be8fda712737197343728058194070c8488
+review_report_commit: d2fe13c12a13e340291032f1e18adf976c2b58fa
 ---
 
 # TASK-009：实现 Provider 配置、网络策略与凭据边界
 
-本 Task 已完成 ZCode 实施与一轮 DeepSeek Harness Review 修订，状态为 `in_review`（等待复审）。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已完成 ZCode 实施、DeepSeek Harness 独立复审与 Codex 串行集成，状态为 `done`。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -29,7 +32,7 @@ D03 §25～28；D06 §49～57；D07 §63～72/87～89；D08 AC-PROVIDER/NET/SEC/
 - [x] 支持多个Provider/Network Profile、按能力和任务/章节/作品/全局解析，记录有效设置来源和用于Run的快照。（`ProviderBindingResolver` 任务>章节>作品>全局 + `UnresolvedCapabilityError` 不猜测；`EffectiveSetting`/`BindingResolution` 来源标签；`build_snapshot` 冻结 + `validate_snapshot` 报 missing/disabled 要求重绑。tests/network 19 项）
 - [x] 统一Direct/System/HTTP/HTTPS/SOCKS5/bypass/override策略；代理失败默认禁止直连，显式fallback可追踪。（`StdlibTransport.resolve_route` 统一路由 + `ProviderNetworkResolver` proxy_policy；代理失败类型化硬失败且不触碰目标；显式开关才一次 Direct 重试 + `FallbackEvent`。tests/network 21 项）
 - [x] Secret只进入受保护Credential Store，SQLite/日志/普通导出无明文；TLS默认开启；分阶段连接诊断与本地/远程数据提示。（`SecretValue` 全程脱敏 + Windows Credential Manager ctypes 适配器（真实 vault 参数化测试）+ SQLite/日志防泄漏扫描；`verify_tls=True` 默认与关闭确认门控；`ConnectionTester` 五阶段类型化错误码；`describe_provider_data` Local/Remote 提示。tests/network 41 项）
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后置为 done。（Review `b42fc32` approved；integration `6c732be`）
 
 ## 允许修改范围
 
@@ -56,14 +59,15 @@ D03 §25～28；D06 §49～57；D07 §63～72/87～89；D08 AC-PROVIDER/NET/SEC/
 - 扫描临时数据库与测试日志无测试Secret；Profile修改不改变既有快照。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
-实际结果（delivery_head=`f1dd602`，固定 Python 3.12.3 任务环境，全部退出码 0）：
+实际结果（固定 `reviewed_head=b42fc32`，Python 3.12.3 任务环境；集成主线使用同一环境，全部退出码 0）：
 
 | 场景 | 命令 | 结果 | 证据 |
 |---|---|---|---|
-| 本 Task 测试 | `PYTHONPATH=src python -m pytest tests/network -q` | 97 passed（修订轮后） | [author-verification](../../verification/TASK-009/author-verification.md) |
+| 本 Task 测试（固定 TASK-009 head） | `PYTHONPATH=src python -m pytest tests/network -q` | **91 passed, 6 skipped**（`openssl unavailable`；TLS `NOT_RUN`） | [author-verification](../../verification/TASK-009/author-verification.md) |
 | 既有切片回归 | `PYTHONPATH=src python -m pytest tests/storage tests/library tests/editing -q` | 91 passed | 同上 |
-| 全量回归 | `PYTHONPATH=src python -m pytest tests -q` | 194 passed（修订轮后） | 同上 |
-| whitespace / 范围 | `git diff --check 3de750a f1dd602 --`；name-only 过滤 | PASS（0；实现范围 37 文件全在白名单） | 同上 + [Handoff](../handoffs/TASK-009-f1dd602.md) |
+| 全量回归（固定 TASK-009 head） | `PYTHONPATH=src python -m pytest tests -q` | **188 passed, 6 skipped**（`openssl unavailable`；TLS `NOT_RUN`） | 同上 |
+| 集成主线全量 | `G:/CODEX/New Manga.task-envs/TASK-005-py312/Scripts/python.exe -m pytest tests -q` | **244 passed, 6 skipped**（`openssl unavailable`；TLS `NOT_RUN`） | [integration-6c732be](../../verification/TASK-009/integration-6c732be.md) |
+| whitespace / 范围 | `git diff --check 57896ef b42fc32 --`；name-only 过滤 | PASS（0；实现范围在白名单） | 同上 + [Handoff](../handoffs/TASK-009-b42fc32.md) |
 
 本地可控端点（127.0.0.1）：受控 HTTP 目标（可注入状态码）、HTTP 代理（绝对形式/CONNECT/407/502/静默）、SOCKS5 mini 服务器（user-pass）、openssl 自签 TLS 目标；未访问真实付费 API。未执行项（真实远程 Provider 端到端、Provider adapter 本体、UI、Profile 的 SQLite 持久化、并发 vault 写、打包回归）如实记录 NOT_RUN/N/A，见 author-verification。
 
@@ -78,7 +82,16 @@ UI由TASK-022接入；具体OCR/Translation模型适配在TASK-019。
 ## 交付与运行记录
 
 - Handoff：修订轮 [TASK-009-b42fc32](../handoffs/TASK-009-b42fc32.md)（当前，`delivery_head=b42fc32`）；首轮 [TASK-009-f1dd602](../handoffs/TASK-009-f1dd602.md)（`f1dd602` 已被 Review 拒绝，作审计记录）。
-- Review：首轮 [TASK-009-f1dd602](../reviews/TASK-009-f1dd602.md)（DeepSeek Harness，commit `2da1a39`）为 changes_requested，R-001～R-008 P1；复审待新 head。
-- 实际执行/实验/测试：[author-verification](../../verification/TASK-009/author-verification.md)（四条命令全过：network 81 / 回归 91 / 全量 178 / diff --check 0）。
-- 最近状态：2026-09-15 首轮 Review（`2da1a39`）changes_requested（R-001～R-008 P1 + R-009～R-012 P2）；修订轮 `b42fc32` 关闭 R-001～R-010 与 R-012（R-011 httpx 偏差 deferred 交 Codex 裁决），状态维持 in_review 等待复审。AC1～AC3 已勾；AC4 待非作者 Review approved 与 Codex 集成后勾选。
+- Review：首轮 [TASK-009-f1dd602](../reviews/TASK-009-f1dd602.md)（DeepSeek Harness，`report_commit=2da1a39`）为 changes_requested；复审 [TASK-009-b42fc32](../reviews/TASK-009-b42fc32.md)（`report_commit=d2fe13c`）为 approved。
+- 实际执行/实验/测试：[author-verification](../../verification/TASK-009/author-verification.md)（固定 TASK-009 head：network 91 passed/6 skipped，既有切片 91 passed，全量 188 passed/6 skipped；6 项均为 `openssl unavailable`，TLS `NOT_RUN`）；[集成验证](../../verification/TASK-009/integration-6c732be.md)记录主线全量 244 passed/6 skipped。
+- Findings disposition：R-001～R-010、R-012 fixed；R-011 已按 D02 §2 接受 stdlib 偏差并 fixed；F-01 已更正通过数并注明 `openssl unavailable`。无 P0/P1；未执行项继续标 `NOT_RUN`/`N/A`。AC1～AC4 全部已勾。
+- 集成记录：实现合并 `dea1dee`，Review 合并及 `integration_commit` 为 `6c732be`；首轮报告 `2da1a39` 与复审报告 `d2fe13c` 均已纳入 master。未释放任何冻结 Task，未 push。
 - 认领记录：2026-09-15 ZCode 在指定 worktree 接管开始执行，状态 ready → in_progress。基线核验通过：HEAD=`57896ef`（release commit）、base=`3de750a` 为祖先，分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。白名单核对：settings/network/transport/credentials/ports 与 tests/network 目录当前均不存在，属本 Task 拟议新增边界。
+
+## Review findings disposition
+
+| ID | 处置 |
+|---|---|
+| R-001～R-010、R-012 | fixed，并经独立 Review 确认 |
+| R-011 | fixed：D02 §2 登记并接受 TASK-009 使用 `socket` / `http.client` / `ssl` 替代目标表中的 `httpx`，理由为零新增依赖且已覆盖本切片所需语义 |
+| F-01 | fixed：Handoff 与 author-verification 更正为 `91 passed, 6 skipped` / `188 passed, 6 skipped`；6 项均为 `openssl unavailable`，TLS 保持 `NOT_RUN` |

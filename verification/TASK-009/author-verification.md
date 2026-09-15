@@ -2,7 +2,8 @@
 task_id: TASK-009
 author: ZCode
 base_commit: 3de750ab7558f4c90841b96005dbbe58b8064e71
-delivery_head: f1dd6022e756ab733c5b6eb20c625b6ce340ba27
+delivery_head: b42fc321b37562e9596ca3bb678be1f5cda22828
+prior_delivery_head: f1dd6022e756ab733c5b6eb20c625b6ce340ba27
 environment: Windows 10.0.26200 x64 / Python 3.12.3（G:/CODEX/New Manga.task-envs/TASK-005-py312）/ Git 2.52.0 / OpenSSL 3.5.4（Git Bash mingw64）
 ---
 
@@ -60,9 +61,10 @@ DSH Review `2da1a39` changes_requested 后的修订轮（[Handoff TASK-009-b42fc
 
 | # | 命令 | 结果 | 退出码 |
 |---|---|---|---|
-| 1 | `PYTHONPATH=src python -m pytest tests/network -q` | 97 passed（81 + 16 新回归，tests/network/test_review_revision.py 按 R-001～R-010 逐项命名） | 0 |
+| 1 | `PYTHONPATH=src python -m pytest tests/network -q` | **91 passed, 6 skipped**（6 项均为 `openssl unavailable`；TLS `NOT_RUN`） | 0 |
 | 2 | `PYTHONPATH=src python -m pytest tests/storage tests/library tests/editing -q` | 91 passed | 0 |
-| 3 | `PYTHONPATH=src python -m pytest tests -q` | 194 passed | 0 |
-| 4 | `git diff --check 3de750a b42fc32 --` | 无输出 | 0 |
+| 3 | `PYTHONPATH=src python -m pytest tests -q` | **188 passed, 6 skipped**（6 项均为 `openssl unavailable`；TLS `NOT_RUN`） | 0 |
+| 4 | `git diff --check 57896ef b42fc32 --` | 无输出 | 0 |
+| 4b | `git diff --check 3de750a b42fc32 --` | 无输出 | 0 |
 
-修订变更范围：`git diff --name-only 150c789 b42fc32` = 11 文件（8 源 + 3 测试），全部在 TASK-009 白名单。R-011（httpx 选型偏差）deferred 交 Codex 裁决；R-012 随元数据提交修正。NOT_RUN/N/A 维持上表，未被改写。
+修订变更范围：`git diff --name-only 150c789 b42fc32` = 11 文件（8 源 + 3 测试），全部在 TASK-009 白名单。6 项 skip 明细为 `tests/network/test_connection_tester.py` 1 项与 `tests/network/test_transport_tls.py` 5 项，原因均为 `openssl unavailable`；TLS 6 项保持 `NOT_RUN`，未写为 PASS。R-011 已由 Codex 在 D02 §2 完成偏差登记并关闭；R-012 与 F-01 随集成元数据收口。NOT_RUN/N/A 维持上表，未被改写。
