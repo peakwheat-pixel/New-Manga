@@ -1,9 +1,9 @@
 ﻿# TASK-007 Codex 集成验证
 
-日期：2026-09-15（Asia/Shanghai）  
-任务：TASK-007 书架领域与本地图片导入  
-基线：`6b123fe55f2e6373335b044fc5e5f169b5d108e0`  
-Review 对象：`reviewed_head=6ea4dd9241c0a24f60964b570cb768bb48dfa0f3`  
+日期：2026-09-15（Asia/Shanghai）
+任务：TASK-007 书架领域与本地图片导入
+基线：`6b123fe55f2e6373335b044fc5e5f169b5d108e0`
+Review 对象：`reviewed_head=6ea4dd9241c0a24f60964b570cb768bb48dfa0f3`
 集成提交：`2b64b0f7e419d8179633bd86928a49195b09414e`
 
 ## Git 集成
