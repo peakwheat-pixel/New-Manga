@@ -2,21 +2,21 @@
 id: TASK-007
 title: 实现书架领域与本地图片导入
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-006]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 6b123fe55f2e6373335b044fc5e5f169b5d108e0
+branch: agent/zcode/TASK-007-library-import
+worktree: G:/CODEX/New Manga.worktrees/TASK-007-zcode
 integration_commit: null
 ---
 
 # TASK-007：实现书架领域与本地图片导入
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并释放，由 ZCode 承接；当前仅完成交接准备，尚未开始实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -61,11 +61,11 @@ D03 §3～5/30；D04 §4～10；D07 §37～39；D08 AC-LIB/CH/IMPORT/PAGE。D �
 
 PDF/MOBI/网页导入属于 TASK-023；Schema新增需Codex协调 TASK-006边界。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+如本 Task 需要新的契约或用户范围决定而输入仍未就绪，登记具体 blocker 并停止实施；不得借此扩大允许范围。Owner 与 Reviewer 必须保持不同。
 
 ## 交付与运行记录
 
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户批准释放；ready，Owner=ZCode，Reviewer=DeepSeek Harness，base=`6b123fe55f2e6373335b044fc5e5f169b5d108e0`；尚未开始实施。
