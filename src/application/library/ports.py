@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Protocol
 
 from domain.books.entities import Book, Chapter, Tag
+from domain.pages.entities import Page
 
 
 class LibraryRepository(Protocol):
@@ -39,3 +40,23 @@ class LibraryRepository(Protocol):
     def add_book_tag(self, book_id: str, tag_id: str) -> None: ...
     def remove_book_tag(self, book_id: str, tag_id: str) -> None: ...
     def list_tags_of_book(self, book_id: str) -> list[Tag]: ...
+
+
+class PageRepository(Protocol):
+    """Round-trip contract for imported pages (TASK-028 §3.3).
+
+    Implemented structurally by ``SqliteLibraryRepository`` alongside
+    ``ImportPageSink``; never merges into ``LibraryRepository``. Incomplete
+    v1 placeholder rows (no source hash / managed reference) are not valid
+    pages: readers skip them instead of fabricating provenance. Soft-deleted
+    pages are likewise not returned by this contract (get_page agrees with
+    list_pages, F-03); recycle-bin/restore views belong to a later slice.
+    """
+
+    def get_page(self, page_id: str) -> Page | None: ...
+
+    def list_pages(self, chapter_id: str) -> list[Page]: ...
+
+    def update_page(self, page: Page) -> None: ...
+
+    def soft_delete_page(self, page_id: str) -> None: ...

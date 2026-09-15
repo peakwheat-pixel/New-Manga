@@ -2,7 +2,7 @@
 id: TASK-029
 title: 实现统一 SQLite 持久化
 kind: implementation
-status: ready
+status: in_review
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-028]
 base_commit: 79529bc9805fda6b72b99860f649fca0922c6cf9
 branch: agent/zcode/TASK-029-unified-sqlite-persistence
 worktree: G:/CODEX/New Manga.worktrees/TASK-029-zcode
-reviewed_head: null
+reviewed_head: 5abc173497e112db4da1c00beac3c19fbcccf455
 integration_commit: null
 ---
 
@@ -29,14 +29,14 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] 追加 `v2__library_region_persistence` migration；v1 migration 内容不变；迁移继续由现有 `MigrationRunner` 执行，保留迁移前备份、checksum、失败回滚和旧程序 `TOO_NEW/query_only` 门控。
-- [ ] 实现 `SqliteLibraryRepository`，按现有 `LibraryRepository`、`ImportPageSink` 和新增 `PageRepository` consumer-side Protocol 持久化 Book/Chapter/Tag/BookTag/Page；Tag 重复检查仍由 `LibraryService` 负责，不新增 `UNIQUE(tags.name)`。
-- [ ] 实现 Page 完整 round-trip 和重启读取；兼容 v1 结构占位 Page，不伪造 Hash、Managed Copy、尺寸或源文件；保留 `source_order` 与 `sort_order` 分离、软删除和源文件只读保护。
-- [ ] 实现 `SqliteRegionRepository`，正确映射 Region/RegionRevision 的 JSON、枚举、Lock、Pin、current 和恢复来源；落实复合外键、`UNIQUE(region_id, revision_no)`、`DEFERRABLE INITIALLY DEFERRED`、current 不可清空、Pin 不改历史和恢复创建新 Revision。
-- [ ] 在既有消费侧 editing Port 与必要的 `RegionEditingService` seam 中实现 `commit_region_revision`：使用 `BEGIN IMMEDIATE`，事务内重读 current/Lock，区分 `APPLIED`、`INPUT_REVISION_CHANGED`、`LOCK_CHANGED`、`DB_FAILED`，冲突或失败保留旧 current；不得用 `add_revision()` + `update_region()` 两次独立提交冒充原子操作。
-- [ ] 让保存、自动写回、恢复、Pin 和 `reorder_regions()` 遵守 TASK-028：revision-owned 状态只能通过 Revision commit 同步，重排产生新的 user Revision，Pin 只更新 `is_pinned`，不得同 ID upsert 改写不可变历史。
-- [ ] 在 v2 数据库上回归 TASK-006 Artifact safe commit 及既有 storage/library/editing 测试；失败、冲突、取消不能改变 current，数据库不能指向不存在文件。
-- [ ] 提供绑定 delivery head 的 Handoff、verification 证据和未运行项；实现完成不等于 done，必须等待 DeepSeek Harness 非作者 Review approved 与 Codex 集成。
+- [x] 追加 `v2__library_region_persistence` migration；v1 migration 内容不变；迁移继续由现有 `MigrationRunner` 执行，保留迁移前备份、checksum、失败回滚和旧程序 `TOO_NEW/query_only` 门控。（v1 SQL 零字符改动+结构断言；`[1,2]` 应用、双备份、checksum、version=3 只读门测试全过）
+- [x] 实现 `SqliteLibraryRepository`，按现有 `LibraryRepository`、`ImportPageSink` 和新增 `PageRepository` consumer-side Protocol 持久化 Book/Chapter/Tag/BookTag/Page；Tag 重复检查仍由 `LibraryService` 负责，不新增 `UNIQUE(tags.name)`。（round-trip/重启/端到端测试；DB 层无 UNIQUE 的负向证据）
+- [x] 实现 Page 完整 round-trip 和重启读取；兼容 v1 结构占位 Page，不伪造 Hash、Managed Copy、尺寸或源文件；保留 `source_order` 与 `sort_order` 分离、软删除和源文件只读保护。（占位行 mapper 拒绝+查询过滤；FK 拒绝悬空 chapter；TASK-007 全部导入测试继续通过）
+- [x] 实现 `SqliteRegionRepository`，正确映射 Region/RegionRevision 的 JSON、枚举、Lock、Pin、current 和恢复来源；落实复合外键、`UNIQUE(region_id, revision_no)`、`DEFERRABLE INITIALLY DEFERRED`、current 不可清空、Pin 不改历史和恢复创建新 Revision。（触发器/FK/Pin/恢复测试全过；integrity_check 干净）
+- [x] 在既有消费侧 editing Port 与必要的 `RegionEditingService` seam 中实现 `commit_region_revision`：使用 `BEGIN IMMEDIATE`，事务内重读 current/Lock，区分 `APPLIED`、`INPUT_REVISION_CHANGED`、`LOCK_CHANGED`、`DB_FAILED`，冲突或失败保留旧 current；不得用 `add_revision()` + `update_region()` 两次独立提交冒充原子操作。（SQLite seam + InMemory committer 同契约；全部写路径收敛单一提交路径；staged-copy 冲突语义测试）
+- [x] 让保存、自动写回、恢复、Pin 和 `reorder_regions()` 遵守 TASK-028：revision-owned 状态只能通过 Revision commit 同步，重排产生新的 user Revision，Pin 只更新 `is_pinned`，不得同 ID upsert 改写不可变历史。（`test_reorder_creates_user_revisions`、`test_pin_updates_flag_only`、`test_restore_appends_and_keeps_history_on_sqlite`）
+- [x] 在 v2 数据库上回归 TASK-006 Artifact safe commit 及既有 storage/library/editing 测试；失败、冲突、取消不能改变 current，数据库不能指向不存在文件。（`db_conn` fixture 即 v2；Artifact 12 项 + 探针全过；越界表边界检查）
+- [ ] 提供绑定 delivery head 的 Handoff、verification 证据和未运行项；实现完成不等于 done，必须等待 DeepSeek Harness 非作者 Review approved 与 Codex 集成。（已交付 [TASK-029-a2348e9](../handoffs/TASK-029-a2348e9.md)；待 Review + 集成）
 
 ## 允许修改范围
 
@@ -88,5 +88,8 @@ integration_commit: null
 
 - Handoff：尚无；ZCode 完成后新增 `doc/handoffs/TASK-029-<delivery-head>.md`，引用固定 delivery head。
 - Review：尚无；DeepSeek Harness 必须在独立 worktree 按固定 base/delivery head 审查，不能审核自己的变更。
-- 实际测试：尚无；所有命令先标 planned/NOT_RUN，交付时按真实环境回填。
+- 实际测试：已回填——四条命令退出码 0：storage 33 / library 32 / editing 25 passed、全量 95 passed；证据见 [verification/TASK-029/author-verification.md](../../verification/TASK-029/author-verification.md)。
+- 最近状态：2026-09-15 修订轮（F-01～F-05）：按 DeepSeek 对 `a2348e9` 的 changes_requested（报告 commit `2652973`）交付 `5abc173`：F-01（P1）默认构造优先采用 repository 自身原子 seam（旧 InMemory 回退对 SQLite 会静默跳过 revision-owned 状态/指针更新，Reviewer 探针缺陷反转为通过+正向测试）；F-02 异常回滚放宽+去 no-op；F-03 get_page 与 list_pages 软删一致+契约写明；F-04 回归计数勘误（97）；F-05 Qt 用例 importorskip。disposition 全部 fixed。验证：四条命令退出码 0（33/32/26/97）。reviewed_head=`5abc173`，状态保持 in_review，见 [Handoff 5abc173](../handoffs/TASK-029-5abc173.md)。
+- 最近状态（历史）：2026-09-15 ZCode 完成实现并交付：v2 迁移（v1 冻结验证）+ SqliteLibraryRepository（三契约）+ SqliteRegionRepository（原子 seam）+ editing 服务收敛单一提交路径 + 12 项 SQLite 集成测试。reviewed_head=`a2348e9`，状态 in_progress → in_review；未合并 master。
 - Codex 集成：尚无；只有 Review approved、Handoff/verification 完整且 Codex 集成验证通过后，才能填写 `integration_commit` 并置 `done`。
+- 认领记录：2026-09-15 ZCode 在指定 worktree 接管开始执行。基线核验通过：HEAD=`c6db2c0`（=release commit，含 base `79529bc` 与 TASK-028 集成），分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。状态 ready → in_progress。
