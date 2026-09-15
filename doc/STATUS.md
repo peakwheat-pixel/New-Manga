@@ -4,17 +4,17 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-001～TASK-008 已完成并集成；TASK-009～TASK-027 与其他业务功能开发继续冻结 |
-| 当前授权 | TASK-001～TASK-008 已完成；尚未释放新的业务 Task，TASK-009～TASK-027 与其他业务功能开发继续冻结 |
+| 阶段 | TASK-001～TASK-008 已完成并集成；TASK-028 统一 SQLite 持久化设计已冻结但实现未释放；TASK-009～TASK-027 与其他业务功能开发继续冻结 |
+| 当前授权 | TASK-001～TASK-008 已完成；仅允许维护 TASK-028 设计记录，尚未释放新的业务或 SQLite 实现 Task |
 | 接管审核 | approved |
-| 用户审核记录 | 2026-09-15：TASK-008 已按批准范围完成 Review 与 Codex 集成；TASK-009～TASK-027 与其他业务功能继续冻结 |
+| 用户审核记录 | 2026-09-15：TASK-008 已按批准范围完成 Review 与 Codex 集成；TASK-028 统一 SQLite 持久化设计冻结、实现未释放；TASK-009～TASK-027 与其他业务功能继续冻结 |
 | 目标基线冻结 | 未冻结；见 Gap Analysis |
 | 应用源代码 / 可执行测试 | TASK-005 最小入口与守卫、TASK-006 持久化与 Artifact 基础、TASK-007 书架领域与本地图片导入、TASK-008 Region 编辑/Revision/人工保护已入库；尚无完整产品功能 |
 | 项目 Git 分支 / 当前 Task 基线 | master；TASK-008 base=`f129ae9`；Owner=`ZCode`，Reviewer=`DeepSeek Harness`，分支=`agent/zcode/TASK-008-region-editing` |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
 | 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口；TASK-008 reviewed head `1f373ac` 由 `06ba2e7` 收口 |
-| 任务分派 / 执行 | TASK-001～TASK-008：done；TASK-009～TASK-027 保持 proposed |
+| 任务分派 / 执行 | TASK-001～TASK-008：done；TASK-028 设计冻结但保持 proposed（未释放实现）；TASK-009～TASK-027 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | TASK-008 Owner 与 Review worktree 均已交付并集成；两个 worktree 及 TASK-007 相关 worktree 暂保留供审计 |
 | 本次 Review | TASK-007 `doc/reviews/TASK-007-6ea4dd9.md` approved；TASK-008 `doc/reviews/TASK-008-1f373ac.md` approved |
 | 产品发布状态 | NOT READY；仅有最小启动骨架，无业务功能或可发布应用 |
@@ -49,7 +49,7 @@ TASK-007 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-007-zcode`；分�
 
 TASK-008 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-008-zcode`；分支 `agent/zcode/TASK-008-region-editing`；基线为 `f129ae96900fb567288f91a78d55c0ff4ecafe6d`；reviewed_head=`1f373ac`，状态 `done`，integration_commit=`06ba2e7`，Reviewer=DeepSeek Harness；Review worktree 为 `G:/CODEX/New Manga.worktrees/TASK-008-deepseek-review`。
 
-后续协调建议（未授权）：尽快单独协调统一 SQLite Region/Revision 持久化落地切片，明确 TASK-006/007/008 当前消费侧契约的收敛方式；R-201/R-202 作为 TASK-008 Review 的 noted/deferred finding 入档，不在本状态更新中释放新的 Task。
+统一 SQLite 持久化设计已冻结：[TASK-028 设计契约](contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md)。它采用共享连接、按消费契约拆分 Adapter、追加 v2 migration，并保留 v1 Artifact 语义；当前只冻结设计，未释放实现，不得据此修改 `src/` 或启动 ZCode/DeepSeek Harness。R-201/R-202 继续作为 TASK-008 Review 的 noted/deferred finding 入档。
 
 用户审核后，Codex在本文件追加日期、决定原文摘要和允许启动的 Task；再在相应 Task 记录 release、owner、base_commit。若仅同意接管，保持其余 Task 为 proposed。
 
@@ -75,3 +75,4 @@ TASK-008 Owner 工作区为 `G:/CODEX/New Manga.worktrees/TASK-008-zcode`；分�
 | 2026-09-15 | 用户 | TASK-007 集成与收尾：固定 `base_commit=6b123fe`、approved `reviewed_head=6ea4dd9`；纳入 Review 报告；关闭 F-01～F-04（F-04 按端口位置规则 deferred）；不启动 TASK-008～TASK-027 | 用户本次集成指令 |
 | 2026-09-15 | 用户 | 批准释放 TASK-008，由 ZCode 实现 Region 编辑、Revision 与人工保护，DeepSeek Harness 独立 Review；TASK-009～TASK-027 与其他业务功能继续冻结 | 用户本次批准指令 |
 | 2026-09-15 | 用户 | 要求按协作协议 §6 将 TASK-008 `reviewed_head=1f373ac` 与 approved Review（`report_commit=f9e5977`）串行集成 master；记录 `integration_commit=06ba2e7`，TASK-008 置 done，更新 STATUS 与验收追踪；建议协调统一 SQLite 持久化切片并将 R-201/R-202 随集成元数据入档 | 用户本次集成指令 |
+| 2026-09-15 | 用户 | 冻结统一 SQLite 持久化设计：仅记录 TASK-006/007/008 的 SQLite 收敛方案、v2 Schema 方向、Adapter seam、事务不变量和实现边界；不修改业务代码/UI/现有规则，不释放实现 Task | 用户本次设计冻结指令；TASK-028 |
