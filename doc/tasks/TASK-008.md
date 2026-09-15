@@ -2,21 +2,21 @@
 id: TASK-008
 title: 实现 Region 编辑、Revision 与人工保护
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-007]
-base_commit: null
-branch: null
-worktree: null
+base_commit: f129ae96900fb567288f91a78d55c0ff4ecafe6d
+branch: agent/zcode/TASK-008-region-editing
+worktree: G:/CODEX/New Manga.worktrees/TASK-008-zcode
 integration_commit: null
 ---
 
 # TASK-008：实现 Region 编辑、Revision 与人工保护
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并释放给 ZCode；当前为 `ready`，尚未开始实施。Reviewer=DeepSeek Harness，待实现 head 固定后独立 Review。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -66,4 +66,4 @@ D03 §6～11/15；D06 §29/87～90；D08 AC-REGION/TRANS/REV/AUTO。D 编号对�
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户批准释放；依赖 TASK-007 已为 done，基线=`f129ae96900fb567288f91a78d55c0ff4ecafe6d`，Owner=ZCode，Reviewer=DeepSeek Harness，状态=`ready`；仅允许本 Task 范围，TASK-009～TASK-027 继续冻结。
