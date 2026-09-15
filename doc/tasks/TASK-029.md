@@ -2,7 +2,7 @@
 id: TASK-029
 title: 实现统一 SQLite 持久化
 kind: implementation
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -90,3 +90,4 @@ integration_commit: null
 - Review：尚无；DeepSeek Harness 必须在独立 worktree 按固定 base/delivery head 审查，不能审核自己的变更。
 - 实际测试：尚无；所有命令先标 planned/NOT_RUN，交付时按真实环境回填。
 - Codex 集成：尚无；只有 Review approved、Handoff/verification 完整且 Codex 集成验证通过后，才能填写 `integration_commit` 并置 `done`。
+- 认领记录：2026-09-15 ZCode 在指定 worktree 接管开始执行。基线核验通过：HEAD=`c6db2c0`（=release commit，含 base `79529bc` 与 TASK-028 集成），分支/worktree 如派单，common dir=`G:/CODEX/New Manga/.git`，工作区干净。状态 ready → in_progress。
