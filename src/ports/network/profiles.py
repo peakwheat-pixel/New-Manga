@@ -30,6 +30,21 @@ DEFAULT_BYPASS_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
 DEFAULT_TIMEOUT_SECONDS = 30.0
 
 
+def _reject_userinfo(url: str, field_name: str) -> None:
+    """Reject ``user:password@host`` proxy endpoints (R-008).
+
+    Proxy passwords belong in the credential vault referenced by
+    ``credential_ref``; userinfo would smuggle a secret into the model,
+    its repr and whatever persists the profile.
+    """
+    netloc = url.split("://", 1)[-1].split("/", 1)[0]
+    if "@" in netloc:
+        raise ValueError(
+            f"{field_name} must not carry user:password userinfo; store "
+            "proxy credentials in the credential vault via credential_ref"
+        )
+
+
 @dataclass(frozen=True)
 class NetworkProfile:
     """One named network configuration (D03 §27)."""
@@ -57,6 +72,10 @@ class NetworkProfile:
             raise ValueError(f"unknown network mode: {self.mode!r}")
         if self.timeout_seconds <= 0:
             raise ValueError("timeout_seconds must be positive")
+        for field_name in ("http_proxy", "https_proxy", "socks5_proxy"):
+            value = getattr(self, field_name)
+            if value:
+                _reject_userinfo(value, field_name)  # R-008
         if self.mode in (MODE_HTTP, MODE_HTTPS):
             if not (self.http_proxy or self.https_proxy) and not self.inherit_system:
                 raise ValueError(

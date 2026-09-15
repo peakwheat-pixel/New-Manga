@@ -16,6 +16,7 @@ from dataclasses import dataclass
 from ports.network.transport import (
     DnsResolutionError,
     MissingCredentialError,
+    ProviderAuthenticationError,
     ProxyAuthenticationError,
     TcpConnectionError,
     TransportError,
@@ -32,6 +33,7 @@ RETRYABLE_ERROR_TYPES = (
 NON_RETRYABLE_ERROR_TYPES = (
     MissingCredentialError,
     ProxyAuthenticationError,
+    ProviderAuthenticationError,
     TlsError,
     DnsResolutionError,
 )

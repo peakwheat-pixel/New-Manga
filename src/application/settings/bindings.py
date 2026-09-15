@@ -85,6 +85,7 @@ class ProviderBindingResolver:
                     f"task-selected provider profile {task_profile_id!r} "
                     "does not exist or is disabled",
                 )
+            self._check_capability(profile, capability)  # R-007
             return BindingResolution(
                 capability=capability,
                 provider_profile=profile,
@@ -121,6 +122,7 @@ class ProviderBindingResolver:
                     f"binding {binding.binding_id!r} points to missing/disabled "
                     f"profile {binding.provider_profile_id!r}",
                 )
+            self._check_capability(profile, capability)  # R-007
             return BindingResolution(
                 capability=capability,
                 provider_profile=profile,
@@ -133,3 +135,18 @@ class ProviderBindingResolver:
             capability,
             f"no enabled binding for capability {capability!r} in this scope",
         )
+
+    @staticmethod
+    def _check_capability(profile: ProviderProfile, capability: str) -> None:
+        """R-007: a resolved profile must actually declare the capability.
+
+        Otherwise an OCR request could silently run on a
+        translation-only profile. Raises instead of degrading: an
+        invalid binding must surface to the user (D06 §51).
+        """
+        if capability not in profile.capabilities:
+            raise UnresolvedCapabilityError(
+                capability,
+                f"profile {profile.provider_profile_id!r} does not declare "
+                f"capability {capability!r} (has {sorted(profile.capabilities)})",
+            )

@@ -65,7 +65,11 @@ class SecretValue:
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, SecretValue):
             return NotImplemented
-        return hmac.compare_digest(self._value, other._value)
+        # R-009: compare fixed-encoded bytes; str comparison with
+        # non-ASCII secrets raises TypeError in hmac.compare_digest.
+        return hmac.compare_digest(
+            self._value.encode("utf-8"), other._value.encode("utf-8")
+        )
 
     def __hash__(self) -> int:
         # Hashable so secrets can sit in sets/dicts without revealing

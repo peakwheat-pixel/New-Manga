@@ -17,11 +17,13 @@ from __future__ import annotations
 import socket
 import ssl
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Callable
 
 from ports.network.profiles import NetworkProfile
 from ports.network.transport import (
+    FallbackEvent,
+    ProviderAuthenticationError,
     Transport,
     TransportError,
     TransportRequest,
@@ -53,12 +55,23 @@ class StageResult:
 
 
 @dataclass(frozen=True)
+class StageFallback:
+    """A direct fallback that happened inside one diagnostic stage,
+    with the original proxy failure preserved for audit (R-004)."""
+
+    stage: str
+    event: FallbackEvent
+
+
+@dataclass(frozen=True)
 class ConnectionTestReport:
     url: str
     network_profile_id: str
     stages: tuple[StageResult, ...] = ()
     http_status: int | None = None
-    fallback_events: tuple = field(default_factory=tuple)
+    #: Every direct fallback from every stage, in execution order,
+    #: with the stage that produced it (R-004).
+    fallback_trace: tuple[StageFallback, ...] = ()
 
     @property
     def ok(self) -> bool:
@@ -111,7 +124,21 @@ class ConnectionTester:
         first_port = route.proxy_port if route.via_proxy else route.target_port
 
         stages: list[StageResult] = []
+        trace: list[StageFallback] = []  # R-004: accumulate every stage
         skipped_after = False
+
+        def send_with_trace(stage: str, headers: dict[str, str] | None = None):
+            """Send through the transport, keeping fallback events of
+            this stage in the report instead of dropping them (R-004)."""
+            outcome = self._transport.send(
+                TransportRequest(
+                    method="GET", url=url, headers=headers or {}
+                ),
+                profile,
+            )
+            for event in outcome.fallback_events:
+                trace.append(StageFallback(stage=stage, event=event))
+            return outcome
 
         def add(stage: str, fn=None, skip_reason: str = "") -> None:
             nonlocal skipped_after
@@ -154,9 +181,7 @@ class ConnectionTester:
         outcome_holder: list = []
 
         def http_stage():
-            outcome = self._transport.send(
-                TransportRequest(method="GET", url=url), profile
-            )
+            outcome = send_with_trace(STAGE_HTTP)
             outcome_holder.append(outcome)
             return f"status {outcome.response.status}"
 
@@ -170,12 +195,12 @@ class ConnectionTester:
         else:
             def auth_stage():
                 headers = auth_headers_provider()
-                outcome = self._transport.send(
-                    TransportRequest(method="GET", url=url, headers=headers), profile
-                )
+                outcome = send_with_trace(STAGE_AUTH, headers)
                 status = outcome.response.status
                 if status in (401, 403):
-                    raise TransportError(
+                    # R-005: typed provider auth failure, distinguishable
+                    # from proxy auth and generic transport errors.
+                    raise ProviderAuthenticationError(
                         f"provider rejected credentials with status {status}"
                     )
                 return f"status {status}"
@@ -189,9 +214,7 @@ class ConnectionTester:
             http_status=(
                 outcome_holder[0].response.status if outcome_holder else None
             ),
-            fallback_events=(
-                outcome_holder[0].fallback_events if outcome_holder else ()
-            ),
+            fallback_trace=tuple(trace),
         )
 
     # ------------------------------------------------------------------

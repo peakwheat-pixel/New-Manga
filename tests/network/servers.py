@@ -174,6 +174,7 @@ class ControlledProxyServer(_Acceptor):
         self.refuse_status = refuse_status
         self.connect_targets: list[str] = []
         self.auth_failures = 0
+        self.forward_auth_headers: list[str] = []
         self._lock = threading.Lock()
         super().__init__(self._serve)
 
@@ -234,6 +235,11 @@ class ControlledProxyServer(_Acceptor):
             if len(parts_of_line) < 2 or "://" not in parts_of_line[1]:
                 return  # not an absolute-form request (e.g. stray bytes)
             url = parts_of_line[1]
+            if self.mode == "refuse_get":
+                conn.sendall(
+                    b"HTTP/1.1 502 Bad Gateway\r\nContent-Length: 0\r\n\r\n"
+                )
+                return
             if not self._authed(headers):
                 with self._lock:
                     self.auth_failures += 1
@@ -242,6 +248,11 @@ class ControlledProxyServer(_Acceptor):
                     b"Content-Length: 0\r\n\r\n"
                 )
                 return
+            # record the Proxy-Authorization the client actually sent
+            with self._lock:
+                self.forward_auth_headers.append(
+                    headers.get("proxy-authorization", "")
+                )
             parts = url.split("://", 1)[1]
             hostport, _, path = parts.partition("/")
             upstream = socket.create_connection(

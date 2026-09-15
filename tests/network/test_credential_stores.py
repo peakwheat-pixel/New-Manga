@@ -45,11 +45,21 @@ def vault(request):
 
         tracked = _Tracked()
         yield tracked
+        # R-010: cleanup failures must fail the test, not disappear —
+        # otherwise the vault silently accumulates test credentials.
+        cleanup_errors: list[str] = []
         for ref in created:
             try:
                 base.delete_credential(ref)
-            except Exception:
-                pass
+            except CredentialNotFoundError:
+                continue  # test already deleted it: cleanup succeeded
+            except Exception as err:  # noqa: BLE001 - teardown reporting
+                cleanup_errors.append(f"{ref}: {err!r}")
+        if cleanup_errors:
+            pytest.fail(
+                "failed to remove test credentials from the Windows vault: "
+                + "; ".join(cleanup_errors)
+            )
 
 
 def test_make_credential_ref_validates_kind_and_name():
