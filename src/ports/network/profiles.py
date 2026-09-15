@@ -1,0 +1,98 @@
+"""Network profile model and store port (D03 §27, D07 §67~68).
+
+Multiple named profiles (direct, system, HTTP/HTTPS/SOCKS5 proxies) can
+coexist (AC-NET-001). Defaults encode the frozen safety posture:
+
+- ``verify_tls=True`` on every new profile (AC-SEC-004); turning it off
+  is a dangerous setting that requires explicit confirmation
+  (AC-SEC-005) — enforced by ``NetworkProfileService``, not the model.
+- ``allow_proxy_failure_direct_fallback=False``: proxy failures must
+  fail loudly, never silently retry direct (AC-NET-002).
+- ``localhost`` / ``127.0.0.1`` are bypassed by default.
+
+Proxy passwords live in the credential vault; the model keeps only
+``credential_ref`` (D07 §69).
+"""
+
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Protocol
+
+MODE_DIRECT = "direct"
+MODE_SYSTEM = "system"
+MODE_HTTP = "http"
+MODE_HTTPS = "https"
+MODE_SOCKS5 = "socks5"
+ALL_MODES = frozenset({MODE_DIRECT, MODE_SYSTEM, MODE_HTTP, MODE_HTTPS, MODE_SOCKS5})
+
+DEFAULT_BYPASS_HOSTS = frozenset({"localhost", "127.0.0.1", "::1"})
+DEFAULT_TIMEOUT_SECONDS = 30.0
+
+
+@dataclass(frozen=True)
+class NetworkProfile:
+    """One named network configuration (D03 §27)."""
+
+    network_profile_id: str
+    name: str
+    mode: str = MODE_DIRECT
+    http_proxy: str = ""
+    https_proxy: str = ""
+    socks5_proxy: str = ""
+    username: str = ""
+    credential_ref: str | None = None
+    bypass_hosts: frozenset[str] = DEFAULT_BYPASS_HOSTS
+    inherit_system: bool = True
+    timeout_seconds: float = DEFAULT_TIMEOUT_SECONDS
+    verify_tls: bool = True
+    allow_proxy_failure_direct_fallback: bool = False
+    created_at: str = ""
+    updated_at: str = ""
+
+    def __post_init__(self) -> None:
+        if not self.network_profile_id:
+            raise ValueError("network_profile_id must not be empty")
+        if self.mode not in ALL_MODES:
+            raise ValueError(f"unknown network mode: {self.mode!r}")
+        if self.timeout_seconds <= 0:
+            raise ValueError("timeout_seconds must be positive")
+        if self.mode in (MODE_HTTP, MODE_HTTPS) and not (
+            self.http_proxy or self.https_proxy
+        ):
+            raise ValueError(f"mode {self.mode} requires an http(s)_proxy URL")
+        if self.mode == MODE_SOCKS5 and not self.socks5_proxy:
+            raise ValueError("mode socks5 requires a socks5_proxy URL")
+
+    def is_bypassed(self, host: str) -> bool:
+        """True when ``host`` skips the proxy entirely (D03 §27).
+
+        Exact match, or ``.suffix`` wildcard against the host's tail so
+        ``.internal`` covers ``a.internal``. The default set always wins
+        on top of the configured one.
+        """
+        host = host.lower().rstrip(".")
+        candidates = set(self.bypass_hosts) | set(DEFAULT_BYPASS_HOSTS)
+        for entry in candidates:
+            entry = entry.lower()
+            if entry.startswith("."):
+                if host.endswith(entry) or host == entry[1:]:
+                    return True
+            elif host == entry:
+                return True
+        return False
+
+
+class NetworkProfileStore(Protocol):
+    """Persistence contract for network profiles.
+
+    In-memory implementation for now; the SQLite adapter belongs to a
+    later coordinated slice. Only ``credential_ref`` crosses this
+    contract — never a proxy password.
+    """
+
+    def add_profile(self, profile: NetworkProfile) -> None: ...
+    def get_profile(self, network_profile_id: str) -> NetworkProfile | None: ...
+    def list_profiles(self) -> list[NetworkProfile]: ...
+    def update_profile(self, profile: NetworkProfile) -> None: ...
+    def delete_profile(self, network_profile_id: str) -> None: ...
