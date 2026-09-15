@@ -2,15 +2,15 @@
 id: TASK-008
 title: 实现 Region 编辑、Revision 与人工保护
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-007]
-base_commit: null
-branch: null
-worktree: null
+base_commit: f129ae96900fb567288f91a78d55c0ff4ecafe6d
+branch: agent/zcode/TASK-008-region-editing
+worktree: G:/CODEX/New Manga.worktrees/TASK-008-zcode
 integration_commit: null
 ---
 
@@ -66,4 +66,4 @@ D03 §6～11/15；D06 §29/87～90；D08 AC-REGION/TRANS/REV/AUTO。D 编号对�
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 Codex 派单开始执行（base=`f129ae9`，含 TASK-007 集成收口；分支/worktree 如上，Owner ZCode、Reviewer DeepSeek Harness）。基线核验通过：HEAD=base、工作区干净、common dir 正确。流转补记：派单时本文件仍为 `proposed/pending_user_review`，按派单口径填入并直接置 `in_progress`（同 TASK-006/007 先例）。切片边界声明：允许路径不含 infrastructure/ports——Region 持久化契约消费侧定义于 `src/application/editing/ports.py`，测试以契约 fake 驱动（含模拟重启）；SQLite RegionRepository 落地与 schema 扩展需 Codex 协调 TASK-006 边界后另行授权；StepResultCandidate 落库属 TASK-011，本切片冲突以结果对象表达。
