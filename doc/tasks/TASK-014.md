@@ -2,21 +2,21 @@
 id: TASK-014
 title: 实现配色与文字排版渲染
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-008]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 29592c929745410ef0045266da94f21ed97ffdcb
+branch: agent/zcode/TASK-014-rendering-style
+worktree: G:/CODEX/New Manga.worktrees/TASK-014-rendering-style
 integration_commit: null
 ---
 
 # TASK-014：实现配色与文字排版渲染
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并释放给 ZCode；当前为 `ready`，尚未开始实施。Reviewer=DeepSeek Harness。TASK-009 已先行释放，ZCode 仍须按序执行，不得在同一实例中并行实现两个 Task。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -68,4 +68,4 @@ D03 §11；D06 §8/23/41/47/86；D08 AC-STYLE/RENDER。D 编号对应 [文档索
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-15 用户批准释放；依赖 TASK-008 已为 done，基线=`29592c929745410ef0045266da94f21ed97ffdcb`，Owner=ZCode，Reviewer=DeepSeek Harness，状态=`ready`；TASK-009 仍按现有序列先行，TASK-010～TASK-013、TASK-015～TASK-027 继续冻结。
