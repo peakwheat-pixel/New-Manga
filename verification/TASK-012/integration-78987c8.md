@@ -11,6 +11,8 @@ integration_commit：`78987c8fe5df5650bf7f674d6a9b79afbc48a5ab`
 
 在 `master` 上按协作协议 §6.6 串行保留两个 `--no-ff` merge commit：先合并作者交付 `e6fe52a`（包含固定被审 head `ca5848b` 及 Handoff），再合并 approved Review `084db60`。未合并其他分支，未修改被审 `src/`/`tests/` 语义。
 
+时间线说明：`78987c8` 之后、TASK-012 文档收口之前，主线已有直连提交 `4e05e59`（TASK-010 的 Qt smoke/pytest 隔离与证据）。该提交不是本次 TASK-012 操作创建或合并的内容；本次验证运行在包含它的最终主线上。
+
 ## 主线复验
 
 环境：Windows `win32 10.0.26200`，Python 3.12.3，PySide6 6.11.2，pytest 9.1.1；解释器 `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe`；未设置 `QT_QPA_PLATFORM`，使用默认 Windows Qt 平台。
