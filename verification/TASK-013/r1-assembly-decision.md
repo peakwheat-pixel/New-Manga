@@ -3,7 +3,8 @@
 ## 固定信息
 
 - Task：TASK-013
-- 当前集成基线：`f0814a8`
+- 当前集成提交：`f0814a8`
+- 后续切片建议 base：`07a5881`（本次收口后的主线 HEAD）
 - 原实现 base：`46646d5`
 - reviewed_head：`da1daf11e65fdc80f20450bec1f5e87234b826c7`
 - Owner：Codex
@@ -19,7 +20,10 @@ R-1 作为独立最小生产装配切片批准登记，不并入 TASK-013 的已
 - `G:/CODEX/New Manga/src/bootstrap/app.py`
 - `G:/CODEX/New Manga/tests/core/test_bootstrap.py`
 - `G:/CODEX/New Manga/verification/TASK-013/**`
-- Codex 负责的状态/导航元数据路径
+- `G:/CODEX/New Manga/doc/00_INDEX.md`
+- `G:/CODEX/New Manga/doc/12_ROADMAP.md`
+- `G:/CODEX/New Manga/doc/STATUS.md`
+- `G:/CODEX/New Manga/doc/tasks/README.md`
 
 ## Seam 核实
 

@@ -90,7 +90,7 @@ D05 §15～36/55/61～65；D06 §74～79/102～103；D08 AC-PAGE/PROGRESS/NFR-UI
 ## R-1 接线范围裁决
 
 - **裁决**：批准建立独立最小生产装配切片，但不在 TASK-013 集成中接线；当前 `R-1=BLOCKED/NOT_RUN`，不以空实现或内存实现替代生产绑定，也不释放 TASK-015 或其他冻结 Task。
-- **拟议范围**：`src/bootstrap/app.py`、`tests/core/test_bootstrap.py`、`verification/TASK-013/r1-assembly-decision.md` 及对应 Codex 元数据；Owner=`Codex`，Reviewer=`DeepSeek Harness`，建议 base=`f0814a8`。该切片不得修改 Schema/migration、共享 Port、依赖清单、其他 Task、AGENTS 或 TASK-012 已审实现。
+- **拟议范围**：`G:/CODEX/New Manga/src/bootstrap/app.py`、`G:/CODEX/New Manga/tests/core/test_bootstrap.py`、`G:/CODEX/New Manga/verification/TASK-013/**`、`G:/CODEX/New Manga/doc/00_INDEX.md`、`G:/CODEX/New Manga/doc/12_ROADMAP.md`、`G:/CODEX/New Manga/doc/STATUS.md`、`G:/CODEX/New Manga/doc/tasks/README.md`；Owner=`Codex`，Reviewer=`DeepSeek Harness`，建议 base=`07a5881`。该切片不得修改 Schema/migration、共享 Port、依赖清单、其他 Task、AGENTS 或 TASK-012 已审实现。
 - **已核实的生产 seam**：`SqliteLibraryRepository.list_pages(chapter_id)` 可绑定 page catalog；`SqliteRegionRepository.list_regions/get_region` 与 `RegionEditingService.save_manual_translation` 可绑定 Region/人工译文编辑；`NavigationViewModel` 可作为导航依赖。
 - **未就绪的生产 seam**：当前 `PipelineService` 仅发现 `InMemoryTargetCatalog`、`InMemoryPipelineStore`、`InMemorySnapshotProvider` 与 `DeterministicStepExecutor`；尚无生产 `TargetCatalog.expand/current/commit_step`、PipelineStore、SnapshotProvider 和真实 StepExecutor 的完整装配。因此本次不向 QML 注入 `workbenchViewModel`，生产 Workbench 继续保持诚实空状态。
 - **接线验收门槛**：提供上述完整生产 Pipeline 绑定；`assemble_services` 只使用真实 SQLite/服务对象并通过 `setContextProperty("workbenchViewModel", ...)` 注入；入口验证真实 Chapter→Book/页面/Region 查询且无硬编码；Windows 默认 Qt（不设 offscreen）入口 smoke、WorkBench/UI 与全量回归均须记录 passed/skipped 分列及 skip 原因。
