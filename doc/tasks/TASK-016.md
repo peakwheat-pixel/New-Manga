@@ -98,3 +98,9 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
   - 第二轮修订处置：**R-002**（失败路径统一走 fallback 门控，`fallback` 记录可审计判定）、**R-003**（research 表头直接标 `UNVERIFIED CANDIDATE METADATA`）、**R-005**（模型运行前强制离线开关 + 本地权重存在性与 Hash 门槛，缺则构造器前 `BLOCKED`）、**R-006**（三个固定结果全部按最新代码重生成，均为 v2 / 6 候选 / 30 记录）、**R-007**（重新计算并同步全部结果 SHA-256）、**R-009**（`BLOCKED` 记录不再含任何性能指标）、**detector-yolo 范围**（明确为 `DOCUMENTATION_ONLY`，无仓库实现来源）。
   - 第二轮验证：协议测试 5 passed / 0 skipped；probe（6×5）30 BLOCKED；`--run-models` 30 BLOCKED 且 `blocked_with_metrics = 0`、离线开关 `HF_HUB_OFFLINE/TRANSFORMERS_OFFLINE/HF_DATASETS_OFFLINE = 1`。
   - 未解决请求：`detector-yolo` 是否保留为文档候选，请 Codex 裁决；真实模型质量/性能仍 `BLOCKED`。
+
+- **当前状态（唯一，更新）**：2026-09-16 `in_review`，等待 Codex 第三次复审。
+  - 第三轮修订（R-005）：`enforce_offline()` 由 `setdefault` 改为**无条件覆盖** `os.environ[name]="1"` 并从环境读回；权重门槛保持"构造器前必须存在已校验本地权重，否则 `BLOCKED`"。
+  - **反例回归**：预置 `HF_HUB_OFFLINE=0`/`TRANSFORMERS_OFFLINE=0`/`HF_DATASETS_OFFLINE=0` 后执行 `--run-models`，输出仍为 `1,1,1`（断言通过，退出码 0）。
+  - 第三轮验证：协议测试 **5 passed / 0 skipped**；默认 probe **30 BLOCKED**；`--run-models` **30 BLOCKED**、`blocked_with_metrics=0`、三开关均 `1`；`git diff --check` 退出码 0；白名单越界 0。
+  - `detector-yolo` 维持 `DOCUMENTATION_ONLY`。真实模型质量/性能仍 `BLOCKED`。
