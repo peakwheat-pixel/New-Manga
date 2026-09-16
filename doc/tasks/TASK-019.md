@@ -2,7 +2,7 @@
 id: TASK-019
 title: 集成已验证的检测/OCR/翻译/修复 Provider
 kind: implementation
-status: proposed
+status: blocked
 approval: pending_user_review
 suggested_owner: ZCode
 owner: null
@@ -16,7 +16,12 @@ integration_commit: null
 
 # TASK-019：集成已验证的检测/OCR/翻译/修复 Provider
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+**BLOCKED（2026-09-17 窗口条款登记）**：2026-09-16 ZCode 全权窗口的解冻名单仅含
+TASK-015/024/017，本 Task 属窗口排除项"解冻名单之外的任务仍冻结"。按条款登记
+`blocked`：blocker=窗口授权不覆盖解冻（前状态 `proposed`）；恢复条件=用户批准释放
+（届时按流程填 owner/base_commit/branch/worktree 后转 `ready`），即使解除冻结也须先登记两项输入缺口：TASK-018 仍为 `blocked`、TASK-017 的真实
+端点层（Provider/成本/时延实测）仍 NOT_RUN（付费端点未配置）。
+当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
