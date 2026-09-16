@@ -1,6 +1,6 @@
 # 项目文档索引与 Source of Truth
 
-状态：TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计与 TASK-029 统一 SQLite 持久化实现已完成并集成；TASK-031 生产 ImageDecoder/Managed Copy 适配器已交付待审；TASK-030 入口装配范围已建立但等待 TASK-031；TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
+状态：TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-030 入口装配范围已建立但仍保持未释放；TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能冻结。仓库现状见 [STATUS](STATUS.md)。所有路径均相对本文档；保留现有 doc 目录及 02 文件名末尾的下划线。
 
 ## 原始目标文档（已完整检查）
 

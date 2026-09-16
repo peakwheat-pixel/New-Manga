@@ -2,8 +2,9 @@
 id: TASK-031
 title: 生产 ImageDecoder 与 Managed Copy 适配器
 kind: implementation
-status: in_review
+status: done
 approval: approved
+decision: approved
 suggested_owner: Codex
 owner: Codex
 reviewer: DeepSeek Harness
@@ -11,7 +12,10 @@ depends_on: [TASK-006, TASK-007, TASK-029]
 base_commit: 29b146f76b46682c6e9de3c40631fd7a5debed16
 branch: agent/codex/TASK-031-production-import-adapters
 worktree: G:/CODEX/New Manga
-integration_commit: null
+reviewed_head: c67a105c4907be07166fe319c77f56ac4cc5f2f0
+implementation_merge: 0b44b83bec8df8efad52d69f72c7aad2237e530b
+integration_commit: e9d5185259ffa175b64d67d5ac00befadc6db643
+review_report_commit: 0509003e4df0ca84428d61faf32dd16a70168d30
 ---
 
 # TASK-031：生产 ImageDecoder 与 Managed Copy 适配器
@@ -25,7 +29,7 @@ integration_commit: null
 - [x] `G:/CODEX/New Manga/src/infrastructure/importing.py` 提供 `QtImageDecoder`：用 PySide6 Qt image plugin 解码，返回实际宽高与 MIME；损坏/不可解码 bytes 抛 `ImageDecodeError`。
 - [x] 同一文件提供 `ManagedCopyStoreAdapter`：由 `book_id_for_chapter` resolver 补齐 D03 路径所需的 `book_id`，通过既有 `ManagedFileStorage` 完成 temp 写入、Hash 校验、不可覆盖 publish；返回 `books/{book_id}/chapters/{chapter_id}/original/` 相对引用，不修改源文件。
 - [x] 生产两个适配器驱动现有 `ImportImagesUseCase`，并证明 copy 成功后才有 Page、copy 内容逐字节等于输入、完整性失败不留 temp/original 孤儿。
-- [ ] 保持 `src/application`、`src/domain`、Protocol、Schema、依赖清单、`src/bootstrap`、`src/ui` 与冻结 Task 不变；独立 Review 和 Codex 集成复验完成前不得置 `done`。
+- [x] 保持 `src/application`、`src/domain`、Protocol、Schema、依赖清单、`src/bootstrap`、`src/ui` 与冻结 Task 不变；独立 Review 和 Codex 集成复验完成后置 `done`。
 
 ## 允许修改范围
 
@@ -44,11 +48,11 @@ integration_commit: null
 
 | 场景/AC | 命令 | 环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Qt 解码 + Managed Copy 适配器 | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/library/test_production_adapters.py -q` | Windows；Python 3.12.3；PySide6 6.11.2；默认 Qt | `6 passed, 0 skipped` | [author-verification-c67a105.md](../../verification/TASK-031/author-verification-c67a105.md) |
-| 现有 library/import 回归 | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/library -q` | Windows；默认 Qt | `38 passed, 0 skipped` | [author-verification-c67a105.md](../../verification/TASK-031/author-verification-c67a105.md) |
+| Qt 解码 + Managed Copy 适配器 | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/library/test_production_adapters.py -q` | Windows；Python 3.12.3；PySide6 6.11.2；默认 Qt | `8 passed, 0 skipped` | [integration-e9d5185.md](../../verification/TASK-031/integration-e9d5185.md) |
+| 现有 library/import 回归 | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/library -q` | Windows；默认 Qt | `40 passed, 0 skipped` | [integration-e9d5185.md](../../verification/TASK-031/integration-e9d5185.md) |
 | TASK-030 入口 smoke | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m bootstrap.app --smoke-test` | Windows 默认 Qt；不设置 offscreen | `BLOCKED`，本 Task 不装配入口 | 由 TASK-030 执行 |
-| `tests/ui_shell -v` | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/ui_shell -v` | Windows 默认 Qt | `46 passed, 0 skipped`；本 Task 未修改 UI | [author-verification-c67a105.md](../../verification/TASK-031/author-verification-c67a105.md) |
-| 全量 | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests -q -rs` | Windows | `374 passed, 6 skipped`；6 项均因 `openssl unavailable` | [author-verification-c67a105.md](../../verification/TASK-031/author-verification-c67a105.md) |
+| `tests/ui_shell -v` | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/ui_shell -v` | Windows 默认 Qt | `46 passed, 0 skipped`；本 Task 未修改 UI | [integration-e9d5185.md](../../verification/TASK-031/integration-e9d5185.md) |
+| 全量 | `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests -q -rs` | Windows | `376 passed, 6 skipped`；6 项均因 `openssl unavailable` | [integration-e9d5185.md](../../verification/TASK-031/integration-e9d5185.md) |
 
 所有结果中的 `passed` 与 `skipped` 分列；没有 skip 时仍写 `0 skipped`。未执行项保持 `NOT_RUN`/`BLOCKED`/`N/A`，不得用局部通过替代入口集成证据。
 
@@ -60,7 +64,13 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[TASK-031-c67a105](../handoffs/TASK-031-c67a105.md)，delivery_head=`c67a105`。
-- Review：尚无；Reviewer=`DeepSeek Harness`，不得自审冒充批准。
-- 实现提交：`c67a105`（`feat(TASK-031): add production image import adapters`）。
-- integration_commit：null。
+- Handoff：[TASK-031-c67a105](../handoffs/TASK-031-c67a105.md)，delivery_head=`c67a105`，已集成。
+- Review：[TASK-031-c67a105 Review](../reviews/TASK-031-c67a105.md)，`report_commit=0509003`，decision=`approved`。
+- 实现提交：`c67a105`；Review finding 收口提交：`d4fe993`。
+- implementation_merge：`0b44b83`；integration_commit：`e9d5185`。
+
+## Review finding disposition
+
+- **R-001 closed**：`d4fe993` 增加真实 `ManagedCopyStoreAdapter` + `ImportImagesUseCase` copy-failure E2E；断言 `COPY_FAILED`、零 Page、temp 清理。
+- **R-002 closed**：`ManagedCopyStoreAdapter.storage` 注解改为既有 `ManagedFileStoragePort`。
+- **R-003 closed**：未知/空 Qt format 使用安全 MIME fallback `application/octet-stream`，并增加回归测试。
