@@ -20,9 +20,9 @@
 
 | # | 精确命令（Git Bash，CWD=worktree） | 退出码 | passed | skipped | 结论 |
 |---|---|---:|---:|---:|---|
-| A1 | `PYTHONPATH=src "$PY" -m pytest tests/reading_export -q` | 0 | 63 | 0 | PASS：专项 63 例（阅读 15 / 导出 28 / ViewModel 12 / QML 契约 8） |
-| A2 | `PYTHONPATH=src "$PY" -m pytest tests -q` | 0 | 535 | 0 | PASS：全仓回归（连续两轮运行均 535 passed，无顺序依赖） |
-| A3 | `PYTHONPATH=src "$PY" -m pytest tests --collect-only -q` | 0 | 535 collected | — | PASS：收集数一致 |
+| A1 | `PYTHONPATH=src "$PY" -m pytest tests/reading_export -q` | 0 | 64 | 0 | PASS：专项 64 例（阅读 15 / 导出 28 / ViewModel 13 / QML 契约 8；含 Review R-002 回归与 R-003 恢复用例） |
+| A2 | `PYTHONPATH=src "$PY" -m pytest tests -q` | 0 | 536 | 0 | PASS：全仓回归（修订轮 ac4ff19 复跑，无顺序依赖） |
+| A3 | `PYTHONPATH=src "$PY" -m pytest tests --collect-only -q` | 0 | 536 collected | — | PASS：收集数一致 |
 
 ### 环境 B：无 PySide6 解释器的分列行为
 
@@ -59,7 +59,16 @@ B1 的 3 个 skip 逐条原因（`-rs` 输出原文）：
 | 产物重读 | zip 回读（namelist+testzip）；PDF 结构回读（页数/xref）；text 回读；真实 Qt PDF 头尾+页对象计数 | PASS |
 | 失败/取消不破坏源文件 | test_source_files_are_never_modified | PASS |
 
-## NOT_RUN / BLOCKED 项（不掩盖）
+## Review 修订轮（head `ac4ff19`）
+
+子 agent Review 首轮 `changes_requested`（P1×2、P2×4），修订提交 `ac4ff19` 后增量复审
+改判 `approved_subagent`：R-001（RTL 工具栏镜像与按钮语义）、R-002（导出 worker 异常
+兜底，附卡死回归测试）、R-003（webtoon 恢复时序）、R-004（glob 断言）、R-005
+（_record best-effort 语义）、R-006（handoff 措辞）全部 fixed；新 R-007（P2，恢复
+断言的同章节重开局限）deferred 至 TASK-020。报告见
+[doc/reviews/TASK-015-488fafc.md](../../doc/reviews/TASK-015-488fafc.md)。
+
+## NOT_RUN / BLOCKED 项（不掩盖；窗口期满后随集成交付一并补外部 post-hoc 复审）
 
 | 项 | 状态 | 原因与恢复条件 |
 |---|---|---|

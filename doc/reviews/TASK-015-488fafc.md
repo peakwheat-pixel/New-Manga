@@ -4,7 +4,7 @@ reviewer: ZCode 子 agent（窗口授权 2026-09-16）
 author: ZCode
 base_commit: 1000ac82743b75df8b4b385bc7096a015e13f107
 reviewed_head: 488fafc
-decision: changes_requested
+decision: approved_subagent
 ---
 
 # Review：TASK-015
@@ -94,10 +94,52 @@ Handoff `TASK-015-488fafc.md` frontmatter 亦声明 supersedes）。本轮审查
 
 ## 结论与复审
 
-**decision = changes_requested。**
+**decision = changes_requested。**（2026-09-16 首轮；后经 head `ac4ff19` 修订，decision 已在复审小节改判为 `approved_subagent`，本节保留原判记录，见下。）
 
 理由：发现 2 项未解决 P1——R-002（repeatExport 无 OSError 兜底，I/O 故障下导出 UI 永久卡死且无提示，已实证复现）与 R-001（RTL 章节工具栏两个"下一页"按钮语义矛盾，误导 AC-READ-003 的直接交互）。两项修复量都很小（一行 except、一处文案对调+补测），不影响本轮交付的整体设计质量：服务层、数据模型映射、stale 语义、durability 契约与测试密度均达到集成标准，P2 项（R-003~R-006）可随修或明确 disposition。
 
 可集成性判断：**当前固定 head 488fafc 不建议交 Codex 集成**；建议作者在本 worktree 修复 R-001/R-002（建议顺带 R-004 一行测试修正）后生成新 head，由本轮 reviewer 做增量复审（复核两个 P1 的 diff 与新测试），无新增 P0/P1 后改登记 `approved_subagent`，再交 Codex 按协议集成并行使装配接线/SQLite 迁移的范围变更裁量。
 
 性质与剩余风险：本结论是用户窗口授权下的同体（ZCode 子 agent）审查，不等同跨 Agent 独立批准；窗口期满后需外部 post-hoc 复审，Task 的 done 仍取决于独立 Review 与 Codex 集成验证。剩余风险：① 生产装配、SQLite 迁移、BookDetailPanel 接线未验证，集成期可能出现接线级缺陷；② Webtoon 恢复路径（R-003）与完整按宽滚动归 TASK-020，届时需复核；③ PDF 像素级验收与真实磁盘满/权限注入仍 NOT_RUN；④ 阅读时长心跳机制（5s 粒度）在进程挂起/睡眠场景的准确性未验证。
+
+---
+
+## 复审（head=ac4ff19，2026-09-16）
+
+按模板要求追加本轮复审记录，不抹掉上方首轮内容。复审对象：`ac4ff19`（父提交 `488fafc`，中间隔纯文档提交 `ed382d6`；净变更以 `git diff ed382d6..ac4ff19` 为准，并另以 `git diff 488fafc..ac4ff19` 全量核对文档演进）。净变更 8 files（+188/−16）：`service.py`、`ReaderView.qml`、`viewmodel.py`（export）、`test_export.py`、`test_qml_contract.py`、`test_viewmodels.py`、handoff 一行措辞、本报告文件收录。变更路径均在 Task 白名单内，未触碰冻结面。
+
+### Findings disposition（R-001..R-006 逐条）
+
+| ID | 首轮级别 | disposition | 复核证据 |
+|---|---|---|---|
+| R-001 | P1 | **fixed** | `ReaderView.qml` toolbar 增加 `layoutDirection: active && model.direction === "rtl" ? Qt.RightToLeft : Qt.LeftToRight` 整行镜像，两按钮文案恒定命名自身动作（"◀ 上一页"/"下一页 ▶"，不再随 direction 变换）。RTL 时 previousPage 按钮位于物理右、nextPage 位于物理左，与键盘 Left=前进一致；文字与动作矛盾（两按钮同名"下一页"）消除。方案优于首轮建议（镜像布局而非换文案），位置语义与 D05 §39 右→左一致 |
+| R-002 | P1 | **fixed** | 两个 worker（startExport/repeatExport）统一 `except ExportCancelledError` + `except Exception → _fail(_worker_error_text(error))`，任何异常不再逃逸线程；`_worker_error_text` 保留 OSError 的"导出写入失败："前缀。新增回归测试 `test_repeat_export_os_error_surfaces_failure_not_stuck`（注入 provider OSError，断言 running 重置 + exportFailed 恰 1 条含 "disk full"）。首轮复现脚本原样重跑：信号到达、running=False、可再次导出，输出 `RESULT: FIXED` |
+| R-003 | P2 | **fixed** | webtoon 恢复从 `Component.onCompleted` 移至 Image `onStatusChanged`（Ready 且 scrollOffsetY>0 时设 contentY）。reviewer 以双章节真实重载场景独立实证：chap1 滚动保存 120 → 切 chap2（Image source 变化、真实重载）→ 滚动保存 60 → 切回 chap1，contentY 恢复 120，`VERDICT: WORKS`。完整按宽滚动验收仍归 TASK-020 |
+| R-004 | P2 | **fixed** | `test_export.py:351` glob 改为 `".out.zip.*"`，与 `_new_temp` 生成的 `.{target.name}.<rand>.tmp` 精确匹配，断言恢复效力 |
+| R-005 | P2 | **fixed** | `_record` 的 `except Exception` 分支删除 FAILED 特判，所有终态 best-effort（吞掉历史写失败），docstring 同步改写并与行为一致（"output file already committed… must not be reported as failed"）。按首轮建议的方向一处置；副作用（历史行丢失无 UI 提示、该次导出不可 repeat 重放）为已接受的文档化行为 |
+| R-006 | P2 | **fixed** | handoff 措辞改为"旧 handoff 文件（TASK-015-fac2ffe.md）已随随后的文档提交删除（Git 历史可溯）"，与实际提交时序（ed382d6 删除）一致 |
+
+### 新 findings（复审增量）
+
+| ID | 级别 | 文件/行 | 触发与影响 | 复现证据 | 建议 | 处理状态/修订 commit |
+|---|---|---|---|---|---|---|
+| R-007 | P2 | tests/reading_export/test_qml_contract.py:231-245 | 新增的 webtoon"恢复断言"在**同章节重开**场景下 Loader sourceComponent 表达式结果不变、Flickable/Image 实例被复用（reviewer 实测 `same Flickable instance: True`），Image source 未变化则 onStatusChanged 不触发——该断言实际验证的是"openChapter 不清空 contentY"，并未驱动 R-003 的恢复分支；断言注释 "restored after image load" 与其实际覆盖路径不符。修复本身正确（reviewer 已在真实重载场景实证），故不阻塞 | reviewer 双章节脚本：章节切换/同章节重开均复用同一 Flickable 实例；跨章节真实重载时恢复 WORKS | 现断言保留（有防清零回归价值）；后续在测试中用两个章节（不同图片文件）驱动真实重载，或移交 TASK-020 的 webtoon 验收一并覆盖 | deferred（归 TASK-020） |
+
+观察项：R-001 镜像后按钮内箭头字形（◀/▶）不随方向翻转，RTL 下"下一页 ▶"位于物理左侧而箭头指右——文字已明确标注动作，不构成误导，留作外观打磨；toolbar 镜像后的按钮位置无契约断言（可在 TASK-020 或集成期补）。
+
+### 复审验证
+
+| 场景 | 命令或手工步骤 | 环境/commit | 结果 | 证据 |
+|---|---|---|---|---|
+| 专项测试（完整 Qt） | `PYTHONPATH=src ".../TASK-014-py312/Scripts/python.exe" -m pytest tests/reading_export -q` | Python 3.12.3 + PySide6 6.11.2 / ac4ff19 | PASS：**64 passed, 0 skipped**（63 + R-002 回归 1 例） | 本轮实际运行 |
+| 全仓回归（完整 Qt） | 同解释器 `-m pytest tests -q` | ac4ff19 | PASS：**536 passed, 0 skipped**（535 + 1；含架构守卫） | 本轮实际运行 |
+| 专项 skip 分列（无 Qt） | `PYTHONPATH=src python -m pytest tests/reading_export -q -rs` | Python 3.14.6 / ac4ff19 | PASS：**42 passed, 3 skipped**（skip 原因同首轮逐条：PySide6 not installed，三处） | `-rs` 输出 |
+| R-002 原卡死路径复现脚本重跑 | 首轮同款脚本（输出目录替换为同名文件 → repeatExport） | 环境 A / ac4ff19 | PASS：exportFailed 到达（"导出写入失败：[WinError 183]…"）、running=False、可再次导出，`RESULT: FIXED` | 本轮实际运行 |
+| R-003 恢复路径独立实证 | 双章节（不同 PNG）真实重载脚本：c1 保存 120 → c2 → 回 c1，检查 contentY | 环境 A / ac4ff19 | PASS：`restored to 120: True`，`WORKS` | 本轮实际运行 |
+| 新增回归测试断言对应性 | 阅读 test_repeat_export_os_error… 与 webtoon 恢复断言 + 对象身份实测 | ac4ff19 | 前者与首轮发现的卡死路径同控制流，有效；后者见 R-007（覆盖性质说明） | 本报告 R-007 |
+
+### 复审结论
+
+**decision = approved_subagent**（复审后改判；仍非 `approved`）。
+
+R-001~R-006 全部 fixed，无新增 P0/P1（新增 R-007 为 P2 测试覆盖观察，deferred 至 TASK-020）。三个环境的复跑数字与首轮基线一致且净增 1 例回归测试，首轮两项 P1 的修复均经 reviewer 独立复现/实证确认。**复审后本 head（ac4ff19）可交授权集成者（Codex）集成**；本结论仍为用户窗口授权下的同体（ZCode 子 agent）审查，不等同跨 Agent 独立批准，**窗口期满后需外部 post-hoc 复审**；Task 进入 done 仍以独立 Review 与 Codex 集成验证为准。剩余风险沿用首轮清单：生产装配/SQLite 迁移/BookDetailPanel 接线待集成验证、PDF 像素级验收与真实磁盘故障注入 NOT_RUN、Webtoon 完整按宽滚动与恢复断言的真实重载覆盖归 TASK-020、阅读时长心跳在挂起/睡眠场景未验证。

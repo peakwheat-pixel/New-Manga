@@ -21,7 +21,11 @@ status: in_review
 ## 提交列表
 
 - `488fafc` feat: rewrite reader session and five-format export per D03/D04/D05/D06
-  （17 files，+3813/−395；本 head 即交付内容）
+  （17 files，+3813/−395）
+- `ac4ff19` fix: address TASK-015 review findings R-001..R-006（子 agent Review
+  changes_requested 后的修订：RTL 工具栏镜像、导出 worker 异常兜底 + 卡死回归、
+  webtoon 恢复时序、glob 断言、_record best-effort、handoff 措辞；复审已改判
+  `approved_subagent`，见 [doc/reviews/TASK-015-488fafc.md](../reviews/TASK-015-488fafc.md)）
 
 变更路径全部在 Task 白名单内：`src/application/reading/**`、`src/application/export/**`、
 `src/ui/qml/reader/**`、`src/ui/viewmodels/reader/**`、`src/ui/qml/windows/ExportWindow.qml`、
