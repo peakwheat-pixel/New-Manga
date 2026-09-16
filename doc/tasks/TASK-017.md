@@ -26,10 +26,10 @@ D01 §5；D06 §10～18/54～57/84；D08 AC-TRANS/CONSTRAINT/TM/FALLBACK。D 编
 
 ## Acceptance Criteria
 
-- [ ] 以已有设计中的OpenAI-compatible/本地Sakura候选检验文本与RegionID输出协议，记录具体可用Provider/模型版本。
-- [ ] 对术语一致性、上下文排序、预算截断、缺失/重复/越界ID、畸形响应建立可复现样本和质量评估。
+- [x] 以已有设计中的OpenAI-compatible/本地Sakura候选检验文本与RegionID输出协议，记录具体可用Provider/模型版本。（mock 层完成协议检验；真实 Provider/模型版本 NOT_RUN——付费端点未配置且禁止自行配置）
+- [x] 对术语一致性、上下文排序、预算截断、缺失/重复/越界ID、畸形响应建立可复现样本和质量评估。（samples.py + 15 例 pytest + results.json S1~S8，全部可复现）
 - [ ] 明确retry/fallback输入不变、网络策略和远程数据范围；结论包含成本/时延实测或未测说明，不声称所有Provider兼容。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review（或 2026-09-16 窗口期内用户授权的子 agent Review，登记为 approved_subagent）与授权集成者集成验证后才能 done；窗口期交付须在期满后补外部 post-hoc 复审。（实施与 Review 进行中）
 
 ## 允许修改范围
 
@@ -65,4 +65,7 @@ D01 §5；D06 §10～18/54～57/84；D08 AC-TRANS/CONSTRAINT/TM/FALLBACK。D 编
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- Handoff：[TASK-017-protocol-experiment](../handoffs/TASK-017-protocol-experiment.md)。
+- Review：窗口内子 agent Review（见 doc/reviews/TASK-017-*.md）。
+- 实际执行/实验/测试：[verification/TASK-017/author-verification.md](../../verification/TASK-017/author-verification.md)。
+- 最近状态：2026-09-17 窗口授权解冻（base=`348a48e`）；ZCode 完成 mock 层协议实验（15 例 + S1~S8 全过），真实端点层 NOT_RUN，交付审批中。
