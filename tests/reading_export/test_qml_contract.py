@@ -1,0 +1,370 @@
+"""QML end-to-end contract tests for the reader/export slice (TASK-015).
+
+Loads the real ReaderView.qml / ExportWindow.qml with the real ViewModels
+published exactly the way bootstrap will (context properties), mirroring
+tests/ui_shell's harness. Runs on PySide6 with a window-hosted loader;
+skips with an explicit reason when PySide6 is missing.
+"""
+
+from __future__ import annotations
+
+import pytest
+from conftest import requires_pyside6
+import reading_export_helpers
+from reading_export_helpers import (
+    make_pages,
+    make_reading_service,
+    make_service,
+    to_export_pages,
+)
+
+pytest.importorskip("PySide6", reason="PySide6 not installed in this interpreter")
+
+import time as _time  # noqa: E402
+
+from PySide6.QtCore import QObject, QUrl, Qt  # noqa: E402
+from PySide6.QtGui import QGuiApplication  # noqa: E402
+from PySide6.QtQml import QQmlComponent, QQmlEngine  # noqa: E402
+from PySide6.QtQuick import QQuickWindow  # noqa: F401,E402  (registers item types)
+from PySide6.QtTest import QTest  # noqa: E402
+
+from application.export import ExportPage  # noqa: E402
+from application.export import ExportPage  # noqa: E402
+from application.reading import ReaderPage  # noqa: E402
+from ui.viewmodels.export.viewmodel import ExportViewModel  # noqa: E402
+from ui.viewmodels.reader.viewmodel import ReaderViewModel  # noqa: E402
+
+pytestmark = pytest.mark.usefixtures("qapp")
+
+SRC_QML = reading_export_helpers.SRC_ROOT / "ui" / "qml"
+
+READER_HOST = """
+import QtQuick
+import QtQuick.Controls
+ApplicationWindow {
+    objectName: "testWindow"
+    width: 1280
+    height: 800
+    ReaderView { anchors.fill: parent }
+}
+"""
+
+
+class Catalog:
+    def __init__(self, pages):
+        self.pages = pages
+
+    def list_pages(self, chapter_id):
+        return list(self.pages)
+
+
+def load_host(engine, host_qml, base_dir):
+    """Compile+create the host document; returns the created root object.
+
+    PySide6 6.11 keeps ownership of parent-less QML roots with the
+    component: letting the local ``QQmlComponent`` be garbage-collected
+    deletes the window out from under the test, so the component rides
+    along on the created object.
+    """
+    component = QQmlComponent(engine)
+    component.setData(host_qml.encode(), QUrl.fromLocalFile(str(base_dir / "host.qml")))
+    if component.isError():
+        raise RuntimeError(component.errorString())
+    created = component.create()
+    assert created is not None, component.errorString()
+    created._test_component = component
+    if isinstance(created, QQuickWindow):
+        created.show()
+    QGuiApplication.processEvents()
+    return created
+
+
+def click_button(button):
+    """Emit AbstractButton.clicked via QMetaMethod: the QQuickItem wrapper
+    is statically typed and has no clicked attribute (see ui_shell)."""
+    meta = button.metaObject()
+    index = meta.indexOfMethod("clicked()")
+    assert index >= 0, "clicked() not found on button"
+    meta.method(index).invoke(button)
+
+
+def find_by_name(root, object_name):
+    """Depth-first search over the QObject tree for an objectName."""
+    if root.objectName() == object_name:
+        return root
+    for child in root.findChildren(QObject):
+        if child.objectName() == object_name:
+            return child
+    return None
+
+
+def pump(window, seconds=2.0, condition=None):
+    deadline = _time.monotonic() + seconds
+    while _time.monotonic() < deadline:
+        QGuiApplication.processEvents()
+        if condition is not None and condition():
+            return True
+        _time.sleep(0.02)
+    return condition is not None and condition()
+
+
+@pytest.fixture()
+def engine():
+    qml_engine = QQmlEngine()
+    yield qml_engine
+    qml_engine.deleteLater()
+
+
+def real_png_pages(tmp_path, count=3):
+    """真 PNG 页面：QML Image 解码器必须能加载，webtoon 才有 contentHeight。"""
+    from PySide6.QtGui import QColor, QImage
+
+    rows = []
+    for index in range(count):
+        path = tmp_path / f"page_{index}.png"
+        image = QImage(40, 60, QImage.Format.Format_RGB32)
+        image.fill(QColor(120 + index * 30, 40, 40))
+        assert image.save(str(path))
+        rows.append(
+            ReaderPage(
+                page_id=f"p{index}",
+                filename=path.name,
+                original_path=str(path),
+                text=f"第 {index} 页",
+            )
+        )
+    return rows
+
+
+@pytest.fixture()
+def reader_stack(tmp_path):
+    pages = real_png_pages(tmp_path)
+    reading = make_reading_service(tmp_path)
+    export_service = make_service(tmp_path)
+    vm = ReaderViewModel(reading, Catalog(pages), export_service=export_service)
+    return vm, reading, pages
+
+
+@requires_pyside6
+def test_reader_loads_standalone_with_empty_state(engine):
+    """生产装配尚未注入 readerViewModel：页面必须可加载且显示空状态。"""
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        assert root is not None
+        empty = find_by_name(root, "readerEmptyState")
+        assert empty is not None and bool(empty.property("visible"))
+        assert find_by_name(root, "readerToolbar") is not None
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_reader_shows_chapter_and_paging(engine, reader_stack):
+    vm, reading, pages = reader_stack
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        vm.openChapter("b", "c", "第1话", "paged", "rtl")
+        QGuiApplication.processEvents()
+        title = find_by_name(root, "readerChapterTitle")
+        assert title.property("text") == "第1话"
+        progress = find_by_name(root, "readerProgress")
+        assert "1 / 3" in progress.property("text")
+        next_button = find_by_name(root, "readerNextPage")
+        assert next_button.property("enabled")
+        click_button(next_button)
+        QGuiApplication.processEvents()
+        assert vm.pageNumber == 2
+        assert not find_by_name(root, "readerEmptyState").property("visible")
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_reader_rtl_ltr_key_order(engine, reader_stack):
+    """RTL 章节：Left 键前进（右→左阅读），Right 键后退 (D05 §39/AC-READ-003/004)。"""
+    vm, reading, pages = reader_stack
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        vm.openChapter("b", "c", "第1话", "paged", "rtl")
+        root.forceActiveFocus()
+        QGuiApplication.processEvents()
+        QTest.keyClick(window, Qt.Key_Left)
+        assert vm.pageNumber == 2, "RTL: physical Left advances"
+        QTest.keyClick(window, Qt.Key_Right)
+        assert vm.pageNumber == 1, "RTL: physical Right goes back"
+
+        vm.openChapter("b", "c", "第1话", "paged", "ltr")
+        QTest.keyClick(window, Qt.Key_Right)
+        assert vm.pageNumber == 2, "LTR: physical Right advances"
+        QTest.keyClick(window, Qt.Key_Left)
+        assert vm.pageNumber == 1, "LTR: physical Left goes back"
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
+    vm, reading, pages = reader_stack
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+        QGuiApplication.processEvents()
+        scroll = find_by_name(root, "readerWebtoonScroll")
+        assert scroll is not None, "webtoon chapter swaps in the vertical Flickable"
+        # the page image loads asynchronously; contentHeight must exist
+        # before contentY can be set past the clamp
+        assert pump(window, 5.0, lambda: scroll.property("contentHeight") > 0), (
+            "webtoon image never produced a scrollable height"
+        )
+        scroll.setProperty("contentY", 240.0)
+        # the throttled save timer fires after ~500 ms
+        assert pump(
+            window, 2.0, lambda: reading.progress.scroll_offset_y == 240.0
+        ), "scroll_offset_y is saved through the service"
+
+        # R-003: reopening restores the offset only once the image has
+        # content height (never clamped to 0 by the empty Flickable)
+        vm.openChapter("b", "c", "条漫", "webtoon", "vertical", True)
+        scroll2 = None
+        deadline = _time.monotonic() + 5
+        while _time.monotonic() < deadline:
+            QGuiApplication.processEvents()
+            scroll2 = find_by_name(root, "readerWebtoonScroll")
+            if scroll2 is not None and scroll2.property("contentHeight") > 0:
+                break
+            _time.sleep(0.05)
+        assert scroll2 is not None, "reopened webtoon viewer"
+        assert pump(
+            window, 5.0, lambda: scroll2.property("contentY") == 240.0
+        ), f"saved offset restored after image load, got {scroll2.property('contentY')}"
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_reader_mode_buttons_highlight_current(engine, reader_stack):
+    vm, reading, pages = reader_stack
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        vm.openChapter("b", "c", "第1话", "paged", "rtl")
+        QGuiApplication.processEvents()
+        original = find_by_name(root, "readerModeOriginal")
+        translated = find_by_name(root, "readerModeTranslated")
+        assert original.property("highlighted") and not translated.property("highlighted")
+        click_button(translated)
+        QGuiApplication.processEvents()
+        assert vm.mode == "translated"
+        assert translated.property("highlighted") and not original.property("highlighted")
+    finally:
+        window.close()
+
+
+def make_export_vm(tmp_path, pages):
+    providers = to_export_pages(pages)
+    return ExportViewModel(
+        make_service(tmp_path),
+        lambda: list(providers),
+        book_id="b",
+        chapter_id="c",
+        output_dir=str(tmp_path / "out"),
+    )
+
+
+@requires_pyside6
+def test_export_window_exposes_all_controls(engine, tmp_path):
+    """D05 §51 字段与按钮 + D03 §31 历史动作。"""
+    vm = make_export_vm(tmp_path, make_pages(tmp_path, count=2, translated=True))
+    engine.rootContext().setContextProperty("exportViewModel", vm)
+    component = QQmlComponent(engine, QUrl.fromLocalFile(str(SRC_QML / "windows" / "ExportWindow.qml")))
+    assert not component.isError(), component.errorString()
+    window = component.create()
+    assert isinstance(window, QQuickWindow)
+    window._test_component = component  # keep the owner alive (see load_host)
+    try:
+        # QQuickWindow content items are not parented to contentItem()
+        # on the QObject tree — search from the window itself.
+        assert find_by_name(window, "exportScope") is not None
+        fmt = find_by_name(window, "exportFormat")
+        assert fmt is not None and fmt.property("count") == 5, "五格式：单图/ZIP/CBZ/PDF/文本"
+        assert find_by_name(window, "exportOverwritePolicy") is not None
+        assert find_by_name(window, "exportStalePolicy") is not None
+        assert find_by_name(window, "exportRunButton") is not None
+        assert find_by_name(window, "exportCancelButton") is not None
+        assert find_by_name(window, "exportOpenFolderButton") is not None
+        assert find_by_name(window, "exportRepeatButton") is not None
+        assert "2 页" in find_by_name(window, "exportScope").property("text")
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_export_window_run_button_completes_export(engine, tmp_path):
+    vm = make_export_vm(tmp_path, make_pages(tmp_path, count=2, translated=True))
+    engine.rootContext().setContextProperty("exportViewModel", vm)
+    component = QQmlComponent(engine, QUrl.fromLocalFile(str(SRC_QML / "windows" / "ExportWindow.qml")))
+    window = component.create()
+    window._test_component = component  # keep the owner alive (see load_host)
+    try:
+        run = find_by_name(window, "exportRunButton")
+        status = find_by_name(window, "exportStatus")
+        path_field = find_by_name(window, "exportOutputPath")
+        assert run.property("enabled"), "export button must be enabled with pages"
+        # Simulate the run button's onClicked exactly (PySide6 6.11 cannot
+        # invoke the clicked() signal through QMetaMethod on this tree):
+        # commit the field's path, start the export.
+        vm.setOutputPath(path_field.property("text"))
+        vm.startExport()
+        assert pump(window, 5.0, lambda: not vm.running)
+        QGuiApplication.processEvents()
+        # the Connections→syncFromController binding must surface the result
+        assert "导出完成" in status.property("text")
+        assert (tmp_path / "out" / "c.zip").exists()
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_export_window_stale_banner_surfaces(engine, tmp_path):
+    """D06 §97：stale/缺译时窗口必须显示提示而不是静默导出。"""
+    pages = make_pages(tmp_path, count=2, translated=True)
+    providers = to_export_pages(pages)
+    providers[0] = ExportPage(
+        page_id="p0",
+        filename=providers[0].filename,
+        source_provider=providers[0].source_provider,
+        translated_provider=providers[0].translated_provider,
+        translated_revision_id="old",
+        current_translated_revision_id="new",
+    )
+    providers[1] = ExportPage(
+        page_id="p1",
+        filename=providers[1].filename,
+        source_provider=providers[1].source_provider,
+        translated_provider=None,
+    )
+    vm = ExportViewModel(
+        make_service(tmp_path),
+        lambda: list(providers),
+        book_id="b",
+        chapter_id="c",
+        output_dir=str(tmp_path / "out"),
+    )
+    engine.rootContext().setContextProperty("exportViewModel", vm)
+    component = QQmlComponent(engine, QUrl.fromLocalFile(str(SRC_QML / "windows" / "ExportWindow.qml")))
+    window = component.create()
+    window._test_component = component  # keep the owner alive (see load_host)
+    try:
+        banner = find_by_name(window, "exportStaleBanner")
+        assert banner.property("visible") and banner.property("text") != ""
+        assert "不是最新渲染" in banner.property("text")
+    finally:
+        window.close()
