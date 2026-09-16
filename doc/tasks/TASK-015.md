@@ -2,21 +2,22 @@
 id: TASK-015
 title: 实现阅读器与五种成果导出
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
+decision: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-012, TASK-014]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 1000ac82743b75df8b4b385bc7096a015e13f107
+branch: agent/zcode/TASK-015-reader-export
+worktree: G:/CODEX/New Manga.worktrees/TASK-015-zcode
 integration_commit: null
 ---
 
 # TASK-015：实现阅读器与五种成果导出
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已按用户授权由 ZCode 认领，进入 `in_progress`；固定 base、分支、worktree 与白名单见上方元数据。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。全局 STATUS 暂不由 Owner 更新。
 
 ## 来源与目标
 
@@ -54,7 +55,7 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 
 - 计划：python -m pytest tests/reading_export；重启继续阅读、双模式独立、缺译图、五格式内容/页序/元数据。
 - 非法/Unicode文件名、已有目标文件、磁盘错误和stale选择；验证导出产物可重新读取。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 以上为验收计划；实现期间逐项回填 passed/skipped/blocked/not_run，命令中的测试目录由本 Task 建立。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -70,4 +71,4 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-16 用户授权释放；ZCode 在指定 worktree 以固定 base 认领，`ready` → `in_progress`，开始需求核对与 TDD 实施。
