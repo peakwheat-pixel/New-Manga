@@ -2,7 +2,7 @@
 id: TASK-011
 title: 实现命令计划、任务调度与可恢复进度
 kind: implementation
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -65,7 +65,7 @@ D03 §20～24；D06 §25～94；D08 AC-CMD/PIPE/PAUSE/STOP/CRASH/RETRY/LOCK/CONF
 
 ## 交付与运行记录
 
-- Handoff：实现完成后补充。
+- Handoff：[TASK-011-6a2016b](../handoffs/TASK-011-6a2016b.md)，delivery_head=`6a2016b`。
 - Review：尚无。
-- 实际执行/实验/测试：尚无；所有实施测试继续 `NOT_RUN`，不得以本次授权改写为 PASS。
-- 最近状态：2026-09-13 接管规划创建；2026-09-16 用户授权释放并登记 `ready`；随后 Codex 认领，当前 `in_progress`。
+- 实际执行/实验/测试：[验证证据](../../verification/TASK-011/tests-6a2016b.txt)：pipeline `27 passed, 0 skipped`；全量 `409 passed, 6 skipped`，6 项均因 `openssl unavailable`。
+- 最近状态：2026-09-13 接管规划创建；2026-09-16 用户授权释放并登记 `ready`；随后 Codex 认领并完成实现，当前 `in_review`，等待 DeepSeek Harness 独立 Review；`integration_commit=null`。
