@@ -20,7 +20,7 @@ TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现�
 | [TASK-014](TASK-014.md) | 实现配色与文字排版渲染 | ZCode | done；integration `a943297`；TASK-008 |
 | [TASK-015](TASK-015.md) | 实现阅读器与五种成果导出 | ZCode | done；base `1000ac8`；integration `fa72cee`；窗口同体 Review approved_subagent（期满补外部复审）；TASK-012, TASK-014 |
 | [TASK-016](TASK-016.md) | OCR 与检测路线独立实验 | DeepSeek Harness | done；integration `9bf85f5`；Review `878ac16`；TASK-003, TASK-004 |
-| [TASK-017](TASK-017.md) | Translation 与上下文输出协议实验 | DeepSeek Harness | TASK-003, TASK-004 |
+| [TASK-017](TASK-017.md) | Translation 与上下文输出协议实验 | ZCode | done；base `348a48e`；integration `c0cf3a1`；窗口同体 Review approved_subagent；真实端点层 NOT_RUN；依赖 TASK-003, TASK-004 |
 | [TASK-018](TASK-018.md) | Mask / Inpainting 路线独立实验 | DeepSeek Harness | TASK-003, TASK-004 |
 | [TASK-019](TASK-019.md) | 集成已验证的检测/OCR/翻译/修复 Provider | ZCode | TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024 |
 | [TASK-020](TASK-020.md) | 实现 Webtoon 分块处理与阅读 | ZCode | TASK-013, TASK-015, TASK-019 |
