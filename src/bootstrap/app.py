@@ -57,6 +57,31 @@ from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
 QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
 
 
+class _ManagedPageCatalog:
+    """Expose SQLite pages and immutable Managed Copy URLs to the Viewer."""
+
+    def __init__(self, repository: SqliteLibraryRepository, storage: ManagedFileStorage) -> None:
+        self._repository = repository
+        self._storage = storage
+
+    def list_pages(self, chapter_id: str):
+        return self._repository.list_pages(chapter_id)
+
+    def image_url(self, page_id: str, mode: str) -> str:
+        if mode != "original":
+            return ""
+        page = self._repository.get_page(page_id)
+        if page is None or not page.managed_original_ref:
+            return ""
+        root = self._storage.root.resolve()
+        path = Path(self._storage.absolute_path(page.managed_original_ref)).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError:
+            return ""
+        return path.as_uri() if path.is_file() else ""
+
+
 @dataclass
 class AppServices:
     """Fully wired production stack; QML receives the page viewmodels.
@@ -130,11 +155,27 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         )
         workbench = WorkbenchViewModel(
             pipeline=pipeline,
-            page_catalog=repository,
+            page_catalog=_ManagedPageCatalog(repository, storage),
             region_catalog=editing,
             translation_editor=editing,
             navigation=navigation,
         )
+
+        def sync_workbench_context() -> None:
+            context = navigation.get_workbench_context()
+            chapter_id = context.get("chapter_id")
+            if not chapter_id:
+                workbench.clearContext()
+                return
+            chapter = library.get_chapter(chapter_id)
+            book = library.get_book(chapter.book_id)
+            if context.get("book_id") != book.book_id:
+                raise ValueError("workbench context book does not own chapter")
+            workbench.setContext(
+                book.book_id, chapter.chapter_id, book.title, chapter.title
+            )
+
+        navigation.workbenchContextChanged.connect(sync_workbench_context)
         return AppServices(
             conn=conn,
             repository=repository,

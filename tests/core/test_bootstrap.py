@@ -309,3 +309,57 @@ def test_assemble_engine_injects_real_workbench_stack(
         engine.deleteLater()
         services.conn.close()
         qapp.processEvents()
+
+
+def test_navigation_enters_real_workbench_context(
+    qapp, tmp_path: Path
+) -> None:
+    """R-001: shelf navigation publishes its real Book/Chapter context."""
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    book = services.library.create_book("导航装配书")
+    chapter = services.library.create_chapter(book.book_id, "第2话")
+    services.bookshelf.selectBook(book.book_id)
+
+    services.bookshelf.enterTranslation(chapter.chapter_id)
+
+    assert services.navigation.get_workbench_context() == {
+        "book_id": book.book_id,
+        "chapter_id": chapter.chapter_id,
+        "page_id": None,
+        "progress": None,
+    }
+    assert services.workbench.get_has_context() is True
+    assert services.workbench.get_context_info()["chapter_id"] == chapter.chapter_id
+    services.conn.close()
+
+
+def test_workbench_resolves_managed_original_url(
+    qapp, tmp_path: Path
+) -> None:
+    """R-002: the Viewer resolves only the immutable Managed Copy path."""
+    from application.importing.images.ports import ImportSource
+    from bootstrap.app import assemble_services
+    from PySide6.QtCore import QUrl
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    book = services.library.create_book("原图装配书")
+    chapter = services.library.create_chapter(book.book_id, "第3话")
+    data = _make_png(9, 7)
+    report = services.importer.import_files(
+        chapter.chapter_id,
+        [ImportSource(filename="original.png", data_provider=lambda: data)],
+    )
+    page = report.imported[0].page
+
+    services.workbench.setContext(
+        book.book_id, chapter.chapter_id, book.title, chapter.title
+    )
+    services.workbench.selectPage(page.page_id)
+
+    resolved = Path(QUrl(services.workbench.get_viewer_image_url()).toLocalFile())
+    assert resolved.is_file()
+    assert resolved.read_bytes() == data
+    assert resolved.is_relative_to((tmp_path / "managed").resolve())
+    services.conn.close()
