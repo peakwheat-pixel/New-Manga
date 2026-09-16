@@ -1,6 +1,20 @@
-"""Reader use cases and its file-backed session state."""
+"""Reader use cases and its file-backed session state (TASK-015)."""
 
-from .service import PageView, ReadingMode, ReadingService
+from .ports import (
+    JsonProgressDocumentStore,
+    ProgressDocumentStore,
+    ReaderPage,
+    ReaderPageCatalog,
+)
+from .service import ChapterReadingSummary, ReadingMode, ReadingProgress, ReadingService
 
-__all__ = ["PageView", "ReadingMode", "ReadingService"]
-
+__all__ = [
+    "ChapterReadingSummary",
+    "JsonProgressDocumentStore",
+    "ProgressDocumentStore",
+    "ReaderPage",
+    "ReaderPageCatalog",
+    "ReadingMode",
+    "ReadingProgress",
+    "ReadingService",
+]

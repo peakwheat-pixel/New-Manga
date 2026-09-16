@@ -1,0 +1,94 @@
+"""Shared helpers for the reading_export suite (TASK-015).
+
+Same convention as tests/workbench/workbench_helpers: the suite-specific
+name avoids the cross-suite ``helpers`` module clash seen in TASK-014;
+tests import ``reading_export_helpers`` directly and the module puts this
+directory and ``src`` on sys.path.
+"""
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+THIS_DIR = Path(__file__).resolve().parent
+SRC_ROOT = THIS_DIR.parents[1] / "src"
+for entry in (str(THIS_DIR), str(SRC_ROOT)):
+    if entry not in sys.path:
+        sys.path.insert(0, entry)
+
+from application.export import (  # noqa: E402
+    ExportPage,
+    JsonHistoryDocumentStore,
+    file_bytes_provider,
+)
+from application.reading import (  # noqa: E402
+    JsonProgressDocumentStore,
+    ReaderPage,
+)
+
+
+def make_pages(tmp_path: Path, count: int = 3, translated: bool = False):
+    """Write `count` tiny PNG-ish files and return matching ReaderPages.
+
+    ``translated=True`` gives every page a distinct translated file whose
+    revision is current, so translated reading/export paths have data.
+    """
+    originals, rows = [], []
+    for index in range(count):
+        original = tmp_path / f"page_{index:02d}_第{index}页.png"
+        original.parent.mkdir(parents=True, exist_ok=True)
+        original.write_bytes(f"PNG-orig-{index}".encode())
+        row = ReaderPage(
+            page_id=f"p{index}",
+            filename=original.name,
+            original_path=str(original),
+        )
+        if translated:
+            translated_path = tmp_path / f"page_{index:02d}_translated.png"
+            translated_path.write_bytes(f"PNG-trans-{index}".encode())
+            row = ReaderPage(
+                page_id=row.page_id,
+                filename=row.filename,
+                original_path=row.original_path,
+                translated_path=str(translated_path),
+                translated_revision_id=f"rev-{index}",
+                current_translated_revision_id=f"rev-{index}",
+                text=f"第 {index} 页译文",
+            )
+        originals.append(row)
+    return originals
+
+
+def to_export_pages(reader_pages):
+    """ReaderPage rows → ExportPage rows (same seam the ViewModel uses)."""
+    return [
+        ExportPage(
+            page_id=page.page_id,
+            filename=page.filename,
+            source_provider=file_bytes_provider(page.original_path),
+            translated_provider=(
+                file_bytes_provider(page.translated_path)
+                if page.translated_path
+                else None
+            ),
+            translated_revision_id=page.translated_revision_id,
+            current_translated_revision_id=page.current_translated_revision_id,
+            text=page.text,
+        )
+        for page in reader_pages
+    ]
+
+
+def make_service(tmp_path):
+    from application.export import ExportService
+
+    return ExportService(
+        JsonHistoryDocumentStore(tmp_path / "export_history.json")
+    )
+
+
+def make_reading_service(tmp_path):
+    from application.reading import ReadingService
+
+    return ReadingService(JsonProgressDocumentStore(tmp_path / "progress.json"))

@@ -1,43 +1,308 @@
+"""ReaderViewModel: reader state between QML and ReadingService (TASK-015).
+
+Published to QML as ``readerViewModel``. The ViewModel owns no business
+rules: mode/direction/progress decisions live in ``ReadingService`` and
+its store, QML only renders state and calls slots (D05 §60).
+
+- ``openChapter`` loads the chapter through the injected page catalog
+  (production binding is an assembly decision, same seam as the
+  workbench's page catalog);
+- reading time accumulates via a coarse internal heartbeat plus
+  ``settleReadingTime`` on every progress-affecting slot, so duration
+  survives crashes within the heartbeat granularity (D03 §29);
+- ``openExporter`` lazily builds the chapter's ``ExportViewModel`` so the
+  reader can hand the export window a ready controller (D05 §51).
+"""
+
 from __future__ import annotations
 
-from PySide6.QtCore import Property, QObject, Signal, Slot
+import time
 
-from application.reading.service import ReadingMode, ReadingService
+from PySide6.QtCore import Property, QObject, QTimer, QUrl, Signal, Slot
+
+from application.export import (
+    ExportPage,
+    ExportService,
+    file_bytes_provider,
+)
+from application.reading.ports import ReaderPage, ReaderPageCatalog
+from application.reading.service import (
+    ReadingMode,
+    ReadingService,
+)
+from ui.viewmodels.export.viewmodel import ExportViewModel
+
+HEARTBEAT_MS = 5000  # coarse crash-granularity for accumulated reading time
 
 
 class ReaderViewModel(QObject):
-    changed = Signal()
+    stateChanged = Signal()
+    summaryChanged = Signal()
+    exportControllerChanged = Signal()
 
-    def __init__(self, service: ReadingService, parent: QObject | None = None):
+    def __init__(
+        self,
+        reading: ReadingService,
+        catalog: ReaderPageCatalog,
+        *,
+        export_service: ExportService | None = None,
+        parent: QObject | None = None,
+    ) -> None:
         super().__init__(parent)
-        self._service = service
+        self._reading = reading
+        self._catalog = catalog
+        self._export_service = export_service
+        self._exporter: ExportViewModel | None = None
+        self._heartbeat = QTimer(self)
+        self._heartbeat.setInterval(HEARTBEAT_MS)
+        self._heartbeat.timeout.connect(self.settleReadingTime)
+        self._last_settle = 0.0
 
-    def _path(self) -> str:
-        return self._service.current_source_path if self._service.pages else ""
+    # ------------------------------------------------------------------
+    # session control
+    # ------------------------------------------------------------------
 
-    def _message(self) -> str:
-        return self._service.status_message() if self._service.pages else ""
-
-    sourcePath = Property(str, _path, notify=changed)
-    statusMessage = Property(str, _message, notify=changed)
-    mode = Property(str, lambda self: self._service.mode.value, notify=changed)
-    direction = Property(str, lambda self: self._service.direction, notify=changed)
-    pageIndex = Property(int, lambda self: self._service.progress.page_index, notify=changed)
+    @Slot(str, str, str, str, str, bool)
+    def openChapter(
+        self,
+        book_id: str,
+        chapter_id: str,
+        chapter_title: str,
+        chapter_type: str,
+        direction: str,
+        resume: bool = True,
+    ) -> None:
+        self.settleReadingTime()
+        pages = self._catalog.list_pages(chapter_id)
+        self._reading.open(
+            book_id,
+            chapter_id,
+            pages,
+            chapter_title=chapter_title,
+            chapter_type=chapter_type,
+            direction=direction,
+            mode=self._reading.mode,
+            resume=resume,
+        )
+        self._last_settle = time.monotonic()
+        self._heartbeat.start()
+        self.stateChanged.emit()
+        self.summaryChanged.emit()
 
     @Slot()
-    def nextPage(self):
-        self._service.next_page()
-        self.changed.emit()
+    def closeReader(self) -> None:
+        self.settleReadingTime()
+        self._heartbeat.stop()
+        self._reading.close()
+        self.summaryChanged.emit()
+
+    @Slot()
+    def continueReading(self) -> None:
+        """从上次位置继续 (D04 §36) — reopens the current chapter mode."""
+        self.settleReadingTime()
+        self._reading.open(
+            self._reading.book_id,
+            self._reading.chapter_id,
+            self._reading.pages,
+            chapter_title=self._reading.chapter_title,
+            chapter_type=self._reading.chapter_type,
+            direction=self._reading.direction,
+            mode=self._reading.mode,
+            resume=True,
+        )
+        self.stateChanged.emit()
+
+    @Slot()
+    def restartFromBeginning(self) -> None:
+        """从章节开头开始 (D04 §36)."""
+        self.settleReadingTime()
+        self._reading.open(
+            self._reading.book_id,
+            self._reading.chapter_id,
+            self._reading.pages,
+            chapter_title=self._reading.chapter_title,
+            chapter_type=self._reading.chapter_type,
+            direction=self._reading.direction,
+            mode=self._reading.mode,
+            resume=False,
+        )
+        self.stateChanged.emit()
+
+    # ------------------------------------------------------------------
+    # properties
+    # ------------------------------------------------------------------
+
+    def _has_chapter(self) -> bool:
+        return self._reading.progress is not None
+
+    hasChapter = Property(bool, _has_chapter, notify=stateChanged)
+
+    def _chapter_title(self) -> str:
+        return self._reading.chapter_title
+
+    chapterTitle = Property(str, _chapter_title, notify=stateChanged)
+
+    def _mode(self) -> str:
+        return self._reading.mode
+
+    mode = Property(str, _mode, notify=stateChanged)
+
+    def _direction(self) -> str:
+        return self._reading.direction.value
+
+    direction = Property(str, _direction, notify=stateChanged)
+
+    def _chapter_type(self) -> str:
+        return self._reading.chapter_type.value
+
+    chapterType = Property(str, _chapter_type, notify=stateChanged)
+
+    def _source_path(self) -> str:
+        if not self._has_chapter():
+            return ""
+        path = self._reading.current_source_path
+        # QML Image sources need file URIs (production catalogs hand out
+        # storage paths); exports keep consuming the local path.
+        return QUrl.fromLocalFile(path).toString() if path else ""
+
+    sourcePath = Property(str, _source_path, notify=stateChanged)
+
+    def _status_message(self) -> str:
+        if not self._has_chapter():
+            return ""
+        return self._reading.status_message
+
+    statusMessage = Property(str, _status_message, notify=stateChanged)
+
+    def _page_number(self) -> int:
+        """1-based position for display; 0 with no chapter."""
+        return self._reading.page_index + 1 if self._has_chapter() else 0
+
+    pageNumber = Property(int, _page_number, notify=stateChanged)
+
+    def _page_count(self) -> int:
+        return self._reading.page_count
+
+    pageCount = Property(int, _page_count, notify=stateChanged)
+
+    def _progress_percent(self) -> float:
+        return self._reading.progress_percent
+
+    progressPercent = Property(float, _progress_percent, notify=stateChanged)
+
+    def _can_previous(self) -> bool:
+        return self._has_chapter() and self._reading.page_index > 0
+
+    canGoPrevious = Property(bool, _can_previous, notify=stateChanged)
+
+    def _can_next(self) -> bool:
+        return self._has_chapter() and self._reading.page_index < self._reading.page_count - 1
+
+    canGoNext = Property(bool, _can_next, notify=stateChanged)
+
+    def _total_read_seconds(self) -> float:
+        if self._reading.progress is None:
+            return 0.0
+        return round(self._reading.progress.total_read_seconds, 3)
+
+    totalReadSeconds = Property(float, _total_read_seconds, notify=summaryChanged)
+
+    def _book_summary(self) -> dict:
+        if not self._reading.book_id:
+            return {}
+        return self._reading.book_summary(self._reading.book_id)
+
+    bookSummary = Property("QVariantMap", _book_summary, notify=summaryChanged)
+
+    def _exporter(self) -> QObject | None:
+        return self._exporter
+
+    exportController = Property(QObject, _exporter, notify=exportControllerChanged)
+
+    # ------------------------------------------------------------------
+    # QML slots
+    # ------------------------------------------------------------------
 
     @Slot(str)
-    def setMode(self, value: str):
-        self._service.mode = ReadingMode(value)
-        self.changed.emit()
+    def setMode(self, mode: str) -> None:
+        self.settleReadingTime()
+        self._reading.set_mode(mode)
+        self.stateChanged.emit()
 
-    @Slot(str)
-    def setDirection(self, value: str):
-        if value not in {"rtl", "ltr"}:
+    @Slot()
+    def nextPage(self) -> None:
+        self.settleReadingTime()
+        self._reading.next_page()
+        self.stateChanged.emit()
+
+    @Slot()
+    def previousPage(self) -> None:
+        self.settleReadingTime()
+        self._reading.previous_page()
+        self.stateChanged.emit()
+
+    @Slot(int)
+    def jumpToPage(self, page_index: int) -> None:
+        self.settleReadingTime()
+        self._reading.jump_to_page(page_index)
+        self.stateChanged.emit()
+
+    @Slot(float)
+    def saveScrollOffset(self, offset_y: float) -> None:
+        """Webtoon 定期保存 scroll_offset_y (D04 §35)."""
+        self._reading.save_scroll_offset(offset_y)
+        self.stateChanged.emit()
+
+    def _scroll_offset_y(self) -> float:
+        if self._reading.progress is None:
+            return 0.0
+        return self._reading.progress.scroll_offset_y
+
+    scrollOffsetY = Property(float, _scroll_offset_y, notify=stateChanged)
+
+    @Slot()
+    def settleReadingTime(self) -> None:
+        """Fold elapsed wall time into the mode's accumulated duration."""
+        if self._reading.progress is None:
+            self._last_settle = time.monotonic()
             return
-        self._service.direction = value
-        self.changed.emit()
+        now = time.monotonic()
+        elapsed = now - (self._last_settle or now)
+        self._last_settle = now
+        if elapsed > 0:
+            self._reading.add_time(elapsed)
+            self.summaryChanged.emit()
 
+    @Slot()
+    def openExporter(self) -> QObject | None:
+        """Create (once) the export controller for the open chapter."""
+        if self._exporter is None:
+            if self._export_service is None:
+                return None
+            self._exporter = ExportViewModel(
+                self._export_service, self._chapter_export_pages, parent=self
+            )
+            self.exportControllerChanged.emit()
+        self._exporter.refreshStaleWarning()
+        return self._exporter
+
+    def _chapter_export_pages(self) -> list[ExportPage]:
+        """Current chapter's pages as export inputs, in reading order."""
+        pages: list[ExportPage] = []
+        for page in self._reading.pages:
+            pages.append(
+                ExportPage(
+                    page_id=page.page_id,
+                    filename=page.filename,
+                    source_provider=file_bytes_provider(page.original_path),
+                    translated_provider=(
+                        file_bytes_provider(page.translated_path)
+                        if page.translated_path
+                        else None
+                    ),
+                    translated_revision_id=page.translated_revision_id,
+                    current_translated_revision_id=page.current_translated_revision_id,
+                    text=page.text,
+                )
+            )
+        return pages
