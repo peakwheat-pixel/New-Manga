@@ -200,9 +200,18 @@ def _package_available(module: str) -> bool:
 
 
 def enforce_offline() -> dict[str, str | None]:
-    """R-005: force offline switches before any provider constructor runs."""
+    """R-005: force the offline switches, **overriding** any pre-set value.
+
+    ``setdefault`` was insufficient: a pre-existing ``HF_HUB_OFFLINE=0`` (or the
+    transformers/datasets equivalents) would survive, and a provider library
+    could then reach the network while the experiment claimed to be offline.
+    The switches are now assigned unconditionally, and the returned mapping is
+    read back from the environment so the recorded evidence proves the forced
+    value rather than the caller's intent.
+    """
+
     for name in OFFLINE_ENV:
-        os.environ.setdefault(name, "1")
+        os.environ[name] = "1"
     return {name: os.environ.get(name) for name in OFFLINE_ENV}
 
 

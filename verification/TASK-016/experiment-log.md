@@ -165,3 +165,42 @@ $env:PYTHONDONTWRITEBYTECODE='1'
 | **R-008** | `doc/tasks/TASK-016.md`：正文状态表述改为历史（"当前状态以 frontmatter 为准"），补入实际 Handoff/Review 链接，末尾只保留一条**当前状态** | 该文件「交付与运行记录」与末尾「当前状态（唯一）」 |
 | **R-009** | `_blocked()` 将 `metrics` 全量清零；`_run_detector()` 的前置门槛位于**任何资源采样之前**，detector 路径不再调用 `_memory_mb()`/`_vram_mb()` | 三份结果 `blocked_with_metrics = 0` |
 | **R-001 残留（detector-yolo）** | 明确为 `DOCUMENTATION_ONLY — no implementation source in this repository`，写入 `CANDIDATES` 与 `verification_matrix.scope_decision`；请 Codex 裁决是否保留 | `run_experiment.py` 的 `CANDIDATES`/`VERIFICATION_MATRIX` |
+
+---
+
+# 附：Review R-005 修订证据（第四轮：强制离线覆盖）
+
+## 缺陷
+
+上一轮 `enforce_offline()` 使用 `os.environ.setdefault(name, "1")`。**`setdefault` 不会覆盖已存在的值**：若调用方预置 `HF_HUB_OFFLINE=0`，该值会被保留，Provider 库仍可能访问网络，而实验记录却声称处于离线状态——即"记录的意图"与"实际生效的值"可能不一致。
+
+## 修复
+
+`enforce_offline()` 改为**无条件赋值** `os.environ[name] = "1"`，并从环境中**读回**构成返回映射，使证据记录的是**强制后的真实值**，而不是调用方的意图。权重侧仍保留 R-005 的本地门槛：`local_weight_gate()` 必须找到真实存在的本地权重路径（并计算其 digest 作为 `model_sha256`），否则在 **import/构造之前** 返回 `BLOCKED`。
+
+## 验证（全部退出码 0）
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---|---:|---:|---|
+| 11 | `python -m unittest experiments/TASK-016/test_protocol.py -v` | **0** | **5** | **0** | `OK` |
+| 12 | `python experiments/TASK-016/run_experiment.py --output experiments/TASK-016/results/probe.json` | **0** | — | — | `{"BLOCKED": 30}` |
+| 13 | `… --output experiments/TASK-016/results/run-models.json --run-models` | **0** | — | — | `{"BLOCKED": 30}`；`offline_environment` 三值均为 `1` |
+| 14 | `… --output experiments/TASK-016/results/model-run-blocked.json --run-models` | **0** | — | — | `{"BLOCKED": 30}`；同上（与 13 同代码同模式） |
+| **15** | **反例**：先预置 `HF_HUB_OFFLINE=0`、`TRANSFORMERS_OFFLINE=0`、`HF_DATASETS_OFFLINE=0`，再执行 `--run-models` 输出到仓库外临时文件 | **0** | — | — | `offline_environment = {"HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1", "HF_DATASETS_OFFLINE": "1"}`，**全部为 1**（断言通过） |
+
+**skip 原因**：命令 11 为 `0 skipped`（协议测试不依赖模型/网络/第三方包）；命令 12~15 为探测进程，无测试项。
+
+## 三份固定结果（内容未变，SHA 与上一轮一致）
+
+| 文件 | schema | 候选 | 记录 | 状态 | `blocked_with_metrics` | `offline_environment` | SHA-256 |
+|---|---|---:|---:|---|---:|---|---|
+| `results/probe.json` | `task016-experiment-result-v2` | 6 | 30 | `{BLOCKED: 30}` | **0** | `null`（probe 模式不进入构造器，故不强制） | `b3c30a8bca68d7d8466ffa7246e2b13fcd2a73173a397977e915a67ab2c91e2a` |
+| `results/run-models.json` | 同上 | 6 | 30 | `{BLOCKED: 30}` | **0** | `{HF_HUB_OFFLINE: "1", TRANSFORMERS_OFFLINE: "1", HF_DATASETS_OFFLINE: "1"}` | `5986fc158edb154a37d38e4ef10390d05bf92476084aa309988eb6f4cf4421bd` |
+| `results/model-run-blocked.json` | 同上 | 6 | 30 | `{BLOCKED: 30}` | **0** | 同上 | `5986fc158edb154a37d38e4ef10390d05bf92476084aa309988eb6f4cf4421bd` |
+
+`detector-yolo` 维持 `DOCUMENTATION_ONLY — no implementation source in this repository`（本轮未改动该项）。
+
+## 范围检查
+
+- `git diff --check`（工作区与暂存区）均退出码 **0**；白名单越界 **0**。
+- 未修改生产 `src/`、`tests/`、Schema/migration、依赖清单、AGENTS、其他 Task 或任何冻结 Task；未 push、未合并。
