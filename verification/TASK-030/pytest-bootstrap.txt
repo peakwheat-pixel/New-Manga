@@ -1,0 +1,16 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\TASK-030-zcode
+configfile: pytest.ini
+collecting ... collected 7 items
+
+tests/core/test_bootstrap.py::test_smoke_startup_loads_qml_and_exits_zero PASSED [ 14%]
+tests/core/test_bootstrap.py::test_smoke_assembles_real_stack_in_data_root PASSED [ 28%]
+tests/core/test_bootstrap.py::test_missing_qml_returns_nonzero_with_path PASSED [ 42%]
+tests/core/test_bootstrap.py::test_assemble_services_migrates_schema_and_managed_layout PASSED [ 57%]
+tests/core/test_bootstrap.py::test_assemble_services_refuses_newer_schema PASSED [ 71%]
+tests/core/test_bootstrap.py::test_import_safety_chain PASSED            [ 85%]
+tests/core/test_bootstrap.py::test_import_unknown_chapter_fails_copy_and_writes_no_page PASSED [100%]
+
+============================== 7 passed in 1.76s ==============================
