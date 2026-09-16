@@ -2,21 +2,21 @@
 id: TASK-016
 title: OCR 与检测路线独立实验
 kind: experiment
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: DeepSeek Harness
-owner: null
-reviewer: null
+owner: DeepSeek Harness
+reviewer: Codex
 depends_on: [TASK-003, TASK-004]
-base_commit: null
-branch: null
-worktree: null
+base_commit: f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86
+branch: agent/deepseek/TASK-016-ocr-detection-experiment
+worktree: G:/CODEX/New Manga.worktrees/TASK-016-deepseek
 integration_commit: null
 ---
 
 # TASK-016：OCR 与检测路线独立实验
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并登记为 `ready`，等待 Owner 在固定 worktree 中认领并实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -49,7 +49,7 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
 
 - 记录实际实验命令、数据/模型Hash、环境、输出和指标；不具备GPU/API条件的项目标BLOCKED/NOT_RUN。
 - 单Region输出映射与长图Tile全局坐标验证；说明模型质量测试不等于产品集成验证。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 实现前结果全部 `NOT_RUN`；Owner 必须在本 Task 目录建立后记录实际实验命令、设备/依赖与输出，不具备环境的项目标 `BLOCKED`/`NOT_RUN`。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -58,11 +58,11 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
 
 不写生产适配器；联网模型或API测试需已配置授权及资源。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持 `BLOCKED`。本次实际 Owner 为 DeepSeek Harness，Reviewer 为 Codex；不得把实验结论直接视为产品需求或生产集成授权。
 
 ## 交付与运行记录
 
-- Handoff：尚无。
+- Handoff：待 Owner 交付。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-16 用户批准释放；`ready`，固定 base=`f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86`，等待 Owner 认领。
