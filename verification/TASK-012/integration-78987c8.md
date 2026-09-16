@@ -1,10 +1,10 @@
 # TASK-012 Codex 集成验证
 
-日期：2026-09-16（Asia/Shanghai）  
-base_commit：`2cceb1e734c5079870662b7a28da316e46444810`  
-reviewed_head：`ca5848b746210564a2503e8c5f59e0a2118e56a1`  
-implementation_merge：`b324d4b09c6f755c37c8df75b5a1c566e882ce8f`  
-review_report_commit：`084db6000f4505f95c6451df8bc5aadefd93f5ff`  
+日期：2026-09-16（Asia/Shanghai）
+base_commit：`2cceb1e734c5079870662b7a28da316e46444810`
+reviewed_head：`ca5848b746210564a2503e8c5f59e0a2118e56a1`
+implementation_merge：`b324d4b09c6f755c37c8df75b5a1c566e882ce8f`
+review_report_commit：`084db6000f4505f95c6451df8bc5aadefd93f5ff`
 integration_commit：`78987c8fe5df5650bf7f674d6a9b79afbc48a5ab`
 
 ## 集成方式
