@@ -8,7 +8,7 @@
 ``Main.qml``（它只负责挂载 ``shell/AppShell.qml``）。
 
 不变量（AC-IMPORT-002/003, D07 §37~39, D05 §60）：
-- QML 不接触数据库与文件系统——页面只消费两个 ViewModel 上下文属性；
+- QML 不接触数据库与文件系统——页面只消费三个 ViewModel 上下文属性；
 - 导入始终经 ``ImportImagesUseCase``：Managed Copy 成功后才写 Page，
   源文件只读；Managed Copy 的 Chapter→Book 解析绑定真实仓储查询
   （``book_id_for_chapter``），不硬编码 book id。
