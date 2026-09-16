@@ -254,3 +254,58 @@ def test_import_unknown_chapter_fails_copy_and_writes_no_page(tmp_path: Path) ->
 
     assert source.read_bytes() == data
     assert services.repository.list_pages("no-such-chapter") == []
+
+
+def test_assemble_engine_injects_real_workbench_stack(
+    qapp, tmp_path: Path
+) -> None:
+    """R-1: the entry binds real SQLite page/region/editing services."""
+    from application.importing.images.ports import ImportSource
+    from infrastructure.pipeline.executor import ProductionStepExecutor
+    from infrastructure.sqlite.pipeline import (
+        SqlitePipelineStore,
+        SqliteSnapshotProvider,
+        SqliteTargetCatalog,
+    )
+    from bootstrap.app import assemble_engine, assemble_services
+    from domain.regions.entities import BBox, RegionGeometry
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    book = services.library.create_book("生产装配书")
+    chapter = services.library.create_chapter(book.book_id, "第1话")
+    report = services.importer.import_files(
+        chapter.chapter_id,
+        [ImportSource(filename="page.png", data_provider=lambda: _make_png(8, 6))],
+    )
+    page = report.imported[0].page
+    region = services.editing.create_region(
+        page.page_id, RegionGeometry(BBox(1, 1, 3, 2))
+    )
+
+    services.workbench.setContext(
+        book.book_id, chapter.chapter_id, book.title, chapter.title
+    )
+    services.workbench.selectPage(page.page_id)
+    services.workbench.selectRegion(region.region_id)
+    services.workbench.setInspectorText("人工译文")
+    services.workbench.saveInspector()
+
+    engine = assemble_engine(services)
+    try:
+        assert isinstance(services.pipeline._catalog, SqliteTargetCatalog)
+        assert isinstance(services.pipeline._store, SqlitePipelineStore)
+        assert isinstance(services.pipeline._snapshots, SqliteSnapshotProvider)
+        assert isinstance(services.pipeline._executor, ProductionStepExecutor)
+        assert engine.rootContext().contextProperty("workbenchViewModel") is services.workbench
+        assert services.workbench.get_context_info() == {
+            "book_id": book.book_id,
+            "chapter_id": chapter.chapter_id,
+            "book_title": book.title,
+            "chapter_title": chapter.title,
+        }
+        assert services.workbench.get_page_list_model().rowCount() == 1
+        assert services.editing.get_region(region.region_id).text.edited_translation == "人工译文"
+    finally:
+        engine.deleteLater()
+        services.conn.close()
+        qapp.processEvents()

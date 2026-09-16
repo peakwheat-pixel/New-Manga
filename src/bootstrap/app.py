@@ -2,8 +2,9 @@
 
 唯一入口：在真实数据根上打开并迁移 SQLite，构造生产服务栈
 （``SqliteLibraryRepository``、``ManagedFileStorage``、``QtImageDecoder``、
-``ManagedCopyStoreAdapter``、``ImportImagesUseCase``、``LibraryService``、
-导航/书架 ViewModel），通过 ``setContextProperty`` 注入 QML 后加载
+  ``ManagedCopyStoreAdapter``、``ImportImagesUseCase``、``LibraryService``、
+  生产 Pipeline、Region 编辑和导航/书架/工作台 ViewModel），通过
+  ``setContextProperty`` 注入 QML 后加载
 ``Main.qml``（它只负责挂载 ``shell/AppShell.qml``）。
 
 不变量（AC-IMPORT-002/003, D07 §37~39, D05 §60）：
@@ -37,23 +38,28 @@ from PySide6.QtQml import QQmlApplicationEngine
 # _grab_and_quit path below re-wraps the native handle as a second safeguard.
 from PySide6.QtQuick import QQuickWindow  # noqa: F401
 
+from application.editing.service import RegionEditingService
 from application.importing.images.service import ImportImagesUseCase
 from application.library.service import LibraryService
+from application.tasks.service import PipelineService
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.importing import ManagedCopyStoreAdapter, QtImageDecoder
+from infrastructure.pipeline.assembly import build_production_pipeline
 from infrastructure.sqlite.connection import open_database
 from infrastructure.sqlite.library import SqliteLibraryRepository
 from infrastructure.sqlite.migrator import MigrationRunner
+from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.schema import default_migrations
 from ui.viewmodels.bookshelf.viewmodel import BookshelfViewModel
 from ui.viewmodels.navigation.viewmodel import NavigationViewModel
+from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
 
 QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
 
 
 @dataclass
 class AppServices:
-    """Fully wired production stack; QML receives only the two viewmodels.
+    """Fully wired production stack; QML receives the page viewmodels.
 
     ``conn`` is exposed so the entry can close the SQLite connection before
     temp-root cleanup — the last writer holds the Windows file lock.
@@ -64,8 +70,11 @@ class AppServices:
     storage: ManagedFileStorage
     importer: ImportImagesUseCase
     library: LibraryService
+    pipeline: PipelineService
+    editing: RegionEditingService
     navigation: NavigationViewModel
     bookshelf: BookshelfViewModel
+    workbench: WorkbenchViewModel
 
 
 def default_data_root() -> Path:
@@ -113,9 +122,18 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             ManagedCopyStoreAdapter(storage, book_id_for_chapter),
             repository,
         )
+        pipeline = build_production_pipeline(conn)
+        editing = RegionEditingService(SqliteRegionRepository(conn))
         navigation = NavigationViewModel()
         bookshelf = BookshelfViewModel(
             library=library, importer=importer, navigation=navigation
+        )
+        workbench = WorkbenchViewModel(
+            pipeline=pipeline,
+            page_catalog=repository,
+            region_catalog=editing,
+            translation_editor=editing,
+            navigation=navigation,
         )
         return AppServices(
             conn=conn,
@@ -123,8 +141,11 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             storage=storage,
             importer=importer,
             library=library,
+            pipeline=pipeline,
+            editing=editing,
             navigation=navigation,
             bookshelf=bookshelf,
+            workbench=workbench,
         )
     except Exception:
         conn.close()
@@ -137,6 +158,7 @@ def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
     root_context = engine.rootContext()
     root_context.setContextProperty("navigationViewModel", services.navigation)
     root_context.setContextProperty("bookshelfViewModel", services.bookshelf)
+    root_context.setContextProperty("workbenchViewModel", services.workbench)
     engine.load(QUrl.fromLocalFile(str(QML_PATH)))
     if not engine.rootObjects():
         raise RuntimeError(f"Failed to load QML: {QML_PATH}")
