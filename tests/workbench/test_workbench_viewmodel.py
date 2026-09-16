@@ -97,6 +97,18 @@ def test_single_select_opens_viewer_and_keeps_pipeline_focus_separate(qapp_):
     assert vm.viewerPageId == "p1"
 
 
+def test_step_page_is_viewmodel_owned_and_clamped(qapp_):
+    _, vm = completed_vm()
+    vm.selectPage("p2")
+
+    vm.stepPage(1)
+    assert vm.viewerPageId == "p3"
+    vm.stepPage(99)
+    assert vm.viewerPageId == "p4"
+    vm.stepPage(-99)
+    assert vm.viewerPageId == "p1"
+
+
 def test_ctrl_and_shift_multi_select(qapp_):
     service, vm = completed_vm()
     vm.togglePageSelected("p1")

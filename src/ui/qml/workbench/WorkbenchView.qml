@@ -170,17 +170,8 @@ Rectangle {
         }
     }
 
-    // Toolbar page stepping stays a pure viewmodel round-trip.
+    // QML only forwards the toolbar action; page math stays in the ViewModel.
     function stepPage(delta) {
-        if (workbench.vm === null || workbench.wPageModel === null) return;
-        var model = workbench.wPageModel;
-        var current = model.rowIndexOf(workbench.wViewerPageId);
-        var count = model.rowCount();
-        if (count === 0) return;
-        var next = current + delta;
-        if (next < 0) next = 0;
-        if (next > count - 1) next = count - 1;
-        var pageId = model.pageIdAt(next);
-        if (pageId !== "") workbench.vm.selectPage(pageId);
+        if (workbench.vm !== null) workbench.vm.stepPage(delta);
     }
 }

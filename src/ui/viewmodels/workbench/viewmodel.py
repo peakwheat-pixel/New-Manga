@@ -309,6 +309,19 @@ class WorkbenchViewModel(QObject):
             return
         self._apply_viewer_page(page_id)
 
+    @Slot(int)
+    def stepPage(self, delta: int) -> None:
+        """Move the Viewer page; QML only forwards the toolbar action."""
+
+        count = self._page_model.rowCount()
+        if count == 0:
+            return
+        current = self._page_model.row_index_of(self._viewer_page_id or "")
+        next_row = max(0, min(count - 1, current + delta))
+        page_id = self._page_model.page_id_at(next_row)
+        if page_id is not None:
+            self.selectPage(page_id)
+
     @Slot(str)
     def togglePageSelected(self, page_id: str) -> None:
         """Ctrl-click multi-select within the current chapter only."""

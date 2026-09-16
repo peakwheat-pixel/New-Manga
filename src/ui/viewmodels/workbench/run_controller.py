@@ -95,9 +95,18 @@ class RunController(QObject):
 
     def shutdown(self, wait_ms: int = 5000) -> None:
         if self._thread is not None:
+            if (
+                self._active_run is not None
+                and self._active_run.status is not PipelineRunStatus.PAUSED
+            ):
+                self._active_run.cancel_requested = True
             self._thread.quit()
             if not self._thread.wait(wait_ms):
-                self._thread.terminate()
+                # R-001: never force-kill an in-flight worker.  This slice has
+                # no durable transaction boundary; before persistence is
+                # connected, replace this fallback with an acknowledged
+                # safe-boundary shutdown protocol.
+                return
             self._thread.deleteLater()
             self._thread = None
         if self._worker is not None:
