@@ -53,8 +53,8 @@ Task 附加测试要求：优先级冲突、重复 Rejected、未确认 TM 不�
 
 ## 提交范围与全量运行观察（如实记录）
 
-1. base `2bdfd6f` 干净树（临时 worktree，已删除）全量 `2 failed, 251 passed`：失败为 `tests/rendering/test_source_style.py::TestPixelAnalyzer::test_two_horizontal_lines_estimate_size_and_direction` 等两例，仅在与其他套件同跑时出现、单独跑 `tests/rendering` 时 56 passed 全过——**pre-existing 测试顺序依赖，早于本 Task 存在，与本 Task 代码无关**（本 Task 全部为新增文件）。按协作协议未顺手修改非白名单文件，移交 Codex 处置。
-2. 最终实现 HEAD `cd76d30` 上全量连续 3 次 `322 passed, 6 skipped, 0 failed`；6 项均因环境缺少 OpenSSL（`openssl unavailable`）跳过。早前一次运行曾观察到 `2 failed, 329 passed`（收集 331）的瞬态结果，与最终稳定态相差 rendering 顺序依赖 2 例 + 收集计数 3 例；最终 HEAD 上未复现，以三次稳定结果为准。
+1. base `2bdfd6f` 干净树（临时 worktree，后续已在取证报告版本化后删除）全量 `2 failed, 251 passed`：失败为 `tests/rendering/test_source_style.py::TestPixelAnalyzer::test_two_horizontal_lines_estimate_size_and_direction` 等两例，仅在与其他套件同跑时出现、单独跑 `tests/rendering` 时 56 passed 全过——**pre-existing 测试顺序依赖，早于本 Task 存在，与本 Task 代码无关**（本 Task 全部为新增文件）。按协作协议未顺手修改非白名单文件，移交 Codex 处置。
+2. 最终实现 HEAD `cd76d30` 上全量连续 3 次 `322 passed, 6 skipped, 0 failed`；6 项均因环境缺少 OpenSSL（`openssl unavailable`）跳过。此前记录将 `2 failed, 329 passed`（收集 331）称为瞬态；后续 ZCode 取证报告 `05effee` 证明这是无 args 与带 `tests` 参数两种命令形态的系统差异，并已定位为 experiments 中 offscreen `QGuiApplication` 单例污染。
 3. 模型/视觉/性能类结果：不适用（本 Task 无模型推理、无渲染像素、无性能指标），未以 Mock 冒充。
 
 ## 设计取舍（需 Review 与 Codex 确认）
@@ -70,4 +70,4 @@ Task 附加测试要求：优先级冲突、重复 Rejected、未确认 TM 不�
 
 - TM/约束的 SQLite 持久化适配器：不在本 Task 白名单（属后续持久化 Task）。
 - 真实 Provider 端到端翻译：依赖后续 Provider 适配 Task；本 Task 仅完成编排与映射守卫。
-- rendering 套件顺序依赖缺陷：Reviewer 与 Codex 集成后均未复现；要求原报告者提供最小复现，期间不修改 `tests/rendering`。详见 [rendering-order-repro.md](rendering-order-repro.md)。
+- rendering 套件顺序依赖缺陷：ZCode 报告 `05effee`、Codex 合并 `014231f` 已确认 100% 复现并定位根因；未修改 `tests/rendering`。详见 [rendering-order-repro.md](rendering-order-repro.md)。

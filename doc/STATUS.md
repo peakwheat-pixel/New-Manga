@@ -13,7 +13,7 @@
 | 项目 Git 分支 / 当前 Task 基线 | master；TASK-009 base=`3de750a`，reviewed_head=`b42fc32`，implementation merge=`dea1dee`，integration_commit=`6c732be`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；TASK-010 base=`2bdfd6f`，reviewed_head=`cd76d30`，implementation merge=`1ea9c80`，integration_commit=`a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，branch=`agent/zcode/TASK-010-translation-context`；TASK-012 base=`2cceb1e`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，branch=`agent/zcode/TASK-012-navigation-library-ui`；TASK-014 base=`29592c9`，reviewed_head=`72cb2be`，implementation merge=`a61216a`，integration_commit=`a943297`；TASK-029 base=`79529bc`，reviewed_head=`5abc173`，implementation merge=`2ea5445`，integration_commit=`0b0b855` |
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
-| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口；TASK-008 reviewed head `1f373ac` 由 `06ba2e7` 收口；TASK-009 reviewed head `b42fc32`，实现合并 `dea1dee`，Review/集成收口 `6c732be`；TASK-010 reviewed head `cd76d30`，实现合并 `1ea9c80`，Review/集成收口 `a225790`；TASK-014 reviewed head `72cb2be`，实现合并 `a61216a`，Review/集成收口 `a943297`；TASK-028 reviewed head `e7f9e41` 由 `509de66` 收口；TASK-029 reviewed head `5abc173`，实现合并 `2ea5445`，Review/集成收口 `0b0b855` |
+| 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口；TASK-008 reviewed head `1f373ac` 由 `06ba2e7` 收口；TASK-009 reviewed head `b42fc32`，实现合并 `dea1dee`，Review/集成收口 `6c732be`；TASK-010 reviewed head `cd76d30`，实现合并 `1ea9c80`，Review/集成收口 `a225790`，取证 `05effee` 由 `014231f` 合并；TASK-014 reviewed head `72cb2be`，实现合并 `a61216a`，Review/集成收口 `a943297`；TASK-028 reviewed head `e7f9e41` 由 `509de66` 收口；TASK-029 reviewed head `5abc173`，实现合并 `2ea5445`，Review/集成收口 `0b0b855` |
 | 任务分派 / 执行 | TASK-001～TASK-010：done（TASK-010 integration=`a225790`）；TASK-012：已批准与 TASK-010 并行执行，未纳入本次集成；TASK-014：done（integration=`a943297`）；TASK-028 设计：done（integration=`509de66`）；TASK-029：done（integration=`0b0b855`）；TASK-011、TASK-013、TASK-015～TASK-027 保持 proposed |
 | ZCode / DeepSeek Harness 连接 | TASK-008、TASK-009、TASK-010、TASK-014 与 TASK-029 已交付并集成；TASK-010 作者与 Reviewer worktree 暂保留供审计；TASK-012 仍由 ZCode 在独立 worktree 执行，未纳入本次集成 |
 | 本次 Review | TASK-007、TASK-008、TASK-009、TASK-010、TASK-014、TASK-028、TASK-029 Review 均已按 STATUS 记录 approved；TASK-012 未进入本次 Review |
@@ -43,7 +43,7 @@
 
 已集成交付入口：[TASK-009 Handoff](handoffs/TASK-009-b42fc32.md)，固定 `base_commit=3de750a`、`reviewed_head=b42fc32`、`integration_commit=6c732be`；首轮 Review `2da1a39` 为 changes_requested，复审报告 `d2fe13c` 为 approved；[集成验证](../verification/TASK-009/integration-6c732be.md)记录主线复验。实现合并提交为 `dea1dee`；R-011（D02 §2 stdlib 偏差）与 F-01（`openssl unavailable` 计数口径）已关闭，TLS 6 项保持 `NOT_RUN`。
 
-已集成交付入口：[TASK-010 Handoff](handoffs/TASK-010-cd76d30.md)，固定 `base_commit=2bdfd6f`、`reviewed_head=cd76d30`、`integration_commit=a225790`；Review 报告 `008b101` 为 approved；[集成验证](../verification/TASK-010/integration-a225790.md)记录主线复验。实现合并提交为 `1ea9c80`；F-01/F-02 已关闭，`tests/rendering` 顺序依赖未复现并等待最小复现。
+已集成交付入口：[TASK-010 Handoff](handoffs/TASK-010-cd76d30.md)，固定 `base_commit=2bdfd6f`、`reviewed_head=cd76d30`、`integration_commit=a225790`；Review 报告 `008b101` 为 approved；[集成验证](../verification/TASK-010/integration-a225790.md)记录主线复验；取证报告 `05effee` 已由 `014231f` 合并。实现合并提交为 `1ea9c80`；F-01/F-02 已关闭，`tests/rendering` 顺序依赖已复现并定位为 offscreen `QGuiApplication` 单例污染，未修改测试套件。
 
 TASK-006 Review 已完成：首轮报告 `doc/reviews/TASK-006-ba1e769.md` 为 changes_requested，复审报告 `doc/reviews/TASK-006-e1d3e2c.md` 为 approved；两个报告均已纳入 master。
 
@@ -65,7 +65,7 @@ TASK-029 已完成并收口：[TASK-029](tasks/TASK-029.md) 固定 base=`79529bc
 
 TASK-009 已完成并收口：[TASK-009](tasks/TASK-009.md) 固定 `base_commit=3de750ab7558f4c90841b96005dbbe58b8064e71`、`reviewed_head=b42fc321b37562e9596ca3bb678be1f5cda22828`、实现合并 `dea1dee`、`integration_commit=6c732be`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。
 
-TASK-010 已完成并收口：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`、`reviewed_head=cd76d30`、实现合并 `1ea9c80`、`integration_commit=a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。移交项 `tests/rendering` 顺序依赖仍为 `NOT_REPRODUCED`，已指派 ZCode 补充最小复现；未授权修改测试套件或创建新 Task。
+TASK-010 已完成并收口：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`、`reviewed_head=cd76d30`、实现合并 `1ea9c80`、`integration_commit=a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。移交项 `tests/rendering` 已由 ZCode 在 `05effee` 复现并由 Codex 以 `014231f` 纳入主线；根因已定位，未授权修改测试套件或创建新 Task。
 
 TASK-012 已批准释放：[TASK-012](tasks/TASK-012.md) 固定 `base_commit=2cceb1e734c5079870662b7a28da316e46444810`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`，分支为 `agent/zcode/TASK-012-navigation-library-ui`，工作树为 `G:/CODEX/New Manga.worktrees/TASK-012-zcode`；按批准范围独立执行，未纳入本次 TASK-010 集成。
 

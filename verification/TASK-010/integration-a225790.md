@@ -30,3 +30,7 @@ integration_commit：`a225790d5eaf90227249039255bb554307f5b2cc9`
 - AC-1～AC-3 已实现并经 Review；AC-4 在本次集成后完成验证，四项均可勾选。
 - F-01、F-02 已关闭；D03 §12.5/§14.4 已登记两个可调实现参数。
 - `tests/rendering` 未修改。
+
+## 后续移交项取证
+
+ZCode 取证提交 `05effee` 已由 Codex 以 merge commit `014231f` 纳入主线。后续最小复现（无参数 pytest 形态）为 `2 failed, 1 passed`，失败为字体可用性与水平文本方向两例；带 `tests` 参数的全量仍为 `322 passed, 6 skipped`。根因已定位为 `experiments/TASK-004/test_smoke.py` 的 offscreen `QGuiApplication` 进程级单例污染；未修改测试套件，修复超出 TASK-010 范围。
