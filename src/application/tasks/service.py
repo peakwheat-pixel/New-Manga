@@ -582,7 +582,8 @@ class PipelineService:
             self._persist(run)
             return CommitStepOutcome("candidate", step_run.step_run_id, candidate.candidate_id, code, outcome.detail)
 
-        return self._fail_step(run, task, step_run, unit, "TARGET_NOT_FOUND", outcome.detail)
+        code = "DB_FAILED" if outcome.status == "db_failed" else "TARGET_NOT_FOUND"
+        return self._fail_step(run, task, step_run, unit, code, outcome.detail)
 
     def _fail_mapping(
         self,
