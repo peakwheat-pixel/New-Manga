@@ -2,7 +2,7 @@
 id: TASK-016
 title: OCR 与检测路线独立实验
 kind: experiment
-status: in_review
+status: done
 approval: approved
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,12 +11,12 @@ depends_on: [TASK-003, TASK-004]
 base_commit: f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86
 branch: agent/deepseek/TASK-016-ocr-detection-experiment
 worktree: G:/CODEX/New Manga.worktrees/TASK-016-deepseek
-integration_commit: null
+integration_commit: 9bf85f5
 ---
 
 # TASK-016：OCR 与检测路线独立实验
 
-本 Task 已获用户授权并由 DeepSeek Harness 认领。**当前状态以顶部 frontmatter 的 `status` 为准（现为 `in_review`）**，正文各段中的状态表述保留为其发生时的历史记录。固定基线为
+本 Task 已获用户授权并由 DeepSeek Harness 认领。**当前状态以顶部 frontmatter 的 `status` 为准（现为 `done`）**，正文各段中的状态表述保留为其发生时的历史记录。固定基线为
 `f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86`，工作分支与路径见顶部元数据；共用流程见
 [协作协议](../09_COLLABORATION.md)。本实验不修改生产实现，不把实验结论直接升级为产品需求。
 
@@ -28,10 +28,10 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
 
 ## Acceptance Criteria
 
-- [ ] 针对已有文档列出的日漫OCR、PaddleOCR Korean和OpenAI-compatible Vision路线建立明确候选/版本/许可表；检测器作为OCR前置共同验证。
-- [ ] 在授权/自制横竖排、韩文、艺术字和Tile样本上记录识别错误、坐标/顺序、耗时/RAM/VRAM、缺依赖行为。
-- [ ] 对低质量/失败fallback只使用已配置路线；输出可复现建议和失败样例，不复制旧仓库未提供代码。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 针对已有文档列出的日漫OCR、PaddleOCR Korean和OpenAI-compatible Vision路线建立明确候选/版本/许可表；检测器作为OCR前置共同验证。
+- [x] 在授权/自制横竖排、韩文、艺术字和Tile样本上记录识别错误、坐标/顺序、耗时/RAM/VRAM、缺依赖行为；真实模型质量与性能仍按证据标为 `BLOCKED`/`NOT_RUN`。
+- [x] 对低质量/失败fallback只使用已配置路线；输出可复现建议和失败样例，不复制旧仓库未提供代码。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后完成。
 
 ## 允许修改范围
 
@@ -104,3 +104,8 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
   - **反例回归**：预置 `HF_HUB_OFFLINE=0`/`TRANSFORMERS_OFFLINE=0`/`HF_DATASETS_OFFLINE=0` 后执行 `--run-models`，输出仍为 `1,1,1`（断言通过，退出码 0）。
   - 第三轮验证：协议测试 **5 passed / 0 skipped**；默认 probe **30 BLOCKED**；`--run-models` **30 BLOCKED**、`blocked_with_metrics=0`、三开关均 `1`；`git diff --check` 退出码 0；白名单越界 0。
 - `detector-yolo` 维持 `DOCUMENTATION_ONLY`。真实模型质量/性能仍 `BLOCKED`。
+
+- **当前状态（唯一，集成后）**：2026-09-16 `done`。
+  - Codex 按 §6.6 保留来源分支变更并创建 `integration_commit=9bf85f5`；独立 Review `878ac16` 对固定 `reviewed_head=f544261` 的结论为 `approved`。
+  - 集成后验证见 [integration-9bf85f5](../../verification/TASK-016/integration-9bf85f5.md)：协议测试 **5 passed / 0 skipped**；默认 probe、`--run-models` 与反例 probe 各 **30 BLOCKED**；两次 model-run `blocked_with_metrics=0`，三项离线开关均为 `1`。
+  - `detector-yolo` 裁决为保留文档候选，范围状态为 `DOCUMENTATION_ONLY`；真实 OCR/检测质量、误差与性能继续标记 `BLOCKED`/`NOT_RUN`，不得视为产品质量验收。

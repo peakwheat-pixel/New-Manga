@@ -204,3 +204,9 @@ $env:PYTHONDONTWRITEBYTECODE='1'
 
 - `git diff --check`（工作区与暂存区）均退出码 **0**；白名单越界 **0**。
 - 未修改生产 `src/`、`tests/`、Schema/migration、依赖清单、AGENTS、其他 Task 或任何冻结 Task；未 push、未合并。
+
+## 9. Codex 集成后复验（`integration_commit=9bf85f5`）
+
+集成验证明细见 [integration-9bf85f5](integration-9bf85f5.md)。在 Windows 默认 Qt 环境（`QT_QPA_PLATFORM` 为空，未设置 offscreen）执行：协议测试 **5 passed / 0 skipped**；默认 probe **30 BLOCKED**；`--run-models` **30 BLOCKED**、`blocked_with_metrics=0`、`HF_HUB_OFFLINE/TRANSFORMERS_OFFLINE/HF_DATASETS_OFFLINE=1,1,1`；预置三项为 `0` 的反例重跑仍得到 **1,1,1**。探测命令无测试项，`passed/skipped` 记为 N/A，skip 原因为 N/A。
+
+真实 OCR/检测质量、错误率、坐标/顺序误差及耗时/RAM/VRAM 仍为 `BLOCKED`/`NOT_RUN`；未以 Mock 代替。`detector-yolo` 的范围裁决为保留 `DOCUMENTATION_ONLY` 文档候选，不表示已有生产实现。
