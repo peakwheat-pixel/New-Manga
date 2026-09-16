@@ -125,3 +125,43 @@ $env:PYTHONDONTWRITEBYTECODE='1'
 `run_experiment.py` 的 manga-ocr **Region polygon 裁切**（识别前先 crop，替代整图输入）、`doc/research/TASK-016.md` 的重写、
 新增的 `verification/TASK-016/author-verification.md` 与 `results/model-run-blocked.json`、以及 `doc/tasks/TASK-016.md` 的部分更新。
 本次提交同时包含这些改动与本轮的 R-001~R-004 修订；合并方向以"保留并发改动 + 补齐 findings"为准。
+
+---
+
+# 附：Review R-002/R-003/R-005~R-009 修订证据（第三轮）
+
+环境：Windows 10.0.26200 / Python 3.12.3（`G:/CODEX/New Manga.task-envs/TASK-012-py312`）/ `PYTHONPATH=experiments/TASK-016` / `PYTHONDONTWRITEBYTECODE=1` / `QT_QPA_PLATFORM` 未设置（本实验不加载 Qt）。
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---|---:|---:|---|
+| 7 | `python -m unittest experiments/TASK-016/test_protocol.py -v` | **0** | **5** | **0** | `OK` |
+| 8 | `python experiments/TASK-016/run_experiment.py --output experiments/TASK-016/results/probe.json` | **0** | — | — | `{"BLOCKED": 30}`（6 候选 × 5 样本），**不联网、不下载** |
+| 9 | `python experiments/TASK-016/run_experiment.py --output experiments/TASK-016/results/run-models.json --run-models` | **0** | — | — | `{"BLOCKED": 30}`；离线开关已强制 |
+| 10 | `python experiments/TASK-016/run_experiment.py --output experiments/TASK-016/results/model-run-blocked.json --run-models` | **0** | — | — | `{"BLOCKED": 30}`，与命令 9 同代码同模式（内容一致） |
+
+**skip 原因**：命令 7 为 `0 skipped`。命令 8~10 为探测进程，无测试项。
+
+## 固定结果的一致性（R-006）与 SHA-256（R-007）
+
+| 文件 | schema | 候选数 | 记录数 | 状态分布 | `blocked_with_metrics` | SHA-256 |
+|---|---|---:|---:|---|---:|---|
+| `results/probe.json` | `task016-experiment-result-v2` | 6 | 30 | `{BLOCKED: 30}` | **0** | `b3c30a8bca68d7d8466ffa7246e2b13fcd2a73173a397977e915a67ab2c91e2a` |
+| `results/run-models.json` | `task016-experiment-result-v2` | 6 | 30 | `{BLOCKED: 30}` | **0** | `5986fc158edb154a37d38e4ef10390d05bf92476084aa309988eb6f4cf4421bd` |
+| `results/model-run-blocked.json` | `task016-experiment-result-v2` | 6 | 30 | `{BLOCKED: 30}` | **0** | `5986fc158edb154a37d38e4ef10390d05bf92476084aa309988eb6f4cf4421bd` |
+
+`run-models.json` 与 `model-run-blocked.json` 由**同一代码、同一模式**生成，故内容与 SHA 一致；前者为权威名，后者保留以兼容既有引用。三份结果均满足：质量/性能字段为 `NOT_RUN`/`null`、`model_sha256 = NOT_AVAILABLE`、`fallback` 为唯一的可审计判定。
+
+**离线开关实测**（`--run-models` 的两份）：`{"HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1", "HF_DATASETS_OFFLINE": "1"}`；默认 probe 模式不强制（`null`），因为其不进入任何模型构造器。
+
+## 逐项处置（第二轮 findings）
+
+| ID | 处置 | 证据 |
+|---|---|---|
+| **R-002** | 失败路径统一门控：新增 `_fallback_gate()`，`_run_manga_ocr`/`_run_paddle`/`_run_openai_compatible` 的异常分支与 `_blocked()` 全部写同一判定；空配置/未点名一律 `BLOCKED: no explicitly configured and named fallback route`，仅当 `TASK016_FALLBACK_ROUTE` 已配置且被点名时才 `FALLBACK_CONFIGURED` | 三份结果中 `fallback` 取值集合均为 `["BLOCKED: no explicitly configured and named fallback route"]` |
+| **R-003** | `doc/research/TASK-016.md` 的表**前**加入 `⚠ UNVERIFIED CANDIDATE METADATA` 声明，**表头**直接标 `（UNVERIFIED）`，使脱离附录阅读也不会误认为已核实 | 该文件第 1 节 |
+| **R-005** | 模型运行前置门槛：`enforce_offline()` 强制 `HF_HUB_OFFLINE`/`TRANSFORMERS_OFFLINE`/`HF_DATASETS_OFFLINE=1`；`local_weight_gate()` 要求 `TASK016_*_WEIGHTS`/`*_MODEL_DIR` 指向**真实存在的本地路径**（并计算其内容 digest 作为 `model_sha256`），缺失即在**构造器之前**返回 `BLOCKED` | 离线开关实测见上；`_run_manga_ocr`/`_run_paddle` 均先调用 gate 再 import/构造 |
+| **R-006** | 三份固定结果全部按最新代码重生成（命令 8~10） | 上表：均为 v2 / 6 候选 / 30 记录 |
+| **R-007** | 重新计算并同步三份结果的 SHA-256 | 上表 SHA 列 |
+| **R-008** | `doc/tasks/TASK-016.md`：正文状态表述改为历史（"当前状态以 frontmatter 为准"），补入实际 Handoff/Review 链接，末尾只保留一条**当前状态** | 该文件「交付与运行记录」与末尾「当前状态（唯一）」 |
+| **R-009** | `_blocked()` 将 `metrics` 全量清零；`_run_detector()` 的前置门槛位于**任何资源采样之前**，detector 路径不再调用 `_memory_mb()`/`_vram_mb()` | 三份结果 `blocked_with_metrics = 0` |
+| **R-001 残留（detector-yolo）** | 明确为 `DOCUMENTATION_ONLY — no implementation source in this repository`，写入 `CANDIDATES` 与 `verification_matrix.scope_decision`；请 Codex 裁决是否保留 | `run_experiment.py` 的 `CANDIDATES`/`VERIFICATION_MATRIX` |

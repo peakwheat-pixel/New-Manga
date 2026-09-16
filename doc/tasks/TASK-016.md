@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-016：OCR 与检测路线独立实验
 
-本 Task 已获用户授权并由 DeepSeek Harness 认领，当前处于 `in_progress`。固定基线为
+本 Task 已获用户授权并由 DeepSeek Harness 认领。**当前状态以顶部 frontmatter 的 `status` 为准（现为 `in_review`）**，正文各段中的状态表述保留为其发生时的历史记录。固定基线为
 `f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86`，工作分支与路径见顶部元数据；共用流程见
 [协作协议](../09_COLLABORATION.md)。本实验不修改生产实现，不把实验结论直接升级为产品需求。
 
@@ -77,10 +77,10 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
 
 ## 交付与运行记录
 
-- Handoff：待实现提交后创建 `doc/handoffs/TASK-016-<short-head>.md`。
-- Review：待 Codex 对固定 delivery head 独立 Review。
-- 实际执行/实验/测试：见 [研究记录](../research/TASK-016.md) 与 [验证记录](../../verification/TASK-016/author-verification.md)。
-- 最近状态：2026-09-16 用户授权，DeepSeek Harness 已认领；当前 `in_progress`，模型质量实验因缺 Provider 前提保持 `BLOCKED/NOT_RUN`。
+- Handoff：[TASK-016-a286578](../handoffs/TASK-016-a286578.md)（首轮）、[TASK-016-4834447](../handoffs/TASK-016-4834447.md)（R-001~R-004 修订轮）。
+- Review：首轮 `changes_requested`（`doc/reviews/TASK-016-a286578.md`）；复审 `changes_requested`（`doc/reviews/TASK-016-4834447.md`，含 R-001~R-009）。
+- 实际执行/实验/测试：见 [研究记录](../research/TASK-016.md)、[验证记录](../../verification/TASK-016/experiment-log.md) 与 [作者自验](../../verification/TASK-016/author-verification.md)。
+- 历史状态（2026-09-16，认领时）：用户授权，DeepSeek Harness 已认领并置 `in_progress`，模型质量实验因缺 Provider 前提保持 `BLOCKED/NOT_RUN`。
 - 最近状态：2026-09-16 用户授权释放；DeepSeek Harness 认领，`in_progress`。base=`f9edd68`、分支/工作区见顶部元数据。
 - 最近状态：2026-09-16 实验交付并置 `in_review`。产物：`experiments/TASK-016/`（协议自检 4 passed/0 skipped；harness 在 probe-only 与 `--run-models` 下各输出 15 条 BLOCKED）、`doc/research/TASK-016.md`（候选/版本/许可调研）、`verification/TASK-016/experiment-log.md`（环境、命令、退出码、skip 原因、BLOCKED/NOT_RUN 清单）。**模型质量/性能全部 BLOCKED**：依赖全缺且 `huggingface.co` 不可达，未以 Mock 冒充。无 GPU/API 阻塞之外的残留；未修改生产 src/tests/Schema/依赖/AGENTS，未 push/合并。待 Codex 独立 Review；本 Task 不自行标记 approved/done。
 
@@ -93,3 +93,8 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
   - 验证：`python -m unittest experiments/TASK-016/test_protocol.py -v` → **5 passed / 0 skipped**；`run_experiment.py` probe-only → **30 BLOCKED**（6 候选 × 5 样本）。模型质量/性能仍 **BLOCKED**（依赖缺失 + `huggingface.co` 不可达），未以 Mock 冒充。
   - 本轮工作区存在**另一位作者**的未提交改动（manga-ocr Region crop、research 重写、author-verification、model-run-blocked.json），按"未提交内容归原作者"予以保留并一并提交。
   - 未修改生产 src/tests/Schema/依赖/AGENTS/其他 Task/冻结 Task；未 push、未合并分支。
+
+- **当前状态（唯一）**：2026-09-16 `in_review`，等待 Codex 第二次复审。
+  - 第二轮修订处置：**R-002**（失败路径统一走 fallback 门控，`fallback` 记录可审计判定）、**R-003**（research 表头直接标 `UNVERIFIED CANDIDATE METADATA`）、**R-005**（模型运行前强制离线开关 + 本地权重存在性与 Hash 门槛，缺则构造器前 `BLOCKED`）、**R-006**（三个固定结果全部按最新代码重生成，均为 v2 / 6 候选 / 30 记录）、**R-007**（重新计算并同步全部结果 SHA-256）、**R-009**（`BLOCKED` 记录不再含任何性能指标）、**detector-yolo 范围**（明确为 `DOCUMENTATION_ONLY`，无仓库实现来源）。
+  - 第二轮验证：协议测试 5 passed / 0 skipped；probe（6×5）30 BLOCKED；`--run-models` 30 BLOCKED 且 `blocked_with_metrics = 0`、离线开关 `HF_HUB_OFFLINE/TRANSFORMERS_OFFLINE/HF_DATASETS_OFFLINE = 1`。
+  - 未解决请求：`detector-yolo` 是否保留为文档候选，请 Codex 裁决；真实模型质量/性能仍 `BLOCKED`。

@@ -1,27 +1,25 @@
 """Run or honestly block the TASK-016 OCR/detection route experiment.
 
-Default mode is a no-download capability probe. ``--run-models`` is explicit:
-it may invoke an already-installed local model or an already-configured
-OpenAI-compatible endpoint, but it never installs dependencies or downloads
-weights. Every result carries enough fields to distinguish quality evidence
-from a missing prerequisite.
+Default mode is a no-download capability probe. ``--run-models`` is explicit
+and is now additionally **gated**: a candidate whose weights must be fetched at
+construction time cannot run at all in this experiment. The harness never
+installs dependencies and never downloads weights.
 
-Revision notes (TASK-016 review findings):
+Revision notes (TASK-016 review findings, round 2):
 
-* **R-001** — detector candidates are first-class ``CANDIDATES`` entries with
-  ``stage``/``metadata_status``; they are probed and failed explicitly, and the
-  report carries a ``verification_matrix`` stating what evidence exists per
-  candidate stage (and what still needs a scope decision).
-* **R-003** — every ``version``/``license`` value is prefixed ``UNVERIFIED`` and
-  carries ``metadata_status: "UNVERIFIED"``; no version or licence is asserted
-  that was not confirmed online.
-* **R-004** — one sentinel ``MODEL_SHA256_UNAVAILABLE`` covers every record
-  without a real model digest; a sample hash is never written to
-  ``model_sha256``.
-
-Preserved from a concurrent author's revision in this worktree: the manga-ocr
-recognition path crops the Region polygon before recognition instead of feeding
-the whole sample image.
+* **R-002** — provider failure paths now route through the same fallback gate as
+  the protocol helper: a failed provider records an auditable ``fallback``
+  value (``BLOCKED`` when nothing is configured/named, ``FALLBACK_CONFIGURED``
+  only for an explicitly configured and named route).
+* **R-005** — model runs are gated *before* any constructor is called: offline
+  environment variables are forced, and a real local weight path must exist
+  (with a computed digest) or the record is ``BLOCKED``. This prevents
+  ``MangaOcr()`` / ``PaddleOCR()`` from silently fetching weights.
+* **R-009** — a ``BLOCKED`` record never carries resource metrics: ``_blocked``
+  clears every metric to ``None``, and the detector path performs no sampling
+  at all.
+* **R-001 (residual)** — ``detector-yolo`` is explicitly marked
+  ``DOCUMENTATION_ONLY``: it has no implementation source in this repository.
 """
 
 from __future__ import annotations
@@ -40,7 +38,7 @@ import time
 from typing import Any
 from urllib import request
 
-from protocol import map_region_result, order_results, validate_route_configuration
+from protocol import fallback_status, map_region_result, order_results, validate_route_configuration
 
 
 ROOT = Path(__file__).resolve().parent
@@ -55,69 +53,93 @@ UNVERIFIED = "UNVERIFIED"
 #: configured, therefore every fallback is BLOCKED.
 CONFIGURED_ROUTES: set[str] = set()
 
+#: R-005: forced offline switches, applied before any provider constructor runs.
+OFFLINE_ENV = ("HF_HUB_OFFLINE", "TRANSFORMERS_OFFLINE", "HF_DATASETS_OFFLINE")
+
+#: R-005: environment variables that must point at real local weights.
+WEIGHT_ENV: dict[str, tuple[str, ...]] = {
+    "manga-ocr": ("TASK016_MANGA_OCR_WEIGHTS", "TASK016_MANGA_OCR_MODEL_DIR"),
+    "paddleocr-korean": ("TASK016_PADDLEOCR_WEIGHTS", "TASK016_PADDLEOCR_MODEL_DIR"),
+}
+
+#: R-001 residual: candidates with no implementation source in this repository.
+DOCUMENTATION_ONLY = "DOCUMENTATION_ONLY — no implementation source in this repository"
+
 CANDIDATES: dict[str, dict[str, Any]] = {
     "manga-ocr": {
         "candidate": "manga-ocr",
         "stage": "recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
         "metadata_status": "UNVERIFIED",
         "version": f"{UNVERIFIED} — claimed 0.1.16 (not confirmed online)",
         "model_ref": f"{UNVERIFIED} — kha-white/manga-ocr",
         "license": f"{UNVERIFIED} — repository claims Apache-2.0; model-weight terms unchecked",
         "requires": ["manga_ocr", "Pillow", "torch", "transformers"],
+        "local_weights": WEIGHT_ENV["manga-ocr"],
         "capability": "Japanese recognition on an existing Region crop; no detector output",
     },
     "paddleocr-korean": {
         "candidate": "PaddleOCR + PP-OCRv5 Korean",
         "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
         "metadata_status": "UNVERIFIED",
         "version": f"{UNVERIFIED} — claimed PaddleOCR 3.7.0 / korean_PP-OCRv5_mobile_rec",
         "model_ref": f"{UNVERIFIED} — korean_PP-OCRv5_mobile_rec",
         "license": f"{UNVERIFIED} — code claims Apache-2.0; model-weight terms must be checked",
         "requires": ["paddleocr", "paddlepaddle"],
+        "local_weights": WEIGHT_ENV["paddleocr-korean"],
         "capability": "Detection + Korean/English recognition",
     },
     "openai-compatible-vision": {
         "candidate": "Vision model behind an OpenAI-compatible endpoint",
         "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — operator-supplied endpoint, no local weights",
         "metadata_status": "UNVERIFIED",
         "version": f"{UNVERIFIED} — candidate family only; no endpoint claimed",
         "model_ref": f"{UNVERIFIED} — operator-supplied model id",
         "license": f"{UNVERIFIED} — depends on the operator's endpoint and model",
         "requires": ["TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL", "TASK016_OPENAI_MODEL or OPENAI_MODEL"],
+        "local_weights": (),
         "capability": "Vision recognition/detection with a JSON polygon request",
     },
     # ---------------- R-001: detector candidates ----------------
     "detector-dbnet": {
         "candidate": "DBNet (documented as the default detector)",
         "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
         "metadata_status": "UNVERIFIED",
         "version": f"{UNVERIFIED} — documented as 'default' (DBNet ResNet34) with no pinned version",
         "model_ref": f"{UNVERIFIED} — no weight file available in this environment",
         "license": f"{UNVERIFIED} — detector weights not obtained",
         "requires": ["onnxruntime"],
+        "local_weights": ("TASK016_DBNET_WEIGHTS",),
         "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
         "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — historical reference; detector/registry.py is NOT in this repository",
     },
     "detector-ctd": {
         "candidate": "CTD",
         "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
         "metadata_status": "UNVERIFIED",
         "version": f"{UNVERIFIED} — named in docs, no version pinned",
         "model_ref": f"{UNVERIFIED} — no weight file available in this environment",
         "license": f"{UNVERIFIED} — detector weights not obtained",
         "requires": ["onnxruntime"],
+        "local_weights": ("TASK016_CTD_WEIGHTS",),
         "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
         "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 / doc/02_TECHNICAL_ARCHITECTURE_.md:24",
     },
     "detector-yolo": {
         "candidate": "YOLO family (yolo / saber_yolo / aux_yolo)",
         "stage": "detection",
+        "scope_status": DOCUMENTATION_ONLY,
         "metadata_status": "UNVERIFIED",
         "version": f"{UNVERIFIED} — names only; the referenced registry is not in this repository",
         "model_ref": f"{UNVERIFIED} — no weight file and no in-repo implementation source",
         "license": f"{UNVERIFIED} — upstream terms unknown; requires a scope decision",
         "requires": ["onnxruntime"],
-        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "local_weights": ("TASK016_YOLO_WEIGHTS",),
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite — documentation-only candidate",
         "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — explicitly '本仓库无此文件'",
     },
 }
@@ -129,21 +151,21 @@ VERIFICATION_MATRIX: tuple[dict[str, str], ...] = (
         "candidates": "detector-dbnet, detector-ctd, detector-yolo",
         "geometric_protocol": "COVERED — tile_polygon_to_global / order_results (model-free)",
         "real_detection_run": "BLOCKED — no detector weights and no onnxruntime in this interpreter",
-        "scope_decision_needed": "YOLO family has no in-repo implementation source (detector/registry.py absent)",
+        "scope_decision": "detector-yolo is DOCUMENTATION_ONLY (no in-repo implementation source); dbnet/ctd are runnable candidates once weights are supplied",
     },
     {
         "stage": "recognition",
         "candidates": "manga-ocr",
         "geometric_protocol": "COVERED — map_region_result preserves region_id and page-global coordinates",
-        "real_recognition_run": "BLOCKED — dependency and weights unavailable",
-        "scope_decision_needed": "none",
+        "real_recognition_run": "BLOCKED — dependency and weights unavailable; weight gate enforced before construction",
+        "scope_decision": "none",
     },
     {
         "stage": "detection+recognition",
         "candidates": "paddleocr-korean, openai-compatible-vision",
         "geometric_protocol": "COVERED — same protocol helpers",
         "real_run": "BLOCKED — dependency/weights unavailable; no configured endpoint",
-        "scope_decision_needed": "model-weight licence, and endpoint authorization",
+        "scope_decision": "model-weight licence, and endpoint authorization",
     },
 )
 
@@ -156,6 +178,16 @@ def _sha256(path: Path) -> str:
     return digest.hexdigest()
 
 
+def _digest_of(path: Path) -> str:
+    if path.is_file():
+        return _sha256(path)
+    digest = hashlib.sha256()
+    for item in sorted(p for p in path.rglob("*") if p.is_file()):
+        digest.update(item.name.encode("utf-8"))
+        digest.update(_sha256(item).encode("ascii"))
+    return digest.hexdigest()
+
+
 def _package_version(distribution: str) -> str | None:
     try:
         return importlib.metadata.version(distribution)
@@ -165,6 +197,31 @@ def _package_version(distribution: str) -> str | None:
 
 def _package_available(module: str) -> bool:
     return importlib.util.find_spec(module) is not None
+
+
+def enforce_offline() -> dict[str, str | None]:
+    """R-005: force offline switches before any provider constructor runs."""
+    for name in OFFLINE_ENV:
+        os.environ.setdefault(name, "1")
+    return {name: os.environ.get(name) for name in OFFLINE_ENV}
+
+
+def local_weight_gate(provider: str) -> tuple[bool, str, str | None]:
+    """R-005: require real local weights; never let a constructor fetch them."""
+
+    names = CANDIDATES[provider].get("local_weights", ())
+    if not names:
+        return True, "endpoint-based candidate; no local weights required", None
+    for name in names:
+        value = os.environ.get(name)
+        if value and Path(value).exists():
+            return True, f"{name}={value}", _digest_of(Path(value))
+    return (
+        False,
+        "no local weight path found (set " + " or ".join(names) + "); "
+        "refusing to let the provider constructor fetch weights",
+        None,
+    )
 
 
 def _memory_mb() -> float | None:
@@ -236,12 +293,24 @@ def _base_result(provider: str, sample: dict[str, Any], *, mode: str) -> dict[st
     }
 
 
+def _fallback_gate() -> str:
+    """R-002: one auditable fallback verdict for every failure path."""
+
+    named = os.environ.get("TASK016_FALLBACK_ROUTE")
+    outcome = fallback_status("FAIL", CONFIGURED_ROUTES, requested_route=named)
+    if outcome == "FALLBACK_CONFIGURED":
+        return f"FALLBACK_CONFIGURED: {named}"
+    return "BLOCKED: no explicitly configured and named fallback route"
+
+
 def _blocked(result: dict[str, Any], reason: str) -> dict[str, Any]:
     result.update({"status": "BLOCKED", "reason": reason})
     # R-004: keep the single sentinel; never substitute the sample hash.
     result["model_sha256"] = MODEL_SHA256_UNAVAILABLE
-    # R-002: nothing is configured and no route is named, so fallback stays BLOCKED.
-    result["fallback"] = "BLOCKED: no explicitly configured and named fallback route"
+    # R-002: every failure path records the same auditable fallback verdict.
+    result["fallback"] = _fallback_gate()
+    # R-009: a blocked record must not carry resource metrics at all.
+    result["metrics"] = {key: None for key in result["metrics"]}
     return result
 
 
@@ -261,6 +330,9 @@ def _normalize_json_text(text: str) -> dict[str, Any]:
 def _run_manga_ocr(result: dict[str, Any], sample: dict[str, Any]) -> dict[str, Any]:
     if not _package_available("manga_ocr"):
         return _blocked(result, "missing dependency: manga_ocr")
+    ok, detail, weights_sha = local_weight_gate("manga-ocr")
+    if not ok:
+        return _blocked(result, f"weight gate: {detail}")
     if len(sample["regions"]) != 1:
         return _blocked(result, "recognition-only route requires one Region crop; detector output unavailable")
     try:
@@ -289,13 +361,16 @@ def _run_manga_ocr(result: dict[str, Any], sample: dict[str, Any]) -> dict[str, 
             reading_order=0,
         )]
         result["status"] = "PASS"
+        result["model_sha256"] = weights_sha or MODEL_SHA256_UNAVAILABLE
         result["recognition_errors"] = (
             "NONE" if text == sample["regions"][0]["text"] else "TEXT_MISMATCH"
         )
         result["coordinate_order"] = "REGION_CROP_REFERENCE"
+        result["fallback"] = "NOT_REQUIRED: provider reported PASS"
     except Exception as error:
-        result = _blocked(result, f"inference failed: {type(error).__name__}: {error}")
         result["status"] = "FAIL"
+        result["reason"] = f"inference failed: {type(error).__name__}: {error}"
+        result["fallback"] = _fallback_gate()
     result["metrics"]["latency_ms"] = round((time.perf_counter() - started) * 1000, 2)
     result["metrics"]["rss_after_mb"] = _memory_mb()
     result["metrics"]["vram_after_mb"] = _vram_mb()
@@ -318,6 +393,9 @@ def _run_paddle(result: dict[str, Any], sample: dict[str, Any]) -> dict[str, Any
     missing = [name for name in ("paddleocr", "paddle") if not _package_available(name)]
     if missing:
         return _blocked(result, "missing dependency: " + ", ".join(missing))
+    ok, detail, weights_sha = local_weight_gate("paddleocr-korean")
+    if not ok:
+        return _blocked(result, f"weight gate: {detail}")
     try:
         from paddleocr import PaddleOCR
     except Exception as error:
@@ -352,11 +430,15 @@ def _run_paddle(result: dict[str, Any], sample: dict[str, Any]) -> dict[str, Any
         observed = order_results(observed)
         result["observed_regions"] = observed
         result["status"] = "PASS"
+        result["model_sha256"] = weights_sha or MODEL_SHA256_UNAVAILABLE
         result["recognition_errors"] = "NOT_AUTOMATICALLY_SCORED"
         result["coordinate_order"] = "PADDLE_PAGE_COORDINATES_ORDER_AS_RETURNED"
+        result["fallback"] = "NOT_REQUIRED: provider reported PASS"
     except Exception as error:
         result["status"] = "FAIL"
         result["reason"] = f"inference failed: {type(error).__name__}: {error}"
+        # R-002: failure must record an auditable fallback verdict.
+        result["fallback"] = _fallback_gate()
     result["metrics"]["latency_ms"] = round((time.perf_counter() - started) * 1000, 2)
     result["metrics"]["rss_after_mb"] = _memory_mb()
     result["metrics"]["vram_after_mb"] = _vram_mb()
@@ -413,9 +495,12 @@ def _run_openai_compatible(result: dict[str, Any], sample: dict[str, Any]) -> di
         result["status"] = "PASS"
         result["recognition_errors"] = "NOT_AUTOMATICALLY_SCORED"
         result["coordinate_order"] = "MODEL_JSON_PAGE_GLOBAL"
+        result["fallback"] = "NOT_REQUIRED: provider reported PASS"
     except Exception as error:
         result["status"] = "FAIL"
         result["reason"] = f"request or schema failed: {type(error).__name__}: {error}"
+        # R-002: failure must record an auditable fallback verdict.
+        result["fallback"] = _fallback_gate()
     result["metrics"]["latency_ms"] = round((time.perf_counter() - started) * 1000, 2)
     result["metrics"]["rss_after_mb"] = _memory_mb()
     result["metrics"]["vram_after_mb"] = _vram_mb()
@@ -423,24 +508,30 @@ def _run_openai_compatible(result: dict[str, Any], sample: dict[str, Any]) -> di
 
 
 def _run_detector(result: dict[str, Any], sample: dict[str, Any], provider: str) -> dict[str, Any]:
-    """R-001: probe a detector candidate and fail explicitly.
+    """R-001/R-009: probe a detector candidate; never fabricate a box or a metric.
 
-    No detector box is ever fabricated: the historical ``detector/registry.py``
-    is not part of this repository and no weight file is available here.
+    The prerequisite checks run *before* any resource sampling, so a blocked
+    detector record carries no latency/RAM/VRAM value at all.
     """
 
-    result["metrics"]["rss_before_mb"] = _memory_mb()
-    result["metrics"]["vram_before_mb"] = _vram_mb()
     if not _package_available("onnxruntime"):
         return _blocked(
             result,
             "missing dependency: onnxruntime (detector runtime); no weight file present either",
         )
+    ok, detail, _ = local_weight_gate(provider)
+    if not ok:
+        return _blocked(result, f"weight gate: {detail}")
+    if CANDIDATES[provider]["scope_status"] == DOCUMENTATION_ONLY:
+        return _blocked(
+            result,
+            f"{provider} is DOCUMENTATION_ONLY: the documented registry module is absent from this "
+            "repository and no weight file was provided; a scope decision is required before it can run",
+        )
     return _blocked(
         result,
-        f"no production detector implementation source for {provider!r}: the documented registry "
-        "module is absent from this repository and no weight file was provided; "
-        "a scope decision is required before this candidate can run",
+        f"no production detector implementation source for {provider!r}: detector onnx runtime present "
+        "but no in-repo loader; a scope decision is required before this candidate can run",
     )
 
 
@@ -472,6 +563,7 @@ def _run_provider(provider: str, sample: dict[str, Any], mode: str) -> dict[str,
 def run(manifest_path: Path, output_path: Path, providers: list[str], run_models: bool) -> None:
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     mode = "model-run" if run_models else "probe-only"
+    offline = enforce_offline() if run_models else {name: os.environ.get(name) for name in OFFLINE_ENV}
     records = []
     for provider in providers:
         for sample in manifest["samples"]:
@@ -482,6 +574,7 @@ def run(manifest_path: Path, output_path: Path, providers: list[str], run_models
         "mode": mode,
         "providers": providers,
         "model_sha256_sentinel": MODEL_SHA256_UNAVAILABLE,
+        "offline_environment": offline,
         "fallback_configuration": validate_route_configuration(CONFIGURED_ROUTES),
         "verification_matrix": [dict(row) for row in VERIFICATION_MATRIX],
         "records": records,

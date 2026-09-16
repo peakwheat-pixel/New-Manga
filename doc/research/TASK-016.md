@@ -4,9 +4,11 @@
 
 ## 1. 研究范围与来源
 
-检验三类候选：日漫日文 OCR、PaddleOCR Korean（检测 + 识别）和 OpenAI-compatible Vision（检测/识别 JSON 输出）。版本和许可信息截至 2026-09-16 以官方一手来源为准：
+检验三类候选：日漫日文 OCR、PaddleOCR Korean（检测 + 识别）和 OpenAI-compatible Vision（检测/识别 JSON 输出）。
 
-| 路线 | 候选 / 版本 | 许可证事实 | 适配边界 | 官方来源 |
+> **⚠ 下表所有候选、版本号与许可证均为 `UNVERIFIED CANDIDATE METADATA`（Review R-003）**：内容摘自上游公开文档与仓库页面，**未经本实验环境联网核实**；且**模型权重条款可能与代码许可不同**。任何版本/许可结论都必须先在有网络的环境复核，**不得据此做合规决策**。
+
+| 路线 | 候选 / 版本（**UNVERIFIED**） | 许可证（**UNVERIFIED**） | 适配边界 | 官方来源 |
 |---|---|---|---|---|
 | 日漫 OCR | `manga-ocr` v0.1.16，`kha-white/manga-ocr@v0.1.16` | 仓库页面标为 Apache-2.0；模型权重未下载，权重独立许可仍需随实际文件核对 | 识别路线，适合已有 Region crop；本身不提供检测框 | [仓库 README](https://github.com/kha-white/manga-ocr)、[v0.1.16 release](https://github.com/kha-white/manga-ocr/releases/tag/v0.1.16) |
 | 韩文 OCR/检测 | PaddleOCR v3.7.0，`korean_PP-OCRv5_mobile_rec` | PaddleOCR 项目/pyproject 标为 Apache License 2.0；韩文模型权重的下载条款需在实际下载时单独留档 | 共同前置检测器 + 韩文/英文识别；模型输出含 polygon 与 score | [v3.7.0 release](https://github.com/PaddlePaddle/PaddleOCR/releases/tag/v3.7.0)、[官方 C++ OCR 文档（韩文模型）](https://github.com/PaddlePaddle/PaddleOCR/blob/main/docs/version3.x/inference_deployment/local_inference/cpp/OCR.md)、[pyproject license](https://github.com/PaddlePaddle/PaddleOCR/blob/main/pyproject.toml) |
