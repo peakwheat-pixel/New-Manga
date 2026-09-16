@@ -97,9 +97,9 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
 
 | 维度 | 设计内容 |
 |---|---|
-| 已有要求 | D01 §2 补充扩展能力；D02 §2/§6（Sakura 为本地 TranslationProvider 候选）；D02 §6.2.2"本地 Sakura"可配置直连；D03 §17.3 Provider Profile 枚举含 `Sakura-本地`；TASK-009 已实现网络诊断/连接测试栈（`infrastructure/network/diagnostics.py`，连接测试 UI 在 D05 §47） |
+| 已有要求 | D01 §2 补充扩展能力；D02 §2/§6（Sakura 为本地 TranslationProvider 候选）；D02 §6.2.2"本地 Sakura"可配置直连；D03 §25 Provider Profile 枚举含 `Sakura-本地`；TASK-009 已实现网络诊断/连接测试栈（`infrastructure/network/diagnostics.py`，连接测试 UI 在 D05 §47） |
 | 未知契约 | "监控"的深度未定义：仅健康探测（/v1/models 或 health 端点）还是含负载/显存/队列指标（Sakura 无标准化指标端点）；轮询频率与失败阈值未定义；多实例（不同端口）支持未定义 |
-| 支持矩阵（草案） | 范围裁定为**健康探测 + 就绪状态**（对齐 ACG-EXT-SAKURA 原文"模型/设备就绪状态"）：Provider Profile 类型为 Sakura-本地时，设置页连接测试即按需探测（复用 TASK-009 连接测试），可选后台轮询（默认关，开启后 60s 间隔、连续 2 次失败标记不可用）；工作台 Provider 选择器显示 就绪/不可用/未知 三态；**不做**显存/负载等未定义指标 |
+| 支持矩阵（草案） | 范围裁定为**健康探测 + 就绪状态**（对齐 ACG-EXT-SAKURA 原文"模型/设备就绪状态"）：Provider Profile 类型为 Sakura-本地时，设置页连接测试即按需探测（复用 TASK-009 连接测试），可选后台轮询（默认关，开启后 60s 间隔、连续 2 次失败标记不可用）；工作台 Provider 选择器显示 就绪/不可用/未知 三态（草案落点：D05 工作台章节暂无此映射，TASK-019 释放前须核对具体挂载位置，不得据此改一级页面结构）；**不做**显存/负载等未定义指标 |
 | 授权/失败边界 | 探测地址取自 Profile（本地默认直连，D02 §6.2.2）；探测失败永不阻断翻译任务发起（任务失败由真实翻译请求自行报错）；轮询请求走统一网络栈并可被全局暂停停止 |
 | AC 草案 | AC-EXT-SAKURA-001（P2）：Sakura Profile 的连接测试给出就绪/不可用与原因；AC-EXT-SAKURA-002（P3）：可选轮询开启后状态变化在工作台可见且连续失败自动标记；AC-EXT-SAKURA-003（P3）：探测关闭/失败不阻塞主流程 |
 | 释放条件 | 用户批准"健康探测级"范围（不做深度指标）；TASK-019 白名单=`src/application/settings/monitoring/**` 或并入 Provider 选择器切片；实测需本地 Sakura 实例，环境不具备时按 D08 口径记录 BLOCKED/NOT_RUN |
@@ -116,7 +116,7 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
 
 | 文档 | 变更 |
 |---|---|
-| `08_ACCEPTANCE_CRITERIA.md` | 新增 §44"AC-EXT：扩展能力"，收录 §1 的 11 条 AC 草案（批准后转编号 AC） |
+| `08_ACCEPTANCE_CRITERIA.md` | 新增 §44"AC-EXT：扩展能力"，收录 §1 的 15 条 AC 草案（批准后转编号 AC） |
 | `13_ACCEPTANCE_TRACEABILITY.md` | `ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA` 的"后续处理"列更新为"TASK-024 已定义边界（contracts/extensions.md §1.x），待用户批准后按 §1 释放条件释放" |
 | `12_ROADMAP.md` | TASK-023/025/019/022 的前置条件加"对应 §1.x 边界获用户批准" |
 

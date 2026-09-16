@@ -13,7 +13,7 @@ status: in_review
 
 - `doc/contracts/extensions.md`（新增）：六个扩展条目（网页导入、PDF/MOBI、
   Plugin/Hooks、AI Plugin Agent、字体上传、Sakura 监控）逐项的来源要求、未知
-  契约、支持矩阵/入口、授权/失败边界、11 条 AC 草案与释放条件；§1.4 给出
+  契约、支持矩阵/入口、授权/失败边界、15 条 AC 草案与释放条件；§1.4 给出
   Plugin Agent"如保留"的四项条件与裁剪判据；§2 有来源排除项；§3 权威文档回写
   计划（待用户批准，本设计不自我批准）；§4 用户待决清单 U-1~U-6。
 - `doc/13_ACCEPTANCE_TRACEABILITY.md`：`ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA` 四行
