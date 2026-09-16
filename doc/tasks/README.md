@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-013、TASK-015～TASK-027 保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
+TASK-001～TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-013 已授权并登记 `READY`、尚未实施；TASK-015～TASK-027 保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -16,7 +16,7 @@ TASK-001～TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久
 | [TASK-010](TASK-010.md) | 实现翻译约束、TM 与 Context | ZCode | done；integration `a225790`；TASK-008, TASK-009 |
 | [TASK-011](TASK-011.md) | 实现命令计划、任务调度与可恢复进度 | Codex | done；integration `369e95f`；TASK-008, TASK-009, TASK-010 |
 | [TASK-012](TASK-012.md) | 实现四页导航与书架 UI | ZCode | done；integration `78987c8`；TASK-005, TASK-007 |
-| [TASK-013](TASK-013.md) | 实现工作台与任务进度交互 | ZCode | TASK-011, TASK-012, TASK-014 |
+| [TASK-013](TASK-013.md) | 实现工作台与任务进度交互 | ZCode | ready；base `46646d5`；TASK-011, TASK-012, TASK-014 |
 | [TASK-014](TASK-014.md) | 实现配色与文字排版渲染 | ZCode | done；integration `a943297`；TASK-008 |
 | [TASK-015](TASK-015.md) | 实现阅读器与五种成果导出 | ZCode | TASK-012, TASK-014 |
 | [TASK-016](TASK-016.md) | OCR 与检测路线独立实验 | DeepSeek Harness | TASK-003, TASK-004 |

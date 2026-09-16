@@ -2,21 +2,21 @@
 id: TASK-013
 title: 实现工作台与任务进度交互
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-011, TASK-012, TASK-014]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 46646d58b3f645fa30fe7e10fae050218f9c55bb
+branch: agent/zcode/TASK-013-workbench-task-progress
+worktree: G:/CODEX/New Manga.worktrees/TASK-013-zcode
 integration_commit: null
 ---
 
 # TASK-013：实现工作台与任务进度交互
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已按用户授权登记为 `ready`，Owner=ZCode，Reviewer=DeepSeek Harness；尚未认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-015 及其他冻结 Task 不受本次授权影响。
 
 ## 来源与目标
 
@@ -67,4 +67,4 @@ D05 §15～36/55/61～65；D06 §74～79/102～103；D08 AC-PAGE/PROGRESS/NFR-UI
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-13 接管规划创建；2026-09-16 依赖 TASK-011/012/014 全部完成后，用户授权释放本 Task，登记 `ready`；尚未开始实现。
