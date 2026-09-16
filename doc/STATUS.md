@@ -5,7 +5,7 @@
 | 项目 | 状态 |
 |---|---|
 | 阶段 | TASK-001～TASK-014、TASK-028 设计、TASK-029、TASK-030 与 TASK-031 已完成并集成；TASK-013 生产 Pipeline seam 与 R-1 Workbench 装配已集成；TASK-016 已完成并以 `integration_commit=9bf85f5` 收口；TASK-015 按既有授权保持 ready；TASK-017～TASK-027 及其他业务功能继续冻结 |
-| 当前授权 | TASK-011、TASK-012、TASK-013、TASK-031 已完成独立 Review 与串行集成；TASK-030 已按用户授权完成独立 Review、R-001～R-003 收口与 Codex 集成；TASK-013 原工作台固定 base=`46646d5`、integration=`f0814a8`，生产 seam 固定 base=`126bab5`、reviewed_head=`e5b58e7`、Review=`8f7c454`、integration=`49c72fdf`，R-01/R-02 已关闭，R-03 已由 R-1 关闭；R-1 固定 base=`7c889cf`、reviewed_head=`7f3be54`、Review=`r1-review-7f3be54`、integration=`734d5b3`，已完成生产装配与集成；TASK-015 依赖已满足，固定 base=`1000ac8`、Owner=`ZCode`、Reviewer=`DeepSeek Harness`，状态=`ready`；TASK-016 固定 base=`f9edd68`、reviewed_head=`f544261`、Review=`878ac16`、integration=`9bf85f5`、Owner=`DeepSeek Harness`、Reviewer=`Codex`，状态=`done`；TASK-017～TASK-027 及其他业务功能仍冻结，不得释放其他冻结 Task |
+| 当前授权 | TASK-011、TASK-012、TASK-013、TASK-031 已完成独立 Review 与串行集成；TASK-030 已按用户授权完成独立 Review、R-001～R-003 收口与 Codex 集成；TASK-013 原工作台固定 base=`46646d5`、integration=`f0814a8`，生产 seam 固定 base=`126bab5`、reviewed_head=`e5b58e7`、Review=`8f7c454`、integration=`49c72fdf`，R-01/R-02 已关闭，R-03 已由 R-1 关闭；R-1 固定 base=`7c889cf`、reviewed_head=`7f3be54`、Review=`r1-review-7f3be54`、integration=`734d5b3`，已完成生产装配与集成；TASK-015 依赖已满足，固定 base=`1000ac8`、Owner=`ZCode`、Reviewer=`DeepSeek Harness`，状态=`ready`；TASK-016 固定 base=`f9edd68`、reviewed_head=`f544261`、Review=`878ac16`、integration=`9bf85f5`、Owner=`DeepSeek Harness`、Reviewer=`Codex`，状态=`done`；TASK-017～TASK-027 及其他业务功能仍冻结，不得释放其他冻结 Task；2026-09-16 用户追加 9 小时 ZCode 全权窗口授权（T0=2026-09-16 23:30 ～ T1=2026-09-17 08:30 Asia/Shanghai），窗口目标 TASK-015/024/017，子 agent Review 登记 `approved_subagent`，期满补外部复审，完整条款见下方「ZCode 全权窗口授权（2026-09-16）」章节 |
 | 接管审核 | approved |
 | 用户审核记录 | 2026-09-15：TASK-008 已按批准范围完成 Review 与 Codex 集成；TASK-028 统一 SQLite 持久化设计冻结；随后授权的 TASK-029 已由 ZCode 实施、DSH approved Review、Codex 集成收口；TASK-009 已释放、完成独立 Review 并集成收口；本次批准释放 TASK-014；本次继续批准释放 TASK-010；本次批准 TASK-012 与 TASK-010 并行执行；TASK-010 已完成独立 Review 与串行集成收口；TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结。2026-09-16：按 §6.6 集成 TASK-012；关闭 R-001/R-002；批准建立独立 TASK-030 装配切片，保持 BLOCKED/未释放，不释放 TASK-013/TASK-015；随后授权 Codex 实施 TASK-031 生产 ImageDecoder/Managed Copy 适配器，已完成独立 Review、R-001～R-003 关闭与串行集成；本次再授权释放 TASK-030，登记为 READY 并创建其专用 ZCode 分支/worktree；TASK-013/TASK-015 及其他冻结 Task 仍不释放。 |
 | 目标基线冻结 | 未冻结；见 Gap Analysis |
@@ -14,7 +14,7 @@
 | TASK-001 交付 / 集成 | 首次 615a073；Review 修订 cdc736c；integration_commit a1cb24c |
 | Git remote | 未配置 |
 | 文档版本状态 | TASK-003 reviewed head `9c6a73b` 由 `db269e9` 集成；TASK-004 reviewed head `181a356` 由 `a501372` 集成；TASK-005 reviewed head `f343008` 由 `6607f75` 集成；TASK-005 集成审计文档收口 `9fa6835` 由 `79b7621` 合并；TASK-006 reviewed head `e1d3e2c` 由 `32a7314` 收口；TASK-007 reviewed head `6ea4dd9` 由 `2b64b0f` 收口；TASK-008 reviewed head `1f373ac` 由 `06ba2e7` 收口；TASK-009 reviewed head `b42fc32`，实现合并 `dea1dee`，Review/集成收口 `6c732be`；TASK-010 reviewed head `cd76d30`，实现合并 `1ea9c80`，Review/集成收口 `a225790`，取证 `05effee` 由 `014231f` 合并；TASK-012 reviewed head `ca5848b`，实现合并 `b324d4b`，Review/集成收口 `78987c8`；TASK-014 reviewed head `72cb2be`，实现合并 `a61216a`，Review/集成收口 `a943297`；TASK-028 reviewed head `e7f9e41` 由 `509de66` 收口；TASK-029 reviewed head `5abc173`，实现合并 `2ea5445`，Review/集成收口 `0b0b855`；TASK-030 reviewed head `c3f1893`、Review `dba2637` approved，实现合并 `a58ff84`、R-001～R-003 修订 `a29f02e`、integration `fef9dd3`，已 done；TASK-031 reviewed head `c67a105`、Review `0509003` approved，实现合并 `0b44b83`、integration `e9d5185`，已 done；TASK-011 reviewed head `6a2016b`、Review `36f874a` approved，实现合并 `053d253`、integration `369e95f`，已 done。 |
-| 任务分派 / 执行 | TASK-001～TASK-014、TASK-028、TASK-029、TASK-030、TASK-031、R-1、TASK-016：done；TASK-015：ready，等待 ZCode 认领；TASK-017～TASK-027 保持 proposed/frozen |
+| 任务分派 / 执行 | TASK-001～TASK-014、TASK-028、TASK-029、TASK-030、TASK-031、R-1、TASK-016：done；TASK-015：ready，等待 ZCode 认领；TASK-017～TASK-027 保持 proposed/frozen；2026-09-16 窗口期内：TASK-015 由 ZCode 实施并代行集成；TASK-024、TASK-017 由 ZCode 自主解冻实施（优先级 015＞024＞017）；其余冻结 Task 不解冻 |
 | ZCode / DeepSeek Harness 连接 | TASK-008、TASK-009、TASK-010、TASK-011、TASK-012、TASK-013、TASK-014、TASK-029、TASK-030 与 TASK-031 已交付并集成；TASK-013 工作台 integration=`f0814a8`，生产 seam Review=`8f7c454`、integration=`49c72fdf`，R-01/R-02 已关闭，R-03 由 R-1 关闭；R-1 Review=`r1-review-7f3be54`、integration=`734d5b3`；TASK-015 已释放给 ZCode、DeepSeek Harness 负责独立 Review；TASK-016 已由 DeepSeek Harness 交付，Codex Review=`878ac16`、integration=`9bf85f5` |
 | 本次 Review | TASK-007、TASK-008、TASK-009、TASK-010、TASK-011、TASK-012、TASK-013、TASK-014、TASK-028、TASK-029、TASK-030、TASK-031、TASK-016 Review 均已按 STATUS 记录 approved；TASK-011 Review=`36f874a`、集成复验见 `verification/TASK-011/integration-369e95f6.md`；TASK-013 原工作台 Review=`9fbfa48`、集成复验见 `verification/TASK-013/integration-f0814a8.md`，生产 seam Review=`8f7c454`、集成复验见 `verification/TASK-013/integration-49c72fdf.md`；TASK-030 Review=`dba2637`、集成复验见 `verification/TASK-030/integration-fef9dd3.md`；TASK-031 Review=`0509003`、集成复验见 `verification/TASK-031/integration-e9d5185.md`；TASK-016 Review=`878ac16`、集成复验见 `verification/TASK-016/integration-9bf85f5.md` |
 | TASK-016 集成对象 | `base_commit=f9edd68`；`reviewed_head=f544261`；metadata=`8153274`；Review=`878ac16`；`integration_commit=9bf85f5`；Owner=`DeepSeek Harness`；Reviewer=`Codex`；实验质量/性能未满足项保持 `BLOCKED`/`NOT_RUN` |
@@ -135,3 +135,37 @@ TASK-009 Review 已归档：[首轮 Review `TASK-009-f1dd602`](reviews/TASK-009-
 | 2026-09-16 | 用户 | 批准释放 TASK-016 OCR 与检测路线独立实验；Owner=DeepSeek Harness、Reviewer=Codex、base=`f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86`、branch=`agent/deepseek/TASK-016-ocr-detection-experiment`、worktree=`G:/CODEX/New Manga.worktrees/TASK-016-deepseek`；仅限 TASK-016 白名单，实验结论不自动成为产品需求；不释放 TASK-015、TASK-017～TASK-027 或其他冻结 Task | 用户本次批准指令 |
 | 2026-09-16 | 用户 | 批准同步释放 TASK-015 阅读器与五种成果导出及 TASK-016 OCR 与检测路线独立实验；TASK-015 Owner=ZCode、Reviewer=DeepSeek Harness、base=`1000ac82743b75df8b4b385bc7096a015e13f107`、branch=`agent/zcode/TASK-015-reader-export`、worktree=`G:/CODEX/New Manga.worktrees/TASK-015-zcode`；TASK-016 保持 Owner=DeepSeek Harness、Reviewer=Codex；两者使用独立 worktree、写集合不重叠，实现可并行，Review/集成仍按协议独立串行；不释放 TASK-017～TASK-027 或其他冻结 Task | 用户本次批准指令 |
 | 2026-09-16 | Codex | TASK-016 按 §6.6 集成：来源 `reviewed_head=f544261` 保留为 merge parent，创建 `integration_commit=9bf85f5`；Review `878ac16` 为 approved；集成后协议测试 5 passed/0 skipped，默认与 model-run 探测均 30 BLOCKED，反例仍强制三项离线开关为 1；更新 TASK-016、STATUS、索引、Roadmap 与验证证据并标记 done；保留 TASK-015 ready，不释放 TASK-015 或其他冻结 Task，未 push | Codex 集成收尾记录 |
+| 2026-09-16 | 用户 | 因额度限制批准 9 小时 ZCode 全权窗口（T0=2026-09-16 23:30 ～ T1=2026-09-17 08:30 Asia/Shanghai）：除已收口的 TASK-016 外所有任务由 ZCode 全权执行，自动批准其实施申请与行为；窗口目标 TASK-015（优先级 1）→ TASK-024（2）→ TASK-017（3），由 ZCode 自主解冻 TASK-024/017 并登记元数据；子 agent Review 登记 `approved_subagent`（用户授权的同体审查，不得记 approved），期满后补外部 post-hoc 复审；ZCode 代行主线集成；白名单内全权，产品需求/验收标准变更、发布 Gate 放宽、push 远端、依赖清单与 Schema 变更、触碰 TASK-016 及解冻名单外 Task 均排除；期满授权失效，未完成任务冻结现状 | 用户本次授权指令；完整条款见本文件「ZCode 全权窗口授权（2026-09-16）」章节 |
+
+## ZCode 全权窗口授权（2026-09-16）
+
+生效窗口：T0=2026-09-16 23:30 ～ T1=2026-09-17 08:30（Asia/Shanghai），共 9 小时；T0 以本节随授权提交进入 master 的时刻为准。本授权由用户于 2026-09-16 批准，用于在 Codex/DeepSeek Harness 额度受限期间维持进度；窗口期满自动失效，长期角色与流程回归 [协作协议](09_COLLABORATION.md)。
+
+### 范围与效力
+
+1. 窗口期内所有任务由 ZCode 全权执行：用户自动批准 ZCode 的实施申请与行为，无需逐项请示；Codex 与 DeepSeek Harness 暂停参与。
+2. 窗口目标三项，按优先级串行执行（前一项收口后进入下一项；时间不足时按优先级取舍）：
+   - [TASK-015](tasks/TASK-015.md) 阅读器与五种成果导出（已 `ready`，base=`1000ac8`，branch=`agent/zcode/TASK-015-reader-export`，worktree=`G:/CODEX/New Manga.worktrees/TASK-015-zcode`）；
+   - [TASK-024](tasks/TASK-024.md) 明确扩展能力及验收覆盖边界（仅设计）；
+   - [TASK-017](tasks/TASK-017.md) Translation 与上下文输出协议实验。
+3. ZCode 代行 Codex 的以下职责：窗口目标 Task 的解冻登记（proposed→ready，填写 owner/base_commit/branch/worktree；TASK-024/017 的 base 取解冻时 master HEAD，branch/worktree 按 `agent/zcode/TASK-xxx-slug` 新建）、主线写入与协作协议 §6 的串行集成（含 ZCode 自身实现的任务）、`doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/tasks/README.md` 与 STATUS 的元数据回填。
+4. 每个窗口目标按完整生命周期执行：实施 → Review → 修订 → 集成 → STATUS/Task 收口；各 Task 白名单、依赖与验收标准不变。
+
+### Review 定性（协议核心临时变更，经用户授权）
+
+- 窗口期内 Review 由 ZCode 开子 agent 执行：必须使用 [Review 模板](templates/REVIEW.md)、固定 base_commit 与 reviewed_head、实际运行测试并在报告中 passed/skipped 分列、报告入库 `doc/reviews/`。
+- 结论只能登记为 `approved_subagent` 或 `changes_requested`，**不得登记为 `approved`**。`approved_subagent` 是用户授权的同体审查（Owner 与 Reviewer 同为 ZCode 及其子 agent），不等同协作协议 §1 的跨 Agent 独立批准。
+- 窗口期满后，用户应安排 Codex 或 DeepSeek Harness 对窗口期全部集成交付补一次外部 post-hoc 复审；该义务不因窗口关闭而消失，复审结论记入审核记录。
+
+### 排除项（自动批准不覆盖，遇之即登记 `BLOCKED` 并等待用户）
+
+- 产品需求与范围变更、D08 验收标准或发布 Gate 放宽；
+- `git push`、配置远端、向外部服务发送内容；
+- 依赖清单（requirements/pyproject）与 Schema 变更；
+- 触碰 TASK-016 交付物（已于 `9bf85f5` 收口）及其 worktree/分支、他人 worktree 与未提交内容；
+- 解冻窗口目标名单之外的 Task（TASK-018～TASK-027 中未列入目标者仍冻结）。
+
+### 到期处置
+
+- T1 后本授权失效：未完成任务冻结于当时状态（含 in_progress/in_review/blocked），等待用户安排；失效后不得凭本授权继续实施或集成。
+- 窗口内已完成的集成不回滚；期满后第一件事为一次纯文档收口提交：审核记录登记失效、移除 09_COLLABORATION 与 AGENTS 的临时条款（仅元数据提交，无需重跑产品测试）。

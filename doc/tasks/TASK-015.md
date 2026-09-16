@@ -29,7 +29,7 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 - [ ] 实现Original/Translated两模式、RTL/LTR、独立阅读进度/时长与书架摘要；Webtoon完整按宽滚动由TASK-020验证。
 - [ ] 单图/ZIP/CBZ/PDF/文本全部有范围、顺序、输出路径/命名/覆盖策略与ExportHistory。
 - [ ] 导出stale明确提示先渲染或继续当前版本，写失败/取消保留原有目标文件和源文件。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review（或 2026-09-16 窗口期内用户授权的子 agent Review，登记为 approved_subagent）与授权集成者集成验证后才能 done；窗口期交付须在期满后补外部 post-hoc 复审。
 
 ## 允许修改范围
 
@@ -63,7 +63,7 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 
 本任务实现导出不等于发布Gate通过；进度与Webtoon跨模块回归由TASK-020/026补齐。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持 `BLOCKED`。本次实际 Owner 为 ZCode，Reviewer 为 DeepSeek Harness；实现不得扩展到白名单外路径。
+如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持 `BLOCKED`。本次实际 Owner 为 ZCode；2026-09-16 窗口期内 Review 由 ZCode 子 agent 承担（结论登记 `approved_subagent`），Reviewer 栏 DeepSeek Harness 为期满补审与后续协作的外部 Reviewer；实现不得扩展到白名单外路径。
 
 ## 交付与运行记录
 

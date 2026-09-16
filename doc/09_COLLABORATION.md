@@ -15,6 +15,8 @@ Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 Z
 
 研究结论不自动成为产品需求。诊断任务只读分析与复现；修复需要有允许修改生产代码的 Task。Reviewer 默认只写 Review 报告。
 
+**临时窗口授权（2026-09-16，9 小时，T0=2026-09-16 23:30 ～ T1=2026-09-17 08:30 Asia/Shanghai；权威定义见 [STATUS](STATUS.md)「ZCode 全权窗口授权（2026-09-16）」）**：经用户批准，窗口期内 ① 本节表格中 Codex 的 Lead/Integrator 职责与 §3、§6 中"Codex 协调/登记/串行集成/主线写入"字样由 ZCode 代行（含 ZCode 自身实现的任务）；② 上段"Owner 与 Reviewer 必须不同"按用户授权以 ZCode 子 agent Review 履行，结论必须登记为 `approved_subagent`（不得记 `approved`），期满后全部窗口交付须补外部 post-hoc 复审；③ ZCode 可自主解冻窗口目标 Task（TASK-015/024/017）并登记元数据；④ "reviewer_unavailable 不得虚构批准"、各 Task 白名单、依赖、验收标准与 STATUS 窗口章节排除项不变。窗口期满本段自动失效，长期角色定义回到上表。
+
 ## 2. Git：一个仓库、多个 linked worktree
 
 实际主工作区 G:/CODEX/New Manga；当前分支 master。保留现有名字，未要求改为 main。无 remote，当前不设计 PR/push 为必需流程。

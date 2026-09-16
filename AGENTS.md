@@ -26,6 +26,7 @@
 - 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 Codex 明确范围；产品需求取舍由用户决定。
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。
 - 完成实现不等于完成集成：独立审查、测试证据和 Codex 集成验证通过后，Task 才能进入 done。
+- 临时窗口（2026-09-16 23:30 ～ 2026-09-17 08:30 Asia/Shanghai，完整条款见 [STATUS](doc/STATUS.md)「ZCode 全权窗口授权（2026-09-16）」）：窗口期内所有任务由 ZCode 全权执行并代行集成，子 agent Review 登记 `approved_subagent`，窗口目标 TASK-015/024/017；TASK-016 已收口不得触碰；期满授权自动失效并回归上述默认分工。
 
 ## 产品边界
 
