@@ -37,15 +37,17 @@ skip 原因：无 skip 发生（`-rs` 无输出）；TASK-012 基线 46 passed �
 | 档位 | 命令 | 退出码 | 证据 |
 |---|---|---|---|
 | 100% | `--screenshot verification/TASK-030/dpi-10pct.png --scale 1.0` | 0 | [dpi-10pct.png](dpi-10pct.png)（1280×800） |
-| 150% | `--screenshot verification/TASK-030/dpi-15pct.png --scale 1.5` | 0 | [dpi-15pct.png](dpi-15pct.png)（1920×1200，文字/控件等比放大） |
-| 200% | `--screenshot verification/TASK-030/dpi-20pct.png --scale 2.0` | 0 | [dpi-20pct.png](dpi-20pct.png)（2560×1600） |
+| 150% | `--screenshot verification/TASK-030/dpi-15pct.png --scale 1.5` | 0 | [dpi-15pct.png](dpi-15pct.png)（实测 1920×1061，文字/控件等比放大） |
+| 200% | `--screenshot verification/TASK-030/dpi-20pct.png --scale 2.0` | 0 | [dpi-20pct.png](dpi-20pct.png)（实测 1924×1062） |
 
-三张截图均可见：左侧导航 Rail 四项（书架选中）、Toolbar（新建作品/导入/搜索/收藏/归档/排序/列表）、
-D05 §62 空状态「还没有作品」与右侧「未选择作品」面板，布局在 150%/200% 下无错位、无裁切。
+三张截图均来自入口真实启动：左侧导航 Rail 四项（书架选中）、Toolbar（新建作品/导入/搜索/收藏/归档/排序/列表）、
+D05 §62 空状态「还没有作品」与右侧「未选择作品」面板均在可见范围内呈现。150%/200% 受本机
+1920×1080 虚拟显示器限制，截图范围小于缩放后窗口的理论尺寸（150% 理论 1920×1200，200% 理论
+2560×1600）；因此这里只记录“可见范围内未观察到控件错位”，不宣称完整窗口无裁切。
 
 实现注记：抓帧用 `QQuickWindow.grabWindow()`（shiboken downcast）而非 `QScreen.grabWindow`——
-后者在本机虚拟显示器上返回空帧。PySide6 wrapper 类型取决于包装发生时已导入的 Python 类型，
-因此 `bootstrap/app.py` 顶层显式导入 `QQuickWindow`，否则 rootObjects()[0] 退化为 QWindow。
+后者在本机虚拟显示器上返回空帧。顶层显式导入 `QQuickWindow` 使 root 对象通常获得强类型包装，
+而 `_grab_and_quit()` 中对 native handle 的 `wrapInstance(..., QQuickWindow)` 是第二道保险。
 
 ## 4. 真实导入安全链（生产栈探针）
 

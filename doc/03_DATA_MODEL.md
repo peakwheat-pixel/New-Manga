@@ -1172,6 +1172,13 @@ last_verified_at
 
 ## 18. Managed File Storage
 
+### 18.1 Windows 桌面装配的数据根默认
+
+Windows 桌面入口默认使用 `%LOCALAPPDATA%/New Manga` 作为数据根，根内保存
+`library.db` 与 `managed/`。环境变量 `NEWMANGA_DATA_ROOT` 或入口参数
+`--data-root` 可覆盖该默认；正式的路径设置 UI 与迁移属于 TASK-022。该默认与
+下述 `books/{book_id}/chapters/{chapter_id}/original/` 的受托管文件布局配套。
+
 ```text
 data/
 ├─ app.db

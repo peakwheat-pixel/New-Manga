@@ -951,6 +951,11 @@ height
 
 **MUST**
 
+Windows 桌面入口的数据根默认是 `%LOCALAPPDATA%/New Manga`，其中包含
+`library.db` 与 `managed/`；`NEWMANGA_DATA_ROOT` 和 `--data-root` 可覆盖。该默认
+适用于本地用户数据，避免漫画库与托管图片进入漫游配置；数据模型中的目录布局见
+[03 数据模型 §18](03_DATA_MODEL.md#18-managed-file-storage)。
+
 项目内部路径不得直接使用不受控的用户标题作为核心目录名。
 
 推荐：

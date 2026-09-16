@@ -138,6 +138,40 @@ def test_assemble_services_refuses_newer_schema(tmp_path: Path) -> None:
         assemble_services(db_path, tmp_path / "managed")
 
 
+def test_assemble_services_closes_connection_when_migration_fails(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    import sqlite3
+    from types import SimpleNamespace
+
+    import bootstrap.app as app_module
+
+    conn = sqlite3.connect(":memory:")
+
+    class FailingMigrationRunner:
+        def __init__(self, connection: sqlite3.Connection, migrations: object) -> None:
+            pass
+
+        def apply_pending(self) -> None:
+            raise RuntimeError("migration failed")
+
+    monkeypatch.setattr(
+        app_module,
+        "open_database",
+        lambda *args, **kwargs: (
+            conn,
+            SimpleNamespace(writable=True, schema_version=0),
+        ),
+    )
+    monkeypatch.setattr(app_module, "MigrationRunner", FailingMigrationRunner)
+
+    with pytest.raises(RuntimeError, match="migration failed"):
+        app_module.assemble_services(tmp_path / "library.db", tmp_path / "managed")
+
+    with pytest.raises(sqlite3.ProgrammingError, match="closed"):
+        conn.execute("SELECT 1")
+
+
 def test_import_safety_chain(tmp_path: Path) -> None:
     """真实导入安全链：源文件只读 → Managed Copy 落盘且逐字节一致 →
     Page 才写入 → 重启（新连接）后 SQLite 可读；managed 路径含真实

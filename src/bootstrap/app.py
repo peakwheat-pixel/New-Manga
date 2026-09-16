@@ -32,9 +32,9 @@ import tempfile
 from PySide6.QtCore import QTimer, QUrl
 from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
-# Imported before the engine wraps Main.qml's ApplicationWindow: the Python
-# wrapper type is chosen from what's imported at wrap time — without this,
-# rootObjects()[0] comes back as a plain QWindow without grabWindow().
+# Imported before the engine wraps Main.qml's ApplicationWindow so
+# rootObjects()[0] is normally a strongly typed QQuickWindow. The
+# _grab_and_quit path below re-wraps the native handle as a second safeguard.
 from PySide6.QtQuick import QQuickWindow  # noqa: F401
 
 from application.importing.images.service import ImportImagesUseCase
@@ -87,45 +87,48 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
     migrations = default_migrations()
     latest_known = max(migration.schema_version for migration in migrations)
     conn, opened = open_database(db_path, latest_known_schema_version=latest_known)
-    if not opened.writable:
-        conn.close()
-        raise RuntimeError(
-            f"database schema v{opened.schema_version} is newer than this "
-            f"application knows (v{latest_known}); refusing to run"
+    try:
+        if not opened.writable:
+            raise RuntimeError(
+                f"database schema v{opened.schema_version} is newer than this "
+                f"application knows (v{latest_known}); refusing to run"
+            )
+        MigrationRunner(conn, migrations).apply_pending()
+
+        repository = SqliteLibraryRepository(conn)
+        storage = ManagedFileStorage(managed_root)
+        storage.ensure_layout()
+        library = LibraryService(repository)
+
+        def book_id_for_chapter(chapter_id: str) -> str:
+            # Real Chapter→Book lookup for the D03 §18 managed layout; an
+            # unknown chapter fails the copy, so no page can be written.
+            chapter = repository.get_chapter(chapter_id)
+            if chapter is None:
+                raise ValueError(f"unknown chapter: {chapter_id!r}")
+            return chapter.book_id
+
+        importer = ImportImagesUseCase(
+            QtImageDecoder(),
+            ManagedCopyStoreAdapter(storage, book_id_for_chapter),
+            repository,
         )
-    MigrationRunner(conn, migrations).apply_pending()
-
-    repository = SqliteLibraryRepository(conn)
-    storage = ManagedFileStorage(managed_root)
-    storage.ensure_layout()
-    library = LibraryService(repository)
-
-    def book_id_for_chapter(chapter_id: str) -> str:
-        # Real Chapter→Book lookup for the D03 §18 managed layout; an
-        # unknown chapter fails the copy, so no page can be written.
-        chapter = repository.get_chapter(chapter_id)
-        if chapter is None:
-            raise ValueError(f"unknown chapter: {chapter_id!r}")
-        return chapter.book_id
-
-    importer = ImportImagesUseCase(
-        QtImageDecoder(),
-        ManagedCopyStoreAdapter(storage, book_id_for_chapter),
-        repository,
-    )
-    navigation = NavigationViewModel()
-    bookshelf = BookshelfViewModel(
-        library=library, importer=importer, navigation=navigation
-    )
-    return AppServices(
-        conn=conn,
-        repository=repository,
-        storage=storage,
-        importer=importer,
-        library=library,
-        navigation=navigation,
-        bookshelf=bookshelf,
-    )
+        navigation = NavigationViewModel()
+        bookshelf = BookshelfViewModel(
+            library=library, importer=importer, navigation=navigation
+        )
+        return AppServices(
+            conn=conn,
+            repository=repository,
+            storage=storage,
+            importer=importer,
+            library=library,
+            navigation=navigation,
+            bookshelf=bookshelf,
+        )
+    except Exception:
+        conn.close()
+        raise
 
 
 def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
@@ -192,6 +195,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     except Exception as error:
         if services is not None:
             services.conn.close()
+        if temp_root is not None:
+            temp_root.cleanup()
         print(f"bootstrap failed: {error}", file=sys.stderr)
         return 1
 
