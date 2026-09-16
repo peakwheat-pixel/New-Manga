@@ -3,4 +3,6 @@
 ........................................................................ [ 72%]
 ........................................................................ [ 97%]
 ........                                                                 [100%]
-296 passed in 113.73s (0:01:53)
+290 passed, 6 skipped in 113.73s (0:01:53)
+
+SKIPPED: tests/network/test_connection_tester.py:106 (1); tests/network/test_transport_tls.py:39,47,62,69,83 (5); reason: openssl unavailable.

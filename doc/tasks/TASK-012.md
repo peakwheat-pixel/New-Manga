@@ -2,8 +2,9 @@
 id: TASK-012
 title: 实现四页导航与书架 UI
 kind: implementation
-status: in_review
+status: done
 approval: approved
+decision: approved
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness
@@ -11,12 +12,15 @@ depends_on: [TASK-005, TASK-007]
 base_commit: 2cceb1e734c5079870662b7a28da316e46444810
 branch: agent/zcode/TASK-012-navigation-library-ui
 worktree: G:/CODEX/New Manga.worktrees/TASK-012-zcode
-integration_commit: null
+reviewed_head: ca5848b746210564a2503e8c5f59e0a2118e56a1
+implementation_merge: b324d4b09c6f755c37c8df75b5a1c566e882ce8f
+integration_commit: 78987c8fe5df5650bf7f674d6a9b79afbc48a5ab
+review_report_commit: 084db6000f4505f95c6451df8bc5aadefd93f5ff
 ---
 
 # TASK-012：实现四页导航与书架 UI
 
-本 Task 已获用户批准释放；2026-09-15 ZCode 在指定 worktree 认领，状态 `ready` → `in_progress`，与 TASK-010（另一 ZCode 会话）并行。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已完成实现、独立 Review 与 Codex 串行集成（`integration_commit=78987c8`）。Owner 为 ZCode，Reviewer 为 DeepSeek Harness；当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 2026-09-15 实施完成，状态 `in_progress` → `in_review`，delivery head `ca5848b`，已交 DeepSeek Harness 独立 Review（见 [Handoff](../handoffs/TASK-012-ca5848b.md)）。
 
@@ -31,7 +35,7 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 - [x] 启动默认书架且只有四个同级入口；无上下文时显示文档规定的空状态，切换保留上下文。（python 服务层 + QML 装载双层测试）
 - [x] 书架包含Toolbar/虚拟化作品列表/固定BookDetail/ChapterList，接入TASK-007用例和导入入口。
 - [x] 依据D05建立最小视觉基线，标清新设计而非既有截图（[ui-baseline](../ui-baseline.md)）；空/禁用态已验证；键盘焦点全量矩阵 NOT_RUN，归 TASK-022。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后完成。（`integration_commit=78987c8`）
 
 ## 允许修改范围
 
@@ -45,6 +49,7 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 - src/ui/qml/settings/SettingsView.qml
 - src/ui/viewmodels/navigation/**
 - src/ui/viewmodels/bookshelf/**
+- src/ui/viewmodels/__init__.py
 - src/ui/models/library/**
 - src/application/navigation/**
 - tests/ui_shell/**
@@ -61,7 +66,8 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 
 - 计划：python -m pytest tests/ui_shell；导航、CRUD/导入绑定、Book+Chapter跳转、切换后上下文。
 - 100%/150%/200%DPI初验并保存截图；完整多屏矩阵在TASK-022/026。
-- ~~以上均为计划，当前结果全部 NOT_RUN~~ → 实际结果（2026-09-15）：`pytest tests/ui_shell` 46 passed、`pytest tests` 296 passed（exit 0），见 [author-verification](../../verification/TASK-012/author-verification.md)；100%/150%/200% DPI 截图初验仍 NOT_RUN（BLOCKED：Main.qml/bootstrap 装配 scope-change 待裁决），完整多屏矩阵在 TASK-022/026。
+- 实际结果（2026-09-15 固定 reviewed head）：`pytest tests/ui_shell` 46 passed、`pytest tests` 290 passed, 6 skipped（exit 0；skip 均为 `openssl unavailable`），见 [author-verification](../../verification/TASK-012/author-verification.md)；集成主线复验为 46 passed、368 passed, 6 skipped，见 [integration verification](../../verification/TASK-012/integration-78987c8.md)。
+- 100%/150%/200% DPI 截图初验仍 `NOT_RUN (BLOCKED)`：入口装配已登记为独立 TASK-030，但该切片依赖的生产 Qt 解码与 Managed Copy 实现尚未在主线就绪；完整多屏矩阵在 TASK-022/026。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -74,12 +80,13 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 
 ## 交付与运行记录
 
-- Handoff：[TASK-012-ca5848b](../handoffs/TASK-012-ca5848b.md)（delivery head `ca5848b`，待 DSH Review）。
-- Review：尚无（2026-09-15 已交付 DSH，owner≠reviewer）。
-- 实际执行/实验/测试：[author-verification.md](../../verification/TASK-012/author-verification.md) —— 全仓 `pytest tests` 296 passed（exit 0，含架构守卫）、`pytest tests/ui_shell` 46 passed（exit 0，35 python + 11 QML 装载/行为）；AC 对照与 NOT_RUN 清单见该文件；pytest 输出原文随存于 verification/TASK-012/。
+- Handoff：[TASK-012-ca5848b](../handoffs/TASK-012-ca5848b.md)（delivery/reviewed head `ca5848b`，已集成）。
+- Review：[TASK-012-ca5848b](../reviews/TASK-012-ca5848b.md)，`report_commit=084db60`，decision=`approved`。
+- 实际执行/实验/测试：[author-verification.md](../../verification/TASK-012/author-verification.md) —— 固定 head 全仓 `290 passed, 6 skipped`、`tests/ui_shell` 46 passed；集成复验见 [integration-78987c8](../../verification/TASK-012/integration-78987c8.md)。
 - 最近状态：2026-09-15 用户批准与 TASK-010 并行释放；`ready`，等待 ZCode 在指定 worktree 认领并转 `in_progress`。
 - 最近状态：2026-09-15 ZCode 认领（`in_progress`），开始 D05/D08 需求阅读与 TDD 实施。
 - 最近状态：2026-09-15 实施完成置 `in_review`（01f5bdb 认领 → c9b3fac 计划+scope-change → cf0df63/17a4a48 TDD → 967dbc0 QML+装载测试 → ca5848b 基线+证据）：四页常驻导航（仅切 visible）、书架 Toolbar/Grid/Card/DetailPanel/ChapterList/新建Dialog/导入入口、三骨架页 §62 空状态、EmptyState；`Main.qml`/`bootstrap` 装配 scope-change request 待 Codex 裁决，DPI 截图初验因此 BLOCKED（NOT_RUN），键盘全量归 TASK-022。
+- 最近状态：2026-09-16 Codex 以 `b324d4b` 合并作者交付、以 `78987c8` 合并 approved Review；四条 AC 勾选，R-001/R-002 closed；TASK-030 独立装配切片已建立但因生产 Qt 解码/Managed Copy 依赖缺失保持 `BLOCKED`，未释放 TASK-013/TASK-015 等冻结任务。
 
 ## 实施计划（in_progress，ZCode）
 
@@ -99,3 +106,16 @@ D05 §2～12/43/62；D08 AC-NAV/LIB/CH/WIN；G16。D 编号对应 [文档索引]
 5. QML（白名单内，全部薄绑定）：`shell/AppShell.qml`、`shell/PrimaryNavigationRail.qml`（固定四入口+worktail 徽标占位）；`bookshelf/BookshelfView|BookshelfToolbar|BookGrid|BookCard|BookDetailPanel|ChapterList.qml`；`common/EmptyState.qml`；`workbench/WorkbenchView.qml`、`reader/ReaderView.qml`（§62 空状态骨架）、`settings/SettingsView.qml`（§43.1 固定分类列表+占位面板）。键盘 Tab/方向键焦点与 disabled 态随绑定给出。
 6. `tests/ui_shell/`：navigation service/VM、bookshelf VM（内存 repo fake + stub importer）、列表模型角色、QML AppShell 装载测试（QQmlComponent + 注入 VM）。
 7. `doc/ui-baseline.md`：最小视觉基线（D05 §3.1/§7 布局、颜色/字体/间距/状态），明确标注“新设计基线，非既有截图”。
+
+## 范围变更裁决：TASK-030
+
+本 Task 不修改 `Main.qml` 或 `bootstrap/app.py`。为使当前 Shell 具备真实入口，批准建立独立最小切片 [TASK-030](TASK-030.md)，固定 `base_commit=78987c8`、Owner=`ZCode`、Reviewer=`DeepSeek Harness`，只允许 `src/ui/qml/Main.qml`、`src/bootstrap/app.py` 及该 Task 自有验证/交接文档。
+
+主线依赖核实（`78987c8`）：SQLite `open_database`/`MigrationRunner`/`SqliteLibraryRepository` 已存在；但 `ImageDecoder` 与 `ManagedCopyStore` 只有 `src/application/importing/images/ports.py` Protocol，Qt 解码实现仅在 `tests/library/helpers.py`，`ManagedFileStorage` 没有 `store_original`。因此 TASK-030 的实现门禁为 `BLOCKED`，须先有已授权的生产适配器；不得在入口装配中使用测试 fake、空实现或绕过 Managed Copy。
+
+### Review findings disposition
+
+| finding | disposition |
+|---|---|
+| R-001 全量计数口径 | **closed**：固定 reviewed head 更正为 `290 passed, 6 skipped`，并列出 `openssl unavailable`；集成主线为 `368 passed, 6 skipped`。 |
+| R-002 授权口径/白名单写法 | **closed**：共享状态文档元数据权限已写入协作协议；`src/ui/viewmodels/__init__.py` 已补入本 Task 白名单。 |

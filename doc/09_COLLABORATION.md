@@ -47,6 +47,7 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 3. Codex 串行登记认领，然后 Owner 在任务分支将 ready 改 in_progress；所有 Agent 以已集成 Task 记录为准。两个 Agent 不能仅靠各自编辑副本宣称同时认领成功。
 4. 并行只用于无未完成依赖且写集合互不重叠的 Task。共用 Schema、ports、启动配置、依赖清单、AGENTS、Task 总索引由 Codex协调；超出 allowed_paths 时暂停越界部分，在 Task 提出范围变更。
 5. Task 文档由 Owner 更新；总索引由 Codex更新。工作日志、阻塞、测试结果及时写进任务文件，长任务不能只留在聊天。
+6. 为统一授权口径，所有 Task 的默认元数据维护范围包括由 Codex 负责的 `doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/STATUS.md`、`doc/tasks/README.md`；仅可回填状态、Task 导航和链接，不得借此修改需求、契约或代码范围。Task 的 `allowed_paths` 仍决定 Owner 可写范围。
 6. 每个 Agent 的测试数据根目录、临时目录、数据库、模型缓存及输出分别隔离。共享 Git 仓库不等于共享可写 app.db 或用户漫画库。
 
 禁止覆盖他人未提交修改、未经协调切换他人分支、自动 stash 他人内容、强制 push 或清理他人 worktree。冲突由 Codex结合两侧需求处理，禁止整文件盲选 ours/theirs。
@@ -70,7 +71,7 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 
 Task 的开发状态与产品 PipelineRun 状态是两套不同概念，不能混入应用 Schema。
 
-测试项必须注明 planned / executed、命令、环境、结果、证据。测试命令尚无实现时写“计划命令”，不能假装可立即运行。Acceptance Criteria 的逐项满足需实际证据，不能仅引用 D08 标题。
+测试项必须注明 planned / executed、命令、环境、结果、证据；结果中的 `passed` 与 `skipped` 必须分列（如 `290 passed, 6 skipped`），并为每个 skip 记录原因。测试命令尚无实现时写“计划命令”，不能假装可立即运行。Acceptance Criteria 的逐项满足需实际证据，不能仅引用 D08 标题。
 
 ## 5. Handoff
 

@@ -2,7 +2,7 @@
 
 - 作者：ZCode（实现）· Reviewer：DeepSeek Harness（独立，非作者）
 - base_commit：`2cceb1e734c5079870662b7a28da316e46444810`
-- reviewed_head：见 [Handoff](../../doc/handoffs/)（本文件所在提交的子提交链，Handoff 中固定）
+- reviewed_head：`ca5848b746210564a2503e8c5f59e0a2118e56a1`
 - 分支：`agent/zcode/TASK-012-navigation-library-ui`
 - worktree：`G:/CODEX/New Manga.worktrees/TASK-012-zcode`
 
@@ -20,10 +20,10 @@
 
 | 命令（worktree 根目录执行） | 退出码 | 结果 | 证据 |
 |---|---|---|---|
-| `…/TASK-012-py312/python.exe -m pytest tests -q` | 0 | 296 passed（含 tests/core 架构守卫） | [pytest-full-20260915.txt](pytest-full-20260915.txt) |
+| `…/TASK-012-py312/python.exe -m pytest tests -q` | 0 | 290 passed, 6 skipped（含 tests/core 架构守卫；6 项均因 `openssl unavailable`） | [pytest-full-20260915.txt](pytest-full-20260915.txt) |
 | `…/TASK-012-py312/python.exe -m pytest tests/ui_shell -v` | 0 | 46 passed（35 python + 11 QML 装载/行为） | [pytest-ui_shell-verbose-20260915.txt](pytest-ui_shell-verbose-20260915.txt) |
 
-两次运行均为 2026-09-15 本机执行，输出原文保存于本目录。
+两次运行均为 2026-09-15 本机执行；通过数与 skip 数分列，输出/勘误保存于本目录。
 
 ## 3. AC 对照
 
