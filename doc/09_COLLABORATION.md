@@ -48,7 +48,7 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 4. 并行只用于无未完成依赖且写集合互不重叠的 Task。共用 Schema、ports、启动配置、依赖清单、AGENTS、Task 总索引由 Codex协调；超出 allowed_paths 时暂停越界部分，在 Task 提出范围变更。
 5. Task 文档由 Owner 更新；总索引由 Codex更新。工作日志、阻塞、测试结果及时写进任务文件，长任务不能只留在聊天。
 6. 为统一授权口径，所有 Task 的默认元数据维护范围包括由 Codex 负责的 `doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/STATUS.md`、`doc/tasks/README.md`；仅可回填状态、Task 导航和链接，不得借此修改需求、契约或代码范围。Task 的 `allowed_paths` 仍决定 Owner 可写范围。
-7. 每个 Agent 的测试数据根目录、临时目录、数据库、模型缓存及输出分别隔离。共享 Git 仓库不等于共享可写 app.db 或用户漫画库。
+6. 每个 Agent 的测试数据根目录、临时目录、数据库、模型缓存及输出分别隔离。共享 Git 仓库不等于共享可写 app.db 或用户漫画库。
 
 禁止覆盖他人未提交修改、未经协调切换他人分支、自动 stash 他人内容、强制 push 或清理他人 worktree。冲突由 Codex结合两侧需求处理，禁止整文件盲选 ours/theirs。
 
