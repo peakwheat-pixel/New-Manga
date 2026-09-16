@@ -1,10 +1,10 @@
 # TASK-031 作者验证
 
-日期：2026-09-16（Asia/Shanghai）  
-工作路径：`G:/CODEX/New Manga`  
-分支：`agent/codex/TASK-031-production-import-adapters`  
-被测实现：`c67a105`  
-固定 base：`29b146f76b46682c6e9de3c40631fd7a5debed16`  
+日期：2026-09-16（Asia/Shanghai）
+工作路径：`G:/CODEX/New Manga`
+分支：`agent/codex/TASK-031-production-import-adapters`
+被测实现：`c67a105`
+固定 base：`29b146f76b46682c6e9de3c40631fd7a5debed16`
 平台：Windows `win32`；Python `3.12.3`；PySide6 `6.11.2`；`QT_QPA_PLATFORM` 未设置（默认 Qt，非 offscreen）
 
 ## 实际命令与结果
