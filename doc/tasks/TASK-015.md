@@ -17,24 +17,28 @@ integration_commit: null
 
 # TASK-015：实现阅读器与五种成果导出
 
-本 Task 已按用户授权由 ZCode 认领，进入 `in_progress`；固定 base、分支、worktree 与白名单见上方元数据。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。全局 STATUS 暂不由 Owner 更新。
+本 Task 由 ZCode 按用户授权实施；固定 base、分支、worktree 与白名单见上方元数据。
+第二轮交付已完成，停在 `in_review` 等待 DeepSeek Harness 独立 Review。当前阶段见
+[STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。全局 STATUS 暂不由 Owner 更新。
 
 ## 来源与目标
 
-D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXPORT。D 编号对应 [文档索引](../00_INDEX.md)；依赖交付物是后续输入，当前并不存在。
+D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXPORT。D 编号对应 [文档索引](../00_INDEX.md)。
 
 主责任编号 AC：AC-LIB-004、AC-EXPORT-001、AC-EXPORT-002、AC-EXPORT-003、AC-READ-001、AC-READ-002、AC-READ-003、AC-READ-004、AC-READ-005。完整映射见 [验收追踪](../13_ACCEPTANCE_TRACEABILITY.md)。
 
 ## Acceptance Criteria
 
-- [x] 实现Original/Translated两模式、RTL/LTR、独立阅读进度/时长与书架摘要；Webtoon完整按宽滚动由TASK-020验证。（服务层通过；Qt实际加载 BLOCKED）
-- [x] 单图/ZIP/CBZ/PDF/文本全部有范围、顺序、输出路径/命名/覆盖策略与ExportHistory。（服务层通过）
-- [x] 导出stale明确提示先渲染或继续当前版本，写失败/取消保留原有目标文件和源文件。（服务层通过）
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 实现Original/Translated两模式、RTL/LTR、独立阅读进度/时长与书架摘要；Webtoon完整按宽滚动由TASK-020验证。
+- [x] 单图/ZIP/CBZ/PDF/文本全部有范围、顺序、输出路径/命名/覆盖策略与ExportHistory。
+- [x] 导出stale明确提示先渲染或继续当前版本，写失败/取消保留原有目标文件和源文件。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Owner 侧交付已完成；Review 与集成环节待 DeepSeek Harness / Codex 执行后才置 done）
+
+AC 对照的实际测试证据见 [作者验证记录](../../verification/TASK-015/author-verification.md)。
 
 ## 允许修改范围
 
-以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
+以下为相对仓库根目录的允许路径；实现未越界。
 
 - src/application/reading/**
 - src/application/export/**
@@ -51,25 +55,27 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 
 不得修改未列出的其他 Task、AGENTS、生产数据或用户源文件。实验任务不写生产 src；Review 任务不顺手修生产代码。共享接口、Schema、依赖或装配超出白名单时，先由 Codex在本 Task 明确范围变更。
 
-## 测试要求
+实现遵守情况：未触碰 Schema/migration、`src/bootstrap/app.py`、`src/ui/qml/shell/AppShell.qml`、BookDetailPanel/BookshelfViewModel 等白名单外文件。因装配/显示接线在白名单外产生的遗留项（SQLite 迁移、bootstrap 注入 `readerViewModel`、BookDetailPanel 摘要接线、Reader Nav 章节数据源）已在 Handoff"未跑项与风险"与"集成装配指引"登记，待 Codex 裁量范围变更，不由 Owner 自行扩展。
 
-- 计划：python -m pytest tests/reading_export；重启继续阅读、双模式独立、缺译图、五格式内容/页序/元数据。
-- 非法/Unicode文件名、已有目标文件、磁盘错误和stale选择；验证导出产物可重新读取。
-- 以上为验收计划；实现期间逐项回填 passed/skipped/blocked/not_run，命令中的测试目录由本 Task 建立。
-- 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
+## 测试要求与实际执行
+
+计划命令 `python -m pytest tests/reading_export` 已落地为 63 例专项测试。实际执行（完整命令、环境、退出码、passed/skipped 分列与逐条 skip 原因）见 [作者验证记录](../../verification/TASK-015/author-verification.md)：
+
+- 完整 Qt 环境（Python 3.12.3 + PySide6 6.11.2，`task-envs/TASK-014-py312`）：专项 `63 passed`（退出码 0）；全仓 `535 passed`（退出码 0，连续两轮稳定）。
+- 无 PySide6 解释器（Python 3.14.6）：专项 `42 passed, 3 skipped`（退出码 0；skip 原因逐条记录为 PySide6 未安装）；该解释器全仓 Qt 套件收集失败为既有环境限制（与 TASK-013 记录一致），非本 Task 引入。
+- NOT_RUN：PDF 外部阅读器像素级验收、真实磁盘满/权限注入、生产装配接线；Webtoon 完整按宽滚动验收归 TASK-020。
 
 ## 依赖、风险与阻塞
 
-硬依赖：[TASK-012](TASK-012.md)、[TASK-014](TASK-014.md)。依赖必须已经集成 done 才可开始。
+硬依赖：[TASK-012](TASK-012.md)、[TASK-014](TASK-014.md)。两者均已集成 done。
 
 本任务实现导出不等于发布Gate通过；进度与Webtoon跨模块回归由TASK-020/026补齐。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+当前无阻塞。
 
 ## 交付与运行记录
 
-- Handoff：[TASK-015-fac2ffe](../handoffs/TASK-015-fac2ffe.md)。
-- Review：待 DeepSeek Harness 独立 Review；作者不得自审。
-- 实际执行/实验/测试：[author-verification](../../verification/TASK-015/author-verification.md)。
-- 最近状态：2026-09-16 用户授权释放；ZCode 以固定 base 认领，`ready` → `in_progress`。
-- 最近状态：2026-09-16 实现 head `fac2ffe`，专项 `8 passed, 0 skipped`；Qt/full regression 按证据记录 BLOCKED/NOT_RUN，状态置 `in_review`，通知 DeepSeek Harness 独立 Review。
+- Handoff：[TASK-015-488fafc](../handoffs/TASK-015-488fafc.md)（第二轮交付，实现 head `488fafc`；取代 fac2ffe 轮的 `TASK-015-fac2ffe.md`，旧文件已删除、Git 历史可溯）。
+- Review：尚无（等待 DeepSeek Harness 固定 `base=1000ac8`、`head=488fafc` 独立审查）。
+- 实际执行/测试：[verification/TASK-015/author-verification.md](../../verification/TASK-015/author-verification.md)。
+- 最近状态：2026-09-16 ZCode 完成第二轮实现并回填 AC 与验证证据，停在 `in_review`；未自行标记 approved/done。
