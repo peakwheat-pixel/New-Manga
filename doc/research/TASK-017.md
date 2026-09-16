@@ -41,9 +41,11 @@ pytest：`15 passed, 0 skipped`（退出码 0）。
 ## 4. 结论与适用范围
 
 - **协议层结论（mock 证据，可复现）**：RegionID 契约校验、retry 输入不变、
-  显式 fallback、预算截断规则均可在不依赖模型的情况下确定性验证；建议
-  生产 Translate Step 落地时直接采用 `protocol.py` 的分类（ok/malformed/
-  missing/duplicate/extra/empty）与 retryable 集合。
+  显式 fallback、预算截断规则均可在不依赖模型的情况下确定性验证。生产
+  Translate Step 引用 `protocol.py` 分类器前必须先吸收 Review R-001~R-003：
+  R-001 非字符串 region_id 防御（EXTRA 分支当前会抛 TypeError）、R-002
+  RateLimit(429) 补入 RETRYABLE（D06 §56.1 点名）、R-003 上下文排序以
+  D06 §13 reading_order 为准（当前贪心截断 + page_id 字典序）。
 - **不声称的部分（NOT_RUN）**：真实 OpenAI-compatible 远程 Provider（未配置
   付费端点，任务禁止自行配置）、真实 Sakura 实例、真实模型的术语一致性与
   翻译质量评分。mock 是确定性规则翻译，**不能**替代模型质量评估；质量层

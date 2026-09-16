@@ -27,8 +27,9 @@
    样本与评估：S1（术语 3/3 命中、上下文序）、预算截断用例、S3~S7 违约分类，
    全部可复现（pytest + results.json）。
 3. retry/fallback 输入不变、网络策略、远程数据范围：S2（payload hash 一致）、
-   S8（显式链）+ D06 §55 代理失败不自动 Direct 的分类规则已编码（NOT_RETRYABLE/
-   RETRYABLE 集合）；远程数据范围=仅样本文本，无真实用户数据。
+   S8（显式链）+ D06 §56/§57 的可重试分类已编码（RETRYABLE/NOT_RETRYABLE 集合；
+   注意 D06 §55 代理失败语义未在本实验编码，属生产网络栈职责）；远程数据
+   范围=仅样本文本，无真实用户数据。
 4. Handoff/审阅/未完成项：见 Handoff 与本文件 NOT_RUN 表。
 
 ## NOT_RUN / BLOCKED 项（不掩盖）

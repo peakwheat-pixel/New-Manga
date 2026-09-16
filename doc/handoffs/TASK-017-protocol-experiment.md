@@ -43,6 +43,13 @@ status: in_review
 任务禁止自行配置；恢复条件与同一样本复跑方法见 research 报告 §4 与
 verification NOT_RUN 表。
 
+## 已知问题移交（非本实验引入）
+
+- `tests/reading_export/test_qml_contract.py` 存在低频顺序依赖 flaky（子 agent
+  全仓复跑首跑 1 failed、复跑与 master 基线均 536 passed；TASK-015 期间已修复
+  一轮，残余偶发与 Qt 焦点/窗口时序相关）。移交 Codex/后续切片跟踪，不阻塞
+  本实验结论。
+
 ## 对后续 Task 的移交
 
 - Translate Step（生产）落地时建议直接采用 protocol.py 的违约分类与
