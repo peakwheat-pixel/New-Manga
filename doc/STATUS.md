@@ -67,7 +67,7 @@ TASK-009 已完成并收口：[TASK-009](tasks/TASK-009.md) 固定 `base_commit=
 
 TASK-010 已完成并收口：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`、`reviewed_head=cd76d30`、实现合并 `1ea9c80`、`integration_commit=a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。移交项 `tests/rendering` 已由 ZCode 在 `05effee` 复现并由 Codex 以 `014231f` 纳入主线；经用户授权，Codex 以 `4e05e59` 修复根因，验证见 [rendering-order-fix.md](../verification/TASK-010/rendering-order-fix.md)，未修改 `tests/rendering`、业务实现或创建新 Task。
 
-TASK-012 已完成并收口：[TASK-012](tasks/TASK-012.md) 固定 `base_commit=2cceb1e734c5079870662b7a28da316e46444810`、`reviewed_head=ca5848b`、实现合并 `b324d4b`、`integration_commit=78987c8`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；[Review](reviews/TASK-012-ca5848b.md) `report_commit=084db60` 为 approved；[集成验证](../verification/TASK-012/integration-78987c8.md)记录主线复验。R-001/R-002 已关闭；入口装配范围变更建立为 TASK-030，后经用户授权登记为 READY。
+TASK-012 已完成并收口：[TASK-012](tasks/TASK-012.md) 固定 `base_commit=2cceb1e734c5079870662b7a28da316e46444810`、`reviewed_head=ca5848b`、实现合并 `b324d4b`、`integration_commit=78987c8`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；[Review](reviews/TASK-012-ca5848b.md) `report_commit=084db60` 为 approved；[集成验证](../verification/TASK-012/integration-78987c8.md)记录主线复验。R-001/R-002 已关闭；入口装配范围变更 TASK-030 已完成并收口。
 
 TASK-030 已完成并收口：[TASK-030](tasks/TASK-030.md) 固定 `base_commit=087da45590c84227e9695eb829669e9cee805ef2`、`reviewed_head=c3f1893`、`implementation_merge=a58ff84`、`integration_commit=fef9dd3`、Owner=`ZCode`、Reviewer=`DeepSeek Harness`、branch=`agent/zcode/TASK-030-main-bootstrap-assembly`、worktree=`G:/CODEX/New Manga.worktrees/TASK-030-zcode`；生产路径为 `src/ui/qml/Main.qml` 与 `src/bootstrap/app.py`，R-001～R-003 与两项裁决已落地；不释放 TASK-013/TASK-015。
 
