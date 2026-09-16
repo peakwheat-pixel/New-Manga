@@ -2,21 +2,21 @@
 id: TASK-024
 title: 明确扩展能力及验收覆盖边界（仅设计）
 kind: design
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-001, TASK-003]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 116e682
+branch: agent/zcode/TASK-024-extension-boundaries-design
+worktree: G:/CODEX/New Manga.worktrees/TASK-024-zcode
 integration_commit: null
 ---
 
 # TASK-024：明确扩展能力及验收覆盖边界（仅设计）
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 由 2026-09-16 ZCode 全权窗口授权解冻（条款见 [STATUS](../STATUS.md)）：窗口内由 ZCode 实施、ZCode 子 agent Review（结论登记 `approved_subagent`，不等同跨 Agent 独立批准）、ZCode 代行集成；期满后补外部 post-hoc 复审。`reviewer` 栏 DeepSeek Harness 为期满补审与后续协作的外部 Reviewer。窗口 base 取解冻时 master HEAD=`116e682`。
 
 ## 来源与目标
 
