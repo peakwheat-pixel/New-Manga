@@ -214,7 +214,7 @@ class PipelineService:
             source_run_id=source_run_id,
             retry_reason=retry_reason,
         )
-        self._store.put(run_id, run)
+        self._persist(run)
         return run
 
     def plan_run(self, run_id: str, *, mode: str = "initial") -> PipelineRun:
@@ -259,7 +259,7 @@ class PipelineService:
         run.terminal_step_units = len(terminal_ids)
         run.step_runs = [] if mode == "initial" else run.step_runs
         self._set_planned_run_status(run)
-        self._store.put(run.run_id, run)
+        self._persist(run)
         return run
 
     # ------------------------------------------------------------------
@@ -528,6 +528,7 @@ class PipelineService:
         run.step_runs.append(step_run)
         task.step_run_ids.append(step_run.step_run_id)
         task.status = PipelineTaskStatus.RUNNING
+        self._persist(run)
         return step_run
 
     def commit_step_result(
@@ -554,6 +555,7 @@ class PipelineService:
             step_run.status = StepRunStatus.COMPLETED
             step_run.output = result.outputs
             self._mark_terminal(run, unit.unit_id)
+            self._persist(run)
             return CommitStepOutcome("committed", step_run.step_run_id)
 
         if outcome.status in {"input_revision_changed", "lock_changed"}:
@@ -577,6 +579,7 @@ class PipelineService:
             task.error_code = code
             task.error_detail = outcome.detail
             self._mark_terminal(run, unit.unit_id)
+            self._persist(run)
             return CommitStepOutcome("candidate", step_run.step_run_id, candidate.candidate_id, code, outcome.detail)
 
         return self._fail_step(run, task, step_run, unit, "TARGET_NOT_FOUND", outcome.detail)
@@ -593,6 +596,7 @@ class PipelineService:
         task.status = PipelineTaskStatus.FAILED
         task.error_code = step_run.error_code
         self._mark_terminal(run, unit.unit_id)
+        self._persist(run)
         return CommitStepOutcome(
             "failed", step_run.step_run_id, error_code=step_run.error_code
         )
@@ -613,6 +617,7 @@ class PipelineService:
         task.error_code = code
         task.error_detail = detail
         self._mark_terminal(run, unit.unit_id)
+        self._persist(run)
         return CommitStepOutcome("failed", step_run.step_run_id, error_code=code, detail=detail)
 
     @staticmethod
@@ -640,6 +645,7 @@ class PipelineService:
         }:
             return run
         run.status = PipelineRunStatus.RUNNING
+        self._persist(run)
         for task in run.tasks:
             if task.status in TERMINAL_TASK_STATUSES:
                 continue
@@ -661,11 +667,13 @@ class PipelineService:
                 if run.pause_requested:
                     task.status = PipelineTaskStatus.PENDING
                     run.status = PipelineRunStatus.PAUSED
+                    self._persist(run)
                     return run
                 if len(run.step_runs) >= self._limits.max_step_runs:
                     run.fatal_error = "RESOURCE_LIMIT_EXCEEDED"
                     run.status = PipelineRunStatus.FAILED
                     self._cancel_remaining(run, task, unit)
+                    self._persist(run)
                     return run
 
                 step_run = self._record_step_attempt(run, task, unit)
@@ -691,6 +699,7 @@ class PipelineService:
                 if run.pause_requested:
                     task.status = PipelineTaskStatus.PENDING
                     run.status = PipelineRunStatus.PAUSED
+                    self._persist(run)
                     return run
 
             if run.cancel_requested:
@@ -698,6 +707,7 @@ class PipelineService:
                 self._cancel_remaining(run, task, None)
                 self._cancel_pending_tasks(run)
                 run.status = PipelineRunStatus.CANCELLED
+                self._persist(run)
                 return run
             if task_failed or task.status is PipelineTaskStatus.FAILED:
                 task.status = PipelineTaskStatus.FAILED
@@ -705,6 +715,7 @@ class PipelineService:
                 task.status = PipelineTaskStatus.COMPLETED
 
         self._aggregate_run(run)
+        self._persist(run)
         return run
 
     def control_run(self, run_id: str, action: str) -> ControlResult:
@@ -715,6 +726,7 @@ class PipelineService:
             run.pause_requested = True
             if run.status is PipelineRunStatus.PENDING:
                 run.status = PipelineRunStatus.PAUSED
+            self._persist(run)
             return ControlResult(run.run_id, run.status)
 
         if action == "stop":
@@ -724,12 +736,14 @@ class PipelineService:
             if run.status in {PipelineRunStatus.PENDING, PipelineRunStatus.PAUSED}:
                 self._cancel_pending_tasks(run)
                 run.status = PipelineRunStatus.CANCELLED
+            self._persist(run)
             return ControlResult(run.run_id, run.status)
 
         if action == "continue":
             if run.status is PipelineRunStatus.PAUSED:
                 run.pause_requested = False
                 run.status = PipelineRunStatus.PENDING
+                self._persist(run)
                 return ControlResult(run.run_id, run.status)
             if run.status is PipelineRunStatus.INTERRUPTED:
                 run.cancel_requested = False
@@ -748,6 +762,7 @@ class PipelineService:
                 retry_reason="restart_after_interruption",
             )
             run.interruption_disposition = "restarted"
+            self._persist(run)
             return ControlResult(run.run_id, run.status, fresh.run_id)
 
         if action == "abandon":
@@ -755,6 +770,7 @@ class PipelineService:
                 raise PipelineError("RUN_NOT_INTERRUPTED", run.run_id)
             run.status = PipelineRunStatus.CANCELLED
             run.termination_reason = "abandoned_after_interruption"
+            self._persist(run)
             return ControlResult(run.run_id, run.status)
 
         raise PipelineError("INVALID_RUN_TRANSITION", f"unknown control action {action}")
@@ -772,6 +788,7 @@ class PipelineService:
             for step in run.step_runs:
                 if step.status is StepRunStatus.RUNNING:
                     step.status = StepRunStatus.INTERRUPTED
+            self._persist(run)
             recovered.append(run_id)
         return tuple(recovered)
 
@@ -889,6 +906,10 @@ class PipelineService:
         if run is None:
             raise PipelineError("TARGET_NOT_FOUND", f"run {run_id} not found")
         return run
+
+    def _persist(self, run: PipelineRun) -> None:
+        """Persist every lifecycle boundary for durable stores."""
+        self._store.put(run.run_id, run)
 
     def _find_task(self, task_id: str) -> tuple[PipelineRun, PipelineTask]:
         for run_id in self._store.list_ids():

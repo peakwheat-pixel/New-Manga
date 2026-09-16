@@ -19,7 +19,7 @@ LATEST_KNOWN = default_migrations()[-1].schema_version
 
 def test_all_migrations_apply_with_checksum_and_metadata(db_conn):
     version = read_schema_version(db_conn)
-    assert version == LATEST_KNOWN == 2
+    assert version == LATEST_KNOWN == 3
 
     for migration in default_migrations():
         row = db_conn.execute(
@@ -27,11 +27,12 @@ def test_all_migrations_apply_with_checksum_and_metadata(db_conn):
             (migration.schema_version,),
         ).fetchone()
         assert row["migration_name"] == migration.migration_name
-        assert row["checksum"] == migration.checksum, (
+        message = (
             f"v1 checksum drift detected at version {migration.schema_version}"
             if migration.schema_version == 1
-            else "v2 checksum mismatch"
+            else f"v{migration.schema_version} checksum mismatch"
         )
+        assert row["checksum"] == migration.checksum, message
 
     metadata = db_conn.execute(
         "SELECT value_json FROM application_metadata WHERE metadata_key = 'schema_version'"
@@ -57,7 +58,7 @@ def test_reopening_is_idempotent(tmp_path):
     assert opened.state.value == "empty"
     runner = MigrationRunner(conn, default_migrations())
     applied = runner.apply_pending()
-    assert [record.schema_version for record in applied] == [1, 2]
+    assert [record.schema_version for record in applied] == [1, 2, 3]
     assert runner.pending_migrations() == []
     assert runner.apply_pending() == []
 
@@ -77,10 +78,10 @@ def test_newer_schema_is_rejected_and_readonly(tmp_path):
     with conn:
         conn.execute(
             "INSERT INTO schema_migrations (schema_version, migration_name, applied_at, checksum)"
-            " VALUES (3, 'future', '2026-01-01T00:00:00Z', 'nope')"
+            " VALUES (4, 'future', '2026-01-01T00:00:00Z', 'nope')"
         )
         conn.execute(
-            "UPDATE application_metadata SET value_json = '3'"
+            "UPDATE application_metadata SET value_json = '4'"
             " WHERE metadata_key = 'schema_version'"
         )
     conn.close()
@@ -118,23 +119,26 @@ def test_pre_migration_backup_created_before_first_ddl(tmp_path):
     assert calls and calls[0][0] == "pre_migration"
 
     # Full pending batch: one pre-migration backup fires per pending
-    # migration (v1 and v2). The v0→v1 guard predates backup_records, so
-    # exactly one row exists — for the v1→v2 backup, recorded with its
-    # storage-relative managed path.
+    # migration. The v0→v1 guard predates backup_records, so the v1→v2 and
+    # v2→v3 snapshots are the two recorded rows.
     records = conn.execute(
         "SELECT backup_type, managed_path, schema_version FROM backup_records"
     ).fetchall()
-    assert len(records) == 1
+    assert len(records) == 2
     assert records[0]["backup_type"] == "pre_migration"
     assert records[0]["schema_version"] == 1  # snapshot taken at v1 state
     assert records[0]["managed_path"].startswith("backups/")
     assert (backups / records[0]["managed_path"].split("/", 1)[1]).is_file()
 
     backup_files = list(backups.glob("*.db"))
-    assert len(backup_files) == 2  # v0→v1 guard (unrecorded) + v1→v2 (recorded)
+    assert len(backup_files) == 3  # v0→v1 guard + v1→v2 + v2→v3
     # The unrecorded file is the v0→v1 snapshot: it predates the schema.
     recorded_file = backups / records[0]["managed_path"].split("/", 1)[1]
-    unrecorded_files = [f for f in backup_files if f.resolve() != recorded_file.resolve()]
+    recorded_v2_file = backups / records[1]["managed_path"].split("/", 1)[1]
+    unrecorded_files = [
+        f for f in backup_files
+        if f.resolve() not in {recorded_file.resolve(), recorded_v2_file.resolve()}
+    ]
     assert len(unrecorded_files) == 1
     first_snapshot = sqlite3.connect(str(unrecorded_files[0]))
     try:
@@ -149,6 +153,12 @@ def test_pre_migration_backup_created_before_first_ddl(tmp_path):
         assert read_schema_version(recorded_snapshot) == 1
     finally:
         recorded_snapshot.close()
+    recorded_v2 = backups / records[1]["managed_path"].split("/", 1)[1]
+    second_snapshot = sqlite3.connect(str(recorded_v2))
+    try:
+        assert read_schema_version(second_snapshot) == 2
+    finally:
+        second_snapshot.close()
     conn.close()
 
 
@@ -190,13 +200,13 @@ def test_checksum_mismatch_detects_edited_history(tmp_path):
     conn.close()
 
 
-def test_v2_introduces_no_out_of_scope_tables(db_conn):
+def test_v2_introduces_no_out_of_scope_tables():
     """TASK-028 §6 boundary check: Pipeline/Candidate/TM/Constraint tables
     belong to later slices and must not silently appear in the schema."""
-    tables = {
-        row[0]
-        for row in conn_tables(db_conn)
-    }
+    conn = sqlite3.connect(":memory:")
+    conn.row_factory = sqlite3.Row
+    MigrationRunner(conn, default_migrations()[:2]).apply_pending()
+    tables = {row[0] for row in conn_tables(conn)}
     forbidden = {
         "pipeline_runs", "pipeline_run_targets", "pipeline_tasks", "step_runs",
         "step_run_input_refs", "step_run_output_refs", "step_result_candidates",
@@ -204,6 +214,7 @@ def test_v2_introduces_no_out_of_scope_tables(db_conn):
         "provider_profiles", "provider_bindings", "network_profiles",
     }
     assert not (tables & forbidden)
+    conn.close()
 
 
 def conn_tables(conn):
