@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-011、TASK-013、TASK-015～TASK-027 保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
+TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-011 已获授权并登记 `READY`、尚未实施；TASK-013、TASK-015～TASK-027 保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -14,7 +14,7 @@ TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQ
 | [TASK-008](TASK-008.md) | 实现 Region 编辑、Revision 与人工保护 | ZCode | done；integration `06ba2e7`；TASK-007 |
 | [TASK-009](TASK-009.md) | 实现 Provider 配置、网络策略与凭据边界 | ZCode | done；integration `6c732be`；TASK-006 |
 | [TASK-010](TASK-010.md) | 实现翻译约束、TM 与 Context | ZCode | done；integration `a225790`；TASK-008, TASK-009 |
-| [TASK-011](TASK-011.md) | 实现命令计划、任务调度与可恢复进度 | Codex | TASK-008, TASK-009, TASK-010 |
+| [TASK-011](TASK-011.md) | 实现命令计划、任务调度与可恢复进度 | Codex | ready；base `1668cd5`；TASK-008, TASK-009, TASK-010 |
 | [TASK-012](TASK-012.md) | 实现四页导航与书架 UI | ZCode | done；integration `78987c8`；TASK-005, TASK-007 |
 | [TASK-013](TASK-013.md) | 实现工作台与任务进度交互 | ZCode | TASK-011, TASK-012, TASK-014 |
 | [TASK-014](TASK-014.md) | 实现配色与文字排版渲染 | ZCode | done；integration `a943297`；TASK-008 |

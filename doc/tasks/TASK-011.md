@@ -2,21 +2,21 @@
 id: TASK-011
 title: 实现命令计划、任务调度与可恢复进度
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: Codex
+reviewer: DeepSeek Harness
 depends_on: [TASK-008, TASK-009, TASK-010]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 1668cd5daebf07ea89fb93b5261410a6cba1c033
+branch: agent/codex/TASK-011-command-scheduler
+worktree: G:/CODEX/New Manga
 integration_commit: null
 ---
 
 # TASK-011：实现命令计划、任务调度与可恢复进度
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户授权进入 `ready`，尚未认领或实施。Owner=Codex，Reviewer=DeepSeek Harness；当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-013、TASK-015 及其他冻结 Task 不受本次授权影响。
 
 ## 来源与目标
 
@@ -57,15 +57,15 @@ D03 §20～24；D06 §25～94；D08 AC-CMD/PIPE/PAUSE/STOP/CRASH/RETRY/LOCK/CONF
 
 ## 依赖、风险与阻塞
 
-硬依赖：[TASK-008](TASK-008.md)、[TASK-009](TASK-009.md)、[TASK-010](TASK-010.md)。依赖必须已经集成 done 才可开始。
+硬依赖：[TASK-008](TASK-008.md)、[TASK-009](TASK-009.md)、[TASK-010](TASK-010.md)。依赖必须已经集成 done 才可开始；三项依赖均已满足。
 
 共享Schema与DTO变更必须同步来源文档与调用者；不可用线程强杀破坏事务。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+当前结构核对：`src/domain/tasks/`、`src/application/tasks/`、`src/application/translation/pipeline/`、`tests/pipeline/` 在 base 中尚不存在；它们是本 Task 白名单下待建立的最小目录，不得扩展为整个 `src`/`tests`。实现前需核对 TASK-002 契约、D03/D06/D08 与现有依赖调用点；如需 Schema、共享 Port、bootstrap 或其他未列路径，先暂停并提出范围变更。
 
 ## 交付与运行记录
 
 - Handoff：尚无。
 - Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 实际执行/实验/测试：尚无；所有实施测试继续 `NOT_RUN`，不得以本次授权改写为 PASS。
+- 最近状态：2026-09-13 接管规划创建；2026-09-16 用户授权释放，登记 `ready`，等待 Codex 认领。
