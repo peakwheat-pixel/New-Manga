@@ -1179,6 +1179,9 @@ Windows 桌面入口默认使用 `%LOCALAPPDATA%/New Manga` 作为数据根，�
 `--data-root` 可覆盖该默认；正式的路径设置 UI 与迁移属于 TASK-022。该默认与
 下述 `books/{book_id}/chapters/{chapter_id}/original/` 的受托管文件布局配套。
 
+本节原有示意以 `app.db` 表示应用数据库；TASK-030 当前入口实际使用
+`library.db`，仅记录当前装配文件名，不改变本节实体、目录层级或 Schema 语义。
+
 ```text
 data/
 ├─ app.db

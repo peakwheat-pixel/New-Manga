@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-030 入口装配最小切片已授权并登记为 `ready`，尚未实施；TASK-011、TASK-013、TASK-015～TASK-027 保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
+TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-011、TASK-013、TASK-015～TASK-027 保持 `proposed`。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -33,7 +33,7 @@ TASK-001～TASK-010、TASK-012、TASK-014、TASK-028 设计、TASK-029 统一 SQ
 | [TASK-027](TASK-027.md) | 发布候选集成、打包与最终验收 | Codex | TASK-026 |
 | [TASK-028](TASK-028.md) | 冻结统一 SQLite 持久化设计（实现由 TASK-029 承接） | Codex | TASK-002, TASK-006, TASK-007, TASK-008 |
 | [TASK-029](TASK-029.md) | 实现统一 SQLite 持久化 | ZCode | done；integration `0b0b855`；TASK-028 |
-| [TASK-030](TASK-030.md) | Main.qml/bootstrap 最小生产装配 | ZCode | ready；base `087da45`；TASK-005, TASK-007, TASK-012, TASK-029, TASK-031 |
+| [TASK-030](TASK-030.md) | Main.qml/bootstrap 最小生产装配 | ZCode | done；integration `fef9dd3`；TASK-005, TASK-007, TASK-012, TASK-029, TASK-031 |
 | [TASK-031](TASK-031.md) | 生产 ImageDecoder 与 Managed Copy 适配器 | Codex | done；integration `e9d5185`；TASK-006, TASK-007, TASK-029 |
 
 每个任务含具体 Acceptance Criteria、允许修改路径与测试要求。TASK-005 已建立最小 `src/bootstrap`、`src/domain`、`src/ui` 与 `tests/core`；其余路径仍是拟议所有权边界，ready 前由 Codex 对照实际结构确认。Task 不能越过依赖、冻结状态或扩大允许范围。
