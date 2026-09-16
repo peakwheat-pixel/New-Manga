@@ -2,7 +2,7 @@
 id: TASK-013
 title: 实现工作台与任务进度交互
 kind: implementation
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: ZCode
 owner: ZCode
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-013：实现工作台与任务进度交互
 
-本 Task 已按用户授权登记为 `ready`，Owner=ZCode，Reviewer=DeepSeek Harness；尚未认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-015 及其他冻结 Task 不受本次授权影响。
+本 Task 已由 Owner=ZCode 认领并实施（2026-09-16），Reviewer=DeepSeek Harness。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-015 及其他冻结 Task 不受本次授权影响。
 
 ## 来源与目标
 
@@ -51,8 +51,15 @@ D05 §15～36/55/61～65；D06 §74～79/102～103；D08 AC-PAGE/PROGRESS/NFR-UI
 
 - 计划：python -m pytest tests/workbench；选择切换、按钮enable、失败筛选、collapse、38成功2失败、模态覆盖确认。
 - Mock长任务中操作UI不冻结；暂停反馈按获批AC阈值实测。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
+
+### 实际执行记录（executed，2026-09-16）
+
+- 环境：Windows 10.0.26200 x64；Python 3.12.3；PySide6 6.11.2；解释器 `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe`；默认 Windows Qt 平台，未设置 offscreen。
+- 命令：`python -m pytest tests/workbench` → **50 passed, 0 skipped**，退出码 0。无 skip 项，无逐项 skip 原因需要登记。
+- 命令：`python -m pytest`（全量回归，testpaths=tests）→ **465 passed, 0 skipped**，退出码 0；含 TASK-012 已审 `tests/ui_shell` 套件与架构守卫，无回归。
+- 证据：[windows-pytest-workbench.txt](../../verification/TASK-013/windows-pytest-workbench.txt)、[windows-pytest-full-suite.txt](../../verification/TASK-013/windows-pytest-full-suite.txt)。
+- AC-NFR-UI-001 为 Mock 证据：worker 线程执行 + GUI 心跳存活测试；真实 AI 负载下的性能结论不在本 Task 范围（D07 目标值需 Benchmark）。
 
 ## 依赖、风险与阻塞
 
@@ -64,7 +71,7 @@ D05 §15～36/55/61～65；D06 §74～79/102～103；D08 AC-PAGE/PROGRESS/NFR-UI
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；2026-09-16 依赖 TASK-011/012/014 全部完成后，用户授权释放本 Task，登记 `ready`；尚未开始实现。
+- Handoff：[TASK-013 工作台切片 Handoff](../handoffs/TASK-013-workbench-task-progress.md)（交付 head 见该文件，随 Handoff 提交追加）。
+- Review：尚无（交付后交 DeepSeek Harness 独立 Review）。
+- 实际执行/实验/测试：见上文“实际执行记录”与 [verification/TASK-013](../../verification/TASK-013/)。
+- 最近状态：2026-09-13 接管规划创建；2026-09-16 依赖 TASK-011/012/014 全部完成后，用户授权释放本 Task，登记 `ready`；2026-09-16 ZCode 认领并完成实现（同一投影投影层 `src/ui/models/tasks/`、工作台 ViewModel 与 worker 线程执行 `src/ui/viewmodels/workbench/`、五固定区 QML `src/ui/qml/workbench/`、`tests/workbench/` 50 项测试），测试证据已入库，待独立 Review。

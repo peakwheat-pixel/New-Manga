@@ -1,0 +1,69 @@
+=== TASK-013 Windows 验证 ===
+日期: 2026-09-16 19:44:27 +0800
+命令: python -m pytest tests/workbench （默认 Windows Qt 平台，未设置 offscreen）
+解释器: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+Python 3.12.3
+PySide6 6.11.2
+platform: win32
+---- pytest tests/workbench ----
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\TASK-013-zcode
+configfile: pytest.ini
+collecting ... collected 50 items
+
+tests/workbench/test_page_list_model.py::test_roles_carry_projection_fields PASSED [  2%]
+tests/workbench/test_page_list_model.py::test_filter_failed_shows_only_failed_rows PASSED [  4%]
+tests/workbench/test_page_list_model.py::test_filter_completed_and_skipped_sets PASSED [  6%]
+tests/workbench/test_page_list_model.py::test_selection_toggle_and_clear PASSED [  8%]
+tests/workbench/test_page_list_model.py::test_selection_ignores_unknown_pages PASSED [ 10%]
+tests/workbench/test_page_list_model.py::test_projection_refresh_preserves_selection PASSED [ 12%]
+tests/workbench/test_page_list_model.py::test_row_index_of_respects_filter PASSED [ 14%]
+tests/workbench/test_projection.py::test_pending_run_all_waiting_and_pause_stop_enabled PASSED [ 16%]
+tests/workbench/test_projection.py::test_counts_match_scheduler_projection PASSED [ 18%]
+tests/workbench/test_projection.py::test_completed_run_counts_and_progress PASSED [ 20%]
+tests/workbench/test_projection.py::test_completed_with_failures_is_not_total_failure PASSED [ 22%]
+tests/workbench/test_projection.py::test_button_matrix_all_statuses PASSED [ 24%]
+tests/workbench/test_projection.py::test_paused_buttons PASSED           [ 26%]
+tests/workbench/test_projection.py::test_blocked_run_reasons_and_buttons PASSED [ 28%]
+tests/workbench/test_projection.py::test_interrupted_buttons PASSED      [ 30%]
+tests/workbench/test_projection.py::test_cancelled_buttons PASSED        [ 32%]
+tests/workbench/test_projection.py::test_locked_overlay_does_not_change_run_status PASSED [ 34%]
+tests/workbench/test_projection.py::test_primary_focus_and_step_flow PASSED [ 36%]
+tests/workbench/test_projection.py::test_run_title_uses_command_label PASSED [ 38%]
+tests/workbench/test_qml_workbench.py::test_no_viewmodel_keeps_honest_empty_state PASSED [ 40%]
+tests/workbench/test_qml_workbench.py::test_viewmodel_without_context_shows_empty_state PASSED [ 42%]
+tests/workbench/test_qml_workbench.py::test_context_reveals_all_five_fixed_areas PASSED [ 44%]
+tests/workbench/test_qml_workbench.py::test_task_progress_reflects_run_through_qml PASSED [ 46%]
+tests/workbench/test_qml_workbench.py::test_statistic_click_filters_pagelist_through_qml PASSED [ 48%]
+tests/workbench/test_qml_workbench.py::test_dirty_confirm_dialog_blocks_and_resumes PASSED [ 50%]
+tests/workbench/test_qml_workbench.py::test_toolbar_mode_switch_roundtrip PASSED [ 52%]
+tests/workbench/test_ui_responsiveness.py::test_execute_run_runs_off_the_gui_thread PASSED [ 54%]
+tests/workbench/test_ui_responsiveness.py::test_gui_thread_stays_alive_during_run PASSED [ 56%]
+tests/workbench/test_ui_responsiveness.py::test_page_switch_remains_possible_while_run_active PASSED [ 58%]
+tests/workbench/test_workbench_viewmodel.py::test_context_loads_pages_into_idle_projection PASSED [ 60%]
+tests/workbench/test_workbench_viewmodel.py::test_empty_context_state PASSED [ 62%]
+tests/workbench/test_workbench_viewmodel.py::test_single_select_opens_viewer_and_keeps_pipeline_focus_separate PASSED [ 64%]
+tests/workbench/test_workbench_viewmodel.py::test_ctrl_and_shift_multi_select PASSED [ 66%]
+tests/workbench/test_workbench_viewmodel.py::test_translate_all_runs_to_completed_on_worker PASSED [ 68%]
+tests/workbench/test_workbench_viewmodel.py::test_command_scope_uses_selection PASSED [ 70%]
+tests/workbench/test_workbench_viewmodel.py::test_translate_selected_without_selection_errors PASSED [ 72%]
+tests/workbench/test_workbench_viewmodel.py::test_region_command_requires_region PASSED [ 74%]
+tests/workbench/test_workbench_viewmodel.py::test_pause_shows_optimistic_feedback_immediately PASSED [ 76%]
+tests/workbench/test_workbench_viewmodel.py::test_stop_cancels_running_job PASSED [ 78%]
+tests/workbench/test_workbench_viewmodel.py::test_run_badge_and_terminal_refresh PASSED [ 80%]
+tests/workbench/test_workbench_viewmodel.py::test_failure_statistic_filters_pagelist PASSED [ 82%]
+tests/workbench/test_workbench_viewmodel.py::test_retry_failed_pages_creates_and_finishes_new_run PASSED [ 84%]
+tests/workbench/test_workbench_viewmodel.py::test_inspector_lists_regions_and_selects PASSED [ 86%]
+tests/workbench/test_workbench_viewmodel.py::test_dirty_flow_save_and_discard PASSED [ 88%]
+tests/workbench/test_workbench_viewmodel.py::test_dirty_navigation_guard_intercepts_page_switch PASSED [ 90%]
+tests/workbench/test_workbench_viewmodel.py::test_dirty_navigation_discard_switches PASSED [ 92%]
+tests/workbench/test_workbench_viewmodel.py::test_progress_throttle_constant_is_about_4hz PASSED [ 94%]
+tests/workbench/test_workbench_viewmodel.py::test_refresh_timer_merges_updates PASSED [ 96%]
+tests/workbench/test_workbench_viewmodel.py::test_manual_refresh_applies_projection_immediately PASSED [ 98%]
+tests/workbench/test_workbench_viewmodel.py::test_viewer_mode_switch_and_image_url PASSED [100%]
+
+============================= 50 passed in 9.03s ==============================
+退出码: 0
+Windows 11 10.0.26200 AMD64
