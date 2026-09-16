@@ -2,7 +2,7 @@
 id: TASK-030
 title: Main.qml/bootstrap 最小生产装配
 kind: implementation
-status: in_progress
+status: in_review
 approval: approved
 decision: approved
 suggested_owner: ZCode
@@ -33,12 +33,12 @@ blocked_from: null
 
 ## 目标与 Acceptance Criteria
 
-- [ ] `src/ui/qml/Main.qml` 仅负责加载 `shell/AppShell.qml`，不新增业务逻辑。
-- [ ] `src/bootstrap/app.py` 在唯一入口构造生产 `NavigationService`、`LibraryService`、`ImportImagesUseCase`、SQLite repository 与已核准的生产 `ImageDecoder`/`ManagedCopyStore`，并通过 `setContextProperty` 注入 `navigationViewModel`、`bookshelfViewModel`；不绕过 Managed Copy 或直接让 QML 访问数据库/文件。
-- [ ] Windows 默认 Qt 平台（不设置 `QT_QPA_PLATFORM=offscreen`）从 `python -m bootstrap.app --smoke-test` 启动完整 AppShell，退出码 0；任务环境为 Python 3.12.3 / PySide6 6.11.2。
-- [ ] 入口启动后完成 100%/150%/200% DPI 截图初验并将原始截图/步骤保存至 `verification/TASK-030/`；不能用 QML 单元装载替代入口证据。
-- [ ] 真实导入探针证明源文件只读、Managed Copy 成功后才写 Page，重启后 SQLite 可读；`tests/ui_shell -v` 为 46 passed，集成全量通过数与 skip 数分列记录。
-- [ ] 非作者 DeepSeek Harness 独立 Review 与 Codex 集成复验完成后才能置 `done`。
+- [x] `src/ui/qml/Main.qml` 仅负责加载 `shell/AppShell.qml`，不新增业务逻辑。（入口窗口挂载，全部行为在 AppShell）
+- [x] `src/bootstrap/app.py` 在唯一入口构造生产 `NavigationService`、`LibraryService`、`ImportImagesUseCase`、SQLite repository 与已核准的生产 `ImageDecoder`/`ManagedCopyStore`，并通过 `setContextProperty` 注入 `navigationViewModel`、`bookshelfViewModel`；不绕过 Managed Copy 或直接让 QML 访问数据库/文件。（`assemble_services`/`assemble_engine`；`book_id_for_chapter` 绑定真实 `SqliteLibraryRepository.get_chapter`）
+- [x] Windows 默认 Qt 平台（不设置 `QT_QPA_PLATFORM=offscreen`）从 `python -m bootstrap.app --smoke-test` 启动完整 AppShell，退出码 0；任务环境为 Python 3.12.3 / PySide6 6.11.2。
+- [x] 入口启动后完成 100%/150%/200% DPI 截图初验并将原始截图/步骤保存至 `verification/TASK-030/`；不能用 QML 单元装载替代入口证据。（`--screenshot`/`--scale` 从入口启动生产栈后抓帧，dpi-10/15/20pct.png）
+- [x] 真实导入探针证明源文件只读、Managed Copy 成功后才写 Page，重启后 SQLite 可读；`tests/ui_shell -v` 为 46 passed，集成全量通过数与 skip 数分列记录。（387 passed / 0 skipped；46 passed / 0 skipped；7 passed / 0 skipped，见 author-verification.md）
+- [ ] 非作者 DeepSeek Harness 独立 Review 与 Codex 集成复验完成后才能置 `done`。（2026-09-16 已交付 DSH Review）
 
 ## 允许修改范围
 
@@ -72,3 +72,4 @@ blocked_from: null
 - 依赖核验：TASK-031 `integration_commit=e9d5185259ffa175b64d67d5ac00befadc6db643` 已提供生产 Qt 解码/Managed Copy；当前仅等待入口实现、独立 Review 与 Codex 集成验证。
 - 参考：TASK-012 [Review](../reviews/TASK-012-ca5848b.md) 的 scope-change 建议与 [集成验证](../../verification/TASK-012/integration-78987c8.md)。
 - 2026-09-16 ZCode 认领（`ready` → `in_progress`），开始入口装配实施：真实 SQLite/migration、生产 QtImageDecoder + ManagedCopyStoreAdapter（经 `book_id_for_chapter` 真实 Chapter→Book 查询）、Main.qml 挂 AppShell、setContextProperty 注入。
+- 2026-09-16 实施完成置 `in_review`：实现提交 `c3f1893`（reviewed_head），Handoff 见 [TASK-030-c3f1893](../handoffs/TASK-030-c3f1893.md)；验证证据 [author-verification.md](../../verification/TASK-030/author-verification.md)——smoke exit 0、ui_shell 46 passed/0 skipped、bootstrap 7 passed/0 skipped、全量 387 passed/0 skipped、DPI 100/150/200% 入口截图、真实导入安全链探针。待 DSH Review。
