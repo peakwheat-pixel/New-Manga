@@ -2,7 +2,7 @@
 id: TASK-011
 title: 实现命令计划、任务调度与可恢复进度
 kind: implementation
-status: ready
+status: in_progress
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-011：实现命令计划、任务调度与可恢复进度
 
-本 Task 已获用户授权进入 `ready`，尚未认领或实施。Owner=Codex，Reviewer=DeepSeek Harness；当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-013、TASK-015 及其他冻结 Task 不受本次授权影响。
+本 Task 已由 Codex 在授权分支上认领并进入 `in_progress`。Owner=Codex，Reviewer=DeepSeek Harness；当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-013、TASK-015 及其他冻结 Task 不受本次授权影响。
 
 ## 来源与目标
 
@@ -65,7 +65,7 @@ D03 §20～24；D06 §25～94；D08 AC-CMD/PIPE/PAUSE/STOP/CRASH/RETRY/LOCK/CONF
 
 ## 交付与运行记录
 
-- Handoff：尚无。
+- Handoff：实现完成后补充。
 - Review：尚无。
 - 实际执行/实验/测试：尚无；所有实施测试继续 `NOT_RUN`，不得以本次授权改写为 PASS。
-- 最近状态：2026-09-13 接管规划创建；2026-09-16 用户授权释放，登记 `ready`，等待 Codex 认领。
+- 最近状态：2026-09-13 接管规划创建；2026-09-16 用户授权释放并登记 `ready`；随后 Codex 认领，当前 `in_progress`。
