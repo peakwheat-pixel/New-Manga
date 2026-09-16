@@ -3,17 +3,19 @@
 ## 固定信息
 
 - Task：TASK-013
-- 当前集成提交：`49c72fdf4d347be70636770c366c146650888ef4`
-- 后续切片建议 base：`49c72fdf4d347be70636770c366c146650888ef4`（生产 seam 集成后；后续仅元数据收口不改变源码基线）
+- 生产 Pipeline seam 集成提交：`49c72fdf4d347be70636770c366c146650888ef4`
+- R-1 集成提交：`734d5b39a3185bf612276dada6b089b55c9e574d`
+- R-1 固定 base：`7c889cff531ef412d7774263e85f1d43e3c2ed7a`
+- R-1 reviewed_head：`7f3be549d97d2b9858867f2e7f7f861e0542342e`
 - 原实现 base：`46646d5`
 - reviewed_head：`da1daf11e65fdc80f20450bec1f5e87234b826c7`
 - Owner：Codex
 - Reviewer：DeepSeek Harness
-- 状态：`READY/NOT_RUN`（独立切片范围已批准，生产 seam 已就绪，尚未接线）
+- 状态：`DONE`（独立 Review approved，已按 §6.6 集成并完成主线复验）
 
 ## 裁决
 
-R-1 作为独立最小生产装配切片批准登记，不并入 TASK-013 的已审实现，也不释放 TASK-015 或其他冻结 Task。当前不修改 `src/bootstrap/app.py`；本轮已补齐完整生产 Pipeline seam，R-1 解除前置阻塞但仍保持未接线，Workbench 在生产入口继续显示已验证的诚实空状态。
+R-1 作为独立最小生产装配切片批准登记，不并入 TASK-013 的已审实现，也不释放 TASK-015 或其他冻结 Task。生产 Pipeline seam 已由 `49c72fdf` 提供；本轮由 Codex 在独立白名单内完成 `src/bootstrap/app.py` 的生产 `WorkbenchViewModel` 装配，并按 §6.6 以 `734d5b3` 集成。Workbench 通过真实 SQLite、真实 Chapter→Book 查询、Managed Copy 原图路径和 `setContextProperty("workbenchViewModel", ...)` 接入生产入口。
 
 拟议完整路径：
 
@@ -36,7 +38,7 @@ R-1 作为独立最小生产装配切片批准登记，不并入 TASK-013 的已
 | pipeline catalog | `SqliteTargetCatalog` 提供真实层级查询与 Revision/Lock guard | READY |
 | pipeline store/snapshot/executor | `SqlitePipelineStore`、`SqliteSnapshotProvider`、`ProductionStepExecutor` 已由本轮集成 | READY |
 
-因此不得在 `assemble_services` 中用内存/确定性对象伪造生产 `WorkbenchViewModel`。R-1 现在可以按本范围建立 `workbenchViewModel`、通过 `setContextProperty` 注入，并验证真实 Chapter→Book/页面/Region 查询；本轮仍不执行接线。不得硬编码 book id，不得绕过 Managed Copy 或源文件只读路径。
+因此不得在 `assemble_services` 中用内存/确定性对象伪造生产 `WorkbenchViewModel`。本轮已按该约束建立并注入 `workbenchViewModel`，并验证真实 Chapter→Book/页面/Region 查询；未硬编码 book id，未绕过 Managed Copy 或源文件只读路径。
 
 ## 接线验收门槛
 
