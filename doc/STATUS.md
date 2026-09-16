@@ -43,7 +43,7 @@
 
 已集成交付入口：[TASK-009 Handoff](handoffs/TASK-009-b42fc32.md)，固定 `base_commit=3de750a`、`reviewed_head=b42fc32`、`integration_commit=6c732be`；首轮 Review `2da1a39` 为 changes_requested，复审报告 `d2fe13c` 为 approved；[集成验证](../verification/TASK-009/integration-6c732be.md)记录主线复验。实现合并提交为 `dea1dee`；R-011（D02 §2 stdlib 偏差）与 F-01（`openssl unavailable` 计数口径）已关闭，TLS 6 项保持 `NOT_RUN`。
 
-已集成交付入口：[TASK-010 Handoff](handoffs/TASK-010-cd76d30.md)，固定 `base_commit=2bdfd6f`、`reviewed_head=cd76d30`、`integration_commit=a225790`；Review 报告 `008b101` 为 approved；[集成验证](../verification/TASK-010/integration-a225790.md)记录主线复验；取证报告 `05effee` 已由 `014231f` 合并。实现合并提交为 `1ea9c80`；F-01/F-02 已关闭，`tests/rendering` 顺序依赖已复现并定位为 offscreen `QGuiApplication` 单例污染，未修改测试套件。
+已集成交付入口：[TASK-010 Handoff](handoffs/TASK-010-cd76d30.md)，固定 `base_commit=2bdfd6f`、`reviewed_head=cd76d30`、`integration_commit=a225790`；Review 报告 `008b101` 为 approved；[集成验证](../verification/TASK-010/integration-a225790.md)记录主线复验；取证报告 `05effee` 已由 `014231f` 合并。实现合并提交为 `1ea9c80`；F-01/F-02 已关闭，`tests/rendering` 顺序依赖已复现并定位为 offscreen `QGuiApplication` 单例污染；经用户授权，修复提交 `4e05e59` 已隔离 smoke 子进程并将默认 pytest 收集限定为 `tests`，详见 [修复验证](../verification/TASK-010/rendering-order-fix.md)。
 
 TASK-006 Review 已完成：首轮报告 `doc/reviews/TASK-006-ba1e769.md` 为 changes_requested，复审报告 `doc/reviews/TASK-006-e1d3e2c.md` 为 approved；两个报告均已纳入 master。
 
@@ -65,7 +65,7 @@ TASK-029 已完成并收口：[TASK-029](tasks/TASK-029.md) 固定 base=`79529bc
 
 TASK-009 已完成并收口：[TASK-009](tasks/TASK-009.md) 固定 `base_commit=3de750ab7558f4c90841b96005dbbe58b8064e71`、`reviewed_head=b42fc321b37562e9596ca3bb678be1f5cda22828`、实现合并 `dea1dee`、`integration_commit=6c732be`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。
 
-TASK-010 已完成并收口：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`、`reviewed_head=cd76d30`、实现合并 `1ea9c80`、`integration_commit=a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。移交项 `tests/rendering` 已由 ZCode 在 `05effee` 复现并由 Codex 以 `014231f` 纳入主线；根因已定位，未授权修改测试套件或创建新 Task。
+TASK-010 已完成并收口：[TASK-010](tasks/TASK-010.md) 固定 `base_commit=2bdfd6f82b67a550c0550ee930d49bdb12656322`、`reviewed_head=cd76d30`、实现合并 `1ea9c80`、`integration_commit=a225790`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；作者与 Reviewer worktree 暂保留供审计。移交项 `tests/rendering` 已由 ZCode 在 `05effee` 复现并由 Codex 以 `014231f` 纳入主线；经用户授权，Codex 以 `4e05e59` 修复根因，验证见 [rendering-order-fix.md](../verification/TASK-010/rendering-order-fix.md)，未修改 `tests/rendering`、业务实现或创建新 Task。
 
 TASK-012 已完成并收口：[TASK-012](tasks/TASK-012.md) 固定 `base_commit=2cceb1e734c5079870662b7a28da316e46444810`、`reviewed_head=ca5848b`、实现合并 `b324d4b`、`integration_commit=78987c8`，Owner=`ZCode`，Reviewer=`DeepSeek Harness`；[Review](reviews/TASK-012-ca5848b.md) `report_commit=084db60` 为 approved；[集成验证](../verification/TASK-012/integration-78987c8.md)记录主线复验。R-001/R-002 已关闭；入口装配范围变更建立为 TASK-030，因生产 Qt 解码/Managed Copy 依赖未就绪保持 BLOCKED。
 
@@ -115,3 +115,4 @@ TASK-009 Review 已归档：[首轮 Review `TASK-009-f1dd602`](reviews/TASK-009-
 | 2026-09-15 | 用户 | 批准 TASK-012 与 TASK-010 并行执行；由 ZCode 实施、DeepSeek Harness 独立 Review；固定 base=`2cceb1e`，使用独立 worktree，仅执行 TASK-012 白名单，TASK-011、TASK-013、TASK-015～TASK-027 与其他业务功能继续冻结 | 用户本次批准指令 |
 | 2026-09-15 | 用户 | 要求按协议 §6.6 串行集成 TASK-010：固定被审范围 `2cceb1e..cd76d30`、approved `reviewed_head=cd76d30`、Review `report_commit=008b101`；更正 F-01、登记 F-02、回填 decision/disposition；要求 rendering 顺序依赖最小复现且在此之前不改测试套件；不启动其他 Task、不释放冻结任务、不 push | 用户本次集成指令 |
 | 2026-09-16 | 用户 | 要求 Codex 处置 TASK-010 的 rendering 顺序依赖移交项：指派 ZCode 补充最小复现；证据到位前维持 `NOT_REPRODUCED`，不改测试套件、不据此创建新 Task；临时 worktree 删除前必须保存精确命令与原始输出 | 用户本次取证指令 |
+| 2026-09-16 | 用户 | 在取证确认根因后，授权修改 `experiments/**` 与 pytest 收集配置以修复 TASK-010 rendering 顺序依赖；不修改业务实现、`tests/rendering`、其他 Task 或依赖清单，不启动新 Task | 用户本次授权指令 |

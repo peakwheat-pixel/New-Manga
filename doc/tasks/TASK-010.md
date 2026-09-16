@@ -70,7 +70,7 @@ Exact/Fuzzy 阈值已在 D03 §12.5/§14.4 登记为 `0.90`/`0.80` 的可调实�
 - Handoff：[TASK-010-cd76d30.md](../handoffs/TASK-010-cd76d30.md)（delivery_head=`cd76d30fdc561eb8f22a849eeb5989473957dc5b`，已集成）。
 - Review：[TASK-010-cd76d30.md](../reviews/TASK-010-cd76d30.md)，`report_commit=008b101`，decision=`approved`，无 P0/P1。
 - 实际执行/实验/测试：[verification/TASK-010/author-verification.md](../../verification/TASK-010/author-verification.md)——2026-09-15，Windows 10.0.26200，Python 3.12.3 / pytest 9.1.1；tests/knowledge 78 passed；全量 322 passed, 6 skipped×3 稳定（6 项均因 `openssl unavailable`）；架构守卫 4 passed；`git diff --check 2cceb1e..cd76d30` 无输出。集成复验见 [integration-a225790.md](../../verification/TASK-010/integration-a225790.md)。
-- 最近状态：2026-09-16 实现合并 `1ea9c80`、Review 报告合并并收口 `a225790`；F-01/F-02 已关闭。ZCode 取证 `05effee`、Codex 证据合并 `014231f` 已确认 tests/rendering 顺序依赖可 100% 复现，根因是 experiments 中 offscreen `QGuiApplication` 单例污染；未修改该套件，修复需另行授权，见 [rendering-order-repro.md](../../verification/TASK-010/rendering-order-repro.md)。
+- 最近状态：2026-09-16 实现合并 `1ea9c80`、Review 报告合并并收口 `a225790`；F-01/F-02 已关闭。ZCode 取证 `05effee`、Codex 证据合并 `014231f` 已确认 tests/rendering 顺序依赖可 100% 复现，根因是 experiments 中 offscreen `QGuiApplication` 单例污染；经用户授权，修复提交 `4e05e59` 已隔离 smoke 子进程并将默认 pytest 收集限定为 `tests`，验证见 [rendering-order-fix.md](../../verification/TASK-010/rendering-order-fix.md)。
 - 认领记录：2026-09-15 ZCode 认领实施，Reviewer=DeepSeek Harness（非作者）。
 
 ## Review findings disposition
@@ -79,4 +79,4 @@ Exact/Fuzzy 阈值已在 D03 §12.5/§14.4 登记为 `0.90`/`0.80` 的可调实�
 |---|---|
 | F-01 全量计数口径 | **closed**：集成后为 `322 passed, 6 skipped`；6 项均因 `openssl unavailable`。 |
 | F-02 两个未登记阈值 | **closed**：D03 §12.5/§14.4 已登记 `0.90`/`0.80`，均为可调实现参数。 |
-| tests/rendering 顺序依赖 | **REPRODUCED**：ZCode `05effee` 与 Codex `014231f` 已确认无参数 pytest 先收集 experiments，offscreen `QGuiApplication` 单例污染后续 rendering；根因已定位，未修改套件。 |
+| tests/rendering 顺序依赖 | **closed / fixed**：ZCode `05effee` 与 Codex `014231f` 已确认无参数 pytest 先收集 experiments，offscreen `QGuiApplication` 单例污染后续 rendering；用户授权后由 `4e05e59` 将 smoke 测试隔离到子进程并把默认收集限定为 `tests`。最小三件套 `3 passed`，全量 `368 passed, 6 skipped`；6 项均因 `openssl unavailable`。 |
