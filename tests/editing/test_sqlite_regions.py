@@ -29,7 +29,9 @@ def db_path(tmp_path):
 
 
 def make_repo(db_path):
-    conn, opened = open_database(db_path, latest_known_schema_version=2)
+    conn, opened = open_database(
+        db_path, latest_known_schema_version=default_migrations()[-1].schema_version
+    )
     MigrationRunner(conn, default_migrations()).apply_pending()
     repo = SqliteRegionRepository(conn)
     return conn, repo

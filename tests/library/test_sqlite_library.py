@@ -28,7 +28,9 @@ def open_repo(db_path):
     """Open-migrate-return factory: each call simulates a fresh start."""
 
     def _open():
-        conn, opened = open_database(db_path, latest_known_schema_version=2)
+        conn, opened = open_database(
+            db_path, latest_known_schema_version=default_migrations()[-1].schema_version
+        )
         MigrationRunner(conn, default_migrations()).apply_pending()
         return conn, SqliteLibraryRepository(conn)
 

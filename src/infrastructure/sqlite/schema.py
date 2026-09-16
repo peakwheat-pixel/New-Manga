@@ -11,6 +11,8 @@ v2 (TASK-029, per the frozen TASK-028 design §3): completes Book/Chapter
 columns, adds full Page import columns (NULL-tolerant for v1 structural
 placeholder pages), tags/book_tags, and regions/region_revisions with the
 same composite deferred FK pattern plus a no-current-clearing trigger.
+v3 (TASK-013): adds the durable Pipeline run graph, stage projections and
+redacted default snapshot configuration. v1/v2 statements are never edited.
 v1 statements are never edited; each version is an additive migration.
 """
 
@@ -21,6 +23,7 @@ from dataclasses import dataclass
 
 SCHEMA_VERSION_V1 = 1
 SCHEMA_VERSION_V2 = 2
+SCHEMA_VERSION_V3 = 3
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -275,6 +278,137 @@ END;
 """
 
 
+MIGRATION_V3_NAME = "v3__production_pipeline_persistence"
+
+MIGRATION_V3_SQL = """
+-- TASK-013: the JSON columns preserve the immutable domain snapshot while
+-- the child tables keep the execution graph queryable and recoverable.
+CREATE TABLE pipeline_runs (
+    run_id TEXT PRIMARY KEY CHECK (length(run_id) > 0),
+    command_type TEXT NOT NULL,
+    scope_type TEXT NOT NULL,
+    requested_targets_json TEXT NOT NULL,
+    settings_snapshot_json TEXT NOT NULL,
+    provider_binding_snapshot_json TEXT NOT NULL,
+    constraint_snapshot_ref TEXT,
+    context_policy_json TEXT NOT NULL,
+    status TEXT NOT NULL,
+    planned_step_units INTEGER NOT NULL DEFAULT 0 CHECK (planned_step_units >= 0),
+    terminal_step_units INTEGER NOT NULL DEFAULT 0 CHECK (terminal_step_units >= 0),
+    pause_requested INTEGER NOT NULL DEFAULT 0 CHECK (pause_requested IN (0, 1)),
+    cancel_requested INTEGER NOT NULL DEFAULT 0 CHECK (cancel_requested IN (0, 1)),
+    source_run_id TEXT,
+    retry_reason TEXT,
+    interruption_disposition TEXT,
+    termination_reason TEXT,
+    fatal_error TEXT,
+    run_json TEXT NOT NULL CHECK (length(run_json) > 0),
+    updated_at TEXT NOT NULL
+);
+CREATE INDEX idx_pipeline_runs_status ON pipeline_runs(status);
+
+CREATE TABLE pipeline_run_targets (
+    run_target_id TEXT PRIMARY KEY CHECK (length(run_target_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    target_type TEXT NOT NULL CHECK (target_type IN ('page', 'region')),
+    page_id TEXT NOT NULL REFERENCES pages(page_id),
+    region_id TEXT,
+    target_order INTEGER NOT NULL CHECK (target_order >= 0),
+    snapshot_json TEXT NOT NULL CHECK (length(snapshot_json) > 0),
+    UNIQUE (pipeline_run_id, target_order),
+    UNIQUE (pipeline_run_id, target_id)
+);
+CREATE INDEX idx_pipeline_run_targets_page ON pipeline_run_targets(page_id);
+
+CREATE TABLE pipeline_tasks (
+    task_id TEXT PRIMARY KEY CHECK (length(task_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    run_target_id TEXT NOT NULL REFERENCES pipeline_run_targets(run_target_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    target_type TEXT NOT NULL CHECK (target_type IN ('page', 'region')),
+    page_id TEXT NOT NULL REFERENCES pages(page_id),
+    region_id TEXT,
+    status TEXT NOT NULL,
+    units_json TEXT NOT NULL,
+    step_run_ids_json TEXT NOT NULL,
+    error_code TEXT,
+    error_detail TEXT
+);
+CREATE INDEX idx_pipeline_tasks_run ON pipeline_tasks(pipeline_run_id);
+
+CREATE TABLE step_runs (
+    step_run_id TEXT PRIMARY KEY CHECK (length(step_run_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    task_id TEXT NOT NULL REFERENCES pipeline_tasks(task_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    page_id TEXT NOT NULL REFERENCES pages(page_id),
+    region_id TEXT,
+    step_type TEXT NOT NULL,
+    unit_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    input_refs_json TEXT NOT NULL,
+    lock_snapshot_json TEXT NOT NULL,
+    retry_no INTEGER NOT NULL DEFAULT 0 CHECK (retry_no >= 0),
+    error_code TEXT,
+    error_detail TEXT,
+    output_json TEXT NOT NULL
+);
+CREATE INDEX idx_step_runs_run ON step_runs(pipeline_run_id);
+
+CREATE TABLE step_run_input_refs (
+    step_run_id TEXT NOT NULL REFERENCES step_runs(step_run_id) ON DELETE CASCADE,
+    input_order INTEGER NOT NULL CHECK (input_order >= 0),
+    ref_key TEXT NOT NULL,
+    revision_id TEXT,
+    PRIMARY KEY (step_run_id, input_order)
+);
+
+CREATE TABLE step_run_output_refs (
+    step_run_id TEXT NOT NULL REFERENCES step_runs(step_run_id) ON DELETE CASCADE,
+    output_order INTEGER NOT NULL CHECK (output_order >= 0),
+    ref_key TEXT NOT NULL,
+    value_json TEXT NOT NULL,
+    PRIMARY KEY (step_run_id, output_order)
+);
+
+CREATE TABLE step_result_candidates (
+    candidate_id TEXT PRIMARY KEY CHECK (length(candidate_id) > 0),
+    pipeline_run_id TEXT NOT NULL REFERENCES pipeline_runs(run_id) ON DELETE CASCADE,
+    step_run_id TEXT NOT NULL REFERENCES step_runs(step_run_id) ON DELETE CASCADE,
+    target_id TEXT NOT NULL,
+    page_id TEXT NOT NULL REFERENCES pages(page_id),
+    region_id TEXT,
+    result_kind TEXT NOT NULL,
+    base_revision_id TEXT,
+    payload_json TEXT NOT NULL,
+    reason TEXT NOT NULL,
+    status TEXT NOT NULL,
+    created_at TEXT NOT NULL,
+    resolved_at TEXT
+);
+CREATE INDEX idx_step_result_candidates_run ON step_result_candidates(pipeline_run_id);
+
+CREATE TABLE pipeline_stage_states (
+    target_type TEXT NOT NULL CHECK (target_type IN ('page', 'region')),
+    target_id TEXT NOT NULL,
+    stage TEXT NOT NULL,
+    status TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    PRIMARY KEY (target_type, target_id, stage)
+);
+
+CREATE TABLE pipeline_defaults (
+    defaults_id INTEGER PRIMARY KEY CHECK (defaults_id = 1),
+    settings_json TEXT NOT NULL,
+    provider_bindings_json TEXT NOT NULL,
+    constraint_snapshot_ref TEXT,
+    context_policy_json TEXT NOT NULL,
+    updated_at TEXT NOT NULL
+);
+"""
+
+
 @dataclass(frozen=True)
 class Migration:
     schema_version: int
@@ -290,4 +424,5 @@ def default_migrations() -> tuple[Migration, ...]:
     return (
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
         Migration(SCHEMA_VERSION_V2, MIGRATION_V2_NAME, MIGRATION_V2_SQL),
+        Migration(SCHEMA_VERSION_V3, MIGRATION_V3_NAME, MIGRATION_V3_SQL),
     )
