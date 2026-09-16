@@ -20,7 +20,7 @@ review_report_commit: 9fbfa48
 
 # TASK-013：实现工作台与任务进度交互
 
-本 Task 已由 Owner=ZCode 完成实现，经过 Reviewer=DeepSeek Harness 独立 Review，并由 Codex 按 §6.6 串行集成。交付 head 固定 `da1daf1`（base `46646d5`），实现合并为 `32a1eb5`，`integration_commit=f0814a8`；R-001～R-003 已收口，R-1 另行裁决为独立装配切片，当前不接线。TASK-015 及其他冻结 Task 不受本次授权影响。
+本 Task 已由 Owner=ZCode 完成实现，经过 Reviewer=DeepSeek Harness 独立 Review，并由 Codex 按 §6.6 串行集成。交付 head 固定 `da1daf1`（base `46646d5`），实现合并为 `32a1eb5`，`integration_commit=f0814a8`；R-001～R-003 已收口，R-1 另行裁决为独立装配切片，当前不接线但已解除前置阻塞（`READY/NOT_RUN`）。TASK-015 及其他冻结 Task 不受本次授权影响。
 
 ## 来源与目标
 
@@ -46,6 +46,24 @@ D05 §15～36/55/61～65；D06 §74～79/102～103；D08 AC-PAGE/PROGRESS/NFR-UI
 - doc/tasks/TASK-013.md
 - doc/handoffs/TASK-013-*.md
 - verification/TASK-013/**
+
+### 生产 Pipeline seam 集成切片（本次授权）
+
+本切片是用户在 2026-09-16 明确授权、承接 R-1 前置阻塞的范围变更；不改写原工作台实现，也不启动 TASK-015 或其他冻结 Task。固定对象：`base_commit=126bab5`、`reviewed_head=e5b58e7378a9fa4e5737220e51a9000a19a21a4e`、Review 报告 `8f7c454`、`integration_commit=49c72fdf4d347be70636770c366c146650888ef4`；Owner=`Codex`，Reviewer=`DeepSeek Harness`。
+
+实际授权路径：
+
+- `src/application/tasks/service.py`
+- `src/infrastructure/sqlite/schema.py`
+- `src/infrastructure/sqlite/pipeline.py`
+- `src/infrastructure/pipeline/**`
+- `tests/pipeline/**`
+- `tests/storage/**`
+- `tests/library/test_sqlite_library.py`、`tests/editing/test_sqlite_regions.py`（v3 schema 上限 fixture 对齐）
+- `verification/TASK-013/**`
+- 本文件仅作授权/状态/链接元数据回填；四条 Codex 统一状态文档仅作导航元数据回填
+
+本切片验收：v3 追加 Pipeline 持久化表；真实 SQLite TargetCatalog/Store/SnapshotProvider/StepExecutor 装配；Pipeline 生命周期持久化、恢复与失败码；Windows 默认 Qt 的 pipeline/storage/workbench/全量验证。生产 `src/bootstrap/app.py`、QML、`src/domain/**`、共享 Protocol、v1/v2 schema 语义、依赖清单、AGENTS、TASK-012 已审实现和冻结 Task 均不在本切片内。
 
 ## 禁止范围
 
@@ -89,10 +107,10 @@ D05 §15～36/55/61～65；D06 §74～79/102～103；D08 AC-PAGE/PROGRESS/NFR-UI
 
 ## R-1 接线范围裁决
 
-- **裁决**：批准建立独立最小生产装配切片，但不在 TASK-013 集成中接线；当前 `R-1=BLOCKED/NOT_RUN`，不以空实现或内存实现替代生产绑定，也不释放 TASK-015 或其他冻结 Task。
+- **裁决**：批准建立独立最小生产装配切片，但不在 TASK-013 集成中接线；当前 `R-1=READY/NOT_RUN`，本轮不以空实现或内存实现替代生产绑定，也不释放 TASK-015 或其他冻结 Task。
 - **拟议范围**：`G:/CODEX/New Manga/src/bootstrap/app.py`、`G:/CODEX/New Manga/tests/core/test_bootstrap.py`、`G:/CODEX/New Manga/verification/TASK-013/**`、`G:/CODEX/New Manga/doc/00_INDEX.md`、`G:/CODEX/New Manga/doc/12_ROADMAP.md`、`G:/CODEX/New Manga/doc/STATUS.md`、`G:/CODEX/New Manga/doc/tasks/README.md`；Owner=`Codex`，Reviewer=`DeepSeek Harness`，建议 base=`07a5881`。该切片不得修改 Schema/migration、共享 Port、依赖清单、其他 Task、AGENTS 或 TASK-012 已审实现。
 - **已核实的生产 seam**：`SqliteLibraryRepository.list_pages(chapter_id)` 可绑定 page catalog；`SqliteRegionRepository.list_regions/get_region` 与 `RegionEditingService.save_manual_translation` 可绑定 Region/人工译文编辑；`NavigationViewModel` 可作为导航依赖。
-- **未就绪的生产 seam**：当前 `PipelineService` 仅发现 `InMemoryTargetCatalog`、`InMemoryPipelineStore`、`InMemorySnapshotProvider` 与 `DeterministicStepExecutor`；尚无生产 `TargetCatalog.expand/current/commit_step`、PipelineStore、SnapshotProvider 和真实 StepExecutor 的完整装配。因此本次不向 QML 注入 `workbenchViewModel`，生产 Workbench 继续保持诚实空状态。
+- **已就绪的生产 seam**：本轮已集成 `SqliteTargetCatalog`、`SqlitePipelineStore`、`SqliteSnapshotProvider` 与 `ProductionStepExecutor`，覆盖真实 `TargetCatalog.expand/current/commit_step`、Pipeline 持久化、快照恢复和执行失败码。因此 R-1 已解除前置阻塞；本次仍不向 QML 注入 `workbenchViewModel`，生产 Workbench 继续保持诚实空状态。
 - **接线验收门槛**：提供上述完整生产 Pipeline 绑定；`assemble_services` 只使用真实 SQLite/服务对象并通过 `setContextProperty("workbenchViewModel", ...)` 注入；入口验证真实 Chapter→Book/页面/Region 查询且无硬编码；Windows 默认 Qt（不设 offscreen）入口 smoke、WorkBench/UI 与全量回归均须记录 passed/skipped 分列及 skip 原因。
 
 ## 交付与运行记录
@@ -100,4 +118,4 @@ D05 §15～36/55/61～65；D06 §74～79/102～103；D08 AC-PAGE/PROGRESS/NFR-UI
 - Handoff：[TASK-013 工作台切片 Handoff](../handoffs/TASK-013-workbench-task-progress.md)，固定 base=`46646d5`、delivery_head=`da1daf1`。
 - Review：[TASK-013 Review](../reviews/TASK-013-da1daf1.md)，`report_commit=9fbfa48`，approved。
 - 实际执行/实验/测试：见上文“作者执行记录”“集成后验证记录”与 [verification/TASK-013](../../verification/TASK-013/)。
-- 最近状态：2026-09-16 依赖 TASK-011/012/014 全部完成后授权并实施；实现 commit `da1daf1`，实现合并 `32a1eb5`；DSH Review `9fbfa48` approved；Codex 保留实现与 Review merge，填写 `integration_commit=f0814a8`，完成集成后 `51 passed, 0 skipped` / `460 passed, 6 skipped` 验证；Task 置 `done`。R-1 保持独立切片 BLOCKED/NOT_RUN。
+- 最近状态：2026-09-16 依赖 TASK-011/012/014 全部完成后授权并实施；原工作台实现 commit `da1daf1`，实现合并 `32a1eb5`；DSH Review `9fbfa48` approved，原 Task `integration_commit=f0814a8`；随后按用户明确授权，以 `base_commit=126bab5` 集成生产 Pipeline seam，固定 `reviewed_head=e5b58e7`、Review `8f7c454`、`integration_commit=49c72fdf`，关闭 R-01/R-02，R-03 合并到 R-1；Task 置 `done`。R-1 为独立 `READY/NOT_RUN` 切片，未修改 bootstrap/QML。

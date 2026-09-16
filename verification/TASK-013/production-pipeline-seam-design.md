@@ -1,8 +1,8 @@
 # TASK-013：生产 Pipeline seam 设计记录
 
-状态：APPROVED FOR IMPLEMENTATION（用户已授权）  
-基线：`126bab54e03849d2684921a5d7fb211f7ad7c23b`  
-Owner：Codex  
+状态：APPROVED FOR IMPLEMENTATION（用户已授权）
+基线：`126bab54e03849d2684921a5d7fb211f7ad7c23b`
+Owner：Codex
 Reviewer：DeepSeek Harness（实现 head 固定后独立 Review）
 
 ## 范围

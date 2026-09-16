@@ -1,6 +1,6 @@
 # 下一阶段可执行 Roadmap
 
-更新日期：2026-09-16。TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-015～TASK-027 未启动。此路线依据 D01～D08 和 [Gap Register](10_CURRENT_STATE_AND_GAPS.md)，没有排入无来源的新产品能力，也不承诺未经验证的日期/工期。
+更新日期：2026-09-16。TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-013 生产 Pipeline seam 已以 `integration_commit=49c72fdf` 集成，R-1 为 `READY/NOT_RUN` 且尚未接线；TASK-015～TASK-027 未启动。此路线依据 D01～D08 和 [Gap Register](10_CURRENT_STATE_AND_GAPS.md)，没有排入无来源的新产品能力，也不承诺未经验证的日期/工期。
 
 ## 1. 阶段与退出条件
 
@@ -34,7 +34,7 @@ flowchart LR
 
 ## 2. 第一批释放状态与后续建议
 
-TASK-001～TASK-012 已集成完成：TASK-003 冻结验收/证据与 Fixture 规范并关闭 F-08；TASK-004 完成 Windows/PySide6/打包隔离实验；TASK-005 按方案 A 建立最小工程入口与架构守卫；TASK-006 完成持久化与 Artifact 安全提交基础；TASK-007 完成书架领域与本地图片导入，并关闭 F-01～F-03，按规则 deferred F-04；TASK-008 完成 Region 编辑、Revision 与人工保护，R-201/R-202 按 Review 记录 deferred；TASK-009 完成 Provider 配置、网络策略与凭据边界（实现 `dea1dee`，收口 `6c732be`）；TASK-010 完成翻译约束、TM 与 Context（实现 `1ea9c80`，收口 `a225790`，F-01/F-02 已关闭）；TASK-011 完成命令计划、任务调度与可恢复进度（实现 `6a2016b`，Review `36f874a`，integration `369e95f`，R-001～R-003 已登记收口）；TASK-012 完成四页导航与书架 UI（实现 `b324d4b`，收口 `78987c8`，R-001/R-002 已关闭）。TASK-014 完成配色与文字排版渲染（实现 `a61216a`，收口 `a943297`）；TASK-028 已完成统一 SQLite 设计冻结；TASK-029 已按该设计完成实现、独立 Review 与 Codex 集成（实现 `2ea5445`，收口 `0b0b855`）；TASK-031 生产 ImageDecoder/Managed Copy 适配器已按固定 Review 完成集成（实现 `c67a105`，R-001～R-003 收口 `d4fe993`，integration `e9d5185`）；TASK-030 入口装配最小切片已完成集成（实现 `c3f1893`，R-001～R-003 与登记事项收口 `a29f02e`，integration `fef9dd3`）；TASK-013 工作台与任务进度已完成集成（实现 `da1daf1`，Review `9fbfa48`，integration `f0814a8`），R-001～R-003 已收口，R-1 独立装配切片保持 BLOCKED/NOT_RUN；其他业务功能继续冻结。
+TASK-001～TASK-012 已集成完成：TASK-003 冻结验收/证据与 Fixture 规范并关闭 F-08；TASK-004 完成 Windows/PySide6/打包隔离实验；TASK-005 按方案 A 建立最小工程入口与架构守卫；TASK-006 完成持久化与 Artifact 安全提交基础；TASK-007 完成书架领域与本地图片导入，并关闭 F-01～F-03，按规则 deferred F-04；TASK-008 完成 Region 编辑、Revision 与人工保护，R-201/R-202 按 Review 记录 deferred；TASK-009 完成 Provider 配置、网络策略与凭据边界（实现 `dea1dee`，收口 `6c732be`）；TASK-010 完成翻译约束、TM 与 Context（实现 `1ea9c80`，收口 `a225790`，F-01/F-02 已关闭）；TASK-011 完成命令计划、任务调度与可恢复进度（实现 `6a2016b`，Review `36f874a`，integration `369e95f`，R-001～R-003 已登记收口）；TASK-012 完成四页导航与书架 UI（实现 `b324d4b`，收口 `78987c8`，R-001/R-002 已关闭）。TASK-014 完成配色与文字排版渲染（实现 `a61216a`，收口 `a943297`）；TASK-028 已完成统一 SQLite 设计冻结；TASK-029 已按该设计完成实现、独立 Review 与 Codex 集成（实现 `2ea5445`，收口 `0b0b855`）；TASK-031 生产 ImageDecoder/Managed Copy 适配器已按固定 Review 完成集成（实现 `c67a105`，R-001～R-003 收口 `d4fe993`，integration `e9d5185`）；TASK-030 入口装配最小切片已完成集成（实现 `c3f1893`，R-001～R-003 与登记事项收口 `a29f02e`，integration `fef9dd3`）；TASK-013 工作台与任务进度已完成集成（实现 `da1daf1`，Review `9fbfa48`，integration `f0814a8`），R-001～R-003 已收口；随后以 `base_commit=126bab5`、`reviewed_head=e5b58e7`、Review `8f7c454` 按 `integration_commit=49c72fdf` 集成生产 Pipeline seam，R-1 已解除前置阻塞并保持 `READY/NOT_RUN`，R-03 合并到下一个接线切片；其他业务功能继续冻结。
 
 这里的顺序是建议，不以用户批准接管推定其批准全部开发。TASK-009、TASK-010、TASK-011、TASK-012、TASK-013、TASK-014、TASK-030 与 TASK-031 已完成集成；TASK-015～TASK-027 仍冻结；默认同一 ZCode 实例不得并行实现两个 Task，本次 TASK-012 例外使用独立 worktree/branch，其他任务仍遵循默认规则。用户若明确批准一组任务，Codex据此持续完成该组，无需重复请求同一授权。
 
