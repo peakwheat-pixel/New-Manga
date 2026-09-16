@@ -1,0 +1,2365 @@
+{
+  "schema": "task016-experiment-result-v2",
+  "manifest_sha256": "5e988b9b65d85ef87d947cbd1a9f74b18af3e4c9fb676a5ae82022c8d5fe4cf3",
+  "mode": "probe-only",
+  "providers": [
+    "manga-ocr",
+    "paddleocr-korean",
+    "openai-compatible-vision",
+    "detector-dbnet",
+    "detector-ctd",
+    "detector-yolo"
+  ],
+  "model_sha256_sentinel": "NOT_AVAILABLE",
+  "offline_environment": {
+    "HF_HUB_OFFLINE": null,
+    "TRANSFORMERS_OFFLINE": null,
+    "HF_DATASETS_OFFLINE": null
+  },
+  "fallback_configuration": {
+    "configured_routes": [],
+    "problems": [
+      "no fallback route configured"
+    ],
+    "valid": false
+  },
+  "verification_matrix": [
+    {
+      "stage": "detection",
+      "candidates": "detector-dbnet, detector-ctd, detector-yolo",
+      "geometric_protocol": "COVERED — tile_polygon_to_global / order_results (model-free)",
+      "real_detection_run": "BLOCKED — no detector weights and no onnxruntime in this interpreter",
+      "scope_decision": "detector-yolo is DOCUMENTATION_ONLY (no in-repo implementation source); dbnet/ctd are runnable candidates once weights are supplied"
+    },
+    {
+      "stage": "recognition",
+      "candidates": "manga-ocr",
+      "geometric_protocol": "COVERED — map_region_result preserves region_id and page-global coordinates",
+      "real_recognition_run": "BLOCKED — dependency and weights unavailable; weight gate enforced before construction",
+      "scope_decision": "none"
+    },
+    {
+      "stage": "detection+recognition",
+      "candidates": "paddleocr-korean, openai-compatible-vision",
+      "geometric_protocol": "COVERED — same protocol helpers",
+      "real_run": "BLOCKED — dependency/weights unavailable; no configured endpoint",
+      "scope_decision": "model-weight licence, and endpoint authorization"
+    }
+  ],
+  "records": [
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "stage": "recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed 0.1.16 (not confirmed online)",
+        "model_ref": "UNVERIFIED — kha-white/manga-ocr",
+        "license": "UNVERIFIED — repository claims Apache-2.0; model-weight terms unchecked",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "local_weights": [
+          "TASK016_MANGA_OCR_WEIGHTS",
+          "TASK016_MANGA_OCR_MODEL_DIR"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "stage": "recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed 0.1.16 (not confirmed online)",
+        "model_ref": "UNVERIFIED — kha-white/manga-ocr",
+        "license": "UNVERIFIED — repository claims Apache-2.0; model-weight terms unchecked",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "local_weights": [
+          "TASK016_MANGA_OCR_WEIGHTS",
+          "TASK016_MANGA_OCR_MODEL_DIR"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "stage": "recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed 0.1.16 (not confirmed online)",
+        "model_ref": "UNVERIFIED — kha-white/manga-ocr",
+        "license": "UNVERIFIED — repository claims Apache-2.0; model-weight terms unchecked",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "local_weights": [
+          "TASK016_MANGA_OCR_WEIGHTS",
+          "TASK016_MANGA_OCR_MODEL_DIR"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "probe-only",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "stage": "recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed 0.1.16 (not confirmed online)",
+        "model_ref": "UNVERIFIED — kha-white/manga-ocr",
+        "license": "UNVERIFIED — repository claims Apache-2.0; model-weight terms unchecked",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "local_weights": [
+          "TASK016_MANGA_OCR_WEIGHTS",
+          "TASK016_MANGA_OCR_MODEL_DIR"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "probe-only",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "stage": "recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed 0.1.16 (not confirmed online)",
+        "model_ref": "UNVERIFIED — kha-white/manga-ocr",
+        "license": "UNVERIFIED — repository claims Apache-2.0; model-weight terms unchecked",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "local_weights": [
+          "TASK016_MANGA_OCR_WEIGHTS",
+          "TASK016_MANGA_OCR_MODEL_DIR"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "probe-only",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed PaddleOCR 3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "UNVERIFIED — korean_PP-OCRv5_mobile_rec",
+        "license": "UNVERIFIED — code claims Apache-2.0; model-weight terms must be checked",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "local_weights": [
+          "TASK016_PADDLEOCR_WEIGHTS",
+          "TASK016_PADDLEOCR_MODEL_DIR"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr and/or paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed PaddleOCR 3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "UNVERIFIED — korean_PP-OCRv5_mobile_rec",
+        "license": "UNVERIFIED — code claims Apache-2.0; model-weight terms must be checked",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "local_weights": [
+          "TASK016_PADDLEOCR_WEIGHTS",
+          "TASK016_PADDLEOCR_MODEL_DIR"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr and/or paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed PaddleOCR 3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "UNVERIFIED — korean_PP-OCRv5_mobile_rec",
+        "license": "UNVERIFIED — code claims Apache-2.0; model-weight terms must be checked",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "local_weights": [
+          "TASK016_PADDLEOCR_WEIGHTS",
+          "TASK016_PADDLEOCR_MODEL_DIR"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "probe-only",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr and/or paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed PaddleOCR 3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "UNVERIFIED — korean_PP-OCRv5_mobile_rec",
+        "license": "UNVERIFIED — code claims Apache-2.0; model-weight terms must be checked",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "local_weights": [
+          "TASK016_PADDLEOCR_WEIGHTS",
+          "TASK016_PADDLEOCR_MODEL_DIR"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "probe-only",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr and/or paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — requires local weights (R-005 gate)",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — claimed PaddleOCR 3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "UNVERIFIED — korean_PP-OCRv5_mobile_rec",
+        "license": "UNVERIFIED — code claims Apache-2.0; model-weight terms must be checked",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "local_weights": [
+          "TASK016_PADDLEOCR_WEIGHTS",
+          "TASK016_PADDLEOCR_MODEL_DIR"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "probe-only",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr and/or paddle"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Vision model behind an OpenAI-compatible endpoint",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — operator-supplied endpoint, no local weights",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — candidate family only; no endpoint claimed",
+        "model_ref": "UNVERIFIED — operator-supplied model id",
+        "license": "UNVERIFIED — depends on the operator's endpoint and model",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "local_weights": [],
+        "capability": "Vision recognition/detection with a JSON polygon request"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model configuration"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Vision model behind an OpenAI-compatible endpoint",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — operator-supplied endpoint, no local weights",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — candidate family only; no endpoint claimed",
+        "model_ref": "UNVERIFIED — operator-supplied model id",
+        "license": "UNVERIFIED — depends on the operator's endpoint and model",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "local_weights": [],
+        "capability": "Vision recognition/detection with a JSON polygon request"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model configuration"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Vision model behind an OpenAI-compatible endpoint",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — operator-supplied endpoint, no local weights",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — candidate family only; no endpoint claimed",
+        "model_ref": "UNVERIFIED — operator-supplied model id",
+        "license": "UNVERIFIED — depends on the operator's endpoint and model",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "local_weights": [],
+        "capability": "Vision recognition/detection with a JSON polygon request"
+      },
+      "mode": "probe-only",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model configuration"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Vision model behind an OpenAI-compatible endpoint",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — operator-supplied endpoint, no local weights",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — candidate family only; no endpoint claimed",
+        "model_ref": "UNVERIFIED — operator-supplied model id",
+        "license": "UNVERIFIED — depends on the operator's endpoint and model",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "local_weights": [],
+        "capability": "Vision recognition/detection with a JSON polygon request"
+      },
+      "mode": "probe-only",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model configuration"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Vision model behind an OpenAI-compatible endpoint",
+        "stage": "detection+recognition",
+        "scope_status": "CANDIDATE — operator-supplied endpoint, no local weights",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — candidate family only; no endpoint claimed",
+        "model_ref": "UNVERIFIED — operator-supplied model id",
+        "license": "UNVERIFIED — depends on the operator's endpoint and model",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "local_weights": [],
+        "capability": "Vision recognition/detection with a JSON polygon request"
+      },
+      "mode": "probe-only",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model configuration"
+    },
+    {
+      "provider": "detector-dbnet",
+      "candidate": {
+        "candidate": "DBNet (documented as the default detector)",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — documented as 'default' (DBNet ResNet34) with no pinned version",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_DBNET_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — historical reference; detector/registry.py is NOT in this repository"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-dbnet",
+      "candidate": {
+        "candidate": "DBNet (documented as the default detector)",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — documented as 'default' (DBNet ResNet34) with no pinned version",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_DBNET_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — historical reference; detector/registry.py is NOT in this repository"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-dbnet",
+      "candidate": {
+        "candidate": "DBNet (documented as the default detector)",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — documented as 'default' (DBNet ResNet34) with no pinned version",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_DBNET_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — historical reference; detector/registry.py is NOT in this repository"
+      },
+      "mode": "probe-only",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-dbnet",
+      "candidate": {
+        "candidate": "DBNet (documented as the default detector)",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — documented as 'default' (DBNet ResNet34) with no pinned version",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_DBNET_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — historical reference; detector/registry.py is NOT in this repository"
+      },
+      "mode": "probe-only",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-dbnet",
+      "candidate": {
+        "candidate": "DBNet (documented as the default detector)",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — documented as 'default' (DBNet ResNet34) with no pinned version",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_DBNET_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — historical reference; detector/registry.py is NOT in this repository"
+      },
+      "mode": "probe-only",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-ctd",
+      "candidate": {
+        "candidate": "CTD",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — named in docs, no version pinned",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_CTD_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 / doc/02_TECHNICAL_ARCHITECTURE_.md:24"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-ctd",
+      "candidate": {
+        "candidate": "CTD",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — named in docs, no version pinned",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_CTD_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 / doc/02_TECHNICAL_ARCHITECTURE_.md:24"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-ctd",
+      "candidate": {
+        "candidate": "CTD",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — named in docs, no version pinned",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_CTD_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 / doc/02_TECHNICAL_ARCHITECTURE_.md:24"
+      },
+      "mode": "probe-only",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-ctd",
+      "candidate": {
+        "candidate": "CTD",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — named in docs, no version pinned",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_CTD_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 / doc/02_TECHNICAL_ARCHITECTURE_.md:24"
+      },
+      "mode": "probe-only",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-ctd",
+      "candidate": {
+        "candidate": "CTD",
+        "stage": "detection",
+        "scope_status": "CANDIDATE — documented only; no weight file provided",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — named in docs, no version pinned",
+        "model_ref": "UNVERIFIED — no weight file available in this environment",
+        "license": "UNVERIFIED — detector weights not obtained",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_CTD_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 / doc/02_TECHNICAL_ARCHITECTURE_.md:24"
+      },
+      "mode": "probe-only",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-yolo",
+      "candidate": {
+        "candidate": "YOLO family (yolo / saber_yolo / aux_yolo)",
+        "stage": "detection",
+        "scope_status": "DOCUMENTATION_ONLY — no implementation source in this repository",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — names only; the referenced registry is not in this repository",
+        "model_ref": "UNVERIFIED — no weight file and no in-repo implementation source",
+        "license": "UNVERIFIED — upstream terms unknown; requires a scope decision",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_YOLO_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite — documentation-only candidate",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — explicitly '本仓库无此文件'"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-yolo",
+      "candidate": {
+        "candidate": "YOLO family (yolo / saber_yolo / aux_yolo)",
+        "stage": "detection",
+        "scope_status": "DOCUMENTATION_ONLY — no implementation source in this repository",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — names only; the referenced registry is not in this repository",
+        "model_ref": "UNVERIFIED — no weight file and no in-repo implementation source",
+        "license": "UNVERIFIED — upstream terms unknown; requires a scope decision",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_YOLO_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite — documentation-only candidate",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — explicitly '本仓库无此文件'"
+      },
+      "mode": "probe-only",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-yolo",
+      "candidate": {
+        "candidate": "YOLO family (yolo / saber_yolo / aux_yolo)",
+        "stage": "detection",
+        "scope_status": "DOCUMENTATION_ONLY — no implementation source in this repository",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — names only; the referenced registry is not in this repository",
+        "model_ref": "UNVERIFIED — no weight file and no in-repo implementation source",
+        "license": "UNVERIFIED — upstream terms unknown; requires a scope decision",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_YOLO_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite — documentation-only candidate",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — explicitly '本仓库无此文件'"
+      },
+      "mode": "probe-only",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-yolo",
+      "candidate": {
+        "candidate": "YOLO family (yolo / saber_yolo / aux_yolo)",
+        "stage": "detection",
+        "scope_status": "DOCUMENTATION_ONLY — no implementation source in this repository",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — names only; the referenced registry is not in this repository",
+        "model_ref": "UNVERIFIED — no weight file and no in-repo implementation source",
+        "license": "UNVERIFIED — upstream terms unknown; requires a scope decision",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_YOLO_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite — documentation-only candidate",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — explicitly '本仓库无此文件'"
+      },
+      "mode": "probe-only",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    },
+    {
+      "provider": "detector-yolo",
+      "candidate": {
+        "candidate": "YOLO family (yolo / saber_yolo / aux_yolo)",
+        "stage": "detection",
+        "scope_status": "DOCUMENTATION_ONLY — no implementation source in this repository",
+        "metadata_status": "UNVERIFIED",
+        "version": "UNVERIFIED — names only; the referenced registry is not in this repository",
+        "model_ref": "UNVERIFIED — no weight file and no in-repo implementation source",
+        "license": "UNVERIFIED — upstream terms unknown; requires a scope decision",
+        "requires": [
+          "onnxruntime"
+        ],
+        "local_weights": [
+          "TASK016_YOLO_WEIGHTS"
+        ],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite — documentation-only candidate",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — explicitly '本仓库无此文件'"
+      },
+      "mode": "probe-only",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured and named fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "probe-only: detector runtime/weights unavailable"
+    }
+  ]
+}
