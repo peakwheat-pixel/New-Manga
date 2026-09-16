@@ -2,21 +2,21 @@
 id: TASK-015
 title: 实现阅读器与五种成果导出
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-012, TASK-014]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 1000ac82743b75df8b4b385bc7096a015e13f107
+branch: agent/zcode/TASK-015-reader-export
+worktree: G:/CODEX/New Manga.worktrees/TASK-015-zcode
 integration_commit: null
 ---
 
 # TASK-015：实现阅读器与五种成果导出
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户批准并登记为 `ready`，等待 Owner 在固定 worktree 中认领并实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
@@ -54,7 +54,7 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 
 - 计划：python -m pytest tests/reading_export；重启继续阅读、双模式独立、缺译图、五格式内容/页序/元数据。
 - 非法/Unicode文件名、已有目标文件、磁盘错误和stale选择；验证导出产物可重新读取。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 实现前结果全部 `NOT_RUN`；Owner 必须在本 Task 目录建立后记录实际测试命令、环境、退出码与输出。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -63,11 +63,11 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 
 本任务实现导出不等于发布Gate通过；进度与Webtoon跨模块回归由TASK-020/026补齐。
 
-如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
+如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持 `BLOCKED`。本次实际 Owner 为 ZCode，Reviewer 为 DeepSeek Harness；实现不得扩展到白名单外路径。
 
 ## 交付与运行记录
 
-- Handoff：尚无。
+- Handoff：待 Owner 交付。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-16 用户批准释放；`ready`，固定 base=`1000ac82743b75df8b4b385bc7096a015e13f107`，等待 Owner 认领。
