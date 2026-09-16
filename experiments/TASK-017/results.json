@@ -1,0 +1,81 @@
+{
+  "scenarios": [
+    {
+      "id": "S1_happy_path_context_glossary",
+      "transport": "ok",
+      "kind": "ok",
+      "ok": true,
+      "detail": "",
+      "latency_ms": 47.0,
+      "tokens_estimated": 29,
+      "glossary_hits": [
+        "倒す",
+        "先輩",
+        "마법"
+      ],
+      "context_truncated_pages": []
+    },
+    {
+      "id": "S2_retry_input_invariance",
+      "first_fault": "http_5xx",
+      "second_fault": "ok",
+      "second_ok": true,
+      "payload_hash": "7c5c50cd316ba74d776d81547ab1d2079a43dbb7c3c8c366c8861864ec3f062e",
+      "requests_recorded": 2,
+      "payloads_identical": true
+    },
+    {
+      "id": "S_malformed_json",
+      "transport": "ok",
+      "classified": "malformed_json",
+      "expected": "malformed_json",
+      "match": true,
+      "retryable": true
+    },
+    {
+      "id": "S_drop_region-2",
+      "transport": "ok",
+      "classified": "missing_ids",
+      "expected": "missing_ids",
+      "match": true,
+      "retryable": true
+    },
+    {
+      "id": "S_dup_region-1",
+      "transport": "ok",
+      "classified": "duplicate_ids",
+      "expected": "duplicate_ids",
+      "match": true,
+      "retryable": true
+    },
+    {
+      "id": "S_extra_region-999",
+      "transport": "ok",
+      "classified": "extra_ids",
+      "expected": "extra_ids",
+      "match": true,
+      "retryable": true
+    },
+    {
+      "id": "S_empty",
+      "transport": "ok",
+      "classified": "empty_translations",
+      "expected": "empty_translations",
+      "match": true,
+      "retryable": true
+    },
+    {
+      "id": "S8_explicit_fallback_chain",
+      "primary_fault": "http_5xx",
+      "secondary_fault": "ok",
+      "secondary_ok": true,
+      "provenance_records_switch": true,
+      "no_automatic_fallback_by_construction": true
+    }
+  ],
+  "not_run": [
+    "真实 OpenAI-compatible 远程 Provider（未配置付费端点，禁止自行配置）",
+    "真实 Sakura 本地实例（本机未运行 Sakura 服务）",
+    "真实模型的术语一致性/质量评分（mock 为确定性规则翻译，不声称模型质量）"
+  ]
+}
