@@ -1,0 +1,2 @@
+== command: PYTHONPATH=src G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m bootstrap.app --smoke-test (Windows default Qt, no QT_QPA_PLATFORM) ==
+EXIT=0
