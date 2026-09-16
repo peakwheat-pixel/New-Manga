@@ -1,0 +1,291 @@
+{
+  "schema": "task016-sample-manifest-v1",
+  "provenance": "self-authored raster samples; no third-party artwork",
+  "generator": "experiments/TASK-016/generate_samples.py",
+  "samples": [
+    {
+      "sample_id": "jp-horizontal",
+      "kind": "japanese-horizontal",
+      "path": "jp_horizontal.png",
+      "width": 800,
+      "height": 260,
+      "regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "tiles": [],
+      "sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb"
+    },
+    {
+      "sample_id": "jp-vertical",
+      "kind": "japanese-vertical",
+      "path": "jp_vertical.png",
+      "width": 420,
+      "height": 620,
+      "regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "tiles": [],
+      "sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66"
+    },
+    {
+      "sample_id": "ko-horizontal",
+      "kind": "korean-horizontal",
+      "path": "ko_horizontal.png",
+      "width": 800,
+      "height": 260,
+      "regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "tiles": [],
+      "sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36"
+    },
+    {
+      "sample_id": "art-text",
+      "kind": "rotated-art-text",
+      "path": "art_text.png",
+      "width": 900,
+      "height": 420,
+      "regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "tiles": [],
+      "sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada"
+    },
+    {
+      "sample_id": "long-tile",
+      "kind": "long-image-tile-global-coordinate",
+      "path": "long_tile.png",
+      "width": 900,
+      "height": 1900,
+      "regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "tiles": [
+        {
+          "tile_id": "tile-00",
+          "origin": [
+            0,
+            0
+          ],
+          "size": [
+            900,
+            700
+          ]
+        },
+        {
+          "tile_id": "tile-01",
+          "origin": [
+            0,
+            600
+          ],
+          "size": [
+            900,
+            700
+          ]
+        },
+        {
+          "tile_id": "tile-02",
+          "origin": [
+            0,
+            1200
+          ],
+          "size": [
+            900,
+            700
+          ]
+        },
+        {
+          "tile_id": "tile-03",
+          "origin": [
+            0,
+            1800
+          ],
+          "size": [
+            900,
+            100
+          ]
+        }
+      ],
+      "sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1"
+    }
+  ]
+}

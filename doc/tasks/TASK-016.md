@@ -2,21 +2,23 @@
 id: TASK-016
 title: OCR 与检测路线独立实验
 kind: experiment
-status: proposed
-approval: pending_user_review
+status: in_progress
+approval: approved
 suggested_owner: DeepSeek Harness
-owner: null
-reviewer: null
+owner: DeepSeek Harness
+reviewer: Codex
 depends_on: [TASK-003, TASK-004]
-base_commit: null
-branch: null
-worktree: null
+base_commit: f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86
+branch: agent/deepseek/TASK-016-ocr-detection-experiment
+worktree: G:/CODEX/New Manga.worktrees/TASK-016-deepseek
 integration_commit: null
 ---
 
 # TASK-016：OCR 与检测路线独立实验
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 已获用户授权并由 DeepSeek Harness 认领，当前处于 `in_progress`。固定基线为
+`f9edd68845d4a1ee5d42d9fdcf1a304dc3fa2f86`，工作分支与路径见顶部元数据；共用流程见
+[协作协议](../09_COLLABORATION.md)。本实验不修改生产实现，不把实验结论直接升级为产品需求。
 
 ## 来源与目标
 
@@ -66,3 +68,5 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-16 用户授权释放；DeepSeek Harness 认领，`in_progress`。base=`f9edd68`、分支/工作区见顶部元数据。
+- 最近状态：2026-09-16 实验交付并置 `in_review`。产物：`experiments/TASK-016/`（协议自检 4 passed/0 skipped；harness 在 probe-only 与 `--run-models` 下各输出 15 条 BLOCKED）、`doc/research/TASK-016.md`（候选/版本/许可调研）、`verification/TASK-016/experiment-log.md`（环境、命令、退出码、skip 原因、BLOCKED/NOT_RUN 清单）。**模型质量/性能全部 BLOCKED**：依赖全缺且 `huggingface.co` 不可达，未以 Mock 冒充。无 GPU/API 阻塞之外的残留；未修改生产 src/tests/Schema/依赖/AGENTS，未 push/合并。待 Codex 独立 Review；本 Task 不自行标记 approved/done。
