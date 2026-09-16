@@ -241,10 +241,10 @@ D08 §74（建议验收结果目录）与 §75（verification-summary.md 推荐�
 
 | 组标识 | 已有来源 | 内容 | 后续处理 | 当前结果 |
 |---|---|---|---|---|
-| `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | 图片/文件夹以外的 PDF、MOBI、网页导入 | TASK-024定义支持矩阵/AC，TASK-023实现 | NOT_RUN |
-| `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin/Hooks、AI生成插件Agent | TASK-024确认条件和AC，TASK-025按获批范围实现 | NOT_RUN |
-| `ACG-EXT-FONT` | D01 §2；D05 §48 | 字体上传和资源处理 | TASK-024确认AC，TASK-022实现 | NOT_RUN |
-| `ACG-EXT-SAKURA` | D01 §2；D02 §11 | Sakura服务监控、模型/设备就绪状态 | TASK-024明确监控范围，TASK-019落实批准部分 | NOT_RUN |
+| `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | 图片/文件夹以外的 PDF、MOBI、网页导入 | TASK-024已定义边界（[contracts/extensions.md §1.1/1.2](contracts/extensions.md)），AC 草案与释放条件待用户批准（U-1/U-2）后转编号 AC，TASK-023实现 | NOT_RUN |
+| `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin/Hooks、AI生成插件Agent | TASK-024已定义边界与 Plugin Agent 保留条件（[contracts/extensions.md §1.3/1.4](contracts/extensions.md)），待用户批准（U-3/U-4）后转编号 AC，TASK-025按获批范围实现 | NOT_RUN |
+| `ACG-EXT-FONT` | D01 §2；D05 §48 | 字体上传和资源处理 | TASK-024已定义边界（[contracts/extensions.md §1.5](contracts/extensions.md)），待用户批准（U-5）后转编号 AC，TASK-022实现 | NOT_RUN |
+| `ACG-EXT-SAKURA` | D01 §2；D02 §11 | Sakura服务监控、模型/设备就绪状态 | TASK-024已定义草案边界（健康探测级）（[contracts/extensions.md §1.6](contracts/extensions.md)），待用户批准（U-6）后转编号 AC，TASK-019落实批准部分 | NOT_RUN |
 | `ACG-EXT-DETECT` | D06 §6/8 | 检测、配色和SourceStyle本身的正确性 | 质量方法见规范 §7；TASK-016/019与TASK-014验证 | NOT_RUN |
 | `ACG-EXT-CONTRACT` | D03/D06，G06～G13 | 状态、复合写回、Pin/TM/Review、SFX等未闭合契约 | TASK-002已冻结契约；精确AC待TASK-003/024补齐 | NOT_RUN |
 | `ACG-EXT-NFR` | D07目标数值与D08发布要求 | SHOULD/P1/豁免的口径及基准环境 | TASK-001/003核对并形成用户可审核规则，TASK-026实测 | NOT_RUN |
