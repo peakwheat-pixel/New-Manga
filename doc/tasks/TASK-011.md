@@ -2,7 +2,7 @@
 id: TASK-011
 title: 实现命令计划、任务调度与可恢复进度
 kind: implementation
-status: in_review
+status: done
 approval: approved
 suggested_owner: Codex
 owner: Codex
@@ -11,12 +11,12 @@ depends_on: [TASK-008, TASK-009, TASK-010]
 base_commit: 1668cd5daebf07ea89fb93b5261410a6cba1c033
 branch: agent/codex/TASK-011-command-scheduler
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 369e95f6ff854f2cdb5eca0abffe8c044e38bff1
 ---
 
 # TASK-011：实现命令计划、任务调度与可恢复进度
 
-本 Task 已由 Codex 在授权分支上认领并进入 `in_progress`。Owner=Codex，Reviewer=DeepSeek Harness；当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-013、TASK-015 及其他冻结 Task 不受本次授权影响。
+本 Task 已由 Codex 实施，经过 DeepSeek Harness 独立 Review 并由 Codex 按 §6.6 集成收口。Owner=Codex，Reviewer=DeepSeek Harness；当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。TASK-013、TASK-015 及其他冻结 Task 不受本次授权影响。
 
 ## 来源与目标
 
@@ -26,11 +26,11 @@ D03 §20～24；D06 §25～94；D08 AC-CMD/PIPE/PAUSE/STOP/CRASH/RETRY/LOCK/CONF
 
 ## Acceptance Criteria
 
-- [ ] 覆盖冻结后的所有Page/Region命令，复用有效OCR、严格rerender、stale、prerequisite、不可变目标/配置快照。
-- [ ] 实现资源上限、每步提交、双重Lock/Revision写回保护；暂停安全边界、停止保留成功成果、崩溃识别interrupted。
-- [ ] 失败页重试创建新Run并记录来源；状态/跳过原因/百分比/页计数同一投影，覆盖空计划和非Page直接target。
-- [ ] 先用确定性Mock验证完整依赖和失败路径；Mock结果不能证明AI质量。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 覆盖冻结后的所有Page/Region命令，复用有效OCR、严格rerender、stale、prerequisite、不可变目标/配置快照。
+- [x] 实现资源上限、每步提交、双重Lock/Revision写回保护；暂停安全边界、停止保留成功成果、崩溃识别interrupted（当前为进程内生命周期语义）。
+- [x] 失败页重试创建新Run并记录来源；状态/跳过原因/百分比/页计数同一投影，覆盖空计划和非Page直接target。
+- [x] 先用确定性Mock验证完整依赖和失败路径；Mock结果不能证明AI质量。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后完成。
 
 ## 允许修改范围
 
@@ -44,6 +44,8 @@ D03 §20～24；D06 §25～94；D08 AC-CMD/PIPE/PAUSE/STOP/CRASH/RETRY/LOCK/CONF
 - doc/handoffs/TASK-011-*.md
 - verification/TASK-011/**
 
+Codex 按协作协议 §3.6 维护的 `doc/00_INDEX.md`、`doc/12_ROADMAP.md`、`doc/STATUS.md`、`doc/tasks/README.md` 仅用于本 Task 的状态、导航和链接同步；不扩大 Owner 的实现白名单。
+
 ## 禁止范围
 
 不得修改未列出的其他 Task、AGENTS、生产数据或用户源文件。实验任务不写生产 src；Review 任务不顺手修生产代码。共享接口、Schema、依赖或装配超出白名单时，先由 Codex在本 Task 明确范围变更。
@@ -52,7 +54,7 @@ D03 §20～24；D06 §25～94；D08 AC-CMD/PIPE/PAUSE/STOP/CRASH/RETRY/LOCK/CONF
 
 - 计划：python -m pytest tests/pipeline；命令矩阵、Run中selection变化、全锁定/全跳过、取消计数、38成功2失败。
 - Step故障注入、pause/stop竞态、crash重启、10→12写回冲突、Provider消失、上下文只写目标。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 集成后 Windows 实测：`G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/pipeline -v`，27 passed，0 skipped；全量补充验证为 409 passed，6 skipped，6 项均因 `openssl unavailable`。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
 ## 依赖、风险与阻塞
@@ -66,6 +68,13 @@ D03 §20～24；D06 §25～94；D08 AC-CMD/PIPE/PAUSE/STOP/CRASH/RETRY/LOCK/CONF
 ## 交付与运行记录
 
 - Handoff：[TASK-011-6a2016b](../handoffs/TASK-011-6a2016b.md)，delivery_head=`6a2016b`。
-- Review：尚无。
+- Review：[TASK-011-6a2016b](../reviews/TASK-011-6a2016b.md)，`decision=approved`，报告 commit=`36f874a`。
+- 集成：作者实现合并=`053d253`；Review 合并=`369e95f`；`integration_commit=369e95f6ff854f2cdb5eca0abffe8c044e38bff1`；集成验证见 [integration-369e95f6.md](../../verification/TASK-011/integration-369e95f6.md)。
 - 实际执行/实验/测试：[验证证据](../../verification/TASK-011/tests-6a2016b.txt)：pipeline `27 passed, 0 skipped`；全量 `409 passed, 6 skipped`，6 项均因 `openssl unavailable`。
-- 最近状态：2026-09-13 接管规划创建；2026-09-16 用户授权释放并登记 `ready`；随后 Codex 认领并完成实现，当前 `in_review`，等待 DeepSeek Harness 独立 Review；`integration_commit=null`。
+- 最近状态：2026-09-13 接管规划创建；2026-09-16 用户授权释放并登记 `ready`；随后 Codex 完成实现，DSH 于 `36f874a` 独立 Review approved，Codex 按 §6.6 集成并完成复验；当前 `done`。
+
+## Review finding disposition
+
+- **R-001 closed**：删除 `src/application/translation/pipeline/executor.py` 文件末尾多余空行，`git diff --check 1668cd5 369e95f --` 不再命中该问题。
+- **R-002 closed**：四个项目状态文档由 Codex 按协作协议 §3.6 作为状态/导航元数据维护，不属于 Owner 的生产实现白名单扩张。
+- **R-003 closed（证据边界登记）**：当前 `Crash Continue/Restart/Abandon` 仅证明进程内生命周期语义；真实进程崩溃后的 SQLite 持久化恢复为 `NOT_RUN`，需另行获批切片，不作已实现能力宣称。

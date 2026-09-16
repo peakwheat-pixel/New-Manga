@@ -61,4 +61,3 @@ class DeterministicStepExecutor:
             output_target_ids=self.output_target_ids or (unit.target_id,),
             revision_updates={revision_key: f"{unit.target_id}:{step_run.step_run_id}"},
         )
-
