@@ -2,21 +2,21 @@
 id: TASK-017
 title: Translation 与上下文输出协议实验
 kind: experiment
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: DeepSeek Harness
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-003, TASK-004]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 348a48e
+branch: agent/zcode/TASK-017-translation-protocol-experiment
+worktree: G:/CODEX/New Manga.worktrees/TASK-017-zcode
 integration_commit: null
 ---
 
 # TASK-017：Translation 与上下文输出协议实验
 
-本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+本 Task 由 2026-09-16 ZCode 全权窗口授权解冻（条款见 [STATUS](../STATUS.md)）：窗口内由 ZCode 实施、ZCode 子 agent Review（结论登记 `approved_subagent`）、ZCode 代行集成；期满后补外部 post-hoc 复审。`reviewer` 栏 DeepSeek Harness 为期满补审与后续协作的外部 Reviewer。窗口 base 取解冻时 master HEAD=`348a48e`。实验不修改正式术语/TM或真实用户数据；不自行配置付费 Provider——真实端点未配置时按 AC 只报告已测层（mock 协议层）。
 
 ## 来源与目标
 
