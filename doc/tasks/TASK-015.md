@@ -2,7 +2,7 @@
 id: TASK-015
 title: 实现阅读器与五种成果导出
 kind: implementation
-status: in_progress
+status: in_review
 approval: approved
 decision: approved
 suggested_owner: ZCode
@@ -27,9 +27,9 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 
 ## Acceptance Criteria
 
-- [ ] 实现Original/Translated两模式、RTL/LTR、独立阅读进度/时长与书架摘要；Webtoon完整按宽滚动由TASK-020验证。
-- [ ] 单图/ZIP/CBZ/PDF/文本全部有范围、顺序、输出路径/命名/覆盖策略与ExportHistory。
-- [ ] 导出stale明确提示先渲染或继续当前版本，写失败/取消保留原有目标文件和源文件。
+- [x] 实现Original/Translated两模式、RTL/LTR、独立阅读进度/时长与书架摘要；Webtoon完整按宽滚动由TASK-020验证。（服务层通过；Qt实际加载 BLOCKED）
+- [x] 单图/ZIP/CBZ/PDF/文本全部有范围、顺序、输出路径/命名/覆盖策略与ExportHistory。（服务层通过）
+- [x] 导出stale明确提示先渲染或继续当前版本，写失败/取消保留原有目标文件和源文件。（服务层通过）
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
@@ -68,7 +68,8 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-16 用户授权释放；ZCode 在指定 worktree 以固定 base 认领，`ready` → `in_progress`，开始需求核对与 TDD 实施。
+- Handoff：[TASK-015-fac2ffe](../handoffs/TASK-015-fac2ffe.md)。
+- Review：待 DeepSeek Harness 独立 Review；作者不得自审。
+- 实际执行/实验/测试：[author-verification](../../verification/TASK-015/author-verification.md)。
+- 最近状态：2026-09-16 用户授权释放；ZCode 以固定 base 认领，`ready` → `in_progress`。
+- 最近状态：2026-09-16 实现 head `fac2ffe`，专项 `8 passed, 0 skipped`；Qt/full regression 按证据记录 BLOCKED/NOT_RUN，状态置 `in_review`，通知 DeepSeek Harness 独立 Review。
