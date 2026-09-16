@@ -2,7 +2,7 @@
 id: TASK-030
 title: Main.qml/bootstrap 最小生产装配
 kind: implementation
-status: ready
+status: in_progress
 approval: approved
 decision: approved
 suggested_owner: ZCode
@@ -68,6 +68,7 @@ blocked_from: null
 
 ## 交付记录
 
-- 当前状态：`READY`；Owner=`ZCode`，Reviewer=`DeepSeek Harness`；`base_commit=087da45590c84227e9695eb829669e9cee805ef2`；branch=`agent/zcode/TASK-030-main-bootstrap-assembly`；worktree=`G:/CODEX/New Manga.worktrees/TASK-030-zcode`；尚无 Handoff、Review、`integration_commit`。
+- 当前状态：`in_progress`（2026-09-16 ZCode 认领）；Owner=`ZCode`，Reviewer=`DeepSeek Harness`；`base_commit=087da45590c84227e9695eb829669e9cee805ef2`；branch=`agent/zcode/TASK-030-main-bootstrap-assembly`；worktree=`G:/CODEX/New Manga.worktrees/TASK-030-zcode`；尚无 Handoff、Review、`integration_commit`。
 - 依赖核验：TASK-031 `integration_commit=e9d5185259ffa175b64d67d5ac00befadc6db643` 已提供生产 Qt 解码/Managed Copy；当前仅等待入口实现、独立 Review 与 Codex 集成验证。
 - 参考：TASK-012 [Review](../reviews/TASK-012-ca5848b.md) 的 scope-change 建议与 [集成验证](../../verification/TASK-012/integration-78987c8.md)。
+- 2026-09-16 ZCode 认领（`ready` → `in_progress`），开始入口装配实施：真实 SQLite/migration、生产 QtImageDecoder + ManagedCopyStoreAdapter（经 `book_id_for_chapter` 真实 Chapter→Book 查询）、Main.qml 挂 AppShell、setContextProperty 注入。
