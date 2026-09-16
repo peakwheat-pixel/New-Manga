@@ -2,7 +2,7 @@
 id: TASK-016
 title: OCR 与检测路线独立实验
 kind: experiment
-status: in_progress
+status: in_review
 approval: approved
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
