@@ -1,10 +1,27 @@
-"""Run or honestly block the TASK-016 OCR route experiment.
+"""Run or honestly block the TASK-016 OCR/detection route experiment.
 
 Default mode is a no-download capability probe. ``--run-models`` is explicit:
 it may invoke an already-installed local model or an already-configured
 OpenAI-compatible endpoint, but it never installs dependencies or downloads
 weights. Every result carries enough fields to distinguish quality evidence
 from a missing prerequisite.
+
+Revision notes (TASK-016 review findings):
+
+* **R-001** — detector candidates are first-class ``CANDIDATES`` entries with
+  ``stage``/``metadata_status``; they are probed and failed explicitly, and the
+  report carries a ``verification_matrix`` stating what evidence exists per
+  candidate stage (and what still needs a scope decision).
+* **R-003** — every ``version``/``license`` value is prefixed ``UNVERIFIED`` and
+  carries ``metadata_status: "UNVERIFIED"``; no version or licence is asserted
+  that was not confirmed online.
+* **R-004** — one sentinel ``MODEL_SHA256_UNAVAILABLE`` covers every record
+  without a real model digest; a sample hash is never written to
+  ``model_sha256``.
+
+Preserved from a concurrent author's revision in this worktree: the manga-ocr
+recognition path crops the Region polygon before recognition instead of feeding
+the whole sample image.
 """
 
 from __future__ import annotations
@@ -23,37 +40,112 @@ import time
 from typing import Any
 from urllib import request
 
-from protocol import map_region_result, order_results
+from protocol import map_region_result, order_results, validate_route_configuration
 
 
 ROOT = Path(__file__).resolve().parent
 
+#: R-004: the one and only sentinel for "no real model digest available".
+MODEL_SHA256_UNAVAILABLE = "NOT_AVAILABLE"
+
+#: R-003: prefix applied to every unverified version/licence string.
+UNVERIFIED = "UNVERIFIED"
+
+#: R-002: routes this experiment may fall back to. Empty by default — nothing is
+#: configured, therefore every fallback is BLOCKED.
+CONFIGURED_ROUTES: set[str] = set()
+
 CANDIDATES: dict[str, dict[str, Any]] = {
     "manga-ocr": {
         "candidate": "manga-ocr",
-        "version": "0.1.16",
-        "model_ref": "kha-white/manga-ocr@v0.1.16",
-        "license": "Apache-2.0 (repository)",
+        "stage": "recognition",
+        "metadata_status": "UNVERIFIED",
+        "version": f"{UNVERIFIED} — claimed 0.1.16 (not confirmed online)",
+        "model_ref": f"{UNVERIFIED} — kha-white/manga-ocr",
+        "license": f"{UNVERIFIED} — repository claims Apache-2.0; model-weight terms unchecked",
         "requires": ["manga_ocr", "Pillow", "torch", "transformers"],
         "capability": "Japanese recognition on an existing Region crop; no detector output",
     },
     "paddleocr-korean": {
         "candidate": "PaddleOCR + PP-OCRv5 Korean",
-        "version": "3.7.0 / korean_PP-OCRv5_mobile_rec",
-        "model_ref": "korean_PP-OCRv5_mobile_rec",
-        "license": "PaddleOCR code Apache-2.0; model-weight terms must be checked before redistribution",
+        "stage": "detection+recognition",
+        "metadata_status": "UNVERIFIED",
+        "version": f"{UNVERIFIED} — claimed PaddleOCR 3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": f"{UNVERIFIED} — korean_PP-OCRv5_mobile_rec",
+        "license": f"{UNVERIFIED} — code claims Apache-2.0; model-weight terms must be checked",
         "requires": ["paddleocr", "paddlepaddle"],
         "capability": "Detection + Korean/English recognition",
     },
     "openai-compatible-vision": {
-        "candidate": "Phi-3.5-vision-instruct via vLLM OpenAI-compatible server",
-        "version": "Phi-3.5-vision-instruct / vLLM 0.29.0",
-        "model_ref": "microsoft/Phi-3.5-vision-instruct",
-        "license": "MIT model; vLLM Apache-2.0",
+        "candidate": "Vision model behind an OpenAI-compatible endpoint",
+        "stage": "detection+recognition",
+        "metadata_status": "UNVERIFIED",
+        "version": f"{UNVERIFIED} — candidate family only; no endpoint claimed",
+        "model_ref": f"{UNVERIFIED} — operator-supplied model id",
+        "license": f"{UNVERIFIED} — depends on the operator's endpoint and model",
         "requires": ["TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL", "TASK016_OPENAI_MODEL or OPENAI_MODEL"],
-        "capability": "Vision recognition/detection candidate with JSON polygon request",
+        "capability": "Vision recognition/detection with a JSON polygon request",
+    },
+    # ---------------- R-001: detector candidates ----------------
+    "detector-dbnet": {
+        "candidate": "DBNet (documented as the default detector)",
+        "stage": "detection",
+        "metadata_status": "UNVERIFIED",
+        "version": f"{UNVERIFIED} — documented as 'default' (DBNet ResNet34) with no pinned version",
+        "model_ref": f"{UNVERIFIED} — no weight file available in this environment",
+        "license": f"{UNVERIFIED} — detector weights not obtained",
+        "requires": ["onnxruntime"],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — historical reference; detector/registry.py is NOT in this repository",
+    },
+    "detector-ctd": {
+        "candidate": "CTD",
+        "stage": "detection",
+        "metadata_status": "UNVERIFIED",
+        "version": f"{UNVERIFIED} — named in docs, no version pinned",
+        "model_ref": f"{UNVERIFIED} — no weight file available in this environment",
+        "license": f"{UNVERIFIED} — detector weights not obtained",
+        "requires": ["onnxruntime"],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 / doc/02_TECHNICAL_ARCHITECTURE_.md:24",
+    },
+    "detector-yolo": {
+        "candidate": "YOLO family (yolo / saber_yolo / aux_yolo)",
+        "stage": "detection",
+        "metadata_status": "UNVERIFIED",
+        "version": f"{UNVERIFIED} — names only; the referenced registry is not in this repository",
+        "model_ref": f"{UNVERIFIED} — no weight file and no in-repo implementation source",
+        "license": f"{UNVERIFIED} — upstream terms unknown; requires a scope decision",
+        "requires": ["onnxruntime"],
+        "capability": "Text detection (polygon/bbox) as an OCR prerequisite",
+        "documented_in": "doc/01_FUNCTIONAL_ARCHITECTURE.md:255 — explicitly '本仓库无此文件'",
     },
 }
+
+#: R-001: what evidence each candidate stage can produce in this environment.
+VERIFICATION_MATRIX: tuple[dict[str, str], ...] = (
+    {
+        "stage": "detection",
+        "candidates": "detector-dbnet, detector-ctd, detector-yolo",
+        "geometric_protocol": "COVERED — tile_polygon_to_global / order_results (model-free)",
+        "real_detection_run": "BLOCKED — no detector weights and no onnxruntime in this interpreter",
+        "scope_decision_needed": "YOLO family has no in-repo implementation source (detector/registry.py absent)",
+    },
+    {
+        "stage": "recognition",
+        "candidates": "manga-ocr",
+        "geometric_protocol": "COVERED — map_region_result preserves region_id and page-global coordinates",
+        "real_recognition_run": "BLOCKED — dependency and weights unavailable",
+        "scope_decision_needed": "none",
+    },
+    {
+        "stage": "detection+recognition",
+        "candidates": "paddleocr-korean, openai-compatible-vision",
+        "geometric_protocol": "COVERED — same protocol helpers",
+        "real_run": "BLOCKED — dependency/weights unavailable; no configured endpoint",
+        "scope_decision_needed": "model-weight licence, and endpoint authorization",
+    },
+)
 
 
 def _sha256(path: Path) -> str:
@@ -128,7 +220,8 @@ def _base_result(provider: str, sample: dict[str, Any], *, mode: str) -> dict[st
         "sample_sha256": sample["sha256"],
         "expected_regions": sample["regions"],
         "observed_regions": None,
-        "model_sha256": os.environ.get("TASK016_MODEL_SHA256", "NOT_AVAILABLE"),
+        # R-004: only a real model run may replace this; a sample hash never may.
+        "model_sha256": MODEL_SHA256_UNAVAILABLE,
         "recognition_errors": "NOT_RUN",
         "coordinate_order": "NOT_RUN",
         "fallback": "NOT_RUN",
@@ -144,8 +237,11 @@ def _base_result(provider: str, sample: dict[str, Any], *, mode: str) -> dict[st
 
 
 def _blocked(result: dict[str, Any], reason: str) -> dict[str, Any]:
-    result.update({"status": "BLOCKED", "reason": reason, "model_sha256": "NOT_AVAILABLE"})
-    result["fallback"] = "BLOCKED: no explicitly configured fallback route"
+    result.update({"status": "BLOCKED", "reason": reason})
+    # R-004: keep the single sentinel; never substitute the sample hash.
+    result["model_sha256"] = MODEL_SHA256_UNAVAILABLE
+    # R-002: nothing is configured and no route is named, so fallback stays BLOCKED.
+    result["fallback"] = "BLOCKED: no explicitly configured and named fallback route"
     return result
 
 
@@ -178,7 +274,14 @@ def _run_manga_ocr(result: dict[str, Any], sample: dict[str, Any]) -> dict[str, 
     result["metrics"]["vram_before_mb"] = _vram_mb()
     try:
         with Image.open(image_path) as image:
-            text = str(MangaOcr()(image))
+            polygon = sample["regions"][0]["polygon"]
+            box = (
+                min(point[0] for point in polygon),
+                min(point[1] for point in polygon),
+                max(point[0] for point in polygon),
+                max(point[1] for point in polygon),
+            )
+            text = str(MangaOcr()(image.crop(box)))
         result["observed_regions"] = [map_region_result(
             region_id=sample["regions"][0]["region_id"],
             text=text,
@@ -319,8 +422,31 @@ def _run_openai_compatible(result: dict[str, Any], sample: dict[str, Any]) -> di
     return result
 
 
+def _run_detector(result: dict[str, Any], sample: dict[str, Any], provider: str) -> dict[str, Any]:
+    """R-001: probe a detector candidate and fail explicitly.
+
+    No detector box is ever fabricated: the historical ``detector/registry.py``
+    is not part of this repository and no weight file is available here.
+    """
+
+    result["metrics"]["rss_before_mb"] = _memory_mb()
+    result["metrics"]["vram_before_mb"] = _vram_mb()
+    if not _package_available("onnxruntime"):
+        return _blocked(
+            result,
+            "missing dependency: onnxruntime (detector runtime); no weight file present either",
+        )
+    return _blocked(
+        result,
+        f"no production detector implementation source for {provider!r}: the documented registry "
+        "module is absent from this repository and no weight file was provided; "
+        "a scope decision is required before this candidate can run",
+    )
+
+
 def _run_provider(provider: str, sample: dict[str, Any], mode: str) -> dict[str, Any]:
     result = _base_result(provider, sample, mode=mode)
+    stage = CANDIDATES[provider]["stage"]
     if mode == "probe-only":
         if provider == "manga-ocr" and not _package_available("manga_ocr"):
             return _blocked(result, "missing dependency: manga_ocr")
@@ -331,12 +457,16 @@ def _run_provider(provider: str, sample: dict[str, Any], mode: str) -> dict[str,
             and (os.environ.get("TASK016_OPENAI_MODEL") or os.environ.get("OPENAI_MODEL"))
         ):
             return _blocked(result, "missing endpoint/model configuration")
+        if stage == "detection":
+            return _blocked(result, "probe-only: detector runtime/weights unavailable")
         return _blocked(result, "probe-only: real inference intentionally not invoked")
     if provider == "manga-ocr":
         return _run_manga_ocr(result, sample)
     if provider == "paddleocr-korean":
         return _run_paddle(result, sample)
-    return _run_openai_compatible(result, sample)
+    if provider == "openai-compatible-vision":
+        return _run_openai_compatible(result, sample)
+    return _run_detector(result, sample, provider)
 
 
 def run(manifest_path: Path, output_path: Path, providers: list[str], run_models: bool) -> None:
@@ -347,10 +477,13 @@ def run(manifest_path: Path, output_path: Path, providers: list[str], run_models
         for sample in manifest["samples"]:
             records.append(_run_provider(provider, sample, mode))
     output = {
-        "schema": "task016-experiment-result-v1",
+        "schema": "task016-experiment-result-v2",
         "manifest_sha256": _sha256(manifest_path),
         "mode": mode,
         "providers": providers,
+        "model_sha256_sentinel": MODEL_SHA256_UNAVAILABLE,
+        "fallback_configuration": validate_route_configuration(CONFIGURED_ROUTES),
+        "verification_matrix": [dict(row) for row in VERIFICATION_MATRIX],
         "records": records,
     }
     output_path.parent.mkdir(parents=True, exist_ok=True)

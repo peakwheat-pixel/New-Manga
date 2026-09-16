@@ -1,0 +1,1084 @@
+{
+  "schema": "task016-experiment-result-v1",
+  "manifest_sha256": "5e988b9b65d85ef87d947cbd1a9f74b18af3e4c9fb676a5ae82022c8d5fe4cf3",
+  "mode": "model-run",
+  "providers": [
+    "manga-ocr",
+    "paddleocr-korean",
+    "openai-compatible-vision"
+  ],
+  "records": [
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "version": "0.1.16",
+        "model_ref": "kha-white/manga-ocr@v0.1.16",
+        "license": "Apache-2.0 (repository)",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "model-run",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "version": "0.1.16",
+        "model_ref": "kha-white/manga-ocr@v0.1.16",
+        "license": "Apache-2.0 (repository)",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "model-run",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "version": "0.1.16",
+        "model_ref": "kha-white/manga-ocr@v0.1.16",
+        "license": "Apache-2.0 (repository)",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "model-run",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "version": "0.1.16",
+        "model_ref": "kha-white/manga-ocr@v0.1.16",
+        "license": "Apache-2.0 (repository)",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "model-run",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "manga-ocr",
+      "candidate": {
+        "candidate": "manga-ocr",
+        "version": "0.1.16",
+        "model_ref": "kha-white/manga-ocr@v0.1.16",
+        "license": "Apache-2.0 (repository)",
+        "requires": [
+          "manga_ocr",
+          "Pillow",
+          "torch",
+          "transformers"
+        ],
+        "capability": "Japanese recognition on an existing Region crop; no detector output"
+      },
+      "mode": "model-run",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: manga_ocr"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "version": "3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "korean_PP-OCRv5_mobile_rec",
+        "license": "PaddleOCR code Apache-2.0; model-weight terms must be checked before redistribution",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "model-run",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr, paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "version": "3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "korean_PP-OCRv5_mobile_rec",
+        "license": "PaddleOCR code Apache-2.0; model-weight terms must be checked before redistribution",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "model-run",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr, paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "version": "3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "korean_PP-OCRv5_mobile_rec",
+        "license": "PaddleOCR code Apache-2.0; model-weight terms must be checked before redistribution",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "model-run",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr, paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "version": "3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "korean_PP-OCRv5_mobile_rec",
+        "license": "PaddleOCR code Apache-2.0; model-weight terms must be checked before redistribution",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "model-run",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr, paddle"
+    },
+    {
+      "provider": "paddleocr-korean",
+      "candidate": {
+        "candidate": "PaddleOCR + PP-OCRv5 Korean",
+        "version": "3.7.0 / korean_PP-OCRv5_mobile_rec",
+        "model_ref": "korean_PP-OCRv5_mobile_rec",
+        "license": "PaddleOCR code Apache-2.0; model-weight terms must be checked before redistribution",
+        "requires": [
+          "paddleocr",
+          "paddlepaddle"
+        ],
+        "capability": "Detection + Korean/English recognition"
+      },
+      "mode": "model-run",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "missing dependency: paddleocr, paddle"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Phi-3.5-vision-instruct via vLLM OpenAI-compatible server",
+        "version": "Phi-3.5-vision-instruct / vLLM 0.29.0",
+        "model_ref": "microsoft/Phi-3.5-vision-instruct",
+        "license": "MIT model; vLLM Apache-2.0",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "capability": "Vision recognition/detection candidate with JSON polygon request"
+      },
+      "mode": "model-run",
+      "sample_id": "jp-horizontal",
+      "sample_sha256": "fe18507633d389bbbad0dbbe163c192cedc7509a4ad0418b557e3fa9e68f1bfb",
+      "expected_regions": [
+        {
+          "region_id": "jp-h-01",
+          "text": "東京の朝です。",
+          "polygon": [
+            [
+              70,
+              75
+            ],
+            [
+              462,
+              75
+            ],
+            [
+              462,
+              159
+            ],
+            [
+              70,
+              159
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model: TASK016_OPENAI_BASE_URL and TASK016_OPENAI_MODEL"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Phi-3.5-vision-instruct via vLLM OpenAI-compatible server",
+        "version": "Phi-3.5-vision-instruct / vLLM 0.29.0",
+        "model_ref": "microsoft/Phi-3.5-vision-instruct",
+        "license": "MIT model; vLLM Apache-2.0",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "capability": "Vision recognition/detection candidate with JSON polygon request"
+      },
+      "mode": "model-run",
+      "sample_id": "jp-vertical",
+      "sample_sha256": "bda605e03b715fcbca25dd3492b6ca83d0e6d63bc49468da3e3933128d014f66",
+      "expected_regions": [
+        {
+          "region_id": "jp-v-01",
+          "text": "静かな夜。",
+          "polygon": [
+            [
+              130,
+              20
+            ],
+            [
+              205,
+              20
+            ],
+            [
+              205,
+              500
+            ],
+            [
+              130,
+              500
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/jp_vertical.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model: TASK016_OPENAI_BASE_URL and TASK016_OPENAI_MODEL"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Phi-3.5-vision-instruct via vLLM OpenAI-compatible server",
+        "version": "Phi-3.5-vision-instruct / vLLM 0.29.0",
+        "model_ref": "microsoft/Phi-3.5-vision-instruct",
+        "license": "MIT model; vLLM Apache-2.0",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "capability": "Vision recognition/detection candidate with JSON polygon request"
+      },
+      "mode": "model-run",
+      "sample_id": "ko-horizontal",
+      "sample_sha256": "8700cbb9e9bc13af23f70e19c52ae292147a67ce0ddb33939289f9bf62fb9c36",
+      "expected_regions": [
+        {
+          "region_id": "ko-h-01",
+          "text": "오늘도 좋은 하루!",
+          "polygon": [
+            [
+              65,
+              75
+            ],
+            [
+              514,
+              75
+            ],
+            [
+              514,
+              149
+            ],
+            [
+              65,
+              149
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/ko_horizontal.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model: TASK016_OPENAI_BASE_URL and TASK016_OPENAI_MODEL"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Phi-3.5-vision-instruct via vLLM OpenAI-compatible server",
+        "version": "Phi-3.5-vision-instruct / vLLM 0.29.0",
+        "model_ref": "microsoft/Phi-3.5-vision-instruct",
+        "license": "MIT model; vLLM Apache-2.0",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "capability": "Vision recognition/detection candidate with JSON polygon request"
+      },
+      "mode": "model-run",
+      "sample_id": "art-text",
+      "sample_sha256": "109704b18c4917cb068e38f9e9f213fe81389bd36f1cd6c6175c977b00ceaada",
+      "expected_regions": [
+        {
+          "region_id": "art-01",
+          "text": "冒険はここから",
+          "polygon": [
+            [
+              125,
+              115
+            ],
+            [
+              780,
+              20
+            ],
+            [
+              800,
+              205
+            ],
+            [
+              145,
+              315
+            ]
+          ],
+          "reading_order": 0
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/art_text.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model: TASK016_OPENAI_BASE_URL and TASK016_OPENAI_MODEL"
+    },
+    {
+      "provider": "openai-compatible-vision",
+      "candidate": {
+        "candidate": "Phi-3.5-vision-instruct via vLLM OpenAI-compatible server",
+        "version": "Phi-3.5-vision-instruct / vLLM 0.29.0",
+        "model_ref": "microsoft/Phi-3.5-vision-instruct",
+        "license": "MIT model; vLLM Apache-2.0",
+        "requires": [
+          "TASK016_OPENAI_BASE_URL or OPENAI_BASE_URL",
+          "TASK016_OPENAI_MODEL or OPENAI_MODEL"
+        ],
+        "capability": "Vision recognition/detection candidate with JSON polygon request"
+      },
+      "mode": "model-run",
+      "sample_id": "long-tile",
+      "sample_sha256": "c560a0c2fca88503a72a99e775b3e25ada7b114918868379ac38247b6cc979d1",
+      "expected_regions": [
+        {
+          "region_id": "long-01",
+          "text": "第一場面です。",
+          "polygon": [
+            [
+              80,
+              170
+            ],
+            [
+              472,
+              170
+            ],
+            [
+              472,
+              254
+            ],
+            [
+              80,
+              254
+            ]
+          ],
+          "reading_order": 0
+        },
+        {
+          "region_id": "long-02",
+          "text": "두 번째 장면입니다.",
+          "polygon": [
+            [
+              80,
+              760
+            ],
+            [
+              580,
+              760
+            ],
+            [
+              580,
+              834
+            ],
+            [
+              80,
+              834
+            ]
+          ],
+          "reading_order": 1
+        },
+        {
+          "region_id": "long-03",
+          "text": "第三場面、つづく。",
+          "polygon": [
+            [
+              80,
+              1330
+            ],
+            [
+              584,
+              1330
+            ],
+            [
+              584,
+              1402
+            ],
+            [
+              80,
+              1402
+            ]
+          ],
+          "reading_order": 2
+        },
+        {
+          "region_id": "long-04",
+          "text": "最後のコマ。",
+          "polygon": [
+            [
+              80,
+              1750
+            ],
+            [
+              416,
+              1750
+            ],
+            [
+              416,
+              1834
+            ],
+            [
+              80,
+              1834
+            ]
+          ],
+          "reading_order": 3
+        }
+      ],
+      "observed_regions": null,
+      "model_sha256": "NOT_AVAILABLE",
+      "recognition_errors": "NOT_RUN",
+      "coordinate_order": "NOT_RUN",
+      "fallback": "BLOCKED: no explicitly configured fallback route",
+      "metrics": {
+        "latency_ms": null,
+        "rss_before_mb": null,
+        "rss_after_mb": null,
+        "vram_before_mb": null,
+        "vram_after_mb": null
+      },
+      "image_path": "G:/CODEX/New Manga.worktrees/TASK-016-deepseek/experiments/TASK-016/samples/long_tile.png",
+      "status": "BLOCKED",
+      "reason": "missing endpoint/model: TASK016_OPENAI_BASE_URL and TASK016_OPENAI_MODEL"
+    }
+  ]
+}

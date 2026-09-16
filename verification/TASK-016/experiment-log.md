@@ -95,3 +95,33 @@ $env:PYTHONDONTWRITEBYTECODE='1'
 - 未 push、未合并任何分支。
 - `run_experiment.py` 默认**不联网、不下载、不安装**；`--run-models` 也只在依赖与端点**已就绪**时才会发起真实推理，本环境两者皆无。
 - 本记录中的候选版本/许可抄自已实现内的候选表（`run_experiment.py` 的 `CANDIDATES`），**未经本环境联网核实**；调研结论另见 `doc/research/TASK-016.md`。
+
+---
+
+# 附：Review R-001~R-004 / S-001 修订证据（第二轮）
+
+本轮修订对应 Codex 的独立 Review findings。命令、退出码与结果如下（环境同上：Windows 10.0.26200 / Python 3.12.3 / 默认 Windows 平台）。
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---|---|---|---|
+| 5 | `python -m unittest experiments/TASK-016/test_protocol.py -v` | **0** | **5** | **0** | `OK`（原 4 项 + 新增 R-002 的 fallback 收窄与非法配置测试） |
+| 6 | `python experiments/TASK-016/run_experiment.py --output experiments/TASK-016/results/probe.json` | **0** | — | — | `{"BLOCKED": 30}`（**6 候选 × 5 样本**；新增 3 个检测器候选） |
+
+**skip 原因**：无 skip（命令 5 为 `0 skipped`）。
+
+## 逐项处置
+
+| ID | 处置 | 证据 |
+|---|---|---|
+| **R-001** | 检测器候选纳入一等公民：`detector-dbnet` / `detector-ctd` / `detector-yolo` 进入 `CANDIDATES`（带 `stage: "detection"`），由 `_run_detector()` 显式 probe 并 `BLOCKED`；报告新增 `verification_matrix`（3 行，逐阶段声明"几何协议已覆盖 / 真实运行 BLOCKED / 需要范围裁决"）。**范围裁决请求**：YOLO 家族在 `doc/01:255` 被明确标为"本仓库无此文件"，无可用实现来源，需 Codex 裁决是否保留该候选 | `results/probe.json` 的 `verification_matrix`、`records[].provider`（6 个）、`_run_detector` 的两个 `_blocked` 分支 |
+| **R-002** | `fallback_status()` 收窄：必须由调用方**点名**路由且该名称**在配置集内**才返回 `FALLBACK_CONFIGURED`；空集、未点名、点名不在集内一律 `BLOCKED`。新增 `validate_route_configuration()` 报告非法配置；新增 2 项测试（4 类断言 + 空配置/空白项） | `protocol.py`、`test_protocol.py::test_fallback_requires_an_explicitly_configured_route` / `::test_invalid_route_configuration_is_reported`；报告中 `fallback_configuration = {valid: False, problems: ["no fallback route configured"]}` |
+| **R-003** | 候选元数据统一标为 **unverified candidate metadata**：`CANDIDATES` 每条带 `metadata_status: "UNVERIFIED"`，`version`/`license` 前加 `UNVERIFIED —` 前缀；`doc/research/TASK-016.md` 追加专门声明 | 报告中 `records[].candidate.metadata_status` 全为 `UNVERIFIED`；`doc/research/TASK-016.md` 末节 |
+| **R-004** | 统一哨兵 `MODEL_SHA256_UNAVAILABLE = "NOT_AVAILABLE"`：`_base_result` 与 `_blocked` 均只写该常量，**不再读取 `TASK016_MODEL_SHA256` 环境变量**，样本哈希只出现在 `sample_sha256`，绝不进入 `model_sha256`；报告顶层亦输出 `model_sha256_sentinel` | `run_experiment.py`；报告中 `model_sha256` 取值集合 = `["NOT_AVAILABLE"]` |
+| **S-001** | `doc/tasks/TASK-016.md` 的「交付与运行记录」已改为指向本轮实际交付（Handoff / Review / 实验结果），并追加本轮修订状态 | `doc/tasks/TASK-016.md` |
+
+## 并发作者改动说明
+
+本轮修订时工作区已存在**另一位作者**的未提交改动（未提交内容归原作者所有，已保留未覆盖）：
+`run_experiment.py` 的 manga-ocr **Region polygon 裁切**（识别前先 crop，替代整图输入）、`doc/research/TASK-016.md` 的重写、
+新增的 `verification/TASK-016/author-verification.md` 与 `results/model-run-blocked.json`、以及 `doc/tasks/TASK-016.md` 的部分更新。
+本次提交同时包含这些改动与本轮的 R-001~R-004 修订；合并方向以"保留并发改动 + 补齐 findings"为准。

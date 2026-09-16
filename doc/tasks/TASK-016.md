@@ -47,12 +47,25 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
 
 不得修改未列出的其他 Task、AGENTS、生产数据或用户源文件。实验任务不写生产 src；Review 任务不顺手修生产代码。共享接口、Schema、依赖或装配超出白名单时，先由 Codex在本 Task 明确范围变更。
 
-## 测试要求
+## 执行计划与测试要求
 
-- 记录实际实验命令、数据/模型Hash、环境、输出和指标；不具备GPU/API条件的项目标BLOCKED/NOT_RUN。
-- 单Region输出映射与长图Tile全局坐标验证；说明模型质量测试不等于产品集成验证。
-- 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
+- 先生成自制横排/竖排/韩文/艺术字/长图 Tile 样本并固定 manifest SHA-256，再运行无下载 Provider 探测。
+- 单 Region 输出必须保留 `region_id`；Tile-local polygon 必须转换为 page-global；检测作为 OCR 前置路线单独记录。
+- 只有显式 `--run-models` 且已有依赖、权重或授权 endpoint 时才允许真实调用；缺任一前提标 `BLOCKED/NOT_RUN`。
+- 记录实际实验命令、数据/模型 Hash、环境、输出和指标；模型质量测试不等于产品集成验证。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
+
+### Owner 执行记录（2026-09-16）
+
+- 样本生成：`experiments/TASK-016/generate_samples.py`，退出码 0；生成 5 个自制 PNG 与 manifest，Hash 和参考 Region/Tile 标注见 [研究记录](../research/TASK-016.md)。
+- 协议自检：`python -m unittest discover -s experiments/TASK-016 -p 'test_*.py' -v` → **4 passed, 0 skipped**，退出码 0；覆盖单 Region、Tile 全局坐标、阅读顺序和 fallback 门控。
+- Provider 探测：`run_experiment.py` 默认 no-download 模式 → **0 passed, 0 skipped, 15 BLOCKED**，退出码 0；`manga_ocr` 缺失 5 条、PaddleOCR/Paddle 缺失 5 条、Vision endpoint/model 配置缺失 5 条。
+- 环境：Windows 11 `10.0.26200`、AMD64、Python 3.12.3、PySide6 6.11.2、RTX 5070 Ti 16303 MiB；未设置 `QT_QPA_PLATFORM`；没有下载模型或发出 API 请求。
+- 证据：[author-verification](../../verification/TASK-016/author-verification.md)、[samples](../../experiments/TASK-016/samples/manifest.json)、[probe](../../experiments/TASK-016/results/probe.json)。
+
+### 当前阻塞
+
+真实 OCR/检测质量、错误率、坐标/顺序误差、耗时、RAM/VRAM 仍为 `BLOCKED/NOT_RUN`：当前隔离环境缺 Provider 依赖/模型权重，且无合法 Vision endpoint；不能用协议自检或 Mock 输出替代。取得隔离依赖、实际模型 Hash 或授权 endpoint 后，应复用同一 manifest 重跑并追加新证据。
 
 ## 依赖、风险与阻塞
 
@@ -64,9 +77,19 @@ D01 §5；D02 §6；D06 §6～7/67～68；D08 AC-OCR/WEBTOON。D 编号对应 [�
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- Handoff：待实现提交后创建 `doc/handoffs/TASK-016-<short-head>.md`。
+- Review：待 Codex 对固定 delivery head 独立 Review。
+- 实际执行/实验/测试：见 [研究记录](../research/TASK-016.md) 与 [验证记录](../../verification/TASK-016/author-verification.md)。
+- 最近状态：2026-09-16 用户授权，DeepSeek Harness 已认领；当前 `in_progress`，模型质量实验因缺 Provider 前提保持 `BLOCKED/NOT_RUN`。
 - 最近状态：2026-09-16 用户授权释放；DeepSeek Harness 认领，`in_progress`。base=`f9edd68`、分支/工作区见顶部元数据。
 - 最近状态：2026-09-16 实验交付并置 `in_review`。产物：`experiments/TASK-016/`（协议自检 4 passed/0 skipped；harness 在 probe-only 与 `--run-models` 下各输出 15 条 BLOCKED）、`doc/research/TASK-016.md`（候选/版本/许可调研）、`verification/TASK-016/experiment-log.md`（环境、命令、退出码、skip 原因、BLOCKED/NOT_RUN 清单）。**模型质量/性能全部 BLOCKED**：依赖全缺且 `huggingface.co` 不可达，未以 Mock 冒充。无 GPU/API 阻塞之外的残留；未修改生产 src/tests/Schema/依赖/AGENTS，未 push/合并。待 Codex 独立 Review；本 Task 不自行标记 approved/done。
+
+- 最近状态：2026-09-16 按 Codex Review（R-001~R-004、S-001）完成修订，置 `in_review` 待复审。
+  - **R-001**：新增检测器候选 `detector-dbnet`/`detector-ctd`/`detector-yolo`（`stage: "detection"`）与 `verification_matrix`（3 行，逐阶段声明覆盖与缺口）；**遗留范围裁决请求**：`detector-yolo` 在 `doc/01:255` 标注"本仓库无此文件"，无实现来源，需 Codex 裁决是否保留。
+  - **R-002**：`fallback_status()` 收窄为"调用方必须点名且名称在配置集内"，新增 `validate_route_configuration()` 与 2 项非法配置测试。
+  - **R-003**：候选元数据统一标为 unverified（`metadata_status: "UNVERIFIED"` + `UNVERIFIED —` 前缀），research 记录追加专门声明。
+  - **R-004**：统一哨兵 `MODEL_SHA256_UNAVAILABLE = "NOT_AVAILABLE"`，不再读环境变量，样本哈希只存 `sample_sha256`。
+  - **S-001**：本节记录已修正为实际交付。
+  - 验证：`python -m unittest experiments/TASK-016/test_protocol.py -v` → **5 passed / 0 skipped**；`run_experiment.py` probe-only → **30 BLOCKED**（6 候选 × 5 样本）。模型质量/性能仍 **BLOCKED**（依赖缺失 + `huggingface.co` 不可达），未以 Mock 冒充。
+  - 本轮工作区存在**另一位作者**的未提交改动（manga-ocr Region crop、research 重写、author-verification、model-run-blocked.json），按"未提交内容归原作者"予以保留并一并提交。
+  - 未修改生产 src/tests/Schema/依赖/AGENTS/其他 Task/冻结 Task；未 push、未合并分支。
