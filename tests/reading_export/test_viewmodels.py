@@ -286,6 +286,37 @@ def test_repeat_export_uses_history_settings(qapp, tmp_path, pages, export_servi
 
 
 @requires_pyside6
+def test_repeat_export_os_error_surfaces_failure_not_stuck(qapp, tmp_path, pages, export_service):
+    """R-002 regression: an OSError inside repeat() must surface via
+    exportFailed and reset `running` instead of killing the worker thread
+    silently (the state used to stick at 正在按相同设置导出… forever)."""
+    vm = make_export_vm(tmp_path, pages, export_service)
+    vm.setMode("original")  # snapshot mode=original keeps the stale check out of the way
+    vm.setOutputPath(str(tmp_path / "out" / "r.zip"))
+    vm.startExport()
+    assert pump_until(qapp, lambda: not vm.running)
+    export_id = vm.history[0]["export_id"]
+
+    good = vm._pages_provider()
+
+    def broken_pages():
+        rows = list(good)
+        rows[0] = ExportPage(
+            page_id=rows[0].page_id,
+            filename=rows[0].filename,
+            source_provider=lambda: (_ for _ in ()).throw(OSError("disk full")),
+        )
+        return rows
+
+    vm._pages_provider = broken_pages
+    failures = []
+    vm.exportFailed.connect(lambda message: failures.append(message))
+    vm.repeatExport(export_id)
+    assert pump_until(qapp, lambda: not vm.running), "running must reset"
+    assert len(failures) == 1 and "disk full" in failures[0]
+
+
+@requires_pyside6
 def test_export_without_pages_surfaces_status(qapp, tmp_path, export_service):
     vm = ExportViewModel(
         export_service,

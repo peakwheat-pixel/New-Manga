@@ -228,6 +228,22 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
         assert pump(
             window, 2.0, lambda: reading.progress.scroll_offset_y == 240.0
         ), "scroll_offset_y is saved through the service"
+
+        # R-003: reopening restores the offset only once the image has
+        # content height (never clamped to 0 by the empty Flickable)
+        vm.openChapter("b", "c", "条漫", "webtoon", "vertical", True)
+        scroll2 = None
+        deadline = _time.monotonic() + 5
+        while _time.monotonic() < deadline:
+            QGuiApplication.processEvents()
+            scroll2 = find_by_name(root, "readerWebtoonScroll")
+            if scroll2 is not None and scroll2.property("contentHeight") > 0:
+                break
+            _time.sleep(0.05)
+        assert scroll2 is not None, "reopened webtoon viewer"
+        assert pump(
+            window, 5.0, lambda: scroll2.property("contentY") == 240.0
+        ), f"saved offset restored after image load, got {scroll2.property('contentY')}"
     finally:
         window.close()
 

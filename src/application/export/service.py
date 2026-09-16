@@ -431,8 +431,11 @@ class ExportService:
         scope: str | None,
         detail: str = "",
     ) -> None:
-        """Append one history row; persistence is best-effort so a history
-        write failure (e.g. disk full) never masks the export outcome."""
+        """Append one history row; persistence is best-effort in every
+        terminal state. A history write failure (e.g. disk full) is
+        swallowed: the output file itself is already committed and must
+        not be reported as failed, and a missing history row never makes
+        an export result wrong (repeat simply cannot replay it)."""
         try:
             rows = self._store.read()
             rows.append(
@@ -456,9 +459,9 @@ class ExportService:
             )
             self._store.write(rows)
         except Exception:
-            if result.status is ExportStatus.FAILED:
-                return
-            raise
+            # best-effort in every state (R-005): never mask the real
+            # export outcome, whatever it was.
+            return
 
 
 def _scope_snapshot(request: ExportRequest) -> str:

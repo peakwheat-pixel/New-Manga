@@ -67,11 +67,15 @@ Rectangle {
         spacing: 4
 
         // ---- Reader Toolbar (D05 §38) ----
+        // RTL chapters (D05 §39 右→左): the toolbar mirrors, so "下一页"
+        // sits on the physical left where RTL reading advances. Button
+        // labels always name their own action (R-001).
         RowLayout {
             objectName: "readerToolbar"
             Layout.fillWidth: true
             Layout.margins: 8
             spacing: 8
+            layoutDirection: active && model.direction === "rtl" ? Qt.RightToLeft : Qt.LeftToRight
 
             Label {
                 objectName: "readerChapterTitle"
@@ -105,7 +109,7 @@ Rectangle {
             }
             Button {
                 objectName: "readerPreviousPage"
-                text: model && model.direction === "rtl" ? "下一页 ◀" : "◀ 上一页"
+                text: "◀ 上一页"
                 enabled: active && model.canGoPrevious
                 onClicked: model.previousPage()
             }
@@ -208,7 +212,6 @@ Rectangle {
                     onTriggered: if (active) model.saveScrollOffset(webtoonScroll.contentY)
                 }
                 onContentYChanged: scrollSaveTimer.restart()
-                Component.onCompleted: contentY = active ? model.scrollOffsetY : 0
 
                 Image {
                     id: webtoonImage
@@ -218,6 +221,13 @@ Rectangle {
                     horizontalAlignment: Image.AlignHCenter
                     source: active ? model.sourcePath : ""
                     asynchronous: true
+                    // R-003: restore the saved offset only after the async
+                    // image has real content height, or the Flickable clamps
+                    // it back to 0.
+                    onStatusChanged: {
+                        if (status === Image.Ready && active && model.scrollOffsetY > 0)
+                            webtoonScroll.contentY = model.scrollOffsetY
+                    }
                 }
             }
         }

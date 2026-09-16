@@ -16,7 +16,7 @@ status: in_review
 不满足 Task 的 AC 深度（服务层缺 D03 §29/31 字段语义、无方向/类型校验、导出无
 覆盖策略三态与 History 字段完整性、QML 与 D05 §37~42/51 不符、测试仅 8 例）。
 本轮按协议 §5 全量重写并生成新 head，请 Review 固定 `1000ac8..488fafc`。
-旧 handoff 文件在本提交中删除（Git 历史可溯）。
+旧 handoff 文件（TASK-015-fac2ffe.md）已随随后的文档提交删除（Git 历史可溯）。
 
 ## 提交列表
 

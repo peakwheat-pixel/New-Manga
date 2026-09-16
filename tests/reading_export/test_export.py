@@ -348,7 +348,7 @@ def test_disk_error_on_final_write_keeps_target(tmp_path, service, pages, monkey
     with pytest.raises(OSError):
         service.export(_request(tmp_path, pages, fmt=ExportFormat.TEXT, output_path=target))
     assert target.read_bytes() == b"OLD-TARGET"
-    assert not list(tmp_path.glob(".out.txt*"))
+    assert not list(tmp_path.glob(".out.zip.*")), "temp file left behind"
 
 
 # ----------------------------------------------------------------------

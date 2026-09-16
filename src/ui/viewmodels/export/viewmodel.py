@@ -25,7 +25,6 @@ from PySide6.QtGui import QDesktopServices
 
 from application.export import (
     ExportCancelledError,
-    ExportError,
     ExportFormat,
     ExportPage,
     ExportRequest,
@@ -273,10 +272,10 @@ class ExportViewModel(QObject):
                 result = self._service.export(request)
             except ExportCancelledError:
                 self._finish({"status": "cancelled"})
-            except ExportError as error:
-                self._fail(str(error))
-            except OSError as error:
-                self._fail(f"导出写入失败：{error}")
+            # ExportError and OSError included: any escaping exception would
+            # kill this worker silently and leave `running` stuck True (R-002).
+            except Exception as error:
+                self._fail(_worker_error_text(error))
             else:
                 self._finish(
                     {
@@ -328,8 +327,10 @@ class ExportViewModel(QObject):
                 )
             except ExportCancelledError:
                 self._finish({"status": "cancelled"})
-            except ExportError as error:
-                self._fail(str(error))
+            # Same blanket guard as startExport (R-002): no exception may
+            # escape the worker and leave `running` stuck True.
+            except Exception as error:
+                self._fail(_worker_error_text(error))
             else:
                 self._finish(
                     {
@@ -399,3 +400,11 @@ class ExportViewModel(QObject):
 
 def _open_folder(folder: str) -> bool:
     return QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
+
+
+def _worker_error_text(error: Exception) -> str:
+    """Human-readable text for a worker-thread failure (R-002)."""
+    if isinstance(error, OSError):
+        return f"导出写入失败：{error}"
+    text = str(error)
+    return text if text else type(error).__name__
