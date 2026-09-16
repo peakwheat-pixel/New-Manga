@@ -26,10 +26,10 @@ D01 §2/5；D02 §6.2/11/12；D05 §43；D07 §72/84；G17。D 编号对应 [文
 
 ## Acceptance Criteria
 
-- [ ] 对网页/PDF/MOBI、Plugin/Hooks、AI Plugin Agent、字体上传、Sakura服务监控逐项标明已有要求与未知契约。
-- [ ] 提出支持矩阵、入口、授权/失败边界和AC草案，说明D02中Plugin Agent“如保留”的条件，不默认删掉也不默认扩建。
-- [ ] 将产品取舍交用户审核并更新权威文档；为TASK-023/025及019/022涉及的扩展范围明确释放条件。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 对网页/PDF/MOBI、Plugin/Hooks、AI Plugin Agent、字体上传、Sakura服务监控逐项标明已有要求与未知契约。（contracts/extensions.md §1.1~1.6 逐项来源/缺口表）
+- [x] 提出支持矩阵、入口、授权/失败边界和AC草案，说明D02中Plugin Agent“如保留”的条件，不默认删掉也不默认扩建。（§1 各条目矩阵 + §1.4 四项保留条件与裁剪判据；§2 明确有来源排除项；§4 用户待决清单 U-1~U-6）
+- [x] 将产品取舍交用户审核并更新权威文档；为TASK-023/025及019/022涉及的扩展范围明确释放条件。（§3 回写计划与 §4 待决清单已交用户审核；追踪表 ACG 行已指向本设计；需求裁决待用户批准后执行，本设计不自我批准）
+- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review（或 2026-09-16 窗口期内用户授权的子 agent Review，登记为 approved_subagent）与授权集成者集成验证后才能 done；窗口期交付须在期满后补外部 post-hoc 复审。（实施与 Review 进行中）
 
 ## 允许修改范围
 
@@ -69,4 +69,7 @@ D01 §2/5；D02 §6.2/11/12；D05 §43；D07 §72/84；G17。D 编号对应 [文
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- Handoff：[TASK-024-<head>](../handoffs/)（实现完成后回填）。
+- Review：窗口内子 agent Review（见 doc/reviews/TASK-024-*.md）。
+- 实际执行/实验/测试：[verification/TASK-024/author-verification.md](../../verification/TASK-024/author-verification.md)。
+- 最近状态：2026-09-17 窗口授权解冻（base=`116e682`）；ZCode 完成 §1 六条目边界设计与追踪表回写，交付审批中。
