@@ -7,7 +7,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from application.importing.images.ports import DecodedImage, ImageDecodeError
-from infrastructure.filesystem.managed_storage import ManagedFileStorage
+from ports.repositories.storage import ManagedFileStoragePort
 
 
 _MIME_TYPES = {
@@ -23,6 +23,7 @@ _MIME_TYPES = {
     "tiff": "image/tiff",
     "webp": "image/webp",
 }
+_UNKNOWN_MIME_TYPE = "application/octet-stream"
 
 
 class QtImageDecoder:
@@ -47,7 +48,7 @@ class QtImageDecoder:
         return DecodedImage(
             width=image.width(),
             height=image.height(),
-            mime_type=_MIME_TYPES.get(format_name, f"image/{format_name}"),
+            mime_type=_MIME_TYPES.get(format_name, _UNKNOWN_MIME_TYPE),
         )
 
 
@@ -61,7 +62,7 @@ class ManagedCopyStoreAdapter:
 
     def __init__(
         self,
-        storage: ManagedFileStorage,
+        storage: ManagedFileStoragePort,
         book_id_for_chapter: Callable[[str], str],
     ) -> None:
         self._storage = storage

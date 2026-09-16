@@ -32,6 +32,29 @@ def test_qt_image_decoder_rejects_invalid_bytes():
         QtImageDecoder().decode(b"not-an-image")
 
 
+def test_qt_image_decoder_uses_safe_mime_fallback(monkeypatch):
+    from PySide6.QtGui import QImage
+
+    class UnknownFormatReader:
+        def __init__(self, device):
+            del device
+
+        def format(self):
+            return b""
+
+        def read(self):
+            return QImage(2, 2, QImage.Format.Format_RGB32)
+
+        def errorString(self):
+            return ""
+
+    monkeypatch.setattr("PySide6.QtGui.QImageReader", UnknownFormatReader)
+
+    decoded = QtImageDecoder().decode(b"plugin-data")
+
+    assert decoded.mime_type == "application/octet-stream"
+
+
 def test_managed_copy_adapter_publishes_verbatim_d03_original(tmp_path):
     storage = ManagedFileStorage(tmp_path / "managed")
     adapter = ManagedCopyStoreAdapter(storage, lambda chapter_id: "book-42")
@@ -59,6 +82,27 @@ def test_production_adapters_drive_import_use_case(tmp_path):
     page = report.imported[0].page
     assert (page.width, page.height) == (9, 6)
     assert Path(storage.absolute_path(page.managed_original_ref)).read_bytes() == data
+
+
+def test_production_copy_failure_creates_no_page(tmp_path, monkeypatch):
+    storage = ManagedFileStorage(tmp_path / "managed")
+
+    def fail_publish(temp_handle, relative_path):
+        del temp_handle, relative_path
+        raise OSError("injected publish failure")
+
+    monkeypatch.setattr(storage, "publish", fail_publish)
+    copy_store = ManagedCopyStoreAdapter(storage, lambda chapter_id: "book-42")
+    sink = InMemoryPageSink()
+    use_case = ImportImagesUseCase(QtImageDecoder(), copy_store, sink)
+
+    report = use_case.import_files(
+        "chapter-7", [make_source("page.png", make_png(3, 2))]
+    )
+
+    assert report.failed[0].reason == "COPY_FAILED"
+    assert sink.pages == []
+    assert list((tmp_path / "managed" / "temp").iterdir()) == []
 
 
 def test_managed_copy_adapter_cleans_temp_on_integrity_failure(tmp_path):
