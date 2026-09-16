@@ -2,7 +2,7 @@
 id: TASK-015
 title: 实现阅读器与五种成果导出
 kind: implementation
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-012, TASK-014]
 base_commit: 1000ac82743b75df8b4b385bc7096a015e13f107
 branch: agent/zcode/TASK-015-reader-export
 worktree: G:/CODEX/New Manga.worktrees/TASK-015-zcode
-integration_commit: null
+integration_commit: fa72cee
 ---
 
 # TASK-015：实现阅读器与五种成果导出
@@ -20,7 +20,7 @@ integration_commit: null
 （完整条款见 [STATUS](../STATUS.md)「ZCode 全权窗口授权（2026-09-16）」章节）：窗口内
 Review 由 ZCode 子 agent 执行、结论登记 `approved_subagent`（用户授权的同体审查，
 不等同协作协议 §1 的跨 Agent 独立批准），ZCode 代行主线集成；窗口期满后由用户安排
-外部 post-hoc 复审。本 Task 已完成实施与窗口内 Review，等待集成收口。
+外部 post-hoc 复审。本 Task 已完成实施、窗口内 Review 与窗口授权集成，状态 `done`；期满补外部 post-hoc 复审的义务不消失。
 
 ## 来源与目标
 
@@ -33,7 +33,7 @@ D03 §29/31；D04 §33～37；D05 §37～42/51；D06 §96～97；D08 AC-READ/EXP
 - [x] 实现Original/Translated两模式、RTL/LTR、独立阅读进度/时长与书架摘要；Webtoon完整按宽滚动由TASK-020验证。
 - [x] 单图/ZIP/CBZ/PDF/文本全部有范围、顺序、输出路径/命名/覆盖策略与ExportHistory。
 - [x] 导出stale明确提示先渲染或继续当前版本，写失败/取消保留原有目标文件和源文件。
-- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review（或 2026-09-16 窗口期内用户授权的子 agent Review，登记为 approved_subagent）与授权集成者集成验证后才能 done；窗口期交付须在期满后补外部 post-hoc 复审。（子 agent Review 已完成：`approved_subagent`；done 待集成收口）
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review（或 2026-09-16 窗口期内用户授权的子 agent Review，登记为 approved_subagent）与授权集成者集成验证后才能 done；窗口期交付须在期满后补外部 post-hoc 复审。（子 agent Review `approved_subagent`；集成 `fa72cee`；master 复验 536 passed）
 
 AC 对照的实际测试证据见 [作者验证记录](../../verification/TASK-015/author-verification.md)。
 
@@ -82,4 +82,4 @@ passed/skipped 分列与逐条 skip 原因）见 [作者验证记录](../../veri
 - Handoff：[TASK-015-488fafc](../handoffs/TASK-015-488fafc.md)（第二轮交付；取代 fac2ffe 轮的 `TASK-015-fac2ffe.md`，旧文件已删除、Git 历史可溯）。
 - Review：[TASK-015-488fafc](../reviews/TASK-015-488fafc.md)——窗口授权下 ZCode 子 agent 执行；首轮 `changes_requested`（P1×2、P2×4），修订 `ac4ff19` 后复审改判 **`approved_subagent`**（R-001~R-006 全部 fixed，R-007 deferred 至 TASK-020）；期满后需外部 post-hoc 复审。
 - 实际执行/测试：[verification/TASK-015/author-verification.md](../../verification/TASK-015/author-verification.md)。
-- 最近状态：2026-09-17 ZCode 完成第二轮实现（`488fafc`）与 Review 修订（`ac4ff19`），窗口内子 agent Review 结论 `approved_subagent`，待按窗口条款代行集成 master 并收口；`reviewer` 栏 DeepSeek Harness 为期满补审与后续协作的外部 Reviewer。
+- 最近状态：2026-09-17 窗口授权收口 `done`：实现 `488fafc`、Review 修订 `ac4ff19`（approved_subagent）、文档 `a915d56`、integration merge=`fa72cee`；master 集成复验全仓 `536 passed, 0 skipped`、专项 `42 passed, 3 skipped`（无 PySide6 解释器）。`reviewer` 栏 DeepSeek Harness 为期满补审与后续协作的外部 Reviewer。

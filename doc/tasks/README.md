@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-013 生产 Pipeline seam 已以 `integration_commit=49c72fdf` 集成，R-1 已以 `integration_commit=734d5b3` 完成生产 Workbench 装配；TASK-016 已以 `integration_commit=9bf85f5` 完成集成，TASK-015 按既有授权保持 `ready`，TASK-017～TASK-027 保持 `proposed`/冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。2026-09-16 23:30 ～ 09-17 08:30（Asia/Shanghai）为 ZCode 全权窗口：除已收口的 TASK-016 外，窗口目标 TASK-015、TASK-024、TASK-017 由 ZCode 全权执行并代行集成，条款见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
+TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-013 生产 Pipeline seam 已以 `integration_commit=49c72fdf` 集成，R-1 已以 `integration_commit=734d5b3` 完成生产 Workbench 装配；TASK-016 已以 `integration_commit=9bf85f5` 完成集成；TASK-015 已按窗口条款收口 `done`（integration_commit=`fa72cee`，Review=`approved_subagent`）；TASK-024/017 由窗口授权解冻实施中，TASK-018～TASK-027 其余保持 `proposed`/冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。2026-09-16 23:30 ～ 09-17 08:30（Asia/Shanghai）为 ZCode 全权窗口：除已收口的 TASK-016 外，窗口目标 TASK-015、TASK-024、TASK-017 由 ZCode 全权执行并代行集成，条款见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -18,7 +18,7 @@ TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现�
 | [TASK-012](TASK-012.md) | 实现四页导航与书架 UI | ZCode | done；integration `78987c8`；TASK-005, TASK-007 |
 | [TASK-013](TASK-013.md) | 实现工作台与任务进度交互 | ZCode | done；workbench integration `f0814a8`；生产 Pipeline seam integration `49c72fdf`；R-1 integration `734d5b3`；TASK-011, TASK-012, TASK-014 |
 | [TASK-014](TASK-014.md) | 实现配色与文字排版渲染 | ZCode | done；integration `a943297`；TASK-008 |
-| [TASK-015](TASK-015.md) | 实现阅读器与五种成果导出 | ZCode | ready；base `1000ac8`；Reviewer DeepSeek Harness；TASK-012, TASK-014 |
+| [TASK-015](TASK-015.md) | 实现阅读器与五种成果导出 | ZCode | done；base `1000ac8`；integration `fa72cee`；窗口同体 Review approved_subagent（期满补外部复审）；TASK-012, TASK-014 |
 | [TASK-016](TASK-016.md) | OCR 与检测路线独立实验 | DeepSeek Harness | done；integration `9bf85f5`；Review `878ac16`；TASK-003, TASK-004 |
 | [TASK-017](TASK-017.md) | Translation 与上下文输出协议实验 | DeepSeek Harness | TASK-003, TASK-004 |
 | [TASK-018](TASK-018.md) | Mask / Inpainting 路线独立实验 | DeepSeek Harness | TASK-003, TASK-004 |
