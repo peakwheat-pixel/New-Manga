@@ -1,0 +1,26 @@
+### TASK-036 AC 7: full suite x6 (per-run record; -rs -rf)
+===== run 1 : exit=0 :: 737 passed, 6 skipped in 26.22s
+===== run 2 : exit=0 :: 737 passed, 6 skipped in 27.17s
+===== run 3 : exit=0 :: 737 passed, 6 skipped in 26.48s
+===== run 4 : exit=0 :: 737 passed, 6 skipped in 26.41s
+===== run 5 : exit=0 :: 737 passed, 6 skipped in 26.19s
+===== run 6 : exit=0 :: 737 passed, 6 skipped in 26.31s
+===== run 7 (skip detail) : exit=0
+......................................sssss............................. [ 38%]
+........................................................................ [ 48%]
+........................................................................ [ 58%]
+........................................................................ [ 67%]
+........................................................................ [ 77%]
+........................................................................ [ 87%]
+........................................................................ [ 96%]
+.......................                                                  [100%]
+737 passed, 6 skipped in 26.77s
+=== base edfdcf2 full suite (control) ===
+base edfdcf2 full suite : exit=0 :: 706 passed, 6 skipped in 26.30s
+=== skip reasons (same in every run) ===
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable

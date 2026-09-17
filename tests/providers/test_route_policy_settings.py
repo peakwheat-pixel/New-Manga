@@ -57,12 +57,29 @@ def test_missing_section_or_key_returns_the_explicit_default() -> None:
         RoutePolicy.from_settings({"inpaint": {}}, default=DEFAULT_ROUTE_POLICY)
         is DEFAULT_ROUTE_POLICY
     )
-    # An `inpaint` section that is not a mapping cannot carry the key either;
-    # both call sites read it as "missing" (before the ruling they agreed here).
-    assert (
-        RoutePolicy.from_settings({"inpaint": "not-a-mapping"}, default=DEFAULT_ROUTE_POLICY)
-        is DEFAULT_ROUTE_POLICY
-    )
+
+
+def test_present_non_mapping_section_fails_loud_with_its_own_message() -> None:
+    """TASK-036 AC ① (R-02): a wrong *section* type is not "key missing".
+
+    TASK-034's R-7 freeze kept this silent (an ``inpaint`` string fell back to
+    the default); TASK-036 lifts the freeze, and the two type errors must be
+    distinguishable in the message so a user knows which level to fix.
+    """
+    for value in ("oops", [], 42, None):
+        with pytest.raises(ProviderInputError) as error:
+            RoutePolicy.from_settings({"inpaint": value}, default=DEFAULT_ROUTE_POLICY)
+        message = str(error.value)
+        assert error.value.error_code == "INVALID_INPUT"
+        assert "inpaint must be a mapping" in message
+        assert "route_policy" not in message
+    with pytest.raises(ProviderInputError) as policy_error:
+        RoutePolicy.from_settings(
+            {"inpaint": {"route_policy": "oops"}}, default=DEFAULT_ROUTE_POLICY
+        )
+    assert "inpaint.route_policy must be a mapping" in str(policy_error.value)
+    # R-1 (key absent) is untouched by the tightening:
+    assert RoutePolicy.from_settings({}, default=DEFAULT_ROUTE_POLICY) is DEFAULT_ROUTE_POLICY
 
 
 def test_the_default_parameter_is_what_distinguishes_the_two_call_sites() -> None:
@@ -80,7 +97,7 @@ def test_the_default_parameter_is_what_distinguishes_the_two_call_sites() -> Non
 # ---------------------------------------------------------------------------
 
 
-@pytest.mark.parametrize("value", ["simple-fill", [], 42, ("edge-bleed",)])
+@pytest.mark.parametrize("value", ["simple-fill", [], 42, ("edge-bleed",), None])
 def test_non_mapping_route_policy_raises_the_same_typed_error(value) -> None:
     with pytest.raises(ProviderInputError) as error:
         resolve(value)
@@ -94,8 +111,16 @@ def test_runtime_assembly_reports_a_malformed_policy_instead_of_ignoring_it() ->
         build_provider_runtime(settings=root_with("simple-fill"))
 
 
+def test_runtime_assembly_reports_a_malformed_section_instead_of_ignoring_it() -> None:
+    """TASK-036 AC ① assembly regression: the *section* type is checked too."""
+    with pytest.raises(ProviderInputError) as error:
+        build_provider_runtime(settings={"inpaint": "oops"})
+    assert "inpaint must be a mapping" in str(error.value)
+
+
 # ---------------------------------------------------------------------------
-# R-3 / R-4 / R-5 / R-6 / R-7: the frozen rules of the shared parser
+# R-3 / R-4 / R-5 / R-6 (unchanged legal semantics) and TASK-036 AC ②/③
+# (R-7 freeze lifted: illegal inputs now fail loud instead of being rewritten)
 # ---------------------------------------------------------------------------
 
 
@@ -135,24 +160,87 @@ def test_blank_color_route_means_no_color_route_configured(blank) -> None:
     assert ROUTE_BRUSHNET not in policy.allowed_routes
 
 
-def test_fallback_routes_and_requirements_defaults_are_frozen() -> None:
+def test_fallback_routes_and_requirements_defaults() -> None:
+    """TASK-034 R-4/R-5 defaults stay; only *illegal values* behave differently."""
     policy = resolve({"requirements": {"brushnet": True}})
     assert policy.fallback_routes == ()
     assert policy.requirements == {"brushnet": True}
-    # R-5/R-7: bool() coercion is unchanged (tightening is a later slice).
-    assert resolve({"requirements": {"brushnet": "false"}}).requirements == {
-        "brushnet": True
-    }
+    assert resolve({"fallback_routes": [ROUTE_EDGE_BLEED]}).fallback_routes == (
+        ROUTE_EDGE_BLEED,
+    )
+    assert resolve({"fallback_routes": []}).fallback_routes == ()
+    assert resolve({"requirements": {}}).requirements == {}
+
+
+@pytest.mark.parametrize("field", ["allowed_routes", "fallback_routes"])
+def test_route_lists_reject_a_bare_string(field: str) -> None:
+    """TASK-036 AC ②: no more silent character expansion (R-07a freeze lifted).
+
+    This replaces the TASK-034 test that *pinned* the character expansion
+    (``test_allowed_routes_as_string_keeps_the_frozen_char_expansion``); the
+    freeze is declared lifted in the TASK-036 Handoff.
+    """
+    with pytest.raises(ProviderInputError) as error:
+        resolve({field: ROUTE_SIMPLE_FILL})
+    message = str(error.value)
+    assert error.value.error_code == "INVALID_INPUT"
+    assert f"inpaint.route_policy.{field} must be a sequence of strings" in message
+    assert "str" in message
+
+
+@pytest.mark.parametrize("field", ["allowed_routes", "fallback_routes"])
+@pytest.mark.parametrize("value", [42, {"edge-bleed": True}, {"edge-bleed"}, None])
+def test_route_lists_reject_non_sequences(field: str, value) -> None:
+    with pytest.raises(ProviderInputError) as error:
+        resolve({field: value})
+    assert f"inpaint.route_policy.{field} must be a sequence of strings" in str(
+        error.value
+    )
+
+
+@pytest.mark.parametrize("field", ["allowed_routes", "fallback_routes"])
+@pytest.mark.parametrize("value", [[1], [None], [ROUTE_EDGE_BLEED, 3]])
+def test_route_lists_reject_non_string_entries(field: str, value) -> None:
+    with pytest.raises(ProviderInputError) as error:
+        resolve({field: value})
+    assert f"inpaint.route_policy.{field} entries must be strings" in str(error.value)
+
+
+def test_legal_route_sequences_keep_their_meaning() -> None:
+    """TASK-036 AC ⑥: for legal inputs nothing changed."""
+    assert resolve({"allowed_routes": [ROUTE_EDGE_BLEED]}).allowed_routes == (
+        ROUTE_EDGE_BLEED,
+    )
+    assert resolve({"allowed_routes": (ROUTE_SIMPLE_FILL,)}).allowed_routes == (
+        ROUTE_SIMPLE_FILL,
+    )
     assert resolve({"fallback_routes": [ROUTE_EDGE_BLEED]}).fallback_routes == (
         ROUTE_EDGE_BLEED,
     )
 
 
-def test_allowed_routes_as_string_keeps_the_frozen_char_expansion() -> None:
-    """R-7 stays registered: this slice does not tighten input validation."""
-    assert resolve({"allowed_routes": ROUTE_SIMPLE_FILL}).allowed_routes == tuple(
-        ROUTE_SIMPLE_FILL
-    )
+@pytest.mark.parametrize("value", ["false", "true", 0, 1, None, [], "yes"])
+def test_requirements_values_must_be_real_bools(value) -> None:
+    """TASK-036 AC ③: ``bool("false")`` is True — coercion is gone (R-07b)."""
+    with pytest.raises(ProviderInputError) as error:
+        resolve({"requirements": {"brushnet": value}})
+    message = str(error.value)
+    assert error.value.error_code == "INVALID_INPUT"
+    assert "inpaint.route_policy.requirements['brushnet'] must be a bool" in message
+    assert type(value).__name__ in message
+
+
+@pytest.mark.parametrize("value", [True, False])
+def test_legal_requirement_flags_keep_their_meaning(value: bool) -> None:
+    assert resolve({"requirements": {"brushnet": value}}).requirements == {
+        "brushnet": value
+    }
+
+
+def test_requirements_must_be_a_mapping() -> None:
+    with pytest.raises(ProviderInputError) as error:
+        resolve({"requirements": ["brushnet"]})
+    assert "inpaint.route_policy.requirements must be a mapping" in str(error.value)
 
 
 # ---------------------------------------------------------------------------

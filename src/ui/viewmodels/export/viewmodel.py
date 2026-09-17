@@ -377,7 +377,10 @@ class ExportViewModel(QObject):
         )
 
     def _finish(self, summary: dict) -> None:
-        self._running = False
+        # TASK-036 AC ④ (R-05): publish the terminal state *before* clearing
+        # `running`, so an observer that sees ``running == False`` has always
+        # already seen the terminal status and signal. `changed` is re-emitted
+        # after the flag clears because it is `running`'s notify signal.
         status = summary.get("status", "")
         if status == "completed":
             self._status = f"导出完成：{summary.get('output_path', '')}"
@@ -387,15 +390,20 @@ class ExportViewModel(QObject):
             self._status = f"导出状态：{status}"
         self.changed.emit()
         self.exportFinished.emit(summary)
+        self._running = False
+        self.changed.emit()
 
     def _fail(self, message: str) -> None:
-        self._running = False
+        # TASK-036 AC ④ (R-05): same ordering as `_finish` — terminal status,
+        # stale prompt, `changed`, terminal signal, then clear `running`.
         self._status = f"导出失败：{message}"
         # A failed translated export usually means stale/missing renders:
         # surface the D06 §97 prompt right away.
         self.refreshStaleWarning()
         self.changed.emit()
         self.exportFailed.emit(message)
+        self._running = False
+        self.changed.emit()
 
 
 def _open_folder(folder: str) -> bool:

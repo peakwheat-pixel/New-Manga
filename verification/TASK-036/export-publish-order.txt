@@ -1,0 +1,25 @@
+### TASK-036 AC 4: terminal-publication order, unning observed inside each slot
+--- BEFORE (base edfdcf2 viewmodel) ---
+viewmodel module: C:\Users\49745\AppData\Local\Temp\task036-base\src\ui\viewmodels\export\viewmodel.py
+--- _fail (stale/missing render)
+    changed         running=False  status='导出失败：不是最新渲染'
+    changed         running=False  status='导出失败：不是最新渲染'
+    exportFailed    running=False  status='导出失败：不是最新渲染'
+    AFTER CALL      running=False  status='导出失败：不是最新渲染'
+--- _finish(completed)
+    changed         running=False  status='导出完成：x.zip'
+    exportFinished  running=False  status='导出完成：x.zip'
+    AFTER CALL      running=False  status='导出完成：x.zip'
+--- AFTER (TASK-036 viewmodel) ---
+viewmodel module: G:\CODEX\New Manga.worktrees\TASK-036-deepseek\src\ui\viewmodels\export\viewmodel.py
+--- _fail (stale/missing render)
+    changed         running=True   status='导出失败：不是最新渲染'
+    changed         running=True   status='导出失败：不是最新渲染'
+    exportFailed    running=True   status='导出失败：不是最新渲染'
+    changed         running=False  status='导出失败：不是最新渲染'
+    AFTER CALL      running=False  status='导出失败：不是最新渲染'
+--- _finish(completed)
+    changed         running=True   status='导出完成：x.zip'
+    exportFinished  running=True   status='导出完成：x.zip'
+    changed         running=False  status='导出完成：x.zip'
+    AFTER CALL      running=False  status='导出完成：x.zip'

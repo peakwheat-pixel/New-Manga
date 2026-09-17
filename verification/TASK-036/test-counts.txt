@@ -1,0 +1,8 @@
+### AC 7 test counts (pristine base edfdcf2 -> HEAD)
+tests/providers : BEFORE='134 passed in 1.71s' AFTER='164 passed in 1.36s'
+tests/core : BEFORE='18 passed in 4.63s' AFTER='18 passed in 4.29s'
+tests/reading_export : BEFORE='65 passed in 2.46s' AFTER='66 passed in 2.31s'
+tests/editing : BEFORE='26 passed in 0.37s' AFTER='26 passed in 0.39s'
+tests/ui_shell : BEFORE='46 passed in 1.02s' AFTER='46 passed in 0.95s'
+tests/workbench : BEFORE='51 passed in 7.68s' AFTER='51 passed in 7.69s'
+mandated four : BEFORE='243 passed in 7.74s' AFTER='274 passed in 7.62s'

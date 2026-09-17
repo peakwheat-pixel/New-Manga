@@ -1,0 +1,35 @@
+### discriminative: NEW tests against the PRE-fix src (edfdcf2)
+--- providers: AC1-3 tests vs old router
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[42-allowed_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[42-fallback_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[value1-allowed_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[value1-fallback_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[value2-allowed_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[value2-fallback_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[None-allowed_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_sequences[None-fallback_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_string_entries[value0-allowed_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_string_entries[value0-fallback_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_string_entries[value1-allowed_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_string_entries[value1-fallback_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_string_entries[value2-allowed_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_route_lists_reject_non_string_entries[value2-fallback_routes]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_values_must_be_real_bools[false]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_values_must_be_real_bools[true]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_values_must_be_real_bools[0]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_values_must_be_real_bools[1]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_values_must_be_real_bools[None]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_values_must_be_real_bools[value5]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_values_must_be_real_bools[yes]
+FAILED tests/providers/test_route_policy_settings.py::test_requirements_must_be_a_mapping
+FAILED tests/providers/test_handlers_pipeline.py::test_run_settings_non_mapping_inpaint_section_fails_the_step_loudly
+28 failed, 37 passed in 1.05s
+--- reading_export: AC4 order tests vs old viewmodel
+E         At index 0 diff: False != True
+E         Use -v to get more diff
+
+tests\reading_export\test_viewmodels.py:368: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/reading_export/test_viewmodels.py::test_export_outcome_wait_does_not_accept_the_half_published_state
+FAILED tests/reading_export/test_viewmodels.py::test_success_path_also_publishes_before_clearing_running
+2 failed, 13 deselected in 0.21s
