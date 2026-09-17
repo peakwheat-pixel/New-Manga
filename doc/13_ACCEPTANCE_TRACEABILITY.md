@@ -1,6 +1,6 @@
 # 需求与验收追踪（接管基线）
 
-来源：[D08 验收标准](08_ACCEPTANCE_CRITERIA.md)。2026-09-13 从二级标题读取185个带编号条目：104个P0、81个P1、0个P2。主责任 Task 用于安排最终行为交付；设计、底层存储及 UI 等依赖仍须共同验证。任务完成不自动将AC改成PASS。
+来源：[D08 验收标准](08_ACCEPTANCE_CRITERIA.md)。2026-09-17 更新：193 个编号条目（104 个 P0、81 个 P1、8 个 P2、0 个 P3）。主责任 Task 用于安排最终行为交付；设计、底层存储及 UI 等依赖仍须共同验证。任务完成不自动将 AC 改成 PASS。
 
 此表是派生的覆盖路由，不重新定义验收预期。TASK-008 切片相关条目已绑定固定 reviewed_head、Review 与主线集成验证；其余产品级验收结果仍为 NOT_RUN。后续每项证据必须绑定测试commit/环境/命令/产物，不能用文档证据替代未执行的产品行为验证。
 
@@ -197,10 +197,18 @@
 | AC-DOC-001 | P1 | 01~08 文件齐全 | [TASK-001](tasks/TASK-001.md) | PASS | 8份文件存在；审计§2 |
 | AC-DOC-002 | P1 | 核心术语统一 | [TASK-002](tasks/TASK-002.md) | PASS | DeepSeek approved `b1b3f5d..885c9a9`；由 `7927169` 集成，契约 §1/5/6 统一术语 |
 | AC-DOC-003 | P1 | 四个一级页面统一 | [TASK-001](tasks/TASK-001.md) | PASS | 全文核对四个入口与默认书架；审计§7 |
+| AC-EXT-IMPORT-003 | P2 | 未加密 PDF 按页导入 | [TASK-023](tasks/TASK-023.md) | NOT_RUN | TASK-023 冻结，无产品测试 |
+| AC-EXT-IMPORT-004 | P2 | 加密或损坏 PDF 零半成品拒绝 | [TASK-023](tasks/TASK-023.md) | NOT_RUN | TASK-023 冻结，无产品测试 |
+| AC-EXT-PLUGIN-001 | P2 | 本地插件 Hook 按 Schema 执行 | [TASK-025](tasks/TASK-025.md) | NOT_RUN | TASK-025 冻结，无产品测试 |
+| AC-EXT-PLUGIN-002 | P2 | 插件崩溃或超时被隔离 | [TASK-025](tasks/TASK-025.md) | NOT_RUN | TASK-025 冻结，无产品测试 |
+| AC-EXT-PLUGIN-003 | P2 | 缺少权限声明的插件拒绝加载 | [TASK-025](tasks/TASK-025.md) | NOT_RUN | TASK-025 冻结，无产品测试 |
+| AC-EXT-FONT-001 | P2 | 获准上传字体可选并用于渲染 | [TASK-022](tasks/TASK-022.md) | NOT_RUN | TASK-022 冻结，无产品测试 |
+| AC-EXT-FONT-002 | P2 | 损坏或超限字体拒绝且无半成品 | [TASK-022](tasks/TASK-022.md) | NOT_RUN | TASK-022 冻结，无产品测试 |
+| AC-EXT-SAKURA-001 | P2 | Sakura 连接测试报告健康与就绪状态 | [TASK-019](tasks/TASK-019.md) | NOT_RUN | TASK-019 blocked；本地 Sakura 实例验证 NOT_RUN |
 
 ## 无独立编号的 AC 主题要求
 
-D08有61个AC主题标题，其中 10 个主题没有独立编号子项；不得因上表只提取编号而遗漏。TASK-003 已为全部未编号要求分配稳定组标识（不发明新的产品 ID 或优先级）：10 个零编号主题、7 个 D08 §68～§73/§76 全局规范、7 个扩展项，共 24 个。执行方式、环境与证据口径见[验收方法与素材规范 §8](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)，本表只保留追踪回链与结果。
+D08有62个AC主题标题，其中 10 个主题没有独立编号子项；不得因上表只提取编号而遗漏。TASK-003 已为全部未编号要求分配稳定组标识（不发明新的产品 ID 或优先级）：10 个零编号主题、7 个 D08 §68～§73/§76 全局规范、7 个扩展项，共 24 个。执行方式、环境与证据口径见[验收方法与素材规范 §8](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)，本表只保留追踪回链与结果。
 
 ### 零编号 AC 主题（10）
 
@@ -237,18 +245,16 @@ D08 §74（建议验收结果目录）与 §75（verification-summary.md 推荐�
 
 ## 01～07 中需补充验收的内容
 
-ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA 原列 15 条 AC-EXT-*；U-1 已取消网页导入，
-AC-EXT-IMPORT-001/002 退役且不复用；U-2 已选 PDFium via `pypdfium2`，U-3 已批准 Plugin
-首版分发范围，U-4 已将 Plugin Agent 延至未来单独裁决；剩余 13 条仍是草案，尚未转为正式编号 AC。未定稿的适用项不得视为已批准或已验收，当前结果保持 NOT_RUN。
+ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA 原列 15 条 AC-EXT-*；U-1 退役 IMPORT-001/002 且编号不复用。其余 13 条中，8 条已纳入 D08 §78 正式编号，结果均为 NOT_RUN；AGENT-001/002、FONT-003、SAKURA-002/003 共 5 条仍为非当前 Release Gate 草案，原因和后续条件见下表。
 
-以下条目尚未成为编号 AC，已分配稳定扩展标识；执行方式见[验收方法与素材规范 §8.4](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)。
+以下 ACG 行仅追踪尚未被正式 AC 覆盖的残余要求；已编号的 8 条在上方 AC 表单独追踪。执行方式见[验收方法与素材规范 §8.4](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)。
 
 | 组标识 | 已有来源 | 内容 | 后续处理 | 当前结果 |
 |---|---|---|---|---|
-| `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | 图片/文件夹以外的 PDF、MOBI 导入；网页导入按 U-1 取消 | [contracts/extensions.md §1.1/1.2](contracts/extensions.md)：IMPORT-001/002 已退役；U-2 已选 PDFium via `pypdfium2`，MOBI 解析契约仍未定稿；TASK-023 仍冻结 | NOT_RUN |
-| `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin/Hooks、AI生成插件Agent | [TASK-024 契约 §1.3/1.4](contracts/extensions.md)：U-3 已批准首版仅本地目录插件（无市场、在线分发或自动更新）；U-4 决定 Agent 不进首版，待格式/权限机制验收后另行裁决二阶段；AC 草案仍未转正式编号，TASK-025 仍冻结 | NOT_RUN |
-| `ACG-EXT-FONT` | D01 §2；D05 §48 | 字体上传和资源处理 | [TASK-024 契约 §1.5](contracts/extensions.md)：U-5 已批准单文件≤50 MB、用户上传字体总数≤200及本地使用许可提示；AC 草案仍待正式化，TASK-022 仍冻结 | NOT_RUN |
-| `ACG-EXT-SAKURA` | D01 §2；D02 §11 | Sakura服务监控、模型/设备就绪状态 | [TASK-024 契约 §1.6](contracts/extensions.md)：U-6 已批准仅健康探测和就绪状态、不做显存或负载等深度指标；AC 草案仍待正式化，TASK-019 仍 blocked 且未释放 | NOT_RUN |
+| `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | MOBI 解析及未编号导入边界；网页导入按 U-1 取消 | [contracts/extensions.md §1.1/1.2](contracts/extensions.md)：PDF 由 AC-EXT-IMPORT-003/004（D08 §78）覆盖；U-2 已选 PDFium via pypdfium2；MOBI 契约仍未定，TASK-023 冻结 | NOT_RUN |
+| `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin/Hooks 与 Plugin Agent 残余范围 | [contracts/extensions.md §1.3/1.4](contracts/extensions.md)：PLUGIN-001～003 已列入 D08 §78；AGENT-001/002（P3：生成插件须经用户确认才可加载；网络调用须可审计）依 U-4 延后，待本地格式/权限验收及新的用户裁决；TASK-025 冻结 | NOT_RUN |
+| `ACG-EXT-FONT` | D01 §2；D05 §48 | 字体上传剩余边界 | [contracts/extensions.md §1.5](contracts/extensions.md)：FONT-001/002 已列入 D08 §78 并应用 U-5 上限/提示；FONT-003（P3：删除被引用字体时强制确认并回退默认）仍为草案；TASK-022 冻结 | NOT_RUN |
+| `ACG-EXT-SAKURA` | D01 §2；D02 §11 | Sakura 健康/就绪监控的未决实现细节 | [contracts/extensions.md §1.6](contracts/extensions.md)：SAKURA-001 已列入 D08 §78 且遵循 U-6；SAKURA-002/003（P3：可选轮询显示状态变化并按连续失败标记；关闭/失败不阻塞主流程）仍为草案；TASK-019 blocked、未释放 | NOT_RUN |
 | `ACG-EXT-DETECT` | D06 §6/8 | 检测、配色和SourceStyle本身的正确性 | 质量方法见规范 §7；TASK-016/019与TASK-014验证 | NOT_RUN |
 | `ACG-EXT-CONTRACT` | D03/D06，G06～G13 | 状态、复合写回、Pin/TM/Review、SFX等未闭合契约 | TASK-002已冻结契约；精确AC待TASK-003/024补齐 | NOT_RUN |
 | `ACG-EXT-NFR` | D07目标数值与D08发布要求 | SHOULD/P1/豁免的口径及基准环境 | TASK-001/003核对并形成用户可审核规则，TASK-026实测 | NOT_RUN |

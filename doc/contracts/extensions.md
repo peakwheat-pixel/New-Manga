@@ -1,7 +1,6 @@
 # 扩展能力与验收覆盖边界设计（TASK-024，仅设计）
 
-状态：**部分裁决，部分草案待后续定稿**。本文件 §1 原列 15 条 AC-EXT-* 产品验收草案；
-U-1 已裁决取消网页导入，AC-EXT-IMPORT-001/002 已退役且不得复用；其余 13 条仍是草案。
+状态：**用户范围裁决已完成；实现细节仍有草案**。原 15 条 AC-EXT 草案中，U-1 退役 IMPORT-001/002；8 条边界明确的 P2 已纳入 D08 §78，5 条残余草案继续由 D13 ACG-EXT 行追踪。
 U-2 已选定 PDFium via `pypdfium2`，但此决定本身不将草案转为正式 AC，也不代表已验证。
 U-3 已批准 Plugin 首版仅支持本地目录插件，不做插件市场、在线分发或自动更新；该范围决定不等于释放 TASK-025。
 U-4 已决定 Plugin Agent 不进入首版；待本地插件格式与权限机制实现并验收后，是否作为第二阶段引入须另行裁决。
@@ -48,7 +47,7 @@ TASK-023 不包含网页采集、站点清单、Firecrawl/gallery-dl 或网页�
 | 未知契约 | MOBI 在 Python 侧无官方解析库（mobi/ebooklib 均为第三方，许可与维护状态未评估）；PDF 栅格化已按 U-2 选定 PDFium via `pypdfium2`，绑定包为 Apache-2.0/BSD-3-Clause 双许可，PDFium 核心为 BSD-style，随分发包附带所有组件许可证；加密/扫描版 PDF 的 OCR 路径未定义；页序与双页 spread 拆分规则未定义 ([pypdfium2 licensing](https://pypi.org/project/pypdfium2/), [PDFium LICENSE](https://pdfium.googlesource.com/pdfium/+/fbec801a8dd8ac30dc2f08385deb0ac81031f3f5/LICENSE)) |
 | 支持矩阵（草案） | 入口=Import Window 文件过滤器扩展 `.pdf .mobi`；解析=外部进程/库转出图片字节序列后走标准 ImportSource 流；PDF：使用 PDFium via `pypdfium2`，未加密文件按页光栅化（150 DPI 起步，可配置）；MOBI：仅未加密 MOBI/KF8；加密文件直接拒绝并说明原因 |
 | 授权/失败边界 | 解码库崩溃隔离在导入任务内（D07 §72 模式）；解析失败页逐页报错；不修改源文件（复用 D04 §8 承诺）；加密内容不尝试绕过 |
-| AC 草案 | AC-EXT-IMPORT-003（P2）：未加密 PDF 按页序导入且 Hash/Managed Copy 语义与图片导入一致；AC-EXT-IMPORT-004（P2）：加密/损坏文件给出明确拒绝理由，零半成品写入 |
+| 正式 AC | AC-EXT-IMPORT-003（P2，D08 §78）：未加密 PDF 按页导入并遵守 Managed Copy/Hash 语义；AC-EXT-IMPORT-004（P2，D08 §78）：加密或损坏 PDF 有原因地拒绝且零半成品。MOBI 仍无正式 AC，契约未定 |
 | 释放条件 | U-2 已批准 PDFium via `pypdfium2` 及其许可证处理；依赖清单仍须由 Codex 在 TASK-023 获得明确授权后更新，并随发行包提供上游与第三方许可证；TASK-023 白名单含 `src/application/importing/documents/**` |
 
 ### 1.3 Plugin / Hooks（ACG-EXT-PLUGIN 的一部分）
@@ -59,7 +58,7 @@ TASK-023 不包含网页采集、站点清单、Firecrawl/gallery-dl 或网页�
 | 未知契约 | U-3 已确定首版本地目录插件范围；Hook 输入输出的具体 schema 未定义；插件发现/签名机制与 manifest 格式未定稿；权限模型粒度（文件/网络/模型）未定义；插件版本与应用版本兼容矩阵未定义（D07 §80 口径） |
 | 支持矩阵（草案） | **U-3 已批准范围**：首版仅支持本地目录插件，不做插件市场、在线分发或自动更新。技术方案仍为草案：目录建议=`%LOCALAPPDATA%/New Manga/plugins/<id>/`，manifest.json 声明扩展点/权限/版本；Hook 调用点按 D02 §12 六组，入参/出参为 versioned JSON schema；任一 Hook 异常=该次调用跳过 + Plugin Error 面板记录 + 主链路继续 |
 | 授权/失败边界 | 权限声明缺失=插件不加载（fail-closed）；网络/文件权限逐项开关且默认关闭；Hook 执行不进 Qt UI 线程；插件目录只读对插件自身生效（插件不得自更新） |
-| AC 草案 | AC-EXT-PLUGIN-001（P2）：合法插件在声明的扩展点被调用且 schema 校验通过；AC-EXT-PLUGIN-002（P2）：插件崩溃/超时被隔离，主任务结果与无插件时一致（幂等性验收）；AC-EXT-PLUGIN-003（P2）：无权限声明的插件被拒绝加载并有审计记录 |
+| 正式 AC | AC-EXT-PLUGIN-001～003（P2，D08 §78）：合法本地插件按已冻结 Schema 执行；崩溃/超时隔离且不破坏主链路；缺权限声明时拒绝加载并留审计记录 |
 | 释放条件 | U-3 的首版分发范围已批准；Hook 批次、AC 与 allowed_paths 仍须在 TASK-025 释放前明确，之后由 Codex 单独授权并按六组 Hook 收紧范围（首批 before/after export + before/after ocr 仍为建议） |
 
 ### 1.4 AI 生成插件 Agent（ACG-EXT-PLUGIN 的一部分，"如保留"裁决）
@@ -84,7 +83,7 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
 | 维度 | 设计内容 |
 |---|---|
 | 支持矩阵（草案，未纳入首版） | 仅为未来二阶段候选：入口=设置页 Plugin/Hooks 分区内"插件助手"按钮（弹窗，非一级页面）；输入=自然语言描述 + 目标 Hook；输出=manifest+hook 脚本草稿 + 差异说明。是否保留待 U-4 后续裁决 |
-| AC 草案 | AC-EXT-AGENT-001（P3）：Agent 生成的插件不经用户确认不会出现在已加载清单；AC-EXT-AGENT-002（P3）：Agent 全部网络调用可在代理日志中审计 |
+| 候选 AC（非当前 Release Gate） | AC-EXT-AGENT-001（P3）：Agent 生成的插件未经用户确认不得出现在已加载清单；AC-EXT-AGENT-002（P3）：Agent 全部网络调用可在代理日志中审计。两项仍为未来阶段草案；依 U-4，须待本地格式/权限机制实现并验收后由用户单独裁决是否进入第二阶段，不在 D08 正式编号 |
 | 释放条件 | U-4 已决定不纳入首版；待 §1.3 本地插件格式与权限机制实现并验收、§1.4 四项条件可被验证后，须由用户单独批准是否进入第二阶段并将 AC 正式化。首版 TASK-025 不包含 Plugin Agent |
 
 ### 1.5 字体上传（ACG-EXT-FONT）
@@ -95,7 +94,7 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
 | 未知契约 | U-5 已确定字体许可提示责任与上传上限；字体缺失/损坏时的回退链未文档化；上传字体的存储位置与 Hash 校验未定义（Model Download 口径 D07 §84 可类比） |
 | 支持矩阵（草案） | 入口=设置页文字样式分区的"上传字体"按钮；格式=.ttf/.otf/.ttc；存储=Managed Storage `fonts/` 下（复制+SHA-256 记录，源文件不动）；加载=追加到 FontCatalog 的用户区，按字体族名选择；损坏字体被 Qt 拒绝时逐文件报错且不入库 |
 | 授权/失败边界 | **U-5 已批准**：单个上传字体文件 ≤50 MB，用户上传字体总数 ≤200；提示文案：“上传即声明本人已具备该字体的本地使用许可；用户自行确保许可，应用不分发字体。”其他草案边界：删除被样式引用的字体时需二次确认并回退默认字体 |
-| AC 草案 | AC-EXT-FONT-001（P2）：上传的字体在样式选择器可选并用于渲染，Hash 入库；AC-EXT-FONT-002（P2）：损坏/超大文件被拒绝且零半成品；AC-EXT-FONT-003（P3）：删除被引用字体时强制确认并回退默认 |
+| 正式 AC / 候选 AC | AC-EXT-FONT-001/002（P2，D08 §78）覆盖可选并渲染、Hash、U-5 提示与 50 MB/200 上限及拒绝路径；AC-EXT-FONT-003（P3）：删除被引用字体时强制确认并回退默认，仍为草案 |
 | 释放条件 | U-5 上限与许可提示文案已批准；TASK-022 仍须待依赖完成、AC/allowed_paths 明确并由 Codex 单独释放；拟议白名单=`src/application/settings/fonts/**` + 设置页样式分区扩展（TASK-014 的 font_catalog 已提供加载 seam，无需改渲染核心） |
 
 ### 1.6 Sakura 本地服务监控（ACG-EXT-SAKURA）
@@ -106,7 +105,7 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
 | 未知契约 | U-6 已确定监控范围为健康探测与就绪状态，不做显存、负载等深度指标；具体健康端点（如 `/v1/models` 或 health）、轮询频率与失败阈值未定；多实例（不同端口）支持未定义 |
 | 支持矩阵（草案） | **U-6 已批准范围**：仅做健康探测与就绪状态，不做显存或负载等深度指标。运行细节仍为草案：Sakura-本地 Provider Profile 的设置页连接测试按需探测（复用 TASK-009 连接测试），可选后台轮询（默认关，建议 60s 间隔、连续 2 次失败标记不可用）；工作台 Provider 选择器显示就绪/不可用/未知三态（草案落点：D05 工作台章节暂无此映射，TASK-019 释放前须核对挂载位置，不得据此改一级页面结构） |
 | 授权/失败边界 | 探测地址取自 Profile（本地默认直连，D02 §6.2.2）；探测失败永不阻断翻译任务发起（任务失败由真实翻译请求自行报错）；轮询请求走统一网络栈并可被全局暂停停止 |
-| AC 草案 | AC-EXT-SAKURA-001（P2）：Sakura Profile 的连接测试给出就绪/不可用与原因；AC-EXT-SAKURA-002（P3）：可选轮询开启后状态变化在工作台可见且连续失败自动标记；AC-EXT-SAKURA-003（P3）：探测关闭/失败不阻塞主流程 |
+| 正式 AC / 候选 AC | AC-EXT-SAKURA-001（P2，D08 §78）覆盖连接测试的健康/就绪结果与原因；AC-EXT-SAKURA-002（P3）：可选轮询开启后状态变化在工作台可见且连续失败自动标记；AC-EXT-SAKURA-003（P3）：探测关闭/失败不阻塞主流程。002/003 仍为草案，且不得超出 U-6 范围 |
 | 释放条件 | U-6 范围已批准；TASK-019 仍 blocked，尚未获单独释放，TASK-018 仍 blocked 且 TASK-017 真实端点层仍 NOT_RUN；满足依赖并获单独释放后由 Codex 明确 AC/allowed_paths。运行测试需本地 Sakura 实例；环境不具备时按 D08 记录 BLOCKED/NOT_RUN |
 
 ## 2. 明确不做的（有来源的排除，非删除）
@@ -117,16 +116,16 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
   D02 §12；在线分发是新的产品范围，须用户明确提出）。
 - 不为任何扩展新增一级页面或常驻浮窗（见 §0.1）。
 
-## 3. 对权威文档的回写（待用户批准后执行）
+## 3. 权威文档回写（U-1～U-6 裁决后的状态）
 
 | 文档 | 变更 |
 |---|---|
-| `08_ACCEPTANCE_CRITERIA.md` | 若后续批准，将 §1 剩余 13 条 AC 草案转为正式编号 AC；已退役的 IMPORT-001/002 不收录 |
-| `13_ACCEPTANCE_TRACEABILITY.md` | `ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA` 的"后续处理"列更新为"TASK-024 已定义边界（contracts/extensions.md §1.x），对应 U-1～U-6 决议已同步；IMPORT-001/002 退役，其余产品 AC 仍为草案并按 §1 释放条件执行" |
-| `12_ROADMAP.md` | 记录 U-1～U-6 已裁决的边界；TASK-023/025/019/022 仍按各自依赖与单独释放条件执行 |
+| `08_ACCEPTANCE_CRITERIA.md` | D08 §78 纳入 8 条边界明确的 P2 AC；AGENT-001/002、FONT-003、SAKURA-002/003 共 5 条继续留作草案，不进入当前 Release Gate |
+| `13_ACCEPTANCE_TRACEABILITY.md` | 8 条正式 AC 按主责任 Task 登记；ACG-EXT 行仅保留 MOBI、Agent、字体删除和 Sakura 轮询/失败细节等残余草案 |
+| `12_ROADMAP.md` | 已记录 U-1～U-6 边界；TASK-023/025/019/022 仍按各自依赖与单独释放条件执行 |
 
-本 Task 自身（仅设计）不代替用户做需求裁决。用户于 2026-09-17 作出 U-1～U-6 决定后，
-Codex 已同步权威范围与裁决记录；TASK-023/025 未释放，TASK-019 仍 blocked，依赖清单及正式 AC 尚未更新。
+本 Task 仍只记录设计交付，不替代实现 Task 的测试证据。用户已作出 U-1～U-6 决定后，8 条边界明确的 P2 扩展 AC 已纳入 D08 §78；AGENT-001/002、FONT-003、SAKURA-002/003 共 5 条仍为草案，原因见 §1。TASK-023/025 未释放，TASK-019 仍 blocked。
+本次 AC 整理不改变 TASK-019/022/023/025 的授权状态。
 
 ## 4. 用户待决清单（审批入口）
 

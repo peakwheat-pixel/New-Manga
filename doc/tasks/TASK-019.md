@@ -16,11 +16,8 @@ integration_commit: null
 
 # TASK-019：集成已验证的检测/OCR/翻译/修复 Provider
 
-**BLOCKED（2026-09-17 窗口条款登记）**：2026-09-16 ZCode 全权窗口的解冻名单仅含
-TASK-015/024/017，本 Task 属窗口排除项"解冻名单之外的任务仍冻结"。按条款登记
-`blocked`：blocker=窗口授权不覆盖解冻（前状态 `proposed`）；恢复条件=用户批准释放
-（届时按流程填 owner/base_commit/branch/worktree 后转 `ready`），即使解除冻结也须先登记两项输入缺口：TASK-018 仍为 `blocked`、TASK-017 的真实
-端点层（Provider/成本/时延实测）仍 NOT_RUN（付费端点未配置）。
+**BLOCKED（2026-09-17 窗口条款登记，后续复核）**：2026-09-16 ZCode 全权窗口解冻名单仅含 TASK-015/024/017，本 Task 不在名单内；窗口授权已归还。U-6 已批准 Sakura 监控只做健康探测与就绪状态、不做显存或负载等深度指标，但该范围决定不释放 TASK-019。
+当前仍不能转为 ready：硬依赖 TASK-018 仍为 blocked；TASK-019 尚未获得单独用户释放授权。TASK-017 已 done，但其真实 OpenAI-compatible Provider 的协议/成本/时延实测仍 NOT_RUN（付费端点未配置），解除冻结前须登记此输入缺口。TASK-017 验证记录也指出本机未运行 Sakura 服务，AC-EXT-SAKURA-001 的真实服务验证因此 NOT_RUN；健康探测端点须在后续 Task 交付中明确。D08 §78 的 AC-EXT-SAKURA-001 已列入本任务，D13 结果为 NOT_RUN。本文件保持 status=blocked、approval=pending_user_review，owner/base/branch/worktree 为空。
 当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
@@ -34,7 +31,7 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - [ ] 按已批准实验报告实现明确选定能力，覆盖本地OCR、韩文OCR、兼容Vision、Translation以及Simple Fill/漫画修复和彩色路线；不可用候选明确禁用，未获批范围不能称完成。
 - [ ] 通过统一网络/设备/文件边界接入Pipeline，严格输出映射、显式fallback、Mask/模型/options/provenance与单Region写回限制。
 - [ ] 模型延迟加载、下载进度/取消/Hash、Ready判定、OOM隔离、GPU重任务默认单并发；CPU fallback仅在Provider声明支持时执行。
-- [ ] TASK-024确认的Sakura本地服务监控范围有实际状态/故障反馈及测试；未批准的监控行为不自行扩展。
+- [ ] D08 §78 的 AC-EXT-SAKURA-001：Sakura Profile 连接测试给出健康/就绪状态与原因，探测范围遵守 U-6；真实服务验证与实现证据必须实测，当前 D13 结果 NOT_RUN。SAKURA-002/003 仍为草案，不自动纳入本任务。
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
@@ -77,4 +74,4 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-17 blocker 复核：U-6 范围已批准；AC-EXT-SAKURA-001 已正式编号并追踪为 NOT_RUN。TASK-018 仍 blocked（硬依赖）；TASK-017 真实 Provider 协议/成本/时延 NOT_RUN（付费端点未配置），本机 Sakura 服务未运行，真实探测验证 NOT_RUN；TASK-019 未获单独释放，状态维持 blocked，不创建 Owner/base/branch/worktree。
