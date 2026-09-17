@@ -1,0 +1,17 @@
+=== 判别力探针（修前树：helpers 未含 safe_number，test_helpers.py 已就位）===
+$ python -m pytest tests/reading_export/test_helpers.py -q -p no:cacheprovider -rf
+
+=================================== ERRORS ====================================
+____________ ERROR collecting tests/reading_export/test_helpers.py ____________
+ImportError while importing test module 'G:\CODEX\New Manga.worktrees\TASK-037-zcode\tests\reading_export\test_helpers.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\reading_export\test_helpers.py:11: in <module>
+    from reading_export_helpers import safe_number, safe_property
+E   ImportError: cannot import name 'safe_number' from 'reading_export_helpers' (G:\CODEX\New Manga.worktrees\TASK-037-zcode\tests\reading_export\reading_export_helpers.py)
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.13s
+EXIT=2
