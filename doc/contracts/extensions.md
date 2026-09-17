@@ -1,8 +1,8 @@
 # 扩展能力与验收覆盖边界设计（TASK-024，仅设计）
 
-状态：**部分裁决，部分草案待用户批准**。本文件 §1 原列 15 条 AC-EXT-* 产品验收草案；
-U-1 已裁决取消网页导入，AC-EXT-IMPORT-001/002 已退役且不得复用；其余 13 条仍是草案，
-须经 U-2~U-6 用户裁决批准后才可转为正式编号 AC，不得作为已接受或已验证的验收依据。
+状态：**部分裁决，部分草案待后续定稿**。本文件 §1 原列 15 条 AC-EXT-* 产品验收草案；
+U-1 已裁决取消网页导入，AC-EXT-IMPORT-001/002 已退役且不得复用；其余 13 条仍是草案。
+U-2 已选定 PDFium via `pypdfium2`，但此决定本身不将草案转为正式 AC，也不代表已验证。
 本文件是 [STATUS](../STATUS.md) 授权窗口内 TASK-024 的唯一设计交付；它只定义边界与条件，
 不实现任何扩展。网页导入已按 U-1 取消；其余扩展仍按各自用户裁决决定是否进入产品范围。
 U-1 仅取消网页导入；其余产品取舍经用户批准后才对 TASK-023/025/019/022 释放，
@@ -41,11 +41,11 @@ TASK-023 不包含网页采集、站点清单、Firecrawl/gallery-dl 或网页�
 | 维度 | 设计内容 |
 |---|---|
 | 已有要求 | D01 §2 补充扩展能力；D04 §8 流程图首节点含"PDF / MOBI"；D05 §52 导入窗口格式列表 |
-| 未知契约 | MOBI 在 Python 侧无官方解析库（mobi/ebooklib 均为第三方，许可与维护状态未评估）；PDF 页→图片的光栅化引擎未选：PDFium 核心为 BSD-style，`pypdfium2` 包自身为 Apache-2.0/BSD-3-Clause，随包分发还需携带 PDFium 依赖许可证；PyMuPDF/MuPDF 提供 AGPL 或商业许可；加密/扫描版 PDF 的 OCR 路径未定义；页序与双页 spread 拆分规则未定义 ([pypdfium2 licensing](https://pypi.org/project/pypdfium2/), [PDFium LICENSE](https://pdfium.googlesource.com/pdfium/+/fbec801a8dd8ac30dc2f08385deb0ac81031f3f5/LICENSE), [PyMuPDF licensing](https://pymupdf.readthedocs.io/en/latest/about.html)) |
-| 支持矩阵（草案） | 入口=Import Window 文件过滤器扩展 `.pdf .mobi`；解析=外部进程/库转出图片字节序列后走标准 ImportSource 流；PDF：未加密文件按页光栅化（150 DPI 起步，可配置）；MOBI：仅未加密 MOBI/KF8；加密文件直接拒绝并说明原因 |
+| 未知契约 | MOBI 在 Python 侧无官方解析库（mobi/ebooklib 均为第三方，许可与维护状态未评估）；PDF 栅格化已按 U-2 选定 PDFium via `pypdfium2`，绑定包为 Apache-2.0/BSD-3-Clause 双许可，PDFium 核心为 BSD-style，随分发包附带所有组件许可证；加密/扫描版 PDF 的 OCR 路径未定义；页序与双页 spread 拆分规则未定义 ([pypdfium2 licensing](https://pypi.org/project/pypdfium2/), [PDFium LICENSE](https://pdfium.googlesource.com/pdfium/+/fbec801a8dd8ac30dc2f08385deb0ac81031f3f5/LICENSE)) |
+| 支持矩阵（草案） | 入口=Import Window 文件过滤器扩展 `.pdf .mobi`；解析=外部进程/库转出图片字节序列后走标准 ImportSource 流；PDF：使用 PDFium via `pypdfium2`，未加密文件按页光栅化（150 DPI 起步，可配置）；MOBI：仅未加密 MOBI/KF8；加密文件直接拒绝并说明原因 |
 | 授权/失败边界 | 解码库崩溃隔离在导入任务内（D07 §72 模式）；解析失败页逐页报错；不修改源文件（复用 D04 §8 承诺）；加密内容不尝试绕过 |
 | AC 草案 | AC-EXT-IMPORT-003（P2）：未加密 PDF 按页序导入且 Hash/Managed Copy 语义与图片导入一致；AC-EXT-IMPORT-004（P2）：加密/损坏文件给出明确拒绝理由，零半成品写入 |
-| 释放条件 | 用户批准光栅化引擎与其许可后果；解析库进依赖清单须走排除项审批；TASK-023 白名单含 `src/application/importing/documents/**` |
+| 释放条件 | U-2 已批准 PDFium via `pypdfium2` 及其许可证处理；依赖清单仍须由 Codex 在 TASK-023 获得明确授权后更新，并随发行包提供上游与第三方许可证；TASK-023 白名单含 `src/application/importing/documents/**` |
 
 ### 1.3 Plugin / Hooks（ACG-EXT-PLUGIN 的一部分）
 
@@ -118,15 +118,15 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
 | `13_ACCEPTANCE_TRACEABILITY.md` | `ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA` 的"后续处理"列更新为"TASK-024 已定义边界（contracts/extensions.md §1.x），待用户批准后按 §1 释放条件释放" |
 | `12_ROADMAP.md` | TASK-023/025/019/022 的前置条件加"对应 §1.x 边界获用户批准" |
 
-本 Task 自身（仅设计）不代替用户做需求裁决。用户于 2026-09-17 作出 U-1 决定后，
-Codex 已按该决定同步权威范围、TASK-023 规划和验收追踪；其余裁决仍按本节回写。
+本 Task 自身（仅设计）不代替用户做需求裁决。用户于 2026-09-17 作出 U-1/U-2 决定后，
+Codex 已同步权威范围与裁决记录；TASK-023 仍未释放，依赖清单及正式 AC 尚未更新。
 
 ## 4. 用户待决清单（审批入口）
 
 | # | 决定 | 影响 |
 |---|---|---|
 | U-1 | **已决定：取消网页导入**；原 AC-EXT-IMPORT-001/002 退役且编号不复用 | TASK-023 范围不含网页导入 |
-| U-2 | PDF 光栅化引擎：PDFium via `pypdfium2`（绑定包 Apache-2.0/BSD-3-Clause；PDFium 核心 BSD-style，附带依赖有额外许可证）或 PyMuPDF/MuPDF（AGPL 或商业许可） | TASK-023 范围、依赖与发行许可证声明 |
+| U-2 | **已决定：PDFium via `pypdfium2`**；按绑定包 Apache-2.0/BSD-3-Clause 双许可及 PDFium 核心 BSD-style 条款履行，并随发行包附带所有依赖许可证 | TASK-023 的 PDF 引擎已确定；未释放任务、未改依赖清单 |
 | U-3 | Plugin 首版=本地目录插件（无市场/无自动更新） | TASK-025 范围 |
 | U-4 | Plugin Agent 是否保留（§1.4 条件） | TASK-025 二批切片 |
 | U-5 | 字体上传上限与许可文案 | TASK-022 范围 |

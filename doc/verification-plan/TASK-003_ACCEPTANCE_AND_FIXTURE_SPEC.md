@@ -205,7 +205,7 @@ D08 中以下主题没有编号子项，使用稳定组标识；产品要求仍�
 
 | ACG ID | 来源 | 内容 | 处理路径 |
 |---|---|---|---|
-| `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | PDF / MOBI 导入（网页导入已按 U-1 取消） | TASK-024 §1.2 定义 PDF/MOBI 边界；网页 AC-EXT-IMPORT-001/002 已退役；TASK-023 仍冻结 |
+| `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | PDF / MOBI 导入（网页导入已按 U-1 取消） | U-2 已选 PDFium via `pypdfium2`；网页 AC-EXT-IMPORT-001/002 已退役；MOBI 契约待定，TASK-023 仍冻结 |
 | `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin / Hooks、AI 生成插件 Agent | TASK-024 确认条件与 AC，TASK-025 实现 |
 | `ACG-EXT-FONT` | D01 §2；D05 §48 | 字体上传与资源处理 | TASK-024 确认 AC，TASK-022 实现 |
 | `ACG-EXT-SAKURA` | D01 §2；D02 §11 | Sakura 服务监控、模型/设备就绪状态 | TASK-024 明确范围，TASK-019 落实 |

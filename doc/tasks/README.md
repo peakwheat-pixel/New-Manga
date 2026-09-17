@@ -27,7 +27,7 @@ TASK-001～TASK-017、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK
 | [TASK-021](TASK-021.md) | 完善备份恢复、回收站、清理与诊断 | Codex | TASK-006, TASK-011, TASK-015 |
 | [TASK-022](TASK-022.md) | 补齐工具窗口、设置与视觉交互验收 | ZCode | TASK-009, TASK-010, TASK-013, TASK-015, TASK-021, TASK-024 |
 | [TASK-023](TASK-023.md) | 实现 PDF/MOBI 导入路线 | ZCode | TASK-007, TASK-009, TASK-012, TASK-024 |
-| [TASK-024](TASK-024.md) | 明确扩展能力及验收覆盖边界（仅设计） | ZCode | done；base `116e682`；integration `61c33e2`；外部 post-hoc Review `9454cec` approved，R-101～R-103 已收口于 `c7a02bd`；U-1 已取消网页导入；U-2～U-6 待用户裁决；依赖 TASK-001, TASK-003 |
+| [TASK-024](TASK-024.md) | 明确扩展能力及验收覆盖边界（仅设计） | ZCode | done；base `116e682`；integration `61c33e2`；外部 post-hoc Review `9454cec` approved，R-101～R-103 已收口于 `c7a02bd`；U-1 已取消网页导入；U-2 已选 PDFium via pypdfium2；U-3～U-6 待用户裁决；依赖 TASK-001, TASK-003 |
 | [TASK-025](TASK-025.md) | 按批准契约实现 Plugin/Hooks 与可选扩展 | ZCode | TASK-019, TASK-022, TASK-024 |
 | [TASK-026](TASK-026.md) | 独立集成审查与质量/性能验收 | DeepSeek Harness | TASK-020, TASK-021, TASK-022, TASK-023, TASK-025 |
 | [TASK-027](TASK-027.md) | 发布候选集成、打包与最终验收 | Codex | TASK-026 |
