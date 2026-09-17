@@ -2,7 +2,7 @@
 id: TASK-036
 title: 设置输入校验与导出发布顺序硬化（承接 TASK-034 R-02 / R-05 / R-07）
 kind: maintenance
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-034]
 base_commit: edfdcf2fe923c8c6e97d19377c61c4b8bba25abc
 branch: agent/deepseek/TASK-036-settings-validation-and-export-order
 worktree: G:/CODEX/New Manga.worktrees/TASK-036-deepseek
-integration_commit: null
+integration_commit: 27253240d0fb2a8df82b15f34546cd74dc9b717f
 ---
 
 # TASK-036：设置输入校验与导出发布顺序硬化
@@ -42,7 +42,7 @@ integration_commit: null
 - [x] **AC ⑤ 冻结解除声明**：**已解除 TASK-034 R-07 冻结**并声明；更新三处锁定旧行为的用例（`test_missing_section_or_key_returns_the_explicit_default` 的段类型断言、`test_allowed_routes_as_string_keeps_the_frozen_char_expansion`、`test_fallback_routes_and_requirements_defaults_are_frozen` 的 `bool("false")` 断言），未放宽/删除其它断言、未新增 skip。
 - [x] **AC ⑥ 语义不变性证据**：12 类输入前后对照矩阵（[`input-matrix-before-after.txt`](../../verification/TASK-036/input-matrix-before-after.txt)）——8 类合法输入前后**逐字相同**（R-1～R-6 保持），非法输入由静默/改写改为 typed error（含 `route_policy: null`、字符串列表、非 str 元素、非 bool requirements 四处）。
 - [x] **AC ⑦ 回归与分列**：mandated 四套件 **274 passed / 0 skipped**（基线 243）；全仓 **737 passed / 6 skipped ×7 次**（逐次 exit 0；基线 `edfdcf2` 706/6；6 条 skip 全为既有 `tests/network` 的 `openssl unavailable`）。逐目录：providers 134→164、core 18→18、reading_export 65→66、editing 26→26、ui_shell 46→46、workbench 51→51（[`test-counts.txt`](../../verification/TASK-036/test-counts.txt)）。
-- [ ] **AC ⑧** 交付 Handoff、实际测试/审阅记录与未完成项，经**非作者** Review（协作协议 §6 四轴）与 Codex 集成验证后才能 done。
+- [x] **AC ⑧** 交付 Handoff、实际测试/审阅记录与未完成项，经**非作者** Review（协作协议 §6 四轴）与 Codex 集成验证后才能 done。
       → Handoff 与取证已交付；**Review 与集成尚未执行**，本 Task 不自行标记 `approved`/`done`。
 
 ## 允许修改范围
@@ -82,12 +82,13 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：[TASK-036-c931db0](../handoffs/TASK-036-c931db0.md)（delivery_head=`c931db0`）。
-- Review：尚无（待 Codex 非作者独立 Review，按协作协议 §6 四轴：Standards / Spec / Architecture / Verification）。
+- Review：[doc/reviews/TASK-036-c931db0.md](../reviews/TASK-036-c931db0.md)（Reviewer=Codex，**非作者**；commit `addf669`；decision=**`approved`**；四轴 Standards / Spec / Architecture / Verification 均 `executed`、逐轴小结、**不跨轴排名**；**并行偏差已按固化结论声明**——本环境双轴子代理通道不可用，按 §6 第 6 条兜底做两遍相互隔离检查）。Findings：R-01（P3，`safe_property` 的字符串占位被用于**数值比较** → `TypeError` 换一种掩蔽；Reviewer 新发现）**open 非阻塞**；R-02（P3，`changed-paths.txt` 为过期快照）**fixed（集成记录更正）**；R-03（P3，两处主动扩大行为：`route_policy: null`、`requirements` 非 mapping）**accepted**；R-04（P3，DirectConnection 处理函数内 `running == True`）**accepted 并记录**；R-05（P3，Handoff 数字不一致）**open 纯文档**。
+- 集成：`integration_commit=2725324`（merge，parents `addf669` + `5606221`）；复验 [verification/TASK-036/integration-2725324.md](../../verification/TASK-036/integration-2725324.md)（master 上 mandated 四套件 **274 passed/0 skipped**；全仓 3 次中 2 次 `737 passed/6 skipped`、1 次命中**已登记并已定性**的 webtoon flaky；`src/` 恰为 2 个允许文件）。
 - 实际执行/测试：
   - 取证总表：[verification/TASK-036/author-verification.md](../../verification/TASK-036/author-verification.md)；输入矩阵：[input-matrix-before-after.txt](../../verification/TASK-036/input-matrix-before-after.txt)；发布顺序：[export-publish-order.txt](../../verification/TASK-036/export-publish-order.txt)；判别力：[discriminative-prefix.log](../../verification/TASK-036/discriminative-prefix.log)；全仓串跑：[full-suite-runs.log](../../verification/TASK-036/full-suite-runs.log)；逐目录计数：[test-counts.txt](../../verification/TASK-036/test-counts.txt)。
   - 命令与结果（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：mandated 四套件 `tests/providers tests/core tests/reading_export tests/editing` **274 passed / 0 skipped**（基线 243）；全仓 **737 passed / 6 skipped ×7 次**（逐次 exit 0；基线 `edfdcf2` 706/6；6 条 skip 均为既有 `openssl unavailable`；本轮既有间歇失败与 webtoon flaky **未触发**，未记为通过）。逐目录：providers 134→164、core 18→18、reading_export 65→66、editing 26→26、ui_shell 46→46、workbench 51→51。
   - 判别力：新测试放到 base `edfdcf2` 的 `src`/viewmodel 上 → providers **28 failed / 37 passed**、reading_export **2 failed**（AC ①②③④ 的新语义均可被判据检出）。边界：改动恰为 `src/application/translation/inpaint/router.py`、`src/ui/viewmodels/export/viewmodel.py`、`tests/**`、`verification/TASK-036/**`；越界 0；`git diff --check` 退出码 0。
-- **未关闭项**：AC ⑧ 的非作者四轴 Review 与 Codex 集成；R-03（`DEFAULT_ROUTE_POLICY` 跨层归属）与 R-06（webtoon flaky 未复现）按 Task 禁止范围**不在本 Task 处理**。
+- **已关闭**：**TASK-034 的 R-02 / R-05 / R-07 三项**（R-07 的冻结由本 Task 解除）；AC ①～⑧ 全部完成。**不在本 Task 处理（按禁止范围）**：TASK-034 的 R-03（`DEFAULT_ROUTE_POLICY` 跨层归属）与 **R-06（webtoon flaky，本轮已定性但未修）** → 见下方「附带发现」与 [STATUS](../STATUS.md)「已知 flaky 测试（跟踪条目）」。本 Task 新增的 R-01（`safe_property` 数值用法）建议并入 R-06 的修复切片。
 - **附带发现（需 Reviewer 裁定）**：本轮全仓串跑（含基线对照）共 26 次。本 head 20 次中 **3 次失败且全部落在同一已登记用例** `test_reader_webtoon_swaps_in_vertical_viewer`；其中第 1 次报告 `test_qml_contract.py:153: RuntimeError`——该行在**诊断辅助函数**内，说明断言已失败（flaky 触发）而诊断访问**已销毁的 QML C++ 对象**，**掩蔽**了真实 `AssertionError`。据此做了**诊断稳健化**（新增 `safe_property()`，不改任何断言/等待预算/测试语义，**不解决也不重分类 R-06**），随后即拿到**真实签名**：`iterations=98 elapsed_ms=2000 ok=False scroll_contentY=-0.0 saved_scroll_offset_y=0.0`（`contentY` 被 `StopAtBounds` 夹回 0 → 无变化信号 → 节流保存不发生）。**归属**：纯净基线 `edfdcf2` 6 次中**同样复现同一用例 1 次**（1 failed / 705 passed）→ **不归因本 Task**。证据：[registered-flaky-signature.md](../../verification/TASK-036/registered-flaky-signature.md)、[intermittent-failure-repro.log](../../verification/TASK-036/intermittent-failure-repro.log)、[flaky-rate-baseline.log](../../verification/TASK-036/flaky-rate-baseline.log)。3 次失败**未记为通过**。
-- **最近状态（当前，唯一）**：2026-09-17 **AC ①～⑦ 完成并取证**，整体置 **`in_review`**，待 Codex 非作者 Review 与集成。分支 `agent/deepseek/TASK-036-settings-validation-and-export-order`、worktree `G:/CODEX/New Manga.worktrees/TASK-036-deepseek`、fixed base `edfdcf2`、delivery head `c931db0`（`dd608f4` 开工文档、`c931db0` 实现与取证）。**未 push、未合并 master、未释放任何冻结 Task。** 请 Reviewer 重点裁定：⑥ 矩阵中我主动扩大的两处行为变化（`route_policy: null`、`requirements` 非 mapping 的 typed error）；④ 的二次 `changed`（`running` notify）；以及 ② 对 `set`/生成器等非序列可迭代类型的拒绝口径。
+- **最近状态（当前，唯一）**：2026-09-17 **`done` 并已集成**——AC ①～⑧ 完成；非作者四轴 Review `approved`（`addf669`）+ integration `2725324`。分支 `agent/deepseek/TASK-036-settings-validation-and-export-order`、worktree `G:/CODEX/New Manga.worktrees/TASK-036-deepseek`、fixed base `edfdcf2`、delivery head `c931db0`（元数据 `5606221`）。**未 push、未释放任何冻结 Task。** Reviewer 已裁定：⑥ 两处主动扩大行为 **accepted**（`route_policy: null` 属"present but non-mapping"，R-1 身份返回仅适用于键缺失；`requirements` 非 mapping 此前已是裸 `ValueError`，本次仅类型化）；④ 二次 `changed` **必需**（`running` 的 notify 即 `changed`，清标志必须再发一次）；② 非序列（含 `set`/生成器）拒绝 **accepted**。**附带发现**：本轮把仓库级 flaky `test_reader_webtoon_swaps_in_vertical_viewer` 从"用例名未捕获"**定性**为可读签名（`contentY=-0.0` 被 `StopAtBounds` 夹回 → 无变化信号 → 节流保存未启动），归属为**非本 Task 引入**（该用例早于本 Task 登记；本 Task 对该文件仅做诊断稳健化；纯净基线亦复现）→ 仍 open，最小修复候选见 [integration-2725324.md](../../verification/TASK-036/integration-2725324.md)。
 - 历史状态（2026-09-17）：由 Codex 依 TASK-034 Review 的 R-02/R-05/R-07 与 Handoff N-1 创建为 `proposed`；随后用户批准释放为 `ready`（Owner=`DeepSeek Harness`、Reviewer=`Codex`、base=`edfdcf2`）。
