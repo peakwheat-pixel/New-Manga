@@ -100,3 +100,97 @@ class ManagedCopyStoreAdapter:
         finally:
             if temp_handle is not None:
                 self._storage.discard_temp(temp_handle)
+
+
+class PdfiumDocumentRaster:
+    """Rasterise PDF pages via pypdfium2 (TASK-023; U-2 approved PDFium).
+
+    Scope: **PDF only**. MOBI is not a PDFium capability and is deliberately
+    not implemented here — the use case reports non-PDF payloads as
+    ``UNSUPPORTED_FORMAT`` instead of this adapter guessing a parser.
+
+    Render scale is an implementation default (2.0 ≈ 144 DPI), not a frozen
+    contract; pages are encoded to PNG through the same Qt stack as the
+    image decoder. PDFium errors surface as
+    :class:`~application.importing.documents.ports.DocumentDecodeError`
+    (``ENCRYPTED`` for password-protected files — never guessed — and
+    ``INVALID_DOCUMENT`` otherwise).
+    """
+
+    def __init__(self, scale: float = 2.0) -> None:
+        self.scale = float(scale)
+
+    def open(self, data: bytes):
+        from application.importing.documents.ports import DocumentDecodeError
+
+        import pypdfium2 as pdfium
+
+        try:
+            document = pdfium.PdfDocument(data)
+        except pdfium.PdfiumError as error:
+            message = str(error)
+            if "password" in message.lower():
+                raise DocumentDecodeError(
+                    "ENCRYPTED", "the PDF is password-protected"
+                ) from error
+            raise DocumentDecodeError("INVALID_DOCUMENT", message) from error
+        return _PdfiumDocumentHandle(document, self.scale)
+
+
+class _PdfiumDocumentHandle:
+    def __init__(self, document, scale: float) -> None:
+        self._document = document
+        self.scale = scale
+
+    @property
+    def page_count(self) -> int:
+        return len(self._document)
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+
+        from PySide6.QtCore import QBuffer, QIODevice
+        from PySide6.QtGui import QImage
+
+        try:
+            page = self._document[index]
+            bitmap = page.render(scale=self.scale)
+            width, height = bitmap.width, bitmap.height
+            raw = bytes(bitmap.buffer)
+        except Exception as error:  # pdfium-level failure on this page
+            raise DocumentDecodeError("INVALID_DOCUMENT", str(error)) from error
+        mode = str(bitmap.mode)
+        if mode == "BGRA":
+            qformat = QImage.Format.Format_ARGB32
+        elif mode == "BGR":
+            qformat = QImage.Format.Format_RGB888
+        else:
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT", f"unexpected pdfium bitmap mode {mode!r}"
+            )
+        bytes_per_line = width * (4 if mode == "BGRA" else 3)
+        if len(raw) < bytes_per_line * height:
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT", "pdfium bitmap buffer is truncated"
+            )
+        image = QImage(raw, width, height, bytes_per_line, qformat)
+        if image.isNull():
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT", "rasterised page could not be decoded by Qt"
+            )
+        buffer = QBuffer()
+        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
+        if not image.save(buffer, "PNG"):
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT", "rasterised page could not be encoded as PNG"
+            )
+        return RenderedDocumentPage(bytes(buffer.data()), width, height)
+
+    def close(self) -> None:
+        try:
+            self._document.close()
+        except Exception:  # pragma: no cover - closing must never raise
+            pass
