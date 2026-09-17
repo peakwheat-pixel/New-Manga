@@ -25,11 +25,14 @@ class ProxyPolicy:
     ALL = frozenset({INHERIT, PROFILE, DIRECT})
 
 
-#: Provider capabilities a binding can address (D06 §7.1).
+#: Provider capabilities a binding can address (D06 §7.1, TASK-019).
+CAPABILITY_DETECTION = "detection"
 CAPABILITY_OCR = "ocr"
 CAPABILITY_TRANSLATION = "translation"
 CAPABILITY_INPAINT = "inpaint"
-ALL_CAPABILITIES = frozenset({CAPABILITY_OCR, CAPABILITY_TRANSLATION, CAPABILITY_INPAINT})
+ALL_CAPABILITIES = frozenset(
+    {CAPABILITY_DETECTION, CAPABILITY_OCR, CAPABILITY_TRANSLATION, CAPABILITY_INPAINT}
+)
 
 
 @dataclass(frozen=True)
