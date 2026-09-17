@@ -20,15 +20,13 @@ from __future__ import annotations
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 
-from infrastructure.providers.inpaint_router import (
+from application.translation.inpaint.protection import protected_pixel_violations
+from application.translation.inpaint.route_catalog import route_gate
+from application.translation.inpaint.router import (
     RoutePolicy,
     RouterDecision,
     RouterFeatures,
     require_route,
-)
-from infrastructure.providers.inpaint_routes import (
-    protected_pixel_violations,
-    route_gate,
 )
 from ports.inpaint.ports import (
     BooleanMask,

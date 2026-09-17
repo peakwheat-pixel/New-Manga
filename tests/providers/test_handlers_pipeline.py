@@ -42,7 +42,7 @@ from infrastructure.providers.step_writes import (
     RegionStepWriter,
     decode_mask_payload,
 )
-from infrastructure.providers.inpaint_router import RoutePolicy
+from application.translation.inpaint.router import RoutePolicy
 from infrastructure.providers.inpaint_routes import EdgeBleedProvider, SimpleFillProvider
 from infrastructure.sqlite.connection import open_database
 from infrastructure.sqlite.migrator import MigrationRunner

@@ -20,7 +20,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from infrastructure.providers.inpaint_routes import route_gate
+from application.translation.inpaint.route_catalog import route_gate
 from ports.inpaint.ports import (
     ROUTE_AOT_GAN,
     ROUTE_BRUSHNET,

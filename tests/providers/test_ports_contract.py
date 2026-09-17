@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 from ports.detection.ports import (
@@ -174,3 +176,23 @@ def test_image_frame_and_mask_are_strict_about_shape() -> None:
         BooleanMask(2, 2, ((True, False),))
     assert BooleanMask(2, 2, ((True, False), (False, False))).bbox() == (0, 0, 1, 1)
     assert BooleanMask(2, 2, ((False, False), (False, False))).bbox() is None
+
+
+def test_application_layer_never_imports_infrastructure() -> None:
+    """Standards S-1 (TASK-019 review): the documented layer direction holds.
+
+    ``doc/02_TECHNICAL_ARCHITECTURE_.md`` §架构方向 requires
+    ``QML/UI → Application → Domain/Ports → Infrastructure Adapters``. The
+    Inpaint Step used to import the route policy, the route table and the
+    non-target protection rule from ``infrastructure.providers``; those now
+    live in the application layer, and this guard keeps the inversion from
+    coming back.
+    """
+    application = Path(__file__).resolve().parents[2] / "src" / "application"
+    offenders: list[str] = []
+    for module in sorted(application.rglob("*.py")):
+        for lineno, line in enumerate(module.read_text(encoding="utf-8").splitlines(), 1):
+            stripped = line.strip()
+            if stripped.startswith(("from infrastructure", "import infrastructure")):
+                offenders.append(f"{module.relative_to(application.parent.parent)}:{lineno}")
+    assert offenders == [], f"application layer must not import infrastructure: {offenders}"
