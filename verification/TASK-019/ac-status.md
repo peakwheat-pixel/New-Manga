@@ -2,7 +2,7 @@
 
 - Task：TASK-019「集成已验证的检测/OCR/翻译/修复 Provider」
 - Owner：DeepSeek Harness（**作者**）／ Reviewer：Codex（**非作者**，集成由 Codex 执行）
-- 固定 base：`36242fb`（代码基线）／交付 head：`5fdd80a`
+- 固定 base：`36242fb`（代码基线）／交付 head：`726baf5`
 - 环境：Windows 11 `10.0.26200`／Python 3.12.3（`G:/CODEX/New Manga.task-envs/TASK-012-py312`）／PySide6 6.11.2／pytest 9.1.1
 - 环境实测：`torch`/`diffusers`/`numpy`/`paddleocr`/`paddle`/`manga_ocr`/`onnxruntime`/`openai`/`PIL`/`transformers` **全部不存在**；GPU 为 RTX 5070 Ti 16303 MiB（见 [`environment.json`](environment.json)）
 - 证据总表：[`author-verification.md`](author-verification.md)
