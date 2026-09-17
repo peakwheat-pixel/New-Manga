@@ -3,6 +3,7 @@
 状态：**部分裁决，部分草案待后续定稿**。本文件 §1 原列 15 条 AC-EXT-* 产品验收草案；
 U-1 已裁决取消网页导入，AC-EXT-IMPORT-001/002 已退役且不得复用；其余 13 条仍是草案。
 U-2 已选定 PDFium via `pypdfium2`，但此决定本身不将草案转为正式 AC，也不代表已验证。
+U-3 已批准 Plugin 首版仅支持本地目录插件，不做插件市场、在线分发或自动更新；该范围决定不等于释放 TASK-025。
 本文件是 [STATUS](../STATUS.md) 授权窗口内 TASK-024 的唯一设计交付；它只定义边界与条件，
 不实现任何扩展。网页导入已按 U-1 取消；其余扩展仍按各自用户裁决决定是否进入产品范围。
 U-1 仅取消网页导入；其余产品取舍经用户批准后才对 TASK-023/025/019/022 释放，
@@ -52,11 +53,11 @@ TASK-023 不包含网页采集、站点清单、Firecrawl/gallery-dl 或网页�
 | 维度 | 设计内容 |
 |---|---|
 | 已有要求 | D01 §2/§5 横切支撑层；D02 §12 扩展点清单（before/after detect→export 六组）与四条原则（schema 明确、崩溃隔离、禁绕 Repository、权限可审计）；D05 §43 设置页含 Plugin/Hooks 分区；D07 §72 稳定性要求 |
-| 未知契约 | Hook 输入输出的具体 schema 未定义；插件打包/发现/签名机制未定义；权限模型粒度（文件/网络/模型）未定义；插件版本与应用版本兼容矩阵未定义（D07 §80 口径） |
-| 支持矩阵（草案） | 首版仅支持**本地目录插件**（`%LOCALAPPDATA%/New Manga/plugins/<id>/`，含 manifest.json 声明扩展点/权限/版本），不做插件市场或在线分发；Hook 调用点按 D02 §12 六组，入参/出参为 versioned JSON schema；任一 Hook 异常=该次调用跳过 + Plugin Error 面板记录 + 主链路继续 |
+| 未知契约 | U-3 已确定首版本地目录插件范围；Hook 输入输出的具体 schema 未定义；插件发现/签名机制与 manifest 格式未定稿；权限模型粒度（文件/网络/模型）未定义；插件版本与应用版本兼容矩阵未定义（D07 §80 口径） |
+| 支持矩阵（草案） | **U-3 已批准范围**：首版仅支持本地目录插件，不做插件市场、在线分发或自动更新。技术方案仍为草案：目录建议=`%LOCALAPPDATA%/New Manga/plugins/<id>/`，manifest.json 声明扩展点/权限/版本；Hook 调用点按 D02 §12 六组，入参/出参为 versioned JSON schema；任一 Hook 异常=该次调用跳过 + Plugin Error 面板记录 + 主链路继续 |
 | 授权/失败边界 | 权限声明缺失=插件不加载（fail-closed）；网络/文件权限逐项开关且默认关闭；Hook 执行不进 Qt UI 线程；插件目录只读对插件自身生效（插件不得自更新） |
 | AC 草案 | AC-EXT-PLUGIN-001（P2）：合法插件在声明的扩展点被调用且 schema 校验通过；AC-EXT-PLUGIN-002（P2）：插件崩溃/超时被隔离，主任务结果与无插件时一致（幂等性验收）；AC-EXT-PLUGIN-003（P2）：无权限声明的插件被拒绝加载并有审计记录 |
-| 释放条件 | 用户批准首版只做本地目录插件（无市场/无自动更新）；TASK-025 白名单按六组 Hook 分批释放（建议首批 before/after export + before/after ocr） |
+| 释放条件 | U-3 的首版分发范围已批准；Hook 批次、AC 与 allowed_paths 仍须在 TASK-025 释放前明确，之后由 Codex 单独授权并按六组 Hook 收紧范围（首批 before/after export + before/after ocr 仍为建议） |
 
 ### 1.4 AI 生成插件 Agent（ACG-EXT-PLUGIN 的一部分，"如保留"裁决）
 
@@ -118,8 +119,8 @@ D02 §12 原文："Plugin Agent **如保留**，只负责生成/管理插件，�
 | `13_ACCEPTANCE_TRACEABILITY.md` | `ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA` 的"后续处理"列更新为"TASK-024 已定义边界（contracts/extensions.md §1.x），待用户批准后按 §1 释放条件释放" |
 | `12_ROADMAP.md` | TASK-023/025/019/022 的前置条件加"对应 §1.x 边界获用户批准" |
 
-本 Task 自身（仅设计）不代替用户做需求裁决。用户于 2026-09-17 作出 U-1/U-2 决定后，
-Codex 已同步权威范围与裁决记录；TASK-023 仍未释放，依赖清单及正式 AC 尚未更新。
+本 Task 自身（仅设计）不代替用户做需求裁决。用户于 2026-09-17 作出 U-1/U-2/U-3 决定后，
+Codex 已同步权威范围与裁决记录；TASK-023/025 仍未释放，依赖清单及正式 AC 尚未更新。
 
 ## 4. 用户待决清单（审批入口）
 
@@ -127,7 +128,7 @@ Codex 已同步权威范围与裁决记录；TASK-023 仍未释放，依赖清�
 |---|---|---|
 | U-1 | **已决定：取消网页导入**；原 AC-EXT-IMPORT-001/002 退役且编号不复用 | TASK-023 范围不含网页导入 |
 | U-2 | **已决定：PDFium via `pypdfium2`**；按绑定包 Apache-2.0/BSD-3-Clause 双许可及 PDFium 核心 BSD-style 条款履行，并随发行包附带所有依赖许可证 | TASK-023 的 PDF 引擎已确定；未释放任务、未改依赖清单 |
-| U-3 | Plugin 首版=本地目录插件（无市场/无自动更新） | TASK-025 范围 |
+| U-3 | **已决定：Plugin 首版仅支持本地目录插件，不做插件市场、在线分发或自动更新** | 插件分发边界已定；TASK-025 未释放，Hook 批次/AC/allowed_paths 及 U-4 仍待明确 |
 | U-4 | Plugin Agent 是否保留（§1.4 条件） | TASK-025 二批切片 |
 | U-5 | 字体上传上限与许可文案 | TASK-022 范围 |
 | U-6 | Sakura 监控=健康探测级（不做深度指标） | TASK-019 范围 |
