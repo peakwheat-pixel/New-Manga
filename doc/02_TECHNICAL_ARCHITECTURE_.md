@@ -666,7 +666,6 @@ NetworkProfile
 - 百度、有道、彩云等云端 API。
 - 模型与权重下载。
 - Hugging Face / GitHub 等模型或资源访问。
-- 网页导入、Firecrawl、gallery-dl 等外部站点。
 - Plugin / Plugin Agent 在授权情况下产生的网络请求。
 - 更新检查或其他明确需要联网的基础设施功能。
 
@@ -992,7 +991,7 @@ flowchart LR
 
 - 不要求启动本地 Flask/HTTP Server 才能运行桌面 UI。
 - UI 与业务逻辑通过 Python/Qt 边界调用，不走 localhost HTTP 作为内部主通道。
-- 网络仅用于外部 Provider、模型下载、网页导入等明确功能。
+- 网络仅用于外部 Provider、模型下载等明确功能。
 - 所有外部网络请求统一经过 Network / Proxy Manager；支持 Direct / System / HTTP(S) / SOCKS5 及 Provider 级覆盖。
 - 后台任务不得阻塞 Qt UI Thread。
 - 长任务通过 Worker/Task Manager 执行，进度统一回传 ViewModel。

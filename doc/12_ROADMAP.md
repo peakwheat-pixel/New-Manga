@@ -62,7 +62,7 @@ DeepSeek Harness 与 ZCode 已分别完成 TASK-003、TASK-004；当前连接事
 
 S1/S2是阶段性切片，未完成的P0/P1继续登记NOT_RUN/BLOCKED，不能当正式版本发布。Mock只能验证数据流和恢复，不能替代实际OCR/Translation/Inpaint质量。性能数值继续作为目标，直到固定硬件/数据集实测。
 
-网页/PDF/MOBI、字体上传、Sakura监控、Plugin/Hooks与Plugin Agent在现有文档确有来源，但契约和AC不完整；TASK-024已交付范围草案，U-1～U-6待用户裁决；批准前TASK-023/025/019/022维持冻结或blocked。若延期必须更新原始范围文档和验收追踪，不能在Roadmap里默认删除。
+PDF/MOBI、字体上传、Sakura监控、Plugin/Hooks与Plugin Agent仍有待决契约；网页导入已由用户于 2026-09-17 按 U-1 取消，相关 AC-EXT-IMPORT-001/002 退役。U-2～U-6 仍待裁决；TASK-023/025/019/022 继续冻结或 blocked，决定本身不释放任务。
 
 不排入用户注册、产品团队协作/权限、Volume、角色工坊、Manga Insight/RAG或永久Webtoon Tile实体，因为D03 §47及D04 §54明确排除。三Agent协作仅属于开发流程。
 

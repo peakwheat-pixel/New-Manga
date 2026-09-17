@@ -161,7 +161,7 @@ flowchart TB
 | 任务/队列(Pipeline/Queue) |
 | 任务进度面板 / 进度条 |
 
-补充扩展能力：网页导入、PDF/MOBI 导入解析、AI 生成插件 Agent、字体上传、Sakura 本地服务监控。
+补充扩展能力：PDF/MOBI 导入解析、AI 生成插件 Agent、字体上传、Sakura 本地服务监控。
 
 网络代理作为目标横切能力，支持 `Direct / System / HTTP / HTTPS / SOCKS5`，并允许 Provider 级覆盖、直连/绕过规则和连接测试；本地服务默认可配置为直连。
 

@@ -60,7 +60,7 @@ D03 §3～5/30；D04 §4～10；D07 §37～39；D08 AC-LIB/CH/IMPORT/PAGE。D �
 
 硬依赖：[TASK-006](TASK-006.md)。依赖必须已经集成 done 才可开始。
 
-PDF/MOBI/网页导入属于 TASK-023；Schema新增需Codex协调 TASK-006边界。
+PDF/MOBI 导入属于 TASK-023（网页导入已按 U-1 取消）；Schema新增需Codex协调 TASK-006边界。
 
 如本 Task 需要新的契约或用户范围决定而输入仍未就绪，登记具体 blocker 并停止实施；不得借此扩大允许范围。Owner 与 Reviewer 必须保持不同。
 

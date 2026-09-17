@@ -1,6 +1,6 @@
 ---
 id: TASK-023
-title: 实现 PDF/MOBI 与网页导入路线
+title: 实现 PDF/MOBI 导入路线
 kind: implementation
 status: proposed
 approval: pending_user_review
@@ -14,21 +14,20 @@ worktree: null
 integration_commit: null
 ---
 
-# TASK-023：实现 PDF/MOBI 与网页导入路线
+# TASK-023：实现 PDF/MOBI 导入路线
 
 本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
-D01 §2；D02 §6.2.2/8；D04 §8；D05 §52；G17。D 编号对应 [文档索引](../00_INDEX.md)；依赖交付物是后续输入，当前并不存在。
+D01 §2；D02 §8；D04 §8；D05 §52；G17。网页导入已按 U-1 取消；本任务规划仅覆盖 PDF/MOBI。D 编号对应 [文档索引](../00_INDEX.md)；依赖交付物是后续输入，当前并不存在。
 
 主责任编号 AC：本任务为设计/实验/基础工作，验收以下专属条件；关联产品 AC 不因本任务完成就自动 PASS。完整映射见 [验收追踪](../13_ACCEPTANCE_TRACEABILITY.md)。
 
 ## Acceptance Criteria
 
-- [ ] 依据TASK-024批准的格式/网站支持矩阵实现PDF/MOBI解析和网页导入，复用Managed Copy/Page用例。
+- [ ] 依据用户批准的格式支持范围实现PDF/MOBI解析，复用Managed Copy/Page用例。
 - [ ] 保留排序/来源/重复策略，畸形/加密/不支持输入可诊断，取消和失败不破坏已导入数据。
-- [ ] 网页外呼走统一网络策略，不假定任意站点可访问；第三方工具按已审核版本与许可接入。
 - [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
 
 ## 允许修改范围
@@ -36,7 +35,6 @@ D01 §2；D02 §6.2.2/8；D04 §8；D05 §52；G17。D 编号对应 [文档索�
 以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
 
 - src/application/importing/documents/**
-- src/application/importing/web/**
 - src/infrastructure/importers/**
 - tests/import_formats/**
 - doc/tasks/TASK-023.md
@@ -50,7 +48,6 @@ D01 §2；D02 §6.2.2/8；D04 §8；D05 §52；G17。D 编号对应 [文档索�
 ## 测试要求
 
 - 计划：python -m pytest tests/import_formats；自制多页PDF/MOBI、损坏/不支持输入、顺序和源Hash。
-- 受控网页fixture、重定向/错误/取消/代理失败，记录实际支持范围。
 - 以上均为计划，当前结果全部 NOT_RUN；命令中的测试目录需本 Task 实际建立后才能运行。
 - 实际记录包含 commit、OS/依赖/设备、准确命令、退出码、结果和证据路径；模型/视觉/性能结果不由Mock代替。
 
@@ -58,7 +55,7 @@ D01 §2；D02 §6.2.2/8；D04 §8；D05 §52；G17。D 编号对应 [文档索�
 
 硬依赖：[TASK-007](TASK-007.md)、[TASK-009](TASK-009.md)、[TASK-012](TASK-012.md)、[TASK-024](TASK-024.md)。依赖必须已经集成 done 才可开始。
 
-缺格式或站点契约不得自行发明行为；所有测试素材应有明确使用许可。
+缺少格式契约不得自行发明行为；所有测试素材应有明确使用许可。
 
 如本 Task 需要获批契约或用户范围决定而输入仍未就绪，登记具体 blocker 并保持未释放。建议 Owner 不是已经分派；Codex释放时指定实际 owner 与非作者 reviewer。
 
