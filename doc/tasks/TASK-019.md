@@ -5,12 +5,12 @@ kind: implementation
 status: ready
 approval: approved_by_user
 suggested_owner: ZCode
-owner: ZCode
-reviewer: DeepSeek Harness
+owner: DeepSeek Harness
+reviewer: Codex
 depends_on: [TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024]
 base_commit: 36242fb00f9f432ec66cc3c33afc167578d0f341
-branch: agent/zcode/TASK-019-provider-integration
-worktree: G:/CODEX/New Manga.worktrees/TASK-019-zcode
+branch: agent/deepseek/TASK-019-provider-integration
+worktree: G:/CODEX/New Manga.worktrees/TASK-019-deepseek
 integration_commit: null
 ---
 
@@ -90,5 +90,5 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- **最近状态（当前，唯一）**：2026-09-17 用户批准**释放**——`status=ready`、`approval=approved_by_user`、Owner=`ZCode`、Reviewer=`DeepSeek Harness`（非作者）、base=`36242fb`、branch=`agent/zcode/TASK-019-provider-integration`、worktree=`G:/CODEX/New Manga.worktrees/TASK-019-zcode`（已创建并同步到**本次释放提交**，该提交含本 Task 文件的 ready 状态；`base_commit=36242fb` 为释放基线，二者仅差一次纯文档提交、**代码基线相同**）；六个硬依赖全部 `done`；允许路径已按 base 的实际结构核对并收紧（见上）。释放时登记的输入缺口见文件头与「依赖、风险与阻塞」，交付必须分列 `BLOCKED`/`NOT_RUN`。**实施尚未开始**：实际执行仍全部 `NOT_RUN`，Owner 开始前须把 `status` 改为 `in_progress`。
+- **最近状态（当前，唯一）**：2026-09-17 用户批准**释放**，并随后**将 Owner 由 ZCode 改为 DeepSeek Harness**——`status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**；Owner 改为 DSH 后原 Reviewer DSH 会构成同体审查，故一并更换）、base=`36242fb`、branch=`agent/deepseek/TASK-019-provider-integration`、worktree=`G:/CODEX/New Manga.worktrees/TASK-019-deepseek`（已创建并同步到**本次释放/改派提交**，该提交含本 Task 文件的 ready 状态；`base_commit=36242fb` 为释放基线，二者仅差纯文档提交、**代码基线相同**）；六个硬依赖全部 `done`；允许路径已按 base 的实际结构核对并收紧（见上）。首次释放时按 `agent/zcode/...` 命名创建的 worktree（`TASK-019-zcode`）**无任何提交、已移除**，不作为工作区使用。释放时登记的输入缺口见文件头与「依赖、风险与阻塞」，交付必须分列 `BLOCKED`/`NOT_RUN`。**实施尚未开始**：实际执行仍全部 `NOT_RUN`，Owner 开始前须把 `status` 改为 `in_progress`。
 - 历史状态（2026-09-17 释放前）：窗口条款登记 `blocked`；U-6 已批准 Sakura 监控范围；AC-EXT-SAKURA-001 已正式编号并追踪为 `NOT_RUN`；TASK-018 已 `ready` 但未完成；TASK-017 真实 Provider 协议/成本/时延 `NOT_RUN`（付费端点未配置）；本机 Sakura 未运行。
