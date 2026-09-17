@@ -2,19 +2,25 @@
 id: TASK-021
 title: 完善备份恢复、回收站、清理与诊断
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: Codex
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: ZCode（窗口内子 agent，结论仅 approved_subagent）
 depends_on: [TASK-006, TASK-011, TASK-015]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 047164ea080651741b38b20a36470115d4830a0d
+branch: agent/zcode/TASK-021-backup-trash-cleanup-diagnostics
+worktree: G:/CODEX/New Manga.worktrees/TASK-021-zcode
 integration_commit: null
 ---
 
 # TASK-021：完善备份恢复、回收站、清理与诊断
+
+**READY（2026-09-18 ZCode 全权窗口 W7——条件执行）**：用户批准解冻（依赖 TASK-006/011/015 均已 `done`）。Owner 由建议的 `Codex` 改为 `ZCode`；Reviewer=窗口内子 agent（结论仅 `approved_subagent`）；`base=047164e`；branch/worktree 见顶部元数据。
+
+**启动门**：**仅当 TASK-038 与 TASK-039 均于 `06:30` 前完成集成**才启动；且必须在 **08:20 前完成一个"连贯可集成子集"的集成**。
+
+**"连贯子集"要求（重要）**：本 Task 的 4 个 AC 覆盖面很大（软删除/回收站、SQLite 一致性备份与恢复、缓存/版本/模型清理分离、日志轮转与诊断包），**不要试图一次全做**。启动时先选定**一个自洽子集**（建议从 AC「软删除和同batch恢复、明确永久删除只作用受控数据」开始），把它**完整做完并集成**（含测试、取证、子 agent Review），再视剩余时间决定是否继续下一个子集。**宁可只交付一个完整子集，也不要留下多个半成品**；窗口结束时未开始的子集按原样留在 Task 中，未完成的子集须在窗口报告中如实登记为 `frozen`。
 
 本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
@@ -34,17 +40,16 @@ D03 §32～34/45；D07 §37～62/90～92；D08 AC-BACKUP/TRASH/CACHE/DISK/LOG/CL
 
 ## 允许修改范围
 
-以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
+**已由 Codex 按实际结构收紧（2026-09-18，窗口授权）**：原草案的 6 条路径（`src/application/maintenance/**`、`src/infrastructure/backup/**`、`src/infrastructure/diagnostics/**`、`src/infrastructure/sqlite/migrations/**`、`src/infrastructure/filesystem/cleanup/**`、`tests/reliability/**`）**当前全部不存在**，已替换为下列实测结构。"不得扩展到整个 `src/tests`"仍然有效。
 
-- src/application/maintenance/**
-- src/infrastructure/backup/**
-- src/infrastructure/diagnostics/**
-- src/infrastructure/sqlite/migrations/**
-- src/infrastructure/filesystem/cleanup/**
-- tests/reliability/**
-- doc/tasks/TASK-021.md
-- doc/handoffs/TASK-021-*.md
-- verification/TASK-021/**
+- `src/application/maintenance/**`（**新建**：备份/恢复/回收站/清理/诊断的用例层）
+- `src/infrastructure/filesystem/**`（存在：managed storage；回收站/清理/诊断包的落盘实现归此）
+- `src/infrastructure/sqlite/**`（存在：一致性备份/恢复的 SQLite 侧工具；**注意本 Task 禁止 Schema/migration 变更**）
+- `src/bootstrap/app.py`（存在：新用例的装配点）
+- `tests/storage/**`、`tests/core/**`（存在；本 Task 的可靠性/故障注入用例归此）
+- `doc/tasks/TASK-021.md`、`doc/handoffs/TASK-021-*.md`、`verification/TASK-021/**`
+
+**若实现需要 Schema/migration 变更**（例如为软删除/回收站补列或表）→ **停下并回抛 Codex 裁决**，不得自行改动（窗口排除项明确禁止 Schema/migration）。
 
 ## 禁止范围
 
