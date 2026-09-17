@@ -29,12 +29,18 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（flaky 根因）**：把该用例的滚动准备改为**成立的前置条件**——例如先有界等待 `contentHeight` 足够容纳目标偏移（≥ 240 或 `contentHeight - height ≥ 240`）**再**设 `contentY`，或设值后**断言 `contentY == 240`** 再等保存。**不得放宽任何断言、不得新增 `skip`/`xfail`、不得删除已有诊断**。
-- [ ] **AC ②（R-01）**：消除 `safe_property` 的数值用法缺陷（例如新增 `safe_number(obj, name, default=0)` 用于数值比较，`safe_property` 继续服务字符串/诊断场景），并**保持**"诊断不得掩蔽真实失败"这一性质。
-- [ ] **AC ③（对照证据，必须）**：给出**修复前 vs 修复后**的失败率对照：每侧**≥10 次**运行（`pytest tests/reading_export -q -rf` 或含该用例的最小命令），逐次记录**退出码 + passed/failed + 命中用例名**。修复后应 **0 命中**；若仍命中，如实登记并给出新签名（**不得记为通过**）。
-- [ ] **AC ④（回归与分列）**：`tests/reading_export` 全绿；`tests/providers`、`tests/core`、`tests/editing` 通过数**不减少**；全仓串跑**≥5 次**逐次记录 passed/skipped 与退出码（本环境全仓非 100% 稳定）。
-- [ ] **AC ⑤（STATUS 口径）**：更新 STATUS「已知 flaky 测试（跟踪条目）」第 1 条的状态与证据（首次登记/证据/状态三列），并说明本次修复依据；**不得**把历史命中记录删掉。
+- [x] **AC ①（flaky 根因）**：把该用例的滚动准备改为**成立的前置条件**——例如先有界等待 `contentHeight` 足够容纳目标偏移（≥ 240 或 `contentHeight - height ≥ 240`）**再**设 `contentY`，或设值后**断言 `contentY == 240`** 再等保存。**不得放宽任何断言、不得新增 `skip`/`xfail`、不得删除已有诊断**。
+  - 落地：三份探针（[clamp-race-probe.md](../../verification/TASK-037/clamp-race-probe.md)）证明该场景内容高度恒 60、"等容纳"恒假（AC 示例之一不可实现）；最终采用另一示例——**夹具改 40x1000 高页**（`reader_stack_webtoon`，仅该用例）使 `contentHeight=1000` 真正容纳 240，写入后新增 `landed == 240` 落点断言（加强，非放宽），原 2 s 保存断言原文保留、等待预算全部未变。机制顺带**修正 TASK-036 的定性**（信号有触发、timer 有启动，只是持久化了回写后的 0）。
+- [x] **AC ②（R-01）**：消除 `safe_property` 的数值用法缺陷（例如新增 `safe_number(obj, name, default=0)` 用于数值比较，`safe_property` 继续服务字符串/诊断场景），并**保持**"诊断不得掩蔽真实失败"这一性质。
+  - 落地：`reading_export_helpers.safe_number()` 新增（删除对象/非数值 → `default`，比较保持数值型）；`test_qml_contract.py` 两处 `(safe_property(...) or 0) > 0` 全部改用 `safe_number`；`safe_property` 原样移入 helpers 模块（诊断占位契约不变）并由新 `test_helpers.py` 无 Qt 单测锁定。判别力：修前树上 `ImportError` → exit 2（[discriminability-pre-fix.log](../../verification/TASK-037/discriminability-pre-fix.log)）。
+- [x] **AC ③（对照证据，必须）**：给出**修复前 vs 修复后**的失败率对照：每侧**≥10 次**运行（`pytest tests/reading_export -q -rf` 或含该用例的最小命令），逐次记录**退出码 + passed/failed + 命中用例名**。修复后应 **0 命中**；若仍命中，如实登记并给出新签名（**不得记为通过**）。
+  - 落地（[pre-fix-runs.log](../../verification/TASK-037/pre-fix-runs.log) / [post-fix-runs.log](../../verification/TASK-037/post-fix-runs.log)）：修前单目录 ×30（每次 66 passed、exit 0，0 命中——单目录频率低于历史全仓口径，历史命中见 STATUS 条目）+ 全仓 ×2（1 次 `743 passed` exit 0；1 次 **96% 处进程异常终止、无 pytest summary、EXIT=127**，非测试失败，如实登记）；修后单目录 ×30（每次 72 passed）+ 全仓 ×6（每次 749 passed）**全部 exit 0、0 命中**。修复过程中的中间态 v2（"单次重写"补丁）被对照**否决**：全仓 2/2 命中同一失败，完整记录在 clamp-race-probe.md 修复迭代表。
+- [x] **AC ④（回归与分列）**：`tests/reading_export` 全绿；`tests/providers`、`tests/core`、`tests/editing` 通过数**不减少**；全仓串跑**≥5 次**逐次记录 passed/skipped 与退出码（本环境全仓非 100% 稳定）。
+  - 落地：`tests/reading_export` 72 passed（66+6 新增）全绿；mandated `tests/providers tests/core tests/editing` **208 passed / 0 skipped**、exit 0（与修前持平，通过数不减少）；全仓 ×6 每次记录（**749 passed / 0 skipped**、exit 0×6）。**口径说明**：本切片全部命令在 Git Bash 下执行，`shutil.which("openssl")` 可用，故 6 条 TLS 测试真实执行（基线 PowerShell 口径为 `737 passed / 6 skipped`；两口径收集总数一致，差异仅这 6 条 skip↔pass）。
+- [x] **AC ⑤（STATUS 口径）**：更新 STATUS「已知 flaky 测试（跟踪条目）」第 1 条的状态与证据（首次登记/证据/状态三列），并说明本次修复依据；**不得**把历史命中记录删掉。
+  - 落地：STATUS 第 1 条已更新为 `fixed（TASK-037）`，历史命中记录与 TASK-036 定性原文保留，新增探针修正定性与本次对照证据链接。
 - [ ] **AC ⑥** 交付 Handoff、实际测试/审阅记录与未完成项，经**窗口内子 agent** Review（按 Review 模板）与集成后才能 done。
+  - Handoff：[doc/handoffs/TASK-037-7b96e72.md](../handoffs/TASK-037-7b96e72.md)；Review 待执行（结论仅 `approved_subagent`/`changes_requested`）。
 
 ## 允许修改范围
 
@@ -67,5 +73,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-17 23:2x 由 ZCode 在窗口内开工（W1，status→`in_progress`）；分支起点按用户指令 `git merge master` 快进至 `c3dabc8`（Task 元数据 `base=e96b3eb` 之上仅两笔纯文档时间戳修正，无代码差异）；修前对照取证进行中（`tests/reading_export` ×30 + 全仓 ×2）。
+- Handoff：[doc/handoffs/TASK-037-7b96e72.md](../handoffs/TASK-037-7b96e72.md)。Review：待窗口内子 agent（另提交）。实际执行/测试：见 [verification/TASK-037/](../../verification/TASK-037/)（pre-fix/post-fix 对照日志、判别力日志、clamp-race-probe.md 机制文档与三份探针）。
+- **最近状态（当前，唯一）**：2026-09-17 23:2x 由 ZCode 在窗口内开工（W1，status→`in_progress`）；分支起点按用户指令 `git merge master` 快进至 `c3dabc8`（Task 元数据 `base=e96b3eb` 之上仅两笔纯文档时间戳修正，无代码差异）。实现 head=`7b96e72`：flaky 修复（高页夹具 + `landed` 落点断言）+ R-01（`safe_number`）+ 新 `test_helpers.py`；对照修前 ×32 / 修后 ×36 全记录，修后 0 命中；mandated 三套件 208 passed/0 skipped；STATUS flaky 第 1 条已更新为 fixed（integration 待登记）。AC ⑥ 待子 agent Review 与集成后置 `done`。
