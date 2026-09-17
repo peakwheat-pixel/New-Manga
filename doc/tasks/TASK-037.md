@@ -2,7 +2,7 @@
 id: TASK-037
 title: 修复已定性 flaky（webtoon 滚动保存）与 TASK-036 R-01 诊断数值用法
 kind: maintenance
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -68,4 +68,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-17 由 Codex 在 ZCode 全权窗口内创建为 `ready`（窗口 W1，用户批准队列裁剪）；`base=e96b3eb`。**实施尚未开始。**
+- **最近状态（当前，唯一）**：2026-09-17 23:2x 由 ZCode 在窗口内开工（W1，status→`in_progress`）；分支起点按用户指令 `git merge master` 快进至 `c3dabc8`（Task 元数据 `base=e96b3eb` 之上仅两笔纯文档时间戳修正，无代码差异）；修前对照取证进行中（`tests/reading_export` ×30 + 全仓 ×2）。
