@@ -2,7 +2,7 @@
 id: TASK-039
 title: 修复 planner `_clean_available` 继承缺陷（render-only 命令跨 run 误判 BLOCKED）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -58,4 +58,5 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 在 ZCode 全权窗口第二轮创建为 `ready`；`base=047164e`。**实施尚未开始。**
+- **历史状态**：2026-09-18 由 Codex 在窗口第二轮创建为 `ready`；`base=047164e`。
+- **最近状态（当前，唯一）**：2026-09-18 04:0x 由 ZCode 在窗口第二轮开工（W6，status→`in_progress`；W5 已于门内集成 `f835ac9`）；分支 `git merge master` 快进至 W5 收口后 HEAD。实施开始：`_clean_available` 判据改为叠加真实 Clean artifact 探针（可选注入，默认 None 保持旧行为）。
