@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-013 生产 Pipeline seam 已以 `integration_commit=49c72fdf` 集成，R-1 已以 `integration_commit=734d5b3` 完成生产 Workbench 装配；TASK-016 已以 `integration_commit=9bf85f5` 完成集成；TASK-015 已按窗口条款收口 `done`（integration_commit=`fa72cee`，Review=`approved_subagent`）；TASK-024/017 由窗口授权解冻实施中，TASK-018～TASK-027 其余保持 `proposed`/冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。2026-09-16 23:30 ～ 09-17 08:30（Asia/Shanghai）为 ZCode 全权窗口：除已收口的 TASK-016 外，窗口目标 TASK-015、TASK-024、TASK-017 由 ZCode 全权执行并代行集成，条款见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
+TASK-001～TASK-014、TASK-028 设计、TASK-029 统一 SQLite 持久化实现、TASK-030 入口装配与 TASK-031 生产 ImageDecoder/Managed Copy 适配器已完成并集成；TASK-013 生产 Pipeline seam 已以 `integration_commit=49c72fdf` 集成，R-1 已以 `integration_commit=734d5b3` 完成生产 Workbench 装配；TASK-016 已以 `integration_commit=9bf85f5` 完成集成；TASK-015 已按窗口条款收口 `done`（integration_commit=`fa72cee`，Review=`approved_subagent`）；TASK-024/017 由窗口授权解冻实施中，TASK-018～TASK-027 其余保持 `proposed`/冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。2026-09-16 23:30 ～ 09-17 08:30（Asia/Shanghai）的 ZCode 全权窗口已经用户指示于 2026-09-17 归还撤销（窗口目标 TASK-015/024/017 均已收口 `done`，留待外部 post-hoc 复审），条款存档见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
