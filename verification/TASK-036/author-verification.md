@@ -127,7 +127,17 @@
 
 **skip 明细（每轮相同，6 条全部为既有环境 skip）**：`tests/network/test_connection_tester.py:106`、`test_transport_tls.py:39`、`:47`、`:62`、`:69`、`:83`，原因均为 `openssl unavailable`。**未新增任何 skip / xfail。**
 
-**关于间歇失败的登记**：本轮 7 次全仓串跑**均 exit 0、无失败**；STATUS 登记的既有间歇失败与 webtoon flaky 本轮未复现（未记为通过，仅记为"本轮未触发"）。
+**关于间歇失败的登记**：STATUS 登记的既有间歇失败在本轮**复现两次，且两次都落在同一已登记用例** `tests/reading_export/test_qml_contract.py::test_reader_webtoon_swaps_in_vertical_viewer`（第 8 次与第 14 次全仓串跑；其余 12 次 `737 passed / 6 skipped`，exit 0）。详见 §9 与 [`registered-flaky-signature.md`](registered-flaky-signature.md)。**未记为通过、未归因本 Task**（该用例在读者 QML 路径上，TASK-036 的改动为 `inpaint` 路由设置解析与**导出** ViewModel）。
+
+## 9. 已登记 flaky 的首次捕获签名（本 Task 的附带发现）
+
+1. **复现 #1（第 8 次全仓串跑）**：报告 `tests/reading_export/test_qml_contract.py:153: RuntimeError`。该行在**诊断辅助函数**内 —— 即被测断言**已经失败**（flaky 触发），但构造失败消息时访问了**已销毁的 QML C++ 对象**，`RuntimeError` 取代了 `AssertionError`，**把 flaky 的真实签名掩蔽了**。
+2. **诊断稳健化（本 Task 的小改动，请 Reviewer 裁定接受/回退）**：在 `tests/reading_export/test_qml_contract.py` 增加 `safe_property()`（`RuntimeError` → `<unavailable: …>` 占位），并让 `object_names()`、webtoon 用例的两处等待条件与 `webtoon_save_diagnostics()` 都走它。**不改变任何断言、等待预算或测试语义**；不解决、不重分类 R-06。
+3. **复现 #2（第 14 次全仓串跑，稳健化之后）**：拿到了**真实签名**（原文见 [`registered-flaky-signature.md`](registered-flaky-signature.md)）：
+   - 失败点 = 既有断言 `pump(window, 2.0, lambda: reading.progress.scroll_offset_y == 240.0)`（`test_qml_contract.py:312`）；
+   - 轨迹 = `iterations=98 elapsed_ms=2000 ok=False scroll_contentY=-0.0 saved_scroll_offset_y=0.0`；
+   - **关键签名 `contentY = -0.0`**：`setProperty("contentY", 240.0)` 被 Flickable 夹回 0（`boundsBehavior: StopAtBounds`），前一断言只保证 `contentHeight > 0`、**未保证内容能容纳 240 的偏移**；若无值变化则 `onContentYChanged` 不触发、`scrollSaveTimer` 不启动，服务端 `scroll_offset_y` 自然保持 0.0。这比"事件循环饥饿/定时器被反复重启"更贴近证据（98 次迭代、预算耗尽）。
+4. STATUS 的 flaky 跟踪节此前把 TASK-034 集成时那 1/14 次失败登记为"用例名未捕获"；本次两次均落在同一已登记用例并给出可读签名，**建议由 Codex 决定是否更新 STATUS 条目**（本 Task 不自行改 STATUS）。
 
 ## 8. 环境与边界
 
