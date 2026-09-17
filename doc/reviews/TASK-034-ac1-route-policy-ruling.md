@@ -83,3 +83,21 @@ requirements     = {}                              # 无默认启用项，故无
 ## 边界声明
 
 本裁决只决定"唯一解释是什么"，不含实现；`src/` 在收到本裁决前保持冻结（作者已遵守）。裁决不改变任何 AC 的 PASS/BLOCKED 记录：AC ① 在此之前一直是 **BLOCKED（第 2 步未开始）**，本裁决只解除"必须先裁决"这一前置，AC ① 仍未完成。
+
+---
+
+## 裁决勘误（2026-09-17，Codex 自查 + 作者要求裁定）
+
+**勘误对象**：本文「R-6 裁决」小节中"必须记录的可观测变化"的第 3 条，原文写：
+
+> 四种特征组合（彩色 webtoon / 高复杂度 / 线稿 / 普通）在裁决前后**均 `BLOCKED`**（学习型路线无实现），故本次只改变"理由与 allowed 集合"，不改变决策结果。
+
+**该括注有误**。实测：只有**彩色 webtoon** 与**高复杂度**两组为 `BLOCKED`；**线稿**与**普通**两组在裁决前后**都选中依赖无关基线 `edge-bleed`**（即 `RUN`，非 `BLOCKED`）。原因：`preferred_route_order` 末尾固定追加 `ROUTE_EDGE_BLEED` 作为 "dependency-free structural last resort"，而 `acceptable_routes` 对非彩色/非高复杂度场景包含该基线 —— 这条路径与 `allowed_routes` 是否含学习型路线无关。
+
+**裁定**：
+
+1. **实质要求不受影响**。该条真正要求的是"**选中哪条路线**未变"，四组全部成立（`decision` 与 `route` 逐项相同；只有 `brushnet` 的理由由 `not implemented: …` 变为 `not in the configured route policy`）。作者按实测登记**正确**，其"不自行接受、请裁决方裁定"的处理方式**正确**。
+2. **不需要任何判定算法变更**。作者在 Handoff 中提出"若裁决方认为线稿/普通也必须 BLOCKED，则属判定算法变更、需另立裁决"——**本裁决方明确不需要**：原文那句话是**措辞失准**，不是对算法提出新要求。`decide_route` / `acceptable_routes` / `preferred_route_order` / `route_gate` / `RouterFeatures` 保持禁止改动。
+3. **失败的是本裁决文本，不是切片**。本条不构成切片 finding；作者以参数化测试（`test_ruled_default_does_not_change_which_route_is_chosen`）把四组的 `decision`+`route` 不变性锁定，正是正确的处置。
+
+**教训登记**：裁决文本中的**具体数字/枚举括注**应与可执行证据同等对待 — 本次由作者实测发现并回抛，避免了把一句顺口括注当成规格。
