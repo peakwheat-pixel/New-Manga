@@ -1,0 +1,1820 @@
+{
+  "schema": "task018-experiment-v1",
+  "harness": "experiments/TASK-018/run_experiment.py",
+  "manifest_sha256": "e024078ff609b05a3a16ce55a7f7924e4e3d37b2f1acbb98948fc57d0f4331f7",
+  "repeat": 3,
+  "routes": {
+    "simple-fill": {
+      "label": "Simple Fill (constant colour)",
+      "kind": "baseline",
+      "learned": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "note": "纯几何填充；无模型、无权重、无 GPU 需求",
+      "requirements": {},
+      "runnable_here": true,
+      "blocked_reason": null
+    },
+    "edge-bleed": {
+      "label": "Edge bleed (nearest-neighbour diffusion)",
+      "kind": "baseline",
+      "learned": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "note": "非模型基线，仅用于结构对照；不得当作学习型修复结果",
+      "requirements": {},
+      "runnable_here": true,
+      "blocked_reason": null
+    },
+    "manga-lama": {
+      "label": "Manga LaMa",
+      "kind": "learned",
+      "learned": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "note": "漫画专用 LaMa 权重；需要 torch 与 HF 权重下载",
+      "requirements": {
+        "torch": false,
+        "manga_lama weights (HF)": false
+      },
+      "runnable_here": false,
+      "blocked_reason": "missing dependency/weight: manga_lama weights (HF), torch"
+    },
+    "aot": {
+      "label": "AOT-GAN",
+      "kind": "learned",
+      "learned": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "note": "AOT-GAN 修复权重；需要 torch 与权重文件",
+      "requirements": {
+        "torch": false,
+        "aot weights": false
+      },
+      "runnable_here": false,
+      "blocked_reason": "missing dependency/weight: aot weights, torch"
+    },
+    "brushnet-powerpaint": {
+      "label": "BrushNet / PowerPaint",
+      "kind": "learned",
+      "learned": true,
+      "size_class": "large",
+      "default_eligible": false,
+      "note": "扩散式修复；依赖 diffusers 与数 GB 权重",
+      "requirements": {
+        "torch": false,
+        "diffusers": false,
+        "brushnet weights (HF)": false
+      },
+      "runnable_here": false,
+      "blocked_reason": "missing dependency/weight: brushnet weights (HF), diffusers, torch"
+    },
+    "flux": {
+      "label": "FLUX (inpaint / fill)",
+      "kind": "learned",
+      "learned": true,
+      "size_class": "very-large",
+      "default_eligible": false,
+      "note": "大型扩散模型；显存与权重规模远超本机可验证范围",
+      "requirements": {
+        "torch": false,
+        "diffusers": false,
+        "flux weights (HF, 10GB+)": false
+      },
+      "runnable_here": false,
+      "blocked_reason": "missing dependency/weight: diffusers, flux weights (HF, 10GB+), torch"
+    }
+  },
+  "records": [
+    {
+      "sample_id": "s1-white-background",
+      "sample_kind": "white-background",
+      "sample_sha256": "1d17069e6bdac22d2cf9d96136e3e9535e927401732f4c8ccada6a7a2a09a457",
+      "route": "simple-fill",
+      "route_label": "Simple Fill (constant colour)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        2.329,
+        2.897,
+        2.268
+      ],
+      "latency_ms_min": 2.268,
+      "latency_ms_max": 2.897,
+      "peak_rss_mb_before": 44.7,
+      "peak_rss_mb_after": 45.45,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 519,
+      "residual_text_pixels_after": 0,
+      "protected_violations": [],
+      "output_image": "results/s1-white-background__simple-fill.png",
+      "output_sha256": "c42a2f7de06114211b743975dfb0a7254497936c170b26d7e6ff563f99a80393",
+      "mask_sha256": "f19d34751b8db8d85d982a9a59ad1856891651fa06a1266b93e23016d19d7a7d"
+    },
+    {
+      "sample_id": "s1-white-background",
+      "sample_kind": "white-background",
+      "sample_sha256": "1d17069e6bdac22d2cf9d96136e3e9535e927401732f4c8ccada6a7a2a09a457",
+      "route": "edge-bleed",
+      "route_label": "Edge bleed (nearest-neighbour diffusion)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        41.144,
+        42.519,
+        39.022
+      ],
+      "latency_ms_min": 39.022,
+      "latency_ms_max": 42.519,
+      "peak_rss_mb_before": 45.73,
+      "peak_rss_mb_after": 49.39,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 519,
+      "residual_text_pixels_after": 519,
+      "protected_violations": [],
+      "output_image": "results/s1-white-background__edge-bleed.png",
+      "output_sha256": "ec0a28b57a30e3b00b10c45e91ff51adda18beb7af9e49f62792d4fcb4973c28",
+      "mask_sha256": "f19d34751b8db8d85d982a9a59ad1856891651fa06a1266b93e23016d19d7a7d"
+    },
+    {
+      "sample_id": "s1-white-background",
+      "sample_kind": "white-background",
+      "sample_sha256": "1d17069e6bdac22d2cf9d96136e3e9535e927401732f4c8ccada6a7a2a09a457",
+      "route": "manga-lama",
+      "route_label": "Manga LaMa",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: manga_lama weights (HF), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s1-white-background",
+      "sample_kind": "white-background",
+      "sample_sha256": "1d17069e6bdac22d2cf9d96136e3e9535e927401732f4c8ccada6a7a2a09a457",
+      "route": "aot",
+      "route_label": "AOT-GAN",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: aot weights, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s1-white-background",
+      "sample_kind": "white-background",
+      "sample_sha256": "1d17069e6bdac22d2cf9d96136e3e9535e927401732f4c8ccada6a7a2a09a457",
+      "route": "brushnet-powerpaint",
+      "route_label": "BrushNet / PowerPaint",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: brushnet weights (HF), diffusers, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s1-white-background",
+      "sample_kind": "white-background",
+      "sample_sha256": "1d17069e6bdac22d2cf9d96136e3e9535e927401732f4c8ccada6a7a2a09a457",
+      "route": "flux",
+      "route_label": "FLUX (inpaint / fill)",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "very-large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: diffusers, flux weights (HF, 10GB+), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s2-line-art",
+      "sample_kind": "line-art",
+      "sample_sha256": "c08a053894ded25a8c06744659d2b5aa8473eb17bb5762fdb500f03740340951",
+      "route": "simple-fill",
+      "route_label": "Simple Fill (constant colour)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 3584,
+        "final_mask_area": 4176,
+        "raw_mask_bbox": [
+          104,
+          136,
+          216,
+          168
+        ],
+        "final_mask_bbox": [
+          102,
+          134,
+          218,
+          170
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        2.354,
+        2.305,
+        2.248
+      ],
+      "latency_ms_min": 2.248,
+      "latency_ms_max": 2.354,
+      "peak_rss_mb_before": 53.96,
+      "peak_rss_mb_after": 53.96,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 2010,
+      "residual_text_pixels_after": 0,
+      "protected_violations": [],
+      "output_image": "results/s2-line-art__simple-fill.png",
+      "output_sha256": "1c4d40b4f0c10d29d87d7c44f993013b123e2cac1e9b19f28c0af32318d60908",
+      "mask_sha256": "18ab6e1a8aa8398837ad7d4a2637d8f4a897c0c3db02b9769f2ad020f03f20d0"
+    },
+    {
+      "sample_id": "s2-line-art",
+      "sample_kind": "line-art",
+      "sample_sha256": "c08a053894ded25a8c06744659d2b5aa8473eb17bb5762fdb500f03740340951",
+      "route": "edge-bleed",
+      "route_label": "Edge bleed (nearest-neighbour diffusion)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 3584,
+        "final_mask_area": 4176,
+        "raw_mask_bbox": [
+          104,
+          136,
+          216,
+          168
+        ],
+        "final_mask_bbox": [
+          102,
+          134,
+          218,
+          170
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        32.469,
+        38.321,
+        31.533
+      ],
+      "latency_ms_min": 31.533,
+      "latency_ms_max": 38.321,
+      "peak_rss_mb_before": 53.96,
+      "peak_rss_mb_after": 56.79,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 2010,
+      "residual_text_pixels_after": 1932,
+      "protected_violations": [],
+      "output_image": "results/s2-line-art__edge-bleed.png",
+      "output_sha256": "e4cef847a3bfa741e902c00222e51037f8c35a40c722a0c0e22df37aa9205ff6",
+      "mask_sha256": "18ab6e1a8aa8398837ad7d4a2637d8f4a897c0c3db02b9769f2ad020f03f20d0"
+    },
+    {
+      "sample_id": "s2-line-art",
+      "sample_kind": "line-art",
+      "sample_sha256": "c08a053894ded25a8c06744659d2b5aa8473eb17bb5762fdb500f03740340951",
+      "route": "manga-lama",
+      "route_label": "Manga LaMa",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 3584,
+        "final_mask_area": 4176,
+        "raw_mask_bbox": [
+          104,
+          136,
+          216,
+          168
+        ],
+        "final_mask_bbox": [
+          102,
+          134,
+          218,
+          170
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: manga_lama weights (HF), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s2-line-art",
+      "sample_kind": "line-art",
+      "sample_sha256": "c08a053894ded25a8c06744659d2b5aa8473eb17bb5762fdb500f03740340951",
+      "route": "aot",
+      "route_label": "AOT-GAN",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 3584,
+        "final_mask_area": 4176,
+        "raw_mask_bbox": [
+          104,
+          136,
+          216,
+          168
+        ],
+        "final_mask_bbox": [
+          102,
+          134,
+          218,
+          170
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: aot weights, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s2-line-art",
+      "sample_kind": "line-art",
+      "sample_sha256": "c08a053894ded25a8c06744659d2b5aa8473eb17bb5762fdb500f03740340951",
+      "route": "brushnet-powerpaint",
+      "route_label": "BrushNet / PowerPaint",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 3584,
+        "final_mask_area": 4176,
+        "raw_mask_bbox": [
+          104,
+          136,
+          216,
+          168
+        ],
+        "final_mask_bbox": [
+          102,
+          134,
+          218,
+          170
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: brushnet weights (HF), diffusers, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s2-line-art",
+      "sample_kind": "line-art",
+      "sample_sha256": "c08a053894ded25a8c06744659d2b5aa8473eb17bb5762fdb500f03740340951",
+      "route": "flux",
+      "route_label": "FLUX (inpaint / fill)",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "very-large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 3584,
+        "final_mask_area": 4176,
+        "raw_mask_bbox": [
+          104,
+          136,
+          216,
+          168
+        ],
+        "final_mask_bbox": [
+          102,
+          134,
+          218,
+          170
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: diffusers, flux weights (HF, 10GB+), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s3-screentone",
+      "sample_kind": "screentone",
+      "sample_sha256": "58d99e0d9400c76a012843e232061d69672631b724e316d9f4846e392a8be62e",
+      "route": "simple-fill",
+      "route_label": "Simple Fill (constant colour)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        2.311,
+        2.255,
+        2.266
+      ],
+      "latency_ms_min": 2.255,
+      "latency_ms_max": 2.311,
+      "peak_rss_mb_before": 56.79,
+      "peak_rss_mb_after": 56.79,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 1794,
+      "residual_text_pixels_after": 0,
+      "protected_violations": [],
+      "output_image": "results/s3-screentone__simple-fill.png",
+      "output_sha256": "c751973c63b7e4f53110951b3992bb2a27b22e35afb5fb712b0d24bed35ebb6b",
+      "mask_sha256": "f19d34751b8db8d85d982a9a59ad1856891651fa06a1266b93e23016d19d7a7d"
+    },
+    {
+      "sample_id": "s3-screentone",
+      "sample_kind": "screentone",
+      "sample_sha256": "58d99e0d9400c76a012843e232061d69672631b724e316d9f4846e392a8be62e",
+      "route": "edge-bleed",
+      "route_label": "Edge bleed (nearest-neighbour diffusion)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        38.039,
+        39.391,
+        39.124
+      ],
+      "latency_ms_min": 38.039,
+      "latency_ms_max": 39.391,
+      "peak_rss_mb_before": 56.79,
+      "peak_rss_mb_after": 56.79,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 1794,
+      "residual_text_pixels_after": 1410,
+      "protected_violations": [],
+      "output_image": "results/s3-screentone__edge-bleed.png",
+      "output_sha256": "1222bf14e216d3f9393d2aa520186497949c97933aa50ce7033decba076de9ae",
+      "mask_sha256": "f19d34751b8db8d85d982a9a59ad1856891651fa06a1266b93e23016d19d7a7d"
+    },
+    {
+      "sample_id": "s3-screentone",
+      "sample_kind": "screentone",
+      "sample_sha256": "58d99e0d9400c76a012843e232061d69672631b724e316d9f4846e392a8be62e",
+      "route": "manga-lama",
+      "route_label": "Manga LaMa",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: manga_lama weights (HF), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s3-screentone",
+      "sample_kind": "screentone",
+      "sample_sha256": "58d99e0d9400c76a012843e232061d69672631b724e316d9f4846e392a8be62e",
+      "route": "aot",
+      "route_label": "AOT-GAN",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: aot weights, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s3-screentone",
+      "sample_kind": "screentone",
+      "sample_sha256": "58d99e0d9400c76a012843e232061d69672631b724e316d9f4846e392a8be62e",
+      "route": "brushnet-powerpaint",
+      "route_label": "BrushNet / PowerPaint",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: brushnet weights (HF), diffusers, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s3-screentone",
+      "sample_kind": "screentone",
+      "sample_sha256": "58d99e0d9400c76a012843e232061d69672631b724e316d9f4846e392a8be62e",
+      "route": "flux",
+      "route_label": "FLUX (inpaint / fill)",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "very-large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: diffusers, flux weights (HF, 10GB+), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s4-gradient",
+      "sample_kind": "gradient",
+      "sample_sha256": "859724f8e4da1ded2a185b8eb68a046a6c7beff433fa5cd3a06071e997ce0023",
+      "route": "simple-fill",
+      "route_label": "Simple Fill (constant colour)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        2.375,
+        2.525,
+        2.369
+      ],
+      "latency_ms_min": 2.369,
+      "latency_ms_max": 2.525,
+      "peak_rss_mb_before": 56.79,
+      "peak_rss_mb_after": 56.79,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 570,
+      "residual_text_pixels_after": 0,
+      "protected_violations": [],
+      "output_image": "results/s4-gradient__simple-fill.png",
+      "output_sha256": "fe5cd02093ccf06ca20697e4b43dc2809b51f94385e8796f3544b6adbe2b21be",
+      "mask_sha256": "f19d34751b8db8d85d982a9a59ad1856891651fa06a1266b93e23016d19d7a7d"
+    },
+    {
+      "sample_id": "s4-gradient",
+      "sample_kind": "gradient",
+      "sample_sha256": "859724f8e4da1ded2a185b8eb68a046a6c7beff433fa5cd3a06071e997ce0023",
+      "route": "edge-bleed",
+      "route_label": "Edge bleed (nearest-neighbour diffusion)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        42.051,
+        42.333,
+        39.816
+      ],
+      "latency_ms_min": 39.816,
+      "latency_ms_max": 42.333,
+      "peak_rss_mb_before": 56.79,
+      "peak_rss_mb_after": 57.7,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 570,
+      "residual_text_pixels_after": 570,
+      "protected_violations": [],
+      "output_image": "results/s4-gradient__edge-bleed.png",
+      "output_sha256": "b4f591dd52c4d817ef030bf5f6e9356edb704749b874c235fe81aaed3ac58c93",
+      "mask_sha256": "f19d34751b8db8d85d982a9a59ad1856891651fa06a1266b93e23016d19d7a7d"
+    },
+    {
+      "sample_id": "s4-gradient",
+      "sample_kind": "gradient",
+      "sample_sha256": "859724f8e4da1ded2a185b8eb68a046a6c7beff433fa5cd3a06071e997ce0023",
+      "route": "manga-lama",
+      "route_label": "Manga LaMa",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: manga_lama weights (HF), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s4-gradient",
+      "sample_kind": "gradient",
+      "sample_sha256": "859724f8e4da1ded2a185b8eb68a046a6c7beff433fa5cd3a06071e997ce0023",
+      "route": "aot",
+      "route_label": "AOT-GAN",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: aot weights, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s4-gradient",
+      "sample_kind": "gradient",
+      "sample_sha256": "859724f8e4da1ded2a185b8eb68a046a6c7beff433fa5cd3a06071e997ce0023",
+      "route": "brushnet-powerpaint",
+      "route_label": "BrushNet / PowerPaint",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: brushnet weights (HF), diffusers, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s4-gradient",
+      "sample_kind": "gradient",
+      "sample_sha256": "859724f8e4da1ded2a185b8eb68a046a6c7beff433fa5cd3a06071e997ce0023",
+      "route": "flux",
+      "route_label": "FLUX (inpaint / fill)",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "very-large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 6144,
+        "final_mask_area": 6864,
+        "raw_mask_bbox": [
+          96,
+          128,
+          224,
+          176
+        ],
+        "final_mask_bbox": [
+          94,
+          126,
+          226,
+          178
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: diffusers, flux weights (HF, 10GB+), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s5-structure-crossing",
+      "sample_kind": "structure-crossing",
+      "sample_sha256": "f96c48f24a098edcde0964723baaed7b3799d24ee63b7ee96f2eee26871d48e2",
+      "route": "simple-fill",
+      "route_label": "Simple Fill (constant colour)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 7616,
+        "final_mask_area": 8400,
+        "raw_mask_bbox": [
+          92,
+          124,
+          228,
+          180
+        ],
+        "final_mask_bbox": [
+          90,
+          122,
+          230,
+          182
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        2.294,
+        2.465,
+        2.286
+      ],
+      "latency_ms_min": 2.286,
+      "latency_ms_max": 2.465,
+      "peak_rss_mb_before": 57.7,
+      "peak_rss_mb_after": 57.7,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 2958,
+      "residual_text_pixels_after": 0,
+      "protected_violations": [],
+      "output_image": "results/s5-structure-crossing__simple-fill.png",
+      "output_sha256": "e32a36c197162c1aba6dc83c0c2d3dea6e24b0ac2cd77e50d74b93fd2d941823",
+      "mask_sha256": "a514d3fdbeb2f3e01d465824c07a8f0e424b0c76fc61bcb687e54939a7d31ec0"
+    },
+    {
+      "sample_id": "s5-structure-crossing",
+      "sample_kind": "structure-crossing",
+      "sample_sha256": "f96c48f24a098edcde0964723baaed7b3799d24ee63b7ee96f2eee26871d48e2",
+      "route": "edge-bleed",
+      "route_label": "Edge bleed (nearest-neighbour diffusion)",
+      "route_kind": "baseline",
+      "learned_model": false,
+      "size_class": "none",
+      "default_eligible": true,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 7616,
+        "final_mask_area": 8400,
+        "raw_mask_bbox": [
+          92,
+          124,
+          228,
+          180
+        ],
+        "final_mask_bbox": [
+          90,
+          122,
+          230,
+          182
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "MEASURED",
+      "repeats": 3,
+      "latency_ms": [
+        42.881,
+        45.518,
+        42.198
+      ],
+      "latency_ms_min": 42.198,
+      "latency_ms_max": 45.518,
+      "peak_rss_mb_before": 57.7,
+      "peak_rss_mb_after": 57.7,
+      "vram_peak_mb": null,
+      "vram_note": "baseline is CPU-only; no GPU allocation is made or measured",
+      "ink_pixels_inside_mask_before": 2958,
+      "residual_text_pixels_after": 2031,
+      "protected_violations": [],
+      "output_image": "results/s5-structure-crossing__edge-bleed.png",
+      "output_sha256": "ea72004bcc2ffbec7537de3a21a6532e11bc13c65f54162623f1f702670b6c62",
+      "mask_sha256": "a514d3fdbeb2f3e01d465824c07a8f0e424b0c76fc61bcb687e54939a7d31ec0"
+    },
+    {
+      "sample_id": "s5-structure-crossing",
+      "sample_kind": "structure-crossing",
+      "sample_sha256": "f96c48f24a098edcde0964723baaed7b3799d24ee63b7ee96f2eee26871d48e2",
+      "route": "manga-lama",
+      "route_label": "Manga LaMa",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 7616,
+        "final_mask_area": 8400,
+        "raw_mask_bbox": [
+          92,
+          124,
+          228,
+          180
+        ],
+        "final_mask_bbox": [
+          90,
+          122,
+          230,
+          182
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: manga_lama weights (HF), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s5-structure-crossing",
+      "sample_kind": "structure-crossing",
+      "sample_sha256": "f96c48f24a098edcde0964723baaed7b3799d24ee63b7ee96f2eee26871d48e2",
+      "route": "aot",
+      "route_label": "AOT-GAN",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "medium",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 7616,
+        "final_mask_area": 8400,
+        "raw_mask_bbox": [
+          92,
+          124,
+          228,
+          180
+        ],
+        "final_mask_bbox": [
+          90,
+          122,
+          230,
+          182
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: aot weights, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s5-structure-crossing",
+      "sample_kind": "structure-crossing",
+      "sample_sha256": "f96c48f24a098edcde0964723baaed7b3799d24ee63b7ee96f2eee26871d48e2",
+      "route": "brushnet-powerpaint",
+      "route_label": "BrushNet / PowerPaint",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 7616,
+        "final_mask_area": 8400,
+        "raw_mask_bbox": [
+          92,
+          124,
+          228,
+          180
+        ],
+        "final_mask_bbox": [
+          90,
+          122,
+          230,
+          182
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: brushnet weights (HF), diffusers, torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    },
+    {
+      "sample_id": "s5-structure-crossing",
+      "sample_kind": "structure-crossing",
+      "sample_sha256": "f96c48f24a098edcde0964723baaed7b3799d24ee63b7ee96f2eee26871d48e2",
+      "route": "flux",
+      "route_label": "FLUX (inpaint / fill)",
+      "route_kind": "learned",
+      "learned_model": true,
+      "size_class": "very-large",
+      "default_eligible": false,
+      "mask": {
+        "mask_params": {
+          "dilate_radius": 2,
+          "feather_radius": 0,
+          "min_region_pixels": 1,
+          "keep_largest_component": false
+        },
+        "raw_mask_area": 7616,
+        "final_mask_area": 8400,
+        "raw_mask_bbox": [
+          92,
+          124,
+          228,
+          180
+        ],
+        "final_mask_bbox": [
+          90,
+          122,
+          230,
+          182
+        ],
+        "final_covers_raw": true
+      },
+      "parameters": {
+        "dilate_radius": 2,
+        "feather_radius": 0,
+        "min_region_pixels": 1,
+        "keep_largest_component": false,
+        "fill_colour": [
+          255,
+          255,
+          255
+        ],
+        "edge_bleed_iterations": 8
+      },
+      "status": "BLOCKED",
+      "reason": "missing dependency/weight: diffusers, flux weights (HF, 10GB+), torch",
+      "latency_ms": null,
+      "peak_rss_mb_after": null,
+      "vram_peak_mb": null,
+      "residual_text_pixels_after": "NOT_RUN",
+      "protected_violations": "NOT_RUN",
+      "output_image": null
+    }
+  ]
+}

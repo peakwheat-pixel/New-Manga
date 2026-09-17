@@ -2,7 +2,7 @@
 id: TASK-018
 title: Mask / Inpainting 路线独立实验
 kind: experiment
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -67,3 +67,13 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-17 用户批准释放；`ready`，Owner=DeepSeek Harness，Reviewer=Codex，base=`dce95ac`，branch=`agent/deepseek/TASK-018-mask-inpainting-experiment`，worktree=`G:/CODEX/New Manga.worktrees/TASK-018-deepseek`。TASK-003/004 均为 `done`；实验尚未开始，全部计划测试仍为 NOT_RUN。
+
+## 交付与运行记录（补充，2026-09-17）
+
+- 实现/实验提交：`6c33e7f`（24 文件；`git diff --check` 退出码 0；白名单越界 0）。
+- **产物**：`experiments/TASK-018/`（`mask_protocol.py` 纯 Python 协议、`generate_samples.py` 五类固定样例、`run_experiment.py` 五路线 × 五样例实验、`test_mask_protocol.py` 12 例自检、`samples/manifest.json` 含 SHA-256、`results/experiment.json` 含全部参数与实测）。
+- **五条路线可用范围**：`simple-fill` 与 `edge-bleed`（**非模型基线**）**实测可运行**；`manga-lama`、`aot`、`brushnet-powerpaint`、`flux` 因缺 `torch`/`diffusers` 与权重**全部 BLOCKED**。**未验证的大型模型一律 `default_eligible = false`**。
+- **实测结论**：`--repeat 3`，10 条 MEASURED 记录；**非目标像素保护违规 10/10 全为 0**；峰值 RSS 45.45–57.70 MB（CPU 路径，显存未分配）；残字为像素统计代理，`simple-fill` 全 0（构造性结果，**不代表质量达标**，且会在线稿/网点/渐变/结构穿越样例上抹平结构）。
+- **未验证项**：四条学习型路线的质量/耗时/显存（BLOCKED）、Mask 内部结构损伤量化（NOT_RUN，当前模型无图像输入能力，不给目视结论）、真实 OOM（无法触发）、真实漫画样例（NOT_RUN）。**未以 Mock 冒充**模型、视觉或性能结果。
+- 边界：仅修改本 Task 白名单；未改生产 src/tests、Schema、依赖、AGENTS、其他 Task；**未扩展到 TASK-019**；未 push/合并。
+- Review：待 Codex 对固定 delivery head `6c33e7f` 独立 Review；本 Task 不自行标记 approved/done。
