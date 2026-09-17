@@ -1,0 +1,19 @@
+OLD_DEFAULT: RoutePolicy(allowed_routes=('simple-fill', 'edge-bleed', 'brushnet'), fallback_routes=(), color_route='brushnet', requirements={'brushnet': False, 'flux-fill': False})
+NEW_DEFAULT: RoutePolicy(allowed_routes=('simple-fill', 'edge-bleed'), fallback_routes=(), color_route=None, requirements={})
+
+combo           before                                      after                                       same decision?
+彩色 webtoon      blocked:None (no configured route is runna...)blocked:None (no configured route is runna...)True
+高复杂度背景          blocked:None (no configured route is runna...)blocked:None (no configured route is runna...)True
+线稿              route:edge-bleed (dependency-free structural b...)route:edge-bleed (dependency-free structural b...)True
+普通小区域           route:edge-bleed (dependency-free structural b...)route:edge-bleed (dependency-free structural b...)True
+
+=== candidate reasons (colour webtoon combo) ===
+  before: [('brushnet', 'not implemented: no learned runtime/weights in this build'), ('flux-fill', 'not in the configured route policy'), ('aot-gan', 'not in the configured route policy'), ('manga-lama', 'not in the configured route policy'), ('edge-bleed', 'not acceptable for a colored/complex scene')]
+  after: [('brushnet', 'not in the configured route policy'), ('flux-fill', 'not in the configured route policy'), ('aot-gan', 'not in the configured route policy'), ('manga-lama', 'not in the configured route policy'), ('edge-bleed', 'not acceptable for a colored/complex scene')]
+
+=== runtime.status() route_policy (live, post-ruling) ===
+  {'allowed_routes': ('simple-fill', 'edge-bleed'), 'fallback_routes': (), 'color_route': None, 'requirements': {}}
+### AC 1 call-site / status observables
+# historical status route_policy (base b34b27e, recorded in doc/reviews/TASK-019-726baf5.md V11):
+#   allowed=[brushnet, edge-bleed, simple-fill]  color=brushnet  requirements={brushnet: False, flux-fill: False}
+# live status route_policy (post-ruling) is printed above; the difference is the ruled Option B observable change.

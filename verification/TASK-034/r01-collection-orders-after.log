@@ -1,0 +1,11 @@
+### R-01 AFTER (fix applied): same order matrix
+tests/reading_export/test_qml_contract.py tests/reading_export/test_viewmodels.py => exit=0 :: 22 passed in 2.45s
+tests/reading_export/test_viewmodels.py tests/reading_export/test_qml_contract.py => exit=0 :: 22 passed in 2.34s
+tests/reading_export tests/editing => exit=0 :: 91 passed in 3.36s
+tests/editing tests/reading_export => exit=0 :: 91 passed in 3.28s
+tests/reading_export tests/workbench => exit=0 :: 116 passed in 10.43s
+tests/reading_export tests/rendering => exit=0 :: 128 passed in 4.62s
+tests/reading_export tests/providers => exit=0 :: 199 passed in 4.67s
+tests/reading_export tests/knowledge => exit=0 :: 143 passed in 3.13s
+tests/reading_export tests/library => exit=0 :: 105 passed in 3.34s
+tests/reading_export => exit=0 :: 65 passed in 2.95s

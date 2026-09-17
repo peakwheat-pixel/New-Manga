@@ -57,6 +57,7 @@ from application.translation.inpaint.router import (
 )
 from infrastructure.providers.registry import ProviderRegistry
 from infrastructure.providers.retry import RetryPolicy
+from infrastructure.providers.runtime import DEFAULT_ROUTE_POLICY
 from infrastructure.providers.step_writes import (
     UNCHECKED,
     ArtifactStepWriter,
@@ -68,10 +69,6 @@ from infrastructure.providers.step_writes import (
     mask_payload,
 )
 from ports.inpaint.ports import (
-    ROUTE_BRUSHNET,
-    ROUTE_EDGE_BLEED,
-    ROUTE_FLUX_FILL,
-    ROUTE_SIMPLE_FILL,
     BooleanMask,
     ImageFrame,
 )
@@ -439,7 +436,12 @@ class ProductionHandlers:
     ) -> StepResult:
         self._require_region(unit)
         settings = self._section(run.settings_snapshot, "inpaint")
-        policy = self._route_policy(settings)
+        # TASK-034 AC ①: the Run-time policy comes from the same single entry
+        # point as the assembly-time one; only the explicit `default` differs
+        # (R-1) — here it is the policy the runtime was assembled with.
+        policy = RoutePolicy.from_settings(
+            run.settings_snapshot, default=self.deps.route_policy
+        )
         upstream_clean = self.deps.artifacts.artifact_for(unit.page_id, ARTIFACT_CLEAN)
         upstream_revision = (
             self.deps.artifacts.current_revision_id(upstream_clean)
@@ -614,32 +616,6 @@ class ProductionHandlers:
             )
         return chain
 
-    def _route_policy(self, settings: Mapping[str, Any]) -> RoutePolicy:
-        raw = settings.get("route_policy")
-        if raw is None:
-            return self.deps.route_policy
-        if not isinstance(raw, Mapping):
-            raise ProviderInputError(
-                "inpaint.route_policy must be a mapping", stage=STEP_INPAINT
-            )
-        allowed = tuple(
-            str(route) for route in raw.get("allowed_routes", ())
-        ) or self.deps.route_policy.allowed_routes
-        fallbacks = tuple(str(route) for route in raw.get("fallback_routes", ()))
-        color_route = raw.get("color_route")
-        requirements = {
-            str(route): bool(value)
-            for route, value in dict(raw.get("requirements", {})).items()
-        }
-        if color_route and str(color_route) not in allowed:
-            allowed = (*allowed, str(color_route))
-        return RoutePolicy(
-            allowed_routes=allowed,
-            fallback_routes=fallbacks,
-            color_route=str(color_route) if color_route else None,
-            requirements=requirements,
-        )
-
     def _context_pages(
         self, page_id: str, region_id: str, run: PipelineRun
     ) -> tuple[ContextPage, ...]:
@@ -742,13 +718,10 @@ def build_production_handlers(
             geometry=geometry,
             retry_policy=retry_policy or RetryPolicy(),
             heavy_runner=heavy_runner,
-            route_policy=route_policy
-            or RoutePolicy(
-                allowed_routes=(ROUTE_SIMPLE_FILL, ROUTE_EDGE_BLEED),
-                fallback_routes=(),
-                color_route=ROUTE_BRUSHNET,
-                requirements={ROUTE_BRUSHNET: False, ROUTE_FLUX_FILL: False},
-            ),
+            # TASK-034 AC ①: reuse the one default policy constant instead of a
+            # third hand-written literal (the runtime does not import this
+            # module, so this import direction has no cycle).
+            route_policy=route_policy or DEFAULT_ROUTE_POLICY,
         )
     ).as_mapping()
 

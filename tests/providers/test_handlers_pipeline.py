@@ -486,6 +486,68 @@ def test_reinpaint_chain_persists_masks_and_clean_revisions(workspace) -> None:
     assert current == clean_rows[1]["artifact_revision_id"]
 
 
+def test_run_settings_route_policy_goes_through_the_shared_parser(workspace) -> None:
+    """AC ① call-site regression (Run side).
+
+    The Inpaint handler resolves the Run's policy through the same
+    ``RoutePolicy.from_settings`` entry point the assembly uses, so the
+    run-level ``allowed_routes`` is honoured verbatim — including the absence
+    of any default color route (R-6 / Option B).
+    """
+    service = _pipeline(
+        workspace,
+        settings={
+            "inpaint": {
+                "dilate_radius": 0,
+                "erode_radius": 0,
+                "is_solid_background": True,
+                "route_policy": {"allowed_routes": [ROUTE_EDGE_BLEED]},
+            }
+        },
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED, [
+        (step.step_type, step.error_code, step.error_detail) for step in executed.step_runs
+    ]
+    step = {item.step_type: item for item in executed.step_runs}["inpaint"]
+    assert step.output["route"] == ROUTE_EDGE_BLEED
+    provenance = step.output["provenance"]
+    assert tuple(provenance["router_allowed_routes"]) == (ROUTE_EDGE_BLEED,)
+    assert provenance["router_color_route_selected"] is False
+
+
+def test_run_settings_malformed_route_policy_fails_the_step_loudly(workspace) -> None:
+    """AC ① / R-2 call-site regression (Run side): no silent fallback."""
+    conn = workspace["conn"]
+    service = _pipeline(
+        workspace, settings={"inpaint": {"route_policy": "simple-fill"}}
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    step = {item.step_type: item for item in executed.step_runs}["inpaint"]
+    assert step.status is StepRunStatus.FAILED
+    assert step.error_code == "INVALID_INPUT"
+    assert "must be a mapping" in (step.error_detail or "")
+    # Nothing was published for the page: the malformed policy is not a no-op.
+    assert (
+        conn.execute(
+            "SELECT COUNT(*) FROM media_artifacts WHERE artifact_type = 'clean'"
+        ).fetchone()[0]
+        == 0
+    )
+
+
 def test_unimplemented_route_blocks_without_writing_anything(workspace) -> None:
     conn = workspace["conn"]
     service = _pipeline(

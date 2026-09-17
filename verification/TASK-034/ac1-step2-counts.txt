@@ -1,0 +1,5 @@
+### AC 1 step 2 test-count deltas (34823b9 -> HEAD)
+tests/providers : BEFORE='110 passed in 1.82s' AFTER='134 passed in 1.76s'
+tests/core : BEFORE='18 passed in 5.46s' AFTER='18 passed in 5.19s'
+tests/reading_export : BEFORE='65 passed in 2.98s' AFTER='65 passed in 2.95s'
+full suite : BEFORE='682 passed, 6 skipped in 28.48s' AFTER='706 passed, 6 skipped in 28.74s'

@@ -1,0 +1,14 @@
+### TASK-034 AC 1 step 2: full suite x3 (per-run record)
+===== run 1 : exit=0 :: 706 passed, 6 skipped in 29.33s
+===== run 2 : exit=0 :: 706 passed, 6 skipped in 29.23s
+===== run 3 : exit=0 :: 706 passed, 6 skipped in 28.68s
+===== run 4 (skip detail) : exit=0
+................................................................         [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+706 passed, 6 skipped in 28.57s
