@@ -9,7 +9,9 @@ Fault injection per instance, consumed in order, then falls back to ok:
 
 - ``malformed_json`` / ``empty`` / ``drop:<id>`` / ``dup:<id>`` /
   ``extra:<id>`` — protocol-level output faults
-- ``http_503`` / ``http_401`` — transport/auth faults (D06 §56 classes)
+- ``http_503`` / ``http_429`` / ``http_401`` / ``http_400`` — transport,
+  rate-limit, auth and request-side faults (D06 §56 classes; 429 added by
+  Review R-002 so the retryable classification is testable end to end)
 
 Every request payload is recorded so the suite can prove D06 §57 (retry
 does not change the input) against the exact bytes.
@@ -88,6 +90,12 @@ class MockProvider:
                     return
                 if fault == "http_401":
                     self._respond(401, {"error": {"message": "bad key"}})
+                    return
+                if fault == "http_429":
+                    self._respond(429, {"error": {"message": "rate limited"}})
+                    return
+                if fault == "http_400":
+                    self._respond(400, {"error": {"message": "bad request"}})
                     return
 
                 if outer.latency_ms:
@@ -203,7 +211,17 @@ class ProtocolClient:
             with urllib.request.urlopen(req, timeout=self.timeout) as response:
                 body = json.loads(response.read().decode("utf-8"))
         except urllib.error.HTTPError as error:
-            kind = "http_401" if error.code == 401 else "http_5xx" if error.code >= 500 else "http_4xx"
+            # R-002: 429 (ProviderRateLimitError, D06 §56.1) is its own kind so
+            # the retryable set can name it; the remaining 4xx stay one kind
+            # that is declared non-retryable instead of falling through.
+            if error.code == 401:
+                kind = "http_401"
+            elif error.code == 429:
+                kind = "http_429"
+            elif error.code >= 500:
+                kind = "http_5xx"
+            else:
+                kind = "http_4xx"
             return "", kind
         except urllib.error.URLError as error:
             return "", "read_timeout" if isinstance(getattr(error, "reason", None), TimeoutError) else "http_5xx"

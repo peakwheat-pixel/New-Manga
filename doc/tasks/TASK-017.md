@@ -2,7 +2,7 @@
 id: TASK-017
 title: Translation 与上下文输出协议实验
 kind: experiment
-status: done
+status: in_review
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: ZCode
@@ -67,3 +67,13 @@ D01 §5；D06 §10～18/54～57/84；D08 AC-TRANS/CONSTRAINT/TM/FALLBACK。D 编
 - 实际执行/实验/测试：[verification/TASK-017/author-verification.md](../../verification/TASK-017/author-verification.md)。
 - 最近状态：2026-09-17 窗口授权收口 `done`：实验 `6a330e1`、Review 登记 `adb2093`、处置 `ae74250`（`doc/reviews/TASK-017-protocol.md`，approved_subagent）、integration=`c0cf3a1`，master 复验全仓 `536 passed` + 实验 `15 passed`；真实端点层 NOT_RUN（付费端点未配置且禁止自行配置），恢复方法见 research §4；reading_export QML 低频 flaky 已登记移交跟踪。
 - post-hoc Review：DeepSeek Harness 报告 commit `fb0bc40`（reviewed_head=`ae74250a`，approved）；R-101 已关闭，验证记录见 [author-verification.md](../../verification/TASK-017/author-verification.md)。
+
+## 尾项修订切片（2026-09-17，Review R-001 / R-002 / R-003）
+
+**当前状态以顶部 frontmatter 的 `status` 为准（现为 `in_review`）**，本节之前的表述保留为其发生时的历史记录。**已集成主体 `c0cf3a1` 与 post-hoc Review `fb0bc40` 不因本切片失效。**
+
+- 作者=Codex、Reviewer=DeepSeek Harness（**非作者**）；base=`754eb4f`（master）、交付 head=`971efe6`；Handoff 见 [TASK-017-971efe6.md](../handoffs/TASK-017-971efe6.md)，取证见 [verification/TASK-017/revision-971efe6.md](../../verification/TASK-017/revision-971efe6.md)。
+- 动因：`doc/reviews/TASK-017-protocol.md` 把 R-001/R-002/R-003 登记为 **open（"移交生产实现 Task"）**，而研究报告 §4 要求"生产 Translate Step 引用 `protocol.py` 分类器前必须先吸收"，TASK-019（未释放）将直接消费该分类器。
+- 修正：R-001 非字符串 `region_id`/`translated_text` 不再崩溃或静默 `str()` 成 `"None"`；R-002 429 独立为 `http_429` 并纳入 `RETRYABLE`、其余 4xx 显式声明不可重试；R-003 引入 `reading_order`（D06 §13）并显式声明"最近优先保留连续段"的截断策略。
+- 验证：`test_protocol.py` **20 passed / 0 skipped**（15 → 20）；`test_run_experiment_cli.py` **1 passed**；`run_experiment.py` 退出码 0 且 `results.json` 与提交版本逐字段一致（仅 `latency_ms` 为测量值）；**判别力**：新增 5 例在修复前代码上全部 FAILED。
+- 未完成项不变、**不得视为通过**：真实 Provider / 真实 Sakura / 真实模型质量评分仍 **NOT_RUN**（未配置付费端点、本机无 Sakura 服务；禁止自行配置）。

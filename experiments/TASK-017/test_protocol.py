@@ -10,6 +10,7 @@ measurement collection. Real-provider runs are a separate, NOT_RUN layer
 
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -21,6 +22,7 @@ from mock_provider import MockProvider, ProtocolClient, deterministic_translatio
 from protocol import (
     NOT_RETRYABLE,
     RETRYABLE,
+    ContextPage,
     ViolationKind,
     build_request,
     glossary_hits,
@@ -194,3 +196,78 @@ def test_deterministic_translation_applies_glossary():
 
     out = deterministic_translation(RegionInput("r", "先輩は強い"), {"先輩": "前辈"})
     assert "前辈" in out
+
+
+# --- Review R-001: malformed provider output must never crash the validator -
+
+
+def test_non_string_region_id_is_reported_not_crashed():
+    """R-001: a non-string region_id classifies as EXTRA_IDS, never TypeError."""
+    raw = json.dumps({"translations": [
+        {"region_id": "r-1", "translated_text": "ok"},
+        {"region_id": 123, "translated_text": "x"},
+        {"region_id": ["r-9"], "translated_text": "y"},
+    ]})
+    report = validate_response(raw, ("r-1",))
+    assert report.kind == ViolationKind.EXTRA_IDS, report.detail
+    assert "123" in report.detail and "['r-9']" in report.detail
+
+
+def test_non_string_translated_text_is_malformed_not_coerced():
+    """R-001: ``str(None)`` would fabricate the literal translation "None"."""
+    raw = json.dumps({"translations": [{"region_id": "r-1", "translated_text": None}]})
+    report = validate_response(raw, ("r-1",))
+    assert report.kind == ViolationKind.MALFORMED_JSON
+    assert report.retryable, "malformed provider output is retryable (D06 §56.1)"
+
+
+# --- Review R-002: 429 retryable; the remaining 4xx explicitly non-retryable -
+
+
+def test_rate_limit_is_retryable_and_other_4xx_declared():
+    server = MockProvider(faults=["http_429", "http_400"]).start()
+    try:
+        request = build_request("page-1", PAGE1_REGIONS, [], GLOSSARY)
+        client = ProtocolClient(server.base_url)
+        _, rate_limited = client.complete(request.payload())
+        _, bad_request = client.complete(request.payload())
+        assert rate_limited == "http_429"
+        assert rate_limited in RETRYABLE, "429 must be retryable (D06 §56.1)"
+        assert bad_request == "http_4xx"
+        assert bad_request in NOT_RETRYABLE, "remaining 4xx are request-side faults"
+    finally:
+        server.stop()
+
+
+# --- Review R-003: declared context ordering and truncation policy -----------
+
+
+def test_context_keeps_the_nearest_contiguous_run():
+    near = ContextPage("page-0", "before", "近端大页" * 120)
+    far = ContextPage("page-2", "after", "远端小页")
+    size_one = build_request("page-1", PAGE1_REGIONS, [near], GLOSSARY).token_estimate()
+    size_both = build_request("page-1", PAGE1_REGIONS, [near, far], GLOSSARY).token_estimate()
+    assert size_both > size_one
+
+    both = build_request("page-1", PAGE1_REGIONS, [near, far], GLOSSARY, token_budget=size_both)
+    assert [page.page_id for page in both.context] == ["page-0", "page-2"]
+    assert both.truncated_context_pages == ()
+
+    nearest_only = build_request("page-1", PAGE1_REGIONS, [near, far], GLOSSARY, token_budget=size_one)
+    assert [page.page_id for page in nearest_only.context] == ["page-0"], "nearest page is kept"
+    assert nearest_only.truncated_context_pages == ("page-2",)
+
+    none_kept = build_request("page-1", PAGE1_REGIONS, [near, far], GLOSSARY, token_budget=size_one - 1)
+    assert none_kept.context == ()
+    assert none_kept.truncated_context_pages == ("page-0", "page-2"), "reported nearest-first"
+
+
+def test_reading_order_beats_page_id_string_order():
+    """R-003: D06 §13 reading_order, not ``page_id`` string order."""
+    far = ContextPage("page-10", "after", "远端大页" * 120, reading_order=9)
+    near = ContextPage("page-3", "after", "近端小页", reading_order=3)
+    size_near = build_request("page-1", PAGE1_REGIONS, [near], GLOSSARY).token_estimate()
+
+    request = build_request("page-1", PAGE1_REGIONS, [far, near], GLOSSARY, token_budget=size_near)
+    assert [page.page_id for page in request.context] == ["page-3"], "reading_order 3 < 9"
+    assert request.truncated_context_pages == ("page-10",)
