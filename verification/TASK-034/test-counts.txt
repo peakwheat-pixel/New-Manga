@@ -1,0 +1,10 @@
+### per-directory collected test counts (AC 5: passed must not decrease)
+tests/providers : BEFORE='111 tests collected in 0.41s' AFTER='110 tests collected in 0.39s'
+tests/core : BEFORE='15 tests collected in 0.11s' AFTER='18 tests collected in 0.11s'
+tests/reading_export : BEFORE='64 tests collected in 0.25s' AFTER='65 tests collected in 0.22s'
+tests/editing : BEFORE='26 tests collected in 0.07s' AFTER='26 tests collected in 0.08s'
+tests/storage : BEFORE='33 tests collected in 0.07s' AFTER='33 tests collected in 0.05s'
+### executed passed counts (base b34b27e vs HEAD)
+tests/providers : BEFORE='111 passed in 1.51s' AFTER='110 passed in 1.76s'
+tests/core : BEFORE='15 passed in 5.29s' AFTER='18 passed in 4.92s'
+tests/reading_export : BEFORE='64 passed in 2.72s' AFTER='65 passed in 3.09s'

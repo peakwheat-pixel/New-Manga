@@ -56,7 +56,7 @@ from ports.providers.profiles import (
     CAPABILITY_TRANSLATION,
 )
 
-from conftest import (
+from providers_helpers import (
     FakeGeometry,
     FakeOcrProvider,
     FakePageImages,

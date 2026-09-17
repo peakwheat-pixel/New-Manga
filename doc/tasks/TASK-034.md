@@ -2,7 +2,7 @@
 id: TASK-034
 title: 测试与分层硬化（route policy 收敛 / 架构守卫 / flaky 诊断）
 kind: maintenance
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -15,6 +15,8 @@ integration_commit: null
 ---
 
 # TASK-034：测试与分层硬化（T-2 / T-4 / flaky 诊断 / TASK-035 R-02）
+
+**状态提示（2026-09-17）**：`status=in_review`——**AC ②③④⑤ 已完成并取证**；**AC ① 只交付第 1 步（裁决请求），第 2 步按 Task 要求冻结，`src/` 零改动**，等待 Codex 裁决。证据总表见 [verification/TASK-034/author-verification.md](../../verification/TASK-034/author-verification.md)，裁决请求见 [verification/TASK-034/route-policy-decision-request.md](../../verification/TASK-034/route-policy-decision-request.md)，交付说明见 [Handoff](../handoffs/TASK-034-f83a33e.md)。**AC ① 不得记为达成。**
 
 **READY（2026-09-17 用户批准释放）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Reviewer 不得与 Owner 同体）、base=`b34b27e`（释放时 master HEAD）、branch/worktree 见顶部元数据（已创建并同步到本次释放提交）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 
@@ -41,14 +43,15 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（T-2）`route_policy` 语义唯一**。分两步，**顺序不可颠倒**：
-      1. **先裁决**：在 Task 中列出两处解析的**全部**可观测分歧（至少覆盖：非 mapping 的输入、`route_policy` 键缺失、`color_route` 缺省、`allowed_routes` 缺省、`requirements` 缺省）及其各自当前行为，提出**唯一**的规范解释与迁移影响，提交 Codex 裁决。**裁决前不得改变任一调用点的可观测行为。**
-      2. **后收敛**：在 `application/translation/inpaint/router.py` 提供单一入口（建议 `RoutePolicy.from_settings(settings, default=…)`），`runtime.py` 与 `handlers.py` 都调用它；分歧点若需保留，必须**显式参数化**并写出理由。用测试锁定"裁决后的唯一语义"，并为**当前**两处行为各留一条回归（在行为未变时）。
-- [ ] **AC ②（T-4）架构守卫加固**：把 `application → infrastructure` 守卫迁入 `tests/core/test_architecture.py` 并复用其 AST 版 `find_forbidden_imports`，覆盖 `importlib.import_module("infrastructure…")` 等动态形式；保留"修前树应报 offenders、修后树为 0"的**判别力**证据。迁移后 `tests/providers` 内的旧守卫须删除或改为调用共享实现（不得留下两套）。
-- [ ] **AC ③（flaky）有界诊断**：两个已登记 flaky 用例加入**有界**诊断（如 `pump_until` 超时 + 失败时输出事件轨迹），**不放宽任何断言、不新增 skip、不把 flaky 记为通过**；若诊断后仍复现，按同一口径登记并给出证据。
-- [ ] **AC ④（TASK-035 R-02）`conftest` 脆弱性消除**：把 `tests/providers/**` 共享替身移入**唯一命名**的 helper 模块（如 `tests/providers/providers_helpers.py`）并改为显式导入，使 `pytest tests/providers tests/editing` 与反向顺序**均 0 collection errors**；给出两种顺序的实测证据。
-- [ ] **AC ⑤ 回归与分列**：`tests/providers`、`tests/core`、`tests/reading_export` 与全仓套件 **passed 不减少**；全仓串跑**至少 5 次**逐次记录 passed/skipped 与退出码。
+- [~] **AC ①（T-2）`route_policy` 语义唯一**。分两步，**顺序不可颠倒**：
+      1. **先裁决**：**已完成（第 1 步）**——[裁决请求](../../verification/TASK-034/route-policy-decision-request.md) 列出两处解析的全部 12 类可观测分歧（含非 mapping、键缺失、`color_route` 缺省/空白、`allowed_routes` 缺省/空/字符串、`requirements` 缺省/非 bool、`fallback_routes`、"常量 vs 注入默认"）与各自当前行为，提出唯一规范解释（R-1～R-6；R-6 给出 A/B 两案，推荐 **Option B：默认不指定彩色路线**）与迁移影响（含 `src/` 三文件范围变更申请）。只读探针证据：[`route-policy-divergences.txt`](../../verification/TASK-034/route-policy-divergences.txt)（6 例 SAME / 6 例 DIVERGES）。**`src/` 未改，两处调用点行为未变。**
+      2. **后收敛**：**BLOCKED（等待 Codex 裁决与 `src/` 范围批准）**——裁决前不得改动任一调用点；裁决后申请获批再在 `application/translation/inpaint/router.py` 落地 `RoutePolicy.from_settings(settings, *, default)` 并补"两处调用点各一条回归"。
+- [x] **AC ②（T-4）架构守卫加固**：守卫迁入 `tests/core/test_architecture.py` 并**复用/扩展**其 AST 版 `find_forbidden_imports`（新增字面量 `importlib.import_module`/`__import__` 检测）；`tests/providers` 内旧行前缀守卫**已删除**（不留两套，仅留指向注释）。判别力：现树 0、历史树 `726baf5` **2**（`step.py:23,29`）、合成动态导入**新 1 / 旧 0**（[`guard-discriminative.txt`](../../verification/TASK-034/guard-discriminative.txt)）。
+- [x] **AC ③（flaky）有界诊断**：两个已登记用例均加**有界**诊断，**未放宽任何断言、未新增 skip、未把 flaky 记为通过**——webtoon 用例引入 `pump_traced`（迭代/耗时轨迹）+ `webtoon_save_diagnostics`（`contentY`/服务端 offset/`Image.status`/对象名），等待预算保持 5/5/2 秒；导出用例把"等 `not vm.running`"改为**等终态信号**（含 `export_diagnostics` 状态轨迹），并新增确定性"半发布窗口"判别测试。**全仓 12 次串跑（诊断前 6 + 后 6）0 失败 → 如实登记"未复现"**，机制根因与候选见 [取证 §2/§5](../../verification/TASK-034/author-verification.md)。
+- [x] **AC ④（TASK-035 R-02）`conftest` 脆弱性消除**：共享替身移入唯一命名 `tests/providers/providers_helpers.py` 并显式导入；`pytest tests/providers tests/editing` 与反向顺序**均 136 passed、0 collection errors**（基线顺序 A = 4 collection errors，[`collection-orders-before.txt`](../../verification/TASK-034/collection-orders-before.txt) / [`collection-orders.txt`](../../verification/TASK-034/collection-orders.txt)）。
+- [x] **AC ⑤ 回归与分列**：mandated 三套件 **193 passed / 0 skipped**、`tests/core`+`storage`+`providers` **161 passed**；全仓 **682 passed / 6 skipped ×6 次**（逐次退出码 0，6 条 skip 均为既有 `tests/network` 的 `openssl unavailable`）。逐目录对照：providers 111→110（守卫**迁出**所致，无断言语义删除）、core 15→18、reading_export 64→65、净 +3（[`test-counts.txt`](../../verification/TASK-034/test-counts.txt)）。
 - [ ] **AC ⑥** 交付 Handoff、实际测试/审阅记录与未完成项，经**非作者** Review（按协作协议 §6 四轴）与 Codex 集成验证后才能 done。
+      → Handoff 与取证已交付；**Review 与集成尚未执行**，本 Task 不自行标记 `approved`/`done`。
 
 ## 允许修改范围
 
@@ -82,6 +85,11 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-17 由用户批准释放；Codex 登记 `status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`b34b27e`（释放时 master HEAD）、branch=`agent/deepseek/TASK-034-test-layer-hardening`、worktree=`G:/CODEX/New Manga.worktrees/TASK-034-deepseek`（已创建并同步到本次释放提交），并完成上表「释放前核对」（T-2 / T-4 / 两个 flaky / TASK-035 R-02 / 依赖均在，且发现 AC ① 缺少已声明的语义锚点 → 已写入「关键前置」要求先裁决）。**实施尚未开始**。
-- 历史状态（2026-09-17）：由 Codex 依 TASK-019 尾项切片 Review 的 T-2/T-4 与 STATUS 的 flaky 条目创建为 `proposed`（`approval=pending_user_review`，owner/reviewer/base/branch/worktree 均为空）；同日并入 TASK-035 Review 的 R-02（`tests/providers` conftest 收集顺序脆弱性，转由本 Task 承接）。
+- Handoff：[TASK-034-f83a33e](../handoffs/TASK-034-f83a33e.md)（delivery_head=`f83a33e`）。
+- Review：尚无（待 Codex 非作者独立 Review，按协作协议 §6 四轴：Standards / Spec / Architecture / Verification）。
+- 实际执行/测试：
+  - 取证总表：[verification/TASK-034/author-verification.md](../../verification/TASK-034/author-verification.md)；AC ① 裁决请求：[route-policy-decision-request.md](../../verification/TASK-034/route-policy-decision-request.md) + [route-policy-divergences.txt](../../verification/TASK-034/route-policy-divergences.txt)；AC ② 判别力：[guard-discriminative.txt](../../verification/TASK-034/guard-discriminative.txt)；AC ④ 前后对照：[collection-orders.txt](../../verification/TASK-034/collection-orders.txt) / [collection-orders-before.txt](../../verification/TASK-034/collection-orders-before.txt)；AC ③⑤ 串跑：[flaky-repro-after.log](../../verification/TASK-034/flaky-repro-after.log)（×6）/ [flaky-repro-before.log](../../verification/TASK-034/flaky-repro-before.log)（×6）；逐目录计数：[test-counts.txt](../../verification/TASK-034/test-counts.txt)；边界：[changed-paths.txt](../../verification/TASK-034/changed-paths.txt)。
+  - 命令与结果（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：mandated `tests/providers tests/core tests/reading_export` **193 passed / 0 skipped**；`tests/providers tests/editing` 与反向顺序 **136 / 136 passed、0 collection errors**；`tests/core tests/storage tests/providers` **161 passed**；全仓 **682 passed / 6 skipped ×6 次**（诊断前为 681×6；6 条 skip 均为既有 `tests/network` 的 `openssl unavailable`）。逐目录：providers 111→110、core 15→18、reading_export 64→65、全仓 679→682。边界：Owner 改动全在 `tests/**` + 文档允许路径、越界 0；**`src/` 零改动**；`git diff --check b34b27e..HEAD` 退出码 0。
+  - 既有两个 flaky：**12 次全仓串跑 0 复现**（如实登记，不记为通过）；诊断已就位，机制根因（N-1 生产侧发布顺序）与候选（N-2）见取证 §2/§5。
+- **最近状态（当前，唯一）**：2026-09-17 **AC ②③④⑤ 完成**、**AC ① 第 1 步交付、第 2 步冻结（等待 Codex 裁决）**，整体置 **`in_review`**。分支 `agent/deepseek/TASK-034-test-layer-hardening`、worktree `G:/CODEX/New Manga.worktrees/TASK-034-deepseek`、fixed base `b34b27e`、delivery head `f83a33e`（`cff86e4` 开工文档、`f83a33e` 测试硬化与取证）。**未 push、未合并 master；未释放任何冻结 Task。** 越界发现登记（未修改）：**N-1** `src/ui/viewmodels/export/viewmodel.py:380/389`、`:392/398` 先清 `running` 后发布状态/信号（导出 flaky 机制根因，需 `src/ui/**` 范围另立切片）；**N-2** webtoon 保存 flaky 未复现、真实原因未定（三条候选）；**N-3** `inpaint.route_policy` 语义无权威声明 → AC ① 必须先裁决。待 Codex 决定：AC ① R-1～R-7 与 `src/` 三文件范围变更；`tests/providers` 111→110（守卫迁出）的口径确认。
+- 历史状态（2026-09-17）：由 Codex 依 TASK-019 尾项切片 Review 的 T-2/T-4 与 STATUS 的 flaky 条目创建为 `proposed`，同日并入 TASK-035 Review 的 R-02；随后用户批准释放为 `ready`（Owner=`DeepSeek Harness`、Reviewer=`Codex`、base=`b34b27e`）。

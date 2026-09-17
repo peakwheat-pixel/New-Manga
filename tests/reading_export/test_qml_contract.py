@@ -108,6 +108,57 @@ def pump(window, seconds=2.0, condition=None):
     return condition is not None and condition()
 
 
+def pump_traced(window, seconds, condition):
+    """``pump`` that also reports how much event-loop time was spent.
+
+    TASK-034 AC ③: the registered flaky case fails inside a *bounded* wait, so
+    the failure message must say whether the event loop was starved (few
+    iterations) or the state simply never changed (many iterations). The wait
+    budget and the assertions are unchanged — this only makes the failure
+    diagnosable.
+    """
+    started = _time.monotonic()
+    iterations = 0
+    ok = False
+    deadline = started + seconds
+    while _time.monotonic() < deadline:
+        QGuiApplication.processEvents()
+        iterations += 1
+        if condition():
+            ok = True
+            break
+        _time.sleep(0.02)
+    if not ok:
+        ok = bool(condition())
+    elapsed_ms = int((_time.monotonic() - started) * 1000)
+    return ok, f"pump({seconds:g}s): iterations={iterations} elapsed_ms={elapsed_ms} ok={ok}"
+
+
+def object_names(root, limit=25):
+    """Collected ``objectName`` values, for failure diagnostics only."""
+    if root is None:
+        return []
+    names = [
+        child.objectName()
+        for child in root.findChildren(QObject)
+        if child.objectName()
+    ]
+    return sorted(set(names))[:limit]
+
+
+def webtoon_save_diagnostics(root, scroll, reading) -> str:
+    """State trace for the webtoon scroll-save assertion."""
+    content_y = scroll.property("contentY") if scroll is not None else None
+    image = find_by_name(root, "readerPage")
+    status = image.property("status") if image is not None else None
+    return (
+        f"scroll_contentY={content_y!r}"
+        f" saved_scroll_offset_y={reading.progress.scroll_offset_y!r}"
+        f" image_status={status!r}"
+        f" object_names={object_names(root)}"
+    )
+
+
 @pytest.fixture()
 def engine():
     qml_engine = QQmlEngine()
@@ -215,35 +266,63 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
     try:
         root = find_by_name(window, "readerView")
         vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
-        QGuiApplication.processEvents()
+        # TASK-034 AC ③: the swap is created by the QML after `openChapter`;
+        # wait for it under a bound instead of assuming one processEvents()
+        # delivered it (the assertion is unchanged, the failure now carries a
+        # trace).
+        swapped, trace = pump_traced(
+            window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+        )
         scroll = find_by_name(root, "readerWebtoonScroll")
-        assert scroll is not None, "webtoon chapter swaps in the vertical Flickable"
+        assert swapped and scroll is not None, (
+            "webtoon chapter swaps in the vertical Flickable — "
+            f"{trace} {webtoon_save_diagnostics(root, scroll, reading)}"
+        )
         # the page image loads asynchronously; contentHeight must exist
         # before contentY can be set past the clamp
-        assert pump(window, 5.0, lambda: scroll.property("contentHeight") > 0), (
-            "webtoon image never produced a scrollable height"
+        height_ok, height_trace = pump_traced(
+            window, 5.0, lambda: scroll.property("contentHeight") > 0
+        )
+        assert height_ok, (
+            "webtoon image never produced a scrollable height — "
+            f"{height_trace} {webtoon_save_diagnostics(root, scroll, reading)}"
         )
         scroll.setProperty("contentY", 240.0)
         # the throttled save timer fires after ~500 ms
-        assert pump(
+        saved_ok, saved_trace = pump_traced(
             window, 2.0, lambda: reading.progress.scroll_offset_y == 240.0
-        ), "scroll_offset_y is saved through the service"
+        )
+        assert saved_ok, (
+            "scroll_offset_y is saved through the service — "
+            f"{saved_trace} {webtoon_save_diagnostics(root, scroll, reading)}"
+        )
 
         # R-003: reopening restores the offset only once the image has
         # content height (never clamped to 0 by the empty Flickable)
         vm.openChapter("b", "c", "条漫", "webtoon", "vertical", True)
         scroll2 = None
         deadline = _time.monotonic() + 5
+        reopen_iterations = 0
         while _time.monotonic() < deadline:
             QGuiApplication.processEvents()
+            reopen_iterations += 1
             scroll2 = find_by_name(root, "readerWebtoonScroll")
             if scroll2 is not None and scroll2.property("contentHeight") > 0:
                 break
             _time.sleep(0.05)
-        assert scroll2 is not None, "reopened webtoon viewer"
-        assert pump(
+        assert scroll2 is not None, (
+            "reopened webtoon viewer —"
+            f" reopen_iterations={reopen_iterations}"
+            f" {webtoon_save_diagnostics(root, scroll2, reading)}"
+        )
+        restored_ok, restored_trace = pump_traced(
             window, 5.0, lambda: scroll2.property("contentY") == 240.0
-        ), f"saved offset restored after image load, got {scroll2.property('contentY')}"
+        )
+        assert restored_ok, (
+            "saved offset restored after image load,"
+            f" got {scroll2.property('contentY')} —"
+            f" {restored_trace} {webtoon_save_diagnostics(root, scroll2, reading)}"
+        )
     finally:
         window.close()
 

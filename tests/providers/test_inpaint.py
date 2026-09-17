@@ -53,7 +53,7 @@ from ports.providers.errors import (
     ProviderNotImplemented,
 )
 
-from conftest import frame, mask_from_boxes
+from providers_helpers import frame, mask_from_boxes
 
 
 # ----------------------------------------------------------------------

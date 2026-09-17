@@ -1,0 +1,33 @@
+### boundary: my commits vs branch start c94c183 (and vs fixed base b34b27e)
+--- vs c94c183 (branch start = release docs)
+doc/tasks/TASK-034.md
+tests/core/test_architecture.py
+tests/providers/conftest.py
+tests/providers/providers_helpers.py
+tests/providers/test_handlers_pipeline.py
+tests/providers/test_inpaint.py
+tests/providers/test_ports_contract.py
+tests/providers/test_remote_providers.py
+tests/providers/test_sakura_probe.py
+tests/reading_export/test_qml_contract.py
+tests/reading_export/test_viewmodels.py
+verification/TASK-034/collection-orders-before.txt
+verification/TASK-034/collection-orders.txt
+verification/TASK-034/flaky-repro-after.log
+verification/TASK-034/flaky-repro-before.log
+verification/TASK-034/guard-discriminative.txt
+verification/TASK-034/route-policy-decision-request.md
+verification/TASK-034/route-policy-divergences.txt
+out-of-scope: none
+--- src/ touched? (must be empty before the AC 1 ruling)
+src changes: none
+--- forbidden-path scan over b34b27e..HEAD
+forbidden hits: doc/STATUS.md, doc/tasks/README.md
+--- whitespace: git diff --check b34b27e..HEAD
+exit=0
+--- note: the two forbidden hits above come from Codex's release commit c94c183
+    (branch start, not authored by this Owner). Its files:
+doc/STATUS.md
+doc/tasks/README.md
+doc/tasks/TASK-034.md
+--- Owner changes vs c94c183 are all in: tests/**, doc/tasks/TASK-034.md, verification/TASK-034/** ; src/ = none

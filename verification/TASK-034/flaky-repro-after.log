@@ -1,0 +1,43 @@
+### TASK-034 AC 3/5: full suite x6 AFTER bounded diagnostics (--tb=long, per-run record)
+===== run 1 : exit=0 :: 682 passed, 6 skipped in 29.87s
+  SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+===== run 2 : exit=0 :: 682 passed, 6 skipped in 28.94s
+  SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+===== run 3 : exit=0 :: 682 passed, 6 skipped in 28.99s
+  SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+===== run 4 : exit=0 :: 682 passed, 6 skipped in 29.38s
+  SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+===== run 5 : exit=0 :: 682 passed, 6 skipped in 27.90s
+  SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+===== run 6 : exit=0 :: 682 passed, 6 skipped in 27.81s
+  SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+  SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable

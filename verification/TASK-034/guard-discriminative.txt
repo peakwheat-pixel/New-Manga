@@ -1,0 +1,17 @@
+--- live application tree @ HEAD
+    candidate root: G:\CODEX\New Manga.worktrees\TASK-034-deepseek\src\application
+    AST guard (tests/core, new) : 0 violation(s)
+    line-prefix guard (removed) : 0 violation(s)
+--- historical application tree @ 726baf5 (pre-S-1-fix)
+    candidate root: C:\Users\49745\AppData\Local\Temp\task034-prefix-726baf5\src\application
+    AST guard (tests/core, new) : 2 violation(s)
+        C:\Users\49745\AppData\Local\Temp\task034-prefix-726baf5\src\application\translation\inpaint\step.py:23: forbidden import infrastructure.providers.inpaint_router
+        C:\Users\49745\AppData\Local\Temp\task034-prefix-726baf5\src\application\translation\inpaint\step.py:29: forbidden import infrastructure.providers.inpaint_routes
+    line-prefix guard (removed) : 2 violation(s)
+        C:\Users\49745\AppData\Local\Temp\task034-prefix-726baf5\src\application\translation\inpaint\step.py:23
+        C:\Users\49745\AppData\Local\Temp\task034-prefix-726baf5\src\application\translation\inpaint\step.py:29
+--- synthetic literal dynamic import
+    candidate root: G:\CODEX\New Manga.worktrees\TASK-034-deepseek\.task034-tmp-dynamic
+    AST guard (tests/core, new) : 1 violation(s)
+        G:\CODEX\New Manga.worktrees\TASK-034-deepseek\.task034-tmp-dynamic\sneaky_application_module.py:2: forbidden dynamic import infrastructure.providers.registry
+    line-prefix guard (removed) : 0 violation(s)
