@@ -35,7 +35,7 @@ TASK-001～TASK-019、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK
 | [TASK-029](TASK-029.md) | 实现统一 SQLite 持久化 | ZCode | done；integration `0b0b855`；TASK-028 |
 | [TASK-030](TASK-030.md) | Main.qml/bootstrap 最小生产装配 | ZCode | done；integration `fef9dd3`；TASK-005, TASK-007, TASK-012, TASK-029, TASK-031 |
 | [TASK-031](TASK-031.md) | 生产 ImageDecoder 与 Managed Copy 适配器 | Codex | done；integration `e9d5185`；TASK-006, TASK-007, TASK-029 |
-| [TASK-032](TASK-032.md) | 修复 SFX Policy Gate 缺失 region_type 前置（F-1） | ZCode（建议） | **proposed（未释放）**；由 TASK-019 的 F-1 转化；Codex 已裁决为**缺陷**（依据 D06 §85 / D08 AC-SFX-001 的 `region_type = sfx` 前置）；TASK-011, TASK-019 |
+| [TASK-032](TASK-032.md) | 修复 SFX Policy Gate 缺失 region_type 前置（F-1） | ZCode | ready；已按用户批准释放（Owner=ZCode、Reviewer=DeepSeek Harness（非作者）、base=`ca17d45`、branch=`agent/zcode/TASK-032-sfx-policy-gate-region-type`、worktree=`G:/CODEX/New Manga.worktrees/TASK-032-zcode`）；Codex 已裁决为**缺陷**（D06 §85 / D08 AC-SFX-001 的 `region_type = sfx` 前置，非产品决策）；实施未开始；**Review 须按 §6 四轴（含 Standards）**；TASK-011, TASK-019（均 done） |
 | [TASK-033](TASK-033.md) | 完整链收口：Color / Term Extract / Render handler | ZCode（建议） | **proposed（未释放）**；承接 TASK-019 的 R-2/F-2（AC-RFULL-001 剩余链路）；渲染侧端口/实现不在允许路径，需先申请范围变更；TASK-010, TASK-014, TASK-019 |
 | [TASK-034](TASK-034.md) | 测试与分层硬化（route policy 收敛 / 架构守卫 / flaky 诊断） | ZCode（建议） | **proposed（未释放）**；承接 TASK-019 尾项切片 Review 的 T-2/T-4 与 STATUS flaky 条目；纯硬化、不改产品行为；TASK-019 |
 
