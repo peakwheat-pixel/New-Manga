@@ -170,3 +170,25 @@ Findings 处置：R-001/R-004/R-005/R-006（报告部分）已在集成收口提
 **仍未解决（不变）**：学习型路线的质量/性能为 **BLOCKED**；Mask 内部结构损伤、真实 OOM、真实漫画样例为 **NOT_RUN**。
 
 详见 [revision-d7c10d4.md](revision-d7c10d4.md)。
+
+---
+
+## 7.2 复审收口（R-101/R-102/R-103 + R-104，2026-09-17）
+
+Reviewer 结论为 `changes_requested`，工程实现已复核 **PASS**，**代码无需改动**。本轮只做口径与文档收口，**未重跑、未覆盖 `results/experiment.json`**。
+
+| ID | 处置 | 证据 |
+|---|---|---|
+| **R-101** | `test_route_gating.py` 的 docstring 原先自称"Standard library only — no PySide6"，但其 `import run_experiment as rx` 会间接导入 PySide6。现改为如实说明：**本测试代码只用标准库，但通过 `run_experiment` 间接依赖 PySide6**，不是端到端无依赖 | 采用**方案 A（仅措辞）**；代码逻辑未改 |
+| **R-102** | `doc/research/TASK-018.md` §4 表的 `min ms`/`max ms`/`peak RSS MB` 三列原先取自**首轮** `experiment.json`，与当前仓库内的 `d7c10d4` 版本不一致。现**更新为新值**并在表下加"数据归属"注，明确所属 artifact；§4 结论 4 区间同步为 **2.20–3.05 ms / 32.28–48.61 ms / 45.32–57.55 MB**；结论 5 与 §7 OOM 行同步为 **≤ 57.6 MB / ≤ 48.7 ms** | 全部数字可在 `results/experiment.json` 中逐一检索；`ink`/`residual`/`viol` 三列为确定性量、逐值未变；**未重跑** |
+| **R-103** | `doc/tasks/TASK-018.md` 原有两个"当前状态（唯一）"块与一个空的"交付与运行记录"。现把空的交付记录改为实际链接，集成段标题改为"集成收口与来源"，**只保留一个 `当前状态（唯一）`**；frontmatter 与正文表述统一为 `in_review` | 该文件中 `当前状态（唯一` 出现次数 = 1 |
+| **R-104（可选）** | `test_route_gating.py` 增加**导入断言**：若被导入的 `run_experiment` 不来自本目录（例如被其他 Task 的 experiments 目录遮蔽），立即失败提示 | 断言位于模块导入期 |
+
+**验证命令**：
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---:|---:|---:|---|
+| 12 | `python -m unittest experiments/TASK-018/test_mask_protocol.py` | **0** | **12** | **0** | `OK`（该文件本轮**未被改动**） |
+| 13 | `python -m unittest experiments/TASK-018/test_route_gating.py` | **0** | **13** | **0** | `OK`（R-101/R-104 改动后仍全绿） |
+
+**skip 原因**：两项均 **`0 skipped`**。

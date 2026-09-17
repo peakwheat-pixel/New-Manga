@@ -16,7 +16,7 @@ integration_commit: 4d189ce
 
 # TASK-018：Mask / Inpainting 路线独立实验
 
-**当前状态以顶部 frontmatter 的 `status` 为准（现为 `done`）**，正文各段中的状态表述保留为其发生时的历史记录。
+**当前状态以顶部 frontmatter 的 `status` 为准（现为 `in_review`）**，正文各段中的状态表述保留为其发生时的历史记录。
 
 **READY（2026-09-17 用户批准释放）**：硬依赖 TASK-003、TASK-004 均已集成 `done`。Owner=DeepSeek Harness，Reviewer=Codex；本任务仅在下列允许路径内开展独立实验。模型或硬件不可用时，按验收要求将相应结果标记为 BLOCKED/NOT_RUN，不以 Mock 代替真实模型、视觉或性能证据。Owner 开始实施前，在本任务分支将状态改为 `in_progress`。
 当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
@@ -65,12 +65,12 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
+- Handoff：[TASK-018-6c33e7f](../handoffs/TASK-018-6c33e7f.md)（首轮交付）、[TASK-018-d7c10d4](../handoffs/TASK-018-d7c10d4.md)（修订切片）。
+- Review：[doc/reviews/TASK-018-6c33e7f.md](../reviews/TASK-018-6c33e7f.md)（pproved，R-001～R-007）；修订切片复审为 changes_requested（仅文档口径，代码无需改动）。
+- 实际执行/实验/测试：见 [研究记录](../research/TASK-018.md)、[实验日志](../../verification/TASK-018/experiment-log.md)、[修订取证](../../verification/TASK-018/revision-d7c10d4.md)、[集成验证](../../verification/TASK-018/integration-4d189ce.md)。
 - 最近状态：2026-09-17 用户批准释放；`ready`，Owner=DeepSeek Harness，Reviewer=Codex，base=`dce95ac`，branch=`agent/deepseek/TASK-018-mask-inpainting-experiment`，worktree=`G:/CODEX/New Manga.worktrees/TASK-018-deepseek`。TASK-003/004 均为 `done`；实验尚未开始，全部计划测试仍为 NOT_RUN。
 
-## 交付与运行记录（补充，2026-09-17）
+### 首轮交付与实测（2026-09-17）
 
 - 实现/实验提交：`6c33e7f`（24 文件；`git diff --check` 退出码 0；白名单越界 0）。
 - **产物**：`experiments/TASK-018/`（`mask_protocol.py` 纯 Python 协议、`generate_samples.py` 五类固定样例、`run_experiment.py` 五路线 × 五样例实验、`test_mask_protocol.py` 12 例自检、`samples/manifest.json` 含 SHA-256、`results/experiment.json` 含全部参数与实测）。
@@ -80,7 +80,7 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - 边界：仅修改本 Task 白名单；未改生产 src/tests、Schema、依赖、AGENTS、其他 Task；**未扩展到 TASK-019**；未 push/合并。
 - Review：待 Codex 对固定 delivery head `6c33e7f` 独立 Review；本 Task 不自行标记 approved/done。
 
-## 当前状态（唯一，集成后）
+## 集成收口与来源（2026-09-17）
 
 **2026-09-17 `done`**。Codex 按协作协议 §6.6 保留来源分支变更并创建 `integration_commit=4d189ce`（merge，parents `461e639` + `ef6d1c3`）；独立 Review [doc/reviews/TASK-018-6c33e7f.md](../reviews/TASK-018-6c33e7f.md) 对固定 `reviewed_head=6c33e7f` 的结论为 `approved`。
 

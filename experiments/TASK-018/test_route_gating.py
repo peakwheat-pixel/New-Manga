@@ -1,8 +1,13 @@
 """Route gating and probing tests for TASK-018 revision slice (R-002 / R-007).
 
-Standard library only — no PySide6, no third-party package, no model. Kept in a
-separate module so the original 12 protocol tests in ``test_mask_protocol.py``
-stay untouched (their count must not change).
+The test code itself uses only the standard library, but it imports the harness
+module ``run_experiment`` in order to exercise the *real* ``route_gate`` /
+``probe_requirement`` logic. That module imports PySide6 for image I/O, so this
+suite is **standard-library-only in its own code**, not dependency-free end to
+end: it requires an interpreter that can import ``run_experiment``.
+
+Kept in a separate module so the original 12 protocol tests in
+``test_mask_protocol.py`` stay untouched (their count must not change).
 
 Run: ``PYTHONPATH=experiments/TASK-018 python -m unittest experiments/TASK-018/test_route_gating.py -v``
 """
@@ -15,6 +20,16 @@ import unittest
 from pathlib import Path
 
 import run_experiment as rx
+
+#: R-104: fail loudly if a *different* ``run_experiment`` module was imported
+#: (for example another task's ``experiments`` directory shadowing this one),
+#: because every assertion below would silently test the wrong harness.
+_HARNESS_MODULE = Path(rx.__file__).resolve()
+_EXPECTED_DIR = Path(__file__).resolve().parent
+assert _HARNESS_MODULE.parent == _EXPECTED_DIR, (
+    f"imported run_experiment from {_HARNESS_MODULE.parent} instead of {_EXPECTED_DIR}; "
+    "check PYTHONPATH ordering before trusting these results"
+)
 
 
 class FailClosedTests(unittest.TestCase):
