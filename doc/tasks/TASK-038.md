@@ -2,7 +2,7 @@
 id: TASK-038
 title: 生产装配收口：reader/export ViewModel 注册 + tile_factory 注入 + 文档导入接线
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -81,5 +81,6 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 在 ZCode 全权窗口第二轮创建为 `ready`（用户指示"再布置任务"）；`base=047164e`。**实施尚未开始。**
+- **历史状态**：2026-09-18 由 Codex 在 ZCode 全权窗口第二轮创建为 `ready`（用户指示"再布置任务"）；`base=047164e`。
+- **最近状态（当前，唯一）**：2026-09-18 08:5x 由 ZCode 在窗口第二轮开工（W5，status→`in_progress`）；分支 `git merge master` 快进至第二轮基线（W1-W3/插队全部集成的 HEAD）；实施开始。
 
