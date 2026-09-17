@@ -142,3 +142,53 @@
 Findings 处置：R-001/R-004/R-005/R-006（报告部分）已在集成收口提交内以文档口径修正收口；R-002/R-003/R-006（`experiment.json` 标签）/R-007 为 **deferred**，限制见 §7，解锁条件见研究报告 §9。
 
 **未解决项不得被当作通过**：R-002 的静态门控、R-003 的输出目录限制、R-007 的回落隐患在修复前持续有效；学习型路线的质量/性能仍为 `BLOCKED`，Mask 内部结构损伤仍为 `NOT_RUN`；两条基线只是保底能力，不代表质量达标。
+
+---
+
+## 7.1 后续修订切片 `d7c10d4`：deferred → fixed（2026-09-17）
+
+| 计划/发现项 | 原状态 | 现状态 | 证据 |
+|---|---|---|---|
+| 路线门控的环境探测（R-002） | 未实现 | **fixed** | `requirements` 为可探测描述符（`importlib.util.find_spec` / 本地权重文件存在性）；记录含 `requirement_probes`、`blocked_stage`；`test_route_gating.py::ProbingTests` 4 例 |
+| 越界输出目录（R-003） | 不支持 | **fixed** | `--output-dir %TEMP%/task018-outofroot` → **退出码 0**、产物正常、路径记绝对、`output_dir_in_experiment_root = false` |
+| 未实现路线 fail-closed（R-007） | 未实现 | **fixed** | 显式 `FILLERS` 映射 + 未登记即 `KeyError`；反例（依赖强制 satisfied）仍 10/10 `BLOCKED` / `not_implemented`、`png_written=[]` |
+| 保护框逐框证据（R-001 剩余） | 未覆盖 | **fixed** | `protected_box_violations`：**20 框全 0** |
+| 未核实体积标注（R-006） | 存在 | **fixed** | 已移除；`size_class` 标 `(unmeasured tier)`；`experiment.json` 重生成 |
+
+**本轮命令与结果（环境同 §1）**：
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---:|---:|---:|---|
+| 7 | `python -m unittest experiments/TASK-018/test_mask_protocol.py` | **0** | **12** | **0** | `OK`（原有 12 例未改动） |
+| 8 | `python -m unittest experiments/TASK-018/test_route_gating.py` | **0** | **13** | **0** | `OK`（新增，独立计数） |
+| 9 | `python experiments/TASK-018/run_experiment.py --repeat 3` | **0** | — | — | `{"MEASURED": 10, "BLOCKED": 20}`；`blocked_stage = {"not_implemented": 20}` |
+| 10 | `run_experiment.py --output-dir %TEMP%/task018-outofroot --repeat 1` | **0** | — | — | 越界不崩溃 |
+| 11 | `git diff --check 8c63f9b d7c10d4` | **0** | — | — | 无输出 |
+
+**skip 原因**：命令 7、8 均 **`0 skipped`**；命令 9、10 为进程执行，无测试项。
+
+**仍未解决（不变）**：学习型路线的质量/性能为 **BLOCKED**；Mask 内部结构损伤、真实 OOM、真实漫画样例为 **NOT_RUN**。
+
+详见 [revision-d7c10d4.md](revision-d7c10d4.md)。
+
+---
+
+## 7.2 复审收口（R-101/R-102/R-103 + R-104，2026-09-17）
+
+Reviewer 结论为 `changes_requested`，工程实现已复核 **PASS**，**代码无需改动**。本轮只做口径与文档收口，**未重跑、未覆盖 `results/experiment.json`**。
+
+| ID | 处置 | 证据 |
+|---|---|---|
+| **R-101** | `test_route_gating.py` 的 docstring 原先自称"Standard library only — no PySide6"，但其 `import run_experiment as rx` 会间接导入 PySide6。现改为如实说明：**本测试代码只用标准库，但通过 `run_experiment` 间接依赖 PySide6**，不是端到端无依赖 | 采用**方案 A（仅措辞）**；代码逻辑未改 |
+| **R-102** | `doc/research/TASK-018.md` §4 表的 `min ms`/`max ms`/`peak RSS MB` 三列原先取自**首轮** `experiment.json`，与当前仓库内的 `d7c10d4` 版本不一致。现**更新为新值**并在表下加"数据归属"注，明确所属 artifact；§4 结论 4 区间同步为 **2.20–3.05 ms / 32.28–48.61 ms / 45.32–57.55 MB**；结论 5 与 §7 OOM 行同步为 **≤ 57.6 MB / ≤ 48.7 ms** | 全部数字可在 `results/experiment.json` 中逐一检索；`ink`/`residual`/`viol` 三列为确定性量、逐值未变；**未重跑** |
+| **R-103** | `doc/tasks/TASK-018.md` 原有两个"当前状态（唯一）"块与一个空的"交付与运行记录"。现把空的交付记录改为实际链接，集成段标题改为"集成收口与来源"，**只保留一个 `当前状态（唯一）`**；frontmatter 与正文表述统一为 `in_review` | 该文件中 `当前状态（唯一` 出现次数 = 1 |
+| **R-104（可选）** | `test_route_gating.py` 增加**导入断言**：若被导入的 `run_experiment` 不来自本目录（例如被其他 Task 的 experiments 目录遮蔽），立即失败提示 | 断言位于模块导入期 |
+
+**验证命令**：
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---:|---:|---:|---|
+| 12 | `python -m unittest experiments/TASK-018/test_mask_protocol.py` | **0** | **12** | **0** | `OK`（该文件本轮**未被改动**） |
+| 13 | `python -m unittest experiments/TASK-018/test_route_gating.py` | **0** | **13** | **0** | `OK`（R-101/R-104 改动后仍全绿） |
+
+**skip 原因**：两项均 **`0 skipped`**。
