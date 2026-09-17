@@ -1,0 +1,18 @@
+### boundary: my commits vs branch start c004d4e
+doc/tasks/TASK-032.md
+src/application/tasks/service.py
+src/infrastructure/sqlite/pipeline.py
+tests/pipeline/test_pipeline.py
+tests/pipeline/test_pipeline_production_seam.py
+out-of-scope: none
+### release/改派 commits on the branch start (Codex-authored, docs only)
+c004d4e docs(TASK-032): reassign owner to DeepSeek Harness (reviewer Codex, non-author) and rebuild branch/worktree
+2e97fc0 docs(TASK-032): register release metadata in index/STATUS
+67827f2 docs(TASK-032): release to ready (owner ZCode, reviewer DSH, base ca17d45)
+doc/STATUS.md
+doc/tasks/README.md
+doc/tasks/TASK-032.md
+### forbidden-path scan over the full range ca17d45..HEAD
+forbidden hits: 0
+### whitespace
+exit=0

@@ -16,6 +16,7 @@ from application.tasks.store import (
     TargetCatalog,
     _merge,
 )
+from domain.regions.entities import SfxPolicy
 from domain.tasks.models import (
     CommandType,
     LockSnapshot,
@@ -100,7 +101,11 @@ def _region(value: Mapping[str, Any]) -> RegionSnapshot:
         region_id=value["region_id"],
         page_id=value["page_id"],
         region_type=value.get("region_type", "speech"),
-        sfx_policy=value.get("sfx_policy", "translate"),
+        # TASK-032 AC ③: the snapshot default must agree with the entity and
+        # the Schema default (``SfxPolicy.SKIP``, D03 §7). It used to be
+        # ``"translate"``, so a stored snapshot without the field flipped an
+        # SFX region into the translation chain.
+        sfx_policy=value.get("sfx_policy", SfxPolicy.SKIP.value),
         lock=_lock(value.get("lock", {})),
         manual_edited=bool(value.get("manual_edited", False)),
         final_confirmed=bool(value.get("final_confirmed", False)),

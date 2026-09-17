@@ -18,11 +18,16 @@ from application.tasks.store import (
     SnapshotProvider,
     TargetCatalog,
 )
+from application.translation.context.gate import (
+    SFX_SKIP_REASON,
+    decide_sfx_translation,
+)
 from application.translation.pipeline.executor import (
     DeterministicStepExecutor,
     StepExecutionError,
     StepExecutor,
 )
+from domain.regions.entities import RegionType, SfxPolicy
 from domain.tasks.models import (
     CommandType,
     ControlResult,
@@ -132,6 +137,47 @@ _REGION_COMMANDS = {
     CommandType.REINPAINT_REGION,
     CommandType.RERENDER_REGION,
 }
+
+#: Steps the SFX Policy Gate may suppress (D06 §85).
+_SFX_GATED_STEPS = frozenset(
+    {"translate", "segment", "mask_refine", "inpaint", "render"}
+)
+
+#: D06 §85 / D08 AC-SFX-001: only ``region_type = sfx`` is gated by the policy.
+_SFX_REGION_TYPE = RegionType.SFX.value
+
+
+def _effective_sfx_policy(region: RegionSnapshot) -> str:
+    """SFX policy with the documented default applied (TASK-032 AC ③).
+
+    An absent or blank ``sfx_policy`` falls back to ``skip`` (D03 §7) — the very
+    value the entity and the SQLite Schema use — so a snapshot written before
+    the field existed can never silently turn an SFX region into a translated
+    one.
+    """
+    policy = str(region.sfx_policy or "").strip()
+    return policy or SfxPolicy.SKIP.value
+
+
+def _sfx_gate_suppresses(region: RegionSnapshot) -> bool:
+    """True when the SFX Policy Gate suppresses the automatic steps.
+
+    Two things are deliberate here (TASK-032 / F-1):
+
+    - **the region type is a precondition**: a region that is not
+      ``region_type = sfx`` is never gated by this policy, whatever its
+      ``sfx_policy`` says (D06 §85, D08 AC-SFX-001, AC ②);
+    - **the policy rule is not re-implemented**: it is delegated to
+      :func:`~application.translation.context.gate.decide_sfx_translation`,
+      the same function the Translate Step uses, so the planner and the
+      execution layer cannot drift apart again — that drift was the root cause
+      of F-1.
+    """
+    if region.region_type != _SFX_REGION_TYPE:
+        return False
+    return decide_sfx_translation(
+        region.region_type, _effective_sfx_policy(region)
+    ).skipped
 
 
 def _new_id(prefix: str) -> str:
@@ -350,15 +396,12 @@ class PipelineService:
         if lock.page_locked or lock.region_locked:
             return PlanDecision.SKIP_LOCK, "page_or_region_locked"
 
-        sfx_policy = region.sfx_policy if region is not None else None
-        if sfx_policy in {"skip", "manual"} and step_type in {
-            "translate",
-            "segment",
-            "mask_refine",
-            "inpaint",
-            "render",
-        }:
-            return PlanDecision.SKIP_POLICY, "sfx_skip"
+        if (
+            region is not None
+            and step_type in _SFX_GATED_STEPS
+            and _sfx_gate_suppresses(region)
+        ):
+            return PlanDecision.SKIP_POLICY, SFX_SKIP_REASON
 
         if step_type == "translate" and not allow_override:
             if lock.translation_locked:

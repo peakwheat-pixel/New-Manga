@@ -1,0 +1,512 @@
+=== discriminative (new tests vs pre-fix src) ===
+......................FFFFFFFFFF........FFF.F...F...F.F.....             [100%]
+================================== FAILURES ===================================
+__________ test_sfx_policy_never_gates_a_non_sfx_region[skip-speech] __________
+
+region_type = 'speech', sfx_policy = 'skip'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+________ test_sfx_policy_never_gates_a_non_sfx_region[skip-narration] _________
+
+region_type = 'narration', sfx_policy = 'skip'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+__________ test_sfx_policy_never_gates_a_non_sfx_region[skip-title] ___________
+
+region_type = 'title', sfx_policy = 'skip'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+___________ test_sfx_policy_never_gates_a_non_sfx_region[skip-note] ___________
+
+region_type = 'note', sfx_policy = 'skip'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+__________ test_sfx_policy_never_gates_a_non_sfx_region[skip-other] ___________
+
+region_type = 'other', sfx_policy = 'skip'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+_________ test_sfx_policy_never_gates_a_non_sfx_region[manual-speech] _________
+
+region_type = 'speech', sfx_policy = 'manual'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+_______ test_sfx_policy_never_gates_a_non_sfx_region[manual-narration] ________
+
+region_type = 'narration', sfx_policy = 'manual'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+_________ test_sfx_policy_never_gates_a_non_sfx_region[manual-title] __________
+
+region_type = 'title', sfx_policy = 'manual'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+__________ test_sfx_policy_never_gates_a_non_sfx_region[manual-note] __________
+
+region_type = 'note', sfx_policy = 'manual'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+_________ test_sfx_policy_never_gates_a_non_sfx_region[manual-other] __________
+
+region_type = 'other', sfx_policy = 'manual'
+
+    @pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+        """AC ②: for a non-SFX region any policy value leaves planning untouched.
+    
+        ``speech`` × ``skip`` is the **real default** combination (entity and
+        Schema default) that F-1 was reported against: before the fix every
+        ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+        planned as ``SKIP_POLICY("sfx_skip")``.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        assert units, "the full chain must be planned"
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline.py:586: AssertionError
+____________ test_sfx_region_without_a_policy_falls_back_to_skip[] ____________
+
+missing_policy = ''
+
+    @pytest.mark.parametrize("missing_policy", ("", None))
+    def test_sfx_region_without_a_policy_falls_back_to_skip(missing_policy) -> None:
+        """AC ③: an absent/blank policy on SFX falls back to the documented skip."""
+        _, by_step = plan_region(
+            single_region_catalog(
+                region_type="sfx",
+                sfx_policy=missing_policy,
+                stages={"ocr": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        for step_type in SFX_GATED_STEPS:
+>           assert by_step[step_type].decision is PlanDecision.SKIP_POLICY, step_type
+E           AssertionError: translate
+E           assert <PlanDecision.RUN: 'run'> is <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E            +  where <PlanDecision.RUN: 'run'> = PlanUnit(unit_id='run-71659114312a4cc0a3187e6bd2896edf:task:0:r1:translate', task_id='run-71659114312a4cc0a3187e6bd289...}), expected_lock=LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)).decision
+E            +  and   <PlanDecision.SKIP_POLICY: 'skip_policy'> = PlanDecision.SKIP_POLICY
+
+tests\pipeline\test_pipeline.py:634: AssertionError
+__________ test_sfx_region_without_a_policy_falls_back_to_skip[None] __________
+
+missing_policy = None
+
+    @pytest.mark.parametrize("missing_policy", ("", None))
+    def test_sfx_region_without_a_policy_falls_back_to_skip(missing_policy) -> None:
+        """AC ③: an absent/blank policy on SFX falls back to the documented skip."""
+        _, by_step = plan_region(
+            single_region_catalog(
+                region_type="sfx",
+                sfx_policy=missing_policy,
+                stages={"ocr": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        for step_type in SFX_GATED_STEPS:
+>           assert by_step[step_type].decision is PlanDecision.SKIP_POLICY, step_type
+E           AssertionError: translate
+E           assert <PlanDecision.RUN: 'run'> is <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E            +  where <PlanDecision.RUN: 'run'> = PlanUnit(unit_id='run-5a6255786c174e1da9390f300c5e3082:task:0:r1:translate', task_id='run-5a6255786c174e1da9390f300c5e...}), expected_lock=LockSnapshot(page_locked=False, region_locked=False, translation_locked=False, inpaint_locked=False)).decision
+E            +  and   <PlanDecision.SKIP_POLICY: 'skip_policy'> = PlanDecision.SKIP_POLICY
+
+tests\pipeline\test_pipeline.py:634: AssertionError
+________ test_planner_agrees_with_the_translate_step_gate[skip-speech] ________
+
+region_type = 'speech', sfx_policy = 'skip'
+
+    @pytest.mark.parametrize("region_type", ("speech", "sfx"))
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_planner_agrees_with_the_translate_step_gate(region_type: str, sfx_policy: str) -> None:
+        """The planner and the Translate Step must not drift apart again (F-1 root cause).
+    
+        The reference verdict is the shared rule
+        (:func:`application.translation.context.gate.decide_sfx_translation`) that
+        the Translate Step already used while the planner had its own copy.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        planned_skip = any(
+            unit.step_type == "translate" and unit.decision is PlanDecision.SKIP_POLICY
+            for unit in units
+        )
+>       assert planned_skip is decide_sfx_translation(region_type, sfx_policy).skipped
+E       AssertionError: assert True is False
+E        +  where False = TranslationAction(status='translate', reason=None).skipped
+E        +    where TranslationAction(status='translate', reason=None) = decide_sfx_translation('speech', 'skip')
+
+tests\pipeline\test_pipeline.py:660: AssertionError
+_______ test_planner_agrees_with_the_translate_step_gate[manual-speech] _______
+
+region_type = 'speech', sfx_policy = 'manual'
+
+    @pytest.mark.parametrize("region_type", ("speech", "sfx"))
+    @pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+    def test_planner_agrees_with_the_translate_step_gate(region_type: str, sfx_policy: str) -> None:
+        """The planner and the Translate Step must not drift apart again (F-1 root cause).
+    
+        The reference verdict is the shared rule
+        (:func:`application.translation.context.gate.decide_sfx_translation`) that
+        the Translate Step already used while the planner had its own copy.
+        """
+        units, _ = plan_region(
+            single_region_catalog(
+                region_type=region_type,
+                sfx_policy=sfx_policy,
+                stages={"ocr": "completed", "clean": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
+        planned_skip = any(
+            unit.step_type == "translate" and unit.decision is PlanDecision.SKIP_POLICY
+            for unit in units
+        )
+>       assert planned_skip is decide_sfx_translation(region_type, sfx_policy).skipped
+E       AssertionError: assert True is False
+E        +  where False = TranslationAction(status='translate', reason=None).skipped
+E        +    where TranslationAction(status='translate', reason=None) = decide_sfx_translation('speech', 'manual')
+
+tests\pipeline\test_pipeline.py:660: AssertionError
+_________ test_sfx_region_with_an_out_of_contract_policy_fails_loudly _________
+
+    def test_sfx_region_with_an_out_of_contract_policy_fails_loudly() -> None:
+        """A policy outside the Schema's three values is rejected, not translated.
+    
+        ``SfxPolicy`` permits only ``skip``/``manual``/``translate`` (D03 §7,
+        Schema CHECK); the shared gate validates the value, so a corrupt snapshot
+        on an SFX region fails at planning instead of silently entering the
+        translation chain. The Translate Step already behaved this way.
+        """
+>       with pytest.raises(ValueError):
+E       Failed: DID NOT RAISE ValueError
+
+tests\pipeline\test_pipeline.py:671: Failed
+_________ test_real_default_sfx_policy_does_not_gate_a_speech_region __________
+
+production_db = <sqlite3.Connection object at 0x000001D1B3A4F1F0>
+
+    def test_real_default_sfx_policy_does_not_gate_a_speech_region(production_db):
+        """AC ④ / F-1: ``region_type='speech'`` + the Schema default policy plans RUN.
+    
+        The region is inserted **without** ``sfx_policy``, so the value comes from
+        the real Schema default (``'skip'``, D03 §7) exactly as a newly created
+        region would carry it — the situation the old helper's ``translate``
+        default could not reach.
+        """
+        row = production_db.execute(
+            "SELECT region_type, sfx_policy FROM regions WHERE region_id = 'region-1'"
+        ).fetchone()
+        assert (row["region_type"], row["sfx_policy"]) == ("speech", "skip")
+        _seed_completed_stages(production_db, "region-1")
+    
+        units, by_step = _plan_region_units(production_db, "region-1")
+        assert units
+>       assert {unit.decision for unit in units} == {PlanDecision.RUN}
+E       AssertionError: assert {<PlanDecisio...skip_policy'>} == {<PlanDecision.RUN: 'run'>}
+E         
+E         Extra items in the left set:
+E         <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E         Use -v to get more diff
+
+tests\pipeline\test_pipeline_production_seam.py:248: AssertionError
+______ test_region_snapshot_deserialiser_uses_the_documented_sfx_default ______
+
+    def test_region_snapshot_deserialiser_uses_the_documented_sfx_default():
+        """AC ③: the persisted-snapshot default agrees with entity and Schema.
+    
+        ``_region`` fills the field when a stored snapshot predates it; the value
+        must be the documented ``skip`` (D03 §7), not ``translate``.
+        """
+        sfx = _region({"region_id": "r-sfx", "page_id": "p1", "region_type": "sfx"})
+>       assert sfx.sfx_policy == "skip"
+E       AssertionError: assert 'translate' == 'skip'
+E         
+E         - skip
+E         + translate
+
+tests\pipeline\test_pipeline_production_seam.py:275: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[skip-speech]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[skip-narration]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[skip-title]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[skip-note]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[skip-other]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[manual-speech]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[manual-narration]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[manual-title]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[manual-note]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_policy_never_gates_a_non_sfx_region[manual-other]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_region_without_a_policy_falls_back_to_skip[]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_region_without_a_policy_falls_back_to_skip[None]
+FAILED tests/pipeline/test_pipeline.py::test_planner_agrees_with_the_translate_step_gate[skip-speech]
+FAILED tests/pipeline/test_pipeline.py::test_planner_agrees_with_the_translate_step_gate[manual-speech]
+FAILED tests/pipeline/test_pipeline.py::test_sfx_region_with_an_out_of_contract_policy_fails_loudly
+FAILED tests/pipeline/test_pipeline_production_seam.py::test_real_default_sfx_policy_does_not_gate_a_speech_region
+FAILED tests/pipeline/test_pipeline_production_seam.py::test_region_snapshot_deserialiser_uses_the_documented_sfx_default
+17 failed, 43 passed in 0.45s
