@@ -2,7 +2,7 @@
 id: TASK-023
 title: 实现 PDF/MOBI 导入路线
 kind: implementation
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-007, TASK-009, TASK-012, TASK-024]
 base_commit: e96b3eb880bdfcfca182aa1350d9ff56798556c1
 branch: agent/zcode/TASK-023-pdf-mobi-import
 worktree: G:/CODEX/New Manga.worktrees/TASK-023-zcode
-integration_commit: null
+integration_commit: ba7d560f346bb1af8a6e71474e23904bc066cf81
 ---
 
 # TASK-023：实现 PDF/MOBI 导入路线
@@ -34,7 +34,7 @@ D01 §2；D02 §8；D04 §8；D05 §52；G17。网页导入已按 U-1 取消；�
 
 - [x] 依据用户批准的格式支持范围实现PDF/MOBI解析，复用Managed Copy/Page用例。（PDF：pypdfium2 光栅化＋`ImportDocumentsUseCase` 复用 images 的 Managed Copy/去重/排序纪律；**MOBI 光栅化 BLOCKED**——无批准解析依赖，非 PDF 载荷 typed `UNSUPPORTED_FORMAT` 可诊断，未自行发明解析器，未记 PASS）
 - [x] 保留排序/来源/重复策略，畸形/加密/不支持输入可诊断，取消和失败不破坏已导入数据。（页级 hash 去重＋order 顺延；INVALID_DOCUMENT/ENCRYPTED/UNSUPPORTED_FORMAT/COPY_FAILED 分列；取消保留已提交页并报告剩余；先导数据在后续失败时原样——均有测试）
-- [ ] 交付 Handoff（[doc/handoffs/TASK-023-7fa9118.md](../handoffs/TASK-023-7fa9118.md)）完成；待窗口内子 agent Review（结论仅 `approved_subagent`/`changes_requested`）与集成后 done。
+- [x] 交付 Handoff=[doc/handoffs/TASK-023-7fa9118.md](../handoffs/TASK-023-7fa9118.md)；Review=[doc/reviews/TASK-023-7fa9118.md](../reviews/TASK-023-7fa9118.md)（**approved_subagent**，报告 commit `c87f21c`，四轴均 executed；R-001～R-004 全 P3 不阻断）；集成=`ba7d560`（merge，parents `cca8b09`+`c87f21c`），集成后复验全仓 **770 passed / 0 skipped**、exit 0。
 
 ## 允许修改范围
 
@@ -71,4 +71,4 @@ D01 §2；D02 §8；D04 §8；D05 §52；G17。网页导入已按 U-1 取消；�
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 - **最近状态（当前，唯一）**：2026-09-18 02:3x 由 ZCode 在窗口内开工（插队规则(b) 达标：W1+W2+W3 已于 06:30 前全部集成、余量 ≥2h）；分支按窗口规则 `git merge master` 快进至 `cca8b09`（base=e96b3eb 之上为窗口授权与 W1-W3 集成提交，写集合不相交）。MOBI 契约边界：pypdfium2 仅覆盖 PDF（U-2 范围），MOBI 解析无批准依赖 → 实现为**可诊断不支持路径**并登记 BLOCKED，不自行发明解析行为。
-- **最近状态（当前，唯一）**：实现 head=`7fa9118`（开工 `d117467`）：requirements 加 `pypdfium2==5.13.0`（唯一批准项；安装前后全仓各 **764 passed/0 skipped exit 0** 留证；readiness 断言零命中无需更新）＋`application/importing/documents/` 新子包＋`PdfiumDocumentRaster`＋`tests/import_formats/` 6 例全过（library 回归 46 passed）。MOBI BLOCKED 如实登记。遗留：bootstrap 生产装配点（白名单外）。AC ③ 待子 agent Review 与集成。
+- **最近状态（当前，唯一）**：实现 head=`7fa9118`（开工 `d117467`）：requirements 加 `pypdfium2==5.13.0`（唯一批准项；安装前后全仓各 **764 passed/0 skipped exit 0** 留证；readiness 断言零命中无需更新）＋`application/importing/documents/` 新子包＋`PdfiumDocumentRaster`＋`tests/import_formats/` 6 例全过（library 回归 46 passed）。MOBI BLOCKED 如实登记。遗留：bootstrap 生产装配点（白名单外）。Review `c87f21c`=**approved_subagent**（R-001～R-004 全 P3 不阻断：死变量/测试 double 低保真/ENCRYPTED 真实映射未验证（作者已如实标注）/中途失败页不进 pending）；集成 `ba7d560`，集成后复验全仓 770 passed/0 skipped exit 0。**TASK-023 已收口 `done`；期满后须 Codex + DSH 外部 post-hoc 复审（可推翻）。**遗留：bootstrap 生产装配点（白名单外）、MOBI 光栅化 BLOCKED（解锁=批准 MOBI 解析依赖）、R-004 语义完善。
