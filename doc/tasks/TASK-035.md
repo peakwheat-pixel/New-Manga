@@ -2,7 +2,7 @@
 id: TASK-035
 title: 修复渲染层 SFX Policy Gate 缺失 region_type 前置（F-1 渲染面）
 kind: bugfix
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -11,12 +11,12 @@ depends_on: [TASK-019, TASK-032]
 base_commit: 2e1bf2d3d9610c1c53537f45abc12e82e8e5ee4f
 branch: agent/deepseek/TASK-035-render-sfx-gate-region-type
 worktree: G:/CODEX/New Manga.worktrees/TASK-035-deepseek
-integration_commit: null
+integration_commit: bd0d030f6179a27c5941766b5856f27f8ec35f50
 ---
 
 # TASK-035：修复渲染层 SFX Policy Gate 缺失 region_type 前置（F-1 渲染面）
 
-**状态提示（2026-09-17）**：`status=in_review`——修复已实现并取证（delivery head `6ddd955`），待**非作者**（Codex）按协作协议 §6 四轴独立 Review；AC 逐条证据、门控矩阵、判别力与越界发现见 [verification/TASK-035/author-verification.md](../../verification/TASK-035/author-verification.md) 与 [Handoff](../handoffs/TASK-035-6ddd955.md)。
+**状态提示（2026-09-17）**：`status=done`——非作者（Codex）四轴独立 Review **`approved`**（[doc/reviews/TASK-035-6ddd955.md](../reviews/TASK-035-6ddd955.md)，commit `9d82f0b`），并已由 Codex 集成（`integration_commit=bd0d030`）。**F-1 据此由"部分关闭"改为 `closed`**（规划面由 TASK-032 关闭，渲染面由本 Task 关闭）。集成复验见 [verification/TASK-035/integration-bd0d030.md](../../verification/TASK-035/integration-bd0d030.md)；作者取证见 [verification/TASK-035/author-verification.md](../../verification/TASK-035/author-verification.md) 与 [Handoff](../handoffs/TASK-035-6ddd955.md)。
 
 **READY（2026-09-17 用户批准释放）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Owner 为 DSH 时若仍由 DSH 审会构成同体审查，故一并指定）；base=`2e1bf2d`（释放时的 master HEAD）、branch/worktree 见顶部元数据（已创建并同步到本次释放提交）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 
@@ -43,7 +43,7 @@ integration_commit: null
 - [x] `tests/pipeline` 的 `region()` 夹具默认对齐生产默认（或显式注明差异），消除 R-02 的"夹具漂移"面。
       → 夹具默认改为 `SfxPolicy.SKIP.value` 并在 docstring 注明依据；新增守卫用例 `test_region_defaults_agree_across_entity_snapshot_and_fixture` 断言实体/Snapshot/夹具三方相同。
 - [x] 交付 Handoff、实际测试/审阅记录与未完成项，经**非作者** Review（按协作协议 §6 四轴）与 Codex 集成验证后才能 done。
-      → Handoff：[TASK-035-6ddd955](../handoffs/TASK-035-6ddd955.md)；取证：[verification/TASK-035/](../../verification/TASK-035/author-verification.md)。**Review 与集成尚未执行**，本 Task 不自行标记 `approved`/`done`。
+      → Handoff：[TASK-035-6ddd955](../handoffs/TASK-035-6ddd955.md)；作者取证：[verification/TASK-035/](../../verification/TASK-035/author-verification.md)。**Review=`approved`**（[doc/reviews/TASK-035-6ddd955.md](../reviews/TASK-035-6ddd955.md)，Reviewer=Codex 非作者，四轴均 `executed`、0 P0/P1、3×P3）；**integration=`bd0d030`**；集成复验 [verification/TASK-035/integration-bd0d030.md](../../verification/TASK-035/integration-bd0d030.md)。
 
 ## 允许修改范围
 
@@ -71,17 +71,18 @@ integration_commit: null
 
 硬依赖：[TASK-019](TASK-019.md)、[TASK-032](TASK-032.md)——均已集成 `done`。
 
-阻塞：**已解除**——2026-09-17 用户批准释放（`approval=approved_by_user`）；实现已完成，当前 `status=in_review` 待非作者 Review。越界项（测试基础设施的 `conftest` 命名冲突 N-1）已登记，不影响本 Task 的完成判定。
+阻塞：**已解除并收口**——2026-09-17 用户批准释放（`approval=approved_by_user`）；实现、非作者四轴 Review 与 Codex 集成均已完成，`status=done`。越界项（测试基础设施的 `conftest` 命名冲突 N-1）已登记为 R-02 并转 [TASK-034](TASK-034.md)（`proposed`、未释放），不影响本 Task 的完成判定。
 
 风险：修改 `tests/rendering/**` 会触碰 TASK-014/015 交付的渲染用例，必须保留其原意（SFX 类型仍被策略拦截），只补正 fixture 的类型。
 
 ## 交付与运行记录
 
 - Handoff：[TASK-035-6ddd955](../handoffs/TASK-035-6ddd955.md)（delivery_head=`6ddd955`）。
-- Review：尚无（待 Codex 非作者独立 Review，按协作协议 §6 四轴：Standards / Spec / Architecture / Verification）。
+- Review：[doc/reviews/TASK-035-6ddd955.md](../reviews/TASK-035-6ddd955.md)（Reviewer=Codex，**非作者**；commit `9d82f0b`；decision=**`approved`**；四轴 Standards / Spec / Architecture / Verification 均 `executed`、逐轴小结、未跨轴排名；**并行偏差已声明**——未取得两条独立 sub-agent 线程，按 §6 第 6 条兜底做两遍相互隔离检查）。Findings：R-01（P3，`changed-paths.txt` 的 `--check` 退出码声明，**已由集成记录更正**）、R-02（P3，`tests/providers` conftest 收集顺序，**转 TASK-034**）、R-03（P3，渲染层逃生口命名策略取值，**open 非阻塞**）；作者登记的 N-2/N-3 均 **accepted**。
+- 集成：`integration_commit=bd0d030`（merge，parents `9d82f0b` + `092957e`）；集成复验 [verification/TASK-035/integration-bd0d030.md](../../verification/TASK-035/integration-bd0d030.md)（master 上 `tests/rendering tests/pipeline` **124 passed/0 skipped**、`tests/core tests/storage tests/providers` **159 passed/0 skipped**、全仓 **679 passed/6 skipped**；6 项 skip 均既有 `tests/network` `openssl unavailable`；默认值探针 `skip`、门控前置生效）。**F-1 → `closed`**（规划面 TASK-032 + 渲染面本 Task）。
 - 实际执行/测试：
   - 取证总表：[verification/TASK-035/author-verification.md](../../verification/TASK-035/author-verification.md)；门控矩阵与默认值：[defaults-and-gate-matrix.txt](../../verification/TASK-035/defaults-and-gate-matrix.txt)；判别力：[discriminative-prefix.log](../../verification/TASK-035/discriminative-prefix.log)；日志：[pytest-main.log](../../verification/TASK-035/pytest-main.log)、[pytest-regression.log](../../verification/TASK-035/pytest-regression.log)、[pytest-full.log](../../verification/TASK-035/pytest-full.log)、[pytest-full-clean.log](../../verification/TASK-035/pytest-full-clean.log)、flaky 对照：[flaky-control.log](../../verification/TASK-035/flaky-control.log)、[flaky-ab.log](../../verification/TASK-035/flaky-ab.log)、[flaky-ab-full.log](../../verification/TASK-035/flaky-ab-full.log)；越界证据：[conftest-collision.log](../../verification/TASK-035/conftest-collision.log)；路径核对：[changed-paths.txt](../../verification/TASK-035/changed-paths.txt)。
   - 命令与结果（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：基线（`e8e1750` 导出树）全仓 **671 passed / 6 skipped**；主套件 `tests/rendering tests/pipeline` **124 passed / 0 skipped**（rendering 56→63、pipeline 60→61）；回归 `tests/core`+`tests/storage`+`tests/providers` **159 passed / 0 skipped**、`tests/editing` **26 passed**；全仓 **679 passed / 6 skipped**（6 条 skip 全为既有 `tests/network` 的 `openssl unavailable`）。判别力：修前 `src/` + 本次用例 → **5 failed / 119 passed**。边界：`git diff --name-only e8e1750..HEAD` 5 个路径全在允许范围、越界 0；全范围禁止路径命中 0；`git diff --check 2e1bf2d..HEAD` 退出码 0。
   - **已登记 flaky（未修复、未新增 skip）**：全仓串跑偶发 `tests/reading_export/test_qml_contract.py::test_reader_webtoon_swaps_in_vertical_viewer` 失败（TASK-017 R-007 / TASK-019 T-1 已登记；本 Task 允许路径不含该文件）。已做对照实验（`tests/pipeline tests/reading_export` 两棵树各 6 次 → 全绿）与全仓频率对照（`flaky-ab-full.log`），结论与不确定性见取证 §3.1；**不记为通过、也不归因于本 Task**。
-- **最近状态（当前，唯一）**：2026-09-17 实现完成并置 **`in_review`**，交 Codex 非作者独立 Review（集成由 Codex 执行）。分支 `agent/deepseek/TASK-035-render-sfx-gate-region-type`、worktree `G:/CODEX/New Manga.worktrees/TASK-035-deepseek`、fixed base `2e1bf2d`、delivery head `6ddd955`（`16cd171` 开工文档、`6ddd955` 修复与用例）。**未 push、未合并 master**。越界发现登记（未修改，供 Codex 裁决）：**N-1** `tests/providers/**` 的裸 `from conftest import …` 在同一 pytest 调用中与 `tests/editing/conftest.py` 冲突（`tests/providers tests/editing` → 4 collection errors；修前树同样复现）；**N-2** 非 SFX 的取值域外策略不再报错（AC ① 的必然结果，已声明）；**N-3** `rerender_region` 的策略校验位置保持在"缺 Clean / 无 final"之后（返回顺序未变，已声明）。
+- **最近状态（当前，唯一）**：2026-09-17 **`done` 并已集成**。分支 `agent/deepseek/TASK-035-render-sfx-gate-region-type`、worktree `G:/CODEX/New Manga.worktrees/TASK-035-deepseek`、fixed base `2e1bf2d`、delivery head `6ddd955`（`16cd171` 开工文档、`6ddd955` 修复与用例、`092957e` 作者证据与 Handoff）；Review `9d82f0b`、integration `bd0d030`。**未 push**。**F-1 → `closed`**。越界发现登记与处置：**N-1**（=R-02）`tests/providers/**` 的裸 `from conftest import …` 在同一 pytest 调用中与 `tests/editing/conftest.py` 冲突（`tests/providers tests/editing` → 4 collection errors；反向顺序 137 passed；两目录均不在本切片 diff 内 → 既有问题，转 [TASK-034](TASK-034.md)）；**N-2** 非 SFX 的取值域外策略不再报错（AC ① 的必然结果，Reviewer **accepted**）；**N-3** `rerender_region` 的策略校验位置保持在"缺 Clean / 无 final"之后（返回顺序未变，Reviewer **accepted 不变更**）。
 - 历史状态（2026-09-17）：由 Codex 依据 TASK-032 Review 的 R-04/R-05/R-02 创建为 `proposed`（`approval=pending_user_review`，owner/reviewer/base/branch/worktree 均为空）；当日获用户批准释放为 `ready`（Owner=`DeepSeek Harness`、Reviewer=`Codex`、base=`2e1bf2d`、branch/worktree 见顶部元数据）。
