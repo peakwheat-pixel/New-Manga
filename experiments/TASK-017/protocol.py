@@ -10,13 +10,16 @@ and the runnable experiment:
   RegionIDs and malformed JSON (D08 AC-TRANS fallback input);
 - retryability classification per D06 §56: provider-transport faults and
   malformed provider output are retryable; authentication and invalid
-  local input are not.
+  local input are not. Rate limiting (HTTP 429) is retryable (§56.1 names
+  ``ProviderRateLimitError``); every other 4xx is declared request-side and
+  non-retryable instead of being left undeclared (Review R-002).
 """
 
 from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 
 
@@ -36,6 +39,9 @@ class ContextPage:
     page_id: str
     position: str  # "before" | "after" relative to the target page
     text: str
+    #: D06 §13 reading order. ``None`` falls back to the page ordinal in
+    #: ``page_id`` so synthetic ids keep a deterministic order (Review R-003).
+    reading_order: int | None = None
 
 
 @dataclass(frozen=True)
@@ -78,6 +84,36 @@ class TranslationRequest:
         return estimate_tokens(body)
 
 
+def _page_ordinal(page_id: str) -> int:
+    """Trailing integer of a page id (``"page-12"`` → ``12``); 0 when absent."""
+    digits = ""
+    for char in reversed(page_id):
+        if not char.isdigit():
+            break
+        digits = char + digits
+    return int(digits) if digits else 0
+
+
+def _context_sort_key(page: ContextPage) -> tuple[int, int, str]:
+    """Nearest-first context ordering (Review R-003).
+
+    ``reading_order`` (D06 §13) wins when the caller supplies it; the page
+    ordinal is the documented fallback for synthetic ids, so ordering never
+    depends on raw ``page_id`` string comparison.
+    """
+    ordinal = page.reading_order if page.reading_order is not None else _page_ordinal(page.page_id)
+    return (0 if page.position == "before" else 1, ordinal, page.page_id)
+
+
+def _format_ids(values: Iterable[object]) -> str:
+    """Render region ids for report details without assuming strings.
+
+    Review R-001: a non-string ``region_id`` must be reported, never raise
+    while the detail string is being built.
+    """
+    return ", ".join(repr(value) if not isinstance(value, str) else value for value in values)
+
+
 def build_request(
     page_id: str,
     regions: list[RegionInput],
@@ -87,12 +123,20 @@ def build_request(
 ) -> TranslationRequest:
     """Group one page's regions with as much context as the budget allows.
 
-    Truncation order (experiment rule): the farthest context page is
-    dropped first; Region texts and glossary are never truncated.
+    Ordering (D06 §13): context pages are ordered by ``reading_order`` when
+    the caller supplies it, otherwise by the page ordinal taken from
+    ``page_id`` — **never** by raw ``page_id`` string order (Review R-003).
+
+    Truncation policy (declared, Review R-003): pages are considered
+    nearest-first and kept while the request still fits the budget; the
+    first page that does not fit is dropped together with every farther
+    page, so the kept set is always the nearest contiguous run — i.e. the
+    farthest pages are dropped first. ``truncated_context_pages`` is
+    reported nearest-first. Region texts and glossary are never truncated.
     """
     if not regions:
         raise ValueError("a Context Group needs at least one region")
-    ordered = sorted(context_pages, key=lambda c: (0 if c.position == "before" else 1, c.page_id))
+    ordered = sorted(context_pages, key=_context_sort_key)  # nearest first
     kept: list[ContextPage] = []
     truncated: list[str] = []
 
@@ -100,11 +144,11 @@ def build_request(
         probe = TranslationRequest(page_id, tuple(regions), tuple(items), glossary or {})
         return probe.token_estimate()
 
-    for page in reversed(ordered):  # farthest pages are candidates to drop
-        kept.insert(0, page)
-        if token_budget is not None and kept and size_of(kept) > token_budget:
-            kept.remove(page)
-            truncated.append(page.page_id)
+    for index, page in enumerate(ordered):
+        if token_budget is not None and size_of([*kept, page]) > token_budget:
+            truncated.extend(candidate.page_id for candidate in ordered[index:])
+            break
+        kept.append(page)
     return TranslationRequest(
         page_id=page_id,
         regions=tuple(regions),
@@ -130,11 +174,14 @@ RETRYABLE = {
     ViolationKind.EXTRA_IDS,
     ViolationKind.EMPTY_TRANSLATIONS,
     "http_5xx",
+    "http_429",  # ProviderRateLimitError — D06 §56.1 names it retryable (R-002)
     "read_timeout",
 }
 NOT_RETRYABLE = {
     "http_401",  # ProviderAuthenticationError (D06 §56.2)
     "http_403",
+    "http_4xx",  # every remaining 4xx is request-side: declared explicitly
+    # instead of falling through by omission (Review R-002)
     "invalid_input",  # our own request was wrong; fix the caller
 }
 
@@ -179,32 +226,45 @@ def validate_response(raw_text: str, expected_ids: tuple[str, ...]) -> ProtocolR
         if not isinstance(item, dict) or "region_id" not in item or "translated_text" not in item:
             return ProtocolReport(ViolationKind.MALFORMED_JSON, detail=f"bad item: {item!r}")
         rid = item["region_id"]
+        if not isinstance(rid, str):
+            # R-001: a non-string id is out of range by definition; record it
+            # instead of raising while the report is being built.
+            extra.append(rid)
+            continue
+        if not isinstance(item["translated_text"], str):
+            # R-001: never coerce — str(None) would fabricate the literal
+            # translation "None". Provider output faults are retryable (§56.1).
+            return ProtocolReport(
+                ViolationKind.MALFORMED_JSON,
+                translations=mapping,
+                detail=f"non-string translated_text for {rid!r}: {item['translated_text']!r}",
+            )
         if rid not in expected:
             extra.append(rid)
             continue
         if rid in mapping:
             duplicates.append(rid)
             continue
-        mapping[rid] = str(item["translated_text"])
+        mapping[rid] = item["translated_text"]
 
     missing = [rid for rid in expected if rid not in mapping]
     if missing:
         return ProtocolReport(
             ViolationKind.MISSING_IDS,
             translations=mapping,
-            detail=f"missing: {', '.join(missing)}",
+            detail=f"missing: {_format_ids(missing)}",
         )
     if duplicates:
         return ProtocolReport(
             ViolationKind.DUPLICATE_IDS,
             translations=mapping,
-            detail=f"duplicated: {', '.join(duplicates)}",
+            detail=f"duplicated: {_format_ids(duplicates)}",
         )
     if extra:
         return ProtocolReport(
             ViolationKind.EXTRA_IDS,
             translations=mapping,
-            detail=f"out-of-range: {', '.join(extra)}",
+            detail=f"out-of-range: {_format_ids(extra)}",
         )
     return ProtocolReport(ViolationKind.OK, translations=mapping)
 
