@@ -1,0 +1,11 @@
+=== TASK-039 判别力探针（修前 src：base 047164e 的 service.py，新测试已就位）===
+$ python -m pytest tests/pipeline/test_clean_availability.py -q -p no:cacheprovider -rf
+FAILED tests/pipeline/test_clean_availability.py::test_render_only_command_runs_when_probe_reports_clean
+FAILED tests/pipeline/test_clean_availability.py::test_render_only_command_stays_blocked_when_probe_reports_missing
+FAILED tests/pipeline/test_clean_availability.py::test_without_probe_the_inherited_judgement_is_preserved
+FAILED tests/pipeline/test_clean_availability.py::test_probe_receives_the_target_page_id
+FAILED tests/pipeline/test_clean_availability.py::test_command_family_matrix_with_probe_reporting_missing
+FAILED tests/pipeline/test_clean_availability.py::test_command_family_matrix_with_probe_reporting_present
+FAILED tests/pipeline/test_clean_availability.py::test_same_run_inpaint_branch_still_short_circuits
+7 failed, 1 passed in 0.16s
+EXIT=1

@@ -2,7 +2,7 @@
 id: TASK-039
 title: 修复 planner `_clean_available` 继承缺陷（render-only 命令跨 run 误判 BLOCKED）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -26,11 +26,11 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（根因）**：诊断并记录根因——planner 判定 Clean 可用性时看的是**stage 状态**而不是**当前 Clean artifact/指针的实际存在**。（TASK-019 的 handler 会提交 `ARTIFACT_CLEAN`，但 `clean` **stage** 未必被写成有效态。）**根因须以证据写明**（哪一行、为何误判），不得只改判据不谈机理。
-- [ ] **AC ②（修复）**：render-only 命令（`RERENDER_PAGE` / `RERENDER_REGION` / `RERENDER_SELECTED` 等，**按实际命令枚举**）在**确实存在 current Clean artifact** 时规划为 `RUN`（不再误 `BLOCKED(missing_clean_artifact)`）；**确实缺失**时仍 `BLOCKED` 且原因入 provenance（**不得放宽既有守卫**）。
-- [ ] **AC ③（不波及其他判定）**：其他命令族（`TRANSLATE_*` / `REINPAINT_*` / `RETRANSLATE_*` / `REOCR_*`）的规划决策与理由**逐项不变**（给出对照矩阵）。
-- [ ] **AC ④（判别力 + 回归）**：新增用例对**修前代码**失败（把新用例放到 base `047164e` 的 `src` 上跑一次并留证）；`tests/pipeline`、`tests/core`、`tests/providers` 与全仓 passed **不减少**；全仓串跑 **≥5 次**逐次记录（同一 shell/venv）。
-- [ ] **AC ⑤** 交付 Handoff、取证，经窗口内子 agent Review 与集成后才能 done；并在 [TASK-033 Handoff](../handoffs/TASK-033-933819f.md) 或 STATUS 记录"R-001 已由本 Task 关闭"。
+- [x] **AC ①（根因）**：诊断并记录根因——planner 判定 Clean 可用性时看的是**stage 状态**而不是**当前 Clean artifact/指针的实际存在**。（TASK-019 的 handler 会提交 `ARTIFACT_CLEAN`，但 `clean` **stage** 未必被写成有效态。）**根因须以证据写明**（哪一行、为何误判），不得只改判据不谈机理。
+- [x] **AC ②（修复）**：render-only 命令（`RERENDER_PAGE` / `RERENDER_REGION` / `RERENDER_SELECTED` 等，**按实际命令枚举**）在**确实存在 current Clean artifact** 时规划为 `RUN`（不再误 `BLOCKED(missing_clean_artifact)`）；**确实缺失**时仍 `BLOCKED` 且原因入 provenance（**不得放宽既有守卫**）。
+- [x] **AC ③（不波及其他判定）**：其他命令族（`TRANSLATE_*` / `REINPAINT_*` / `RETRANSLATE_*` / `REOCR_*`）的规划决策与理由**逐项不变**（给出对照矩阵）。
+- [x] **AC ④（判别力 + 回归）**：新增用例对**修前代码**失败（把新用例放到 base `047164e` 的 `src` 上跑一次并留证）；`tests/pipeline`、`tests/core`、`tests/providers` 与全仓 passed **不减少**；全仓串跑 **≥5 次**逐次记录（同一 shell/venv）。
+- [ ] **AC ⑤** 交付 Handoff（[doc/handoffs/TASK-039-38fbde4.md](../handoffs/TASK-039-38fbde4.md)）完成；待窗口内子 agent Review 与集成后 done；集成后在 [TASK-033 Handoff](../handoffs/TASK-033-933819f.md) 或 STATUS 登记"R-001 已由本 Task 关闭"。
 
 ## 允许修改范围
 
@@ -58,4 +58,6 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 在 ZCode 全权窗口第二轮创建为 `ready`；`base=047164e`。**实施尚未开始。**
+- **历史状态**：2026-09-18 由 Codex 在窗口第二轮创建为 `ready`；`base=047164e`。
+- **最近状态（当前，唯一）**：2026-09-18 04:0x 由 ZCode 在窗口第二轮开工（W6，status→`in_progress`；W5 已于门内集成 `f835ac9`）；分支 `git merge master` 快进至 W5 收口后 HEAD。实施开始：`_clean_available` 判据改为叠加真实 Clean artifact 探针（可选注入，默认 None 保持旧行为）。
+- **最近状态（当前，唯一）**：实现 head=`38fbde4`：`PipelineService` 新增可选 `clean_probe`（默认 None 保持旧行为逐字节），`_clean_available` 保留两历史判据＋叠加 artifact 探针（根因/机理写入方法 docstring）；`tests/pipeline/test_clean_availability.py` 8 例全过（含 AC ③ 对照矩阵：retranslate/reinpaint/rerender_region/rerender_single + 同 run inpaint 短路 + 手写 clean stage 尊重）；判别力=修前 src 上 7 failed/1 passed exit 1（唯一通过=守卫保持）。**生产 probe 注入点在白名单外（bootstrap），移交后续装配切片**（同 TASK-020/023 先例）。Review `18c9834`=**approved_subagent**（四轴 executed；R-001/R-002 文档更正已采纳、R-003 deferred、R-004 accepted——AC ③ 泛化口径经独立裁定成立）。AC ⑤ 待集成。
