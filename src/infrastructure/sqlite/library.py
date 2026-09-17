@@ -11,6 +11,7 @@ import reads (dedup/next order) only consider fully imported rows.
 from __future__ import annotations
 
 import sqlite3
+from collections.abc import Sequence
 
 from domain.books.entities import Book, Chapter, ChapterType, ReadingDirection, Tag
 from domain.pages.entities import Page
@@ -373,6 +374,86 @@ class SqliteLibraryRepository:
             self._conn.execute(
                 "UPDATE pages SET deleted_at = ? WHERE page_id = ?",
                 (_soft_delete_timestamp(), page_id),
+            )
+
+    # ------------------------------------------------------------------
+    # TASK-021 trash subset: batch soft delete / restore / purge
+    # ------------------------------------------------------------------
+
+    def get_pages_by_ids(self, page_ids: Sequence[str]) -> list[Page]:
+        """Fetch pages by id **including soft-deleted ones** (trash views and
+        restore paths must see what the reader hides)."""
+        ids = list(page_ids)
+        if not ids:
+            return []
+        placeholders = ",".join("?" for _ in ids)
+        rows = self._conn.execute(
+            f"SELECT * FROM pages WHERE page_id IN ({placeholders})",
+            tuple(ids),
+        ).fetchall()
+        pages = []
+        for row in rows:
+            page = self._page_from_row(row)
+            if page is not None:
+                pages.append(page)
+        return pages
+
+    def soft_delete_pages(self, page_ids: Sequence[str], deleted_at: str) -> int:
+        """Soft-delete the given pages with **one shared timestamp** (same
+        batch ⇒ same ``deleted_at`` value). Already-deleted pages are left
+        untouched. Returns the number of rows actually soft-deleted."""
+        ids = list(page_ids)
+        if not ids:
+            return 0
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            cursor = self._conn.execute(
+                "UPDATE pages SET deleted_at = ?, updated_at = ?"
+                f" WHERE page_id IN ({placeholders}) AND deleted_at IS NULL",
+                (deleted_at, deleted_at, *ids),
+            )
+            return cursor.rowcount
+
+    def restore_pages(self, page_ids: Sequence[str]) -> int:
+        """Clear ``deleted_at`` on the given pages; already-live pages are
+        untouched. Returns the number of rows actually restored."""
+        ids = list(page_ids)
+        if not ids:
+            return 0
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            cursor = self._conn.execute(
+                "UPDATE pages SET deleted_at = NULL, updated_at = ?"
+                f" WHERE page_id IN ({placeholders}) AND deleted_at IS NOT NULL",
+                (_soft_delete_timestamp(), *ids),
+            )
+            return cursor.rowcount
+
+    def purge_pages(self, page_ids: Sequence[str]) -> None:
+        """Hard-delete page rows **and their dependent regions/revisions**.
+
+        Controlled data only: callers remove the managed files separately
+        (see ``application.maintenance``); user source files live outside the
+        managed root and are never addressed here. Row order respects the
+        ``regions.page_id`` / ``region_revisions.region_id`` foreign keys.
+        """
+        ids = list(page_ids)
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            self._conn.execute(
+                "DELETE FROM region_revisions WHERE region_id IN"
+                f" (SELECT region_id FROM regions WHERE page_id IN ({placeholders}))",
+                tuple(ids),
+            )
+            self._conn.execute(
+                f"DELETE FROM regions WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+            self._conn.execute(
+                f"DELETE FROM pages WHERE page_id IN ({placeholders})",
+                tuple(ids),
             )
 
 

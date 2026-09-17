@@ -49,6 +49,8 @@ from application.export import (
 from application.importing.documents import ImportDocumentsUseCase
 from application.importing.images.service import ImportImagesUseCase
 from application.library.service import LibraryService
+from application.maintenance import TrashService
+from application.maintenance.trash import _JsonTrashManifest
 from application.reading.service import ReadingService
 from application.reading.ports import JsonProgressDocumentStore
 from application.rendering.service import RenderService
@@ -382,6 +384,7 @@ class AppServices:
     storage: ManagedFileStorage
     importer: ImportImagesUseCase
     document_importer: ImportDocumentsUseCase
+    trash: TrashService
     reading: ReadingService
     export_service: ExportService
     reader: ReaderViewModel
@@ -453,6 +456,13 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         # dependency) and fails typed at the use case.
         document_importer = ImportDocumentsUseCase(
             PdfiumDocumentRaster(), copy_store, repository
+        )
+        # TASK-021 trash subset: page-level soft delete / batch restore /
+        # controlled-only purge. The manifest lives next to the managed data.
+        trash = TrashService(
+            repository,
+            storage,
+            _JsonTrashManifest(Path(managed_root) / "trash-manifest.json"),
         )
         # TASK-019: the production Pipeline receives real handlers built from
         # the provider runtime. Nothing is wired when no provider is ready:
@@ -635,6 +645,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             storage=storage,
             importer=importer,
             document_importer=document_importer,
+            trash=trash,
             reading=reading,
             export_service=export_service,
             reader=reader,
