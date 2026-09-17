@@ -2,7 +2,7 @@
 id: TASK-037
 title: 修复已定性 flaky（webtoon 滚动保存）与 TASK-036 R-01 诊断数值用法
 kind: maintenance
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-036]
 base_commit: e96b3eb880bdfcfca182aa1350d9ff56798556c1
 branch: agent/zcode/TASK-037-flaky-diagnostic-fix
 worktree: G:/CODEX/New Manga.worktrees/TASK-037-zcode
-integration_commit: null
+integration_commit: 372c3bfa421cf12f5c6c1a3cbfdf9ffd8a5b0c8e
 ---
 
 # TASK-037：修复已定性 flaky（webtoon 滚动保存）与 TASK-036 R-01
@@ -39,8 +39,8 @@ integration_commit: null
   - 落地：`tests/reading_export` 72 passed（66+6 新增）全绿；mandated `tests/providers tests/core tests/editing` **208 passed / 0 skipped**、exit 0（与修前持平，通过数不减少）；全仓 ×6 每次记录（**749 passed / 0 skipped**、exit 0×6）。**口径说明**：本切片全部命令在 Git Bash 下执行，`shutil.which("openssl")` 可用，故 6 条 TLS 测试真实执行（基线 PowerShell 口径为 `737 passed / 6 skipped`；两口径收集总数一致，差异仅这 6 条 skip↔pass）。
 - [x] **AC ⑤（STATUS 口径）**：更新 STATUS「已知 flaky 测试（跟踪条目）」第 1 条的状态与证据（首次登记/证据/状态三列），并说明本次修复依据；**不得**把历史命中记录删掉。
   - 落地：STATUS 第 1 条已更新为 `fixed（TASK-037）`，历史命中记录与 TASK-036 定性原文保留，新增探针修正定性与本次对照证据链接。
-- [ ] **AC ⑥** 交付 Handoff、实际测试/审阅记录与未完成项，经**窗口内子 agent** Review（按 Review 模板）与集成后才能 done。
-  - Handoff：[doc/handoffs/TASK-037-7b96e72.md](../handoffs/TASK-037-7b96e72.md)；Review 待执行（结论仅 `approved_subagent`/`changes_requested`）。
+- [x] **AC ⑥** 交付 Handoff、实际测试/审阅记录与未完成项，经**窗口内子 agent** Review（按 Review 模板）与集成后才能 done。
+  - Handoff：[doc/handoffs/TASK-037-7b96e72.md](../handoffs/TASK-037-7b96e72.md)；Review：[doc/reviews/TASK-037-7b96e72.md](../reviews/TASK-037-7b96e72.md)（**approved_subagent**，报告 commit `7c35277`；四轴均 executed；2×P3 非阻塞：R-001 fixture 装配重复判断项、R-002 STATUS"建议"段同步范围说明——均已记录）；集成 `372c3bf`，集成后复验全仓 **749 passed / 0 skipped**、exit 0。
 
 ## 允许修改范围
 
@@ -73,5 +73,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[doc/handoffs/TASK-037-7b96e72.md](../handoffs/TASK-037-7b96e72.md)。Review：待窗口内子 agent（另提交）。实际执行/测试：见 [verification/TASK-037/](../../verification/TASK-037/)（pre-fix/post-fix 对照日志、判别力日志、clamp-race-probe.md 机制文档与三份探针）。
-- **最近状态（当前，唯一）**：2026-09-17 23:2x 由 ZCode 在窗口内开工（W1，status→`in_progress`）；分支起点按用户指令 `git merge master` 快进至 `c3dabc8`（Task 元数据 `base=e96b3eb` 之上仅两笔纯文档时间戳修正，无代码差异）。实现 head=`7b96e72`：flaky 修复（高页夹具 + `landed` 落点断言）+ R-01（`safe_number`）+ 新 `test_helpers.py`；对照修前 ×32 / 修后 ×36 全记录，修后 0 命中；mandated 三套件 208 passed/0 skipped；STATUS flaky 第 1 条已更新为 fixed（integration 待登记）。AC ⑥ 待子 agent Review 与集成后置 `done`。
+- Handoff：[doc/handoffs/TASK-037-7b96e72.md](../handoffs/TASK-037-7b96e72.md)。Review：[doc/reviews/TASK-037-7b96e72.md](../reviews/TASK-037-7b96e72.md)（approved_subagent，`7c35277`）。实际执行/测试：见 [verification/TASK-037/](../../verification/TASK-037/)（pre-fix/post-fix 对照日志、判别力日志、clamp-race-probe.md 机制文档与三份探针）。
+- **最近状态（当前，唯一）**：2026-09-17 窗口 W1 **已收口 `done`**——开工 `e1ab37b`（分支快进至 `c3dabc8`）→ 实现 `7b96e72`（flaky 修复：高页夹具 + `landed` 落点断言 + R-01 `safe_number` + 新 `test_helpers.py`；对照修前 ×32 / 修后 ×36，修后 0 命中）→ 文档 `b0e243e`（Handoff/AC/STATUS flaky 第 1 条 fixed）→ 子 agent Review `7c35277`（**approved_subagent**，2×P3 非阻塞）→ 集成 `372c3bf`（merge，parents `c3dabc8`+`7c35277`）→ 集成后复验全仓 **749 passed / 0 skipped**、exit 0（Git Bash 口径，openssl 可用故 6 条 TLS 真实执行；PowerShell 口径为 743 passed / 6 skipped，收集总数一致）。TASK-036 R-01 已关闭。遗留：修前树观测到 1 次全仓 96% 处进程异常终止（EXIT=127、无 summary，非测试失败，复跑未再现）；`paintedHeight` 读数疑点见 clamp-race-probe.md「未决」。**期满后须 Codex + DSH 外部 post-hoc 复审，可推翻本 `done`。**
