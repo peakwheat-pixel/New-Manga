@@ -2,7 +2,7 @@
 id: TASK-036
 title: 设置输入校验与导出发布顺序硬化（承接 TASK-034 R-02 / R-05 / R-07）
 kind: maintenance
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
