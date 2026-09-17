@@ -2,7 +2,7 @@
 id: TASK-018
 title: Mask / Inpainting 路线独立实验
 kind: experiment
-status: done
+status: in_review
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness

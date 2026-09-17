@@ -15,6 +15,9 @@ Run: ``PYTHONPATH=experiments/TASK-018 python -m unittest experiments/TASK-018/t
 from __future__ import annotations
 
 import os
+import shutil
+import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -170,6 +173,54 @@ class OutOfRootTests(unittest.TestCase):
         display, inside = rx._display_path(rx.ROOT / "results")
         self.assertTrue(inside)
         self.assertFalse(Path(display).is_absolute())
+
+
+class StartupAssertionTests(unittest.TestCase):
+    """R-104: an ``implementation`` without a registered filler must fail at startup.
+
+    The guard runs at import time in ``run_experiment``. To prove that — without
+    editing the harness — a **copy** of the harness is misconfigured in a temp
+    directory and imported in a fresh interpreter.
+    """
+
+    def test_current_configuration_passes_the_guard(self) -> None:
+        self.assertIsNone(rx.assert_implementations_registered())
+
+    def test_guard_rejects_a_route_with_unregistered_implementation(self) -> None:
+        broken = dict(rx.ROUTES)
+        broken["__misconfigured__"] = {
+            **rx.ROUTES["simple-fill"],
+            "implementation": "not_a_registered_filler",
+        }
+        with self.assertRaises(RuntimeError) as ctx:
+            rx.assert_implementations_registered(broken, rx.FILLERS)
+        self.assertIn("__misconfigured__", str(ctx.exception))
+        self.assertIn("misconfiguration", str(ctx.exception))
+
+    def test_misconfigured_copy_dies_at_import_and_writes_no_png(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmpdir = Path(tmp)
+            for name in ("run_experiment.py", "mask_protocol.py"):
+                shutil.copy2(_EXPECTED_DIR / name, tmpdir / name)
+            target = tmpdir / "run_experiment.py"
+            text = target.read_text(encoding="utf-8")
+            marker = '"edge-bleed": lambda pixels, mask: edge_bleed_fill(pixels, mask, iterations=8),'
+            self.assertIn(marker, text, "guard test needs the edge-bleed filler registration")
+            # Genuine misconfiguration: the route keeps its ``implementation``
+            # but is no longer registered in FILLERS.
+            target.write_text(
+                text.replace(marker, '"_removed_for_counterexample_": lambda pixels, mask: None,'),
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [sys.executable, "-c", "import run_experiment"],
+                cwd=str(tmpdir),
+                capture_output=True,
+                text=True,
+            )
+            self.assertNotEqual(proc.returncode, 0, "misconfigured harness must fail at import")
+            self.assertIn("misconfiguration", proc.stderr or proc.stdout)
+            self.assertEqual(list(tmpdir.glob("*.png")), [], "a misconfigured run must not write images")
 
 
 if __name__ == "__main__":
