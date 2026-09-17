@@ -24,7 +24,7 @@ D01 §2/5；D02 §6.2/11/12；D05 §43；D07 §72/84；G17。D 编号对应 [文
 
 主责任编号 AC：本任务为设计/实验/基础工作，验收以下专属条件；关联产品 AC 不因本任务完成就自动 PASS。完整映射见 [验收追踪](../13_ACCEPTANCE_TRACEABILITY.md)。
 
-本 Task 的 4 条 AC 衡量设计交付；`doc/contracts/extensions.md` 原列 15 条 `AC-EXT-*` 产品验收草案，其中网页导入的 IMPORT-001/002 已按 U-1 退役。剩余 13 条仍是草案；U-2 已选定 PDFium via `pypdfium2`，U-3 已批准 Plugin 首版本地目录范围，但这些决定均未将草案转为正式 AC。两组 AC 属于不同层级，不得合并计数；产品草案不计入本 Task 的 4 条设计 AC。
+本 Task 的 4 条 AC 衡量设计交付；`doc/contracts/extensions.md` 原列 15 条 `AC-EXT-*` 产品验收草案，其中网页导入的 IMPORT-001/002 已按 U-1 退役。剩余 13 条仍是草案；U-2 已选定 PDFium via `pypdfium2`，U-3 已批准 Plugin 首版本地目录范围，U-4 已决定 Plugin Agent 不进入首版、二阶段另行裁决，但这些决定均未将草案转为正式 AC。两组 AC 属于不同层级，不得合并计数；产品草案不计入本 Task 的 4 条设计 AC。
 
 ## Acceptance Criteria
 
@@ -71,6 +71,6 @@ D01 §2/5；D02 §6.2/11/12；D05 §43；D07 §72/84；G17。D 编号对应 [文
 - Handoff：[TASK-024-design-boundaries](../handoffs/TASK-024-design-boundaries.md)。
 - Review：窗口内子 agent Review（见 doc/reviews/TASK-024-*.md）。
 - 实际执行/实验/测试：[verification/TASK-024/author-verification.md](../../verification/TASK-024/author-verification.md)。
-- 最近状态：2026-09-17 窗口授权收口 `done`：设计 `d840075`、Review 修订 `86072c3`（`doc/reviews/TASK-024-design.md`，approved_subagent）、integration=`61c33e2`，master 复验 `536 passed`；用户裁决 U-1 取消网页导入、U-2 采用 PDFium via `pypdfium2`、U-3 批准 Plugin 首版仅本地目录（无市场/在线分发/自动更新），已同步契约与追踪；U-4~U-6 仍待裁决，TASK-023/025/019/022 继续冻结。
+- 最近状态：2026-09-17 窗口授权收口 `done`：设计 `d840075`、Review 修订 `86072c3`（`doc/reviews/TASK-024-design.md`，approved_subagent）、integration=`61c33e2`，master 复验 `536 passed`；用户裁决 U-1 取消网页导入、U-2 采用 PDFium via `pypdfium2`、U-3 批准 Plugin 首版仅本地目录（无市场/在线分发/自动更新）、U-4 决定 Plugin Agent 不进首版、二阶段另行裁决，已同步契约与追踪；U-5/U-6 仍待裁决，TASK-023/025/019/022 继续冻结。
 - post-hoc Review：DeepSeek Harness 报告 commit `9454cec`（reviewed_head=`86072c30`，approved）；R-101～R-103 已处置，验证记录见 [author-verification.md](../../verification/TASK-024/author-verification.md)。
 - 状态说明：frontmatter `status: done` 由关闭提交 `348a48e`（integration=`61c33e2`）确定；Review 所见 fixed head `86072c30` 的 `ready` 已被后续关闭记录取代，当前保持 `done`。

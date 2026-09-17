@@ -239,14 +239,14 @@ D08 §74（建议验收结果目录）与 §75（verification-summary.md 推荐�
 
 ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA 原列 15 条 AC-EXT-*；U-1 已取消网页导入，
 AC-EXT-IMPORT-001/002 退役且不复用；U-2 已选 PDFium via `pypdfium2`，U-3 已批准 Plugin
-首版分发范围，但剩余 13 条仍是草案，尚未转为正式编号 AC。未定稿的适用项不得视为已批准或已验收，当前结果保持 NOT_RUN。
+首版分发范围，U-4 已将 Plugin Agent 延至未来单独裁决；剩余 13 条仍是草案，尚未转为正式编号 AC。未定稿的适用项不得视为已批准或已验收，当前结果保持 NOT_RUN。
 
 以下条目尚未成为编号 AC，已分配稳定扩展标识；执行方式见[验收方法与素材规范 §8.4](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)。
 
 | 组标识 | 已有来源 | 内容 | 后续处理 | 当前结果 |
 |---|---|---|---|---|
 | `ACG-EXT-IMPORT` | D01 §2；D04 §8；D05 §52 | 图片/文件夹以外的 PDF、MOBI 导入；网页导入按 U-1 取消 | [contracts/extensions.md §1.1/1.2](contracts/extensions.md)：IMPORT-001/002 已退役；U-2 已选 PDFium via `pypdfium2`，MOBI 解析契约仍未定稿；TASK-023 仍冻结 | NOT_RUN |
-| `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin/Hooks、AI生成插件Agent | [TASK-024 契约 §1.3/1.4](contracts/extensions.md)：U-3 已批准首版仅本地目录插件（无市场、在线分发或自动更新）；U-4 Agent 保留仍待裁决，AC 草案仍未转正式编号；TASK-025 仍冻结 | NOT_RUN |
+| `ACG-EXT-PLUGIN` | D01 §2；D02 §12；D07 §72 | Plugin/Hooks、AI生成插件Agent | [TASK-024 契约 §1.3/1.4](contracts/extensions.md)：U-3 已批准首版仅本地目录插件（无市场、在线分发或自动更新）；U-4 决定 Agent 不进首版，待格式/权限机制验收后另行裁决二阶段；AC 草案仍未转正式编号，TASK-025 仍冻结 | NOT_RUN |
 | `ACG-EXT-FONT` | D01 §2；D05 §48 | 字体上传和资源处理 | TASK-024已定义边界（[contracts/extensions.md §1.5](contracts/extensions.md)），待用户批准（U-5）后转编号 AC，TASK-022实现 | NOT_RUN |
 | `ACG-EXT-SAKURA` | D01 §2；D02 §11 | Sakura服务监控、模型/设备就绪状态 | TASK-024已定义草案边界（健康探测级）（[contracts/extensions.md §1.6](contracts/extensions.md)），待用户批准（U-6）后转编号 AC，TASK-019落实批准部分 | NOT_RUN |
 | `ACG-EXT-DETECT` | D06 §6/8 | 检测、配色和SourceStyle本身的正确性 | 质量方法见规范 §7；TASK-016/019与TASK-014验证 | NOT_RUN |
