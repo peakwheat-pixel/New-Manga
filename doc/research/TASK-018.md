@@ -208,3 +208,15 @@ python experiments/TASK-018/run_experiment.py --repeat 3
 | R-104 | 部分处置 / deferred | **fixed** | `run_experiment.py` 新增 `assert_implementations_registered()` 并在**模块导入期**调用：任一 route 声明了 `implementation` 却未在 `FILLERS` 注册即 `RuntimeError`，**拒绝启动**（不再等到运行中途才 `KeyError`）。**反例取证**：把 `FILLERS` 中的 `edge-bleed` 条目移除（route 仍声明 `implementation`）后，新解释器导入即失败——`returncode = 1`、消息 `route/FILLERS misconfiguration: edge-bleed declare an implementation but have no registered filler; refusing to start`，且 **`png_written = []`** |
 
 验证：`test_mask_protocol.py` **12 passed / 0 skipped**；`test_route_gating.py` **16 passed / 0 skipped**（13 → 16，**不减少**，新增 `StartupAssertionTests` 3 例）；确定性字段与仓库内已提交 `results/experiment.json` **0 差异**（`manifest_sha256`、`routes`、`mask_sha256`、`output_sha256`、`sample_sha256`、`parameters`、`mask`、`protected_box_violations` 全部一致，比对在临时目录进行，**未覆盖仓库 JSON**）。
+
+### 9.4 集成收口（2026-09-17，Codex）：R-201 关闭
+
+尾项切片 `965bcd2`（元数据 `c8c2a8e`）经 Codex 独立 Review 后集成：`integration_commit=5a9f5c8`（merge，parents `f190fc8`+`c8c2a8e`）。Review 报告见 [`doc/reviews/TASK-018-965bcd2.md`](../reviews/TASK-018-965bcd2.md)，集成后复验见 [verification/TASK-018/integration-5a9f5c8.md](../../verification/TASK-018/integration-5a9f5c8.md)。
+
+| ID | 内容 | 处置 |
+|---|---|---|
+| R-201 | `doc/tasks/TASK-018.md` 的"唯一"状态块未随 frontmatter 同步（仍写 `done`/"无未决 Review"，并把 R-104 记为 deferred） | **closed**：本报告对应轮次的集成收口已把状态块重写为最终状态（三轮 Review 与集成、`integration_commit=5a9f5c8`、无待处理 finding） |
+
+集成后复验：`test_mask_protocol.py` **12 passed / 0 skipped**；`test_route_gating.py` **16 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、保护违规 0、保护框 20/20=0、`blocked_stage` 20/20 `not_implemented`、确定性字段与提交 JSON **0 差异**；Reviewer 以 CLI 路径复现 fail-closed 反例（退出码 1、未写任何 PNG）；全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。
+
+至此 TASK-018 的三轮 Review 与集成全部收口，**无待处理 finding**。仍未具备证据的维度照旧保留：四条学习型路线的质量/耗时/内存/显存 **`BLOCKED`**；Mask 内部结构损伤量化、真实 OOM、真实漫画样例 **`NOT_RUN`**；生产 Router 属 **TASK-019**（未释放）。

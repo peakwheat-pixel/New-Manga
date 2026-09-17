@@ -248,3 +248,20 @@ Findings 处置：R-001～R-007、R-101、R-102、R-103 **closed**；R-104 **部
 ### 未覆盖确认
 
 本轮**未重跑覆盖** `results/experiment.json`（确定性比对输出到 `%TEMP%`）；**未改动** `test_mask_protocol.py`。
+
+---
+
+## 7.5 尾项切片集成收口（2026-09-17，Codex）
+
+| 项目 | 值 |
+|---|---|
+| 尾项切片 head | `965bcd2`（元数据 `c8c2a8e`） |
+| Review 报告 | [`doc/reviews/TASK-018-965bcd2.md`](../../doc/reviews/TASK-018-965bcd2.md)（decision=`approved`） |
+| implementation merge / integration commit | `5a9f5c8`（merge，parents `f190fc8` + `c8c2a8e`） |
+| 集成后验证 | [integration-5a9f5c8.md](integration-5a9f5c8.md) |
+
+集成后复验（master）：协议测试 **12 passed / 0 skipped**；门控与探测测试 **16 passed / 0 skipped**；`run_experiment.py --repeat 3`（`%TEMP%` 副本）→ **10 MEASURED + 20 BLOCKED**、`blocked_stage` 20/20 `not_implemented`、`protected_violations` 10/10 为空、`protected_box_violations` **20 框全 0**、确定性字段与提交 JSON **0 差异**；Reviewer 以 CLI 路径独立复现 fail-closed 反例（改名 `FILLERS` 条目 → 退出码 1、**未写任何 PNG**）；全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。仓库内 `results/experiment.json` 未被覆盖。
+
+Findings 处置：R-104 **closed**（§7.4 已记 fixed）；本轮新增 **R-201（P3，任务文件状态块未同步）closed in integration**（状态块已在收口提交重写）。至此 TASK-018 **无待处理 finding**。
+
+**仍未解决（不变、不得视为通过）**：四条学习型路线的质量/性能 **BLOCKED**；Mask 内部结构损伤量化、真实 OOM、真实漫画样例 **NOT_RUN**；生产 Router 属 TASK-019（未释放）。

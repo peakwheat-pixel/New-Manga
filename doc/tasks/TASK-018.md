@@ -2,7 +2,7 @@
 id: TASK-018
 title: Mask / Inpainting 路线独立实验
 kind: experiment
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-003, TASK-004]
 base_commit: dce95acbb57a3494cb0f9d8d2d42e27d164176bb
 branch: agent/deepseek/TASK-018-mask-inpainting-experiment
 worktree: G:/CODEX/New Manga.worktrees/TASK-018-deepseek
-integration_commit: 14b92e4
+integration_commit: 5a9f5c8
 ---
 
 # TASK-018：Mask / Inpainting 路线独立实验
@@ -90,10 +90,12 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - 未完成项保持原样、不得视为通过：四条学习型路线的修复质量/残字/背景损伤/耗时/显存 **`BLOCKED`**；Mask **内部**结构损伤量化、真实 OOM、真实漫画样例 **`NOT_RUN`**；模型 Hash `NOT_AVAILABLE`。
 - 生产 Router 属 **TASK-019**：本 Task 只提出候选条件，**未扩展到 TASK-019**，也未释放 TASK-019 或其他冻结 Task。
 
-- **当前状态（唯一）**：2026-09-17 `done`。已按协作协议 §6.6 完成两轮独立 Review 与集成，本 Task 无未决 Review。
+- **当前状态（唯一）**：2026-09-17 `done`。已按协作协议 §6.6 完成三轮独立 Review 与集成（首轮 + 修订切片 + 尾项切片），本 Task 无未决 Review。
+  - **尾项切片（R-104）**：base `6f130ad`、被审 head `965bcd2`（元数据 `c8c2a8e`），Review [`doc/reviews/TASK-018-965bcd2.md`](../reviews/TASK-018-965bcd2.md) `approved`，integration=`5a9f5c8`。内容：`run_experiment.py` 新增 `assert_implementations_registered()` 并在**模块导入期**调用（`implementation` 非 None ⇒ 该 route 必须在 `FILLERS` 注册，否则 `RuntimeError` 拒绝启动）；反例经 Reviewer 以 CLI 路径独立复现（退出码 1、**未写任何 PNG**，作者的 import 路径反例亦成立）；`test_route_gating.py` **13 → 16 passed**（通过数未减少）。
+  - **尾项集成后复验**（见 [verification/TASK-018/integration-5a9f5c8.md](../../verification/TASK-018/integration-5a9f5c8.md)）：协议测试 **12 passed / 0 skipped**、门控测试 **16 passed / 0 skipped**、实验 **10 MEASURED + 20 BLOCKED**、保护框 20/20=0、确定性字段与提交 JSON 0 差异、全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。
   - **首轮**：base `dce95ac`（起点 `9ee17189`）、被审 head `6c33e7f`（元数据 `ef6d1c3`），Review [`doc/reviews/TASK-018-6c33e7f.md`](../reviews/TASK-018-6c33e7f.md) `approved`（R-001～R-007），integration=`4d189ce`。
   - **修订切片**：base `8c63f9b`、被审 head `d7c10d4`（元数据 `3b38d39`）→ 复审 `changes_requested`（R-101/R-102 证据表述、R-103/R-104 文档与防护；工程实现已复核 PASS、代码无需改动）→ 收口 head `5063315`（元数据 `b10f1ba`），Review [`doc/reviews/TASK-018-5063315.md`](../reviews/TASK-018-5063315.md) `approved`，integration=`14b92e4`。
   - 修复内容：R-007 fail-closed（显式 `FILLERS` 映射，依赖齐备也不授权未实现路线）、R-002 真实探测（`importlib.util.find_spec` + 本地权重文件）、R-003 越界输出目录、R-006 去未核实体积标注并重生成 `experiment.json`、R-001 剩余项保护框逐框断言、R-101 依赖声明更正、R-102 数字归属与区间同步、R-103 状态块合并。
   - 集成后复验（见 [verification/TASK-018/integration-14b92e4.md](../../verification/TASK-018/integration-14b92e4.md)）：`test_mask_protocol.py` **12 passed / 0 skipped**；`test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、保护违规 0、**保护框 20/20 全 0**、`blocked_stage` 20/20 `not_implemented`、确定性字段与提交 JSON 0 差异；全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。
-  - 未关闭项：R-104 剩余部分（`implementation ⇒ FILLERS` 一致性断言）**deferred**，见 [研究报告](../research/TASK-018.md) §9.2；学习型路线质量/性能 **`BLOCKED`**、Mask 内部结构损伤与真实 OOM/漫画样例 **`NOT_RUN`**，不得视为通过。
+  - 未关闭项：**无待处理 Review finding**（R-201 已在集成收口关闭，R-104 已 `fixed`）。仍不具备证据的维度照旧保留、**不得视为通过**：四条学习型路线的质量/耗时/内存/显存 **`BLOCKED`**；Mask 内部结构损伤量化、真实 OOM、真实漫画样例 **`NOT_RUN`**；模型 Hash `NOT_AVAILABLE`。生产 Router 属 **TASK-019**（未释放）。
   - 边界：未改生产 `src/`、`tests/`、Schema、依赖清单、`AGENTS.md`；未扩展到 TASK-019；未释放 TASK-019 或其他冻结 Task；未 push。
