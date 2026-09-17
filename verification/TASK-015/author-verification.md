@@ -77,3 +77,14 @@ B1 的 3 个 skip 逐条原因（`-rs` 输出原文）：
 | Webtoon 完整按宽滚动验收 | 移交 TASK-020（Task 文件已注明） | 需长图渲染切片；本 Task 交付数据字段、纵向 Flickable 与 scroll_offset 持久化 |
 | 生产装配接线（bootstrap 注入 readerViewModel / 页面目录 adapter） | NOT_IN_SCOPE | `src/bootstrap/app.py` 不在 TASK-015 允许路径；接线代码见 Handoff §集成装配指引，待 Codex 集成 |
 | 章节内切换列表（Reader Nav 数据源） | NOT_IN_SCOPE | 章节列表数据源在 library/bookshelf 装配（白名单外）；`readerPickChapter` 保持 TASK-012 诚实占位（禁用） |
+
+## DSH post-hoc Review findings remediation
+
+报告：DeepSeek Harness 分支 `agent/deepseek/TASK-015-posthoc` 的 commit `9b77685`，文件 `doc/reviews/TASK-015-a915d562.md`，固定 reviewed_head=`a915d562`，结论 `approved`（P0/P1=0，P2=1）。
+
+R-101（P2，两个 ViewModel 包的 `__init__.py` 文件尾多余空行）已关闭：分别删除 `src/ui/viewmodels/export/__init__.py` 与 `src/ui/viewmodels/reader/__init__.py` 的一个末尾空行，保留标准单个 CRLF 终止符。
+
+| 验证 | 命令 | 退出码 | passed | skipped | skip 原因 |
+|---|---|---:|---:|---:|---|
+| 专项回归 | `G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest -q -rs tests/reading_export` | 0 | 64 | 0 | 无 |
+| 空白检查 | `git diff --check` | 0 | — | — | 不适用 |

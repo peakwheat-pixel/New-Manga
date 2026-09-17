@@ -237,6 +237,9 @@ D08 §74（建议验收结果目录）与 §75（verification-summary.md 推荐�
 
 ## 01～07 中需补充验收的内容
 
+ACG-EXT-IMPORT/PLUGIN/FONT/SAKURA 对应的 15 条 AC-EXT-* 均为草案；须经 U-1~U-6 用户裁决
+批准后，才可转为正式编号 AC。批准前不得将这些草案视为已批准或已验收，相关当前结果保持 NOT_RUN。
+
 以下条目尚未成为编号 AC，已分配稳定扩展标识；执行方式见[验收方法与素材规范 §8.4](verification-plan/TASK-003_ACCEPTANCE_AND_FIXTURE_SPEC.md)。
 
 | 组标识 | 已有来源 | 内容 | 后续处理 | 当前结果 |

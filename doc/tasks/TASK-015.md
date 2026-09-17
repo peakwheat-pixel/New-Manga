@@ -83,3 +83,4 @@ passed/skipped 分列与逐条 skip 原因）见 [作者验证记录](../../veri
 - Review：[TASK-015-488fafc](../reviews/TASK-015-488fafc.md)——窗口授权下 ZCode 子 agent 执行；首轮 `changes_requested`（P1×2、P2×4），修订 `ac4ff19` 后复审改判 **`approved_subagent`**（R-001~R-006 全部 fixed，R-007 deferred 至 TASK-020）；期满后需外部 post-hoc 复审。
 - 实际执行/测试：[verification/TASK-015/author-verification.md](../../verification/TASK-015/author-verification.md)。
 - 最近状态：2026-09-17 窗口授权收口 `done`：实现 `488fafc`、Review 修订 `ac4ff19`（approved_subagent）、文档 `a915d56`、integration merge=`fa72cee`；master 集成复验全仓 `536 passed, 0 skipped`、专项 `42 passed, 3 skipped`（无 PySide6 解释器）。`reviewer` 栏 DeepSeek Harness 为期满补审与后续协作的外部 Reviewer。
+- post-hoc Review：DeepSeek Harness 报告 commit `9b77685`（reviewed_head=`a915d562`，approved）；R-101 已关闭，验证记录见 [author-verification.md](../../verification/TASK-015/author-verification.md)。

@@ -39,3 +39,18 @@
 | 真实 OpenAI-compatible 远程 Provider 协议/时延/成本实测 | NOT_RUN | 未配置付费端点且任务禁止自行配置；恢复条件：用户提供测试端点后按同一样本协议复跑 |
 | 真实 Sakura 本地实例验证 | NOT_RUN | 本机未运行 Sakura 服务 |
 | 真实模型术语一致性/翻译质量评分 | NOT_RUN | mock 为确定性规则翻译，不能声称模型质量；方法已就绪（glossary_hits + 样本），待真实端点 |
+
+## DSH post-hoc Review findings remediation
+
+报告：DeepSeek Harness 分支 `agent/deepseek/TASK-017-posthoc` 的 commit `fb0bc40`，文件 `doc/reviews/TASK-017-ae74250a.md`，固定 reviewed_head=`ae74250a`，结论 `approved`（P0/P1=0，P2=1）。
+
+R-101（P2，Windows 非 UTF-8 控制台打印韩文时 `UnicodeEncodeError`）已关闭：`run_experiment.py` 的终端 JSON 摘要改为 `ensure_ascii=True`；结果文件仍以 UTF-8 保存。
+
+| 验证 | 命令/条件 | 退出码 | passed | skipped | skip 原因 |
+|---|---|---:|---:|---:|---|
+| 协议测试 | `G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest -q -rs experiments/TASK-017/test_protocol.py` | 0 | 15 | 0 | 无 |
+| ASCII 控制台回归 | `G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest -q -rs experiments/TASK-017/test_run_experiment_cli.py` | 0 | 1 | 0 | 无；子进程使用 `PYTHONIOENCODING=ascii` |
+| 实验脚本 | PowerShell 设置 `PYTHONIOENCODING=ascii` 后，以 `G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe experiments/TASK-017/run_experiment.py` 执行 | 0 | — | — | 不适用；stdout 无非 ASCII 字节，stderr 为空 |
+| 空白检查 | `git diff --check` | 0 | — | — | 不适用 |
+
+回归测试在修复前按预期失败（UnicodeEncodeError，退出码 1），修复后通过。重复执行会刷新 `results.json` 中的瞬时 latency 数值；本次已恢复该文件的固定基线，未把测量噪声作为交付变更。

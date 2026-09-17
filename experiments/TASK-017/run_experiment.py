@@ -131,5 +131,5 @@ if __name__ == "__main__":
         scenario.get("match", scenario.get("ok", scenario.get("second_ok", True)))
         for scenario in summary["scenarios"]
     )
-    print(json.dumps(summary, ensure_ascii=False, indent=2))
+    print(json.dumps(summary, ensure_ascii=True, indent=2))
     raise SystemExit(0 if ok else 1)

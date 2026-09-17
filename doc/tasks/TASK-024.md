@@ -24,12 +24,14 @@ D01 §2/5；D02 §6.2/11/12；D05 §43；D07 §72/84；G17。D 编号对应 [文
 
 主责任编号 AC：本任务为设计/实验/基础工作，验收以下专属条件；关联产品 AC 不因本任务完成就自动 PASS。完整映射见 [验收追踪](../13_ACCEPTANCE_TRACEABILITY.md)。
 
+本 Task 的 4 条 AC 衡量设计交付；`doc/contracts/extensions.md` 中的 15 条 `AC-EXT-*` 是后续产品验收草案，须经 U-1~U-6 用户裁决批准后才可转为正式编号 AC。两组 AC 属于不同层级，不得合并计数；15 条草案也不计入本 Task 的 4 条设计 AC。
+
 ## Acceptance Criteria
 
 - [x] 对网页/PDF/MOBI、Plugin/Hooks、AI Plugin Agent、字体上传、Sakura服务监控逐项标明已有要求与未知契约。（contracts/extensions.md §1.1~1.6 逐项来源/缺口表）
 - [x] 提出支持矩阵、入口、授权/失败边界和AC草案，说明D02中Plugin Agent“如保留”的条件，不默认删掉也不默认扩建。（§1 各条目矩阵 + §1.4 四项保留条件与裁剪判据；§2 明确有来源排除项；§4 用户待决清单 U-1~U-6）
 - [x] 将产品取舍交用户审核并更新权威文档；为TASK-023/025及019/022涉及的扩展范围明确释放条件。（§3 回写计划与 §4 待决清单已交用户审核；追踪表 ACG 行已指向本设计；需求裁决待用户批准后执行，本设计不自我批准）
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review（或 2026-09-16 窗口期内用户授权的子 agent Review，登记为 approved_subagent）与授权集成者集成验证后才能 done；窗口期交付须在期满后补外部 post-hoc 复审。（子 agent Review `approved_subagent`，R-001..R-004 fixed、R-005 deferred；集成 `61c33e2`，master 复验 536 passed）
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review（或 2026-09-16 窗口期内用户授权的子 agent Review，登记为 approved_subagent）与授权集成者集成验证后才能 done；窗口期交付须在期满后补外部 post-hoc 复审。（窗口内子 agent Review `approved_subagent`；集成 `61c33e2`；DSH post-hoc Review `9454cec` approved，R-101～R-103 已关闭；纯文档，不适用测试）
 
 ## 允许修改范围
 
@@ -66,10 +68,9 @@ D01 §2/5；D02 §6.2/11/12；D05 §43；D07 §72/84；G17。D 编号对应 [文
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- Handoff：[TASK-024-<head>](../handoffs/)（实现完成后回填）。
+- Handoff：[TASK-024-design-boundaries](../handoffs/TASK-024-design-boundaries.md)。
 - Review：窗口内子 agent Review（见 doc/reviews/TASK-024-*.md）。
 - 实际执行/实验/测试：[verification/TASK-024/author-verification.md](../../verification/TASK-024/author-verification.md)。
 - 最近状态：2026-09-17 窗口授权收口 `done`：设计 `d840075`、Review 修订 `86072c3`（`doc/reviews/TASK-024-design.md`，approved_subagent）、integration=`61c33e2`，master 复验 `536 passed`；U-1~U-6 待用户批准，TASK-023/025/019/022 在批准前维持冻结。
+- post-hoc Review：DeepSeek Harness 报告 commit `9454cec`（reviewed_head=`86072c30`，approved）；R-101～R-103 已处置，验证记录见 [author-verification.md](../../verification/TASK-024/author-verification.md)。
+- 状态说明：frontmatter `status: done` 由关闭提交 `348a48e`（integration=`61c33e2`）确定；Review 所见 fixed head `86072c30` 的 `ready` 已被后续关闭记录取代，当前保持 `done`。

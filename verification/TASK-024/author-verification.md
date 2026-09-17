@@ -53,3 +53,17 @@ print("all reference checks passed:", len(checks))
 | §3 权威文档回写（08 新增 AC-EXT 节、Roadmap 前置条件） | NOT_RUN（有意） | 需求裁决属用户保留权；本设计只登记 §4 待决清单 U-1~U-6，批准后以元数据提交回写，避免自我批准 |
 | Sakura/Plugin/字体/导入的产品级 AC 验收 | NOT_RUN | 属 TASK-023/025/019/022 的实现后验收；设计任务不产生产品证据 |
 | 真实 Sakura 实例探测验证 | NOT_RUN | 本机无 Sakura 服务；属 TASK-019 实现后验收 |
+
+## DSH post-hoc Review findings remediation
+
+报告：DeepSeek Harness 分支 `agent/deepseek/TASK-024-posthoc` 的 commit `9454cec`，文件 `doc/reviews/TASK-024-86072c30.md`，固定 reviewed_head=`86072c30`，结论 `approved`（P0/P1=0，P2=3）。
+
+- R-101：在契约抬头和追踪表显式说明 15 条 AC-EXT-* 均为草案，须经 U-1~U-6 用户裁决批准后才能转为正式编号 AC；批准前不得视为已接受/已验证，结果保持 NOT_RUN。
+- R-102：当前 TASK-024 frontmatter 为 `status: done`；关闭提交 `348a48e` 在集成 `61c33e2` 后完成状态收口，取代 reviewed_head=`86072c30` 上的旧 `ready` 值。
+- R-103：TASK-024 明确说明自身 4 条设计 AC 与契约中的 15 条后续产品 AC 草案属于不同层级，不合并计数。
+
+| 验证 | 结果 | passed | skipped | skip 原因 |
+|---|---|---:|---:|---|
+| AC 草案计数 | Python regex 对 `doc/contracts/extensions.md` 计数 | 0 | — | — | 不适用；15 个唯一 ID |
+| TASK-024 代码测试 | N/A：纯文档设计 Task | N/A | N/A | 无测试套件；不是 skip |
+| `git diff --check` | 退出码 0 | — | — | 不适用 |
