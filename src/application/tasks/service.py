@@ -8,6 +8,7 @@ database tables, or bootstrap wiring outside this Task's whitelist.
 from __future__ import annotations
 
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
@@ -193,12 +194,17 @@ class PipelineService:
         snapshots: SnapshotProvider | None = None,
         executor: StepExecutor | None = None,
         limits: ResourceLimits | None = None,
+        clean_probe: Callable[[str], bool] | None = None,
     ) -> None:
         self._catalog = catalog
         self._store = store or InMemoryPipelineStore()
         self._snapshots = snapshots or InMemorySnapshotProvider()
         self._executor = executor or DeterministicStepExecutor()
         self._limits = limits or ResourceLimits()
+        # TASK-039: optional artifact probe (page_id -> current Clean exists?).
+        # ``None`` (every pre-existing construction) keeps the inherited
+        # stage-based judgement byte-for-byte.
+        self._clean_probe = clean_probe
 
     # ------------------------------------------------------------------
     # TASK-002 §9: create and plan
@@ -428,7 +434,9 @@ class PipelineService:
 
         if not self._required_input_available(step_type, stages, previous):
             return PlanDecision.BLOCKED, "MISSING_REQUIRED_INPUT"
-        if step_type == "render" and not self._clean_available(stages, previous):
+        if step_type == "render" and not self._clean_available(
+            target.page_id, stages, previous
+        ):
             return PlanDecision.BLOCKED, "missing_clean_artifact"
         if not self._provider_available(run, step_type):
             return PlanDecision.BLOCKED, "PROVIDER_UNAVAILABLE"
@@ -455,11 +463,38 @@ class PipelineService:
             return True
         return stages.get(required, StageState.NOT_STARTED).is_valid or previous.get(required) is PlanDecision.RUN
 
-    @staticmethod
     def _clean_available(
-        stages: Mapping[str, StageState], previous: Mapping[str, PlanDecision]
+        self,
+        page_id: str,
+        stages: Mapping[str, StageState],
+        previous: Mapping[str, PlanDecision],
     ) -> bool:
-        return stages.get("clean", StageState.NOT_STARTED).is_valid or previous.get("inpaint") is PlanDecision.RUN
+        """TASK-039 (TASK-033 R-001, P2): Clean availability is a question
+        about the *artifact*, not about a stage nobody writes.
+
+        Root cause (AC 1): the inherited judge read ``stages["clean"]`` — but
+        no step ever writes a ``clean`` **stage** (inpaint completes the
+        ``inpaint`` stage and commits the Clean artifact pointer inside the
+        handler, outside ``revision_updates``), so for real data the check was
+        always false and render-only commands (``RERENDER_*``) stayed
+        planning-``BLOCKED(missing_clean_artifact)`` across runs even with a
+        current Clean revision on disk. Existing unit tests only passed
+        because they hand-wrote a ``clean`` stage into their fixtures.
+
+        The judge keeps both historical inputs — same-run ``inpaint is RUN``
+        and a valid ``clean`` stage (for any future writer) — and adds an
+        optional artifact probe injected at assembly (AC 2). ``probe is None``
+        (every pre-existing construction) preserves the old decision exactly;
+        the probe can only turn a would-be BLOCKED into RUN when a current
+        Clean artifact really exists — it never blocks something the old
+        judge allowed (AC 3).
+        """
+        if previous.get("inpaint") is PlanDecision.RUN:
+            return True
+        if stages.get("clean", StageState.NOT_STARTED).is_valid:
+            return True
+        probe = self._clean_probe
+        return probe is not None and bool(probe(page_id))
 
     @staticmethod
     def _effective_lock(
