@@ -1,0 +1,172 @@
+{
+  "schema": "task018-samples-v1",
+  "generator": "experiments/TASK-018/generate_samples.py",
+  "renderer": "PySide6 QImage/QPainter (no PIL/numpy in this environment)",
+  "size": [
+    320,
+    320
+  ],
+  "sample_count": 5,
+  "samples": [
+    {
+      "sample_id": "s1-white-background",
+      "kind": "white-background",
+      "description": "白底黑字对白：纯白背景 + 粗体文字，最简单的填充场景",
+      "size": [
+        320,
+        320
+      ],
+      "path": "s1-white-background.png",
+      "sha256": "1d17069e6bdac22d2cf9d96136e3e9535e927401732f4c8ccada6a7a2a09a457",
+      "target_box": [
+        96,
+        128,
+        224,
+        176
+      ],
+      "protected_boxes": [
+        [
+          0,
+          0,
+          320,
+          96
+        ],
+        [
+          0,
+          208,
+          320,
+          320
+        ]
+      ],
+      "reference_text": "TEXT"
+    },
+    {
+      "sample_id": "s2-line-art",
+      "kind": "line-art",
+      "description": "线稿：密集细线构成的图案，文字压在线的上方",
+      "size": [
+        320,
+        320
+      ],
+      "path": "s2-line-art.png",
+      "sha256": "c08a053894ded25a8c06744659d2b5aa8473eb17bb5762fdb500f03740340951",
+      "target_box": [
+        104,
+        136,
+        216,
+        168
+      ],
+      "protected_boxes": [
+        [
+          0,
+          0,
+          320,
+          100
+        ],
+        [
+          0,
+          200,
+          320,
+          320
+        ]
+      ],
+      "reference_text": "TEXT"
+    },
+    {
+      "sample_id": "s3-screentone",
+      "kind": "screentone",
+      "description": "网点：规则点阵半调背景，文字位于网点之上",
+      "size": [
+        320,
+        320
+      ],
+      "path": "s3-screentone.png",
+      "sha256": "58d99e0d9400c76a012843e232061d69672631b724e316d9f4846e392a8be62e",
+      "target_box": [
+        96,
+        128,
+        224,
+        176
+      ],
+      "protected_boxes": [
+        [
+          0,
+          0,
+          320,
+          110
+        ],
+        [
+          0,
+          196,
+          320,
+          320
+        ]
+      ],
+      "reference_text": "TEXT"
+    },
+    {
+      "sample_id": "s4-gradient",
+      "kind": "gradient",
+      "description": "渐变：水平灰阶渐变，文字位于渐变中部",
+      "size": [
+        320,
+        320
+      ],
+      "path": "s4-gradient.png",
+      "sha256": "859724f8e4da1ded2a185b8eb68a046a6c7beff433fa5cd3a06071e997ce0023",
+      "target_box": [
+        96,
+        128,
+        224,
+        176
+      ],
+      "protected_boxes": [
+        [
+          0,
+          0,
+          320,
+          100
+        ],
+        [
+          0,
+          200,
+          320,
+          320
+        ]
+      ],
+      "reference_text": "TEXT"
+    },
+    {
+      "sample_id": "s5-structure-crossing",
+      "kind": "structure-crossing",
+      "description": "结构穿越：面板边框与速度线穿过文字区，修复必须延续结构而不是抹平",
+      "size": [
+        320,
+        320
+      ],
+      "path": "s5-structure-crossing.png",
+      "sha256": "f96c48f24a098edcde0964723baaed7b3799d24ee63b7ee96f2eee26871d48e2",
+      "target_box": [
+        92,
+        124,
+        228,
+        180
+      ],
+      "protected_boxes": [
+        [
+          0,
+          0,
+          320,
+          92
+        ],
+        [
+          0,
+          212,
+          320,
+          320
+        ]
+      ],
+      "reference_text": "TEXT"
+    }
+  ]
+}
