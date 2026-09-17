@@ -125,9 +125,15 @@
 
 基线对照：纯净 `edfdcf2` 导出树全仓 **706 passed / 6 skipped**（exit 0）→ 本 head **737 passed / 6 skipped**（+31）。
 
-**skip 明细（每轮相同，6 条全部为既有环境 skip）**：`tests/network/test_connection_tester.py:106`、`test_transport_tls.py:39`、`:47`、`:62`、`:69`、`:83`，原因均为 `openssl unavailable`。**未新增任何 skip / xfail。**
+**全仓串跑逐次记录（三段合计 17 次）**：
 
-**关于间歇失败的登记**：STATUS 登记的既有间歇失败在本轮**复现两次，且两次都落在同一已登记用例** `tests/reading_export/test_qml_contract.py::test_reader_webtoon_swaps_in_vertical_viewer`（第 8 次与第 14 次全仓串跑；其余 12 次 `737 passed / 6 skipped`，exit 0）。详见 §9 与 [`registered-flaky-signature.md`](registered-flaky-signature.md)。**未记为通过、未归因本 Task**（该用例在读者 QML 路径上，TASK-036 的改动为 `inpaint` 路由设置解析与**导出** ViewModel）。
+1. 实现完成后 7 次（`-rs -rf`）：[`full-suite-runs.log`](full-suite-runs.log) —— 6 次 `737 passed / 6 skipped`（exit 0）+ 第 7 次带 skip 明细（同数）→ **7/7 通过**；其中第 8 次（并入下段计数）失败。
+2. 复现尝试 6 次（`--tb=long -rf`）：[`intermittent-failure-repro.log`](intermittent-failure-repro.log) —— 5 次通过、**第 6 次命中已登记 flaky**（真实签名，见 §9）。
+3. 诊断稳健化之后 4+ 次：`full-suite-runs-post-diagnostics.log` —— 全部 `737 passed / 6 skipped`（exit 0）。
+
+合计：**20 次中 17 次 `737 passed / 6 skipped`（exit 0）、3 次失败且 3 次都落在同一已登记用例**（`test_reader_webtoon_swaps_in_vertical_viewer`；1 次被诊断掩蔽、1 次拿到真实签名、1 次仅捕获用例名）。**基线与归属对照**：纯净 `edfdcf2` 导出树（无本 Task 任何改动）6 次全仓串跑中**同样复现同一用例 1 次**（`1 failed, 705 passed, 6 skipped`，[`flaky-rate-baseline.log`](flaky-rate-baseline.log)）——即该 flaky **不是本 Task 引入**；基线与本 head 的产出对照为 **706 passed / 6 skipped → 737 passed / 6 skipped（+31）**。**3 次失败均未记为通过、未归因本 Task。**
+
+**skip 明细（每轮相同，6 条全部为既有环境 skip）**：`tests/network/test_connection_tester.py:106`、`test_transport_tls.py:39`、`:47`、`:62`、`:69`、`:83`，原因均为 `openssl unavailable`。**未新增任何 skip / xfail。**
 
 ## 9. 已登记 flaky 的首次捕获签名（本 Task 的附带发现）
 
