@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-018、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK-015/024/017 的窗口内 Review 为 approved_subagent；三份外部 post-hoc Review 均 approved，findings 已由 `c7a02bd` 收口；TASK-018 的三轮 Review [TASK-018-6c33e7f](../reviews/TASK-018-6c33e7f.md)、[TASK-018-5063315](../reviews/TASK-018-5063315.md)、[TASK-018-965bcd2](../reviews/TASK-018-965bcd2.md) 均为 approved，integration=`4d189ce`→`14b92e4`→`5a9f5c8`，R-001～R-007 与 R-101/R-102/R-103/R-104/R-201 全部 closed、无待处理 finding）；TASK-019 为 blocked；TASK-020～TASK-023、TASK-025～TASK-027 继续冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。ZCode 全权窗口已于 2026-09-17 按用户指示归还撤销，条款存档见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
+TASK-001～TASK-018、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK-015/024/017 的窗口内 Review 为 approved_subagent；三份外部 post-hoc Review 均 approved，findings 已由 `c7a02bd` 收口；TASK-018 的三轮 Review [TASK-018-6c33e7f](../reviews/TASK-018-6c33e7f.md)、[TASK-018-5063315](../reviews/TASK-018-5063315.md)、[TASK-018-965bcd2](../reviews/TASK-018-965bcd2.md) 均为 approved，integration=`4d189ce`→`14b92e4`→`5a9f5c8`，R-001～R-007 与 R-101/R-102/R-103/R-104/R-201 全部 closed、无待处理 finding；TASK-017 的尾项修订切片 Review [TASK-017-971efe6](../reviews/TASK-017-971efe6.md) approved、integration=`d36f724`）；**TASK-019 为 ready（已按用户批准释放）**；TASK-020～TASK-023、TASK-025～TASK-027 继续冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。ZCode 全权窗口已于 2026-09-17 按用户指示归还撤销，条款存档见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -22,7 +22,7 @@ TASK-001～TASK-018、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK
 | [TASK-016](TASK-016.md) | OCR 与检测路线独立实验 | DeepSeek Harness | done；integration `9bf85f5`；Review `878ac16`；TASK-003, TASK-004 |
 | [TASK-017](TASK-017.md) | Translation 与上下文输出协议实验 | ZCode | done；主体 base `348a48e`、integration `c0cf3a1`、外部 post-hoc Review `fb0bc40` approved；尾项修订切片（R-001/R-002/R-003 吸收）Review=[TASK-017-971efe6](../reviews/TASK-017-971efe6.md) approved、integration=`d36f724`（R-001/R-002/R-003/R-101 closed）；真实端点层 NOT_RUN；依赖 TASK-003, TASK-004 |
 | [TASK-018](TASK-018.md) | Mask / Inpainting 路线独立实验 | DeepSeek Harness | done；三轮 Review [TASK-018-6c33e7f](../reviews/TASK-018-6c33e7f.md) + [TASK-018-5063315](../reviews/TASK-018-5063315.md) + [TASK-018-965bcd2](../reviews/TASK-018-965bcd2.md) 均 approved，integration=`4d189ce`→`14b92e4`→`5a9f5c8`（无待处理 finding）；TASK-003, TASK-004 |
-| [TASK-019](TASK-019.md) | 集成已验证的检测/OCR/翻译/修复 Provider | ZCode | blocked；TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024 |
+| [TASK-019](TASK-019.md) | 集成已验证的检测/OCR/翻译/修复 Provider | ZCode | ready；已按用户批准释放（Owner=ZCode、Reviewer=DeepSeek Harness、base=`36242fb`、branch=`agent/zcode/TASK-019-provider-integration`、worktree=`G:/CODEX/New Manga.worktrees/TASK-019-zcode`）；实施未开始，登记阻塞=真实端点未配置 / 本机无 Sakura / 无 `torch`·`diffusers`；依赖 TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024（均已 done） |
 | [TASK-020](TASK-020.md) | 实现 Webtoon 分块处理与阅读 | ZCode | TASK-013, TASK-015, TASK-019 |
 | [TASK-021](TASK-021.md) | 完善备份恢复、回收站、清理与诊断 | Codex | TASK-006, TASK-011, TASK-015 |
 | [TASK-022](TASK-022.md) | 补齐工具窗口、设置与视觉交互验收 | ZCode | TASK-009, TASK-010, TASK-013, TASK-015, TASK-021, TASK-024 |
