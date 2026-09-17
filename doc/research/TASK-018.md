@@ -88,7 +88,7 @@
 1. **非目标像素保护 100% 达成**：10 条实测记录的保护违规全部为 **0**，说明实验侧的 Mask 门控（"只重写 Mask 内像素"）在基线上被严格执行并可回归验证。
 2. **Simple Fill 的残字为 0，但这不是质量结论**：常量白填充必然把暗像素清零（`residual=0` 是**构造性结果**）。它在**白底**样例上确实有效（背景本就是白色），但在**线稿、网点、渐变、结构穿越**四类样例上，它同样会把目标框内的**线稿/网点/渐变/边框结构一并抹成白块**——残字指标看不见这一点，因此**不能仅凭 `residual=0` 判定 Simple Fill 可用**。这正是必须记录"背景/边框损伤"的原因。
 3. **Edge bleed 的 residual 反而更高，但主因是覆盖不足、不是修复失败**：8 次迭代只能改写 Mask 边界环（改写量见上一节；white-background 上甚至为 0），未触及的原始像素继续被计入 `residual`（line-art 1932、structure-crossing 2031）。它确实会把邻域颜色扩散进边界环，且同样不延续结构——**结构穿越样例最能暴露这一点**。两条基线覆盖不对等，本表不能用于给它们排序。
-4. **耗时量级**：基线在 320×320、Mask 约 6k–10k 像素下为 **2.20–3.05 ms（simple-fill）** 与 **32.28–48.61 ms（edge-bleed）**；峰值工作集 **45.32–57.55 MB**，且**全部为 CPU 路径，无 GPU 分配**（`vram_peak_mb = null`）。区间取自 `d7c10d4` 的 `results/experiment.json`（见 §4 表下数据归属注）。
+4. **耗时量级**：基线在 320×320、Mask 约 6k–10k 像素下为 **2.20–3.05 ms（simple-fill）** 与 **32.28–48.61 ms（edge-bleed）**；峰值工作集 **45.32–57.55 MB**，且**全部为 CPU 路径，无 GPU 分配**（`vram_peak_mb = null`）。区间取自 `d7c10d4` 的 `results/experiment.json`（见 §4 表下数据归属注）。口径说明：区间下界 `45.32 MB` 取自 `peak_rss_mb_before`（本进程最早记录的峰值工作集），而 §4 表的 `peak RSS MB` 列是各记录的 `peak_rss_mb_after`（下界 `46.13 MB`）；两者都是同一进程的真实读数。
 
 ### 明确无法给出的结论
 
@@ -184,3 +184,17 @@ python experiments/TASK-018/run_experiment.py --repeat 3
 验证：`test_mask_protocol.py` **12 passed / 0 skipped**（原有 12 例未改动）；新增 `test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、保护违规 0、保护框 20/20 全 0；连续两次运行的 `routes`/`manifest_sha256`/`mask_sha256`/`output_sha256`/`sample_sha256`/`parameters`/`mask`/`protected_box_violations` **完全一致**。详见 [revision-d7c10d4.md](../../verification/TASK-018/revision-d7c10d4.md)。
 
 > **仍未解决（不变）**：四条学习型路线的质量/耗时/内存/显存为 **BLOCKED**（本切片未新增任何数字）；Mask 内部结构损伤量化、真实 OOM、真实漫画样例为 **NOT_RUN**。R-004 与 R-005 已在集成收口提交内以文档口径处理，本切片不再改动。
+
+### 9.2 集成收口（2026-09-17，Codex）
+
+修订切片 `d7c10d4`（元数据 `3b38d39`）与复审收口 `5063315`（元数据 `b10f1ba`）已经 Codex 独立 Review 后集成：`integration_commit=14b92e4`（merge，parents `d49679b`+`b10f1ba`）。Review 报告见 [`doc/reviews/TASK-018-5063315.md`](../reviews/TASK-018-5063315.md)，集成后复验见 [verification/TASK-018/integration-14b92e4.md](../../verification/TASK-018/integration-14b92e4.md)。
+
+| ID | 处置 |
+|---|---|
+| R-001～R-007（首轮） | **全部 closed**（R-001 剩余项与 R-002/R-003/R-006/R-007 由 `d7c10d4` 修复；R-004/R-005 以文档口径收口） |
+| R-101 | **closed**：`test_route_gating.py` docstring 已如实说明"测试代码只用标准库，但经 `run_experiment` 间接依赖 PySide6"；两份历史记录（本报告对应轮次的 Handoff 与修订取证）已加更正指针 |
+| R-102 | **closed**：§4 表三列已更新为当前 `experiment.json` 的值，并加数据归属注；结论 4/5 与 §7 OOM 行同步；Reviewer 逐行核对 **10/10 一致** |
+| R-103 | **closed**：任务文件合并为单一状态块 |
+| R-104 | **部分处置 / deferred**：已实施"导入来源"断言（防静默测错 harness）；Reviewer 原建议的 `ROUTES[*].implementation` 非 None ⇒ 必须在 `FILLERS` 注册的一致性断言**未实施**。误配时仍为中途 `KeyError`（响亮失败、不产生伪数据，但会留下部分产物），登记为后续重跑前可一并处理的观察项 |
+
+集成后复验：`test_mask_protocol.py` **12 passed / 0 skipped**；`test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、`blocked_stage` 20/20 `not_implemented`、保护违规 0、**保护框 20/20 全 0**、确定性字段与提交 JSON 0 差异；全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。

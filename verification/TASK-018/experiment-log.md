@@ -192,3 +192,21 @@ Reviewer 结论为 `changes_requested`，工程实现已复核 **PASS**，**代�
 | 13 | `python -m unittest experiments/TASK-018/test_route_gating.py` | **0** | **13** | **0** | `OK`（R-101/R-104 改动后仍全绿） |
 
 **skip 原因**：两项均 **`0 skipped`**。
+
+---
+
+## 7.3 集成收口（2026-09-17，Codex）
+
+| 项目 | 值 |
+|---|---|
+| 修订切片 head | `d7c10d4`（元数据 `3b38d39`） |
+| 复审收口 head | `5063315`（元数据 `b10f1ba`） |
+| Review 报告 | [`doc/reviews/TASK-018-5063315.md`](../../doc/reviews/TASK-018-5063315.md)（decision=`approved`） |
+| implementation merge / integration commit | `14b92e4`（merge，parents `d49679b` + `b10f1ba`） |
+| 集成后验证 | [integration-14b92e4.md](integration-14b92e4.md) |
+
+集成后复验（master）：协议测试 **12 passed / 0 skipped**；门控与探测测试 **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、`blocked_stage` 20/20 `not_implemented`、`protected_violations` 10/10 为空、`protected_box_violations` **20 框全 0**、`results/` 仅 10 张 PNG、BLOCKED 记录无 `output_image`/`output_sha256`；确定性字段与提交的 `results/experiment.json` **0 差异**（复跑在 `%TEMP%` 副本中执行，未覆盖仓库数据）；全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。
+
+Findings 处置：R-001～R-007、R-101、R-102、R-103 **closed**；R-104 **部分处置**——"导入来源"断言已实施，Reviewer 原建议的 `implementation ⇒ FILLERS` 一致性断言 **deferred**（误配时为响亮失败、不产生伪数据，但会留下部分产物），登记见研究报告 §9.2。
+
+**仍未解决（不变、不得视为通过）**：四条学习型路线的质量/性能 **BLOCKED**；Mask 内部结构损伤量化、真实 OOM、真实漫画样例 **NOT_RUN**。

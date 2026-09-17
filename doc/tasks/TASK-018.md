@@ -2,7 +2,7 @@
 id: TASK-018
 title: Mask / Inpainting 路线独立实验
 kind: experiment
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-003, TASK-004]
 base_commit: dce95acbb57a3494cb0f9d8d2d42e27d164176bb
 branch: agent/deepseek/TASK-018-mask-inpainting-experiment
 worktree: G:/CODEX/New Manga.worktrees/TASK-018-deepseek
-integration_commit: 4d189ce
+integration_commit: 14b92e4
 ---
 
 # TASK-018：Mask / Inpainting 路线独立实验
@@ -32,7 +32,7 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - [x] 比较文档已有Simple Fill、Manga LaMa、AOT、BrushNet/PowerPaint、FLUX候选的实际可用范围；未能测试项明确保留未知。（`simple-fill`、`edge-bleed` 实测；四条学习型路线因缺依赖与权重全部 `BLOCKED`，未以 Mock 或基线数字代替）
 - [x] 固定白底/线稿/网点/渐变/结构穿越样例，对Mask精修和修复分别记录残字、背景/边框损伤、耗时及峰值资源。（样例与 manifest、raw/final Mask 记录、残字代理、耗时与峰值 RSS 均已入库；**Mask 外**保护违规 10/10=0；Mask **内部**结构损伤量化仍 `NOT_RUN`——见下方未完成项，不得视为质量通过）
 - [x] 提出有实测依据的Router条件、fallback与资源要求，保留参数调节和原始/最终Mask；不把大型模型设成未经验证默认。（`default_eligible` 仅两个基线为 `true`；建议为候选条件，生产 Router 属 TASK-019，本 Task 未扩展）
-- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Review `doc/reviews/TASK-018-6c33e7f.md` decision=`approved`；integration=`4d189ce`）
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（首轮 Review [`doc/reviews/TASK-018-6c33e7f.md`](../reviews/TASK-018-6c33e7f.md) `approved`（被审 head `6c33e7f`）→ integration=`4d189ce`；修订切片复审 [`doc/reviews/TASK-018-5063315.md`](../reviews/TASK-018-5063315.md) `approved`（被审 head `5063315`）→ integration=`14b92e4`）
 
 ## 允许修改范围
 
@@ -90,8 +90,10 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - 未完成项保持原样、不得视为通过：四条学习型路线的修复质量/残字/背景损伤/耗时/显存 **`BLOCKED`**；Mask **内部**结构损伤量化、真实 OOM、真实漫画样例 **`NOT_RUN`**；模型 Hash `NOT_AVAILABLE`。
 - 生产 Router 属 **TASK-019**：本 Task 只提出候选条件，**未扩展到 TASK-019**，也未释放 TASK-019 或其他冻结 Task。
 
-- **当前状态（唯一）**：2026-09-17 `in_review`，等待 Codex 对修订切片 `d7c10d4` 独立 Review。
-  - 修订：R-007 fail-closed（显式 `FILLERS` 映射，未实现路线即使依赖齐备也 `BLOCKED`/`not_implemented`）、R-002 真实探测（`importlib.util.find_spec` + 本地权重文件）、R-003 越界输出目录不崩溃、R-006 去未核实体积标注并重生成 `experiment.json`、R-001 剩余项保护框逐框断言。
-  - 验证：`test_mask_protocol.py` **12 passed / 0 skipped**（原有 12 例未改动）；新增 `test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、保护违规 0、**保护框 20/20 全 0**；连续两次运行的确定性字段完全一致；反例证明 fail-closed（`png_written=[]`）。
-  - **已集成基线 `4d189ce` 不因本切片失效**（增量修复，未改写已集成提交）。
-  - 边界：未改生产 src/tests、Schema、依赖、AGENTS；未改 `doc/STATUS.md`/`doc/00_INDEX.md`/`doc/12_ROADMAP.md`/`doc/tasks/README.md`；未释放 TASK-019 或其他冻结 Task；未 push/合并 master。
+- **当前状态（唯一）**：2026-09-17 `done`。已按协作协议 §6.6 完成两轮独立 Review 与集成，本 Task 无未决 Review。
+  - **首轮**：base `dce95ac`（起点 `9ee17189`）、被审 head `6c33e7f`（元数据 `ef6d1c3`），Review [`doc/reviews/TASK-018-6c33e7f.md`](../reviews/TASK-018-6c33e7f.md) `approved`（R-001～R-007），integration=`4d189ce`。
+  - **修订切片**：base `8c63f9b`、被审 head `d7c10d4`（元数据 `3b38d39`）→ 复审 `changes_requested`（R-101/R-102 证据表述、R-103/R-104 文档与防护；工程实现已复核 PASS、代码无需改动）→ 收口 head `5063315`（元数据 `b10f1ba`），Review [`doc/reviews/TASK-018-5063315.md`](../reviews/TASK-018-5063315.md) `approved`，integration=`14b92e4`。
+  - 修复内容：R-007 fail-closed（显式 `FILLERS` 映射，依赖齐备也不授权未实现路线）、R-002 真实探测（`importlib.util.find_spec` + 本地权重文件）、R-003 越界输出目录、R-006 去未核实体积标注并重生成 `experiment.json`、R-001 剩余项保护框逐框断言、R-101 依赖声明更正、R-102 数字归属与区间同步、R-103 状态块合并。
+  - 集成后复验（见 [verification/TASK-018/integration-14b92e4.md](../../verification/TASK-018/integration-14b92e4.md)）：`test_mask_protocol.py` **12 passed / 0 skipped**；`test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、保护违规 0、**保护框 20/20 全 0**、`blocked_stage` 20/20 `not_implemented`、确定性字段与提交 JSON 0 差异；全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。
+  - 未关闭项：R-104 剩余部分（`implementation ⇒ FILLERS` 一致性断言）**deferred**，见 [研究报告](../research/TASK-018.md) §9.2；学习型路线质量/性能 **`BLOCKED`**、Mask 内部结构损伤与真实 OOM/漫画样例 **`NOT_RUN`**，不得视为通过。
+  - 边界：未改生产 `src/`、`tests/`、Schema、依赖清单、`AGENTS.md`；未扩展到 TASK-019；未释放 TASK-019 或其他冻结 Task；未 push。

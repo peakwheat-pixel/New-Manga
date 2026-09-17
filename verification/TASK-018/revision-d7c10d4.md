@@ -1,5 +1,7 @@
 # TASK-018 修订切片取证：`d7c10d4`
 
+> **更正（2026-09-17，集成收口，Review R-101）**：本文件 §1 与 §3 中"纯标准库""无第三方依赖"的表述**不准确**——`experiments/TASK-018/test_route_gating.py` 通过 `import run_experiment` 间接依赖 PySide6（该模块用 PySide6 做图像 I/O），只是测试代码本身只用标准库。权威说明见 [实验日志](experiment-log.md) §7.2 与 [`doc/reviews/TASK-018-5063315.md`](../../doc/reviews/TASK-018-5063315.md)。其余结论不受影响。
+
 - Task：TASK-018「Mask / Inpainting 路线独立实验」后续修订切片
 - Owner：DeepSeek Harness ／ Reviewer：Codex（**非作者，独立 Review 由 Codex 执行**）
 - 固定 base：`8c63f9b19f6daf065847aefce01bda578332cd6b`（= 修订前分支 head，**已与 master 同步**，无需再次 merge）
