@@ -57,6 +57,16 @@ def _utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds")
 
 
+class _Unchecked:
+    """Sentinel: "no expectation supplied" is different from "expect NULL"."""
+
+    def __repr__(self) -> str:  # pragma: no cover - debugging aid
+        return "UNCHECKED"
+
+
+UNCHECKED = _Unchecked()
+
+
 def _text_jsonable(region: Region) -> dict:
     """Serialize the region text block exactly as the region table stores it."""
     text = region.text
@@ -98,17 +108,24 @@ class RegionStepWriter:
         options: dict[str, str] | None = None,
         source_run_id: str | None = None,
         source_step_run_id: str | None = None,
+        expected_current_revision_id: str | None | _Unchecked = UNCHECKED,
     ) -> PreparedTextWrite:
         if not isinstance(ocr_text, str):
             raise ProviderInputError(
                 "OCR text must be a string", provider_id=provider_id, stage="ocr"
             )
-        staged = self._staged_region(region_id)
+        staged = self._staged_region(region_id, provider_id=provider_id, stage="ocr")
+        if staged.region_locked:
+            raise LockBlocked(
+                "region is locked", provider_id=provider_id, stage="ocr"
+            )
         changed = staged.text.apply_ocr(ocr_text)
         revision_id, revision_no = self._persist(
             staged,
             source_run_id=source_run_id,
             source_step_run_id=source_step_run_id,
+            expected_current_revision_id=expected_current_revision_id,
+            provider_id=provider_id,
         )
         return PreparedTextWrite(
             region_id=region_id,
@@ -129,6 +146,7 @@ class RegionStepWriter:
         options: dict[str, str] | None = None,
         source_run_id: str | None = None,
         source_step_run_id: str | None = None,
+        expected_current_revision_id: str | None | _Unchecked = UNCHECKED,
     ) -> PreparedTranslationWrite:
         if not isinstance(translation, str):
             raise ProviderInputError(
@@ -136,8 +154,8 @@ class RegionStepWriter:
                 provider_id=provider_id,
                 stage="translate",
             )
-        staged = self._staged_region(region_id)
-        if staged.translation_locked or staged.region_locked:
+        staged = self._staged_region(region_id, provider_id=provider_id, stage="translate")
+        if staged.translation_locked or staged.region_locked or staged.text.translation_locked:
             # D06 §89: a locked region keeps its text; the machine result may
             # only survive as a candidate, never as the current revision.
             raise LockBlocked(
@@ -150,6 +168,8 @@ class RegionStepWriter:
             staged,
             source_run_id=source_run_id,
             source_step_run_id=source_step_run_id,
+            expected_current_revision_id=expected_current_revision_id,
+            provider_id=provider_id,
         )
         return PreparedTranslationWrite(
             region_id=region_id,
@@ -162,11 +182,13 @@ class RegionStepWriter:
     # internals
     # ------------------------------------------------------------------
 
-    def _staged_region(self, region_id: str) -> Region:
+    def _staged_region(self, region_id: str, *, provider_id: str = "", stage: str = "") -> Region:
         region = self.repository.get_region(region_id)
         if region is None or region.deleted:
             raise ProviderUnavailable(
-                f"region {region_id!r} is not available", stage="region-write"
+                f"region {region_id!r} is not available",
+                provider_id=provider_id,
+                stage=stage or "region-write",
             )
         return copy.deepcopy(region)
 
@@ -176,6 +198,8 @@ class RegionStepWriter:
         *,
         source_run_id: str | None,
         source_step_run_id: str | None,
+        expected_current_revision_id: str | None | _Unchecked = UNCHECKED,
+        provider_id: str = "",
     ) -> tuple[str, int]:
         revision_id = uuid.uuid4().hex
         now = _utc_now()
@@ -188,7 +212,22 @@ class RegionStepWriter:
             ).fetchone()
             if row is None:
                 raise ProviderUnavailable(
-                    f"region {staged.region_id!r} disappeared", stage="region-write"
+                    f"region {staged.region_id!r} disappeared",
+                    provider_id=provider_id,
+                    stage="region-write",
+                )
+            if (
+                not isinstance(expected_current_revision_id, _Unchecked)
+                and row["current_revision_id"] != expected_current_revision_id
+            ):
+                # Same guard the pipeline seam applies, checked *before* any
+                # write so a stale attempt cannot mutate the region text.
+                raise LockBlocked(
+                    "region current revision changed during the step"
+                    f" (expected {expected_current_revision_id!r},"
+                    f" found {row['current_revision_id']!r})",
+                    provider_id=provider_id,
+                    stage="region-write",
                 )
             revision_no = self.conn.execute(
                 "SELECT COALESCE(MAX(revision_no), 0) + 1 AS next_no"
@@ -279,10 +318,23 @@ class ArtifactStepWriter:
         pipeline_run_id: str | None = None,
         step_run_id: str | None = None,
         provenance_json: str | None = None,
+        expected_current_revision_id: str | None | _Unchecked = UNCHECKED,
     ) -> PreparedArtifact:
         context = self._page_context(page_id)
         artifact_id, is_first = self._artifact_id(page_id, artifact_type, context)
         previous_revision_id = self.current_revision_id(artifact_id)
+        if (
+            not isinstance(expected_current_revision_id, _Unchecked)
+            and previous_revision_id != expected_current_revision_id
+        ):
+            # The page-target branch of the pipeline seam owns this pointer;
+            # checking it here keeps an orphan revision row from being written.
+            raise LockBlocked(
+                "artifact current revision changed during the step"
+                f" (expected {expected_current_revision_id!r},"
+                f" found {previous_revision_id!r})",
+                stage="artifact-write",
+            )
         revision_id = uuid.uuid4().hex
         relative_path = self.storage.new_revision_relative_path(
             context["book_id"], context["chapter_id"], artifact_type, revision_id, suffix

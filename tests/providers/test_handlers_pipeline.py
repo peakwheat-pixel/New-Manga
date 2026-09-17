@@ -49,6 +49,7 @@ from infrastructure.sqlite.migrator import MigrationRunner
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.schema import default_migrations
 from ports.inpaint.ports import ROUTE_EDGE_BLEED, ROUTE_MANGA_LAMA, ROUTE_SIMPLE_FILL
+from ports.providers.errors import LockBlocked
 from ports.providers.profiles import (
     CAPABILITY_INPAINT,
     CAPABILITY_OCR,
@@ -129,8 +130,8 @@ def workspace(tmp_path: Path):
         ):
             conn.execute(
                 "INSERT INTO regions (region_id, page_id, region_type, geometry_json, text_json,"
-                " style_json, sfx_policy, current_revision_id, created_at, updated_at)"
-                " VALUES (?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)",
+                " style_json, sfx_policy, translation_locked, current_revision_id, created_at, updated_at)"
+                " VALUES (?, ?, ?, ?, ?, ?, ?, ?, NULL, ?, ?)",
                 (
                     region_id,
                     "page-1",
@@ -139,6 +140,7 @@ def workspace(tmp_path: Path):
                     json.dumps(text),
                     "{}",
                     "translate",
+                    1 if text["translation_locked"] else 0,
                     NOW,
                     NOW,
                 ),
@@ -526,3 +528,59 @@ def test_missing_provider_binding_fails_closed(workspace) -> None:
     assert step.error_code == "PROVIDER_NOT_CONFIGURED"
     assert _text(conn, "region-b") == before
     assert len(_revision_ids(conn, "region-b")) == 1
+
+
+def test_stale_region_revision_is_refused_before_any_write(workspace) -> None:
+    """The writer applies the seam's optimistic guard before mutating text."""
+    conn = workspace["conn"]
+    writer = RegionStepWriter(conn, workspace["regions"])
+    before = _text(conn, "region-b")
+
+    with pytest.raises(LockBlocked) as error:
+        writer.prepare_ocr_text(
+            "region-b", "stale", expected_current_revision_id="region-b-rev-999"
+        )
+    assert error.value.error_code == "LOCK_CHANGED"
+    assert _text(conn, "region-b") == before
+    assert len(_revision_ids(conn, "region-b")) == 1
+
+    # The matching expectation still writes.
+    prepared = writer.prepare_ocr_text(
+        "region-b", "fresh", expected_current_revision_id="region-b-rev-1"
+    )
+    assert prepared.revision_id in _revision_ids(conn, "region-b")
+
+
+def test_locked_region_refuses_ocr_and_translation_writes(workspace) -> None:
+    conn = workspace["conn"]
+    conn.execute(
+        "UPDATE regions SET region_locked = 1 WHERE region_id = 'region-a'"
+    )
+    conn.commit()
+    writer = RegionStepWriter(conn, workspace["regions"])
+    with pytest.raises(LockBlocked):
+        writer.prepare_ocr_text("region-a", "x")
+
+    # Translation lock on region-c (the planner skips it; the writer refuses too).
+    with pytest.raises(LockBlocked):
+        writer.prepare_machine_translation("region-c", "y")
+    assert _text(conn, "region-c")["text"]["edited_translation"] == "人工译文"
+
+
+def test_stale_artifact_pointer_is_refused_before_publishing(workspace) -> None:
+    storage = workspace["storage"]
+    writer = ArtifactStepWriter(workspace["conn"], storage)
+    with pytest.raises(LockBlocked):
+        writer.prepare_revision(
+            page_id="page-1",
+            artifact_type="mask",
+            payload=b"payload",
+            mime_type="application/x-newmanga-mask",
+            expected_current_revision_id="not-the-current-one",
+        )
+    assert (
+        workspace["conn"].execute(
+            "SELECT COUNT(*) FROM artifact_revisions"
+        ).fetchone()[0]
+        == 0
+    )

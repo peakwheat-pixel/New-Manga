@@ -58,6 +58,7 @@ from infrastructure.providers.inpaint_routes import provider_id_for_route
 from infrastructure.providers.registry import ProviderRegistry
 from infrastructure.providers.retry import RetryPolicy
 from infrastructure.providers.step_writes import (
+    UNCHECKED,
     ArtifactStepWriter,
     PreparedArtifact,
     RegionStepWriter,
@@ -229,6 +230,7 @@ class ProductionHandlers:
             options=dict(result.options),
             source_run_id=run.run_id,
             source_step_run_id=step_run.step_run_id,
+            expected_current_revision_id=step_run.input_refs.get("region"),
         )
         outputs = {
             "ocr_text": result.text,
@@ -306,6 +308,7 @@ class ProductionHandlers:
             options=dict(result.options),
             source_run_id=run.run_id,
             source_step_run_id=step_run.step_run_id,
+            expected_current_revision_id=step_run.input_refs.get("region"),
         )
         outputs = {
             "machine_translation": translations[region_id],
@@ -361,6 +364,9 @@ class ProductionHandlers:
             height=height,
             pipeline_run_id=run.run_id,
             step_run_id=step_run.step_run_id,
+            expected_current_revision_id=self._expected_artifact_revision(
+                step_run, unit, ARTIFACT_MASK
+            ),
             options_json=json.dumps(dict(DEFAULT_MASK_PARAMS), sort_keys=True),
             provenance_json=json.dumps(
                 {"mask_record": record.as_dict(), "source": MASK_SOURCE_REGION_GEOMETRY},
@@ -410,6 +416,9 @@ class ProductionHandlers:
             height=height,
             pipeline_run_id=run.run_id,
             step_run_id=step_run.step_run_id,
+            expected_current_revision_id=self._expected_artifact_revision(
+                step_run, unit, ARTIFACT_MASK
+            ),
             options_json=json.dumps(dict(parameters), sort_keys=True),
             provenance_json=json.dumps({"mask_record": record.as_dict()}, sort_keys=True),
         )
@@ -488,6 +497,9 @@ class ProductionHandlers:
             source_artifact_revision_id=upstream_revision,
             pipeline_run_id=run.run_id,
             step_run_id=step_run.step_run_id,
+            expected_current_revision_id=self._expected_artifact_revision(
+                step_run, unit, ARTIFACT_CLEAN
+            ),
             options_json=json.dumps(dict(step_result.provenance.get("options", {})), sort_keys=True),
             provenance_json=json.dumps(step_result.provenance, sort_keys=True, default=str),
         )
@@ -508,6 +520,22 @@ class ProductionHandlers:
     # ------------------------------------------------------------------
     # shared machinery
     # ------------------------------------------------------------------
+
+    @staticmethod
+    def _expected_artifact_revision(
+        step_run: StepRun, unit: PlanUnit, artifact_type: str
+    ):
+        """Expected artifact pointer for the prepare step.
+
+        Page-scoped units carry the artifact pointer in ``input_refs`` and the
+        pipeline seam flips it later, so the expectation is checked before
+        writing. Region-scoped units cannot express that pointer in
+        ``StepResult``; their write is guarded by
+        :meth:`ArtifactStepWriter.adopt_current` instead.
+        """
+        if unit.region_id:
+            return UNCHECKED
+        return step_run.input_refs.get(artifact_type)
 
     def _commit_artifacts(
         self, unit: PlanUnit, prepared: Mapping[str, PreparedArtifact]

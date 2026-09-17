@@ -138,7 +138,12 @@ class PreparedTextWrite:
 
 
 class OcrTextWriter(Protocol):
-    """Persist one OCR result without moving the pipeline-owned pointer."""
+    """Persist one OCR result without moving the pipeline-owned pointer.
+
+    ``expected_current_revision_id`` carries the writer's optimistic guard: an
+    implementation must refuse to write when the stored current revision has
+    moved on, exactly like the pipeline seam would.
+    """
 
     def prepare_ocr_text(
         self,
@@ -150,4 +155,5 @@ class OcrTextWriter(Protocol):
         options: dict[str, str] | None = None,
         source_run_id: str | None = None,
         source_step_run_id: str | None = None,
+        expected_current_revision_id: str | None = None,
     ) -> PreparedTextWrite: ...

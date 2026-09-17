@@ -319,23 +319,22 @@ def build_provider_registry(
                     KIND_ENDPOINT,
                     f"{_provider_settings(settings, PROVIDER_SAKURA).get('base_url', '')}|"
                     f"{_provider_settings(settings, PROVIDER_SAKURA).get('model', '')}",
-                    detail="local Sakura endpoint",
+                    detail="local Sakura endpoint (D02 §6.2.2)",
                 ),
             ),
-            note="local OpenAI-compatible Sakura server (D02 §6.2.2)",
+            note=(
+                "local OpenAI-compatible Sakura server; readiness means "
+                "'configured' — reachability is reported by the connection test"
+            ),
         ),
         translation_factory(
             PROVIDER_SAKURA,
             "local-sakura",
             config=sakura_config(
-                base_url=str(
-                    _provider_settings(settings, PROVIDER_SAKURA).get(
-                        "base_url", "http://127.0.0.1:8080/v1"
-                    )
-                ),
-                model=str(
-                    _provider_settings(settings, PROVIDER_SAKURA).get("model", "sakura")
-                ),
+                # No implicit default here: an unconfigured profile stays
+                # Not-Configured instead of pretending a service is there.
+                base_url=str(_provider_settings(settings, PROVIDER_SAKURA).get("base_url", "")),
+                model=str(_provider_settings(settings, PROVIDER_SAKURA).get("model", "")),
             ),
         ),
     )

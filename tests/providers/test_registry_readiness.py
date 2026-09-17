@@ -141,6 +141,52 @@ def test_binding_resolution_honours_snapshot_flags_and_shape() -> None:
         registry.resolve_binding(CAPABILITY_OCR, {"unrelated": "x"})
 
 
+def test_sakura_readiness_follows_its_profile_configuration() -> None:
+    """Configured == Ready is a configuration fact, not a reachability claim."""
+    unconfigured, _ = build_provider_registry(settings={})
+    assert unconfigured.status("sakura-local").state == ProviderState.NOT_CONFIGURED
+
+    configured, _ = build_provider_registry(
+        settings={
+            "providers": {
+                "profiles": {
+                    "sakura-local": {
+                        "base_url": "http://127.0.0.1:8080/v1",
+                        "model": "sakura",
+                    }
+                }
+            }
+        }
+    )
+    status = configured.status("sakura-local")
+    assert status.ready is True
+    assert "connection test" in status.detail or status.detail == ""
+
+
+def test_runtime_exposes_the_sakura_connection_test() -> None:
+    from infrastructure.providers.runtime import build_provider_runtime
+
+    runtime = build_provider_runtime(settings={})
+    assert runtime.sakura_probe is None  # no transport injected
+    assert runtime.sakura_base_url == "http://127.0.0.1:8080/v1"
+
+    with_transport = build_provider_runtime(
+        settings={
+            "providers": {
+                "profiles": {
+                    "sakura-local": {
+                        "base_url": "http://127.0.0.1:9999/v1",
+                        "model": "sakura",
+                    }
+                }
+            }
+        },
+        transport=object(),  # only used by the probe on demand
+    )
+    assert with_transport.sakura_probe is not None
+    assert with_transport.sakura_base_url == "http://127.0.0.1:9999/v1"
+
+
 def test_no_model_runtime_is_installed_in_this_environment() -> None:
     """Environment evidence for the registered BLOCKED items."""
     for module in ("torch", "diffusers", "numpy", "paddleocr", "manga_ocr"):

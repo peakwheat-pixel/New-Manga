@@ -89,7 +89,11 @@ class PreparedTranslationWrite:
 
 
 class TranslationWriter(Protocol):
-    """Persist machine translations without moving the pipeline pointer."""
+    """Persist machine translations without moving the pipeline pointer.
+
+    ``expected_current_revision_id`` is the writer's optimistic guard, matching
+    the pipeline seam's compare-and-set behaviour.
+    """
 
     def prepare_machine_translation(
         self,
@@ -101,6 +105,7 @@ class TranslationWriter(Protocol):
         options: dict[str, str] | None = None,
         source_run_id: str | None = None,
         source_step_run_id: str | None = None,
+        expected_current_revision_id: str | None = None,
     ) -> PreparedTranslationWrite: ...
 
 
