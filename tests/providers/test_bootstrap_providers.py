@@ -148,3 +148,25 @@ def test_ocr_handler_uses_the_managed_original_and_writes_one_region(
         assert text["ocr_text"] == ""
     finally:
         services.conn.close()
+
+
+def test_render_stack_and_full_chain_handlers_assemble(tmp_path: Path) -> None:
+    """TASK-033 AC ④: the render production assembly exists and the three
+    full-chain handlers are wired — with no heavy runtime installed
+    (same AC-OPTIONAL-001 environment)."""
+    from application.rendering.service import RenderService
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        assert isinstance(services.render, RenderService)
+        # the handlers mapping reaches the seam through the production executor
+        executor = services.pipeline._executor
+        for step_type in ("color", "term_extract", "render"):
+            assert step_type in executor._handlers, step_type
+        # the color step's page PNG input is part of the same assembly
+        from infrastructure.providers.handlers import PageImageSource
+
+        assert callable(PageImageSource.page_png)
+    finally:
+        services.conn.close()

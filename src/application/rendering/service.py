@@ -28,6 +28,7 @@ Frozen behaviour implemented here:
 from __future__ import annotations
 
 import json
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Sequence
@@ -115,7 +116,18 @@ class RenderService:
         compositor: ImageCompositor,
         source_styles: SourceStyleService,
         font_catalog: FontCatalog,
+        content_decoder: Callable[[str, bytes], bytes] | None = None,
     ) -> None:
+        """``content_decoder`` is a TASK-033 assembly bridge, opt-in and
+        behaviour-preserving: pipeline artifact revisions are stored in the
+        provider layer's ``NMFR`` container (``application/x-newmanga-frame``,
+        deliberately not a shareable image format), while rendering composes
+        on PNG. The assembly injects a decoder that converts such payloads
+        and passes anything else through unchanged; ``None`` (tests, and any
+        assembly whose artifacts are already PNG) keeps the historical
+        behaviour exactly. The application layer never imports the provider
+        container code — the decoder closure comes in from the assembly.
+        """
         self._region_repo = region_repo
         self._locator = locator
         self._artifacts = artifacts
@@ -124,6 +136,7 @@ class RenderService:
         self._compositor = compositor
         self._source_styles = source_styles
         self._font_catalog = font_catalog
+        self._content_decoder = content_decoder
 
     # ------------------------------------------------------------------
     # page rerender (D06 §41)
@@ -316,7 +329,10 @@ class RenderService:
         return self._locator.locate_current(page_id, ArtifactType.CLEAN)
 
     def _read_managed(self, relative_path: str) -> bytes:
-        return Path(self._storage.absolute_path(relative_path)).read_bytes()
+        data = Path(self._storage.absolute_path(relative_path)).read_bytes()
+        if self._content_decoder is not None:
+            return self._content_decoder(relative_path, data)
+        return data
 
     def _active_regions(self, page_id: str) -> Sequence:
         regions = [
