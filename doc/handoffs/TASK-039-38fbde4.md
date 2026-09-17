@@ -45,7 +45,7 @@ return stages.get("clean", StageState.NOT_STARTED).is_valid or previous.get("inp
 
 ## AC ④ 判别力 + 回归
 
-- **判别力**（[discriminability-pre-fix.log](../../verification/TASK-039/discriminability-pre-fix.log)）：新测试放修前 src（stash `service.py` 至 base `047164e`）→ **exit 1、7 failed / 1 passed**——唯一通过项是"probe=missing 时 BLOCKED 保持"守卫测试（该行为修前即正确，属预期）。
+- **判别力**（[discriminability-pre-fix.log](../../verification/TASK-039/discriminability-pre-fix.log)）：新测试放修前 src（stash `service.py` 至 base `047164e`）→ **exit 1、7 failed / 1 passed**。归因更正（Review R-002）：修前构造器无 `clean_probe` 参数，7 例失败中含 TypeError 型；**唯一通过是"手写 clean stage 仍被尊重"用例**（该路径不依赖 probe，修前即正确）——判别力结论（修复前后可区分、exit 1）成立。
 - **回归**：`tests/pipeline`+`tests/core` 81 passed（probe=None 下全部既有 planner 测试逐字节保持）；全仓 ×5 见下表；`tests/providers` 未触碰（TASK-038 契约在 W5 集成口径内）。
 
 ## 验证证据（同一 shell + 同一 venv）
@@ -55,8 +55,15 @@ return stages.get("clean", StageState.NOT_STARTED).is_valid or previous.get("inp
 | 场景 | 命令 | commit | 结果 |
 |---|---|---|---|
 | 本切片 | `pytest tests/pipeline/test_clean_availability.py -q -p no:cacheprovider -rf` | `38fbde4` | **8 passed / 0 skipped**、exit 0 |
-| pipeline+core 回归 | `pytest tests/pipeline tests/core -q -p no:cacheprovider -rf` | `38fbde4` | **81 passed / 0 skipped**、exit 0 |
+| pipeline+core 回归 | `pytest tests/pipeline tests/core -q -p no:cacheprovider -rf` | `38fbde4` | **89 passed / 0 skipped**、exit 0（修前同命令 81 + 新增 8；Review R-001 更正——初稿误记修前数字） |
 | 全仓 ×5 | `-q -rs -rf` 逐次 | `38fbde4` | **每次 780 passed / 0 skipped、exit 0**（[full-suite-runs.log](../../verification/TASK-039/full-suite-runs.log)） |
+
+## Review 处置记录
+
+- Review：[doc/reviews/TASK-039-38fbde4.md](../../doc/reviews/TASK-039-38fbde4.md)（`18c9834`）= **approved_subagent**（四轴 executed）。
+- R-001（P2）/R-002（P2）：**fixed（本文档修订）**——验证表数字更正（81→89 含口径说明）、判别力归因更正（见上）。
+- R-003（P3）：**deferred**——`test_clean_availability.py` 中挂在 helper 形态函数上的无效 `@pytest.mark.parametrize`（两组预期未被执行）与 `_service` helper 轻微重复，随下次该文件触碰清理。
+- R-004（P3）：**accepted**——AC ③"逐项不变"与 probe=present 矩阵的表述张力，Review 独立裁定"修复泛化"口径成立（`_clean_available` 是全部 render 单元唯一共享判据；probe=None 与修前逐字节等价；翻转仅 BLOCKED→RUN 且需 artifact 真实存在），已留档供 post-hoc 复审。
 
 ## AC ⑤ 与遗留
 
