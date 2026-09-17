@@ -113,3 +113,45 @@ def make_reading_service(tmp_path):
     from application.reading import ReadingService
 
     return ReadingService(JsonProgressDocumentStore(tmp_path / "progress.json"))
+
+
+def safe_property(obj, name):
+    """Read a QML property, tolerating a deleted C++ object.
+
+    Diagnostics must never replace the failure they describe: during a real
+    reproduction of the registered webtoon flaky the QML ``Image``/``Flickable``
+    can already be gone, and a bare ``obj.property(...)`` would raise
+    ``RuntimeError: Internal C++ object already deleted`` instead of letting the
+    underlying ``AssertionError`` surface (observed 2026-09-17, TASK-036).
+    Moved here from test_qml_contract (TASK-037) so the placeholder contract
+    is unit-testable without Qt.
+    """
+    if obj is None:
+        return None
+    try:
+        return obj.property(name)
+    except RuntimeError as error:  # pragma: no cover - deleted C++ object
+        return f"<unavailable: {error}>"
+
+
+def safe_number(obj, name, default=0.0):
+    """Read a QML property as a number for numeric wait conditions.
+
+    ``safe_property`` deliberately returns a *string* placeholder — right for
+    diagnostics, wrong for comparisons: ``(safe_property(x, "contentHeight")
+    or 0) > 0`` evaluates ``str > int`` and raises ``TypeError``, replacing
+    the real assertion failure with a crash (TASK-036 R-01). Numeric wait
+    conditions use this helper instead: a missing object or a non-numeric
+    value falls back to ``default``, so the comparison stays numeric, the
+    bounded wait keeps waiting, and the eventual assertion still reports
+    through ``safe_property`` diagnostics — never masking a real failure.
+    """
+    if obj is None:
+        return default
+    try:
+        value = obj.property(name)
+    except RuntimeError:  # pragma: no cover - deleted C++ object
+        return default
+    if isinstance(value, (int, float)):
+        return value
+    return default

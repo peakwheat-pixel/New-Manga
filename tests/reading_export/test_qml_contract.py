@@ -15,6 +15,8 @@ from reading_export_helpers import (
     make_reading_service,
     make_service,
     requires_pyside6,
+    safe_number,
+    safe_property,
     to_export_pages,
 )
 
@@ -134,23 +136,6 @@ def pump_traced(window, seconds, condition):
     return ok, f"pump({seconds:g}s): iterations={iterations} elapsed_ms={elapsed_ms} ok={ok}"
 
 
-def safe_property(obj, name):
-    """Read a QML property, tolerating a deleted C++ object.
-
-    Diagnostics must never replace the failure they describe: during a real
-    reproduction of the registered webtoon flaky the QML ``Image``/``Flickable``
-    can already be gone, and a bare ``obj.property(...)`` would raise
-    ``RuntimeError: Internal C++ object already deleted`` instead of letting the
-    underlying ``AssertionError`` surface (observed 2026-09-17, TASK-036).
-    """
-    if obj is None:
-        return None
-    try:
-        return obj.property(name)
-    except RuntimeError as error:  # pragma: no cover - deleted C++ object
-        return f"<unavailable: {error}>"
-
-
 def object_names(root, limit=25):
     """Collected ``objectName`` values, for failure diagnostics only."""
     if root is None:
@@ -183,14 +168,20 @@ def engine():
     qml_engine.deleteLater()
 
 
-def real_png_pages(tmp_path, count=3):
-    """真 PNG 页面：QML Image 解码器必须能加载，webtoon 才有 contentHeight。"""
+def real_png_pages(tmp_path, count=3, page_height=60):
+    """真 PNG 页面：QML Image 解码器必须能加载，webtoon 才有 contentHeight。
+
+    ``page_height=1000``（``reader_stack_webtoon``） produces a page whose
+    contentHeight can actually hold the 240 px scroll offset the webtoon
+    contract test writes; the default 40x60 page tops out at contentHeight=60,
+    which cannot scroll at all (see verification/TASK-037/clamp-race-probe.md).
+    """
     from PySide6.QtGui import QColor, QImage
 
     rows = []
     for index in range(count):
         path = tmp_path / f"page_{index}.png"
-        image = QImage(40, 60, QImage.Format.Format_RGB32)
+        image = QImage(40, page_height, QImage.Format.Format_RGB32)
         image.fill(QColor(120 + index * 30, 40, 40))
         assert image.save(str(path))
         rows.append(
@@ -207,6 +198,21 @@ def real_png_pages(tmp_path, count=3):
 @pytest.fixture()
 def reader_stack(tmp_path):
     pages = real_png_pages(tmp_path)
+    reading = make_reading_service(tmp_path)
+    export_service = make_service(tmp_path)
+    vm = ReaderViewModel(reading, Catalog(pages), export_service=export_service)
+    return vm, reading, pages
+
+
+@pytest.fixture()
+def reader_stack_webtoon(tmp_path):
+    """reader_stack with tall (40x1000) pages so the webtoon Flickable's
+    contentHeight (the page's natural height) can actually hold the 240 px
+    scroll offset the save/restore contract test writes — with the 40x60
+    default the content never becomes scrollable and the write races the
+    StopAtBounds extent fixup (verification/TASK-037/clamp-race-probe.md).
+    """
+    pages = real_png_pages(tmp_path, page_height=1000)
     reading = make_reading_service(tmp_path)
     export_service = make_service(tmp_path)
     vm = ReaderViewModel(reading, Catalog(pages), export_service=export_service)
@@ -276,8 +282,8 @@ def test_reader_rtl_ltr_key_order(engine, reader_stack):
 
 
 @requires_pyside6
-def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
-    vm, reading, pages = reader_stack
+def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack_webtoon):
+    vm, reading, pages = reader_stack_webtoon
     engine.rootContext().setContextProperty("readerViewModel", vm)
     window = load_host(engine, READER_HOST, SRC_QML / "reader")
     try:
@@ -298,13 +304,24 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
         # the page image loads asynchronously; contentHeight must exist
         # before contentY can be set past the clamp
         height_ok, height_trace = pump_traced(
-            window, 5.0, lambda: (safe_property(scroll, "contentHeight") or 0) > 0
+            window, 5.0, lambda: safe_number(scroll, "contentHeight") > 0
         )
         assert height_ok, (
             "webtoon image never produced a scrollable height — "
             f"{height_trace} {webtoon_save_diagnostics(root, scroll, reading)}"
         )
         scroll.setProperty("contentY", 240.0)
+        # The scroll offset must land and stay: with content that can hold a
+        # 240 px offset the StopAtBounds extent has nothing to clamp back
+        # (historically a 40x60 page capped contentHeight at 60 and the
+        # extent fixup rewrote the write to -0.0, persisting 0 — see
+        # verification/TASK-037/clamp-race-probe.md). This assertion turns
+        # that race into an immediate, diagnosable failure (TASK-037 AC ①).
+        landed = safe_number(scroll, "contentY")
+        assert landed == 240.0, (
+            "contentY write must land inside the scrollable extent — "
+            f"contentY={landed!r} {webtoon_save_diagnostics(root, scroll, reading)}"
+        )
         # the throttled save timer fires after ~500 ms
         saved_ok, saved_trace = pump_traced(
             window, 2.0, lambda: reading.progress.scroll_offset_y == 240.0
@@ -324,7 +341,7 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
             QGuiApplication.processEvents()
             reopen_iterations += 1
             scroll2 = find_by_name(root, "readerWebtoonScroll")
-            if scroll2 is not None and (safe_property(scroll2, "contentHeight") or 0) > 0:
+            if scroll2 is not None and safe_number(scroll2, "contentHeight") > 0:
                 break
             _time.sleep(0.05)
         assert scroll2 is not None, (
