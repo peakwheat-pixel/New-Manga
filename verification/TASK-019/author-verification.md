@@ -31,7 +31,7 @@
 | `src/infrastructure/providers/runtime.py` | 注册表装配（本地/远程/学习型）与 settings 契约 |
 | `src/application/translation/inpaint/mask.py` / `step.py` | Mask 几何/细化（不变量：final covers raw）与 Inpaint Step 编排（路由阻断、fallback 链、非目标保护、新 revision） |
 | `src/bootstrap/app.py` | **注入真实 handler 与 provider runtime**（`build_production_pipeline(conn, handlers=...)`），并提供 Managed Copy 像素/裁剪与 Region 几何来源 |
-| `tests/providers/**`（新增 12 文件） | 109 例：端口契约、就绪/缺依赖 fail-closed、retry/fallback、RegionID 协议、远程适配器、Sakura 探测、设备/OOM、模型生命周期、修复路由、seam 集成 |
+| `tests/providers/**`（新增 12 文件） | 110 例：端口契约、就绪/缺依赖 fail-closed、retry/fallback、RegionID 协议、远程适配器、Sakura 探测、设备/OOM、模型生命周期、修复路由、seam 集成 |
 
 `git diff --check 36242fb..5fdd80a` → **退出码 0**（无输出）。允许路径：`git diff --name-only c9eb65a..HEAD` 共 46 条，**0 条越界**（未触碰依赖清单、Schema/migration、`src/infrastructure/pipeline/**`、`src/application/translation/pipeline/**`、`AGENTS.md`、其他 Task 或生产数据）。
 
@@ -43,8 +43,10 @@
 
 - **Region 文本**：`RegionStepWriter` 在 `BEGIN IMMEDIATE` 内插入新 `region_revisions` 行并更新 `regions.text_json`，**不**改 `current_revision_id`；`StepResult.revision_updates={"region": <new>}` 由 seam 收编。
 - **页面 artifact（page 目标）**：`ArtifactStepWriter` 发布不可变文件 + 插入 `artifact_revisions` 行，**不**改 artifact pointer；`StepResult.revision_updates={"mask"/"clean": <new>}` 由 seam 收编。
-- **Region 目标的 artifact（`REINPAINT_REGION` 等）**：seam 对 region 目标只接受 `{"region": …}`，无法表达页面 artifact 指针，因此由 `ArtifactStepWriter.adopt_current()` 以**同样的 CAS 语义**完成指针收编，`StepResult` 不带 revision 更新。
+- **Region 目标的 artifact（`REINPAINT_REGION` 等）**：seam 对 region 目标只接受 `{"region": …}`，无法表达页面 artifact 指针，因此由 `ArtifactStepWriter.adopt_current()` 以**同样的 CAS 语义**完成指针收编，`StepResult` 不带 revision 更新。**页面级命令**（`REINPAINT_ALL/SELECTED/SINGLE`）由 planner 展开为 Region 单元（D06 §48），同样走这条路径。
 - 两侧都在写前用**期望当前 revision** 校验（`expected_current_revision_id`）：region 侧在事务内比对，artifact 侧在发布前比对；不匹配即 `LOCK_CHANGED`，**不产生任何写入**。
+- **同页多 Region 的修复是累积的**：`handle_inpaint` 以**当前 Clean 修订**为上游（D06 §22.1「Original / 当前上游图像」），不总是回到原图；实测 3 个 Region 生成 3 个 Clean revision，`source_artifact_revision_id` 依次串联（`test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean`）。
+- Region-less 页面的 artifact 步骤由 planner 在 OCR 前置阶段即 `BLOCKED`，不会到达 handler；handler 对非 Region 目标**显式失败**，不静默跳过。
 - 残留窗口（已知、已登记）：prepare 与 seam 收编之间存在极小的并发窗口。若该窗口内发生并发写，region 文本已在事务外提交、seam 会把该步骤记为 candidate 而不收编指针。本 Task 无法在不改 seam 的前提下完全消除；见 §5 风险 R-1。
 
 ### 2.2 fail-closed 与诚实分类
@@ -61,9 +63,9 @@
 | # | 命令（原样） | 退出码 | passed | skipped | 结果 |
 |---|---|---:|---:|---:|---|
 | 0 | `python -m pytest -q -p no:cacheprovider`（**基线** `c9eb65a`，改动前） | 0 | **530** | **6** | 改动前全仓基线 |
-| 1 | `python -m pytest tests/providers -q -p no:cacheprovider -rs` | **0** | **109** | **0** | 本 Task 新建套件全绿（`pytest-providers.log`） |
+| 1 | `python -m pytest tests/providers -q -p no:cacheprovider -rs` | **0** | **110** | **0** | 本 Task 新建套件全绿（`pytest-providers.log`） |
 | 2 | `python -m pytest tests/pipeline tests/core tests/storage -q -p no:cacheprovider -rs` | **0** | **78** | **0** | 强制回归：seam/bootstrap/storage 未回归（`pytest-regression.log`） |
-| 3 | `python -m pytest -q -p no:cacheprovider -rs` | **0** | **639** | **6** | 全仓（基线 530 → 639，+109 均为本 Task 新增）（`pytest-full.log`） |
+| 3 | `python -m pytest -q -p no:cacheprovider -rs` | **0** | **640** | **6** | 全仓（基线 530 → 640，+110 均为本 Task 新增）（`pytest-full.log`） |
 | 4 | `git diff --check 36242fb..5fdd80a` | **0** | — | — | 无输出（无空白错误） |
 | 5 | 允许路径核对 `git diff --name-only c9eb65a..HEAD` | — | — | — | 46/46 在允许范围内；禁止路径命中 **0**（`changed-paths.txt`） |
 | 6 | readiness 报告导出（真实装配） | **0** | — | — | `readiness-report.json`（六态与 `not_implemented` 分类） |
@@ -109,6 +111,7 @@
 | R-4 | TASK-017 报告 §4.1 提醒：除 401/403/429 外的其余 4xx 被显式归为不可重试请求侧错误；生产是否需要区分 408 等边缘状态 | 本 Task 沿用该口径并单测锁定；如需细原子集，应在网络栈单独裁决，不要直接照搬 |
 | R-5 | **疑似跨 Task 缺陷（非本 Task 引入，未修改）**：普通新建 Region 的 `sfx_policy` 默认 `'skip'`，而 `PipelineService._decide_step` 对 `skip/manual` 一律跳过 `translate`/`segment`/`mask_refine`/`inpaint`/`render`（不限 `region_type='sfx'`），因此**真实使用中普通对白 Region 的翻译/修复步骤会持续 `SKIP_POLICY`** | 证据：`src/infrastructure/sqlite/schema.py:229`（`DEFAULT 'skip'`）、`src/application/editing/service.py:254`（`create_region(sfx_policy=SfxPolicy.SKIP)`）、`src/domain/regions/entities.py:230`（域默认 SKIP）、`src/application/tasks/service.py:353-361`（skip/manual → SKIP_POLICY）、`src/infrastructure/sqlite/pipeline.py:709`（从 DB 列读取）与同一文件 `:103`／`src/domain/tasks/models.py:182`（快照默认却是 `"translate"`，两处口径不一致）；`src/ui/**` 中无任何 `sfx_policy` 写入路径（grep 0 命中），`tests/pipeline/test_pipeline.py:47` 的辅助函数默认写 `"translate"`。本 Task 未改动该行为（不在允许路径），集成夹具显式置 `sfx_policy='translate'`。**请 Codex 核对是否为既有设计意图**；若确认为缺陷，其影响面（P0 级：翻译链在真实使用中不执行）超出本 Task 范围 |
 | R-6 | 本 Task 新建 `src/ports/providers/errors.py`（共享错误/就绪分类）属 `src/ports/providers/**` 内的**新增模块**，而非既有字段扩展 | 任务文本允许该 glob 但限定「仅扩展 capability/可选字段」；此处按「新增文件不改变既有语义、不破坏既有测试」处理（`profiles.py` 仅加常量）。如判定越界，请退回并指定共享错误分类的落点 |
+| R-8 | **页面级 Mask/Clean artifact 与 Region 单元的对应关系**：`media_artifacts` 每页每类型只有一行，因此同页多 Region 的 `segment`/`mask_refine` 各生成 mask revision，但**当前 Mask 指针最终只指向最后一个 Region 的精修 mask**（历史 revision 全部保留，AC-INPAINT-001 的可读性成立，但「同页多 Region 的当前 mask」在数据模型上不可分辨）。Clean 侧因以上游 Clean 累积而不受影响 | 若产品需要按 Region 查看/编辑 mask，需要「mask artifact 按 Region 归属或合并为整页 mask」的数据模型裁决（Schema / D03 §16，超出本 Task 允许路径）。当前行为已由 `test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean`（6 个 mask revision）与 `test_reinpaint_chain_persists_masks_and_clean_revisions` 取证 |
 
 ## 6. 边界与合规
 

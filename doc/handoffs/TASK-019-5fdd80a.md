@@ -36,12 +36,12 @@ status: in_review
 | # | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|---|
 | 0 | 改动前基线 | `python -m pytest -q -p no:cacheprovider` | `c9eb65a`（释放提交） | **530 passed, 6 skipped**（基线事实） | — |
-| 1 | 新增套件 | `python -m pytest tests/providers -q -p no:cacheprovider -rs` | `5fdd80a` | **PASS**：109 passed, 0 skipped（退出码 0） | `pytest-providers.log` |
+| 1 | 新增套件 | `python -m pytest tests/providers -q -p no:cacheprovider -rs` | `5fdd80a` | **PASS**：110 passed, 0 skipped（退出码 0） | `pytest-providers.log` |
 | 2 | 强制回归 | `python -m pytest tests/pipeline tests/core tests/storage -q -p no:cacheprovider -rs` | `5fdd80a` | **PASS**：78 passed, 0 skipped（退出码 0） | `pytest-regression.log` |
-| 3 | 全仓 | `python -m pytest -q -p no:cacheprovider -rs` | `5fdd80a` | **PASS**：639 passed, 6 skipped（退出码 0；+109 全部为本 Task 新增） | `pytest-full.log` |
+| 3 | 全仓 | `python -m pytest -q -p no:cacheprovider -rs` | `5fdd80a` | **PASS**：640 passed, 6 skipped（退出码 0；+110 全部为本 Task 新增） | `pytest-full.log` |
 | 4 | skip 明细 | 同上 `-rs` | — | 6 条全部位于既有 `tests/network`：`openssl unavailable`（`test_connection_tester.py:106`、`test_transport_tls.py:39/47/62/69/83`），与本 Task 无关 | `pytest-full.log` |
 | 5 | AC-OCR-001/002、RFULL-002/003/005 | `pytest tests/providers/test_handlers_pipeline.py` | `5fdd80a` | **PASS**：真实 SQLite + 真实 seam；目标 Region 写入、A/C 未变、人工译文与锁保留、陈旧 revision 与锁被拒 | 同 1 |
-| 6 | AC-INPAINT-001/002/003/004 | `pytest tests/providers/test_inpaint.py tests/providers/test_handlers_pipeline.py` | `5fdd80a` | **PASS**：Mask 原始+精修两 revision 与文件、逐位回读、Clean revision 递增且旧版本保留、Router provenance、彩色路线选择与追踪 | 同 1 |
+| 6 | AC-INPAINT-001/002/003/004 | `pytest tests/providers/test_inpaint.py tests/providers/test_handlers_pipeline.py` | `5fdd80a` | **PASS**：Mask 原始+精修两 revision 与文件、逐位回读、Clean revision 递增且旧版本保留、Router provenance、彩色路线选择与追踪；页面级 `REINPAINT_ALL` 展开为 3 个 Region 单元、Clean 累积（3 revision 串联） | 同 1 |
 | 7 | AC-FALLBACK-001/002、D06 §56/§57 | `pytest tests/providers/test_retry_fallback.py` | `5fdd80a` | **PASS**：无显式 fallback 只试 primary；显式 fallback 记录两次尝试；重试不改变 payload；认证类错误不重试 | 同 1 |
 | 8 | AC-GPU-001/002/003 | `pytest tests/providers/test_devices.py` | `5fdd80a` | **PASS**：OOM → `OUT_OF_MEMORY` 且不逃逸；双线程 `max_observed=1`；CPU fallback 仅声明支持时发生并记录 provenance | 同 1 |
 | 9 | AC-OPTIONAL-001/002 | `pytest tests/providers/test_bootstrap_providers.py tests/providers/test_registry_readiness.py` | `5fdd80a` | **PASS**：本机无 torch/numpy/OCR 运行时仍完成真实装配；六态就绪报告 | `readiness-report.json` |
@@ -83,6 +83,7 @@ status: in_review
 | **R-5** | **疑似跨 Task 缺陷（未修改）**：普通新建 Region 默认 `sfx_policy='skip'`，planner 对所有 region type 的 `translate/segment/mask_refine/inpaint/render` 一律 `SKIP_POLICY`；`src/ui/**` 无任何写入路径 | 证据：`schema.py:229`、`application/editing/service.py:254`、`domain/regions/entities.py:230`、`application/tasks/service.py:353-361`、`sqlite/pipeline.py:709` vs `:103`（快照默认 `"translate"`，口径不一致）、`tests/pipeline/test_pipeline.py:47`（辅助默认 `translate`）。请 Codex 确认意图与归属；影响面为 P0 级 |
 | **R-6** | `src/ports/providers/errors.py` 为新增模块（任务文本允许该 glob 但限定「扩展 capability/可选字段」） | 若判定越界，请退回并指定共享错误/就绪分类的落点；`profiles.py` 仅新增 `CAPABILITY_DETECTION` 常量 |
 | **R-7** | 完整链与真实模型路线未收口，AC-RFULL-001 与全部质量/性能类 AC 仍 BLOCKED | 解锁条件：依赖获批 + 权重路径与 SHA-256；端点类需用户提供端点或明确取消该路线 |
+| **R-8** | 页级 Mask/Clean 与 Region 单元是「一页一 artifact 行」的既有数据模型：同页多 Region 各生成 mask revision，但当前 Mask 指针最终只指向最后一个 Region 的精修 mask（历史 revision 均保留；Clean 侧因累积上游不受影响） | 若产品需要按 Region 查看 mask，需要 mask artifact 归属（Schema/D03 §16）裁决，超出本 Task 允许路径。取证：`test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean`（6 个 mask revision） |
 
 ## 回退方法
 

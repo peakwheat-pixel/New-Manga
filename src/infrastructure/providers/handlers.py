@@ -63,6 +63,7 @@ from infrastructure.providers.step_writes import (
     PreparedArtifact,
     RegionStepWriter,
     artifact_payload_from_frame,
+    decode_frame_payload,
     decode_mask_payload,
     mask_payload,
 )
@@ -364,9 +365,7 @@ class ProductionHandlers:
             height=height,
             pipeline_run_id=run.run_id,
             step_run_id=step_run.step_run_id,
-            expected_current_revision_id=self._expected_artifact_revision(
-                step_run, unit, ARTIFACT_MASK
-            ),
+            expected_current_revision_id=UNCHECKED,
             options_json=json.dumps(dict(DEFAULT_MASK_PARAMS), sort_keys=True),
             provenance_json=json.dumps(
                 {"mask_record": record.as_dict(), "source": MASK_SOURCE_REGION_GEOMETRY},
@@ -416,9 +415,7 @@ class ProductionHandlers:
             height=height,
             pipeline_run_id=run.run_id,
             step_run_id=step_run.step_run_id,
-            expected_current_revision_id=self._expected_artifact_revision(
-                step_run, unit, ARTIFACT_MASK
-            ),
+            expected_current_revision_id=UNCHECKED,
             options_json=json.dumps(dict(parameters), sort_keys=True),
             provenance_json=json.dumps({"mask_record": record.as_dict()}, sort_keys=True),
         )
@@ -441,8 +438,6 @@ class ProductionHandlers:
         self, step_run: StepRun, unit: PlanUnit, run: PipelineRun
     ) -> StepResult:
         self._require_region(unit)
-        frame = self.deps.images.page_frame(unit.page_id)
-        current_mask = self._current_mask(unit.page_id)
         settings = self._section(run.settings_snapshot, "inpaint")
         policy = self._route_policy(settings)
         upstream_clean = self.deps.artifacts.artifact_for(unit.page_id, ARTIFACT_CLEAN)
@@ -451,6 +446,11 @@ class ProductionHandlers:
             if upstream_clean
             else None
         )
+        # D06 §22.1 "Original / 当前上游图像": when a Clean revision already
+        # exists it is the upstream, so repairing several Regions of one page
+        # accumulates instead of overwriting each other's pixels.
+        frame = self._upstream_frame(unit.page_id, upstream_clean, upstream_revision)
+        current_mask = self._current_mask(unit.page_id)
         features = RouterFeatures(
             mask_area_ratio=area_ratio(current_mask),
             is_speech_bubble=bool(settings.get("is_speech_bubble", True)),
@@ -497,9 +497,7 @@ class ProductionHandlers:
             source_artifact_revision_id=upstream_revision,
             pipeline_run_id=run.run_id,
             step_run_id=step_run.step_run_id,
-            expected_current_revision_id=self._expected_artifact_revision(
-                step_run, unit, ARTIFACT_CLEAN
-            ),
+            expected_current_revision_id=UNCHECKED,
             options_json=json.dumps(dict(step_result.provenance.get("options", {})), sort_keys=True),
             provenance_json=json.dumps(step_result.provenance, sort_keys=True, default=str),
         )
@@ -521,39 +519,51 @@ class ProductionHandlers:
     # shared machinery
     # ------------------------------------------------------------------
 
-    @staticmethod
-    def _expected_artifact_revision(
-        step_run: StepRun, unit: PlanUnit, artifact_type: str
-    ):
-        """Expected artifact pointer for the prepare step.
-
-        Page-scoped units carry the artifact pointer in ``input_refs`` and the
-        pipeline seam flips it later, so the expectation is checked before
-        writing. Region-scoped units cannot express that pointer in
-        ``StepResult``; their write is guarded by
-        :meth:`ArtifactStepWriter.adopt_current` instead.
-        """
-        if unit.region_id:
-            return UNCHECKED
-        return step_run.input_refs.get(artifact_type)
-
     def _commit_artifacts(
         self, unit: PlanUnit, prepared: Mapping[str, PreparedArtifact]
     ) -> tuple[dict[str, str], dict[str, StageState]]:
-        """Route prepared artifact revisions to the correct pointer owner."""
-        if unit.region_id:
-            # A region target's StepResult may only carry {"region": ...}, so
-            # the artifact pointer is compare-and-set here with the same guard.
-            for artifact in prepared.values():
-                self.deps.artifacts.adopt_current(
-                    artifact_id=artifact.artifact_id,
-                    revision_id=artifact.revision_id,
-                    expected_current_revision_id=artifact.previous_revision_id,
-                )
-            return {}, {unit.step_type: StageState.COMPLETED}
-        return (
-            {artifact_type: artifact.revision_id for artifact_type, artifact in prepared.items()},
-            {unit.step_type: StageState.COMPLETED},
+        """Adopt prepared artifact revisions for a Region-scoped step.
+
+        Artifact-writing steps (segment/mask_refine/inpaint) are always
+        Region-scoped here: the planner expands pages into Region units
+        (D06 §48), and a Region-less page has no valid OCR stage, so its
+        artifact steps are planned ``BLOCKED`` before any handler runs. A
+        Region target's ``StepResult`` may only carry ``{"region": ...}``, so
+        the page-level Mask/Clean pointer is compare-and-set here with the same
+        optimistic guard the pipeline seam would apply (AC-INPAINT-002).
+        """
+        if not unit.region_id:
+            raise ProviderInputError(
+                f"step {unit.step_type!r} requires a Region target",
+                stage=unit.step_type,
+            )
+        for artifact in prepared.values():
+            self.deps.artifacts.adopt_current(
+                artifact_id=artifact.artifact_id,
+                revision_id=artifact.revision_id,
+                expected_current_revision_id=artifact.previous_revision_id,
+            )
+        return {}, {unit.step_type: StageState.COMPLETED}
+
+    def _upstream_frame(
+        self, page_id: str, clean_artifact_id: str | None, clean_revision_id: str | None
+    ) -> ImageFrame:
+        """Current Clean revision when present, otherwise the Managed Copy."""
+        if not clean_artifact_id or not clean_revision_id:
+            return self.deps.images.page_frame(page_id)
+        row = self.deps.artifacts.conn.execute(
+            "SELECT managed_path FROM artifact_revisions WHERE artifact_revision_id = ?",
+            (clean_revision_id,),
+        ).fetchone()
+        if row is None:
+            raise ProviderUnavailable(
+                "the current Clean Revision is missing from the database",
+                stage=STEP_INPAINT,
+            )
+        payload = self.deps.artifacts.read_path(row["managed_path"]).read_bytes()
+        header, raw = decode_frame_payload(payload)
+        return ImageFrame(
+            int(header["width"]), int(header["height"]), str(header["mode"]), raw
         )
 
     def _current_mask(self, page_id: str) -> BooleanMask:

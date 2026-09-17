@@ -7,7 +7,7 @@
 ........................................................................ [ 66%]
 ........................................................................ [ 78%]
 ........................................................................ [ 89%]
-.....................................................................    [100%]
+......................................................................   [100%]
 =========================== short test summary info ===========================
 SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
 SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
@@ -15,4 +15,4 @@ SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
 SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
 SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
 SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
-639 passed, 6 skipped in 24.52s
+640 passed, 6 skipped in 25.12s

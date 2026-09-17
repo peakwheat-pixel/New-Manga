@@ -468,7 +468,10 @@ def test_reinpaint_chain_persists_masks_and_clean_revisions(workspace) -> None:
     )
     service.plan_run(second.run_id)
     executed_again = service.execute_run(second.run_id)
-    assert executed_again.status is PipelineRunStatus.COMPLETED
+    assert executed_again.status is PipelineRunStatus.COMPLETED, [
+        (step.step_type, step.error_code, step.error_detail)
+        for step in executed_again.step_runs
+    ]
     clean_rows = conn.execute(
         "SELECT artifact_revision_id, revision_no FROM artifact_revisions"
         " WHERE artifact_id = ? ORDER BY revision_no",
@@ -511,6 +514,81 @@ def test_unimplemented_route_blocks_without_writing_anything(workspace) -> None:
         ).fetchone()[0]
         == 0
     )
+
+
+def test_page_scope_reinpaint_expands_to_regions_and_accumulates_clean(workspace) -> None:
+    """Page-scope commands expand into Region units (D06 §48) and stay cumulative."""
+    conn = workspace["conn"]
+    # Every Region of the page has already been OCR'ed (the planner requires a
+    # valid OCR stage before segment; see the fixture note).
+    for region_id in ("region-a", "region-c"):
+        conn.execute(
+            "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+            " VALUES ('region', ?, 'ocr', 'completed', ?)",
+            (region_id, NOW),
+        )
+    conn.commit()
+    service = _pipeline(
+        workspace,
+        settings={
+            "inpaint": {
+                "dilate_radius": 0,
+                "erode_radius": 0,
+                "route_policy": {
+                    "allowed_routes": [ROUTE_SIMPLE_FILL, ROUTE_EDGE_BLEED],
+                    "requirements": {ROUTE_SIMPLE_FILL: True, ROUTE_EDGE_BLEED: True},
+                },
+            }
+        },
+    )
+    run = service.create_run(
+        CommandType.REINPAINT_ALL, PipelineScope(ScopeType.PAGE, selected_ids=("page-1",))
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED, [
+        (step.step_type, step.error_code, step.error_detail) for step in executed.step_runs
+    ]
+    step_types = [step.step_type for step in executed.step_runs]
+    assert step_types.count("segment") == 3
+    assert step_types.count("mask_refine") == 3
+    assert step_types.count("inpaint") == 3
+    # Every unit is Region-scoped even though the command was page-scoped.
+    assert {step.target_id for step in executed.step_runs} == {
+        "region-a",
+        "region-b",
+        "region-c",
+    }
+
+    clean_artifact = conn.execute(
+        "SELECT artifact_id FROM media_artifacts WHERE artifact_type = 'clean'"
+    ).fetchone()
+    clean_rows = conn.execute(
+        "SELECT artifact_revision_id, revision_no, source_artifact_revision_id"
+        " FROM artifact_revisions WHERE artifact_id = ? ORDER BY revision_no",
+        (clean_artifact["artifact_id"],),
+    ).fetchall()
+    assert [row["revision_no"] for row in clean_rows] == [1, 2, 3]
+    # Each region's repair is based on the previous Clean revision: the page's
+    # repairs accumulate instead of overwriting each other.
+    assert clean_rows[0]["source_artifact_revision_id"] is None
+    assert clean_rows[1]["source_artifact_revision_id"] == clean_rows[0]["artifact_revision_id"]
+    assert clean_rows[2]["source_artifact_revision_id"] == clean_rows[1]["artifact_revision_id"]
+    current = conn.execute(
+        "SELECT current_revision_id FROM media_artifacts WHERE artifact_id = ?",
+        (clean_artifact["artifact_id"],),
+    ).fetchone()["current_revision_id"]
+    assert current == clean_rows[2]["artifact_revision_id"]
+
+    mask_artifact = conn.execute(
+        "SELECT artifact_id FROM media_artifacts WHERE artifact_type = 'mask'"
+    ).fetchone()
+    mask_count = conn.execute(
+        "SELECT COUNT(*) FROM artifact_revisions WHERE artifact_id = ?",
+        (mask_artifact["artifact_id"],),
+    ).fetchone()[0]
+    assert mask_count == 6  # raw + refined per Region, history preserved
 
 
 def test_missing_provider_binding_fails_closed(workspace) -> None:
