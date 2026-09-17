@@ -2,7 +2,7 @@
 id: TASK-021
 title: 完善备份恢复、回收站、清理与诊断
 kind: implementation
-status: in_progress
+status: done（子集；其余子集 frozen，见下）
 approval: approved_by_user
 suggested_owner: Codex
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-006, TASK-011, TASK-015]
 base_commit: 047164ea080651741b38b20a36470115d4830a0d
 branch: agent/zcode/TASK-021-backup-trash-cleanup-diagnostics
 worktree: G:/CODEX/New Manga.worktrees/TASK-021-zcode
-integration_commit: null
+integration_commit: 5bc17f8cb0af682578166357a2c4ba8eedab644c
 ---
 
 # TASK-021：完善备份恢复、回收站、清理与诊断
@@ -36,7 +36,10 @@ D03 §32～34/45；D07 §37～62/90～92；D08 AC-BACKUP/TRASH/CACHE/DISK/LOG/CL
 - [ ] SQLite一致性备份、迁移前备份、恢复前备份、完整性和版本检查；失败不留下半迁移可写DB。
 - [ ] 缓存/版本/模型清理分开，保护current/pinned/活动输入输出/备份引用，低磁盘可诊断。
 - [ ] 日志轮转、错误定位、诊断包默认无Secret/原图/完整Prompt；数据/版本/模型metadata可追溯。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] **子集交付**（软删除/同 batch 恢复/永久删除只作用受控数据）：Handoff=[doc/handoffs/TASK-021-887e0d6.md](../handoffs/TASK-021-887e0d6.md)；Review=[doc/reviews/TASK-021-887e0d6.md](../reviews/TASK-021-887e0d6.md)（**approved_subagent**，报告 commit `a9b4141`，四轴 executed；R-001 P2 open 登记处置计划、R-002~R-004 P3 不阻断）；集成=`5bc17f8`（merge，parents `22eafa8`+`a9b4141`），集成后复验全仓 **786 passed / 0 skipped**、exit 0。**其余子集（备份/恢复、缓存/版本/模型清理、日志/诊断包）frozen**——窗口时间预算下的取舍（round2 指令：只交付一个完整子集）。
+- [ ] 备份/恢复子集：frozen（未开始，恢复条件=后续窗口或常规释放）。
+- [ ] 缓存/版本/模型清理子集：frozen（同上）。
+- [ ] 日志轮转与诊断包子集：frozen（同上）。
 
 ## 允许修改范围
 
@@ -77,3 +80,4 @@ D03 §32～34/45；D07 §37～62/90～92；D08 AC-BACKUP/TRASH/CACHE/DISK/LOG/CL
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 - **最近状态（当前，唯一）**：2026-09-18 04:5x 由 ZCode 在窗口第二轮开工（W7，status→`in_progress`；启动门达标：TASK-038 `f835ac9` + TASK-039 `c8024fe` 均于 06:30 前集成）；分支 `git merge master` 快进至 `22eafa8`。**自洽子集选定**：AC「软删除和同 batch 恢复、永久删除只作用受控数据」（Page 级）。**Schema 预检通过**：books/chapters/pages 均已有 `deleted_at` 列（schema :36/:46/:56）、`soft_delete_page` 已存在（library.py:371）——无需回抛 Schema。
+- **最近状态（当前，唯一）**：子集实现 head=`887e0d6`（repository trash 4 方法 + `remove_managed` 防逃逸 + `application/maintenance/` 新子包 + `TrashService` 装配 + `tests/storage/test_trash.py` 5 例 + 装配契约 1 例，全过；library 回归含在 mandated）。Review `a9b4141`=**approved_subagent**（四轴 executed；R-001 **P2 open**＝跨 batch 重叠 page_id 的 API 层串扰——集成后修复/并入 trash 后续子集，处置计划已登记；R-002~R-004 P3 不阻断）。集成 `5bc17f8`，集成后复验全仓 786 passed/0 skipped exit 0。**本子集已收口 done；其余子集 frozen；期满后须 Codex + DSH 外部 post-hoc 复审（可推翻）。**
