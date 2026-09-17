@@ -219,9 +219,25 @@ def reader_stack_webtoon(tmp_path):
     return vm, reading, pages
 
 
+class _EmptyCatalog:
+    """ReaderPageCatalog double: an openable chapter that has no pages yet."""
+
+    def list_pages(self, chapter_id):
+        return []
+
+
 @requires_pyside6
-def test_reader_loads_standalone_with_empty_state(engine):
-    """生产装配尚未注入 readerViewModel：页面必须可加载且显示空状态。"""
+def test_reader_loads_with_injected_viewmodel_shows_empty_state(engine, tmp_path):
+    """TASK-038 AC ①（前提变化的等价更新，非放宽）：生产装配
+    （bootstrap.assemble_engine）自本切片起注入 readerViewModel——原用例
+    "生产装配尚未注入 readerViewModel：页面必须可加载且显示空状态"的前提
+    已不存在。本用例改为断言注入后的行为：以生产同型的方式注入一个尚未
+    打开章节的 ViewModel（production assembly 走 _ManagedReaderCatalog；
+    此处用无页面 catalog 等价），页面必须可加载、空态照常显示、注入的 VM
+    被页面消费（hasChapter=False）。"""
+    reading = make_reading_service(tmp_path)
+    vm = ReaderViewModel(reading, _EmptyCatalog(), export_service=make_service(tmp_path))
+    engine.rootContext().setContextProperty("readerViewModel", vm)
     window = load_host(engine, READER_HOST, SRC_QML / "reader")
     try:
         root = find_by_name(window, "readerView")
@@ -229,6 +245,7 @@ def test_reader_loads_standalone_with_empty_state(engine):
         empty = find_by_name(root, "readerEmptyState")
         assert empty is not None and bool(empty.property("visible"))
         assert find_by_name(root, "readerToolbar") is not None
+        assert vm.hasChapter is False
     finally:
         window.close()
 

@@ -25,7 +25,6 @@ from __future__ import annotations
 
 import hashlib
 import os
-import uuid
 from collections import OrderedDict
 from dataclasses import dataclass
 from pathlib import Path
@@ -318,17 +317,9 @@ def _qt_rect(x: int, y: int, width: int, height: int):
     return QRect(int(x), int(y), int(width), int(height))
 
 
-def default_cache_root() -> Path:
-    """Rebuildable tile cache under the shared data root."""
-    root = os.environ.get("NEWMANGA_DATA_ROOT")
-    base = Path(root) if root else Path.home() / ".newmanga"
-    return base / "cache" / "webtoon-tiles" / uuid.uuid4().hex[:8]
-
-
 __all__ = [
     "TileCache",
     "TileGrid",
     "TileSpec",
     "TiledPageRasterizer",
-    "default_cache_root",
 ]
