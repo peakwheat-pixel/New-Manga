@@ -2,7 +2,7 @@
 id: TASK-019
 title: 集成已验证的检测/OCR/翻译/修复 Provider
 kind: implementation
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024]
 base_commit: 36242fb00f9f432ec66cc3c33afc167578d0f341
 branch: agent/deepseek/TASK-019-provider-integration
 worktree: G:/CODEX/New Manga.worktrees/TASK-019-deepseek
-integration_commit: null
+integration_commit: 3755af9
 ---
 
 # TASK-019：集成已验证的检测/OCR/翻译/修复 Provider
@@ -44,7 +44,7 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - [x] D08 §78 的 AC-EXT-SAKURA-001：Sakura Profile 连接测试给出健康/就绪状态与原因，探测范围遵守 U-6；真实服务验证与实现证据必须实测，当前 D13 结果 NOT_RUN。SAKURA-002/003 仍为草案，不自动纳入本任务。
       → 探测实现 **PASS**（5 种结果与原因码；仅请求 `/models`（必要时 `/health`），无显存/负载字段）；**真实服务验证 `NOT_RUN`**：本机无 Sakura 实例，已用真实 `StdlibTransport` 执行一次真实探测（`unreachable` / `connection refused`）。SAKURA-002/003 未实现。
 - [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
-      → Handoff：[TASK-019-726baf5](../handoffs/TASK-019-726baf5.md)；取证：[verification/TASK-019/](../verification/TASK-019/author-verification.md)。**Review 与集成尚未执行**，本 Task 不自行标记 `approved`/`done`。
+      → Handoff：[TASK-019-726baf5](../handoffs/TASK-019-726baf5.md)；取证：[verification/TASK-019/](../verification/TASK-019/author-verification.md)；**非作者独立 Review**：[doc/reviews/TASK-019-726baf5.md](../reviews/TASK-019-726baf5.md)（decision=`approved`，F-1～F-7）；**集成**：`integration_commit=3755af9`，集成后复验见 [verification/TASK-019/integration-3755af9.md](../../verification/TASK-019/integration-3755af9.md)。
 
 ## 允许修改范围
 
@@ -99,5 +99,29 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
   - 命令与结果（本机 `G:/CODEX/New Manga.task-envs/TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，退出码全部 0）：基线 `python -m pytest -q -p no:cacheprovider` = **530 passed / 6 skipped**；`python -m pytest tests/providers` = **110 passed / 0 skipped**；`python -m pytest tests/pipeline tests/core tests/storage` = **78 passed / 0 skipped**；全仓 = **640 passed / 6 skipped**（+110 全部为本 Task 新增；6 条 skip 均在既有 `tests/network`，原因 `openssl unavailable`）。`git diff --check 36242fb..726baf5` 退出码 0；`git diff --name-only c9eb65a..HEAD` 56 条**全部在允许路径内**，禁止路径命中 0。
   - 真实探测（非 mock）：生产 `SakuraProbe` + `StdlibTransport` 对 `http://127.0.0.1:8080/v1` 发起真实连接 → `reason_code=unreachable`、`connection refused`、仅 1 个请求（各证明探测可用与 U-6 范围）。
   - **BLOCKED/NOT_RUN 如实分列**：真实 OCR/韩文 OCR/真实彩色修复质量、真实翻译质量与成本/时延、真实权重下载、`color`/`term_extract`/`render` 接线（AC-RFULL-001 完整链）为 `BLOCKED`；真实 Sakura 服务验证、真实端点端到端为 `NOT_RUN`。**未以 mock/替身冒充模型质量或真实端点**。
-- **最近状态（当前，唯一）**：2026-09-17 实现完成并置 **`in_review`**，交 Codex 非作者独立 Review（集成由 Codex 执行）。分支 `agent/deepseek/TASK-019-provider-integration`、worktree `G:/CODEX/New Manga.worktrees/TASK-019-deepseek`、fixed base `36242fb`、delivery head `726baf5`（`07d78d3` 开工文档、`8effbeb` 实现主体、`5fdd80a` 写入守卫与一致性、`3176520` 取证文档、`726baf5` 页面级修复累积与端到端用例）。**未 push、未合并 master**。范围判定登记：新增 `src/ports/providers/errors.py`（共享错误/就绪分类）属允许 glob 内的**新增模块**，`src/ports/providers/profiles.py` 仅新增 `CAPABILITY_DETECTION` 常量、未改既有字段语义；如 Reviewer 判定越界请退回并指定落点（Handoff 风险 R-6）。同批登记待 Codex 裁决项：AC-RFULL-001 的 `color`/`term_extract`/`render` handler 归属与允许路径（R-2）、彩色/复杂场景拒绝单色基线的产品取舍（R-3）、**页面级 Mask artifact 与 Region 单元的一对多关系**（R-8：当前 Mask 指针最终只指向最后一个 Region 的精修 mask，历史 revision 保留；按 Region 查看 mask 需数据模型裁决）、以及 **R-5 疑似跨 Task 缺陷**（普通新建 Region 默认 `sfx_policy='skip'` 导致 planner 对 `translate/segment/mask_refine/inpaint/render` 一律 `SKIP_POLICY`，`src/ui/**` 无写入路径；证据见取证 §5）。
+- **最近状态（当前，唯一）**：2026-09-17 **`done`**——实现完成（交付 head `726baf5`，元数据 `6c981c2`）→ 非作者独立 Review `approved`（[doc/reviews/TASK-019-726baf5.md](../reviews/TASK-019-726baf5.md)，F-1～F-7）→ Codex 集成 `integration_commit=3755af9`（merge，parents `7c635d5`+`6c981c2`）。集成后复验（master）：`tests/providers` **110 passed / 0 skipped**、`tests/pipeline tests/core tests/storage` **78 passed / 0 skipped**、全仓 **640 passed / 6 skipped**（6 项均为既有 `tests/network` 的 `openssl unavailable`）；Reviewer 另以自写脚本独立跑通生产 `assemble_services`（12 个 Provider 四态、四条学习型路线 `not_ready/PROVIDER_NOT_IMPLEMENTED`、GPU `unavailable`）。**BLOCKED/NOT_RUN 与后继项见下节，不得视为通过**；分支 `agent/deepseek/TASK-019-provider-integration`、worktree `G:/CODEX/New Manga.worktrees/TASK-019-deepseek`、fixed base `36242fb`；未 push。
+
+## 集成后登记（2026-09-17，Codex）
+
+### 范围变更（批准）
+
+`src/ports/providers/**` 内**新增独立模块**获准：本 Task 新增 `src/ports/providers/errors.py` 作为四类能力共享的错误/就绪分类家，零既有语义改动（`profiles.py` 仅新增 `CAPABILITY_DETECTION` 并并入 `ALL_CAPABILITIES`）。流程提醒：新增模块应**先**申请范围变更再落盘，本次为事后追加（Review F-3）。
+
+### Findings 处置
+
+| ID | 级别 | 内容 | 处置 |
+|---|---|---|---|
+| F-1 / R-5 | **P0（既有，跨 Task）** | `sfx_policy` 默认 `skip` + planner（`src/application/tasks/service.py:353-361`）**不检查 `region_type`** → 真实默认下普通（SPEECH）Region 的 `translate/segment/mask_refine/inpaint/render` 全被 `SKIP_POLICY` 跳过；新建 Region 默认 `SKIP`（`entities.py:230`、`schema.py:229`、`editing/service.py:254`），`src/ui/**` 无写入路径；既有测试辅助默认 `"translate"`（`tests/pipeline/test_pipeline.py:47`）故照不到 | **不属本 Task，未修**。需用户/Codex 裁决：①`sfx_policy` 是否只作用于 SFX 类型 Region；②新建 Region 默认应为 `skip` 还是 `translate`（含 `sqlite/pipeline.py` 快照默认口径不一致）。裁决后作为**独立 Task** 释放并补真实默认值回归用例；在此之前"重全翻译链在真实使用中可用"**不成立** |
+| F-2 / R-2 | P2 | AC-RFULL-001 的 `color`/`term_extract`/`render` handler 不在本 Task 允许路径 | **Codex 裁决：不扩展本 Task 范围**；AC-RFULL-001 保持 `BLOCKED`，作为后继切片输入（需用户批准释放） |
+| F-4 / R-3 | P2 | 彩色/高复杂度场景拒绝单色基线（fail-closed，不静默降级） | **待用户裁决**（产品取舍）；当前实现维持 fail-closed |
+| F-5 / R-8 | P3 | 页级 mask artifact 与 Region 一对多（指针最终指向最后一个 Region 的精修 mask；历史 revision 保留） | 接受；按 Region 检索 mask 需 Schema/D03 §16 裁决 |
+| F-6 / R-1 | P3 | prepare-only 与 seam 指针收编之间的残余并发窗口 | 接受（后果有界：该步骤记 candidate、内容 revision 保留、指针不回退；已有期望 revision CAS 缓解）；彻底修复需 seam 改动，超出允许路径 |
+| F-3 / R-6 | P3（流程） | 新增共享错误/就绪模块未先申请范围变更 | 追加授权为允许；已登记（见上） |
+
+### 未关闭项（不得视为通过）
+
+- **AC-RFULL-001 完整链** `BLOCKED`，且有两个独立原因：F-2（缺 `color`/`term_extract`/`render` handler）与 F-1（真实默认策略会跳过整条链）。
+- 真实 OCR / 韩文 OCR / 真实彩色修复 / 真实翻译的**质量**与**成本/时延**：`BLOCKED`（无依赖、无权重、无端点）。
+- AC-EXT-SAKURA-001 **真实服务验证**：`NOT_RUN`（本机无 Sakura）；探测实现本身 PASS。
+- 真实权重下载、真实 GPU OOM 复现：`BLOCKED` / `NOT_RUN`。
 - 历史状态（2026-09-17 释放前）：窗口条款登记 `blocked`；U-6 已批准 Sakura 监控范围；AC-EXT-SAKURA-001 已正式编号并追踪为 `NOT_RUN`；TASK-018 已 `ready` 但未完成；TASK-017 真实 Provider 协议/成本/时延 `NOT_RUN`（付费端点未配置）；本机 Sakura 未运行。
