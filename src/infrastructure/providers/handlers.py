@@ -49,12 +49,12 @@ from infrastructure.providers.fallback import (
     chain_from_binding,
     run_chain,
 )
-from infrastructure.providers.inpaint_router import (
+from application.translation.inpaint.route_catalog import provider_id_for_route
+from application.translation.inpaint.router import (
     RoutePolicy,
     RouterFeatures,
     require_route,
 )
-from infrastructure.providers.inpaint_routes import provider_id_for_route
 from infrastructure.providers.registry import ProviderRegistry
 from infrastructure.providers.retry import RetryPolicy
 from infrastructure.providers.step_writes import (

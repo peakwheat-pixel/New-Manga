@@ -1,11 +1,11 @@
-"""Dependency-free inpaint routes and the fail-closed route gate.
+"""Dependency-free inpaint route implementations (raster mechanism only).
 
-TASK-018 R-007 is the governing rule: the route table is an **explicit**
-mapping, and a route that has no implementation is ``not_implemented`` even
-when every dependency is satisfied. Two routes are implemented and measurable
-today (Simple Fill, Edge Bleed); the learned routes (Manga LaMa, AOT-GAN,
-BrushNet/PowerPaint, FLUX Fill) are declared but unimplemented in this Task —
-their quality/perf evidence stays BLOCKED rather than being simulated.
+The route **declaration and fail-closed gate** (TASK-018 R-007) and the
+non-target protection **rule** live in the application layer
+(``application/translation/inpaint/route_catalog.py`` and ``protection.py``);
+this module keeps only the bytes-level implementations and their providers, so
+no application module has to import infrastructure (Standards S-1/S-2 of the
+TASK-019 review).
 
 Non-target protection is enforced after every repaint: pixels outside the
 final mask must be byte-identical, otherwise
@@ -18,11 +18,10 @@ from __future__ import annotations
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass, field
 
+from application.translation.inpaint.protection import protected_pixel_violations
+from application.translation.inpaint.route_catalog import route_gate
 from ports.inpaint.ports import (
-    IMPLEMENTED,
-    LEARNED_ROUTES,
     MODE_BYTES_PER_PIXEL,
-    NOT_IMPLEMENTED,
     ROUTE_EDGE_BLEED,
     ROUTE_SIMPLE_FILL,
     BooleanMask,
@@ -37,126 +36,6 @@ from ports.providers.errors import (
 )
 
 DEFAULT_FILL_RGB = (255, 255, 255)
-
-
-@dataclass(frozen=True)
-class RouteRecord:
-    """The declared state of one route — dependency satisfaction is separate."""
-
-    route: str
-    state: str
-    reason: str
-    requires_gpu: bool = False
-    dependency_free: bool = False
-    #: Provider registry id that implements this route ("" when none exists).
-    provider_id: str = ""
-
-    @property
-    def runnable(self) -> bool:
-        return self.state == IMPLEMENTED
-
-    def as_dict(self) -> dict:
-        return {
-            "route": self.route,
-            "state": self.state,
-            "reason": self.reason,
-            "requires_gpu": self.requires_gpu,
-            "dependency_free": self.dependency_free,
-            "provider_id": self.provider_id,
-        }
-
-
-#: Explicit route table (TASK-018 R-007). Absent route -> KeyError by design.
-ROUTE_TABLE: dict[str, RouteRecord] = {
-    ROUTE_SIMPLE_FILL: RouteRecord(
-        ROUTE_SIMPLE_FILL,
-        IMPLEMENTED,
-        "dependency-free baseline",
-        dependency_free=True,
-        provider_id="inpaint-simple-fill",
-    ),
-    ROUTE_EDGE_BLEED: RouteRecord(
-        ROUTE_EDGE_BLEED,
-        IMPLEMENTED,
-        "dependency-free structural baseline (not a learned model)",
-        dependency_free=True,
-        provider_id="inpaint-edge-bleed",
-    ),
-    "manga-lama": RouteRecord(
-        "manga-lama",
-        NOT_IMPLEMENTED,
-        "not implemented: no learned runtime/weights in this build",
-        requires_gpu=True,
-        provider_id="inpaint-manga-lama",
-    ),
-    "aot-gan": RouteRecord(
-        "aot-gan",
-        NOT_IMPLEMENTED,
-        "not implemented: no learned runtime/weights in this build",
-        requires_gpu=True,
-        provider_id="inpaint-aot-gan",
-    ),
-    "brushnet": RouteRecord(
-        "brushnet",
-        NOT_IMPLEMENTED,
-        "not implemented: no learned runtime/weights in this build",
-        requires_gpu=True,
-        provider_id="inpaint-brushnet",
-    ),
-    "flux-fill": RouteRecord(
-        "flux-fill",
-        NOT_IMPLEMENTED,
-        "not implemented: no learned runtime/weights in this build",
-        requires_gpu=True,
-        provider_id="inpaint-flux-fill",
-    ),
-}
-
-
-def route_record(route: str) -> RouteRecord:
-    """Look up a route; an unregistered name is a hard error (R-007)."""
-    try:
-        return ROUTE_TABLE[route]
-    except KeyError:
-        raise ProviderNotImplemented(
-            f"unknown inpaint route: {route!r}", stage="inpaint"
-        ) from None
-
-
-def provider_id_for_route(route: str) -> str:
-    """Registry id implementing one route; empty when no provider exists."""
-    return route_record(route).provider_id
-
-
-def route_gate(
-    route: str,
-    *,
-    requirements_satisfied: bool = True,
-) -> RouteRecord:
-    """Decide runnability: implementation first, then dependencies (R-007)."""
-    record = route_record(route)
-    if not record.runnable:
-        return record
-    if not requirements_satisfied:
-        return RouteRecord(
-            record.route,
-            NOT_IMPLEMENTED,
-            "required runtime/weights are missing",
-            requires_gpu=record.requires_gpu,
-            dependency_free=record.dependency_free,
-        )
-    return record
-
-
-def describe_routes() -> tuple[RouteRecord, ...]:
-    return tuple(ROUTE_TABLE[route] for route in sorted(ROUTE_TABLE))
-
-
-def learned_routes_declared() -> frozenset[str]:
-    """Guard: the learned set and the unimplemented set must stay in sync."""
-    return frozenset(
-        route for route, record in ROUTE_TABLE.items() if not record.runnable
-    ) & LEARNED_ROUTES
 
 
 # ----------------------------------------------------------------------
@@ -236,25 +115,6 @@ def edge_bleed(
                     _set_pixel(buffer, (y * width + x) * bpp, averaged)  # type: ignore[arg-type]
         remaining = next_remaining
     return ImageFrame(width, height, image.mode, bytes(buffer))
-
-
-def protected_pixel_violations(
-    before: ImageFrame, after: ImageFrame, mask: BooleanMask
-) -> tuple[tuple[int, int], ...]:
-    """Pixels that changed **outside** the mask; must be empty before commit."""
-    if (before.width, before.height) != (after.width, after.height):
-        raise ProviderInputError("image size changed during inpaint", stage="inpaint")
-    bpp = MODE_BYTES_PER_PIXEL[before.mode]
-    violations: list[tuple[int, int]] = []
-    for y, row in enumerate(mask.rows):
-        base = y * before.width * bpp
-        for x, cell in enumerate(row):
-            if cell:
-                continue
-            offset = base + x * bpp
-            if before.data[offset : offset + bpp] != after.data[offset : offset + bpp]:
-                violations.append((x, y))
-    return tuple(violations)
 
 
 def require_non_target_protection(

@@ -28,7 +28,7 @@ from typing import Any
 
 from infrastructure.devices.manager import DeviceManager
 from infrastructure.providers.dependencies import KIND_CREDENTIAL, KIND_ENDPOINT, KIND_MODULE, Requirement
-from infrastructure.providers.inpaint_router import RoutePolicy
+from application.translation.inpaint.router import RoutePolicy
 from infrastructure.providers.models import ModelManager, ModelSpec
 from infrastructure.providers.ocr_local import (
     PROVIDER_MANGA_OCR,

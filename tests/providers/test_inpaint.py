@@ -12,7 +12,13 @@ from application.translation.inpaint.mask import (
     mask_record,
     refine,
 )
-from infrastructure.providers.inpaint_router import (
+from application.translation.inpaint.protection import protected_pixel_violations
+from application.translation.inpaint.route_catalog import (
+    describe_routes,
+    route_gate,
+    route_record,
+)
+from application.translation.inpaint.router import (
     COMPLEXITY_HIGH,
     DECISION_BLOCKED,
     RoutePolicy,
@@ -24,12 +30,8 @@ from infrastructure.providers.inpaint_router import (
 from infrastructure.providers.inpaint_routes import (
     EdgeBleedProvider,
     SimpleFillProvider,
-    describe_routes,
     edge_bleed,
-    protected_pixel_violations,
     provider_for_route,
-    route_gate,
-    route_record,
     simple_fill,
 )
 from infrastructure.providers.step_writes import (
