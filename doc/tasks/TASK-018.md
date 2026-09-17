@@ -2,7 +2,7 @@
 id: TASK-018
 title: Mask / Inpainting 路线独立实验
 kind: experiment
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,10 +11,12 @@ depends_on: [TASK-003, TASK-004]
 base_commit: dce95acbb57a3494cb0f9d8d2d42e27d164176bb
 branch: agent/deepseek/TASK-018-mask-inpainting-experiment
 worktree: G:/CODEX/New Manga.worktrees/TASK-018-deepseek
-integration_commit: null
+integration_commit: 4d189ce
 ---
 
 # TASK-018：Mask / Inpainting 路线独立实验
+
+**当前状态以顶部 frontmatter 的 `status` 为准（现为 `done`）**，正文各段中的状态表述保留为其发生时的历史记录。
 
 **READY（2026-09-17 用户批准释放）**：硬依赖 TASK-003、TASK-004 均已集成 `done`。Owner=DeepSeek Harness，Reviewer=Codex；本任务仅在下列允许路径内开展独立实验。模型或硬件不可用时，按验收要求将相应结果标记为 BLOCKED/NOT_RUN，不以 Mock 代替真实模型、视觉或性能证据。Owner 开始实施前，在本任务分支将状态改为 `in_progress`。
 当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
@@ -27,10 +29,10 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 
 ## Acceptance Criteria
 
-- [ ] 比较文档已有Simple Fill、Manga LaMa、AOT、BrushNet/PowerPaint、FLUX候选的实际可用范围；未能测试项明确保留未知。
-- [ ] 固定白底/线稿/网点/渐变/结构穿越样例，对Mask精修和修复分别记录残字、背景/边框损伤、耗时及峰值资源。
-- [ ] 提出有实测依据的Router条件、fallback与资源要求，保留参数调节和原始/最终Mask；不把大型模型设成未经验证默认。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 比较文档已有Simple Fill、Manga LaMa、AOT、BrushNet/PowerPaint、FLUX候选的实际可用范围；未能测试项明确保留未知。（`simple-fill`、`edge-bleed` 实测；四条学习型路线因缺依赖与权重全部 `BLOCKED`，未以 Mock 或基线数字代替）
+- [x] 固定白底/线稿/网点/渐变/结构穿越样例，对Mask精修和修复分别记录残字、背景/边框损伤、耗时及峰值资源。（样例与 manifest、raw/final Mask 记录、残字代理、耗时与峰值 RSS 均已入库；**Mask 外**保护违规 10/10=0；Mask **内部**结构损伤量化仍 `NOT_RUN`——见下方未完成项，不得视为质量通过）
+- [x] 提出有实测依据的Router条件、fallback与资源要求，保留参数调节和原始/最终Mask；不把大型模型设成未经验证默认。（`default_eligible` 仅两个基线为 `true`；建议为候选条件，生产 Router 属 TASK-019，本 Task 未扩展）
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。（Review `doc/reviews/TASK-018-6c33e7f.md` decision=`approved`；integration=`4d189ce`）
 
 ## 允许修改范围
 
@@ -77,3 +79,13 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - **未验证项**：四条学习型路线的质量/耗时/显存（BLOCKED）、Mask 内部结构损伤量化（NOT_RUN，当前模型无图像输入能力，不给目视结论）、真实 OOM（无法触发）、真实漫画样例（NOT_RUN）。**未以 Mock 冒充**模型、视觉或性能结果。
 - 边界：仅修改本 Task 白名单；未改生产 src/tests、Schema、依赖、AGENTS、其他 Task；**未扩展到 TASK-019**；未 push/合并。
 - Review：待 Codex 对固定 delivery head `6c33e7f` 独立 Review；本 Task 不自行标记 approved/done。
+
+## 当前状态（唯一，集成后）
+
+**2026-09-17 `done`**。Codex 按协作协议 §6.6 保留来源分支变更并创建 `integration_commit=4d189ce`（merge，parents `461e639` + `ef6d1c3`）；独立 Review [doc/reviews/TASK-018-6c33e7f.md](../reviews/TASK-018-6c33e7f.md) 对固定 `reviewed_head=6c33e7f` 的结论为 `approved`。
+
+- 集成后复验见 [verification/TASK-018/integration-4d189ce.md](../../verification/TASK-018/integration-4d189ce.md)：协议自检 **12 passed / 0 skipped**；`run_experiment.py --repeat 3` 在 `%TEMP%` 副本中复跑得 `{"MEASURED": 10, "BLOCKED": 20}`，保护违规 10/10 全 0，确定性字段与交付 JSON 完全一致（仓库内 `results/experiment.json` 保持交付字节）；集成后全仓套件 **530 passed / 6 skipped**（6 项均因 `openssl unavailable`），7 次运行中 1 次出现与本 Task 无关的低频 flaky，已如实登记。
+- Review findings：R-001/R-004/R-005/R-006（报告部分）已按文档口径修正收口；**R-002（静态门控）、R-003（`--output-dir` 越界崩溃）、R-006（`experiment.json` requirements 体积标签）、R-007（非 `simple-fill` 路线回落到 `edge_bleed_fill` 的潜在伪造风险）为 `deferred`**，限制登记在 [实验日志](../../verification/TASK-018/experiment-log.md) §7 与 [研究报告](../research/TASK-018.md) §9。
+- **解锁条件**：本 Task 后续任何重跑（尤其在未来具备 `torch`/权重或网络的环境验证学习型路线）**必须先修 R-007**（未实现路线 fail-closed），再按 R-002 补真实探测并重新取证；`routes[*].runnable_here`/`blocked_reason` 不得作为环境证据引用。
+- 未完成项保持原样、不得视为通过：四条学习型路线的修复质量/残字/背景损伤/耗时/显存 **`BLOCKED`**；Mask **内部**结构损伤量化、真实 OOM、真实漫画样例 **`NOT_RUN`**；模型 Hash `NOT_AVAILABLE`。
+- 生产 Router 属 **TASK-019**：本 Task 只提出候选条件，**未扩展到 TASK-019**，也未释放 TASK-019 或其他冻结 Task。

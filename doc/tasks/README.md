@@ -1,6 +1,6 @@
 # Task 索引
 
-TASK-001～TASK-017、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK-015/024/017 的窗口内 Review 为 approved_subagent；三份外部 post-hoc Review 均 approved，findings 已由 `c7a02bd` 收口）；TASK-018 为 ready；TASK-019 为 blocked；TASK-020～TASK-023、TASK-025～TASK-027 继续冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。ZCode 全权窗口已于 2026-09-17 按用户指示归还撤销，条款存档见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
+TASK-001～TASK-018、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK-015/024/017 的窗口内 Review 为 approved_subagent；三份外部 post-hoc Review 均 approved，findings 已由 `c7a02bd` 收口；TASK-018 的 Review [doc/reviews/TASK-018-6c33e7f.md](../reviews/TASK-018-6c33e7f.md) 为 approved、integration=`4d189ce`，R-002/R-003/R-006/R-007 为 deferred）；TASK-019 为 blocked；TASK-020～TASK-023、TASK-025～TASK-027 继续冻结。**建议 Owner 不是实际派单。** 单个 Task 文件是状态真值，本表只提供标题和依赖导航。详细阶段与 Gate 见 [STATUS](../STATUS.md) 与 [Roadmap](../12_ROADMAP.md)。ZCode 全权窗口已于 2026-09-17 按用户指示归还撤销，条款存档见 [STATUS](../STATUS.md)「ZCode 全权窗口授权」。
 
 | Task | 交付目标 | 建议 Owner | 硬依赖 |
 |---|---|---|---|
@@ -21,7 +21,7 @@ TASK-001～TASK-017、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK
 | [TASK-015](TASK-015.md) | 实现阅读器与五种成果导出 | ZCode | done；base `1000ac8`；integration `fa72cee`；外部 post-hoc Review `9b77685` approved，R-101 已收口于 `c7a02bd`；TASK-012, TASK-014 |
 | [TASK-016](TASK-016.md) | OCR 与检测路线独立实验 | DeepSeek Harness | done；integration `9bf85f5`；Review `878ac16`；TASK-003, TASK-004 |
 | [TASK-017](TASK-017.md) | Translation 与上下文输出协议实验 | ZCode | done；base `348a48e`；integration `c0cf3a1`；外部 post-hoc Review `fb0bc40` approved，R-101 已收口于 `c7a02bd`；真实端点层 NOT_RUN；依赖 TASK-003, TASK-004 |
-| [TASK-018](TASK-018.md) | Mask / Inpainting 路线独立实验 | DeepSeek Harness | ready；已分派 DeepSeek Harness，Reviewer=Codex；TASK-003, TASK-004 |
+| [TASK-018](TASK-018.md) | Mask / Inpainting 路线独立实验 | DeepSeek Harness | done；Review=[TASK-018-6c33e7f](../reviews/TASK-018-6c33e7f.md) approved，integration=`4d189ce`（R-002/R-003/R-006/R-007 deferred）；TASK-003, TASK-004 |
 | [TASK-019](TASK-019.md) | 集成已验证的检测/OCR/翻译/修复 Provider | ZCode | blocked；TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024 |
 | [TASK-020](TASK-020.md) | 实现 Webtoon 分块处理与阅读 | ZCode | TASK-013, TASK-015, TASK-019 |
 | [TASK-021](TASK-021.md) | 完善备份恢复、回收站、清理与诊断 | Codex | TASK-006, TASK-011, TASK-015 |

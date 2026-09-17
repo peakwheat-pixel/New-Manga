@@ -23,13 +23,15 @@
 | 路线 | 类型 | 规模档 | 依赖 | 本环境可运行 | 备注 |
 |---|---|---|---|---|---|
 | **Simple Fill** | 基线（非模型） | `none` | 无 | **✅ MEASURED**（5/5 样例） | 常量色填充；**唯一在所有五类样例上残字为 0 的路线** |
-| **Edge bleed** | 基线（**非模型**） | `none` | 无 | **✅ MEASURED**（5/5 样例） | 最近邻扩散；仅作**结构对照**，**不是**学习型修复，不得当作模型结果 |
+| **Edge bleed** | 基线（**非模型**） | `none` | 无 | **✅ MEASURED**（5/5 样例） | **正交邻居均值扩散**（实现见 `mask_protocol.edge_bleed_fill`；交付数据中的 `route_label` 写作 "nearest-neighbour"，属历史命名，含义以本条为准，见 §9 R-004）；仅作**结构对照**，**不是**学习型修复，不得当作模型结果 |
 | **Manga LaMa** | 学习型 | `medium` | `torch` + HF 权重 | **⛔ BLOCKED** | 漫画专用 LaMa 权重；缺 `torch` 且权重不可下载 |
 | **AOT-GAN** | 学习型 | `medium` | `torch` + 权重 | **⛔ BLOCKED** | 缺 `torch` 且无权重文件 |
-| **BrushNet / PowerPaint** | 学习型 | `large` | `torch` + `diffusers` + 数 GB 权重 | **⛔ BLOCKED** | 扩散式；依赖与权重均缺 |
-| **FLUX**（inpaint/fill） | 学习型 | `very-large` | `torch` + `diffusers` + 10GB+ 权重 | **⛔ BLOCKED** | 规模远超本机可验证范围 |
+| **BrushNet / PowerPaint** | 学习型 | `large` | `torch` + `diffusers` + 权重 | **⛔ BLOCKED** | 扩散式；依赖与权重均缺；**权重体积未核实**（未下载、未实测） |
+| **FLUX**（inpaint/fill） | 学习型 | `very-large` | `torch` + `diffusers` + 权重 | **⛔ BLOCKED** | `very-large` 只是本 Task 的规模档定性描述，**无实测资源数字** |
 
 **未验证的大型模型一律未设为默认**：`default_eligible` 仅 `simple-fill` 与 `edge-bleed` 为 `True`；四条学习型路线全部为 `False`（见 `results/experiment.json` 的 `routes`）。
+
+**学习型路线不写入任何资源数字**（2026-09-17 集成收口）：本报告不为它们给出权重体积、显存、内存或耗时数值。`results/experiment.json` 的 `routes[*].requirements` 键名仍带历史体积标注（如 `10GB+`），那只是缺失依赖的标签、**不是实测值**，待 §9 的解锁条件一并清理（R-006）。
 
 ## 3. 固定五类样例
 
@@ -49,7 +51,7 @@
 
 ## 4. 实测结果（`--repeat 3`，全部为真实执行）
 
-耗时为该路线 3 次重复的 **min/max**；`ink` 为修复前 Mask 内的暗像素数；`residual` 为修复后仍是暗像素的数量（**残字的像素统计代理，不是视觉质量判定**）；`viol` 为**保护框内被改动的像素数**（必须为 0）；`rss` 为进程峰值工作集。
+耗时为该路线 3 次重复的 **min/max**；`ink` 为修复前 Mask 内的暗像素数；`residual` 为修复后仍是暗像素的数量（**残字的像素统计代理，不是视觉质量判定**）；`viol` 为 **final Mask 外被改动的像素数**（必须为 0；该判据的覆盖范围严格包含 `samples/manifest.json` 声明的保护框，但 harness 目前未按保护框逐个断言——原表述“保护框内被改动的像素数”已按 Review R-001 更正，见 §9）；`rss` 为进程峰值工作集。
 
 | 样例 | 路线 | min ms | max ms | ink(前) | residual(后) | viol | peak RSS MB |
 |---|---|---:|---:|---:|---:|---:|---:|
@@ -64,11 +66,25 @@
 | structure-crossing | simple-fill | 2.286 | 2.465 | 2958 | **0** | **0** | 57.7 |
 | structure-crossing | edge-bleed | 42.198 | 45.518 | 2958 | 2031 | **0** | 57.7 |
 
+### Mask 内实际改写覆盖（Codex 集成复核，2026-09-17）
+
+上表的 `residual` 只统计 Mask 内剩余暗像素，无法说明路线**是否真的改写了 Mask 内部**。Codex 在独立 Review 中用交付的样例 PNG 与输出 PNG 逐像素比对（final Mask＝目标框膨胀 2 px，与 harness 一致）复核得到：
+
+| 样例 | simple-fill 改写 / Mask | edge-bleed 改写 / Mask | edge-bleed 未触及 |
+|---|---:|---:|---:|
+| white-background | 673 / 6864 | **0** / 6864 | 6864（产物与样例逐像素相同） |
+| line-art | 2091 / 4176 | 1100 / 4176 | 3076 |
+| screentone | 1911 / 6864 | 528 / 6864 | 6336 |
+| gradient | 6864 / 6864 | 1994 / 6864 | 4870 |
+| structure-crossing | 3082 / 8400 | 1504 / 8400 | 6896 |
+
+`edge_bleed_iterations=8` 对 52～56 px 高的 Mask 只能覆盖边界环，因此 **edge-bleed 的 `residual` 主要来自“从未被改写的原始像素”**，不等于“修复失败”。两条基线的覆盖**不对等**，不可据此排序。复核方法可原样重算（逐像素比对样例与 `results/*__*.png`）；本表数值登记于集成提交 `4d189ce` 的 Review 记录与 [实验日志](../../verification/TASK-018/experiment-log.md)。
+
 ### 可以直接读出的结论
 
 1. **非目标像素保护 100% 达成**：10 条实测记录的保护违规全部为 **0**，说明实验侧的 Mask 门控（"只重写 Mask 内像素"）在基线上被严格执行并可回归验证。
 2. **Simple Fill 的残字为 0，但这不是质量结论**：常量白填充必然把暗像素清零（`residual=0` 是**构造性结果**）。它在**白底**样例上确实有效（背景本就是白色），但在**线稿、网点、渐变、结构穿越**四类样例上，它同样会把目标框内的**线稿/网点/渐变/边框结构一并抹成白块**——残字指标看不见这一点，因此**不能仅凭 `residual=0` 判定 Simple Fill 可用**。这正是必须记录"背景/边框损伤"的原因。
-3. **Edge bleed 的 residual 反而更高**：它在多类样例上把邻域的深色像素扩散进 Mask（line-art 1932、structure-crossing 2031），且同样不延续结构——**结构穿越样例最能暴露这一点**。
+3. **Edge bleed 的 residual 反而更高，但主因是覆盖不足、不是修复失败**：8 次迭代只能改写 Mask 边界环（改写量见上一节；white-background 上甚至为 0），未触及的原始像素继续被计入 `residual`（line-art 1932、structure-crossing 2031）。它确实会把邻域颜色扩散进边界环，且同样不延续结构——**结构穿越样例最能暴露这一点**。两条基线覆盖不对等，本表不能用于给它们排序。
 4. **耗时量级**：基线在 320×320、Mask 约 6k–10k 像素下为 **~2 ms（simple-fill）** 与 **~32–46 ms（edge-bleed）**；峰值工作集约 **45–58 MB**，且**全部为 CPU 路径，无 GPU 分配**（`vram_peak_mb = null`）。
 
 ### 明确无法给出的结论
@@ -133,3 +149,19 @@ python experiments/TASK-018/run_experiment.py --repeat 3
 ```
 
 `--route simple-fill` 等可只跑单条路线；`--repeat N` 控制重复次数。
+
+## 9. Review 后修订与未关闭项（2026-09-17，Codex 集成收口）
+
+独立 Review（[`doc/reviews/TASK-018-6c33e7f.md`](../reviews/TASK-018-6c33e7f.md)，decision=`approved`）对固定 `delivery_head=6c33e7f` 提出 7 条 findings。在本报告范围内的处置如下；未关闭项同时登记在 [实验日志](../../verification/TASK-018/experiment-log.md)。
+
+| ID | 级别 | 内容 | 处置 |
+|---|---|---|---|
+| R-001 | P2 | `viol` 被表述为“保护框内改动数”，实际是 final Mask 外改动数；`manifest.json` 的 `protected_boxes` 未被 harness 断言 | **本报告已更正口径**（§4 与本节）；保护框逐个断言留待 R-002 同一解锁条件 |
+| R-002 | P2 | 路线门控是静态常量而非环境探测；`runnable_here`/`blocked_reason` 不可作为环境证据 | **deferred**：本环境缺依赖经独立复核为真，但机制不具探测性；解锁条件见下 |
+| R-003 | P3 | `--output-dir` 指向实验根之外会 `ValueError` 退出码 1 并留下部分产物 | **deferred**；已在实验日志登记 |
+| R-004 | P3 | “最近邻扩散”与实现（正交邻居均值）不符 | **本报告已更正口径**（§2）；交付数据中的 `route_label` 保持不变以免重生成 JSON |
+| R-005 | P2 | edge-bleed 覆盖不足未被量化，`residual` 被归因为扩散 | **本报告已补复核数据并改写结论**（§4 新增小节与结论 3） |
+| R-006 | P2 | 学习型路线的“数 GB / 10GB+ 权重”为未实测、无出处的数字 | **本报告已删除体积数字**（§2）；`experiment.json` 的 requirements 标签待 R-002 条件一并清理 |
+| R-007 | P2（潜在、当前不可达） | `run_experiment.py:189-192` 对任何非 `simple-fill` 路线回落到 `edge_bleed_fill`：一旦按 R-002 改成真实探测，未实现的路线会被写成 `MEASURED` 并产出伪造成果 | **deferred**，且是**解锁前置条件**：补探测前必须先引入 fail-closed 的“已实现/未实现”门控 |
+
+**解锁条件（本 Task 后续任何重跑之前必须满足）**：在具备 `torch`/权重或网络的环境重跑本实验前，先修 R-007（未实现路线必须 `BLOCKED`，不得回落到基线结果），再按 R-002 补真实探测并重新取证。学习型路线的质量、残字、损伤与资源在获得实测前仍是未知。

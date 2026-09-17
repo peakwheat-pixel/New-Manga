@@ -87,7 +87,7 @@
 |---|---|---|
 | 实际实验入口、样例 Hash、硬件、参数、重复次数 | **已完成** | 本文 §1/§3/§4；`results/experiment.json` |
 | 输出图与失败样例归档 | **已完成（部分）** | 10 张输出图已入库；**学习型路线无失败样例可归档**（它们在构造前即 `BLOCKED`） |
-| **非目标像素/Region 保护** | **已完成** | `protected_pixels()` 对每条 MEASURED 记录返回空列表（viol=0，10/10） |
+| **非目标像素/Region 保护** | **已完成** | `protected_pixels()` 对每条 MEASURED 记录返回空列表（10/10）。该函数的判据是 **final Mask 外像素变更数**，其覆盖范围严格包含 `samples/manifest.json` 声明的 `protected_boxes`，但 harness 目前未按保护框逐个断言（Review R-001，报告已更正口径） |
 | **缺模型行为** | **已完成** | 4 条学习型路线 × 5 样例 = 20 条 `BLOCKED`，均带具体原因，**不产生伪造图或数字** |
 | **OOM 行为** | **NOT_RUN（无法触发）** | 唯一可运行路线为 CPU 常量填充/扩散，峰值 58 MB；无法构造真实 OOM。学习型路线的 OOM 行为随其 BLOCKED 一并未知 |
 | 无硬件路线标 BLOCKED | **已完成** | `manga-lama`、`aot`、`brushnet-powerpaint`、`flux` |
@@ -105,6 +105,10 @@
 | 真实（非自制）漫画样例 | **NOT_RUN** | 仅使用自制合成样例 |
 | 生产 Router 实现 | **N/A** | 属 **TASK-019**；本 Task **不扩展到 TASK-019**，只提出建议 |
 | 生产集成验证 | **N/A** | 实验不代表产品集成；本 Task 不修改 `src/` |
+| 路线门控的环境探测 | **未实现（Review R-002）** | `ROUTES[*].requirements` 是静态常量，`_route_status()` 只读常量、不做 `find_spec`/权重探测；`routes[*].runnable_here`/`blocked_reason` **不是环境证据**，不得被 TASK-019 或后续重跑引用 |
+| 越界输出目录 | **不支持（Review R-003）** | `--output-dir` 必须位于 `experiments/TASK-018` 之内；越界会抛 `ValueError`、退出码 1 并留下部分产物。重跑请改用整目录副本 |
+| 未实现路线 fail-closed 门控 | **未实现（Review R-007）** | 非 `simple-fill` 路线若被判为 runnable，会回落到 `edge_bleed_fill` 并被写成 `MEASURED`。当前仅因门控恒为静态 `False` 而不可达；补真实探测前必须先修 |
+| edge-bleed 的 Mask 内覆盖 | **已复核（2026-09-17）** | 8 次迭代只覆盖边界环：改写量 0/6864（white-background）、1100/4176、528/6864、1994/6864、1504/8400；`residual` 主要来自未触及的原始像素。详见研究报告 §4 新增小节 |
 
 ## 8. 边界声明
 
@@ -113,3 +117,28 @@
 - **未 push、未合并**任何分支。
 - `edge-bleed` 是**非模型基线**，在报告与数据中始终标为 `learned_model: false`，**不得**被当作学习型修复结果引用。
 - **未以 Mock 冒充**真实模型、视觉或性能结果。
+
+## 9. 独立 Review 与集成（2026-09-17，Codex）
+
+| 项目 | 值 |
+|---|---|
+| base commit | `dce95acbb57a3494cb0f9d8d2d42e27d164176bb` |
+| start head | `9ee17189817ede5564866049e01139b9608f63a7` |
+| reviewed head（delivery） | `6c33e7f237f63fd9b777335e72b84fe317cf866b` |
+| 元数据 head | `ef6d1c382a5cee8b165217274a6c72db08716188` |
+| Review 报告 | `doc/reviews/TASK-018-6c33e7f.md`（decision=`approved`，R-001～R-007） |
+| implementation merge | `4d189ce`（merge commit，parents `461e639` + `ef6d1c3`） |
+| integration commit | `4d189ce` |
+| 集成后验证 | [integration-4d189ce.md](integration-4d189ce.md) |
+
+集成后复验（master）：
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---:|---:|---:|---|
+| 1 | `PYTHONPATH=experiments/TASK-018 python -m unittest experiments/TASK-018/test_mask_protocol.py -v` | 0 | **12** | **0** | `OK`（与交付一致） |
+| 2 | `run_experiment.py --repeat 3`（在 `%TEMP%` 副本中执行，避免改写仓库内 `results/experiment.json`） | 0 | — | — | `{"MEASURED": 10, "BLOCKED": 20}`；MEASURED 保护违规 10/10 全 0；确定性字段与交付 JSON 完全一致 |
+| 3 | `python -m pytest -q -p no:cacheprovider`（集成后全仓套件） | 0 | **530** | **6** | 6 项 skip 全为 `openssl unavailable`；7 次运行中 6 次为该结果，另 1 次为 `1 failed, 529 passed, 6 skipped`（未捕获用例名，随后连续 4 次通过；TASK-018 不在 `testpaths = tests` 内，属已登记的低频 flaky，非本次集成引入） |
+
+Findings 处置：R-001/R-004/R-005/R-006（报告部分）已在集成收口提交内以文档口径修正收口；R-002/R-003/R-006（`experiment.json` 标签）/R-007 为 **deferred**，限制见 §7，解锁条件见研究报告 §9。
+
+**未解决项不得被当作通过**：R-002 的静态门控、R-003 的输出目录限制、R-007 的回落隐患在修复前持续有效；学习型路线的质量/性能仍为 `BLOCKED`，Mask 内部结构损伤仍为 `NOT_RUN`；两条基线只是保底能力，不代表质量达标。
