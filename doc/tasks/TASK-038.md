@@ -2,7 +2,7 @@
 id: TASK-038
 title: 生产装配收口：reader/export ViewModel 注册 + tile_factory 注入 + 文档导入接线
 kind: implementation
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-015, TASK-019, TASK-020, TASK-023, TASK-033]
 base_commit: 047164ea080651741b38b20a36470115d4830a0d
 branch: agent/zcode/TASK-038-production-assembly
 worktree: G:/CODEX/New Manga.worktrees/TASK-038-zcode
-integration_commit: null
+integration_commit: f835ac9bc2355ee2af6f018991d035da94626950
 ---
 
 # TASK-038：生产装配收口（reader / export / 文档导入）
@@ -38,7 +38,7 @@ integration_commit: null
 - [ ] **AC ⑤（装配契约测试）**：新增/扩展"生产 engine 注册了全部所需 context property"的契约测试（现有 `tests/core/test_bootstrap.py:299` 只断言了 `workbenchViewModel`）；断言集合须与 AC ①②③④ 的实际接线一致。
 - [ ] **AC ⑥（TASK-020 遗留收口）**：TASK-020 Handoff 的 disposition 表中标注"随生产装配切片收口"的 R-002/003/005/006 在本 Task 内逐条处置（fixed/deferred 均须写明理由）。
 - [ ] **AC ⑦（回归与分列）**：`tests/core`、`tests/providers`、`tests/pipeline`、`tests/reading_export`、`tests/import_formats`、`tests/library` 与全仓 **passed 不减少**；全仓串跑**≥5 次**逐次记录（**统一用同一种 shell 与同一 venv**，见下方证据纪律）。
-- [ ] **AC ⑧** 交付 Handoff、取证，经窗口内子 agent Review（Review 模板、passed/skipped 分列）与集成后才能 done。
+- [x] **AC ⑧** Handoff=[doc/handoffs/TASK-038-317f33e.md](../handoffs/TASK-038-317f33e.md)；Review=[doc/reviews/TASK-038-317f33e.md](../reviews/TASK-038-317f33e.md)（**approved_subagent**，报告 commit `fcf791f`，四轴 executed；R-001～R-003 全 P3 不阻断）；集成=`f835ac9`（merge，parents `047164e`+`fcf791f`），集成后复验全仓 **772 passed / 0 skipped**、exit 0（PowerShell 继承 PATH 口径，与全切片一致）。
 
 ## 允许修改范围
 
@@ -82,5 +82,5 @@ integration_commit: null
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
 - **历史状态**：2026-09-18 由 Codex 在 ZCode 全权窗口第二轮创建为 `ready`（用户指示"再布置任务"）；`base=047164e`。
-- **最近状态（当前，唯一）**：2026-09-18 08:5x 由 ZCode 在窗口第二轮开工（W5，status→`in_progress`）；分支 `git merge master` 快进至第二轮基线（W1-W3/插队全部集成的 HEAD）；实施开始。
+- **最近状态（当前，唯一）**：2026-09-18 08:5x 由 ZCode 在窗口第二轮开工（W5，status→`in_progress`）；分支 `git merge master` 快进至第二轮基线（W1-W3/插队全部集成的 HEAD）；实现 head=`317f33e`（reader/export/documents 装配 + tile_factory + 契约测试 ×2 + :224 等价更新 + AC⑥ R-003/R-006 fixed）；Review `fcf791c`=**approved_subagent**（3×P3）；集成 `f835ac9`，复验 772 passed/0 skipped exit 0。**TASK-038 已收口 `done`；期满后须 Codex + DSH 外部 post-hoc 复审（可推翻）。**遗留：R-001（R-002 disposition 口径改 accepted）、translated 文本导出接线、R-005 QML 清理。
 
