@@ -39,7 +39,7 @@ from ports.providers.errors import (
 )
 from ports.translation.protocol import RegionInput, build_request_payload
 
-from conftest import FakeTransport, chat_completion
+from providers_helpers import FakeTransport, chat_completion
 
 
 def _config(**overrides) -> OpenAiCompatibleConfig:

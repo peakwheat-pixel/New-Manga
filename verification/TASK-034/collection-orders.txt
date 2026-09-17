@@ -1,0 +1,14 @@
+### TASK-034 AC 4: two collection orders (after moving the doubles)
+--- A: pytest tests/providers tests/editing
+................................................................         [100%]
+136 passed in 2.13s
+--- B: pytest tests/editing tests/providers
+................................................................         [100%]
+136 passed in 1.90s
+--- C: pytest tests/providers tests/core tests/reading_export (mandated)
+........................................................................ [ 74%]
+.................................................                        [100%]
+193 passed in 9.44s
+--- D: pytest tests/core tests/storage tests/providers (regression)
+.................                                                        [100%]
+161 passed in 7.19s

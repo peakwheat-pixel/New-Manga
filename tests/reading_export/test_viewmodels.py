@@ -48,6 +48,41 @@ def pump_until(app, condition, timeout=5.0):
     return condition()
 
 
+# ---------------------------------------------------------------------------
+# TASK-034 AC ③: bounded diagnosis for the two registered flaky cases.
+#
+# `startExport` publishes its terminal state in this order
+# (`src/ui/viewmodels/export/viewmodel.py`):
+#     _finish(): self._running = False  (:380)  ... self._status = ... (:382-387)
+#                self.changed.emit()   (:388)   self.exportFinished.emit() (:389)
+#     _fail():   self._running = False  (:392)  ... self._status = ... (:393)
+#                self.refreshStaleWarning() (:396)  self.exportFailed.emit() (:398)
+#
+# So waiting on `not vm.running` can return in the window between "flag
+# cleared" and "status/signal published", leaving the assertions to run on a
+# half-published state. Waiting on the *outcome the assertion is about*
+# removes that window without weakening any assertion: on timeout the same
+# assertion still fails, now with an event/state trace attached.
+# ---------------------------------------------------------------------------
+
+
+def await_export_outcome(app, signals, *, timeout=5.0):
+    """Bounded wait for the worker's terminal signal (TASK-034 AC ③)."""
+    return pump_until(app, lambda: bool(signals), timeout=timeout)
+
+
+def export_diagnostics(vm, signals) -> str:
+    """State trace attached to a failed export assertion."""
+    return (
+        "export did not settle as expected:"
+        f" running={vm.running!r}"
+        f" signals={list(signals)!r}"
+        f" staleWarningVisible={vm.staleWarningVisible!r}"
+        f" statusMessage={vm.statusMessage!r}"
+        f" history={len(vm.history)}"
+    )
+
+
 class Catalog:
     """ReaderPageCatalog-shaped fake over a fixed page list."""
 
@@ -224,11 +259,11 @@ def test_start_export_completes_and_updates_history(qapp, tmp_path, pages, expor
     finished = []
     vm.exportFinished.connect(lambda summary: finished.append(summary))
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running)
-    assert len(finished) == 1
-    assert finished[0]["status"] == "completed"
-    assert "导出完成" in vm.statusMessage
-    assert len(vm.history) == 1
+    assert await_export_outcome(qapp, finished), export_diagnostics(vm, finished)
+    assert len(finished) == 1, export_diagnostics(vm, finished)
+    assert finished[0]["status"] == "completed", export_diagnostics(vm, finished)
+    assert "导出完成" in vm.statusMessage, export_diagnostics(vm, finished)
+    assert len(vm.history) == 1, export_diagnostics(vm, finished)
     assert (tmp_path / "out" / "result.zip").exists()
 
 
@@ -239,10 +274,10 @@ def test_start_export_stale_abort_surfaces_failure(qapp, tmp_path, pages, export
     failures = []
     vm.exportFailed.connect(lambda message: failures.append(message))
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running)
-    assert len(failures) == 1
-    assert "不是最新渲染" in failures[0]
-    assert vm.staleWarningVisible
+    assert await_export_outcome(qapp, failures), export_diagnostics(vm, failures)
+    assert len(failures) == 1, export_diagnostics(vm, failures)
+    assert "不是最新渲染" in failures[0], export_diagnostics(vm, failures)
+    assert vm.staleWarningVisible, export_diagnostics(vm, failures)
 
 
 @requires_pyside6
@@ -251,12 +286,48 @@ def test_cancel_export_reports_and_keeps_ui_consistent(qapp, tmp_path, pages, ex
     vm.setOutputPath(str(tmp_path / "out" / "x.zip"))
     vm.startExport()
     vm.cancelExport()  # cooperative flag; may land before or after completion
-    assert pump_until(qapp, lambda: not vm.running)
+    # Wait for the terminal *publication* (running cleared and the status
+    # string no longer the in-progress one), not just for the running flag.
+    terminal = pump_until(
+        qapp,
+        lambda: not vm.running and not vm.statusMessage.startswith("正在导出"),
+    )
+    assert terminal, export_diagnostics(vm, ())
     if (tmp_path / "out" / "x.zip").exists():
-        assert vm.statusMessage.startswith("导出完成")
+        assert vm.statusMessage.startswith("导出完成"), export_diagnostics(vm, ())
     else:
         # cancelled before any page was written: no file, clear message
-        assert "取消" in vm.statusMessage or "导出失败" in vm.statusMessage
+        assert "取消" in vm.statusMessage or "导出失败" in vm.statusMessage, (
+            export_diagnostics(vm, ())
+        )
+
+
+@requires_pyside6
+def test_export_outcome_wait_does_not_accept_the_half_published_state(qapp):
+    """AC ③ discriminative: the old wait could return mid-publication.
+
+    With ``running`` already cleared and no terminal signal delivered yet —
+    the window between ``viewmodel.py:392`` and ``:398`` — the previous
+    ``pump_until(not vm.running)`` wait returned immediately. The outcome
+    wait keeps waiting, so the bounded timeout (not a relaxed assertion) is
+    what ends it.
+    """
+
+    class HalfPublished:
+        running = False  # cleared at viewmodel.py:380/392 …
+        statusMessage = "正在导出…"  # … while the status is still the old one
+        staleWarningVisible = False
+        history: tuple = ()
+
+    vm = HalfPublished()
+    signals: list = []
+    # The old predicate is satisfied in this state …
+    assert not vm.running
+    # … while the assertion-relevant outcome has not arrived.
+    assert not await_export_outcome(qapp, signals, timeout=0.2)
+    diagnostics = export_diagnostics(vm, signals)
+    assert "signals=[]" in diagnostics
+    assert "running=False" in diagnostics
 
 
 @requires_pyside6

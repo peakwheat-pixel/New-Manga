@@ -16,7 +16,7 @@ from infrastructure.providers.sakura_probe import (
 )
 from ports.network.transport import TransportTimeoutError
 
-from conftest import FakeTransport
+from providers_helpers import FakeTransport
 
 BASE = "http://127.0.0.1:8080/v1"
 

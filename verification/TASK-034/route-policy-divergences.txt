@@ -1,0 +1,44 @@
+runtime DEFAULT_ROUTE_POLICY = allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': False, 'flux-fill': False}
+HandlerDependencies default  = allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+
+[SAME] settings={} (no inpaint)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': False, 'flux-fill': False}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': False, 'flux-fill': False}
+[SAME] inpaint={} (no route_policy key)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': False, 'flux-fill': False}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': False, 'flux-fill': False}
+[DIVERGES] route_policy="simple-fill" (non-mapping)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': False, 'flux-fill': False}
+    handlers: ProviderInputError: INVALID_INPUT: inpaint.route_policy must be a mapping
+[DIVERGES] route_policy=[] (non-mapping)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': False, 'flux-fill': False}
+    handlers: ProviderInputError: INVALID_INPUT: inpaint.route_policy must be a mapping
+[DIVERGES] route_policy={} (empty mapping)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color=None requirements={}
+[DIVERGES] allowed_routes=[edge-bleed] (no color_route)
+    runtime : allowed=('edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={}
+    handlers: allowed=('edge-bleed',) fallback=() color=None requirements={}
+[DIVERGES] color_route=flux-fill (no allowed_routes)
+    runtime : allowed=('flux-fill',) fallback=() color='flux-fill' requirements={}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet', 'flux-fill') fallback=() color='flux-fill' requirements={}
+[DIVERGES] requirements only (no allowed_routes/color)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': True}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color=None requirements={'brushnet': True}
+[DIVERGES] allowed_routes=[] (empty list)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color=None requirements={}
+[DIVERGES] allowed_routes='simple-fill' (string)
+    runtime : allowed=('s', 'i', 'm', 'p', 'l', 'e', '-', 'f', 'i', 'l', 'l', 'brushnet') fallback=() color='brushnet' requirements={}
+    handlers: allowed=('s', 'i', 'm', 'p', 'l', 'e', '-', 'f', 'i', 'l', 'l') fallback=() color=None requirements={}
+[DIVERGES] color_route='' (blank)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color=None requirements={}
+[DIVERGES] requirements={'brushnet': 'false'} (string)
+    runtime : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={'brushnet': True}
+    handlers: allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color=None requirements={'brushnet': True}
+
+=== extra: deps.route_policy differs from the module constant ===
+deps.route_policy = allowed=('simple-fill',) fallback=() color=None requirements={}
+runtime  (same key path, empty mapping) : allowed=('simple-fill', 'edge-bleed', 'brushnet') fallback=() color='brushnet' requirements={}
+handlers (same key path, empty mapping) : allowed=('simple-fill',) fallback=() color=None requirements={}

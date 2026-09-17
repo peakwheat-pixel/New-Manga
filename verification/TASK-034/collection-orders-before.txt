@@ -1,0 +1,11 @@
+### BEFORE (pristine base b34b27e, src+tests): collection orders
+--- A: pytest tests/providers tests/editing (BEFORE)
+ERROR tests/providers/test_inpaint.py
+ERROR tests/providers/test_remote_providers.py
+ERROR tests/providers/test_sakura_probe.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!
+4 errors in 0.76s
+--- B: pytest tests/editing tests/providers (BEFORE)
+........................................................................ [ 52%]
+.................................................................        [100%]
+137 passed in 1.87s
