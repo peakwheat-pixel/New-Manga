@@ -2,7 +2,7 @@
 id: TASK-023
 title: 实现 PDF/MOBI 导入路线
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -70,3 +70,4 @@ D01 §2；D02 §8；D04 §8；D05 §52；G17。网页导入已按 U-1 取消；�
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- **最近状态（当前，唯一）**：2026-09-18 02:3x 由 ZCode 在窗口内开工（插队规则(b) 达标：W1+W2+W3 已于 06:30 前全部集成、余量 ≥2h）；分支按窗口规则 `git merge master` 快进至 `cca8b09`（base=e96b3eb 之上为窗口授权与 W1-W3 集成提交，写集合不相交）。MOBI 契约边界：pypdfium2 仅覆盖 PDF（U-2 范围），MOBI 解析无批准依赖 → 实现为**可诊断不支持路径**并登记 BLOCKED，不自行发明解析行为。
