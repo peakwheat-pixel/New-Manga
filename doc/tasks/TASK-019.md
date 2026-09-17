@@ -2,7 +2,7 @@
 id: TASK-019
 title: 集成已验证的检测/OCR/翻译/修复 Provider
 kind: implementation
-status: in_progress
+status: in_review
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -35,11 +35,16 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 
 ## Acceptance Criteria
 
-- [ ] 按已批准实验报告实现明确选定能力，覆盖本地OCR、韩文OCR、兼容Vision、Translation以及Simple Fill/漫画修复和彩色路线；不可用候选明确禁用，未获批范围不能称完成。
-- [ ] 通过统一网络/设备/文件边界接入Pipeline，严格输出映射、显式fallback、Mask/模型/options/provenance与单Region写回限制。
-- [ ] 模型延迟加载、下载进度/取消/Hash、Ready判定、OOM隔离、GPU重任务默认单并发；CPU fallback仅在Provider声明支持时执行。
-- [ ] D08 §78 的 AC-EXT-SAKURA-001：Sakura Profile 连接测试给出健康/就绪状态与原因，探测范围遵守 U-6；真实服务验证与实现证据必须实测，当前 D13 结果 NOT_RUN。SAKURA-002/003 仍为草案，不自动纳入本任务。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 按已批准实验报告实现明确选定能力，覆盖本地OCR、韩文OCR、兼容Vision、Translation以及Simple Fill/漫画修复和彩色路线；不可用候选明确禁用，未获批范围不能称完成。
+      → **部分达成、已分列**：能力端口与适配器（manga-ocr / PaddleOCR Korean / OpenAI-compatible Vision / 远程与本地 Sakura 翻译 / Simple Fill+Edge Bleed 基线 / 彩色路线策略）全部交付；**真实 OCR、韩文 OCR、真实彩色修复的质量类判定为 `BLOCKED`**（无依赖/权重/端点），未获批范围（学习型修复路线）未称完成。逐条见 [AC 状态分列](../verification/TASK-019/ac-status.md)。
+- [x] 通过统一网络/设备/文件边界接入Pipeline，严格输出映射、显式fallback、Mask/模型/options/provenance与单Region写回限制。
+      → `tests/providers/test_handlers_pipeline.py`（真实 SQLite + 真实 seam）与 `tests/providers/test_retry_fallback.py`；`color`/`term_extract`/`render` 三步的 handler 不在本 Task 允许路径，完整链见 AC-RFULL-001 的 `BLOCKED` 登记。
+- [x] 模型延迟加载、下载进度/取消/Hash、Ready判定、OOM隔离、GPU重任务默认单并发；CPU fallback仅在Provider声明支持时执行。
+      → `tests/providers/test_model_lifecycle.py`、`test_devices.py`；**真实权重下载与真实 GPU OOM 复现为 `BLOCKED`/`NOT_RUN`**（无来源、无运行时）。
+- [x] D08 §78 的 AC-EXT-SAKURA-001：Sakura Profile 连接测试给出健康/就绪状态与原因，探测范围遵守 U-6；真实服务验证与实现证据必须实测，当前 D13 结果 NOT_RUN。SAKURA-002/003 仍为草案，不自动纳入本任务。
+      → 探测实现 **PASS**（5 种结果与原因码；仅请求 `/models`（必要时 `/health`），无显存/负载字段）；**真实服务验证 `NOT_RUN`**：本机无 Sakura 实例，已用真实 `StdlibTransport` 执行一次真实探测（`unreachable` / `connection refused`）。SAKURA-002/003 未实现。
+- [x] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+      → Handoff：[TASK-019-5fdd80a](../handoffs/TASK-019-5fdd80a.md)；取证：[verification/TASK-019/](../verification/TASK-019/author-verification.md)。**Review 与集成尚未执行**，本 Task 不自行标记 `approved`/`done`。
 
 ## 允许修改范围
 
@@ -87,8 +92,12 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际执行/实验/测试：尚无。
-- **最近状态（当前，唯一）**：2026-09-17 用户批准**释放**，并随后**将 Owner 由 ZCode 改为 DeepSeek Harness**——`status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**；Owner 改为 DSH 后原 Reviewer DSH 会构成同体审查，故一并更换）、base=`36242fb`、branch=`agent/deepseek/TASK-019-provider-integration`、worktree=`G:/CODEX/New Manga.worktrees/TASK-019-deepseek`（已创建并同步到**本次释放/改派提交**，该提交含本 Task 文件的 ready 状态；`base_commit=36242fb` 为释放基线，二者仅差纯文档提交、**代码基线相同**）；六个硬依赖全部 `done`；允许路径已按 base 的实际结构核对并收紧（见上）。首次释放时按 `agent/zcode/...` 命名创建的 worktree（`TASK-019-zcode`）**无任何提交、已移除**，不作为工作区使用。释放时登记的输入缺口见文件头与「依赖、风险与阻塞」，交付必须分列 `BLOCKED`/`NOT_RUN`。**实施尚未开始**：实际执行仍全部 `NOT_RUN`，Owner 开始前须把 `status` 改为 `in_progress`。
+- Handoff：[TASK-019-5fdd80a](../handoffs/TASK-019-5fdd80a.md)（delivery_head=`5fdd80a`）。
+- Review：尚无（待 Codex 非作者独立 Review）。
+- 实际执行/实验/测试：
+  - 取证总表：[verification/TASK-019/author-verification.md](../verification/TASK-019/author-verification.md)；AC 分列：[ac-status.md](../verification/TASK-019/ac-status.md)；环境：[environment.json](../verification/TASK-019/environment.json)；就绪报告：[readiness-report.json](../verification/TASK-019/readiness-report.json)；真实 Sakura 探测：[sakura-probe-attempt.json](../verification/TASK-019/sakura-probe-attempt.json)；日志：[pytest-providers.log](../verification/TASK-019/pytest-providers.log)、[pytest-regression.log](../verification/TASK-019/pytest-regression.log)、[pytest-full.log](../verification/TASK-019/pytest-full.log)；路径核对：[changed-paths.txt](../verification/TASK-019/changed-paths.txt)。
+  - 命令与结果（本机 `G:/CODEX/New Manga.task-envs/TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，退出码全部 0）：基线 `python -m pytest -q -p no:cacheprovider` = **530 passed / 6 skipped**；`python -m pytest tests/providers` = **109 passed / 0 skipped**；`python -m pytest tests/pipeline tests/core tests/storage` = **78 passed / 0 skipped**；全仓 = **639 passed / 6 skipped**（+109 全部为本 Task 新增；6 条 skip 均在既有 `tests/network`，原因 `openssl unavailable`）。`git diff --check 36242fb..5fdd80a` 退出码 0；`git diff --name-only c9eb65a..HEAD` 46 条**全部在允许路径内**，禁止路径命中 0。
+  - 真实探测（非 mock）：生产 `SakuraProbe` + `StdlibTransport` 对 `http://127.0.0.1:8080/v1` 发起真实连接 → `reason_code=unreachable`、`connection refused`、仅 1 个请求（各证明探测可用与 U-6 范围）。
+  - **BLOCKED/NOT_RUN 如实分列**：真实 OCR/韩文 OCR/真实彩色修复质量、真实翻译质量与成本/时延、真实权重下载、`color`/`term_extract`/`render` 接线（AC-RFULL-001 完整链）为 `BLOCKED`；真实 Sakura 服务验证、真实端点端到端为 `NOT_RUN`。**未以 mock/替身冒充模型质量或真实端点**。
+- **最近状态（当前，唯一）**：2026-09-17 实现完成并置 **`in_review`**，交 Codex 非作者独立 Review（集成由 Codex 执行）。分支 `agent/deepseek/TASK-019-provider-integration`、worktree `G:/CODEX/New Manga.worktrees/TASK-019-deepseek`、fixed base `36242fb`、delivery head `5fdd80a`（`07d78d3` 开工文档、`8effbeb` 实现主体、`5fdd80a` 写入守卫与一致性）。**未 push、未合并 master**。范围判定登记：新增 `src/ports/providers/errors.py`（共享错误/就绪分类）属允许 glob 内的**新增模块**，`src/ports/providers/profiles.py` 仅新增 `CAPABILITY_DETECTION` 常量、未改既有字段语义；如 Reviewer 判定越界请退回并指定落点（Handoff 风险 R-6）。同批登记待 Codex 裁决项：AC-RFULL-001 的 `color`/`term_extract`/`render` handler 归属与允许路径（R-2）、彩色/复杂场景拒绝单色基线的产品取舍（R-3）、以及 **R-5 疑似跨 Task 缺陷**（普通新建 Region 默认 `sfx_policy='skip'` 导致 planner 对 `translate/segment/mask_refine/inpaint/render` 一律 `SKIP_POLICY`，`src/ui/**` 无写入路径；证据见取证 §5）。
 - 历史状态（2026-09-17 释放前）：窗口条款登记 `blocked`；U-6 已批准 Sakura 监控范围；AC-EXT-SAKURA-001 已正式编号并追踪为 `NOT_RUN`；TASK-018 已 `ready` 但未完成；TASK-017 真实 Provider 协议/成本/时延 `NOT_RUN`（付费端点未配置）；本机 Sakura 未运行。

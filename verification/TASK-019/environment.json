@@ -1,0 +1,18 @@
+{
+  "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "machine": "AMD64",
+  "optional_modules": {
+    "torch": false,
+    "diffusers": false,
+    "numpy": false,
+    "paddleocr": false,
+    "paddle": false,
+    "manga_ocr": false,
+    "onnxruntime": false,
+    "openai": false,
+    "PIL": false,
+    "transformers": false
+  },
+  "gpu": "NVIDIA GeForce RTX 5070 Ti, 16303 MiB, 616.92"
+}
