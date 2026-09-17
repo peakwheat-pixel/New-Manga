@@ -1,0 +1,11 @@
+### full-suite flaky rate: baseline (pristine e8e1750) x6 then HEAD x4
+baseline full 1: exit=0 :: 671 passed, 6 skipped in 27.66s :: []
+baseline full 2: exit=0 :: 671 passed, 6 skipped in 27.25s :: []
+baseline full 3: exit=0 :: 671 passed, 6 skipped in 27.16s :: []
+baseline full 4: exit=0 :: 671 passed, 6 skipped in 27.91s :: []
+baseline full 5: exit=0 :: 671 passed, 6 skipped in 27.53s :: []
+baseline full 6: exit=0 :: 671 passed, 6 skipped in 27.16s :: []
+head full 1: exit=0 :: 679 passed, 6 skipped in 28.15s :: []
+head full 2: exit=0 :: 679 passed, 6 skipped in 28.12s :: []
+head full 3: exit=0 :: 679 passed, 6 skipped in 28.68s :: []
+head full 4: exit=0 :: 679 passed, 6 skipped in 29.94s :: []

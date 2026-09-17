@@ -1,0 +1,9 @@
+### conftest collision (test infrastructure; reproducible on the pre-fix tree too)
+--- HEAD: tests/editing tests/providers (working order)
+.................................................................        [100%]
+137 passed in 2.31s
+--- HEAD: tests/providers tests/editing (collision)
+ERROR tests/providers/test_remote_providers.py
+ERROR tests/providers/test_sakura_probe.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!
+4 errors in 0.78s

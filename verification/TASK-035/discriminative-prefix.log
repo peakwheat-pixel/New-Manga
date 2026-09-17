@@ -1,0 +1,163 @@
+### discriminative: pre-fix src (e8e1750) + TASK-035 tests
+.......................FFF.........F.................................... [ 58%]
+........................................F...........                     [100%]
+================================== FAILURES ===================================
+__ TestRerenderPage.test_speech_region_with_the_real_default_policy_renders ___
+
+self = <test_rerender.TestRerenderPage object at 0x000001FFED41B050>
+stack = {'conn': <sqlite3.Connection object at 0x000001FFED4A7790>, 'storage': <infrastructure.filesystem.managed_storage.Mana...FFED593380>, 'locator': <infrastructure.rendering.locator.SqlitePageArtifactLocator object at 0x000001FFED593E00>, ...}
+clean_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01\x90\x00\x00\x01\x04\x08\x06\x00\x00\x00\x06Hb\x99\x00\x00\x00\tpHYs\...000! \x00\x00\x13\x02\x02\x000! \x00\x00\x13\x02\x02\x000\xf9?\x14\xba\x08K\x87\x99z\xbd\x00\x00\x00\x00IEND\xaeB`\x82'
+
+    def test_speech_region_with_the_real_default_policy_renders(
+        self, stack, clean_png
+    ) -> None:
+        """TASK-035 / F-1: ``speech`` + the real default ``skip`` must render.
+    
+        ``sfx=None`` leaves the entity defaults untouched — ``region_type``
+        ``speech`` and ``SfxPolicy.SKIP``, exactly what a newly created region
+        carries (D03 §7). The §85 gate must not apply, because the type is not
+        ``sfx``.
+        """
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-real-default",
+            sfx=None,
+        )
+        assert (region.region_type, region.sfx_policy) == (
+            RegionType.SPEECH,
+            SfxPolicy.SKIP,
+        )
+    
+        outcome = stack["service"].rerender_page(ids["page_id"])
+    
+        assert outcome.status is RenderStatus.COMMITTED
+        report = {item.region_id: item for item in outcome.reports}[region.region_id]
+>       assert report.status == "rendered"
+E       AssertionError: assert 'skipped' == 'rendered'
+E         
+E         - rendered
+E         + skipped
+
+tests\rendering\test_rerender.py:304: AssertionError
+___ TestRerenderPage.test_non_sfx_policy_values_never_gate_rendering[skip] ____
+
+self = <test_rerender.TestRerenderPage object at 0x000001FFED41B4D0>
+stack = {'conn': <sqlite3.Connection object at 0x000001FFED66C9A0>, 'storage': <infrastructure.filesystem.managed_storage.Mana...FFED593770>, 'locator': <infrastructure.rendering.locator.SqlitePageArtifactLocator object at 0x000001FFED593590>, ...}
+clean_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01\x90\x00\x00\x01\x04\x08\x06\x00\x00\x00\x06Hb\x99\x00\x00\x00\tpHYs\...000! \x00\x00\x13\x02\x02\x000! \x00\x00\x13\x02\x02\x000\xf9?\x14\xba\x08K\x87\x99z\xbd\x00\x00\x00\x00IEND\xaeB`\x82'
+policy = 'skip'
+
+    @pytest.mark.parametrize("policy", ["skip", "manual", "translate"])
+    def test_non_sfx_policy_values_never_gate_rendering(
+        self, stack, clean_png, policy: str
+    ) -> None:
+        """AC ①: a non-SFX region renders whatever its ``sfx_policy`` says."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-speech",
+            sfx=policy,
+        )
+    
+        outcome = stack["service"].rerender_page(ids["page_id"])
+    
+        assert outcome.status is RenderStatus.COMMITTED
+        report = {item.region_id: item for item in outcome.reports}[region.region_id]
+>       assert report.status == "rendered"
+E       AssertionError: assert 'skipped' == 'rendered'
+E         
+E         - rendered
+E         + skipped
+
+tests\rendering\test_rerender.py:325: AssertionError
+__ TestRerenderPage.test_non_sfx_policy_values_never_gate_rendering[manual] ___
+
+self = <test_rerender.TestRerenderPage object at 0x000001FFED41B830>
+stack = {'conn': <sqlite3.Connection object at 0x000001FFED66D5D0>, 'storage': <infrastructure.filesystem.managed_storage.Mana...FFED839220>, 'locator': <infrastructure.rendering.locator.SqlitePageArtifactLocator object at 0x000001FFED839E50>, ...}
+clean_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01\x90\x00\x00\x01\x04\x08\x06\x00\x00\x00\x06Hb\x99\x00\x00\x00\tpHYs\...000! \x00\x00\x13\x02\x02\x000! \x00\x00\x13\x02\x02\x000\xf9?\x14\xba\x08K\x87\x99z\xbd\x00\x00\x00\x00IEND\xaeB`\x82'
+policy = 'manual'
+
+    @pytest.mark.parametrize("policy", ["skip", "manual", "translate"])
+    def test_non_sfx_policy_values_never_gate_rendering(
+        self, stack, clean_png, policy: str
+    ) -> None:
+        """AC ①: a non-SFX region renders whatever its ``sfx_policy`` says."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-speech",
+            sfx=policy,
+        )
+    
+        outcome = stack["service"].rerender_page(ids["page_id"])
+    
+        assert outcome.status is RenderStatus.COMMITTED
+        report = {item.region_id: item for item in outcome.reports}[region.region_id]
+>       assert report.status == "rendered"
+E       AssertionError: assert 'skipped' == 'rendered'
+E         
+E         - rendered
+E         + skipped
+
+tests\rendering\test_rerender.py:325: AssertionError
+_ TestRerenderRegion.test_speech_region_with_the_real_default_policy_renders_single_region _
+
+self = <test_rerender.TestRerenderRegion object at 0x000001FFED4391F0>
+stack = {'conn': <sqlite3.Connection object at 0x000001FFED66DB70>, 'storage': <infrastructure.filesystem.managed_storage.Mana...FFED83B290>, 'locator': <infrastructure.rendering.locator.SqlitePageArtifactLocator object at 0x000001FFED839940>, ...}
+clean_png = b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x01\x90\x00\x00\x01\x04\x08\x06\x00\x00\x00\x06Hb\x99\x00\x00\x00\tpHYs\...000! \x00\x00\x13\x02\x02\x000! \x00\x00\x13\x02\x02\x000\xf9?\x14\xba\x08K\x87\x99z\xbd\x00\x00\x00\x00IEND\xaeB`\x82'
+
+    def test_speech_region_with_the_real_default_policy_renders_single_region(
+        self, stack, clean_png
+    ) -> None:
+        """Single-region render (§47) is not gated for a non-SFX region either."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-real-default",
+            sfx=None,
+        )
+    
+        outcome = stack["service"].rerender_region(region.region_id)
+    
+>       assert outcome.status is RenderStatus.COMMITTED
+E       AssertionError: assert 'blocked' is 'committed'
+E        +  where 'blocked' = RenderOutcome(status='blocked', artifact_id=None, revision_no=None, managed_path=None, provenance_json=None, reports=(), error_code='SKIP_POLICY', detail='skip_policy: sfx_policy=skip requires an explicit manual command (allow_manual_sfx)').status
+E        +  and   'committed' = RenderStatus.COMMITTED
+
+tests\rendering\test_rerender.py:553: AssertionError
+________ test_region_defaults_agree_across_entity_snapshot_and_fixture ________
+
+    def test_region_defaults_agree_across_entity_snapshot_and_fixture() -> None:
+        """TASK-035 (R-02/R-05 guard): the three SFX defaults must not drift apart.
+    
+        Entity, snapshot and this suite's fixture all use the production default
+        ``SfxPolicy.SKIP`` (D03 §7, matching the Schema default); the old fixture
+        value ``"translate"`` is what kept F-1 invisible to this suite.
+        """
+>       assert (
+            Region("r-entity", "p1").sfx_policy.value
+            == RegionSnapshot("r-snapshot", "p1").sfx_policy
+            == region("r-fixture", "p1").sfx_policy
+            == SfxPolicy.SKIP.value
+        )
+E       AssertionError: assert 'skip' == 'translate'
+E         
+E         - translate
+E         + skip
+
+tests\pipeline\test_pipeline.py:699: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/rendering/test_rerender.py::TestRerenderPage::test_speech_region_with_the_real_default_policy_renders
+FAILED tests/rendering/test_rerender.py::TestRerenderPage::test_non_sfx_policy_values_never_gate_rendering[skip]
+FAILED tests/rendering/test_rerender.py::TestRerenderPage::test_non_sfx_policy_values_never_gate_rendering[manual]
+FAILED tests/rendering/test_rerender.py::TestRerenderRegion::test_speech_region_with_the_real_default_policy_renders_single_region
+FAILED tests/pipeline/test_pipeline.py::test_region_defaults_agree_across_entity_snapshot_and_fixture
+5 failed, 119 passed in 3.16s

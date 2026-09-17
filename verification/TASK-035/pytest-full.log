@@ -1,0 +1,51 @@
+### python -m pytest -q -p no:cacheprovider -rs
+........................................................................ [ 10%]
+........................................................................ [ 21%]
+....................s................................................... [ 31%]
+...................................sssss................................ [ 42%]
+........................................................................ [ 52%]
+........................................................................ [ 63%]
+...........................F............................................ [ 73%]
+........................................................................ [ 84%]
+........................................................................ [ 94%]
+.....................................                                    [100%]
+================================== FAILURES ===================================
+________________ test_reader_webtoon_swaps_in_vertical_viewer _________________
+
+engine = <PySide6.QtQml.QQmlEngine(0x1d7f08cfbd0) at 0x000001D736FB1D00>
+reader_stack = (<ui.viewmodels.reader.viewmodel.ReaderViewModel(0x1d767be52e0) at 0x000001D736FB3EC0>, <application.reading.service.R...0\\page_2.png', translated_path=None, translated_revision_id=None, current_translated_revision_id=None, text='第 2 页')])
+
+    @requires_pyside6
+    def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
+        vm, reading, pages = reader_stack
+        engine.rootContext().setContextProperty("readerViewModel", vm)
+        window = load_host(engine, READER_HOST, SRC_QML / "reader")
+        try:
+            root = find_by_name(window, "readerView")
+            vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+            QGuiApplication.processEvents()
+            scroll = find_by_name(root, "readerWebtoonScroll")
+            assert scroll is not None, "webtoon chapter swaps in the vertical Flickable"
+            # the page image loads asynchronously; contentHeight must exist
+            # before contentY can be set past the clamp
+            assert pump(window, 5.0, lambda: scroll.property("contentHeight") > 0), (
+                "webtoon image never produced a scrollable height"
+            )
+            scroll.setProperty("contentY", 240.0)
+            # the throttled save timer fires after ~500 ms
+>           assert pump(
+                window, 2.0, lambda: reading.progress.scroll_offset_y == 240.0
+            ), "scroll_offset_y is saved through the service"
+E           AssertionError: scroll_offset_y is saved through the service
+E           assert False
+E            +  where False = pump(<PySide6.QtQuick.QQuickWindow(0x1d7f01b1b30 active exposed, visibility=QWindow::Windowed, flags=QFlags<Qt::WindowType>(Window), name="testWindow", geometry=640,296 1280x800) at 0x000001D736FB2E00>, 2.0, <function test_reader_webtoon_swaps_in_vertical_viewer.<locals>.<lambda> at 0x000001D744138900>)
+
+tests\reading_export\test_qml_contract.py:228: AssertionError
+=========================== short test summary info ===========================
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+1 failed, 678 passed, 6 skipped in 28.07s

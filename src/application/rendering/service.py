@@ -16,9 +16,13 @@ Frozen behaviour implemented here:
   the composition base; only the target region's box is restored from
   Clean and redrawn; a moved-on region revision or page artifact base
   yields ``COMPOSITION_BASE_CHANGED`` without updating any current.
-- SFX policy gate (§85): ``skip``/``manual`` regions are skipped by
-  batch renders (``skip_policy``); a manual-SFX region renders only on
-  an explicit single-region command with ``allow_manual_sfx=True``.
+- SFX policy gate (§85): only ``region_type = sfx`` follows ``skip``/``manual``
+  (skipped by batch renders as ``skip_policy``); a manual-SFX region renders
+  only on an explicit single-region command with ``allow_manual_sfx=True``.
+  Non-SFX regions are never gated by this policy, whatever its value, and the
+  decision comes from the shared rule
+  (:func:`application.translation.context.gate.decide_sfx_translation`) that
+  the planner and the Translate Step also use (TASK-035 / F-1).
 """
 
 from __future__ import annotations
@@ -37,6 +41,7 @@ from application.rendering.style import (
     resolve_font_size,
 )
 from application.translation.color.service import SourceStyleService
+from application.translation.context.gate import decide_sfx_translation
 from domain.regions.entities import SfxPolicy
 from ports.repositories.artifacts import (
     ArtifactRecord,
@@ -216,7 +221,6 @@ class RenderService:
             # §47 allows rendering under translation/inpaint locks, but a
             # fully region-locked target is not written by any command here.
             return _blocked("LOCK_CHANGED", "region_locked: rendering is blocked")
-        sfx = SfxPolicy(stored.sfx_policy)
         page_id = stored.page_id
         snapshot_revision_id = stored.current_revision_id
 
@@ -235,11 +239,15 @@ class RenderService:
                 "MISSING_REQUIRED_INPUT",
                 "region has no final_translation to render",
             )
-        if sfx is SfxPolicy.SKIP or (sfx is SfxPolicy.MANUAL and not allow_manual_sfx):
+        if not _sfx_gate_allows(
+            stored.region_type.value,
+            stored.sfx_policy.value,
+            allow_manual=allow_manual_sfx,
+        ):
             return _blocked(
                 "SKIP_POLICY",
-                f"skip_policy: sfx_policy={sfx.value} requires an "
-                "explicit manual command (allow_manual_sfx)",
+                f"skip_policy: sfx_policy={stored.sfx_policy.value} on an sfx "
+                "region requires an explicit manual command (allow_manual_sfx)",
             )
 
         source_style_result = self._extract_source_style(page_id)
@@ -344,9 +352,8 @@ class RenderService:
             return _Prepared(
                 _skip_report(region.region_id, "empty_final"), None
             )
-        sfx = SfxPolicy(region.sfx_policy)
-        if sfx is SfxPolicy.SKIP or (
-            sfx is SfxPolicy.MANUAL and not allow_sfx
+        if not _sfx_gate_allows(
+            region.region_type.value, region.sfx_policy.value, allow_manual=allow_sfx
         ):
             return _Prepared(_skip_report(region.region_id, "skip_policy"), None)
 
@@ -511,6 +518,26 @@ class _Prepared:
 
 def _skip_report(region_id: str, reason: str) -> RegionRenderReport:
     return RegionRenderReport(region_id=region_id, status=_SKIPPED, skip_reason=reason)
+
+
+def _sfx_gate_allows(
+    region_type: str, sfx_policy: str, *, allow_manual: bool
+) -> bool:
+    """D06 §85 SFX Policy Gate using the **single shared rule** (TASK-035).
+
+    ``decide_sfx_translation`` is the same implementation the planner and the
+    Translate Step use, so the ``region_type == sfx`` precondition and the
+    policy mapping exist in exactly one place — F-1's root cause was two
+    drifting copies (one per layer).
+
+    ``allow_manual`` is the rendering layer's own escape hatch (D06 §47: an
+    explicit single-region force render), not a second policy rule: it only
+    lets an *explicitly requested* manual SFX through.
+    """
+    action = decide_sfx_translation(region_type, sfx_policy)
+    if not action.skipped:
+        return True
+    return allow_manual and SfxPolicy(sfx_policy) is SfxPolicy.MANUAL
 
 
 def _merge_defaults(

@@ -19,7 +19,7 @@ from region_helpers import InMemoryRegionRepository  # noqa: E402
 
 from application.rendering.service import RenderService, RenderStatus
 from application.translation.color.service import SourceStyleService
-from domain.regions.entities import BBox, Region, RegionGeometry
+from domain.regions.entities import BBox, Region, RegionGeometry, RegionType, SfxPolicy
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.rendering.font_catalog import QtFontCatalog
 from infrastructure.rendering.locator import SqlitePageArtifactLocator
@@ -184,14 +184,24 @@ def make_region(
     region_id: str | None = None,
     bbox=(40, 30, 220, 120),
     final: str = "你好世界",
-    sfx: str = "translate",
+    sfx: str | None = "translate",
+    region_type: str = "speech",
 ):
+    """Insert one region into the in-memory repository.
+
+    ``region_type="speech"`` + ``sfx=None`` is the **real product default** of a
+    newly created region (``Region`` defaults: ``speech`` + ``SfxPolicy.SKIP``,
+    D03 §7) — the combination TASK-035 exists for. ``region_type="sfx"`` marks
+    a genuine SFX region, which is the only type the §85 gate may skip.
+    """
     region = Region(
         region_id=region_id or f"region-{len(repo.regions) + 1}",
         page_id=page_id,
+        region_type=RegionType(region_type),
         geometry=RegionGeometry(bbox=BBox(*bbox)),
     )
-    region.sfx_policy = sfx
+    if sfx is not None:
+        region.sfx_policy = SfxPolicy(sfx)
     if final:
         region.text.machine_translation = final
         region.text.refresh_final()
@@ -250,7 +260,7 @@ class TestRerenderPage:
         normal = make_region(repo, ids["page_id"], region_id="r-normal", final="正文")
         sfx_skip = make_region(
             repo, ids["page_id"], region_id="r-sfx", bbox=(150, 20, 100, 100),
-            final="ドン!", sfx="skip",
+            final="ドン!", sfx="skip", region_type="sfx",
         )
 
         outcome = stack["service"].rerender_page(ids["page_id"])
@@ -263,6 +273,57 @@ class TestRerenderPage:
         rendered = read_managed(stack, outcome.managed_path)
         # SFX box is pixel-identical to the clean base (nothing was drawn)
         assert region_box_equal(rendered, clean_png, (150, 20, 100, 100))
+
+    def test_speech_region_with_the_real_default_policy_renders(
+        self, stack, clean_png
+    ) -> None:
+        """TASK-035 / F-1: ``speech`` + the real default ``skip`` must render.
+
+        ``sfx=None`` leaves the entity defaults untouched — ``region_type``
+        ``speech`` and ``SfxPolicy.SKIP``, exactly what a newly created region
+        carries (D03 §7). The §85 gate must not apply, because the type is not
+        ``sfx``.
+        """
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-real-default",
+            sfx=None,
+        )
+        assert (region.region_type, region.sfx_policy) == (
+            RegionType.SPEECH,
+            SfxPolicy.SKIP,
+        )
+
+        outcome = stack["service"].rerender_page(ids["page_id"])
+
+        assert outcome.status is RenderStatus.COMMITTED
+        report = {item.region_id: item for item in outcome.reports}[region.region_id]
+        assert report.status == "rendered"
+        assert report.skip_reason is None
+
+    @pytest.mark.parametrize("policy", ["skip", "manual", "translate"])
+    def test_non_sfx_policy_values_never_gate_rendering(
+        self, stack, clean_png, policy: str
+    ) -> None:
+        """AC ①: a non-SFX region renders whatever its ``sfx_policy`` says."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-speech",
+            sfx=policy,
+        )
+
+        outcome = stack["service"].rerender_page(ids["page_id"])
+
+        assert outcome.status is RenderStatus.COMMITTED
+        report = {item.region_id: item for item in outcome.reports}[region.region_id]
+        assert report.status == "rendered"
+        assert report.skip_reason is None
 
     def test_empty_final_translation_regions_are_skipped(self, stack, clean_png) -> None:
         ids = seed_page(stack)
@@ -464,6 +525,7 @@ class TestRerenderRegion:
             region_id="r-sfx",
             final="拟声词",
             sfx="manual",
+            region_type="sfx",
         )
 
         blocked = stack["service"].rerender_region("r-sfx")
@@ -472,3 +534,69 @@ class TestRerenderRegion:
 
         allowed = stack["service"].rerender_region("r-sfx", allow_manual_sfx=True)
         assert allowed.status is RenderStatus.COMMITTED
+
+    def test_speech_region_with_the_real_default_policy_renders_single_region(
+        self, stack, clean_png
+    ) -> None:
+        """Single-region render (§47) is not gated for a non-SFX region either."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-real-default",
+            sfx=None,
+        )
+
+        outcome = stack["service"].rerender_region(region.region_id)
+
+        assert outcome.status is RenderStatus.COMMITTED
+
+    def test_sfx_region_with_the_real_default_policy_is_still_gated(
+        self, stack, clean_png
+    ) -> None:
+        """The original §85 intent survives: a real SFX region + ``skip`` is gated."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        repo = stack["service"]._region_repo
+        make_region(repo, ids["page_id"], region_id="r-normal", final="正文")
+        sfx = make_region(
+            repo,
+            ids["page_id"],
+            region_id="r-sfx-default",
+            bbox=(150, 20, 100, 100),
+            final="ドン!",
+            sfx=None,
+            region_type="sfx",
+        )
+        assert sfx.sfx_policy is SfxPolicy.SKIP
+
+        batch = stack["service"].rerender_page(ids["page_id"])
+        assert batch.status is RenderStatus.COMMITTED
+        report = {item.region_id: item for item in batch.reports}[sfx.region_id]
+        assert (report.status, report.skip_reason) == ("skipped", "skip_policy")
+
+        blocked = stack["service"].rerender_region(sfx.region_id)
+        assert blocked.status is RenderStatus.BLOCKED
+        assert blocked.error_code == "SKIP_POLICY"
+        assert "skip_policy" in (blocked.detail or "")
+
+    def test_sfx_translate_policy_enters_the_normal_render_flow(
+        self, stack, clean_png
+    ) -> None:
+        """AC ①: SFX + ``translate`` renders normally (explicit opt-in)."""
+        ids = seed_page(stack)
+        commit_artifact(stack, ids, ArtifactType.CLEAN, clean_png)
+        region = make_region(
+            stack["service"]._region_repo,
+            ids["page_id"],
+            region_id="r-sfx-translate",
+            bbox=(150, 20, 100, 100),
+            final="ドン!",
+            sfx="translate",
+            region_type="sfx",
+        )
+
+        outcome = stack["service"].rerender_region(region.region_id)
+
+        assert outcome.status is RenderStatus.COMMITTED

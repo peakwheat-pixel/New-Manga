@@ -1,0 +1,15 @@
+### boundary: my commits vs branch start e8e1750
+doc/tasks/TASK-035.md
+src/application/rendering/service.py
+src/domain/tasks/models.py
+tests/pipeline/test_pipeline.py
+tests/rendering/test_rerender.py
+out-of-scope: none
+### forbidden-path scan over 2e1bf2d..HEAD
+forbidden hits: 0
+### whitespace: git diff --check 2e1bf2d..HEAD
+exit=0
+### branch-start commits (Codex release docs) 2e1bf2d..e8e1750
+doc/STATUS.md
+doc/tasks/README.md
+doc/tasks/TASK-035.md
