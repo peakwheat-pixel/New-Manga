@@ -1,0 +1,6 @@
+### AC ③: sfx_policy defaults, entity vs Schema vs snapshot (TASK-032)
+entity Region(...).sfx_policy        = skip
+entity SfxPolicy.SKIP.value          = skip
+domain RegionSnapshot(...).sfx_policy = translate
+snapshot deserialiser _region({...})  = skip
+Schema default (row not given sfx_policy) = {'region_type': 'speech', 'sfx_policy': 'skip'}
