@@ -198,28 +198,71 @@ Rectangle {
         Component {
             id: webtoonViewer
             // 按宽适配、高度自然延伸、纵向滚动（D05 §40；禁止按固定高度压缩）。
+            // TASK-020: when the assembly injects a tile factory the page is
+            // served as rebuildable tile bands (按需解码 + 预取限制); without
+            // one the whole-page image path below is unchanged.
             Flickable {
                 id: webtoonScroll
                 objectName: "readerWebtoonScroll"
                 clip: true
                 contentWidth: width
-                contentHeight: webtoonImage.paintedHeight
+                contentHeight: tilesHost.visible
+                    ? tilesHost.childrenRect.height
+                    : webtoonImage.paintedHeight
                 boundsBehavior: Flickable.StopAtBounds
+
+                // Tile geometry is known immediately (no decode round-trip),
+                // so the saved offset restores as soon as the tiled host is
+                // live; the whole-image path keeps its R-003 decode wait.
+                onVisibleChanged: if (visible) Qt.callLater(restoreSavedOffset)
+                onWidthChanged: if (visible) Qt.callLater(restoreSavedOffset)
+                Component.onCompleted: Qt.callLater(restoreSavedOffset)
+
+                function restoreSavedOffset() {
+                    if (tilesHost.visible && active && model.scrollOffsetY > 0)
+                        webtoonScroll.contentY = model.scrollOffsetY
+                }
 
                 Timer {
                     id: scrollSaveTimer
                     interval: 500
                     onTriggered: if (active) model.saveScrollOffset(webtoonScroll.contentY)
                 }
-                onContentYChanged: scrollSaveTimer.restart()
+                onContentYChanged: {
+                    scrollSaveTimer.restart()
+                    if (tilesHost.visible)
+                        model.requestTiles(webtoonScroll.contentY,
+                                           webtoonScroll.contentY + webtoonScroll.height)
+                }
+
+                Column {
+                    id: tilesHost
+                    visible: active && model.tilesActive
+                    width: parent.width
+
+                    Repeater {
+                        model: visible ? model.tiles : []
+                        delegate: Image {
+                            required property var modelData
+                            source: modelData.url
+                            width: tilesHost.width
+                            height: modelData.pageWidth > 0
+                                ? modelData.height * tilesHost.width / modelData.pageWidth
+                                : 0
+                            fillMode: Image.PreserveAspectFit
+                            asynchronous: true
+                        }
+                    }
+                }
 
                 Image {
                     id: webtoonImage
                     objectName: "readerPage"
+                    visible: !tilesHost.visible
                     width: parent.width
                     fillMode: Image.PreserveAspectFit
                     horizontalAlignment: Image.AlignHCenter
-                    source: active ? model.sourcePath : ""
+                    source: active && !tilesHost.visible ? model.sourcePath : ""
                     asynchronous: true
                     // R-003: restore the saved offset only after the async
                     // image has real content height, or the Flickable clamps
