@@ -2,7 +2,7 @@
 id: TASK-033
 title: 完整链收口：Color / Term Extract / Render handler 与渲染侧生产装配
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -107,5 +107,6 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-17 由用户批准释放；Codex 登记 `status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`81ffd83`（释放时 master HEAD）、branch=`agent/deepseek/TASK-033-full-chain-handlers`、worktree=`G:/CODEX/New Manga.worktrees/TASK-033-deepseek`，并完成上表「释放前核对」（含**关键新发现**：渲染侧生产装配完全缺失、`RenderService` 仅测试构造）与「归属裁决」「单一写者」两项约束的固化。**实施尚未开始。**
+- **历史状态（2026-09-17 释放时）**：由用户批准释放；Codex 登记 `status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`81ffd83`（释放时 master HEAD）、branch=`agent/deepseek/TASK-033-full-chain-handlers`、worktree=`G:/CODEX/New Manga.worktrees/TASK-033-deepseek`，并完成上表「释放前核对」（含**关键新发现**：渲染侧生产装配完全缺失、`RenderService` 仅测试构造）与「归属裁决」「单一写者」两项约束的固化。**实施尚未开始。**
 - 历史状态（2026-09-17）：由 Codex 依 TASK-019 R-2/F-2 创建为 `proposed`（`approval=pending_user_review`）；同日获用户批准释放。
+- **最近状态（当前，唯一）**：2026-09-18 00:3x 由 ZCode 在窗口内开工（W2 旗舰，status→`in_progress`）；分支按用户指令 `git merge master` 快进至 `a3c36b1`（Task 元数据 `base=e96b3eb` 之上为窗口授权与 W1 TASK-037 集成提交，其中仅 TASK-037 触碰 `tests/reading_export/**` 与文档、与本 Task 写集合不相交）。侦查完成：`commit_step` 对 Region 目标接受空 `revision_updates`（仅更新 stage）→ 单一写者决策=**RenderService 为 `translated` 指针唯一写者（CAS），render handler 的 `StepResult.revision_updates={}`**；实现开始。
