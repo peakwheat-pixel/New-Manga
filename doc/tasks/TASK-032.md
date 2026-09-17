@@ -2,7 +2,7 @@
 id: TASK-032
 title: 修复 SFX Policy Gate 缺失 region_type 前置（F-1）
 kind: bugfix
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-011, TASK-019]
 base_commit: ca17d454edc03bc1b057e9e3fc463c81da652e53
 branch: agent/deepseek/TASK-032-sfx-policy-gate-region-type
 worktree: G:/CODEX/New Manga.worktrees/TASK-032-deepseek
-integration_commit: null
+integration_commit: e3e055e
 ---
 
 # TASK-032：修复 SFX Policy Gate 缺失 region_type 前置（F-1）
@@ -19,6 +19,17 @@ integration_commit: null
 **状态提示（2026-09-17）**：`status=in_review`——修复已实现并取证（delivery head `771977c`），待**非作者**（Codex）独立 Review；AC 逐条证据、判别力与越界发现见 [verification/TASK-032/author-verification.md](../../verification/TASK-032/author-verification.md) 与 [Handoff](../handoffs/TASK-032-771977c.md)。
 
 **READY（2026-09-17 用户批准释放；同日按用户指示改派 Owner）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Owner 改为 DSH 后，若仍由 DSH 审会构成同体审查，故一并更换）；base=`ca17d45`（释放时的 master HEAD，已与实际代码核对：`src/application/tasks/service.py:353-361` 的缺陷仍在，`sfx_policy` 判断未检查 `region_type`）；branch/worktree 见顶部元数据（已按 `agent/deepseek/...` 命名重建并同步；首次按 `agent/zcode/...` 创建且**无任何提交**的 worktree/分支已移除）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
+
+## 集成收口（2026-09-17，Codex）
+
+**状态以顶部 frontmatter 为准（现为 `done`）**；上方那段交付时的状态提示（`in_review`）保留为历史快照。`integration_commit=e3e055e`（merge，parents `f3acd2f`+`ff887db`，被审 head `771977c`、元数据 `ff887db`）。
+
+- **Review**：[doc/reviews/TASK-032-771977c.md](../reviews/TASK-032-771977c.md)（Reviewer=Codex **非作者**，decision=`approved`）。四轴均有 `executed` 声明与逐轴小结；**Standards/Spec 未并行**——已派发的两条双轴线程仍排在执行槽之后，故按 §6 第 6 条兜底改用**两遍相互隔离**检查，并在报告中显式声明该偏差。
+- **集成后复验（master `e3e055e`）**：`tests/pipeline` **60 passed / 0 skipped**；`tests/core`+`tests/storage`+`tests/providers` **159 passed / 0 skipped**；全仓 **671 passed / 6 skipped**（6 项均既有 `tests/network` 的 `openssl unavailable`）。planner 前置已在 master 生效（`service.py:176` 的 `region.region_type != _SFX_REGION_TYPE`）。
+- **AC 判定**：①仅 SFX 应用策略 PASS；②非 SFX 全类型/全命令族不受影响 PASS（执行点唯一 + 15 组合参数化）；③缺字段口径三方一致 PASS；④真实默认值回归用例 PASS（判别力独立复现 **17 failed / 43 passed**）；⑤测试分列 PASS。
+- **Findings 处置**：**R-01 fixed**（更正 Handoff 验证表第 6 行的 `--check` 退出码声明，见上）；**R-02 deferred**（测试夹具 `region()` 默认仍为 `translate`，属漂移面，交 TASK-035）；**R-03 accepted**（取值域外策略在规划阶段 fail-closed 抛错，Schema 已限定取值域，无需产品决策）；**R-04 登记为 TASK-035**（渲染层同类缺陷，P1，既有）；**R-05 登记为 TASK-035**（`src/domain/tasks/models.py:182` 字段默认，P2）。
+- **F-1 状态：部分关闭**——**规划面 closed**（本 Task 达成）；**渲染面 open**（R-04：`src/application/rendering/service.py:219/238/347-351` 仍只按策略判定、无 `region_type` 前置，普通 `speech` Region 在真实默认 `skip` 下渲染仍被拦）。**F-1 不得记为已关闭**，关闭条件 = TASK-035 完成并集成。
+- 边界：未改 Schema/migration、依赖清单、pipeline seam 本体、`AGENTS.md`、其他 Task；未 push。
 
 **Codex 已完成意图裁决：本 Task 修的是缺陷、不是产品取舍**——依据 D06 §85「SFX Policy Gate」的前置 `region_type = sfx` 与 D08 AC-SFX-001（`region_type = sfx` 且未额外配置 → `SKIP_POLICY` / `reason = sfx_skip`）；D03 §7 的默认 `skip` **对 SFX 类型是正确的**，问题在策略泄漏到非 SFX 类型。因此**不需要产品决策**。
 
