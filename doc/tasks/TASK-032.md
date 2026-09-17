@@ -2,21 +2,25 @@
 id: TASK-032
 title: 修复 SFX Policy Gate 缺失 region_type 前置（F-1）
 kind: bugfix
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: DeepSeek Harness
 depends_on: [TASK-011, TASK-019]
-base_commit: null
-branch: null
-worktree: null
+base_commit: ca17d454edc03bc1b057e9e3fc463c81da652e53
+branch: agent/zcode/TASK-032-sfx-policy-gate-region-type
+worktree: G:/CODEX/New Manga.worktrees/TASK-032-zcode
 integration_commit: null
 ---
 
 # TASK-032：修复 SFX Policy Gate 缺失 region_type 前置（F-1）
 
-**PROPOSED（未释放）**：本 Task 由 TASK-019 Review 发现的跨 Task P0 缺陷 **F-1** 转化而来，**需用户批准释放**；未释放前不得实施。**Codex 已完成意图裁决：这是缺陷，不是产品取舍**，因此不需要产品决策（依据见下）。
+**READY（2026-09-17 用户批准释放）**：Owner=`ZCode`、Reviewer=`DeepSeek Harness`（**非作者**）；base=`ca17d45`（释放时的 master HEAD，已与实际代码核对：`src/application/tasks/service.py:353-361` 的缺陷仍在，`sfx_policy` 判断未检查 `region_type`）；branch/worktree 见顶部元数据（已创建并同步到本次释放提交）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
+
+**Codex 已完成意图裁决：本 Task 修的是缺陷、不是产品取舍**——依据 D06 §85「SFX Policy Gate」的前置 `region_type = sfx` 与 D08 AC-SFX-001（`region_type = sfx` 且未额外配置 → `SKIP_POLICY` / `reason = sfx_skip`）；D03 §7 的默认 `skip` **对 SFX 类型是正确的**，问题在策略泄漏到非 SFX 类型。因此**不需要产品决策**。
+
+**Review 口径**：本 Task 的独立 Review 必须按[协作协议](../09_COLLABORATION.md) §6 的**四轴**执行——**Standards**（`code-review` 技能两轴之一，强制；含 Fowler smell baseline 作为判断项）/ **Spec**（两轴之二）/ Architecture / Verification，并逐轴声明 `executed`/`N/A`、每轴一行小结、**不跨轴排名**；两轴应优先由**独立执行者/线程并行**执行（模板见 [Review 模板](../templates/REVIEW.md)）。
 
 ## 来源与目标
 
@@ -41,7 +45,7 @@ integration_commit: null
 - `tests/pipeline/**`
 - `doc/tasks/TASK-032.md`、`doc/handoffs/TASK-032-*.md`、`verification/TASK-032/**`
 
-超出范围（Schema/migration、D03/D08 文本、`src/ui/**`、`src/domain/**`、其他 Task）先由 Codex 明确范围变更。本 Task **预计不需要 Schema 变更**（`skip` 默认本身正确）。
+Codex 已按 base `ca17d45` 的实际结构核对：三个代码/测试允许路径（`src/application/tasks/service.py`、`src/infrastructure/sqlite/pipeline.py`、`tests/pipeline/**`）均存在。超出范围（Schema/migration、D03/D08 文本、`src/ui/**`、`src/domain/**`、其他 Task）先由 Codex 明确范围变更。本 Task **预计不需要 Schema 变更**（`skip` 默认本身正确）。
 
 ## 禁止范围
 
@@ -64,5 +68,6 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`proposed`，未释放）。
-- 最近状态：2026-09-17 由 Codex 依据 TASK-019 的 F-1 登记创建为 `proposed`；释放需用户批准，释放时由 Codex 填写 owner/reviewer/base/branch/worktree。
+- Handoff：尚无。Review：尚无。实际执行/测试：尚无。
+- **最近状态（当前，唯一）**：2026-09-17 用户批准**释放**——`status=ready`、`approval=approved_by_user`、Owner=`ZCode`、Reviewer=`DeepSeek Harness`（非作者）、base=`ca17d45`、branch=`agent/zcode/TASK-032-sfx-policy-gate-region-type`、worktree=`G:/CODEX/New Manga.worktrees/TASK-032-zcode`（已创建并同步到 release 提交）。依赖 TASK-011/TASK-019 均 `done`；Codex 已核对缺陷仍存在于 `src/application/tasks/service.py:353-361`。**实施尚未开始**：实际执行仍为 `NOT_RUN`，Owner 开始前须把 `status` 改为 `in_progress`。
+- 历史状态（2026-09-17 释放前）：由 Codex 依据 TASK-019 的 F-1 登记创建为 `proposed`（`approval=pending_user_review`，owner/reviewer/base/branch/worktree 均为空）。
