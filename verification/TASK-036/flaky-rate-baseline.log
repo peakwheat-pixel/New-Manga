@@ -1,0 +1,8 @@
+### baseline (pristine edfdcf2) full suite x6 - flaky-rate control
+===== baseline run 1 : exit=0 :: 706 passed, 6 skipped in 25.84s
+===== baseline run 2 : exit=1 :: 1 failed, 705 passed, 6 skipped in 27.48s
+  FAILED tests/reading_export/test_qml_contract.py::test_reader_webtoon_swaps_in_vertical_viewer
+===== baseline run 3 : exit=0 :: 706 passed, 6 skipped in 26.88s
+===== baseline run 4 : exit=0 :: 706 passed, 6 skipped in 26.08s
+===== baseline run 5 : exit=0 :: 706 passed, 6 skipped in 26.02s
+===== baseline run 6 : exit=0 :: 706 passed, 6 skipped in 26.16s

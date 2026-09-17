@@ -22,7 +22,7 @@ pytest.importorskip("PySide6", reason="PySide6 not installed in this interpreter
 
 import time as _time  # noqa: E402
 
-from PySide6.QtCore import QUrl  # noqa: E402
+from PySide6.QtCore import Qt, QUrl  # noqa: E402
 
 from application.export import ExportPage, ExportService  # noqa: E402
 from ui.viewmodels.export.viewmodel import ExportViewModel  # noqa: E402
@@ -49,26 +49,22 @@ def pump_until(app, condition, timeout=5.0):
 
 
 # ---------------------------------------------------------------------------
-# TASK-034 AC ③: bounded diagnosis for the two registered flaky cases.
+# TASK-034 AC ③ diagnostics + TASK-036 AC ④ (R-05) publish order.
 #
-# `startExport` publishes its terminal state in this order
-# (`src/ui/viewmodels/export/viewmodel.py`):
-#     _finish(): self._running = False  (:380)  ... self._status = ... (:382-387)
-#                self.changed.emit()   (:388)   self.exportFinished.emit() (:389)
-#     _fail():   self._running = False  (:392)  ... self._status = ... (:393)
-#                self.refreshStaleWarning() (:396)  self.exportFailed.emit() (:398)
+# `_finish`/`_fail` now publish the terminal state *before* clearing the
+# `running` flag (`src/ui/viewmodels/export/viewmodel.py`):
+#     _finish(): self._status = …  → self.changed.emit() →
+#                self.exportFinished.emit(summary) → self._running = False →
+#                self.changed.emit()          (the flag's own notify signal)
+#     _fail():   self._status = …  → self.refreshStaleWarning() →
+#                self.changed.emit() → self.exportFailed.emit(message) →
+#                self._running = False → self.changed.emit()
 #
-# So waiting on `not vm.running` can return in the window between "flag
-# cleared" and "status/signal published", leaving the assertions to run on a
-# half-published state. Waiting on the *outcome the assertion is about*
-# removes that window without weakening any assertion: on timeout the same
-# assertion still fails, now with an event/state trace attached.
+# So `running == False` now implies the terminal state and signal are already
+# published, which makes the natural terminal wait correct again (TASK-036
+# AC ④: the waits below went back to `not vm.running`). The diagnostic trace
+# is still attached to every failure message.
 # ---------------------------------------------------------------------------
-
-
-def await_export_outcome(app, signals, *, timeout=5.0):
-    """Bounded wait for the worker's terminal signal (TASK-034 AC ③)."""
-    return pump_until(app, lambda: bool(signals), timeout=timeout)
 
 
 def export_diagnostics(vm, signals) -> str:
@@ -81,6 +77,22 @@ def export_diagnostics(vm, signals) -> str:
         f" statusMessage={vm.statusMessage!r}"
         f" history={len(vm.history)}"
     )
+
+
+def half_published(snapshots) -> list:
+    """Snapshots that show the pre-TASK-036 inconsistency (running cleared, state stale)."""
+    return [
+        snapshot
+        for snapshot in snapshots
+        if snapshot[0] is False and snapshot[1].startswith("正在导出")
+    ]
+
+
+def record_changes(vm) -> list:
+    """Record ``(running, statusMessage)`` on every ``changed`` emission."""
+    snapshots: list = []
+    vm.changed.connect(lambda: snapshots.append((vm.running, vm.statusMessage)))
+    return snapshots
 
 
 class Catalog:
@@ -259,7 +271,7 @@ def test_start_export_completes_and_updates_history(qapp, tmp_path, pages, expor
     finished = []
     vm.exportFinished.connect(lambda summary: finished.append(summary))
     vm.startExport()
-    assert await_export_outcome(qapp, finished), export_diagnostics(vm, finished)
+    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, finished)
     assert len(finished) == 1, export_diagnostics(vm, finished)
     assert finished[0]["status"] == "completed", export_diagnostics(vm, finished)
     assert "导出完成" in vm.statusMessage, export_diagnostics(vm, finished)
@@ -274,7 +286,7 @@ def test_start_export_stale_abort_surfaces_failure(qapp, tmp_path, pages, export
     failures = []
     vm.exportFailed.connect(lambda message: failures.append(message))
     vm.startExport()
-    assert await_export_outcome(qapp, failures), export_diagnostics(vm, failures)
+    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, failures)
     assert len(failures) == 1, export_diagnostics(vm, failures)
     assert "不是最新渲染" in failures[0], export_diagnostics(vm, failures)
     assert vm.staleWarningVisible, export_diagnostics(vm, failures)
@@ -286,13 +298,9 @@ def test_cancel_export_reports_and_keeps_ui_consistent(qapp, tmp_path, pages, ex
     vm.setOutputPath(str(tmp_path / "out" / "x.zip"))
     vm.startExport()
     vm.cancelExport()  # cooperative flag; may land before or after completion
-    # Wait for the terminal *publication* (running cleared and the status
-    # string no longer the in-progress one), not just for the running flag.
-    terminal = pump_until(
-        qapp,
-        lambda: not vm.running and not vm.statusMessage.startswith("正在导出"),
-    )
-    assert terminal, export_diagnostics(vm, ())
+    # With the TASK-036 AC ④ order, `running == False` already implies the
+    # terminal status was published, so the natural wait is sufficient.
+    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, ())
     if (tmp_path / "out" / "x.zip").exists():
         assert vm.statusMessage.startswith("导出完成"), export_diagnostics(vm, ())
     else:
@@ -303,31 +311,63 @@ def test_cancel_export_reports_and_keeps_ui_consistent(qapp, tmp_path, pages, ex
 
 
 @requires_pyside6
-def test_export_outcome_wait_does_not_accept_the_half_published_state(qapp):
-    """AC ③ discriminative: the old wait could return mid-publication.
+def test_export_outcome_wait_does_not_accept_the_half_published_state(
+    qapp, tmp_path, pages, export_service
+):
+    """TASK-036 AC ④ (R-05): the half-published window is gone.
 
-    With ``running`` already cleared and no terminal signal delivered yet —
-    the window between ``viewmodel.py:392`` and ``:398`` — the previous
-    ``pump_until(not vm.running)`` wait returned immediately. The outcome
-    wait keeps waiting, so the bounded timeout (not a relaxed assertion) is
-    what ends it.
+    TASK-034 wrote this test against the *old* order to show that waiting on
+    ``not vm.running`` could return while the status/signal were still
+    unpublished. The order is fixed now, so the test pins the invariant that
+    replaced the window (updated, not deleted — see AC ④):
+
+    * every observation with ``running == False`` already shows a terminal
+      status, and
+    * with a **direct** connection (which runs inside the emit call, so the
+      in-call order is observable) the terminal signal fires while the flag is
+      still set. An auto/queued connection is delivered later, by which time
+      the flag is cleared and the terminal state is visible.
     """
+    vm = make_export_vm(tmp_path, pages, export_service)
+    make_stale_and_missing(vm)
+    snapshots = record_changes(vm)
+    in_call = []
+    vm.exportFailed.connect(
+        lambda message: in_call.append(vm.running), Qt.ConnectionType.DirectConnection
+    )
+    vm.startExport()
+    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, in_call)
 
-    class HalfPublished:
-        running = False  # cleared at viewmodel.py:380/392 …
-        statusMessage = "正在导出…"  # … while the status is still the old one
-        staleWarningVisible = False
-        history: tuple = ()
+    assert half_published(snapshots) == [], half_published(snapshots)
+    assert snapshots, "the changed signal must have fired"
+    assert in_call == [True], in_call  # emitted before `running` was cleared
+    assert vm.statusMessage.startswith("导出失败"), vm.statusMessage
+    # Non-vacuity: the detector still recognises the pre-fix ordering.
+    assert half_published([(False, "正在导出…"), (False, "导出失败：x")]) == [
+        (False, "正在导出…")
+    ]
 
-    vm = HalfPublished()
-    signals: list = []
-    # The old predicate is satisfied in this state …
-    assert not vm.running
-    # … while the assertion-relevant outcome has not arrived.
-    assert not await_export_outcome(qapp, signals, timeout=0.2)
-    diagnostics = export_diagnostics(vm, signals)
-    assert "signals=[]" in diagnostics
-    assert "running=False" in diagnostics
+
+@requires_pyside6
+def test_success_path_also_publishes_before_clearing_running(
+    qapp, tmp_path, pages, export_service
+):
+    """TASK-036 AC ④: the same invariant on the ``exportFinished`` path."""
+    vm = make_export_vm(tmp_path, pages, export_service)
+    vm.setOutputPath(str(tmp_path / "out" / "ok.zip"))
+    snapshots = record_changes(vm)
+    in_call = []
+    vm.exportFinished.connect(
+        lambda summary: in_call.append((vm.running, summary)),
+        Qt.ConnectionType.DirectConnection,
+    )
+    vm.startExport()
+    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, in_call)
+
+    assert half_published(snapshots) == [], half_published(snapshots)
+    assert [snapshot[0] for snapshot in in_call] == [True], in_call
+    assert in_call[0][1]["status"] == "completed"
+    assert vm.statusMessage.startswith("导出完成"), vm.statusMessage
 
 
 @requires_pyside6

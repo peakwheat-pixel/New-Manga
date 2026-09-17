@@ -1,0 +1,39 @@
+### TASK-036 AC 6: inpaint.route_policy input matrix
+--- BEFORE (base edfdcf2 src) ---
+TASK-034 #1  no inpaint key                  | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #2  inpaint={}                      | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #3  inpaint='oops' (section type)   | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #4  route_policy='simple-fill'      | ProviderInputError: INVALID_INPUT: inpaint.route_policy must be a mapping
+TASK-034 #5  route_policy=[]                 | ProviderInputError: INVALID_INPUT: inpaint.route_policy must be a mapping
+TASK-034 #6  route_policy=None               | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #7  route_policy={}                 | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #8  allowed=[edge-bleed]            | OK  allowed=('edge-bleed',) fallback=() color=None requirements={}
+TASK-034 #9  allowed=[]                      | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #10 color_route=flux-fill           | OK  allowed=('simple-fill', 'edge-bleed', 'flux-fill') fallback=() color='flux-fill' requirements={}
+TASK-034 #11 color_route=''                  | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #12 requirements={brushnet: True}   | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={'brushnet': True}
+ext allowed='simple-fill' (string)           | OK  allowed=('s', 'i', 'm', 'p', 'l', 'e', '-', 'f', 'i', 'l', 'l') fallback=() color=None requirements={}
+ext fallback='edge-bleed' (string)           | OK  allowed=('simple-fill', 'edge-bleed') fallback=('e', 'd', 'g', 'e', '-', 'b', 'l', 'e', 'e', 'd') color=None requirements={}
+ext allowed=[1] (non-str entry)              | OK  allowed=('1',) fallback=() color=None requirements={}
+ext requirements={brushnet: 'false'}         | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={'brushnet': True}
+ext requirements={brushnet: 0}               | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={'brushnet': False}
+ext requirements=['brushnet']                | ValueError: dictionary update sequence element #0 has length 8; 2 is required
+--- AFTER (TASK-036 src) ---
+TASK-034 #1  no inpaint key                  | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #2  inpaint={}                      | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #3  inpaint='oops' (section type)   | ProviderInputError: INVALID_INPUT: inpaint must be a mapping (got str)
+TASK-034 #4  route_policy='simple-fill'      | ProviderInputError: INVALID_INPUT: inpaint.route_policy must be a mapping (got str)
+TASK-034 #5  route_policy=[]                 | ProviderInputError: INVALID_INPUT: inpaint.route_policy must be a mapping (got list)
+TASK-034 #6  route_policy=None               | ProviderInputError: INVALID_INPUT: inpaint.route_policy must be a mapping (got NoneType)
+TASK-034 #7  route_policy={}                 | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #8  allowed=[edge-bleed]            | OK  allowed=('edge-bleed',) fallback=() color=None requirements={}
+TASK-034 #9  allowed=[]                      | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #10 color_route=flux-fill           | OK  allowed=('simple-fill', 'edge-bleed', 'flux-fill') fallback=() color='flux-fill' requirements={}
+TASK-034 #11 color_route=''                  | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={}
+TASK-034 #12 requirements={brushnet: True}   | OK  allowed=('simple-fill', 'edge-bleed') fallback=() color=None requirements={'brushnet': True}
+ext allowed='simple-fill' (string)           | ProviderInputError: INVALID_INPUT: inpaint.route_policy.allowed_routes must be a sequence of strings (got str)
+ext fallback='edge-bleed' (string)           | ProviderInputError: INVALID_INPUT: inpaint.route_policy.fallback_routes must be a sequence of strings (got str)
+ext allowed=[1] (non-str entry)              | ProviderInputError: INVALID_INPUT: inpaint.route_policy.allowed_routes entries must be strings (got int)
+ext requirements={brushnet: 'false'}         | ProviderInputError: INVALID_INPUT: inpaint.route_policy.requirements['brushnet'] must be a bool (got str)
+ext requirements={brushnet: 0}               | ProviderInputError: INVALID_INPUT: inpaint.route_policy.requirements['brushnet'] must be a bool (got int)
+ext requirements=['brushnet']                | ProviderInputError: INVALID_INPUT: inpaint.route_policy.requirements must be a mapping (got list)

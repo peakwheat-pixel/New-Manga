@@ -2,7 +2,7 @@
 id: TASK-036
 title: 设置输入校验与导出发布顺序硬化（承接 TASK-034 R-02 / R-05 / R-07）
 kind: maintenance
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -15,6 +15,8 @@ integration_commit: null
 ---
 
 # TASK-036：设置输入校验与导出发布顺序硬化
+
+**状态提示（2026-09-17）**：`status=in_review`——**AC ①～⑦ 已完成并取证**（delivery head `c931db0`），**AC ⑧（非作者四轴 Review + Codex 集成）未执行**。证据总表：[verification/TASK-036/author-verification.md](../../verification/TASK-036/author-verification.md)；交付说明：[Handoff](../handoffs/TASK-036-c931db0.md)。
 
 **READY（2026-09-17 用户批准释放）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`edfdcf2`（释放时 master HEAD）、branch/worktree 见顶部元数据（已创建并同步到本次释放提交）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 
@@ -33,14 +35,15 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（R-02）`inpaint` 段类型错误 fail-loud**：`settings` 中 `inpaint` 键**存在且非 mapping** 时，`from_settings` 抛 `ProviderInputError`，错误信息须明确区分"段类型错误"与既有的"`route_policy` 非 mapping"；装配路径（`build_provider_runtime`）与运行路径（Inpaint Step）**行为一致**，各留一条回归。**不得**把该错误静默降级为"键缺失"。
-- [ ] **AC ②（R-07a）序列校验**：`allowed_routes` / `fallback_routes` 必须是**字符串序列**。**字符串本身必须被拒绝**（不得再逐字符展开）；元素非 `str` 亦拒绝。错误须为 `ProviderInputError`（`INVALID_INPUT`），信息指出字段名与期望类型。
-- [ ] **AC ③（R-07b）`requirements` 值域**：值必须是真正的 `bool`；`"false"`/`"true"`/`0`/`1` 等**一律拒绝**（不再 `bool()` 强制转换）。空 `requirements` 与全 `bool` 的 `requirements` 行为不变。
-- [ ] **AC ④（R-05）导出发布顺序**：`_finish`/`_fail` 改为**先发布终态（`_status` + `changed` + 终态信号 `exportFinished`/`exportFailed`）再清 `self._running`**，使任何观察者在 `running == False` 时必然已能看到终态；`tests/reading_export` 的导出用例等待随之回到**自然的终态等待**（等待预算不得放宽、断言不得放宽/删除）；`test_export_outcome_wait_does_not_accept_the_half_published_state` 按新顺序更新而**不得删除**。
-- [ ] **AC ⑤ 冻结解除声明**：本轮**解除 R-07 冻结**，必须同步更新上一轮锁定冻结行为的测试（至少 `test_allowed_routes_as_string_keeps_the_frozen_char_expansion`、`test_fallback_routes_and_requirements_defaults_are_frozen` 中的 `bool("false")` 断言），并在 Handoff 显式说明"冻结已由本 Task 解除"。
-- [ ] **AC ⑥ 语义不变性证据**：给出矩阵，证明**合法输入的含义一字未变**（TASK-034 裁决的 R-1～R-6 全部保持），且只有"非法输入"的处理由静默/改写改为报错；对 `from_settings` 的 12 类输入逐条给出前后对照。
-- [ ] **AC ⑦ 回归与分列**：`tests/providers`、`tests/core`、`tests/reading_export`、`tests/editing`、全仓套件 **passed 不减少**；全仓串跑**至少 5 次**逐次记录 passed/skipped 与退出码。
+- [x] **AC ①（R-02）`inpaint` 段类型错误 fail-loud**：`from_settings` 用哨兵区分"键缺失"与"键存在但类型错误"；`inpaint` 非 mapping → `ProviderInputError("inpaint must be a mapping (got X)")`，与 `route_policy` 的错误消息**分级可辨**。装配回归 `test_runtime_assembly_reports_a_malformed_section_instead_of_ignoring_it`；运行回归 `test_handlers_pipeline.py::test_run_settings_non_mapping_inpaint_section_fails_the_step_loudly`（Step `FAILED`/`INVALID_INPUT`、未写出 clean artifact）。**附带关闭** TASK-034 实现的 `route_policy: null` 静默漏洞。
+- [x] **AC ②（R-07a）序列校验**：新增 `_route_sequence()`——`allowed_routes`/`fallback_routes` 必须是真序列且元素全 `str`；裸字符串（原逐字符展开）、非序列（int/dict/set/None）、非 `str` 元素一律拒绝，消息含字段名与期望类型。用例：`test_route_lists_reject_a_bare_string`、`…_reject_non_sequences`、`…_reject_non_string_entries`、`test_legal_route_sequences_keep_their_meaning`。
+- [x] **AC ③（R-07b）`requirements` 值域**：新增 `_requirement_flags()`——值必须真 `bool`（`"false"`/`"true"`/`0`/`1`/`None` 全部拒绝，不再 `bool()` 强转）；非 mapping 由裸 `ValueError` 改为 typed error；空 `{}` 与全 bool 行为不变（`test_requirements_values_must_be_real_bools`、`test_legal_requirement_flags_keep_their_meaning`、`test_requirements_must_be_a_mapping`）。
+- [x] **AC ④（R-05）导出发布顺序**：`_finish`/`_fail` 改为终态 `_status` → `changed` → 终态信号 → `_running = False` → `changed`（`running` 的 notify）。导出用例等待收回自然终态等待（预算 5 s、断言、`export_diagnostics` 均未变）；`test_export_outcome_wait_does_not_accept_the_half_published_state` **按新顺序更新而非删除**，新增成功路径同型用例。证据：[`export-publish-order.txt`](../../verification/TASK-036/export-publish-order.txt)（前后对照）+ 判别力 2 failed（[`discriminative-prefix.log`](../../verification/TASK-036/discriminative-prefix.log)）。
+- [x] **AC ⑤ 冻结解除声明**：**已解除 TASK-034 R-07 冻结**并声明；更新三处锁定旧行为的用例（`test_missing_section_or_key_returns_the_explicit_default` 的段类型断言、`test_allowed_routes_as_string_keeps_the_frozen_char_expansion`、`test_fallback_routes_and_requirements_defaults_are_frozen` 的 `bool("false")` 断言），未放宽/删除其它断言、未新增 skip。
+- [x] **AC ⑥ 语义不变性证据**：12 类输入前后对照矩阵（[`input-matrix-before-after.txt`](../../verification/TASK-036/input-matrix-before-after.txt)）——8 类合法输入前后**逐字相同**（R-1～R-6 保持），非法输入由静默/改写改为 typed error（含 `route_policy: null`、字符串列表、非 str 元素、非 bool requirements 四处）。
+- [x] **AC ⑦ 回归与分列**：mandated 四套件 **274 passed / 0 skipped**（基线 243）；全仓 **737 passed / 6 skipped ×7 次**（逐次 exit 0；基线 `edfdcf2` 706/6；6 条 skip 全为既有 `tests/network` 的 `openssl unavailable`）。逐目录：providers 134→164、core 18→18、reading_export 65→66、editing 26→26、ui_shell 46→46、workbench 51→51（[`test-counts.txt`](../../verification/TASK-036/test-counts.txt)）。
 - [ ] **AC ⑧** 交付 Handoff、实际测试/审阅记录与未完成项，经**非作者** Review（协作协议 §6 四轴）与 Codex 集成验证后才能 done。
+      → Handoff 与取证已交付；**Review 与集成尚未执行**，本 Task 不自行标记 `approved`/`done`。
 
 ## 允许修改范围
 
@@ -78,6 +81,13 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-17 由用户批准释放；Codex 登记 `status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`edfdcf2`（释放时 master HEAD）、branch=`agent/deepseek/TASK-036-settings-validation-and-export-order`、worktree=`G:/CODEX/New Manga.worktrees/TASK-036-deepseek`，并完成上表「来源」栏的**释放前实测**（R-02/R-07a/R-07b/R-05 四项现状均在）。**实施尚未开始。**
-- 判据说明：R-02/R-07 的目标语义沿用 TASK-034 R-2 已确立的 fail-closed 原则（用户已批准），因此本 Task **无需**先走一次裁决请求；实现中若与既有文档/测试冲突，按上文回抛。
+- Handoff：[TASK-036-c931db0](../handoffs/TASK-036-c931db0.md)（delivery_head=`c931db0`）。
+- Review：尚无（待 Codex 非作者独立 Review，按协作协议 §6 四轴：Standards / Spec / Architecture / Verification）。
+- 实际执行/测试：
+  - 取证总表：[verification/TASK-036/author-verification.md](../../verification/TASK-036/author-verification.md)；输入矩阵：[input-matrix-before-after.txt](../../verification/TASK-036/input-matrix-before-after.txt)；发布顺序：[export-publish-order.txt](../../verification/TASK-036/export-publish-order.txt)；判别力：[discriminative-prefix.log](../../verification/TASK-036/discriminative-prefix.log)；全仓串跑：[full-suite-runs.log](../../verification/TASK-036/full-suite-runs.log)；逐目录计数：[test-counts.txt](../../verification/TASK-036/test-counts.txt)。
+  - 命令与结果（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：mandated 四套件 `tests/providers tests/core tests/reading_export tests/editing` **274 passed / 0 skipped**（基线 243）；全仓 **737 passed / 6 skipped ×7 次**（逐次 exit 0；基线 `edfdcf2` 706/6；6 条 skip 均为既有 `openssl unavailable`；本轮既有间歇失败与 webtoon flaky **未触发**，未记为通过）。逐目录：providers 134→164、core 18→18、reading_export 65→66、editing 26→26、ui_shell 46→46、workbench 51→51。
+  - 判别力：新测试放到 base `edfdcf2` 的 `src`/viewmodel 上 → providers **28 failed / 37 passed**、reading_export **2 failed**（AC ①②③④ 的新语义均可被判据检出）。边界：改动恰为 `src/application/translation/inpaint/router.py`、`src/ui/viewmodels/export/viewmodel.py`、`tests/**`、`verification/TASK-036/**`；越界 0；`git diff --check` 退出码 0。
+- **未关闭项**：AC ⑧ 的非作者四轴 Review 与 Codex 集成；R-03（`DEFAULT_ROUTE_POLICY` 跨层归属）与 R-06（webtoon flaky 未复现）按 Task 禁止范围**不在本 Task 处理**。
+- **附带发现（需 Reviewer 裁定）**：本轮全仓串跑（含基线对照）共 26 次。本 head 20 次中 **3 次失败且全部落在同一已登记用例** `test_reader_webtoon_swaps_in_vertical_viewer`；其中第 1 次报告 `test_qml_contract.py:153: RuntimeError`——该行在**诊断辅助函数**内，说明断言已失败（flaky 触发）而诊断访问**已销毁的 QML C++ 对象**，**掩蔽**了真实 `AssertionError`。据此做了**诊断稳健化**（新增 `safe_property()`，不改任何断言/等待预算/测试语义，**不解决也不重分类 R-06**），随后即拿到**真实签名**：`iterations=98 elapsed_ms=2000 ok=False scroll_contentY=-0.0 saved_scroll_offset_y=0.0`（`contentY` 被 `StopAtBounds` 夹回 0 → 无变化信号 → 节流保存不发生）。**归属**：纯净基线 `edfdcf2` 6 次中**同样复现同一用例 1 次**（1 failed / 705 passed）→ **不归因本 Task**。证据：[registered-flaky-signature.md](../../verification/TASK-036/registered-flaky-signature.md)、[intermittent-failure-repro.log](../../verification/TASK-036/intermittent-failure-repro.log)、[flaky-rate-baseline.log](../../verification/TASK-036/flaky-rate-baseline.log)。3 次失败**未记为通过**。
+- **最近状态（当前，唯一）**：2026-09-17 **AC ①～⑦ 完成并取证**，整体置 **`in_review`**，待 Codex 非作者 Review 与集成。分支 `agent/deepseek/TASK-036-settings-validation-and-export-order`、worktree `G:/CODEX/New Manga.worktrees/TASK-036-deepseek`、fixed base `edfdcf2`、delivery head `c931db0`（`dd608f4` 开工文档、`c931db0` 实现与取证）。**未 push、未合并 master、未释放任何冻结 Task。** 请 Reviewer 重点裁定：⑥ 矩阵中我主动扩大的两处行为变化（`route_policy: null`、`requirements` 非 mapping 的 typed error）；④ 的二次 `changed`（`running` notify）；以及 ② 对 `set`/生成器等非序列可迭代类型的拒绝口径。
+- 历史状态（2026-09-17）：由 Codex 依 TASK-034 Review 的 R-02/R-05/R-07 与 Handoff N-1 创建为 `proposed`；随后用户批准释放为 `ready`（Owner=`DeepSeek Harness`、Reviewer=`Codex`、base=`edfdcf2`）。

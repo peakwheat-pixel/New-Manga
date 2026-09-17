@@ -1,0 +1,7 @@
+### TASK-036: mandated four suites, per-run record (tests/providers tests/core tests/reading_export tests/editing)
+===== run 1 : exit=0 :: 274 passed in 7.41s
+===== run 2 : exit=0 :: 274 passed in 7.60s
+===== run 3 : exit=0 :: 274 passed in 7.40s
+===== run 4 : exit=0 :: 274 passed in 7.67s
+===== run 5 : exit=0 :: 274 passed in 7.87s
+===== run 6 : exit=0 :: 274 passed in 7.45s

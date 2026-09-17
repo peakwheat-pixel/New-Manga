@@ -1,0 +1,21 @@
+### boundary: Owner commits vs branch start 81ffd83 (release docs by Codex)
+doc/handoffs/TASK-036-c931db0.md
+doc/tasks/TASK-036.md
+src/application/translation/inpaint/router.py
+src/ui/viewmodels/export/viewmodel.py
+tests/providers/test_handlers_pipeline.py
+tests/providers/test_route_policy_settings.py
+tests/reading_export/test_viewmodels.py
+verification/TASK-036/author-verification.md
+verification/TASK-036/discriminative-prefix.log
+verification/TASK-036/export-publish-order.txt
+verification/TASK-036/full-suite-runs.log
+verification/TASK-036/input-matrix-before-after.txt
+verification/TASK-036/test-counts.txt
+out-of-scope (Owner commits): none
+--- release commit 81ffd83 (Codex, not this Owner) touched:
+doc/STATUS.md
+doc/tasks/README.md
+doc/tasks/TASK-036.md
+--- whitespace: git diff --check edfdcf2..HEAD
+exit=0

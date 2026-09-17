@@ -548,6 +548,35 @@ def test_run_settings_malformed_route_policy_fails_the_step_loudly(workspace) ->
     )
 
 
+def test_run_settings_non_mapping_inpaint_section_fails_the_step_loudly(workspace) -> None:
+    """TASK-036 AC ① (R-02) call-site regression (Run side).
+
+    The ``inpaint`` **section** itself being the wrong type is a different
+    configuration error from a malformed ``route_policy``, and it must fail
+    loud too — previously the handler silently used the assembled default.
+    """
+    conn = workspace["conn"]
+    service = _pipeline(workspace, settings={"inpaint": "oops"})
+    run = service.create_run(
+        CommandType.REINPAINT_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-b",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    step = {item.step_type: item for item in executed.step_runs}["inpaint"]
+    assert step.status is StepRunStatus.FAILED
+    assert step.error_code == "INVALID_INPUT"
+    assert "inpaint must be a mapping" in (step.error_detail or "")
+    assert "route_policy" not in (step.error_detail or "")
+    assert (
+        conn.execute(
+            "SELECT COUNT(*) FROM media_artifacts WHERE artifact_type = 'clean'"
+        ).fetchone()[0]
+        == 0
+    )
+
+
 def test_unimplemented_route_blocks_without_writing_anything(workspace) -> None:
     conn = workspace["conn"]
     service = _pipeline(

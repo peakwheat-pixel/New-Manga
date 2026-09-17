@@ -18,7 +18,7 @@ router_reason and fallback_chain are all carried out of the decision.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -286,6 +286,62 @@ def _reason_for(route: str, features: RouterFeatures) -> str:
     return f"configured route {route}"
 
 
+_MISSING = object()
+
+
+def _route_sequence(policy: Mapping[str, Any], field: str) -> tuple[str, ...]:
+    """Read a route list, rejecting anything that is not a sequence of str.
+
+    TASK-036 AC ② (lifting the TASK-034 R-7 freeze): a bare string used to be
+    iterated character by character, silently turning ``"simple-fill"`` into
+    eleven single-letter routes.
+    """
+    value = policy.get(field, _MISSING)
+    if value is _MISSING:
+        return ()
+    if isinstance(value, (str, bytes, bytearray)) or not isinstance(value, Sequence):
+        raise ProviderInputError(
+            f"inpaint.route_policy.{field} must be a sequence of strings"
+            f" (got {type(value).__name__})",
+            stage="inpaint",
+        )
+    for route in value:
+        if not isinstance(route, str):
+            raise ProviderInputError(
+                f"inpaint.route_policy.{field} entries must be strings"
+                f" (got {type(route).__name__})",
+                stage="inpaint",
+            )
+    return tuple(value)
+
+
+def _requirement_flags(policy: Mapping[str, Any]) -> dict[str, bool]:
+    """Read ``requirements``, requiring real ``bool`` values.
+
+    TASK-036 AC ③: ``bool("false")`` is ``True``, so coercion silently turned a
+    user's ``"false"`` into an enabled requirement.
+    """
+    value = policy.get("requirements", _MISSING)
+    if value is _MISSING:
+        return {}
+    if not isinstance(value, Mapping):
+        raise ProviderInputError(
+            "inpaint.route_policy.requirements must be a mapping"
+            f" (got {type(value).__name__})",
+            stage="inpaint",
+        )
+    flags: dict[str, bool] = {}
+    for route, flag in value.items():
+        if not isinstance(flag, bool):
+            raise ProviderInputError(
+                f"inpaint.route_policy.requirements[{route!r}] must be a bool"
+                f" (got {type(flag).__name__})",
+                stage="inpaint",
+            )
+        flags[str(route)] = flag
+    return flags
+
+
 @dataclass
 class RoutePolicy:
     """The user-configured route policy (persisted with the Run settings)."""
@@ -324,47 +380,59 @@ class RoutePolicy:
     ) -> "RoutePolicy":
         """The **only** interpretation of the ``inpaint.route_policy`` setting.
 
-        TASK-034 AC ① (ruling R-1..R-6): the assembly-time provider runtime and
-        the per-Run Inpaint handler both call this method, so one input can no
-        longer have two meanings.
+        TASK-034 AC ① (ruling R-1..R-6) established the single entry point and
+        the fail-closed direction; TASK-036 lifted the R-7 freeze and tightened
+        the input validation (AC ①②③ below). Legal inputs keep their meaning
+        exactly (see ``verification/TASK-036`` for the before/after matrix).
 
-        - **R-1** (the one allowed difference, made explicit): a missing
+        - **R-1** (the one allowed difference, made explicit): an absent
           ``inpaint`` section or ``route_policy`` key returns ``default``
           unchanged — the assembly passes ``DEFAULT_ROUTE_POLICY`` and a Run
           passes the policy it was assembled with. That difference is a
           parameter, never a hidden branch.
-        - **R-2**: a present but non-mapping ``route_policy`` raises
-          :class:`~ports.providers.errors.ProviderInputError` at *both* call
-          sites; a malformed user policy must not be silently ignored.
-        - **R-3**: a missing/empty ``allowed_routes`` falls back to
+        - **R-2 / TASK-036 AC ①**: a present but non-mapping ``route_policy``
+          raises :class:`~ports.providers.errors.ProviderInputError` at *both*
+          call sites, and so does a present but non-mapping ``inpaint``
+          **section** — with a message that names the offending level.
+        - **R-3**: an absent/empty ``allowed_routes`` falls back to
           ``default.allowed_routes``; **R-4**: ``fallback_routes`` defaults
           to ``()``.
-        - **R-5**: ``requirements`` defaults to ``{}`` and keeps the
-          ``bool(value)`` coercion (tightening non-bool values stays
-          registered as the later R-7 slice).
-        - **R-6 / Option B**: a missing or blank ``color_route`` means "no color
+        - **TASK-036 AC ②**: ``allowed_routes``/``fallback_routes`` must be
+          actual sequences of ``str``; a bare string (previously char-expanded)
+          and non-``str`` entries are rejected.
+        - **R-5 / TASK-036 AC ③**: ``requirements`` defaults to ``{}`` and its
+          values must be real ``bool``s — ``"false"``/``0``/``1`` are rejected
+          instead of being coerced with ``bool()``.
+        - **R-6 / Option B**: an absent or blank ``color_route`` means "no color
           route configured" (``None``); an explicitly named color route is
           still honoured and ``__post_init__`` adds it to ``allowed_routes``.
         """
-        inpaint = settings.get("inpaint")
-        raw = inpaint.get("route_policy") if isinstance(inpaint, Mapping) else None
-        if raw is None:
+        section = settings.get("inpaint", _MISSING)
+        if section is _MISSING:
+            return default
+        if not isinstance(section, Mapping):
+            raise ProviderInputError(
+                "inpaint must be a mapping"
+                f" (got {type(section).__name__})",
+                stage="inpaint",
+            )
+        raw = section.get("route_policy", _MISSING)
+        if raw is _MISSING:
             return default
         if not isinstance(raw, Mapping):
             raise ProviderInputError(
-                "inpaint.route_policy must be a mapping", stage="inpaint"
+                "inpaint.route_policy must be a mapping"
+                f" (got {type(raw).__name__})",
+                stage="inpaint",
             )
-        allowed = tuple(str(route) for route in raw.get("allowed_routes", ()))
-        fallbacks = tuple(str(route) for route in raw.get("fallback_routes", ()))
+        allowed = _route_sequence(raw, "allowed_routes")
+        fallbacks = _route_sequence(raw, "fallback_routes")
         color_route = raw.get("color_route")
         return cls(
             allowed_routes=allowed or default.allowed_routes,
             fallback_routes=fallbacks,
             color_route=str(color_route) if color_route else None,
-            requirements={
-                str(route): bool(value)
-                for route, value in dict(raw.get("requirements", {})).items()
-            },
+            requirements=_requirement_flags(raw),
         )
 
     def decide(self, features: RouterFeatures) -> RouterDecision:

@@ -1,0 +1,9 @@
+### post-diagnostics full-suite runs
+===== run 1 : exit=0 :: 737 passed, 6 skipped in 26.04s
+===== run 2 : exit=0 :: 737 passed, 6 skipped in 26.09s
+===== run 3 : exit=0 :: 737 passed, 6 skipped in 27.05s
+===== run 4 : exit=0 :: 737 passed, 6 skipped in 25.84s
+===== extra run 1 : exit=1 :: 1 failed, 736 passed, 6 skipped in 28.18s
+  FAILED tests/reading_export/test_qml_contract.py::test_reader_webtoon_swaps_in_vertical_viewer
+===== extra run 2 : exit=0 :: 737 passed, 6 skipped in 26.37s
+===== extra run 3 : exit=0 :: 737 passed, 6 skipped in 26.06s

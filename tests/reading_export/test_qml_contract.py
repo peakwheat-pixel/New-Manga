@@ -134,23 +134,40 @@ def pump_traced(window, seconds, condition):
     return ok, f"pump({seconds:g}s): iterations={iterations} elapsed_ms={elapsed_ms} ok={ok}"
 
 
+def safe_property(obj, name):
+    """Read a QML property, tolerating a deleted C++ object.
+
+    Diagnostics must never replace the failure they describe: during a real
+    reproduction of the registered webtoon flaky the QML ``Image``/``Flickable``
+    can already be gone, and a bare ``obj.property(...)`` would raise
+    ``RuntimeError: Internal C++ object already deleted`` instead of letting the
+    underlying ``AssertionError`` surface (observed 2026-09-17, TASK-036).
+    """
+    if obj is None:
+        return None
+    try:
+        return obj.property(name)
+    except RuntimeError as error:  # pragma: no cover - deleted C++ object
+        return f"<unavailable: {error}>"
+
+
 def object_names(root, limit=25):
     """Collected ``objectName`` values, for failure diagnostics only."""
     if root is None:
         return []
-    names = [
-        child.objectName()
-        for child in root.findChildren(QObject)
-        if child.objectName()
-    ]
+    try:
+        children = root.findChildren(QObject)
+    except RuntimeError as error:  # pragma: no cover - deleted C++ object
+        return [f"<unavailable: {error}>"]
+    names = [child.objectName() for child in children if child.objectName()]
     return sorted(set(names))[:limit]
 
 
 def webtoon_save_diagnostics(root, scroll, reading) -> str:
     """State trace for the webtoon scroll-save assertion."""
-    content_y = scroll.property("contentY") if scroll is not None else None
+    content_y = safe_property(scroll, "contentY")
     image = find_by_name(root, "readerPage")
-    status = image.property("status") if image is not None else None
+    status = safe_property(image, "status")
     return (
         f"scroll_contentY={content_y!r}"
         f" saved_scroll_offset_y={reading.progress.scroll_offset_y!r}"
@@ -281,7 +298,7 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
         # the page image loads asynchronously; contentHeight must exist
         # before contentY can be set past the clamp
         height_ok, height_trace = pump_traced(
-            window, 5.0, lambda: scroll.property("contentHeight") > 0
+            window, 5.0, lambda: (safe_property(scroll, "contentHeight") or 0) > 0
         )
         assert height_ok, (
             "webtoon image never produced a scrollable height — "
@@ -307,7 +324,7 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
             QGuiApplication.processEvents()
             reopen_iterations += 1
             scroll2 = find_by_name(root, "readerWebtoonScroll")
-            if scroll2 is not None and scroll2.property("contentHeight") > 0:
+            if scroll2 is not None and (safe_property(scroll2, "contentHeight") or 0) > 0:
                 break
             _time.sleep(0.05)
         assert scroll2 is not None, (
@@ -316,11 +333,11 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack):
             f" {webtoon_save_diagnostics(root, scroll2, reading)}"
         )
         restored_ok, restored_trace = pump_traced(
-            window, 5.0, lambda: scroll2.property("contentY") == 240.0
+            window, 5.0, lambda: safe_property(scroll2, "contentY") == 240.0
         )
         assert restored_ok, (
             "saved offset restored after image load,"
-            f" got {scroll2.property('contentY')} —"
+            f" got {safe_property(scroll2, 'contentY')!r} —"
             f" {restored_trace} {webtoon_save_diagnostics(root, scroll2, reading)}"
         )
     finally:
