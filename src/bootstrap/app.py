@@ -40,14 +40,28 @@ from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtQuick import QQuickWindow  # noqa: F401
 
 from application.editing.service import RegionEditingService
+from application.export import (
+    ExportPage,
+    ExportService,
+    JsonHistoryDocumentStore,
+    file_bytes_provider,
+)
+from application.importing.documents import ImportDocumentsUseCase
 from application.importing.images.service import ImportImagesUseCase
 from application.library.service import LibraryService
+from application.reading.service import ReadingService
+from application.reading.ports import JsonProgressDocumentStore
 from application.rendering.service import RenderService
 from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
 from application.translation.knowledge.term_extraction import TermExtractionService
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
-from infrastructure.importing import ManagedCopyStoreAdapter, QtImageDecoder
+from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
+from infrastructure.importing import (
+    ManagedCopyStoreAdapter,
+    PdfiumDocumentRaster,
+    QtImageDecoder,
+)
 from infrastructure.pipeline.assembly import build_production_pipeline
 from infrastructure.providers.handlers import (
     RegionMaskGeometry,
@@ -70,7 +84,9 @@ from infrastructure.transport.stdlib import StdlibTransport
 from ports.inpaint.ports import ImageFrame
 from ports.providers.errors import ProviderInputError
 from ui.viewmodels.bookshelf.viewmodel import BookshelfViewModel
+from ui.viewmodels.export.viewmodel import ExportViewModel
 from ui.viewmodels.navigation.viewmodel import NavigationViewModel
+from ui.viewmodels.reader.viewmodel import ReaderViewModel
 from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
 
 QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
@@ -200,6 +216,61 @@ class _ManagedPageImageSource:
         return bytes(buffer.data())
 
 
+class _ManagedReaderCatalog:
+    """Repository pages in the reader's ``ReaderPage`` contract (TASK-038).
+
+    Originals come straight from the Managed Copy; the translated image is
+    the page's current TRANSLATED artifact (empty when the page has none —
+    the reader then falls back to the original with an explicit status
+    message, D06 §97). OCR text lives on Regions, not on the page, so
+    ``text`` stays empty here (translated-export text is a separate seam).
+    """
+
+    def __init__(
+        self,
+        repository: SqliteLibraryRepository,
+        storage: ManagedFileStorage,
+        locator: SqlitePageArtifactLocator,
+    ) -> None:
+        self._repository = repository
+        self._storage = storage
+        self._locator = locator
+
+    def list_pages(self, chapter_id: str) -> list:
+        from application.reading.ports import ReaderPage
+        from ports.repositories.artifacts import ArtifactType
+
+        rows = []
+        for page in self._repository.list_pages(chapter_id):
+            original = (
+                self._storage.absolute_path(page.managed_original_ref)
+                if page.managed_original_ref
+                else ""
+            )
+            translated = ""
+            translated_revision = None
+            current_revision = None
+            located = self._locator.locate_current(
+                page.page_id, ArtifactType.TRANSLATED
+            )
+            if located is not None:
+                _record, revision = located
+                translated = self._storage.absolute_path(revision.managed_path)
+                translated_revision = revision.artifact_revision_id
+                current_revision = revision.artifact_revision_id
+            rows.append(
+                ReaderPage(
+                    page_id=page.page_id,
+                    filename=page.source_filename,
+                    original_path=original,
+                    translated_path=translated or None,
+                    translated_revision_id=translated_revision,
+                    current_translated_revision_id=current_revision,
+                )
+            )
+        return rows
+
+
 class _RegionGeometrySource:
     """Region geometry as mask primitives (D06 §19 Segment input)."""
 
@@ -310,6 +381,10 @@ class AppServices:
     repository: SqliteLibraryRepository
     storage: ManagedFileStorage
     importer: ImportImagesUseCase
+    document_importer: ImportDocumentsUseCase
+    reading: ReadingService
+    export_service: ExportService
+    reader: ReaderViewModel
     library: LibraryService
     pipeline: PipelineService
     editing: RegionEditingService
@@ -318,6 +393,12 @@ class AppServices:
     navigation: NavigationViewModel
     bookshelf: BookshelfViewModel
     workbench: WorkbenchViewModel
+    #: Returns the export controller for the *standalone* export window
+    #: (TASK-038 AC ② path B); ``None`` when no chapter context is active.
+    export_viewmodel: Callable[[], ExportViewModel | None]
+    #: Injected by ``assemble_engine`` so a live engine re-publishes the
+    #: ``exportViewModel`` context property when the workbench context moves.
+    set_export_context_updater: Callable[[Callable], None]
 
 
 def default_data_root() -> Path:
@@ -361,10 +442,17 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
                 raise ValueError(f"unknown chapter: {chapter_id!r}")
             return chapter.book_id
 
+        copy_store = ManagedCopyStoreAdapter(storage, book_id_for_chapter)
         importer = ImportImagesUseCase(
             QtImageDecoder(),
-            ManagedCopyStoreAdapter(storage, book_id_for_chapter),
+            copy_store,
             repository,
+        )
+        # TASK-023 AC ④: PDF import rides the same Managed Copy store and
+        # page sink as image import. MOBI stays BLOCKED (no approved parsing
+        # dependency) and fails typed at the use case.
+        document_importer = ImportDocumentsUseCase(
+            PdfiumDocumentRaster(), copy_store, repository
         )
         # TASK-019: the production Pipeline receives real handlers built from
         # the provider runtime. Nothing is wired when no provider is ready:
@@ -410,12 +498,112 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         pipeline = build_production_pipeline(conn, handlers=handlers)
         editing = RegionEditingService(regions)
         navigation = NavigationViewModel()
+
+        # TASK-038 AC ①/③: the reader ViewModel over the same data root —
+        # progress and export history live next to the library database, and
+        # the tile factory is Python-only (QML never touches files/models).
+        # Tiles are a rebuildable cache under the managed root; the byte
+        # budget is the TASK-020 R-002 memory ledger in production.
+        data_root = Path(db_path).parent
+        reading = ReadingService(
+            JsonProgressDocumentStore(data_root / "reading_progress.json")
+        )
+        export_service = ExportService(
+            JsonHistoryDocumentStore(data_root / "export_history.json")
+        )
+
+        def tile_factory(path: str) -> TiledPageRasterizer:
+            return TiledPageRasterizer(
+                path,
+                cache_dir=Path(managed_root) / "cache" / "webtoon-tiles",
+                tile_height=4000,
+                overlap=64,
+                prefetch=1,
+                cache=TileCache(max_bytes=512 * 1024 * 1024),
+            )
+
+        page_catalog = _ManagedPageCatalog(repository, storage)
+        reader_catalog = _ManagedReaderCatalog(
+            repository, storage, SqlitePageArtifactLocator(conn)
+        )
+        reader = ReaderViewModel(
+            reading,
+            reader_catalog,
+            export_service=export_service,
+            tile_factory=tile_factory,
+        )
+
+        def _open_reader_chapter() -> None:
+            # AC-NAV-003: entering the reader page carries the chapter the
+            # shelf/workbench action selected; without one the reader stays
+            # on its empty state.
+            context = navigation.get_reader_context()
+            chapter_id = context.get("chapter_id")
+            if not chapter_id:
+                return
+            chapter = library.get_chapter(chapter_id)
+            if chapter is None:
+                return
+            if not page_catalog.list_pages(chapter_id):
+                # nothing to read yet: keep the reader's empty state instead
+                # of failing the navigation signal handler
+                return
+            reader.openChapter(
+                chapter.book_id,
+                chapter.chapter_id,
+                chapter.title,
+                chapter.chapter_type.value,
+                chapter.reading_direction.value,
+                True,
+            )
+
+        navigation.readerContextChanged.connect(_open_reader_chapter)
+
+        # TASK-038 AC ② path B: the standalone export window controller
+        # follows the workbench chapter context (reader-initiated exports go
+        # through ``readerViewModel.exportController`` — path A).
+        export_state: dict = {"vm": None, "updater": None}
+
+        def _chapter_export_pages(chapter_id: str) -> list:
+            return [
+                ExportPage(
+                    page_id=page.page_id,
+                    filename=page.filename,
+                    source_provider=file_bytes_provider(page.original_path),
+                    translated_provider=(
+                        file_bytes_provider(page.translated_path)
+                        if page.translated_path
+                        else None
+                    ),
+                    translated_revision_id=page.translated_revision_id,
+                    current_translated_revision_id=page.current_translated_revision_id,
+                    text=page.text,
+                )
+                for page in page_catalog.list_pages(chapter_id)
+            ]
+
+        def _rebuild_export_viewmodel(book, chapter) -> None:
+            view_model = ExportViewModel(
+                export_service,
+                lambda: _chapter_export_pages(chapter.chapter_id),
+                book_id=book.book_id,
+                chapter_id=chapter.chapter_id,
+                output_dir=str(data_root / "exports"),
+            )
+            export_state["vm"] = view_model
+            updater = export_state["updater"]
+            if callable(updater):
+                updater(view_model)
+
         bookshelf = BookshelfViewModel(
-            library=library, importer=importer, navigation=navigation
+            library=library,
+            importer=importer,
+            document_importer=document_importer,
+            navigation=navigation,
         )
         workbench = WorkbenchViewModel(
             pipeline=pipeline,
-            page_catalog=_ManagedPageCatalog(repository, storage),
+            page_catalog=page_catalog,
             region_catalog=editing,
             translation_editor=editing,
             navigation=navigation,
@@ -426,6 +614,10 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             chapter_id = context.get("chapter_id")
             if not chapter_id:
                 workbench.clearContext()
+                export_state["vm"] = None
+                updater = export_state["updater"]
+                if callable(updater):
+                    updater(None)
                 return
             chapter = library.get_chapter(chapter_id)
             book = library.get_book(chapter.book_id)
@@ -434,6 +626,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             workbench.setContext(
                 book.book_id, chapter.chapter_id, book.title, chapter.title
             )
+            _rebuild_export_viewmodel(book, chapter)
 
         navigation.workbenchContextChanged.connect(sync_workbench_context)
         return AppServices(
@@ -441,6 +634,10 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             repository=repository,
             storage=storage,
             importer=importer,
+            document_importer=document_importer,
+            reading=reading,
+            export_service=export_service,
+            reader=reader,
             library=library,
             pipeline=pipeline,
             editing=editing,
@@ -449,6 +646,10 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             navigation=navigation,
             bookshelf=bookshelf,
             workbench=workbench,
+            export_viewmodel=lambda: export_state["vm"],
+            set_export_context_updater=lambda updater: export_state.update(
+                updater=updater
+            ),
         )
     except Exception:
         conn.close()
@@ -456,12 +657,30 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
 
 
 def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
-    """Inject the viewmodels as context properties and load Main.qml."""
+    """Inject the viewmodels as context properties and load Main.qml.
+
+    Registration names and their two export paths (TASK-038 AC ②):
+
+    - ``readerViewModel`` — the reader page's controller. Reader-initiated
+      exports go through ``readerViewModel.exportController`` (built lazily
+      by the ViewModel from the same ``ExportService``); ReaderView.qml's
+      export window consumes exactly that property.
+    - ``exportViewModel`` — the *standalone* export window controller for the
+      current workbench chapter; rebuilt by the assembly whenever the
+      workbench context moves. ``None`` while no chapter is active.
+    """
     engine = QQmlApplicationEngine()
     root_context = engine.rootContext()
     root_context.setContextProperty("navigationViewModel", services.navigation)
     root_context.setContextProperty("bookshelfViewModel", services.bookshelf)
     root_context.setContextProperty("workbenchViewModel", services.workbench)
+    root_context.setContextProperty("readerViewModel", services.reader)
+    root_context.setContextProperty("exportViewModel", services.export_viewmodel())
+    services.set_export_context_updater(
+        lambda view_model: root_context.setContextProperty(
+            "exportViewModel", view_model
+        )
+    )
     engine.load(QUrl.fromLocalFile(str(QML_PATH)))
     if not engine.rootObjects():
         raise RuntimeError(f"Failed to load QML: {QML_PATH}")

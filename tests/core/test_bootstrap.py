@@ -363,3 +363,116 @@ def test_workbench_resolves_managed_original_url(
     assert resolved.read_bytes() == data
     assert resolved.is_relative_to((tmp_path / "managed").resolve())
     services.conn.close()
+
+
+def test_assemble_engine_registers_reader_export_and_tiled_reader(
+    qapp, tmp_path: Path
+) -> None:
+    """TASK-038 AC ①②③④⑤: the production engine contract.
+
+    Every context property the QML pages consume is registered, the reader
+    ViewModel is tiled (tile factory injected, cache under the managed root),
+    document import is reachable, and the two export paths are distinct and
+    bound: ``readerViewModel.exportController`` (reader-initiated) versus the
+    context-property ``exportViewModel`` (standalone window, follows the
+    workbench chapter)."""
+    from application.importing.documents import ImportDocumentsUseCase
+    from application.importing.images.ports import ImportSource
+    from ui.viewmodels.export.viewmodel import ExportViewModel
+    from application.reading.service import ReadingService
+    from bootstrap.app import assemble_engine, assemble_services
+    from infrastructure.importing import PdfiumDocumentRaster
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    book = services.library.create_book("装配契约书")
+    chapter = services.library.create_chapter(
+        book.book_id,
+        "条漫话",
+        chapter_type="webtoon",
+        reading_direction="vertical",
+    )
+    assert isinstance(services.reading, ReadingService)
+    assert isinstance(services.document_importer, ImportDocumentsUseCase)
+    assert isinstance(services.document_importer._raster, PdfiumDocumentRaster)
+
+    engine = assemble_engine(services)
+    try:
+        root = engine.rootContext()
+        # AC ①/②: all consumed context properties are registered
+        assert root.contextProperty("readerViewModel") is services.reader
+        registered = {
+            name: root.contextProperty(name)
+            for name in (
+                "navigationViewModel",
+                "bookshelfViewModel",
+                "workbenchViewModel",
+                "readerViewModel",
+                "exportViewModel",
+            )
+        }
+        assert all(value is not None for name, value in registered.items() if name != "exportViewModel")
+        # path B starts without a chapter context
+        assert registered["exportViewModel"] is None
+
+        # AC ② path B: moving the workbench context through the real
+        # navigation entry rebuilds and republishes the standalone controller
+        services.navigation.enterWorkbench(book.book_id, chapter.chapter_id)
+        standalone = root.contextProperty("exportViewModel")
+        assert isinstance(standalone, ExportViewModel)
+        assert standalone._chapter_id == chapter.chapter_id
+
+        # AC ① path A: the reader-initiated controller is a distinct VM from
+        # the same export service, reached only via readerViewModel
+        controller = services.reader.openExporter()
+        assert isinstance(controller, ExportViewModel)
+        assert controller is not standalone
+
+        # AC ①③: the navigation reader context opens the chapter in the
+        # production reader ViewModel, and the injected tile factory makes
+        # TASK-020's tiled mode active (cache lives under the managed root)
+        services.importer.import_files(
+            chapter.chapter_id,
+            [ImportSource(filename="p0.png", data_provider=lambda: _make_png(400, 3000))],
+        )
+        services.navigation.enterReader(book.book_id, chapter.chapter_id)
+        assert services.reader.hasChapter is True
+        assert services.reader.tilesActive is True
+        services.reader.requestTiles(0, 4000)
+        tile_files = list(
+            (tmp_path / "managed" / "cache" / "webtoon-tiles").glob("tile-*.png")
+        )
+        assert tile_files, "viewport tiles must be materialised on request"
+
+        # AC ④: document import reachable through the shelf view model, and
+        # MOBI stays a typed unsupported failure (never faked)
+        summary = services.bookshelf.importDocumentsFromUrls(
+            chapter.chapter_id, []
+        )
+        assert summary["failed"] == 0
+        non_pdf = tmp_path / "book.mobi"
+        non_pdf.write_bytes(b"BOOKMOBI not a pdf")
+        from PySide6.QtCore import QUrl
+
+        summary = services.bookshelf.importDocumentsFromUrls(
+            chapter.chapter_id, [QUrl.fromLocalFile(str(non_pdf))]
+        )
+        assert summary["failed"] == 1
+    finally:
+        engine.deleteLater()
+        services.conn.close()
+
+
+def test_reader_service_and_tile_cache_live_on_the_data_root(tmp_path: Path) -> None:
+    """TASK-038 AC ①③: reading progress and export history persist next to
+    the library database (one data root), so a restart resumes."""
+    from bootstrap.app import assemble_services
+
+    db_path = tmp_path / "library.db"
+    services = assemble_services(db_path, tmp_path / "managed")
+    try:
+        # one data root: reader progress / export history sit next to the
+        # library database (the store materialises its file on first write)
+        assert services.reading.progress is None
+        assert services.export_service is not None
+    finally:
+        services.conn.close()

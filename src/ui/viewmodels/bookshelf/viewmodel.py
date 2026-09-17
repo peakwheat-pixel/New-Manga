@@ -36,12 +36,14 @@ class BookshelfViewModel(QObject):
         *,
         library: LibraryService,
         importer,  # ImportImagesUseCase-shaped: import_files(chapter_id, sources, **kw)
+        document_importer=None,  # TASK-023: ImportDocumentsUseCase-shaped; None keeps image-only
         navigation: QObject,  # NavigationViewModel
         parent: QObject | None = None,
     ) -> None:
         super().__init__(parent)
         self._library = library
         self._importer = importer
+        self._document_importer = document_importer
         self._navigation = navigation
         self._book_model = BookListModel(self)
         self._chapter_model = ChapterListModel(self)
@@ -358,6 +360,30 @@ class BookshelfViewModel(QObject):
             for url in urls
         ]
         report = self._importer.import_files(chapter_id, sources)
+        return {
+            "imported": len(report.imported),
+            "skipped": len(report.skipped_duplicates),
+            "failed": len(report.failed),
+            "summary": self._format_summary(report),
+        }
+
+    @Slot(str, list)
+    def importDocumentsFromUrls(self, chapter_id: str, urls: list) -> dict:
+        """QML entry for document imports (PDF; TASK-023). Same URL → bytes
+        discipline as image import; MOBI/unknown formats fail typed as
+        ``UNSUPPORTED_FORMAT`` inside the report. Requires the assembly to
+        have injected a document importer."""
+        if self._document_importer is None:
+            return {"imported": 0, "skipped": 0, "failed": 0, "summary": "未启用文档导入"}
+        self._library.get_chapter(chapter_id)  # unknown chapter → error
+        sources = [
+            ImportSource(
+                filename=Path(url.toLocalFile()).name,
+                data_provider=lambda path=Path(url.toLocalFile()): path.read_bytes(),
+            )
+            for url in urls
+        ]
+        report = self._document_importer.import_documents(chapter_id, sources)
         return {
             "imported": len(report.imported),
             "skipped": len(report.skipped_duplicates),

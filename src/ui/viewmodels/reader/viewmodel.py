@@ -345,7 +345,9 @@ class ReaderViewModel(QObject):
         grid = self._rasterizer.grid
         top, bottom = int(viewport_top), int(viewport_bottom)
         try:
-            wanted = self._rasterizer.ensure_viewport(top, bottom)
+            # materialise the visible band (+prefetch); the returned paths are
+            # re-resolved per tile below, so the return value is not bound
+            self._rasterizer.ensure_viewport(top, bottom)
         except (OSError, ValueError):
             self.tilesChanged.emit()
             return
@@ -355,7 +357,6 @@ class ReaderViewModel(QObject):
                 top, bottom, prefetch=self._rasterizer.prefetch
             )
         }
-        wanted_keys = {path.resolve() for path in wanted}
         changed = False
         for row in self._tile_rows:
             if row["url"] or row["index"] not in wanted_indices:
