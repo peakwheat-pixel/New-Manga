@@ -1,0 +1,15 @@
+### A/B: pytest tests/pipeline tests/reading_export -q  x6 per tree
+--- baseline tree (pristine e8e1750, 671 tests)
+baseline ab 1: exit=0 :: 124 passed in 3.05s :: []
+baseline ab 2: exit=0 :: 124 passed in 3.33s :: []
+baseline ab 3: exit=0 :: 124 passed in 3.35s :: []
+baseline ab 4: exit=0 :: 124 passed in 3.21s :: []
+baseline ab 5: exit=0 :: 124 passed in 3.26s :: []
+baseline ab 6: exit=0 :: 124 passed in 3.18s :: []
+--- HEAD tree (TASK-035, 679 tests)
+head ab 1: exit=0 :: 125 passed in 3.23s :: []
+head ab 2: exit=0 :: 125 passed in 3.42s :: []
+head ab 3: exit=0 :: 125 passed in 3.32s :: []
+head ab 4: exit=0 :: 125 passed in 3.24s :: []
+head ab 5: exit=0 :: 125 passed in 3.22s :: []
+head ab 6: exit=0 :: 125 passed in 3.24s :: []

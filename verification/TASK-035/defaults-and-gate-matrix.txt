@@ -1,0 +1,21 @@
+=== AC 3 / R-02 / R-05: SFX policy defaults ===
+entity Region(...).sfx_policy        = skip
+domain RegionSnapshot(...).sfx_policy = skip
+SfxPolicy.SKIP.value                 = skip
+tests/pipeline region() fixture default = skip
+Schema default (sfx_policy not written) = {'region_type': 'speech', 'sfx_policy': 'skip'}
+
+=== AC 1/2: render-layer gate (shared rule) matrix ===
+region_type policy     allow_manual  render allowed  planner/translate gate skipped
+speech      skip       False         True            False
+speech      skip       True          True            False
+speech      manual     False         True            False
+speech      manual     True          True            False
+speech      translate  False         True            False
+speech      translate  True          True            False
+sfx         skip       False         False           True
+sfx         skip       True          False           True
+sfx         manual     False         False           True
+sfx         manual     True          True            True
+sfx         translate  False         True            False
+sfx         translate  True          True            False

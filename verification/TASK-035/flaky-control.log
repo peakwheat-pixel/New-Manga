@@ -1,0 +1,4 @@
+### flaky control: pristine e8e1750 tree, 3 more iterations
+baseline run 1: exit=0 :: 671 passed, 6 skipped in 30.31s :: failed=[]
+baseline run 2: exit=0 :: 671 passed, 6 skipped in 27.75s :: failed=[]
+baseline run 3: exit=0 :: 671 passed, 6 skipped in 27.75s :: failed=[]
