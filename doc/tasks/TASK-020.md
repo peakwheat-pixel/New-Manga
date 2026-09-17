@@ -2,7 +2,7 @@
 id: TASK-020
 title: 实现 Webtoon 分块处理与阅读
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -72,3 +72,4 @@ D03 §5；D05 §20/40；D06 §17/67～70；D07 §14～17；D08 AC-WEBTOON/CAP。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- **最近状态（当前，唯一）**：2026-09-18 01:1x 由 ZCode 在窗口内开工（W3，status→`in_progress`；启动门达标：W2 TASK-033 已于 04:50 前集成 `4d0f932`）；分支按窗口规则 `git merge master` 快进至 `5832894`（Task 元数据 base=e96b3eb 之上为窗口授权与 W1/W2 集成提交，写集合与本 Task 不相交）。实施开始：TileGrid 几何 + LRU TileCache + QImageReader 按需 clip 解码 + tile 缓存文件 + ViewModel/QML 接线。
