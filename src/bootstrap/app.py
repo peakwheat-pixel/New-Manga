@@ -22,8 +22,9 @@
 from __future__ import annotations
 
 import argparse
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+import json
 import os
 from pathlib import Path
 import sqlite3
@@ -45,11 +46,20 @@ from application.tasks.service import PipelineService
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.importing import ManagedCopyStoreAdapter, QtImageDecoder
 from infrastructure.pipeline.assembly import build_production_pipeline
+from infrastructure.providers.handlers import (
+    RegionMaskGeometry,
+    build_production_handlers,
+)
+from infrastructure.providers.runtime import build_provider_runtime
+from infrastructure.providers.step_writes import ArtifactStepWriter, RegionStepWriter
 from infrastructure.sqlite.connection import open_database
 from infrastructure.sqlite.library import SqliteLibraryRepository
 from infrastructure.sqlite.migrator import MigrationRunner
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.schema import default_migrations
+from infrastructure.transport.stdlib import StdlibTransport
+from ports.inpaint.ports import ImageFrame
+from ports.providers.errors import ProviderInputError
 from ui.viewmodels.bookshelf.viewmodel import BookshelfViewModel
 from ui.viewmodels.navigation.viewmodel import NavigationViewModel
 from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
@@ -82,6 +92,148 @@ class _ManagedPageCatalog:
         return path.as_uri() if path.is_file() else ""
 
 
+class _ManagedPageImageSource:
+    """Pixel access for provider steps (D06 §6/§7 input, D07 §37).
+
+    Only the immutable Managed Copy is read; a missing or undecodable file is a
+    typed provider-input failure, never an empty image.
+    """
+
+    def __init__(
+        self,
+        repository: SqliteLibraryRepository,
+        storage: ManagedFileStorage,
+        regions: SqliteRegionRepository,
+    ) -> None:
+        self._repository = repository
+        self._storage = storage
+        self._regions = regions
+
+    def _page_image(self, page_id: str):
+        from PySide6.QtGui import QImage
+
+        page = self._repository.get_page(page_id)
+        if page is None or not page.managed_original_ref:
+            raise ProviderInputError(
+                f"page {page_id!r} has no managed original", stage="image-source"
+            )
+        root = self._storage.root.resolve()
+        path = Path(self._storage.absolute_path(page.managed_original_ref)).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError as error:
+            raise ProviderInputError(
+                f"managed original for {page_id!r} escapes the data root",
+                stage="image-source",
+            ) from error
+        if not path.is_file():
+            raise ProviderInputError(
+                f"managed original is missing: {path}", stage="image-source"
+            )
+        image = QImage(str(path))
+        if image.isNull():
+            raise ProviderInputError(
+                f"managed original is not decodable: {path}", stage="image-source"
+            )
+        return image
+
+    def page_frame(self, page_id: str) -> ImageFrame:
+        from PySide6.QtGui import QImage
+
+        image = self._page_image(page_id).convertToFormat(QImage.Format.Format_RGB32)
+        width, height = image.width(), image.height()
+        return ImageFrame(width, height, "rgb32", bytes(image.constBits()))
+
+    def region_crop(self, page_id: str, region_id: str) -> tuple[bytes, int, int]:
+        from PySide6.QtCore import QBuffer, QIODevice, QRect
+        from PySide6.QtGui import QImage
+
+        page = self._repository.get_page(page_id)
+        if page is None:
+            raise ProviderInputError(
+                f"page {page_id!r} is not available", stage="image-source"
+            )
+        region = self._regions.get_region(region_id)
+        if region is None:
+            raise ProviderInputError(
+                f"region {region_id!r} is not available", stage="image-source"
+            )
+        image = self._page_image(page_id)
+        bbox = region.geometry.bbox
+        rect = QRect(bbox.x, bbox.y, bbox.width, bbox.height).intersected(
+            QRect(0, 0, image.width(), image.height())
+        )
+        if rect.isEmpty():
+            raise ProviderInputError(
+                f"region {region_id!r} lies outside the page", stage="image-source"
+            )
+        crop = image.copy(rect).convertToFormat(QImage.Format.Format_RGB888)
+        buffer = QBuffer()
+        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
+        if not crop.save(buffer, "PNG"):
+            raise ProviderInputError(
+                "region crop could not be encoded", stage="image-source"
+            )
+        return bytes(buffer.data()), crop.width(), crop.height()
+
+
+class _RegionGeometrySource:
+    """Region geometry as mask primitives (D06 §19 Segment input)."""
+
+    def __init__(self, regions: SqliteRegionRepository) -> None:
+        self._regions = regions
+
+    def mask_geometry(self, region_id: str) -> RegionMaskGeometry:
+        region = self._regions.get_region(region_id)
+        if region is None or region.deleted:
+            raise ProviderInputError(
+                f"region {region_id!r} is not available", stage="segment"
+            )
+        bbox = region.geometry.bbox
+        boxes = ((bbox.x, bbox.y, bbox.x + bbox.width, bbox.y + bbox.height),)
+        return RegionMaskGeometry(boxes=boxes, polygons=(region.geometry.polygon,) if region.geometry.polygon else ())
+
+
+def _load_pipeline_settings(conn: sqlite3.Connection) -> dict:
+    """Read the persisted pipeline defaults (empty when never configured)."""
+    try:
+        row = conn.execute(
+            "SELECT settings_json FROM pipeline_defaults WHERE defaults_id = 1"
+        ).fetchone()
+    except sqlite3.Error:
+        return {}
+    if row is None or not row[0]:
+        return {}
+    try:
+        loaded = json.loads(row[0])
+    except (ValueError, TypeError):
+        return {}
+    return loaded if isinstance(loaded, dict) else {}
+
+
+def _credential_resolver() -> Callable[[str], str | None] | None:
+    """Resolve provider credentials from the Windows vault, best effort.
+
+    A vault that cannot be opened must not stop the app from starting
+    (AC-OPTIONAL-001); the providers that need a credential then report
+    Not-Ready with ``MISSING_CREDENTIAL`` instead.
+    """
+    try:
+        from infrastructure.credentials.windows import WindowsCredentialStore
+
+        store = WindowsCredentialStore()
+    except Exception:
+        return None
+
+    def resolve(ref: str) -> str | None:
+        try:
+            return store.resolve_credential(ref).reveal()
+        except Exception:
+            return None
+
+    return resolve
+
+
 @dataclass
 class AppServices:
     """Fully wired production stack; QML receives the page viewmodels.
@@ -97,6 +249,7 @@ class AppServices:
     library: LibraryService
     pipeline: PipelineService
     editing: RegionEditingService
+    providers: object
     navigation: NavigationViewModel
     bookshelf: BookshelfViewModel
     workbench: WorkbenchViewModel
@@ -133,6 +286,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         storage = ManagedFileStorage(managed_root)
         storage.ensure_layout()
         library = LibraryService(repository)
+        regions = SqliteRegionRepository(conn)
 
         def book_id_for_chapter(chapter_id: str) -> str:
             # Real Chapter→Book lookup for the D03 §18 managed layout; an
@@ -147,8 +301,28 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             ManagedCopyStoreAdapter(storage, book_id_for_chapter),
             repository,
         )
-        pipeline = build_production_pipeline(conn)
-        editing = RegionEditingService(SqliteRegionRepository(conn))
+        # TASK-019: the production Pipeline receives real handlers built from
+        # the provider runtime. Nothing is wired when no provider is ready:
+        # the step then fails with PROVIDER_UNAVAILABLE / Not-Ready instead of
+        # inventing a deterministic placeholder.
+        provider_runtime = build_provider_runtime(
+            settings=_load_pipeline_settings(conn),
+            transport=StdlibTransport(),
+            credential_resolver=_credential_resolver(),
+        )
+        handlers = build_production_handlers(
+            registry=provider_runtime.registry,
+            regions=regions,
+            region_writer=RegionStepWriter(conn, regions),
+            artifacts=ArtifactStepWriter(conn, storage),
+            images=_ManagedPageImageSource(repository, storage, regions),
+            geometry=_RegionGeometrySource(regions),
+            retry_policy=provider_runtime.retry_policy,
+            heavy_runner=provider_runtime.heavy_runner,
+            route_policy=provider_runtime.route_policy,
+        )
+        pipeline = build_production_pipeline(conn, handlers=handlers)
+        editing = RegionEditingService(regions)
         navigation = NavigationViewModel()
         bookshelf = BookshelfViewModel(
             library=library, importer=importer, navigation=navigation
@@ -184,6 +358,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             library=library,
             pipeline=pipeline,
             editing=editing,
+            providers=provider_runtime,
             navigation=navigation,
             bookshelf=bookshelf,
             workbench=workbench,

@@ -1,0 +1,4 @@
+### python -m pytest tests/pipeline tests/core tests/storage -q -p no:cacheprovider -rs
+........................................................................ [ 92%]
+......                                                                   [100%]
+78 passed in 4.88s

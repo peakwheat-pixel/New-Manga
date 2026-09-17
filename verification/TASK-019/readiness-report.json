@@ -1,0 +1,187 @@
+{
+  "gpu": {
+    "detail": "no GPU runtime installed (torch is absent)",
+    "error_code": "DEVICE_UNAVAILABLE",
+    "index": 0,
+    "kind": "gpu",
+    "name": "",
+    "state": "unavailable",
+    "total_memory_mb": null
+  },
+  "models": [],
+  "providers": [
+    {
+      "capabilities": [
+        "detection"
+      ],
+      "detail": "no base_url configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "missing_requirements": [
+        "endpoint"
+      ],
+      "provider_id": "openai-vision-detection",
+      "provider_type": "openai-compatible-vision",
+      "state": "not_configured"
+    },
+    {
+      "capabilities": [
+        "ocr"
+      ],
+      "detail": "module 'manga_ocr' is not installed",
+      "error_code": "PROVIDER_DEPENDENCY_MISSING",
+      "missing_requirements": [
+        "manga_ocr",
+        "PIL"
+      ],
+      "provider_id": "manga-ocr",
+      "provider_type": "local-manga-ocr",
+      "state": "missing_dependency"
+    },
+    {
+      "capabilities": [
+        "ocr"
+      ],
+      "detail": "module 'paddleocr' is not installed",
+      "error_code": "PROVIDER_DEPENDENCY_MISSING",
+      "missing_requirements": [
+        "paddleocr",
+        "paddle"
+      ],
+      "provider_id": "paddleocr-korean",
+      "provider_type": "local-paddleocr",
+      "state": "missing_dependency"
+    },
+    {
+      "capabilities": [
+        "ocr"
+      ],
+      "detail": "no base_url configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "missing_requirements": [
+        "endpoint"
+      ],
+      "provider_id": "openai-vision-ocr",
+      "provider_type": "openai-compatible-vision",
+      "state": "not_configured"
+    },
+    {
+      "capabilities": [
+        "translation"
+      ],
+      "detail": "no base_url configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "missing_requirements": [
+        "endpoint"
+      ],
+      "provider_id": "openai-compatible-translation",
+      "provider_type": "openai-compatible",
+      "state": "not_configured"
+    },
+    {
+      "capabilities": [
+        "translation"
+      ],
+      "detail": "no base_url configured",
+      "error_code": "PROVIDER_NOT_CONFIGURED",
+      "missing_requirements": [
+        "endpoint"
+      ],
+      "provider_id": "sakura-local",
+      "provider_type": "local-sakura",
+      "state": "not_configured"
+    },
+    {
+      "capabilities": [
+        "inpaint"
+      ],
+      "detail": "",
+      "error_code": "",
+      "missing_requirements": [],
+      "provider_id": "inpaint-simple-fill",
+      "provider_type": "local-simple-fill",
+      "state": "ready"
+    },
+    {
+      "capabilities": [
+        "inpaint"
+      ],
+      "detail": "",
+      "error_code": "",
+      "missing_requirements": [],
+      "provider_id": "inpaint-edge-bleed",
+      "provider_type": "local-edge-bleed",
+      "state": "ready"
+    },
+    {
+      "capabilities": [
+        "inpaint"
+      ],
+      "detail": "Manga LaMa has no implementation in this build (TASK-018)",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED",
+      "missing_requirements": [
+        "torch",
+        "diffusers",
+        "numpy"
+      ],
+      "provider_id": "inpaint-manga-lama",
+      "provider_type": "local-diffusion",
+      "state": "not_ready"
+    },
+    {
+      "capabilities": [
+        "inpaint"
+      ],
+      "detail": "AOT-GAN has no implementation in this build (TASK-018)",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED",
+      "missing_requirements": [
+        "torch",
+        "numpy"
+      ],
+      "provider_id": "inpaint-aot-gan",
+      "provider_type": "local-diffusion",
+      "state": "not_ready"
+    },
+    {
+      "capabilities": [
+        "inpaint"
+      ],
+      "detail": "BrushNet/PowerPaint has no implementation in this build (TASK-018)",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED",
+      "missing_requirements": [
+        "torch",
+        "diffusers",
+        "numpy"
+      ],
+      "provider_id": "inpaint-brushnet",
+      "provider_type": "local-diffusion",
+      "state": "not_ready"
+    },
+    {
+      "capabilities": [
+        "inpaint"
+      ],
+      "detail": "FLUX Fill has no implementation in this build (TASK-018)",
+      "error_code": "PROVIDER_NOT_IMPLEMENTED",
+      "missing_requirements": [
+        "torch",
+        "diffusers"
+      ],
+      "provider_id": "inpaint-flux-fill",
+      "provider_type": "local-diffusion",
+      "state": "not_ready"
+    }
+  ],
+  "route_policy": {
+    "allowed_routes": [
+      "simple-fill",
+      "edge-bleed",
+      "brushnet"
+    ],
+    "color_route": "brushnet",
+    "fallback_routes": [],
+    "requirements": {
+      "brushnet": false,
+      "flux-fill": false
+    }
+  }
+}

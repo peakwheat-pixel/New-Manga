@@ -1,0 +1,19 @@
+{
+  "report": {
+    "detail": "connection refused: 127.0.0.1:8080",
+    "elapsed_ms": 2058,
+    "endpoint": "http://127.0.0.1:8080/v1/models",
+    "health_endpoint": "http://127.0.0.1:8080/v1/health",
+    "healthy": false,
+    "http_status": null,
+    "models": [],
+    "provider_id": "sakura-local",
+    "ready": false,
+    "ready_endpoint": "http://127.0.0.1:8080/v1/models",
+    "reason_code": "unreachable",
+    "scope_note": "U-6 scope: health/readiness only — no VRAM, load or throughput probes"
+  },
+  "requests": [
+    "http://127.0.0.1:8080/v1/models"
+  ]
+}

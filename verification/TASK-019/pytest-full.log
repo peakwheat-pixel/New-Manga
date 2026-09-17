@@ -1,0 +1,18 @@
+### python -m pytest -q -p no:cacheprovider -rs
+........................................................................ [ 11%]
+........................................................................ [ 22%]
+....................s................................................... [ 33%]
+...................................sssss................................ [ 44%]
+........................................................................ [ 55%]
+........................................................................ [ 66%]
+........................................................................ [ 78%]
+........................................................................ [ 89%]
+......................................................................   [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+640 passed, 6 skipped in 25.12s
