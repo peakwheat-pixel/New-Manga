@@ -56,7 +56,7 @@ return stages.get("clean", StageState.NOT_STARTED).is_valid or previous.get("inp
 |---|---|---|---|
 | 本切片 | `pytest tests/pipeline/test_clean_availability.py -q -p no:cacheprovider -rf` | `38fbde4` | **8 passed / 0 skipped**、exit 0 |
 | pipeline+core 回归 | `pytest tests/pipeline tests/core -q -p no:cacheprovider -rf` | `38fbde4` | **81 passed / 0 skipped**、exit 0 |
-| 全仓 ×5 | `-q -rs -rf` 逐次 | `38fbde4` | 见 `verification/TASK-039/full-suite-runs.log` |
+| 全仓 ×5 | `-q -rs -rf` 逐次 | `38fbde4` | **每次 780 passed / 0 skipped、exit 0**（[full-suite-runs.log](../../verification/TASK-039/full-suite-runs.log)） |
 
 ## AC ⑤ 与遗留
 
