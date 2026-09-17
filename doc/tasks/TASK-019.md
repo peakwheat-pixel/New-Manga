@@ -2,7 +2,7 @@
 id: TASK-019
 title: 集成已验证的检测/OCR/翻译/修复 Provider
 kind: implementation
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -11,12 +11,12 @@ depends_on: [TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024]
 base_commit: 36242fb00f9f432ec66cc3c33afc167578d0f341
 branch: agent/deepseek/TASK-019-provider-integration
 worktree: G:/CODEX/New Manga.worktrees/TASK-019-deepseek
-integration_commit: 3755af9
+integration_commit: 9a5486a
 ---
 
 # TASK-019：集成已验证的检测/OCR/翻译/修复 Provider
 
-**状态提示（2026-09-17）**：顶部 frontmatter 现为 `in_review`，指**尾项切片 `ab26601`**（Standards S-1/S-2 分层修正）待非作者独立 Review；**主体已于 `integration_commit=3755af9` 集成 `done`，其结论不因本切片失效**。切片详情见文末「尾项切片」。
+**状态提示（2026-09-17）**：`status=done`——主体 `integration_commit=3755af9`；尾项切片（Standards S-1/S-2 分层修正）经非作者（DeepSeek Harness）独立 Review `approved`（[`doc/reviews/TASK-019-ab26601.md`](../reviews/TASK-019-ab26601.md)，T-1～T-4 均 P2 非阻塞）后以 `integration_commit=9a5486a` 集成。`BLOCKED`/`NOT_RUN` 项**未变、不得视为通过**。切片详情见文末「尾项切片」。
 
 **READY（2026-09-17 用户批准释放；同日按用户指示改派 Owner）**：六个硬依赖 **全部已集成 `done`**（TASK-011 `369e95f`、TASK-014 `a9432971`、TASK-016 `9bf85f5`、TASK-017 `d36f724`、TASK-018 `5a9f5c8`、TASK-024 `61c33e2`）。Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Owner 为 DSH 时原 Reviewer DSH 会构成同体审查，故一并更换）；base=`36242fb`、branch/worktree 见顶部元数据（首次按 `agent/zcode/...` 命名创建的**无提交** worktree/分支已移除，不作为工作区）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 
@@ -129,7 +129,9 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 
 ## 尾项切片（2026-09-17，Standards S-1/S-2 分层修正）
 
-- 作者=`Codex`、Reviewer=`DeepSeek Harness`（**非作者**）；base=`36242fb`（分支起点 `0389eb4`）、交付 head=`ab26601`；Handoff 见 [TASK-019-ab26601.md](../handoffs/TASK-019-ab26601.md)，取证见 [verification/TASK-019/layering-fix-ab26601.md](../../verification/TASK-019/layering-fix-ab26601.md)。
+- 作者=`Codex`、Reviewer=`DeepSeek Harness`（**非作者**）；base=`36242fb`（分支起点 `0389eb4`）、交付 head=`ab26601`（元数据 `b03cf57`）；Review [`doc/reviews/TASK-019-ab26601.md`](../reviews/TASK-019-ab26601.md) `approved`；**集成 `integration_commit=9a5486a`**（merge，parents `0389eb4`+`3929d9e`）；集成后复验见 [verification/TASK-019/integration-9a5486a.md](../../verification/TASK-019/integration-9a5486a.md)：`tests/providers` **111 passed/0 skipped**、`tests/pipeline`+`core`+`storage` **78 passed/0 skipped**、全仓 **641 passed/6 skipped**（6 项均既有 `openssl unavailable`）。Handoff 见 [TASK-019-ab26601.md](../handoffs/TASK-019-ab26601.md)，切片取证见 [verification/TASK-019/layering-fix-ab26601.md](../../verification/TASK-019/layering-fix-ab26601.md)。
+- **Findings 处置（T-1～T-4，均 P2 非阻塞）**：**T-1 已登记**（`doc/STATUS.md`「已知 flaky 测试（跟踪条目）」收录 `tests/reading_export/test_qml_contract.py::test_reader_webtoon_swaps_in_vertical_viewer` 与 `tests/reading_export/test_viewmodels.py::test_start_export_stale_abort_surfaces_failure`；Reviewer 已用切片前树证明其先于本切片存在）；**T-2 deferred**（`runtime.py`/`handlers.py` 的重复 `_route_policy` 收敛 → 建议另开切片）；**T-3 已处理**（`changed-paths.txt` 加迁移说明、行数口径改为 `−149/+9`、`author-verification.md` 保持作者快照，更正集中登记在集成记录）；**T-4 deferred**（守卫迁入 `tests/core/` 并改 AST 形式的建议，待该路径可改）。
+- **S-1/S-2 已关闭**：`src/application/**` 对 `infrastructure` 的依赖在 master 上为 **0**（独立 AST 扫描证实），并有回归守卫 `tests/providers/test_ports_contract.py::test_application_layer_never_imports_infrastructure`。详见 [Standards 附录](../reviews/TASK-019-standards-addendum.md)。
 - 动因：[post-hoc Standards 附录](../reviews/TASK-019-standards-addendum.md) 发现 **S-1**——Inpaint Step 反向依赖 `infrastructure.providers.*`，违反 `doc/02_TECHNICAL_ARCHITECTURE_.md` §架构方向；**S-2**（同根因）策略与适配器同住 infrastructure。
 - 修正：路由**声明与门控**迁入 `src/application/translation/inpaint/route_catalog.py`；`inpaint_router.py` 迁为 `src/application/translation/inpaint/router.py`；非目标保护**规则**迁入 `src/application/translation/inpaint/protection.py`；`inpaint_routes.py` 只留光栅实现与 provider。**`step.py` 不再 import infrastructure**。
 - 验证：`tests/providers` **111 passed / 0 skipped**（110 → 111，新增架构守卫）；`tests/pipeline`+`core`+`storage` **78 passed / 0 skipped**；全仓 **641 passed / 6 skipped**（6 项均既有 `openssl unavailable`）；**S-1 断言 0 命中**、`inpaint_router` 引用 0 命中；判别力：旧 `step.py` 确有 2 处 infrastructure 导入（新守卫在旧代码上必然失败）；独立装配复验 12 Provider、学习型路线仍 `not_ready/PROVIDER_NOT_IMPLEMENTED`。

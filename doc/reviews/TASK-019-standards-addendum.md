@@ -21,8 +21,8 @@ decision: findings_open（不改变 3755af9 的既有集成结论）
 
 | ID | 类型 | 位置 | 内容与依据 | 修法 |
 |---|---|---|---|---|
-| **S-1** | **记录在案标准的违反** | `src/application/translation/inpaint/step.py:23,29` | 反向依赖 `infrastructure.providers.inpaint_router` / `inpaint_routes`。`doc/02_TECHNICAL_ARCHITECTURE_.md` §架构方向："依赖方向必须保持 `QML / UI → Application → Domain / Ports → Infrastructure Adapters`"且"禁止反向依赖"。全仓扫描 `src/application/**`：**本文件是唯一**反向导入 infrastructure 的应用层模块（无既有先例可援引） | 把路由/决策**策略**下沉到 `src/application/translation/inpaint/`（本 Task 允许路径内），infrastructure 只保留适配器实现；或让 handler 经 port 注入决策结果 |
-| S-2 | 判断项（同根因） | `src/infrastructure/providers/inpaint_router.py`、`inpaint_routes.py` | D06 §21 的路由**策略**（`RouterFeatures`/`RoutePolicy`/`acceptable_routes()`/route 选择）与**适配器**（simple-fill/edge-bleed 实现）住在同一目录 → `Feature Envy`/`Divergent Change` 读法 | 与 S-1 同修：策略入 application，适配器留 infrastructure |
+| **S-1** | **记录在案标准的违反** | `src/application/translation/inpaint/step.py:23,29` | 反向依赖 `infrastructure.providers.inpaint_router` / `inpaint_routes`。`doc/02_TECHNICAL_ARCHITECTURE_.md` §架构方向："依赖方向必须保持 `QML / UI → Application → Domain / Ports → Infrastructure Adapters`"且"禁止反向依赖"。全仓扫描 `src/application/**`：**本文件是唯一**反向导入 infrastructure 的应用层模块（无既有先例可援引） | 把路由/决策**策略**下沉到 `src/application/translation/inpaint/`（本 Task 允许路径内），infrastructure 只保留适配器实现；或让 handler 经 port 注入决策结果 → **已修复并集成（尾项切片 `ab26601`，`integration_commit=9a5486a`）：CLOSED** |
+| S-2 | 判断项（同根因） | `src/infrastructure/providers/inpaint_router.py`、`inpaint_routes.py` | D06 §21 的路由**策略**（`RouterFeatures`/`RoutePolicy`/`acceptable_routes()`/route 选择）与**适配器**（simple-fill/edge-bleed 实现）住在同一目录 → `Feature Envy`/`Divergent Change` 读法 | 与 S-1 同修：策略入 application，适配器留 infrastructure → **已随 S-1 落地（`route_catalog.py`/`router.py`/`protection.py` 入 application，光栅实现与 provider 留 infrastructure）：CLOSED** |
 | S-3 | 判断项（可接受） | `src/infrastructure/providers/handlers.py` | 直接 import 具体错误类 `application.translation.pipeline.executor.StepExecutionError`；方向允许，但适配器耦合到应用层具体类型 | 保持现状（seam 已冻结）；如后续引入 port 级错误类型再收敛 |
 
 **Baseline smell 检查（未发现问题）**：无重复实现（`_utc_now` 仅一处；10 个新基础设施模块除适配器对称外无同形逻辑）；无死错误类（21 个错误码全部有引用）；无 `TODO/FIXME/XXX`；未见为 spec 之外需求添加的抽象（`heavy_gate_capacity` 同时被策略与测试使用）；ports/application 未 import PySide6/sqlite3。
@@ -46,3 +46,9 @@ decision: findings_open（不改变 3755af9 的既有集成结论）
 - 主 Review 的 Spec/Verification 结论**不受本附录影响**（本附录的 Spec 轴与其一致）。
 - **S-1/S-2 是主 Review 未覆盖的轴**，因此属于"事后发现"：`integration_commit=3755af9` 不撤销，修复按尾项切片走"实现 → 非作者 Review → 集成"。
 - 两轴**分别报告、不合并、不跨轴排名**。
+
+## 关闭记录（2026-09-17）
+
+- **S-1 / S-2 已 CLOSED**：由尾项切片 `ab26601` 修复（Review [`doc/reviews/TASK-019-ab26601.md`](TASK-019-ab26601.md)，Reviewer=DeepSeek Harness **非作者**，decision=`approved`），并以 `integration_commit=9a5486a` 集成。master 上 `src/application/**` 对 `infrastructure` 的依赖为 **0**（Reviewer 用独立 AST 扫描含动态导入证实），并有回归守卫 `tests/providers/test_ports_contract.py::test_application_layer_never_imports_infrastructure`。
+- **S-3 维持"可接受耦合"结论**（seam 冻结）。
+- **Review findings 处置**（T-1～T-4，均 P2 非阻塞）：T-1 已登记入 `doc/STATUS.md`「已知 flaky 测试（跟踪条目）」；T-2 / T-4 deferred（建议另开切片）；T-3 已处理（快照说明 + 行数口径更正）。完整处置表见 [`verification/TASK-019/integration-9a5486a.md`](../../verification/TASK-019/integration-9a5486a.md)。

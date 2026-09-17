@@ -1,3 +1,12 @@
+# Snapshot taken at metadata head 6c981c2 (author evidence, Review T-3).
+# Post-refactor note (ab26601 / integration 9a5486a):
+#   src/infrastructure/providers/inpaint_router.py
+#     -> src/application/translation/inpaint/router.py          (git mv)
+#   route table + fail-closed gate ->
+#     src/application/translation/inpaint/route_catalog.py
+#   non-target protection rule ->
+#     src/application/translation/inpaint/protection.py
+# Authoritative current-tree list: verification/TASK-019/integration-9a5486a.md
 doc/handoffs/TASK-019-726baf5.md
 doc/tasks/TASK-019.md
 src/application/translation/inpaint/__init__.py

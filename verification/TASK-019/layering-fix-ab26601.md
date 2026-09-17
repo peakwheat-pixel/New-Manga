@@ -17,7 +17,7 @@
 | **新增** `src/application/translation/inpaint/route_catalog.py` | 路由**声明与门控**从 `infrastructure/providers/inpaint_routes.py` 迁入：`RouteRecord`、`ROUTE_TABLE`、`route_record`、`provider_id_for_route`、`route_gate`、`describe_routes`、`learned_routes_declared`（逐字搬迁，仅补模块 docstring） |
 | **迁移** `inpaint_router.py` → `src/application/translation/inpaint/router.py` | `git mv`（保留历史），唯一内容改动是 `route_gate` 的导入目标改指 `application.translation.inpaint.route_catalog` |
 | **新增** `src/application/translation/inpaint/protection.py` | 非目标像素保护**规则** `protected_pixel_violations`（TASK-018 硬规则）迁入 application；适配器侧的 `require_non_target_protection` 留在 infrastructure 并改为从 application 导入该规则（方向合法） |
-| **收敛** `src/infrastructure/providers/inpaint_routes.py` | 只保留光栅实现与 provider（`simple_fill`/`edge_bleed`/`SimpleFillProvider`/`EdgeBleedProvider`/`provider_for_route`/`run_routes`）；删除已迁出的 158 行；导入其需要的规则与门控 |
+| **收敛** `src/infrastructure/providers/inpaint_routes.py` | 只保留光栅实现与 provider（`simple_fill`/`edge_bleed`/`SimpleFillProvider`/`EdgeBleedProvider`/`provider_for_route`/`run_routes`）；删除已迁出的定义；导入其需要的规则与门控。（口径更正：逐文件 `git diff --numstat` 为 `−149/+9`、净 −140；原"158 行"为合并 diff 规模——Review T-3） |
 | **改向** `step.py` | 三个 application 内导入替代原 infrastructure 导入 → **该文件不再 import infrastructure** |
 | **改向** `handlers.py`、`runtime.py` | 策略/声明改从 application 导入（infrastructure → application，合法方向）；适配器导入不变 |
 | **测试** | `test_inpaint.py`、`test_handlers_pipeline.py` 的导入路径同步；`test_ports_contract.py` **新增架构回归守卫** |
