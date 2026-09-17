@@ -11,12 +11,18 @@ its store, QML only renders state and calls slots (D05 §60).
   ``settleReadingTime`` on every progress-affecting slot, so duration
   survives crashes within the heartbeat granularity (D03 §29);
 - ``openExporter`` lazily builds the chapter's ``ExportViewModel`` so the
-  reader can hand the export window a ready controller (D05 §51).
+  reader can hand the export window a ready controller (D05 §51);
+- TASK-020 webtoon tiling: when a ``tile_factory`` is injected, webtoon
+  chapters are served as rebuildable tile bands (``tiles``/``tilesActive``/
+  ``requestTiles``/``clearTileCache``) instead of one whole-page image; the
+  rasterizer owns the pixel cache only — progress, regions and render
+  revisions stay in the reading service and are never cached here.
 """
 
 from __future__ import annotations
 
 import time
+from typing import Callable
 
 from PySide6.QtCore import Property, QObject, QTimer, QUrl, Signal, Slot
 
@@ -39,6 +45,7 @@ class ReaderViewModel(QObject):
     stateChanged = Signal()
     summaryChanged = Signal()
     exportControllerChanged = Signal()
+    tilesChanged = Signal()
 
     def __init__(
         self,
@@ -46,12 +53,16 @@ class ReaderViewModel(QObject):
         catalog: ReaderPageCatalog,
         *,
         export_service: ExportService | None = None,
+        tile_factory: Callable[[str], object] | None = None,
         parent: QObject | None = None,
     ) -> None:
         super().__init__(parent)
         self._reading = reading
         self._catalog = catalog
         self._export_service = export_service
+        self._tile_factory = tile_factory
+        self._rasterizer: object | None = None
+        self._tile_rows: list[dict] = []
         self._exporter: ExportViewModel | None = None
         self._heartbeat = QTimer(self)
         self._heartbeat.setInterval(HEARTBEAT_MS)
@@ -84,6 +95,7 @@ class ReaderViewModel(QObject):
             mode=self._reading.mode,
             resume=resume,
         )
+        self._rebuild_tiles()
         self._last_settle = time.monotonic()
         self._heartbeat.start()
         self.stateChanged.emit()
@@ -227,6 +239,7 @@ class ReaderViewModel(QObject):
     def setMode(self, mode: str) -> None:
         self.settleReadingTime()
         self._reading.set_mode(mode)
+        self._rebuild_tiles()
         self.stateChanged.emit()
 
     @Slot()
@@ -259,6 +272,109 @@ class ReaderViewModel(QObject):
         return self._reading.progress.scroll_offset_y
 
     scrollOffsetY = Property(float, _scroll_offset_y, notify=stateChanged)
+
+    # ------------------------------------------------------------------
+    # TASK-020 webtoon tiling (rebuildable pixel cache)
+    # ------------------------------------------------------------------
+
+    def _rebuild_tiles(self) -> None:
+        """(Re)build the tile rasterizer for the current page and mode.
+
+        Only webtoon chapters with an injected factory get tiles; everything
+        else (and any factory failure) falls back to the whole-page image
+        path. Tiles are a rebuildable pixel cache — clearing them never
+        touches reading progress, regions or render revisions.
+        """
+        self._rasterizer = None
+        self._tile_rows = []
+        if self._tile_factory is None or not self._has_chapter():
+            self.tilesChanged.emit()
+            return
+        if self._reading.chapter_type.value != "webtoon":
+            self.tilesChanged.emit()
+            return
+        try:
+            rasterizer = self._tile_factory(self._reading.current_source_path)
+            self._tile_rows = [
+                {
+                    "index": tile.index,
+                    "top": tile.content_top,
+                    "height": tile.content_height,
+                    "pageWidth": rasterizer.page_size[0],
+                    "url": "",
+                }
+                for tile in rasterizer.grid.tiles
+            ]
+            self._rasterizer = rasterizer
+        except (OSError, ValueError):
+            # unreadable page: keep the whole-image path, QML surfaces the error
+            self._rasterizer = None
+            self._tile_rows = []
+        self.tilesChanged.emit()
+
+    def _tiles_active(self) -> bool:
+        return self._rasterizer is not None
+
+    tilesActive = Property(bool, _tiles_active, notify=tilesChanged)
+
+    def _tiles(self) -> list:
+        return self._tile_rows
+
+    tiles = Property("QVariantList", _tiles, notify=tilesChanged)
+
+    def _page_pixel_width(self) -> int:
+        if self._rasterizer is None:
+            return 0
+        return self._rasterizer.page_size[0]
+
+    pagePixelWidth = Property(int, _page_pixel_width, notify=tilesChanged)
+
+    def _page_pixel_height(self) -> int:
+        if self._rasterizer is None:
+            return 0
+        return self._rasterizer.page_size[1]
+
+    pagePixelHeight = Property(int, _page_pixel_height, notify=tilesChanged)
+
+    @Slot(float, float)
+    def requestTiles(self, viewport_top: float, viewport_bottom: float) -> None:
+        """Materialise the visible tile band (+bounded prefetch) and fill the
+        row URLs; QML calls this while scrolling the tiled webtoon viewer."""
+        if self._rasterizer is None:
+            return
+        grid = self._rasterizer.grid
+        top, bottom = int(viewport_top), int(viewport_bottom)
+        try:
+            wanted = self._rasterizer.ensure_viewport(top, bottom)
+        except (OSError, ValueError):
+            self.tilesChanged.emit()
+            return
+        wanted_indices = {
+            tile.index
+            for tile in grid.visible_tiles(
+                top, bottom, prefetch=self._rasterizer.prefetch
+            )
+        }
+        wanted_keys = {path.resolve() for path in wanted}
+        changed = False
+        for row in self._tile_rows:
+            if row["url"] or row["index"] not in wanted_indices:
+                continue
+            path = self._rasterizer.tile_file(row["index"])
+            row["url"] = QUrl.fromLocalFile(str(path)).toString()
+            changed = True
+        if changed:
+            self.tilesChanged.emit()
+
+    @Slot()
+    def clearTileCache(self) -> None:
+        """Drop the rebuildable tile pixels; business truth is untouched."""
+        if self._rasterizer is None:
+            return
+        self._rasterizer.clear()
+        for row in self._tile_rows:
+            row["url"] = ""
+        self.tilesChanged.emit()
 
     @Slot()
     def settleReadingTime(self) -> None:
