@@ -2,7 +2,7 @@
 id: TASK-019
 title: 集成已验证的检测/OCR/翻译/修复 Provider
 kind: implementation
-status: done
+status: in_review
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -15,6 +15,8 @@ integration_commit: 3755af9
 ---
 
 # TASK-019：集成已验证的检测/OCR/翻译/修复 Provider
+
+**状态提示（2026-09-17）**：顶部 frontmatter 现为 `in_review`，指**尾项切片 `ab26601`**（Standards S-1/S-2 分层修正）待非作者独立 Review；**主体已于 `integration_commit=3755af9` 集成 `done`，其结论不因本切片失效**。切片详情见文末「尾项切片」。
 
 **READY（2026-09-17 用户批准释放；同日按用户指示改派 Owner）**：六个硬依赖 **全部已集成 `done`**（TASK-011 `369e95f`、TASK-014 `a9432971`、TASK-016 `9bf85f5`、TASK-017 `d36f724`、TASK-018 `5a9f5c8`、TASK-024 `61c33e2`）。Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Owner 为 DSH 时原 Reviewer DSH 会构成同体审查，故一并更换）；base=`36242fb`、branch/worktree 见顶部元数据（首次按 `agent/zcode/...` 命名创建的**无提交** worktree/分支已移除，不作为工作区）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 
@@ -124,4 +126,13 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - 真实 OCR / 韩文 OCR / 真实彩色修复 / 真实翻译的**质量**与**成本/时延**：`BLOCKED`（无依赖、无权重、无端点）。
 - AC-EXT-SAKURA-001 **真实服务验证**：`NOT_RUN`（本机无 Sakura）；探测实现本身 PASS。
 - 真实权重下载、真实 GPU OOM 复现：`BLOCKED` / `NOT_RUN`。
+
+## 尾项切片（2026-09-17，Standards S-1/S-2 分层修正）
+
+- 作者=`Codex`、Reviewer=`DeepSeek Harness`（**非作者**）；base=`36242fb`（分支起点 `0389eb4`）、交付 head=`ab26601`；Handoff 见 [TASK-019-ab26601.md](../handoffs/TASK-019-ab26601.md)，取证见 [verification/TASK-019/layering-fix-ab26601.md](../../verification/TASK-019/layering-fix-ab26601.md)。
+- 动因：[post-hoc Standards 附录](../reviews/TASK-019-standards-addendum.md) 发现 **S-1**——Inpaint Step 反向依赖 `infrastructure.providers.*`，违反 `doc/02_TECHNICAL_ARCHITECTURE_.md` §架构方向；**S-2**（同根因）策略与适配器同住 infrastructure。
+- 修正：路由**声明与门控**迁入 `src/application/translation/inpaint/route_catalog.py`；`inpaint_router.py` 迁为 `src/application/translation/inpaint/router.py`；非目标保护**规则**迁入 `src/application/translation/inpaint/protection.py`；`inpaint_routes.py` 只留光栅实现与 provider。**`step.py` 不再 import infrastructure**。
+- 验证：`tests/providers` **111 passed / 0 skipped**（110 → 111，新增架构守卫）；`tests/pipeline`+`core`+`storage` **78 passed / 0 skipped**；全仓 **641 passed / 6 skipped**（6 项均既有 `openssl unavailable`）；**S-1 断言 0 命中**、`inpaint_router` 引用 0 命中；判别力：旧 `step.py` 确有 2 处 infrastructure 导入（新守卫在旧代码上必然失败）；独立装配复验 12 Provider、学习型路线仍 `not_ready/PROVIDER_NOT_IMPLEMENTED`。
+- **如实登记**：全仓 5 次运行中 1 次出现 `1 failed`（用例名未捕获），其后 4 次全绿；与已登记的 `tests/reading_export` QML 低频顺序敏感 flaky 特征一致，本切片不将其记为通过、也不归因于本切片。
+- 边界：仅改允许路径内文件；未改依赖清单、Schema、pipeline seam 本体、`AGENTS.md`、其他 Task；未 push、未合并 master。
 - 历史状态（2026-09-17 释放前）：窗口条款登记 `blocked`；U-6 已批准 Sakura 监控范围；AC-EXT-SAKURA-001 已正式编号并追踪为 `NOT_RUN`；TASK-018 已 `ready` 但未完成；TASK-017 真实 Provider 协议/成本/时延 `NOT_RUN`（付费端点未配置）；本机 Sakura 未运行。
