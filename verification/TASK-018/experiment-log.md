@@ -142,3 +142,31 @@
 Findings 处置：R-001/R-004/R-005/R-006（报告部分）已在集成收口提交内以文档口径修正收口；R-002/R-003/R-006（`experiment.json` 标签）/R-007 为 **deferred**，限制见 §7，解锁条件见研究报告 §9。
 
 **未解决项不得被当作通过**：R-002 的静态门控、R-003 的输出目录限制、R-007 的回落隐患在修复前持续有效；学习型路线的质量/性能仍为 `BLOCKED`，Mask 内部结构损伤仍为 `NOT_RUN`；两条基线只是保底能力，不代表质量达标。
+
+---
+
+## 7.1 后续修订切片 `d7c10d4`：deferred → fixed（2026-09-17）
+
+| 计划/发现项 | 原状态 | 现状态 | 证据 |
+|---|---|---|---|
+| 路线门控的环境探测（R-002） | 未实现 | **fixed** | `requirements` 为可探测描述符（`importlib.util.find_spec` / 本地权重文件存在性）；记录含 `requirement_probes`、`blocked_stage`；`test_route_gating.py::ProbingTests` 4 例 |
+| 越界输出目录（R-003） | 不支持 | **fixed** | `--output-dir %TEMP%/task018-outofroot` → **退出码 0**、产物正常、路径记绝对、`output_dir_in_experiment_root = false` |
+| 未实现路线 fail-closed（R-007） | 未实现 | **fixed** | 显式 `FILLERS` 映射 + 未登记即 `KeyError`；反例（依赖强制 satisfied）仍 10/10 `BLOCKED` / `not_implemented`、`png_written=[]` |
+| 保护框逐框证据（R-001 剩余） | 未覆盖 | **fixed** | `protected_box_violations`：**20 框全 0** |
+| 未核实体积标注（R-006） | 存在 | **fixed** | 已移除；`size_class` 标 `(unmeasured tier)`；`experiment.json` 重生成 |
+
+**本轮命令与结果（环境同 §1）**：
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---:|---:|---:|---|
+| 7 | `python -m unittest experiments/TASK-018/test_mask_protocol.py` | **0** | **12** | **0** | `OK`（原有 12 例未改动） |
+| 8 | `python -m unittest experiments/TASK-018/test_route_gating.py` | **0** | **13** | **0** | `OK`（新增，独立计数） |
+| 9 | `python experiments/TASK-018/run_experiment.py --repeat 3` | **0** | — | — | `{"MEASURED": 10, "BLOCKED": 20}`；`blocked_stage = {"not_implemented": 20}` |
+| 10 | `run_experiment.py --output-dir %TEMP%/task018-outofroot --repeat 1` | **0** | — | — | 越界不崩溃 |
+| 11 | `git diff --check 8c63f9b d7c10d4` | **0** | — | — | 无输出 |
+
+**skip 原因**：命令 7、8 均 **`0 skipped`**；命令 9、10 为进程执行，无测试项。
+
+**仍未解决（不变）**：学习型路线的质量/性能为 **BLOCKED**；Mask 内部结构损伤、真实 OOM、真实漫画样例为 **NOT_RUN**。
+
+详见 [revision-d7c10d4.md](revision-d7c10d4.md)。

@@ -165,3 +165,19 @@ python experiments/TASK-018/run_experiment.py --repeat 3
 | R-007 | P2（潜在、当前不可达） | `run_experiment.py:189-192` 对任何非 `simple-fill` 路线回落到 `edge_bleed_fill`：一旦按 R-002 改成真实探测，未实现的路线会被写成 `MEASURED` 并产出伪造成果 | **deferred**，且是**解锁前置条件**：补探测前必须先引入 fail-closed 的“已实现/未实现”门控 |
 
 **解锁条件（本 Task 后续任何重跑之前必须满足）**：在具备 `torch`/权重或网络的环境重跑本实验前，先修 R-007（未实现路线必须 `BLOCKED`，不得回落到基线结果），再按 R-002 补真实探测并重新取证。学习型路线的质量、残字、损伤与资源在获得实测前仍是未知。
+
+### 9.1 后续修订切片 `d7c10d4`（2026-09-17）：R-002/R-003/R-006/R-007 与 R-001 剩余项 → **fixed**
+
+上一节登记的 deferred 项已在本切片关闭；**已集成基线 `4d189ce` 不因本切片失效**（增量修复，未改写已集成提交）。
+
+| ID | 原状态 | 现状态 | 证据 |
+|---|---|---|---|
+| R-001（剩余项：保护框逐框断言） | 部分收口 | **fixed** | 新增 `protected_box_violations()`；`results/experiment.json` 中 **20 个保护框全部 `changed_pixels = 0`**（10 条 MEASURED × 2 框） |
+| R-002（路线门控为静态常量） | deferred | **fixed** | `requirements` 改为可探测描述符（`module` → `importlib.util.find_spec`；`weight` → 环境变量指向的本地文件存在性）；记录含 `requirement_probes` 与 `blocked_stage`（`dependency` / `not_implemented`） |
+| R-003（`--output-dir` 越界崩溃） | deferred | **fixed** | `_display_path()` 回退绝对路径；写入 `%TEMP%/task018-outofroot` 时**退出码 0**、产物正常、`output_dir_in_experiment_root = false` |
+| R-006（未核实的体积标注） | deferred | **fixed** | 描述符键名与 `note` 中 `10GB+`/`数 GB` 全部移除；`size_class` 统一加 `(unmeasured tier)`；`results/experiment.json` 按新代码重生成（`schema = task018-experiment-v2`） |
+| R-007（非 `simple-fill` 路线回落 `edge_bleed_fill`） | deferred（潜在） | **fixed** | 显式 `FILLERS` 映射；未登记路线 `raise KeyError`；`route_gate()` 先判可实现性 → `not_implemented`。**反例**：依赖全部强制 satisfied 后仍 10/10 `BLOCKED`、`png_written=[]`、`any_measured=False` |
+
+验证：`test_mask_protocol.py` **12 passed / 0 skipped**（原有 12 例未改动）；新增 `test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、保护违规 0、保护框 20/20 全 0；连续两次运行的 `routes`/`manifest_sha256`/`mask_sha256`/`output_sha256`/`sample_sha256`/`parameters`/`mask`/`protected_box_violations` **完全一致**。详见 [revision-d7c10d4.md](../../verification/TASK-018/revision-d7c10d4.md)。
+
+> **仍未解决（不变）**：四条学习型路线的质量/耗时/内存/显存为 **BLOCKED**（本切片未新增任何数字）；Mask 内部结构损伤量化、真实 OOM、真实漫画样例为 **NOT_RUN**。R-004 与 R-005 已在集成收口提交内以文档口径处理，本切片不再改动。

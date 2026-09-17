@@ -2,7 +2,7 @@
 id: TASK-018
 title: Mask / Inpainting 路线独立实验
 kind: experiment
-status: in_progress
+status: in_review
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -89,3 +89,9 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - **解锁条件**：本 Task 后续任何重跑（尤其在未来具备 `torch`/权重或网络的环境验证学习型路线）**必须先修 R-007**（未实现路线 fail-closed），再按 R-002 补真实探测并重新取证；`routes[*].runnable_here`/`blocked_reason` 不得作为环境证据引用。
 - 未完成项保持原样、不得视为通过：四条学习型路线的修复质量/残字/背景损伤/耗时/显存 **`BLOCKED`**；Mask **内部**结构损伤量化、真实 OOM、真实漫画样例 **`NOT_RUN`**；模型 Hash `NOT_AVAILABLE`。
 - 生产 Router 属 **TASK-019**：本 Task 只提出候选条件，**未扩展到 TASK-019**，也未释放 TASK-019 或其他冻结 Task。
+
+- **当前状态（唯一）**：2026-09-17 `in_review`，等待 Codex 对修订切片 `d7c10d4` 独立 Review。
+  - 修订：R-007 fail-closed（显式 `FILLERS` 映射，未实现路线即使依赖齐备也 `BLOCKED`/`not_implemented`）、R-002 真实探测（`importlib.util.find_spec` + 本地权重文件）、R-003 越界输出目录不崩溃、R-006 去未核实体积标注并重生成 `experiment.json`、R-001 剩余项保护框逐框断言。
+  - 验证：`test_mask_protocol.py` **12 passed / 0 skipped**（原有 12 例未改动）；新增 `test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、保护违规 0、**保护框 20/20 全 0**；连续两次运行的确定性字段完全一致；反例证明 fail-closed（`png_written=[]`）。
+  - **已集成基线 `4d189ce` 不因本切片失效**（增量修复，未改写已集成提交）。
+  - 边界：未改生产 src/tests、Schema、依赖、AGENTS；未改 `doc/STATUS.md`/`doc/00_INDEX.md`/`doc/12_ROADMAP.md`/`doc/tasks/README.md`；未释放 TASK-019 或其他冻结 Task；未 push/合并 master。
