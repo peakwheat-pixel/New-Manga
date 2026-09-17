@@ -2,7 +2,7 @@
 id: TASK-032
 title: 修复 SFX Policy Gate 缺失 region_type 前置（F-1）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
