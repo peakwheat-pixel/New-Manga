@@ -41,7 +41,7 @@ TASK-023 不包含网页采集、站点清单、Firecrawl/gallery-dl 或网页�
 | 维度 | 设计内容 |
 |---|---|
 | 已有要求 | D01 §2 补充扩展能力；D04 §8 流程图首节点含"PDF / MOBI"；D05 §52 导入窗口格式列表 |
-| 未知契约 | MOBI 在 Python 侧无官方解析库（mobi/ebooklib 均为第三方，许可与维护状态未评估）；PDF 页→图片的光栅化引擎未选（pdfium/PyMuPDF 许可差异大：AGPL vs Apache）；加密/扫描版 PDF 的 OCR 路径未定义；页序与双页 spread 拆分规则未定义 |
+| 未知契约 | MOBI 在 Python 侧无官方解析库（mobi/ebooklib 均为第三方，许可与维护状态未评估）；PDF 页→图片的光栅化引擎未选：PDFium 核心为 BSD-style，`pypdfium2` 包自身为 Apache-2.0/BSD-3-Clause，随包分发还需携带 PDFium 依赖许可证；PyMuPDF/MuPDF 提供 AGPL 或商业许可；加密/扫描版 PDF 的 OCR 路径未定义；页序与双页 spread 拆分规则未定义 ([pypdfium2 licensing](https://pypi.org/project/pypdfium2/), [PDFium LICENSE](https://pdfium.googlesource.com/pdfium/+/fbec801a8dd8ac30dc2f08385deb0ac81031f3f5/LICENSE), [PyMuPDF licensing](https://pymupdf.readthedocs.io/en/latest/about.html)) |
 | 支持矩阵（草案） | 入口=Import Window 文件过滤器扩展 `.pdf .mobi`；解析=外部进程/库转出图片字节序列后走标准 ImportSource 流；PDF：未加密文件按页光栅化（150 DPI 起步，可配置）；MOBI：仅未加密 MOBI/KF8；加密文件直接拒绝并说明原因 |
 | 授权/失败边界 | 解码库崩溃隔离在导入任务内（D07 §72 模式）；解析失败页逐页报错；不修改源文件（复用 D04 §8 承诺）；加密内容不尝试绕过 |
 | AC 草案 | AC-EXT-IMPORT-003（P2）：未加密 PDF 按页序导入且 Hash/Managed Copy 语义与图片导入一致；AC-EXT-IMPORT-004（P2）：加密/损坏文件给出明确拒绝理由，零半成品写入 |
@@ -126,7 +126,7 @@ Codex 已按该决定同步权威范围、TASK-023 规划和验收追踪；其�
 | # | 决定 | 影响 |
 |---|---|---|
 | U-1 | **已决定：取消网页导入**；原 AC-EXT-IMPORT-001/002 退役且编号不复用 | TASK-023 范围不含网页导入 |
-| U-2 | PDF 光栅化引擎许可（pdfium Apache-2.0 vs PyMuPDF AGPL） | TASK-023 范围与依赖清单 |
+| U-2 | PDF 光栅化引擎：PDFium via `pypdfium2`（绑定包 Apache-2.0/BSD-3-Clause；PDFium 核心 BSD-style，附带依赖有额外许可证）或 PyMuPDF/MuPDF（AGPL 或商业许可） | TASK-023 范围、依赖与发行许可证声明 |
 | U-3 | Plugin 首版=本地目录插件（无市场/无自动更新） | TASK-025 范围 |
 | U-4 | Plugin Agent 是否保留（§1.4 条件） | TASK-025 二批切片 |
 | U-5 | 字体上传上限与许可文案 | TASK-022 范围 |
