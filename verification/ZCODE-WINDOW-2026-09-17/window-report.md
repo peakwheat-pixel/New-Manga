@@ -54,7 +54,8 @@
 3. **超大 webtoon 像素解码**（TASK-020 BLOCKED）：真实产品能力缺口；解锁需依赖变更（用户批准）或 Qt 上游修复；在解锁前产品 webtoon 阅读走整图路径（Qt 可读范围内）或生产装配后走 tile 路径但源文件超限时 fail-closed。
 4. **shell 口径双轨**：openssl 有无导致全仓数字双口径（Git Bash / PowerShell）——建议在协作协议或 flaky 节固化两口径换算说明，避免"N passed"对不上（本窗口已在 STATUS 审核行注明）。
 5. **MOBI 能力缺口**（TASK-023 BLOCKED）：需要用户批准 MOBI 解析依赖才能补齐；当前 .mobi 导入为可诊断失败。
-6. **窗口内 Review 全部为同体审查**：三切片的 approved_subagent 均不可当独立批准使用；任何一项被 post-hoc 推翻，按协议重开对应 Task。
+6. **`importorskip` 新增的透明说明**：窗口内新测试文件有 2 处 `pytest.importorskip("PySide6", ...)`（TASK-033 `test_full_chain.py`、TASK-020 `test_webtoon_tiles.py`）——与 `tests/library/test_production_adapters.py` 等既有先例同范式，属 Qt 依赖缺失时的**环境声明**而非失败掩蔽：本窗口环境 PySide6 在位，两组测试**实际执行**（全仓 0 skipped）；TASK-033 Review R-002 已逐条审定该范式合规。
+7. **窗口内 Review 全部为同体审查**：三切片的 approved_subagent 均不可当独立批准使用；任何一项被 post-hoc 推翻，按协议重开对应 Task。
 
 
 ## v2 追加：TASK-023（插队项）收口
