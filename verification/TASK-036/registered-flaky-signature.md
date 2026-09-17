@@ -32,14 +32,22 @@ tests\reading_export\test_qml_contract.py:312: AssertionError
 - 结果：`1 failed, 736 passed, 6 skipped`（exit 1），失败用例**同为** `test_reader_webtoon_swaps_in_vertical_viewer`。
 - 该批次未开启 `--tb=long`，只记录了用例名；签名与复现 #2 一致（同断言、同路径）。
 
-## 频率对照（本会话）
+## 复现 #4（mandated 四套件命令，同一用例）
 
-| 树 | 全仓串跑次数 | 失败次数 | 失败用例 |
-|---|---:|---:|---|
-| 本 head（TASK-036） | 17 + 3 = **20** | **3** | 全部为 `test_reader_webtoon_swaps_in_vertical_viewer` |
-| 纯净基线 `edfdcf2`（无本 Task 任何改动） | **6** | **1** | **同为** `test_reader_webtoon_swaps_in_vertical_viewer`（run 2：`1 failed, 705 passed, 6 skipped`，见 [`flaky-rate-baseline.log`](flaky-rate-baseline.log)） |
+- 场景：`python -m pytest tests/providers tests/core tests/reading_export tests/editing -q -rs`（本 Task 的 mandated 命令）第 7 次。
+- 结果：`1 failed, 273 passed`（exit 1），失败点 `tests/reading_export/test_qml_contract.py:312`（**同一条断言**：`scroll_offset_y is saved through the service`）。
+- 随后连续 6 次同名命令全部 `274 passed`（[`mandated-four-runs.log`](mandated-four-runs.log)）。
+- 结论：该 flaky **不限于全仓串跑**，mandated 命令同样会命中（同一用例、同一断言）。
 
-**归属判断（结论）**：该用例属读者 QML 路径，TASK-036 的产品代码改动为 `inpaint` 路由设置解析与**导出** ViewModel，不在该用例执行图上；TASK-036 对该测试文件的改动仅为**诊断稳健化**（不改断言/预算/时序）。**纯净基线同样复现同一用例**（1/6），故本会话的高频次属既有 flaky + 环境时序，**不归因本 Task**。同时说明 STATUS 中 TASK-034 集成时登记的"1/14 未定性间歇失败（用例名未捕获）"**极可能就是这个已登记用例**。
+## 频率对照（本会话，全部为同一用例）
+
+| 树 / 命令 | 次数 | 失败次数 | 失败率 |
+|---|---:|---:|---:|
+| 本 head（TASK-036）全仓串跑 | 20 | 3 | ≈15% |
+| 本 head mandated 四套件命令 | 7 | 1 | ≈14% |
+| 纯净基线 `edfdcf2` 全仓串跑（无本 Task 任何改动） | 6 | 1 | ≈17% |
+
+**归属判断（结论）**：该用例属读者 QML 路径，TASK-036 的产品代码改动为 `inpaint` 路由设置解析与**导出** ViewModel，不在该用例执行图上；TASK-036 对该测试文件的改动仅为**诊断稳健化**（不改断言/预算/时序）。**纯净基线同样复现同一用例且失败率相当（1/6 ≈17%）**，故 3 次失败**不归因本 Task**，而是既有 flaky（本会话环境下的实际频率 ≈15%，高于 STATUS 登记时的 1/14）。同时说明 STATUS 中 TASK-034 集成时登记的"1/14 未定性间歇失败（用例名未捕获）"**极可能就是这个已登记用例**。
 
 ## 可读结论（供 R-06 跟踪，**本 Task 不修**）
 

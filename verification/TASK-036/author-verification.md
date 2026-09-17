@@ -98,7 +98,7 @@
 
 ## 7. AC ⑦：回归与分列
 
-**mandated 四套件**：`python -m pytest tests/providers tests/core tests/reading_export tests/editing -q -p no:cacheprovider -rs` → **274 passed / 0 skipped**（基线 `edfdcf2`：243 passed）。
+**mandated 四套件**：`python -m pytest tests/providers tests/core tests/reading_export tests/editing -q -p no:cacheprovider -rs` → **274 passed / 0 skipped**（基线 `edfdcf2`：243 passed）。本会话该命令共 7 次：**6 次 274 passed（exit 0）、1 次命中已登记 flaky**（`1 failed, 273 passed`，失败点 `test_qml_contract.py:312`，详见 §9）；逐次记录见 [`mandated-four-runs.log`](mandated-four-runs.log)。
 
 **逐目录 passed 对照**（纯净 `edfdcf2` 导出树 vs 本 head，[`test-counts.txt`](test-counts.txt)）：
 
@@ -143,7 +143,11 @@
    - 失败点 = 既有断言 `pump(window, 2.0, lambda: reading.progress.scroll_offset_y == 240.0)`（`test_qml_contract.py:312`）；
    - 轨迹 = `iterations=98 elapsed_ms=2000 ok=False scroll_contentY=-0.0 saved_scroll_offset_y=0.0`；
    - **关键签名 `contentY = -0.0`**：`setProperty("contentY", 240.0)` 被 Flickable 夹回 0（`boundsBehavior: StopAtBounds`），前一断言只保证 `contentHeight > 0`、**未保证内容能容纳 240 的偏移**；若无值变化则 `onContentYChanged` 不触发、`scrollSaveTimer` 不启动，服务端 `scroll_offset_y` 自然保持 0.0。这比"事件循环饥饿/定时器被反复重启"更贴近证据（98 次迭代、预算耗尽）。
-4. STATUS 的 flaky 跟踪节此前把 TASK-034 集成时那 1/14 次失败登记为"用例名未捕获"；本次两次均落在同一已登记用例并给出可读签名，**建议由 Codex 决定是否更新 STATUS 条目**（本 Task 不自行改 STATUS）。
+4. STATUS 的 flaky 跟踪节此前把 TASK-034 集成时那 1/14 次失败登记为"用例名未捕获"；本次**4 次复现全部落在同一已登记用例**并给出可读签名 ——
+   - 本 head 全仓串跑 **3/20（≈15%）**、mandated 四套件命令 **1/7（≈14%）**；
+   - **纯净基线 `edfdcf2` 全仓 **1/6（≈17%）**（[`flaky-rate-baseline.log`](flaky-rate-baseline.log)）→ 失败率与本 head 相当，**不归因本 Task**；
+   - 该 flaky **不限于全仓串跑**（mandated 命令同样命中），且失败点**始终是同一条断言** `test_qml_contract.py:312`。
+   建议由 Codex 决定是否更新 STATUS 条目（本 Task 不自行改 STATUS）。
 
 ## 8. 环境与边界
 
