@@ -198,3 +198,13 @@ python experiments/TASK-018/run_experiment.py --repeat 3
 | R-104 | **部分处置 / deferred**：已实施"导入来源"断言（防静默测错 harness）；Reviewer 原建议的 `ROUTES[*].implementation` 非 None ⇒ 必须在 `FILLERS` 注册的一致性断言**未实施**。误配时仍为中途 `KeyError`（响亮失败、不产生伪数据，但会留下部分产物），登记为后续重跑前可一并处理的观察项 |
 
 集成后复验：`test_mask_protocol.py` **12 passed / 0 skipped**；`test_route_gating.py` **13 passed / 0 skipped**；`run_experiment.py --repeat 3` → **10 MEASURED + 20 BLOCKED**、`blocked_stage` 20/20 `not_implemented`、保护违规 0、**保护框 20/20 全 0**、确定性字段与提交 JSON 0 差异；全仓套件 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）。
+
+### 9.3 尾项切片（2026-09-17）：R-104 → **fixed**
+
+本节取代 §9.2 中 R-104 的"部分处置 / deferred"状态。上一轮只实施了"导入来源"断言（防静默测错 harness）；Reviewer 原建议的 **`ROUTES[*].implementation` 非 `None` ⇒ 该 route 必须在 `FILLERS` 注册** 的启动期一致性断言，现已补齐。
+
+| ID | 原状态（§9.2） | 现状态 | 处置与证据 |
+|---|---|---|---|
+| R-104 | 部分处置 / deferred | **fixed** | `run_experiment.py` 新增 `assert_implementations_registered()` 并在**模块导入期**调用：任一 route 声明了 `implementation` 却未在 `FILLERS` 注册即 `RuntimeError`，**拒绝启动**（不再等到运行中途才 `KeyError`）。**反例取证**：把 `FILLERS` 中的 `edge-bleed` 条目移除（route 仍声明 `implementation`）后，新解释器导入即失败——`returncode = 1`、消息 `route/FILLERS misconfiguration: edge-bleed declare an implementation but have no registered filler; refusing to start`，且 **`png_written = []`** |
+
+验证：`test_mask_protocol.py` **12 passed / 0 skipped**；`test_route_gating.py` **16 passed / 0 skipped**（13 → 16，**不减少**，新增 `StartupAssertionTests` 3 例）；确定性字段与仓库内已提交 `results/experiment.json` **0 差异**（`manifest_sha256`、`routes`、`mask_sha256`、`output_sha256`、`sample_sha256`、`parameters`、`mask`、`protected_box_violations` 全部一致，比对在临时目录进行，**未覆盖仓库 JSON**）。

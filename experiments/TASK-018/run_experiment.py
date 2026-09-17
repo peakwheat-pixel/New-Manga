@@ -158,6 +158,38 @@ BLOCKED_STAGE_DEPENDENCY = "dependency"
 BLOCKED_STAGE_NOT_IMPLEMENTED = "not_implemented"
 
 
+def assert_implementations_registered(
+    routes: dict[str, dict[str, object]] | None = None,
+    fillers: dict[str, object] | None = None,
+) -> None:
+    """R-104: a route that declares an implementation must be registered.
+
+    Invoked at **import time** (see the call below), so a route/``FILLERS``
+    misconfiguration fails at startup with an explicit message instead of
+    surfacing later as a ``KeyError`` in the middle of a run — after some
+    output images may already have been written.
+
+    Parameters exist so tests can exercise the guard with a deliberately
+    broken table without editing this file.
+    """
+    routes = ROUTES if routes is None else routes
+    fillers = FILLERS if fillers is None else fillers
+    unregistered = [
+        route
+        for route, info in routes.items()
+        if info.get("implementation") is not None and route not in fillers
+    ]
+    if unregistered:
+        raise RuntimeError(
+            "route/FILLERS misconfiguration: "
+            + ", ".join(sorted(unregistered))
+            + " declare an implementation but have no registered filler; refusing to start"
+        )
+
+
+assert_implementations_registered()
+
+
 def probe_requirement(requirement: dict[str, str]) -> dict[str, object]:
     """R-002: probe one descriptor against the real environment."""
     kind = requirement.get("type")

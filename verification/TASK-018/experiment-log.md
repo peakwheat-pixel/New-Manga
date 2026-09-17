@@ -210,3 +210,41 @@ Reviewer 结论为 `changes_requested`，工程实现已复核 **PASS**，**代�
 Findings 处置：R-001～R-007、R-101、R-102、R-103 **closed**；R-104 **部分处置**——"导入来源"断言已实施，Reviewer 原建议的 `implementation ⇒ FILLERS` 一致性断言 **deferred**（误配时为响亮失败、不产生伪数据，但会留下部分产物），登记见研究报告 §9.2。
 
 **仍未解决（不变、不得视为通过）**：四条学习型路线的质量/性能 **BLOCKED**；Mask 内部结构损伤量化、真实 OOM、真实漫画样例 **NOT_RUN**。
+
+---
+
+## 7.4 尾项切片：R-104 关闭（2026-09-17）
+
+`doc/research/TASK-018.md` §9.2 与本文 §7.3 中 R-104 的"部分处置 / deferred"状态**由本节取代为 `fixed`**。
+
+### 实施
+
+`experiments/TASK-018/run_experiment.py` 新增模块级守卫：
+
+- `assert_implementations_registered(routes=None, fillers=None)`：遍历 `ROUTES`，凡 `implementation is not None` 却不在 `FILLERS` 的 route 一律收集并抛 `RuntimeError`（消息以 `route/FILLERS misconfiguration:` 开头并以 `refusing to start` 结尾）；
+- 该函数在**模块导入期**被调用，因此误配在**启动**即失败，而不是运行到该 route 时才 `KeyError`（那时可能已写出部分 PNG）。
+
+### 反例取证（独立脚本，不在仓库内）
+
+在临时目录复制 `run_experiment.py` + `mask_protocol.py`，**移除 `FILLERS` 中的 `edge-bleed` 条目**（该 route 仍声明 `implementation = "edge_bleed_fill"`），再以新解释器 `import run_experiment`：
+
+| 观测 | 结果 |
+|---|---|
+| `returncode` | **1**（导入即失败） |
+| 消息 | `RuntimeError: route/FILLERS misconfiguration: edge-bleed declare an implementation but have no registered filler; refusing to start` |
+| 写入的 PNG | **`[]`** |
+
+### 验证命令
+
+| # | 命令 | 退出码 | passed | skipped | 结果 |
+|---|---|---:|---:|---:|---|
+| 14 | `python -m unittest experiments/TASK-018/test_mask_protocol.py` | **0** | **12** | **0** | `OK`（该文件未被改动） |
+| 15 | `python -m unittest experiments/TASK-018/test_route_gating.py` | **0** | **16** | **0** | `OK`（13 → 16，新增 `StartupAssertionTests` 3 例，**未减少**） |
+| 16 | 反例脚本（临时目录副本 + 移除 FILLERS 条目 + 新解释器导入） | **0**（脚本自身） | — | — | 被测进程 **returncode = 1**、`png_written = []` |
+| 17 | 确定性比对（临时目录 `--repeat 3` vs 仓库已提交 JSON） | — | — | — | `manifest_sha256`/`routes`/`mask_sha256`/`output_sha256`/`sample_sha256`/`parameters`/`mask`/`protected_box_violations` **全部一致** |
+
+**skip 原因**：命令 14、15 均 **`0 skipped`**。
+
+### 未覆盖确认
+
+本轮**未重跑覆盖** `results/experiment.json`（确定性比对输出到 `%TEMP%`）；**未改动** `test_mask_protocol.py`。
