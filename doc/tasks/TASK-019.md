@@ -2,7 +2,7 @@
 id: TASK-019
 title: 集成已验证的检测/OCR/翻译/修复 Provider
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
