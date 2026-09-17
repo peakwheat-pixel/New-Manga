@@ -20,6 +20,9 @@ from application.tasks.store import (  # noqa: E402
     InMemorySnapshotProvider,
     InMemoryTargetCatalog,
 )
+from application.translation.context.gate import (  # noqa: E402
+    decide_sfx_translation,
+)
 from application.translation.pipeline.executor import (  # noqa: E402
     DeterministicStepExecutor,
 )
@@ -30,6 +33,7 @@ from domain.tasks.models import (  # noqa: E402
     PipelineRunStatus,
     PipelineScope,
     PipelineTaskStatus,
+    PlanDecision,
     RegionSnapshot,
     ScopeType,
     StageState,
@@ -523,3 +527,154 @@ def test_resource_limit_is_a_run_fatal_error() -> None:
     result = pipeline.execute_run(run.run_id)
     assert result.status is PipelineRunStatus.FAILED
     assert result.fatal_error == "RESOURCE_LIMIT_EXCEEDED"
+
+
+# ---------------------------------------------------------------------------
+# TASK-032 / F-1: the SFX Policy Gate is preconditioned on region_type
+# ---------------------------------------------------------------------------
+
+#: Every region type except ``sfx`` (D03 §6.2).
+NON_SFX_REGION_TYPES = ("speech", "narration", "title", "note", "other")
+#: Steps the SFX Policy Gate may suppress (D06 §85).
+SFX_GATED_STEPS = ("translate", "segment", "mask_refine", "inpaint", "render")
+DOCUMENTED_SFX_POLICIES = ("skip", "manual", "translate")
+
+
+def plan_region(catalog, command: str, region_id: str):
+    """Plan one region-scoped command and return its units keyed by step."""
+    pipeline, _, _ = service(catalog)
+    run = create_and_plan(
+        pipeline,
+        command,
+        scope=PipelineScope(ScopeType.REGION, selected_ids=(region_id,)),
+    )
+    units = [unit for task in run.tasks for unit in task.units]
+    return units, {unit.step_type: unit for unit in units}
+
+
+def single_region_catalog(**region_kwargs) -> InMemoryTargetCatalog:
+    catalog = InMemoryTargetCatalog()
+    catalog.add_page(
+        "p1",
+        book_id="b",
+        chapter_id="c",
+        regions=(region("r1", "p1", **region_kwargs),),
+    )
+    return catalog
+
+
+@pytest.mark.parametrize("region_type", NON_SFX_REGION_TYPES)
+@pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+def test_sfx_policy_never_gates_a_non_sfx_region(region_type: str, sfx_policy: str) -> None:
+    """AC ②: for a non-SFX region any policy value leaves planning untouched.
+
+    ``speech`` × ``skip`` is the **real default** combination (entity and
+    Schema default) that F-1 was reported against: before the fix every
+    ``translate/segment/mask_refine/inpaint/render`` unit of such a region was
+    planned as ``SKIP_POLICY("sfx_skip")``.
+    """
+    units, _ = plan_region(
+        single_region_catalog(
+            region_type=region_type,
+            sfx_policy=sfx_policy,
+            stages={"ocr": "completed", "clean": "completed"},
+        ),
+        "retranslate_region_full",
+        "r1",
+    )
+    assert units, "the full chain must be planned"
+    assert {unit.decision for unit in units} == {PlanDecision.RUN}
+    assert [unit for unit in units if unit.reason == "sfx_skip"] == []
+
+
+@pytest.mark.parametrize("sfx_policy", ("skip", "manual"))
+def test_sfx_region_policies_suppress_the_automatic_chain(sfx_policy: str) -> None:
+    """AC ①: on a real SFX region ``skip``/``manual`` keep SKIP_POLICY('sfx_skip')."""
+    _, by_step = plan_region(
+        single_region_catalog(
+            region_type="sfx", sfx_policy=sfx_policy, stages={"ocr": "completed"}
+        ),
+        "retranslate_region_full",
+        "r1",
+    )
+    for step_type in SFX_GATED_STEPS:
+        assert by_step[step_type].decision is PlanDecision.SKIP_POLICY, step_type
+        assert by_step[step_type].reason == "sfx_skip", step_type
+
+
+def test_sfx_region_translate_policy_enters_the_translation_chain() -> None:
+    """AC ① / AC-SFX-002: SFX + ``translate`` runs the normal chain."""
+    units, by_step = plan_region(
+        single_region_catalog(
+            region_type="sfx",
+            sfx_policy="translate",
+            stages={"ocr": "completed", "clean": "completed"},
+        ),
+        "retranslate_region_full",
+        "r1",
+    )
+    assert {unit.decision for unit in units} == {PlanDecision.RUN}
+    assert by_step["translate"].decision is PlanDecision.RUN
+    assert [unit for unit in units if unit.reason == "sfx_skip"] == []
+
+
+@pytest.mark.parametrize("missing_policy", ("", None))
+def test_sfx_region_without_a_policy_falls_back_to_skip(missing_policy) -> None:
+    """AC ③: an absent/blank policy on SFX falls back to the documented skip."""
+    _, by_step = plan_region(
+        single_region_catalog(
+            region_type="sfx",
+            sfx_policy=missing_policy,
+            stages={"ocr": "completed"},
+        ),
+        "retranslate_region_full",
+        "r1",
+    )
+    for step_type in SFX_GATED_STEPS:
+        assert by_step[step_type].decision is PlanDecision.SKIP_POLICY, step_type
+        assert by_step[step_type].reason == "sfx_skip", step_type
+
+
+@pytest.mark.parametrize("region_type", ("speech", "sfx"))
+@pytest.mark.parametrize("sfx_policy", DOCUMENTED_SFX_POLICIES)
+def test_planner_agrees_with_the_translate_step_gate(region_type: str, sfx_policy: str) -> None:
+    """The planner and the Translate Step must not drift apart again (F-1 root cause).
+
+    The reference verdict is the shared rule
+    (:func:`application.translation.context.gate.decide_sfx_translation`) that
+    the Translate Step already used while the planner had its own copy.
+    """
+    units, _ = plan_region(
+        single_region_catalog(
+            region_type=region_type,
+            sfx_policy=sfx_policy,
+            stages={"ocr": "completed", "clean": "completed"},
+        ),
+        "retranslate_region_full",
+        "r1",
+    )
+    planned_skip = any(
+        unit.step_type == "translate" and unit.decision is PlanDecision.SKIP_POLICY
+        for unit in units
+    )
+    assert planned_skip is decide_sfx_translation(region_type, sfx_policy).skipped
+
+
+def test_sfx_region_with_an_out_of_contract_policy_fails_loudly() -> None:
+    """A policy outside the Schema's three values is rejected, not translated.
+
+    ``SfxPolicy`` permits only ``skip``/``manual``/``translate`` (D03 §7,
+    Schema CHECK); the shared gate validates the value, so a corrupt snapshot
+    on an SFX region fails at planning instead of silently entering the
+    translation chain. The Translate Step already behaved this way.
+    """
+    with pytest.raises(ValueError):
+        plan_region(
+            single_region_catalog(
+                region_type="sfx",
+                sfx_policy="not-a-policy",
+                stages={"ocr": "completed"},
+            ),
+            "retranslate_region_full",
+            "r1",
+        )
