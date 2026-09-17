@@ -62,7 +62,7 @@ DeepSeek Harness 与 ZCode 已分别完成 TASK-003、TASK-004；当前连接事
 
 S1/S2是阶段性切片，未完成的P0/P1继续登记NOT_RUN/BLOCKED，不能当正式版本发布。Mock只能验证数据流和恢复，不能替代实际OCR/Translation/Inpaint质量。性能数值继续作为目标，直到固定硬件/数据集实测。
 
-PDF/MOBI、字体上传、Sakura监控、Plugin/Hooks与Plugin Agent仍有待决契约；网页导入已由用户于 2026-09-17 按 U-1 取消，相关 AC-EXT-IMPORT-001/002 退役。U-2 已选 PDFium via `pypdfium2`；U-3 已批准 Plugin 首版仅支持本地目录插件，不做市场、在线分发或自动更新；U-4 已决定 Plugin Agent 不进入首版，待本地插件格式与权限机制实现验收后再单独裁决是否进入第二阶段；U-5 已批准字体上传单文件上限 50 MB、总数上限 200 及本地使用许可提示；U-6 仍待裁决。TASK-023/025/019/022 继续冻结或 blocked，决定本身不释放任务。
+PDF/MOBI、字体上传、Sakura监控、Plugin/Hooks与Plugin Agent仍有待定实现契约；网页导入已由用户于 2026-09-17 按 U-1 取消，相关 AC-EXT-IMPORT-001/002 退役。U-2 已选 PDFium via `pypdfium2`；U-3 已批准 Plugin 首版仅支持本地目录插件，不做市场、在线分发或自动更新；U-4 已决定 Plugin Agent 不进入首版，待本地插件格式与权限机制实现验收后再单独裁决是否进入第二阶段；U-5 已批准字体上传单文件上限 50 MB、总数上限 200 及本地使用许可提示；U-6 已批准 Sakura 监控仅做健康探测和就绪状态，不做显存或负载等深度指标。TASK-023/025/019/022 继续冻结或 blocked，决定本身不释放任务。
 
 不排入用户注册、产品团队协作/权限、Volume、角色工坊、Manga Insight/RAG或永久Webtoon Tile实体，因为D03 §47及D04 §54明确排除。三Agent协作仅属于开发流程。
 
