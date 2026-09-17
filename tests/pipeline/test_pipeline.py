@@ -26,6 +26,7 @@ from application.translation.context.gate import (  # noqa: E402
 from application.translation.pipeline.executor import (  # noqa: E402
     DeterministicStepExecutor,
 )
+from domain.regions.entities import Region, SfxPolicy  # noqa: E402
 from domain.tasks.models import (  # noqa: E402
     CommandType,
     LockSnapshot,
@@ -48,8 +49,16 @@ def region(
     revisions: dict[str, str | None] | None = None,
     lock: LockSnapshot | None = None,
     region_type: str = "speech",
-    sfx_policy: str = "translate",
+    sfx_policy: str = SfxPolicy.SKIP.value,
 ) -> RegionSnapshot:
+    """Build one region snapshot with the **production** policy default.
+
+    The default is ``SfxPolicy.SKIP`` — the same value as the entity and the
+    SQLite Schema (D03 §7). TASK-035 closed R-02: with the old ``"translate"``
+    default no case in this suite ever combined ``speech`` with the policy a
+    real, newly created region carries, which is exactly why F-1 stayed
+    invisible here.
+    """
     return RegionSnapshot(
         region_id,
         page_id,
@@ -678,3 +687,18 @@ def test_sfx_region_with_an_out_of_contract_policy_fails_loudly() -> None:
             "retranslate_region_full",
             "r1",
         )
+
+
+def test_region_defaults_agree_across_entity_snapshot_and_fixture() -> None:
+    """TASK-035 (R-02/R-05 guard): the three SFX defaults must not drift apart.
+
+    Entity, snapshot and this suite's fixture all use the production default
+    ``SfxPolicy.SKIP`` (D03 §7, matching the Schema default); the old fixture
+    value ``"translate"`` is what kept F-1 invisible to this suite.
+    """
+    assert (
+        Region("r-entity", "p1").sfx_policy.value
+        == RegionSnapshot("r-snapshot", "p1").sfx_policy
+        == region("r-fixture", "p1").sfx_policy
+        == SfxPolicy.SKIP.value
+    )

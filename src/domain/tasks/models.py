@@ -13,6 +13,8 @@ from enum import Enum
 from types import MappingProxyType
 from typing import Any, Mapping
 
+from domain.regions.entities import SfxPolicy
+
 
 def _freeze(value: Any) -> Any:
     """Recursively freeze JSON-like values used by run snapshots."""
@@ -179,7 +181,9 @@ class RegionSnapshot:
     region_id: str
     page_id: str
     region_type: str = "speech"
-    sfx_policy: str = "translate"
+    # TASK-035: the snapshot default must agree with the entity and the Schema
+    # default (D03 §7: SFX defaults to skip). It used to be "translate".
+    sfx_policy: str = SfxPolicy.SKIP.value
     lock: LockSnapshot = field(default_factory=LockSnapshot)
     manual_edited: bool = False
     final_confirmed: bool = False
