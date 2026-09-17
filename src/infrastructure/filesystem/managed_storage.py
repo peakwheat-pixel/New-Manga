@@ -112,3 +112,20 @@ class ManagedFileStorage:
         # os.replace is atomic within one volume; the existence guard above
         # keeps committed revisions immutable (TASK-002 §8.1).
         os.replace(temp_handle, final_path)
+
+    def remove_managed(self, relative_path: str) -> None:
+        """Delete one managed (controlled) file (TASK-021 trash subset).
+
+        Refuses paths that escape the managed root — permanent deletion can
+        only ever reach controlled copies, never anything outside (and user
+        source files are never inside the managed root at all)."""
+        absolute = Path(self.absolute_path(relative_path)).resolve()
+        root = self._root.resolve()
+        try:
+            absolute.relative_to(root)
+        except ValueError as error:
+            raise ImmutablePathViolation(
+                f"refusing to remove {absolute}: escapes the managed root {root}"
+            ) from error
+        if absolute.is_file():
+            absolute.unlink()

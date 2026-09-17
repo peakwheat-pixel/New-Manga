@@ -476,3 +476,18 @@ def test_reader_service_and_tile_cache_live_on_the_data_root(tmp_path: Path) -> 
         assert services.export_service is not None
     finally:
         services.conn.close()
+
+
+def test_trash_service_is_assembled_on_the_same_data_root(tmp_path: Path) -> None:
+    """TASK-021 subset: the trash use case is reachable from the production
+    assembly and its manifest lives next to the managed data."""
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        from application.maintenance import TrashService
+
+        assert isinstance(services.trash, TrashService)
+        assert services.trash.list_batches() == []
+    finally:
+        services.conn.close()
