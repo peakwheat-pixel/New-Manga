@@ -2,30 +2,26 @@
 id: TASK-018
 title: Mask / Inpainting 路线独立实验
 kind: experiment
-status: blocked
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: DeepSeek Harness
-owner: null
-reviewer: null
+owner: DeepSeek Harness
+reviewer: Codex
 depends_on: [TASK-003, TASK-004]
-base_commit: null
-branch: null
-worktree: null
+base_commit: dce95acbb57a3494cb0f9d8d2d42e27d164176bb
+branch: agent/deepseek/TASK-018-mask-inpainting-experiment
+worktree: G:/CODEX/New Manga.worktrees/TASK-018-deepseek
 integration_commit: null
 ---
 
 # TASK-018：Mask / Inpainting 路线独立实验
 
-**BLOCKED（2026-09-17 窗口条款登记）**：2026-09-16 ZCode 全权窗口的解冻名单仅含
-TASK-015/024/017，本 Task 属窗口排除项"解冻名单之外的任务仍冻结"。按条款登记
-`blocked`：blocker=窗口授权不覆盖解冻（前状态 `proposed`）；恢复条件=用户批准释放
-（届时按流程填 owner/base_commit/branch/worktree 后转 `ready`），其 `suggested_owner` DeepSeek Harness 的额度限制解除、以及窗口期满外部 post-hoc 复审
-完成后更宜启动。
+**READY（2026-09-17 用户批准释放）**：硬依赖 TASK-003、TASK-004 均已集成 `done`。Owner=DeepSeek Harness，Reviewer=Codex；本任务仅在下列允许路径内开展独立实验。模型或硬件不可用时，按验收要求将相应结果标记为 BLOCKED/NOT_RUN，不以 Mock 代替真实模型、视觉或性能证据。Owner 开始实施前，在本任务分支将状态改为 `in_progress`。
 当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
 
-D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档索引](../00_INDEX.md)；依赖交付物是后续输入，当前并不存在。
+D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档索引](../00_INDEX.md)。TASK-003 与 TASK-004 已集成完成；实验产物尚待本任务执行。
 
 主责任编号 AC：本任务为设计/实验/基础工作，验收以下专属条件；关联产品 AC 不因本任务完成就自动 PASS。完整映射见 [验收追踪](../13_ACCEPTANCE_TRACEABILITY.md)。
 
@@ -70,4 +66,4 @@ D01 §5；D02 §6.1；D06 §19～22/53/69；D07 §107。D 编号对应 [文档�
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- 最近状态：2026-09-17 用户批准释放；`ready`，Owner=DeepSeek Harness，Reviewer=Codex，base=`dce95ac`，branch=`agent/deepseek/TASK-018-mask-inpainting-experiment`，worktree=`G:/CODEX/New Manga.worktrees/TASK-018-deepseek`。TASK-003/004 均为 `done`；实验尚未开始，全部计划测试仍为 NOT_RUN。

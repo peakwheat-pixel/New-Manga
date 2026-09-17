@@ -17,7 +17,7 @@ integration_commit: null
 # TASK-019：集成已验证的检测/OCR/翻译/修复 Provider
 
 **BLOCKED（2026-09-17 窗口条款登记，后续复核）**：2026-09-16 ZCode 全权窗口解冻名单仅含 TASK-015/024/017，本 Task 不在名单内；窗口授权已归还。U-6 已批准 Sakura 监控只做健康探测与就绪状态、不做显存或负载等深度指标，但该范围决定不释放 TASK-019。
-当前仍不能转为 ready：硬依赖 TASK-018 仍为 blocked；TASK-019 尚未获得单独用户释放授权。TASK-017 已 done，但其真实 OpenAI-compatible Provider 的协议/成本/时延实测仍 NOT_RUN（付费端点未配置），解除冻结前须登记此输入缺口。TASK-017 验证记录也指出本机未运行 Sakura 服务，AC-EXT-SAKURA-001 的真实服务验证因此 NOT_RUN；健康探测端点须在后续 Task 交付中明确。D08 §78 的 AC-EXT-SAKURA-001 已列入本任务，D13 结果为 NOT_RUN。本文件保持 status=blocked、approval=pending_user_review，owner/base/branch/worktree 为空。
+当前仍不能转为 ready：硬依赖 TASK-018 已释放为 `ready`，但尚未完成并集成 `done`；TASK-019 也未获得单独用户释放授权。TASK-017 已 done，但其真实 OpenAI-compatible Provider 的协议/成本/时延实测仍 NOT_RUN（付费端点未配置），因此相关真实端点证据仍缺。本机未运行 Sakura 服务，AC-EXT-SAKURA-001 的真实服务验证因此 NOT_RUN；健康探测端点须在 TASK-019 交付中明确。D08 §78 的 AC-EXT-SAKURA-001 已列入本任务，D13 结果为 NOT_RUN。本文件保持 status=blocked、approval=pending_user_review，owner/base/branch/worktree 为空。
 当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
 ## 来源与目标
@@ -74,4 +74,4 @@ D01 §5；D02 §6/11；D06 §6～23/51～57/80～85；D08 AC-OCR/INPAINT/FALLBAC
 - Handoff：尚无。
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
-- 最近状态：2026-09-17 blocker 复核：U-6 范围已批准；AC-EXT-SAKURA-001 已正式编号并追踪为 NOT_RUN。TASK-018 仍 blocked（硬依赖）；TASK-017 真实 Provider 协议/成本/时延 NOT_RUN（付费端点未配置），本机 Sakura 服务未运行，真实探测验证 NOT_RUN；TASK-019 未获单独释放，状态维持 blocked，不创建 Owner/base/branch/worktree。
+- 最近状态：2026-09-17 blocker 复核及 TASK-018 释放后：U-6 范围已批准；AC-EXT-SAKURA-001 已正式编号并追踪为 NOT_RUN。TASK-018 已 `ready` 但未完成，仍为 TASK-019 硬依赖；TASK-017 真实 Provider 协议/成本/时延 NOT_RUN（付费端点未配置），本机 Sakura 服务未运行，真实探测验证 NOT_RUN；TASK-019 未获单独释放，状态维持 blocked，不创建 Owner/base/branch/worktree。
