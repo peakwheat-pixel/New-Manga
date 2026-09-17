@@ -2,7 +2,7 @@
 id: TASK-034
 title: 测试与分层硬化（route policy 收敛 / 架构守卫 / flaky 诊断）
 kind: maintenance
-status: in_review
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-019]
 base_commit: b34b27e2bc7c1dbd4c3b15a91f08e158d966f365
 branch: agent/deepseek/TASK-034-test-layer-hardening
 worktree: G:/CODEX/New Manga.worktrees/TASK-034-deepseek
-integration_commit: null
+integration_commit: b6051e5b567749b681810e664946fd98da70b1b4
 ---
 
 # TASK-034：测试与分层硬化（T-2 / T-4 / flaky 诊断 / TASK-035 R-02）
@@ -51,7 +51,7 @@ integration_commit: null
 - [x] **AC ④（TASK-035 R-02）`conftest` 脆弱性消除**：共享替身移入唯一命名 `tests/providers/providers_helpers.py` 并显式导入；`pytest tests/providers tests/editing` 与反向顺序**均 136 passed、0 collection errors**（基线顺序 A = 4 collection errors，[`collection-orders-before.txt`](../../verification/TASK-034/collection-orders-before.txt) / [`collection-orders.txt`](../../verification/TASK-034/collection-orders.txt)）。
 - [x] **AC ⑤ 回归与分列**：mandated 三套件 **193 passed / 0 skipped**、`tests/core`+`storage`+`providers` **161 passed**；全仓 **682 passed / 6 skipped ×6 次**（逐次退出码 0，6 条 skip 均为既有 `tests/network` 的 `openssl unavailable`）。逐目录对照：providers 111→110（守卫**迁出**所致，无断言语义删除）、core 15→18、reading_export 64→65、净 +3（[`test-counts.txt`](../../verification/TASK-034/test-counts.txt)）。
 - [ ] **AC ⑥** 交付 Handoff、实际测试/审阅记录与未完成项，经**非作者** Review（按协作协议 §6 四轴）与 Codex 集成验证后才能 done。
-      → Handoff 与取证已交付；**Review 与集成尚未执行**，本 Task 不自行标记 `approved`/`done`。
+      → Handoff 与取证已交付；**AC ②③④⑤ 已完成非作者四轴 Review 与集成**（Review `approved`、integration=`b6051e5`）。**AC ① 第 2 步与 R-01 未关闭前本 Task 不标记 `done`** → 本项保持未勾选。
 
 ## 允许修改范围
 
@@ -86,10 +86,13 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：[TASK-034-f83a33e](../handoffs/TASK-034-f83a33e.md)（delivery_head=`f83a33e`）。
-- Review：尚无（待 Codex 非作者独立 Review，按协作协议 §6 四轴：Standards / Spec / Architecture / Verification）。
+- Review（AC ②③④⑤ 部分）：[doc/reviews/TASK-034-f83a33e.md](../reviews/TASK-034-f83a33e.md)（Reviewer=Codex，**非作者**；commit `abda60f`；decision=**`approved`**；四轴 Standards / Spec / Architecture / Verification 均 `executed`、逐轴小结、**未跨轴排名**；**并行偏差已声明**——未取得两条独立 sub-agent 线程，按 §6 第 6 条兜底做两遍相互隔离检查）。Findings：**R-01（P2）**=`tests/reading_export` 裸 `conftest` 导入（与 AC ④ 同根因，六种伙伴目录顺序均 2 collection errors；**既有**缺陷）**deferred 且绑定为 AC ① 第 2 步的强制项**；R-02（P3，AC ⑤ 逐目录计数口径）**accepted**；R-03（P3，webtoon 首处观察窗口）**accepted（已披露）**；R-04（P3，半发布窗口判别测试用合成假对象）**open 非阻塞**；R-05（P3，生产侧发布顺序）与 R-06（P3，flaky 未复现）**deferred**；R-07（P3，`allowed_routes` 为字符串/`requirements` 非 bool 的强制转换）**本次冻结 + 登记**。
+- AC ① 裁决（第 1 步产出）：[doc/reviews/TASK-034-ac1-route-policy-ruling.md](../reviews/TASK-034-ac1-route-policy-ruling.md)（R-1 认可、R-2 认可**并须记录装配路径由静默回落变为启动期报错**、R-3 认可、R-4 冻结、R-5 冻结、**R-6 采纳 Option B** 且 `DEFAULT_ROUTE_POLICY` 须对齐 `RoutePolicy` 默认与 TASK-018 的 `default_eligible`、R-7 冻结+登记；**`src/` 三文件范围变更已批准**并限定不改路由判定算法/Schema/依赖/seam）。
+- 集成：`integration_commit=b6051e5`（merge，parents `abda60f` + `8ca99d4`）；复验 [verification/TASK-034/integration-b6051e5.md](../../verification/TASK-034/integration-b6051e5.md)（master 上 mandated 三套件 **193 passed/0 skipped**、AC ④ 两种顺序 **136/136 passed**、全仓 **682 passed/6 skipped** 全为既有 `openssl unavailable`；`src/` 零改动）。
+- **未关闭项（本 Task 不得 `done` 的原因）**：①**AC ① 第 2 步**未开始（裁决已出，可实施）；②**R-01** 必须在第 2 步切片内一并消除（强制，非可选）；③R-05/R-06/R-07 已登记待后续切片。
 - 实际执行/测试：
   - 取证总表：[verification/TASK-034/author-verification.md](../../verification/TASK-034/author-verification.md)；AC ① 裁决请求：[route-policy-decision-request.md](../../verification/TASK-034/route-policy-decision-request.md) + [route-policy-divergences.txt](../../verification/TASK-034/route-policy-divergences.txt)；AC ② 判别力：[guard-discriminative.txt](../../verification/TASK-034/guard-discriminative.txt)；AC ④ 前后对照：[collection-orders.txt](../../verification/TASK-034/collection-orders.txt) / [collection-orders-before.txt](../../verification/TASK-034/collection-orders-before.txt)；AC ③⑤ 串跑：[flaky-repro-after.log](../../verification/TASK-034/flaky-repro-after.log)（×6）/ [flaky-repro-before.log](../../verification/TASK-034/flaky-repro-before.log)（×6）；逐目录计数：[test-counts.txt](../../verification/TASK-034/test-counts.txt)；边界：[changed-paths.txt](../../verification/TASK-034/changed-paths.txt)。
   - 命令与结果（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：mandated `tests/providers tests/core tests/reading_export` **193 passed / 0 skipped**；`tests/providers tests/editing` 与反向顺序 **136 / 136 passed、0 collection errors**；`tests/core tests/storage tests/providers` **161 passed**；全仓 **682 passed / 6 skipped ×6 次**（诊断前为 681×6；6 条 skip 均为既有 `tests/network` 的 `openssl unavailable`）。逐目录：providers 111→110、core 15→18、reading_export 64→65、全仓 679→682。边界：Owner 改动全在 `tests/**` + 文档允许路径、越界 0；**`src/` 零改动**；`git diff --check b34b27e..HEAD` 退出码 0。
   - 既有两个 flaky：**12 次全仓串跑 0 复现**（如实登记，不记为通过）；诊断已就位，机制根因（N-1 生产侧发布顺序）与候选（N-2）见取证 §2/§5。
-- **最近状态（当前，唯一）**：2026-09-17 **AC ②③④⑤ 完成**、**AC ① 第 1 步交付、第 2 步冻结（等待 Codex 裁决）**，整体置 **`in_review`**。分支 `agent/deepseek/TASK-034-test-layer-hardening`、worktree `G:/CODEX/New Manga.worktrees/TASK-034-deepseek`、fixed base `b34b27e`、delivery head `f83a33e`（`cff86e4` 开工文档、`f83a33e` 测试硬化与取证）。**未 push、未合并 master；未释放任何冻结 Task。** 越界发现登记（未修改）：**N-1** `src/ui/viewmodels/export/viewmodel.py:380/389`、`:392/398` 先清 `running` 后发布状态/信号（导出 flaky 机制根因，需 `src/ui/**` 范围另立切片）；**N-2** webtoon 保存 flaky 未复现、真实原因未定（三条候选）；**N-3** `inpaint.route_policy` 语义无权威声明 → AC ① 必须先裁决。待 Codex 决定：AC ① R-1～R-7 与 `src/` 三文件范围变更；`tests/providers` 111→110（守卫迁出）的口径确认。
+- **最近状态（当前，唯一）**：2026-09-17 **AC ②③④⑤ 已 Review `approved` 并集成（`b6051e5`）**；**AC ① 第 1 步已交付、裁决已出（R-1～R-7 + `src/` 三文件范围批准），第 2 步未开始**；整体 `status=in_progress`（**不得 `done`**，见上「未关闭项」）。分支 `agent/deepseek/TASK-034-test-layer-hardening`、worktree `G:/CODEX/New Manga.worktrees/TASK-034-deepseek`、fixed base `b34b27e`、delivery head `f83a33e`（`cff86e4` 开工文档、`f83a33e` 测试硬化与取证）。**未 push、未合并 master；未释放任何冻结 Task。** 越界发现登记（未修改）：**N-1** `src/ui/viewmodels/export/viewmodel.py:380/389`、`:392/398` 先清 `running` 后发布状态/信号（导出 flaky 机制根因，需 `src/ui/**` 范围另立切片）；**N-2** webtoon 保存 flaky 未复现、真实原因未定（三条候选）；**N-3** `inpaint.route_policy` 语义无权威声明 → AC ① 必须先裁决。待 Codex 决定：AC ① R-1～R-7 与 `src/` 三文件范围变更；`tests/providers` 111→110（守卫迁出）的口径确认。
 - 历史状态（2026-09-17）：由 Codex 依 TASK-019 尾项切片 Review 的 T-2/T-4 与 STATUS 的 flaky 条目创建为 `proposed`，同日并入 TASK-035 Review 的 R-02；随后用户批准释放为 `ready`（Owner=`DeepSeek Harness`、Reviewer=`Codex`、base=`b34b27e`）。
