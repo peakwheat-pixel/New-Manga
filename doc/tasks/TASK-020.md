@@ -2,19 +2,23 @@
 id: TASK-020
 title: 实现 Webtoon 分块处理与阅读
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: ZCode（窗口内子 agent，结论仅 approved_subagent）
 depends_on: [TASK-013, TASK-015, TASK-019]
-base_commit: null
-branch: null
-worktree: null
+base_commit: e96b3eb880bdfcfca182aa1350d9ff56798556c1
+branch: agent/zcode/TASK-020-webtoon-chunked-reading
+worktree: G:/CODEX/New Manga.worktrees/TASK-020-zcode
 integration_commit: null
 ---
 
 # TASK-020：实现 Webtoon 分块处理与阅读
+
+**READY（2026-09-17 ZCode 全权窗口 W3——条件执行）**：用户批准解冻（依赖 TASK-013/015/019 均已 `done`）。Owner=`ZCode`、Reviewer=窗口内子 agent（结论仅 `approved_subagent`）、`base=e96b3eb`、branch/worktree 见顶部元数据。开工前把 `status` 改为 `in_progress`。
+
+**启动门（窗口规则）**：本 Task **只在 W2（[TASK-033](TASK-033.md)）已于 `04:50` 前完成集成时才启动**；否则跳过本 Task，把时间留给 W2 收口与 W4。若启动，须在 `08:20` 前完成集成，否则冻结回 `proposed` 并在窗口报告中说明。
 
 本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
@@ -33,17 +37,15 @@ D03 §5；D05 §20/40；D06 §17/67～70；D07 §14～17；D08 AC-WEBTOON/CAP。
 
 ## 允许修改范围
 
-以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
+**已由 Codex 按实际结构收紧（2026-09-17，窗口授权）**：原草案中的 `src/infrastructure/imaging/webtoon/**`、`src/ui/qml/workbench/ViewerCanvas.qml`、`tests/webtoon/**` **当前均不存在**，已替换为下列**实测存在**的路径。"不得扩展到整个 `src/tests`"仍然有效。
 
-- src/infrastructure/imaging/webtoon/**
-- src/ui/qml/workbench/ViewerCanvas.qml
-- src/ui/qml/reader/**
-- src/ui/viewmodels/reader/**
-- src/application/reading/**
-- tests/webtoon/**
-- doc/tasks/TASK-020.md
-- doc/handoffs/TASK-020-*.md
-- verification/TASK-020/**
+- `src/application/reading/**`（存在）
+- `src/ui/viewmodels/reader/**`（存在）
+- `src/ui/qml/reader/**`（存在）
+- `src/ui/qml/workbench/ViewerPanel.qml`（存在；画布相关改动只能用此文件，**不得**改其他 workbench QML）
+- `src/infrastructure/imaging/**`（**新建**：Tile / Cache 光栅实现归属处；不得引入越界依赖）
+- `tests/reading_export/**`（存在；本 Task 的阅读器/QML 契约用例归此目录）
+- `doc/tasks/TASK-020.md`、`doc/handoffs/TASK-020-*.md`、`verification/TASK-020/**`
 
 ## 禁止范围
 

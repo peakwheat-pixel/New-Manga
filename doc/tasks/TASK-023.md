@@ -2,19 +2,25 @@
 id: TASK-023
 title: 实现 PDF/MOBI 导入路线
 kind: implementation
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: ZCode
+reviewer: ZCode（窗口内子 agent，结论仅 approved_subagent）
 depends_on: [TASK-007, TASK-009, TASK-012, TASK-024]
-base_commit: null
-branch: null
-worktree: null
+base_commit: e96b3eb880bdfcfca182aa1350d9ff56798556c1
+branch: agent/zcode/TASK-023-pdf-mobi-import
+worktree: G:/CODEX/New Manga.worktrees/TASK-023-zcode
 integration_commit: null
 ---
 
 # TASK-023：实现 PDF/MOBI 导入路线
+
+**READY（2026-09-17 ZCode 全权窗口——插队项）**：用户批准解冻，并**同时批准本 Task 新增 `pypdfium2` 依赖**（原唯一阻塞项）。Owner=`ZCode`、Reviewer=窗口内子 agent（结论仅 `approved_subagent`）、`base=e96b3eb`、branch/worktree 见顶部元数据。
+
+**插队规则**：本 Task 为窗口内**插队/优先替补项**——当且仅当出现下列情形才启动：(a) 用户在窗口内指示优先；(b) W1+W2（及已启动的 W3）于 `06:30` 前全部集成完成、余量 ≥2h；(c) 出现必须优先处理的新任务。**不满足则本窗口不动它**（窗口报告登记为"依赖已解除、待排期"）。
+
+**依赖变更注意事项（必须留证）**：向共享测试 venv 安装 `pypdfium2` 会**改变其他 Agent 的运行环境**。因此：①只允许新增该一项依赖，不得顺带升级/新增其他项；②必须在安装**前后各跑一次全仓**并记录对照；③若既有测试断言 pypdfium2 缺失或 readiness 为 `missing_dependency`，须在本 Task 内一并更新并说明理由（**不得**用放宽断言绕过）。
 
 本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
 
@@ -32,14 +38,13 @@ D01 §2；D02 §8；D04 §8；D05 §52；G17。网页导入已按 U-1 取消；�
 
 ## 允许修改范围
 
-以下为相对仓库根目录的允许路径；源码路径均为拟议边界，不表示当前文件存在。ready 前由 Codex与已冻结实际结构核对并收紧；不能自行扩展到整个 src/tests。
+**已由 Codex 按实际结构收紧（2026-09-17，窗口授权）**：原草案中的 `src/application/importing/documents/**`、`src/infrastructure/importers/**`、`tests/import_formats/**` **当前均不存在**，已替换为下列实测结构。
 
-- src/application/importing/documents/**
-- src/infrastructure/importers/**
-- tests/import_formats/**
-- doc/tasks/TASK-023.md
-- doc/handoffs/TASK-023-*.md
-- verification/TASK-023/**
+- `src/application/importing/**`（存在，现为 `importing/images/**`；文档导入用例可在此新增子包）
+- `src/infrastructure/importing.py`（存在的模块；如确需拆包须在 Handoff 说明理由）
+- `pyproject.toml` / `requirements*.txt`（**仅允许新增 `pypdfium2`**，用户 2026-09-17 批准）
+- `tests/library/**`（存在）与**新建** `tests/import_formats/**`
+- `doc/tasks/TASK-023.md`、`doc/handoffs/TASK-023-*.md`、`verification/TASK-023/**`
 
 ## 禁止范围
 

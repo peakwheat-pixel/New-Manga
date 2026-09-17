@@ -5,16 +5,20 @@ kind: implementation
 status: ready
 approval: approved_by_user
 suggested_owner: ZCode
-owner: DeepSeek Harness
-reviewer: Codex
+owner: ZCode
+reviewer: ZCode（窗口内子 agent，结论仅 approved_subagent）
 depends_on: [TASK-010, TASK-014, TASK-019, TASK-034]
-base_commit: 81ffd8314309324aeb7ed510f8f5a5ef73d509a7
-branch: agent/deepseek/TASK-033-full-chain-handlers
-worktree: G:/CODEX/New Manga.worktrees/TASK-033-deepseek
+base_commit: e96b3eb880bdfcfca182aa1350d9ff56798556c1
+branch: agent/zcode/TASK-033-full-chain-handlers
+worktree: G:/CODEX/New Manga.worktrees/TASK-033-zcode
 integration_commit: null
 ---
 
 # TASK-033：完整链收口（Color / Term Extract / Render handler 与渲染侧生产装配）
+
+**窗口改派（2026-09-17，ZCode 全权窗口 W2——**本窗口唯一旗舰**）**：Owner 由 `DeepSeek Harness` **改派 `ZCode`**；Reviewer 由 `Codex` 改为**窗口内子 agent**（结论**只能** `approved_subagent`/`changes_requested`，且**须由 Codex/DSH 在窗口后补外部 post-hoc 复审**）；`base` 改取窗口基线 `e96b3eb`；`branch`/`worktree` 改为 `agent/zcode/TASK-033-full-chain-handlers` / `G:/CODEX/New Manga.worktrees/TASK-033-zcode`。**下行「READY」段中的 owner/reviewer/base/branch/worktree 以本块为准**；其验收要求、归属裁决、单一写者约束与禁止范围**完全不变**。
+
+**若 W2 在 04:50 前未完成集成** → 按窗口规则**跳过 W3**，把剩余时间留给 W2 收口与 W4；**不得**为赶时间放宽 AC、跳过 Review 或把 `BLOCKED` 记为通过。
 
 **READY（2026-09-17 用户批准释放）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`81ffd83`（释放时 master HEAD）、branch/worktree 见顶部元数据（已创建并同步到本次释放提交）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 

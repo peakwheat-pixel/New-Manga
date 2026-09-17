@@ -101,6 +101,16 @@ Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head�
 
 仅元数据归档提交无需重跑产品测试；生产代码/契约/测试变化不能用此规则免检。Git hooks 和远端保护当前都不存在，本协议是人工/Agent 协作约束，不是已安装的强制机制。
 
+### 【临时·2026-09-17 ZCode 全权窗口】Review 独立性例外（T1=2026-09-18 08:50 后由 Codex 移除）
+
+窗口期内（T0=本授权提交进入 master 的实际时刻 ≈2026-09-17 23:2x ～ T1=2026-09-18 08:50，Asia/Shanghai）：
+
+1. 全部工作由 **ZCode** 执行，其为唯一主线写入与集成责任人；Codex 与 DeepSeek Harness 暂停主线写入。
+2. §6 的 Review 由 **ZCode 子 agent** 执行，结论**只能**为 `approved_subagent` 或 `changes_requested`，**不得**为 `approved`；`approved_subagent` 明确**不等同** §6 第 1 条的跨 Agent 独立批准，窗口内不得据此宣称"独立 Review 通过"。
+3. 窗口内硬红线不变：不得放宽/删除断言、不得新增 `skip`/`xfail`、不得把 flaky 命中或 `BLOCKED`/`NOT_RUN` 记为通过；回归声明须附退出码与 passed/skipped 分列。
+4. **期满后强制外部 post-hoc 复审**：Codex + DeepSeek Harness 对窗口期全部集成交付补审；该义务不因窗口关闭而消失，复审可推翻或重开窗口内标记的 `done`。
+5. 完整条款（队列、时间门、排除项、到期处置）见 [STATUS](STATUS.md)「ZCode 全权窗口授权（2026-09-17）【生效中】」。
+
 ## 7. 发布与阶段审核
 
 接管通过、契约冻结、切片通过、最终发布是不同 Gate。Mock Pipeline 通过只能证明编排和保存链路，不能证明 OCR/翻译/修复质量。

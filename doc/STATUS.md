@@ -175,6 +175,7 @@ TASK-009 Review 已归档：[首轮 Review `TASK-009-f1dd602`](reviews/TASK-009-
 | 2026-09-17 | 用户（经 Codex 登记） | **释放 TASK-036**（用户指示"立即可执行"）。Codex 释放前核对（master `edfdcf2` 实测，四项现状均在）：**R-02** `RoutePolicy.from_settings({'inpaint': 'oops'}, default=…)` → **静默返回默认**（`inpaint` **段本身**非 mapping 被当作"键缺失"，而 `route_policy` 非 mapping 已是 fail-loud）；**R-07a** `allowed_routes='simple-fill'` → **逐字符展开** `('s','i','m','p','l','e','-','f','i','l','l')`；**R-07b** `requirements={'brushnet': 'false'}` → `{'brushnet': True}`（`bool("false")` 恒真）；**R-05** `src/ui/viewmodels/export/viewmodel.py` `_finish`(`:379-389`)/`_fail`(`:391-398`) **先清 `self._running` 后发布 `_status` 与终态信号**（半发布窗口 = 导出类 flaky 机制根因）。**判据已在 Task 内固化**：R-02/R-07 沿用 TASK-034 R-2 已确立的 fail-closed 原则（"用户写错的配置不得被无声忽略或无声改写"），故**本轮无需再走裁决请求**；若实现与既有文档/测试冲突须回抛。登记 `status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`edfdcf2`（释放时 master HEAD）、branch=`agent/deepseek/TASK-036-settings-validation-and-export-order`、worktree=`G:/CODEX/New Manga.worktrees/TASK-036-deepseek`（已创建并同步到本次释放提交）。**范围**：`src/application/translation/inpaint/router.py`、`src/ui/viewmodels/export/viewmodel.py`、`tests/**`、Task/Handoff/`verification/TASK-036/**`（超出需先申请）。**明确不含** R-03（常量跨层归属建议）与 R-06（webtoon flaky 未复现）。**实施尚未开始**。未释放 TASK-020～TASK-023、TASK-025～TASK-027、TASK-033 | 本提交；Task 文件 [doc/tasks/TASK-036.md](tasks/TASK-036.md)；Checklist：未改 Schema/migration、依赖清单、seam 本体、`AGENTS.md`、其他 Task |
 | 2026-09-17 | 用户（经 Codex 登记） | **释放 TASK-033**（用户指示"TASK-033（完整链收口，关闭 AC-RFULL-001 剩余链路）"）。Codex 释放前核对（master `81ffd83` 实测）：**`color`/`term_extract`/`render` 三个 handler 仍缺失**（`ProductionHandlers._handlers` 仅注册 ocr/translate/segment/mask_refine/inpaint → 执行期 `src/infrastructure/pipeline/executor.py:29-32` 抛 `PROVIDER_UNAVAILABLE`；`render` 另在上游 Clean 缺失时**规划期**即 `BLOCKED(missing_clean_artifact)`，见 `verification/TASK-019/ac-status.md:25`）；**关键新发现**：**渲染侧生产装配完全缺失**——`rg "RenderService(" src/` = **0 命中**（唯一构造点在 `tests/rendering/test_rerender.py:108`），`src/bootstrap/app.py` 无 `RenderService`/`FontCatalog`/`Compositor`/`LayoutEngine` 装配 → **仅补 handler 不足以打通 render**；**但渲染适配器齐备**（`QtTextLayoutEngine`/`QtImageCompositor`/`QtFontCatalog`/`PixelSourceStyleAnalyzer`/`SqlitePageArtifactLocator`），故本 Task 只需**装配**而非改实现；`color` 依赖已存在（`SourceStyleService` + `ports/rendering` 的 `SourceStyleAnalyzer` + `PixelSourceStyleAnalyzer`）；`knowledge/` 仅有 `tm.py`，术语抽取服务可能需新建。**归属裁决（回答 TASK-019 R-2）**：三 handler 归 `src/infrastructure/providers/handlers.py`、经 `src/bootstrap/app.py:313/324` 注入；`color`/`term_extract` 为**无外部调用**的应用内步骤且能力缺失 **fail-closed**（不静默降级）；`render` 调用应用层 `RenderService`。**渲染侧范围裁定**：`src/ports/rendering/**`、`src/infrastructure/rendering/**` **本次不预开放**——确需修改须先在 Task 记录具体文件+理由+是否改变既有签名/行为，经 Codex 裁决。**新增 P0 级约束「单一写者」**：`RenderService` 自行 compare-and-set 提交 `translated` 指针而 seam 亦按 `StepRevisionUpdates` 翻转指针 → 必须明确唯一写者并用测试证明无双写/指针抖动，无法保证时停下回抛。**AC-RFULL-001 口径**：本 Task **不得记 PASS**，只更新为「**BLOCKED（handler 与生产装配面已打通；真实 OCR/翻译/修复能力仍缺）**」并列出解锁条件。登记 `status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`（原 `suggested_owner=ZCode`；ZCode 窗口授权已撤销、当前不在线，用户可要求开工前改派）、Reviewer=`Codex`（**非作者**）、base=`81ffd83`（释放时 master HEAD）、branch=`agent/deepseek/TASK-033-full-chain-handlers`、worktree=`G:/CODEX/New Manga.worktrees/TASK-033-deepseek`（已创建并同步到本次释放提交）。**实施尚未开始**。未释放 TASK-020～TASK-023、TASK-025～TASK-027 | 本提交；Task 文件 [doc/tasks/TASK-033.md](tasks/TASK-033.md)；Checklist：未改 Schema/migration、依赖清单、seam 本体、`AGENTS.md`、其他 Task |
 | 2026-09-17 | Codex | **TASK-036 独立 Review + 集成（TASK-034 的 R-02 / R-05 / R-07 三项关闭）**：作者=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）；`base=edfdcf2`、被审 `c931db0`（元数据 `5606221`）、Review [doc/reviews/TASK-036-c931db0.md](reviews/TASK-036-c931db0.md)（decision=`approved`，**四轴** Standards/Spec/Architecture/Verification 均 `executed`、逐轴小结、**不跨轴排名**，0 P0/P1、5×P3）、integration=`2725324`（merge，parents `addf669`+`5606221`）。**并行偏差已按固化结论声明**（本环境双轴子代理通道不可用 → §6 第 6 条兜底两遍相互隔离检查，不再重复派发）。**落地内容**：`RoutePolicy.from_settings` 以 `_MISSING` 哨兵把"**键缺失**（返回**同一** `default` 对象，R-1）"与"**键/段类型错误**（typed `ProviderInputError`，消息分级）"分开——**同时关掉 TASK-034 遗留的 `route_policy: null` 静默回落漏洞**；`allowed_routes`/`fallback_routes` 必须为字符串序列（裸字符串、`set`/生成器等非序列、非 `str` 元素一律拒绝）；`requirements` 值必须真 `bool`（`bool("false")` 陷阱消除）、非 mapping 由裸 `ValueError` 改为 typed error；`src/ui/viewmodels/export/viewmodel.py` 的 `_finish`/`_fail` 改为**先发布终态（`_status` + `changed` + 终态信号）再清 `running`**，且清标志后再发一次 `changed`（**必需**——`running = Property(bool, _running, notify=changed)`），导出用例等待**收回**自然终态等待。**Reviewer 独立复核**：输入 12 类矩阵在 **base `edfdcf2` 导出树与 HEAD 两侧各跑一遍探针**逐条复现（8 类合法输入逐字相同；非法输入一律 typed 且含字段名）；发布顺序逐槽观测；冻结解除清单逐条核对（3 处旧行为用例**改名/更新而非静默删除**，未新增 skip）；边界 `src/` 恰为 2 个允许文件。**Findings**：R-01（P3，`safe_property` 的**字符串**占位被用于**数值比较**的等待条件 → `str > int` 抛 `TypeError`，把"RuntimeError 掩蔽 AssertionError"换成"TypeError 掩蔽"；Reviewer 独立复现，仅在等待期间对象销毁时可达，**不造成假通过**）**open 非阻塞**；R-02（P3，`changed-paths.txt` 为 `1b0c89e` 时刻过期快照、漏 `tests/reading_export/test_qml_contract.py`）**fixed（集成记录更正，未改作者材料；实测 Owner 改动仍在允许范围、越界 0）**；R-03（P3，作者**主动扩大的两处**行为：`route_policy: null`、`requirements` 非 mapping）**accepted**（前者属 TASK-034 R-2 的"present but non-mapping"，R-1 身份返回仅适用于键缺失；后者此前已是裸 `ValueError`，本次仅类型化）；R-04（P3，**DirectConnection** 的终态信号处理函数内读到 `running == True`，已由测试断言为新契约）**accepted 并记录**；R-05（P3，Handoff 数字"3 次/两次"不一致）**open 纯文档**。**附带价值**：把下方 flaky 条目 `test_reader_webtoon_swaps_in_vertical_viewer` 从"用例名未捕获"**首次定性**（签名 `contentY=-0.0` 被 `StopAtBounds` 夹回 → 无值变化 → 无 `onContentYChanged` → 节流保存未启动），并确认**非本 Task 引入**（该用例早于本 Task 登记；本 Task 对该文件仅做诊断稳健化 `safe_property()`；纯净 `edfdcf2` 对照亦复现）——**未记为通过**。**TASK-036 置 `done`**；**TASK-034 的 R-02/R-05/R-07 全部关闭**；TASK-034 的 R-03（常量跨层归属）与 R-06（flaky）仍按原登记跟踪。未 push；未释放其他 Task | 本提交；证据 [verification/TASK-036/integration-2725324.md](../verification/TASK-036/integration-2725324.md)；Checklist：未改 Schema/migration、依赖清单、seam 本体、`AGENTS.md`、`src/ui/**` 之外路径、其他 Task；未把 flaky 或 `NOT_RUN` 改记为通过 |
+| 2026-09-17 | 用户（经 Codex 登记） | **ZCode 全权窗口授权生效**（用户 2026-09-17 指示"23:00–08:50 全部工作由 ZCode 进行"，并逐条确认队列裁剪、TASK-033 改派、临时条款、`pypdfium2` 依赖批准与插队规则；其余由 AI 决定）。窗口 **T0 = 本授权提交进入 master 的实际时刻（≈23:2x，晚于原定 23:00 约 20 分钟，因方案确认回合超出）→ T1 = 2026-09-18 08:50**，实际 ≈9h30m。完整条款见下方「ZCode 全权窗口授权（2026-09-17）【生效中】」。**队列**：W1=[TASK-037](tasks/TASK-037.md)（flaky 修复 + TASK-036 R-01，保底）、W2=[TASK-033](tasks/TASK-033.md)（完整链收口，保底/旗舰，**已由 DSH 改派 ZCode**）、W3=[TASK-020](tasks/TASK-020.md)（Webtoon 分块，**条件**：W2 于 04:50 前集成才启动）、W4=文档状态同步 + 窗口报告（兜底）、插队项=[TASK-023](tasks/TASK-023.md)（PDF/MOBI，**用户批准新增 `pypdfium2`**）；**不做** TASK-021/022/025/026/027。**Review 定性**：窗口内由 ZCode 子 agent 审查，结论**只能 `approved_subagent`/`changes_requested`（不得写 `approved`）**，期满后**强制 Codex + DSH 外部 post-hoc 复审**（可推翻重开）。**Codex 与 DSH 窗口期暂停主线写入**。登记动作：TASK-033 改派（owner/reviewer/base=`e96b3eb`/branch=`agent/zcode/TASK-033-full-chain-handlers`/worktree=`…\TASK-033-zcode`）、TASK-037 新建、TASK-020/TASK-023 解冻（**白名单已按实际结构收紧**——原草案的 `src/infrastructure/imaging/webtoon/**`、`src/ui/qml/workbench/ViewerCanvas.qml`、`tests/webtoon/**`、`src/application/importing/documents/**`、`src/infrastructure/importers/**`、`tests/import_formats/**` 均不存在）、`agent/zcode/*` 分支与 worktree 已建 | 本提交；依据：用户本次指示；[doc/09_COLLABORATION.md](09_COLLABORATION.md) 临时条款、[AGENTS.md](../AGENTS.md) 临时条款 |
 
 ## 已知 flaky 测试（跟踪条目）
 
@@ -187,6 +188,46 @@ TASK-009 Review 已归档：[首轮 Review `TASK-009-f1dd602`](reviews/TASK-009-
 | **（曾登记为"用例名未捕获"）** | TASK-034 尾项切片集成（[integration-8ca4b23](../verification/TASK-034/integration-8ca4b23.md)） | 1/14 全仓串跑 `1 failed, 705 passed, 6 skipped`，**当时只截末两行、用例名未捕获** | **已推断合并入第 1 条**：此后所有观测到的间歇失败（TASK-036 head 3 次 + 本集成 master 1 次）都落在第 1 条同一用例，且该用例早于 TASK-034 即已登记；但当时**无直接证据**，故仅作推断、不再单列 open 条目 |
 
 建议（**TASK-034 AC ③ 已实施有界诊断**；其中 webtoon 首处观察窗口归一化的口径见 [TASK-034 Review R-03](reviews/TASK-034-f83a33e.md)）：第 1 条根因已定性（非"事件循环饥饿"），修复属后续切片（可连同 TASK-036 R-01 一起做）；第 2 条机制根因（发布顺序）已由 TASK-036 关闭，待更长时间无复现后可按同一口径收口。**任何"全仓 N passed"结论都应附执行次数与命中记录。**
+
+## ZCode 全权窗口授权（2026-09-17）【生效中】
+
+> **状态**：2026-09-17 用户批准并逐条确认。窗口 **T0 = 本授权提交进入 master 的实际时刻（≈2026-09-17 23:2x；原定 23:00 因方案确认回合超出而顺延约 20 分钟）→ T1 = 2026-09-18 08:50**（Asia/Shanghai），实际约 9 小时 30 分。T1 后本授权失效，由 Codex 恢复唯一主线写入并移除临时条款。
+
+### 范围与效力
+
+1. 窗口期内**全部工作由 ZCode 执行**：用户自动批准 ZCode 在**窗口名单内**的实施申请与行为，无需逐项请示。**Codex 与 DeepSeek Harness 在本窗口期暂停主线写入**——Codex 仅写两笔：T0 前的本授权提交、T1 后的纯文档收口提交。
+2. **窗口队列**（用户批准的裁剪）：
+   - **W1（保底）** [TASK-037](tasks/TASK-037.md)：已定性 flaky 修复 + TASK-036 R-01。
+   - **W2（保底，唯一旗舰）** [TASK-033](tasks/TASK-033.md)：完整链收口（Color / Term Extract / Render handler + 渲染侧生产装配）；**已由 DSH 改派 ZCode**；验收要求、归属裁决、**单一写者 P0 约束**与禁止范围不变；**AC-RFULL-001 不得记 PASS**。
+   - **W3（条件）** [TASK-020](tasks/TASK-020.md)：Webtoon 分块处理与阅读——**仅当 W2 于 04:50 前完成集成才启动**，且须 08:20 前完成集成，否则冻结回 `proposed`。
+   - **W4（兜底）** 文档状态同步（`doc/00_INDEX.md`、`doc/12_ROADMAP.md` 的「当前状态」段自 TASK-032 起长期未更新）+ 窗口报告。
+   - **插队项** [TASK-023](tasks/TASK-023.md)：PDF/MOBI 导入（依赖 `pypdfium2` 已获单独批准）——仅按该 Task 内「插队规则」启动。
+   - **时间门**：**08:20 后不得启动新切片**；**08:50（T1）停止实施与集成**，在飞切片冻结在当前状态。
+   - **本窗口不做**：TASK-021 / TASK-022 / TASK-025 / TASK-026 / TASK-027（链式依赖与发布 Gate）。
+3. ZCode 代行 Codex 的解冻登记职责；名单内各 Task 的 owner/base_commit/branch/worktree 已由 Codex **预先登记**（见各 Task 文件顶部元数据），ZCode 只需建开工提交并置 `in_progress`。
+4. 每个窗口目标按完整生命周期执行：实施 → Review → 修订 → 集成 → Task/STATUS 收口；各 Task 白名单、依赖与验收标准不变。
+
+### Review 定性（协议核心临时变更，经用户授权）
+
+- 窗口期内 Review 由 ZCode 开**子 agent** 执行：必须使用 [Review 模板](templates/REVIEW.md)、固定 base_commit 与 reviewed_head、实际运行测试并在报告中 passed/skipped 分列、报告入库 `doc/reviews/`。
+- 结论**只能**登记为 `approved_subagent` 或 `changes_requested`，**不得登记为 `approved`**。`approved_subagent` 是用户授权的同体审查（Owner 与 Reviewer 同为 ZCode 与其子 agent），**不等同协作协议 §1 的跨 Agent 独立批准**。
+- **窗口内硬红线**：不得新增 `skip`/`xfail`、不得放宽或删除断言、不得把 flaky 命中或 `BLOCKED`/`NOT_RUN` 记为通过；每条回归声明须附**退出码 + passed/skipped 分列**，失败一律用 `-rf` 记录用例名。
+- **期满后强制外部 post-hoc 复审**：由 Codex + DeepSeek Harness 对窗口期**全部集成交付**补一次外部复审；该义务不因窗口关闭而消失，结论可能**推翻或重开**窗口内标记的 `done`。
+
+### 排除项（自动批准不覆盖，遇之即登记 `BLOCKED` 并等待用户）
+
+- 产品需求与范围变更、D08 验收标准或发布 Gate 放宽；
+- `git push`、配置远端、向外部服务发送内容；
+- **Schema / migration 变更**；**依赖清单变更仅限 TASK-023 的 `pypdfium2` 单项**（用户 2026-09-17 单独批准，且须按该 Task 的依赖变更留证要求执行）；
+- 触碰他人 worktree / 分支 / 未提交内容（含 `TASK-033/034/035/036-deepseek` 及更早的 `agent/*` worktree）；
+- 解冻窗口名单之外的 Task（TASK-021 / TASK-022 / TASK-025 / TASK-026 / TASK-027 保持冻结）。
+
+### 到期处置
+
+- T1（08:50）后本授权失效：未完成任务冻结于当时状态（含 `in_progress`/`in_review`/`blocked`），等待用户安排；**失效后不得凭本授权继续实施或集成**。
+- 窗口内已完成的集成**不回滚**；Codex 在 T1 后的第一件事为一次**纯文档收口提交**：登记失效、移除本节的临时效力与 [09_COLLABORATION](09_COLLABORATION.md)、[AGENTS.md](../AGENTS.md) 的临时条款（仅元数据提交，无需重跑产品测试），并排出 post-hoc 复审计划。
+
+---
 
 ## ZCode 全权窗口授权（2026-09-16）【已失效——2026-09-17 经用户指示归还撤销】
 

@@ -18,6 +18,8 @@
 
 当前阶段、已释放 Task 与冻结范围只以 [STATUS](doc/STATUS.md) 和对应 Task 文件为准，本入口不复制易过期的状态。Agent 只能执行已批准且依赖满足的 Task；接管、Review 或单个 Task 获批不等于其他开发自动获批。
 
+**【临时·2026-09-17 ZCode 全权窗口，T1=2026-09-18 08:50 后失效】** 窗口期内**全部工作由 ZCode 执行**，ZCode 为**唯一主线写入与集成责任人**；Codex 与 DeepSeek Harness **暂停主线写入**（Codex 仅写 T0 前的授权提交与 T1 后的纯文档收口提交）。窗口内 Review 由 ZCode 子 agent 执行，结论**只能**登记为 `approved_subagent` 或 `changes_requested`，**不得**写 `approved`；期满后**必须**由 Codex + DeepSeek Harness 补一次外部 post-hoc 复审（可推翻窗口内的 `done`）。自动批准**不覆盖**：产品需求与范围变更、D08/Gate 放宽、Schema/migration 变更、`git push`/远端/外发、解冻名单外 Task、触碰他人 worktree。完整条款见 [STATUS](doc/STATUS.md)「ZCode 全权窗口授权（2026-09-17）【生效中】」。**本段为临时条款，T1 后由 Codex 移除。**
+
 ## 角色与交付
 
 - Codex：Lead / Architect / Integrator；负责契约、任务分配、冲突决策及集成。
