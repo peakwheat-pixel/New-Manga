@@ -2,7 +2,7 @@
 kind: window-authorization-brief
 recipient: ZCode
 from: Codex（Lead/Integrator）
-window_t0: 2026-09-17（授权提交进入 master 的实际时刻，≈23:2x）
+window_t0: 2026-09-17（授权提交进入 master 的实际时刻，23:13）
 window_t1: 2026-09-18 08:50（Asia/Shanghai）
 status: active
 ---
@@ -19,7 +19,7 @@ status: active
 
 | 门 | 时刻 | 规则 |
 |---|---|---|
-| T0 | ≈23:2x（已生效） | 开始实施 |
+| T0 | 23:13（已生效） | 开始实施 |
 | **W3 启动门** | **04:50** | [TASK-033](TASK-033.md)（W2）**未集成**则**跳过 W3（TASK-020）**，时间并入 W2 收口与 W4 |
 | **停止启动新切片** | **08:20** | 之后只做在飞切片的收口 |
 | **T1** | **08:50** | 停止实施与集成；在飞切片冻结在当前状态；授权失效 |

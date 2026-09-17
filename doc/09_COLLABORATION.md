@@ -103,7 +103,7 @@ Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head�
 
 ### 【临时·2026-09-17 ZCode 全权窗口】Review 独立性例外（T1=2026-09-18 08:50 后由 Codex 移除）
 
-窗口期内（T0=本授权提交进入 master 的实际时刻 ≈2026-09-17 23:2x ～ T1=2026-09-18 08:50，Asia/Shanghai）：
+窗口期内（T0=本授权提交进入 master 的实际时刻 2026-09-17 23:13 ～ T1=2026-09-18 08:50，Asia/Shanghai）：
 
 1. 全部工作由 **ZCode** 执行，其为唯一主线写入与集成责任人；Codex 与 DeepSeek Harness 暂停主线写入。
 2. §6 的 Review 由 **ZCode 子 agent** 执行，结论**只能**为 `approved_subagent` 或 `changes_requested`，**不得**为 `approved`；`approved_subagent` 明确**不等同** §6 第 1 条的跨 Agent 独立批准，窗口内不得据此宣称"独立 Review 通过"。
