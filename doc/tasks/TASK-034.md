@@ -2,7 +2,7 @@
 id: TASK-034
 title: 测试与分层硬化（route policy 收敛 / 架构守卫 / flaky 诊断）
 kind: maintenance
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: DeepSeek Harness
