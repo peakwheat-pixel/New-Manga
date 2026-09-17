@@ -4,7 +4,7 @@
 - Owner／作者：DeepSeek Harness ／ Reviewer：Codex（**非作者**）
 - 固定 base：`edfdcf2fe923c8c6e97d19377c61c4b8bba25abc`（代码基线）；分支起点 `81ffd83`（释放纯文档提交）
 - 分支 / 工作区：`agent/deepseek/TASK-036-settings-validation-and-export-order` ／ `G:/CODEX/New Manga.worktrees/TASK-036-deepseek`
-- 交付 head：待提交后回填（`git rev-parse --short HEAD`）
+- 交付 head：`c931db0`（`dd608f4` 为开工 `in_progress` 文档提交）
 
 ## 1. 实施概览
 
@@ -98,10 +98,36 @@
 
 ## 7. AC ⑦：回归与分列
 
-（数值将在全仓串跑完成后回填；命令与日志路径见下。）
+**mandated 四套件**：`python -m pytest tests/providers tests/core tests/reading_export tests/editing -q -p no:cacheprovider -rs` → **274 passed / 0 skipped**（基线 `edfdcf2`：243 passed）。
 
-- mandated：`python -m pytest tests/providers tests/core tests/reading_export tests/editing -q -p no:cacheprovider -rs`
-- 全仓：`python -m pytest -q -p no:cacheprovider -rs -rf` ×6 → [`full-suite-runs.log`](full-suite-runs.log)
+**逐目录 passed 对照**（纯净 `edfdcf2` 导出树 vs 本 head，[`test-counts.txt`](test-counts.txt)）：
+
+| 目录 | 基线 | 本 head | 差异 |
+|---|---|---|---|
+| `tests/providers` | 134 | **164** | +30（AC ①②③ 拒绝类用例与两条调用点回归；旧冻结用例被替换） |
+| `tests/core` | 18 | 18 | 不变 |
+| `tests/reading_export` | 65 | **66** | +1（AC ④ 成功路径同型用例；半发布用例为更新而非新增/删除） |
+| `tests/editing` | 26 | 26 | 不变 |
+| `tests/ui_shell` / `tests/workbench` | 46 / 51 | 46 / 51 | 不变（`src/ui/**` 改动的相邻套件） |
+| mandated 四套件合计 | 243 | **274** | +31 |
+
+**全仓串跑 ≥5 次逐次记录**（`python -m pytest -q -p no:cacheprovider -rs -rf`，[`full-suite-runs.log`](full-suite-runs.log)）：
+
+| # | 退出码 | passed | skipped | 失败用例 |
+|---|---:|---:|---:|---|
+| 1 | 0 | 737 | 6 | 无 |
+| 2 | 0 | 737 | 6 | 无 |
+| 3 | 0 | 737 | 6 | 无 |
+| 4 | 0 | 737 | 6 | 无 |
+| 5 | 0 | 737 | 6 | 无 |
+| 6 | 0 | 737 | 6 | 无 |
+| 7（带 `-rs` 明细） | 0 | 737 | 6 | 无 |
+
+基线对照：纯净 `edfdcf2` 导出树全仓 **706 passed / 6 skipped**（exit 0）→ 本 head **737 passed / 6 skipped**（+31）。
+
+**skip 明细（每轮相同，6 条全部为既有环境 skip）**：`tests/network/test_connection_tester.py:106`、`test_transport_tls.py:39`、`:47`、`:62`、`:69`、`:83`，原因均为 `openssl unavailable`。**未新增任何 skip / xfail。**
+
+**关于间歇失败的登记**：本轮 7 次全仓串跑**均 exit 0、无失败**；STATUS 登记的既有间歇失败与 webtoon flaky 本轮未复现（未记为通过，仅记为"本轮未触发"）。
 
 ## 8. 环境与边界
 
