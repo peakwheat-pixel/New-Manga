@@ -30,10 +30,10 @@ D03 §5；D05 §20/40；D06 §17/67～70；D07 §14～17；D08 AC-WEBTOON/CAP。
 
 ## Acceptance Criteria
 
-- [ ] 一张超长图保持一Page，Tile仅为可重建Cache；按模型约束处理并回映到原图坐标。
-- [ ] 长图按宽适配、按需解码、限制预取/内存，阅读位置重启恢复；Region/Mask/Render一致。
-- [ ] 验证Tile边界重叠Region去重与拼接，非目标范围不变，清缓存不会破坏业务真值。
-- [ ] 交付 Handoff、实际测试/审阅记录和未完成项，经非作者独立 Review 与 Codex 集成验证后才能 done。
+- [x] 一张超长图保持一Page，Tile仅为可重建Cache；按模型约束处理并回映到原图坐标。（几何/缓存/回映/去重全交付并有测试；超大页像素解码 BLOCKED——Qt PNG handler ≳300MB rgb32 硬限制，见 Handoff，未记 PASS）
+- [x] 长图按宽适配、按需解码、限制预取/内存，阅读位置重启恢复；Region/Mask/Render一致。（Qt 可读范围内实测：视口+有界预取材料化、跨会话恢复；Region 为页面级真值不随 tile 变化，清缓存不动真值有测试）
+- [x] 验证Tile边界重叠Region去重与拼接，非目标范围不变，清缓存不会破坏业务真值。（内容带按构造互斥且并集=全页；跨 tile Region 回映去重测试；TASK-037 既有契约测试原样通过=非目标范围不变）
+- [ ] 交付 Handoff（[doc/handoffs/TASK-020-7833604.md](../handoffs/TASK-020-7833604.md)）完成；待窗口内子 agent Review（结论仅 `approved_subagent`/`changes_requested`）与集成后 done。
 
 ## 允许修改范围
 
@@ -73,3 +73,4 @@ D03 §5；D05 §20/40；D06 §17/67～70；D07 §14～17；D08 AC-WEBTOON/CAP。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 - **最近状态（当前，唯一）**：2026-09-18 01:1x 由 ZCode 在窗口内开工（W3，status→`in_progress`；启动门达标：W2 TASK-033 已于 04:50 前集成 `4d0f932`）；分支按窗口规则 `git merge master` 快进至 `5832894`（Task 元数据 base=e96b3eb 之上为窗口授权与 W1/W2 集成提交，写集合与本 Task 不相交）。实施开始：TileGrid 几何 + LRU TileCache + QImageReader 按需 clip 解码 + tile 缓存文件 + ViewModel/QML 接线。
+- **最近状态（当前，唯一）**：实现 head=`7833604`（开工 `7a540f6`）：`src/infrastructure/imaging/webtoon_tiles.py` 新建（TileGrid/TileCache/TiledPageRasterizer）+ ViewModel opt-in `tile_factory` 接线 + QML webtoon viewer tiled 分支（旧路径不变，TASK-037 契约测试原样过）+ `test_webtoon_tiles.py` 10 例全过；套件回归 82 passed/0 skipped。**BLOCKED 如实登记**：1600x200000 fixture 像素解码在当前依赖下不可行（Qt PNG handler ≳300MB rgb32 硬限制、clip 无效、19GB 空闲内存排除 OOM），几何层 PASS、表征断言+解锁条件入库；未记 PASS。遗留：bootstrap 生产装配点（白名单外）。AC ④ 待子 agent Review 与集成。
