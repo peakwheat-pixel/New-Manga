@@ -2,7 +2,7 @@
 id: TASK-021
 title: 完善备份恢复、回收站、清理与诊断
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: Codex
 owner: ZCode
@@ -76,3 +76,4 @@ D03 §32～34/45；D07 §37～62/90～92；D08 AC-BACKUP/TRASH/CACHE/DISK/LOG/CL
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+- **最近状态（当前，唯一）**：2026-09-18 04:5x 由 ZCode 在窗口第二轮开工（W7，status→`in_progress`；启动门达标：TASK-038 `f835ac9` + TASK-039 `c8024fe` 均于 06:30 前集成）；分支 `git merge master` 快进至 `22eafa8`。**自洽子集选定**：AC「软删除和同 batch 恢复、永久删除只作用受控数据」（Page 级）。**Schema 预检通过**：books/chapters/pages 均已有 `deleted_at` 列（schema :36/:46/:56）、`soft_delete_page` 已存在（library.py:371）——无需回抛 Schema。
