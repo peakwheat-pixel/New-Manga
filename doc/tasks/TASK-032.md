@@ -5,18 +5,18 @@ kind: bugfix
 status: ready
 approval: approved_by_user
 suggested_owner: ZCode
-owner: ZCode
-reviewer: DeepSeek Harness
+owner: DeepSeek Harness
+reviewer: Codex
 depends_on: [TASK-011, TASK-019]
 base_commit: ca17d454edc03bc1b057e9e3fc463c81da652e53
-branch: agent/zcode/TASK-032-sfx-policy-gate-region-type
-worktree: G:/CODEX/New Manga.worktrees/TASK-032-zcode
+branch: agent/deepseek/TASK-032-sfx-policy-gate-region-type
+worktree: G:/CODEX/New Manga.worktrees/TASK-032-deepseek
 integration_commit: null
 ---
 
 # TASK-032：修复 SFX Policy Gate 缺失 region_type 前置（F-1）
 
-**READY（2026-09-17 用户批准释放）**：Owner=`ZCode`、Reviewer=`DeepSeek Harness`（**非作者**）；base=`ca17d45`（释放时的 master HEAD，已与实际代码核对：`src/application/tasks/service.py:353-361` 的缺陷仍在，`sfx_policy` 判断未检查 `region_type`）；branch/worktree 见顶部元数据（已创建并同步到本次释放提交）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
+**READY（2026-09-17 用户批准释放；同日按用户指示改派 Owner）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Owner 改为 DSH 后，若仍由 DSH 审会构成同体审查，故一并更换）；base=`ca17d45`（释放时的 master HEAD，已与实际代码核对：`src/application/tasks/service.py:353-361` 的缺陷仍在，`sfx_policy` 判断未检查 `region_type`）；branch/worktree 见顶部元数据（已按 `agent/deepseek/...` 命名重建并同步；首次按 `agent/zcode/...` 创建且**无任何提交**的 worktree/分支已移除）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 
 **Codex 已完成意图裁决：本 Task 修的是缺陷、不是产品取舍**——依据 D06 §85「SFX Policy Gate」的前置 `region_type = sfx` 与 D08 AC-SFX-001（`region_type = sfx` 且未额外配置 → `SKIP_POLICY` / `reason = sfx_skip`）；D03 §7 的默认 `skip` **对 SFX 类型是正确的**，问题在策略泄漏到非 SFX 类型。因此**不需要产品决策**。
 
@@ -69,5 +69,5 @@ Codex 已按 base `ca17d45` 的实际结构核对：三个代码/测试允许路
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无。
-- **最近状态（当前，唯一）**：2026-09-17 用户批准**释放**——`status=ready`、`approval=approved_by_user`、Owner=`ZCode`、Reviewer=`DeepSeek Harness`（非作者）、base=`ca17d45`、branch=`agent/zcode/TASK-032-sfx-policy-gate-region-type`、worktree=`G:/CODEX/New Manga.worktrees/TASK-032-zcode`（已创建并同步到 release 提交）。依赖 TASK-011/TASK-019 均 `done`；Codex 已核对缺陷仍存在于 `src/application/tasks/service.py:353-361`。**实施尚未开始**：实际执行仍为 `NOT_RUN`，Owner 开始前须把 `status` 改为 `in_progress`。
-- 历史状态（2026-09-17 释放前）：由 Codex 依据 TASK-019 的 F-1 登记创建为 `proposed`（`approval=pending_user_review`，owner/reviewer/base/branch/worktree 均为空）。
+- **最近状态（当前，唯一）**：2026-09-17 用户批准**释放**，并随后**改派 Owner 为 `DeepSeek Harness`**——`status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`ca17d45`、branch=`agent/deepseek/TASK-032-sfx-policy-gate-region-type`、worktree=`G:/CODEX/New Manga.worktrees/TASK-032-deepseek`（已创建并同步到改派提交）。依赖 TASK-011/TASK-019 均 `done`；Codex 已核对缺陷仍存在于 `src/application/tasks/service.py:353-361`。**实施尚未开始**：实际执行仍为 `NOT_RUN`，Owner 开始前须把 `status` 改为 `in_progress`。
+- 历史状态（2026-09-17）：由 Codex 依据 TASK-019 的 F-1 登记创建为 `proposed`；当日获用户批准释放为 `ready`（首版 Owner=`ZCode`、Reviewer=`DeepSeek Harness`，分支 `agent/zcode/TASK-032-sfx-policy-gate-region-type`，**无任何提交**），随后按用户指示改派 Owner 并重建分支/worktree，见上。
