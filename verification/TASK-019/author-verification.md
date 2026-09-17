@@ -33,7 +33,7 @@
 | `src/bootstrap/app.py` | **注入真实 handler 与 provider runtime**（`build_production_pipeline(conn, handlers=...)`），并提供 Managed Copy 像素/裁剪与 Region 几何来源 |
 | `tests/providers/**`（新增 12 文件） | 110 例：端口契约、就绪/缺依赖 fail-closed、retry/fallback、RegionID 协议、远程适配器、Sakura 探测、设备/OOM、模型生命周期、修复路由、seam 集成 |
 
-`git diff --check 36242fb..726baf5` → **退出码 0**（无输出）。允许路径：`git diff --name-only c9eb65a..HEAD` 共 46 条，**0 条越界**（未触碰依赖清单、Schema/migration、`src/infrastructure/pipeline/**`、`src/application/translation/pipeline/**`、`AGENTS.md`、其他 Task 或生产数据）。
+`git diff --check 36242fb..726baf5` → **退出码 0**（无输出）。允许路径：`git diff --name-only c9eb65a..HEAD` 共 56 条（46 条代码/测试 + 10 条文档与取证），**0 条越界**（未触碰依赖清单、Schema/migration、`src/infrastructure/pipeline/**`、`src/application/translation/pipeline/**`、`AGENTS.md`、其他 Task 或生产数据）。
 
 ## 2. 关键设计决策（交付时需 Reviewer 重点看）
 
@@ -67,7 +67,7 @@
 | 2 | `python -m pytest tests/pipeline tests/core tests/storage -q -p no:cacheprovider -rs` | **0** | **78** | **0** | 强制回归：seam/bootstrap/storage 未回归（`pytest-regression.log`） |
 | 3 | `python -m pytest -q -p no:cacheprovider -rs` | **0** | **640** | **6** | 全仓（基线 530 → 640，+110 均为本 Task 新增）（`pytest-full.log`） |
 | 4 | `git diff --check 36242fb..726baf5` | **0** | — | — | 无输出（无空白错误） |
-| 5 | 允许路径核对 `git diff --name-only c9eb65a..HEAD` | — | — | — | 46/46 在允许范围内；禁止路径命中 **0**（`changed-paths.txt`） |
+| 5 | 允许路径核对 `git diff --name-only c9eb65a..HEAD` | — | — | — | 56/56 在允许范围内；禁止路径命中 **0**（`changed-paths.txt`） |
 | 6 | readiness 报告导出（真实装配） | **0** | — | — | `readiness-report.json`（六态与 `not_implemented` 分类） |
 | 7 | 真实 Sakura 探测（`StdlibTransport`，`127.0.0.1:8080`） | **0** | — | — | `sakura-probe-attempt.json`：`unreachable` / `connection refused` / 仅 1 个请求 |
 
