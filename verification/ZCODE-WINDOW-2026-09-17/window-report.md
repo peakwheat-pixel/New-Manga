@@ -2,6 +2,7 @@
 
 > 作者：ZCode（窗口内唯一主线写入与集成责任人）。授权条款：[STATUS](../../doc/STATUS.md)「ZCode 全权窗口授权（2026-09-17）【生效中】」；作业指令：[ZCODE-WINDOW-2026-09-17.md](../../doc/handoffs/ZCODE-WINDOW-2026-09-17.md)。
 > v1 固化于 2026-09-18 ~02:30；**v2（~03:25）追加插队项 TASK-023 的收口交付**（见「v2 追加」节）。
+> **v3（~05:55）追加第二轮（W5/W6/W7）收口交付**——第二轮授权见 [round2 指令包](../../doc/handoffs/ZCODE-WINDOW-2026-09-17-round2.md)（同一 T1=08:50）。
 > **本报告不改变任何 Review 定性**：窗口内全部结论均为 `approved_subagent`（用户授权的同体审查，非协作协议 §1 跨 Agent 独立批准）；**期满后 Codex + DeepSeek Harness 必须对下列全部集成交付补外部 post-hoc 复审，可推翻任何窗口内 `done`**。
 
 ## 1. 队列项最终状态
@@ -66,3 +67,44 @@
 - **Review**：`approved_subagent`（报告 `c87f21c`；四轴 executed；R-001～R-004 全 P3 不阻断）。
 - **集成后复验**：全仓 770 passed / 0 skipped、exit 0。
 - **MOBI**：BLOCKED（无批准解析依赖），非 PDF 载荷 typed `UNSUPPORTED_FORMAT` 可诊断；未记 PASS。
+
+
+---
+
+# 第二轮收口（v3 追加，2026-09-18 ~05:55）
+
+> 第二轮窗口 = 同一 T1（08:50）的延续授权；队列 W5（必做）→ W6（必做）→ W7（条件：W5+W6 于 06:30 前集成）；统一证据口径＝`powershell.exe -NoProfile -Command`（Git Bash 会话启动，PATH 继承含 openssl）+ `TASK-012-py312` venv → 全仓 **N passed / 0 skipped**。
+
+## 队列项最终状态（第二轮）
+
+| # | 切片 | 状态 | 实现 head | Review | integration |
+|---|---|---|---|---|---|
+| W5 | [TASK-038](../../doc/tasks/TASK-038.md) 生产装配收口 | **done** | `317f33e` | [TASK-038-317f33e.md](../../doc/reviews/TASK-038-317f33e.md)（`fcf791f`）approved_subagent（3×P3） | `f835ac9` |
+| W6 | [TASK-039](../../doc/tasks/TASK-039.md) planner `_clean_available` 修复 | **done** | `38fbde4` | [TASK-039-38fbde4.md](../../doc/reviews/TASK-039-38fbde4.md)（`18c9834`）approved_subagent（R-001/R-002 文档更正采纳、R-003 deferred、R-004 accepted） | `c8024fe` |
+| W7 | [TASK-021](../../doc/tasks/TASK-021.md) 自洽子集（软删除/同 batch 恢复/受控-only 永久删除） | **done（子集）**；其余三个子集 **frozen** | `887e0d6` | [TASK-021-887e0d6.md](../../doc/reviews/TASK-021-887e0d6.md)（`a9b4141`）approved_subagent（R-001 P2 open 登记处置、3×P3） | `5bc17f8` |
+
+## 第二轮关键交付
+
+- **W5**：`assemble_engine` 注册 `readerViewModel`/`exportViewModel`（此前生产阅读器是惰性空态页）；export 双路径注册名对应关系写明并以测试锁定（路径 A=`readerViewModel.exportController`、路径 B=`exportViewModel` 随 workbench 章节重建重发布）；`tile_factory` 注入（TASK-020 分块阅读生产可达）；`ImportDocumentsUseCase` 接线（TASK-023 PDF 可达，MOBI 仍 typed UNSUPPORTED）；`test_qml_contract.py:224` 前提变化等价更新。暴露并处置两个装配面缺陷（Page→ReaderPage 契约适配 `_ManagedReaderCatalog`、无页章节导航防御）。
+- **W6**：TASK-033 R-001（P2）关闭——`_clean_available` 判据叠加可选 `clean_probe`（probe=None 与修前逐字节等价；对照矩阵+判别力 7 failed/1 passed 留证）；**生产 probe 注入点（bootstrap）白名单外，移交后续装配切片**。
+- **W7**：Page 级软删除/同 batch 恢复/受控-only 永久删除（Schema 预检通过——`deleted_at` 列本就存在，零 Schema 变更）；`remove_managed` 防逃逸；测试含 managed 根外模拟源文件逐字节幸存证明。**R-001 P2 open（跨 batch 重叠 page_id 的 API 层串扰）——处置计划：集成后修复/并入 trash 后续子集。**
+
+## 第二轮 approved_subagent 清单（供 post-hoc 复审排期）
+
+| integration_commit | Task | reviewed_head | Review |
+|---|---|---|---|
+| `f835ac9` | TASK-038 | `317f33e` | `fcf791f` approved_subagent |
+| `c8024fe` | TASK-039 | `38fbde4` | `18c9834` approved_subagent |
+| `5bc17f8` | TASK-021 | `887e0d6` | `a9b4141` approved_subagent |
+
+## 第二轮基线与口径
+
+- 基线（round2 指令，纯系统 PATH PowerShell）：764 passed / 6 skipped（`047164e`）。**本窗口全部数字统一为 powershell.exe（继承 PATH，openssl 可用）+ TASK-012-py312 口径**：开工基线 770 passed / 0 skipped → W5 后 772（+2 契约测试）→ W6 后 780（+8）→ W7 后 **786 passed / 0 skipped**（+6）；各切片全仓 ×5 逐次留证（TASK-038/039/021 verification 目录）。
+- 依赖清单：**零变更**（本轮无新依赖）。Schema/migration：**零变更**（TASK-021 软删除依赖既有 `deleted_at` 列，预检留证）。
+
+## 第二轮未完成项与冻结原因
+
+- **TASK-021 其余三个子集 frozen**（备份/恢复、缓存/版本/模型清理、日志/诊断包）——窗口时间预算下的取舍（round2 指令：只交付一个完整子集）。
+- **生产装配注入遗留清单**（各切片白名单外，移交后续装配切片）：TASK-020 `tile_factory` ✅（W5 已接）、TASK-023 `ImportDocumentsUseCase` ✅（W5 已接）、**TASK-039 `clean_probe` 生产注入（待接——未接前生产 render-only 命令保持既有 BLOCKED 行为）**。
+- **MOBI 解析依赖**与**超大 webtoon 像素解码**：维持用户裁决等待状态（第一轮已登记）。
+- **TASK-021 R-001 P2**（跨 batch 重叠 page_id 的 API 层串扰）：处置计划=集成后修复/并入 trash 后续子集。
