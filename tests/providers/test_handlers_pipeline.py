@@ -353,7 +353,9 @@ def test_locked_region_is_skipped_and_never_translated(workspace) -> None:
 
 
 def test_translate_step_commits_but_render_remains_unwired(workspace) -> None:
-    """Evidence for AC-RFULL-001: only the capability steps this Task owns run."""
+    """Evidence for AC-RFULL-001 (TASK-019): a translate-only command does
+    not reach render. The render handler itself is wired since TASK-033; the
+    planning guard (no Clean Artifact in this command) still blocks it."""
     conn = workspace["conn"]
     service = _pipeline(workspace)
     run = service.create_run(
@@ -369,9 +371,9 @@ def test_translate_step_commits_but_render_remains_unwired(workspace) -> None:
     assert steps["translate"].output["provenance"]["provider_id"] == "fake-translate"
     assert tuple(steps["translate"].output["context_provenance"]["context_pages"]) == ()
 
-    # AC-RFULL-001 evidence: the chain stops after the steps this Task owns.
-    # `render` is planned BLOCKED (no Clean Artifact / no render handler), and
-    # no StepRun is created for it — it is never faked.
+    # AC-RFULL-001 evidence: `render` is planned BLOCKED for a translate-only
+    # command (no Clean Artifact, no same-run inpaint), and no StepRun is
+    # created for it — it is never faked.
     assert "render" not in steps
     decisions = {unit.step_type: unit.decision for unit in executed.tasks[0].units}
     assert decisions["render"].value == "blocked"

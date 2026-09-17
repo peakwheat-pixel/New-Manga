@@ -94,11 +94,12 @@ def mask_from_boxes(
 
 @dataclass
 class FakePageImages:
-    """PageImageSource double: fixed frame and crop bytes."""
+    """PageImageSource double: fixed frame, crop bytes and page PNG."""
 
     page: ImageFrame
     crop: bytes = b"crop-bytes"
     crop_size: tuple[int, int] = (4, 3)
+    png: bytes | None = None  # TASK-033 color step input; real PNG when needed
     region_calls: list[tuple[str, str]] = field(default_factory=list)
 
     def page_frame(self, page_id: str) -> ImageFrame:
@@ -107,6 +108,15 @@ class FakePageImages:
     def region_crop(self, page_id: str, region_id: str) -> tuple[bytes, int, int]:
         self.region_calls.append((page_id, region_id))
         return self.crop, self.crop_size[0], self.crop_size[1]
+
+    def page_png(self, page_id: str) -> bytes:
+        from ports.providers.errors import ProviderInputError
+
+        if self.png is None:
+            raise ProviderInputError(
+                f"page {page_id!r} has no PNG in this double", stage="image-source"
+            )
+        return self.png
 
 
 @dataclass

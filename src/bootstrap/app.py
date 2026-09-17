@@ -42,7 +42,10 @@ from PySide6.QtQuick import QQuickWindow  # noqa: F401
 from application.editing.service import RegionEditingService
 from application.importing.images.service import ImportImagesUseCase
 from application.library.service import LibraryService
+from application.rendering.service import RenderService
 from application.tasks.service import PipelineService
+from application.translation.color.service import SourceStyleService
+from application.translation.knowledge.term_extraction import TermExtractionService
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.importing import ManagedCopyStoreAdapter, QtImageDecoder
 from infrastructure.pipeline.assembly import build_production_pipeline
@@ -52,6 +55,12 @@ from infrastructure.providers.handlers import (
 )
 from infrastructure.providers.runtime import build_provider_runtime
 from infrastructure.providers.step_writes import ArtifactStepWriter, RegionStepWriter
+from infrastructure.rendering.font_catalog import QtFontCatalog
+from infrastructure.rendering.locator import SqlitePageArtifactLocator
+from infrastructure.rendering.pixel_source_style import PixelSourceStyleAnalyzer
+from infrastructure.rendering.qt_compositor import QtImageCompositor
+from infrastructure.rendering.qt_layout import QtTextLayoutEngine
+from infrastructure.sqlite.artifacts import SqliteArtifactRepository
 from infrastructure.sqlite.connection import open_database
 from infrastructure.sqlite.library import SqliteLibraryRepository
 from infrastructure.sqlite.migrator import MigrationRunner
@@ -176,6 +185,20 @@ class _ManagedPageImageSource:
             )
         return bytes(buffer.data()), crop.width(), crop.height()
 
+    def page_png(self, page_id: str) -> bytes:
+        """The whole Managed Copy page as PNG (TASK-033 color step input)."""
+        from PySide6.QtCore import QBuffer, QIODevice
+
+        image = self._page_image(page_id)
+        buffer = QBuffer()
+        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
+        if not image.save(buffer, "PNG"):
+            raise ProviderInputError(
+                f"page {page_id!r} could not be re-encoded as PNG",
+                stage="image-source",
+            )
+        return bytes(buffer.data())
+
 
 class _RegionGeometrySource:
     """Region geometry as mask primitives (D06 §19 Segment input)."""
@@ -192,6 +215,47 @@ class _RegionGeometrySource:
         bbox = region.geometry.bbox
         boxes = ((bbox.x, bbox.y, bbox.x + bbox.width, bbox.y + bbox.height),)
         return RegionMaskGeometry(boxes=boxes, polygons=(region.geometry.polygon,) if region.geometry.polygon else ())
+
+
+def _render_content_decoder(relative_path: str, payload: bytes) -> bytes:
+    """TASK-033 assembly bridge: pipeline ``NMFR`` containers → PNG.
+
+    Inpaint/Clean revisions are stored in the provider layer's
+    ``application/x-newmanga-frame`` container (a deliberate non-shareable
+    format, TASK-018); rendering composes on PNG. Payloads that are not
+    ``NMFR`` (PNG originals, translated PNGs) pass through unchanged, so this
+    is a pure format bridge at the seam — the stored revisions stay untouched.
+    """
+    from PySide6.QtCore import QBuffer, QIODevice
+    from PySide6.QtGui import QImage
+
+    if not payload.startswith(b"NMFR"):
+        return payload
+    from infrastructure.providers.step_writes import decode_frame_payload
+
+    header, raw = decode_frame_payload(payload)
+    mode = str(header.get("mode", ""))
+    width, height = int(header["width"]), int(header["height"])
+    if mode != "rgb32":
+        raise ProviderInputError(
+            f"unsupported frame mode {mode!r} for the render bridge",
+            stage="render",
+        )
+    bytes_per_line = width * 4
+    if len(raw) < bytes_per_line * height:
+        raise ProviderInputError("frame payload is truncated", stage="render")
+    image = QImage(raw, width, height, bytes_per_line, QImage.Format.Format_RGB32)
+    if image.isNull():
+        raise ProviderInputError(
+            "frame payload could not be decoded for rendering", stage="render"
+        )
+    buffer = QBuffer()
+    buffer.open(QIODevice.OpenModeFlag.WriteOnly)
+    if not image.save(buffer, "PNG"):
+        raise ProviderInputError(
+            "clean frame could not be re-encoded as PNG", stage="render"
+        )
+    return bytes(buffer.data())
 
 
 def _load_pipeline_settings(conn: sqlite3.Connection) -> dict:
@@ -249,6 +313,7 @@ class AppServices:
     library: LibraryService
     pipeline: PipelineService
     editing: RegionEditingService
+    render: RenderService
     providers: object
     navigation: NavigationViewModel
     bookshelf: BookshelfViewModel
@@ -310,6 +375,24 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             transport=StdlibTransport(),
             credential_resolver=_credential_resolver(),
         )
+        # TASK-033: the render step needs the application-layer RenderService,
+        # assembled here from the existing infrastructure/rendering adapters
+        # (no adapter implementation is added or modified). Qt-based classes
+        # need a QGuiApplication instance, which the entry creates before
+        # calling this; pure headless consumers construct their own.
+        font_catalog = QtFontCatalog()
+        source_styles = SourceStyleService(PixelSourceStyleAnalyzer())
+        render_service = RenderService(
+            region_repo=regions,
+            locator=SqlitePageArtifactLocator(conn),
+            artifacts=SqliteArtifactRepository(conn, storage),
+            storage=storage,
+            layout_engine=QtTextLayoutEngine(font_catalog),
+            compositor=QtImageCompositor(),
+            source_styles=source_styles,
+            font_catalog=font_catalog,
+            content_decoder=_render_content_decoder,
+        )
         handlers = build_production_handlers(
             registry=provider_runtime.registry,
             regions=regions,
@@ -320,6 +403,9 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             retry_policy=provider_runtime.retry_policy,
             heavy_runner=provider_runtime.heavy_runner,
             route_policy=provider_runtime.route_policy,
+            source_styles=source_styles,
+            terms=TermExtractionService(),
+            render_service=render_service,
         )
         pipeline = build_production_pipeline(conn, handlers=handlers)
         editing = RegionEditingService(regions)
@@ -358,6 +444,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             library=library,
             pipeline=pipeline,
             editing=editing,
+            render=render_service,
             providers=provider_runtime,
             navigation=navigation,
             bookshelf=bookshelf,

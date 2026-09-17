@@ -14,9 +14,12 @@ one ``StepResult``. Three invariants shape the code:
   unimplemented route raise typed errors; nothing is silently substituted and
   no mock result is produced (AC-FALLBACK-001, AC-GPU-001, AC-OPTIONAL-002).
 
-``detect``/``color``/``term_extract``/``render`` are intentionally absent: this
-Task owns the detection/OCR/translation/inpaint capability ports only, and an
-absent handler is a provider-availability error, never a fake success.
+``detect`` is intentionally absent: this Task owns the
+detection/OCR/translation/inpaint capability ports only, and an absent handler
+is a provider-availability error, never a fake success. ``color`` /
+``term_extract`` / ``render`` were added by TASK-033 (the full-chain closure):
+they are assembly-gated — the handler exists but fails closed with a typed
+error when its service was not assembled, never a silent degradation.
 """
 
 from __future__ import annotations
@@ -27,6 +30,8 @@ from dataclasses import dataclass, field
 from typing import Any, Protocol
 
 from application.editing.ports import RegionRepository
+from application.rendering.service import RenderService, RenderStatus
+from application.translation.color.service import SourceStyleService
 from application.translation.inpaint.mask import (
     DEFAULT_MASK_PARAMS,
     MASK_SOURCE_REFINED,
@@ -42,6 +47,7 @@ from application.translation.inpaint.step import (
     InpaintStepRequest,
     execute_inpaint_step,
 )
+from application.translation.knowledge.term_extraction import TermExtractionService
 from application.translation.pipeline.executor import StepExecutionError
 from domain.tasks.models import PipelineRun, PlanUnit, StageState, StepResult, StepRun
 from infrastructure.providers.fallback import (
@@ -91,13 +97,17 @@ from ports.translation.protocol import (
 )
 
 STEP_OCR = "ocr"
+STEP_COLOR = "color"
+STEP_TERM_EXTRACT = "term_extract"
 STEP_TRANSLATE = "translate"
 STEP_SEGMENT = "segment"
 STEP_MASK_REFINE = "mask_refine"
 STEP_INPAINT = "inpaint"
+STEP_RENDER = "render"
 
 ARTIFACT_MASK = "mask"
 ARTIFACT_CLEAN = "clean"
+ARTIFACT_TRANSLATED = "translated"
 
 DEFAULT_CONTEXT_TOKEN_BUDGET = 2000
 DEFAULT_CONTEXT_PAGES = 1
@@ -111,6 +121,10 @@ class PageImageSource(Protocol):
     def region_crop(
         self, page_id: str, region_id: str
     ) -> tuple[bytes, int, int]: ...
+
+    def page_png(self, page_id: str) -> bytes:
+        """The whole Managed Copy page re-encoded as PNG (color step input)."""
+        ...
 
 
 @dataclass(frozen=True)
@@ -127,7 +141,13 @@ class RegionGeometrySource(Protocol):
 
 @dataclass
 class HandlerDependencies:
-    """Everything the handlers may use; all of it is injected."""
+    """Everything the handlers may use; all of it is injected.
+
+    ``source_styles`` / ``terms`` / ``render_service`` are the TASK-033
+    assembly points: ``None`` keeps the assembly buildable everywhere, and the
+    matching handlers then fail closed with a typed error instead of
+    degrading silently (AC-COLOR/TERM/RENDER fail-closed).
+    """
 
     registry: ProviderRegistry
     regions: RegionRepository
@@ -138,6 +158,9 @@ class HandlerDependencies:
     retry_policy: RetryPolicy = field(default_factory=RetryPolicy)
     heavy_runner: Any = None  # DeviceManager.run_guarded, optional
     route_policy: RoutePolicy = field(default_factory=RoutePolicy)
+    source_styles: SourceStyleService | None = None  # TASK-033 color
+    terms: TermExtractionService | None = None  # TASK-033 term_extract
+    render_service: RenderService | None = None  # TASK-033 render
 
 
 class ProductionHandlers:
@@ -149,10 +172,13 @@ class ProductionHandlers:
             step_type: self._typed(handler)
             for step_type, handler in (
                 (STEP_OCR, self.handle_ocr),
+                (STEP_COLOR, self.handle_color),
+                (STEP_TERM_EXTRACT, self.handle_term_extract),
                 (STEP_TRANSLATE, self.handle_translate),
                 (STEP_SEGMENT, self.handle_segment),
                 (STEP_MASK_REFINE, self.handle_mask_refine),
                 (STEP_INPAINT, self.handle_inpaint),
+                (STEP_RENDER, self.handle_render),
             )
         }
 
@@ -518,6 +544,188 @@ class ProductionHandlers:
         )
 
     # ------------------------------------------------------------------
+    # Color / Term Extract / Render (TASK-033 full-chain closure)
+    # ------------------------------------------------------------------
+
+    def handle_color(
+        self, step_run: StepRun, unit: PlanUnit, run: PipelineRun
+    ) -> StepResult:
+        """D06 §8 source-style analysis: judgement only, no Region write.
+
+        Fail-closed: without an assembled analyzer this raises instead of
+        reporting a fallback default (AC-COLOR). ``needs_fallback`` is the
+        *output* of the frozen reliability rule, recorded in provenance —
+        the render step applies it, this step only measures.
+        """
+        region_id = self._require_region(unit)
+        if self.deps.source_styles is None:
+            raise ProviderNotConfigured(
+                "no source style analyzer assembled for the color step",
+                stage=STEP_COLOR,
+            )
+        region = self.deps.regions.get_region(region_id)
+        if region is None or region.deleted:
+            raise ProviderInputError(
+                f"region {region_id!r} is not available", stage=STEP_COLOR
+            )
+        original_png = self.deps.images.page_png(unit.page_id)
+        box = region.geometry.bbox.as_tuple()
+        result = self.deps.source_styles.extract(original_png, box)
+        style = result.style
+        outputs = {
+            "source_style": {
+                "detected_source_font_size": style.detected_source_font_size,
+                "source_font_size_confidence": style.source_font_size_confidence,
+                "text_color": style.text_color,
+                "stroke_hint_color": style.stroke_hint_color,
+                "background_color": style.background_color,
+                "direction_hint": (
+                    style.direction_hint.value if style.direction_hint else None
+                ),
+            },
+            "needs_fallback": result.needs_fallback,
+            "provenance": {
+                "step": STEP_COLOR,
+                "ai_invoked": False,  # structural: pixel analysis only
+                "device_host": self._device_host(),
+                "box": list(box),
+                "fallback_to_default": result.needs_fallback,
+            },
+        }
+        return StepResult(
+            target_id=unit.target_id,
+            step_type=unit.step_type,
+            outputs=outputs,
+            output_target_ids=(unit.target_id,),
+            # judgement-only step: no Region revision, no pointer move.
+            revision_updates={},
+            next_stage_states={unit.step_type: StageState.COMPLETED},
+        )
+
+    def handle_term_extract(
+        self, step_run: StepRun, unit: PlanUnit, run: PipelineRun
+    ) -> StepResult:
+        """D06 §12 term candidates from the OCR text; knowledge sources are
+        read-only (glossary settings + optional TM scan), the formal glossary
+        and TM data are never modified and no request leaves the process
+        (TASK-033 AC ②). Fail-closed without the assembled service.
+        """
+        region_id = self._require_region(unit)
+        if self.deps.terms is None:
+            raise ProviderNotConfigured(
+                "no term extraction service assembled for the term_extract step",
+                stage=STEP_TERM_EXTRACT,
+            )
+        region = self.deps.regions.get_region(region_id)
+        if region is None or region.deleted:
+            raise ProviderInputError(
+                f"region {region_id!r} is not available", stage=STEP_TERM_EXTRACT
+            )
+        source_text = region.text.ocr_text
+        if not source_text.strip():
+            raise ProviderInputError(
+                "region has no OCR text to extract terms from",
+                stage=STEP_TERM_EXTRACT,
+            )
+        glossary = self._glossary(run)
+        book_id = next(
+            (
+                target.snapshot.book_id
+                for target in run.targets
+                if target.target_id == unit.target_id
+            ),
+            None,
+        )
+        result = self.deps.terms.extract(
+            source_text, glossary=glossary or None, book_id=book_id
+        )
+        outputs = {
+            "term_candidates": [
+                {
+                    "term": candidate.term,
+                    "source": candidate.source,
+                    "occurrences": candidate.occurrences,
+                    "suggested_target": candidate.suggested_target,
+                }
+                for candidate in result.candidates
+            ],
+            "provenance": {
+                **result.provenance,
+                "book_id": book_id,
+                "device_host": self._device_host(),
+            },
+        }
+        return StepResult(
+            target_id=unit.target_id,
+            step_type=unit.step_type,
+            outputs=outputs,
+            output_target_ids=(unit.target_id,),
+            # candidates only: no Region revision, no glossary/TM write.
+            revision_updates={},
+            next_stage_states={unit.step_type: StageState.COMPLETED},
+        )
+
+    def handle_render(
+        self, step_run: StepRun, unit: PlanUnit, run: PipelineRun
+    ) -> StepResult:
+        """D06 §23/§47 render through the application-layer RenderService.
+
+        **Single writer (TASK-033 P0 constraint)**: ``RenderService`` commits
+        the page-level ``translated`` pointer itself via the atomic
+        compare-and-write seam (``_commit_translated`` → ``commit_revision``
+        with ``expected_current_revision_id``). This handler therefore returns
+        ``revision_updates={}`` — the pipeline seam must not flip the same
+        pointer a second time — and the committed-once property is asserted in
+        ``tests/providers/test_full_chain.py``.
+
+        Fail-closed: missing Clean / locked region / skip policy / composition
+        conflicts surface as the RenderService's typed error codes, never as a
+        silent no-op success.
+        """
+        region_id = self._require_region(unit)
+        if self.deps.render_service is None:
+            raise ProviderNotConfigured(
+                "no render service assembled for the render step",
+                stage=STEP_RENDER,
+            )
+        outcome = self.deps.render_service.rerender_region(region_id)
+        if outcome.status is not RenderStatus.COMMITTED:
+            raise StepExecutionError(
+                outcome.error_code or "RENDER_FAILED",
+                outcome.detail or f"render outcome={outcome.status}",
+            )
+        outputs = {
+            "render_status": outcome.status,
+            "translated_artifact_id": outcome.artifact_id,
+            "translated_revision_no": outcome.revision_no,
+            "translated_managed_path": outcome.managed_path,
+            "region_reports": [
+                {
+                    "region_id": report.region_id,
+                    "status": report.status,
+                    "skip_reason": report.skip_reason,
+                    "final_font_size": report.final_font_size,
+                    "font_substituted": report.font_substituted,
+                }
+                for report in outcome.reports
+            ],
+            "provenance": (
+                json.loads(outcome.provenance_json)
+                if outcome.provenance_json
+                else {}
+            ),
+        }
+        return StepResult(
+            target_id=unit.target_id,
+            step_type=unit.step_type,
+            outputs=outputs,
+            output_target_ids=(unit.target_id,),
+            # RenderService is the sole writer of the `translated` pointer.
+            revision_updates={},
+            next_stage_states={unit.step_type: StageState.COMPLETED},
+        )
+
+    # ------------------------------------------------------------------
     # shared machinery
     # ------------------------------------------------------------------
 
@@ -706,8 +914,16 @@ def build_production_handlers(
     retry_policy: RetryPolicy | None = None,
     heavy_runner: Any = None,
     route_policy: RoutePolicy | None = None,
+    source_styles: SourceStyleService | None = None,
+    terms: TermExtractionService | None = None,
+    render_service: RenderService | None = None,
 ) -> dict[str, Any]:
-    """Convenience wrapper used by ``bootstrap.app``."""
+    """Convenience wrapper used by ``bootstrap.app``.
+
+    The TASK-033 services stay optional at the assembly boundary: an omitted
+    service still assembles, and its handler then fails closed at run time
+    (TASK-033 AC ①/②/③).
+    """
     return ProductionHandlers(
         HandlerDependencies(
             registry=registry,
@@ -722,6 +938,9 @@ def build_production_handlers(
             # third hand-written literal (the runtime does not import this
             # module, so this import direction has no cycle).
             route_policy=route_policy or DEFAULT_ROUTE_POLICY,
+            source_styles=source_styles,
+            terms=terms,
+            render_service=render_service,
         )
     ).as_mapping()
 
@@ -729,15 +948,19 @@ def build_production_handlers(
 __all__ = [
     "ARTIFACT_CLEAN",
     "ARTIFACT_MASK",
+    "ARTIFACT_TRANSLATED",
     "HandlerDependencies",
     "PageImageSource",
     "ProductionHandlers",
     "RegionGeometrySource",
     "RegionMaskGeometry",
+    "STEP_COLOR",
     "STEP_INPAINT",
     "STEP_MASK_REFINE",
     "STEP_OCR",
+    "STEP_RENDER",
     "STEP_SEGMENT",
+    "STEP_TERM_EXTRACT",
     "STEP_TRANSLATE",
     "build_production_handlers",
 ]
