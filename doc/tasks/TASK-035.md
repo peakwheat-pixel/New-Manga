@@ -2,21 +2,25 @@
 id: TASK-035
 title: 修复渲染层 SFX Policy Gate 缺失 region_type 前置（F-1 渲染面）
 kind: bugfix
-status: proposed
-approval: pending_user_review
+status: ready
+approval: approved_by_user
 suggested_owner: ZCode
-owner: null
-reviewer: null
+owner: DeepSeek Harness
+reviewer: Codex
 depends_on: [TASK-019, TASK-032]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 2e1bf2d3d9610c1c53537f45abc12e82e8e5ee4f
+branch: agent/deepseek/TASK-035-render-sfx-gate-region-type
+worktree: G:/CODEX/New Manga.worktrees/TASK-035-deepseek
 integration_commit: null
 ---
 
 # TASK-035：修复渲染层 SFX Policy Gate 缺失 region_type 前置（F-1 渲染面）
 
-**PROPOSED（未释放）**：本 Task 承接 TASK-032 Review 的 **R-04（P1）/ R-05（P2）/ R-02（P2）**，**需用户批准释放**；未释放前不得实施。**F-1 只有在 TASK-035 完成并集成后才算关闭**（TASK-032 只关闭了规划面）。
+**READY（2026-09-17 用户批准释放）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Owner 为 DSH 时若仍由 DSH 审会构成同体审查，故一并指定）；base=`2e1bf2d`（释放时的 master HEAD）、branch/worktree 见顶部元数据（已创建并同步到本次释放提交）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
+
+**释放前核对（Codex 实测，非作者自述）**：R-04 仍在——`src/application/rendering/service.py:219` 与 `:347` 仅做 `SfxPolicy(...)` 判定，**该文件内 `region_type` 零命中**；R-05 仍在——`src/domain/tasks/models.py:182` 的 `sfx_policy: str = "translate"`；R-02 仍在——`tests/pipeline/test_pipeline.py:51` 的夹具默认 `"translate"`。四个允许路径（`src/application/rendering`、`src/domain/tasks/models.py`、`tests/rendering`、`tests/pipeline`）均存在。
+
+**F-1 关闭条件**：本 Task 完成并集成后，F-1 才可从"部分关闭（规划面 closed / 渲染面 open）"改为 **closed**。**Review 口径**：按[协作协议](../09_COLLABORATION.md) §6 的**四轴**执行（Standards / Spec / Architecture / Verification，逐轴 `executed`/`N/A`、每轴一行小结、**不跨轴排名**），Standards 与 Spec 两轴应优先由**独立执行者/线程并行**（不可用时按兜底做两遍相互隔离检查并声明偏差）。
 
 ## 来源与目标
 
@@ -66,4 +70,5 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`proposed`，未释放）。
-- 最近状态：2026-09-17 由 Codex 依据 TASK-032 Review 的 R-04/R-05/R-02 创建为 `proposed`；释放需用户批准，释放时由 Codex 填 owner/reviewer/base/branch/worktree。
+- **最近状态（当前，唯一）**：2026-09-17 用户批准**释放**——`status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`2e1bf2d`、branch=`agent/deepseek/TASK-035-render-sfx-gate-region-type`、worktree=`G:/CODEX/New Manga.worktrees/TASK-035-deepseek`（已创建并同步到释放提交）。依赖 TASK-019/TASK-032 均 `done`。**实施尚未开始**：实际执行仍为 `NOT_RUN`，Owner 开始前须把 `status` 改为 `in_progress`。
+- 历史状态（2026-09-17）：由 Codex 依据 TASK-032 Review 的 R-04/R-05/R-02 创建为 `proposed`（`approval=pending_user_review`，owner/reviewer/base/branch/worktree 均为空）。

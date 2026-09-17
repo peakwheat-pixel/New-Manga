@@ -38,6 +38,6 @@ TASK-001～TASK-019、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK
 | [TASK-032](TASK-032.md) | 修复 SFX Policy Gate 缺失 region_type 前置（F-1 规划面） | DeepSeek Harness | done；Review=[TASK-032-771977c](../reviews/TASK-032-771977c.md) approved（四轴 executed）、integration=`e3e055e`（被审 `771977c`）；集成后 `tests/pipeline` 60 passed/0 skipped、全仓 671 passed/6 skipped；**F-1 仅规划面关闭**——渲染面仍 open（见 TASK-035）；TASK-011, TASK-019 |
 | [TASK-033](TASK-033.md) | 完整链收口：Color / Term Extract / Render handler | ZCode（建议） | **proposed（未释放）**；承接 TASK-019 的 R-2/F-2（AC-RFULL-001 剩余链路）；渲染侧端口/实现不在允许路径，需先申请范围变更；TASK-010, TASK-014, TASK-019 |
 | [TASK-034](TASK-034.md) | 测试与分层硬化（route policy 收敛 / 架构守卫 / flaky 诊断） | ZCode（建议） | **proposed（未释放）**；承接 TASK-019 尾项切片 Review 的 T-2/T-4 与 STATUS flaky 条目；纯硬化、不改产品行为；TASK-019 |
-| [TASK-035](TASK-035.md) | 修复渲染层 SFX Policy Gate 缺失 region_type 前置（F-1 渲染面） | ZCode（建议） | **proposed（未释放）**；承接 TASK-032 Review 的 R-04（P1，既有）/R-05（P2）/R-02（P2）；**F-1 只有本 Task 完成并集成后才算关闭**；TASK-019, TASK-032（均 done） |
+| [TASK-035](TASK-035.md) | 修复渲染层 SFX Policy Gate 缺失 region_type 前置（F-1 渲染面） | DeepSeek Harness | ready；已按用户批准释放（Owner=DeepSeek Harness、Reviewer=Codex（非作者）、base=`2e1bf2d`、branch=`agent/deepseek/TASK-035-render-sfx-gate-region-type`、worktree=`G:/CODEX/New Manga.worktrees/TASK-035-deepseek`）；承接 TASK-032 Review 的 R-04（P1，既有）/R-05（P2）/R-02（P2）；**F-1 只有本 Task 完成并集成后才算关闭**；实施未开始；TASK-019, TASK-032（均 done） |
 
 每个任务含具体 Acceptance Criteria、允许修改路径与测试要求。TASK-005 已建立最小 `src/bootstrap`、`src/domain`、`src/ui` 与 `tests/core`；其余路径仍是拟议所有权边界，ready 前由 Codex 对照实际结构确认。Task 不能越过依赖、冻结状态或扩大允许范围。
