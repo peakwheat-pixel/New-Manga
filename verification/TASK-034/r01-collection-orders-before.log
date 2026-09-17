@@ -1,0 +1,11 @@
+### R-01 BEFORE (merged master @ HEAD): bare 'from conftest import requires_pyside6'
+tests/reading_export/test_qml_contract.py tests/reading_export/test_viewmodels.py => exit=0 :: 22 passed in 2.68s ::
+tests/reading_export/test_viewmodels.py tests/reading_export/test_qml_contract.py => exit=0 :: 22 passed in 2.24s ::
+tests/reading_export tests/editing => exit=2 :: 2 errors in 0.29s :: ImportError while importing test module 'G:\CODEX\New Manga.worktrees\TASK-034-deepseek\tests\reading_export\test_qml_contract.py'.
+tests/editing tests/reading_export => exit=0 :: 91 passed in 3.10s ::
+tests/reading_export tests/workbench => exit=2 :: 2 errors in 0.34s :: ImportError while importing test module 'G:\CODEX\New Manga.worktrees\TASK-034-deepseek\tests\reading_export\test_qml_contract.py'.
+tests/reading_export tests/rendering => exit=2 :: 2 errors in 0.42s :: ImportError while importing test module 'G:\CODEX\New Manga.worktrees\TASK-034-deepseek\tests\reading_export\test_qml_contract.py'.
+tests/reading_export tests/providers => exit=2 :: 2 errors in 0.55s :: ImportError while importing test module 'G:\CODEX\New Manga.worktrees\TASK-034-deepseek\tests\reading_export\test_qml_contract.py'.
+tests/reading_export tests/knowledge => exit=2 :: 2 errors in 0.28s :: ImportError while importing test module 'G:\CODEX\New Manga.worktrees\TASK-034-deepseek\tests\reading_export\test_qml_contract.py'.
+tests/reading_export tests/library => exit=2 :: 2 errors in 0.35s :: ImportError while importing test module 'G:\CODEX\New Manga.worktrees\TASK-034-deepseek\tests\reading_export\test_qml_contract.py'.
+tests/reading_export => exit=0 :: 65 passed in 2.70s ::

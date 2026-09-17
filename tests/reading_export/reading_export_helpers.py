@@ -8,14 +8,35 @@ directory and ``src`` on sys.path.
 
 from __future__ import annotations
 
+import importlib.util
 import sys
 from pathlib import Path
+
+import pytest
 
 THIS_DIR = Path(__file__).resolve().parent
 SRC_ROOT = THIS_DIR.parents[1] / "src"
 for entry in (str(THIS_DIR), str(SRC_ROOT)):
     if entry not in sys.path:
         sys.path.insert(0, entry)
+
+
+def _pyside6_available() -> bool:
+    """True when the active interpreter can import PySide6 (no import side effect)."""
+    return importlib.util.find_spec("PySide6") is not None
+
+
+#: Skip marker for Qt-dependent tests.
+#:
+#: It lives here — in the **uniquely named** helper module — and is imported
+#: explicitly (TASK-034 R-01). It used to be reached through a bare
+#: ``from conftest import requires_pyside6``, which resolved to another
+#: directory's ``conftest`` whenever ``tests/reading_export`` was collected
+#: after a suite that has its own ``conftest.py``
+#: (``pytest tests/reading_export tests/editing`` → 2 collection errors).
+requires_pyside6 = pytest.mark.skipif(
+    not _pyside6_available(), reason="PySide6 not installed in this interpreter"
+)
 
 from application.export import (  # noqa: E402
     ExportPage,

@@ -18,7 +18,9 @@ router_reason and fallback_chain are all carried out of the decision.
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass, field
+from typing import Any
 
 from application.translation.inpaint.route_catalog import route_gate
 from ports.inpaint.ports import (
@@ -314,6 +316,55 @@ class RoutePolicy:
             fallback_routes=self.fallback_routes,
             color_route=route,
             requirements=dict(self.requirements),
+        )
+
+    @classmethod
+    def from_settings(
+        cls, settings: Mapping[str, Any], *, default: "RoutePolicy"
+    ) -> "RoutePolicy":
+        """The **only** interpretation of the ``inpaint.route_policy`` setting.
+
+        TASK-034 AC ① (ruling R-1..R-6): the assembly-time provider runtime and
+        the per-Run Inpaint handler both call this method, so one input can no
+        longer have two meanings.
+
+        - **R-1** (the one allowed difference, made explicit): a missing
+          ``inpaint`` section or ``route_policy`` key returns ``default``
+          unchanged — the assembly passes ``DEFAULT_ROUTE_POLICY`` and a Run
+          passes the policy it was assembled with. That difference is a
+          parameter, never a hidden branch.
+        - **R-2**: a present but non-mapping ``route_policy`` raises
+          :class:`~ports.providers.errors.ProviderInputError` at *both* call
+          sites; a malformed user policy must not be silently ignored.
+        - **R-3**: a missing/empty ``allowed_routes`` falls back to
+          ``default.allowed_routes``; **R-4**: ``fallback_routes`` defaults
+          to ``()``.
+        - **R-5**: ``requirements`` defaults to ``{}`` and keeps the
+          ``bool(value)`` coercion (tightening non-bool values stays
+          registered as the later R-7 slice).
+        - **R-6 / Option B**: a missing or blank ``color_route`` means "no color
+          route configured" (``None``); an explicitly named color route is
+          still honoured and ``__post_init__`` adds it to ``allowed_routes``.
+        """
+        inpaint = settings.get("inpaint")
+        raw = inpaint.get("route_policy") if isinstance(inpaint, Mapping) else None
+        if raw is None:
+            return default
+        if not isinstance(raw, Mapping):
+            raise ProviderInputError(
+                "inpaint.route_policy must be a mapping", stage="inpaint"
+            )
+        allowed = tuple(str(route) for route in raw.get("allowed_routes", ()))
+        fallbacks = tuple(str(route) for route in raw.get("fallback_routes", ()))
+        color_route = raw.get("color_route")
+        return cls(
+            allowed_routes=allowed or default.allowed_routes,
+            fallback_routes=fallbacks,
+            color_route=str(color_route) if color_route else None,
+            requirements={
+                str(route): bool(value)
+                for route, value in dict(raw.get("requirements", {})).items()
+            },
         )
 
     def decide(self, features: RouterFeatures) -> RouterDecision:

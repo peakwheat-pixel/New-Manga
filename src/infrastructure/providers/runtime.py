@@ -54,6 +54,7 @@ from infrastructure.providers.translation_openai import (
     OpenAiTranslationProvider,
     sakura_config,
 )
+from ports.inpaint.ports import ROUTE_EDGE_BLEED, ROUTE_SIMPLE_FILL
 from ports.network.transport import Transport
 from ports.providers.profiles import (
     CAPABILITY_DETECTION,
@@ -70,11 +71,16 @@ PROVIDER_INPAINT_AOT_GAN = "inpaint-aot-gan"
 PROVIDER_INPAINT_BRUSHNET = "inpaint-brushnet"
 PROVIDER_INPAINT_FLUX = "inpaint-flux-fill"
 
+#: The single default route policy (TASK-034 AC ① ruling, R-3/R-6 Option B).
+#: It matches ``RoutePolicy``'s own defaults and TASK-018's recorded
+#: ``default_eligible`` set: only the two dependency-free baselines are allowed
+#: and **no** color route is configured by default — an unverified learned
+#: route (``brushnet``/``flux-fill``/…) must never be enabled implicitly.
 DEFAULT_ROUTE_POLICY = RoutePolicy(
-    allowed_routes=("simple-fill", "edge-bleed"),
+    allowed_routes=(ROUTE_SIMPLE_FILL, ROUTE_EDGE_BLEED),
     fallback_routes=(),
-    color_route="brushnet",
-    requirements={"brushnet": False, "flux-fill": False},
+    color_route=None,
+    requirements={},
 )
 
 DEFAULT_RETRY_POLICY = RetryPolicy(max_attempts=2, backoff_seconds=1.0)
@@ -411,32 +417,13 @@ def build_provider_runtime(
         transport=transport,
         credential_resolver=credential_resolver,
         retry_policy=_retry_policy(settings),
-        route_policy=_route_policy(settings),
+        route_policy=RoutePolicy.from_settings(
+            settings, default=DEFAULT_ROUTE_POLICY
+        ),
         sakura_probe=probe,
         sakura_base_url=sakura_base_url,
     )
     return runtime
-
-
-def _route_policy(settings: Mapping[str, Any]) -> RoutePolicy:
-    inpaint = settings.get("inpaint")
-    raw = inpaint.get("route_policy") if isinstance(inpaint, Mapping) else None
-    if not isinstance(raw, Mapping):
-        return DEFAULT_ROUTE_POLICY
-    allowed = tuple(str(route) for route in raw.get("allowed_routes", ()))
-    fallbacks = tuple(str(route) for route in raw.get("fallback_routes", ()))
-    color_route = raw.get("color_route")
-    if color_route and str(color_route) not in allowed:
-        allowed = (*allowed, str(color_route))
-    return RoutePolicy(
-        allowed_routes=allowed or DEFAULT_ROUTE_POLICY.allowed_routes,
-        fallback_routes=fallbacks,
-        color_route=str(color_route) if color_route else DEFAULT_ROUTE_POLICY.color_route,
-        requirements={
-            str(route): bool(value)
-            for route, value in dict(raw.get("requirements", {})).items()
-        },
-    )
 
 
 def _no_transport(provider_id: str):

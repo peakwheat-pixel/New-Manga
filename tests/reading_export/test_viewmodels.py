@@ -10,11 +10,11 @@ import time
 from pathlib import Path
 
 import pytest
-from conftest import requires_pyside6
 from reading_export_helpers import (
     make_pages,
     make_reading_service,
     make_service,
+    requires_pyside6,
     to_export_pages,
 )
 

@@ -3,6 +3,12 @@
 Qt-dependent tests skip with an explicit reason when PySide6 is missing
 (the 3.14 interpreter on this machine has no PySide6; the project venvs
 do). Pure service tests run everywhere.
+
+``requires_pyside6`` and the availability probe live in
+:mod:`reading_export_helpers` and are imported explicitly (TASK-034 R-01), so
+no test module depends on the bare ``conftest`` module name — that name
+resolves to another directory's conftest when this suite is collected after a
+suite that has its own ``conftest.py``.
 """
 
 from __future__ import annotations
@@ -18,16 +24,7 @@ for _entry in (str(THIS_DIR), str(THIS_DIR.parents[1] / "src")):
     if _entry not in sys.path:
         sys.path.insert(0, _entry)
 
-
-def _pyside6_available() -> bool:
-    import importlib.util
-
-    return importlib.util.find_spec("PySide6") is not None
-
-
-requires_pyside6 = pytest.mark.skipif(
-    not _pyside6_available(), reason="PySide6 not installed in this interpreter"
-)
+from reading_export_helpers import _pyside6_available  # noqa: E402
 
 
 @pytest.fixture(scope="session")
