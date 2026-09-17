@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-019：集成已验证的检测/OCR/翻译/修复 Provider
 
-**READY（2026-09-17 用户批准释放）**：六个硬依赖 **全部已集成 `done`**（TASK-011 `369e95f`、TASK-014 `a9432971`、TASK-016 `9bf85f5`、TASK-017 `d36f724`、TASK-018 `5a9f5c8`、TASK-024 `61c33e2`）。Owner=`ZCode`、Reviewer=`DeepSeek Harness`（非作者）；base=`36242fb`、branch/worktree 见顶部元数据。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
+**READY（2026-09-17 用户批准释放；同日按用户指示改派 Owner）**：六个硬依赖 **全部已集成 `done`**（TASK-011 `369e95f`、TASK-014 `a9432971`、TASK-016 `9bf85f5`、TASK-017 `d36f724`、TASK-018 `5a9f5c8`、TASK-024 `61c33e2`）。Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**——Owner 为 DSH 时原 Reviewer DSH 会构成同体审查，故一并更换）；base=`36242fb`、branch/worktree 见顶部元数据（首次按 `agent/zcode/...` 命名创建的**无提交** worktree/分支已移除，不作为工作区）。Owner 开始实施前，在本任务分支把 `status` 改为 `in_progress`。
 
 **释放时登记的输入缺口（不得默认通过，必须在交付中显式分列）**：
 
