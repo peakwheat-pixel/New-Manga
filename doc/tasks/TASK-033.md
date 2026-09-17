@@ -56,14 +56,14 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（`color`）**：新增 handler，产出并记录 color/route 判定与 provenance；无外部调用/无模型依赖时 **fail-closed**（不得静默降级）；写回遵守单 Region 写作用域与 Lock。
-- [ ] **AC ②（`term_extract`）**：新增 handler，产出 term/TM 候选并记录 provenance；**不修改正式术语库或 TM 数据、不发出网络请求**；能力缺失时 fail-closed。
-- [ ] **AC ③（`render`）**：新增 handler；上游（Clean 等）齐备时**规划不再** `BLOCKED(missing_clean_artifact)` 且步骤可执行；写回遵守单 Region 写作用域、Lock 与 current/pinned Revision 保护；**缺上游时仍 fail-closed 且原因入 provenance**（不得放宽既有规划守卫）。并满足上文「单一写者」要求。
-- [ ] **AC ④（渲染侧生产装配）**：`src/bootstrap/app.py` 组装 render 所需适配器（**复用** `infrastructure/rendering/**` 既有实现，不新增实现、不改其签名/行为），使 `assemble_services` 在**无重型依赖**时仍可构建（沿用 AC-OPTIONAL-001 口径），并给出 readiness 证据。
-- [ ] **AC ⑤（完整链用例）**：以**真实 SQLite + 真实 seam + 替身 provider**（沿用 `tests/providers` 既有替身范式）跑通 9 步，断言：目标 Region 被写入；**同页其他 Region 的 text / pointer / stage 全不变**（AC-RFULL-002）；人工译文与 Lock 保留（AC-RFULL-005）；并**逐步**给出每步 `status`。
-- [ ] **AC ⑥（AC-RFULL-001 口径更新，不得记 PASS）**：更新 `verification/TASK-019/ac-status.md` 中 AC-RFULL-001 的口径为「**BLOCKED（handler 与生产装配面已打通；真实 OCR/翻译/修复能力仍缺）**」，并逐项列出仍 `BLOCKED`/`NOT_RUN` 的项与**解锁条件**。**严禁**把 AC-RFULL-001 记为通过。
-- [ ] **AC ⑦（回归与分列）**：`tests/providers`、`tests/pipeline`、`tests/core`、`tests/storage`、`tests/rendering` 与全仓套件 **passed 不减少**；全仓串跑**至少 5 次**逐次记录 passed/skipped 与退出码。
-- [ ] **AC ⑧** 交付 Handoff、实际测试/审阅记录与未完成项，经**非作者** Review（协作协议 §6 四轴）与 Codex 集成验证后才能 done。
+- [x] **AC ①（`color`）**：新增 handler，产出并记录 color/route 判定与 provenance；无外部调用/无模型依赖时 **fail-closed**（不得静默降级）；写回遵守单 Region 写作用域与 Lock。
+- [x] **AC ②（`term_extract`）**：新增 handler，产出 term/TM 候选并记录 provenance；**不修改正式术语库或 TM 数据、不发出网络请求**；能力缺失时 fail-closed。
+- [x] **AC ③（`render`）**：新增 handler；上游（Clean 等）齐备时**规划不再** `BLOCKED(missing_clean_artifact)` 且步骤可执行；写回遵守单 Region 写作用域、Lock 与 current/pinned Revision 保护；**缺上游时仍 fail-closed 且原因入 provenance**（不得放宽既有规划守卫）。并满足上文「单一写者」要求。
+- [x] **AC ④（渲染侧生产装配）**：`src/bootstrap/app.py` 组装 render 所需适配器（**复用** `infrastructure/rendering/**` 既有实现，不新增实现、不改其签名/行为），使 `assemble_services` 在**无重型依赖**时仍可构建（沿用 AC-OPTIONAL-001 口径），并给出 readiness 证据。
+- [x] **AC ⑤（完整链用例）**：以**真实 SQLite + 真实 seam + 替身 provider**（沿用 `tests/providers` 既有替身范式）跑通 9 步，断言：目标 Region 被写入；**同页其他 Region 的 text / pointer / stage 全不变**（AC-RFULL-002）；人工译文与 Lock 保留（AC-RFULL-005）；并**逐步**给出每步 `status`。
+- [x] **AC ⑥（AC-RFULL-001 口径更新，不得记 PASS）**：更新 `verification/TASK-019/ac-status.md` 中 AC-RFULL-001 的口径为「**BLOCKED（handler 与生产装配面已打通；真实 OCR/翻译/修复能力仍缺）**」，并逐项列出仍 `BLOCKED`/`NOT_RUN` 的项与**解锁条件**。**严禁**把 AC-RFULL-001 记为通过。
+- [x] **AC ⑦（回归与分列）**（主套件 230 passed/0 skipped、回归 114 passed/0 skipped、全仓 ×5 见 `verification/TASK-033/full-suite-runs.log`，均 exit 0）：`tests/providers`、`tests/pipeline`、`tests/core`、`tests/storage`、`tests/rendering` 与全仓套件 **passed 不减少**；全仓串跑**至少 5 次**逐次记录 passed/skipped 与退出码。
+- [ ] **AC ⑧** 交付 Handoff（[doc/handoffs/TASK-033-933819f.md](../handoffs/TASK-033-933819f.md)）完成；待窗口内子 agent Review（按 Review 模板四轴，结论仅 `approved_subagent`/`changes_requested`）与集成后 done。
 
 ## 允许修改范围
 
@@ -108,5 +108,6 @@ integration_commit: null
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
 - **历史状态（2026-09-17 释放时）**：由用户批准释放；Codex 登记 `status=ready`、`approval=approved_by_user`、Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`81ffd83`（释放时 master HEAD）、branch=`agent/deepseek/TASK-033-full-chain-handlers`、worktree=`G:/CODEX/New Manga.worktrees/TASK-033-deepseek`，并完成上表「释放前核对」（含**关键新发现**：渲染侧生产装配完全缺失、`RenderService` 仅测试构造）与「归属裁决」「单一写者」两项约束的固化。**实施尚未开始。**
+- **最近状态（当前，唯一）**：2026-09-18 窗口 W2 实现 head=`933819f`（开工 `1baaa53`，分支快进至 `a3c36b1`）：三 handler（color/term_extract/render）+ `TermExtractionService` 新建 + bootstrap 渲染装配（`content_decoder` NMFR→PNG 桥，opt-in）+ `test_full_chain.py` 4 例全过 + AC ⑥ 口径更新。**单一写者决策**：RenderService 为 `translated` 指针唯一写者（CAS），render handler `revision_updates={}`，三次 render 指针 `[1,2,3]` 无抖动。主套件 230 passed/0 skipped、回归 114 passed/0 skipped。**继承缺陷登记（未修，planner 不在允许路径）**：render-only 命令跨 run 仍 `BLOCKED(missing_clean_artifact)`（`_clean_available` 查询无人写入的 `clean` stage），移交 Codex 裁决后续切片。AC ⑧ 待子 agent Review 与集成。
 - 历史状态（2026-09-17）：由 Codex 依 TASK-019 R-2/F-2 创建为 `proposed`（`approval=pending_user_review`）；同日获用户批准释放。
 - **最近状态（当前，唯一）**：2026-09-18 00:3x 由 ZCode 在窗口内开工（W2 旗舰，status→`in_progress`）；分支按用户指令 `git merge master` 快进至 `a3c36b1`（Task 元数据 `base=e96b3eb` 之上为窗口授权与 W1 TASK-037 集成提交，其中仅 TASK-037 触碰 `tests/reading_export/**` 与文档、与本 Task 写集合不相交）。侦查完成：`commit_step` 对 Region 目标接受空 `revision_updates`（仅更新 stage）→ 单一写者决策=**RenderService 为 `translated` 指针唯一写者（CAS），render handler 的 `StepResult.revision_updates={}`**；实现开始。
