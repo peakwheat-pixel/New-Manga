@@ -343,23 +343,26 @@ class ReaderViewModel(QObject):
         if self._rasterizer is None:
             return
         grid = self._rasterizer.grid
+        top, bottom = int(viewport_top), int(viewport_bottom)
         try:
-            wanted = self._rasterizer.ensure_viewport(
-                int(viewport_top), int(viewport_bottom)
-            )
+            wanted = self._rasterizer.ensure_viewport(top, bottom)
         except (OSError, ValueError):
             self.tilesChanged.emit()
             return
+        wanted_indices = {
+            tile.index
+            for tile in grid.visible_tiles(
+                top, bottom, prefetch=self._rasterizer.prefetch
+            )
+        }
         wanted_keys = {path.resolve() for path in wanted}
         changed = False
         for row in self._tile_rows:
-            if row["url"]:
+            if row["url"] or row["index"] not in wanted_indices:
                 continue
-            tile = grid.tile(row["index"])
-            path = self._rasterizer.tile_file(tile.index)
-            if path.resolve() in wanted_keys:
-                row["url"] = QUrl.fromLocalFile(str(path)).toString()
-                changed = True
+            path = self._rasterizer.tile_file(row["index"])
+            row["url"] = QUrl.fromLocalFile(str(path)).toString()
+            changed = True
         if changed:
             self.tilesChanged.emit()
 

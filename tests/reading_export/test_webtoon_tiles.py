@@ -225,10 +225,15 @@ def test_tiled_reader_serves_viewport_tiles(tmp_path, qapp) -> None:
     assert [row["index"] for row in rows] == [0, 1, 2, 3]
     assert all(not row["url"] for row in rows)
 
-    vm.requestTiles(0, 900)  # viewport + prefetch=1 → tiles 0 and 1
+    vm.requestTiles(0, 900)  # viewport + prefetch=1 → tiles 0, 1 and 2
     served = [row for row in vm.tiles if row["url"]]
     # viewport [0, 900) spans tiles 0-1; prefetch=1 adds tile 2
     assert [row["index"] for row in served] == [0, 1, 2]
+    # R-001 regression: tiles outside the viewport+prefetch window must not
+    # be decoded at all (按需解码 — no whole-page materialisation on scroll)
+    assert all(row["url"] == "" for row in vm.tiles if row["index"] == 3)
+    cache_files = list((tmp_path / "tile-cache").glob("tile-*.png"))
+    assert len(cache_files) == 3  # exactly the viewport+prefetch band, not the page
     for row in served:
         path = Path(row["url"].replace("file:///", "").replace("file://", ""))
         assert path.is_file() and path.read_bytes()[:8] == b"\x89PNG\r\n\x1a\n"
