@@ -2,7 +2,7 @@
 id: TASK-017
 title: Translation 与上下文输出协议实验
 kind: experiment
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-003, TASK-004]
 base_commit: 348a48e
 branch: agent/zcode/TASK-017-translation-protocol-experiment
 worktree: G:/CODEX/New Manga.worktrees/TASK-017-zcode
-integration_commit: c0cf3a1
+integration_commit: d36f724
 ---
 
 # TASK-017：Translation 与上下文输出协议实验
@@ -75,5 +75,8 @@ D01 §5；D06 §10～18/54～57/84；D08 AC-TRANS/CONSTRAINT/TM/FALLBACK。D 编
 - 作者=Codex、Reviewer=DeepSeek Harness（**非作者**）；base=`754eb4f`（master）、交付 head=`971efe6`；Handoff 见 [TASK-017-971efe6.md](../handoffs/TASK-017-971efe6.md)，取证见 [verification/TASK-017/revision-971efe6.md](../../verification/TASK-017/revision-971efe6.md)。
 - 动因：`doc/reviews/TASK-017-protocol.md` 把 R-001/R-002/R-003 登记为 **open（"移交生产实现 Task"）**，而研究报告 §4 要求"生产 Translate Step 引用 `protocol.py` 分类器前必须先吸收"，TASK-019（未释放）将直接消费该分类器。
 - 修正：R-001 非字符串 `region_id`/`translated_text` 不再崩溃或静默 `str()` 成 `"None"`；R-002 429 独立为 `http_429` 并纳入 `RETRYABLE`、其余 4xx 显式声明不可重试；R-003 引入 `reading_order`（D06 §13）并显式声明"最近优先保留连续段"的截断策略。
-- 验证：`test_protocol.py` **20 passed / 0 skipped**（15 → 20）；`test_run_experiment_cli.py` **1 passed**；`run_experiment.py` 退出码 0 且 `results.json` 与提交版本逐字段一致（仅 `latency_ms` 为测量值）；**判别力**：新增 5 例在修复前代码上全部 FAILED。
+- 验证（作者）：`test_protocol.py` **20 passed / 0 skipped**（15 → 20）；`test_run_experiment_cli.py` **1 passed**；`run_experiment.py` 退出码 0 且 `results.json` 与提交版本逐字段一致（仅 `latency_ms` 为测量值）；**判别力**：新增 5 例在修复前代码上全部 FAILED。
+- **独立 Review（2026-09-17）**：DeepSeek Harness 在独立 linked worktree（分支 `agent/deepseek/TASK-017-tail-review`）完成，报告 commit `e50ba29` → [`doc/reviews/TASK-017-971efe6.md`](../reviews/TASK-017-971efe6.md)，结论 **`approved`**（P0=0/P1=0/P2=0，P3×1 观察 R-101 不阻塞）。Reviewer 独立复现了判别力（修复后测试 × 修复前代码 = 5 failed / 15 passed）。
+- **集成（2026-09-17，Codex）**：`integration_commit=d36f724`（merge，3 parents：`754eb4f` + 作者 `387bb1e` + 评审 `e50ba29`）。集成后复验见 [verification/TASK-017/integration-d36f724.md](../../verification/TASK-017/integration-d36f724.md)：`test_protocol.py` **20 passed / 0 skipped**、`test_run_experiment_cli.py` **1 passed**、全仓 **530 passed / 6 skipped**（6 项均 `openssl unavailable`）；`results.json` 未被改写。
+- **Findings 关闭**：R-001 / R-002 / R-003 **closed**（`971efe6` + 回归测试，Reviewer 复核成立）；**R-101 closed**（`experiments/TASK-017/README.md` 注明 `latency_ms` 为易变字段、比对应排除，并列出可指纹化的确定性字段；未改动 `results.json`）。
 - 未完成项不变、**不得视为通过**：真实 Provider / 真实 Sakura / 真实模型质量评分仍 **NOT_RUN**（未配置付费端点、本机无 Sakura 服务；禁止自行配置）。

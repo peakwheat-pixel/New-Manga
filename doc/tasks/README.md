@@ -20,7 +20,7 @@ TASK-001～TASK-018、TASK-024 与 TASK-028～TASK-031 已完成并集成（TASK
 | [TASK-014](TASK-014.md) | 实现配色与文字排版渲染 | ZCode | done；integration `a943297`；TASK-008 |
 | [TASK-015](TASK-015.md) | 实现阅读器与五种成果导出 | ZCode | done；base `1000ac8`；integration `fa72cee`；外部 post-hoc Review `9b77685` approved，R-101 已收口于 `c7a02bd`；TASK-012, TASK-014 |
 | [TASK-016](TASK-016.md) | OCR 与检测路线独立实验 | DeepSeek Harness | done；integration `9bf85f5`；Review `878ac16`；TASK-003, TASK-004 |
-| [TASK-017](TASK-017.md) | Translation 与上下文输出协议实验 | ZCode | done；base `348a48e`；integration `c0cf3a1`；外部 post-hoc Review `fb0bc40` approved，R-101 已收口于 `c7a02bd`；真实端点层 NOT_RUN；依赖 TASK-003, TASK-004 |
+| [TASK-017](TASK-017.md) | Translation 与上下文输出协议实验 | ZCode | done；主体 base `348a48e`、integration `c0cf3a1`、外部 post-hoc Review `fb0bc40` approved；尾项修订切片（R-001/R-002/R-003 吸收）Review=[TASK-017-971efe6](../reviews/TASK-017-971efe6.md) approved、integration=`d36f724`（R-001/R-002/R-003/R-101 closed）；真实端点层 NOT_RUN；依赖 TASK-003, TASK-004 |
 | [TASK-018](TASK-018.md) | Mask / Inpainting 路线独立实验 | DeepSeek Harness | done；三轮 Review [TASK-018-6c33e7f](../reviews/TASK-018-6c33e7f.md) + [TASK-018-5063315](../reviews/TASK-018-5063315.md) + [TASK-018-965bcd2](../reviews/TASK-018-965bcd2.md) 均 approved，integration=`4d189ce`→`14b92e4`→`5a9f5c8`（无待处理 finding）；TASK-003, TASK-004 |
 | [TASK-019](TASK-019.md) | 集成已验证的检测/OCR/翻译/修复 Provider | ZCode | blocked；TASK-011, TASK-014, TASK-016, TASK-017, TASK-018, TASK-024 |
 | [TASK-020](TASK-020.md) | 实现 Webtoon 分块处理与阅读 | ZCode | TASK-013, TASK-015, TASK-019 |

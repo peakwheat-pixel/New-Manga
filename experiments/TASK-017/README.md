@@ -20,9 +20,13 @@ python run_experiment.py                  # 全场景，写 results.json（退�
   可编程故障（malformed/empty/drop/dup/extra/503/401/延迟），记录每个请求
   payload 供 §57 输入不变性验证。
 - `samples.py`：日/韩混合文本、双页上下文、术语表（先輩/倒す/마법）。
-- `test_protocol.py`：15 例（含故障注入、预算截断、显式 fallback 链、
-  时延/Token 测量）。
+- `test_protocol.py`：20 例（含故障注入、预算截断、显式 fallback 链、
+  时延/Token 测量，以及 Review R-001/R-002/R-003 的回归 5 例）。
 - `run_experiment.py`：S1~S8 场景机读结果 → `results.json`。
+- **`results.json` 的 `latency_ms` 是易变字段**（运行期测量值，每次复跑都会
+  不同）：比对"与提交版本一致"时必须排除该字段；可指纹化的确定性证据是
+  `kind` / `retryable` / `payload_hash` / `context_truncated_pages` / `match`
+  等其余字段（Review R-101）。
 
 ## 结论速览（详见 ../../doc/research/TASK-017.md）
 
