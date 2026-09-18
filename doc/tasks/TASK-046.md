@@ -6,7 +6,7 @@ status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
-reviewer: DeepSeek Harness
+reviewer: Qoder
 depends_on: [TASK-042, TASK-045]
 base_commit: fc8f1d95dd465bf021f8d61414778f98a4f46f17
 branch: agent/zcode/TASK-046-decode-rewind-cost
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-046：解码面 rewind 成本收敛（overlap 语义收口）
 
-**READY（2026-09-18，用户批准"下一步"后由 Codex 开立并释放）**：Owner=`ZCode`、Reviewer=`DeepSeek Harness`（**非作者**）、base=`fc8f1d9`（释放时 master HEAD）。
+**READY（2026-09-18，用户批准"下一步"后由 Codex 开立并释放）**：Owner=`ZCode`、Reviewer=`Qoder`（**非作者**；原指派 `DeepSeek Harness`，2026-09-19 经用户指示改派）、base=`fc8f1d9`（释放时 master HEAD）。
 
 > **✅ 开工门已解除（2026-09-18）**：TASK-045 已集成（`e2a8f01`），写集合冲突消除 ⇒ **可置 `in_progress`**（开工先 `git merge master`，现为 `e2a8f01`）。原记录：本 Task 的写集合与 [TASK-045](TASK-045.md) **重叠**（`src/infrastructure/imaging/webtoon_tiles.py`、`tests/core/test_bootstrap.py`、`tests/reading_export/**`）。**TASK-045 必须已集成**（当前 `in_review`、首轮 Review 判 `changes_requested`，R-001 P1 待修）方可把本 Task 置 `in_progress`；开工前先 `git merge master`。此门由 Codex 在 TASK-045 集成时解除（协议 §3.4：并行只用于写集合互不重叠的 Task）。
 
@@ -89,5 +89,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[TASK-046-a40e228.md](../handoffs/TASK-046-a40e228.md)。Review：尚无（待 `DeepSeek Harness` 按 §6 执行**非作者** Review）。实际测试：修前全仓 1 次（848/0）+ 修后全仓 5 次（851/0 ×5）+ 定向 136/0 + 探针前后各 ×3 + 判别力 1 次，全部入库 `verification/TASK-046/`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 开工（merge master 至 `ec5b4d1` 后置 `in_progress`）；实现提交 `a40e228`（bootstrap overlap=0 + 默认值收口 + docstring 口径 + AC①/⑤ 测试 + 修前基线证据）；AC ①～⑦ 全部达成（AC② 含一处墙钟归因声明），文档收口本提交。**待 DSH 非作者 Review；集成与 AC ⑩ 正式 STATUS 口径登记归 Codex。**`base=fc8f1d9`。
+- Handoff：[TASK-046-a40e228.md](../handoffs/TASK-046-a40e228.md)。Review：尚无（待 `Qoder` 按 §6 执行**非作者** Review；原指派 DSH，2026-09-19 经用户指示改派）。实际测试：修前全仓 1 次（848/0）+ 修后全仓 5 次（851/0 ×5）+ 定向 136/0 + 探针前后各 ×3 + 判别力 1 次，全部入库 `verification/TASK-046/`。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 开工（merge master 至 `ec5b4d1` 后置 `in_progress`）；实现提交 `a40e228`（bootstrap overlap=0 + 默认值收口 + docstring 口径 + AC①/⑤ 测试 + 修前基线证据）；AC ①～⑦ 全部达成（AC② 含一处墙钟归因声明），文档收口本提交。**待 Qoder 非作者 Review；集成与 AC ⑩ 正式 STATUS 口径登记归 Codex。**`base=fc8f1d9`。
