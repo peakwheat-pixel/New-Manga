@@ -529,6 +529,10 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         pipeline = build_production_pipeline(
             conn, handlers=handlers, clean_probe=clean_probe
         )
+        # TASK-048 AC ③: a run left RUNNING by a previous process (crash,
+        # kill) must never look active forever — startup reaps those rows to
+        # INTERRUPTED before any ViewModel can observe them.
+        pipeline.recover_running_runs()
         editing = RegionEditingService(regions)
         navigation = NavigationViewModel()
 
