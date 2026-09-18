@@ -8,10 +8,11 @@
 |---|---|---|---|
 | Codex Desktop | Lead / Architect / Integrator；盘点、契约、拆任务、协调依赖、处理冲突 | 基线文档、Task、集成验证与决策记录 | 唯一主线写入和合并责任人 |
 | ZCode | 独立 Feature、长任务 | 固定 commit、代码与必要测试、Handoff | 自己的任务分支；不得自行合并主线 |
+| Qoder | 独立 Feature、长任务实现（与 ZCode 同面）；亦可作为**非作者** Reviewer | 固定 commit、代码与必要测试、Handoff；Review 报告 | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
 | DeepSeek Harness | 技术实验、OCR/Translation/Inpainting 研究、测试、Bug 分析、独立 Code Review | 可复现实验、测试证据、诊断/Review 报告 | 自己的实验或测试分支；不得自行改生产实现以“证明”Review |
 | 用户 | 产品取舍、阶段审核、重大范围变化 | 由 Codex 记录的审核决定 | 决定接管及后续阶段范围 |
 
-Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
+Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查；ZCode / Qoder 的实现由 Codex、DeepSeek Harness 或 Qoder（**非作者**）独立审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
 
 研究结论不自动成为产品需求。诊断任务只读分析与复现；修复需要有允许修改生产代码的 Task。Reviewer 默认只写 Review 报告。
 
@@ -21,7 +22,7 @@ Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 Z
 
 批准接管后先由 Codex 创建可复现的初始基线 commit，再开放任务分支。未提交的当前接管文件不能充当可跨 worktree 同步的基线。第一次提交的 author 使用实际 Git 身份，不能冒用其他 Agent 的签名。
 
-并行模式：Codex 使用主工作区；ZCode 和 DeepSeek 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
+并行模式：Codex 使用主工作区；ZCode、DeepSeek 与 Qoder 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
 
 开始时记录以下检查结果：
 
@@ -36,7 +37,7 @@ git rev-parse HEAD
 
 linked worktree 的 toplevel 可以不同，但 common directory 必须指向本项目 .git。初始仓库 HEAD 不存在时，由 Codex先完成基线提交；其他 Agent 不自行绕过。
 
-分支约定：agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 Codex 分配并填进 Task，不能复制模板中的示例命令直接执行。
+分支约定：agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug、agent/qoder/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 Codex 分配并填进 Task，不能复制模板中的示例命令直接执行。
 
 同一物理 checkout 同时只允许一个写入者；无法使用 worktree 时串行交接。read-only Review 也固定被审查 commit，不对正在写的 checkout 运行会改文件的命令。
 

@@ -1,6 +1,6 @@
 # New Manga：所有 Agent 的共同入口
 
-唯一真实项目仓库：G:/CODEX/New Manga。Codex Desktop、ZCode、DeepSeek Harness 以此仓库及其 Git linked worktree 为工作空间，共享 Git 历史和版本化文档。聊天记录不是项目事实来源。
+唯一真实项目仓库：G:/CODEX/New Manga。Codex Desktop、ZCode、DeepSeek Harness、Qoder 以此仓库及其 Git linked worktree 为工作空间，共享 Git 历史和版本化文档。聊天记录不是项目事实来源。
 
 ## 每次开始工作
 
@@ -23,6 +23,7 @@
 
 - Codex：Lead / Architect / Integrator；负责契约、任务分配、冲突决策及集成。
 - ZCode：独立 Feature、长任务实现；提交代码、测试及 Handoff。
+- Qoder：独立 Feature、长任务实现（与 ZCode 同面）；提交代码、测试及 Handoff；也可作为**非作者** Reviewer。不得审核自己实现的变更。
 - DeepSeek Harness：技术实验、OCR / Translation / Inpainting 研究、测试、Bug 分析及独立 Review。不得审核自己实现的变更。
 - 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 Codex 明确范围；产品需求取舍由用户决定。
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。
