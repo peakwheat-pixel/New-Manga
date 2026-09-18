@@ -898,6 +898,18 @@ def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
     return engine
 
 
+def _shutdown_services(services: AppServices) -> None:
+    """Drain the workbench run thread, then close the shared connection.
+
+    The worker thread uses the same SQLite connection as the GUI thread
+    (single-connection design), so the drain must finish before close().
+    RunController.shutdown cancels the active run and waits (bounded, it
+    never force-kills); when no run is active it is a no-op.
+    """
+    services.workbench.shutdown()
+    services.conn.close()
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="bootstrap.app")
     parser.add_argument(
@@ -949,7 +961,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         engine = assemble_engine(services)
     except Exception as error:
         if services is not None:
-            services.conn.close()
+            _shutdown_services(services)
         if temp_root is not None:
             temp_root.cleanup()
         print(f"bootstrap failed: {error}", file=sys.stderr)
@@ -997,7 +1009,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     # Close SQLite before temp-root cleanup: the connection holds the
     # Windows file lock on library.db.
-    services.conn.close()
+    _shutdown_services(services)
     if temp_root is not None:
         temp_root.cleanup()
     return exit_code
