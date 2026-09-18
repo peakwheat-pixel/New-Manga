@@ -1,0 +1,14 @@
+[a] Qt page filter histogram: {None: 308, Sub: 215, Up: 2067, Average: 239, Paeth: 1171}
+[a] crop equivalence on the Qt multi-filter page: OK
+[b:RGB] filters={0: 90, 1: 90, 2: 90, 3: 90, 4: 90} tiles=5: OK
+[b:RGBA] filters={0: 90, 1: 90, 2: 90, 3: 90, 4: 90} tiles=5: OK
+[b:Gray] filters={0: 90, 1: 90, 2: 90, 3: 90, 4: 90} tiles=5: OK
+[b:Gray+Alpha] filters={0: 90, 1: 90, 2: 90, 3: 90, 4: 90} tiles=5: OK
+[c] read_band(past EOF) -> OUT_OF_RANGE (typed)
+[c] read_band(height-5, 100) -> 5 rows (silent clamp to EOF: yes) - callers must self-check (production _decode does via R-004)
+[c] behaviour record consistent
+suite a: OK
+suite b: OK
+suite c: OK
+overall: OK
+EXIT=0

@@ -1,0 +1,10 @@
+[a] Qt page filter histogram: {None: 308, Sub: 215, Up: 2067, Average: 239, Paeth: 1171}
+[a] tile 1: file height 1564 != declared content_height 1500 (top 1500)
+[a] tile 1: row mismatch, first bad row 500 (rows 1564 vs expected 1500)
+[a] tile 2: file height 1064 != declared content_height 1000 (top 3000)
+[a] tile 2: row mismatch, first bad row 0 (rows 1064 vs expected 1000)
+[a] FAIL: tile concatenation != page rows (4128 rows vs 4000)
+[a] crop equivalence on the Qt multi-filter page: FAILED
+suite a: FAILED
+overall: FAILED
+EXIT_A=1
