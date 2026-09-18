@@ -1,0 +1,16 @@
+== tree: C:\Users\49745\AppData\Local\Temp\task046-prefix-ec5b4d1 | TileGrid default overlap=64 ==
+  400x20000 full sweep (25 tiles): 1.000s rewinds=24 rows_reconstructed=260000 kept_rows=20000 filters[None:260000]
+== 1600x8000 Qt-encoded page: 0.1 MB file ==
+  tile 0 only (rows 0-4000): 4.172s rewinds=0 rows_reconstructed=4000 kept_rows=4000 filters[None:16, Sub:31, Paeth:3953]
+  tiles 0+1 in one call (rows 0-8000): 13.094s rewinds=1 rows_reconstructed=12000 kept_rows=8000 filters[None:48, Sub:94, Paeth:11858]
+  => measured extra for the second tile: 8.922s | extra rewinds=1 | extra rows_reconstructed=8000
+  FLOOR a: read_band(0,8000) one sequential pass: 8.469s rewinds=0 rows_reconstructed=8000 filters[None:32, Sub:63, Paeth:7905]
+  FLOOR b: read_band(0,4000) one sequential pass: 4.344s rewinds=0 rows_reconstructed=4000 filters[None:16, Sub:31, Paeth:3953]
+  FLOOR c: _encode_png(4000 rows) 0.062s -> 0.0 MB
+  FLOOR for tiles 0+1 (one 8000-row pass + two band encodes): 8.593s | measured 13.094s -> ratio 1.524
+  FLOOR for tile 0 only (one 4000-row pass + one encode): 4.406s | measured 4.172s -> ratio 0.947
+  unavoidable work of the SECOND tile (rows 4000-8000 + its encode): 4.187s | measured extra 8.922s
+  rows 4000-8000 reached via read_band(4000,4000): 8.250s rewinds=0 rows_reconstructed=8000 filters[None:32, Sub:63, Paeth:7905]
+  per-row cost band0 (rows 0-4000): 1.086 ms | band1 (rows 0-8000 pass): 1.059 ms
+  CONTROL tiles 0+1 with explicit overlap=64: 12.453s rewinds=1 rows_reconstructed=12000 kept_rows=8000 filters[None:48, Sub:94, Paeth:11858]
+  => overlap=64 costs 0 extra reconstructed rows vs this tree's default (0.95x wall clock of the default call)

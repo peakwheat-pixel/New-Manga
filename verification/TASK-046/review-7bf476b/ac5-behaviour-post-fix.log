@@ -1,0 +1,5 @@
+== tree: G:\CODEX\New Manga.worktrees\TASK-046-zcode
+== default overlap on this tree: 0
+-- full sweep at this tree's default overlap: rewinds=0 -> test's 'rewinds == 0' would PASS
+-- overlap 0 vs 64 tile bytes identical: True | stitched == whole page: True -> byte-identity body PASSES (pinned, as declared)
+-- full sweep with explicit overlap=64: rewinds=4 (test pins == 4)

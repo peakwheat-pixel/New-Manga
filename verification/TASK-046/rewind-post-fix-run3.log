@@ -1,0 +1,12 @@
+== TASK-046 AC 2: default-overlap full sweep, 400x20000 (tile_height=800, default overlap=0) ==
+grid tiles: 25
+  full sweep: 0.172s rewinds=0
+
+== TASK-046 AC 2: 1600x8000 Qt-encoded, default overlap, tile 0 vs tiles 0+1 ==
+  tile 0 only (4000 rows): 4.188s rewinds=0
+  tiles 0+1 in one call: 8.796s rewinds=0
+  => extra cost of the second tile in the same call: 4.608s (TASK-045 baseline: ~8.9-9.7s of pure rescan)
+
+== control: explicit overlap=64 keeps the per-tile rewind (machinery retained) ==
+  tiles 0+1 with overlap=64: 13.610s rewinds=1
+EXIT=0

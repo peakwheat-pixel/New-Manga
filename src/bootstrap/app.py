@@ -550,7 +550,13 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
                 path,
                 cache_dir=Path(managed_root) / "cache" / "webtoon-tiles",
                 tile_height=4000,
-                overlap=64,
+                # overlap=0 (TASK-046): after TASK-045 F-4 crops the decode
+                # window to the content band, an overlap contributes nothing
+                # to the stored pixels — it only pushed every tile after the
+                # first behind the streaming cursor, forcing a per-tile
+                # rewind (O(tiles^2) per sweep). 0 makes the full-page sweep
+                # one sequential scan; pixels are byte-identical (AC 1).
+                overlap=0,
                 prefetch=1,
                 cache=TileCache(max_bytes=512 * 1024 * 1024),
             )

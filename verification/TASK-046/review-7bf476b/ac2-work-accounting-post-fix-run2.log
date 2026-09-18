@@ -1,0 +1,16 @@
+== tree: G:\CODEX\New Manga.worktrees\TASK-046-zcode | TileGrid default overlap=0 ==
+  400x20000 full sweep (25 tiles): 0.172s rewinds=0 rows_reconstructed=20000 kept_rows=20000 filters[None:20000]
+== 1600x8000 Qt-encoded page: 0.1 MB file ==
+  tile 0 only (rows 0-4000): 4.141s rewinds=0 rows_reconstructed=4000 kept_rows=4000 filters[None:16, Sub:31, Paeth:3953]
+  tiles 0+1 in one call (rows 0-8000): 8.750s rewinds=0 rows_reconstructed=8000 kept_rows=8000 filters[None:32, Sub:63, Paeth:7905]
+  => measured extra for the second tile: 4.609s | extra rewinds=0 | extra rows_reconstructed=4000
+  FLOOR a: read_band(0,8000) one sequential pass: 8.703s rewinds=0 rows_reconstructed=8000 filters[None:32, Sub:63, Paeth:7905]
+  FLOOR b: read_band(0,4000) one sequential pass: 4.406s rewinds=0 rows_reconstructed=4000 filters[None:16, Sub:31, Paeth:3953]
+  FLOOR c: _encode_png(4000 rows) 0.063s -> 0.0 MB
+  FLOOR for tiles 0+1 (one 8000-row pass + two band encodes): 8.829s | measured 8.750s -> ratio 0.991
+  FLOOR for tile 0 only (one 4000-row pass + one encode): 4.469s | measured 4.141s -> ratio 0.927
+  unavoidable work of the SECOND tile (rows 4000-8000 + its encode): 4.360s | measured extra 4.609s
+  rows 4000-8000 reached via read_band(4000,4000): 8.531s rewinds=0 rows_reconstructed=8000 filters[None:32, Sub:63, Paeth:7905]
+  per-row cost band0 (rows 0-4000): 1.102 ms | band1 (rows 0-8000 pass): 1.088 ms
+  CONTROL tiles 0+1 with explicit overlap=64: 12.969s rewinds=1 rows_reconstructed=12000 kept_rows=8000 filters[None:48, Sub:94, Paeth:11858]
+  => overlap=64 costs 4000 extra reconstructed rows vs this tree's default (1.48x wall clock of the default call)

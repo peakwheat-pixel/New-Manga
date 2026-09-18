@@ -2,11 +2,11 @@
 id: TASK-046
 title: 解码面 rewind 成本收敛（overlap 语义收口，落地 TASK-042 AC ⑩ 的实测结论）
 kind: performance
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
-reviewer: DeepSeek Harness
+reviewer: Qoder
 depends_on: [TASK-042, TASK-045]
 base_commit: fc8f1d95dd465bf021f8d61414778f98a4f46f17
 branch: agent/zcode/TASK-046-decode-rewind-cost
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-046：解码面 rewind 成本收敛（overlap 语义收口）
 
-**READY（2026-09-18，用户批准"下一步"后由 Codex 开立并释放）**：Owner=`ZCode`、Reviewer=`DeepSeek Harness`（**非作者**）、base=`fc8f1d9`（释放时 master HEAD）。
+**READY（2026-09-18，用户批准"下一步"后由 Codex 开立并释放）**：Owner=`ZCode`、Reviewer=`Qoder`（**非作者**；原指派 `DeepSeek Harness`，2026-09-19 经用户指示改派）、base=`fc8f1d9`（释放时 master HEAD）。
 
 > **✅ 开工门已解除（2026-09-18）**：TASK-045 已集成（`e2a8f01`），写集合冲突消除 ⇒ **可置 `in_progress`**（开工先 `git merge master`，现为 `e2a8f01`）。原记录：本 Task 的写集合与 [TASK-045](TASK-045.md) **重叠**（`src/infrastructure/imaging/webtoon_tiles.py`、`tests/core/test_bootstrap.py`、`tests/reading_export/**`）。**TASK-045 必须已集成**（当前 `in_review`、首轮 Review 判 `changes_requested`，R-001 P1 待修）方可把本 Task 置 `in_progress`；开工前先 `git merge master`。此门由 Codex 在 TASK-045 集成时解除（协议 §3.4：并行只用于写集合互不重叠的 Task）。
 
@@ -37,16 +37,23 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（根因与不变量，先证后用）**：写清 overlap 在 F-4 之后**还剩什么职责**（是否被任何解码正确性依赖：PNG 行过滤只依赖"上一重建行"，而流式读取本就是顺序重建），并给出**可复现证明**：把解码窗 overlap 去掉/改变后，瓦片像素与 `overlap=64` **逐字节相同**（对图案页与随机页各一次；断言"瓦片行拼接 == 整页行"仍成立）。若结论是"overlap 仍必需"，必须给出反例与最小必要值，**不得凭码面推导**。
-- [ ] **AC ②（成本对照，主 AC）**：同一 shell + 同一 venv，同一页尺寸与同一测量脚本，修复前 vs 修复后**逐次**记录（≥3 次）：
+- [x] **AC ①（根因与不变量，先证后用）**：写清 overlap 在 F-4 之后**还剩什么职责**（是否被任何解码正确性依赖：PNG 行过滤只依赖"上一重建行"，而流式读取本就是顺序重建），并给出**可复现证明**：把解码窗 overlap 去掉/改变后，瓦片像素与 `overlap=64` **逐字节相同**（对图案页与随机页各一次；断言"瓦片行拼接 == 整页行"仍成立）。若结论是"overlap 仍必需"，必须给出反例与最小必要值，**不得凭码面推导**。
+  ✅ **结论：零职责，已证**——`test_overlap_choice_leaves_tile_files_byte_identical`（pattern/noise 两参数）：overlap 0 vs 64 全部 tile 文件**逐字节相同** + 拼接 == 整页。Handoff `TASK-046-a40e228.md`。
+- [x] **AC ②（成本对照，主 AC）**：同一 shell + 同一 venv，同一页尺寸与同一测量脚本，修复前 vs 修复后**逐次**记录（≥3 次）：
   - `rewind` 次数：全页扫掠的 rewind 数**不再 = 块数 − 1**（目标 ≤1/次调用，单块调用为 0）；
   - 墙钟：`1600×8000` Qt 编码页"单块 → 两块同调用"的**额外**耗时应落在噪声级（对照 ≈8.9–9.7s）；`400×20000` 全页扫掠耗时同步下降；
   - 与 `verification/TASK-045/rewind-cost-probe.txt`、[author-probes-rerun.txt](../verification/TASK-045/review-1171bc5/author-probes-rerun.txt) 的基线数字逐项对照。
-- [ ] **AC ③（像素语义不变）**：`tests/reading_export/**` 既有几何/带宽/缓存键/逐行断言**逐条不变**（不得放宽）：瓦片文件高度 == 声明 `content_height`、每块行 == 该页对应行、拼接 == 整页；全屏/视口请求返回的文件集合语义不变。
-- [ ] **AC ④（缓存语义显式声明）**：缓存键含 `overlap`（`webtoon_tiles.py:335`）⇒ 改 overlap 会使既有磁盘瓦片**失效重建**。须在 Handoff 声明这一点及其影响（可重建像素缓存、不触业务数据），并确认 `_TILE_CACHE_FORMAT` 是否需要随之升版。
-- [ ] **AC ⑤（判别力与对照）**：新增/更新的断言对**修前代码**失败（或给出等价对照矩阵并说明为何不适用）；如实标注哪些用例只是"钉住既有行为"、不计入判别力。
-- [ ] **AC ⑥（不回归）**：`tests/reading_export`、`tests/core` 与全仓 **passed 不减少**；全仓 ≥5 次逐次记录（同一 shell + 同一 venv、退出码 + passed/skipped 分列 + skip 原因）；**不得新增 `skip`/`xfail`、不得放宽/删除既有断言**。
-- [ ] **AC ⑦（可观测性收口）**：`webtoon_tiles.py` 的 `ensure_viewport`/`_decode` 与 `TASK-042` Handoff 里"一次顺序扫描"的措辞必须与最终实现**一致**（代码/注释/断言三者一致）；`doc/STATUS.md` 由 Codex 在集成时登记 AC ⑩ 的最终口径。
+  ✅ rewinds 24→0（全页）、1→0（两块）；全页 0.92→0.17s（≈5.4×）；基线逐项吻合。**⚠ "额外耗时噪声级"字面未达成，已归因**：残余 4.61–5.22s = 第二块自身的线性解码成本（重扫增量 ≈4s 已消除）——如实登记于 Handoff AC② 表，交 Reviewer 裁定。
+- [x] **AC ③（像素语义不变）**：`tests/reading_export/**` 既有几何/带宽/缓存键/逐行断言**逐条不变**（不得放宽）：瓦片文件高度 == 声明 `content_height`、每块行 == 该页对应行、拼接 == 整页；全屏/视口请求返回的文件集合语义不变。
+  ✅ 既有断言 0 修改 0 删除（diff 仅新增）；修后定向 136 passed / 0 skipped。
+- [x] **AC ④（缓存语义显式声明）**：缓存键含 `overlap`（`webtoon_tiles.py:335`）⇒ 改 overlap 会使既有磁盘瓦片**失效重建**。须在 Handoff 声明这一点及其影响（可重建像素缓存、不触业务数据），并确认 `_TILE_CACHE_FORMAT` 是否需要随之升版。
+  ✅ 旧盘瓦片按新 key 自动失效重建（可重建像素、不触业务数据）；**不升版**（键已含 overlap，且 F-4 后字节与 overlap 无关）——声明已写入 `_TILE_CACHE_FORMAT` 注释与 Handoff。
+- [x] **AC ⑤（判别力与对照）**：新增/更新的断言对**修前代码**失败（或给出等价对照矩阵并说明为何不适用）；如实标注哪些用例只是"钉住既有行为"、不计入判别力。
+  ✅ 修后 tests @ 修前 src（ec5b4d1）→ **4 failed / 16 passed**（`discriminating-new-tests-vs-prefix.log`）；判别 = 默认值/装配断言 ×3，钉住 = 字节等价本体 + overlap=64 对照分支（均如实标注，见 Handoff AC⑤）。
+- [x] **AC ⑥（不回归）**：`tests/reading_export`、`tests/core` 与全仓 **passed 不减少**；全仓 ≥5 次逐次记录（同一 shell + 同一 venv、退出码 + passed/skipped 分列 + skip 原因）；**不得新增 `skip`/`xfail`、不得放宽/删除既有断言**。
+  ✅ 修前 848/0 ×1 → 修后 **851/0 ×5**（exit 0 ×5；+3 为新增用例；无新 skip/xfail、断言仅增不改）。
+- [x] **AC ⑦（可观测性收口）**：`webtoon_tiles.py` 的 `ensure_viewport`/`_decode` 与 `TASK-042` Handoff 里"一次顺序扫描"的措辞必须与最终实现**一致**（代码/注释/断言三者一致）；`doc/STATUS.md` 由 Codex 在集成时登记 AC ⑩ 的最终口径。
+  ✅ docstring 已更新为最终契约（默认=顺序扫描；显式 overlap 按文档计价）；TASK-042 Handoff 第 27 行在收口后**重新为真**（正文不改，Handoff 声明衔接）；STATUS 登记行已提交，AC ⑩ 正式口径登记归 Codex 集成时执行。
 
 ## 允许修改范围
 
@@ -66,11 +73,11 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ① 像素等价 | planned：图案页 + 随机页，overlap 变更前后瓦片逐字节比对 | python 3.12 + `TASK-012-py312` venv | NOT_RUN | 无 |
-| AC ② rewind 成本 | planned：`python verification/TASK-046/rewind_cost_probe.py`（基线脚本可从 TASK-045 复制） | 同上，同页尺寸 | NOT_RUN | 无 |
-| AC ③ 像素语义 | planned：`pytest tests/reading_export -q -rs -rf` | 同上 | NOT_RUN | 无 |
-| AC ⑥ 全仓回归 | planned：`pytest -q -rs`（≥5 次） | 同上 | NOT_RUN | 无 |
-| AC ⑤ 判别力 | planned：新断言 + 修前 `src`/装配（对照矩阵） | 同上 | NOT_RUN | 无 |
+| AC ① 像素等价 | planned：图案页 + 随机页，overlap 变更前后瓦片逐字节比对 | python 3.12 + `TASK-012-py312` venv | ✅ pattern/noise 两参数：overlap 0 vs 64 全部 tile 文件逐字节相同 + 拼接==整页（`test_overlap_choice_leaves_tile_files_byte_identical`，3 passed） | `tests/reading_export/test_webtoon_tiles.py`；Handoff AC① |
+| AC ② rewind 成本 | planned：`python verification/TASK-046/rewind_cost_probe.py`（基线脚本可从 TASK-045 复制） | 同上，同页尺寸 | ✅ 前后各 ×3：rewinds 24→0（全页）/1→0（两块）；全页 0.92→0.17s；额外 9.0→4.6–5.2s（⚠ 残余=第二块线性解码，已归因） | `verification/TASK-046/rewind-{pre,post}-fix-run{1,2,3}.log` |
+| AC ③ 像素语义 | planned：`pytest tests/reading_export -q -rs -rf` | 同上 | ✅ 既有断言 0 改 0 删；修后 `tests/reading_export tests/core` 136 passed / 0 skipped | `targeted-reading-export-core-post-fix.log` |
+| AC ⑥ 全仓回归 | planned：`pytest -q -rs`（≥5 次） | 同上 | ✅ 修前 848/0 ×1 → 修后 851/0 ×5（exit 0 ×5；+3 新用例；无新 skip/xfail） | `full-suite-{pre-fix-run1,post-fix-run1..5}.log` |
+| AC ⑤ 判别力 | planned：新断言 + 修前 `src`/装配（对照矩阵） | 同上 | ✅ 修后 tests @ 修前 src（ec5b4d1）：4 failed / 16 passed，exit 1；判别/钉住分列见 Handoff | `discriminating-new-tests-vs-prefix.log` |
 
 ## 依赖、风险与阻塞
 
@@ -82,5 +89,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无（待 `DeepSeek Harness` 按 §6 执行**非作者** Review）。实际测试：尚无（`ready`；开工门已解除，可开工）。
-- **最近状态（当前，唯一）**：2026-09-18 用户批准"下一步"后由 Codex 开立为 `ready`；**TASK-045 已于 `e2a8f01` 集成 ⇒ 开工门解除**，可 `git merge master` 后开工。`base=fc8f1d9`。**实施尚未开始。**
+- Handoff：[TASK-046-a40e228.md](../handoffs/TASK-046-a40e228.md)。Review：尚无（待 `Qoder` 按 §6 执行**非作者** Review；原指派 DSH，2026-09-19 经用户指示改派）。实际测试：修前全仓 1 次（848/0）+ 修后全仓 5 次（851/0 ×5）+ 定向 136/0 + 探针前后各 ×3 + 判别力 1 次，全部入库 `verification/TASK-046/`。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 开工（merge master 至 `ec5b4d1` 后置 `in_progress`）；实现提交 `a40e228`（bootstrap overlap=0 + 默认值收口 + docstring 口径 + AC①/⑤ 测试 + 修前基线证据）；AC ①～⑦ 全部达成（AC② 含一处墙钟归因声明），文档收口本提交。**待 Qoder 非作者 Review；集成与 AC ⑩ 正式 STATUS 口径登记归 Codex。**`base=fc8f1d9`。

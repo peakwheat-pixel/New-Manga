@@ -438,6 +438,11 @@ def test_assemble_engine_registers_reader_export_and_tiled_reader(
         assert services.reader.hasChapter is True
         assert services.reader.tilesActive is True
         services.reader.requestTiles(0, 4000)
+        # TASK-046 AC ⑤: the assembly serves tiles with overlap=0 — the F-4
+        # crop made the overlap pixel-irrelevant, and 0 keeps a whole-page
+        # sweep one sequential scan. Discriminating: the pre-fix assembly
+        # passed overlap=64, so this assertion failed there.
+        assert services.reader._rasterizer.grid.overlap == 0
         tile_files = list(
             (tmp_path / "managed" / "cache" / "webtoon-tiles").glob("tile-*.png")
         )
