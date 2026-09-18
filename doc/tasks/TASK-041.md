@@ -2,7 +2,7 @@
 id: TASK-041
 title: MOBI 导入路线（用户已批准 MOBI 解析依赖）
 kind: implementation
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-023]
 base_commit: 904fca185c9900c0b2df297529a58ece831dc0a0
 branch: agent/zcode/TASK-041-mobi-import
 worktree: G:/CODEX/New Manga.worktrees/TASK-041-zcode
-integration_commit: null
+integration_commit: 7c4fae018c5690063beccd9b9b6d2de19e71ccde
 ---
 
 # TASK-041：MOBI 导入路线（承接 TASK-023 遗留 `BLOCKED`）
@@ -38,8 +38,8 @@ integration_commit: null
 ## Acceptance Criteria
 
 - [x] **AC ①（依赖与留证）**：`requirements.txt` **仅新增 `mobi==0.4.1`**（不得顺带升级/新增其他项）；给出**安装前后各一次全仓对照**与 venv 变更记录；确认该包**不发起网络请求**（可静态核对其导入面）。
-- [ ] **AC ②（解析→带图页面）**——**d114253 Review 判 FAIL（R-001：页面清单=提取树全量图片按字典序，cover/HD/KF8 树会重复/乱序）**；修订 `f752096` 重新交付：收集面收敛为 `mobi7/Images/image%05d.<ext>` + record 号排序 + KF8 typed fail-closed + 注入树回归用例（判别力 3 failed @d114253；Reviewer 探针复跑反例消失 4 页→2 页 record 序），**待 Codex 复审确认后回勾**。：对真实/合成 MOBI 样本提取内嵌页面图像，经 Managed Copy 落地为 Page，排序/来源/重复策略与既有文档导入一致（复用 TASK-023 的用例路径，不另造一套）。
-- [ ] **AC ③（fail-closed 矩阵）**——**d114253 Review 判 PARTIAL（R-003：适配器依赖缺失分支零覆盖；R-004：坏图页仅单页用例）**；修订 `f752096` 补齐：`sys.modules["mobi"]=None` 驱动真实 import 守卫、3 页中段坏图用例、5 个 fail-closed 用例增加受控根不存在断言（R-005），**待 Codex 复审确认后回勾**。：下列输入一律**可诊断失败**且**不留下部分导入的脏数据**（事务/清理语义与 PDF 路径一致）：依赖缺失（readiness = `missing_dependency`）、非 MOBI 载荷、**加密/DRM 保护**、截断/畸形容器、文本型无页面图像、以及图像解码失败的页。
+- [x] **AC ②（解析→带图页面）**——**d114253 Review 判 FAIL（R-001：页面清单=提取树全量图片按字典序，cover/HD/KF8 树会重复/乱序）**；修订 `f752096` 重新交付：收集面收敛为 `mobi7/Images/image%05d.<ext>` + record 号排序 + KF8 typed fail-closed + 注入树回归用例（判别力 3 failed @d114253；Reviewer 探针复跑反例消失 4 页→2 页 record 序），**复审 `3a26c32` 已确认并回勾（integration `7c4fae0`）**。：对真实/合成 MOBI 样本提取内嵌页面图像，经 Managed Copy 落地为 Page，排序/来源/重复策略与既有文档导入一致（复用 TASK-023 的用例路径，不另造一套）。
+- [x] **AC ③（fail-closed 矩阵）**——**d114253 Review 判 PARTIAL（R-003：适配器依赖缺失分支零覆盖；R-004：坏图页仅单页用例）**；修订 `f752096` 补齐：`sys.modules["mobi"]=None` 驱动真实 import 守卫、3 页中段坏图用例、5 个 fail-closed 用例增加受控根不存在断言（R-005），**复审 `3a26c32` 已确认并回勾（integration `7c4fae0`）**。：下列输入一律**可诊断失败**且**不留下部分导入的脏数据**（事务/清理语义与 PDF 路径一致）：依赖缺失（readiness = `missing_dependency`）、非 MOBI 载荷、**加密/DRM 保护**、截断/畸形容器、文本型无页面图像、以及图像解码失败的页。
 - [x] **AC ④（不回归 PDF）**：TASK-023 的 PDF 路径与全部既有用例**逐项不变**（`tests/import_formats/**`、`tests/library/**` 通过数不减少）；MOBI 的新用例**不得**改动 PDF 断言。
 - [x] **AC ⑤（可替换性）**：解析器位于**端口/适配器**之后（`application/importing/documents/ports.py` 已有先例），`requirements.txt` 之外**不得**让 `mobi` 类型泄漏进 application 层；Handoff 说明"若上游停更如何替换"。
 - [x] **AC ⑥（判别力 + 回归）**：新增用例对**修前代码**失败（放 base `904fca1` 的 `src` 上跑一次并留证）；全仓串跑 **≥5 次**逐次记录（**同一 shell + 同一 venv**，退出码 + passed/skipped 分列）。
@@ -77,6 +77,6 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[TASK-041-3230f45](../handoffs/TASK-041-3230f45.md)（含 Review `d114253` 的修订节与 R-006 口径勘误）。Review：[TASK-041-d114253](../reviews/TASK-041-d114253.md) = `changes_requested`（Codex，非作者）；复审待出。证据：[verification/TASK-041/](../../verification/TASK-041/)。
-- **修订记录（当前，唯一）**：2026-09-18 Review `d114253` 判 `changes_requested`（R-001 P1 集合/排序口径、R-002 P2 声明越界、R-003~R-007 P3）。ZCode 修订 head=`f752096`：R-001 收集面收敛为 `mobi7/Images/image%05d.<ext>` + record 号数值排序 + `mobi8/` 树 typed fail-closed（cover/HD 策略显式写入 docstring）；R-002 选声明收窄「KF7 picture MOBI」+ AZW3/KF8 **BLOCKED 登记**（解锁=专门切片验证真实 KF8 树）；R-003 改 `sys.modules["mobi"]=None` 驱动适配器真实 import 守卫；R-004 新增 3 页中段坏图用例（保留已成功页/后续 pending/cancelled=False）；R-005 五个 fail-closed 用例加受控根不存在断言；R-007 未注入 detail 改 "no MOBI binding was injected" 并同步断言；R-006 口径勘误入 Handoff（`0 skipped` 系 Git Bash 会话内启动 powershell.exe、openssl 可用致 6 条 `tests/network` 转正，总数与 Reviewer 的 822/6 一致）。**判别力**：修订用例 @d114253 src → **3 failed / 9 passed exit 1**（恰为 3 个行为修复用例；3 条覆盖补强用例如实声明无判别力）；Reviewer 探针复跑**反例消失**（注入树 4 页/HD 居首 → 2 页 record 序红→绿）。**证据（勘误口径）**：定向 `tests/import_formats tests/library` **68 passed/0 skipped** exit 0；全仓 ×5 **每次 831 passed/0 skipped** exit 0（828+3 新例；无新增 skip/xfail；未验证项：真实商业 DRM 样本与真实 AZW3 容器仍无获取渠道，AZW3 已按 R-002 收窄为 BLOCKED）。AC ②③ 勾选按 Review 结论回退，待复审确认。
+- Handoff：[TASK-041-3230f45](../handoffs/TASK-041-3230f45.md)（含 Review `d114253` 的修订节与 R-006 口径勘误）。Review：[TASK-041-d114253](../reviews/TASK-041-d114253.md) = `changes_requested`（Codex，非作者）→ 修订后复审 [TASK-041-237e623](../reviews/TASK-041-237e623.md) = **`approved`**（`3a26c32`）。证据：[verification/TASK-041/](../../verification/TASK-041/)。
+- **集成记录（当前，唯一）**：2026-09-18 复审 `approved`（`3a26c32`）后按 §6.6 集成——先 `git merge master` → `4d925f3`，再合并入 master → **`integration_commit=7c4fae0`**；集成后复跑全仓 **825 passed / 6 skipped**、定向 68/0（[integration-postmerge-tests.txt](../../verification/TASK-041/integration-postmerge-tests.txt)）。**TASK-041 已 `done`、AC ②③ 已回勾、TASK-023 遗留① 关闭**；AZW3/KF8 另记 `BLOCKED`。以下为修订记录：2026-09-18 Review `d114253` 判 `changes_requested`（R-001 P1 集合/排序口径、R-002 P2 声明越界、R-003~R-007 P3）。ZCode 修订 head=`f752096`：R-001 收集面收敛为 `mobi7/Images/image%05d.<ext>` + record 号数值排序 + `mobi8/` 树 typed fail-closed（cover/HD 策略显式写入 docstring）；R-002 选声明收窄「KF7 picture MOBI」+ AZW3/KF8 **BLOCKED 登记**（解锁=专门切片验证真实 KF8 树）；R-003 改 `sys.modules["mobi"]=None` 驱动适配器真实 import 守卫；R-004 新增 3 页中段坏图用例（保留已成功页/后续 pending/cancelled=False）；R-005 五个 fail-closed 用例加受控根不存在断言；R-007 未注入 detail 改 "no MOBI binding was injected" 并同步断言；R-006 口径勘误入 Handoff（`0 skipped` 系 Git Bash 会话内启动 powershell.exe、openssl 可用致 6 条 `tests/network` 转正，总数与 Reviewer 的 822/6 一致）。**判别力**：修订用例 @d114253 src → **3 failed / 9 passed exit 1**（恰为 3 个行为修复用例；3 条覆盖补强用例如实声明无判别力）；Reviewer 探针复跑**反例消失**（注入树 4 页/HD 居首 → 2 页 record 序红→绿）。**证据（勘误口径）**：定向 `tests/import_formats tests/library` **68 passed/0 skipped** exit 0；全仓 ×5 **每次 831 passed/0 skipped** exit 0（828+3 新例；无新增 skip/xfail；未验证项：真实商业 DRM 样本与真实 AZW3 容器仍无获取渠道，AZW3 已按 R-002 收窄为 BLOCKED）。AC ②③ 勾选按 Review 结论回退，待复审确认。
 - **前史**：2026-09-18 首轮实现交付 `3230f45`（merge master 后基线 `6ea3dd3`，任务书 `base=904fca1` 被取代）；依赖对照装前/装后各 819 passed/0 skipped 一致；判别力两锚点 ImportError exit=2；全仓 ×5 每次 828 passed/0 skipped（口径勘误见 Handoff 修订节）。

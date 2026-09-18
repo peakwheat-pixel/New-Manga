@@ -1,0 +1,39 @@
+post-integration verification on master 7c4fae0 (pwsh + TASK-012-py312, PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider)
+cmd> pytest tests/import_formats tests/library -q -rs -rf
+....................................................................     [100%]
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+68 passed, 1 warning in 1.49s
+EXIT=0
+cmd> pytest -q -rs -p no:cacheprovider
+........................................................................ [  8%]
+........................................................................ [ 17%]
+........................................................s............... [ 25%]
+.......................................................................s [ 34%]
+ssss.................................................................... [ 43%]
+........................................................................ [ 51%]
+........................................................................ [ 60%]
+........................................................................ [ 69%]
+........................................................................ [ 77%]
+........................................................................ [ 86%]
+........................................................................ [ 95%]
+.......................................                                  [100%]
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+825 passed, 6 skipped, 1 warning in 37.04s
+EXIT=0
