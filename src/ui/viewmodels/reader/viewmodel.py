@@ -21,6 +21,7 @@ its store, QML only renders state and calls slots (D05 §60).
 
 from __future__ import annotations
 
+import math
 import time
 from typing import Callable
 
@@ -63,6 +64,7 @@ class ReaderViewModel(QObject):
         self._tile_factory = tile_factory
         self._rasterizer: object | None = None
         self._tile_rows: list[dict] = []
+        self._viewport_page: tuple[int, int] | None = None
         self._exporter: ExportViewModel | None = None
         self._heartbeat = QTimer(self)
         self._heartbeat.setInterval(HEARTBEAT_MS)
@@ -85,6 +87,9 @@ class ReaderViewModel(QObject):
     ) -> None:
         self.settleReadingTime()
         pages = self._catalog.list_pages(chapter_id)
+        # a new chapter starts a fresh viewport: the QML host restores the
+        # saved offset and requests the real window (R-001).
+        self._viewport_page = None
         self._reading.open(
             book_id,
             chapter_id,
@@ -122,6 +127,7 @@ class ReaderViewModel(QObject):
             mode=self._reading.mode,
             resume=True,
         )
+        self._rebuild_tiles()
         self.stateChanged.emit()
 
     @Slot()
@@ -138,6 +144,7 @@ class ReaderViewModel(QObject):
             mode=self._reading.mode,
             resume=False,
         )
+        self._rebuild_tiles()
         self.stateChanged.emit()
 
     # ------------------------------------------------------------------
@@ -246,18 +253,24 @@ class ReaderViewModel(QObject):
     def nextPage(self) -> None:
         self.settleReadingTime()
         self._reading.next_page()
+        # F-5 (TASK-045): a page turn changes the *source*, so the tile rows
+        # must be rebuilt — otherwise the tiled viewer keeps showing the
+        # previous page's pixels while progress already points at the new one.
+        self._rebuild_tiles()
         self.stateChanged.emit()
 
     @Slot()
     def previousPage(self) -> None:
         self.settleReadingTime()
         self._reading.previous_page()
+        self._rebuild_tiles()
         self.stateChanged.emit()
 
     @Slot(int)
     def jumpToPage(self, page_index: int) -> None:
         self.settleReadingTime()
         self._reading.jump_to_page(page_index)
+        self._rebuild_tiles()
         self.stateChanged.emit()
 
     @Slot(float)
@@ -284,6 +297,14 @@ class ReaderViewModel(QObject):
         else (and any factory failure) falls back to the whole-page image
         path. Tiles are a rebuildable pixel cache — clearing them never
         touches reading progress, regions or render revisions.
+
+        R-001 (TASK-045 revision): the rows are rebuilt with empty urls, so the
+        ViewModel must also *serve* them. Opening a chapter at offset 0 and
+        turning a page change no scroll position, so the QML trigger
+        (``onContentYChanged``) never fires and the tiled viewer used to stay
+        blank until the user scrolled. The tile lifecycle belongs to this
+        ViewModel, so it materialises the remembered viewport (the page head
+        when nothing was requested yet) right here.
         """
         self._rasterizer = None
         self._tile_rows = []
@@ -310,7 +331,25 @@ class ReaderViewModel(QObject):
             # unreadable page: keep the whole-image path, QML surfaces the error
             self._rasterizer = None
             self._tile_rows = []
+            self.tilesChanged.emit()
+            return
+        top, bottom = self._viewport_for_new_page()
+        self._serve_viewport(top, bottom, notify=False)
         self.tilesChanged.emit()
+
+    def _viewport_for_new_page(self) -> tuple[int, int]:
+        """The remembered page-pixel viewport, clamped onto the current page.
+
+        ``(0, 0)`` means "the page head plus prefetch" and is the bootstrap
+        when no viewport has been requested yet (R-001).
+        """
+        if self._rasterizer is None or self._viewport_page is None:
+            return (0, 0)
+        top, bottom = self._viewport_page
+        span = max(1, bottom - top)
+        page_height = self._rasterizer.page_size[1]
+        top = min(max(0, top), max(0, page_height - span))
+        return (top, top + span)
 
     def _tiles_active(self) -> bool:
         return self._rasterizer is not None
@@ -336,20 +375,41 @@ class ReaderViewModel(QObject):
 
     pagePixelHeight = Property(int, _page_pixel_height, notify=tilesChanged)
 
-    @Slot(float, float)
-    def requestTiles(self, viewport_top: float, viewport_bottom: float) -> None:
+    @Slot(float, float, float)
+    def requestTiles(
+        self, viewport_top: float, viewport_bottom: float, scale: float = 1.0
+    ) -> None:
         """Materialise the visible tile band (+bounded prefetch) and fill the
-        row URLs; QML calls this while scrolling the tiled webtoon viewer."""
+        row URLs; QML calls this while scrolling the tiled webtoon viewer.
+
+        Coordinate contract (F-11, TASK-045): the viewport arrives in
+        **display** pixels (``Flickable.contentY``/``height``) while the tile
+        grid speaks **page** pixels, so the caller passes ``scale`` = display
+        pixels per page pixel (``host width / pagePixelWidth``). ``1.0`` — the
+        historical behaviour — means the page is shown at 1:1.
+        """
+        if self._rasterizer is None:
+            return
+        factor = float(scale) or 1.0
+        top = int(math.floor(viewport_top / factor))
+        bottom = int(math.ceil(viewport_bottom / factor))
+        self._serve_viewport(top, bottom)
+
+    def _serve_viewport(self, top: int, bottom: int, *, notify: bool = True) -> None:
+        """Materialise the page-pixel viewport ``[top, bottom)`` (+prefetch)
+        and fill the urls of the rows it covers; remembers the viewport so a
+        page turn or a mode switch can serve the equivalent band (R-001)."""
         if self._rasterizer is None:
             return
         grid = self._rasterizer.grid
-        top, bottom = int(viewport_top), int(viewport_bottom)
+        self._viewport_page = (top, bottom)
         try:
             # materialise the visible band (+prefetch); the returned paths are
             # re-resolved per tile below, so the return value is not bound
             self._rasterizer.ensure_viewport(top, bottom)
         except (OSError, ValueError):
-            self.tilesChanged.emit()
+            if notify:
+                self.tilesChanged.emit()
             return
         wanted_indices = {
             tile.index
@@ -364,7 +424,7 @@ class ReaderViewModel(QObject):
             path = self._rasterizer.tile_file(row["index"])
             row["url"] = QUrl.fromLocalFile(str(path)).toString()
             changed = True
-        if changed:
+        if changed and notify:
             self.tilesChanged.emit()
 
     @Slot()

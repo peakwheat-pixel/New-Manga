@@ -61,6 +61,68 @@ def write_streaming_png(
     return time.monotonic() - started
 
 
+def row_colour(page_y: int) -> bytes:
+    """Row ``page_y``'s RGB: a pure function of the row index.
+
+    A solid-colour page cannot tell *which* rows a tile holds, so the F-4
+    geometry tests use content that identifies its own row.
+    """
+    return bytes(((page_y * 7) % 256, (page_y * 13) % 256, (page_y * 29) % 256))
+
+
+def write_row_pattern_png(
+    path: Path, width: int, height: int, *, level: int = -1, seed: int = 0
+) -> None:
+    """RGB PNG where row ``y`` carries :func:`row_colour` (streamed by band).
+
+    ``level=0`` stores the deflate blocks uncompressed, which makes the file
+    size a pure function of the dimensions — the F-14 test needs two files of
+    *identical* size with different pixels.
+    """
+
+    def chunk(tag: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + tag
+            + data
+            + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+        )
+
+    compressor = zlib.compressobj(level)
+    with open(path, "wb") as handle:
+        handle.write(b"\x89PNG\r\n\x1a\n")
+        handle.write(
+            chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+        )
+        rows_per_band = 1000
+        for start in range(0, height, rows_per_band):
+            payload = bytearray()
+            for page_y in range(start, min(start + rows_per_band, height)):
+                payload += b"\x00" + row_colour(page_y + seed) * width
+            data = compressor.compress(bytes(payload))
+            if data:
+                handle.write(chunk(b"IDAT", data))
+        handle.write(chunk(b"IDAT", compressor.flush()))
+        handle.write(chunk(b"IEND", b""))
+
+
+def qt_rows(path: Path) -> tuple[list[bytes], int, int]:
+    """Decode a PNG with Qt and return its rows as packed RGB bytes.
+
+    Reading the *tiles* through Qt (not through the reader under test) keeps
+    the geometry assertion independent of the band reader.
+    """
+    from PySide6.QtGui import QImage
+
+    image = QImage(str(path))
+    assert not image.isNull(), f"Qt could not decode {path}"
+    image = image.convertToFormat(QImage.Format.Format_RGB888)
+    stride = image.bytesPerLine()
+    data = bytes(image.constBits())
+    rows = [data[y * stride : y * stride + image.width() * 3] for y in range(image.height())]
+    return rows, image.width(), image.height()
+
+
 # ---------------------------------------------------------------------------
 # TileGrid geometry (no Qt)
 # ---------------------------------------------------------------------------
@@ -223,7 +285,10 @@ def test_tiled_reader_serves_viewport_tiles(tmp_path, qapp) -> None:
     assert vm.pagePixelWidth == 400 and vm.pagePixelHeight == 3000
     rows = list(vm.tiles)
     assert [row["index"] for row in rows] == [0, 1, 2, 3]
-    assert all(not row["url"] for row in rows)
+    # R-001 (TASK-045 revision): the ViewModel serves the page head as soon as
+    # the rows are built, so the bootstrap band (tile 0 + prefetch) already has
+    # urls — this replaces the old "all urls empty until a manual request".
+    assert [row["index"] for row in rows if row["url"]] == [0, 1]
 
     vm.requestTiles(0, 900)  # viewport + prefetch=1 → tiles 0, 1 and 2
     served = [row for row in vm.tiles if row["url"]]
@@ -336,3 +401,360 @@ def test_oversize_page_streams_bands_within_a_measured_memory_bound(
         json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     assert record["fixture_bytes"] > 0 and took > 0.0 and ratio < 0.05
+
+
+# ---------------------------------------------------------------------------
+# TASK-045 F-4: the materialised tile IS the declared content band
+# ---------------------------------------------------------------------------
+
+
+def test_materialised_tiles_carry_exactly_their_declared_band(
+    tmp_path, qapp
+) -> None:
+    """F-4 (TASK-045): the overlap is *decode context only*.
+
+    The file written for a tile must be exactly ``[content_top,
+    content_bottom)`` tall and hold exactly those page rows — otherwise the
+    QML delegate scales a taller image into the declared box (letterbox) and
+    every non-first tile repeats the previous band's tail.
+    """
+    width, height = 400, 3000
+    source = tmp_path / "pattern.png"
+    write_row_pattern_png(source, width, height)
+    rasterizer = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "tiles", tile_height=800, overlap=64
+    )
+    assert rasterizer.page_size == (width, height)
+
+    stitched: list[bytes] = []
+    for tile in rasterizer.grid.tiles:
+        rows, tile_width, tile_height = qt_rows(rasterizer.tile_file(tile.index))
+        expected = [row_colour(y) * width for y in range(tile.content_top, tile.content_bottom)]
+        assert tile_width == width
+        assert tile_height == tile.content_height, (
+            f"tile {tile.index}: file height {tile_height} != declared "
+            f"content_height {tile.content_height}"
+        )
+        assert rows == expected, f"tile {tile.index} does not hold its own page rows"
+        stitched.extend(rows)
+
+    # the union of the tiles is the page: no row repeated, none missing
+    assert stitched == [row_colour(y) * width for y in range(height)]
+
+
+# ---------------------------------------------------------------------------
+# TASK-045 F-5 / F-11: page turns rebuild tiles; viewport coordinates are
+# converted from display pixels
+# ---------------------------------------------------------------------------
+
+
+def _make_multipage_webtoon_stack(tmp_path: Path, sizes: list[tuple[int, int]]):
+    """ReaderViewModel over a multi-page webtoon chapter with tiling injected."""
+    from application.reading import ReaderPage
+    from application.reading.service import ReadingService
+    from application.export import ExportService, JsonHistoryDocumentStore
+    from application.reading import JsonProgressDocumentStore
+    from ui.viewmodels.reader.viewmodel import ReaderViewModel
+    from infrastructure.imaging.webtoon_tiles import TiledPageRasterizer
+
+    tests_dir = Path(__file__).resolve().parent
+    import sys
+
+    for entry in (str(tests_dir), str(tests_dir.parents[1] / "src")):
+        if entry not in sys.path:
+            sys.path.insert(0, entry)
+
+    pages = []
+    for index, (page_width, page_height) in enumerate(sizes):
+        path = tmp_path / f"page_{index}.png"
+        write_streaming_png(path, page_width, page_height, fill_rgb=(30 * index, 60, 90))
+        pages.append(
+            ReaderPage(
+                page_id=f"p{index}",
+                filename=path.name,
+                original_path=str(path),
+                text=f"第 {index} 页",
+            )
+        )
+
+    class Catalog:
+        def list_pages(self, chapter_id):
+            return list(pages)
+
+    reading = ReadingService(JsonProgressDocumentStore(tmp_path / "progress.json"))
+    export_service = ExportService(
+        JsonHistoryDocumentStore(tmp_path / "export_history.json")
+    )
+
+    def factory(path: str) -> TiledPageRasterizer:
+        return TiledPageRasterizer(
+            path, cache_dir=tmp_path / "tile-cache", tile_height=800, overlap=32
+        )
+
+    vm = ReaderViewModel(
+        reading, Catalog(), export_service=export_service, tile_factory=factory
+    )
+    vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+    return vm, reading
+
+
+def test_opening_a_tiled_chapter_serves_the_first_band_by_itself(
+    tmp_path, qapp
+) -> None:
+    """R-001 (TASK-045 revision): the ViewModel must serve the page head on
+    open — no caller requests a viewport when the saved offset is 0."""
+    vm, _reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+
+    assert vm.tilesActive is True
+    served = [row for row in vm.tiles if row["url"]]
+    # tile 0 + one prefetch tile, exactly what visible_tiles(0, 0) covers
+    assert [row["index"] for row in served] == [0, 1]
+    for row in served:
+        assert Path(row["url"].replace("file:///", "").replace("file://", "")).is_file()
+
+
+def test_page_turn_serves_the_remembered_viewport_without_a_request(
+    tmp_path, qapp
+) -> None:
+    """R-001: a page turn serves the equivalent band of the new page on its
+    own, clamped onto the new page's height (never an empty window)."""
+    vm, _reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+    vm.requestTiles(2400, 3200)  # deep in page 1 (tile_height 800)
+    # the deep window plus its prefetch tile are now served as well
+    assert {2, 3} <= {row["index"] for row in vm.tiles if row["url"]}
+
+    vm.nextPage()
+
+    # page 2 is 1200 tall: the 800-row window clamps to [400, 1200) → tiles 0, 1
+    assert vm.pageNumber == 2
+    served = [row["index"] for row in vm.tiles if row["url"]]
+    assert served == [0, 1], vm.tiles
+    for row in vm.tiles:
+        if row["url"]:
+            assert Path(
+                row["url"].replace("file:///", "").replace("file://", "")
+            ).is_file()
+
+
+def test_next_page_rebuilds_the_tiles_for_the_new_page(tmp_path, qapp) -> None:
+    """F-5 (TASK-045): page turns must rebuild the tile rows.
+
+    Pre-fix only ``openChapter``/``setMode`` rebuilt them, so a page turn kept
+    the previous page's pixels (and urls) while progress advanced.
+    """
+    vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+    assert vm.tilesActive is True
+    assert vm.pagePixelHeight == 3000
+    first_page_urls = [row["url"] for row in vm.tiles if row["url"]]
+    assert first_page_urls, "the first page must materialise tiles on open"
+
+    vm.nextPage()
+
+    assert vm.pageNumber == 2
+    # the rows now describe the *new* page and hold the new page's files
+    assert vm.pagePixelHeight == 1200
+    assert [row["height"] for row in vm.tiles] == [800, 400]
+    served = [row for row in vm.tiles if row["url"]]
+    assert [row["index"] for row in served] == [0, 1]
+    assert set(row["url"] for row in served).isdisjoint(first_page_urls), (
+        "a page turn must not keep the previous page's tile files"
+    )
+    for row in served:
+        path = Path(row["url"].replace("file:///", "").replace("file://", ""))
+        assert path.is_file()
+
+    # ...and going back rebuilds page 1 again
+    vm.previousPage()
+    assert vm.pagePixelHeight == 3000
+    assert [row["height"] for row in vm.tiles] == [800, 800, 800, 600]
+
+
+def test_jump_to_page_rebuilds_the_tiles_too(tmp_path, qapp) -> None:
+    """F-5: ``jumpToPage`` is a page-changing slot as well, and it serves the
+    new page by itself (R-001)."""
+    vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+    first_page_urls = {row["url"] for row in vm.tiles if row["url"]}
+
+    vm.jumpToPage(1)
+
+    assert vm.pageNumber == 2
+    assert vm.pagePixelHeight == 1200
+    served = {row["url"] for row in vm.tiles if row["url"]}
+    assert served, "jumping to a page must serve its tiles"
+    assert served.isdisjoint(first_page_urls)
+
+
+class _RecordingRasterizer:
+    """Minimal rasterizer double that records the viewport it is asked for."""
+
+    def __init__(self, page_size: tuple[int, int]) -> None:
+        self.page_size = page_size
+        self.grid = TileGrid(page_size[0], page_size[1], tile_height=800, overlap=32)
+        self.prefetch = 1
+        self.viewports: list[tuple[int, int]] = []
+
+    def ensure_viewport(self, top: int, bottom: int):
+        self.viewports.append((top, bottom))
+        return ()
+
+    def tile_file(self, index: int) -> Path:
+        return Path(f"tile-{index}.png")
+
+
+def test_request_tiles_converts_display_pixels_to_page_pixels(tmp_path, qapp) -> None:
+    """F-11 (TASK-045): QML passes *display* pixels (``Flickable.contentY``);
+    the grid speaks page pixels, so the caller must pass the scale."""
+    from application.reading import ReaderPage
+    from application.reading.service import ReadingService
+    from application.reading import JsonProgressDocumentStore
+    from ui.viewmodels.reader.viewmodel import ReaderViewModel
+
+    recording = _RecordingRasterizer((1600, 6000))
+    page = ReaderPage(
+        page_id="p0", filename="long.png", original_path=str(tmp_path / "long.png"), text=""
+    )
+
+    class Catalog:
+        def list_pages(self, chapter_id):
+            return [page]
+
+    reading = ReadingService(JsonProgressDocumentStore(tmp_path / "progress.json"))
+    vm = ReaderViewModel(reading, Catalog(), tile_factory=lambda path: recording)
+    vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+    assert vm.tilesActive is True
+
+    # the page is 1600px wide; the host shows it at 800px → scale 0.5
+    vm.requestTiles(0, 500, 0.5)
+    vm.requestTiles(10, 500, 0.5)
+    # default keeps the historical 1:1 behaviour
+    vm.requestTiles(0, 500)
+
+    # the first entry is the open-time bootstrap (R-001): visible_tiles(0, 0)
+    assert recording.viewports == [(0, 0), (0, 1000), (20, 1000), (0, 500)]
+
+
+def test_ensure_viewport_rewind_accounting_is_per_tile(tmp_path, qapp) -> None:
+    """AC ⑩ (TASK-042 R-03): the cursor only moves forward and
+    ``visible_tiles`` is ascending, so a rewind's rescan is bounded by the
+    requested window's end — and **each overlapped tile after the first
+    rewinds once** (measured; see verification/TASK-045/rewind-cost-probe.txt).
+
+    The AC's original premise ("one call needs at most one rewind") holds only
+    for a single-tile call; this test pins both cases so the cost model cannot
+    drift silently.
+    """
+    width, height = 400, 4000
+    source = tmp_path / "pattern.png"
+    write_row_pattern_png(source, width, height)
+    rasterizer = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "tiles", tile_height=800, overlap=32, prefetch=0
+    )
+    grid = rasterizer.grid
+
+    # premise: the tile window is ascending for every viewport
+    for top in range(0, height, 250):
+        indices = [tile.index for tile in grid.visible_tiles(top, top + 400, prefetch=1)]
+        assert indices == sorted(indices)
+
+    reader = rasterizer._reader
+    rewinds: list[int] = []
+    original_rewind = reader.rewind
+
+    def counting_rewind() -> None:
+        rewinds.append(reader.cursor_row)
+        original_rewind()
+
+    reader.rewind = counting_rewind
+
+    rasterizer.ensure_viewport(2400, 3200)  # forward: no rewind
+    assert rewinds == []
+    assert reader.cursor_row >= 3200
+
+    rasterizer.ensure_viewport(0, 800)  # one tile behind the cursor: one rewind
+    assert len(rewinds) == 1
+    rows, _width, tile_height = qt_rows(rasterizer.tile_file(0))
+    assert tile_height == 800
+    assert rows == [row_colour(y) * width for y in range(800)]
+
+    # a later forward call reuses the materialised file (no decode, no rewind)
+    rasterizer.ensure_viewport(2400, 3200)
+    assert len(rewinds) == 1
+
+    # three fresh overlapped tiles in one call: tiles 1 and 2 each rewind,
+    # because their windows start `overlap` rows before the previous end
+    fresh = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "tiles-2", tile_height=800, overlap=32, prefetch=0
+    )
+    fresh_reader = fresh._reader
+    fresh_rewinds: list[int] = []
+    fresh_original = fresh_reader.rewind
+
+    def fresh_counting() -> None:
+        fresh_rewinds.append(fresh_reader.cursor_row)
+        fresh_original()
+
+    fresh_reader.rewind = fresh_counting
+    fresh.ensure_viewport(0, 2400)  # tiles 0, 1, 2
+    assert len(fresh_rewinds) == 2, fresh_rewinds
+
+
+def test_same_size_rewrite_does_not_reuse_a_stale_tile(tmp_path, qapp) -> None:
+    """F-14 (TASK-045): the cache key must be content-addressed.
+
+    The old key was path + size + geometry, so rewriting the source *in place*
+    with the same byte count kept hitting the previous page's tile.
+    """
+    width, height = 40, 200
+    source = tmp_path / "page.png"
+    cache_dir = tmp_path / "tiles"
+    write_row_pattern_png(source, width, height, level=0, seed=0)
+    first_size = source.stat().st_size
+
+    first_raster = TiledPageRasterizer(
+        source, cache_dir=cache_dir, tile_height=100, overlap=8
+    )
+    first_tile = first_raster.tile_file(0)
+    first_rows, _width, _height = qt_rows(first_tile)
+
+    # same dimensions, different pixels, identical byte count (level 0)
+    write_row_pattern_png(source, width, height, level=0, seed=37)
+    assert source.stat().st_size == first_size, "the rewrite must keep the size"
+
+    second_raster = TiledPageRasterizer(
+        source, cache_dir=cache_dir, tile_height=100, overlap=8
+    )
+    second_tile = second_raster.tile_file(0)
+
+    assert second_tile != first_tile, "stale tile reused after an in-place rewrite"
+    second_rows, _width, _height = qt_rows(second_tile)
+    assert second_rows != first_rows
+    assert second_rows == [row_colour(y + 37) * width for y in range(100)]
+
+
+def _corrupt_png_payload(path: Path) -> None:
+    """Damage the IDAT payload while leaving the container structurally valid."""
+    data = bytearray(path.read_bytes())
+    marker = data.index(b"IDAT")
+    length = struct.unpack_from(">I", data, marker - 4)[0]
+    state = 24681357
+    for index in range(marker + 4, marker + 4 + length):
+        state = (state * 1103515245 + 12345) & 0x7FFFFFFF
+        data[index] = state & 0xFF
+    path.write_bytes(bytes(data))
+
+
+def test_damaged_payload_degrades_through_the_viewmodel(tmp_path, qapp) -> None:
+    """AC ⑧ end-to-end (TASK-042 R-01): a damaged payload must reach the
+    ViewModel's documented fallback instead of escaping ``zlib.error`` while
+    QML scrolls (``zlib.error`` is not an ``OSError``/``ValueError``)."""
+    source = tmp_path / "damaged.png"
+    write_streaming_png(source, 400, 3000)
+    _corrupt_png_payload(source)
+
+    vm, _reading = _make_reader_stack(tmp_path, source, tile_height=800)
+    assert vm.tilesActive is True
+
+    vm.requestTiles(0, 900)  # pre-fix: zlib.error escapes this call
+
+    assert [row["index"] for row in vm.tiles] == [0, 1, 2, 3]
+    assert all(row["url"] == "" for row in vm.tiles), "no tile can be served"

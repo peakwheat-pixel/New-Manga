@@ -27,7 +27,7 @@ import time as _time  # noqa: E402
 from PySide6.QtCore import QObject, QUrl, Qt  # noqa: E402
 from PySide6.QtGui import QGuiApplication  # noqa: E402
 from PySide6.QtQml import QQmlComponent, QQmlEngine  # noqa: E402
-from PySide6.QtQuick import QQuickWindow  # noqa: F401,E402  (registers item types)
+from PySide6.QtQuick import QQuickItem, QQuickWindow  # noqa: F401,E402  (registers item types)
 from PySide6.QtTest import QTest  # noqa: E402
 
 from application.export import ExportPage  # noqa: E402
@@ -394,6 +394,152 @@ def test_reader_mode_buttons_highlight_current(engine, reader_stack):
         QGuiApplication.processEvents()
         assert vm.mode == "translated"
         assert translated.property("highlighted") and not original.property("highlighted")
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_webtoon_mode_gates_the_toolbar_page_buttons(engine, reader_stack_webtoon):
+    """F-5 (TASK-045): the toolbar's page buttons were never gated on the
+    vertical viewer although the keyboard was, so a webtoon chapter could page
+    away from the page on screen. The gate must be mode-specific: paged
+    chapters keep both buttons."""
+    vm, reading, pages = reader_stack_webtoon
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+        swapped, _trace = pump_traced(
+            window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+        )
+        assert swapped
+        # the fixture's chapter really can page: the gate is not a blanket off
+        assert vm.canGoNext and vm.canGoPrevious is False
+
+        assert find_by_name(root, "readerNextPage").property("enabled") is False
+        assert find_by_name(root, "readerPreviousPage").property("enabled") is False
+
+        # paged chapters keep the toolbar paging
+        vm.openChapter("b", "c", "第1话", "paged", "ltr")
+        vm.jumpToPage(0)
+        QGuiApplication.processEvents()
+        assert vm.canGoNext
+        assert find_by_name(root, "readerNextPage").property("enabled") is True
+    finally:
+        window.close()
+
+
+@pytest.fixture()
+def reader_stack_tiled(tmp_path):
+    """Two real webtoon pages served as tile bands (tile factory injected)."""
+    from infrastructure.imaging.webtoon_tiles import TiledPageRasterizer
+
+    pages = real_png_pages(tmp_path, count=2, page_height=1000)
+    reading = make_reading_service(tmp_path)
+    export_service = make_service(tmp_path)
+
+    def factory(path: str) -> TiledPageRasterizer:
+        return TiledPageRasterizer(
+            path, cache_dir=tmp_path / "tile-cache", tile_height=600, overlap=32
+        )
+
+    vm = ReaderViewModel(
+        reading, Catalog(pages), export_service=export_service, tile_factory=factory
+    )
+    return vm, reading, pages
+
+
+def served_tile_sources(root) -> list:
+    """The tile delegates' ``source`` values from the real object tree.
+
+    QML delegate items get a *visual* parent, not a QObject parent, so
+    ``childItems()`` — not ``findChildren()`` — is what sees them.
+    """
+    host = find_by_name(root, "readerTilesHost")
+    if host is None:
+        return []
+    sources = []
+    for item in host.childItems():
+        source = item.property("source")
+        if source is None:
+            continue
+        text = source.toString() if hasattr(source, "toString") else str(source)
+        if text:
+            sources.append(text)
+    return sources
+
+
+def _open_tiled_webtoon(engine, reader_stack_tiled, window):
+    """Open the tiled webtoon chapter and wait for the viewer to swap in."""
+    vm, _reading, _pages = reader_stack_tiled
+    root = find_by_name(window, "readerView")
+    vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+    swapped, trace = pump_traced(
+        window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+    )
+    assert swapped, trace
+    assert vm.tilesActive is True
+    return vm, root
+
+
+@requires_pyside6
+def test_tiled_webtoon_serves_the_first_page_without_an_explicit_request(
+    engine, reader_stack_tiled
+):
+    """R-001 (TASK-045 revision): opening a tiled webtoon chapter must serve
+    the first page's tiles **by itself**.
+
+    The shipped trigger surface used to be ``onContentYChanged`` only, so an
+    open at the saved offset 0 never asked for a tile: the rows existed with
+    empty urls, the whole-page fallback was hidden by ``tilesActive``, and the
+    reader showed a blank band until the user scrolled. This test never calls
+    ``requestTiles`` — that is the point.
+    """
+    engine.rootContext().setContextProperty("readerViewModel", reader_stack_tiled[0])
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        vm, root = _open_tiled_webtoon(engine, reader_stack_tiled, window)
+
+        served, trace = pump_traced(window, 3.0, lambda: bool(served_tile_sources(root)))
+        assert served, (
+            "opening the chapter must serve the first page's tiles without a "
+            f"scroll — {trace} sources={served_tile_sources(root)}"
+        )
+        assert vm.pageNumber == 1
+    finally:
+        window.close()
+
+
+@requires_pyside6
+def test_tiled_webtoon_serves_the_new_page_after_a_turn_without_an_explicit_request(
+    engine, reader_stack_tiled
+):
+    """R-001 (TASK-045 revision): a page turn must serve the new page's tiles
+    on its own, and never leave the previous page's files on screen."""
+    engine.rootContext().setContextProperty("readerViewModel", reader_stack_tiled[0])
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        vm, root = _open_tiled_webtoon(engine, reader_stack_tiled, window)
+        served, trace = pump_traced(window, 3.0, lambda: bool(served_tile_sources(root)))
+        assert served, f"the first page's tiles must be served — {trace}"
+        first_page_sources = served_tile_sources(root)
+
+        vm.nextPage()
+
+        assert vm.pageNumber == 2
+        replaced, turn_trace = pump_traced(
+            window, 3.0, lambda: bool(served_tile_sources(root))
+        )
+        assert replaced, (
+            "a page turn must serve the new page's tiles without a scroll — "
+            f"{turn_trace} sources={served_tile_sources(root)}"
+        )
+        second_page_sources = served_tile_sources(root)
+        assert set(second_page_sources).isdisjoint(first_page_sources), (
+            "a page turn must not keep the previous page's tile files — "
+            f"sources={second_page_sources}"
+        )
     finally:
         window.close()
 

@@ -26,7 +26,6 @@ unit-testable without PySide6.
 from __future__ import annotations
 
 import hashlib
-import os
 import struct
 import zlib
 from collections import OrderedDict
@@ -38,6 +37,15 @@ from typing import Sequence
 from infrastructure.imaging.streaming_png import StreamingPngError, StreamingPngReader
 
 _COLOUR_TYPE_FOR_CHANNELS = {1: 0, 2: 4, 3: 2, 4: 6}
+
+#: Bumped whenever the *bytes written for a tile* change meaning, so an older
+#: on-disk tile can never be reused after the geometry contract moved
+#: (TASK-045 F-4: files now hold the content band only, without the overlap).
+#: A bump orphans the previous generation's files in the cache directory
+#: (R-005): they are rebuildable pixels, never business data, and
+#: :meth:`TiledPageRasterizer.clear` — or a manual wipe — reclaims every
+#: ``tile-*.png`` generation at once.
+_TILE_CACHE_FORMAT = "v2"
 
 
 def _encode_png(raw: bytes, width: int, height: int, channels: int) -> bytes:
@@ -228,13 +236,28 @@ class TileCache:
 class TiledPageRasterizer:
     """On-demand tile decoder with a rebuildable file cache.
 
-    Peak memory is one decode window (tile + upward overlap), never the
-    whole page: the stdlib streaming PNG reader reconstructs exactly the
-    requested band. Decoded tiles become PNG files under ``cache_dir``
-    (keyed by source hash + tile index + geometry), so QML consumes ordinary
-    file URIs and the whole cache directory can be wiped and rebuilt at any
-    time. The streaming cursor only moves forward; a request behind it (after
-    a cache wipe) transparently rewinds and re-scans.
+    One tile file holds **exactly** ``[content_top, content_bottom)`` of the
+    page: the decode window's upward overlap is decoding *context* and is
+    cropped away before encoding (TASK-045 F-4). The QML delegate therefore
+    scales an image whose aspect ratio already matches its box — no letterbox,
+    and neighbouring bands never repeat rows.
+
+    Memory composition (TASK-045 AC ⑨, measured — see
+    ``verification/TASK-045/memory-and-fixture-probe.txt``): the compressed
+    source is resident (``read_bytes`` below) plus up to 2 x the largest IDAT
+    chunk plus O(decode band); the whole page is never materialised as pixels.
+    Decoded tiles become PNG files under ``cache_dir`` (keyed by source
+    *content* digest + tile geometry + index), so QML consumes ordinary file
+    URIs and the whole cache directory can be wiped and rebuilt at any time.
+
+    The streaming cursor only moves forward, and ``visible_tiles`` is
+    ascending, so no call ever needs a *backward* jump. With a non-zero
+    ``overlap``, however, the decode window of every tile after the first
+    starts ``overlap`` rows before the previous window ended — just behind the
+    cursor — so each of those tiles rewinds and re-scans from row 0, making a
+    multi-tile viewport O(tiles²) rather than one sequential scan
+    (TASK-045 AC ⑩; measured costs in
+    ``verification/TASK-045/rewind-cost-probe.txt``).
     """
 
     def __init__(
@@ -251,7 +274,12 @@ class TiledPageRasterizer:
         self.cache_dir = Path(cache_dir)
         self.prefetch = max(0, int(prefetch))
         self._cache = cache if cache is not None else TileCache(max_bytes=256 * 1024 * 1024)
-        self._reader = StreamingPngReader(self.source_path.read_bytes())
+        source_bytes = self.source_path.read_bytes()
+        # Content-addressed cache identity (TASK-045 F-14): the digest is one
+        # extra pass over bytes that are resident anyway, and it is what makes
+        # a same-size in-place rewrite miss the stale tile.
+        self._source_digest = hashlib.sha256(source_bytes).hexdigest()
+        self._reader = StreamingPngReader(source_bytes)
         self.grid = TileGrid(
             self._reader.width,
             self._reader.height,
@@ -289,7 +317,7 @@ class TiledPageRasterizer:
             raise RuntimeError(f"tile {index} is already being decoded")
         self._in_flight.add(index)
         try:
-            png_bytes = self._decode(self.grid.decode_rect(tile))
+            png_bytes = self._decode(tile)
             self.cache_dir.mkdir(parents=True, exist_ok=True)
             target.write_bytes(png_bytes)
             self._file_keys[index] = target
@@ -301,7 +329,26 @@ class TiledPageRasterizer:
     def ensure_viewport(
         self, viewport_top: int, viewport_bottom: int
     ) -> tuple[Path, ...]:
-        """Decode the visible tiles plus the bounded prefetch window."""
+        """Decode the visible tiles plus the bounded prefetch window.
+
+        Rewind accounting (TASK-045 AC ⑩, measured — see
+        ``verification/TASK-045/rewind-cost-probe.txt``):
+
+        - ``visible_tiles`` is ascending, so a call never needs a *backward*
+          jump mid-way; each tile's rescan is bounded by its own window end;
+        - with a non-zero ``overlap`` the window of every tile after the first
+          starts ``overlap`` rows before the previous window ended — i.e. just
+          behind the cursor — so those tiles each rewind and rescan from row 0.
+          Measured on a 1600x8000 Qt-encoded page: tile 0 alone 4.53 s, tiles
+          0+1 in one call 14.24 s (the extra 9.70 s is exactly that rescan);
+        - tiles whose file already exists are never decoded again, so the cost
+          is paid once per tile file, not once per viewport update.
+
+        The resulting quadratic fold is a decode-strategy property: TASK-042's
+        "one sequential scan for the whole page" holds only with ``overlap=0``.
+        Bootstrapping passes ``overlap=64`` (``src/bootstrap/app.py``), so this
+        is documented, not changed, here.
+        """
         return tuple(
             self.tile_file(tile.index)
             for tile in self.grid.visible_tiles(
@@ -309,13 +356,17 @@ class TiledPageRasterizer:
             )
         )
 
-    def _decode(self, rect: tuple[int, int, int, int]) -> bytes:
-        """Rasterise the band ``(x, y, w, h)`` into PNG bytes.
+    def _decode(self, tile: TileSpec) -> bytes:
+        """Encode **the tile's content band** ``[content_top, content_bottom)``
+        into PNG bytes — the overlap is decode context only (TASK-045 F-4).
 
         ``x`` is always 0 (bands span the full width). The streaming cursor
-        only moves forward; a request behind it (possible after a cache wipe)
-        rewinds and re-scans once — correctness first, re-scan cost recorded
-        in the TASK-042 handoff."""
+        only moves forward; a request behind it (after a cache wipe, or the
+        next overlapped tile) rewinds and re-scans once, and that rescan is
+        linear in the rows up to the requested window's end — not in the page.
+        See :meth:`ensure_viewport` for the measured cost of the overlap.
+        """
+        rect = self.grid.decode_rect(tile)
         _x, y, _width, height = rect
         try:
             raw, width, band_height, channels = self._reader.read_band(y, height)
@@ -326,12 +377,33 @@ class TiledPageRasterizer:
                 ) from error
             self._reader.rewind()
             raw, width, band_height, channels = self._reader.read_band(y, height)
-        return _encode_png(raw, width, band_height, channels)
+        offset = tile.content_top - y
+        # R-004 (TASK-045): the decode window is built from the content band, so
+        # the reader must hand back exactly that many rows. Truncating silently
+        # would write a tile shorter than the height declared to QML — the very
+        # symptom F-4 removed — so a short read is a hard, diagnosable failure.
+        if band_height - offset != tile.content_height:
+            raise OSError(
+                f"tile {tile.index} decoded {band_height} rows for content band"
+                f" {tile.content_height} (offset {offset})"
+            )
+        keep_rows = tile.content_height
+        stride = width * channels
+        start = offset * stride
+        return _encode_png(
+            raw[start : start + keep_rows * stride], width, keep_rows, channels
+        )
 
     def _cache_key(self, index: int) -> str:
-        stat = os.stat(self.source_path)
+        """Cache identity: source *content*, page/tile geometry and index.
+
+        Content-addressed on purpose (TASK-045 F-14): path + size + geometry
+        could not tell a same-size in-place rewrite apart, so a stale tile
+        stayed valid. ``_TILE_CACHE_FORMAT`` additionally separates tile files
+        whose *bytes* changed meaning (F-4).
+        """
         digest = hashlib.sha256(
-            f"{self.source_path}|{stat.st_size}|{self.grid.page_width}x"
+            f"{_TILE_CACHE_FORMAT}|{self._source_digest}|{self.grid.page_width}x"
             f"{self.grid.page_height}|{self.grid.tile_height}|{self.grid.overlap}|{index}".encode()
         ).hexdigest()[:24]
         return f"tile-{digest}-{index:05d}"

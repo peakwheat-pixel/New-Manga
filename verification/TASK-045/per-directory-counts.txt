@@ -1,0 +1,6 @@
+# TASK-045 revision slice: per-directory counts (delivered vs reviewed head 1171bc5 vs master c3d9ed2)
+delivered tests/reading_export -> 109 passed in 15.50s
+delivered tests/core -> 24 passed in 5.89s
+delivered tests/ui_shell -> 46 passed in 1.36s
+delivered tests/workbench -> 51 passed in 7.78s
+delivered AC6 aggregate -> 230 passed in 27.97s
