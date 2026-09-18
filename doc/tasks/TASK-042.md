@@ -2,7 +2,7 @@
 id: TASK-042
 title: 超大 Webtoon 带状/流式解码（承接 TASK-020 遗留 BLOCKED）
 kind: implementation
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: ZCode
@@ -80,4 +80,6 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 依用户批准的流式解码依赖创建为 `ready`；`base=904fca1`。**实施尚未开始。**
+- **历史状态**：2026-09-18 由 Codex 创建为 `ready`（base=904fca1）。
+- **最近状态（当前，唯一）**：2026-09-18 09:1x 由 ZCode 开工（status→`in_progress`）；分支 `git merge master` 快进至 `7ea1629`（W5-W7 收口后 HEAD）。实施开始：`src/infrastructure/imaging/streaming_png.py`（stdlib zlib＋PNG 行过滤器带状读取，单遍游标）＋接入 `TiledPageRasterizer`＋翻转 TASK-020 表征钩子＋变体 fail-closed 矩阵＋Qt 逐像素对照。**依赖决策：首选 stdlib（不启用 pyvips）**。
+- **最近状态（当前，唯一）**：实现 head=`fc6c649`（开工 `ebe5755`）：`streaming_png.py` 新建（单遍游标带读＋全 5 种过滤器＋typed 变体拒绝）＋`TiledPageRasterizer` 改驱动流式读取（Qt 从 imaging 模块移除）＋纯 stdlib PNG 编码器＋`test_streaming_png.py` 11 例（含 Qt 逐像素一致）＋TASK-020 表征钩子按原设计翻转（oversize 1600×200000 带状解码**成功**、窗口=恰 1/50 整页 rgb32、tracemalloc 峰值留证）。**未新增依赖（stdlib-only，pyvips 备选未启用）**。回归：mandated reading_export 93 passed/0 skipped、全仓 ×5 每次 798 passed/0 skipped exit 0。**status=in_review：待 Codex（非作者）Review 与集成**——集成后登记 TASK-020 遗留②关闭。
