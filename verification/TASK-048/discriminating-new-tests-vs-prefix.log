@@ -1,0 +1,118 @@
+﻿FFF                                                                      [100%]
+================================== FAILURES ===================================
+____________ test_run_completes_on_worker_thread_over_real_sqlite _____________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x24f1aaa6000) at 0x0000024F1B2645C0>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2309/test_run_completes_on_worker_t0')
+
+    def test_run_completes_on_worker_thread_over_real_sqlite(qapp, tmp_path):
+        """AC 鈶?鈶? no ProgrammingError on the worker; the run reaches a
+        terminal status and the database records it."""
+        services, chapter = _assembled_library(tmp_path, page_count=2)
+        run = _planned_run(services, chapter)
+    
+        crashed: list[str] = []
+        finished: list[str] = []
+        from ui.viewmodels.workbench.run_controller import RunController
+    
+        controller = RunController()
+        controller.runCrashed.connect(lambda run_id, error: crashed.append(error))
+        controller.runFinished.connect(
+            lambda run_id, status: finished.append(status)
+        )
+        controller.start(services.pipeline, run)
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline and not finished and not crashed:
+            qapp.processEvents()
+            time.sleep(0.01)
+    
+>       assert not crashed, f"worker crashed: {crashed}"
+E       AssertionError: worker crashed: ['SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 38080 and this is thread id 51212.']
+E       assert not ['SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 38080 and this is thread id 51212.']
+
+tests\workbench\test_run_thread_e2e.py:124: AssertionError
+_______________ test_worker_run_and_main_thread_access_coexist ________________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x24f1aaa6000) at 0x0000024F1B2645C0>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2309/test_worker_run_and_main_threa0')
+
+    def test_worker_run_and_main_thread_access_coexist(qapp, tmp_path):
+        """AC 鈶?negative case: while the worker executes the run, the main
+        thread keeps issuing reads *and writes* on the same connection; both
+        streams survive without exceptions and land their rows."""
+        services, chapter = _assembled_library(tmp_path, page_count=8)
+        run = _planned_run(services, chapter)
+    
+        crashed: list[str] = []
+        finished: list[str] = []
+        from ui.viewmodels.workbench.run_controller import RunController
+    
+        controller = RunController()
+        controller.runCrashed.connect(lambda run_id, error: crashed.append(error))
+        controller.runFinished.connect(
+            lambda run_id, status: finished.append(status)
+        )
+        controller.start(services.pipeline, run)
+    
+        # main-thread write stream while the worker writes the pipeline tables
+        created: list[str] = []
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline and not finished and not crashed:
+            qapp.processEvents()
+            book = services.library.create_book(f"骞跺彂涔?{len(created)}")
+            created.append(book.book_id)
+            assert services.library.get_chapter(chapter.chapter_id) is not None
+            assert services.library.list_books(), "main-thread read broke"
+            time.sleep(0.002)
+    
+>       assert not crashed, f"worker crashed under concurrency: {crashed}"
+E       AssertionError: worker crashed under concurrency: ['SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 38080 and this is thread id 49908.']
+E       assert not ['SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 38080 and this is thread id 49908.']
+
+tests\workbench\test_run_thread_e2e.py:163: AssertionError
+___________________ test_startup_recovers_runs_left_running ___________________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x24f1aaa6000) at 0x0000024F1B2645C0>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2309/test_startup_recovers_runs_lef0')
+
+    def test_startup_recovers_runs_left_running(qapp, tmp_path):
+        """AC 鈶? a run left ``running`` by a previous process becomes
+        ``interrupted`` when the production assembly starts up again."""
+        services, chapter = _assembled_library(tmp_path, page_count=1)
+        run = _planned_run(services, chapter)
+    
+        # simulate the crash legacy: the persisted run *snapshot* says running
+        # (on pre-fix trees a worker crash is exactly what left rows in this
+        # state 鈥?the run_json replay is the store's source of truth)
+        conn = sqlite3.connect(str(tmp_path / "library.db"))
+        try:
+            row = conn.execute(
+                "SELECT run_json FROM pipeline_runs WHERE run_id = ?", (run.run_id,)
+            ).fetchone()
+            snapshot = json.loads(row[0])
+            snapshot["status"] = "running"
+            with conn:
+                conn.execute(
+                    "UPDATE pipeline_runs SET status = 'running', run_json = ?"
+                    " WHERE run_id = ?",
+                    (json.dumps(snapshot), run.run_id),
+                )
+        finally:
+            conn.close()
+    
+        # a fresh production start must reap it before anything observes it
+        from bootstrap.app import assemble_services
+    
+        assemble_services(tmp_path / "library.db", tmp_path / "managed")
+>       assert _db_run_status(tmp_path / "library.db", run.run_id) == "interrupted"
+E       AssertionError: assert 'running' == 'interrupted'
+E         
+E         - interrupted
+E         + running
+
+tests\workbench\test_run_thread_e2e.py:211: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_run_thread_e2e.py::test_run_completes_on_worker_thread_over_real_sqlite
+FAILED tests/workbench/test_run_thread_e2e.py::test_worker_run_and_main_thread_access_coexist
+FAILED tests/workbench/test_run_thread_e2e.py::test_startup_recovers_runs_left_running
+3 failed in 1.07s
