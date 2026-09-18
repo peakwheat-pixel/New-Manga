@@ -838,3 +838,42 @@ class SqliteSnapshotProvider(SnapshotProvider):
             constraint_snapshot_ref=row["constraint_snapshot_ref"],
             context_policy=freeze_snapshot(_redact(context)),
         )
+
+
+class SqliteRunLedgerMaintenance:
+    """Run-ledger maintenance for TASK-053 R-03: target-less runs are
+    **kept** when pages are purged (a run spans pages and cascading it
+    away would destroy shared audit history), and reclaimed only through
+    this explicit entry point.
+
+    Active runs (``running``/``paused``) are never removed here even when
+    target-less: the startup recovery path may still hold them (TASK-048).
+    All foreign keys along ``pipeline_runs`` are ``ON DELETE CASCADE``
+    (pipeline_tasks / step_runs / step_result_candidates), so the reclaim
+    is one statement with enforcement left on.
+    """
+
+    _ACTIVE_STATUSES = ("running", "paused")
+
+    def __init__(self, conn: sqlite3.Connection) -> None:
+        self._conn = conn
+
+    def count_targetless_runs(self) -> int:
+        row = self._conn.execute(
+            "SELECT COUNT(*) AS n FROM pipeline_runs r"
+            " WHERE NOT EXISTS"
+            " (SELECT 1 FROM pipeline_run_targets t WHERE t.pipeline_run_id = r.run_id)"
+        ).fetchone()
+        return int(row["n"])
+
+    def purge_targetless_runs(self) -> int:
+        placeholders = ",".join("?" for _ in self._ACTIVE_STATUSES)
+        with self._conn:
+            cursor = self._conn.execute(
+                "DELETE FROM pipeline_runs WHERE NOT EXISTS"
+                " (SELECT 1 FROM pipeline_run_targets t"
+                "  WHERE t.pipeline_run_id = pipeline_runs.run_id)"
+                f" AND status NOT IN ({placeholders})",
+                self._ACTIVE_STATUSES,
+            )
+        return cursor.rowcount
