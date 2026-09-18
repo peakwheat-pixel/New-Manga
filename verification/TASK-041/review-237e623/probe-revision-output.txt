@@ -1,0 +1,8 @@
+reviewer re-check of the TASK-041 revision (f752096)
+[1 noise tree (cover+HD+images 02,03)] pages=2 [(8, 6, (254, 0, 0)), (9, 7, (0, 255, 1))]
+[2 numeric order (records 09 then 10)] pages=2 [(8, 6, (254, 0, 0)), (9, 7, (0, 255, 1))]
+[3 mirrored mobi8 tree] typed failure reason=INVALID_DOCUMENT detail=KF8/AZW3 MOBI containers are not supported yet: only KF7 picture MOBI is
+[4 KF8-only tree (no mobi7)] typed failure reason=INVALID_DOCUMENT detail=KF8/AZW3 MOBI containers are not supported yet: only KF7 picture MOBI is
+[5 non-conforming names excluded] pages=1 [(8, 6, (254, 0, 0))]
+[6 same record, two extensions] pages=2 [(8, 6, (254, 0, 0)), (8, 6, (0, 255, 1))]
+EXIT=0

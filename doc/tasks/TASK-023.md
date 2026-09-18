@@ -75,5 +75,5 @@ D01 §2；D02 §8；D04 §8；D05 §52；G17。网页导入已按 U-1 取消；�
 
 ## 遗留项状态更新（2026-09-18）
 
-- **遗留项①（MOBI 光栅化 BLOCKED）**：用户 **2026-09-18 批准 MOBI 解析依赖**（解锁条件达成）→ 由 [TASK-041](TASK-041.md) 承接实施（依赖选定 `mobi==0.4.1`；**仅支持提取内嵌页面图像**，可重排文本型 MOBI 仍 typed fail-closed）。本 Task 不再重开。
+- **遗留项①（MOBI 光栅化 BLOCKED）**：用户 **2026-09-18 批准 MOBI 解析依赖**（解锁条件达成）→ 由 [TASK-041](TASK-041.md) 承接实施（依赖选定 `mobi==0.4.1`；**仅支持提取内嵌页面图像**，可重排文本型 MOBI 仍 typed fail-closed）。**已由 TASK-041 交付并集成（`7c4fae0`；复审 [TASK-041-237e623](../reviews/TASK-041-237e623.md) approved）⇒ 遗留① 于 2026-09-18 关闭**；TASK-041 范围收窄为 **KF7 picture MOBI**，**AZW3/KF8 导入另记 `BLOCKED`**（解锁＝专门切片在真实 AZW3 样本上验证 KF8 树）。本 Task 不再重开。
 - 遗留项②（生产装配点 `ImportDocumentsUseCase` 接线）已由 [TASK-038](TASK-038.md) 关闭。

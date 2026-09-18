@@ -1,3 +1,4 @@
 PySide6_Essentials==6.11.2
 shiboken6==6.11.2
 pypdfium2==5.13.0
+mobi==0.4.1

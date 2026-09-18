@@ -1,0 +1,91 @@
+reviewer discriminance: revised tests/import_formats/test_mobi_import.py against d114253 src (temp tree C:\Users\49745\AppData\Local\Temp\nm041rev2\t)
+......F..FF.                                                             [100%]
+================================== FAILURES ===================================
+__________ test_without_injected_mobi_raster_mobi_stays_unsupported ___________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2225/test_without_injected_mobi_ras0')
+
+    def test_without_injected_mobi_raster_mobi_stays_unsupported(tmp_path: Path) -> None:
+        """The TASK-023 fallback is preserved byte-for-byte when the assembly
+        does not inject a MOBI binding (pre-TASK-041 constructions). Review
+        R-007: the detail says what is actually wrong �� no binding was
+        injected �� instead of repeating the pre-approval BLOCKED wording."""
+        storage = ManagedFileStorage(tmp_path / "managed")
+        copy_store = ManagedCopyStoreAdapter(storage, lambda chapter_id: "book-42")
+        use_case = ImportDocumentsUseCase(
+            PdfiumDocumentRaster(), copy_store, InMemoryPageSink()
+        )
+        data = picture_mobi([_make_jpeg(8, 6, (255, 0, 0))])
+
+        report = use_case.import_documents("chapter-7", [_source("m.mobi", data)])
+
+        assert report.imported == ()
+        assert report.failed[0].reason == "UNSUPPORTED_FORMAT"
+>       assert "no MOBI binding was injected" in report.failed[0].detail
+E       AssertionError: assert 'no MOBI binding was injected' in 'only PDF is supported by the approved binding (MOBI rasterisation is BLOCKED, TASK-023)'
+E        +  where 'only PDF is supported by the approved binding (MOBI rasterisation is BLOCKED, TASK-023)' = FailedImport(filename='m.mobi', reason='UNSUPPORTED_FORMAT', detail='only PDF is supported by the approved binding (MOBI rasterisation is BLOCKED, TASK-023)').detail
+
+tests\import_formats\test_mobi_import.py:347: AssertionError
+__________________ test_extractor_noise_never_becomes_pages ___________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2225/test_extractor_noise_never_bec0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002101742B890>
+
+    def test_extractor_noise_never_becomes_pages(tmp_path, monkeypatch) -> None:
+        """R-001: a tree carrying the non-page names the real binding can emit ��
+        ``cover%05d.*`` (a cover, not a page) and ``HDimage%05d.*`` (an HD
+        duplicate under ``HDImages/``) �� yields exactly the KF7 page images in
+        record order. On d114253 this tree collected 4 "pages" with the HD copy
+        first (reviewer probe ``probe_collect.py``, PROBE A)."""
+        tree = _ExtractorTree(tmp_path)
+        tree.inject(monkeypatch)
+        handle = MobiDocumentRaster().open(
+            picture_mobi([_make_jpeg(8, 6, (255, 0, 0))])
+        )
+
+>       assert handle.page_count == 2
+E       assert 4 == 2
+E        +  where 4 = <infrastructure.importing._MobiDocumentHandle object at 0x00000210174E04A0>.page_count
+
+tests\import_formats\test_mobi_import.py:391: AssertionError
+___________________ test_kf8_dual_format_tree_fails_closed ____________________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x00000210174E0EC0>, 'sink': <t...: WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2225/test_kf8_dual_format_tree_fail0/managed')}
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2225/test_kf8_dual_format_tree_fail0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000210174E0CB0>
+
+    def test_kf8_dual_format_tree_fails_closed(
+        workspace, tmp_path, monkeypatch
+    ) -> None:
+        """R-001/R-002: a KF8/AZW3 extraction tree (mirrored ``mobi8/``) must
+        not import �� the ``mobi7/`` tree of a dual-format container is an
+        unverified down-conversion, so the adapter fails typed (AZW3 support
+        stays BLOCKED; see ``MobiDocumentRaster``)."""
+        tree = _ExtractorTree(tmp_path, with_mobi8=True)
+        tree.inject(monkeypatch)
+        use_case, sink = workspace["use_case"], workspace["sink"]
+
+        report = use_case.import_documents(
+            "chapter-7",
+            [_source("azw3.mobi", picture_mobi([_make_jpeg(8, 6, (255, 0, 0))]))],
+        )
+
+>       assert report.imported == ()
+E       AssertionError: assert (ImportedPage...ted_at=None))) == ()
+E
+E         Left contains 4 more items, first extra item: ImportedPage(filename='azw3-page-0001.png', page=Page(page_id='46336e589b7a4f5c831442e0823389ee', chapter_id='chapter-...not_started', created_at='2026-09-18T14:07:13.899+00:00', updated_at='2026-09-18T14:07:13.899+00:00', deleted_at=None))
+E         Use -v to get more diff
+
+tests\import_formats\test_mobi_import.py:417: AssertionError
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/import_formats/test_mobi_import.py::test_without_injected_mobi_raster_mobi_stays_unsupported
+FAILED tests/import_formats/test_mobi_import.py::test_extractor_noise_never_becomes_pages
+FAILED tests/import_formats/test_mobi_import.py::test_kf8_dual_format_tree_fails_closed
+3 failed, 9 passed, 1 warning in 0.96s
+EXIT=1

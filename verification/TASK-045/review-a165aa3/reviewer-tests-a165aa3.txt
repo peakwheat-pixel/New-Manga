@@ -1,0 +1,28 @@
+reviewer re-run on the revision tree (a165aa3), pwsh + TASK-012-py312, PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider
+cmd> pytest tests/reading_export tests/core -q -rs -rf
+........................................................................ [ 54%]
+.............................................................            [100%]
+133 passed in 19.22s
+EXIT=0
+cmd> pytest -q -rs -p no:cacheprovider
+........................................................................ [  8%]
+........................................................................ [ 17%]
+.............................................s.......................... [ 25%]
+............................................................sssss....... [ 34%]
+........................................................................ [ 43%]
+........................................................................ [ 51%]
+........................................................................ [ 60%]
+........................................................................ [ 68%]
+........................................................................ [ 77%]
+........................................................................ [ 86%]
+........................................................................ [ 94%]
+............................................                             [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+830 passed, 6 skipped in 43.06s
+EXIT=0

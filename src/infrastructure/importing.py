@@ -2,6 +2,11 @@
 
 from __future__ import annotations
 
+import os
+import re
+import shutil
+import struct
+import tempfile
 from collections.abc import Callable
 from pathlib import Path
 from uuid import uuid4
@@ -24,6 +29,14 @@ _MIME_TYPES = {
     "webp": "image/webp",
 }
 _UNKNOWN_MIME_TYPE = "application/octet-stream"
+
+# R-001 (TASK-041 review): page images are exactly ``image%05d.<ext>`` in
+# ``mobi7/Images/``. The fullmatch keeps the extractor's other outputs out —
+# ``cover%05d.*`` (a cover, not a page) and ``HDimage%05d.*`` (HD duplicates
+# under ``HDImages/``) both end in "...image%05d.<ext>" but do not fullmatch.
+_PAGE_IMAGE_RE = re.compile(
+    r"image(\d{5})\.(?:bmp|gif|jpe?g|png)", re.IGNORECASE
+)
 
 
 class QtImageDecoder:
@@ -213,3 +226,173 @@ class _PdfiumDocumentHandle:
             self._document.close()
         except Exception:  # pragma: no cover - closing must never raise
             pass
+
+
+class MobiDocumentRaster:
+    """Extract embedded page images from KF7 picture MOBI (TASK-041).
+
+    Scope (user-approved; narrowed per review R-002): **KF7 picture MOBI
+    only** — comic MOBI files in the classic format are one embedded image
+    per page, published as managed pages through the shared document-import
+    discipline. Deliberately out of scope, typed fail-closed:
+
+    - reflowable text-only MOBI (no page images): ``INVALID_DOCUMENT`` with
+      a scope note (rendering HTML would need an engine the approved
+      dependency set does not include);
+    - KF8/AZW3 containers (dual-format or KF8-only): ``INVALID_DOCUMENT`` —
+      **BLOCKED** pending a dedicated slice that verifies the KF8 tree on
+      real samples; the ``mobi7/`` tree of a dual-format container is an
+      unverified down-conversion, so it is not trusted either.
+
+    Page semantics (R-001): the extractor's temp tree is **not** trusted as
+    a page list. Besides ``mobi7/Images/image%05d.<ext>`` (page images,
+    named after their container record number) it may contain
+    ``cover%05d.*`` (a cover, not a page), ``HDimage%05d.*`` (HD duplicates
+    under ``HDImages/``) and a mirrored ``mobi8/`` tree. Only the KF7 page
+    images are collected, ordered by the record number in the name — cover
+    and HD resources never become pages.
+
+    The ``mobi`` binding (mobi==0.4.1, an embedded KindleUnpack) sits
+    strictly behind this adapter — application code never imports it — so a
+    dead upstream is swapped here and nowhere else. DRM-protected containers
+    (``crypto_type != 0`` in the PalmDoc header) are rejected as
+    ``ENCRYPTED`` before any parsing; truncation and parse failures surface
+    as ``INVALID_DOCUMENT``; a page whose image bytes Qt cannot decode fails
+    that page (F-3 accounting); an unusable binding is
+    ``MISSING_DEPENDENCY`` (F-9 caliber, same as the PDF path).
+    """
+
+    def open(self, data: bytes):
+        from application.importing.documents.ports import DocumentDecodeError
+
+        try:
+            import mobi  # adapter-local: never leaks past this file
+        except (ImportError, OSError) as error:
+            raise DocumentDecodeError(
+                "MISSING_DEPENDENCY",
+                "the mobi binding required for MOBI import is unavailable: "
+                f"{error}",
+            ) from error
+
+        crypto_type = _pdb_crypto_type(data)
+        if crypto_type is not None and crypto_type != 0:
+            raise DocumentDecodeError(
+                "ENCRYPTED",
+                "the MOBI is DRM-protected; protected files are never opened",
+            )
+
+        temp_source: str | None = None
+        try:
+            descriptor, temp_source = tempfile.mkstemp(suffix=".mobi")
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(data)
+            tempdir, _html = mobi.extract(temp_source)
+        except DocumentDecodeError:
+            raise
+        except Exception as error:
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                f"the MOBI container could not be parsed: {error}",
+            ) from error
+        finally:
+            if temp_source is not None:
+                try:
+                    os.unlink(temp_source)
+                except OSError:  # pragma: no cover - temp file best effort
+                    pass
+
+        root = Path(tempdir)
+        if (root / "mobi8").is_dir():
+            # KF8/AZW3 container (dual-format or KF8-only): fail closed
+            # instead of trusting an unverified down-converted KF7 tree
+            # (review R-001/R-002; see the class docstring for the BLOCKED
+            # registration).
+            shutil.rmtree(tempdir, ignore_errors=True)
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                "KF8/AZW3 MOBI containers are not supported yet: only KF7 "
+                "picture MOBI is verified (support is BLOCKED pending a "
+                "dedicated slice)",
+            )
+
+        page_dir = root / "mobi7" / "Images"
+        images: list[tuple[int, Path]] = []
+        if page_dir.is_dir():
+            for path in page_dir.iterdir():
+                match = _PAGE_IMAGE_RE.fullmatch(path.name)
+                if match is not None and path.is_file():
+                    images.append((int(match.group(1)), path))
+        images.sort(key=lambda entry: entry[0])
+        if not images:
+            shutil.rmtree(tempdir, ignore_errors=True)
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                "text-only MOBI: no KF7 page images (mobi7/Images/"
+                "image%05d.*); reflowable rendering is out of the approved "
+                "scope",
+            )
+        return _MobiDocumentHandle(tempdir, [path for _record, path in images])
+
+
+class _MobiDocumentHandle:
+    """Extracted picture-MOBI: one image file per page, record order."""
+
+    def __init__(self, tempdir: str, images: list[Path]) -> None:
+        self._tempdir = tempdir
+        self._images = images
+
+    @property
+    def page_count(self) -> int:
+        return len(self._images)
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+
+        from PySide6.QtCore import QBuffer, QIODevice
+        from PySide6.QtGui import QImage
+
+        path = self._images[index]
+        try:
+            raw = path.read_bytes()
+        except OSError as error:
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT", f"page image could not be read: {error}"
+            ) from error
+        image = QImage()
+        if not image.loadFromData(raw):
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                f"page image {path.name} could not be decoded by Qt",
+            )
+        buffer = QBuffer()
+        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
+        if not image.save(buffer, "PNG"):
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                f"page image {path.name} could not be encoded as PNG",
+            )
+        return RenderedDocumentPage(bytes(buffer.data()), image.width(), image.height())
+
+    def close(self) -> None:
+        # The extractor leaves its temp tree behind; ownership of cleanup is
+        # here so every exit path (success, page failure, cancellation)
+        # releases it.
+        shutil.rmtree(self._tempdir, ignore_errors=True)
+
+
+def _pdb_crypto_type(data: bytes) -> int | None:
+    """``crypto_type`` of the PalmDoc header (record 0), or ``None`` when
+    the container is too short to have one (the extractor reports that)."""
+    if len(data) < 78:
+        return None
+    record_count = struct.unpack_from(">H", data, 76)[0]
+    if record_count == 0:
+        return None
+    record0_offset = struct.unpack_from(">I", data, 78)[0]
+    crypto_offset = record0_offset + 0x0C
+    if len(data) < crypto_offset + 2:
+        return None
+    return struct.unpack_from(">H", data, crypto_offset)[0]

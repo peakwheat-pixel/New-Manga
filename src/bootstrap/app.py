@@ -61,6 +61,7 @@ from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
 from infrastructure.importing import (
     ManagedCopyStoreAdapter,
+    MobiDocumentRaster,
     PdfiumDocumentRaster,
     QtImageDecoder,
 )
@@ -451,11 +452,16 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             copy_store,
             repository,
         )
-        # TASK-023 AC ④: PDF import rides the same Managed Copy store and
-        # page sink as image import. MOBI stays BLOCKED (no approved parsing
-        # dependency) and fails typed at the use case.
+        # TASK-023 AC ④ / TASK-041 AC ②: document import rides the same
+        # Managed Copy store and page sink as image import. PDF goes through
+        # PDFium; picture MOBI (user-approved dependency mobi==0.4.1) goes
+        # through its own adapter behind the same port. Text-only and
+        # DRM-protected MOBI fail typed at the adapter.
         document_importer = ImportDocumentsUseCase(
-            PdfiumDocumentRaster(), copy_store, repository
+            PdfiumDocumentRaster(),
+            copy_store,
+            repository,
+            mobi_raster=MobiDocumentRaster(),
         )
         # TASK-021 trash subset: page-level soft delete / batch restore /
         # controlled-only purge. The manifest lives next to the managed data.

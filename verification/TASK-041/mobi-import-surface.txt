@@ -1,0 +1,155 @@
+# mobi==0.4.1 import-surface audit (AC 1: no network calls) - 2026-09-18
+# command: ls site-packages/mobi/ && grep -rn '^import |^from ' site-packages/mobi/*.py && grep -rniE 'socket|urllib|urlopen|requests|http' site-packages/mobi/
+
+=== package files ===
+__init__.py
+__pycache__
+compatibility_utils.py
+extract.py
+kindleunpack.py
+mobi_cover.py
+mobi_dict.py
+mobi_header.py
+mobi_html.py
+mobi_index.py
+mobi_k8proc.py
+mobi_k8resc.py
+mobi_nav.py
+mobi_ncx.py
+mobi_opf.py
+mobi_pagemap.py
+mobi_sectioner.py
+mobi_split.py
+mobi_uncompress.py
+mobi_utils.py
+mobiml2xhtml.py
+unipath.py
+unpack_structure.py
+
+=== all top-level imports in mobi/*.py ===
+10:from .compatibility_utils import unicode_str
+10:from .mobi_index import MobiIndex
+10:from .unipath import pathof
+10:from loguru import logger
+10:import binascii
+10:import struct
+11:from .unipath import pathof
+11:import codecs
+11:import os
+12:from .compatibility_utils import lzip, unescapeit, unicode_str
+12:import binascii
+12:import os
+12:import re
+12:import struct
+12:import sys
+13:from .unipath import pathof
+13:from loguru import logger
+13:import os
+13:import sys
+13:import traceback
+14:from .mobi_utils import toBase32
+14:import re
+15:from .compatibility_utils import PY2, add_cp65001_codec, binary_type, hexlify, unicode_argv, unicode_str, utf8_str
+15:from .compatibility_utils import PY2, bord, hexlify, unicode_str
+15:from .compatibility_utils import unicode_str
+15:from .unipath import pathof
+15:from itertools import cycle
+15:import struct
+164:import binascii
+16:from .mobi_utils import fromBase32
+16:from .mobi_utils import toHex
+16:import array
+16:import re
+16:import struct
+172:import getopt
+173:import os
+174:import re
+175:import struct
+176:import zlib
+17:import struct
+184:from .mobi_cover import CoverProcessor, get_image_type
+185:from .mobi_dict import dictSupport
+186:from .mobi_header import MobiHeader, dump_contexth
+187:from .mobi_html import HTMLProcessor, XHTMLK8Processor
+188:from .mobi_k8proc import K8Processor
+189:from .mobi_k8resc import K8RESCProcessor
+18:from .unipath import pathof
+18:import zipfile
+190:from .mobi_nav import NAVProcessor
+191:from .mobi_ncx import ncxExtract
+192:from .mobi_opf import OPFProcessor
+193:from .mobi_pagemap import PageMapProcessor
+194:from .mobi_sectioner import Sectionizer, describe
+195:from .mobi_split import mobi_split
+196:from .mobi_utils import toBase32
+197:from .unpack_structure import fileNames
+19:from .unipath import pathof
+1:import os
+1:import shutil
+20:from .mobi_utils import mangle_fonts
+20:import struct
+21:from .mobi_index import MobiIndex
+21:from .mobi_index import getTagMap, getVariableWidthValue, readTagSection
+21:import uuid
+22:from .mobi_utils import fromBase32
+22:from .mobi_utils import toHex
+23:from .mobi_uncompress import HuffcdicReader, PalmdocReader, UncompressedReader
+23:from .unipath import pathof
+26:from .mobi_utils import getLanguage
+27:import os
+28:import codecs
+28:import sys
+29:import sys
+2:import tempfile
+30:from .compatibility_utils import PY2, binary_type, text_type
+3:from os.path import basename, exists, join, splitext
+4:from mobi.extract import extract as extract  # explicit re-export
+4:import imghdr
+4:import struct
+5:from . import unipath
+5:from .compatibility_utils import PY2, bchr, bstr, lmap
+5:from loguru import logger
+5:import datetime
+5:import os
+6:from .compatibility_utils import text_type
+6:from __future__ import unicode_literals, division, absolute_import, print_function
+6:from loguru import logger
+6:import re
+6:import struct
+6:import uuid
+7:from .compatibility_utils import PY2, PY3, bchr, bstr, utf8_str
+7:from .compatibility_utils import PY2, bchr, bord, bstr
+7:from .compatibility_utils import PY2, bstr, utf8_str
+7:from .compatibility_utils import PY2, unicode_str
+7:from .compatibility_utils import PY2, utf8_str
+7:from .unipath import pathof
+7:from datetime import datetime, timezone
+7:from loguru import logger
+7:from mobi.kindleunpack import unpackBook
+8:from .compatibility_utils import PY2, text_type, bchr, bord
+8:from loguru import logger
+8:from xml.sax.saxutils import escape as xmlescape
+9:from .compatibility_utils import PY2, bchar, bord, bstr, hexlify
+
+=== network-related tokens (expect no hits) ===
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\compatibility_utils.py:37:    from urllib.parse import unquote
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\compatibility_utils.py:39:    from urllib import unquote
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_nav.py:167:        nav_header += '<html xmlns="http://www.w3.org/1999/xhtml"'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_nav.py:168:        nav_header += ' xmlns:epub="http://www.idpf.org/2007/ops"'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_opf.py:521:        data.append('<package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid">\n')
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_opf.py:523:            '<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_opf.py:551:            package = '<package version="2.0" xmlns="http://www.idpf.org/2007/opf" unique-identifier="uid">\n'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_opf.py:554:                '<metadata xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:opf="http://www.idpf.org/2007/opf">'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_opf.py:563:            package = '<package version="3.0" xmlns="http://www.idpf.org/2007/opf" prefix="rendition: http://www.idpf.org/vocab/rendition/#" unique-identifier="uid">\n'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_opf.py:565:            metadata_tag = '<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobiml2xhtml.py:312:            '<?xml version="1.0"?>\n<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">\n'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_pagemap.py:141:        pagemapxml = '<page-map xmlns="http://www.idpf.org/2007/opf">\n'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_html.py:108:                + b'<meta http-equiv="content-type" content="text/html; charset='
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_cover.py:184:            data += '<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops"'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_cover.py:202:            data += '<html xmlns="http://www.w3.org/1999/xhtml"'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_cover.py:210:            data += '    <svg xmlns="http://www.w3.org/2000/svg" height="100%" preserveAspectRatio="xMidYMid meet"'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_cover.py:211:            data += f' version="1.1" viewBox="{viewBox:s}" width="100%" xmlns:xlink="http://www.w3.org/1999/xlink">\n'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_ncx.py:105:<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="%s">
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\mobi_ncx.py:192:<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="%s">
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\unpack_structure.py:135:xmlns:enc="http://www.w3.org/2001/04/xmlenc#" xmlns:deenc="http://ns.adobe.com/digitaleditions/enc">\n'
+G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/mobi/\unpack_structure.py:138:                encryption += '    <enc:EncryptionMethod Algorithm="http://ns.adobe.com/pdf/enc#RC"/>\n'
