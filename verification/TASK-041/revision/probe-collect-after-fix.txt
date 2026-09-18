@@ -1,0 +1,14 @@
+﻿=== PROBE A: adapter collection over a tree with cover/HD names ===
+injected tree (2 logical page images + cover + HD copy):
+    HDImages\HDimage00004.jpeg
+    mobi7\book.html
+    mobi7\Images\cover00001.jpeg
+    mobi7\Images\image00002.jpeg
+    mobi7\Images\image00003.jpeg
+adapter page_count = 2
+    page 1 (8, 6) rgb= (254, 0, 0)
+    page 2 (9, 7) rgb= (0, 255, 1)
+=== PROBE B: fail-closed leaves no managed copy ===
+drm | reason= ENCRYPTED | imported= 0 | sink.pages= 0 | managed_root_exists= False | files= []
+truncated | reason= INVALID_DOCUMENT | imported= 0 | sink.pages= 0 | managed_root_exists= False | files= []
+text_only | reason= INVALID_DOCUMENT | imported= 0 | sink.pages= 0 | managed_root_exists= False | files= []
