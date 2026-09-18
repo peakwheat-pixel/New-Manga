@@ -1,0 +1,18 @@
+reviewer probe (Codex non-author review of 1171bc5) - delivered src tree
+src tree = G:\CODEX\New Manga.worktrees\TASK-045-deepseek\src
+[A] page=(60, 1200) tiles=3
+[A] declared content heights: [500, 500, 200]
+[A] tile-file height mismatches: []
+[A] tiles whose rows != their page rows: []
+[A] stitched rows == whole page: True (1200 vs 1200 rows)
+[A] F-4 property holds: True
+[B] tilesActive=True pagePixelWidth=60 hostVisible=True
+[B1] first open, no manual requestTiles
+    B1: hostVisualChildren=3 (Repeater + its delegates) sources=[] wholePageImageVisible=False
+[B2] after one scroll (contentY=13) -> 2 source(s): ['tile-2dae4e5ef0154d4baa7c8d2b-00000.png', 'tile-33e62eac8a8989803726b48c-00001.png']
+[B3] after nextPage, page=2, no manual request
+    B3: hostVisualChildren=3 (Repeater + its delegates) sources=[] wholePageImageVisible=False
+    B3 sources were []
+[B4] after a scroll on page 2 -> 2 source(s): ['tile-d4aa0bd4c175c29fe3b28b0b-00000.png', 'tile-9a05c54729d007461651bbe1-00001.png']
+[B4] page-2 tiles differ from page-1 tiles: True
+EXIT=0
