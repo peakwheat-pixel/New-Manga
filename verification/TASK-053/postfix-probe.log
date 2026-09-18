@@ -1,0 +1,12 @@
+probe: post-fix tree = working branch (same probe script); 对照 pre-fix REPRODUCED
+AC 4 trigger enumeration (pre-fix tree):
+  ["trg_media_artifacts_current_not_clearable", "trg_regions_current_not_clearable"]
+R-04 probe: purge failed as designed: transient storage fault on books/book-1/chapters/chapter-1/original/p1.png
+R-04 probe: manifest keys after failure: ['batches', 'pending_purges']
+R-04 probe: pending_purges present: True
+R-04 probe: orphan file still on disk: True
+R-04 probe: orphan discoverable via ledger/manifest: True
+R-03 probe: after page purge -> run row remains: True | its target rows: 0
+R-03 probe: maintenance entry point exists pre-fix: True
+PRE-FIX EVIDENCE: NOT REPRODUCED
+EXIT=1

@@ -2,7 +2,7 @@
 id: TASK-053
 title: TASK-044 遗留收口（R-03 pipeline_runs 累积 / R-04 不可重试孤儿文件）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode

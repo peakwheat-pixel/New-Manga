@@ -19,7 +19,15 @@ Invariants:
   atomically. It is an *index*, not the only source of truth: ``deleted_at``
   is the batch identity in the store, so a missing or corrupt manifest
   degrades to a rebuild instead of disabling restore/purge (F-7; no schema
-  change).
+  change);
+- the file sweep list of a purge is persisted as a ``pending_purges``
+  manifest entry **before** any destructive step (TASK-053 R-04): a file
+  removal failure after the rows are gone leaves a *retryable* pending
+  entry instead of an undiscoverable orphan. The entry clears only when
+  every file is removed; ``retry_pending_purges()`` retries (file removal
+  is idempotent — already-gone files complete silently). Target-less
+  pipeline runs are deliberately kept and reclaimed only through
+  ``RunLedgerMaintenance.purge_targetless_runs()`` (R-03).
 """
 
 from __future__ import annotations
@@ -195,6 +203,13 @@ class TrashService:
         refuses) raises, leaving a diagnosable orphan file rather than a row
         pointing at something that is already gone. User source files are
         outside the managed root and structurally unreachable.
+
+        Before any row is deleted the file list is persisted into the
+        manifest as a **pending purge** entry (TASK-053 R-04): if file
+        removal fails, the batch record is already gone, so without the
+        pending entry the orphan could never be rediscovered. The entry is
+        cleared only after every file was removed (or was already gone);
+        :meth:`retry_pending_purges` retries failed entries.
         """
         batch, _remaining = self._take_batch(batch_id)
         pages = self._pages.get_pages_by_ids(list(batch.page_ids))
@@ -204,10 +219,29 @@ class TrashService:
             if page.managed_original_ref
         ]
         targets.extend(self._pages.list_generated_asset_paths(list(batch.page_ids)))
+        unique_targets = list(dict.fromkeys(targets))
+        self._record_pending_purge(batch_id, unique_targets)
         self._pages.purge_pages(list(batch.page_ids))
         self._drop_batch(batch_id)
-        for relative_path in dict.fromkeys(targets):
-            self._remover.remove_managed(relative_path)
+        self._remove_pending_targets(batch_id, unique_targets)
+
+    def retry_pending_purges(self) -> int:
+        """Retry every pending purge entry left by failed :meth:`purge_batch`
+        runs (TASK-053 R-04). File removal is idempotent — an entry whose
+        files are already gone completes silently. Each entry is cleared
+        only when all of its files are removable; the first failure raises
+        and leaves the remaining entries in place for another retry.
+        Returns the number of entries cleared."""
+        cleared = 0
+        for batch_id, targets in self._pending_purges():
+            self._remove_pending_targets(batch_id, targets)
+            cleared += 1
+        return cleared
+
+    def pending_purge_count(self) -> int:
+        """Diagnosable view: how many purge batches are awaiting file
+        cleanup (R-04 makes this number reachability-recoverable)."""
+        return len(self._pending_purges())
 
     # ------------------------------------------------------------------
 
@@ -246,5 +280,37 @@ class TrashService:
         manifest = self._manifest.read_manifest()
         manifest["batches"] = [
             item for item in manifest.get("batches", []) if item["batch_id"] != batch_id
+        ]
+        self._manifest.write_manifest(manifest)
+
+    # -- pending purges (TASK-053 R-04) -----------------------------------
+
+    def _record_pending_purge(self, batch_id: str, targets: list[str]) -> None:
+        """Persist the file sweep list *before* any destructive step so a
+        partial file failure can always be retried."""
+        manifest = self._manifest.read_manifest()
+        pending = [p for p in manifest.get("pending_purges", []) if p["batch_id"] != batch_id]
+        pending.append({"batch_id": batch_id, "targets": list(targets)})
+        manifest["pending_purges"] = pending
+        self._manifest.write_manifest(manifest)
+
+    def _pending_purges(self) -> list[tuple[str, list[str]]]:
+        manifest = self._manifest.read_manifest()
+        return [
+            (item["batch_id"], list(item["targets"]))
+            for item in manifest.get("pending_purges", [])
+        ]
+
+    def _remove_pending_targets(self, batch_id: str, targets: list[str]) -> None:
+        """Remove every file of one pending entry, then clear the entry.
+        A remover failure raises *before* the entry is cleared, so the
+        orphan stays discoverable and retryable."""
+        for relative_path in targets:
+            self._remover.remove_managed(relative_path)
+        manifest = self._manifest.read_manifest()
+        manifest["pending_purges"] = [
+            item
+            for item in manifest.get("pending_purges", [])
+            if item["batch_id"] != batch_id
         ]
         self._manifest.write_manifest(manifest)
