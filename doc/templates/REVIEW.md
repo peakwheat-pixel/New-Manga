@@ -11,16 +11,16 @@ decision: pending
 
 Reviewer 不能是变更作者。decision 为 pending / changes_requested / approved / blocked；只有对该 reviewed_head 的实际审查才有效。
 
-**执行口径（强制，2026-09-17 用户批准）**：Review 必须包含 `code-review` 技能的**两轴口径** —— **Standards**（代码是否符合本仓库记录下来的标准）与 **Spec**（代码是否忠实实现来源 Task/AC）—— 再加上本仓库既有的 **Architecture** 与 **Verification**，共四轴。两轴（Standards/Spec）**分别报告、不合并、不跨轴排名**：任一变更可能通过一轴而在另一轴失败。
+**执行口径（2026-09-18 更新：双轴强制已取消）**：Review 必须覆盖 **Architecture**（分层/契约/依赖/安全/持久化）与 **Verification**（实际运行检查、逐项 PASS/FAIL/BLOCKED/NOT_RUN）。`code-review` 技能的 **Standards**（是否符合本仓库记录的标准）与 **Spec**（是否忠实实现来源 AC）是**可选视角**：可用可不用，**不再强制**，也**不再要求**分别报告、独立 sub-agent 并行执行、"两遍相互隔离"检查或偏差声明（并行双轴子代理能力在本会话不可用，用户 2026-09-18 决定取消该强制项）。
 
-- **隔离要求**：技能要求两轴各由独立 sub-agent 执行以避免 context 互相污染。有独立执行者/线程时优先**并行**两个子审查；环境不支持时，必须做**两遍相互隔离**的检查（不得用一遍通读充当两轴），并在报告中显式声明该偏差与替代做法。
-- **轴状态声明**：报告须逐轴声明 `executed` 或 `N/A`（N/A 必须给理由）；缺声明、或未执行且无理由 → Review 视为未完成，**不得批准**。
+- **视角状态声明（建议）**：如采用了多个视角，建议各自标注 `executed`/`N/A` 并给一行小结；**缺声明不再导致 Review 未完成**。
+- **批准门槛（不变）**：P0/P1 未解决或关键验证缺失时不可批准（见下「验证」与「结论」）。
 
 ## 范围与依据
 
 需求/AC、diff、受影响调用链、共享契约、数据和 UI 边界；记录未审到的部分。
 
-## Standards
+## Standards（可选视角）
 
 按**本仓库记录下来的**标准审查，并逐条给出依据文件与条款：`AGENTS.md`、[09 协作协议](../09_COLLABORATION.md)、[02 技术架构](../02_TECHNICAL_ARCHITECTURE_.md)（§架构方向、§16 推荐源码边界）、D03/D06/D08 相关条文、本 Task 的允许/禁止范围。
 
@@ -28,7 +28,7 @@ Reviewer 不能是变更作者。decision 为 pending / changes_requested / appr
 
 写清：① 违反记录在案标准的**硬性项**（须引用标准文件 + 条款）；② 命中的 baseline smell（须引用 hunk）。建议 < 400 字。
 
-## Spec
+## Spec（可选视角）
 
 来源顺序：本 Task 文件的 AC → 其引用的 D01～D08 条文与 `doc/contracts/**` → `STATUS.md` 中的用户裁决。**不得**用聊天记录、旧仓库路径或目标图推断已有实现。
 
@@ -48,7 +48,7 @@ Reviewer 不能是变更作者。decision 为 pending / changes_requested / appr
 |---|---|---|---|---|
 | 必填 | 实际执行内容 | 必填 | PASS/FAIL/BLOCKED/NOT_RUN/N/A | 必填 |
 
-四轴（**Standards、Spec**、Architecture、Verification）分别给出结论，并逐轴声明 `executed`/`N/A`；每轴末尾给一行小结（该轴发现数 + 本轴最严重项），**不跨轴排名、不合并两轴**。P0/P1 未解决、关键验证缺失时不可批准。
+**Architecture 与 Verification 两面分别给出结论**（如另用了 Standards/Spec 视角，一并写明）。P0/P1 未解决、关键验证缺失时不可批准。
 
 ## 结论与复审
 

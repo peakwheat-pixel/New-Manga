@@ -37,7 +37,7 @@ TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表�
 | [任务目录](tasks/README.md) | 30 个 Task 索引；单个文件是任务状态真值 |
 | [Task 模板](templates/TASK.md) | 新任务创建 |
 | [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
-| [Review 模板](templates/REVIEW.md) | 按固定 commit 独立审查和复审；**四轴 = Standards / Spec（`code-review` 技能两轴口径，强制、不跨轴排名）+ Architecture / Verification**，逐轴声明 `executed`/`N/A` |
+| [Review 模板](templates/REVIEW.md) | 按固定 commit 独立审查和复审；**必须覆盖 Architecture / Verification 两面**；`code-review` 技能的 **Standards / Spec 为可选视角**（2026-09-18 用户决定取消其与 Spec 的"双轴"强制口径与并行/隔离要求）；建议标注各视角 `executed`/`N/A` |
 
 handoffs、reviews、verification 已包含固定提交的真实交付；目录或文件名本身仍不等于审查/验证通过。
 
