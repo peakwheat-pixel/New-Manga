@@ -96,6 +96,7 @@
 | `f835ac9` | TASK-038 | `317f33e` | `fcf791f` approved_subagent |
 | `c8024fe` | TASK-039 | `38fbde4` | `18c9834` approved_subagent |
 | `5bc17f8` | TASK-021 | `887e0d6` | `a9b4141` approved_subagent |
+| `b940497` | TASK-021 R-001 修订 | `0fe634f` | 复审 `79ec0d2` approved_subagent（R-001 fixed 复现+终态 7/7 PASS；集成后复验 787 passed/0 skipped） |
 
 ## 第二轮基线与口径
 
