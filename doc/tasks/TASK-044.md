@@ -2,7 +2,7 @@
 id: TASK-044
 title: TASK-021 修订尾项（F-2 purge FK 完整性 P1 + F-6 生成资产删除范围 + F-7 manifest 原子性 + F-10 软删过滤）
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-021]
 base_commit: 1c171dcdeafc1cbffe6111d503dd0cd598e22dea
 branch: agent/deepseek/TASK-044-purge-integrity
 worktree: G:/CODEX/New Manga.worktrees/TASK-044-deepseek
-integration_commit: null
+integration_commit: 5784018fb528ef7b2521134515ee7776222ffd1d
 ---
 
 # TASK-044：TASK-021 修订尾项（F-2 / F-6 / F-7 / F-10）
@@ -106,3 +106,13 @@ integration_commit: null
 - **另两处超出任务书枚举的补全（可回退）**：跨页 provenance 悬空指针先清（否则"永久删除"对该形态永久失败，E5 证据）；无 FK 的 `pipeline_stage_states` 键行一并清理（该表当前 0 行、无生产写入方）。
 - **最近状态（当前，唯一）**：2026-09-18 **`in_progress`（实现已交付，待非作者 Review）**——F-2 / F-6 / F-7 / F-10 已实现并取证，delivery head `7cd59d5`，fixed base `1c171dc`（开工先 `git merge master` → `33c8dd4`，fast-forward 无冲突）。**未 push；`doc/STATUS.md` 未改**（按 AC ⑦，关闭登记在 Review/集成之后）。本 Task **尚未 done**、四项缺陷**尚未"关闭"**。
 - 历史状态（2026-09-18）：由 Codex 依 DSH 外部复审 `doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md` 的 F-2/F-6/F-7/F-10 开立为 `ready`；本次开工置 `in_progress`。
+
+
+## Review 与集成记录（2026-09-18）
+
+- **Review**：[doc/reviews/TASK-044-7cd59d5.md](../reviews/TASK-044-7cd59d5.md)（Reviewer=Codex，**非作者**；commit `731561b`；decision=**`approved`**；0 P0/P1、4×P3）。
+- **Reviewer 独立复跑（非复用作者证据）**：`tests/storage` **48 passed / 0 skipped**、新文件 **9 passed**、全仓 **813 passed / 6 skipped**（6 条全为既有 `tests/network` `openssl unavailable`；基线 `804/6` ⇒ **+9 恰为新增 9 例**）；**判别力独立复现** 新测试 + master `src` → **8 failed / 1 passed**（唯一通过者为夹具完整性守卫）；**重跑作者探针** E0a 得 **6 表 / 7 FK 全部 `NO ACTION`**（与我先前独立枚举逐项一致）、E0b 显示 pipeline 子树多为 CASCADE、**E1 两张表的 `current_revision_id` 清空均被触发器 ABORT 拒绝**、E2 只删 revisions 失败 ⇒ 印证正确路径；既有测试**零断言/零测试删除**、**无新增 skip/xfail**、未碰 Schema/依赖/`AGENTS.md`、`src`+`tests` 空白干净、**无 `PRAGMA foreign_keys = OFF` / 无吞 `IntegrityError`**。
+- **★ AC ① 实证修正（作者提出，Reviewer 采纳）**：本 Task 的 AC ① 原写「**先** `UPDATE media_artifacts SET current_revision_id = NULL` 破循环」，**该步骤在本 schema 下不可能**——`trg_media_artifacts_current_not_clearable`（及 `regions` 同名触发器）对「非 NULL → NULL」直接 `RAISE(ABORT)`（E1 实测两条均被拒）；正确路径是承认复合 FK 为 **`DEFERRABLE INITIALLY DEFERRED`**，**同一事务内两侧同删**即满足（E2 只删 revisions 失败 → E4 逆序全量提交成功）。**裁定：采纳作者的修正，我方该步骤作废**；Task 文件内作者已加「AC ① 的实证修正（请 Reviewer 裁定）」段，本 Review 明示认可。**流程修正（我方）**：涉及"删除/级联/清指针"的 AC 必须同时枚举 `sqlite_master` 的 **TRIGGER**（本次只读 FK 图、漏触发器）。
+- **5 项待裁定 → 结论**：① F-10 的 port docstring 漂移 **采纳选项 (b)——由集成方改**（见下）；② `max_source_order` 有意不过滤 **接受**（restore 槽位保留，既有测试已把该口径写成有意行为）；③ 跨页 provenance 清指针 **接受**（登记 R-02）；④ `pipeline_stage_states` 一并清理 **接受**（全库扫描证明是唯一无 FK 残留表；正确性优先）；⑤ `pipeline_runs` 不删 **接受**（run 跨多页；登记 R-03）。
+- **集成**：`integration_commit=5784018`（merge，parents `731561b` + `9c7d0fa`）。**R-01 由集成方落地**：`src/application/importing/images/ports.py` 的 `ImportPageSink` docstring 按作者建议替文改为"`max_source_order` 仍计入软删页；`existing_source_hashes` 只返回 live 页（F-10, TASK-044）"（**纯文档、行为零变更**；改动 `+6/−6`，空白检查 exit 0）。master 复验：`tests/storage` **48 passed**、全仓 **813 passed / 6 skipped**（**改 docstring 前后各跑一次，结果一致**）。
+- **关闭**：**F-2 / F-6 / F-7 / F-10 关闭**；TASK-044 置 `done`。
