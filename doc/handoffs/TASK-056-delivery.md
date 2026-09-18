@@ -52,4 +52,4 @@ status: delivered
 - `_is_safe` 改为 `PurePosixPath` 组件检查（含 `..`/`.` 的路径一律 False）后再判前缀；docstring 记录理由。
 - 新回归用例 `test_dotdot_components_are_rejected_even_under_safe_prefix`（sneaky 路径 skipped、业务文件幸存）；判别力=守卫移除必失败。
 - R-002/R-003/R-004（P3：run 的 ImmutablePathViolation 中止边界、Protocol 归位、测试私有成员访问）维持 open，不阻塞。
-- 修订后取证：新套件 9/0；全仓 ×5（881…）→ 实测 4×901/0 + run2 1 failed（`test_worker_run_and_main_thread_access_coexist`，TASK-048 的并发用例在全仓负载下的时序 flaky——单跑 ×6 全过、复跑全仓 901/0；诊断入 `flaky-diagnostic.log`；**与本切片变更面无关**，归 TASK-048 R-2 已注记的强度事项，登记 STATUS flaky 跟踪）→ `verification/TASK-056/revision-full-suite-run{1..5}.log`。
+- 修订后取证：新套件 9/0；全仓 ×5（901/0 预期口径）→ 实测 4×901/0 + run2 1 failed（`test_worker_run_and_main_thread_access_coexist`，TASK-048 的并发用例在全仓负载下的时序 flaky——单跑 ×6 全过、复跑全仓 901/0；诊断入 `flaky-diagnostic.log`；**与本切片变更面无关**，归 TASK-048 R-2 已注记的强度事项，登记 STATUS flaky 跟踪）→ `verification/TASK-056/revision-full-suite-run{1..5}.log`。
