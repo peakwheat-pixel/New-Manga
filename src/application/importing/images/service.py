@@ -118,6 +118,6 @@ class ImportImagesUseCase:
             imported=tuple(imported),
             skipped_duplicates=tuple(skipped),
             failed=tuple(failed),
-            pending_after_cancel=tuple(pending),
+            pending=tuple(pending),
             cancelled=bool(pending),
         )

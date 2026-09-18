@@ -95,5 +95,5 @@ class ImportReport:
     imported: tuple[ImportedPage, ...] = ()
     skipped_duplicates: tuple[str, ...] = ()
     failed: tuple[FailedImport, ...] = ()
-    pending_after_cancel: tuple[str, ...] = ()
+    pending: tuple[str, ...] = ()
     cancelled: bool = False

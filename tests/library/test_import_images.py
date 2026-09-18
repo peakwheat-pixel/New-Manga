@@ -158,7 +158,7 @@ def test_cancellation_keeps_committed_pages_only(import_use_case, chapter):
     report = use_case.import_files(chapter.chapter_id, sources, cancelled=cancel_after_two)
     assert report.cancelled is True
     assert len(report.imported) == 2
-    assert report.pending_after_cancel == ("03.png", "04.png")
+    assert report.pending == ("03.png", "04.png")
     assert len(sink.pages) == 2
     # No page exists without its managed copy.
     for page in sink.pages:

@@ -2,7 +2,7 @@
 id: TASK-054
 title: TASK-043 R-02：pending_after_cancel 跨层中性改名
 kind: refactor
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
