@@ -2,7 +2,7 @@
 id: TASK-051
 title: 工作台三档视图解析 translated/compare（§11 P-6）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -28,12 +28,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（解析规则）**：`_ManagedPageCatalog.image_url(page_id, mode)` 支持 `translated`（当前 TRANSLATED revision）与 `compare`（语义须写明并实现：例如并排/叠加所需的两个来源，或明确复用哪两个 artifact）；**必须复用** `SqlitePageArtifactLocator.locate_current(...)` 与既有 Managed Copy 路径校验（根内校验不得绕过）。
-- [ ] **AC ②（与阅读器一致）**：给出"同页同 revision"的断言证据（workbench 解析出的路径 == reader 解析出的同一 revision 的路径）。
-- [ ] **AC ③（缺失语义）**：无 translated/compare 数据时返回空态且 VM/QML 能区分"无数据"与"路径非法"（typed/可诊断；不得静默混淆）。
-- [ ] **AC ④（QML 不改）**：`src/ui/qml/**` 零改动（`ViewerPanel.qml` 既有绑定已就绪）；若确需改 QML → 停下交 Codex 登记范围变更（本窗口按 BLOCKED 处理）。
-- [ ] **AC ⑤（判别力 + 不回归）**：新用例对修前失败；`tests/core/**`（bootstrap 契约）、`tests/workbench/**` 既有断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
-- [ ] **AC ⑥** Handoff + `verification/TASK-051/**` + 独立子对话 Review + 集成 + STATUS 台账行。
+- [x] **AC ①（解析规则）**：`_ManagedPageCatalog.image_url(page_id, mode)` 支持 `translated`（当前 TRANSLATED revision）与 `compare`（语义须写明并实现：例如并排/叠加所需的两个来源，或明确复用哪两个 artifact）；**必须复用** `SqlitePageArtifactLocator.locate_current(...)` 与既有 Managed Copy 路径校验（根内校验不得绕过）。
+- [x] **AC ②（与阅读器一致）**：给出"同页同 revision"的断言证据（workbench 解析出的路径 == reader 解析出的同一 revision 的路径）。
+- [x] **AC ③（缺失语义）**：无 translated/compare 数据时返回空态且 VM/QML 能区分"无数据"与"路径非法"（typed/可诊断；不得静默混淆）。
+- [x] **AC ④（QML 不改）**：`src/ui/qml/**` 零改动（`ViewerPanel.qml` 既有绑定已就绪）；若确需改 QML → 停下交 Codex 登记范围变更（本窗口按 BLOCKED 处理）。
+- [x] **AC ⑤（判别力 + 不回归）**：新用例对修前失败；`tests/core/**`（bootstrap 契约）、`tests/workbench/**` 既有断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
+- [x] **AC ⑥** Handoff + `verification/TASK-051/**` + 独立子对话 Review + 集成 + STATUS 台账行。
 
 ## 允许修改范围
 
@@ -51,8 +51,8 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ①② 同一 revision | `pytest tests/core tests/workbench -q`（planned） | 真 SQLite + 发布 translated artifact | NOT_RUN | 无 |
-| AC ⑤ 全仓 | `pytest -q -rs` ×5（planned） | 不设 `QT_QPA_PLATFORM` | NOT_RUN | 无 |
+| AC ①② 同一 revision | `pytest tests/core tests/workbench -q -rs` | 真 SQLite + 发布 translated artifact | 87 passed（含 3 新用例；translated 路径==reader 同 revision） | targeted-core-workbench.log |
+| AC ⑤ 全仓 | `pytest -q -rs` ×5 | 不设 `QT_QPA_PLATFORM` | 895 passed, 0 skipped, exit 0 ×5 | full-suite-post-fix-run{1..5}.log |
 
 ## 依赖、风险与阻塞
 
@@ -61,5 +61,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际测试：尚无（`ready`，前置 TASK-050）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（窗口 W4）。**实施尚未开始。**
+- Handoff：`doc/handoffs/TASK-051-3cc5cf5.md`。Review：独立子对话（进行中，报告将落 `doc/reviews/TASK-051-3cc5cf5.md`）。实际测试：见上方测试要求表与 `verification/TASK-051/**`。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W4 实现并取证完毕（实现提交 `3cc5cf5`）：compare 语义从 ViewerPanel.qml（D05 §20.1 左右双图）推出（无需产品裁决）；catalog 注入 locator 解析 translated/compare（根内校验不绕过）+ image_state typed 空态 + VM viewerImageStateFor Slot（QML 零改动）；3 新用例、定向 87、全仓 895×5 全绿；判别力=修前树 2 failed（exit 1）+ 双树探针（EMPTY/unavailable ↔ resolved/ok）。原开立记录：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（窗口 W4）。
