@@ -1,0 +1,34 @@
+﻿FFF...........F.....                                                     [100%]
+================================== FAILURES ===================================
+_________ test_full_page_sweep_is_one_sequential_scan_at_the_default __________
+tests\reading_export\test_webtoon_tiles.py:562: in test_full_page_sweep_is_one_sequential_scan_at_the_default
+    assert default.grid.overlap == 0
+E   assert 64 == 0
+E    +  where 64 = <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D499980F80>.overlap
+E    +    where <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D499980F80> = <infrastructure.imaging.webtoon_tiles.TiledPageRasterizer object at 0x000001D498EB59D0>.grid
+________ test_overlap_choice_leaves_tile_files_byte_identical[pattern] ________
+tests\reading_export\test_webtoon_tiles.py:512: in test_overlap_choice_leaves_tile_files_byte_identical
+    assert zero.grid.overlap == 0
+E   assert 64 == 0
+E    +  where 64 = <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D499B744D0>.overlap
+E    +    where <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D499B744D0> = <infrastructure.imaging.webtoon_tiles.TiledPageRasterizer object at 0x000001D499B74440>.grid
+_________ test_overlap_choice_leaves_tile_files_byte_identical[noise] _________
+tests\reading_export\test_webtoon_tiles.py:512: in test_overlap_choice_leaves_tile_files_byte_identical
+    assert zero.grid.overlap == 0
+E   assert 64 == 0
+E    +  where 64 = <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D499B74C80>.overlap
+E    +    where <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D499B74C80> = <infrastructure.imaging.webtoon_tiles.TiledPageRasterizer object at 0x000001D499B74DD0>.grid
+________ test_assemble_engine_registers_reader_export_and_tiled_reader ________
+tests\core\test_bootstrap.py:445: in test_assemble_engine_registers_reader_export_and_tiled_reader
+    assert services.reader._rasterizer.grid.overlap == 0
+E   assert 64 == 0
+E    +  where 64 = <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D49AB0C890>.overlap
+E    +    where <infrastructure.imaging.webtoon_tiles.TileGrid object at 0x000001D49AB0C890> = <infrastructure.imaging.webtoon_tiles.TiledPageRasterizer object at 0x000001D49AB0C3B0>.grid
+E    +      where <infrastructure.imaging.webtoon_tiles.TiledPageRasterizer object at 0x000001D49AB0C3B0> = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x1d49ba8ea70) at 0x000001D49AB92280>._rasterizer
+E    +        where <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x1d49ba8ea70) at 0x000001D49AB92280> = AppServices(conn=<sqlite3.Connection object at 0x000001D49AB68A90>, repository=<infrastructure.sqlite.library.SqliteLi...t 0x000001D49AB7EF20>, set_export_context_updater=<function assemble_services.<locals>.<lambda> at 0x000001D49AB7EFC0>).reader
+=========================== short test summary info ===========================
+FAILED tests/reading_export/test_webtoon_tiles.py::test_full_page_sweep_is_one_sequential_scan_at_the_default
+FAILED tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_leaves_tile_files_byte_identical[pattern]
+FAILED tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_leaves_tile_files_byte_identical[noise]
+FAILED tests/core/test_bootstrap.py::test_assemble_engine_registers_reader_export_and_tiled_reader
+4 failed, 16 passed in 6.43s
