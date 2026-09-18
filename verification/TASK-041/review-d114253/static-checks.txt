@@ -1,0 +1,41 @@
+reviewer static checks for TASK-041 @ d114253 (Codex, non-author review)
+== fixed point / commits ==
+6ea3dd39d1bb2b61c49af2ead070f40b83a9b9b4
+d11425376fe482f782c4efc0ae08ae42a930b6f3
+3230f45e8d7b4a01a892aea112514cf3c1e46557
+== requirements diff ==
+  +mobi==0.4.1 (single added line; full diff in the review)
+== mobi leakage in src/ ==
+G:\CODEX\New Manga.worktrees\TASK-041-zcode\src\infrastructure\importing.py:252:            import mobi  # adapter-local: never leaks past this file
+G:\CODEX\New Manga.worktrees\TASK-041-zcode\src\infrastructure\importing.py:272:            tempdir, _html = mobi.extract(temp_source)
+
+== application -> infrastructure imports ==
+hits: 0 (exit 1)
+== network surface inside mobi package ==
+hits: 0 (exit 1)
+== installed distributions ==
+['loguru==0.7.3', 'mobi==0.4.1', 'pypdfium2==5.13.0', 'shiboken6==6.11.2', 'standard-imghdr==3.13.0', 'win32_setctime==1.2.0']
+
+== binding source citations (site-packages/mobi) ==
+153:CREATE_COVER_PAGE = True  # XXX experimental
+331:        imgname = "HDimage%05d.%s" % (i, imgtype)
+417:    imgname = "image%05d.%s" % (i, imgtype)
+419:        imgname = "cover%05d.%s" % (i, imgtype)
+
+44:        self.imgdir = os.path.join(self.mobi7dir, "Images")
+47:        self.hdimgdir = os.path.join(self.outdir, "HDImages")
+65:        self.k8images = os.path.join(self.k8oebps, "Images")
+112:                    fileout = os.path.join(self.k8images, name)
+
+13:    tempdir = tempfile.mkdtemp(prefix="mobiex")
+29:    unpackBook(infile, tempdir, epubver="A")
+
+== author's 5 full-suite runs (their logs) ==
+full-suite-run1.log: 828 passed, 1 warning in 34.71s
+full-suite-run2.log: 828 passed, 1 warning in 33.83s
+full-suite-run3.log: 828 passed, 1 warning in 36.28s
+full-suite-run4.log: 828 passed, 1 warning in 33.54s
+full-suite-run5.log: 828 passed, 1 warning in 33.70s
+== reviewer run (declared caliber) ==
+pytest -q -p no:cacheprovider -rs -rf  ->  822 passed, 6 skipped, exit 0 (log: reviewer-full-suite-822-6.txt)
+author caliber in their logs: 828 passed, 0 skipped  =>  totals agree (822+6 = 828 = 819+9)
