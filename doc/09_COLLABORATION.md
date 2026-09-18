@@ -8,11 +8,13 @@
 |---|---|---|---|
 | Codex Desktop | Lead / Architect / Integrator；盘点、契约、拆任务、协调依赖、处理冲突 | 基线文档、Task、集成验证与决策记录 | 唯一主线写入和合并责任人 |
 | ZCode | 独立 Feature、长任务 | 固定 commit、代码与必要测试、Handoff | 自己的任务分支；不得自行合并主线 |
-| Qoder | 独立 Feature、长任务实现（与 ZCode 同面）；亦可作为**非作者** Reviewer | 固定 commit、代码与必要测试、Handoff；Review 报告 | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
+| Qoder | UI/UX、GUI 与 QML 视觉/交互设计责任方；独立 Feature、长任务实现（与 ZCode 同面）；亦可作为**非作者** Reviewer | 设计规范、视觉/交互参考、固定 commit、代码与必要测试、Handoff；Review 报告 | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
 | DeepSeek Harness | 技术实验、OCR/Translation/Inpainting 研究、测试、Bug 分析、独立 Code Review | 可复现实验、测试证据、诊断/Review 报告 | 自己的实验或测试分支；不得自行改生产实现以“证明”Review |
 | 用户 | 产品取舍、阶段审核、重大范围变化 | 由 Codex 记录的审核决定 | 决定接管及后续阶段范围 |
 
 Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查；ZCode / Qoder 的实现由 Codex、DeepSeek Harness 或 Qoder（**非作者**）独立审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
+
+UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 QML 组件边界由 Qoder 主责设计；设计结论先以只读设计 Task 固化并经非作者 Review、Codex 集成，之后才能在单独释放的实现 Task 中落代码。Qoder 的设计身份不自动授予 `src/**` 写权限，也不改变产品需求、四页一级导航、共享契约或 Schema。产品取舍仍由用户决定。
 
 研究结论不自动成为产品需求。诊断任务只读分析与复现；修复需要有允许修改生产代码的 Task。Reviewer 默认只写 Review 报告。
 

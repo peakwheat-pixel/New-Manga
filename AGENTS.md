@@ -23,7 +23,7 @@
 
 - Codex：Lead / Architect / Integrator；负责契约、任务分配、冲突决策及集成。
 - ZCode：独立 Feature、长任务实现；提交代码、测试及 Handoff。
-- Qoder：独立 Feature、长任务实现（与 ZCode 同面）；提交代码、测试及 Handoff；也可作为**非作者** Reviewer。不得审核自己实现的变更。
+- Qoder：UI/UX、GUI 与 QML 视觉/交互设计责任方；同时承担独立 Feature、长任务实现（与 ZCode 同面），提交代码、测试及 Handoff；也可作为**非作者** Reviewer。设计交付不能替代已释放 Task；不得自行扩大产品范围、修改共享契约或审核自己实现的变更。
 - DeepSeek Harness：技术实验、OCR / Translation / Inpainting 研究、测试、Bug 分析及独立 Review。不得审核自己实现的变更。
 - 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 Codex 明确范围；产品需求取舍由用户决定。
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。
