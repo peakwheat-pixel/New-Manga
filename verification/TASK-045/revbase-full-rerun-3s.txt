@@ -1,0 +1,235 @@
+........................................................................ [  8%]
+........................................................................ [ 17%]
+.............................................s.......................... [ 25%]
+............................................................sssss....... [ 34%]
+........................................................................ [ 43%]
+........................................................................ [ 51%]
+........................................................................ [ 60%]
+.......................................................FF............... [ 68%]
+........................................F...FFFFF....................... [ 77%]
+........................................................................ [ 86%]
+........................................................................ [ 94%]
+............................................                             [100%]
+================================== FAILURES ===================================
+____ test_tiled_webtoon_serves_the_first_page_without_an_explicit_request _____
+
+engine = <PySide6.QtQml.QQmlEngine(0x1fdf4316060) at 0x000001FDEC5E3740>
+reader_stack_tiled = (<ui.viewmodels.reader.viewmodel.ReaderViewModel(0x1fdf42cbf80) at 0x000001FDEC5E3080>, <application.reading.service.R...0\\page_1.png', translated_path=None, translated_revision_id=None, current_translated_revision_id=None, text='�� 1 ҳ')])
+
+    @requires_pyside6
+    def test_tiled_webtoon_serves_the_first_page_without_an_explicit_request(
+        engine, reader_stack_tiled
+    ):
+        """R-001 (TASK-045 revision): opening a tiled webtoon chapter must serve
+        the first page's tiles **by itself**.
+    
+        The shipped trigger surface used to be ``onContentYChanged`` only, so an
+        open at the saved offset 0 never asked for a tile: the rows existed with
+        empty urls, the whole-page fallback was hidden by ``tilesActive``, and the
+        reader showed a blank band until the user scrolled. This test never calls
+        ``requestTiles`` �� that is the point.
+        """
+        engine.rootContext().setContextProperty("readerViewModel", reader_stack_tiled[0])
+        window = load_host(engine, READER_HOST, SRC_QML / "reader")
+        try:
+            vm, root = _open_tiled_webtoon(engine, reader_stack_tiled, window)
+    
+            served, trace = pump_traced(window, 3.0, lambda: bool(served_tile_sources(root)))
+>           assert served, (
+                "opening the chapter must serve the first page's tiles without a "
+                f"scroll �� {trace} sources={served_tile_sources(root)}"
+            )
+E           AssertionError: opening the chapter must serve the first page's tiles without a scroll �� pump(3s): iterations=146 elapsed_ms=3000 ok=False sources=[]
+E           assert False
+
+tests\reading_export\test_qml_contract.py:505: AssertionError
+_ test_tiled_webtoon_serves_the_new_page_after_a_turn_without_an_explicit_request _
+
+engine = <PySide6.QtQml.QQmlEngine(0x1fdf479c6e0) at 0x000001FDEC5E3480>
+reader_stack_tiled = (<ui.viewmodels.reader.viewmodel.ReaderViewModel(0x1fdf49ded70) at 0x000001FDEC5E2FC0>, <application.reading.service.R...1\\page_1.png', translated_path=None, translated_revision_id=None, current_translated_revision_id=None, text='�� 1 ҳ')])
+
+    @requires_pyside6
+    def test_tiled_webtoon_serves_the_new_page_after_a_turn_without_an_explicit_request(
+        engine, reader_stack_tiled
+    ):
+        """R-001 (TASK-045 revision): a page turn must serve the new page's tiles
+        on its own, and never leave the previous page's files on screen."""
+        engine.rootContext().setContextProperty("readerViewModel", reader_stack_tiled[0])
+        window = load_host(engine, READER_HOST, SRC_QML / "reader")
+        try:
+            vm, root = _open_tiled_webtoon(engine, reader_stack_tiled, window)
+            served, trace = pump_traced(window, 3.0, lambda: bool(served_tile_sources(root)))
+>           assert served, f"the first page's tiles must be served �� {trace}"
+E           AssertionError: the first page's tiles must be served �� pump(3s): iterations=147 elapsed_ms=3000 ok=False
+E           assert False
+
+tests\reading_export\test_qml_contract.py:525: AssertionError
+___________________ test_tiled_reader_serves_viewport_tiles ___________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2252/test_tiled_reader_serves_viewp0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1fd2b39d1c0) at 0x000001FD2C4F0D00>
+
+    def test_tiled_reader_serves_viewport_tiles(tmp_path, qapp) -> None:
+        from infrastructure.imaging.webtoon_tiles import TiledPageRasterizer
+    
+        source = tmp_path / "long.png"
+        assert write_streaming_png(source, 400, 3000) >= 0.0
+    
+        vm, reading = _make_reader_stack(tmp_path, source, tile_height=800)
+        assert vm.tilesActive is True
+        assert vm.pagePixelWidth == 400 and vm.pagePixelHeight == 3000
+        rows = list(vm.tiles)
+        assert [row["index"] for row in rows] == [0, 1, 2, 3]
+        # R-001 (TASK-045 revision): the ViewModel serves the page head as soon as
+        # the rows are built, so the bootstrap band (tile 0 + prefetch) already has
+        # urls �� this replaces the old "all urls empty until a manual request".
+>       assert [row["index"] for row in rows if row["url"]] == [0, 1]
+E       assert [] == [0, 1]
+E         
+E         Right contains 2 more items, first extra item: 0
+E         Use -v to get more diff
+
+tests\reading_export\test_webtoon_tiles.py:291: AssertionError
+________ test_opening_a_tiled_chapter_serves_the_first_band_by_itself _________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2252/test_opening_a_tiled_chapter_s0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1fd2b39d1c0) at 0x000001FD2C4F0D00>
+
+    def test_opening_a_tiled_chapter_serves_the_first_band_by_itself(
+        tmp_path, qapp
+    ) -> None:
+        """R-001 (TASK-045 revision): the ViewModel must serve the page head on
+        open �� no caller requests a viewport when the saved offset is 0."""
+        vm, _reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+    
+        assert vm.tilesActive is True
+        served = [row for row in vm.tiles if row["url"]]
+        # tile 0 + one prefetch tile, exactly what visible_tiles(0, 0) covers
+>       assert [row["index"] for row in served] == [0, 1]
+E       assert [] == [0, 1]
+E         
+E         Right contains 2 more items, first extra item: 0
+E         Use -v to get more diff
+
+tests\reading_export\test_webtoon_tiles.py:511: AssertionError
+_______ test_page_turn_serves_the_remembered_viewport_without_a_request _______
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2252/test_page_turn_serves_the_reme0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1fd2b39d1c0) at 0x000001FD2C4F0D00>
+
+    def test_page_turn_serves_the_remembered_viewport_without_a_request(
+        tmp_path, qapp
+    ) -> None:
+        """R-001: a page turn serves the equivalent band of the new page on its
+        own, clamped onto the new page's height (never an empty window)."""
+        vm, _reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+        vm.requestTiles(2400, 3200)  # deep in page 1 (tile_height 800)
+        # the deep window plus its prefetch tile are now served as well
+        assert {2, 3} <= {row["index"] for row in vm.tiles if row["url"]}
+    
+        vm.nextPage()
+    
+        # page 2 is 1200 tall: the 800-row window clamps to [400, 1200) �� tiles 0, 1
+        assert vm.pageNumber == 2
+        served = [row["index"] for row in vm.tiles if row["url"]]
+>       assert served == [0, 1], vm.tiles
+E       AssertionError: [{'index': 0, 'top': 0, 'height': 800, 'pageWidth': 400, ...}, {'index': 1, 'top': 800, 'height': 400, 'pageWidth': 400, ...}]
+E       assert [] == [0, 1]
+E         
+E         Right contains 2 more items, first extra item: 0
+E         Use -v to get more diff
+
+tests\reading_export\test_webtoon_tiles.py:531: AssertionError
+_____________ test_next_page_rebuilds_the_tiles_for_the_new_page ______________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2252/test_next_page_rebuilds_the_ti0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1fd2b39d1c0) at 0x000001FD2C4F0D00>
+
+    def test_next_page_rebuilds_the_tiles_for_the_new_page(tmp_path, qapp) -> None:
+        """F-5 (TASK-045): page turns must rebuild the tile rows.
+    
+        Pre-fix only ``openChapter``/``setMode`` rebuilt them, so a page turn kept
+        the previous page's pixels (and urls) while progress advanced.
+        """
+        vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+        assert vm.tilesActive is True
+        assert vm.pagePixelHeight == 3000
+        first_page_urls = [row["url"] for row in vm.tiles if row["url"]]
+>       assert first_page_urls, "the first page must materialise tiles on open"
+E       AssertionError: the first page must materialise tiles on open
+E       assert []
+
+tests\reading_export\test_webtoon_tiles.py:549: AssertionError
+__________________ test_jump_to_page_rebuilds_the_tiles_too ___________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2252/test_jump_to_page_rebuilds_the0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1fd2b39d1c0) at 0x000001FD2C4F0D00>
+
+    def test_jump_to_page_rebuilds_the_tiles_too(tmp_path, qapp) -> None:
+        """F-5: ``jumpToPage`` is a page-changing slot as well, and it serves the
+        new page by itself (R-001)."""
+        vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+        first_page_urls = {row["url"] for row in vm.tiles if row["url"]}
+    
+        vm.jumpToPage(1)
+    
+        assert vm.pageNumber == 2
+        assert vm.pagePixelHeight == 1200
+        served = {row["url"] for row in vm.tiles if row["url"]}
+>       assert served, "jumping to a page must serve its tiles"
+E       AssertionError: jumping to a page must serve its tiles
+E       assert set()
+
+tests\reading_export\test_webtoon_tiles.py:583: AssertionError
+__________ test_request_tiles_converts_display_pixels_to_page_pixels __________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2252/test_request_tiles_converts_di0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1fd2b39d1c0) at 0x000001FD2C4F0D00>
+
+    def test_request_tiles_converts_display_pixels_to_page_pixels(tmp_path, qapp) -> None:
+        """F-11 (TASK-045): QML passes *display* pixels (``Flickable.contentY``);
+        the grid speaks page pixels, so the caller must pass the scale."""
+        from application.reading import ReaderPage
+        from application.reading.service import ReadingService
+        from application.reading import JsonProgressDocumentStore
+        from ui.viewmodels.reader.viewmodel import ReaderViewModel
+    
+        recording = _RecordingRasterizer((1600, 6000))
+        page = ReaderPage(
+            page_id="p0", filename="long.png", original_path=str(tmp_path / "long.png"), text=""
+        )
+    
+        class Catalog:
+            def list_pages(self, chapter_id):
+                return [page]
+    
+        reading = ReadingService(JsonProgressDocumentStore(tmp_path / "progress.json"))
+        vm = ReaderViewModel(reading, Catalog(), tile_factory=lambda path: recording)
+        vm.openChapter("b", "c", "����", "webtoon", "vertical")
+        assert vm.tilesActive is True
+    
+        # the page is 1600px wide; the host shows it at 800px �� scale 0.5
+        vm.requestTiles(0, 500, 0.5)
+        vm.requestTiles(10, 500, 0.5)
+        # default keeps the historical 1:1 behaviour
+        vm.requestTiles(0, 500)
+    
+        # the first entry is the open-time bootstrap (R-001): visible_tiles(0, 0)
+>       assert recording.viewports == [(0, 0), (0, 1000), (20, 1000), (0, 500)]
+E       assert [(0, 1000), (...00), (0, 500)] == [(0, 0), (0, ...00), (0, 500)]
+E         
+E         At index 0 diff: (0, 1000) != (0, 0)
+E         Right contains one more item: (0, 500)
+E         Use -v to get more diff
+
+tests\reading_export\test_webtoon_tiles.py:633: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/reading_export/test_qml_contract.py::test_tiled_webtoon_serves_the_first_page_without_an_explicit_request
+FAILED tests/reading_export/test_qml_contract.py::test_tiled_webtoon_serves_the_new_page_after_a_turn_without_an_explicit_request
+FAILED tests/reading_export/test_webtoon_tiles.py::test_tiled_reader_serves_viewport_tiles
+FAILED tests/reading_export/test_webtoon_tiles.py::test_opening_a_tiled_chapter_serves_the_first_band_by_itself
+FAILED tests/reading_export/test_webtoon_tiles.py::test_page_turn_serves_the_remembered_viewport_without_a_request
+FAILED tests/reading_export/test_webtoon_tiles.py::test_next_page_rebuilds_the_tiles_for_the_new_page
+FAILED tests/reading_export/test_webtoon_tiles.py::test_jump_to_page_rebuilds_the_tiles_too
+FAILED tests/reading_export/test_webtoon_tiles.py::test_request_tiles_converts_display_pixels_to_page_pixels
+8 failed, 822 passed, 6 skipped in 47.98s

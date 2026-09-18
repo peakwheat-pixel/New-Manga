@@ -3,6 +3,15 @@
   module docstring states the whole-image root cause: True
      TASK-042 �� the Qt PNG handler allocates the whole image and fails above
 
+== R-002: the 'at most one rewind' claim ==
+  occurrences of 'at most one rewind' under src/infrastructure/imaging: 0
+  TiledPageRasterizer docstring mentions both terms: True
+     page: the decode window's upward overlap is decoding *context* and is
+     ``overlap``, however, the decode window of every tile after the first
+     starts ``overlap`` rows before the previous window ended �� just behind the
+     cursor �� so each of those tiles rewinds and re-scans from row 0, making a
+     ``verification/TASK-045/rewind-cost-probe.txt``).
+
 == F-14: the cache key ==
   _cache_key docstring:
      Cache identity: source *content*, page/tile geometry and index.

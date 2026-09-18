@@ -285,7 +285,10 @@ def test_tiled_reader_serves_viewport_tiles(tmp_path, qapp) -> None:
     assert vm.pagePixelWidth == 400 and vm.pagePixelHeight == 3000
     rows = list(vm.tiles)
     assert [row["index"] for row in rows] == [0, 1, 2, 3]
-    assert all(not row["url"] for row in rows)
+    # R-001 (TASK-045 revision): the ViewModel serves the page head as soon as
+    # the rows are built, so the bootstrap band (tile 0 + prefetch) already has
+    # urls — this replaces the old "all urls empty until a manual request".
+    assert [row["index"] for row in rows if row["url"]] == [0, 1]
 
     vm.requestTiles(0, 900)  # viewport + prefetch=1 → tiles 0, 1 and 2
     served = [row for row in vm.tiles if row["url"]]
@@ -495,6 +498,44 @@ def _make_multipage_webtoon_stack(tmp_path: Path, sizes: list[tuple[int, int]]):
     return vm, reading
 
 
+def test_opening_a_tiled_chapter_serves_the_first_band_by_itself(
+    tmp_path, qapp
+) -> None:
+    """R-001 (TASK-045 revision): the ViewModel must serve the page head on
+    open — no caller requests a viewport when the saved offset is 0."""
+    vm, _reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+
+    assert vm.tilesActive is True
+    served = [row for row in vm.tiles if row["url"]]
+    # tile 0 + one prefetch tile, exactly what visible_tiles(0, 0) covers
+    assert [row["index"] for row in served] == [0, 1]
+    for row in served:
+        assert Path(row["url"].replace("file:///", "").replace("file://", "")).is_file()
+
+
+def test_page_turn_serves_the_remembered_viewport_without_a_request(
+    tmp_path, qapp
+) -> None:
+    """R-001: a page turn serves the equivalent band of the new page on its
+    own, clamped onto the new page's height (never an empty window)."""
+    vm, _reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+    vm.requestTiles(2400, 3200)  # deep in page 1 (tile_height 800)
+    # the deep window plus its prefetch tile are now served as well
+    assert {2, 3} <= {row["index"] for row in vm.tiles if row["url"]}
+
+    vm.nextPage()
+
+    # page 2 is 1200 tall: the 800-row window clamps to [400, 1200) → tiles 0, 1
+    assert vm.pageNumber == 2
+    served = [row["index"] for row in vm.tiles if row["url"]]
+    assert served == [0, 1], vm.tiles
+    for row in vm.tiles:
+        if row["url"]:
+            assert Path(
+                row["url"].replace("file:///", "").replace("file://", "")
+            ).is_file()
+
+
 def test_next_page_rebuilds_the_tiles_for_the_new_page(tmp_path, qapp) -> None:
     """F-5 (TASK-045): page turns must rebuild the tile rows.
 
@@ -504,21 +545,20 @@ def test_next_page_rebuilds_the_tiles_for_the_new_page(tmp_path, qapp) -> None:
     vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
     assert vm.tilesActive is True
     assert vm.pagePixelHeight == 3000
-    vm.requestTiles(0, 800)
     first_page_urls = [row["url"] for row in vm.tiles if row["url"]]
-    assert first_page_urls, "the first page must materialise tiles"
+    assert first_page_urls, "the first page must materialise tiles on open"
 
     vm.nextPage()
 
     assert vm.pageNumber == 2
-    # the rows now describe the *new* page and hold no stale urls
+    # the rows now describe the *new* page and hold the new page's files
     assert vm.pagePixelHeight == 1200
     assert [row["height"] for row in vm.tiles] == [800, 400]
-    assert all(row["url"] == "" for row in vm.tiles), "stale tile urls survived"
-
-    vm.requestTiles(0, 800)
     served = [row for row in vm.tiles if row["url"]]
     assert [row["index"] for row in served] == [0, 1]
+    assert set(row["url"] for row in served).isdisjoint(first_page_urls), (
+        "a page turn must not keep the previous page's tile files"
+    )
     for row in served:
         path = Path(row["url"].replace("file:///", "").replace("file://", ""))
         assert path.is_file()
@@ -530,12 +570,18 @@ def test_next_page_rebuilds_the_tiles_for_the_new_page(tmp_path, qapp) -> None:
 
 
 def test_jump_to_page_rebuilds_the_tiles_too(tmp_path, qapp) -> None:
-    """F-5: ``jumpToPage`` is a page-changing slot as well."""
+    """F-5: ``jumpToPage`` is a page-changing slot as well, and it serves the
+    new page by itself (R-001)."""
     vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+    first_page_urls = {row["url"] for row in vm.tiles if row["url"]}
+
     vm.jumpToPage(1)
+
     assert vm.pageNumber == 2
     assert vm.pagePixelHeight == 1200
-    assert all(row["url"] == "" for row in vm.tiles)
+    served = {row["url"] for row in vm.tiles if row["url"]}
+    assert served, "jumping to a page must serve its tiles"
+    assert served.isdisjoint(first_page_urls)
 
 
 class _RecordingRasterizer:
@@ -583,7 +629,8 @@ def test_request_tiles_converts_display_pixels_to_page_pixels(tmp_path, qapp) ->
     # default keeps the historical 1:1 behaviour
     vm.requestTiles(0, 500)
 
-    assert recording.viewports == [(0, 1000), (20, 1000), (0, 500)]
+    # the first entry is the open-time bootstrap (R-001): visible_tiles(0, 0)
+    assert recording.viewports == [(0, 0), (0, 1000), (20, 1000), (0, 500)]
 
 
 def test_ensure_viewport_rewind_accounting_is_per_tile(tmp_path, qapp) -> None:

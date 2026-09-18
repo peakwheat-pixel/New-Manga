@@ -1,0 +1,22 @@
+# TASK-045 revision slice: R-001 discrimination (machine-extracted from revision-pre-fix-tests.txt)
+# tree under test: reviewed head 1171bc5 src + QML (two-tree run) with THIS slice's tests
+#   git archive 1171bc5 src pytest.ini | tar -x -C <tmp>; then copy the worktree tests/ + pytest.ini
+# command: python -m pytest tests/reading_export tests/core -q -rf -p no:cacheprovider
+
+test_tiled_webtoon_serves_the_first_page_without_an_explicit_request -> AssertionError: opening the chapter must serve the first page's tiles without a scroll �� pump(3s): iterations=147 elapsed_ms=3000 ok=False sources=[]
+test_tiled_webtoon_serves_the_new_page_after_a_turn_without_an_explicit_request -> AssertionError: the first page's tiles must be served �� pump(3s): iterations=147 elapsed_ms=3015 ok=False
+test_tiled_reader_serves_viewport_tiles -> assert [] == [0, 1]
+test_opening_a_tiled_chapter_serves_the_first_band_by_itself -> assert [] == [0, 1]
+test_page_turn_serves_the_remembered_viewport_without_a_request -> AssertionError: [{'index': 0, 'top': 0, 'height': 800, 'pageWidth': 400, ...}, {'index': 1, 'top': 800, 'height': 400, 'pageWidth': 400, ...}]
+test_next_page_rebuilds_the_tiles_for_the_new_page -> AssertionError: the first page must materialise tiles on open
+test_jump_to_page_rebuilds_the_tiles_too -> AssertionError: jumping to a page must serve its tiles
+test_request_tiles_converts_display_pixels_to_page_pixels -> assert [(0, 1000), (...00), (0, 500)] == [(0, 0), (0, ...00), (0, 500)]
+
+# totals: 8 failed / 125 passed (see the log tail). Every failure is on the R-001 axis:
+#   2 new QML tests (no manual requestTiles) + 2 new ViewModel tests + the 4 assertions that
+#   encoded the old "urls stay empty until a caller asks" behaviour.
+#
+# Full suite in the same base tree: 8 failed / 822 passed / 6 skipped, exit 1 - the same eight
+# assertions and no crash (see revbase-full-rerun-3s.txt; with the earlier 5 s failure budget
+# the run additionally hit a Qt access violation in tests/workbench/test_ui_responsiveness.py,
+# which is why the new tests now bound their failure path at 3 s).

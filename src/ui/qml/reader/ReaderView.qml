@@ -258,11 +258,14 @@ Rectangle {
                     width: parent.width
 
                     Repeater {
-                        // F-5 (TASK-045): qualify the ViewModel — an
+                        // F-5/R-003 (TASK-045): qualify both names. An
                         // unqualified `model` inside a Repeater resolves to the
-                        // Repeater's *own* model property, so `model.tiles` was
-                        // undefined and no tile delegate was ever instantiated.
-                        model: visible && rv.model ? rv.model.tiles : []
+                        // Repeater's own model property (`model.tiles` was
+                        // undefined → no delegate was ever created) and an
+                        // unqualified `visible` resolves to the Repeater's own
+                        // visible (always true), so the intent is expressed on
+                        // the host explicitly.
+                        model: tilesHost.visible && rv.model ? rv.model.tiles : []
                         delegate: Image {
                             required property var modelData
                             source: modelData.url

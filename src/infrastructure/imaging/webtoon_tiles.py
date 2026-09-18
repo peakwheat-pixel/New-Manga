@@ -41,6 +41,10 @@ _COLOUR_TYPE_FOR_CHANNELS = {1: 0, 2: 4, 3: 2, 4: 6}
 #: Bumped whenever the *bytes written for a tile* change meaning, so an older
 #: on-disk tile can never be reused after the geometry contract moved
 #: (TASK-045 F-4: files now hold the content band only, without the overlap).
+#: A bump orphans the previous generation's files in the cache directory
+#: (R-005): they are rebuildable pixels, never business data, and
+#: :meth:`TiledPageRasterizer.clear` — or a manual wipe — reclaims every
+#: ``tile-*.png`` generation at once.
 _TILE_CACHE_FORMAT = "v2"
 
 
@@ -246,11 +250,14 @@ class TiledPageRasterizer:
     *content* digest + tile geometry + index), so QML consumes ordinary file
     URIs and the whole cache directory can be wiped and rebuilt at any time.
 
-    The streaming cursor only moves forward. A request behind it (after a
-    cache wipe) transparently rewinds and re-scans **once**: ``visible_tiles``
-    is ascending, so one :meth:`ensure_viewport` call needs at most one
-    rewind, and that rescan stops at the target band's end (TASK-045 AC ⑩;
-    measured costs in ``verification/TASK-045/rewind-cost-probe.txt``).
+    The streaming cursor only moves forward, and ``visible_tiles`` is
+    ascending, so no call ever needs a *backward* jump. With a non-zero
+    ``overlap``, however, the decode window of every tile after the first
+    starts ``overlap`` rows before the previous window ended — just behind the
+    cursor — so each of those tiles rewinds and re-scans from row 0, making a
+    multi-tile viewport O(tiles²) rather than one sequential scan
+    (TASK-045 AC ⑩; measured costs in
+    ``verification/TASK-045/rewind-cost-probe.txt``).
     """
 
     def __init__(
@@ -371,9 +378,16 @@ class TiledPageRasterizer:
             self._reader.rewind()
             raw, width, band_height, channels = self._reader.read_band(y, height)
         offset = tile.content_top - y
-        keep_rows = min(tile.content_height, band_height - offset)
-        if keep_rows <= 0:
-            raise OSError(f"tile {tile.index} decoded an empty content band")
+        # R-004 (TASK-045): the decode window is built from the content band, so
+        # the reader must hand back exactly that many rows. Truncating silently
+        # would write a tile shorter than the height declared to QML — the very
+        # symptom F-4 removed — so a short read is a hard, diagnosable failure.
+        if band_height - offset != tile.content_height:
+            raise OSError(
+                f"tile {tile.index} decoded {band_height} rows for content band"
+                f" {tile.content_height} (offset {offset})"
+            )
+        keep_rows = tile.content_height
         stride = width * channels
         start = offset * stride
         return _encode_png(

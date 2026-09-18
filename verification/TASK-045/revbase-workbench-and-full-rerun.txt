@@ -1,0 +1,64 @@
+# Base tree (1171bc5 src + this slice's tests): characterize the one access violation
+
+===== tests/workbench alone =====
+exit=0
+...................................................                      [100%]
+51 passed in 7.77s
+
+===== full suite rerun =====
+exit=-1073741819
+........................................................................ [  8%]
+........................................................................ [ 17%]
+.............................................s.......................... [ 25%]
+............................................................sssss....... [ 34%]
+........................................................................ [ 43%]
+........................................................................ [ 51%]
+........................................................................ [ 60%]
+.......................................................FF............... [ 68%]
+........................................F...FFFFF....................... [ 77%]
+........................................................................ [ 86%]
+........................................................................ [ 94%]
+Windows fatal exception: access violation
+
+Thread 0x000013a0 (most recent call first):
+  File "C:\Users\49745\AppData\Local\Temp\task045-rev-base\tests\workbench\test_ui_responsiveness.py", line 66 in <lambda>
+  File "C:\Users\49745\AppData\Local\Temp\task045-rev-base\src\application\translation\pipeline\executor.py", line 52 in execute
+  File "C:\Users\49745\AppData\Local\Temp\task045-rev-base\src\application\tasks\service.py", line 762 in execute_run
+  File "C:\Users\49745\AppData\Local\Temp\task045-rev-base\src\ui\viewmodels\workbench\run_controller.py", line 36 in execute
+
+Current thread 0x0000bd14 (most recent call first):
+  File "C:\Users\49745\AppData\Local\Temp\task045-rev-base\tests\workbench\workbench_helpers.py", line 189 in wait_until
+  File "C:\Users\49745\AppData\Local\Temp\task045-rev-base\tests\workbench\test_ui_responsiveness.py", line 87 in test_gui_thread_stays_alive_during_run
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\python.py", line 167 in pytest_pyfunc_call
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\python.py", line 1707 in runtest
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\runner.py", line 184 in pytest_runtest_call
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\runner.py", line 250 in <lambda>
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\runner.py", line 361 in from_call
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\runner.py", line 249 in call_and_report
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\runner.py", line 139 in runtestprotocol
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\runner.py", line 118 in pytest_runtest_protocol
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\main.py", line 408 in pytest_runtestloop
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\main.py", line 384 in _main
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\main.py", line 330 in wrap_session
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\main.py", line 377 in pytest_cmdline_main
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_callers.py", line 121 in _multicall
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_manager.py", line 120 in _hookexec
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pluggy\_hooks.py", line 512 in __call__
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\config\__init__.py", line 229 in _main
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\_pytest\config\__init__.py", line 253 in _console_main
+  File "G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\pytest\__main__.py", line 9 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 198 in _run_module_as_main
+....................

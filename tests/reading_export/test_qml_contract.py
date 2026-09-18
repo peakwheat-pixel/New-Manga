@@ -450,69 +450,96 @@ def reader_stack_tiled(tmp_path):
     return vm, reading, pages
 
 
+def served_tile_sources(root) -> list:
+    """The tile delegates' ``source`` values from the real object tree.
+
+    QML delegate items get a *visual* parent, not a QObject parent, so
+    ``childItems()`` — not ``findChildren()`` — is what sees them.
+    """
+    host = find_by_name(root, "readerTilesHost")
+    if host is None:
+        return []
+    sources = []
+    for item in host.childItems():
+        source = item.property("source")
+        if source is None:
+            continue
+        text = source.toString() if hasattr(source, "toString") else str(source)
+        if text:
+            sources.append(text)
+    return sources
+
+
+def _open_tiled_webtoon(engine, reader_stack_tiled, window):
+    """Open the tiled webtoon chapter and wait for the viewer to swap in."""
+    vm, _reading, _pages = reader_stack_tiled
+    root = find_by_name(window, "readerView")
+    vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+    swapped, trace = pump_traced(
+        window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+    )
+    assert swapped, trace
+    assert vm.tilesActive is True
+    return vm, root
+
+
 @requires_pyside6
-def test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles(
+def test_tiled_webtoon_serves_the_first_page_without_an_explicit_request(
     engine, reader_stack_tiled
 ):
-    """F-5 (TASK-045) at the QML level: the tile delegates must not keep
-    pointing at the previous page's files after a page turn.
+    """R-001 (TASK-045 revision): opening a tiled webtoon chapter must serve
+    the first page's tiles **by itself**.
 
-    The ViewModel-level test pins the rows; this one pins what QML actually
-    renders (delegate ``source`` values), which is where "显示旧图" was
-    visible.
+    The shipped trigger surface used to be ``onContentYChanged`` only, so an
+    open at the saved offset 0 never asked for a tile: the rows existed with
+    empty urls, the whole-page fallback was hidden by ``tilesActive``, and the
+    reader showed a blank band until the user scrolled. This test never calls
+    ``requestTiles`` — that is the point.
     """
-    vm, reading, pages = reader_stack_tiled
-    engine.rootContext().setContextProperty("readerViewModel", vm)
+    engine.rootContext().setContextProperty("readerViewModel", reader_stack_tiled[0])
     window = load_host(engine, READER_HOST, SRC_QML / "reader")
     try:
-        root = find_by_name(window, "readerView")
-        vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
-        swapped, _trace = pump_traced(
-            window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+        vm, root = _open_tiled_webtoon(engine, reader_stack_tiled, window)
+
+        served, trace = pump_traced(window, 3.0, lambda: bool(served_tile_sources(root)))
+        assert served, (
+            "opening the chapter must serve the first page's tiles without a "
+            f"scroll — {trace} sources={served_tile_sources(root)}"
         )
-        assert swapped
-        assert vm.tilesActive is True
-        QGuiApplication.processEvents()
+        assert vm.pageNumber == 1
+    finally:
+        window.close()
 
-        host = find_by_name(root, "readerTilesHost")
-        assert host is not None and bool(host.property("visible"))
 
-        def served_sources() -> list:
-            # QML delegate items get a *visual* parent, not a QObject parent,
-            # so childItems() — not findChildren() — is what sees them.
-            sources = []
-            for item in host.childItems():
-                source = item.property("source")
-                if source is None:
-                    continue
-                text = source.toString() if hasattr(source, "toString") else str(source)
-                if text:
-                    sources.append(text)
-            return sources
-
-        assert served_sources() == []
-
-        vm.requestTiles(0, 600)
-        served, trace = pump_traced(window, 5.0, lambda: bool(served_sources()))
+@requires_pyside6
+def test_tiled_webtoon_serves_the_new_page_after_a_turn_without_an_explicit_request(
+    engine, reader_stack_tiled
+):
+    """R-001 (TASK-045 revision): a page turn must serve the new page's tiles
+    on its own, and never leave the previous page's files on screen."""
+    engine.rootContext().setContextProperty("readerViewModel", reader_stack_tiled[0])
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        vm, root = _open_tiled_webtoon(engine, reader_stack_tiled, window)
+        served, trace = pump_traced(window, 3.0, lambda: bool(served_tile_sources(root)))
         assert served, f"the first page's tiles must be served — {trace}"
-        first_page_sources = served_sources()
+        first_page_sources = served_tile_sources(root)
 
         vm.nextPage()
-        dropped, drop_trace = pump_traced(
-            window, 5.0, lambda: served_sources() == []
-        )
 
         assert vm.pageNumber == 2
-        assert dropped, (
-            "a page turn must drop the previous page's tile sources — "
-            f"{drop_trace} sources={served_sources()}"
+        replaced, turn_trace = pump_traced(
+            window, 3.0, lambda: bool(served_tile_sources(root))
         )
-
-        vm.requestTiles(0, 600)
-        again, again_trace = pump_traced(window, 5.0, lambda: bool(served_sources()))
-        assert again, f"the new page's tiles must be served — {again_trace}"
-        second_page_sources = served_sources()
-        assert set(second_page_sources).isdisjoint(first_page_sources)
+        assert replaced, (
+            "a page turn must serve the new page's tiles without a scroll — "
+            f"{turn_trace} sources={served_tile_sources(root)}"
+        )
+        second_page_sources = served_tile_sources(root)
+        assert set(second_page_sources).isdisjoint(first_page_sources), (
+            "a page turn must not keep the previous page's tile files — "
+            f"sources={second_page_sources}"
+        )
     finally:
         window.close()
 

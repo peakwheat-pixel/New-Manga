@@ -40,6 +40,31 @@ for line in root_cause:
 assert root_cause
 
 print()
+print("== R-002: the 'at most one rewind' claim ==")
+#: The class docstring must not repeat the retracted claim; the measured
+#: wording lives in the same docstring (R-002, TASK-045 revision).
+forbidden = "at most one rewind"
+hits = [
+    f"{path.relative_to(REPO_ROOT)}:{number}"
+    for path in sorted(IMAGING.rglob("*.py"))
+    for number, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1)
+    if forbidden in line.lower()
+]
+print(f"  occurrences of {forbidden!r} under src/infrastructure/imaging:", len(hits))
+for entry in hits:
+    print("   ", entry)
+assert not hits, "the retracted 'at most one rewind' claim returned"
+
+source = TILES.read_text(encoding="utf-8")
+class_doc = source.split("class TiledPageRasterizer:")[1].split('"""')[1]
+print("  TiledPageRasterizer docstring mentions both terms:",
+      "rewind" in class_doc.lower() and "overlap" in class_doc.lower())
+assert "rewind" in class_doc.lower() and "overlap" in class_doc.lower()
+for line in class_doc.strip().splitlines():
+    if "rewind" in line.lower() or "overlap" in line.lower():
+        print("    ", line.strip())
+
+print()
 print("== F-14: the cache key ==")
 source = TILES.read_text(encoding="utf-8")
 key_doc = source.split("def _cache_key")[1].split('"""')[1]
