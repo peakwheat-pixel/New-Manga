@@ -238,7 +238,7 @@ def test_cancel_stops_before_the_next_page_and_keeps_committed(workspace) -> Non
     assert report.cancelled is True
     assert len(report.imported) == 2  # pages 1-2 committed
     assert len(sink.pages) == 2
-    assert report.pending_after_cancel  # remainder reported as pending
+    assert report.pending  # remainder reported as pending
 
 
 def test_encrypted_pdf_is_reported_not_guessed(tmp_path) -> None:
@@ -373,7 +373,7 @@ def test_failed_page_reports_the_rest_as_pending(tmp_path) -> None:
 
     assert len(report.imported) == 1 and len(sink.pages) == 1
     assert [failure.reason for failure in report.failed] == ["INVALID_DOCUMENT"]
-    assert report.pending_after_cancel == ("long.pdf (page 3+)", "long.pdf (page 4+)")
+    assert report.pending == ("long.pdf (page 3+)", "long.pdf (page 4+)")
     assert report.skipped_duplicates == ()
     # a failed page is not a cancellation: the flag must stay honest
     assert report.cancelled is False
@@ -401,7 +401,7 @@ def test_copy_failure_reports_the_rest_as_pending(tmp_path) -> None:
 
     assert len(report.imported) == 1 and len(sink.pages) == 1
     assert [failure.reason for failure in report.failed] == ["COPY_FAILED"]
-    assert report.pending_after_cancel == ("long.pdf (page 3+)",)
+    assert report.pending == ("long.pdf (page 3+)",)
     assert report.cancelled is False
 
 
@@ -417,7 +417,7 @@ def test_cancel_reports_every_remaining_page_as_pending(tmp_path) -> None:
 
     assert report.cancelled is True
     assert len(report.imported) == 2
-    assert report.pending_after_cancel == ("long.pdf (page 3+)", "long.pdf (page 4+)")
+    assert report.pending == ("long.pdf (page 3+)", "long.pdf (page 4+)")
 
 
 def test_zero_page_document_is_a_typed_failure_not_a_duplicate(tmp_path) -> None:
@@ -430,7 +430,7 @@ def test_zero_page_document_is_a_typed_failure_not_a_duplicate(tmp_path) -> None
     assert report.imported == () and sink.pages == []
     assert report.skipped_duplicates == ()
     assert [failure.reason for failure in report.failed] == ["INVALID_DOCUMENT"]
-    assert report.pending_after_cancel == ()
+    assert report.pending == ()
 
 
 def test_zero_page_pdf_through_the_production_raster_fails_typed(workspace) -> None:

@@ -438,6 +438,6 @@ def test_mid_document_bad_page_keeps_prior_and_pends_rest(workspace) -> None:
     assert [item.page.source_order for item in report.imported] == [1]
     assert [failure.reason for failure in report.failed] == ["INVALID_DOCUMENT"]
     assert "decoded" in report.failed[0].detail
-    assert report.pending_after_cancel == ("mid.mobi (page 3+)",)
+    assert report.pending == ("mid.mobi (page 3+)",)
     assert report.cancelled is False
     assert len(sink.pages) == 1
