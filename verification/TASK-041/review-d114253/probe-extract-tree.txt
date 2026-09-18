@@ -1,0 +1,9 @@
+reviewer probe: what the real binding leaves in its temp tree for THIS SLICE'S synthetic container
+container = tests/import_formats/test_mobi_import.py::picture_mobi([red 8x6, green 9x7])
+tempdir: C:\Users\49745\AppData\Local\Temp\mobiexsr6id3dj
+returned: mobi7\book.html
+DIR . -> []
+DIR HDImages -> []
+DIR mobi7 -> ['book.html', 'content.opf', 'toc.ncx']
+DIR mobi7\Images -> ['image00002.jpeg', 'image00003.jpeg']
+EXIT=0
