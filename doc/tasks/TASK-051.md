@@ -2,7 +2,7 @@
 id: TASK-051
 title: 工作台三档视图解析 translated/compare（§11 P-6）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
