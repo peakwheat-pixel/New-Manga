@@ -1,0 +1,5 @@
+== tree: C:\Users\49745\AppData\Local\Temp\task046-prefix-ec5b4d1
+== default overlap on this tree: 64
+-- full sweep at this tree's default overlap: rewinds=4 -> test's 'rewinds == 0' would FAIL
+-- overlap 0 vs 64 tile bytes identical: True | stitched == whole page: True -> byte-identity body PASSES (pinned, as declared)
+-- full sweep with explicit overlap=64: rewinds=4 (test pins == 4)

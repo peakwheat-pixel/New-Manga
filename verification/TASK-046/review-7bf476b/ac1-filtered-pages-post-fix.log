@@ -1,0 +1,11 @@
+-- paeth: file paeth.png, overlap 0 vs 64
+   byte-identical across all 3 tiles: True | stitched == whole page: True
+-- average: file average.png, overlap 0 vs 64
+   byte-identical across all 3 tiles: True | stitched == whole page: True
+-- up: file up.png, overlap 0 vs 64
+   byte-identical across all 3 tiles: True | stitched == whole page: True
+-- sub: file sub.png, overlap 0 vs 64
+   byte-identical across all 3 tiles: True | stitched == whole page: True
+-- qt/libpng page filter histogram: {0: 8, 1: 15, 4: 1977}
+-- qt: file qt.png, overlap 0 vs 64
+   byte-identical across all 3 tiles: True | stitched == whole page: True
