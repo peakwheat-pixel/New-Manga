@@ -43,5 +43,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际测试：尚无（`ready`，前置 TASK-053）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 开立为 `ready`（窗口 W10）。**实施尚未开始。**
+- Handoff：[TASK-057-delivery.md](../handoffs/TASK-057-delivery.md)。Review：尚无（待窗口独立子对话 Review）。实际测试：新套件 8/0 + 相邻 storage/core 97/0 + 全仓（4×912/0 有效绿 + 1 既有时序 flaky + 1 环境中断，逐次分列入库）。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 实现（实现提交 `c5515fb`）：sidecar 清单 + `verify_backup_file` + typed `restore_backup`（覆盖语义/pre_restore 自动备份/一致性报告/sidecar 兜底）+ `BackupLedger` 端口。零 Schema/依赖/QML。`base=8bf8da3`（开工已 merge master `1d41e00`，含 W0–W4/W6–W9）。
