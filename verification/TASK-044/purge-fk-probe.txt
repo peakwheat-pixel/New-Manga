@@ -1,0 +1,61 @@
+foreign_keys pragma: 1
+
+== E0a: every FK whose parent is pages ==
+  media_artifacts.page_id -> pages.page_id  on_delete=NO ACTION
+  media_artifacts.page_id -> pages.page_id  on_delete=NO ACTION
+  pipeline_run_targets.page_id -> pages.page_id  on_delete=NO ACTION
+  pipeline_tasks.page_id -> pages.page_id  on_delete=NO ACTION
+  regions.page_id -> pages.page_id  on_delete=NO ACTION
+  step_result_candidates.page_id -> pages.page_id  on_delete=NO ACTION
+  step_runs.page_id -> pages.page_id  on_delete=NO ACTION
+  => 7 FKs from 6 tables
+
+== E0b: remaining FKs among purge-relevant tables ==
+  artifact_revisions.source_artifact_revision_id -> artifact_revisions.artifact_revision_id  on_delete=NO ACTION
+  artifact_revisions.artifact_id -> media_artifacts.artifact_id  on_delete=NO ACTION
+  media_artifacts.current_revision_id -> artifact_revisions.artifact_revision_id  on_delete=NO ACTION
+  media_artifacts.artifact_id -> artifact_revisions.artifact_id  on_delete=NO ACTION
+  pipeline_run_targets.pipeline_run_id -> pipeline_runs.run_id  on_delete=CASCADE
+  pipeline_tasks.run_target_id -> pipeline_run_targets.run_target_id  on_delete=CASCADE
+  pipeline_tasks.pipeline_run_id -> pipeline_runs.run_id  on_delete=CASCADE
+  region_revisions.restored_from_revision_id -> region_revisions.region_revision_id  on_delete=NO ACTION
+  region_revisions.region_id -> region_revisions.region_id  on_delete=NO ACTION
+  region_revisions.region_id -> regions.region_id  on_delete=NO ACTION
+  regions.current_revision_id -> region_revisions.region_revision_id  on_delete=NO ACTION
+  regions.region_id -> region_revisions.region_id  on_delete=NO ACTION
+  step_result_candidates.step_run_id -> step_runs.step_run_id  on_delete=CASCADE
+  step_result_candidates.pipeline_run_id -> pipeline_runs.run_id  on_delete=CASCADE
+  step_run_input_refs.step_run_id -> step_runs.step_run_id  on_delete=CASCADE
+  step_run_output_refs.step_run_id -> step_runs.step_run_id  on_delete=CASCADE
+  step_runs.task_id -> pipeline_tasks.task_id  on_delete=CASCADE
+  step_runs.pipeline_run_id -> pipeline_runs.run_id  on_delete=CASCADE
+  committed graph rows: {'pages': 4, 'media_artifacts': 4, 'artifact_revisions': 8, 'regions': 4, 'region_revisions': 8, 'pipeline_run_targets': 4, 'pipeline_tasks': 4, 'step_runs': 4, 'step_result_candidates': 4, 'step_run_input_refs': 0, 'step_run_output_refs': 4}
+
+== E1: clearing the 'current' pointers (the task's prescribed step) ==
+  UPDATE media_artifacts SET current_revision_id = NULL: FAILED -> IntegrityError: media_artifacts.current_revision_id cannot be cleared once set
+  UPDATE regions SET current_revision_id = NULL: FAILED -> IntegrityError: regions.current_revision_id cannot be cleared once set
+
+== E2 (p1): delete only artifact_revisions, artifacts survive ==
+  artifact_revisions alone: FAILED -> IntegrityError: FOREIGN KEY constraint failed
+  rows left: {'pages': 4, 'media_artifacts': 4, 'artifact_revisions': 8, 'regions': 4, 'region_revisions': 8, 'pipeline_run_targets': 4, 'pipeline_tasks': 4, 'step_runs': 4, 'step_result_candidates': 4, 'step_run_input_refs': 0, 'step_run_output_refs': 4}
+
+== E3 (p2): artifact_revisions then media_artifacts, one transaction ==
+  revisions + artifacts: COMMITTED; foreign_key_check=[]
+  rows left: {'pages': 4, 'media_artifacts': 3, 'artifact_revisions': 6, 'regions': 4, 'region_revisions': 8, 'pipeline_run_targets': 4, 'pipeline_tasks': 4, 'step_runs': 4, 'step_result_candidates': 4, 'step_run_input_refs': 0, 'step_run_output_refs': 4}
+
+== E4 (p3): the full child-before-parent order ==
+  full order: COMMITTED; foreign_key_check=[]
+  rows left: {'pages': 3, 'media_artifacts': 2, 'artifact_revisions': 4, 'regions': 3, 'region_revisions': 6, 'pipeline_run_targets': 3, 'pipeline_tasks': 3, 'step_runs': 3, 'step_result_candidates': 3, 'step_run_input_refs': 0, 'step_run_output_refs': 3}
+
+== E5 (p4, plus an external referrer on p5) ==
+  p5 revision derives from a p4 revision
+  purge p4 WITHOUT clearing external provenance: FAILED -> IntegrityError: FOREIGN KEY constraint failed
+  purge p4 WITH the provenance pre-clear: COMMITTED; foreign_key_check=[]
+  p5 first revision's source after p4 purge: None
+
+== summary ==
+  E0 FK graph matches the task's 6 tables / 7 FKs: True
+  E1 current-pointer clearing impossible: True
+  E2/E3 self-reference verdict: see above
+  E4 full order committed: True
+  rows left: {'pages': 4, 'media_artifacts': 2, 'artifact_revisions': 4, 'regions': 4, 'region_revisions': 8, 'pipeline_run_targets': 4, 'pipeline_tasks': 4, 'step_runs': 4, 'step_result_candidates': 4, 'step_run_input_refs': 0, 'step_run_output_refs': 4}

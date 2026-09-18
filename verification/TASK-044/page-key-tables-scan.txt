@@ -1,0 +1,35 @@
+tables keyed on page/region/artifact/run columns:
+  artifact_revisions: keyed=['artifact_revision_id', 'artifact_id', 'pipeline_run_id', 'step_run_id'] without_fk=['artifact_revision_id', 'pipeline_run_id', 'step_run_id']
+  book_tags: keyed=['book_id'] without_fk=[]
+  books: keyed=['book_id'] without_fk=['book_id']
+  chapters: keyed=['chapter_id', 'book_id'] without_fk=['chapter_id']
+  media_artifacts: keyed=['artifact_id', 'book_id', 'chapter_id', 'page_id'] without_fk=[]
+  pages: keyed=['page_id', 'chapter_id'] without_fk=['page_id']
+  pipeline_run_targets: keyed=['run_target_id', 'pipeline_run_id', 'page_id', 'region_id'] without_fk=['run_target_id', 'region_id']
+  pipeline_tasks: keyed=['task_id', 'pipeline_run_id', 'run_target_id', 'page_id', 'region_id'] without_fk=['task_id', 'region_id']
+  region_revisions: keyed=['region_revision_id', 'region_id'] without_fk=['region_revision_id']
+  regions: keyed=['region_id', 'page_id'] without_fk=[]
+  step_result_candidates: keyed=['pipeline_run_id', 'step_run_id', 'page_id', 'region_id'] without_fk=['region_id']
+  step_run_input_refs: keyed=['step_run_id'] without_fk=[]
+  step_run_output_refs: keyed=['step_run_id'] without_fk=[]
+  step_runs: keyed=['step_run_id', 'pipeline_run_id', 'task_id', 'page_id', 'region_id'] without_fk=['step_run_id', 'region_id']
+
+tables with a key column but NO foreign key:
+  artifact_revisions.artifact_revision_id
+  artifact_revisions.pipeline_run_id
+  artifact_revisions.step_run_id
+  books.book_id
+  chapters.chapter_id
+  pages.page_id
+  pipeline_run_targets.run_target_id
+  pipeline_run_targets.region_id
+  pipeline_tasks.task_id
+  pipeline_tasks.region_id
+  region_revisions.region_revision_id
+  step_result_candidates.region_id
+  step_runs.step_run_id
+  step_runs.region_id
+  => 14 such columns
+
+note: pipeline_stage_states keys on (target_type, target_id) with no FK
+  pipeline_stage_states rows: 0

@@ -33,7 +33,29 @@ class PageTrashStore(Protocol):
 
     def restore_pages(self, page_ids) -> int: ...
 
-    def purge_pages(self, page_ids) -> None: ...
+    def purge_pages(self, page_ids) -> None:
+        """Hard-delete the pages in **one transaction**, together with every
+        row that references them (the caller handles managed files).
+
+        Implementations must delete the whole foreign-key closure — a page with
+        artifact or pipeline rows included — in child-before-parent order, with
+        foreign-key enforcement left on (F-2, TASK-044).
+        """
+        ...
+
+    def list_generated_asset_paths(self, page_ids) -> list[str]:
+        """Managed paths of every **generated asset** belonging to these pages
+        (artifact revisions), for the permanent-delete file sweep (F-6)."""
+        ...
+
+    def list_trashed_page_groups(self) -> list[tuple[str, str, tuple[str, ...]]]:
+        """``(chapter_id, deleted_at, page_ids)`` for each soft-deleted group.
+
+        ``deleted_at`` is the batch identity in the store, which makes the
+        batch list derivable from the database when the JSON ledger is missing
+        or corrupt (F-7).
+        """
+        ...
 
 
 class ControlledFileRemover(Protocol):
