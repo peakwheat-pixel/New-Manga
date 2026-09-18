@@ -2,7 +2,7 @@
 id: TASK-050
 title: 生产 Pipeline 的设置与 provider 绑定注入（§11 P-3 非 UI 部分）
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
