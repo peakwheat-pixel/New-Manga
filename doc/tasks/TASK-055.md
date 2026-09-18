@@ -2,7 +2,7 @@
 id: TASK-055
 title: TASK-021 冻结子集①：日志与诊断
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
