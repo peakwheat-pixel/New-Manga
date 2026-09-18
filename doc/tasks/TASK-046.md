@@ -18,7 +18,7 @@ integration_commit: null
 
 **READY（2026-09-18，用户批准"下一步"后由 Codex 开立并释放）**：Owner=`ZCode`、Reviewer=`DeepSeek Harness`（**非作者**）、base=`fc8f1d9`（释放时 master HEAD）。
 
-> **⚠ 开工门（硬）**：本 Task 的写集合与 [TASK-045](TASK-045.md) **重叠**（`src/infrastructure/imaging/webtoon_tiles.py`、`tests/core/test_bootstrap.py`、`tests/reading_export/**`）。**TASK-045 必须已集成**（当前 `in_review`、首轮 Review 判 `changes_requested`，R-001 P1 待修）方可把本 Task 置 `in_progress`；开工前先 `git merge master`。此门由 Codex 在 TASK-045 集成时解除（协议 §3.4：并行只用于写集合互不重叠的 Task）。
+> **✅ 开工门已解除（2026-09-18）**：TASK-045 已集成（`e2a8f01`），写集合冲突消除 ⇒ **可置 `in_progress`**（开工先 `git merge master`，现为 `e2a8f01`）。原记录：本 Task 的写集合与 [TASK-045](TASK-045.md) **重叠**（`src/infrastructure/imaging/webtoon_tiles.py`、`tests/core/test_bootstrap.py`、`tests/reading_export/**`）。**TASK-045 必须已集成**（当前 `in_review`、首轮 Review 判 `changes_requested`，R-001 P1 待修）方可把本 Task 置 `in_progress`；开工前先 `git merge master`。此门由 Codex 在 TASK-045 集成时解除（协议 §3.4：并行只用于写集合互不重叠的 Task）。
 
 ## 来源与目标
 
@@ -74,13 +74,13 @@ integration_commit: null
 
 ## 依赖、风险与阻塞
 
-- **硬依赖**：TASK-042（流式带状读取，已集成 `ce7b4f9`）、TASK-045（F-4 裁剪使 overlap 对输出失去贡献，**未完成** ⇒ 本 Task 的开工门）。
-- **写集合冲突**：与 TASK-045 在 `webtoon_tiles.py` / `tests/core/test_bootstrap.py` / `tests/reading_export/**` 重叠 ⇒ 见顶部开工门。
+- **硬依赖**：TASK-042（流式带状读取，已集成 `ce7b4f9`）、TASK-045（F-4 裁剪使 overlap 对输出失去贡献；**已集成 `e2a8f01`** ⇒ 开工门已解除）。
+- **写集合冲突**：与 TASK-045 在 `webtoon_tiles.py` / `tests/core/test_bootstrap.py` / `tests/reading_export/**` 重叠 ⇒ **已随 TASK-045 集成（`e2a8f01`）解除**。
 - **契约风险**：`TileGrid(overlap=...)` 是公开构造参数，`TiledPageRasterizer` 默认值亦为 64；改默认值会影响所有构造点（含测试）——需在 AC ④ 中说明影响面。
 - **性能风险**：`overlap=0` 若被证明对解码正确性无影响，则"复用上一窗尾部"是等价更强的方案；若二者有差异，以实测为准并记录取舍。
 - **未验证面**：真实超大商业 webtoon 页（授权素材）不可得，测量仍以合成/Qt 编码页为准。
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无（待 `DeepSeek Harness` 按 §6 执行**非作者** Review）。实际测试：尚无（`ready`，受开工门约束）。
-- **最近状态（当前，唯一）**：2026-09-18 用户批准"下一步"后由 Codex 开立为 `ready`，并记录 TASK-045 开工门；`base=fc8f1d9`。**实施尚未开始。**
+- Handoff：尚无。Review：尚无（待 `DeepSeek Harness` 按 §6 执行**非作者** Review）。实际测试：尚无（`ready`；开工门已解除，可开工）。
+- **最近状态（当前，唯一）**：2026-09-18 用户批准"下一步"后由 Codex 开立为 `ready`；**TASK-045 已于 `e2a8f01` 集成 ⇒ 开工门解除**，可 `git merge master` 后开工。`base=fc8f1d9`。**实施尚未开始。**

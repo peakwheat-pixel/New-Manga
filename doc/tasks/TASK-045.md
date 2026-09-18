@@ -2,7 +2,7 @@
 id: TASK-045
 title: TASK-020/038 修订尾项（F-4 tile 落盘几何 + F-5 翻页旧图 + F-8 Slot result + F-11 坐标口径 + F-13/F-14 注释口径）
 kind: bugfix
-status: ready
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-020, TASK-038]
 base_commit: 1c171dcdeafc1cbffe6111d503dd0cd598e22dea
 branch: agent/deepseek/TASK-045-webtoon-display-fixes
 worktree: G:/CODEX/New Manga.worktrees/TASK-045-deepseek
-integration_commit: null
+integration_commit: e2a8f019eea34f47e01904ae6805eef863ddd349
 ---
 
 # TASK-045：TASK-020/038 修订尾项（F-4 / F-5 / F-8 / F-11 / F-13 / F-14）
@@ -75,7 +75,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[TASK-045-1171bc5](../handoffs/TASK-045-1171bc5.md)（delivery_head=`1171bc5`，实现两提交 `602cca8` + `1171bc5`）。Review：尚无（待 Codex 按 §6 执行**非作者** Review）。
+- Handoff：[TASK-045-1171bc5](../handoffs/TASK-045-1171bc5.md)（delivery_head=`1171bc5`，实现两提交 `602cca8` + `1171bc5`）。Review：[TASK-045-1171bc5](../reviews/TASK-045-1171bc5.md) = `changes_requested`（`c3d9ed2`）→ 修订后复审 [TASK-045-a165aa3](../reviews/TASK-045-a165aa3.md) = **`approved`**（`f6258a1`）。
 - 实际执行/测试（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：
   - 证据总表：[verification/TASK-045/README.md](../../verification/TASK-045/README.md)；AC ⑨ 内存构成：[memory-and-fixture-probe.txt](../../verification/TASK-045/memory-and-fixture-probe.txt)；AC ⑩ rewind 成本：[rewind-cost-probe.txt](../../verification/TASK-045/rewind-cost-probe.txt)；F-13/F-14 注释核查：[comment-drift-check.txt](../../verification/TASK-045/comment-drift-check.txt)；全仓逐次：[full-suite-runs.log](../../verification/TASK-045/full-suite-runs.log)；基线：[baseline-master-6ea3dd3.txt](../../verification/TASK-045/baseline-master-6ea3dd3.txt)。
   - 定向：`tests/reading_export tests/core` = **130 passed / 0 skipped**；QML 契约 10 passed。
@@ -86,17 +86,17 @@ integration_commit: null
 - **AC ⑩ 的前提被实测推翻（请 Reviewer 裁定）**：`visible_tiles` 升序只保证"不向后跳"；生产 `overlap=64` 使**每个非首块的窗口起点落在游标之前**，故每块各 rewind 一次并从 row 0 重扫（400×20000 全页扫掠 24 次 rewind；1600×8000 Qt 编码页单块 4.53s → 两块 14.24s）。TASK-042 Handoff 的"全页只需一次顺序扫描"仅在 `overlap=0` 成立。本 Task 按 AC 只做**文档化 + 实测**；解码策略与生产 `overlap`（`src/bootstrap/app.py:547`，不在白名单）未动。
 - **AC ⑨ 口径修正**：实测构成为**常驻压缩源 + 2×最大 IDAT 块 + O(带)**（单块编码时块项主导，400×10000 实测额外 24.1MB ≈ 23× 带宽；1000 行分块时 5.7MB），修正 R-02 的"≈3–4× 带宽"表述。
 - **F-8 如实说明**：契约（`result="QVariantMap"`）与元对象断言已补，接线由 `tests/core/test_bootstrap.py` 既有断言继续覆盖；但当前 QML 侧只有 `importFilesFromUrls` 有调用方，`importDocumentsFromUrls` 尚无 QML 入口——本修复保证一旦接线即得 dict 而非 `undefined`。
-- **最近状态（当前，唯一）**：2026-09-18 **`in_progress`（修订切片已交付，待复审）**——首轮 `1171bc5` 的独立复审（[TASK-045-1171bc5](../reviews/TASK-045-1171bc5.md)）为 **`changes_requested`**（R-001 P1：分块视图打开/翻页后无人请求瓦片 ⇒ 空白带；R-002 P2 注释口径；R-003/R-004/R-005 P3），已按复审逐条修订：delivery head **`a165aa3`**（Handoff [TASK-045-a165aa3](../handoffs/TASK-045-a165aa3.md)），被审 head `1171bc5`。开工时已 `git merge master`（`c3d9ed2`，含复审文件）。**未 push；`doc/STATUS.md` 未改**（按 AC ⑦，关闭登记待复审通过后由 Codex 执行）。本 Task **尚未 done**、各项**尚未"关闭"**。
+- **集成记录（当前，唯一）**：2026-09-18 复审 **`approved`**（`f6258a1`）后按 §6.6 集成——先 `git merge master` → `7261ec7`，再合并入 master → **`integration_commit=e2a8f01`**（集成前 master `56f6409`）；集成后复跑定向 **133 passed / 0 skipped**、全仓 **842 passed / 6 skipped**（=825 含 TASK-041 + 本切片 14 + 修订净 3；[integration-postmerge-tests.txt](../../verification/TASK-045/integration-postmerge-tests.txt)）。**F-4/F-5/F-8/F-11/F-13/F-14 与 TASK-042 R-01～R-04 全部关闭**；AC ⑧～⑪ 已回勾；AC ⑩ 最终口径与 TASK-020/038 勘误见 [集成记录](../../verification/TASK-045/integration-e2a8f01.md)。**TASK-045 已 `done`。** 以下为修订期记录：首轮 `1171bc5` 的独立复审（[TASK-045-1171bc5](../reviews/TASK-045-1171bc5.md)）为 **`changes_requested`**（R-001 P1：分块视图打开/翻页后无人请求瓦片 ⇒ 空白带；R-002 P2 注释口径；R-003/R-004/R-005 P3），已按复审逐条修订：delivery head **`a165aa3`**（Handoff [TASK-045-a165aa3](../handoffs/TASK-045-a165aa3.md)），被审 head `1171bc5`。开工时已 `git merge master`（`c3d9ed2`，含复审文件）。**未 push；`doc/STATUS.md` 未改**（按 AC ⑦，关闭登记待复审通过后由 Codex 执行）。（历史：本行写作时尚未 done；关闭登记已由 Codex 在集成时完成。）
 - 历史状态（2026-09-18）：由 Codex 依 DSH 外部复审的 F-4/F-5/F-8/F-11/F-13/F-14 开立为 `ready`（base=`1c171dc`），随后并入 TASK-042 复审的 R-01～R-04（AC ⑧～⑪）；本次开工置 `in_progress`。
 
 ## 追加范围（2026-09-18，由 TASK-042 Review 的 findings 并入）
 
 TASK-042 复审产生 4 项 P3（均不影响其批准），因同属 webtoon/imaging 血缘且本 Task 白名单已覆盖 `src/infrastructure/imaging/**` 与 `tests/reading_export/**`，**并入本 Task 一并收口**：
 
-- [ ] **AC ⑧（= R-01）typed 化损坏载荷**：`streaming_png.py::_pump` 把 `decompress()` 的 `zlib.error` 包成 typed `StreamingPngError`（如 `INVALID_PNG`/`CORRUPT_DATA`）。现状：`zlib.error` 的 MRO 为 `(zlib.error, Exception)`，**逃出** `viewmodel.py:309/351` 的 `except (OSError, ValueError)`，损坏源文件不再走优雅回退；**失败本身仍是 fail-closed（Adler-32 拦截，不产出错误像素）**。补"容器合法但载荷损坏"用例（TASK-042 的变体矩阵未覆盖此格）。
-- [ ] **AC ⑨（= R-02）内存声明精确化**：把 `streaming_png.py` / `webtoon_tiles.py` 的"peak = one decode window / never more than one scanline pair plus the band"改为**实测构成**——"压缩源常驻（`__init__` 的 `read_bytes()`）+ O(带宽)（实测 ≈3–4× 带）"；并说明将来要 O(带) 总量需改为流式读源。
-- [ ] **AC ⑩（= R-03）rewind 成本文档化**：在 `ensure_viewport`/`_decode` 写明"`visible_tiles` 升序 ⇒ **每次调用最多一次 rewind**、最坏为以目标带末端为界的一次重扫"，并记入实测（Reviewer 实测：扫 20000 行 0.39 s；回跳 row 12000 0.156 s；回跳 row 0 0.219 s）；如需再加"最近 N 带缓存"。
-- [ ] **AC ⑪（= R-04）补"真实编码器 × 超大"覆盖**：新增一个**中尺寸 Qt 编码**夹具（建议 `1600×20000` ≈128 MB rgb32，**低于 Qt 的 ~300 MB 失效门**）走带状读 + 与 Qt 解码的像素一致性，补上"超大页夹具由测试自写 stdlib 写入器（filter 0）生成"留下的覆盖缺口。
+- [x] **AC ⑧（= R-01）typed 化损坏载荷**：`streaming_png.py::_pump` 把 `decompress()` 的 `zlib.error` 包成 typed `StreamingPngError`（如 `INVALID_PNG`/`CORRUPT_DATA`）。现状：`zlib.error` 的 MRO 为 `(zlib.error, Exception)`，**逃出** `viewmodel.py:309/351` 的 `except (OSError, ValueError)`，损坏源文件不再走优雅回退；**失败本身仍是 fail-closed（Adler-32 拦截，不产出错误像素）**。补"容器合法但载荷损坏"用例（TASK-042 的变体矩阵未覆盖此格）。
+- [x] **AC ⑨（= R-02）内存声明精确化**：把 `streaming_png.py` / `webtoon_tiles.py` 的"peak = one decode window / never more than one scanline pair plus the band"改为**实测构成**——"压缩源常驻（`__init__` 的 `read_bytes()`）+ O(带宽)（实测 ≈3–4× 带）"；并说明将来要 O(带) 总量需改为流式读源。
+- [x] **AC ⑩（= R-03）rewind 成本文档化**：在 `ensure_viewport`/`_decode` 写明"`visible_tiles` 升序 ⇒ **每次调用最多一次 rewind**、最坏为以目标带末端为界的一次重扫"，并记入实测（Reviewer 实测：扫 20000 行 0.39 s；回跳 row 12000 0.156 s；回跳 row 0 0.219 s）；如需再加"最近 N 带缓存"。
+- [x] **AC ⑪（= R-04）补"真实编码器 × 超大"覆盖**：新增一个**中尺寸 Qt 编码**夹具（建议 `1600×20000` ≈128 MB rgb32，**低于 Qt 的 ~300 MB 失效门**）走带状读 + 与 Qt 解码的像素一致性，补上"超大页夹具由测试自写 stdlib 写入器（filter 0）生成"留下的覆盖缺口。
 
 → 对应 TASK-042 Review 的 R-01/R-02/R-03/R-04（[doc/reviews/TASK-042-fc6c649.md](../reviews/TASK-042-fc6c649.md)）。
 
