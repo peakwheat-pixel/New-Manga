@@ -1,0 +1,15 @@
+# TASK-044 pre-fix discrimination summary (machine-extracted from
+# verification/TASK-044/pre-fix-purge-integrity.txt: base 33c8dd4 src + the new tests)
+
+test_purge_batch_removes_every_row_referencing_the_page -> sqlite3.IntegrityError: FOREIGN KEY constraint failed
+test_purge_cannot_be_restored_into_a_dangling_page -> sqlite3.IntegrityError: FOREIGN KEY constraint failed
+test_purge_deletes_generated_assets_and_keeps_unrelated_files -> sqlite3.IntegrityError: FOREIGN KEY constraint failed
+test_purge_refuses_generated_asset_paths_outside_the_managed_root -> sqlite3.IntegrityError: FOREIGN KEY constraint failed
+test_purge_clears_cross_page_provenance_instead_of_failing -> sqlite3.IntegrityError: FOREIGN KEY constraint failed
+test_soft_deleted_pages_do_not_block_reimport_dedup -> AssertionError: assert '127c80e3ebb36485ff260879c7399dcee703a80b56ffc7c42905ce7b3949ce83' not in {'127c80e3ebb36485ff260879c7399dcee703a80b56ffc7c42905ce7b3949ce83', 'f819001948ebee745b548e456f752706038d130c3ce5a87eab3bee8d75d80cea'}
+test_batches_survive_a_corrupt_manifest -> json.decoder.JSONDecodeError: Unterminated string starting at: line 1 column 27 (char 26)
+test_manifest_write_is_atomic -> Failed: DID NOT RAISE OSError
+
+# fixture guard (test_fixture_populates_every_table_that_references_pages) passes pre-fix by design:
+#   it only asserts the fixture builds every referencing table.
+# totals: 8 failed, 1 passed (see the log tail).

@@ -1,0 +1,401 @@
+.FFFFFFFF                                                                [100%]
+================================== FAILURES ===================================
+___________ test_purge_batch_removes_every_row_referencing_the_page ___________
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BB6FF100>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB725430>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB725700>, ...}
+
+    def test_purge_batch_removes_every_row_referencing_the_page(purge_world) -> None:
+        """F-2 / AC ��: a page that really has artifacts and pipeline rows purges."""
+        conn = purge_world["conn"]
+        page = purge_world["add_page"]("p1")
+        dependents = purge_world["add_dependents"]("p1")
+        batch = purge_world["service"].soft_delete_pages("chapter-1", ["p1"])
+    
+>       purge_world["service"].purge_batch(batch.batch_id)
+
+tests\storage\test_purge_integrity.py:300: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\maintenance\trash.py:146: in purge_batch
+    self._pages.purge_pages(list(batch.page_ids))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x00000229BB725EE0>
+page_ids = ['p1']
+
+    def purge_pages(self, page_ids: Sequence[str]) -> None:
+        """Hard-delete page rows **and their dependent regions/revisions**.
+    
+        Controlled data only: callers remove the managed files separately
+        (see ``application.maintenance``); user source files live outside the
+        managed root and are never addressed here. Row order respects the
+        ``regions.page_id`` / ``region_revisions.region_id`` foreign keys.
+        """
+        ids = list(page_ids)
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            self._conn.execute(
+                "DELETE FROM region_revisions WHERE region_id IN"
+                f" (SELECT region_id FROM regions WHERE page_id IN ({placeholders}))",
+                tuple(ids),
+            )
+            self._conn.execute(
+                f"DELETE FROM regions WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+>           self._conn.execute(
+                f"DELETE FROM pages WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+E           sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+src\infrastructure\sqlite\library.py:454: IntegrityError
+_____________ test_purge_cannot_be_restored_into_a_dangling_page ______________
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BB6FF6A0>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB743E60>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB743F50>, ...}
+
+    def test_purge_cannot_be_restored_into_a_dangling_page(purge_world) -> None:
+        """AC ��: after purge the page cannot come back pointing at a missing file."""
+        storage = purge_world["storage"]
+        page = purge_world["add_page"]("p1")
+        purge_world["add_dependents"]("p1")
+        managed_file = Path(storage.absolute_path(page["managed_original_ref"]))
+        assert managed_file.is_file()
+        batch = purge_world["service"].soft_delete_pages("chapter-1", ["p1"])
+    
+>       purge_world["service"].purge_batch(batch.batch_id)
+
+tests\storage\test_purge_integrity.py:341: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\maintenance\trash.py:146: in purge_batch
+    self._pages.purge_pages(list(batch.page_ids))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x00000229BB743290>
+page_ids = ['p1']
+
+    def purge_pages(self, page_ids: Sequence[str]) -> None:
+        """Hard-delete page rows **and their dependent regions/revisions**.
+    
+        Controlled data only: callers remove the managed files separately
+        (see ``application.maintenance``); user source files live outside the
+        managed root and are never addressed here. Row order respects the
+        ``regions.page_id`` / ``region_revisions.region_id`` foreign keys.
+        """
+        ids = list(page_ids)
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            self._conn.execute(
+                "DELETE FROM region_revisions WHERE region_id IN"
+                f" (SELECT region_id FROM regions WHERE page_id IN ({placeholders}))",
+                tuple(ids),
+            )
+            self._conn.execute(
+                f"DELETE FROM regions WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+>           self._conn.execute(
+                f"DELETE FROM pages WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+E           sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+src\infrastructure\sqlite\library.py:454: IntegrityError
+________ test_purge_deletes_generated_assets_and_keeps_unrelated_files ________
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BB6FFD30>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB726C00>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB741FD0>, ...}
+
+    def test_purge_deletes_generated_assets_and_keeps_unrelated_files(purge_world) -> None:
+        """F-6: permanent delete covers the page's generated assets as well as the
+        managed original �� and still nothing outside the managed root."""
+        storage_root: Path = purge_world["storage_root"]
+        page = purge_world["add_page"]("p1")
+        dependents = purge_world["add_dependents"]("p1")
+        other_page = purge_world["add_page"]("p2")
+        other_dependents = purge_world["add_dependents"]("p2")
+        generated = [(storage_root / path).is_file() for path in dependents["revision_paths"]]
+        assert all(generated), "fixture must have real generated assets on disk"
+        # a page that is not being purged keeps everything
+        assert (storage_root / other_page["managed_original_ref"]).is_file()
+        batch = purge_world["service"].soft_delete_pages("chapter-1", ["p1"])
+    
+>       purge_world["service"].purge_batch(batch.batch_id)
+
+tests\storage\test_purge_integrity.py:363: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\maintenance\trash.py:146: in purge_batch
+    self._pages.purge_pages(list(batch.page_ids))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x00000229BB725CA0>
+page_ids = ['p1']
+
+    def purge_pages(self, page_ids: Sequence[str]) -> None:
+        """Hard-delete page rows **and their dependent regions/revisions**.
+    
+        Controlled data only: callers remove the managed files separately
+        (see ``application.maintenance``); user source files live outside the
+        managed root and are never addressed here. Row order respects the
+        ``regions.page_id`` / ``region_revisions.region_id`` foreign keys.
+        """
+        ids = list(page_ids)
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            self._conn.execute(
+                "DELETE FROM region_revisions WHERE region_id IN"
+                f" (SELECT region_id FROM regions WHERE page_id IN ({placeholders}))",
+                tuple(ids),
+            )
+            self._conn.execute(
+                f"DELETE FROM regions WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+>           self._conn.execute(
+                f"DELETE FROM pages WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+E           sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+src\infrastructure\sqlite\library.py:454: IntegrityError
+______ test_purge_refuses_generated_asset_paths_outside_the_managed_root ______
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BC11CA90>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB725610>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB742180>, ...}
+
+    def test_purge_refuses_generated_asset_paths_outside_the_managed_root(purge_world) -> None:
+        """F-6 keeps the boundary: a managed path escaping the root is refused and
+        the outside file survives verbatim (``remove_managed`` is not relaxed)."""
+        storage_root: Path = purge_world["storage_root"]
+        outside = purge_world["tmp_path"] / "outside.png"
+        outside.write_bytes(b"precious")
+        purge_world["add_page"]("p1")
+        dependents = purge_world["add_dependents"]("p1")
+        with purge_world["conn"]:
+            purge_world["conn"].execute(
+                "UPDATE artifact_revisions SET managed_path = '../outside.png'"
+                " WHERE artifact_revision_id = ?",
+                (dependents["revisions"][1],),
+            )
+        batch = purge_world["service"].soft_delete_pages("chapter-1", ["p1"])
+    
+        with pytest.raises(ImmutablePathViolation):
+>           purge_world["service"].purge_batch(batch.batch_id)
+
+tests\storage\test_purge_integrity.py:391: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\maintenance\trash.py:146: in purge_batch
+    self._pages.purge_pages(list(batch.page_ids))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x00000229BB7255E0>
+page_ids = ['p1']
+
+    def purge_pages(self, page_ids: Sequence[str]) -> None:
+        """Hard-delete page rows **and their dependent regions/revisions**.
+    
+        Controlled data only: callers remove the managed files separately
+        (see ``application.maintenance``); user source files live outside the
+        managed root and are never addressed here. Row order respects the
+        ``regions.page_id`` / ``region_revisions.region_id`` foreign keys.
+        """
+        ids = list(page_ids)
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            self._conn.execute(
+                "DELETE FROM region_revisions WHERE region_id IN"
+                f" (SELECT region_id FROM regions WHERE page_id IN ({placeholders}))",
+                tuple(ids),
+            )
+            self._conn.execute(
+                f"DELETE FROM regions WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+>           self._conn.execute(
+                f"DELETE FROM pages WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+E           sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+src\infrastructure\sqlite\library.py:454: IntegrityError
+_________ test_purge_clears_cross_page_provenance_instead_of_failing __________
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BC11D120>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB724D70>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB742270>, ...}
+
+    def test_purge_clears_cross_page_provenance_instead_of_failing(purge_world) -> None:
+        """A revision on another page deriving from a purged revision must not make
+        the permanent delete impossible: the dangling provenance pointer is
+        cleared, the surviving revision and its file stay."""
+        conn = purge_world["conn"]
+        storage_root: Path = purge_world["storage_root"]
+        purge_world["add_page"]("p1")
+        source = purge_world["add_dependents"]("p1")
+        purge_world["add_page"]("p2")
+        derived = purge_world["add_dependents"](
+            "p2", source_revision_id=source["revisions"][1]
+        )
+        batch = purge_world["service"].soft_delete_pages("chapter-1", ["p1"])
+    
+>       purge_world["service"].purge_batch(batch.batch_id)
+
+tests\storage\test_purge_integrity.py:410: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\maintenance\trash.py:146: in purge_batch
+    self._pages.purge_pages(list(batch.page_ids))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x00000229BB724F20>
+page_ids = ['p1']
+
+    def purge_pages(self, page_ids: Sequence[str]) -> None:
+        """Hard-delete page rows **and their dependent regions/revisions**.
+    
+        Controlled data only: callers remove the managed files separately
+        (see ``application.maintenance``); user source files live outside the
+        managed root and are never addressed here. Row order respects the
+        ``regions.page_id`` / ``region_revisions.region_id`` foreign keys.
+        """
+        ids = list(page_ids)
+        if not ids:
+            return
+        placeholders = ",".join("?" for _ in ids)
+        with self._conn:
+            self._conn.execute(
+                "DELETE FROM region_revisions WHERE region_id IN"
+                f" (SELECT region_id FROM regions WHERE page_id IN ({placeholders}))",
+                tuple(ids),
+            )
+            self._conn.execute(
+                f"DELETE FROM regions WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+>           self._conn.execute(
+                f"DELETE FROM pages WHERE page_id IN ({placeholders})",
+                tuple(ids),
+            )
+E           sqlite3.IntegrityError: FOREIGN KEY constraint failed
+
+src\infrastructure\sqlite\library.py:454: IntegrityError
+_____________ test_soft_deleted_pages_do_not_block_reimport_dedup _____________
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BC11D7B0>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB75B5C0>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB743800>, ...}
+
+    def test_soft_deleted_pages_do_not_block_reimport_dedup(purge_world) -> None:
+        """F-10: a trashed page must not silently swallow a re-import.
+    
+        ``existing_source_hashes`` hides soft-deleted rows (re-importing the same
+        file produces a page again instead of "skipped, but the chapter looks
+        empty"). ``max_source_order`` intentionally keeps counting them so a
+        restored page can never collide with a newly imported one �� see the
+        Handoff for that split and the port-docstring drift it implies.
+        """
+        repository = purge_world["repository"]
+        page = purge_world["add_page"]("p1", source_order=1)
+        purge_world["add_page"]("p2", source_order=2)
+        source_hash = hashlib.sha256(page["payload"]).hexdigest()
+    
+        assert repository.existing_source_hashes("chapter-1") == {
+            source_hash,
+            hashlib.sha256(b"original-p2").hexdigest(),
+        }
+        assert repository.max_source_order("chapter-1") == 2
+    
+        purge_world["service"].soft_delete_pages("chapter-1", ["p1"])
+    
+>       assert source_hash not in repository.existing_source_hashes("chapter-1")
+E       AssertionError: assert '127c80e3ebb36485ff260879c7399dcee703a80b56ffc7c42905ce7b3949ce83' not in {'127c80e3ebb36485ff260879c7399dcee703a80b56ffc7c42905ce7b3949ce83', 'f819001948ebee745b548e456f752706038d130c3ce5a87eab3bee8d75d80cea'}
+E        +  where {'127c80e3ebb36485ff260879c7399dcee703a80b56ffc7c42905ce7b3949ce83', 'f819001948ebee745b548e456f752706038d130c3ce5a87eab3bee8d75d80cea'} = existing_source_hashes('chapter-1')
+E        +    where existing_source_hashes = <infrastructure.sqlite.library.SqliteLibraryRepository object at 0x00000229BB759A90>.existing_source_hashes
+
+tests\storage\test_purge_integrity.py:446: AssertionError
+___________________ test_batches_survive_a_corrupt_manifest ___________________
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BC11DA80>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB75AC60>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB758A40>, ...}
+
+    def test_batches_survive_a_corrupt_manifest(purge_world) -> None:
+        """F-7: the ledger is derivable from the store (``deleted_at`` *is* the
+        batch identity), so a truncated manifest degrades to a rebuild instead of
+        disabling restore/purge."""
+        service = purge_world["service"]
+        purge_world["add_page"]("p1")
+        purge_world["add_page"]("p2")
+        batch = service.soft_delete_pages("chapter-1", ["p1", "p2"])
+    
+        purge_world["manifest_path"].write_text('{"batches": [{"batch_id": "tru', encoding="utf-8")
+    
+>       rebuilt = service.list_batches()
+                  ^^^^^^^^^^^^^^^^^^^^^^
+
+tests\storage\test_purge_integrity.py:462: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\maintenance\trash.py:118: in list_batches
+    manifest = self._manifest.read_manifest()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\application\maintenance\trash.py:44: in read_manifest
+    return json.loads(self._path.read_text(encoding="utf-8"))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py:337: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <json.decoder.JSONDecoder object at 0x00000229B9B3BD40>
+s = '{"batches": [{"batch_id": "tru', idx = 0
+
+    def raw_decode(self, s, idx=0):
+        """Decode a JSON document from ``s`` (a ``str`` beginning with
+        a JSON document) and return a 2-tuple of the Python
+        representation and the index in ``s`` where the document ended.
+    
+        This can be used to decode a JSON document from a string that may
+        have extraneous data at the end.
+    
+        """
+        try:
+>           obj, end = self.scan_once(s, idx)
+                       ^^^^^^^^^^^^^^^^^^^^^^
+E           json.decoder.JSONDecodeError: Unterminated string starting at: line 1 column 27 (char 26)
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py:353: JSONDecodeError
+________________________ test_manifest_write_is_atomic ________________________
+
+purge_world = {'conn': <sqlite3.Connection object at 0x00000229BB6FFD30>, 'repository': <infrastructure.sqlite.library.SqliteLibrary...BB759010>, 'storage': <infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000229BB758F20>, ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000229BB75B920>
+
+    def test_manifest_write_is_atomic(purge_world, monkeypatch) -> None:
+        """F-7: a crash during the manifest write must leave the previous manifest
+        intact �� never a truncated half-written file."""
+        service = purge_world["service"]
+        manifest_path: Path = purge_world["manifest_path"]
+        purge_world["add_page"]("p1")
+        purge_world["add_page"]("p2")
+        first = service.soft_delete_pages("chapter-1", ["p1"])
+        before = manifest_path.read_text(encoding="utf-8")
+        assert [item["batch_id"] for item in json.loads(before)["batches"]] == [first.batch_id]
+    
+        def explode(*args, **kwargs):
+            raise OSError("injected failure before the manifest swap")
+    
+        monkeypatch.setattr(os, "replace", explode)
+>       with pytest.raises(OSError):
+E       Failed: DID NOT RAISE OSError
+
+tests\storage\test_purge_integrity.py:491: Failed
+=========================== short test summary info ===========================
+FAILED tests/storage/test_purge_integrity.py::test_purge_batch_removes_every_row_referencing_the_page
+FAILED tests/storage/test_purge_integrity.py::test_purge_cannot_be_restored_into_a_dangling_page
+FAILED tests/storage/test_purge_integrity.py::test_purge_deletes_generated_assets_and_keeps_unrelated_files
+FAILED tests/storage/test_purge_integrity.py::test_purge_refuses_generated_asset_paths_outside_the_managed_root
+FAILED tests/storage/test_purge_integrity.py::test_purge_clears_cross_page_provenance_instead_of_failing
+FAILED tests/storage/test_purge_integrity.py::test_soft_deleted_pages_do_not_block_reimport_dedup
+FAILED tests/storage/test_purge_integrity.py::test_batches_survive_a_corrupt_manifest
+FAILED tests/storage/test_purge_integrity.py::test_manifest_write_is_atomic
+8 failed, 1 passed in 0.67s

@@ -294,14 +294,33 @@ class SqliteLibraryRepository:
     )
 
     def existing_source_hashes(self, chapter_id: str) -> set[str]:
+        """Hashes of the chapter's **live** complete pages.
+
+        Soft-deleted pages are excluded (F-10, TASK-044): a trashed page used
+        to swallow a re-import silently — the file was reported as a duplicate
+        while the chapter showed no page. ``max_source_order`` below
+        deliberately still counts trashed pages, so a later restore can never
+        collide with a page imported in the meantime.
+
+        NOTE: ``application/importing/images/ports.py`` still documents the
+        previous "soft-deleted rows stay visible here" contract; that docstring
+        is outside TASK-044's allowed paths and is owed as a follow-up.
+        """
         rows = self._conn.execute(
             "SELECT source_hash FROM pages"
-            " WHERE chapter_id = ? AND " + self._COMPLETE_PAGE_WHERE,
+            " WHERE chapter_id = ? AND deleted_at IS NULL AND "
+            + self._COMPLETE_PAGE_WHERE,
             (chapter_id,),
         ).fetchall()
         return {row["source_hash"] for row in rows}
 
     def max_source_order(self, chapter_id: str) -> int:
+        """Highest ``source_order`` in the chapter, trashed pages included.
+
+        Keeping soft-deleted rows in the maximum is intentional: their order
+        slots are reserved until the batch is restored or purged, so appending
+        a new import after them cannot hand two pages the same order.
+        """
         row = self._conn.execute(
             "SELECT MAX(source_order) AS max_order FROM pages"
             " WHERE chapter_id = ? AND " + self._COMPLETE_PAGE_WHERE,
@@ -429,31 +448,145 @@ class SqliteLibraryRepository:
             )
             return cursor.rowcount
 
-    def purge_pages(self, page_ids: Sequence[str]) -> None:
-        """Hard-delete page rows **and their dependent regions/revisions**.
+    def list_generated_asset_paths(self, page_ids: Sequence[str]) -> list[str]:
+        """Managed paths of every generated artifact revision of these pages.
 
-        Controlled data only: callers remove the managed files separately
-        (see ``application.maintenance``); user source files live outside the
-        managed root and are never addressed here. Row order respects the
-        ``regions.page_id`` / ``region_revisions.region_id`` foreign keys.
+        Permanent deletion covers the generated assets as well as the managed
+        original (F-6, TASK-044; D04 §permanent-delete). Paths are returned
+        verbatim: the caller's remover is what refuses anything outside the
+        managed root, so a corrupt row can never escalate into a file write.
+        """
+        ids = list(page_ids)
+        if not ids:
+            return []
+        placeholders = ",".join("?" for _ in ids)
+        rows = self._conn.execute(
+            "SELECT ar.managed_path FROM artifact_revisions ar"
+            " JOIN media_artifacts ma ON ma.artifact_id = ar.artifact_id"
+            f" WHERE ma.page_id IN ({placeholders})"
+            " ORDER BY ma.artifact_id, ar.revision_no",
+            tuple(ids),
+        ).fetchall()
+        return [row["managed_path"] for row in rows]
+
+    def list_trashed_page_groups(self) -> list[tuple[str, str, tuple[str, ...]]]:
+        """``(chapter_id, deleted_at, page_ids)`` for each soft-deleted group.
+
+        One soft-delete batch shares a single ``deleted_at`` value, so the
+        batch list is derivable from the store; the JSON ledger is an index
+        that can be rebuilt (F-7, TASK-044).
+        """
+        rows = self._conn.execute(
+            "SELECT chapter_id, deleted_at, page_id FROM pages"
+            " WHERE deleted_at IS NOT NULL"
+            " ORDER BY deleted_at, chapter_id, sort_order, page_id"
+        ).fetchall()
+        groups: dict[tuple[str, str], list[str]] = {}
+        for row in rows:
+            groups.setdefault((row["chapter_id"], row["deleted_at"]), []).append(
+                row["page_id"]
+            )
+        return [
+            (chapter_id, deleted_at, tuple(page_ids))
+            for (chapter_id, deleted_at), page_ids in groups.items()
+        ]
+
+    def purge_pages(self, page_ids: Sequence[str]) -> None:
+        """Hard-delete page rows **and every row that references them**.
+
+        Controlled data only: callers remove the managed files separately (see
+        ``application.maintenance``); user source files live outside the
+        managed root and are never addressed here.
+
+        The statement order is the reverse of the real foreign-key graph,
+        re-derived with ``PRAGMA foreign_key_list`` (six tables / seven
+        foreign keys point at ``pages``, all ``NO ACTION``; F-2, TASK-044):
+
+        1. provenance pointers that would dangle are cleared first —
+           ``artifact_revisions.source_artifact_revision_id`` is an *immediate*
+           self-reference, and a revision belonging to another page may derive
+           from a revision being purged;
+        2. pipeline rows, children before parents (``step_runs`` cascades its
+           input/output refs), plus the non-FK ``pipeline_stage_states`` rows;
+        3. artifact revisions *before* the artifacts that own them;
+        4. region revisions, then regions, then the pages.
+
+        ``media_artifacts.current_revision_id`` is deliberately left set: the
+        schema's ``trg_media_artifacts_current_not_clearable`` aborts any
+        attempt to clear an established pointer, and the composite foreign key
+        is ``DEFERRABLE INITIALLY DEFERRED``, so deleting both sides inside
+        this one transaction is what keeps it satisfied.
+
+        Everything runs in a single transaction, so a failure leaves the
+        database exactly as it was. Foreign-key enforcement is never disabled
+        and ``IntegrityError`` is never swallowed.
         """
         ids = list(page_ids)
         if not ids:
             return
         placeholders = ",".join("?" for _ in ids)
+        params = tuple(ids)
+        page_artifacts = (
+            "SELECT artifact_id FROM media_artifacts"
+            f" WHERE page_id IN ({placeholders})"
+        )
+        purged_revisions = (
+            "SELECT artifact_revision_id FROM artifact_revisions"
+            f" WHERE artifact_id IN ({page_artifacts})"
+        )
+        page_regions = (
+            f"SELECT region_id FROM regions WHERE page_id IN ({placeholders})"
+        )
         with self._conn:
             self._conn.execute(
-                "DELETE FROM region_revisions WHERE region_id IN"
-                f" (SELECT region_id FROM regions WHERE page_id IN ({placeholders}))",
-                tuple(ids),
+                "UPDATE artifact_revisions SET source_artifact_revision_id = NULL"
+                f" WHERE source_artifact_revision_id IN ({purged_revisions})",
+                params,
             )
             self._conn.execute(
-                f"DELETE FROM regions WHERE page_id IN ({placeholders})",
-                tuple(ids),
+                f"DELETE FROM step_result_candidates WHERE page_id IN ({placeholders})",
+                params,
             )
             self._conn.execute(
-                f"DELETE FROM pages WHERE page_id IN ({placeholders})",
-                tuple(ids),
+                f"DELETE FROM step_runs WHERE page_id IN ({placeholders})", params
+            )
+            self._conn.execute(
+                f"DELETE FROM pipeline_tasks WHERE page_id IN ({placeholders})", params
+            )
+            self._conn.execute(
+                f"DELETE FROM pipeline_run_targets WHERE page_id IN ({placeholders})",
+                params,
+            )
+            self._conn.execute(
+                "DELETE FROM artifact_revisions"
+                f" WHERE artifact_id IN ({page_artifacts})",
+                params,
+            )
+            self._conn.execute(
+                f"DELETE FROM media_artifacts WHERE page_id IN ({placeholders})",
+                params,
+            )
+            self._conn.execute(
+                "DELETE FROM region_revisions"
+                f" WHERE region_id IN ({page_regions})",
+                params,
+            )
+            self._conn.execute(
+                "DELETE FROM pipeline_stage_states"
+                f" WHERE target_type = 'page' AND target_id IN ({placeholders})",
+                params,
+            )
+            self._conn.execute(
+                "DELETE FROM pipeline_stage_states"
+                " WHERE target_type = 'region'"
+                f" AND target_id IN ({page_regions})",
+                params,
+            )
+            self._conn.execute(
+                f"DELETE FROM regions WHERE page_id IN ({placeholders})", params
+            )
+            self._conn.execute(
+                f"DELETE FROM pages WHERE page_id IN ({placeholders})", params
             )
 
 

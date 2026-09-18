@@ -9,16 +9,23 @@ Invariants:
 - restore works **per batch** and only clears ``deleted_at`` — content,
   managed files and order metadata are untouched;
 - permanent deletion (``purge_batch``) addresses **controlled data only**:
-  managed page files (through the injected remover, which refuses paths
-  escaping the managed root) and the page/region rows. User source files are
-  never inside the managed root, so they are structurally unreachable;
-- the batch ledger is a JSON manifest next to the managed data (rebuildable
-  bookkeeping, no schema change).
+  the page's managed original **and every generated asset** (artifact
+  revisions, F-6) through the injected remover, which refuses paths escaping
+  the managed root, plus every database row that references the pages. User
+  source files are never inside the managed root, so they are structurally
+  unreachable. Rows go first and files afterwards, so the database can never
+  point at a file that is already gone (F-2);
+- the batch ledger is a JSON manifest next to the managed data, written
+  atomically. It is an *index*, not the only source of truth: ``deleted_at``
+  is the batch identity in the store, so a missing or corrupt manifest
+  degrades to a rebuild instead of disabling restore/purge (F-7; no schema
+  change).
 """
 
 from __future__ import annotations
 
 import json
+import os
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -33,21 +40,56 @@ from application.maintenance.ports import (
 
 
 class _JsonTrashManifest:
-    """JSON-file manifest store (one file, one ``batches`` list)."""
+    """JSON-file manifest store (one file, one ``batches`` list).
+
+    Writes are atomic: the payload goes to a unique temp file in the same
+    directory and is swapped in with ``os.replace``, so a crash mid-write
+    leaves the previous manifest untouched rather than a truncated one. Reads
+    tolerate a missing, unreadable or corrupt file by reporting no batches —
+    the service then rebuilds the list from the store, so a damaged ledger
+    never disables the feature (F-7, TASK-044).
+    """
 
     def __init__(self, path: Path) -> None:
         self._path = Path(path)
 
     def read_manifest(self) -> dict:
-        if not self._path.is_file():
+        try:
+            text = self._path.read_text(encoding="utf-8")
+        except (OSError, UnicodeDecodeError):
             return {"batches": []}
-        return json.loads(self._path.read_text(encoding="utf-8"))
+        try:
+            manifest = json.loads(text)
+        except json.JSONDecodeError:
+            return {"batches": []}
+        if not isinstance(manifest, dict) or not isinstance(
+            manifest.get("batches"), list
+        ):
+            return {"batches": []}
+        return manifest
 
     def write_manifest(self, manifest: dict) -> None:
         self._path.parent.mkdir(parents=True, exist_ok=True)
-        self._path.write_text(
-            json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8"
-        )
+        payload = json.dumps(manifest, ensure_ascii=False, indent=2)
+        temp_path = self._path.with_name(f".{self._path.name}.tmp-{uuid.uuid4().hex}")
+        try:
+            with open(temp_path, "w", encoding="utf-8") as handle:
+                handle.write(payload)
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(temp_path, self._path)
+        except OSError:
+            # the previous manifest must survive; never leave the temp behind
+            try:
+                temp_path.unlink()
+            except OSError:
+                pass
+            raise
+
+
+def _rebuilt_batch_id(chapter_id: str, deleted_at: str) -> str:
+    """Deterministic id for a batch recovered from the store's ``deleted_at``."""
+    return f"rebuilt:{chapter_id}:{deleted_at}"
 
 
 class TrashService:
@@ -115,16 +157,25 @@ class TrashService:
         return batch
 
     def list_batches(self) -> list[TrashBatch]:
-        manifest = self._manifest.read_manifest()
-        return [
+        """Ledger batches plus any batch rebuilt from the store.
+
+        A soft-delete group that the manifest does not know about (lost,
+        truncated or corrupt ledger) is reported with a deterministic
+        ``rebuilt:…`` id, so restore and purge keep working (F-7, TASK-044).
+        """
+        batches = self._manifest_batches()
+        known = {(batch.chapter_id, batch.deleted_at) for batch in batches}
+        rebuilt = [
             TrashBatch(
-                batch_id=item["batch_id"],
-                chapter_id=item["chapter_id"],
-                deleted_at=item["deleted_at"],
-                page_ids=tuple(item["page_ids"]),
+                batch_id=_rebuilt_batch_id(chapter_id, deleted_at),
+                chapter_id=chapter_id,
+                deleted_at=deleted_at,
+                page_ids=page_ids,
             )
-            for item in manifest.get("batches", [])
+            for chapter_id, deleted_at, page_ids in self._pages.list_trashed_page_groups()
+            if (chapter_id, deleted_at) not in known
         ]
+        return batches + rebuilt
 
     def restore_batch(self, batch_id: str) -> int:
         """Restore every page of the batch (同 batch 恢复); the batch record
@@ -135,18 +186,42 @@ class TrashService:
         return restored
 
     def purge_batch(self, batch_id: str) -> None:
-        """Permanently delete the batch: managed page files first (controlled
-        copies only), then the rows. User source files are outside the
-        managed root and structurally unreachable."""
+        """Permanently delete the batch: rows first, then the managed files.
+
+        The database rows go in **one transaction** and only after that
+        succeeds are the files removed — the managed original plus every
+        generated asset of those pages (F-6). A file that cannot be removed
+        (including any path escaping the managed root, which the remover
+        refuses) raises, leaving a diagnosable orphan file rather than a row
+        pointing at something that is already gone. User source files are
+        outside the managed root and structurally unreachable.
+        """
         batch, _remaining = self._take_batch(batch_id)
         pages = self._pages.get_pages_by_ids(list(batch.page_ids))
-        for page in pages:
-            if page.managed_original_ref:
-                self._remover.remove_managed(page.managed_original_ref)
+        targets: list[str] = [
+            page.managed_original_ref
+            for page in pages
+            if page.managed_original_ref
+        ]
+        targets.extend(self._pages.list_generated_asset_paths(list(batch.page_ids)))
         self._pages.purge_pages(list(batch.page_ids))
         self._drop_batch(batch_id)
+        for relative_path in dict.fromkeys(targets):
+            self._remover.remove_managed(relative_path)
 
     # ------------------------------------------------------------------
+
+    def _manifest_batches(self) -> list[TrashBatch]:
+        manifest = self._manifest.read_manifest()
+        return [
+            TrashBatch(
+                batch_id=item["batch_id"],
+                chapter_id=item["chapter_id"],
+                deleted_at=item["deleted_at"],
+                page_ids=tuple(item["page_ids"]),
+            )
+            for item in manifest.get("batches", [])
+        ]
 
     def _take_batch(self, batch_id: str) -> tuple[TrashBatch, list[dict]]:
         manifest = self._manifest.read_manifest()
@@ -161,6 +236,10 @@ class TrashService:
                 )
                 remaining = [item for item in items if item["batch_id"] != batch_id]
                 return batch, remaining
+        # not in the ledger: possibly a batch rebuilt from the store
+        for batch in self.list_batches():
+            if batch.batch_id == batch_id:
+                return batch, list(items)
         raise KeyError(f"unknown trash batch: {batch_id!r}")
 
     def _drop_batch(self, batch_id: str) -> None:
