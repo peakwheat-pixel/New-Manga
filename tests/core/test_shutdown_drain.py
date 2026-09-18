@@ -19,9 +19,17 @@ exit drain: workbench first, connection second.
 from __future__ import annotations
 
 import sqlite3
+import sys
 import time
 from pathlib import Path
 from types import SimpleNamespace
+
+# self-contained: this file must run standalone (pytest
+# tests/core/test_shutdown_drain.py), not relying on another module in
+# the directory being collected first to put src/ on sys.path
+_SRC = Path(__file__).resolve().parents[2] / "src"
+if str(_SRC) not in sys.path:
+    sys.path.insert(0, str(_SRC))
 
 import pytest
 

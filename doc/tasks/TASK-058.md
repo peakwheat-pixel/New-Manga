@@ -48,6 +48,6 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 顺序契约 | `pytest tests/core/test_shutdown_drain.py -q` | TASK-012-py312 venv | 待跑 | verification/TASK-058/ |
-| AC2 真实排空 | 同上（真实装配 + 活动 run） | 同上 | 待跑 | verification/TASK-058/ |
+| AC1 顺序契约 | `pytest tests/core/test_shutdown_drain.py -q`（文件自包含，单跑可复现） | TASK-012-py312 venv | 待跑 | verification/TASK-058/ |
+| AC2 真实排空 | 同上（真实装配 + 离开 PENDING 的 run） | 同上 | 待跑 | verification/TASK-058/ |
 | AC4 全仓 ×5 | `pytest tests -q` | 同上 | 待跑 | verification/TASK-058/run0X.log |
