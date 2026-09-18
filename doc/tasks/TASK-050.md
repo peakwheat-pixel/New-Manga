@@ -26,12 +26,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（读面注入）**：`build_production_pipeline(...)` 在生产装配处收到由**设置存储**解析出的 `settings` 与 `provider_bindings`（不复用"第二套"解析；与既有 settings/constraint/context 语义一致）；无配置时行为与现状**逐字节一致**（仍 typed fail-closed）。
-- [ ] **AC ②（写面 API）**：提供保存/读取 provider 绑定与相关设置的**应用层 API**（含校验与 typed 错误），并有用例；**不做设置页 UI**（属 TASK-022，见其设计门）。
-- [ ] **AC ③（端到端前进）**：配置一个**确定性/本地**（测试内自建，不引入依赖、不配真实端点）provider 后，命令能越过 `PROVIDER_NOT_CONFIGURED` 前进到更后段；给出修前/修后对照与"真实端点仍 NOT_RUN"的声明。
-- [ ] **AC ④（凭据边界）**：不得读写真实凭据/密钥文件；凭据路径遵循既有 D03/settings 边界（若需要凭据注入，必须是**接口**而非值）。
-- [ ] **AC ⑤（判别力 + 不回归）**：新用例对修前失败；`tests/providers/**`、`tests/core/**`、`tests/pipeline/**` 既有断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
-- [ ] **AC ⑥** Handoff + `verification/TASK-050/**` + 独立子对话 Review + 集成 + STATUS 台账行。
+- [x] **AC ①（读面注入）**：`build_production_pipeline(...)` 在生产装配处收到由**设置存储**解析出的 `settings` 与 `provider_bindings`（不复用"第二套"解析；与既有 settings/constraint/context 语义一致）；无配置时行为与现状**逐字节一致**（仍 typed fail-closed）。
+- [x] **AC ②（写面 API）**：提供保存/读取 provider 绑定与相关设置的**应用层 API**（含校验与 typed 错误），并有用例；**不做设置页 UI**（属 TASK-022，见其设计门）。
+- [x] **AC ③（端到端前进）**：配置一个**确定性/本地**（测试内自建，不引入依赖、不配真实端点）provider 后，命令能越过 `PROVIDER_NOT_CONFIGURED` 前进到更后段；给出修前/修后对照与"真实端点仍 NOT_RUN"的声明。
+- [x] **AC ④（凭据边界）**：不得读写真实凭据/密钥文件；凭据路径遵循既有 D03/settings 边界（若需要凭据注入，必须是**接口**而非值）。
+- [x] **AC ⑤（判别力 + 不回归）**：新用例对修前失败；`tests/providers/**`、`tests/core/**`、`tests/pipeline/**` 既有断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
+- [x] **AC ⑥** Handoff + `verification/TASK-050/**` + 独立子对话 Review + 集成 + STATUS 台账行。
 
 ## 允许修改范围
 
@@ -50,9 +50,9 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ③ 前后对照 | `python verification/TASK-050/bindings_probe.py`（planned） | venv + 真 SQLite | NOT_RUN | 无 |
-| AC ①② 用例 | `pytest tests/pipeline tests/core -q`（planned） | 同上 | NOT_RUN | 无 |
-| AC ⑤ 全仓 | `pytest -q -rs` ×5（planned） | 不设 `QT_QPA_PLATFORM` | NOT_RUN | 无 |
+| AC ③ 前后对照 | `python verification/TASK-050/bindings_probe.py` | venv + 真 SQLite | 修前×2：WRITE_FACE=unavailable、ocr=PROVIDER_NOT_CONFIGURED；修后×2：ok、ocr=completed、RUN=completed、ECHO_LANDED=1 | probe-{pre,post}-fix-run{1,2}.txt |
+| AC ①② 用例 | `pytest tests/core tests/providers tests/pipeline -q -rs` | 同上 | 273 passed（含 6 新用例全绿） | 定向回归（core/providers/pipeline） |
+| AC ⑤ 全仓 | `pytest -q -rs` ×5 | 不设 `QT_QPA_PLATFORM` | 884 passed, 0 skipped, exit 0 ×5 | full-suite-post-fix-run{1..5}.log |
 
 ## 依赖、风险与阻塞
 
@@ -62,5 +62,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际测试：尚无（`ready`，前置 TASK-048/049）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（窗口 W3）。**实施尚未开始。**
+- Handoff：`doc/handoffs/TASK-050-5027998.md`。Review：独立子对话（进行中，报告将落 `doc/reviews/TASK-050-5027998.md`）。实际测试：见上方测试要求表与 `verification/TASK-050/**`。原始登记：尚无。Review：尚无。实际测试：尚无（`ready`，前置 TASK-048/049）。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W3 实现并取证完毕（实现提交 `5027998`）：`_load_pipeline_defaults` 读面注入（未配置安装逐字节一致）+ `PipelineDefaultsService` 写面（typed 校验、复用 snapshot provider 持久化、known_steps 取自 handler 表）+ AC③ 端到端（本地确定性 provider 绑定后 OCR_REGION 前进到 completed、译文落 region_revisions）；6 新用例、定向 273、全仓 884×5 全绿；判别力双级。原开立记录：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（窗口 W3）。**实施尚未开始。**
