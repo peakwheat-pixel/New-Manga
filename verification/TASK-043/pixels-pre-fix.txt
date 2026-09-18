@@ -1,0 +1,7 @@
+python     : G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH : C:\Users\49745\AppData\Local\Temp\task043-prefix\src
+using tree : C:\Users\49745\AppData\Local\Temp\task043-prefix\src\infrastructure\importing.py
+adapter    : infrastructure.importing
+PDF fill (255, 0, 0) -> PNG 200x200 centre pixel RGBA (0,0,255,255)  [SWAPPED]
+PDF fill (0, 255, 0) -> PNG 200x200 centre pixel RGBA (0,255,0,255)  [OK]
+PDF fill (0, 0, 255) -> PNG 200x200 centre pixel RGBA (255,0,0,255)  [SWAPPED]

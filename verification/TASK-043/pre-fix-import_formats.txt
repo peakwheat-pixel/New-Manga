@@ -1,0 +1,259 @@
+......F.FFFFF.FF                                                         [100%]
+================================== FAILURES ===================================
+_____________ test_imported_pdf_page_keeps_the_source_colour[red] _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x00000146CD0D2F90>, 'sink': <t...mp_path': WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2074/test_imported_pdf_page_keeps_t0')}
+fill = (255, 0, 0)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+        from PySide6.QtGui import QImage
+    
+        use_case, storage = workspace["use_case"], workspace["storage"]
+    
+        report = use_case.import_documents(
+            "chapter-7", [_source("solid.pdf", solid_colour_pdf(*fill))]
+        )
+    
+        assert len(report.imported) == 1 and report.failed == ()
+        page = report.imported[0].page
+        png_path = Path(storage.absolute_path(page.managed_original_ref))
+        assert png_path.is_file()  # the managed copy really holds the page
+        image = QImage.fromData(png_path.read_bytes(), "PNG")
+        assert not image.isNull()
+        assert (image.width(), image.height()) == (200, 200)  # 100pt MediaBox at scale 2.0
+        samples = ((0.5, 0.5), (0.25, 0.25), (0.75, 0.25), (0.25, 0.75), (0.75, 0.75))
+        for x_ratio, y_ratio in samples:
+            colour = image.pixelColor(
+                round(image.width() * x_ratio), round(image.height() * y_ratio)
+            )
+>           assert (colour.red(), colour.green(), colour.blue()) == pytest.approx(
+                fill, abs=8
+            ), f"pixel at ratio ({x_ratio}, {y_ratio}) is not the source fill {fill}"
+E           AssertionError: pixel at ratio (0.5, 0.5) is not the source fill (255, 0, 0)
+E           assert (0, 0, 255) == approx((255 ��...0 �� 8, 0 �� 8))
+E             
+E             comparison failed. Mismatched elements: 2 / 3:
+E             Max absolute difference: 255
+E             Max relative difference: inf
+E             Index | Obtained | Expected
+E             0     | 0        | 255 �� 8 
+E             2     | 255      | 0 �� 8
+
+tests\import_formats\test_document_import.py:309: AssertionError
+____________ test_imported_pdf_page_keeps_the_source_colour[blue] _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x00000146CD137E90>, 'sink': <t...mp_path': WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2074/test_imported_pdf_page_keeps_t2')}
+fill = (0, 0, 255)
+
+    @pytest.mark.parametrize(
+        "fill", [(255, 0, 0), (0, 255, 0), (0, 0, 255)], ids=["red", "green", "blue"]
+    )
+    def test_imported_pdf_page_keeps_the_source_colour(workspace, fill) -> None:
+        """F-1 (TASK-043): the rasteriser must keep PDFium's BGR byte order.
+    
+        Pre-fix, the ``BGR`` buffer went into ``QImage.Format_RGB888``, so a pure
+        red page was decoded blue (and blue red). The old suite asserted only
+        ``(width, height)``, which is blind to a channel swap �� so this test
+        samples the pixels of the PNG that the *production* Managed Copy
+        persisted, through the real PDFium binding.
+        """
+        from PySide6.QtGui import QImage
+    
+        use_case, storage = workspace["use_case"], workspace["storage"]
+    
+        report = use_case.import_documents(
+            "chapter-7", [_source("solid.pdf", solid_colour_pdf(*fill))]
+        )
+    
+        assert len(report.imported) == 1 and report.failed == ()
+        page = report.imported[0].page
+        png_path = Path(storage.absolute_path(page.managed_original_ref))
+        assert png_path.is_file()  # the managed copy really holds the page
+        image = QImage.fromData(png_path.read_bytes(), "PNG")
+        assert not image.isNull()
+        assert (image.width(), image.height()) == (200, 200)  # 100pt MediaBox at scale 2.0
+        samples = ((0.5, 0.5), (0.25, 0.25), (0.75, 0.25), (0.25, 0.75), (0.75, 0.75))
+        for x_ratio, y_ratio in samples:
+            colour = image.pixelColor(
+                round(image.width() * x_ratio), round(image.height() * y_ratio)
+            )
+>           assert (colour.red(), colour.green(), colour.blue()) == pytest.approx(
+                fill, abs=8
+            ), f"pixel at ratio ({x_ratio}, {y_ratio}) is not the source fill {fill}"
+E           AssertionError: pixel at ratio (0.5, 0.5) is not the source fill (0, 0, 255)
+E           assert (255, 0, 0) == approx((0 �� 8...�� 8, 255 �� 8))
+E             
+E             comparison failed. Mismatched elements: 2 / 3:
+E             Max absolute difference: 255
+E             Max relative difference: inf
+E             Index | Obtained | Expected
+E             0     | 255      | 0 �� 8   
+E             2     | 0        | 255 �� 8
+
+tests\import_formats\test_document_import.py:309: AssertionError
+________________ test_failed_page_reports_the_rest_as_pending _________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2074/test_failed_page_reports_the_r0')
+
+    def test_failed_page_reports_the_rest_as_pending(tmp_path) -> None:
+        """F-3 (TASK-043): a mid-document failure must account for the remainder.
+    
+        Pre-fix the loop simply ``break``-ed, so pages after the failure were
+        neither failed nor pending and the caller could not tell that they were
+        never attempted.
+        """
+        use_case, sink, raster = _stub_use_case(tmp_path, page_count=4, fail_on=1)
+    
+        report = use_case.import_documents("chapter-7", [_source("long.pdf", b"%PDF-1.4 stub")])
+    
+        assert len(report.imported) == 1 and len(sink.pages) == 1
+        assert [failure.reason for failure in report.failed] == ["INVALID_DOCUMENT"]
+>       assert report.pending_after_cancel == ("long.pdf (page 3+)", "long.pdf (page 4+)")
+E       AssertionError: assert () == ('long.pdf (p...df (page 4+)')
+E         
+E         Right contains 2 more items, first extra item: 'long.pdf (page 3+)'
+E         Use -v to get more diff
+
+tests\import_formats\test_document_import.py:376: AssertionError
+________________ test_copy_failure_reports_the_rest_as_pending ________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2074/test_copy_failure_reports_the_0')
+
+    def test_copy_failure_reports_the_rest_as_pending(tmp_path) -> None:
+        """F-3 (TASK-043): the Managed Copy failure path accounts for the
+        remainder just like the decode failure path."""
+        storage = ManagedFileStorage(tmp_path / "managed")
+        inner = ManagedCopyStoreAdapter(storage, lambda chapter_id: "book-42")
+        calls = {"count": 0}
+    
+        class FlakyStore:
+            def store_original(self, chapter_id, source_filename, data, source_hash):
+                calls["count"] += 1
+                if calls["count"] == 2:
+                    raise OSError("injected copy failure")
+                return inner.store_original(chapter_id, source_filename, data, source_hash)
+    
+        sink = InMemoryPageSink()
+        use_case = ImportDocumentsUseCase(_StubRaster(page_count=3), FlakyStore(), sink)
+    
+        report = use_case.import_documents("chapter-7", [_source("long.pdf", b"%PDF-1.4 stub")])
+    
+        assert len(report.imported) == 1 and len(sink.pages) == 1
+        assert [failure.reason for failure in report.failed] == ["COPY_FAILED"]
+>       assert report.pending_after_cancel == ("long.pdf (page 3+)",)
+E       AssertionError: assert () == ('long.pdf (page 3+)',)
+E         
+E         Right contains one more item: 'long.pdf (page 3+)'
+E         Use -v to get more diff
+
+tests\import_formats\test_document_import.py:404: AssertionError
+_____________ test_cancel_reports_every_remaining_page_as_pending _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2074/test_cancel_reports_every_rema0')
+
+    def test_cancel_reports_every_remaining_page_as_pending(tmp_path) -> None:
+        """F-3 (TASK-043): cancellation lists every page that was never started."""
+        use_case, sink, _ = _stub_use_case(tmp_path, page_count=4)
+    
+        report = use_case.import_documents(
+            "chapter-7",
+            [_source("long.pdf", b"%PDF-1.4 stub")],
+            cancelled=lambda: len(sink.pages) >= 2,
+        )
+    
+        assert report.cancelled is True
+        assert len(report.imported) == 2
+>       assert report.pending_after_cancel == ("long.pdf (page 3+)", "long.pdf (page 4+)")
+E       AssertionError: assert ('long.pdf (page 3+)',) == ('long.pdf (p...df (page 4+)')
+E         
+E         Right contains one more item: 'long.pdf (page 4+)'
+E         Use -v to get more diff
+
+tests\import_formats\test_document_import.py:420: AssertionError
+_________ test_zero_page_document_is_a_typed_failure_not_a_duplicate __________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2074/test_zero_page_document_is_a_t0')
+
+    def test_zero_page_document_is_a_typed_failure_not_a_duplicate(tmp_path) -> None:
+        """F-3 (TASK-043): a document yielding no pages is *unusable*, not a
+        duplicate �� pre-fix it landed in ``skipped_duplicates``."""
+        use_case, sink, _ = _stub_use_case(tmp_path, page_count=0)
+    
+        report = use_case.import_documents("chapter-7", [_source("empty.pdf", b"%PDF-1.4 stub")])
+    
+        assert report.imported == () and sink.pages == []
+>       assert report.skipped_duplicates == ()
+E       AssertionError: assert ('empty.pdf',) == ()
+E         
+E         Left contains one more item: 'empty.pdf'
+E         Use -v to get more diff
+
+tests\import_formats\test_document_import.py:431: AssertionError
+______________ test_unavailable_pdfium_binding_is_a_typed_error _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000146CD136B40>
+
+    def test_unavailable_pdfium_binding_is_a_typed_error(monkeypatch) -> None:
+        """F-9 (TASK-043): an unusable PDF binding raises the typed
+        ``DocumentDecodeError``, never a bare ``ImportError``."""
+        monkeypatch.setitem(sys.modules, "pypdfium2", None)
+    
+        with pytest.raises(DocumentDecodeError) as caught:
+>           PdfiumDocumentRaster().open(minimal_pdf(1))
+
+tests\import_formats\test_document_import.py:455: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing.PdfiumDocumentRaster object at 0x00000146CD136CF0>
+data = b'%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [4 0 R] /Count 1 >>\nen...000058 00000 n \n0000000115 00000 n \n0000000202 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n289\n%%EOF\n'
+
+    def open(self, data: bytes):
+        from application.importing.documents.ports import DocumentDecodeError
+    
+>       import pypdfium2 as pdfium
+E       ModuleNotFoundError: import of pypdfium2 halted; None in sys.modules
+
+src\infrastructure\importing.py:126: ModuleNotFoundError
+____________ test_unavailable_pdfium_binding_is_reported_per_file _____________
+
+workspace = {'use_case': <application.importing.documents.service.ImportDocumentsUseCase object at 0x00000146CD137E00>, 'sink': <t...mp_path': WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2074/test_unavailable_pdfium_bindin0')}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000146CD137D10>
+
+    def test_unavailable_pdfium_binding_is_reported_per_file(workspace, monkeypatch) -> None:
+        """F-9 end-to-end: the use case reports the unusable binding as a typed
+        per-file failure instead of crashing the whole import."""
+        monkeypatch.setitem(sys.modules, "pypdfium2", None)
+        use_case = workspace["use_case"]
+    
+>       report = use_case.import_documents("chapter-7", [_source("a.pdf", minimal_pdf(1))])
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\import_formats\test_document_import.py:467: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\application\importing\documents\service.py:125: in import_documents
+    handle = self._raster.open(data)
+             ^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.importing.PdfiumDocumentRaster object at 0x00000146CD137C20>
+data = b'%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [4 0 R] /Count 1 >>\nen...000058 00000 n \n0000000115 00000 n \n0000000202 00000 n \ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n289\n%%EOF\n'
+
+    def open(self, data: bytes):
+        from application.importing.documents.ports import DocumentDecodeError
+    
+>       import pypdfium2 as pdfium
+E       ModuleNotFoundError: import of pypdfium2 halted; None in sys.modules
+
+src\infrastructure\importing.py:126: ModuleNotFoundError
+8 failed, 8 passed in 1.03s

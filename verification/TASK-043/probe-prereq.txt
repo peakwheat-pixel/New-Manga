@@ -1,0 +1,11 @@
+PySide6 QImage.Format_BGR888 present: True
+PySide6 QImage.Format_RGB888  present: True
+Format_BGR888 value: 29
+Format_RGB888  value: 13
+Format_BGR888: raw bytes (0,0,255) -> pixelColor RGBA (255,0,0,255)
+Format_RGB888: raw bytes (0,0,255) -> pixelColor RGBA (0,0,255,255)
+pypdfium2 version: unknown
+0-page PDF refused by pdfium: PdfiumError: Failed to load document (PDFium: Success).
+PDF fill (255,0,0) size=200x200 -> production PNG centre pixel RGBA (0,0,255,255)
+PDF fill (0,255,0) size=200x200 -> production PNG centre pixel RGBA (0,255,0,255)
+PDF fill (0,0,255) size=200x200 -> production PNG centre pixel RGBA (255,0,0,255)

@@ -1,0 +1,3 @@
+BGRA bytes (B=0,G=0,R=255,A=255) -> Format_ARGB32 pixelColor RGBA (255, 0, 0, 255)  [OK]
+BGRA bytes (B=0,G=255,R=0,A=255) -> Format_ARGB32 pixelColor RGBA (0, 255, 0, 255)  [OK]
+BGRA bytes (B=255,G=0,R=0,A=255) -> Format_ARGB32 pixelColor RGBA (0, 0, 255, 255)  [OK]

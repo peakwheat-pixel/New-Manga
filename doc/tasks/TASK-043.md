@@ -2,7 +2,7 @@
 id: TASK-043
 title: TASK-023 修订尾项（F-1 PDF 红蓝通道互换 P1 + F-3 失败余页 + F-9 依赖导入位置）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -68,6 +68,14 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 依 DSH 外部复审的 F-1/F-3/F-9 开立；`base=1c171dc`。**实施尚未开始。**
+- Handoff：[TASK-043-d8e9406](../handoffs/TASK-043-d8e9406.md)（delivery_head=`d8e9406`）。Review：尚无（待 Codex 按 §6 执行**非作者** Review）。
+- 实际执行/测试（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：
+  - 证据总表：[verification/TASK-043/README.md](../../verification/TASK-043/README.md)；修前/修后像素：[pixels-pre-fix.txt](../../verification/TASK-043/pixels-pre-fix.txt) / [pixels-post-fix.txt](../../verification/TASK-043/pixels-post-fix.txt)（两棵树的 `PYTHONPATH` 选择，日志首行打印实际加载的 `src` 树）；BGRA 依据：[bgra-basis.txt](../../verification/TASK-043/bgra-basis.txt)；恒等重构：[pdf-builder-identity.txt](../../verification/TASK-043/pdf-builder-identity.txt)；全仓逐次：[full-suite-runs.log](../../verification/TASK-043/full-suite-runs.log)；基线：[baseline-master-c5aa664.txt](../../verification/TASK-043/baseline-master-c5aa664.txt)；skip 原因：[skip-reasons.txt](../../verification/TASK-043/skip-reasons.txt)。
+  - 定向：`tests/import_formats tests/library tests/providers` → **225 passed / 0 skipped**（16 / 40 / 169）；`tests/import_formats tests/library` → 56 passed。
+  - 全仓：**802 passed / 6 skipped ×5 次**（逐次 exit 0）；独立基线 master `c5aa664` → **792 passed / 6 skipped** ⇒ +10 = 恰好新增 10 例；6 条 skip 全部为既有 `tests/network` `openssl unavailable`（`test_connection_tester.py:106`、`test_transport_tls.py:39/47/62/69/83`）。
+  - 判别力：新测试放到 base `c5aa664` 的 `src` 上 → **8 failed / 8 passed**（`-rf` 逐条 node id + 树溯源）。修前也通过的两项（F-1 `[green]` 在 R↔B 互换下恒等；生产 0 页 PDF 本就 typed 拒绝）已声明为守卫、不计入判别力。
+  - 边界：改动恰为 `src/infrastructure/importing.py`、`src/application/importing/documents/service.py`、`src/application/importing/documents/ports.py`、`tests/import_formats/test_document_import.py`、`verification/TASK-043/**`，**越界 0**；`git diff --check` 退出码 0；**未新增 skip/xfail**；既有断言零删除（`tests/` 的删除行仅为 `minimal_pdf` 尾部搬入 `_assemble_pdf`，字节恒等已证）。
+- **待 Reviewer 裁定**：① F-3 的 `cancelled` 语义收紧（原 `bool(pending)` → 真实取消）；② 失败余页复用 `pending_after_cancel` 字段名（该端口文件 `application/importing/images/ports.py` 不在本 Task 白名单，未改名）；③ F-9 新报告码 `MISSING_DEPENDENCY` 与 `except (ImportError, OSError)` 的宽度；④ **修复前已导入的 PDF 页不会自动修复**（Managed Copy 内仍是互换像素，且其 `source_hash` 与修复后不一致 → 重新导入不会去重）是否另开切片。
+- **最近状态（当前，唯一）**：2026-09-18 **`in_progress`（实现已交付，待非作者 Review）**——F-1 / F-3 / F-9 已实现并取证，delivery head `d8e9406`，fixed base `1c171dc`（开工先 `git merge master` → `c5aa664`，fast-forward 无冲突）。**未 push；未改 Schema/migration、依赖清单、pipeline seam、路由判定/SFX、`AGENTS.md`、其他 Task；`doc/STATUS.md` 未改**（按 AC ⑤，F-1/F-3/F-9 的关闭登记发生在 Review 与集成之后，作者阶段不预写）。本 Task **尚未 done**、三项缺陷**尚未"关闭"**。
+- 历史状态（2026-09-18）：由 Codex 依 DSH 外部复审 `doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md` 的 F-1/F-3/F-9 开立为 `ready`（Owner=`DeepSeek Harness`、Reviewer=`Codex`、base=`1c171dc`）；本次开工置 `in_progress`。
 

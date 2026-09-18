@@ -11,8 +11,13 @@ the same duplicate bookkeeping as image pages.
 Failure / cancellation semantics mirror ``ImportImagesUseCase`` (AC 2): a
 page that fails decode or copy never reaches the sink; cancellation stops
 before starting the next page; already committed pages stay and the
-remainder is reported as pending. Corrupt, encrypted and unsupported files
-fail with typed reasons and never break previously imported data.
+remainder is reported as pending. F-3 (TASK-043) makes that accounting
+total: a page that fails decode *or* copy also leaves ``page_no+1 ..
+page_count`` pending, so no page is ever in no bucket at all, and a
+document whose page count is zero is an ``INVALID_DOCUMENT`` failure
+instead of being misreported as a duplicate. Only an actual cancellation
+sets ``cancelled``. Corrupt, encrypted and unsupported files fail with
+typed reasons and never break previously imported data.
 
 MOBI: no parsing dependency is approved, so non-PDF payloads fail with
 ``UNSUPPORTED_FORMAT`` — diagnosable, never silently ignored, never parsed
@@ -61,6 +66,19 @@ def _page_name(source_filename: str, page_no: int) -> str:
     return f"{stem}-page-{page_no:04d}.png"
 
 
+def _pending_pages(source_filename: str, first_page: int, page_count: int) -> list[str]:
+    """Pending labels for every page in ``first_page..page_count`` (1-based).
+
+    ``(page N+)`` keeps the label shape TASK-023 already used on the cancel
+    path. A ``first_page`` beyond ``page_count`` yields no label, so callers
+    can pass ``page_no + 1`` unconditionally (F-3, TASK-043).
+    """
+    return [
+        f"{source_filename} (page {page_no}+)"
+        for page_no in range(first_page, page_count + 1)
+    ]
+
+
 class ImportDocumentsUseCase:
     """Import document files as managed page images (TASK-023 AC 1/2)."""
 
@@ -92,10 +110,12 @@ class ImportDocumentsUseCase:
         skipped: list[str] = []
         failed: list[FailedImport] = []
         pending: list[str] = []
+        was_cancelled = False
 
         for source in sources:
             if is_cancelled():
                 pending.append(source.filename)
+                was_cancelled = True
                 continue
             try:
                 data = source.read()
@@ -131,11 +151,27 @@ class ImportDocumentsUseCase:
             file_page_failures = 0
             file_pages_imported = 0
             file_pages_skipped = 0
+            page_count = handle.page_count
             try:
-                for page_no in range(1, handle.page_count + 1):
+                if page_count == 0:
+                    # F-3 (TASK-043): a document that yields no pages is an
+                    # unusable document, not "every page already existed".
+                    failed.append(
+                        FailedImport(
+                            source.filename,
+                            REASON_INVALID_DOCUMENT,
+                            "document contains no pages",
+                        )
+                    )
+                for page_no in range(1, page_count + 1):
                     if is_cancelled():
-                        pending.append(f"{source.filename} (page {page_no}+)")
+                        # page_no was never started: it and every later page
+                        # are pending.
+                        pending.extend(
+                            _pending_pages(source.filename, page_no, page_count)
+                        )
                         cancelled_during_pages = True
+                        was_cancelled = True
                         break
                     try:
                         rendered = handle.render_page(page_no - 1)
@@ -144,6 +180,12 @@ class ImportDocumentsUseCase:
                             FailedImport(source.filename, error.reason, error.detail)
                         )
                         file_page_failures += 1
+                        # F-3 (TASK-043): the pages after the failure were
+                        # never attempted; account for them as pending rather
+                        # than leaving them in no bucket at all.
+                        pending.extend(
+                            _pending_pages(source.filename, page_no + 1, page_count)
+                        )
                         break
                     page_hash = hashlib.sha256(rendered.png).hexdigest()
                     if (
@@ -162,6 +204,10 @@ class ImportDocumentsUseCase:
                     except OSError as error:
                         failed.append(
                             FailedImport(source.filename, REASON_COPY_FAILED, str(error))
+                        )
+                        # F-3 (TASK-043): same accounting as a decode failure.
+                        pending.extend(
+                            _pending_pages(source.filename, page_no + 1, page_count)
                         )
                         break
                     next_order += 1
@@ -189,7 +235,7 @@ class ImportDocumentsUseCase:
 
             if cancelled_during_pages:
                 continue
-            if file_pages_imported == 0 and file_page_failures == 0:
+            if file_pages_imported == 0 and file_page_failures == 0 and page_count > 0:
                 # every page already existed: the document is a duplicate
                 skipped.append(source.filename)
 
@@ -199,5 +245,5 @@ class ImportDocumentsUseCase:
             skipped_duplicates=tuple(skipped),
             failed=tuple(failed),
             pending_after_cancel=tuple(pending),
-            cancelled=bool(pending),
+            cancelled=was_cancelled,
         )
