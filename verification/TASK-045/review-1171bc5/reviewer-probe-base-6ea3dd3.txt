@@ -1,0 +1,10 @@
+reviewer probe - BASE src tree (6ea3dd3), same script; note section B still loads the delivered QML, so only section A is a discriminance signal
+src tree = C:\Users\49745\AppData\Local\Temp\nm045disc\src
+[A] page=(60, 1200) tiles=3
+[A] declared content heights: [500, 500, 200]
+[A] tile-file height mismatches: [(1, 540, 500), (2, 240, 200)]
+[A] tiles whose rows != their page rows: [1, 2]
+[A] stitched rows == whole page: False (1280 vs 1200 rows)
+[A] F-4 property holds: False
+[B] tilesActive=True pagePixelWidth=60 hostVisible=True
+EXIT=
