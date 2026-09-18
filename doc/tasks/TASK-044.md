@@ -2,7 +2,7 @@
 id: TASK-044
 title: TASK-021 修订尾项（F-2 purge FK 完整性 P1 + F-6 生成资产删除范围 + F-7 manifest 原子性 + F-10 软删过滤）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -94,5 +94,15 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 依 DSH 外部复审的 F-2/F-6/F-7/F-10 开立；`base=1c171dc`。**实施尚未开始。**
+- Handoff：[TASK-044-7cd59d5](../handoffs/TASK-044-7cd59d5.md)（delivery_head=`7cd59d5`）。Review：尚无（待 Codex 按 §6 执行**非作者** Review）。
+- 实际执行/测试（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：
+  - 证据总表：[verification/TASK-044/README.md](../../verification/TASK-044/README.md)；FK 图与删除顺序实验：[purge-fk-probe.txt](../../verification/TASK-044/purge-fk-probe.txt)；完整性扫描：[page-key-tables-scan.txt](../../verification/TASK-044/page-key-tables-scan.txt)；判别力：[pre-fix-failure-summary.txt](../../verification/TASK-044/pre-fix-failure-summary.txt)；全仓逐次：[full-suite-runs.log](../../verification/TASK-044/full-suite-runs.log)；基线：[baseline-master-33c8dd4.txt](../../verification/TASK-044/baseline-master-33c8dd4.txt)。
+  - 定向：`tests/storage tests/core tests/library tests/import_formats tests/providers` → **296 passed / 0 skipped**；逐目录 `storage 48 / core 23 / library 40 / providers 169`。
+  - 全仓：**813 passed / 6 skipped ×5 次**（另 run 6 给出逐条 skip 原因），逐次 exit 0；独立基线 master `33c8dd4` → **804 passed / 6 skipped** ⇒ +9 = 恰好新增 9 例；6 条 skip 全为既有 `tests/network` `openssl unavailable`。
+  - 判别力：新测试放到 base `33c8dd4` 的 `src` 上 → **8 failed / 1 passed**（唯一通过者是夹具守卫，理应修前通过）；5 项 purge 用例在修前均为 `IntegrityError: FOREIGN KEY constraint failed`（F-2 复现）。
+  - 边界：改动恰为 `src/infrastructure/sqlite/library.py`、`src/application/maintenance/{trash,ports}.py`、`tests/storage/test_purge_integrity.py`、`verification/TASK-044/**`，**越界 0**；`git diff --check` 退出码 0；**未新增 skip/xfail**；未放宽既有断言；未用 `PRAGMA foreign_keys = OFF`、未捕获 `IntegrityError`、未放宽 `remove_managed` 越界拒绝；未改 Schema/migration/依赖/seam。
+- **AC ① 的实证修正（请 Reviewer 裁定）**：任务书要求的「先 `UPDATE media_artifacts SET current_revision_id = NULL` 破循环」在本 schema 下**不可能执行**——`trg_media_artifacts_current_not_clearable` 对「非 NULL → NULL」直接 `RAISE(ABORT)`（`regions` 同，见 [purge-fk-probe.txt](../../verification/TASK-044/purge-fk-probe.txt) E1）；且**不必要**：该复合 FK 声明为 `DEFERRABLE INITIALLY DEFERRED`，同一事务内两侧同删即满足（E3/E4）。改 Schema 与关 FK 均被禁止，故实现改为依赖 deferred FK 并在 docstring 写明依据。
+- **F-10 拆分与 port docstring 漂移（需要一次跨范围决定）**：`existing_source_hashes` 已加 `deleted_at IS NULL`；`max_source_order` **有意保留**软删行（否则新导入页会与日后 restore 的页撞 order）。但 `src/application/importing/images/ports.py` 的 `ImportPageSink` 文档要求「两方法都不得过滤」→ 该文件**不在本 Task 允许范围**，未改，建议给单文件 scope grant 或由 Codex 在集成时改（替换文案见 Handoff「待 Reviewer 裁定」①）。
+- **另两处超出任务书枚举的补全（可回退）**：跨页 provenance 悬空指针先清（否则"永久删除"对该形态永久失败，E5 证据）；无 FK 的 `pipeline_stage_states` 键行一并清理（该表当前 0 行、无生产写入方）。
+- **最近状态（当前，唯一）**：2026-09-18 **`in_progress`（实现已交付，待非作者 Review）**——F-2 / F-6 / F-7 / F-10 已实现并取证，delivery head `7cd59d5`，fixed base `1c171dc`（开工先 `git merge master` → `33c8dd4`，fast-forward 无冲突）。**未 push；`doc/STATUS.md` 未改**（按 AC ⑦，关闭登记在 Review/集成之后）。本 Task **尚未 done**、四项缺陷**尚未"关闭"**。
+- 历史状态（2026-09-18）：由 Codex 依 DSH 外部复审 `doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md` 的 F-2/F-6/F-7/F-10 开立为 `ready`；本次开工置 `in_progress`。
