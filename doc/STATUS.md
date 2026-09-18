@@ -4,7 +4,7 @@
 
 | 项目 | 状态 |
 |---|---|
-| 阶段 | TASK-001～TASK-021、TASK-024、TASK-028～TASK-046、TASK-041、TASK-045 已完成并集成（TASK-021 仅 **trash 子集**，其余三个子集冻结）；**ZCode 全权窗口（2026-09-19，T1=09:00）生效中**：W0–W10 队列见「ZCode 全权窗口授权（2026-09-19）」小节（**W0/W1/W2/W6/W7/W8 已完成集成（TASK-046/048/049/053/054/055）**；其余待做）；TASK-022/025/026/027 已纳入同一队列但**门槛未达成，记 BLOCKED**；TASK-047 属 Qoder（窗口外）。窗口期 master 由 ZCode 代行写入。**2026-09-18 当日**经两次外部 post-hoc 复审收口了窗口期 7 项集成，并据此开立 TASK-043/044/045 修订尾项（**F-1/F-2 已关闭**），另完成 TASK-040（clean_probe 生产注入）与 TASK-042（超大 webtoon 带状解码）。master 基线 `cd57ee4`（本次刷新基线：TASK-053 集成，其上已含并行会话的 TASK-046/048/049/054/055），全仓 **886 passed / 0 skipped**（本机 openssl 可见 ⇒ `tests/network` 6 条 TLS 转正；openssl 不可用时 880/6）。|
+| 阶段 | TASK-001～TASK-021、TASK-024、TASK-028～TASK-046、TASK-041、TASK-045 已完成并集成（TASK-021 仅 **trash 子集**，其余三个子集冻结）；**ZCode 全权窗口（2026-09-19，T1=09:00）生效中**：W0–W10 队列见「ZCode 全权窗口授权（2026-09-19）」小节（**W0–W4、W6–W9 已完成集成（TASK-046/048/049/050/051/053/054/055/056）**；其余待做）；TASK-022/025/026/027 已纳入同一队列但**门槛未达成，记 BLOCKED**；TASK-047 属 Qoder（窗口外）。窗口期 master 由 ZCode 代行写入。**2026-09-18 当日**经两次外部 post-hoc 复审收口了窗口期 7 项集成，并据此开立 TASK-043/044/045 修订尾项（**F-1/F-2 已关闭**），另完成 TASK-040（clean_probe 生产注入）与 TASK-042（超大 webtoon 带状解码）。master 基线 `11517ac`（本次刷新基线：TASK-056 集成，其上已含并行会话的 TASK-046/048/049/050/051/053/054/055），全仓 **904 passed / 0 skipped**（本机 openssl 可见 ⇒ `tests/network` 6 条 TLS 转正；openssl 不可用时 880/6）。|
 | 当前授权 | **角色已恢复初始定位**（窗口期临时条款已于 2026-09-18 08:50 T1 移除；并行双轴强制已于同日取消）：**Codex = Lead/Architect/Integrator，且为唯一主线写入与合并责任人**；**ZCode = 独立 Feature/长任务实现**（自有分支，不得自行合并主线）；**DeepSeek Harness = 实验/测试/Bug 分析/独立 Review**（**不得审核自己的实现**）；**Owner ≠ Reviewer**。当前可执行：**ZCode 全权窗口队列 W0–W10**（TASK-046、TASK-048～057，按前提性排序；新任务可插队，见窗口小节）；TASK-041、TASK-045 已完成集成（`done`）；TASK-022、TASK-025～TASK-027 未释放。|
 | 2026-09-19 Qoder / UI 设计增量 | 用户指定 **Qoder 为 UI/UX、GUI 与 QML 视觉/交互设计责任方**。Codex 已开立并释放 **TASK-047**（`ready`，Owner=Qoder、Reviewer=Codex、base=`0e470f3`、branch=`agent/qoder/TASK-047-ui-ux-gui-design`、worktree=`G:/CODEX/New Manga.worktrees/TASK-047-qoder`），仅允许写设计契约、视觉参考、Handoff 与 verification；不得写 `src/**`、`tests/**`、Schema、依赖、产品文档或其他 Task。TASK-022 保持 `proposed`，改为 Qoder 建议 Owner 并增加 TASK-047 硬依赖；TASK-047 经非作者 Review、Codex 集成后才能另行批准 UI 实现。 |
 | 接管审核 | approved |
@@ -333,7 +333,7 @@ TASK-009 Review 已归档：[首轮 Review `TASK-009-f1dd602`](reviews/TASK-009-
 | W6 | [TASK-053](tasks/TASK-053.md) ⑧ TASK-044 R-03/R-04 | 无 | **done**（独立子对话 Review：首轮 `approved_subagent`→R-001 守卫→复审 `approved_subagent` @5eeebde；integration=`cd57ee4`，ZCode 窗口代行） |
 | W7 | [TASK-054](tasks/TASK-054.md) ⑨ TASK-043 R-02 改名 | 无 | **done**（独立子对话 Review `approved_subagent` @88c1562；integration=`771dbf7`，ZCode 窗口代行） |
 | W8 | [TASK-055](tasks/TASK-055.md) ⑩ TASK-021 子集① 日志/诊断 | 无 | **done**（独立子对话 Review：首轮 `changes_requested`→修订复审 `approved_subagent` @60d1d55；integration=`0493ea9`，ZCode 窗口代行） |
-| W9 | [TASK-056](tasks/TASK-056.md) ⑪ TASK-021 子集② 缓存·版本·模型清理 | W6、W7 | ready |
+| W9 | [TASK-056](tasks/TASK-056.md) ⑪ TASK-021 子集② 缓存·版本·模型清理 | W6、W7 | **done**（独立子对话 Review：首轮 `approved_subagent`→R-001 守卫→复审 `approved_subagent` @15f977a；integration=`11517ac`，ZCode 窗口代行） |
 | W10 | [TASK-057](tasks/TASK-057.md) ⑫ TASK-021 子集③ 备份/恢复 | W6 | ready |
 | W11 | 新发现/插入任务（ZCode 自建 Task 文件） | 依其自身前置 | 动态 |
 | W12 | 兜底：窗口报告、队列重排记录、文档同步 | — | 动态 |
