@@ -2,7 +2,7 @@
 id: TASK-055
 title: TASK-021 冻结子集①：日志与诊断
 kind: implementation
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-021]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-055-diagnostics
 worktree: G:/CODEX/New Manga.worktrees/TASK-055-zcode
-integration_commit: null
+integration_commit: 0493ea9
 ---
 
 # TASK-055：日志与诊断（TASK-021 冻结子集①，优先子集）
@@ -46,4 +46,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：[TASK-055-7f13e53.md](../handoffs/TASK-055-7f13e53.md)。Review：尚无（待窗口独立子对话 Review）。实际测试：新套件 19 例 + 全仓 ×5（870/0，=851 基线 + 19 新用例）+ 相邻面 storage/core 72/0，全部入库 `verification/TASK-055/`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 实现（AC ④ 白名单收紧记录：实际落地 `src/application/maintenance/diagnostics.py` + `src/infrastructure/filesystem/bounded_log_store.py` + `tests/diagnostics/**`；零新依赖、零 Schema）。实现提交 `7f13e53`。**装配接线与 QML 入口不在本切片**（bootstrap 未触碰；QML 受 TASK-047 门约束），生产可达登记 NOT_RUN、待装配切片注入。`base=8bf8da3`（开工已 merge master `aaef5f2`，含 TASK-046/TASK-054）。
+- **集成完成（2026-09-19，当前）**：首轮独立子对话 Review `changes_requested`（R-001 P1：to_dict 丢字段）→ 修订 `c175657` 修复（R-001/R-002/R-004/R-007）→ 复审 `approved_subagent`（[TASK-055-c175657](../reviews/TASK-055-c175657.md)，固定被审 `60d1d55`）→ ZCode 按窗口授权代行集成 `0493ea9`（--no-ff，其上已含并行会话 TASK-048），集成后 master 复跑定向 19/0、全仓 873/0 ×2。装配接线与 QML 入口 NOT_RUN（见 Handoff）。历史：2026-09-19 ZCode 实现（AC ④ 白名单收紧记录：实际落地 `src/application/maintenance/diagnostics.py` + `src/infrastructure/filesystem/bounded_log_store.py` + `tests/diagnostics/**`；零新依赖、零 Schema）。实现提交 `7f13e53`。**装配接线与 QML 入口不在本切片**（bootstrap 未触碰；QML 受 TASK-047 门约束），生产可达登记 NOT_RUN、待装配切片注入。`base=8bf8da3`（开工已 merge master `aaef5f2`，含 TASK-046/TASK-054）。
