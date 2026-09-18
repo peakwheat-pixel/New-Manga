@@ -2,7 +2,7 @@
 id: TASK-051
 title: 工作台三档视图解析 translated/compare（§11 P-6）
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-013, TASK-038, TASK-050]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-051-workbench-viewer-modes
 worktree: G:/CODEX/New Manga.worktrees/TASK-051-zcode
-integration_commit: null
+integration_commit: 65d1e13
 ---
 
 # TASK-051：工作台三档视图（§11 P-6，P1）
@@ -62,4 +62,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/TASK-051-3cc5cf5.md`。Review：独立子对话（进行中，报告将落 `doc/reviews/TASK-051-3cc5cf5.md`）。实际测试：见上方测试要求表与 `verification/TASK-051/**`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W4 实现并取证完毕（实现提交 `3cc5cf5`）：compare 语义从 ViewerPanel.qml（D05 §20.1 左右双图）推出（无需产品裁决）；catalog 注入 locator 解析 translated/compare（根内校验不绕过）+ image_state typed 空态 + VM viewerImageStateFor Slot（QML 零改动）；3 新用例、定向 87、全仓 895×5 全绿；判别力=修前树 2 failed（exit 1）+ 双树探针（EMPTY/unavailable ↔ resolved/ok）。原开立记录：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（窗口 W4）。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W4 实现并取证完毕（实现提交 `3cc5cf5`）：compare 语义从 ViewerPanel.qml（D05 §20.1 左右双图）推出（无需产品裁决）；catalog 注入 locator 解析 translated/compare（根内校验不绕过）+ image_state typed 空态 + VM viewerImageStateFor Slot（QML 零改动）；3 新用例、定向 87、全仓 895×5 全绿；判别力=修前树 2 failed（exit 1）+ 双树探针（EMPTY/unavailable ↔ resolved/ok）。独立子对话 Review `approved_subagent`（doc/reviews/TASK-051-3cc5cf5.md，3×P3 不阻断）；integration=`65d1e13`，集成后 master 全仓 895 passed / 0 skipped exit 0。T1 后由 Codex + DSH + Qoder post-hoc 复审（可推翻）。原开立记录：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（窗口 W4）。
