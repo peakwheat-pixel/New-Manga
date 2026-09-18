@@ -2,7 +2,7 @@
 id: TASK-046
 title: 解码面 rewind 成本收敛（overlap 语义收口，落地 TASK-042 AC ⑩ 的实测结论）
 kind: performance
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-042, TASK-045]
 base_commit: fc8f1d95dd465bf021f8d61414778f98a4f46f17
 branch: agent/zcode/TASK-046-decode-rewind-cost
 worktree: G:/CODEX/New Manga.worktrees/TASK-046-zcode
-integration_commit: null
+integration_commit: 2b40085731227e99d152a413fa6887d53fe99199
 ---
 
 # TASK-046：解码面 rewind 成本收敛（overlap 语义收口）
@@ -89,5 +89,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[TASK-046-a40e228.md](../handoffs/TASK-046-a40e228.md)。Review：尚无（待 `Qoder` 按 §6 执行**非作者** Review；原指派 DSH，2026-09-19 经用户指示改派）。实际测试：修前全仓 1 次（848/0）+ 修后全仓 5 次（851/0 ×5）+ 定向 136/0 + 探针前后各 ×3 + 判别力 1 次，全部入库 `verification/TASK-046/`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 开工（merge master 至 `ec5b4d1` 后置 `in_progress`）；实现提交 `a40e228`（bootstrap overlap=0 + 默认值收口 + docstring 口径 + AC①/⑤ 测试 + 修前基线证据）；AC ①～⑦ 全部达成（AC② 含一处墙钟归因声明），文档收口本提交。**待 Qoder 非作者 Review；集成与 AC ⑩ 正式 STATUS 口径登记归 Codex。**`base=fc8f1d9`。
+- Handoff：[TASK-046-a40e228.md](../handoffs/TASK-046-a40e228.md)。Review：[TASK-046-7bf476b.md](../reviews/TASK-046-7bf476b.md)（**`approved`**，Qoder 非作者，固定被审 `7bf476b`；R-003 已更正，R-001 留 Codex 分派、R-004/R-005 留 Codex T1 收口）。实际测试：修前全仓 1 次（848/0）+ 修后全仓 5 次（851/0 ×5）+ 定向 136/0 + 探针前后各 ×3 + 判别力 1 次，全部入库 `verification/TASK-046/`；Reviewer 侧自有探针与复跑（全仓 ×3：851/0）入库 `verification/TASK-046/review-7bf476b/`。
+- **最近状态（当前，唯一）**：2026-09-19 **集成完成**：Qoder 非作者 Review `approved`（无 P0/P1）→ ZCode 按窗口授权（T0=51a71f3 → T1=09:00）代行集成，`merge master 51a71f3`（60cebc0）→ **integration `2b40085`**（--no-ff，保留来源 merge 提交），集成后全仓复跑见 STATUS 台账行。R-002 的在效文档刷新随集成提交执行。`base=fc8f1d9`。
