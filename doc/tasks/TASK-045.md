@@ -75,8 +75,19 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 依 DSH 外部复审的 F-4/F-5/F-8/F-11/F-13/F-14 开立；`base=1c171dc`。**实施尚未开始。**
+- Handoff：[TASK-045-1171bc5](../handoffs/TASK-045-1171bc5.md)（delivery_head=`1171bc5`，实现两提交 `602cca8` + `1171bc5`）。Review：尚无（待 Codex 按 §6 执行**非作者** Review）。
+- 实际执行/测试（`TASK-012-py312`，Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1，`PYTHONDONTWRITEBYTECODE=1`，全部 `-p no:cacheprovider`）：
+  - 证据总表：[verification/TASK-045/README.md](../../verification/TASK-045/README.md)；AC ⑨ 内存构成：[memory-and-fixture-probe.txt](../../verification/TASK-045/memory-and-fixture-probe.txt)；AC ⑩ rewind 成本：[rewind-cost-probe.txt](../../verification/TASK-045/rewind-cost-probe.txt)；F-13/F-14 注释核查：[comment-drift-check.txt](../../verification/TASK-045/comment-drift-check.txt)；全仓逐次：[full-suite-runs.log](../../verification/TASK-045/full-suite-runs.log)；基线：[baseline-master-6ea3dd3.txt](../../verification/TASK-045/baseline-master-6ea3dd3.txt)。
+  - 定向：`tests/reading_export tests/core` = **130 passed / 0 skipped**；QML 契约 10 passed。
+  - 全仓：**827 passed / 6 skipped ×5 次**（另 run 6 给出逐条 skip 原因），逐次 exit 0；独立基线 master `6ea3dd3` = **813 passed / 6 skipped** ⇒ +14 = 恰好新增 14 例；逐目录 reading_export 106/93、core 24/23、ui_shell 46/46、workbench 51/51，AC ⑥ 聚合 227/213；6 条 skip 全为既有 `tests/network` `openssl unavailable`。
+  - 判别力（**两棵树**：`git archive 6ea3dd3 src pytest.ini` + 本 worktree 最终 `tests/`）：**10 failed / 120 passed**，逐条原因见 [pre-fix-failure-summary.txt](../../verification/TASK-045/pre-fix-failure-summary.txt)；3 例守卫（per-tile rewind 计量、内存构成、真实编码器超大页）修前亦通过，已声明不计入判别力。
+  - 边界：作者自有改动 23 文件、+1919/−38，**0 文件删除、越界 0**；`src/ui/qml/` 仅改 `reader/ReaderView.qml`；未改 Schema/migration、依赖清单、seam、`AGENTS.md`、其他 Task；`git diff --check` 退出码 0；未新增 skip/xfail、未放宽既有断言。
+- **新发现（先于本 Task 存在，已在本 Task 内修复并留证）**：`ReaderView.qml` 的瓦片 `Repeater` 使用未限定名 `model.tiles`，而 `model` 在该作用域解析为 **Repeater 自身的 `model` 属性** ⇒ delegate 从未创建，同时整图 `<Image>` 因 `tilesActive` 为真被隐藏 ⇒ **分块（webtoon tiled）视图自 TASK-020 起渲染空白**（而非 F-5 描述的"旧图"）。修复为 `rv.model.tiles`；隔离证据 [pre-fix-delegate-diagnosis.txt](../../verification/TASK-045/pre-fix-delegate-diagnosis.txt)。归属与是否需要更正 TASK-020/038 的 Review 结论请 Reviewer 裁定。
+- **AC ⑩ 的前提被实测推翻（请 Reviewer 裁定）**：`visible_tiles` 升序只保证"不向后跳"；生产 `overlap=64` 使**每个非首块的窗口起点落在游标之前**，故每块各 rewind 一次并从 row 0 重扫（400×20000 全页扫掠 24 次 rewind；1600×8000 Qt 编码页单块 4.53s → 两块 14.24s）。TASK-042 Handoff 的"全页只需一次顺序扫描"仅在 `overlap=0` 成立。本 Task 按 AC 只做**文档化 + 实测**；解码策略与生产 `overlap`（`src/bootstrap/app.py:547`，不在白名单）未动。
+- **AC ⑨ 口径修正**：实测构成为**常驻压缩源 + 2×最大 IDAT 块 + O(带)**（单块编码时块项主导，400×10000 实测额外 24.1MB ≈ 23× 带宽；1000 行分块时 5.7MB），修正 R-02 的"≈3–4× 带宽"表述。
+- **F-8 如实说明**：契约（`result="QVariantMap"`）与元对象断言已补，接线由 `tests/core/test_bootstrap.py` 既有断言继续覆盖；但当前 QML 侧只有 `importFilesFromUrls` 有调用方，`importDocumentsFromUrls` 尚无 QML 入口——本修复保证一旦接线即得 dict 而非 `undefined`。
+- **最近状态（当前，唯一）**：2026-09-18 **`in_progress`（实现已交付，待非作者 Review）**——F-4/F-5/F-8/F-11/F-13/F-14 与 TASK-042 的 R-01～R-04 已实现并取证，delivery head `1171bc5`，fixed base `1c171dc`（开工先 `git merge master` → `6ea3dd3`）。**集成注意**：master 其后已推进到 `fe59360`（TASK-041 复审），集成前需再 merge 一次。**未 push；`doc/STATUS.md` 未改**（按 AC ⑦，关闭登记在 Review/集成之后）。本 Task **尚未 done**、各项**尚未"关闭"**。
+- 历史状态（2026-09-18）：由 Codex 依 DSH 外部复审的 F-4/F-5/F-8/F-11/F-13/F-14 开立为 `ready`（base=`1c171dc`），随后并入 TASK-042 复审的 R-01～R-04（AC ⑧～⑪）；本次开工置 `in_progress`。
 
 ## 追加范围（2026-09-18，由 TASK-042 Review 的 findings 并入）
 
