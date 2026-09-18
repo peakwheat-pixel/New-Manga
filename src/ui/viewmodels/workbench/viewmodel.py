@@ -424,6 +424,21 @@ class WorkbenchViewModel(QObject):
 
         return self._image_url(self._viewer_page_id, mode)
 
+    @Slot(str, result=str)
+    def viewerImageStateFor(self, mode: str) -> str:
+        """Typed empty-state of the viewer image (TASK-051 AC ③):
+        ``ok`` / ``missing`` / ``invalid`` — lets the VM tell "no data yet"
+        from "path escaped the managed root" instead of collapsing both to
+        a blank <Image>. QML presentation stays TASK-047-gated."""
+
+        page_id = self._viewer_page_id
+        if page_id is None:
+            return "missing"
+        state = getattr(self._page_catalog, "image_state", None)
+        if state is None:
+            return "missing"
+        return str(state(page_id, mode))
+
     def get_viewer_page_name(self) -> str:
         if self._viewer_page_id is None:
             return ""

@@ -1,0 +1,3 @@
+﻿FAILED tests/core/test_page_catalog_modes.py::test_translated_and_compare_resolve_like_the_reader
+FAILED tests/core/test_page_catalog_modes.py::test_invalid_paths_stay_diagnosable_not_silent
+2 failed, 1 passed, 30 deselected in 1.18s

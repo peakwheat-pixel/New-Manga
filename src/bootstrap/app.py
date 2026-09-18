@@ -75,6 +75,7 @@ from infrastructure.providers.runtime import build_provider_runtime
 from infrastructure.providers.step_writes import ArtifactStepWriter, RegionStepWriter
 from infrastructure.rendering.font_catalog import QtFontCatalog
 from infrastructure.rendering.locator import SqlitePageArtifactLocator
+from ports.repositories.artifacts import ArtifactType
 from infrastructure.rendering.pixel_source_style import PixelSourceStyleAnalyzer
 from infrastructure.rendering.qt_compositor import QtImageCompositor
 from infrastructure.rendering.qt_layout import QtTextLayoutEngine
@@ -99,21 +100,76 @@ QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
 class _ManagedPageCatalog:
     """Expose SQLite pages and immutable Managed Copy URLs to the Viewer."""
 
-    def __init__(self, repository: SqliteLibraryRepository, storage: ManagedFileStorage) -> None:
+    def __init__(
+        self,
+        repository: SqliteLibraryRepository,
+        storage: ManagedFileStorage,
+        locator: SqlitePageArtifactLocator,
+    ) -> None:
         self._repository = repository
         self._storage = storage
+        self._locator = locator
 
     def list_pages(self, chapter_id: str):
         return self._repository.list_pages(chapter_id)
 
     def image_url(self, page_id: str, mode: str) -> str:
-        if mode != "original":
-            return ""
+        """Workbench viewer image for one mode (TASK-051 AC ①).
+
+        ``original``/``compare`` both show the immutable Managed Copy —
+        compare is the D05 §20.1 side-by-side, whose left pane *is* the
+        original (ViewerPanel.qml). ``translated`` is the page's current
+        TRANSLATED artifact revision, resolved through the same locator
+        the reader uses, so both surfaces show the same revision (AC ②).
+        Every failure collapses to "" (the QML empty-state contract);
+        :meth:`image_state` carries the typed reason.
+        """
         page = self._repository.get_page(page_id)
-        if page is None or not page.managed_original_ref:
+        if page is None:
             return ""
+        if mode == "translated":
+            located = self._locator.locate_current(page_id, ArtifactType.TRANSLATED)
+            if located is None:
+                return ""
+            _record, revision = located
+            return self._uri_within(revision.managed_path)
+        if mode in ("original", "compare"):
+            if not page.managed_original_ref:
+                return ""
+            return self._uri_within(page.managed_original_ref)
+        return ""  # unknown mode: not a silent wrong image
+
+    def image_state(self, page_id: str, mode: str) -> str:
+        """Typed empty-state channel (TASK-051 AC ③): ``ok``/``missing``/``invalid``.
+
+        ``missing`` = the page or its artifact does not exist yet; ``invalid``
+        = a reference exists but escapes the managed root or the file is gone.
+        The VM exposes this so "no data" and "broken path" stay
+        distinguishable without changing the QML contract (TASK-047-gated).
+        """
+        page = self._repository.get_page(page_id)
+        if page is None:
+            return "missing"
+        if mode == "translated":
+            located = self._locator.locate_current(page_id, ArtifactType.TRANSLATED)
+            if located is None:
+                return "missing"
+            ref: str | None = located[1].managed_path
+        else:
+            ref = page.managed_original_ref
+        if not ref:
+            return "missing"
         root = self._storage.root.resolve()
-        path = Path(self._storage.absolute_path(page.managed_original_ref)).resolve()
+        path = Path(self._storage.absolute_path(ref)).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError:
+            return "invalid"
+        return "ok" if path.is_file() else "invalid"
+
+    def _uri_within(self, ref: str) -> str:
+        root = self._storage.root.resolve()
+        path = Path(self._storage.absolute_path(ref)).resolve()
         try:
             path.relative_to(root)
         except ValueError:
@@ -673,7 +729,9 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
                 cache=TileCache(max_bytes=512 * 1024 * 1024),
             )
 
-        page_catalog = _ManagedPageCatalog(repository, storage)
+        page_catalog = _ManagedPageCatalog(
+            repository, storage, SqlitePageArtifactLocator(conn)
+        )
         reader_catalog = _ManagedReaderCatalog(
             repository, storage, SqlitePageArtifactLocator(conn)
         )
