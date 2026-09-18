@@ -2,7 +2,7 @@
 id: TASK-053
 title: TASK-044 遗留收口（R-03 pipeline_runs 累积 / R-04 不可重试孤儿文件）
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-044]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-053-run-files-leak
 worktree: G:/CODEX/New Manga.worktrees/TASK-053-zcode
-integration_commit: null
+integration_commit: cd57ee4
 ---
 
 # TASK-053：TASK-044 遗留 R-03 / R-04 收口
@@ -49,4 +49,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：[TASK-053-delivery.md](../handoffs/TASK-053-delivery.md)。Review：尚无（待窗口独立子对话 Review）。实际测试：修前探针（c9e0675 树）REPRODUCED + 修后对照 NOT REPRODUCED + 新套件 7 例（判别力：R-04 主用例修前必失败；R-03 保留策略用例声明为钉住）+ 全仓 ×5（880/0，=873 基线 + 7）+ AC④ 触发器枚举前后一致，全部入库 `verification/TASK-053/`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 实现：R-04=purge 文件清单先持久化（manifest `pending_purges` 段）+ `retry_pending_purges()`/`pending_purge_count()` 入口（幂等重试）；R-03=明确保留策略 + `RunLedgerMaintenance` 端口（`count/purge_targetless_runs`，活动 run 保留），实现 `SqliteRunLedgerMaintenance`。零 Schema/依赖/QML/装配改动。`base=8bf8da3`（开工已 merge master `c9e0675`，含 W0/W1/W7/W8）。
+- **集成完成（2026-09-19，当前）**：首轮独立子对话 Review `approved_subagent`（[TASK-053-3b58736](../reviews/TASK-053-3b58736.md)；R-001 P2 守卫建议）→ 守卫修订 `16340b5` → 复审 `approved_subagent`（[TASK-053-16340b5](../reviews/TASK-053-16340b5.md)，固定被审 `5eeebde`）→ ZCode 按窗口授权代行集成 `cd57ee4`（--no-ff，其上已含并行会话 W0–W2/W7/W8），集成后 master 复跑定向 8/0、全仓 886/0 ×2。三入口生产接线 NOT_RUN（装配批，含 R-004 盲区收口）。历史：2026-09-19 ZCode 实现：R-04=purge 文件清单先持久化（manifest `pending_purges` 段）+ `retry_pending_purges()`/`pending_purge_count()` 入口（幂等重试）；R-03=明确保留策略 + `RunLedgerMaintenance` 端口（`count/purge_targetless_runs`，活动 run 保留），实现 `SqliteRunLedgerMaintenance`。零 Schema/依赖/QML/装配改动。`base=8bf8da3`（开工已 merge master `c9e0675`，含 W0/W1/W7/W8）。
