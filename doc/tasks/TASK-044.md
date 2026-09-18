@@ -96,4 +96,3 @@ integration_commit: null
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
 - **最近状态（当前，唯一）**：2026-09-18 由 Codex 依 DSH 外部复审的 F-2/F-6/F-7/F-10 开立；`base=1c171dc`。**实施尚未开始。**
-

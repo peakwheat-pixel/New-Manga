@@ -2,7 +2,7 @@
 id: TASK-043
 title: TASK-023 修订尾项（F-1 PDF 红蓝通道互换 P1 + F-3 失败余页 + F-9 依赖导入位置）
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: DeepSeek Harness
@@ -11,7 +11,7 @@ depends_on: [TASK-023]
 base_commit: 1c171dcdeafc1cbffe6111d503dd0cd598e22dea
 branch: agent/deepseek/TASK-043-import-fixes
 worktree: G:/CODEX/New Manga.worktrees/TASK-043-deepseek
-integration_commit: null
+integration_commit: b29427a648d2079a533750307e64f4588fee8c15
 ---
 
 # TASK-043：TASK-023 修订尾项（F-1 / F-3 / F-9）
@@ -79,3 +79,13 @@ integration_commit: null
 - **最近状态（当前，唯一）**：2026-09-18 **`in_progress`（实现已交付，待非作者 Review）**——F-1 / F-3 / F-9 已实现并取证，delivery head `d8e9406`，fixed base `1c171dc`（开工先 `git merge master` → `c5aa664`，fast-forward 无冲突）。**未 push；未改 Schema/migration、依赖清单、pipeline seam、路由判定/SFX、`AGENTS.md`、其他 Task；`doc/STATUS.md` 未改**（按 AC ⑤，F-1/F-3/F-9 的关闭登记发生在 Review 与集成之后，作者阶段不预写）。本 Task **尚未 done**、三项缺陷**尚未"关闭"**。
 - 历史状态（2026-09-18）：由 Codex 依 DSH 外部复审 `doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md` 的 F-1/F-3/F-9 开立为 `ready`（Owner=`DeepSeek Harness`、Reviewer=`Codex`、base=`1c171dc`）；本次开工置 `in_progress`。
 
+
+## Review 与集成记录（2026-09-18）
+
+- **Review**：[doc/reviews/TASK-043-d8e9406.md](../reviews/TASK-043-d8e9406.md)（Reviewer=Codex，**非作者**；commit `4d11b81`；decision=**`approved`**；0 P0/P1、4×P3）。
+- **Reviewer 独立复跑（非复用作者证据）**：定向 `tests/import_formats tests/library tests/providers` **225 passed / 0 skipped**；全仓 **802 passed / 6 skipped**（6 条全为既有 `tests/network` `openssl unavailable`）；**F-1 两棵树像素探针**——基线 `c5aa664` 红→`(0,0,255,255)`、蓝→`(255,0,0,255)`（SWAPPED）、绿不变，交付树三色 OK，且 `using tree` 确为两棵不同树；**判别力独立复现** 新测试 + 基线 src → **8 failed / 8 passed**（并验证加载树为基线导出树）；**BGRA 分支字节序**独立验证（BGRA 字节经 `Format_ARGB32` 得 `0xffff0000` = 纯红）；`tests/` 侧**零断言/测试删除**。
+- **复用作者证据（已声明）**：作者 5 次逐次全仓日志、`bgra-basis*.txt`、`pdf-builder-identity.txt`（字节恒等仅间接核对＝无断言删除）。
+- **Findings 处置**：**R-01（P3）** `git diff --check` 退出码 2——`TASK-043.md`/`TASK-044.md` 各一处 EOF 空行 + `verification/TASK-043/pre-fix-*.txt` 内被捕获的 pytest 尾随空格；**两处 EOF 已修**（`src/`+`tests/` 范围零命中），日志类不改作者材料 → **fixed**。**R-02（P3）** `pending_after_cancel` 名称与新语义（失败后未开始的页）偏差、且该共享端口不在本切片白名单 → **deferred（登记跨层命名切片）**。**R-03（P3）** `except (ImportError, OSError)` 宽度 → **accepted（附建议）**。**R-04（P3）** 修复前已导入页保留互换像素、且 `source_hash` 为错误字节 ⇒ 重导不会去重 → **deferred（登记；绑定"文档导入入口接线/发布"前裁决）**。
+- **Handoff 四项裁定**：①`cancelled` 语义收紧（`bool(pending)` → `was_cancelled`）**接受**（校正性；`src/ui/**` 无消费者）；②`pending_after_cancel` 名不改 **接受**（登记 R-02）；③`MISSING_DEPENDENCY` 新码 **接受**（R-03 附建议）；④"本 Task 不做迁移" **接受**（登记 R-04）。
+- **集成**：`integration_commit=b29427a`（merge，parents `4d11b81` + `d765f22`）。master 复验：定向 **225 passed / 0 skipped**、全仓 **802 passed / 6 skipped**；独立基线 `792/6` ⇒ **+10 恰为新增 10 例**，skip 数不变。
+- **关闭**：**F-1（P1）/ F-3（P2）/ F-9（P3）关闭**；TASK-043 置 `done`。
