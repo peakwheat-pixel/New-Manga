@@ -1,0 +1,16 @@
+== AC 10: rewind cost on a 400x20000 page (tile_height=800, overlap=64) ==
+grid tiles: 25
+  forward sweep of the whole page (25 tiles): 0.937s rewinds=24
+  forward jump to row 12000 (cursor 800 -> 12800): 0.031s rewinds=0
+  rewind to row 0 (rescan 800 rows): 0.015s rewinds=1
+  rewind to row 11920 (rescan 12720 rows): 0.094s rewinds=2
+
+  cost per rescanned row:
+    rewind-to-zero  : 18.7 us/row
+    rewind-to-11920 : 7.4 us/row
+
+== AC 10 addendum: overlap forces one rewind PER TILE (production overlap=64) ==
+  1600x8000 Qt-encoded, tile 0 only (4000 rows): 4.531s rewinds=0
+  ... then tile 1 in the SAME call (rescan to 8000 rows): 14.235s total rewinds=1
+  => a 2-tile viewport costs 9.704s of extra rescan for 64 overlap rows: the fold is quadratic in tiles, not linear
+  => TASK-042's 'one sequential scan for the whole page' holds only with overlap=0; with the production overlap every tile re-scans from row 0

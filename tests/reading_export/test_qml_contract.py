@@ -398,6 +398,38 @@ def test_reader_mode_buttons_highlight_current(engine, reader_stack):
         window.close()
 
 
+@requires_pyside6
+def test_webtoon_mode_gates_the_toolbar_page_buttons(engine, reader_stack_webtoon):
+    """F-5 (TASK-045): the toolbar's page buttons were never gated on the
+    vertical viewer although the keyboard was, so a webtoon chapter could page
+    away from the page on screen. The gate must be mode-specific: paged
+    chapters keep both buttons."""
+    vm, reading, pages = reader_stack_webtoon
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+        swapped, _trace = pump_traced(
+            window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+        )
+        assert swapped
+        # the fixture's chapter really can page: the gate is not a blanket off
+        assert vm.canGoNext and vm.canGoPrevious is False
+
+        assert find_by_name(root, "readerNextPage").property("enabled") is False
+        assert find_by_name(root, "readerPreviousPage").property("enabled") is False
+
+        # paged chapters keep the toolbar paging
+        vm.openChapter("b", "c", "第1话", "paged", "ltr")
+        vm.jumpToPage(0)
+        QGuiApplication.processEvents()
+        assert vm.canGoNext
+        assert find_by_name(root, "readerNextPage").property("enabled") is True
+    finally:
+        window.close()
+
+
 def make_export_vm(tmp_path, pages):
     providers = to_export_pages(pages)
     return ExportViewModel(

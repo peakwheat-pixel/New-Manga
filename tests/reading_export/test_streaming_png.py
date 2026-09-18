@@ -294,3 +294,205 @@ def test_variant_matrix_fails_typed() -> None:
             StreamingPngReader(data)
     # the well-formed page still reads (matrix sanity)
     assert StreamingPngReader(ok).read_band(0, 2)[2] == 2
+
+
+# ---------------------------------------------------------------------------
+# TASK-045 AC ⑧ (TASK-042 R-01): damaged payload, valid container
+# ---------------------------------------------------------------------------
+
+
+def test_corrupt_idat_payload_fails_typed() -> None:
+    """AC ⑧: ``zlib.error`` must not escape as itself.
+
+    ``zlib.error``'s MRO is ``(zlib.error, Exception)``, so callers guarding
+    on ``OSError``/``ValueError`` (the reader ViewModel's graceful fallback)
+    never caught it: a damaged page crashed the tiling call instead of
+    falling back. The failure stays fail-closed either way (no wrong pixels
+    are produced) — only its *type* changes.
+    """
+    width, height, bpp = 16, 8, 3
+    raw_rows = make_raw_rows(width, height, bpp=bpp)
+    png = bytearray(build_png(width, height, raw_rows, bpp=bpp, filter_type=0))
+
+    marker = png.index(b"IDAT")
+    length = struct.unpack_from(">I", png, marker - 4)[0]
+    state = 987654321
+    for index in range(marker + 4, marker + 4 + length):
+        state = (state * 1103515245 + 12345) & 0x7FFFFFFF
+        png[index] = state & 0xFF
+
+    reader = StreamingPngReader(bytes(png))
+    with pytest.raises(StreamingPngError) as caught:
+        reader.read_band(0, height)
+    assert caught.value.reason == "CORRUPT_DATA"
+
+    # the whole point of the typed error: the callers' guard now sees it
+    assert issubclass(StreamingPngError, ValueError)
+
+
+# ---------------------------------------------------------------------------
+# TASK-045 AC ⑨ (TASK-042 R-02): measured memory composition
+# ---------------------------------------------------------------------------
+
+
+def _largest_idat_chunk(data: bytes) -> int:
+    offset, largest = 8, 0
+    while offset + 8 <= len(data):
+        length = struct.unpack_from(">I", data, offset)[0]
+        if data[offset + 4 : offset + 8] == b"IDAT":
+            largest = max(largest, length)
+        offset += 12 + length
+    return largest
+
+
+@pytest.mark.parametrize(
+    ("height", "rows_per_chunk"),
+    [(10000, 10000), (10000, 1000)],
+    ids=["single-idat", "banded-idat"],
+)
+def test_band_read_peak_composition(
+    tmp_path: Path, height: int, rows_per_chunk: int
+) -> None:
+    """AC ⑨ (TASK-042 R-02): peak = resident source + 2 × largest IDAT chunk
+    + O(decode band) — **measured**, with both terms visible.
+
+    The compressed source is read whole by the rasterizer, and ``_pump`` holds
+    the current IDAT chunk plus the decompressor's ``unconsumed_tail``, so the
+    chunk term counts twice. "Peak ≈ one decode window" was never true: with a
+    single-IDAT encoder the chunk term *is* the whole payload (measured at
+    400x20000: 48 MB added for a 24 MB source = 46× the 1 MB band), while a
+    libpng-style banded encoder brings it back to a few band widths
+    (verification/TASK-045/memory-and-fixture-probe.txt).
+    """
+    import tracemalloc
+
+    from infrastructure.imaging.webtoon_tiles import TiledPageRasterizer
+
+    width = 400
+    source = tmp_path / f"noise-{rows_per_chunk}.png"
+    _write_incompressible_png(source, width, height, rows_per_chunk=rows_per_chunk)
+    data = source.read_bytes()
+    source_bytes = len(data)
+    largest_chunk = _largest_idat_chunk(data)
+    whole_page_raw = width * height * 3
+    assert source_bytes > whole_page_raw // 2, "fixture must not compress away"
+
+    tracemalloc.start()
+    rasterizer = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "tiles", tile_height=800, overlap=64
+    )
+    construction_peak = tracemalloc.get_traced_memory()[1]
+    files = rasterizer.ensure_viewport(0, 800)
+    read_peak = tracemalloc.get_traced_memory()[1]
+    tracemalloc.stop()
+
+    assert len(files) == 2  # tile 0 + one prefetch
+    band_bytes = (800 + 64) * width * 3  # decoded window (RGB), overlap included
+    added = read_peak - source_bytes
+
+    # 1) the compressed source is resident for the object's lifetime
+    assert construction_peak >= source_bytes
+    # 2) one band read adds the chunk pair plus a bounded multiple of the band
+    assert added <= 2 * largest_chunk + 6 * band_bytes, (
+        f"source={source_bytes} largest_idat={largest_chunk} band={band_bytes} "
+        f"added={added}"
+    )
+    # 3) the band term is real and smaller than the page: the page is never
+    #    materialised as pixels (only the compressed chunk pair is ever copied)
+    assert 6 * band_bytes < whole_page_raw
+    if rows_per_chunk < height:
+        assert added < source_bytes
+
+
+def _write_incompressible_png(
+    path: Path, width: int, height: int, *, rows_per_chunk: int | None = None
+) -> None:
+    """Write a PNG whose payload is random (so it really is ~raw-size)."""
+    import random
+
+    stride = width * 3 + 1  # filter byte + RGB row
+    payload = bytearray(random.Random(20260918).randbytes(stride * height))
+    payload[0::stride] = b"\x00" * height  # filter 0 on every scanline
+
+    def chunk(tag: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + tag
+            + data
+            + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+        )
+
+    with open(path, "wb") as handle:
+        handle.write(b"\x89PNG\r\n\x1a\n")
+        handle.write(
+            chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+        )
+        compressor = zlib.compressobj(1)
+        block = rows_per_chunk or height
+        for start in range(0, height, block):
+            data = compressor.compress(
+                bytes(payload[start * stride : (start + block) * stride])
+            )
+            if data:
+                handle.write(chunk(b"IDAT", data))
+        handle.write(chunk(b"IDAT", compressor.flush()))
+        handle.write(chunk(b"IEND", b""))
+
+
+# ---------------------------------------------------------------------------
+# TASK-045 AC ⑪ (TASK-042 R-04): real encoder × oversized page
+# ---------------------------------------------------------------------------
+
+
+def row_bytes(page_y: int, width: int) -> bytes:
+    return bytes(((page_y * 7) % 256, (page_y * 13) % 256, (page_y * 29) % 256)) * width
+
+
+def test_qt_encoded_oversized_page_bands_match_qt_pixels(tmp_path: Path) -> None:
+    """AC ⑪: 1600x20000 (≈128 MB rgb32 — below Qt's ~300 MB failure point)
+    written by a **real encoder** (libpng via QImage.save), then read band by
+    band and compared byte-for-byte against Qt's own pixels.
+
+    TASK-042 left this gap: the oversized fixture was produced by the test's
+    own stdlib writer (filter 0), so no real encoder's filter choices were
+    ever exercised at size.
+    """
+    from PySide6.QtGui import QImage
+
+    width, height = 1600, 20000
+    payload = bytearray()
+    for page_y in range(height):
+        payload += row_bytes(page_y, width)
+    raw = bytes(payload)
+
+    image = QImage(raw, width, height, width * 3, QImage.Format.Format_RGB888)
+    assert not image.isNull()
+    path = tmp_path / "qt-large.png"
+    # libpng's fastest setting: this fixture only has to be *really* encoded,
+    # not small — full compression would add ~10 s per suite run.
+    assert image.save(str(path), "PNG", 1), "Qt failed to encode the fixture"
+
+    data = path.read_bytes()
+    reader = StreamingPngReader(data)
+    assert (reader.width, reader.height) == (width, height)
+    assert reader.bytes_per_pixel == 3
+
+    # rows 500..2000: a non-zero start, and small enough that the forward
+    # scan (pure-Python unfilter of libpng's Average/Paeth rows) stays cheap —
+    # reading from row 12000 would scan 14000 rows and take ~16 s.
+    start, count = 500, 1500
+    band, band_width, band_height, channels = reader.read_band(start, count)
+    assert (band_width, band_height, channels) == (width, count, 3)
+
+    qt = QImage(str(path))
+    assert not qt.isNull()
+    assert (qt.width(), qt.height()) == (width, height)
+    qt = qt.convertToFormat(QImage.Format.Format_RGB888)
+    stride = qt.bytesPerLine()
+    assert stride == width * 3  # tightly packed → the band is one contiguous slice
+    bits = qt.constBits()
+    expected = bytes(bits[start * stride : (start + count) * stride])
+    assert band == expected
+
+    # the pixel comparison is meaningful: neighbouring rows differ
+    assert expected[:3] != expected[stride : stride + 3]

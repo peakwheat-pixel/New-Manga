@@ -17,9 +17,23 @@ fails **typed**, never silently):
   reconstructed row), so the reader is a **one-way cursor**: rows are
   produced in order and ``rewind()`` restarts from row 0.
 
-Band reads never store more than one scanline pair plus the requested band,
-so peak memory is bounded by ``band_height x stride`` + two rows — measured
-in the TASK-042 tests, never asserted as a budget.
+Band reads never materialise the whole *image*: only the requested rows are
+reconstructed. Memory composition (TASK-045 AC ⑨, measured — see
+``verification/TASK-045/memory-and-fixture-probe.txt``):
+
+- the compressed **source stays resident** as one ``bytes`` object (the caller
+  hands the whole file in, and the rasterizer reads it once at construction),
+  so the reader is *not* O(band) in total;
+- ``_pump`` holds the IDAT chunk it is currently feeding **plus** the
+  decompressor's ``unconsumed_tail``, i.e. up to **2 x the largest IDAT
+  chunk**;
+- the reconstructed band plus one pending scanline pair is O(band).
+
+Measured at 400x10000 with an incompressible payload: a single-IDAT encoder
+adds ~24 MB (12 MB source, 2 x 12 MB chunk) while 1000-row IDAT chunks — what
+libpng emits (~8 KB) — add ~5.7 MB, i.e. a few band widths. An O(band) *total*
+would require streaming the source (incremental reads) instead of handing the
+whole file in.
 """
 
 from __future__ import annotations
@@ -42,8 +56,9 @@ class StreamingPngError(ValueError):
     """Typed, diagnosable failure for unsupported PNG variants or damage.
 
     ``reason`` is a stable code: ``NOT_PNG`` / ``INVALID_PNG`` /
-    ``TRUNCATED`` / ``INTERLACED`` / ``UNSUPPORTED_BIT_DEPTH`` /
-    ``PALETTED`` / ``REWIND_REQUIRED`` / ``OUT_OF_RANGE``.
+    ``TRUNCATED`` / ``CORRUPT_DATA`` / ``INTERLACED`` /
+    ``UNSUPPORTED_BIT_DEPTH`` / ``PALETTED`` / ``REWIND_REQUIRED`` /
+    ``OUT_OF_RANGE``.
     """
 
     def __init__(self, reason: str, detail: str = "") -> None:
@@ -53,7 +68,18 @@ class StreamingPngError(ValueError):
 
 
 class StreamingPngReader:
-    """One-way-cursor band reader over PNG bytes."""
+    """One-way-cursor band reader over PNG bytes.
+
+    The cursor only moves forward; :meth:`read_band` **more than once** in
+    ascending order is the intended use (each call continues where the last
+    one stopped), while a band behind the cursor raises ``REWIND_REQUIRED``
+    and the caller restarts with :meth:`rewind`, which re-opens the zlib
+    stream and rescans from row 0. The rasterizer's ``visible_tiles`` is
+    ascending, so a rewind never jumps backwards mid-call — but with its
+    production ``overlap`` every tile after the first starts *just* behind the
+    cursor and does rescan once (measured cost in
+    ``verification/TASK-045/rewind-cost-probe.txt``; TASK-045 AC ⑩).
+    """
 
     def __init__(self, data: bytes) -> None:
         self._data = data
@@ -213,7 +239,15 @@ class StreamingPngReader:
     def _pump(self, wanted: int) -> bool:
         """Feed the zlib stream until ``wanted`` decompressed bytes are
         pending, the stream ends, or the IDAT chunks run out. Returns False
-        when no progress is possible any more."""
+        when no progress is possible any more.
+
+        A damaged payload makes zlib raise ``zlib.error``, whose MRO is
+        ``(zlib.error, Exception)`` — it would escape every caller that
+        guards on ``OSError``/``ValueError`` (the reader ViewModel's
+        fallback). It is therefore wrapped as the typed
+        ``CORRUPT_DATA`` failure (TASK-045 AC ⑧ = TASK-042 R-01); the
+        failure stays fail-closed either way, no wrong pixels are produced.
+        """
         produced = 0
         while len(self._pending) < wanted and not self._zlib_done:
             if self._unconsumed:
@@ -225,7 +259,12 @@ class StreamingPngReader:
             else:
                 self._zlib_done = True
                 break
-            out = self._decompressor.decompress(chunk, wanted - len(self._pending))
+            try:
+                out = self._decompressor.decompress(chunk, wanted - len(self._pending))
+            except zlib.error as error:
+                raise StreamingPngError(
+                    "CORRUPT_DATA", f"IDAT payload cannot be decompressed: {error}"
+                ) from error
             self._pending += out
             produced += len(out)
             if self._decompressor.eof:

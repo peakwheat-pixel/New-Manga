@@ -581,3 +581,27 @@ def test_production_clean_probe_gates_render_only_planning(tmp_path: Path) -> No
         }
     finally:
         services.conn.close()
+
+
+def test_document_import_slot_publishes_a_return_type() -> None:
+    """F-8 (TASK-045): ``@Slot(str, list)`` without ``result=`` publishes
+    ``returnType=void``, so QML receives ``undefined`` even though the Python
+    method returns a summary dict. The wiring itself is asserted by
+    ``test_production_assembly...`` above; this pins the *metatype* QML sees.
+    """
+    from PySide6.QtCore import QMetaType
+
+    from ui.viewmodels.bookshelf.viewmodel import BookshelfViewModel
+
+    meta = BookshelfViewModel.staticMetaObject
+    methods = [
+        meta.method(index)
+        for index in range(meta.methodCount())
+        if bytes(meta.method(index).name()) == b"importDocumentsFromUrls"
+    ]
+    assert methods, "importDocumentsFromUrls must be published as a slot"
+    for method in methods:
+        assert method.returnType() == QMetaType.Type.QVariantMap, (
+            f"{bytes(method.methodSignature())!r} publishes "
+            f"returnType={method.returnMetaType().name()}"
+        )

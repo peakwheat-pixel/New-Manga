@@ -110,13 +110,17 @@ Rectangle {
             Button {
                 objectName: "readerPreviousPage"
                 text: "◀ 上一页"
-                enabled: active && model.canGoPrevious
+                // F-5 (TASK-045): the toolbar is gated on the vertical viewer
+                // exactly like the keyboard above — a webtoon chapter scrolls,
+                // it does not page (the tile band is rebuilt on every page
+                // turn, so an ungated button would swap pixels under the user).
+                enabled: active && !vertical && model.canGoPrevious
                 onClicked: model.previousPage()
             }
             Button {
                 objectName: "readerNextPage"
                 text: model && model.direction === "rtl" ? "▶ 下一页" : "下一页 ▶"
-                enabled: active && model.canGoNext
+                enabled: active && !vertical && model.canGoNext
                 onClicked: model.nextPage()
             }
             Button {
@@ -228,11 +232,23 @@ Rectangle {
                     interval: 500
                     onTriggered: if (active) model.saveScrollOffset(webtoonScroll.contentY)
                 }
+
+                // F-11 (TASK-045): contentY/height are **display** pixels while
+                // the tile grid speaks **page** pixels, so the host passes the
+                // ratio (display per page pixel). The tiles are drawn at
+                // tilesHost.width, so the scale is host width / page width.
+                function tileScale() {
+                    if (!active || !model.pagePixelWidth || tilesHost.width <= 0)
+                        return 1.0;
+                    return tilesHost.width / model.pagePixelWidth;
+                }
+
                 onContentYChanged: {
                     scrollSaveTimer.restart()
                     if (tilesHost.visible)
                         model.requestTiles(webtoonScroll.contentY,
-                                           webtoonScroll.contentY + webtoonScroll.height)
+                                           webtoonScroll.contentY + webtoonScroll.height,
+                                           tileScale())
                 }
 
                 Column {

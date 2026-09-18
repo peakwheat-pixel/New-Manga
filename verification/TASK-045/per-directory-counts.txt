@@ -1,0 +1,11 @@
+# TASK-045 per-directory counts (delivered tree vs baseline 6ea3dd3)
+delivered tests/reading_export -> 105 passed in 14.17s
+delivered tests/core -> 24 passed in 5.25s
+delivered tests/ui_shell -> 46 passed in 1.45s
+delivered tests/workbench -> 51 passed in 7.74s
+delivered AC6 aggregate -> 226 passed in 26.63s
+baseline  tests/reading_export -> 93 passed in 6.35s
+baseline  tests/core -> 23 passed in 5.97s
+baseline  tests/ui_shell -> 46 passed in 1.37s
+baseline  tests/workbench -> 51 passed in 7.67s
+baseline  AC6 aggregate -> 213 passed in 19.47s

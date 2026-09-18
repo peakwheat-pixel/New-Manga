@@ -367,12 +367,17 @@ class BookshelfViewModel(QObject):
             "summary": self._format_summary(report),
         }
 
-    @Slot(str, list)
+    @Slot(str, list, result="QVariantMap")
     def importDocumentsFromUrls(self, chapter_id: str, urls: list) -> dict:
         """QML entry for document imports (PDF; TASK-023). Same URL → bytes
         discipline as image import; MOBI/unknown formats fail typed as
         ``UNSUPPORTED_FORMAT`` inside the report. Requires the assembly to
-        have injected a document importer."""
+        have injected a document importer.
+
+        ``result=`` is required (F-8, TASK-045): without it the metaobject
+        publishes ``returnType=void`` and QML receives ``undefined`` even
+        though this returns a summary dict.
+        """
         if self._document_importer is None:
             return {"imported": 0, "skipped": 0, "failed": 0, "summary": "未启用文档导入"}
         self._library.get_chapter(chapter_id)  # unknown chapter → error

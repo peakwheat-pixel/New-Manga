@@ -1,0 +1,16 @@
+== AC 9: memory composition per IDAT chunking ==
+  single IDAT (whole payload):
+    source_bytes=12013730 largest_idat=12009623 band_bytes=1036800
+    construction_peak=12027507 read_peak=36084354
+    added=24070624 added/band=23.22x 2*largest+6*band=30240046
+  1000-row IDATs:
+    source_bytes=12013838 largest_idat=1201096 band_bytes=1036800
+    construction_peak=12026649 read_peak=17731957
+    added=5718119 added/band=5.52x 2*largest+6*band=8622992
+
+== AC 11: phase costs of the Qt-encoded 1600x20000 fixture ==
+  build raw (96 MB): 0.12s
+  QImage.save(quality=1): 0.70s -> 0.1 MB
+  streaming band read (2000 rows): 18.47s
+  Qt load + convert + slice: 0.33s identical=True
+  qt-encoded IDAT largest chunk: 8192
