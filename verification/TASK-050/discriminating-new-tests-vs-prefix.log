@@ -1,0 +1,3 @@
+﻿ERROR tests/core/test_pipeline_defaults_service.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+24 deselected, 1 error in 0.81s
