@@ -19,10 +19,15 @@ instead of being misreported as a duplicate. Only an actual cancellation
 sets ``cancelled``. Corrupt, encrypted and unsupported files fail with
 typed reasons and never break previously imported data.
 
-MOBI: no parsing dependency is approved, so non-PDF payloads fail with
+MOBI (TASK-041): when a ``mobi_raster`` is injected, picture-MOBI payloads
+(PalmDB BOOK/MOBI containers carrying embedded page images) ride the same
+discipline as PDF through that binding; DRM-protected, truncated,
+unparseable and text-only (no page images) containers fail with typed
+reasons from the adapter, and a page whose image bytes cannot be decoded
+fails that page under the F-3 accounting. Without an injected ``mobi_raster``
+the TASK-023 behaviour is preserved byte-for-byte: MOBI reports
 ``UNSUPPORTED_FORMAT`` — diagnosable, never silently ignored, never parsed
-by an invented reader (AC 2; MOBI rasterisation stays BLOCKED until a
-dependency is approved).
+by an invented reader.
 """
 
 from __future__ import annotations
@@ -60,6 +65,18 @@ def _is_pdf(data: bytes) -> bool:
     return data[: len(_PDF_MAGIC)] == _PDF_MAGIC
 
 
+def _is_mobi(data: bytes) -> bool:
+    """PalmDB container whose type/creator is BOOK/MOBI (the .mobi/.azw3
+    family — this check alone cannot tell KF7 from KF8/AZW3).
+
+    The identifiers sit at fixed offsets of the 78-byte PDB header, so this
+    stays a byte check — no parsing happens here. Dispatch only: the MOBI
+    raster itself accepts KF7 picture containers and fails every other
+    variant typed (see ``MobiDocumentRaster``).
+    """
+    return len(data) >= 68 and data[60:64] == b"BOOK" and data[64:68] == b"MOBI"
+
+
 def _page_name(source_filename: str, page_no: int) -> str:
     """Managed-copy display name for one document page (1-based, stable)."""
     stem = Path(source_filename).stem or "document"
@@ -87,10 +104,16 @@ class ImportDocumentsUseCase:
         raster: DocumentRaster,
         copy_store: ManagedCopyStore,
         sink: ImportPageSink,
+        mobi_raster: DocumentRaster | None = None,
     ) -> None:
         self._raster = raster
         self._store = copy_store
         self._sink = sink
+        # TASK-041: the approved MOBI picture-extraction binding. ``None``
+        # (every construction that predates it, and assemblies that opt out)
+        # keeps the TASK-023 behaviour byte-for-byte: MOBI payloads report
+        # ``UNSUPPORTED_FORMAT``.
+        self._mobi_raster = mobi_raster
 
     def import_documents(
         self,
@@ -128,21 +151,28 @@ class ImportDocumentsUseCase:
             document_hash = hashlib.sha256(data).hexdigest()
             del document_hash  # page hashes below are the durable dedup domain
 
-            if not _is_pdf(data):
-                # MOBI and every other non-PDF payload: diagnosable, no
+            if _is_pdf(data):
+                selected = self._raster
+            elif _is_mobi(data) and self._mobi_raster is not None:
+                # TASK-041: the approved picture-MOBI extraction binding.
+                selected = self._mobi_raster
+            else:
+                # Every payload without an approved binding (including MOBI
+                # when the assembly did not inject one): diagnosable, no
                 # invented parser (see module docstring).
                 failed.append(
                     FailedImport(
                         source.filename,
                         REASON_UNSUPPORTED_FORMAT,
-                        "only PDF is supported by the approved binding "
-                        "(MOBI rasterisation is BLOCKED, TASK-023)",
+                        "only PDF is wired in this assembly; the MOBI payload "
+                        "was recognised but no MOBI binding was injected "
+                        "(MOBI support landed with TASK-041)",
                     )
                 )
                 continue
 
             try:
-                handle = self._raster.open(data)
+                handle = selected.open(data)
             except DocumentDecodeError as error:
                 failed.append(FailedImport(source.filename, error.reason, error.detail))
                 continue
