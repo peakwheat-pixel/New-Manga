@@ -116,3 +116,10 @@ TASK-042 复审产生 4 项 P3（均不影响其批准），因同属 webtoon/im
 **验证**（同一 shell + 同一 venv）：定向 `tests/reading_export tests/core` = **133 passed / 0 skipped**；全仓 **830 passed / 6 skipped ×5 次 + run 6（`-rs` 给 skip 原因）**，逐次 exit 0；逐目录 reading_export 109 / core 24 / ui_shell 46 / workbench 51（AC ⑥ 聚合 230）；基线：被审 head `1171bc5` 纯树 **827/6**（与复审自身一致）、主仓库 master `c3d9ed2` **825/6**；6 条 skip 全为既有 `tests/network` `openssl unavailable`。**附带发现与加固**：本切片测试放到修前树上时全仓曾两次在 `tests/workbench/test_ui_responsiveness.py` 触发 Windows access violation（0xC0000005，与 TASK-045 面无直接关系；纯 `1171bc5` 树全仓正常、`tests/workbench` 单独正常、最小组合不复现），定位到修前树上新用例**失败路径**各自 `pump_traced(5.0)` 空转，失败预算收紧至 **3s** 后基树全仓无崩溃（8 failed / 822 passed / 6 skipped），**交付树加固前后各 6 次全仓全绿**。
 
 **待复审裁定**：①触发面放在 VM（而非 QML）是否接受；②`clearTileCache()` 无 QML 入口、清空后不自动补服务的口径；③AC ⑩ 解码面 `overlap=0` 小切片仍待 Codex 开立（本切片不改解码策略）。
+
+## Post-hoc 复审登记（2026-09-19）
+
+- Reviewer=`ZCode`（非作者、非原 Reviewer）。固定被审状态 `cb93d66`；评审期间工作区 fast-forward 至 `16f7d75`（仅文档提交，`src/tests` diff 为空），报告 head `77d7b5b`。报告：[TASK-045-posthoc-zcode](../reviews/TASK-045-posthoc-zcode.md)；独立证据：[verification/TASK-045/posthoc-zcode/](../../verification/TASK-045/posthoc-zcode/)。
+- **decision=`uphold_with_findings`**：首轮 `changes_requested` → 修订 `approved` 的两轮结论、`integration_commit=e2a8f01` 与 `cb93d66` 收口全部维持；7 个复审靶点无一推翻，F-4/F-5/F-8/F-11/F-13/F-14 与 TASK-042 R-01～R-04 的关闭登记不变。
+- 新增 3 项 **P3 观察项，不要求返工**：P3-1 `visible_tiles(0,0)` 依赖负数 floor-division 的隐式语义；P3-2 `clearTileCache()` 清 URL 后不自发重请求（当前生产 QML 无调用点）；P3-3 `read_band` 跨页尾请求静默钳制（生产 `_decode` 有短读硬校验兜底）。
+- 复审与本次登记**未改生产代码、测试、post-hoc 报告正文或证据**，因此不要求复跑产品测试；TASK-020/038 的历史口径勘误已分别追加到两份 Review 末尾，不改原结论正文。
