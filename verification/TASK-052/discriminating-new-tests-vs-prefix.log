@@ -1,0 +1,3 @@
+﻿FAILED tests/workbench/test_command_error_surface.py::test_provider_binding_failure_keeps_code_and_detail
+FAILED tests/workbench/test_command_error_surface.py::test_worker_crash_surfaces_with_stage
+3 failed, 54 deselected in 0.28s

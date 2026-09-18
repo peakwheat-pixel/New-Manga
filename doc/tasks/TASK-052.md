@@ -26,13 +26,13 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（VM 状态）**：workbench VM 暴露可绑定的最近错误状态（property + notify）与"清空/已读"入口；emit 路径集中（不得在 13 处各写一套 UI 逻辑）。
-- [ ] **AC ②（QML 最小消费者）**：在**工作台页面**内新增一个最小可见元素（状态条/文本 + 复制/关闭），并带 `objectName` 以便契约测试定位；**只改 `src/ui/qml/workbench/**`**，不得改 reader/bookshelf 等其他页面。
-- [ ] **AC ③（可诊断性）**：错误文本包含可执行的诊断信息（错误码/阶段），并能一键复制（供用户反馈）。
-- [ ] **AC ④（断言）**：VM 级用例覆盖三类真实失败（无 provider 绑定 / 无 Region / worker 崩溃）后状态可见；QML 契约级用例断言该元素在失败后可见、成功后/清空后不可见（机器可验证，不靠"码面推导"）。
-- [ ] **AC ⑤（provisional 声明）**：在源码注释与 Handoff 中明确标注"最小实现、待 TASK-047 设计收敛后调整"，并在 Task 内记录该局限。
-- [ ] **AC ⑥（不回归 + 判别力）**：新断言对修前失败；`tests/workbench/**`、`tests/ui_shell/**`、`tests/reading_export/**` 既有 QML 契约断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
-- [ ] **AC ⑦** Handoff + `verification/TASK-052/**` + 独立子对话 Review + 集成 + STATUS 台账行。
+- [x] **AC ①（VM 状态）**：workbench VM 暴露可绑定的最近错误状态（property + notify）与"清空/已读"入口；emit 路径集中（不得在 13 处各写一套 UI 逻辑）。
+- [x] **AC ②（QML 最小消费者）**：在**工作台页面**内新增一个最小可见元素（状态条/文本 + 复制/关闭），并带 `objectName` 以便契约测试定位；**只改 `src/ui/qml/workbench/**`**，不得改 reader/bookshelf 等其他页面。
+- [x] **AC ③（可诊断性）**：错误文本包含可执行的诊断信息（错误码/阶段），并能一键复制（供用户反馈）。
+- [x] **AC ④（断言）**：VM 级用例覆盖三类真实失败（无 provider 绑定 / 无 Region / worker 崩溃）后状态可见；QML 契约级用例断言该元素在失败后可见、成功后/清空后不可见（机器可验证，不靠"码面推导"）。
+- [x] **AC ⑤（provisional 声明）**：在源码注释与 Handoff 中明确标注"最小实现、待 TASK-047 设计收敛后调整"，并在 Task 内记录该局限。
+- [x] **AC ⑥（不回归 + 判别力）**：新断言对修前失败；`tests/workbench/**`、`tests/ui_shell/**`、`tests/reading_export/**` 既有 QML 契约断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
+- [x] **AC ⑦** Handoff + `verification/TASK-052/**` + 独立子对话 Review + 集成 + STATUS 台账行。
 
 ## 允许修改范围
 
@@ -50,9 +50,9 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ④ VM 三类失败 | `pytest tests/workbench -q`（planned） | venv + 真 SQLite | NOT_RUN | 无 |
-| AC ④ QML 契约 | `pytest tests/ui_shell tests/reading_export -q`（planned） | 同上 | NOT_RUN | 无 |
-| AC ⑥ 全仓 | `pytest -q -rs` ×5（planned） | 不设 `QT_QPA_PLATFORM` | NOT_RUN | 无 |
+| AC ④ VM 三类失败 | `pytest tests/workbench -q -k command_error` | venv + 真 SQLite | 3 passed（selection/provider 绑定/worker crash） | tests/workbench/test_command_error_surface.py |
+| AC ④ QML 契约 | `pytest tests/workbench -k command_error_bar`；定向三目录 | 同上 | bar 可见性状态机+复制+关闭通过；定向 216 passed | tests/workbench/test_qml_workbench.py、targeted log |
+| AC ⑥ 全仓 | `pytest -q -rs` ×5 | 不设 `QT_QPA_PLATFORM` | 899 passed, 0 skipped, exit 0 ×5 | full-suite-post-fix-run{1..5}.log |
 
 ## 依赖、风险与阻塞
 
@@ -61,5 +61,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际测试：尚无（`ready`，前置 TASK-050）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（窗口 W5，provisional 呈现）。**实施尚未开始。**
+- Handoff：`doc/handoffs/TASK-052-3afaade.md`（含 PROVISIONAL 声明）。Review：独立子对话（进行中，报告将落 `doc/reviews/TASK-052-3afaade.md`）。实际测试：见上方测试要求表与 `verification/TASK-052/**`。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W5 实现并取证完毕（实现提交 `3afaade`）：VM 单一 sink `_record_command_error`（12 处 emit 收口；signal 保裸 detail 兼容既有断言，状态文本带 [stage/code] 诊断）+ `commandErrorText`/`clearCommandError` + QML `commandErrorBar`（文本+复制+关闭，非阻塞，objectName 寻址）；4 新用例、定向 216、全仓 899×5 全绿；判别力=修前树 3 failed（exit 1）。provisional：呈现待 TASK-047 设计收敛。原开立记录：窗口 W5 开立为 `ready`。
