@@ -77,3 +77,14 @@ integration_commit: null
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
 - **最近状态（当前，唯一）**：2026-09-18 由 Codex 依 DSH 外部复审的 F-4/F-5/F-8/F-11/F-13/F-14 开立；`base=1c171dc`。**实施尚未开始。**
+
+## 追加范围（2026-09-18，由 TASK-042 Review 的 findings 并入）
+
+TASK-042 复审产生 4 项 P3（均不影响其批准），因同属 webtoon/imaging 血缘且本 Task 白名单已覆盖 `src/infrastructure/imaging/**` 与 `tests/reading_export/**`，**并入本 Task 一并收口**：
+
+- [ ] **AC ⑧（= R-01）typed 化损坏载荷**：`streaming_png.py::_pump` 把 `decompress()` 的 `zlib.error` 包成 typed `StreamingPngError`（如 `INVALID_PNG`/`CORRUPT_DATA`）。现状：`zlib.error` 的 MRO 为 `(zlib.error, Exception)`，**逃出** `viewmodel.py:309/351` 的 `except (OSError, ValueError)`，损坏源文件不再走优雅回退；**失败本身仍是 fail-closed（Adler-32 拦截，不产出错误像素）**。补"容器合法但载荷损坏"用例（TASK-042 的变体矩阵未覆盖此格）。
+- [ ] **AC ⑨（= R-02）内存声明精确化**：把 `streaming_png.py` / `webtoon_tiles.py` 的"peak = one decode window / never more than one scanline pair plus the band"改为**实测构成**——"压缩源常驻（`__init__` 的 `read_bytes()`）+ O(带宽)（实测 ≈3–4× 带）"；并说明将来要 O(带) 总量需改为流式读源。
+- [ ] **AC ⑩（= R-03）rewind 成本文档化**：在 `ensure_viewport`/`_decode` 写明"`visible_tiles` 升序 ⇒ **每次调用最多一次 rewind**、最坏为以目标带末端为界的一次重扫"，并记入实测（Reviewer 实测：扫 20000 行 0.39 s；回跳 row 12000 0.156 s；回跳 row 0 0.219 s）；如需再加"最近 N 带缓存"。
+- [ ] **AC ⑪（= R-04）补"真实编码器 × 超大"覆盖**：新增一个**中尺寸 Qt 编码**夹具（建议 `1600×20000` ≈128 MB rgb32，**低于 Qt 的 ~300 MB 失效门**）走带状读 + 与 Qt 解码的像素一致性，补上"超大页夹具由测试自写 stdlib 写入器（filter 0）生成"留下的覆盖缺口。
+
+→ 对应 TASK-042 Review 的 R-01/R-02/R-03/R-04（[doc/reviews/TASK-042-fc6c649.md](../reviews/TASK-042-fc6c649.md)）。

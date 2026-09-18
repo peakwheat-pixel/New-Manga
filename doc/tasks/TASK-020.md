@@ -77,5 +77,5 @@ D03 §5；D05 §20/40；D06 §17/67～70；D07 §14～17；D08 AC-WEBTOON/CAP。
 
 ## 遗留项状态更新（2026-09-18）
 
-- **遗留项②（超大 webtoon 像素解码 BLOCKED）**：用户 **2026-09-18 批准引入流式解码依赖**（解锁条件①达成）→ 由 [TASK-042](TASK-042.md) 承接实施（含按原设计**翻转**本 Task 留下的表征断言钩子与 `oversize-record.json` 口径）。本 Task 不再重开。
+- **遗留项②（超大 webtoon 像素解码 BLOCKED）→ 已于 2026-09-18 关闭**（[TASK-042](TASK-042.md) Review `approved`、integration `ce7b4f9`；表征钩子按原设计翻转，带状解码成功；未新增依赖）。历史：用户 **2026-09-18 批准引入流式解码依赖**（解锁条件①达成）→ 由 [TASK-042](TASK-042.md) 承接实施（含按原设计**翻转**本 Task 留下的表征断言钩子与 `oversize-record.json` 口径）。本 Task 不再重开。
 - 遗留项①（生产装配点 `tile_factory` 注入）已由 [TASK-038](TASK-038.md) 关闭（`assemble_engine` 现注册 5 个 context property）。

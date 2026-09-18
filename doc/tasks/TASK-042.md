@@ -2,7 +2,7 @@
 id: TASK-042
 title: 超大 Webtoon 带状/流式解码（承接 TASK-020 遗留 BLOCKED）
 kind: implementation
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-020, TASK-038]
 base_commit: 904fca185c9900c0b2df297529a58ece831dc0a0
 branch: agent/zcode/TASK-042-streaming-decode
 worktree: G:/CODEX/New Manga.worktrees/TASK-042-zcode
-integration_commit: null
+integration_commit: ce7b4f916a8155b2c4914eb4f9bfe5d8cf0f4462
 ---
 
 # TASK-042：超大 Webtoon 带状/流式解码
@@ -47,7 +47,7 @@ integration_commit: null
 - [ ] **AC ④（端到端可达）**：经 TASK-020/038 的 tile 路径，超大页在生产装配下可读（视口带按需解码）；未注入 tile 工厂时**回退路径行为不变**。
 - [ ] **AC ⑤（依赖纪律）**：若最终引入 `pyvips`，`requirements.txt` **仅新增该项**并提供上述三份证据；若未引入，Handoff 明写"未新增依赖"及理由。
 - [ ] **AC ⑥（判别力 + 回归）**：新测试对**修前代码**失败（放 base `904fca1` 的 `src` 上跑并留证）；`tests/reading_export`、`tests/core`、`tests/providers` 与全仓 passed **不减少**；全仓串跑 **≥5 次**逐次记录（同一 shell + 同一 venv）。
-- [ ] **AC ⑦** 交付 Handoff、取证，经**非作者** Review 与 Codex 集成后才能 done；并登记 TASK-020 遗留项②关闭。
+- [x] **AC ⑦** 交付 Handoff、取证，经**非作者** Review 与 Codex 集成后才能 done；并登记 TASK-020 遗留项②关闭。→ Review [doc/reviews/TASK-042-fc6c649.md](../reviews/TASK-042-fc6c649.md) `approved`（非作者，commit `6e303cf`）、integration=`ce7b4f9`、复验 [verification/TASK-042/integration-ce7b4f9.md](../../verification/TASK-042/integration-ce7b4f9.md)。
 
 ## 允许修改范围
 
@@ -83,3 +83,11 @@ integration_commit: null
 - **历史状态**：2026-09-18 由 Codex 创建为 `ready`（base=904fca1）。
 - **最近状态（当前，唯一）**：2026-09-18 09:1x 由 ZCode 开工（status→`in_progress`）；分支 `git merge master` 快进至 `7ea1629`（W5-W7 收口后 HEAD）。实施开始：`src/infrastructure/imaging/streaming_png.py`（stdlib zlib＋PNG 行过滤器带状读取，单遍游标）＋接入 `TiledPageRasterizer`＋翻转 TASK-020 表征钩子＋变体 fail-closed 矩阵＋Qt 逐像素对照。**依赖决策：首选 stdlib（不启用 pyvips）**。
 - **最近状态（当前，唯一）**：实现 head=`fc6c649`（开工 `ebe5755`）：`streaming_png.py` 新建（单遍游标带读＋全 5 种过滤器＋typed 变体拒绝）＋`TiledPageRasterizer` 改驱动流式读取（Qt 从 imaging 模块移除）＋纯 stdlib PNG 编码器＋`test_streaming_png.py` 11 例（含 Qt 逐像素一致）＋TASK-020 表征钩子按原设计翻转（oversize 1600×200000 带状解码**成功**、窗口=恰 1/50 整页 rgb32、tracemalloc 峰值留证）。**未新增依赖（stdlib-only，pyvips 备选未启用）**。回归：mandated reading_export 93 passed/0 skipped、全仓 ×5 每次 798 passed/0 skipped exit 0。**status=in_review：待 Codex（非作者）Review 与集成**——集成后登记 TASK-020 遗留②关闭。
+
+
+## Review 与集成记录（2026-09-18）
+
+- **Review**：[doc/reviews/TASK-042-fc6c649.md](../reviews/TASK-042-fc6c649.md)（Reviewer=Codex，**非作者**；commit `6e303cf`；decision=**`approved`**；四轴均 `executed`、逐轴小结、**不跨轴排名**；并行偏差已声明）。Reviewer 独立复现的两项核心主张：**自写 5 种正向过滤器 + 逐行混合 + 4 组 bpp → 各带逐字节等于原始行**；**Qt 编码随机 RGBA PNG → 各带与 `QImage` 逐像素一致**。
+- **Findings（4×P3，非阻塞，全部为 Reviewer 新增发现）**：**R-01** 损坏但结构完整的载荷 → `zlib.error`（MRO 为 `(zlib.error, Exception)`，**既非 `OSError` 也非 `ValueError`**）逃出 reader VM 的 `except (OSError, ValueError)`；**失败仍 fail-closed（Adler-32 拦截，不产出错误像素）**，仅为"失败类型未 typed"→ 归入 [TASK-045](TASK-045.md)；**R-02** 内存声明精度（峰值 = 压缩源常驻 + ≈3–4× 带宽，非 1× 带）→ TASK-045；**R-03** rewind 重扫成本未量化、且"升序请求 ⇒ 每调用最多一次 rewind"这一有界性质未文档化（Reviewer 实测 0.39/0.16/0.22 s）→ TASK-045；**R-04** 超大页夹具改由测试自写 stdlib 写入器生成（filter 0）→"真实编码器 × 超大"未覆盖 → TASK-045。
+- **集成**：`integration_commit=ce7b4f9`（merge，parents `6e303cf` + `98b38b7`；分支 head 已合并 master `f1c6ea0`）。master 复验：`tests/reading_export`+`core`+`providers`+`pipeline` **352 passed**；全仓 **792 passed / 6 skipped**（6 条为既有 `tests/network` 的 `openssl unavailable`；作者声明的 Git-Bash 口径为 `798/0`，**总数一致**）。
+- **关闭**：TASK-020 **遗留项②（超大 webtoon 像素解码 BLOCKED）关闭**（表征钩子已按原设计翻转）；TASK-020 遗留项①②至此全部关闭。
