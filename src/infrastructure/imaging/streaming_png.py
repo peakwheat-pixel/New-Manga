@@ -18,7 +18,14 @@ fails **typed**, never silently):
   produced in order and ``rewind()`` restarts from row 0.
 
 Band reads never materialise the whole *image*: only the requested rows are
-reconstructed. Memory composition (TASK-045 AC ⑨, measured — see
+reconstructed. At the rasterizer's default ``overlap=0`` (TASK-046) the
+decode windows follow the cursor in order, so a whole-page sweep never
+rewinds; an explicitly requested non-zero overlap starts every tile after
+the first *just* behind the cursor and costs one rewind + rescan each
+(measured on both sides: ``verification/TASK-045/rewind-cost-probe.txt``
+for the overlap=64 fold, ``verification/TASK-046/`` for the after numbers;
+TASK-045 AC ⑩ / TASK-046 AC ②).
+Memory composition (TASK-045 AC ⑨, measured — see
 ``verification/TASK-045/memory-and-fixture-probe.txt``):
 
 - the compressed **source stays resident** as one ``bytes`` object (the caller
@@ -75,10 +82,13 @@ class StreamingPngReader:
     one stopped), while a band behind the cursor raises ``REWIND_REQUIRED``
     and the caller restarts with :meth:`rewind`, which re-opens the zlib
     stream and rescans from row 0. The rasterizer's ``visible_tiles`` is
-    ascending, so a rewind never jumps backwards mid-call — but with its
-    production ``overlap`` every tile after the first starts *just* behind the
-    cursor and does rescan once (measured cost in
-    ``verification/TASK-045/rewind-cost-probe.txt``; TASK-045 AC ⑩).
+    ascending, so a rewind never jumps backwards mid-call — and at the
+    rasterizer's default ``overlap=0`` (TASK-046) a whole-page sweep never
+    rewinds at all; an explicitly requested non-zero overlap costs one
+    rewind + rescan per following tile (measured on both sides:
+    ``verification/TASK-045/rewind-cost-probe.txt`` for the overlap=64
+    fold, ``verification/TASK-046/`` for the after numbers; TASK-045
+    AC ⑩ / TASK-046 AC ②).
     """
 
     def __init__(self, data: bytes) -> None:

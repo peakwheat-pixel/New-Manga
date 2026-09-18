@@ -2,7 +2,7 @@
 id: TASK-046
 title: 解码面 rewind 成本收敛（overlap 语义收口，落地 TASK-042 AC ⑩ 的实测结论）
 kind: performance
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -83,4 +83,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无（待 `DeepSeek Harness` 按 §6 执行**非作者** Review）。实际测试：尚无（`ready`；开工门已解除，可开工）。
-- **最近状态（当前，唯一）**：2026-09-18 用户批准"下一步"后由 Codex 开立为 `ready`；**TASK-045 已于 `e2a8f01` 集成 ⇒ 开工门解除**，可 `git merge master` 后开工。`base=fc8f1d9`。**实施尚未开始。**
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 开工（`git merge master` 至 `ec5b4d1` 后置 `in_progress`）。`base=fc8f1d9`。实施进行中。

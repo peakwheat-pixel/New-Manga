@@ -443,6 +443,136 @@ def test_materialised_tiles_carry_exactly_their_declared_band(
 
 
 # ---------------------------------------------------------------------------
+# TASK-046: the overlap semantics fold to 0 — byte-identical tile files, one
+# sequential sweep
+# ---------------------------------------------------------------------------
+
+
+def _write_noise_png(
+    path: Path, width: int, height: int, *, seed: int = 0x2545F491
+) -> None:
+    """Deterministic high-entropy RGB PNG (filter 0, stdlib only).
+
+    Random content defeats any per-row structure, so an overlap cannot be
+    justified by "reconstruction needs context": every row stands alone.
+    """
+
+    def chunk(tag: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + tag
+            + data
+            + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+        )
+
+    state = seed
+    rows = bytearray()
+    for _y in range(height):
+        rows.append(0)  # filter 0
+        for _x in range(width * 3):
+            state = (state * 1103515245 + 12345) & 0x7FFFFFFF
+            rows.append(state & 0xFF)
+    with open(path, "wb") as handle:
+        handle.write(b"\x89PNG\r\n\x1a\n")
+        handle.write(
+            chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, 0))
+        )
+        handle.write(chunk(b"IDAT", zlib.compress(bytes(rows), 6)))
+        handle.write(chunk(b"IEND", b""))
+
+
+@pytest.mark.parametrize("kind", ["pattern", "noise"])
+def test_overlap_choice_leaves_tile_files_byte_identical(
+    tmp_path, qapp, kind: str
+) -> None:
+    """AC ① (TASK-046): after F-4 the decode overlap contributes nothing to
+    the stored pixels, so the default change (64 → 0) must leave every tile
+    file **byte-identical** and the tile union still equal to the whole page
+    — on a structured pattern page and on high-entropy noise alike.
+
+    Deliberately a *pinned property*, not a discriminating assertion: it
+    already held on the pre-fix tree (F-4 landed there), which is exactly
+    what makes the default change safe (AC ⑤ records it as
+    non-discriminating).
+    """
+    width, height = 400, 2500
+    source = tmp_path / f"{kind}.png"
+    if kind == "pattern":
+        write_row_pattern_png(source, width, height)
+    else:
+        _write_noise_png(source, width, height)
+
+    zero = TiledPageRasterizer(
+        source, cache_dir=tmp_path / f"tiles-{kind}-0", tile_height=800
+    )
+    sixty_four = TiledPageRasterizer(
+        source, cache_dir=tmp_path / f"tiles-{kind}-64", tile_height=800, overlap=64
+    )
+    # the default really moved (and an explicit choice is still honoured)
+    assert zero.grid.overlap == 0
+    assert sixty_four.grid.overlap == 64
+
+    stitched: list[bytes] = []
+    for tile in zero.grid.tiles:
+        file_zero = zero.tile_file(tile.index).read_bytes()
+        file_overlapped = sixty_four.tile_file(tile.index).read_bytes()
+        assert file_zero == file_overlapped, (
+            f"tile {tile.index}: the overlap changed the stored bytes"
+        )
+        rows, tile_width, tile_height = qt_rows(zero.tile_file(tile.index))
+        assert (tile_width, tile_height) == (width, tile.content_height)
+        stitched.extend(rows)
+    page_rows, page_width, _page_height = qt_rows(source)
+    assert stitched == page_rows and page_width == width, (
+        "the tile union must still be the whole page, row for row"
+    )
+
+
+def test_full_page_sweep_is_one_sequential_scan_at_the_default(tmp_path) -> None:
+    """AC ②/⑤ (TASK-046): at the default overlap a whole-page sweep is one
+    sequential scan — **zero** rewinds; explicitly requesting overlap=64
+    keeps the per-tile rewind (the machinery is retained, its cost
+    documented).
+
+    Discriminating: on the pre-fix tree the default was 64 and the same
+    sweep rewinded ``tiles - 1`` times (4 on this page). The overlap=64
+    control below pins pre-existing behaviour and does NOT count as
+    discriminating.
+    """
+    width, height = 400, 4000  # 5 tiles at tile_height=800
+    source = tmp_path / "sweep.png"
+    write_row_pattern_png(source, width, height)
+
+    def swept_rewinds(rasterizer: TiledPageRasterizer) -> int:
+        counter = {"n": 0}
+        reader = rasterizer._reader
+        original = reader.rewind
+
+        def counting() -> None:
+            counter["n"] += 1
+            original()
+
+        reader.rewind = counting
+        rasterizer.ensure_viewport(0, height)
+        return counter["n"]
+
+    default = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "sweep-0", tile_height=800
+    )
+    assert default.grid.overlap == 0
+    assert swept_rewinds(default) == 0, (
+        "the default-overlap sweep must be one sequential scan"
+    )
+
+    overlapped = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "sweep-64", tile_height=800, overlap=64
+    )
+    assert swept_rewinds(overlapped) == 4, (
+        "an explicit overlap=64 keeps the documented per-tile rewind fold"
+    )
+
+
+# ---------------------------------------------------------------------------
 # TASK-045 F-5 / F-11: page turns rebuild tiles; viewport coordinates are
 # converted from display pixels
 # ---------------------------------------------------------------------------

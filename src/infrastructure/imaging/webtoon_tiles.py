@@ -45,6 +45,14 @@ _COLOUR_TYPE_FOR_CHANNELS = {1: 0, 2: 4, 3: 2, 4: 6}
 #: (R-005): they are rebuildable pixels, never business data, and
 #: :meth:`TiledPageRasterizer.clear` — or a manual wipe — reclaims every
 #: ``tile-*.png`` generation at once.
+#:
+#: TASK-046 AC ④: the cache key also folds in ``grid.overlap``, so the
+#: overlap change below (production default 64 → 0) invalidates existing
+#: on-disk tiles by itself — they are rebuilt from the source on demand.
+#: No ``_TILE_CACHE_FORMAT`` bump is needed for that: v2 guards the *bytes
+#: written per tile*, and with F-4 in place those bytes are identical for
+#: any overlap (verified byte-for-byte, TASK-046 AC ①) — an old-generation
+#: file is merely an orphan, never a wrong pixel.
 _TILE_CACHE_FORMAT = "v2"
 
 
@@ -112,7 +120,7 @@ class TileGrid:
         page_width: int,
         page_height: int,
         tile_height: int = 4000,
-        overlap: int = 64,
+        overlap: int = 0,
     ) -> None:
         page_width = int(page_width)
         page_height = int(page_height)
@@ -152,9 +160,12 @@ class TileGrid:
     def decode_rect(self, tile: TileSpec) -> tuple[int, int, int, int]:
         """``(x, y, w, h)`` decode window including the context overlap.
 
-        The overlap extends *upwards* into the previous tile's tail so a
-        region sitting on a boundary decodes with its full context; the
-        displayed band stays ``[content_top, content_bottom)``.
+        A non-zero overlap extends *upwards* into the previous tile's tail so
+        a region sitting on a boundary decodes with its full context; the
+        displayed band stays ``[content_top, content_bottom)``. The default
+        is 0 (TASK-046): with F-4 cropping the window to the content band,
+        an overlap changes no stored pixel — it only costs a cursor rewind
+        per tile — so callers opt in explicitly when they want the context.
         """
         y = max(0, tile.content_top - self.overlap)
         bottom = min(self.page_height, tile.content_bottom)
@@ -251,13 +262,15 @@ class TiledPageRasterizer:
     URIs and the whole cache directory can be wiped and rebuilt at any time.
 
     The streaming cursor only moves forward, and ``visible_tiles`` is
-    ascending, so no call ever needs a *backward* jump. With a non-zero
-    ``overlap``, however, the decode window of every tile after the first
-    starts ``overlap`` rows before the previous window ended — just behind the
-    cursor — so each of those tiles rewinds and re-scans from row 0, making a
-    multi-tile viewport O(tiles²) rather than one sequential scan
-    (TASK-045 AC ⑩; measured costs in
-    ``verification/TASK-045/rewind-cost-probe.txt``).
+    ascending, so no call ever needs a *backward* jump, and with the default
+    ``overlap=0`` (TASK-046) one ``ensure_viewport`` sweep over the whole
+    page **is** one sequential scan: zero rewinds, cost linear in the rows.
+    With an explicitly requested non-zero ``overlap`` the decode window of
+    every tile after the first starts ``overlap`` rows before the previous
+    window ended — just behind the cursor — so each of those tiles rewinds
+    and re-scans from row 0, making that sweep O(tiles²) (measured on both
+    sides of the change: ``verification/TASK-045/rewind-cost-probe.txt`` for
+    the overlap=64 fold, ``verification/TASK-046/`` for the after numbers).
     """
 
     def __init__(
@@ -266,7 +279,7 @@ class TiledPageRasterizer:
         *,
         cache_dir: str | Path,
         tile_height: int = 4000,
-        overlap: int = 64,
+        overlap: int = 0,
         prefetch: int = 1,
         cache: TileCache | None = None,
     ) -> None:
@@ -331,23 +344,25 @@ class TiledPageRasterizer:
     ) -> tuple[Path, ...]:
         """Decode the visible tiles plus the bounded prefetch window.
 
-        Rewind accounting (TASK-045 AC ⑩, measured — see
-        ``verification/TASK-045/rewind-cost-probe.txt``):
+        Rewind accounting (TASK-045 AC ⑩ measured the before side;
+        TASK-046 AC ② measures both sides — see
+        ``verification/TASK-046/rewind_cost_probe.py``):
 
-        - ``visible_tiles`` is ascending, so a call never needs a *backward*
-          jump mid-way; each tile's rescan is bounded by its own window end;
-        - with a non-zero ``overlap`` the window of every tile after the first
-          starts ``overlap`` rows before the previous window ended — i.e. just
-          behind the cursor — so those tiles each rewind and rescan from row 0.
-          Measured on a 1600x8000 Qt-encoded page: tile 0 alone 4.53 s, tiles
-          0+1 in one call 14.24 s (the extra 9.70 s is exactly that rescan);
-        - tiles whose file already exists are never decoded again, so the cost
-          is paid once per tile file, not once per viewport update.
+        - with the default ``overlap=0`` the windows tile the page without
+          gaps or back-glances, so a full-page sweep is **one sequential
+          scan**: 0 rewinds, wall clock linear in the rows;
+        - with an explicitly requested non-zero ``overlap`` the window of
+          every tile after the first starts ``overlap`` rows before the
+          previous window ended — i.e. just behind the cursor — so those
+          tiles each rewind and rescan from row 0 (O(tiles²); the overlap=64
+          fold measured 24 rewinds / ~9 s of pure rescan on the AC ② pages);
+        - tiles whose file already exists are never decoded again, so the
+          cost is paid once per tile file, not once per viewport update.
 
-        The resulting quadratic fold is a decode-strategy property: TASK-042's
-        "one sequential scan for the whole page" holds only with ``overlap=0``.
-        Bootstrapping passes ``overlap=64`` (``src/bootstrap/app.py``), so this
-        is documented, not changed, here.
+        TASK-042's "one sequential scan for the whole page" therefore holds
+        verbatim at the production default (0); the overlap machinery stays
+        available behind the explicit keyword for callers that want decode
+        context and accept the rescan.
         """
         return tuple(
             self.tile_file(tile.index)
@@ -361,10 +376,13 @@ class TiledPageRasterizer:
         into PNG bytes — the overlap is decode context only (TASK-045 F-4).
 
         ``x`` is always 0 (bands span the full width). The streaming cursor
-        only moves forward; a request behind it (after a cache wipe, or the
-        next overlapped tile) rewinds and re-scans once, and that rescan is
-        linear in the rows up to the requested window's end — not in the page.
-        See :meth:`ensure_viewport` for the measured cost of the overlap.
+        only moves forward; at the default ``overlap=0`` the windows follow
+        the cursor in order, so a whole-page sweep never rewinds; an
+        explicitly requested non-zero overlap puts the next window's start
+        behind the cursor (after a cache wipe, or the next overlapped tile),
+        which rewinds and re-scans once, linear in the rows up to the
+        requested window's end — not in the page. See
+        :meth:`ensure_viewport` for the measured costs.
         """
         rect = self.grid.decode_rect(tile)
         _x, y, _width, height = rect
