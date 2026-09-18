@@ -1,0 +1,3 @@
+[shadow] delegate counts: legacy=0 partial=2 fixed=2
+[shadow] the 'delegates were never created under the TASK-020 spelling' claim reproduces: YES
+EXIT=0

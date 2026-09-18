@@ -156,3 +156,22 @@ DeepSeek 首次独立 Review 绑定 `496b4ed..615a073`，结论为 `changes_requ
 | F-09 / P2 | master `c39ba99` | AGENTS 当前授权改为只回指 STATUS/Task，避免阶段状态再次过期 |
 
 DeepSeek Harness 已批准 `b1b3f5d..885c9a9`，F-01～F-07 全部 resolved；Codex 以 `7927169` 集成并完成切片验证。TASK-003～027 未授权、未启动，仓库仍无应用源码、SQL、测试框架或可执行产品。
+
+## 11. 生产可达性复核（2026-09-19）
+
+**来源**：Qoder 的只读盘点 [PRODUCTION-REACHABILITY-AUDIT-2026-09-18](research/PRODUCTION-REACHABILITY-AUDIT-2026-09-18.md)（用户指示“只读盘点、不动代码”），经 **Codex 独立复核**（自写探针与证据见 [verification/POSTHOC-REACHABILITY-AUDIT-2026-09-18](../verification/POSTHOC-REACHABILITY-AUDIT-2026-09-18/codex-verification.md)）。本节只登记**已复核**的断点，不改动 §1～§10 的历史快照。
+
+**结论**：STATUS 的「产品发布状态 NOT READY」成立，且依据比既有文档更强——**自动翻译整链在生产装配面上存在四道彼此独立的断点**，即使补齐真实模型依赖（AC-RFULL-001 的既有 `BLOCKED` 条件），从 UI 触发仍然跑不通：
+
+| # | 级别 | 断点 | 复核方式 |
+|---|---|---|---|
+| 1 | P0 | 生产任务执行复用 GUI 线程创建的 SQLite 连接（`open_database` 在启动线程；`RunController` 在 QThread 里执行同一个 `PipelineService`）⇒ 首个 store 访问即 `sqlite3.ProgrammingError`；且 worker 崩溃后 run 在 DB 中停留 `running` | **端到端**：真实 `assemble_services` + 真实 `RunController` → `runCrashed` 复现；主线程对照可跑完 ⇒ 纯线程归属问题 |
+| 2 | P0 | 生产无 Region 创建入口（`create_region` 无 UI 调用点），且 `build_production_handlers` 未注册 `detect` ⇒ 区域类步骤无输入 | **端到端**：真实运行的 `step_runs` 行 = `ocr region=None status=failed code=INVALID_INPUT "requires a Region target"` |
+| 3 | P1 | 生产 Pipeline 的 `settings` / `provider_bindings` 恒为 `None`（`app.py:529-531` 只传 handlers / clean_probe）⇒ 越过区域墙后 `_chain` 抛 `PROVIDER_NOT_CONFIGURED`；根因含设置页空壳 | **端到端**：先经应用服务造出 Region，再跑 `OCR_REGION` → 运行期 `PROVIDER_NOT_CONFIGURED` |
+| 4 | P1 | `commandError` 在 QML 中没有消费者 ⇒ 上述三类失败对用户完全静默 | **静态**：`src/ui/qml/**` 0 命中；13 处全部在 workbench ViewModel |
+
+**另有**：**P-6**（工作台三档视图恒空白）已在 catalog 缝端到端复核——同一页同一 Managed Copy，workbench 的 `translated`/`compare` 恒空而 reader 能解析出 translated artifact；**E-1** 复现——`QT_QPA_PLATFORM=offscreen` 使 `tests/rendering` 两条断言假失败（2 failed / 61 passed；不设该变量 63 passed），故全仓口径须**不设**该变量；**P-5**（书架导入入口）静态不成立、运行期需 GUI 确证。**P-7～P-10（P2）尚未逐条复核。**
+
+**证据方法论（要点）**：现有 **848 条测试**全绿，是因为它们走 mock/内存装配或直接调用用例层；`assemble_services` + 真实 SQLite + worker 线程这条**生产路径**没有任何测试穿过——因此 `N passed` 类证据无法否证上述断点。
+
+**处置**：findings 采纳为**已复核事实**；**是否开切片、顺序与范围由用户裁决**（Codex 建议顺序：跨线程连接 → Region 入口/`detect` → provider 与设置写入面 → `commandError` 上屏 → 工作台视图）。本节不释放任何 Task。

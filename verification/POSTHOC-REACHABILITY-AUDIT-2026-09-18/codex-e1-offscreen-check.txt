@@ -1,0 +1,44 @@
+Codex check of Qoder E-1: QT_QPA_PLATFORM=offscreen makes two rendering assertions fail
+..................F...................F........................          [100%]
+================================== FAILURES ===================================
+_______ TestFontAvailability.test_installed_font_is_reported_available ________
+
+self = <test_layout.TestFontAvailability object at 0x000002B25ABD0050>
+engine = <infrastructure.rendering.qt_layout.QtTextLayoutEngine object at 0x000002B25B882180>
+
+    def test_installed_font_is_reported_available(self, engine) -> None:
+        result = engine.layout(request(text="����"))
+>       assert result.font_available is True
+E       AssertionError: assert False is True
+E        +  where False = LayoutResult(items=(DrawItem(text='����', x=0.0, y=26.0, per_char=False),), extents_width=52, extents_height=26.0, fits=True, font_available=False, resolved_family='Sans Serif').font_available
+
+tests\rendering\test_layout.py:147: AssertionError
+___ TestPixelAnalyzer.test_two_horizontal_lines_estimate_size_and_direction ___
+
+self = <test_source_style.TestPixelAnalyzer object at 0x000002B25B859C40>
+analyzer = <infrastructure.rendering.pixel_source_style.PixelSourceStyleAnalyzer object at 0x000002B25B91FD70>
+
+    def test_two_horizontal_lines_estimate_size_and_direction(
+        self, analyzer
+    ) -> None:
+        png = make_text_image(["�������", "�ڶ�����"], pixel_size=30)
+        style = analyzer.analyze(png, BOX)
+        assert style.detected_source_font_size is not None
+        # ink band height is a rough proxy: 0.6..1.3 �� pixel size
+        assert 0.6 * 30 <= style.detected_source_font_size <= 1.3 * 30
+        assert style.source_font_size_confidence >= 0.5
+>       assert style.direction_hint is TextDirection.HORIZONTAL
+E       AssertionError: assert <TextDirection.VERTICAL: 'vertical'> is <TextDirection.HORIZONTAL: 'horizontal'>
+E        +  where <TextDirection.VERTICAL: 'vertical'> = SourceStyle(detected_source_font_size=26.0, source_font_size_confidence=1.0, text_color='#101010', stroke_hint_color=None, background_color='#ffffff', direction_hint=<TextDirection.VERTICAL: 'vertical'>).direction_hint
+E        +  and   <TextDirection.HORIZONTAL: 'horizontal'> = TextDirection.HORIZONTAL
+
+tests\rendering\test_source_style.py:85: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/rendering/test_layout.py::TestFontAvailability::test_installed_font_is_reported_available
+FAILED tests/rendering/test_source_style.py::TestPixelAnalyzer::test_two_horizontal_lines_estimate_size_and_direction
+2 failed, 61 passed in 1.76s
+EXIT=1
+--- control: same dir without the variable ---
+...............................................................          [100%]
+63 passed in 1.79s
+EXIT=0

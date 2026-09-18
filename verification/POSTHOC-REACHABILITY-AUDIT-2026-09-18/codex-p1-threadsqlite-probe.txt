@@ -1,0 +1,13 @@
+Codex probe: Qoder P-1 (cross-thread SQLite in the production run path)
+db: C:\Users\49745\AppData\Local\Temp\nmqoder-p1-v46yeq6b\library.db
+[A] REAL PipelineService -> plain Python thread
+   planned status: pending units: 8
+   execute_run on another thread -> ProgrammingError: SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 11060 and this is thread id 39228.
+[B] REAL RunController (QThread) -> same PipelineService instance
+   planned status: pending units: 8
+   signals: {'crash': 'SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 11060 and this is thread id 49076.'}
+   stored run status after the worker: running
+[C] control: same calls on the main thread
+   planned status: pending units: 8
+   main-thread execute_run -> status: completed_with_failures
+EXIT=0

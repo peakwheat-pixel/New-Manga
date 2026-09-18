@@ -4,7 +4,7 @@ title: 补齐工具窗口、设置与视觉交互验收
 kind: implementation
 status: proposed
 approval: pending_user_review
-suggested_owner: ZCode
+suggested_owner: Qoder
 owner: null
 reviewer: null
 depends_on: [TASK-009, TASK-010, TASK-013, TASK-015, TASK-021, TASK-024]
@@ -17,6 +17,8 @@ integration_commit: null
 # TASK-022：补齐工具窗口、设置与视觉交互验收
 
 本 Task 仅为规划，尚未授权、认领或实施。当前阶段见 [STATUS](../STATUS.md)；共用流程见 [协作协议](../09_COLLABORATION.md)。
+
+2026-09-19 用户指定 Qoder 为 UI/UX、GUI 与 QML 视觉/交互设计责任方。先由 [TASK-047](TASK-047.md) 冻结设计规范；本 Task 仍保持 `proposed`，待 TASK-047 `done`、全部硬依赖满足并由用户批准释放后，才可进入实现。
 
 ## 来源与目标
 
@@ -73,3 +75,5 @@ D05 §4～5/13～14/30/43～55/64～67；D01 §2字体上传；D08 AC-WIN/DPI/CL
 - Review：尚无。
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
+
+> **2026-09-19 ZCode 全权窗口条目**：本 Task 已纳入 [STATUS](../STATUS.md) 的窗口队列（W12+ 尾项），但**门槛未达成**：需 **TASK-021 三子集（TASK-055/056/057）** + **TASK-047 设计门（Qoder，窗口外）** + **TASK-050（W3，绑定写入面）** 全部完成。门槛满足前一律记 `BLOCKED（前置未达成）`，**不得跳过前置强行开工**；窗口内如需调整门槛，由 Codex 在 T1 后处理。

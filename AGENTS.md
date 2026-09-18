@@ -1,6 +1,6 @@
 # New Manga：所有 Agent 的共同入口
 
-唯一真实项目仓库：G:/CODEX/New Manga。Codex Desktop、ZCode、DeepSeek Harness 以此仓库及其 Git linked worktree 为工作空间，共享 Git 历史和版本化文档。聊天记录不是项目事实来源。
+唯一真实项目仓库：G:/CODEX/New Manga。Codex Desktop、ZCode、DeepSeek Harness、Qoder 以此仓库及其 Git linked worktree 为工作空间，共享 Git 历史和版本化文档。聊天记录不是项目事实来源。
 
 ## 每次开始工作
 
@@ -19,10 +19,15 @@
 当前阶段、已释放 Task 与冻结范围只以 [STATUS](doc/STATUS.md) 和对应 Task 文件为准，本入口不复制易过期的状态。Agent 只能执行已批准且依赖满足的 Task；接管、Review 或单个 Task 获批不等于其他开发自动获批。
 
 
+## 临时条款：ZCode 全权窗口（2026-09-19，T1 = 2026-09-19 09:00）
+
+窗口期内（T0 至 T1）本入口的常规分工按 [STATUS](doc/STATUS.md)「ZCode 全权窗口授权（2026-09-19）」让渡给 ZCode：名单内实施由 ZCode 执行并**自行批准**（不得因范围/取舍发起人工授权申请）；**每个切片的 Review 必须由其新开的独立子对话完成，不得自审**，结论只能 `approved_subagent`/`changes_requested`；授权其**代行主线写入与集成**、**自建 Task 文件**并按前提性**插队**。Codex 窗口期暂停生产写入（仅 T0/T1 文档与只读复核）；DSH 与 Qoder 窗口期不参与，**09:00 后对窗口内全部集成做外部 post-hoc 复审（可推翻）**。命中"需要 Schema/依赖/产品范围变更"者：停该切片、记 BLOCKED、转下一项，**不得申请**。T1 到达后本条款即时失效，由 Codex 移除。
+
 ## 角色与交付
 
 - Codex：Lead / Architect / Integrator；负责契约、任务分配、冲突决策及集成。
 - ZCode：独立 Feature、长任务实现；提交代码、测试及 Handoff。
+- Qoder：UI/UX、GUI 与 QML 视觉/交互设计责任方；同时承担独立 Feature、长任务实现（与 ZCode 同面），提交代码、测试及 Handoff；也可作为**非作者** Reviewer。设计交付不能替代已释放 Task；不得自行扩大产品范围、修改共享契约或审核自己实现的变更。
 - DeepSeek Harness：技术实验、OCR / Translation / Inpainting 研究、测试、Bug 分析及独立 Review。不得审核自己实现的变更。
 - 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 Codex 明确范围；产品需求取舍由用户决定。
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。

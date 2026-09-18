@@ -8,10 +8,13 @@
 |---|---|---|---|
 | Codex Desktop | Lead / Architect / Integrator；盘点、契约、拆任务、协调依赖、处理冲突 | 基线文档、Task、集成验证与决策记录 | 唯一主线写入和合并责任人 |
 | ZCode | 独立 Feature、长任务 | 固定 commit、代码与必要测试、Handoff | 自己的任务分支；不得自行合并主线 |
+| Qoder | UI/UX、GUI 与 QML 视觉/交互设计责任方；独立 Feature、长任务实现（与 ZCode 同面）；亦可作为**非作者** Reviewer | 设计规范、视觉/交互参考、固定 commit、代码与必要测试、Handoff；Review 报告 | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
 | DeepSeek Harness | 技术实验、OCR/Translation/Inpainting 研究、测试、Bug 分析、独立 Code Review | 可复现实验、测试证据、诊断/Review 报告 | 自己的实验或测试分支；不得自行改生产实现以“证明”Review |
 | 用户 | 产品取舍、阶段审核、重大范围变化 | 由 Codex 记录的审核决定 | 决定接管及后续阶段范围 |
 
-Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
+Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查；ZCode / Qoder 的实现由 Codex、DeepSeek Harness 或 Qoder（**非作者**）独立审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
+
+UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 QML 组件边界由 Qoder 主责设计；设计结论先以只读设计 Task 固化并经非作者 Review、Codex 集成，之后才能在单独释放的实现 Task 中落代码。Qoder 的设计身份不自动授予 `src/**` 写权限，也不改变产品需求、四页一级导航、共享契约或 Schema。产品取舍仍由用户决定。
 
 研究结论不自动成为产品需求。诊断任务只读分析与复现；修复需要有允许修改生产代码的 Task。Reviewer 默认只写 Review 报告。
 
@@ -21,7 +24,7 @@ Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 Z
 
 批准接管后先由 Codex 创建可复现的初始基线 commit，再开放任务分支。未提交的当前接管文件不能充当可跨 worktree 同步的基线。第一次提交的 author 使用实际 Git 身份，不能冒用其他 Agent 的签名。
 
-并行模式：Codex 使用主工作区；ZCode 和 DeepSeek 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
+并行模式：Codex 使用主工作区；ZCode、DeepSeek 与 Qoder 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
 
 开始时记录以下检查结果：
 
@@ -36,7 +39,7 @@ git rev-parse HEAD
 
 linked worktree 的 toplevel 可以不同，但 common directory 必须指向本项目 .git。初始仓库 HEAD 不存在时，由 Codex先完成基线提交；其他 Agent 不自行绕过。
 
-分支约定：agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 Codex 分配并填进 Task，不能复制模板中的示例命令直接执行。
+分支约定：agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug、agent/qoder/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 Codex 分配并填进 Task，不能复制模板中的示例命令直接执行。
 
 同一物理 checkout 同时只允许一个写入者；无法使用 worktree 时串行交接。read-only Review 也固定被审查 commit，不对正在写的 checkout 运行会改文件的命令。
 
@@ -106,3 +109,15 @@ Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head�
 接管通过、契约冻结、切片通过、最终发布是不同 Gate。Mock Pipeline 通过只能证明编排和保存链路，不能证明 OCR/翻译/修复质量。
 
 发布按 D08 执行：P0/P1 和干净 Windows 验证等要求不因 Roadmap 分阶段而降低。范围删减、阈值豁免先形成用户可审查的文档决定，不能把未完成标成 N/A。当前未授权提交远端、创建外部项目或向其他人发送消息。
+
+## 8. 临时条款：ZCode 全权窗口（2026-09-19）【T1 = 2026-09-19 09:00 后失效】
+
+窗口期内下列条款优先于本协议常规条款，T1 到达后由 Codex 移除：
+
+1. **执行与自批**：窗口名单内（STATUS 队列 W0–W12）的实施由 ZCode 执行并自行批准，**不得发起人工授权申请**；范围外的请求一律记 `BLOCKED` 并转下一项。
+2. **Review**：每切片必须**新开独立子对话**审查（仅提供仓库 + Task + diff/证据路径，不提供作者叙述），报告须记录"独立子对话（开始时间/标识）+ 命令与输出"；结论只能 `approved_subagent` / `changes_requested`；**不得自审**。T1 后由 Codex + DSH + Qoder 强制 post-hoc 复审，**可推翻**。
+3. **集成**：授权 ZCode 代行主线写入与集成（保留来源分支 merge 提交；集成后复跑并留证）。
+4. **新任务与插队**：ZCode 可自建 Task 文件、登记 STATUS/索引、建分支与 worktree；新发现按**前提性**插入队列（P0/P1 且无未满足前置者插队首），只需在台账行写明理由。
+5. **证据纪律（不变）**：同一 shell + 同一 venv、`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、**不得设 `QT_QPA_PLATFORM`**；退出码 + passed/skipped 分列 + skip 原因；全仓 ≥5 次逐次记录；不得新增 `skip`/`xfail`、不得放宽/删除既有断言。
+6. **排除项**：Schema/migration、依赖清单、产品需求与验收标准、发布 Gate、真实 provider 端点/密钥/权重、`src/ui/qml/**`（本窗口 Task 明列者除外）、`doc/10_CURRENT_STATE_AND_GAPS.md` 与既入档 Review 正文、`AGENTS.md`（除 T0/T1）、push 远端。
+7. **T1**：09:00 停止实施与集成；在飞切片冻结在当时 commit（不回滚）；Codex 收口并把窗口内全部集成交三方 post-hoc 复审。
