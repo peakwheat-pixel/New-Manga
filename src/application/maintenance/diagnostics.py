@@ -19,7 +19,7 @@ import json
 import re
 from collections import deque
 from dataclasses import dataclass
-from typing import Callable, Iterable, Protocol
+from typing import Iterable, Protocol
 
 _SECTION_ORDER = (
     "application",
@@ -89,13 +89,7 @@ class DiagnosticsReport:
     def to_dict(self) -> dict:
         return {
             "generated_at": self.generated_at,
-            "application": {"app_version": self.app_version},
-            "database": {"schema_version": str(self.schema_version)},
-            **{
-                name: {key: value for key, value in fields}
-                for name, fields in self.sections
-                if name not in ("application", "database")
-            },
+            **{name: dict(fields) for name, fields in self.sections},
         }
 
     def to_json_bytes(self) -> bytes:
@@ -130,8 +124,14 @@ def build_diagnostics_report(
         (key, redact_value(key, value)) for key, value in sorted(environment_paths.items())
     )
     sections = (
-        ("application", (("platform_python", platform_python),)),
-        ("database", (("database_path", database_path),)),
+        (
+            "application",
+            (("app_version", app_version), ("platform_python", platform_python)),
+        ),
+        (
+            "database",
+            (("schema_version", str(schema_version)), ("database_path", database_path)),
+        ),
         ("settings_summary", settings_fields),
         ("recent_errors", error_fields),
         ("environment_paths", path_fields),
@@ -182,8 +182,6 @@ class DiagnosticsSnapshotProvider(Protocol):
     def settings_summary(self) -> dict[str, str]: ...
 
     def environment_paths(self) -> dict[str, str]: ...
-
-    def recent_errors(self) -> tuple[RecentError, ...]: ...
 
 
 class DiagnosticsBundleSink(Protocol):

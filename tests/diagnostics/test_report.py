@@ -3,6 +3,7 @@ bounded recent-error retention, one-call export (TASK-055 AC 1/2/3)."""
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from pathlib import Path
 
@@ -82,7 +83,9 @@ class TestFixedFieldList:
         payload = json.loads(_report().to_json_bytes().decode("utf-8"))
         assert payload["generated_at"] == "2026-09-19T02:00:00"
         assert payload["application"]["app_version"] == "0.1.0"
+        assert payload["application"]["platform_python"] == "CPython 3.12.3"
         assert payload["database"]["schema_version"] == "3"
+        assert payload["database"]["database_path"] == str(PURE_DATA_ROOT / "library.db")
         assert payload["environment_paths"]["data_root"] == str(PURE_DATA_ROOT)
 
     def test_to_dict_is_json_serialisable_and_matches_json_bytes(self):
@@ -153,7 +156,7 @@ class TestServiceExport:
                 return "diag-20260919T020000.json"
 
         errors = BoundedErrorLog()
-        errors.record(RecentError("t1", "import", "IMPORT_FILE_MISSING", "a.png"))
+        errors.record(RecentError("t1", "import", "PROVIDER_AUTH_FAILED", "a.png"))
         sink = _Sink()
         service = DiagnosticsService(
             _provider=_provider(),
@@ -165,9 +168,9 @@ class TestServiceExport:
         payload, at = sink.written
         assert at == "2026-09-19T02:00:00"
         parsed = json.loads(payload.decode("utf-8"))
-        assert any("IMPORT_FILE_MISSING" in value for value in parsed["recent_errors"].values())
+        assert any("PROVIDER_AUTH_FAILED" in value for value in parsed["recent_errors"].values())
 
     def test_report_is_frozen(self):
         report = _report()
-        with pytest.raises(Exception):
+        with pytest.raises(dataclasses.FrozenInstanceError):
             report.app_version = "changed"
