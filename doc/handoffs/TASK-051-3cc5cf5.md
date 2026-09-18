@@ -17,7 +17,7 @@
 ## compare 语义的依据（Task 风险项裁决）
 
 Task 要求"从 D 文档与既有 QML 绑定推出，不得自创"。证据链：
-1. `ViewerPanel.qml:85` 注释 **`// Compare pane (D05 §20.1 左右双图)`**——compare = 左右双图；
+1. `ViewerPanel.qml:88` 注释 **`// Compare pane (D05 §20.1 左右双图)`**——compare = 左右双图；
 2. 左 pane `source: viewer.imageUrl`（原图，带"原图"角标，ViewerPanel.qml:70-78），右 pane `source: viewer.translatedUrl`（译图，ViewerPanel.qml:99）；
 3. `WorkbenchView.qml:30`：`wViewerTranslated = vm.viewerImageUrlFor("translated")`；
 4. VM `viewerImageUrlFor` docstring："Compare pane needs the translated variant, D05 §20.1"。
@@ -59,7 +59,7 @@ URL 面保持既有 QML 契约（一切失败 → `""`，QML 空态文案"译图
 | 修前 ×2 | resolved | **EMPTY** | **EMPTY** | unavailable |
 | 修后 ×2 | resolved | **resolved** | **resolved** | ok |
 
-（`probe-pre-fix-run{1,2}.txt` / `probe-post-fix-run{1,2}.txt`；P-6 复核签名"workbench translated/compare 恒空、reader 非空"在修前列复现。）
+（`probe-pre-fix-run{1,2}.txt` / `probe-post-fix-run{1,2}.txt`；修前列复现 P-6 复核签名的 workbench 侧：translated/compare 恒空——探针仅覆盖 workbench 面，reader 侧非空由 AC② 用例钉住。）
 
 - **不回归**：定向 `tests/core tests/workbench` **87 passed**（`targeted-core-workbench.log`，含 QML 契约测试）；全仓 ×5 **895 passed / 0 skipped / exit 0**（892 master 基线 +3 新用例），逐次 `full-suite-post-fix-run{1..5}.log`。无新增 skip/xfail、既有断言零改动。
 
