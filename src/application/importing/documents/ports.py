@@ -31,7 +31,9 @@ class DocumentDecodeError(ValueError):
 
     ``reason`` is a stable code for the import report: ``INVALID_DOCUMENT``
     for bytes that cannot be parsed, ``ENCRYPTED`` for password-protected
-    documents (no credential is ever guessed).
+    documents (no credential is ever guessed), and ``MISSING_DEPENDENCY``
+    when the raster binding itself is unavailable (never installed, or its
+    native library will not load — F-9, TASK-043).
     """
 
     def __init__(self, reason: str, detail: str = "") -> None:

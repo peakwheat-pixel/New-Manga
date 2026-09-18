@@ -1,0 +1,10 @@
+[bytes] ARGB32 isNull=False format=Format_ARGB32 bytesPerLine=8 sizeInBytes=8
+[bytes]   pixel(0,0)=0xffff0000 pixel(1,0)=0xff0000ff
+[bytes]   pixelColor(0,0) RGBA (255,0,0,255)
+[bytes]   pixelColor(1,0) RGBA (0,0,255,255)
+[bytearray] ARGB32 isNull=False format=Format_ARGB32 bytesPerLine=8 sizeInBytes=8
+[bytearray]   pixel(0,0)=0xffff0000 pixel(1,0)=0xff0000ff
+[bytearray]   pixelColor(0,0) RGBA (255,0,0,255)
+[bytearray]   pixelColor(1,0) RGBA (0,0,255,255)
+[control] Format_BGR888 pixelColor(0,0) RGBA (255,0,0,255)
+[control] Format_RGB888 pixelColor(0,0) RGBA (0,0,255,255)
