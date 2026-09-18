@@ -45,4 +45,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：[TASK-054-56a429e.md](../handoffs/TASK-054-56a429e.md)。Review：尚无（待窗口独立子对话 Review）。实际测试：改名前全仓 1 次（851/0）+ 改名后全仓 5 次（851/0 ×5，exit 0 ×5）+ 定向 28/0 + 40/0，全部入库 `verification/TASK-054/`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 实现：`pending_after_cancel` → `pending`（ports 字段 + 两处构造 keyword + 8 处断言），全链 0 残留；行为零变更（前后对照 851/0 ↔ 851/0）；无新用例（无新行为，判别对象为名字存在性，由 grep 残留检查承担，已声明）。实现提交 `56a429e`。`base=8bf8da3`（开工已 merge master `7537136`，含 TASK-046）。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 实现：`pending_after_cancel` → `pending`（ports 字段 + 两处构造 keyword + 7 处断言），全链 0 残留；行为零变更（前后对照 851/0 ↔ 851/0）；无新用例（无新行为，判别对象为名字存在性，由 grep 残留检查承担，已声明）。实现提交 `56a429e`。`base=8bf8da3`（开工已 merge master `7537136`，含 TASK-046）。
