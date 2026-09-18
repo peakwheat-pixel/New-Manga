@@ -65,5 +65,6 @@ TASK-001～TASK-021（TASK-021 仅 trash 子集）、TASK-024、TASK-028～TASK-
 | [TASK-055](TASK-055.md) | TASK-021 子集①：日志与诊断 | ZCode | **ready（窗口 W8，本窗口优先子集）**；AC 含脱敏诊断包、日志上限/轮转、白名单按实际结构收紧；base `8bf8da3`；TASK-021 |
 | [TASK-056](TASK-056.md) | TASK-021 子集②：缓存·版本·模型清理 | ZCode | **ready（窗口 W9；前置 TASK-053/054）**；AC 含可清理/永不清理边界、预览、**瓦片缓存跨代回收（TASK-045 R-005）**、幂等与失败可诊断；base `8bf8da3`；TASK-021 |
 | [TASK-057](TASK-057.md) | TASK-021 子集③：备份与恢复 | ZCode | **ready（窗口 W10；前置 TASK-053）**；AC 含备份完整性、恢复覆盖/合并语义、不写用户源文件、失败可诊断；base `8bf8da3`；TASK-021 |
+| [TASK-058](TASK-058.md) | 应用退出排空 workbench 运行线程（§11 P-10，窗口自建插入） | ZCode | **done（2026-09-19 窗口 W11）**：`_shutdown_services` 统一退出收口（drain→close，含 bootstrap 失败分支）；子对话 Review 首轮 `changes_requested`（R-001 测试自包含）→返修复验 `approved_subagent`，integration `414a8e1` |
 
 每个任务含具体 Acceptance Criteria、允许修改路径与测试要求。TASK-005 已建立最小 `src/bootstrap`、`src/domain`、`src/ui` 与 `tests/core`；其余路径仍是拟议所有权边界，ready 前由 Codex 对照实际结构确认。Task 不能越过依赖、冻结状态或扩大允许范围。

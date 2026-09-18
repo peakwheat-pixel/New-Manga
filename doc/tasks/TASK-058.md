@@ -2,7 +2,7 @@
 id: TASK-058
 title: 应用退出时排空 workbench 运行线程（P-10 优雅退出）
 kind: feature
-status: in_progress
+status: done
 approval: zcode_window_self_approved
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: ["TASK-048"]
 base_commit: 726c1bb
 branch: agent/zcode/TASK-058-graceful-shutdown-drain
 worktree: "G:/CODEX/New Manga.worktrees/TASK-058-zcode"
-integration_commit: null
+integration_commit: 414a8e1
 ---
 
 # TASK-058：应用退出时排空 workbench 运行线程（P-10 优雅退出）
@@ -25,11 +25,11 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1：`main()` 的退出路径改为经统一函数 `_shutdown_services(services)` 收尾，该函数先 `services.workbench.shutdown()` 再 `services.conn.close()`（顺序固定，含 bootstrap 失败的 except 分支）。
-- [ ] AC2：真实装配下，存在活动 run 时调用 `_shutdown_services` 能让 worker QThread 在返回前排空（run 不再 running、线程结束），且共享连接随后才关闭。
-- [ ] AC3：判别力——新增用例在修前代码上失败（`_shutdown_services` 修前不存在：import 级失败 + 顺序契约失败）；仅钉既有 VM/Controller 语义的用例单独声明不计判别。
-- [ ] AC4：全仓测试 ≥5 次全绿（退出码 0、passed/skipped 分列），不新增 skip/xfail、不放宽既有断言。
-- [ ] AC5：不改 RunController/WorkbenchViewModel 的既有语义（shutdown 幂等性维持），不动 `src/ui/qml/**`。
+- [x] AC1：`main()` 的退出路径改为经统一函数 `_shutdown_services(services)` 收尾，该函数先 `services.workbench.shutdown()` 再 `services.conn.close()`（顺序固定，含 bootstrap 失败的 except 分支）。
+- [x] AC2：真实装配下，存在活动 run 时调用 `_shutdown_services` 能让 worker QThread 在返回前排空（run 不再 running、线程结束），且共享连接随后才关闭。
+- [x] AC3：判别力——新增用例在修前代码上失败（`_shutdown_services` 修前不存在：import 级失败 + 顺序契约失败）；仅钉既有 VM/Controller 语义的用例单独声明不计判别。
+- [x] AC4：全仓测试 ≥5 次全绿（退出码 0、passed/skipped 分列），不新增 skip/xfail、不放宽既有断言。
+- [x] AC5：不改 RunController/WorkbenchViewModel 的既有语义（shutdown 幂等性维持），不动 `src/ui/qml/**`。
 
 ## 允许修改范围
 
@@ -48,6 +48,6 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 顺序契约 | `pytest tests/core/test_shutdown_drain.py -q`（文件自包含，单跑可复现） | TASK-012-py312 venv | 待跑 | verification/TASK-058/ |
-| AC2 真实排空 | 同上（真实装配 + 离开 PENDING 的 run） | 同上 | 待跑 | verification/TASK-058/ |
-| AC4 全仓 ×5 | `pytest tests -q` | 同上 | 待跑 | verification/TASK-058/run0X.log |
+| AC1 顺序契约 | `pytest tests/core/test_shutdown_drain.py -q`（文件自包含，单跑可复现） | TASK-012-py312 venv | 3 passed, EXIT=0 | verification/TASK-058/standalone-file.log |
+| AC2 真实排空 | 同上（真实装配 + 离开 PENDING 的 run） | 同上 | 3 passed, EXIT=0（同文件）；目录 -k 形态同绿 | verification/TASK-058/directory-k.log |
+| AC4 全仓 ×5+1 | `pytest tests -q` | 同上 | 911 passed / 0 skipped, EXIT=0 ×6（分支）；集成后 master 911 passed, EXIT=0 | verification/TASK-058/run01..06.log、post-integration-master-full-suite.log |
