@@ -2,7 +2,7 @@
 id: TASK-040
 title: 接通 TASK-039 的 clean_probe 生产注入（含 F-12 口径修正）
 kind: bugfix
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-039]
 base_commit: 40d97d52d272035db723018102970ba40c9c9f62
 branch: agent/zcode/TASK-040-clean-probe-injection
 worktree: G:/CODEX/New Manga.worktrees/TASK-040-zcode
-integration_commit: null
+integration_commit: e1be885bb3a26f962a6b1ce01a8f220949c6ab03
 ---
 
 # TASK-040：接通 TASK-039 的 `clean_probe` 生产注入（含 F-12 口径修正）
@@ -60,3 +60,14 @@ integration_commit: null
 - Review：尚无（待 Codex 非作者 Review）。
 - 实际执行/测试：见 `verification/TASK-040/`——基线全仓 **798 passed / 0 skipped** exit 0（= master `c5aa664`）；实现后定向 `tests/core+pipeline+providers` **261 passed / 0 skipped** exit 0；全仓 ×5 **每次 800 passed / 0 skipped** exit 0（798 基线 + 2 新增，passed 不减少）；修前判别力（src 回退 `c5aa664`）**2 failed / exit 1** 留证后恢复复跑 2 passed。全部同一口径：`powershell.exe`（继承 PATH 含 openssl）+ `TASK-012-py312` + `-p no:cacheprovider`。
 - **最近状态（当前，唯一）**：2026-09-18 ZCode 实现交付 `977ef65`（文档 `2afabf2`），随后**尾部 merge master `84bdda7`（TASK-043 集成，与本切片零文件重叠；STATUS 冲突保留双方登记行）→ 分支 head `004f00e`**，merge 后复跑全仓 ×5 **每次 810 passed / 0 skipped** exit 0、定向 261 passed / 0 skipped exit 0（802+2 新例+6 条 network 在本 shell 口径转正，收集总数一致），`status=in_review`。**注意**：实现含一处**白名单偏差**——物理构造点 `src/infrastructure/pipeline/assembly.py` 不在任务书允许列表，本切片以"可选形参透传"3 行接入并已在 Handoff 声明理由（F-12 原文证据位置即含该文件），**交 Codex Review 裁决**。
+
+
+## Review 与集成记录（2026-09-18）
+
+- **Review**：[doc/reviews/TASK-040-977ef65.md](../reviews/TASK-040-977ef65.md)（Reviewer=Codex，**非作者**；commit `826bc90`；decision=**`approved`**；0 P0/P1）。
+- **Reviewer 独立复跑（非复用作者证据）**：定向 `tests/core tests/pipeline tests/providers` **261 passed / 0 skipped**；全仓 **804 passed / 6 skipped**（6 条全为既有 `tests/network` `openssl unavailable`；作者同口径 `810/0` ⇒ **804+6 = 810，收集总数一致**）；**判别力独立复现** 新测试 + master `src` → **2 failed / 14 deselected**（接线断言 FAILED；生产对照 FAILED 于 `blocked:missing_clean_artifact != run:`）；`service.py` 经 diff 核对**仅 docstring**、`tests/core` **零断言/零测试删除**、`src`+`tests` 空白干净；`build_production_pipeline` 的另 2 个调用点不传新参数 ⇒ 修前装配行为不变。
+- **白名单偏差（R-01，本 Review 明示授予）**：`src/infrastructure/pipeline/assembly.py` 不在原白名单，作者为其新增**可选形参** `clean_probe: Callable[[str], bool] | None = None` + 透传（默认 `None` ⇒ 既有调用方逐字节不变）。授予理由：`PipelineService` 的**物理构造点在 assembly.py**（`app.py` 只是调用方）；白名单内注入只剩"跨模块写 `pipeline._clean_probe` 私有属性"一途（更差）；该改动为**加法式、默认保持**、未动 seam 其他语义；**F-12 的证据位置本身含 `assembly.py`**；作者**主动声明偏差 + 给出回滚路径**（程序上正确）。
+- **流程修正（Codex 自查）**：释放 TASK-040 时把"装配处"指认为 `src/bootstrap/app.py`，未沿到物理构造函数所在文件——这是**释放方的核对遗漏**。今后涉及"装配/接线"的切片，白名单须包含构造函数所在文件（或用 `rg "^def build_"` 先定位物理装配点）。
+- **Findings 处置**：R-01 **granted**（见上）；R-02（白盒接线断言读 `_clean_probe`）**accepted**（本切片禁止改 `service.py` 逻辑 ⇒ 无法加公开访问器；仓库已有同风格先例；建议将来加只读访问器后改公开/行为式断言）；R-03（口径差）**accepted/记录**；R-04（探针每次判定一次只读 DB 查询）**accepted（观察项）**。
+- **集成**：`integration_commit=e1be885`（merge，parents `826bc90` + `9b9c2da`；分支尾部含 `004f00e` = merge master `84bdda7`）。master 复验：定向 **261 passed / 0 skipped**、全仓 **804 passed / 6 skipped**。
+- **关闭**：**F-12 关闭**；TASK-040 置 `done`。
