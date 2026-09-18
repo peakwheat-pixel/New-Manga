@@ -57,6 +57,7 @@ from application.rendering.service import RenderService
 from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
 from application.translation.knowledge.term_extraction import TermExtractionService
+from domain.regions.entities import BBox, RegionGeometry, RegionOrigin
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
 from infrastructure.importing import (
@@ -497,6 +498,33 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             font_catalog=font_catalog,
             content_decoder=_render_content_decoder,
         )
+        # TASK-049 AC ②: the one application-layer Region write path —
+        # ``RegionEditingService.create_region`` (first revision + pointer in
+        # one atomic commit, TASK-002 §2.1) — is also what the ``detect``
+        # step's candidates flow through; the handler never writes Regions
+        # itself and no second write path is invented.
+        editing = RegionEditingService(regions)
+
+        def _create_detected_region(
+            page_id: str,
+            polygon: tuple[tuple[float, float], ...],
+            reading_order: int,
+            _provenance: dict,
+        ) -> str:
+            xs = [int(round(x)) for x, _ in polygon]
+            ys = [int(round(y)) for _, y in polygon]
+            geometry = RegionGeometry(
+                bbox=BBox(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)),
+                polygon=tuple((int(round(x)), int(round(y))) for x, y in polygon),
+            )
+            region = editing.create_region(
+                page_id,
+                geometry,
+                reading_order=reading_order,
+                origin=RegionOrigin.MACHINE,
+            )
+            return region.region_id
+
         handlers = build_production_handlers(
             registry=provider_runtime.registry,
             regions=regions,
@@ -510,6 +538,14 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             source_styles=source_styles,
             terms=TermExtractionService(),
             render_service=render_service,
+            # TASK-049 AC ①: no production detector exists yet (no endpoint /
+            # weights are authorised in this window), so ``detector`` stays
+            # ``None`` and page-level runs fail closed at the ``detect`` step
+            # with PROVIDER_NOT_CONFIGURED — diagnosable, never silent. The
+            # Region write side is already wired (region_creator) so a real
+            # detector is a one-argument assembly change in a later slice.
+            detector=None,
+            region_creator=_create_detected_region,
         )
         # TASK-040 AC ①: wire the TASK-039 Clean-availability probe into the
         # production planner. The probe reuses the same read-only page
@@ -533,7 +569,6 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         # kill) must never look active forever — startup reaps those rows to
         # INTERRUPTED before any ViewModel can observe them.
         pipeline.recover_running_runs()
-        editing = RegionEditingService(regions)
         navigation = NavigationViewModel()
 
         # TASK-038 AC ①/③: the reader ViewModel over the same data root —
