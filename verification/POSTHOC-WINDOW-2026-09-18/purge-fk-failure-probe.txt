@@ -1,0 +1,16 @@
+### DSH external review: empirical probe — TrashService.purge_batch on a page that has a media_artifacts row
+# probe: verification/POSTHOC-WINDOW-2026-09-18/purge_fk_probe.py (real schema via MigrationRunner, real ManagedFileStorage)
+# range under review: c3dabc8..5f3c115; HEAD at run time: 7ea1629
+batch page_ids     : ('p1',)
+managed file exists: True
+purge_batch        : IntegrityError - FOREIGN KEY constraint failed
+managed file after : False    <-- file already gone?
+page row after     : 1
+deleted_at after   : 2026-09-18T01:01:00.489822+00:00
+batches in ledger  : 1
+restore_batch      : 1 -> live page points at missing file: True
+=== does a processed page always have media_artifacts rows? ===
+# step_writes.py:500 INSERT INTO media_artifacts (pipeline artifact preparation)
+src/infrastructure/providers/step_writes.py:500:            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+src/infrastructure/sqlite/artifacts.py:64:                "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+# test fixture gap: tests/storage/test_trash.py:69-88 make_page inserts only the pages row (no artifact row)

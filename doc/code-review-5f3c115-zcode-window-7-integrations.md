@@ -1,0 +1,36 @@
+# Code Review
+
+- **Scope**: post-hoc external review of the 7 integrated slices in `c3dabc8..5f3c115` (ZCode full-authority window 2026-09-17/18); product code = 19 files under `src/`, plus `tests/**` and the window's docs
+- **Commit**: 5f3c115 (range end; range start `c3dabc8`)
+- **Date**: 2026-09-18
+- **Mode**: local
+- **Confidence threshold**: 80
+
+## Summary
+
+The range's "single writer" invariant for the page `translated` pointer and the trash purge's protection of **user source files** both hold, but two in-range implementation defects were found and reproduced: the PDF rasteriser swaps red/blue channels for every imported page, and `purge_pages` does not cover the tables that reference `pages(page_id)`, so permanent deletion deterministically fails after the managed copy has already been unlinked.
+
+## Method
+
+- Agent-guidance compliance, bug&correctness and security lenses plus historical-context and code-comment compliance lenses ran as five isolated sub-agents; findings were deduplicated (14 candidates), scored once (confidence 0-100, severity blocker/major/minor/nit), and filtered at the 80 confidence threshold.
+- The reviewer independently reproduced both surviving findings with throwaway probes under `%TEMP%` (no repository file was modified): `verification/POSTHOC-WINDOW-2026-09-18/pdf_channel_probe.py` and `purge_fk_probe.py`.
+- Environment/caliber: Windows 11, `G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe` (Python 3.12.3 / PySide6 6.11.2 / pytest 9.1.1), `PYTHONDONTWRITEBYTECODE=1`, `-p no:cacheprovider`. Independent full-suite run at review time: **781 passed / 6 skipped, exit 0** (the 6 skips are the pre-existing `tests/network` `openssl unavailable`). The window's Git-Bash caliber (`N passed / 0 skipped`) is the same collection with openssl on PATH; the difference is a caliber artifact, not removed skips.
+- Repo-format review with the full finding set and the per-axis statements: `doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md`.
+
+## Issues
+
+1. **PDF rasteriser swaps the red and blue channels of every imported page** (severity: major, confidence: 90)
+   - `src/infrastructure/importing.py:166-174` — pdfium's default bitmap mode is `BGR` (`n_channels=3`, `stride == width*3`), but the buffer is handed to `QImage.Format_RGB888`, which expects R,G,B. The sibling `BGRA` branch (mapped to `Format_ARGB32`) is correct on little-endian, and in this environment the `BGRA` branch is unreachable, so the asymmetry is the defect. Reproduced: a hand-built one-page PDF filled with pure red (`1 0 0 rg 0 0 100 100 re f`) rendered through the production `PdfiumDocumentRaster(scale=2.0)` yields a centre pixel of RGBA **(0, 0, 255, 255)** — pure red becomes pure blue — while pdfium reports `mode=BGR` with raw centre bytes `(0,0,255)`. The wrong pixels are written into the Managed Copy and covered by the stored `source_hash`, and `tests/import_formats` contains no pixel assertion (the window review only checked size 1224×1584 and typed errors).
+   - Fix: use `QImage.Format_BGR888` for the `BGR` branch (Qt ≥ 5.14), keep `Format_ARGB32` for `BGRA`, and add a regression that renders a known-colour PDF and asserts the decoded pixel. Evidence: `verification/POSTHOC-WINDOW-2026-09-18/pdf-channel-swap-probe.txt`.
+
+2. **Trash purge deletes the managed file first and then fails its foreign-key check, for every page that has been processed** (severity: major, confidence: 90)
+   - `src/infrastructure/sqlite/library.py:432-457` + `src/application/maintenance/trash.py:137-147` — `purge_pages` deletes only `region_revisions → regions → pages`, but `pages(page_id)` is referenced without `ON DELETE CASCADE` by `media_artifacts` (`schema.py:64/71`), `pipeline_run_targets` (`:315`), `pipeline_tasks` (`:330`), `step_runs` (`:345`) and `step_result_candidates` (`:380`), and `src/infrastructure/sqlite/connection.py:37` enables `PRAGMA foreign_keys = ON`. Any page that has been through the pipeline has such rows (`step_writes.py:500`). Reproduced on the real schema: `purge_batch` raises `IntegrityError: FOREIGN KEY constraint failed`; because `remove_managed` already ran, the outcomes are: managed original **deleted**, page row still soft-deleted, batch still in the ledger, and a subsequent `restore_batch` produces a live page whose `managed_original_ref` points at a deleted file — while the purge can never succeed. The regression suite stays green only because its fixture (`tests/storage/test_trash.py:69-88`) inserts just the `pages` row. The same file already contains the correct precedent for child-first deletion (`delete_tag`, `library.py:252-254`).
+   - Fix: inside one transaction delete the dependants in FK order (`step_result_candidates`, `pipeline_tasks`, `pipeline_run_targets`, `step_runs` → `artifact_revisions` (clear `media_artifacts.current_revision_id` first) → `media_artifacts` → `region_revisions` → `regions` → `pages`), and invert the file handling to "commit rows first, unlink managed files afterwards (diagnosable)". Add a case that purges a page carrying artifact/run rows. Evidence: `verification/POSTHOC-WINDOW-2026-09-18/purge-fk-failure-probe.txt`.
+
+## Verified findings below the threshold (registered, not confirmed)
+
+These were verified but scored below 80 (mainly because the paths are not yet reachable from the shipped UI or are already registered); they are recorded with full evidence and dispositions in `doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md` §3: document-import remainder silently dropped after a page failure (`documents/service.py:142-147,162-166,191`, 75); tile PNGs keep the overlap band while rows declare `content_height` (`webtoon_tiles.py:234-262` + `ReaderView.qml:245-254`, 75); page-turn in tiled webtoon never rebuilds tiles and the toolbar is not `vertical`-gated (`viewmodel.py:112/128/246/252/258` + `ReaderView.qml:110-121`, 75); purge omits generated assets (`trash.py:141-143`, 75); trash manifest non-atomic write and unguarded read (`trash.py:39-49,87-105`, 75); `import pypdfium2` outside the `try` (`importing.py:126`, 75); soft-deleted pages still participate in import dedup (`library.py:296-310`, 75); `clean_probe` never injected although the docstring and TASK-039 AC ② claim it is (`service.py:486`, 75, already released as TASK-040); `@Slot` missing `result=` (`bookshelf/viewmodel.py:370`, 50); `requestTiles` display-vs-page coordinate space (`ReaderView.qml:231-235`, 50); `setClipRect` memory contract falsified by the repo's own test (`webtoon_tiles.py:14-18`, 25); cache key not content-addressed (`webtoon_tiles.py:189`, 25).
+
+## Verdict
+
+`approved_with_findings`: the **integration boundaries and honesty of the 7 slices are upheld** (no out-of-whitelist changes, one approved dependency line, no schema/migration, no deletions, no new skips, all BLOCKED items left unmarked), and the two priority items requested by the brief — the `4d0f932` single-writer invariant and the `b940497` protection of user **source files** — both hold. However the range's Spec claim of "0 implementation errors" no longer holds: the two issues above are real, in-range and reproducible, and both the window's same-body reviews and Codex's post-hoc review missed them. Recommend targeted follow-up slices rather than a rollback, since neither defect is reachable from the current UI.

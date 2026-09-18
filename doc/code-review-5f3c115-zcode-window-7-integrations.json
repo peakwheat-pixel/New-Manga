@@ -1,0 +1,24 @@
+{
+  "scope": "post-hoc external review of the 7 integrated slices in c3dabc8..5f3c115 (ZCode window); product code = 19 files under src/ plus tests/**",
+  "commit": "5f3c115",
+  "date": "2026-09-18",
+  "threshold": 80,
+  "issues": [
+    {
+      "file": "src/infrastructure/importing.py",
+      "line": 169,
+      "severity": "major",
+      "confidence": 90,
+      "title": "PDF rasteriser maps pdfium's BGR buffer to Format_RGB888, swapping red and blue for every imported page",
+      "description": "pdfium's default bitmap mode is BGR (n_channels=3, stride == width*3) but the bytes are wrapped in QImage.Format_RGB888, which expects R,G,B; the sibling BGRA branch (Format_ARGB32) is correct on little-endian and is unreachable in this environment, so the asymmetry is the defect. Reproduced with a hand-built pure-red PDF rendered through the production PdfiumDocumentRaster: the decoded centre pixel is RGBA (0,0,255,255) (red becomes blue) while pdfium reports mode=BGR with raw centre bytes (0,0,255). The wrong pixels are persisted into the Managed Copy and covered by source_hash, and tests/import_formats has no pixel assertion. Fix: use QImage.Format_BGR888 for the BGR branch (Qt >= 5.14) and add a regression that renders a known-colour PDF and asserts the decoded pixel. Evidence: verification/POSTHOC-WINDOW-2026-09-18/pdf-channel-swap-probe.txt."
+    },
+    {
+      "file": "src/infrastructure/sqlite/library.py",
+      "line": 432,
+      "severity": "major",
+      "confidence": 90,
+      "title": "purge_pages omits the tables that reference pages(page_id): permanent deletion fails after the managed file was already unlinked",
+      "description": "purge_pages deletes only region_revisions -> regions -> pages, but media_artifacts (schema.py:64/71), pipeline_run_targets (:315), pipeline_tasks (:330), step_runs (:345) and step_result_candidates (:380) reference pages(page_id) with no ON DELETE CASCADE while connection.py:37 enables PRAGMA foreign_keys = ON; any pipeline-processed page has such rows (step_writes.py:500). Reproduced on the real schema: trash.py:137-147 unlinks the managed original first, then purge_batch raises 'IntegrityError: FOREIGN KEY constraint failed', leaving the file gone, the row still soft-deleted, the ledger batch still present, and restore_batch produces a live page whose managed_original_ref points at the deleted file; the purge can never succeed. The regression suite stays green because tests/storage/test_trash.py:69-88 inserts only the pages row; the same file has the correct child-first precedent in delete_tag (library.py:252-254). Fix: delete the dependants in FK order inside one transaction (step_result_candidates, pipeline_tasks, pipeline_run_targets, step_runs -> artifact_revisions (clear media_artifacts.current_revision_id first) -> media_artifacts -> region_revisions -> regions -> pages), and commit rows before unlinking managed files; add a purge case for a page with artifact/run rows. Evidence: verification/POSTHOC-WINDOW-2026-09-18/purge-fk-failure-probe.txt."
+    }
+  ]
+}
