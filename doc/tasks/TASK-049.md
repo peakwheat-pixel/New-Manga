@@ -2,7 +2,7 @@
 id: TASK-049
 title: 生产区域输入面（§11 P-2：detect handler 注册 + detection→Region 路径；不接 QML）
 kind: implementation
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-008, TASK-019, TASK-048]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-049-region-input
 worktree: G:/CODEX/New Manga.worktrees/TASK-049-zcode
-integration_commit: null
+integration_commit: e94d5af
 ---
 
 # TASK-049：生产区域输入面（§11 P-2，P0）
@@ -68,4 +68,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/TASK-049-a57617f.md`。Review：独立子对话（进行中，报告将落 `doc/reviews/TASK-049-a57617f.md`）。实际测试：见上方测试要求表与 `verification/TASK-049/**`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W2 实现并取证完毕（实现提交 `a57617f`）：detect handler 注册 + 页级 plan 前置 + region_creator 装配（复用 create_region）+ 回填；5 新用例、定向 326、全仓 859×5 全绿；判别力双级（import 级 collection error + 行为级双树探针）。实施完成，待独立 Review 与集成。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W2 实现并取证完毕（实现提交 `a57617f`）：detect handler 注册 + 页级 plan 前置 + region_creator 装配（复用 create_region）+ 回填；5 新用例、定向 326、全仓 859×5 全绿；判别力双级（import 级 collection error + 行为级双树探针）。独立子对话 Review `approved_subagent`（doc/reviews/TASK-049-a57617f.md，无 P0/P1，R-001 P2 已修正）；integration=`e94d5af`，集成后 master 全仓 878 passed / 0 skipped exit 0。T1 后由 Codex + DSH + Qoder post-hoc 复审（可推翻）。
