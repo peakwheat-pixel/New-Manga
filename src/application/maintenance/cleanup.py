@@ -28,6 +28,7 @@ entry for retry (AC 4 — same ledger pattern as TASK-053 R-04).
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import PurePosixPath
 from typing import Iterable, Protocol
 
 from application.maintenance.ports import (
@@ -181,5 +182,14 @@ class CleanupService:
 
 
 def _is_safe(relative_path: str) -> bool:
+    """Prefix whitelist **after** component checks: a path containing
+    ``..`` (or ``.``) components is never safe regardless of its prefix —
+    a naive startswith check would let ``cache/webtoon-tiles/../../...``
+    escape onto business files inside the managed root (first-review
+    R-001). Escaping the managed root itself is additionally refused by
+    the remover; this check keeps root-internal escapes out too."""
     normalized = relative_path.replace("\\", "/")
+    parts = PurePosixPath(normalized).parts
+    if any(part in ("..", ".") for part in parts):
+        return False
     return any(normalized.startswith(prefix) for prefix in CACHE_SAFE_PREFIXES)

@@ -44,3 +44,12 @@ status: delivered
 - **模型目录未注册**：`CACHE_SAFE_PREFIXES` 仅含 `cache/`；模型/权重清理等注册真实路径后再启用（窗口排除项）。
 - **`pending_cleanups` 与 F-7**：manifest 损坏退化同 TASK-053 的既有面（pending 段与 batches 段同文件同损）；清理对象是可再生缓存，损失=多扫一轮，无业务风险。
 - **回退**：`git revert <实现提交>`（纯新增文件）。
+
+## 追加登记（作者修订，首轮 Review approved_subagent 后的 R-001 守卫）
+
+首轮独立子对话 Review（03:15–03:44，decision=`approved_subagent`，报告见 [TASK-056-4c8b8a7.md](../reviews/TASK-056-4c8b8a7.md)）0 项 P0/P1，R-001（P2）防御纵深：`_is_safe` 纯字符串前缀匹配可被 `..` 组件绕过（`cache/webtoon-tiles/../../books/...` 会放行并删除 root 内业务文件；生产唯一 inventory 输出受控不可达，root 外逃逸仍被 remover 硬拒绝）。守卫已随修订落地：
+
+- `_is_safe` 改为 `PurePosixPath` 组件检查（含 `..`/`.` 的路径一律 False）后再判前缀；docstring 记录理由。
+- 新回归用例 `test_dotdot_components_are_rejected_even_under_safe_prefix`（sneaky 路径 skipped、业务文件幸存）；判别力=守卫移除必失败。
+- R-002/R-003/R-004（P3：run 的 ImmutablePathViolation 中止边界、Protocol 归位、测试私有成员访问）维持 open，不阻塞。
+- 修订后取证：新套件 9/0；全仓 ×5（881…）→ 实测 4×901/0 + run2 1 failed（`test_worker_run_and_main_thread_access_coexist`，TASK-048 的并发用例在全仓负载下的时序 flaky——单跑 ×6 全过、复跑全仓 901/0；诊断入 `flaky-diagnostic.log`；**与本切片变更面无关**，归 TASK-048 R-2 已注记的强度事项，登记 STATUS flaky 跟踪）→ `verification/TASK-056/revision-full-suite-run{1..5}.log`。

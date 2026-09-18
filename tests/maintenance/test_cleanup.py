@@ -166,6 +166,26 @@ class TestSafetyBoundary:
         assert outcome.to_dict()["books/b/original/p1.png"]["status"] == "skipped"
         assert original.is_file(), "original must survive"
 
+    def test_dotdot_components_are_rejected_even_under_safe_prefix(
+        self, cleanup_workspace
+    ) -> None:
+        """First-review R-001 regression: `cache/../../books/...` starts
+        with the safe prefix but must be skipped — otherwise a hostile
+        inventory could delete root-internal business files."""
+        workspace = cleanup_workspace
+        original = workspace["managed"] / "books" / "b" / "original" / "p2.png"
+        original.parent.mkdir(parents=True, exist_ok=True)
+        original.write_bytes(b"ORIGINAL TWO")
+        sneaky = "cache/webtoon-tiles/../../books/b/original/p2.png"
+        inventory = StaticInventory(CleanupTarget(sneaky, 12))
+        service = CleanupService(inventory, workspace["storage"], workspace["manifest"])
+
+        outcome = service.run()
+
+        assert outcome.skipped == 1 and outcome.removed == 0
+        assert outcome.to_dict()[sneaky]["status"] == "skipped"
+        assert original.is_file(), "business file must survive"
+
     def test_user_source_outside_managed_root_is_never_addressed(
         self, tmp_path: Path
     ) -> None:
