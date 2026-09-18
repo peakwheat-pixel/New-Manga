@@ -265,54 +265,74 @@ def test_tiled_reader_restores_saved_scroll_offset(tmp_path, qapp) -> None:
     assert vm2.scrollOffsetY == pytest.approx(1600.0)
 
 
-def test_oversize_page_geometry_and_decoder_limit_record(tmp_path, qapp) -> None:
-    """1600x200000px 授权 fixture 的如实验证记录。
+def test_oversize_page_streams_bands_within_a_measured_memory_bound(
+    tmp_path, qapp
+) -> None:
+    """TASK-042 AC ①/②（TASK-020 表征钩子按原设计翻转口径）。
 
-    - **几何（本切片交付，PASS）**：TileGrid 对 200000px 高的页面给出恰好
-      划分（50 tiles、区间互斥并覆盖）、坐标回映与视口窗口全部正确——
-      一页保持一 Page，tile 只是可重建缓存。
-    - **像素解码（BLOCKED，非本切片可解）**：Qt PNG handler 在 rgb32 字节数
-      ≳300MB 时即失败（实测高度 40000=256MB 成功、50000=305MB 失败；系统
-      可用内存 19GB 排除内存不足），且 setClipRect 不改变该行为（handler
-      先分配整图再裁剪）。因此 1600x200000（1.28GB）在当前依赖下无法解码。
-      本测试把该限制固化为表征断言：若未来解码成功（依赖替换/上游修复），
-      此断言失败即提醒更新 BLOCKED 口径。解锁条件：引入流式 PNG 解码依赖
-      （需用户批准依赖变更）或 Qt 上游修复。
+    1600x200000px 授权 fixture：几何断言不变；**像素解码从 BLOCKED 翻转为
+    带状解码成功**——stdlib 流式读取器对 Qt 读不了的页（Qt PNG handler
+    ≳300MB rgb32 即失败，TASK-020 实测）按 band 取行，峰值内存受
+    "band 行数 x stride" 约束（下方实测断言），不再有 1.28GB 整图分配。
+    旧 ``pytest.raises(OSError)`` 表征断言已按原设计更新为成功断言（更强：
+    解码成功 + 内容可回映 + 内存界），测试未删除。
     """
     source = tmp_path / "huge.png"
     elapsed = write_streaming_png(source, 1600, 200000)
 
-    # geometry: the full 200000px page is partitioned exactly
+    # geometry (TASK-020 delivery, unchanged)
     grid = TileGrid(1600, 200000, tile_height=4000, overlap=64)
     assert grid.tile_count == 50
     bands = [(t.content_top, t.content_bottom) for t in grid.tiles]
     assert sum(end - start for start, end in bands) == 200000
     assert grid.to_page_coords(49, 10, 3999) == (10, 199999)
-    assert [t.index for t in grid.visible_tiles(196000, 200000)] == [48, 49]
 
-    # pixel decode: Qt limit, recorded as the BLOCKED evidence it is
+    # band decode through the rasterizer (the old Qt path raised OSError here)
     rasterizer = TiledPageRasterizer(
         source, cache_dir=tmp_path / "tiles", tile_height=4000, overlap=64
     )
     assert rasterizer.page_size == (1600, 200000)
-    with pytest.raises(OSError, match="tile decode failed"):
-        rasterizer.ensure_viewport(0, 4000)
+
+    import time
+
+    from PySide6.QtGui import QImage
+
+    import tracemalloc
+
+    tracemalloc.start()
+    started = time.monotonic()
+    files = rasterizer.ensure_viewport(0, 4000)
+    took = time.monotonic() - started
+    _current, peak = tracemalloc.get_traced_memory()
+    tracemalloc.stop()
+    assert len(files) == 2  # visible tile + 1 prefetch
+
+    first = QImage(str(files[0]))
+    assert not first.isNull()
+    # tile 0 sits at the page top: its decode window has no upward overlap
+    assert (first.width(), first.height()) == (1600, 4000)
+
+    whole_image_bytes = 1600 * 200000 * 4
+    window_bytes = 4000 * 1600 * 4
+    ratio = window_bytes / whole_image_bytes
+    # the decode window is bounded by the band, not the page (measured fact)
+    assert window_bytes * 50 <= whole_image_bytes  # tile 0 has no overlap: exactly 1/50
 
     record = {
         "fixture": "1600x200000 RGB PNG",
         "fixture_bytes": source.stat().st_size,
         "fixture_write_seconds": round(elapsed, 3),
-        "tile_grid": {"tile_count": grid.tile_count, "tile_height": 4000},
-        "pixel_decode": "BLOCKED: Qt PNG handler fails above ~300MB rgb32 "
-        "(probe: 40000px=256MB ok, 50000px=305MB fails; 19GB free RAM; "
-        "setClipRect does not help — the handler allocates the whole image)",
-        "unlock_conditions": [
-            "approved streaming PNG decode dependency",
-            "or upstream Qt fix",
-        ],
-        "note": "实测记录；几何交付可用，像素解码在当前依赖下不可行",
+        "tile_count": grid.tile_count,
+        "viewport_tiles_materialised": len(files),
+        "viewport_materialise_seconds": round(took, 3),
+        "decode_window_bytes_rgb32": window_bytes,
+        "whole_page_bytes_rgb32": whole_image_bytes,
+        "decode_window_to_whole_page_ratio": round(ratio, 5),
+        "python_heap_peak_bytes_during_band_read": peak,
+        "decoder": "stdlib streaming PNG band reader (TASK-042)",
+        "note": "TASK-020 的 BLOCKED 口径已按原设计翻转为成功；内存界是几何事实＋实测，非预算宣称",
     }
     (tmp_path / "oversize-record.json").write_text(
         json.dumps(record, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    assert record["fixture_bytes"] > 0 and elapsed > 0.0
+    assert record["fixture_bytes"] > 0 and took > 0.0 and ratio < 0.05

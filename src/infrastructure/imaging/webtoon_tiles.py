@@ -1,4 +1,4 @@
-"""Webtoon tile grid, cache and on-demand rasterizer (TASK-020).
+"""Webtoon tile grid, cache and on-demand rasterizer (TASK-020/042).
 
 A webtoon page is one Page entity and one source file — tiles are a
 *rebuildable pixel cache* in front of it, never a second source of truth
@@ -11,24 +11,69 @@ A webtoon page is one Page entity and one source file — tiles are a
 - :class:`TileCache` is a byte-budgeted LRU over rebuildable entries;
   ``clear()`` only drops pixels, business truth (progress, regions, render
   revisions) lives in the reading service / repository and is untouched.
-- :class:`TiledPageRasterizer` decodes one tile at a time through
-  ``QImageReader.setClipRect`` (peak memory ≈ one tile + overlap, not the
-  whole — possibly 1600x200000 — page), stores decoded tiles as PNG files in
-  a rebuildable cache directory and serves file paths (the reader ViewModel
-  hands them to QML as file URIs; no engine-side image provider is needed).
+- :class:`TiledPageRasterizer` decodes one tile at a time through the
+  stdlib streaming PNG band reader (:mod:`infrastructure.imaging.streaming_png`,
+  TASK-042 — the Qt PNG handler allocates the whole image and fails above
+  ~300 MB rgb32), stores decoded tiles as PNG files in a rebuildable cache
+  directory and serves file paths (the reader ViewModel hands them to QML as
+  file URIs; no engine-side image provider is needed).
 
-The Qt import is deferred into the methods that decode, so the grid/cache
-half of this module is unit-testable without PySide6.
+The band reader is pure stdlib and the PNG encoder is pure stdlib — this
+module has **no** Qt import at all, so the grid/cache/raster half is
+unit-testable without PySide6.
 """
 
 from __future__ import annotations
 
 import hashlib
 import os
+import struct
+import zlib
 from collections import OrderedDict
 from dataclasses import dataclass
+from itertools import accumulate
 from pathlib import Path
 from typing import Sequence
+
+from infrastructure.imaging.streaming_png import StreamingPngError, StreamingPngReader
+
+_COLOUR_TYPE_FOR_CHANNELS = {1: 0, 2: 4, 3: 2, 4: 6}
+
+
+def _encode_png(raw: bytes, width: int, height: int, channels: int) -> bytes:
+    """Encode reconstructed scanlines (filter 0) as a PNG — pure stdlib.
+
+    ``raw`` is ``height`` rows of ``width x channels`` bytes (channel order
+    matches the source PNG colour type). Filter 0 keeps encoding O(bytes) at
+    C speed; the streaming reader already did the reconstruction work.
+    """
+
+    def chunk(tag: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + tag
+            + data
+            + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+        )
+
+    colour_type = _COLOUR_TYPE_FOR_CHANNELS[channels]
+    stride = width * channels
+    scanlines = b"".join(
+        b"\x00" + raw[i * stride : (i + 1) * stride] for i in range(height)
+    )
+    return b"".join(
+        (
+            b"\x89PNG\r\n\x1a\n",
+            chunk(
+                b"IHDR",
+                struct.pack(
+                    ">IIBBBBB", width, height, 8, colour_type, 0, 0, 0
+                ),
+            ),
+            chunk(b"IDAT", zlib.compress(scanlines, 6)),
+            chunk(b"IEND", b""),
+        )
+    )
 
 
 @dataclass(frozen=True)
@@ -184,11 +229,12 @@ class TiledPageRasterizer:
     """On-demand tile decoder with a rebuildable file cache.
 
     Peak memory is one decode window (tile + upward overlap), never the
-    whole page: ``QImageReader.setClipRect`` drives the PNG decoder straight
-    to the requested band. Decoded tiles become PNG files under
-    ``cache_dir`` (keyed by source hash + tile index + geometry), so QML
-    consumes ordinary file URIs and the whole cache directory can be wiped
-    and rebuilt at any time.
+    whole page: the stdlib streaming PNG reader reconstructs exactly the
+    requested band. Decoded tiles become PNG files under ``cache_dir``
+    (keyed by source hash + tile index + geometry), so QML consumes ordinary
+    file URIs and the whole cache directory can be wiped and rebuilt at any
+    time. The streaming cursor only moves forward; a request behind it (after
+    a cache wipe) transparently rewinds and re-scans.
     """
 
     def __init__(
@@ -205,8 +251,13 @@ class TiledPageRasterizer:
         self.cache_dir = Path(cache_dir)
         self.prefetch = max(0, int(prefetch))
         self._cache = cache if cache is not None else TileCache(max_bytes=256 * 1024 * 1024)
-        width, height = self._probe_size()
-        self.grid = TileGrid(width, height, tile_height=tile_height, overlap=overlap)
+        self._reader = StreamingPngReader(self.source_path.read_bytes())
+        self.grid = TileGrid(
+            self._reader.width,
+            self._reader.height,
+            tile_height=tile_height,
+            overlap=overlap,
+        )
         self._file_keys: dict[int, Path] = {}
         self._in_flight: set[int] = set()
 
@@ -218,21 +269,12 @@ class TiledPageRasterizer:
     def page_size(self) -> tuple[int, int]:
         return (self.grid.page_width, self.grid.page_height)
 
-    def _probe_size(self) -> tuple[int, int]:
-        from PySide6.QtGui import QImageReader
-
-        reader = QImageReader(str(self.source_path))
-        size = reader.size()
-        if not size.isValid():
-            raise ValueError(f"page image is not readable: {self.source_path}")
-        return (size.width(), size.height())
-
     # ------------------------------------------------------------------
     # tile materialisation
     # ------------------------------------------------------------------
 
     def tile_file(self, index: int) -> Path:
-        """Materialise one tile (cache hit or clip decode) and return its PNG
+        """Materialise one tile (cache hit or band decode) and return its PNG
         path. Concurrent callers for the same index get the same file."""
         tile = self.grid.tile(index)
         cached = self._file_keys.get(index)
@@ -247,16 +289,11 @@ class TiledPageRasterizer:
             raise RuntimeError(f"tile {index} is already being decoded")
         self._in_flight.add(index)
         try:
-            image = self._decode(self.grid.decode_rect(tile))
+            png_bytes = self._decode(self.grid.decode_rect(tile))
             self.cache_dir.mkdir(parents=True, exist_ok=True)
-            if not image.save(str(target), "PNG"):
-                raise OSError(f"could not write tile cache file {target}")
+            target.write_bytes(png_bytes)
             self._file_keys[index] = target
-            self._cache.put(
-                key,
-                target,
-                cost=max(1, image.width() * image.height() * 4),
-            )
+            self._cache.put(key, target, cost=max(1, len(png_bytes)))
             return target
         finally:
             self._in_flight.discard(index)
@@ -272,19 +309,24 @@ class TiledPageRasterizer:
             )
         )
 
-    def _decode(self, rect: tuple[int, int, int, int]):
-        from PySide6.QtGui import QImageReader
+    def _decode(self, rect: tuple[int, int, int, int]) -> bytes:
+        """Rasterise the band ``(x, y, w, h)`` into PNG bytes.
 
-        x, y, width, height = rect
-        reader = QImageReader(str(self.source_path))
-        reader.setAutoTransform(False)
-        reader.setClipRect(_qt_rect(x, y, width, height))
-        image = reader.read()
-        if image.isNull():
-            raise OSError(
-                f"tile decode failed for {self.source_path}: {reader.errorString()}"
-            )
-        return image
+        ``x`` is always 0 (bands span the full width). The streaming cursor
+        only moves forward; a request behind it (possible after a cache wipe)
+        rewinds and re-scans once — correctness first, re-scan cost recorded
+        in the TASK-042 handoff."""
+        _x, y, _width, height = rect
+        try:
+            raw, width, band_height, channels = self._reader.read_band(y, height)
+        except StreamingPngError as error:
+            if error.reason != "REWIND_REQUIRED":
+                raise OSError(
+                    f"tile decode failed for {self.source_path}: {error}"
+                ) from error
+            self._reader.rewind()
+            raw, width, band_height, channels = self._reader.read_band(y, height)
+        return _encode_png(raw, width, band_height, channels)
 
     def _cache_key(self, index: int) -> str:
         stat = os.stat(self.source_path)
@@ -309,12 +351,6 @@ class TiledPageRasterizer:
                     entry.unlink()
                 except OSError:
                     pass
-
-
-def _qt_rect(x: int, y: int, width: int, height: int):
-    from PySide6.QtCore import QRect
-
-    return QRect(int(x), int(y), int(width), int(height))
 
 
 __all__ = [
