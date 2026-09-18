@@ -2,7 +2,7 @@
 id: TASK-041
 title: MOBI 导入路线（用户已批准 MOBI 解析依赖）
 kind: implementation
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
 owner: ZCode
@@ -37,12 +37,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（依赖与留证）**：`requirements.txt` **仅新增 `mobi==0.4.1`**（不得顺带升级/新增其他项）；给出**安装前后各一次全仓对照**与 venv 变更记录；确认该包**不发起网络请求**（可静态核对其导入面）。
-- [ ] **AC ②（解析→带图页面）**：对真实/合成 MOBI 样本提取内嵌页面图像，经 Managed Copy 落地为 Page，排序/来源/重复策略与既有文档导入一致（复用 TASK-023 的用例路径，不另造一套）。
-- [ ] **AC ③（fail-closed 矩阵）**：下列输入一律**可诊断失败**且**不留下部分导入的脏数据**（事务/清理语义与 PDF 路径一致）：依赖缺失（readiness = `missing_dependency`）、非 MOBI 载荷、**加密/DRM 保护**、截断/畸形容器、文本型无页面图像、以及图像解码失败的页。
-- [ ] **AC ④（不回归 PDF）**：TASK-023 的 PDF 路径与全部既有用例**逐项不变**（`tests/import_formats/**`、`tests/library/**` 通过数不减少）；MOBI 的新用例**不得**改动 PDF 断言。
-- [ ] **AC ⑤（可替换性）**：解析器位于**端口/适配器**之后（`application/importing/documents/ports.py` 已有先例），`requirements.txt` 之外**不得**让 `mobi` 类型泄漏进 application 层；Handoff 说明"若上游停更如何替换"。
-- [ ] **AC ⑥（判别力 + 回归）**：新增用例对**修前代码**失败（放 base `904fca1` 的 `src` 上跑一次并留证）；全仓串跑 **≥5 次**逐次记录（**同一 shell + 同一 venv**，退出码 + passed/skipped 分列）。
+- [x] **AC ①（依赖与留证）**：`requirements.txt` **仅新增 `mobi==0.4.1`**（不得顺带升级/新增其他项）；给出**安装前后各一次全仓对照**与 venv 变更记录；确认该包**不发起网络请求**（可静态核对其导入面）。
+- [x] **AC ②（解析→带图页面）**：对真实/合成 MOBI 样本提取内嵌页面图像，经 Managed Copy 落地为 Page，排序/来源/重复策略与既有文档导入一致（复用 TASK-023 的用例路径，不另造一套）。
+- [x] **AC ③（fail-closed 矩阵）**：下列输入一律**可诊断失败**且**不留下部分导入的脏数据**（事务/清理语义与 PDF 路径一致）：依赖缺失（readiness = `missing_dependency`）、非 MOBI 载荷、**加密/DRM 保护**、截断/畸形容器、文本型无页面图像、以及图像解码失败的页。
+- [x] **AC ④（不回归 PDF）**：TASK-023 的 PDF 路径与全部既有用例**逐项不变**（`tests/import_formats/**`、`tests/library/**` 通过数不减少）；MOBI 的新用例**不得**改动 PDF 断言。
+- [x] **AC ⑤（可替换性）**：解析器位于**端口/适配器**之后（`application/importing/documents/ports.py` 已有先例），`requirements.txt` 之外**不得**让 `mobi` 类型泄漏进 application 层；Handoff 说明"若上游停更如何替换"。
+- [x] **AC ⑥（判别力 + 回归）**：新增用例对**修前代码**失败（放 base `904fca1` 的 `src` 上跑一次并留证）；全仓串跑 **≥5 次**逐次记录（**同一 shell + 同一 venv**，退出码 + passed/skipped 分列）。
 - [ ] **AC ⑦** 交付 Handoff、取证，经**非作者** Review（Review 模板、四轴、passed/skipped 分列）与 Codex 集成后才能 done；并在 STATUS 记录 TASK-023 遗留项①关闭。
 
 ## 允许修改范围
@@ -77,5 +77,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 依用户批准的 MOBI 依赖创建为 `ready`；`base=904fca1`。**实施尚未开始。**
+- Handoff：[TASK-041-3230f45](../handoffs/TASK-041-3230f45.md)。Review：尚无（待 Codex，非作者）。证据：[verification/TASK-041/](../../verification/TASK-041/)。
+- **最近状态（当前，唯一）**：2026-09-18 ZCode 实现交付 `in_review`。开工先 `git merge master`（实际实现基线 `6ea3dd3`，含 TASK-043 的 `Format_BGR888` 修复；任务书 `base=904fca1` 已被取代，判别力对两锚点均留证）；实现 head=`3230f45`。**范围执行口径**：只做 picture-MOBI 内嵌页面图像提取（`MobiDocumentRaster` lazy import `mobi`，application 层零泄漏）；text-only/DRM/截断/坏页/依赖缺失全部 typed fail-closed 且无脏数据（9 例矩阵）；PDF 断言零改动；`requirements.txt` 仅 +`mobi==0.4.1`（装前/装后全仓 819 passed/0 skipped 一致，@`6ea3dd3` 同 venv 同代码状态对照；3 个纯 Python 传递依赖如实声明）；**MOBI 解码走 `QImage.loadFromData`（Qt 自解码 JPEG/PNG），不产生裸 BGR 缓冲，故无第二份颜色映射——`Format_BGR888` 仍是 pdfium 路径的唯一权威实现**（Handoff「Format_BGR888 复用口径」节）。证据（同口径：PowerShell + `TASK-012-py312` + `PYTHONDONTWRITEBYTECODE=1` + `-p no:cacheprovider`）：定向 `tests/import_formats tests/library` **65 passed/0 skipped** exit 0；判别力修前两锚点 **ImportError exit=2**、修后 9 passed；全仓 ×5 **每次 828 passed/0 skipped** exit 0（=基线 819+9 新例；唯一 warning 为 `mobi` 包自身 `imghdr` 弃用告警，已登记为上游停更实证）。AC ⑦ 待 Codex Review 与集成；STATUS 登记 TASK-023 遗留①随集成关闭。
