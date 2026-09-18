@@ -2,7 +2,7 @@
 id: TASK-050
 title: 生产 Pipeline 的设置与 provider 绑定注入（§11 P-3 非 UI 部分）
 kind: implementation
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-009, TASK-019, TASK-048, TASK-049]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-050-settings-bindings
 worktree: G:/CODEX/New Manga.worktrees/TASK-050-zcode
-integration_commit: null
+integration_commit: 21b7301
 ---
 
 # TASK-050：设置与 provider 绑定注入（§11 P-3 非 UI，P1）
@@ -31,7 +31,7 @@ integration_commit: null
 - [x] **AC ③（端到端前进）**：配置一个**确定性/本地**（测试内自建，不引入依赖、不配真实端点）provider 后，命令能越过 `PROVIDER_NOT_CONFIGURED` 前进到更后段；给出修前/修后对照与"真实端点仍 NOT_RUN"的声明。
 - [x] **AC ④（凭据边界）**：不得读写真实凭据/密钥文件；凭据路径遵循既有 D03/settings 边界（若需要凭据注入，必须是**接口**而非值）。
 - [x] **AC ⑤（判别力 + 不回归）**：新用例对修前失败；`tests/providers/**`、`tests/core/**`、`tests/pipeline/**` 既有断言逐条不变；全仓 passed 不减少；≥5 次逐次记录（不设 `QT_QPA_PLATFORM`）。
-- [x] **AC ⑥** Handoff + `verification/TASK-050/**` + 独立子对话 Review + 集成 + STATUS 台账行。（Handoff/证据/Review 于 `0525f59` 侧完成；集成与台账行在本切片集成提交中落地）
+- [x] **AC ⑥** Handoff + `verification/TASK-050/**` + 独立子对话 Review + 集成 + STATUS 台账行。（integration=`21b7301`，集成后 master 全仓 892 passed / 0 skipped exit 0；STATUS 台账行已落。T1 后由 Codex + DSH + Qoder post-hoc 复审（可推翻））
 
 ## 允许修改范围
 
