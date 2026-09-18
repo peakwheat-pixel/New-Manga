@@ -253,11 +253,16 @@ Rectangle {
 
                 Column {
                     id: tilesHost
+                    objectName: "readerTilesHost"
                     visible: active && model.tilesActive
                     width: parent.width
 
                     Repeater {
-                        model: visible ? model.tiles : []
+                        // F-5 (TASK-045): qualify the ViewModel — an
+                        // unqualified `model` inside a Repeater resolves to the
+                        // Repeater's *own* model property, so `model.tiles` was
+                        // undefined and no tile delegate was ever instantiated.
+                        model: visible && rv.model ? rv.model.tiles : []
                         delegate: Image {
                             required property var modelData
                             source: modelData.url

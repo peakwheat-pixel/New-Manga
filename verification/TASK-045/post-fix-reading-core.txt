@@ -1,10 +1,3 @@
 ........................................................................ [ 55%]
-.........................................................                [100%]
-============================= slowest 6 durations =============================
-4.73s call     tests/reading_export/test_streaming_png.py::test_band_read_peak_composition[single-idat]
-3.80s call     tests/reading_export/test_webtoon_tiles.py::test_oversize_page_streams_bands_within_a_measured_memory_bound
-3.53s call     tests/reading_export/test_streaming_png.py::test_qt_encoded_oversized_page_bands_match_qt_pixels
-1.10s call     tests/core/test_bootstrap.py::test_smoke_assembles_real_stack_in_data_root
-1.09s call     tests/core/test_bootstrap.py::test_smoke_startup_loads_qml_and_exits_zero
-0.93s call     tests/core/test_bootstrap.py::test_missing_qml_returns_nonzero_with_path
-129 passed in 20.22s
+..........................................................               [100%]
+130 passed in 22.48s

@@ -27,7 +27,7 @@ import time as _time  # noqa: E402
 from PySide6.QtCore import QObject, QUrl, Qt  # noqa: E402
 from PySide6.QtGui import QGuiApplication  # noqa: E402
 from PySide6.QtQml import QQmlComponent, QQmlEngine  # noqa: E402
-from PySide6.QtQuick import QQuickWindow  # noqa: F401,E402  (registers item types)
+from PySide6.QtQuick import QQuickItem, QQuickWindow  # noqa: F401,E402  (registers item types)
 from PySide6.QtTest import QTest  # noqa: E402
 
 from application.export import ExportPage  # noqa: E402
@@ -426,6 +426,93 @@ def test_webtoon_mode_gates_the_toolbar_page_buttons(engine, reader_stack_webtoo
         QGuiApplication.processEvents()
         assert vm.canGoNext
         assert find_by_name(root, "readerNextPage").property("enabled") is True
+    finally:
+        window.close()
+
+
+@pytest.fixture()
+def reader_stack_tiled(tmp_path):
+    """Two real webtoon pages served as tile bands (tile factory injected)."""
+    from infrastructure.imaging.webtoon_tiles import TiledPageRasterizer
+
+    pages = real_png_pages(tmp_path, count=2, page_height=1000)
+    reading = make_reading_service(tmp_path)
+    export_service = make_service(tmp_path)
+
+    def factory(path: str) -> TiledPageRasterizer:
+        return TiledPageRasterizer(
+            path, cache_dir=tmp_path / "tile-cache", tile_height=600, overlap=32
+        )
+
+    vm = ReaderViewModel(
+        reading, Catalog(pages), export_service=export_service, tile_factory=factory
+    )
+    return vm, reading, pages
+
+
+@requires_pyside6
+def test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles(
+    engine, reader_stack_tiled
+):
+    """F-5 (TASK-045) at the QML level: the tile delegates must not keep
+    pointing at the previous page's files after a page turn.
+
+    The ViewModel-level test pins the rows; this one pins what QML actually
+    renders (delegate ``source`` values), which is where "显示旧图" was
+    visible.
+    """
+    vm, reading, pages = reader_stack_tiled
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        vm.openChapter("b", "c", "条漫", "webtoon", "vertical")
+        swapped, _trace = pump_traced(
+            window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+        )
+        assert swapped
+        assert vm.tilesActive is True
+        QGuiApplication.processEvents()
+
+        host = find_by_name(root, "readerTilesHost")
+        assert host is not None and bool(host.property("visible"))
+
+        def served_sources() -> list:
+            # QML delegate items get a *visual* parent, not a QObject parent,
+            # so childItems() — not findChildren() — is what sees them.
+            sources = []
+            for item in host.childItems():
+                source = item.property("source")
+                if source is None:
+                    continue
+                text = source.toString() if hasattr(source, "toString") else str(source)
+                if text:
+                    sources.append(text)
+            return sources
+
+        assert served_sources() == []
+
+        vm.requestTiles(0, 600)
+        served, trace = pump_traced(window, 5.0, lambda: bool(served_sources()))
+        assert served, f"the first page's tiles must be served — {trace}"
+        first_page_sources = served_sources()
+
+        vm.nextPage()
+        dropped, drop_trace = pump_traced(
+            window, 5.0, lambda: served_sources() == []
+        )
+
+        assert vm.pageNumber == 2
+        assert dropped, (
+            "a page turn must drop the previous page's tile sources — "
+            f"{drop_trace} sources={served_sources()}"
+        )
+
+        vm.requestTiles(0, 600)
+        again, again_trace = pump_traced(window, 5.0, lambda: bool(served_sources()))
+        assert again, f"the new page's tiles must be served — {again_trace}"
+        second_page_sources = served_sources()
+        assert set(second_page_sources).isdisjoint(first_page_sources)
     finally:
         window.close()
 

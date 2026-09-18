@@ -1,180 +1,71 @@
-..........FFFF.F...........FF.................F.....F...                 [100%]
+.......................................FF.............................F. [ 55%]
+...........................FFFF.FF.......................F               [100%]
 ================================== FAILURES ===================================
-__________ test_materialised_tiles_carry_exactly_their_declared_band __________
+______________ test_webtoon_mode_gates_the_toolbar_page_buttons _______________
 
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2153/test_materialised_tiles_carry_0')
-qapp = <PySide6.QtGui.QGuiApplication(0x197de908b30) at 0x00000197DF398D40>
+engine = <PySide6.QtQml.QQmlEngine(0x197c565a0c0) at 0x000001976FBBCF80>
+reader_stack_webtoon = (<ui.viewmodels.reader.viewmodel.ReaderViewModel(0x197c530d3c0) at 0x000001976FBBE040>, <application.reading.service.R...0\\page_2.png', translated_path=None, translated_revision_id=None, current_translated_revision_id=None, text='�� 2 ҳ')])
 
-    def test_materialised_tiles_carry_exactly_their_declared_band(
-        tmp_path, qapp
-    ) -> None:
-        """F-4 (TASK-045): the overlap is *decode context only*.
-    
-        The file written for a tile must be exactly ``[content_top,
-        content_bottom)`` tall and hold exactly those page rows �� otherwise the
-        QML delegate scales a taller image into the declared box (letterbox) and
-        every non-first tile repeats the previous band's tail.
-        """
-        width, height = 400, 3000
-        source = tmp_path / "pattern.png"
-        write_row_pattern_png(source, width, height)
-        rasterizer = TiledPageRasterizer(
-            source, cache_dir=tmp_path / "tiles", tile_height=800, overlap=64
-        )
-        assert rasterizer.page_size == (width, height)
-    
-        stitched: list[bytes] = []
-        for tile in rasterizer.grid.tiles:
-            rows, tile_width, tile_height = qt_rows(rasterizer.tile_file(tile.index))
-            expected = [row_colour(y) * width for y in range(tile.content_top, tile.content_bottom)]
-            assert tile_width == width
->           assert tile_height == tile.content_height, (
-                f"tile {tile.index}: file height {tile_height} != declared "
-                f"content_height {tile.content_height}"
+    @requires_pyside6
+    def test_webtoon_mode_gates_the_toolbar_page_buttons(engine, reader_stack_webtoon):
+        """F-5 (TASK-045): the toolbar's page buttons were never gated on the
+        vertical viewer although the keyboard was, so a webtoon chapter could page
+        away from the page on screen. The gate must be mode-specific: paged
+        chapters keep both buttons."""
+        vm, reading, pages = reader_stack_webtoon
+        engine.rootContext().setContextProperty("readerViewModel", vm)
+        window = load_host(engine, READER_HOST, SRC_QML / "reader")
+        try:
+            root = find_by_name(window, "readerView")
+            vm.openChapter("b", "c", "����", "webtoon", "vertical")
+            swapped, _trace = pump_traced(
+                window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
             )
-E           AssertionError: tile 1: file height 864 != declared content_height 800
-E           assert 864 == 800
-E            +  where 800 = TileSpec(index=1, content_top=800, content_bottom=1600).content_height
-
-tests\reading_export\test_webtoon_tiles.py:424: AssertionError
-_____________ test_next_page_rebuilds_the_tiles_for_the_new_page ______________
-
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2153/test_next_page_rebuilds_the_ti0')
-qapp = <PySide6.QtGui.QGuiApplication(0x197de908b30) at 0x00000197DF398D40>
-
-    def test_next_page_rebuilds_the_tiles_for_the_new_page(tmp_path, qapp) -> None:
-        """F-5 (TASK-045): page turns must rebuild the tile rows.
+            assert swapped
+            # the fixture's chapter really can page: the gate is not a blanket off
+            assert vm.canGoNext and vm.canGoPrevious is False
     
-        Pre-fix only ``openChapter``/``setMode`` rebuilt them, so a page turn kept
-        the previous page's pixels (and urls) while progress advanced.
+>           assert find_by_name(root, "readerNextPage").property("enabled") is False
+E           assert True is False
+E            +  where True = <built-in method property of PySide6.QtQuick.QQuickItem object at 0x000001976FC43C80>('enabled')
+E            +    where <built-in method property of PySide6.QtQuick.QQuickItem object at 0x000001976FC43C80> = <PySide6.QtQuick.QQuickItem(0x197c5720c70, name="readerNextPage", parent=0x1977afc0070, geometry=477,0 54x24) at 0x000001976FC43C80>.property
+E            +      where <PySide6.QtQuick.QQuickItem(0x197c5720c70, name="readerNextPage", parent=0x1977afc0070, geometry=477,0 54x24) at 0x000001976FC43C80> = find_by_name(<PySide6.QtQuick.QQuickItem(0x197c5559ec0, id="activeFocusItem", name="readerView", parent=0x197c56bdb50, geometry=0,0 1280x800) at 0x000001976FBBE840>, 'readerNextPage')
+
+tests\reading_export\test_qml_contract.py:420: AssertionError
+_________ test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles _________
+
+engine = <PySide6.QtQml.QQmlEngine(0x197c5faa020) at 0x000001976FCD27C0>
+reader_stack_tiled = (<ui.viewmodels.reader.viewmodel.ReaderViewModel(0x197c5ec6a00) at 0x000001976FDEB340>, <application.reading.service.R...0\\page_1.png', translated_path=None, translated_revision_id=None, current_translated_revision_id=None, text='�� 1 ҳ')])
+
+    @requires_pyside6
+    def test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles(
+        engine, reader_stack_tiled
+    ):
+        """F-5 (TASK-045) at the QML level: the tile delegates must not keep
+        pointing at the previous page's files after a page turn.
+    
+        The ViewModel-level test pins the rows; this one pins what QML actually
+        renders (delegate ``source`` values), which is where "��ʾ��ͼ" was
+        visible.
         """
-        vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
-        assert vm.tilesActive is True
-        assert vm.pagePixelHeight == 3000
-        vm.requestTiles(0, 800)
-        first_page_urls = [row["url"] for row in vm.tiles if row["url"]]
-        assert first_page_urls, "the first page must materialise tiles"
+        vm, reading, pages = reader_stack_tiled
+        engine.rootContext().setContextProperty("readerViewModel", vm)
+        window = load_host(engine, READER_HOST, SRC_QML / "reader")
+        try:
+            root = find_by_name(window, "readerView")
+            vm.openChapter("b", "c", "����", "webtoon", "vertical")
+            swapped, _trace = pump_traced(
+                window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+            )
+            assert swapped
+            assert vm.tilesActive is True
+            QGuiApplication.processEvents()
     
-        vm.nextPage()
-    
-        assert vm.pageNumber == 2
-        # the rows now describe the *new* page and hold no stale urls
->       assert vm.pagePixelHeight == 1200
-E       assert 3000 == 1200
-E        +  where 3000 = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x197e0276a50) at 0x00000197DF6316C0>.pagePixelHeight
+            host = find_by_name(root, "readerTilesHost")
+>           assert host is not None and bool(host.property("visible"))
+E           assert (None is not None)
 
-tests\reading_export\test_webtoon_tiles.py:508: AssertionError
-__________________ test_jump_to_page_rebuilds_the_tiles_too ___________________
-
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2153/test_jump_to_page_rebuilds_the0')
-qapp = <PySide6.QtGui.QGuiApplication(0x197de908b30) at 0x00000197DF398D40>
-
-    def test_jump_to_page_rebuilds_the_tiles_too(tmp_path, qapp) -> None:
-        """F-5: ``jumpToPage`` is a page-changing slot as well."""
-        vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
-        vm.jumpToPage(1)
-        assert vm.pageNumber == 2
->       assert vm.pagePixelHeight == 1200
-E       assert 3000 == 1200
-E        +  where 3000 = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x197e0276aa0) at 0x00000197DFDF8A00>.pagePixelHeight
-
-tests\reading_export\test_webtoon_tiles.py:530: AssertionError
-__________ test_request_tiles_converts_display_pixels_to_page_pixels __________
-
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2153/test_request_tiles_converts_di0')
-qapp = <PySide6.QtGui.QGuiApplication(0x197de908b30) at 0x00000197DF398D40>
-
-    def test_request_tiles_converts_display_pixels_to_page_pixels(tmp_path, qapp) -> None:
-        """F-11 (TASK-045): QML passes *display* pixels (``Flickable.contentY``);
-        the grid speaks page pixels, so the caller must pass the scale."""
-        from application.reading import ReaderPage
-        from application.reading.service import ReadingService
-        from application.reading import JsonProgressDocumentStore
-        from ui.viewmodels.reader.viewmodel import ReaderViewModel
-    
-        recording = _RecordingRasterizer((1600, 6000))
-        page = ReaderPage(
-            page_id="p0", filename="long.png", original_path=str(tmp_path / "long.png"), text=""
-        )
-    
-        class Catalog:
-            def list_pages(self, chapter_id):
-                return [page]
-    
-        reading = ReadingService(JsonProgressDocumentStore(tmp_path / "progress.json"))
-        vm = ReaderViewModel(reading, Catalog(), tile_factory=lambda path: recording)
-        vm.openChapter("b", "c", "����", "webtoon", "vertical")
-        assert vm.tilesActive is True
-    
-        # the page is 1600px wide; the host shows it at 800px �� scale 0.5
->       vm.requestTiles(0, 500, 0.5)
-E       TypeError: ReaderViewModel.requestTiles() takes 3 positional arguments but 4 were given
-
-tests\reading_export\test_webtoon_tiles.py:574: TypeError
-_____________ test_damaged_payload_degrades_through_the_viewmodel _____________
-
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2153/test_damaged_payload_degrades_0')
-qapp = <PySide6.QtGui.QGuiApplication(0x197de908b30) at 0x00000197DF398D40>
-
-    def test_damaged_payload_degrades_through_the_viewmodel(tmp_path, qapp) -> None:
-        """AC �� end-to-end (TASK-042 R-01): a damaged payload must reach the
-        ViewModel's documented fallback instead of escaping ``zlib.error`` while
-        QML scrolls (``zlib.error`` is not an ``OSError``/``ValueError``)."""
-        source = tmp_path / "damaged.png"
-        write_streaming_png(source, 400, 3000)
-        _corrupt_png_payload(source)
-    
-        vm, _reading = _make_reader_stack(tmp_path, source, tile_height=800)
-        assert vm.tilesActive is True
-    
->       vm.requestTiles(0, 900)  # pre-fix: zlib.error escapes this call
-        ^^^^^^^^^^^^^^^^^^^^^^^
-
-tests\reading_export\test_webtoon_tiles.py:647: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-src\ui\viewmodels\reader\viewmodel.py:350: in requestTiles
-    self._rasterizer.ensure_viewport(top, bottom)
-src\infrastructure\imaging\webtoon_tiles.py:305: in ensure_viewport
-    return tuple(
-src\infrastructure\imaging\webtoon_tiles.py:306: in <genexpr>
-    self.tile_file(tile.index)
-src\infrastructure\imaging\webtoon_tiles.py:292: in tile_file
-    png_bytes = self._decode(self.grid.decode_rect(tile))
-                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-src\infrastructure\imaging\webtoon_tiles.py:321: in _decode
-    raw, width, band_height, channels = self._reader.read_band(y, height)
-                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-src\infrastructure\imaging\streaming_png.py:187: in read_band
-    row = self._advance_one_row()
-          ^^^^^^^^^^^^^^^^^^^^^^^
-src\infrastructure\imaging\streaming_png.py:198: in _advance_one_row
-    if not self._pump(self._row_bytes - len(self._pending)):
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
-self = <infrastructure.imaging.streaming_png.StreamingPngReader object at 0x00000197DF4F9BB0>
-wanted = 1201
-
-    def _pump(self, wanted: int) -> bool:
-        """Feed the zlib stream until ``wanted`` decompressed bytes are
-        pending, the stream ends, or the IDAT chunks run out. Returns False
-        when no progress is possible any more."""
-        produced = 0
-        while len(self._pending) < wanted and not self._zlib_done:
-            if self._unconsumed:
-                chunk, self._unconsumed = self._unconsumed, b""
-            elif self._idat_index < len(self._idat_spans):
-                start, length = self._idat_spans[self._idat_index]
-                self._idat_index += 1
-                chunk = self._data[start : start + length]
-            else:
-                self._zlib_done = True
-                break
->           out = self._decompressor.decompress(chunk, wanted - len(self._pending))
-                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-E           zlib.error: Error -3 while decompressing data: incorrect header check
-
-src\infrastructure\imaging\streaming_png.py:228: error
+tests\reading_export\test_qml_contract.py:478: AssertionError
 ____________________ test_corrupt_idat_payload_fails_typed ____________________
 
     def test_corrupt_idat_payload_fails_typed() -> None:
@@ -211,7 +102,7 @@ src\infrastructure\imaging\streaming_png.py:198: in _advance_one_row
            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
-self = <infrastructure.imaging.streaming_png.StreamingPngReader object at 0x00000197DF4F94C0>
+self = <infrastructure.imaging.streaming_png.StreamingPngReader object at 0x000001976FFF7170>
 wanted = 49
 
     def _pump(self, wanted: int) -> bool:
@@ -234,30 +125,218 @@ wanted = 49
 E           zlib.error: Error -3 while decompressing data: incorrect header check
 
 src\infrastructure\imaging\streaming_png.py:228: error
-_________ test_band_read_peak_is_resident_source_plus_a_bounded_band __________
+__________ test_materialised_tiles_carry_exactly_their_declared_band __________
 
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2153/test_band_read_peak_is_residen0')
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_materialised_tiles_carry_0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1976edf4320) at 0x000001976F64EF80>
 
-    def test_band_read_peak_is_resident_source_plus_a_bounded_band(tmp_path) -> None:
-        """AC ��: peak �� resident compressed source + O(band), *measured*.
+    def test_materialised_tiles_carry_exactly_their_declared_band(
+        tmp_path, qapp
+    ) -> None:
+        """F-4 (TASK-045): the overlap is *decode context only*.
     
-        The compressed source is read whole by the rasterizer (``read_bytes()``),
-        so "peak = one scanline pair plus the band" was never true; the honest
-        composition is asserted here instead of being claimed in prose.
+        The file written for a tile must be exactly ``[content_top,
+        content_bottom)`` tall and hold exactly those page rows �� otherwise the
+        QML delegate scales a taller image into the declared box (letterbox) and
+        every non-first tile repeats the previous band's tail.
         """
-        import tracemalloc
-    
-        from infrastructure.imaging.webtoon_tiles import TiledPageRasterizer
-    
-        width, height = 400, 20000
+        width, height = 400, 3000
         source = tmp_path / "pattern.png"
-        _write_row_pattern_png(source, width, height)
-        source_bytes = source.stat().st_size
->       assert source_bytes > 1_000_000, "fixture must be large enough to measure"
-E       AssertionError: fixture must be large enough to measure
-E       assert 125027 > 1000000
+        write_row_pattern_png(source, width, height)
+        rasterizer = TiledPageRasterizer(
+            source, cache_dir=tmp_path / "tiles", tile_height=800, overlap=64
+        )
+        assert rasterizer.page_size == (width, height)
+    
+        stitched: list[bytes] = []
+        for tile in rasterizer.grid.tiles:
+            rows, tile_width, tile_height = qt_rows(rasterizer.tile_file(tile.index))
+            expected = [row_colour(y) * width for y in range(tile.content_top, tile.content_bottom)]
+            assert tile_width == width
+>           assert tile_height == tile.content_height, (
+                f"tile {tile.index}: file height {tile_height} != declared "
+                f"content_height {tile.content_height}"
+            )
+E           AssertionError: tile 1: file height 864 != declared content_height 800
+E           assert 864 == 800
+E            +  where 800 = TileSpec(index=1, content_top=800, content_bottom=1600).content_height
 
-tests\reading_export\test_streaming_png.py:353: AssertionError
+tests\reading_export\test_webtoon_tiles.py:431: AssertionError
+_____________ test_next_page_rebuilds_the_tiles_for_the_new_page ______________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_next_page_rebuilds_the_ti0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1976edf4320) at 0x000001976F64EF80>
+
+    def test_next_page_rebuilds_the_tiles_for_the_new_page(tmp_path, qapp) -> None:
+        """F-5 (TASK-045): page turns must rebuild the tile rows.
+    
+        Pre-fix only ``openChapter``/``setMode`` rebuilt them, so a page turn kept
+        the previous page's pixels (and urls) while progress advanced.
+        """
+        vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+        assert vm.tilesActive is True
+        assert vm.pagePixelHeight == 3000
+        vm.requestTiles(0, 800)
+        first_page_urls = [row["url"] for row in vm.tiles if row["url"]]
+        assert first_page_urls, "the first page must materialise tiles"
+    
+        vm.nextPage()
+    
+        assert vm.pageNumber == 2
+        # the rows now describe the *new* page and hold no stale urls
+>       assert vm.pagePixelHeight == 1200
+E       assert 3000 == 1200
+E        +  where 3000 = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x19767470a40) at 0x000001976FDE8380>.pagePixelHeight
+
+tests\reading_export\test_webtoon_tiles.py:515: AssertionError
+__________________ test_jump_to_page_rebuilds_the_tiles_too ___________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_jump_to_page_rebuilds_the0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1976edf4320) at 0x000001976F64EF80>
+
+    def test_jump_to_page_rebuilds_the_tiles_too(tmp_path, qapp) -> None:
+        """F-5: ``jumpToPage`` is a page-changing slot as well."""
+        vm, reading = _make_multipage_webtoon_stack(tmp_path, [(400, 3000), (400, 1200)])
+        vm.jumpToPage(1)
+        assert vm.pageNumber == 2
+>       assert vm.pagePixelHeight == 1200
+E       assert 3000 == 1200
+E        +  where 3000 = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x197674707c0) at 0x00000197C8E7BC80>.pagePixelHeight
+
+tests\reading_export\test_webtoon_tiles.py:537: AssertionError
+__________ test_request_tiles_converts_display_pixels_to_page_pixels __________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_request_tiles_converts_di0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1976edf4320) at 0x000001976F64EF80>
+
+    def test_request_tiles_converts_display_pixels_to_page_pixels(tmp_path, qapp) -> None:
+        """F-11 (TASK-045): QML passes *display* pixels (``Flickable.contentY``);
+        the grid speaks page pixels, so the caller must pass the scale."""
+        from application.reading import ReaderPage
+        from application.reading.service import ReadingService
+        from application.reading import JsonProgressDocumentStore
+        from ui.viewmodels.reader.viewmodel import ReaderViewModel
+    
+        recording = _RecordingRasterizer((1600, 6000))
+        page = ReaderPage(
+            page_id="p0", filename="long.png", original_path=str(tmp_path / "long.png"), text=""
+        )
+    
+        class Catalog:
+            def list_pages(self, chapter_id):
+                return [page]
+    
+        reading = ReadingService(JsonProgressDocumentStore(tmp_path / "progress.json"))
+        vm = ReaderViewModel(reading, Catalog(), tile_factory=lambda path: recording)
+        vm.openChapter("b", "c", "����", "webtoon", "vertical")
+        assert vm.tilesActive is True
+    
+        # the page is 1600px wide; the host shows it at 800px �� scale 0.5
+>       vm.requestTiles(0, 500, 0.5)
+E       TypeError: ReaderViewModel.requestTiles() takes 3 positional arguments but 4 were given
+
+tests\reading_export\test_webtoon_tiles.py:581: TypeError
+_____________ test_same_size_rewrite_does_not_reuse_a_stale_tile ______________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_same_size_rewrite_does_no0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1976edf4320) at 0x000001976F64EF80>
+
+    def test_same_size_rewrite_does_not_reuse_a_stale_tile(tmp_path, qapp) -> None:
+        """F-14 (TASK-045): the cache key must be content-addressed.
+    
+        The old key was path + size + geometry, so rewriting the source *in place*
+        with the same byte count kept hitting the previous page's tile.
+        """
+        width, height = 40, 200
+        source = tmp_path / "page.png"
+        cache_dir = tmp_path / "tiles"
+        write_row_pattern_png(source, width, height, level=0, seed=0)
+        first_size = source.stat().st_size
+    
+        first_raster = TiledPageRasterizer(
+            source, cache_dir=cache_dir, tile_height=100, overlap=8
+        )
+        first_tile = first_raster.tile_file(0)
+        first_rows, _width, _height = qt_rows(first_tile)
+    
+        # same dimensions, different pixels, identical byte count (level 0)
+        write_row_pattern_png(source, width, height, level=0, seed=37)
+        assert source.stat().st_size == first_size, "the rewrite must keep the size"
+    
+        second_raster = TiledPageRasterizer(
+            source, cache_dir=cache_dir, tile_height=100, overlap=8
+        )
+        second_tile = second_raster.tile_file(0)
+    
+>       assert second_tile != first_tile, "stale tile reused after an in-place rewrite"
+E       AssertionError: stale tile reused after an in-place rewrite
+E       assert WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_same_size_rewrite_does_no0/tiles/tile-4a9ba4b62b073f97fc585bda-00000.png') != WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_same_size_rewrite_does_no0/tiles/tile-4a9ba4b62b073f97fc585bda-00000.png')
+
+tests\reading_export\test_webtoon_tiles.py:681: AssertionError
+_____________ test_damaged_payload_degrades_through_the_viewmodel _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2192/test_damaged_payload_degrades_0')
+qapp = <PySide6.QtGui.QGuiApplication(0x1976edf4320) at 0x000001976F64EF80>
+
+    def test_damaged_payload_degrades_through_the_viewmodel(tmp_path, qapp) -> None:
+        """AC �� end-to-end (TASK-042 R-01): a damaged payload must reach the
+        ViewModel's documented fallback instead of escaping ``zlib.error`` while
+        QML scrolls (``zlib.error`` is not an ``OSError``/``ValueError``)."""
+        source = tmp_path / "damaged.png"
+        write_streaming_png(source, 400, 3000)
+        _corrupt_png_payload(source)
+    
+        vm, _reading = _make_reader_stack(tmp_path, source, tile_height=800)
+        assert vm.tilesActive is True
+    
+>       vm.requestTiles(0, 900)  # pre-fix: zlib.error escapes this call
+        ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\reading_export\test_webtoon_tiles.py:710: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ui\viewmodels\reader\viewmodel.py:350: in requestTiles
+    self._rasterizer.ensure_viewport(top, bottom)
+src\infrastructure\imaging\webtoon_tiles.py:305: in ensure_viewport
+    return tuple(
+src\infrastructure\imaging\webtoon_tiles.py:306: in <genexpr>
+    self.tile_file(tile.index)
+src\infrastructure\imaging\webtoon_tiles.py:292: in tile_file
+    png_bytes = self._decode(self.grid.decode_rect(tile))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\imaging\webtoon_tiles.py:321: in _decode
+    raw, width, band_height, channels = self._reader.read_band(y, height)
+                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\imaging\streaming_png.py:187: in read_band
+    row = self._advance_one_row()
+          ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\imaging\streaming_png.py:198: in _advance_one_row
+    if not self._pump(self._row_bytes - len(self._pending)):
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.imaging.streaming_png.StreamingPngReader object at 0x00000197D2B88140>
+wanted = 1201
+
+    def _pump(self, wanted: int) -> bool:
+        """Feed the zlib stream until ``wanted`` decompressed bytes are
+        pending, the stream ends, or the IDAT chunks run out. Returns False
+        when no progress is possible any more."""
+        produced = 0
+        while len(self._pending) < wanted and not self._zlib_done:
+            if self._unconsumed:
+                chunk, self._unconsumed = self._unconsumed, b""
+            elif self._idat_index < len(self._idat_spans):
+                start, length = self._idat_spans[self._idat_index]
+                self._idat_index += 1
+                chunk = self._data[start : start + length]
+            else:
+                self._zlib_done = True
+                break
+>           out = self._decompressor.decompress(chunk, wanted - len(self._pending))
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E           zlib.error: Error -3 while decompressing data: incorrect header check
+
+src\infrastructure\imaging\streaming_png.py:228: error
 ______________ test_document_import_slot_publishes_a_return_type ______________
 
     def test_document_import_slot_publishes_a_return_type() -> None:
@@ -284,60 +363,28 @@ ______________ test_document_import_slot_publishes_a_return_type ______________
             )
 E           AssertionError: b'importDocumentsFromUrls(QString,QVariantList)' publishes returnType=void
 E           assert 43 == <Type.QVariantMap: 8>
-E            +  where 43 = <built-in method returnType of PySide6.QtCore.QMetaMethod object at 0x00000197E2424580>()
-E            +    where <built-in method returnType of PySide6.QtCore.QMetaMethod object at 0x00000197E2424580> = <PySide6.QtCore.QMetaMethod object at 0x00000197E2424580>.returnType
+E            +  where 43 = <built-in method returnType of PySide6.QtCore.QMetaMethod object at 0x00000197C8F9C100>()
+E            +    where <built-in method returnType of PySide6.QtCore.QMetaMethod object at 0x00000197C8F9C100> = <PySide6.QtCore.QMetaMethod object at 0x00000197C8F9C100>.returnType
 E            +  and   <Type.QVariantMap: 8> = <enum 'Type'>.QVariantMap
 E            +    where <enum 'Type'> = <class 'PySide6.QtCore.QMetaType'>.Type
 
 tests\core\test_bootstrap.py:604: AssertionError
-______________ test_webtoon_mode_gates_the_toolbar_page_buttons _______________
-
-engine = <PySide6.QtQml.QQmlEngine(0x1984ad89090) at 0x0000019787031A40>
-reader_stack_webtoon = (<ui.viewmodels.reader.viewmodel.ReaderViewModel(0x1984aca8160) at 0x0000019787031EC0>, <application.reading.service.R...0\\page_2.png', translated_path=None, translated_revision_id=None, current_translated_revision_id=None, text='�� 2 ҳ')])
-
-    @requires_pyside6
-    def test_webtoon_mode_gates_the_toolbar_page_buttons(engine, reader_stack_webtoon):
-        """F-5 (TASK-045): the toolbar's page buttons were never gated on the
-        vertical viewer although the keyboard was, so a webtoon chapter could page
-        away from the page on screen. The gate must be mode-specific: paged
-        chapters keep both buttons."""
-        vm, reading, pages = reader_stack_webtoon
-        engine.rootContext().setContextProperty("readerViewModel", vm)
-        window = load_host(engine, READER_HOST, SRC_QML / "reader")
-        try:
-            root = find_by_name(window, "readerView")
-            vm.openChapter("b", "c", "����", "webtoon", "vertical")
-            swapped, _trace = pump_traced(
-                window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
-            )
-            assert swapped
-            # the fixture's chapter really can page: the gate is not a blanket off
-            assert vm.canGoNext and vm.canGoPrevious is False
-    
->           assert find_by_name(root, "readerNextPage").property("enabled") is False
-E           assert True is False
-E            +  where True = <built-in method property of PySide6.QtQuick.QQuickItem object at 0x0000019787032C40>('enabled')
-E            +    where <built-in method property of PySide6.QtQuick.QQuickItem object at 0x0000019787032C40> = <PySide6.QtQuick.QQuickItem(0x1984afc80d0, name="readerNextPage", parent=0x198436f6dd0, geometry=477,0 54x24) at 0x0000019787032C40>.property
-E            +      where <PySide6.QtQuick.QQuickItem(0x1984afc80d0, name="readerNextPage", parent=0x198436f6dd0, geometry=477,0 54x24) at 0x0000019787032C40> = find_by_name(<PySide6.QtQuick.QQuickItem(0x197dff62d90, id="activeFocusItem", name="readerView", parent=0x1984adb14e0, geometry=0,0 1280x800) at 0x0000019787032400>, 'readerNextPage')
-
-tests\reading_export\test_qml_contract.py:420: AssertionError
-============================= slowest 8 durations =============================
-15.65s call     tests/reading_export/test_streaming_png.py::test_qt_encoded_oversized_page_bands_match_qt_pixels
-3.57s call     tests/reading_export/test_webtoon_tiles.py::test_oversize_page_streams_bands_within_a_measured_memory_bound
-1.17s call     tests/core/test_bootstrap.py::test_smoke_startup_loads_qml_and_exits_zero
-1.15s call     tests/core/test_bootstrap.py::test_smoke_assembles_real_stack_in_data_root
-0.94s call     tests/core/test_bootstrap.py::test_missing_qml_returns_nonzero_with_path
-0.67s call     tests/core/test_bootstrap.py::test_assemble_engine_injects_real_workbench_stack
-0.63s call     tests/reading_export/test_qml_contract.py::test_reader_webtoon_swaps_in_vertical_viewer
-0.38s call     tests/core/test_bootstrap.py::test_assemble_engine_registers_reader_export_and_tiled_reader
+============================= slowest 6 durations =============================
+5.11s call     tests/reading_export/test_streaming_png.py::test_band_read_peak_composition[single-idat]
+3.71s call     tests/reading_export/test_webtoon_tiles.py::test_oversize_page_streams_bands_within_a_measured_memory_bound
+3.43s call     tests/reading_export/test_streaming_png.py::test_qt_encoded_oversized_page_bands_match_qt_pixels
+1.39s call     tests/core/test_bootstrap.py::test_smoke_startup_loads_qml_and_exits_zero
+1.07s call     tests/core/test_bootstrap.py::test_smoke_assembles_real_stack_in_data_root
+0.89s call     tests/core/test_bootstrap.py::test_missing_qml_returns_nonzero_with_path
 =========================== short test summary info ===========================
+FAILED tests/reading_export/test_qml_contract.py::test_webtoon_mode_gates_the_toolbar_page_buttons
+FAILED tests/reading_export/test_qml_contract.py::test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles
+FAILED tests/reading_export/test_streaming_png.py::test_corrupt_idat_payload_fails_typed
 FAILED tests/reading_export/test_webtoon_tiles.py::test_materialised_tiles_carry_exactly_their_declared_band
 FAILED tests/reading_export/test_webtoon_tiles.py::test_next_page_rebuilds_the_tiles_for_the_new_page
 FAILED tests/reading_export/test_webtoon_tiles.py::test_jump_to_page_rebuilds_the_tiles_too
 FAILED tests/reading_export/test_webtoon_tiles.py::test_request_tiles_converts_display_pixels_to_page_pixels
+FAILED tests/reading_export/test_webtoon_tiles.py::test_same_size_rewrite_does_not_reuse_a_stale_tile
 FAILED tests/reading_export/test_webtoon_tiles.py::test_damaged_payload_degrades_through_the_viewmodel
-FAILED tests/reading_export/test_streaming_png.py::test_corrupt_idat_payload_fails_typed
-FAILED tests/reading_export/test_streaming_png.py::test_band_read_peak_is_resident_source_plus_a_bounded_band
 FAILED tests/core/test_bootstrap.py::test_document_import_slot_publishes_a_return_type
-FAILED tests/reading_export/test_qml_contract.py::test_webtoon_mode_gates_the_toolbar_page_buttons
-9 failed, 47 passed in 26.58s
+10 failed, 120 passed in 20.80s

@@ -1,21 +1,21 @@
 # TASK-045 pre-fix discrimination (machine-extracted from pre-fix-tests.txt)
-# base 6ea3dd3 src + the new/updated tests, -q -rf
+# tree under test: base 6ea3dd3 src + QML (two-tree run) with the FINAL test files
+#   git archive 6ea3dd3 src pytest.ini | tar -x -C <tmp>; then copy the worktree tests/ + pytest.ini
+# command: python -m pytest tests/reading_export tests/core -q -rf -p no:cacheprovider
 
+test_webtoon_mode_gates_the_toolbar_page_buttons -> assert True is False
+test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles -> assert (None is not None)
+test_corrupt_idat_payload_fails_typed -> zlib.error: Error -3 while decompressing data: incorrect header check
 test_materialised_tiles_carry_exactly_their_declared_band -> AssertionError: tile 1: file height 864 != declared content_height 800
 test_next_page_rebuilds_the_tiles_for_the_new_page -> assert 3000 == 1200
 test_jump_to_page_rebuilds_the_tiles_too -> assert 3000 == 1200
 test_request_tiles_converts_display_pixels_to_page_pixels -> TypeError: ReaderViewModel.requestTiles() takes 3 positional arguments but 4 were given
+test_same_size_rewrite_does_not_reuse_a_stale_tile -> AssertionError: stale tile reused after an in-place rewrite
 test_damaged_payload_degrades_through_the_viewmodel -> zlib.error: Error -3 while decompressing data: incorrect header check
-test_corrupt_idat_payload_fails_typed -> zlib.error: Error -3 while decompressing data: incorrect header check
-test_band_read_peak_is_resident_source_plus_a_bounded_band -> AssertionError: fixture must be large enough to measure
 test_document_import_slot_publishes_a_return_type -> AssertionError: b'importDocumentsFromUrls(QString,QVariantList)' publishes returnType=void
-test_webtoon_mode_gates_the_toolbar_page_buttons -> assert True is False
 
-# totals: 9 failed / 47 passed (see the log tail).
-# Guards that pass pre-fix by design (they pin existing behaviour):
-#   test_ensure_viewport_rewind_accounting_is_per_tile, test_qt_encoded_oversized_page_bands_match_qt_pixels,
-#   test_band_read_peak_composition[single-idat|banded-idat] (the measured composition is unchanged by these fixes).
-# NOTE: line 10's name is the first version of what is now test_band_read_peak_composition. It failed
-# pre-fix only because its own fixture guard ("must be large enough to measure") rejected a highly
-# compressible page — not because of product behaviour; fixture and assertions were corrected before
-# delivery (the correct fixture is incompressible and both terms of the composition are asserted).
+# totals: 10 failed / 120 passed (see the log tail).
+# Guards that pass pre-fix by design (they pin behaviour these fixes do not change):
+#   test_ensure_viewport_rewind_accounting_is_per_tile (pins the measured per-tile rewind),
+#   test_band_read_peak_composition[single-idat|banded-idat] (measured memory composition),
+#   test_qt_encoded_oversized_page_bands_match_qt_pixels (real-encoder x oversized coverage).

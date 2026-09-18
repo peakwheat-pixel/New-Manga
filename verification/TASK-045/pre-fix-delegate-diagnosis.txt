@@ -1,0 +1,59 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles _________
+
+engine = <PySide6.QtQml.QQmlEngine(0x238925cd1f0) at 0x0000023894F92200>
+reader_stack_tiled = (<ui.viewmodels.reader.viewmodel.ReaderViewModel(0x23894a75400) at 0x00000238964018C0>, <application.reading.service.R...0\\page_1.png', translated_path=None, translated_revision_id=None, current_translated_revision_id=None, text='�� 1 ҳ')])
+
+    @requires_pyside6
+    def test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles(
+        engine, reader_stack_tiled
+    ):
+        """F-5 (TASK-045) at the QML level: the tile delegates must not keep
+        pointing at the previous page's files after a page turn.
+    
+        The ViewModel-level test pins the rows; this one pins what QML actually
+        renders (delegate ``source`` values), which is where "��ʾ��ͼ" was
+        visible.
+        """
+        vm, reading, pages = reader_stack_tiled
+        engine.rootContext().setContextProperty("readerViewModel", vm)
+        window = load_host(engine, READER_HOST, SRC_QML / "reader")
+        try:
+            root = find_by_name(window, "readerView")
+            vm.openChapter("b", "c", "����", "webtoon", "vertical")
+            swapped, _trace = pump_traced(
+                window, 5.0, lambda: find_by_name(root, "readerWebtoonScroll") is not None
+            )
+            assert swapped
+            assert vm.tilesActive is True
+            QGuiApplication.processEvents()
+    
+            host = find_by_name(root, "readerTilesHost")
+            assert host is not None and bool(host.property("visible"))
+    
+            def served_sources() -> list:
+                # QML delegate items get a *visual* parent, not a QObject parent,
+                # so childItems() �� not findChildren() �� is what sees them.
+                sources = []
+                for item in host.childItems():
+                    source = item.property("source")
+                    if source is None:
+                        continue
+                    text = source.toString() if hasattr(source, "toString") else str(source)
+                    if text:
+                        sources.append(text)
+                return sources
+    
+            assert served_sources() == []
+    
+            vm.requestTiles(0, 600)
+            served, trace = pump_traced(window, 5.0, lambda: bool(served_sources()))
+>           assert served, f"the first page's tiles must be served �� {trace}"
+E           AssertionError: the first page's tiles must be served �� pump(5s): iterations=246 elapsed_ms=5015 ok=False
+E           assert False
+
+tests\reading_export\test_qml_contract.py:497: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/reading_export/test_qml_contract.py::test_tiled_webtoon_page_turn_drops_the_previous_pages_tiles
+1 failed, 9 deselected in 6.00s
