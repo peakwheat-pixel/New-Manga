@@ -1,0 +1,105 @@
+﻿FF                                                                       [100%]
+================================== FAILURES ===================================
+____________ test_assemble_services_injects_production_clean_probe ____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2101/test_assemble_services_injects0')
+
+    def test_assemble_services_injects_production_clean_probe(tmp_path: Path) -> None:
+        """TASK-040 AC 鈶?(wiring assertion): the production PipelineService
+        carries a non-None ``clean_probe`` 鈥?a missing injection can no longer
+        pass silently (F-12: the TASK-039 fix existed but was unreachable in
+        production)."""
+        from bootstrap.app import assemble_services
+    
+        services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+>           assert services.pipeline._clean_probe is not None
+E           assert None is not None
+E            +  where None = <application.tasks.service.PipelineService object at 0x00000280BF99C500>._clean_probe
+E            +    where <application.tasks.service.PipelineService object at 0x00000280BF99C500> = AppServices(conn=<sqlite3.Connection object at 0x00000280BEC3DE40>, repository=<infrastructure.sqlite.library.SqliteLi...t 0x00000280BFA88540>, set_export_context_updater=<function assemble_services.<locals>.<lambda> at 0x00000280BFA885E0>).pipeline
+
+tests\core\test_bootstrap.py:505: AssertionError
+___________ test_production_clean_probe_gates_render_only_planning ____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2101/test_production_clean_probe_ga0')
+
+    def test_production_clean_probe_gates_render_only_planning(tmp_path: Path) -> None:
+        """TASK-040 AC 鈶?(production contrast, real SQLite + the real locator
+        probe): without a current Clean the render-only plan stays fail-closed;
+        after the production artifact writer publishes a current Clean revision
+        the same plan turns RUN 鈥?while a sibling page without Clean stays
+        BLOCKED (the guard is never relaxed)."""
+        from application.importing.images.ports import ImportSource
+        from bootstrap.app import assemble_services
+        from domain.tasks.models import PipelineScope, ScopeType
+        from infrastructure.providers.step_writes import ArtifactStepWriter
+    
+        services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            book = services.library.create_book("鎺㈤拡瀵圭収涔?)
+            chapter = services.library.create_chapter(book.book_id, "绗?璇?)
+            report = services.importer.import_files(
+                chapter.chapter_id,
+                [
+                    ImportSource(
+                        filename="with-clean.png", data_provider=lambda: _make_png(8, 6)
+                    ),
+                    # a *different* image: identical bytes would trip the
+                    # duplicate-source guard and never become a second page
+                    ImportSource(
+                        filename="without-clean.png",
+                        data_provider=lambda: _make_png(9, 6),
+                    ),
+                ],
+            )
+            page_with_clean = report.imported[0].page
+            page_without_clean = report.imported[1].page
+    
+            def plan(page_id: str) -> dict[str, str]:
+                run = services.pipeline.create_run(
+                    "rerender_single",
+                    PipelineScope(ScopeType.PAGE, selected_ids=(page_id,)),
+                )
+                services.pipeline.plan_run(run.run_id)
+                return {
+                    unit.step_type: f"{unit.decision.value}:{unit.reason or ''}"
+                    for unit in run.tasks[0].units
+                }
+    
+            # missing Clean: the inherited fail-closed guard is untouched
+            assert plan(page_with_clean.page_id) == {
+                "render": "blocked:missing_clean_artifact"
+            }
+            assert plan(page_without_clean.page_id) == {
+                "render": "blocked:missing_clean_artifact"
+            }
+    
+            # publish a current Clean revision the way the inpaint handler does
+            writer = ArtifactStepWriter(services.conn, services.storage)
+            prepared = writer.prepare_revision(
+                page_id=page_with_clean.page_id,
+                artifact_type="clean",
+                payload=_make_png(8, 6),
+                mime_type="image/png",
+                width=8,
+                height=6,
+            )
+            writer.adopt_current(
+                artifact_id=prepared.artifact_id,
+                revision_id=prepared.revision_id,
+                expected_current_revision_id=prepared.previous_revision_id,
+            )
+    
+            # only the page that really has a current Clean turns RUN
+>           assert plan(page_with_clean.page_id) == {"render": "run:"}
+E           AssertionError: assert {'render': 'b...ean_artifact'} == {'render': 'run:'}
+E             
+E             Differing items:
+E             {'render': 'blocked:missing_clean_artifact'} != {'render': 'run:'}
+E             Use -v to get more diff
+
+tests\core\test_bootstrap.py:578: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_bootstrap.py::test_assemble_services_injects_production_clean_probe
+FAILED tests/core/test_bootstrap.py::test_production_clean_probe_gates_render_only_planning
+2 failed, 14 deselected in 0.60s
