@@ -1,0 +1,1 @@
+OUTCOME=crashed | error=SQLite objects created in a thread can only be used in that same thread. The object was created in thread id 31368 and this is thread id 10568.

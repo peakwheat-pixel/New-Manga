@@ -2,7 +2,7 @@
 id: TASK-048
 title: 修复生产任务执行的跨线程 SQLite 连接（§11 P-1，P0）+ 生产路径端到端测试资产
 kind: bugfix
-status: ready
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-013, TASK-038]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-048-thread-sqlite
 worktree: G:/CODEX/New Manga.worktrees/TASK-048-zcode
-integration_commit: null
+integration_commit: be558caa094940bf8d454ea1effc866dcefc6f0a
 ---
 
 # TASK-048：跨线程 SQLite 连接（§11 P-1）+ 生产路径端到端测试资产
@@ -31,12 +31,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（根因与方案）**：写明连接归属方案与理由（每线程取连接 / 连接工厂 / 串行化访问；若采用 `check_same_thread=False` 必须说明 WAL/锁语义与**串行化**策略）。方案须解释为何不产生并发写竞争，并给出并发的负向用例或论证。
-- [ ] **AC ②（端到端不复现）**：真实 `assemble_services` + 真实 `RunController`(QThread) 跑一条 `TRANSLATE_ALL`：**不再出现** `ProgrammingError`；给出修复前后对照（修前必须复现，作为判别力）。
-- [ ] **AC ③（run 终态）**：崩溃路径消失后，run **不再停留 `running`**；同时把 `PipelineService.recover_running_runs()` 接入**生产启动路径**（`src/bootstrap/app.py`），并有用例证明启动即可回收上轮遗留的运行中记录。
-- [ ] **AC ④（新增端到端测试资产）**：新增一条集成测试：`assemble_services` + 真实 SQLite 文件 + worker 线程（`RunController`）+ 一条完整命令，断言"能跑完 + DB 落终态"。该用例对**修前**代码失败（判别力留证）。
-- [ ] **AC ⑤（不回归）**：`tests/storage/**`、`tests/core/**`、`tests/workbench/**` 既有断言**逐条不变**；全仓 passed 不减少；全仓 ≥5 次逐次记录（同一 shell + 同一 venv；**不得设 `QT_QPA_PLATFORM`**）。
-- [ ] **AC ⑥** 交付 Handoff、`verification/TASK-048/**`，经**独立子对话** Review + 集成后才能 done；STATUS 台账行记录结论。
+- [x] **AC ①（根因与方案）**：写明连接归属方案与理由（每线程取连接 / 连接工厂 / 串行化访问；若采用 `check_same_thread=False` 必须说明 WAL/锁语义与**串行化**策略）。方案须解释为何不产生并发写竞争，并给出并发的负向用例或论证。
+- [x] **AC ②（端到端不复现）**：真实 `assemble_services` + 真实 `RunController`(QThread) 跑一条 `TRANSLATE_ALL`：**不再出现** `ProgrammingError`；给出修复前后对照（修前必须复现，作为判别力）。
+- [x] **AC ③（run 终态）**：崩溃路径消失后，run **不再停留 `running`**；同时把 `PipelineService.recover_running_runs()` 接入**生产启动路径**（`src/bootstrap/app.py`），并有用例证明启动即可回收上轮遗留的运行中记录。
+- [x] **AC ④（新增端到端测试资产）**：新增一条集成测试：`assemble_services` + 真实 SQLite 文件 + worker 线程（`RunController`）+ 一条完整命令，断言"能跑完 + DB 落终态"。该用例对**修前**代码失败（判别力留证）。
+- [x] **AC ⑤（不回归）**：`tests/storage/**`、`tests/core/**`、`tests/workbench/**` 既有断言**逐条不变**；全仓 passed 不减少；全仓 ≥5 次逐次记录（同一 shell + 同一 venv；**不得设 `QT_QPA_PLATFORM`**）。
+- [x] **AC ⑥** 交付 Handoff、`verification/TASK-048/**`，经**独立子对话** Review（`approved_subagent` @`14995b6`，3×P3 不阻断）+ 集成（`be558ca`）后 done；STATUS 台账行已记录。
 
 ## 允许修改范围
 
@@ -57,9 +57,10 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ② 修前复现 | `python verification/TASK-048/thread_probe_pre.py`（planned） | venv `TASK-012-py312` | NOT_RUN | 无 |
-| AC ④ 端到端新用例 | `pytest tests/workbench tests/core -q`（planned） | 同上 | NOT_RUN | 无 |
-| AC ⑤ 全仓 | `pytest -q -rs` ×5（planned） | 同上，不设 `QT_QPA_PLATFORM` | NOT_RUN | 无 |
+| AC ② 修前复现 | `python verification/TASK-048/thread_probe_pre.py <tree>` | venv `TASK-012-py312` | 修前 ×2 `OUTCOME=crashed`（sqlite3.ProgrammingError）；修后 ×2 `OUTCOME=finished, status=completed_with_failures` | `thread-{pre,post}-fix-run{1,2}.txt` |
+| AC ④ 端到端新用例 | `pytest tests/workbench/test_run_thread_e2e.py -q` | 同上 | 修后 3 passed；修前树 3 failed / exit 1（判别力，失败文本=跨线程异常） | `discriminating-new-tests-vs-prefix.log` |
+| AC ⑤ 定向 | `pytest tests/storage tests/core tests/workbench -q` | 同上 | **126 passed / 0 skipped，exit 0** | `targeted-storage-core-workbench.log` |
+| AC ⑤ 全仓 | `pytest -q -rs` ×5 | 同上，不设 `QT_QPA_PLATFORM` | **854 passed / 0 skipped / exit 0 ×5**（851 基线 + 3 新用例；无新 skip） | `full-suite-post-fix-run{1..5}.log` |
 
 ## 依赖、风险与阻塞
 
@@ -69,5 +70,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无（窗口内独立子对话）。实际测试：尚无（`ready`）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 依 §11 复核结论开立为 `ready`（ZCode 全权窗口 W1）；base=`8bf8da3`。**实施尚未开始。**
+- Handoff：[TASK-048-011ee16.md](../handoffs/TASK-048-011ee16.md)。Review：[TASK-048-14995b6](../reviews/TASK-048-14995b6.md)（**`approved_subagent`**，独立子对话，3×P3 不阻断）。实际测试：修前判别 1 次（3 failed / exit 1）+ 探针前后各 ×2 + 定向 126/0 + 全仓 ×5（854/0 ×5），全部入库 `verification/TASK-048/`。
+- **最近状态（当前，唯一）**：2026-09-19 **集成完成**：独立子对话 Review `approved_subagent`（Reviewer 独立复跑：新用例 3 passed、定向 126/0、全仓 854/0、判别力 3 failed @修前树、探针双树 crashed↔finished）→ Review 报告 land `8dc13eb` → **integration `be558ca`**（--no-ff；与并行会话的 TASK-054 集成 `771dbf7` 错峰，写集合不重叠）→ 集成后 master 全仓 854 passed / 0 skipped exit 0。`base=8bf8da3`。
