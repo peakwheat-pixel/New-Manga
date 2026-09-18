@@ -491,3 +491,93 @@ def test_trash_service_is_assembled_on_the_same_data_root(tmp_path: Path) -> Non
         assert services.trash.list_batches() == []
     finally:
         services.conn.close()
+
+
+def test_assemble_services_injects_production_clean_probe(tmp_path: Path) -> None:
+    """TASK-040 AC ② (wiring assertion): the production PipelineService
+    carries a non-None ``clean_probe`` — a missing injection can no longer
+    pass silently (F-12: the TASK-039 fix existed but was unreachable in
+    production)."""
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        assert services.pipeline._clean_probe is not None
+    finally:
+        services.conn.close()
+
+
+def test_production_clean_probe_gates_render_only_planning(tmp_path: Path) -> None:
+    """TASK-040 AC ③ (production contrast, real SQLite + the real locator
+    probe): without a current Clean the render-only plan stays fail-closed;
+    after the production artifact writer publishes a current Clean revision
+    the same plan turns RUN — while a sibling page without Clean stays
+    BLOCKED (the guard is never relaxed)."""
+    from application.importing.images.ports import ImportSource
+    from bootstrap.app import assemble_services
+    from domain.tasks.models import PipelineScope, ScopeType
+    from infrastructure.providers.step_writes import ArtifactStepWriter
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        book = services.library.create_book("探针对照书")
+        chapter = services.library.create_chapter(book.book_id, "第1话")
+        report = services.importer.import_files(
+            chapter.chapter_id,
+            [
+                ImportSource(
+                    filename="with-clean.png", data_provider=lambda: _make_png(8, 6)
+                ),
+                # a *different* image: identical bytes would trip the
+                # duplicate-source guard and never become a second page
+                ImportSource(
+                    filename="without-clean.png",
+                    data_provider=lambda: _make_png(9, 6),
+                ),
+            ],
+        )
+        page_with_clean = report.imported[0].page
+        page_without_clean = report.imported[1].page
+
+        def plan(page_id: str) -> dict[str, str]:
+            run = services.pipeline.create_run(
+                "rerender_single",
+                PipelineScope(ScopeType.PAGE, selected_ids=(page_id,)),
+            )
+            services.pipeline.plan_run(run.run_id)
+            return {
+                unit.step_type: f"{unit.decision.value}:{unit.reason or ''}"
+                for unit in run.tasks[0].units
+            }
+
+        # missing Clean: the inherited fail-closed guard is untouched
+        assert plan(page_with_clean.page_id) == {
+            "render": "blocked:missing_clean_artifact"
+        }
+        assert plan(page_without_clean.page_id) == {
+            "render": "blocked:missing_clean_artifact"
+        }
+
+        # publish a current Clean revision the way the inpaint handler does
+        writer = ArtifactStepWriter(services.conn, services.storage)
+        prepared = writer.prepare_revision(
+            page_id=page_with_clean.page_id,
+            artifact_type="clean",
+            payload=_make_png(8, 6),
+            mime_type="image/png",
+            width=8,
+            height=6,
+        )
+        writer.adopt_current(
+            artifact_id=prepared.artifact_id,
+            revision_id=prepared.revision_id,
+            expected_current_revision_id=prepared.previous_revision_id,
+        )
+
+        # only the page that really has a current Clean turns RUN
+        assert plan(page_with_clean.page_id) == {"render": "run:"}
+        assert plan(page_without_clean.page_id) == {
+            "render": "blocked:missing_clean_artifact"
+        }
+    finally:
+        services.conn.close()

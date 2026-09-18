@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sqlite3
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from typing import Any
 
 from application.tasks.service import PipelineService, ResourceLimits
@@ -25,8 +25,14 @@ def build_production_pipeline(
     constraint_snapshot_ref: str | None = None,
     context_policy: Mapping[str, Any] | None = None,
     limits: ResourceLimits | None = None,
+    clean_probe: Callable[[str], bool] | None = None,
 ) -> PipelineService:
-    """Build a production service with no InMemory/Deterministic defaults."""
+    """Build a production service with no InMemory/Deterministic defaults.
+
+    ``clean_probe`` (TASK-040) is the TASK-039 artifact probe: the caller
+    owns its source and semantics; ``None`` keeps the pre-TASK-040 assembly
+    byte-for-byte.
+    """
     return PipelineService(
         SqliteTargetCatalog(conn),
         store=SqlitePipelineStore(conn),
@@ -39,4 +45,5 @@ def build_production_pipeline(
         ),
         executor=ProductionStepExecutor(handlers),
         limits=limits,
+        clean_probe=clean_probe,
     )

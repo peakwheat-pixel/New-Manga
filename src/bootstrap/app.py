@@ -505,7 +505,24 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             terms=TermExtractionService(),
             render_service=render_service,
         )
-        pipeline = build_production_pipeline(conn, handlers=handlers)
+        # TASK-040 AC ①: wire the TASK-039 Clean-availability probe into the
+        # production planner. The probe reuses the same read-only page
+        # artifact locator the render/reader paths already use — a page is
+        # clean-available iff its current Clean revision exists; no second
+        # Clean judgement is invented here.
+        from ports.repositories.artifacts import ArtifactType
+
+        clean_locator = SqlitePageArtifactLocator(conn)
+
+        def clean_probe(page_id: str) -> bool:
+            return (
+                clean_locator.locate_current(page_id, ArtifactType.CLEAN)
+                is not None
+            )
+
+        pipeline = build_production_pipeline(
+            conn, handlers=handlers, clean_probe=clean_probe
+        )
         editing = RegionEditingService(regions)
         navigation = NavigationViewModel()
 

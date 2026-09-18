@@ -2,7 +2,7 @@
 id: TASK-040
 title: 接通 TASK-039 的 clean_probe 生产注入（含 F-12 口径修正）
 kind: bugfix
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -28,12 +28,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（注入）**：在装配处（`src/bootstrap/app.py`）为 `PipelineService` 注入 `clean_probe`。**必须复用既有能力**（如 artifact 仓储/locator 对 `clean` 的 current 查询），**不得新造第二套 Clean 判定**；探针的**来源与语义须在 Handoff 写明**（谁提供、判什么、返回什么）。
-- [ ] **AC ②（接线断言，必做）**：在装配契约测试（`tests/core/test_bootstrap.py`）中新增断言：**生产装配得到的 `PipelineService` 携带非 `None` 的 `clean_probe`**。这是本切片的核心价值——让"接线漏做"不再可能悄悄通过。
-- [ ] **AC ③（生产行为 + 判别力）**：给出对照证据——当页**存在 current Clean artifact** 时，render-only 命令**不再** `BLOCKED(missing_clean_artifact)`；**缺失**时仍 fail-closed 且原因入 provenance（既有守卫不得放宽）。新用例对**修前代码**失败并留证。
-- [ ] **AC ④（F-12 口径修正）**：把 `service.py` 中"injected at assembly (AC 2)"的表述改为与实现一致（注明：**由本切片接通**）；并同步 [TASK-039](TASK-039.md) 的 AC ② 注记口径（在其 Task 文件或 STATUS 记一处修订，**不得**回改已入档的 Review 结论）。
-- [ ] **AC ⑤（回归与证据）**：`tests/core`、`tests/pipeline`、`tests/providers` 与全仓 **passed 不减少**；全仓串跑 **≥5 次**逐次记录（同一 shell + 同一 venv：PowerShell + `TASK-012-py312`），**passed/skipped 分列 + skip 原因**；不得新增 `skip`/`xfail`。
-- [ ] **AC ⑥** 交付 Handoff、取证，经**非作者** Review 与 Codex 集成后才能 done；并在 STATUS 记录 F-12 关闭。
+- [x] **AC ①（注入）**：在装配处（`src/bootstrap/app.py`）为 `PipelineService` 注入 `clean_probe`。**必须复用既有能力**（如 artifact 仓储/locator 对 `clean` 的 current 查询），**不得新造第二套 Clean 判定**；探针的**来源与语义须在 Handoff 写明**（谁提供、判什么、返回什么）。
+- [x] **AC ②（接线断言，必做）**：在装配契约测试（`tests/core/test_bootstrap.py`）中新增断言：**生产装配得到的 `PipelineService` 携带非 `None` 的 `clean_probe`**。这是本切片的核心价值——让"接线漏做"不再可能悄悄通过。
+- [x] **AC ③（生产行为 + 判别力）**：给出对照证据——当页**存在 current Clean artifact** 时，render-only 命令**不再** `BLOCKED(missing_clean_artifact)`；**缺失**时仍 fail-closed 且原因入 provenance（既有守卫不得放宽）。新用例对**修前代码**失败并留证。
+- [x] **AC ④（F-12 口径修正）**：把 `service.py` 中"injected at assembly (AC 2)"的表述改为与实现一致（注明：**由本切片接通**）；并同步 [TASK-039](TASK-039.md) 的 AC ② 注记口径（在其 Task 文件或 STATUS 记一处修订，**不得**回改已入档的 Review 结论）。
+- [x] **AC ⑤（回归与证据）**：`tests/core`、`tests/pipeline`、`tests/providers` 与全仓 **passed 不减少**；全仓串跑 **≥5 次**逐次记录（同一 shell + 同一 venv：PowerShell + `TASK-012-py312`），**passed/skipped 分列 + skip 原因**；不得新增 `skip`/`xfail`。
+- [ ] **AC ⑥** 交付 Handoff、取证，经**非作者** Review 与 Codex 集成后才能 done；并在 STATUS 记录 F-12 关闭。（Handoff 已交付，待 Codex Review 与集成）
 
 ## 允许修改范围
 
@@ -56,5 +56,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
-- **最近状态（当前，唯一）**：2026-09-18 由 Codex 释放（用户指示排序"先 040 还是 43" → Codex 裁定 **043 先**、040 与之并行）；`base=40d97d5`。**实施尚未开始。**
+- Handoff：[TASK-040-977ef65.md](../handoffs/TASK-040-977ef65.md)（含探针来源/语义、**assembly.py 白名单偏差声明**、验证证据表）。
+- Review：尚无（待 Codex 非作者 Review）。
+- 实际执行/测试：见 `verification/TASK-040/`——基线全仓 **798 passed / 0 skipped** exit 0（= master `c5aa664`）；实现后定向 `tests/core+pipeline+providers` **261 passed / 0 skipped** exit 0；全仓 ×5 **每次 800 passed / 0 skipped** exit 0（798 基线 + 2 新增，passed 不减少）；修前判别力（src 回退 `c5aa664`）**2 failed / exit 1** 留证后恢复复跑 2 passed。全部同一口径：`powershell.exe`（继承 PATH 含 openssl）+ `TASK-012-py312` + `-p no:cacheprovider`。
+- **最近状态（当前，唯一）**：2026-09-18 ZCode 实现交付 `977ef65`（文档 `2afabf2`），随后**尾部 merge master `84bdda7`（TASK-043 集成，与本切片零文件重叠；STATUS 冲突保留双方登记行）→ 分支 head `004f00e`**，merge 后复跑全仓 ×5 **每次 810 passed / 0 skipped** exit 0、定向 261 passed / 0 skipped exit 0（802+2 新例+6 条 network 在本 shell 口径转正，收集总数一致），`status=in_review`。**注意**：实现含一处**白名单偏差**——物理构造点 `src/infrastructure/pipeline/assembly.py` 不在任务书允许列表，本切片以"可选形参透传"3 行接入并已在 Handoff 声明理由（F-12 原文证据位置即含该文件），**交 Codex Review 裁决**。

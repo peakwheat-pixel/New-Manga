@@ -483,8 +483,10 @@ class PipelineService:
 
         The judge keeps both historical inputs — same-run ``inpaint is RUN``
         and a valid ``clean`` stage (for any future writer) — and adds an
-        optional artifact probe injected at assembly (AC 2). ``probe is None``
-        (every pre-existing construction) preserves the old decision exactly;
+        optional artifact probe (TASK-039 AC 2 landed the optional parameter;
+        its production injection at assembly is wired by TASK-040).
+        ``probe is None`` (every pre-existing construction) preserves the old
+        decision exactly;
         the probe can only turn a would-be BLOCKED into RUN when a current
         Clean artifact really exists — it never blocks something the old
         judge allowed (AC 3).
