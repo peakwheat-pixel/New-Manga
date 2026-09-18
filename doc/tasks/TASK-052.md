@@ -2,7 +2,7 @@
 id: TASK-052
 title: 命令失败可见化（§11 P-4：commandError 上屏，最小可见 + provisional）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
