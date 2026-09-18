@@ -1,0 +1,12 @@
+Codex probe: Qoder P-2 (region-less units) + P-6 (workbench viewer asymmetry)
+page: 9c99bb554bfb4604b81da46613c9f18e
+[P-2] real run, main thread (worker path is the P-1 probe)
+   run status: completed_with_failures
+   ocr          region=None status=failed code=INVALID_INPUT detail=step 'ocr' requires a Region target (stage=ocr)
+   distinct error codes: ['INVALID_INPUT']
+[P-6] same page, two catalogs
+   workbench image_url(original)  : True
+   workbench image_url(translated): ''
+   workbench image_url(compare)   : ''
+   reader translated_path present : True
+EXIT=0

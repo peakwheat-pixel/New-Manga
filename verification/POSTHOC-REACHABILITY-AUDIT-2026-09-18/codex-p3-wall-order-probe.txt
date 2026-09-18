@@ -1,0 +1,7 @@
+Codex probe: wall ordering P-2 -> P-3 with a Region present
+region created through the application service: c295f9257e1944bfb1709a97b3b759f0
+planned status: pending
+   unit ocr region=c295f9257e1944bfb1709a97b3b759f0 decision=run reason=None
+final status: completed_with_failures
+   step_run: ('ocr', 'c295f9257e1944bfb1709a97b3b759f0', 'failed', 'PROVIDER_NOT_CONFIGURED', "no provider binding configured for step 'ocr' (stage=ocr)")
+EXIT=0
