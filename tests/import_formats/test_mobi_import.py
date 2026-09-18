@@ -8,6 +8,12 @@ out the way the binding reads it (``crypto_type`` at record-0 offset 0x0C,
 ``firstresource`` at 0x6C, no NCX), record 1 is the HTML, the remaining
 records are the page images. Pixel-level assertions (the TASK-043 lesson:
 dimensions alone cannot see a channel swap or a wrong page order).
+
+Scope after review R-001/R-002 (d114253): the adapter accepts **KF7 picture
+MOBI only**. The extractor's non-page outputs (``cover%05d.*``, HD copies
+under ``HDImages/``) and KF8/AZW3 trees never become pages — the injection
+tests below monkeypatch ``mobi.extract`` with trees the real binding can
+emit and pin the fail-closed semantics.
 """
 
 from __future__ import annotations
@@ -30,10 +36,6 @@ pytest.importorskip("PySide6")
 from PySide6.QtCore import QBuffer, QIODevice  # noqa: E402
 from PySide6.QtGui import QColor, QImage  # noqa: E402
 
-from application.importing.documents.ports import (  # noqa: E402
-    DocumentDecodeError,
-    DocumentRaster,
-)
 from application.importing.documents.service import ImportDocumentsUseCase  # noqa: E402
 from application.importing.images.ports import ImportSource  # noqa: E402
 from infrastructure.filesystem.managed_storage import ManagedFileStorage  # noqa: E402
@@ -156,15 +158,37 @@ def text_only_mobi() -> bytes:
     return _pack_pdb(records)
 
 
-class InMemoryRaster(DocumentRaster):
-    """A raster double that always reports the given typed failure."""
+class _ExtractorTree:
+    """Context for monkeypatching ``mobi.extract`` with a fake tree (the
+    reviewer probe template): the binding never sees real bytes, the
+    adapter's collection semantics are what is under test."""
 
-    def __init__(self, reason: str, detail: str) -> None:
-        self._reason = reason
-        self._detail = detail
+    def __init__(self, tmp_path: Path, *, with_mobi8: bool = False) -> None:
+        imgdir = tmp_path / "mobi7" / "Images"
+        imgdir.mkdir(parents=True)
+        (imgdir / "image00002.jpeg").write_bytes(_make_jpeg(8, 6, (255, 0, 0)))
+        (imgdir / "image00003.jpeg").write_bytes(_make_jpeg(9, 7, (0, 255, 0)))
+        (imgdir / "cover00001.jpeg").write_bytes(_make_jpeg(4, 4, (255, 255, 255)))
+        hddir = tmp_path / "HDImages"
+        hddir.mkdir()
+        (hddir / "HDimage00004.jpeg").write_bytes(_make_jpeg(5, 5, (0, 0, 255)))
+        (tmp_path / "mobi7" / "book.html").write_text(
+            "<html></html>", encoding="utf-8"
+        )
+        if with_mobi8:
+            kf8dir = tmp_path / "mobi8" / "OEBPS" / "Images"
+            kf8dir.mkdir(parents=True)
+            (kf8dir / "image00002.jpeg").write_bytes(_make_jpeg(8, 6, (255, 0, 0)))
+        self.root = tmp_path
 
-    def open(self, data: bytes):
-        raise DocumentDecodeError(self._reason, self._detail)
+    def inject(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        import mobi as binding
+
+        monkeypatch.setattr(
+            binding,
+            "extract",
+            lambda infile: (str(self.root), str(self.root / "mobi7" / "book.html")),
+        )
 
 
 @pytest.fixture()
@@ -178,7 +202,12 @@ def workspace(tmp_path: Path):
         sink,
         mobi_raster=MobiDocumentRaster(),
     )
-    return {"use_case": use_case, "sink": sink, "storage": storage}
+    return {
+        "use_case": use_case,
+        "sink": sink,
+        "storage": storage,
+        "managed_root": tmp_path / "managed",
+    }
 
 
 def _source(name: str, data: bytes) -> ImportSource:
@@ -246,6 +275,9 @@ def test_drm_mobi_fails_typed_and_leaves_no_data(workspace) -> None:
     assert reason == "ENCRYPTED"
     assert "DRM" in detail
     assert sink.pages == []
+    # R-005: the assertion now covers the managed copy itself — a failed
+    # import must not even create the controlled root.
+    assert not workspace["managed_root"].exists()
 
 
 def test_truncated_mobi_fails_invalid_document(workspace) -> None:
@@ -261,6 +293,7 @@ def test_truncated_mobi_fails_invalid_document(workspace) -> None:
     assert len(report.failed) == 1
     assert report.failed[0].reason == "INVALID_DOCUMENT"
     assert sink.pages == []
+    assert not workspace["managed_root"].exists()
 
 
 def test_text_only_mobi_fails_closed_with_scope_note(workspace) -> None:
@@ -275,6 +308,7 @@ def test_text_only_mobi_fails_closed_with_scope_note(workspace) -> None:
     assert report.failed[0].reason == "INVALID_DOCUMENT"
     assert "text-only" in report.failed[0].detail
     assert sink.pages == []
+    assert not workspace["managed_root"].exists()
 
 
 def test_undecodable_page_image_fails_that_page(workspace) -> None:
@@ -296,7 +330,9 @@ def test_undecodable_page_image_fails_that_page(workspace) -> None:
 
 def test_without_injected_mobi_raster_mobi_stays_unsupported(tmp_path: Path) -> None:
     """The TASK-023 fallback is preserved byte-for-byte when the assembly
-    does not inject a MOBI binding (pre-TASK-041 constructions)."""
+    does not inject a MOBI binding (pre-TASK-041 constructions). Review
+    R-007: the detail says what is actually wrong — no binding was
+    injected — instead of repeating the pre-approval BLOCKED wording."""
     storage = ManagedFileStorage(tmp_path / "managed")
     copy_store = ManagedCopyStoreAdapter(storage, lambda chapter_id: "book-42")
     use_case = ImportDocumentsUseCase(
@@ -308,28 +344,25 @@ def test_without_injected_mobi_raster_mobi_stays_unsupported(tmp_path: Path) -> 
 
     assert report.imported == ()
     assert report.failed[0].reason == "UNSUPPORTED_FORMAT"
-    assert "TASK-023" in report.failed[0].detail
+    assert "no MOBI binding was injected" in report.failed[0].detail
 
 
-def test_missing_binding_reports_missing_dependency(tmp_path: Path) -> None:
+def test_missing_binding_reports_missing_dependency(workspace, monkeypatch) -> None:
     """A binding that cannot load (readiness) is a typed failure, not a
-    crash and not a skip (F-9 caliber)."""
-    storage = ManagedFileStorage(tmp_path / "managed")
-    copy_store = ManagedCopyStoreAdapter(storage, lambda chapter_id: "book-42")
-    use_case = ImportDocumentsUseCase(
-        PdfiumDocumentRaster(),
-        copy_store,
-        InMemoryPageSink(),
-        mobi_raster=InMemoryRaster(
-            "MISSING_DEPENDENCY", "the mobi binding is unavailable"
-        ),
-    )
+    crash and not a skip (F-9 caliber). Review R-003: this now drives the
+    adapter's own import guard — ``sys.modules["mobi"] = None`` makes the
+    ``import mobi`` inside ``MobiDocumentRaster.open`` raise."""
+    monkeypatch.setitem(sys.modules, "mobi", None)
+    use_case, sink = workspace["use_case"], workspace["sink"]
     data = picture_mobi([_make_jpeg(8, 6, (255, 0, 0))])
 
     report = use_case.import_documents("chapter-7", [_source("m.mobi", data)])
 
     assert report.imported == ()
     assert report.failed[0].reason == "MISSING_DEPENDENCY"
+    assert "unavailable" in report.failed[0].detail
+    assert sink.pages == []
+    assert not workspace["managed_root"].exists()
 
 
 def test_non_mobi_non_pdf_payloads_still_unsupported(workspace) -> None:
@@ -341,3 +374,70 @@ def test_non_mobi_non_pdf_payloads_still_unsupported(workspace) -> None:
 
     assert report.imported == ()
     assert report.failed[0].reason == "UNSUPPORTED_FORMAT"
+
+
+def test_extractor_noise_never_becomes_pages(tmp_path, monkeypatch) -> None:
+    """R-001: a tree carrying the non-page names the real binding can emit —
+    ``cover%05d.*`` (a cover, not a page) and ``HDimage%05d.*`` (an HD
+    duplicate under ``HDImages/``) — yields exactly the KF7 page images in
+    record order. On d114253 this tree collected 4 "pages" with the HD copy
+    first (reviewer probe ``probe_collect.py``, PROBE A)."""
+    tree = _ExtractorTree(tmp_path)
+    tree.inject(monkeypatch)
+    handle = MobiDocumentRaster().open(
+        picture_mobi([_make_jpeg(8, 6, (255, 0, 0))])
+    )
+
+    assert handle.page_count == 2
+    first = _decode_png(handle.render_page(0).png)
+    second = _decode_png(handle.render_page(1).png)
+    assert (first.width(), first.height()) == (8, 6)
+    assert (second.width(), second.height()) == (9, 7)
+    _assert_colour(first.pixelColor(4, 3), (255, 0, 0))
+    _assert_colour(second.pixelColor(5, 4), (0, 255, 0))
+    handle.close()
+
+
+def test_kf8_dual_format_tree_fails_closed(
+    workspace, tmp_path, monkeypatch
+) -> None:
+    """R-001/R-002: a KF8/AZW3 extraction tree (mirrored ``mobi8/``) must
+    not import — the ``mobi7/`` tree of a dual-format container is an
+    unverified down-conversion, so the adapter fails typed (AZW3 support
+    stays BLOCKED; see ``MobiDocumentRaster``)."""
+    tree = _ExtractorTree(tmp_path, with_mobi8=True)
+    tree.inject(monkeypatch)
+    use_case, sink = workspace["use_case"], workspace["sink"]
+
+    report = use_case.import_documents(
+        "chapter-7",
+        [_source("azw3.mobi", picture_mobi([_make_jpeg(8, 6, (255, 0, 0))]))],
+    )
+
+    assert report.imported == ()
+    assert len(report.failed) == 1
+    assert report.failed[0].reason == "INVALID_DOCUMENT"
+    assert "KF8" in report.failed[0].detail
+    assert sink.pages == []
+    assert not workspace["managed_root"].exists()
+
+
+def test_mid_document_bad_page_keeps_prior_and_pends_rest(workspace) -> None:
+    """R-004: the F-3 accounting with a broken page *between* good pages —
+    the good page before it is kept, the pages after it are pending, and a
+    failed page is not a cancellation (PDF precedent:
+    ``test_failed_page_reports_the_rest_as_pending``)."""
+    use_case, sink = workspace["use_case"], workspace["sink"]
+    broken = b"\xff\xd8\xff\xd9"  # JPEG magic + EOI, no frame data
+    images = [_make_jpeg(8, 6, (255, 0, 0)), broken, _make_jpeg(9, 7, (0, 255, 0))]
+
+    report = use_case.import_documents(
+        "chapter-7", [_source("mid.mobi", picture_mobi(images))]
+    )
+
+    assert [item.page.source_order for item in report.imported] == [1]
+    assert [failure.reason for failure in report.failed] == ["INVALID_DOCUMENT"]
+    assert "decoded" in report.failed[0].detail
+    assert report.pending_after_cancel == ("mid.mobi (page 3+)",)
+    assert report.cancelled is False
+    assert len(sink.pages) == 1

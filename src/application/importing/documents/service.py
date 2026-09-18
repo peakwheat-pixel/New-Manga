@@ -66,10 +66,13 @@ def _is_pdf(data: bytes) -> bool:
 
 
 def _is_mobi(data: bytes) -> bool:
-    """PalmDB container whose type/creator is BOOK/MOBI (MOBI and AZW3).
+    """PalmDB container whose type/creator is BOOK/MOBI (the .mobi/.azw3
+    family — this check alone cannot tell KF7 from KF8/AZW3).
 
     The identifiers sit at fixed offsets of the 78-byte PDB header, so this
-    stays a byte check — no parsing happens here.
+    stays a byte check — no parsing happens here. Dispatch only: the MOBI
+    raster itself accepts KF7 picture containers and fails every other
+    variant typed (see ``MobiDocumentRaster``).
     """
     return len(data) >= 68 and data[60:64] == b"BOOK" and data[64:68] == b"MOBI"
 
@@ -161,8 +164,9 @@ class ImportDocumentsUseCase:
                     FailedImport(
                         source.filename,
                         REASON_UNSUPPORTED_FORMAT,
-                        "only PDF is supported by the approved binding "
-                        "(MOBI rasterisation is BLOCKED, TASK-023)",
+                        "only PDF is wired in this assembly; the MOBI payload "
+                        "was recognised but no MOBI binding was injected "
+                        "(MOBI support landed with TASK-041)",
                     )
                 )
                 continue

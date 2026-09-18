@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import shutil
 import struct
 import tempfile
@@ -28,6 +29,14 @@ _MIME_TYPES = {
     "webp": "image/webp",
 }
 _UNKNOWN_MIME_TYPE = "application/octet-stream"
+
+# R-001 (TASK-041 review): page images are exactly ``image%05d.<ext>`` in
+# ``mobi7/Images/``. The fullmatch keeps the extractor's other outputs out —
+# ``cover%05d.*`` (a cover, not a page) and ``HDimage%05d.*`` (HD duplicates
+# under ``HDImages/``) both end in "...image%05d.<ext>" but do not fullmatch.
+_PAGE_IMAGE_RE = re.compile(
+    r"image(\d{5})\.(?:bmp|gif|jpe?g|png)", re.IGNORECASE
+)
 
 
 class QtImageDecoder:
@@ -220,14 +229,28 @@ class _PdfiumDocumentHandle:
 
 
 class MobiDocumentRaster:
-    """Extract embedded page images from picture MOBI containers (TASK-041).
+    """Extract embedded page images from KF7 picture MOBI (TASK-041).
 
-    Scope (user-approved): **picture MOBI only** — comic MOBI/AZW3 files are
-    typically one embedded image per page, and those images are published as
-    managed pages through the shared document-import discipline. Reflowable
-    text-only MOBI has no page images to give and is deliberately **not**
-    rendered (that would need an HTML engine, a different class of
-    dependency): it fails typed as ``INVALID_DOCUMENT`` with a scope note.
+    Scope (user-approved; narrowed per review R-002): **KF7 picture MOBI
+    only** — comic MOBI files in the classic format are one embedded image
+    per page, published as managed pages through the shared document-import
+    discipline. Deliberately out of scope, typed fail-closed:
+
+    - reflowable text-only MOBI (no page images): ``INVALID_DOCUMENT`` with
+      a scope note (rendering HTML would need an engine the approved
+      dependency set does not include);
+    - KF8/AZW3 containers (dual-format or KF8-only): ``INVALID_DOCUMENT`` —
+      **BLOCKED** pending a dedicated slice that verifies the KF8 tree on
+      real samples; the ``mobi7/`` tree of a dual-format container is an
+      unverified down-conversion, so it is not trusted either.
+
+    Page semantics (R-001): the extractor's temp tree is **not** trusted as
+    a page list. Besides ``mobi7/Images/image%05d.<ext>`` (page images,
+    named after their container record number) it may contain
+    ``cover%05d.*`` (a cover, not a page), ``HDimage%05d.*`` (HD duplicates
+    under ``HDImages/``) and a mirrored ``mobi8/`` tree. Only the KF7 page
+    images are collected, ordered by the record number in the name — cover
+    and HD resources never become pages.
 
     The ``mobi`` binding (mobi==0.4.1, an embedded KindleUnpack) sits
     strictly behind this adapter — application code never imports it — so a
@@ -237,13 +260,7 @@ class MobiDocumentRaster:
     as ``INVALID_DOCUMENT``; a page whose image bytes Qt cannot decode fails
     that page (F-3 accounting); an unusable binding is
     ``MISSING_DEPENDENCY`` (F-9 caliber, same as the PDF path).
-
-    Page order: the extractor names images after their container record
-    number, and filename order therefore *is* container order — the order
-    the authoring tool wrote the page images in.
     """
-
-    _IMAGE_SUFFIXES = {".bmp", ".gif", ".jpeg", ".jpg", ".png"}
 
     def open(self, data: bytes):
         from application.importing.documents.ports import DocumentDecodeError
@@ -285,19 +302,36 @@ class MobiDocumentRaster:
                     pass
 
         root = Path(tempdir)
-        images = sorted(
-            path
-            for path in root.rglob("*")
-            if path.is_file() and path.suffix.lower() in self._IMAGE_SUFFIXES
-        )
+        if (root / "mobi8").is_dir():
+            # KF8/AZW3 container (dual-format or KF8-only): fail closed
+            # instead of trusting an unverified down-converted KF7 tree
+            # (review R-001/R-002; see the class docstring for the BLOCKED
+            # registration).
+            shutil.rmtree(tempdir, ignore_errors=True)
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                "KF8/AZW3 MOBI containers are not supported yet: only KF7 "
+                "picture MOBI is verified (support is BLOCKED pending a "
+                "dedicated slice)",
+            )
+
+        page_dir = root / "mobi7" / "Images"
+        images: list[tuple[int, Path]] = []
+        if page_dir.is_dir():
+            for path in page_dir.iterdir():
+                match = _PAGE_IMAGE_RE.fullmatch(path.name)
+                if match is not None and path.is_file():
+                    images.append((int(match.group(1)), path))
+        images.sort(key=lambda entry: entry[0])
         if not images:
             shutil.rmtree(tempdir, ignore_errors=True)
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT",
-                "text-only MOBI: no embedded page images (reflowable "
-                "rendering is out of the approved scope)",
+                "text-only MOBI: no KF7 page images (mobi7/Images/"
+                "image%05d.*); reflowable rendering is out of the approved "
+                "scope",
             )
-        return _MobiDocumentHandle(tempdir, images)
+        return _MobiDocumentHandle(tempdir, [path for _record, path in images])
 
 
 class _MobiDocumentHandle:
