@@ -1,0 +1,5 @@
+﻿container 1731 bytes -> C:\Users\49745\AppData\Local\Temp\mobi-probe-u7jqtswo\probe.mobi
+extract FAILED: TypeError: cannot unpack non-iterable bool object
+"""Probe: can a hand-built picture MOBI be extracted by mobi 0.4.1?
+
+Builds a minimal PalmDB/MOBI container (KF7, no DRM, no compression):

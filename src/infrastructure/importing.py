@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import os
+import shutil
+import struct
+import tempfile
 from collections.abc import Callable
 from pathlib import Path
 from uuid import uuid4
@@ -213,3 +217,148 @@ class _PdfiumDocumentHandle:
             self._document.close()
         except Exception:  # pragma: no cover - closing must never raise
             pass
+
+
+class MobiDocumentRaster:
+    """Extract embedded page images from picture MOBI containers (TASK-041).
+
+    Scope (user-approved): **picture MOBI only** — comic MOBI/AZW3 files are
+    typically one embedded image per page, and those images are published as
+    managed pages through the shared document-import discipline. Reflowable
+    text-only MOBI has no page images to give and is deliberately **not**
+    rendered (that would need an HTML engine, a different class of
+    dependency): it fails typed as ``INVALID_DOCUMENT`` with a scope note.
+
+    The ``mobi`` binding (mobi==0.4.1, an embedded KindleUnpack) sits
+    strictly behind this adapter — application code never imports it — so a
+    dead upstream is swapped here and nowhere else. DRM-protected containers
+    (``crypto_type != 0`` in the PalmDoc header) are rejected as
+    ``ENCRYPTED`` before any parsing; truncation and parse failures surface
+    as ``INVALID_DOCUMENT``; a page whose image bytes Qt cannot decode fails
+    that page (F-3 accounting); an unusable binding is
+    ``MISSING_DEPENDENCY`` (F-9 caliber, same as the PDF path).
+
+    Page order: the extractor names images after their container record
+    number, and filename order therefore *is* container order — the order
+    the authoring tool wrote the page images in.
+    """
+
+    _IMAGE_SUFFIXES = {".bmp", ".gif", ".jpeg", ".jpg", ".png"}
+
+    def open(self, data: bytes):
+        from application.importing.documents.ports import DocumentDecodeError
+
+        try:
+            import mobi  # adapter-local: never leaks past this file
+        except (ImportError, OSError) as error:
+            raise DocumentDecodeError(
+                "MISSING_DEPENDENCY",
+                "the mobi binding required for MOBI import is unavailable: "
+                f"{error}",
+            ) from error
+
+        crypto_type = _pdb_crypto_type(data)
+        if crypto_type is not None and crypto_type != 0:
+            raise DocumentDecodeError(
+                "ENCRYPTED",
+                "the MOBI is DRM-protected; protected files are never opened",
+            )
+
+        temp_source: str | None = None
+        try:
+            descriptor, temp_source = tempfile.mkstemp(suffix=".mobi")
+            with os.fdopen(descriptor, "wb") as handle:
+                handle.write(data)
+            tempdir, _html = mobi.extract(temp_source)
+        except DocumentDecodeError:
+            raise
+        except Exception as error:
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                f"the MOBI container could not be parsed: {error}",
+            ) from error
+        finally:
+            if temp_source is not None:
+                try:
+                    os.unlink(temp_source)
+                except OSError:  # pragma: no cover - temp file best effort
+                    pass
+
+        root = Path(tempdir)
+        images = sorted(
+            path
+            for path in root.rglob("*")
+            if path.is_file() and path.suffix.lower() in self._IMAGE_SUFFIXES
+        )
+        if not images:
+            shutil.rmtree(tempdir, ignore_errors=True)
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                "text-only MOBI: no embedded page images (reflowable "
+                "rendering is out of the approved scope)",
+            )
+        return _MobiDocumentHandle(tempdir, images)
+
+
+class _MobiDocumentHandle:
+    """Extracted picture-MOBI: one image file per page, record order."""
+
+    def __init__(self, tempdir: str, images: list[Path]) -> None:
+        self._tempdir = tempdir
+        self._images = images
+
+    @property
+    def page_count(self) -> int:
+        return len(self._images)
+
+    def render_page(self, index: int):
+        from application.importing.documents.ports import (
+            DocumentDecodeError,
+            RenderedDocumentPage,
+        )
+
+        from PySide6.QtCore import QBuffer, QIODevice
+        from PySide6.QtGui import QImage
+
+        path = self._images[index]
+        try:
+            raw = path.read_bytes()
+        except OSError as error:
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT", f"page image could not be read: {error}"
+            ) from error
+        image = QImage()
+        if not image.loadFromData(raw):
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                f"page image {path.name} could not be decoded by Qt",
+            )
+        buffer = QBuffer()
+        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
+        if not image.save(buffer, "PNG"):
+            raise DocumentDecodeError(
+                "INVALID_DOCUMENT",
+                f"page image {path.name} could not be encoded as PNG",
+            )
+        return RenderedDocumentPage(bytes(buffer.data()), image.width(), image.height())
+
+    def close(self) -> None:
+        # The extractor leaves its temp tree behind; ownership of cleanup is
+        # here so every exit path (success, page failure, cancellation)
+        # releases it.
+        shutil.rmtree(self._tempdir, ignore_errors=True)
+
+
+def _pdb_crypto_type(data: bytes) -> int | None:
+    """``crypto_type`` of the PalmDoc header (record 0), or ``None`` when
+    the container is too short to have one (the extractor reports that)."""
+    if len(data) < 78:
+        return None
+    record_count = struct.unpack_from(">H", data, 76)[0]
+    if record_count == 0:
+        return None
+    record0_offset = struct.unpack_from(">I", data, 78)[0]
+    crypto_offset = record0_offset + 0x0C
+    if len(data) < crypto_offset + 2:
+        return None
+    return struct.unpack_from(">H", data, crypto_offset)[0]
