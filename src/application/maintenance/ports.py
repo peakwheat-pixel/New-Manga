@@ -71,3 +71,22 @@ class TrashManifestStore(Protocol):
     def read_manifest(self) -> dict: ...
 
     def write_manifest(self, manifest: dict) -> None: ...
+
+
+class RunLedgerMaintenance(Protocol):
+    """Maintenance seam for the persisted pipeline-run ledger (TASK-053
+    R-03: runs are deliberately **kept** after every target page is
+    purged — a run spans pages, so cascading it away would destroy
+    audit history other pages still share. Target-less runs stay
+    visible and reclaimable through this port instead of being
+    silently dropped by page deletion."""
+
+    def count_targetless_runs(self) -> int:
+        """Number of persisted runs whose every target row is gone."""
+        ...
+
+    def purge_targetless_runs(self) -> int:
+        """Delete every non-active target-less run; returns the count
+        removed. Active runs (running/paused) are always kept: they may
+        still be referenced by the recovery path even with no tasks."""
+        ...

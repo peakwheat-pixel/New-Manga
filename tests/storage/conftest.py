@@ -6,6 +6,7 @@ command ``python -m pytest tests/storage`` works without external env setup.
 
 from __future__ import annotations
 
+import hashlib
 import sys
 import uuid
 from datetime import datetime, timezone
@@ -122,3 +123,84 @@ def artifact_id(repo, seeded_page) -> str:
             artifact_type=ArtifactType.TRANSLATED,
         )
     ).artifact_id
+
+
+NOW = "2026-09-19T02:00:00+00:00"
+
+
+@pytest.fixture()
+def trash_workspace(tmp_path: Path):
+    """Real SQLite + real ManagedFileStorage trash construction (the
+    TASK-021 subset shape), for the TASK-053 R-03/R-04 tests."""
+
+    from application.maintenance import TrashService
+    from application.maintenance.trash import _JsonTrashManifest
+    from domain.pages.entities import Page
+    from infrastructure.sqlite.library import SqliteLibraryRepository
+
+    conn, _opened = open_database(
+        tmp_path / "library.db", latest_known_schema_version=LATEST_KNOWN
+    )
+    MigrationRunner(conn, default_migrations()).apply_pending()
+    storage = ManagedFileStorage(tmp_path / "managed")
+    storage.ensure_layout()
+    repository = SqliteLibraryRepository(conn)
+
+    user_source = tmp_path / "user-side" / "original-art.tiff"
+    user_source.parent.mkdir(parents=True, exist_ok=True)
+    user_source.write_bytes(b"USER SOURCE BYTES")
+
+    with conn:
+        conn.execute(
+            "INSERT INTO books (book_id, title, created_at, updated_at)"
+            " VALUES ('book-1', 'Book', ?, ?)",
+            (NOW, NOW),
+        )
+        conn.execute(
+            "INSERT INTO chapters (chapter_id, book_id, title, created_at, updated_at)"
+            " VALUES ('chapter-1', 'book-1', 'Chapter', ?, ?)",
+            (NOW, NOW),
+        )
+
+    def make_page(page_id: str, payload: bytes) -> Page:
+        relative = f"books/book-1/chapters/chapter-1/original/{page_id}.png"
+        managed_file = tmp_path / "managed" / Path(relative)
+        managed_file.parent.mkdir(parents=True, exist_ok=True)
+        managed_file.write_bytes(payload)
+        page = Page(
+            page_id=page_id,
+            chapter_id="chapter-1",
+            source_filename=f"{page_id}.png",
+            source_order=int(page_id[-1]),
+            sort_order=int(page_id[-1]),
+            source_hash=hashlib.sha256(payload).hexdigest(),
+            source_size_bytes=len(payload),
+            width=4,
+            height=3,
+            managed_original_ref=relative,
+        )
+        repository.add_page(page)
+        return page
+
+    manifest = _JsonTrashManifest(tmp_path / "managed" / "trash-manifest.json")
+    service = TrashService(repository, storage, manifest)
+
+    def read_pending() -> list[dict]:
+        return manifest.read_manifest().get("pending_purges", [])
+
+    yield {
+        "conn": conn,
+        "repository": repository,
+        "storage": storage,
+        "service": service,
+        "make_page": make_page,
+        "user_source": user_source,
+        "manifest_path": tmp_path / "managed" / "trash-manifest.json",
+        "managed": tmp_path / "managed",
+        "with_remover": lambda remover: TrashService(repository, remover, manifest),
+        "read_pending": read_pending,
+        "live_page_ids": lambda: {
+            page.page_id for page in repository.list_pages("chapter-1")
+        },
+    }
+    conn.close()
