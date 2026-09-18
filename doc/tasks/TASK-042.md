@@ -5,18 +5,22 @@ kind: implementation
 status: ready
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
-owner: DeepSeek Harness
+owner: ZCode
 reviewer: Codex
 depends_on: [TASK-020, TASK-038]
 base_commit: 904fca185c9900c0b2df297529a58ece831dc0a0
-branch: agent/deepseek/TASK-042-streaming-decode
-worktree: G:/CODEX/New Manga.worktrees/TASK-042-deepseek
+branch: agent/zcode/TASK-042-streaming-decode
+worktree: G:/CODEX/New Manga.worktrees/TASK-042-zcode
 integration_commit: null
 ---
 
 # TASK-042：超大 Webtoon 带状/流式解码
 
-**READY（2026-09-18 用户批准"两项都批准"——本项为超大 webtoon 的流式解码依赖）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`904fca1`。
+**READY（2026-09-18 用户批准"两项都批准"——本项为超大 webtoon 的流式解码依赖）**：Owner=`ZCode`、Reviewer=`Codex`（**非作者**）、base=`904fca1`。
+
+**改派说明（2026-09-18，经用户确认"适合交给 ZCode"）**：Owner 由 `DeepSeek Harness` 改为 `ZCode`（**连续性最优**：本 Task 要改的 tile 路径与 `webtoon_tiles.py` 即 ZCode 在窗口内的交付；原 `agent/deepseek/TASK-042-streaming-decode` 分支与 worktree **无任何提交**，已按约定移除重建为 `agent/zcode/**`）。Reviewer 保持 `Codex`（非作者）。
+
+**复审特别提示（给 Reviewer）**：AC ② 要翻转的表征断言钩子是**本 Task 作者自己在 TASK-020 写的**——复审必须确认新断言**更强**（带状解码成功 + 内存界 + 逐像素等价），**不是**把旧断言改宽松；该测试**不得删除**。
 
 ## 来源（TASK-020 已把问题钉得很准）
 

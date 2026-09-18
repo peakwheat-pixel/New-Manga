@@ -5,18 +5,20 @@ kind: implementation
 status: ready
 approval: approved_by_user
 suggested_owner: DeepSeek Harness
-owner: DeepSeek Harness
+owner: ZCode
 reviewer: Codex
 depends_on: [TASK-023]
 base_commit: 904fca185c9900c0b2df297529a58ece831dc0a0
-branch: agent/deepseek/TASK-041-mobi-import
-worktree: G:/CODEX/New Manga.worktrees/TASK-041-deepseek
+branch: agent/zcode/TASK-041-mobi-import
+worktree: G:/CODEX/New Manga.worktrees/TASK-041-zcode
 integration_commit: null
 ---
 
 # TASK-041：MOBI 导入路线（承接 TASK-023 遗留 `BLOCKED`）
 
-**READY（2026-09-18 用户批准"两项都批准"——本项为 MOBI 解析依赖）**：Owner=`DeepSeek Harness`、Reviewer=`Codex`（**非作者**）、base=`904fca1`、branch/worktree 见顶部元数据。开工前把 `status` 改为 `in_progress`。
+**READY（2026-09-18 用户批准"两项都批准"——本项为 MOBI 解析依赖）**：Owner=`ZCode`、Reviewer=`Codex`（**非作者**）、base=`904fca1`、branch/worktree 见顶部元数据。开工前把 `status` 改为 `in_progress`。
+
+**改派说明（2026-09-18，经用户确认"适合交给 ZCode"）**：Owner 由 `DeepSeek Harness` 改为 `ZCode`（属"独立 Feature/长任务实现"职责面；原 `agent/deepseek/TASK-041-mobi-import` 分支与 worktree **无任何提交**，已按命名约定移除并重建为 `agent/zcode/**`）。Reviewer 保持 `Codex`（非作者）。
 
 ## 来源
 
@@ -77,4 +79,3 @@ integration_commit: null
 
 - Handoff：尚无。Review：尚无。实际执行/测试：尚无（`ready`，实施未开始）。
 - **最近状态（当前，唯一）**：2026-09-18 由 Codex 依用户批准的 MOBI 依赖创建为 `ready`；`base=904fca1`。**实施尚未开始。**
-

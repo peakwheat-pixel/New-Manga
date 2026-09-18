@@ -2,11 +2,11 @@
 id: TASK-021
 title: 完善备份恢复、回收站、清理与诊断
 kind: implementation
-status: done（子集；其余子集 frozen，见下）
+status: done
 approval: approved_by_user
 suggested_owner: Codex
 owner: ZCode
-reviewer: ZCode（窗口内子 agent，结论仅 approved_subagent）
+reviewer: Codex
 depends_on: [TASK-006, TASK-011, TASK-015]
 base_commit: 047164ea080651741b38b20a36470115d4830a0d
 branch: agent/zcode/TASK-021-backup-trash-cleanup-diagnostics
