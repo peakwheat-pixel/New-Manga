@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Mapping, Sequence
 
 from application.tasks.store import (
@@ -343,6 +343,19 @@ class PipelineService:
         region: RegionSnapshot | None,
     ) -> list[PlanUnit]:
         steps = _COMMAND_STEPS[run.command_type]
+        if region is None and "ocr" in steps:
+            # TASK-049 AC ①②③: a page-level target has no Region yet, and
+            # the planned chain starts at ``ocr`` — so detection runs first
+            # and creates the Regions the region steps consume. With no
+            # detector wired the ``detect`` handler fails closed
+            # (PROVIDER_NOT_CONFIGURED) and the task's remaining units are
+            # cancelled — the run then fails at the capability gap instead of
+            # at ``ocr`` with INVALID_INPUT "requires a Region target".
+            # Region-level plans keep their steps unchanged (their Region
+            # already exists), and region-free chains (rerender/reinpaint)
+            # are not gated on detection either — their semantics do not
+            # start from Region creation.
+            steps = ("detect", *steps)
         forced = self._forced_steps(run.command_type)
         target_id = region.region_id if region is not None else target.page_id
         current_revisions = (
@@ -634,6 +647,12 @@ class PipelineService:
         if outcome.status == "applied":
             step_run.status = StepRunStatus.COMPLETED
             step_run.output = result.outputs
+            if unit.step_type == "detect":
+                # TASK-049 AC ③: the detection step created the page's
+                # Regions; the task's still-regionless units (planned before
+                # any Region existed) now bind to the first one so ``ocr`` et
+                # al. run against a real Region target.
+                self._backfill_detected_regions(task, unit, result)
             self._mark_terminal(run, unit.unit_id)
             self._persist(run)
             return CommitStepOutcome("committed", step_run.step_run_id)
@@ -733,7 +752,15 @@ class PipelineService:
             if task.status is PipelineTaskStatus.BLOCKED:
                 continue
             task_failed = False
-            for unit in task.units:
+            # index-based loop (TASK-049): a committed ``detect`` step
+            # replaces the task's still-regionless units (see
+            # ``_backfill_detected_regions``); iterating by index lets the
+            # next iteration see the replaced units, which a plain
+            # ``for unit in task.units`` (bound to the old tuple) would not.
+            unit_index = 0
+            while unit_index < len(task.units):
+                unit = task.units[unit_index]
+                unit_index += 1
                 if unit.unit_id in run.terminal_unit_ids:
                     continue
                 if unit.decision is PlanDecision.SKIP_VALID or unit.decision is PlanDecision.SKIP_LOCK or unit.decision is PlanDecision.SKIP_POLICY:
@@ -889,6 +916,33 @@ class PipelineService:
             PipelineScope(ScopeType.PAGE_SELECTION, selected_ids=failed_pages),
             source_run_id=run.run_id,
             retry_reason="retry_failed_targets",
+        )
+
+    @staticmethod
+    def _backfill_detected_regions(
+        task: PipelineTask, unit: PlanUnit, result: StepResult
+    ) -> None:
+        """Bind the task's regionless units to the first detected Region.
+
+        Multi-Region pages still run their pipeline steps against the first
+        Region (``reading_order`` 1); fanning a page task out over every
+        detected Region is a later scheduling slice — the full id list stays
+        in the step's ``outputs`` for audit either way.
+        """
+        region_ids = tuple(result.outputs.get("region_ids") or ())
+        if not region_ids:
+            return
+        primary = region_ids[0]
+        # rebuild the tuple in place on the task: the index-based loop in
+        # ``execute_run`` re-reads ``task.units[index]`` each iteration, so
+        # the units after the detect step see their new region_id
+        task.units = tuple(
+            (
+                replace(item, region_id=primary)
+                if item.unit_id != unit.unit_id and item.region_id is None
+                else item
+            )
+            for item in task.units
         )
 
     def _cancel_remaining(

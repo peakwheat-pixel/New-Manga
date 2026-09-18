@@ -1,0 +1,4 @@
+PLANNED_UNITS=['detect', 'ocr', 'color', 'term_extract', 'translate', 'segment', 'mask_refine', 'inpaint', 'render']
+STEP detect -> failed code='PROVIDER_NOT_CONFIGURED'
+RUN_FINAL=completed_with_failures
+MISSING_REGION_INPUT_FAILURES=0
