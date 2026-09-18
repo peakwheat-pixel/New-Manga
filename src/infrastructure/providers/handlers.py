@@ -78,6 +78,7 @@ from ports.inpaint.ports import (
     BooleanMask,
     ImageFrame,
 )
+from ports.detection.ports import DetectionRequest
 from ports.ocr.ports import (
     SCRIPT_JAPANESE,
     TEXT_DIRECTION_HORIZONTAL,
@@ -96,6 +97,7 @@ from ports.translation.protocol import (
     build_request_payload,
 )
 
+STEP_DETECT = "detect"
 STEP_OCR = "ocr"
 STEP_COLOR = "color"
 STEP_TERM_EXTRACT = "term_extract"
@@ -161,6 +163,12 @@ class HandlerDependencies:
     source_styles: SourceStyleService | None = None  # TASK-033 color
     terms: TermExtractionService | None = None  # TASK-033 term_extract
     render_service: RenderService | None = None  # TASK-033 render
+    #: TASK-049 AC ①②: the detection adapter and the application-layer
+    #: Region writer for the ``detect`` step. ``None`` (every pre-TASK-049
+    #: construction) keeps the assembly buildable, and ``handle_detect`` then
+    #: fails closed with a typed error instead of degrading silently.
+    detector: Any = None  # ports.detection.ports.DetectionProvider
+    region_creator: Any = None  # (page_id, polygon, reading_order, provenance) -> region_id
 
 
 class ProductionHandlers:
@@ -171,6 +179,7 @@ class ProductionHandlers:
         self._handlers: dict[str, Any] = {
             step_type: self._typed(handler)
             for step_type, handler in (
+                (STEP_DETECT, self.handle_detect),
                 (STEP_OCR, self.handle_ocr),
                 (STEP_COLOR, self.handle_color),
                 (STEP_TERM_EXTRACT, self.handle_term_extract),
@@ -209,6 +218,89 @@ class ProductionHandlers:
 
     def as_mapping(self) -> dict[str, Any]:
         return dict(self._handlers)
+
+    # ------------------------------------------------------------------
+    # detect (TASK-049 AC ①②: page-level input face for region steps)
+    # ------------------------------------------------------------------
+
+    def handle_detect(
+        self, step_run: StepRun, unit: PlanUnit, run: PipelineRun
+    ) -> StepResult:
+        """Detect text regions on the page and land them as Regions.
+
+        Fail-closed ladder (TASK-049 AC ①):
+
+        - no detector / no region writer wired at assembly →
+          ``PROVIDER_NOT_CONFIGURED`` (the same taxonomy slot OCR_REGION uses
+          when no OCR provider is ready — the failure stays at the capability
+          gap, never at a fabricated success);
+        - the adapter reports zero candidates → ``INVALID_INPUT`` (a page
+          with no text has nothing for the following region steps to work
+          on; failing the step cancels the task's remaining units instead of
+          letting ``ocr`` fail with "requires a Region target");
+        - the adapter raised → typed provider error via ``_typed``.
+
+        Idempotency: a page that already has live Regions reuses them (in
+        ``reading_order``), so re-planned page tasks never pile up duplicate
+        machine regions. The Regions themselves are written by the
+        application-layer ``region_creator`` (assembly-injected; TASK-049 AC ②
+        reuses :meth:`RegionEditingService.create_region` — no second Region
+        write path exists).
+        """
+        if self.deps.detector is None or self.deps.region_creator is None:
+            raise ProviderNotConfigured(
+                "no detection provider / region writer is wired at assembly",
+                stage=STEP_DETECT,
+            )
+        live = [
+            region
+            for region in self.deps.regions.list_regions(unit.page_id)
+            if not region.deleted
+        ]
+        if live:
+            region_ids = tuple(
+                region.region_id
+                for region in sorted(live, key=lambda region: region.reading_order)
+            )
+            provenance = {"reused_existing_regions": len(region_ids)}
+            return self._detect_result(unit, region_ids, provenance)
+
+        frame = self.deps.images.page_frame(unit.page_id)
+        request = DetectionRequest(
+            page_id=unit.page_id,
+            image_bytes=frame.data,
+            width=frame.width,
+            height=frame.height,
+        )
+        detection = self.deps.detector.detect(request)
+        candidates = detection.page_global_candidates()
+        if not candidates:
+            raise ProviderInputError(
+                f"detector returned no candidates for page {unit.page_id!r}",
+                stage=STEP_DETECT,
+            )
+        provenance = detection.provenance()
+        region_ids = tuple(
+            self.deps.region_creator(
+                unit.page_id,
+                candidate.polygon,
+                candidate.reading_order or index,
+                provenance,
+            )
+            for index, candidate in enumerate(candidates, start=1)
+        )
+        return self._detect_result(unit, region_ids, provenance)
+
+    @staticmethod
+    def _detect_result(
+        unit: PlanUnit, region_ids: tuple[str, ...], provenance: dict
+    ) -> StepResult:
+        return StepResult(
+            target_id=unit.target_id,
+            step_type=STEP_DETECT,
+            outputs={"region_ids": region_ids, "detection": provenance},
+            output_target_ids=(unit.target_id,),
+        )
 
     # ------------------------------------------------------------------
     # OCR (D06 §7, AC-OCR-001/004)
@@ -917,12 +1009,16 @@ def build_production_handlers(
     source_styles: SourceStyleService | None = None,
     terms: TermExtractionService | None = None,
     render_service: RenderService | None = None,
+    detector: Any = None,
+    region_creator: Any = None,
 ) -> dict[str, Any]:
     """Convenience wrapper used by ``bootstrap.app``.
 
     The TASK-033 services stay optional at the assembly boundary: an omitted
     service still assembles, and its handler then fails closed at run time
-    (TASK-033 AC ①/②/③).
+    (TASK-033 AC ①/②/③).  ``detector`` / ``region_creator`` are the
+    TASK-049 ``detect`` step's optional pair — unwired, ``detect`` fails
+    closed with ``PROVIDER_NOT_CONFIGURED``.
     """
     return ProductionHandlers(
         HandlerDependencies(
@@ -941,6 +1037,8 @@ def build_production_handlers(
             source_styles=source_styles,
             terms=terms,
             render_service=render_service,
+            detector=detector,
+            region_creator=region_creator,
         )
     ).as_mapping()
 
@@ -955,6 +1053,7 @@ __all__ = [
     "RegionGeometrySource",
     "RegionMaskGeometry",
     "STEP_COLOR",
+    "STEP_DETECT",
     "STEP_INPAINT",
     "STEP_MASK_REFINE",
     "STEP_OCR",
