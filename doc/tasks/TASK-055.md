@@ -2,7 +2,7 @@
 id: TASK-055
 title: TASK-021 冻结子集①：日志与诊断
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -45,5 +45,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际测试：尚无（`ready`）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 开立为 `ready`（窗口 W8，本窗口优先子集）。**实施尚未开始。**
+- Handoff：[TASK-055-7f13e53.md](../handoffs/TASK-055-7f13e53.md)。Review：尚无（待窗口独立子对话 Review）。实际测试：新套件 19 例 + 全仓 ×5（870/0，=851 基线 + 19 新用例）+ 相邻面 storage/core 72/0，全部入库 `verification/TASK-055/`。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 实现（AC ④ 白名单收紧记录：实际落地 `src/application/maintenance/diagnostics.py` + `src/infrastructure/filesystem/bounded_log_store.py` + `tests/diagnostics/**`；零新依赖、零 Schema）。实现提交 `7f13e53`。**装配接线与 QML 入口不在本切片**（bootstrap 未触碰；QML 受 TASK-047 门约束），生产可达登记 NOT_RUN、待装配切片注入。`base=8bf8da3`（开工已 merge master `aaef5f2`，含 TASK-046/TASK-054）。
