@@ -43,7 +43,7 @@ stage 取值如实描述失败面：`selection`（guard 类）/ `command`（Pipe
 
 ### AC ④ 断言（三类真实失败 + QML 契约）— 达成
 - 无 Region / 无 Page：`startRegionCommand("ocr_region")` / `startTranslateSelected()` 真实入口 guard → 状态可见、可清空；
-- 无 provider 绑定：生产 `_chain` 的**真实错误类型与真实文本**（`PipelineError("PROVIDER_NOT_CONFIGURED", "no provider binding configured for step 'ocr'")`）经对象分支 → 状态含码+细节；
+- 无 provider 绑定：**生产错误文本 + 等价形态构造**——用例以 `PipelineError("PROVIDER_NOT_CONFIGURED", "no provider binding configured for step 'ocr'")` 走 sink 对象分支，文本与生产 `_chain` 逐字一致。**勘误（R-001，Review 指出）**：生产该场景实际抛 `ProviderNotConfigured`（`ProviderError` 子类，非 `PipelineError`、无 `.code` 实例属性），且该异常经 handler→service 终止于 run 内部（`completed_with_failures`，真实终态），**不经 commandError/sink**（见「已知边界」）——用例覆盖的是 sink 对象分支与真实文本，非该异常的真实抛出路径；
 - worker 崩溃：`_on_run_crashed`（RunController.runCrashed 的真实接收器）→ `[worker] ...`；
 - QML 契约：`test_command_error_bar_visible_only_when_a_failure_is_held`——空闲不可见 → 真实 VM 失败后可见且文本正确 → 复制动作可执行 → 关闭后不可见且 VM 状态清空（机器可验证）。
 
