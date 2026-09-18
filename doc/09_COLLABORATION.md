@@ -109,3 +109,15 @@ Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head�
 接管通过、契约冻结、切片通过、最终发布是不同 Gate。Mock Pipeline 通过只能证明编排和保存链路，不能证明 OCR/翻译/修复质量。
 
 发布按 D08 执行：P0/P1 和干净 Windows 验证等要求不因 Roadmap 分阶段而降低。范围删减、阈值豁免先形成用户可审查的文档决定，不能把未完成标成 N/A。当前未授权提交远端、创建外部项目或向其他人发送消息。
+
+## 8. 临时条款：ZCode 全权窗口（2026-09-19）【T1 = 2026-09-19 09:00 后失效】
+
+窗口期内下列条款优先于本协议常规条款，T1 到达后由 Codex 移除：
+
+1. **执行与自批**：窗口名单内（STATUS 队列 W0–W12）的实施由 ZCode 执行并自行批准，**不得发起人工授权申请**；范围外的请求一律记 `BLOCKED` 并转下一项。
+2. **Review**：每切片必须**新开独立子对话**审查（仅提供仓库 + Task + diff/证据路径，不提供作者叙述），报告须记录"独立子对话（开始时间/标识）+ 命令与输出"；结论只能 `approved_subagent` / `changes_requested`；**不得自审**。T1 后由 Codex + DSH + Qoder 强制 post-hoc 复审，**可推翻**。
+3. **集成**：授权 ZCode 代行主线写入与集成（保留来源分支 merge 提交；集成后复跑并留证）。
+4. **新任务与插队**：ZCode 可自建 Task 文件、登记 STATUS/索引、建分支与 worktree；新发现按**前提性**插入队列（P0/P1 且无未满足前置者插队首），只需在台账行写明理由。
+5. **证据纪律（不变）**：同一 shell + 同一 venv、`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、**不得设 `QT_QPA_PLATFORM`**；退出码 + passed/skipped 分列 + skip 原因；全仓 ≥5 次逐次记录；不得新增 `skip`/`xfail`、不得放宽/删除既有断言。
+6. **排除项**：Schema/migration、依赖清单、产品需求与验收标准、发布 Gate、真实 provider 端点/密钥/权重、`src/ui/qml/**`（本窗口 Task 明列者除外）、`doc/10_CURRENT_STATE_AND_GAPS.md` 与既入档 Review 正文、`AGENTS.md`（除 T0/T1）、push 远端。
+7. **T1**：09:00 停止实施与集成；在飞切片冻结在当时 commit（不回滚）；Codex 收口并把窗口内全部集成交三方 post-hoc 复审。
