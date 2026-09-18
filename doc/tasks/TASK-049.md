@@ -2,7 +2,7 @@
 id: TASK-049
 title: 生产区域输入面（§11 P-2：detect handler 注册 + detection→Region 路径；不接 QML）
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
