@@ -2,7 +2,7 @@
 id: TASK-057
 title: TASK-021 冻结子集③：备份与恢复
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
