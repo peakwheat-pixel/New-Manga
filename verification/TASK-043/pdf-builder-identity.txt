@@ -1,0 +1,8 @@
+base module : C:\Users\49745\AppData\Local\Temp\task043-base-test_document_import.py
+worktree    : G:\CODEX\New Manga.worktrees\TASK-043-deepseek\tests\import_formats\test_document_import.py
+minimal_pdf(1): len=452 base_sha256=42fb6cbbbe4173e1 worktree_sha256=42fb6cbbbe4173e1 identical=True
+minimal_pdf(2): len=672 base_sha256=f6ae8e31b32c0400 worktree_sha256=f6ae8e31b32c0400 identical=True
+minimal_pdf(3): len=892 base_sha256=b85744ce77ef7b6f worktree_sha256=b85744ce77ef7b6f identical=True
+minimal_pdf(5): len=1341 base_sha256=d89fba529b6ba07d worktree_sha256=d89fba529b6ba07d identical=True
+minimal_pdf(8): len=2013 base_sha256=f5450d4769a8ca7e worktree_sha256=f5450d4769a8ca7e identical=True
+ALL IDENTICAL: True

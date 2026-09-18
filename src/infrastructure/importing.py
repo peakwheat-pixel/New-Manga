@@ -114,7 +114,9 @@ class PdfiumDocumentRaster:
     image decoder. PDFium errors surface as
     :class:`~application.importing.documents.ports.DocumentDecodeError`
     (``ENCRYPTED`` for password-protected files — never guessed — and
-    ``INVALID_DOCUMENT`` otherwise).
+    ``INVALID_DOCUMENT`` otherwise). An unusable binding (not installed, or
+    its native library cannot load) is ``MISSING_DEPENDENCY``, never a bare
+    ``ImportError`` escaping the adapter (F-9, TASK-043).
     """
 
     def __init__(self, scale: float = 2.0) -> None:
@@ -123,7 +125,17 @@ class PdfiumDocumentRaster:
     def open(self, data: bytes):
         from application.importing.documents.ports import DocumentDecodeError
 
-        import pypdfium2 as pdfium
+        try:
+            import pypdfium2 as pdfium
+        except (ImportError, OSError) as error:
+            # F-9 (TASK-043): the binding is imported inside the guarded
+            # region so a missing/unloadable PDFium is a diagnosable typed
+            # failure instead of an exception escaping mid-import.
+            raise DocumentDecodeError(
+                "MISSING_DEPENDENCY",
+                "the pypdfium2 binding required for PDF import is unavailable: "
+                f"{error}",
+            ) from error
 
         try:
             document = pdfium.PdfDocument(data)
@@ -164,9 +176,16 @@ class _PdfiumDocumentHandle:
             raise DocumentDecodeError("INVALID_DOCUMENT", str(error)) from error
         mode = str(bitmap.mode)
         if mode == "BGRA":
+            # pdfium hands back BGRA byte order. Format_ARGB32 is the
+            # little-endian name for exactly that in-memory layout
+            # (0xAARRGGBB words read as B,G,R,A), so the two agree.
             qformat = QImage.Format.Format_ARGB32
         elif mode == "BGR":
-            qformat = QImage.Format.Format_RGB888
+            # F-1 (TASK-043): pdfium hands back BGR byte order, so the buffer
+            # must be read as BGR — Format_RGB888 swapped red and blue on
+            # every page (and the wrong pixels were persisted to the Managed
+            # Copy and hashed into source_hash).
+            qformat = QImage.Format.Format_BGR888
         else:
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT", f"unexpected pdfium bitmap mode {mode!r}"
