@@ -74,3 +74,8 @@ D03 §5；D05 §20/40；D06 §17/67～70；D07 §14～17；D08 AC-WEBTOON/CAP。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 - **最近状态（当前，唯一）**：2026-09-18 01:1x 由 ZCode 在窗口内开工（W3，status→`in_progress`；启动门达标：W2 TASK-033 已于 04:50 前集成 `4d0f932`）；分支按窗口规则 `git merge master` 快进至 `5832894`（Task 元数据 base=e96b3eb 之上为窗口授权与 W1/W2 集成提交，写集合与本 Task 不相交）。实施开始：TileGrid 几何 + LRU TileCache + QImageReader 按需 clip 解码 + tile 缓存文件 + ViewModel/QML 接线。
 - **最近状态（当前，唯一）**：实现 head=`7833604`（开工 `7a540f6`）：`src/infrastructure/imaging/webtoon_tiles.py` 新建（TileGrid/TileCache/TiledPageRasterizer）+ ViewModel opt-in `tile_factory` 接线 + QML webtoon viewer tiled 分支（旧路径不变，TASK-037 契约测试原样过）+ `test_webtoon_tiles.py` 10 例全过；套件回归 82 passed/0 skipped。**BLOCKED 如实登记**：1600x200000 fixture 像素解码在当前依赖下不可行（Qt PNG handler ≳300MB rgb32 硬限制、clip 无效、19GB 空闲内存排除 OOM），几何层 PASS、表征断言+解锁条件入库；未记 PASS。遗留：bootstrap 生产装配点（白名单外）。首轮 Review `changes_requested`（R-001 P1）已修订收口（`b337f71`），复审 `40f20e7`=**approved_subagent**；集成 `b738200`，集成后复验全仓 764 passed/0 skipped exit 0。**TASK-020 已收口 `done`；期满后须 Codex + DSH 外部 post-hoc 复审（可推翻）。**遗留：bootstrap 注入 `tile_factory`（生产装配点，白名单外）、超大页像素解码 BLOCKED（Qt PNG handler 限制，解锁条件入库）、R-002/003/005 deferred、R-006 P3 open。
+
+## 遗留项状态更新（2026-09-18）
+
+- **遗留项②（超大 webtoon 像素解码 BLOCKED）**：用户 **2026-09-18 批准引入流式解码依赖**（解锁条件①达成）→ 由 [TASK-042](TASK-042.md) 承接实施（含按原设计**翻转**本 Task 留下的表征断言钩子与 `oversize-record.json` 口径）。本 Task 不再重开。
+- 遗留项①（生产装配点 `tile_factory` 注入）已由 [TASK-038](TASK-038.md) 关闭（`assemble_engine` 现注册 5 个 context property）。
