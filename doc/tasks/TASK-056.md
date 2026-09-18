@@ -2,7 +2,7 @@
 id: TASK-056
 title: TASK-021 冻结子集②：缓存·版本·模型清理
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
