@@ -187,3 +187,37 @@ def test_batches_are_independent(workspace) -> None:
     service.purge_batch(batch_b.batch_id)
     assert set(_pages(repository)) == {"p1"}  # p2 rows gone, p1 untouched
     assert list(workspace["service"].list_batches()) == []
+
+
+def test_overlapping_soft_delete_does_not_cross_batches(workspace) -> None:
+    """TASK-021 R-001 (Review a9b4141, P2): a page that is already in an
+    earlier batch must never be recorded into (or restored/purged by) a
+    later batch — batches stay disjoint even when callers overlap id lists."""
+    service, repository = workspace["service"], workspace["repository"]
+    workspace["make_page"]("p1", b"one")
+    workspace["make_page"]("p2", b"two")
+    workspace["make_page"]("p3", b"three")
+
+    batch_a = service.soft_delete_pages("chapter-1", ("p1", "p2"))
+    assert batch_a.page_ids == ("p1", "p2")
+
+    # p2 is still in batch A: the overlapping call may only take p3
+    batch_c = service.soft_delete_pages("chapter-1", ("p2", "p3"))
+    assert batch_c.page_ids == ("p3",)
+
+    # restoring batch C must not resurrect p2 (it belongs to batch A)
+    service.restore_batch(batch_c.batch_id)
+    # all three rows still exist (get_pages_by_ids sees soft-deleted ones);
+    # only p3 is live, p1/p2 remain trashed in batch A
+    rows = {page.page_id: page for page in repository.get_pages_by_ids(("p1", "p2", "p3"))}
+    assert set(rows) == {"p1", "p2", "p3"}
+    assert rows["p3"].deleted_at is None  # p3 restored
+    assert rows["p1"].deleted_at and rows["p2"].deleted_at  # p1/p2 still trashed
+
+    # purging batch A removes exactly its own pages (p2 is soft-deleted by A,
+    # so purging A is safe); the live p3 is untouched
+    service.purge_batch(batch_a.batch_id)
+    pages = _pages(repository)
+    assert set(pages) == {"p3"}
+    managed_left = list((workspace["tmp_path"] / "managed").rglob("original/*.png"))
+    assert all("p3" in path.name for path in managed_left)

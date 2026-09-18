@@ -20,7 +20,7 @@ from __future__ import annotations
 
 import json
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Callable
 
@@ -75,15 +75,32 @@ class TrashService:
         if not ids:
             raise ValueError("no pages given")
         batch_id = self._id_factory()
-        deleted_at = datetime.now(timezone.utc).isoformat(timespec="milliseconds")
-        deleted = self._pages.soft_delete_pages(ids, deleted_at)
-        if deleted == 0:
+        # microsecond precision + collision guard: the deleted_at value *is*
+        # the batch identity in the store, so two batches must never share it
+        # (same-millisecond deletes would otherwise merge).
+        existing = {batch.deleted_at for batch in self.list_batches()}
+        deleted_at = datetime.now(timezone.utc).isoformat(timespec="microseconds")
+        stamp = datetime.fromisoformat(deleted_at)
+        while deleted_at in existing:
+            stamp += timedelta(microseconds=1)
+            deleted_at = stamp.isoformat(timespec="microseconds")
+        self._pages.soft_delete_pages(ids, deleted_at)
+        # R-001 (Review a9b4141): the store may skip ids that are already in
+        # an *earlier* batch (its UPDATE only touches live rows). Record only
+        # the ids this batch actually soft-deleted — otherwise restore/purge
+        # of this batch would reach into another batch's pages.
+        actually_deleted = tuple(
+            page.page_id
+            for page in self._pages.get_pages_by_ids(list(ids))
+            if page.deleted_at == deleted_at
+        )
+        if not actually_deleted:
             raise ValueError("no live page matched the given ids")
         batch = TrashBatch(
             batch_id=batch_id,
             chapter_id=chapter_id,
             deleted_at=deleted_at,
-            page_ids=ids,
+            page_ids=actually_deleted,
         )
         manifest = self._manifest.read_manifest()
         manifest.setdefault("batches", []).append(
