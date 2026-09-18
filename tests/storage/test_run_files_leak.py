@@ -53,6 +53,21 @@ class FlakyRemover:
         self._inner.remove_managed(relative_path)
 
 
+class FailingPages:
+    """Store wrapper whose ``purge_pages`` always fails: the row deletion
+    itself is impossible, so the pages stay live with a pending sweep
+    already recorded (the first-review R-001 premature-entry scenario)."""
+
+    def __init__(self, inner) -> None:
+        self._inner = inner
+
+    def __getattr__(self, name):
+        return getattr(self._inner, name)
+
+    def purge_pages(self, page_ids) -> None:
+        raise OSError("simulated purge_pages failure: rows stay live")
+
+
 def _insert_run(conn, run_id: str, *, status: str = "completed") -> None:
     conn.execute(
         "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
@@ -117,9 +132,12 @@ class TestR04RetryablePendingPurge:
         service = workspace["service"]
         page = workspace["make_page"]("p2", b"payload-two")
         batch = service.soft_delete_pages("chapter-1", ("p2",))
+        # the real flow at this point: rows gone, batch already out of the
+        # ledger, files removed — but the entry-clearing write was lost
         workspace["storage"].remove_managed(page.managed_original_ref)
-
         service._record_pending_purge(batch.batch_id, [page.managed_original_ref])
+        service._drop_batch(batch.batch_id)
+
         assert service.retry_pending_purges() == 1
         assert service.pending_purge_count() == 0
 
@@ -134,6 +152,46 @@ class TestR04RetryablePendingPurge:
         service.purge_batch(batch.batch_id)
 
         assert service.pending_purge_count() == 0
+
+    def test_retry_skips_premature_entry_while_rows_are_still_live(
+        self, trash_workspace
+    ) -> None:
+        """First-review R-001 guard: when the failure happened *before* the
+        rows were deleted (purge_pages itself failed), the batch is still in
+        the ledger and its pages are alive — the pending entry is premature
+        and a retry must NOT remove the live pages' files. The real purge
+        later overwrites the same-id entry and completes the sweep."""
+        workspace = trash_workspace
+        service = workspace["service"]
+        page = workspace["make_page"]("p9", b"payload-nine")
+        batch = service.soft_delete_pages("chapter-1", ("p9",))
+
+        from application.maintenance import TrashService
+        from application.maintenance.trash import _JsonTrashManifest
+
+        row_fault_service = TrashService(
+            FailingPages(workspace["repository"]),
+            workspace["storage"],
+            _JsonTrashManifest(workspace["manifest_path"]),
+        )
+        with pytest.raises(OSError):
+            row_fault_service.purge_batch(batch.batch_id)
+
+        assert service.pending_purge_count() == 1
+        # the guard: retry skips the premature entry, live file untouched
+        assert service.retry_pending_purges() == 0
+        assert service.pending_purge_count() == 1
+        assert (workspace["managed"] / page.managed_original_ref).is_file()
+        # the page ROW is still there (soft-deleted, never hard-purged)
+        row_left = workspace["conn"].execute(
+            "SELECT COUNT(*) FROM pages WHERE page_id = ?", (page.page_id,)
+        ).fetchone()[0]
+        assert row_left == 1
+
+        # the real purge overwrites the same-id entry and completes it
+        service.purge_batch(batch.batch_id)
+        assert service.pending_purge_count() == 0
+        assert not (workspace["managed"] / page.managed_original_ref).exists()
 
 
 class TestR03TargetlessRuns:

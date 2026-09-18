@@ -231,9 +231,19 @@ class TrashService:
         files are already gone completes silently. Each entry is cleared
         only when all of its files are removable; the first failure raises
         and leaves the remaining entries in place for another retry.
-        Returns the number of entries cleared."""
+        Returns the number of entries cleared.
+
+        Guard (first-review R-001): an entry whose batch is **still in the
+        ledger** is premature — its page rows were never deleted (the
+        failure happened before/during ``purge_pages``), so removing its
+        files would orphan *live* pages. Such entries are skipped and kept;
+        the real purge overwrites the same-id entry with the fresh sweep
+        list.
+        """
         cleared = 0
         for batch_id, targets in self._pending_purges():
+            if self._batch_in_ledger(batch_id):
+                continue
             self._remove_pending_targets(batch_id, targets)
             cleared += 1
         return cleared
@@ -300,6 +310,12 @@ class TrashService:
             (item["batch_id"], list(item["targets"]))
             for item in manifest.get("pending_purges", [])
         ]
+
+    def _batch_in_ledger(self, batch_id: str) -> bool:
+        manifest = self._manifest.read_manifest()
+        return any(
+            item["batch_id"] == batch_id for item in manifest.get("batches", [])
+        )
 
     def _remove_pending_targets(self, batch_id: str, targets: list[str]) -> None:
         """Remove every file of one pending entry, then clear the entry.

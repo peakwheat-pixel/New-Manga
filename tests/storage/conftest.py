@@ -195,6 +195,7 @@ def trash_workspace(tmp_path: Path):
         "service": service,
         "make_page": make_page,
         "user_source": user_source,
+        "manifest_path": tmp_path / "managed" / "trash-manifest.json",
         "managed": tmp_path / "managed",
         "with_remover": lambda remover: TrashService(repository, remover, manifest),
         "read_pending": read_pending,

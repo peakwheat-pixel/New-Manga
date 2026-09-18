@@ -47,3 +47,12 @@ status: delivered
 - **pending_purges 清单在 manifest 内**：manifest 损坏退化重建的既有语义（F-7）不覆盖 pending 段——极端情况下 pending 条目丢失退回 R-04 修前形态（孤儿不可发现）；概率与影响与既有 F-7 面一致，未扩大。
 - **单文件删除部分成功**：条目内多文件时第 N 个失败会留下前 N-1 个已删（重试幂等，无危害）。
 - **回退**：`git revert <实现提交>` 即可（语义追加、无既有行为改变）。
+
+## 追加登记（作者修订，首轮 Review approved_subagent 后的 R-001 守卫）
+
+首轮独立子对话 Review（02:59，decision=`approved_subagent`，报告见 [TASK-053-3b58736.md](../reviews/TASK-053-3b58736.md)）0 项 P0/P1，R-001（P2）为 premature pending 条目场景：`purge_pages` 失败/崩溃后行未删、batch 仍在 ledger，但 pending 条目已在——此时 `retry_pending_purges()` 会误删**仍存活页**的托管文件。守卫已随修订落地：
+
+- `retry_pending_purges()` 跳过并保留 `batch_id` 仍在 ledger 的条目（行删除未发生 ⇒ 条目 premature；真正的 purge 会以同 id 覆盖条目并完成清扫）；docstring 记录理由。
+- 新用例 `test_retry_skips_premature_entry_while_rows_are_still_live`（守卫生效断言 + 真实 purge 后覆盖完成）；同轮修正 idempotent 用例的构造使其符合真实流程（条目残留时 batch 必已出账）。
+- 修订后取证：新套件 8/0；全仓 ×5（881/0，=873 基线 + 8，EXIT=0 ×5）→ `verification/TASK-053/revision-full-suite-run{1..5}.log`。
+- R-002（探针文案）/R-003（接线提醒）维持 open/已声明，不阻塞。
