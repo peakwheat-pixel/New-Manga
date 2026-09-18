@@ -59,7 +59,7 @@ TASK-001～TASK-021（TASK-021 仅 trash 子集）、TASK-024、TASK-028～TASK-
 | [TASK-049](TASK-049.md) | 生产区域输入面（§11 P-2，P0；detect handler + detection→Region，不接 QML） | ZCode | **done（2026-09-19 窗口 W2）**：detect 注册 + 页级 plan 前置 + region_creator 复用 create_region；子对话 Review `approved_subagent`，integration `e94d5af`；QML 零改动 |
 | [TASK-050](TASK-050.md) | 生产 Pipeline 设置与 provider 绑定注入（§11 P-3 非 UI） | ZCode | **done（2026-09-19 窗口 W3）**：读面注入（未配置安装行为不变）+ `PipelineDefaultsService` 写面（typed 校验）；子对话 Review `approved_subagent`，integration `21b7301` |
 | [TASK-051](TASK-051.md) | 工作台三档视图解析 translated/compare（§11 P-6） | ZCode | **done（2026-09-19 窗口 W4）**：catalog 注入 locator，compare=D05 §20.1 左右双图，typed 空态；子对话 Review `approved_subagent`，integration `65d1e13`；QML 零改动 |
-| [TASK-052](TASK-052.md) | 命令失败可见化（§11 P-4；最小可见 + provisional） | ZCode | **ready（窗口 W5；前置 TASK-050）**；`commandError` 在 QML 0 命中；AC 含 VM 状态 + 仅工作台页面的最小消费者 + 三类失败断言 + provisional 声明；base `8bf8da3` |
+| [TASK-052](TASK-052.md) | 命令失败可见化（§11 P-4，provisional） | ZCode | **done（2026-09-19 窗口 W5）**：VM 单一 sink + `commandErrorText`/`clearCommandError` + QML `commandErrorBar`（最小可见）；Review `approved_subagent`，integration `a1c8171`；呈现待 TASK-047 |
 | [TASK-053](TASK-053.md) | TASK-044 R-03/R-04 收口（run 累积 / 不可重试孤儿文件） | ZCode | **ready（窗口 W6）**；AC 含先取证、清单持久化可重试、run 保留/清理策略、**TRIGGER 枚举纪律**；base `8bf8da3`；TASK-044 |
 | [TASK-054](TASK-054.md) | TASK-043 R-02：`pending_after_cancel` 跨层中性改名 | ZCode | **ready（窗口 W7）**；行为零变更、全链一致、改名前后 passed 对照；base `8bf8da3`；TASK-043 |
 | [TASK-055](TASK-055.md) | TASK-021 子集①：日志与诊断 | ZCode | **ready（窗口 W8，本窗口优先子集）**；AC 含脱敏诊断包、日志上限/轮转、白名单按实际结构收紧；base `8bf8da3`；TASK-021 |

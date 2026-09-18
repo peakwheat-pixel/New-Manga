@@ -2,7 +2,7 @@
 id: TASK-052
 title: 命令失败可见化（§11 P-4：commandError 上屏，最小可见 + provisional）
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-050]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-052-command-error-surface
 worktree: G:/CODEX/New Manga.worktrees/TASK-052-zcode
-integration_commit: null
+integration_commit: a1c8171
 ---
 
 # TASK-052：命令失败可见化（§11 P-4，P1；最小可见 + provisional）
@@ -62,4 +62,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/TASK-052-3afaade.md`（含 PROVISIONAL 声明）。Review：独立子对话（进行中，报告将落 `doc/reviews/TASK-052-3afaade.md`）。实际测试：见上方测试要求表与 `verification/TASK-052/**`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W5 实现并取证完毕（实现提交 `3afaade`）：VM 单一 sink `_record_command_error`（12 处 emit 收口；signal 保裸 detail 兼容既有断言，状态文本带 [stage/code] 诊断）+ `commandErrorText`/`clearCommandError` + QML `commandErrorBar`（文本+复制+关闭，非阻塞，objectName 寻址）；4 新用例、定向 216、全仓 899×5 全绿；判别力=修前树 3 failed（exit 1）。provisional：呈现待 TASK-047 设计收敛。原开立记录：窗口 W5 开立为 `ready`。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 于窗口 W5 实现并取证完毕（实现提交 `3afaade`）：VM 单一 sink `_record_command_error`（12 处 emit 收口；signal 保裸 detail 兼容既有断言，状态文本带 [stage/code] 诊断）+ `commandErrorText`/`clearCommandError` + QML `commandErrorBar`（文本+复制+关闭，非阻塞，objectName 寻址）；4 新用例、定向 216、全仓 899×5 全绿；判别力=修前树 3 failed（exit 1）。独立子对话 Review `approved_subagent`（doc/reviews/TASK-052-3afaade.md，R-001 P2 勘误已补）；integration=`a1c8171`，集成后 master 全仓 908 passed / 0 skipped exit 0。T1 后由 Codex + DSH + Qoder post-hoc 复审（可推翻）。原开立记录：窗口 W5 开立为 `ready`。
