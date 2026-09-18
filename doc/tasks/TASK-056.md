@@ -2,7 +2,7 @@
 id: TASK-056
 title: TASK-021 冻结子集②：缓存·版本·模型清理
 kind: implementation
-status: ready
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-021, TASK-053, TASK-054]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-056-cache-version-cleanup
 worktree: G:/CODEX/New Manga.worktrees/TASK-056-zcode
-integration_commit: null
+integration_commit: 11517ac
 ---
 
 # TASK-056：缓存·版本·模型清理（TASK-021 冻结子集②）
@@ -45,5 +45,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际测试：尚无（`ready`，前置 TASK-053）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 开立为 `ready`（窗口 W9）。**实施尚未开始。**
+- Handoff：[TASK-056-delivery.md](../handoffs/TASK-056-delivery.md)。Review：尚无（待窗口独立子对话 Review）。实际测试：新套件 8/0 + 全仓 ×5（900/0，=892 基线 + 8），入库 `verification/TASK-056/`。
+- **集成完成（2026-09-19，当前）**：首轮独立子对话 Review `approved_subagent`（[TASK-056-4c8b8a7](../reviews/TASK-056-4c8b8a7.md)；R-001 P2 守卫建议）→ 守卫修订 `15f977a` → 复审 `approved_subagent`（[TASK-056-15f977a](../reviews/TASK-056-15f977a.md)，固定被审 `15f977a`）→ ZCode 按窗口授权代行集成 `11517ac`（--no-ff，其上已含并行会话 W0–W4/W6–W8），集成后 master 复跑 904/0 ×2。装配接线与模型目录 NOT_RUN（见 Handoff）。历史：2026-09-19 ZCode 实现（实现提交 `cae3dd3`）：`cleanup.py` 受控清理框架（前缀白名单边界/预览/结构化结果/幂等/pending 重试）+ `tile_cache_sweep.py` 跨代枚举；装配接线 NOT_RUN（同 TASK-055 口径）；模型目录未注册（窗口排除项）。`base=8bf8da3`（开工已 merge master `c083f60`，含 W0–W3/W6–W8）。

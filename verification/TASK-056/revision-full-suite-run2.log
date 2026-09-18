@@ -1,0 +1,75 @@
+........................................................................ [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 23%]
+........................................................................ [ 31%]
+........................................................................ [ 39%]
+........................................................................ [ 47%]
+........................................................................ [ 55%]
+........................................................................ [ 63%]
+........................................................................ [ 71%]
+........................................................................ [ 79%]
+........................................................................ [ 87%]
+........................................................................ [ 95%]
+..........F..........................                                    [100%]
+================================== FAILURES ===================================
+_______________ test_worker_run_and_main_thread_access_coexist ________________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x2263a6a47b0) at 0x0000022639EAAF80>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2458/test_worker_run_and_main_threa0')
+
+    def test_worker_run_and_main_thread_access_coexist(qapp, tmp_path):
+        """AC ① negative case: while the worker executes the run, the main
+        thread keeps issuing reads *and writes* on the same connection; both
+        streams survive without exceptions and land their rows."""
+        services, chapter = _assembled_library(tmp_path, page_count=8)
+        run = _planned_run(services, chapter)
+    
+        crashed: list[str] = []
+        finished: list[str] = []
+        from ui.viewmodels.workbench.run_controller import RunController
+    
+        controller = RunController()
+        controller.runCrashed.connect(lambda run_id, error: crashed.append(error))
+        controller.runFinished.connect(
+            lambda run_id, status: finished.append(status)
+        )
+        controller.start(services.pipeline, run)
+    
+        # main-thread write stream while the worker writes the pipeline tables
+        created: list[str] = []
+        deadline = time.monotonic() + 30
+        while time.monotonic() < deadline and not finished and not crashed:
+            qapp.processEvents()
+            book = services.library.create_book(f"并发书 {len(created)}")
+            created.append(book.book_id)
+            assert services.library.get_chapter(chapter.chapter_id) is not None
+            assert services.library.list_books(), "main-thread read broke"
+            time.sleep(0.002)
+    
+        assert not crashed, f"worker crashed under concurrency: {crashed}"
+        assert finished, "run never finished under concurrency"
+        assert finished[0] in _TERMINAL_STATUSES
+    
+        # both write streams landed: every concurrent book is durable, and the
+        # run's terminal status is in the database
+        conn = sqlite3.connect(str(tmp_path / "library.db"))
+        try:
+            book_rows = conn.execute("SELECT COUNT(*) FROM books").fetchone()[0]
+            run_row = conn.execute(
+                "SELECT status FROM pipeline_runs WHERE run_id = ?", (run.run_id,)
+            ).fetchone()
+        finally:
+            conn.close()
+>       assert book_rows >= 1 + len(created)
+E       AssertionError: assert 3 >= (1 + 3)
+E        +  where 3 = len(['379e593bdafd46d7bb65da7e358a6e52', 'eafbc93f9b934fc6b5ebb0dacebe832c', '2edf44b90549427997591c92fa370f72'])
+
+tests\workbench\test_run_thread_e2e.py:177: AssertionError
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 failed, 900 passed, 1 warning in 42.41s
+EXIT=1
