@@ -5,6 +5,7 @@ range: c3dabc8..5f3c115（63 commits，7 项 approved_subagent 集成 + W4 文�
 reviewer: Codex（Lead；作者 ZCode 已回避）
 external_second_reviewer: DeepSeek Harness（待补，见「结论」）
 decision: approved（7/7 维持，无推翻）
+errata: 见文末「勘误（2026-09-18）」——Spec 轴由"0 实现有误"修正为 **2 项 P1 实现缺陷（F-1/F-2）**，由 DSH 外部复审发现并经我独立复现
 ---
 
 # Post-hoc 复审：ZCode 窗口（2026-09-17 → 2026-09-18 08:50）
@@ -121,3 +122,27 @@ decision: approved（7/7 维持，无推翻）
 **剩余风险**：P-03（TASK-039 注入点，不倒退）、P-05（TASK-021 三个子集未做）、两项**用户待裁决依赖**（MOBI 解析、超大 webtoon 流式解码）、P-04（不可复现异常）。
 
 **待补**：本复审由 Codex 执行；按窗口条款，**DeepSeek Harness 的外部独立复审仍应补做**（尤其 `4d0f932` 单一写者与 `b940497` 用户数据保护两处），结论记入审核记录。
+
+---
+
+## 勘误（2026-09-18，DSH 外部复审之后）
+
+DSH 已完成外部独立复审：[POSTHOC-WINDOW-DSH-2026-09-18](POSTHOC-WINDOW-DSH-2026-09-18.md)。**本文 Spec 轴「0 缺失 / 0 scope creep / 0 实现有误」的第三项被修正为 2 项 P1 实现缺陷**；两项均经**我独立复现确认**（非仅采信报告）：
+
+1. **F-1（P1）PDF 红蓝通道互换** —— `src/infrastructure/importing.py:165-174` 把 pdfium 的 `BGR` 缓冲包成 `Format_RGB888`。**我的复现**：纯红 PDF 经生产 `PdfiumDocumentRaster(scale=2.0)` 渲染 → 解码中心像素 **RGBA=(0,0,255,255)**（红变蓝）；pdfium 侧 `mode=BGR`、`stride=600=w*3`、原始中心字节 `(0,0,255)`。**我漏判的原因**：只核了尺寸与 typed 错误，**没有任何像素断言**。
+2. **F-2（P1）purge 的 FK 图不完整 + 先删文件后删行** —— `library.py:432-457` 只处理 `region_revisions → regions → pages`，漏掉 5 张引用 `pages` 的表（全部 `NO ACTION`）。**我的复现**：`purge_batch` → `IntegrityError: FOREIGN KEY constraint failed`；随后 `managed file after: False`（文件已消失）、`page row after: 1`、`batches in ledger: 1`、`restore_batch` → **活页指向缺失文件**。**我漏判的原因**：只读了 `purge_pages` 的代码与其 docstring 自述，**没有枚举 `PRAGMA foreign_key_list`**，且当时"5 处高风险深挖"全部以读码为主，未做**行为级验证**。
+
+**口径修正**：本文 Spec 轴结论 → **「0 缺失 / 0 scope creep / 2 项实现有误（F-1、F-2）」**。**维持不变的部分**：7 项集成的**边界合规**（白名单 0 越界）、**诚实性**（3 处 `BLOCKED` 未记 PASS、异常主动披露）、**P0 单一写者约束**（DSH 亦独立复核成立）、无删除/依赖仅获批 1 行/0 Schema/0 新增有效 skip。
+
+**对本文两处具体主张的修正**：①文内对 TASK-021 的 approved 主张（"purge 只删行并自述…"）**在"行依赖完整性 / 生成资产删除范围"范围内不成立**（源文件保护部分仍成立）；②文内 TASK-020 相关结论**未覆盖 tile 落盘几何与声明不符**（F-4）。两处均已在其对应 Review 文件中追加勘误。
+
+**F-3～F-14 的归属裁定（Codex）**
+
+| Findings | 归属切片 | 依据 |
+|---|---|---|
+| **F-1(P1)** + F-3(P2) + F-9(P3) | [TASK-043](../tasks/TASK-043.md)（TASK-023 修订尾项） | 同在文档导入血缘 |
+| **F-2(P1)** + F-6/F-7/F-10(P3) | [TASK-044](../tasks/TASK-044.md)（TASK-021 修订尾项） | 同在 trash/purge 血缘；**接线任何 purge UI 前必须完成** |
+| F-4/F-5(P2) + F-8/F-11/F-13/F-14(P3) | [TASK-045](../tasks/TASK-045.md)（TASK-020/038 修订尾项） | 同在 webtoon 分块/显示与装配血缘 |
+| F-12(P3) | **并入 TASK-040**（`clean_probe` 注入，**仍未释放**，待用户决定） | 其口径修正与注入同一切片最自然 |
+
+**流程性采纳**（来自 DSH §4.3 的建议）：①"光栅化/图像适配器必须有**像素级断言**"；②"硬删/级联路径必须**枚举全部引用表**"；③"**接线断言**（能力已实现但生产不可达）应纳入 Task 模板 AC 清单"——本窗口已三次出现同类问题（tile、文档导入、clean_probe），值得写进模板。

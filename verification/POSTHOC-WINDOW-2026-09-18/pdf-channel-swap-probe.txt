@@ -1,0 +1,9 @@
+### DSH external review: empirical probe — PDF rasterisation channel order (importing.py:165-174)
+# probe: verification/POSTHOC-WINDOW-2026-09-18/pdf_channel_probe.py  (hand-built 1-page red PDF -> production PdfiumDocumentRaster)
+# HEAD at run time: 7ea1629
+rendered 200x200 png=200x200 format=Format.Format_RGB32
+centre pixel RGBA = (0, 0, 255, 255)
+source PDF paints pure RED (1 0 0 rg)
+VERDICT: RED->BLUE SWAP (RGB888 used for a BGR buffer)
+pdfium mode: BGR stride: 600 w*3: 600
+raw centre bytes: (0, 0, 255) (B,G,R order if pdfium native)
