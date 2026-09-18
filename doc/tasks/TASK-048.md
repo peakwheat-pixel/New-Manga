@@ -2,7 +2,7 @@
 id: TASK-048
 title: 修复生产任务执行的跨线程 SQLite 连接（§11 P-1，P0）+ 生产路径端到端测试资产
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-013, TASK-038]
 base_commit: 8bf8da3f988cdeffce83ad251a15c22ce862dd1a
 branch: agent/zcode/TASK-048-thread-sqlite
 worktree: G:/CODEX/New Manga.worktrees/TASK-048-zcode
-integration_commit: null
+integration_commit: be558caa094940bf8d454ea1effc866dcefc6f0a
 ---
 
 # TASK-048：跨线程 SQLite 连接（§11 P-1）+ 生产路径端到端测试资产
@@ -36,7 +36,7 @@ integration_commit: null
 - [x] **AC ③（run 终态）**：崩溃路径消失后，run **不再停留 `running`**；同时把 `PipelineService.recover_running_runs()` 接入**生产启动路径**（`src/bootstrap/app.py`），并有用例证明启动即可回收上轮遗留的运行中记录。
 - [x] **AC ④（新增端到端测试资产）**：新增一条集成测试：`assemble_services` + 真实 SQLite 文件 + worker 线程（`RunController`）+ 一条完整命令，断言"能跑完 + DB 落终态"。该用例对**修前**代码失败（判别力留证）。
 - [x] **AC ⑤（不回归）**：`tests/storage/**`、`tests/core/**`、`tests/workbench/**` 既有断言**逐条不变**；全仓 passed 不减少；全仓 ≥5 次逐次记录（同一 shell + 同一 venv；**不得设 `QT_QPA_PLATFORM`**）。
-- [ ] **AC ⑥** 交付 Handoff、`verification/TASK-048/**`，经**独立子对话** Review + 集成后才能 done；STATUS 台账行记录结论。（实现/取证/Handoff 已交付，独立子对话 Review 与集成进行中）
+- [x] **AC ⑥** 交付 Handoff、`verification/TASK-048/**`，经**独立子对话** Review（`approved_subagent` @`14995b6`，3×P3 不阻断）+ 集成（`be558ca`）后 done；STATUS 台账行已记录。
 
 ## 允许修改范围
 
@@ -70,5 +70,5 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[TASK-048-011ee16.md](../handoffs/TASK-048-011ee16.md)。Review：独立子对话（进行中）。实际测试：修前判别 1 次（3 failed / exit 1）+ 探针前后各 ×2 + 定向 126/0 + 全仓 ×5（854/0 ×5），全部入库 `verification/TASK-048/`。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 开工（merge master `7537136` 后置 `in_progress`）；实现提交 `011ee16`（`check_same_thread=False` + AC① 论证入 `connection.py` docstring + `recover_running_runs()` 接入启动装配 + 3 条端到端用例）；AC ①～⑤ 达成，AC ⑥ 待独立子对话 Review + 集成。`base=8bf8da3`。
+- Handoff：[TASK-048-011ee16.md](../handoffs/TASK-048-011ee16.md)。Review：[TASK-048-14995b6](../reviews/TASK-048-14995b6.md)（**`approved_subagent`**，独立子对话，3×P3 不阻断）。实际测试：修前判别 1 次（3 failed / exit 1）+ 探针前后各 ×2 + 定向 126/0 + 全仓 ×5（854/0 ×5），全部入库 `verification/TASK-048/`。
+- **最近状态（当前，唯一）**：2026-09-19 **集成完成**：独立子对话 Review `approved_subagent`（Reviewer 独立复跑：新用例 3 passed、定向 126/0、全仓 854/0、判别力 3 failed @修前树、探针双树 crashed↔finished）→ Review 报告 land `8dc13eb` → **integration `be558ca`**（--no-ff；与并行会话的 TASK-054 集成 `771dbf7` 错峰，写集合不重叠）→ 集成后 master 全仓 854 passed / 0 skipped exit 0。`base=8bf8da3`。
