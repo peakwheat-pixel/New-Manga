@@ -333,6 +333,49 @@ def _render_content_decoder(relative_path: str, payload: bytes) -> bytes:
     return bytes(buffer.data())
 
 
+def _load_pipeline_defaults(conn: sqlite3.Connection) -> dict:
+    """Read the persisted pipeline defaults row (TASK-050 AC ①).
+
+    Same tolerant decoding as :func:`_load_pipeline_settings`, extended to
+    all four columns. An unconfigured (or corrupt) install decodes to
+    all-empty values so the assembly keeps passing ``None`` and the
+    snapshot provider's bootstrap stays byte-identical.
+    """
+    empty = {
+        "settings": {},
+        "provider_bindings": {},
+        "constraint_snapshot_ref": None,
+        "context_policy": {},
+    }
+    try:
+        row = conn.execute(
+            "SELECT settings_json, provider_bindings_json, constraint_snapshot_ref,"
+            " context_policy_json FROM pipeline_defaults WHERE defaults_id = 1"
+        ).fetchone()
+    except sqlite3.Error:
+        return dict(empty)  # un-migrated storage: all-empty, never a crash
+    if row is None:
+        # a fresh database has no defaults row until the snapshot provider
+        # seeds one — identical semantics to an explicitly empty row
+        return dict(empty)
+
+    def _mapping(raw: object) -> dict:
+        if not isinstance(raw, str) or not raw:
+            return {}
+        try:
+            loaded = json.loads(raw)
+        except (ValueError, TypeError):
+            return {}
+        return loaded if isinstance(loaded, dict) else {}
+
+    return {
+        "settings": _mapping(row[0]),
+        "provider_bindings": _mapping(row[1]),
+        "constraint_snapshot_ref": row[2] if isinstance(row[2], str) else None,
+        "context_policy": _mapping(row[3]),
+    }
+
+
 def _load_pipeline_settings(conn: sqlite3.Connection) -> dict:
     """Read the persisted pipeline defaults (empty when never configured)."""
     try:
@@ -392,6 +435,7 @@ class AppServices:
     reader: ReaderViewModel
     library: LibraryService
     pipeline: PipelineService
+    pipeline_defaults: "PipelineDefaultsService"
     editing: RegionEditingService
     render: RenderService
     providers: object
@@ -562,13 +606,42 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
                 is not None
             )
 
+        # TASK-050 AC ①: seed the pipeline's frozen snapshots from the
+        # persisted settings storage. All-empty output decodes to ``None``
+        # injections, so an unconfigured install keeps the pre-TASK-050
+        # bootstrap byte-for-byte; a configured one is re-projected into
+        # the same row the snapshots are read from (idempotent, no second
+        # settings parse).
+        defaults = _load_pipeline_defaults(conn)
         pipeline = build_production_pipeline(
-            conn, handlers=handlers, clean_probe=clean_probe
+            conn,
+            handlers=handlers,
+            clean_probe=clean_probe,
+            settings=defaults["settings"] or None,
+            provider_bindings=defaults["provider_bindings"] or None,
+            constraint_snapshot_ref=defaults["constraint_snapshot_ref"],
+            context_policy=defaults["context_policy"] or None,
         )
         # TASK-048 AC ③: a run left RUNNING by a previous process (crash,
         # kill) must never look active forever — startup reaps those rows to
         # INTERRUPTED before any ViewModel can observe them.
         pipeline.recover_running_runs()
+        # TASK-050 AC ②: the application-layer defaults channel over the
+        # same storage row. The save bridge reuses the infrastructure
+        # snapshot provider's own persistence (no second writer); the
+        # known-step set comes from the handler table itself, so the
+        # write face can never accept a step the pipeline would not run.
+        from application.settings.pipeline_defaults import (
+            PipelineDefaults,
+            PipelineDefaultsService,
+        )
+        from infrastructure.sqlite.pipeline import SqliteSnapshotProvider
+
+        pipeline_defaults = PipelineDefaultsService(
+            load=lambda: PipelineDefaults(**_load_pipeline_defaults(conn)),
+            save=lambda **kwargs: SqliteSnapshotProvider(conn, **kwargs),
+            known_steps=frozenset(handlers),  # build_production_handlers returns the step table already
+        )
         navigation = NavigationViewModel()
 
         # TASK-038 AC ①/③: the reader ViewModel over the same data root —
@@ -719,6 +792,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             reader=reader,
             library=library,
             pipeline=pipeline,
+            pipeline_defaults=pipeline_defaults,
             editing=editing,
             render=render_service,
             providers=provider_runtime,
