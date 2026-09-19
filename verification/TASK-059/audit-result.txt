@@ -1,0 +1,135 @@
+== env ==
+date: 2026-09-20 00:38:54+0800
+host: MINGW64_NT-10.0-26200 3.6.5-22c95533.x86_64
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+node: v24.15.0
+chrome: 153.0.8010.48 (C:/Program Files/Google/Chrome/Application/chrome.exe)
+python: Python 3.12.3 (venv G:/CODEX/New Manga.task-envs/TASK-012-py312)
+== cmd ==
+"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" verification/TASK-059/export-tokens.py
+bash verification/TASK-059/run-reference-audit.sh
+== tokens ==
+wrote doc\design\tokens-cand-a.json (84 color tokens x2 modes)
+wrote doc\design\tokens-cand-b.json (84 color tokens x2 modes)
+wrote doc\design\tokens-cand-c.json (84 color tokens x2 modes)
+wrote doc\design\tokens-cand-d.json (84 color tokens x2 modes)
+wrote doc\design\tokens-cand-e.json (84 color tokens x2 modes)
+wrote doc\design\tokens-cand-f.json (84 color tokens x2 modes)
+== out ==
+== 1) JS 语法门 ==
+syntax OK
+== 2) 全矩阵审计 ==
+  a/dark/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/dark/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/dark/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/dark/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/dark/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/light/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/light/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/light/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/light/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  a/light/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/dark/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/dark/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/dark/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/dark/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/dark/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/light/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/light/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/light/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/light/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  b/light/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/dark/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/dark/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/dark/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/dark/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/dark/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/light/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/light/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/light/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/light/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  c/light/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/dark/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/dark/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/dark/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/dark/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/dark/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/light/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/light/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/light/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/light/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  d/light/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/dark/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/dark/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/dark/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/dark/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/dark/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/light/bookshelf: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/light/workbench: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/light/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/light/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  e/light/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  f/dark/bookshelf: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/workbench: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/reader: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/settings: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/states: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/bookshelf: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/workbench: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/reader: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/settings: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/states: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+== 3) 无头截图 ==
+  a-dark-bookshelf.png
+  a-dark-workbench.png
+  a-dark-reader.png
+  a-dark-settings.png
+  a-dark-states.png
+  b-light-bookshelf.png
+  b-light-workbench.png
+  b-light-reader.png
+  b-light-settings.png
+  b-light-states.png
+  c-light-bookshelf.png
+  c-light-workbench.png
+  c-light-reader.png
+  c-light-settings.png
+  c-light-states.png
+  a-light-workbench.png
+  b-dark-workbench.png
+  c-dark-workbench.png
+  c-glass-off-bookshelf.png
+  c-glass-off-workbench.png
+  a-dark-workbench-dpi150.png
+  a-dark-workbench-dpi200.png
+  a-dark-workbench-taskdetail.png
+  c-glass-taskdetail.png
+  b-light-danger.png
+  c-glass-both.png
+  d-light-bookshelf.png
+  d-light-workbench.png
+  d-light-reader.png
+  d-light-settings.png
+  d-light-states.png
+  d-dark-workbench.png
+  d-light-workbench-taskdetail.png
+  e-dark-bookshelf.png
+  e-dark-workbench.png
+  e-dark-reader.png
+  e-dark-settings.png
+  e-dark-states.png
+  e-light-workbench.png
+  e-dark-palette.png
+  e-dark-workbench-dpi150.png
+  f-dark-bookshelf.png
+  f-dark-workbench.png
+  f-dark-reader.png
+  f-dark-settings.png
+  f-dark-states.png
+  f-light-bookshelf.png
+  f-light-workbench.png
+  f-dark-workbench-dpi150.png
+  f-dark-workbench-taskdetail.png
+== 汇总 ==
+AUDIT RESULT: ALL PASS
+AUDIT_EXIT=0
