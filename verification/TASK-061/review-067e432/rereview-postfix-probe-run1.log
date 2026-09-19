@@ -1,0 +1,78 @@
+﻿LABEL=probe-post-ffdc47d
+ROOT=G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+HEAD=50f3f9a7927a2d5423add1ccca0fdd369a164ea5
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+QT_QPA_PLATFORM=<unset>
+CMD=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t061_review_probe.py G:\CODEX\New Manga.worktrees\TASK-061-qoder-review 3
+----------------------------------------
+== tree: G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+== head: 50f3f9a
+
+-- T1 registry growth over 8 real runs (my TASK-060 S1 instrument)
+   after assembly: registry=1
+   run 1: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 2: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 3: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 4: outcome=completed_with_failures registry_after=1 peak_during=2
+   run 5: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 6: outcome=completed_with_failures registry_after=1 peak_during=2
+   run 7: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 8: outcome=completed_with_failures registry_after=1 peak_during=2
+   SUMMARY T1 shape=[1, 1, 1, 1, 1, 1, 1, 1] bounded(<=2)? True peaks=[1, 1, 1, 2, 1, 2, 1, 2]
+   open connections after 8 runs: 1
+   T1b while a worker executes execute_run: registry=-1 (2 = GUI + worker, i.e. bounded by LIVE threads, not by runs); after it dies: registry=1 open=1 errors=0
+
+-- T2 deterministic eviction (no gc.collect() anywhere)
+   40 sequential threads: peak registry=1 final registry=1 errors=0
+
+-- T3 ident-reuse stress (recycled thread idents vs the stale-slot branch)
+   1840 threads churned: peak registry=1 final=1 open=1 errors=0
+
+-- T4 a GUI-held cursor from a dead worker (the 'no other reference' claim)
+   registry 1 -> 1 after the cursor's thread died
+   held cursor BROKEN after eviction: ProgrammingError: Cannot operate on a closed database.   <-- the evicting thread closed a connection another thread still referenced
+
+-- T5 is the TASK-057 前置① predicate a *barrier*?
+   composite predicate right after a completed run: shutdown() is True=True; any_in_transaction=False -> gate passes? True
+   (a) admission: can a NEW run still start after the gate passed?
+       YES — RunController.start() has no shut-down latch; a writer
+            can appear one statement after the check returns False
+       second run done; controller.shutdown() -> True
+   (b) does 'no thread in a transaction' mean 'no live writer'?
+       live-but-idle writer thread: {'aggregate_any_in_transaction': False, 'registry_size': 2, 'own_in_transaction': False}
+       => any_in_transaction()==False while a second thread holds an open, writable connection; drained=>no-worker is what actually carries the guarantee
+
+-- T6 remove_managed guard matrix
+   .. traversal               books/../revisions/keep_a.png                  -> typed refusal: refusing to remove 'books/../revisions/keep_a.png': path components ma; target survives? True
+   . segment                  books/./keep_b.png                             -> typed refusal: refusing to remove 'books/./keep_b.png': path components may not trave; target survives? True
+   empty middle segment       books//keep_c.png                              -> typed refusal: refusing to remove 'books//keep_c.png': path components may not traver; target survives? True
+   backslash traversal        books\..\revisions\keep_a.png                  -> typed refusal: refusing to remove 'books\\..\\revisions\\keep_a.png': path components; target survives? True
+   mklink /J rc=0 (directory junction)
+   dir junction (root-internal) books/book-1/chapters/chapter-twin/original/ke -> typed refusal: refusing to remove 'books/book-1/chapters/chapter-twin/original/keep_j; target survives? True
+   mklink /J (books level) rc=0
+   junction at books level    books/book-twin/chapters/chapter-1/original/ke -> typed refusal: refusing to remove 'books/book-twin/chapters/chapter-1/original/keep_j; target survives? True
+   mklink /J (outside root) rc=0
+   junction to outside root   books/outlink/victim.png                       -> typed refusal: refusing to remove C:\Users\49745\AppData\Local\Temp\t061-t6-kmmo618s\; target survives? True
+   mklink (file symlink) rc=0 stderr=
+   file symlink to protected  books/book-1/chapters/chapter-1/original/sym.p -> typed refusal: refusing to remove 'books/book-1/chapters/chapter-1/original/sym.png':; target survives? True
+   (the symlink itself is inside the root; deleting it is harmless. protected target survives? True)
+   lstat dir junction: st_file_attributes=1040 REPARSE bit? True st_reparse_tag=2684354563
+   lstat books-level junction: st_file_attributes=1040 REPARSE bit? True st_reparse_tag=2684354563
+   legit deletion: allowed; file gone? True
+
+   same shapes through TrashService.retry_pending_purges():
+   .. traversal     books/../revisions/keep_a.png                -> raised ImmutablePathViolation; victim survives? True
+   . segment        revisions/./keep_a.png                       -> raised ImmutablePathViolation; victim survives? True
+   dir junction     books/book-1/chapters/chapter-twin/original/ -> raised ImmutablePathViolation; victim survives? True
+
+-- T7 cost of the per-level lstat walk
+   60 real removals of a 6-segment managed path: lstat calls per removal=[6] median=563us p95=772us
+
+== done
+
+EXIT=0
+HEAD=50f3f9a7927a2d5423add1ccca0fdd369a164ea5

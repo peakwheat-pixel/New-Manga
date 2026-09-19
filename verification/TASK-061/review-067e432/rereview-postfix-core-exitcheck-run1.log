@@ -1,0 +1,20 @@
+﻿LABEL=post-core-1
+ROOT=G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+HEAD=50f3f9a7927a2d5423add1ccca0fdd369a164ea5
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+CMD=python -m pytest -q -rs -p no:cacheprovider tests/core/test_connection_ownership.py
+BUDGET_SECONDS=40
+----------------------------------------
+.....                                                                    [100%]
+5 passed in 0.24s
+----------------------------------------stderr
+
+========================================verdict
+TERMINATED with exit code 0
+TERMINATED=True
+EXIT=0
+HEAD=50f3f9a7927a2d5423add1ccca0fdd369a164ea5

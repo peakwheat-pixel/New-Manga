@@ -1,0 +1,16 @@
+﻿LABEL=pre-helper-1
+ROOT=C:\Users\49745\AppData\Local\Temp\t061-prefix2
+HEAD=6cb0afb5e53a229c700b0570d19f0f03c9942811
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+QT_QPA_PLATFORM=<unset>
+CMD=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe C:/Users/49745/AppData/Local/Temp/t061-prefix2/verification/TASK-061/prefix-discrimination/bookjunction-prefix-evidence.py C:\Users\49745\AppData\Local\Temp\t061-prefix2 
+----------------------------------------
+remove_managed returned normally: NO typed refusal
+protected original still exists: False
+
+EXIT=0
+HEAD=6cb0afb5e53a229c700b0570d19f0f03c9942811

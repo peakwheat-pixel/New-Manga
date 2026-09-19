@@ -1,0 +1,81 @@
+﻿LABEL=prefix-storage-2
+ROOT=C:\Users\49745\AppData\Local\Temp\t061-prefix
+HEAD=6cb0afb5e53a229c700b0570d19f0f03c9942811
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PYTEST=python -m pytest -q -rs -p no:cacheprovider tests/storage/test_managed_storage.py
+----------------------------------------
+.......FFF                                                               [100%]
+================================== FAILURES ===================================
+_ TestR010ReparseWalk.test_refuses_a_root_internal_junction_and_spares_the_target _
+
+self = <test_managed_storage.TestR010ReparseWalk object at 0x0000021DD114C8F0>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2669/test_refuses_a_root_internal_j0')
+
+    def test_refuses_a_root_internal_junction_and_spares_the_target(
+        self, tmp_path
+    ):
+        import subprocess
+    
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        protected_rel = "books/book-1/chapters/chapter-1/original/keep.png"
+        protected = tmp_path / "managed" / Path(*protected_rel.split("/"))
+        protected.parent.mkdir(parents=True)
+        protected.write_bytes(b"PROTECTED ORIGINAL")
+    
+        # mklink /J needs no privileges on NTFS; it creates a directory
+        # junction (reparse point).  Limitation (declared): this covers the
+        # directory-junction form only; file symlinks require developer
+        # mode/privilege and are not exercised here.
+        twin = tmp_path / "managed" / "books" / "book-1" / "chapters" / "chapter-twin"
+        made = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(twin), str(protected.parent)],
+            capture_output=True,  # no text: mklink output is GBK on this box
+        )
+        assert made.returncode == 0, made.stderr
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_managed_storage.py:170: Failed
+__ TestR011DotSegmentIsAlive.test_refuses_a_dot_segment_and_spares_the_file ___
+
+self = <test_managed_storage.TestR011DotSegmentIsAlive object at 0x0000021DD114E540>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2669/test_refuses_a_dot_segment_and0')
+
+    def test_refuses_a_dot_segment_and_spares_the_file(self, tmp_path):
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        target = tmp_path / "managed" / "books" / "keep.png"
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"KEEP")
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_managed_storage.py:194: Failed
+_______ TestR011DotSegmentIsAlive.test_refuses_an_empty_middle_segment ________
+
+self = <test_managed_storage.TestR011DotSegmentIsAlive object at 0x0000021DD114F4A0>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2669/test_refuses_an_empty_middle_s0')
+
+    def test_refuses_an_empty_middle_segment(self, tmp_path):
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        target = tmp_path / "managed" / "books" / "keep2.png"
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"KEEP")
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_managed_storage.py:206: Failed
+3 failed, 7 passed in 0.14s
+
+COLLECTED=10 tests collected in 0.02s
+EXIT=1
+HEAD=6cb0afb5e53a229c700b0570d19f0f03c9942811

@@ -2,7 +2,7 @@
 id: TASK-061
 title: 连接注册表驱逐与 remove_managed 解析一致性（R-002 / R-010 / R-011）
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-060]
 base_commit: 6cb0afb5e53a229c700b0570d19f0f03c9942811
 branch: agent/zcode/TASK-061-connection-eviction
 worktree: G:/CODEX/New Manga.worktrees/TASK-061-zcode
-integration_commit: null
+integration_commit: 0e2576463d1cd1c913061da95cb148ca2bc5589e
 ---
 
 # TASK-061：连接注册表驱逐与 `remove_managed` 解析一致性
@@ -36,7 +36,7 @@ integration_commit: null
 - [x] **AC ④（供 TASK-057 前置①引用）**：把「drained ⇒ 无其他写者」写成**可判定**形式（例如 release 之后断言无活动连接 / 无 `running` run），并在 Task 内写明 TASK-057 前置①应引用哪条断言。
 - [x] **AC ⑤（不回归）**：`tests/storage`、`tests/workbench`、`tests/maintenance`、`tests/core` 与全仓 **不得跌破 923 collected**（openssl 可用口径 `923 passed / 0 skipped`；本机 PowerShell 口径 `917 passed / 6 skipped`，总数须仍为 923）；不得新增 `skip`/`xfail`、不得放宽既有断言。
 - [x] **AC ⑥（证据口径）**：每份日志带 **EXIT 码** 与 **shell/venv 头**、逐次入库；判别力必须是 **artefact**（协议 §6 第 12 条，Q-009）。
-- [ ] **AC ⑦** Handoff + `verification/TASK-061/**` + **非作者** Review + 集成；集成后 STATUS 登记，并标注 **TASK-057 前置①是否已可判定**。
+- [x] **AC ⑦** Handoff + `verification/TASK-061/**` + **非作者** Review + 集成（`integration_commit=0e25764`）；集成后 STATUS 登记，并标注 **TASK-057 前置①是否已可判定**（结论见「复审结论与 open 项」）。
 
 ## 允许修改范围
 
@@ -75,5 +75,27 @@ integration_commit: null
 - **实际测试**（同一 shell + 同一 venv：PowerShell + `TASK-012-py312`，`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、未设 `QT_QPA_PLATFORM`；每份日志带 EXIT + shell/venv 头）：
   - 判别力（修前树 `6cb0afb` detached，新用例复制入树未提交）：`verification/TASK-061/prefix-discrimination/`——e2e 驱逐 **1 failed，registry=[2,3,4,5]**（EXIT=1，失败文本即 R-002 机理）；connection 单元整文件 **3 failed / 2 passed，进程真退出**（try/finally 修复后取证，`connection-ownership-unit-prefix-run2.log`，EXIT=1）；managed_storage **3 failed**（junction 穿越未拒 + helper 实证目标消失 `exists: False`，`.` 段删除成功；既有 7 例仍 passed；`managed-storage-bookjunction-prefix-run2.log`）。
   - 修后：四目录回归 **178 passed**；全仓 `verification/TASK-061/full-suite/full-suite-run{1..5}.log`——**5/5 次 930 passed / 0 skipped、EXIT=0**；collected 930 = 923（master `6cb0afb` 基线，openssl 可用口径）+ **7 个本切片新增用例**，未跌破基线、未新增 skip/xfail、未放宽既有断言。
-- **AC⑦**：Handoff 见 [TASK-061-zcode-handoff](../handoffs/TASK-061-zcode-handoff.md)；Review 待 Qoder（非作者）。
-- **最近状态（当前，唯一）**：2026-09-19 实现完成、AC①~⑥ 证据齐备；待 Qoder Review + 集成 + STATUS 登记（集成时标注 TASK-057 前置①已可判定）。
+- **AC⑦**：Handoff 见 [TASK-061-zcode-handoff](../handoffs/TASK-061-zcode-handoff.md)；Review＝**Qoder（非作者）** [TASK-061-067e432](../reviews/TASK-061-067e432.md)（`067e432` → `changes_requested`，仅证据台账两条；`ffdc47d` → **`approved`**）；集成 `0e25764`（`--no-ff`，delivery head `ffdc47d`，元数据台账 `ffdc47d`）。评审证据 `verification/TASK-061/review-067e432/**`（28 份日志 + 探针脚本）已随集成落库。
+- **最近状态（当前，唯一）**：2026-09-19 **已集成并收口 `done`**（`integration_commit=0e25764`）。集成后 master 全仓 **930 passed / 0 skipped / EXIT=0（930 collected）**——Reviewer 口径（openssl 可用）；本机 PowerShell 口径为 924 passed / 6 skipped（6 条＝既有 `tests/network` `openssl unavailable`），总数一致。**TASK-057 前置①自本 head 起可判定**，但按 R-004 是**快照而非准入闸门**（详见下节）。
+
+## 复审结论与 open 项
+
+**结论**：`approved`（针对 `ffdc47d`）。两条阻断项（R-001 证据台账的 EXIT 行与挂起归因、R-002 junction 用例构造使「目标存活」恒真）**均由 Reviewer 用自己的探针复算红绿**：修前 junction 真删受保护原件（`exists: False`）／修后 typed 拒绝且存活；修前整文件 `EXIT=1` 真退出／修后全绿。**实现代码零返工**（返修 commit `0825b71` 只动测试与文字）。R-003~R-008 不阻断。
+
+**TASK-057 前置①口径（本切片交付）**：`workbench.shutdown() is True and not services.conn.any_in_transaction()`。**该谓词是快照、不是准入闸门**（R-004）：门通过后 `RunController.start()` 仍可起新 run（只有"已有 run"闩），且一个**活着**的第二写线程会令聚合判 False。TASK-057 的门需写成三件式——`shutdown() is True` + `not any_in_transaction()` + **restore 期间拒绝 startRun**（VM 侧闩），并把"`RunController` 是唯一非 GUI 写线程"的前提写进 docstring。
+
+**仍 open（转后续处置，均不阻断本切片）**：
+
+| ID | 级别 | 内容 | 建议去向 |
+|---|---|---|---|
+| R-003 | P3 | `_evict`/lease docstring 的"无任何代码可再拿到该连接"应**收窄**为"不经 facade 存活的句柄"（反例：跨线程存活的 cursor）；生产今日不可达 | docs 微切片 |
+| R-004 | P3 | 谓词是快照非准入闸门（见上） | **并入 TASK-057** |
+| R-005 | P3 | `any_in_transaction()` 的**聚合方向**仍无用例（行为正确性由 Reviewer 的 M1 代测） | **并入 TASK-057** |
+| R-006 | P3 | 模块 docstring "Every statement runs on the owning thread" 仍需一句例外（`open_connection_count` 在他线程连接上执行） | docs 微切片 |
+| R-007(i) | P3 | 前导 `/` 的 Windows/POSIX 不对称仍在（无越界后果） | docs 微切片 |
+| R-008 | P3 | poll 上界 2 与最终断言 `==[1]*4` 不同界 | docs 微切片 |
+| N-002 | nit | `barrier.wait()` 无超时（worker 抵达屏障前死亡 ⇒ 主线程永久阻塞） | 下次动该文件时顺手收 |
+| N-003 | nit | 已入库用例仍只覆盖**目录 junction**，文件符号链接形态未落（AC② 实质已由探针证明成立） | 下个切片补 |
+| N-004 | nit | `managed-storage-bookjunction-prefix-run2.log` 的 note 写 "REPLACES run2"（应为 run1）；集成台账宜写"**当前有效**日志均带 EXIT 与环境头，被取代的挂起记录保留不删" | docs 微切片 |
+
+**Reviewer 声明未审面（不影响批准）**：真机 GUI 长会话、POSIX `S_ISLNK` 分支、未开开发者模式机器上的文件符号链接、解释器关停期 lease 回调与 `close()` 的交错。
