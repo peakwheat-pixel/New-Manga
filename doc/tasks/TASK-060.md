@@ -2,7 +2,7 @@
 id: TASK-060
 title: SQLite 连接与事务归属收口（W1 后置复审推翻后的重开切片）
 kind: bugfix
-status: in_progress
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-048, TASK-058]
 base_commit: 9522f2df66a79b82bb2419bc99f84ef39694e513
 branch: agent/zcode/TASK-060-sqlite-ownership
 worktree: G:/CODEX/New Manga.worktrees/TASK-060-zcode
-integration_commit: null
+integration_commit: e7de64dd4f8057adde25b259cef987780d48ca74
 ---
 
 # TASK-060：SQLite 连接与事务归属收口
@@ -40,7 +40,7 @@ integration_commit: null
 - [x] **AC ⑦（单一"永不清理"谓词）**：`src/application/maintenance/cleanup.py`、`src/infrastructure/filesystem/managed_storage.py`、`tile_cache_sweep.py`、`trash.py` 的护栏收敛为**一个**权威谓词（"解析后前缀 + 行存活 + 每面复用"），并补一致性用例；至少覆盖 Q-007 的 ①（`_is_safe` 只护缓存面）、②（缓存清扫不复核 reparse point）、③（重试守卫按 manifest 成员而非行存活）、④（`retry_pending_cleanups` 不重过 `_is_safe`）、⑤（`_record_pending([])` 整键弹出）。
 - [x] **AC ⑧（撤回 flaky 定性）**：`doc/STATUS.md` 的 flaky 条目（`test_worker_run_and_main_thread_access_coexist`）由本切片收口（已由 Codex 先行撤回并指向 Q-001，见该行）；修后该用例应在 ≥10 轮全仓/定向串跑中稳定通过（逐次留证）。
 - [x] **AC ⑨（证据口径）**：每份日志必须带 **EXIT 码** 与 **shell/venv 头**（同一 shell + 同一 venv、`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、**不得设 `QT_QPA_PLATFORM`**）；全仓 ≥5 次逐次记录，**不得跌破 911 collected / 0 skipped（openssl 可用口径；本机 PowerShell 口径为 905 passed / 6 skipped，总数必须仍为 911）**；不得新增 `skip`/`xfail`、不得放宽既有断言（Q-009 的口径要求）。
-- [ ] **AC ⑩** Handoff + `verification/TASK-060/**` + **非作者** Review + 集成；集成后置 TASK-048 为 `done`（或按评审结论收口）并在 STATUS 记录。
+- [x] **AC ⑩** Handoff + `verification/TASK-060/**` + **非作者** Review + 集成；集成后置 TASK-048 为 `done`（或按评审结论收口）并在 STATUS 记录。
 
 ## 允许修改范围
 
@@ -74,3 +74,5 @@ integration_commit: null
 - **既有测试适配（非放宽）**：`tests/workbench/test_shutdown_drain.py` 的 stub 适配 `shutdown() -> bool` 新契约（修前返回 None）；`tests/storage/test_run_files_leak.py::test_retry_is_idempotent_when_files_are_already_gone` 的 setup 补 `purge_pages` 使"行已删"的模拟场景字面为真（否则与新行存活守卫冲突）。
 - **R-001 返修（Qoder review b28c615，changes_requested → 已收口）**：`ManagedFileStorage.remove_managed` 的组件规则在 b28c615 上**只剩注释、检查代码缺失**——`books/.../original/../original/<neighbour>` resolve 后仍在根内，根内检查放行，篡改的 pending_purges 条目可删除根内邻居。返修在该单点补上真实组件守卫（`..`/`.` 组件与绝对路径一律 `ImmutablePathViolation`，trash 面零改动）；新增判别用例 `TestQ007TamperedEntryCannotDeleteNeighbours`（篡改条目 batch_id 不在 ledger、穿越字面不匹配任何 `managed_original_ref`，行存活守卫两路放行，唯物理守卫可挡）。证据 `verification/TASK-060/r001-fix/`：pre（b28c615 重演，managed_storage stash 回退）1 failed EXIT=1；post 全文件 10 passed EXIT=0；全仓 **923 passed / 0 skipped** EXIT=0（= 922 + 1 新用例）。
 - **最近状态（当前，唯一）**：2026-09-19 实现完成、AC①~⑨ 证据齐备；Qoder review 的 R-001 已返修并留证，待 Qoder 复跑判别改判后由 Codex 集成（AC⑩）。
+
+> **2026-09-19 集成收口（Codex）**：`git merge --no-ff` 于 **`%s`**（base `a2b23ad`，delivery `f7745e6`）。Review=[TASK-060-b28c615](../reviews/TASK-060-b28c615.md)，Reviewer=**Qoder（非作者；用户在切片进行中把 Reviewer 由 Codex 改派 Qoder；集成仍由 Codex 负责）**，`changes_requested`@`b28c615` → R-001 返修 → **`approved`@`f7745e6`**。**集成后全仓**：`pytest tests -q -rs` → **917 passed / 6 skipped / EXIT=0（共 923 collected）**——本机 PowerShell 口径 openssl 不可用，6 条为既有 `tests/network` TLS skip；**openssl 可用口径即 923 passed / 0 skipped，总数一致**。**集成时登记的三条 open 项（Reviewer 要求记账，非返工）**：① **R-003 白名单追认**（`src/ui/viewmodels/workbench/viewmodel.py`、`src/infrastructure/imaging/tile_cache_sweep.py`，均为 AC⑥/AC⑦ 的必要落点）；② **R-002 + R-010 + R-011 立案**为后续小切片（`connection.py` 每线程连接注册表**永不驱逐**——TASK-057 前置①正卡在此；`remove_managed` 的词法组件规则跑在 `.resolve()` 之后 ⇒ 根内 junction/符号链接可删同根受保护原件；`"." in parts` 死条件）；③ **AC⑧ flaky 收口完成**（十轮稳定 `verification/TASK-060/stability-runs/**`）、**TASK-048 复归 `done`**。
