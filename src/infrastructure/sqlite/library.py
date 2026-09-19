@@ -469,6 +469,22 @@ class SqliteLibraryRepository:
         ).fetchall()
         return [row["managed_path"] for row in rows]
 
+    def list_live_managed_refs(self, refs) -> set[str]:
+        """TASK-060 Q-007 ③: which refs a live (non-purged) page row still
+        references as its managed original."""
+        refs = [r for r in refs if r]
+        if not refs:
+            return set()
+        placeholders = ",".join("?" for _ in refs)
+        rows = self._conn.execute(
+            # a soft-deleted row still EXISTS (restorable) — only a purged
+            # row (gone) releases its file for sweeping (Q-007 ③)
+            "SELECT managed_original_ref FROM pages"
+            f" WHERE managed_original_ref IN ({placeholders})",
+            tuple(refs),
+        ).fetchall()
+        return {row["managed_original_ref"] for row in rows}
+
     def list_trashed_page_groups(self) -> list[tuple[str, str, tuple[str, ...]]]:
         """``(chapter_id, deleted_at, page_ids)`` for each soft-deleted group.
 

@@ -133,7 +133,10 @@ class TestR04RetryablePendingPurge:
         page = workspace["make_page"]("p2", b"payload-two")
         batch = service.soft_delete_pages("chapter-1", ("p2",))
         # the real flow at this point: rows gone, batch already out of the
-        # ledger, files removed — but the entry-clearing write was lost
+        # ledger, files removed — but the entry-clearing write was lost.
+        # (TASK-060: make "rows gone" literal — purge the page row like
+        # purge_batch does — so the row-liveness guard sees the truth.)
+        workspace["repository"].purge_pages(("p2",))
         workspace["storage"].remove_managed(page.managed_original_ref)
         service._record_pending_purge(batch.batch_id, [page.managed_original_ref])
         service._drop_batch(batch.batch_id)
@@ -302,3 +305,41 @@ class TestTriggerDiscipline:
         assert maintenance.purge_targetless_runs() == 1
         # both documented triggers still exist and nothing refused the deletes
         assert triggers() == _DOCUMENTED_TRIGGERS
+
+
+class TestQ007RowLivenessGuard:
+    """TASK-060 Q-007 ③: the retry guard is **row liveness**, not manifest
+    membership.  Discriminating: with a lost manifest (batches list gone,
+    pending_purges intact) the pre-fix guard saw "not in ledger" and swept
+    files whose pages were still live rows — orphaning live pages."""
+
+    def test_retry_skips_live_rows_even_when_the_manifest_lost_the_batch(
+        self, trash_workspace
+    ) -> None:
+        workspace = trash_workspace
+        service = workspace["service"]
+        page = workspace["make_page"]("p10", b"payload-ten")
+        batch = service.soft_delete_pages("chapter-1", ("p10",))
+
+        # the batch lands in pending_purges (purge not attempted yet), then
+        # the manifest "loses" its batches list — the ledger degrades to a
+        # rebuild from the store (F-7), the pending entry survives
+        import json
+
+        manifest_path = workspace["manifest_path"]
+        raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+        raw["batches"] = []
+        raw["pending_purges"] = [
+            {
+                "batch_id": batch.batch_id,
+                "targets": [page.managed_original_ref],
+            }
+        ]
+        manifest_path.write_text(json.dumps(raw), encoding="utf-8")
+
+        cleared = service.retry_pending_purges()
+
+        assert cleared == 0, "retry swept files whose page rows are still live"
+        assert (
+            workspace["managed"] / page.managed_original_ref
+        ).is_file(), "a live page's managed original was removed by the retry"

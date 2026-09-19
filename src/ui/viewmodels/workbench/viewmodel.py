@@ -41,7 +41,7 @@ from ui.models.tasks.projection import (
     build_projection,
     step_label,
 )
-from ui.viewmodels.workbench.run_controller import RunController
+from ui.viewmodels.workbench.run_controller import RunController, is_terminal_status
 
 VIEWER_MODES = ("original", "clean", "translated", "compare")
 
@@ -844,7 +844,15 @@ class WorkbenchViewModel(QObject):
         self._refresh_projection()
         self._record_command_error(error, stage="worker")
 
-    def shutdown(self) -> bool:
+    def shutdown(self, wait_ms: int = 5000) -> bool:
         """Drain the run controller; True = drained (TASK-060 Q-003)."""
         self._progress_timer.stop()
-        return self._controller.shutdown()
+        if self._run is not None and not is_terminal_status(
+            self._run.status.value
+        ):
+            # TASK-060 Q-003: on exit there is no session to resume into.
+            # A merely PAUSED run's worker has already left, so the
+            # controller no longer holds it — the cancel request must be
+            # written here, on the run object the VM still owns.
+            self._run.cancel_requested = True
+        return self._controller.shutdown(wait_ms)

@@ -220,3 +220,88 @@ class TestRetryableFailures:
         assert retry.removed == 1 and retry.failed == 0
         assert not tile.exists()
         assert workspace["service"].pending_cleanup_count() == 0
+
+
+class TestQ007SingleNeverCleanPredicate:
+    """TASK-060 Q-007 ②/④/⑤: one never-clean boundary across faces."""
+
+    def test_retry_rechecks_the_never_clean_predicate(
+        self, cleanup_workspace
+    ) -> None:
+        """④: a tampered pending entry must be re-checked by the same
+        predicate — pre-fix the retry face skipped the whitelist entirely
+        and handed the path straight to the remover."""
+        workspace = cleanup_workspace
+        tile = workspace["make_tile"]("tile-ok-00001.png", b"payload")
+        manifest = workspace["manifest"]
+        manifest.write_manifest(
+            {
+                # read_manifest treats a manifest without "batches" as corrupt
+                "batches": [],
+                "pending_cleanups": [
+                    "cache/webtoon-tiles/" + tile.name,
+                    "../../escape.png",
+                ],
+            }
+        )
+
+        outcome = workspace["service"].retry_pending_cleanups()
+
+        by_path = dict(outcome.items)
+        assert by_path["cache/webtoon-tiles/" + tile.name].status == "ok"
+        assert by_path["../../escape.png"].status == "skipped"
+        assert not tile.exists(), "the safe pending entry should have been swept"
+        assert workspace["service"].pending_cleanup_count() == 0
+
+    def test_successful_run_preserves_unrelated_pending_entries(
+        self, cleanup_workspace
+    ) -> None:
+        """⑤: merge semantics — a clean run used to pop the whole pending
+        key, discarding entries of an earlier run that were never retried
+        to success."""
+        workspace = cleanup_workspace
+        tile = workspace["make_tile"]("tile-live-00002.png", b"payload")
+        manifest = workspace["manifest"]
+        manifest.write_manifest(
+            {
+                "batches": [],
+                "pending_cleanups": ["cache/webtoon-tiles/tile-ghost-00000.png"],
+            }
+        )
+
+        outcome = workspace["service"].run()
+
+        assert outcome.failed == 0
+        assert outcome.removed == 1
+        assert workspace["service"].pending_cleanup_count() == 1, (
+            "a clean run wiped the pending list of an earlier run"
+        )
+        retry = workspace["service"].retry_pending_cleanups()
+        assert retry.removed == 1, "the ghost entry sweeps idempotently"
+        assert not tile.exists()
+
+    def test_reparse_point_named_like_a_tile_is_not_reported(
+        self, cleanup_workspace, tmp_path: Path
+    ) -> None:
+        """②: the sweeper re-checks each candidate *after* resolution — a
+        reparse point named ``tile-*.png`` pointing outside the cache
+        subtree is never reported as a cleanable target.  Uses a directory
+        junction (mklink /J needs no privileges on Windows)."""
+        import subprocess
+
+        workspace = cleanup_workspace
+        outside = tmp_path / "outside-target"
+        outside.mkdir(exist_ok=True)
+        (outside / "precious.txt").write_bytes(b"keep me")
+        junction = workspace["tile_dir"] / "tile-evil-00000.png"
+        result = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(junction), str(outside)],
+            capture_output=True,
+        )
+        if result.returncode != 0:
+            pytest.fail(f"junction creation failed: {result.stderr!r}")
+
+        files = workspace["sweeper_files"]()
+
+        assert "cache/webtoon-tiles/tile-evil-00000.png" not in files
+        assert (outside / "precious.txt").read_bytes() == b"keep me"
