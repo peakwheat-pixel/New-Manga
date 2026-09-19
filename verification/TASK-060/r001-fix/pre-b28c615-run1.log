@@ -1,0 +1,53 @@
+# repo: G:/CODEX/New Manga.worktrees/TASK-060-zcode @ b28c615 (pre-R001-fix: managed_storage.py stashed back to b28c615)
+# shell: PowerShell 5.1 (powershell.exe -NoProfile)
+# venv: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe (Python 3.12.3)
+# env: PYTHONDONTWRITEBYTECODE=1; QT_QPA_PLATFORM unset
+# pytest: -q -p no:cacheprovider
+# target: tests/storage/test_run_files_leak.py::TestQ007TamperedEntryCannotDeleteNeighbours
+# date: 2026-09-19
+---
+F                                                                        [100%]
+================================== FAILURES ===================================
+_ TestQ007TamperedEntryCannotDeleteNeighbours.test_retry_refuses_a_traversal_target_and_spares_the_neighbour _
+
+self = <test_run_files_leak.TestQ007TamperedEntryCannotDeleteNeighbours object at 0x000001A91FAC05C0>
+trash_workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001A91FE4D520>, 'repository': <infras...ject at 0x000001A91FE4D340>, 'service': <application.maintenance.trash.TrashService object at 0x000001A91FE4CF80>, ...}
+
+    def test_retry_refuses_a_traversal_target_and_spares_the_neighbour(
+        self, trash_workspace
+    ) -> None:
+        import json
+    
+        from infrastructure.filesystem.managed_storage import (
+            ImmutablePathViolation,
+        )
+    
+        workspace = trash_workspace
+        service = workspace["service"]
+        neighbour = workspace["make_page"]("p99", b"neighbour-bytes")
+        workspace["make_page"]("p10", b"payload-ten")
+        # a real soft delete first, so the manifest file exists on disk
+        service.soft_delete_pages("chapter-1", ("p10",))
+    
+        # tamper: a batch id that no longer exists + the neighbour's file
+        # reached through a ".." traversal that still resolves *inside*
+        # the managed root
+        traversed = neighbour.managed_original_ref.replace(
+            "/original/", "/original/../original/", 1
+        )
+        assert traversed != neighbour.managed_original_ref
+        manifest_path = workspace["manifest_path"]
+        raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+        raw["pending_purges"] = [
+            {"batch_id": "batch-tampered", "targets": [traversed]}
+        ]
+        manifest_path.write_text(json.dumps(raw), encoding="utf-8")
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_run_files_leak.py:388: Failed
+=========================== short test summary info ===========================
+FAILED tests/storage/test_run_files_leak.py::TestQ007TamperedEntryCannotDeleteNeighbours::test_retry_refuses_a_traversal_target_and_spares_the_neighbour
+1 failed in 0.18s
+pre EXIT=1

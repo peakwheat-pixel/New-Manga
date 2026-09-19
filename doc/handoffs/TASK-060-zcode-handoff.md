@@ -21,6 +21,8 @@ status: draft
 | `8e71151` | 判别用例交错方案改为纯 `commit()`（双树判别成立） |
 | `851edcf` | 修正判别 fixture 违反 CHECK 约束导致假阳性（origin/review_state 合法值） |
 | `dc254fa` | AC④ e2e + AC⑥ drain 契约用例；VM `shutdown(wait_ms)` 转发并 cancel PAUSED run |
+| `29edbb5`/`b28c615` | 文档 + 证据归档 + Reviewer 改派 Qoder |
+| R-001 返修 | `remove_managed` 组件守卫（b28c615 上仅存注释壳）真实落码 + 判别用例 `TestQ007TamperedEntryCannotDeleteNeighbours`（证据 `verification/TASK-060/r001-fix/`：pre 1 failed EXIT=1 / post 10 passed EXIT=0 / 全仓 923 passed EXIT=0） |
 
 ### AC 逐项对照
 
