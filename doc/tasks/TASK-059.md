@@ -4,19 +4,21 @@ title: UI/UX 视觉方向与信息架构重做（仅设计；**授权重画配�
 kind: design
 status: ready
 approval: approved_by_user
-suggested_owner: Qoder
-owner: Qoder
+suggested_owner: ZCode
+owner: ZCode
 reviewer: Codex
 depends_on: [TASK-012, TASK-013, TASK-015]
-base_commit: 6cb0afb5e53a229c700b0570d19f0f03c9942811
-branch: agent/qoder/TASK-059-ui-redesign
-worktree: G:/CODEX/New Manga.worktrees/TASK-059-qoder
+base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
+branch: agent/zcode/TASK-059-ui-redesign
+worktree: G:/CODEX/New Manga.worktrees/TASK-059-zcode
 integration_commit: null
 ---
 
 # TASK-059：UI/UX 视觉方向与信息架构重做（仅设计）
 
-**READY（2026-09-19，用户否决 TASK-047 后由 Codex 另立）**：Owner=`Qoder`（**用户可随时改派**）、Reviewer=`Codex`（**非作者**）、base=收口时 master HEAD。开工先 `git merge master`。**本 Task 取代 [TASK-047](TASK-047.md) 的设计门**（TASK-047 = `rejected`，不进入 `done`，其结论不作为本轮依据）。
+**READY（2026-09-19，用户否决 TASK-047 后由 Codex 另立；随后按用户指示改派 ZCode）**：Owner=`ZCode`、Reviewer=`Codex`（**非作者**）、base=`4c81dca6186f9b47f2771e5033a5d6ecfa986dd6`、branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。开工先 `git merge master`。**本 Task 取代 [TASK-047](TASK-047.md) 的设计门**（TASK-047 = `rejected`，不进入 `done`，其结论不作为本轮依据）。
+
+**改派记录（2026-09-19）**：用户指示把本 Task 交给 `ZCode`。原 Qoder 分支/worktree `agent/qoder/TASK-059-ui-redesign` / `G:/CODEX/New Manga.worktrees/TASK-059-qoder` 在改派前无实施提交，现仅作旧指派留档，不再作为本 Task 的开工工作区；不得把其中内容直接作为交付。AC、允许/禁止范围、授权与 Reviewer 均不变。
 
 ## 必读输入（先读，再动手）
 
@@ -72,11 +74,11 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无（Reviewer=`Codex`，非作者）。实际测试：尚无（`ready`）。
-- **最近状态（当前，唯一）**：2026-09-19 用户否决 TASK-047（`rejected`）后，由 Codex 另立并释放为 `ready`；base=收口时 master HEAD。**实施尚未开始。**
+- **最近状态（当前，唯一）**：2026-09-19 用户否决 TASK-047（`rejected`）后由 Codex 另立并释放为 `ready`，随后用户指示改派给 `ZCode`；base=`4c81dca`、branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。**实施尚未开始。**
 
 ## 参考输入（用户 2026-09-19 会话；**不改变本 Task 的 AC、允许/禁止范围与授权**）
 
-用户在会话中给出**建议的契约章节结构**。**是否采纳由 Qoder 在契约中体现、由 Codex 在 Review 时把关**；本清单**不是 AC**，不构成准入门槛。
+用户在会话中给出**建议的契约章节结构**。**是否采纳由 ZCode 在契约中体现、由 Codex 在 Review 时把关**；本清单**不是 AC**，不构成准入门槛。
 
 1. **方向宣言**
 2. **设计令牌表**（亮 + 暗；**如采纳玻璃语言，另加「玻璃开/关」两套**）

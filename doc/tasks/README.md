@@ -1,5 +1,7 @@
 # Task 索引
 
+2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
+
 2026-09-19 增量：**TASK-047（Owner=Qoder，仅 UI/UX/GUI/QML 设计规范）已被用户否决 → `rejected`**（理由：R-1 视觉方向 / R-2 布局与信息架构 / R-3 太保守没超出基线；裁决记录见该 Task 末尾，分支 `agent/qoder/TASK-047-ui-ux-gui-design` @`980ae7d` **未合并、保留**）。设计门改由新立的 [TASK-059](TASK-059.md) 承接（**明确授权重画配色与布局、允许推翻 `ui-baseline` 取值、要求 2–3 个实质不同的候选方向**）。TASK-022 保持 `proposed`，其设计门前置由 TASK-047 改挂 TASK-059。
 2026-09-19 增量：**ZCode 全权窗口（T0 本提交 → T1=2026-09-19 09:00）生效中**——队列 W0–W10 见 [STATUS](../STATUS.md) 同名小节与下表（TASK-046、TASK-048～057，按前提性排序，可插队）；TASK-022/025/026/027 已纳入同一队列但**门槛未达成记 BLOCKED**；TASK-047 属 Qoder（窗口外）。窗口期 Review 由 ZCode **新开独立子对话**完成（不得自审），T1 后 Codex + DSH + Qoder 强制 post-hoc 复审。
 
@@ -66,7 +68,7 @@ TASK-001～TASK-021（TASK-021 仅 trash 子集）、TASK-024、TASK-028～TASK-
 | [TASK-056](TASK-056.md) | TASK-021 子集②：缓存·版本·模型清理 | ZCode | **ready（窗口 W9；前置 TASK-053/054）**；AC 含可清理/永不清理边界、预览、**瓦片缓存跨代回收（TASK-045 R-005）**、幂等与失败可诊断；base `8bf8da3`；TASK-021 |
 | [TASK-057](TASK-057.md) | TASK-021 子集③：备份与恢复 | ZCode | **ready（窗口 W10；前置 TASK-053）**；AC 含备份完整性、恢复覆盖/合并语义、不写用户源文件、失败可诊断；base `8bf8da3`；TASK-021 |
 | [TASK-058](TASK-058.md) | 应用退出排空 workbench 运行线程（§11 P-10，窗口自建插入） | ZCode | **done（2026-09-19 窗口 W11）**：`_shutdown_services` 统一退出收口（drain→close，含 bootstrap 失败分支）；子对话 Review 首轮 `changes_requested`（R-001 测试自包含）→返修复验 `approved_subagent`，integration `414a8e1` |
-| [TASK-059](TASK-059.md) | UI/UX 视觉方向与信息架构**重做**（仅设计；授权重画配色与布局） | Qoder | **ready**；承接被否决的 TASK-047：**可推翻 `doc/ui-baseline.md` 取值**、可重新划分页面内分区与信息层级（四页骨架不变）、交付 **2–3 个实质不同的候选方向**；必读 TASK-047 末尾裁决记录；只写 `doc/**`，不写 `src/**`；Reviewer=Codex（非作者）；TASK-012, TASK-013, TASK-015 |
+| [TASK-059](TASK-059.md) | UI/UX 视觉方向与信息架构**重做**（仅设计；授权重画配色与布局） | ZCode | **ready**；承接被否决的 TASK-047：**可推翻 `doc/ui-baseline.md` 取值**、可重新划分页面内分区与信息层级（四页骨架不变）、交付 **2–3 个实质不同的候选方向**；必读 TASK-047 末尾裁决记录；只写 `doc/**`，不写 `src/**`；Reviewer=Codex（非作者）；base `4c81dca`；TASK-012, TASK-013, TASK-015 |
 | [TASK-060](TASK-060.md) | SQLite 连接与事务归属收口（W1 推翻后重开） | ZCode | **done（integration `e7de64d`）**：Review=Qoder（非作者；`changes_requested`→R-001 返修→`approved`@`f7745e6`）；集成后全仓 **917 passed / 6 skipped / EXIT=0（共 923 collected；openssl 可用口径 923/0）**；三条 open 项（R-003 白名单追认、R-002/R-010/R-011 立案、AC⑧+TASK-048）已登记；目标＝每线程连接或单写者串行化（消除跨线程共享事务）；AC 含「写者返回成功 ⇒ 独立连接可读回该行」「交错下无孤儿 Revision」`BEGIN IMMEDIATE` 入 typed 通道、超时不 close、单一「永不清理」谓词、日志带 EXIT+shell/venv 头、**不得跌破 911 collected**；Reviewer=Codex（非作者）；TASK-048, TASK-058 |
 | [TASK-061](TASK-061.md) | 连接注册表驱逐与 `remove_managed` 解析一致性（R-002/R-010/R-011） | ZCode | **ready**；AC 含「连接注册表大小与打开连接数**不随 run 数增长**」与「**根内 junction/符号链接指向同根受保护文件时 typed 拒绝且目标存活**」；并把「drained ⇒ 无其他写者」写成可判定形式供 **TASK-057 前置①** 引用；Reviewer=Qoder（非作者）；不得跌破 **923 collected**；TASK-060 |
 | [TASK-062](TASK-062.md) | 后置复审残留收口（Q-006 诊断脱敏 + TASK-046 R-001 多过滤器补证 + R-009） | **Codex** | **ready**；AC 含「诊断包**每个值**过屏（含 recent_errors 与键）」「**Qt/libpng 编码页**补证 overlap 0/64 瓦片字节相同且拼接==整页」；刻意避开 TASK-061 在飞写集合；Reviewer=Qoder（非作者）；不得跌破 **923 collected**；TASK-046, TASK-055 |
