@@ -43,5 +43,6 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[TASK-057-delivery.md](../handoffs/TASK-057-delivery.md)。Review：尚无（待窗口独立子对话 Review）。实际测试：新套件 8/0 + 相邻 storage/core 97/0 + 全仓（4×912/0 有效绿 + 1 既有时序 flaky + 1 环境中断，逐次分列入库）。
-- **最近状态（当前，唯一）**：2026-09-19 ZCode 实现（实现提交 `c5515fb`）：sidecar 清单 + `verify_backup_file` + typed `restore_backup`（覆盖语义/pre_restore 自动备份/一致性报告/sidecar 兜底）+ `BackupLedger` 端口。零 Schema/依赖/QML。`base=8bf8da3`（开工已 merge master `1d41e00`，含 W0–W4/W6–W9）。
+- Handoff：[TASK-057-delivery.md](../handoffs/TASK-057-delivery.md)（冻结交付）。Review：Qoder 窗口复审维持冻结 + 三项前置（`doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md` Q-008）。实际测试：新套件 8/0 + 相邻 storage/core 97/0 + 全仓（4×912/0 有效绿 + 1 既有时序 flaky + 1 环境中断，逐次分列入库）。
+- 2026-09-19 冻结交付（实现提交 `c5515fb`）：sidecar 清单 + `verify_backup_file` + typed `restore_backup`（覆盖语义/pre_restore 自动备份/一致性报告/sidecar 兜底）+ `BackupLedger` 端口。零 Schema/依赖/QML。
+- **最近状态（当前，唯一）**：2026-09-19 ZCode 解冻前置切片（实现提交 `2707ea8`；范围=Q-008 前置②③ + R-004/R-005，Qoder Review）：① AC③ 恒真断言删 `or True` 补真实边界断言 ② R-004 三件式门（VM `beginRestore/endRestore` 闩拒绝全部 start 路径；`RunController`/`any_in_transaction` docstring 写明唯一写者前提与「快照非准入闸门」约束）③ R-005 聚合方向判别用例 ④ R-003/R-006 docstring 收窄 + N-002 `barrier.wait(5)` ⑤ backup.py 最小 facade 适配（`_current()`；超出开工指令字面白名单，依据原 Task 白名单 `src/infrastructure/sqlite/**` 执行，登记于 Handoff 交 Reviewer 裁定）。修前/修后判别探针与日志 `verification/TASK-057/pre-fix-probes/`（TRUTHY-PASS→DISCRIMINATING-FAIL、AttributeError→POST-FIX 双翻转）；全量 3×942 passed EXIT=0（`unfreeze-full-suite-run{1,2,3}.log`，942≥930 基线）。`base=50c4b1a`（开工 merge master `49f45f6` → `0d15018`）。Handoff：[TASK-057-unfreeze.md](../handoffs/TASK-057-unfreeze.md)（Reviewer=Qoder，待审）。

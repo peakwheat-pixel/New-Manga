@@ -1,15 +1,15 @@
-=== tree:   agent/zcode/TASK-057-backup-restore @ 0d15018（修后形态：本切片代码改动已落地）
+=== tree:   agent/zcode/TASK-057-backup-restore @ 2707ea8（修后形态：本切片代码改动已落地）
 === shell:  Git Bash (MSYS) / win32
 === venv:   TASK-012-py312 (Python 3.12.3)
 === env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM 未设（产品边界口径）
-=== date:   2026-09-19T21:27:05+0800
+=== date:   2026-09-19T21:31:49+0800
 === cmd:    /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest /g/CODEX/New Manga.worktrees/TASK-057-zcode/verification/TASK-057/pre-fix-probes/probe_q008_truthy.py -q -s -p no:cacheprovider
 ---
 DISCRIMINATING-FAIL: assertion caught the simulated regression (AC③ breach: backup wrote a user-side shadow into the managed root
 assert not True
  +  where True = exists()
- +    where exists = (WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2690/test_truthy_assertion_cannot_c0/managed') / 'user-side').exists) => discriminating power confirmed
+ +    where exists = (WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2694/test_truthy_assertion_cannot_c0/managed') / 'user-side').exists) => discriminating power confirmed
 .
-1 passed in 0.12s
+1 passed in 0.61s
 ---
 EXIT=0
