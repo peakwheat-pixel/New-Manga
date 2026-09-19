@@ -1,0 +1,69 @@
+---
+id: TASK-060
+title: SQLite 连接与事务归属收口（W1 后置复审推翻后的重开切片）
+kind: bugfix
+status: ready
+approval: approved_by_user
+suggested_owner: ZCode
+owner: ZCode
+reviewer: Codex
+depends_on: [TASK-048, TASK-058]
+base_commit: 9522f2df66a79b82bb2419bc99f84ef39694e513
+branch: agent/zcode/TASK-060-sqlite-ownership
+worktree: G:/CODEX/New Manga.worktrees/TASK-060-zcode
+integration_commit: null
+---
+
+# TASK-060：SQLite 连接与事务归属收口
+
+**READY（2026-09-19，用户依 Qoder 后置复审报告重开）**：Owner=`ZCode`、Reviewer=`Codex`（**非作者**）、base=9522f2d。开工先 `git merge master`。
+
+## 来源与固定对象
+
+- **被推翻的切片**：W1 [TASK-048](TASK-048.md)，integration **`be558ca`**（**不回滚该 merge**）。
+- **裁决依据**：[POSTHOC-WINDOW-2026-09-19-Qoder](../reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md)（`uphold_with_findings` 总论，**W1 单片 `overturn`**）与其 Findings **Q-001（P0）/ Q-002（P2）/ Q-003（P2）/ Q-007（P2）**。
+- **主证据**：[verification/POSTHOC-WINDOW-2026-09-19/Qoder/](../../verification/POSTHOC-WINDOW-2026-09-19/Qoder/)——`w1_thread_collision_probe.py` + `w1-thread-collision-run{1..10}.log`（真实 `assemble_services` + 真实 SQLite + 真实 `RunController`(QThread) + 完整 `TRANSLATE_ALL`）。
+- **代码内自认**：`src/infrastructure/sqlite/connection.py:28-35` 的 docstring 已写明"两线程共享同一事务 ⇒ 主线程 commit 可落在 worker 的 `with conn:` 内、发布 mid-batch 快照"，并把后果描述为"bounded/self-healed"——本切片就是把这条**归属缺陷**真正收口。
+
+## 目标
+
+把连接与事务的**归属**收敛到单一所有者（**每线程独立连接** 或 **单写者串行化**，二选一并说明取舍），使"两线程各自 commit/rollback 同一事务"在结构上不可能；并顺带收口与其同族的超时关闭竞态与清理面护栏。
+
+## Acceptance Criteria
+
+- [ ] **AC ①（归属模型 + 判别力）**：给出模型（per-thread 连接 or 单写者串行化）与理由；新用例在**修前**（`be558ca` 或 `9522f2d`）失败、修后通过（判别力留证）。
+- [ ] **AC ②（写者返回成功 ⇒ 独立连接可读回该行）**：任何写路径返回成功后，**用一条独立的新连接**必须能读回该行（含 GUI 侧写与 worker 侧 `_persist`）；不得出现"返回成功但落盘 0 行"（Q-001 D3 的机理）。
+- [ ] **AC ③（交错下无孤儿 Revision）**：在强制交错下，**不可变历史不得出现半途 Revision**（不得出现"revision 行已落、其承载对象未落"或反向）；必须给出重复执行的确定性证据（Q-001 D2 的机理）。
+- [ ] **AC ④（不再静默打死 run）**：交错下 worker run 不得被静默打死并留下 `running` 行；失败必须经 typed 通道可见（Q-001 ④ 的机理）。
+- [ ] **AC ⑤（`BEGIN IMMEDIATE` 入 typed 通道）**：`src/infrastructure/sqlite/regions.py` 的 `BEGIN IMMEDIATE`（`:210` 附近）纳入 `try` 并映射为 typed 可诊断失败，不得让 sqlite 原生异常穿透到 VM/QML（Q-002）。
+- [ ] **AC ⑥（超时不得 close）**：`run_controller.py:104-109` 的 `shutdown()` 超时早退后，`_shutdown_services`（`src/bootstrap/app.py:909-910`）**不得**在 worker 仍在写同一连接时无条件 `conn.close()`；要么先完成排空，要么 detach/延后关闭，并把"未排空"写进 diagnostics；`PAUSED` 分支同样要请求停止（Q-003）。
+- [ ] **AC ⑦（单一"永不清理"谓词）**：`src/application/maintenance/cleanup.py`、`src/infrastructure/filesystem/managed_storage.py`、`tile_cache_sweep.py`、`trash.py` 的护栏收敛为**一个**权威谓词（"解析后前缀 + 行存活 + 每面复用"），并补一致性用例；至少覆盖 Q-007 的 ①（`_is_safe` 只护缓存面）、②（缓存清扫不复核 reparse point）、③（重试守卫按 manifest 成员而非行存活）、④（`retry_pending_cleanups` 不重过 `_is_safe`）、⑤（`_record_pending([])` 整键弹出）。
+- [ ] **AC ⑧（撤回 flaky 定性）**：`doc/STATUS.md` 的 flaky 条目（`test_worker_run_and_main_thread_access_coexist`）由本切片收口（已由 Codex 先行撤回并指向 Q-001，见该行）；修后该用例应在 ≥10 轮全仓/定向串跑中稳定通过（逐次留证）。
+- [ ] **AC ⑨（证据口径）**：每份日志必须带 **EXIT 码** 与 **shell/venv 头**（同一 shell + 同一 venv、`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、**不得设 `QT_QPA_PLATFORM`**）；全仓 ≥5 次逐次记录，**不得跌破 911 collected / 0 skipped（openssl 可用口径；本机 PowerShell 口径为 905 passed / 6 skipped，总数必须仍为 911）**；不得新增 `skip`/`xfail`、不得放宽既有断言（Q-009 的口径要求）。
+- [ ] **AC ⑩** Handoff + `verification/TASK-060/**` + **非作者** Review + 集成；集成后置 TASK-048 为 `done`（或按评审结论收口）并在 STATUS 记录。
+
+## 允许修改范围
+
+- `src/infrastructure/sqlite/**`（连接归属；**不得改 Schema/migration**）
+- `src/application/tasks/**`
+- `src/ui/viewmodels/workbench/run_controller.py`
+- `src/bootstrap/app.py`（仅超时/关闭时序）
+- `src/application/maintenance/**`（cleanup 谓词；`cleanup.py` 实际在此）
+- `src/infrastructure/filesystem/managed_storage.py`
+- `tests/storage/**`、`tests/workbench/**`、`tests/maintenance/**`（cleanup 用例实际在此）、`tests/core/**`
+- 本 Task、Handoff、`verification/TASK-060/**`、`doc/STATUS.md`（台账行）
+
+## 禁止范围
+
+- 不得改 Schema/migration、`requirements.txt`、`src/ui/qml/**`、`AGENTS.md`、其他 Task；不得回滚 `be558ca`；不得放宽断言/新增 skip；不 push。
+
+## 依赖、风险与阻塞
+
+- 依赖：TASK-048（被推翻的实现）、TASK-058（退出排空，Q-003 涉及它的关闭时序）。
+- **与 TASK-057 的次序**：TASK-057（备份/恢复）**维持冻结**，其集成的**三项前置**（Q-008）＝① 活动 run/并发写者门（或显式先 drain/关闭）、② 删除恒真断言并补真实边界断言、③ 归档修前判别日志——**本切片是①的结构前提**，即 TASK-060 先于 TASK-057 集成。
+- 风险：per-thread 连接会改变事务可见性语义（WAL 下跨连接可见性、`BEGIN IMMEDIATE` 的锁等待）；单写者串行化会引入队列与延迟——两条路线都要在 Task 内写明取舍与实测。
+
+## 交付与运行记录
+
+- Handoff：尚无。Review：尚无（Reviewer=`Codex`，非作者）。实际测试：尚无（`ready`）。
+- **最近状态（当前，唯一）**：2026-09-19 依 [Qoder 后置复审](../reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md) 的 W1 `overturn` 与 Q-001（P0）重开；base=9522f2d。**实施尚未开始。**
