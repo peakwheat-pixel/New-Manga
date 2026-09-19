@@ -2,7 +2,7 @@
 id: TASK-059
 title: UI/UX 视觉方向与信息架构重做（仅设计；**授权重画配色与布局**）
 kind: design
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -36,12 +36,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（正面回答否决理由）**：逐条写清本轮如何回答 **R-1（视觉方向）/ R-2（布局与信息架构）/ R-3（太保守、没超出基线）**；不得只做措辞回应——每条的答案必须能在 AC ② 的候选方向里被指认。
-- [ ] **AC ②（2–3 个彼此不同的候选方向）**：交付 **2–3 个**候选，每个含：① 角色定位（服务谁、什么场景优先）② 完整令牌表（色彩/字号/间距/圆角/阴影，亮+暗）③ **至少 3 个页面**的关键视图（书架/工作台/阅读器或设置中的至少三个）④ 信息架构与页面内分区说明 ⑤ **代价与取舍**（实现成本、与现有 ViewModel 接口的冲突面、可访问性代价）。候选之间必须**在视觉语言或 IA 上有实质差异**（不是同一方案的三种密度）。
-- [ ] **AC ③（可打开的离线参考）**：每个候选都要有**可离线打开**的参考（单文件 HTML 或图片集），可被标注与截图；**允许复用** TASK-047 的标注回路与自检脚本（语法门/引用核对/无头截图+对比度审计）——**作为工具，不作为结论**。
-- [ ] **AC ④（硬事实沿用或显式推翻）**：DPI/最小窗口组合、文本对比度 ≥4.5:1、CJK 长文本与截断、状态矩阵（空/加载/错误/运行/未保存）、键盘可达性：要么沿用 TASK-047 §10 的量化结论，要么**显式推翻并给新证据**。
-- [ ] **AC ⑤（待决项）**：列出需要用户裁决的产品问题（沿用并复核 Q-1~Q-10，可增删改）；**明确区分**"设计可自决"与"必须用户裁决"。
-- [ ] **AC ⑥（交付与流程）**：交付本轮契约（**替代** TASK-047 的契约，不是在其上补丁）、候选方向参考、`verification/TASK-059/**`（自检脚本 + 审计 JSON + 截图）、Handoff；经**非作者** Review（Codex）与集成后才能 done；**设计身份不自动授予 `src/**` 写权限**（实现另行释放实现 Task）。
+- [x] **AC ①（正面回答否决理由）**：逐条写清本轮如何回答 **R-1（视觉方向）/ R-2（布局与信息架构）/ R-3（太保守、没超出基线）**；不得只做措辞回应——每条的答案必须能在 AC ② 的候选方向里被指认。→ [契约](../contracts/UI_UX_GUI_DESIGN.md) §2，逐条指认到候选。
+- [x] **AC ②（2–3 个彼此不同的候选方向）**：交付 **2–3 个**候选，每个含：① 角色定位（服务谁、什么场景优先）② 完整令牌表（色彩/字号/间距/圆角/阴影，亮+暗）③ **至少 3 个页面**的关键视图（书架/工作台/阅读器或设置中的至少三个）④ 信息架构与页面内分区说明 ⑤ **代价与取舍**（实现成本、与现有 ViewModel 接口的冲突面、可访问性代价）。候选之间必须**在视觉语言或 IA 上有实质差异**（不是同一方案的三种密度）。→ A/B/C 三候选（契约 §3–§6 + `tokens-cand-*.json` + 每候选 5 页视图截图）；差异维度＝主题气质/密度/强调色/玻璃材质/书架 IA（C 两级浏览）/工作台 Inspector 层级（A 译文置顶）。
+- [x] **AC ③（可打开的离线参考）**：每个候选都要有**可离线打开**的参考（单文件 HTML 或图片集），可被标注与截图；**允许复用** TASK-047 的标注回路与自检脚本（语法门/引用核对/无头截图+对比度审计）——**作为工具，不作为结论**。→ `doc/design/ui-reference.html` 单文件（评审 chrome 切换候选/主题/玻璃/DPI/页面/审计）；工具思路复用、方案内容零复用。
+- [x] **AC ④（硬事实沿用或显式推翻）**：DPI/最小窗口组合、文本对比度 ≥4.5:1、CJK 长文本与截断、状态矩阵（空/加载/错误/运行/未保存）、键盘可达性：要么沿用 TASK-047 §10 的量化结论，要么**显式推翻并给新证据**。→ 契约 §12 对照表：硬事实沿用、ui-baseline 色板作为目标方向显式推翻（授权内）；对比度 30 组合全 PASS（含 2 处审计驱动修正）。
+- [x] **AC ⑤（待决项）**：列出需要用户裁决的产品问题（沿用并复核 Q-1~Q-10，可增删改）；**明确区分**"设计可自决"与"必须用户裁决"。→ 契约 §13：ND-1～ND-7（用户裁决）与设计可自决项分列；Q-1~Q-10 复核结论并入；Q-011 硬编码色映射在契约 §10 补齐。
+- [x] **AC ⑥（交付与流程）**：交付本轮契约（**替代** TASK-047 的契约，不是在其上补丁）、候选方向参考、`verification/TASK-059/**`（自检脚本 + 审计 JSON + 截图）、Handoff；经**非作者** Review（Codex）与集成后才能 done；**设计身份不自动授予 `src/**` 写权限**（实现另行释放实现 Task）。→ 契约新写（非补丁）；`verification/TASK-059/`（脚本+审计结果+26 截图+令牌导出）；[Handoff](../handoffs/TASK-059-three-candidates.md)；`src/**` 零改动。
 
 ## 允许修改范围
 
@@ -60,9 +60,9 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ②③ 参考可加载 | 无头浏览器打开每个候选参考；桌面 1280×800 与 100/150/200% DPI 截图；检查溢出/重叠/控制台错误 | 仓库 master + 无头 Chrome（本切片不跑 pytest） | NOT_RUN | 无 |
-| AC ④ 硬事实 | 对比度审计脚本（≥4.5:1）+ CJK/截断/状态矩阵逐项截图 | 同上 | NOT_RUN | 无 |
-| AC ⑥ 文档完整性 | `git diff --check`；链接与 AC/Gap/待决项逐条核对 | 同上 | NOT_RUN | 无 |
+| AC ②③ 参考可加载 | 无头浏览器打开每个候选参考；桌面 1280×800 与 100/150/200% DPI 截图；检查溢出/重叠/控制台错误 | 仓库 master + 无头 Chrome（本切片不跑 pytest） | **executed**：语法门 OK；26 张截图（含 DPI 125/150/200 与玻璃开关）；30 组合溢出/重叠审计 outside=0/clipped=0 | [audit-result.txt](../../verification/TASK-059/audit-result.txt)（`EXIT=0`）、[screenshots/](../../verification/TASK-059/screenshots/) |
+| AC ④ 硬事实 | 对比度审计脚本（≥4.5:1）+ CJK/截断/状态矩阵逐项截图 | 同上 | **executed**：3 候选 × 2 主题 × 5 视图 × 15 令牌对全 PASS（含 2 处审计驱动修正：A accent、B 暗 ink-3）；CJK 竖排缺陷修复后复检 PASS | 同上 + [契约 §12](../contracts/UI_UX_GUI_DESIGN.md) |
+| AC ⑥ 文档完整性 | `git diff --check`；链接与 AC/Gap/待决项逐条核对 | 同上 | **executed**：`git diff --check` 退出码 0；契约链接/截图引用/JSON↔HTML 一致性交叉核对 ALL OK | [Handoff 验证证据表](../handoffs/TASK-059-three-candidates.md) |
 
 ## 依赖、风险与阻塞
 
@@ -73,8 +73,9 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无（Reviewer=`Codex`，非作者）。实际测试：尚无（`ready`）。
-- **最近状态（当前，唯一）**：2026-09-19 用户否决 TASK-047（`rejected`）后由 Codex 另立并释放为 `ready`，随后用户指示改派给 `ZCode`；base=`4c81dca`、branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。**实施尚未开始。**
+- Handoff：[TASK-059-three-candidates](../handoffs/TASK-059-three-candidates.md)。Review：尚无（Reviewer=`Codex`，非作者；待 Review）。
+- **最近状态（当前，唯一）**：2026-09-19 **交付完成，置 `in_review`**。实现 head=`5578a01`（参考+令牌 JSON+验证证据）、契约 head=`ddaf865`，Handoff/Task/STATUS 为其后文档提交。交付＝A/B/C 三候选（契约 §3–§6）+ 离线参考 `doc/design/ui-reference.html` + `verification/TASK-059/**`（30 组合审计 ALL PASS、26 截图）+ 契约（含 Q-011 映射、Gap/切片、DDR、ND-1~7 待决项）。**待 Codex Review；候选方向选择（ND-1）待用户裁决。**
+- 历史：2026-09-19 用户否决 TASK-047（`rejected`）后由 Codex 另立并释放为 `ready`，随后用户指示改派给 `ZCode`；base=`4c81dca`、branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。
 
 ## 参考输入（用户 2026-09-19 会话；**不改变本 Task 的 AC、允许/禁止范围与授权**）
 

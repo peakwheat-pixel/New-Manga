@@ -176,6 +176,16 @@ C/D 类浮窗（05 §D 类容器）尺寸上限必须满足「853×533 DIP 内�
 
 A 候选的 Inspector 译文置顶是**布局顺序变化**，不改 `regionInspectorHost` 接口与 VM 绑定。
 
+**Q-011 硬编码颜色令牌映射**（`src/ui/qml/workbench/WorkbenchView.qml` 中绕过令牌系统的取值，实现改动不在本设计 Task 范围内，由 S-TOKEN/实现 Task 执行）：
+
+| 位置 | 现值 | 用途 | 目标令牌（按所选候选） |
+|---|---|---|---|
+| `WorkbenchView.qml:18` | `#f5f5f4` | 工作台根底色 | `bg-page` |
+| `WorkbenchView.qml:89` | `#fef2f2` | commandErrorBar 底 | `fail-soft` |
+| `WorkbenchView.qml:90` | `#dc2626` | commandErrorBar 描边 | `st-fail` |
+| `WorkbenchView.qml:107` | `#991b1b` | commandErrorBar 文字 | `st-fail` |
+| `WorkbenchView.qml:159,171,191` | `#e7e5e4` | 五区分隔线 | `divider` |
+
 ## 11. Gap 矩阵与实现切片建议
 
 Gap 沿用 TASK-047 §7 编号中仍然成立的部分，按候选差异化重述；完整建议切片（每个都是独立实现 Task，需 Codex 释放）：
