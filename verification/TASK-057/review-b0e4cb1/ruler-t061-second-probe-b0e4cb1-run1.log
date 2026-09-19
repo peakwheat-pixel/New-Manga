@@ -1,0 +1,41 @@
+﻿LABEL=ruler-2
+ROOT=G:\CODEX\New Manga.worktrees\TASK-057-qoder-review
+HEAD=b0e4cb1a92bea76c90892a1f1d05ae2d8a82d1a3
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+QT_QPA_PLATFORM=<unset>
+CMD=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-b0e4cb1/t061_second_writer_probe.py G:\CODEX\New Manga.worktrees\TASK-057-qoder-review 
+----------------------------------------
+== tree: G:\CODEX\New Manga.worktrees\TASK-057-qoder-review
+== head: b0e4cb1
+
+-- M1 aggregate view of a FOREIGN open write transaction (+ M4)
+   registry 1 -> 2 (worker registered)
+   worker is in an open write transaction; GUI-side any_in_transaction() -> True   <-- the aggregate must be True for AC ④ to mean anything
+   GUI thread's own in_transaction (per-thread trap): False
+   M4 open_connection_count() while a foreign txn is open: returned 2 (0.1 ms)   <-- it runs SELECT 1 on every registered connection, including another thread's
+   releasing the worker (it rolls back on the way out)
+   any_in_transaction after the worker finished -> False
+   M1/M4 note: the aggregate reads are taken from the GUI thread against a connection owned by another thread (check_same_thread=False).
+
+-- M2 eviction of a worker that dies with a HALF-OPEN transaction
+   after the writer died: registry=1 any_in_transaction=False
+   was the half-open row published? False (False = eviction's close() rolled the dead thread's transaction back)
+
+-- M3 cost attribution: lstat walk vs resolve() vs the unlink
+   per removal (median us): whole remove_managed=598; 6-step lstat walk=84; path resolve=114; root resolve=81
+   => the walk is 14% of the call (84 us of 598 us)
+
+-- M5 leading-segment asymmetry
+   joinpath('', 'revisions', 'keep_m5.png') -> C:\Users\49745\AppData\Local\Temp\t061-m5-z_d7b2hd\managed\revisions\keep_m5.png
+   '/revisions/keep_m5.png'         -> ALLOWED; file survives? False
+   '\\revisions\\keep_m5.png'       -> typed refusal (refusing to remove C:\revisions\keep_m5.png: esc); file survives? True
+   'revisions/keep_m5.png/'         -> typed refusal (refusing to remove 'revisions/keep_m5.png/': pat); file survives? True
+
+== done
+
+EXIT=0
+HEAD=b0e4cb1a92bea76c90892a1f1d05ae2d8a82d1a3

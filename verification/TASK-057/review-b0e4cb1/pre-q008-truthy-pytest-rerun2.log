@@ -1,0 +1,17 @@
+﻿LABEL=q008-pre-2
+ROOT=C:\Users\49745\AppData\Local\Temp\t057-prefix
+HEAD=0d150186f5e3b476019f23d8945128512813edb6
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PYTEST=python -m pytest -q -rs -p no:cacheprovider verification/TASK-057/review-b0e4cb1/probe_q008_truthy.py -s
+----------------------------------------
+TRUTHY-PASS: assertion passed despite the simulated regression => the `or True` truthy tail gives AC③ zero discriminating power (pre-fix shape)
+.
+1 passed in 0.53s
+
+COLLECTED=n/a
+EXIT=0
+HEAD=0d150186f5e3b476019f23d8945128512813edb6
