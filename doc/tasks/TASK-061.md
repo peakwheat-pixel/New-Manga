@@ -2,7 +2,7 @@
 id: TASK-061
 title: 连接注册表驱逐与 remove_managed 解析一致性（R-002 / R-010 / R-011）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -69,4 +69,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无（Reviewer=`Qoder`，非作者）。实际测试：尚无（`ready`）。
-- **最近状态（当前，唯一）**：2026-09-19 由 Codex 依 TASK-060 复审的 R-002/R-010/R-011 开立为 `ready`；base=`cc4d966`。**实施尚未开始。**
+- **最近状态（当前，唯一）**：2026-09-19 由 Codex 依 TASK-060 复审的 R-002/R-010/R-011 开立为 `ready`；base=`cc4d966`。`in_progress`（2026-09-19，开工于 master 头 `6cb0afb`，base 已是 master 头故无 merge；三项机制 spike 已完成：QThread 死亡会回收 `threading.local` 值、`_DummyThread` 残留 enumerate 故死线程扫描不可用、`sqlite3.Connection` 不可弱引用 ⇒ 驱逐采用 lease 哨兵 + weakref 回调方案）。
