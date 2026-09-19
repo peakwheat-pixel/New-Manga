@@ -31,15 +31,15 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC ①（归属模型 + 判别力）**：给出模型（per-thread 连接 or 单写者串行化）与理由；新用例在**修前**（`be558ca` 或 `9522f2d`）失败、修后通过（判别力留证）。
-- [ ] **AC ②（写者返回成功 ⇒ 独立连接可读回该行）**：任何写路径返回成功后，**用一条独立的新连接**必须能读回该行（含 GUI 侧写与 worker 侧 `_persist`）；不得出现"返回成功但落盘 0 行"（Q-001 D3 的机理）。
-- [ ] **AC ③（交错下无孤儿 Revision）**：在强制交错下，**不可变历史不得出现半途 Revision**（不得出现"revision 行已落、其承载对象未落"或反向）；必须给出重复执行的确定性证据（Q-001 D2 的机理）。
-- [ ] **AC ④（不再静默打死 run）**：交错下 worker run 不得被静默打死并留下 `running` 行；失败必须经 typed 通道可见（Q-001 ④ 的机理）。
-- [ ] **AC ⑤（`BEGIN IMMEDIATE` 入 typed 通道）**：`src/infrastructure/sqlite/regions.py` 的 `BEGIN IMMEDIATE`（`:210` 附近）纳入 `try` 并映射为 typed 可诊断失败，不得让 sqlite 原生异常穿透到 VM/QML（Q-002）。
-- [ ] **AC ⑥（超时不得 close）**：`run_controller.py:104-109` 的 `shutdown()` 超时早退后，`_shutdown_services`（`src/bootstrap/app.py:909-910`）**不得**在 worker 仍在写同一连接时无条件 `conn.close()`；要么先完成排空，要么 detach/延后关闭，并把"未排空"写进 diagnostics；`PAUSED` 分支同样要请求停止（Q-003）。
-- [ ] **AC ⑦（单一"永不清理"谓词）**：`src/application/maintenance/cleanup.py`、`src/infrastructure/filesystem/managed_storage.py`、`tile_cache_sweep.py`、`trash.py` 的护栏收敛为**一个**权威谓词（"解析后前缀 + 行存活 + 每面复用"），并补一致性用例；至少覆盖 Q-007 的 ①（`_is_safe` 只护缓存面）、②（缓存清扫不复核 reparse point）、③（重试守卫按 manifest 成员而非行存活）、④（`retry_pending_cleanups` 不重过 `_is_safe`）、⑤（`_record_pending([])` 整键弹出）。
-- [ ] **AC ⑧（撤回 flaky 定性）**：`doc/STATUS.md` 的 flaky 条目（`test_worker_run_and_main_thread_access_coexist`）由本切片收口（已由 Codex 先行撤回并指向 Q-001，见该行）；修后该用例应在 ≥10 轮全仓/定向串跑中稳定通过（逐次留证）。
-- [ ] **AC ⑨（证据口径）**：每份日志必须带 **EXIT 码** 与 **shell/venv 头**（同一 shell + 同一 venv、`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、**不得设 `QT_QPA_PLATFORM`**）；全仓 ≥5 次逐次记录，**不得跌破 911 collected / 0 skipped（openssl 可用口径；本机 PowerShell 口径为 905 passed / 6 skipped，总数必须仍为 911）**；不得新增 `skip`/`xfail`、不得放宽既有断言（Q-009 的口径要求）。
+- [x] **AC ①（归属模型 + 判别力）**：给出模型（per-thread 连接 or 单写者串行化）与理由；新用例在**修前**（`be558ca` 或 `9522f2d`）失败、修后通过（判别力留证）。
+- [x] **AC ②（写者返回成功 ⇒ 独立连接可读回该行）**：任何写路径返回成功后，**用一条独立的新连接**必须能读回该行（含 GUI 侧写与 worker 侧 `_persist`）；不得出现"返回成功但落盘 0 行"（Q-001 D3 的机理）。
+- [x] **AC ③（交错下无孤儿 Revision）**：在强制交错下，**不可变历史不得出现半途 Revision**（不得出现"revision 行已落、其承载对象未落"或反向）；必须给出重复执行的确定性证据（Q-001 D2 的机理）。
+- [x] **AC ④（不再静默打死 run）**：交错下 worker run 不得被静默打死并留下 `running` 行；失败必须经 typed 通道可见（Q-001 ④ 的机理）。
+- [x] **AC ⑤（`BEGIN IMMEDIATE` 入 typed 通道）**：`src/infrastructure/sqlite/regions.py` 的 `BEGIN IMMEDIATE`（`:210` 附近）纳入 `try` 并映射为 typed 可诊断失败，不得让 sqlite 原生异常穿透到 VM/QML（Q-002）。
+- [x] **AC ⑥（超时不得 close）**：`run_controller.py:104-109` 的 `shutdown()` 超时早退后，`_shutdown_services`（`src/bootstrap/app.py:909-910`）**不得**在 worker 仍在写同一连接时无条件 `conn.close()`；要么先完成排空，要么 detach/延后关闭，并把"未排空"写进 diagnostics；`PAUSED` 分支同样要请求停止（Q-003）。
+- [x] **AC ⑦（单一"永不清理"谓词）**：`src/application/maintenance/cleanup.py`、`src/infrastructure/filesystem/managed_storage.py`、`tile_cache_sweep.py`、`trash.py` 的护栏收敛为**一个**权威谓词（"解析后前缀 + 行存活 + 每面复用"），并补一致性用例；至少覆盖 Q-007 的 ①（`_is_safe` 只护缓存面）、②（缓存清扫不复核 reparse point）、③（重试守卫按 manifest 成员而非行存活）、④（`retry_pending_cleanups` 不重过 `_is_safe`）、⑤（`_record_pending([])` 整键弹出）。
+- [x] **AC ⑧（撤回 flaky 定性）**：`doc/STATUS.md` 的 flaky 条目（`test_worker_run_and_main_thread_access_coexist`）由本切片收口（已由 Codex 先行撤回并指向 Q-001，见该行）；修后该用例应在 ≥10 轮全仓/定向串跑中稳定通过（逐次留证）。
+- [x] **AC ⑨（证据口径）**：每份日志必须带 **EXIT 码** 与 **shell/venv 头**（同一 shell + 同一 venv、`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、**不得设 `QT_QPA_PLATFORM`**）；全仓 ≥5 次逐次记录，**不得跌破 911 collected / 0 skipped（openssl 可用口径；本机 PowerShell 口径为 905 passed / 6 skipped，总数必须仍为 911）**；不得新增 `skip`/`xfail`、不得放宽既有断言（Q-009 的口径要求）。
 - [ ] **AC ⑩** Handoff + `verification/TASK-060/**` + **非作者** Review + 集成；集成后置 TASK-048 为 `done`（或按评审结论收口）并在 STATUS 记录。
 
 ## 允许修改范围
@@ -65,5 +65,11 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无（Reviewer=`Codex`，非作者）。实际测试：尚无（`ready`）。
-- **最近状态**：2026-09-19 依 [Qoder 后置复审](../reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md) 的 W1 `overturn` 与 Q-001（P0）重开；base=9522f2d。**in_progress（2026-09-19，merge master a2b23ad 后开工）。**
+- **实现 commits（本分支）**：`1195baf`（主实现：per-thread 连接归属 + typed BEGIN + drain-aware close + 单一永不清理谓词）、其后测试修正 commit、`dc254fa`（AC④ e2e + AC⑥ drain 契约用例 + VM shutdown 转发 wait_ms 并 cancel PAUSED run）。基线 master=`a2b23ad`。
+- **归属模型与取舍（AC①）**：选 **per-thread 连接 facade**（`ThreadRoutedConnection`：threading.local 每线程惰性建真连接，facade 转发 execute/cursor/commit/rollback/with/`__getattr__`；registry 统一 close）。理由：改动集中在连接层、repository/服务零改动、"两线程各自 commit/rollback 同一事务"在结构上不可能发生（每线程只有自己的事务）、WAL 保留读写并发（跨连接读已提交可见，写锁竞争由 busy_timeout=5000 兜底）。**放弃**单写者串行化：需要引入跨线程队列与延迟，改动面波及所有写路径，与本切片"归属收口"目标不成比例。
+- **实际测试**（同一 shell + 同一 venv：PowerShell + `TASK-012-py312`，`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、未设 `QT_QPA_PLATFORM`；每份日志带 EXIT + shell/venv 头）：
+  - 判别力（修前树 `a2b23ad` detached）：`verification/TASK-060/prefix-discrimination/`——connection_ownership **2 failed ×2**（`connection-ownership-run{1,2}.log`，EXIT=1）；Q-007 护栏 3 failed / 1 passed（`q007-guards-run1.log`，EXIT=1；**reparse-point 用例修前即通过**——pathlib `glob()` 本就不跟随 junction，该用例定位是回归保护而非判别，见日志 note）。
+  - AC⑧ 稳定性：`verification/TASK-060/stability-runs/targeted-run{1..10}.log`——定向串跑（connection_ownership + `test_worker_run_and_main_thread_access_coexist` + AC④ e2e + drain 契约）**10/10 轮 8 passed、EXIT=0**。
+  - AC⑨ 全仓：`verification/TASK-060/full-suite/full-suite-run{1..5}.log`——**5/5 次 922 passed / 0 skipped、EXIT=0**；collected 922 = 911（master a2b23ad 基线，openssl 可用口径）+ **11 个本切片新增用例**，未跌破基线、未新增 skip/xfail、未放宽既有断言。
+- **既有测试适配（非放宽）**：`tests/workbench/test_shutdown_drain.py` 的 stub 适配 `shutdown() -> bool` 新契约（修前返回 None）；`tests/storage/test_run_files_leak.py::test_retry_is_idempotent_when_files_are_already_gone` 的 setup 补 `purge_pages` 使"行已删"的模拟场景字面为真（否则与新行存活守卫冲突）。
+- **最近状态（当前，唯一）**：2026-09-19 实现完成、AC①~⑨ 证据齐备；AC⑩ 待 Handoff + Codex（非作者）Review + 集成。
