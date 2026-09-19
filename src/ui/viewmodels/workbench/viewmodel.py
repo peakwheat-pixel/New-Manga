@@ -844,6 +844,7 @@ class WorkbenchViewModel(QObject):
         self._refresh_projection()
         self._record_command_error(error, stage="worker")
 
-    def shutdown(self) -> None:
+    def shutdown(self) -> bool:
+        """Drain the run controller; True = drained (TASK-060 Q-003)."""
         self._progress_timer.stop()
-        self._controller.shutdown()
+        return self._controller.shutdown()

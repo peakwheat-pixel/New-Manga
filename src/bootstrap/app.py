@@ -899,15 +899,28 @@ def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
 
 
 def _shutdown_services(services: AppServices) -> None:
-    """Drain the workbench run thread, then close the shared connection.
+    """Drain the workbench run thread, then close the connection — only
+    if the drain finished.
 
-    The worker thread uses the same SQLite connection as the GUI thread
-    (single-connection design), so the drain must finish before close().
-    RunController.shutdown cancels the active run and waits (bounded, it
-    never force-kills); when no run is active it is a no-op.
+    TASK-060 Q-003: ``RunController.shutdown``'s wait budget is a wall
+    clock, not a completion guarantee — on timeout the worker thread is
+    still alive and writing.  Closing the connection under an active
+    writer (TASK-048's shared-handle era) or a per-thread writer
+    (TASK-060) would truncate the run's final writes, so close() is
+    skipped and the abandoned drain is reported on stderr instead of
+    failing silently.  WAL is crash-safe: the OS reclaims the handle at
+    process exit and the next startup's ``recover_running_runs()`` reaps
+    the abandoned run to ``interrupted``.
     """
-    services.workbench.shutdown()
-    services.conn.close()
+    drained = services.workbench.shutdown()
+    if drained:
+        services.conn.close()
+    else:
+        print(
+            "shutdown: workbench drain timed out; connection left open "
+            "(worker thread still writing)",
+            file=sys.stderr,
+        )
 
 
 def main(argv: Sequence[str] | None = None) -> int:

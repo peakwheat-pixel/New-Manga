@@ -207,8 +207,12 @@ class SqliteRegionRepository:
         lock_snapshot: RegionLockSnapshot | None = None,
     ) -> RegionCommitResult:
         conn = self._conn
-        conn.execute("BEGIN IMMEDIATE")
+        # TASK-060 Q-002: BEGIN IMMEDIATE sits inside the try so a lock or
+        # transaction failure (busy_timeout exhaustion, another writer's
+        # IMMEDIATE) surfaces as the typed DB_FAILED result instead of a
+        # raw sqlite3.OperationalError reaching the VM/QML.
         try:
+            conn.execute("BEGIN IMMEDIATE")
             row = conn.execute(
                 "SELECT current_revision_id, region_locked, translation_locked,"
                 " inpaint_locked FROM regions WHERE region_id = ?",

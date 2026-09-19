@@ -2,7 +2,7 @@
 id: TASK-060
 title: SQLite 连接与事务归属收口（W1 后置复审推翻后的重开切片）
 kind: bugfix
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -66,4 +66,4 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：尚无。Review：尚无（Reviewer=`Codex`，非作者）。实际测试：尚无（`ready`）。
-- **最近状态（当前，唯一）**：2026-09-19 依 [Qoder 后置复审](../reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md) 的 W1 `overturn` 与 Q-001（P0）重开；base=9522f2d。**实施尚未开始。**
+- **最近状态**：2026-09-19 依 [Qoder 后置复审](../reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md) 的 W1 `overturn` 与 Q-001（P0）重开；base=9522f2d。**in_progress（2026-09-19，merge master a2b23ad 后开工）。**
