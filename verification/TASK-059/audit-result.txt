@@ -1,36 +1,56 @@
 == 1) JS 语法门 ==
 syntax OK
 == 2) 全矩阵审计 ==
-  a/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
-  a/dark/workbench: PASS contrast=15/15 outside=0 clipped=0 
-  a/dark/reader: PASS contrast=15/15 outside=0 clipped=0 
-  a/dark/settings: PASS contrast=15/15 outside=0 clipped=0 
-  a/dark/states: PASS contrast=15/15 outside=0 clipped=0 
-  a/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
-  a/light/workbench: PASS contrast=15/15 outside=0 clipped=0 
-  a/light/reader: PASS contrast=15/15 outside=0 clipped=0 
-  a/light/settings: PASS contrast=15/15 outside=0 clipped=0 
-  a/light/states: PASS contrast=15/15 outside=0 clipped=0 
-  b/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
-  b/dark/workbench: PASS contrast=15/15 outside=0 clipped=0 
-  b/dark/reader: PASS contrast=15/15 outside=0 clipped=0 
-  b/dark/settings: PASS contrast=15/15 outside=0 clipped=0 
-  b/dark/states: PASS contrast=15/15 outside=0 clipped=0 
-  b/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
-  b/light/workbench: PASS contrast=15/15 outside=0 clipped=0 
-  b/light/reader: PASS contrast=15/15 outside=0 clipped=0 
-  b/light/settings: PASS contrast=15/15 outside=0 clipped=0 
-  b/light/states: PASS contrast=15/15 outside=0 clipped=0 
-  c/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
-  c/dark/workbench: PASS contrast=15/15 outside=0 clipped=0 
-  c/dark/reader: PASS contrast=15/15 outside=0 clipped=0 
-  c/dark/settings: PASS contrast=15/15 outside=0 clipped=0 
-  c/dark/states: PASS contrast=15/15 outside=0 clipped=0 
-  c/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
-  c/light/workbench: PASS contrast=15/15 outside=0 clipped=0 
-  c/light/reader: PASS contrast=15/15 outside=0 clipped=0 
-  c/light/settings: PASS contrast=15/15 outside=0 clipped=0 
-  c/light/states: PASS contrast=15/15 outside=0 clipped=0 
+  a/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  a/dark/workbench: PASS contrast=15/15 outside=0 clipped=0
+  a/dark/reader: PASS contrast=15/15 outside=0 clipped=0
+  a/dark/settings: PASS contrast=15/15 outside=0 clipped=0
+  a/dark/states: PASS contrast=15/15 outside=0 clipped=0
+  a/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  a/light/workbench: PASS contrast=15/15 outside=0 clipped=0
+  a/light/reader: PASS contrast=15/15 outside=0 clipped=0
+  a/light/settings: PASS contrast=15/15 outside=0 clipped=0
+  a/light/states: PASS contrast=15/15 outside=0 clipped=0
+  b/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  b/dark/workbench: PASS contrast=15/15 outside=0 clipped=0
+  b/dark/reader: PASS contrast=15/15 outside=0 clipped=0
+  b/dark/settings: PASS contrast=15/15 outside=0 clipped=0
+  b/dark/states: PASS contrast=15/15 outside=0 clipped=0
+  b/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  b/light/workbench: PASS contrast=15/15 outside=0 clipped=0
+  b/light/reader: PASS contrast=15/15 outside=0 clipped=0
+  b/light/settings: PASS contrast=15/15 outside=0 clipped=0
+  b/light/states: PASS contrast=15/15 outside=0 clipped=0
+  c/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  c/dark/workbench: PASS contrast=15/15 outside=0 clipped=0
+  c/dark/reader: PASS contrast=15/15 outside=0 clipped=0
+  c/dark/settings: PASS contrast=15/15 outside=0 clipped=0
+  c/dark/states: PASS contrast=15/15 outside=0 clipped=0
+  c/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  c/light/workbench: PASS contrast=15/15 outside=0 clipped=0
+  c/light/reader: PASS contrast=15/15 outside=0 clipped=0
+  c/light/settings: PASS contrast=15/15 outside=0 clipped=0
+  c/light/states: PASS contrast=15/15 outside=0 clipped=0
+  d/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  d/dark/workbench: PASS contrast=15/15 outside=0 clipped=0
+  d/dark/reader: PASS contrast=15/15 outside=0 clipped=0
+  d/dark/settings: PASS contrast=15/15 outside=0 clipped=0
+  d/dark/states: PASS contrast=15/15 outside=0 clipped=0
+  d/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  d/light/workbench: PASS contrast=15/15 outside=0 clipped=0
+  d/light/reader: PASS contrast=15/15 outside=0 clipped=0
+  d/light/settings: PASS contrast=15/15 outside=0 clipped=0
+  d/light/states: PASS contrast=15/15 outside=0 clipped=0
+  e/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  e/dark/workbench: PASS contrast=15/15 outside=0 clipped=0
+  e/dark/reader: PASS contrast=15/15 outside=0 clipped=0
+  e/dark/settings: PASS contrast=15/15 outside=0 clipped=0
+  e/dark/states: PASS contrast=15/15 outside=0 clipped=0
+  e/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0
+  e/light/workbench: PASS contrast=15/15 outside=0 clipped=0
+  e/light/reader: PASS contrast=15/15 outside=0 clipped=0
+  e/light/settings: PASS contrast=15/15 outside=0 clipped=0
+  e/light/states: PASS contrast=15/15 outside=0 clipped=0
 == 3) 无头截图 ==
   a-dark-bookshelf.png
   a-dark-workbench.png
@@ -58,5 +78,20 @@ syntax OK
   c-glass-taskdetail.png
   b-light-danger.png
   c-glass-both.png
+  d-light-bookshelf.png
+  d-light-workbench.png
+  d-light-reader.png
+  d-light-settings.png
+  d-light-states.png
+  d-dark-workbench.png
+  d-light-workbench-taskdetail.png
+  e-dark-bookshelf.png
+  e-dark-workbench.png
+  e-dark-reader.png
+  e-dark-settings.png
+  e-dark-states.png
+  e-light-workbench.png
+  e-dark-palette.png
+  e-dark-workbench-dpi150.png
 == 汇总 ==
 AUDIT RESULT: ALL PASS

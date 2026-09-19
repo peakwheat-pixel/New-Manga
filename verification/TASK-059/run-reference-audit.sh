@@ -41,10 +41,10 @@ let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
       f.length?('fails:'+f.map(x=>x.name+'='+x.cr).join(',')):'');
   }catch(e){console.log('FAIL parse-error')}
 });")
-  echo "  $1/$2/$3: $out"
+  echo "  $1/$2/$3: $(printf '%s' "$out" | sed 's/[[:space:]]*$//')"
   case "$out" in PASS*) ;; *) fail=1 ;; esac
 }
-for c in a b c; do for m in dark light; do for p in bookshelf workbench reader settings states; do
+for c in a b c d e; do for m in dark light; do for p in bookshelf workbench reader settings states; do
   audit "$c" "$m" "$p"
 done; done; done
 
@@ -89,6 +89,23 @@ shot a-dark-workbench-taskdetail a dark workbench "" "win=detail"
 shot c-glass-taskdetail          c dark workbench "" "win=detail"
 shot b-light-danger              b light settings "" "win=danger"
 shot c-glass-both                c dark workbench 125 "win=both"
+# 候选 D（Vermilion，默认亮色）：五视图 + 第二主题 + 工具窗
+shot d-light-bookshelf d light bookshelf
+shot d-light-workbench d light workbench
+shot d-light-reader    d light reader
+shot d-light-settings  d light settings
+shot d-light-states    d light states
+shot d-dark-workbench  d dark workbench
+shot d-light-workbench-taskdetail d light workbench "" "win=detail"
+# 候选 E（Amber，默认暗色）：五视图 + 第二主题 + 命令面板
+shot e-dark-bookshelf e dark bookshelf
+shot e-dark-workbench e dark workbench
+shot e-dark-reader    e dark reader
+shot e-dark-settings  e dark settings
+shot e-dark-states    e dark states
+shot e-light-workbench e light workbench
+shot e-dark-palette    e dark workbench "" "pal=1"
+shot e-dark-workbench-dpi150 e dark workbench 150
 
 echo "== 汇总 =="
 if [ "$fail" -eq 0 ]; then echo "AUDIT RESULT: ALL PASS"; else echo "AUDIT RESULT: FAILURES PRESENT"; exit 1; fi

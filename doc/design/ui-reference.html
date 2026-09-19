@@ -65,6 +65,18 @@ body {
   --rad-sm:6px; --rad-md:9px; --rad-lg:12px; --rad-win:14px;
   --tb-h:48px; --list-w:174px; --insp-w:278px; --prog-h:146px; --det-w:328px;
 }
+[data-cand="d"] {
+  --fs-base:13px; --fs-sm:12px; --fs-lg:14px; --fs-sub:16px; --fs-title:19px; --fs-disp:24px;
+  --ctl-h:32px; --row-h:34px; --rail-w:52px; --pad-page:16px; --gap:12px;
+  --rad-sm:2px; --rad-md:4px; --rad-lg:6px; --rad-win:8px;
+  --tb-h:46px; --list-w:172px; --insp-w:272px; --prog-h:140px; --det-w:324px;
+}
+[data-cand="e"] {
+  --fs-base:12px; --fs-sm:11px; --fs-lg:13px; --fs-sub:14px; --fs-title:16px; --fs-disp:20px;
+  --ctl-h:26px; --row-h:26px; --rail-w:48px; --pad-page:10px; --gap:8px;
+  --rad-sm:2px; --rad-md:3px; --rad-lg:4px; --rad-win:6px;
+  --tb-h:40px; --list-w:176px; --insp-w:286px; --prog-h:132px; --det-w:320px;
+}
 
 /* ============ 色彩令牌层（候选 A「Graphite」） ============ */
 /* 方向：中性暖灰黑工作台。深色为默认主题（生产者耐力优先）；亮色为完整第二主题。 */
@@ -173,6 +185,77 @@ body {
   --glass-bg:rgba(26,27,33,.56); --glass-bd:rgba(255,255,255,.14); --glass-hi:rgba(255,255,255,.08);
 }
 
+/* ============ 色彩令牌层（候选 D「Vermilion 朱砂」） ============ */
+/* 方向：编辑部/印刷。亮色为默认（纸白+墨黑+朱砂红）；暗色为夜读完整第二主题。 */
+[data-cand="d"][data-mode="light"] {
+  --bg-page:#f7f5f2; --bg-rail:#ffffff; --bg-panel:#ffffff; --bg-raised:#fffdf9;
+  --bg-inset:#f1efeb; --bg-canvas:#221f1b; --bg-hover:#f4f1ec; --bg-active:#ebe7e0;
+  --bg-press:#e6e1d9;
+  --border:#d8d3ca; --border-strong:#b5aea1; --divider:#e8e4dc;
+  --ink:#1c1a17; --ink-2:#55514a; --ink-3:#6b665d; --ink-dis:#948d81; --ink-inv:#ffffff;
+  --accent:#b3391b; --accent-hov:#c24324; --accent-press:#9c3015; --accent-text:#a33518;
+  --accent-soft:rgba(179,57,27,.08); --on-accent:#ffffff;
+  --st-ok:#1a7f37; --st-ok-t:#1a7f37; --st-run:#0969da; --st-warn:#9a6700; --st-warn-t:#9a6700;
+  --st-fail:#cf222e; --st-skip:#57606a; --st-lock:#8250df; --st-block:#bc4c00;
+  --ok-soft:rgba(26,127,55,.08); --run-soft:rgba(9,105,218,.08); --warn-soft:rgba(154,103,0,.09);
+  --fail-soft:rgba(207,34,46,.08); --skip-soft:rgba(87,96,106,.09); --lock-soft:rgba(130,80,223,.09);
+  --block-soft:rgba(188,76,0,.09);
+  --focus:#b3391b; --shadow:0 1px 0 rgba(28,25,20,.05), 0 10px 26px rgba(28,25,20,.09);
+  --shadow-sm:0 1px 4px rgba(28,25,20,.08);
+  --glass-bg:rgba(255,255,255,.6); --glass-bd:rgba(255,255,255,.65); --glass-hi:rgba(255,255,255,.85);
+}
+[data-cand="d"][data-mode="dark"] {
+  --bg-page:#16130f; --bg-rail:#12100c; --bg-panel:#1d1a15; --bg-raised:#242019;
+  --bg-inset:#100e0a; --bg-canvas:#0b0906; --bg-hover:#262119; --bg-active:#302a1f;
+  --bg-press:#201c15;
+  --border:#37312a; --border-strong:#4f4738; --divider:#2b261f;
+  --ink:#ede7dc; --ink-2:#b0a898; --ink-3:#968d7c; --ink-dis:#6b6355; --ink-inv:#16130f;
+  --accent:#d9542e; --accent-hov:#e2603a; --accent-press:#c44724; --accent-text:#e0704a;
+  --accent-soft:rgba(217,84,46,.14); --on-accent:#24100a;
+  --st-ok:#4ade80; --st-ok-t:#5ee9a0; --st-run:#60a5fa; --st-warn:#fbbf24; --st-warn-t:#fcd34d;
+  --st-fail:#f87171; --st-skip:#a5a89e; --st-lock:#c084fc; --st-block:#fdba74;
+  --ok-soft:rgba(74,222,128,.10); --run-soft:rgba(96,165,250,.11); --warn-soft:rgba(251,191,36,.10);
+  --fail-soft:rgba(248,113,113,.11); --skip-soft:rgba(165,168,158,.10); --lock-soft:rgba(192,132,252,.11);
+  --block-soft:rgba(253,186,116,.11);
+  --focus:#e0704a; --shadow:0 6px 18px rgba(0,0,0,.5); --shadow-sm:0 2px 8px rgba(0,0,0,.42);
+  --glass-bg:rgba(29,26,21,.58); --glass-bd:rgba(255,255,255,.12); --glass-hi:rgba(255,255,255,.07);
+}
+
+/* ============ 色彩令牌层（候选 E「Amber 琥珀」） ============ */
+/* 方向：控制台。暗色为默认（深蓝黑+琥珀）；亮色为「纸上终端」完整第二主题。全 UI 等宽字体。 */
+[data-cand="e"][data-mode="dark"] {
+  --bg-page:#0c0e12; --bg-rail:#080a0d; --bg-panel:#10131a; --bg-raised:#151924;
+  --bg-inset:#090b0f; --bg-canvas:#060709; --bg-hover:#171b24; --bg-active:#1d2230;
+  --bg-press:#12151d;
+  --border:#20242e; --border-strong:#333947; --divider:#161a21;
+  --ink:#ccd3de; --ink-2:#939bab; --ink-3:#7b8595; --ink-dis:#4f5765; --ink-inv:#0b0d11;
+  --accent:#e2b34d; --accent-hov:#ecbf5e; --accent-press:#d5a53f; --accent-text:#eec368;
+  --accent-soft:rgba(226,179,77,.12); --on-accent:#201804;
+  --st-ok:#4ade80; --st-ok-t:#5ee9a0; --st-run:#60a5fa; --st-warn:#fbbf24; --st-warn-t:#fcd34d;
+  --st-fail:#f87171; --st-skip:#a5b0c0; --st-lock:#c084fc; --st-block:#fdba74;
+  --ok-soft:rgba(74,222,128,.10); --run-soft:rgba(96,165,250,.11); --warn-soft:rgba(251,191,36,.10);
+  --fail-soft:rgba(248,113,113,.11); --skip-soft:rgba(165,176,192,.10); --lock-soft:rgba(192,132,252,.11);
+  --block-soft:rgba(253,186,116,.11);
+  --focus:#eec368; --shadow:0 8px 20px rgba(0,0,0,.55); --shadow-sm:0 2px 8px rgba(0,0,0,.48);
+  --glass-bg:rgba(16,19,26,.6); --glass-bd:rgba(255,255,255,.1); --glass-hi:rgba(255,255,255,.06);
+}
+[data-cand="e"][data-mode="light"] {
+  --bg-page:#f2f2ef; --bg-rail:#e9e9e5; --bg-panel:#fbfbfa; --bg-raised:#ffffff;
+  --bg-inset:#ebebe7; --bg-canvas:#1e2126; --bg-hover:#ededea; --bg-active:#e2e2dd;
+  --bg-press:#dadad4;
+  --border:#d6d6d0; --border-strong:#b3b3ab; --divider:#e4e4df;
+  --ink:#1e2126; --ink-2:#4d525b; --ink-3:#626873; --ink-dis:#8f95a0; --ink-inv:#ffffff;
+  --accent:#996c0d; --accent-hov:#a57710; --accent-press:#8a600b; --accent-text:#8f640c;
+  --accent-soft:rgba(153,108,13,.09); --on-accent:#ffffff;
+  --st-ok:#1a7f37; --st-ok-t:#1a7f37; --st-run:#0969da; --st-warn:#9a6700; --st-warn-t:#9a6700;
+  --st-fail:#cf222e; --st-skip:#57606a; --st-lock:#8250df; --st-block:#bc4c00;
+  --ok-soft:rgba(26,127,55,.09); --run-soft:rgba(9,105,218,.09); --warn-soft:rgba(154,103,0,.10);
+  --fail-soft:rgba(207,34,46,.09); --skip-soft:rgba(87,96,106,.10); --lock-soft:rgba(130,80,223,.10);
+  --block-soft:rgba(188,76,0,.10);
+  --focus:#996c0d; --shadow:0 2px 12px rgba(30,33,38,.12); --shadow-sm:0 1px 5px rgba(30,33,38,.10);
+  --glass-bg:rgba(251,251,250,.6); --glass-bd:rgba(255,255,255,.65); --glass-hi:rgba(255,255,255,.85);
+}
+
 /* ============ 产品骨架 ============ */
 #app { background:var(--bg-page); color:var(--ink); }
 #app * { font-family:inherit; }
@@ -194,6 +277,63 @@ body {
   position:absolute; top:2px; right:6px; background:var(--st-run); color:#fff;
   font-size:calc(var(--fs-sm) - 2px); padding:0 5px; border-radius:8px; font-weight:600;
 }
+/* ---- 候选 D：一级导航从左侧 rail 重排为顶部导航条（四页同级不变） ---- */
+[data-cand="d"] #app { flex-direction:column; }
+[data-cand="d"] .rail {
+  flex-direction:row; align-items:center; width:auto; height:var(--rail-w);
+  border-right:none; border-bottom:1px solid var(--divider); padding:0 var(--pad-page); gap:4px;
+}
+[data-cand="d"] .railbtn { flex-direction:row; width:auto; padding:6px 16px; gap:7px; border-radius:var(--rad-sm); }
+[data-cand="d"] .railbtn .ico { font-size:var(--fs-lg); }
+[data-cand="d"] .railbtn.on { background:transparent; box-shadow:inset 0 -2px 0 var(--accent); border-radius:0; }
+[data-cand="d"] .railbtn .badge { position:static; margin-left:2px; }
+[data-cand="d"] .rail::after { content:""; flex:1; }
+[data-cand="d"] .rail::before { content:""; width:14px; height:14px; background:var(--accent); margin-right:10px; flex:0 0 14px; }
+/* D 编辑部排版：书架大标题（衬线仅用于标题，正文仍系统字体） */
+.ehead { display:none; padding:var(--pad-page) var(--pad-page) 0; }
+[data-cand="d"] .ehead { display:block; }
+.ehead .et { font-family:"Source Han Serif SC","Noto Serif SC","SimSun",serif; font-size:calc(var(--fs-disp)*1.5); font-weight:700; letter-spacing:.02em; }
+.ehead .es { color:var(--ink-3); font-size:var(--fs-sm); margin-top:2px; }
+.ehead .erule { height:3px; background:var(--ink); margin-top:8px; position:relative; }
+.ehead .erule::after { content:""; position:absolute; left:0; top:0; width:64px; height:3px; background:var(--accent); }
+/* ---- 候选 E：控制台。全 UI 等宽 + 顶部命令条 + 表格化书架 + 命令面板 ---- */
+[data-cand="e"] #app { font-family:"Cascadia Mono","Consolas",monospace; }
+[data-cand="e"] #app * { letter-spacing:.01em; }
+.cmdbar {
+  display:none; position:absolute; top:0; left:0; right:0; height:36px; z-index:7;
+  align-items:center; gap:8px; padding:0 12px; background:var(--bg-rail);
+  border-bottom:1px solid var(--divider); font-size:var(--fs-base); color:var(--ink-3);
+}
+[data-cand="e"] .cmdbar { display:flex; }
+[data-cand="e"] .pagemount { padding-top:36px; }
+.cmdbar .pr { color:var(--accent-text); font-weight:700; }
+.cmdbar .kbd { margin-left:auto; border:1px solid var(--border); border-radius:var(--rad-sm); padding:0 5px; font-size:var(--fs-sm); color:var(--ink-3); }
+[data-cand="e"] .bookgrid { display:none; }
+[data-cand="e"] #page-bookshelf .tb .seg, [data-cand="e"] #page-bookshelf .tb > .btn.ghost { display:none; }
+/* E：表格化书架（点击行 → 详情面板，交互同 A/B） */
+.etable { display:none; flex:1 1 auto; overflow:auto; padding:6px var(--pad-page) var(--pad-page); }
+[data-cand="e"] .etable { display:block; }
+.etable .thead { display:flex; gap:var(--gap); padding:4px 8px; color:var(--ink-3); font-size:var(--fs-sm); border-bottom:1px solid var(--border); position:sticky; top:0; background:var(--bg-page); }
+.trow { display:flex; align-items:center; gap:var(--gap); min-height:var(--row-h); padding:2px 8px; border:1px solid transparent; border-bottom:1px solid var(--divider); cursor:pointer; font-size:var(--fs-base); }
+.trow:hover { background:var(--bg-hover); }
+.trow.sel { background:var(--accent-soft); border-color:var(--accent); }
+.trow .sw { width:10px; height:10px; flex:0 0 10px; border-radius:1px; }
+.trow .tt { flex:1 1 0; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.trow .tc, .trow .tp { flex:0 0 88px; color:var(--ink-2); }
+.trow .tp { display:flex; align-items:center; gap:6px; }
+.trow .tp .bar { flex:1; height:3px; background:var(--bg-inset); border-radius:0; overflow:hidden; }
+.trow .tp .bar i { display:block; height:100%; background:var(--accent); }
+.trow .tst { flex:0 0 74px; }
+.trow .ops { flex:0 0 auto; display:flex; gap:4px; }
+/* E：命令面板（Ctrl+K 全局跳转/搜索；评审用 pal=1 打开） */
+#win-palette { display:none; position:absolute; z-index:30; top:52px; left:50%; transform:translateX(-50%); width:560px; max-width:86%; flex-direction:column; border-radius:var(--rad-win); border:1px solid var(--border-strong); background:var(--bg-panel); box-shadow:var(--shadow); overflow:hidden; }
+#win-palette .pin { display:flex; align-items:center; gap:8px; padding:10px 12px; border-bottom:1px solid var(--divider); }
+#win-palette .pin .pr { color:var(--accent-text); font-weight:700; }
+#win-palette .pitem { display:flex; align-items:center; gap:8px; padding:7px 12px; cursor:pointer; font-size:var(--fs-base); }
+#win-palette .pitem:hover { background:var(--bg-hover); }
+#win-palette .pitem .k { margin-left:auto; color:var(--ink-3); font-size:var(--fs-sm); }
+#win-palette .psec { padding:6px 12px 3px; color:var(--ink-3); font-size:var(--fs-sm); border-bottom:1px solid var(--divider); }
+#win-palette .pfoot { display:flex; gap:14px; padding:6px 12px; border-top:1px solid var(--divider); background:var(--bg-inset); color:var(--ink-3); font-size:var(--fs-sm); }
 .pagemount { flex:1 1 auto; position:relative; overflow:hidden; }
 .page { position:absolute; inset:0; display:none; overflow:hidden; }
 .page.on { display:flex; flex-direction:column; }
@@ -253,6 +393,8 @@ body {
 [data-cand="a"] { --card-w:132px; }
 [data-cand="b"] { --card-w:158px; }
 [data-cand="c"] { --card-w:148px; }
+[data-cand="d"] { --card-w:150px; }
+[data-cand="e"] { --card-w:132px; }
 .bcard {
   border-radius:var(--rad-md); border:1px solid var(--border); background:var(--bg-panel);
   overflow:hidden; cursor:pointer; position:relative;
@@ -546,6 +688,8 @@ textarea.tedit {
     <button class="rb on" id="cand-a" onclick="setCand('a')">A · Graphite 石墨</button>
     <button class="rb" id="cand-b" onclick="setCand('b')">B · Atelier 画廊</button>
     <button class="rb" id="cand-c" onclick="setCand('c')">C · Duo 双面+玻璃</button>
+    <button class="rb" id="cand-d" onclick="setCand('d')">D · Vermilion 朱砂</button>
+    <button class="rb" id="cand-e" onclick="setCand('e')">E · Amber 琥珀</button>
   </div>
   <div class="grp"><label>主题</label>
     <button class="rb on" id="mode-dark" onclick="setMode('dark')">暗</button>
@@ -588,6 +732,8 @@ textarea.tedit {
       </nav>
 
       <div class="pagemount">
+      <!-- E：全局命令条（Ctrl+K 命令面板入口；仅候选 E 常驻） -->
+      <div class="cmdbar"><span class="pr">›</span><span>输入命令或搜索：跳转页面 / 打开作品 / 启动任务 / 筛选失败页…</span><span class="kbd">Ctrl K</span></div>
       <!-- ======================== 书架 ======================== -->
       <section class="page on" id="page-bookshelf" data-page="bookshelf">
         <div class="tb glassable">
@@ -602,6 +748,12 @@ textarea.tedit {
         </div>
         <div class="shelfbody">
           <div class="gridwrap">
+            <!-- D：编辑部排版大标题（仅候选 D 显示） -->
+            <div class="ehead">
+              <div class="et">书架</div>
+              <div class="es">8 部作品 · 2 部进行中 · 上次活动 昨天 23:41</div>
+              <div class="erule"></div>
+            </div>
             <div class="bookgrid">
               <div class="bcard sel" id="bcard-1">
                 <div class="cover" style="background:linear-gradient(155deg,#5b6d9e,#31405f)"><span class="ph">封面</span><span class="fav">★</span></div>
@@ -644,6 +796,18 @@ textarea.tedit {
                   <div class="p"><i style="width:55%"></i></div><div class="pl">译文 55% · 4-18</div></div>
               </div>
             </div>
+          </div>
+          <!-- E：表格化书架（仅候选 E 显示；点击行 → 详情面板，交互同 A/B） -->
+          <div class="etable" id="etable">
+            <div class="thead"><span style="flex:0 0 10px"></span><span style="flex:1 1 0">书名</span><span style="flex:0 0 88px">话数</span><span style="flex:0 0 88px">译文进度</span><span style="flex:0 0 74px">状态</span><span style="flex:0 0 96px">最近活动</span><span style="flex:0 0 auto">操作</span></div>
+            <div class="trow sel"><span class="sw" style="background:linear-gradient(155deg,#5b6d9e,#31405f)"></span><span class="tt">葬送的芙莉莲</span><span class="tc mono">24/37</span><span class="tp"><span class="bar"><i style="width:64%"></i></span><span class="mono">64%</span></span><span class="tst"><span class="badge" style="background:var(--run-soft);color:var(--st-run)">● 进行中</span></span><span class="tc mono ellip">昨天 23:41</span><span class="ops"><button class="btn sm ghost">继续翻译</button></span></div>
+            <div class="trow"><span class="sw" style="background:linear-gradient(155deg,#9e5b5b,#5f3131)"></span><span class="tt">关于我转生成为史莱姆这件事</span><span class="tc mono">9/32</span><span class="tp"><span class="bar"><i style="width:28%"></i></span><span class="mono">28%</span></span><span class="tst"><span class="badge" style="background:var(--warn-soft);color:var(--st-warn-t)">✓! 有失败</span></span><span class="tc mono ellip">3 天前</span><span class="ops"><button class="btn sm ghost">打开</button></span></div>
+            <div class="trow"><span class="sw" style="background:linear-gradient(155deg,#5b9e6e,#315f3d)"></span><span class="tt">间谍过家家</span><span class="tc mono">87/94</span><span class="tp"><span class="bar"><i style="width:92%"></i></span><span class="mono">92%</span></span><span class="tst"><span class="badge" style="background:var(--run-soft);color:var(--st-run)">● 进行中</span></span><span class="tc mono ellip">上周</span><span class="ops"><button class="btn sm ghost">打开</button></span></div>
+            <div class="trow"><span class="sw" style="background:linear-gradient(155deg,#8a6bb8,#4a3a66)"></span><span class="tt">我推的孩子</span><span class="tc mono">3/38</span><span class="tp"><span class="bar"><i style="width:8%"></i></span><span class="mono">8%</span></span><span class="tst"><span class="badge" style="background:var(--bg-inset);color:var(--ink-2)">○ 等待</span></span><span class="tc mono ellip">04-12</span><span class="ops"><button class="btn sm ghost">打开</button></span></div>
+            <div class="trow"><span class="sw" style="background:linear-gradient(155deg,#b8935b,#665031)"></span><span class="tt">进击的巨人 完全版</span><span class="tc mono">142/142</span><span class="tp"><span class="bar"><i style="width:100%"></i></span><span class="mono">100%</span></span><span class="tst"><span class="badge" style="background:var(--ok-soft);color:var(--st-ok-t)">✓ 已完成</span></span><span class="tc mono ellip">06-30</span><span class="ops"><button class="btn sm ghost">导出</button></span></div>
+            <div class="trow"><span class="sw" style="background:linear-gradient(155deg,#5b8d9e,#314d5f)"></span><span class="tt">咒术回战</span><span class="tc mono">10/24</span><span class="tp"><span class="bar"><i style="width:41%"></i></span><span class="mono">41%</span></span><span class="tst"><span class="badge" style="background:var(--block-soft);color:var(--st-block)">⊘ 阻塞 1</span></span><span class="tc mono ellip">06-02</span><span class="ops"><button class="btn sm ghost">查看原因</button></span></div>
+            <div class="trow"><span class="sw" style="background:linear-gradient(155deg,#7d7d85,#3c3c44)"></span><span class="tt">链锯人 第2部</span><span class="tc mono">0/97</span><span class="tp"><span class="bar"><i style="width:0%"></i></span><span class="mono">0%</span></span><span class="tst"><span class="badge" style="background:var(--bg-inset);color:var(--ink-2)">○ 未开始</span></span><span class="tc mono ellip">05-21</span><span class="ops"><button class="btn sm ghost">打开</button></span></div>
+            <div class="trow"><span class="sw" style="background:linear-gradient(155deg,#b85b8d,#5f314d)"></span><span class="tt">目隐都市的演绎者</span><span class="tc mono">11/20</span><span class="tp"><span class="bar"><i style="width:55%"></i></span><span class="mono">55%</span></span><span class="tst"><span class="badge" style="background:var(--skip-soft);color:var(--ink-2)">↷ 已归档</span></span><span class="tc mono ellip">04-18</span><span class="ops"><button class="btn sm ghost">打开</button></span></div>
           </div>
           <!-- A/B：右侧详情面板（C 候选中此面板让位给两级浏览） -->
           <aside class="detpanel" id="detpanel">
@@ -1086,6 +1250,19 @@ textarea.tedit {
       </section>
 
       <!-- ======================== 悬浮工具窗（叠开在工作台上） ======================== -->
+      <!-- E：命令面板（Ctrl+K；仅候选 E，评审用 pal=1 打开） -->
+      <div id="win-palette">
+        <div class="pin"><span class="pr">›</span><span style="color:var(--ink-3)">继续翻译：葬送的芙莉莲 第37话</span><span class="kbd" style="margin-left:auto">Esc 关闭</span></div>
+        <div class="psec">最近</div>
+        <div class="pitem"><span style="color:var(--accent-text)">▶</span><span>继续翻译 · 葬送的芙莉莲 / 第37话</span><span class="k">Enter</span></div>
+        <div class="pitem"><span style="color:var(--ink-2)">▣</span><span>打开作品 · 间谍过家家</span><span class="k">G B</span></div>
+        <div class="psec">页面</div>
+        <div class="pitem"><span style="color:var(--ink-2)">→</span><span>跳转：书架</span><span class="k">G S</span></div>
+        <div class="pitem"><span style="color:var(--ink-2)">→</span><span>跳转：工作台</span><span class="k">G W</span></div>
+        <div class="psec">任务</div>
+        <div class="pitem"><span style="color:var(--st-fail)">!</span><span>筛选失败页 · run-3f9c（2 页）</span><span class="k">F F</span></div>
+        <div class="pfoot"><span>↑↓ 选择</span><span>↵ 执行</span><span>esc 关闭</span></div>
+      </div>
       <div class="fwin glass" id="win-taskdetail" style="right:300px;top:64px;width:470px;height:420px">
         <div class="fhead"><span>任务详情 · <span class="mono">run-3f9c</span></span><span class="badge" style="background:var(--run-soft);color:var(--st-run)"><span class="dot" style="background:var(--st-run)"></span>运行中</span><span class="spacer"></span><button class="btn sm ghost" onclick="toggleWin('win-taskdetail')">✕</button></div>
         <div class="fbody">
@@ -1118,7 +1295,7 @@ var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAl
 function setCand(c){
   document.body.dataset.cand = c;
   $("#app").dataset.cand = c;
-  ["a","b","c"].forEach(function(k){ $("#cand-"+k).classList.toggle("on", k===c); });
+  ["a","b","c","d","e"].forEach(function(k){ $("#cand-"+k).classList.toggle("on", k===c); });
   $("#glass-on").disabled = (c!=="c"); $("#glass-off").disabled = (c!=="c");
   applyShelfVariant();
 }
@@ -1159,9 +1336,9 @@ $$(".bcard").forEach(function(card){
     if (document.body.dataset.cand==="c") shelfL2(true);
   });
 });
-$$(".chaprow,.chapcard").forEach(function(row){
+$$(".chaprow,.chapcard,.etable .trow").forEach(function(row){
   row.addEventListener("click", function(){
-    $$(".chaprow,.chapcard").forEach(function(c){ c.classList.remove("sel"); });
+    $$(".chaprow,.chapcard,.etable .trow").forEach(function(c){ c.classList.remove("sel"); });
     row.classList.add("sel");
   });
 });
@@ -1226,7 +1403,7 @@ function layoutAudit(){
   var issues = { outside:0, clipped:0, overlap:0 };
   var page = $$(".page.on")[0];
   if (!page) return issues;
-  var els = page.querySelectorAll(".btn,.input,.badge,.bcard,.chaprow,.ptile,.provrow,.cat,.inssec,.taskprog,.steps,.counts,.tb,.wbtb,.rtb,.fwin,.banner,.stcard");
+  var els = page.querySelectorAll(".btn,.input,.badge,.bcard,.chaprow,.ptile,.provrow,.cat,.inssec,.taskprog,.steps,.counts,.tb,.wbtb,.rtb,.fwin,.banner,.stcard,.trow,.thead,.pitem,.ehead");
   els.forEach(function(el){
     if (el.offsetParent === null) return;
     var r = el.getBoundingClientRect();
@@ -1281,6 +1458,8 @@ function runAudit(){
     $("#win-taskdetail").style.display = "none";
     $("#win-danger").style.display = "none";
   }
+  // E 的命令面板：pal=1 显示（仅候选 E）
+  $("#win-palette").style.display = (q.get("pal")==="1" && (q.get("cand")||"a")==="e") ? "flex" : "none";
   if (q.get("audit") === "1"){ window.__auditResult = runAudit(); }
   applyShelfVariant();
 })();
