@@ -1,0 +1,21 @@
+== tree: G:\CODEX\New Manga.worktrees\POSTHOC-WINDOW-2026-09-19-qoder
+== sqlite3.threadsafety = 3 (docstring premise #1 needs 3=serialized)
+
+-- A uphold (real assembly + real RunController + TRANSLATE_ALL): crashed=0 finished=['completed_with_failures'] db_status=completed_with_failures -> P0 FIX REPRODUCED
+
+-- B realism (20s of real GUI region commits during a real run)
+   GUI attempts=1788 raised=2 created=1788 translated=1786
+   run: crashed=0 finished=['completed_with_failures'] db_status=completed_with_failures
+        2x sqlite3.OperationalError
+          first: cannot start a transaction within a transaction
+   durability: GUI create_region succeeded=1788, region rows durable=1788, lost=0
+   invariants: {'pointer_points_at_other_region': 0, 'regions_with_null_pointer': 0, 'revisions_without_region_row': 0, 'pointer_dangling': 0, 'state_torn_vs_current_revision': 0, 'integrity_check': 'ok', 'foreign_key_check_rows': 0}
+
+-- C control (same GUI loop, NO worker run): attempts=1253 raised=0 kinds={}
+
+-- D mechanism (forced schedule; `with conn:` shape = pipeline.py:398)
+   D1 GUI BEGIN IMMEDIATE against a worker-held txn: OperationalError: cannot start a transaction within a transaction
+   D1 worker side: no error  (a worker rollback here would also erase GUI work in flight)
+   D2 after the GUI rollback: orphan revision rows=1 (0 expected if 'rolling back entirely' held); region pointer=54a090f69a764c0bb5e7badc589f210b
+   D2 invariants: {'pointer_points_at_other_region': 0, 'regions_with_null_pointer': 0, 'revisions_without_region_row': 0, 'pointer_dangling': 0, 'state_torn_vs_current_revision': 0, 'integrity_check': 'ok', 'foreign_key_check_rows': 0}
+   D3 GUI write: returned normally (its commit() had nothing left to commit); rows durable=0 -> 0 means a silently lost user write (the 'flaky' signature)
