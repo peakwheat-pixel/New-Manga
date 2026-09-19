@@ -1,3 +1,13 @@
+== env ==
+date: 2026-09-20 00:40:17+0800
+host: MINGW64_NT-10.0-26200 3.6.5-22c95533.x86_64
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+node: v24.15.0
+chrome: 153.0.8010.48 (C:/Program Files/Google/Chrome/Application/chrome.exe)
+python: Python 3.12.3 (venv G:/CODEX/New Manga.task-envs/TASK-012-py312)
+== cmd ==
+bash verification/TASK-059/discriminate-r001-r004.sh   (R-001/R-004/R3-001 判别力 artefact)
+== out ==
   D1 old-warn-token (expect FAIL with badge-warn/st-warn-t): FAIL contrast=21/22 overlap=0 fails:badge-warn/st-warn-t=4.22
   D2 injected-overlap (expect FAIL with overlap>=1):          FAIL contrast=22/22 overlap=1 overlaps:badge[⚠ OV-A] × badge[✓ OV-B] (37x12px)
   D3 f-skip-direct-regression (expect FAIL st-skip-direct):   FAIL contrast=23/24 overlap=0 fails:st-skip-direct/panel=3.01

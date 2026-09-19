@@ -3,7 +3,7 @@ task_id: TASK-059
 author: ZCode
 recipient: Codex（Reviewer，非作者）
 base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
-delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 07397ac（R3 返修） / 04743a8（R4 组合候选 F） / 本次提交（R5 返修：card-w 随 B + 几何断言纳入 card-w + 50 张截图）
+delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 07397ac（R3 返修） / 04743a8（R4 组合候选 F） / d6d471d（R5 返修） / 本次提交（R6：证据日志环境头修复，设计零改动）
 status: in_review
 ---
 
@@ -129,3 +129,14 @@ Reviewer=Codex（非作者），固定 base=`07397ac`、被审 head=`04743a8`。
 **全量证据重跑（R5 head）**：审计矩阵 **60 组合 ALL PASS**（F 全组合 `contrast=24/24 outside=0 clipped=0 overlap=0`，`AUDIT_EXIT=0`）；判别 **D1/D2/D3 全 FAIL（预期方向）**——D1 `badge-warn/st-warn-t=4.22`、D2 `overlap=1`、D3 `st-skip-direct/panel=3.01`（`DISCRIM_EXIT=0`）；**50 张截图**；契约 §15 全量刷新。R3-001 的两对扩展（7.22/11.34）口径不变。
 
 **Reviewer（Codex）复审建议**：① 独立复算 `f['geometry']==b['geometry']`（21 项含 card-w=158px）；② 目检 `f-light-bookshelf.png` / `f-dark-bookshelf.png`（R4-001 视觉面）；③ `git diff 04743a8..HEAD` 全部落在 `doc/**` 与 `verification/TASK-059/**`。
+
+## R6 返修记录（2026-09-20，Review `TASK-059-d6d471d` 唯一 finding R5-001 之后）
+
+**Finding**：R5-001（P1）——R5 重跑两份证据日志时未走脚本头注释的标准包装命令，`== env ==`/`== cmd ==` 环境头被覆盖删除（回归已关闭的 R-005/Q-009 证据纪律），而契约 §15 仍声称日志含环境头与命令。**设计内容零改动**（HTML/JSON/契约/截图口径全部不变）。
+
+**处置（closed）**：按脚本头注释的标准包装命令重新生成两份日志，结构复刻 R3 版口径：
+
+- [audit-result.txt](../../verification/TASK-059/audit-result.txt)：`== env ==`（date/host/shell/node/chrome/python+venv，chrome 版本按既有口径用 PowerShell 从文件资源取）→ `== cmd ==`（export-tokens.py + run-reference-audit.sh）→ `== tokens ==`（6 JSON 重导，**与已提交内容字节一致，无漂移**）→ `== out ==`（语法门 + 60 组合 ALL PASS + 50 张截图 + 汇总）→ `AUDIT_EXIT=0`。
+- [discriminate-result.txt](../../verification/TASK-059/discriminate-result.txt)：同 `== env ==`/`== cmd ==` 头 → `== out ==`（D1=`4.22` FAIL / D2=`overlap=1` / D3=`st-skip-direct/panel=3.01` FAIL，预期方向）→ `DISCRIMINATION: OK` → `DISCRIM_EXIT=0`。
+
+重跑伴随 4 张截图（`a-dark-states` / `c-glass-both` / `d-light-states` / `f-dark-states`）出现无头渲染像素微差，属同批产物一并入库；60 组合判定、F 24/24、判别方向均与 R5 一致。改动仅 `verification/TASK-059/**` 两份日志 + 4 张截图 + 本 Handoff/Task/STATUS 记录。
