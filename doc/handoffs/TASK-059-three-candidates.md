@@ -3,11 +3,13 @@ task_id: TASK-059
 author: ZCode
 recipient: Codex（Reviewer，非作者）
 base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
-delivery_head: 5578a01（参考+证据） / ddaf865（契约）
+delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约）
 status: in_review
 ---
 
 # Handoff：TASK-059（三候选设计交付）
+
+> **R2 修订（2026-09-19，交付后追加）**：用户在本 Handoff 提交后指示「再增加两种完全不一样的设计」。R2 已交付候选 **D · Vermilion 朱砂**（一级导航 rail→顶部导航条 + 编辑部印刷网格；导航范式变化，ND-8）与 **E · Amber 琥珀**（全 UI 等宽 + 书架表格化 + Ctrl+K 命令面板；新交互机制 ND-9、26px 触达显式例外 ND-10）。契约以 R2 为准（§6A/§6B、DDR-8）；候选总数 3→5，**AC② 的「2–3 个」由用户指示扩展为 5**，Task 文件已记录该口径变更。证据矩阵 30→50 组合（ALL PASS，`EXIT=0`）、截图 26→41 张。R2 提交：`dd455c0`（参考+证据）、`af91e06`（契约）。以下正文为 R1 内容，R1 的 AC 对照对 D/E 同样成立（对照关系见文末 R2 补充表）。
 
 ## 交付结果
 
@@ -62,3 +64,18 @@ status: in_review
 - 评审 chrome（framecap/审计按钮）属参考页工具，不是产品画面；`#page-states` 曾因 ID specificity 常显叠盖（已修复为 `.on` 门控），Review 截图时若见状态页叠盖请报告。
 - TASK-047 分支（`980ae7d`）按任务要求未合并、未触碰；本交付仅复用其工具思路与硬事实，未复制其方案内容。
 - 本 Task 与任何实现 Task 无写集合冲突（只写 `doc/**`、`verification/TASK-059/**`）。
+
+## R2 补充：D/E 的 AC 对照与验证
+
+| AC | D/E 对照 |
+|---|---|
+| AC ① | 契约 §2 R1/R2/R3 回答已扩为五候选口径：R-1 → D 朱砂 `#b3391b`、E 琥珀 `#e2b34d`（新色板，非既有灰蓝）；R-2 → D 顶栏导航重排、E 表格书架+命令面板（范式级，非换色）；R-3 → 提案主体继续扩大 |
+| AC ② | D/E 各含 ①角色定位 ②完整令牌（`tokens-cand-{d,e}.json`，42 色 × 2 主题）③五页视图截图 ④IA 声明（契约 §6A/§6B）⑤代价取舍（含 26px 触达例外、字体 fallback、实现成本）；D/E 与 A/B/C 的差异是**范式**（导航位置/字体体制/信息形态/交互入口），不是密度变体 |
+| AC ③ | 同一 `ui-reference.html`：chrome 候选按钮 D/E；`?cand=d` / `?cand=e` / `pal=1` 可复现 |
+| AC ④ | 无新增硬事实推翻；E 的 26px 触达在 §9 显式记录为「低于本仓 28 底线、高于 WCAG 2.5.8 的 24」并挂 ND-10 |
+| AC ⑤ | ND-8（顶栏导航）/ ND-9（命令面板）/ ND-10（触达例外）新增为用户裁决项 |
+| AC ⑥ | 证据矩阵 50 组合（`5 候选 × 2 主题 × 5 视图`）**ALL PASS**、41 张截图、`audit-result.txt`（`EXIT=0`，尾随空白已在脚本源头 trim）；`git diff --check` 退出码 0 |
+
+R2 审计驱动修正：E 暗色 `--ink-3` 初稿 `#737d8d`（4.47:1，FAIL）→ `#7b8595`（≥4.5，PASS）。D 全部组合一次通过。
+
+R2 目检记录：`d-light-bookshelf.png`（顶栏 tab+朱砂指示条+衬线页头）、`e-dark-bookshelf.png`（命令条+表格行+状态徽标三重编码）、`e-dark-palette.png`（命令面板分组/快捷键/页脚）、`d-dark-workbench.png`（暖黑朱砂 hairline 工作台）均按预期呈现；`#page-states` 无叠盖复发。
