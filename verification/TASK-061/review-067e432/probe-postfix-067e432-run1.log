@@ -1,0 +1,58 @@
+﻿LABEL=probe-post-1
+ROOT=G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+HEAD=067e4320bb36471106a5d136044389f8e3284788
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+CMD=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe verification/TASK-061/review-067e432/t061_review_probe.py G:\CODEX\New Manga.worktrees\TASK-061-qoder-review 
+----------------------------------------
+== tree: G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+== head: 067e432
+
+-- T1 registry growth over 8 real runs (my TASK-060 S1 instrument)
+   after assembly: registry=1
+   run 1: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 2: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 3: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 4: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 5: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 6: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 7: outcome=completed_with_failures registry_after=1 peak_during=1
+   run 8: outcome=completed_with_failures registry_after=1 peak_during=1
+   SUMMARY T1 shape=[1, 1, 1, 1, 1, 1, 1, 1] bounded(<=2)? True peaks=[1, 1, 1, 1, 1, 1, 1, 1]
+   open connections after 8 runs: 1
+
+-- T2 deterministic eviction (no gc.collect() anywhere)
+   40 sequential threads: peak registry=1 final registry=1 errors=0
+
+-- T3 ident-reuse stress (recycled thread idents vs the stale-slot branch)
+   7880 threads churned: peak registry=1 final=1 open=1 errors=0
+
+-- T4 a GUI-held cursor from a dead worker (the 'no other reference' claim)
+   registry 1 -> 1 after the cursor's thread died
+   held cursor BROKEN after eviction: ProgrammingError: Cannot operate on a closed database.   <-- the evicting thread closed a connection another thread still referenced
+
+-- T5 is the TASK-057 前置① predicate a *barrier*?
+   composite predicate right after a completed run: shutdown() is True=True; any_in_transaction=False -> gate passes? True
+   (a) admission: can a NEW run still start after the gate passed?
+python.exe : Traceback (most recent call last):
+所在位置 G:\CODEX\New Manga.worktrees\TASK-061-qoder-review\verification\TASK-061\review-067e432\run_probe.ps1:32 字符: 11
++ $output = & $python $Probe $Root $Tail 2>&1
++           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Traceback (most recent call last)::String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+       YES — RunController.start() has no shut-down latch; a writer
+            can appear one statement after the check returns False
+       second run done; controller.shutdown() -> True
+   (b) does 'no thread in a transaction' mean 'no live writer'?
+       live-but-idle writer thread: {'aggregate_any_in_transaction': False, 'registry_size': 2, 'own_in_transaction': False}
+  File "G:\CODEX\New Manga.worktrees\TASK-061-qoder-review\verification\TASK-061\review-067e432\t061_review_probe.py", 
+line 341, in <module>
+    print(
+UnicodeEncodeError: 'gbk' codec can't encode character '\u21d2' in position 103: illegal multibyte sequence
+
+EXIT=1
+HEAD=067e4320bb36471106a5d136044389f8e3284788

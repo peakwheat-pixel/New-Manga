@@ -1,0 +1,18 @@
+﻿LABEL=four-dirs-1
+ROOT=G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+HEAD=067e4320bb36471106a5d136044389f8e3284788
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PYTEST=python -m pytest -q -rs -p no:cacheprovider tests/storage tests/workbench tests/maintenance tests/core
+----------------------------------------
+........................................................................ [ 40%]
+........................................................................ [ 80%]
+..................................                                       [100%]
+178 passed in 20.03s
+
+COLLECTED=178 tests collected in 0.58s
+EXIT=0
+HEAD=067e4320bb36471106a5d136044389f8e3284788

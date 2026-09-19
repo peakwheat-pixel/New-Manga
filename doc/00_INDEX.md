@@ -1,5 +1,7 @@
 # 项目文档索引与 Source of Truth
 
+2026-09-19 TASK-059 ND-1 用户裁决：候选方向选择 **A 的配色/视觉令牌与 IA + B 的几何比例（控件高度、行高、间距、字号、面板尺寸）**；不继承 B 的章节大卡 IA，也不启用 C 玻璃、D 顶栏或 E 命令面板。组合稿必须重新通过完整一致性审计后才能集成，C/D/E 未被选择。详见 [STATUS](STATUS.md) 当前台账。
+
 2026-09-19 TASK-059 改派：按用户指示，设计重做 Task 的 Owner 由 Qoder 改为 **ZCode**；新的 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`，Reviewer 仍为 Codex。原 Qoder 分支/worktree 未实施且仅留档，不再作为开工工作区；AC、授权和范围不变。
 
 2026-09-19 增量：用户指定 **Qoder 为 UI/UX、GUI 与 QML 视觉/交互设计责任方**；[TASK-047](tasks/TASK-047.md)（Owner=Qoder，仅设计）**已被用户否决 → `rejected`**（R-1 视觉方向 / R-2 布局与信息架构 / R-3 太保守；裁决记录见该 Task 末尾，分支 `agent/qoder/TASK-047-ui-ux-gui-design` @`980ae7d` 未合并保留）；设计门改由新立的 [TASK-059](tasks/TASK-059.md) 承接（**授权重画配色与布局**、要求 2–3 个实质不同的候选方向）。[TASK-047](tasks/TASK-047.md) 原计划交付设计规范与视觉参考，不写生产代码。TASK-022 保持 `proposed`，并改列 Qoder 为建议 Owner；TASK-047 `done` 且用户另行批准后才释放实现。

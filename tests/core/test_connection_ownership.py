@@ -193,3 +193,81 @@ def test_writer_success_survives_the_other_threads_rollback(owned_db):
         "writer returned success but an independent connection cannot"
         " read the row back (silently swallowed write)"
     )
+
+
+class TestR002RegistryEviction:
+    """TASK-061 R-002: the per-thread registry must not grow with the
+    number of finished worker threads.  Eviction fires through a lease
+    sentinel that shares the thread-local slot with the connection: the
+    callback can only run once *no code* holds the lease any more — i.e.
+    the owning thread is gone — which is the concurrency-safety argument
+    (never reclaim a connection another thread still holds)."""
+
+    def test_a_dead_threads_connection_is_evicted(self, owned_db):
+        import gc
+
+        conn, _db_path = owned_db
+        barrier = threading.Barrier(2)
+        release = threading.Event()
+
+        def other_thread():
+            conn.execute("SELECT 1").fetchone()  # opens this thread's real one
+            barrier.wait()  # main thread may now read the registry size
+            release.wait()  # stay alive until the main thread sampled 2
+
+        thread = threading.Thread(target=other_thread)
+        thread.start()
+        try:
+            barrier.wait()
+            assert conn.registry_size() == 2, (
+                "both live threads hold a connection"
+            )
+        finally:
+            # the worker parks on release.wait(): it MUST be released even
+            # when the assertion above fails, or a non-daemon thread outlives
+            # the test and the pytest process never exits
+            release.set()
+        thread.join()
+        gc.collect()  # thread-local teardown -> lease collected -> evicted
+        assert conn.registry_size() == 1, (
+            "the dead thread's connection stayed in the registry"
+        )
+
+    def test_explicit_release_frees_the_calling_threads_slot(self, owned_db):
+        conn, _db_path = owned_db
+        conn.execute("SELECT 1").fetchone()
+        assert conn.registry_size() == 1
+        conn.release_current_thread_connection()
+        assert conn.registry_size() == 0
+        assert conn.open_connection_count() == 0
+        # the facade stays usable: a fresh connection is opened on demand
+        conn.execute("SELECT 1").fetchone()
+        assert conn.registry_size() == 1
+
+
+class TestR004AggregatedWriterView:
+    """TASK-061 AC ④: "drained ⇒ no other writer" must be decidable.
+    ``any_in_transaction`` reads the *registered* connections directly —
+    it never opens a new one (R-004), asserted here via the registry
+    size staying constant."""
+
+    def test_any_in_transaction_tracks_the_callers_own_transaction(
+        self, owned_db
+    ):
+        conn, db_path = owned_db
+        _seed_region(conn)
+        assert conn.any_in_transaction() is False
+        assert conn.registry_size() == 1  # the aggregate read opened nothing
+        # sqlite3 opens the implicit transaction at the first DML, not at
+        # ``with`` entry — so the in-flight probe runs a real INSERT.
+        with conn:
+            conn.execute(
+                "INSERT INTO regions (region_id, page_id, region_type,"
+                " reading_order, geometry_json, text_json, style_json,"
+                " sfx_policy, created_at, updated_at, current_revision_id)"
+                " VALUES ('r-evict', 'p1', 'speech', 2, '{}', '{}', '{}',"
+                " 'skip', ?, ?, NULL)",
+                (_NOW, _NOW),
+            )
+            assert conn.any_in_transaction() is True
+        assert conn.any_in_transaction() is False

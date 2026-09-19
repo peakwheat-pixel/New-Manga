@@ -1,0 +1,70 @@
+﻿LABEL=prefix-e2e-1
+ROOT=C:\Users\49745\AppData\Local\Temp\t061-prefix
+HEAD=6cb0afb5e53a229c700b0570d19f0f03c9942811
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PYTEST=python -m pytest -q -rs -p no:cacheprovider tests/workbench/test_connection_eviction.py
+----------------------------------------
+F                                                                        [100%]
+================================== FAILURES ===================================
+_______________ test_registry_does_not_grow_with_completed_runs _______________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x1afc2b85e90) at 0x000001AFC33A1C40>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2665/test_registry_does_not_grow_wi0')
+
+    def test_registry_does_not_grow_with_completed_runs(qapp, tmp_path):
+        services, chapter = _assembled_library(tmp_path, page_count=2)
+        from ui.viewmodels.workbench.run_controller import RunController
+    
+        growth: list[int] = []
+        for _ in range(_RUNS):
+            run = services.pipeline.create_run(
+                CommandType.TRANSLATE_ALL.value,
+                PipelineScope(ScopeType.CHAPTER, chapter_id=chapter.chapter_id),
+            )
+            services.pipeline.plan_run(run.run_id)
+            finished: list[str] = []
+            crashed: list[str] = []
+            controller = RunController()
+            controller.runCrashed.connect(lambda _rid, err: crashed.append(err))
+            controller.runFinished.connect(
+                lambda _rid, status: finished.append(status)
+            )
+            controller.start(services.pipeline, run)
+            deadline = time.monotonic() + 30
+            while time.monotonic() < deadline and not finished and not crashed:
+                qapp.processEvents()
+                time.sleep(0.01)
+            assert not crashed, f"worker crashed: {crashed}"
+            assert finished, "run never finished"
+            controller.shutdown()
+            # the worker thread is gone (shutdown drained it); give the
+            # interpreter the chance to tear the thread's locals down
+            deadline = time.monotonic() + 5
+            while time.monotonic() < deadline and _registry_size(services) > (
+                _REGRESSION_BOUND
+            ):
+                qapp.processEvents()
+                time.sleep(0.05)
+            growth.append(_registry_size(services))
+    
+        peak_open = _open_connections(services)
+>       assert growth == [1] * _RUNS, (
+            f"registry grew with completed runs: {growth} "
+            "(pre-fix shape is [2, 3, 4, 5] for 4 runs)"
+        )
+E       AssertionError: registry grew with completed runs: [2, 3, 4, 5] (pre-fix shape is [2, 3, 4, 5] for 4 runs)
+E       assert [2, 3, 4, 5] == [1, 1, 1, 1]
+E         
+E         At index 0 diff: 2 != 1
+E         Use -v to get more diff
+
+tests\workbench\test_connection_eviction.py:118: AssertionError
+1 failed in 15.62s
+
+COLLECTED=n/a
+EXIT=1
+HEAD=6cb0afb5e53a229c700b0570d19f0f03c9942811

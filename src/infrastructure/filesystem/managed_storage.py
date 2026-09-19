@@ -13,8 +13,9 @@ overwritten (TASK-002 §8.1).
 from __future__ import annotations
 
 import os
+import stat
 import uuid
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 from infrastructure.filesystem.integrity import integrity_of
 from ports.repositories.storage import IntegrityInfo
@@ -36,6 +37,14 @@ ARTIFACT_TYPE_DIRS: dict[str, str] = {
     "debug_ocr": "debug",
     "debug_detection": "debug",
 }
+
+
+def _is_reparse_point(st: os.stat_result) -> bool:
+    """Junction/symlink detection that works on both Windows and POSIX."""
+    attributes = getattr(st, "st_file_attributes", 0)
+    if attributes:
+        return bool(attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT)
+    return stat.S_ISLNK(st.st_mode)
 
 
 class ImmutablePathViolation(RuntimeError):
@@ -116,9 +125,25 @@ class ManagedFileStorage:
     def remove_managed(self, relative_path: str) -> None:
         """Delete one managed (controlled) file (TASK-021 trash subset).
 
-        Refuses paths that escape the managed root — permanent deletion can
-        only ever reach controlled copies, never anything outside (and user
-        source files are never inside the managed root at all)."""
+        Refuses anything that does not resolve to a plain file *inside* the
+        managed root reached without crossing a reparse point — permanent
+        deletion can only ever reach controlled copies, never anything
+        outside (and user source files are never inside the managed root at
+        all).  The guards, in order:
+
+        - **lexical** (TASK-060 R-001 / TASK-061 R-011): the raw ``/``-split
+          segments must not contain ``..``, ``.`` or empty components.  The
+          segments come from the raw string, *not* ``PurePosixPath.parts``,
+          which silently drops ``.`` and empty components (the dead
+          ``"." in parts`` condition this slice removes);
+        - **containment** (TASK-021): the fully resolved path must stay
+          inside the resolved root;
+        - **reparse walk** (TASK-061 R-010): every existing directory along
+          the *unresolved* walk must be a plain directory.  A root-internal
+          junction or symlink resolves back inside the root, so containment
+          alone would let a tampered reference reach a sibling chapter's
+          protected original through a link.
+        """
         absolute = Path(self.absolute_path(relative_path)).resolve()
         root = self._root.resolve()
         try:
@@ -127,18 +152,29 @@ class ManagedFileStorage:
             raise ImmutablePathViolation(
                 f"refusing to remove {absolute}: escapes the managed root {root}"
             ) from error
-        # TASK-060 Q-007 ①: component rule at the single physical removal
-        # point — "books/../cache/x" resolves back *inside* the root, so
-        # the containment check above alone would let a tampered relative
-        # path delete a root-internal neighbour.  The policy predicate
-        # (application.maintenance.cleanup.is_safe_relative_path) applies
-        # the same component rule per face; this is the backstop every
-        # removal goes through regardless of its caller.
-        parts = PurePosixPath(relative_path.replace("\\", "/")).parts
-        if ".." in parts or "." in parts or Path(relative_path).is_absolute():
+        segments = relative_path.replace("\\", "/").split("/")
+        if (
+            ".." in segments
+            or "." in segments
+            or Path(relative_path).is_absolute()
+            or any(segment == "" for segment in segments[1:])
+        ):
             raise ImmutablePathViolation(
                 f"refusing to remove {relative_path!r}:"
                 " path components may not traverse"
             )
+        # TASK-061 R-010: walk the *unresolved* path and reject any link.
+        probe = self._root
+        for segment in segments:
+            probe = probe / segment
+            try:
+                probe_stat = probe.lstat()
+            except OSError:
+                break  # nothing there to traverse through
+            if _is_reparse_point(probe_stat):
+                raise ImmutablePathViolation(
+                    f"refusing to remove {relative_path!r}:"
+                    f" path crosses a junction/symlink at {probe}"
+                )
         if absolute.is_file():
             absolute.unlink()
