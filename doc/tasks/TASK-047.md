@@ -2,8 +2,8 @@
 id: TASK-047
 title: UI/UX、GUI 与 QML 设计规范收敛（仅设计）
 kind: design
-status: ready
-approval: approved_by_user
+status: rejected
+approval: rejected_by_user
 suggested_owner: Qoder
 owner: Qoder
 reviewer: Codex
@@ -81,3 +81,39 @@ integration_commit: null
 - Review：尚无；Reviewer=`Codex`，必须为非作者审查。
 - 实际执行/测试：尚无；全部 NOT_RUN。
 - 最近状态：2026-09-19 用户指定 Qoder 为 UI/UX/GUI 设计责任方；Codex 开立并释放为 `ready`，base=`0e470f3`。实施尚未开始。
+
+> **Codex 说明（2026-09-19）**：以下裁决记录由 Owner（Qoder）在分支 `agent/qoder/TASK-047-ui-ux-gui-design` @ `980ae7d` 记录；应留档要求**逐字引入 master**。该分支本体**未合并、未 push、保留**（8 提交 `fce3bae`…`980ae7d`），其交付（契约/视觉参考/截图）**不进入 master**，亦不作为后续实现的依据。**注意**：以下裁决记录正文中指向 `verification/TASK-047/**` 与 `doc/contracts/UI_UX_GUI_DESIGN.md` 的链接在 **master 上不可解析**（这些文件只存在于该未合并分支）；需要查看时用 `git show agent/qoder/TASK-047-ui-ux-gui-design:<path>`。Task 状态随之改为 `rejected` / `rejected_by_user`；设计门由新立的 [TASK-059](TASK-059.md) 承接。
+
+## 裁决记录：设计被用户否决（2026-09-19）
+
+**决定方**：用户（产品决策方）。**执行方**：Qoder（Owner）。**处置**：作废留档 —— 不合并、不删除、不改交付内容。
+
+`status: in_review → rejected`，`approval: approved_by_user → rejected_by_user`。Codex 的非作者 Review **不再进行**，
+本 Task 不进入 `done`，其结论**不作为**任何后续实现的依据。
+
+### 否决理由（用户原话口径，三项全中）
+
+| # | 不满意点 | 我的判读（供重做参考，不代表用户表述） |
+|---|---|---|
+| R-1 | **视觉方向不对** | 契约把 `doc/ui-baseline.md` 的既有灰蓝色板当作既定事实继承下来，只在明度/对比度上做修正（§10.1 D-6）。结果是"更合规的同一张脸"，不是一个新的视觉方向。 |
+| R-2 | **布局与信息架构不对** | §2 容器分类、§5 面板宽度、§6 逐页 As-Is 基本按当前 QML 的区域划分固化。四页骨架是产品硬约束，但页面内部怎么分区、信息怎么排，本应重新设计，我按现状描摹了。 |
+| R-3 | **太保守，没超出基线** | 这是 R-1/R-2 的共同根因。本 Task 的约束（不得新增产品能力、参考须以现有项目事实为基础、不得把目标图冒充已有能力）叠加"As-Is/To-Be/Gap 必须三分"的写法，使产出的重心落在**取证与对账**上，而不是**提出方案**上。 |
+
+### 仍然有效、可复用的部分（重做时不必从零开始）
+
+以下与"设计得好不好"无关，是**事实与约束**，重做时若结论与之冲突，应以这些为准或显式推翻：
+
+- **§1 K-1~K-7 对账**：任务书引用的 `AC-EDIT` 在 D08 中不存在；D05 无 DPI/键盘/令牌/截断条文；D07 无字体/CJK/可访问性/最小尺寸条文；**没有任何界面相关 AC 拿到过 PASS**（追踪表全为 `NOT_RUN`）。
+- **§6 As-Is 取证**：81 条 `path:line` 引用经脚本核对全部可定位（`verification/TASK-047/check-source-citations.sh`）。当前 QML 到底实现了什么、缺什么，这部分是可靠的。
+- **§10.1 D-1~D-6 与 §10 的量化结果**：1280×800 物理窗在 150% 起低于 1024×640 DIP（**Q-2**）；四个文本令牌在实际承载面上不达 4.5:1。这两条与审美无关，是硬事实。
+- **§8 待决项 Q-1~Q-10**：仍需用户/Codex 裁决，不因本 Task 作废而消失。
+- **标注评审回路**（契约 §11 + 参考页 `A` 键）：工具，与视觉方案无关，重做后的参考可以直接复用。
+
+### 连带影响（需 Codex 处理，Qoder 不越权）
+
+1. **TASK-022 的设计门失效**：STATUS 把 TASK-022 的 `BLOCKED` 条件写成"TASK-021 三子集 + **TASK-047 设计门** + W3"。
+   TASK-047 现在被否决而非 `done`，该门不能再被引用。需要 Codex 二选一：
+   (a) 另立一个重做的设计 Task 并让 TASK-022 改挂到新 Task 上；(b) 明确解除 TASK-022 的设计门前置，仅保留其余条件。
+2. **`doc/STATUS.md` 与任务索引需要改档**：不在本 Task 允许路径内，Qoder 未改。
+3. **本分支与 worktree 保留**：`agent/qoder/TASK-047-ui-ux-gui-design`，8 个提交（`fce3bae`…`fe5d540`），
+   master 未被影响（本 Task 全程未合并、未 push）。若决定销毁，由 Codex 执行。
