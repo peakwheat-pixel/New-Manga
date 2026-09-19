@@ -36,15 +36,41 @@ status: delivered
 | R-005/N-002/门 | `pytest tests/core/test_connection_ownership.py tests/workbench/test_restore_gate.py tests/workbench/test_connection_eviction.py` | `2707ea8` | **10 passed**（R-005 新例 + 门 3 例 + 既有全绿） | 会话记录，全量日志覆盖 |
 | 不回归 | `pytest tests -q -p no:cacheprovider -rs` ×3 | `2707ea8`，Git-Bash + TASK-012-py312，PYTHONDONTWRITEBYTECODE=1、QT_QPA_PLATFORM 未设 | **3×942 passed, EXIT=0**（942 ≥ 930 基线；+4 = R-005 1 + 门 3；无 skipped、无新增 skip/xfail） | `verification/TASK-057/unfreeze-full-suite-run{1,2,3}.log` |
 
-## 接收方式
+## 返修记录（review `TASK-057-b0e4cb1`，R-001~R-006 闭合，base=`b0e4cb1` 补一 commit）
 
-- 分支 `agent/zcode/TASK-057-backup-restore`，worktree `G:/CODEX/New Manga.worktrees/TASK-057-zcode`；delivery_head=`2707ea8`（实现）+ 本文档提交。
-- 复现：`pytest tests -q -p no:cacheprovider -rs`；判别复跑 `bash verification/TASK-057/pre-fix-probes/run-prefix.sh`（修前语义） / `run-postfix.sh`（修后语义）。
-- Reviewer（Qoder）：重点裁定第 6 项越界；核对三件式门与 `any_in_transaction` docstring 的快照约束是否覆盖 Q-008 前置①的全部关切。
+来源：Qoder Review `doc/reviews/TASK-057-b0e4cb1.md`（changes_requested）。核心结论（R-001，实测）：`_restore_in_progress` 只在 `_start_run` 检查，`continueRun`/`_restart_or_abandon`/`retryFailedPages` 三处直呼 `controller.start` —— PAUSED + 闩置位 + `continueRun` ⇒ worker started=True。返修把闩从 VM 单点移到**唯一 worker 出生地**：
+
+1. **R-001 closed——闩落咽喉点**：`run_controller.py` 新增 `RestoreLatchClosedError(RuntimeError)`、`RunController.set_restore_latch(bool)`、`admission_closed` 属性；`start()` **顶部**（先于 `is_running` 检查）置位即抛。VM 侧 `beginRestore/endRestore` 转调 `controller.set_restore_latch`（`_restore_in_progress` 保留为 VM 镜像）；新增 `_start_pending_worker(run)` 统一 `continueRun`/`_restart_or_abandon`/`retryFailedPages` 三面的出生调用（`RestoreLatchClosedError` → typed 错误面「恢复进行中，不能启动任务」stage=run，无 worker 出生）；`_start_run` 的前置检查**保留**（必须先于 `create_run`/`plan_run` 写拒绝，控制器闩是其下的第二层网）。`grep` 核对：`controller.start` 全 VM 仅剩 `_start_pending_worker` 内 1 处。
+2. **R-002 closed——`restoreGate()` 上下文管理器**（viewmodel.py）：进入失败抛 `RuntimeError`；主体正常/异常均 finally `endRestore`——失败的恢复不会把工作台永久锁死。
+3. **R-001/R-002 测试——门测试 3→9 条**（`tests/workbench/test_restore_gate.py`）：四面真枚举（`startTranslateAll`/`startTranslateUntranslated` 直调；`continueRun` 走**全真 PAUSED 链路** start→pause→drain→闩→continue，`control_run` 真 PAUSED→PENDING 后出生被闩拦；`restartRun`/`retryFailedPages` 按 Reviewer 探针 MODE B 手法 stub service 控制层返回真 PENDING run——内存栈无失败工作可继承、真 planner 会把 fresh plan 成 COMPLETED，故生产语义的 PENDING fresh 只能经 stub 供给）+ 每面断言「无 worker 出生 + 错误面命中」；另加 gate 异常释放、gate 活动 run 入口拒绝两条。**判别证据**：同一 9 条在 b0e4cb1 上 **6 挂 3 过**（continue/restart/retry 三面均 "a run worker was born while the restore latch was engaged"=R-001 现行复现；`admission_closed`/`restoreGate` 两条 AttributeError=咽喉点缺失）——`verification/TASK-057/review-b0e4cb1/gate-fix-discrim-b0e4cb1-run1.log`（逐测试单进程，QThread 硬崩即 worker 真出生的物理证据，exit=127）。
+4. **R-004 closed——三处 docstring 真话化**：`run_controller.py` `start()`/`shutdown()`（唯一写者前提改述为咽喉点事实）、`viewmodel.py` 门注释、`connection.py` `any_in_transaction()`（原「rejects every start path」过强表述改为指向 `RunController.set_restore_latch` 咽喉点；快照非准入闸门约束保留）。仅 docstring，零行为。
+5. **R-006 closed——判别探针翻转进 EXIT**：`probe_q008_truthy.py` 删恒真尾巴 `assert caught in (True, False)` 改 `assert caught, ...`（pytest 运行器下 `raise SystemExit(0)` 会被判 FAILED/EXIT=1，实测核对后用语义等价的 assert 翻转：判别对象失效⇒EXIT=1、判别力成立⇒EXIT=0）；`probe_r004_latch.py` 修前 AttributeError 分支 `SystemExit(0)`→`SystemExit(1)`。**双树判别**：`0d15018`（`or True` 在、闩不存在）双 EXIT=1——`review-b0e4cb1/probes-r006-flip-discrim-0d15018-run1.log`；b0e4cb1/修复树双 EXIT=0——`review-b0e4cb1/probes-r006-flip-on-b0e4cb1-still-pass-run1.log`。
+6. **R-003/R-005/R-007 无代码动作**：R-003 白名单追认归 Codex（本切片不改）；R-005 以实测差值链闭合（见下）；R-007（AC⑤ 次数口径）随返修验证一并满足——本轮全仓 ×1 记录于下表，AC⑤ 的 ≥5 次逐次记录仍以解冻切片 3×942 + 冻结交付 4×912 为累积台账。
+
+**942 差值实证（R-005）**——各锚点 `pytest tests -q --collect-only` 实测（0 skipped 口径下 collected=passed）：`49f45f6`（merge 合入的 master 头，纯 docs 差异至 `17401dd`）= **930** → merge 头 `0d15018` = **938** = 930 + 8（TASK-057 冻结交付 `c5515fb` 的 storage 新套件首次随 merge 进入全仓）→ 解冻切片 `2707ea8`/`b0e4cb1` = **942** = 938 + 4（R-005 聚合方向判别用例 1 + restore 门用例 3）→ 返修树 = **948** = 942 + 6（门测试 3→9）。
+
+### 返修验证证据（工作树在 `b0e4cb1` 之上，提交前采集；同一 Git Bash + TASK-012-py312，PYTHONDONTWRITEBYTECODE=1、QT_QPA_PLATFORM 未设）
+
+| 场景 | 命令 | 结果 | 日志 |
+|---|---|---|---|
+| Reviewer 探针复跑（非作者，只读复用 qoder-review worktree 探针，ROOT 传本树） | `t057_gate_probe.py <TASK-057-zcode>` | **A.1 PAUSED continueRun 真链路 worker=False+错误面命中；MODE B 三面全 False+错误面命中**（A.0 两面维持 False；A.2/A.3 非闩错误面为内存栈语义，Reviewer 探针自带 MODE B 覆盖该两面） | `review-b0e4cb1/probe-gate-fix-zcode-run1.log` |
+| 门测试判别（修前） | b0e4cb1 archive + 9 条门测试 | 6/9 挂（三面 worker 出生 + 2 AttributeError + gate 缺失） | `review-b0e4cb1/gate-fix-discrim-b0e4cb1-run1.log` |
+| 探针 R-006 翻转（修前 `0d15018`） | archive 0d15018 + 翻转后探针 | q008 TRUTHY-PASS→EXIT=1；r004 AttributeError→EXIT=1 | `review-b0e4cb1/probes-r006-flip-discrim-0d15018-run1.log` |
+| 探针 R-006 翻转（修复树） | 复跑翻转后探针 | q008 DISCRIMINATING-FAIL→EXIT=0；r004 POST-FIX→EXIT=0 | `pre-fix-probes/post-fix-probes-r006-flip-run1.log` |
+| 定向（门 + connection ownership/eviction） | `pytest tests/workbench/test_restore_gate.py tests/core/test_connection_ownership.py tests/workbench/test_connection_eviction.py -q` | **16 passed, EXIT=0** | `review-b0e4cb1/targeted-gate-ownership-fix-run1.log` |
+| 不回归 | `pytest tests -q -p no:cacheprovider` ×1 | **948 passed, EXIT=0**（942+6；无 skipped、无新增 skip/xfail） | `review-b0e4cb1/full-suite-fix-run1.log` |
+
+白名单核对（返修 commit）：`src/ui/viewmodels/workbench/**`（2 文件）、`src/infrastructure/sqlite/connection.py`（仅 docstring）、`tests/workbench/test_restore_gate.py`、`verification/TASK-057/**`（探针 2 文件 + 日志）、`doc/tasks/TASK-057.md`、`doc/handoffs/TASK-057-unfreeze.md`；零 Schema/依赖/QML、未动 backup.py（R-001 裁定接受项保持原样）、未动 STATUS、无放宽既有断言（门测试只增不删）、无新增 skip/xfail、不 push。
+
+## 接收方式（返修后）
+
+- 分支 `agent/zcode/TASK-057-backup-restore`，worktree `G:/CODEX/New Manga.worktrees/TASK-057-zcode`；delivery_head=`2707ea8`（解冻切片实现）+ handoff docs（`b0e4cb1`）+ **返修 commit（base=`b0e4cb1` 之上的单一 commit，即本文件的提交 HEAD；代码+测试+判别日志+本文档同 commit）**。
+- 复现：`pytest tests -q -p no:cacheprovider -rs`；四面判别复跑 `t057_gate_probe.py <本 worktree>`（Reviewer 探针，A.1/MODE B 应全 False+错误面命中）；探针翻转双树判别见返修记录第 5 条（`run-prefix.sh`/`run-postfix.sh` 仍可复跑，脚本名是当初采集时点的历史语义）。
+- Reviewer（Qoder）复审入口：`doc/reviews/TASK-057-b0e4cb1.md` 的 R-001~R-007 → 返修记录逐条 disposition；重点核对：① `RunController.start()` 咽喉点闩与 `_start_pending_worker` 三面收敛 ② 门测试四面枚举的判别力（b0e4cb1 上 6/9 挂）③ A.1 真链路 continueRun 面。原切片第 6 项越界（backup.py）已经 Reviewer `b0e4cb1` 裁定接受，不再开放。
 
 ## 风险与遗留
 
 - **backup.py 依赖 `facade._current()`（私有方法）**：过渡态适配；装配切片可把「调用线程真连接」收敛为 facade 公开 unwrap 接口后回归改名。
 - **R-007(i)/R-008/N-003/N-004 未闭**：不在本切片授权范围（归 TASK-062 复审残留微切片）。
 - **既有声明不变**：`pre_restore` 备份记录随覆盖消失（回滚凭据=文件+sidecar）；一致性报告只读不修；**生产接线 NOT_RUN**（bootstrap 未注入 backup 服务，装配切片统一）。
-- **回退**：`git revert 2707ea8`（恢复至 `0d15018`；restore 用例将回到 2 failed 裂缝态）。
+- **回退**：`git revert 2707ea8`（恢复至 `0d15018`；restore 用例将回到 2 failed 裂缝态）。返修 commit 的回退 = revert 该 commit 本身（回到 `b0e4cb1`，门只盖 1/4 start 面——不可单独回退源文件而保留测试）。

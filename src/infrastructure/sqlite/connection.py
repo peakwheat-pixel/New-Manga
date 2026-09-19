@@ -235,10 +235,12 @@ class ThreadRoutedConnection:
         an admission gate — a writer started after the check (the worker
         behind ``RunController.start()``) is invisible to it, and an
         idle live thread always reads False.  The restore path must
-        therefore additionally hold the workbench VM's restore latch,
-        which rejects every start path while the restore runs; the
-        premise that makes the snapshot meaningful is "RunController's
-        worker is the only non-GUI writer".
+        therefore additionally hold the restore latch on the controller
+        itself (``RunController.set_restore_latch``): while it is
+        engaged, ``RunController.start()`` — the sole worker birthplace,
+        reached from all four workbench VM call sites — refuses every
+        admission; the premise that makes the snapshot meaningful is
+        "RunController's worker is the only non-GUI writer".
         """
         with self._registry_lock:
             conns = list(self._connections.values())

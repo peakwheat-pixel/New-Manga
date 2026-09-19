@@ -7,7 +7,10 @@
 - 修后形态：闩存在，``beginRestore()`` 置位后 ``startTranslateAll()``
   被拒（不产生 run、controller 空闲），``endRestore()`` 解除。
 
-同一探针两树均可跑：分支结论由 stdout 承载，EXIT 记录执行真实性。
+同一探针两树均可跑，结论进 EXIT（review R-006）：
+- 修前树：无闩 API ⇒ PRE-FIX 分支，EXIT=1（门第三件缺失的证据）；
+- 修后树：闩拒绝 startRun、endRestore 解除 ⇒ POST-FIX 分支，EXIT=0；
+  若闩在但拒绝失效 ⇒ POST-FIX-REGRESSION，EXIT=1。
 """
 
 import sys
@@ -32,7 +35,7 @@ try:
 except AttributeError as error:
     print(f"PRE-FIX: no restore latch exists (AttributeError: {error})")
     print("=> restore 期间 startRun 无拒绝路径 —— R-004 门第三件在修前树缺失")
-    raise SystemExit(0)
+    raise SystemExit(1)
 
 latched = vm.beginRestore()
 assert latched is True, "idle tree: beginRestore must latch successfully"

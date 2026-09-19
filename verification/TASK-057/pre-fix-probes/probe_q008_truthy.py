@@ -8,8 +8,11 @@
   模拟回归发生，测试仍 PASS ⇒ 恒真断言抓不住真实回归；
 - 修后形态（去掉 ``or True`` 的真实边界断言）：同一场景 FAIL ⇒ 判别力成立。
 
-判别力 = 同一探针在修前/修后两树上 PASS/FAIL 分支翻转，两份日志并排即证。
-探针自身恒不失败（分支结论由 stdout 承载）；其他异常照常抛出（EXIT≠0）。
+判别力 = 同一探针在修前/修后两树上 EXIT 翻转，两份日志并排即证：
+- 修后树：断言抓到模拟回归 ⇒ DISCRIMINATING-FAIL 分支 ⇒ 探针 PASS，EXIT=0；
+- 修前树（``or True`` 仍在）：回归溜过断言 ⇒ TRUTHY-PASS 分支 ⇒
+  探针 FAIL，EXIT=1（review R-006：结论必须进 EXIT，恒真尾巴已删）。
+其他异常照常抛出（EXIT≠0）。
 """
 
 import sys
@@ -48,4 +51,6 @@ def test_truthy_assertion_cannot_catch_simulated_regression(
         print("TRUTHY-PASS: assertion passed despite the simulated "
               "regression => the `or True` truthy tail gives AC③ zero "
               "discriminating power (pre-fix shape)")
-    assert caught in (True, False)  # probe itself never fails; the log branch is the evidence
+    assert caught, (
+        "no discriminating power: the AC③ assertion passed despite the "
+        "simulated regression (truthy-tail shape — pre-fix defect)")

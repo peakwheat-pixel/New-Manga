@@ -1,0 +1,53 @@
+== R-006 flip discrimination: flipped probes against pre-fix head 0d15018 (or-True still present, no restore latch) ==
+shell: Git Bash (win32) / venv: TASK-012-py312 (Python 3.12.3)
+workdir: git archive of 0d15018 + flipped probe files copied in
+expectation: q008 hits the TRUTHY-PASS branch and FAILS (EXIT=1); r004 hits AttributeError and exits 1; (the b0e4cb1/fix-head side: both EXIT=0, see probes-r006-flip-on-b0e4cb1-still-pass-run1.log)
+
+--- q008 truthy probe (pytest)
+TRUTHY-PASS: assertion passed despite the simulated regression => the `or True` truthy tail gives AC③ zero discriminating power (pre-fix shape)
+F
+================================== FAILURES ===================================
+___________ test_truthy_assertion_cannot_catch_simulated_regression ___________
+backup_workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001CF76616690>, 'service': <infrastru...('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2706/test_truthy_assertion_cannot_c0/managed/backups'), ...}
+    def test_truthy_assertion_cannot_catch_simulated_regression(
+        backup_workspace,
+    ) -> None:
+        # the real test class is imported *inside* the test body so pytest
+        # cannot collect its (passing) members alongside this probe
+        from test_backup_restore import TestBackupCompleteness
+
+        # 模拟回归：备份实现把 user-side 目录写进了 managed root（AC③ 突破）
+        simulated = backup_workspace["managed_root"] / "user-side"
+        simulated.mkdir(parents=True, exist_ok=True)
+        assert simulated.exists(), "probe setup: simulated regression not in place"
+
+        caught = False
+        try:
+            TestBackupCompleteness().test_backup_does_not_touch_user_source(
+                backup_workspace
+            )
+        except AssertionError as error:
+            caught = True
+            print(f"DISCRIMINATING-FAIL: assertion caught the simulated "
+                  f"regression ({error}) => discriminating power confirmed")
+        else:
+            print("TRUTHY-PASS: assertion passed despite the simulated "
+                  "regression => the `or True` truthy tail gives AC③ zero "
+                  "discriminating power (pre-fix shape)")
+>       assert caught, (
+            "no discriminating power: the AC③ assertion passed despite the "
+            "simulated regression (truthy-tail shape — pre-fix defect)")
+E       AssertionError: no discriminating power: the AC③ assertion passed despite the simulated regression (truthy-tail shape — pre-fix defect)
+E       assert False
+verification\TASK-057\pre-fix-probes\probe_q008_truthy.py:54: AssertionError
+=========================== short test summary info ===========================
+FAILED verification/TASK-057/pre-fix-probes/probe_q008_truthy.py::test_truthy_assertion_cannot_catch_simulated_regression
+1 failed in 0.20s
+EXIT=1
+
+--- r004 latch probe (python)
+PRE-FIX: no restore latch exists (AttributeError: 'WorkbenchViewModel' object has no attribute 'beginRestore')
+=> restore 期间 startRun 无拒绝路径 —— R-004 门第三件在修前树缺失
+EXIT=1
+
+FLIP_DISCRIM_DONE

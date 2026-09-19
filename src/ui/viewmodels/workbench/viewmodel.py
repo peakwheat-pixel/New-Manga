@@ -21,7 +21,9 @@ typed seam so the production binding is an assembly decision.
 
 from __future__ import annotations
 
+from contextlib import contextmanager
 from pathlib import Path
+from typing import Iterator
 
 from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
 
@@ -41,7 +43,11 @@ from ui.models.tasks.projection import (
     build_projection,
     step_label,
 )
-from ui.viewmodels.workbench.run_controller import RunController, is_terminal_status
+from ui.viewmodels.workbench.run_controller import (
+    RestoreLatchClosedError,
+    RunController,
+    is_terminal_status,
+)
 
 VIEWER_MODES = ("original", "clean", "translated", "compare")
 
@@ -111,9 +117,12 @@ class WorkbenchViewModel(QObject):
         # run state
         self._run: PipelineRun | None = None
         self._pausing = False
-        # TASK-057 Q-008 前置① / TASK-061 R-004: restore latch — while a
-        # restore overwrites the live database, every start path is
-        # rejected here (part 3 of the three-part gate)
+        # TASK-057 Q-008 前置① / TASK-061 R-004 / review R-001: the
+        # restore latch lives on the controller (``RunController.start``
+        # is the sole worker birthplace, reached from four VM call
+        # sites); ``_restore_in_progress`` is this VM's mirror of it for
+        # cheap reads.  The ``_start_run`` pre-check below rejects before
+        # ``create_run``/``plan_run`` would write during a restore.
         self._restore_in_progress = False
         self._controller = RunController(self)
         self._controller.runFinished.connect(self._on_run_finished)
@@ -679,9 +688,10 @@ class WorkbenchViewModel(QObject):
 
     def _start_run(self, command: CommandType, scope: PipelineScope) -> None:
         if self._restore_in_progress:
-            # R-004: any_in_transaction() was a snapshot taken before the
-            # restore began — a run started during the restore would write
-            # into a database being overwritten wholesale.
+            # R-004 / review R-001: reject BEFORE create_run/plan_run —
+            # those are writes too, so this path must not even build a run
+            # object during a restore.  (The controller latch is the
+            # second, birthplace-level net under this.)
             self._record_command_error("恢复进行中，不能启动任务", stage="run")
             return
         if self._controller.is_running:
@@ -697,8 +707,7 @@ class WorkbenchViewModel(QObject):
         self._pausing = False
         self._refresh_projection()
         if run.status is PipelineRunStatus.PENDING:
-            self._controller.start(self._pipeline, run)
-            self._progress_timer.start()
+            self._start_pending_worker(run)
             self._refresh_from_run()
 
     # ------------------------------------------------------------------
@@ -714,19 +723,59 @@ class WorkbenchViewModel(QObject):
         (2) ``not any_in_transaction()`` is the *maintenance caller's*
         duty before calling this — the VM holds no connection handle,
         and the aggregate predicate is a snapshot, not an admission
-        gate (R-004); (3) this latch is what keeps the gate closed while
-        the restore runs: every start path is rejected on the VM side
-        until :meth:`endRestore`.
+        gate (R-004); (3) the latch itself lives on the controller and
+        closes admission at ``RunController.start()`` — the sole worker
+        birthplace, reached from all four VM call sites — until
+        :meth:`endRestore` (review R-001).
         """
         if self._controller.is_running:
             self._record_command_error("已有任务在运行，不能进入恢复", stage="run")
             return False
+        self._controller.set_restore_latch(True)
         self._restore_in_progress = True
         return True
 
     def endRestore(self) -> None:
         """Release the restore latch — normal runs may start again."""
+        self._controller.set_restore_latch(False)
         self._restore_in_progress = False
+
+    @contextmanager
+    def restoreGate(self) -> Iterator[None]:
+        """Engage the latch for the duration of a restore body.
+
+        Review R-002: an exception inside the body must not leave the
+        workbench permanently closed — ``__exit__`` releases the latch
+        unconditionally, so a failed restore cannot wedge every start
+        path.  Entering refuses (``RuntimeError``) when a run is still
+        executing, mirroring :meth:`beginRestore`.
+        """
+        if not self.beginRestore():
+            raise RuntimeError(
+                "cannot enter the restore gate: "
+                + (self.commandErrorText or "a run is executing")
+            )
+        try:
+            yield
+        finally:
+            self.endRestore()
+
+    def _start_pending_worker(self, run: PipelineRun) -> None:
+        """Birth the run worker through the controller's admission point.
+
+        Sole choke point for the three control paths that reach
+        ``controller.start`` directly (``continueRun``,
+        ``_restart_or_abandon``, ``retryFailedPages`` — review R-001):
+        while the restore latch holds, the controller raises
+        :class:`RestoreLatchClosedError` and the refusal lands on the
+        typed command-error surface with no worker born.
+        """
+        try:
+            self._controller.start(self._pipeline, run)
+        except RestoreLatchClosedError:
+            self._record_command_error("恢复进行中，不能启动任务", stage="run")
+            return
+        self._progress_timer.start()
 
     # ------------------------------------------------------------------
     # run controls (D06 §103 button matrix)
@@ -781,8 +830,7 @@ class WorkbenchViewModel(QObject):
             self._run = fresh
         self._refresh_projection()
         if self._run.status is PipelineRunStatus.PENDING:
-            self._controller.start(self._pipeline, self._run)
-            self._progress_timer.start()
+            self._start_pending_worker(self._run)
 
     @Slot()
     def restartRun(self) -> None:
@@ -805,8 +853,7 @@ class WorkbenchViewModel(QObject):
             self._run = fresh
             self._refresh_projection()
             if fresh.status is PipelineRunStatus.PENDING:
-                self._controller.start(self._pipeline, fresh)
-                self._progress_timer.start()
+                self._start_pending_worker(fresh)
         else:
             self._refresh_projection()
 
@@ -824,8 +871,7 @@ class WorkbenchViewModel(QObject):
         self._pausing = False
         self._refresh_projection()
         if fresh.status is PipelineRunStatus.PENDING:
-            self._controller.start(self._pipeline, fresh)
-            self._progress_timer.start()
+            self._start_pending_worker(fresh)
 
     # ------------------------------------------------------------------
     # refresh plumbing

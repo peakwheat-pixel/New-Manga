@@ -1,0 +1,20 @@
+== R-006 flip discrimination: flipped probes against pre-fix head b0e4cb1 ==
+shell: Git Bash (win32) / venv: TASK-012-py312 (Python 3.12.3)
+workdir: git archive of b0e4cb1 + flipped probe files copied in
+expectation: both probes now exit NON-ZERO on b0e4cb1 (q008: TRUTHY-PASS branch -> assert fails; r004: AttributeError -> SystemExit(1))
+
+--- q008 truthy probe (pytest)
+DISCRIMINATING-FAIL: assertion caught the simulated regression (AC③ breach: backup wrote a user-side shadow into the managed root
+assert not True
+ +  where True = exists()
+ +    where exists = (WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2705/test_truthy_assertion_cannot_c0/managed') / 'user-side').exists) => discriminating power confirmed
+.
+1 passed in 0.14s
+EXIT=0
+
+--- r004 latch probe (python)
+POST-FIX: restore latch rejects startRun during restore (no run created, controller idle)
+POST-FIX: endRestore releases the latch — normal run start works
+EXIT=0
+
+FLIP_DISCRIM_DONE
