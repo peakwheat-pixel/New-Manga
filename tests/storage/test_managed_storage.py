@@ -134,3 +134,76 @@ def test_verify_temp_reports_integrity(tmp_path):
     info = storage.verify_temp(temp)
     assert info.sha256 == _sha256(content)
     assert info.size_bytes == len(content)
+
+
+class TestR010ReparseWalk:
+    """TASK-061 R-010: a *root-internal* junction resolves back inside the
+    root, so the containment check alone lets a tampered reference reach a
+    sibling chapter's protected original through the link.  The removal
+    point must walk the unresolved path and refuse any reparse point.
+    Discriminating: on the pre-fix tree the traversal is granted and the
+    protected file is gone."""
+
+    def test_refuses_a_root_internal_junction_and_spares_the_target(
+        self, tmp_path
+    ):
+        import subprocess
+
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        protected_rel = "books/book-1/chapters/chapter-1/original/keep.png"
+        protected = tmp_path / "managed" / Path(*protected_rel.split("/"))
+        protected.parent.mkdir(parents=True)
+        protected.write_bytes(b"PROTECTED ORIGINAL")
+
+        # mklink /J needs no privileges on NTFS; it creates a directory
+        # junction (reparse point).  Limitation (declared): this covers the
+        # directory-junction form only; file symlinks require developer
+        # mode/privilege and are not exercised here.
+        twin = tmp_path / "managed" / "books" / "book-1" / "chapters" / "chapter-twin"
+        made = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(twin), str(protected.parent)],
+            capture_output=True,  # no text: mklink output is GBK on this box
+        )
+        assert made.returncode == 0, made.stderr
+
+        with pytest.raises(ImmutablePathViolation):
+            storage.remove_managed(
+                "books/book-1/chapters/chapter-twin/original/keep.png"
+            )
+
+        assert protected.is_file(), (
+            "the root-internal junction deleted the protected original"
+        )
+
+
+class TestR011DotSegmentIsAlive:
+    """TASK-061 R-011: ``PurePosixPath('a/./b').parts`` drops the ``.``,
+    so ``'.' in parts`` was a dead condition.  The lexical check now reads
+    the raw split segments, and a ``.`` component is a typed refusal.
+    Discriminating: on the pre-fix tree the dotted path lexes clean and
+    the file is removed."""
+
+    def test_refuses_a_dot_segment_and_spares_the_file(self, tmp_path):
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        target = tmp_path / "managed" / "books" / "keep.png"
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"KEEP")
+
+        with pytest.raises(ImmutablePathViolation):
+            storage.remove_managed("books/./keep.png")
+
+        assert target.is_file(), "the dotted path lexed clean and deleted the file"
+
+    def test_refuses_an_empty_middle_segment(self, tmp_path):
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        target = tmp_path / "managed" / "books" / "keep2.png"
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"KEEP")
+
+        with pytest.raises(ImmutablePathViolation):
+            storage.remove_managed("books//keep2.png")
+
+        assert target.is_file()

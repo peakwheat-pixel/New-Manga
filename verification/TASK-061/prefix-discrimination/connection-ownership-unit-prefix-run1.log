@@ -1,0 +1,107 @@
+# repo: G:/CODEX/New Manga.worktrees/TASK-061-prefix @ 6cb0afb (pre-fix, detached)
+# shell: PowerShell 5.1 (powershell.exe -NoProfile)
+# venv: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe (Python 3.12.3)
+# env: PYTHONDONTWRITEBYTECODE=1; QT_QPA_PLATFORM unset
+# pytest: -q -p no:cacheprovider
+# target: tests/core/test_connection_ownership.py (copied into the pre-fix tree uncommitted)
+# date: 2026-09-19
+---
+..FFF                                                                    [100%]
+================================== FAILURES ===================================
+_____ TestR002RegistryEviction.test_a_dead_threads_connection_is_evicted ______
+
+self = <test_connection_ownership.TestR002RegistryEviction object at 0x000001E9C50792B0>
+owned_db = (<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001E9C507B4A0>, WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2622/test_a_dead_threads_connection0/library.db'))
+
+    def test_a_dead_threads_connection_is_evicted(self, owned_db):
+        import gc
+    
+        conn, _db_path = owned_db
+        barrier = threading.Barrier(2)
+        release = threading.Event()
+    
+        def other_thread():
+            conn.execute("SELECT 1").fetchone()  # opens this thread's real one
+            barrier.wait()  # main thread may now read the registry size
+            release.wait()  # stay alive until the main thread sampled 2
+    
+        thread = threading.Thread(target=other_thread)
+        thread.start()
+        barrier.wait()
+>       assert conn.registry_size() == 2, "both live threads hold a connection"
+               ^^^^^^^^^^^^^^^^^^
+
+tests\core\test_connection_ownership.py:221: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001E9C507B4A0>
+name = 'registry_size'
+
+    def __getattr__(self, name: str):
+        # in_transaction, row_factory, create_function, … — anything not
+        # explicitly routed above forwards to the calling thread's
+        # connection.
+>       return getattr(self._current(), name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'sqlite3.Connection' object has no attribute 'registry_size'
+
+src\infrastructure\sqlite\connection.py:128: AttributeError
+_ TestR002RegistryEviction.test_explicit_release_frees_the_calling_threads_slot _
+
+self = <test_connection_ownership.TestR002RegistryEviction object at 0x000001E9C5079580>
+owned_db = (<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001E9C507B710>, WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2622/test_explicit_release_frees_th0/library.db'))
+
+    def test_explicit_release_frees_the_calling_threads_slot(self, owned_db):
+        conn, _db_path = owned_db
+        conn.execute("SELECT 1").fetchone()
+>       assert conn.registry_size() == 1
+               ^^^^^^^^^^^^^^^^^^
+
+tests\core\test_connection_ownership.py:232: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001E9C507B710>
+name = 'registry_size'
+
+    def __getattr__(self, name: str):
+        # in_transaction, row_factory, create_function, … — anything not
+        # explicitly routed above forwards to the calling thread's
+        # connection.
+>       return getattr(self._current(), name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'sqlite3.Connection' object has no attribute 'registry_size'
+
+src\infrastructure\sqlite\connection.py:128: AttributeError
+_ TestR004AggregatedWriterView.test_any_in_transaction_tracks_the_callers_own_transaction _
+
+self = <test_connection_ownership.TestR004AggregatedWriterView object at 0x000001E9C5079880>
+owned_db = (<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001E9C5092660>, WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2622/test_any_in_transaction_tracks0/library.db'))
+
+    def test_any_in_transaction_tracks_the_callers_own_transaction(
+        self, owned_db
+    ):
+        conn, db_path = owned_db
+        _seed_region(conn)
+>       assert conn.any_in_transaction() is False
+               ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\core\test_connection_ownership.py:252: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001E9C5092660>
+name = 'any_in_transaction'
+
+    def __getattr__(self, name: str):
+        # in_transaction, row_factory, create_function, … — anything not
+        # explicitly routed above forwards to the calling thread's
+        # connection.
+>       return getattr(self._current(), name)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'sqlite3.Connection' object has no attribute 'any_in_transaction'. Did you mean: 'in_transaction'?
+
+src\infrastructure\sqlite\connection.py:128: AttributeError
+=========================== short test summary info ===========================
+FAILED tests/core/test_connection_ownership.py::TestR002RegistryEviction::test_a_dead_threads_connection_is_evicted
+FAILED tests/core/test_connection_ownership.py::TestR002RegistryEviction::test_explicit_release_frees_the_calling_threads_slot
+FAILED tests/core/test_connection_ownership.py::TestR004AggregatedWriterView::test_any_in_transaction_tracks_the_callers_own_transaction
+3 failed, 2 passed in 0.60s

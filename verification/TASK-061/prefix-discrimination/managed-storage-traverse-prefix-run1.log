@@ -1,0 +1,83 @@
+# repo: G:/CODEX/New Manga.worktrees/TASK-061-prefix @ 6cb0afb (pre-fix, detached)
+# shell: PowerShell 5.1 (powershell.exe -NoProfile)
+# venv: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe (Python 3.12.3)
+# env: PYTHONDONTWRITEBYTECODE=1; QT_QPA_PLATFORM unset
+# pytest: -q -p no:cacheprovider
+# target: tests/storage/test_managed_storage.py (copied into the pre-fix tree uncommitted)
+# note: the three NEW classes (TestR010ReparseWalk, TestR011DotSegmentIsAlive) fail as
+#   expected on the pre-fix tree (traversal granted, protected file deleted / dotted
+#   and empty-middle segments lex clean and delete); the 7 pre-existing cases pass.
+# date: 2026-09-19
+---
+.......FFF                                                               [100%]
+================================== FAILURES ===================================
+_ TestR010ReparseWalk.test_refuses_a_root_internal_junction_and_spares_the_target _
+
+self = <test_managed_storage.TestR010ReparseWalk object at 0x000001FDAB4BC530>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2633/test_refuses_a_root_internal_j0')
+
+    def test_refuses_a_root_internal_junction_and_spares_the_target(
+        self, tmp_path
+    ):
+        import subprocess
+    
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        protected_rel = "books/book-1/chapters/chapter-1/original/keep.png"
+        protected = tmp_path / "managed" / Path(*protected_rel.split("/"))
+        protected.parent.mkdir(parents=True)
+        protected.write_bytes(b"PROTECTED ORIGINAL")
+    
+        # mklink /J needs no privileges on NTFS; it creates a directory
+        # junction (reparse point).  Limitation (declared): this covers the
+        # directory-junction form only; file symlinks require developer
+        # mode/privilege and are not exercised here.
+        twin = tmp_path / "managed" / "books" / "book-1" / "chapters" / "chapter-twin"
+        made = subprocess.run(
+            ["cmd", "/c", "mklink", "/J", str(twin), str(protected.parent)],
+            capture_output=True,  # no text: mklink output is GBK on this box
+        )
+        assert made.returncode == 0, made.stderr
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_managed_storage.py:170: Failed
+__ TestR011DotSegmentIsAlive.test_refuses_a_dot_segment_and_spares_the_file ___
+
+self = <test_managed_storage.TestR011DotSegmentIsAlive object at 0x000001FDAB4BE180>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2633/test_refuses_a_dot_segment_and0')
+
+    def test_refuses_a_dot_segment_and_spares_the_file(self, tmp_path):
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        target = tmp_path / "managed" / "books" / "keep.png"
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"KEEP")
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_managed_storage.py:194: Failed
+_______ TestR011DotSegmentIsAlive.test_refuses_an_empty_middle_segment ________
+
+self = <test_managed_storage.TestR011DotSegmentIsAlive object at 0x000001FDAB4BF0E0>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2633/test_refuses_an_empty_middle_s0')
+
+    def test_refuses_an_empty_middle_segment(self, tmp_path):
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        target = tmp_path / "managed" / "books" / "keep2.png"
+        target.parent.mkdir(parents=True)
+        target.write_bytes(b"KEEP")
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_managed_storage.py:206: Failed
+=========================== short test summary info ===========================
+FAILED tests/storage/test_managed_storage.py::TestR010ReparseWalk::test_refuses_a_root_internal_junction_and_spares_the_target
+FAILED tests/storage/test_managed_storage.py::TestR011DotSegmentIsAlive::test_refuses_a_dot_segment_and_spares_the_file
+FAILED tests/storage/test_managed_storage.py::TestR011DotSegmentIsAlive::test_refuses_an_empty_middle_segment
+3 failed, 7 passed in 0.64s
+EXIT=1
