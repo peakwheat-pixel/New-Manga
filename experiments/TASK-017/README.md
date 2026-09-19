@@ -7,7 +7,7 @@ NOT_RUN（未配置付费端点，任务禁止自行配置）。
 
 ```bash
 cd experiments/TASK-017
-python -m pytest test_protocol.py -q      # 15 例协议测试
+python -m pytest test_protocol.py -q      # 20 例协议测试
 python run_experiment.py                  # 全场景，写 results.json（退出码 0=全过）
 ```
 
