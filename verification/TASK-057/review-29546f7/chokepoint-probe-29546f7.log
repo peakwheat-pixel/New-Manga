@@ -1,0 +1,31 @@
+=== label:  chokepoint-probe-29546f7
+=== tree:   G:/CODEX/New Manga.worktrees/TASK-057-zcode @ 29546f7 [agent/zcode/TASK-057-backup-restore]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM unset, PYTHONIOENCODING=utf-8
+=== date:   2026-09-20T00:06:01+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-29546f7/t057_chokepoint_probe.py G:/CODEX/New Manga.worktrees/TASK-057-zcode
+---
+== tree: G:\CODEX\New Manga.worktrees\TASK-057-zcode @ 29546f7  dirty=no
+
+-- H1 latch engaged on the CONTROLLER only (VM mirror left False)
+   vm._restore_in_progress=False  controller.admission_closed=True
+   H1 startTranslateAll            worker born=False  run object=True  error='[run] 恢复进行中，不能启动任务'
+   H1 startTranslateUntranslated   worker born=False  run object=True  error='[run] 恢复进行中，不能启动任务'
+   H1 continueRun (state paused)      worker born=False  error='[run] 恢复进行中，不能启动任务'
+
+-- H2 nested restoreGate(): does the inner exit unlock the outer body?
+   outer engaged: _restore_in_progress=True admission_closed=True
+   inner gate entered while already engaged (no refusal)
+   after inner exit, still inside outer body: admission_closed=False  start refused? False
+   outer exited: admission_closed=False
+
+-- H3 half-applied command: what survives a latched continueRun?
+   before latch: run='paused'   after latched continueRun: store='pending'  vm._run='pending'
+   worker born=False  error='[run] 恢复进行中，不能启动任务'
+   tasks in store after the refusal: {'pending': 2}
+   endRestore() auto-started the pending run? False
+   run status after release: 'pending'  (a PENDING run with no worker is what recover_running_runs faces next boot)
+
+== done
+EXIT=0
