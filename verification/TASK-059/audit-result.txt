@@ -1,0 +1,62 @@
+== 1) JS 语法门 ==
+syntax OK
+== 2) 全矩阵审计 ==
+  a/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
+  a/dark/workbench: PASS contrast=15/15 outside=0 clipped=0 
+  a/dark/reader: PASS contrast=15/15 outside=0 clipped=0 
+  a/dark/settings: PASS contrast=15/15 outside=0 clipped=0 
+  a/dark/states: PASS contrast=15/15 outside=0 clipped=0 
+  a/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
+  a/light/workbench: PASS contrast=15/15 outside=0 clipped=0 
+  a/light/reader: PASS contrast=15/15 outside=0 clipped=0 
+  a/light/settings: PASS contrast=15/15 outside=0 clipped=0 
+  a/light/states: PASS contrast=15/15 outside=0 clipped=0 
+  b/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
+  b/dark/workbench: PASS contrast=15/15 outside=0 clipped=0 
+  b/dark/reader: PASS contrast=15/15 outside=0 clipped=0 
+  b/dark/settings: PASS contrast=15/15 outside=0 clipped=0 
+  b/dark/states: PASS contrast=15/15 outside=0 clipped=0 
+  b/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
+  b/light/workbench: PASS contrast=15/15 outside=0 clipped=0 
+  b/light/reader: PASS contrast=15/15 outside=0 clipped=0 
+  b/light/settings: PASS contrast=15/15 outside=0 clipped=0 
+  b/light/states: PASS contrast=15/15 outside=0 clipped=0 
+  c/dark/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
+  c/dark/workbench: PASS contrast=15/15 outside=0 clipped=0 
+  c/dark/reader: PASS contrast=15/15 outside=0 clipped=0 
+  c/dark/settings: PASS contrast=15/15 outside=0 clipped=0 
+  c/dark/states: PASS contrast=15/15 outside=0 clipped=0 
+  c/light/bookshelf: PASS contrast=15/15 outside=0 clipped=0 
+  c/light/workbench: PASS contrast=15/15 outside=0 clipped=0 
+  c/light/reader: PASS contrast=15/15 outside=0 clipped=0 
+  c/light/settings: PASS contrast=15/15 outside=0 clipped=0 
+  c/light/states: PASS contrast=15/15 outside=0 clipped=0 
+== 3) 无头截图 ==
+  a-dark-bookshelf.png
+  a-dark-workbench.png
+  a-dark-reader.png
+  a-dark-settings.png
+  a-dark-states.png
+  b-light-bookshelf.png
+  b-light-workbench.png
+  b-light-reader.png
+  b-light-settings.png
+  b-light-states.png
+  c-light-bookshelf.png
+  c-light-workbench.png
+  c-light-reader.png
+  c-light-settings.png
+  c-light-states.png
+  a-light-workbench.png
+  b-dark-workbench.png
+  c-dark-workbench.png
+  c-glass-off-bookshelf.png
+  c-glass-off-workbench.png
+  a-dark-workbench-dpi150.png
+  a-dark-workbench-dpi200.png
+  a-dark-workbench-taskdetail.png
+  c-glass-taskdetail.png
+  b-light-danger.png
+  c-glass-both.png
+== 汇总 ==
+AUDIT RESULT: ALL PASS

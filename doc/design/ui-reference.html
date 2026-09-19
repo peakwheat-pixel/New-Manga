@@ -1,0 +1,1289 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>New Manga · TASK-059 UI 候选方向参考（A Graphite / B Atelier / C Duo）</title>
+<!--
+  TASK-059 视觉参考（设计提案，非生产 QML，不代表任何已实现能力或已通过的 AC）。
+  离线单文件；评审 chrome（顶部工具条与 states 视图）不属于产品画面。
+  用法：顶部切换候选 A/B/C、亮/暗、玻璃开/关（仅 C）、页面、DPI 档；"审计"运行自检。
+  URL 参数：?cand=a|b|c&mode=light|dark&page=bookshelf|workbench|reader|settings|states&dpi=100|125|150|175|200&glass=on|off
+-->
+<style>
+/* ============ 评审 chrome（非产品画面） ============ */
+* { margin:0; padding:0; box-sizing:border-box; }
+html,body { height:100%; }
+body {
+  font-family:"Segoe UI Variable","Segoe UI","Microsoft YaHei UI","PingFang SC",sans-serif;
+  background:#0c0c0e; color:#d8d8dc; overflow:hidden;
+  display:flex; flex-direction:column;
+}
+#reviewbar {
+  flex:0 0 auto; display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  padding:7px 12px; background:#16161a; border-bottom:1px solid #2c2c32;
+  font-size:12px; user-select:none; z-index:50;
+}
+#reviewbar .grp { display:flex; align-items:center; gap:4px; padding-right:10px; margin-right:6px; border-right:1px solid #2c2c32; }
+#reviewbar .grp:last-child { border-right:none; }
+#reviewbar label { color:#8b8b94; margin-right:2px; }
+.rb {
+  border:1px solid #34343c; background:#1f1f26; color:#c9c9d2; padding:3px 10px;
+  border-radius:5px; cursor:pointer; font-size:12px; line-height:1.5;
+}
+.rb:hover { background:#2a2a33; }
+.rb.on { background:#3a5af0; border-color:#3a5af0; color:#fff; }
+.rb:disabled { opacity:.35; cursor:not-allowed; }
+#stage { flex:1 1 auto; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:auto; padding:14px; gap:6px; }
+#frame {
+  width:1280px; height:800px; flex:0 0 auto; position:relative; overflow:hidden;
+  border:1px solid #3a3a42; box-shadow:0 10px 44px rgba(0,0,0,.55); background:#000;
+}
+.framecap {
+  flex:0 0 auto; font-size:11px; color:#8b8b94; letter-spacing:.3px;
+}
+/* 产品画面按 DIP 缩放（外框=物理窗，内容随 DPI 放大） */
+#app { width:1280px; height:800px; transform-origin:0 0; display:flex; overflow:hidden; }
+
+/* ============ 密度/几何层（候选差异的第一层） ============ */
+#app { font-size:var(--fs-base); }
+[data-cand="a"] {
+  --fs-base:12px; --fs-sm:11px; --fs-lg:13px; --fs-sub:15px; --fs-title:17px; --fs-disp:21px;
+  --ctl-h:28px; --row-h:32px; --rail-w:56px; --pad-page:10px; --gap:8px;
+  --rad-sm:4px; --rad-md:6px; --rad-lg:8px; --rad-win:10px;
+  --tb-h:44px; --list-w:172px; --insp-w:272px; --prog-h:140px; --det-w:320px;
+}
+[data-cand="b"] {
+  --fs-base:13px; --fs-sm:12px; --fs-lg:14px; --fs-sub:16px; --fs-title:19px; --fs-disp:23px;
+  --ctl-h:36px; --row-h:42px; --rail-w:68px; --pad-page:16px; --gap:12px;
+  --rad-sm:8px; --rad-md:11px; --rad-lg:14px; --rad-win:16px;
+  --tb-h:52px; --list-w:176px; --insp-w:288px; --prog-h:150px; --det-w:336px;
+}
+[data-cand="c"] {
+  --fs-base:13px; --fs-sm:12px; --fs-lg:14px; --fs-sub:16px; --fs-title:18px; --fs-disp:22px;
+  --ctl-h:32px; --row-h:36px; --rail-w:60px; --pad-page:12px; --gap:10px;
+  --rad-sm:6px; --rad-md:9px; --rad-lg:12px; --rad-win:14px;
+  --tb-h:48px; --list-w:174px; --insp-w:278px; --prog-h:146px; --det-w:328px;
+}
+
+/* ============ 色彩令牌层（候选 A「Graphite」） ============ */
+/* 方向：中性暖灰黑工作台。深色为默认主题（生产者耐力优先）；亮色为完整第二主题。 */
+[data-cand="a"][data-mode="dark"] {
+  --bg-page:#1a1a1d; --bg-rail:#141417; --bg-panel:#222226; --bg-raised:#29292e;
+  --bg-inset:#121215; --bg-canvas:#0e0e10; --bg-hover:#2e2e34; --bg-active:#38383f;
+  --bg-press:#26262b;
+  --border:#34343b; --border-strong:#4a4a54; --divider:#2b2b31;
+  --ink:#ececee; --ink-2:#a9a9b3; --ink-3:#91919c; --ink-dis:#70707b; --ink-inv:#101013;
+  --accent:#4d63e8; --accent-hov:#5f73f0; --accent-press:#3f52d6; --accent-text:#8ca3ff;
+  --accent-soft:rgba(91,118,247,.14); --on-accent:#ffffff;
+  --st-ok:#4ade80; --st-ok-t:#5ee9a0; --st-run:#60a5fa; --st-warn:#fbbf24; --st-warn-t:#fcd34d;
+  --st-fail:#f87171; --st-skip:#a5b0c0; --st-lock:#c084fc; --st-block:#fdba74;
+  --ok-soft:rgba(74,222,128,.12); --run-soft:rgba(96,165,250,.13); --warn-soft:rgba(251,191,36,.12);
+  --fail-soft:rgba(248,113,113,.13); --skip-soft:rgba(165,176,192,.12); --lock-soft:rgba(192,132,252,.13);
+  --block-soft:rgba(253,186,116,.13);
+  --focus:#8ca3ff; --shadow:0 6px 18px rgba(0,0,0,.45); --shadow-sm:0 2px 8px rgba(0,0,0,.4);
+  --glass-bg:rgba(30,30,36,.58); --glass-bd:rgba(255,255,255,.14); --glass-hi:rgba(255,255,255,.09);
+}
+[data-cand="a"][data-mode="light"] {
+  --bg-page:#f4f4f3; --bg-rail:#ebebea; --bg-panel:#ffffff; --bg-raised:#ffffff;
+  --bg-inset:#efefee; --bg-canvas:#26262a; --bg-hover:#f0f0ef; --bg-active:#e6e6e4;
+  --bg-press:#e2e2e0;
+  --border:#d9d9d6; --border-strong:#bcbcba; --divider:#e6e6e4;
+  --ink:#1b1b1f; --ink-2:#4f4f58; --ink-3:#63636c; --ink-dis:#8d8d96; --ink-inv:#ffffff;
+  --accent:#4356d6; --accent-hov:#4d61e0; --accent-press:#3a4ac2; --accent-text:#4356d6;
+  --accent-soft:rgba(67,86,214,.10); --on-accent:#ffffff;
+  --st-ok:#1a7f37; --st-ok-t:#1a7f37; --st-run:#0969da; --st-warn:#9a6700; --st-warn-t:#9a6700;
+  --st-fail:#cf222e; --st-skip:#57606a; --st-lock:#8250df; --st-block:#bc4c00;
+  --ok-soft:rgba(26,127,55,.10); --run-soft:rgba(9,105,218,.10); --warn-soft:rgba(154,103,0,.11);
+  --fail-soft:rgba(207,34,46,.10); --skip-soft:rgba(87,96,106,.11); --lock-soft:rgba(130,80,223,.11);
+  --block-soft:rgba(188,76,0,.11);
+  --focus:#4356d6; --shadow:0 4px 16px rgba(28,28,32,.13); --shadow-sm:0 1px 5px rgba(28,28,32,.10);
+  --glass-bg:rgba(255,255,255,.60); --glass-bd:rgba(255,255,255,.65); --glass-hi:rgba(255,255,255,.85);
+}
+
+/* ============ 色彩令牌层（候选 B「Atelier」） ============ */
+/* 方向：暖纸白画廊。亮色为默认（收藏与阅读的愉悦优先）；暗色「夜画廊」为完整第二主题。 */
+[data-cand="b"][data-mode="light"] {
+  --bg-page:#f7f5f1; --bg-rail:#efede8; --bg-panel:#fffefb; --bg-raised:#fffefb;
+  --bg-inset:#f1efe9; --bg-canvas:#211f1c; --bg-hover:#f4f2ec; --bg-active:#eae7df;
+  --bg-press:#e5e2d9;
+  --border:#e2ded6; --border-strong:#c9c4b8; --divider:#ece9e2;
+  --ink:#262320; --ink-2:#5d574c; --ink-3:#6f6a59; --ink-dis:#8d8674; --ink-inv:#fffefb;
+  --accent:#0f766e; --accent-hov:#12857c; --accent-press:#0c665f; --accent-text:#0f766e;
+  --accent-soft:rgba(15,118,110,.09); --on-accent:#ffffff;
+  --st-ok:#15803d; --st-ok-t:#15803d; --st-run:#1d4ed8; --st-warn:#a16207; --st-warn-t:#a16207;
+  --st-fail:#b91c1c; --st-skip:#64748b; --st-lock:#7e22ce; --st-block:#c2410c;
+  --ok-soft:rgba(21,128,61,.09); --run-soft:rgba(29,78,216,.09); --warn-soft:rgba(161,98,7,.10);
+  --fail-soft:rgba(185,28,28,.09); --skip-soft:rgba(100,116,139,.10); --lock-soft:rgba(126,34,206,.09);
+  --block-soft:rgba(194,65,12,.09);
+  --focus:#0f766e; --shadow:0 6px 22px rgba(88,80,64,.16), 0 1px 4px rgba(88,80,64,.10);
+  --shadow-sm:0 2px 10px rgba(88,80,64,.12);
+  --glass-bg:rgba(255,254,250,.62); --glass-bd:rgba(255,255,255,.7); --glass-hi:rgba(255,255,255,.9);
+}
+[data-cand="b"][data-mode="dark"] {
+  --bg-page:#191817; --bg-rail:#131211; --bg-panel:#232120; --bg-raised:#2a2826;
+  --bg-inset:#100f0e; --bg-canvas:#0b0a09; --bg-hover:#2f2d2a; --bg-active:#393632;
+  --bg-press:#272523;
+  --border:#3a362f; --border-strong:#54503f; --divider:#302d29;
+  --ink:#ede9e1; --ink-2:#a9a496; --ink-3:#948e80; --ink-dis:#6e695e; --ink-inv:#171614;
+  --accent:#3ecfbd; --accent-hov:#54d9c8; --accent-press:#2fbcab; --accent-text:#3ecfbd;
+  --accent-soft:rgba(62,207,189,.12); --on-accent:#062e2a;
+  --st-ok:#4ade80; --st-ok-t:#5ee9a0; --st-run:#60a5fa; --st-warn:#fbbf24; --st-warn-t:#fcd34d;
+  --st-fail:#f87171; --st-skip:#a5a99e; --st-lock:#c084fc; --st-block:#fdba74;
+  --ok-soft:rgba(74,222,128,.11); --run-soft:rgba(96,165,250,.12); --warn-soft:rgba(251,191,36,.11);
+  --fail-soft:rgba(248,113,113,.12); --skip-soft:rgba(165,169,158,.12); --lock-soft:rgba(192,132,252,.12);
+  --block-soft:rgba(253,186,116,.12);
+  --focus:#3ecfbd; --shadow:0 6px 20px rgba(0,0,0,.5); --shadow-sm:0 2px 9px rgba(0,0,0,.45);
+  --glass-bg:rgba(32,30,28,.58); --glass-bd:rgba(255,255,255,.13); --glass-hi:rgba(255,255,255,.08);
+}
+
+/* ============ 色彩令牌层（候选 C「Duo」） ============ */
+/* 方向：双面人格。书架/阅读器=画廊语言，工作台=车间语言；材质区分层级——
+   浮层（工具窗/阅读器chrome/书架工具栏）为玻璃，核心面板为实体。钴蓝紫强调。 */
+[data-cand="c"][data-mode="light"] {
+  --bg-page:#f3f4f6; --bg-rail:#e9eaee; --bg-panel:#ffffff; --bg-raised:#ffffff;
+  --bg-inset:#eceef1; --bg-canvas:#1b1c20; --bg-hover:#f1f2f5; --bg-active:#e5e7ec;
+  --bg-press:#dfe2e8;
+  --border:#dcdfe4; --border-strong:#c0c4cc; --divider:#e8eaee;
+  --ink:#191a1f; --ink-2:#4d4f58; --ink-3:#5f616b; --ink-dis:#8b8d97; --ink-inv:#ffffff;
+  --accent:#4f46e5; --accent-hov:#5b53ea; --accent-press:#423cc9; --accent-text:#4f46e5;
+  --accent-soft:rgba(79,70,229,.10); --on-accent:#ffffff;
+  --st-ok:#1a7f37; --st-ok-t:#1a7f37; --st-run:#0969da; --st-warn:#9a6700; --st-warn-t:#9a6700;
+  --st-fail:#cf222e; --st-skip:#57606a; --st-lock:#8250df; --st-block:#bc4c00;
+  --ok-soft:rgba(26,127,55,.10); --run-soft:rgba(9,105,218,.10); --warn-soft:rgba(154,103,0,.11);
+  --fail-soft:rgba(207,34,46,.10); --skip-soft:rgba(87,96,106,.11); --lock-soft:rgba(130,80,223,.11);
+  --block-soft:rgba(188,76,0,.11);
+  --focus:#4f46e5; --shadow:0 5px 20px rgba(24,26,38,.14); --shadow-sm:0 2px 8px rgba(24,26,38,.10);
+  --glass-bg:rgba(255,255,255,.58); --glass-bd:rgba(255,255,255,.68); --glass-hi:rgba(255,255,255,.9);
+}
+[data-cand="c"][data-mode="dark"] {
+  --bg-page:#15161a; --bg-rail:#101115; --bg-panel:#1f2026; --bg-raised:#26272e;
+  --bg-inset:#0e0f12; --bg-canvas:#0a0b0d; --bg-hover:#2b2c34; --bg-active:#35363f;
+  --bg-press:#23242b;
+  --border:#32333c; --border-strong:#484a56; --divider:#282931;
+  --ink:#e8e9ee; --ink-2:#a4a6b2; --ink-3:#8d8f9c; --ink-dis:#6c6e7a; --ink-inv:#101014;
+  --accent:#5b5fe8; --accent-hov:#6c70f0; --accent-press:#4b4fd4; --accent-text:#a5b4fc;
+  --accent-soft:rgba(91,95,232,.16); --on-accent:#ffffff;
+  --st-ok:#4ade80; --st-ok-t:#5ee9a0; --st-run:#60a5fa; --st-warn:#fbbf24; --st-warn-t:#fcd34d;
+  --st-fail:#f87171; --st-skip:#a5aab8; --st-lock:#c084fc; --st-block:#fdba74;
+  --ok-soft:rgba(74,222,128,.12); --run-soft:rgba(96,165,250,.13); --warn-soft:rgba(251,191,36,.12);
+  --fail-soft:rgba(248,113,113,.13); --skip-soft:rgba(165,170,184,.12); --lock-soft:rgba(192,132,252,.13);
+  --block-soft:rgba(253,186,116,.13);
+  --focus:#a5b4fc; --shadow:0 6px 18px rgba(0,0,0,.5); --shadow-sm:0 2px 8px rgba(0,0,0,.42);
+  --glass-bg:rgba(26,27,33,.56); --glass-bd:rgba(255,255,255,.14); --glass-hi:rgba(255,255,255,.08);
+}
+
+/* ============ 产品骨架 ============ */
+#app { background:var(--bg-page); color:var(--ink); }
+#app * { font-family:inherit; }
+.rail {
+  flex:0 0 var(--rail-w); background:var(--bg-rail); border-right:1px solid var(--divider);
+  display:flex; flex-direction:column; align-items:center; padding:8px 0; gap:6px; z-index:5;
+}
+.railbtn {
+  width:calc(var(--rail-w) - 12px); padding:7px 2px 6px; border:none; border-radius:var(--rad-md);
+  background:transparent; color:var(--ink-3); cursor:pointer; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:3px; font-size:var(--fs-sm);
+  position:relative;
+}
+.railbtn .ico { font-size:calc(var(--fs-title) + 1px); line-height:1; opacity:.9; }
+.railbtn:hover { background:var(--bg-hover); color:var(--ink-2); }
+.railbtn.on { background:var(--accent-soft); color:var(--accent-text); font-weight:600; }
+.railbtn.on .ico { opacity:1; }
+.railbtn .badge {
+  position:absolute; top:2px; right:6px; background:var(--st-run); color:#fff;
+  font-size:calc(var(--fs-sm) - 2px); padding:0 5px; border-radius:8px; font-weight:600;
+}
+.pagemount { flex:1 1 auto; position:relative; overflow:hidden; }
+.page { position:absolute; inset:0; display:none; overflow:hidden; }
+.page.on { display:flex; flex-direction:column; }
+
+/* ============ 通用控件 ============ */
+.btn {
+  height:var(--ctl-h); padding:0 calc(var(--gap) + 4px); border-radius:var(--rad-md);
+  border:1px solid var(--border); background:var(--bg-panel); color:var(--ink);
+  font-size:var(--fs-base); cursor:pointer; display:inline-flex; align-items:center; gap:5px;
+  white-space:nowrap;
+}
+.btn:hover { background:var(--bg-hover); }
+.btn:active { background:var(--bg-press); }
+.btn.primary { background:var(--accent); border-color:var(--accent); color:var(--on-accent); font-weight:600; }
+.btn.primary:hover { background:var(--accent-hov); }
+.btn.ghost { border-color:transparent; background:transparent; }
+.btn.ghost:hover { background:var(--bg-hover); }
+.btn.danger { color:var(--st-fail); border-color:var(--st-fail); background:transparent; }
+.btn.sm { height:calc(var(--ctl-h) - 6px); padding:0 var(--gap); font-size:var(--fs-sm); }
+.btn:disabled { color:var(--ink-dis); background:var(--bg-inset); border-color:var(--border); cursor:not-allowed; }
+.btn.primary:disabled { background:var(--bg-inset); color:var(--ink-dis); }
+.btn:focus-visible { outline:2px solid var(--focus); outline-offset:1px; }
+.input {
+  height:var(--ctl-h); border:1px solid var(--border); border-radius:var(--rad-md);
+  background:var(--bg-inset); color:var(--ink); padding:0 var(--gap); font-size:var(--fs-base);
+  display:inline-flex; align-items:center; min-width:0; white-space:nowrap; overflow:hidden;
+}
+.input.focus { border-color:var(--accent); outline:2px solid var(--focus); outline-offset:0; background:var(--bg-panel); }
+.badge {
+  display:inline-flex; align-items:center; gap:4px; padding:1px 8px; border-radius:99px;
+  font-size:var(--fs-sm); font-weight:600; white-space:nowrap;
+}
+.dot { width:7px; height:7px; border-radius:50%; flex:0 0 7px; }
+.mono { font-family:"Cascadia Mono","Consolas",monospace; font-variant-numeric:tabular-nums; }
+.tip { color:var(--ink-3); font-size:var(--fs-sm); }
+.ellip { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.ellip-m { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; direction:rtl; text-align:left; }
+
+/* ============ 书架 ============ */
+#page-bookshelf .tb {
+  flex:0 0 auto; height:var(--tb-h); display:flex; align-items:center; gap:var(--gap);
+  padding:0 var(--pad-page); border-bottom:1px solid var(--divider);
+}
+/* C 候选：书架工具栏为玻璃浮层（悬浮于封面墙之上） */
+[data-cand="c"] #page-bookshelf .tb.glassable { border-bottom:none; position:absolute; top:0; left:0; right:0; z-index:6; }
+[data-cand="c"][data-glass="on"] #page-bookshelf .tb.glassable {
+  background:var(--glass-bg);
+  -webkit-backdrop-filter:blur(22px) saturate(1.5); backdrop-filter:blur(22px) saturate(1.5);
+  border-bottom:1px solid var(--glass-bd);
+  box-shadow:inset 0 1px 0 var(--glass-hi), 0 3px 12px rgba(0,0,0,.12);
+}
+[data-cand="c"][data-glass="off"] #page-bookshelf .tb.glassable { background:var(--bg-panel); border-bottom:1px solid var(--divider); }
+[data-cand="c"] #page-bookshelf .shelfbody { padding-top:var(--tb-h); }
+.shelfbody { flex:1 1 auto; display:flex; overflow:hidden; }
+.gridwrap { flex:1 1 auto; overflow:auto; padding:var(--pad-page); }
+.bookgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(var(--card-w),1fr)); gap:var(--gap); }
+[data-cand="a"] { --card-w:132px; }
+[data-cand="b"] { --card-w:158px; }
+[data-cand="c"] { --card-w:148px; }
+.bcard {
+  border-radius:var(--rad-md); border:1px solid var(--border); background:var(--bg-panel);
+  overflow:hidden; cursor:pointer; position:relative;
+}
+[data-cand="b"] .bcard { box-shadow:var(--shadow-sm); border-radius:var(--rad-lg); }
+.bcard:hover { border-color:var(--border-strong); }
+.bcard.sel { border-color:var(--accent); outline:2px solid var(--focus); outline-offset:0; }
+.cover { height:calc(var(--card-w)*1.18); position:relative; display:flex; align-items:center; justify-content:center; }
+.cover .ph { font-size:calc(var(--fs-disp)*1.1); opacity:.5; }
+.cover .fav { position:absolute; top:5px; right:6px; color:var(--st-warn); font-size:var(--fs-base); text-shadow:0 1px 2px rgba(0,0,0,.3); }
+.cover .arch { position:absolute; top:5px; left:6px; }
+.bmeta { padding:calc(var(--gap) - 2px) var(--gap) var(--gap); }
+.bmeta .t { font-weight:600; font-size:var(--fs-base); }
+.bmeta .o { color:var(--ink-3); font-size:var(--fs-sm); margin-top:1px; }
+.bmeta .p { margin-top:5px; height:4px; border-radius:2px; background:var(--bg-inset); overflow:hidden; }
+.bmeta .p i { display:block; height:100%; background:var(--accent); border-radius:2px; }
+.bmeta .pl { margin-top:3px; font-size:calc(var(--fs-sm) - 1px); color:var(--ink-3); }
+/* 详情面板（A/B） */
+.detpanel {
+  flex:0 0 var(--det-w); border-left:1px solid var(--divider); background:var(--bg-panel);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.dethead { padding:var(--pad-page); display:flex; gap:var(--gap); border-bottom:1px solid var(--divider); }
+.detcover {
+  width:74px; height:104px; border-radius:var(--rad-sm); flex:0 0 74px;
+  display:flex; align-items:center; justify-content:center; opacity:.85;
+}
+.dethead .info { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.dethead .info .t { font-size:var(--fs-sub); font-weight:650; }
+.tagrow { display:flex; flex-wrap:wrap; gap:4px; }
+.tag { font-size:var(--fs-sm); color:var(--ink-2); background:var(--bg-inset); border:1px solid var(--border); padding:0 7px; border-radius:99px; }
+.detstats { display:flex; gap:var(--gap); padding:calc(var(--gap) + 2px) var(--pad-page); border-bottom:1px solid var(--divider); }
+.detstats .s { flex:1; }
+.detstats .s b { display:block; font-size:var(--fs-base); }
+.detstats .s span { font-size:var(--fs-sm); color:var(--ink-3); }
+.chapwrap { flex:1 1 auto; overflow:auto; padding:var(--gap) var(--pad-page); }
+.chaprow {
+  display:flex; align-items:center; gap:var(--gap); min-height:var(--row-h);
+  padding:calc(var(--gap)/2) var(--gap); border-radius:var(--rad-md); cursor:pointer;
+  border:1px solid transparent;
+}
+.chaprow:hover { background:var(--bg-hover); }
+.chaprow.sel { background:var(--accent-soft); border-color:var(--accent); }
+.chaprow .no { color:var(--accent-text); font-weight:700; min-width:26px; }
+.chaprow .ct { flex:1 1 0; min-width:0; }
+.chaprow .cs { font-size:var(--fs-sm); color:var(--ink-3); margin-top:1px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chaprow .ops { display:flex; gap:4px; flex:0 0 auto; }
+.chstat { font-size:var(--fs-sm); font-weight:600; }
+/* B：章节大卡（画廊密度） */
+[data-cand="b"] .chaprow { min-height:58px; align-items:center; }
+[data-cand="b"] .chaprow .th {
+  width:44px; height:58px; border-radius:var(--rad-sm); flex:0 0 44px; margin:2px 0;
+}
+/* C：书架两级浏览 */
+.twolevel { flex:1 1 auto; display:none; flex-direction:column; overflow:hidden; }
+[data-cand="c"].shelf-l2 .twolevel { display:flex; }
+[data-cand="c"].shelf-l2 .gridwrap, [data-cand="c"].shelf-l2 .detpanel { display:none; }
+.l2bar { display:flex; align-items:center; gap:var(--gap); padding:var(--gap) var(--pad-page); }
+.l2grid { flex:1 1 auto; overflow:auto; padding:0 var(--pad-page) var(--pad-page); display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:var(--gap); align-content:start; }
+.chapcard {
+  border:1px solid var(--border); background:var(--bg-panel); border-radius:var(--rad-lg);
+  padding:var(--gap) calc(var(--gap) + 2px); display:flex; gap:var(--gap); cursor:pointer;
+}
+.chapcard:hover { border-color:var(--border-strong); box-shadow:var(--shadow-sm); }
+.chapcard .th { width:52px; height:70px; border-radius:var(--rad-sm); flex:0 0 52px; }
+.chapcard .cc { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.chapcard .cc .t { font-weight:600; }
+
+/* ============ 工作台 ============ */
+#page-workbench .wbtb {
+  flex:0 0 auto; height:var(--tb-h); display:flex; align-items:center; gap:var(--gap);
+  padding:0 var(--pad-page); border-bottom:1px solid var(--divider); background:var(--bg-panel);
+}
+.wbtb .crumb { color:var(--ink-2); min-width:0; }
+.wbtb .crumb b { color:var(--ink); }
+.seg { display:inline-flex; border:1px solid var(--border); border-radius:var(--rad-md); overflow:hidden; }
+.seg button {
+  height:calc(var(--ctl-h) - 2px); border:none; background:transparent; color:var(--ink-2);
+  padding:0 var(--gap); cursor:pointer; font-size:var(--fs-base); border-right:1px solid var(--divider);
+}
+.seg button:last-child { border-right:none; }
+.seg button.on { background:var(--accent-soft); color:var(--accent-text); font-weight:600; }
+.wbmain { flex:1 1 auto; display:flex; overflow:hidden; }
+.pagelist {
+  flex:0 0 var(--list-w); border-right:1px solid var(--divider); display:flex; flex-direction:column;
+  background:var(--bg-panel); overflow:hidden;
+}
+.pagelist .ph { padding:var(--gap) var(--gap) calc(var(--gap) - 2px); font-size:var(--fs-sm); color:var(--ink-3); display:flex; justify-content:space-between; align-items:center; }
+.ptiles { flex:1 1 auto; overflow:auto; padding:0 var(--gap) var(--gap); display:grid; grid-template-columns:1fr 1fr; gap:var(--gap); align-content:start; }
+.ptile { border:1px solid var(--border); border-radius:var(--rad-sm); overflow:hidden; cursor:pointer; background:var(--bg-inset); position:relative; }
+.ptile .th { height:56px; position:relative; }
+.ptile .no { position:absolute; top:2px; left:4px; font-size:calc(var(--fs-sm) - 1px); color:#fff; text-shadow:0 1px 2px rgba(0,0,0,.6); font-weight:600; }
+.ptile .st { position:absolute; bottom:2px; right:3px; font-size:calc(var(--fs-sm) - 1px); }
+.ptile .fn { font-size:calc(var(--fs-sm) - 1px); padding:2px 4px; color:var(--ink-3); border-top:1px solid var(--divider); background:var(--bg-panel); }
+.ptile.cur { border-color:var(--accent); outline:2px solid var(--focus); }
+.ptile .lock { position:absolute; top:2px; right:3px; font-size:calc(var(--fs-sm) - 1px); }
+.viewer { flex:1 1 auto; background:var(--bg-canvas); position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+.canvaspage { width:340px; height:520px; background:#e8e4da; border-radius:2px; position:relative; box-shadow:0 4px 24px rgba(0,0,0,.5); transform-origin:center; }
+.panel-art { position:absolute; border:2px solid #2a2a2a; background:#f4f1e8; }
+.bubble { position:absolute; border:1.6px solid #2a2a2a; border-radius:50%; background:#fff; }
+.sfx { position:absolute; font-weight:800; color:#2a2a2a; transform:rotate(-8deg); }
+.roi { position:absolute; border:1.5px solid var(--st-run); border-radius:2px; }
+.roi.sel { border:2px solid var(--accent); background:var(--accent-soft); }
+.roi.proof { border:1.5px dashed var(--st-warn); }
+.roi.locked { border-color:var(--st-lock); }
+.roi .taglbl {
+  position:absolute; top:-9px; left:-1px; font-size:9px; padding:0 4px; border-radius:3px;
+  background:var(--accent); color:#fff; font-weight:600; white-space:nowrap;
+}
+.roi .lockic { position:absolute; top:-8px; right:-1px; font-size:10px; }
+.viewer .vhint { position:absolute; bottom:var(--gap); left:50%; transform:translateX(-50%); }
+/* C：阅读器 chrome 为玻璃；工作台 viewer 浮出工具条同理 */
+.vfloat {
+  position:absolute; top:var(--gap); left:50%; transform:translateX(-50%); z-index:5;
+  display:flex; align-items:center; gap:var(--gap); padding:calc(var(--gap)/2) var(--gap);
+  border-radius:99px; border:1px solid var(--border); background:var(--bg-panel); box-shadow:var(--shadow-sm);
+}
+.inspector {
+  flex:0 0 var(--insp-w); border-left:1px solid var(--divider); background:var(--bg-panel);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.inshead { padding:var(--gap) var(--pad-page); border-bottom:1px solid var(--divider); display:flex; align-items:center; justify-content:space-between; }
+.insbody { flex:1 1 auto; overflow:auto; display:flex; flex-direction:column; }
+.inssec { border-bottom:1px solid var(--divider); padding:var(--gap) var(--pad-page); }
+.inssec > .shead { display:flex; align-items:center; justify-content:space-between; cursor:pointer; font-weight:600; font-size:var(--fs-base); }
+.inssec > .shead .car { color:var(--ink-3); font-size:var(--fs-sm); }
+.inssec .sbody { margin-top:var(--gap); display:flex; flex-direction:column; gap:var(--gap); }
+.inssec.folded .sbody { display:none; }
+.kv { display:flex; gap:var(--gap); font-size:var(--fs-sm); }
+.kv .k { color:var(--ink-3); flex:0 0 64px; }
+.kv .v { color:var(--ink); min-width:0; }
+textarea.tedit {
+  width:100%; min-height:88px; resize:vertical; border:1px solid var(--accent); border-radius:var(--rad-md);
+  background:var(--bg-inset); color:var(--ink); padding:var(--gap); font-size:var(--fs-lg); line-height:1.55;
+  outline:2px solid var(--focus); outline-offset:0; font-family:inherit;
+}
+.dirtyrow { display:flex; align-items:center; gap:var(--gap); }
+.dirtyflag { color:var(--st-warn-t); background:var(--warn-soft); border:1px solid var(--st-warn); font-size:var(--fs-sm); padding:1px 8px; border-radius:99px; font-weight:600; }
+/* 校对工作流重排（候选 A 的 IA 差异）：译文 > OCR > 几何 > 样式/修复 > Lock > Revision */
+.insbody > .inssec { order:5; }
+.inssec.i-trans { order:0; } .inssec.i-ocr { order:1; } .inssec.i-geo { order:2; }
+.inssec.i-style { order:3; } .inssec.i-lock { order:4; }
+[data-cand="b"] .insbody > .inssec, [data-cand="c"] .insbody > .inssec { order:initial; }
+/* B/C 保持 D05 数据模型分组顺序（geo→ocr→trans→style→repair→lock→rev） */
+.lockgrid { display:grid; grid-template-columns:1fr 1fr; gap:4px var(--gap); }
+.lockit { display:flex; align-items:center; gap:5px; font-size:var(--fs-sm); }
+.lockit .st { font-weight:700; }
+.lockit.on .st { color:var(--st-lock); }
+.lockit.off .st { color:var(--ink-3); }
+.taskprog {
+  flex:0 0 auto; height:var(--prog-h); border-top:1px solid var(--divider); background:var(--bg-panel);
+  display:flex; flex-direction:column; padding:var(--gap) var(--pad-page); gap:calc(var(--gap)/1);
+}
+.tp-top { display:flex; align-items:center; gap:var(--gap); }
+.tp-top .name { font-weight:600; min-width:0; }
+.bar { flex:1 1 auto; height:8px; border-radius:4px; background:var(--bg-inset); overflow:hidden; min-width:80px; }
+.bar i { display:block; height:100%; background:linear-gradient(90deg,var(--accent),var(--accent-hov)); border-radius:4px; }
+.steps { display:flex; align-items:center; gap:calc(var(--gap)/2); flex-wrap:nowrap; font-size:var(--fs-sm); color:var(--ink-2); overflow:hidden; }
+.step { display:inline-flex; align-items:center; gap:3px; white-space:nowrap; }
+.step .sym { font-weight:700; }
+.step.done .sym { color:var(--st-ok-t); } .step.run .sym { color:var(--st-run); }
+.step.run { color:var(--ink); font-weight:600; }
+.step.todo { color:var(--ink-3); } .step .arr { color:var(--ink-dis); }
+.tp-mid { display:flex; align-items:center; gap:var(--gap); font-size:var(--fs-sm); color:var(--ink-2); }
+.tp-curpage { display:flex; align-items:center; gap:6px; }
+.tp-thumb { width:26px; height:34px; border-radius:2px; background:linear-gradient(160deg,#cfd6e4,#aeb8cc); border:1px solid var(--border); }
+.counts { display:flex; gap:var(--gap); }
+.cnt { display:inline-flex; align-items:center; gap:4px; cursor:pointer; border:none; background:transparent; color:var(--ink-2); font-size:var(--fs-sm); padding:2px 4px; border-radius:var(--rad-sm); }
+.cnt:hover { background:var(--bg-hover); }
+.cnt b { font-weight:700; }
+.cnt.ok b { color:var(--st-ok-t); } .cnt.fail b { color:var(--st-fail); } .cnt.skip b { color:var(--st-skip); }
+.cnt.wait b { color:var(--ink-2); } .cnt.block b { color:var(--st-block); }
+.tp-ctl { display:flex; gap:var(--gap); align-items:center; margin-left:auto; }
+
+/* ============ 阅读器 ============ */
+#page-reader { background:var(--bg-canvas); }
+#page-reader .rtb {
+  flex:0 0 auto; height:var(--tb-h); display:flex; align-items:center; gap:var(--gap);
+  padding:0 var(--pad-page); background:var(--bg-panel); border-bottom:1px solid var(--divider);
+}
+#page-reader .rbody { flex:1 1 auto; position:relative; overflow:hidden; display:flex; align-items:center; justify-content:center; }
+/* C：阅读器 chrome 玻璃化 */
+[data-cand="c"][data-glass="on"] #page-reader .rtb {
+  background:var(--glass-bg); border-bottom:1px solid var(--glass-bd);
+  -webkit-backdrop-filter:blur(22px) saturate(1.5); backdrop-filter:blur(22px) saturate(1.5);
+  box-shadow:inset 0 1px 0 var(--glass-hi);
+}
+.readerpage { width:400px; height:600px; background:#efe9dc; position:relative; box-shadow:0 6px 30px rgba(0,0,0,.55); }
+.rfloat {
+  position:absolute; bottom:calc(var(--gap) + 6px); left:50%; transform:translateX(-50%); z-index:6;
+  display:flex; align-items:center; gap:var(--gap); padding:calc(var(--gap)/2) calc(var(--gap) + 2px);
+  border-radius:99px; border:1px solid var(--border); background:var(--bg-panel); box-shadow:var(--shadow-sm);
+}
+[data-cand="c"][data-glass="on"] .rfloat {
+  background:var(--glass-bg); border-color:var(--glass-bd);
+  -webkit-backdrop-filter:blur(22px) saturate(1.5); backdrop-filter:blur(22px) saturate(1.5);
+  box-shadow:inset 0 1px 0 var(--glass-hi), 0 4px 16px rgba(0,0,0,.3);
+}
+.modeflag { position:absolute; top:var(--gap); right:var(--gap); z-index:5; }
+
+/* ============ 设置 ============ */
+#page-settings .stbody { flex:1 1 auto; display:flex; overflow:hidden; }
+.catlist {
+  flex:0 0 176px; border-right:1px solid var(--divider); background:var(--bg-rail);
+  overflow:auto; padding:var(--gap);
+}
+.cat {
+  display:block; width:100%; text-align:left; padding:calc(var(--gap) - 2px) var(--gap); margin-bottom:2px;
+  border:none; border-radius:var(--rad-md); background:transparent; color:var(--ink-2);
+  font-size:var(--fs-base); cursor:pointer;
+}
+.cat:hover { background:var(--bg-hover); }
+.cat.on { background:var(--accent-soft); color:var(--accent-text); font-weight:600; }
+.stcontent { flex:1 1 auto; overflow:auto; padding:var(--pad-page) calc(var(--pad-page) + 4px); }
+.sth { font-size:var(--fs-title); font-weight:650; margin-bottom:2px; }
+.stsub { color:var(--ink-3); font-size:var(--fs-sm); margin-bottom:var(--pad-page); }
+.provrow {
+  display:flex; align-items:center; gap:var(--gap); padding:calc(var(--gap) + 1px) var(--gap);
+  border:1px solid var(--border); border-radius:var(--rad-md); background:var(--bg-panel); margin-bottom:var(--gap);
+}
+.provrow:hover { border-color:var(--border-strong); }
+.provrow .pic { width:30px; height:30px; border-radius:var(--rad-sm); flex:0 0 30px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; font-size:var(--fs-base); }
+.provrow .pc { flex:1; min-width:0; }
+.provrow .pc .t { font-weight:600; }
+.provrow .pc .s { font-size:var(--fs-sm); color:var(--ink-3); margin-top:1px; }
+.ovr { margin-top:calc(var(--gap) + 2px); border:1px solid var(--border); border-radius:var(--rad-md); background:var(--bg-panel); padding:var(--gap) calc(var(--gap) + 2px); }
+.ovr .orow { display:flex; align-items:center; gap:var(--gap); padding:calc(var(--gap)/2) 0; font-size:var(--fs-sm); border-bottom:1px dashed var(--divider); }
+.ovr .orow:last-child { border-bottom:none; }
+.ovr .orow .k { flex:0 0 150px; color:var(--ink-2); }
+.srcpill { font-size:var(--fs-sm); padding:0 7px; border-radius:99px; border:1px solid var(--border); background:var(--bg-inset); color:var(--ink-2); white-space:nowrap; }
+.srcpill.ch { border-color:var(--st-run); color:var(--st-run); background:var(--run-soft); }
+
+/* ============ 玻璃浮窗体系（候选 C；A/B 同结构实心） ============ */
+.fwin {
+  position:absolute; z-index:20; border-radius:var(--rad-win); border:1px solid var(--border);
+  background:var(--bg-panel); box-shadow:var(--shadow); display:flex; flex-direction:column; overflow:hidden;
+}
+.fwin .fhead {
+  display:flex; align-items:center; gap:var(--gap); padding:calc(var(--gap) + 1px) var(--pad-page);
+  border-bottom:1px solid var(--divider); font-weight:600;
+}
+.fwin .fhead .spacer { flex:1; }
+.fwin .fbody { flex:1 1 auto; overflow:auto; padding:var(--pad-page); display:flex; flex-direction:column; gap:var(--gap); }
+.fwin .ffoot { display:flex; gap:var(--gap); justify-content:flex-end; padding:var(--gap) var(--pad-page); border-top:1px solid var(--divider); background:var(--bg-inset); }
+[data-cand="c"][data-glass="on"] .fwin.glass {
+  background:var(--glass-bg); border-color:var(--glass-bd);
+  -webkit-backdrop-filter:blur(26px) saturate(1.6); backdrop-filter:blur(26px) saturate(1.6);
+  box-shadow:inset 0 1px 0 var(--glass-hi), 0 12px 40px rgba(0,0,0,.35);
+}
+/* 玻璃不直接承载裸文本：标题与正文用 scrim 胶囊承托 */
+[data-cand="c"][data-glass="on"] .fwin.glass .fhead, [data-cand="c"][data-glass="on"] .fwin.glass .ffoot {
+  background:var(--scrim, rgba(127,127,127,.0));
+  background:color-mix(in srgb, var(--bg-panel) 55%, transparent);
+  border-color:var(--divider);
+}
+[data-cand="c"][data-glass="on"] .fwin.glass .fbody { background:color-mix(in srgb, var(--bg-panel) 55%, transparent); }
+.trow { display:flex; align-items:center; gap:var(--gap); font-size:var(--fs-sm); padding:calc(var(--gap)/2) 0; border-bottom:1px dashed var(--divider); }
+.trow:last-child { border-bottom:none; }
+.trow .mono { font-size:var(--fs-sm); }
+.lvl { font-weight:700; }
+.secttl { font-size:var(--fs-sm); color:var(--ink-3); font-weight:600; margin-top:calc(var(--gap)/2); }
+
+/* ============ 状态矩阵页（评审专用全览，非产品页面） ============ */
+#page-states { background:var(--bg-page); overflow:auto; padding:var(--pad-page) calc(var(--pad-page) + 6px); }
+#page-states.on { display:block; }
+.stgrid { display:grid; grid-template-columns:1fr 1fr; gap:var(--pad-page); }
+.stcard { border:1px solid var(--border); border-radius:var(--rad-lg); background:var(--bg-panel); padding:var(--pad-page); }
+.stcard h3 { font-size:var(--fs-sub); margin-bottom:var(--gap); }
+.stcard table { width:100%; border-collapse:collapse; font-size:var(--fs-sm); }
+.stcard td, .stcard th { text-align:left; padding:4px 6px; border-bottom:1px dashed var(--divider); }
+.stcard th { color:var(--ink-3); font-weight:600; }
+.demo-row { display:flex; gap:var(--gap); flex-wrap:wrap; align-items:center; margin:6px 0; }
+.emptydemo { border:1px dashed var(--border-strong); border-radius:var(--rad-lg); padding:26px; text-align:center; }
+.emptydemo .et { font-size:var(--fs-sub); font-weight:650; margin:8px 0 3px; }
+.emptydemo .ed { color:var(--ink-3); font-size:var(--fs-sm); margin-bottom:var(--gap); }
+.skeleton { height:10px; border-radius:5px; background:linear-gradient(90deg,var(--bg-inset),var(--bg-hover),var(--bg-inset)); background-size:200% 100%; animation:sk 1.4s linear infinite; margin:7px 0; }
+@keyframes sk { from{background-position:200% 0} to{background-position:-200% 0} }
+.banner { display:flex; align-items:center; gap:var(--gap); padding:calc(var(--gap) - 1px) var(--gap); border-radius:var(--rad-md); font-size:var(--fs-base); }
+.banner.err { background:var(--fail-soft); border:1px solid var(--st-fail); color:var(--st-fail); }
+.banner.warn { background:var(--warn-soft); border:1px solid var(--st-warn); color:var(--st-warn-t); }
+.banner.info { background:var(--run-soft); border:1px solid var(--st-run); color:var(--st-run); }
+.a11y-badge { font-size:9px; border:1px solid var(--border-strong); border-radius:3px; padding:0 3px; color:var(--ink-3); vertical-align:middle; margin-left:4px; }
+
+/* 审计输出 */
+#auditOutput { display:none; }
+</style>
+</head>
+<body data-cand="a" data-mode="dark" data-glass="on">
+<div id="reviewbar">
+  <div class="grp"><label>候选</label>
+    <button class="rb on" id="cand-a" onclick="setCand('a')">A · Graphite 石墨</button>
+    <button class="rb" id="cand-b" onclick="setCand('b')">B · Atelier 画廊</button>
+    <button class="rb" id="cand-c" onclick="setCand('c')">C · Duo 双面+玻璃</button>
+  </div>
+  <div class="grp"><label>主题</label>
+    <button class="rb on" id="mode-dark" onclick="setMode('dark')">暗</button>
+    <button class="rb" id="mode-light" onclick="setMode('light')">亮</button>
+  </div>
+  <div class="grp"><label>玻璃</label>
+    <button class="rb on" id="glass-on" onclick="setGlass('on')">开</button>
+    <button class="rb" id="glass-off" onclick="setGlass('off')">关</button>
+  </div>
+  <div class="grp"><label>页面</label>
+    <button class="rb" data-pg="bookshelf" onclick="setPage('bookshelf')">书架</button>
+    <button class="rb" data-pg="workbench" onclick="setPage('workbench')">工作台</button>
+    <button class="rb" data-pg="reader" onclick="setPage('reader')">阅读器</button>
+    <button class="rb" data-pg="settings" onclick="setPage('settings')">设置</button>
+    <button class="rb" data-pg="states" onclick="setPage('states')">状态与样例</button>
+  </div>
+  <div class="grp"><label>DPI</label>
+    <button class="rb" data-dpi="100" onclick="setDpi(100)">100</button>
+    <button class="rb" data-dpi="125" onclick="setDpi(125)">125</button>
+    <button class="rb" data-dpi="150" onclick="setDpi(150)">150</button>
+    <button class="rb" data-dpi="175" onclick="setDpi(175)">175</button>
+    <button class="rb" data-dpi="200" onclick="setDpi(200)">200</button>
+  </div>
+  <div class="grp">
+    <button class="rb" onclick="runAudit()">▶ 审计</button>
+    <span id="audit-sum" style="color:#8b8b94"></span>
+  </div>
+</div>
+
+<div id="stage">
+  <div class="framecap" id="framecap">物理窗口 1280×800 · 内容 DIP 放大</div>
+  <div id="frame">
+    <div id="app" data-cand="a" data-mode="dark" data-glass="on" class="">
+      <!-- 一级导航 Rail（四页常驻，结构钉住 nav-*） -->
+      <nav class="rail">
+        <button class="railbtn on" data-nav="bookshelf"><span class="ico">▤</span><span>书架</span></button>
+        <button class="railbtn" data-nav="workbench"><span class="ico">⛏</span><span>工作台</span><span class="badge">4Hz</span></button>
+        <button class="railbtn" data-nav="reader"><span class="ico">📖</span><span>阅读器</span></button>
+        <button class="railbtn" data-nav="settings"><span class="ico">⚙</span><span>设置</span></button>
+      </nav>
+
+      <div class="pagemount">
+      <!-- ======================== 书架 ======================== -->
+      <section class="page on" id="page-bookshelf" data-page="bookshelf">
+        <div class="tb glassable">
+          <button class="btn primary">＋ 新建作品</button>
+          <button class="btn">导入</button>
+          <span class="input" style="width:200px">🔍 搜索标题 / 原名 / 标签…</span>
+          <span class="input" style="width:96px">标签：全部 ▾</span>
+          <span class="seg"><button>最近</button><button class="on">标题</button></span>
+          <span style="flex:1"></span>
+          <span class="seg"><button>⊞ 网格</button><button>☰ 列表</button></span>
+          <button class="btn ghost" title="回收站">🗑</button>
+        </div>
+        <div class="shelfbody">
+          <div class="gridwrap">
+            <div class="bookgrid">
+              <div class="bcard sel" id="bcard-1">
+                <div class="cover" style="background:linear-gradient(155deg,#5b6d9e,#31405f)"><span class="ph">封面</span><span class="fav">★</span></div>
+                <div class="bmeta"><div class="t ellip">葬送的芙莉莲</div><div class="o ellip">葬送のフリーレン</div>
+                  <div class="p"><i style="width:64%"></i></div><div class="pl">译文 64% · 昨天</div></div>
+              </div>
+              <div class="bcard">
+                <div class="cover" style="background:linear-gradient(155deg,#9e5b5b,#5f3131)"><span class="ph">封面</span><span class="fav">★</span><span class="arch badge" style="background:var(--st-warn);color:var(--ink-inv)">归档</span></div>
+                <div class="bmeta"><div class="t ellip">关于我转生成为史莱姆这件事</div><div class="o ellip">転生したらスライムだった件</div>
+                  <div class="p"><i style="width:28%"></i></div><div class="pl">译文 28% · 3 天前</div></div>
+              </div>
+              <div class="bcard">
+                <div class="cover" style="background:linear-gradient(155deg,#5b9e6e,#315f3d)"><span class="ph">封面</span></div>
+                <div class="bmeta"><div class="t ellip">间谍过家家</div><div class="o ellip">SPY×FAMILY</div>
+                  <div class="p"><i style="width:92%"></i></div><div class="pl">译文 92% · 上周</div></div>
+              </div>
+              <div class="bcard">
+                <div class="cover" style="background:linear-gradient(155deg,#8a6bb8,#4a3a66)"><span class="ph">封面</span></div>
+                <div class="bmeta"><div class="t ellip">我推的孩子</div><div class="o ellip">【推しの子】</div>
+                  <div class="p"><i style="width:8%"></i></div><div class="pl">译文 8% · 4-12</div></div>
+              </div>
+              <div class="bcard">
+                <div class="cover" style="background:linear-gradient(155deg,#b8935b,#665031)"><span class="ph">封面</span><span class="fav">★</span></div>
+                <div class="bmeta"><div class="t ellip">进击的巨人 完全版</div><div class="o ellip">進撃の巨人</div>
+                  <div class="p"><i style="width:100%"></i></div><div class="pl">译文 100% · 6-30</div></div>
+              </div>
+              <div class="bcard">
+                <div class="cover" style="background:linear-gradient(155deg,#5b8d9e,#314d5f)"><span class="ph">封面</span></div>
+                <div class="bmeta"><div class="t ellip">咒术回战</div><div class="o ellip">呪術廻戦</div>
+                  <div class="p"><i style="width:41%"></i></div><div class="pl">译文 41% · 6-02</div></div>
+              </div>
+              <div class="bcard">
+                <div class="cover" style="background:linear-gradient(155deg,#7d7d85,#3c3c44)"><span class="ph">封面</span></div>
+                <div class="bmeta"><div class="t ellip">链锯人 第2部</div><div class="o ellip">チェンソーマン</div>
+                  <div class="p"><i style="width:0%"></i></div><div class="pl">未翻译 · 5-21</div></div>
+              </div>
+              <div class="bcard">
+                <div class="cover" style="background:linear-gradient(155deg,#b85b8d,#5f314d)"><span class="ph">封面</span></div>
+                <div class="bmeta"><div class="t ellip">目隐都市的演绎者</div><div class="o ellip">カゲロウデイズ</div>
+                  <div class="p"><i style="width:55%"></i></div><div class="pl">译文 55% · 4-18</div></div>
+              </div>
+            </div>
+          </div>
+          <!-- A/B：右侧详情面板（C 候选中此面板让位给两级浏览） -->
+          <aside class="detpanel" id="detpanel">
+            <div class="dethead">
+              <div class="detcover" style="background:linear-gradient(155deg,#5b6d9e,#31405f)">封面</div>
+              <div class="info">
+                <div class="t ellip">葬送的芙莉莲</div>
+                <div class="ellip tip">葬送のフリーレン</div>
+                <div class="tagrow"><span class="tag">奇幻</span><span class="tag">冒险</span><span class="tag">＋</span></div>
+                <div class="tip">收藏 ★ · 最近阅读 昨天 23:41</div>
+              </div>
+            </div>
+            <div class="detstats">
+              <div class="s"><b>64%</b><span>译文进度</span></div>
+              <div class="s"><b>38%</b><span>原文进度</span></div>
+              <div class="s"><b>142</b><span>累计页</span></div>
+              <div class="s"><b>21h</b><span>阅读时长</span></div>
+            </div>
+            <div class="chapwrap" id="chapwrap">
+              <div style="display:flex;gap:6px;margin-bottom:6px">
+                <span class="input" style="flex:1;font-size:var(--fs-sm)">新章节标题…</span>
+                <button class="btn sm">新建</button>
+              </div>
+              <div class="chaprow sel">
+                <span class="no mono">37</span>
+                <div class="ct"><div class="t ellip">第37话 一级魔法使试验</div>
+                  <div class="cs">分页 · RTL · 42 页 · <span class="chstat" style="color:var(--st-ok-t)">✓ 已完成 39</span> <span class="chstat" style="color:var(--st-fail)">失败 2</span> <span class="chstat" style="color:var(--st-skip)">跳过 1</span></div></div>
+                <div class="ops"><button class="btn sm primary">进入翻译</button><button class="btn sm">阅读</button></div>
+              </div>
+              <div class="chaprow">
+                <span class="no mono">36</span>
+                <div class="ct"><div class="t ellip">第36话 阿乌拉的作用</div>
+                  <div class="cs">分页 · RTL · 38 页 · <span class="chstat" style="color:var(--st-ok-t)">✓ 已完成</span></div></div>
+                <div class="ops"><button class="btn sm">进入翻译</button><button class="btn sm">阅读</button></div>
+              </div>
+              <div class="chaprow">
+                <span class="no mono">35</span>
+                <div class="ct"><div class="t ellip">第35话 曾与我并肩之人</div>
+                  <div class="cs">分页 · RTL · 40 页 · <span class="chstat" style="color:var(--st-run)">● 翻译中 17/40</span></div></div>
+                <div class="ops"><button class="btn sm">进入翻译</button><button class="btn sm">阅读</button></div>
+              </div>
+              <div class="chaprow">
+                <span class="no mono">34</span>
+                <div class="ct"><div class="t ellip">第34话 使寿命扉之光的长音祭·新年特别增刊修订版</div>
+                  <div class="cs">Webtoon · Vertical · 1 页（长条 1820×96000） · <span class="chstat" style="color:var(--st-lock)">🔒 已锁定 3 页</span></div></div>
+                <div class="ops"><button class="btn sm">进入翻译</button><button class="btn sm">阅读</button></div>
+              </div>
+              <div class="chaprow" style="color:var(--ink-dis)">
+                <span class="no mono">33</span>
+                <div class="ct"><div class="t ellip">第33话 昔日的英雄</div>
+                  <div class="cs">分页 · RTL · 36 页 · ✓ 已完成</div></div>
+                <div class="ops"><button class="btn sm" disabled>编辑</button><button class="btn sm" disabled>⋯</button></div>
+              </div>
+            </div>
+          </aside>
+          <!-- C：书 → 章 两级浏览 -->
+          <div class="twolevel" id="twolevel">
+            <div class="l2bar">
+              <button class="btn sm" onclick="shelfL2(false)">← 返回书架</button>
+              <div style="font-size:var(--fs-title);font-weight:650">葬送的芙莉莲</div>
+              <span class="tip ellip">葬送のフリーレン · 42 章 · 译文 64%</span>
+              <span style="flex:1"></span>
+              <button class="btn sm">＋ 新建章节</button>
+              <button class="btn sm">编辑资料</button>
+            </div>
+            <div class="l2grid">
+              <div class="chapcard sel"><div class="th" style="background:linear-gradient(160deg,#6b7ba8,#3a4666)"></div>
+                <div class="cc"><div class="t ellip">第37话 一级魔法使试验</div>
+                  <div class="tip">分页 · RTL · 42 页</div>
+                  <div><span class="chstat" style="color:var(--st-ok-t)">✓ 39</span> <span class="chstat" style="color:var(--st-fail)">失败 2</span> <span class="chstat" style="color:var(--st-skip)">跳过 1</span></div>
+                  <div style="display:flex;gap:6px;margin-top:2px"><button class="btn sm primary">进入翻译</button><button class="btn sm">阅读</button></div></div></div>
+              <div class="chapcard"><div class="th" style="background:linear-gradient(160deg,#a89a6b,#66603a)"></div>
+                <div class="cc"><div class="t ellip">第36话 阿乌拉的作用</div>
+                  <div class="tip">分页 · RTL · 38 页</div><div><span class="chstat" style="color:var(--st-ok-t)">✓ 已完成</span></div>
+                  <div style="display:flex;gap:6px;margin-top:2px"><button class="btn sm">进入翻译</button><button class="btn sm">阅读</button></div></div></div>
+              <div class="chapcard"><div class="th" style="background:linear-gradient(160deg,#6ba8a0,#3a6660)"></div>
+                <div class="cc"><div class="t ellip">第35话 曾与我并肩之人</div>
+                  <div class="tip">分页 · RTL · 40 页</div><div><span class="chstat" style="color:var(--st-run)">● 翻译中 17/40</span></div>
+                  <div style="display:flex;gap:6px;margin-top:2px"><button class="btn sm">进入翻译</button><button class="btn sm">阅读</button></div></div></div>
+              <div class="chapcard"><div class="th" style="background:linear-gradient(160deg,#a86b8d,#663a4d)"></div>
+                <div class="cc"><div class="t ellip">第34话 使寿命扉之光的长音祭·新年特别增刊修订版</div>
+                  <div class="tip ellip-m mono">ch0034_webtoon_long_strip_master_v2.png · 1 页（1820×96000）</div>
+                  <div><span class="chstat" style="color:var(--st-lock)">🔒 已锁定 3 页</span></div>
+                  <div style="display:flex;gap:6px;margin-top:2px"><button class="btn sm">进入翻译</button><button class="btn sm">阅读</button></div></div></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================== 工作台 ======================== -->
+      <section class="page" id="page-workbench" data-page="workbench">
+        <div class="wbtb">
+          <span class="crumb ellip" style="max-width:210px"><b>葬送的芙莉莲</b> / 第37话</span>
+          <span class="seg">
+            <button>◀ 上一页</button><button>下一页 ▶</button>
+          </span>
+          <span class="seg"><button>原图</button><button>修复图</button><button class="on">译图</button><button>对比</button></span>
+          <span class="tip mono" style="font-size:var(--fs-sm)">100%</span>
+          <span style="flex:1"></span>
+          <button class="btn">☐ 框选 Region <kbd class="a11y-badge">R</kbd></button>
+          <button class="btn primary">全部翻译</button>
+          <button class="btn">跳过已译</button>
+          <button class="btn ghost" title="更多批处理">⋯</button>
+        </div>
+        <div class="wbmain">
+          <aside class="pagelist">
+            <div class="ph"><span>页面 40</span><span class="tip">多选 Ctrl/Shift</span></div>
+            <div class="ptiles">
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#c9cede,#98a2ba)"><span class="no">01</span><span class="st" style="color:#39d98a">✓</span></div><div class="fn ellip-m">001.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#d8d0c0,#a89a80)"><span class="no">02</span><span class="st" style="color:#39d98a">✓</span></div><div class="fn ellip-m">002.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#c0ccd8,#8090a8)"><span class="no">03</span><span class="lock">🔒</span><span class="st" style="color:#39d98a">✓</span></div><div class="fn ellip-m">003.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#d4c9c0,#a89080)"><span class="no">04</span><span class="st" style="color:#39d98a">✓</span></div><div class="fn ellip-m">004.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#b8c8d8,#7088a0);box-shadow:inset 0 0 0 2px var(--st-run)"><span class="no">05</span><span class="st">⏳</span></div><div class="fn ellip-m">005.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#ccc4b8,#9a9080)"><span class="no">06</span><span class="st" style="color:#39d98a">✓</span></div><div class="fn ellip-m">006.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#c8c8c8,#888)"><span class="no">07</span><span class="st" style="color:var(--st-skip)">↷</span></div><div class="fn ellip-m">007_cover_variant.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#d8b8b8,#a87070)"><span class="no">08</span><span class="st" style="color:var(--st-fail);font-weight:700">!</span></div><div class="fn ellip-m">008.jpg</div></div>
+              <div class="ptile cur"><div class="th" style="background:linear-gradient(150deg,#d0c8b0,#a09878)"><span class="no">09</span><span class="st" style="color:#39d98a">✓</span></div><div class="fn ellip-m">009.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#b8c0b0,#788870)"><span class="no">10</span><span class="st" style="color:var(--st-warn)">△</span></div><div class="fn ellip-m">010.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#2a2a2e,#1a1a1e)"></div><div class="fn ellip-m">011.jpg</div></div>
+              <div class="ptile"><div class="th" style="background:linear-gradient(150deg,#2a2a2e,#1a1a1e)"></div><div class="fn ellip-m">012.jpg</div></div>
+            </div>
+          </aside>
+          <div class="viewer">
+            <div class="canvaspage">
+              <div class="panel-art" style="left:10px;top:10px;right:10px;height:150px"></div>
+              <div class="panel-art" style="left:10px;top:170px;width:155px;height:170px"></div>
+              <div class="panel-art" style="left:175px;top:170px;right:10px;height:82px"></div>
+              <div class="panel-art" style="left:175px;top:262px;right:10px;height:78px"></div>
+              <div class="panel-art" style="left:10px;top:350px;right:10px;height:160px"></div>
+              <div class="bubble" style="left:26px;top:22px;width:96px;height:44px"></div>
+              <div class="bubble" style="left:210px;top:120px;width:100px;height:40px"></div>
+              <div class="bubble" style="left:30px;top:370px;width:110px;height:52px"></div>
+              <div class="sfx" style="left:220px;top:390px;font-size:22px">ドンッ</div>
+              <!-- Region overlay：选中（翻译已改·未保存） -->
+              <div class="roi sel" style="left:26px;top:22px;width:96px;height:44px"><span class="taglbl">R3 · 译文</span></div>
+              <!-- 需校对 -->
+              <div class="roi proof" style="left:210px;top:120px;width:100px;height:40px"><span class="taglbl" style="background:var(--st-warn)">R7 · 需校对</span></div>
+              <!-- 锁定 -->
+              <div class="roi locked" style="left:30px;top:370px;width:110px;height:52px"><span class="taglbl" style="background:var(--st-lock)">R2 · 锁定</span><span class="lockic">🔒</span></div>
+            </div>
+            <div class="vfloat">
+              <span class="tip mono">009.jpg · 1400×2000</span>
+              <span class="dot" style="background:var(--st-lock)"></span><span class="tip">2 个 Lock</span>
+              <span class="dot" style="background:var(--st-warn)"></span><span class="tip">1 需校对</span>
+              <span style="flex:1"></span>
+              <button class="btn sm">适合窗口</button>
+              <button class="btn sm ghost">⊞ Overlay</button>
+            </div>
+          </div>
+          <aside class="inspector">
+            <div class="inshead">
+              <span style="font-weight:650">Region <span class="mono">R3</span></span>
+              <span class="dirtyflag" id="inspectorDirtyBadge">● 未保存</span>
+            </div>
+            <div class="insbody">
+              <!-- 校对工作流：译文置顶（候选 A）；B/C 为 D05 数据分组顺序 -->
+              <div class="inssec i-trans">
+                <div class="shead">译文<span class="car">▾</span></div>
+                <div class="sbody">
+                  <textarea class="tedit" spellcheck="false">我出发了。要去完成那份迟到了五十年的约定。</textarea>
+                  <div class="dirtyrow">
+                    <button class="btn sm primary">保存</button>
+                    <button class="btn sm">放弃</button>
+                    <span style="flex:1"></span>
+                    <button class="btn sm">重译</button>
+                    <button class="btn sm danger">重全翻译…</button>
+                  </div>
+                  <div class="kv"><span class="k">TM</span><span class="v">Exact 命中 · 置信 0.96 · 来自第12话</span></div>
+                  <div class="kv"><span class="k">约束</span><span class="v">术语「フリーレン→芙莉莲」已应用</span></div>
+                </div>
+              </div>
+              <div class="inssec i-ocr">
+                <div class="shead">OCR<span class="car">▾</span></div>
+                <div class="sbody">
+                  <div class="kv"><span class="k">原文</span><span class="v">行ってくる。五十年越しの約束、果たしに行くから。</span></div>
+                  <div class="kv"><span class="k">Provider</span><span class="v">manga_ocr · 置信 0.94</span></div>
+                  <div class="kv"><span class="k">时间</span><span class="v mono">09-19 10:42</span></div>
+                </div>
+              </div>
+              <div class="inssec i-geo">
+                <div class="shead">基本<span class="car">▸</span></div>
+                <div class="sbody">
+                  <div class="kv"><span class="k">类型</span><span class="v">SPEECH · 阅读序 3</span></div>
+                  <div class="kv"><span class="k">BBox</span><span class="v mono">52,50 96×44</span></div>
+                </div>
+              </div>
+              <div class="inssec i-style folded">
+                <div class="shead">样式<span class="car">▸</span></div>
+                <div class="sbody">
+                  <div class="kv"><span class="k">字号</span><span class="v">自动 28 · 偏移 <span class="mono">+2</span> → 30</span></div>
+                  <div class="kv"><span class="k">字体</span><span class="v">思源黑体 Bold</span></div>
+                </div>
+              </div>
+              <div class="inssec i-lock">
+                <div class="shead">Lock 与保护<span class="car">▾</span></div>
+                <div class="sbody">
+                  <div class="lockgrid">
+                    <span class="lockit off"><span class="st">○</span>Page Lock</span>
+                    <span class="lockit off"><span class="st">○</span>Region Lock</span>
+                    <span class="lockit off"><span class="st">○</span>翻译 Lock</span>
+                    <span class="lockit off"><span class="st">○</span>修复 Lock</span>
+                  </div>
+                  <div class="tip">人工编辑保存后自动置「翻译 Lock」，防后台覆盖；Revision 自动留档。</div>
+                </div>
+              </div>
+              <div class="inssec folded" style="order:6">
+                <div class="shead">Revision<span class="car">▸</span></div>
+                <div class="sbody">
+                  <div class="kv"><span class="k">历史</span><span class="v"><button class="btn sm">查看 4 个版本</button></span></div>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+        <div class="taskprog">
+          <div class="tp-top">
+            <span class="name ellip" style="max-width:300px" id="taskProgressTitle">第37话 · 全部翻译（跳过已翻译）</span>
+            <div class="bar"><i style="width:68%"></i></div>
+            <b class="mono" id="taskProgressPercent">68%</b>
+            <span class="badge" style="background:var(--run-soft);color:var(--st-run)" id="taskProgressStatus">● 翻译中</span>
+          </div>
+          <div class="steps">
+            <span class="step done"><span class="sym">✓</span>检测</span><span class="arr">→</span>
+            <span class="step done"><span class="sym">✓</span>OCR</span><span class="arr">→</span>
+            <span class="step done"><span class="sym">✓</span>配色</span><span class="arr">→</span>
+            <span class="step done"><span class="sym">✓</span>术语</span><span class="arr">→</span>
+            <span class="step run"><span class="sym">●</span>翻译</span><span class="arr">→</span>
+            <span class="step todo"><span class="sym">○</span>修复</span><span class="arr">→</span>
+            <span class="step todo"><span class="sym">○</span>渲染</span><span class="arr">→</span>
+            <span class="step todo"><span class="sym">○</span>保存</span>
+          </div>
+          <div class="tp-mid">
+            <span class="tp-curpage"><span class="tp-thumb"></span>当前 <b class="mono">23/40</b> <span class="ellip-m mono tip" style="max-width:150px">023_kesshen_hyourgan_v2.jpg</span></span>
+            <span class="counts">
+              <button class="cnt ok">✓ 完成 <b>27</b></button>
+              <button class="cnt fail" id="statFailed">! 失败 <b>2</b></button>
+              <button class="cnt block">⊘ 阻塞 <b>1</b></button>
+              <button class="cnt skip">↷ 跳过 <b>4</b></button>
+              <button class="cnt wait" id="statWaiting">○ 等待 <b>6</b></button>
+            </span>
+            <span class="tp-ctl">
+              <button class="btn sm" id="btnPauseRun">⏸ 暂停</button>
+              <button class="btn sm" id="btnStopRun">■ 停止</button>
+              <button class="btn sm" disabled id="btnContinueRun">▶ 继续</button>
+              <button class="btn sm ghost" onclick="toggleWin('win-taskdetail')">任务详情 ↗</button>
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================== 阅读器 ======================== -->
+      <section class="page" id="page-reader" data-page="reader">
+        <div class="rtb">
+          <span class="ellip" style="max-width:230px;font-weight:600" id="readerChapterTitle">葬送的芙莉莲 · 第37话 一级魔法使试验</span>
+          <span class="seg"><button>原图</button><button class="on" id="readerModeTranslated">译图</button></span>
+          <span class="seg"><button>RTL</button><button>LTR</button><button>竖条</button></span>
+          <span style="flex:1"></span>
+          <span class="tip" id="readerProgress">23 / 42 · 55%</span>
+          <button class="btn sm" id="readerPreviousPage">◀</button>
+          <button class="btn sm" id="readerNextPage">▶</button>
+          <button class="btn sm">继续上次</button>
+          <button class="btn sm">导出</button>
+        </div>
+        <div class="rbody">
+          <div class="readerpage">
+            <div class="panel-art" style="left:12px;top:12px;right:12px;height:190px"></div>
+            <div class="panel-art" style="left:12px;top:212px;width:180px;height:200px"></div>
+            <div class="panel-art" style="left:202px;top:212px;right:12px;height:96px"></div>
+            <div class="panel-art" style="left:202px;top:318px;right:12px;height:94px"></div>
+            <div class="panel-art" style="left:12px;top:422px;right:12px;height:166px"></div>
+            <div class="bubble" style="left:30px;top:26px;width:120px;height:52px"></div>
+            <div class="bubble" style="left:250px;top:150px;width:110px;height:46px"></div>
+            <div class="sfx" style="left:240px;top:470px;font-size:24px">ゴゴゴ</div>
+            <div style="position:absolute;left:34px;top:34px;width:112px;height:38px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#333">我要去赴那个约。</div>
+            <div style="position:absolute;left:254px;top:158px;width:102px;height:34px;display:flex;align-items:center;justify-content:center;font-size:12px;color:#333">五十年前的约定…</div>
+          </div>
+          <span class="modeflag badge" style="background:var(--accent);color:var(--on-accent)">译图 · Translated</span>
+          <div class="rfloat">
+            <button class="btn sm ghost" id="readerModeOriginal" title="原图/译图">▤</button>
+            <span class="mono tip">23/42</span>
+            <input type="range" style="width:130px" value="55">
+            <button class="btn sm ghost" title="章节目录">☰</button>
+            <button class="btn sm ghost" title="阅读设置">Aa</button>
+            <button class="btn sm ghost" title="快捷键">?</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================== 设置 ======================== -->
+      <section class="page" id="page-settings" data-page="settings">
+        <div class="stbody">
+          <nav class="catlist" id="settingsCategoryList">
+            <button class="cat on">Provider</button>
+            <button class="cat">网络 / 代理</button>
+            <button class="cat">OCR</button>
+            <button class="cat">翻译</button>
+            <button class="cat">图片修复</button>
+            <button class="cat">排版样式</button>
+            <button class="cat">模型 / GPU</button>
+            <button class="cat">任务 / 并发</button>
+            <button class="cat">缓存 / Revision</button>
+            <button class="cat">回收站</button>
+            <button class="cat">备份 / 恢复</button>
+            <button class="cat">Plugin / Hooks</button>
+          </nav>
+          <div class="stcontent">
+            <div class="sth">Provider</div>
+            <div class="stsub">同一 Provider 可建多个 Profile；凭据存于 Windows 凭据管理器，界面不明文展示。</div>
+            <div class="provrow">
+              <span class="pic" style="background:#3a3f52">DS</span>
+              <div class="pc"><div class="t">DeepSeek 主力 <span class="a11y-badge">默认</span></div>
+                <div class="s">OpenAI 兼容 · translation · deepseek-chat · 网络：全局默认</div></div>
+              <span class="badge" style="background:var(--ok-soft);color:var(--st-ok-t)"><span class="dot" style="background:var(--st-ok)"></span>已连接</span>
+              <label style="display:flex;align-items:center;gap:4px;font-size:var(--fs-sm);color:var(--ink-2)"><input type="checkbox" checked>启用</label>
+              <button class="btn sm">测试</button><button class="btn sm">编辑</button><button class="btn sm ghost">⋯</button>
+            </div>
+            <div class="provrow">
+              <span class="pic" style="background:#7a4a3a">SK</span>
+              <div class="pc"><div class="t">本地 Sakura</div>
+                <div class="s">本地服务 · translation · http://127.0.0.1:8080 · 监控：健康/就绪</div></div>
+              <span class="badge" style="background:var(--fail-soft);color:var(--st-fail)"><span class="dot" style="background:var(--st-fail)"></span>未运行</span>
+              <label style="display:flex;align-items:center;gap:4px;font-size:var(--fs-sm);color:var(--ink-2)"><input type="checkbox" checked>启用</label>
+              <button class="btn sm">测试</button><button class="btn sm">编辑</button><button class="btn sm ghost">⋯</button>
+            </div>
+            <div class="provrow">
+              <span class="pic" style="background:#3a5a4a">VL</span>
+              <div class="pc"><div class="t">Vision OCR · GPT-4o 兼容</div>
+                <div class="s">OpenAI 兼容 · vision_ocr · 将向远程服务发送页面图片 <span class="a11y-badge">隐私</span></div></div>
+              <span class="badge" style="background:var(--skip-soft);color:var(--ink-2)"><span class="dot" style="background:var(--st-skip)"></span>未测试</span>
+              <label style="display:flex;align-items:center;gap:4px;font-size:var(--fs-sm);color:var(--ink-2)"><input type="checkbox">启用</label>
+              <button class="btn sm">测试</button><button class="btn sm">编辑</button><button class="btn sm ghost">⋯</button>
+            </div>
+            <button class="btn">＋ 新建 Profile</button>
+            <div class="ovr">
+              <div class="secttl">覆盖来源（任意值都说明它从哪一层来）</div>
+              <div class="orow"><span class="k">OCR Provider</span><span class="v">paddleocr_korean</span><span class="srcpill ch">来源：章节设置</span><button class="btn sm ghost">改用全局</button></div>
+              <div class="orow"><span class="k">翻译 Provider</span><span class="v">DeepSeek 主力</span><span class="srcpill">来源：全局</span></div>
+              <div class="orow"><span class="k">修复路线</span><span class="v">Anime LaMa</span><span class="srcpill" style="border-color:var(--st-warn);color:var(--st-warn-t);background:var(--warn-soft)">仅本次任务</span></div>
+            </div>
+            <div class="banner err" style="margin-top:var(--gap)">⚠ 本地 Sakura 未运行 — 本地翻译不可用，任务将改用已启用的远程 Provider 或阻塞。<button class="btn sm" style="margin-left:auto">查看原因</button><button class="btn sm ghost">✕</button></div>
+          </div>
+        </div>
+        <!-- 危险操作确认（Modal 类） -->
+        <div class="fwin" id="win-danger" style="right:36px;bottom:40px;width:430px">
+          <div class="fhead"><span>⚠ 关闭 TLS 证书验证</span><span class="spacer"></span><button class="btn sm ghost">✕</button></div>
+          <div class="fbody">
+            <div style="font-size:var(--fs-base);line-height:1.6">将影响什么：<b>所有远程请求不再校验服务器证书</b>，可能被中间人窃听或篡改，包括凭据与漫画内容。<br>
+            是否可恢复：可随时重新开启。<br>
+            是否影响用户原始文件：不影响（源文件不参与网络传输）。</div>
+          </div>
+          <div class="ffoot"><button class="btn">取消</button><button class="btn danger">我已了解风险，关闭验证</button></div>
+        </div>
+      </section>
+
+      <!-- ======================== 状态与样例（评审专用，非产品页面） ======================== -->
+      <section class="page" id="page-states" data-page="states">
+        <div class="stgrid">
+          <div class="stcard">
+            <h3>PipelineRun 状态机（9 态）与面板控制</h3>
+            <table>
+              <tr><th>状态</th><th>徽标</th><th>暂停/停止/继续</th><th>附加动作</th></tr>
+              <tr><td>Pending 等待</td><td><span class="badge" style="background:var(--bg-inset);color:var(--ink-2)"><span class="dot" style="background:var(--ink-3)"></span>等待</span></td><td class="mono">✓ / ✓ / ✕</td><td>—</td></tr>
+              <tr><td>Running 运行中</td><td><span class="badge" style="background:var(--run-soft);color:var(--st-run)"><span class="dot" style="background:var(--st-run)"></span>运行中</span></td><td class="mono">✓ / ✓ / ✕</td><td>—</td></tr>
+              <tr><td>Paused 已暂停</td><td><span class="badge" style="background:var(--bg-inset);color:var(--ink-2)">⏸ 已暂停</span></td><td class="mono">✕ / ✓ / ✓</td><td>—</td></tr>
+              <tr><td>Blocked 阻塞</td><td><span class="badge" style="background:var(--block-soft);color:var(--st-block)"><span class="dot" style="background:var(--st-block)"></span>阻塞 1</span></td><td class="mono">✕ / ✓ / ✕</td><td>查看原因 · 重新规划</td></tr>
+              <tr><td>Interrupted 中断</td><td><span class="badge" style="background:var(--warn-soft);color:var(--st-warn-t)">⚠ 已中断</span></td><td class="mono">✕ / ✕ / ✕</td><td>继续 / 重新开始 / 放弃</td></tr>
+              <tr><td>Completed 完成</td><td><span class="badge" style="background:var(--ok-soft);color:var(--st-ok-t)">✓ 已完成</span></td><td class="mono">✕ / ✕ / ✕</td><td>—</td></tr>
+              <tr><td>CompletedWithFailures</td><td><span class="badge" style="background:var(--warn-soft);color:var(--st-warn-t)">✓! 已完成（有失败）</span></td><td class="mono">✕ / ✕ / ✕</td><td>查看失败 · 重试失败页</td></tr>
+              <tr><td>Failed 失败</td><td><span class="badge" style="background:var(--fail-soft);color:var(--st-fail)">! 失败</span></td><td class="mono">✕ / ✕ / ✕</td><td>查看错误</td></tr>
+              <tr><td>Cancelled 已停止</td><td><span class="badge" style="background:var(--skip-soft);color:var(--ink-2)">■ 已停止</span></td><td class="mono">✕ / ✕ / ✕</td><td>保留已提交成果</td></tr>
+            </table>
+          </div>
+          <div class="stcard">
+            <h3>Page / Region 状态与 Lock（字形+颜色+文本 三重编码）</h3>
+            <div class="demo-row">
+              <span class="badge" style="background:var(--bg-inset);color:var(--ink-2)"><span class="dot" style="background:var(--ink-3)"></span>○ 等待</span>
+              <span class="badge" style="background:var(--run-soft);color:var(--st-run)"><span class="dot" style="background:var(--st-run)"></span>● 处理中</span>
+              <span class="badge" style="background:var(--ok-soft);color:var(--st-ok-t)">✓ 已完成</span>
+              <span class="badge" style="background:var(--warn-soft);color:var(--st-warn-t)">✓△ 部分完成</span>
+              <span class="badge" style="background:var(--warn-soft);color:var(--st-warn-t)">△ 需校对</span>
+              <span class="badge" style="background:var(--fail-soft);color:var(--st-fail)">! 失败</span>
+              <span class="badge" style="background:var(--skip-soft);color:var(--ink-2)">↷ 跳过</span>
+              <span class="badge" style="background:var(--block-soft);color:var(--st-block)">⊘ 阻塞</span>
+              <span class="badge" style="background:var(--lock-soft);color:var(--st-lock)">🔒 已锁定</span>
+            </div>
+            <div class="demo-row">
+              <span class="badge" style="background:var(--bg-inset);color:var(--ink-3)">Region：未识别</span>
+              <span class="badge" style="background:var(--run-soft);color:var(--st-run)">已 OCR</span>
+              <span class="badge" style="background:var(--run-soft);color:var(--st-run)">已翻译</span>
+              <span class="badge" style="background:var(--ok-soft);color:var(--st-ok-t)">已修复</span>
+              <span class="badge" style="background:var(--ok-soft);color:var(--st-ok-t)">已渲染</span>
+              <span class="badge" style="background:var(--accent-soft);color:var(--accent-text)">✓ 已确认</span>
+            </div>
+            <div class="lockgrid" style="margin-top:6px">
+              <span class="lockit on"><span class="st">🔒</span>Page Lock</span>
+              <span class="lockit off"><span class="st">○</span>Region Lock</span>
+              <span class="lockit on"><span class="st">🔒</span>翻译 Lock</span>
+              <span class="lockit off"><span class="st">○</span>修复 Lock</span>
+            </div>
+            <div class="tip" style="margin-top:6px">同一对象可同时具有 处理状态 + 校对状态 + Lock；UI 不用单一徽标合并三种语义。锁定叠加角标；需校对用虚线框（见工作台画布）。</div>
+            <h3 style="margin-top:10px">Toast / Banner</h3>
+            <div class="banner info">ℹ 已加入任务队列（第 3 位）</div>
+            <div class="banner warn" style="margin-top:5px">⚠ GPU 不可用，已回退 CPU（Provider 声明支持）</div>
+            <div class="banner err" style="margin-top:5px">✕ Page 08 OCR 失败：ProviderAuthenticationError <button class="btn sm" style="margin-left:auto">定位</button><button class="btn sm ghost">重试</button></div>
+          </div>
+          <div class="stcard">
+            <h3>空状态 / 加载 / 禁用 / 焦点</h3>
+            <div style="display:flex;gap:var(--pad-page);flex-wrap:wrap">
+              <div class="emptydemo" style="flex:1;min-width:200px">
+                <div style="font-size:26px;opacity:.4">▤</div>
+                <div class="et">还没有作品</div>
+                <div class="ed">从本地导入图片，或新建一个作品开始</div>
+                <button class="btn primary">新建作品</button>
+                <button class="btn" disabled>导入作品</button>
+              </div>
+              <div style="flex:1;min-width:200px">
+                <div class="skeleton" style="width:70%"></div><div class="skeleton"></div><div class="skeleton" style="width:85%"></div>
+                <div class="tip">加载中：骨架屏（列表）/ BusyIndicator（按钮内 16px）</div>
+                <div style="margin-top:8px;display:flex;gap:6px;align-items:center">
+                  <button class="btn sm" disabled>禁用态按钮</button>
+                  <button class="btn sm primary" disabled>禁用主按钮</button>
+                </div>
+                <div style="margin-top:8px"><span class="input focus" style="width:150px">焦点态输入框</span></div>
+                <div class="tip" style="margin-top:6px">焦点环 2px var(--focus)，全控件可达键盘 Tab。</div>
+              </div>
+            </div>
+          </div>
+          <div class="stcard">
+            <h3>长文本 / 截断规则（CJK · 超长文件名）</h3>
+            <table>
+              <tr><th>场景</th><th>规则</th></tr>
+              <tr><td style="width:90px">书名/章节标题</td><td><div class="ellip" style="max-width:300px">关于我转生成为史莱姆这件事 第八百九十七章 番外·新年特别篇【修订版】</div><span class="tip">ElideRight + ToolTip 全文</span></td></tr>
+              <tr><td>文件名</td><td><div class="ellip-m mono" style="max-width:300px">chapter_0897_final_rev2_webtoon_long_strip_export_20260919.png</div><span class="tip">ElideMiddle（保扩展名）+ ToolTip</span></td></tr>
+              <tr><td>描述摘要</td><td><div style="max-width:300px">魔法使试验的会场设在了大陆北部的大陆魔法王国。应试者需要通过三轮考核，才能获得一级魔法使的资格……<span style="color:var(--ink-3)">更多</span></div><span class="tip">最多 2 行 Wrap 后 ElideRight</span></td></tr>
+              <tr><td>按钮文字</td><td><span class="tip">不得省略号——改短文案 + ToolTip，或允许两行</span></td></tr>
+              <tr><td>数字列</td><td><span class="mono">1,024 / 200,000 / 98.6%（tabular-nums 右对齐）</span></td></tr>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================== 悬浮工具窗（叠开在工作台上） ======================== -->
+      <div class="fwin glass" id="win-taskdetail" style="right:300px;top:64px;width:470px;height:420px">
+        <div class="fhead"><span>任务详情 · <span class="mono">run-3f9c</span></span><span class="badge" style="background:var(--run-soft);color:var(--st-run)"><span class="dot" style="background:var(--st-run)"></span>运行中</span><span class="spacer"></span><button class="btn sm ghost" onclick="toggleWin('win-taskdetail')">✕</button></div>
+        <div class="fbody">
+          <div class="kv"><span class="k">范围</span><span class="v">葬送的芙莉莲 / 第37话 / 40 页</span></div>
+          <div class="kv"><span class="k">开始</span><span class="v mono">2026-09-19 10:41:07 · 已运行 00:12:33</span></div>
+          <div class="kv"><span class="k">并发</span><span class="v mono">翻译 2 · 修复 1（GPU 串行）</span></div>
+          <div class="secttl">Provider 快照（任务冻结）</div>
+          <div class="kv"><span class="k">OCR</span><span class="v">manga_ocr @ cuda:0</span></div>
+          <div class="kv"><span class="k">翻译</span><span class="v">DeepSeek 主力 · deepseek-chat</span></div>
+          <div class="secttl">失败（2）</div>
+          <div class="trow"><span class="mono" style="flex:0 0 46px">Page 08</span><span class="lvl" style="color:var(--st-fail)">OCR</span><span class="ellip" style="flex:1">ProviderAuthenticationError — 401 Unauthorized</span><button class="btn sm">重试</button></div>
+          <div class="trow"><span class="mono" style="flex:0 0 46px">Page 17</span><span class="lvl" style="color:var(--st-fail)">修复</span><span class="ellip" style="flex:1">InpaintTimeout — 300s 超时（远程 BrushNet）</span><button class="btn sm">重试</button></div>
+          <div class="secttl">阻塞（1）</div>
+          <div class="trow"><span class="mono" style="flex:0 0 46px">Page 31</span><span class="lvl" style="color:var(--st-block)">规划</span><span class="ellip" style="flex:1">Page Lock 生效，无法自动处理</span><button class="btn sm">查看原因</button></div>
+        </div>
+        <div class="ffoot"><button class="btn sm">重试全部失败页</button><button class="btn sm">导出诊断包</button></div>
+      </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<pre id="auditOutput">{}</pre>
+<script>
+"use strict";
+var $ = function(s){ return document.querySelector(s); };
+var $$ = function(s){ return Array.prototype.slice.call(document.querySelectorAll(s)); };
+
+function setCand(c){
+  document.body.dataset.cand = c;
+  $("#app").dataset.cand = c;
+  ["a","b","c"].forEach(function(k){ $("#cand-"+k).classList.toggle("on", k===c); });
+  $("#glass-on").disabled = (c!=="c"); $("#glass-off").disabled = (c!=="c");
+  applyShelfVariant();
+}
+function setMode(m){
+  document.body.dataset.mode = m;
+  $("#app").dataset.mode = m;
+  $("#mode-dark").classList.toggle("on", m==="dark");
+  $("#mode-light").classList.toggle("on", m==="light");
+}
+function setGlass(g){
+  document.body.dataset.glass = g;
+  $("#app").dataset.glass = g;
+  $("#glass-on").classList.toggle("on", g==="on");
+  $("#glass-off").classList.toggle("on", g==="off");
+}
+function setPage(p){
+  $$(".page").forEach(function(el){ el.classList.toggle("on", el.dataset.page===p); });
+  $$("#app .railbtn").forEach(function(b){ b.classList.toggle("on", b.dataset.nav===p); });
+  $$("#reviewbar [data-pg]").forEach(function(b){ b.classList.toggle("on", b.dataset.pg===p); });
+  if (p!=="bookshelf") $("#app").classList.remove("shelf-l2");
+}
+function setDpi(d){
+  $("#app").style.transform = "scale(" + (d/100) + ")";
+  $$("#reviewbar [data-dpi]").forEach(function(b){ b.classList.toggle("on", +b.dataset.dpi===d); });
+}
+function applyShelfVariant(){
+  // 候选 C 的 IA 差异：书架默认进入两级浏览（书 → 章）
+  $("#app").classList.toggle("shelf-l2", document.body.dataset.cand==="c");
+}
+function toggleWin(id){ var w=document.getElementById(id); w.style.display = (w.style.display==="none")?"flex":"none"; }
+function shelfL2(on){ $("#app").classList.toggle("shelf-l2", on); }
+
+/* 书架卡片点击 → A/B 更新详情面板；C 切两级 */
+$$(".bcard").forEach(function(card){
+  card.addEventListener("click", function(){
+    $$(".bcard").forEach(function(c){ c.classList.remove("sel"); });
+    card.classList.add("sel");
+    if (document.body.dataset.cand==="c") shelfL2(true);
+  });
+});
+$$(".chaprow,.chapcard").forEach(function(row){
+  row.addEventListener("click", function(){
+    $$(".chaprow,.chapcard").forEach(function(c){ c.classList.remove("sel"); });
+    row.classList.add("sel");
+  });
+});
+$("#bcard-1").addEventListener("click", function(){ if(document.body.dataset.cand!=="c"){} });
+$$("#app .railbtn").forEach(function(b){ b.addEventListener("click", function(){ setPage(b.dataset.nav); }); });
+
+/* ============ 审计：对比度 + 溢出/裁切 ============ */
+function lum(hex){
+  var h = hex.replace("#",""); if (h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  var c = [0,1,2].map(function(i){ var v = parseInt(h.substr(i*2,2),16)/255;
+    return v<=0.04045 ? v/12.92 : Math.pow((v+0.055)/1.055, 2.4); });
+  return 0.2126*c[0] + 0.7152*c[1] + 0.0722*c[2];
+}
+function cr(fg,bg){ var a=lum(fg), b=lum(bg); var hi=Math.max(a,b), lo=Math.min(a,b); return (hi+0.05)/(lo+0.05); }
+function mix(hex, alpha, over){
+  var h = hex.replace("#",""); if (h.length===3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+  var o = over.replace("#","");
+  var out = [0,1,2].map(function(i){
+    var f = parseInt(h.substr(i*2,2),16), t = parseInt(o.substr(i*2,2),16);
+    return Math.round(f*alpha + t*(1-alpha));
+  });
+  return "#" + out.map(function(v){ return ("0"+v.toString(16)).slice(-2); }).join("");
+}
+/* 「文字令牌 × 实际承载面」配对；面板/底色取自当前 CSS 变量 */
+function tokenPairs(cs){
+  var panel = cs.getPropertyValue("--bg-panel").trim();
+  var page  = cs.getPropertyValue("--bg-page").trim();
+  var inset = cs.getPropertyValue("--bg-inset").trim();
+  var canvas= cs.getPropertyValue("--bg-canvas").trim();
+  var accent= cs.getPropertyValue("--accent").trim();
+  var rows = [
+    ["ink/panel",        cs.getPropertyValue("--ink").trim(),    panel, 4.5],
+    ["ink-2/panel",      cs.getPropertyValue("--ink-2").trim(),  panel, 4.5],
+    ["ink-3/panel",      cs.getPropertyValue("--ink-3").trim(),  panel, 4.5],
+    ["ink-dis/inset",    cs.getPropertyValue("--ink-dis").trim(),"#ffffff", 3.0],
+    ["accent-text/panel",cs.getPropertyValue("--accent-text").trim(), panel, 4.5],
+    ["on-accent/accent", cs.getPropertyValue("--on-accent").trim(),   accent, 4.5],
+    ["st-ok/panel",      cs.getPropertyValue("--st-ok-t").trim(), panel, 4.5],
+    ["st-run/panel",     cs.getPropertyValue("--st-run").trim(),  panel, 4.5],
+    ["st-warn/panel",    cs.getPropertyValue("--st-warn-t").trim(),panel, 4.5],
+    ["st-fail/panel",    cs.getPropertyValue("--st-fail").trim(), panel, 4.5],
+    ["st-skip/panel",    cs.getPropertyValue("--ink-2").trim(),   panel, 4.5],
+    ["st-lock/panel",    cs.getPropertyValue("--st-lock").trim(), panel, 4.5],
+    ["st-block/panel",   cs.getPropertyValue("--st-block").trim(),panel, 4.5],
+    ["ink-3/page",       cs.getPropertyValue("--ink-3").trim(),   page, 4.5],
+    ["ink-2/inset",      cs.getPropertyValue("--ink-2").trim(),   inset, 4.5]
+  ];
+  return rows.map(function(r){ return { name:r[0], fg:r[1], bg:r[2], need:r[3], cr: Math.round(cr(r[1],r[2])*100)/100, pass: cr(r[1],r[2])>=r[3] }; });
+}
+/* 溢出/裁切：当前可见页内元素是否越过 frame；滚动容器内溢出不算缺陷 */
+function inScroller(el){
+  var p = el.parentElement;
+  while (p && p !== document.body){
+    var oy = getComputedStyle(p).overflowY, ox = getComputedStyle(p).overflowX;
+    if (/(auto|scroll)/.test(oy) || /(auto|scroll)/.test(ox)) return true;
+    p = p.parentElement;
+  }
+  return false;
+}
+function layoutAudit(){
+  var frame = $("#frame").getBoundingClientRect();
+  var issues = { outside:0, clipped:0, overlap:0 };
+  var page = $$(".page.on")[0];
+  if (!page) return issues;
+  var els = page.querySelectorAll(".btn,.input,.badge,.bcard,.chaprow,.ptile,.provrow,.cat,.inssec,.taskprog,.steps,.counts,.tb,.wbtb,.rtb,.fwin,.banner,.stcard");
+  els.forEach(function(el){
+    if (el.offsetParent === null) return;
+    var r = el.getBoundingClientRect();
+    if (r.width===0 && r.height===0) return;
+    if (r.right > frame.right+1 || r.bottom > frame.bottom+1 || r.left < frame.left-1 || r.top < frame.top-1){
+      if (!inScroller(el)) { issues.outside++; }
+    }
+    if (el.scrollWidth > el.clientWidth + 2 && !inScroller(el) &&
+        getComputedStyle(el).textOverflow !== "ellipsis" &&
+        getComputedStyle(el).overflowX !== "auto" && getComputedStyle(el).overflowX !== "scroll" &&
+        !el.classList.contains("ellip") && !el.classList.contains("ellip-m")){
+      var txt = (el.textContent||"").trim();
+      if (txt.length > 3) issues.clipped++;
+    }
+  });
+  return issues;
+}
+function currentParams(){
+  var b = document.body.dataset, cs = getComputedStyle($("#app"));
+  return { cand:b.cand, mode:b.mode, glass:b.glass, page:(($$(".page.on")[0])||{}).dataset ? $$(".page.on")[0].dataset.page : "?",
+           dpi: Math.round((parseFloat(($("#app").style.transform||"scale(1)").replace("scale(",""))||1)*100) };
+}
+function runAudit(){
+  var out = { generated: new Date().toISOString(), params: currentParams(), contrast: null, layout: null, note: "HTML/Chromium 呈现口径，非 Qt；不构成任何 D08 AC 的 PASS。" };
+  var cs = getComputedStyle($("#app"));
+  out.contrast = tokenPairs(cs);
+  // disabled 令牌的实际底是 inset，按 inset 重算
+  var inset = cs.getPropertyValue("--bg-inset").trim();
+  out.contrast.forEach(function(r){ if (r.name==="ink-dis/inset") r.bg = inset; });
+  out.contrast.forEach(function(r){ r.pass = r.cr >= r.need; });
+  out.layout = layoutAudit();
+  var fails = out.contrast.filter(function(r){ return !r.pass; });
+  $("#auditOutput").textContent = JSON.stringify(out, null, 2);
+  $("#audit-sum").textContent = "对比 " + (out.contrast.length-fails.length) + "/" + out.contrast.length + " 达标" +
+    (fails.length ? " ✗ " + fails.map(function(f){ return f.name + "=" + f.cr; }).join(", ") : "") +
+    " · 布局 outside=" + out.layout.outside + " clipped=" + out.layout.clipped;
+  return out;
+}
+/* URL 参数驱动（无头截图用） */
+(function init(){
+  var q = new URLSearchParams(location.search);
+  if (q.get("cand")) setCand(q.get("cand"));
+  if (q.get("mode")) setMode(q.get("mode"));
+  if (q.get("glass")) setGlass(q.get("glass"));
+  if (q.get("page")) setPage(q.get("page"));
+  if (q.get("dpi")) setDpi(parseInt(q.get("dpi"),10));
+  if (q.get("win")) {
+    var w = q.get("win");
+    $("#win-taskdetail").style.display = (w==="detail"||w==="both") ? "flex" : "none";
+    $("#win-danger").style.display    = (w==="danger"||w==="both") ? "flex" : "none";
+  } else {
+    $("#win-taskdetail").style.display = "none";
+    $("#win-danger").style.display = "none";
+  }
+  if (q.get("audit") === "1"){ window.__auditResult = runAudit(); }
+  applyShelfVariant();
+})();
+</script>
+</body>
+</html>
