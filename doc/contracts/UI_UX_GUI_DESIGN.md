@@ -2,9 +2,9 @@
 
 > 状态：**候选提案 + ND-1 已选组合稿 F**。本文档与视觉参考由 TASK-059 产出，尚未被任何实现 Task 释放。
 > 视觉真值：[doc/design/ui-reference.html](../design/ui-reference.html)（离线可开，浏览器直接打开）。
-> 机器可读副本：[tokens-cand-a.json](../design/tokens-cand-a.json) / [tokens-cand-b.json](../design/tokens-cand-b.json) / [tokens-cand-c.json](../design/tokens-cand-c.json) / [tokens-cand-d.json](../design/tokens-cand-d.json) / [tokens-cand-e.json](../design/tokens-cand-e.json) / [tokens-cand-f.json](../design/tokens-cand-f.json)（由 `verification/TASK-059/export-tokens.py` 生成；每份 42 色令牌 × 2 主题 + 20 项几何）。
+> 机器可读副本：[tokens-cand-a.json](../design/tokens-cand-a.json) / [tokens-cand-b.json](../design/tokens-cand-b.json) / [tokens-cand-c.json](../design/tokens-cand-c.json) / [tokens-cand-d.json](../design/tokens-cand-d.json) / [tokens-cand-e.json](../design/tokens-cand-e.json) / [tokens-cand-f.json](../design/tokens-cand-f.json)（由 `verification/TASK-059/export-tokens.py` 生成；每份 42 色令牌 × 2 主题 + 21 项几何，含 `card-w`）。
 > 边界：本文档不修改 D01～D08、[ui-baseline](../ui-baseline.md) 的任何条文；与其冲突时以 D 文档为准，冲突记入 §13 待决项。所有色值/尺寸当前为 HTML/Chromium 呈现，**非 Qt 实现值**，不构成任何 D08 AC 的 PASS。
-> 版本：R4（2026-09-19）。R1 交付 A/B/C 三候选；R2 按用户当日指示增补 D/E 两候选（「完全不一样」的范式级差异，见 §6A/§6B 与 DDR-8），审计矩阵由 30 组合扩至 50 组合。**R3 按 Review（`TASK-059-db366da`）收口**：徽标对比度改按真实 `*-soft` 合成底审计并统一加深亮色状态文字令牌（§7.2）、补齐命令面板契约与 D/E 实现切片（§6B/§10/§11）、实现真实重叠检测并补判别力证据（§15）。**R4 执行用户裁决 ND-1（DDR-9）**：新增组合候选 F「Graphite Atelier」（A 色板 + B 几何、IA 继承 A，§3/§6C），F 为**已选方向**；审计矩阵扩至 60 组合，F 套用 R3-001 扩展对比度口径（24 对，§7.2）；A–E 保留为候选档案，不再等待裁决。
+> 版本：R4（2026-09-19）。R1 交付 A/B/C 三候选；R2 按用户当日指示增补 D/E 两候选（「完全不一样」的范式级差异，见 §6A/§6B 与 DDR-8），审计矩阵由 30 组合扩至 50 组合。**R3 按 Review（`TASK-059-db366da`）收口**：徽标对比度改按真实 `*-soft` 合成底审计并统一加深亮色状态文字令牌（§7.2）、补齐命令面板契约与 D/E 实现切片（§6B/§10/§11）、实现真实重叠检测并补判别力证据（§15）。**R4 执行用户裁决 ND-1（DDR-9）**：新增组合候选 F「Graphite Atelier」（A 色板 + B 几何、IA 继承 A，§3/§6C），F 为**已选方向**；审计矩阵扩至 60 组合，F 套用 R3-001 扩展对比度口径（24 对，§7.2）；A–E 保留为候选档案，不再等待裁决。**R5 按 Review（`TASK-059-04743a8`，DDR-10）收口**：F 的书架卡片宽 `--card-w` 由 A 档 132px 改为 **B 档 158px**（R4-001：ND-1「比例大小按 B」覆盖卡片宽度，IA 仅指浏览结构），`card-w` 纳入令牌几何相等断言（20→21 项）；补 `f-light-bookshelf.png`（R4-002，截图 49→50）；辅助脚本说明统一为 a–f / D1–D3 并清理死变量（R4-003）；证据全量重跑。
 
 ---
 
@@ -14,8 +14,8 @@
 |---|---|---|
 | 决策与规格 | 本文 | 六候选（含 ND-1 组合稿 F）的规格、IA 声明、Gap、DDR、待决项 |
 | 视觉真值 | `doc/design/ui-reference.html` | 全部令牌、组件、页面视图的唯一呈现载体；带评审 chrome（候选/主题/玻璃/DPI/审计按钮） |
-| 机器可读副本 | `doc/design/tokens-cand-*.json` | 每候选 42 色令牌 × 2 主题 + 20 项几何 + 玻璃参数；与 HTML 不一致时以 HTML 为准 |
-| 验证证据 | `verification/TASK-059/` | 审计与判别脚本、60 组合审计矩阵（含徽标真实合成底）、49 张截图、令牌导出脚本 |
+| 机器可读副本 | `doc/design/tokens-cand-*.json` | 每候选 42 色令牌 × 2 主题 + 21 项几何（含 `card-w`）+ 玻璃参数；与 HTML 不一致时以 HTML 为准 |
+| 验证证据 | `verification/TASK-059/` | 审计与判别脚本、60 组合审计矩阵（含徽标真实合成底）、50 张截图、令牌导出脚本 |
 
 评审 chrome（候选切换、审计按钮、framecap 标注）是参考页的评审工具，**不是产品画面**；产品画面只有 `#frame` 内的内容。
 
@@ -148,9 +148,9 @@ TASK-059 取代被否决的 TASK-047 设计切片（裁决记录见 [TASK-047](.
 **角色定位**：ND-1 用户裁决的组合方向（DDR-9）——**色彩、状态色、亮/暗主题与视觉语言采用 A · Graphite；字号、控件高、行高、间距与面板尺寸等几何令牌采用 B · Atelier；IA 与骨架继承 A**。目标是 A 的「沉稳暗色工作台」气质叠加 B 的宽松可读密度，同时不引入 B/C/D/E 的任何范式差异。
 
 **构成规则（组合的唯一合法口径）**：
-1. **色彩令牌逐字面值继承 A**（`tokens-cand-f.json` 的 `modes` 与 `tokens-cand-a.json` 完全一致，含 R3 深化后的亮色状态文字令牌与全部 `*-soft`）；交叉核对由 `export-tokens.py` 生成物保证，审计日志另有 `F = A color palette + B geometry: OK` 断言。
-2. **几何令牌逐项继承 B**（fs/ctl-h/row-h/rail-w/pad-page/gap/rad/tb-h/list-w/insp-w/prog-h/det-w 全部 20 项；书架卡片宽 `--card-w` 除外，见下）。
-3. **IA 继承 A**：书架单级（作品网格 → 章节列表，`--card-w` 132px 同 A）——ND-1 明确**不继承 B 的章节大卡**；工作台 Inspector 译文置顶重排同 A（§4）。ND-1 同时排除：C 玻璃、D 顶栏导航、E 命令面板——F 的参考页无任何这三者的响应规则，玻璃变量虽随色板保留但永不启用（同 A）。
+1. **色彩令牌逐字面值继承 A**（`tokens-cand-f.json` 的 `modes` 与 `tokens-cand-a.json` 完全一致，含 R3 深化后的亮色状态文字令牌与全部 `*-soft`）；交叉核对由 `export-tokens.py` 生成物保证，审计日志另有 `F = A color palette + B geometry (incl card-w): OK` 断言。
+2. **几何令牌逐项继承 B**（fs/ctl-h/row-h/rail-w/pad-page/gap/rad/tb-h/list-w/insp-w/prog-h/det-w 20 项 + 书架卡片宽 `--card-w`=158px，共 **21 项**——R5 起 `card-w` 纳入 `tokens-cand-f.json` 的几何相等断言，Review R4-001）。
+3. **IA 继承 A**：书架**单级浏览结构**（作品网格 → 章节列表）——ND-1 明确**不继承 B 的章节大卡**（指两级浏览结构与分区，不含尺寸）；卡片宽度属几何、随 B 取 158px（R5 修正，DDR-10）。工作台 Inspector 译文置顶重排同 A（§4）。ND-1 同时排除：C 玻璃、D 顶栏导航、E 命令面板——F 的参考页无任何这三者的响应规则，玻璃变量虽随色板保留但永不启用（同 A）。
 4. **圆角气质变化是几何继承的必然结果**：A 的 4/6/10px 硬朗圆角被 B 的 8/11/16px 取代，这是 ND-1「间距/面板尺寸按 B」的题中之义；除此之外无任何 B 视觉语言（暖纸白、青瓷、画廊投影）进入 F。
 
 **R3-001 扩展审计口径（组合稿专属）**：F 在既有 22 对（15 直底 + 7 徽标合成底）之上追加两对，阈值均 4.5:1——`st-skip-direct/panel`（`--st-skip` 作直接文本色 × panel 直底）与 `ink/selected-row`（`.sel` 选中行底 = `accent-soft` 以 alpha 叠 panel 的合成底 × 行内主文本 `--ink`）。实测 dark 7.22:1 / 11.34:1、light 同口径全 PASS；判别力 D3：注入低对比 skip 回归值 → `st-skip-direct/panel=3.01` FAIL（§15）。A–E 维持 22 对既有证据口径不变。
@@ -270,7 +270,7 @@ Gap 沿用 TASK-047 §7 编号中仍然成立的部分，按候选差异化重�
 | S-SHELF-TABLE | 书架表格视图（行选择→详情面板，交互同 A/B） | 仅 E | S-SHELF-BOOK 同期 |
 | S-CLOSE / S-SET / S-PERF 等 | 沿用 TASK-047 §7 既有切片定义（关闭语义/设置页/性能），按所选候选令牌执行 | 全部 | 对应原文 |
 
-**F 的切片映射（R4）**：F = ND-1 已选方向，其实现面是 S-TOKEN（灌 `tokens-cand-f.json`）+ S-WB-INSPECTOR 的 **A 形态**（译文置顶）+ S-SHELF-BOOK 的 **A 形态**（行为网格、`--card-w` 132px）+ 全部共享切片按 F 令牌执行；§8.2 降级序列按 F 的 B 档几何触发（150% 压力见 `f-dark-workbench-dpi150.png`）。F 不涉及 S-SHELF-L2/S-GLASS/S-TOPNAV/S-CMDPALETTE/S-SHELF-TABLE（ND-1 已排除对应范式）。
+**F 的切片映射（R5）**：F = ND-1 已选方向，其实现面是 S-TOKEN（灌 `tokens-cand-f.json`）+ S-WB-INSPECTOR 的 **A 形态**（译文置顶）+ S-SHELF-BOOK 的 **A 形态**（作品网格单级结构、`--card-w` 158px 随 B 几何）+ 全部共享切片按 F 令牌执行；§8.2 降级序列按 F 的 B 档几何触发（150% 压力见 `f-dark-workbench-dpi150.png`）。F 不涉及 S-SHELF-L2/S-GLASS/S-TOPNAV/S-CMDPALETTE/S-SHELF-TABLE（ND-1 已排除对应范式）。
 
 **D/E 范式切片与共享切片的边界（R3 补，保证 Gap→实现计划不断链）**：D 的**导航重排**全责在 `S-TOPNAV`，**书架页头/hairline 工作台**的视觉语言在 `S-SHELF-BOOK`/`S-WB-INSPECTOR`；E 的**表格 IA**（列结构/行选择→详情面板）在 `S-SHELF-TABLE`，**表格行视觉语言**在 `S-SHELF-BOOK`，**字段表 Inspector** 在 `S-WB-INSPECTOR`，**命令面板**在 `S-CMDPALETTE`（契约 §6B）。每个切片的验收面＝契约 §7–§9 对应条款 + 该候选对应视图截图组合（§15 清单）。
 
@@ -318,13 +318,14 @@ Gap 沿用 TASK-047 §7 编号中仍然成立的部分，按候选差异化重�
 | DDR-6 | 状态色字面值五候选共用 | 减少维护面；语义色跨主题一致性优先于候选个性（个性由底色/强调/密度承担） |
 | DDR-7 | 不修改 D01～D08 与 ui-baseline | TASK-059 禁止范围；方向推翻只记录于 §12，文档归档由集成方处理 |
 | DDR-8 | R2 增补 D/E 两候选（范式级差异：导航重排/表格化/命令面板/等宽） | 用户 2026-09-19 在 in_review 后追加指示「再增加两种完全不一样的设计」；D/E 与 A/B/C 及彼此的差异维度是范式而非样式；章节号 §6A/§6B 保持既有 §7+ 引用稳定 |
-| DDR-9 | **R4 新增组合候选 F「Graphite Atelier」并标记为 ND-1 已选方向**：A 色彩/状态色/主题/视觉语言 + B 几何（20 项密度令牌）+ A 的 IA（书架单级、Inspector 译文置顶）；不继承 B 章节大卡，不启用 C 玻璃/D 顶栏/E 命令面板；组合稿按 ND-1 条款重做全套一致性审计（60 组合矩阵、F 专属 24 对含 R3-001 扩展、判别 D3）；A–E 保留为候选档案 | 用户 ND-1 裁决（2026-09-19，STATUS 台账行 + TASK-059 开工指令）；契约 ND-1 本身规定组合必须重新审计一致性，不能拼装 A/B 两份候选当实现规范 |
+| DDR-9 | **R4 新增组合候选 F「Graphite Atelier」并标记为 ND-1 已选方向**：A 色彩/状态色/主题/视觉语言 + B 几何（密度令牌）+ A 的 IA 结构（书架单级、Inspector 译文置顶）；不继承 B 章节大卡（两级浏览结构），不启用 C 玻璃/D 顶栏/E 命令面板；组合稿按 ND-1 条款重做全套一致性审计（60 组合矩阵、F 专属 24 对含 R3-001 扩展、判别 D3）；A–E 保留为候选档案 | 用户 ND-1 裁决（2026-09-19，STATUS 台账行 + TASK-059 开工指令）；契约 ND-1 本身规定组合必须重新审计一致性，不能拼装 A/B 两份候选当实现规范 |
+| DDR-10 | **R5 修正 F 规格偏差（Review `TASK-059-04743a8` R4-001，P1）**：书架卡片宽 `--card-w` 由 A 档 132px 改为 **B 档 158px**——ND-1「比例大小按 B」覆盖卡片宽度，IA 仅指浏览结构（单级 vs 两级）非尺寸；`card-w` 纳入 `tokens-cand-f.json` 几何相等断言（20→21 项，几何断言不得事后缩小验收面）；补 `f-light-bookshelf.png`（R4-002，截图 49→50 张）；辅助脚本说明统一 a–f / D1–D3、清理 `geom_sel` 死变量（R4-003）；60 组合审计、F 24 对、D1/D2/D3 全量重跑 | Review R4-001/002/003 + 用户返修指令（2026-09-19）：改 158px、断言纳入 card-w、补亮色书架截图 |
 
 ## 15. 验证证据索引
 
-- 审计：`verification/TASK-059/run-reference-audit.sh` → JS 语法门 + 60 组合（6 候选 × 2 主题 × 5 视图）矩阵 + 49 张截图。矩阵内容＝对比度（A–E：15 直底对 + 7 徽标 `*-soft` 真实合成底对；**F：另加 R3-001 扩展的 `st-skip-direct/panel` 与 `ink/selected-row` 共 24 对**，文本 ≥4.5 / 非文本 ≥3.0）+ 溢出（outside）+ 裁切（clipped）+ **重叠（overlap，同级元素两两相交检测，R-004）**；最近一次全量结果 **60/60 ALL PASS**（F 全部组合 24/24 对；`AUDIT_EXIT=0`，日志 `audit-result.txt`）。
+- 审计：`verification/TASK-059/run-reference-audit.sh` → JS 语法门 + 60 组合（6 候选 × 2 主题 × 5 视图）矩阵 + 50 张截图。矩阵内容＝对比度（A–E：15 直底对 + 7 徽标 `*-soft` 真实合成底对；**F：另加 R3-001 扩展的 `st-skip-direct/panel` 与 `ink/selected-row` 共 24 对**，文本 ≥4.5 / 非文本 ≥3.0）+ 溢出（outside）+ 裁切（clipped）+ **重叠（overlap，同级元素两两相交检测，R-004）**；最近一次全量结果 **60/60 ALL PASS**（F 全部组合 24/24 对；`AUDIT_EXIT=0`，日志 `audit-result.txt`）。
 - 证据纪律（R-005）：`audit-result.txt` / `discriminate-result.txt` 同一日志内含**环境头**（shell/node/chrome/python 及 venv 路径）、**命令**、全量输出与 **`AUDIT_EXIT`/`DISCRIM_EXIT`**；本次口径＝Git Bash 5.2 (msys，MINGW64_NT-10.0-26200) + Chrome 153.0.8010.48 headless + node v24.15.0 + `TASK-012-py312` venv Python 3.12.3（Chrome 版本取自文件版本资源，避免 `--version` 进程在 Windows 下挂起/噪音）。
 - 判别力：`verification/TASK-059/discriminate-r001-r004.sh`（日志 `discriminate-result.txt`，`DISCRIM_EXIT=0`）——**D1** 回退 A 亮色 warn 旧令牌 → 徽标对 `badge-warn/st-warn-t=4.22` FAIL（数值与复审独立复算一致）；**D2** 向 states 页注入两个相交徽标 → `overlap=1` 且输出相交元素对；**D3（R4 新增，R3-001）** 向 F 暗色注入低对比 `--st-skip` 回归值 → F 专属对 `st-skip-direct/panel=3.01` FAIL。三个检测均证明**有判别力**（非恒 PASS）。
-- 截图清单（49 张）：`{a,b,c,d}-默认主题-{bookshelf,workbench,reader,settings,states}`（A 暗、B/C/D 亮）+ `e-dark-*` 同构 + **`f-dark-{bookshelf,workbench,reader,settings,states}`**（ND-1 组合稿五视图）；第二主题代表 `a-light-workbench / b-dark-workbench / c-dark-workbench / d-dark-workbench / e-light-workbench / f-light-workbench`；玻璃对照 `c-glass-off-{bookshelf,workbench}` + `c-glass-{taskdetail,both}`；DPI 压力 `a-dark-workbench-dpi150.png / a-dark-workbench-dpi200.png / e-dark-workbench-dpi150.png / f-dark-workbench-dpi150.png`；工具窗 `a-dark-workbench-taskdetail / b-light-danger / d-light-workbench-taskdetail / f-dark-workbench-taskdetail`；E 命令面板 `e-dark-palette`。
-- 令牌：`doc/design/tokens-cand-{a,b,c,d,e,f}.json`（每份 42 色令牌 × 2 主题 + 20 项几何 + 玻璃参数）← `verification/TASK-059/export-tokens.py`；F 与 A 的 `modes` 逐值一致、F 与 B 的 `geometry` 逐项一致由生成物与审计日志断言（`F = A color palette + B geometry: OK`）。
+- 截图清单（50 张）：`{a,b,c,d}-默认主题-{bookshelf,workbench,reader,settings,states}`（A 暗、B/C/D 亮）+ `e-dark-*` 同构 + **`f-dark-{bookshelf,workbench,reader,settings,states}`**（ND-1 组合稿五视图）；第二主题代表 `a-light-workbench / b-dark-workbench / c-dark-workbench / d-dark-workbench / e-light-workbench / f-light-bookshelf / f-light-workbench`；玻璃对照 `c-glass-off-{bookshelf,workbench}` + `c-glass-{taskdetail,both}`；DPI 压力 `a-dark-workbench-dpi150.png / a-dark-workbench-dpi200.png / e-dark-workbench-dpi150.png / f-dark-workbench-dpi150.png`；工具窗 `a-dark-workbench-taskdetail / b-light-danger / d-light-workbench-taskdetail / f-dark-workbench-taskdetail`；E 命令面板 `e-dark-palette`。
+- 令牌：`doc/design/tokens-cand-{a,b,c,d,e,f}.json`（每份 42 色令牌 × 2 主题 + 21 项几何含 `card-w` + 玻璃参数）← `verification/TASK-059/export-tokens.py`；F 与 A 的 `modes` 逐值一致、F 与 B 的 `geometry` **逐项一致（含 `card-w`=158px，R5 起）**由生成物与审计日志断言（`F = A color palette + B geometry (incl card-w): OK`）。
 - **口径**：全部结果为 HTML/Chromium 呈现，非 Qt；不构成任何 D08 AC 的 PASS，也不预支未来实现 Task 的验证。

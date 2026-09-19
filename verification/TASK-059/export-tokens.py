@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """TASK-059: 从 doc/design/ui-reference.html 导出机器可读令牌副本。
 
-HTML 是唯一视觉真值；本脚本生成 doc/design/tokens-cand-{a,b,c,d,e}.json。
+HTML 是唯一视觉真值；本脚本生成 doc/design/tokens-cand-{a..f}.json（六候选）。
 两者不一致时以 HTML 为准，重新运行本脚本即可再生成。
 用法：python verification/TASK-059/export-tokens.py
 """
@@ -44,11 +44,6 @@ def split_tokens(raw: dict) -> tuple[dict, dict]:
 
 def main() -> int:
     css = HTML.read_text(encoding="utf-8")
-    geom_sel = {
-        "a": '[data-cand="a"] {',
-        "b": '[data-cand="b"] {',
-        "c": '[data-cand="c"] {',
-    }
     # 密度块选择器与主题块共享前缀，用“不接 [data-mode”的锚定区分
     geom = {}
     for c in "abcdef":
@@ -60,6 +55,14 @@ def main() -> int:
             raise SystemExit(f"geometry block not found for {c}")
         geom[c] = {k: v.strip() for k, v in
                    re.findall(r"--([\w-]+)\s*:\s*([^;]+);?", ms[0].group(1))}
+        # card-w 定义在独立的单属性小方块（不含 --fs-base），单独提取后并入
+        # geometry，使 JSON 几何相等断言覆盖 card-w（Review R4-001）
+        cs = [m for m in pat.finditer(css)
+              if "--card-w" in m.group(1) and "--fs-base" not in m.group(1)]
+        if not cs:
+            raise SystemExit(f"card-w block not found for {c}")
+        geom[c]["card-w"] = re.findall(
+            r"--card-w\s*:\s*([^;]+);?", cs[0].group(1))[0].strip()
 
     for c in "abcdef":
         modes = {}

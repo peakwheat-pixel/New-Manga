@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 # TASK-059 R-001/R-004 判别力验证（Q-009：判别证据必须是 artefact）。
-# 从当前 ui-reference.html 派生两个临时判别副本，在无头 Chrome 中验证：
+# 从当前 ui-reference.html 派生三个临时判别副本，在无头 Chrome 中验证：
 #  D1（R-001）：把 A 亮色 --st-warn-t 回退到修前值 #9a6700 → 徽标对 badge-warn/st-warn-t 应 FAIL（约 4.22:1）
 #  D2（R-004）：向 states 页注入两个相交徽标 → layout.overlap 应 ≥1 并输出相交元素对
 #  D3（R3-001，ND-1 组合稿 F）：把 --st-skip 注入低对比回归值 → F 专属对 st-skip-direct/panel 应 FAIL
 # 本脚本不修改仓库文件；判别副本写入系统临时目录。
-# 判定通过 = 两个检测各至少报出一次 FAIL；审计全绿矩阵另见 run-reference-audit.sh。
+# 判定通过 = 三个检测各至少报出一次 FAIL；审计全绿矩阵另见 run-reference-audit.sh。
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"

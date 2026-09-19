@@ -113,12 +113,13 @@ shot e-dark-states    e dark states
 shot e-light-workbench e light workbench
 shot e-dark-palette    e dark workbench "" "pal=1"
 shot e-dark-workbench-dpi150 e dark workbench 150
-# 候选 F（Graphite Atelier，ND-1 组合稿，默认暗色）：五视图 + 第二主题 + DPI + 工具窗
+# 候选 F（Graphite Atelier，ND-1 组合稿，默认暗色）：五视图 + 亮色书架/工作台 + DPI + 工具窗
 shot f-dark-bookshelf f dark bookshelf
 shot f-dark-workbench f dark workbench
 shot f-dark-reader    f dark reader
 shot f-dark-settings  f dark settings
 shot f-dark-states    f dark states
+shot f-light-bookshelf f light bookshelf
 shot f-light-workbench f light workbench
 shot f-dark-workbench-dpi150 f dark workbench 150
 shot f-dark-workbench-taskdetail f dark workbench "" "win=detail"

@@ -30,7 +30,8 @@
     "list-w": "174px",
     "insp-w": "278px",
     "prog-h": "146px",
-    "det-w": "328px"
+    "det-w": "328px",
+    "card-w": "148px"
   },
   "modes": {
     "dark": {

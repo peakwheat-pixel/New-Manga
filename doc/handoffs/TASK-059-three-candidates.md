@@ -3,7 +3,7 @@ task_id: TASK-059
 author: ZCode
 recipient: Codex（Reviewer，非作者）
 base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
-delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 07397ac（R3 返修：审计与令牌修正+文档收口） / 本次提交（R4 组合候选 F：Graphite Atelier + 全量重审计）
+delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 07397ac（R3 返修） / 04743a8（R4 组合候选 F） / 本次提交（R5 返修：card-w 随 B + 几何断言纳入 card-w + 50 张截图）
 status: in_review
 ---
 
@@ -115,3 +115,17 @@ R3 判别力证据（Q-009，同日志入库）：D1 回退 A 亮色 warn 旧令
 **改动范围**：仍仅 `doc/**`（契约/参考 HTML/tokens-f JSON/Task/Handoff/STATUS 台账行）+ `verification/TASK-059/**`（审计与判别脚本、日志、49 截图）；`src/**`、`tests/**`、Schema、依赖、D01～D08、ui-baseline 零改动；未 push。
 
 **Reviewer（Codex）复审建议**：① 核对 R3-001 闭合是否成立（两对扩展的定义与实测值、D3 判别）；② 核对 F 构成规则（`tokens-cand-f.json` 与 A/B JSON 的断言可独立复算）；③ `git diff 07397ac..HEAD -- doc/contracts/` 对照 §6C/§15。复审通过后本 Task 可进入集成（候选裁决已由 ND-1 完成，ND-4/5/6/7 仍待用户，其中 ND-6 为 F 实现前待决）。
+
+## R5 返修记录（2026-09-19，Review `TASK-059-04743a8` 判 `changes_requested` 之后）
+
+Reviewer=Codex（非作者），固定 base=`07397ac`、被审 head=`04743a8`。以下为逐 finding disposition；全部改动仍只落在 `doc/**` 与 `verification/TASK-059/**`（`src/**`/`tests/**`/Schema/依赖零改动）。
+
+| Finding | 处置 | 证据 |
+|---|---|---|
+| R4-001（P1：F 的 `--card-w` 取 A 档 132px，违背 ND-1「比例大小按 B」；几何断言被事后缩小到 20 项子集） | **closed**：① `ui-reference.html` F 卡片宽 132px → **158px**（B 档；ND-1 的 IA 例外仅指浏览结构——书架单级 vs B 的两级，不含尺寸）；② `export-tokens.py` 将独立小方块的 `--card-w` 提取并入 `geometry`（每候选 20→**21 项**），`tokens-cand-{a..f}.json` 全部重导，几何相等断言自此覆盖 `card-w`；③ 契约同步：§6C 构成规则 2/3 改写（几何 21 项、IA=浏览结构非尺寸）、§11 F 切片映射 `--card-w` 158px、§14 新增 **DDR-10**、§15 断言文字加 `(incl card-w)` | 重导断言 `F = A color palette + B geometry (incl card-w): OK`（f=158px=b、a=132px）；独立复算路径=读 JSON `f['geometry']==b['geometry']` |
+| R4-002（P2：缺 `f-light-bookshelf.png`，F 亮色书架无法独立复核） | **closed**：`run-reference-audit.sh` F 段新增 `shot f-light-bookshelf`；全量重拍后入库。F 截图 8→**9** 张，总数 49→**50**；F 的书架与工作台均具备暗/亮两主题证据 | `screenshots/f-light-bookshelf.png`（已目检：亮色书架 + 158px 卡片网格，无叠盖）；契约 §15 截图清单（50 张） |
+| R4-003（P3：`export-tokens.py` docstring 仍写 `{a,b,c,d,e}`；判别脚本仍写「两个检测/两个临时副本」；未使用变量 `geom_sel`） | **closed**：docstring → `{a..f}`（六候选）；判别脚本头 → 「派生三个临时判别副本」「判定通过 = 三个检测各至少报出一次 FAIL」；删除 `geom_sel` 死变量（其功能早已由正则 `finditer` 取代） | 两脚本现行头注释；`grep geom_sel` 零命中 |
+
+**全量证据重跑（R5 head）**：审计矩阵 **60 组合 ALL PASS**（F 全组合 `contrast=24/24 outside=0 clipped=0 overlap=0`，`AUDIT_EXIT=0`）；判别 **D1/D2/D3 全 FAIL（预期方向）**——D1 `badge-warn/st-warn-t=4.22`、D2 `overlap=1`、D3 `st-skip-direct/panel=3.01`（`DISCRIM_EXIT=0`）；**50 张截图**；契约 §15 全量刷新。R3-001 的两对扩展（7.22/11.34）口径不变。
+
+**Reviewer（Codex）复审建议**：① 独立复算 `f['geometry']==b['geometry']`（21 项含 card-w=158px）；② 目检 `f-light-bookshelf.png` / `f-dark-bookshelf.png`（R4-001 视觉面）；③ `git diff 04743a8..HEAD` 全部落在 `doc/**` 与 `verification/TASK-059/**`。
