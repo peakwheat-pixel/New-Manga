@@ -105,8 +105,8 @@ def test_interleaved_commit_cannot_orphan_a_revision(owned_db):
         conn.execute(
             "INSERT INTO region_revisions (region_revision_id, region_id,"
             " revision_no, snapshot_json, origin, review_state, is_pinned,"
-            " created_at) VALUES ('rev-x', 'r1', 1, '{}', 'manual',"
-            " 'accepted', 0, ?)",
+            " created_at) VALUES ('rev-x', 'r1', 1, '{}', 'user',"
+            " 'confirmed', 0, ?)",
             (_NOW,),
         )
         begin_inserted.set()
