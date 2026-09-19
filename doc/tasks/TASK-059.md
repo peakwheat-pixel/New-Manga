@@ -2,7 +2,7 @@
 id: TASK-059
 title: UI/UX 视觉方向与信息架构重做（仅设计；**授权重画配色与布局**）
 kind: design
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [TASK-012, TASK-013, TASK-015]
 base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
 branch: agent/zcode/TASK-059-ui-redesign
 worktree: G:/CODEX/New Manga.worktrees/TASK-059-zcode
-integration_commit: null
+integration_commit: 53ae2e4a58925f0bdf86ec60f7222f3e72b7d379
 ---
 
 # TASK-059：UI/UX 视觉方向与信息架构重做（仅设计）
@@ -19,6 +19,8 @@ integration_commit: null
 **READY（2026-09-19，用户否决 TASK-047 后由 Codex 另立；随后按用户指示改派 ZCode）**：Owner=`ZCode`、Reviewer=`Codex`（**非作者**）、base=`4c81dca6186f9b47f2771e5033a5d6ecfa986dd6`、branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。开工先 `git merge master`。**本 Task 取代 [TASK-047](TASK-047.md) 的设计门**（TASK-047 = `rejected`，不进入 `done`，其结论不作为本轮依据）。
 
 **改派记录（2026-09-19）**：用户指示把本 Task 交给 `ZCode`。原 Qoder 分支/worktree `agent/qoder/TASK-059-ui-redesign` / `G:/CODEX/New Manga.worktrees/TASK-059-qoder` 在改派前无实施提交，现仅作旧指派留档，不再作为本 Task 的开工工作区；不得把其中内容直接作为交付。AC、允许/禁止范围、授权与 Reviewer 均不变。
+
+**INTEGRATED（2026-09-20）**：设计交付分支 `agent/zcode/TASK-059-ui-redesign` @ `58272ab` 已由 Codex 以 `53ae2e4` 集成；Codex Review 报告通过 merge `305fec3` 入主。最终 Review=[TASK-059-58272ab](../reviews/TASK-059-58272ab.md)，decision=`approved`，R5-001 已 closed。ND-1 已选定 **F · Graphite Atelier**（A 色彩/状态色/主题/视觉语言 + B 几何，含 `card-w=158px`；IA 继承 A）；ND-4/5/6/7 仍未决，其中 ND-6 是 F 实现前待决项。本 Task 只完成设计规范集成，**不释放任何 QML 实现权**。
 
 ## 必读输入（先读，再动手）
 
@@ -75,6 +77,7 @@ integration_commit: null
 
 - Handoff：[TASK-059-three-candidates](../handoffs/TASK-059-three-candidates.md)。Review：[TASK-059-db366da](../reviews/TASK-059-db366da.md)（`changes_requested`，R-001～R-006）→ R3 返修（head=`07397ac`）→ [TASK-059-07397ac](../reviews/TASK-059-07397ac.md)（`approved`，非阻塞 R3-001）→ R4 组合候选 F（head=`04743a8`）→ [TASK-059-04743a8](../reviews/TASK-059-04743a8.md)（分支 `agent/codex/TASK-059-review`，`changes_requested`，R4-001～R4-003）→ **R5 返修（当前）**。
 - **最近状态（当前，唯一）**：2026-09-20 **R6 返修交付（仅证据日志），保持 `in_review`**。Review `d6d471d` 唯一 finding **R5-001（P1）**：R5 重跑两份证据日志时未走脚本头注释的标准包装命令，`== env ==`/`== cmd ==` 环境头被覆盖删除（回归已关闭的 R-005/Q-009 证据纪律），而契约 §15 仍声称日志含环境头与命令。**处置**：按脚本头注释的标准包装命令重新生成两份日志——[audit-result.txt](../../verification/TASK-059/audit-result.txt)（`== env ==` date/host/shell/node/chrome/python+venv → `== cmd ==` → `== tokens ==` 6 JSON 重导无漂移 → `== out ==` 60 组合 ALL PASS → `AUDIT_EXIT=0`）与 [discriminate-result.txt](../../verification/TASK-059/discriminate-result.txt)（同 env/cmd 头 → D1/D2/D3 全 FAIL → `DISCRIMINATION: OK` → `DISCRIM_EXIT=0`）。**设计内容零改动**（HTML/JSON/契约/50 截图口径不变；重跑伴随 4 张截图像素微差属无头渲染非确定性，一并入库）；tokens 重导证明无漂移。R6 head=本次提交。**待 Codex 复审 R6（核对两份日志头结构即可）；ND-4/5/6/7 仍待用户裁决（ND-6 为 F 实现前待决，本轮不动）。**
+- **集成状态（2026-09-20，权威）**：Codex 已集成设计交付 `integration_commit=53ae2e4`、Review 报告 merge=`305fec3`；最终 reviewed_head=`58272ab`、Review [TASK-059-58272ab](../reviews/TASK-059-58272ab.md) 为 `approved`。R4-001/R4-002/R4-003/R5-001 全部 closed；60 组合、D1/D2/D3、F=A 色板 + B geometry（含 `card-w=158px`）和 50 张截图均保持。**本行覆盖上方“最近状态”的 `in_review` 口径。**
 - 历史：2026-09-19 R1 交付 A/B/C 三候选（实现 head=`5578a01`、契约 head=`ddaf865`）；用户追加指示「再增加两种完全不一样的设计」→ R2 增补 D · Vermilion 朱砂与 E · Amber 琥珀（R2 head=`dd455c0`（参考+证据）、`af91e06`（契约），候选总数 3→5（AC② 口径经用户指示扩展，DDR-8）；证据＝50 组合 ALL PASS + 41 张截图）。同日 Review `db366da` 判 `changes_requested`（R-001 徽标对比度审计方式错误、R-002 命令面板契约缺口、R-003 D/E 切片缺口、R-004 overlap 未实现、R-005 审计日志证据纪律、R-006 R1 残留）→ R3 返修（六条全 closed；head=`07397ac`）→ Review `07397ac` `approved`（唯一 P2 R3-001：直接 `--st-skip` 文本未入审计）→ R4（用户 ND-1 裁决组合候选 F 交付，head=`04743a8`：A 色板 + B 几何、R3-001 以 24 对闭合、DDR-9）→ Review `04743a8` `changes_requested`（R4-001 card-w 规格偏差 P1、R4-002 缺 F 亮色书架截图 P2、R4-003 脚本说明残留 P3）→ R5 返修（`--card-w` 132→158px 随 B 且纳入几何断言 21 项、补 `f-light-bookshelf.png` 共 50 张、脚本说明统一 a–f/D1–D3 + 删 `geom_sel`；契约 DDR-10；head=`d6d471d`）→ Review `d6d471d` 判 `changes_requested`（唯一 R5-001：日志环境头回归）→ R6。base=`4c81dca`、branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。
 
 ## 参考输入（用户 2026-09-19 会话；**不改变本 Task 的 AC、允许/禁止范围与授权**）

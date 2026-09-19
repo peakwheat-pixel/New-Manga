@@ -3,11 +3,15 @@ task_id: TASK-059
 author: ZCode
 recipient: Codex（Reviewer，非作者）
 base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
-delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 07397ac（R3 返修） / 04743a8（R4 组合候选 F） / d6d471d（R5 返修） / 本次提交（R6：证据日志环境头修复，设计零改动）
-status: in_review
+delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 07397ac（R3 返修） / 04743a8（R4 组合候选 F） / d6d471d（R5 返修） / 58272ab（R6：证据日志环境头修复，设计零改动）
+status: integrated
+integration_commit: 53ae2e4a58925f0bdf86ec60f7222f3e72b7d379
+review_head: 58272abfbe4115b265347e014798ebe506e6f6f4
 ---
 
 # Handoff：TASK-059（三候选设计交付）
+
+> **集成登记（2026-09-20）**：最终 Review [TASK-059-58272ab](../reviews/TASK-059-58272ab.md) 为 `approved`；作者交付 `58272ab` 由 Codex 以 integration `53ae2e4` 并入 master，Review 报告 merge=`305fec3`。F · Graphite Atelier 已作为 ND-1 选定设计基线集成，但未释放任何 QML 实现权。
 
 > **R2 修订（2026-09-19，交付后追加）**：用户在本 Handoff 提交后指示「再增加两种完全不一样的设计」。R2 已交付候选 **D · Vermilion 朱砂**（一级导航 rail→顶部导航条 + 编辑部印刷网格；导航范式变化，ND-8）与 **E · Amber 琥珀**（全 UI 等宽 + 书架表格化 + Ctrl+K 命令面板；新交互机制 ND-9、26px 触达显式例外 ND-10）。契约以 R2 为准（§6A/§6B、DDR-8）；候选总数 3→5，**AC② 的「2–3 个」由用户指示扩展为 5**，Task 文件已记录该口径变更。证据矩阵 30→50 组合（ALL PASS，`EXIT=0`）、截图 26→41 张。R2 提交：`dd455c0`（参考+证据）、`af91e06`（契约）。以下正文为 R1 内容，R1 的 AC 对照对 D/E 同样成立（对照关系见文末 R2 补充表）。
 

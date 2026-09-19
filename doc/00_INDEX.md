@@ -1,5 +1,7 @@
 # 项目文档索引与 Source of Truth
 
+2026-09-20 TASK-059 集成：设计重做 Task 已 `done`，integration=`53ae2e4`，最终 Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`。ND-1 选定 **F · Graphite Atelier**（A 色彩/状态色/主题 + B 几何含 `card-w=158px` + A IA；无 C 玻璃/D 顶栏/E 命令面板）；设计已集成但未释放实现 Task，ND-4/5/6/7 待用户裁决。
+
 2026-09-19 TASK-059 ND-1 用户裁决：候选方向选择 **A 的配色/视觉令牌与 IA + B 的几何比例（控件高度、行高、间距、字号、面板尺寸）**；不继承 B 的章节大卡 IA，也不启用 C 玻璃、D 顶栏或 E 命令面板。组合稿必须重新通过完整一致性审计后才能集成，C/D/E 未被选择。详见 [STATUS](STATUS.md) 当前台账。
 
 2026-09-19 TASK-059 改派：按用户指示，设计重做 Task 的 Owner 由 Qoder 改为 **ZCode**；新的 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`，Reviewer 仍为 Codex。原 Qoder 分支/worktree 未实施且仅留档，不再作为开工工作区；AC、授权和范围不变。

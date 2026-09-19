@@ -1,6 +1,6 @@
 # UI / UX / GUI 设计契约（TASK-059 候选提案）
 
-> 状态：**候选提案 + ND-1 已选组合稿 F**。本文档与视觉参考由 TASK-059 产出，尚未被任何实现 Task 释放。
+> 状态：**候选提案 + ND-1 已选组合稿 F**。本文档与视觉参考由 TASK-059 产出，已于 2026-09-20 以 integration `53ae2e4` 集成；**尚未被任何实现 Task 释放**。
 > 视觉真值：[doc/design/ui-reference.html](../design/ui-reference.html)（离线可开，浏览器直接打开）。
 > 机器可读副本：[tokens-cand-a.json](../design/tokens-cand-a.json) / [tokens-cand-b.json](../design/tokens-cand-b.json) / [tokens-cand-c.json](../design/tokens-cand-c.json) / [tokens-cand-d.json](../design/tokens-cand-d.json) / [tokens-cand-e.json](../design/tokens-cand-e.json) / [tokens-cand-f.json](../design/tokens-cand-f.json)（由 `verification/TASK-059/export-tokens.py` 生成；每份 42 色令牌 × 2 主题 + 21 项几何，含 `card-w`）。
 > 边界：本文档不修改 D01～D08、[ui-baseline](../ui-baseline.md) 的任何条文；与其冲突时以 D 文档为准，冲突记入 §13 待决项。所有色值/尺寸当前为 HTML/Chromium 呈现，**非 Qt 实现值**，不构成任何 D08 AC 的 PASS。

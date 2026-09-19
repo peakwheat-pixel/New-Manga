@@ -1,5 +1,7 @@
 # 下一阶段可执行 Roadmap
 
+2026-09-20 TASK-059 集成收口：设计重做已 `done`（integration `53ae2e4`，Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`）。ND-1 选定 F · Graphite Atelier（A 色板 + B 几何，IA 继承 A）；ND-4/5/6/7 待用户裁决，ND-6 为 F 实现前待决，QML 实现仍未释放。
+
 2026-09-19 TASK-059 改派：Owner=`ZCode`、Reviewer=`Codex`；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档；Task 授权与验收标准不变。
 
 2026-09-19 增量：TASK-047（Owner=Qoder，仅 UI/UX、GUI 与 QML 设计规范）**已被用户否决 → `rejected`**（裁决记录见该 Task 末尾；分支 `agent/qoder/TASK-047-ui-ux-gui-design` @`980ae7d` 未合并保留）；设计门改由新立的 [TASK-059](tasks/TASK-059.md) 承接（**授权重画配色与布局**、要求 2–3 个实质不同的候选方向）。TASK-022 保持 `proposed`，TASK-059 完成后另行批准实现。
