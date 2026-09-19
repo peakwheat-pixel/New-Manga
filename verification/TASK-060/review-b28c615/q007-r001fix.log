@@ -1,0 +1,4 @@
+== tree: G:\CODEX\New Manga.worktrees\TASK-060-zcode
+   retry_pending_purges raised ImmutablePathViolation: refusing to remove 'books/../revisions/keep.png': path components may not traverse
+   cleared=None protected revision file survives? True   <-- survives=False means the trash face can unlink a root-internal neighbour through a tampered manifest entry
+   is_safe_relative_path('books/../revisions/keep.png') = False   (the single authority refuses it; the trash face never calls it)
