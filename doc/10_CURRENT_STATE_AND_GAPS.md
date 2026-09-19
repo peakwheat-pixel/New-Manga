@@ -165,8 +165,8 @@ DeepSeek Harness 已批准 `b1b3f5d..885c9a9`，F-01～F-07 全部 resolved；Co
 
 | # | 级别 | 断点 | 复核方式 |
 |---|---|---|---|
-| 1 | P0 | 生产任务执行复用 GUI 线程创建的 SQLite 连接（`open_database` 在启动线程；`RunController` 在 QThread 里执行同一个 `PipelineService`）⇒ 首个 store 访问即 `sqlite3.ProgrammingError`；且 worker 崩溃后 run 在 DB 中停留 `running` | **端到端**：真实 `assemble_services` + 真实 `RunController` → `runCrashed` 复现；主线程对照可跑完 ⇒ 纯线程归属问题 |
-| 2 | P0 | 生产无 Region 创建入口（`create_region` 无 UI 调用点），且 `build_production_handlers` 未注册 `detect` ⇒ 区域类步骤无输入 | **端到端**：真实运行的 `step_runs` 行 = `ocr region=None status=failed code=INVALID_INPUT "requires a Region target"` |
+| 1 | P0 | 生产任务执行复用 GUI 线程创建的 SQLite 连接（`open_database` 在启动线程；`RunController` 在 QThread 里执行同一个 `PipelineService`）⇒ 首个 store 访问即 `sqlite3.ProgrammingError`；worker 崩溃后 run 在 DB 中停留 `running` | **端到端**复现（真实 `assemble_services` + 真实 `RunController`；主线程对照可跑完 ⇒ 纯连接归属问题）。**2026-09-19 收口**：TASK-048（`be558ca`）修掉跨线程异常，但其「共享单连接」方案被 Qoder 后置复审判 **W1 `overturn`（Q-001 P0：两线程 commit/rollback 同一事务 ⇒ 孤儿 Revision 10/10、静默丢写 7/7、run 被静默打死 3/10）**；重开后由 **TASK-060（`e7de64d`）**以「每线程连接归属 + typed BEGIN + drain-aware close」闭环。**另案（open）**：连接注册表**永不驱逐**（R-002）、`remove_managed` 的解析一致性（R-010）、`"." in parts` 死条件（R-011）。 |
+| 2 | P0 | 生产无 Region 创建入口（`create_region` 无 UI 调用点），且 `build_production_handlers` 未注册 `detect` ⇒ 区域类步骤无输入 | **端到端**复现（`step_runs` 行 = `ocr region=None status=failed code=INVALID_INPUT`）。**2026-09-19 更正（Qoder 复审 Q-004）**：TASK-049（`e94d5af`）已把**接缝**接上（注册 `detect` handler + detection→Region 生产路径 + VM 槽），但**生产仍惰性**——`detector=None`、无 UI 调用者 ⇒ **落 Region 数仍为 0**；且该收口**只对含 `ocr` 的命令成立**，页级 `REINPAINT_ALL`/`RERENDER_ALL` 在无 Region 页上仍报 `INVALID_INPUT requires a Region target`（两条 region-free 链计入缺口）。 |
 | 3 | P1 | 生产 Pipeline 的 `settings` / `provider_bindings` 恒为 `None`（`app.py:529-531` 只传 handlers / clean_probe）⇒ 越过区域墙后 `_chain` 抛 `PROVIDER_NOT_CONFIGURED`；根因含设置页空壳 | **端到端**：先经应用服务造出 Region，再跑 `OCR_REGION` → 运行期 `PROVIDER_NOT_CONFIGURED` |
 | 4 | P1 | `commandError` 在 QML 中没有消费者 ⇒ 上述三类失败对用户完全静默 | **静态**：`src/ui/qml/**` 0 命中；13 处全部在 workbench ViewModel |
 
@@ -175,3 +175,5 @@ DeepSeek Harness 已批准 `b1b3f5d..885c9a9`，F-01～F-07 全部 resolved；Co
 **证据方法论（要点）**：现有 **848 条测试**全绿，是因为它们走 mock/内存装配或直接调用用例层；`assemble_services` + 真实 SQLite + worker 线程这条**生产路径**没有任何测试穿过——因此 `N passed` 类证据无法否证上述断点。
 
 **处置**：findings 采纳为**已复核事实**；**是否开切片、顺序与范围由用户裁决**（Codex 建议顺序：跨线程连接 → Region 入口/`detect` → provider 与设置写入面 → `commandError` 上屏 → 工作台视图）。本节不释放任何 Task。
+
+**2026-09-19 进展**：**P-1 已闭环**（TASK-048 → 后置复审推翻 → TASK-060 `e7de64d` 收口；余 R-002/R-010/R-011 另案）；**P-2 接缝已闭、生产仍惰性**（行内更正）；P-3 已由 TASK-050（`21b7301`）接通读/写面（读面属**沿用既有能力**，见 Q-005 注）；P-4 已由 TASK-052（`a1c8171`，provisional 呈现）收口；P-6 已由 TASK-051（`65d1e13`）收口；P-5 仍待 GUI 确证；P-7/P-8 与 TASK-047/059 设计门相关；P-9 需产品裁决导出落点；**P-10 已由 TASK-058（`414a8e1`）收口**。

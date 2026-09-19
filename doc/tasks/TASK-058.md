@@ -40,7 +40,7 @@ integration_commit: 414a8e1
 
 ## 禁止范围
 
-- `src/workbench/run_controller.py`、`src/ui/viewmodels/workbench/**`（仅复用，不改语义）
+- `src/ui/viewmodels/workbench/run_controller.py`、`src/ui/viewmodels/workbench/**`（仅复用，不改语义）
 - `src/ui/qml/**`、Schema/migration、`requirements.txt`、`doc/10_CURRENT_STATE_AND_GAPS.md`
 - 用户源文件 / Managed Copy / DB 结构
 

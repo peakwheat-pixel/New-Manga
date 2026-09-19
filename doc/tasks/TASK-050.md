@@ -26,7 +26,7 @@ integration_commit: 21b7301
 
 ## Acceptance Criteria
 
-- [x] **AC ①（读面注入）**：`build_production_pipeline(...)` 在生产装配处收到由**设置存储**解析出的 `settings` 与 `provider_bindings`（不复用"第二套"解析；与既有 settings/constraint/context 语义一致）；无配置时行为与现状**逐字节一致**（仍 typed fail-closed）。
+- [x] **AC ①（读面注入）**（**后置复审 Q-005 注**：base `8bf8da3` 的 `freeze()` 本就每 run 重读 `pipeline_defaults`，故本条属**沿用既有能力**、其用例不具判别力；实得收益在 AC②，判别力以 AC③ 的确定性 provider 驱动为准）：`build_production_pipeline(...)` 在生产装配处收到由**设置存储**解析出的 `settings` 与 `provider_bindings`（不复用"第二套"解析；与既有 settings/constraint/context 语义一致）；无配置时行为与现状**逐字节一致**（仍 typed fail-closed）。
 - [x] **AC ②（写面 API）**：提供保存/读取 provider 绑定与相关设置的**应用层 API**（含校验与 typed 错误），并有用例；**不做设置页 UI**（属 TASK-022，见其设计门）。
 - [x] **AC ③（端到端前进）**：配置一个**确定性/本地**（测试内自建，不引入依赖、不配真实端点）provider 后，命令能越过 `PROVIDER_NOT_CONFIGURED` 前进到更后段；给出修前/修后对照与"真实端点仍 NOT_RUN"的声明。
 - [x] **AC ④（凭据边界）**：不得读写真实凭据/密钥文件；凭据路径遵循既有 D03/settings 边界（若需要凭据注入，必须是**接口**而非值）。
