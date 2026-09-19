@@ -210,3 +210,7 @@ round 2 全部产物在**我自己的 Review worktree**（`G:/CODEX/New Manga.wo
 - `verification/TASK-057/review-29546f7/`：`t057_chokepoint_probe.py`（本轮新对抗探针）、`run.sh`（Git Bash 版 runner：HEAD/shell/venv/env 头 + `EXIT=`），以及 14 份日志——`targeted-gate-29546f7.log`、`full-suite-29546f7-run{1,2}.log`、`collect-only-29546f7.log`、`gate-probe-29546f7.log`、`discrim-gate-on-b0e4cb1.log`、`discrim-single-continue-run.log`、`r006-q008-on-0d15018.log`、`r006-r004-on-0d15018.log`、`r006-q008-on-29546f7.log`、`r006-r004-on-29546f7.log`、`chokepoint-probe-29546f7.log`（H2 首版）、`chokepoint-probe-29546f7-run2.log`（H2 明示 worker 出生）、`targeted-five-files-29546f7.log`。
 
 临时树 `C:/Users/49745/AppData/Local/Temp/t057-r2-prefix`（@`b0e4cb1` + 返修后测试文件）与 `t057-r2-mergehead`（@`0d15018` + 返修后探针）不属于仓库、只读复核，报告提交后 `git worktree remove`。作者树 `TASK-057-zcode` 我未写一字节。
+
+### 复验（同一 head `29546f7` 的第二次采集，2026-09-20 00:20 前后）
+
+同一指令第二次送达时树未动（作者 head 仍 `29546f7`、`dirty=0`；我的报告 commit 仍 `74b9b52`），故按同一口径把三条指定复跑 + 对抗探针各再采一次，结果逐项一致：① `t057_gate_probe.py` 输出的 8 条 `worker started during restore?` **全 False、0 条 True**（`EXIT=0`）；② 门测试 `9 passed / EXIT=0`；③ 全仓 `948 passed / EXIT=0`（50.31s）；④ 对抗探针 H1 三面仍不出生活跃 worker、H3 仍是 `store='pending'`，H2 仍为 **`WORKER BORN DURING OUTER RESTORE=True`**（R-008 未变，判据可复现）。 我的四次运行均未向作者树写入任何文件（`PYTHONDONTWRITEBYTECODE=1` + `-p no:cacheprovider`，跑后 `git status --porcelain` 为空）。日志：`rerun-gate-probe.log`、`rerun-gate-tests.log`、`rerun-full-suite.log`、`rerun-chokepoint-probe.log`。
