@@ -1,0 +1,34 @@
+== tree: G:\CODEX\New Manga.worktrees\TASK-060-qoder-review
+== branch/head: b28c615
+
+-- S1 ThreadRoutedConnection registry growth over real runs
+   after assembly: registry=(1, 1)
+   run 1: outcome=completed_with_failures registry=2 open_connections=2
+   run 2: outcome=completed_with_failures registry=3 open_connections=3
+   run 3: outcome=completed_with_failures registry=4 open_connections=4
+   run 4: outcome=completed_with_failures registry=5 open_connections=5
+   run 5: outcome=completed_with_failures registry=6 open_connections=6
+   run 6: outcome=completed_with_failures registry=7 open_connections=7
+   run 7: outcome=completed_with_failures registry=8 open_connections=8
+   run 8: outcome=completed_with_failures registry=9 open_connections=9
+   (each run is a new QThread => a new ident; the facade never evicts a finished worker's connection, so both numbers grow monotonically)
+
+-- S2 Q-007 ¢Ù physical backstop, through the production trash retry path
+   policy predicate says safe? is_safe_relative_path=False  (False = the single authority refuses it)
+   remove_managed(): ImmutablePathViolation: refusing to remove C:\Users\49745\AppData\Local\Temp\t060-s2-8b0ketiw\revisions\keep.png: escapes the managed root C:\Us
+   protected revision file still there? True  (False = the physical layer has no component rule)
+   TrashService.retry_pending_purges() cleared=1; protected file survives? False   <-- production path: a tampered manifest entry reaches unlink
+   note: cache faces pass is_safe_relative_path() first (AC ¢ß ¢Ü is real); the trash face has no predicate call and relies on the physical layer.
+
+-- S3 what a facade attribute read means now
+   a worker thread that only READ conn.in_transaction: value=False; registry 1 -> 2  (a read-only attribute opened a real connection)
+   while the worker holds an open write transaction, GUI thread reads in_transaction -> False (worker's own view: True once released)
+   aggregate 'is any thread writing?' API on the facade: ['close', 'commit', 'cursor', 'execute', 'rollback']
+   worker-side in_transaction before rollback: [True]
+
+-- S4 GUI save cost when a worker holds the write lock
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\TASK-060-qoder-review\verification\TASK-060\review-b28c615\t060_review_probe.py", line 259, in <module>
+    page = services4.library.get_pages(chapter4.chapter_id)[0]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'LibraryService' object has no attribute 'get_pages'

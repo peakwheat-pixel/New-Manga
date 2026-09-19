@@ -242,7 +242,12 @@ class TrashService:
         """
         cleared = 0
         for batch_id, targets in self._pending_purges():
-            if self._batch_in_ledger(batch_id):
+            # TASK-060 Q-007 ③: the guard is **row liveness**, not manifest
+            # membership — an entry whose page rows are still alive (the
+            # purge never reached the rows) must not have its files swept,
+            # and an entry whose batch survives only as a rebuilt group
+            # must not fail open either.
+            if self._batch_pages_still_alive(batch_id, targets):
                 continue
             self._remove_pending_targets(batch_id, targets)
             cleared += 1
@@ -311,16 +316,32 @@ class TrashService:
             for item in manifest.get("pending_purges", [])
         ]
 
-    def _batch_in_ledger(self, batch_id: str) -> bool:
-        manifest = self._manifest.read_manifest()
-        return any(
-            item["batch_id"] == batch_id for item in manifest.get("batches", [])
-        )
+    def _batch_pages_still_alive(self, batch_id: str, targets: list[str]) -> bool:
+        """Row-liveness guard for pending purges (TASK-060 Q-007 ③).
+
+        True when the entry's files are still referenced by live page rows
+        (soft-deleted counts as live — the purge never reached the rows),
+        so removing them would orphan live pages.  Two routes, because the
+        ledger can degrade (F-7): match the batch by id, or — when the id
+        is unrecoverable (rebuilt ids differ) — ask the store whether any
+        target path is still a live row's managed original.
+        """
+        for batch in self.list_batches():
+            if batch.batch_id == batch_id:
+                return bool(self._pages.get_pages_by_ids(list(batch.page_ids)))
+        return bool(self._pages.list_live_managed_refs(targets))
 
     def _remove_pending_targets(self, batch_id: str, targets: list[str]) -> None:
         """Remove every file of one pending entry, then clear the entry.
         A remover failure raises *before* the entry is cleared, so the
-        orphan stays discoverable and retryable."""
+        orphan stays discoverable and retryable.
+
+        TASK-060 Q-007 ①: the never-clean boundary is single-sourced —
+        the component rule and root containment are enforced once, at the
+        physical removal point (``ManagedFileStorage.remove_managed``,
+        matching ``is_safe_relative_path``'s policy rule), so this face
+        cannot drift from the cache faces by keeping its own guard.
+        """
         for relative_path in targets:
             self._remover.remove_managed(relative_path)
         manifest = self._manifest.read_manifest()

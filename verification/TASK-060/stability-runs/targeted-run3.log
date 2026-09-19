@@ -1,0 +1,11 @@
+# repo: G:/CODEX/New Manga.worktrees/TASK-060-zcode @ dc254fa (post-fix)
+# shell: PowerShell 5.1 (powershell.exe -NoProfile)
+# venv: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe (Python 3.12.3)
+# env: PYTHONDONTWRITEBYTECODE=1; QT_QPA_PLATFORM unset
+# pytest: -q -p no:cacheprovider
+# target: tests/core/test_connection_ownership.py tests/workbench/test_run_thread_e2e.py::test_worker_run_and_main_thread_access_coexist tests/workbench/test_gui_write_during_run.py tests/workbench/test_drain_shutdown.py
+# date: 2026-09-19
+---
+........                                                                 [100%]
+8 passed in 2.99s
+run3 EXIT=0

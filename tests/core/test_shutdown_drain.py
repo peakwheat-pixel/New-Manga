@@ -54,7 +54,11 @@ def test_shutdown_services_drains_workbench_before_closing_conn():
 
     calls: list[str] = []
     services = SimpleNamespace(
-        workbench=SimpleNamespace(shutdown=lambda: calls.append("shutdown")),
+        # TASK-060 Q-003: shutdown now reports drained; False/None would
+        # make _shutdown_services skip close on purpose
+        workbench=SimpleNamespace(
+            shutdown=lambda: calls.append("shutdown") or True
+        ),
         conn=SimpleNamespace(close=lambda: calls.append("close")),
     )
     _shutdown_services(services)

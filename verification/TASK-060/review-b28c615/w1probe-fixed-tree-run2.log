@@ -1,0 +1,19 @@
+== tree: G:\CODEX\New Manga.worktrees\TASK-060-qoder-review
+== sqlite3.threadsafety = 3 (docstring premise #1 needs 3=serialized)
+
+-- A uphold (real assembly + real RunController + TRANSLATE_ALL): crashed=0 finished=['completed_with_failures'] db_status=completed_with_failures -> P0 FIX REPRODUCED
+
+-- B realism (20s of real GUI region commits during a real run)
+   GUI attempts=1771 raised=0 created=1771 translated=1771
+   run: crashed=0 finished=['completed_with_failures'] db_status=completed_with_failures
+   durability: GUI create_region succeeded=1771, region rows durable=1771, lost=0
+   invariants: {'pointer_points_at_other_region': 0, 'regions_with_null_pointer': 0, 'revisions_without_region_row': 0, 'pointer_dangling': 0, 'state_torn_vs_current_revision': 0, 'integrity_check': 'ok', 'foreign_key_check_rows': 0}
+
+-- C control (same GUI loop, NO worker run): attempts=1220 raised=0 kinds={}
+
+-- D mechanism (forced schedule; `with conn:` shape = pipeline.py:398)
+   D1 GUI BEGIN IMMEDIATE against a worker-held txn: RuntimeError: region revision commit failed: OperationalError('database is locked')
+   D1 worker side: no error  (a worker rollback here would also erase GUI work in flight)
+   D2 after the GUI rollback: orphan revision rows=0 (0 expected if 'rolling back entirely' held); region pointer=c711847eefb74f2eb8b0f87a884933f0
+   D2 invariants: {'pointer_points_at_other_region': 0, 'regions_with_null_pointer': 0, 'revisions_without_region_row': 0, 'pointer_dangling': 0, 'state_torn_vs_current_revision': 0, 'integrity_check': 'ok', 'foreign_key_check_rows': 0}
+   D3 GUI write: returned normally (its commit() had nothing left to commit); rows durable=1 -> 0 means a silently lost user write (the 'flaky' signature)

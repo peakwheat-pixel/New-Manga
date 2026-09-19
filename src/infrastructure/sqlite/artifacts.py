@@ -192,8 +192,11 @@ class SqliteArtifactRepository(ArtifactRepositoryPort):
         integrity,
     ) -> CommitOutcome:
         conn = self._conn
-        conn.execute("BEGIN IMMEDIATE")
+        # TASK-060 Q-002: same as regions.commit_region_revision — the
+        # BEGIN belongs inside the try; failure raises sqlite3.Error which
+        # the caller already maps to the typed DB_FAILED outcome.
         try:
+            conn.execute("BEGIN IMMEDIATE")
             current = conn.execute(
                 "SELECT current_revision_id FROM media_artifacts WHERE artifact_id = ?",
                 (artifact_id,),

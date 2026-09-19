@@ -1,0 +1,3 @@
+== tree: C:\Users\49745\AppData\Local\Temp\t060-prefix
+   cleared=1 protected revision file survives? False   <-- survives=False means the trash face can unlink a root-internal neighbour through a tampered manifest entry
+   is_safe_relative_path: absent on this tree (no single predicate yet)

@@ -14,7 +14,7 @@ from __future__ import annotations
 
 import os
 import uuid
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 
 from infrastructure.filesystem.integrity import integrity_of
 from ports.repositories.storage import IntegrityInfo
@@ -127,5 +127,12 @@ class ManagedFileStorage:
             raise ImmutablePathViolation(
                 f"refusing to remove {absolute}: escapes the managed root {root}"
             ) from error
+        # TASK-060 Q-007 ①: component rule at the single physical removal
+        # point — "books/../cache/x" resolves back *inside* the root, so
+        # the containment check above alone would let a tampered relative
+        # path delete a root-internal neighbour.  The policy predicate
+        # (application.maintenance.cleanup.is_safe_relative_path) applies
+        # the same component rule per face; this is the backstop every
+        # removal goes through regardless of its caller.
         if absolute.is_file():
             absolute.unlink()

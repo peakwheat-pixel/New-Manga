@@ -48,6 +48,17 @@ class PageTrashStore(Protocol):
         (artifact revisions), for the permanent-delete file sweep (F-6)."""
         ...
 
+    def list_live_managed_refs(self, refs) -> set[str]:
+        """Which of the given managed paths are still referenced by a **live
+        page row** (soft-deleted counts as live — the row exists).
+
+        TASK-060 Q-007 ③: row-liveness guard for pending purge retries —
+        a pending entry whose targets a live row still references must
+        never be swept, even when the batch identity is unrecoverable
+        (lost ledger) and cannot be matched by id.
+        """
+        ...
+
     def list_trashed_page_groups(self) -> list[tuple[str, str, tuple[str, ...]]]:
         """``(chapter_id, deleted_at, page_ids)`` for each soft-deleted group.
 
