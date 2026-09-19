@@ -160,16 +160,17 @@ class TestR010ReparseWalk:
         # junction (reparse point).  Limitation (declared): this covers the
         # directory-junction form only; file symlinks require developer
         # mode/privilege and are not exercised here.
-        twin = tmp_path / "managed" / "books" / "book-1" / "chapters" / "chapter-twin"
+        twin = tmp_path / "managed" / "books" / "book-twin"
         made = subprocess.run(
-            ["cmd", "/c", "mklink", "/J", str(twin), str(protected.parent)],
+            # junction target: the book-1 directory (original's parents[2])
+            ["cmd", "/c", "mklink", "/J", str(twin), str(protected.parent.parents[2])],
             capture_output=True,  # no text: mklink output is GBK on this box
         )
         assert made.returncode == 0, made.stderr
 
         with pytest.raises(ImmutablePathViolation):
             storage.remove_managed(
-                "books/book-1/chapters/chapter-twin/original/keep.png"
+                "books/book-twin/chapters/chapter-1/original/keep.png"
             )
 
         assert protected.is_file(), (

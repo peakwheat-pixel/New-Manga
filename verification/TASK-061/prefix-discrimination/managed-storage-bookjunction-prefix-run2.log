@@ -1,0 +1,59 @@
+# repo: G:/CODEX/New Manga.worktrees/TASK-061-prefix @ 6cb0afb (pre-fix, detached)
+# shell: PowerShell 5.1 (powershell.exe -NoProfile)
+# venv: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe (Python 3.12.3)
+# env: PYTHONDONTWRITEBYTECODE=1; QT_QPA_PLATFORM unset
+# pytest: -q -p no:cacheprovider
+# target A: tests/storage/test_managed_storage.py::TestR010ReparseWalk (junction moved up one level: books/book-twin -> books/book-1; copied uncommitted)
+# target B: verification/TASK-061/prefix-discrimination/bookjunction-prefix-evidence.py (same tree; prints refusal + target existence)
+# note: this run REPLACES run2 after a fixture correction — the junction target
+#   first pointed at chapters/ (parents[1], wrong level) which made the attack
+#   path resolve to a nonexistent file; it now points at books/book-1 (parents[2]).
+#   Qoder asked for an artefact showing the pre-fix tree REALLY deletes the
+#   protected original: see target B output (exists: False).
+# date: 2026-09-19
+---
+# === target A: pytest ===
+F                                                                        [100%]
+================================== FAILURES ===================================
+_ TestR010ReparseWalk.test_refuses_a_root_internal_junction_and_spares_the_target _
+
+self = <test_managed_storage.TestR010ReparseWalk object at 0x00000211BCFD7A70>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2674/test_refuses_a_root_internal_j0')
+
+    def test_refuses_a_root_internal_junction_and_spares_the_target(
+        self, tmp_path
+    ):
+        import subprocess
+    
+        storage = ManagedFileStorage(tmp_path / "managed")
+        storage.ensure_layout()
+        protected_rel = "books/book-1/chapters/chapter-1/original/keep.png"
+        protected = tmp_path / "managed" / Path(*protected_rel.split("/"))
+        protected.parent.mkdir(parents=True)
+        protected.write_bytes(b"PROTECTED ORIGINAL")
+    
+        # mklink /J needs no privileges on NTFS; it creates a directory
+        # junction (reparse point).  Limitation (declared): this covers the
+        # directory-junction form only; file symlinks require developer
+        # mode/privilege and are not exercised here.
+        twin = tmp_path / "managed" / "books" / "book-twin"
+        made = subprocess.run(
+            # junction target: the book-1 directory (original's parents[2])
+            ["cmd", "/c", "mklink", "/J", str(twin), str(protected.parent.parents[2])],
+            capture_output=True,  # no text: mklink output is GBK on this box
+        )
+        assert made.returncode == 0, made.stderr
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_managed_storage.py:171: Failed
+=========================== short test summary info ===========================
+FAILED tests/storage/test_managed_storage.py::TestR010ReparseWalk::test_refuses_a_root_internal_junction_and_spares_the_target
+1 failed in 0.08s
+pytest EXIT=1
+
+# === target B: helper ===
+remove_managed returned normally: NO typed refusal
+protected original still exists: False
+helper EXIT=0

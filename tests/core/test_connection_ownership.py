@@ -217,9 +217,16 @@ class TestR002RegistryEviction:
 
         thread = threading.Thread(target=other_thread)
         thread.start()
-        barrier.wait()
-        assert conn.registry_size() == 2, "both live threads hold a connection"
-        release.set()
+        try:
+            barrier.wait()
+            assert conn.registry_size() == 2, (
+                "both live threads hold a connection"
+            )
+        finally:
+            # the worker parks on release.wait(): it MUST be released even
+            # when the assertion above fails, or a non-daemon thread outlives
+            # the test and the pytest process never exits
+            release.set()
         thread.join()
         gc.collect()  # thread-local teardown -> lease collected -> evicted
         assert conn.registry_size() == 1, (

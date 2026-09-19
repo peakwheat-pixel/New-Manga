@@ -8,7 +8,7 @@ suggested_owner: ZCode
 owner: ZCode
 reviewer: Qoder（非作者）
 depends_on: [TASK-060]
-base_commit: cc4d9660b3f30d32b87d80c440e2dceb323c6a99
+base_commit: 6cb0afb5e53a229c700b0570d19f0f03c9942811
 branch: agent/zcode/TASK-061-connection-eviction
 worktree: G:/CODEX/New Manga.worktrees/TASK-061-zcode
 integration_commit: null
@@ -55,9 +55,9 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ① 驱逐 | 真实 `assemble_services` 连跑 N 次 run，读注册表大小与打开连接数（planned） | PowerShell + `TASK-012-py312`，不设 `QT_QPA_PLATFORM` | NOT_RUN | 无 |
-| AC ② 解析一致性 | `mklink /J` 根内 junction 指向同根受保护文件，断言 typed 拒绝且目标存活（planned） | 同上（Windows） | NOT_RUN | 无 |
-| AC ⑤ 全仓 | `pytest tests -q -rs` ×5（planned） | 同上 | NOT_RUN | 无 |
+| AC ① 驱逐 | 真实 `assemble_services` 连跑 4 次 TRANSLATE_ALL，读 `registry_size()`/`open_connection_count()`；修前树 `6cb0afb` detached 复跑同用例取对照 | PowerShell + `TASK-012-py312`，不设 `QT_QPA_PLATFORM` @ 6cb0afb（修前）/032dc3a（修后） | PASS：修前 [2,3,4,5] 单调增长（FAIL 判别）→ 修后 [1,1,1,1]、open ≤2 | `verification/TASK-061/prefix-discrimination/connection-eviction-prefix-run1.log`（EXIT=1）+ `tests/workbench/test_connection_eviction.py` |
+| AC ② 解析一致性 | `mklink /J` 根内 junction（books/book-twin → books/book-1）指向同根受保护原件，断言 typed 拒绝且目标存活；修前树另跑取证脚本展示"删除成功 + 目标消失" | 同上（Windows NTFS） @ 6cb0afb/032dc3a | PASS：修前 `DID NOT RAISE` + helper `exists: False`（目标确实被删）→ 修后 typed 拒绝 + 目标存活 | `verification/TASK-061/prefix-discrimination/managed-storage-bookjunction-prefix-run2.log`（pytest EXIT=1 / helper EXIT=0）+ `tests/storage/test_managed_storage.py::TestR010ReparseWalk` |
+| AC ⑤ 全仓 | `python -m pytest -q -p no:cacheprovider`（全仓）×5 | 同上 @ 032dc3a | PASS：5/5 次 930 passed / 0 skipped，EXIT=0（collected 930 = 923 基线 + 7 新增） | `verification/TASK-061/full-suite/full-suite-run{1..5}.log` |
 
 ## 依赖、风险与阻塞
 
