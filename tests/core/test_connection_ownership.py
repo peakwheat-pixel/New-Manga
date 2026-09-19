@@ -212,13 +212,18 @@ class TestR002RegistryEviction:
 
         def other_thread():
             conn.execute("SELECT 1").fetchone()  # opens this thread's real one
-            barrier.wait()  # main thread may now read the registry size
+            # N-002: a timeout on BOTH barrier sides — if this worker dies
+            # before reaching the barrier, the main thread must not hang
+            # forever inside barrier.wait()
+            assert barrier.wait(5) in (0, 1)
             release.wait()  # stay alive until the main thread sampled 2
 
         thread = threading.Thread(target=other_thread)
         thread.start()
         try:
-            barrier.wait()
+            # N-002: bounded wait + assert it was reached (not broken)
+            assert barrier.wait(5) in (0, 1), (
+                "worker never reached the barrier (died before it)")
             assert conn.registry_size() == 2, (
                 "both live threads hold a connection"
             )
@@ -270,4 +275,62 @@ class TestR004AggregatedWriterView:
                 (_NOW, _NOW),
             )
             assert conn.any_in_transaction() is True
+        assert conn.any_in_transaction() is False
+
+    def test_any_in_transaction_sees_the_other_threads_write(self, owned_db):
+        """TASK-061 review R-005 (aggregation direction, discriminating):
+        a transaction held by *another* thread must be visible through the
+        aggregate predicate while this thread's per-connection
+        ``in_transaction`` stays False.  If the aggregate ever regresses
+        to a per-thread read, the first assertion fails on an idle caller
+        connection — the direction the per-connection attribute cannot
+        answer and the reason the aggregate exists (R-004)."""
+        conn, _db_path = owned_db
+        _seed_region(conn)
+        assert conn.any_in_transaction() is False
+        worker_tx_open = threading.Event()
+        release = threading.Event()
+
+        def worker() -> None:
+            try:
+                # the worker's own (thread-routed) connection, driven the
+                # way PipelineService holds a write: BEGIN IMMEDIATE +
+                # INSERT, parked mid-transaction
+                conn.execute("BEGIN IMMEDIATE")
+                conn.execute(
+                    "INSERT INTO regions (region_id, page_id, region_type,"
+                    " reading_order, geometry_json, text_json, style_json,"
+                    " sfx_policy, created_at, updated_at, current_revision_id)"
+                    " VALUES ('r-r005', 'p1', 'speech', 9, '{}', '{}', '{}',"
+                    " 'skip', ?, ?, NULL)",
+                    (_NOW, _NOW),
+                )
+                worker_tx_open.set()
+                release.wait(5)
+            finally:
+                try:
+                    conn.rollback()
+                except sqlite3.Error:
+                    pass
+
+        thread = threading.Thread(target=worker)
+        thread.start()
+        try:
+            assert worker_tx_open.wait(5), (
+                "worker never opened its transaction")
+            # aggregate direction: the OTHER thread's write is what we see
+            assert conn.any_in_transaction() is True, (
+                "aggregate lost the other thread's open write transaction "
+                "(regressed to a per-thread read — R-005)")
+            # per-thread direction: OUR connection is idle, and the
+            # aggregate read opened no new connection (R-004 invariant)
+            assert conn.in_transaction is False
+            assert conn.registry_size() == 2
+        finally:
+            # the worker parks on release.wait(): it MUST be released even
+            # when an assertion above fails, or a non-daemon thread outlives
+            # the test and the pytest process never exits
+            release.set()
+        thread.join(10)
+        assert not thread.is_alive(), "worker never released"
         assert conn.any_in_transaction() is False

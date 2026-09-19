@@ -111,6 +111,10 @@ class WorkbenchViewModel(QObject):
         # run state
         self._run: PipelineRun | None = None
         self._pausing = False
+        # TASK-057 Q-008 前置① / TASK-061 R-004: restore latch — while a
+        # restore overwrites the live database, every start path is
+        # rejected here (part 3 of the three-part gate)
+        self._restore_in_progress = False
         self._controller = RunController(self)
         self._controller.runFinished.connect(self._on_run_finished)
         self._controller.runCrashed.connect(self._on_run_crashed)
@@ -674,6 +678,12 @@ class WorkbenchViewModel(QObject):
             )
 
     def _start_run(self, command: CommandType, scope: PipelineScope) -> None:
+        if self._restore_in_progress:
+            # R-004: any_in_transaction() was a snapshot taken before the
+            # restore began — a run started during the restore would write
+            # into a database being overwritten wholesale.
+            self._record_command_error("恢复进行中，不能启动任务", stage="run")
+            return
         if self._controller.is_running:
             self._record_command_error("已有任务在运行", stage="run")
             return
@@ -690,6 +700,33 @@ class WorkbenchViewModel(QObject):
             self._controller.start(self._pipeline, run)
             self._progress_timer.start()
             self._refresh_from_run()
+
+    # ------------------------------------------------------------------
+    # restore gate (TASK-057 Q-008 前置① / TASK-061 R-004, three parts)
+    # ------------------------------------------------------------------
+
+    def beginRestore(self) -> bool:
+        """Engage the restore latch; ``False`` while a run is executing.
+
+        The three-part gate this participates in: (1) the run worker is
+        drained — while a run is still executing ``beginRestore`` refuses
+        (app-exit equivalently proves it via ``shutdown() is True``);
+        (2) ``not any_in_transaction()`` is the *maintenance caller's*
+        duty before calling this — the VM holds no connection handle,
+        and the aggregate predicate is a snapshot, not an admission
+        gate (R-004); (3) this latch is what keeps the gate closed while
+        the restore runs: every start path is rejected on the VM side
+        until :meth:`endRestore`.
+        """
+        if self._controller.is_running:
+            self._record_command_error("已有任务在运行，不能进入恢复", stage="run")
+            return False
+        self._restore_in_progress = True
+        return True
+
+    def endRestore(self) -> None:
+        """Release the restore latch — normal runs may start again."""
+        self._restore_in_progress = False
 
     # ------------------------------------------------------------------
     # run controls (D06 §103 button matrix)

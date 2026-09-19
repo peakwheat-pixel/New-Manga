@@ -72,6 +72,19 @@ class RunController(QObject):
         return self._active_run.run_id if self._active_run else None
 
     def start(self, service, run: PipelineRun) -> None:
+        """Start ``run`` on a fresh worker thread.
+
+        Sole-writer premise (TASK-057 Q-008 前置① / TASK-061 R-004): the
+        worker started here is the **only non-GUI writer** to the shared
+        database.  Maintenance paths that overwrite the live database
+        (backup restore) must not interleave with it: they may only run
+        after ``shutdown()`` returned True (worker drained) and
+        ``not facade.any_in_transaction()`` was confirmed, and while such
+        an operation runs the workbench VM's restore latch rejects every
+        start path — the aggregate predicate is a snapshot taken before
+        the maintenance began, so a worker started after it would be
+        invisible to it.
+        """
         if self.is_running:
             raise RuntimeError("a run is already executing on this controller")
         self._active_run = run
@@ -122,6 +135,12 @@ class RunController(QObject):
 
     def shutdown(self, wait_ms: int = 5000) -> bool:
         """App-exit drain: cancel any active run, then reap the worker.
+
+        This is part 1 of the restore gate (TASK-057 Q-008 前置① /
+        TASK-061 R-004): a ``True`` return proves the run worker is gone,
+        which together with ``not any_in_transaction()`` and the VM-side
+        restore latch means no other writer can touch the database while
+        a restore overwrites it.
 
         TASK-060 Q-003: a PAUSED run is requested to cancel as well — on
         shutdown there is no session to resume into.  (Run-completion

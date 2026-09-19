@@ -113,7 +113,21 @@ class TestBackupCompleteness:
         workspace = backup_workspace
         workspace["service"].create_backup("manual", "test")
         assert workspace["user_source"].read_bytes() == b"USER SOURCE BYTES"
-        assert not (workspace["managed_root"] / "user-side").exists() or True
+        # Q-008 前置②: this assertion used to carry a truthy tail (`or True`),
+        # which made the AC③ boundary unpolicable — a regression writing a
+        # user-side shadow into the managed root passed silently (pre-fix
+        # discriminating evidence:
+        # verification/TASK-057/pre-fix-probes/pre-fix-q008-truthy-run2.log).
+        # Real boundaries now: no user-side shadow inside the managed root,
+        # and the user-side directory keeps exactly the source file.
+        assert not (workspace["managed_root"] / "user-side").exists(), (
+            "AC③ breach: backup wrote a user-side shadow into the managed root"
+        )
+        assert [
+            p.name for p in workspace["user_source"].parent.iterdir()
+        ] == ["art.tiff"], (
+            "AC③ breach: backup wrote files into the user source directory"
+        )
 
 
 class TestRestoreSemantics:

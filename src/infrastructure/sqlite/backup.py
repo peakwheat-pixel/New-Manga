@@ -168,7 +168,13 @@ class SqliteBackupService:
 
         source = sqlite3.connect(str(target))
         try:
-            source.backup(self._conn)
+            # TASK-060 connection model: the facade (ThreadRoutedConnection)
+            # is not itself a sqlite3.Connection — the backup API needs the
+            # *real* connection of the calling thread as its target.  The
+            # restore gate (Q-008 前置①: shutdown() is True AND not
+            # any_in_transaction(), VM restore latch engaged) guarantees
+            # that connection is idle, as the backup API requires.
+            source.backup(self._conn._current())
         finally:
             source.close()
 
