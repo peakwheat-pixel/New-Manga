@@ -134,5 +134,11 @@ class ManagedFileStorage:
         # (application.maintenance.cleanup.is_safe_relative_path) applies
         # the same component rule per face; this is the backstop every
         # removal goes through regardless of its caller.
+        parts = PurePosixPath(relative_path.replace("\\", "/")).parts
+        if ".." in parts or "." in parts or Path(relative_path).is_absolute():
+            raise ImmutablePathViolation(
+                f"refusing to remove {relative_path!r}:"
+                " path components may not traverse"
+            )
         if absolute.is_file():
             absolute.unlink()

@@ -1,0 +1,11 @@
+# repo: G:/CODEX/New Manga.worktrees/TASK-060-zcode @ R-001 fix (component rule restored at ManagedFileStorage.remove_managed)
+# shell: PowerShell 5.1 (powershell.exe -NoProfile)
+# venv: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe (Python 3.12.3)
+# env: PYTHONDONTWRITEBYTECODE=1; QT_QPA_PLATFORM unset
+# pytest: -q -p no:cacheprovider
+# target: tests/storage/test_run_files_leak.py (full file, incl. TestQ007TamperedEntryCannotDeleteNeighbours)
+# date: 2026-09-19
+---
+..........                                                               [100%]
+10 passed in 0.66s
+post EXIT=0

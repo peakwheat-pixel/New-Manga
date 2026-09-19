@@ -343,3 +343,54 @@ class TestQ007RowLivenessGuard:
         assert (
             workspace["managed"] / page.managed_original_ref
         ).is_file(), "a live page's managed original was removed by the retry"
+
+
+class TestQ007TamperedEntryCannotDeleteNeighbours:
+    """TASK-060 R-001 (Qoder review of b28c615): a tampered pending-purge
+    entry must not be able to delete a root-internal *neighbour* through a
+    ``..`` traversal.  The tampered batch id is gone from the ledger and
+    the traversal literal matches no stored ``managed_original_ref``, so
+    the row-liveness guard lets the entry through on both legs — the last
+    line of defence is the component rule at the single physical removal
+    point.  Discriminating: on b28c615 the removal point had no component
+    rule, so the neighbour file was unlinked and this test failed."""
+
+    def test_retry_refuses_a_traversal_target_and_spares_the_neighbour(
+        self, trash_workspace
+    ) -> None:
+        import json
+
+        from infrastructure.filesystem.managed_storage import (
+            ImmutablePathViolation,
+        )
+
+        workspace = trash_workspace
+        service = workspace["service"]
+        neighbour = workspace["make_page"]("p99", b"neighbour-bytes")
+        workspace["make_page"]("p10", b"payload-ten")
+        # a real soft delete first, so the manifest file exists on disk
+        service.soft_delete_pages("chapter-1", ("p10",))
+
+        # tamper: a batch id that no longer exists + the neighbour's file
+        # reached through a ".." traversal that still resolves *inside*
+        # the managed root
+        traversed = neighbour.managed_original_ref.replace(
+            "/original/", "/original/../original/", 1
+        )
+        assert traversed != neighbour.managed_original_ref
+        manifest_path = workspace["manifest_path"]
+        raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+        raw["pending_purges"] = [
+            {"batch_id": "batch-tampered", "targets": [traversed]}
+        ]
+        manifest_path.write_text(json.dumps(raw), encoding="utf-8")
+
+        with pytest.raises(ImmutablePathViolation):
+            service.retry_pending_purges()
+
+        # the neighbour survived, and the tampered entry stays pending
+        # (diagnosable, not silently consumed)
+        assert (
+            workspace["managed"] / neighbour.managed_original_ref
+        ).is_file(), "the tampered entry deleted a root-internal neighbour"
+        assert service.pending_purge_count() == 1
