@@ -1,0 +1,9 @@
+== tree: G:\CODEX\New Manga.worktrees\TASK-060-zcode  head: f7745e6
+   dotdot slash               target='books/../revisions/keep1.png'                 neighbour survives? 1      <- refused: refusing to remove 'books/../revisions/keep1.png': path components may not tra
+   dotdot backslash           target='books\\..\\revisions\\keep2.png'              neighbour survives? 1      <- refused: refusing to remove 'books\\..\\revisions\\keep2.png': path components may not 
+   single dot component       target='./revisions/keep3.png'                        neighbour survives? 0      <- remove_managed returned normally
+   absolute path in root      target='C:\\Users\\49745\\AppData\\Local\\Temp\\t060-r001-na1xf28s\\managed\\revisions\\keep4.png' neighbour survives? 1      <- refused: refusing to remove 'C:\\Users\\49745\\AppData\\Local\\Temp\\t060-r001-na1xf28s
+   junction (no '..' text)    target='books/j/keep5.png'                            neighbour survives? 0      <- remove_managed returned normally
+   file symlink               target='books/link6.png'                              neighbour survives? 0      <- remove_managed returned normally
+   note: legit non-traversing managed path must still be removable:
+      remove_managed('books/b/original/p1.png') -> removed, gone=True

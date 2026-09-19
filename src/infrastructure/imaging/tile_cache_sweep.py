@@ -30,10 +30,21 @@ class WebtoonTileCacheSweeper:
     def list_cache_files(self) -> tuple[CleanupTarget, ...]:
         if not self._cache_root.is_dir():
             return ()
-        prefix = self._cache_root.resolve().relative_to(self._managed_root.resolve())
+        resolved_cache = self._cache_root.resolve()
+        prefix = resolved_cache.relative_to(self._managed_root.resolve())
         targets = []
         for path in sorted(self._cache_root.glob(_TILE_GLOB)):
-            if path.is_file():
+            # TASK-060 Q-007 ②: re-check *after* resolution — a reparse
+            # point / symlink named like a tile may point anywhere,
+            # including back at a protected revision file inside the
+            # managed root.  Such an entry is never reported as a
+            # cleanable target.
+            resolved = path.resolve()
+            try:
+                resolved.relative_to(resolved_cache)
+            except ValueError:
+                continue
+            if resolved.is_file():
                 relative = (prefix / path.name).as_posix()
                 targets.append(CleanupTarget(relative, path.stat().st_size))
         return tuple(targets)

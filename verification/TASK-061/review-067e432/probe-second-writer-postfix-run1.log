@@ -1,0 +1,59 @@
+﻿LABEL=probe-second-post-1
+ROOT=G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+HEAD=067e4320bb36471106a5d136044389f8e3284788
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+QT_QPA_PLATFORM=<unset>
+CMD=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe verification/TASK-061/review-067e432/t061_second_writer_probe.py G:\CODEX\New Manga.worktrees\TASK-061-qoder-review 
+----------------------------------------
+python.exe : G:\CODEX\New Manga.worktrees\TASK-061-qoder-review\verification\TASK-061\review-067e432\t061_second_writer
+_probe.py:1: SyntaxWarning: invalid escape sequence '\`'
+At G:\CODEX\New Manga.worktrees\TASK-061-qoder-review\verification\TASK-061\review-067e432\run_probe.ps1:35 char:11
++ $output = & $python $Probe $Root $Tail 2>&1
++           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (G:\CODEX\New Ma...e sequence '\`':String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  """TASK-061 review, second probe (Qoder, non-author): the four faces the
+== tree: G:\CODEX\New Manga.worktrees\TASK-061-qoder-review
+== head: 067e432
+
+-- M1 aggregate view of a FOREIGN open write transaction (+ M4)
+   registry 1 -> 2 (worker registered)
+   worker is in an open write transaction; GUI-side any_in_transaction() -> True   <-- the aggregate must be True for AC ④ to mean anything
+   GUI thread's own in_transaction (per-thread trap): False
+   M4 open_connection_count() while a foreign txn is open: returned 2 (0.0 ms)   <-- it runs SELECT 1 on every registered connection, including another thread's
+   releasing the worker (it rolls back on the way out)
+   any_in_transaction after the worker finished -> False
+   M1/M4 note: the aggregate reads are taken from the GUI thread against a connection owned by another thread (check_same_thread=False).
+
+-- M2 eviction of a worker that dies with a HALF-OPEN transaction
+   after the writer died: registry=1 any_in_transaction=False
+   was the half-open row published? False (False = eviction's close() rolled the dead thread's transaction back)
+
+-- M3 cost attribution: lstat walk vs resolve() vs the unlink
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\TASK-061-qoder-review\verification\TASK-061\review-067e432\t061_second_writer_prob
+e.py", line 231, in <module>
+    lstat_us = median(timeit(lambda: [ (storage3.root / s).lstat() for s in segments ]))
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.worktrees\TASK-061-qoder-review\verification\TASK-061\review-067e432\t061_second_writer_prob
+e.py", line 223, in timeit
+    fn()
+  File "G:\CODEX\New Manga.worktrees\TASK-061-qoder-review\verification\TASK-061\review-067e432\t061_second_writer_prob
+e.py", line 231, in <lambda>
+    lstat_us = median(timeit(lambda: [ (storage3.root / s).lstat() for s in segments ]))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py", line 847, in lstat
+    return self.stat(follow_symlinks=False)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py", line 840, in stat
+    return os.stat(self, follow_symlinks=follow_symlinks)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [WinError 2] 系统找不到指定的文件。: 'C:\\Users\\49745\\AppData\\Local\\Temp\\t061-m3-juy7youo\\managed\\b'
+
+EXIT=1
+HEAD=067e4320bb36471106a5d136044389f8e3284788

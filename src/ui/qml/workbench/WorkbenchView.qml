@@ -37,6 +37,7 @@ Rectangle {
     property bool wDirty: vm !== null ? vm.hasDirtyEditor : false
     property var wProgress: vm !== null ? vm.taskProgress : {}
     property var wPageModel: vm !== null ? vm.pageListModel : null
+    property string wCommandError: vm !== null ? vm.commandErrorText : ""
 
     // “选择作品和章节” uses a floating window per D05 §62; the picker is
     // part of the shelf→workbench assembly slice, so the entry stays
@@ -74,6 +75,61 @@ Rectangle {
             onTranslateAllClicked: workbench.vm.startTranslateAll()
             onTranslateUntranslatedClicked: workbench.vm.startTranslateUntranslated()
             onTranslateSelectedClicked: workbench.vm.startTranslateSelected()
+        }
+
+        // TASK-052 (PROVISIONAL): minimal non-blocking failure surface.
+        // Smallest visible element that makes commandError reachable by the
+        // user (text + copy + dismiss); the TASK-047 design gate owns the
+        // final visual language and information hierarchy.
+        Rectangle {
+            objectName: "commandErrorBar"
+            visible: workbench.wCommandError !== ""
+            Layout.fillWidth: true
+            Layout.preferredHeight: visible ? 32 : 0
+            color: "#fef2f2"
+            border.color: "#dc2626"
+
+            TextEdit {
+                id: commandErrorCopyHelper
+                visible: false
+                width: 0
+                height: 0
+            }
+            Label {
+                objectName: "commandErrorText"
+                anchors.left: parent.left
+                anchors.leftMargin: 8
+                anchors.right: commandErrorCopyButton.left
+                anchors.rightMargin: 8
+                anchors.verticalCenter: parent.verticalCenter
+                text: workbench.wCommandError
+                elide: Text.ElideRight
+                color: "#991b1b"
+            }
+            Button {
+                id: commandErrorCopyButton
+                objectName: "commandErrorCopyButton"
+                anchors.right: commandErrorCloseButton.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: parent.verticalCenter
+                text: "复制"
+                onClicked: {
+                    commandErrorCopyHelper.text = workbench.wCommandError
+                    commandErrorCopyHelper.selectAll()
+                    commandErrorCopyHelper.copy()
+                }
+            }
+            Button {
+                id: commandErrorCloseButton
+                objectName: "commandErrorCloseButton"
+                anchors.right: parent.right
+                anchors.rightMargin: 4
+                anchors.verticalCenter: parent.verticalCenter
+                text: "×"
+                onClicked: {
+                    if (workbench.vm !== null) workbench.vm.clearCommandError()
+                }
+            }
         }
 
         RowLayout {

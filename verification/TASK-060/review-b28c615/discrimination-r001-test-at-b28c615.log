@@ -1,0 +1,47 @@
+﻿F                                                                        [100%]
+================================== FAILURES ===================================
+_ TestQ007TamperedEntryCannotDeleteNeighbours.test_retry_refuses_a_traversal_target_and_spares_the_neighbour _
+
+self = <test_run_files_leak.TestQ007TamperedEntryCannotDeleteNeighbours object at 0x0000026EA0C0DFA0>
+trash_workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000026EA0C0CF80>, 'repository': <infras...ject at 0x0000026EA0C0E4E0>, 'service': <application.maintenance.trash.TrashService object at 0x0000026EA0C10DD0>, ...}
+
+    def test_retry_refuses_a_traversal_target_and_spares_the_neighbour(
+        self, trash_workspace
+    ) -> None:
+        import json
+    
+        from infrastructure.filesystem.managed_storage import (
+            ImmutablePathViolation,
+        )
+    
+        workspace = trash_workspace
+        service = workspace["service"]
+        neighbour = workspace["make_page"]("p99", b"neighbour-bytes")
+        workspace["make_page"]("p10", b"payload-ten")
+        # a real soft delete first, so the manifest file exists on disk
+        service.soft_delete_pages("chapter-1", ("p10",))
+    
+        # tamper: a batch id that no longer exists + the neighbour's file
+        # reached through a ".." traversal that still resolves *inside*
+        # the managed root
+        traversed = neighbour.managed_original_ref.replace(
+            "/original/", "/original/../original/", 1
+        )
+        assert traversed != neighbour.managed_original_ref
+        manifest_path = workspace["manifest_path"]
+        raw = json.loads(manifest_path.read_text(encoding="utf-8"))
+        raw["pending_purges"] = [
+            {"batch_id": "batch-tampered", "targets": [traversed]}
+        ]
+        manifest_path.write_text(json.dumps(raw), encoding="utf-8")
+    
+>       with pytest.raises(ImmutablePathViolation):
+E       Failed: DID NOT RAISE ImmutablePathViolation
+
+tests\storage\test_run_files_leak.py:388: Failed
+1 failed, 9 deselected in 0.19s
+
+COLLECTED=10 tests collected in 0.13s
+EXIT=1
+LABEL=r001-discriminator-at-b28c615
+HEAD=b28c6150f888225ee92308c3bb81252ba54ec895

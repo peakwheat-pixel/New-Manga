@@ -72,3 +72,7 @@ integration_commit: be558caa094940bf8d454ea1effc866dcefc6f0a
 
 - Handoff：[TASK-048-011ee16.md](../handoffs/TASK-048-011ee16.md)。Review：[TASK-048-14995b6](../reviews/TASK-048-14995b6.md)（**`approved_subagent`**，独立子对话，3×P3 不阻断）。实际测试：修前判别 1 次（3 failed / exit 1）+ 探针前后各 ×2 + 定向 126/0 + 全仓 ×5（854/0 ×5），全部入库 `verification/TASK-048/`。
 - **最近状态（当前，唯一）**：2026-09-19 **集成完成**：独立子对话 Review `approved_subagent`（Reviewer 独立复跑：新用例 3 passed、定向 126/0、全仓 854/0、判别力 3 failed @修前树、探针双树 crashed↔finished）→ Review 报告 land `8dc13eb` → **integration `be558ca`**（--no-ff；与并行会话的 TASK-054 集成 `771dbf7` 错峰，写集合不重叠）→ 集成后 master 全仓 854 passed / 0 skipped exit 0。`base=8bf8da3`。
+\n
+> **2026-09-19 后置复审推翻（Qoder，外部非作者）**：本切片的 P0 端到端修复**为真**（复核 10/10 复现），但 **AC ① 的并发判据未被满足**——单连接跨线程共享导致两线程 commit/rollback 同一事务（**Q-001，P0**：孤儿 Revision 10/10、GUI 写返回成功却 0 行落盘 7/7、10 轮中 3 轮 run 被静默打死且行停留 `running`）。按 §6.8「P0/P1 未解决不能批准」，`done` 不能维持 ⇒ 本切片置 **`blocked`**，由 **[TASK-060](TASK-060.md)** 收口；集成 `be558ca` **不回滚**。裁决见 [POSTHOC-WINDOW-2026-09-19-Qoder](../reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md)。
+
+> **2026-09-19 复归 `done`**：后置复审的 W1 `overturn`（Q-001 P0）已由 [TASK-060](TASK-060.md) 收口（integration `e7de64d`）。Reviewer（Qoder）在 TASK-060 的复审中明确认可「R-001 闭合后置 TASK-048 为 done」——Q-001 的四种机理已被 TASK-060 在其探针上全部归零。集成 `be558ca` 未回滚。

@@ -91,3 +91,5 @@ integration_commit: 2b40085731227e99d152a413fa6887d53fe99199
 
 - Handoff：[TASK-046-a40e228.md](../handoffs/TASK-046-a40e228.md)。Review：[TASK-046-7bf476b.md](../reviews/TASK-046-7bf476b.md)（**`approved`**，Qoder 非作者，固定被审 `7bf476b`；R-003 已更正，R-001 留 Codex 分派、R-004/R-005 留 Codex T1 收口）。实际测试：修前全仓 1 次（848/0）+ 修后全仓 5 次（851/0 ×5）+ 定向 136/0 + 探针前后各 ×3 + 判别力 1 次，全部入库 `verification/TASK-046/`；Reviewer 侧自有探针与复跑（全仓 ×3：851/0）入库 `verification/TASK-046/review-7bf476b/`。
 - **最近状态（当前，唯一）**：2026-09-19 **集成完成**：Qoder 非作者 Review `approved`（无 P0/P1）→ ZCode 按窗口授权（T0=51a71f3 → T1=09:00）代行集成，`merge master 51a71f3`（60cebc0）→ **integration `2b40085`**（--no-ff，保留来源 merge 提交），集成后全仓复跑见 STATUS 台账行。R-002 的在效文档刷新随集成提交执行。`base=fc8f1d9`。
+
+> **2026-09-19 未落点登记（Q-013）**：本 Task Review 的 **R-001（P2）仍 open**——AC① 的「改 overlap 后瓦片像素逐字节相同」证明用的是**手写 filter-0** 页（`tests/reading_export/test_webtoon_tiles.py:485-527` 及两个夹具 `write_row_pattern_png`/`_write_noise_png`），**未覆盖 libpng/Qt 的 Average/Paeth/Up 等行过滤**；建议后续小切片用 Qt 编码的多过滤器页补证（与 TASK-060 的连接面无关，单列）。

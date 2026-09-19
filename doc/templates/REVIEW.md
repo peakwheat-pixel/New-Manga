@@ -48,6 +48,8 @@ Reviewer 不能是变更作者。decision 为 pending / changes_requested / appr
 |---|---|---|---|---|
 | 必填 | 实际执行内容 | 必填 | PASS/FAIL/BLOCKED/NOT_RUN/N/A | 必填 |
 
+**证据纪律（2026-09-19，Q-009）**：运行日志必须带 **EXIT 与 shell/venv 头**且逐次入库；**判别力 artefact 缺失即记 `NOT_RUN`**，不得以散文或 `N passed` 代替；skip 逐条给原因；不同口径的数字须在同一处给出**总数**与差值解释。
+
 **Architecture 与 Verification 两面分别给出结论**（如另用了 Standards/Spec 视角，一并写明）。P0/P1 未解决、关键验证缺失时不可批准。
 
 ## 结论与复审

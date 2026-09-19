@@ -248,3 +248,41 @@ def test_toolbar_mode_switch_roundtrip(workbench, qapp):
     assert find_one(workbench.view, "viewerModeLabel").property("text") == "对比"
     assert bool(find_one(workbench.view, "viewerComparePane")
                 .property("visible")) is True
+
+
+# ----------------------------------------------------------------------
+# TASK-052: the command-error bar (provisional minimal visibility)
+# ----------------------------------------------------------------------
+
+
+def test_command_error_bar_visible_only_when_a_failure_is_held(workbench, qapp):
+    """AC ②/④: the bar is a real QML element (objectName-addressable),
+    it becomes visible when the VM holds a failure, the copy action runs
+    without error, and dismissing it hides the bar again."""
+    workbench.vm.setContext("book-1", "chapter-1", "书", "章")
+    qapp.processEvents()
+    bar = workbench.view.findChild(QObject, "commandErrorBar")
+    assert bar is not None
+    qapp.processEvents()
+    assert bool(bar.property("visible")) is False  # idle: nothing held
+
+    # a real VM failure path (selection guard) feeds the surface
+    workbench.vm.startTranslateSelected()
+    qapp.processEvents()
+    assert bool(bar.property("visible")) is True
+    text_item = workbench.view.findChild(QObject, "commandErrorText")
+    assert text_item is not None
+    assert "未选择任何 Page" in str(text_item.property("text"))
+
+    # copy action runs the clipboard helper without error
+    copy_button = workbench.view.findChild(QObject, "commandErrorCopyButton")
+    assert copy_button is not None
+    click_button(copy_button)
+
+    # dismiss hides the bar and clears the VM state
+    close_button = workbench.view.findChild(QObject, "commandErrorCloseButton")
+    assert close_button is not None
+    click_button(close_button)
+    qapp.processEvents()
+    assert workbench.vm.commandErrorText == ""
+    assert bool(bar.property("visible")) is False

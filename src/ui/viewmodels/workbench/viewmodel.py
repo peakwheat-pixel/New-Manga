@@ -41,7 +41,7 @@ from ui.models.tasks.projection import (
     build_projection,
     step_label,
 )
-from ui.viewmodels.workbench.run_controller import RunController
+from ui.viewmodels.workbench.run_controller import RunController, is_terminal_status
 
 VIEWER_MODES = ("original", "clean", "translated", "compare")
 
@@ -63,6 +63,7 @@ class WorkbenchViewModel(QObject):
     selectionChanged = Signal()
     inspectorDirtyConfirmRequested = Signal("QVariantMap")
     commandError = Signal(str)
+    commandErrorChanged = Signal()
     runFinished = Signal(str, str)  # run_id, final status
 
     def __init__(
@@ -90,6 +91,10 @@ class WorkbenchViewModel(QObject):
 
         self._page_model = WorkbenchPageListModel(self)
         self._projection: TaskProjection | None = None
+
+        # TASK-052: latest command failure surface (provisional minimal
+        # visibility until the TASK-047 design gate converges the UI)
+        self._command_error_text = ""
 
         # viewer vs pipeline focus are two different pages (D05 §18.3)
         self._viewer_page_id: str | None = None
@@ -439,6 +444,20 @@ class WorkbenchViewModel(QObject):
             return "missing"
         return str(state(page_id, mode))
 
+    def get_command_error_text(self) -> str:
+        return self._command_error_text
+
+    commandErrorText = Property(
+        str, get_command_error_text, notify=commandErrorChanged
+    )
+
+    @Slot()
+    def clearCommandError(self) -> None:
+        """Acknowledge the surfaced failure (TASK-052 AC ①)."""
+        if self._command_error_text:
+            self._command_error_text = ""
+            self.commandErrorChanged.emit()
+
     def get_viewer_page_name(self) -> str:
         if self._viewer_page_id is None:
             return ""
@@ -556,7 +575,7 @@ class WorkbenchViewModel(QObject):
         if not self._inspector_dirty or self._inspector_region_id is None:
             return
         if self._translation_editor is None:
-            self.commandError.emit("no translation editor bound")
+            self._record_command_error("no translation editor bound", stage="editor")
             return
         self._translation_editor.save_manual_translation(
             self._inspector_region_id, self._inspector_text
@@ -617,7 +636,7 @@ class WorkbenchViewModel(QObject):
     def startTranslateSelected(self) -> None:
         selected = self._page_model.get_selected_ids()
         if not selected:
-            self.commandError.emit("未选择任何 Page")
+            self._record_command_error("未选择任何 Page", stage="selection")
             return
         self._start_run(
             CommandType.TRANSLATE_SELECTED,
@@ -630,7 +649,7 @@ class WorkbenchViewModel(QObject):
     def startRegionCommand(self, command_type: str) -> None:
         region_id = self._inspector_region_id
         if not region_id:
-            self.commandError.emit("未选择 Region")
+            self._record_command_error("未选择 Region", stage="selection")
             return
         self._start_run(
             CommandType(command_type),
@@ -639,7 +658,7 @@ class WorkbenchViewModel(QObject):
 
     def _start_chapter_command(self, command: CommandType) -> None:
         if not self._chapter_id:
-            self.commandError.emit("尚未选择章节")
+            self._record_command_error("尚未选择章节", stage="selection")
             return
         selected = self._page_model.get_selected_ids()
         if selected:
@@ -656,13 +675,13 @@ class WorkbenchViewModel(QObject):
 
     def _start_run(self, command: CommandType, scope: PipelineScope) -> None:
         if self._controller.is_running:
-            self.commandError.emit("已有任务在运行")
+            self._record_command_error("已有任务在运行", stage="run")
             return
         try:
             run = self._pipeline.create_run(command, scope)
             self._pipeline.plan_run(run.run_id)
         except PipelineError as error:
-            self.commandError.emit(error.detail or error.code)
+            self._record_command_error(error)
             return
         self._run = run
         self._pausing = False
@@ -691,7 +710,7 @@ class WorkbenchViewModel(QObject):
             try:
                 self._pipeline.control_run(self._run.run_id, "pause")
             except PipelineError as error:
-                self.commandError.emit(error.detail or error.code)
+                self._record_command_error(error)
                 return
             self._refresh_projection()
 
@@ -707,7 +726,7 @@ class WorkbenchViewModel(QObject):
             try:
                 self._pipeline.control_run(self._run.run_id, "stop")
             except PipelineError as error:
-                self.commandError.emit(error.detail or error.code)
+                self._record_command_error(error)
                 return
             self._refresh_projection()
 
@@ -718,7 +737,7 @@ class WorkbenchViewModel(QObject):
         try:
             result = self._pipeline.control_run(self._run.run_id, "continue")
         except PipelineError as error:
-            self.commandError.emit(error.detail or error.code)
+            self._record_command_error(error)
             return
         if result.new_run_id is not None:
             fresh = self._pipeline.plan_run(result.new_run_id)
@@ -742,7 +761,7 @@ class WorkbenchViewModel(QObject):
         try:
             result = self._pipeline.control_run(self._run.run_id, action)
         except PipelineError as error:
-            self.commandError.emit(error.detail or error.code)
+            self._record_command_error(error)
             return
         if action == "restart" and result.new_run_id is not None:
             fresh = self._pipeline.plan_run(result.new_run_id)
@@ -762,7 +781,7 @@ class WorkbenchViewModel(QObject):
             fresh = self._pipeline.retry_failed_targets(self._run.run_id)
             self._pipeline.plan_run(fresh.run_id)
         except PipelineError as error:
-            self.commandError.emit(error.detail or error.code)
+            self._record_command_error(error)
             return
         self._run = fresh
         self._pausing = False
@@ -795,12 +814,45 @@ class WorkbenchViewModel(QObject):
         self._refresh_projection()
         self.runFinished.emit(run_id, status)
 
+    def _record_command_error(
+        self, error: BaseException | str, *, stage: str = "command"
+    ) -> None:
+        """Single sink for every command failure (TASK-052 AC ①③).
+
+        PROVISIONAL minimal visibility: the machine-readable diagnosis
+        (stage / error code) rides in the text itself and the latest
+        failure stays bindable via ``commandErrorText`` until the
+        TASK-047 design gate converges presentation and hierarchy. The
+        legacy ``commandError`` signal keeps firing unchanged.
+        """
+        if isinstance(error, BaseException):
+            code = getattr(error, "code", "") or type(error).__name__
+            detail = getattr(error, "detail", "") or str(error)
+            text = f"[{stage}/{code}] {detail}"
+        else:
+            detail = str(error)
+            text = f"[{stage}] {detail}"
+        self._command_error_text = text
+        # the legacy signal keeps emitting the bare detail so existing
+        # listeners (and their pinned assertions) stay byte-identical
+        self.commandError.emit(detail)
+        self.commandErrorChanged.emit()
+
     def _on_run_crashed(self, run_id: str, error: str) -> None:
         self._pausing = False
         self._progress_timer.stop()
         self._refresh_projection()
-        self.commandError.emit(error)
+        self._record_command_error(error, stage="worker")
 
-    def shutdown(self) -> None:
+    def shutdown(self, wait_ms: int = 5000) -> bool:
+        """Drain the run controller; True = drained (TASK-060 Q-003)."""
         self._progress_timer.stop()
-        self._controller.shutdown()
+        if self._run is not None and not is_terminal_status(
+            self._run.status.value
+        ):
+            # TASK-060 Q-003: on exit there is no session to resume into.
+            # A merely PAUSED run's worker has already left, so the
+            # controller no longer holds it — the cancel request must be
+            # written here, on the run object the VM still owns.
+            self._run.cancel_requested = True
+        return self._controller.shutdown(wait_ms)

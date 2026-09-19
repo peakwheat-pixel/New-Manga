@@ -4,7 +4,7 @@ title: 独立集成审查与质量/性能验收
 kind: verification
 status: proposed
 approval: pending_user_review
-suggested_owner: DeepSeek Harness
+suggested_owner: Qoder
 owner: null
 reviewer: null
 depends_on: [TASK-020, TASK-021, TASK-022, TASK-023, TASK-025]
@@ -72,4 +72,6 @@ DeepSeek不可将自己编写的测试当成对自身实现的独立审查；相
 - 实际执行/实验/测试：尚无。
 - 最近状态：2026-09-13 接管规划创建；proposed，pending_user_review。
 
-> **2026-09-19 ZCode 全权窗口条目**：本 Task 已纳入 [STATUS](../STATUS.md) 的窗口队列（W12+ 尾项），但**门槛未达成**：需 **TASK-022、TASK-025** 完成；且本 Task 为独立审查，**必须由非作者执行**（窗口内 ZCode 不可承担）。门槛满足前一律记 `BLOCKED（前置未达成）`，**不得跳过前置强行开工**；窗口内如需调整门槛，由 Codex 在 T1 后处理。
+> **2026-09-19 ZCode 全权窗口条目**：本 Task 已纳入 [STATUS](../STATUS.md) 的窗口队列（W12+ 尾项），但**门槛未达成**：需 **TASK-022、TASK-025** 完成；且本 Task 为独立审查，**必须由非作者执行**（2026-09-19 起建议 Owner=Qoder；Qoder 对 TASK-020/021/022/023/025 **均非作者**，仍满足非作者约束）。门槛满足前一律记 `BLOCKED（前置未达成）`，**不得跳过前置强行开工**；窗口内如需调整门槛，由 Codex 在 T1 后处理。
+
+> **2026-09-19 改派登记（用户指示「把给 dsh 的任务，分配给 qoder」）**：`suggested_owner` 由 `DeepSeek Harness` 改为 **`Qoder`**。本 Task 是**独立集成审查**，非作者约束不变：Qoder 对 TASK-020/021/022/023/025 均非作者，故可承担；若届时 Qoder 参与了其中任一实现，须改由他人（Codex/ZCode）执行。状态仍为 `proposed`、门槛不变（需 TASK-022、TASK-025 完成）。

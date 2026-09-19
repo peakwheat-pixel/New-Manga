@@ -898,6 +898,31 @@ def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
     return engine
 
 
+def _shutdown_services(services: AppServices) -> None:
+    """Drain the workbench run thread, then close the connection — only
+    if the drain finished.
+
+    TASK-060 Q-003: ``RunController.shutdown``'s wait budget is a wall
+    clock, not a completion guarantee — on timeout the worker thread is
+    still alive and writing.  Closing the connection under an active
+    writer (TASK-048's shared-handle era) or a per-thread writer
+    (TASK-060) would truncate the run's final writes, so close() is
+    skipped and the abandoned drain is reported on stderr instead of
+    failing silently.  WAL is crash-safe: the OS reclaims the handle at
+    process exit and the next startup's ``recover_running_runs()`` reaps
+    the abandoned run to ``interrupted``.
+    """
+    drained = services.workbench.shutdown()
+    if drained:
+        services.conn.close()
+    else:
+        print(
+            "shutdown: workbench drain timed out; connection left open "
+            "(worker thread still writing)",
+            file=sys.stderr,
+        )
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="bootstrap.app")
     parser.add_argument(
@@ -949,7 +974,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         engine = assemble_engine(services)
     except Exception as error:
         if services is not None:
-            services.conn.close()
+            _shutdown_services(services)
         if temp_root is not None:
             temp_root.cleanup()
         print(f"bootstrap failed: {error}", file=sys.stderr)
@@ -997,7 +1022,7 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     # Close SQLite before temp-root cleanup: the connection holds the
     # Windows file lock on library.db.
-    services.conn.close()
+    _shutdown_services(services)
     if temp_root is not None:
         temp_root.cleanup()
     return exit_code

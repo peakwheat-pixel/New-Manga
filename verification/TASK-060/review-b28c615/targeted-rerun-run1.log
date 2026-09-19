@@ -1,0 +1,14 @@
+﻿..........                                                               [100%]
+============================= slowest 6 durations =============================
+2.20s call     tests/workbench/test_drain_shutdown.py::test_shutdown_cancels_a_paused_run
+0.30s call     tests/workbench/test_gui_write_during_run.py::test_run_survives_gui_explicit_and_implicit_writes
+0.20s call     tests/workbench/test_drain_shutdown.py::test_shutdown_timeout_is_reported_as_not_drained
+0.06s call     tests/workbench/test_run_thread_e2e.py::test_run_completes_on_worker_thread_over_real_sqlite
+0.06s call     tests/workbench/test_run_thread_e2e.py::test_worker_run_and_main_thread_access_coexist
+0.05s call     tests/workbench/test_run_thread_e2e.py::test_startup_recovers_runs_left_running
+10 passed in 3.08s
+
+COLLECTED=10 tests collected in 0.10s
+EXIT=0
+LABEL=targeted-fixed-1
+HEAD=b28c6150f888225ee92308c3bb81252ba54ec895

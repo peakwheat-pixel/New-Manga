@@ -93,26 +93,44 @@ class RunController(QObject):
     def request_stop(self, run: PipelineRun) -> None:
         run.cancel_requested = True
 
-    def shutdown(self, wait_ms: int = 5000) -> None:
+    def _reap_worker(self, wait_ms: int) -> bool:
+        """Stop the worker thread and clear the run-slot bookkeeping.
+
+        Returns ``True`` when the worker thread is gone (or never was);
+        ``False`` means the wait budget expired with the thread *still
+        alive and writing* — the caller must then not close the shared
+        database connection (TASK-060 Q-003; see
+        ``bootstrap.app._shutdown_services``).
+        """
         if self._thread is not None:
-            if (
-                self._active_run is not None
-                and self._active_run.status is not PipelineRunStatus.PAUSED
-            ):
-                self._active_run.cancel_requested = True
             self._thread.quit()
             if not self._thread.wait(wait_ms):
                 # R-001: never force-kill an in-flight worker.  This slice has
                 # no durable transaction boundary; before persistence is
                 # connected, replace this fallback with an acknowledged
                 # safe-boundary shutdown protocol.
-                return
+                # TASK-060 Q-003: report the failed drain instead of
+                # silently pretending the thread is gone.
+                return False
             self._thread.deleteLater()
             self._thread = None
         if self._worker is not None:
             self._worker.deleteLater()
             self._worker = None
         self._active_run = None
+        return True
+
+    def shutdown(self, wait_ms: int = 5000) -> bool:
+        """App-exit drain: cancel any active run, then reap the worker.
+
+        TASK-060 Q-003: a PAUSED run is requested to cancel as well — on
+        shutdown there is no session to resume into.  (Run-completion
+        cleanup must use :meth:`_reap_worker` instead: cancelling a
+        merely-paused run here would kill a later ``continueRun``.)
+        """
+        if self._active_run is not None:
+            self._active_run.cancel_requested = True
+        return self._reap_worker(wait_ms)
 
     # ------------------------------------------------------------------
     # worker callbacks (queued onto the GUI thread)
@@ -120,12 +138,14 @@ class RunController(QObject):
 
     def _on_finished(self, run_id: str, status: str) -> None:
         was_running = self._active_run is not None
-        self.shutdown()
+        # reap only — the run reached its own end state (a merely PAUSED
+        # run must stay resumable); cancelling here is shutdown's job
+        self._reap_worker(5000)
         if was_running:
             self.runFinished.emit(run_id, status)
 
     def _on_crashed(self, run_id: str, error: str) -> None:
-        self.shutdown()
+        self._reap_worker(5000)
         self.runCrashed.emit(run_id, error)
 
 
