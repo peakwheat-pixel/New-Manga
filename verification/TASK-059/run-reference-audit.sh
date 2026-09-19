@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # TASK-059 视觉参考自检：
 #  1) JS 语法门（无头加载前置）
-#  2) 全矩阵审计：5 候选 × 2 主题 × 5 视图 —— 对比度(≥4.5 文本/≥3 非文本，含徽标真实 *-soft 合成底) + 溢出/裁切/重叠
+#  2) 全矩阵审计：6 候选 × 2 主题 × 5 视图 —— 对比度(≥4.5 文本/≥3 非文本，含徽标真实 *-soft 合成底) + 溢出/裁切/重叠
 #  3) 无头截图（关键组合，含 DPI 150/200）
 # 口径：全部结果为 HTML/Chromium 呈现，非 Qt；不构成任何 D08 AC 的 PASS。
 # 标准重跑（R-005 证据纪律：环境头 + 命令 + 输出 + EXIT 同一日志入库）：
@@ -51,7 +51,7 @@ let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
   echo "  $1/$2/$3: $(printf '%s' "$out" | sed 's/[[:space:]]*$//')"
   case "$out" in PASS*) ;; *) fail=1 ;; esac
 }
-for c in a b c d e; do for m in dark light; do for p in bookshelf workbench reader settings states; do
+for c in a b c d e f; do for m in dark light; do for p in bookshelf workbench reader settings states; do
   audit "$c" "$m" "$p"
 done; done; done
 
@@ -113,6 +113,15 @@ shot e-dark-states    e dark states
 shot e-light-workbench e light workbench
 shot e-dark-palette    e dark workbench "" "pal=1"
 shot e-dark-workbench-dpi150 e dark workbench 150
+# 候选 F（Graphite Atelier，ND-1 组合稿，默认暗色）：五视图 + 第二主题 + DPI + 工具窗
+shot f-dark-bookshelf f dark bookshelf
+shot f-dark-workbench f dark workbench
+shot f-dark-reader    f dark reader
+shot f-dark-settings  f dark settings
+shot f-dark-states    f dark states
+shot f-light-workbench f light workbench
+shot f-dark-workbench-dpi150 f dark workbench 150
+shot f-dark-workbench-taskdetail f dark workbench "" "win=detail"
 
 echo "== 汇总 =="
 if [ "$fail" -eq 0 ]; then echo "AUDIT RESULT: ALL PASS"; else echo "AUDIT RESULT: FAILURES PRESENT"; exit 1; fi

@@ -3,7 +3,7 @@ task_id: TASK-059
 author: ZCode
 recipient: Codex（Reviewer，非作者）
 base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
-delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 本次提交（R3 返修：审计与令牌修正+文档收口）
+delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 07397ac（R3 返修：审计与令牌修正+文档收口） / 本次提交（R4 组合候选 F：Graphite Atelier + 全量重审计）
 status: in_review
 ---
 
@@ -94,3 +94,24 @@ Reviewer=Codex（非作者）固定 base=`4c81dca`、被审 head=`db366da`。以
 | R-006（R1 计数残留） | **closed**：契约 §1 证据行 → 判别脚本/50 组合（含徽标合成底）/41 截图；§7.2/§9 → 五候选 × 22 对口径；DDR-1 → 注明 R2 由 DDR-8 扩展；§2/§15 徽标口径同步；`run-reference-audit.sh:4` 脚本头 → 5 候选；`export-tokens.py:4,89` → `{a,b,c,d,e}` 与「非 C 候选不启用玻璃」；D/E JSON note 经重导自动修正；Task AC④/AC⑥ 与测试要求表同步 | 契约 R3 版；Task（R3 版）；grep 复核无「30 组合/26 张/3 候选」残留于现行口径句 |
 
 R3 判别力证据（Q-009，同日志入库）：D1 回退 A 亮色 warn 旧令牌 → `badge-warn/st-warn-t=4.22` FAIL（与复审复算一致）；D2 注入相交徽标 → `overlap=1` 检出。`DISCRIM_EXIT=0`。
+
+## R4 交付：组合候选 F · Graphite Atelier（2026-09-19，用户 ND-1 裁决之后）
+
+**背景**：Review [TASK-059-07397ac](../reviews/TASK-059-07397ac.md)（分支 `agent/codex/TASK-059-review` @ `9d3b0f2`）对 R3 复审 **`approved`**，附唯一非阻塞 P2 **R3-001**（22 对审计未覆盖直接使用 `--st-skip` 的状态文本；B 亮色选中行合成底上独立复算约 4.17:1，open 移交后续）。随后用户作出 **ND-1 裁决**：配色/状态色/亮暗主题/视觉语言＝**A · Graphite**；字号/控件高/行高/间距/面板尺寸等几何比例＝**B · Atelier**；IA＝**A**（不继承 B 章节大卡）；不启用 C 玻璃、D 顶栏、E 命令面板。按契约 ND-1「组合稿必须重新做一致性审计，不能把 A/B 两份候选拼成实现规范」条款，交付组合候选 **F · Graphite Atelier**；候选总数 5→6（DDR-9），A–E 保留为候选档案。
+
+**六项交付**：
+
+| # | 交付 | 结果 |
+|---|---|---|
+| ① | `ui-reference.html` 新增候选 F | 几何块逐项取 B 的 20 项密度令牌；色板逐**字面值**取 A（dark/light 两块完整复制）；书架 `--card-w` 取 A 档（IA 继承 A，不取 B 章节大卡）；无任何 C/D/E 覆写（玻璃/顶栏/命令面板规则均绑定原候选选择器，不波及 F）；切换按钮 `F · Graphite Atelier` |
+| ② | `doc/design/tokens-cand-f.json` | `export-tokens.py` 生成（CAND_NAMES 与循环扩到 `abcdef`）；python 断言 `f['modes']==a['modes']` 且 `f['geometry']==b['geometry']` → **OK**；`glass.enabled=false`；name 注明「ND-1 组合稿：A 色彩 + B 几何，IA 继承 A」 |
+| ③ | 契约更新 | §头部 R4 版本行、§1 证据行、§2、§3 改六候选总览（F 列）、新增 **§6C**（F 构成规则 + R3-001 审计口径）、§7.2（60 组合/24 对 + 扩展对记录）、§7.3、§8.1/§8.2、§9、§10、§11（F 切片映射：S-TOKEN 灌 f JSON + A 形态切片；不涉及 L2/GLASS/TOPNAV/CMDPALETTE/TABLE）、§13（ND-1 标已裁决；ND-2/3/8/9/10 对 F 不适用；ND-4/5/6/7 仍待决）、§14 DDR-9、§15 证据索引重写 |
+| ④ | **R3-001 disposition＝closed（本轮闭合）** | `tokenPairs()` 仅对 F 追加 2 对：`st-skip-direct/panel`（`--st-skip` 直接文本 × panel，前景用真 `--st-skip` 而非 Review 指出的 `--ink-2`）与 `ink/selected-row`（`.sel` 行底 `accent-soft` 叠 panel 合成 × `--ink`，覆盖 Review 指出的选中行上下文），阈值 4.5:1；实测 **7.22 / 11.34 PASS**（A 色板下无 B 的 4.17 风险）；A–E 维持 22 对既有证据口径不变。Review 原建议「随所选实现切片补齐」，因 F 即 ND-1 已选方向且缺口属审计覆盖而非实现缺陷，在组合稿审计口径中直接闭合 |
+| ⑤ | 全量审计重跑 | **60 组合（6 候选 × 2 主题 × 5 视图）ALL PASS**——F 每组合 `contrast=24/24 outside=0 clipped=0 overlap=0`；环境头/命令/`AUDIT_EXIT=0` 同日志入库；截图 41→**49** 张（+8 F：`f-dark-{bookshelf,workbench,reader,settings,states}`、`f-light-workbench`、`f-dark-workbench-dpi150`、`f-dark-workbench-taskdetail`） |
+| ⑥ | 判别力扩展 | **D1/D2/D3 全 FAIL（预期方向）**，`DISCRIM_EXIT=0`；新增 **D3**＝把 F/A 暗色 `--st-skip` 全局回退为 `#6b6b76` 后跑 `cand=f` 审计 → `st-skip-direct/panel=3.01` FAIL，证明新扩展对非恒 PASS |
+
+**F 抽验目检**：`f-dark-workbench.png` / `f-light-workbench.png`＝石墨底 + indigo 强调（A 色板）× 36px 控件 / 42px 行高（B 几何），徽标、选中行、进度条均正常，无叠盖、无截断异常。
+
+**改动范围**：仍仅 `doc/**`（契约/参考 HTML/tokens-f JSON/Task/Handoff/STATUS 台账行）+ `verification/TASK-059/**`（审计与判别脚本、日志、49 截图）；`src/**`、`tests/**`、Schema、依赖、D01～D08、ui-baseline 零改动；未 push。
+
+**Reviewer（Codex）复审建议**：① 核对 R3-001 闭合是否成立（两对扩展的定义与实测值、D3 判别）；② 核对 F 构成规则（`tokens-cand-f.json` 与 A/B JSON 的断言可独立复算）；③ `git diff 07397ac..HEAD -- doc/contracts/` 对照 §6C/§15。复审通过后本 Task 可进入集成（候选裁决已由 ND-1 完成，ND-4/5/6/7 仍待用户，其中 ND-6 为 F 实现前待决）。

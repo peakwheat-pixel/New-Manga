@@ -20,6 +20,7 @@ CAND_NAMES = {
     "c": "Duo 双面+玻璃（画廊×车间 + 局部玻璃）",
     "d": "Vermilion 朱砂（顶栏导航+编辑部印刷网格）",
     "e": "Amber 琥珀（等宽表格+命令面板控制台）",
+    "f": "Graphite Atelier（ND-1 组合稿：A 色彩 + B 几何，IA 继承 A）",
 }
 
 def parse_block(css: str, selector: str) -> dict:
@@ -50,7 +51,7 @@ def main() -> int:
     }
     # 密度块选择器与主题块共享前缀，用“不接 [data-mode”的锚定区分
     geom = {}
-    for c in "abcde":
+    for c in "abcdef":
         pat = re.compile(
             r'\[data-cand="' + c + r'"\]\s*\{([^}]*)\}')
         ms = [m for m in pat.finditer(css)
@@ -60,7 +61,7 @@ def main() -> int:
         geom[c] = {k: v.strip() for k, v in
                    re.findall(r"--([\w-]+)\s*:\s*([^;]+);?", ms[0].group(1))}
 
-    for c in "abcde":
+    for c in "abcdef":
         modes = {}
         for mode in ("dark", "light"):
             raw = parse_block(

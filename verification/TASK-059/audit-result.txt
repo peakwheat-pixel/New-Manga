@@ -1,20 +1,12 @@
 == env ==
-date: 2026-09-19 21:32:54+0800
-host: MINGW64_NT-10.0-26200 3.6.5-22c95533.x86_64
-shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
-node: v24.15.0
-chrome: 153.0.8010.48 (C:/Program Files/Google/Chrome/Application/chrome.exe)
-python: Python 3.12.3 (venv G:/CODEX/New Manga.task-envs/TASK-012-py312)
+MINGW64_NT-10.0-26200
+GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+v24.15.0
+Chrome 153.0.8010.48 (headless)
+Python 3.12.3
+venv: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
 == cmd ==
-"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" verification/TASK-059/export-tokens.py
 bash verification/TASK-059/run-reference-audit.sh
-bash verification/TASK-059/discriminate-r001-r004.sh   (R-001/R-004 判别力 artefact)
-== tokens ==
-wrote doc\design\tokens-cand-a.json (84 color tokens x2 modes)
-wrote doc\design\tokens-cand-b.json (84 color tokens x2 modes)
-wrote doc\design\tokens-cand-c.json (84 color tokens x2 modes)
-wrote doc\design\tokens-cand-d.json (84 color tokens x2 modes)
-wrote doc\design\tokens-cand-e.json (84 color tokens x2 modes)
 == out ==
 == 1) JS 语法门 ==
 syntax OK
@@ -69,6 +61,16 @@ syntax OK
   e/light/reader: PASS contrast=22/22 outside=0 clipped=0 overlap=0
   e/light/settings: PASS contrast=22/22 outside=0 clipped=0 overlap=0
   e/light/states: PASS contrast=22/22 outside=0 clipped=0 overlap=0
+  f/dark/bookshelf: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/workbench: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/reader: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/settings: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/dark/states: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/bookshelf: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/workbench: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/reader: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/settings: PASS contrast=24/24 outside=0 clipped=0 overlap=0
+  f/light/states: PASS contrast=24/24 outside=0 clipped=0 overlap=0
 == 3) 无头截图 ==
   a-dark-bookshelf.png
   a-dark-workbench.png
@@ -111,11 +113,14 @@ syntax OK
   e-light-workbench.png
   e-dark-palette.png
   e-dark-workbench-dpi150.png
+  f-dark-bookshelf.png
+  f-dark-workbench.png
+  f-dark-reader.png
+  f-dark-settings.png
+  f-dark-states.png
+  f-light-workbench.png
+  f-dark-workbench-dpi150.png
+  f-dark-workbench-taskdetail.png
 == 汇总 ==
 AUDIT RESULT: ALL PASS
 AUDIT_EXIT=0
-== discrimination (R-001/R-004 判别力) ==
-  D1 old-warn-token (expect FAIL with badge-warn/st-warn-t): FAIL contrast=21/22 overlap=0 fails:badge-warn/st-warn-t=4.22
-  D2 injected-overlap (expect FAIL with overlap>=1):          FAIL contrast=22/22 overlap=1 overlaps:badge[⚠ OV-A] × badge[✓ OV-B] (37x12px)
-DISCRIMINATION: OK
-DISCRIM_EXIT=0
