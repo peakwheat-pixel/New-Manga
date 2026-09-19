@@ -32,7 +32,7 @@ TASK-001～TASK-021（TASK-021 仅 trash 子集）、TASK-024、TASK-028～TASK-
 | [TASK-023](TASK-023.md) | 实现 PDF/MOBI 导入路线 | ZCode | **done（仅 PDF，经 `pypdfium2`）**（Review=`approved_subagent` `7fa9118`、integration=`ba7d560`）；用户 2026-09-17 批准新增 `pypdfium2`；**MOBI 部分当时 `BLOCKED`**——已由 [TASK-041](TASK-041.md) 承接并交付（integration `7c4fae0`，**遗留① 关闭**；AZW3/KF8 另记 BLOCKED）；PDF 红蓝通道互换等缺陷已由 [TASK-043](TASK-043.md) 关闭；base `e96b3eb`；TASK-007, TASK-009, TASK-012, TASK-024 |
 | [TASK-024](TASK-024.md) | 明确扩展能力及验收覆盖边界（仅设计） | ZCode | done；base `116e682`；integration `61c33e2`；外部 post-hoc Review `9454cec` approved，R-101～R-103 已收口于 `c7a02bd`；U-1 已取消网页导入；U-2 已选 PDFium via pypdfium2；U-3 已批准 Plugin 首版仅本地目录、无市场/在线分发/自动更新；U-4 已决定 Plugin Agent 不进首版、二阶段另行裁决；U-5 已批准字体上限与许可提示；U-6 已批准 Sakura 健康探测与就绪状态范围；依赖 TASK-001, TASK-003 |
 | [TASK-025](TASK-025.md) | 按批准契约实现 Plugin/Hooks 与可选扩展 | ZCode | TASK-019, TASK-022, TASK-024 |
-| [TASK-026](TASK-026.md) | 独立集成审查与质量/性能验收 | DeepSeek Harness | TASK-020, TASK-021, TASK-022, TASK-023, TASK-025 |
+| [TASK-026](TASK-026.md) | 独立集成审查与质量/性能验收 | **Qoder**（2026-09-19 由 DSH 改派） | TASK-020, TASK-021, TASK-022, TASK-023, TASK-025 |
 | [TASK-027](TASK-027.md) | 发布候选集成、打包与最终验收 | Codex | TASK-026 |
 | [TASK-028](TASK-028.md) | 冻结统一 SQLite 持久化设计（实现由 TASK-029 承接） | Codex | TASK-002, TASK-006, TASK-007, TASK-008 |
 | [TASK-029](TASK-029.md) | 实现统一 SQLite 持久化 | ZCode | done；integration `0b0b855`；TASK-028 |

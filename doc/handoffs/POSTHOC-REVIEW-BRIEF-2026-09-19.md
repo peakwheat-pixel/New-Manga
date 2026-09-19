@@ -1,6 +1,6 @@
 # 交接包：ZCode 全权窗口（2026-09-19）的三方 post-hoc 复审
 
-**委托方**：Codex（窗口收口方）。**Reviewer**：**DeepSeek Harness + Qoder + Codex**（三方可独立复审；Codex 为收口方与集成责任人，其复审结论不得作为唯一依据）。
+**委托方**：Codex（窗口收口方）。**Reviewer**：**Qoder + Codex**（2026-09-19 用户指示「把给 dsh 的任务，分配给 qoder」——原 DSH 槽位**改派 Qoder**；Codex 为收口方与集成责任人，其复审结论不作为唯一依据）。
 **窗口**：T0 = `51a71f3`（授权提交，2026-09-19 01:10:09）→ T1 = 2026-09-19 09:00。
 **复审对象**：`51a71f3..<收口时 master>`（收口时为 `0bb1e6c`；**逐切片以各 Task 的 `integration_commit` 为准**）。
 
@@ -39,7 +39,7 @@
 ## 3. 边界与交付
 
 - **只读**：不得修改 `src/**`、`tests/**`；不得改各 Task 既入档 Review 正文与 `doc/10_CURRENT_STATE_AND_GAPS.md`；不得回滚窗口内任何 merge。
-- 交付到 `doc/reviews/POSTHOC-WINDOW-2026-09-19-<reviewer>.md`（如 `POSTHOC-WINDOW-2026-09-19-DSH.md`、`-Qoder.md`、`-Codex.md`）+ 证据 `verification/POSTHOC-WINDOW-2026-09-19/<reviewer>/**`。
+- 交付到 `doc/reviews/POSTHOC-WINDOW-2026-09-19-<reviewer>.md`（即 `POSTHOC-WINDOW-2026-09-19-Qoder.md`、`-Codex.md`；原 `-DSH.md` 槽位已改派 Qoder，**不要**再产出 DSH 命名）+ 证据 `verification/POSTHOC-WINDOW-2026-09-19/<reviewer>/**`。
 - 结论口径：**`uphold`（维持 done）/ `uphold_with_findings`（维持 + 另开切片）/ `overturn`（推翻，须带可复现反例与 P0/P1 依据）**；推翻项由 Codex 处置（重开 Task 或回滚相关集成的**后续修正**，但**不删除已入档历史**）。
 - 验证口径：同一 shell + 同一 venv、`PYTHONDONTWRITEBYTECODE=1`、`-p no:cacheprovider`、**不设 `QT_QPA_PLATFORM`**；退出码 + passed/skipped 分列 + skip 原因；**总数必须对得上**（收口时：本机 905 passed / 6 skipped = 911 collected；openssl 可用口径为 911 passed / 0 skipped）。
 - 报告中必须分列"**独立复跑**"与"**复用窗口内证据**"。

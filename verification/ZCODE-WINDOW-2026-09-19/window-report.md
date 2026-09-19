@@ -67,3 +67,8 @@
 3. `doc/00_INDEX.md` 第 5 行补写**第三窗口进展段**（W0–W11）。
 4. 本报告 + 三方 post-hoc 复审交接包 `doc/handoffs/POSTHOC-REVIEW-BRIEF-2026-09-19.md`。
 5. 收口验证（见 §1）；未跑项如实登记（见 §4）。
+
+## 7. 追记（2026-09-19）
+
+- **post-hoc 复审的 DSH 槽位改派 Qoder**（用户指示）：本报告 §4/§6 与 [交接包](../../doc/handoffs/POSTHOC-REVIEW-BRIEF-2026-09-19.md) 中的"Codex + DSH + Qoder"自 2026-09-19 起读作 **Codex + Qoder**；交付命名改为 `POSTHOC-WINDOW-2026-09-19-Qoder.md`，**不再产出 `-DSH.md`**。窗口内集成本身不变、不回滚。
+- **另一处 DSH 待办**：`TASK-026`（`proposed`）的 `suggested_owner` 由 DSH 改为 Qoder（该 Task 仍受非作者约束与前置门槛约束）。
