@@ -1,13 +1,15 @@
 ---
 task_id: TASK-060
 author: ZCode
-recipient: Codex
+recipient: Qoder
 base_commit: a2b23ad
 delivery_head: dc254fa
 status: draft
 ---
 
 # Handoff：TASK-060（SQLite 连接与事务归属收口）
+
+> Reviewer 改派（2026-09-19，用户指示）：`Qoder`（非作者；Q-001 探针/报告作者）替代 Codex 做 Review；集成与 STATUS 收口仍由 Codex 执行。
 
 ## 交付结果
 
@@ -31,7 +33,7 @@ status: draft
 - **AC⑦（单一"永不清理"谓词）**：策略层 `src/application/maintenance/cleanup.py::is_safe_relative_path(relative_path, *, prefixes)`（组件检查 `..`/`.` + 前缀白名单；`prefixes=()` = 仅组件检查的业务面）为唯一权威谓词；物理层 `managed_storage.remove_managed` 在既有根内检查**之后**追加组件守卫（保持 `../` 走原 "escapes the managed root" 通道，不改变异常语义）；`tile_cache_sweep.list_cache_files` 对候选 `resolve()` 后复核仍在缓存根内（reparse point 不上报）；`trash.py` 重试守卫改行存活判定 `_batch_pages_still_alive`（batch id 匹配 → `get_pages_by_ids`；id 不可恢复（rebuilt 前缀）→ `list_live_managed_refs`，**软删行也算活**）；`_record_pending(add=…, remove=…)` 合并语义替代整键覆盖。一致性用例：`TestQ007SingleNeverCleanPredicate`（3 例）+ `TestQ007RowLivenessGuard`（1 例）。
 - **AC⑧（flaky 撤回后收口）**：定向串跑 10/10 轮全绿（含 `test_worker_run_and_main_thread_access_coexist`），逐次留证。
 - **AC⑨（证据口径）**：见下表；每份日志带 EXIT 码 + shell/venv 头；collected 922 = 911 基线 + 11 新增用例；未新增 skip/xfail、未放宽既有断言。
-- **AC⑩**：本 Handoff 即交付；Review/集成/STATUS 收口待 Codex。
+- **AC⑩**：本 Handoff 即交付；Review 待 Qoder（非作者），集成/STATUS 收口待 Codex。
 
 ## 验证证据
 
@@ -64,7 +66,7 @@ status: draft
   $env:PYTHONDONTWRITEBYTECODE='1'
   & 'G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe' -m pytest tests/core/test_connection_ownership.py tests/workbench/test_gui_write_during_run.py tests/workbench/test_drain_shutdown.py -q -p no:cacheprovider
   ```
-- Review 建议重点：
+- Review 建议重点（Qoder）：
   1. `connection.py` 的 `ThreadRoutedConnection` 归属模型是否可作为 TASK-057（备份/恢复）前置①"活动 run/并发写者门"的结构基础（`shutdown() -> bool` 的 drained 契约即其依赖的排空语义）；
   2. `viewmodel.shutdown` 在 VM 层 cancel PAUSED run 的归属划分（controller 已不持有该对象）；
   3. `list_live_managed_refs` "软删行也算活"的语义（行存在即被引用；purge 后才消失）；

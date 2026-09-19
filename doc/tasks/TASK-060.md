@@ -6,7 +6,7 @@ status: in_progress
 approval: approved_by_user
 suggested_owner: ZCode
 owner: ZCode
-reviewer: Codex
+reviewer: Qoder
 depends_on: [TASK-048, TASK-058]
 base_commit: 9522f2df66a79b82bb2419bc99f84ef39694e513
 branch: agent/zcode/TASK-060-sqlite-ownership
@@ -16,7 +16,7 @@ integration_commit: null
 
 # TASK-060：SQLite 连接与事务归属收口
 
-**READY（2026-09-19，用户依 Qoder 后置复审报告重开）**：Owner=`ZCode`、Reviewer=`Codex`（**非作者**）、base=9522f2d。开工先 `git merge master`。
+**READY（2026-09-19，用户依 Qoder 后置复审报告重开）**：Owner=`ZCode`、Reviewer=`Qoder`（**非作者**；2026-09-19 用户改派，原指派 Codex——Qoder 是 Q-001 探针与后置复审报告的作者，由其验证修复最对口；集成仍由 Codex 执行）、base=9522f2d。开工先 `git merge master`。
 
 ## 来源与固定对象
 
@@ -72,4 +72,4 @@ integration_commit: null
   - AC⑧ 稳定性：`verification/TASK-060/stability-runs/targeted-run{1..10}.log`——定向串跑（connection_ownership + `test_worker_run_and_main_thread_access_coexist` + AC④ e2e + drain 契约）**10/10 轮 8 passed、EXIT=0**。
   - AC⑨ 全仓：`verification/TASK-060/full-suite/full-suite-run{1..5}.log`——**5/5 次 922 passed / 0 skipped、EXIT=0**；collected 922 = 911（master a2b23ad 基线，openssl 可用口径）+ **11 个本切片新增用例**，未跌破基线、未新增 skip/xfail、未放宽既有断言。
 - **既有测试适配（非放宽）**：`tests/workbench/test_shutdown_drain.py` 的 stub 适配 `shutdown() -> bool` 新契约（修前返回 None）；`tests/storage/test_run_files_leak.py::test_retry_is_idempotent_when_files_are_already_gone` 的 setup 补 `purge_pages` 使"行已删"的模拟场景字面为真（否则与新行存活守卫冲突）。
-- **最近状态（当前，唯一）**：2026-09-19 实现完成、AC①~⑨ 证据齐备；AC⑩ 待 Handoff + Codex（非作者）Review + 集成。
+- **最近状态（当前，唯一）**：2026-09-19 实现完成、AC①~⑨ 证据齐备；AC⑩ 待 Handoff + Qoder（非作者）Review + Codex 集成。
