@@ -8,7 +8,7 @@ suggested_owner: Qoder
 owner: Qoder
 reviewer: Codex
 depends_on: [TASK-012, TASK-013, TASK-015]
-base_commit: ed21c8a9e9c2a9f491c0ee17e42e72b6cd2acc62
+base_commit: 6cb0afb5e53a229c700b0570d19f0f03c9942811
 branch: agent/qoder/TASK-059-ui-redesign
 worktree: G:/CODEX/New Manga.worktrees/TASK-059-qoder
 integration_commit: null
