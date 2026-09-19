@@ -100,19 +100,8 @@ def test_interleaved_commit_cannot_orphan_a_revision(owned_db):
     other_committed = threading.Event()
 
     def writer() -> None:
-        # an open transaction of the writer's own (read first — taking
-        # the write lock here would deadlock two *separate* connections,
-        # which is exactly the interleaving a shared connection allowed
-        # "for free")
-        conn.execute("BEGIN")
-        conn.execute("SELECT COUNT(*) FROM regions").fetchone()
-        begin_inserted.set()
-        other_committed.wait(5)
-        # pre-fix: the other thread's commit already ended this shared
-        # transaction, so this INSERT auto-commits and the rollback below
-        # is a no-op -> the revision row is orphaned on disk.
-        # post-fix: the INSERT joins the writer's still-open transaction
-        # and the rollback undoes it.
+        # half-open transaction: revision row inserted, NOT committed
+        conn.execute("BEGIN IMMEDIATE")
         conn.execute(
             "INSERT INTO region_revisions (region_revision_id, region_id,"
             " revision_no, snapshot_json, origin, review_state, is_pinned,"
@@ -120,15 +109,20 @@ def test_interleaved_commit_cannot_orphan_a_revision(owned_db):
             " 'accepted', 0, ?)",
             (_NOW,),
         )
+        begin_inserted.set()
+        other_committed.wait(5)
+        # pre-fix: the other thread's bare commit() already published this
+        # half-open row (one shared transaction), so the rollback below is
+        # a no-op and the row is orphaned on disk.
+        # post-fix: the other thread's commit() is a no-op on its OWN
+        # connection and the rollback undoes the writer's row.
         conn.rollback()
 
     def other_thread() -> None:
         begin_inserted.wait(5)
-        with conn:
-            conn.execute(
-                "UPDATE regions SET updated_at = ? WHERE region_id = 'r1'",
-                (_NOW,),
-            )
+        # no DML, no write lock needed post-fix; pre-fix this single
+        # commit() ended the shared transaction holding the writer's row
+        conn.commit()
         other_committed.set()
 
     t1 = threading.Thread(target=writer)
@@ -143,17 +137,12 @@ def test_interleaved_commit_cannot_orphan_a_revision(owned_db):
         orphans = judge.execute(
             "SELECT COUNT(*) FROM region_revisions WHERE region_revision_id = 'rev-x'"
         ).fetchone()[0]
-        updated = judge.execute(
-            "SELECT COUNT(*) FROM regions WHERE region_id = 'r1' AND updated_at = ?",
-            (_NOW,),
-        ).fetchone()[0]
     finally:
         judge.close()
     assert orphans == 0, (
         "a half-open revision row survived its own writer's rollback"
         " because the other thread's commit published it (orphan revision)"
     )
-    assert updated == 1, "the other thread's committed write went missing"
 
 
 def test_writer_success_survives_the_other_threads_rollback(owned_db):
