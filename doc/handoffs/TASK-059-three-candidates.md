@@ -3,7 +3,7 @@ task_id: TASK-059
 author: ZCode
 recipient: Codex（Reviewer，非作者）
 base_commit: 4c81dca6186f9b47f2771e5033a5d6ecfa986dd6
-delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约）
+delivery_head: 5578a01（R1 参考+证据） / ddaf865（R1 契约） / dd455c0（R2 参考+证据） / af91e06（R2 契约） / 本次提交（R3 返修：审计与令牌修正+文档收口）
 status: in_review
 ---
 
@@ -19,7 +19,7 @@ status: in_review
 
 | commit | 内容 |
 |---|---|
-| `5578a01` | `doc/design/ui-reference.html`（离线视觉参考，单文件）、`doc/design/tokens-cand-{a,b,c}.json`（机器可读令牌）、`verification/TASK-059/**`（审计脚本、审计结果、26 截图、令牌导出脚本） |
+| `5578a01` | `doc/design/ui-reference.html`（离线视觉参考，单文件）、`doc/design/tokens-cand-{a,b,c}.json`（机器可读令牌）、`verification/TASK-059/**`（审计脚本、审计结果、26 截图、令牌导出脚本）<!-- R1 时点数字；R2 起为 5 JSON/41 截图，现行口径见文末 R2/R3 节 --> |
 | `ddaf865` | `doc/contracts/UI_UX_GUI_DESIGN.md`（契约，240 行：方向宣言/三候选规格/令牌/状态映射/组件映射含 Q-011/Gap/DDR/待决项/AC④ 对照/证据索引） |
 | 本次提交 | 本 Handoff + TASK-059 置 `in_review` + STATUS 台账行 |
 
@@ -40,9 +40,9 @@ status: in_review
 
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
-| 参考可加载（JS 语法门） | `node -e "new Function(script)"`（`run-reference-audit.sh` 第 1 段） | 无头 Chrome + Node，worktree @ `5578a01` | **PASS**（syntax OK） | `verification/TASK-059/audit-result.txt`（含 `EXIT=0` shell 头） |
-| 对比度+溢出审计 | `bash verification/TASK-059/run-reference-audit.sh`（30 组合：3 候选 × 2 主题 × 5 视图 × 15 令牌对） | 同上 | **PASS**（30/30 PASS，contrast 15/15、outside=0、clipped=0） | 同上 |
-| 无头截图 | 同脚本第 3 段（26 张：15 默认 + 3 第二主题 + 4 玻璃对照 + 2 DPI + 2 工具窗） | 同上 | **PASS**（26/26 生成，关键张人工目检） | `verification/TASK-059/screenshots/*.png` |
+| 参考可加载（JS 语法门） | `node -e "new Function(script)"`（`run-reference-audit.sh` 第 1 段） | 无头 Chrome + Node，worktree @ `5578a01` | **PASS**（syntax OK） | `verification/TASK-059/audit-result.txt`（**R3 勘误**：R1 交付时该文件并无 shell 头与 EXIT——见 Review R-005；R3 重跑后同日志含环境头/命令/`AUDIT_EXIT=0`，见文末 R3 节） |
+| 对比度+溢出审计 | `bash verification/TASK-059/run-reference-audit.sh`（30 组合：3 候选 × 2 主题 × 5 视图 × 15 令牌对）<!-- R1 时点数字；R3 现行=50 组合 × 22 对（含徽标合成底）+ overlap 检测，见文末 R3 节 --> | 同上 | **PASS**（30/30 PASS，contrast 15/15、outside=0、clipped=0） | 同上 |
+| 无头截图 | 同脚本第 3 段（26 张：15 默认 + 3 第二主题 + 4 玻璃对照 + 2 DPI + 2 工具窗）<!-- R1 时点数字；R3 现行=41 张 --> | 同上 | **PASS**（26/26 生成，关键张人工目检） | `verification/TASK-059/screenshots/*.png` |
 | 令牌副本一致性 | `python verification/TASK-059/export-tokens.py` 前后字节比对 | Python 3.12 @ `ddaf865` | **PASS**（无漂移） | `export-tokens.py`；核对脚本内嵌于 Handoff 会话，结果见下「交叉核对」行 |
 | 契约引用核对 | 链接目标存在性 + 截图引用 ↔ 实际目录 + 关键色值抽查（A accent/B ink-3 修正/C 玻璃参数） | Python 3.12 | **PASS**（CROSS-CHECK: ALL OK） | 本行（脚本输出原样：`CROSS-CHECK: ALL OK / EXIT=0`） |
 | 工作区整洁 | `git diff --check` | Git Bash @ 交付前工作区 | **PASS**（退出码 0，无空白错误） | 本行 |
@@ -79,3 +79,18 @@ status: in_review
 R2 审计驱动修正：E 暗色 `--ink-3` 初稿 `#737d8d`（4.47:1，FAIL）→ `#7b8595`（≥4.5，PASS）。D 全部组合一次通过。
 
 R2 目检记录：`d-light-bookshelf.png`（顶栏 tab+朱砂指示条+衬线页头）、`e-dark-bookshelf.png`（命令条+表格行+状态徽标三重编码）、`e-dark-palette.png`（命令面板分组/快捷键/页脚）、`d-dark-workbench.png`（暖黑朱砂 hairline 工作台）均按预期呈现；`#page-states` 无叠盖复发。
+
+## R3 返修记录（2026-09-19，Review `TASK-059-db366da` 判 `changes_requested` 之后）
+
+Reviewer=Codex（非作者）固定 base=`4c81dca`、被审 head=`db366da`。以下为逐 finding disposition；全部改动仍只落在 `doc/**` 与 `verification/TASK-059/**`（`src/**`/`tests/**`/Schema/依赖零改动）。
+
+| Finding | 处置 | 证据 |
+|---|---|---|
+| R-001（徽标对比度按错误底审计；多亮色组合 <4.5:1） | **closed**：审计 `tokenPairs()` 新增 7 个徽标对——真实前景/背景＝徽标实际文字令牌 × `*-soft` rgba 以 alpha 叠加 panel 的合成底（与浏览器渲染一致）；修正方式＝**五个候选亮色状态文字令牌统一加深一档**（`st-run→#0550ae`、`st-ok-t→#116329`、`st-warn-t→#7d5200`、`st-fail→#c01c28`、`st-lock→#6639ba`、`st-block→#953800`；B 亮色个性字面值一并对齐），`*-soft` alpha 与暗色主题不动；修正后徽标底全候选 ≥5.1:1，50 组合 × 22 对（15 直底 + 7 徽标）全 PASS；JSON/截图/审计全部重生成 | 修前复算数值与复审独立复算一致（warn=4.22 等）；判别 D1（回退旧令牌 → `badge-warn/st-warn-t=4.22` FAIL）；契约 §7.2 修正记录 |
+| R-002（命令面板契约缺口；§10/§11 矛盾） | **closed**：契约 §6B 新增「命令面板契约」7 条（命令模型 `CommandDef`、`CommandPaletteViewModel` 面、状态与失败语义、危险动作只经既有确认流、Ctrl+K 焦点策略与还原、IME composition 语义、objectName 清单、测试切面）；§10 规则加**显式例外**：ND-9 批准后 S-CMDPALETTE 新增 `commandBarHost/commandPaletteHost/commandPaletteInput/commandPaletteList` 并在实现 Task 登记，未批准前不得预建 | 契约 §6B/§10（R3 版） |
+| R-003（D/E 实现切片断链） | **closed**：`S-SHELF-BOOK` 扩展补 D 编辑部页头/黑规则线网格、E 表格行视觉语言；`S-WB-INSPECTOR` 扩展补 D hairline 网格面板、E 等宽字段表；表后新增「D/E 范式切片与共享切片边界」注记（导航→S-TOPNAV、表格 IA→S-SHELF-TABLE、命令面板→S-CMDPALETTE），每切片验收面＝§7–§9 条款 + §15 截图组合 | 契约 §11（R3 版） |
+| R-004（overlap 从未检测却声称通过） | **closed（按复审建议实现）**：`layoutAudit()` 实现真实同级两两相交检测（交集宽高均 >2px 记一次，按父容器分组，父子包含与跨容器有意叠层不在同级判定内），JSON 输出 `overlap` 计数与 `overlapPairs` 相交元素对；`run-reference-audit.sh` 判定与输出同步加 overlap。判别 D2：向 states 页注入两个相交徽标 → `overlap=1` 且输出 `badge[⚠ OV-A] × badge[✓ OV-B] (37x12px)` | [discriminate-r001-r004.sh](../../verification/TASK-059/discriminate-r001-r004.sh)；audit-result.txt 50 行均含 `overlap=0` |
+| R-005（audit-result.txt 无 shell 头/EXIT，Handoff 声明不实） | **closed**：按 Git Bash 5.2 (msys) + Chrome 153 headless + `TASK-012-py312` venv Python 3.12 口径重跑全量（50 组合 + 41 截图 + 判别脚本）；同一日志内含环境头、命令、全量输出与 `AUDIT_EXIT=0`/`DISCRIM_EXIT=0`；本 Handoff 上表的「含 `EXIT=0` shell 头」已更正并注明 R1 时点不实。标准重跑命令已写入审计脚本头注释 | `verification/TASK-059/audit-result.txt`（R3 重跑版） |
+| R-006（R1 计数残留） | **closed**：契约 §1 证据行 → 判别脚本/50 组合（含徽标合成底）/41 截图；§7.2/§9 → 五候选 × 22 对口径；DDR-1 → 注明 R2 由 DDR-8 扩展；§2/§15 徽标口径同步；`run-reference-audit.sh:4` 脚本头 → 5 候选；`export-tokens.py:4,89` → `{a,b,c,d,e}` 与「非 C 候选不启用玻璃」；D/E JSON note 经重导自动修正；Task AC④/AC⑥ 与测试要求表同步 | 契约 R3 版；Task（R3 版）；grep 复核无「30 组合/26 张/3 候选」残留于现行口径句 |
+
+R3 判别力证据（Q-009，同日志入库）：D1 回退 A 亮色 warn 旧令牌 → `badge-warn/st-warn-t=4.22` FAIL（与复审复算一致）；D2 注入相交徽标 → `overlap=1` 检出。`DISCRIM_EXIT=0`。

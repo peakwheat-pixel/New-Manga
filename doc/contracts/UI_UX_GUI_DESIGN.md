@@ -4,7 +4,7 @@
 > 视觉真值：[doc/design/ui-reference.html](../design/ui-reference.html)（离线可开，浏览器直接打开）。
 > 机器可读副本：[tokens-cand-a.json](../design/tokens-cand-a.json) / [tokens-cand-b.json](../design/tokens-cand-b.json) / [tokens-cand-c.json](../design/tokens-cand-c.json) / [tokens-cand-d.json](../design/tokens-cand-d.json) / [tokens-cand-e.json](../design/tokens-cand-e.json)（由 `verification/TASK-059/export-tokens.py` 生成；每份 42 色令牌 × 2 主题 + 20 项几何）。
 > 边界：本文档不修改 D01～D08、[ui-baseline](../ui-baseline.md) 的任何条文；与其冲突时以 D 文档为准，冲突记入 §13 待决项。所有色值/尺寸当前为 HTML/Chromium 呈现，**非 Qt 实现值**，不构成任何 D08 AC 的 PASS。
-> 版本：R2（2026-09-19）。R1 交付 A/B/C 三候选；**R2 按用户当日指示增补 D/E 两候选**（「完全不一样」的范式级差异，见 §6A/§6B 与 DDR-8），审计矩阵由 30 组合扩至 50 组合。
+> 版本：R3（2026-09-19）。R1 交付 A/B/C 三候选；R2 按用户当日指示增补 D/E 两候选（「完全不一样」的范式级差异，见 §6A/§6B 与 DDR-8），审计矩阵由 30 组合扩至 50 组合。**R3 按 Review（`TASK-059-db366da`）收口**：徽标对比度改按真实 `*-soft` 合成底审计并统一加深亮色状态文字令牌（§7.2）、补齐命令面板契约与 D/E 实现切片（§6B/§10/§11）、实现真实重叠检测并补判别力证据（§15）。
 
 ---
 
@@ -15,7 +15,7 @@
 | 决策与规格 | 本文 | 五候选的规格、IA 声明、Gap、DDR、待决项 |
 | 视觉真值 | `doc/design/ui-reference.html` | 全部令牌、组件、页面视图的唯一呈现载体；带评审 chrome（候选/主题/玻璃/DPI/审计按钮） |
 | 机器可读副本 | `doc/design/tokens-cand-*.json` | 每候选 42 色令牌 × 2 主题 + 20 项几何 + 玻璃参数；与 HTML 不一致时以 HTML 为准 |
-| 验证证据 | `verification/TASK-059/` | 审计脚本、30 组合审计矩阵、26 张截图、令牌导出脚本 |
+| 验证证据 | `verification/TASK-059/` | 审计与判别脚本、50 组合审计矩阵（含徽标真实合成底）、41 张截图、令牌导出脚本 |
 
 评审 chrome（候选切换、审计按钮、framecap 标注）是参考页的评审工具，**不是产品画面**；产品画面只有 `#frame` 内的内容。
 
@@ -23,7 +23,7 @@
 
 TASK-059 取代被否决的 TASK-047 设计切片（裁决记录见 [TASK-047](../tasks/TASK-047.md) 末尾）。五个候选正面回答三条否决理由，且在候选中**可指认**：
 
-- **R-1（视觉方向不对：继承灰蓝色板）** → 五候选各自给出完整色彩系统，没有一个沿用 ui-baseline 的 `#4f6bed` 蓝。A 用中性暖灰黑 + 靛蓝 `#4d63e8`；B 用暖纸白 `#f7f5f1` + 青瓷 `#0f766e`；C 用中性冷灰 + 靛青 `#5b5fe8` 且以材质（玻璃）为第二识别维度；D 用纸白 + 墨黑 + 朱砂红 `#b3391b`；E 用深蓝黑 + 琥珀 `#e2b34d`。全部令牌对通过 4.5:1（文本）/3.0:1（非文本）审计。
+- **R-1（视觉方向不对：继承灰蓝色板）** → 五候选各自给出完整色彩系统，没有一个沿用 ui-baseline 的 `#4f6bed` 蓝。A 用中性暖灰黑 + 靛蓝 `#4d63e8`；B 用暖纸白 `#f7f5f1` + 青瓷 `#0f766e`；C 用中性冷灰 + 靛青 `#5b5fe8` 且以材质（玻璃）为第二识别维度；D 用纸白 + 墨黑 + 朱砂红 `#b3391b`；E 用深蓝黑 + 琥珀 `#e2b34d`。全部令牌对（panel 直底 + 徽标 `*-soft` 真实合成底）通过 4.5:1（文本）/3.0:1（非文本）审计。
 - **R-2（布局照搬现状）** → 五候选不是同一布局换色：A 重排工作台 Inspector 信息层级（译文置顶，§4）；B 把书架章节从行升级为大卡（§5）；C 根本改变书架导航模型为两级浏览（§6）；D 把一级导航从左侧 rail 重排为顶部导航条并改用编辑部排版网格（§6A）；E 把书架从卡片网格改为数据表格并以命令面板为核心交互（§6B）。四页一级骨架不变（D01 §1 约束，所有候选遵守）。
 - **R-3（太保守：取证盖过提案）** → 本契约以提案为主体：§4～§6B 是五个完整可裁决的方向；TASK-047 的 81 条 As-Is 取证不复制，只保留仍然成立的硬事实（§12）与 Gap 矩阵（§11）。
 
@@ -123,9 +123,19 @@ TASK-059 取代被否决的 TASK-047 设计切片（裁决记录见 [TASK-047](.
 
 **IA 声明**：
 - 书架：**表格清单**——色标 + 书名 + 话数 + 进度条 + 状态徽标 + 最近活动 + 行内操作；表头 sticky。点击行 → 右侧详情面板（与 A/B 交互一致）。表格形态是「库=数据集」心智的表达。
-- **全局命令条 + 命令面板**（本候选的范式差异，ND-9 需用户裁决）：内容区顶部常驻命令条（`›` 提示符 + Ctrl K 角标）；Ctrl+K 唤出命令面板——跳转页面、打开作品、启动/筛选任务、执行最近动作。面板是**交互机制的新增**（不是新一级页面、不改 D01 四页同级；数据来源全部是已有 VM 能力的另一个入口），但按协作协议仍列为待决项由用户点头。
+- **全局命令条 + 命令面板**（本候选的范式差异，ND-9 需用户裁决）：内容区顶部常驻命令条（`›` 提示符 + Ctrl K 角标）；Ctrl+K 唤出命令面板——跳转页面、打开作品、启动/筛选任务、执行最近动作。面板是**交互机制的新增**（不是新一级页面、不改 D01 四页同级；数据来源全部是已有 VM 能力的另一个入口），但按协作协议仍列为待决项由用户点头。完整交互契约见下「命令面板契约」。
 - 工作台：五区不变；等宽 + 26px 密度把 Inspector 做成「字段表」（TM/约束/OCR/Provider/锁定），数据密集取向。
 - 亮/暗两套完整；亮色是「纸上终端」（暖灰白底 + 琥珀）。
+
+**命令面板契约（S-CMDPALETTE 规格，ND-9 裁决输入；实现面在对应实现 Task 内落地）**：
+
+1. **命令模型**：`CommandDef { id, title, section, keywords, shortcutText, enabled, danger }`——纯 UI 层聚合对象；`section`（导航/打开/任务/导出/设置）对应面板分组（见 `e-dark-palette.png`）。命令注册源全部来自**既有 VM 的既有方法/信号**（导航切换、打开作品、TaskProgress 的 pause/stop/continue/restart/abandon/retry/filter、导出、设置跳转）；面板不新增、不包装业务逻辑。
+2. **VM**：新增 `CommandPaletteViewModel`（上下文属性 `commandPaletteViewModel`）：`query`（输入）、`results`（只读列表模型：title/section/shortcutText/enabled/danger + 命令 id）、`selectedIndex`、`accepted(commandId)` 信号。过滤＝title+keywords 的不区分大小写子串匹配；无结果呈空态文案；`enabled=false` 的命令照常列出但置灰，并给不可用原因 tooltip。
+3. **状态与失败语义**：命令的可用性**实时跟随源 VM**（如无选中作品时「打开作品」禁用）；执行目标不可用（作品已删除等）时复用既有 `commandErrorBar` 呈现错误，面板保持打开、该命令转禁用。危险动作（放弃任务等）：面板只负责**跳转/预填既有确认流**（复用 DirtyConfirmDialog 同类的危险确认窗），面板自身永不直接执行破坏性动作。
+4. **快捷键与焦点**：Ctrl+K 为窗口级快捷键，焦点在任何控件（含文本编辑器）内均唤出面板；面板打开时为模态 overlay，Esc 关闭**优先级最高**；↑/↓ 在结果内循环、Enter 执行选中项；关闭（执行或 Esc）后焦点还原到唤出前的焦点对象（记录 focus owner），还原对象已销毁时回落到当前页首个可聚焦控件。
+5. **IME/CJK**：过滤查询只在 IME **composition 结束后**更新（composition 期间不触发重新过滤、不移动选中项）；候选词键（如上下方向）在组合期间归 IME，不驱动面板。
+6. **objectName**：候选 E 获 ND-9 批准后，S-CMDPALETTE 实现切片新增 `commandBarHost / commandPaletteHost / commandPaletteInput / commandPaletteList`，在该 Task 的 allowed_paths 与测试注册表（TASK-047 §4.7 体系的延伸）登记——本契约 §10 的「不因视觉方案新增必需 objectName」规则的**显式例外**（§10 已注明）。
+7. **测试切面**：打开/关闭与焦点还原；query→results 过滤（含 CJK 组合输入不半途触发）；禁用态呈现与执行拒绝；危险命令必须经确认流；Ctrl+K 在编辑器焦点内可唤出；空态；`accepted` 到既有 VM 方法的一跳映射（不重复实现业务）。
 
 **代价取舍**：
 - **触达高度显式例外**：26px 控件高度低于本仓 §9 的 28px 底线（仍高于 WCAG 2.5.8 的 24px），是候选 E 换取密度的显式取舍，鼠标用户误触风险略升——已计入 §3 对照表与 ND-10。
@@ -150,7 +160,9 @@ TASK-059 取代被否决的 TASK-047 设计切片（裁决记录见 [TASK-047](.
 
 ### 7.2 状态映射（三重编码）
 
-**任何状态不得仅靠颜色承载**：badge = 字形 + 颜色（`*-soft` 底 + `st-*` 字）+ 文本，三者齐备。状态色在 panel 底上对比度 ≥4.5:1（审计矩阵 30 组合 PASS）。
+**任何状态不得仅靠颜色承载**：badge = 字形 + 颜色（`*-soft` 底 + `st-*` 字）+ 文本，三者齐备。对比度按**徽标真实背景**审计：`*-soft` 是 rgba，以 alpha 叠加 panel 合成后与文字令牌比较，阈值 4.5:1（徽标字号 `--fs-sm`，不适用大字号 3:1 豁免）；panel 直底场景另按 15 对直底令牌审计。审计矩阵 50 组合 × 22 对（15 直底 + 7 徽标合成底）全部 PASS（§15）。
+
+**审计驱动修正记录（R3）**：徽标真实底口径下，五个候选的亮色主题均有状态文字低于 4.5:1（如 warn 4.22 / ok 4.44 / lock 4.36 / block 4.31，E 候选 7 对中 6 对不达标）；修法为**亮色状态文字令牌统一加深一档**（`st-run #0969da→#0550ae`、`st-ok-t #1a7f37→#116329`、`st-warn-t #9a6700→#7d5200`、`st-fail #cf222e→#c01c28`、`st-lock #8250df→#6639ba`、`st-block #bc4c00→#953800`，B 亮色的候选个性字面值一并对齐），`*-soft` alpha 不动、暗色主题不动；修正后徽标底对比度全候选 ≥5.1:1。判别力证据：回退旧值即 FAIL（`badge-warn/st-warn-t=4.22`），见 `verification/TASK-059/discriminate-r001-r004.sh`。
 
 PipelineRun 九态（D01 §4 / 05 §61 语义，UI 呈现归本契约）：
 
@@ -190,7 +202,7 @@ C/D 类浮窗（05 §D 类容器）尺寸上限必须满足「853×533 DIP 内�
 
 ## 9. 可访问性与文本
 
-- **对比度**：文本 ≥4.5:1、disabled/非文本 ≥3.0:1；审计矩阵 3 候选 × 2 主题 × 5 视图 × 15 对令牌全部 PASS（§15）。
+- **对比度**：文本 ≥4.5:1、disabled/非文本 ≥3.0:1；审计矩阵 5 候选 × 2 主题 × 5 视图 × 22 对令牌（15 直底 + 7 徽标 `*-soft` 真实合成底）全部 PASS（§15）。
 - **三重编码**：§7.2；焦点环 `--focus` 2px，键盘可达全部交互件。
 - **触达目标**：≥28×28 DIP（A 的 28px 控件是底线；B 36px 最宽松）。**候选 E 显式例外：26×26 DIP**——高于 WCAG 2.5.8 AA 的 24×24，低于本仓 28 底线，是 E 换取最高密度的显式取舍（ND-10）。
 - **CJK**：正文行高 ≥1.5；中文允许 `WrapAnywhere` 断行；标签/按钮禁止单字竖排（`b-light-bookshelf` 修复记录即此类缺陷）。
@@ -199,7 +211,7 @@ C/D 类浮窗（05 §D 类容器）尺寸上限必须满足「853×533 DIP 内�
 
 ## 10. ViewModel / objectName 映射
 
-**规则**：设计不重命名任何既有 objectName，不因视觉方案新增必需的 objectName；实现切片如需新 objectName（如玻璃开关设置项控件），在对应实现 Task 的 allowed_paths 内登记。测试钉住面以 TASK-047 §4.7 注册表 + 现行代码为准：
+**规则**：设计不重命名任何既有 objectName，不因视觉方案新增必需的 objectName；实现切片如需新 objectName（如玻璃开关设置项控件），在对应实现 Task 的 allowed_paths 内登记。**显式例外（R3 消解与 §11 的矛盾）**：候选 E 获用户裁决（ND-9）后，`S-CMDPALETTE` 切片新增 `commandBarHost / commandPaletteHost / commandPaletteInput / commandPaletteList` 四个 objectName（契约见 §6B「命令面板契约」），在该实现 Task 的 allowed_paths 与测试注册表登记；ND-9 未批准前不得预建。测试钉住面以 TASK-047 §4.7 注册表 + 现行代码为准：
 
 | 设计概念 | QML 组件（现状） | objectName（钉住） | VM 绑定（现状，WorkbenchView.qml:20-40） |
 |---|---|---|---|
@@ -235,14 +247,16 @@ Gap 沿用 TASK-047 §7 编号中仍然成立的部分，按候选差异化重�
 | S-TOKEN | 建立 QML 单一令牌源（Theme singleton），灌入所选候选 JSON；全 UI 去硬编码色（含 `WorkbenchView.qml:18` 的 `#f5f5f4` 根色） | 选中候选 | 无；其余切片的前置 |
 | S-A11Y | 对比度/焦点环/触达/截断规则落地 + 对应测试 | 全部 | S-TOKEN |
 | S-WIN | 最小窗与 DPI 五档降级序列（§8.2） | 全部 | S-TOKEN；TASK-047 G-8 系 |
-| S-WB-INSPECTOR | Inspector 重排（仅 A）或分组梳理（B/C） | A/B/C 各自形态 | S-TOKEN；objectName 不变 |
-| S-SHELF-BOOK | 书架视觉重建（A 行为网格 / B 章节大卡 / C 书墙） | 选中候选 | S-TOKEN |
+| S-WB-INSPECTOR | Inspector 视觉重建：译文置顶重排（A）/分组梳理（B/C）/**hairline 网格面板（D，§6A）**/**等宽字段表（E，§6B）** | A/B/C/D/E 各自形态 | S-TOKEN；objectName 不变；E 依赖等宽字体栈 |
+| S-SHELF-BOOK | 书架视觉重建：行为网格（A）/章节大卡（B）/书墙（C）/**编辑部页头+黑规则线网格（D，§6A）**/**表格行视觉语言（E，IA 归 S-SHELF-TABLE）** | A/B/C/D/E 各自形态 | S-TOKEN；D 页头衬线字体栈可用性不阻塞（fallback 系统 UI 字） |
 | S-SHELF-L2 | 书架两级浏览 IA（仅 C，若 ND-3 批准） | C | S-SHELF-BOOK；IA 变化需用户裁决 |
 | S-GLASS | 玻璃 PoC：Qt Quick backdrop 等价方案 + 性能验证（D07 §4.4/§95 约束下），不过则降级半透明纯色 | 仅 C | **最高风险**，必须最先验证 |
 | S-TOPNAV | 一级导航 rail→顶部导航条重排（QML 布局重排，nav-* objectName 不变） | 仅 D | S-TOKEN；导航范式变化需用户裁决（ND-8） |
 | S-CMDPALETTE | 命令面板：命令注册/搜索/执行（聚合既有 VM 能力，不动业务逻辑）+ 命令条常驻 | 仅 E | S-TOKEN；新交互机制需用户裁决（ND-9） |
 | S-SHELF-TABLE | 书架表格视图（行选择→详情面板，交互同 A/B） | 仅 E | S-SHELF-BOOK 同期 |
 | S-CLOSE / S-SET / S-PERF 等 | 沿用 TASK-047 §7 既有切片定义（关闭语义/设置页/性能），按所选候选令牌执行 | 全部 | 对应原文 |
+
+**D/E 范式切片与共享切片的边界（R3 补，保证 Gap→实现计划不断链）**：D 的**导航重排**全责在 `S-TOPNAV`，**书架页头/hairline 工作台**的视觉语言在 `S-SHELF-BOOK`/`S-WB-INSPECTOR`；E 的**表格 IA**（列结构/行选择→详情面板）在 `S-SHELF-TABLE`，**表格行视觉语言**在 `S-SHELF-BOOK`，**字段表 Inspector** 在 `S-WB-INSPECTOR`，**命令面板**在 `S-CMDPALETTE`（契约 §6B）。每个切片的验收面＝契约 §7–§9 对应条款 + 该候选对应视图截图组合（§15 清单）。
 
 设计相关但**不在任何候选**中变更的：四页一级骨架、TaskProgress 常驻、悬浮窗行为矩阵（05 §D）、Lock 语义。
 
@@ -280,7 +294,7 @@ Gap 沿用 TASK-047 §7 编号中仍然成立的部分，按候选差异化重�
 
 | # | 决策 | 理由 |
 |---|---|---|
-| DDR-1 | 交付三个实质不同的候选而非单一提案 | 用户开工指令明确要求 2–3 个「视觉语言或 IA 实质不同」的方向 |
+| DDR-1 | 交付多个实质不同的候选而非单一提案（R1 三候选；R2 由 DDR-8 按用户指示扩展为五候选） | 用户开工指令明确要求 2–3 个「视觉语言或 IA 实质不同」的方向；R2 追加指示「再增加两种完全不一样的设计」 |
 | DDR-2 | 玻璃不承载裸文本、文字落 scrim（55% panel） | 使对比度审计确定性（无需猜测背后像素）；同时压低玻璃可读性风险 |
 | DDR-3 | HTML 为视觉真值，JSON 由脚本生成 | 令牌一致性可复现验证（`export-tokens.py`），避免双真值漂移 |
 | DDR-4 | A 的 Inspector 重排以显式布局顺序为 QML 规格 | CSS `order` 是参考实现的表达手段，不应暗示 QML 依赖运行时重排 |
@@ -291,7 +305,9 @@ Gap 沿用 TASK-047 §7 编号中仍然成立的部分，按候选差异化重�
 
 ## 15. 验证证据索引
 
-- 审计：`verification/TASK-059/run-reference-audit.sh` → JS 语法门 + 50 组合（5 候选 × 2 主题 × 5 视图）对比度/溢出矩阵 + 41 张截图；最近一次全量结果 **ALL PASS**（结果随本次交付入库于同目录 `audit-result.txt`）。
+- 审计：`verification/TASK-059/run-reference-audit.sh` → JS 语法门 + 50 组合（5 候选 × 2 主题 × 5 视图）矩阵 + 41 张截图。矩阵内容＝对比度（15 直底对 + 7 徽标 `*-soft` 真实合成底对，文本 ≥4.5 / 非文本 ≥3.0）+ 溢出（outside）+ 裁切（clipped）+ **重叠（overlap，同级元素两两相交检测，R-004）**；最近一次全量结果 **ALL PASS**（`AUDIT_EXIT=0`）。
+- 证据纪律（R-005）：`audit-result.txt` 同一日志内含**环境头**（shell/node/chrome/python 及 venv 路径）、**命令**、全量输出与 **`AUDIT_EXIT`/`DISCRIM_EXIT`**；本次口径＝Git Bash 5.2 (msys) + Chrome 153 headless + `TASK-012-py312` venv Python 3.12。
+- 判别力：`verification/TASK-059/discriminate-r001-r004.sh` —— 回退 A 亮色 warn 旧令牌 → 徽标对 `badge-warn/st-warn-t=4.22` FAIL（数值与复审独立复算一致）；向 states 页注入两个相交徽标 → `overlap=1` 且输出相交元素对。两个检测均证明**有判别力**（非恒 PASS）。
 - 截图清单：`{a,b,c,d}-默认主题-{bookshelf,workbench,reader,settings,states}`（A 暗、B/C/D 亮）+ `e-dark-*` 同构；第二主题代表 `a-light-workbench / b-dark-workbench / c-dark-workbench / d-dark-workbench / e-light-workbench`；玻璃对照 `c-glass-off-{bookshelf,workbench}` + `c-glass-{taskdetail,both}`；DPI 压力 `a-dark-workbench-dpi150.png / a-dark-workbench-dpi200.png / e-dark-workbench-dpi150.png`；工具窗 `a-dark-workbench-taskdetail / b-light-danger / d-light-workbench-taskdetail`；E 命令面板 `e-dark-palette`。
 - 令牌：`doc/design/tokens-cand-{a,b,c,d,e}.json`（每份 42 色令牌 × 2 主题 + 20 项几何 + 玻璃参数）← `verification/TASK-059/export-tokens.py`。
 - **口径**：全部结果为 HTML/Chromium 呈现，非 Qt；不构成任何 D08 AC 的 PASS，也不预支未来实现 Task 的验证。

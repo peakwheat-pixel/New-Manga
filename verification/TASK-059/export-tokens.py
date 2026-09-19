@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """TASK-059: 从 doc/design/ui-reference.html 导出机器可读令牌副本。
 
-HTML 是唯一视觉真值；本脚本生成 doc/design/tokens-cand-{a,b,c}.json。
+HTML 是唯一视觉真值；本脚本生成 doc/design/tokens-cand-{a,b,c,d,e}.json。
 两者不一致时以 HTML 为准，重新运行本脚本即可再生成。
 用法：python verification/TASK-059/export-tokens.py
 """
@@ -86,7 +86,7 @@ def main() -> int:
                     "仅候选 C 启用玻璃材质；blur 22px/saturate 1.5 用于行内"
                     "浮条，26px/1.6 用于工具窗。玻璃承载容器与控件，裸文本"
                     "必须落在 scrim（color-mix 55% panel）上。"
-                ) if c == "c" else "候选 A/B 不启用玻璃材质。",
+                ) if c == "c" else "非 C 候选不启用玻璃材质。",
             },
             "geometry": geom[c],
             "modes": modes,

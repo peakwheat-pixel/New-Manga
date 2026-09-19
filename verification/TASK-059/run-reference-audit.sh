@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 # TASK-059 视觉参考自检：
 #  1) JS 语法门（无头加载前置）
-#  2) 全矩阵审计：3 候选 × 2 主题 × 5 视图 —— 对比度(≥4.5 文本/≥3 非文本) + 溢出/裁切
+#  2) 全矩阵审计：5 候选 × 2 主题 × 5 视图 —— 对比度(≥4.5 文本/≥3 非文本，含徽标真实 *-soft 合成底) + 溢出/裁切/重叠
 #  3) 无头截图（关键组合，含 DPI 150/200）
 # 口径：全部结果为 HTML/Chromium 呈现，非 Qt；不构成任何 D08 AC 的 PASS。
+# 标准重跑（R-005 证据纪律：环境头 + 命令 + 输出 + EXIT 同一日志入库）：
+#   { echo "== env =="; uname -s; bash --version | head -1; node -v; "$CHROME" --version; \
+#     echo "== cmd =="; echo 'bash verification/TASK-059/run-reference-audit.sh'; \
+#     echo "== out =="; bash verification/TASK-059/run-reference-audit.sh; \
+#     echo "EXIT=$?"; } > verification/TASK-059/audit-result.txt 2>&1
 set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ROOT="$(cd "$HERE/../.." && pwd)"
@@ -35,10 +40,12 @@ let d='';process.stdin.on('data',c=>d+=c).on('end',()=>{
   const t=m[1].replace(/&quot;/g,'\"').replace(/&amp;/g,'&');
   try{const o=JSON.parse(t);
     const f=o.contrast.filter(r=>!r.pass);
-    console.log((f.length||o.layout.outside||o.layout.clipped)?'FAIL':'PASS',
+    const ov=o.layout.overlap||0;
+    console.log((f.length||o.layout.outside||o.layout.clipped||ov)?'FAIL':'PASS',
       'contrast='+ (o.contrast.length-f.length)+'/'+o.contrast.length,
-      'outside='+o.layout.outside,'clipped='+o.layout.clipped,
-      f.length?('fails:'+f.map(x=>x.name+'='+x.cr).join(',')):'');
+      'outside='+o.layout.outside,'clipped='+o.layout.clipped,'overlap='+ov,
+      f.length?('fails:'+f.map(x=>x.name+'='+x.cr).join(',')):'',
+      ov?('overlaps:'+(o.layout.overlapPairs||[]).slice(0,5).join('; ')):'');
   }catch(e){console.log('FAIL parse-error')}
 });")
   echo "  $1/$2/$3: $(printf '%s' "$out" | sed 's/[[:space:]]*$//')"
