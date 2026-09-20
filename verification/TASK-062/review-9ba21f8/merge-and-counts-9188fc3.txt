@@ -1,0 +1,47 @@
+=== label:  merge-and-counts-9188fc3
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM unset
+=== date:   2026-09-20T09:02:58+08:00
+=== trees:  master @ 3d79403
+          branch @ 9188fc3  base @ 41d7aee
+--- 1. merge preview: git merge-tree --write-tree master agent/codex/TASK-062-posthoc-residuals
+    a50173b3d5c061af3f5bfa4c6fe5aaaf97bcc35b
+    100644 782a596a360e89161e127937c9cc3db1baf5ad0d 1	doc/STATUS.md
+    100644 4ae68e318da1980692b0b21309894e59713658c4 2	doc/STATUS.md
+    100644 ad2122a4d2770f02f3c762e35bb9e7d5e7f4fd4e 3	doc/STATUS.md
+    
+    Auto-merging doc/STATUS.md
+    CONFLICT (content): Merge conflict in doc/STATUS.md
+    conflict-marker lines in output: 0
+--- 2. implementation drift since the slice base (empty = none)
+    (no lines above = master never touched TASK-062's three files)
+--- 3. collected per tree (pytest's own number is authoritative)
+        base tree: the copied TASK-062 test file is restored first so the
+        count is the pristine base (the copy is what §R2-1 discrimination ran with)
+    master:  930 tests collected in 0.87s
+    branch:  930 tests collected in 1.50s
+    base (pristine 41d7aee): 923 tests collected in 1.45s
+--- 4. node-id set difference (membership only; the raw grep count includes
+        non-node lines, so it is NOT used as the total)
+    grepped lines: master 941  branch 941
+    only in TASK-062 branch (7):
+      + tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_benign_values_survive_every_section
+      + tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_credentials_are_masked_in_recent_errors_values_and_keys
+      + tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_credentials_are_masked_in_the_application_and_database_sections
+      + tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_embedded_credential_shapes_are_caught_anywhere_in_a_value
+      + tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_ordinary_paths_versions_and_words_pass_through
+      + tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_the_documented_boundary_is_the_actual_boundary
+      + tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_on_a_qt_encoded_page
+    only in master (7)  [TASK-061's own additions]:
+      - tests/core/test_connection_ownership.py::TestR002RegistryEviction::test_a_dead_threads_connection_is_evicted
+      - tests/core/test_connection_ownership.py::TestR002RegistryEviction::test_explicit_release_frees_the_calling_threads_slot
+      - tests/core/test_connection_ownership.py::TestR004AggregatedWriterView::test_any_in_transaction_tracks_the_callers_own_transaction
+      - tests/storage/test_managed_storage.py::TestR010ReparseWalk::test_refuses_a_root_internal_junction_and_spares_the_target
+      - tests/storage/test_managed_storage.py::TestR011DotSegmentIsAlive::test_refuses_a_dot_segment_and_spares_the_file
+      - tests/storage/test_managed_storage.py::TestR011DotSegmentIsAlive::test_refuses_an_empty_middle_segment
+      - tests/workbench/test_connection_eviction.py::test_registry_does_not_grow_with_completed_runs
+    shared node ids: 934   only-branch: 7   only-master: 7
+    => each side adds its own tests on top of the shared base; the two added
+       groups are disjoint (no id appears on both sides' difference lists).
+EXIT=0
