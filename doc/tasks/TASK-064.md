@@ -2,7 +2,7 @@
 id: TASK-064
 title: diagnostics production wiring（TASK-055 装配接线后续）
 kind: implementation
-status: in_review
+status: approved
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
@@ -63,5 +63,5 @@ QML/UI 入口仍不在本 Task；不得新增 `diagnosticsService` QML context p
 ## 交付与运行记录
 
 - Handoff：[TASK-064-e39cc27](../handoffs/TASK-064-e39cc27.md)，delivery head=`2024bfb`。
-- Review：待归档独立非作者 Review（Reviewer=DeepSeek Harness，非作者）；复审结论已 approved。
+- Review：[TASK-064-d154044](../reviews/TASK-064-d154044.md)；独立非作者复审结论 `approved`。
 - 实际测试：定向 75 passed / 0 skipped；全仓连续 5 次均 945 passed / 6 skipped；P1 修复前后判别日志已入库；详见 `verification/TASK-064/`。
