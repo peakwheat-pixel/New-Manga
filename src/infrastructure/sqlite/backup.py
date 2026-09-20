@@ -196,7 +196,12 @@ class SqliteBackupService:
                 "SIDECAR_MISMATCH",
                 f"{target.name}: sidecar hash != recorded hash",
             )
-        actual_hash = sha256_file(target)
+        try:
+            actual_hash = sha256_file(target)
+        except OSError as error:
+            raise BackupVerificationError(
+                "BACKUP_FILE_UNREADABLE", f"{target.name}: {error}"
+            ) from error
         if actual_hash != recorded_hash:
             raise BackupVerificationError(
                 "HASH_MISMATCH",

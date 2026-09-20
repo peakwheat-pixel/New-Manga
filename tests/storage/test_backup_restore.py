@@ -480,6 +480,33 @@ class TestTypedFailures:
             service.restore_backup(backup_id)
         assert excinfo.value.code in ("HASH_MISMATCH", "INTEGRITY_FAILED")
 
+    def test_hash_read_failure_is_typed_and_leaves_live_untouched(
+        self, backup_workspace, monkeypatch
+    ) -> None:
+        workspace = backup_workspace
+        conn, service = workspace["conn"], workspace["service"]
+        workspace["seed_page"]("p1")
+        backup_id = service.create_backup("manual", "unreadable")
+        records_before = conn.execute(
+            "SELECT COUNT(*) FROM backup_records"
+        ).fetchone()[0]
+        monkeypatch.setattr(
+            backup_module,
+            "sha256_file",
+            Mock(side_effect=OSError("forced read failure")),
+        )
+
+        with pytest.raises(BackupVerificationError) as excinfo:
+            service.restore_backup(backup_id)
+
+        assert excinfo.value.code == "BACKUP_FILE_UNREADABLE"
+        assert conn.execute(
+            "SELECT COUNT(*) FROM artifact_revisions"
+        ).fetchone()[0] == 1
+        assert conn.execute(
+            "SELECT COUNT(*) FROM backup_records"
+        ).fetchone()[0] == records_before
+
     def test_restore_rejects_backup_id_path_escape(self, backup_workspace) -> None:
         workspace = backup_workspace
         service = workspace["service"]
