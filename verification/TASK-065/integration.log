@@ -1,0 +1,25 @@
+TASK=T1.3.2 / TASK-065
+LABEL=integration
+WORKTREE=G:\CODEX\New Manga.worktrees\TASK-065-codex
+HEAD=772d63c2c921a08606d742438a146cb310159b02
+SHELL=PowerShell 7.6.6
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=Python 3.12.3
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COLLECT_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests/core/test_shutdown_drain.py tests/workbench/test_drain_shutdown.py --collect-only -q -p no:cacheprovider
+tests/core/test_shutdown_drain.py::test_shutdown_services_drains_workbench_before_closing_conn
+tests/core/test_shutdown_drain.py::test_shutdown_services_drains_an_active_real_run
+tests/core/test_shutdown_drain.py::test_workbench_vm_shutdown_is_idempotent
+tests/workbench/test_drain_shutdown.py::test_shutdown_reports_drained_on_a_live_run
+tests/workbench/test_drain_shutdown.py::test_shutdown_timeout_is_reported_as_not_drained
+tests/workbench/test_drain_shutdown.py::test_shutdown_cancels_a_paused_run
+tests/workbench/test_drain_shutdown.py::test_bootstrap_shutdown_skips_close_and_reports_on_timeout
+
+7 tests collected in 0.03s
+COLLECT_EXIT=0
+TEST_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests/core/test_shutdown_drain.py tests/workbench/test_drain_shutdown.py -q -p no:cacheprovider -rs
+.......                                                                  [100%]
+7 passed in 3.90s
+EXIT=0

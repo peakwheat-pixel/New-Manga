@@ -11,7 +11,6 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 import workbench_helpers  # noqa: F401  (sys.path injection)
@@ -113,4 +112,3 @@ def test_bootstrap_shutdown_skips_close_and_reports_on_timeout(capsys):
     assert calls == [], "connection was closed under an undrained worker"
     err = capsys.readouterr().err
     assert "drain timed out" in err, err
-    assert sys.stderr is not None

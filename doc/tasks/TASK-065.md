@@ -2,13 +2,13 @@
 id: TASK-065
 title: TASK-058 复审尾项 docs+tests 小切片
 kind: maintenance
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
 reviewer: Qoder
 depends_on: ["TASK-058", "TASK-064"]
-base_commit: 44aa64d
+base_commit: 772d63c2c921a08606d742438a146cb310159b02
 branch: agent/codex/TASK-065-task058-followups
 worktree: "G:/CODEX/New Manga.worktrees/TASK-065-codex"
 integration_commit: null

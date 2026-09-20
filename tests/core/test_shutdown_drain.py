@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import sqlite3
 import sys
+import threading
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -119,26 +120,33 @@ def test_shutdown_services_drains_an_active_real_run(qapp, tmp_path):
     ordering stub cannot reach.
     """
     from bootstrap.app import _shutdown_services
+    from application.translation.pipeline.executor import (
+        DeterministicStepExecutor,
+    )
 
     services, book, chapter = _make_library(tmp_path, page_count=6)
+    worker_entered = threading.Event()
+
+    def slow_step(*_args) -> None:
+        worker_entered.set()
+        time.sleep(1.0)
+
+    services.pipeline._executor = DeterministicStepExecutor(on_execute=slow_step)
     vm = services.workbench
     vm.setContext(book.book_id, chapter.chapter_id, "退出排空书", "退出话")
     vm.startTranslateAll()
 
-    # wait until the worker actually picked the run up (left PENDING),
-    # so the drain below races a real active/just-terminal run, not a
-    # thread that never started
+    # The injected first step remains active long enough to prove the
+    # production drain is called on a live worker, not a completed run.
     from domain.tasks.models import PipelineRunStatus
 
-    deadline = time.monotonic() + 15
-    while time.monotonic() < deadline:
-        qapp.processEvents()
-        if vm._run is not None and vm._run.status is not PipelineRunStatus.PENDING:
-            break
-        time.sleep(0.01)
+    assert worker_entered.wait(5), "worker never entered a pipeline step"
     assert vm._run is not None, "run was never created"
     assert vm._run.status is not PipelineRunStatus.PENDING, (
         "worker never picked up the run"
+    )
+    assert vm._controller.is_running is True, (
+        "worker finished before the shutdown drain could exercise it"
     )
 
     _shutdown_services(services)
