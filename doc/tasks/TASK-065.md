@@ -8,7 +8,7 @@ suggested_owner: Codex
 owner: Codex
 reviewer: Qoder
 depends_on: ["TASK-058", "TASK-064"]
-base_commit: 97fc5aa
+base_commit: 44aa64d
 branch: agent/codex/TASK-065-task058-followups
 worktree: "G:/CODEX/New Manga.worktrees/TASK-065-codex"
 integration_commit: null
