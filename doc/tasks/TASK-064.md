@@ -2,7 +2,7 @@
 id: TASK-064
 title: diagnostics production wiring（TASK-055 装配接线后续）
 kind: implementation
-status: approved
+status: done
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
@@ -11,7 +11,7 @@ depends_on: [TASK-055, TASK-063]
 base_commit: 604c47a1dade46522cf496817861742a454deeb9
 branch: agent/codex/TASK-064-diagnostics-production-wiring
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: ec42feb2ce00b588c5f116f3fd850238998b9819
 ---
 
 # TASK-064：diagnostics production wiring
@@ -29,7 +29,7 @@ QML/UI 入口仍不在本 Task；不得新增 `diagnosticsService` QML context p
 - [x] **AC ③（有界 sink）**：导出 sink 复用 `BoundedLogStore` 与既有 data-root 约定；输出不进入用户源文件树，且文件数量/单文件大小上限仍由已有有界存储保证。
 - [x] **AC ④（生产 contract tests）**：新增/扩展 `tests/core/test_bootstrap.py` 与 `tests/diagnostics/**`，覆盖 provider/sink 注入、真实导出和装配失败边界；不得修改 QML、Schema 或 SQLite 实现。
 - [x] **AC ⑤（回归与证据）**：全仓 collected 不低于 948；无新增 skip/xfail、无放宽/删除既有断言；全仓至少连续 5 次，日志逐次含 shell/venv、命令、EXIT、passed/skipped 与逐条 skip 原因。
-- [ ] **AC ⑥（交付）**：Handoff、verification、独立非作者 Review、STATUS/任务索引齐全；Review approved 后由 Codex 合并并填写 `integration_commit`，合并后复跑全仓再置 `done`。
+- [x] **AC ⑥（交付）**：Handoff、verification、独立非作者 Review、STATUS/任务索引齐全；Review approved 后由 Codex 合并并填写 `integration_commit`，合并后复跑全仓再置 `done`。
 
 ## 允许修改范围
 
@@ -53,15 +53,16 @@ QML/UI 入口仍不在本 Task；不得新增 `diagnosticsService` QML context p
 | AC ①～④ 定向 | `pytest tests/diagnostics tests/core -q -p no:cacheprovider -rs` | PowerShell 7 + `TASK-012-py312`；`2024bfb` | PASS：75 passed / 0 skipped，EXIT=0 | `verification/TASK-064/diagnostics-bootstrap-suite.log` |
 | AC ⑤ 全仓 ×5 | `pytest tests -q -p no:cacheprovider -rs`，连续 5 次逐次记录 | 同上；`2024bfb` | PASS：每次 951 collected、945 passed / 6 skipped，EXIT=0 | `verification/TASK-064/full-suite-{1..5}.log` |
 | AC ⑤ skip 审计 | 读取每次 `-rs` 输出并逐条登记 | 同上 | PASS：6 项均为 `openssl unavailable`，无新增 skip/xfail | `verification/TASK-064/full-suite-{1..5}.log` |
+| 合并后回归 | `pytest tests -q -p no:cacheprovider -rs` | master；`ec42feb2ce00b588c5f116f3fd850238998b9819` | PASS：951 collected、945 passed / 6 skipped，EXIT=0 | `verification/TASK-064/integration-master-ec42feb.log` |
 
 ## 依赖、风险与阻塞
 
 - 硬依赖：TASK-055 已集成 `0493ea9`；TASK-063 已集成 `94a0091`。
 - 风险：生产装配若把诊断写入 managed/user source 边界，可能泄露或破坏用户源文件；必须由 sink 根路径 contract test 钉住。
-- 阻塞：无；本 Task 已获用户批准，交付 head 为 `2024bfb`，独立非作者 Review 已 approved，等待 Codex 集成。
+- 阻塞：无；本 Task 已完成 Review、Codex 集成与合并后回归，integration=`ec42feb2ce00b588c5f116f3fd850238998b9819`。
 
 ## 交付与运行记录
 
-- Handoff：[TASK-064-e39cc27](../handoffs/TASK-064-e39cc27.md)，delivery head=`2024bfb`。
+- Handoff：[TASK-064-e39cc27](../handoffs/TASK-064-e39cc27.md)，delivery head=`2024bfb`，integration=`ec42feb2ce00b588c5f116f3fd850238998b9819`。
 - Review：[TASK-064-d154044](../reviews/TASK-064-d154044.md)；独立非作者复审结论 `approved`。
-- 实际测试：定向 75 passed / 0 skipped；全仓连续 5 次均 945 passed / 6 skipped；P1 修复前后判别日志已入库；详见 `verification/TASK-064/`。
+- 实际测试：定向 75 passed / 0 skipped；全仓连续 5 次及合并后均 945 passed / 6 skipped；P1 修复前后判别日志已入库；详见 `verification/TASK-064/`。
