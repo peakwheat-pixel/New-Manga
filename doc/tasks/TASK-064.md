@@ -2,7 +2,7 @@
 id: TASK-064
 title: diagnostics production wiring（TASK-055 装配接线后续）
 kind: implementation
-status: ready
+status: in_progress
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
