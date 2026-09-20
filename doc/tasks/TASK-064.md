@@ -58,10 +58,10 @@ QML/UI 入口仍不在本 Task；不得新增 `diagnosticsService` QML context p
 
 - 硬依赖：TASK-055 已集成 `0493ea9`；TASK-063 已集成 `94a0091`。
 - 风险：生产装配若把诊断写入 managed/user source 边界，可能泄露或破坏用户源文件；必须由 sink 根路径 contract test 钉住。
-- 阻塞：无；本 Task 已获用户批准，交付 head 为 `e39cc27`，等待独立非作者 Review。
+- 阻塞：无；本 Task 已获用户批准，交付 head 为 `2024bfb`，独立非作者 Review 已 approved，等待 Codex 集成。
 
 ## 交付与运行记录
 
 - Handoff：[TASK-064-e39cc27](../handoffs/TASK-064-e39cc27.md)，delivery head=`2024bfb`。
-- Review：待独立非作者 Review（Reviewer=DeepSeek Harness，非作者）。
+- Review：待归档独立非作者 Review（Reviewer=DeepSeek Harness，非作者）；复审结论已 approved。
 - 实际测试：定向 75 passed / 0 skipped；全仓连续 5 次均 945 passed / 6 skipped；P1 修复前后判别日志已入库；详见 `verification/TASK-064/`。
