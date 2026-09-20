@@ -10,7 +10,7 @@ import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
-from infrastructure.sqlite.migrator import read_schema_version
+from infrastructure.sqlite.migrator import MigrationRunner, read_schema_version
 from infrastructure.sqlite.schema import default_migrations
 
 
@@ -61,6 +61,7 @@ class SqliteBackupService:
         # managed_path is the storage-relative managed path (D03 §34.3), not
         # a bare file name, so later restore/cleanup slices can resolve it.
         managed_path = f"{self._backup_root.name}/{target.name}"
+        completed = False
         try:
             destination = sqlite3.connect(str(temporary))
             try:
@@ -68,22 +69,24 @@ class SqliteBackupService:
                 destination.commit()
             finally:
                 destination.close()
-            os.replace(temporary, target)
-            schema_version = verify_backup_file(target)
+            schema_version = verify_backup_file(temporary)
             created_at = _utc_now()
-            size_bytes = target.stat().st_size
-            database_hash = sha256_file(target)
-            write_sidecar(
-                target,
+            size_bytes = temporary.stat().st_size
+            database_hash = sha256_file(temporary)
+            temporary_sidecar = write_sidecar(
+                temporary,
                 schema_version=schema_version,
                 database_hash=database_hash,
                 app_version=app_version,
                 created_at=created_at,
             )
+            os.replace(temporary_sidecar, _sidecar_path(target))
+            os.replace(temporary, target)
             if not self._backup_records_table_exists():
                 # The v0 → v1 pre-migration backup runs before any schema exists,
                 # so there is nowhere to record metadata yet; the backup file
                 # plus its self-describing sidecar remain the deliverable.
+                completed = True
                 return backup_id
             with self._conn:
                 self._conn.execute(
@@ -104,15 +107,18 @@ class SqliteBackupService:
                         source_reason,
                     ),
                 )
+            completed = True
             return backup_id
         except (BackupVerificationError, OSError, sqlite3.Error) as error:
-            for candidate in (temporary, target):
-                for artifact in (candidate, _sidecar_path(candidate)):
-                    try:
-                        artifact.unlink(missing_ok=True)
-                    except OSError:
-                        pass
             raise BackupVerificationError("BACKUP_CREATE_FAILED", str(error)) from error
+        finally:
+            if not completed:
+                for candidate in (temporary, target):
+                    for artifact in (candidate, _sidecar_path(candidate)):
+                        try:
+                            artifact.unlink(missing_ok=True)
+                        except OSError:
+                            pass
 
     def _backup_records_table_exists(self) -> bool:
         row = self._conn.execute(
@@ -200,29 +206,51 @@ class SqliteBackupService:
         pre_restore_id = self.create_backup(
             "pre_restore", f"automatic before restore of {backup_id}"
         )
+        pre_restore_target = self._backup_root / f"{pre_restore_id}.db"
 
+        try:
+            self._restore_database(target)
+            if target_schema < latest_known:
+                MigrationRunner(self._conn, default_migrations()).apply_pending()
+            (integrity,) = self._conn.execute("PRAGMA integrity_check").fetchone()
+            if integrity != "ok":
+                raise BackupVerificationError("INTEGRITY_FAILED", str(integrity))
+            restored_version = read_schema_version(self._conn)
+            if restored_version != latest_known:
+                raise BackupVerificationError(
+                    "SCHEMA_MISMATCH",
+                    f"restored schema v{restored_version} != known v{latest_known}",
+                )
+            report = {
+                "restored_from": backup_id,
+                "pre_restore_backup_id": pre_restore_id,
+                "schema_version": restored_version,
+                "expected_schema_version": latest_known,
+            }
+            report["managed_consistency"] = self.managed_consistency_report()
+            return report
+        except Exception as error:
+            try:
+                self._restore_database(pre_restore_target)
+            except Exception as rollback_error:
+                raise BackupVerificationError(
+                    "RESTORE_ROLLBACK_FAILED",
+                    f"pre_restore={pre_restore_id}; restore={error}; "
+                    f"rollback={rollback_error}",
+                ) from error
+            raise BackupVerificationError(
+                "RESTORE_FAILED",
+                f"{error}; pre_restore={pre_restore_id}; rollback=completed",
+            ) from error
+
+    def _restore_database(self, target: Path) -> None:
+        """Copy one verified SQLite file into the current thread's live DB."""
         source = sqlite3.connect(str(target))
         try:
-            # TASK-060 connection model: the facade (ThreadRoutedConnection)
-            # is not itself a sqlite3.Connection — the backup API needs the
-            # *real* connection of the calling thread as its target.  The
-            # restore gate (Q-008 前置①: shutdown() is True AND not
-            # any_in_transaction(), VM restore latch engaged) guarantees
-            # that connection is idle, as the backup API requires.
+            # The restore gate guarantees that this real connection is idle.
             source.backup(self._conn._current())
         finally:
             source.close()
-
-        restored_version = verify_backup_file(target)
-        report = {
-            "restored_from": backup_id,
-            "pre_restore_backup_id": pre_restore_id,
-            "schema_version": read_schema_version(self._conn),
-            "expected_schema_version": restored_version,
-        }
-        consistency = self.managed_consistency_report()
-        report["managed_consistency"] = consistency
-        return report
 
     def managed_consistency_report(self) -> dict:
         """AC 2 assertion face: every revision ``managed_path`` recorded in

@@ -106,9 +106,33 @@ class TestBackupCompleteness:
 
         backup_id = workspace["service"].create_backup("manual", "test")
 
-        verifier.assert_called_once_with(
-            workspace["backup_root"] / f"{backup_id}.db"
-        )
+        verifier.assert_called_once()
+        verified = verifier.call_args.args[0]
+        assert verified.parent == workspace["backup_root"]
+        assert verified.name.startswith(f".{backup_id}.tmp-")
+        assert verified.name.endswith(".db")
+
+    def test_abrupt_publish_interruption_leaves_no_half_artifact(
+        self, backup_workspace, monkeypatch
+    ) -> None:
+        workspace = backup_workspace
+        real_replace = backup_module.os.replace
+
+        def interrupt_after_database_publish(source, destination) -> None:
+            real_replace(source, destination)
+            published = Path(destination)
+            if published.suffix == ".db" and not published.name.startswith("."):
+                raise SystemExit("forced interruption")
+
+        monkeypatch.setattr(backup_module.os, "replace", interrupt_after_database_publish)
+
+        with pytest.raises(SystemExit, match="forced interruption"):
+            workspace["service"].create_backup("manual", "test")
+
+        assert list(workspace["backup_root"].iterdir()) == []
+        assert workspace["conn"].execute(
+            "SELECT COUNT(*) FROM backup_records"
+        ).fetchone()[0] == 0
 
     def test_readback_failure_is_typed_and_leaves_no_artifacts(
         self, backup_workspace, monkeypatch
@@ -204,6 +228,59 @@ class TestBackupCompleteness:
 
 
 class TestRestoreSemantics:
+    def test_restore_migrates_a_v0_pre_migration_backup(self, tmp_path) -> None:
+        from infrastructure.sqlite.connection import open_database
+        from infrastructure.sqlite.migrator import MigrationRunner
+        from infrastructure.sqlite.schema import default_migrations
+
+        latest = default_migrations()[-1].schema_version
+        conn, _opened = open_database(
+            tmp_path / "library.db", latest_known_schema_version=latest
+        )
+        service = SqliteBackupService(conn, tmp_path / "backups")
+        try:
+            backup_id = service.create_backup("pre_migration", "v0 snapshot")
+            MigrationRunner(conn, default_migrations()).apply_pending()
+            assert backup_module.read_schema_version(conn) == latest
+
+            report = service.restore_backup(backup_id)
+
+            assert report["schema_version"] == latest
+            assert report["expected_schema_version"] == latest
+            assert backup_module.read_schema_version(conn) == latest
+        finally:
+            conn.close()
+
+    def test_restore_failure_is_typed_and_rolls_back_live_database(
+        self, backup_workspace, monkeypatch
+    ) -> None:
+        workspace = backup_workspace
+        conn, service = workspace["conn"], workspace["service"]
+        workspace["seed_page"]("p1")
+        backup_id = service.create_backup("manual", "restore target")
+        original_restore = service._restore_database
+        calls = 0
+
+        def fail_once(target: Path) -> None:
+            nonlocal calls
+            calls += 1
+            if calls == 1:
+                raise sqlite3.ProgrammingError("forced destination failure")
+            original_restore(target)
+
+        monkeypatch.setattr(service, "_restore_database", fail_once)
+
+        with pytest.raises(BackupVerificationError) as excinfo:
+            service.restore_backup(backup_id)
+
+        assert excinfo.value.code == "RESTORE_FAILED"
+        assert "pre_restore=" in excinfo.value.detail
+        assert calls == 2
+        assert backup_module.read_schema_version(conn) == 3
+        assert conn.execute(
+            "SELECT COUNT(*) FROM artifact_revisions"
+        ).fetchone()[0] == 1
+
     def test_restore_overwrites_to_backup_point_and_consistency_holds(
         self, backup_workspace
     ) -> None:
