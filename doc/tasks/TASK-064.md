@@ -50,8 +50,8 @@ QML/UI 入口仍不在本 Task；不得新增 `diagnosticsService` QML context p
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC ①～④ 定向 | `pytest tests/diagnostics tests/core -q -p no:cacheprovider -rs` | PowerShell 7 + `TASK-012-py312`；`e39cc27` | PASS：74 passed / 0 skipped，EXIT=0 | `verification/TASK-064/diagnostics-bootstrap-suite.log` |
-| AC ⑤ 全仓 ×5 | `pytest tests -q -p no:cacheprovider -rs`，连续 5 次逐次记录 | 同上；`e39cc27` | PASS：每次 950 collected、944 passed / 6 skipped，EXIT=0 | `verification/TASK-064/full-suite-{1..5}.log` |
+| AC ①～④ 定向 | `pytest tests/diagnostics tests/core -q -p no:cacheprovider -rs` | PowerShell 7 + `TASK-012-py312`；`2024bfb` | PASS：75 passed / 0 skipped，EXIT=0 | `verification/TASK-064/diagnostics-bootstrap-suite.log` |
+| AC ⑤ 全仓 ×5 | `pytest tests -q -p no:cacheprovider -rs`，连续 5 次逐次记录 | 同上；`2024bfb` | PASS：每次 951 collected、945 passed / 6 skipped，EXIT=0 | `verification/TASK-064/full-suite-{1..5}.log` |
 | AC ⑤ skip 审计 | 读取每次 `-rs` 输出并逐条登记 | 同上 | PASS：6 项均为 `openssl unavailable`，无新增 skip/xfail | `verification/TASK-064/full-suite-{1..5}.log` |
 
 ## 依赖、风险与阻塞
@@ -62,6 +62,6 @@ QML/UI 入口仍不在本 Task；不得新增 `diagnosticsService` QML context p
 
 ## 交付与运行记录
 
-- Handoff：[TASK-064-e39cc27](../handoffs/TASK-064-e39cc27.md)。
+- Handoff：[TASK-064-e39cc27](../handoffs/TASK-064-e39cc27.md)，delivery head=`2024bfb`。
 - Review：待独立非作者 Review（Reviewer=DeepSeek Harness，非作者）。
-- 实际测试：定向 74 passed / 0 skipped；全仓连续 5 次均 944 passed / 6 skipped；详见 `verification/TASK-064/`。
+- 实际测试：定向 75 passed / 0 skipped；全仓连续 5 次均 945 passed / 6 skipped；P1 修复前后判别日志已入库；详见 `verification/TASK-064/`。
