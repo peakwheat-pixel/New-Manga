@@ -2,7 +2,7 @@
 id: TASK-065
 title: TASK-058 复审尾项 docs+tests 小切片
 kind: maintenance
-status: in_review
+status: done
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
@@ -11,7 +11,7 @@ depends_on: ["TASK-058", "TASK-064"]
 base_commit: 772d63c2c921a08606d742438a146cb310159b02
 branch: agent/codex/TASK-065-task058-followups
 worktree: "G:/CODEX/New Manga.worktrees/TASK-065-codex"
-integration_commit: null
+integration_commit: 784e30658e6769cae6b3802f36c060f6e4b3cc02
 ---
 
 # TASK-065：TASK-058 复审尾项 docs+tests 小切片
@@ -26,7 +26,7 @@ integration_commit: null
 - [x] AC2：重采一次全仓测试日志，日志逐项包含 shell、venv、命令、`EXIT`、collected/passed/skipped 与逐条 skip 原因；不得用散文替代日志证据。
 - [x] AC3：修正 `AppServices.conn` 的过时类型注解及相关 single-connection 历史措辞；仅注解/docstring 变化，运行行为不变。
 - [x] AC4：移除 `tests/workbench/test_drain_shutdown.py` 的恒真 `assert sys.stderr is not None`，保留前一条有判别力的 stderr 断言；不得放宽或删除有效断言。
-- [ ] AC5：完成 Handoff 与独立非作者 Review；全仓 collected 不低于 `951`，无新增 skip/xfail。
+- [x] AC5：完成 Handoff 与独立非作者 Review；全仓 collected 不低于 `951`，无新增 skip/xfail。
 
 ## 允许修改范围
 
@@ -57,7 +57,7 @@ TASK-058 与 TASK-064 已集成。F-007 仍是后续 diagnostics 设计/接线�
 
 ## 交付与运行记录
 
-- Handoff：[TASK-065-367eeae.md](../handoffs/TASK-065-367eeae.md)；已提交复审。
-- Review：[首轮 Changes Requested](../reviews/TASK-065-c5f8217.md)；R-001～R-004 已返修，独立复审待结果。
-- integration_commit：待 Codex 合并后填写。
-- 实际测试：`367eeae` 上 targeted 2/2、相关 integration 7/7、全仓 951 collected = 945 passed + 6 个既有 `openssl unavailable` skip；全部 EXIT=0。判别日志为旧快夹具 1 failed / EXIT=1。
+- Handoff：[TASK-065-367eeae.md](../handoffs/TASK-065-367eeae.md)；已收口。
+- Review：[首轮 Changes Requested](../reviews/TASK-065-c5f8217.md) 后完成返修；[独立复审](../reviews/TASK-065-7db2ec0.md) **Approved**，review commit `19afba4`。
+- integration_commit：`784e30658e6769cae6b3802f36c060f6e4b3cc02`（`merge: complete TASK-065 review slices`）。
+- 实际测试：delivery `367eeae` 上 targeted 2/2、相关 integration 7/7、全仓 951 collected = 945 passed + 6 个既有 `openssl unavailable` skip；合并提交 `784e306` 上再次全仓 951 collected = 945 passed + 同 6 skip，全部 EXIT=0。判别日志为旧快夹具 1 failed / EXIT=1；合并后证据为 [integration-master-784e306.log](../../verification/TASK-065/integration-master-784e306.log)。
