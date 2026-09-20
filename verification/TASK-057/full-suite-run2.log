@@ -1,0 +1,44 @@
+shell: git-bash; venv: TASK-012-py312; PYTHONDONTWRITEBYTECODE=1; -p no:cacheprovider; QT_QPA_PLATFORM unset
+........................................................................ [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 23%]
+........................................................................ [ 31%]
+........................................................................ [ 39%]
+........................................................................ [ 47%]
+........................................................................ [ 55%]
+........................................................................ [ 63%]
+........................................................................ [ 71%]
+.......F................................................................ [ 78%]
+........................................................................ [ 86%]
+........................................................................ [ 94%]
+................................................                         [100%]
+================================== FAILURES ===================================
+_______________ test_start_export_completes_and_updates_history _______________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x1cd4aba7110) at 0x000001CD4BB95900>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2495/test_start_export_completes_an0')
+pages = [ReaderPage(page_id='p0', filename='page_00_第0页.png', original_path='C:\\Users\\49745\\AppData\\Local\\Temp\\pytest-of..._an0\\page_02_translated.png', translated_revision_id='rev-2', current_translated_revision_id='rev-2', text='第 2 页译文')]
+export_service = <application.export.service.ExportService object at 0x000001CD32F84080>
+
+    @requires_pyside6
+    def test_start_export_completes_and_updates_history(qapp, tmp_path, pages, export_service):
+        vm = make_export_vm(tmp_path, pages, export_service)
+        vm.setOutputPath(str(tmp_path / "out" / "result.zip"))
+        finished = []
+        vm.exportFinished.connect(lambda summary: finished.append(summary))
+        vm.startExport()
+        assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, finished)
+>       assert len(finished) == 1, export_diagnostics(vm, finished)
+E       AssertionError: export did not settle as expected: running=False signals=[] staleWarningVisible=False statusMessage='导出完成：C:\\Users\\49745\\AppData\\Local\\Temp\\pytest-of-49745\\pytest-2495\\test_start_export_completes_an0\\out\\result.zip' history=1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests\reading_export\test_viewmodels.py:275: AssertionError
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1 failed, 911 passed, 1 warning in 45.14s
+EXIT=1

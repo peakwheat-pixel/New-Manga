@@ -1,0 +1,82 @@
+== discrimination run: fixed test_restore_gate.py against pre-fix head b0e4cb1 (per-test processes) ==
+shell: Git Bash (win32) / venv: G:/CODEX/New Manga.task-envs/TASK-012-py312 (Python 3.12.3)
+workdir: git archive of b0e4cb1 into %TEMP%/t057-discrim + the fixed test file copied in
+expectation on b0e4cb1: the three unguarded faces (continueRun/restartRun/retryFailedPages) FAIL with 'a run worker was born while the restore latch was engaged' (= review R-001 reproduced); the two latch/gate-ownership cases FAIL on the missing controller latch / restoreGate (= review R-002); the three cases of shipped b0e4cb1 behavior PASS; on the fix head all nine PASS (9 passed, see gate-tests run log)
+
+--- test_begin_restore_refuses_while_a_run_is_active
+.                                                                        [100%]
+1 passed in 0.13s
+exit=0
+--- test_latched_start_translate_all_rejected
+.                                                                        [100%]
+1 passed in 0.13s
+exit=0
+--- test_latched_start_translate_untranslated_rejected
+.                                                                        [100%]
+1 passed in 0.14s
+exit=0
+--- test_latched_continue_run_rejected
+F                                                                        [100%]
+================================== FAILURES ===================================
+E   AssertionError: a run worker was born while the restore latch was engaged
+    assert True is False
+     +  where True = <ui.viewmodels.workbench.run_controller.RunController(0x1d85b77feb0) at 0x000001D85E0CB800>.is_running
+     +    where <ui.viewmodels.workbench.run_controller.RunController(0x1d85b77feb0) at 0x000001D85E0CB800> = <ui.viewmodels.workbench.viewmodel.WorkbenchViewModel(0x1d85b782e30) at 0x000001D85E1095C0>._controller
+C:\Users\49745\AppData\Local\Temp\t057-discrim\tests\workbench\test_restore_gate.py:98: AssertionError: a run worker was born while the restore latch was engaged
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_restore_gate.py::test_latched_continue_run_rejected
+1 failed in 0.14s
+exit=127
+--- test_latched_restart_run_rejected
+F                                                                        [100%]
+================================== FAILURES ===================================
+E   AssertionError: a run worker was born while the restore latch was engaged
+    assert True is False
+     +  where True = <ui.viewmodels.workbench.run_controller.RunController(0x238d5283c40) at 0x00000238D5979140>.is_running
+     +    where <ui.viewmodels.workbench.run_controller.RunController(0x238d5283c40) at 0x00000238D5979140> = <ui.viewmodels.workbench.viewmodel.WorkbenchViewModel(0x238d5283b50) at 0x00000238D59CDCC0>._controller
+C:\Users\49745\AppData\Local\Temp\t057-discrim\tests\workbench\test_restore_gate.py:98: AssertionError: a run worker was born while the restore latch was engaged
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_restore_gate.py::test_latched_restart_run_rejected
+1 failed in 0.14s
+exit=127
+--- test_latched_retry_failed_pages_rejected
+F                                                                        [100%]
+================================== FAILURES ===================================
+E   AssertionError: a run worker was born while the restore latch was engaged
+    assert True is False
+     +  where True = <ui.viewmodels.workbench.run_controller.RunController(0x1d57f4eb7c0) at 0x000001D57FCF9F80>.is_running
+     +    where <ui.viewmodels.workbench.run_controller.RunController(0x1d57f4eb7c0) at 0x000001D57FCF9F80> = <ui.viewmodels.workbench.viewmodel.WorkbenchViewModel(0x1d57f4e9f10) at 0x000001D57FD1D500>._controller
+C:\Users\49745\AppData\Local\Temp\t057-discrim\tests\workbench\test_restore_gate.py:98: AssertionError: a run worker was born while the restore latch was engaged
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_restore_gate.py::test_latched_retry_failed_pages_rejected
+1 failed in 0.13s
+exit=127
+--- test_end_restore_releases_the_latch
+F                                                                        [100%]
+================================== FAILURES ===================================
+E   AttributeError: 'RunController' object has no attribute 'admission_closed'
+C:\Users\49745\AppData\Local\Temp\t057-discrim\tests\workbench\test_restore_gate.py:214: AttributeError: 'RunController' object has no attribute 'admission_closed'
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_restore_gate.py::test_end_restore_releases_the_latch
+1 failed in 0.13s
+exit=1
+--- test_restore_gate_releases_the_latch_when_the_body_raises
+F                                                                        [100%]
+================================== FAILURES ===================================
+E   AttributeError: 'WorkbenchViewModel' object has no attribute 'restoreGate'
+C:\Users\49745\AppData\Local\Temp\t057-discrim\tests\workbench\test_restore_gate.py:227: AttributeError: 'WorkbenchViewModel' object has no attribute 'restoreGate'
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_restore_gate.py::test_restore_gate_releases_the_latch_when_the_body_raises
+1 failed in 0.13s
+exit=1
+--- test_restore_gate_refuses_entry_while_a_run_is_active
+F                                                                        [100%]
+================================== FAILURES ===================================
+E   AttributeError: 'WorkbenchViewModel' object has no attribute 'restoreGate'
+C:\Users\49745\AppData\Local\Temp\t057-discrim\tests\workbench\test_restore_gate.py:248: AttributeError: 'WorkbenchViewModel' object has no attribute 'restoreGate'
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_restore_gate.py::test_restore_gate_refuses_entry_while_a_run_is_active
+1 failed in 0.13s
+exit=1
+
+DISCRIM_DONE

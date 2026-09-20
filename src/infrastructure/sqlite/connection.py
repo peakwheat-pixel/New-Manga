@@ -28,7 +28,11 @@ lazily created and routed by :class:`ThreadRoutedConnection`:
   facade's ``close()`` (called from the GUI thread after the drain)
   must be able to close connections created on worker threads.  Every
   *statement* still runs on the connection's owning thread via the
-  thread-local routing.
+  thread-local routing — with exactly one documented exception
+  (TASK-061 review R-006): ``open_connection_count()`` runs its
+  read-only ``SELECT 1`` probe on *every registered connection*,
+  including ones owned by other threads (observability only, no side
+  effects).
 - Cross-connection visibility is the WAL read-committed model:
   after a writer commits, an independent connection (AC ② test)
   immediately reads the row back.  Write-lock contention between the
@@ -64,9 +68,12 @@ class _ConnectionLease:
     real connection, so both die *together* when the owning thread dies
     (CPython tears the thread's locals down at thread exit — verified for
     QThread workers).  The lease's weakref callback is the eviction hook;
-    it can only ever fire once *no code* holds the lease any more, which
-    is exactly "the owning thread cannot issue statements on this
-    connection any more".
+    it can only ever fire once *no code* holds the lease any more — i.e.
+    the owning thread is gone, so no *facade-mediated* statement can
+    reach the connection (TASK-061 review R-003: an escaped raw
+    cursor/handle is a caller-contract violation and fails with
+    ``ProgrammingError`` after eviction — not a correctness hole in the
+    lease itself).
     """
 
     __slots__ = ("__weakref__",)  # no other state; weakref is the point
@@ -107,10 +114,25 @@ class ThreadRoutedConnection:
         Concurrency argument (TASK-061 AC ①): the callback fires only when
         the *lease* has been garbage-collected, and the lease is held
         exclusively in the owning thread's thread-local slot — so at fire
-        time the owning thread is gone and no code path can reach the
-        connection any more (this closure holds the last reference).
+        time the owning thread is gone and no code path *through the
+        facade* can reach the connection any more (this closure holds the
+        last reference).
+
+        TASK-061 review R-003 — scoped promise + explicit caller
+        constraint: "no code path can reach it" holds for facade-mediated
+        access only.  A raw handle that escaped the facade — a
+        ``sqlite3.Cursor`` (or the real connection object) kept alive
+        across threads — still references the closed connection and
+        raises ``sqlite3.ProgrammingError`` on use after eviction
+        (verified).  Callers must therefore never let a cursor or a real
+        connection handle outlive the facade call that produced it, let
+        alone survive across threads; all statements go through the
+        facade.
+
         Registry mutation takes the lock; ``conn.close()`` needs no
-        coordination because no other party can reference ``conn``.
+        coordination because no other party *inside the ownership model*
+        can reference ``conn`` (escaped raw handles are the caller
+        violation scoped above).
         """
         with self._registry_lock:
             if self._connections.get(ident) is conn:
@@ -208,6 +230,17 @@ class ThreadRoutedConnection:
         ``workbench.shutdown() is True`` (drained ⇒ the run worker is
         gone) **and** ``not conn.any_in_transaction()`` (⇒ no other
         thread holds an open write) together mean "no other writer".
+
+        R-004: that conjunction is a *snapshot taken at check time*, not
+        an admission gate — a writer started after the check (the worker
+        behind ``RunController.start()``) is invisible to it, and an
+        idle live thread always reads False.  The restore path must
+        therefore additionally hold the restore latch on the controller
+        itself (``RunController.set_restore_latch``): while it is
+        engaged, ``RunController.start()`` — the sole worker birthplace,
+        reached from all four workbench VM call sites — refuses every
+        admission; the premise that makes the snapshot meaningful is
+        "RunController's worker is the only non-GUI writer".
         """
         with self._registry_lock:
             conns = list(self._connections.values())
@@ -219,7 +252,14 @@ class ThreadRoutedConnection:
             return len(self._connections)
 
     def open_connection_count(self) -> int:
-        """How many registered real connections are still open."""
+        """How many registered real connections are still open.
+
+        TASK-061 review R-006 — the documented exception to "statements
+        run only on the owning thread": the probe below is a read-only
+        ``SELECT 1`` executed on *other threads'* registered connections
+        too.  Observability only: it never opens, closes, commits or
+        writes anything.
+        """
         with self._registry_lock:
             conns = list(self._connections.values())
         count = 0

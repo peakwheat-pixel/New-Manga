@@ -1,0 +1,11 @@
+=== tree:   agent/zcode/TASK-057-backup-restore @ 2707ea8（修后形态：本切片代码改动已落地）
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM 未设（产品边界口径）
+=== date:   2026-09-19T21:31:50+0800
+=== cmd:    /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe /g/CODEX/New Manga.worktrees/TASK-057-zcode/verification/TASK-057/pre-fix-probes/probe_r004_latch.py
+---
+POST-FIX: restore latch rejects startRun during restore (no run created, controller idle)
+POST-FIX: endRestore releases the latch — normal run start works
+---
+EXIT=0
