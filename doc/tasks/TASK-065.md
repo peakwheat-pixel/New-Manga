@@ -49,7 +49,7 @@ integration_commit: null
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1 | `pytest tests/core/test_shutdown_drain.py tests/workbench/test_drain_shutdown.py -q -p no:cacheprovider -rs` | 与仓库既有 TASK-012-py312 venv；不设 `QT_QPA_PLATFORM` | NOT_RUN | `verification/TASK-065/` |
-| AC2/AC5 | `pytest tests -q -p no:cacheprovider -rs` | 同一 PowerShell + venv；`PYTHONDONTWRITEBYTECODE=1` | NOT_RUN | 带 header/EXIT 的全仓日志 |
+| AC2/AC5 | `PYTHONPATH=src python -m pytest tests -q -p no:cacheprovider -rs`（另行 `--collect-only` 计数） | 同一 PowerShell + venv；`PYTHONDONTWRITEBYTECODE=1`；不设 `QT_QPA_PLATFORM` | **基线 PASS：951 collected / 945 passed / 6 skipped / EXIT=0；最终切片结果 NOT_RUN** | [baseline-full-suite.log](../../verification/TASK-065/baseline-full-suite.log)；6 条 skip 均为 `openssl unavailable` |
 
 ## 依赖、风险与阻塞
 
