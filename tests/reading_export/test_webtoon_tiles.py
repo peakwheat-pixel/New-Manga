@@ -917,6 +917,7 @@ def _write_hand_filtered_png(
     *,
     interlace: int = 0,
     truncate_raw: bool = False,
+    first_filter_type: int | None = None,
 ) -> None:
     """Write a deterministic RGB page with one selected PNG row filter."""
     if filter_type not in {0, 2, 3}:
@@ -937,7 +938,7 @@ def _write_hand_filtered_png(
     encoded = bytearray()
     for index, row in enumerate(rows):
         previous = rows[index - 1] if index else None
-        encoded.append(filter_type)
+        encoded.append(first_filter_type if index == 0 and first_filter_type is not None else filter_type)
         if filter_type == 0:
             encoded.extend(row)
         elif filter_type == 2:
@@ -999,7 +1000,11 @@ def png_row_filter_types(path: Path) -> set[int]:
     raw = zlib.decompress(bytes(idat))
     assert interlace == 0, "png_row_filter_types only supports non-interlaced PNGs"
     assert len(raw) == height * stride, "decompressed PNG payload has an invalid length"
-    return {raw[y * stride] for y in range(height)}
+    filter_types = {raw[y * stride] for y in range(height)}
+    assert all(0 <= filter_type <= 4 for filter_type in filter_types), (
+        "png_row_filter_types found an invalid filter type"
+    )
+    return filter_types
 
 
 def test_png_row_filter_types_rejects_interlaced_pages(tmp_path) -> None:
@@ -1015,6 +1020,14 @@ def test_png_row_filter_types_rejects_truncated_scanlines(tmp_path) -> None:
     _write_hand_filtered_png(source, 8, 3, 2, truncate_raw=True)
 
     with pytest.raises(AssertionError, match="invalid length"):
+        png_row_filter_types(source)
+
+
+def test_png_row_filter_types_rejects_invalid_filter_bytes(tmp_path) -> None:
+    source = tmp_path / "invalid-filter.png"
+    _write_hand_filtered_png(source, 8, 3, 2, first_filter_type=5)
+
+    with pytest.raises(AssertionError, match="filter type"):
         png_row_filter_types(source)
 
 

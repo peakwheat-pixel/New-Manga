@@ -301,3 +301,34 @@ class TestRedactionReachesEverySection:
         assert "dot" in doc
         assert "slash" in doc
         assert "shorter than 8" in doc
+
+    def test_redaction_does_not_drop_multiple_masked_keys(self):
+        payload = json.loads(
+            _report(
+                settings_summary={
+                    "translation.api_key": "first",
+                    "translation.auth_token": "second",
+                }
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        assert list(payload["settings_summary"]) == ["[redacted]", "[redacted]#2"]
+        assert sorted(payload["settings_summary"].values()) == ["[redacted]", "[redacted]"]
+
+    def test_generated_at_credential_shape_is_redacted(self):
+        payload = json.loads(
+            _report(generated_at="export-sk-abcdef123456")
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        assert payload["generated_at"] == "[redacted]"
+
+    def test_documented_boundary_behavior_is_pinned(self):
+        for value in (
+            "provider_sk-abcdefgh1234",
+            "pkg.sk-abcdefgh1234",
+            "D:/Users/sk-abcdefgh1234/file.txt",
+        ):
+            assert redact_value("note", value) == "[redacted]"
+        assert redact_value("note", "sk-abc1234") == "sk-abc1234"

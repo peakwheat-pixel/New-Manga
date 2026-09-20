@@ -73,6 +73,21 @@ def redact_value(key: str, value: str) -> str:
     return value
 
 
+def _redact_mapping(values: dict[str, str]) -> tuple[tuple[str, str], ...]:
+    fields: list[tuple[str, str]] = []
+    used_keys: set[str] = set()
+    for key, value in sorted(values.items()):
+        output_key = redact_value(key, key)
+        if output_key in used_keys:
+            suffix = 2
+            while f"{output_key}#{suffix}" in used_keys:
+                suffix += 1
+            output_key = f"{output_key}#{suffix}"
+        used_keys.add(output_key)
+        fields.append((output_key, redact_value(key, value)))
+    return tuple(fields)
+
+
 @dataclass(frozen=True)
 class RecentError:
     """One bounded, already-summary error entry (typed code + message)."""
@@ -138,10 +153,7 @@ def build_diagnostics_report(
     database and recent-errors sections, which previously passed through raw
     (TASK-062 AC ①). Defence in depth only: the collector is still expected to
     pass digests, never raw credentials."""
-    settings_fields = tuple(
-        (redact_value(key, key), redact_value(key, value))
-        for key, value in sorted(settings_summary.items())
-    )
+    settings_fields = _redact_mapping(settings_summary)
     error_fields = tuple(
         (
             redact_value("recent_error", f"{error.occurred_at} {error.source}"),
@@ -153,10 +165,7 @@ def build_diagnostics_report(
         )
         for error in recent_errors
     )
-    path_fields = tuple(
-        (redact_value(key, key), redact_value(key, value))
-        for key, value in sorted(environment_paths.items())
-    )
+    path_fields = _redact_mapping(environment_paths)
     sections = (
         (
             "application",
@@ -183,7 +192,7 @@ def build_diagnostics_report(
         ("environment_paths", path_fields),
     )
     return DiagnosticsReport(
-        generated_at=generated_at,
+        generated_at=redact_value("generated_at", generated_at),
         app_version=app_version,
         schema_version=schema_version,
         sections=sections,
