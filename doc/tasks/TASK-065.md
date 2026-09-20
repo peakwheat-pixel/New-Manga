@@ -2,7 +2,7 @@
 id: TASK-065
 title: TASK-058 复审尾项 docs+tests 小切片
 kind: maintenance
-status: in_progress
+status: in_review
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
@@ -22,10 +22,10 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1：把 TASK-058 AC2 用例改成真实活动 worker 形状：调用 `_shutdown_services` 前可证明 worker 仍活跃，返回后线程排空且连接关闭；保留既有强断言。
+- [x] AC1：把 TASK-058 AC2 用例改成真实活动 worker 形状：调用 `_shutdown_services` 前可证明 worker 仍活跃，返回后线程排空且连接关闭；保留既有强断言。
 - [ ] AC2：重采一次全仓测试日志，日志逐项包含 shell、venv、命令、`EXIT`、collected/passed/skipped 与逐条 skip 原因；不得用散文替代日志证据。
-- [ ] AC3：修正 `AppServices.conn` 的过时类型注解及相关 single-connection 历史措辞；仅注解/docstring 变化，运行行为不变。
-- [ ] AC4：移除 `tests/workbench/test_drain_shutdown.py` 的恒真 `assert sys.stderr is not None`，保留前一条有判别力的 stderr 断言；不得放宽或删除有效断言。
+- [x] AC3：修正 `AppServices.conn` 的过时类型注解及相关 single-connection 历史措辞；仅注解/docstring 变化，运行行为不变。
+- [x] AC4：移除 `tests/workbench/test_drain_shutdown.py` 的恒真 `assert sys.stderr is not None`，保留前一条有判别力的 stderr 断言；不得放宽或删除有效断言。
 - [ ] AC5：完成 Handoff 与独立非作者 Review；全仓 collected 不低于 `951`，无新增 skip/xfail。
 
 ## 允许修改范围
@@ -57,7 +57,7 @@ TASK-058 与 TASK-064 已集成。F-007 仍是后续 diagnostics 设计/接线�
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
+- Handoff：[TASK-065-73a7557.md](../handoffs/TASK-065-73a7557.md)；待修订后复审。
+- Review：[首轮 Changes Requested](../reviews/TASK-065-c5f8217.md)；R-001～R-004 正在返修，尚未批准。
 - integration_commit：待 Codex 合并后填写。
-- 实际测试：尚无。
+- 实际测试：首轮日志因未绑定 delivery commit 被 Review 拒绝；返修后须重采。判别日志见 `verification/TASK-065/discrimination-red.log`（旧快夹具 1 failed / EXIT=1）。
