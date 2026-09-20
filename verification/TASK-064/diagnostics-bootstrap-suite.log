@@ -1,0 +1,13 @@
+TASK=TASK-064
+shell=pwsh 7
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+cwd=G:/CODEX/New Manga
+commit=e39cc27
+command=pytest tests/diagnostics tests/core -q -p no:cacheprovider -rs
+EXIT=0
+collected=74
+passed=74
+skipped=0
+skip_reasons=none
+result=74 passed in 6.52s
