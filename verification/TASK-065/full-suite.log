@@ -1,7 +1,10 @@
 TASK=T1.3.2 / TASK-065
 LABEL=full-suite
 WORKTREE=G:\CODEX\New Manga.worktrees\TASK-065-codex
-HEAD=772d63c2c921a08606d742438a146cb310159b02
+HEAD=367eeae92a6a680019e3d1737aab477b180e3f7a
+SOURCE_TREE_STATE_BEGIN
+
+SOURCE_TREE_STATE_END
 SHELL=PowerShell 7.6.6
 VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
 PYTHON=Python 3.12.3
@@ -961,7 +964,7 @@ tests/workbench/test_workbench_viewmodel.py::test_refresh_timer_merges_updates
 tests/workbench/test_workbench_viewmodel.py::test_manual_refresh_applies_projection_immediately
 tests/workbench/test_workbench_viewmodel.py::test_viewer_mode_switch_and_image_url
 
-951 tests collected in 1.51s
+951 tests collected in 1.49s
 COLLECT_EXIT=0
 TEST_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests -q -p no:cacheprovider -rs
 ........................................................................ [  7%]
@@ -991,5 +994,5 @@ SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
 SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
 SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
 SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
-945 passed, 6 skipped, 1 warning in 54.56s
+945 passed, 6 skipped, 1 warning in 51.35s
 EXIT=0

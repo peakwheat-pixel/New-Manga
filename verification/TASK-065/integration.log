@@ -1,7 +1,10 @@
 TASK=T1.3.2 / TASK-065
 LABEL=integration
 WORKTREE=G:\CODEX\New Manga.worktrees\TASK-065-codex
-HEAD=772d63c2c921a08606d742438a146cb310159b02
+HEAD=367eeae92a6a680019e3d1737aab477b180e3f7a
+SOURCE_TREE_STATE_BEGIN
+
+SOURCE_TREE_STATE_END
 SHELL=PowerShell 7.6.6
 VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
 PYTHON=Python 3.12.3
@@ -21,5 +24,5 @@ tests/workbench/test_drain_shutdown.py::test_bootstrap_shutdown_skips_close_and_
 COLLECT_EXIT=0
 TEST_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests/core/test_shutdown_drain.py tests/workbench/test_drain_shutdown.py -q -p no:cacheprovider -rs
 .......                                                                  [100%]
-7 passed in 3.90s
+7 passed in 2.94s
 EXIT=0
