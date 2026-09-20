@@ -1,5 +1,7 @@
 # 项目文档索引与 Source of Truth
 
+> **2026-09-20 Rebaseline 生效**：后续 Milestone、Epic、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
+
 2026-09-20 TASK-059 集成：设计重做 Task 已 `done`，integration=`53ae2e4`，最终 Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`。ND-1 选定 **F · Graphite Atelier**（A 色彩/状态色/主题 + B 几何含 `card-w=158px` + A IA；无 C 玻璃/D 顶栏/E 命令面板）；设计已集成但未释放实现 Task，ND-4/5/6/7 待用户裁决。
 
 2026-09-19 TASK-059 ND-1 用户裁决：候选方向选择 **A 的配色/视觉令牌与 IA + B 的几何比例（控件高度、行高、间距、字号、面板尺寸）**；不继承 B 的章节大卡 IA，也不启用 C 玻璃、D 顶栏或 E 命令面板。组合稿必须重新通过完整一致性审计后才能集成，C/D/E 未被选择。详见 [STATUS](STATUS.md) 当前台账。

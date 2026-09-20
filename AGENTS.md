@@ -4,7 +4,7 @@
 
 ## 每次开始工作
 
-1. 阅读 [文档索引与 Source of Truth](doc/00_INDEX.md) 和 [当前阶段](doc/STATUS.md)。
+1. 阅读 [Project Rebaseline Plan（唯一规划事实源）](doc/REBASELINE_PLAN.md)、[文档索引](doc/00_INDEX.md) 和 [当前阶段](doc/STATUS.md)。
 2. 阅读 [协作协议](doc/09_COLLABORATION.md)，核对自己的 Task、依赖、授权状态、基线 commit 和允许修改路径。
 3. 检查工作区、分支及 Git common directory；阅读任务引用的需求与真实代码、测试。未提交内容归原作者所有。
 4. 发现事实与文档不一致，在 Task 中留下证据并交 Codex 处理；不能靠聊天、旧项目路径或目标图推断已有实现。
@@ -16,7 +16,7 @@
 
 ## 当前授权
 
-当前阶段、已释放 Task 与冻结范围只以 [STATUS](doc/STATUS.md) 和对应 Task 文件为准，本入口不复制易过期的状态。Agent 只能执行已批准且依赖满足的 Task；接管、Review 或单个 Task 获批不等于其他开发自动获批。
+当前 Milestone、Task 树、依赖和 Legacy Mapping 只以 [REBASELINE_PLAN](doc/REBASELINE_PLAN.md) 为准；当前唯一 Active Task 与运行状态只以 [STATUS](doc/STATUS.md) 为准。历史 Task 文件保留为证据；只有 Rebaseline Plan 明确激活且范围已冻结的 Task 才允许实施。
 
 
 ## 角色与交付

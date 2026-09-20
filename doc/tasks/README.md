@@ -1,5 +1,7 @@
 # Task 索引
 
+> **Historical ledger after 2026-09-20 Rebaseline.** TASK-001～065 文件、Handoff、Review 与 verification 保留为历史证据；它们不再构成当前排期。当前任务树和 Legacy Mapping 见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前唯一 Active Task 见 [STATUS](../STATUS.md)。本目录暂不批量移动或删除文件，以保护既有链接与 Git 追溯。
+
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 
 2026-09-19 增量：**TASK-047（Owner=Qoder，仅 UI/UX/GUI/QML 设计规范）已被用户否决 → `rejected`**（理由：R-1 视觉方向 / R-2 布局与信息架构 / R-3 太保守没超出基线；裁决记录见该 Task 末尾，分支 `agent/qoder/TASK-047-ui-ux-gui-design` @`980ae7d` **未合并、保留**）。设计门改由新立的 [TASK-059](TASK-059.md) 承接（**明确授权重画配色与布局、允许推翻 `ui-baseline` 取值、要求 2–3 个实质不同的候选方向**）。TASK-022 保持 `proposed`，其设计门前置由 TASK-047 改挂 TASK-059。

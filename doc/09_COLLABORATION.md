@@ -1,6 +1,6 @@
 # Codex / ZCode / DeepSeek Harness 协作协议
 
-本协议将用户本次协作安排固化为可共享文件。当前只准备接管资料，所有未来实施仍受 [STATUS](STATUS.md) 的冻结约束。
+本协议固化协作方式；当前 Milestone、任务树、依赖与 Legacy Mapping 以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源，当前唯一 Active Task 与运行状态以 [STATUS](STATUS.md) 为准。
 
 ## 1. 角色与权限
 
