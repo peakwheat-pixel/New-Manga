@@ -8,7 +8,7 @@ suggested_owner: ZCode
 owner: ZCode
 reviewer: Qoder
 depends_on: [TASK-048, TASK-058]
-base_commit: 9522f2df66a79b82bb2419bc99f84ef39694e513
+base_commit: 9522f2df66a79b82bb2419bc99f84ef39694e513   # 判别树 a2b23ad 与之在 src/tests 上逐字节等价（R-009）
 branch: agent/zcode/TASK-060-sqlite-ownership
 worktree: G:/CODEX/New Manga.worktrees/TASK-060-zcode
 integration_commit: e7de64dd4f8057adde25b259cef987780d48ca74
@@ -16,7 +16,7 @@ integration_commit: e7de64dd4f8057adde25b259cef987780d48ca74
 
 # TASK-060：SQLite 连接与事务归属收口
 
-**READY（2026-09-19，用户依 Qoder 后置复审报告重开）**：Owner=`ZCode`、Reviewer=`Qoder`（**非作者**；2026-09-19 用户改派，原指派 Codex——Qoder 是 Q-001 探针与后置复审报告的作者，由其验证修复最对口；集成仍由 Codex 执行）、base=9522f2d。开工先 `git merge master`。
+**READY（2026-09-19，用户依 Qoder 后置复审报告重开）**：Owner=`ZCode`、Reviewer=`Qoder`（**非作者**；2026-09-19 用户改派，原指派 Codex——Qoder 是 Q-001 探针与后置复审报告的作者，由其验证修复最对口；集成仍由 Codex 执行）、base=9522f2d（实际判别树 `a2b23ad`，二者在 `src/tests` 上 `git diff` 为空，代码等价；R-009）。开工先 `git merge master`。
 
 ## 来源与固定对象
 

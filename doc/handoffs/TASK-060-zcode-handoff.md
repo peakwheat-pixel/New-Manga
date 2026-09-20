@@ -56,7 +56,7 @@ status: draft
 
 **既有测试适配（非放宽，两处，均语义增强）**：
 
-1. `tests/workbench/test_shutdown_drain.py`：stub 适配 `shutdown() -> bool` 新契约（修前 `shutdown()` 无返回值，TASK-058 用例断言的是排空行为本身；现契约返回 drained 布尔，stub 需返回布尔）。
+1. `tests/core/test_shutdown_drain.py`：stub 适配 `shutdown() -> bool` 新契约（修前 `shutdown()` 无返回值，TASK-058 用例断言的是排空行为本身；现契约返回 drained 布尔，stub 需返回布尔）。（R-009 勘误：原文误记 `tests/workbench/…`）
 2. `tests/storage/test_run_files_leak.py::test_retry_is_idempotent_when_files_are_already_gone`：setup 补 `repository.purge_pages(("p2",))`——该用例模拟"行已删、文件已清"的幂等重试，但原 setup 只删了文件没删行，与新的行存活守卫语义冲突（行仍在 ⇒ 守卫正确地跳过）。修的是 setup 与模拟场景的一致性，断言未动。
 
 ## 接收方式
