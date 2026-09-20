@@ -1,0 +1,113 @@
+shell=pwsh
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+base=ea56119
+command=pytest tests/diagnostics/test_report.py -q -p no:cacheprovider -rs -k data_derived_keys or recent_error_code or redaction_docstring or does_not_drop_multiple_masked_keys or generated_at_credential or documented_boundary_behavior
+FFFFF.                                                                   [100%]
+================================== FAILURES ===================================
+_ TestRedactionReachesEverySection.test_data_derived_keys_are_redacted_in_settings_and_paths _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001BF8A309010>
+
+    def test_data_derived_keys_are_redacted_in_settings_and_paths(self):
+        payload = json.loads(
+            _report(
+                settings_summary={
+                    "sk-abcdefgh123456": "settings value",
+                    "ordinary.setting": "ordinary value",
+                },
+                environment_paths={
+                    "sk-zyxwvuts987654": "D:/MangaData",
+                    "data_root": str(PURE_DATA_ROOT),
+                },
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+>       assert "sk-abcdefgh123456" not in json.dumps(payload)
+E       assert 'sk-abcdefgh123456' not in '{"applicati...ngs value"}}'
+E         
+E         'sk-abcdefgh123456' is contained here:
+E            value", "sk-abcdefgh123456": "settings value"}}
+E         ?           +++++++++++++++++
+
+tests\diagnostics\test_report.py:270: AssertionError
+_ TestRedactionReachesEverySection.test_recent_error_code_survives_message_redaction _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001BF8A308C80>
+
+    def test_recent_error_code_survives_message_redaction(self):
+        payload = json.loads(
+            _report(
+                recent_errors=(
+                    RecentError(
+                        "t1",
+                        "import",
+                        "PROVIDER_AUTH_FAILED",
+                        "request rejected sk-abcdef123456",
+                    ),
+                )
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+>       assert payload["recent_errors"] == {
+            "t1 import": "[PROVIDER_AUTH_FAILED] [redacted]"
+        }
+E       AssertionError: assert {'t1 import': '[redacted]'} == {'t1 import':...] [redacted]'}
+E         
+E         Differing items:
+E         {'t1 import': '[redacted]'} != {'t1 import': '[PROVIDER_AUTH_FAILED] [redacted]'}
+E         Use -v to get more diff
+
+tests\diagnostics\test_report.py:292: AssertionError
+_ TestRedactionReachesEverySection.test_redaction_docstring_states_guard_boundaries _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001BF8A309520>
+
+    def test_redaction_docstring_states_guard_boundaries(self):
+        doc = redact_value.__doc__ or ""
+>       assert "only excludes alphanumeric" in doc
+E       AssertionError: assert 'only excludes alphanumeric' in 'Mask values whose *key name* is sensitive, or whose value contains a\n    credential shape (a ``Bearer ��`` run or an ...h\n    ``sk-`` followed by eight or more token characters *is* masked; that is the\n    intended safe direction.\n    '
+
+tests\diagnostics\test_report.py:298: AssertionError
+_ TestRedactionReachesEverySection.test_redaction_does_not_drop_multiple_masked_keys _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001BF8A309850>
+
+    def test_redaction_does_not_drop_multiple_masked_keys(self):
+        payload = json.loads(
+            _report(
+                settings_summary={
+                    "translation.api_key": "first",
+                    "translation.auth_token": "second",
+                }
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+>       assert list(payload["settings_summary"]) == ["[redacted]", "[redacted]#2"]
+E       AssertionError: assert ['translation...n.auth_token'] == ['[redacted]', '[redacted]#2']
+E         
+E         At index 0 diff: 'translation.api_key' != '[redacted]'
+E         Use -v to get more diff
+
+tests\diagnostics\test_report.py:316: AssertionError
+_ TestRedactionReachesEverySection.test_generated_at_credential_shape_is_redacted _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001BF8A309BE0>
+
+    def test_generated_at_credential_shape_is_redacted(self):
+        payload = json.loads(
+            _report(generated_at="export-sk-abcdef123456")
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+>       assert payload["generated_at"] == "[redacted]"
+E       AssertionError: assert 'export-sk-abcdef123456' == '[redacted]'
+E         
+E         - [redacted]
+E         + export-sk-abcdef123456
+
+tests\diagnostics\test_report.py:325: AssertionError
+5 failed, 1 passed, 18 deselected in 0.15s
+EXIT=1

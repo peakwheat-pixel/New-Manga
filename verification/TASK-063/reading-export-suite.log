@@ -1,0 +1,11 @@
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 61%]
+..............................................                           [100%]
+118 passed in 20.40s
+EXIT=0
