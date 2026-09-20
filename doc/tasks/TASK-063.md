@@ -2,7 +2,7 @@
 id: TASK-063
 title: 诊断脱敏边界与多过滤器测试补强（TASK-062 Review R-001/R-002/R-003/R-004/R-006）
 kind: bugfix
-status: in_review
+status: approved
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
@@ -63,6 +63,6 @@ integration_commit: null
 ## 交付与运行记录
 
 - Handoff：[TASK-063-3fbbfe4.md](../handoffs/TASK-063-3fbbfe4.md)。
-- Review：独立非作者 Review 待最终 head 复审（Task 元数据 Reviewer=Qoder，非作者）。
+- Review：独立非作者 Review 已 `approved`，见 [TASK-063-303d3cc](../reviews/TASK-063-303d3cc.md)（Task 元数据 Reviewer=Qoder，非作者）。
 - 实现提交：`30db4a2`（首轮 GREEN）、`3fbbfe4`（Review P2 修复）。
-- 实际测试：已完成；当前状态 `in_review`，尚未合并 master。
+- 实际测试：已完成；当前状态 `approved`，尚未合并 master。
