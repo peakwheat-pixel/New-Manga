@@ -14,7 +14,7 @@ $env:PYTHONDONTWRITEBYTECODE = "1"
 Remove-Item Env:QT_QPA_PLATFORM -ErrorAction SilentlyContinue
 
 $head = (& git rev-parse HEAD).Trim()
-$treeState = (& git status --short | Out-String).Trim()
+$treeState = (& git status --short -- src tests doc | Out-String).Trim()
 $pythonVersion = (& $python --version 2>&1 | Out-String).Trim()
 $shellVersion = $PSVersionTable.PSVersion.ToString()
 $collectCommand = "$python -m pytest $Target --collect-only -q -p no:cacheprovider"
@@ -25,9 +25,9 @@ $testCommand = "$python -m pytest $Target -q -p no:cacheprovider -rs"
     "LABEL=$Label"
     "WORKTREE=$root"
     "HEAD=$head"
-    "TREE_STATE_BEGIN"
+    "SOURCE_TREE_STATE_BEGIN"
     $treeState
-    "TREE_STATE_END"
+    "SOURCE_TREE_STATE_END"
     "SHELL=PowerShell $shellVersion"
     "VENV=$python"
     "PYTHON=$pythonVersion"
