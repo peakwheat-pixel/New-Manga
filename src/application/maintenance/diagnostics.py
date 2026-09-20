@@ -60,7 +60,9 @@ def redact_value(key: str, value: str) -> str:
     written as, say, ``password=hunter2`` inside a message is the collector's
     responsibility to digest away. A path segment that literally starts with
     ``sk-`` followed by eight or more token characters *is* masked; that is the
-    intended safe direction.
+    intended safe direction. The left guard only excludes alphanumeric
+    adjacency; underscore, dot, and slash are still boundaries, and runs
+    shorter than 8 token characters are not masked.
     """
     if _SENSITIVE_KEY.search(key):
         return _REDACTED
@@ -137,17 +139,23 @@ def build_diagnostics_report(
     (TASK-062 AC ①). Defence in depth only: the collector is still expected to
     pass digests, never raw credentials."""
     settings_fields = tuple(
-        (key, redact_value(key, value)) for key, value in sorted(settings_summary.items())
+        (redact_value(key, key), redact_value(key, value))
+        for key, value in sorted(settings_summary.items())
     )
     error_fields = tuple(
         (
             redact_value("recent_error", f"{error.occurred_at} {error.source}"),
-            redact_value("recent_error", f"[{error.code}] {error.message}"),
+            redact_value(
+                "recent_error",
+                f"[{redact_value('recent_error_code', error.code)}] "
+                f"{redact_value('recent_error_message', error.message)}",
+            ),
         )
         for error in recent_errors
     )
     path_fields = tuple(
-        (key, redact_value(key, value)) for key, value in sorted(environment_paths.items())
+        (redact_value(key, key), redact_value(key, value))
+        for key, value in sorted(environment_paths.items())
     )
     sections = (
         (

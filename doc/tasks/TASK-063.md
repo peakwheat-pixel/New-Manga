@@ -2,15 +2,15 @@
 id: TASK-063
 title: 诊断脱敏边界与多过滤器测试补强（TASK-062 Review R-001/R-002/R-003/R-004/R-006）
 kind: bugfix
-status: proposed
+status: in_progress
 approval: approved_by_user
 suggested_owner: Codex
-owner: null
+owner: Codex
 reviewer: Qoder（非作者）
 depends_on: [TASK-062]
-base_commit: null
-branch: null
-worktree: null
+base_commit: ea56119ba16a8a57832a1ae9660845235ec58fc4
+branch: agent/codex/TASK-063-diagnostics-boundaries
+worktree: G:/CODEX/New Manga
 integration_commit: null
 ---
 
@@ -57,7 +57,7 @@ integration_commit: null
 
 - 硬依赖：TASK-062 已集成；TASK-055 的生产接线不得先于本切片。
 - 风险：键侧过屏和错误码保留的实现若混淆 key/value 形状，可能产生假阴性；以报告级判别用例锁定。
-- 阻塞：实施前由 Codex 依当前 master 创建 branch/worktree 并填写实际 base。
+- 阻塞：无；实现分支已从 `ea56119` 建立。
 
 ## 交付与运行记录
 

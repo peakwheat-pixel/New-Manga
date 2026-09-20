@@ -909,18 +909,86 @@ def write_qt_encoded_png(path: Path, width: int, height: int) -> None:
     assert image.save(str(path), "PNG"), "Qt could not encode the fixture"
 
 
+def _write_hand_filtered_png(
+    path: Path,
+    width: int,
+    height: int,
+    filter_type: int,
+    *,
+    interlace: int = 0,
+    truncate_raw: bool = False,
+) -> None:
+    """Write a deterministic RGB page with one selected PNG row filter."""
+    if filter_type not in {0, 2, 3}:
+        raise ValueError(filter_type)
+
+    def chunk(tag: bytes, data: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(data))
+            + tag
+            + data
+            + struct.pack(">I", zlib.crc32(tag + data) & 0xFFFFFFFF)
+        )
+
+    rows = [
+        bytes(((y * 17 + index * 5) % 256) for index in range(width * 3))
+        for y in range(height)
+    ]
+    encoded = bytearray()
+    for index, row in enumerate(rows):
+        previous = rows[index - 1] if index else None
+        encoded.append(filter_type)
+        if filter_type == 0:
+            encoded.extend(row)
+        elif filter_type == 2:
+            encoded.extend(
+                (value - (previous[offset] if previous else 0)) & 0xFF
+                for offset, value in enumerate(row)
+            )
+        else:
+            encoded.extend(
+                (
+                    value
+                    - (
+                        (
+                            (row[offset - 3] if offset >= 3 else 0)
+                            + (previous[offset] if previous else 0)
+                        )
+                        >> 1
+                    )
+                )
+                & 0xFF
+                for offset, value in enumerate(row)
+            )
+    payload = bytes(encoded[:-1] if truncate_raw else encoded)
+    path.write_bytes(
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", struct.pack(">IIBBBBB", width, height, 8, 2, 0, 0, interlace))
+        + chunk(b"IDAT", zlib.compress(payload))
+        + chunk(b"IEND", b"")
+    )
+
+
 def png_row_filter_types(path: Path) -> set[int]:
     """The filter-type byte of every reconstructed scanline in the IDAT."""
     data = path.read_bytes()
     pos = 8
-    width = height = bit_depth = colour_type = 0
+    width = height = bit_depth = colour_type = interlace = 0
     idat = bytearray()
     while pos + 8 <= len(data):
         length = struct.unpack_from(">I", data, pos)[0]
         tag = data[pos + 4 : pos + 8]
         chunk = data[pos + 8 : pos + 8 + length]
         if tag == b"IHDR":
-            width, height, bit_depth, colour_type = struct.unpack_from(">IIBB", chunk, 0)
+            (
+                width,
+                height,
+                bit_depth,
+                colour_type,
+                _compression,
+                _filter_method,
+                interlace,
+            ) = struct.unpack(">IIBBBBB", chunk)
         elif tag == b"IDAT":
             idat += chunk
         elif tag == b"IEND":
@@ -929,7 +997,25 @@ def png_row_filter_types(path: Path) -> set[int]:
     channels = {0: 1, 2: 3, 4: 2, 6: 4}[colour_type]
     stride = width * (bit_depth // 8) * channels + 1
     raw = zlib.decompress(bytes(idat))
+    assert interlace == 0, "png_row_filter_types only supports non-interlaced PNGs"
+    assert len(raw) == height * stride, "decompressed PNG payload has an invalid length"
     return {raw[y * stride] for y in range(height)}
+
+
+def test_png_row_filter_types_rejects_interlaced_pages(tmp_path) -> None:
+    source = tmp_path / "interlaced.png"
+    _write_hand_filtered_png(source, 8, 3, 2, interlace=1)
+
+    with pytest.raises(AssertionError, match="non-interlaced"):
+        png_row_filter_types(source)
+
+
+def test_png_row_filter_types_rejects_truncated_scanlines(tmp_path) -> None:
+    source = tmp_path / "truncated.png"
+    _write_hand_filtered_png(source, 8, 3, 2, truncate_raw=True)
+
+    with pytest.raises(AssertionError, match="invalid length"):
+        png_row_filter_types(source)
 
 
 def test_overlap_choice_on_a_qt_encoded_page(tmp_path, qapp) -> None:
@@ -969,3 +1055,27 @@ def test_overlap_choice_on_a_qt_encoded_page(tmp_path, qapp) -> None:
     assert stitched == page_rows and page_width == width, (
         "the tile union must still be the whole page, row for row"
     )
+
+
+@pytest.mark.parametrize("filter_type", [2, 3], ids=["up", "average"])
+def test_overlap_choice_on_hand_filtered_pages(tmp_path, qapp, filter_type) -> None:
+    """TASK-063 R-006: explicitly cover Up and Average row filters."""
+    width, height = 600, 2100
+    source = tmp_path / f"filter-{filter_type}.png"
+    _write_hand_filtered_png(source, width, height, filter_type)
+    assert png_row_filter_types(source) == {filter_type}
+
+    zero = TiledPageRasterizer(source, cache_dir=tmp_path / "tiles-0", tile_height=800)
+    sixty_four = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "tiles-64", tile_height=800, overlap=64
+    )
+    stitched: list[bytes] = []
+    for tile in zero.grid.tiles:
+        file_zero = zero.tile_file(tile.index).read_bytes()
+        file_overlapped = sixty_four.tile_file(tile.index).read_bytes()
+        assert file_zero == file_overlapped
+        rows, tile_width, tile_height = qt_rows(zero.tile_file(tile.index))
+        assert (tile_width, tile_height) == (width, tile.content_height)
+        stitched.extend(rows)
+    page_rows, page_width, _page_height = qt_rows(source)
+    assert stitched == page_rows and page_width == width
