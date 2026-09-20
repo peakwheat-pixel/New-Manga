@@ -143,30 +143,25 @@ def test_latched_start_translate_untranslated_rejected(qapp):
 
 
 def test_latched_continue_run_rejected(qapp):
-    """Face 3 (``continueRun`` on a PAUSED run): the run control lands
-    (PAUSED → PENDING) but the worker is NOT born and the refusal is on
-    the error surface — this face birthed a worker at b0e4cb1."""
+    """R-009 face 3: reject before the PAUSED run is mutated."""
     vm = _vm()
     status = _run_to_settled(vm, qapp, pause=True)
     assert status in {"paused", "interrupted"}, (
         f"expected a resumable run, got {status!r}")
+    original_run = vm._run
+    original_status = original_run.status
     assert vm.beginRestore() is True
     try:
         vm.continueRun()
         _assert_refused(vm)
+        assert vm._run is original_run
+        assert vm._run.status is original_status
     finally:
         vm.endRestore()
 
 
 def test_latched_restart_run_rejected(qapp):
-    """Face 4a (``restartRun``): domain premise is an INTERRUPTED run
-    (what ``recover_running_runs`` produces after a crash).  Production
-    ``control_run("restart")`` returns a NEW run id; the service call is
-    stubbed to hand back a genuinely PENDING fresh run (reviewer-probe
-    MODE B — the in-memory stack has no failed work to carry over, so it
-    would plan the fresh run COMPLETED).  From there the VM takes the
-    real ``plan_run`` → projection → worker-birth path, and that is the
-    face that birthed a worker unguarded at b0e4cb1."""
+    """R-009 face 4a: reject before restart replaces the current run."""
     vm = _vm()
     interrupted, fresh = _pending_pair(vm)
     vm._run = interrupted
@@ -178,17 +173,14 @@ def test_latched_restart_run_rejected(qapp):
     try:
         vm.restartRun()
         _assert_refused(vm)
+        assert vm._run is interrupted
+        assert vm._run.status is PipelineRunStatus.INTERRUPTED
     finally:
         vm.endRestore()
 
 
 def test_latched_retry_failed_pages_rejected(qapp):
-    """Face 4b (``retryFailedPages``): domain premise is a FAILED page
-    target on the run (retry is only offered for that).  Production
-    ``retry_failed_targets`` returns a NEW PENDING run; the service call
-    is stubbed likewise (reviewer-probe MODE B).  The VM still takes the
-    real ``plan_run`` → projection → worker-birth path, which the latch
-    must close."""
+    """R-009 face 4b: reject before retry replaces the current run."""
     vm = _vm()
     retried, fresh = _pending_pair(vm)
     vm._run = retried
@@ -201,6 +193,8 @@ def test_latched_retry_failed_pages_rejected(qapp):
     try:
         vm.retryFailedPages()
         _assert_refused(vm)
+        assert vm._run is retried
+        assert page_task.status is PipelineTaskStatus.FAILED
     finally:
         vm.endRestore()
 
@@ -234,6 +228,20 @@ def test_restore_gate_releases_the_latch_when_the_body_raises(qapp):
     try:
         assert vm._controller.is_running is True, (
             "the latch was not released after the restore body raised")
+    finally:
+        assert vm.shutdown() is True
+
+
+def test_restore_gate_rejects_nested_entry_without_releasing_outer_latch(qapp):
+    """R-008: an inner gate cannot release the still-active outer gate."""
+    vm = _vm()
+    try:
+        with vm.restoreGate():
+            with pytest.raises(RuntimeError, match="cannot enter the restore gate"):
+                with vm.restoreGate():
+                    pass
+            assert vm._restore_in_progress is True
+            assert vm._controller.admission_closed is True
     finally:
         assert vm.shutdown() is True
 

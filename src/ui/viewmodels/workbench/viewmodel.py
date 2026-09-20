@@ -728,6 +728,9 @@ class WorkbenchViewModel(QObject):
         birthplace, reached from all four VM call sites — until
         :meth:`endRestore` (review R-001).
         """
+        if self._restore_in_progress:
+            self._record_command_error("恢复已在进行中", stage="run")
+            return False
         if self._controller.is_running:
             self._record_command_error("已有任务在运行，不能进入恢复", stage="run")
             return False
@@ -820,6 +823,9 @@ class WorkbenchViewModel(QObject):
     def continueRun(self) -> None:
         if self._run is None:
             return
+        if self._restore_in_progress:
+            self._record_command_error("恢复进行中，不能启动任务", stage="run")
+            return
         try:
             result = self._pipeline.control_run(self._run.run_id, "continue")
         except PipelineError as error:
@@ -843,6 +849,9 @@ class WorkbenchViewModel(QObject):
     def _restart_or_abandon(self, action: str) -> None:
         if self._run is None:
             return
+        if action == "restart" and self._restore_in_progress:
+            self._record_command_error("恢复进行中，不能启动任务", stage="run")
+            return
         try:
             result = self._pipeline.control_run(self._run.run_id, action)
         except PipelineError as error:
@@ -860,6 +869,9 @@ class WorkbenchViewModel(QObject):
     @Slot()
     def retryFailedPages(self) -> None:
         if self._run is None:
+            return
+        if self._restore_in_progress:
+            self._record_command_error("恢复进行中，不能启动任务", stage="run")
             return
         try:
             fresh = self._pipeline.retry_failed_targets(self._run.run_id)
