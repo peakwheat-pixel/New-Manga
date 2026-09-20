@@ -1,0 +1,11 @@
+=== label:  r006-r004-on-29546f7
+=== tree:   G:/CODEX/New Manga.worktrees/TASK-057-zcode @ 29546f7 [agent/zcode/TASK-057-backup-restore]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM unset, PYTHONIOENCODING=utf-8
+=== date:   2026-09-19T23:58:29+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe verification/TASK-057/pre-fix-probes/probe_r004_latch.py
+---
+POST-FIX: restore latch rejects startRun during restore (no run created, controller idle)
+POST-FIX: endRestore releases the latch — normal run start works
+EXIT=0

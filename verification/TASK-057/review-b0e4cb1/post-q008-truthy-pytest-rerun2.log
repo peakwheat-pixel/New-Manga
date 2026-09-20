@@ -1,0 +1,20 @@
+﻿LABEL=q008-post-2
+ROOT=G:\CODEX\New Manga.worktrees\TASK-057-qoder-review
+HEAD=b0e4cb1a92bea76c90892a1f1d05ae2d8a82d1a3
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PYTEST=python -m pytest -q -rs -p no:cacheprovider verification/TASK-057/review-b0e4cb1/probe_q008_truthy.py -s
+----------------------------------------
+DISCRIMINATING-FAIL: assertion caught the simulated regression (AC③ breach: backup wrote a user-side shadow into the managed root
+assert not True
+ +  where True = exists()
+ +    where exists = (WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2702/test_truthy_assertion_cannot_c0/managed') / 'user-side').exists) => discriminating power confirmed
+.
+1 passed in 0.13s
+
+COLLECTED=n/a
+EXIT=0
+HEAD=b0e4cb1a92bea76c90892a1f1d05ae2d8a82d1a3

@@ -1,0 +1,50 @@
+=== label:  gate-probe-29546f7
+=== tree:   G:/CODEX/New Manga.worktrees/TASK-057-zcode @ 29546f7 [agent/zcode/TASK-057-backup-restore]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM unset, PYTHONIOENCODING=utf-8
+=== date:   2026-09-19T23:53:23+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-b0e4cb1/t057_gate_probe.py G:/CODEX/New Manga.worktrees/TASK-057-zcode
+---
+== tree: G:\CODEX\New Manga.worktrees\TASK-057-zcode @ 29546f7
+
+-- MODE A.0 control: the two paths the shipped case covers
+   A0 startTranslateAll               worker started during restore? False   latch-error surfaced? True   state after call=no-run  run object created? False
+       error surface: '[run] 恢复进行中，不能启动任务'
+   A0 startTranslateUntranslated      worker started during restore? False   latch-error surfaced? True   state after call=no-run  
+       error surface: '[run] 恢复进行中，不能启动任务'
+
+-- MODE A.1 continueRun (needs a PAUSED run)
+   run state after pause+drain: paused
+   A1 continueRun                     worker started during restore? False   latch-error surfaced? True   state after call=pending  started_seen=False
+       error surface: '[run] 恢复进行中，不能启动任务'
+
+-- MODE A.2/A.3 restartRun / retryFailedPages (terminal run)
+   restartRun: run state before latch = completed
+   A restartRun                       worker started during restore? False   latch-error surfaced? False   state after call=completed  
+       error surface: '[command/RUN_NOT_INTERRUPTED] run-184fc4582b194170bde8dc7000173803'
+   retryFailedPages: run state before latch = completed
+   A retryFailedPages                 worker started during restore? False   latch-error surfaced? False   state after call=completed  
+       error surface: '[command/TARGET_NOT_FOUND] run has no failed page targets'
+
+-- MODE B: same three slots with the run pinned to PENDING
+   B continueRun                      worker started during restore? False   latch-error surfaced? True   state after call=pending  started_seen=False
+       error surface: '[run] 恢复进行中，不能启动任务'
+   B restartRun                       worker started during restore? False   latch-error surfaced? True   state after call=pending  started_seen=False
+       error surface: '[run] 恢复进行中，不能启动任务'
+   B retryFailedPages                 worker started during restore? False   latch-error surfaced? True   state after call=pending  started_seen=False
+       error surface: '[run] 恢复进行中，不能启动任务'
+
+-- G5 latch stickiness: who can release it?
+   production callers of beginRestore/endRestore inside src/:
+       src/ui/viewmodels/workbench/viewmodel.py:717:    def beginRestore(self) -> bool:
+       src/ui/viewmodels/workbench/viewmodel.py:721:        drained — while a run is still executing ``beginRestore`` refuses
+       src/ui/viewmodels/workbench/viewmodel.py:729:        :meth:`endRestore` (review R-001).
+       src/ui/viewmodels/workbench/viewmodel.py:738:    def endRestore(self) -> None:
+       src/ui/viewmodels/workbench/viewmodel.py:751:        executing, mirroring :meth:`beginRestore`.
+       src/ui/viewmodels/workbench/viewmodel.py:753:        if not self.beginRestore():
+       src/ui/viewmodels/workbench/viewmodel.py:761:            self.endRestore()
+   latched and abandoned: _restore_in_progress=True; controller idle=True   => an exception between begin/end leaves the workbench permanently closed (no finally, no timeout, no context manager)
+
+== done
+EXIT=0

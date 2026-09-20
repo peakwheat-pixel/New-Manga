@@ -1,0 +1,51 @@
+=== label:  r006-q008-on-0d15018
+=== tree:   C:/Users/49745/AppData/Local/Temp/t057-r2-mergehead @ 0d15018 [HEAD]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM unset, PYTHONIOENCODING=utf-8
+=== date:   2026-09-19T23:58:20+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest verification/TASK-057/pre-fix-probes/probe_q008_truthy.py -q -p no:cacheprovider -s
+---
+TRUTHY-PASS: assertion passed despite the simulated regression => the `or True` truthy tail gives AC③ zero discriminating power (pre-fix shape)
+F
+================================== FAILURES ===================================
+___________ test_truthy_assertion_cannot_catch_simulated_regression ___________
+
+backup_workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000258CB002960>, 'service': <infrastru...('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2710/test_truthy_assertion_cannot_c0/managed/backups'), ...}
+
+    def test_truthy_assertion_cannot_catch_simulated_regression(
+        backup_workspace,
+    ) -> None:
+        # the real test class is imported *inside* the test body so pytest
+        # cannot collect its (passing) members alongside this probe
+        from test_backup_restore import TestBackupCompleteness
+    
+        # 模拟回归：备份实现把 user-side 目录写进了 managed root（AC③ 突破）
+        simulated = backup_workspace["managed_root"] / "user-side"
+        simulated.mkdir(parents=True, exist_ok=True)
+        assert simulated.exists(), "probe setup: simulated regression not in place"
+    
+        caught = False
+        try:
+            TestBackupCompleteness().test_backup_does_not_touch_user_source(
+                backup_workspace
+            )
+        except AssertionError as error:
+            caught = True
+            print(f"DISCRIMINATING-FAIL: assertion caught the simulated "
+                  f"regression ({error}) => discriminating power confirmed")
+        else:
+            print("TRUTHY-PASS: assertion passed despite the simulated "
+                  "regression => the `or True` truthy tail gives AC③ zero "
+                  "discriminating power (pre-fix shape)")
+>       assert caught, (
+            "no discriminating power: the AC③ assertion passed despite the "
+            "simulated regression (truthy-tail shape — pre-fix defect)")
+E       AssertionError: no discriminating power: the AC③ assertion passed despite the simulated regression (truthy-tail shape — pre-fix defect)
+E       assert False
+
+verification\TASK-057\pre-fix-probes\probe_q008_truthy.py:54: AssertionError
+=========================== short test summary info ===========================
+FAILED verification/TASK-057/pre-fix-probes/probe_q008_truthy.py::test_truthy_assertion_cannot_catch_simulated_regression
+1 failed in 0.17s
+EXIT=1

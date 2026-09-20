@@ -1,0 +1,25 @@
+﻿LABEL=pre-collect
+ROOT=C:\Users\49745\AppData\Local\Temp\t057-prefix
+HEAD=0d150186f5e3b476019f23d8945128512813edb6
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PYTEST=python -m pytest -q -rs -p no:cacheprovider tests --collect-only -q -no-summary
+----------------------------------------
+python.exe : ERROR: usage: python -m pytest [options] [file_or_dir] [file_or_dir] [...]
+At G:\CODEX\New Manga.worktrees\TASK-057-qoder-review\verification\TASK-057\review-b0e4cb1\run.ps1:42 char:11
++ $output = & $python -m pytest -q -rs -p no:cacheprovider @targets @ex ...
++           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (ERROR: usage: p...e_or_dir] [...]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+python -m pytest: error: unrecognized arguments: -no-summary
+  inifile: C:\Users\49745\AppData\Local\Temp\t057-prefix\pytest.ini
+  rootdir: C:\Users\49745\AppData\Local\Temp\t057-prefix
+
+
+COLLECTED=938 tests collected in 2.54s
+EXIT=4
+HEAD=0d150186f5e3b476019f23d8945128512813edb6
