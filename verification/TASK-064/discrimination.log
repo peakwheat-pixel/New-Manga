@@ -1,0 +1,20 @@
+TASK=TASK-064
+shell=pwsh 7
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+cwd=G:/CODEX/New Manga
+
+case=pre-fix
+commit=e39cc27 plus uncommitted TASK-064 regression assertions
+command=pytest tests/diagnostics/test_bounded_log_store.py tests/core/test_bootstrap.py -q -p no:cacheprovider -rs -k 'write_creates_one_file_per_report or injects_and_exports_diagnostics'
+EXIT=1
+result=2 failed, 25 deselected
+failure[1]=BoundedLogStore.write missing (AttributeError)
+failure[2]=repeated real export JSONDecodeError: Extra data
+
+case=post-fix
+commit=2024bfb
+command=pytest tests/diagnostics/test_bounded_log_store.py tests/core/test_bootstrap.py -q -p no:cacheprovider -rs -k 'write_creates_one_file_per_report or injects_and_exports_diagnostics'
+EXIT=0
+result=2 passed, 25 deselected
+discriminates=standalone report files, JSON readability after repeated export, redacted generated_at path, preserved PROVIDER_AUTH_FAILED code, and credential-shaped value masking in a real assembled service

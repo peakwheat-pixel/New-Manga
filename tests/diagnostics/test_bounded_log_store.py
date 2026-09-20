@@ -32,6 +32,19 @@ def test_append_creates_file_and_grows_within_cap(tmp_path):
     assert files[0].read_text(encoding="utf-8") == "line-1\nline-2\n"
 
 
+def test_write_creates_one_file_per_report(tmp_path):
+    store = _store(tmp_path)
+
+    first = store.write('{"report": 1}', timestamp=_T)
+    second = store.write('{"report": 2}', timestamp=_T)
+
+    assert first != second
+    assert [path.read_text(encoding="utf-8") for path in store.files()] == [
+        '{"report": 1}\n',
+        '{"report": 2}\n',
+    ]
+
+
 def test_rotation_when_current_file_exceeds_byte_cap(tmp_path):
     store = _store(tmp_path, max_bytes=12)
     store.append("0123456789", timestamp=_T)  # 11 bytes incl newline
