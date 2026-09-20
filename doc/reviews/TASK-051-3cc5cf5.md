@@ -1,4 +1,12 @@
+---
+task_id: TASK-051
+author: ZCode
+reviewer: 独立子对话 Reviewer（非作者）
+base_commit: a2306e3
+reviewed_head: 9d22999
+implement_commit: 3cc5cf5
 decision: approved_subagent
+---
 
 # Review — TASK-051 工作台三档视图解析 translated/compare
 

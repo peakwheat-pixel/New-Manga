@@ -33,7 +33,7 @@ D03 §5；D05 §20/40；D06 §17/67～70；D07 §14～17；D08 AC-WEBTOON/CAP。
 - [x] 一张超长图保持一Page，Tile仅为可重建Cache；按模型约束处理并回映到原图坐标。（几何/缓存/回映/去重全交付并有测试；超大页像素解码 BLOCKED——Qt PNG handler ≳300MB rgb32 硬限制，见 Handoff，未记 PASS）
 - [x] 长图按宽适配、按需解码、限制预取/内存，阅读位置重启恢复；Region/Mask/Render一致。（Qt 可读范围内实测：视口+有界预取材料化、跨会话恢复；Region 为页面级真值不随 tile 变化，清缓存不动真值有测试）
 - [x] 验证Tile边界重叠Region去重与拼接，非目标范围不变，清缓存不会破坏业务真值。（内容带按构造互斥且并集=全页；跨 tile Region 回映去重测试；TASK-037 既有契约测试原样通过=非目标范围不变）
-- [x] 交付 Handoff=[doc/handoffs/TASK-020-7833604.md](../handoffs/TASK-020-7833604.md)；Review=[doc/reviews/TASK-020-7833604.md](../reviews/TASK-020-7833604.md)（首轮 `changes_requested` `baffcc4`：R-001 P1 修订收口 `b337f71`、R-004 表述收口、R-002/003/005 deferred、R-006 P3 open 不阻断；复审 `40f20e7`=**approved_subagent**，四轴均 executed）；集成=`b738200`（merge，parents `5832894`+`40f20e7`），集成后复验全仓 **764 passed / 0 skipped**、exit 0。
+- [x] 交付 Handoff=[doc/handoffs/TASK-020-7833604.md](../handoffs/TASK-020-7833604.md)；Review=[doc/reviews/TASK-020-7833604.md](../reviews/TASK-020-7833604.md)（首轮 `changes_requested` `baffcc4`：R-001 P1 修订收口 `b337f71`、R-004 表述收口、R-002/003/005 deferred、R-006 P3 open 不阻断；复审报告已由未合并提交 [`40f20e7`](../reviews/TASK-020-7833604.md) 追加，decision=`approved_subagent`，四轴均 executed）；集成=`b738200`（merge，parents `5832894`+`40f20e7`），集成后复验全仓 **764 passed / 0 skipped**、exit 0。
 
 ## 允许修改范围
 

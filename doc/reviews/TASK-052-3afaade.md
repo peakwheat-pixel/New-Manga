@@ -1,5 +1,3 @@
-decision: approved_subagent
-
 ---
 task_id: TASK-052
 reviewer: 独立子对话 Reviewer（ZCode 窗口，非本切片实现作者）

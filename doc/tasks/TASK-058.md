@@ -2,7 +2,7 @@
 id: TASK-058
 title: 应用退出时排空 workbench 运行线程（P-10 优雅退出）
 kind: feature
-status: done
+status: in_review
 approval: zcode_window_self_approved
 suggested_owner: ZCode
 owner: ZCode
@@ -15,6 +15,10 @@ integration_commit: 414a8e1
 ---
 
 # TASK-058：应用退出时排空 workbench 运行线程（P-10 优雅退出）
+
+## 当前状态与 blocker（2026-09-20 台账复核）
+
+当前置为 `in_review`，不再以 `done` 记账。现有 Handoff 记录了窗口内 `approved_subagent` 复验，但仓库 `doc/reviews/` 中没有对应的 TASK-058 Review 报告，因此缺少可固定 `base_commit=726c1bb`、被审 head 和 `decision` 的非作者 Review artefact。恢复条件：补入独立非作者 Review（至少覆盖 Architecture/Verification，并带完整 frontmatter 与结论），再由 Codex 核对后恢复 `done` 台账。
 
 ## 来源与目标
 
