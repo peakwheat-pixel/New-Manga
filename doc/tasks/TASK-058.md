@@ -2,11 +2,11 @@
 id: TASK-058
 title: 应用退出时排空 workbench 运行线程（P-10 优雅退出）
 kind: feature
-status: in_review
-approval: zcode_window_self_approved
+status: done
+approval: approved
 suggested_owner: ZCode
 owner: ZCode
-reviewer: independent_subagent
+reviewer: Qoder
 depends_on: ["TASK-048"]
 base_commit: 726c1bb
 branch: agent/zcode/TASK-058-graceful-shutdown-drain
@@ -16,9 +16,9 @@ integration_commit: 414a8e1
 
 # TASK-058：应用退出时排空 workbench 运行线程（P-10 优雅退出）
 
-## 当前状态与 blocker（2026-09-20 台账复核）
+## 复审与集成收口（2026-09-20）
 
-当前置为 `in_review`，不再以 `done` 记账。现有 Handoff 记录了窗口内 `approved_subagent` 复验，但仓库 `doc/reviews/` 中没有对应的 TASK-058 Review 报告，因此缺少可固定 `base_commit=726c1bb`、被审 head 和 `decision` 的非作者 Review artefact。恢复条件：补入独立非作者 Review（至少覆盖 Architecture/Verification，并带完整 frontmatter 与结论），再由 Codex 核对后恢复 `done` 台账。
+已补入 Qoder 的独立非作者 Review：[TASK-058-9c8cd52](../reviews/TASK-058-9c8cd52.md)，结论为 `approved`，固定 `base_commit=726c1bb`、`reviewed_head=9c8cd52`。Review 与 7 份 verification 已由 Codex 以 `--no-ff` 合入 master；`integration_commit=414a8e1`。原 Q-003 的生产缺陷由 TASK-060 `1195baf` 修复并在复审中确认，记为 `closed-elsewhere`。
 
 ## 来源与目标
 

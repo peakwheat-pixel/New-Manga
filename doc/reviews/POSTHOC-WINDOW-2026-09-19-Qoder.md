@@ -117,7 +117,8 @@ per_slice_overturn: [W1/TASK-048]
 但没有配套的**单写者/事务归属契约**——`SqlitePipelineStore`、`SqliteTargetCatalog.commit_step`、
 `SqliteRegionRepository`、`SqliteLibraryRepository` 各自在自己的对象上开/交/回滚**同一个连接的事务**，
 `with self._conn:`（`pipeline.py:398`、`library.py:109`）与 `BEGIN IMMEDIATE`（`pipeline.py:578`、
-`regions.py:210`、`step_writes.py:207,358,435`）互不知情。TASK-058 的退出 drain（Q-003）与
+`regions.py:210`、`step_writes.py:207,358,435`）互不知情。TASK-058 的退出 drain（Q-003，已由
+TASK-060 `1195baf` 关闭）与
 TASK-057 的 restore（Q-008）都在同一条不变式之上，应合并为一次收口：
 **每线程独立连接，或显式串行化 + typed 错误 + 事务归属单点**。
 
@@ -165,7 +166,7 @@ W6/W9 的清理面代码路径细节（`trash.py:216-249`、`cleanup.py:134-153`
 | Q-004 | P2 | W2 `src/application/tasks/service.py:346,93-94`；`handlers.py:460,507,555,777`；`bootstrap/app.py`（`detector=None`，`e94d5af` 注释 541-547） | §11 P-2 的收口**只对含 `ocr` 的命令成立**；页级 `REINPAINT_ALL`/`RERENDER_ALL` 在无 Region 页上仍报 `INVALID_INPUT "requires a Region target"`；且生产无检测器⇒"检测→落 Region"实际产出恒为 0（作者已在代码注释声明） | [读码]＋[记录]（`region-post-fix-run1.txt:2-3` `detect->failed PROVIDER_NOT_CONFIGURED`） | 在 doc 10 / STATUS 把 P-2 改写为"**接缝已闭、生产仍惰性**（无检测器、无 UI 调用者）"，并把两条 region-free 链列入缺口；不改代码不算缺陷 | open（记录更正） |
 | Q-005 | P2 | W3 AC①；`tests/core/test_pipeline_defaults_assembly.py:68-107`；`discriminating-new-tests-vs-prefix.log` | 读面注入并非新增能力：base `8bf8da3` 的 `freeze()` 已每 run 重读 `pipeline_defaults`（第 813-823 行）；该用例不 import 任何新代码⇒在修前树同样通过；AC① 却按"已达成"勾选 | [读码] 双树 `git show` 对照；[记录] 判别日志仅 1 个 ERROR | AC① 措辞改为"沿用既有每-run 重读"，实得收益记在 AC②；或补一条真正判别的断言 | open |
 | Q-006 | P2 | W8 `src/application/maintenance/diagnostics.py:75`（+`:113-115` 声明）对 `:117,124,129,133` 与 `:119-122` | docstring 承诺"每个值入报前过脱敏屏"，实现只对 `settings_summary`、`environment_paths` 调 `redact_value`；`app_version/platform_python/database_path` 与 `recent_errors.message` 裸传，且合成键 `"{occurred_at} {source}"` 结构上不可能命中 `_SENSITIVE_KEY`；测试用良性 `"a.png"` 掩盖（`tests/diagnostics/test_report.py:159`） | [读码] 逐行对照 | 要么把 `recent_errors` 也过屏（并补一条含路径/令牌子串的用例），要么删掉该不变式措辞；诊断包会外发，宜按隐私面处理 | open |
-| Q-007 | P2 | W9/W6 `cleanup.py:134-153,180-195`、`tile_cache_sweep.py:31-38`、`managed_storage.py:116-131`、`trash.py:216-249,314-318` | 清理面三处不对称/开环：①`_is_safe` 只护缓存面，trash/purge 仅"解析后落在根内"，故任何被篡改的 `managed_path` 可删同根其他页的受保护原件；②缓存清扫不复核解析后的 reparse point（可指向根内 pinned/current revision 文件）；③重试守卫按 **manifest 成员** 而非**行存活**判定⇒既可能"永远跳过本该重试的批次"，也可能对 `rebuilt:*` 批次 fail-open；④`retry_pending_cleanups` 不重过 `_is_safe`；⑤`_record_pending([])` 会整键弹出⇒瞬时空清单丢弃重试列表 | [子代理] 读码；Reviewer 未独立复跑（见「未覆盖风险」） | 单一"永不清理"谓词（解析后前缀 + 行存活 + 每面复用）；补一条守卫移除即失败的判别日志（当前只有散文，见 Q-009） | open（交 Codex 分派；建议与 Q-001/Q-003 并一次"写路径与破坏面收口"切片） |
+| Q-007 | P2 | W9/W6 `cleanup.py:134-153,180-195`、`tile_cache_sweep.py:31-38`、`managed_storage.py:116-131`、`trash.py:216-249,314-318` | 清理面三处不对称/开环：①`_is_safe` 只护缓存面，trash/purge 仅"解析后落在根内"，故任何被篡改的 `managed_path` 可删同根其他页的受保护原件；②缓存清扫不复核解析后的 reparse point（可指向根内 pinned/current revision 文件）；③重试守卫按 **manifest 成员** 而非**行存活**判定⇒既可能"永远跳过本该重试的批次"，也可能对 `rebuilt:*` 批次 fail-open；④`retry_pending_cleanups` 不重过 `_is_safe`；⑤`_record_pending([])` 会整键弹出⇒瞬时空清单丢弃重试列表 | [子代理] 读码；Reviewer 未独立复跑（见「未覆盖风险」） | 单一"永不清理"谓词（解析后前缀 + 行存活 + 每面复用）；补一条守卫移除即失败的判别日志（当前只有散文，见 Q-009） | open（交 Codex 分派；建议与 Q-001 一次"写路径与破坏面收口"切片） |
 | Q-008 | P1（阻断集成，非台账缺陷） | W10 `src/infrastructure/sqlite/backup.py:107-184`、`tests/storage/test_backup_restore.py:116` | 未集成分支：`restore_backup` 以 SQLite backup API **整库覆盖**活库，却无活动 run / 并发写者 / 打开 trash 的任何前置检查（同一作者对更弱的 `purge_targetless_runs` 写了 `_ACTIVE_STATUSES=("running","paused")` 守卫，`pipeline.py:856-878`）⇒在 TASK-048 的活线程模型上会摧毁任务可恢复性与备份点之后的人工修改；AC③ 唯一断言为恒真 `… or True`；AC⑤ 计数自相矛盾（表列 run1/2/3/6/7 而 run4/5 也是 912/0，却记"有效绿 4 次"）；AC⑥ 无 Review | [复现] `git show 50c4b1a` 两处文本；[子代理] 其余 | **维持冻结**；集成前需：活动写者门（或显式先 drain/关闭）、删除恒真断言并补真实边界断言、归档一份修前判别日志 | open |
 | Q-009 | P2（系统性·证据纪律） | `verification/TASK-048/049/050/051/052/054/058/full-suite-*.log`；`window-report.md:58`；`H/TASK-053-delivery.md:34`、`H/TASK-055-7f13e53.md:33`、`H/TASK-056-delivery.md` | ①多数全仓日志只有 2 行尾巴且**无 EXIT**，却声称"exit 0 ×5"⇒不可复核；②"全程 PowerShell"与日志自证 `shell: git-bash` 冲突；③W6/W9 的"守卫移除必失败"只有散文、W8 **完全没有**修前判别件（仅 N passed）；③W3 "定向 273" 无 artefact（只有复核 `review-rerun-core.log` 的 30 passed）；④以"会话记录"充当证据，与 AGENTS.md 首条相悖 | [复现] 目录与文本逐份核对（另见 Reviewer `full-suite-run{1,2}.log` 为合规样本：含 COLLECTED/EXIT） | 重采 W1–W5、W11 的逐次日志（带 EXIT 与 shell/venv 头）；W6/W9 补真实判别件；把"artefact 缺失即记 NOT_RUN，不得以散文或 `N passed` 代判别"写进窗口章程 | open |
 | Q-010 | P3 | `doc/STATUS.md:243` flaky 台账 | 把 Q-001 的确定性机理记为"并发用例时序浮动、单跑 ×6 全过"⇒方向反了：单跑过是因为调度窗口不出现 | [复现] D3 确定性复现 | 该条改指向 Q-001，勿再以 flaky 结案 | open |
@@ -202,7 +203,7 @@ W6/W9 的清理面代码路径细节（`trash.py:216-249`、`cleanup.py:134-153`
 - 维持：W0、W2、W3、W4、W5、W6、W7、W8、W9、W11 的 `done`（各带上述 P2/P3 待处置项）。
 - 推翻：W1/TASK-048——推翻的是"AC① 并发判据已满足"与 `approved_subagent` 的批准效力，
   **不是 P0 修复本身**；按边界"不回滚任何 merge、不删除已入档历史"，处置应为重开一个连接归属/事务归属切片
-  （Q-001＋Q-002，顺带吸收 Q-003 与 Q-007 的"单一边界谓词"部分），并把 `doc/STATUS.md:243` 的 flaky 定性撤回（Q-010）。
+（Q-001＋Q-002，顺带吸收 Q-007 的"单一边界谓词"部分；Q-003 已由 TASK-060 `1195baf` 关闭），并把 `doc/STATUS.md:243` 的 flaky 定性撤回（Q-010）。
 - 维持冻结：W10/TASK-057 不得按现状集成（Q-008 三项前置）。
 - 流程：Q-009 的证据纪律应写进窗口章程（下一窗口开工前），否则"×5 逐次"仍是不可复核的自述。
 
@@ -223,7 +224,7 @@ W6/W9 的清理面代码路径细节（`trash.py:216-249`、`cleanup.py:134-153`
 
 ## 推荐下一步（可直接转发）
 
-**Codex：据本报告重开"SQLite 连接与事务归属收口"切片**（这是唯一能同时了结 Q-001/Q-002/Q-003/Q-007 不对称防御的入口）。
+**Codex：据本报告重开"SQLite 连接与事务归属收口"切片**（这是唯一能同时了结 Q-001/Q-002/Q-007 不对称防御的入口；Q-003 已闭合）。
 
 - 固定对象：被审窗口 `51a71f3..b7b1b7c`；W1 integration `be558ca`；主证据 `verification/POSTHOC-WINDOW-2026-09-19/Qoder/w1-thread-collision-run{1..10}.log`（绝对位置见上节）
 - 建议范围：`src/infrastructure/sqlite/**`（每线程连接或单写者串行化）、`src/application/tasks/**`、
