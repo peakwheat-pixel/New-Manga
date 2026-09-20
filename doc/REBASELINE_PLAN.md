@@ -1,8 +1,11 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE**  
-Adopted from: Stage 3 Final Project Rebaseline Plan + Final Review corrections  
-Repository baseline inspected: `master` @ `d05b3dbbbf4806df07d2b310683923d5df01f2a5`  
+Status: **ACTIVE DEVELOPMENT BASELINE**
+
+Adopted from: Stage 3 Final Project Rebaseline Plan + Final Review corrections
+
+Repository baseline inspected: `master` @ `d05b3dbbbf4806df07d2b310683923d5df01f2a5`
+
 Effective date: 2026-09-20
 
 This file is the sole planning source of truth for future development sequencing. Product requirements and architecture constraints remain authoritative in D01–D08 and `doc/contracts/**`; historical Task, Handoff, Review, and verification files remain evidence, not current scheduling authority.

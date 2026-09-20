@@ -1,7 +1,9 @@
 # Worktree Safety Inventory
 
-Snapshot time: 2026-09-20 (Asia/Shanghai)  
-Repository: `G:/CODEX/New Manga`  
+Snapshot time: 2026-09-20 (Asia/Shanghai)
+
+Repository: `G:/CODEX/New Manga`
+
 Master baseline: `d05b3dbbbf4806df07d2b310683923d5df01f2a5`
 
 No worktree was removed or pruned. Classification is conservative:
@@ -148,4 +150,3 @@ Summary: 94 linked worktrees — 3 `MUST_PRESERVE`, 9 `NEEDS_REVIEW`, 76 `SAFE_T
 ## Disposition rule
 
 No removal is authorized by this inventory alone. Before any later removal, refresh status, confirm ownership, and re-check reachability against the then-current master. Never substitute `git worktree prune` for that review.
-
