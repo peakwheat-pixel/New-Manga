@@ -1,4 +1,5 @@
 shell=pwsh
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
 python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
 base=ea56119
 command=pytest tests/diagnostics/test_report.py -q -p no:cacheprovider -rs -k data_derived_keys or recent_error_code or redaction_docstring or does_not_drop_multiple_masked_keys or generated_at_credential or documented_boundary_behavior

@@ -1,3 +1,9 @@
+shell=pwsh
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+command=pytest tests/diagnostics -q -p no:cacheprovider -rs
+collected=31
+
 ...............................                                          [100%]
 31 passed in 1.35s
 EXIT=0

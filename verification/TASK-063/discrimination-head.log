@@ -1,4 +1,5 @@
 shell=pwsh
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
 python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
 base=ea56119
 head=3fbbfe4

@@ -1,3 +1,9 @@
+shell=pwsh
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+command=pytest tests -q -p no:cacheprovider -rs
+collected=948
+
 ........................................................................ [  7%]
 ........................................................................ [ 15%]
 ........................................................................ [ 22%]

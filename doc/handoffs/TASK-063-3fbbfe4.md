@@ -15,7 +15,7 @@ status: in_review
 
 - `30db4a2`：首轮实现与判别测试。
 - `3fbbfe4`：独立 Review P2 修复：脱敏键碰撞不丢字段、`generated_at` 值形状过屏、AC③运行时边界、PNG 非法 filter byte 守卫。
-- 变更路径仅为 `src/application/maintenance/diagnostics.py`、`tests/diagnostics/test_report.py`、`tests/reading_export/test_webtoon_tiles.py`、Task 文档。
+- 变更路径：`src/application/maintenance/diagnostics.py`、`tests/diagnostics/test_report.py`、`tests/reading_export/test_webtoon_tiles.py`、`doc/tasks/TASK-063.md`、`doc/tasks/README.md`、`doc/STATUS.md`、`doc/handoffs/TASK-063-3fbbfe4.md`、`verification/TASK-063/**`。
 - 未触碰 Schema、依赖、QML、SQLite、Managed Copy、cleanup、`tests/workbench`、TASK-055 生产接线；未 push。
 
 ## 验证证据

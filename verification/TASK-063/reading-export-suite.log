@@ -1,3 +1,9 @@
+shell=pwsh
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+command=pytest tests/reading_export -q -p no:cacheprovider -rs
+collected=118
+
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
 file:///G:/CODEX/New Manga/src/ui/qml/reader/ReaderView.qml:193: TypeError: Cannot read property 'sourcePath' of null
