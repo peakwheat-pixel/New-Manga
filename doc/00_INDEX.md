@@ -44,7 +44,7 @@ TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表�
 | [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | G06～G13、R-011 的冻结语义；后续 Schema/Pipeline/UI/测试共同输入 |
 | [TASK-028 统一 SQLite 设计](contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md) | TASK-006/007/008 的 SQLite 收敛设计；实现由 TASK-029 承接 |
 | [TASK-029 统一 SQLite 实现](tasks/TASK-029.md) | 按 TASK-028 实现 v2 migration、Library/Page/Region adapter 与原子 Revision seam；已集成 |
-| [任务目录](tasks/README.md) | 62 个 Task 索引；单个文件是任务状态真值 |
+| [任务目录](tasks/README.md) | 65 个历史 Task 的证据索引；当前排期以 REBASELINE_PLAN / STATUS 为准 |
 | [Task 模板](templates/TASK.md) | 新任务创建 |
 | [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
 | [Review 模板](templates/REVIEW.md) | 按固定 commit 独立审查和复审；**必须覆盖 Architecture / Verification 两面**；`code-review` 技能的 **Standards / Spec 为可选视角**（2026-09-18 用户决定取消其与 Spec 的"双轴"强制口径与并行/隔离要求）；建议标注各视角 `executed`/`N/A` |
