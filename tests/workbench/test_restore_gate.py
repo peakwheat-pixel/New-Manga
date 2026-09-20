@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import time
 import types
+from unittest.mock import Mock
 
 import workbench_helpers  # noqa: F401  (sys.path injection: src + tests)
 
@@ -166,15 +167,18 @@ def test_latched_restart_run_rejected(qapp):
     interrupted, fresh = _pending_pair(vm)
     vm._run = interrupted
     interrupted.status = PipelineRunStatus.INTERRUPTED
-    vm._pipeline.control_run = (
-        lambda _rid, _action, _new=fresh.run_id:
-        types.SimpleNamespace(new_run_id=_new))
+    vm._pipeline.control_run = Mock(
+        return_value=types.SimpleNamespace(new_run_id=fresh.run_id)
+    )
+    vm._pipeline.plan_run = Mock(wraps=vm._pipeline.plan_run)
     assert vm.beginRestore() is True
     try:
         vm.restartRun()
         _assert_refused(vm)
         assert vm._run is interrupted
         assert vm._run.status is PipelineRunStatus.INTERRUPTED
+        vm._pipeline.control_run.assert_not_called()
+        vm._pipeline.plan_run.assert_not_called()
     finally:
         vm.endRestore()
 
@@ -188,13 +192,32 @@ def test_latched_retry_failed_pages_rejected(qapp):
         t for t in retried.tasks if t.target_type is TargetType.PAGE
     )
     page_task.status = PipelineTaskStatus.FAILED
-    vm._pipeline.retry_failed_targets = lambda _rid: fresh
+    vm._pipeline.retry_failed_targets = Mock(return_value=fresh)
+    vm._pipeline.plan_run = Mock(wraps=vm._pipeline.plan_run)
     assert vm.beginRestore() is True
     try:
         vm.retryFailedPages()
         _assert_refused(vm)
         assert vm._run is retried
         assert page_task.status is PipelineTaskStatus.FAILED
+        vm._pipeline.retry_failed_targets.assert_not_called()
+        vm._pipeline.plan_run.assert_not_called()
+    finally:
+        vm.endRestore()
+
+
+def test_latched_abandon_run_remains_available(qapp):
+    """Abandon does not start work, so restore admission must not block it."""
+    vm = _vm()
+    interrupted, _fresh = _pending_pair(vm)
+    vm._run = interrupted
+    interrupted.status = PipelineRunStatus.INTERRUPTED
+    assert vm.beginRestore() is True
+    try:
+        vm.abandonRun()
+        assert vm._run.status is PipelineRunStatus.CANCELLED
+        assert vm._controller.admission_closed is True
+        assert vm.commandErrorText == ""
     finally:
         vm.endRestore()
 

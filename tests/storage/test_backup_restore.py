@@ -11,8 +11,10 @@ semantics are asserted against observable state changes.
 from __future__ import annotations
 
 import hashlib
+import sqlite3
 import sys
 from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
@@ -20,6 +22,7 @@ SRC_ROOT = Path(__file__).resolve().parents[2] / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+import infrastructure.sqlite.backup as backup_module  # noqa: E402
 from infrastructure.sqlite.backup import (  # noqa: E402
     BackupVerificationError,
     SqliteBackupService,
@@ -93,6 +96,76 @@ def backup_workspace(tmp_path: Path):
 
 
 class TestBackupCompleteness:
+    def test_create_backup_runs_readback_before_recording_completed(
+        self, backup_workspace, monkeypatch
+    ) -> None:
+        workspace = backup_workspace
+        original = backup_module.verify_backup_file
+        verifier = Mock(side_effect=original)
+        monkeypatch.setattr(backup_module, "verify_backup_file", verifier)
+
+        backup_id = workspace["service"].create_backup("manual", "test")
+
+        verifier.assert_called_once_with(
+            workspace["backup_root"] / f"{backup_id}.db"
+        )
+
+    def test_readback_failure_is_typed_and_leaves_no_artifacts(
+        self, backup_workspace, monkeypatch
+    ) -> None:
+        workspace = backup_workspace
+        monkeypatch.setattr(
+            backup_module,
+            "verify_backup_file",
+            Mock(side_effect=BackupVerificationError("INTEGRITY_FAILED", "forced")),
+        )
+
+        with pytest.raises(BackupVerificationError) as excinfo:
+            workspace["service"].create_backup("manual", "test")
+
+        assert excinfo.value.code == "BACKUP_CREATE_FAILED"
+        assert list(workspace["backup_root"].iterdir()) == []
+        assert workspace["conn"].execute(
+            "SELECT COUNT(*) FROM backup_records"
+        ).fetchone()[0] == 0
+
+    def test_sidecar_failure_is_typed_and_leaves_no_artifacts(
+        self, backup_workspace, monkeypatch
+    ) -> None:
+        workspace = backup_workspace
+        monkeypatch.setattr(
+            backup_module,
+            "write_sidecar",
+            Mock(side_effect=OSError("forced sidecar failure")),
+        )
+
+        with pytest.raises(BackupVerificationError) as excinfo:
+            workspace["service"].create_backup("manual", "test")
+
+        assert excinfo.value.code == "BACKUP_CREATE_FAILED"
+        assert list(workspace["backup_root"].iterdir()) == []
+        assert workspace["conn"].execute(
+            "SELECT COUNT(*) FROM backup_records"
+        ).fetchone()[0] == 0
+
+    def test_ledger_failure_is_typed_and_leaves_no_artifacts(
+        self, backup_workspace
+    ) -> None:
+        workspace = backup_workspace
+        workspace["conn"].execute(
+            "CREATE TRIGGER reject_backup_record BEFORE INSERT ON backup_records "
+            "BEGIN SELECT RAISE(ABORT, 'forced ledger failure'); END"
+        )
+
+        with pytest.raises(BackupVerificationError) as excinfo:
+            workspace["service"].create_backup("manual", "test")
+
+        assert excinfo.value.code == "BACKUP_CREATE_FAILED"
+        assert list(workspace["backup_root"].iterdir()) == []
+        assert workspace["conn"].execute(
+            "SELECT COUNT(*) FROM backup_records"
+        ).fetchone()[0] == 0
+
     def test_backup_writes_record_sidecar_and_passes_readback(
         self, backup_workspace
     ) -> None:
@@ -141,30 +214,122 @@ class TestRestoreSemantics:
         workspace = backup_workspace
         conn, service = workspace["conn"], workspace["service"]
         workspace["seed_page"]("p1")
+        translated_path = "books/b/chapters/c/translated/p1.png"
+        translated_file = workspace["managed_root"] / translated_path
+        translated_file.parent.mkdir(parents=True, exist_ok=True)
+        translated_file.write_bytes(b"translated-v1")
+        with conn:
+            conn.execute(
+                "UPDATE media_artifacts SET current_revision_id = 'rev-p1'"
+                " WHERE artifact_id = 'art-p1'"
+            )
+            conn.execute(
+                "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id,"
+                " page_id, artifact_type, created_at, updated_at)"
+                " VALUES ('art-translated-p1', 'book-1', 'chapter-1', 'p1',"
+                " 'translated', ?, ?)",
+                (NOW, NOW),
+            )
+            conn.execute(
+                "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
+                " revision_no, managed_path, file_hash, mime_type, size_bytes,"
+                " is_pinned, created_at)"
+                " VALUES ('rev-translated-p1', 'art-translated-p1', 1, ?, ?,"
+                " 'image/png', ?, 1, ?)",
+                (
+                    translated_path,
+                    hashlib.sha256(b"translated-v1").hexdigest(),
+                    len(b"translated-v1"),
+                    NOW,
+                ),
+            )
+            conn.execute(
+                "UPDATE media_artifacts"
+                " SET current_revision_id = 'rev-translated-p1'"
+                " WHERE artifact_id = 'art-translated-p1'"
+            )
         backup_id = service.create_backup("manual", "before growth")
 
-        # drift after the backup: a second page/revision, and the pinned
-        # pointer of p1 moves to it
-        workspace["seed_page"]("p2")
-        assert workspace["conn"].execute(
-            "SELECT COUNT(*) FROM artifact_revisions").fetchone()[0] == 2
+        # Drift both current pointers and both pinned revisions after backup.
+        original_v2 = "books/b/chapters/c/original/p1-v2.png"
+        translated_v2 = "books/b/chapters/c/translated/p1-v2.png"
+        for relative, payload in (
+            (original_v2, b"original-v2"),
+            (translated_v2, b"translated-v2"),
+        ):
+            candidate = workspace["managed_root"] / relative
+            candidate.parent.mkdir(parents=True, exist_ok=True)
+            candidate.write_bytes(payload)
+        with conn:
+            conn.execute("UPDATE artifact_revisions SET is_pinned = 0")
+            for revision_id, artifact_id, relative, payload in (
+                ("rev-p1-v2", "art-p1", original_v2, b"original-v2"),
+                (
+                    "rev-translated-p1-v2",
+                    "art-translated-p1",
+                    translated_v2,
+                    b"translated-v2",
+                ),
+            ):
+                conn.execute(
+                    "INSERT INTO artifact_revisions (artifact_revision_id,"
+                    " artifact_id, revision_no, managed_path, file_hash, mime_type,"
+                    " size_bytes, is_pinned, created_at)"
+                    " VALUES (?, ?, 2, ?, ?, 'image/png', ?, 1, ?)",
+                    (
+                        revision_id,
+                        artifact_id,
+                        relative,
+                        hashlib.sha256(payload).hexdigest(),
+                        len(payload),
+                        NOW,
+                    ),
+                )
+                conn.execute(
+                    "UPDATE media_artifacts SET current_revision_id = ?"
+                    " WHERE artifact_id = ?",
+                    (revision_id, artifact_id),
+                )
 
         report = service.restore_backup(backup_id)
 
         assert report["restored_from"] == backup_id
         assert report["schema_version"] == report["expected_schema_version"]
-        # drift is rolled back by the overwrite
-        assert workspace["conn"].execute(
-            "SELECT COUNT(*) FROM artifact_revisions").fetchone()[0] == 1
-        # the restored pointer row still matches an existing managed file
+        pointers = {
+            row["artifact_type"]: row["current_revision_id"]
+            for row in conn.execute(
+                "SELECT artifact_type, current_revision_id FROM media_artifacts"
+            )
+        }
+        assert pointers == {
+            "original": "rev-p1",
+            "translated": "rev-translated-p1",
+        }
+        pinned = {
+            row[0]
+            for row in conn.execute(
+                "SELECT artifact_revision_id FROM artifact_revisions"
+                " WHERE is_pinned = 1"
+            )
+        }
+        assert pinned == {"rev-p1", "rev-translated-p1"}
+        assert conn.execute(
+            "SELECT COUNT(*) FROM artifact_revisions"
+        ).fetchone()[0] == 2
         consistency = report["managed_consistency"]
-        assert consistency["checked"] == 1
+        assert consistency["checked"] == 2
         assert consistency["missing"] == []
         assert not consistency["skipped"]
-        restored_path = workspace["conn"].execute(
-            "SELECT managed_path FROM artifact_revisions").fetchone()[0]
-        assert (workspace["managed_root"] / restored_path).is_file()
-        assert (workspace["managed_root"] / restored_path).read_bytes() == b"p1"
+        restored = {
+            row[0]: (workspace["managed_root"] / row[1]).read_bytes()
+            for row in conn.execute(
+                "SELECT artifact_revision_id, managed_path FROM artifact_revisions"
+            )
+        }
+        assert restored == {
+            "rev-p1": b"p1",
+            "rev-translated-p1": b"translated-v1",
+        }
 
     def test_restore_creates_reusable_pre_restore_backup(
         self, backup_workspace
@@ -237,3 +402,86 @@ class TestTypedFailures:
         with pytest.raises(BackupVerificationError) as excinfo:
             service.restore_backup(backup_id)
         assert excinfo.value.code in ("HASH_MISMATCH", "INTEGRITY_FAILED")
+
+    def test_restore_rejects_backup_id_path_escape(self, backup_workspace) -> None:
+        workspace = backup_workspace
+        service = workspace["service"]
+        workspace["seed_page"]("p1")
+        backup_id = service.create_backup("manual", "move outside root")
+        target = workspace["backup_root"] / f"{backup_id}.db"
+        sidecar = target.with_name(target.name + ".manifest.json")
+        outside = workspace["backup_root"].parent / "escaped.db"
+        outside_sidecar = outside.with_name(outside.name + ".manifest.json")
+        target.replace(outside)
+        sidecar.replace(outside_sidecar)
+
+        for invalid_id in ("../escaped", str(outside.with_suffix(""))):
+            with pytest.raises(BackupVerificationError) as excinfo:
+                service.restore_backup(invalid_id)
+            assert excinfo.value.code == "BACKUP_UNKNOWN"
+        assert workspace["conn"].execute(
+            "SELECT COUNT(*) FROM artifact_revisions"
+        ).fetchone()[0] == 1
+
+    def test_restore_rejects_schema_metadata_mismatch(
+        self, backup_workspace
+    ) -> None:
+        workspace = backup_workspace
+        service = workspace["service"]
+        backup_id = service.create_backup("manual", "mismatched metadata")
+        target = workspace["backup_root"] / f"{backup_id}.db"
+        backup_module.write_sidecar(
+            target,
+            schema_version=999,
+            database_hash=backup_module.sha256_file(target),
+            app_version=None,
+            created_at=NOW,
+        )
+
+        with pytest.raises(BackupVerificationError) as excinfo:
+            service.restore_backup(backup_id)
+
+        assert excinfo.value.code == "SCHEMA_MISMATCH"
+
+    def test_restore_rejects_schema_newer_than_application(
+        self, backup_workspace
+    ) -> None:
+        workspace = backup_workspace
+        conn, service = workspace["conn"], workspace["service"]
+        workspace["seed_page"]("p1")
+        backup_id = service.create_backup("manual", "future schema")
+        target = workspace["backup_root"] / f"{backup_id}.db"
+        future = sqlite3.connect(target)
+        try:
+            future.execute(
+                "INSERT INTO schema_migrations"
+                " (schema_version, migration_name, applied_at, checksum)"
+                " VALUES (999, 'future', ?, 'future')",
+                (NOW,),
+            )
+            future.commit()
+        finally:
+            future.close()
+        database_hash = backup_module.sha256_file(target)
+        backup_module.write_sidecar(
+            target,
+            schema_version=999,
+            database_hash=database_hash,
+            app_version=None,
+            created_at=NOW,
+        )
+        with conn:
+            conn.execute(
+                "UPDATE backup_records SET schema_version = 999, database_hash = ?"
+                " WHERE backup_id = ?",
+                (database_hash, backup_id),
+            )
+
+        with pytest.raises(BackupVerificationError) as excinfo:
+            service.restore_backup(backup_id)
+
+        assert excinfo.value.code == "SCHEMA_TOO_NEW"
+        assert backup_module.read_schema_version(conn) == 3
+        assert conn.execute(
+            "SELECT COUNT(*) FROM artifact_revisions"
+        ).fetchone()[0] == 1
