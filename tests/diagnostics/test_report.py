@@ -174,3 +174,80 @@ class TestServiceExport:
         report = _report()
         with pytest.raises(dataclasses.FrozenInstanceError):
             report.app_version = "changed"
+
+
+class TestRedactionReachesEverySection:
+    """TASK-062 AC ①/②: the documented invariant must actually hold.
+
+    Before this slice only ``settings_summary`` and ``environment_paths`` were
+    screened; the application, database and recent-errors sections passed
+    through raw, and the recent-error *key* (composed from caller-supplied
+    ``occurred_at``/``source``) could never match the sensitive-name screen.
+    """
+
+    def test_credentials_are_masked_in_the_application_and_database_sections(self):
+        payload = json.loads(
+            _report(
+                platform_python="Bearer eyJhbGciOi.payload.sig",
+                database_path="D:/MangaData/sk-secretvalue1234.db",
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        assert payload["application"]["platform_python"] == "[redacted]"
+        assert payload["database"]["database_path"] == "[redacted]"
+
+    def test_credentials_are_masked_in_recent_errors_values_and_keys(self):
+        payload = json.loads(
+            _report(
+                recent_errors=(
+                    RecentError(
+                        "t1", "import", "PROVIDER_AUTH_FAILED", "rejected sk-abcdef123456"
+                    ),
+                    RecentError("t2", "Bearer abc.def.ghi", "E", "plain message"),
+                )
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        # The screen replaces the *whole* value rather than rewriting it in
+        # place: one entry's diagnosability is sacrificed so no credential
+        # fragment can survive. Pin both directions.
+        serialized = json.dumps(payload, ensure_ascii=False)
+        assert "sk-abcdef123456" not in serialized, "the token survived into the report"
+        assert "Bearer abc.def.ghi" not in serialized, "the bearer survived into the report"
+        assert "[redacted]" in payload["recent_errors"].values()
+        assert any(key == "[redacted]" for key in payload["recent_errors"])
+
+    def test_benign_values_survive_every_section(self):
+        payload = json.loads(_report().to_json_bytes().decode("utf-8"))
+        assert payload["application"] == {
+            "app_version": "0.1.0",
+            "platform_python": "CPython 3.12.3",
+        }
+        assert payload["database"]["database_path"].endswith("library.db")
+        assert payload["environment_paths"]["data_root"] == str(PURE_DATA_ROOT)
+
+    def test_embedded_credential_shapes_are_caught_anywhere_in_a_value(self):
+        assert redact_value("note", "see sk-abcdefgh1234 for details") == "[redacted]"
+        assert redact_value("note", "sent Bearer abc.def.ghi to the endpoint") == "[redacted]"
+
+    def test_ordinary_paths_versions_and_words_pass_through(self):
+        for value in (
+            "D:/MangaData",
+            "D:\\MangaData\\managed",
+            "1.0.0+build.7",
+            "CPython 3.12.3",
+            "D:/workspace/task-live-run/comic-sketch.png",
+        ):
+            assert redact_value("data_root", value) == value
+
+    def test_the_documented_boundary_is_the_actual_boundary(self):
+        """Pin both directions of the documented boundary (AC ①/③).
+
+        An ``sk-`` run of >= 8 token characters is masked even inside a path
+        (coarse on purpose = safe direction), while a secret spelled inside
+        free text is *not* scrubbed - that stays the collector's duty.
+        """
+        assert redact_value("data_root", "D:/workspace/sk-tools-market") == "[redacted]"
+        assert redact_value("note", "password=hunter2") == "password=hunter2"

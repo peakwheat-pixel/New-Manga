@@ -1,0 +1,10 @@
+TASK-062 targeted evidence @ 4c81dca (worktree state, uncommitted)
+shell=pwsh 7.6.6  platform=Windows
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe (Python 3.12.3)
+env: PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider, QT_QPA_PLATFORM unset
+
+command: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/reading_export/test_webtoon_tiles.py -q -rs -k qt_encoded -p no:cacheprovider
+
+.                                                                        [100%]
+1 passed, 22 deselected in 2.65s
+EXIT=0

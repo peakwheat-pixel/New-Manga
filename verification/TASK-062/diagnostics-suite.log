@@ -1,0 +1,10 @@
+TASK-062 targeted evidence @ 4c81dca (worktree state, uncommitted)
+shell=pwsh 7.6.6  platform=Windows
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe (Python 3.12.3)
+env: PYTHONDONTWRITEBYTECODE=1, -p no:cacheprovider, QT_QPA_PLATFORM unset
+
+command: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/diagnostics -q -rs -p no:cacheprovider
+
+.........................                                                [100%]
+25 passed in 0.22s
+EXIT=0

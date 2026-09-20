@@ -888,3 +888,84 @@ def test_damaged_payload_degrades_through_the_viewmodel(tmp_path, qapp) -> None:
 
     assert [row["index"] for row in vm.tiles] == [0, 1, 2, 3]
     assert all(row["url"] == "" for row in vm.tiles), "no tile can be served"
+
+
+# ---------------------------------------------------------------------------
+# TASK-062 AC ④ / TASK-046 R-001: the overlap equivalence on a page whose rows
+# carry *adaptive* filters. The hand-written fixtures above only ever emit
+# filter 0, so the filter-dependent decode path was never exercised.
+# ---------------------------------------------------------------------------
+
+
+def write_qt_encoded_png(path: Path, width: int, height: int) -> None:
+    """Encode a page with Qt/libpng (adaptive row filters)."""
+    from PySide6.QtGui import QImage
+
+    payload = bytearray()
+    for y in range(height):
+        payload += bytes(((y * 3) % 256, (y * 29) % 256, (y * 7) % 256)) * width
+    raw = bytes(payload)
+    image = QImage(raw, width, height, width * 3, QImage.Format.Format_RGB888)
+    assert image.save(str(path), "PNG"), "Qt could not encode the fixture"
+
+
+def png_row_filter_types(path: Path) -> set[int]:
+    """The filter-type byte of every reconstructed scanline in the IDAT."""
+    data = path.read_bytes()
+    pos = 8
+    width = height = bit_depth = colour_type = 0
+    idat = bytearray()
+    while pos + 8 <= len(data):
+        length = struct.unpack_from(">I", data, pos)[0]
+        tag = data[pos + 4 : pos + 8]
+        chunk = data[pos + 8 : pos + 8 + length]
+        if tag == b"IHDR":
+            width, height, bit_depth, colour_type = struct.unpack_from(">IIBB", chunk, 0)
+        elif tag == b"IDAT":
+            idat += chunk
+        elif tag == b"IEND":
+            break
+        pos += 12 + length
+    channels = {0: 1, 2: 3, 4: 2, 6: 4}[colour_type]
+    stride = width * (bit_depth // 8) * channels + 1
+    raw = zlib.decompress(bytes(idat))
+    return {raw[y * stride] for y in range(height)}
+
+
+def test_overlap_choice_on_a_qt_encoded_page(tmp_path, qapp) -> None:
+    """TASK-046 R-001 (TASK-062 AC ④): the overlap property on a page encoded
+    by Qt/libpng - one whose rows carry adaptive filters.
+
+    The original proof used hand-written filter-0 fixtures, so it said nothing
+    about the filter-dependent decode path. The fixture is asserted to be
+    non-trivial first, otherwise this test would silently re-open the gap it is
+    meant to close.
+    """
+    width, height = 600, 2100
+    source = tmp_path / "qt-encoded.png"
+    write_qt_encoded_png(source, width, height)
+    assert png_row_filter_types(source) != {0}, (
+        "fixture is all filter-0: R-001 would stay open"
+    )
+
+    zero = TiledPageRasterizer(source, cache_dir=tmp_path / "tiles-0", tile_height=800)
+    sixty_four = TiledPageRasterizer(
+        source, cache_dir=tmp_path / "tiles-64", tile_height=800, overlap=64
+    )
+    assert zero.grid.overlap == 0
+    assert sixty_four.grid.overlap == 64
+
+    stitched: list[bytes] = []
+    for tile in zero.grid.tiles:
+        file_zero = zero.tile_file(tile.index).read_bytes()
+        file_overlapped = sixty_four.tile_file(tile.index).read_bytes()
+        assert file_zero == file_overlapped, (
+            f"tile {tile.index}: the overlap changed the stored bytes"
+        )
+        rows, tile_width, tile_height = qt_rows(zero.tile_file(tile.index))
+        assert (tile_width, tile_height) == (width, tile.content_height)
+        stitched.extend(rows)
+    page_rows, page_width, _page_height = qt_rows(source)
+    assert stitched == page_rows and page_width == width, (
+        "the tile union must still be the whole page, row for row"
+    )

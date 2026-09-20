@@ -1,0 +1,9 @@
+probe: Qt/libpng-encoded fixture filter types + overlap 0/64 byte identity (TASK-062 AC ④)
+qt-encoded page row filter types: [0, 1, 4]
+all filter-0? False
+tile 0: file_bytes_equal=True declared=800 file_height=800 width=600
+tile 1: file_bytes_equal=True declared=800 file_height=800 width=600
+tile 2: file_bytes_equal=True declared=500 file_height=500 width=600
+union == whole page: True page_width: 600
+ALL BYTE-IDENTICAL: True TILES: 3
+EXIT=0

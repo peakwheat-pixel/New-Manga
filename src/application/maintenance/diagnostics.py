@@ -36,18 +36,37 @@ _SENSITIVE_KEY = re.compile(
 )
 _REDACTED = "[redacted]"
 
-#: Value shapes that look like bearer credentials even under a benign
-#: key name. Deliberately narrow to avoid mangling ordinary paths.
-_BEARER = re.compile(r"^Bearer\s+", re.IGNORECASE)
-_OPENAI_STYLE = re.compile(r"^sk-")
+#: Value shapes that look like bearer credentials even under a benign key
+#: name (TASK-062 AC ①: the screen must also catch a credential **embedded**
+#: in a longer string, not only one that starts the value).
+#:
+#: Both patterns keep a left guard so ordinary path segments do not match:
+#: ``.../task-live-run`` never matches ``sk-`` because the ``s`` follows an
+#: alphanumeric. The screen stays deliberately coarse for a real ``sk-`` run
+#: (>= 8 token characters) — masking a bizarre path that literally contains
+#: ``.../sk-…`` is the safe direction, and the boundary is documented in
+#: :func:`redact_value`.
+_BEARER = re.compile(r"(?<![A-Za-z0-9])Bearer\s+[A-Za-z0-9._~+/=\-]{6,}", re.IGNORECASE)
+_OPENAI_STYLE = re.compile(r"(?<![A-Za-z0-9])sk-[A-Za-z0-9_\-]{8,}")
 
 
 def redact_value(key: str, value: str) -> str:
-    """Mask values whose *key name* is sensitive, or whose shape is one of
-    the narrow credential prefixes; everything else passes through."""
+    """Mask values whose *key name* is sensitive, or whose value contains a
+    credential shape (a ``Bearer …`` run or an ``sk-…`` key), **anywhere** in
+    the string; everything else passes through.
+
+    Boundary (documented, tested): the screen is name-based plus two narrow
+    value shapes. It does **not** try to scrub arbitrary free text — a secret
+    written as, say, ``password=hunter2`` inside a message is the collector's
+    responsibility to digest away. A path segment that literally starts with
+    ``sk-`` followed by eight or more token characters *is* masked; that is the
+    intended safe direction.
+    """
     if _SENSITIVE_KEY.search(key):
         return _REDACTED
-    if _BEARER.match(value) or _OPENAI_STYLE.match(value):
+    # ``search``, not ``match``: the credential may be embedded in a longer
+    # string (TASK-062 AC ①) - the patterns carry their own left guard.
+    if _BEARER.search(value) or _OPENAI_STYLE.search(value):
         return _REDACTED
     return value
 
@@ -72,7 +91,9 @@ class DiagnosticsReport:
     recent_errors    - caller-supplied bounded error summaries
     environment_paths- data root / managed root / log directory display paths
 
-    Every value passes the redaction screen before entering the report.
+    Every value **and every key** passes the redaction screen before entering
+    the report (TASK-062 AC ①); see :func:`redact_value` for what that screen
+    does and does not cover.
     """
 
     generated_at: str
@@ -110,14 +131,19 @@ def build_diagnostics_report(
     recent_errors: Iterable[RecentError],
     environment_paths: dict[str, str],
 ) -> DiagnosticsReport:
-    """Assemble the fixed-section report; every supplied value is screened
-    through :func:`redact_value` (defence in depth — the collector is
-    expected to pass digests, never raw credentials)."""
+    """Assemble the fixed-section report; **every** supplied value and key is
+    screened through :func:`redact_value` — including the application,
+    database and recent-errors sections, which previously passed through raw
+    (TASK-062 AC ①). Defence in depth only: the collector is still expected to
+    pass digests, never raw credentials."""
     settings_fields = tuple(
         (key, redact_value(key, value)) for key, value in sorted(settings_summary.items())
     )
     error_fields = tuple(
-        (f"{error.occurred_at} {error.source}", f"[{error.code}] {error.message}")
+        (
+            redact_value("recent_error", f"{error.occurred_at} {error.source}"),
+            redact_value("recent_error", f"[{error.code}] {error.message}"),
+        )
         for error in recent_errors
     )
     path_fields = tuple(
@@ -126,11 +152,23 @@ def build_diagnostics_report(
     sections = (
         (
             "application",
-            (("app_version", app_version), ("platform_python", platform_python)),
+            tuple(
+                (key, redact_value(key, value))
+                for key, value in (
+                    ("app_version", app_version),
+                    ("platform_python", platform_python),
+                )
+            ),
         ),
         (
             "database",
-            (("schema_version", str(schema_version)), ("database_path", database_path)),
+            tuple(
+                (key, redact_value(key, value))
+                for key, value in (
+                    ("schema_version", str(schema_version)),
+                    ("database_path", database_path),
+                )
+            ),
         ),
         ("settings_summary", settings_fields),
         ("recent_errors", error_fields),
