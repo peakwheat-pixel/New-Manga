@@ -1,0 +1,93 @@
+﻿...................FF.F.F                                                [100%]
+================================== FAILURES ===================================
+_ TestRedactionReachesEverySection.test_credentials_are_masked_in_the_application_and_database_sections _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001A93BFC2C00>
+
+    def test_credentials_are_masked_in_the_application_and_database_sections(self):
+        payload = json.loads(
+            _report(
+                platform_python="Bearer eyJhbGciOi.payload.sig",
+                database_path="D:/MangaData/sk-secretvalue1234.db",
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+>       assert payload["application"]["platform_python"] == "[redacted]"
+E       AssertionError: assert 'Bearer eyJhb...i.payload.sig' == '[redacted]'
+E         
+E         - [redacted]
+E         + Bearer eyJhbGciOi.payload.sig
+
+tests\diagnostics\test_report.py:197: AssertionError
+_ TestRedactionReachesEverySection.test_credentials_are_masked_in_recent_errors_values_and_keys _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001A93BFC2ED0>
+
+    def test_credentials_are_masked_in_recent_errors_values_and_keys(self):
+        payload = json.loads(
+            _report(
+                recent_errors=(
+                    RecentError(
+                        "t1", "import", "PROVIDER_AUTH_FAILED", "rejected sk-abcdef123456"
+                    ),
+                    RecentError("t2", "Bearer abc.def.ghi", "E", "plain message"),
+                )
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        # The screen replaces the *whole* value rather than rewriting it in
+        # place: one entry's diagnosability is sacrificed so no credential
+        # fragment can survive. Pin both directions.
+        serialized = json.dumps(payload, ensure_ascii=False)
+>       assert "sk-abcdef123456" not in serialized, "the token survived into the report"
+E       AssertionError: the token survived into the report
+E       assert 'sk-abcdef123456' not in '{"applicati...le.com/v1"}}'
+E         
+E         'sk-abcdef123456' is contained here:
+E            rejected sk-abcdef123456", "t2 Bearer abc.def.ghi": "[E] plain message"}, "settings_summary": {"translation.endpoint": "https://api.example.com/v1"}}
+E         ?           +++++++++++++++
+
+tests\diagnostics\test_report.py:217: AssertionError
+_ TestRedactionReachesEverySection.test_embedded_credential_shapes_are_caught_anywhere_in_a_value _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001A93BF479E0>
+
+    def test_embedded_credential_shapes_are_caught_anywhere_in_a_value(self):
+>       assert redact_value("note", "see sk-abcdefgh1234 for details") == "[redacted]"
+E       AssertionError: assert 'see sk-abcde...4 for details' == '[redacted]'
+E         
+E         - [redacted]
+E         + see sk-abcdefgh1234 for details
+
+tests\diagnostics\test_report.py:232: AssertionError
+_ TestRedactionReachesEverySection.test_the_documented_boundary_is_the_actual_boundary _
+
+self = <test_report.TestRedactionReachesEverySection object at 0x000001A93BFC3410>
+
+    def test_the_documented_boundary_is_the_actual_boundary(self):
+        """Pin both directions of the documented boundary (AC ①/③).
+    
+        An ``sk-`` run of >= 8 token characters is masked even inside a path
+        (coarse on purpose = safe direction), while a secret spelled inside
+        free text is *not* scrubbed - that stays the collector's duty.
+        """
+>       assert redact_value("data_root", "D:/workspace/sk-tools-market") == "[redacted]"
+E       AssertionError: assert 'D:/workspace/sk-tools-market' == '[redacted]'
+E         
+E         - [redacted]
+E         + D:/workspace/sk-tools-market
+
+tests\diagnostics\test_report.py:252: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_credentials_are_masked_in_the_application_and_database_sections
+FAILED tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_credentials_are_masked_in_recent_errors_values_and_keys
+FAILED tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_embedded_credential_shapes_are_caught_anywhere_in_a_value
+FAILED tests/diagnostics/test_report.py::TestRedactionReachesEverySection::test_the_documented_boundary_is_the_actual_boundary
+4 failed, 21 passed in 0.24s
+
+COLLECTED=25 tests collected in 0.04s
+EXIT=1
+LABEL=prefix-diagnostics
+HEAD=41d7aee50e8f3d1daf67c7a89daf37ca4e01849c

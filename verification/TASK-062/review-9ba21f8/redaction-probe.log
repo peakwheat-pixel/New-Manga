@@ -1,0 +1,35 @@
+== tree: G:\CODEX\New Manga.worktrees\TASK-062-codex
+
+-- S1 can a credential shape still reach the serialized report?
+   sensitive *key name* -> value masked: True
+   settings key containing an sk- run is emitted verbatim? True -> ['sk-abcdefgh123456']
+   environment_paths key with the same shape: True
+   non-str settings value raises TypeError: expected string or bytes-like object, got 'int'
+
+-- S2 diagnosability cost on a realistic provider-auth failure
+   error text as reported : '[redacted]'
+   composite key          : '2026-09-19T08:12:03+00:00 provider.translation.openai'
+   -> the whole message (status code, endpoint, which header, the hint) is gone, not just the token
+   span-only masking would keep the first and hide only the token:
+     "HTTP 401 from https://api.example.com/v1/chat: invalid api key in header 'Authorization: Bearer sk-[redacted]' - check Settings > Providers"
+
+-- S3 collateral of the widened search (left guard blocks alnum only)
+   kept      ordinary data root           'D:/MangaData'
+   kept      windows backslash path       'D:\\MangaData\\managed'
+   kept      hyphenated word              'D:/workspace/task-live-run/comic-sketch.png'
+   kept      version with build meta      '1.0.0+build.7'
+   kept      python banner                'CPython 3.12.3'
+   REDACTED  user dir literally sk-*      'C:/Users/sk-1a2b3c4d/Manga/library.db'
+   REDACTED  project folder sk-tools-market 'D:/workspace/sk-tools-market/x.png'
+   REDACTED  identifier with underscore   'provider_sk-abcdefgh1234 in trace'
+   REDACTED  dotted module-ish name       'pkg.sk-abcdefgh1234'
+   REDACTED  Bearer as a plain word + number 'Bearer 12345678 people in queue'
+   kept      short sk- (7 token chars)    'sk-abc1234'
+   kept      sk- followed by punctuation  'sk-!!!!!!!'
+   kept      lowercase bearer without space 'bearertoken123'
+   kept      truncated bearer             'Bearer ab'
+
+   left-guard check: does a preceding underscore/dot still allow a match?
+     'foo_sk-abcdefgh1234' -> '[redacted]'
+     '.sk-abcdefgh1234' -> '[redacted]'
+     'asdk-abcdefgh1234' -> 'asdk-abcdefgh1234'

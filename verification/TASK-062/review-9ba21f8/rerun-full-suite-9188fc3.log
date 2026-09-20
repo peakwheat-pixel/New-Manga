@@ -1,0 +1,29 @@
+=== label:  rerun-full-suite-9188fc3
+=== tree:   G:/CODEX/New Manga.worktrees/TASK-062-codex @ 9188fc3 [agent/codex/TASK-062-posthoc-residuals]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   G:/CODEX/New Manga.task-envs/TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, PYTHONIOENCODING=utf-8, QT_QPA_PLATFORM unset
+=== date:   2026-09-20T08:58:55+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests -q -p no:cacheprovider -rs
+---
+........................................................................ [  7%]
+........................................................................ [ 15%]
+........................................................................ [ 23%]
+........................................................................ [ 30%]
+........................................................................ [ 38%]
+........................................................................ [ 46%]
+........................................................................ [ 54%]
+........................................................................ [ 61%]
+........................................................................ [ 69%]
+........................................................................ [ 77%]
+........................................................................ [ 85%]
+........................................................................ [ 92%]
+..................................................................       [100%]
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+930 passed, 1 warning in 49.18s
+EXIT=0
