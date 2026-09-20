@@ -1,0 +1,47 @@
+=== label:  drain-probe-master
+=== tree:   G:/CODEX/New Manga.worktrees/TASK-058-qoder-review @ 3d79403 [agent/qoder/TASK-058-review]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   G:/CODEX/New Manga.task-envs/TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, PYTHONIOENCODING=utf-8, QT_QPA_PLATFORM unset
+=== date:   2026-09-20T12:41:25+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe verification/TASK-058/review-9c8cd52/t058_drain_timeout_probe.py G:/CODEX/New Manga.worktrees/TASK-058-qoder-review
+---
+shutdown: workbench drain timed out; connection left open (worker thread still writing)
+== tree: G:\CODEX\New Manga.worktrees\TASK-058-qoder-review
+
+-- S3 does _shutdown_services branch on the drain result?
+           drained = services.workbench.shutdown()
+           if drained:
+               services.conn.close()
+           else:
+               print(
+                   "shutdown: workbench drain timed out; connection left open "
+                   "(worker thread still writing)",
+                   file=sys.stderr,
+               )
+   statements: 9   branches: 2   <- a non-zero count means the caller DOES branch on the bool
+
+-- S1 drain timeout (a worker step outlives the 5 s budget)
+   worker alive before the exit drain? True
+   bool the caller received from shutdown(): [False]
+   _shutdown_services took                  : 5.00s (budget 5s)
+   worker thread still running at return?   : True
+   conn after _shutdown_services            : STILL OPEN -> close skipped
+   waiting for the worker to wake and write...
+   what the worker saw writing after close  : OK - the connection was still usable
+   probe process still alive (no interpreter crash)
+
+-- S2 is a worker actually alive when the shipped AC2 drains? (5 samples)
+   sample 0: status at the drain call = 'completed_with_failures'   worker alive = False
+   sample 1: status at the drain call = 'completed_with_failures'   worker alive = False
+   sample 2: status at the drain call = 'completed_with_failures'   worker alive = False
+   sample 3: status at the drain call = 'completed_with_failures'   worker alive = False
+   sample 4: status at the drain call = 'completed_with_failures'   worker alive = True
+
+-- S4 the shape AC2 should have: worker alive, but drainable in budget
+   worker alive at the drain call: True   drain took 0.72s
+   worker wrote before close?     True   conn closed afterwards? True
+   -> this is the case the shipped AC2 does NOT exercise (S2: alive=False)
+
+== done
+EXIT=0

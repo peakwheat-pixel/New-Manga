@@ -1,0 +1,57 @@
+=== label:  discrimination-base-726c1bb
+=== tree:   C:/Users/49745/AppData/Local/Temp/t058-prefix @ 726c1bb [HEAD]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   G:/CODEX/New Manga.task-envs/TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, PYTHONIOENCODING=utf-8, QT_QPA_PLATFORM unset
+=== date:   2026-09-20T12:41:37+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/core/test_shutdown_drain.py -q -p no:cacheprovider -rf
+---
+FFF                                                                      [100%]
+================================== FAILURES ===================================
+_________ test_shutdown_services_drains_workbench_before_closing_conn _________
+
+    def test_shutdown_services_drains_workbench_before_closing_conn():
+        """AC1: the drain runs before the shared connection closes.
+    
+        Discriminating: ``_shutdown_services`` does not exist on pre-fix
+        trees (import fails); the recorded call order pins AC1 itself.
+        """
+>       from bootstrap.app import _shutdown_services
+E       ImportError: cannot import name '_shutdown_services' from 'bootstrap.app' (C:\Users\49745\AppData\Local\Temp\t058-prefix\src\bootstrap\app.py)
+
+tests\core\test_shutdown_drain.py:53: ImportError
+______________ test_shutdown_services_drains_an_active_real_run _______________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x26ecd385f20) at 0x0000026ECE913B00>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2782/test_shutdown_services_drains_0')
+
+    def test_shutdown_services_drains_an_active_real_run(qapp, tmp_path):
+        """AC2: with a run executing on the worker thread, the production
+        exit drain returns with the thread drained and the connection closed.
+    
+        Discriminating: the function is new (import fails pre-fix); it also
+        exercises the real VM -> RunController -> worker path that the
+        ordering stub cannot reach.
+        """
+>       from bootstrap.app import _shutdown_services
+E       ImportError: cannot import name '_shutdown_services' from 'bootstrap.app' (C:\Users\49745\AppData\Local\Temp\t058-prefix\src\bootstrap\app.py)
+
+tests\core\test_shutdown_drain.py:121: ImportError
+__________________ test_workbench_vm_shutdown_is_idempotent ___________________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x26ecd385f20) at 0x0000026ECE913B00>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2782/test_workbench_vm_shutdown_is_0')
+
+    def test_workbench_vm_shutdown_is_idempotent(qapp, tmp_path):
+        """Pinning-only (existing VM semantics, not discriminating): a second
+        shutdown after the drain must be a safe no-op."""
+>       from bootstrap.app import _shutdown_services
+E       ImportError: cannot import name '_shutdown_services' from 'bootstrap.app' (C:\Users\49745\AppData\Local\Temp\t058-prefix\src\bootstrap\app.py)
+
+tests\core\test_shutdown_drain.py:159: ImportError
+=========================== short test summary info ===========================
+FAILED tests/core/test_shutdown_drain.py::test_shutdown_services_drains_workbench_before_closing_conn
+FAILED tests/core/test_shutdown_drain.py::test_shutdown_services_drains_an_active_real_run
+FAILED tests/core/test_shutdown_drain.py::test_workbench_vm_shutdown_is_idempotent
+3 failed in 0.45s
+EXIT=1
