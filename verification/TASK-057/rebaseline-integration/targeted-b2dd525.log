@@ -1,0 +1,50 @@
+TASK=T1.3.1 / TASK-057
+LABEL=targeted-r3
+WORKTREE=C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga
+HEAD=b2dd525ef503886df9814e8dc8367bfeaf5b8773
+SOURCE_TREE_STATE_BEGIN
+
+SOURCE_TREE_STATE_END
+SHELL=PowerShell 7.6.6
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=Python 3.12.3
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COLLECT_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests/storage/test_backup_restore.py tests/workbench/test_restore_gate.py --collect-only -q -p no:cacheprovider
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_create_backup_runs_readback_before_recording_completed
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_abrupt_publish_interruption_leaves_no_half_artifact
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_readback_failure_is_typed_and_leaves_no_artifacts
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_sidecar_failure_is_typed_and_leaves_no_artifacts
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_ledger_failure_is_typed_and_leaves_no_artifacts
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_backup_writes_record_sidecar_and_passes_readback
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_backup_does_not_touch_user_source
+tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_migrates_a_v0_pre_migration_backup
+tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_failure_is_typed_and_rolls_back_live_database
+tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_overwrites_to_backup_point_and_consistency_holds
+tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_creates_reusable_pre_restore_backup
+tests/storage/test_backup_restore.py::TestRestoreSemantics::test_backup_is_repeatable_with_distinct_records
+tests/storage/test_backup_restore.py::TestTypedFailures::test_unknown_backup_id_is_typed
+tests/storage/test_backup_restore.py::TestTypedFailures::test_corrupt_backup_file_is_typed_and_leaves_db_intact
+tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_mismatch_is_typed
+tests/storage/test_backup_restore.py::TestTypedFailures::test_restore_rejects_backup_id_path_escape
+tests/storage/test_backup_restore.py::TestTypedFailures::test_restore_rejects_schema_metadata_mismatch
+tests/storage/test_backup_restore.py::TestTypedFailures::test_restore_rejects_schema_newer_than_application
+tests/workbench/test_restore_gate.py::test_begin_restore_refuses_while_a_run_is_active
+tests/workbench/test_restore_gate.py::test_latched_start_translate_all_rejected
+tests/workbench/test_restore_gate.py::test_latched_start_translate_untranslated_rejected
+tests/workbench/test_restore_gate.py::test_latched_continue_run_rejected
+tests/workbench/test_restore_gate.py::test_latched_restart_run_rejected
+tests/workbench/test_restore_gate.py::test_latched_retry_failed_pages_rejected
+tests/workbench/test_restore_gate.py::test_latched_abandon_run_remains_available
+tests/workbench/test_restore_gate.py::test_end_restore_releases_the_latch
+tests/workbench/test_restore_gate.py::test_restore_gate_releases_the_latch_when_the_body_raises
+tests/workbench/test_restore_gate.py::test_restore_gate_rejects_nested_entry_without_releasing_outer_latch
+tests/workbench/test_restore_gate.py::test_restore_gate_refuses_entry_while_a_run_is_active
+
+29 tests collected in 0.08s
+COLLECT_EXIT=0
+TEST_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests/storage/test_backup_restore.py tests/workbench/test_restore_gate.py -q -p no:cacheprovider -rs
+.............................                                            [100%]
+29 passed in 1.08s
+EXIT=0
