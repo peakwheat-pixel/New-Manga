@@ -60,7 +60,9 @@ def redact_value(key: str, value: str) -> str:
     written as, say, ``password=hunter2`` inside a message is the collector's
     responsibility to digest away. A path segment that literally starts with
     ``sk-`` followed by eight or more token characters *is* masked; that is the
-    intended safe direction.
+    intended safe direction. The left guard only excludes alphanumeric
+    adjacency; underscore, dot, and slash are still boundaries, and runs
+    shorter than 8 token characters are not masked.
     """
     if _SENSITIVE_KEY.search(key):
         return _REDACTED
@@ -69,6 +71,21 @@ def redact_value(key: str, value: str) -> str:
     if _BEARER.search(value) or _OPENAI_STYLE.search(value):
         return _REDACTED
     return value
+
+
+def _redact_mapping(values: dict[str, str]) -> tuple[tuple[str, str], ...]:
+    fields: list[tuple[str, str]] = []
+    used_keys: set[str] = set()
+    for key, value in sorted(values.items()):
+        output_key = redact_value(key, key)
+        if output_key in used_keys:
+            suffix = 2
+            while f"{output_key}#{suffix}" in used_keys:
+                suffix += 1
+            output_key = f"{output_key}#{suffix}"
+        used_keys.add(output_key)
+        fields.append((output_key, redact_value(key, value)))
+    return tuple(fields)
 
 
 @dataclass(frozen=True)
@@ -136,19 +153,19 @@ def build_diagnostics_report(
     database and recent-errors sections, which previously passed through raw
     (TASK-062 AC ①). Defence in depth only: the collector is still expected to
     pass digests, never raw credentials."""
-    settings_fields = tuple(
-        (key, redact_value(key, value)) for key, value in sorted(settings_summary.items())
-    )
+    settings_fields = _redact_mapping(settings_summary)
     error_fields = tuple(
         (
             redact_value("recent_error", f"{error.occurred_at} {error.source}"),
-            redact_value("recent_error", f"[{error.code}] {error.message}"),
+            redact_value(
+                "recent_error",
+                f"[{redact_value('recent_error_code', error.code)}] "
+                f"{redact_value('recent_error_message', error.message)}",
+            ),
         )
         for error in recent_errors
     )
-    path_fields = tuple(
-        (key, redact_value(key, value)) for key, value in sorted(environment_paths.items())
-    )
+    path_fields = _redact_mapping(environment_paths)
     sections = (
         (
             "application",
@@ -175,7 +192,7 @@ def build_diagnostics_report(
         ("environment_paths", path_fields),
     )
     return DiagnosticsReport(
-        generated_at=generated_at,
+        generated_at=redact_value("generated_at", generated_at),
         app_version=app_version,
         schema_version=schema_version,
         sections=sections,

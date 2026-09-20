@@ -121,7 +121,7 @@ class TestRedaction:
             ).to_json_bytes()
         )
         assert "sk-should-never-appear" not in json.dumps(payload)
-        assert payload["settings_summary"]["translation.api_key"] == "[redacted]"
+        assert payload["settings_summary"]["[redacted]"] == "[redacted]"
         assert payload["settings_summary"]["network.proxy_url"] == "http://127.0.0.1:7890"
 
 
@@ -216,7 +216,7 @@ class TestRedactionReachesEverySection:
         serialized = json.dumps(payload, ensure_ascii=False)
         assert "sk-abcdef123456" not in serialized, "the token survived into the report"
         assert "Bearer abc.def.ghi" not in serialized, "the bearer survived into the report"
-        assert "[redacted]" in payload["recent_errors"].values()
+        assert "[PROVIDER_AUTH_FAILED] [redacted]" in payload["recent_errors"].values()
         assert any(key == "[redacted]" for key in payload["recent_errors"])
 
     def test_benign_values_survive_every_section(self):
@@ -251,3 +251,84 @@ class TestRedactionReachesEverySection:
         """
         assert redact_value("data_root", "D:/workspace/sk-tools-market") == "[redacted]"
         assert redact_value("note", "password=hunter2") == "password=hunter2"
+
+    def test_data_derived_keys_are_redacted_in_settings_and_paths(self):
+        payload = json.loads(
+            _report(
+                settings_summary={
+                    "sk-abcdefgh123456": "settings value",
+                    "ordinary.setting": "ordinary value",
+                },
+                environment_paths={
+                    "sk-zyxwvuts987654": "D:/MangaData",
+                    "data_root": str(PURE_DATA_ROOT),
+                },
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        assert "sk-abcdefgh123456" not in json.dumps(payload)
+        assert "sk-zyxwvuts987654" not in json.dumps(payload)
+        assert payload["settings_summary"]["[redacted]"] == "settings value"
+        assert payload["settings_summary"]["ordinary.setting"] == "ordinary value"
+        assert payload["environment_paths"]["[redacted]"] == "D:/MangaData"
+        assert payload["environment_paths"]["data_root"] == str(PURE_DATA_ROOT)
+
+    def test_recent_error_code_survives_message_redaction(self):
+        payload = json.loads(
+            _report(
+                recent_errors=(
+                    RecentError(
+                        "t1",
+                        "import",
+                        "PROVIDER_AUTH_FAILED",
+                        "request rejected sk-abcdef123456",
+                    ),
+                )
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        assert payload["recent_errors"] == {
+            "t1 import": "[PROVIDER_AUTH_FAILED] [redacted]"
+        }
+
+    def test_redaction_docstring_states_guard_boundaries(self):
+        doc = redact_value.__doc__ or ""
+        assert "only excludes alphanumeric" in doc
+        assert "adjacency" in doc
+        assert "underscore" in doc
+        assert "dot" in doc
+        assert "slash" in doc
+        assert "shorter than 8" in doc
+
+    def test_redaction_does_not_drop_multiple_masked_keys(self):
+        payload = json.loads(
+            _report(
+                settings_summary={
+                    "translation.api_key": "first",
+                    "translation.auth_token": "second",
+                }
+            )
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        assert list(payload["settings_summary"]) == ["[redacted]", "[redacted]#2"]
+        assert sorted(payload["settings_summary"].values()) == ["[redacted]", "[redacted]"]
+
+    def test_generated_at_credential_shape_is_redacted(self):
+        payload = json.loads(
+            _report(generated_at="export-sk-abcdef123456")
+            .to_json_bytes()
+            .decode("utf-8")
+        )
+        assert payload["generated_at"] == "[redacted]"
+
+    def test_documented_boundary_behavior_is_pinned(self):
+        for value in (
+            "provider_sk-abcdefgh1234",
+            "pkg.sk-abcdefgh1234",
+            "D:/Users/sk-abcdefgh1234/file.txt",
+        ):
+            assert redact_value("note", value) == "[redacted]"
+        assert redact_value("note", "sk-abc1234") == "sk-abc1234"
