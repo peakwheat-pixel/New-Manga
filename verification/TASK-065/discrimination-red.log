@@ -1,0 +1,69 @@
+TASK=T1.3.2 / TASK-065
+LABEL=discrimination-red-fast-fixture
+WORKTREE=G:\CODEX\New Manga.worktrees\TASK-065-codex
+HEAD=c5f8217929b0c5170b8bf5e54ec915f4ba37aa46
+TREE_STATE_BEGIN
+M tests/core/test_shutdown_drain.py
+ M verification/TASK-065/run_suite.ps1
+?? .superpowers/
+?? doc/reviews/TASK-065-c5f8217.md
+TREE_STATE_END
+SHELL=PowerShell 7.6.6
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=Python 3.12.3
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COLLECT_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests/core/test_shutdown_drain.py::test_shutdown_services_drains_an_active_real_run --collect-only -q -p no:cacheprovider
+tests/core/test_shutdown_drain.py::test_shutdown_services_drains_an_active_real_run
+
+1 test collected in 0.02s
+COLLECT_EXIT=0
+TEST_COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest tests/core/test_shutdown_drain.py::test_shutdown_services_drains_an_active_real_run -q -p no:cacheprovider -rs
+F                                                                        [100%]
+================================== FAILURES ===================================
+______________ test_shutdown_services_drains_an_active_real_run _______________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x16547c753a0) at 0x0000016546573D00>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2802/test_shutdown_services_drains_0')
+
+    def test_shutdown_services_drains_an_active_real_run(qapp, tmp_path):
+        """AC2: with a run executing on the worker thread, the production
+        exit drain returns with the thread drained and the connection closed.
+
+        Discriminating: the function is new (import fails pre-fix); it also
+        exercises the real VM -> RunController -> worker path that the
+        ordering stub cannot reach.
+        """
+        from bootstrap.app import _shutdown_services
+        services, book, chapter = _make_library(tmp_path, page_count=6)
+        vm = services.workbench
+        vm.setContext(book.book_id, chapter.chapter_id, "�˳��ſ���", "�˳���")
+        vm.startTranslateAll()
+
+        # wait until the worker actually picked the run up (left PENDING),
+        # so the drain below races a real active/just-terminal run, not a
+        # thread that never started
+        from domain.tasks.models import PipelineRunStatus
+
+        deadline = time.monotonic() + 15
+        while time.monotonic() < deadline:
+            qapp.processEvents()
+            if vm._run is not None and vm._run.status is not PipelineRunStatus.PENDING:
+                break
+            time.sleep(0.01)
+        assert vm._run is not None, "run was never created"
+        assert vm._run.status is not PipelineRunStatus.PENDING, (
+            "worker never picked up the run"
+        )
+>       assert vm._controller.is_running is True, (
+            "worker finished before the shutdown drain could exercise it"
+        )
+E       AssertionError: worker finished before the shutdown drain could exercise it
+E       assert False is True
+E        +  where False = <ui.viewmodels.workbench.run_controller.RunController(0x165483f0280) at 0x00000165494F81C0>.is_running
+E        +    where <ui.viewmodels.workbench.run_controller.RunController(0x165483f0280) at 0x00000165494F81C0> = <ui.viewmodels.workbench.viewmodel.WorkbenchViewModel(0x165483f0320) at 0x000001654967BB00>._controller
+
+tests\core\test_shutdown_drain.py:142: AssertionError
+1 failed in 0.92s
+EXIT=1

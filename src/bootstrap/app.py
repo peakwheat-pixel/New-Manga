@@ -84,7 +84,7 @@ from infrastructure.rendering.pixel_source_style import PixelSourceStyleAnalyzer
 from infrastructure.rendering.qt_compositor import QtImageCompositor
 from infrastructure.rendering.qt_layout import QtTextLayoutEngine
 from infrastructure.sqlite.artifacts import SqliteArtifactRepository
-from infrastructure.sqlite.connection import open_database
+from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
 from infrastructure.sqlite.library import SqliteLibraryRepository
 from infrastructure.sqlite.migrator import MigrationRunner
 from infrastructure.sqlite.regions import SqliteRegionRepository
@@ -525,11 +525,12 @@ def _credential_resolver() -> Callable[[str], str | None] | None:
 class AppServices:
     """Fully wired production stack; QML receives the page viewmodels.
 
-    ``conn`` is exposed so the entry can close the SQLite connection before
-    temp-root cleanup — the last writer holds the Windows file lock.
+    ``conn`` is the thread-routed SQLite facade exposed so the entry can close
+    every per-thread connection before temp-root cleanup — the last writer
+    holds the Windows file lock.
     """
 
-    conn: sqlite3.Connection
+    conn: ThreadRoutedConnection
     repository: SqliteLibraryRepository
     storage: ManagedFileStorage
     importer: ImportImagesUseCase

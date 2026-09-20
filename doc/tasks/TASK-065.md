@@ -2,13 +2,13 @@
 id: TASK-065
 title: TASK-058 复审尾项 docs+tests 小切片
 kind: maintenance
-status: ready
+status: in_review
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
 reviewer: Qoder
 depends_on: ["TASK-058", "TASK-064"]
-base_commit: 44aa64d
+base_commit: 772d63c2c921a08606d742438a146cb310159b02
 branch: agent/codex/TASK-065-task058-followups
 worktree: "G:/CODEX/New Manga.worktrees/TASK-065-codex"
 integration_commit: null
@@ -22,10 +22,10 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1：把 TASK-058 AC2 用例改成真实活动 worker 形状：调用 `_shutdown_services` 前可证明 worker 仍活跃，返回后线程排空且连接关闭；保留既有强断言。
-- [ ] AC2：重采一次全仓测试日志，日志逐项包含 shell、venv、命令、`EXIT`、collected/passed/skipped 与逐条 skip 原因；不得用散文替代日志证据。
-- [ ] AC3：修正 `AppServices.conn` 的过时类型注解及相关 single-connection 历史措辞；仅注解/docstring 变化，运行行为不变。
-- [ ] AC4：移除 `tests/workbench/test_drain_shutdown.py` 的恒真 `assert sys.stderr is not None`，保留前一条有判别力的 stderr 断言；不得放宽或删除有效断言。
+- [x] AC1：把 TASK-058 AC2 用例改成真实活动 worker 形状：调用 `_shutdown_services` 前可证明 worker 仍活跃，返回后线程排空且连接关闭；保留既有强断言。
+- [x] AC2：重采一次全仓测试日志，日志逐项包含 shell、venv、命令、`EXIT`、collected/passed/skipped 与逐条 skip 原因；不得用散文替代日志证据。
+- [x] AC3：修正 `AppServices.conn` 的过时类型注解及相关 single-connection 历史措辞；仅注解/docstring 变化，运行行为不变。
+- [x] AC4：移除 `tests/workbench/test_drain_shutdown.py` 的恒真 `assert sys.stderr is not None`，保留前一条有判别力的 stderr 断言；不得放宽或删除有效断言。
 - [ ] AC5：完成 Handoff 与独立非作者 Review；全仓 collected 不低于 `951`，无新增 skip/xfail。
 
 ## 允许修改范围
@@ -48,8 +48,8 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | `pytest tests/core/test_shutdown_drain.py tests/workbench/test_drain_shutdown.py -q -p no:cacheprovider -rs` | 与仓库既有 TASK-012-py312 venv；不设 `QT_QPA_PLATFORM` | NOT_RUN | `verification/TASK-065/` |
-| AC2/AC5 | `PYTHONPATH=src python -m pytest tests -q -p no:cacheprovider -rs`（另行 `--collect-only` 计数） | 同一 PowerShell + venv；`PYTHONDONTWRITEBYTECODE=1`；不设 `QT_QPA_PLATFORM` | **基线 PASS：951 collected / 945 passed / 6 skipped / EXIT=0；最终切片结果 NOT_RUN** | [baseline-full-suite.log](../../verification/TASK-065/baseline-full-suite.log)；6 条 skip 均为 `openssl unavailable` |
+| AC1 | `pytest tests/core/test_shutdown_drain.py tests/workbench/test_drain_shutdown.py -q -p no:cacheprovider -rs` | PowerShell 7.6.6 + TASK-012-py312；`367eeae`；不设 `QT_QPA_PLATFORM` | **PASS：7 collected / 7 passed / EXIT=0** | [integration.log](../../verification/TASK-065/integration.log) |
+| AC2/AC5 | `PYTHONPATH=src python -m pytest tests -q -p no:cacheprovider -rs`（另行 `--collect-only` 计数） | 同一 PowerShell + venv；`367eeae`；`PYTHONDONTWRITEBYTECODE=1`；不设 `QT_QPA_PLATFORM` | **PASS：951 collected / 945 passed / 6 skipped / EXIT=0；无 xfail/xpass** | [full-suite.log](../../verification/TASK-065/full-suite.log)；6 条 skip 均为 `openssl unavailable` |
 
 ## 依赖、风险与阻塞
 
@@ -57,7 +57,7 @@ TASK-058 与 TASK-064 已集成。F-007 仍是后续 diagnostics 设计/接线�
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
+- Handoff：[TASK-065-367eeae.md](../handoffs/TASK-065-367eeae.md)；已提交复审。
+- Review：[首轮 Changes Requested](../reviews/TASK-065-c5f8217.md)；R-001～R-004 已返修，独立复审待结果。
 - integration_commit：待 Codex 合并后填写。
-- 实际测试：尚无。
+- 实际测试：`367eeae` 上 targeted 2/2、相关 integration 7/7、全仓 951 collected = 945 passed + 6 个既有 `openssl unavailable` skip；全部 EXIT=0。判别日志为旧快夹具 1 failed / EXIT=1。

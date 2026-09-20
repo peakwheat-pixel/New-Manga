@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import sqlite3
 import sys
+import threading
 import time
 from pathlib import Path
 from types import SimpleNamespace
@@ -118,32 +119,47 @@ def test_shutdown_services_drains_an_active_real_run(qapp, tmp_path):
     exercises the real VM -> RunController -> worker path that the
     ordering stub cannot reach.
     """
+    from application.translation.pipeline.executor import (
+        DeterministicStepExecutor,
+    )
     from bootstrap.app import _shutdown_services
 
     services, book, chapter = _make_library(tmp_path, page_count=6)
+    worker_entered = threading.Event()
+
+    def wait_for_shutdown(_step_run, _unit, run) -> None:
+        worker_entered.set()
+        deadline = time.monotonic() + 5
+        while not run.cancel_requested and time.monotonic() < deadline:
+            time.sleep(0.01)
+        if not run.cancel_requested:
+            raise AssertionError("shutdown never requested worker cancellation")
+
+    services.pipeline._executor = DeterministicStepExecutor(
+        on_execute=wait_for_shutdown
+    )
     vm = services.workbench
     vm.setContext(book.book_id, chapter.chapter_id, "退出排空书", "退出话")
     vm.startTranslateAll()
 
-    # wait until the worker actually picked the run up (left PENDING),
-    # so the drain below races a real active/just-terminal run, not a
-    # thread that never started
+    # The step cannot return until shutdown marks the run cancelled, so the
+    # drain below necessarily starts while the worker is still executing.
     from domain.tasks.models import PipelineRunStatus
 
-    deadline = time.monotonic() + 15
-    while time.monotonic() < deadline:
-        qapp.processEvents()
-        if vm._run is not None and vm._run.status is not PipelineRunStatus.PENDING:
-            break
-        time.sleep(0.01)
+    assert worker_entered.wait(5), "worker never entered a pipeline step"
     assert vm._run is not None, "run was never created"
     assert vm._run.status is not PipelineRunStatus.PENDING, (
         "worker never picked up the run"
+    )
+    assert vm._run.cancel_requested is False
+    assert vm._controller.is_running is True, (
+        "worker finished before the shutdown drain could exercise it"
     )
 
     _shutdown_services(services)
 
     assert vm._controller.is_running is False, "worker thread was not drained"
+    assert vm._run.cancel_requested is True
     row = sqlite3.connect(str(tmp_path / "library.db")).execute(
         "SELECT status FROM pipeline_runs"
     ).fetchone()
