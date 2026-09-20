@@ -11,8 +11,9 @@
 | `tests/diagnostics` | 31 passed / 0 skipped / EXIT=0 |
 | `tests/reading_export` | 118 passed / 0 skipped / EXIT=0 |
 | `tests` | 942 passed / 6 skipped / EXIT=0, 948 collected, repeated 5 times |
+| merged `master` | 942 passed / 6 skipped / EXIT=0, 948 collected, integration `94a0091` |
 
-The six skips are pre-existing `openssl unavailable`: `tests/network/test_connection_tester.py:106` and `tests/network/test_transport_tls.py:39/47/62/69/83`. The five raw full-suite logs are [full-suite-run1.log](full-suite-run1.log) through [full-suite-run5.log](full-suite-run5.log); each includes shell/venv header, command, skip reasons, and `EXIT=0`.
+The six skips are pre-existing `openssl unavailable`: `tests/network/test_connection_tester.py:106` and `tests/network/test_transport_tls.py:39/47/62/69/83`. The five raw full-suite logs are [full-suite-run1.log](full-suite-run1.log) through [full-suite-run5.log](full-suite-run5.log); the merged-master result is [integration-master-2026-09-20.log](integration-master-2026-09-20.log). Each includes shell/venv header, command, skip reasons, and `EXIT=0`.
 
 ## Discrimination
 

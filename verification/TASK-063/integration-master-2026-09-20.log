@@ -1,0 +1,17 @@
+shell=pwsh
+venv=G:/CODEX/New Manga.task-envs/TASK-012-py312
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+base=ea56119
+merge_commit=94a0091b54c972685b173905f405f1ecb6713159
+command=pytest tests -q -p no:cacheprovider -rs
+collected=948
+
+=========================== short test summary info ===========================
+SKIPPED [1] tests/network/test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests/network/test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests/network/test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests/network/test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests/network/test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests/network/test_transport_tls.py:83: openssl unavailable
+942 passed, 6 skipped, 1 warning in 53.42s
+EXIT=0

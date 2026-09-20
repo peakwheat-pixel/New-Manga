@@ -2,7 +2,7 @@
 id: TASK-063
 title: 诊断脱敏边界与多过滤器测试补强（TASK-062 Review R-001/R-002/R-003/R-004/R-006）
 kind: bugfix
-status: approved
+status: done
 approval: approved_by_user
 suggested_owner: Codex
 owner: Codex
@@ -11,7 +11,7 @@ depends_on: [TASK-062]
 base_commit: ea56119ba16a8a57832a1ae9660845235ec58fc4
 branch: agent/codex/TASK-063-diagnostics-boundaries
 worktree: G:/CODEX/New Manga
-integration_commit: null
+integration_commit: 94a0091
 ---
 
 # TASK-063：诊断脱敏边界与多过滤器测试补强
@@ -30,7 +30,7 @@ integration_commit: null
 - [x] **AC ④（R-004）**：`png_row_filter_types` 对解压长度、非交错 PNG 与 filter byte `0..4` 做健全性断言；非法解析均有失败测试。
 - [x] **AC ⑤（R-006）**：新增稳定的 Up/Average 过滤器页，验证 overlap `0`/`64` 瓦片逐字节相同且拼接等于整页；既有 TASK-062 断言未删除或放宽。
 - [x] **AC ⑥**：全仓 `948 collected = 942 passed / 6 skipped / EXIT=0` ×5；无新增 skip/xfail；日志含 shell/venv、命令、EXIT，且基线失败/head 通过判别 artefact 已入库。
-- [ ] **AC ⑦**：Handoff、verification、独立非作者 Review、STATUS 已准备；**待 Codex 将 approved delivery 合并回 master 后**填写 `integration_commit` 并勾选本项。
+- [x] **AC ⑦**：Handoff、verification、独立非作者 Review、STATUS 已准备；Codex 已将 approved delivery 合并回 master，`integration_commit=94a0091`，并完成合并后全仓验证。
 
 ## 允许修改范围
 
@@ -52,6 +52,7 @@ integration_commit: null
 | AC ①～③ 脱敏 | `pytest tests/diagnostics -q -p no:cacheprovider -rs` | PowerShell + `TASK-012-py312`，不设 `QT_QPA_PLATFORM`；head `3fbbfe4` | **PASS 31 passed / 0 skipped / EXIT=0** | [diagnostics-suite.log](../../verification/TASK-063/diagnostics-suite.log) |
 | AC ④～⑤ 瓦片 | `pytest tests/reading_export -q -p no:cacheprovider -rs` | 同上；head `3fbbfe4` | **PASS 118 passed / 0 skipped / EXIT=0** | [reading-export-suite.log](../../verification/TASK-063/reading-export-suite.log) |
 | AC ⑥ 全仓 | `pytest tests -q -p no:cacheprovider -rs` | 同上；head `3fbbfe4` | **PASS ×5：948 collected = 942 passed / 6 skipped / EXIT=0** | [full-suite-run1..5.log](../../verification/TASK-063/) |
+| AC ⑦ 合并后 | `pytest tests -q -p no:cacheprovider -rs` | PowerShell + `TASK-012-py312`；master `94a0091` | **PASS 948 collected = 942 passed / 6 skipped / EXIT=0** | [integration-master-2026-09-20.log](../../verification/TASK-063/integration-master-2026-09-20.log) |
 | AC ⑥ 判别力 | 同一新增诊断用例选择集，分别在 `ea56119` 与 `3fbbfe4` | 同上 | **基线 5 failed / 1 passed / EXIT=1；head 6 passed / EXIT=0** | [discrimination-base.log](../../verification/TASK-063/discrimination-base.log)、[discrimination-head.log](../../verification/TASK-063/discrimination-head.log) |
 
 ## 依赖、风险与阻塞
@@ -65,4 +66,4 @@ integration_commit: null
 - Handoff：[TASK-063-3fbbfe4.md](../handoffs/TASK-063-3fbbfe4.md)。
 - Review：独立非作者 Review 已 `approved`，见 [TASK-063-303d3cc](../reviews/TASK-063-303d3cc.md)（Task 元数据 Reviewer=Qoder，非作者）。
 - 实现提交：`30db4a2`（首轮 GREEN）、`3fbbfe4`（Review P2 修复）。
-- 实际测试：已完成；当前状态 `approved`，尚未合并 master。
+- 实际测试：已完成；当前状态 `done`，`integration_commit=94a0091`。
