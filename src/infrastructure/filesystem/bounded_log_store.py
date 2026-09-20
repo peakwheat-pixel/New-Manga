@@ -66,6 +66,17 @@ class BoundedLogStore:
                 handle.write(entry)
             self._prune()
 
+    def write(self, line: str, *, timestamp: str) -> Path:
+        """Write one standalone bounded entry to a fresh file."""
+        with self._lock:
+            self._root.mkdir(parents=True, exist_ok=True)
+            entry = line if line.endswith("\n") else line + "\n"
+            path = self._open_new_file(timestamp)
+            with path.open("w", encoding="utf-8") as handle:
+                handle.write(entry)
+            self._prune()
+            return path
+
     def files(self) -> tuple[Path, ...]:
         """Existing log files, oldest first."""
         with self._lock:

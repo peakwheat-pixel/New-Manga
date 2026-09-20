@@ -24,6 +24,7 @@ from __future__ import annotations
 import argparse
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from datetime import datetime, timezone
 import json
 import os
 import platform
@@ -140,11 +141,9 @@ class _BoundedDiagnosticsSink:
         self._store = store
 
     def write_report(self, payload: bytes, generated_at: str) -> str:
-        self._store.append(payload.decode("utf-8"), timestamp=generated_at)
-        files = self._store.files()
-        if not files:
-            raise RuntimeError("diagnostics sink did not create a report file")
-        return str(files[-1])
+        del generated_at
+        timestamp = datetime.now(timezone.utc).isoformat(timespec="microseconds")
+        return str(self._store.write(payload.decode("utf-8"), timestamp=timestamp))
 
 
 class _ManagedPageCatalog:

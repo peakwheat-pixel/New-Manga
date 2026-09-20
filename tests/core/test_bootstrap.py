@@ -120,7 +120,7 @@ def test_assemble_services_migrates_schema_and_managed_layout(tmp_path: Path) ->
 def test_assemble_services_injects_and_exports_diagnostics(
     tmp_path: Path,
 ) -> None:
-    from application.maintenance.diagnostics import DiagnosticsService
+    from application.maintenance.diagnostics import DiagnosticsService, RecentError
     from bootstrap.app import assemble_services
 
     services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
@@ -148,6 +148,32 @@ def test_assemble_services_injects_and_exports_diagnostics(
             tmp_path / "managed"
         )
 
+        services.diagnostics._errors.record(
+            RecentError(
+                occurred_at="2026-09-20T12:00:01",
+                source="pipeline",
+                code="PROVIDER_AUTH_FAILED",
+                message="Bearer abcdef1234567890 sk-abcdef1234567890",
+            )
+        )
+        error_export = Path(
+            services.diagnostics.export(generated_at="2026-09-20T12:00:02")
+        )
+        error_payload = json.loads(error_export.read_text(encoding="utf-8"))
+        error_values = tuple(error_payload["recent_errors"].values())
+        assert any("PROVIDER_AUTH_FAILED" in value for value in error_values)
+        assert "abcdef1234567890" not in json.dumps(error_payload)
+        assert "sk-abcdef1234567890" not in json.dumps(error_payload)
+
+        sensitive_timestamp_export = Path(
+            services.diagnostics.export(generated_at="export-sk-abcdef123456")
+        )
+        sensitive_payload = json.loads(
+            sensitive_timestamp_export.read_text(encoding="utf-8")
+        )
+        assert sensitive_payload["generated_at"] == "[redacted]"
+        assert "skabcdef123456" not in sensitive_timestamp_export.name
+
         for index in range(6):
             services.diagnostics.export(
                 generated_at=f"2026-09-20T12:00:{index:02d}"
@@ -155,6 +181,7 @@ def test_assemble_services_injects_and_exports_diagnostics(
         files = sorted((tmp_path / "diagnostics").glob("diag-*.log"))
         assert len(files) <= 5
         assert all(path.stat().st_size <= 512_000 for path in files)
+        assert all(json.loads(path.read_text(encoding="utf-8")) for path in files)
     finally:
         services.conn.close()
 
