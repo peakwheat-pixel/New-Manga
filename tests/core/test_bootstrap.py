@@ -10,6 +10,7 @@ copy) against temp roots only — the user data root is never touched.
 from __future__ import annotations
 
 import hashlib
+import json
 import os
 from pathlib import Path
 import shutil
@@ -112,10 +113,67 @@ def test_assemble_services_migrates_schema_and_managed_layout(tmp_path: Path) ->
     ).fetchone()
     assert version_row[0] == latest
     conn.close()
-
     assert (tmp_path / "managed" / "temp").is_dir()
     assert services.library.list_books() == []
 
+
+def test_assemble_services_injects_and_exports_diagnostics(
+    tmp_path: Path,
+) -> None:
+    from application.maintenance.diagnostics import DiagnosticsService
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        assert isinstance(services.diagnostics, DiagnosticsService)
+
+        exported = Path(
+            services.diagnostics.export(generated_at="2026-09-20T12:00:00")
+        )
+
+        assert exported.is_file()
+        assert exported.parent == tmp_path / "diagnostics"
+        payload = json.loads(exported.read_text(encoding="utf-8"))
+        assert set(payload) == {
+            "application",
+            "database",
+            "environment_paths",
+            "generated_at",
+            "recent_errors",
+            "settings_summary",
+        }
+        assert payload["database"]["schema_version"] == "3"
+        assert payload["environment_paths"]["data_root"] == str(tmp_path)
+        assert payload["environment_paths"]["managed_root"] == str(
+            tmp_path / "managed"
+        )
+
+        for index in range(6):
+            services.diagnostics.export(
+                generated_at=f"2026-09-20T12:00:{index:02d}"
+            )
+        files = sorted((tmp_path / "diagnostics").glob("diag-*.log"))
+        assert len(files) <= 5
+        assert all(path.stat().st_size <= 512_000 for path in files)
+    finally:
+        services.conn.close()
+
+
+def test_assemble_engine_does_not_publish_diagnostics_to_qml(
+    qapp, tmp_path: Path
+) -> None:
+    from application.maintenance.diagnostics import DiagnosticsService
+    from bootstrap.app import assemble_engine, assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    engine = assemble_engine(services)
+    try:
+        assert isinstance(services.diagnostics, DiagnosticsService)
+        assert engine.rootContext().contextProperty("diagnosticsService") is None
+    finally:
+        engine.deleteLater()
+        services.conn.close()
+        qapp.processEvents()
 
 def test_assemble_services_refuses_newer_schema(tmp_path: Path) -> None:
     import sqlite3

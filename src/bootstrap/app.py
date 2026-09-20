@@ -26,6 +26,7 @@ from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 import json
 import os
+import platform
 from pathlib import Path
 import sqlite3
 import sys
@@ -50,6 +51,7 @@ from application.importing.documents import ImportDocumentsUseCase
 from application.importing.images.service import ImportImagesUseCase
 from application.library.service import LibraryService
 from application.maintenance import TrashService
+from application.maintenance.diagnostics import BoundedErrorLog, DiagnosticsService
 from application.maintenance.trash import _JsonTrashManifest
 from application.reading.service import ReadingService
 from application.reading.ports import JsonProgressDocumentStore
@@ -58,6 +60,7 @@ from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
 from application.translation.knowledge.term_extraction import TermExtractionService
 from domain.regions.entities import BBox, RegionGeometry, RegionOrigin
+from infrastructure.filesystem.bounded_log_store import BoundedLogStore
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
 from infrastructure.importing import (
@@ -95,6 +98,53 @@ from ui.viewmodels.reader.viewmodel import ReaderViewModel
 from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
 
 QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
+_APP_VERSION = "0.1.0"
+
+
+@dataclass(frozen=True)
+class _ProductionDiagnosticsSnapshot:
+    database: Path
+    data_root: Path
+    managed_root: Path
+    diagnostics_root: Path
+    schema: int
+    configured: bool
+
+    def app_version(self) -> str:
+        return _APP_VERSION
+
+    def platform_python(self) -> str:
+        return platform.python_version()
+
+    def schema_version(self) -> int:
+        return self.schema
+
+    def database_path(self) -> str:
+        return str(self.database)
+
+    def settings_summary(self) -> dict[str, str]:
+        return {
+            "pipeline_defaults": "configured" if self.configured else "not-configured"
+        }
+
+    def environment_paths(self) -> dict[str, str]:
+        return {
+            "data_root": str(self.data_root),
+            "managed_root": str(self.managed_root),
+            "diagnostics_root": str(self.diagnostics_root),
+        }
+
+
+class _BoundedDiagnosticsSink:
+    def __init__(self, store: BoundedLogStore) -> None:
+        self._store = store
+
+    def write_report(self, payload: bytes, generated_at: str) -> str:
+        self._store.append(payload.decode("utf-8"), timestamp=generated_at)
+        files = self._store.files()
+        if not files:
+            raise RuntimeError("diagnostics sink did not create a report file")
+        return str(files[-1])
 
 
 class _ManagedPageCatalog:
@@ -488,6 +538,7 @@ class AppServices:
     trash: TrashService
     reading: ReadingService
     export_service: ExportService
+    diagnostics: DiagnosticsService
     reader: ReaderViewModel
     library: LibraryService
     pipeline: PipelineService
@@ -706,6 +757,24 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         # Tiles are a rebuildable cache under the managed root; the byte
         # budget is the TASK-020 R-002 memory ledger in production.
         data_root = Path(db_path).parent
+        diagnostics_root = data_root / "diagnostics"
+        diagnostics = DiagnosticsService(
+            _ProductionDiagnosticsSnapshot(
+                database=Path(db_path),
+                data_root=data_root,
+                managed_root=Path(managed_root),
+                diagnostics_root=diagnostics_root,
+                schema=latest_known,
+                configured=bool(
+                    defaults["settings"]
+                    or defaults["provider_bindings"]
+                    or defaults["constraint_snapshot_ref"]
+                    or defaults["context_policy"]
+                ),
+            ),
+            _BoundedDiagnosticsSink(BoundedLogStore(diagnostics_root)),
+            BoundedErrorLog(),
+        )
         reading = ReadingService(
             JsonProgressDocumentStore(data_root / "reading_progress.json")
         )
@@ -847,6 +916,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             trash=trash,
             reading=reading,
             export_service=export_service,
+            diagnostics=diagnostics,
             reader=reader,
             library=library,
             pipeline=pipeline,
