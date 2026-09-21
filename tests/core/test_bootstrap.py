@@ -396,6 +396,44 @@ def test_assemble_engine_injects_real_workbench_stack(
         qapp.processEvents()
 
 
+def test_production_workbench_region_writes_use_real_editing_service(
+    qapp, tmp_path: Path
+) -> None:
+    """T1.1.2: the production VM reaches the real creator and deleter seams."""
+    from application.importing.images.ports import ImportSource
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        book = services.library.create_book("生产 Region 书")
+        chapter = services.library.create_chapter(book.book_id, "第1话")
+        report = services.importer.import_files(
+            chapter.chapter_id,
+            [ImportSource(filename="page.png", data_provider=lambda: _make_png(8, 6))],
+        )
+        page = report.imported[0].page
+        services.workbench.setContext(
+            book.book_id, chapter.chapter_id, book.title, chapter.title
+        )
+        services.workbench.selectPage(page.page_id)
+
+        services.workbench.createRectangle(
+            0.125, 0.16666666666666666, 0.625, 0.6666666666666666
+        )
+
+        regions = services.editing.list_regions(page.page_id)
+        assert len(regions) == 1
+        region_id = regions[0].region_id
+        services.workbench.deleteRegion(region_id)
+        assert services.editing.list_regions(page.page_id) == []
+        assert services.conn.execute(
+            "SELECT deleted_at IS NOT NULL FROM regions WHERE region_id = ?",
+            (region_id,),
+        ).fetchone()[0] == 1
+    finally:
+        services.conn.close()
+
+
 def test_navigation_enters_real_workbench_context(
     qapp, tmp_path: Path
 ) -> None:

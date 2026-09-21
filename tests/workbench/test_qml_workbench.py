@@ -385,10 +385,14 @@ def test_overlay_tool_buttons_switch_the_drawing_mode(workbench, qapp):
     # belongs to this slice instead of being deferred to later polish.
     workbench.vm.setContext("book-1", "chapter-1", "测试书", "第1话")
     workbench.vm.selectPage("p1")
+    workbench.vm._pages["p1"].update(width=800, height=1200)
+    workbench.vm.viewerChanged.emit()
     qapp.processEvents()
 
     overlay = find_one(workbench.view, "viewerRegionOverlay")
     assert overlay.property("drawingMode") == "rect"
+    assert bool(find_one(overlay, "regionToolRect").property("enabled")) is True
+    assert bool(find_one(overlay, "regionToolPolygon").property("enabled")) is True
 
     click_button(find_one(overlay, "regionToolPolygon"))
     assert overlay.property("drawingMode") == "polygon"

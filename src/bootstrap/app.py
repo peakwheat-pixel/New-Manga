@@ -884,6 +884,8 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             page_catalog=page_catalog,
             region_catalog=editing,
             translation_editor=editing,
+            region_creator=editing,
+            region_deleter=editing,
             navigation=navigation,
         )
 

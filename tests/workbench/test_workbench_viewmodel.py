@@ -718,6 +718,20 @@ def test_deleting_the_selected_region_clears_selection(qapp_):
     assert vm.inspectorRegionId == ""
 
 
+def test_deleting_the_selected_region_clears_inspector_content(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer, deleter=writer)
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    vm.setInspectorText("未保存的旧内容")
+    assert vm.hasDirtyEditor is True
+
+    vm.deleteRegion("r-created-1")
+
+    assert vm.inspectorRegionId == ""
+    assert vm.inspectorText == ""
+    assert vm.hasDirtyEditor is False
+
+
 def test_deleting_another_region_keeps_selection(qapp_):
     writer = FakeRegionWriter()
     vm = region_vm(creator=writer, deleter=writer)

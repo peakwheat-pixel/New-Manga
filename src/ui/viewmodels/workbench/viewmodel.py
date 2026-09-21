@@ -729,6 +729,9 @@ class WorkbenchViewModel(QObject):
         self._region_deleter.delete_region(region_id)
         if self._inspector_region_id == region_id:
             self._inspector_region_id = None
+            self._inspector_saved_text = ""
+            self._inspector_text = ""
+            self._set_dirty(False)
         self.inspectorChanged.emit()
 
     def _set_dirty(self, dirty: bool) -> None:
