@@ -39,6 +39,20 @@ Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移�
 - 接管确认（交接流程第 6 步）：新任 Owner 需读 AGENTS → 本文件 → STATUS →
   当前 TASK → RepoWiki Map → CodeWiki Overview → `git status` 后确认接管。
 
+### 2026-09-21 Codex 接管确认（当前工作区）
+
+Codex 已按交接流程第 6 步完成读取并确认接管：`AGENTS.md` → 本文件 →
+`doc/STATUS.md` → 当前 `doc/tasks/T1.1.1.md` → RepoWiki Map → CodeWiki
+Overview → `git status`。当前工作区为 `G:/CODEX/New Manga`，`master` @
+`9fea2d37bfdc0a50e4a4f965c886e1c5594c061a`。
+
+- RepoWiki Map 已按当前 HEAD 刷新；`repo-map.meta.json` 记录 freshness，属于可入库的知识层 sidecar。
+- 全局 CodeWiki policy 已建立于 `%USERPROFILE%\.repo-knowledge\config\codewiki-instructions.md`，`rk-wiki`、`rk-update`、`rk-status`、`rk-verify` 与 MCP 工作流已接入；隔离 smoke repository 的 full、incremental、MCP write/edit、Mermaid、identifier 和 freshness 检查均通过。
+- 当前项目旧 `wiki/codewiki/` 分类为 `BILINGUAL=0`、`CHINESE_ONLY=0`、`ENGLISH_ONLY=9`、`MIXED=8`、`BROKEN=0`，因此保持 `MIXED`，不伪装成 PASS。全量刷新 staging 因 CodeWiki agent 在第二个模块长时间无进展而停止；旧 Wiki 已备份且未覆盖。
+- `verification/KNOWLEDGE-OWNER-HANDOVER-20260921/` 是已跟踪的历史证据，保持原样；`.codewiki/` sessions、`.qoder-credits/`、`material/`、`docs/superpowers/`、实验文件以及旧 Wiki 的未验证输出不入库，归原作者/生成缓存并保留在工作区。
+
+本确认只记录 Knowledge Refresh Owner 接管与知识层入库决定，不改变现有项目的主线 writer、branch/worktree 或 Git 集成权限。
+
 ## 两个权限是分开的
 
 | 权限 | 归属 | 范围 |

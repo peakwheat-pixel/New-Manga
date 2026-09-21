@@ -1,357 +1,357 @@
 {
   "root": "G:/CODEX/New Manga",
-  "file_count": 828,
+  "file_count": 830,
   "entries": [
     {
       "rank": 1,
       "path": "src/domain/regions/entities.py",
-      "score": 0.035291,
+      "score": 0.035234,
       "language": "python",
       "lines": 328
     },
     {
       "rank": 2,
       "path": "src/domain/books/entities.py",
-      "score": 0.02918,
+      "score": 0.029133,
       "language": "python",
       "lines": 181
     },
     {
       "rank": 3,
       "path": "src/domain/tasks/models.py",
-      "score": 0.02168,
+      "score": 0.021645,
       "language": "python",
       "lines": 461
     },
     {
       "rank": 4,
       "path": "src/ports/providers/errors.py",
-      "score": 0.021339,
+      "score": 0.021304,
       "language": "python",
       "lines": 295
     },
     {
       "rank": 5,
       "path": "src/domain/pages/entities.py",
-      "score": 0.017293,
+      "score": 0.017265,
       "language": "python",
       "lines": 58
     },
     {
       "rank": 6,
       "path": "src/ports/repositories/storage.py",
-      "score": 0.008608,
+      "score": 0.008594,
       "language": "python",
       "lines": 53
     },
     {
       "rank": 7,
       "path": "src/domain/constraints/entities.py",
-      "score": 0.008549,
+      "score": 0.008536,
       "language": "python",
       "lines": 265
     },
     {
       "rank": 8,
       "path": "src/application/importing/images/ports.py",
-      "score": 0.008204,
+      "score": 0.008191,
       "language": "python",
       "lines": 100
     },
     {
       "rank": 9,
       "path": "src/infrastructure/imaging/streaming_png.py",
-      "score": 0.007011,
+      "score": 0.006999,
       "language": "python",
       "lines": 329
     },
     {
       "rank": 10,
       "path": "src/infrastructure/filesystem/managed_storage.py",
-      "score": 0.006514,
+      "score": 0.006504,
       "language": "python",
       "lines": 181
     },
     {
       "rank": 11,
       "path": "src/application/maintenance/ports.py",
-      "score": 0.006324,
+      "score": 0.006314,
       "language": "python",
       "lines": 104
     },
     {
       "rank": 12,
       "path": "src/infrastructure/imaging/webtoon_tiles.py",
-      "score": 0.006086,
+      "score": 0.006076,
       "language": "python",
       "lines": 452
     },
     {
       "rank": 13,
       "path": "src/ports/repositories/artifacts.py",
-      "score": 0.00586,
+      "score": 0.005851,
       "language": "python",
       "lines": 161
     },
     {
       "rank": 14,
       "path": "src/ports/rendering/direction.py",
-      "score": 0.005841,
+      "score": 0.005831,
       "language": "python",
       "lines": 17
     },
     {
       "rank": 15,
       "path": "src/ports/network/transport.py",
-      "score": 0.005773,
+      "score": 0.005763,
       "language": "python",
       "lines": 126
     },
     {
       "rank": 16,
       "path": "src/ports/repositories/database.py",
-      "score": 0.005649,
+      "score": 0.00564,
       "language": "python",
       "lines": 60
     },
     {
       "rank": 17,
       "path": "src/application/export/__init__.py",
-      "score": 0.005427,
+      "score": 0.005418,
       "language": "python",
       "lines": 46
     },
     {
       "rank": 18,
       "path": "src/application/translation/pipeline/executor.py",
-      "score": 0.005196,
+      "score": 0.005188,
       "language": "python",
       "lines": 64
     },
     {
       "rank": 19,
       "path": "src/infrastructure/sqlite/schema.py",
-      "score": 0.004978,
+      "score": 0.00497,
       "language": "python",
       "lines": 429
     },
     {
       "rank": 20,
       "path": "src/ports/rendering/ports.py",
-      "score": 0.004821,
+      "score": 0.004813,
       "language": "python",
       "lines": 172
     },
     {
       "rank": 21,
       "path": "src/bootstrap/app.py",
-      "score": 0.004452,
+      "score": 0.004444,
       "language": "python",
       "lines": 1105
     },
     {
       "rank": 22,
       "path": "src/application/export/ports.py",
-      "score": 0.004438,
+      "score": 0.004431,
       "language": "python",
       "lines": 85
     },
     {
       "rank": 23,
       "path": "src/infrastructure/sqlite/connection.py",
-      "score": 0.004416,
+      "score": 0.004409,
       "language": "python",
       "lines": 374
     },
     {
       "rank": 24,
       "path": "src/ports/network/profiles.py",
-      "score": 0.004358,
+      "score": 0.004351,
       "language": "python",
       "lines": 120
     },
     {
       "rank": 25,
       "path": "src/ports/inpaint/ports.py",
-      "score": 0.004219,
+      "score": 0.004212,
       "language": "python",
       "lines": 227
     },
     {
       "rank": 26,
       "path": "src/application/reading/ports.py",
-      "score": 0.004138,
+      "score": 0.004131,
       "language": "python",
       "lines": 103
     },
     {
       "rank": 27,
       "path": "src/application/settings/errors.py",
-      "score": 0.00402,
+      "score": 0.004013,
       "language": "python",
       "lines": 29
     },
     {
       "rank": 28,
       "path": "src/infrastructure/importing.py",
-      "score": 0.003974,
+      "score": 0.003967,
       "language": "python",
       "lines": 399
     },
     {
       "rank": 29,
       "path": "src/ui/viewmodels/reader/viewmodel.py",
-      "score": 0.003911,
+      "score": 0.003905,
       "language": "python",
       "lines": 486
     },
     {
       "rank": 30,
       "path": "src/infrastructure/sqlite/migrator.py",
-      "score": 0.003839,
+      "score": 0.003833,
       "language": "python",
       "lines": 168
     },
     {
       "rank": 31,
       "path": "src/ports/providers/profiles.py",
-      "score": 0.003602,
+      "score": 0.003596,
       "language": "python",
       "lines": 90
     },
     {
       "rank": 32,
       "path": "src/infrastructure/filesystem/integrity.py",
-      "score": 0.003576,
+      "score": 0.003571,
       "language": "python",
       "lines": 24
     },
     {
       "rank": 33,
       "path": "src/application/tasks/service.py",
-      "score": 0.003202,
+      "score": 0.003197,
       "language": "python",
       "lines": 1071
     },
     {
       "rank": 34,
       "path": "src/ports/providers/credentials.py",
-      "score": 0.003201,
+      "score": 0.003196,
       "language": "python",
       "lines": 97
     },
     {
       "rank": 35,
       "path": "src/application/maintenance/trash.py",
-      "score": 0.003162,
+      "score": 0.003157,
       "language": "python",
       "lines": 354
     },
     {
       "rank": 36,
       "path": "src/application/navigation/service.py",
-      "score": 0.003146,
+      "score": 0.003141,
       "language": "python",
       "lines": 141
     },
     {
       "rank": 37,
       "path": "src/application/importing/documents/ports.py",
-      "score": 0.003145,
+      "score": 0.00314,
       "language": "python",
       "lines": 60
     },
     {
       "rank": 38,
       "path": "src/application/translation/knowledge/tm.py",
-      "score": 0.003137,
+      "score": 0.003132,
       "language": "python",
       "lines": 298
     },
     {
       "rank": 39,
       "path": "src/application/settings/models.py",
-      "score": 0.00312,
+      "score": 0.003115,
       "language": "python",
       "lines": 61
     },
     {
       "rank": 40,
       "path": "src/application/reading/service.py",
-      "score": 0.003116,
+      "score": 0.003111,
       "language": "python",
       "lines": 441
     },
     {
       "rank": 41,
       "path": "src/application/export/service.py",
-      "score": 0.003114,
+      "score": 0.003109,
       "language": "python",
       "lines": 571
     },
     {
       "rank": 42,
       "path": "src/ui/models/tasks/projection.py",
-      "score": 0.003072,
+      "score": 0.003067,
       "language": "python",
       "lines": 337
     },
     {
       "rank": 43,
       "path": "src/application/tasks/store.py",
-      "score": 0.002998,
+      "score": 0.002993,
       "language": "python",
       "lines": 359
     },
     {
       "rank": 44,
       "path": "src/ui/viewmodels/export/viewmodel.py",
-      "score": 0.002825,
+      "score": 0.002821,
       "language": "python",
       "lines": 419
     },
     {
       "rank": 45,
       "path": "src/ui/viewmodels/workbench/run_controller.py",
-      "score": 0.002754,
+      "score": 0.00275,
       "language": "python",
       "lines": 211
     },
     {
       "rank": 46,
       "path": "src/application/library/errors.py",
-      "score": 0.002752,
+      "score": 0.002748,
       "language": "python",
       "lines": 32
     },
     {
       "rank": 47,
       "path": "src/application/library/service.py",
-      "score": 0.002743,
+      "score": 0.002738,
       "language": "python",
       "lines": 235
     },
     {
       "rank": 48,
       "path": "src/application/translation/context/builder.py",
-      "score": 0.002727,
+      "score": 0.002723,
       "language": "python",
       "lines": 354
     },
     {
       "rank": 49,
       "path": "src/application/translation/context/gate.py",
-      "score": 0.002657,
+      "score": 0.002652,
       "language": "python",
       "lines": 43
     },
     {
       "rank": 50,
       "path": "src/application/reading/__init__.py",
-      "score": 0.00257,
+      "score": 0.002566,
       "language": "python",
       "lines": 21
     }
   ],
-  "partial_coverage": "828 of 829 files; skipped: 1 oversized"
+  "partial_coverage": "830 of 831 files; skipped: 1 oversized"
 }
