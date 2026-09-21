@@ -133,7 +133,7 @@ def main() -> int:
         by_count = sorted(records, key=lambda record: (record["candidates"], record["page"]))
         preview_sources.append(args.material / by_count[0]["page"])
         preview_sources.append(args.material / by_count[-1]["page"])
-        step = max(1, len(pages) // args.previews)
+        step = max(1, len(pages) // args.previews) if args.previews > 0 else 1
         preview_sources.extend(pages[i] for i in range(0, len(pages), step))
     written = 0
     seen: set[Path] = set()

@@ -13,6 +13,7 @@
 | Python | 3.12.3（两个 venv 均同版本） |
 | 实现 venv | `G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312`：python-doctr 1.1.0、torch 2.14.0+cpu、torchvision 0.29.0 |
 | 基线 venv（无 docTR） | `G:/CODEX/New Manga.task-envs/TASK-012-py312`：基线 requirements，无 torch/doctr/numpy |
+| GPU venv | `G:/CODEX/New Manga.task-envs/T1.1.1-gpu-py312`：torch 2.11.0+cu128、torchvision 0.26.0+cu128、python-doctr 1.1.0、PySide6_Essentials 6.11.2（RTX 5070 Ti） |
 | 权重文件 | `C:\Users\49745\.cache\doctr\models\fast_base-688a8b34.pt`，65,815,552 B |
 | 权重 SHA-256 | `688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace`（安装前后均校验，脚本 `verification/T1.1.1/scripts/fetch_doctr_weights.py`） |
 
@@ -63,6 +64,11 @@ PYTHONPATH=src "G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" 
   整模块 skip（`importorskip("doctr")`），以及 2 个位于 torch 探测之后的
   fail-closed rung 单元测试（`importorskip("torch")`）。
 
+### 命令 D — T1.1.1 专项（GPU venv，CUDA）
+
+与命令 A 同四文件，venv 换 GPU venv 并设 `NEW_MANGA_DOCTR_DEVICE=cuda`
+（命令原文见 §5.1）。结果：**41 passed**，退出码 0。
+
 ## 3. Seam 检查矩阵（22 项）
 
 `tests/providers/t111_support.py::SEAM_CHECK_MATRIX`，四样本
@@ -91,25 +97,44 @@ adapter 按 raw 帧处理：rgb32（BGRA→RGB）/ rgb24 双模式，字节长�
 `G:/CODEX/New Manga.task-envs/T1.1.1-gpu-py312`，不改实现 venv 的
 CPU pin；requirements 保持 PyPI CPU 构建，GPU 打包决策属 T3.2.1）。
 
-## 5.1 GPU 结果：BLOCKED（网络）
+## 5.1 GPU 结果：PASS
 
-cu128 wheel（torch ~2.5 GB）四次安装尝试均未成功，全部为环境网络原因，
-非代码原因：
+一次性 venv `G:/CODEX/New Manga.task-envs/T1.1.1-gpu-py312`
+（torch 2.11.0+cu128、torchvision 0.26.0+cu128、python-doctr 1.1.0、
+PySide6_Essentials 6.11.2、Py 3.12.3）。cu128 wheel 由 curl 断点续传
+下载后本地安装（pip 24.0 一次性下载三次损坏；断点续传一次成功）。
+GPU：NVIDIA GeForce RTX 5070 Ti，`torch.cuda.is_available()` = True。
 
-1. 官方源 `download.pytorch.org/whl/cu128` 两次下载损坏（pip SHA-256
-   校验失败：expected `7c78…3a4c` got `aefa…f7`，另一次类似）；
-2. `--no-cache-dir` 第三次仍损坏（expected `7c78…` got `2eb3…d3`）；
-3. 清华镜像索引无 cu128 分发（`No matching distribution found`）。
+命令（同 §2 命令 A，venv 与设备换为 GPU）：
 
-一次性 venv `G:/CODEX/New Manga.task-envs/T1.1.1-gpu-py312` 已建好，
-网络可用时执行
-`pip install --no-cache-dir torch torchvision --index-url https://download.pytorch.org/whl/cu128`
-后即可用 `NEW_MANGA_DOCTR_DEVICE=cuda` 复跑命令 A 完成 GPU 验证。
+```
+PYTHONPATH=src NEW_MANGA_DOCTR_DEVICE=cuda \
+"G:/CODEX/New Manga.task-envs/T1.1.1-gpu-py312/Scripts/python.exe" \
+  -m pytest tests/providers/test_detection_doctr.py \
+            tests/providers/test_detection_doctr_real.py \
+            tests/providers/test_detector_assembly.py \
+            tests/providers/test_detect_seam_t111.py \
+  -q -p no:cacheprovider
+```
 
-已验证的设备逻辑：`_resolve_device` 的 cpu/auto/cuda/tpu 分支有单元
-覆盖（tpu → `PROVIDER_INPUT`；cuda 请求但不可用 → `PROVIDER_UNAVAILABLE`
-为代码路径 review，未运行验证）；GPU 打包决策本属 T3.2.1，
-requirements 固定 PyPI CPU 构建不受影响。
+结果：**41 passed**（22 项 seam 检查以 CUDA 推理运行）。
+
+真实素材 GPU 批跑（`real_material_check.py --device cuda`，
+数值证据 `real-material/results-gpu.json`，SHA-256
+`df1f18a8cb4a8a958789a9c6964b70ad7ce4a165a76b40b40a53256174d97fa9`）：
+
+| 项 | CPU（impl venv） | GPU（RTX 5070 Ti） |
+|---|---|---|
+| 169 页总耗时 | 124.4 s | **13.2 s**（页均 ~78 ms） |
+| 候选块总数 | 4,333 | 4,336 |
+| 页均置信度 | 0.6271 | 0.6270 |
+| 零候选页 | 091、155 | 091、155（相同） |
+| 块数不一致页 | — | 仅 2 页差 1–2 块（070、081，浮点阈值边界） |
+
+单页（1350×1920）显存峰值：522.6 MiB allocated / 830.0 MiB reserved
+（`torch.cuda.max_memory_*`，页 168），16 GB 卡余量充足。
+
+CPU 与 GPU 结果一致性良好；差异均为检测阈值边界的浮点效应，符合预期。
 
 ## 6. 真实漫画质量验证
 
@@ -161,13 +186,13 @@ PYTHONPATH=src "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.ex
 
 ## 8. 未验证项 / 已知限制
 
-- GPU 运行验证：BLOCKED（§5.1，网络下载损坏；CPU 全部验证通过，
-  GPU 打包决策属 T3.2.1）；
 - 真实素材上的检测率为观察记录而非验收阈值（§6）；封面书法体
   艺术字标题未检出（与评估阶段 art-text 边界一致）；
+- GPU 打包（requirements 固定 CUDA wheel）仍属 T3.2.1；本任务在
+  一次性 venv 完成了 GPU 运行验证（§5.1），requirements 不变；
 - `detect` 的并发/多线程行为未专项测试（与既有 provider 同假设，
   engine 实例挂装配单例）；
-- 长图 tile 化（page 级一次性推理在大图上的显存/耗时）未压测
-  （本次最大页 1350×1920 CPU ~740 ms）；
-- Python 3.12 / Windows 验证覆盖 impl 与基线两个 venv；其他
+- 长图 tile 化未压测（本次最大页 1350×1920：CPU ~740 ms /
+  GPU ~55 ms / 显存峰值 523 MiB）；
+- Python 3.12 / Windows 验证覆盖 impl、基线、GPU 三个 venv；其他
   Python 版本不在本任务范围。
