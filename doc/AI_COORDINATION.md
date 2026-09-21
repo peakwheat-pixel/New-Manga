@@ -39,11 +39,11 @@ Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移�
 - 接管确认（交接流程第 6 步）：新任 Owner 需读 AGENTS → 本文件 → STATUS →
   当前 TASK → RepoWiki Map → CodeWiki Overview → `git status` 后确认接管。
 
-### 2026-09-21 Codex 接管确认（当前工作区）
+### 2026-09-21 Codex 接管确认（确认时工作区快照）
 
 Codex 已按交接流程第 6 步完成读取并确认接管：`AGENTS.md` → 本文件 →
 `doc/STATUS.md` → 当前 `doc/tasks/T1.1.1.md` → RepoWiki Map → CodeWiki
-Overview → `git status`。当前工作区为 `G:/CODEX/New Manga`，`master` @
+Overview → `git status`。确认时工作区为 `G:/CODEX/New Manga`，`master` @
 `9fea2d37bfdc0a50e4a4f965c886e1c5594c061a`。
 
 - RepoWiki Map 已按当前 HEAD 刷新；`repo-map.meta.json` 记录 freshness，属于可入库的知识层 sidecar。
