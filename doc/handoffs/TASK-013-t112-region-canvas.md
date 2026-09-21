@@ -66,6 +66,7 @@ RED 失败原因逐条为「目标模块/属性/槽不存在」或「校验未�
 | AC / 场景 | 实际命令 | 结果 | 日志 |
 |---|---|---|---|
 | 全量回归 ×5（同一 HEAD） | `python -m pytest tests -q -p no:cacheprovider -rs` | **PASS** 每次 `1029 passed, 0 skipped`，EXIT=0 | `verification/TASK-013/t112-full-suite-run{1..5}.log` |
+| 交付 HEAD 复核（文档/空白提交之后） | 同上 | **PASS** `1029 passed`，EXIT=0 | `t112-delivery-head-confirmation.log` |
 | 计数门 ≥982 | `python -m pytest tests --collect-only -q` | **PASS** 1029 collected，EXIT=0 | `t112-collect.log` |
 | 本片 chokepoint | 四个测试文件合跑 | **PASS** EXIT=0 | `t112-chokepoint.log` |
 | 语法编译 | `python -m compileall -q src tests` | **PASS** EXIT=0 | `t112-compileall.log` |
