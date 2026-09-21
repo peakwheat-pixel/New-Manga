@@ -1,0 +1,34 @@
+TASK=T1.3.1 / TASK-057
+LABEL=r011-acl-probe-prefix
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+CWD=/tmp/t057-r4/prefix
+HEAD=PRE-FIX-SANDBOX (src/infrastructure/sqlite/backup.py from 85832bb; copy at /tmp/t057-r4/prefix)
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+PYTHON=Python 3.12.3
+OPENSSL=/mingw64/bin/openssl
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga/verification/TASK-057/review-c79cd36/t057_r011_acl_probe.py /tmp/t057-r4/prefix
+TREE=C:\Users\49745\AppData\Local\Temp\t057-r4\prefix
+HEAD_SRC_HAS_TYPED_MAPPING=False
+== Scenario A: real Windows ACL read-deny between verify and hash ==
+   PREVALIDATION_TYPE=PermissionError CODE=None
+   GENUINE_OS_ERROR=('PermissionError', 13)
+   [PASS] ACL deny produced a genuine OS read failure ！ ('PermissionError', 13)
+   [FAIL] failure is typed BackupVerificationError ！ actual=PermissionError
+   [FAIL] typed code is BACKUP_FILE_UNREADABLE ！ actual=None
+   [PASS] file readable again after ACL reset
+   [PASS] live artifact_revisions untouched
+   [PASS] backup ledger row count unchanged ！ before=1
+   [PASS] no pre_restore/tmp half-artifact in backup root ！ before=['d925049a15954d4dacb81760b808180b.db', 'd925049a15954d4dacb81760b808180b.db.manifest.json'] after=['d925049a15954d4dacb81760b808180b.db', 'd925049a15954d4dacb81760b808180b.db.manifest.json']
+== Scenario B: same-stage sqlite3.Error reachability (v0-shaped live DB) ==
+   LEDGER_READ_TYPE=OperationalError CODE=None
+   [PASS] ledger-read failure leaves the live DB unwritten
+== done: failures=2 ['failure is typed BackupVerificationError', 'typed code is BACKUP_FILE_UNREADABLE']
+EXIT=1

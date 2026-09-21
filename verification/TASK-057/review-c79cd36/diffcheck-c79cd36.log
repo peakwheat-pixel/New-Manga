@@ -1,0 +1,41 @@
+TASK=T1.3.1 / TASK-057
+LABEL=diff-check-r4-reviewer
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+HEAD=c79cd360ce29bb45fb319e347c5325c95aee5567
+SOURCE_TREE_STATE_BEGIN
+?? doc/reviews/T1.3.1-TASK-057-c79cd36.md
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+NOTE=raw per-line output of the all-paths check is deliberately NOT re-embedded here
+NOTE2=(it quotes the 12 historical raw logs already recorded in Round 3); reproduce with the COMMAND lines below
+COMMAND1=git diff --check 676319b..c79cd36 -- src tests
+EXIT1=0
+COMMAND2=git diff --check 5c6ce73..0b957d1
+EXIT2=0
+COMMAND3=git diff --check 85832bb..c79cd36
+EXIT3=0
+COMMAND4=git diff --check 676319b..c79cd36
+EXIT4=2
+COMMAND4_RAW_LINE_COUNT=216
+== attribution of the COMMAND4 findings (file:count)
+     41 verification/TASK-057/review-29546f7/rerun-gate-probe.log
+     41 verification/TASK-057/review-29546f7/gate-probe-29546f7.log
+     13 verification/TASK-057/review-b0e4cb1/prefix-backup-tests-run1.log
+      4 verification/TASK-057/review-b0e4cb1/probe-gate-b0e4cb1-run1.log
+      2 verification/TASK-057/review-29546f7/r006-q008-on-0d15018.log
+      1 verification/TASK-057/review-b0e4cb1/ruler-t061-second-probe-b0e4cb1-run1.log
+      1 verification/TASK-057/review-b0e4cb1/prefix-r004-latch-rerun1.log
+      1 verification/TASK-057/review-b0e4cb1/prefix-q008-truthy-rerun1.log
+      1 verification/TASK-057/review-b0e4cb1/prefix-collect-count-run1.log
+      1 verification/TASK-057/review-b0e4cb1/postfix-r004-latch-rerun1.log
+      1 verification/TASK-057/review-b0e4cb1/postfix-q008-truthy-rerun1.log
+      1 verification/TASK-057/review-29546f7/discrim-single-continue-run.log
+== distinct files: 12
+== all findings under verification/TASK-057/review-29546f7 or review-b0e4cb1 (historical raw logs):
+0
+== trailing-whitespace scan of the delivered files (0 expected)
+tests/storage/test_backup_restore.py=0
+src/infrastructure/sqlite/backup.py=0

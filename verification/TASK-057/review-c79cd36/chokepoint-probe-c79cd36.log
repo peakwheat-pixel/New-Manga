@@ -1,0 +1,40 @@
+TASK=T1.3.1 / TASK-057
+LABEL=chokepoint-probe-r4-reviewer
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+CWD=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+HEAD=c79cd360ce29bb45fb319e347c5325c95aee5567
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+PYTHON=Python 3.12.3
+OPENSSL=/mingw64/bin/openssl
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga/verification/TASK-057/review-29546f7/t057_chokepoint_probe.py C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+== tree: C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga @ c79cd36  dirty=yes
+
+-- H1 latch engaged on the CONTROLLER only (VM mirror left False)
+   vm._restore_in_progress=False  controller.admission_closed=True
+   H1 startTranslateAll            worker born=False  run object=True  error='[run] 恢复进行中，不能启动任务'
+   H1 startTranslateUntranslated   worker born=False  run object=True  error='[run] 恢复进行中，不能启动任务'
+   H1 continueRun (state paused)      worker born=False  error='[run] 恢复进行中，不能启动任务'
+
+-- H2 nested restoreGate(): does the inner exit unlock the outer body?
+   outer engaged: _restore_in_progress=True admission_closed=True
+   inner gate refused: cannot enter the restore gate: [run] 恢复已在进行中
+   after inner exit, still inside the OUTER body: admission_closed=True  _restore_in_progress=True  WORKER BORN DURING OUTER RESTORE=False
+   outer exited: admission_closed=False
+
+-- H3 half-applied command: what survives a latched continueRun?
+   before latch: run='paused'   after latched continueRun: store='paused'  vm._run='paused'
+   worker born=False  error='[run] 恢复进行中，不能启动任务'
+   tasks in store after the refusal: {'pending': 2}
+   endRestore() auto-started the pending run? False
+   run status after release: 'paused'  (a PENDING run with no worker is what recover_running_runs faces next boot)
+
+== done
+EXIT=0

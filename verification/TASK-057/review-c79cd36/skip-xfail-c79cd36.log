@@ -1,0 +1,31 @@
+TASK=T1.3.1 / TASK-057
+LABEL=skip-xfail-parity-r4-reviewer
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+HEAD=c79cd360ce29bb45fb319e347c5325c95aee5567
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+OPENSSL=/mingw64/bin/openssl
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND=git grep -nE 'pytest\.mark\.(skip|skipif|xfail)|pytest\.skip\(|@unittest\.skip' <rev> -- src tests
+== 676319b
+676319b:tests/network/test_connection_tester.py:25:pytestmark_tls = pytest.mark.skipif(openssl is None, reason="openssl unavailable")
+676319b:tests/network/test_transport_tls.py:23:pytestmark = pytest.mark.skipif(openssl is None, reason="openssl unavailable")
+676319b:tests/reading_export/conftest.py:33:        pytest.skip("PySide6 not installed")
+676319b:tests/reading_export/reading_export_helpers.py:37:requires_pyside6 = pytest.mark.skipif(
+676319b:tests/rendering/test_source_style.py:135:            pytest.skip("synthetic single line was still confident")
+COUNT=5
+== c79cd36
+c79cd36:tests/network/test_connection_tester.py:25:pytestmark_tls = pytest.mark.skipif(openssl is None, reason="openssl unavailable")
+c79cd36:tests/network/test_transport_tls.py:23:pytestmark = pytest.mark.skipif(openssl is None, reason="openssl unavailable")
+c79cd36:tests/reading_export/conftest.py:33:        pytest.skip("PySide6 not installed")
+c79cd36:tests/reading_export/reading_export_helpers.py:37:requires_pyside6 = pytest.mark.skipif(
+c79cd36:tests/rendering/test_source_style.py:135:            pytest.skip("synthetic single line was still confident")
+COUNT=5
+== new xfail markers anywhere in range
+GREP_EXIT=1 (1 = none added)
