@@ -1,0 +1,30 @@
+TASK=T1.3.1 / TASK-057
+LABEL=prior-round-discrim-r4-reviewer
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+HEAD=561739aa8c3a1b25502721b88ecc0d351ca928ce
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/prior-round-discrim-c79cd36.log
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+PYTHON=Python 3.12.3
+OPENSSL=/mingw64/bin/openssl
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PURPOSE=R-002 abrupt-publish cleanup / R-010 v0 restore+migration and rollback / R-011 typed hash failure, each individually
+COMMAND=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/storage/test_backup_restore.py::TestBackupCompleteness::test_abrupt_publish_interruption_leaves_no_half_artifact tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_migrates_a_v0_pre_migration_backup tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_failure_is_typed_and_rolls_back_live_database tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_read_failure_is_typed_and_leaves_live_untouched -v -p no:cacheprovider
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+rootdir: C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga
+configfile: pytest.ini
+collecting ... collected 4 items
+
+tests/storage/test_backup_restore.py::TestBackupCompleteness::test_abrupt_publish_interruption_leaves_no_half_artifact PASSED [ 25%]
+tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_migrates_a_v0_pre_migration_backup PASSED [ 50%]
+tests/storage/test_backup_restore.py::TestRestoreSemantics::test_restore_failure_is_typed_and_rolls_back_live_database PASSED [ 75%]
+tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_read_failure_is_typed_and_leaves_live_untouched PASSED [100%]
+
+============================== 4 passed in 0.28s ==============================
+EXIT=0
