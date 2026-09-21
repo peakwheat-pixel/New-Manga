@@ -83,7 +83,7 @@ Only one task is active. `ACTIVE` here means released for the next execution cyc
 - **Preconditions**: TASK-060/061 are integrated; refresh both branch heads before execution.
 - **Deliverables**: reconciled review evidence, merge commit, updated Task/Handoff, post-integration verification.
 - **Acceptance criteria**: backup/restore tests and full suite pass; restore admission protects every start path; user source files remain untouched; no hanging connection.
-- **Verification**: `tests/maintenance/test_sqlite_backup.py`, affected workbench/connection tests, then full regression.
+- **Verification**: `tests/storage/test_backup_restore.py` and `tests/workbench/test_restore_gate.py`, affected workbench/connection tests, then full regression.
 - **Done**: fixed reviewed head matches integrated content, findings are dispositioned, Codex closes the task.
 
 ### T1.1.1 — Production Text Detector
