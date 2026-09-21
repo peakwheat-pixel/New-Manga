@@ -86,6 +86,32 @@ Task 的开发状态与产品 PipelineRun 状态是两套不同概念，不能�
 
 Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head；避免要求文件包含自己的 commit hash。修订生产内容必须生成新的 handoff/head，并重新审查。
 
+### 5.1 Task 完成后的下一任务建议
+
+每次 Task 进入 `done`，或 Codex 明确关闭一个 review / research / integration
+切片时，交付者和 Codex 最终回复都必须提供一个基于当前仓库状态的下一任务建议。
+没有安全、已授权的下一任务时，明确写“无需下一步操作”，不能用泛泛的“继续开发”代替。
+
+下一任务建议必须包含：
+
+1. **Task**：Roadmap ID 或现有 Task ID、标题、推荐启动条件和依赖。
+2. **Agent**：根据任务性质指定合适的 Owner；ZCode 负责独立 Feature/长任务，
+   Qoder 负责 QML/UI/UX，DeepSeek Harness 负责研究/实验/测试/独立 Review，
+   Codex 负责契约、共享 seam、主线集成和 Release Gate。Owner 与 Reviewer 必须不同。
+3. **Recovery point**：实际仓库路径、branch/worktree、固定 `base_commit` 和当前
+   `head`；若 worktree 尚未创建，写明“待 Codex 创建”，不得臆造路径或 commit。
+4. **Scope**：允许修改路径、明确的禁止路径、是否需要共享接口/Schema/依赖变更授权。
+5. **Deliverables**：代码/测试/Handoff/verification 或研究报告的具体文件和结果。
+6. **Verification**：可复制的命令、环境、逐项验收标准、skip/blocker 记录方式和
+   完成 Gate。不得把 planned、NOT_RUN 或 BLOCKED 写成 PASS。
+7. **Forwardable instruction**：一段可直接发送给 Owner 的完整指令，至少重复上述
+   工作路径、Task、base/head、范围、交付物和验证要求。
+
+下一任务建议不等于任务释放。Codex 仍须先在 `STATUS` 登记范围，确认依赖、Owner、
+Reviewer、base、branch、worktree 和 allowed paths，再将 Task 从 `proposed` 改为
+`ready`。不得因为当前 Task 完成而自动启动下一 Task；若需要用户做产品取舍，建议必须
+标为 `BLOCKED` 或 `等待用户裁决` 并停止实施。
+
 ## 6. 独立 Review 与集成
 
 使用 [Review 模板](templates/REVIEW.md)。Review 必须固定 base_commit 与 reviewed_head；分支随后变化不延用旧批准。
