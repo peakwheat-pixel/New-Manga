@@ -87,8 +87,8 @@ def test_collapsed_polygon_extent_is_rejected():
 
 def test_polygon_that_repeats_two_corners_is_rejected():
     # Four points, but only two distinct after rounding: the extent is a
-    # perfectly healthy 640x960, so ONLY the distinct-point rule can catch
-    # this. Without it RegionGeometry would store a ring that traces a line.
+    # perfectly healthy 640x960, so an extent test would wave it through.
+    # The ring traces a line out and back and encloses nothing.
     with pytest.raises(RegionCanvasError) as excinfo:
         normalized_to_page_geometry(
             [(0.1, 0.1), (0.9, 0.9), (0.1, 0.1), (0.9, 0.9)], 800, 1200

@@ -39,16 +39,14 @@ def _to_pixels(axis: float, size: int) -> int:
     return min(size, max(0, math.floor(axis * size + 0.5)))
 
 
-def _distinct(points: Sequence[tuple[int, int]]) -> int:
-    return len({(x, y) for x, y in points})
-
-
 def _twice_area(ring: tuple[tuple[int, int], ...]) -> int:
     """Shoelace doubled area, exact because every coordinate is an int.
 
-    A ring can have a non-empty bounding box and still enclose nothing --
-    three collinear points trace a line. BBox positivity does not see that,
-    so the area has to be checked on its own terms.
+    This is the one geometry rule that has to hold before a Region is built.
+    Every flat selection fails it through the same door -- zero extent, a ring
+    that repeats its own corners, and a collinear triple all enclose nothing
+    -- and an extent test alone cannot see the last one. ``BBox`` would raise
+    ``ValueError`` on the first two, and that must not reach QML.
     """
     total = 0
     for index in range(len(ring)):
@@ -85,29 +83,15 @@ def normalized_to_page_geometry(
 
     xs = [_to_pixels(nx, page_w) for nx, _ in points]
     ys = [_to_pixels(ny, page_h) for _, ny in points]
-    if len(points) == 2:
-        polygon = _rectangle_ring(xs, ys)
-    else:
-        polygon = tuple(zip(xs, ys))
-        # Rounding can collapse a ring drawn on top of itself; a ring of two
-        # distinct corners still has a healthy extent, so this is not covered
-        # by the area check below.
-        if _distinct(polygon) < 3:
-            raise RegionCanvasError(
-                DEGENERATE_GEOMETRY,
-                "polygon ring has fewer than 3 distinct points",
-            )
+    polygon = _rectangle_ring(xs, ys) if len(points) == 2 else tuple(zip(xs, ys))
 
     left, right = min(x for x, _ in polygon), max(x for x, _ in polygon)
     top, bottom = min(y for _, y in polygon), max(y for _, y in polygon)
     width, height = right - left, bottom - top
-    if width <= 0 or height <= 0:
-        raise RegionCanvasError(
-            DEGENERATE_GEOMETRY, f"selection has no area ({width}x{height} px)"
-        )
     if _twice_area(polygon) == 0:
         raise RegionCanvasError(
-            DEGENERATE_GEOMETRY, "ring is a straight line and encloses no area"
+            DEGENERATE_GEOMETRY,
+            f"selection encloses no area (extent {width}x{height} px)",
         )
 
     return RegionGeometry(bbox=BBox(left, top, width, height), polygon=polygon)
