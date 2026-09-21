@@ -102,7 +102,7 @@ QML shell changes are serialized through Codex.
 
 | Order | Task | State | Owner / reviewer | Acceptance boundary |
 |---:|---|---|---|---|
-| 1 | **T1.1.2 Region Canvas & Creator** | **NEXT / only product task to release** | Qoder / non-author reviewer + Codex integrator | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
+| 1 | **T1.1.2 Region Canvas & Creator** | **RELEASED / READY_FOR_QODER** | Qoder / non-author reviewer + Codex integrator; base `b985d9c`, worktree `G:\CODEX\New Manga.worktrees\T1.1.2-qoder` | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
 | 2 | T1.1.1 Production Text Detector | PLANNED; evaluation may be document-only | DeepSeek Harness / Codex | A page without regions creates a persisted candidate Region through a selected real detector; no `PROVIDER_NOT_CONFIGURED` on the configured path. |
 | 3 | T1.2.1 Settings UI & ViewModel | PLANNED | ZCode / Codex | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline, and never enter logs/diagnostics. |
 | 4 | T2.1.1 Apply Design F to QML | PLANNED | ZCode / Qoder + Codex | Shared F tokens are consumed by all four pages; 158px bookshelf geometry and accepted state contrast are verified without business-logic changes. |
