@@ -1,0 +1,24 @@
+=== Running Repository Knowledge Diagnostics ===
+
+[1/5] Checking Python Virtual Environments...
+  [PASS] RepoWiki: repowiki, version 0.4.1
+  [PASS] CodeWiki: CodeWiki CLI, version 2.0.0
+
+[2/5] Checking Binaries and Wrappers...
+  [PASS] repowiki.cmd exists
+  [PASS] codewiki.cmd exists
+  [PASS] codewiki-mcp.cmd exists
+  [PASS] uv.exe exists
+
+[3/5] Checking Windows UTF-8 / Encoding Safety...
+  [PASS] CodeWiki CLI UTF-8 gate passed (no GBK codec error)
+
+[4/5] Checking CodeWiki MCP stdio Handshake...
+  [PASS] MCP Server stdio handshake success (codewiki v1.30.0)
+
+[5/5] Checking Target Project Knowledge Status...
+  [PASS] RepoMap JSON valid (50 ranked files)
+
+=== Diagnostic Summary ===
+STATUS: ALL CHECKS PASSED [OK]
+EXIT=0

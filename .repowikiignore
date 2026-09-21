@@ -1,0 +1,13 @@
+# 只影响 repowiki 扫描范围，不影响 git（git 忽略规则在 .gitignore）。
+
+# Qoder CLI 的 canvas 产物，非项目内容；单文件 >200KB 会被判 oversized。
+.qoder-credits/
+
+# 生成物自身，避免 map 扫到自己。
+wiki/
+
+# verification/ 的原始运行日志与文本转储（pytest 输出、pip freeze、changed-paths）。
+# 只排除证据转储：verification 下的 .md 结论与 .py 探针脚本仍留在 map 中。
+# map 里没有某文件不等于该文件不存在，需要时直接读目录。
+verification/*.log
+verification/*.txt
