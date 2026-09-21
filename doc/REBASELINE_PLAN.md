@@ -48,15 +48,15 @@ No percentage-complete claim is used.
 
 ## Task tree and status
 
-Only one task is active. `ACTIVE` here means released for the next execution cycle; implementation has not started under this rebaseline.
+Only one task may be `ACTIVE` at a time. `ACTIVE` means released for execution by Owner decision. Preparation tracks that produce documents only — no `src/**` or `tests/**` changes — may run concurrently with the single ACTIVE task and do not make their task ACTIVE.
 
 | Task | Title | State | Hard dependencies | Owner / Reviewer |
 |---|---|---|---|---|
-| **T1.3.2** | Close TASK-065 Slices | **ACTIVE — STOP before implementation** | none | Codex / Qoder |
-| T1.3.1 | Integrate Backup Branch | PLANNED | none | Codex integrator; ZCode author / Qoder reviewer |
-| T1.1.1 | Production Text Detector | PLANNED — **IMPLEMENTATION CHOICE REQUIRED** | none | DeepSeek Harness / Codex |
-| T1.1.2 | Region Canvas & Creator | PLANNED | none | ZCode / Qoder |
-| T1.2.1 | Settings UI & ViewModel | PLANNED | none | ZCode / Codex |
+| T1.3.2 | Close TASK-065 Slices | **DONE** — integrated `784e306` | none | Codex / Qoder |
+| T1.3.1 | Integrate Backup Branch | **DONE** — integrated `38d6eaa` | none | Codex integrator; ZCode author / Qoder reviewer |
+| T1.1.1 | Production Text Detector | PLANNED — **IMPLEMENTATION CHOICE REQUIRED**; evaluation preparation authorized, implementation not | none | DeepSeek Harness / Codex |
+| **T1.1.2** | Region Canvas & Creator | **ACTIVE** (Owner decision 2026-09-21, base `f8a4f4a`) | none | Qoder / antigravity (non-author) + Codex integrator |
+| T1.2.1 | Settings UI & ViewModel | PLANNED — contract pre-study authorized | none | ZCode / Codex |
 | T2.1.1 | Apply Design F to QML | PLANNED | T1.1.2, T1.2.1 | ZCode / Qoder + Codex |
 | T2.2.1 | Reader & Workbench Polish | PLANNED | T2.1.1 | ZCode / Qoder |
 | T3.1.1 | Unify Storage into SQLite | PLANNED | T1.3.1 | Codex / DeepSeek Harness |
@@ -169,15 +169,18 @@ Only one task is active. `ACTIVE` here means released for the next execution cyc
 ## Dependency and execution order
 
 ```text
-ACTIVE: T1.3.2
-  -> T1.3.1
-  -> T1.1.1 + T1.1.2 (safe only after scopes are frozen; app.py integration remains serial)
-  -> T1.2.1
+DONE: T1.3.2 (integrated 784e306)
+DONE: T1.3.1 (integrated 38d6eaa)
+ACTIVE: T1.1.2
+  -> T1.1.1 (evaluation preparation authorized; implementation waits on the architecture decision)
+  -> T1.2.1 (contract pre-study authorized)
   -> T2.1.1
   -> T2.2.1
-  -> T3.1.1 (hard: T1.3.1; recommended after M2)
+  -> T3.1.1 (hard: T1.3.1 — now satisfied; still recommended after M2)
   -> T3.2.1
 ```
+
+`T1.1.1 + T1.1.2` may run concurrently only after both scopes are frozen; `src/bootstrap/app.py` integration remains serial through Codex. T1.1.2 is expected to avoid `app.py` and the top-level QML shell entirely (the canvas lives under `src/ui/qml/workbench/` and is referenced from `WorkbenchView.qml`), which keeps it off that serial gate — Codex to confirm at scope freeze.
 
 Every closed task triggers a fresh dependency check. Planned work does not become active merely because it is expected later.
 
@@ -246,4 +249,4 @@ The authoritative snapshot is [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENT
 
 ## Activation and closure rule
 
-T1.3.2 is the only active execution task. This rebaseline deliberately stops before its implementation. At task start, revalidate Objective, Scope, Non-goals, Acceptance Criteria, Verification, Done Definition, allowed paths, base/head, and pre-existing changes against current HEAD.
+T1.1.2 is the only active execution task (Owner decision 2026-09-21, base `f8a4f4ab9a1e66808bfa82fd1a59c014fa7ec8a2`). T1.3.2 and T1.3.1 are closed. At task start, revalidate Objective, Scope, Non-goals, Acceptance Criteria, Verification, Done Definition, allowed paths, base/head, and pre-existing changes against current HEAD.
