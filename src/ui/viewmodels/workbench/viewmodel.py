@@ -710,6 +710,27 @@ class WorkbenchViewModel(QObject):
             self._apply_inspector_region(region.region_id)
         self.inspectorChanged.emit()
 
+    @Slot(str)
+    def deleteRegion(self, region_id: str) -> None:
+        """Remove a mis-drawn region.
+
+        A canvas that commits on release without a way back leaves the user
+        looking at a box they cannot get rid of. The repository soft-deletes,
+        and ``list_regions`` already filters deleted rows, so the overlay
+        loses the box on the next refresh with no extra broadcast.
+        """
+
+        if self._region_deleter is None:
+            self._record_command_error("no region deleter bound", stage="editor")
+            return
+        if not region_id:
+            self._record_command_error("no region selected", stage="editor")
+            return
+        self._region_deleter.delete_region(region_id)
+        if self._inspector_region_id == region_id:
+            self._inspector_region_id = None
+        self.inspectorChanged.emit()
+
     def _set_dirty(self, dirty: bool) -> None:
         if self._inspector_dirty != dirty:
             self._inspector_dirty = dirty

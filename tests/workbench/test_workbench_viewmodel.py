@@ -697,4 +697,52 @@ def test_polygon_with_fewer_than_three_points_is_typed(qapp_):
     assert errors and "polygon points" in errors[0]
 
 
+# ----------------------------------------------------------------------
+# T1.1.2: deletion (a commit-on-draw canvas needs an exit)
+# ----------------------------------------------------------------------
+
+
+def test_delete_region_forwards_the_id(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer, deleter=writer)
+    vm.deleteRegion("r7")
+    assert writer.deleted == ["r7"]
+
+
+def test_deleting_the_selected_region_clears_selection(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer, deleter=writer)
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    assert vm.inspectorRegionId == "r-created-1"
+    vm.deleteRegion("r-created-1")
+    assert vm.inspectorRegionId == ""
+
+
+def test_deleting_another_region_keeps_selection(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer, deleter=writer)
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    vm.deleteRegion("someone-else")
+    assert vm.inspectorRegionId == "r-created-1"
+
+
+def test_unbound_deleter_is_typed_and_does_not_raise(qapp_):
+    vm = region_vm(deleter=None)
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.deleteRegion("r7")
+    assert errors == ["no region deleter bound"]
+
+
+def test_empty_region_id_is_typed(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(deleter=writer)
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.deleteRegion("")
+    assert writer.deleted == []
+    assert errors == ["no region selected"]
+
+
+
 
