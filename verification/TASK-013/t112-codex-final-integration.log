@@ -65,6 +65,26 @@ COMMAND: git diff --check b985d9c HEAD -- src tests doc
 RESULT: pass
 EXIT: 0
 
+FINAL_MASTER_VERIFICATION_CHECKPOINT: 74ba0d88ed736f49e55fefcc5acee6fa39d34ff8
+
+COMMAND: python -m pytest tests -q -p no:cacheprovider -rs
+RESULT: 1025 passed, 6 skipped, 1 warning in 55.08s
+SKIPS: six existing OpenSSL-unavailable TLS cases
+WARNING: existing mobi/imghdr deprecation warning
+EXIT: 0
+
+COMMAND: python -m compileall -q src tests
+RESULT: pass
+EXIT: 0
+
+COMMAND: python -m bootstrap.app --smoke-test --data-root <fresh temp directory>
+RESULT: SQLite and managed directory assembled; smoke completed
+EXIT: 0
+
+COMMAND: git diff --check -- src tests doc
+RESULT: pass
+EXIT: 0
+
 ACCEPTANCE
 - Rectangle creation / preview / cancel / invalid geometry: PASS by focused VM/QML evidence.
 - Polygon creation / append / confirm / cancel / invalid geometry: PASS by focused VM/QML evidence.
