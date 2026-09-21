@@ -1,252 +1,148 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE**
+Status: **ACTIVE DEVELOPMENT BASELINE — Stage A audit complete**
 
-Adopted from: Stage 3 Final Project Rebaseline Plan + Final Review corrections
+Audit date: 2026-09-21 (Asia/Shanghai)
 
-Repository baseline inspected: `master` @ `d05b3dbbbf4806df07d2b310683923d5df01f2a5`
+Code baseline audited: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
-Effective date: 2026-09-20
+This file is the sole source of truth for sequencing. `doc/STATUS.md` is the
+only live execution checkpoint. `doc/tasks/`, `doc/handoffs/`, `doc/reviews/`
+and `verification/` are historical evidence unless this file explicitly
+releases a task.
 
-This file is the sole planning source of truth for future development sequencing. Product requirements and architecture constraints remain authoritative in D01–D08 and `doc/contracts/**`; historical Task, Handoff, Review, and verification files remain evidence, not current scheduling authority.
+## Current implemented state
 
-## Rebaseline ruling on counts
+### Verified complete at the current code baseline
 
-The approved prose says “6 Epics / 8 Tasks”, but its explicit tree names **7 Epics and 9 Task IDs**. No approved item is silently discarded. This baseline therefore adopts the explicit tree below: **3 Milestones / 7 Epics / 9 Tasks**. Owner may later normalize the labels or merge tasks through an explicit planning decision; until then the listed IDs are authoritative.
+- SQLite v2 schema, migrations, region/revision persistence, connection
+  ownership and managed-copy safety boundaries.
+- Local image, PDF and picture-MOBI import paths, with typed failure behavior.
+- Scheduler/executor, pause/stop/retry/recovery state, render/export adapters,
+  Webtoon tiled reading and diagnostics wiring.
+- Four top-level QML routes and the existing Bookshelf/Workbench/Reader shell.
+- Backup/restore service and restore admission/latch tests; production backup
+  UI/bootstrap exposure is not part of this verified list.
+- Fresh isolated verification: `982 collected = 976 passed + 6 skipped`, exit
+  0. The six skips are the existing OpenSSL-unavailable TLS cases.
+- Fresh smoke verification: `python -m bootstrap.app --smoke-test` exit 0.
 
-## Product goal
+### Partial, blocked or missing
 
-Deliver a safe Windows desktop workflow for importing local manga, acquiring text regions, configuring OCR/translation/image providers, translating and typesetting, then reading or exporting results without modifying user source files or losing manual edits, locks, revisions, or recovery state.
+- **T1.1.2 gap:** Workbench can inspect/edit existing regions, but has no
+  manual rectangle/polygon creator wired to `RegionEditingService.create_region`.
+- **T1.1.1 gap:** production assembly still passes `detector=None`; page-level
+  detection fails closed with `PROVIDER_NOT_CONFIGURED`. No production
+  `DetectionProvider` implementation is selected or wired.
+- **T1.2.1 gap:** `SettingsView.qml` is a category placeholder and there is no
+  Settings ViewModel or usable provider/credential/endpoint/proxy save flow.
+- **T2.1.1 gap:** the selected F · Graphite Atelier design is documented, but
+  production QML still uses the pre-F hard-coded palette and has no shared
+  token/theme layer.
+- **T3.1.1 gap:** reading progress and export history still use JSON document
+  stores; core library/pipeline persistence is already SQLite.
+- **T3.2.1 gap:** no product PyInstaller spec/build script or clean-machine
+  release artifact exists. The old TASK-004 experiment is evidence for a Qt
+  smoke binary, not a product package.
+- Real provider quality and external endpoint behavior are not proven by the
+  unit suite; adapters and fail-closed paths are not production quality claims.
 
-## Current verified capability state
+## Historical Task audit
 
-- **Stable**: SQLite v2 core persistence, Managed Copy, image/PDF/MOBI import, Webtoon tiled reading, scheduler/executor, rendering/export, connection ownership, diagnostics wiring.
-- **Partial**: Workbench execution and views exist, but manual region drawing is absent.
-- **Blocked**: Production text detection is assembled with `detector=None`.
-- **Missing**: Usable Settings UI and production QML implementation of F · Graphite Atelier.
-- **Technical debt**: Reading progress and export history still use JSON stores.
+Classification is based on current source, current tests, fixed integration
+commits and review evidence. It does not copy the old `status: done` field.
+Historical files are not rewritten merely to change this classification.
 
-No percentage-complete claim is used.
+| Classification | Tasks | Audit reason |
+|---|---|---|
+| `VERIFIED_COMPLETE` | TASK-005–015, TASK-029–032, TASK-034–046, TASK-049–058, TASK-060–065 | Integrated implementation or contract has current code and reproducible review/test evidence. TASK-013 is complete for its original progress/workbench scope; the canvas gap is a later slice. |
+| `IMPLEMENTED_NOT_VERIFIED` | TASK-059 | Design artifacts are integrated, but the latest evidence round still awaits the independent review checkpoint; production QML implementation is intentionally a later task. |
+| `PARTIAL` | TASK-004, TASK-016–021, TASK-023, TASK-033 | The bounded slice exists, but its own evidence records a clean-machine gate, model/endpoint quality limitation, large-page limitation, deferred sub-slices, deferred MOBI history, or missing real-provider capability. |
+| `BLOCKED` | none | No historical task is promoted to blocked when a bounded delivered slice exists; the current blockers are represented as gaps in the new roadmap. |
+| `NOT_STARTED` | none | Former proposed tasks were replaced or retained in the new roadmap rather than left as an unowned queue. |
+| `SUPERSEDED` | TASK-022, TASK-025–027, TASK-047, TASK-048 | Replaced by T1.2.1/T2.1.1/T2.2.1/T3.2.1 or by the later connection-ownership implementation. TASK-047 was explicitly rejected. |
+| `DUPLICATE` | none | No additional independent delivery was found to be a pure duplicate. |
+| `OBSOLETE` | none | Retired scope is recorded as superseded so its history remains traceable. |
+| `DOC_ONLY` | TASK-001–003, TASK-024, TASK-028 | These are intentionally document/contract/design deliverables; their completion does not imply product implementation. |
 
-## Milestones and Epics
+The old task ledgers remain in place for traceability. Their frontmatter is
+historical metadata, not a second scheduling source of truth.
 
-### Milestone 1 — Alpha Core Loop Closure
-
-- **E1.1 Region Input & Detection**: production detection plus manual region creation.
-- **E1.2 Settings UI & Provider Configuration**: user-accessible provider, credential, endpoint, and proxy settings.
-- **E1.3 Branch Integration & Baseline Cleanup**: close TASK-065 and integrate the reviewed TASK-057 delivery safely.
-
-### Milestone 2 — UI/UX Modernization & Polish
-
-- **E2.1 QML Design Modernization**: implement F · Graphite Atelier in production QML.
-- **E2.2 Interaction & Navigation Polish**: close reader/workbench dead ends and provisional error UI.
-
-### Milestone 3 — Storage Convergence & Alpha Release Gate
-
-- **E3.1 Persistence Unification**: move reading progress and export history into SQLite.
-- **E3.2 Packaging & End-to-End Release Gate**: Windows package and clean-machine acceptance.
-
-## Task tree and status
-
-Only one task may be `ACTIVE` at a time. `ACTIVE` means released for execution by Owner decision. Preparation tracks that produce documents only — no `src/**` or `tests/**` changes — may run concurrently with the single ACTIVE task and do not make their task ACTIVE.
-
-| Task | Title | State | Hard dependencies | Owner / Reviewer |
-|---|---|---|---|---|
-| T1.3.2 | Close TASK-065 Slices | **DONE** — integrated `784e306` | none | Codex / Qoder |
-| T1.3.1 | Integrate Backup Branch | **DONE** — integrated `38d6eaa` | none | Codex integrator; ZCode author / Qoder reviewer |
-| T1.1.1 | Production Text Detector | PLANNED — **IMPLEMENTATION CHOICE REQUIRED**; evaluation preparation authorized, implementation not | none | DeepSeek Harness / Codex |
-| **T1.1.2** | Region Canvas & Creator | **ACTIVE** (Owner decision 2026-09-21, base `f8a4f4a`) | none | Qoder / antigravity (non-author) + Codex integrator |
-| T1.2.1 | Settings UI & ViewModel | PLANNED — contract pre-study authorized | none | ZCode / Codex |
-| T2.1.1 | Apply Design F to QML | PLANNED | T1.1.2, T1.2.1 | ZCode / Qoder + Codex |
-| T2.2.1 | Reader & Workbench Polish | PLANNED | T2.1.1 | ZCode / Qoder |
-| T3.1.1 | Unify Storage into SQLite | PLANNED | T1.3.1 | Codex / DeepSeek Harness |
-| T3.2.1 | Windows Packaging & Gate | PLANNED | all preceding applicable tasks | Codex / Qoder + DeepSeek Harness |
-
-## Task definitions
-
-### T1.3.2 — Close TASK-065 Slices
-
-- **Objective**: complete the docs/test precision work already approved in `doc/tasks/TASK-065.md`.
-- **Scope**: make the shutdown-drain test prove an active worker existed; refresh full-suite evidence; correct stale connection typing/docs; remove the tautological stderr assertion.
-- **Non-goals**: no product behavior, Schema, dependency, SQLite, QML, Managed Copy, or cleanup changes.
-- **Preconditions**: this rebaseline is committed; TASK-065 AC and allowed paths are rechecked against the new HEAD.
-- **Deliverables**: tests/docs changes, verification evidence, Handoff, independent Review.
-- **Acceptance criteria**: all five TASK-065 ACs; collected tests not below 951; no added skip/xfail or weakened effective assertion.
-- **Verification**: targeted shutdown-drain tests, collect-only count, full regression with environment/command/exit/skip evidence.
-- **Done**: independent Review approved, Codex integration, post-integration regression, Closure Gate.
-
-### T1.3.1 — Integrate Backup Branch
-
-- **Objective**: reconcile and integrate the already reviewed TASK-057 backup/restore delivery without losing later master work.
-- **Scope**: fixed delivery head `29546f7`; Qoder Review at `agent/qoder/TASK-057-review` records `approved`; rebase/merge impact analysis against current master; Codex whitelist ruling; integrate and verify. R-008/R-009 remain acceptance gaps of this integration task and may not escape into a new task if they prevent safe restore wiring.
-- **Non-goals**: no backup-model redesign and no unrelated storage work.
-- **Preconditions**: TASK-060/061 are integrated; refresh both branch heads before execution.
-- **Deliverables**: reconciled review evidence, merge commit, updated Task/Handoff, post-integration verification.
-- **Acceptance criteria**: backup/restore tests and full suite pass; restore admission protects every start path; user source files remain untouched; no hanging connection.
-- **Verification**: `tests/storage/test_backup_restore.py` and `tests/workbench/test_restore_gate.py`, affected workbench/connection tests, then full regression.
-- **Done**: fixed reviewed head matches integrated content, findings are dispositioned, Codex closes the task.
-
-### T1.1.1 — Production Text Detector
-
-- **Objective**: remove production `detector=None` so page-level translation can create Regions for pages without existing annotations.
-- **Implementation choice required**: do not select a provider during rebaseline. At task start, use repository evidence → technical evaluation → architecture decision to choose online Vision detection, DBNet, Comic Text Detector, or another actual detection provider. MangaOCR is recognition, not detection, and must not be used as the detector.
-- **Scope**: implement the chosen `TextDetector` adapter and inject it through `build_production_handlers`.
-- **Non-goals**: no scheduler rewrite, Detection contract rewrite, or OCR recognition work.
-- **Preconditions**: TASK-049 detection-to-Region persistence path remains valid.
-- **Deliverables**: architecture decision, adapter, bootstrap wiring, end-to-end page detection test.
-- **Acceptance criteria**: an imported page with no Regions can run detection and persist at least one candidate Region without `PROVIDER_NOT_CONFIGURED`.
-- **Verification**: end-to-end detection/Region test plus affected provider/pipeline/full regression suites.
-- **Done**: architecture decision recorded, independent Review approved, Codex integration verified.
-
-### T1.1.2 — Region Canvas & Creator
-
-- **Objective**: let users draw text regions on the original page in the Workbench.
-- **Scope**: QML canvas overlay for rectangle/polygon input; a ViewModel creation slot; existing `RegionEditingService.create_region` path.
-- **Non-goals**: no Region storage-model or typesetting-engine redesign.
-- **Preconditions**: TASK-008/049 Region services remain available.
-- **Deliverables**: QML interaction, ViewModel binding, interaction tests.
-- **Acceptance criteria**: drawing a region updates the inspector and creates matching `regions` and `region_revisions` rows.
-- **Verification**: QML interaction plus service/persistence tests.
-- **Done**: independent Review approved and Codex integration verified.
-
-### T1.2.1 — Settings UI & ViewModel
-
-- **Objective**: replace the Settings placeholder with usable provider, credential, endpoint, and proxy configuration.
-- **Scope**: Settings ViewModel over existing settings/credential services; bootstrap registration; QML provider list, password input, base URL, local endpoint, proxy, and save behavior.
-- **Non-goals**: no plugin marketplace or credential-encryption redesign.
-- **Preconditions**: TASK-009/050 backend services remain valid.
-- **Deliverables**: ViewModel, QML page, settings contract and tests.
-- **Acceptance criteria**: user settings survive restart and are consumed by the pipeline; secrets are not exposed in logs/UI diagnostics.
-- **Verification**: UI/service integration, persistence, credential boundary, and full regression tests.
-- **Done**: independent Review approved and Codex integration verified.
-
-### T2.1.1 — Apply Design F to QML
-
-- **Objective**: implement TASK-059 F · Graphite Atelier across the four top-level pages.
-- **Scope**: shared QML theme/tokens; AppShell, Bookshelf, Workbench, Reader, and Settings colors, spacing, typography, controls, and 158px card geometry.
-- **Non-goals**: no business/ViewModel changes; no C glass, D top navigation, E command palette, or B chapter-card IA.
-- **Preconditions**: M1 UI contracts are stable; ND-6 and any remaining TASK-059 implementation decisions are resolved.
-- **Hard dependencies**: T1.1.2, T1.2.1.
-- **Deliverables**: production QML, contract tests, visual evidence.
-- **Acceptance criteria**: production QML consumes the chosen tokens; 158px bookshelf cards; required state contrast meets the accepted contract; four-page behavior remains intact.
-- **Verification**: QML contract/interaction tests and offline screenshot/contrast audit.
-- **Done**: Qoder visual Review and non-author engineering Review approved; Codex integration verified.
-
-### T2.2.1 — Reader & Workbench Polish
-
-- **Objective**: close the reader/workbench navigation dead ends and replace provisional command errors with the accepted F notification pattern.
-- **Scope**: reader chapter picker, workbench empty-state picker, command error notification behavior.
-- **Non-goals**: no unrelated feature expansion.
-- **Dependencies**: T2.1.1.
-- **Deliverables**: QML behavior and interaction tests.
-- **Acceptance criteria**: chapter switching and empty-state selection are user-accessible; errors are visible, dismissible, and follow the accepted design.
-- **Verification**: QML interaction tests plus regression.
-- **Done**: independent Review approved and Codex integration verified.
-
-### T3.1.1 — Unify Storage into SQLite
-
-- **Objective**: replace JSON-backed export history and reading progress with transactional SQLite persistence and safe legacy-data migration.
-- **Scope**: schema migration, repositories/adapters, one-time JSON import, rollback and compatibility tests.
-- **Non-goals**: no export or reading business-rule change.
-- **Hard dependency**: T1.3.1, because backup/recovery must protect the migration.
-- **Execution-order constraint**: **recommended after M2 stabilization**. T2.1.1 is not a hard code dependency unless fresh implementation evidence proves otherwise.
-- **Deliverables**: migration, adapters, safe import/rollback behavior, tests.
-- **Acceptance criteria**: production no longer depends on JSON stores; old data migrates once without loss; rollback keeps metadata consistent.
-- **Verification**: storage/migration/reading/export suites and full regression.
-- **Done**: independent Review approved and Codex integration verified.
-
-### T3.2.1 — Windows Packaging & Gate
-
-- **Objective**: produce an installable Windows Alpha and verify the complete user workflow on a clean machine.
-- **Scope**: PyInstaller packaging, required Qt/plugins/fonts/runtime assets, clean Windows 11 walkthrough, D08 release gate.
-- **Non-goals**: no automatic updater.
-- **Dependencies**: all preceding tasks required by the release path.
-- **Deliverables**: versioned installer/build artifact and release acceptance report.
-- **Acceptance criteria**: without a system Python install, the app launches, imports local manga, accepts provider settings, translates, reads/exports, and exits without a residual process.
-- **Verification**: automated package checks plus clean-VM manual acceptance.
-- **Done**: all release findings closed, reviewers approve, Codex signs the Alpha release candidate.
-
-## Dependency and execution order
+## Dependency graph
 
 ```text
-DONE: T1.3.2 (integrated 784e306)
-DONE: T1.3.1 (integrated 38d6eaa)
-ACTIVE: T1.1.2
-  -> T1.1.1 (evaluation preparation authorized; implementation waits on the architecture decision)
-  -> T1.2.1 (contract pre-study authorized)
-  -> T2.1.1
-  -> T2.2.1
-  -> T3.1.1 (hard: T1.3.1 — now satisfied; still recommended after M2)
-  -> T3.2.1
+T1.1.2 Region Canvas & Creator
+  requires: TASK-008/TASK-049 region service and current Workbench VM seam
+  writes:  QML workbench overlay, Workbench VM creator slot, interaction tests
+  serial integration: src/bootstrap/app.py region_creator injection
+
+T1.1.1 Production Text Detector
+  requires: detector choice and provider contract decision
+  writes: selected DetectionProvider adapter + bootstrap wiring + E2E test
+  must not: use MangaOCR as a detector or silently fall back
+
+T1.2.1 Settings UI & ViewModel
+  requires: existing TASK-009/TASK-050 settings/credential services
+  writes: settings VM, provider/credential/endpoint/proxy QML, persistence tests
+
+T2.1.1 Graphite Atelier QML
+  requires: T1.1.2 and T1.2.1 contracts stable
+  -> T2.2.1 Reader/Workbench polish
+
+T3.1.1 SQLite progress/export history
+  requires: TASK-057 backup/recovery slice; recommended after T2 stabilization
+  -> T3.2.1 packaging and clean-machine release gate
 ```
 
-`T1.1.1 + T1.1.2` may run concurrently only after both scopes are frozen; `src/bootstrap/app.py` integration remains serial through Codex. T1.1.2 **does** need a one-line `app.py` change: the workbench write capability is injected at `src/bootstrap/app.py:882` (`region_catalog=editing, translation_editor=editing`), so production region creation requires adding `region_creator=editing` there. Codex must land that line; the QML/ViewModel/test part of T1.1.2 stays inside its own whitelist and is where the work is verified.
+No downstream task is released before its prerequisite is integrated. Product
+code, shared contracts, `src/bootstrap/app.py`, SQLite migrations and top-level
+QML shell changes are serialized through Codex.
 
-Every closed task triggers a fresh dependency check. Planned work does not become active merely because it is expected later.
+## New roadmap and execution order
 
-## Legacy mapping
+| Order | Task | State | Owner / reviewer | Acceptance boundary |
+|---:|---|---|---|---|
+| 1 | **T1.1.2 Region Canvas & Creator** | **NEXT / only product task to release** | Qoder / non-author reviewer + Codex integrator | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
+| 2 | T1.1.1 Production Text Detector | PLANNED; evaluation may be document-only | DeepSeek Harness / Codex | A page without regions creates a persisted candidate Region through a selected real detector; no `PROVIDER_NOT_CONFIGURED` on the configured path. |
+| 3 | T1.2.1 Settings UI & ViewModel | PLANNED | ZCode / Codex | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline, and never enter logs/diagnostics. |
+| 4 | T2.1.1 Apply Design F to QML | PLANNED | ZCode / Qoder + Codex | Shared F tokens are consumed by all four pages; 158px bookshelf geometry and accepted state contrast are verified without business-logic changes. |
+| 5 | T2.2.1 Reader & Workbench Polish | PLANNED | ZCode / non-author reviewer | Chapter picker, Workbench empty-state picker and dismissible command-error notification are accessible and tested. |
+| 6 | T3.1.1 Unify Storage into SQLite | PLANNED | Codex / DeepSeek Harness | JSON progress/export stores migrate once into transactional SQLite with rollback and no data loss. |
+| 7 | T3.2.1 Windows Packaging & Release Gate | PLANNED | Codex / Qoder + DeepSeek Harness | Product onedir launches on clean Windows without Python, completes the core workflow, and exits without a residual process. |
 
-Legacy Task files remain in `doc/tasks/`; they are archived **logically, not erased or moved**, preserving links, Git history, decisions, Reviews, Handoffs, and verification evidence.
+Preparation-only research for T1.1.1 may run without changing `src/**` or
+`tests/**`. No second product task becomes active until Order 1 is integrated.
 
-| Legacy Task | New location | Action |
-|---|---|---|
-| TASK-001–008 | M1 foundation | KEEP |
-| TASK-009 | T1.2.1 | MERGE + REOPEN UI gap |
-| TASK-010–012 | M1 foundation | KEEP |
-| TASK-013 | T1.1.2 | MERGE + REOPEN canvas gap |
-| TASK-014 | M1 foundation | KEEP |
-| TASK-015 | T2.2.1 + T3.1.1 | MERGE remaining interaction/storage gaps |
-| TASK-016–018 | research archive | KEEP (RESEARCH) |
-| TASK-019 | T1.1.1 | MERGE + REOPEN detector gap |
-| TASK-020 | M1 foundation | KEEP |
-| TASK-021 | T1.3.1 | MERGE backup subset |
-| TASK-022 | T1.2.1 + T2.1.1 | RETIRE / SUPERSEDED |
-| TASK-023 | M1 foundation | KEEP |
-| TASK-024 | contract archive | KEEP (CONTRACT) |
-| TASK-025 | later backlog | RETIRE FROM ALPHA |
-| TASK-026–027 | T3.2.1 | SUPERSEDED |
-| TASK-028–046 | M1 foundation | KEEP |
-| TASK-047 | rejected design archive | RETIRE (REJECTED) |
-| TASK-048 | TASK-060 replacement history | SUPERSEDED |
-| TASK-049–056 | M1 foundation | KEEP |
-| TASK-057 | T1.3.1 | MERGE reviewed delivery |
-| TASK-058 | M1 foundation | KEEP |
-| TASK-059 | T2.1.1 | MERGE + EXTEND into QML implementation |
-| TASK-060–064 | M1 foundation | KEEP |
-| TASK-065 | T1.3.2 | MERGE / ACTIVE closure |
+## Directory and document governance
 
-## Agent allocation and conflict control
+- Keep `src/`, `tests/`, `doc/01–09`, contracts, task/review/handoff evidence
+  and verification logs.
+- Keep historical tasks in place; archive them logically through the mapping in
+  this file instead of moving or deleting them.
+- Treat `verification/` as evidence, not generated cache. Do not delete logs
+  during this rebaseline.
+- `.pytest_cache/` is generated and ignored. `.codewiki/`, `wiki/`,
+  `.repowikiignore` and `.qoder-credits/` are untracked agent/generated
+  material; preserve them for owner review and do not add them to the product
+  baseline in this checkpoint.
+- `experiments/TASK-017/README.md` is another agent's uncommitted change;
+  preserve it and keep it outside this audit commit.
+- The 2026-09-20 worktree inventory is evidence only and must be refreshed
+  before any future worktree deletion. No worktree deletion or prune is
+  authorized here.
 
-- **Codex**: coordinator, architect, sole master integrator, closure owner.
-- **Qoder**: repository impact analysis, QML/visual quality, non-author Review.
-- **ZCode**: bounded UI/feature implementation on assigned branch.
-- **DeepSeek Harness**: OCR/detection/translation/image specialist and non-author Review.
-- Owner must not Review their own implementation.
-- `src/bootstrap/app.py`, SQLite schema/migrations, and top-level QML shell changes are serialized through Codex.
+## Recovery checkpoint
 
-## Governance
+```powershell
+Set-Location 'G:\CODEX\New Manga'
+git status --short --branch
+git rev-parse HEAD
+Get-Content doc\STATUS.md
+git log -8 --oneline --decorate
+$env:PYTHONPATH='src'
+& 'C:\Users\49745\AppData\Local\Temp\new-manga-audit-py314-20260921\Scripts\python.exe' -m pytest tests -q -p no:cacheprovider -rs
+```
 
-Approved rules:
-
-- Repository reality outranks historical planning claims.
-- Evidence precedes completion claims.
-- Owner and Reviewer are different people/agents.
-- Codex is merge owner and integrator.
-- Prefer closing tasks over creating tasks.
-- A bug/test/acceptance gap that blocks the active task remains inside that task.
-- `DONE` requires implementation, targeted verification, full regression, independent Review, integration verification, and Closure Gate.
-
-Proposed metrics, **not hard policy** until Owner approval:
-
-- Task Expansion Ratio ≤ 0.2.
-- Ratio > 0.5 warns of divergence.
-- Ratio ≥ 1.0 suggests rebaseline.
-- Open Tasks ≤ 8.
-
-## Worktree safety
-
-The authoritative snapshot is [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md). No worktree removal or `git worktree prune` is authorized by this rebaseline. Refresh the inventory before any later cleanup.
-
-## Activation and closure rule
-
-T1.1.2 is the only active execution task (Owner decision 2026-09-21, base `f8a4f4ab9a1e66808bfa82fd1a59c014fa7ec8a2`). T1.3.2 and T1.3.1 are closed. At task start, revalidate Objective, Scope, Non-goals, Acceptance Criteria, Verification, Done Definition, allowed paths, base/head, and pre-existing changes against current HEAD.
+Resume only after confirming the current branch, dirty files, `STATUS.md`,
+this plan and the latest verification artifact. Do not infer progress from
+chat history.

@@ -1,5 +1,7 @@
 # Task 索引
 
+> **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。
+
 > **Historical ledger after 2026-09-20 Rebaseline.** TASK-001～065 文件、Handoff、Review 与 verification 保留为历史证据；它们不再构成当前排期。当前任务树和 Legacy Mapping 见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前唯一 Active Task 见 [STATUS](../STATUS.md)。本目录暂不批量移动或删除文件，以保护既有链接与 Git 追溯。
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。

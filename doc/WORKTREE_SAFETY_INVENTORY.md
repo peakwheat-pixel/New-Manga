@@ -1,5 +1,11 @@
 # Worktree Safety Inventory
 
+> **Staleness notice (2026-09-21):** this inventory was captured on
+> 2026-09-20 at an earlier master baseline. It remains a no-delete safety
+> record, not a current cleanup authorization. The current main-worktree
+> dirty set is recorded in [STATUS](STATUS.md); refresh this file before any
+> worktree deletion or `git worktree prune`.
+
 Snapshot time: 2026-09-20 (Asia/Shanghai)
 
 Repository: `G:/CODEX/New Manga`

@@ -1,5 +1,7 @@
 # 接管审计、当前状态与 Gap Analysis
 
+> **历史快照声明（2026-09-21）**：本文档记录 2026-09-13 的初始接管状态，不是当前实现基线。当前代码、Gap、任务审计和路线以 [REBASELINE_PLAN](REBASELINE_PLAN.md)、[STATUS](STATUS.md) 与 [Rebaseline Verification](14_TAKEOVER_VERIFICATION.md) 为准。
+
 审计日期：2026-09-13，Asia/Shanghai。范围仅为 G:/CODEX/New Manga 及其 Git 元数据。D01～D08 的定义与实际文件路径见 [索引](00_INDEX.md)。本报告是本次接管快照，持续状态见 [STATUS](STATUS.md)。
 
 §1～8 保留接管时观察，行号和原始指纹对应初始基线 `496b4ed`；TASK-001 后续修订见 §9，TASK-002 契约冻结见 §10。历史“未提交/未授权”描述不代表当前状态。
