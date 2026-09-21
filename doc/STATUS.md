@@ -11,14 +11,14 @@ Audit checkpoint: 2026-09-21 (Asia/Shanghai)
 | Integrated code HEAD | `5b917459deeb72de575d0985e1315889444cef4b` |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Active product task | `T1.1.1 — Production Text Detector = IN_REVIEW / CHANGES_REQUESTED`; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`. |
-| Product task owner/reviewer | Implementation: ZCode; non-author review/integration: Codex; T1.1.1 blocking findings: 4. |
-| Execution branch/worktree | `task/t1.1.2-region-canvas-qoder` / `G:\CODEX\New Manga.worktrees\T1.1.2-qoder` |
-| Execution base/head | base `b985d9cf92a894f035550fe409179b3cb5adcbd8`; integrated code head `5b917459deeb72de575d0985e1315889444cef4b` |
+| Active product task | `T1.1.1 — Production Text Detector = APPROVED / WAITING FOR CODEX INTEGRATION`; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`. |
+| Product task owner/reviewer | Implementation: ZCode; non-author review/integration: Codex; T1.1.1 blocking findings: 0; IMPORTANT deferred findings: 2. |
+| Execution branch/worktree | `agent/zcode/T1.1.1-production-text-detector` / `G:\CODEX\New Manga.worktrees\T1.1.1-production-text-detector` |
+| Execution base/head | review base `4a1ed6ca`; delivery head `2f116a2`; R2 docs head `4a631355` |
 | Verified test status | Fresh Python 3.12 venv: `1031 collected = 1025 passed + 6 skipped`, exit 0. All six skips are OpenSSL-unavailable TLS cases; one existing MOBI deprecation warning. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | T1.1.1 review: merge threshold, boundary clipping, torch pin and compliance re-check unresolved; master still uses `detector=None`. Settings page is a placeholder with no Settings VM; Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
+| Current blockers | T1.1.1 R2 review has 0 blocking findings and is approved for Codex integration; master still uses the prior T1.1.2 product state until serial integration. Deferred: author full-suite pass/skip count correction and existing export signal race. Settings page is a placeholder with no Settings VM; Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
 | Dirty main-worktree files | Preserve: `experiments/TASK-017/README.md` (tracked modification); `.qoder-credits/` (19 untracked files); `.codewiki/`, `wiki/`, `.repowikiignore`, `doc/AI_COORDINATION.md` (untracked parallel/generated material). |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
 | Last product integration | `5b91745` T1.1.2 Region Canvas & Creator; prior product integration was `38d6eaa` TASK-057. |
@@ -49,10 +49,12 @@ verification are now complete.
 
 ## Stage B execution gate
 
-T1.1.2 is integrated and verified. T1.1.1 has a fixed implementation delivery
-head but is not integrated or verified; do not start any later roadmap unit.
+T1.1.2 is integrated and verified. T1.1.1 R2 has a fixed implementation
+delivery head and an approved non-author review, but is not integrated or
+verified; do not start any later roadmap unit.
 Preserve all dirty files and worktrees. `TASK-013` remains the historical task;
-T1.1.2 is closed and T1.1.1 remains in the non-author review gate.
+T1.1.2 is closed and T1.1.1 is approved but remains outside the integrated
+product state until the Codex integration gate completes.
 
 ## T1.1.1 preparation Release Gate
 
@@ -98,6 +100,27 @@ Codex independently reviewed ZCode delivery
 - Review report: [T1.1.1 review 4a1ed6c](../verification/T1.1.1/review-4a1ed6c.md).
 - Integration: none; master product code remains at the prior integrated
   T1.1.2 state. ZCode must deliver a new head and wait for re-review.
+
+## T1.1.1 R2 Review checkpoint
+
+Codex reviewed ZCode R2 delivery `2f116a2` against base `4a1ed6ca` in
+`G:\CODEX\New Manga.worktrees\T1.1.1-production-text-detector`.
+
+- R2 code commit: `2f116a2`; follow-up evidence/Handoff commit:
+  `4a631355316e959e9a9704f1ead2eaed39cbf7a3`.
+- Result: **APPROVED FOR CODEX INTEGRATION WINDOW**; all six historical
+  blockers are fixed and fresh CPU/GPU focused suites are `46 passed` each.
+- Fresh full-suite evidence is recorded in
+  [review-2f116a2](../verification/T1.1.1/review-2f116a2.md): implementation
+  environment `1069 passed, 6 skipped, 2 failed`; baseline environment
+  `1043 passed, 11 skipped, 1 failed`. The only product failure is the
+  pre-existing export signal race; the other implementation-environment
+  failure is the expected model-runtime readiness assertion.
+- IMPORTANT deferred findings: correct the stale author pass/skip split in the
+  R2 evidence, and assign the export race to a separate export/reading repair
+  window. Neither is a T1.1.1 R2 code blocker.
+- Integration: none yet; master remains at the prior T1.1.2 product state.
+  ZCode must not merge. Codex owns the next serial integration gate.
 
 ## Recovery instruction
 
