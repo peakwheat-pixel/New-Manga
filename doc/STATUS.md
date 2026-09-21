@@ -54,6 +54,27 @@ unit until a new Task Release Gate is completed. Preserve all dirty files and
 worktrees. `TASK-013` remains the historical task; T1.1.2 is the current
 roadmap slice and is now closed.
 
+## T1.1.1 preparation Release Gate
+
+Codex reviewed the fixed evaluation `base=1fa5f89` → `head=ed607b7` from
+`G:\CODEX\New Manga.worktrees\T1.1.1-detector-evaluation`.
+
+- Result: **CONDITIONAL_PASS — implementation scope may be prepared; production
+  implementation is not started.**
+- Selection: docTR local detection (`fast_base` default proposal); CTD is
+  **NO-GO** under the current GPL-3.0 and unverified weight-license chain.
+- Verification: the evaluation harness was independently rerun with the
+  recorded Python 3.12 environment: `22/22 checks`, exit `0`; the result was
+  written outside the repository. Evaluation evidence remains at
+  `verification/T1.1.1/`.
+- Formal Task: [T1.1.1 Production Text Detector](tasks/T1.1.1.md).
+- Release conditions: adapter and merge-policy tests, pinned local weights with
+  typed missing-weight failure, harness promotion plus real-page quality pass,
+  license/compliance re-check, and explicit CPU/GPU torch packaging choice.
+- Current state: Task remains `proposed`; no owner/branch/worktree or
+  production implementation has been released. Current dirty files and
+  existing worktrees remain preserved.
+
 ## Recovery instruction
 
 ```powershell
