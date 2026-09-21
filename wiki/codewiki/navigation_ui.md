@@ -33,10 +33,13 @@ The QML shell calls `NavigationViewModel`; the ViewModel delegates to `Navigatio
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 导航界面结构 / Navigation UI Structure
+---
 flowchart LR
-    QML["AppShell QML"] --> VM["NavigationViewModel"]
+    QML["AppShell QML（应用外壳）"] --> VM["NavigationViewModel"]
     VM --> SERVICE["NavigationService"]
-    SERVICE --> CONTEXT["Reader / Workbench context"]
+    SERVICE --> CONTEXT["Reader / Workbench context（阅读/工作台上下文）"]
 ```
 
 ## 源码证据 / Source Evidence

@@ -33,11 +33,14 @@ QML calls `ExportViewModel`; the ViewModel invokes `ExportService.export()` or `
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 导出界面结构 / Export UI Structure
+---
 flowchart LR
     QML["ExportWindow.qml"] --> VM["ExportViewModel"]
     VM --> SERVICE["ExportService"]
-    SERVICE --> PROVIDER["Lazy page providers"]
-    SERVICE --> TARGET["Atomic export target"]
+    SERVICE --> PROVIDER["Lazy page providers（惰性页面提供者）"]
+    SERVICE --> TARGET["Atomic export target（原子导出目标）"]
 ```
 
 ## 源码证据 / Source Evidence

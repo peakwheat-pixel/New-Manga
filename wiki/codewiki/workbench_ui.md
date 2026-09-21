@@ -33,12 +33,15 @@ The UI owns projection, coordinate conversion, unsaved-change confirmation, reco
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 工作台界面结构 / Workbench UI Structure
+---
 flowchart LR
-    QML["Workbench QML"] --> VM["WorkbenchViewModel"]
+    QML["工作台 QML / Workbench QML"] --> VM["WorkbenchViewModel"]
     VM --> RUN["RunController"]
     RUN --> PIPE["PipelineService"]
     VM --> REGION["RegionEditingService"]
-    VM --> CATALOG["Page catalog / Managed Copy"]
+    VM --> CATALOG["Page catalog / Managed Copy（页面目录与托管副本）"]
 ```
 
 ## 源码证据 / Source Evidence

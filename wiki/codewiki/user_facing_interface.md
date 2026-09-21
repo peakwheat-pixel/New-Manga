@@ -33,11 +33,14 @@ QML pages call their ViewModels; ViewModels turn domain/application projections 
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 用户界面分层 / User-Facing Interface Layering
+---
 flowchart TB
-    QML["PySide6 / QML pages"] --> VMS["Qt ViewModels and models"]
-    VMS --> APP["Application services"]
-    APP --> PORTS["Ports / domain"]
-    PORTS --> INFRA["Infrastructure adapters"]
+    QML["PySide6 / QML pages（QML 页面）"] --> VMS["Qt ViewModels and models（视图模型与模型）"]
+    VMS --> APP["Application services（应用服务）"]
+    APP --> PORTS["Ports / domain（端口与领域）"]
+    PORTS --> INFRA["Infrastructure adapters（基础设施适配器）"]
 ```
 
 ## 源码证据 / Source Evidence

@@ -33,11 +33,14 @@ The Workbench ViewModel calls `PipelineService` through `RunController`; the ser
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 管线编排依赖 / Pipeline Orchestration Dependencies
+---
 flowchart LR
-    QML["Workbench QML"] --> VM["WorkbenchViewModel"]
+    QML["工作台 QML / Workbench QML"] --> VM["WorkbenchViewModel"]
     VM --> RUN["RunController"]
     RUN --> PIPE["PipelineService"]
-    PIPE --> EXEC["StepExecutor / provider runtime"]
+    PIPE --> EXEC["StepExecutor / provider runtime（提供者运行时）"]
 ```
 
 ## 源码证据 / Source Evidence

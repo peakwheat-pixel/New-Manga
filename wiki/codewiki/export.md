@@ -33,10 +33,13 @@ It does not discover chapters, query SQLite, render pages, or manage QML directl
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 导出服务依赖 / Export Service Dependencies
+---
 flowchart LR
     REQUEST["ExportRequest"] --> SERVICE["ExportService"]
-    SERVICE --> ENCODER["Format encoder / PdfComposer"]
-    SERVICE --> PUBLISH["Atomic publication"]
+    SERVICE --> ENCODER["Format encoder / PdfComposer（格式编码器）"]
+    SERVICE --> PUBLISH["Atomic publication（原子发布）"]
     SERVICE --> HISTORY["HistoryDocumentStore"]
 ```
 

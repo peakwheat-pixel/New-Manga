@@ -33,12 +33,15 @@ Application services call maintenance ports; infrastructure supplies SQLite, fil
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 维护与恢复结构 / Maintenance and Recovery Structure
+---
 flowchart TB
-    VM["Application entry points"] --> MAINT["Maintenance services"]
-    MAINT --> PORTS["Backup / Trash / Cleanup / Diagnostics ports"]
-    PORTS --> DB["SQLite adapters"]
-    PORTS --> FS["Managed filesystem adapters"]
-    SOURCE["User source tree"] -. never deleted .-> FS
+    VM["Application entry points（应用入口）"] --> MAINT["Maintenance services（维护服务）"]
+    MAINT --> PORTS["Backup / Trash / Cleanup / Diagnostics ports（维护端口）"]
+    PORTS --> DB["SQLite adapters（SQLite 适配器）"]
+    PORTS --> FS["Managed filesystem adapters（托管文件系统适配器）"]
+    SOURCE["User source tree（用户源码树）"] -. 永不删除 / never deleted .-> FS
 ```
 
 ## 源码证据 / Source Evidence

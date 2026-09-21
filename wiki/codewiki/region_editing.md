@@ -33,11 +33,14 @@ Workbench calls `RegionEditingService`; the service reads snapshots through `Reg
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 区域编辑依赖 / Region Editing Dependencies
+---
 flowchart LR
-    UI["Workbench UI"] --> SERVICE["RegionEditingService"]
+    UI["Workbench UI（工作台界面）"] --> SERVICE["RegionEditingService"]
     SERVICE --> REPO["RegionRepository"]
     SERVICE --> COMMIT["RegionRevisionCommitter"]
-    COMMIT --> DB["SQLite Region revisions"]
+    COMMIT --> DB["SQLite Region revisions（SQLite 区域修订）"]
 ```
 
 ## 源码证据 / Source Evidence

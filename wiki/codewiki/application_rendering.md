@@ -33,12 +33,15 @@ After UI starts a Pipeline operation, the handler calls `RenderService`; the ser
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 渲染管线依赖 / Rendering Pipeline Dependencies
+---
 flowchart LR
-    UI["Workbench / Reader / Export UI"] --> PIPE["PipelineService"]
+    UI["Workbench / Reader / Export UI（界面层）"] --> PIPE["PipelineService"]
     PIPE --> HANDLER["ProductionHandlers.handle_render"]
     HANDLER --> RENDER["RenderService"]
-    RENDER --> PORTS["Rendering and artifact ports"]
-    PORTS --> ADAPTERS["Qt / SQLite / Managed-file adapters"]
+    RENDER --> PORTS["Rendering and artifact ports（渲染与产物端口）"]
+    PORTS --> ADAPTERS["Qt / SQLite / Managed-file adapters（适配器）"]
 ```
 
 ## 源码证据 / Source Evidence

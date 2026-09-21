@@ -33,11 +33,14 @@ QML calls `LibraryService`, `ImportImagesUseCase`/`ImportDocumentsUseCase`, and 
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 书架界面结构 / Bookshelf UI Structure
+---
 flowchart LR
-    QML["Bookshelf QML"] --> VM["BookshelfViewModel"]
+    QML["书架 QML / Bookshelf QML"] --> VM["BookshelfViewModel"]
     VM --> MODELS["BookListModel / ChapterListModel"]
     VM --> LIB["LibraryService"]
-    VM --> IMPORT["Import use cases"]
+    VM --> IMPORT["Import use cases（导入用例）"]
     VM --> NAV["NavigationViewModel"]
 ```
 

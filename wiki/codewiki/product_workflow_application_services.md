@@ -33,10 +33,13 @@ Presentation ViewModels call application services; services depend on ports/doma
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 产品工作流分层 / Product Workflow Layering
+---
 flowchart TB
-    UI["PySide6 / QML ViewModels"] --> APP["src/application workflows"]
-    APP --> DOMAIN["Domain and ports"]
-    DOMAIN --> INFRA["SQLite / Managed Copy / provider adapters"]
+    UI["PySide6 / QML ViewModels（视图模型）"] --> APP["src/application workflows（应用层工作流）"]
+    APP --> DOMAIN["Domain and ports（领域与端口）"]
+    DOMAIN --> INFRA["SQLite / Managed Copy / provider adapters（基础设施适配器）"]
 ```
 
 ## 源码证据 / Source Evidence

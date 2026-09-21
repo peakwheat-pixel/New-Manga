@@ -33,8 +33,11 @@ QML does not access databases, files, or providers directly; chapter context com
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 阅读界面结构 / Reader UI Structure
+---
 flowchart LR
-    NAV["Navigation context"] --> VM["ReaderViewModel"]
+    NAV["Navigation context（导航上下文）"] --> VM["ReaderViewModel"]
     VM --> READING["ReadingService"]
     READING --> CATALOG["ReaderPageCatalog"]
     VM --> EXPORT["ExportViewModel"]

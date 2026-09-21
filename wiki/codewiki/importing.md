@@ -33,12 +33,15 @@ The import chain never edits user source files, does not execute SQL directly, a
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 导入管线依赖 / Import Pipeline Dependencies
+---
 flowchart LR
-    SOURCE["User source files"] --> UC["Import use case"]
+    SOURCE["User source files（用户源文件）"] --> UC["Import use case（导入用例）"]
     UC --> DECODER["ImageDecoder / DocumentRaster"]
     UC --> COPY["ManagedCopyStore"]
     UC --> SINK["ImportPageSink"]
-    SINK --> DB["SQLite Page rows"]
+    SINK --> DB["SQLite Page rows（SQLite 页面行）"]
 ```
 
 ## 源码证据 / Source Evidence

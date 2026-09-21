@@ -33,11 +33,14 @@ Bookshelf writes Workbench/Reader context; `NavigationService` publishes state; 
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 导航服务依赖 / Navigation Service Dependencies
+---
 flowchart LR
-    INPUT["Page route / context"] --> SERVICE["NavigationService"]
-    SERVICE --> ROUTE["Current route"]
-    SERVICE --> READER["Reader context"]
-    SERVICE --> WORKBENCH["Workbench context"]
+    INPUT["Page route / context（页面路由与上下文）"] --> SERVICE["NavigationService"]
+    SERVICE --> ROUTE["Current route（当前路由）"]
+    SERVICE --> READER["Reader context（阅读上下文）"]
+    SERVICE --> WORKBENCH["Workbench context（工作台上下文）"]
 ```
 
 ## 源码证据 / Source Evidence

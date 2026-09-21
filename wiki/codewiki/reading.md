@@ -33,11 +33,14 @@ It sits below Qt and infrastructure and depends on the read-only `ReaderPageCata
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 阅读服务依赖 / Reading Service Dependencies
+---
 flowchart LR
-    CONTEXT["Book / Chapter context"] --> SERVICE["ReadingService"]
+    CONTEXT["Book / Chapter context（书籍与章节上下文）"] --> SERVICE["ReadingService"]
     SERVICE --> CATALOG["ReaderPageCatalog"]
     SERVICE --> PROGRESS["ProgressDocumentStore"]
-    SERVICE --> SUMMARY["Shelf-facing summaries"]
+    SERVICE --> SUMMARY["Shelf-facing summaries（书架侧摘要）"]
 ```
 
 ## 源码证据 / Source Evidence

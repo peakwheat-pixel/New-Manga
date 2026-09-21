@@ -33,11 +33,14 @@ UI or bootstrap supplies inputs; `SettingsResolutionService`, `ProviderBindingRe
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 设置解析依赖 / Settings Resolution Dependencies
+---
 flowchart LR
-    INPUT["Layered settings"] --> RESOLVE["SettingsResolutionService"]
+    INPUT["Layered settings（分层设置）"] --> RESOLVE["SettingsResolutionService"]
     RESOLVE --> BIND["ProviderBindingResolver"]
     RESOLVE --> NETWORK["NetworkProfileService"]
-    RESOLVE --> SNAPSHOT["Run configuration snapshot"]
+    RESOLVE --> SNAPSHOT["Run configuration snapshot（运行配置快照）"]
 ```
 
 ## 源码证据 / Source Evidence

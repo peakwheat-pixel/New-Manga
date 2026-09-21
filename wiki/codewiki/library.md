@@ -33,8 +33,11 @@ The bookshelf ViewModel projects book/chapter models and calls the service; impo
 ## 架构 / Architecture
 
 ```mermaid
+---
+title: 书架模块依赖 / Library Module Dependencies
+---
 flowchart LR
-    QML["Bookshelf QML"] --> VM["BookshelfViewModel"]
+    QML["书架 QML / Bookshelf QML"] --> VM["BookshelfViewModel"]
     VM --> SERVICE["LibraryService"]
     SERVICE --> PORT["LibraryRepository / PageRepository"]
     PORT --> SQLITE["SqliteLibraryRepository"]
