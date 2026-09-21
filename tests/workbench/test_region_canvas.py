@@ -60,10 +60,12 @@ def test_polygon_keeps_the_ring_it_was_given():
 def test_out_of_range_points_are_clamped_to_the_page():
     # Past the letterbox band the value still has to land on the page edge:
     # -0.2 -> 0 and 1.4 -> page height, so no coordinate escapes the extent.
+    # The middle point sits off the corner-to-corner diagonal on purpose: a
+    # collinear triple is a separate rejection, tested below.
     geometry = normalized_to_page_geometry(
-        [(-0.2, 1.4), (0.5, 0.5), (1.3, -0.5)], 800, 1200
+        [(-0.2, 1.4), (0.2, 0.2), (1.3, -0.5)], 800, 1200
     )
-    assert geometry.polygon == ((0, 1200), (400, 600), (800, 0))
+    assert geometry.polygon == ((0, 1200), (160, 240), (800, 0))
     assert geometry.bbox == BBox(0, 0, 800, 1200)
 
 
@@ -90,6 +92,17 @@ def test_polygon_that_repeats_two_corners_is_rejected():
     with pytest.raises(RegionCanvasError) as excinfo:
         normalized_to_page_geometry(
             [(0.1, 0.1), (0.9, 0.9), (0.1, 0.1), (0.9, 0.9)], 800, 1200
+        )
+    assert codes(excinfo) == "DEGENERATE_GEOMETRY"
+
+
+def test_collinear_polygon_is_rejected_as_degenerate():
+    # Three distinct points, a non-zero bounding box, and no area at all: the
+    # ring is a straight line. BBox's positivity cannot see it, so without an
+    # area rule this persists as a region nothing covers.
+    with pytest.raises(RegionCanvasError) as excinfo:
+        normalized_to_page_geometry(
+            [(0.1, 0.1), (0.3, 0.3), (0.9, 0.9)], 800, 1200
         )
     assert codes(excinfo) == "DEGENERATE_GEOMETRY"
 

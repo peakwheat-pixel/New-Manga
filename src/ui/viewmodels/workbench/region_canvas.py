@@ -43,6 +43,21 @@ def _distinct(points: Sequence[tuple[int, int]]) -> int:
     return len({(x, y) for x, y in points})
 
 
+def _twice_area(ring: tuple[tuple[int, int], ...]) -> int:
+    """Shoelace doubled area, exact because every coordinate is an int.
+
+    A ring can have a non-empty bounding box and still enclose nothing --
+    three collinear points trace a line. BBox positivity does not see that,
+    so the area has to be checked on its own terms.
+    """
+    total = 0
+    for index in range(len(ring)):
+        x1, y1 = ring[index]
+        x2, y2 = ring[(index + 1) % len(ring)]
+        total += x1 * y2 - x2 * y1
+    return abs(total)
+
+
 def _rectangle_ring(xs: Sequence[int], ys: Sequence[int]) -> tuple[tuple[int, int], ...]:
     left, right = min(xs), max(xs)
     top, bottom = min(ys), max(ys)
@@ -89,6 +104,10 @@ def normalized_to_page_geometry(
     if width <= 0 or height <= 0:
         raise RegionCanvasError(
             DEGENERATE_GEOMETRY, f"selection has no area ({width}x{height} px)"
+        )
+    if _twice_area(polygon) == 0:
+        raise RegionCanvasError(
+            DEGENERATE_GEOMETRY, "ring is a straight line and encloses no area"
         )
 
     return RegionGeometry(bbox=BBox(left, top, width, height), polygon=polygon)
