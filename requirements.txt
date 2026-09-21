@@ -2,3 +2,10 @@ PySide6_Essentials==6.11.2
 shiboken6==6.11.2
 pypdfium2==5.13.0
 mobi==0.4.1
+# T1.1.1 production text detector (doc/research/T1.1.1-detector-evaluation.md).
+# torch/torchvision arrive transitively (torch>=2.0,<3.0); on Windows the
+# PyPI wheels are CPU builds. GPU wheels are a packaging decision (T3.2.1).
+# Weights are NOT downloaded at run time: pin fast_base-688a8b34.pt
+# (sha256 688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace)
+# locally; see src/infrastructure/providers/detection_doctr.py.
+python-doctr==1.1.0

@@ -71,6 +71,10 @@ from infrastructure.importing import (
     QtImageDecoder,
 )
 from infrastructure.pipeline.assembly import build_production_pipeline
+from infrastructure.providers.detection_doctr import (
+    DOCTR_WEIGHTS_FILENAME,
+    DoctrDetectionProvider,
+)
 from infrastructure.providers.handlers import (
     RegionMaskGeometry,
     build_production_handlers,
@@ -676,6 +680,25 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             )
             return region.region_id
 
+        # T1.1.1: the selected production detector (docTR fast_base, see
+        # doc/research/T1.1.1-detector-evaluation.md) is wired through the
+        # application-layer region_creator below. The provider is lazy and
+        # strictly offline: weights must exist as a local file (default
+        # <data root>/models/detector/, override NEWMANGA_DETECTOR_WEIGHTS)
+        # with the pinned SHA-256, or the ``detect`` step fails closed with
+        # PROVIDER_NOT_CONFIGURED at run time — the same diagnosable gap as
+        # an unwired detector. No download, no fallback.
+        detector_weights = Path(
+            os.environ.get(
+                "NEWMANGA_DETECTOR_WEIGHTS",
+                str(
+                    Path(db_path).resolve().parent
+                    / "models"
+                    / "detector"
+                    / DOCTR_WEIGHTS_FILENAME
+                ),
+            )
+        )
         handlers = build_production_handlers(
             registry=provider_runtime.registry,
             regions=regions,
@@ -689,13 +712,10 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             source_styles=source_styles,
             terms=TermExtractionService(),
             render_service=render_service,
-            # TASK-049 AC ①: no production detector exists yet (no endpoint /
-            # weights are authorised in this window), so ``detector`` stays
-            # ``None`` and page-level runs fail closed at the ``detect`` step
-            # with PROVIDER_NOT_CONFIGURED — diagnosable, never silent. The
-            # Region write side is already wired (region_creator) so a real
-            # detector is a one-argument assembly change in a later slice.
-            detector=None,
+            detector=DoctrDetectionProvider(
+                weights_path=detector_weights,
+                device=os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu"),
+            ),
             region_creator=_create_detected_region,
         )
         # TASK-040 AC ①: wire the TASK-039 Clean-availability probe into the
