@@ -42,6 +42,11 @@ class FakePage:
     source_filename: str
     page_locked: bool = False
     managed_original_ref: str = ""
+    # T1.1.2: production Page carries a positive pixel extent; defaulted here
+    # so every existing positional call site keeps working. Left at 0 the
+    # viewmodel must refuse to draw rather than collapse a box to the origin.
+    width: int = 0
+    height: int = 0
 
 
 @dataclass
@@ -55,6 +60,7 @@ class FakeRegion:
     edited_translation: str = ""
     final_translation: str = ""
     translation_locked: bool = False
+    geometry: object = None  # T1.1.2: a RegionGeometry, as the overlay needs
 
 
 class FakePageCatalog:

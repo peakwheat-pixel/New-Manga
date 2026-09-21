@@ -26,6 +26,7 @@ from workbench_helpers import (
 import pytest
 
 from application.translation.pipeline.executor import DeterministicStepExecutor
+from domain.regions.entities import BBox, RegionGeometry
 from domain.tasks.models import ScopeType
 
 
@@ -473,3 +474,64 @@ def test_viewer_mode_switch_and_image_url(qapp_):
         pass
     else:
         raise AssertionError("unknown mode must raise")
+
+
+# ----------------------------------------------------------------------
+# T1.1.2: page extent and region geometry reach the view
+# ----------------------------------------------------------------------
+
+
+def test_page_pixel_extent_is_exposed_for_the_overlay(qapp_):
+    # The QML overlay must scale with the SAME constants the converter uses,
+    # otherwise a box can be drawn at A while the click resolves at B.
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    vm = make_vm(
+        service,
+        pages=[FakePage("p1", "chapter-1", 1, "001.jpg", width=800, height=1200)],
+    )
+    vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    vm.selectPage("p1")
+    assert vm.viewerPageWidth == 800
+    assert vm.viewerPageHeight == 1200
+
+
+def test_page_extent_defaults_to_zero_without_dimensions(qapp_):
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    vm = make_vm(service, pages=[FakePage("p1", "chapter-1", 1, "001.jpg")])
+    vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    vm.selectPage("p1")
+    assert (vm.viewerPageWidth, vm.viewerPageHeight) == (0, 0)
+
+
+def test_no_current_page_reports_zero_extent(qapp_):
+    _, vm = completed_vm()
+    assert vm.viewerPageWidth == 0
+    assert vm.viewerPageHeight == 0
+
+
+def test_inspector_rows_carry_geometry_for_the_overlay(qapp_):
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    region = FakeRegion("r1", "p1")
+    region.geometry = RegionGeometry(bbox=BBox(100, 200, 400, 600))
+    vm = make_vm(
+        service,
+        pages=[FakePage("p1", "chapter-1", 1, "001.jpg", width=800, height=1200)],
+        regions=[region],
+    )
+    vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    vm.selectPage("p1")
+    rows = vm.get_inspector_regions()
+    assert rows[0]["geometry"] == {"bbox": [100, 200, 400, 600], "polygon": []}
+
+
+def test_inspector_row_geometry_is_none_when_the_region_has_none(qapp_):
+    # A catalog double (or a legacy row) without geometry must read as absent
+    # so the overlay skips it, not as a box collapsed onto the origin.
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    vm = make_vm(service, pages=[FakePage("p1", "chapter-1", 1, "001.jpg",
+                                          width=800, height=1200)],
+                 regions=[FakeRegion("r1", "p1")])
+    vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    vm.selectPage("p1")
+    assert vm.get_inspector_regions()[0]["geometry"] is None
+

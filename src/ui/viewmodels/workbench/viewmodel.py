@@ -183,6 +183,8 @@ class WorkbenchViewModel(QObject):
                 "filename": page.source_filename,
                 "locked": bool(getattr(page, "page_locked", False)),
                 "managed_original_ref": getattr(page, "managed_original_ref", ""),
+                "width": int(getattr(page, "width", 0) or 0),
+                "height": int(getattr(page, "height", 0) or 0),
             }
 
     def _page_meta(self) -> dict[str, tuple[int, str, bool]]:
@@ -478,6 +480,22 @@ class WorkbenchViewModel(QObject):
 
     viewerPageName = Property(str, get_viewer_page_name, notify=viewerChanged)
 
+    def _viewer_page_extent(self) -> tuple[int, int]:
+        row = self._pages.get(self._viewer_page_id or "", {})
+        return int(row.get("width", 0)), int(row.get("height", 0))
+
+    def get_viewer_page_width(self) -> int:
+        return self._viewer_page_extent()[0]
+
+    def get_viewer_page_height(self) -> int:
+        return self._viewer_page_extent()[1]
+
+    # T1.1.2: the overlay scales by these, and the converter converts by them.
+    # Two independent sources for one constant is how a box ends up drawn at
+    # A and clicked at B, so QML is not allowed to read Image.sourceSize.
+    viewerPageWidth = Property(int, get_viewer_page_width, notify=viewerChanged)
+    viewerPageHeight = Property(int, get_viewer_page_height, notify=viewerChanged)
+
     def _image_url(self, page_id: str | None, mode: str) -> str:
         if page_id is None:
             return ""
@@ -512,9 +530,23 @@ class WorkbenchViewModel(QObject):
                     "translation_locked": bool(
                         getattr(region, "translation_locked", False)
                     ),
+                    "geometry": self._region_geometry(region),
                 }
             )
         return regions
+
+    @staticmethod
+    def _region_geometry(region) -> dict | None:
+        """Page-pixel geometry as a plain map, or None when the region has none.
+
+        ``as_jsonable()`` is the same dict the revision snapshot stores
+        (domain/regions/entities.py), so the overlay draws exactly what the
+        writer persisted.
+        """
+        geometry = getattr(region, "geometry", None)
+        if geometry is None or not hasattr(geometry, "as_jsonable"):
+            return None
+        return geometry.as_jsonable()
 
     inspectorRegions = Property(
         "QVariantList", get_inspector_regions, notify=inspectorChanged
