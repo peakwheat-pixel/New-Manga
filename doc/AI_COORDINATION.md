@@ -12,7 +12,7 @@
 Knowledge Refresh Owner:  Codex
 Bootstrap Agent:          Codex         # 2026-09-21 从 ZCode 接手（工具链由 ZCode 于同日重建为全局 Windows 原生）
 Mainline Integrator:      Codex        # 不由本文件授予或变更
-Knowledge Baseline HEAD:  8b57adfb57b08bccd7fd6a5b29748e171482e17b
+Knowledge Baseline HEAD:  f2f697c7ca419a793cafe2fe604aea2d37d84090
 Last Knowledge Refresh:   2026-09-22
 Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移交；见下方交接记录)
 ```
