@@ -1,0 +1,38 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: clamp-removed
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_region_canvas.py::test_out_of_range_points_are_clamped_to_the_page -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+______________ test_out_of_range_points_are_clamped_to_the_page _______________
+
+    def test_out_of_range_points_are_clamped_to_the_page():
+        # Past the letterbox band the value still has to land on the page edge:
+        # -0.2 -> 0 and 1.4 -> page height, so no coordinate escapes the extent.
+        # The middle point sits off the corner-to-corner diagonal on purpose: a
+        # collinear triple is a separate rejection, tested below.
+        geometry = normalized_to_page_geometry(
+            [(-0.2, 1.4), (0.2, 0.2), (1.3, -0.5)], 800, 1200
+        )
+>       assert geometry.polygon == ((0, 1200), (160, 240), (800, 0))
+E       assert ((-160, 1680)... (1040, -600)) == ((0, 1200), (...40), (800, 0))
+E         
+E         At index 0 diff: (-160, 1680) != (0, 1200)
+E         Use -v to get more diff
+
+tests\workbench\test_region_canvas.py:68: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_region_canvas.py::test_out_of_range_points_are_clamped_to_the_page
+1 failed in 0.14s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/region_canvas.py
+REVERTED: True

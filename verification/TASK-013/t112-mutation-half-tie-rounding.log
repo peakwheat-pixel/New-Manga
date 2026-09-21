@@ -1,0 +1,41 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: half-tie-rounding
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_region_canvas.py::test_half_tie_rounds_up_not_to_even -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________________ test_half_tie_rounds_up_not_to_even _____________________
+
+    def test_half_tie_rounds_up_not_to_even():
+        # 0.125 and 0.625 are dyadic (2**-3, 2**-1+2**-3) so n*size == 12.5 / 62.5
+        # is an exact tie, not a float coincidence. builtin round() would yield
+        # (12, 62); the contract is half-up.
+        geometry = normalized_to_page_geometry([(0.0, 0.0), (0.125, 0.625)], 100, 100)
+>       assert geometry.bbox == BBox(0, 0, 13, 63)
+E       AssertionError: assert BBox(x=0, y=0...12, height=62) == BBox(x=0, y=0...13, height=63)
+E         
+E         Omitting 2 identical items, use -vv to show
+E         Differing attributes:
+E         ['width', 'height']
+E         
+E         Drill down into differing attribute width:
+E           width: 12 != 13...
+E         
+E         ...Full output truncated (3 lines hidden), use '-vv' to show
+
+tests\workbench\test_region_canvas.py:42: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_region_canvas.py::test_half_tie_rounds_up_not_to_even
+1 failed in 0.14s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/region_canvas.py
+REVERTED: True

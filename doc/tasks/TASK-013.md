@@ -1453,3 +1453,40 @@ git commit -m "docs(t1.1.2): verification evidence and handoff"
 - **已核实的既有事实**（逐条回仓验证，非推断）：`make_vm(service, *, pages, regions, editor, navigation, image_urls)`、`FakePage`/`FakeRegion`（均为纯 `@dataclass`，`workbench_helpers.py:35-53`）、`FakePageCatalog`/`FakeRegionCatalog`/`FakeNavigation`/`make_pipeline`/`pages_list` 均存在；槽名 `selectPage`(:321)、`selectRegion`(:562)、`setViewerMode`(:430) 实测存在；QML 测试的真实 harness 是 `workbench` fixture（`test_qml_workbench.py:126-150`，yield `.vm/.engine/.window/.view`）与 `find_one`(:47-50)，**不存在** `engine` fixture —— 计划已据此改写 Task 7 Step 1；`ViewerPanel` 的模式来自 `WorkbenchView.qml:168` 的 `mode: workbench.wViewerMode`，根节点 id 为 `workbench`、其 viewmodel 属性名为 `vm`，故挂载行是 `vm: workbench.vm`；真 SQLite 装配范式 `open_database` + `MigrationRunner(...).apply_pending()` + `SqliteRegionRepository` + `RegionEditingService(repo, committer=repo)` 抄自 `tests/editing/test_sqlite_regions.py:30-40`，`pages` 表最小 INSERT 列集抄自同文件 `:48-58`；表列名抄自 `schema.py:220-266`。
 - **计划内已修掉的三处自身缺陷**：Task 7 Step 1 最初引用了不存在的 `engine` fixture 与凭空的 `overlay_object/overlay_property` 辅助；`RegionOverlay.qml` 草稿有重复的 `onPositionChanged` 处理器（QML 加载期错误）且释放时角点计算自相矛盾；Task 2 最初把 `FakeRegion` 说成手写 `__init__`。均已按实测事实改正。
 
+
+---
+
+# Follow-up Slice: T1.1.2 — 执行记录（2026-09-21，Qoder）
+
+本节只追加实现结果，不改动上文 2026-09-16 的 TASK-013 历史记录，也不改动
+`TASK-013 = VERIFIED_COMPLETE`。上文 :125 起的 T1.1.2 设计与 :215 起的实现计划
+仍是本片的规格来源；Reviewer 判 Scope/spec 以本节 + 设计节为准。
+
+## 结果
+
+- 状态：`IMPLEMENTATION_COMPLETE_FOR_REVIEW`（等待非作者 Reviewer + Codex 集成）。
+- Worktree `G:\CODEX\New Manga.worktrees\T1.1.2-qoder`，branch
+  `task/t1.1.2-region-canvas-qoder`，base `b985d9c`，实现末位 `39192ca`。
+- 计划 Task 1-8 **全部落地**，9 个提交按片推进；每片先跑失败测试再写最小实现。
+- 交付详情、验证表、变异矩阵、Deferred Findings 与 Candidate Backlog 见
+  [Handoff：T1.1.2](../handoffs/TASK-013-t112-region-canvas.md)。
+
+## 与设计节 :146 范围声明的一致性
+
+设计声明的三处超出 `REBASELINE_PLAN` :104 字面的范围（多边形、已有框回显、最小删除入口）
+全部实现；实现过程中另加两项**收紧**（不扩产品范围）：
+
+1. 共线零面积环拒绝（§10 `degenerate geometry` 要求，设计的退化清单原本看不见它）；
+2. 为保持判别力，把 extent/点数/面积三条重叠判据收敛为鞋带面积单一判据。
+
+另按任务书 §9「坐标必须通过测试验证」补了设计未覆盖的 **QML 半边**：
+`toNormalized` 在 6 种视口尺寸 × 3 个矩形上做页面像素往返断言。设计 :201 把坐标证明
+全押在 Python 侧，留下 QML 侧 letterbox 算术无证据的缺口，此处补齐。
+
+## 实现计划自身缺陷（已按仓库实测改正，留档以免复用）
+
+计划正文有 5 处与仓库实际或算术不符：Task 1 clamp 用例的 bbox 期望值算错、
+Task 7 `px()` 把 letterbox 偏移加进了宽高、Task 3 一条断言受运算符优先级影响实为恒真、
+Task 6 的删除用例挂在恒空 fake catalog 上（delete 不工作也会 PASS）、Task 7 挂载行
+`view.vm` 与自审 `workbench.vm` 不一致（实测为后者）。逐条说明与修法见 Handoff
+「风险与遗留」第 6 项。

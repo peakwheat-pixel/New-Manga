@@ -1,0 +1,41 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: scale-falls-back-when-extent-missing
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_qml_workbench.py::test_overlay_scales_by_the_viewmodel_extent_not_the_image -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+__________ test_overlay_scales_by_the_viewmodel_extent_not_the_image __________
+
+workbench = <test_qml_workbench.Harness object at 0x0000020F80165490>
+qapp = <PySide6.QtGui.QGuiApplication(0x20fcdc832e0) at 0x0000020FCE6069C0>
+
+    def test_overlay_scales_by_the_viewmodel_extent_not_the_image(workbench, qapp):
+        # The fixture's FakePages carry no width/height, so the viewmodel reports
+        # 0x0: scale must stay 0 and input disabled, rather than the overlay
+        # silently borrowing Image.sourceSize and drifting from the converter.
+        workbench.vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+        workbench.vm.selectPage("p1")
+        qapp.processEvents()
+        overlay = find_one(workbench.view, "viewerRegionOverlay")
+>       assert float(overlay.property("scale")) == 0.0
+E       assert 0.5 == 0.0
+E        +  where 0.5 = float(0.5)
+E        +    where 0.5 = <built-in method property of PySide6.QtCore.QObject object at 0x0000020F8016F3C0>('scale')
+E        +      where <built-in method property of PySide6.QtCore.QObject object at 0x0000020F8016F3C0> = <PySide6.QtCore.QObject(0x20fcfb69250, name = "viewerRegionOverlay") at 0x0000020F8016F3C0>.property
+
+tests\workbench\test_qml_workbench.py:377: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_qml_workbench.py::test_overlay_scales_by_the_viewmodel_extent_not_the_image
+1 failed in 0.56s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/qml/workbench/RegionOverlay.qml
+REVERTED: True

@@ -1,0 +1,36 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: letterbox-band-clamped-instead-of-rejected
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_qml_workbench.py::test_overlay_refuses_a_stroke_started_in_the_letterbox_band -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_overlay_refuses_a_stroke_started_in_the_letterbox_band _________
+
+overlay_item = <PySide6.QtCore.QObject(0x24c1f3dae80, name = "standaloneOverlay") at 0x0000024C1F7FF580>
+
+    def test_overlay_refuses_a_stroke_started_in_the_letterbox_band(overlay_item):
+        # Clamping a band start to the page edge would persist a box hugging the
+        # page that nobody drew. Refusal is the only honest answer, and the band
+        # exists solely in viewport space, so this is the one place that can know.
+        assert float(overlay_item.property("offsetX")) == 100
+>       assert overlay_item.toNormalized(5, 300) is None
+E       assert <PySide6.QtQml.QJSValue object at 0x0000024C1F808F00> is None
+E        +  where <PySide6.QtQml.QJSValue object at 0x0000024C1F808F00> = <PySide6.QtCore.MetaFunction object at 0x0000024C1EEC8B70>(5, 300)
+E        +    where <PySide6.QtCore.MetaFunction object at 0x0000024C1EEC8B70> = <PySide6.QtCore.QObject(0x24c1f3dae80, name = "standaloneOverlay") at 0x0000024C1F7FF580>.toNormalized
+
+tests\workbench\test_qml_workbench.py:473: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_qml_workbench.py::test_overlay_refuses_a_stroke_started_in_the_letterbox_band
+1 failed in 0.25s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/qml/workbench/RegionOverlay.qml
+REVERTED: True

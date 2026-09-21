@@ -1,0 +1,39 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: no-page-check-removed
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_workbench_viewmodel.py::test_no_page_selected_is_typed -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+_______________________ test_no_page_selected_is_typed ________________________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x2d54d04f940) at 0x000002D54FC45740>
+
+    def test_no_page_selected_is_typed(qapp_):
+        service, _ = make_pipeline(pages=[("p1", 1)])
+        vm = make_vm(service, pages=[], creator=FakeRegionWriter())
+        vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+        errors = []
+        vm.commandError.connect(errors.append)
+        vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+>       assert errors == ["no page selected"]
+E       AssertionError: assert ['page 0x0 ha...pixel extent'] == ['no page selected']
+E         
+E         At index 0 diff: 'page 0x0 has no usable pixel extent' != 'no page selected'
+E         Use -v to get more diff
+
+tests\workbench\test_workbench_viewmodel.py:627: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_workbench_viewmodel.py::test_no_page_selected_is_typed
+1 failed in 0.21s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/viewmodel.py
+REVERTED: True

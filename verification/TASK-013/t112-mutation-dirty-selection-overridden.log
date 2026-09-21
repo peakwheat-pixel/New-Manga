@@ -1,0 +1,43 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: dirty-selection-overridden
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_workbench_viewmodel.py::test_dirty_editor_is_not_discarded_by_a_new_region -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_dirty_editor_is_not_discarded_by_a_new_region ______________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x2369c1e0f80) at 0x000002369EE19D00>
+
+    def test_dirty_editor_is_not_discarded_by_a_new_region(qapp_):
+        # _navigate would open the save/discard dialog; bypassing it blindly would
+        # throw away typed text. So with a dirty inspector the list refreshes but
+        # the selection is left alone.
+        writer = FakeRegionWriter()
+        vm = region_vm(creator=writer)
+        vm.selectRegion("r1")
+        vm.setInspectorText("未保存的台词")
+        assert vm.hasDirtyEditor is True
+        vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+>       assert writer.created and vm.inspectorRegionId == "r1"
+E       AssertionError: assert ([('p1', RegionGeometry(bbox=BBox(x=80, y=120, width=320, height=480), polygon=((80, 120), (400, 120), (400, 600), (80, 600))))] and 'r-created-1' == 'r1'
+E        +  where [('p1', RegionGeometry(bbox=BBox(x=80, y=120, width=320, height=480), polygon=((80, 120), (400, 120), (400, 600), (80, 600))))] = <workbench_helpers.FakeRegionWriter object at 0x000002369E1C7A70>.created
+E         
+E         - r1
+E         + r-created-1)
+
+tests\workbench\test_workbench_viewmodel.py:640: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_workbench_viewmodel.py::test_dirty_editor_is_not_discarded_by_a_new_region
+1 failed in 0.21s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/viewmodel.py
+REVERTED: True

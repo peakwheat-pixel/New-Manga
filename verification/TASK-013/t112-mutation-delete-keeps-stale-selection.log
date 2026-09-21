@@ -1,0 +1,37 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: delete-keeps-stale-selection
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_workbench_viewmodel.py::test_deleting_the_selected_region_clears_selection -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_deleting_the_selected_region_clears_selection ______________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x249f9756b10) at 0x00000249FA219940>
+
+    def test_deleting_the_selected_region_clears_selection(qapp_):
+        writer = FakeRegionWriter()
+        vm = region_vm(creator=writer, deleter=writer)
+        vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+        assert vm.inspectorRegionId == "r-created-1"
+        vm.deleteRegion("r-created-1")
+>       assert vm.inspectorRegionId == ""
+E       AssertionError: assert 'r-created-1' == ''
+E         
+E         + r-created-1
+
+tests\workbench\test_workbench_viewmodel.py:718: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_workbench_viewmodel.py::test_deleting_the_selected_region_clears_selection
+1 failed in 0.21s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/viewmodel.py
+REVERTED: True

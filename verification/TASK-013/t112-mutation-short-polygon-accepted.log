@@ -1,0 +1,41 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: short-polygon-accepted
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_workbench_viewmodel.py::test_polygon_with_fewer_than_three_points_is_typed -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________ test_polygon_with_fewer_than_three_points_is_typed ______________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x29dfcff4830) at 0x0000029DFDB30A80>
+
+    def test_polygon_with_fewer_than_three_points_is_typed(qapp_):
+        # The discriminating case: two points are a legal *rectangle*, so if the
+        # ring length were not checked here a two-point polygon would silently be
+        # persisted as a box the user never drew.
+        writer = FakeRegionWriter()
+        vm = region_vm(creator=writer)
+        errors = []
+        vm.commandError.connect(errors.append)
+        vm.createPolygon("[[0.1, 0.1], [0.4, 0.4]]")
+>       assert writer.created == []
+E       AssertionError: assert [('p1', Regio... (80, 480))))] == []
+E         
+E         Left contains one more item: ('p1', RegionGeometry(bbox=BBox(x=80, y=120, width=240, height=360), polygon=((80, 120), (320, 120), (320, 480), (80, 480))))
+E         Use -v to get more diff
+
+tests\workbench\test_workbench_viewmodel.py:696: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_workbench_viewmodel.py::test_polygon_with_fewer_than_three_points_is_typed
+1 failed in 0.21s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/viewmodel.py
+REVERTED: True

@@ -1,0 +1,37 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: full-suite-3
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (POSIX sh)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: python -m pytest tests -q -p no:cacheprovider -rs
+........................................................................ [  6%]
+........................................................................ [ 13%]
+........................................................................ [ 20%]
+........................................................................ [ 27%]
+........................................................................ [ 34%]
+........................................................................ [ 41%]
+........................................................................ [ 48%]
+........................................................................ [ 55%]
+........................................................................ [ 62%]
+........................................................................ [ 69%]
+........................................................................ [ 76%]
+........................................................................ [ 83%]
+........................................................................ [ 90%]
+........................................................................ [ 97%]
+.....................                                                    [100%]
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+1029 passed, 1 warning in 55.79s
+
+EXIT: 0
+SKIPPED_LINES:
+(none)

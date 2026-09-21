@@ -1,0 +1,46 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: page-size-branch-removed
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_workbench_viewmodel.py::test_missing_page_extent_is_a_typed_error -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+__________________ test_missing_page_extent_is_a_typed_error __________________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x1d502651990) at 0x000001D50308DF40>
+
+    def test_missing_page_extent_is_a_typed_error(qapp_):
+        # A page row without dimensions must fail loudly, not silently collapse
+        # the box onto the origin: the writer is never reached.
+        writer = FakeRegionWriter()
+        service, _ = make_pipeline(pages=[("p1", 1)])
+        vm = make_vm(
+            service,
+            pages=[FakePage("p1", "chapter-1", 1, "001.jpg")],
+            creator=writer,
+        )
+        vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+        vm.selectPage("p1")
+        errors = []
+        vm.commandError.connect(errors.append)
+        vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+        assert writer.created == []
+        assert len(errors) == 1
+>       assert "no usable pixel extent" in errors[0]
+E       AssertionError: assert 'no usable pixel extent' in 'selection encloses no area (extent 0x0 px)'
+
+tests\workbench\test_workbench_viewmodel.py:606: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_workbench_viewmodel.py::test_missing_page_extent_is_a_typed_error
+1 failed in 0.21s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/region_canvas.py
+REVERTED: True

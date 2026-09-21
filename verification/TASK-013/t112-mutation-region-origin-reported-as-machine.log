@@ -1,0 +1,51 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: region-origin-reported-as-machine
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_region_create_persistence.py::test_drawn_rectangle_creates_region_and_first_revision -q -p no:cacheprovider
+F                                                                        [100%]
+================================== FAILURES ===================================
+___________ test_drawn_rectangle_creates_region_and_first_revision ____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2925/test_drawn_rectangle_creates_r0')
+qapp = <PySide6.QtGui.QGuiApplication(0x264c6a2a390) at 0x00000264C739CD00>
+
+    def test_drawn_rectangle_creates_region_and_first_revision(tmp_path, qapp):
+        conn, _editing, vm = _vm(tmp_path)
+        before = conn.execute("SELECT COUNT(*) FROM regions").fetchone()[0]
+    
+        vm.createRectangle(0.125, 0.16666666666666666, 0.625, 0.6666666666666666)
+    
+        assert conn.execute("SELECT COUNT(*) FROM regions").fetchone()[0] == before + 1
+        row = conn.execute(
+            "SELECT r.page_id, r.geometry_json, r.reading_order, r.current_revision_id,"
+            "       v.revision_no, v.origin, v.snapshot_json"
+            "  FROM regions r JOIN region_revisions v ON v.region_id = r.region_id"
+        ).fetchone()
+        assert row[0] == "p1"
+        geometry = json.loads(row[1])
+        assert geometry["bbox"] == [100, 200, 400, 600]
+        assert geometry["polygon"] == [[100, 200], [500, 200], [500, 800], [100, 800]]
+        assert row[2] == 1                       # first region on the page
+>       assert (row[4], row[5]) == (1, "user")   # one revision, drawn by the user
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       AssertionError: assert (1, 'machine') == (1, 'user')
+E         
+E         At index 1 diff: 'machine' != 'user'
+E         Use -v to get more diff
+
+tests\workbench\test_region_create_persistence.py:108: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_region_create_persistence.py::test_drawn_rectangle_creates_region_and_first_revision
+1 failed in 0.24s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/application/editing/service.py
+REVERTED: True

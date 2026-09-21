@@ -1,0 +1,129 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: area-rule-removed
+WORKTREE: G:\CODEX\New Manga.worktrees\T1.1.2-qoder
+HEAD: 39192cac482799e401eca07941004006b74c094b
+SHELL: Git Bash (C:\Program Files\Git\bin\bash.exe)
+VENV: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts
+PYTHON: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset (default Windows platform)>
+COMMAND: "python" -m pytest tests/workbench/test_region_canvas.py::test_zero_area_rectangle_is_rejected_before_writing tests/workbench/test_region_canvas.py::test_collapsed_polygon_extent_is_rejected tests/workbench/test_region_canvas.py::test_polygon_that_repeats_two_corners_is_rejected tests/workbench/test_region_canvas.py::test_collinear_polygon_is_rejected_as_degenerate tests/workbench/test_workbench_viewmodel.py::test_degenerate_drag_never_reaches_the_writer -q -p no:cacheprovider
+FFFFF                                                                    [100%]
+================================== FAILURES ===================================
+_____________ test_zero_area_rectangle_is_rejected_before_writing _____________
+
+    def test_zero_area_rectangle_is_rejected_before_writing():
+        # RegionGeometry/BBox raise ValueError on a non-positive extent, so the
+        # converter must reject first: the ViewModel maps this to a typed error.
+        with pytest.raises(RegionCanvasError) as excinfo:
+>           normalized_to_page_geometry([(0.25, 0.25), (0.25, 0.9)], 800, 1200)
+
+tests\workbench\test_region_canvas.py:76: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ui\viewmodels\workbench\region_canvas.py:97: in normalized_to_page_geometry
+    return RegionGeometry(bbox=BBox(left, top, width, height), polygon=polygon)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:7: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = BBox(x=200, y=300, width=0, height=780)
+
+    def __post_init__(self) -> None:
+        if self.width <= 0 or self.height <= 0:
+>           raise ValueError("bbox width/height must be positive")
+E           ValueError: bbox width/height must be positive
+
+src\domain\regions\entities.py:70: ValueError
+__________________ test_collapsed_polygon_extent_is_rejected __________________
+
+    def test_collapsed_polygon_extent_is_rejected():
+        with pytest.raises(RegionCanvasError) as excinfo:
+>           normalized_to_page_geometry(
+                [(0.2, 0.2), (0.2, 0.5), (0.2, 0.9)], 800, 1200
+            )
+
+tests\workbench\test_region_canvas.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ui\viewmodels\workbench\region_canvas.py:97: in normalized_to_page_geometry
+    return RegionGeometry(bbox=BBox(left, top, width, height), polygon=polygon)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:7: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = BBox(x=160, y=240, width=0, height=840)
+
+    def __post_init__(self) -> None:
+        if self.width <= 0 or self.height <= 0:
+>           raise ValueError("bbox width/height must be positive")
+E           ValueError: bbox width/height must be positive
+
+src\domain\regions\entities.py:70: ValueError
+______________ test_polygon_that_repeats_two_corners_is_rejected ______________
+
+    def test_polygon_that_repeats_two_corners_is_rejected():
+        # Four points, but only two distinct after rounding: the extent is a
+        # perfectly healthy 640x960, so an extent test would wave it through.
+        # The ring traces a line out and back and encloses nothing.
+>       with pytest.raises(RegionCanvasError) as excinfo:
+E       Failed: DID NOT RAISE RegionCanvasError
+
+tests\workbench\test_region_canvas.py:92: Failed
+______________ test_collinear_polygon_is_rejected_as_degenerate _______________
+
+    def test_collinear_polygon_is_rejected_as_degenerate():
+        # Three distinct points, a non-zero bounding box, and no area at all: the
+        # ring is a straight line. BBox's positivity cannot see it, so without an
+        # area rule this persists as a region nothing covers.
+>       with pytest.raises(RegionCanvasError) as excinfo:
+E       Failed: DID NOT RAISE RegionCanvasError
+
+tests\workbench\test_region_canvas.py:103: Failed
+________________ test_degenerate_drag_never_reaches_the_writer ________________
+
+qapp_ = <PySide6.QtGui.QGuiApplication(0x22bff658f60) at 0x0000022B8021F640>
+
+    def test_degenerate_drag_never_reaches_the_writer(qapp_):
+        # Discriminating: proves validation runs BEFORE any write. Dropping the
+        # RegionCanvasError handling would let BBox's ValueError escape.
+        writer = FakeRegionWriter()
+        vm = region_vm(creator=writer)
+        errors = []
+        vm.commandError.connect(errors.append)
+>       vm.createRectangle(0.3, 0.1, 0.3, 0.8)
+
+tests\workbench\test_workbench_viewmodel.py:583: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\ui\viewmodels\workbench\viewmodel.py:654: in createRectangle
+    self._create_region_geometry([(nx0, ny0), (nx1, ny1)])
+src\ui\viewmodels\workbench\viewmodel.py:697: in _create_region_geometry
+    geometry = normalized_to_page_geometry(
+src\ui\viewmodels\workbench\region_canvas.py:97: in normalized_to_page_geometry
+    return RegionGeometry(bbox=BBox(left, top, width, height), polygon=polygon)
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+<string>:7: in __init__
+    ???
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = BBox(x=240, y=120, width=0, height=840)
+
+    def __post_init__(self) -> None:
+        if self.width <= 0 or self.height <= 0:
+>           raise ValueError("bbox width/height must be positive")
+E           ValueError: bbox width/height must be positive
+
+src\domain\regions\entities.py:70: ValueError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_region_canvas.py::test_zero_area_rectangle_is_rejected_before_writing
+FAILED tests/workbench/test_region_canvas.py::test_collapsed_polygon_extent_is_rejected
+FAILED tests/workbench/test_region_canvas.py::test_polygon_that_repeats_two_corners_is_rejected
+FAILED tests/workbench/test_region_canvas.py::test_collinear_polygon_is_rejected_as_degenerate
+FAILED tests/workbench/test_workbench_viewmodel.py::test_degenerate_drag_never_reaches_the_writer
+5 failed in 0.26s
+
+EXIT: 1
+CAUGHT_BY_TEST: True
+MUTATED_FILE: src/ui/viewmodels/workbench/region_canvas.py
+REVERTED: True
