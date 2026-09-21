@@ -16,6 +16,7 @@ Rectangle {
     property string translatedUrl: ""
     property string pageName: ""
     property string mode: "original"
+    property var vm: null
 
     Label {
         anchors.centerIn: parent
@@ -82,6 +83,19 @@ Rectangle {
                     visible: viewer.mode === "compare"
                     text: "原图"
                     color: "#78716c"
+                }
+
+                // Region geometry belongs to the original page's pixel space,
+                // so the canvas exists only over this pane in this mode: a
+                // produced artifact has no guaranteed matching dimensions.
+                // The margins match mainImage so the fit rect is the same rect
+                // the image is letterboxed into.
+                RegionOverlay {
+                    objectName: "viewerRegionOverlay"
+                    anchors.fill: parent
+                    anchors.margins: 4
+                    visible: viewer.mode === "original" && viewer.pageName !== ""
+                    vm: viewer.vm
                 }
             }
 

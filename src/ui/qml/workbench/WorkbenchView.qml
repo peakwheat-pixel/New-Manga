@@ -166,6 +166,7 @@ Rectangle {
                 translatedUrl: workbench.wViewerTranslated
                 pageName: workbench.wViewerPageName
                 mode: workbench.wViewerMode
+                vm: workbench.vm
             }
 
             Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: "#e7e5e4" }

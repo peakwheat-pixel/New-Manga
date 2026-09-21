@@ -43,6 +43,25 @@ ApplicationWindow {
 }
 """
 
+# Standalone overlay host: the fit rect is driven by width/height alone, so
+# the item->normalized half of the coordinate chain can be pinned at any
+# display scale without a mouse.
+OVERLAY_HOST_QML = """
+import QtQuick
+Rectangle {
+    objectName: "overlayHost"
+    width: 600
+    height: 600
+    RegionOverlay {
+        objectName: "standaloneOverlay"
+        width: 600
+        height: 600
+        pageW: 800
+        pageH: 1200
+    }
+}
+"""
+
 
 def find_one(root, object_name):
     listed = root.findChildren(QObject, object_name)
@@ -55,6 +74,18 @@ def click_button(button):
     index = meta.indexOfMethod("clicked()")
     assert index >= 0, f"clicked() not found on {button.objectName()}"
     meta.method(index).invoke(button)
+
+
+def js_pair(value):
+    """Read a QML ``[number, number]`` return without a production shim.
+
+    A JS array crosses into Python as an opaque QJSValue; JS ``null`` arrives
+    as ``None``, which is what the rejection cases assert on.
+    """
+    if value is None:
+        return None
+    assert value.isArray(), "expected a JS array from toNormalized()"
+    return [value.property(0).toNumber(), value.property(1).toNumber()]
 
 
 @pytest.fixture()
@@ -113,6 +144,27 @@ def workbench(qapp):
     harness.view = view
     yield harness
     window.deleteLater()
+    engine.deleteLater()
+    qapp.processEvents()
+
+
+@pytest.fixture()
+def overlay_item(qapp):
+    """A RegionOverlay sized from the test, over an 800x1200 page."""
+    engine = QQmlEngine(None)
+    component = QQmlComponent(engine)
+    component.setData(
+        OVERLAY_HOST_QML.encode(),
+        QUrl.fromLocalFile(str(WORKBENCH_DIR / "_OverlayHost.qml")),
+    )
+    assert component.isReady(), [e.toString() for e in component.errors()]
+    root = component.create()
+    assert root is not None
+    qapp.processEvents()
+    item = root.findChild(QObject, "standaloneOverlay")
+    assert item is not None
+    yield item
+    root.deleteLater()
     engine.deleteLater()
     qapp.processEvents()
 
@@ -286,3 +338,149 @@ def test_command_error_bar_visible_only_when_a_failure_is_held(workbench, qapp):
     qapp.processEvents()
     assert workbench.vm.commandErrorText == ""
     assert bool(bar.property("visible")) is False
+
+
+# ----------------------------------------------------------------------
+# T1.1.2: region drawing overlay
+# ----------------------------------------------------------------------
+
+
+def test_region_overlay_mounts_and_follows_viewer_mode(workbench, qapp):
+    # Load/visibility only, by design: synthetic mouse drags are exactly the
+    # flakiness this repo already documents, so the interaction is covered by
+    # the viewmodel tests and the conversion by test_region_canvas.py.
+    workbench.vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    workbench.vm.selectPage("p1")
+    qapp.processEvents()
+
+    overlay = find_one(workbench.view, "viewerRegionOverlay")
+    assert bool(overlay.property("visible")) is True
+    assert overlay.property("drawingMode") == "rect"
+
+    workbench.vm.setViewerMode("translated")
+    qapp.processEvents()
+    assert bool(overlay.property("visible")) is False
+
+    workbench.vm.setViewerMode("original")
+    qapp.processEvents()
+    assert bool(overlay.property("visible")) is True
+
+
+def test_overlay_scales_by_the_viewmodel_extent_not_the_image(workbench, qapp):
+    # The fixture's FakePages carry no width/height, so the viewmodel reports
+    # 0x0: scale must stay 0 and input disabled, rather than the overlay
+    # silently borrowing Image.sourceSize and drifting from the converter.
+    workbench.vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    workbench.vm.selectPage("p1")
+    qapp.processEvents()
+    overlay = find_one(workbench.view, "viewerRegionOverlay")
+    assert float(overlay.property("scale")) == 0.0
+    input_area = overlay.findChild(QObject, "regionOverlayInput")
+    assert input_area is not None
+    assert bool(input_area.property("enabled")) is False
+
+
+def test_overlay_tool_buttons_switch_the_drawing_mode(workbench, qapp):
+    # Polygon creation is unreachable without a mode switch, so the control
+    # belongs to this slice instead of being deferred to later polish.
+    workbench.vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    workbench.vm.selectPage("p1")
+    qapp.processEvents()
+
+    overlay = find_one(workbench.view, "viewerRegionOverlay")
+    assert overlay.property("drawingMode") == "rect"
+
+    click_button(find_one(overlay, "regionToolPolygon"))
+    assert overlay.property("drawingMode") == "polygon"
+
+    click_button(find_one(overlay, "regionToolRect"))
+    assert overlay.property("drawingMode") == "rect"
+
+
+# ----------------------------------------------------------------------
+# T1.1.2: the item -> normalized half of the coordinate chain
+# ----------------------------------------------------------------------
+
+
+def test_overlay_reproduces_the_documented_worked_example(overlay_item):
+    # doc/tasks/TASK-013.md: page 800x1200 in a 600x600 pane gives scale 0.5
+    # and a fit rect spanning item x 100..500. A drag from (150,100) to
+    # (350,400) must normalize to the pair documented to become
+    # bbox [100, 200, 400, 600] on the page.
+    from ui.viewmodels.workbench.region_canvas import normalized_to_page_geometry
+
+    assert float(overlay_item.property("scale")) == 0.5
+    assert float(overlay_item.property("offsetX")) == 100
+    assert float(overlay_item.property("offsetY")) == 0
+
+    corner_a = js_pair(overlay_item.toNormalized(150, 100))
+    corner_b = js_pair(overlay_item.toNormalized(350, 400))
+    assert corner_a == [0.125, 1 / 6]
+    assert corner_b == [0.625, 2 / 3]
+
+    geometry = normalized_to_page_geometry([corner_a, corner_b], 800, 1200)
+    assert geometry.bbox.as_tuple() == (100, 200, 400, 600)
+
+
+def test_page_pixels_survive_the_round_trip_at_every_display_scale(overlay_item):
+    # The acceptance list requires the mapping be proven by test rather than
+    # judged by eye: a page location taken out to item coordinates through the
+    # fit rect has to come back as the same canonical pixel at any viewport,
+    # including the two extreme sides of letterboxing.
+    from ui.viewmodels.workbench.region_canvas import normalized_to_page_geometry
+
+    page_w, page_h = 800, 1200
+    rectangles = [
+        ((100, 200), (500, 800)),
+        ((0, 0), (799, 1199)),
+        ((400, 600), (799, 1199)),
+    ]
+    viewports = [
+        (600, 600),    # fit to window
+        (800, 1200),   # 1:1
+        (1600, 2400),  # magnified past the page
+        (400, 600),    # reduced to half
+        (1000, 600),   # wide pane: bands left and right
+        (600, 1400),   # tall pane: bands top and bottom
+    ]
+    for width, height in viewports:
+        overlay_item.setProperty("width", width)
+        overlay_item.setProperty("height", height)
+        scale = float(overlay_item.property("scale"))
+        offset_x = float(overlay_item.property("offsetX"))
+        offset_y = float(overlay_item.property("offsetY"))
+        assert scale == pytest.approx(min(width / page_w, height / page_h))
+        for (ax, ay), (bx, by) in rectangles:
+            corner_a = js_pair(overlay_item.toNormalized(
+                ax * scale + offset_x, ay * scale + offset_y
+            ))
+            corner_b = js_pair(overlay_item.toNormalized(
+                bx * scale + offset_x, by * scale + offset_y
+            ))
+            assert corner_a is not None and corner_b is not None
+            geometry = normalized_to_page_geometry(
+                [corner_a, corner_b], page_w, page_h
+            )
+            expected = (min(ax, bx), min(ay, by), abs(bx - ax), abs(by - ay))
+            assert geometry.bbox.as_tuple() == expected, (width, height, expected)
+
+
+def test_overlay_refuses_a_stroke_started_in_the_letterbox_band(overlay_item):
+    # Clamping a band start to the page edge would persist a box hugging the
+    # page that nobody drew. Refusal is the only honest answer, and the band
+    # exists solely in viewport space, so this is the one place that can know.
+    assert float(overlay_item.property("offsetX")) == 100
+    assert overlay_item.toNormalized(5, 300) is None
+    assert overlay_item.toNormalized(595, 300) is None
+    assert js_pair(overlay_item.toNormalized(100, 0)) == [0.0, 0.0]
+    assert js_pair(overlay_item.toNormalized(500, 600)) == [1.0, 1.0]
+
+
+def test_overlay_without_a_page_extent_maps_nothing(overlay_item):
+    # No extent must mean no input, not a division that yields a stray value.
+    overlay_item.setProperty("pageW", 0)
+    assert float(overlay_item.property("scale")) == 0.0
+    assert overlay_item.toNormalized(150, 100) is None
+
+
+
