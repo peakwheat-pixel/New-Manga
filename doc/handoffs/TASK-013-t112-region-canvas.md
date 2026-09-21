@@ -69,7 +69,8 @@ RED 失败原因逐条为「目标模块/属性/槽不存在」或「校验未�
 | 计数门 ≥982 | `python -m pytest tests --collect-only -q` | **PASS** 1029 collected，EXIT=0 | `t112-collect.log` |
 | 本片 chokepoint | 四个测试文件合跑 | **PASS** EXIT=0 | `t112-chokepoint.log` |
 | 语法编译 | `python -m compileall -q src tests` | **PASS** EXIT=0 | `t112-compileall.log` |
-| 空白/EOF 检查 | `git diff --check` | **PASS**（`b985d9c..HEAD` 需随文档提交后复跑，见「遗留」） | — |
+| 空白/EOF 检查（代码与文档） | `git diff --check b985d9c HEAD -- src tests doc` | **PASS** EXIT=0（首跑发现两处测试文件 EOF 空行，由 `93d5494` 修掉后复跑） | — |
+| 同上，含证据日志 | `git diff --check b985d9c HEAD` | **不清洗**：`verification/**/*.log` 内 14 处 trailing whitespace 全部来自 pytest 原样输出 | 按「原样记录」保留 |
 | 归一化→页面像素、half-up 舍入、clamp、共线、重复点、`<2` 点、页宽高缺失 | `test_region_canvas.py`（12 条） | **PASS** | chokepoint |
 | 三槽行为 / typed 错误面 / dirty 分岔 / 未绑定不抛 | `test_workbench_viewmodel.py`（新增 22 条） | **PASS** | chokepoint |
 | 真 `regions` + `region_revisions` 落库、`origin='user'`、pointer、软删 | `test_region_create_persistence.py`（真 SQLite，非 Mock） | **PASS** | chokepoint |
