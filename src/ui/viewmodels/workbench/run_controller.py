@@ -20,6 +20,15 @@ from PySide6.QtCore import QObject, QThread, Signal, Slot
 from domain.tasks.models import PipelineRun, PipelineRunStatus
 
 
+class RestoreLatchClosedError(RuntimeError):
+    """Raised by :meth:`RunController.start` while the restore latch holds.
+
+    The typed shape lets VM call sites turn the refusal into the workbench
+    command-error surface instead of leaking a raw ``RuntimeError`` into
+    the QML slot (TASK-057 review R-001).
+    """
+
+
 class _Worker(QObject):
     """Runs inside the QThread; one execution per worker."""
 
@@ -58,6 +67,7 @@ class RunController(QObject):
         self._thread: QThread | None = None
         self._worker: _Worker | None = None
         self._active_run: PipelineRun | None = None
+        self._admission_closed = False
 
     # ------------------------------------------------------------------
     # lifecycle
@@ -71,7 +81,42 @@ class RunController(QObject):
     def active_run_id(self) -> str | None:
         return self._active_run.run_id if self._active_run else None
 
+    def set_restore_latch(self, closed: bool) -> None:
+        """Open/close run admission (TASK-057 Q-008 前置①, review R-001).
+
+        The latch lives HERE — at the sole worker birthplace — not at the
+        VM's individual call sites: the VM reaches ``start()`` from four
+        places (``_start_run``, ``continueRun``, ``_restart_or_abandon``,
+        ``retryFailedPages``), and a per-call-site check would leave the
+        invariant to the mercy of "no fifth call site is ever added".
+        While closed, every ``start()`` raises
+        :class:`RestoreLatchClosedError` and no worker is born.
+        """
+        self._admission_closed = bool(closed)
+
+    @property
+    def admission_closed(self) -> bool:
+        return self._admission_closed
+
     def start(self, service, run: PipelineRun) -> None:
+        """Start ``run`` on a fresh worker thread.
+
+        Sole-writer premise (TASK-057 Q-008 前置① / TASK-061 R-004): the
+        worker started here is the **only non-GUI writer** to the shared
+        database.  Maintenance paths that overwrite the live database
+        (backup restore) must not interleave with it: they may only run
+        after ``shutdown()`` returned True (worker drained) and
+        ``not facade.any_in_transaction()`` was confirmed, and while such
+        an operation runs the restore latch held by this controller
+        rejects every admission (below) — the aggregate predicate is a
+        snapshot taken before the maintenance began, so a worker started
+        after it would be invisible to it.
+        """
+        if self._admission_closed:
+            raise RestoreLatchClosedError(
+                "restore latch is engaged: run admission is closed "
+                "(TASK-057 Q-008 前置①)"
+            )
         if self.is_running:
             raise RuntimeError("a run is already executing on this controller")
         self._active_run = run
@@ -122,6 +167,13 @@ class RunController(QObject):
 
     def shutdown(self, wait_ms: int = 5000) -> bool:
         """App-exit drain: cancel any active run, then reap the worker.
+
+        This is part 1 of the restore gate (TASK-057 Q-008 前置① /
+        TASK-061 R-004): a ``True`` return proves the run worker is gone,
+        which together with ``not any_in_transaction()`` and this
+        controller's restore latch (part 3, :meth:`set_restore_latch`)
+        means no other writer can touch the database while a restore
+        overwrites it.
 
         TASK-060 Q-003: a PAUSED run is requested to cancel as well — on
         shutdown there is no session to resume into.  (Run-completion

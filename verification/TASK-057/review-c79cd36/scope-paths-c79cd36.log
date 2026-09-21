@@ -1,0 +1,66 @@
+TASK=T1.3.1 / TASK-057
+LABEL=scope-paths-r4-reviewer
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+HEAD=c79cd360ce29bb45fb319e347c5325c95aee5567
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+OPENSSL=/mingw64/bin/openssl
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND=git diff --name-status 676319b..c79cd36
+== full range name-status (src doc tests)
+A	doc/handoffs/T1.3.1-TASK-057-integration.md
+A	doc/handoffs/TASK-057-delivery.md
+A	doc/handoffs/TASK-057-unfreeze.md
+A	doc/reviews/T1.3.1-TASK-057-8318b64.md
+A	doc/reviews/T1.3.1-TASK-057-85832bb.md
+A	doc/reviews/T1.3.1-TASK-057-d7e9aa9.md
+A	doc/reviews/TASK-057-b0e4cb1.md
+M	doc/tasks/TASK-057.md
+A	src/application/maintenance/backup.py
+M	src/infrastructure/sqlite/backup.py
+M	src/infrastructure/sqlite/connection.py
+M	src/ui/viewmodels/workbench/run_controller.py
+M	src/ui/viewmodels/workbench/viewmodel.py
+M	tests/core/test_connection_ownership.py
+A	tests/storage/test_backup_restore.py
+A	tests/workbench/test_restore_gate.py
+== full range: non-verification/doc paths
+src/application/maintenance/backup.py
+src/infrastructure/sqlite/backup.py
+src/infrastructure/sqlite/connection.py
+src/ui/viewmodels/workbench/run_controller.py
+src/ui/viewmodels/workbench/viewmodel.py
+tests/core/test_connection_ownership.py
+tests/storage/test_backup_restore.py
+tests/workbench/test_restore_gate.py
+== forbidden-path hits (schema/migrator/requirements/AGENTS/qml/other tasks/STATUS)
+FORBIDDEN_GREP_EXIT=1 (1 = none)
+== doc/tasks touched
+doc/tasks/TASK-057.md
+== review docs: add commit and later modifications (tamper check)
+doc/reviews/T1.3.1-TASK-057-8318b64.md ADD=47b118a review: request TASK-057 integration changes MOD_AFTER_ADD=0
+doc/reviews/T1.3.1-TASK-057-85832bb.md ADD=5c6ce73 review: request TASK-057 typed prevalidation MOD_AFTER_ADD=0
+doc/reviews/T1.3.1-TASK-057-d7e9aa9.md ADD=0737270 review: request TASK-057 restore safety changes MOD_AFTER_ADD=0
+doc/reviews/TASK-057-b0e4cb1.md ADD=9478a60 docs(TASK-057): non-author review @ b0e4cb1 — changes_requested MOD_AFTER_ADD=2
+== R-011 fix commit content (5c6ce73..0b957d1)
+ src/infrastructure/sqlite/backup.py  |  7 ++++++-
+ tests/storage/test_backup_restore.py | 27 +++++++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 1 deletion(-)
+== evidence commit content (0b957d1..c79cd36): src/tests must be empty
+SRC_TESTS_DIFF_EXIT=0
+doc/handoffs/T1.3.1-TASK-057-integration.md
+doc/tasks/TASK-057.md
+verification/TASK-057/rebaseline-integration/chokepoint-probe-0b957d1.log
+verification/TASK-057/rebaseline-integration/full-suite-0b957d1-run1.log
+verification/TASK-057/rebaseline-integration/full-suite-0b957d1-run2.log
+verification/TASK-057/rebaseline-integration/full-suite-0b957d1-run3.log
+verification/TASK-057/rebaseline-integration/full-suite-0b957d1-run4.log
+verification/TASK-057/rebaseline-integration/full-suite-0b957d1-run5.log
+verification/TASK-057/rebaseline-integration/integration-0b957d1.log
+verification/TASK-057/rebaseline-integration/targeted-0b957d1.log

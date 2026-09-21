@@ -1,0 +1,210 @@
+﻿LABEL=pre-backup-1
+ROOT=C:\Users\49745\AppData\Local\Temp\t057-prefix
+HEAD=0d150186f5e3b476019f23d8945128512813edb6
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+PYTEST=python -m pytest -q -rs -p no:cacheprovider tests/storage/test_backup_restore.py
+----------------------------------------
+..FF....                                                                 [100%]
+================================== FAILURES ===================================
+_ TestRestoreSemantics.test_restore_overwrites_to_backup_point_and_consistency_holds _
+
+self = <test_backup_restore.TestRestoreSemantics object at 0x000001F012522540>
+backup_workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001F0125614F0>, 'service': <infrastru...('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2698/test_restore_overwrites_to_bac0/managed/backups'), ...}
+
+    def test_restore_overwrites_to_backup_point_and_consistency_holds(
+        self, backup_workspace
+    ) -> None:
+        """AC 2: overwrite semantics �� a revision added *after* the backup
+        is gone again after the restore, the backed-up current/pinned
+        pointer is back, and every restored managed_path still points at
+        an existing managed file."""
+        workspace = backup_workspace
+        conn, service = workspace["conn"], workspace["service"]
+        workspace["seed_page"]("p1")
+        backup_id = service.create_backup("manual", "before growth")
+    
+        # drift after the backup: a second page/revision, and the pinned
+        # pointer of p1 moves to it
+        workspace["seed_page"]("p2")
+        assert workspace["conn"].execute(
+            "SELECT COUNT(*) FROM artifact_revisions").fetchone()[0] == 2
+    
+>       report = service.restore_backup(backup_id)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\storage\test_backup_restore.py:138: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.backup.SqliteBackupService object at 0x000001F0125632C0>
+backup_id = 'ef3ace6f332848a4aacb1cb97ddb64aa'
+
+    def restore_backup(self, backup_id: str) -> dict:
+        """Restore the main database from a recorded backup (AC 2: the
+        semantics are **overwrite** �� the backup API replaces every page of
+        the live database with the backup's).
+    
+        Order of operations (AC 3: no half-finished state, AC 4: typed):
+    
+        1. resolve the record (typed ``BACKUP_UNKNOWN``);
+        2. verify the file: exists, sidecar hash matches, integrity ok
+           (all typed) �� before anything is written;
+        3. take an automatic ``pre_restore`` backup (file + sidecar survive
+           the overwrite even though the ``backup_records`` row of the live
+           database does not �� the sidecar is what makes that backup
+           recoverable);
+        4. run the SQLite backup API backup-file -> live connection;
+        5. report the post-restore schema version and, when a managed root
+           is configured, the DB/Managed Copy consistency report.
+        """
+        row = self._conn.execute(
+            "SELECT managed_path, database_hash FROM backup_records"
+            " WHERE backup_id = ? AND status = 'completed'",
+            (backup_id,),
+        ).fetchone()
+        target = self._backup_root / f"{backup_id}.db"
+        if row is None:
+            # Overwrite semantics: after a restore the live database's
+            # backup_records revert to the backup point, which may predate
+            # the requested id entirely (e.g. restoring twice). The
+            # self-describing sidecar is the fallback authority then; a
+            # missing file is still typed.
+            if not target.is_file():
+                raise BackupVerificationError("BACKUP_UNKNOWN", backup_id)
+            recorded_hash = read_sidecar(target)["database_hash"]
+        else:
+            recorded_hash = row["database_hash"]
+            if Path(row["managed_path"]).name != target.name:
+                target = self._backup_root / Path(row["managed_path"]).name
+        verify_backup_file(target)
+        sidecar = read_sidecar(target)
+        if sidecar["database_hash"] != recorded_hash:
+            raise BackupVerificationError(
+                "SIDECAR_MISMATCH",
+                f"{target.name}: sidecar hash != recorded hash",
+            )
+        actual_hash = sha256_file(target)
+        if actual_hash != recorded_hash:
+            raise BackupVerificationError(
+                "HASH_MISMATCH",
+                f"{target.name}: file hash != recorded hash",
+            )
+    
+        pre_restore_id = self.create_backup(
+            "pre_restore", f"automatic before restore of {backup_id}"
+        )
+        write_sidecar(
+            self._backup_root / f"{pre_restore_id}.db",
+            schema_version=read_schema_version(self._conn),
+            database_hash=sha256_file(self._backup_root / f"{pre_restore_id}.db"),
+            app_version=None,
+            created_at=_utc_now(),
+        )
+    
+        source = sqlite3.connect(str(target))
+        try:
+>           source.backup(self._conn)
+E           TypeError: backup() argument 'target' must be sqlite3.Connection, not ThreadRoutedConnection
+
+src\infrastructure\sqlite\backup.py:171: TypeError
+____ TestRestoreSemantics.test_restore_creates_reusable_pre_restore_backup ____
+
+self = <test_backup_restore.TestRestoreSemantics object at 0x000001F012522390>
+backup_workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001F0125215B0>, 'service': <infrastru...('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2698/test_restore_creates_reusable_0/managed/backups'), ...}
+
+    def test_restore_creates_reusable_pre_restore_backup(
+        self, backup_workspace
+    ) -> None:
+        """AC 3/4: the restore itself is rollback-able �� the automatic
+        pre_restore backup file exists, is verifiable, and can be restored
+        again (repeatable operations)."""
+        workspace = backup_workspace
+        conn, service = workspace["conn"], workspace["service"]
+        workspace["seed_page"]("p1")
+        backup_id = service.create_backup("manual", "origin")
+    
+>       first = service.restore_backup(backup_id)
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\storage\test_backup_restore.py:166: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <infrastructure.sqlite.backup.SqliteBackupService object at 0x000001F012520620>
+backup_id = 'dcd5772c5ac9498f865e2f3df531d67f'
+
+    def restore_backup(self, backup_id: str) -> dict:
+        """Restore the main database from a recorded backup (AC 2: the
+        semantics are **overwrite** �� the backup API replaces every page of
+        the live database with the backup's).
+    
+        Order of operations (AC 3: no half-finished state, AC 4: typed):
+    
+        1. resolve the record (typed ``BACKUP_UNKNOWN``);
+        2. verify the file: exists, sidecar hash matches, integrity ok
+           (all typed) �� before anything is written;
+        3. take an automatic ``pre_restore`` backup (file + sidecar survive
+           the overwrite even though the ``backup_records`` row of the live
+           database does not �� the sidecar is what makes that backup
+           recoverable);
+        4. run the SQLite backup API backup-file -> live connection;
+        5. report the post-restore schema version and, when a managed root
+           is configured, the DB/Managed Copy consistency report.
+        """
+        row = self._conn.execute(
+            "SELECT managed_path, database_hash FROM backup_records"
+            " WHERE backup_id = ? AND status = 'completed'",
+            (backup_id,),
+        ).fetchone()
+        target = self._backup_root / f"{backup_id}.db"
+        if row is None:
+            # Overwrite semantics: after a restore the live database's
+            # backup_records revert to the backup point, which may predate
+            # the requested id entirely (e.g. restoring twice). The
+            # self-describing sidecar is the fallback authority then; a
+            # missing file is still typed.
+            if not target.is_file():
+                raise BackupVerificationError("BACKUP_UNKNOWN", backup_id)
+            recorded_hash = read_sidecar(target)["database_hash"]
+        else:
+            recorded_hash = row["database_hash"]
+            if Path(row["managed_path"]).name != target.name:
+                target = self._backup_root / Path(row["managed_path"]).name
+        verify_backup_file(target)
+        sidecar = read_sidecar(target)
+        if sidecar["database_hash"] != recorded_hash:
+            raise BackupVerificationError(
+                "SIDECAR_MISMATCH",
+                f"{target.name}: sidecar hash != recorded hash",
+            )
+        actual_hash = sha256_file(target)
+        if actual_hash != recorded_hash:
+            raise BackupVerificationError(
+                "HASH_MISMATCH",
+                f"{target.name}: file hash != recorded hash",
+            )
+    
+        pre_restore_id = self.create_backup(
+            "pre_restore", f"automatic before restore of {backup_id}"
+        )
+        write_sidecar(
+            self._backup_root / f"{pre_restore_id}.db",
+            schema_version=read_schema_version(self._conn),
+            database_hash=sha256_file(self._backup_root / f"{pre_restore_id}.db"),
+            app_version=None,
+            created_at=_utc_now(),
+        )
+    
+        source = sqlite3.connect(str(target))
+        try:
+>           source.backup(self._conn)
+E           TypeError: backup() argument 'target' must be sqlite3.Connection, not ThreadRoutedConnection
+
+src\infrastructure\sqlite\backup.py:171: TypeError
+2 failed, 6 passed in 1.11s
+
+COLLECTED=8 tests collected in 0.02s
+EXIT=1
+HEAD=0d150186f5e3b476019f23d8945128512813edb6

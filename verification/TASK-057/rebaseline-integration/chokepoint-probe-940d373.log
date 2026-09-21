@@ -1,0 +1,37 @@
+TASK=T1.3.1 / TASK-057
+LABEL=reviewer-chokepoint-probe
+WORKTREE=C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga
+HEAD=940d373537d610d22150c42b1983482179c3bc87
+SOURCE_TREE_STATE_BEGIN
+
+SOURCE_TREE_STATE_END
+SHELL=PowerShell 7.6.6
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=Python 3.12.3
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga\verification\TASK-057\review-29546f7\t057_chokepoint_probe.py C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga
+== tree: C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga @ 940d373  dirty=yes
+
+-- H1 latch engaged on the CONTROLLER only (VM mirror left False)
+   vm._restore_in_progress=False  controller.admission_closed=True
+   H1 startTranslateAll            worker born=False  run object=True  error='[run] �ָ������У�������������'
+   H1 startTranslateUntranslated   worker born=False  run object=True  error='[run] �ָ������У�������������'
+   H1 continueRun (state paused)      worker born=False  error='[run] �ָ������У�������������'
+
+-- H2 nested restoreGate(): does the inner exit unlock the outer body?
+   outer engaged: _restore_in_progress=True admission_closed=True
+   inner gate refused: cannot enter the restore gate: [run] �ָ����ڽ�����
+   after inner exit, still inside the OUTER body: admission_closed=True  _restore_in_progress=True  WORKER BORN DURING OUTER RESTORE=False
+   outer exited: admission_closed=False
+
+-- H3 half-applied command: what survives a latched continueRun?
+   before latch: run='paused'   after latched continueRun: store='paused'  vm._run='paused'
+   worker born=False  error='[run] �ָ������У�������������'
+   tasks in store after the refusal: {'pending': 2}
+   endRestore() auto-started the pending run? False
+   run status after release: 'paused'  (a PENDING run with no worker is what recover_running_runs faces next boot)
+
+== done
+EXIT=0

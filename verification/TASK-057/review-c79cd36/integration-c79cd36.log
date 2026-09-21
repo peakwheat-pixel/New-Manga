@@ -1,0 +1,20 @@
+TASK=T1.3.1 / TASK-057
+LABEL=integration-r4-reviewer
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga
+HEAD=c79cd360ce29bb45fb319e347c5325c95aee5567
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=PowerShell 7.6.6
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=Python 3.12.3
+PATH_SOURCE=registry Machine+User (Git mingw64 excluded)
+OPENSSL=<not on PATH>
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND="G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -m pytest tests/storage/test_backup_restore.py tests/workbench/test_restore_gate.py tests/core/test_connection_ownership.py tests/workbench/test_connection_eviction.py tests/workbench/test_run_thread_e2e.py tests/storage/test_schema_migration.py -q -p no:cacheprovider -rs
+................................................                         [100%]
+48 passed in 2.65s
+EXIT=0

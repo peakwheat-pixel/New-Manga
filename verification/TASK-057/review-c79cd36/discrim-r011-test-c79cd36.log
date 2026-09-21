@@ -1,0 +1,27 @@
+TASK=T1.3.1 / TASK-057
+LABEL=discrim-r011-test-head
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+CWD=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+HEAD=c79cd360ce29bb45fb319e347c5325c95aee5567
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+PYTHON=Python 3.12.3
+OPENSSL=/mingw64/bin/openssl
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_read_failure_is_typed_and_leaves_live_untouched -v -p no:cacheprovider
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+rootdir: C:\Users\49745\.codex\worktrees\t1-3-1-backup-integration\New Manga
+configfile: pytest.ini
+collecting ... collected 1 item
+
+tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_read_failure_is_typed_and_leaves_live_untouched PASSED [100%]
+
+============================== 1 passed in 1.09s ==============================
+EXIT=0

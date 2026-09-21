@@ -1,0 +1,11 @@
+=== tree:   agent/zcode/TASK-057-backup-restore @ 0d15018（修前形态：本切片代码改动前）
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM 未设（产品边界口径）
+=== date:   2026-09-19T21:20:59+0800
+=== cmd:    /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest /g/CODEX/New Manga.worktrees/TASK-057-zcode/verification/TASK-057/pre-fix-probes/probe_q008_truthy.py -q -p no:cacheprovider
+---
+...                                                                      [100%]
+3 passed in 0.85s
+---
+EXIT=0

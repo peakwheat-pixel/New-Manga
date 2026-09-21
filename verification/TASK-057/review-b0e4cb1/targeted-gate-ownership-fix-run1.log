@@ -1,0 +1,11 @@
+=== tree: agent/zcode/TASK-057-backup-restore（工作树含 R-001~R-006 返修改动，HEAD 提交前仍为 b0e4cb1）
+=== shell: Git Bash (MSYS) / win32
+=== venv: TASK-012-py312 (Python 3.12.3)
+=== env: PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM 未设, -p no:cacheprovider
+=== date: 2026-09-19T23:38:10+0800
+=== cmd: pytest tests/workbench/test_restore_gate.py tests/core/test_connection_ownership.py tests/workbench/test_connection_eviction.py -q
+
+................                                                         [100%]
+16 passed in 1.46s
+---
+TARGETED_EXIT=0

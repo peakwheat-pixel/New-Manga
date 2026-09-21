@@ -1,0 +1,16 @@
+﻿LABEL=r004-post-1
+ROOT=G:\CODEX\New Manga.worktrees\TASK-057-qoder-review
+HEAD=b0e4cb1a92bea76c90892a1f1d05ae2d8a82d1a3
+SHELL=PowerShell 5.1.26100.9444 (powershell.exe -NoProfile)
+VENV=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+PYTHON=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | CPython AMD64
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+QT_QPA_PLATFORM=<unset>
+CMD=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-b0e4cb1/probe_r004_latch.py G:\CODEX\New Manga.worktrees\TASK-057-qoder-review 
+----------------------------------------
+POST-FIX: restore latch rejects startRun during restore (no run created, controller idle)
+POST-FIX: endRestore releases the latch — normal run start works
+
+EXIT=0
+HEAD=b0e4cb1a92bea76c90892a1f1d05ae2d8a82d1a3

@@ -1,0 +1,83 @@
+TASK=T1.3.1 / TASK-057
+LABEL=discrim-r011-test-prefix
+REVIEWER=Qoder (independent non-author reviewer, Round 4)
+WORKTREE=C:/Users/49745/.codex/worktrees/t1-3-1-backup-integration/New Manga
+CWD=/tmp/t057-r4/prefix
+HEAD=PRE-FIX-SANDBOX (src/infrastructure/sqlite/backup.py from 85832bb; copy at /tmp/t057-r4/prefix)
+SOURCE_TREE_STATE_BEGIN
+?? verification/TASK-057/review-c79cd36/
+SOURCE_TREE_STATE_END
+SHELL=Git Bash (MSYS) / bash 5.2.37(1)-release
+VENV=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+PYTHON=Python 3.12.3
+OPENSSL=/mingw64/bin/openssl
+PYTHONPATH=src
+PYTHONDONTWRITEBYTECODE=1
+QT_QPA_PLATFORM=<unset>
+COMMAND=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_read_failure_is_typed_and_leaves_live_untouched -v -p no:cacheprovider
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+rootdir: C:\Users\49745\AppData\Local\Temp\t057-r4\prefix
+configfile: pytest.ini
+collecting ... collected 1 item
+
+tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_read_failure_is_typed_and_leaves_live_untouched FAILED [100%]
+
+================================== FAILURES ===================================
+_ TestTypedFailures.test_hash_read_failure_is_typed_and_leaves_live_untouched _
+
+self = <test_backup_restore.TestTypedFailures object at 0x00000248C8DFF350>
+backup_workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000248C8E38890>, 'service': <infrastru...('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2892/test_hash_read_failure_is_type0/managed/backups'), ...}
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000248C8E389E0>
+
+    def test_hash_read_failure_is_typed_and_leaves_live_untouched(
+        self, backup_workspace, monkeypatch
+    ) -> None:
+        workspace = backup_workspace
+        conn, service = workspace["conn"], workspace["service"]
+        workspace["seed_page"]("p1")
+        backup_id = service.create_backup("manual", "unreadable")
+        records_before = conn.execute(
+            "SELECT COUNT(*) FROM backup_records"
+        ).fetchone()[0]
+        monkeypatch.setattr(
+            backup_module,
+            "sha256_file",
+            Mock(side_effect=OSError("forced read failure")),
+        )
+    
+        with pytest.raises(BackupVerificationError) as excinfo:
+>           service.restore_backup(backup_id)
+
+tests\storage\test_backup_restore.py:500: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\sqlite\backup.py:199: in restore_backup
+    actual_hash = sha256_file(target)
+                  ^^^^^^^^^^^^^^^^^^^
+..\..\..\Programs\Python\Python312\Lib\unittest\mock.py:1134: in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+..\..\..\Programs\Python\Python312\Lib\unittest\mock.py:1138: in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <Mock id='2511631819328'>
+args = (WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-2892/test_hash_read_failure_is_type0/managed/backups/63f364d3b5a545c08e7efa30aaa7ba4a.db'),)
+kwargs = {}
+
+    def _execute_mock_call(self, /, *args, **kwargs):
+        # separate from _increment_mock_call so that awaited functions are
+        # executed separately from their call, also AsyncMock overrides this method
+    
+        effect = self.side_effect
+        if effect is not None:
+            if _is_exception(effect):
+>               raise effect
+E               OSError: forced read failure
+
+..\..\..\Programs\Python\Python312\Lib\unittest\mock.py:1193: OSError
+=========================== short test summary info ===========================
+FAILED tests/storage/test_backup_restore.py::TestTypedFailures::test_hash_read_failure_is_typed_and_leaves_live_untouched
+============================== 1 failed in 0.57s ==============================
+EXIT=1

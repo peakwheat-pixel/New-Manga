@@ -1,0 +1,47 @@
+=== label:  discrim-single-continue-run
+=== tree:   C:/Users/49745/AppData/Local/Temp/t057-r2-prefix @ b0e4cb1 [HEAD]
+=== shell:  Git Bash (MSYS) / win32
+=== venv:   TASK-012-py312 (Python 3.12.3 CPython AMD64)
+=== env:    PYTHONDONTWRITEBYTECODE=1, QT_QPA_PLATFORM unset, PYTHONIOENCODING=utf-8
+=== date:   2026-09-19T23:57:27+08:00
+=== cmd:    G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -X faulthandler -m pytest tests/workbench/test_restore_gate.py::test_latched_continue_run_rejected -q -p no:cacheprovider
+---
+F                                                                        [100%]
+================================== FAILURES ===================================
+_____________________ test_latched_continue_run_rejected ______________________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x1f494380d20) at 0x000001F494B8A2C0>
+
+    def test_latched_continue_run_rejected(qapp):
+        """Face 3 (``continueRun`` on a PAUSED run): the run control lands
+        (PAUSED → PENDING) but the worker is NOT born and the refusal is on
+        the error surface — this face birthed a worker at b0e4cb1."""
+        vm = _vm()
+        status = _run_to_settled(vm, qapp, pause=True)
+        assert status in {"paused", "interrupted"}, (
+            f"expected a resumable run, got {status!r}")
+        assert vm.beginRestore() is True
+        try:
+            vm.continueRun()
+>           _assert_refused(vm)
+
+tests\workbench\test_restore_gate.py:156: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+vm = <ui.viewmodels.workbench.viewmodel.WorkbenchViewModel(0x1f49228fee0) at 0x000001F4941ECD40>
+
+    def _assert_refused(vm) -> None:
+        """The two claims of gate part 3, per face: no worker born + the
+        typed restore-latch error surface."""
+>       assert vm._controller.is_running is False, (
+            "a run worker was born while the restore latch was engaged")
+E       AssertionError: a run worker was born while the restore latch was engaged
+E       assert True is False
+E        +  where True = <ui.viewmodels.workbench.run_controller.RunController(0x1f492290660) at 0x000001F494B73800>.is_running
+E        +    where <ui.viewmodels.workbench.run_controller.RunController(0x1f492290660) at 0x000001F494B73800> = <ui.viewmodels.workbench.viewmodel.WorkbenchViewModel(0x1f49228fee0) at 0x000001F4941ECD40>._controller
+
+tests\workbench\test_restore_gate.py:98: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/workbench/test_restore_gate.py::test_latched_continue_run_rejected
+1 failed in 0.17s
+EXIT=127
