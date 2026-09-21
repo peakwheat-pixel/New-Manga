@@ -651,3 +651,50 @@ def test_clean_editor_refreshes_the_region_list(qapp_):
     assert emitted
 
 
+# ----------------------------------------------------------------------
+# T1.1.2: polygon creation
+# ----------------------------------------------------------------------
+
+
+def test_create_polygon_keeps_the_drawn_ring(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer)
+    vm.createPolygon("[[0.0, 0.0], [0.5, 0.0], [0.5, 1.0]]")
+    (_page, geometry), = writer.created
+    assert geometry.polygon == ((0, 0), (400, 0), (400, 1200))
+
+
+def test_malformed_polygon_json_is_typed_and_silent(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer)
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.createPolygon("[[0.0, 0.0], not-json")
+    assert writer.created == []
+    assert errors == ["polygon points are not a [[x, y], ...] list"]
+
+
+def test_polygon_coordinates_must_be_numeric(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer)
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.createPolygon('[["a", 0.1], [0.4, 0.4], [0.5, 0.5]]')
+    assert writer.created == []
+    assert errors == ["polygon points are not a [[x, y], ...] list"]
+
+
+def test_polygon_with_fewer_than_three_points_is_typed(qapp_):
+    # The discriminating case: two points are a legal *rectangle*, so if the
+    # ring length were not checked here a two-point polygon would silently be
+    # persisted as a box the user never drew.
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer)
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.createPolygon("[[0.1, 0.1], [0.4, 0.4]]")
+    assert writer.created == []
+    assert errors and "polygon points" in errors[0]
+
+
+

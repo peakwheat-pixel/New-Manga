@@ -21,6 +21,7 @@ typed seam so the production binding is an assembly decision.
 
 from __future__ import annotations
 
+import json
 from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator
@@ -651,6 +652,35 @@ class WorkbenchViewModel(QObject):
         dragging right or down, so the converter takes min/max itself.
         """
         self._create_region_geometry([(nx0, ny0), (nx1, ny1)])
+
+    @Slot(str)
+    def createPolygon(self, pointsJson: str) -> None:
+        """Persist a free polygon from a JSON ``[[nx, ny], ...]`` ring.
+
+        Points cross the seam as a string on purpose: a QVariantList would
+        leave the element types to Qt's coercion rules, and a ring is only
+        meaningful as pairs of floats.
+        """
+        points = self._parse_normalized_points(pointsJson)
+        if points is None:
+            self._record_command_error(
+                "polygon points are not a [[x, y], ...] list", stage="editor"
+            )
+            return
+        self._create_region_geometry(points)
+
+    @staticmethod
+    def _parse_normalized_points(
+        points_json: str,
+    ) -> list[tuple[float, float]] | None:
+        try:
+            raw = json.loads(points_json)
+            points = [(float(pair[0]), float(pair[1])) for pair in raw]
+        except (ValueError, TypeError, KeyError, IndexError):
+            return None
+        # Fewer than three points is not a ring. Two would otherwise be read
+        # as a rectangle by the converter and persist a box nobody drew.
+        return points if len(points) >= 3 else None
 
     def _create_region_geometry(self, points: list[tuple[float, float]]) -> None:
         """Shared commit path: validate first, write once, never raise to QML."""
