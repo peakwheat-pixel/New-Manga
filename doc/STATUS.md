@@ -11,14 +11,14 @@ Audit checkpoint: 2026-09-21 (Asia/Shanghai)
 | Integrated code HEAD | `5b917459deeb72de575d0985e1315889444cef4b` |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Active product task | **None**; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`; next candidate remains unreleased. |
-| Product task owner/reviewer | Implementation: Qoder; non-author review/integration: Codex; blocking findings: 0. |
+| Active product task | `T1.1.1 — Production Text Detector = IN_REVIEW / CHANGES_REQUESTED`; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`. |
+| Product task owner/reviewer | Implementation: ZCode; non-author review/integration: Codex; T1.1.1 blocking findings: 4. |
 | Execution branch/worktree | `task/t1.1.2-region-canvas-qoder` / `G:\CODEX\New Manga.worktrees\T1.1.2-qoder` |
 | Execution base/head | base `b985d9cf92a894f035550fe409179b3cb5adcbd8`; integrated code head `5b917459deeb72de575d0985e1315889444cef4b` |
 | Verified test status | Fresh Python 3.12 venv: `1031 collected = 1025 passed + 6 skipped`, exit 0. All six skips are OpenSSL-unavailable TLS cases; one existing MOBI deprecation warning. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | Production detector is `None`; Settings page is a placeholder with no Settings VM; Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
+| Current blockers | T1.1.1 review: merge threshold, boundary clipping, torch pin and compliance re-check unresolved; master still uses `detector=None`. Settings page is a placeholder with no Settings VM; Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
 | Dirty main-worktree files | Preserve: `experiments/TASK-017/README.md` (tracked modification); `.qoder-credits/` (19 untracked files); `.codewiki/`, `wiki/`, `.repowikiignore`, `doc/AI_COORDINATION.md` (untracked parallel/generated material). |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
 | Last product integration | `5b91745` T1.1.2 Region Canvas & Creator; prior product integration was `38d6eaa` TASK-057. |
@@ -49,10 +49,10 @@ verification are now complete.
 
 ## Stage B execution gate
 
-T1.1.2 is integrated and verified. Do not start T1.1.1 or any later roadmap
-unit until a new Task Release Gate is completed. Preserve all dirty files and
-worktrees. `TASK-013` remains the historical task; T1.1.2 is the current
-roadmap slice and is now closed.
+T1.1.2 is integrated and verified. T1.1.1 has a fixed implementation delivery
+head but is not integrated or verified; do not start any later roadmap unit.
+Preserve all dirty files and worktrees. `TASK-013` remains the historical task;
+T1.1.2 is closed and T1.1.1 remains in the non-author review gate.
 
 ## T1.1.1 preparation Release Gate
 
@@ -71,9 +71,33 @@ Codex reviewed the fixed evaluation `base=1fa5f89` → `head=ed607b7` from
 - Release conditions: adapter and merge-policy tests, pinned local weights with
   typed missing-weight failure, harness promotion plus real-page quality pass,
   license/compliance re-check, and explicit CPU/GPU torch packaging choice.
-- Current state: Task remains `proposed`; no owner/branch/worktree or
-  production implementation has been released. Current dirty files and
-  existing worktrees remain preserved.
+- Historical checkpoint state: Task was `proposed`; no owner/branch/worktree or
+  production implementation had been released at that preparation review.
+  The current implementation/review state is recorded below.
+
+## T1.1.1 implementation Review checkpoint
+
+Codex independently reviewed ZCode delivery
+`4a1ed6ca2778301da983f9f9159210a2fcca6985` against base
+`1fa5f893649ec3c9f13f0823aca838548d863393` in
+`G:\CODEX\New Manga.worktrees\T1.1.1-production-text-detector`.
+
+- Owner: ZCode; non-author Reviewer/Integrator: Codex.
+- Result: **CHANGES_REQUESTED — NOT APPROVED FOR INTEGRATION**.
+- Blocking findings: R-001 horizontal merge tolerance is not used; R-002 block
+  padding is not clipped to page bounds; R-003 torch is not pinned and CPU/GPU
+  environments use different torch minor versions; R-004 compliance re-check
+  is not present as reproducible verification evidence.
+- Important follow-ups: default weight-fetch destination does not match the
+  production default path; merge-policy tests do not cover the critical
+  threshold/boundary mutations.
+- Fresh evidence: focused CPU `41 passed` and GPU `41 passed`; compileall,
+  bootstrap smoke and diff check exit 0. Full-suite failures reproduce in the
+  fixed `1fa5f89` control and are recorded as baseline evidence, not as a
+  T1.1.1 regression.
+- Review report: [T1.1.1 review 4a1ed6c](../verification/T1.1.1/review-4a1ed6c.md).
+- Integration: none; master product code remains at the prior integrated
+  T1.1.2 state. ZCode must deliver a new head and wait for re-review.
 
 ## Recovery instruction
 
