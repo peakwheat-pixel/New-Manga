@@ -180,7 +180,7 @@ ACTIVE: T1.1.2
   -> T3.2.1
 ```
 
-`T1.1.1 + T1.1.2` may run concurrently only after both scopes are frozen; `src/bootstrap/app.py` integration remains serial through Codex. T1.1.2 is expected to avoid `app.py` and the top-level QML shell entirely (the canvas lives under `src/ui/qml/workbench/` and is referenced from `WorkbenchView.qml`), which keeps it off that serial gate — Codex to confirm at scope freeze.
+`T1.1.1 + T1.1.2` may run concurrently only after both scopes are frozen; `src/bootstrap/app.py` integration remains serial through Codex. T1.1.2 **does** need a one-line `app.py` change: the workbench write capability is injected at `src/bootstrap/app.py:882` (`region_catalog=editing, translation_editor=editing`), so production region creation requires adding `region_creator=editing` there. Codex must land that line; the QML/ViewModel/test part of T1.1.2 stays inside its own whitelist and is where the work is verified.
 
 Every closed task triggers a fresh dependency check. Planned work does not become active merely because it is expected later.
 
