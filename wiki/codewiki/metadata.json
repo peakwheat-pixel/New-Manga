@@ -1,0 +1,35 @@
+{
+  "generation_info": {
+    "timestamp": "2026-09-21T16:22:48Z",
+    "main_model": "mcp/agent-driven",
+    "generator_version": "2.0.0",
+    "repo_path": "G:\\CODEX\\New Manga",
+    "commit_id": "cd42826ea73f097a9daf6aaf78576c592a54f644"
+  },
+  "statistics": {
+    "total_components": 2057,
+    "leaf_nodes": 177,
+    "max_depth": 2
+  },
+  "files_generated": [
+    "application_rendering.md",
+    "bookshelf_ui.md",
+    "export_ui.md",
+    "export.md",
+    "importing.md",
+    "library.md",
+    "maintenance_and_recovery.md",
+    "navigation_ui.md",
+    "navigation.md",
+    "pipeline_orchestration.md",
+    "product_workflow_application_services.md",
+    "reader_ui.md",
+    "reading.md",
+    "region_editing.md",
+    "settings_and_configuration.md",
+    "user_facing_interface.md",
+    "workbench_ui.md"
+  ],
+  "generation_mode": "CodeWiki MCP fine-grained workflow",
+  "bilingual_policy": "C:\\Users\\49745\\.repo-knowledge\\config\\codewiki-instructions.md"
+}

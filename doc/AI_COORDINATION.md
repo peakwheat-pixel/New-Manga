@@ -12,8 +12,8 @@
 Knowledge Refresh Owner:  Codex
 Bootstrap Agent:          Codex         # 2026-09-21 从 ZCode 接手（工具链由 ZCode 于同日重建为全局 Windows 原生）
 Mainline Integrator:      Codex        # 不由本文件授予或变更
-Knowledge Baseline HEAD:  ba5cc5cc09ecf7b946dc589286a748100b12cd22
-Last Knowledge Refresh:   2026-09-21
+Knowledge Baseline HEAD:  cd42826ea73f097a9daf6aaf78576c592a54f644
+Last Knowledge Refresh:   2026-09-22
 Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移交；见下方交接记录)
 ```
 
@@ -48,7 +48,14 @@ Overview → `git status`。确认时工作区为 `G:/CODEX/New Manga`，`master
 
 - RepoWiki Map 已按当前 HEAD 刷新；`repo-map.meta.json` 记录 freshness，属于可入库的知识层 sidecar。
 - 全局 CodeWiki policy 已建立于 `%USERPROFILE%\.repo-knowledge\config\codewiki-instructions.md`，`rk-wiki`、`rk-update`、`rk-status`、`rk-verify` 与 MCP 工作流已接入；隔离 smoke repository 的 full、incremental、MCP write/edit、Mermaid、identifier 和 freshness 检查均通过。
-- 当前项目旧 `wiki/codewiki/` 分类为 `BILINGUAL=0`、`CHINESE_ONLY=0`、`ENGLISH_ONLY=9`、`MIXED=8`、`BROKEN=0`，因此保持 `MIXED`，不伪装成 PASS。全量刷新 staging 因 CodeWiki agent 在第二个模块长时间无进展而停止；旧 Wiki 已备份且未覆盖。
+- 旧 `wiki/codewiki/` 在迁移前分类为 `BILINGUAL=0`、`CHINESE_ONLY=0`、`ENGLISH_ONLY=9`、`MIXED=8`、`BROKEN=0`；原目录已完整备份到
+  `C:\Users\49745\.repo-knowledge\backups\new-manga-codewiki-pre-bilingual-20260922\codewiki-original-live`。
+  2026-09-22 通过 CodeWiki MCP fine-grained workflow 生成并校验 17 个单页双语模块文档，当前分类为
+  `BILINGUAL=17`、`CHINESE_ONLY=0`、`ENGLISH_ONLY=0`、`MIXED=0`、`BROKEN=0`；未创建 `wiki/codewiki-zh` 或
+  `wiki/codewiki-en`。Mermaid 17/17 通过 validator，源码链接全部解析，`rk-status` 与 `rk-verify` 均 PASS。
+- CodeWiki CLI 的 `--update` 依赖 `metadata.json`；已为 MCP baseline 写入兼容元数据，并在 `rk-update` 中加入缺失 baseline 时拒绝隐式 full generation 的保护。
+  主项目空增量验证成功（RepoWiki map refresh + CodeWiki `--update --update-rung 0`，无源码变更）。
+- 初次全量 CLI staging 因 CodeWiki agent 在第二个模块长时间无进展而停止；其 staging 仅保留为证据，不覆盖最终 Wiki。MCP module tree 归一化后 unmatched component IDs 为 0，剩余 14 个未分配项是被排除的实验测试叶节点。
 - `verification/KNOWLEDGE-OWNER-HANDOVER-20260921/` 是已跟踪的历史证据，保持原样；`.codewiki/` sessions、`.qoder-credits/`、`material/`、`docs/superpowers/`、实验文件以及旧 Wiki 的未验证输出不入库，归原作者/生成缓存并保留在工作区。
 
 本确认只记录 Knowledge Refresh Owner 接管与知识层入库决定，不改变现有项目的主线 writer、branch/worktree 或 Git 集成权限。
