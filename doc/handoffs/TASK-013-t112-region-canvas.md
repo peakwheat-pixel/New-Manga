@@ -4,7 +4,7 @@ author: Qoder
 recipient: Codex
 base_commit: b985d9cf92a894f035550fe409179b3cb5adcbd8
 delivery_head: 39192ca
-status: IMPLEMENTATION_COMPLETE_FOR_REVIEW
+status: VERIFIED_COMPLETE
 ---
 
 # Handoff：T1.1.2 Region Canvas & Creator
@@ -182,5 +182,21 @@ Codex 接收后的下一步（本片刻意留下）：在 `src/bootstrap/app.py`
   `TextDetector` 全仓零命中，真实契约是 `src/ports/detection/ports.py:130` 的
   `DetectionProvider`（与已收口 R-013 同类，建议登记 R-014）。
 
-**本片不得声明的结论**：T1.1.2 状态停在 `IMPLEMENTATION_COMPLETE_FOR_REVIEW`。
-`VERIFIED_COMPLETE` 只能由 Codex 在非作者 review + bootstrap wiring + fresh 全量验证之后判定。
+## Codex review / integration closure
+
+- Qoder implementation head: `39192ca`; Qoder final documentation head:
+  `a7d0104`。
+- Codex integration head: `5b917459deeb72de575d0985e1315889444cef4b`。
+- Non-author review: `BLOCKING=0`、`IMPORTANT=0`、`NON_BLOCKING=2`。
+- Resolved blockers: real bootstrap creator/deleter wiring and stale Inspector
+  content after deleting the selected Region.
+- Self-intersecting rings remain deferred because the current domain/spec
+  defines `<3` points and zero-area/degenerate rejection, not simple-polygon
+  validation.
+- User-controlled zoom/pan is `N/A`; viewport/display scaling and canonical
+  coordinate round-trips are verified.
+- Final evidence: [Codex integration verification](../../verification/TASK-013/t112-codex-final-integration.log)。
+
+Qoder 的 `IMPLEMENTATION_COMPLETE_FOR_REVIEW` 是 worker 交付时状态；经
+Codex 非作者审查、bootstrap wiring 和最终 fresh verification 后，当前
+Roadmap 状态为 `T1.1.2 = VERIFIED_COMPLETE`。

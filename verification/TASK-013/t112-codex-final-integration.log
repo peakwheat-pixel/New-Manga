@@ -1,0 +1,78 @@
+TASK: T1.1.2 (follow-up slice of TASK-013)
+LABEL: Codex non-author review, integration and final verification
+REPOSITORY: G:/CODEX/New Manga
+MASTER_CODE_HEAD: 5b917459deeb72de575d0985e1315889444cef4b
+QODER_IMPLEMENTATION_HEAD: 39192cac482799e401eca07941004006b74c094b
+QODER_FINAL_HEAD: a7d01041823515db24a40ee74afc1448e819dd3f
+BASE: b985d9cf92a894f035550fe409179b3cb5adcbd8
+WORKTREE: G:/CODEX/New Manga.worktrees/T1.1.2-qoder
+BRANCH: task/t1.1.2-region-canvas-qoder
+PYTHON: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+PYTHONPATH: src
+PYTHONDONTWRITEBYTECODE: 1
+QT_QPA_PLATFORM: <unset; default Windows Qt platform>
+
+REVIEW FINDINGS
+- BLOCKING: selected-region deletion left Inspector text/dirty state stale.
+  Fixed in Codex commit 5b91745. RED test:
+  test_deleting_the_selected_region_clears_inspector_content; GREEN in focused run.
+- BLOCKING: production WorkbenchViewModel had no real creator/deleter injection.
+  Fixed in Codex commit 5b91745. RED test:
+  test_production_workbench_region_writes_use_real_editing_service; GREEN in focused run.
+- NON_BLOCKING: self-intersecting rings are accepted. Current domain/spec requires
+  >=3 points and non-zero area, not a simple polygon; no acceptance change made.
+- NON_BLOCKING: real synthetic mouse drag and Canvas paint are not headless-tested.
+  QML load/mode reachability, VM behavior, coordinate conversion, persistence and
+  bootstrap smoke are verified without claiming mouse/paint automation.
+
+MUTATION EVIDENCE REVIEW
+- 11 mutation logs exist, each records a failing test, EXIT=1, CAUGHT_BY_TEST=True,
+  and REVERTED=True. The repository diff contains no temporary mutation of the
+  forbidden application service. Evidence supports 11/11, not the separate 12/12
+  wording in the external request.
+
+COMMAND: python -m pytest tests/core/test_bootstrap.py tests/workbench/test_region_canvas.py tests/workbench/test_region_create_persistence.py tests/workbench/test_workbench_viewmodel.py tests/workbench/test_qml_workbench.py -q -p no:cacheprovider -rs
+RESULT: 98 passed
+EXIT: 0
+
+COMMAND: python -m pytest tests/workbench/test_region_create_persistence.py::test_drawing_a_region_leaves_the_source_file_untouched -q -p no:cacheprovider
+RESULT: 1 passed
+EXIT: 0
+
+COMMAND: python -m pytest tests --collect-only -q -p no:cacheprovider
+RESULT: 1031 tests collected
+EXIT: 0
+
+COMMAND: python -m pytest tests -q -p no:cacheprovider -rs
+RESULT: 1025 passed, 6 skipped, 1 warning
+SKIPS: six existing OpenSSL-unavailable TLS cases
+WARNING: existing mobi/imghdr deprecation warning
+EXIT: 0
+
+COMMAND: python -m compileall -q src tests
+RESULT: pass
+EXIT: 0
+
+COMMAND: python -m bootstrap.app --smoke-test --data-root <fresh temp directory>
+RESULT: SQLite and managed directory assembled; smoke completed
+EXIT: 0
+
+COMMAND: git diff --check -- src tests doc
+RESULT: pass
+EXIT: 0
+
+COMMAND: git diff --check b985d9c HEAD -- src tests doc
+RESULT: pass
+EXIT: 0
+
+ACCEPTANCE
+- Rectangle creation / preview / cancel / invalid geometry: PASS by focused VM/QML evidence.
+- Polygon creation / append / confirm / cancel / invalid geometry: PASS by focused VM/QML evidence.
+- Canonical coordinate mapping, letterbox offsets, viewport resize/aspect ratio: PASS.
+- User-controlled zoom/pan: N/A; current Workbench has no such controls.
+- Real SQLite `regions` + `region_revisions` persistence: PASS.
+- Reload consistency: PASS.
+- Inspector synchronization and selected-delete cleanup: PASS.
+- Production bootstrap reachability: PASS through real RegionEditingService.
+- Source-file protection: PASS.
+- Non-author review: PASS; BLOCKING findings = 0.

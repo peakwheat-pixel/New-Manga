@@ -1,6 +1,6 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — Stage A audit complete**
+Status: **ACTIVE DEVELOPMENT BASELINE — Stage B T1.1.2 complete**
 
 Audit date: 2026-09-21 (Asia/Shanghai)
 
@@ -23,14 +23,16 @@ releases a task.
 - Four top-level QML routes and the existing Bookshelf/Workbench/Reader shell.
 - Backup/restore service and restore admission/latch tests; production backup
   UI/bootstrap exposure is not part of this verified list.
-- Fresh isolated verification: `982 collected = 976 passed + 6 skipped`, exit
-  0. The six skips are the existing OpenSSL-unavailable TLS cases.
+- T1.1.2 Region Canvas & Creator: rectangle/polygon creation, canonical page
+  coordinate conversion, real SQLite persistence, deletion, Inspector sync and
+  production `region_creator`/`region_deleter` wiring.
+- Fresh Codex integration verification: `1031 collected = 1025 passed + 6
+  skipped`, exit 0. The six skips are the existing OpenSSL-unavailable TLS
+  cases.
 - Fresh smoke verification: `python -m bootstrap.app --smoke-test` exit 0.
 
 ### Partial, blocked or missing
 
-- **T1.1.2 gap:** Workbench can inspect/edit existing regions, but has no
-  manual rectangle/polygon creator wired to `RegionEditingService.create_region`.
 - **T1.1.1 gap:** production assembly still passes `detector=None`; page-level
   detection fails closed with `PROVIDER_NOT_CONFIGURED`. No production
   `DetectionProvider` implementation is selected or wired.
@@ -102,7 +104,7 @@ QML shell changes are serialized through Codex.
 
 | Order | Task | State | Owner / reviewer | Acceptance boundary |
 |---:|---|---|---|---|
-| 1 | **T1.1.2 Region Canvas & Creator** | **RELEASED / READY_FOR_QODER** | Qoder / non-author reviewer + Codex integrator; base `b985d9c`, worktree `G:\CODEX\New Manga.worktrees\T1.1.2-qoder` | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
+| 1 | **T1.1.2 Region Canvas & Creator** | **VERIFIED_COMPLETE** | Qoder implementation / Codex non-author review and integration; base `b985d9c`, integrated `5b91745` | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
 | 2 | T1.1.1 Production Text Detector | PLANNED; evaluation may be document-only | DeepSeek Harness / Codex | A page without regions creates a persisted candidate Region through a selected real detector; no `PROVIDER_NOT_CONFIGURED` on the configured path. |
 | 3 | T1.2.1 Settings UI & ViewModel | PLANNED | ZCode / Codex | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline, and never enter logs/diagnostics. |
 | 4 | T2.1.1 Apply Design F to QML | PLANNED | ZCode / Qoder + Codex | Shared F tokens are consumed by all four pages; 158px bookshelf geometry and accepted state contrast are verified without business-logic changes. |
