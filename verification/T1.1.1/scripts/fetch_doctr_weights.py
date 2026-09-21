@@ -2,20 +2,29 @@
 
 This is the ONLY sanctioned way to obtain the weights; the production
 adapter never downloads (missing weights are a typed PROVIDER_NOT_CONFIGURED).
-The file is verified against the pinned SHA-256 before it lands in the docTR
-cache where the tests (and, via NEWMANGA_DETECTOR_WEIGHTS, the app) find it.
+The file is verified against the pinned SHA-256 before it lands at its
+destination.
+
+Destination resolution (aligned with ``bootstrap.app``, Review fix):
+
+1. ``NEWMANGA_DETECTOR_WEIGHTS`` set → that exact file path (the same
+   environment variable the production assembly reads);
+2. ``--dest <dir>`` → weights land in that directory;
+3. otherwise → ``./models/detector/`` under the current directory, i.e.
+   the ``<data root>/models/detector/`` layout the bootstrap looks up by
+   default — run this script from the app's data root and no configuration
+   is needed.
 
 Usage (any Python 3.12 env with network access):
     python verification/T1.1.1/scripts/fetch_doctr_weights.py
     python verification/T1.1.1/scripts/fetch_doctr_weights.py --dest <dir>
-
-Default destination is the docTR cache ~/.cache/doctr/models/.
 """
 
 from __future__ import annotations
 
 import argparse
 import hashlib
+import os
 import sys
 import urllib.request
 from pathlib import Path
@@ -42,13 +51,19 @@ def main() -> int:
     parser.add_argument(
         "--dest",
         type=Path,
-        default=Path.home() / ".cache" / "doctr" / "models",
-        help="target directory (default: docTR cache)",
+        default=None,
+        help="target directory (default: ./models/detector, or the exact "
+        "file NEWMANGA_DETECTOR_WEIGHTS points at)",
     )
     args = parser.parse_args()
-    dest: Path = args.dest
-    dest.mkdir(parents=True, exist_ok=True)
-    target = dest / WEIGHTS_FILENAME
+
+    override = os.environ.get("NEWMANGA_DETECTOR_WEIGHTS")
+    if override:
+        target = Path(override)
+    else:
+        dest: Path = args.dest if args.dest is not None else Path("models/detector")
+        dest.mkdir(parents=True, exist_ok=True)
+        target = dest / WEIGHTS_FILENAME
 
     if target.is_file():
         actual = sha256_file(target)

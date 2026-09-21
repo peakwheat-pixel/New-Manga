@@ -66,9 +66,11 @@ DOCTR_WEIGHTS_URL = (
 #: height`` (at least ``MIN_TOLERANCE_PX``) belong to the same block.
 MERGE_VERTICAL_FACTOR = 0.7
 MERGE_MIN_TOLERANCE_PX = 8.0
-#: horizontal gap up to ``tolerance`` px still merges (word spacing).
+#: horizontal word gap up to this many px still merges (word spacing).
+#: gap = max(x0_a, x0_b) − min(x1_a, x1_b); negative means overlap.
 MERGE_HORIZONTAL_TOLERANCE_PX = 8.0
-#: candidate rectangles are grown by this padding on every side.
+#: candidate rectangles are grown by this padding on every side, then
+#: clipped to the page bounds.
 MERGE_PAD_PX = 6.0
 # ---------------------------------------------------------------------------
 
@@ -106,6 +108,7 @@ class DoctrDetectionProvider:
         blocks = cluster_words_into_blocks(
             [(b[0], b[1], b[2], b[3]) for b in boxes],
             [b[4] for b in boxes],
+            page_size=(width, height),
         )
         candidates = tuple(
             RegionCandidate(
@@ -316,14 +319,17 @@ def _boxes_from_doctr(
 def cluster_words_into_blocks(
     rects: list[tuple[float, float, float, float]],
     confidences: list[float],
+    page_size: tuple[float, float] | None = None,
 ) -> list[tuple[list[tuple[float, float]], float]]:
     """Frozen word-to-block merge policy (T1.1.1).
 
     Word boxes whose vertical centers are within
     ``max(MERGE_VERTICAL_FACTOR × median height, MERGE_MIN_TOLERANCE_PX)``
-    and whose horizontal gap is at most ``MERGE_HORIZONTAL_TOLERANCE_PX`` are
-    merged into one block rectangle, padded by ``MERGE_PAD_PX``; blocks are
-    ordered top-to-bottom, left-to-right. Block confidence is the mean word
+    and whose horizontal gap is at most ``MERGE_HORIZONTAL_TOLERANCE_PX``
+    are merged into one block rectangle, grown by ``MERGE_PAD_PX`` on every
+    side and — when ``page_size`` is given — clipped to the page bounds so a
+    padded polygon never extends past the page. Blocks are ordered
+    top-to-bottom, left-to-right. Block confidence is the mean word
     confidence. Deterministic and side-effect free.
     """
     if not rects:
@@ -356,7 +362,8 @@ def cluster_words_into_blocks(
                 for g in group:
                     gr = rects[g]
                     v_close = abs((r[1] + r[3]) / 2 - (gr[1] + gr[3]) / 2) <= tolerance
-                    h_near = min(r[2], gr[2]) - max(r[0], gr[0]) >= -tolerance
+                    gap = max(r[0], gr[0]) - min(r[2], gr[2])
+                    h_near = gap <= MERGE_HORIZONTAL_TOLERANCE_PX
                     if v_close and h_near:
                         group.append(idx)
                         remaining.remove(idx)
@@ -373,6 +380,14 @@ def cluster_words_into_blocks(
             (x1 + MERGE_PAD_PX, y1 + MERGE_PAD_PX),
             (x0 - MERGE_PAD_PX, y1 + MERGE_PAD_PX),
         ]
+        if page_size is not None:
+            # clip the *padded* polygon: padding must never push a candidate
+            # past the page bounds
+            page_w, page_h = page_size
+            polygon = [
+                (min(max(px, 0.0), page_w), min(max(py, 0.0), page_h))
+                for px, py in polygon
+            ]
         confidence = sum(confidences[i] for i in group) / len(group)
         blocks.append((polygon, confidence))
     blocks.sort(key=lambda item: (min(y for _, y in item[0]), min(x for x, _ in item[0])))

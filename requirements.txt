@@ -3,9 +3,16 @@ shiboken6==6.11.2
 pypdfium2==5.13.0
 mobi==0.4.1
 # T1.1.1 production text detector (doc/research/T1.1.1-detector-evaluation.md).
-# torch/torchvision arrive transitively (torch>=2.0,<3.0); on Windows the
-# PyPI wheels are CPU builds. GPU wheels are a packaging decision (T3.2.1).
-# Weights are NOT downloaded at run time: pin fast_base-688a8b34.pt
+# Packaging choice (Review fix): torch/torchvision are PINNED to the exact
+# versions verified on Windows / Python 3.12 in verification/T1.1.1; the
+# PyPI wheels are the CPU builds and that is the supported configuration.
+# GPU (CUDA) wheels are a separate packaging decision (T3.2.1) — they were
+# proven to work (torch 2.11.0+cu128, RTX 5070 Ti) in the one-off venv
+# documented in verification/T1.1.1/author-verification.md §5.1, but are
+# NOT part of requirements.txt. Weights are NOT downloaded at run time: pin
+# fast_base-688a8b34.pt
 # (sha256 688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace)
 # locally; see src/infrastructure/providers/detection_doctr.py.
 python-doctr==1.1.0
+torch==2.14.0
+torchvision==0.29.0

@@ -77,6 +77,43 @@ class TestMergePolicy:
         blocks = cluster_words_into_blocks(rects, [0.9, 0.9])
         assert len(blocks) == 2
 
+    def test_horizontal_gap_threshold_is_discriminative(self):
+        # a gap of exactly MERGE_HORIZONTAL_TOLERANCE_PX (8.0) merges; one
+        # hundredth of a px more does not — the horizontal threshold is its
+        # own frozen constant, not the (larger) vertical tolerance
+        rects = [(10.0, 10.0, 40.0, 30.0), (48.0, 11.0, 90.0, 29.0)]
+        assert len(cluster_words_into_blocks(rects, [0.9, 0.9])) == 1
+        rects = [(10.0, 10.0, 40.0, 30.0), (48.01, 11.0, 90.0, 29.0)]
+        assert len(cluster_words_into_blocks(rects, [0.9, 0.9])) == 2
+
+    def test_vertical_center_threshold_is_discriminative(self):
+        # equal heights (median 20 → tolerance max(20*0.7, 8) = 14.0):
+        # a vertical center distance of exactly 14.0 merges; 14.1 does not
+        rects = [(10.0, 10.0, 40.0, 30.0), (10.0, 24.0, 40.0, 44.0)]
+        assert len(cluster_words_into_blocks(rects, [0.9, 0.9])) == 1
+        rects = [(10.0, 10.0, 40.0, 30.0), (10.0, 24.1, 40.0, 44.1)]
+        assert len(cluster_words_into_blocks(rects, [0.9, 0.9])) == 2
+
+    def test_padding_grows_the_block_by_six_px(self):
+        (polygon, _) = cluster_words_into_blocks([(10.0, 10.0, 40.0, 30.0)], [0.9])[0]
+        assert [p[0] for p in polygon] == pytest.approx([4.0, 46.0, 46.0, 4.0])
+        assert [p[1] for p in polygon] == pytest.approx([4.0, 4.0, 36.0, 36.0])
+
+    def test_padded_polygon_is_clipped_to_the_page(self):
+        # pad would reach x 54 / y 44; with a page size the *padded* polygon
+        # is clipped to the page bounds, without it the pad passes through
+        padded = cluster_words_into_blocks([(44.0, 34.0, 48.0, 38.0)], [0.9])[0][0]
+        assert max(x for x, _ in padded) == pytest.approx(54.0)
+        assert max(y for _, y in padded) == pytest.approx(44.0)
+
+        clipped = cluster_words_into_blocks(
+            [(44.0, 34.0, 48.0, 38.0)], [0.9], page_size=(50.0, 40.0)
+        )[0][0]
+        assert min(x for x, _ in clipped) == pytest.approx(38.0)
+        assert max(x for x, _ in clipped) == pytest.approx(50.0)
+        assert min(y for _, y in clipped) == pytest.approx(28.0)
+        assert max(y for _, y in clipped) == pytest.approx(40.0)
+
     def test_blocks_are_ordered_top_to_bottom(self):
         rects = [
             (10.0, 400.0, 40.0, 420.0),
@@ -127,6 +164,28 @@ class TestRequestValidation:
         # a real 4x4 rgb24 frame declared as 8x8 cannot be reshaped safely
         with pytest.raises(ProviderInputError, match="byte count"):
             _provider().detect(_request(_frame_bytes(4, 4), width=8, height=8))
+
+
+class TestDetectPathClipping:
+    def test_detect_never_returns_polygons_past_the_page(self, monkeypatch):
+        """A word box hugging the page edge must come back clipped: the
+        padded block polygon stays inside the decoded page bounds."""
+        pytest.importorskip("numpy", reason="numpy is not installed")
+        import numpy
+
+        provider = _provider()
+        provider._engine = lambda pages: [  # fake docTR detection predictor
+            {
+                "words": numpy.array(
+                    [[0.98, 0.96, 1.015, 1.004, 0.93]], dtype=float
+                )
+            }
+        ]
+        result = provider.detect(_request(_frame_bytes(20, 10), width=20, height=10))
+        assert len(result.candidates) == 1
+        for x, y in result.candidates[0].polygon:
+            assert 0.0 <= x <= 20.0
+            assert 0.0 <= y <= 10.0
 
 
 # ---------------------------------------------------------------------------
