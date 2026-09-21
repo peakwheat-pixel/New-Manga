@@ -481,6 +481,3 @@ def test_overlay_without_a_page_extent_maps_nothing(overlay_item):
     overlay_item.setProperty("pageW", 0)
     assert float(overlay_item.property("scale")) == 0.0
     assert overlay_item.toNormalized(150, 100) is None
-
-
-

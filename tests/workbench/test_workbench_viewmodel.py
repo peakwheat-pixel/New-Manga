@@ -742,7 +742,3 @@ def test_empty_region_id_is_typed(qapp_):
     vm.deleteRegion("")
     assert writer.deleted == []
     assert errors == ["no region selected"]
-
-
-
-
