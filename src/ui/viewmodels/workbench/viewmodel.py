@@ -43,6 +43,10 @@ from ui.models.tasks.projection import (
     build_projection,
     step_label,
 )
+from ui.viewmodels.workbench.region_canvas import (
+    RegionCanvasError,
+    normalized_to_page_geometry,
+)
 from ui.viewmodels.workbench.run_controller import (
     RestoreLatchClosedError,
     RunController,
@@ -79,6 +83,8 @@ class WorkbenchViewModel(QObject):
         page_catalog,  # duck-typed: list_pages(chapter_id) -> page-like
         region_catalog=None,  # duck-typed: list_regions(page_id) / get_region(id)
         translation_editor=None,  # duck-typed: save_manual_translation(id, text)
+        region_creator=None,  # duck-typed: create_region(page_id, geometry)
+        region_deleter=None,  # duck-typed: delete_region(region_id)
         navigation=None,  # NavigationViewModel for the D05 §3.1 badge
         parent: QObject | None = None,
     ) -> None:
@@ -87,6 +93,8 @@ class WorkbenchViewModel(QObject):
         self._page_catalog = page_catalog
         self._region_catalog = region_catalog
         self._translation_editor = translation_editor
+        self._region_creator = region_creator
+        self._region_deleter = region_deleter
         self._navigation = navigation
 
         self._book_id: str | None = None
@@ -632,6 +640,45 @@ class WorkbenchViewModel(QObject):
     def discardInspector(self) -> None:
         self._inspector_text = self._inspector_saved_text
         self._set_dirty(False)
+
+    @Slot(float, float, float, float)
+    def createRectangle(
+        self, nx0: float, ny0: float, nx1: float, ny1: float
+    ) -> None:
+        """Persist an axis-aligned region from two normalized canvas corners.
+
+        Corner order is not a contract: dragging left or up is as valid as
+        dragging right or down, so the converter takes min/max itself.
+        """
+        self._create_region_geometry([(nx0, ny0), (nx1, ny1)])
+
+    def _create_region_geometry(self, points: list[tuple[float, float]]) -> None:
+        """Shared commit path: validate first, write once, never raise to QML."""
+
+        if self._region_creator is None:
+            self._record_command_error("no region creator bound", stage="editor")
+            return
+        page_id = self._viewer_page_id
+        if page_id is None:
+            self._record_command_error("no page selected", stage="editor")
+            return
+        row = self._pages.get(page_id, {})
+        try:
+            geometry = normalized_to_page_geometry(
+                points, row.get("width", 0), row.get("height", 0)
+            )
+        except RegionCanvasError as error:
+            # The exception object, not just its text: _record_command_error
+            # puts ``code`` on commandErrorText so a rejected drag is
+            # diagnosable as a geometry problem instead of a mystery no-op.
+            self._record_command_error(error, stage="editor")
+            return
+        region = self._region_creator.create_region(page_id, geometry)
+        # A drawn region should show up in the Inspector immediately — but not
+        # by discarding translation text the user typed and never saved.
+        if not self._inspector_dirty:
+            self._apply_inspector_region(region.region_id)
+        self.inspectorChanged.emit()
 
     def _set_dirty(self, dirty: bool) -> None:
         if self._inspector_dirty != dirty:

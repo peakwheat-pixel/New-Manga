@@ -16,6 +16,7 @@ from workbench_helpers import (
     FakeNavigation,
     FakePage,
     FakeRegion,
+    FakeRegionWriter,
     fail_first_region_step,
     make_pipeline,
     make_vm,
@@ -534,4 +535,119 @@ def test_inspector_row_geometry_is_none_when_the_region_has_none(qapp_):
     vm.setContext("book-1", "chapter-1", "测试书", "第1话")
     vm.selectPage("p1")
     assert vm.get_inspector_regions()[0]["geometry"] is None
+
+
+# ----------------------------------------------------------------------
+# T1.1.2: rectangle creation
+# ----------------------------------------------------------------------
+
+
+def region_vm(editor=None, creator=None, deleter=None):
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    vm = make_vm(
+        service,
+        pages=[FakePage("p1", "chapter-1", 1, "001.jpg", width=800, height=1200)],
+        creator=creator,
+        deleter=deleter,
+        editor=editor,
+    )
+    vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    vm.selectPage("p1")
+    return vm
+
+
+def test_create_rectangle_writes_page_pixels(qapp_):
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer)
+    vm.createRectangle(0.125, 0.16666666666666666, 0.625, 0.6666666666666666)
+    assert writer.created == [
+        ("p1", RegionGeometry(bbox=BBox(100, 200, 400, 600),
+                              polygon=((100, 200), (500, 200),
+                                       (500, 800), (100, 800))))
+    ]
+
+
+def test_create_rectangle_selects_the_new_region(qapp_):
+    vm = region_vm(creator=FakeRegionWriter())
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    assert vm.inspectorRegionId == "r-created-1"
+
+
+def test_degenerate_drag_never_reaches_the_writer(qapp_):
+    # Discriminating: proves validation runs BEFORE any write. Dropping the
+    # RegionCanvasError handling would let BBox's ValueError escape.
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer)
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.createRectangle(0.3, 0.1, 0.3, 0.8)
+    assert writer.created == []
+    assert len(errors) == 1
+    assert "no area" in errors[0]
+
+
+def test_missing_page_extent_is_a_typed_error(qapp_):
+    # A page row without dimensions must fail loudly, not silently collapse
+    # the box onto the origin: the writer is never reached.
+    writer = FakeRegionWriter()
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    vm = make_vm(
+        service,
+        pages=[FakePage("p1", "chapter-1", 1, "001.jpg")],
+        creator=writer,
+    )
+    vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    vm.selectPage("p1")
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    assert writer.created == []
+    assert len(errors) == 1
+    assert "no usable pixel extent" in errors[0]
+    # the machine-readable code rides on the typed error surface
+    assert "PAGE_SIZE_UNAVAILABLE" in vm.commandErrorText
+    assert vm.inspectorRegionId == ""
+
+
+def test_unbound_creator_is_typed_and_does_not_raise(qapp_):
+    vm = region_vm()
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)   # must not raise into QML
+    assert errors == ["no region creator bound"]
+
+
+def test_no_page_selected_is_typed(qapp_):
+    service, _ = make_pipeline(pages=[("p1", 1)])
+    vm = make_vm(service, pages=[], creator=FakeRegionWriter())
+    vm.setContext("book-1", "chapter-1", "测试书", "第1话")
+    errors = []
+    vm.commandError.connect(errors.append)
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    assert errors == ["no page selected"]
+
+
+def test_dirty_editor_is_not_discarded_by_a_new_region(qapp_):
+    # _navigate would open the save/discard dialog; bypassing it blindly would
+    # throw away typed text. So with a dirty inspector the list refreshes but
+    # the selection is left alone.
+    writer = FakeRegionWriter()
+    vm = region_vm(creator=writer)
+    vm.selectRegion("r1")
+    vm.setInspectorText("未保存的台词")
+    assert vm.hasDirtyEditor is True
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    assert writer.created and vm.inspectorRegionId == "r1"
+
+
+def test_clean_editor_refreshes_the_region_list(qapp_):
+    # The other branch: with nothing at risk the new region becomes selected,
+    # so the Inspector shows it without a reload.
+    emitted = []
+    vm = region_vm(creator=FakeRegionWriter())
+    vm.inspectorChanged.connect(lambda: emitted.append(1))
+    vm.createRectangle(0.1, 0.1, 0.5, 0.5)
+    assert vm.inspectorRegionId == "r-created-1"
+    assert emitted
+
 

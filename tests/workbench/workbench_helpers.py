@@ -110,6 +110,23 @@ class FakeEditor:
         self.saved.append((region_id, text))
 
 
+class FakeRegionWriter:
+    """Records create/delete calls through the T1.1.2 writer seams."""
+
+    def __init__(self) -> None:
+        self.created: list[tuple[str, object]] = []
+        self.deleted: list[str] = []
+
+    def create_region(self, page_id: str, geometry) -> FakeRegion:
+        region = FakeRegion(f"r-created-{len(self.created) + 1}", page_id)
+        region.geometry = geometry
+        self.created.append((page_id, geometry))
+        return region
+
+    def delete_region(self, region_id: str) -> None:
+        self.deleted.append(region_id)
+
+
 class FakeNavigation:
     """NavigationViewModel surface used for the D05 §3.1 badge."""
 
@@ -162,7 +179,7 @@ def make_pipeline(
 
 
 def make_vm(service: PipelineService, *, pages=None, regions=None, editor=None,
-            navigation=None, image_urls=None):
+            navigation=None, image_urls=None, creator=None, deleter=None):
     """WorkbenchViewModel wired to fakes; page catalog defaults to the 40
     FakePages matching make_pipeline's catalog entries."""
 
@@ -182,6 +199,8 @@ def make_vm(service: PipelineService, *, pages=None, regions=None, editor=None,
         region_catalog=FakeRegionCatalog(regions or []),
         translation_editor=editor or FakeEditor(),
         navigation=navigation,
+        region_creator=creator,
+        region_deleter=deleter,
     )
 
 
