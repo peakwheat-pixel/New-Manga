@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../theme"
 
 // D05 §18: left PageListPanel — virtualized thumbnails (ListView),
 // per-tile status glyph + lock overlay (AC-PAGE-003), current-viewer
@@ -9,7 +10,7 @@ import QtQuick.Layouts
 Rectangle {
     id: pageList
     objectName: "pageListPanel"
-    color: "#ffffff"
+    color: Tokens.bgPanel
 
     property var pageModel: null
     property string viewerPageId: ""
@@ -49,12 +50,14 @@ Rectangle {
             x: 4
             height: 64
             objectName: "pageTile-" + model.pageId
-            radius: 4
-            color: model.isSelected ? "#dbeafe"
-                 : model.pageId === pageList.viewerPageId ? "#fef3c7"
-                 : "#f9fafb"
-            border.color: model.pageId === pageList.viewerPageId ? "#d97706"
-                        : model.isSelected ? "#2563eb" : "#e5e7eb"
+            radius: Tokens.radSm
+            // §6C R3-001 audits `ink` against an accent-soft selected row, so
+            // the selected ground must stay accent-soft and its text Tokens.ink.
+            color: model.isSelected ? Tokens.accentSoft
+                 : model.pageId === pageList.viewerPageId ? Tokens.bgActive
+                 : Tokens.bgRaised
+            border.color: model.pageId === pageList.viewerPageId ? Tokens.borderStrong
+                        : model.isSelected ? Tokens.accent : Tokens.divider
             border.width: model.pageId === pageList.viewerPageId || model.isSelected ? 2 : 1
 
             // AC-PAGE-002: single / ctrl / shift selection + viewer open.
@@ -81,9 +84,14 @@ Rectangle {
                     // managed storage in a later rendering slice (D05 §65).
                     width: 48
                     height: 48
-                    radius: 3
-                    color: "#e5e7eb"
-                    Label { anchors.centerIn: parent; text: model.pageOrder; color: "#6b7280" }
+                    radius: Tokens.radSm
+                    color: Tokens.bgInset
+                    Label {
+                        anchors.centerIn: parent
+                        text: model.pageOrder
+                        color: Tokens.ink2
+                        font.pixelSize: Tokens.fsSm
+                    }
                 }
 
                 ColumnLayout {
@@ -93,7 +101,8 @@ Rectangle {
                         Layout.fillWidth: true
                         text: model.filename
                         elide: Text.ElideMiddle
-                        font.pixelSize: 11
+                        color: Tokens.ink
+                        font.pixelSize: Tokens.fsSm
                     }
                     RowLayout {
                         spacing: 4
@@ -106,25 +115,29 @@ Rectangle {
                                 return glyphs[model.status] || model.status;
                             }
                             color: {
-                                var colors = { waiting: "#9ca3af", processing: "#2563eb",
-                                    completed: "#16a34a", failed: "#dc2626",
-                                    skipped: "#a855f7", blocked: "#d97706" };
-                                return colors[model.status] || "#9ca3af";
+                                var colors = { waiting: Tokens.ink3,
+                                    processing: Tokens.stRun,
+                                    completed: Tokens.stOk,
+                                    failed: Tokens.stFail,
+                                    skipped: Tokens.stSkip,
+                                    blocked: Tokens.stBlock };
+                                return colors[model.status] || Tokens.ink3;
                             }
-                            font.pixelSize: 11
+                            font.pixelSize: Tokens.fsSm
                         }
                         Label {
                             objectName: "pageLock-" + model.pageId
                             text: "🔒"
                             visible: model.isLocked
-                            font.pixelSize: 11
+                            color: Tokens.stLock
+                            font.pixelSize: Tokens.fsSm
                         }
                         Label {
                             objectName: "pagePipelineCurrent-" + model.pageId
                             text: "▶ 运行中"
                             visible: model.isPipelineCurrent
-                            color: "#2563eb"
-                            font.pixelSize: 10
+                            color: Tokens.stRun
+                            font.pixelSize: Tokens.fsSm
                         }
                     }
                 }
