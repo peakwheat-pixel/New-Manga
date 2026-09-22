@@ -276,7 +276,7 @@ class TestRestoreSemantics:
         assert excinfo.value.code == "RESTORE_FAILED"
         assert "pre_restore=" in excinfo.value.detail
         assert calls == 2
-        assert backup_module.read_schema_version(conn) == 3
+        assert backup_module.read_schema_version(conn) == 4
         assert conn.execute(
             "SELECT COUNT(*) FROM artifact_revisions"
         ).fetchone()[0] == 1
@@ -585,7 +585,7 @@ class TestTypedFailures:
             service.restore_backup(backup_id)
 
         assert excinfo.value.code == "SCHEMA_TOO_NEW"
-        assert backup_module.read_schema_version(conn) == 3
+        assert backup_module.read_schema_version(conn) == 4
         assert conn.execute(
             "SELECT COUNT(*) FROM artifact_revisions"
         ).fetchone()[0] == 1

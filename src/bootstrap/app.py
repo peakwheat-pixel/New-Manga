@@ -45,7 +45,6 @@ from application.editing.service import RegionEditingService
 from application.export import (
     ExportPage,
     ExportService,
-    JsonHistoryDocumentStore,
     file_bytes_provider,
 )
 from application.importing.documents import ImportDocumentsUseCase
@@ -55,7 +54,6 @@ from application.maintenance import TrashService
 from application.maintenance.diagnostics import BoundedErrorLog, DiagnosticsService
 from application.maintenance.trash import _JsonTrashManifest
 from application.reading.service import ReadingService
-from application.reading.ports import JsonProgressDocumentStore
 from application.rendering.service import RenderService
 from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
@@ -91,6 +89,12 @@ from infrastructure.sqlite.artifacts import SqliteArtifactRepository
 from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
 from infrastructure.sqlite.library import SqliteLibraryRepository
 from infrastructure.sqlite.migrator import MigrationRunner
+from infrastructure.sqlite.reading_export import (
+    SqliteExportHistoryStore,
+    SqliteReadingProgressStore,
+    import_legacy_export_history,
+    import_legacy_reading_progress,
+)
 from infrastructure.sqlite.regions import SqliteRegionRepository
 from infrastructure.sqlite.schema import default_migrations
 from infrastructure.transport.stdlib import StdlibTransport
@@ -823,12 +827,14 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             _BoundedDiagnosticsSink(BoundedLogStore(diagnostics_root)),
             BoundedErrorLog(),
         )
-        reading = ReadingService(
-            JsonProgressDocumentStore(data_root / "reading_progress.json")
-        )
-        export_service = ExportService(
-            JsonHistoryDocumentStore(data_root / "export_history.json")
-        )
+        # T3.1.1 (D03 §29, D03 §31, AC-READ-002, AC-EXPORT-002):
+        # One-time legacy JSON import into SQLite; SQLite is now the sole
+        # write source of truth, legacy JSON files are preserved read-only.
+        import_legacy_reading_progress(conn, data_root / "reading_progress.json")
+        import_legacy_export_history(conn, data_root / "export_history.json")
+
+        reading = ReadingService(SqliteReadingProgressStore(conn))
+        export_service = ExportService(SqliteExportHistoryStore(conn))
         # T1.2.1: the settings page stack — JSON-backed profile stores (the
         # durable ports adapters stay a later coordinated slice; same
         # JSON-interim as progress/export history), the OS credential vault
