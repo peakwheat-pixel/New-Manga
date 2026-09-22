@@ -11,18 +11,18 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.2.1 = VERIFIED_COMPLETE`; T1.1.1 and T1.1.2 are also `VERIFIED_COMPLETE`. |
-| Current Active Task | None; T2.1.1 remains unreleased and requires its own Release Gate. |
-| Current owner/reviewer | T1.2.1 author: ZCode; non-author reviewer/integrator: Codex; integration complete. |
-| Current branch/worktree | Main: `master` at `e8535d5`; author recovery worktree remains `agent/zcode/T1.2.1-settings-ui-viewmodel` at `e025c9a`; Codex integration worktree: `agent/codex/T1.2.1-r5-integration` at `e92c414`. |
-| Current review base/head | base `d11d927`; R4 `39dbbf7` / `a527b85`; R5 `e5716ac` / `e025c9a`; product integration `9a14310`; evidence `e92c414`. |
+| Current product checkpoint | `T1.2.1 = VERIFIED_COMPLETE`; T1.1.1 and T1.1.2 are also `VERIFIED_COMPLETE`; `T2.1.1 = READY` with implementation not started. |
+| Current Active Task | T2.1.1 is released to Qoder but not `in_progress`; no production QML implementation has started. |
+| Current owner/reviewer | T2.1.1 Owner: Qoder; non-author reviewer/integrator and Release Gate: Codex. |
+| Current branch/worktree | Main: `master` at `7f34135`; Qoder: `agent/qoder/T2.1.1-design-f-qml` at `7f34135`, worktree `G:/CODEX/New Manga.worktrees/T2.1.1-design-f-qml`; prior T1.2.1 recovery/integration worktrees remain preserved. |
+| Current review base/head | T2.1.1 base `7f34135`; delivery head: none yet. Prior T1.2.1 review/integration evidence remains historical. |
 | Latest integrated product test status | T1.2.1 integration tree: Git Bash `1139 passed + 1 known torch environment failure + 0 skipped + 1 warning`, PowerShell `1133 passed + 6 OpenSSL skips + 1 known failure + 1 warning`; both exit 1 only for the known environment assertion. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T1.2.1 product blockers. The known torch readiness assertion and OpenSSL-dependent TLS skips remain environment evidence. T2.1.1, T3.1.1 and T3.2.1 remain separate unreleased Roadmap work. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
-| Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md` (tracked modification) and untracked `.codewiki/`, `.qoder-credits/`, `docs/`, `material/`, `wiki/codewiki/temp/`. Recheck `git status` before any edit; current documentation edits are separate. |
-| Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
-| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R5 review](../verification/T1.2.1/review-e5716ac.md); [T1.2.1 integration](../verification/T1.2.1/integration-9a14310.md) |
+| Current blockers | No Release Gate blocker for T2.1.1. Implementation is not started; the remaining F token/QML gap is the released scope. T3.1.1 and T3.2.1 remain unreleased. Known torch/OpenSSL results remain historical environment evidence. |
+| Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
+| Worktrees | T2.1.1 Qoder worktree is newly created clean at base `7f34135`; existing worktrees remain preserved. No deletion or prune is authorized. |
+| Evidence | [T2.1.1 release gate](../verification/T2.1.1/release-gate-7f34135.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 integration](../verification/T1.2.1/integration-9a14310.md) |
 
 ## Verified completed capability
 
@@ -46,10 +46,21 @@ verification are now complete.
 
 ## Stage B execution gate
 
-T1.1.2, T1.1.1 and T1.2.1 are integrated and verified. T2.1.1 is not released;
-it requires its own Task Release Gate and must not be inferred from T1.2.1
-completion. Preserve all dirty files and worktrees. `TASK-013` remains the
-historical task; the completed T1.2.1 state belongs to the Current Roadmap.
+T1.1.2, T1.1.1 and T1.2.1 are integrated and verified. T2.1.1 passed its own
+Task Release Gate at `7f34135` and is `READY` for Qoder implementation; this is
+not an implementation or completion claim. Preserve all dirty files and
+worktrees. `TASK-013` remains the historical task; completed T1.2.1 and the
+released T2.1.1 state belong to the Current Roadmap.
+
+## T2.1.1 Release Gate checkpoint
+
+Codex created the formal [T2.1.1 Task](tasks/T2.1.1.md) and the isolated
+Qoder worktree `G:/CODEX/New Manga.worktrees/T2.1.1-design-f-qml` from
+`7f341355968f69fc3db7b6824d73ec7d56c182be`. The selected token delivery is
+fixed to `pragma Singleton` + `qmldir`. The gate is **PASS TO START**; Qoder
+must not treat `READY` as `in_progress`, and must wait for a direct Owner
+instruction. Fresh implementation tests, Review, and integration evidence are
+still absent.
 
 ## T1.1.1 preparation Release Gate
 
@@ -274,15 +285,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; no product Task is `in_progress` |
-| `ExecutionState` | `IDLE` on master at `e8535d5` |
-| `Current Executor` | Codex integration complete; next executor pending T2.1.1 Release Gate |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 integrated and verified → T2.1.1 unreleased |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `ready` / implementation not started |
+| `ExecutionState` | `IDLE` on master at `7f34135`; Qoder worktree is clean at the same base |
+| `Current Executor` | Qoder may start only after receiving the released instruction; Codex remains Reviewer/Integrator |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 integrated and verified → T2.1.1 Release Gate passed → T2.1.1 ready/not started |
 | `Dependency Blocking Chain` | T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.1.1 design/research after write-set review |
-| `Do Not Start Yet` | T2.1.1, T2.2.1, T3.2.1 and any product change outside a released Task |
-| `Safe To Resume` | Only after Codex runs the independent T2.1.1 Release Gate; no automatic start |
+| `Do Not Start Yet` | T2.2.1, T3.1.1, T3.2.1 and any product change outside a released Task; do not auto-start T2.1.1 without the Owner instruction |
+| `Safe To Resume` | Qoder may begin T2.1.1 only on the created worktree and fixed base, with no scope expansion; Codex must review and integrate afterward |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -294,7 +305,7 @@ T1.1.1 VERIFIED_COMPLETE @ f56f441
         ↓
 T1.2.1 VERIFIED_COMPLETE @ 9a14310 / e92c414
         ↓
-T2.1.1 Release Gate (not released)
+T2.1.1 READY (implementation not started)
         ↓
 T2.2.1 (not released)
 ```
@@ -304,7 +315,7 @@ T2.2.1 (not released)
 | Work item | Readiness | Class | Conflict |
 |---|---|---|---|
 | T1.2.1 | complete | closed | provider runtime, VM, Settings QML, bootstrap integrated |
-| T2.1.1 | not ready | `DO_NOT_START_YET` | four-page QML/theme and T1.2.1 contract |
+| T2.1.1 | ready | `RELEASED_NOT_STARTED` | four-page QML/theme; F token contract; T1.2.1 UI contracts |
 | T3.1.1 research | conditional | research-only parallel | SQLite/storage write set |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |

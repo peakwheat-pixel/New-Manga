@@ -118,15 +118,16 @@ QML shell changes are serialized through Codex.
 | 1 | **T1.1.2 Region Canvas & Creator** | **VERIFIED_COMPLETE** | Qoder implementation / Codex non-author review and integration; base `b985d9c`, integrated `5b91745` | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
 | 2 | T1.1.1 Production Text Detector | **VERIFIED_COMPLETE**; integrated `f56f441` | ZCode implementation / Codex non-author review and integration | A page without regions creates a persisted candidate Region through a selected real detector; configured path no longer fails as `PROVIDER_NOT_CONFIGURED`. |
 | 3 | [T1.2.1 Settings UI & ViewModel](tasks/T1.2.1.md) | **VERIFIED_COMPLETE**; integrated `9a14310`, evidence `e92c414` | ZCode implementation / Codex non-author review and integration | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline and never enter logs/diagnostics; B-003 production credential path verified. |
-| 4 | T2.1.1 Apply Design F to QML | PLANNED | ZCode / Qoder + Codex | Shared F tokens are consumed by all four pages; 158px bookshelf geometry and accepted state contrast are verified without business-logic changes. |
+| 4 | [T2.1.1 Apply Design F to QML](tasks/T2.1.1.md) | **READY — implementation not started** | Qoder / Codex non-author review and integration; base `7f34135`, worktree created at base | Shared F tokens use `pragma Singleton` + `qmldir`; all four pages consume them; 158px bookshelf geometry, accepted/completed-state contrast, and a discriminating hard-code guard are verified without business-logic changes. |
 | 5 | T2.2.1 Reader & Workbench Polish | PLANNED | ZCode / non-author reviewer | Chapter picker, Workbench empty-state picker and dismissible command-error notification are accessible and tested. |
 | 6 | T3.1.1 Unify Storage into SQLite | PLANNED | Codex / DeepSeek Harness | JSON progress/export stores migrate once into transactional SQLite with rollback and no data loss. |
 | 7 | T3.2.1 Windows Packaging & Release Gate | PLANNED | Codex / Qoder + DeepSeek Harness | Product onedir launches on clean Windows without Python, completes the core workflow, and exits without a residual process. |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
-the completed Task. T2.1.1 still requires its own Release Gate and is not
-released automatically by T1.2.1 completion.
+the completed Task. The independent [T2.1.1 Release Gate](../verification/T2.1.1/release-gate-7f34135.md)
+has passed at base `7f34135`; implementation is released to Qoder but has not
+started and is not verified complete.
 
 ## Project control baseline — 2026-09-22
 
@@ -142,8 +143,8 @@ Current blocking chain:
 
 ```text
 T1.2.1 VERIFIED_COMPLETE
-  → independent T2.1.1 Release Gate
-  → release T2.1.1
+  → independent T2.1.1 Release Gate (PASSED)
+  → T2.1.1 implementation (READY, not started)
   → T2.2.1
   → T3.1.1 storage convergence
   → T3.2.1 clean-machine Windows release

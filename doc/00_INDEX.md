@@ -2,7 +2,7 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-22）**：T1.1.1 已于 `f56f441` 集成并验证；T1.2.1 R4 候选为 `39dbbf7` / Handoff `a527b85`，仍未复审、未集成，B-003 与范围漂移待处理。修改版 V2 全景审计见 [PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md)；当前 HEAD、测试口径、阻断项与下一 Release Gate 见 [STATUS](STATUS.md)；任务顺序见 [REBASELINE_PLAN](REBASELINE_PLAN.md)。下方 2026-09-19 及更早的长段落是历史导航，不决定当前排期。
+> **Current pointer（2026-09-22）**：T1.1.1、T1.1.2、T1.2.1 已集成并验证；T2.1.1 在 base `7f34135` 已通过独立 Release Gate，正式 Task 为 [T2.1.1](tasks/T2.1.1.md)，实现尚未开始。Release evidence：[T2.1.1 gate](../verification/T2.1.1/release-gate-7f34135.md)。当前 HEAD、测试口径、阻断项与执行恢复点见 [STATUS](STATUS.md)；任务顺序见 [REBASELINE_PLAN](REBASELINE_PLAN.md)。下方 2026-09-19 及更早的长段落是历史导航，不决定当前排期。
 
 2026-09-20 TASK-059 集成：设计重做 Task 已 `done`，integration=`53ae2e4`，最终 Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`。ND-1 选定 **F · Graphite Atelier**（A 色彩/状态色/主题 + B 几何含 `card-w=158px` + A IA；无 C 玻璃/D 顶栏/E 命令面板）；设计已集成但未释放实现 Task，ND-4/5/6/7 待用户裁决。
 
