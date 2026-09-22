@@ -1,0 +1,47 @@
+=== reviewer: DeepSeek Harness (non-author, independent)
+=== session: session-07d9ad59-edde-4d0e-afc6-491dd34c6bd9
+=== shell: pwsh 7.6.6
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== base: e771179beaa92b7c592a1986a32ffbf1b6302566
+=== reviewed head: 899bd3c99752ce435da25e41166bafa1c2963abc
+=== workdir: G:\CODEX\New Manga.worktrees\T3.1.1-deepseek-review-899bd3c
+=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src;.
+=== ran at: 2026-09-22 22:12:03 +08:00
+=== cmd: python -m bootstrap.app --smoke-test --data-root C:\Users\49745\AppData\Local\Temp\t311_review_smoke_final_c3a557ce18d54ed6bd6f1dbb5cff2ea9
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_5(0x23ced380fb0)  is not an Item
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_5(0x23ced4dda70)  is not an Item
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:137:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_37(0x23ced975880, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:129:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x23ced977b30, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:104:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_37(0x23ced976b40, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:96:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x23ced976f00, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/workbench/RegionInspector.qml:104:25: QML QQuickRectangle: The current style does not support customization of this control (property: "background" item: QQuickRectangle(0x23ceda46f10, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:137:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_37(0x23ced9764b0, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:129:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x23ced978c10, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:104:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_37(0x23ced977680, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/common/ChapterPicker.qml:96:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x23ced975790, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookshelfView.qml:65: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookshelfView.qml:49: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookshelfToolbar.qml:63: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookshelfToolbar.qml:57: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookshelfToolbar.qml:52: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/T3.1.1-deepseek-review-899bd3c/src/ui/qml/bookshelf/BookshelfToolbar.qml:45: TypeError: Cannot read property 'favoritesOnly' of null
+ExitCode: 0
+=== smoke data root tree ===
+C:\Users\49745\AppData\Local\Temp\t311_review_smoke_final_c3a557ce18d54ed6bd6f1dbb5cff2ea9\managed
+C:\Users\49745\AppData\Local\Temp\t311_review_smoke_final_c3a557ce18d54ed6bd6f1dbb5cff2ea9\library.db
+C:\Users\49745\AppData\Local\Temp\t311_review_smoke_final_c3a557ce18d54ed6bd6f1dbb5cff2ea9\managed\temp
+=== smoke DB introspection ===
+schema_version = 4
+v4 tables = ['export_history', 'reading_progress']
+progress_rows = 0
+history_rows = 0
+metadata_keys = ['legacy_export_history_imported', 'legacy_reading_progress_imported', 'schema_version']
+backup_records = 0

@@ -1,0 +1,68 @@
+=== reviewer: DeepSeek Harness (non-author, independent)
+=== session: session-07d9ad59-edde-4d0e-afc6-491dd34c6bd9
+=== shell: pwsh 7.6.6
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== base: e771179beaa92b7c592a1986a32ffbf1b6302566
+=== reviewed head: 899bd3c99752ce435da25e41166bafa1c2963abc
+=== workdir: G:\CODEX\New Manga.worktrees\T3.1.1-deepseek-review-899bd3c
+=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src;.
+=== ran at: 2026-09-22 22:12:03 +08:00
+=== cmd: python verification/T3.1.1/review-probes-899bd3c.py
+==============================================================================
+[PASS] AC1.a v4 tables/columns/PK/UNIQUE/CHECK/index introspected from the live DB
+       progress PK=progress_id UNIQUE(book,chapter,mode) present; history indexes ['idx_export_history_book', 'idx_export_history_created_at', 'sqlite_autoindex_export_history_1']
+[PASS] AC1.b v4 DDL carries the CHECK constraints the acceptance names
+       mode IN (original,translated) and status IN (completed,skipped,cancelled,failed) enforced
+[PASS] AC1.c v4 is additive: no ALTER/DROP touches any pre-v4 object
+       v4 body only CREATE TABLE/CREATE INDEX; v1/v2/v3 SQL hashes already proven identical
+[PASS] AC1.d MigrationRunner checksum/transaction/newer-schema guards still active
+       checksum mismatch raises; failed migration rolls back to v4 with no half table; v5 DB opens TOO_NEW/read-only and apply_pending raises SchemaTooNewError
+[PASS] AC1.f pre-migration backup still fires for the new v3->v4 step
+       4 pre_migration backups fired; recorded snapshots at v1, v2, v3; 4 backup files on disk
+[PASS] AC1.e FK expectations: v4 declares no FOREIGN KEY (documented finding)
+       reading_progress foreign_key_list=[]; export_history foreign_key_list=[]; foreign_keys PRAGMA is ON, so the delivery report's 'FK + cascade delete' claim is NOT met
+[PASS] AC2.a ReadingProgress full-field round-trip through the real adapter
+       11/11 fields identical before and after reopen
+[PASS] AC2.b Original and Translated progress stay independent; webtoon fields + duration survive
+       original/translated/webtoon rows independent; last_page_id, scroll_offset_y and total_read_seconds restored after reopen
+[PASS] AC2.c (book_id, chapter_id, mode) never duplicates under repeated writes
+       3 writes -> 1 row (latest percent wins); adding a new key keeps both rows
+[PASS] AC2.f one progress_id reused by two keys in a single write (observed behaviour)
+       two rows reusing one progress_id raise IntegrityError and the whole batch rolls back (0 rows); the store never duplicates, but the failure is a raw sqlite3 error, not a typed store error
+[PASS] AC2.d ExportHistory full-field round-trip, all statuses, newest-first, repeat snapshot
+       13/13 fields x 4 terminal statuses round-trip; read order is newest-first; repeat snapshots intact
+[PASS] AC2.e ExportService.repeat rebuilds from the persisted snapshot, not from JSON
+       repeat() replayed the stored scope snapshot and appended a new SQLite row; no JSON file written
+[PASS] AC3.a valid legacy JSON imports exactly once and the files are byte-identical afterwards
+       imported once (hash/mtime/size/inode and directory listing unchanged, zero mutating calls); restart re-import returns 0
+[PASS] AC3.b missing legacy files are an empty legacy store, not an error
+       missing files -> 0 rows, missing_empty marker, no file created
+[PASS] AC4.a corrupt JSON -> LegacyCorruptJsonError with the original cause chained
+       LegacyCorruptJsonError with __cause__=json.JSONDecodeError; file untouched, no marker, no rows
+[PASS] AC4.b wrong top-level structure -> LegacyInvalidStructureError (both stores)
+       non-object progress doc, non-list entries, and non-list history doc all raise LegacyInvalidStructureError
+[PASS] AC4.c one invalid record aborts the whole import (single record field legality)
+       4 progress cases + 1 history case -> LegacyInvalidRecordError, zero rows written
+[PASS] AC4.d SQLite write failure mid-import rolls back everything and writes no marker
+       raised IntegrityError: injected | 0 rows, no marker, file untouched
+[PASS] AC4.e marker write failure rolls the whole batch back (marker timing)
+       marker INSERT aborted (IntegrityError); imported rows rolled back with it; file untouched
+[PASS] AC4.f store write failure preserves existing DB rows and writes no partial row
+       existing row intact, no partial row, exactly one row after rollback
+[PASS] AC4.g error context: messages carry the file path and the offending field
+       message includes file path, record index, and the offending field name
+[PASS] AC4.h legacy JSON reusing one progress_id across two keys (observed behaviour)
+       raises IntegrityError (typed=False); no rows, no marker, file byte-identical, and identical on the next startup
+[PASS] AC5.a assemble_services wires the SQLite adapters and creates no legacy JSON file
+       assemble_services -> SQLite adapters, live write visible in library.db at schema v4, zero JSON files
+[PASS] AC5.b production assembly imports pre-existing legacy JSON instead of writing it
+       startup imported legacy rows into SQLite through the real assembly and left both JSON files byte-identical
+[PASS] AC5.d a real ReadingService session persists to SQLite and a cold restart resumes
+       open/next_page/add_time persisted into SQLite; cold re-assembly resumed at p-2 with accumulated duration; no JSON file exists
+[PASS] AC5.c no production module still selects a JSON store as write truth
+       no bootstrap module instantiates a JSON store; assemble_engine only injects viewmodels
+[PASS] AC7 allowed-path envelope: only sqlite/bootstrap/tests/verification touched
+       16 changed files, all inside the frozen envelope: ['src/bootstrap/app.py', 'src/infrastructure/sqlite/__init__.py', 'src/infrastructure/sqlite/reading_export.py', 'src/infrastructure/sqlite/schema.py', 'tests/core/test_bootstrap.py', 'tests/reading_export/test_sqlite_reading_export.py', 'tests/stora
+==============================================================================
+27/27 independent review checks passed
+ExitCode: 0
