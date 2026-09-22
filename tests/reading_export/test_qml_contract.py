@@ -251,6 +251,23 @@ def test_reader_loads_with_injected_viewmodel_shows_empty_state(engine, tmp_path
 
 
 @requires_pyside6
+def test_reader_picker_stays_honest_without_bookshelf_viewmodel(engine, tmp_path):
+    # Standalone ReaderView loads with only its own VM; the picker action must
+    # not dereference an absent bookshelf context property.
+    reading = make_reading_service(tmp_path)
+    vm = ReaderViewModel(reading, _EmptyCatalog(), export_service=make_service(tmp_path))
+    engine.rootContext().setContextProperty("readerViewModel", vm)
+    window = load_host(engine, READER_HOST, SRC_QML / "reader")
+    try:
+        root = find_by_name(window, "readerView")
+        pick = find_by_name(root, "readerPickChapter")
+        assert pick is not None
+        assert bool(pick.property("enabled")) is False
+    finally:
+        window.close()
+
+
+@requires_pyside6
 def test_reader_shows_chapter_and_paging(engine, reader_stack):
     vm, reading, pages = reader_stack
     engine.rootContext().setContextProperty("readerViewModel", vm)
@@ -376,6 +393,19 @@ def test_reader_webtoon_swaps_in_vertical_viewer(engine, reader_stack_webtoon):
         )
     finally:
         window.close()
+
+
+@requires_pyside6
+def test_webtoon_canvas_uses_the_paged_canvas_ground():
+    source = (SRC_QML / "reader" / "ReaderView.qml").read_text(encoding="utf-8")
+    marker = 'objectName: "readerWebtoonCanvas"'
+    assert marker in source
+    start = source.index(marker)
+    end = source.index("\n\n                Flickable", start)
+    ground = source[start:end]
+    assert "color: Tokens.bgCanvas" in ground
+    mutated = ground.replace("color: Tokens.bgCanvas", "color: Tokens.bgPage", 1)
+    assert "color: Tokens.bgCanvas" not in mutated
 
 
 @requires_pyside6

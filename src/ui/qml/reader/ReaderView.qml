@@ -26,6 +26,7 @@ Rectangle {
     focus: true  // keyboard paging (D05 §39) needs active focus on this page
 
     property var model: (typeof readerViewModel !== "undefined" ? readerViewModel : null)
+    property var shelf: (typeof bookshelfViewModel !== "undefined" ? bookshelfViewModel : null)
     readonly property bool active: model !== null && model.hasChapter
     readonly property bool vertical: active && model.chapterType === "webtoon"
 
@@ -63,6 +64,12 @@ Rectangle {
         }
     }
 
+    ChapterPicker {
+        id: readerChapterPicker
+        shelf: rv.shelf
+        action: "reader"
+    }
+
     ColumnLayout {
         anchors.fill: parent
         spacing: 4
@@ -87,12 +94,10 @@ Rectangle {
             }
             Button {
                 objectName: "readerPickChapter"
-                // D04 §33: chapters are entered from the shelf/workbench with
-                // context; an in-reader chapter picker needs the chapter list
-                // source, which the assembly wires (see TASK-015 handoff).
-                // Disabled keeps the TASK-012 honest-skeleton contract.
                 text: "章节…"
-                enabled: false
+                enabled: rv.shelf !== null && rv.shelf.bookCount > 0
+                Accessible.name: "选择阅读章节"
+                onClicked: readerChapterPicker.open()
             }
             Button {
                 objectName: "readerModeOriginal"
@@ -208,59 +213,64 @@ Rectangle {
             // TASK-020: when the assembly injects a tile factory the page is
             // served as rebuildable tile bands (按需解码 + 预取限制); without
             // one the whole-page image path below is unchanged.
-            Flickable {
-                id: webtoonScroll
-                objectName: "readerWebtoonScroll"
-                clip: true
-                contentWidth: width
-                contentHeight: tilesHost.visible
-                    ? tilesHost.childrenRect.height
-                    : webtoonImage.paintedHeight
-                boundsBehavior: Flickable.StopAtBounds
+            Rectangle {
+                objectName: "readerWebtoonCanvas"
+                color: Tokens.bgCanvas
+
+                Flickable {
+                    id: webtoonScroll
+                    objectName: "readerWebtoonScroll"
+                    anchors.fill: parent
+                    clip: true
+                    contentWidth: width
+                    contentHeight: tilesHost.visible
+                        ? tilesHost.childrenRect.height
+                        : webtoonImage.paintedHeight
+                    boundsBehavior: Flickable.StopAtBounds
 
                 // Tile geometry is known immediately (no decode round-trip),
                 // so the saved offset restores as soon as the tiled host is
                 // live; the whole-image path keeps its R-003 decode wait.
-                onVisibleChanged: if (visible) Qt.callLater(restoreSavedOffset)
-                onWidthChanged: if (visible) Qt.callLater(restoreSavedOffset)
-                Component.onCompleted: Qt.callLater(restoreSavedOffset)
+                    onVisibleChanged: if (visible) Qt.callLater(restoreSavedOffset)
+                    onWidthChanged: if (visible) Qt.callLater(restoreSavedOffset)
+                    Component.onCompleted: Qt.callLater(restoreSavedOffset)
 
-                function restoreSavedOffset() {
-                    if (tilesHost.visible && active && model.scrollOffsetY > 0)
-                        webtoonScroll.contentY = model.scrollOffsetY
-                }
+                    function restoreSavedOffset() {
+                        if (tilesHost.visible && active && model.scrollOffsetY > 0)
+                            webtoonScroll.contentY = model.scrollOffsetY
+                    }
 
-                Timer {
-                    id: scrollSaveTimer
-                    interval: 500
-                    onTriggered: if (active) model.saveScrollOffset(webtoonScroll.contentY)
-                }
+                    Timer {
+                        id: scrollSaveTimer
+                        interval: 500
+                        onTriggered: if (active) model.saveScrollOffset(webtoonScroll.contentY)
+                    }
 
                 // F-11 (TASK-045): contentY/height are **display** pixels while
                 // the tile grid speaks **page** pixels, so the host passes the
                 // ratio (display per page pixel). The tiles are drawn at
                 // tilesHost.width, so the scale is host width / page width.
-                function tileScale() {
-                    if (!active || !model.pagePixelWidth || tilesHost.width <= 0)
-                        return 1.0;
-                    return tilesHost.width / model.pagePixelWidth;
-                }
+                    function tileScale() {
+                        if (!active || !model.pagePixelWidth || tilesHost.width <= 0)
+                            return 1.0;
+                        return tilesHost.width / model.pagePixelWidth;
+                    }
 
-                onContentYChanged: {
-                    scrollSaveTimer.restart()
-                    if (tilesHost.visible)
-                        model.requestTiles(webtoonScroll.contentY,
-                                           webtoonScroll.contentY + webtoonScroll.height,
-                                           tileScale())
-                }
+                    onContentYChanged: {
+                        scrollSaveTimer.restart()
+                        if (tilesHost.visible)
+                            model.requestTiles(webtoonScroll.contentY,
+                                               webtoonScroll.contentY + webtoonScroll.height,
+                                               tileScale())
+                    }
 
-                Column {
-                    id: tilesHost
-                    objectName: "readerTilesHost"
-                    visible: active && model.tilesActive
-                    width: parent.width
+                    Column {
+                        id: tilesHost
+                        objectName: "readerTilesHost"
+                        visible: active && model.tilesActive
+                        width: parent.width
 
-                    Repeater {
+                        Repeater {
                         // F-5/R-003 (TASK-045): qualify both names. An
                         // unqualified `model` inside a Repeater resolves to the
                         // Repeater's own model property (`model.tiles` was
@@ -268,35 +278,36 @@ Rectangle {
                         // unqualified `visible` resolves to the Repeater's own
                         // visible (always true), so the intent is expressed on
                         // the host explicitly.
-                        model: tilesHost.visible && rv.model ? rv.model.tiles : []
-                        delegate: Image {
-                            required property var modelData
-                            source: modelData.url
-                            width: tilesHost.width
-                            height: modelData.pageWidth > 0
-                                ? modelData.height * tilesHost.width / modelData.pageWidth
-                                : 0
-                            fillMode: Image.PreserveAspectFit
-                            asynchronous: true
+                            model: tilesHost.visible && rv.model ? rv.model.tiles : []
+                            delegate: Image {
+                                required property var modelData
+                                source: modelData.url
+                                width: tilesHost.width
+                                height: modelData.pageWidth > 0
+                                    ? modelData.height * tilesHost.width / modelData.pageWidth
+                                    : 0
+                                fillMode: Image.PreserveAspectFit
+                                asynchronous: true
+                            }
                         }
                     }
-                }
 
-                Image {
-                    id: webtoonImage
-                    objectName: "readerPage"
-                    visible: !tilesHost.visible
-                    width: parent.width
-                    fillMode: Image.PreserveAspectFit
-                    horizontalAlignment: Image.AlignHCenter
-                    source: active && !tilesHost.visible ? model.sourcePath : ""
-                    asynchronous: true
-                    // R-003: restore the saved offset only after the async
-                    // image has real content height, or the Flickable clamps
-                    // it back to 0.
-                    onStatusChanged: {
-                        if (status === Image.Ready && active && model.scrollOffsetY > 0)
-                            webtoonScroll.contentY = model.scrollOffsetY
+                    Image {
+                        id: webtoonImage
+                        objectName: "readerPage"
+                        visible: !tilesHost.visible
+                        width: parent.width
+                        fillMode: Image.PreserveAspectFit
+                        horizontalAlignment: Image.AlignHCenter
+                        source: active && !tilesHost.visible ? model.sourcePath : ""
+                        asynchronous: true
+                        // R-003: restore the saved offset only after the async
+                        // image has real content height, or the Flickable clamps
+                        // it back to 0.
+                        onStatusChanged: {
+                            if (status === Image.Ready && active && model.scrollOffsetY > 0)
+                                webtoonScroll.contentY = model.scrollOffsetY
+                        }
                     }
                 }
             }

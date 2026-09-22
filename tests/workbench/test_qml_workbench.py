@@ -334,6 +334,10 @@ def test_command_error_bar_visible_only_when_a_failure_is_held(workbench, qapp):
     # dismiss hides the bar and clears the VM state
     close_button = workbench.view.findChild(QObject, "commandErrorCloseButton")
     assert close_button is not None
+    source = WORKBENCH_QML.read_text(encoding="utf-8")
+    binding = 'Accessible.name: "关闭错误提示"'
+    assert binding in source
+    assert binding not in source.replace(binding, 'Accessible.name: ""', 1)
     click_button(close_button)
     qapp.processEvents()
     assert workbench.vm.commandErrorText == ""

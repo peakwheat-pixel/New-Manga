@@ -264,15 +264,69 @@ def test_view_mode_switch_keeps_model(shell):
     assert int(grid_view.property("count")) == 2
 
 
-def test_workbench_and_reader_are_honest_skeletons(shell):
-    # D05 §62: skeleton pages exist but their pick actions stay disabled
-    # until TASK-013/015 deliver the floating pickers.
+def test_workbench_and_reader_pick_existing_book_chapter_context(shell, qapp):
+    # T2.2.1: both entry points reuse the bookshelf models and navigation
+    # slots; they must not invent a second context path.
+    first = shell.shelf.createBook("第一本")
+    second = shell.shelf.createBook("第二本")
+    shell.shelf.selectBook(first["book_id"])
+    first_chapter = shell.shelf.createChapter(first["book_id"], "第1话", "1")
+    shell.shelf.selectBook(second["book_id"])
+    second_chapter = shell.shelf.createChapter(second["book_id"], "第2话", "2")
+
     shell.nav.navigate("workbench")
     pick = find_one(shell.root, "workbenchPickContext")
-    assert bool(pick.property("enabled")) is False
+    assert bool(pick.property("enabled")) is True
+    click_button(pick)
+    picker = find_one(shell.root, "workbenchChapterPicker")
+    assert bool(picker.property("visible")) is True
+    book_list = find_one(picker, "chapterPickerBookList")
+    chapter_list = find_one(picker, "chapterPickerChapterList")
+    target_index = 0 if book_list.property("currentValue") == second["book_id"] else 1
+    book_list.setProperty("currentIndex", target_index)
+    qapp.processEvents()
+    assert int(chapter_list.property("count")) == 1
+    assert chapter_list.property("currentValue") == second_chapter["chapter_id"]
+    click_button(find_one(picker, "chapterPickerAccept"))
+    qapp.processEvents()
+    assert bool(picker.property("visible")) is False
+    assert shell.nav.workbenchContext["book_id"] == second["book_id"]
+    assert shell.nav.workbenchContext["chapter_id"] == second_chapter["chapter_id"]
+
     shell.nav.navigate("reader")
     pick = find_one(shell.root, "readerPickChapter")
-    assert bool(pick.property("enabled")) is False
+    assert bool(pick.property("enabled")) is True
+    click_button(pick)
+    picker = find_one(shell.root, "readerChapterPicker")
+    assert bool(picker.property("visible")) is True
+    click_button(find_one(picker, "chapterPickerCancel"))
+    assert bool(picker.property("visible")) is False
+    click_button(pick)
+    reader_book_list = find_one(picker, "chapterPickerBookList")
+    reader_chapter_list = find_one(picker, "chapterPickerChapterList")
+    reader_index = (
+        0 if reader_book_list.property("currentValue") == second["book_id"] else 1
+    )
+    reader_book_list.setProperty("currentIndex", reader_index)
+    qapp.processEvents()
+    assert reader_chapter_list.property("currentValue") == second_chapter["chapter_id"]
+    click_button(find_one(picker, "chapterPickerAccept"))
+    qapp.processEvents()
+    assert shell.nav.readerContext["book_id"] == second["book_id"]
+    assert shell.nav.readerContext["chapter_id"] == second_chapter["chapter_id"]
+
+
+def test_picker_binding_is_discriminating_against_disabled_mutation():
+    # The empty-state action is intentionally disabled only when the shelf
+    # seam is absent/empty. A mutation to `enabled: false` must be visible to
+    # this source contract rather than silently passing.
+    source = (helpers.SRC_ROOT / "ui" / "qml" / "workbench" / "WorkbenchView.qml").read_text(
+        encoding="utf-8"
+    )
+    binding = "enabled: workbench.shelf !== null && workbench.shelf.bookCount > 0"
+    assert binding in source
+    mutated = source.replace(binding, "enabled: false", 1)
+    assert binding not in mutated
 
 
 def test_settings_page_lists_twelve_fixed_categories(shell):

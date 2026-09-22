@@ -20,6 +20,7 @@ Rectangle {
 
     property var vm: (typeof workbenchViewModel !== "undefined"
                       && workbenchViewModel !== null) ? workbenchViewModel : null
+    property var shelf: (typeof bookshelfViewModel !== "undefined" ? bookshelfViewModel : null)
     property bool hasContext: vm !== null && vm.hasContext
 
     // guarded aliases (no-viewmodel → neutral values)
@@ -40,9 +41,13 @@ Rectangle {
     property var wPageModel: vm !== null ? vm.pageListModel : null
     property string wCommandError: vm !== null ? vm.commandErrorText : ""
 
-    // “选择作品和章节” uses a floating window per D05 §62; the picker is
-    // part of the shelf→workbench assembly slice, so the entry stays
-    // disabled here until a context is set programmatically.
+    ChapterPicker {
+        id: workbenchChapterPicker
+        shelf: workbench.shelf
+        action: "workbench"
+    }
+
+    // “选择作品和章节” uses a floating window per D05 §62.
     EmptyState {
         anchors.centerIn: parent
         visible: !workbench.hasContext
@@ -51,7 +56,9 @@ Rectangle {
         Button {
             objectName: "workbenchPickContext"
             text: "选择作品和章节"
-            enabled: workbench.hasContext  // disabled without context
+            enabled: workbench.shelf !== null && workbench.shelf.bookCount > 0
+            Accessible.name: "选择作品和章节"
+            onClicked: workbenchChapterPicker.open()
         }
     }
 
@@ -86,9 +93,10 @@ Rectangle {
             objectName: "commandErrorBar"
             visible: workbench.wCommandError !== ""
             Layout.fillWidth: true
-            Layout.preferredHeight: visible ? 32 : 0
+            Layout.preferredHeight: visible ? Tokens.ctlH : 0
             color: Tokens.failSoft
             border.color: Tokens.stFail
+            Accessible.name: "命令错误提示"
 
             TextEdit {
                 id: commandErrorCopyHelper
@@ -100,9 +108,9 @@ Rectangle {
             Label {
                 objectName: "commandErrorText"
                 anchors.left: parent.left
-                anchors.leftMargin: 8
+                anchors.leftMargin: Tokens.gap
                 anchors.right: commandErrorCopyButton.left
-                anchors.rightMargin: 8
+                anchors.rightMargin: Tokens.gap
                 anchors.verticalCenter: parent.verticalCenter
                 text: workbench.wCommandError
                 elide: Text.ElideRight
@@ -113,9 +121,10 @@ Rectangle {
                 id: commandErrorCopyButton
                 objectName: "commandErrorCopyButton"
                 anchors.right: commandErrorCloseButton.left
-                anchors.rightMargin: 4
+                anchors.rightMargin: Tokens.gap / 2
                 anchors.verticalCenter: parent.verticalCenter
                 text: "复制"
+                Accessible.name: "复制错误信息"
                 onClicked: {
                     commandErrorCopyHelper.text = workbench.wCommandError
                     commandErrorCopyHelper.selectAll()
@@ -126,9 +135,10 @@ Rectangle {
                 id: commandErrorCloseButton
                 objectName: "commandErrorCloseButton"
                 anchors.right: parent.right
-                anchors.rightMargin: 4
+                anchors.rightMargin: Tokens.gap / 2
                 anchors.verticalCenter: parent.verticalCenter
                 text: "×"
+                Accessible.name: "关闭错误提示"
                 onClicked: {
                     if (workbench.vm !== null) workbench.vm.clearCommandError()
                 }
