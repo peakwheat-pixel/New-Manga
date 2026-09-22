@@ -6,23 +6,23 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
-| Latest product integration | `5da1cf6` (T2.1.1 product integration; final verification evidence `verification/T2.1.1/integration-5da1cf6.md`) |
+| Latest product integration | `fe9fca0` (T2.2.1 product code integration; final verification evidence `verification/T2.2.1/integration-aad510b.md`) |
 | Branch | `master` |
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, and `T2.1.1` are `VERIFIED_COMPLETE`; T2.2.1 is `READY` and implementation has not started. |
-| Current Active Task | T2.2.1 Release Gate passed; ZCode and Qoder owner worktrees are ready at base `16810c5`. |
-| Current owner/reviewer | T2.2.1: ZCode functional implementation, Qoder QML/UI/UX, Codex non-author reviewer/integrator. |
-| Current branch/worktree | Main: `master`; product code remains at `5da1cf6`; governance base is `16810c5`; ZCode worktree `G:/CODEX/New Manga.worktrees/T2.2.1-zcode`; Qoder worktree `G:/CODEX/New Manga.worktrees/T2.2.1-qoder`. |
-| Current review base/head | T2.2.1 base `16810c5`; delivery/review/integration heads not yet available. |
-| Latest integrated product test status | T2.1.1 integration tree: PowerShell/TASK-012-py312 `1178 passed + 11 environment skips + 0 failed + 1 warning`, exit 0; author dependency-equipped evidence remains `1183 passed + 5 skipped`, exit 0. |
-| Smoke status | T2.1.1 fresh `python -m bootstrap.app --smoke-test --data-root <fresh-temp-dir>` exit 0; SQLite/database created. |
-| Compile status | T2.1.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | No Release Gate blocker remains. T2.2.1 implementation is ready but not yet delivered; T3.1.1 and T3.2.1 remain unreleased. Environment skips and deferred GUI/DPI findings are recorded as such, not hidden as PASS. |
+| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, and `T2.2.1` are `VERIFIED_COMPLETE`; T3.1.1 is the next unreleased roadmap item. |
+| Current Active Task | None; T2.2.1 is integrated and closed at product head `fe9fca0`. |
+| Current owner/reviewer | T2.2.1 completed by ZCode/Qoder with Codex non-author review and integration; next task requires its own Release Gate. |
+| Current branch/worktree | Main: `master`; product head `fe9fca0`; ZCode delivery `df637df`; Qoder delivery `0846573`; author worktrees preserved and clean. |
+| Current review base/head | T2.2.1 review base `af424a1`, delivery `0846573`, approved by Codex artifact `125fff7`; integration evidence `integration-aad510b`. |
+| Latest integrated product test status | T2.2.1 integration: PowerShell/T1.1.1-impl-py312 focused affected suite `278 passed + 0 skipped + 0 failed`, exit 0; full suite `1209 passed + 6 OpenSSL skips + 1 known torch environment failure + 1 warning`, exit 1. |
+| Smoke status | T2.2.1 fresh `python -m bootstrap.app --smoke-test --data-root G:/CODEX/New Manga.task-envs/T2.2.1-integration-smoke-20260922` exit 0; SQLite/database smoke completed. |
+| Compile status | T2.2.1 fresh `python -m compileall -q src tests` exit 0. |
+| Current blockers | No T2.2.1 product blocker remains. The full-suite torch probe is an explicit environment limitation; T3.1.1 and T3.2.1 remain unreleased and require their own gates. |
 | Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
-| Worktrees | T2.2.1 ZCode and Qoder worktrees are clean at base `16810c5`; all existing worktrees remain preserved. No deletion or prune is authorized. |
-| Evidence | [T2.2.1 Task](tasks/T2.2.1.md); [T2.2.1 release gate](../verification/T2.2.1/release-gate-ef1a9b8.md); [T2.1.1 review](../verification/T2.1.1/review-bc49ef9.md); [T2.1.1 integration](../verification/T2.1.1/integration-5da1cf6.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.2.1 integration](../verification/T1.2.1/integration-9a14310.md) |
+| Worktrees | T2.2.1 ZCode and Qoder worktrees remain preserved and clean at their delivery heads; all existing worktrees remain preserved. No deletion or prune was performed. |
+| Evidence | [T2.2.1 Task](tasks/T2.2.1.md); [release gate](../verification/T2.2.1/release-gate-ef1a9b8.md); [review](../verification/T2.2.1/review-0846573.md); [integration](../verification/T2.2.1/integration-aad510b.md); [T2.1.1 integration](../verification/T2.1.1/integration-5da1cf6.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
 
 ## Verified completed capability
 
@@ -40,10 +40,8 @@ verification are now complete.
 
 ## Open gaps
 
-1. T2.2.1: Reader & Workbench polish, including the deferred webtoon canvas
-   consistency slice.
-2. T3.1.1: migrate reading progress and export history from JSON to SQLite.
-3. T3.2.1: build and verify a product Windows onedir package on a clean machine.
+1. T3.1.1: migrate reading progress and export history from JSON to SQLite.
+2. T3.2.1: build and verify a product Windows onedir package on a clean machine.
 
 ## Stage B execution gate
 
@@ -83,22 +81,25 @@ Review: [review-bc49ef9](../verification/T2.1.1/review-bc49ef9.md).
 Result: **T2.1.1 = VERIFIED_COMPLETE**. Its successor now has its own
 Release Gate.
 
-## T2.2.1 Release Gate checkpoint
+## T2.2.1 Release Gate / completion checkpoint
 
 Codex created the formal [T2.2.1 Task](tasks/T2.2.1.md), implementation plan,
-and [Release Gate](../verification/T2.2.1/release-gate-ef1a9b8.md). The gate
-passed to start from `16810c5`. ZCode owns functional implementation at
-`G:/CODEX/New Manga.worktrees/T2.2.1-zcode` on
-`agent/zcode/T2.2.1-reader-workbench-polish`; Qoder owns QML/UI/UX at
-`G:/CODEX/New Manga.worktrees/T2.2.1-qoder` on
-`agent/qoder/T2.2.1-reader-workbench-qml`. Both worktrees are clean and no
-implementation commit exists yet. Codex remains the non-author reviewer and
-serial integrator.
+and [Release Gate](../verification/T2.2.1/release-gate-ef1a9b8.md) at base
+`16810c5`. ZCode delivered the functional seam at `df637df`; Qoder delivered
+the QML/UI head `0846573` in
+`G:/CODEX/New Manga.worktrees/T2.2.1-qoder`. Codex approved the non-author
+review and integrated the serial chain at product code head `fe9fca0`.
 
 The frozen scope is: Reader chapter picker, Workbench empty-state picker,
 dismissible command-error presentation, and webtoon `Tokens.bgCanvas`
 consistency. Region six-state rendering, command palette, storage, bootstrap,
 Schema, provider/runtime, and dependency changes are excluded.
+
+Focused integration verification is `278 passed`, exit 0. Compile and smoke
+are exit 0. Full-suite verification is `1209 passed`, six explicit OpenSSL
+skips, one known torch-environment failure, exit 1; this limitation is
+recorded in [integration evidence](../verification/T2.2.1/integration-aad510b.md)
+and is not hidden as PASS. Result: **T2.2.1 = VERIFIED_COMPLETE**.
 
 ## T1.1.1 preparation Release Gate
 
@@ -323,15 +324,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE` |
-| `ExecutionState` | `IDLE` on master with product code at `5da1cf6`; Qoder delivery and Codex integration worktrees remain preserved |
-| `Current Executor` | None; T2.2.1 requires its own Release Gate. Codex remains Reviewer/Integrator |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 integrated and verified → T2.1.1 integrated and verified → T2.2.1 Release Gate pending |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE` |
+| `ExecutionState` | `IDLE` on master with product code at `fe9fca0`; author delivery worktrees remain preserved |
+| `Current Executor` | None; T3.1.1 requires its own Release Gate. Codex remains Lead/Reviewer/Integrator |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 integrated and verified; next is T3.1.1 gate |
 | `Dependency Blocking Chain` | T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.1.1 design/research after write-set review |
-| `Do Not Start Yet` | T2.2.1, T3.1.1, T3.2.1 and any product change outside a released Task; do not auto-start T2.2.1 without its own Release Gate |
-| `Safe To Resume` | No active product task; next candidate is T2.2.1 after an independent Release Gate |
+| `Do Not Start Yet` | T3.1.1, T3.2.1 and any product change outside a released Task; do not start T3.1.1 without its own Release Gate |
+| `Safe To Resume` | No active product task; next candidate is T3.1.1 after Codex creates its Release Gate |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -345,7 +346,7 @@ T1.2.1 VERIFIED_COMPLETE @ 9a14310 / e92c414
         ↓
 T2.1.1 VERIFIED_COMPLETE @ 5da1cf6
         ↓
-T2.2.1 (not released)
+T2.2.1 VERIFIED_COMPLETE @ fe9fca0
 ```
 
 ### Parallel execution matrix
