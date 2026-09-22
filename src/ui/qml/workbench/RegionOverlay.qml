@@ -1,5 +1,7 @@
 import QtQuick
 import QtQuick.Controls
+import "../common"
+import "../theme"
 
 // T1.1.2: draw text regions on the Original page and see the existing ones.
 //
@@ -80,7 +82,7 @@ Rectangle {
                 if (!geometry || !geometry.bbox) continue;
                 var box = geometry.bbox;
                 var selected = regions[i].region_id === overlay.vm.inspectorRegionId;
-                ctx.strokeStyle = selected ? "#ea580c" : "#0ea5e9";
+                ctx.strokeStyle = selected ? Tokens.accent : Tokens.stRun;
                 ctx.lineWidth = selected ? 2 : 1;
                 ctx.beginPath();
                 ctx.rect(overlay.toItemX(box[0]), overlay.toItemY(box[1]),
@@ -88,9 +90,11 @@ Rectangle {
                 ctx.stroke();
             }
 
-            // The draft, in item px straight from the pointer.
-            ctx.strokeStyle = "#16a34a";
-            ctx.fillStyle = "#16a34a";
+            // The draft, in item px straight from the pointer. Amber rather
+            // than the region blues so an unfinished box never reads as a
+            // stored Region (.roi=st-run, .roi.sel=accent in the contract).
+            ctx.strokeStyle = Tokens.stWarn;
+            ctx.fillStyle = Tokens.stWarn;
             ctx.lineWidth = 1;
             ctx.beginPath();
             if (overlay.drawingMode === "rect" && overlay.dragging) {
@@ -188,7 +192,8 @@ Rectangle {
             text: "矩形"
             visible: overlay.visible
             enabled: input.enabled
-            palette.buttonText: overlay.drawingMode === "rect" ? "#ffffff" : "#44403c"
+            palette.button: overlay.drawingMode === "rect" ? Tokens.accent : Tokens.bgRaised
+            palette.buttonText: overlay.drawingMode === "rect" ? Tokens.onAccent : Tokens.ink
             onClicked: overlay.drawingMode = "rect"
         }
         Button {
@@ -197,12 +202,13 @@ Rectangle {
             text: "多边形"
             visible: overlay.visible
             enabled: input.enabled
-            palette.buttonText: overlay.drawingMode === "polygon" ? "#ffffff" : "#44403c"
+            palette.button: overlay.drawingMode === "polygon" ? Tokens.accent : Tokens.bgRaised
+            palette.buttonText: overlay.drawingMode === "polygon" ? Tokens.onAccent : Tokens.ink
             onClicked: overlay.drawingMode = "polygon"
         }
     }
 
-    Label {
+    CanvasCaption {
         objectName: "regionToolHint"
         anchors.top: parent.top
         anchors.left: parent.left
@@ -211,7 +217,6 @@ Rectangle {
         text: overlay.drawingMode === "polygon"
               ? "左键添加节点 · 右键闭合并保存 · Esc 取消 · Delete 删除选中"
               : "拖拽框选 · Esc 取消 · Delete 删除选中"
-        color: "#57534e"
     }
 
     Connections {

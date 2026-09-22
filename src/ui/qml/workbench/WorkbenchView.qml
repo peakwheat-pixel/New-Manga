@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../common"
+import "../theme"
 
 // D05 §15/§16 workbench: fixed Toolbar / PageList / Viewer / Inspector /
 // bottom TaskProgressPanel, all simultaneously live (TASK-013 AC 1).
@@ -15,7 +16,7 @@ import "../common"
 Rectangle {
     id: workbench
     objectName: "workbenchView"
-    color: "#f5f5f4"
+    color: Tokens.bgPage
 
     property var vm: (typeof workbenchViewModel !== "undefined"
                       && workbenchViewModel !== null) ? workbenchViewModel : null
@@ -86,8 +87,8 @@ Rectangle {
             visible: workbench.wCommandError !== ""
             Layout.fillWidth: true
             Layout.preferredHeight: visible ? 32 : 0
-            color: "#fef2f2"
-            border.color: "#dc2626"
+            color: Tokens.failSoft
+            border.color: Tokens.stFail
 
             TextEdit {
                 id: commandErrorCopyHelper
@@ -104,7 +105,8 @@ Rectangle {
                 anchors.verticalCenter: parent.verticalCenter
                 text: workbench.wCommandError
                 elide: Text.ElideRight
-                color: "#991b1b"
+                font.pixelSize: Tokens.fsBase
+                color: Tokens.stFail
             }
             Button {
                 id: commandErrorCopyButton
@@ -156,7 +158,7 @@ Rectangle {
                 }
             }
 
-            Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: "#e7e5e4" }
+            Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: Tokens.divider }
 
             ViewerPanel {
                 objectName: "viewerPanelHost"
@@ -169,7 +171,7 @@ Rectangle {
                 vm: workbench.vm
             }
 
-            Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: "#e7e5e4" }
+            Rectangle { Layout.preferredWidth: 1; Layout.fillHeight: true; color: Tokens.divider }
 
             RegionInspector {
                 objectName: "regionInspectorHost"
@@ -189,7 +191,7 @@ Rectangle {
             }
         }
 
-        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: "#e7e5e4" }
+        Rectangle { Layout.fillWidth: true; Layout.preferredHeight: 1; color: Tokens.divider }
 
         TaskProgressPanel {
             objectName: "taskProgressPanelHost"
