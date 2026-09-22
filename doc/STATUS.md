@@ -2,27 +2,26 @@
 
 Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
-Audit checkpoint: 2026-09-21 (Asia/Shanghai)
+Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
-| Code baseline HEAD | `f56f441c1ce981ff83a3af98c5862917e35711f1` (product integration merge) |
+| Latest product integration | `f56f441c1ce981ff83a3af98c5862917e35711f1` (T1.1.1 product merge) |
 | Branch | `master` |
-| Integrated code HEAD | `f56f441c1ce981ff83a3af98c5862917e35711f1` |
+| Mainline HEAD at this checkpoint | `ef8d0e02a21f2834420130a2553e90fdf9443368` (later documentation commits; no `src/**`, `tests/**` or `requirements.txt` change since `f56f441`) |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Active product task | `T1.1.1 — Production Text Detector = INTEGRATED / VERIFIED_COMPLETE`; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`; `T1.2.1 — Settings UI & ViewModel = REVIEW_BLOCKED`. |
-| Product task owner/reviewer | Implementation: ZCode; non-author review/integration: Codex; T1.1.1 blocking findings: 0; IMPORTANT deferred findings: 2. |
-| Execution branch/worktree | Integrated from `agent/codex/T1.1.1-integration` / `C:\Users\49745\.codex\worktrees\t111-codex-integration\New Manga`; author preserved at `agent/zcode/T1.1.1-production-text-detector` |
-| Execution base/head | review base `4a1ed6ca`; delivery head `2f116a2`; R2 docs head `4a631355` |
-| Verified test status | Fresh Python 3.12 implementation venv: `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the pre-existing model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases; one existing MOBI deprecation warning. |
+| Current product checkpoint | `T1.2.1 — Settings UI & ViewModel = REVIEW_BLOCKED / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
+| Current owner/reviewer | T1.2.1 implementation: ZCode; non-author reviewer/integrator: Codex. Blocking findings: B-001/B-002. |
+| Current branch/worktree | Author: `agent/zcode/T1.2.1-settings-ui-viewmodel` / `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`; isolated Codex candidate: `agent/codex/T1.2.1-integration` / `C:\Users\49745\.codex\worktrees\t121-codex-integration\New Manga` (not merged). |
+| Current review base/head | base `d11d927`; delivery `c54f360`; author handoff `ace633a`; isolated partial repair `0b4e434`. |
+| Latest integrated product test status | T1.1.1 integration: Python 3.12 implementation venv, `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases. T1.2.1 candidate results are recorded in its review, not claimed as mainline verification. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T1.1.1 integration blockers. T1.2.1 review found unresolved production provider-registry binding and network/proxy transport wiring blockers. Deferred outside these tasks: the expected model-runtime readiness assertion in the implementation venv and the previously observed export signal race; neither is in the detector diff. Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
-| Dirty main-worktree files | Preserve: `experiments/TASK-017/README.md` (tracked modification); `.qoder-credits/` (19 untracked files); `.codewiki/`, `wiki/`, `.repowikiignore`, `doc/AI_COORDINATION.md` (untracked parallel/generated material). |
+| Current blockers | No T1.1.1 integration blockers. T1.2.1 review found unresolved production provider-registry binding and network/proxy transport wiring blockers; no formal `doc/tasks/T1.2.1.md` release record is committed. Deferred outside these tasks: the expected model-runtime readiness assertion in the implementation venv and the previously observed export signal race; neither is in the detector diff. Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
+| Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md` (tracked modification) and untracked `.codewiki/`, `.qoder-credits/`, `docs/`, `material/`, `wiki/codewiki/temp/`. Recheck `git status` before any edit; current documentation edits are separate. |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
-| Last product integration | `5b91745` T1.1.2 Region Canvas & Creator; prior product integration was `38d6eaa` TASK-057. |
-| Evidence | [Codex T1.1.2 final verification](../verification/TASK-013/t112-codex-final-integration.log) |
+| Evidence | [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 non-author review](../verification/T1.2.1/review-c54f360.md); [T1.2.1 isolated candidate](../verification/T1.2.1/integration-0b4e434.md) |
 
 ## Verified completed capability
 
@@ -40,19 +39,20 @@ verification are now complete.
 
 ## Open gaps
 
-1. T1.1.1: choose and wire one real text detector; MangaOCR is recognition,
-   not detection.
-2. T1.2.1: expose provider, credential, endpoint and proxy settings safely.
-3. T2.1.1: apply the selected Graphite Atelier token layer to production QML.
-4. T3.1.1: migrate reading progress and export history from JSON to SQLite.
-5. T3.2.1: build and verify a product Windows onedir package on a clean machine.
+1. T1.2.1: close B-001 provider-registry resolution and B-002 network/proxy
+   transport wiring; incorporate/review the isolated B-003 mirror repair.
+2. T2.1.1: apply the selected Graphite Atelier token layer to production QML.
+3. T3.1.1: migrate reading progress and export history from JSON to SQLite.
+4. T3.2.1: build and verify a product Windows onedir package on a clean machine.
 
 ## Stage B execution gate
 
-T1.1.2 and T1.1.1 are integrated and verified. Do not start any later roadmap
-unit until a separate Task Release Gate is authorized. Preserve all dirty files
-and worktrees. `TASK-013` remains the historical task; T1.1.2 and T1.1.1 are
-closed in the current roadmap state.
+T1.1.2 and T1.1.1 are integrated and verified. T1.2.1 has been delivered but
+its review is blocked; do not integrate it or release T2.1.1 until B-001/B-002
+are resolved, the missing formal Task scope is recorded, and a fresh non-author review and Codex
+integration gate pass. Preserve all dirty files and worktrees. `TASK-013`
+remains the historical task; T1.1.2 and T1.1.1 are closed in the current roadmap
+state.
 
 ## T1.1.1 preparation Release Gate
 

@@ -1,10 +1,14 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — Stage B T1.1.2 complete**
+Status: **ACTIVE DEVELOPMENT BASELINE — Stage B T1.2.1 review blocked**
 
 Audit date: 2026-09-21 (Asia/Shanghai)
 
-Code baseline audited: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
+Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
+
+Current integration checkpoint (2026-09-22): T1.1.1 product merge `f56f441`;
+T1.2.1 is delivered but not integrated. Live HEAD and execution details are in
+[`STATUS.md`](STATUS.md).
 
 This file is the sole source of truth for sequencing. `doc/STATUS.md` is the
 only live execution checkpoint. `doc/tasks/`, `doc/handoffs/`, `doc/reviews/`
@@ -13,7 +17,7 @@ releases a task.
 
 ## Current implemented state
 
-### Verified complete at the current code baseline
+### Verified complete on the integrated product baseline
 
 - SQLite v2 schema, migrations, region/revision persistence, connection
   ownership and managed-copy safety boundaries.
@@ -26,18 +30,22 @@ releases a task.
 - T1.1.2 Region Canvas & Creator: rectangle/polygon creation, canonical page
   coordinate conversion, real SQLite persistence, deletion, Inspector sync and
   production `region_creator`/`region_deleter` wiring.
-- Fresh Codex integration verification: `1031 collected = 1025 passed + 6
-  skipped`, exit 0. The six skips are the existing OpenSSL-unavailable TLS
-  cases.
-- Fresh smoke verification: `python -m bootstrap.app --smoke-test` exit 0.
+- T1.1.1 Production Text Detector: docTR local detector and production bootstrap
+  injection are integrated at `f56f441`; focused detector tests, bootstrap to
+  SQLite, real-material detection and source protection passed. Its full suite
+  was `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`,
+  exit 1; see [integration evidence](../verification/T1.1.1/integration-f56f441.md).
+- Earlier T1.1.2 integration verification: `1031 collected = 1025 passed + 6
+  skipped`, exit 0; smoke test exit 0. The six skips were existing
+  OpenSSL-unavailable TLS cases.
 
 ### Partial, blocked or missing
 
-- **T1.1.1 gap:** production assembly still passes `detector=None`; page-level
-  detection fails closed with `PROVIDER_NOT_CONFIGURED`. No production
-  `DetectionProvider` implementation is selected or wired.
-- **T1.2.1 gap:** `SettingsView.qml` is a category placeholder and there is no
-  Settings ViewModel or usable provider/credential/endpoint/proxy save flow.
+- **T1.2.1 review blocker:** ZCode delivered Settings UI/ViewModel, but it is
+  not integrated. UI-created provider profile IDs do not resolve in the
+  production registry (B-001), and saved network/proxy settings do not reach
+  the provider transport (B-002). The B-003 mirror repair exists only in an
+  isolated Codex candidate. See [non-author review](../verification/T1.2.1/review-c54f360.md).
 - **T2.1.1 gap:** the selected F · Graphite Atelier design is documented, but
   production QML still uses the pre-F hard-coded palette and has no shared
   token/theme layer.
@@ -57,8 +65,8 @@ Historical files are not rewritten merely to change this classification.
 
 | Classification | Tasks | Audit reason |
 |---|---|---|
-| `VERIFIED_COMPLETE` | TASK-005–015, TASK-029–032, TASK-034–046, TASK-049–058, TASK-060–065 | Integrated implementation or contract has current code and reproducible review/test evidence. TASK-013 is complete for its original progress/workbench scope; the canvas gap is a later slice. |
-| `IMPLEMENTED_NOT_VERIFIED` | TASK-059 | Design artifacts are integrated, but the latest evidence round still awaits the independent review checkpoint; production QML implementation is intentionally a later task. |
+| `VERIFIED_COMPLETE` | TASK-005–015, TASK-029–032, TASK-034–046, TASK-049–065 | Integrated implementation or contract has current code and reproducible review/test evidence. TASK-013 is complete for its original progress/workbench scope; the canvas gap is a later slice. TASK-059 is a verified design deliverable, not production QML implementation. |
+| `IMPLEMENTED_NOT_VERIFIED` | none | Current T1.2.1 implementation is tracked in the roadmap below, not in the historical TASK-001–065 audit. |
 | `PARTIAL` | TASK-004, TASK-016–021, TASK-023, TASK-033 | The bounded slice exists, but its own evidence records a clean-machine gate, model/endpoint quality limitation, large-page limitation, deferred sub-slices, deferred MOBI history, or missing real-provider capability. |
 | `BLOCKED` | none | No historical task is promoted to blocked when a bounded delivered slice exists; the current blockers are represented as gaps in the new roadmap. |
 | `NOT_STARTED` | none | Former proposed tasks were replaced or retained in the new roadmap rather than left as an unowned queue. |
@@ -105,15 +113,17 @@ QML shell changes are serialized through Codex.
 | Order | Task | State | Owner / reviewer | Acceptance boundary |
 |---:|---|---|---|---|
 | 1 | **T1.1.2 Region Canvas & Creator** | **VERIFIED_COMPLETE** | Qoder implementation / Codex non-author review and integration; base `b985d9c`, integrated `5b91745` | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
-| 2 | T1.1.1 Production Text Detector | PLANNED; evaluation may be document-only | DeepSeek Harness / Codex | A page without regions creates a persisted candidate Region through a selected real detector; no `PROVIDER_NOT_CONFIGURED` on the configured path. |
-| 3 | T1.2.1 Settings UI & ViewModel | PLANNED | ZCode / Codex | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline, and never enter logs/diagnostics. |
+| 2 | T1.1.1 Production Text Detector | **VERIFIED_COMPLETE**; integrated `f56f441` | ZCode implementation / Codex non-author review and integration | A page without regions creates a persisted candidate Region through a selected real detector; configured path no longer fails as `PROVIDER_NOT_CONFIGURED`. |
+| 3 | T1.2.1 Settings UI & ViewModel | **REVIEW_BLOCKED**; not integrated | ZCode implementation / Codex non-author review | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline, and never enter logs/diagnostics. B-001/B-002 remain blocking. |
 | 4 | T2.1.1 Apply Design F to QML | PLANNED | ZCode / Qoder + Codex | Shared F tokens are consumed by all four pages; 158px bookshelf geometry and accepted state contrast are verified without business-logic changes. |
 | 5 | T2.2.1 Reader & Workbench Polish | PLANNED | ZCode / non-author reviewer | Chapter picker, Workbench empty-state picker and dismissible command-error notification are accessible and tested. |
 | 6 | T3.1.1 Unify Storage into SQLite | PLANNED | Codex / DeepSeek Harness | JSON progress/export stores migrate once into transactional SQLite with rollback and no data loss. |
 | 7 | T3.2.1 Windows Packaging & Release Gate | PLANNED | Codex / Qoder + DeepSeek Harness | Product onedir launches on clean Windows without Python, completes the core workflow, and exits without a residual process. |
 
-Preparation-only research for T1.1.1 may run without changing `src/**` or
-`tests/**`. No second product task becomes active until Order 1 is integrated.
+T1.2.1 requires a bounded provider-registry/network-transport scope decision
+and a formal Task release record (none is committed under `doc/tasks/T1.2.1.md`),
+then author revision, non-author re-review and Codex integration verification
+before T2.1.1 can be released. A roadmap row is not itself a Task Release Gate.
 
 ## Directory and document governance
 
@@ -123,10 +133,9 @@ Preparation-only research for T1.1.1 may run without changing `src/**` or
   this file instead of moving or deleting them.
 - Treat `verification/` as evidence, not generated cache. Do not delete logs
   during this rebaseline.
-- `.pytest_cache/` is generated and ignored. `.codewiki/`, `wiki/`,
-  `.repowikiignore` and `.qoder-credits/` are untracked agent/generated
-  material; preserve them for owner review and do not add them to the product
-  baseline in this checkpoint.
+- `.pytest_cache/` is generated and ignored. The untracked-file inventory in
+  the initial audit is historical; refresh `git status` before any edit and
+  preserve other agents' material.
 - `experiments/TASK-017/README.md` is another agent's uncommitted change;
   preserve it and keep it outside this audit commit.
 - The 2026-09-20 worktree inventory is evidence only and must be refreshed
@@ -141,8 +150,6 @@ git status --short --branch
 git rev-parse HEAD
 Get-Content doc\STATUS.md
 git log -8 --oneline --decorate
-$env:PYTHONPATH='src'
-& 'C:\Users\49745\AppData\Local\Temp\new-manga-audit-py314-20260921\Scripts\python.exe' -m pytest tests -q -p no:cacheprovider -rs
 ```
 
 Resume only after confirming the current branch, dirty files, `STATUS.md`,
