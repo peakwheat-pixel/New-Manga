@@ -14,7 +14,7 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Current product checkpoint | `T1.2.1 = VERIFIED_COMPLETE`; T1.1.1 and T1.1.2 are also `VERIFIED_COMPLETE`. |
 | Current Active Task | None; T2.1.1 remains unreleased and requires its own Release Gate. |
 | Current owner/reviewer | T1.2.1 author: ZCode; non-author reviewer/integrator: Codex; integration complete. |
-| Current branch/worktree | Main: `master` at `e92c414`; author recovery worktree remains `agent/zcode/T1.2.1-settings-ui-viewmodel` at `e025c9a`; Codex integration worktree: `agent/codex/T1.2.1-r5-integration` at `e92c414`. |
+| Current branch/worktree | Main: `master` at `e8535d5`; author recovery worktree remains `agent/zcode/T1.2.1-settings-ui-viewmodel` at `e025c9a`; Codex integration worktree: `agent/codex/T1.2.1-r5-integration` at `e92c414`. |
 | Current review base/head | base `d11d927`; R4 `39dbbf7` / `a527b85`; R5 `e5716ac` / `e025c9a`; product integration `9a14310`; evidence `e92c414`. |
 | Latest integrated product test status | T1.2.1 integration tree: Git Bash `1139 passed + 1 known torch environment failure + 0 skipped + 1 warning`, PowerShell `1133 passed + 6 OpenSSL skips + 1 known failure + 1 warning`; both exit 1 only for the known environment assertion. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
@@ -275,7 +275,7 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 | Field | Current value |
 |---|---|
 | `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; no product Task is `in_progress` |
-| `ExecutionState` | `IDLE` on master at `e92c414` |
+| `ExecutionState` | `IDLE` on master at `e8535d5` |
 | `Current Executor` | Codex integration complete; next executor pending T2.1.1 Release Gate |
 | `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 integrated and verified → T2.1.1 unreleased |
 | `Dependency Blocking Chain` | T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
