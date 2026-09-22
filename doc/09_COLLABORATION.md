@@ -1,4 +1,4 @@
-# Codex / ZCode / DeepSeek Harness 协作协议
+# Codex / ZCode / DeepSeek Harness / Antigravity 协作协议
 
 本协议固化协作方式；当前 Milestone、任务树、依赖与 Legacy Mapping 以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源，当前唯一 Active Task 与运行状态以 [STATUS](STATUS.md) 为准。
 
@@ -10,9 +10,10 @@
 | ZCode | 独立 Feature、长任务 | 固定 commit、代码与必要测试、Handoff | 自己的任务分支；不得自行合并主线 |
 | Qoder | UI/UX、GUI 与 QML 视觉/交互设计责任方；独立 Feature、长任务实现（与 ZCode 同面）；亦可作为**非作者** Reviewer | 设计规范、视觉/交互参考、固定 commit、代码与必要测试、Handoff；Review 报告 | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
 | DeepSeek Harness | 技术实验、OCR/Translation/Inpainting 研究、测试、Bug 分析、独立 Code Review | 可复现实验、测试证据、诊断/Review 报告 | 自己的实验或测试分支；不得自行改生产实现以“证明”Review |
+| Antigravity | 通用编程实现；承担 Codex 释放的 Python、应用、基础设施或测试 Feature/长任务 | 固定 commit、代码、必要测试与 Handoff | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
 | 用户 | 产品取舍、阶段审核、重大范围变化 | 由 Codex 记录的审核决定 | 决定接管及后续阶段范围 |
 
-Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查；ZCode / Qoder 的实现由 Codex、DeepSeek Harness 或 Qoder（**非作者**）独立审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
+Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查；ZCode / Qoder / Antigravity 的实现由 Codex、DeepSeek Harness 或 Qoder（**非作者**）独立审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
 
 UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 QML 组件边界由 Qoder 主责设计；设计结论先以只读设计 Task 固化并经非作者 Review、Codex 集成，之后才能在单独释放的实现 Task 中落代码。Qoder 的设计身份不自动授予 `src/**` 写权限，也不改变产品需求、四页一级导航、共享契约或 Schema。产品取舍仍由用户决定。
 
@@ -24,7 +25,7 @@ UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 QML 组件�
 
 批准接管后先由 Codex 创建可复现的初始基线 commit，再开放任务分支。未提交的当前接管文件不能充当可跨 worktree 同步的基线。第一次提交的 author 使用实际 Git 身份，不能冒用其他 Agent 的签名。
 
-并行模式：Codex 使用主工作区；ZCode、DeepSeek 与 Qoder 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
+并行模式：Codex 使用主工作区；ZCode、DeepSeek、Qoder 与 Antigravity 使用同仓库的 linked worktree。每个 worktree 独立 checkout/index，Git common directory 相同。另建同名仓库、复制源码目录当真值、在任务 worktree 再执行 git init 均不符合此约定。
 
 开始时记录以下检查结果：
 
@@ -39,7 +40,7 @@ git rev-parse HEAD
 
 linked worktree 的 toplevel 可以不同，但 common directory 必须指向本项目 .git。初始仓库 HEAD 不存在时，由 Codex先完成基线提交；其他 Agent 不自行绕过。
 
-分支约定：agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug、agent/qoder/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 Codex 分配并填进 Task，不能复制模板中的示例命令直接执行。
+分支约定：agent/codex/TASK-xxx-slug、agent/zcode/TASK-xxx-slug、agent/deepseek/TASK-xxx-slug、agent/qoder/TASK-xxx-slug、agent/antigravity/TASK-xxx-slug。一个 Task 一个 Owner，一个分支；实际路径由 Codex 分配并填进 Task，不能复制模板中的示例命令直接执行。
 
 同一物理 checkout 同时只允许一个写入者；无法使用 worktree 时串行交接。read-only Review 也固定被审查 commit，不对正在写的 checkout 运行会改文件的命令。
 
@@ -96,7 +97,7 @@ Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head�
 
 1. **Task**：Roadmap ID 或现有 Task ID、标题、推荐启动条件和依赖。
 2. **Agent**：根据任务性质指定合适的 Owner；ZCode 负责独立 Feature/长任务，
-   Qoder 负责 QML/UI/UX，DeepSeek Harness 负责研究/实验/测试/独立 Review，
+   Antigravity 负责通用编程实现，Qoder 负责 QML/UI/UX，DeepSeek Harness 负责研究/实验/测试/独立 Review，
    Codex 负责契约、共享 seam、主线集成和 Release Gate。Owner 与 Reviewer 必须不同。
 3. **Recovery point**：实际仓库路径、branch/worktree、固定 `base_commit` 和当前
    `head`；若 worktree 尚未创建，写明“待 Codex 创建”，不得臆造路径或 commit。

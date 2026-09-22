@@ -1,6 +1,6 @@
 # New Manga：所有 Agent 的共同入口
 
-唯一真实项目仓库：G:/CODEX/New Manga。Codex Desktop、ZCode、DeepSeek Harness、Qoder 以此仓库及其 Git linked worktree 为工作空间，共享 Git 历史和版本化文档。聊天记录不是项目事实来源。
+唯一真实项目仓库：G:/CODEX/New Manga。Codex Desktop、ZCode、DeepSeek Harness、Qoder、Antigravity 以此仓库及其 Git linked worktree 为工作空间，共享 Git 历史和版本化文档。聊天记录不是项目事实来源。
 
 ## 每次开始工作
 
@@ -26,6 +26,7 @@
 - ZCode：独立 Feature、长任务实现；提交代码、测试及 Handoff。
 - Qoder：UI/UX、GUI 与 QML 视觉/交互设计责任方；同时承担独立 Feature、长任务实现（与 ZCode 同面），提交代码、测试及 Handoff；也可作为**非作者** Reviewer。设计交付不能替代已释放 Task；不得自行扩大产品范围、修改共享契约或审核自己实现的变更。
 - DeepSeek Harness：技术实验、OCR / Translation / Inpainting 研究、测试、Bug 分析及独立 Review。不得审核自己实现的变更。
+- Antigravity：通用编程实现 Agent；承担 Codex 已释放的 Python、应用、基础设施或测试编程 Task，提交固定 commit、测试及 Handoff。使用自己的任务分支，不得自行扩大范围、修改未授权共享契约、审核自己的实现或合并 master；QML/UI/UX 任务仍由 Qoder 主责，除非 Task 另行明确分配。
 - 修改共享接口、Schema、依赖和协作规则前，先在 Task 中由 Codex 明确范围；产品需求取舍由用户决定。
 - 使用 [Task 模板](doc/templates/TASK.md)、[Handoff 模板](doc/templates/HANDOFF.md)、[Review 模板](doc/templates/REVIEW.md)。所有交接均引用实际文件与 commit。
 - 完成实现不等于完成集成：独立审查、测试证据和 Codex 集成验证通过后，Task 才能进入 done。
