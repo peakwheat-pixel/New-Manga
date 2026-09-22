@@ -15,7 +15,7 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 is the next unreleased task. |
 | Current Active Task | None; T3.1.1 is closed after Codex integration. Next action is to establish the T3.2.1 Release Gate. |
 | Current owner/reviewer | T3.1.1: Antigravity implementation; DeepSeek Harness independent non-author Review; Codex Lead / Architect / Integrator. |
-| Current branch/worktree | Main: `master` at evidence merge `0ed71a8` (product code merge `0c70e44`); author worktree `G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite` clean at `81c3197`; Review worktree clean at `4e1eb3a`. |
+| Current branch/worktree | Main: `master` with product code merge `0c70e44` and subsequent T3.1.1 evidence/governance commits; author worktree `G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite` clean at `81c3197`; Review worktree clean at `4e1eb3a`. |
 | Current review base/head | T3.1.1 base `e771179`; delivery `899bd3c`; Review `4e1eb3a` (`approved`); integration evidence `verification/T3.1.1/integration-899bd3c.md`. |
 | Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
 | Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
@@ -348,7 +348,7 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 | Field | Current value |
 |---|---|
 | `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE` |
-| `ExecutionState` | `IDLE` after T3.1.1 integration; master evidence head `0ed71a8`; product code head `0c70e44` |
+| `ExecutionState` | `IDLE` after T3.1.1 integration; product code head `0c70e44`; evidence/governance records are committed on master |
 | `Current Executor` | No active executor; T3.1.1 is closed. Codex remains Lead/Architect/Integrator; next task requires a new Release Gate |
 | `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified |
 | `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 Release Gate |
