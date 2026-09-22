@@ -1,0 +1,44 @@
+# T2.1.1 gates — delivery HEAD bc49ef9 (base 7f34135), 2026-09-22
+# env: TASK-012-py312 venv, default Windows QPA (QT_QPA_PLATFORM unset)
+
+$ python -m compileall -q src tests
+exit=0
+
+$ git diff --check 7f34135..HEAD -- src tests doc
+exit=0 (no output above = clean)
+
+$ color literals outside src/ui/qml/theme/  (grep -rn '#hex' src/ui/qml --include=*.qml)
+0
+
+$ mixed-line-ending scan over src/ui/qml + tests/ui_shell + tests/workbench
+['tests\\ui_shell\\test_design_f_applied.py', 'tests\\ui_shell\\test_design_tokens.py']
+
+$ changed files vs allowed paths
+src/ui/qml/Main.qml
+src/ui/qml/bookshelf/BookCard.qml
+src/ui/qml/bookshelf/BookDetailPanel.qml
+src/ui/qml/bookshelf/BookGrid.qml
+src/ui/qml/bookshelf/BookshelfToolbar.qml
+src/ui/qml/bookshelf/BookshelfView.qml
+src/ui/qml/bookshelf/ChapterList.qml
+src/ui/qml/common/CanvasCaption.qml
+src/ui/qml/common/EmptyState.qml
+src/ui/qml/reader/ReaderView.qml
+src/ui/qml/settings/SettingsView.qml
+src/ui/qml/shell/AppShell.qml
+src/ui/qml/shell/NavBadge.qml
+src/ui/qml/shell/PrimaryNavigationRail.qml
+src/ui/qml/theme/Tokens.qml
+src/ui/qml/theme/qmldir
+src/ui/qml/windows/ExportWindow.qml
+src/ui/qml/workbench/PageListPanel.qml
+src/ui/qml/workbench/RegionInspector.qml
+src/ui/qml/workbench/RegionOverlay.qml
+src/ui/qml/workbench/TaskProgressPanel.qml
+src/ui/qml/workbench/ViewerPanel.qml
+src/ui/qml/workbench/WorkbenchToolbar.qml
+src/ui/qml/workbench/WorkbenchView.qml
+tests/ui_shell/test_design_f_applied.py
+tests/ui_shell/test_design_tokens.py
+tests/workbench/test_qml_workbench.py
+verification/T2.1.1/generate_tokens.py
