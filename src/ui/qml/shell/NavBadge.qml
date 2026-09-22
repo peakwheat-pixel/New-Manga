@@ -8,7 +8,7 @@ import "../theme"
 Rectangle {
     id: badge
     property string text: ""
-    color: Tokens.stRun
+    color: Tokens.runSoft
     radius: Tokens.radSm
     width: badgeLabel.implicitWidth + 8
     height: badgeLabel.implicitHeight + 4
@@ -17,7 +17,7 @@ Rectangle {
         id: badgeLabel
         anchors.centerIn: parent
         text: badge.text
-        color: Tokens.onAccent
+        color: Tokens.stRun
         font.pixelSize: Tokens.fsSm
     }
 }

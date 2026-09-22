@@ -231,6 +231,14 @@ def test_no_label_paints_with_a_graphic_only_token():
     )
 
 
+def test_nav_badge_uses_soft_status_ground_and_text_token():
+    """Rail status badges must use the audited three-part status encoding."""
+    badge = (QML_ROOT / "shell" / "NavBadge.qml").read_text(encoding="utf-8")
+    assert "color: Tokens.runSoft" in badge
+    assert "color: Tokens.stRun" in badge
+    assert "color: Tokens.onAccent" not in badge
+
+
 def test_the_bookshelf_grid_takes_its_cell_geometry_from_tokens():
     # ND-1 accepted B's 158px card. A re-added numeric cellWidth here would
     # silently undo the acceptance item this task exists to deliver.
