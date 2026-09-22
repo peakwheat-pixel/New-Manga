@@ -358,12 +358,13 @@ integration.
 |---|---|
 | Checkpoint type | Project audit/control baseline |
 | Start commit | `4dfe9e7` |
+| Control baseline commit | `25bff3c` (`docs(audit): establish V2 project control baseline`) |
 | Working directory | `G:\CODEX\New Manga` |
 | Mainline state | master; preserved dirty user/agent files listed above |
-| Completed steps | rules preflight; state inventory; source/test/Git/worktree audit; master fresh checks; candidate evidence; RepoWiki refresh; CodeWiki attempt and diagnostics; control-plan drafting |
-| Remaining at report drafting | commit governance changes and run final diff/status verification; CodeWiki baseline refresh remains a separately blocked knowledge-layer follow-up |
+| Completed steps | rules preflight; state inventory; source/test/Git/worktree audit; master fresh checks; candidate evidence; RepoWiki refresh; CodeWiki attempt and diagnostics; control-plan drafting; governance commit |
+| Remaining at report drafting | final diff/status verification; CodeWiki baseline refresh remains a separately blocked knowledge-layer follow-up |
 | Safe resume test | re-read `AGENTS.md`, `doc/STATUS.md`, this report; compare HEAD/branch/worktree and preserved dirty paths; run `git diff --check` |
-| Next exact step | finish control-document edits, stage only scoped files, verify staged paths, commit, then update final commit pointer in this report if needed |
+| Next exact step | run final diff/status verification; next product executor may begin only the explicitly released T1.2.1 R4 review/repair gate |
 | Product work | not started by this audit; T1.2.1 remains a separately gated candidate |
 
 ## 17. Audit conclusion

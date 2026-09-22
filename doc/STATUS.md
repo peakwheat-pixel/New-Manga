@@ -224,14 +224,14 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 |---|---|
 | `TaskStatus` | T1.2.1 `changes_requested`; no product Task is `in_progress` |
 | `ExecutionState` | `IDLE` on master; ZCode R4 candidate is a fixed, separate delivery |
-| `Current Executor` | Codex for audit/control baseline; next executor `UNASSIGNED` |
+| `Current Executor` | Codex audit/control baseline complete; next executor `UNASSIGNED` |
 | `YOU ARE HERE` | T1.1.1 + T1.1.2 integrated → T1.2.1 R4 review gate → T2.1.1 unreleased |
 | `Dependency Blocking Chain` | T1.2.1 B-003/scope/review/integration → T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.1.1 design/research after write-set review |
 | `Do Not Start Yet` | T2.1.1, T2.2.1, T3.2.1 and any product change outside a released Task |
 | `Safe To Resume` | Yes for audit/governance after Reality Check; no for T1.2.1 implementation until scope/B-003/review gates close |
-| `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; source baseline `4dfe9e7` |
+| `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
 
