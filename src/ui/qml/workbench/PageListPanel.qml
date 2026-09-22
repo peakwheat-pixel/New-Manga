@@ -56,8 +56,8 @@ Rectangle {
             color: model.isSelected ? Tokens.accentSoft
                  : model.pageId === pageList.viewerPageId ? Tokens.bgActive
                  : Tokens.bgRaised
-            border.color: model.pageId === pageList.viewerPageId ? Tokens.borderStrong
-                        : model.isSelected ? Tokens.accent : Tokens.divider
+            border.color: model.pageId === pageList.viewerPageId ? Tokens.focus
+                        : model.isSelected ? Tokens.accent : Tokens.border
             border.width: model.pageId === pageList.viewerPageId || model.isSelected ? 2 : 1
 
             // AC-PAGE-002: single / ctrl / shift selection + viewer open.
@@ -117,7 +117,7 @@ Rectangle {
                             color: {
                                 var colors = { waiting: Tokens.ink3,
                                     processing: Tokens.stRun,
-                                    completed: Tokens.stOk,
+                                    completed: Tokens.stOkT,
                                     failed: Tokens.stFail,
                                     skipped: Tokens.stSkip,
                                     blocked: Tokens.stBlock };

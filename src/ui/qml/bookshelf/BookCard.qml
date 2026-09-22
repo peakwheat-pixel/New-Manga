@@ -81,7 +81,10 @@ Rectangle {
                     id: archivedLabel
                     anchors.centerIn: parent
                     text: "▣ 归档"
-                    color: Tokens.stSkip
+                    // §7.2 audited badge pair for skip is ink-2 on the
+                    // composited skip-soft ground; st-skip is only audited as
+                    // direct text on a panel.
+                    color: Tokens.ink2
                     font.pixelSize: Tokens.fsSm
                 }
             }

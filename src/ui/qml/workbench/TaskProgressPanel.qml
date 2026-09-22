@@ -40,7 +40,7 @@ Rectangle {
         return {
             waiting: Tokens.ink3,
             processing: Tokens.stRun,
-            completed: Tokens.stOk,
+            completed: Tokens.stOkT,
             failed: Tokens.stFail,
             skipped: Tokens.stSkip,
             blocked: Tokens.stBlock
@@ -58,9 +58,10 @@ Rectangle {
         }[status] || "○";
     }
 
-    // Run-state badges, §7.2 table. "completed with failures" is a success
-    // ground with warning text on purpose: a whole batch must not read as a
-    // failure (contract §7.2 closing note), which is why it is not warn-soft.
+    // Run-state badges, §7.2 table. The 徽标 column of the reference's
+    // PipelineRun table pins each pair; "completed with failures" is
+    // warn-soft/st-warn-t, so the warning ground carries it, not ok-soft —
+    // ok-soft is only ever audited against st-ok-t.
     readonly property var badgeStyles: ({
         pending:                   { bg: Tokens.bgInset,   fg: Tokens.ink2,    glyph: "○" },
         running:                   { bg: Tokens.runSoft,   fg: Tokens.stRun,   glyph: "●" },
@@ -68,7 +69,7 @@ Rectangle {
         blocked:                   { bg: Tokens.blockSoft, fg: Tokens.stBlock, glyph: "⊘" },
         interrupted:               { bg: Tokens.warnSoft,  fg: Tokens.stWarnT, glyph: "⚠" },
         completed:                 { bg: Tokens.okSoft,    fg: Tokens.stOkT,   glyph: "✓" },
-        completed_with_failures:   { bg: Tokens.okSoft,    fg: Tokens.stWarnT, glyph: "✓!" },
+        completed_with_failures:   { bg: Tokens.warnSoft,  fg: Tokens.stWarnT, glyph: "✓!" },
         failed:                    { bg: Tokens.failSoft,  fg: Tokens.stFail,  glyph: "!" },
         cancelled:                 { bg: Tokens.skipSoft,  fg: Tokens.ink2,    glyph: "■" }
     })
