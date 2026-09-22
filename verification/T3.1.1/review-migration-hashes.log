@@ -1,0 +1,37 @@
+=== reviewer: DeepSeek Harness (non-author, independent)
+=== session: session-07d9ad59-edde-4d0e-afc6-491dd34c6bd9
+=== shell: pwsh 7.6.6
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== base: e771179beaa92b7c592a1986a32ffbf1b6302566
+=== reviewed head: 899bd3c99752ce435da25e41166bafa1c2963abc
+=== workdir: G:\CODEX\New Manga.worktrees\T3.1.1-deepseek-review-899bd3c
+=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src;.
+=== ran at: 2026-09-22 22:12:03 +08:00
+=== cmd: python <tmp>\hash_migrations.py <repo> <tmp>\migration_hashes.json
+=== migration SQL SHA-256: base vs delivery head ===
+MIGRATION_V1_SQL     base=f68cb4ab8facda4b  head=f68cb4ab8facda4b  SAME
+                     full_base=f68cb4ab8facda4b6e701a934ed14b240bce13c50fe1527a3989de1c987994bd
+                     full_head=f68cb4ab8facda4b6e701a934ed14b240bce13c50fe1527a3989de1c987994bd
+MIGRATION_V2_SQL     base=b984eaeeb5a3a162  head=b984eaeeb5a3a162  SAME
+                     full_base=b984eaeeb5a3a162040d2de458f09ecde1479519d30a48fd7c36118295875d5b
+                     full_head=b984eaeeb5a3a162040d2de458f09ecde1479519d30a48fd7c36118295875d5b
+MIGRATION_V3_SQL     base=359d97f42cad9cb1  head=359d97f42cad9cb1  SAME
+                     full_base=359d97f42cad9cb18d676ffc113abae4e81cb237c4841ef82262a8736518a0c2
+                     full_head=359d97f42cad9cb18d676ffc113abae4e81cb237c4841ef82262a8736518a0c2
+MIGRATION_V4_SQL     base=        <absent>  head=c8e0b4899026784b  NEW
+                     full_base=<absent>
+                     full_head=c8e0b4899026784bda958c49e6e1d13896f7ac083dafd1acf04a030677a88394
+
+=== registered migrations (head) ===
+  v1 v1__storage_base checksum=f68cb4ab8facda4b6e701a934ed14b240bce13c50fe1527a3989de1c987994bd
+  v2 v2__library_region_persistence checksum=b984eaeeb5a3a162040d2de458f09ecde1479519d30a48fd7c36118295875d5b
+  v3 v3__production_pipeline_persistence checksum=359d97f42cad9cb18d676ffc113abae4e81cb237c4841ef82262a8736518a0c2
+  v4 v4__reading_export_storage checksum=c8e0b4899026784bda958c49e6e1d13896f7ac083dafd1acf04a030677a88394
+
+=== registered migrations (base) ===
+  v1 v1__storage_base checksum=f68cb4ab8facda4b6e701a934ed14b240bce13c50fe1527a3989de1c987994bd
+  v2 v2__library_region_persistence checksum=b984eaeeb5a3a162040d2de458f09ecde1479519d30a48fd7c36118295875d5b
+  v3 v3__production_pipeline_persistence checksum=359d97f42cad9cb18d676ffc113abae4e81cb237c4841ef82262a8736518a0c2
+
+[json evidence written to C:\Users\49745\AppData\Local\Temp\t311_review\migration_hashes.json]
+ExitCode: 0
