@@ -46,6 +46,14 @@ NUMERIC_FONT_SIZE = re.compile(r"font\.pixelSize:\s*\d")
 PALETTE_ROLE = re.compile(r"^\s*palette\.([A-Za-z]+):", re.M)
 NUMERIC_CELL = re.compile(r"cell(?:Width|Height):\s*\d")
 THEME_IMPORT = re.compile(r'^import "\.\./theme"$|^import "theme"$', re.M)
+# §7.2 keeps st-ok / st-warn for dots, borders and painted graphics, and ships
+# st-ok-t / st-warn-t as the text forms -- the audit table pairs the badge and
+# panel rows with the *-t tokens. Handing a label the dot token is off-contract
+# even when it happens to clear 4.5:1, and it is invisible to every contrast
+# check, so it needs its own rule. QML object literals put the binding
+# mid-line, so this reads per line and excuses the paint/border contexts.
+DOT_TOKEN = re.compile(r"Tokens\.(?:stOk|stWarn)(?![A-Za-z])")
+GRAPHIC_CONTEXT = re.compile(r"strokeStyle|fillStyle|border")
 
 # The nine roles Main.qml and ExportWindow.qml must declare. Qt's QML palette
 # has no palette.light.* / palette.dark.* grouping (assigning one is a load
@@ -208,6 +216,19 @@ def test_no_page_hardcodes_a_font_size():
         if hits:
             offenders[str(path.relative_to(QML_ROOT))] = len(hits)
     assert not offenders, f"numeric font.pixelSize (use Tokens.fs*): {offenders}"
+
+
+def test_no_label_paints_with_a_graphic_only_token():
+    offenders = {}
+    for path in page_sources():
+        text = path.read_text(encoding="utf-8")
+        hits = [line.strip()[:60] for line in text.splitlines()
+                if DOT_TOKEN.search(line) and not GRAPHIC_CONTEXT.search(line)]
+        if hits:
+            offenders[str(path.relative_to(QML_ROOT))] = hits
+    assert not offenders, (
+        f"text bound to a dot token instead of its *-t text form: {offenders}"
+    )
 
 
 def test_the_bookshelf_grid_takes_its_cell_geometry_from_tokens():
