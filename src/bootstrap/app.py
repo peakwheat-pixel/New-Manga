@@ -100,6 +100,7 @@ from ui.viewmodels.bookshelf.viewmodel import BookshelfViewModel
 from ui.viewmodels.export.viewmodel import ExportViewModel
 from ui.viewmodels.navigation.viewmodel import NavigationViewModel
 from ui.viewmodels.reader.viewmodel import ReaderViewModel
+from ui.viewmodels.settings.viewmodel import SettingsViewModel
 from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
 
 QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
@@ -559,6 +560,9 @@ class AppServices:
     #: Injected by ``assemble_engine`` so a live engine re-publishes the
     #: ``exportViewModel`` context property when the workbench context moves.
     set_export_context_updater: Callable[[Callable], None]
+    #: T1.2.1: the settings page controller. ``None`` keeps the page inert
+    #: (headless AppServices constructions carry no settings stack).
+    settings_vm: "SettingsViewModel | None" = None
 
 
 def default_data_root() -> Path:
@@ -801,6 +805,32 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         export_service = ExportService(
             JsonHistoryDocumentStore(data_root / "export_history.json")
         )
+        # T1.2.1: the settings page stack — JSON-backed profile stores (the
+        # durable ports adapters stay a later coordinated slice; same
+        # JSON-interim as progress/export history), the OS credential vault
+        # and the settings viewmodel. Secrets go straight to the vault;
+        # only credential_ref strings cross the stores (AC-SEC-001~003).
+        from application.settings.network import NetworkProfileService
+        from infrastructure.settings.json_profile_stores import (
+            JsonNetworkProfileStore,
+            JsonProviderProfileStore,
+        )
+
+        settings_dir = data_root / "settings"
+        try:
+            from infrastructure.credentials.windows import WindowsCredentialStore
+
+            settings_credentials = WindowsCredentialStore()
+        except ImportError:  # non-Windows dev environments: vault absent
+            settings_credentials = None
+        settings_vm = SettingsViewModel(
+            provider_store=JsonProviderProfileStore(settings_dir),
+            network_service=NetworkProfileService(
+                JsonNetworkProfileStore(settings_dir)
+            ),
+            credential_store=settings_credentials,
+            pipeline_defaults=pipeline_defaults,
+        )
 
         def tile_factory(path: str) -> TiledPageRasterizer:
             return TiledPageRasterizer(
@@ -953,6 +983,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
             set_export_context_updater=lambda updater: export_state.update(
                 updater=updater
             ),
+            settings_vm=settings_vm,
         )
     except Exception:
         conn.close()
@@ -979,6 +1010,7 @@ def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
     root_context.setContextProperty("workbenchViewModel", services.workbench)
     root_context.setContextProperty("readerViewModel", services.reader)
     root_context.setContextProperty("exportViewModel", services.export_viewmodel())
+    root_context.setContextProperty("settingsViewModel", services.settings_vm)
     services.set_export_context_updater(
         lambda view_model: root_context.setContextProperty(
             "exportViewModel", view_model
