@@ -6,23 +6,23 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
-| Latest product integration | `f56f441c1ce981ff83a3af98c5862917e35711f1` (T1.1.1 product merge) |
+| Latest product integration | `9a14310` (T1.2.1 product integration; final verification evidence `e92c414`) |
 | Branch | `master` |
-| Mainline base checked before this audit/control baseline | `4dfe9e7850c370634a293118536672e5f91680f8` (R4 scope release; no T1.2.1 product merge). Read live HEAD with `git rev-parse HEAD`. |
+| Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.2.1 — R5 REVIEW APPROVED / READY FOR INTEGRATION VERIFICATION / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
-| Current Active Task | T1.2.1 Codex integration verification is active in an isolated worktree; T2.1.1 remains unreleased. |
-| Current owner/reviewer | T1.2.1 author: ZCode; non-author reviewer/integrator: Codex. R5 B-003 is closed; final integration evidence remains. |
-| Current branch/worktree | Author: `agent/zcode/T1.2.1-settings-ui-viewmodel` / `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`; isolated Codex candidate: `agent/codex/T1.2.1-integration` / `C:\Users\49745\.codex\worktrees\t121-codex-integration\New Manga` (not merged). |
-| Current review base/head | base `d11d927`; R1 `c54f360` / `ace633a`; R3 `d978d6f` / `7376bce`; R4 `39dbbf7` / `a527b85`; R5 `e5716ac` / `e025c9a`; isolated Codex candidate `0b4e434` is not integrated. |
-| Latest integrated product test status | T1.1.1 integration: Python 3.12 implementation venv, `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases. T1.2.1 candidate results are recorded in its review, not claimed as mainline verification. |
+| Current product checkpoint | `T1.2.1 = VERIFIED_COMPLETE`; T1.1.1 and T1.1.2 are also `VERIFIED_COMPLETE`. |
+| Current Active Task | None; T2.1.1 remains unreleased and requires its own Release Gate. |
+| Current owner/reviewer | T1.2.1 author: ZCode; non-author reviewer/integrator: Codex; integration complete. |
+| Current branch/worktree | Main: `master` at `e92c414`; author recovery worktree remains `agent/zcode/T1.2.1-settings-ui-viewmodel` at `e025c9a`; Codex integration worktree: `agent/codex/T1.2.1-r5-integration` at `e92c414`. |
+| Current review base/head | base `d11d927`; R4 `39dbbf7` / `a527b85`; R5 `e5716ac` / `e025c9a`; product integration `9a14310`; evidence `e92c414`. |
+| Latest integrated product test status | T1.2.1 integration tree: Git Bash `1139 passed + 1 known torch environment failure + 0 skipped + 1 warning`, PowerShell `1133 passed + 6 OpenSSL skips + 1 known failure + 1 warning`; both exit 1 only for the known environment assertion. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T1.1.1 integration blockers. T1.2.1 R5 non-author review closed B-003 and authorized serial integration. Final integration verification is still required before `done`. The single `SettingsView.qml` filter remains the only reconciled QML exception. Deferred outside this Task: known model-runtime readiness assertion and export signal race. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
+| Current blockers | No T1.2.1 product blockers. The known torch readiness assertion and OpenSSL-dependent TLS skips remain environment evidence. T2.1.1, T3.1.1 and T3.2.1 remain separate unreleased Roadmap work. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
 | Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md` (tracked modification) and untracked `.codewiki/`, `.qoder-credits/`, `docs/`, `material/`, `wiki/codewiki/temp/`. Recheck `git status` before any edit; current documentation edits are separate. |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
-| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R1 review](../verification/T1.2.1/review-c54f360.md); [R3 review](../verification/T1.2.1/review-d978d6f.md); [R4 review](../verification/T1.2.1/review-39dbbf7.md); [R5 review](../verification/T1.2.1/review-e5716ac.md) |
+| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R5 review](../verification/T1.2.1/review-e5716ac.md); [T1.2.1 integration](../verification/T1.2.1/integration-9a14310.md) |
 
 ## Verified completed capability
 
@@ -40,22 +40,16 @@ verification are now complete.
 
 ## Open gaps
 
-1. T1.2.1: review the ZCode R4 candidate `39dbbf7`, close B-003 and resolve
-   QML allowed-path drift under the frozen [Task](tasks/T1.2.1.md); then Codex
-   re-reviews and verifies integration.
-2. T2.1.1: apply the selected Graphite Atelier token layer to production QML.
-3. T3.1.1: migrate reading progress and export history from JSON to SQLite.
-4. T3.2.1: build and verify a product Windows onedir package on a clean machine.
+1. T2.1.1: apply the selected Graphite Atelier token layer to production QML.
+2. T3.1.1: migrate reading progress and export history from JSON to SQLite.
+3. T3.2.1: build and verify a product Windows onedir package on a clean machine.
 
 ## Stage B execution gate
 
-T1.1.2 and T1.1.1 are integrated and verified. T1.2.1 has been delivered but
-its R3 review is blocked. The formal Task freezes R4 revision scope; there is
-no current implementation in progress. Do not integrate R3 or release T2.1.1
-until R3-B001–B005 are resolved, a fresh non-author review and Codex
-integration gate pass. Preserve all dirty files and worktrees. `TASK-013`
-remains the historical task; T1.1.2 and T1.1.1 are closed in the current roadmap
-state.
+T1.1.2, T1.1.1 and T1.2.1 are integrated and verified. T2.1.1 is not released;
+it requires its own Task Release Gate and must not be inferred from T1.2.1
+completion. Preserve all dirty files and worktrees. `TASK-013` remains the
+historical task; the completed T1.2.1 state belongs to the Current Roadmap.
 
 ## T1.1.1 preparation Release Gate
 
@@ -216,7 +210,7 @@ authorized revision, not a claim that implementation has resumed or passed.
   independently approved; product integration and final verification are the
   current Codex-only next step.
 
-## T1.2.1 R5 non-author review checkpoint
+## T1.2.1 R5 non-author review checkpoint (historical; superseded by integration)
 
 Codex reviewed ZCode R5 implementation `e5716ac` against `39dbbf7` and Handoff
 `e025c9a` in `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`.
@@ -243,7 +237,7 @@ The author worktree is clean at `e025c9a`.
 - Status: `T1.2.1 = READY_FOR_INTEGRATION_VERIFICATION`; Codex may now
   integrate serially. Do not start T2.1.1 before final integration evidence.
 
-## T1.2.1 R4 non-author review checkpoint
+## T1.2.1 R4 non-author review checkpoint (historical)
 
 Codex reviewed ZCode implementation `39dbbf7` against the R3 implementation
 baseline `d978d6f` and Handoff `a527b85` against `7376bce` in the author
@@ -280,15 +274,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `approved`; R5 review passed, product commit not yet integrated |
-| `ExecutionState` | `INTEGRATION_VERIFYING` in isolated Codex worktree |
-| `Current Executor` | Codex Integrator; ZCode delivery fixed at `e025c9a` |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 integrated → T1.2.1 R5 approved → integration verification → T2.1.1 unreleased |
-| `Dependency Blocking Chain` | T1.2.1 B-003/scope/review/integration → T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; no product Task is `in_progress` |
+| `ExecutionState` | `IDLE` on master at `e92c414` |
+| `Current Executor` | Codex integration complete; next executor pending T2.1.1 Release Gate |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 integrated and verified → T2.1.1 unreleased |
+| `Dependency Blocking Chain` | T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.1.1 design/research after write-set review |
 | `Do Not Start Yet` | T2.1.1, T2.2.1, T3.2.1 and any product change outside a released Task |
-| `Safe To Resume` | Yes for Codex T1.2.1 integration verification; no T2.1.1 until final gate closes |
+| `Safe To Resume` | Only after Codex runs the independent T2.1.1 Release Gate; no automatic start |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -298,32 +292,42 @@ T1.1.2 VERIFIED_COMPLETE
         ↓
 T1.1.1 VERIFIED_COMPLETE @ f56f441
         ↓
-T1.2.1 R4 candidate @ 39dbbf7 / a527b85 (not integrated)
+T1.2.1 VERIFIED_COMPLETE @ 9a14310 / e92c414
         ↓
-Codex non-author review + B-003 + scope gate
+T2.1.1 Release Gate (not released)
         ↓
-T2.1.1 (not released)
+T2.2.1 (not released)
 ```
 
 ### Parallel execution matrix
 
 | Work item | Readiness | Class | Conflict |
 |---|---|---|---|
-| T1.2.1 R4 | conditional | `DO_NOT_PARALLEL` with T2.1.1 | provider runtime, VM, Settings QML, bootstrap |
+| T1.2.1 | complete | closed | provider runtime, VM, Settings QML, bootstrap integrated |
 | T2.1.1 | not ready | `DO_NOT_START_YET` | four-page QML/theme and T1.2.1 contract |
 | T3.1.1 research | conditional | research-only parallel | SQLite/storage write set |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
 
-## T1.2.1 R4 candidate reality update
+## T1.2.1 integration completion checkpoint
 
-The ZCode worktree is clean at `a527b85` and focused verification reports
-`415 passed, 6 skipped, 1 failed`, exit 1. The known torch readiness assertion
-and OpenSSL skips are recorded separately. The candidate has not been reviewed
-or integrated. It leaves B-003 production `StdlibTransport` credential-store
-injection unimplemented and changes `src/ui/qml/settings/SettingsView.qml`,
-which is outside the current Task's allowed paths; Codex must resolve both
-before approval.
+Codex fast-forwarded master to integration evidence commit `e92c414`, whose
+code integration merge is `9a14310`. The author chain from `c54f360` through
+`e025c9a` is preserved as the merge's second parent. The final integration
+tree is clean; the pre-existing main-worktree dirty files remain untouched.
+
+- R5 Review: [review-e5716ac](../verification/T1.2.1/review-e5716ac.md),
+  BLOCKING findings = 0.
+- Final integration evidence: [integration-9a14310](../verification/T1.2.1/integration-9a14310.md).
+- Final product probe: two production assemblies, persisted SQLite binding,
+  registry/provider resolution, exact authenticated proxy header, zero auth
+  failures, no secret exposure, and vault cleanup all passed.
+- Final focused suite: 122 passed, exit 0. Full suite: Git Bash 1139 passed,
+  1 known torch environment failure, 0 skipped; PowerShell 1133 passed, 6
+  OpenSSL skips, 1 known failure; both exit 1 only for the documented
+  environment assertion. Compileall, six smoke runs, and diff-check passed.
+- Result: `T1.2.1 = VERIFIED_COMPLETE`. Do not start T2.1.1 automatically;
+  issue its own Release Gate first.
 
 ## Recovery instruction
 
