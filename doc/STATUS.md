@@ -7,22 +7,23 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Field | Current value |
 |---|---|
 | Latest product integration | `fe9fca0` (T2.2.1 product code integration; final verification evidence `verification/T2.2.1/integration-aad510b.md`) |
+| T3.1.1 Release Gate base | `e771179` (T2.2.1 closeout; no T3.1.1 product code yet) |
 | Branch | `master` |
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, and `T2.2.1` are `VERIFIED_COMPLETE`; T3.1.1 is the next unreleased roadmap item. |
-| Current Active Task | None; T2.2.1 is integrated and closed at product head `fe9fca0`. |
-| Current owner/reviewer | T2.2.1 completed by ZCode/Qoder with Codex non-author review and integration; next task requires its own Release Gate. |
-| Current branch/worktree | Main: `master`; product head `fe9fca0`; ZCode delivery `df637df`; Qoder delivery `0846573`; author worktrees preserved and clean. |
-| Current review base/head | T2.2.1 review base `af424a1`, delivery `0846573`, approved by Codex artifact `125fff7`; integration evidence `integration-aad510b`. |
+| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, and `T2.2.1` are `VERIFIED_COMPLETE`; T3.1.1 is `READY` after its Release Gate, implementation not started. |
+| Current Active Task | T3.1.1 Release Gate passed; implementation not started. |
+| Current owner/reviewer | Codex implementation/Integrator; DeepSeek Harness independent non-author Reviewer. |
+| Current branch/worktree | Main: `master`; T3.1.1 gate base `e771179`; implementation branch/worktree are specified by the Gate and not yet created. |
+| Current review base/head | T3.1.1 base `e771179`; delivery/review/integration not yet available. Previous T2.2.1 evidence remains linked below. |
 | Latest integrated product test status | T2.2.1 integration: PowerShell/T1.1.1-impl-py312 focused affected suite `278 passed + 0 skipped + 0 failed`, exit 0; full suite `1209 passed + 6 OpenSSL skips + 1 known torch environment failure + 1 warning`, exit 1. |
 | Smoke status | T2.2.1 fresh `python -m bootstrap.app --smoke-test --data-root G:/CODEX/New Manga.task-envs/T2.2.1-integration-smoke-20260922` exit 0; SQLite/database smoke completed. |
 | Compile status | T2.2.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T2.2.1 product blocker remains. The full-suite torch probe is an explicit environment limitation; T3.1.1 and T3.2.1 remain unreleased and require their own gates. |
+| Current blockers | No T3.1.1 gate blocker. Implementation must stay within the released scope and requires DeepSeek Harness approval before integration; T3.2.1 remains unreleased. |
 | Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
 | Worktrees | T2.2.1 ZCode and Qoder worktrees remain preserved and clean at their delivery heads; all existing worktrees remain preserved. No deletion or prune was performed. |
-| Evidence | [T2.2.1 Task](tasks/T2.2.1.md); [release gate](../verification/T2.2.1/release-gate-ef1a9b8.md); [review](../verification/T2.2.1/review-0846573.md); [integration](../verification/T2.2.1/integration-aad510b.md); [T2.1.1 integration](../verification/T2.1.1/integration-5da1cf6.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
+| Evidence | [T3.1.1 Task](tasks/T3.1.1.md); [T3.1.1 Release Gate](../verification/T3.1.1/release-gate-e771179.md); [T2.2.1 Task](tasks/T2.2.1.md); [T2.2.1 release gate](../verification/T2.2.1/release-gate-ef1a9b8.md); [T2.2.1 review](../verification/T2.2.1/review-0846573.md); [T2.2.1 integration](../verification/T2.2.1/integration-aad510b.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
 
 ## Verified completed capability
 
@@ -100,6 +101,22 @@ are exit 0. Full-suite verification is `1209 passed`, six explicit OpenSSL
 skips, one known torch-environment failure, exit 1; this limitation is
 recorded in [integration evidence](../verification/T2.2.1/integration-aad510b.md)
 and is not hidden as PASS. Result: **T2.2.1 = VERIFIED_COMPLETE**.
+
+## T3.1.1 independent Release Gate checkpoint
+
+Codex created the formal [T3.1.1 Task](tasks/T3.1.1.md), implementation plan,
+and [independent Release Gate](../verification/T3.1.1/release-gate-e771179.md)
+at governance base `e771179`. The Gate is **PASS TO START**: Codex may create
+the isolated implementation worktree and implement the SQLite v4 progress/export
+slice; DeepSeek Harness must independently review the fixed delivery head before
+Codex integrates it. No T3.1.1 product code, migration, or database was changed
+by the Gate.
+
+The frozen boundary is: additive v4 migration, SQLite adapters for the existing
+progress/history ports, one-time non-destructive legacy JSON import, bootstrap
+injection, and migration/data-loss evidence. TASK-028 Library/Page/Region work,
+v1–v3 migration edits, backup UI, Pipeline/Provider/QML and packaging remain out
+of scope. T3.2.1 is not released.
 
 ## T1.1.1 preparation Release Gate
 
@@ -324,15 +341,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE` |
-| `ExecutionState` | `IDLE` on master with product code at `fe9fca0`; author delivery worktrees remain preserved |
-| `Current Executor` | None; T3.1.1 requires its own Release Gate. Codex remains Lead/Reviewer/Integrator |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 integrated and verified; next is T3.1.1 gate |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `ready` / Gate `PASS TO START` |
+| `ExecutionState` | `READY` on master; T3.1.1 gate base `e771179`; implementation not started; existing author worktrees remain preserved |
+| `Current Executor` | Codex is released to implement T3.1.1; DeepSeek Harness is the independent Reviewer; Codex remains Lead/Integrator |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 verified → T3.1.1 Gate passed |
 | `Dependency Blocking Chain` | T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
-| `Conditional` | T3.1.1 design/research after write-set review |
-| `Do Not Start Yet` | T3.1.1, T3.2.1 and any product change outside a released Task; do not start T3.1.1 without its own Release Gate |
-| `Safe To Resume` | No active product task; next candidate is T3.1.1 after Codex creates its Release Gate |
+| `Conditional` | T3.1.1 implementation only within the released Task paths and evidence requirements |
+| `Do Not Start Yet` | T3.2.1 and any product change outside a released Task; do not expand T3.1.1 into TASK-028/TASK-057/UI/Provider/Pipeline work |
+| `Safe To Resume` | Create the isolated Codex T3.1.1 worktree from `e771179`, then implement and hand off for DeepSeek Harness review |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -347,6 +364,10 @@ T1.2.1 VERIFIED_COMPLETE @ 9a14310 / e92c414
 T2.1.1 VERIFIED_COMPLETE @ 5da1cf6
         ↓
 T2.2.1 VERIFIED_COMPLETE @ fe9fca0
+        ↓
+T3.1.1 Release Gate PASSED @ e771179
+        ↓
+T3.1.1 storage convergence (implementation not started)
 ```
 
 ### Parallel execution matrix

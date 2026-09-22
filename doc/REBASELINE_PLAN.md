@@ -1,6 +1,6 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — T2.2.1 VERIFIED_COMPLETE; T3.1.1 next**
+Status: **ACTIVE DEVELOPMENT BASELINE — T2.2.1 VERIFIED_COMPLETE; T3.1.1 RELEASE GATE PASSED**
 
 Audit date: 2026-09-21 (Asia/Shanghai)
 
@@ -120,7 +120,7 @@ QML shell changes are serialized through Codex.
 | 3 | [T1.2.1 Settings UI & ViewModel](tasks/T1.2.1.md) | **VERIFIED_COMPLETE**; integrated `9a14310`, evidence `e92c414` | ZCode implementation / Codex non-author review and integration | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline and never enter logs/diagnostics; B-003 production credential path verified. |
 | 4 | [T2.1.1 Apply Design F to QML](tasks/T2.1.1.md) | **VERIFIED_COMPLETE**; product code integrated at `5da1cf6` | Qoder / Codex non-author review and integration; base `7f34135` | Shared F tokens use `pragma Singleton` + `qmldir`; all four pages consume them; 158px bookshelf geometry, accepted/completed-state contrast, and a discriminating hard-code guard are verified without business-logic changes. Review/integration evidence: [`review-bc49ef9`](../verification/T2.1.1/review-bc49ef9.md), [`integration-5da1cf6`](../verification/T2.1.1/integration-5da1cf6.md). |
 | 5 | [T2.2.1 Reader & Workbench Polish](tasks/T2.2.1.md) | **VERIFIED_COMPLETE**; integrated `fe9fca0` | ZCode functional implementation + Qoder QML/UI/UX / Codex non-author review and integration | Chapter picker, Workbench empty-state picker, dismissible command-error notification, and webtoon canvas consistency are accessible and tested. Evidence: [`review-0846573`](../verification/T2.2.1/review-0846573.md), [`integration-aad510b`](../verification/T2.2.1/integration-aad510b.md). |
-| 6 | T3.1.1 Unify Storage into SQLite | PLANNED | Codex / DeepSeek Harness | JSON progress/export stores migrate once into transactional SQLite with rollback and no data loss. |
+| 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **READY; RELEASE GATE PASSED** at base `e771179`; implementation not started | Codex / DeepSeek Harness independent Review | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Gate: [release-gate-e771179](../verification/T3.1.1/release-gate-e771179.md). |
 | 7 | T3.2.1 Windows Packaging & Release Gate | PLANNED | Codex / Qoder + DeepSeek Harness | Product onedir launches on clean Windows without Python, completes the core workflow, and exits without a residual process. |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
@@ -129,6 +129,12 @@ the completed Task. T2.1.1 passed its release gate at base `7f34135`, received
 non-author review, was integrated at `5da1cf6`, and is now
 `VERIFIED_COMPLETE`; its fresh evidence is recorded in
 `verification/T2.1.1/`.
+
+The formal [T3.1.1 Task](tasks/T3.1.1.md) and its independent
+[Release Gate](../verification/T3.1.1/release-gate-e771179.md) are now registered.
+The Gate releases implementation from `e771179`; it does not mark any product
+code or acceptance criterion complete. DeepSeek Harness review is mandatory
+before integration.
 
 ## Project control baseline — 2026-09-22
 
@@ -147,6 +153,7 @@ T1.2.1 VERIFIED_COMPLETE
   → independent T2.1.1 Release Gate (PASSED)
   → T2.1.1 VERIFIED_COMPLETE @ 5da1cf6
   → T2.2.1 VERIFIED_COMPLETE @ fe9fca0
+  → T3.1.1 Release Gate PASSED @ e771179
   → T3.1.1 storage convergence
   → T3.2.1 clean-machine Windows release
 ```

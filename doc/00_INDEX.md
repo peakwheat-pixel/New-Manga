@@ -2,7 +2,7 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-22）**：T1.1.1、T1.1.2、T1.2.1、T2.1.1、T2.2.1 已集成并验证；T2.2.1 产品 head=`fe9fca0`，正式 Task 为 [T2.2.1](tasks/T2.2.1.md)，Review=`review-0846573`，Integration=`integration-aad510b`。下一项是 T3.1.1，尚未释放。当前 HEAD、测试口径、阻断项与执行恢复点见 [STATUS](STATUS.md)；任务顺序见 [REBASELINE_PLAN](REBASELINE_PLAN.md)。下方 2026-09-19 及更早的长段落是历史导航，不决定当前排期。
+> **Current pointer（2026-09-22）**：T1.1.1、T1.1.2、T1.2.1、T2.1.1、T2.2.1 已集成并验证；T2.2.1 产品 head=`fe9fca0`。T3.1.1 已以基线=`e771179` 通过独立 Release Gate，正式 Task 为 [T3.1.1](tasks/T3.1.1.md)，实现尚未开始；Gate 证据为 [release-gate-e771179](../verification/T3.1.1/release-gate-e771179.md)。当前 HEAD、测试口径、阻断项与执行恢复点见 [STATUS](STATUS.md)；任务顺序见 [REBASELINE_PLAN](REBASELINE_PLAN.md)。下方 2026-09-19 及更早的长段落是历史导航，不决定当前排期。
 
 2026-09-20 TASK-059 集成：设计重做 Task 已 `done`，integration=`53ae2e4`，最终 Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`。ND-1 选定 **F · Graphite Atelier**（A 色彩/状态色/主题 + B 几何含 `card-w=158px` + A IA；无 C 玻璃/D 顶栏/E 命令面板）；设计已集成但未释放实现 Task，ND-4/5/6/7 待用户裁决。
 
@@ -46,7 +46,7 @@ TASK-001 已将 D03～D08“基于”列表里的历史长文件名改为上表�
 | [TASK-002 最小契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md) | G06～G13、R-011 的冻结语义；后续 Schema/Pipeline/UI/测试共同输入 |
 | [TASK-028 统一 SQLite 设计](contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md) | TASK-006/007/008 的 SQLite 收敛设计；实现由 TASK-029 承接 |
 | [TASK-029 统一 SQLite 实现](tasks/TASK-029.md) | 按 TASK-028 实现 v2 migration、Library/Page/Region adapter 与原子 Revision seam；已集成 |
-| [任务目录](tasks/README.md) | 65 个历史 Task 的证据索引；当前排期以 REBASELINE_PLAN / STATUS 为准 |
+| [任务目录](tasks/README.md) | 历史 Task 与当前 T3.1.1 任务的证据索引；当前排期以 REBASELINE_PLAN / STATUS 为准 |
 | [Task 模板](templates/TASK.md) | 新任务创建 |
 | [Handoff 模板](templates/HANDOFF.md) | 实现 / 实验交付、故障中断交接 |
 | [Review 模板](templates/REVIEW.md) | 按固定 commit 独立审查和复审；**必须覆盖 Architecture / Verification 两面**；`code-review` 技能的 **Standards / Spec 为可选视角**（2026-09-18 用户决定取消其与 Spec 的"双轴"强制口径与并行/隔离要求）；建议标注各视角 `executed`/`N/A` |
