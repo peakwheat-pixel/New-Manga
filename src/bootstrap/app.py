@@ -503,18 +503,29 @@ def _load_pipeline_settings(conn: sqlite3.Connection) -> dict:
     return loaded if isinstance(loaded, dict) else {}
 
 
-def _credential_resolver() -> Callable[[str], str | None] | None:
-    """Resolve provider credentials from the Windows vault, best effort.
+def _credential_store() -> "WindowsCredentialStore | None":
+    """The production Windows vault, best effort (AC-OPTIONAL-001).
 
-    A vault that cannot be opened must not stop the app from starting
-    (AC-OPTIONAL-001); the providers that need a credential then report
-    Not-Ready with ``MISSING_CREDENTIAL`` instead.
+    A vault that cannot be opened must not stop the app from starting:
+    ``None`` keeps providers reporting Not-Ready with
+    ``MISSING_CREDENTIAL`` and leaves the transport without a proxy
+    credential source instead of failing the assembly.
     """
     try:
         from infrastructure.credentials.windows import WindowsCredentialStore
 
-        store = WindowsCredentialStore()
+        return WindowsCredentialStore()
     except Exception:
+        return None
+
+
+def _credential_resolver(
+    store: "WindowsCredentialStore | None" = None,
+) -> Callable[[str], str | None] | None:
+    """Resolve provider credentials from the production vault, best effort."""
+    if store is None:
+        store = _credential_store()
+    if store is None:
         return None
 
     def resolve(ref: str) -> str | None:
@@ -563,6 +574,10 @@ class AppServices:
     #: T1.2.1: the settings page controller. ``None`` keeps the page inert
     #: (headless AppServices constructions carry no settings stack).
     settings_vm: "SettingsViewModel | None" = None
+    #: T1.2.1 B-003 (R5): the production transport. Exposed so assembly
+    #: tests and probes can observe the credential store actually injected
+    #: into it; ``None`` on headless constructions that predate the field.
+    transport: StdlibTransport | None = None
 
 
 def default_data_root() -> Path:
@@ -636,11 +651,17 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         # inventing a deterministic placeholder.
         # T1.2.1 R3: the persisted step bindings ride along so a bound
         # settings profile is projected onto its registry slot at assembly.
+        # B-003 (R5): the transport shares the same production vault as the
+        # providers, so authenticated proxies resolve their credential at
+        # send time; a vault that cannot be opened leaves it ``None`` and
+        # the app still starts (AC-OPTIONAL-001).
+        credential_store = _credential_store()
+        transport = StdlibTransport(credential_store=credential_store)
         provider_runtime = build_provider_runtime(
             settings=_load_pipeline_settings(conn),
             provider_bindings=_load_pipeline_defaults(conn)["provider_bindings"],
-            transport=StdlibTransport(),
-            credential_resolver=_credential_resolver(),
+            transport=transport,
+            credential_resolver=_credential_resolver(credential_store),
         )
         # TASK-033: the render step needs the application-layer RenderService,
         # assembled here from the existing infrastructure/rendering adapters
@@ -813,6 +834,8 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         # JSON-interim as progress/export history), the OS credential vault
         # and the settings viewmodel. Secrets go straight to the vault;
         # only credential_ref strings cross the stores (AC-SEC-001~003).
+        # The vault is the same best-effort instance the transport and the
+        # provider resolver share (B-003): one construction, one fallback.
         from application.settings.network import NetworkProfileService
         from infrastructure.settings.json_profile_stores import (
             JsonNetworkProfileStore,
@@ -820,18 +843,12 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         )
 
         settings_dir = data_root / "settings"
-        try:
-            from infrastructure.credentials.windows import WindowsCredentialStore
-
-            settings_credentials = WindowsCredentialStore()
-        except ImportError:  # non-Windows dev environments: vault absent
-            settings_credentials = None
         settings_vm = SettingsViewModel(
             provider_store=JsonProviderProfileStore(settings_dir),
             network_service=NetworkProfileService(
                 JsonNetworkProfileStore(settings_dir)
             ),
-            credential_store=settings_credentials,
+            credential_store=credential_store,
             pipeline_defaults=pipeline_defaults,
         )
 
@@ -987,6 +1004,7 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
                 updater=updater
             ),
             settings_vm=settings_vm,
+            transport=transport,
         )
     except Exception:
         conn.close()
