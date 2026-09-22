@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import "../common"
+import "../theme"
 
 // D05 §7.1 BookDetailPanel: fixed on the right — cover, book fields, tags,
 // favorite/archive, chapter list, 进入翻译/进入阅读. 编辑 and 更多 stay
@@ -8,9 +9,9 @@ import "../common"
 Rectangle {
     id: detail
     objectName: "bookDetailPanel"
-    color: "#ffffff"
-    border.color: "#d9d9d6"
-    radius: 6
+    color: Tokens.bgPanel
+    border.color: Tokens.border
+    radius: Tokens.radSm
 
     property var shelf: bookshelfViewModel
     property var info: shelf.selectedBook
@@ -33,27 +34,32 @@ Rectangle {
 
             Label {
                 text: info.title !== undefined ? info.title : ""
-                font.pixelSize: 18
+                font.pixelSize: Tokens.fsTitle
                 font.weight: Font.DemiBold
+                color: Tokens.ink
             }
             Label {
                 visible: info.originalTitle !== undefined && info.originalTitle !== ""
                 text: info.originalTitle !== undefined ? info.originalTitle : ""
-                color: "#6b7280"
+                color: Tokens.ink2
+                font.pixelSize: Tokens.fsBase
             }
             Label {
                 text: info.author !== undefined && info.author !== ""
                       ? "作者：" + info.author : ""
-                color: "#6b7280"
+                color: Tokens.ink3
+                font.pixelSize: Tokens.fsSm
             }
             Label {
                 text: "标签：" + (info.tags !== undefined && info.tags.length > 0
                       ? info.tags.join("、") : "无")
-                color: "#6b7280"
+                color: Tokens.ink3
+                font.pixelSize: Tokens.fsSm
             }
             Label {
                 text: "进度：—"  // 阅读进度字段尚未落地（TASK-007），诚实显示
-                color: "#6b7280"
+                color: Tokens.ink3
+                font.pixelSize: Tokens.fsSm
             }
 
             Row {

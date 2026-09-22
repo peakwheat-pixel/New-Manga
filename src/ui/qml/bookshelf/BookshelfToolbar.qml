@@ -1,14 +1,15 @@
 import QtQuick
 import QtQuick.Controls
 import "../common"
+import "../theme"
 
 // D05 §7.1 BookshelfToolbar: 新建作品 / 导入 / 搜索 / 筛选(收藏·归档) /
 // 排序 / Grid-List 切换. All state lives in bookshelfViewModel.
 Rectangle {
     id: toolbar
     objectName: "bookshelfToolbar"
-    color: "#f7f7f5"
-    height: 48
+    color: Tokens.bgPanel
+    height: Tokens.tbH
 
     property var shelf: bookshelfViewModel
 

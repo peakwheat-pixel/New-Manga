@@ -2,13 +2,14 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Dialogs
 import "../common"
+import "../theme"
 
 // D05 §7 bookshelf layout: toolbar on top, book grid/list left, fixed
 // BookDetailPanel right, D05 §62 empty state when the shelf is empty.
 Rectangle {
     id: bookshelf
     objectName: "bookshelfView"
-    color: "#f5f5f4"
+    color: Tokens.bgPage
 
     property var shelf: bookshelfViewModel
 
@@ -32,7 +33,7 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.margins: 8
+        anchors.margins: Tokens.padPage
 
         Item {
             id: shelfArea
@@ -40,7 +41,7 @@ Rectangle {
             anchors.bottom: parent.bottom
             anchors.left: parent.left
             anchors.right: detailArea.left
-            anchors.rightMargin: 8
+            anchors.rightMargin: Tokens.gap
 
             EmptyState {
                 objectName: "bookshelfEmptyState"
@@ -71,7 +72,7 @@ Rectangle {
             anchors.top: parent.top
             anchors.bottom: parent.bottom
             anchors.right: parent.right
-            width: 320
+            width: Tokens.detW
         }
     }
 
