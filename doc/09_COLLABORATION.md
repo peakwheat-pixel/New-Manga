@@ -112,6 +112,41 @@ Reviewer、base、branch、worktree 和 allowed paths，再将 Task 从 `propose
 `ready`。不得因为当前 Task 完成而自动启动下一 Task；若需要用户做产品取舍，建议必须
 标为 `BLOCKED` 或 `等待用户裁决` 并停止实施。
 
+### 5.2 Rolling Checkpoint 与 Resume Reality Check
+
+长任务在以下节点写入 Task-local checkpoint：完成 Reality Check、重要
+Subtask、关键接口或测试状态变化、首次形成复杂 dirty worktree、出现
+Blocker、准备暂停或切换 Agent。优先放在对应的
+`verification/<Task-ID>/`；已有 Handoff/Review 能完整承载时复用它们，
+不另建全局 `CHECKPOINT.md`。
+
+Checkpoint 至少记录：
+
+```text
+Timestamp / Agent / Task ID
+TaskStatus / ExecutionState
+Branch / Worktree / start commit / current HEAD
+Working Tree（modified / added / deleted / staged / untracked）
+Completed Steps / Current Working Point / Next Exact Step
+Tests Already Run / Tests Remaining / Current Errors
+Blockers / Decisions / Open Questions
+Evidence / Confidence / Resume Safety
+```
+
+`TaskStatus` 继续使用本协议 §4 的状态机；`ExecutionState` 只描述
+`IDLE / ACTIVE / PAUSED / CHECKPOINTED / INTERRUPTED`，不写入产品 Schema，
+也不替代 Task 状态。没有 checkpoint 的聊天内容不构成可恢复事实。
+
+接手 `in_progress`、`changes_requested`、`blocked` 或带 checkpoint 的 Task
+时，先逐项比较：checkpoint HEAD 与当前 HEAD、branch、worktree、记录的
+文件集合、Task 状态和测试环境。结果明确记录为 `RESUME_SAFE` 或
+`DRIFT_DETECTED`；若 HEAD 或相关文件已变化，先分析漂移来源并由 Codex
+重新确认范围，不能盲目覆盖或重置工作区。
+
+每次 Task Exit 必须持久化 Task 状态、最近 checkpoint/Handoff 和必要的
+Execution Event；退出不等于完成。只有 AC、独立 Review、集成和集成后
+验证全部满足时，才可将 Task 置为 `done`。
+
 ## 6. 独立 Review 与集成
 
 使用 [Review 模板](templates/REVIEW.md)。Review 必须固定 base_commit 与 reviewed_head；分支随后变化不延用旧批准。

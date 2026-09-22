@@ -8,6 +8,7 @@
 2. 阅读 [协作协议](doc/09_COLLABORATION.md)，核对自己的 Task、依赖、授权状态、基线 commit 和允许修改路径。
 3. 检查工作区、分支及 Git common directory；阅读任务引用的需求与真实代码、测试。未提交内容归原作者所有。
 4. 发现事实与文档不一致，在 Task 中留下证据并交 Codex 处理；不能靠聊天、旧项目路径或目标图推断已有实现。
+5. 若 `STATUS` 指向当前审计或 checkpoint，先阅读对应的 `verification/**` 证据；它提供恢复与地图信息，但不替代 Plan、Status、Task 或代码测试事实。
 
 ## 每次结束对话
 

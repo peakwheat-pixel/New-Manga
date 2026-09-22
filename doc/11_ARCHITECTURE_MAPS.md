@@ -1,10 +1,44 @@
 # Architecture / Data / UI / Flow 地图
 
-基线：2026-09-13，原始文档指纹见 [审计报告](10_CURRENT_STATE_AND_GAPS.md)。下文 D01～D08 对应 [文档索引](00_INDEX.md)。
+基线：2026-09-22，真实代码逆向部分见
+[PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md)。下文 D01～D08
+对应 [文档索引](00_INDEX.md)；旧的 2026-09-13 接管图仍保留为历史对照。
 
-**证据边界：当前没有应用源代码、测试或数据库。除 §0 仓库图外，所有图和矩阵均为 To-Be，未实现、未验证；不是代码逆向结果。** G06～G13 的最小实现语义来自 [TASK-002 契约](contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md)；实际 SQL、进程/线程实现与文件名仍未确定。
+**证据边界：本文件现在同时保存当前 As-Is 与历史 To-Be 视图。凡标记
+`Current As-Is` 的内容来自 2026-09-22 master 源码、测试和 Git；凡标记
+`To-Be` 的内容仍是目标设计，不能当作实现证据。**
 
-## 0. As-Is：真实仓库
+## Current As-Is：master @ `4dfe9e7`
+
+证据：[项目全景审计](../verification/PROJECT-AUDIT-2026-09-22.md)、
+`src/`、`tests/`、[RepoWiki map](../wiki/repowiki/repo-map.json)。当前主线已具备
+Python/PySide6 QML 桌面骨架、SQLite v3/Managed Copy、书架/工作台/阅读器/设置
+四个一级路由、Pipeline/Run 持久化、Region 编辑、导入/导出与 Provider 接缝；
+真实远程 Provider 质量、T1.2.1 设置交付和 Windows clean-machine release 仍未闭环。
+
+~~~mermaid
+flowchart TB
+    QML["src/ui/qml\n四个一级页面"] --> VM["src/ui/viewmodels\nQObject ViewModels"]
+    VM --> APP["src/application\nUse cases / settings / pipeline"]
+    APP --> DOMAIN["src/domain\nBooks / Pages / Regions / Tasks"]
+    APP --> PORTS["src/ports\nRepository / Provider / Network contracts"]
+    INFRA["src/infrastructure\nSQLite / filesystem / import / render / provider / transport"] -. implements .-> PORTS
+    INFRA --> DB[(SQLite v3)]
+    INFRA --> FS[(Managed Copy / revisions / artifacts)]
+    INFRA --> NET["Network / Credential / Provider adapters"]
+    BOOT["src/bootstrap/app.py"] --> APP
+    BOOT --> INFRA
+    TESTS["tests/\n1077 collected on current main"] -. verifies .-> APP
+    TESTS -. verifies .-> INFRA
+~~~
+
+当前真实依赖方向：`ui → application → domain/ports`；
+`infrastructure` 实现 ports 并由 `bootstrap` 装配。架构守卫测试禁止
+application 反向依赖 infrastructure；QML 不直接访问数据库、文件或模型。
+
+## Historical Stage A As-Is：2026-09-13
+
+以下段落是初始接管时的历史快照，不再描述当前源代码。
 
 ~~~mermaid
 flowchart LR

@@ -7,8 +7,11 @@ Audit date: 2026-09-21 (Asia/Shanghai)
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
 Current integration checkpoint (2026-09-22): T1.1.1 product merge `f56f441`;
-T1.2.1 R3 is `CHANGES_REQUESTED`, not integrated. Its bounded R4 revision is
-released in [T1.2.1](tasks/T1.2.1.md). Live HEAD and execution details are in
+T1.2.1 R3 is `CHANGES_REQUESTED`, not integrated. A ZCode R4 candidate exists
+at implementation `39dbbf7` plus Handoff `a527b85`, but it is not reviewed or
+integrated; its B-003 transport credential seam remains open and its QML
+change requires allowed-path disposition. The bounded R4 revision is released
+in [T1.2.1](tasks/T1.2.1.md). Live HEAD and execution details are in
 [`STATUS.md`](STATUS.md).
 
 This file is the sole source of truth for sequencing. `doc/STATUS.md` is the
@@ -43,11 +46,11 @@ releases a task.
 ### Partial, blocked or missing
 
 - **T1.2.1 review blocker:** ZCode delivered Settings UI/ViewModel, but it is
-  not integrated. R3 closes the single-profile happy path, not the five
-  acceptance-level findings: multi-capability alias collision, proxy-policy
-  semantics, production proxy credential store, disabled fixed-slot profile,
-  and capability-to-binding validation. See the
-  [R3 non-author review](../verification/T1.2.1/review-d978d6f.md).
+  not integrated. R4 candidate `39dbbf7` addresses four R3 edge seams in its
+  own evidence, but production bootstrap credential injection (B-003), the
+  candidate's QML path drift, independent review and integration remain open.
+  See the [R3 review](../verification/T1.2.1/review-d978d6f.md), the R4 Handoff
+  in the author worktree, and the [current audit](../verification/PROJECT-AUDIT-2026-09-22.md).
 - **T2.1.1 gap:** the selected F · Graphite Atelier design is documented, but
   production QML still uses the pre-F hard-coded palette and has no shared
   token/theme layer.
@@ -117,7 +120,7 @@ QML shell changes are serialized through Codex.
 |---:|---|---|---|---|
 | 1 | **T1.1.2 Region Canvas & Creator** | **VERIFIED_COMPLETE** | Qoder implementation / Codex non-author review and integration; base `b985d9c`, integrated `5b91745` | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
 | 2 | T1.1.1 Production Text Detector | **VERIFIED_COMPLETE**; integrated `f56f441` | ZCode implementation / Codex non-author review and integration | A page without regions creates a persisted candidate Region through a selected real detector; configured path no longer fails as `PROVIDER_NOT_CONFIGURED`. |
-| 3 | [T1.2.1 Settings UI & ViewModel](tasks/T1.2.1.md) | **CHANGES_REQUESTED / REVIEW_BLOCKED**; R4 revision scope released, execution idle, not integrated | ZCode implementation / Codex non-author review | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline and never enter logs/diagnostics; R3-B001–B005 must close. |
+| 3 | [T1.2.1 Settings UI & ViewModel](tasks/T1.2.1.md) | **CHANGES_REQUESTED / REVIEW_BLOCKED**; R4 candidate exists, execution idle, not integrated | ZCode implementation / Codex non-author review | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline and never enter logs/diagnostics; B-003, scope review, fresh review and integration remain. |
 | 4 | T2.1.1 Apply Design F to QML | PLANNED | ZCode / Qoder + Codex | Shared F tokens are consumed by all four pages; 158px bookshelf geometry and accepted state contrast are verified without business-logic changes. |
 | 5 | T2.2.1 Reader & Workbench Polish | PLANNED | ZCode / non-author reviewer | Chapter picker, Workbench empty-state picker and dismissible command-error notification are accessible and tested. |
 | 6 | T3.1.1 Unify Storage into SQLite | PLANNED | Codex / DeepSeek Harness | JSON progress/export stores migrate once into transactional SQLite with rollback and no data loss. |
@@ -128,6 +131,37 @@ freeze the R4 repair paths. This is a revision of the existing blocked Task,
 not a second workstream or approval of R3. ZCode must deliver a new head and
 evidence, followed by Codex non-author re-review and integration verification
 before T2.1.1 can be released.
+
+## Project control baseline — 2026-09-22
+
+The detailed modified-V2 audit is [PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md).
+It is evidence and a derived map, not a second planning source. The current
+project overview, repository/code architecture map, Task ↔ Code ↔ Test
+traceability, module maturity, parallel matrix and Dependency Blocking Chain
+are maintained there; this Plan retains the authoritative phase, dependency
+and release order. The live dashboard, `TaskStatus`/`ExecutionState`, current
+branch/HEAD, dirty-file safety and next actions remain in [STATUS](STATUS.md).
+
+Current blocking chain:
+
+```text
+T1.2.1 R4 candidate
+  → resolve B-003 + QML allowed-path drift
+  → Codex non-author review + integration verification
+  → release T2.1.1
+  → T2.2.1
+  → T3.1.1 storage convergence
+  → T3.2.1 clean-machine Windows release
+```
+
+This is a dependency blocking chain, not a schedule critical path; no reliable
+duration model exists. Research-only storage work and knowledge-map refreshes
+may be conditional/safe parallel work when their write sets stay isolated.
+
+Audit note: Roadmap ID `T1.1.2` is verified through historical `TASK-013`,
+integration `5b91745` and its verification records, but has no dedicated
+`doc/tasks/T1.1.2.md`. This is a traceability gap recorded for future document
+maintenance; it does not reopen the integrated implementation.
 
 ## Directory and document governance
 

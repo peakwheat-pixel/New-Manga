@@ -8,21 +8,21 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 |---|---|
 | Latest product integration | `f56f441c1ce981ff83a3af98c5862917e35711f1` (T1.1.1 product merge) |
 | Branch | `master` |
-| Mainline base checked before this R4 Gate | `ed0a02bf42d701aaa4a0fdda003bbae9cb789fad` (R3 review documentation; no R3 product merge). Read live HEAD with `git rev-parse HEAD`. |
+| Mainline base checked before this audit/control baseline | `4dfe9e7850c370634a293118536672e5f91680f8` (R4 scope release; no T1.2.1 product merge). Read live HEAD with `git rev-parse HEAD`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
 | Current product checkpoint | `T1.2.1 — Settings UI & ViewModel = CHANGES_REQUESTED / REVIEW_BLOCKED / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
 | Current Active Task | None in execution. [T1.2.1](tasks/T1.2.1.md) R4 revision scope is released for ZCode to resume; no product implementation or integration is authorized outside that frozen scope. |
-| Current owner/reviewer | T1.2.1 revision: ZCode; non-author reviewer/integrator: Codex. Blocking findings: R3-B001–B005. |
+| Current owner/reviewer | T1.2.1 R4 candidate: ZCode; non-author reviewer/integrator: Codex. Blocking findings: B-003, allowed-path drift, fresh review and integration. |
 | Current branch/worktree | Author: `agent/zcode/T1.2.1-settings-ui-viewmodel` / `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`; isolated Codex candidate: `agent/codex/T1.2.1-integration` / `C:\Users\49745\.codex\worktrees\t121-codex-integration\New Manga` (not merged). |
-| Current review base/head | base `d11d927`; R1 delivery/Handoff `c54f360` / `ace633a`; R3 implementation/Handoff `d978d6f` / `7376bce`; isolated Codex candidate `0b4e434` is not integrated. |
+| Current review base/head | base `d11d927`; R1 `c54f360` / `ace633a`; R3 `d978d6f` / `7376bce`; R4 candidate `39dbbf7` / `a527b85`; isolated Codex candidate `0b4e434` is not integrated. |
 | Latest integrated product test status | T1.1.1 integration: Python 3.12 implementation venv, `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases. T1.2.1 candidate results are recorded in its review, not claimed as mainline verification. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T1.1.1 integration blockers. T1.2.1 R3 review records five blockers: multi-capability alias, proxy policy/missing-network behavior, production proxy credential store, disabled fixed-slot profile, capability validation. Formal [R4 revision scope](tasks/T1.2.1.md) is now frozen; no R3 product commit is integrated. Deferred outside this Task: known model-runtime readiness environment assertion and previously observed export signal race. Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
+| Current blockers | No T1.1.1 integration blockers. T1.2.1 R4 candidate claims fixes for four R3 seams, but B-003 production transport credential injection is not implemented, the candidate changes forbidden Settings QML, and non-author review/integration are outstanding. Formal [R4 scope](tasks/T1.2.1.md) remains gated; no T1.2.1 product commit is integrated. Deferred outside this Task: known model-runtime readiness assertion and export signal race. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
 | Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md` (tracked modification) and untracked `.codewiki/`, `.qoder-credits/`, `docs/`, `material/`, `wiki/codewiki/temp/`. Recheck `git status` before any edit; current documentation edits are separate. |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
-| Evidence | [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R1 review](../verification/T1.2.1/review-c54f360.md); [R3 review](../verification/T1.2.1/review-d978d6f.md); [isolated candidate](../verification/T1.2.1/integration-0b4e434.md) |
+| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R1 review](../verification/T1.2.1/review-c54f360.md); [R3 review](../verification/T1.2.1/review-d978d6f.md); [isolated candidate](../verification/T1.2.1/integration-0b4e434.md) |
 
 ## Verified completed capability
 
@@ -40,8 +40,9 @@ verification are now complete.
 
 ## Open gaps
 
-1. T1.2.1: ZCode R4 revision must close R3-B001–B005 per the frozen
-   [Task](tasks/T1.2.1.md); then Codex re-reviews and verifies integration.
+1. T1.2.1: review the ZCode R4 candidate `39dbbf7`, close B-003 and resolve
+   QML allowed-path drift under the frozen [Task](tasks/T1.2.1.md); then Codex
+   re-reviews and verifies integration.
 2. T2.1.1: apply the selected Graphite Atelier token layer to production QML.
 3. T3.1.1: migrate reading progress and export history from JSON to SQLite.
 4. T3.2.1: build and verify a product Windows onedir package on a clean machine.
@@ -214,6 +215,57 @@ authorized revision, not a claim that implementation has resumed or passed.
   per-finding tests/production-path probes; Codex non-author re-review of fixed
   head; only then serial integration and mainline verification. R4 tests and
   integration are currently `NOT_RUN`.
+
+## V2 Project Control Dashboard
+
+Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md).
+
+| Field | Current value |
+|---|---|
+| `TaskStatus` | T1.2.1 `changes_requested`; no product Task is `in_progress` |
+| `ExecutionState` | `IDLE` on master; ZCode R4 candidate is a fixed, separate delivery |
+| `Current Executor` | Codex for audit/control baseline; next executor `UNASSIGNED` |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 integrated → T1.2.1 R4 review gate → T2.1.1 unreleased |
+| `Dependency Blocking Chain` | T1.2.1 B-003/scope/review/integration → T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
+| `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
+| `Conditional` | T3.1.1 design/research after write-set review |
+| `Do Not Start Yet` | T2.1.1, T2.2.1, T3.2.1 and any product change outside a released Task |
+| `Safe To Resume` | Yes for audit/governance after Reality Check; no for T1.2.1 implementation until scope/B-003/review gates close |
+| `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; source baseline `4dfe9e7` |
+
+### Current position map
+
+```text
+T1.1.2 VERIFIED_COMPLETE
+        ↓
+T1.1.1 VERIFIED_COMPLETE @ f56f441
+        ↓
+T1.2.1 R4 candidate @ 39dbbf7 / a527b85 (not integrated)
+        ↓
+Codex non-author review + B-003 + scope gate
+        ↓
+T2.1.1 (not released)
+```
+
+### Parallel execution matrix
+
+| Work item | Readiness | Class | Conflict |
+|---|---|---|---|
+| T1.2.1 R4 | conditional | `DO_NOT_PARALLEL` with T2.1.1 | provider runtime, VM, Settings QML, bootstrap |
+| T2.1.1 | not ready | `DO_NOT_START_YET` | four-page QML/theme and T1.2.1 contract |
+| T3.1.1 research | conditional | research-only parallel | SQLite/storage write set |
+| RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
+| CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
+
+## T1.2.1 R4 candidate reality update
+
+The ZCode worktree is clean at `a527b85` and focused verification reports
+`415 passed, 6 skipped, 1 failed`, exit 1. The known torch readiness assertion
+and OpenSSL skips are recorded separately. The candidate has not been reviewed
+or integrated. It leaves B-003 production `StdlibTransport` credential-store
+injection unimplemented and changes `src/ui/qml/settings/SettingsView.qml`,
+which is outside the current Task's allowed paths; Codex must resolve both
+before approval.
 
 ## Recovery instruction
 

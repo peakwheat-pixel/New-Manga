@@ -12,10 +12,21 @@
 Knowledge Refresh Owner:  Codex
 Bootstrap Agent:          Codex         # 2026-09-21 从 ZCode 接手（工具链由 ZCode 于同日重建为全局 Windows 原生）
 Mainline Integrator:      Codex        # 不由本文件授予或变更
-Knowledge Baseline HEAD:  f2f697c7ca419a793cafe2fe604aea2d37d84090
-Last Knowledge Refresh:   2026-09-22
+Knowledge Baseline HEAD:  4dfe9e7850c370634a293118536672e5f91680f8
+Last Knowledge Refresh:   2026-09-22 (RepoWiki current; CodeWiki stale)
 Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移交；见下方交接记录)
 ```
+
+### 2026-09-22 V2 审计后的知识层现实
+
+- `rk-map` 已将 `wiki/repowiki/` 刷新到主线 `4dfe9e7`，`rk-status` 报告
+  `VALID (CURRENT)`。
+- `rk-update` 已尝试 CodeWiki 增量刷新并生成若干模块页，但在连接重置及长时间无
+  新产物后停止。当前 `rk-status` 报告 `GENERATED (24 Markdown files)`、
+  `HEAD Freshness: STALE`；`rk-verify` 仍因 CodeWiki 元数据过期及双语/图表策略
+  混合状态失败。该次部分生成物不作为新的知识基线入库。
+- 因此 CodeWiki 只能作为派生、可能过期的阅读材料；Source / Tests / Git、
+  `AGENTS.md`、`STATUS.md` 与 Task/Handoff/Review 仍是事实源。
 
 ## 交接记录
 
