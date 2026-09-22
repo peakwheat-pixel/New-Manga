@@ -1,0 +1,1201 @@
+{
+  "material_root": "G:\\CODEX\\New Manga\\material\\17",
+  "page_count": 169,
+  "device": "cuda",
+  "weights_sha256_probe": "see author-verification.md §1",
+  "pages_with_zero_candidates": [
+    "091.jpg",
+    "155.jpg"
+  ],
+  "total_candidates": 4336,
+  "mean_candidates_per_page": 25.66,
+  "mean_conf_over_nonempty_pages": 0.627,
+  "total_elapsed_ms": 13153,
+  "records": [
+    {
+      "page": "001.jpg",
+      "candidates": 12,
+      "mean_conf": 0.5759,
+      "min_conf": 0.1125,
+      "elapsed_ms": 4459
+    },
+    {
+      "page": "002.jpg",
+      "candidates": 7,
+      "mean_conf": 0.7513,
+      "min_conf": 0.7127,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "003.jpg",
+      "candidates": 4,
+      "mean_conf": 0.4907,
+      "min_conf": 0.1643,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "004.jpg",
+      "candidates": 50,
+      "mean_conf": 0.7035,
+      "min_conf": 0.4893,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "005.jpg",
+      "candidates": 20,
+      "mean_conf": 0.6385,
+      "min_conf": 0.2391,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "006.jpg",
+      "candidates": 47,
+      "mean_conf": 0.5997,
+      "min_conf": 0.1191,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "007.jpg",
+      "candidates": 38,
+      "mean_conf": 0.6393,
+      "min_conf": 0.1961,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "008.jpg",
+      "candidates": 3,
+      "mean_conf": 0.5994,
+      "min_conf": 0.4725,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "009.jpg",
+      "candidates": 14,
+      "mean_conf": 0.6028,
+      "min_conf": 0.2362,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "010.jpg",
+      "candidates": 28,
+      "mean_conf": 0.6484,
+      "min_conf": 0.3679,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "011.jpg",
+      "candidates": 19,
+      "mean_conf": 0.6384,
+      "min_conf": 0.3408,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "012.jpg",
+      "candidates": 19,
+      "mean_conf": 0.6206,
+      "min_conf": 0.1782,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "013.jpg",
+      "candidates": 21,
+      "mean_conf": 0.5894,
+      "min_conf": 0.3772,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "014.jpg",
+      "candidates": 5,
+      "mean_conf": 0.6133,
+      "min_conf": 0.4525,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "015.jpg",
+      "candidates": 1,
+      "mean_conf": 0.5744,
+      "min_conf": 0.5744,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "016.jpg",
+      "candidates": 21,
+      "mean_conf": 0.6031,
+      "min_conf": 0.2091,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "017.jpg",
+      "candidates": 16,
+      "mean_conf": 0.616,
+      "min_conf": 0.4012,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "018.jpg",
+      "candidates": 7,
+      "mean_conf": 0.6437,
+      "min_conf": 0.5648,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "019.jpg",
+      "candidates": 24,
+      "mean_conf": 0.5827,
+      "min_conf": 0.1138,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "020.jpg",
+      "candidates": 15,
+      "mean_conf": 0.6137,
+      "min_conf": 0.2509,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "021.jpg",
+      "candidates": 4,
+      "mean_conf": 0.5239,
+      "min_conf": 0.2478,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "022.jpg",
+      "candidates": 6,
+      "mean_conf": 0.583,
+      "min_conf": 0.4362,
+      "elapsed_ms": 45
+    },
+    {
+      "page": "023.jpg",
+      "candidates": 14,
+      "mean_conf": 0.5945,
+      "min_conf": 0.4229,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "024.jpg",
+      "candidates": 3,
+      "mean_conf": 0.4882,
+      "min_conf": 0.3477,
+      "elapsed_ms": 45
+    },
+    {
+      "page": "025.jpg",
+      "candidates": 4,
+      "mean_conf": 0.717,
+      "min_conf": 0.4377,
+      "elapsed_ms": 45
+    },
+    {
+      "page": "026.jpg",
+      "candidates": 26,
+      "mean_conf": 0.6646,
+      "min_conf": 0.4361,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "027.jpg",
+      "candidates": 39,
+      "mean_conf": 0.6259,
+      "min_conf": 0.4081,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "028.jpg",
+      "candidates": 19,
+      "mean_conf": 0.6305,
+      "min_conf": 0.3864,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "029.jpg",
+      "candidates": 33,
+      "mean_conf": 0.619,
+      "min_conf": 0.1159,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "030.jpg",
+      "candidates": 40,
+      "mean_conf": 0.594,
+      "min_conf": 0.2322,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "031.jpg",
+      "candidates": 51,
+      "mean_conf": 0.6638,
+      "min_conf": 0.5408,
+      "elapsed_ms": 58
+    },
+    {
+      "page": "032.jpg",
+      "candidates": 53,
+      "mean_conf": 0.5991,
+      "min_conf": 0.1881,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "033.jpg",
+      "candidates": 61,
+      "mean_conf": 0.6507,
+      "min_conf": 0.4582,
+      "elapsed_ms": 59
+    },
+    {
+      "page": "034.jpg",
+      "candidates": 83,
+      "mean_conf": 0.6302,
+      "min_conf": 0.136,
+      "elapsed_ms": 66
+    },
+    {
+      "page": "035.jpg",
+      "candidates": 68,
+      "mean_conf": 0.5943,
+      "min_conf": 0.2135,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "036.jpg",
+      "candidates": 11,
+      "mean_conf": 0.5817,
+      "min_conf": 0.3143,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "037.jpg",
+      "candidates": 40,
+      "mean_conf": 0.6389,
+      "min_conf": 0.3491,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "038.jpg",
+      "candidates": 31,
+      "mean_conf": 0.6403,
+      "min_conf": 0.4121,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "039.jpg",
+      "candidates": 11,
+      "mean_conf": 0.6508,
+      "min_conf": 0.5616,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "040.jpg",
+      "candidates": 54,
+      "mean_conf": 0.6277,
+      "min_conf": 0.4669,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "041.jpg",
+      "candidates": 40,
+      "mean_conf": 0.6411,
+      "min_conf": 0.3557,
+      "elapsed_ms": 55
+    },
+    {
+      "page": "042.jpg",
+      "candidates": 26,
+      "mean_conf": 0.6442,
+      "min_conf": 0.4009,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "043.jpg",
+      "candidates": 53,
+      "mean_conf": 0.6093,
+      "min_conf": 0.3538,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "044.jpg",
+      "candidates": 49,
+      "mean_conf": 0.6414,
+      "min_conf": 0.194,
+      "elapsed_ms": 59
+    },
+    {
+      "page": "045.jpg",
+      "candidates": 43,
+      "mean_conf": 0.6012,
+      "min_conf": 0.2457,
+      "elapsed_ms": 68
+    },
+    {
+      "page": "046.jpg",
+      "candidates": 38,
+      "mean_conf": 0.624,
+      "min_conf": 0.3206,
+      "elapsed_ms": 60
+    },
+    {
+      "page": "047.jpg",
+      "candidates": 31,
+      "mean_conf": 0.6348,
+      "min_conf": 0.4041,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "048.jpg",
+      "candidates": 4,
+      "mean_conf": 0.616,
+      "min_conf": 0.425,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "049.jpg",
+      "candidates": 35,
+      "mean_conf": 0.64,
+      "min_conf": 0.4075,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "050.jpg",
+      "candidates": 32,
+      "mean_conf": 0.6562,
+      "min_conf": 0.5463,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "051.jpg",
+      "candidates": 7,
+      "mean_conf": 0.7169,
+      "min_conf": 0.6445,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "052.jpg",
+      "candidates": 45,
+      "mean_conf": 0.6063,
+      "min_conf": 0.2279,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "053.jpg",
+      "candidates": 43,
+      "mean_conf": 0.6299,
+      "min_conf": 0.1081,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "054.jpg",
+      "candidates": 36,
+      "mean_conf": 0.607,
+      "min_conf": 0.1147,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "055.jpg",
+      "candidates": 22,
+      "mean_conf": 0.6184,
+      "min_conf": 0.4107,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "056.jpg",
+      "candidates": 6,
+      "mean_conf": 0.6291,
+      "min_conf": 0.5521,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "057.jpg",
+      "candidates": 30,
+      "mean_conf": 0.6494,
+      "min_conf": 0.3378,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "058.jpg",
+      "candidates": 31,
+      "mean_conf": 0.607,
+      "min_conf": 0.297,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "059.jpg",
+      "candidates": 33,
+      "mean_conf": 0.6281,
+      "min_conf": 0.2815,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "060.jpg",
+      "candidates": 2,
+      "mean_conf": 0.6351,
+      "min_conf": 0.5859,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "061.jpg",
+      "candidates": 3,
+      "mean_conf": 0.5189,
+      "min_conf": 0.5072,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "062.jpg",
+      "candidates": 13,
+      "mean_conf": 0.6992,
+      "min_conf": 0.5864,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "063.jpg",
+      "candidates": 36,
+      "mean_conf": 0.6699,
+      "min_conf": 0.5159,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "064.jpg",
+      "candidates": 8,
+      "mean_conf": 0.6409,
+      "min_conf": 0.5377,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "065.jpg",
+      "candidates": 30,
+      "mean_conf": 0.6286,
+      "min_conf": 0.2994,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "066.jpg",
+      "candidates": 7,
+      "mean_conf": 0.6558,
+      "min_conf": 0.5449,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "067.jpg",
+      "candidates": 23,
+      "mean_conf": 0.6549,
+      "min_conf": 0.5104,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "068.jpg",
+      "candidates": 11,
+      "mean_conf": 0.5758,
+      "min_conf": 0.258,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "069.jpg",
+      "candidates": 46,
+      "mean_conf": 0.6458,
+      "min_conf": 0.3173,
+      "elapsed_ms": 57
+    },
+    {
+      "page": "070.jpg",
+      "candidates": 38,
+      "mean_conf": 0.6171,
+      "min_conf": 0.3505,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "071.jpg",
+      "candidates": 13,
+      "mean_conf": 0.6458,
+      "min_conf": 0.4863,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "072.jpg",
+      "candidates": 33,
+      "mean_conf": 0.61,
+      "min_conf": 0.3594,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "073.jpg",
+      "candidates": 36,
+      "mean_conf": 0.6456,
+      "min_conf": 0.3473,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "074.jpg",
+      "candidates": 3,
+      "mean_conf": 0.655,
+      "min_conf": 0.5805,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "075.jpg",
+      "candidates": 9,
+      "mean_conf": 0.5287,
+      "min_conf": 0.3325,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "076.jpg",
+      "candidates": 37,
+      "mean_conf": 0.6381,
+      "min_conf": 0.4014,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "077.jpg",
+      "candidates": 27,
+      "mean_conf": 0.6766,
+      "min_conf": 0.521,
+      "elapsed_ms": 58
+    },
+    {
+      "page": "078.jpg",
+      "candidates": 48,
+      "mean_conf": 0.6244,
+      "min_conf": 0.2987,
+      "elapsed_ms": 63
+    },
+    {
+      "page": "079.jpg",
+      "candidates": 37,
+      "mean_conf": 0.6542,
+      "min_conf": 0.491,
+      "elapsed_ms": 55
+    },
+    {
+      "page": "080.jpg",
+      "candidates": 72,
+      "mean_conf": 0.6286,
+      "min_conf": 0.2688,
+      "elapsed_ms": 66
+    },
+    {
+      "page": "081.jpg",
+      "candidates": 27,
+      "mean_conf": 0.5916,
+      "min_conf": 0.1029,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "082.jpg",
+      "candidates": 18,
+      "mean_conf": 0.6126,
+      "min_conf": 0.2441,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "083.jpg",
+      "candidates": 32,
+      "mean_conf": 0.5984,
+      "min_conf": 0.3368,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "084.jpg",
+      "candidates": 26,
+      "mean_conf": 0.5979,
+      "min_conf": 0.2985,
+      "elapsed_ms": 252
+    },
+    {
+      "page": "085.jpg",
+      "candidates": 42,
+      "mean_conf": 0.6024,
+      "min_conf": 0.2127,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "086.jpg",
+      "candidates": 48,
+      "mean_conf": 0.6193,
+      "min_conf": 0.137,
+      "elapsed_ms": 57
+    },
+    {
+      "page": "087.jpg",
+      "candidates": 41,
+      "mean_conf": 0.6263,
+      "min_conf": 0.1785,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "088.jpg",
+      "candidates": 35,
+      "mean_conf": 0.6243,
+      "min_conf": 0.1046,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "089.jpg",
+      "candidates": 29,
+      "mean_conf": 0.6129,
+      "min_conf": 0.3936,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "090.jpg",
+      "candidates": 5,
+      "mean_conf": 0.6093,
+      "min_conf": 0.4747,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "091.jpg",
+      "candidates": 0,
+      "mean_conf": null,
+      "min_conf": null,
+      "elapsed_ms": 45
+    },
+    {
+      "page": "092.jpg",
+      "candidates": 17,
+      "mean_conf": 0.5572,
+      "min_conf": 0.1444,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "093.jpg",
+      "candidates": 44,
+      "mean_conf": 0.6257,
+      "min_conf": 0.3734,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "094.jpg",
+      "candidates": 20,
+      "mean_conf": 0.6022,
+      "min_conf": 0.3514,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "095.jpg",
+      "candidates": 36,
+      "mean_conf": 0.6771,
+      "min_conf": 0.5154,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "096.jpg",
+      "candidates": 14,
+      "mean_conf": 0.5359,
+      "min_conf": 0.2446,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "097.jpg",
+      "candidates": 22,
+      "mean_conf": 0.6349,
+      "min_conf": 0.5105,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "098.jpg",
+      "candidates": 12,
+      "mean_conf": 0.6558,
+      "min_conf": 0.5202,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "099.jpg",
+      "candidates": 13,
+      "mean_conf": 0.6301,
+      "min_conf": 0.5163,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "100.jpg",
+      "candidates": 4,
+      "mean_conf": 0.6842,
+      "min_conf": 0.5724,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "101.jpg",
+      "candidates": 28,
+      "mean_conf": 0.6342,
+      "min_conf": 0.5113,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "102.jpg",
+      "candidates": 5,
+      "mean_conf": 0.5807,
+      "min_conf": 0.3417,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "103.jpg",
+      "candidates": 4,
+      "mean_conf": 0.6028,
+      "min_conf": 0.5577,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "104.jpg",
+      "candidates": 30,
+      "mean_conf": 0.6312,
+      "min_conf": 0.5066,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "105.jpg",
+      "candidates": 45,
+      "mean_conf": 0.6212,
+      "min_conf": 0.1486,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "106.jpg",
+      "candidates": 25,
+      "mean_conf": 0.6275,
+      "min_conf": 0.2525,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "107.jpg",
+      "candidates": 56,
+      "mean_conf": 0.6304,
+      "min_conf": 0.3414,
+      "elapsed_ms": 57
+    },
+    {
+      "page": "108.jpg",
+      "candidates": 28,
+      "mean_conf": 0.6396,
+      "min_conf": 0.3697,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "109.jpg",
+      "candidates": 45,
+      "mean_conf": 0.6311,
+      "min_conf": 0.1443,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "110.jpg",
+      "candidates": 21,
+      "mean_conf": 0.6322,
+      "min_conf": 0.2334,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "111.jpg",
+      "candidates": 48,
+      "mean_conf": 0.6457,
+      "min_conf": 0.3466,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "112.jpg",
+      "candidates": 26,
+      "mean_conf": 0.6152,
+      "min_conf": 0.2305,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "113.jpg",
+      "candidates": 34,
+      "mean_conf": 0.6428,
+      "min_conf": 0.3213,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "114.jpg",
+      "candidates": 31,
+      "mean_conf": 0.6726,
+      "min_conf": 0.144,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "115.jpg",
+      "candidates": 66,
+      "mean_conf": 0.666,
+      "min_conf": 0.3635,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "116.jpg",
+      "candidates": 7,
+      "mean_conf": 0.6782,
+      "min_conf": 0.555,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "117.jpg",
+      "candidates": 41,
+      "mean_conf": 0.629,
+      "min_conf": 0.441,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "118.jpg",
+      "candidates": 31,
+      "mean_conf": 0.6328,
+      "min_conf": 0.3634,
+      "elapsed_ms": 59
+    },
+    {
+      "page": "119.jpg",
+      "candidates": 39,
+      "mean_conf": 0.6476,
+      "min_conf": 0.4056,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "120.jpg",
+      "candidates": 26,
+      "mean_conf": 0.5686,
+      "min_conf": 0.1601,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "121.jpg",
+      "candidates": 34,
+      "mean_conf": 0.6467,
+      "min_conf": 0.4103,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "122.jpg",
+      "candidates": 24,
+      "mean_conf": 0.6122,
+      "min_conf": 0.1832,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "123.jpg",
+      "candidates": 39,
+      "mean_conf": 0.6409,
+      "min_conf": 0.4213,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "124.jpg",
+      "candidates": 39,
+      "mean_conf": 0.6429,
+      "min_conf": 0.155,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "125.jpg",
+      "candidates": 35,
+      "mean_conf": 0.6362,
+      "min_conf": 0.3842,
+      "elapsed_ms": 54
+    },
+    {
+      "page": "126.jpg",
+      "candidates": 20,
+      "mean_conf": 0.6384,
+      "min_conf": 0.1641,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "127.jpg",
+      "candidates": 36,
+      "mean_conf": 0.6016,
+      "min_conf": 0.1292,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "128.jpg",
+      "candidates": 1,
+      "mean_conf": 0.368,
+      "min_conf": 0.368,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "129.jpg",
+      "candidates": 1,
+      "mean_conf": 0.7291,
+      "min_conf": 0.7291,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "130.jpg",
+      "candidates": 32,
+      "mean_conf": 0.5745,
+      "min_conf": 0.1259,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "131.jpg",
+      "candidates": 33,
+      "mean_conf": 0.6594,
+      "min_conf": 0.1763,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "132.jpg",
+      "candidates": 8,
+      "mean_conf": 0.6172,
+      "min_conf": 0.49,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "133.jpg",
+      "candidates": 38,
+      "mean_conf": 0.6139,
+      "min_conf": 0.3608,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "134.jpg",
+      "candidates": 15,
+      "mean_conf": 0.5928,
+      "min_conf": 0.2204,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "135.jpg",
+      "candidates": 6,
+      "mean_conf": 0.6392,
+      "min_conf": 0.5806,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "136.jpg",
+      "candidates": 27,
+      "mean_conf": 0.6254,
+      "min_conf": 0.4029,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "137.jpg",
+      "candidates": 43,
+      "mean_conf": 0.6104,
+      "min_conf": 0.199,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "138.jpg",
+      "candidates": 23,
+      "mean_conf": 0.5817,
+      "min_conf": 0.1395,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "139.jpg",
+      "candidates": 32,
+      "mean_conf": 0.6406,
+      "min_conf": 0.5212,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "140.jpg",
+      "candidates": 11,
+      "mean_conf": 0.6696,
+      "min_conf": 0.3835,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "141.jpg",
+      "candidates": 6,
+      "mean_conf": 0.47,
+      "min_conf": 0.3516,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "142.jpg",
+      "candidates": 43,
+      "mean_conf": 0.6149,
+      "min_conf": 0.1761,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "143.jpg",
+      "candidates": 9,
+      "mean_conf": 0.6645,
+      "min_conf": 0.4823,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "144.jpg",
+      "candidates": 15,
+      "mean_conf": 0.6906,
+      "min_conf": 0.5538,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "145.jpg",
+      "candidates": 19,
+      "mean_conf": 0.6571,
+      "min_conf": 0.5142,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "146.jpg",
+      "candidates": 31,
+      "mean_conf": 0.6618,
+      "min_conf": 0.3924,
+      "elapsed_ms": 50
+    },
+    {
+      "page": "147.jpg",
+      "candidates": 19,
+      "mean_conf": 0.6287,
+      "min_conf": 0.3917,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "148.jpg",
+      "candidates": 1,
+      "mean_conf": 0.5688,
+      "min_conf": 0.5688,
+      "elapsed_ms": 45
+    },
+    {
+      "page": "149.jpg",
+      "candidates": 17,
+      "mean_conf": 0.6205,
+      "min_conf": 0.4762,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "150.jpg",
+      "candidates": 4,
+      "mean_conf": 0.6489,
+      "min_conf": 0.372,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "151.jpg",
+      "candidates": 41,
+      "mean_conf": 0.6461,
+      "min_conf": 0.3959,
+      "elapsed_ms": 53
+    },
+    {
+      "page": "152.jpg",
+      "candidates": 8,
+      "mean_conf": 0.5687,
+      "min_conf": 0.3974,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "153.jpg",
+      "candidates": 16,
+      "mean_conf": 0.5739,
+      "min_conf": 0.2313,
+      "elapsed_ms": 47
+    },
+    {
+      "page": "154.jpg",
+      "candidates": 20,
+      "mean_conf": 0.6717,
+      "min_conf": 0.5266,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "155.jpg",
+      "candidates": 0,
+      "mean_conf": null,
+      "min_conf": null,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "156.jpg",
+      "candidates": 19,
+      "mean_conf": 0.5946,
+      "min_conf": 0.1853,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "157.jpg",
+      "candidates": 44,
+      "mean_conf": 0.6225,
+      "min_conf": 0.1722,
+      "elapsed_ms": 51
+    },
+    {
+      "page": "158.jpg",
+      "candidates": 28,
+      "mean_conf": 0.6447,
+      "min_conf": 0.468,
+      "elapsed_ms": 52
+    },
+    {
+      "page": "159.jpg",
+      "candidates": 50,
+      "mean_conf": 0.6453,
+      "min_conf": 0.4325,
+      "elapsed_ms": 56
+    },
+    {
+      "page": "160.jpg",
+      "candidates": 35,
+      "mean_conf": 0.6373,
+      "min_conf": 0.3412,
+      "elapsed_ms": 49
+    },
+    {
+      "page": "161.jpg",
+      "candidates": 13,
+      "mean_conf": 0.6565,
+      "min_conf": 0.5141,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "162.jpg",
+      "candidates": 1,
+      "mean_conf": 0.6803,
+      "min_conf": 0.6803,
+      "elapsed_ms": 45
+    },
+    {
+      "page": "163.jpg",
+      "candidates": 12,
+      "mean_conf": 0.6541,
+      "min_conf": 0.462,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "164.jpg",
+      "candidates": 21,
+      "mean_conf": 0.6685,
+      "min_conf": 0.1145,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "165.jpg",
+      "candidates": 15,
+      "mean_conf": 0.6557,
+      "min_conf": 0.3381,
+      "elapsed_ms": 46
+    },
+    {
+      "page": "166.jpg",
+      "candidates": 9,
+      "mean_conf": 0.6654,
+      "min_conf": 0.4414,
+      "elapsed_ms": 45
+    },
+    {
+      "page": "167.jpg",
+      "candidates": 18,
+      "mean_conf": 0.7089,
+      "min_conf": 0.5095,
+      "elapsed_ms": 48
+    },
+    {
+      "page": "168.jpg",
+      "candidates": 44,
+      "mean_conf": 0.7553,
+      "min_conf": 0.5095,
+      "elapsed_ms": 55
+    },
+    {
+      "page": "169.jpg",
+      "candidates": 2,
+      "mean_conf": 0.8568,
+      "min_conf": 0.8092,
+      "elapsed_ms": 46
+    }
+  ],
+  "previews_written": 169,
+  "preview_dir": "G:\\CODEX\\New Manga.task-envs\\T1.1.1-work\\t111-real-material"
+}
