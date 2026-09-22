@@ -159,6 +159,36 @@ handoff is `ace633a`.
 - Status: `T1.2.1 = REVIEW_BLOCKED / IMPLEMENTED_NOT_VERIFIED`. Do not start
   T2.1.1. ZCode must resolve B-001/B-002 and wait for re-review.
 
+## T1.2.1 R3 Non-author Review checkpoint
+
+Codex reviewed the ZCode R3 implementation `d978d6f` against `ace633a` and
+the R3 Handoff `7376bce` in
+`G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`.
+
+- Result: **CHANGES_REQUESTED — R3 REVIEW_BLOCKED**.
+- Scope: `git diff ace633a..d978d6f --stat` contains exactly the six
+  authorized R3 paths; QML, `src/ports/**`, SQLite schema, Roadmap and STATUS
+  are untouched by the R3 implementation.
+- The single-profile happy path is independently reproduced through the
+  migrated SQLite row, `_load_pipeline_settings`/
+  `_load_pipeline_defaults`, `build_provider_runtime`, fixed registry-slot
+  resolution and a recording transport.
+- Remaining blocking findings: one profile id cannot alias multiple capability
+  slots; `proxy_policy` semantics and missing-network fail-closed behavior are
+  not preserved; production `StdlibTransport` lacks the credential store for
+  proxy credentials; disabled fixed-slot profiles still resolve; and binding
+  does not validate the profile capability declaration.
+- Fresh R3 verification in the stated implementation venv: focused
+  `410 collected = 403 passed + 6 skipped + 1 failed`, exit 1; full
+  `1124 collected = 1117 passed + 6 skipped + 1 failed`, one warning, exit 1;
+  compileall, six smoke runs and diff-check exit 0. The single failure is the
+  known torch registry-readiness environment assertion; the six skips are
+  OpenSSL-unavailable TLS cases.
+- Evidence: [R3 review](../verification/T1.2.1/review-d978d6f.md) and
+  [R3 edge probes](../verification/T1.2.1/r3-edge-probes-d978d6f.log).
+- Status remains `T1.2.1 = REVIEW_BLOCKED / IMPLEMENTED_NOT_VERIFIED`. No R3
+  product commit is integrated; do not start T2.1.1.
+
 ## Recovery instruction
 
 ```powershell

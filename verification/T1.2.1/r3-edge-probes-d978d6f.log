@@ -1,0 +1,42 @@
+T1.2.1 R3 independent edge probes
+Date: 2026-09-22
+Shell: PowerShell
+Python: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+PYTHONPATH: src
+CWD: G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel
+
+Probe inputs:
+- one profile id `shared` bound to both `translate` and `ocr`;
+- one profile with `proxy_policy=direct` and `network_profile_id=proxy`;
+- one fixed-slot profile `openai-compatible-translation` with `enabled=False`;
+- one profile with `proxy_policy=profile` and missing network id `missing`.
+
+Observed output:
+
+MULTI_BINDING translation= ProviderNotConfigured: PROVIDER_NOT_CONFIGURED: provider 'openai-vision-ocr' does not declare capability 'translation'
+MULTI_BINDING ocr= resolved
+DIRECT_POLICY mode= socks5
+DISABLED_FIXED resolved=True
+MISSING_NETWORK mode= None
+EDGE_PROBE_EXIT=0
+
+Interpretation:
+- alias map is single-valued and cannot represent one profile bound to two
+  capability slots;
+- direct proxy policy is ignored;
+- disabled fixed-slot profile still resolves;
+- missing profile-policy network silently becomes direct instead of failing
+  through the existing ProviderNetworkResolver contract.
+
+Production SQLite-row probe:
+
+LOADED_SECTIONS= ['providers']
+LOADED_BINDINGS= {'translate': 'my-openai-profile'}
+RESOLVED_PROVIDER= openai-compatible-translation
+TRANSPORT_NETWORK= corp-proxy socks5 socks5://gateway.internal:1080
+SECRET_IN_MIRROR= False
+PRODUCTION_PROBE_EXIT=0
+
+This happy path does not prove the authenticated proxy path. Production
+bootstrap still calls `StdlibTransport()` without the credential store needed
+to resolve a proxy `credential_ref`.
