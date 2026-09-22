@@ -142,7 +142,7 @@ def test_assemble_services_injects_and_exports_diagnostics(
             "recent_errors",
             "settings_summary",
         }
-        assert payload["database"]["schema_version"] == "3"
+        assert payload["database"]["schema_version"] == "4"
         assert payload["environment_paths"]["data_root"] == str(tmp_path)
         assert payload["environment_paths"]["managed_root"] == str(
             tmp_path / "managed"

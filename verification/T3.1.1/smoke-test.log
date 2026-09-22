@@ -1,0 +1,6 @@
+=== shell: pwsh
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== base: e771179
+=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src
+=== cmd: python -m bootstrap.app --smoke-test --data-root C:\Users\49745\AppData\Local\Temp\c51b7dd377184cf4a39a9dcd3e40191f
+ExitCode: 0

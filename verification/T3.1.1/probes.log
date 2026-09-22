@@ -1,0 +1,6 @@
+=== shell: pwsh
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== base: e771179
+=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src;tests/reading_export, QT_QPA_PLATFORM unset
+=== cmd: python verification/T3.1.1/run_probes.py
+--- [PROBE 1] Legacy JSON Import, Idempotency & File Preservation --- PASS: Probe 1 completed successfully. --- [PROBE 2] Error Diagnosis on Corrupt / Invalid Input --- PASS: Probe 2 completed successfully. --- [PROBE 3] Production Bootstrap Assembly & SQLite Writes --- PASS: Probe 3 completed successfully. --- [PROBE 4] Transaction Atomicity & Failure Rollback --- PASS: Probe 4 completed successfully.  ALL T3.1.1 PROBES PASSED.

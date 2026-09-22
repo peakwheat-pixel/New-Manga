@@ -1,0 +1,6 @@
+=== shell: pwsh
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== base: e771179
+=== env: PYTHONDONTWRITEBYTECODE=1
+=== cmd: python -m compileall -q src tests
+ExitCode: 0

@@ -1,0 +1,55 @@
+=== shell: pwsh
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== base: e771179
+=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src;.
+=== cmd: pytest tests -q -p no:cacheprovider -rs
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+......................................................s................. [ 23%]
+........................................................................ [ 29%]
+......sssss............................................................. [ 34%]
+........................................................................ [ 40%]
+........................................................................ [ 46%]
+........F............................................................... [ 52%]
+........................................................................ [ 58%]
+........................................................................ [ 64%]
+........................................................................ [ 69%]
+........................................................................ [ 75%]
+........................................................................ [ 81%]
+........................................................................ [ 87%]
+........................................................................ [ 93%]
+........................................................................ [ 99%]
+............                                                             [100%]
+================================== FAILURES ===================================
+___________ test_no_model_runtime_is_installed_in_this_environment ____________
+
+    def test_no_model_runtime_is_installed_in_this_environment() -> None:
+        """Environment evidence for the registered BLOCKED items."""
+        for module in ("torch", "diffusers", "numpy", "paddleocr", "manga_ocr"):
+>           assert importlib.util.find_spec(module) is None, (
+                f"{module} unexpectedly present: the BLOCKED classification in "
+                "doc/tasks/TASK-019.md assumes it is absent"
+            )
+E           AssertionError: torch unexpectedly present: the BLOCKED classification in doc/tasks/TASK-019.md assumes it is absent
+E           assert ModuleSpec(name='torch', loader=<_frozen_importlib_external.SourceFileLoader object at 0x0000014AC3409AF0>, origin='G:...nit__.py', submodule_search_locations=['G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312\\Lib\\site-packages\\torch']) is None
+E            +  where ModuleSpec(name='torch', loader=<_frozen_importlib_external.SourceFileLoader object at 0x0000014AC3409AF0>, origin='G:...nit__.py', submodule_search_locations=['G:\\CODEX\\New Manga.task-envs\\T1.1.1-impl-py312\\Lib\\site-packages\\torch']) = <function find_spec at 0x0000014ADE490B80>('torch')
+E            +    where <function find_spec at 0x0000014ADE490B80> = <module 'importlib.util' (frozen)>.find_spec
+E            +      where <module 'importlib.util' (frozen)> = importlib.util
+
+tests\providers\test_registry_readiness.py:193: AssertionError
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+1 failed, 1229 passed, 6 skipped, 1 warning in 69.56s (0:01:09)
+ExitCode: 1

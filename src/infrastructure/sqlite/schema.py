@@ -24,6 +24,7 @@ from dataclasses import dataclass
 SCHEMA_VERSION_V1 = 1
 SCHEMA_VERSION_V2 = 2
 SCHEMA_VERSION_V3 = 3
+SCHEMA_VERSION_V4 = 4
 
 MIGRATION_V1_NAME = "v1__storage_base"
 
@@ -408,6 +409,49 @@ CREATE TABLE pipeline_defaults (
 );
 """
 
+MIGRATION_V4_NAME = "v4__reading_export_storage"
+
+MIGRATION_V4_SQL = """
+-- T3.1.1: reading progress persistence (D03 §29, AC-READ-002).
+-- One row per (book_id, chapter_id, mode); keeps original and translated independent.
+CREATE TABLE reading_progress (
+    progress_id TEXT PRIMARY KEY CHECK (length(progress_id) > 0),
+    book_id TEXT NOT NULL,
+    chapter_id TEXT NOT NULL,
+    mode TEXT NOT NULL CHECK (mode IN ('original', 'translated')),
+    last_page_id TEXT NOT NULL DEFAULT '',
+    scroll_offset_x REAL NOT NULL DEFAULT 0.0,
+    scroll_offset_y REAL NOT NULL DEFAULT 0.0,
+    progress_percent REAL NOT NULL DEFAULT 0.0,
+    last_read_at TEXT NOT NULL DEFAULT '',
+    total_read_seconds REAL NOT NULL DEFAULT 0.0,
+    updated_at TEXT NOT NULL,
+    UNIQUE (book_id, chapter_id, mode)
+);
+CREATE INDEX idx_reading_progress_book ON reading_progress(book_id);
+
+-- T3.1.1: export history persistence (D03 §31, AC-EXPORT-002).
+-- Records terminal export outcomes (completed, skipped, cancelled, failed)
+-- with snapshots sufficient to repeat exports with original settings.
+CREATE TABLE export_history (
+    export_id TEXT PRIMARY KEY CHECK (length(export_id) > 0),
+    book_id TEXT NOT NULL,
+    chapter_id TEXT NOT NULL,
+    pipeline_run_id TEXT,
+    export_type TEXT NOT NULL,
+    scope_snapshot_json TEXT NOT NULL DEFAULT '{}',
+    output_path TEXT NOT NULL DEFAULT '',
+    render_profile_snapshot_json TEXT NOT NULL DEFAULT '{}',
+    status TEXT NOT NULL CHECK (status IN ('completed', 'skipped', 'cancelled', 'failed')),
+    file_hash TEXT NOT NULL DEFAULT '',
+    created_at TEXT NOT NULL,
+    completed_at TEXT NOT NULL DEFAULT '',
+    detail TEXT NOT NULL DEFAULT ''
+);
+CREATE INDEX idx_export_history_created_at ON export_history(created_at DESC);
+CREATE INDEX idx_export_history_book ON export_history(book_id, chapter_id);
+"""
+
 
 @dataclass(frozen=True)
 class Migration:
@@ -425,4 +469,5 @@ def default_migrations() -> tuple[Migration, ...]:
         Migration(SCHEMA_VERSION_V1, MIGRATION_V1_NAME, MIGRATION_V1_SQL),
         Migration(SCHEMA_VERSION_V2, MIGRATION_V2_NAME, MIGRATION_V2_SQL),
         Migration(SCHEMA_VERSION_V3, MIGRATION_V3_NAME, MIGRATION_V3_SQL),
+        Migration(SCHEMA_VERSION_V4, MIGRATION_V4_NAME, MIGRATION_V4_SQL),
     )
