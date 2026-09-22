@@ -11,18 +11,18 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `4dfe9e7850c370634a293118536672e5f91680f8` (R4 scope release; no T1.2.1 product merge). Read live HEAD with `git rev-parse HEAD`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.2.1 — Settings UI & ViewModel = CHANGES_REQUESTED / REVIEW_BLOCKED / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
-| Current Active Task | None in execution. [T1.2.1](tasks/T1.2.1.md) R4 revision scope is released for ZCode to resume; no product implementation or integration is authorized outside that frozen scope. |
-| Current owner/reviewer | T1.2.1 R4 candidate: ZCode; non-author reviewer/integrator: Codex. Blocking findings: B-003, allowed-path drift, fresh review and integration. |
+| Current product checkpoint | `T1.2.1 — R4 REVIEWED / INTEGRATION BLOCKED ON B-003 / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
+| Current Active Task | T1.2.1 B-003 follow-up is pending ZCode delivery; no product implementation or integration is authorized outside the bounded scope in the review. |
+| Current owner/reviewer | T1.2.1 R4 candidate: ZCode; non-author reviewer/integrator: Codex. R4-B001/B002/B004/B005 resolved; B-003 remains BLOCKING. |
 | Current branch/worktree | Author: `agent/zcode/T1.2.1-settings-ui-viewmodel` / `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`; isolated Codex candidate: `agent/codex/T1.2.1-integration` / `C:\Users\49745\.codex\worktrees\t121-codex-integration\New Manga` (not merged). |
 | Current review base/head | base `d11d927`; R1 `c54f360` / `ace633a`; R3 `d978d6f` / `7376bce`; R4 candidate `39dbbf7` / `a527b85`; isolated Codex candidate `0b4e434` is not integrated. |
 | Latest integrated product test status | T1.1.1 integration: Python 3.12 implementation venv, `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases. T1.2.1 candidate results are recorded in its review, not claimed as mainline verification. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T1.1.1 integration blockers. T1.2.1 R4 candidate claims fixes for four R3 seams, but B-003 production transport credential injection is not implemented, the candidate changes forbidden Settings QML, and non-author review/integration are outstanding. Formal [R4 scope](tasks/T1.2.1.md) remains gated; no T1.2.1 product commit is integrated. Deferred outside this Task: known model-runtime readiness assertion and export signal race. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
+| Current blockers | No T1.1.1 integration blockers. T1.2.1 R4 non-author review resolved four R3 seams, but B-003 production transport credential injection is not implemented; integration and final verification are withheld. The single `SettingsView.qml` filter is explicitly reconciled into R4 scope; other QML remains forbidden. Deferred outside this Task: known model-runtime readiness assertion and export signal race. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
 | Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md` (tracked modification) and untracked `.codewiki/`, `.qoder-credits/`, `docs/`, `material/`, `wiki/codewiki/temp/`. Recheck `git status` before any edit; current documentation edits are separate. |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
-| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R1 review](../verification/T1.2.1/review-c54f360.md); [R3 review](../verification/T1.2.1/review-d978d6f.md); [isolated candidate](../verification/T1.2.1/integration-0b4e434.md) |
+| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R1 review](../verification/T1.2.1/review-c54f360.md); [R3 review](../verification/T1.2.1/review-d978d6f.md); [R4 review](../verification/T1.2.1/review-39dbbf7.md); [R4 probe](../verification/T1.2.1/r4-probe-39dbbf7.log) |
 
 ## Verified completed capability
 
@@ -207,14 +207,47 @@ authorized revision, not a claim that implementation has resumed or passed.
   Gate was recorded. Recheck branch, HEAD, dirty state and Git common dir
   before author work; stop on divergence.
 - **Allowed**: only the source, test, Task, Handoff and verification paths in
-  [T1.2.1 §允许修改范围](tasks/T1.2.1.md#允许修改范围). Shared registry/runtime/bootstrap
-  edits are authorized only for R3-B001–B005. No ports, Schema, dependencies,
-  QML, other Task or user-data changes. `0b4e434` remains an isolated
-  unmerged candidate, not the repair base.
-- **Exit**: new author implementation commit, new Handoff and reproducible
-  per-finding tests/production-path probes; Codex non-author re-review of fixed
-  head; only then serial integration and mainline verification. R4 tests and
-  integration are currently `NOT_RUN`.
+  [T1.2.1 §允许修改范围](tasks/T1.2.1.md#允许修改范围). The current R4
+  reconciliation permits only the single `SettingsView.qml` capability filter;
+  other QML remains forbidden. `0b4e434` remains an isolated unmerged
+  candidate, not the repair base.
+- **Exit**: R4 implementation `39dbbf7` and Handoff `a527b85` were reviewed by
+  Codex. B-003 is authorized for one narrow follow-up delivery: inject the
+  existing credential store into production `StdlibTransport`, add assembly
+  evidence and a redacted authenticated-proxy probe. Product integration and
+  final verification remain blocked until that delivery passes non-author
+  review.
+
+## T1.2.1 R4 non-author review checkpoint
+
+Codex reviewed ZCode implementation `39dbbf7` against the R3 implementation
+baseline `d978d6f` and Handoff `a527b85` against `7376bce` in the author
+worktree. The author worktree is clean at `a527b85`.
+
+- Result: **R4 EDGE REVIEW APPROVED; INTEGRATION BLOCKED — B-003**.
+- The implementation diff contains exactly six paths: registry, runtime,
+  Settings ViewModel, the explicitly reconciled `SettingsView.qml` filter,
+  and two focused test files. `src/bootstrap/app.py` is unchanged.
+- R4-B001 multi-capability aliasing, B002 network policy/fail-closed behavior,
+  B004 disabled-slot behavior, and B005 capability validation were reproduced
+  by independent runtime probe. Evidence: [R4 review](../verification/T1.2.1/review-39dbbf7.md)
+  and [R4 probe](../verification/T1.2.1/r4-probe-39dbbf7.log).
+- B-003 remains BLOCKING: production line 642 still constructs
+  `StdlibTransport()` without `credential_store`. The existing authenticated
+  proxy adapter subset passes, but that is not production bootstrap evidence.
+- B-003 is **authorized for the next delivery only**: use the existing
+  credential-store seam with best-effort `None` fallback, add an assembly-level
+  test and a local redacted authenticated-proxy probe. No ports, schema,
+  dependencies or QML redesign are authorized.
+- Fresh author-worktree evidence: Git Bash focused `421 passed + 1 known
+  torch readiness failure`, full `1135 passed + 1 known failure`; PowerShell
+  focused `415 passed + 6 OpenSSL skips + 1 known failure`, full `1129 passed
+  + 6 skips + 1 known failure`; compileall exit 0, six smoke runs 6/6, and
+  diff-check exit 0. The known failure and environment skips are not reported
+  as all-green.
+- Status: `T1.2.1 = REVIEW_BLOCKED_B003_PENDING / NOT INTEGRATED`. Do not
+  start T2.1.1. Next executor: ZCode for the bounded repair; Codex remains
+  non-author Reviewer/Integrator.
 
 ## V2 Project Control Dashboard
 
@@ -222,15 +255,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `changes_requested`; no product Task is `in_progress` |
-| `ExecutionState` | `IDLE` on master; ZCode R4 candidate is a fixed, separate delivery |
-| `Current Executor` | Codex audit/control baseline complete; next executor `UNASSIGNED` |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 integrated → T1.2.1 R4 review gate → T2.1.1 unreleased |
+| `TaskStatus` | T1.2.1 `review_blocked_b003_pending`; no product commit integrated |
+| `ExecutionState` | `WAITING_FOR_B003` on master; R4 edge review is complete, product integration withheld |
+| `Current Executor` | ZCode next for bounded B-003 delivery; Codex non-author Reviewer/Integrator |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 integrated → T1.2.1 R4 edge review → B-003 follow-up → T2.1.1 unreleased |
 | `Dependency Blocking Chain` | T1.2.1 B-003/scope/review/integration → T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.1.1 design/research after write-set review |
 | `Do Not Start Yet` | T2.1.1, T2.2.1, T3.2.1 and any product change outside a released Task |
-| `Safe To Resume` | Yes for audit/governance after Reality Check; no for T1.2.1 implementation until scope/B-003/review gates close |
+| `Safe To Resume` | Yes for the authorized T1.2.1 B-003 follow-up; no integration or T2.1.1 until fresh gates close |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map

@@ -1,0 +1,25 @@
+T1.2.1 R4 independent probe
+delivery=39dbbf7
+handoff=a527b85
+base=7376bce
+worktree=G:/CODEX/New Manga.worktrees/T1.2.1-settings-ui-viewmodel
+shell=PowerShell
+venv=G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe
+
+probe=build_provider_runtime with persisted-shape settings and two capability bindings
+DUAL_TRANSLATE=openai-compatible-translation
+DUAL_OCR=openai-vision-ocr
+DIRECT_NETWORK=None
+PROFILE_MISSING=ProviderUnavailable PROVIDER_UNAVAILABLE: network: missing network profile 'vanished'
+INHERIT_NETWORK=corp-proxy
+DISABLED_FIXED=ProviderDisabled PROVIDER_DISABLED: provider is disabled by the user
+ENABLED_OVERRIDE=openai-compatible-translation
+exit=0
+
+Interpretation:
+- A multi-capability profile keeps independent (profile_id, capability) aliases.
+- direct does not consume a named network; profile missing is fail-closed.
+- inherit reads the effective global network profile.
+- a disabled fixed slot stays disabled unless an enabled binding explicitly projects
+  an enabled profile into that slot; enabled binding wins over stale disabled data.
+- No secret value was included in the output.
