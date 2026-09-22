@@ -485,3 +485,18 @@ def test_overlay_without_a_page_extent_maps_nothing(overlay_item):
     overlay_item.setProperty("pageW", 0)
     assert float(overlay_item.property("scale")) == 0.0
     assert overlay_item.toNormalized(150, 100) is None
+
+
+def test_workbench_panel_geometry_comes_from_the_f_tokens(workbench, qapp):
+    # T2.1.1 binds the workbench areas to tb-h / insp-w / prog-h. The numbers
+    # here are the accepted geometry, so a re-pasted literal is a regression
+    # against the design rather than a style preference.
+    workbench.vm.setContext("book-1", "chapter-1", "书", "章")
+    qapp.processEvents()
+    for name, prop, expected in (
+        ("workbenchToolbarHost", "implicitHeight", 52),
+        ("regionInspectorHost", "implicitWidth", 288),
+        ("taskProgressPanelHost", "implicitHeight", 150),
+    ):
+        panel = find_one(workbench.view, name)
+        assert int(panel.property(prop)) == expected, f"{name}.{prop}"
