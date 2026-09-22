@@ -11,18 +11,18 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `4dfe9e7850c370634a293118536672e5f91680f8` (R4 scope release; no T1.2.1 product merge). Read live HEAD with `git rev-parse HEAD`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.2.1 — R4 REVIEWED / INTEGRATION BLOCKED ON B-003 / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
-| Current Active Task | T1.2.1 B-003 follow-up is pending ZCode delivery; no product implementation or integration is authorized outside the bounded scope in the review. |
-| Current owner/reviewer | T1.2.1 R4 candidate: ZCode; non-author reviewer/integrator: Codex. R4-B001/B002/B004/B005 resolved; B-003 remains BLOCKING. |
+| Current product checkpoint | `T1.2.1 — R5 REVIEW APPROVED / READY FOR INTEGRATION VERIFICATION / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
+| Current Active Task | T1.2.1 Codex integration verification is active in an isolated worktree; T2.1.1 remains unreleased. |
+| Current owner/reviewer | T1.2.1 author: ZCode; non-author reviewer/integrator: Codex. R5 B-003 is closed; final integration evidence remains. |
 | Current branch/worktree | Author: `agent/zcode/T1.2.1-settings-ui-viewmodel` / `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`; isolated Codex candidate: `agent/codex/T1.2.1-integration` / `C:\Users\49745\.codex\worktrees\t121-codex-integration\New Manga` (not merged). |
-| Current review base/head | base `d11d927`; R1 `c54f360` / `ace633a`; R3 `d978d6f` / `7376bce`; R4 candidate `39dbbf7` / `a527b85`; isolated Codex candidate `0b4e434` is not integrated. |
+| Current review base/head | base `d11d927`; R1 `c54f360` / `ace633a`; R3 `d978d6f` / `7376bce`; R4 `39dbbf7` / `a527b85`; R5 `e5716ac` / `e025c9a`; isolated Codex candidate `0b4e434` is not integrated. |
 | Latest integrated product test status | T1.1.1 integration: Python 3.12 implementation venv, `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases. T1.2.1 candidate results are recorded in its review, not claimed as mainline verification. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T1.1.1 integration blockers. T1.2.1 R4 non-author review resolved four R3 seams, but B-003 production transport credential injection is not implemented; integration and final verification are withheld. The single `SettingsView.qml` filter is explicitly reconciled into R4 scope; other QML remains forbidden. Deferred outside this Task: known model-runtime readiness assertion and export signal race. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
+| Current blockers | No T1.1.1 integration blockers. T1.2.1 R5 non-author review closed B-003 and authorized serial integration. Final integration verification is still required before `done`. The single `SettingsView.qml` filter remains the only reconciled QML exception. Deferred outside this Task: known model-runtime readiness assertion and export signal race. Graphite F is not applied to production QML; reading/export history remain JSON-backed; packaging and clean-machine gate are absent. |
 | Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md` (tracked modification) and untracked `.codewiki/`, `.qoder-credits/`, `docs/`, `material/`, `wiki/codewiki/temp/`. Recheck `git status` before any edit; current documentation edits are separate. |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
-| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R1 review](../verification/T1.2.1/review-c54f360.md); [R3 review](../verification/T1.2.1/review-d978d6f.md); [R4 review](../verification/T1.2.1/review-39dbbf7.md); [R4 probe](../verification/T1.2.1/r4-probe-39dbbf7.log) |
+| Evidence | [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 R1 review](../verification/T1.2.1/review-c54f360.md); [R3 review](../verification/T1.2.1/review-d978d6f.md); [R4 review](../verification/T1.2.1/review-39dbbf7.md); [R5 review](../verification/T1.2.1/review-e5716ac.md) |
 
 ## Verified completed capability
 
@@ -212,11 +212,36 @@ authorized revision, not a claim that implementation has resumed or passed.
   other QML remains forbidden. `0b4e434` remains an isolated unmerged
   candidate, not the repair base.
 - **Exit**: R4 implementation `39dbbf7` and Handoff `a527b85` were reviewed by
-  Codex. B-003 is authorized for one narrow follow-up delivery: inject the
-  existing credential store into production `StdlibTransport`, add assembly
-  evidence and a redacted authenticated-proxy probe. Product integration and
-  final verification remain blocked until that delivery passes non-author
-  review.
+  Codex. B-003 follow-up delivery `e5716ac` / Handoff `e025c9a` is now
+  independently approved; product integration and final verification are the
+  current Codex-only next step.
+
+## T1.2.1 R5 non-author review checkpoint
+
+Codex reviewed ZCode R5 implementation `e5716ac` against `39dbbf7` and Handoff
+`e025c9a` in `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`.
+The author worktree is clean at `e025c9a`.
+
+- Result: **REVIEW APPROVED — B-003 CLOSED; READY FOR INTEGRATION VERIFICATION**.
+- R5 implementation scope is limited to `src/bootstrap/app.py` and
+  `tests/core/test_transport_credential_assembly.py`; Handoff and redacted
+  probe are the only accompanying evidence paths.
+- `_credential_store()` catches construction/import failures and returns
+  `None`; production `assemble_services` constructs one store and shares it
+  with transport, provider resolver and SettingsViewModel. The Handoff
+  §10.2③ cleanup is confirmed in scope because it removes a duplicate vault
+  construction inside the same authorized assembly file.
+- Fresh Git Bash full: `1139 passed, 1 known torch environment failure, 0
+  skipped, 1 warning`, exit 1. Fresh PowerShell full: `1133 passed, 6
+  OpenSSL skips, 1 known failure, 1 warning`, exit 1. Assembly/fail-closed
+  focused: `5 passed`, exit 0; broader R5 focused set: `90 passed`, exit 0.
+- Compileall exit 0; six bootstrap smoke runs passed; diff-check exit 0.
+  Fresh production probe passed: two real assemblies, SQLite binding,
+  registry resolution, provider client request, exact proxy Basic header,
+  zero auth failures, secret absent from output, and vault cleanup true.
+- Evidence: [R5 review](../verification/T1.2.1/review-e5716ac.md).
+- Status: `T1.2.1 = READY_FOR_INTEGRATION_VERIFICATION`; Codex may now
+  integrate serially. Do not start T2.1.1 before final integration evidence.
 
 ## T1.2.1 R4 non-author review checkpoint
 
@@ -255,15 +280,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `review_blocked_b003_pending`; no product commit integrated |
-| `ExecutionState` | `WAITING_FOR_B003` on master; R4 edge review is complete, product integration withheld |
-| `Current Executor` | ZCode next for bounded B-003 delivery; Codex non-author Reviewer/Integrator |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 integrated → T1.2.1 R4 edge review → B-003 follow-up → T2.1.1 unreleased |
+| `TaskStatus` | T1.2.1 `approved`; R5 review passed, product commit not yet integrated |
+| `ExecutionState` | `INTEGRATION_VERIFYING` in isolated Codex worktree |
+| `Current Executor` | Codex Integrator; ZCode delivery fixed at `e025c9a` |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 integrated → T1.2.1 R5 approved → integration verification → T2.1.1 unreleased |
 | `Dependency Blocking Chain` | T1.2.1 B-003/scope/review/integration → T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.1.1 design/research after write-set review |
 | `Do Not Start Yet` | T2.1.1, T2.2.1, T3.2.1 and any product change outside a released Task |
-| `Safe To Resume` | Yes for the authorized T1.2.1 B-003 follow-up; no integration or T2.1.1 until fresh gates close |
+| `Safe To Resume` | Yes for Codex T1.2.1 integration verification; no T2.1.1 until final gate closes |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
