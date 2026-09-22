@@ -4,12 +4,11 @@ Date: 2026-09-22 (Asia/Shanghai)
 
 ## Decision
 
-**CONDITIONAL PASS TO PREPARE — scope frozen; implementation not started.**
+**PASS TO START — scope frozen; implementation not started.**
 
-Codex has created the formal Task and implementation plan from the current
-integrated baseline. The owner worktrees and branches still need to be created
-before the Task can move from `proposed` to `ready`; no production code or
-tests were changed by this gate.
+Codex created the formal Task and implementation plan from the current
+integrated baseline, then created both owner worktrees from the governance
+base. No production code or tests were changed by this gate.
 
 ## Recovery point
 
@@ -17,12 +16,13 @@ tests were changed by this gate.
 |---|---|
 | Repository | `G:/CODEX/New Manga` |
 | Main branch | `master` |
-| Base HEAD | `ef1a9b893d1da54fbc2b6e65dad285c54bae7ec5` |
+| Gate documentation commit | `16810c55c28ada960420d8053f47f29b1f71b8f0` |
+| Base HEAD for implementation | `16810c55c28ada960420d8053f47f29b1f71b8f0` |
 | Primary owner | ZCode |
 | QML/UI/UX owner | Qoder |
 | Non-author reviewer/integrator | Codex |
-| Primary branch/worktree | pending Codex creation |
-| QML branch/worktree | pending Codex creation |
+| Primary branch/worktree | `agent/zcode/T2.2.1-reader-workbench-polish` / `G:/CODEX/New Manga.worktrees/T2.2.1-zcode` |
+| QML branch/worktree | `agent/qoder/T2.2.1-reader-workbench-qml` / `G:/CODEX/New Manga.worktrees/T2.2.1-qoder` |
 | Main worktree dirty state | Existing `experiments/TASK-017/README.md`, agent caches, plans, material, and wiki temp paths preserved; no cleanup or overwrite authorized |
 
 ## Gate checks
@@ -51,18 +51,17 @@ tests were changed by this gate.
 | Check | Result |
 |---|---|
 | `git status --short --branch` | PASS — pre-existing dirty/untracked paths preserved |
-| `git rev-parse HEAD` | PASS — `ef1a9b893d1da54fbc2b6e65dad285c54bae7ec5` |
+| `git rev-parse HEAD` | PASS — governance began from `ef1a9b8`; implementation base is `16810c5` |
 | T1.1.2/T1.2.1/T2.1.1 dependency evidence | PASS — current Plan/STATUS and linked integration records |
 | Implementation focused tests | NOT_RUN — implementation has not started |
 | Full suite | NOT_RUN — this is a preparation gate, not a completion claim |
 | Compileall | NOT_RUN — no implementation change to validate |
 | Bootstrap smoke | NOT_RUN — reserved for implementation/integration evidence |
-| Diff check | PASS — governance files will be checked before commit |
+| Diff check | PASS — governance files were clean before owner worktrees were created |
 
 ## Gate boundary
 
-ZCode and Qoder may begin only after Codex records the actual base, branch, and
-worktree for each owner and changes the Task to `ready`. Qoder may implement
+ZCode and Qoder may begin from the recorded `16810c5` base. Qoder may implement
 only the declared QML/UI/UX paths; ZCode may not invent a Python seam or modify
 shared contracts without a Codex scope decision. Both agents must deliver
 fixed heads, tests, evidence, and Handoff material. Neither author worktree may

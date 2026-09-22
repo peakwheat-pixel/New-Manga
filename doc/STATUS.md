@@ -11,18 +11,18 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, and `T2.1.1` are `VERIFIED_COMPLETE`; T2.2.1 is the next unreleased roadmap item. |
-| Current Active Task | None. T2.1.1 is closed after non-author review, Codex integration, and fresh verification. |
-| Current owner/reviewer | T2.1.1 was Qoder / Codex; Codex remains Coordinator/Integrator. T2.2.1 requires its own Release Gate before implementation. |
-| Current branch/worktree | Main: `master` with product code at `5da1cf6` and governance records in the final integration commit; Qoder delivery worktree remains preserved at `ddb2044`; Codex integration worktree is `G:/CODEX/New Manga.worktrees/T2.1.1-integration`. |
-| Current review base/head | T2.1.1 base `7f34135`; Qoder delivery `bc49ef9` with evidence/Handoff head `ddb2044`; Codex integration code `5da1cf6`. |
+| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, and `T2.1.1` are `VERIFIED_COMPLETE`; T2.2.1 is `READY` and implementation has not started. |
+| Current Active Task | T2.2.1 Release Gate passed; ZCode and Qoder owner worktrees are ready at base `16810c5`. |
+| Current owner/reviewer | T2.2.1: ZCode functional implementation, Qoder QML/UI/UX, Codex non-author reviewer/integrator. |
+| Current branch/worktree | Main: `master`; product code remains at `5da1cf6`; governance base is `16810c5`; ZCode worktree `G:/CODEX/New Manga.worktrees/T2.2.1-zcode`; Qoder worktree `G:/CODEX/New Manga.worktrees/T2.2.1-qoder`. |
+| Current review base/head | T2.2.1 base `16810c5`; delivery/review/integration heads not yet available. |
 | Latest integrated product test status | T2.1.1 integration tree: PowerShell/TASK-012-py312 `1178 passed + 11 environment skips + 0 failed + 1 warning`, exit 0; author dependency-equipped evidence remains `1183 passed + 5 skipped`, exit 0. |
 | Smoke status | T2.1.1 fresh `python -m bootstrap.app --smoke-test --data-root <fresh-temp-dir>` exit 0; SQLite/database created. |
 | Compile status | T2.1.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T2.1.1 blocker remains. T2.2.1, T3.1.1 and T3.2.1 remain unreleased. Environment skips and deferred GUI/webtoon findings are recorded as such, not hidden as PASS. |
+| Current blockers | No Release Gate blocker remains. T2.2.1 implementation is ready but not yet delivered; T3.1.1 and T3.2.1 remain unreleased. Environment skips and deferred GUI/DPI findings are recorded as such, not hidden as PASS. |
 | Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
-| Worktrees | Qoder T2.1.1 worktree is clean at delivery/evidence head `ddb2044`; Codex integration worktree is clean at `5da1cf6`; existing worktrees remain preserved. No deletion or prune is authorized. |
-| Evidence | [T2.1.1 release gate](../verification/T2.1.1/release-gate-7f34135.md); [T2.1.1 review](../verification/T2.1.1/review-bc49ef9.md); [T2.1.1 integration](../verification/T2.1.1/integration-5da1cf6.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.1.1 integration](../verification/T1.1.1/integration-f56f441.md); [T1.2.1 integration](../verification/T1.2.1/integration-9a14310.md) |
+| Worktrees | T2.2.1 ZCode and Qoder worktrees are clean at base `16810c5`; all existing worktrees remain preserved. No deletion or prune is authorized. |
+| Evidence | [T2.2.1 Task](tasks/T2.2.1.md); [T2.2.1 release gate](../verification/T2.2.1/release-gate-ef1a9b8.md); [T2.1.1 review](../verification/T2.1.1/review-bc49ef9.md); [T2.1.1 integration](../verification/T2.1.1/integration-5da1cf6.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md); [T1.2.1 integration](../verification/T1.2.1/integration-9a14310.md) |
 
 ## Verified completed capability
 
@@ -80,8 +80,25 @@ full suite `1178 passed, 11 skipped, 0 failed, 1 warning`, compileall exit 0,
 bootstrap smoke exit 0, and diff-check clean. Environment skips are documented
 in [integration evidence](../verification/T2.1.1/integration-5da1cf6.md).
 Review: [review-bc49ef9](../verification/T2.1.1/review-bc49ef9.md).
-Result: **T2.1.1 = VERIFIED_COMPLETE**. Do not start T2.2.1 without its own
+Result: **T2.1.1 = VERIFIED_COMPLETE**. Its successor now has its own
 Release Gate.
+
+## T2.2.1 Release Gate checkpoint
+
+Codex created the formal [T2.2.1 Task](tasks/T2.2.1.md), implementation plan,
+and [Release Gate](../verification/T2.2.1/release-gate-ef1a9b8.md). The gate
+passed to start from `16810c5`. ZCode owns functional implementation at
+`G:/CODEX/New Manga.worktrees/T2.2.1-zcode` on
+`agent/zcode/T2.2.1-reader-workbench-polish`; Qoder owns QML/UI/UX at
+`G:/CODEX/New Manga.worktrees/T2.2.1-qoder` on
+`agent/qoder/T2.2.1-reader-workbench-qml`. Both worktrees are clean and no
+implementation commit exists yet. Codex remains the non-author reviewer and
+serial integrator.
+
+The frozen scope is: Reader chapter picker, Workbench empty-state picker,
+dismissible command-error presentation, and webtoon `Tokens.bgCanvas`
+consistency. Region six-state rendering, command palette, storage, bootstrap,
+Schema, provider/runtime, and dependency changes are excluded.
 
 ## T1.1.1 preparation Release Gate
 
