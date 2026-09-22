@@ -7,13 +7,13 @@ Audit checkpoint: 2026-09-21 (Asia/Shanghai)
 | Field | Current value |
 |---|---|
 | Code baseline HEAD | `f56f441c1ce981ff83a3af98c5862917e35711f1` (product integration merge) |
-| Branch | `agent/codex/T1.1.1-integration` (to fast-forward `master`) |
+| Branch | `master` |
 | Integrated code HEAD | `f56f441c1ce981ff83a3af98c5862917e35711f1` |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
 | Active product task | `T1.1.1 — Production Text Detector = INTEGRATED / VERIFIED_COMPLETE`; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`. |
 | Product task owner/reviewer | Implementation: ZCode; non-author review/integration: Codex; T1.1.1 blocking findings: 0; IMPORTANT deferred findings: 2. |
-| Execution branch/worktree | Integration: `agent/codex/T1.1.1-integration` / `C:\Users\49745\.codex\worktrees\t111-codex-integration\New Manga`; author preserved at `agent/zcode/T1.1.1-production-text-detector` |
+| Execution branch/worktree | Integrated from `agent/codex/T1.1.1-integration` / `C:\Users\49745\.codex\worktrees\t111-codex-integration\New Manga`; author preserved at `agent/zcode/T1.1.1-production-text-detector` |
 | Execution base/head | review base `4a1ed6ca`; delivery head `2f116a2`; R2 docs head `4a631355` |
 | Verified test status | Fresh Python 3.12 implementation venv: `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the pre-existing model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases; one existing MOBI deprecation warning. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
