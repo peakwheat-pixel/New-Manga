@@ -14,7 +14,7 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Current product checkpoint | `T1.2.1 = VERIFIED_COMPLETE`; T1.1.1 and T1.1.2 are also `VERIFIED_COMPLETE`; `T2.1.1 = READY` with implementation not started. |
 | Current Active Task | T2.1.1 is released to Qoder but not `in_progress`; no production QML implementation has started. |
 | Current owner/reviewer | T2.1.1 Owner: Qoder; non-author reviewer/integrator and Release Gate: Codex. |
-| Current branch/worktree | Main: `master` at `7f34135`; Qoder: `agent/qoder/T2.1.1-design-f-qml` at `7f34135`, worktree `G:/CODEX/New Manga.worktrees/T2.1.1-design-f-qml`; prior T1.2.1 recovery/integration worktrees remain preserved. |
+| Current branch/worktree | Main: `master` at `2734be2` (governance commit; product base remains `7f34135`); Qoder: `agent/qoder/T2.1.1-design-f-qml` at `7f34135`, worktree `G:/CODEX/New Manga.worktrees/T2.1.1-design-f-qml`; prior T1.2.1 recovery/integration worktrees remain preserved. |
 | Current review base/head | T2.1.1 base `7f34135`; delivery head: none yet. Prior T1.2.1 review/integration evidence remains historical. |
 | Latest integrated product test status | T1.2.1 integration tree: Git Bash `1139 passed + 1 known torch environment failure + 0 skipped + 1 warning`, PowerShell `1133 passed + 6 OpenSSL skips + 1 known failure + 1 warning`; both exit 1 only for the known environment assertion. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
@@ -286,7 +286,7 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 | Field | Current value |
 |---|---|
 | `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `ready` / implementation not started |
-| `ExecutionState` | `IDLE` on master at `7f34135`; Qoder worktree is clean at the same base |
+| `ExecutionState` | `IDLE` on master at `2734be2`; Qoder implementation worktree is clean at product base `7f34135` |
 | `Current Executor` | Qoder may start only after receiving the released instruction; Codex remains Reviewer/Integrator |
 | `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 integrated and verified → T2.1.1 Release Gate passed → T2.1.1 ready/not started |
 | `Dependency Blocking Chain` | T2.1.1 → T2.2.1 → T3.1.1 → T3.2.1 |
