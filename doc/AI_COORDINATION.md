@@ -22,9 +22,10 @@ Last Handover:            2026-09-21 ZCode -> Codex (知识层刷新 Owner 移�
 - `rk-map` 已将 `wiki/repowiki/` 刷新到主线 `4dfe9e7`，`rk-status` 报告
   `VALID (CURRENT)`。
 - `rk-update` 已尝试 CodeWiki 增量刷新并生成若干模块页，但在连接重置及长时间无
-  新产物后停止。当前 `rk-status` 报告 `GENERATED (24 Markdown files)`、
-  `HEAD Freshness: STALE`；`rk-verify` 仍因 CodeWiki 元数据过期及双语/图表策略
-  混合状态失败。该次部分生成物不作为新的知识基线入库。
+  新产物后停止；未验证的部分生成页已清理。当前 `rk-status` 报告已有的
+  `GENERATED (17 Markdown files)`、`HEAD Freshness: STALE`；Markdown 与 Mermaid
+  双语策略通过，`rk-verify` 仅因 CodeWiki 元数据过期失败。该次部分生成物不作为
+  新的知识基线入库。
 - 因此 CodeWiki 只能作为派生、可能过期的阅读材料；Source / Tests / Git、
   `AGENTS.md`、`STATUS.md` 与 Task/Handoff/Review 仍是事实源。
 

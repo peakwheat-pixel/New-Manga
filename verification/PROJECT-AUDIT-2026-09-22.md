@@ -346,11 +346,12 @@ integration.
 - RepoWiki is current after refresh (`rk-status`: `VALID (CURRENT)`). CodeWiki
   incremental generation was attempted through `rk-update`; it produced
   several validated module pages, but stopped after a connection reset and a
-  prolonged no-progress interval. Final `rk-status` reports `GENERATED (24
-  Markdown files)` with `HEAD Freshness: STALE`; `rk-verify` fails the mixed
-  bilingual/diagram policy and stale metadata checks. The partial generated
-  CodeWiki output is intentionally not staged as a new baseline. This is a
-  knowledge-tool limitation and does not change source/task truth.
+  prolonged no-progress interval. After removing the unvalidated partial
+  pages, final `rk-status` reports the existing `GENERATED (17 Markdown
+  files)` with `HEAD Freshness: STALE`; Markdown and Mermaid policy checks pass,
+  while `rk-verify` fails only the stale CodeWiki metadata check. The partial
+  generated output is not staged as a new baseline. This is a knowledge-tool
+  limitation and does not change source/task truth.
 
 ## 16. Rolling checkpoint and resume record
 
