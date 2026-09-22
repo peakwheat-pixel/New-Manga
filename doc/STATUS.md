@@ -6,24 +6,24 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
-| Latest product integration | `fe9fca0` (T2.2.1 product code integration; final verification evidence `verification/T2.2.1/integration-aad510b.md`) |
-| T3.1.1 Release Gate base | `e771179` (T2.2.1 closeout; no T3.1.1 product code yet) |
+| Latest product integration | `0c70e44` (T3.1.1 product code integration; final verification evidence `verification/T3.1.1/integration-899bd3c.md`) |
+| T3.1.1 Release Gate base | `e771179`; delivery `899bd3c`; independent Review `4e1eb3a` approved |
 | Branch | `master` |
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, and `T2.2.1` are `VERIFIED_COMPLETE`; T3.1.1 is `READY` after its Release Gate, implementation not started. |
-| Current Active Task | T3.1.1 implementation released to Antigravity; implementation not started. |
-| Current owner/reviewer | Antigravity implementation; Codex Lead / Architect / Integrator; DeepSeek Harness independent non-author Reviewer. |
-| Current branch/worktree | Main: `master`; T3.1.1 implementation branch `agent/antigravity/T3.1.1-storage-sqlite`, worktree `G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite`, clean at `e771179`. |
-| Current review base/head | T3.1.1 base `e771179`; delivery/review/integration not yet available. Previous T2.2.1 evidence remains linked below. |
-| Latest integrated product test status | T2.2.1 integration: PowerShell/T1.1.1-impl-py312 focused affected suite `278 passed + 0 skipped + 0 failed`, exit 0; full suite `1209 passed + 6 OpenSSL skips + 1 known torch environment failure + 1 warning`, exit 1. |
-| Smoke status | T2.2.1 fresh `python -m bootstrap.app --smoke-test --data-root G:/CODEX/New Manga.task-envs/T2.2.1-integration-smoke-20260922` exit 0; SQLite/database smoke completed. |
-| Compile status | T2.2.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T3.1.1 gate blocker. Implementation must stay within the released scope and requires DeepSeek Harness approval before integration; T3.2.1 remains unreleased. |
+| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 is the next unreleased task. |
+| Current Active Task | None; T3.1.1 is closed after Codex integration. Next action is to establish the T3.2.1 Release Gate. |
+| Current owner/reviewer | T3.1.1: Antigravity implementation; DeepSeek Harness independent non-author Review; Codex Lead / Architect / Integrator. |
+| Current branch/worktree | Main: `master` at evidence merge `0ed71a8` (product code merge `0c70e44`); author worktree `G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite` clean at `81c3197`; Review worktree clean at `4e1eb3a`. |
+| Current review base/head | T3.1.1 base `e771179`; delivery `899bd3c`; Review `4e1eb3a` (`approved`); integration evidence `verification/T3.1.1/integration-899bd3c.md`. |
+| Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
+| Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
+| Compile status | T3.1.1 fresh `python -m compileall -q src tests` exit 0. |
+| Current blockers | No release-blocking finding. R-002 duplicate legacy `progress_id` handling and Review R-004/R-005/R-006 are documented P2 follow-ups; T3.2.1 Release Gate is not yet released. |
 | Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
 | Worktrees | T2.2.1 ZCode and Qoder worktrees remain preserved and clean at their delivery heads; all existing worktrees remain preserved. No deletion or prune was performed. |
-| Evidence | [T3.1.1 Task](tasks/T3.1.1.md); [T3.1.1 Release Gate](../verification/T3.1.1/release-gate-e771179.md); [T2.2.1 Task](tasks/T2.2.1.md); [T2.2.1 release gate](../verification/T2.2.1/release-gate-ef1a9b8.md); [T2.2.1 review](../verification/T2.2.1/review-0846573.md); [T2.2.1 integration](../verification/T2.2.1/integration-aad510b.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
+| Evidence | [T3.1.1 Task](tasks/T3.1.1.md); [T3.1.1 Release Gate](../verification/T3.1.1/release-gate-e771179.md); [T3.1.1 Review](../verification/T3.1.1/review-899bd3c.md); [T3.1.1 integration](../verification/T3.1.1/integration-899bd3c.md); [T2.2.1 integration](../verification/T2.2.1/integration-aad510b.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
 
 ## Verified completed capability
 
@@ -41,8 +41,7 @@ verification are now complete.
 
 ## Open gaps
 
-1. T3.1.1: migrate reading progress and export history from JSON to SQLite.
-2. T3.2.1: build and verify a product Windows onedir package on a clean machine.
+1. T3.2.1: build and verify a product Windows onedir package on a clean machine.
 
 ## Stage B execution gate
 
@@ -102,15 +101,22 @@ skips, one known torch-environment failure, exit 1; this limitation is
 recorded in [integration evidence](../verification/T2.2.1/integration-aad510b.md)
 and is not hidden as PASS. Result: **T2.2.1 = VERIFIED_COMPLETE**.
 
-## T3.1.1 independent Release Gate checkpoint
+## T3.1.1 independent Release Gate and integration checkpoint
 
 Codex created the formal [T3.1.1 Task](tasks/T3.1.1.md), implementation plan,
 and [independent Release Gate](../verification/T3.1.1/release-gate-e771179.md)
-at governance base `e771179`. The Gate is **PASS TO START**: the task is now
-released to Antigravity for the SQLite v4 progress/export slice; DeepSeek Harness
-must independently review the fixed delivery head before Codex integrates it.
-No T3.1.1 product code, migration, or database was changed by the Gate or
-reassignment.
+at governance base `e771179`. Antigravity delivered `899bd3c`; DeepSeek Harness
+independently reviewed it in a separate worktree and approved it at `4e1eb3a`.
+Codex then integrated the product delivery at `0c70e44`, merged the Review and
+Handoff evidence, and reran the focused/core/compileall/smoke gates.
+
+Integration evidence is [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md):
+focused `220 passed`, core `49 passed`, compileall exit 0, smoke exit 0, and
+`git diff --check` exit 0. R-001/R-003 wording is corrected by explicit Task
+disposition; R-002 remains a documented non-blocking P2 defer.
+
+Result: **T3.1.1 = VERIFIED_COMPLETE**. T3.2.1 remains unreleased pending its
+own Release Gate.
 
 The frozen boundary is: additive v4 migration, SQLite adapters for the existing
 progress/history ports, one-time non-destructive legacy JSON import, bootstrap
@@ -341,15 +347,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `ready` / Gate `PASS TO START` |
-| `ExecutionState` | `READY` on master plus isolated Antigravity T3.1.1 implementation worktree; branch is clean at `e771179`; implementation not started |
-| `Current Executor` | Antigravity is released to implement T3.1.1; DeepSeek Harness is the independent Reviewer; Codex remains Lead/Architect/Integrator |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 verified → T3.1.1 Gate passed |
-| `Dependency Blocking Chain` | T2.2.1 → T3.1.1 → T3.2.1 |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE` |
+| `ExecutionState` | `IDLE` after T3.1.1 integration; master evidence head `0ed71a8`; product code head `0c70e44` |
+| `Current Executor` | No active executor; T3.1.1 is closed. Codex remains Lead/Architect/Integrator; next task requires a new Release Gate |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified |
+| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 Release Gate |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
-| `Conditional` | T3.1.1 implementation only within the released Task paths and evidence requirements |
-| `Do Not Start Yet` | T3.2.1 and any product change outside a released Task; do not expand T3.1.1 into TASK-028/TASK-057/UI/Provider/Pipeline work |
-| `Safe To Resume` | Antigravity implements in the clean T3.1.1 worktree from `e771179`, then hands off for DeepSeek Harness review |
+| `Conditional` | T3.2.1 only after its Release Gate; P2 follow-up work requires a new scoped Task |
+| `Do Not Start Yet` | T3.2.1 implementation and any product change outside a released Task; do not reopen T3.1.1 P2 follow-ups inline |
+| `Safe To Resume` | Create and review the T3.2.1 Release Gate; preserve T3.1.1 author/Review worktrees |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -365,9 +371,9 @@ T2.1.1 VERIFIED_COMPLETE @ 5da1cf6
         ↓
 T2.2.1 VERIFIED_COMPLETE @ fe9fca0
         ↓
-T3.1.1 Release Gate PASSED @ e771179
+T3.1.1 VERIFIED_COMPLETE @ 0c70e44
         ↓
-T3.1.1 storage convergence (implementation not started)
+T3.2.1 Windows packaging Release Gate (not released)
 ```
 
 ### Parallel execution matrix
@@ -376,7 +382,7 @@ T3.1.1 storage convergence (implementation not started)
 |---|---|---|---|
 | T1.2.1 | complete | closed | provider runtime, VM, Settings QML, bootstrap integrated |
 | T2.1.1 | complete | `CLOSED` | four-page QML/theme; F token contract; T1.2.1 UI contracts |
-| T3.1.1 research | conditional | research-only parallel | SQLite/storage write set |
+| T3.1.1 | complete | closed | SQLite v4 progress/export persistence integrated and independently approved |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
 

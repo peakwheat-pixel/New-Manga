@@ -1,0 +1,5 @@
+=== shell: PowerShell
+=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
+=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src;.
+=== cmd: python -m bootstrap.app --smoke-test --data-root C:\Users\49745\AppData\Local\Temp\t311-integration-3fb32edba490475cb9e429e5ea11b884
+ExitCode: 0

@@ -10,16 +10,16 @@
 === cmd: git diff --check e771179..899bd3c
 verification/T3.1.1/core.log:8: new blank line at EOF.
 verification/T3.1.1/delivery-report.md:3: trailing whitespace.
-+**Date:** 2026-09-22 (Asia/Shanghai)  
++**Date:** 2026-09-22 (Asia/Shanghai)
 verification/T3.1.1/delivery-report.md:4: trailing whitespace.
-+**Agent:** Antigravity (Implementation Agent)  
++**Agent:** Antigravity (Implementation Agent)
 verification/T3.1.1/delivery-report.md:5: trailing whitespace.
-+**Task ID:** T3.1.1  
++**Task ID:** T3.1.1
 verification/T3.1.1/delivery-report.md:6: trailing whitespace.
-+**Base Commit:** `e771179`  
++**Base Commit:** `e771179`
 verification/T3.1.1/delivery-report.md:7: trailing whitespace.
-+**Branch:** `agent/antigravity/T3.1.1-storage-sqlite`  
++**Branch:** `agent/antigravity/T3.1.1-storage-sqlite`
 verification/T3.1.1/delivery-report.md:8: trailing whitespace.
-+**Worktree:** `G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite`  
++**Worktree:** `G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite`
 verification/T3.1.1/focused-reading-storage.log:11: new blank line at EOF.
 ExitCode: 2

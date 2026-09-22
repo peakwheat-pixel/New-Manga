@@ -1,10 +1,5 @@
-=== shell: pwsh
-=== venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (Python 3.12.3)
-=== base: e771179
-=== env: PYTHONDONTWRITEBYTECODE=1, PYTHONPATH=src
-=== cmd: pytest tests/reading_export tests/storage -q
 ........................................................................ [ 32%]
 ........................................................................ [ 65%]
 ........................................................................ [ 98%]
 ....                                                                     [100%]
-220 passed in 26.09s
+220 passed in 24.80s
