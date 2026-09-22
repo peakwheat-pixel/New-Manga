@@ -15,7 +15,7 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, and `T2.2.1` are `VERIFIED_COMPLETE`; T3.1.1 is `READY` after its Release Gate, implementation not started. |
 | Current Active Task | T3.1.1 Release Gate passed; implementation not started. |
 | Current owner/reviewer | Codex implementation/Integrator; DeepSeek Harness independent non-author Reviewer. |
-| Current branch/worktree | Main: `master`; T3.1.1 gate base `e771179`; implementation branch/worktree are specified by the Gate and not yet created. |
+| Current branch/worktree | Main: `master`; T3.1.1 implementation branch `agent/codex/T3.1.1-storage-sqlite`, worktree `C:/Users/49745/.codex/worktrees/t3-1-1-codex-storage-sqlite/New Manga`, clean at `e771179`. |
 | Current review base/head | T3.1.1 base `e771179`; delivery/review/integration not yet available. Previous T2.2.1 evidence remains linked below. |
 | Latest integrated product test status | T2.2.1 integration: PowerShell/T1.1.1-impl-py312 focused affected suite `278 passed + 0 skipped + 0 failed`, exit 0; full suite `1209 passed + 6 OpenSSL skips + 1 known torch environment failure + 1 warning`, exit 1. |
 | Smoke status | T2.2.1 fresh `python -m bootstrap.app --smoke-test --data-root G:/CODEX/New Manga.task-envs/T2.2.1-integration-smoke-20260922` exit 0; SQLite/database smoke completed. |
@@ -342,14 +342,14 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 | Field | Current value |
 |---|---|
 | `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `ready` / Gate `PASS TO START` |
-| `ExecutionState` | `READY` on master; T3.1.1 gate base `e771179`; implementation not started; existing author worktrees remain preserved |
+| `ExecutionState` | `READY` on master plus isolated T3.1.1 implementation worktree; branch is clean at `e771179`; implementation not started |
 | `Current Executor` | Codex is released to implement T3.1.1; DeepSeek Harness is the independent Reviewer; Codex remains Lead/Integrator |
 | `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 verified → T3.1.1 Gate passed |
 | `Dependency Blocking Chain` | T2.2.1 → T3.1.1 → T3.2.1 |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.1.1 implementation only within the released Task paths and evidence requirements |
 | `Do Not Start Yet` | T3.2.1 and any product change outside a released Task; do not expand T3.1.1 into TASK-028/TASK-057/UI/Provider/Pipeline work |
-| `Safe To Resume` | Create the isolated Codex T3.1.1 worktree from `e771179`, then implement and hand off for DeepSeek Harness review |
+| `Safe To Resume` | Implement in the clean T3.1.1 worktree from `e771179`, then hand off for DeepSeek Harness review |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
