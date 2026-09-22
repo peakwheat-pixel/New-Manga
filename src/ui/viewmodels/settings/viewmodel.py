@@ -384,11 +384,22 @@ class SettingsViewModel(QObject):
             self.failed.emit(f"未知的管线能力：{step_type}")
             return
         try:
-            if provider_profile_id and self._providers.get_profile(
-                provider_profile_id
-            ) is None:
+            profile = (
+                self._providers.get_profile(provider_profile_id)
+                if provider_profile_id
+                else None
+            )
+            if provider_profile_id and profile is None:
                 self.failed.emit(
                     f"绑定的 Provider 配置不存在：{provider_profile_id}"
+                )
+                return
+            # R-007: the profile must declare the capability it is bound
+            # to, or the projection would serve the wrong pipeline step.
+            if profile is not None and step_type not in profile.capabilities:
+                self.failed.emit(
+                    f"Provider 配置 {provider_profile_id!r} 未声明能力 "
+                    f"{step_type!r}（已声明：{sorted(profile.capabilities)}）"
                 )
                 return
             self._defaults.save_provider_binding(step, provider_profile_id)
@@ -458,6 +469,7 @@ class SettingsViewModel(QObject):
             "options": profile.option_dict(),
             "provider_type": profile.provider_type,
             "network_profile_id": profile.network_profile_id or "",
+            "proxy_policy": profile.proxy_policy,
         }
         providers["profiles"] = profiles
         self._defaults.save_settings_section("providers", providers)

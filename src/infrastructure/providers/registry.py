@@ -80,16 +80,21 @@ class ProviderRegistration:
 class ProviderRegistry:
     """Registry of provider descriptors with probed readiness.
 
-    ``binding_aliases`` maps Settings-UI provider profile ids to the fixed
-    registry id whose slot carries that profile's configuration (the
-    projection built at assembly by ``build_provider_runtime``). Resolution
-    translates an aliased id up front, so a Run's frozen snapshot can name
-    the user profile while readiness and instance caching stay keyed by
-    the one registry id.
+    ``binding_aliases`` maps a Settings-UI provider profile id **plus the
+    capability being resolved** to the fixed registry id whose slot
+    carries that profile's configuration (the projection built at
+    assembly by ``build_provider_runtime``). The capability is part of the
+    key because one multi-capability profile may legitimately be bound to
+    several steps and therefore live in several fixed slots; a flat
+    profile-id map would let the last binding win and route the other
+    capabilities to the wrong provider. Resolution translates an aliased
+    id up front, so a Run's frozen snapshot can name the user profile
+    while readiness and instance caching stay keyed by the one registry
+    id.
     """
 
     credential_resolver: Callable[[str], str | None] | None = None
-    binding_aliases: Mapping[str, str] = field(default_factory=dict, repr=False)
+    binding_aliases: Mapping[tuple[str, str], str] = field(default_factory=dict, repr=False)
     _registrations: dict[str, ProviderRegistration] = field(default_factory=dict, repr=False)
     _instances: dict[str, Any] = field(default_factory=dict, repr=False)
 
@@ -233,7 +238,9 @@ class ProviderRegistry:
 
     def resolve(self, capability: str, provider_id: str) -> Any:
         """Return the provider instance for one capability or fail closed."""
-        provider_id = self.binding_aliases.get(provider_id, provider_id)
+        provider_id = self.binding_aliases.get(
+            (provider_id, capability), provider_id
+        )
         registration = self._registrations.get(provider_id)
         if registration is None:
             raise ProviderUnavailable(

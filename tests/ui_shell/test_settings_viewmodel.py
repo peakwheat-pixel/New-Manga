@@ -218,7 +218,7 @@ class TestProviderProfileFlow:
 class TestBindingFlow:
     def test_binding_write_feeds_pipeline_defaults(self, qapp):
         vm, _, bridge = _vm()
-        vm.saveProviderProfile(_provider_payload(api_key=""))
+        vm.saveProviderProfile(_provider_payload(api_key="", capabilities=["ocr"]))
         vm.saveBinding("ocr", "openai-translation")
         assert bridge.state["provider_bindings"]["ocr"] == "openai-translation"
         assert vm.bindings["ocr"] == "openai-translation"
@@ -242,6 +242,26 @@ class TestBindingFlow:
         vm.saveBinding("ocr", "no-such-profile")
         assert failures and "no-such-profile" in failures[0]
         assert bridge.state["provider_bindings"] == {}
+
+    def test_binding_rejects_capability_mismatch(self, qapp):
+        """R4 B-005 (R-007): the bound profile must declare the capability
+        it is bound to; otherwise it could be projected onto a remote slot
+        serving the wrong pipeline step."""
+        vm, _, bridge = _vm()
+        failures = []
+        vm.failed.connect(failures.append)
+        vm.saveProviderProfile(_provider_payload(api_key=""))  # translation-only
+        vm.saveBinding("ocr", "openai-translation")
+        assert failures and "ocr" in failures[0]
+        assert bridge.state["provider_bindings"] == {}
+
+    def test_binding_accepts_declared_capability(self, qapp):
+        vm, _, bridge = _vm()
+        vm.saveProviderProfile(_provider_payload(api_key=""))
+        vm.saveBinding("translation", "openai-translation")
+        assert bridge.state["provider_bindings"]["translate"] == (
+            "openai-translation"
+        )
 
     def test_unknown_step_fails_typed(self, qapp):
         vm, _, bridge = _vm()
@@ -306,6 +326,7 @@ class TestPipelineMirror:
             "options": {},
             "provider_type": "openai",
             "network_profile_id": "corp-proxy",
+            "proxy_policy": "inherit",
         }
 
     def test_provider_delete_cleans_mirror(self, qapp):
@@ -361,7 +382,7 @@ class TestPipelineMirror:
         vm.saveProviderProfile(
             _provider_payload(
                 api_key="", provider_type="openai-compatible",
-                network_profile_id="corp-proxy",
+                network_profile_id="corp-proxy", proxy_policy="profile",
             )
         )
         vm.saveBinding("translation", "openai-translation")

@@ -320,7 +320,15 @@ Rectangle {
                         ComboBox {
                             id: bindingCombo
                             Layout.preferredWidth: 240
-                            model: settingsViewModel ? settingsViewModel.profiles : []
+                            // R4 B-005: only profiles declaring this
+                            // capability are bindable here (R-007) — the
+                            // registry descriptor check cannot recover the
+                            // user's declaration after projection.
+                            model: settingsViewModel
+                                ? settingsViewModel.profiles.filter(function (p) {
+                                      return p.capabilities.indexOf(parent.capabilityKey) >= 0;
+                                  })
+                                : []
                             textRole: "name"
                             valueRole: "provider_profile_id"
                             property string boundId: settingsViewModel

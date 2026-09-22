@@ -66,6 +66,7 @@ from ports.providers.profiles import (
     CAPABILITY_INPAINT,
     CAPABILITY_OCR,
     CAPABILITY_TRANSLATION,
+    ProxyPolicy,
 )
 
 PROVIDER_VISION_DETECTION = "openai-vision-detection"
@@ -136,6 +137,20 @@ def _provider_settings(settings: Mapping[str, Any], provider_id: str) -> Mapping
     return profile if isinstance(profile, Mapping) else {}
 
 
+def _slot_enabled(settings: Mapping[str, Any], provider_id: str) -> bool:
+    """The ``enabled`` flag of the profile sitting in one fixed slot.
+
+    An explicit ``enabled: False`` in the slot (whether written directly
+    or projected from a disabled user profile) must disable the registry
+    registration — otherwise a disabled profile stays resolvable just
+    because its id happens to look like a fixed id (R4 B-004).
+    """
+    profile = _provider_settings(settings, provider_id)
+    if not profile:
+        return True
+    return profile.get("enabled") is not False
+
+
 def _model_specs(settings: Mapping[str, Any]) -> tuple[ModelSpec, ...]:
     providers = settings.get("providers")
     if not isinstance(providers, Mapping):
@@ -198,21 +213,77 @@ def _openai_config(
     )
 
 
+# -- network selection (mirrors ProviderNetworkResolver, D03 §25) ----------
+
+#: The persisted global-default key (``setDefaultNetworkProfile`` writes
+#: ``settings["network"]["profile_id"]``; the application resolver knows
+#: the same setting as ``network.profile_id``).
+_GLOBAL_NETWORK_SECTION = "network"
+_GLOBAL_NETWORK_KEY = "profile_id"
+
+
+def _networks_section(settings: Mapping[str, Any]) -> Mapping[str, Any]:
+    providers = settings.get("providers")
+    networks = providers.get("networks") if isinstance(providers, Mapping) else None
+    return networks if isinstance(networks, Mapping) else {}
+
+
+def _network_gap(
+    settings: Mapping[str, Any], profile: Mapping[str, Any]
+) -> str | None:
+    """Why this provider profile's network reference cannot resolve, or
+    ``None`` when the selection is complete under its ``proxy_policy``.
+
+    Mirrors the ``ProviderNetworkResolver`` contract exactly so that a
+    reference that would raise in the application layer fails closed here
+    too (readiness reports ``not_configured``; resolution never reaches
+    the factory): ``direct`` always resolves; ``profile`` needs an
+    existing ``network_profile_id``; ``inherit`` uses the global
+    ``network.profile_id`` when one is set, direct otherwise.
+    """
+    policy = str(profile.get("proxy_policy") or ProxyPolicy.INHERIT)
+    if policy == ProxyPolicy.DIRECT:
+        return None
+    networks = _networks_section(settings)
+    if policy == ProxyPolicy.PROFILE:
+        network_id = str(profile.get("network_profile_id", "") or "").strip()
+        if not network_id:
+            return (
+                "proxy_policy=profile without a network_profile_id"
+            )
+        if network_id not in networks:
+            return f"missing network profile {network_id!r}"
+        return None
+    network_id = str(
+        (settings.get(_GLOBAL_NETWORK_SECTION) or {}).get(_GLOBAL_NETWORK_KEY, "")
+        or ""
+    ).strip()
+    if network_id and network_id not in networks:
+        return f"network.profile_id {network_id!r} matches no network profile"
+    return None
+
+
 def _network_profile_for(
     settings: Mapping[str, Any], profile: Mapping[str, Any]
 ) -> NetworkProfile | None:
-    """The network profile one provider profile names, or ``None``.
-
-    The mirrored settings shape stores network profiles under
-    ``providers.networks``; an id that matches nothing leaves the config
-    without one, and the client then falls back to the direct default.
-    """
-    network_id = str(profile.get("network_profile_id", "") or "").strip()
+    """The network profile one provider profile uses, or ``None`` for
+    direct. Callers are guarded by :func:`_network_gap` — by the time a
+    factory runs, the named profile exists (fail-closed happens at
+    readiness, not as a silent direct fallback)."""
+    policy = str(profile.get("proxy_policy") or ProxyPolicy.INHERIT)
+    if policy == ProxyPolicy.DIRECT:
+        return None
+    networks = _networks_section(settings)
+    if policy == ProxyPolicy.PROFILE:
+        network_id = str(profile.get("network_profile_id", "") or "").strip()
+    else:
+        network_id = str(
+            (settings.get(_GLOBAL_NETWORK_SECTION) or {}).get(_GLOBAL_NETWORK_KEY, "")
+            or ""
+        ).strip()
     if not network_id:
         return None
-    providers = settings.get("providers")
-    networks = providers.get("networks") if isinstance(providers, Mapping) else None
-    raw = networks.get(network_id) if isinstance(networks, Mapping) else None
+    raw = networks.get(network_id)
     if not isinstance(raw, Mapping):
         return None
     return _network_profile_from_settings(network_id, raw)
@@ -254,6 +325,15 @@ _STEP_VISION_TARGETS = {
     "ocr": PROVIDER_VISION_OCR,
 }
 
+#: The capability each projected step serves — part of the alias key so a
+#: multi-capability profile bound to several steps resolves each one
+#: against its own slot (R4 B-001).
+_STEP_CAPABILITY = {
+    "translate": CAPABILITY_TRANSLATION,
+    "ocr": CAPABILITY_OCR,
+    "detect": CAPABILITY_DETECTION,
+}
+
 
 def _registry_target_for_step(step: str, provider_type: str) -> str | None:
     if step == "translate":
@@ -279,15 +359,17 @@ def _binding_named_profile_id(binding: Any) -> str:
 
 def _apply_profile_bindings(
     settings: Mapping[str, Any], provider_bindings: Mapping[str, Any] | None
-) -> tuple[Mapping[str, Any], dict[str, str]]:
+) -> tuple[Mapping[str, Any], dict[tuple[str, str], str]]:
     """Project bound user profiles onto the fixed registry slots.
 
     The Settings UI binds pipeline steps to *user-named* profile ids while
     the registry resolves fixed provider ids only. For every step binding
     that names a stored, enabled profile, the profile data is copied into
     the fixed slot of the registry provider serving that step, and a
-    ``profile id → registry id`` alias is returned so
-    ``ProviderRegistry.resolve`` accepts the profile id as well.
+    ``(profile id, capability) → registry id`` alias is returned so
+    ``ProviderRegistry.resolve`` accepts the profile id as well — per
+    capability, because one multi-capability profile may legitimately
+    serve several steps from several slots.
 
     The input mappings are never mutated; bindings that already name a
     fixed id (the pre-T1.2.1 shape) pass through untouched, and disabled
@@ -302,7 +384,7 @@ def _apply_profile_bindings(
         return settings, {}
 
     effective_profiles = dict(profiles)
-    aliases: dict[str, str] = {}
+    aliases: dict[tuple[str, str], str] = {}
     for step, binding in provider_bindings.items():
         profile_id = _binding_named_profile_id(binding)
         if not profile_id or profile_id not in effective_profiles:
@@ -316,7 +398,7 @@ def _apply_profile_bindings(
         if target is None or target == profile_id:
             continue
         effective_profiles[target] = dict(raw)
-        aliases[profile_id] = target
+        aliases[(profile_id, _STEP_CAPABILITY.get(str(step), str(step)))] = target
     if not aliases:
         return settings, {}
 
@@ -341,6 +423,22 @@ def _openai_requirements(
             Requirement(KIND_CREDENTIAL, str(profile["credential_ref"]))
         )
     return tuple(requirements)
+
+
+def _network_gate(
+    provider_id: str, settings: Mapping[str, Any]
+) -> Callable[[], tuple[bool, str, str]]:
+    """Readiness gate: a network reference that cannot resolve fails
+    closed with ``not_configured`` semantics, so resolution never silently
+    degrades to a direct connection (R4 B-002)."""
+
+    def gate() -> tuple[bool, str, str]:
+        gap = _network_gap(settings, _provider_settings(settings, provider_id))
+        if gap:
+            return False, "PROVIDER_NOT_CONFIGURED", f"network: {gap}"
+        return True, "", ""
+
+    return gate
 
 
 def build_provider_registry(
@@ -401,6 +499,8 @@ def build_provider_registry(
             note="detection port only; no Detect AC is assigned to TASK-019",
         ),
         vision_client(PROVIDER_VISION_DETECTION, "openai-compatible-vision"),
+        gate=_network_gate(PROVIDER_VISION_DETECTION, settings),
+        enabled=_slot_enabled(settings, PROVIDER_VISION_DETECTION),
     )
 
     # -- OCR -----------------------------------------------------------
@@ -443,6 +543,8 @@ def build_provider_registry(
             note="explicit Vision fallback for art text / low-quality OCR",
         ),
         vision_client(PROVIDER_VISION_OCR, "openai-compatible-vision"),
+        gate=_network_gate(PROVIDER_VISION_OCR, settings),
+        enabled=_slot_enabled(settings, PROVIDER_VISION_OCR),
     )
 
     # -- translation ---------------------------------------------------
@@ -454,6 +556,8 @@ def build_provider_registry(
             requirements=_openai_requirements(PROVIDER_OPENAI_TRANSLATION, settings),
         ),
         translation_factory(PROVIDER_OPENAI_TRANSLATION, "openai-compatible"),
+        gate=_network_gate(PROVIDER_OPENAI_TRANSLATION, settings),
+        enabled=_slot_enabled(settings, PROVIDER_OPENAI_TRANSLATION),
     )
     registry.register(
         ProviderDescriptor(
@@ -483,6 +587,8 @@ def build_provider_registry(
                 model=str(_provider_settings(settings, PROVIDER_SAKURA).get("model", "")),
             ),
         ),
+        gate=_network_gate(PROVIDER_SAKURA, settings),
+        enabled=_slot_enabled(settings, PROVIDER_SAKURA),
     )
 
     # -- inpaint -------------------------------------------------------
