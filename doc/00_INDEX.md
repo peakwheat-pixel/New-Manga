@@ -2,7 +2,7 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-22）**：T1.1.1、T1.1.2、T1.2.1、T2.1.1、T2.2.1、T3.1.1 已集成并验证；T3.1.1 产品 head=`0c70e44`，独立 Review=`4e1eb3a`，集成证据为 [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md)。T3.2.1 已在基线=`c2fcb1c` 通过 Release Gate，正在等待实现；Gate 证据为 [release-gate-c2fcb1c](../verification/T3.2.1/release-gate-c2fcb1c.md)。当前 HEAD、测试口径、阻断项与执行恢复点见 [STATUS](STATUS.md)；任务顺序见 [REBASELINE_PLAN](REBASELINE_PLAN.md)。下方 2026-09-19 及更早的长段落是历史导航，不决定当前排期。
+> **Current pointer（2026-09-22）**：T1.1.1、T1.1.2、T1.2.1、T2.1.1、T2.2.1、T3.1.1 已集成并验证；T3.1.1 产品 head=`0c70e44`，独立 Review=`4e1eb3a`，集成证据为 [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md)。T3.2.1 已在基线=`c2fcb1c` 通过 Release Gate，worktree 已创建并释放给 Antigravity；Gate 证据为 [release-gate-c2fcb1c](../verification/T3.2.1/release-gate-c2fcb1c.md)。当前 HEAD、测试口径、阻断项与执行恢复点见 [STATUS](STATUS.md)；任务顺序见 [REBASELINE_PLAN](REBASELINE_PLAN.md)。下方 2026-09-19 及更早的长段落是历史导航，不决定当前排期。
 
 2026-09-20 TASK-059 集成：设计重做 Task 已 `done`，integration=`53ae2e4`，最终 Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`。ND-1 选定 **F · Graphite Atelier**（A 色彩/状态色/主题 + B 几何含 `card-w=158px` + A IA；无 C 玻璃/D 顶栏/E 命令面板）；设计已集成但未释放实现 Task，ND-4/5/6/7 待用户裁决。
 

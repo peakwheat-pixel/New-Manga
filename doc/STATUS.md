@@ -13,9 +13,9 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
 | Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 Release Gate is passed and its implementation is not started. |
-| Current Active Task | T3.2.1 Release Gate passed; implementation not started. |
+| Current Active Task | T3.2.1 implementation released to Antigravity; no delivery yet. |
 | Current owner/reviewer | T3.2.1: Antigravity implementation; DeepSeek Harness independent non-author Review; Codex Lead / Architect / Integrator; Qoder only if a separately authorized QML/resource seam is needed. |
-| Current branch/worktree | Main: `master` at the current governance baseline; T3.2.1 implementation branch `agent/antigravity/T3.2.1-windows-packaging`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging`, both pending Codex creation from `c2fcb1c`. |
+| Current branch/worktree | Main: `master` at the current governance baseline; T3.2.1 branch `agent/antigravity/T3.2.1-windows-packaging`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging`, clean at `c2fcb1c`. |
 | Current review base/head | T3.2.1 base `c2fcb1c`; delivery/review/integration not yet available. Gate evidence: `verification/T3.2.1/release-gate-c2fcb1c.md`. |
 | Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
 | Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
@@ -124,7 +124,8 @@ Codex established the formal [T3.2.1 Task](tasks/T3.2.1.md) and
 [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) from the verified
 T3.1.1 baseline `c2fcb1c`. The Gate is **PASS TO START** for Antigravity
 implementation. No packaging spec, build script, artifact or clean-machine
-result is being claimed by this documentation change.
+result is being claimed by this documentation change. The fixed worktree is now
+created and clean at `c2fcb1c`; implementation is released to Antigravity.
 
 The hard final boundary is D07/D08: a real Windows x64 machine without Python,
 venv, source checkout or developer PATH must complete the package workflow,
@@ -362,14 +363,14 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 | Field | Current value |
 |---|---|
 | `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE`; T3.2.1 `ready` / `PASS TO START` |
-| `ExecutionState` | `READY` after T3.2.1 Gate; implementation worktree pending creation from `c2fcb1c` |
+| `ExecutionState` | `READY` after T3.2.1 Gate; isolated Antigravity worktree is clean at `c2fcb1c` |
 | `Current Executor` | Antigravity is released for T3.2.1 implementation; DeepSeek Harness is the independent Reviewer; Codex remains Lead/Architect/Integrator |
 | `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 Gate passed |
 | `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 implementation → clean-machine release validation |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
 | `Conditional` | T3.2.1 implementation only within the released packaging paths and evidence requirements |
-| `Do Not Start Yet` | T3.2.1 implementation until Codex creates the fixed-base worktree; any installer/updater/CI release work outside this Task |
-| `Safe To Resume` | Codex creates `agent/antigravity/T3.2.1-windows-packaging` from `c2fcb1c`, then Antigravity implements the frozen scope |
+| `Do Not Start Yet` | Any implementation outside the created T3.2.1 worktree; installer/updater/CI release work outside this Task |
+| `Safe To Resume` | Antigravity implements the frozen T3.2.1 scope in the clean worktree from `c2fcb1c` |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map

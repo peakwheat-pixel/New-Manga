@@ -114,10 +114,28 @@ T3.2.1 implementation checks remain `NOT_RUN` until a delivery head exists.
 
 ## Gate ownership and release rule
 
-Codex may create the isolated Antigravity worktree from the recorded base and
-release implementation within the frozen paths. Antigravity must deliver a
+Codex has created the isolated Antigravity worktree from the recorded base and
+released implementation within the frozen paths. Antigravity must deliver a
 fixed head, tests, package evidence and Handoff. DeepSeek Harness must review
 that head from an independent context and cannot review its own changes. Codex
 must not integrate before `approved`. T3.2.1 cannot become `VERIFIED_COMPLETE`
 or `READY` for release while the clean Windows or P0/P1/data-safety evidence is
 missing.
+
+## Implementation release addendum — 2026-09-22
+
+Per the user's explicit instruction, Codex created and released the isolated
+implementation workspace:
+
+```text
+branch: agent/antigravity/T3.2.1-windows-packaging
+worktree: G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging
+HEAD: c2fcb1ce575099f6e74f69c711f423040a545951
+status: clean
+```
+
+Baseline checks in PowerShell using the existing Python 3.12.3 environment
+`G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312` passed: `tests/core` = 49
+passed, exit 0; `python -m compileall -q src tests` = exit 0. No product code,
+package artifact or user data was changed by workspace creation or baseline
+verification. Antigravity may now implement only the frozen Task paths.

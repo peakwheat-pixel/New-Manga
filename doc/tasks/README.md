@@ -4,7 +4,7 @@
 
 > **Historical ledger after 2026-09-20 Rebaseline.** TASK-001～065 文件、Handoff、Review 与 verification 保留为历史证据；它们不再构成当前排期。当前任务树和 Legacy Mapping 见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前唯一 Active Task 见 [STATUS](../STATUS.md)。本目录暂不批量移动或删除文件，以保护既有链接与 Git 追溯。
 
-Current released task: [T3.2.1 — Windows Packaging and Clean-Machine Release Gate](T3.2.1.md), `ready / PASS TO START` at base `c2fcb1c`; implementation worktree is not yet created, and final clean-machine validation remains mandatory. Gate evidence: [release-gate-c2fcb1c](../../verification/T3.2.1/release-gate-c2fcb1c.md). T3.1.1 is complete at product integration `0c70e44`. This line is a navigation pointer only; [REBASELINE_PLAN](../REBASELINE_PLAN.md) and [STATUS](../STATUS.md) remain authoritative.
+Current released task: [T3.2.1 — Windows Packaging and Clean-Machine Release Gate](T3.2.1.md), `ready / implementation released` at base `c2fcb1c`; Antigravity worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging` is clean at the fixed base, and final clean-machine validation remains mandatory. Gate evidence: [release-gate-c2fcb1c](../../verification/T3.2.1/release-gate-c2fcb1c.md). T3.1.1 is complete at product integration `0c70e44`. This line is a navigation pointer only; [REBASELINE_PLAN](../REBASELINE_PLAN.md) and [STATUS](../STATUS.md) remain authoritative.
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 
