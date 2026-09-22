@@ -1,6 +1,6 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — T3.1.1 VERIFIED_COMPLETE; T3.2.1 RELEASE GATE PENDING**
+Status: **ACTIVE DEVELOPMENT BASELINE — T3.1.1 VERIFIED_COMPLETE; T3.2.1 RELEASE GATE PASSED**
 
 Audit date: 2026-09-21 (Asia/Shanghai)
 
@@ -57,8 +57,9 @@ releases a task.
   SQLite v4 adapters with non-destructive one-time legacy import; P2 follow-ups
   are recorded in the Task and integration evidence.
 - **T3.2.1 gap:** no product PyInstaller spec/build script or clean-machine
-  release artifact exists. The old TASK-004 experiment is evidence for a Qt
-  smoke binary, not a product package.
+  release artifact exists. Its Release Gate is now passed for implementation;
+  the old TASK-004 experiment is evidence for a Qt smoke binary, not a product
+  package, and clean-machine validation remains pending.
 - Real provider quality and external endpoint behavior are not proven by the
   unit suite; adapters and fail-closed paths are not production quality claims.
 
@@ -124,7 +125,7 @@ QML shell changes are serialized through Codex.
 | 4 | [T2.1.1 Apply Design F to QML](tasks/T2.1.1.md) | **VERIFIED_COMPLETE**; product code integrated at `5da1cf6` | Qoder / Codex non-author review and integration; base `7f34135` | Shared F tokens use `pragma Singleton` + `qmldir`; all four pages consume them; 158px bookshelf geometry, accepted/completed-state contrast, and a discriminating hard-code guard are verified without business-logic changes. Review/integration evidence: [`review-bc49ef9`](../verification/T2.1.1/review-bc49ef9.md), [`integration-5da1cf6`](../verification/T2.1.1/integration-5da1cf6.md). |
 | 5 | [T2.2.1 Reader & Workbench Polish](tasks/T2.2.1.md) | **VERIFIED_COMPLETE**; integrated `fe9fca0` | ZCode functional implementation + Qoder QML/UI/UX / Codex non-author review and integration | Chapter picker, Workbench empty-state picker, dismissible command-error notification, and webtoon canvas consistency are accessible and tested. Evidence: [`review-0846573`](../verification/T2.2.1/review-0846573.md), [`integration-aad510b`](../verification/T2.2.1/integration-aad510b.md). |
 | 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **VERIFIED_COMPLETE**; product integrated `0c70e44` | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Evidence: [review-899bd3c](../verification/T3.1.1/review-899bd3c.md), [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md). |
-| 7 | T3.2.1 Windows Packaging & Release Gate | PLANNED | Codex / Qoder + DeepSeek Harness | Product onedir launches on clean Windows without Python, completes the core workflow, and exits without a residual process. |
+| 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | **READY; RELEASE GATE PASSED** at base `c2fcb1c`; implementation not started | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | Product onedir launches on clean Windows without Python, completes the core workflow, protects user/source data, and exits without a residual process. Gate: [release-gate-c2fcb1c](../verification/T3.2.1/release-gate-c2fcb1c.md). |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
@@ -138,6 +139,12 @@ The formal [T3.1.1 Task](tasks/T3.1.1.md), its independent
 Review, and Codex [integration evidence](../verification/T3.1.1/integration-899bd3c.md)
 are complete. The product delivery is integrated at `0c70e44`; R-002 and the
 remaining P2 follow-ups are explicitly deferred rather than hidden.
+
+The formal [T3.2.1 Task](tasks/T3.2.1.md) and its [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md)
+are now registered at baseline `c2fcb1c`. The Gate releases packaging
+implementation only; clean Windows, P0/P1, data-safety, benchmark and
+independent Review evidence remain required before `VERIFIED_COMPLETE` or
+`READY` for release.
 
 ## Project control baseline — 2026-09-22
 
@@ -157,7 +164,8 @@ T1.2.1 VERIFIED_COMPLETE
   → T2.1.1 VERIFIED_COMPLETE @ 5da1cf6
   → T2.2.1 VERIFIED_COMPLETE @ fe9fca0
   → T3.1.1 VERIFIED_COMPLETE @ 0c70e44
-  → T3.2.1 clean-machine Windows release gate (not released)
+  → T3.2.1 Release Gate PASSED @ c2fcb1c
+  → T3.2.1 clean-machine Windows release validation
 ```
 
 This is a dependency blocking chain, not a schedule critical path; no reliable

@@ -12,18 +12,18 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 is the next unreleased task. |
-| Current Active Task | None; T3.1.1 is closed after Codex integration. Next action is to establish the T3.2.1 Release Gate. |
-| Current owner/reviewer | T3.1.1: Antigravity implementation; DeepSeek Harness independent non-author Review; Codex Lead / Architect / Integrator. |
-| Current branch/worktree | Main: `master` with product code merge `0c70e44` and subsequent T3.1.1 evidence/governance commits; author worktree `G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite` clean at `81c3197`; Review worktree clean at `4e1eb3a`. |
-| Current review base/head | T3.1.1 base `e771179`; delivery `899bd3c`; Review `4e1eb3a` (`approved`); integration evidence `verification/T3.1.1/integration-899bd3c.md`. |
+| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 Release Gate is passed and its implementation is not started. |
+| Current Active Task | T3.2.1 Release Gate passed; implementation not started. |
+| Current owner/reviewer | T3.2.1: Antigravity implementation; DeepSeek Harness independent non-author Review; Codex Lead / Architect / Integrator; Qoder only if a separately authorized QML/resource seam is needed. |
+| Current branch/worktree | Main: `master` at the current governance baseline; T3.2.1 implementation branch `agent/antigravity/T3.2.1-windows-packaging`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging`, both pending Codex creation from `c2fcb1c`. |
+| Current review base/head | T3.2.1 base `c2fcb1c`; delivery/review/integration not yet available. Gate evidence: `verification/T3.2.1/release-gate-c2fcb1c.md`. |
 | Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
 | Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
 | Compile status | T3.1.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | No release-blocking finding. R-002 duplicate legacy `progress_id` handling and Review R-004/R-005/R-006 are documented P2 follow-ups; T3.2.1 Release Gate is not yet released. |
+| Current blockers | No Gate scope blocker. T3.2.1 clean Windows validation is a hard final-release prerequisite and is not yet available; implementation must remain within the released paths. |
 | Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
 | Worktrees | T2.2.1 ZCode and Qoder worktrees remain preserved and clean at their delivery heads; all existing worktrees remain preserved. No deletion or prune was performed. |
-| Evidence | [T3.1.1 Task](tasks/T3.1.1.md); [T3.1.1 Release Gate](../verification/T3.1.1/release-gate-e771179.md); [T3.1.1 Review](../verification/T3.1.1/review-899bd3c.md); [T3.1.1 integration](../verification/T3.1.1/integration-899bd3c.md); [T2.2.1 integration](../verification/T2.2.1/integration-aad510b.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
+| Evidence | [T3.2.1 Task](tasks/T3.2.1.md); [T3.2.1 Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md); [T3.1.1 integration](../verification/T3.1.1/integration-899bd3c.md); [T2.2.1 integration](../verification/T2.2.1/integration-aad510b.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
 
 ## Verified completed capability
 
@@ -41,7 +41,7 @@ verification are now complete.
 
 ## Open gaps
 
-1. T3.2.1: build and verify a product Windows onedir package on a clean machine.
+1. T3.2.1: implement and verify a product Windows onedir package on a clean machine; Release Gate passed, implementation and final release validation remain open.
 
 ## Stage B execution gate
 
@@ -115,14 +115,28 @@ focused `220 passed`, core `49 passed`, compileall exit 0, smoke exit 0, and
 `git diff --check` exit 0. R-001/R-003 wording is corrected by explicit Task
 disposition; R-002 remains a documented non-blocking P2 defer.
 
-Result: **T3.1.1 = VERIFIED_COMPLETE**. T3.2.1 remains unreleased pending its
-own Release Gate.
+Result: **T3.1.1 = VERIFIED_COMPLETE**. T3.2.1 now has its own Release Gate;
+implementation has not started.
+
+## T3.2.1 Windows Packaging Release Gate checkpoint
+
+Codex established the formal [T3.2.1 Task](tasks/T3.2.1.md) and
+[Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) from the verified
+T3.1.1 baseline `c2fcb1c`. The Gate is **PASS TO START** for Antigravity
+implementation. No packaging spec, build script, artifact or clean-machine
+result is being claimed by this documentation change.
+
+The hard final boundary is D07/D08: a real Windows x64 machine without Python,
+venv, source checkout or developer PATH must complete the package workflow,
+restart with data intact, preserve source/data safety, and leave no residual
+process. TASK-004's minimal onedir experiment remains supporting evidence only;
+its clean-machine E12 is `BLOCKED` and cannot satisfy T3.2.1.
 
 The frozen boundary is: additive v4 migration, SQLite adapters for the existing
 progress/history ports, one-time non-destructive legacy JSON import, bootstrap
 injection, and migration/data-loss evidence. TASK-028 Library/Page/Region work,
 v1–v3 migration edits, backup UI, Pipeline/Provider/QML and packaging remain out
-of scope. T3.2.1 is not released.
+of T3.1.1 scope. T3.2.1 packaging is released only within its own Gate.
 
 ## T1.1.1 preparation Release Gate
 
@@ -347,15 +361,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE` |
-| `ExecutionState` | `IDLE` after T3.1.1 integration; product code head `0c70e44`; evidence/governance records are committed on master |
-| `Current Executor` | No active executor; T3.1.1 is closed. Codex remains Lead/Architect/Integrator; next task requires a new Release Gate |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified |
-| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 Release Gate |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE`; T3.2.1 `ready` / `PASS TO START` |
+| `ExecutionState` | `READY` after T3.2.1 Gate; implementation worktree pending creation from `c2fcb1c` |
+| `Current Executor` | Antigravity is released for T3.2.1 implementation; DeepSeek Harness is the independent Reviewer; Codex remains Lead/Architect/Integrator |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 Gate passed |
+| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 implementation → clean-machine release validation |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
-| `Conditional` | T3.2.1 only after its Release Gate; P2 follow-up work requires a new scoped Task |
-| `Do Not Start Yet` | T3.2.1 implementation and any product change outside a released Task; do not reopen T3.1.1 P2 follow-ups inline |
-| `Safe To Resume` | Create and review the T3.2.1 Release Gate; preserve T3.1.1 author/Review worktrees |
+| `Conditional` | T3.2.1 implementation only within the released packaging paths and evidence requirements |
+| `Do Not Start Yet` | T3.2.1 implementation until Codex creates the fixed-base worktree; any installer/updater/CI release work outside this Task |
+| `Safe To Resume` | Codex creates `agent/antigravity/T3.2.1-windows-packaging` from `c2fcb1c`, then Antigravity implements the frozen scope |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -373,7 +387,9 @@ T2.2.1 VERIFIED_COMPLETE @ fe9fca0
         ↓
 T3.1.1 VERIFIED_COMPLETE @ 0c70e44
         ↓
-T3.2.1 Windows packaging Release Gate (not released)
+T3.2.1 Release Gate PASSED @ c2fcb1c
+        ↓
+T3.2.1 packaging implementation and clean-machine validation
 ```
 
 ### Parallel execution matrix
@@ -383,6 +399,7 @@ T3.2.1 Windows packaging Release Gate (not released)
 | T1.2.1 | complete | closed | provider runtime, VM, Settings QML, bootstrap integrated |
 | T2.1.1 | complete | `CLOSED` | four-page QML/theme; F token contract; T1.2.1 UI contracts |
 | T3.1.1 | complete | closed | SQLite v4 progress/export persistence integrated and independently approved |
+| T3.2.1 | ready | conditional | Release Gate passed; packaging implementation and clean Windows validation pending |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
 
