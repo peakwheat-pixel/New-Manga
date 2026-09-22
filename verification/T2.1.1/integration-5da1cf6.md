@@ -28,6 +28,12 @@ Shell: PowerShell; interpreter:
 | `python -m bootstrap.app --smoke-test --data-root <fresh-temp-dir>` | SQLite/database smoke completed; `library.db` present | 0 |
 | `git diff --check -- src tests doc verification` | no output | 0 |
 
+The same final product tree was rechecked on `master` after the fast-forward:
+full suite `1178 passed, 11 skipped, 0 failed, 1 warning`, exit 0;
+`compileall` exit 0; bootstrap smoke exit 0; and source-protection tests
+`tests/storage/test_managed_storage.py tests/editing/test_text_protection.py`
+reported `19 passed`, exit 0.
+
 Full-suite skips are environment facts: 2 docTR tests, 6 OpenSSL tests, 1
 numpy test, and 2 torch tests. The author’s dependency-equipped evidence
 recorded 1183 passed / 5 skipped; this environment cannot reproduce that exact
@@ -43,7 +49,8 @@ main worktree’s pre-existing dirty paths were not used or overwritten.
 
 ## Gate result
 
-Fresh integration evidence is green for the available environment. T2.1.1 is
-eligible for master fast-forward after the governance records are committed.
+Fresh integration evidence is green for the available environment. The
+integration candidate was fast-forwarded to `master`; the final governance
+commit is the current repository HEAD after this evidence was recorded.
 The reader webtoon canvas consistency and human GUI/DPI inspection remain
 deferred findings, not hidden PASS claims.
