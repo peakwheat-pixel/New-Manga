@@ -9,8 +9,8 @@ graph, acceptance boundaries and historical Task audit live in
 
 1. **T1.1.2 — Region Canvas & Creator**: verified complete.
 2. **T1.1.1 — Production Text Detector**: verified complete; integrated `f56f441`.
-3. **T1.2.1 — Settings UI & ViewModel**: delivered, review blocked on provider
-   registry and network/proxy transport wiring; not integrated.
+3. **[T1.2.1 — Settings UI & ViewModel](tasks/T1.2.1.md)**: R3 review blocked
+   on five findings; bounded R4 revision released, execution idle, not integrated.
 4. **T2.1.1 — Apply Design F**: implement Graphite Atelier in production QML.
 5. **T2.2.1 — Reader & Workbench Polish**.
 6. **T3.1.1 — Unify Storage into SQLite**.

@@ -7,7 +7,8 @@ Audit date: 2026-09-21 (Asia/Shanghai)
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
 Current integration checkpoint (2026-09-22): T1.1.1 product merge `f56f441`;
-T1.2.1 is delivered but not integrated. Live HEAD and execution details are in
+T1.2.1 R3 is `CHANGES_REQUESTED`, not integrated. Its bounded R4 revision is
+released in [T1.2.1](tasks/T1.2.1.md). Live HEAD and execution details are in
 [`STATUS.md`](STATUS.md).
 
 This file is the sole source of truth for sequencing. `doc/STATUS.md` is the
@@ -42,10 +43,11 @@ releases a task.
 ### Partial, blocked or missing
 
 - **T1.2.1 review blocker:** ZCode delivered Settings UI/ViewModel, but it is
-  not integrated. UI-created provider profile IDs do not resolve in the
-  production registry (B-001), and saved network/proxy settings do not reach
-  the provider transport (B-002). The B-003 mirror repair exists only in an
-  isolated Codex candidate. See [non-author review](../verification/T1.2.1/review-c54f360.md).
+  not integrated. R3 closes the single-profile happy path, not the five
+  acceptance-level findings: multi-capability alias collision, proxy-policy
+  semantics, production proxy credential store, disabled fixed-slot profile,
+  and capability-to-binding validation. See the
+  [R3 non-author review](../verification/T1.2.1/review-d978d6f.md).
 - **T2.1.1 gap:** the selected F · Graphite Atelier design is documented, but
   production QML still uses the pre-F hard-coded palette and has no shared
   token/theme layer.
@@ -93,7 +95,8 @@ T1.1.1 Production Text Detector
 
 T1.2.1 Settings UI & ViewModel
   requires: existing TASK-009/TASK-050 settings/credential services
-  writes: settings VM, provider/credential/endpoint/proxy QML, persistence tests
+  R4 writes: bounded registry/runtime/VM/bootstrap repair and focused tests
+  gate: five R3 findings, new Handoff, non-author re-review, Codex integration
 
 T2.1.1 Graphite Atelier QML
   requires: T1.1.2 and T1.2.1 contracts stable
@@ -114,16 +117,17 @@ QML shell changes are serialized through Codex.
 |---:|---|---|---|---|
 | 1 | **T1.1.2 Region Canvas & Creator** | **VERIFIED_COMPLETE** | Qoder implementation / Codex non-author review and integration; base `b985d9c`, integrated `5b91745` | Draw a rectangle/polygon on the original page; inspector updates; matching `regions` and `region_revisions` rows are created; no source-file write. |
 | 2 | T1.1.1 Production Text Detector | **VERIFIED_COMPLETE**; integrated `f56f441` | ZCode implementation / Codex non-author review and integration | A page without regions creates a persisted candidate Region through a selected real detector; configured path no longer fails as `PROVIDER_NOT_CONFIGURED`. |
-| 3 | T1.2.1 Settings UI & ViewModel | **REVIEW_BLOCKED**; not integrated | ZCode implementation / Codex non-author review | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline, and never enter logs/diagnostics. B-001/B-002 remain blocking. |
+| 3 | [T1.2.1 Settings UI & ViewModel](tasks/T1.2.1.md) | **CHANGES_REQUESTED / REVIEW_BLOCKED**; R4 revision scope released, execution idle, not integrated | ZCode implementation / Codex non-author review | Provider, credential, endpoint and proxy settings survive restart, feed the pipeline and never enter logs/diagnostics; R3-B001–B005 must close. |
 | 4 | T2.1.1 Apply Design F to QML | PLANNED | ZCode / Qoder + Codex | Shared F tokens are consumed by all four pages; 158px bookshelf geometry and accepted state contrast are verified without business-logic changes. |
 | 5 | T2.2.1 Reader & Workbench Polish | PLANNED | ZCode / non-author reviewer | Chapter picker, Workbench empty-state picker and dismissible command-error notification are accessible and tested. |
 | 6 | T3.1.1 Unify Storage into SQLite | PLANNED | Codex / DeepSeek Harness | JSON progress/export stores migrate once into transactional SQLite with rollback and no data loss. |
 | 7 | T3.2.1 Windows Packaging & Release Gate | PLANNED | Codex / Qoder + DeepSeek Harness | Product onedir launches on clean Windows without Python, completes the core workflow, and exits without a residual process. |
 
-T1.2.1 requires a bounded provider-registry/network-transport scope decision
-and a formal Task release record (none is committed under `doc/tasks/T1.2.1.md`),
-then author revision, non-author re-review and Codex integration verification
-before T2.1.1 can be released. A roadmap row is not itself a Task Release Gate.
+The [formal T1.2.1 Task](tasks/T1.2.1.md) and [STATUS Release Gate](STATUS.md)
+freeze the R4 repair paths. This is a revision of the existing blocked Task,
+not a second workstream or approval of R3. ZCode must deliver a new head and
+evidence, followed by Codex non-author re-review and integration verification
+before T2.1.1 can be released.
 
 ## Directory and document governance
 
