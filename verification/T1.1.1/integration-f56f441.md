@@ -76,4 +76,3 @@ integration finding and is **INTEGRATED / VERIFIED_COMPLETE**.
 2. `tests/reading_export/test_viewmodels.py::test_start_export_completes_and_updates_history`
    has a pre-existing order-sensitive Qt signal race; it remains assigned to a
    separate export/reading reliability window.
-
