@@ -95,6 +95,7 @@ Rectangle {
                 visible: false
                 width: 0
                 height: 0
+                color: Tokens.ink
             }
             Label {
                 objectName: "commandErrorText"

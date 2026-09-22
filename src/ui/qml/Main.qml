@@ -25,6 +25,8 @@ ApplicationWindow {
     palette.highlightedText: Tokens.onAccent
     palette.text: Tokens.ink
     palette.placeholderText: Tokens.ink3
+    palette.toolTipBase: Tokens.bgPanel
+    palette.toolTipText: Tokens.ink
 
 
     AppShell {

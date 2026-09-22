@@ -177,34 +177,44 @@ Rectangle {
     }
 
     // Reachable controls: declared after the MouseArea so they take their own
-    // clicks instead of being treated as the start of a shape.
-    Row {
+    // clicks instead of being treated as the start of a shape. The pill ground
+    // is ui-reference .vfloat: viewer chrome floats as a bg-panel pill, because
+    // this row sits on bg-canvas. `highlighted` rather than a local palette
+    // override -- writing any palette role on a Control cut it off from the
+    // window palette and left its label black.
+    Rectangle {
         objectName: "regionToolbar"
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.margins: 8
-        spacing: 4
+        anchors.margins: Tokens.gap
+        radius: Tokens.radSm
+        color: Tokens.bgPanel
+        border.color: Tokens.border
         visible: overlay.visible
+        width: regionTools.implicitWidth + 4
+        height: regionTools.implicitHeight + 4
 
-        Button {
-            id: rectTool
-            objectName: "regionToolRect"
-            text: "矩形"
-            visible: overlay.visible
-            enabled: input.enabled
-            palette.button: overlay.drawingMode === "rect" ? Tokens.accent : Tokens.bgRaised
-            palette.buttonText: overlay.drawingMode === "rect" ? Tokens.onAccent : Tokens.ink
-            onClicked: overlay.drawingMode = "rect"
-        }
-        Button {
-            id: polygonTool
-            objectName: "regionToolPolygon"
-            text: "多边形"
-            visible: overlay.visible
-            enabled: input.enabled
-            palette.button: overlay.drawingMode === "polygon" ? Tokens.accent : Tokens.bgRaised
-            palette.buttonText: overlay.drawingMode === "polygon" ? Tokens.onAccent : Tokens.ink
-            onClicked: overlay.drawingMode = "polygon"
+        Row {
+            id: regionTools
+            anchors.centerIn: parent
+            spacing: 4
+
+            Button {
+                objectName: "regionToolRect"
+                text: "矩形"
+                visible: overlay.visible
+                enabled: input.enabled
+                highlighted: overlay.drawingMode === "rect"
+                onClicked: overlay.drawingMode = "rect"
+            }
+            Button {
+                objectName: "regionToolPolygon"
+                text: "多边形"
+                visible: overlay.visible
+                enabled: input.enabled
+                highlighted: overlay.drawingMode === "polygon"
+                onClicked: overlay.drawingMode = "polygon"
+            }
         }
     }
 

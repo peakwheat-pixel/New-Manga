@@ -32,6 +32,8 @@ Window {
     palette.highlightedText: Tokens.onAccent
     palette.text: Tokens.ink
     palette.placeholderText: Tokens.ink3
+    palette.toolTipBase: Tokens.bgPanel
+    palette.toolTipText: Tokens.ink
 
     property var controller: (typeof exportViewModel !== "undefined" ? exportViewModel : null)
     readonly property bool ready: controller !== null && controller.pageCount > 0
