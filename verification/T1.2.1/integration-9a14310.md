@@ -12,7 +12,7 @@ is an existing environment assertion and is not a T1.2.1 failure.
 |---|---|
 | Mainline base | `ade5814` |
 | Author branch | `agent/zcode/T1.2.1-settings-ui-viewmodel` |
-| Author delivery | `e025c9a` |
+| Author delivery | `e025c9a`; authorization supplement `b8a8841` |
 | Integration branch | `agent/codex/T1.2.1-r5-integration` |
 | Integration worktree | `G:\CODEX\New Manga.worktrees\T1.2.1-r5-integration` |
 | Code integration HEAD | `9a14310` |
@@ -31,6 +31,10 @@ The merge was required because master had not yet integrated the earlier
 c54/R3/R4 T1.2.1 implementation commits. A partial R5-only cherry-pick would
 have omitted those prerequisites; the final tree includes them and retains
 the ZCode commit chain as the merge's second parent.
+
+The later `b8a8841` commit is Handoff-only: it records the user's explicit
+§10.6 authorization for the already-reviewed assembly seam. It adds no
+production or test code; Codex preserved it on mainline as commit `24c8005`.
 
 ## Final integration verification
 

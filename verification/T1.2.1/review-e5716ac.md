@@ -2,14 +2,15 @@
 
 ## Decision
 
-**REVIEW APPROVED — B-003 CLOSED FOR INTEGRATION.**
+**REVIEW APPROVED — B-003 CLOSED; integration verified.**
 
 The R5 implementation is within the authorized bootstrap seam, its new
 assembly tests are discriminating, the fail-closed comparison test passes,
 and the independent production probe proves the real credential path. The
-delivery is now eligible for Codex integration and final mainline
-verification. It is not yet `VERIFIED_COMPLETE` until that integration
-verification finishes.
+delivery was integrated by Codex at `9a14310` and independently verified at
+`e92c414`. This report records the fixed-head non-author review and the fresh
+reviewer checks below; later mainline commits do not change the reviewed R5
+code.
 
 ## Fixed inputs and worktree
 
@@ -20,15 +21,15 @@ verification finishes.
 | Reviewer / Integrator | Codex, non-author |
 | R5 base | `39dbbf7` |
 | Implementation commit | `e5716ac` |
-| Handoff / evidence commit | `e025c9a` |
+| Handoff / evidence commits | `e025c9a` + `b8a8841` (§10.6 authorization supplement) |
 | Branch | `agent/zcode/T1.2.1-settings-ui-viewmodel` |
 | Worktree | `G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel` |
-| Final author HEAD | `e025c9a04b8fcd9043985836f6c609312dc25ba5` |
+| Final author HEAD | `b8a8841449135320337c9bc9736f85b695d8ab2a` |
 | Author worktree | clean |
 
 The implementation commit contains the production and test changes. The
-Handoff commit adds §10 and the redacted author probe. Author history was not
-rewritten.
+Handoff commit adds §10 and the redacted author probe; `b8a8841` adds only the
+user authorization supplement in §10.6. Author history was not rewritten.
 
 ## Scope audit
 
@@ -39,13 +40,16 @@ src/bootstrap/app.py
 tests/core/test_transport_credential_assembly.py
 ```
 
-The complete R5 delivery (`39dbbf7..e025c9a`) contains only the two paths
+The complete R5 delivery (`39dbbf7..b8a8841`) contains only the two paths
 above plus:
 
 ```text
 doc/handoffs/T1.2.1-zcode-handoff.md
 verification/T1.2.1/author-r5-credential-store-probe.md
 ```
+
+The final diff also contains the Handoff-only §10.6 authorization supplement;
+it does not alter production code or tests.
 
 No ports, SQLite schema, dependencies, QML, Roadmap, STATUS, or unrelated
 agent files were changed by the author delivery. The diff is whitespace-clean.
@@ -94,6 +98,14 @@ same authorized production assembly seam. It is in `src/bootstrap/app.py`,
 removes a second failure policy that only caught `ImportError`, and is needed
 to make the required “any vault construction failure → None” behavior true
 for the whole production assembly. No rollback is required.
+
+### Handoff §10.6 authorization confirmation
+
+The author branch final head `b8a8841` records the user's explicit
+authorization for the single allowed path drift: deleting the independent
+SettingsViewModel vault construction and making transport, provider resolver,
+and SettingsViewModel consume the assembly-local store. The implementation is
+confined to `src/bootstrap/app.py`; no further scope expansion is inferred.
 
 ### Tests and discriminating evidence
 
@@ -152,6 +164,33 @@ G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
 PYTHONPATH=src
 ```
 
+Independent reviewer rerun on the current integrated mainline used PowerShell
+and the same Python 3.12 venv:
+
+```text
+python -m pytest tests/core/test_transport_credential_assembly.py tests/network/test_transport_local.py tests/providers/test_provider_binding_projection.py tests/ui_shell/test_settings_viewmodel.py tests/core/test_bootstrap.py tests/network/test_settings_profile_persistence.py -q -rs -p no:cacheprovider
+95 passed, 0 skipped, exit 0
+```
+
+The reviewer also reran the production-chain probe with a temporary script:
+
+```text
+COMPLETE_EXCEPTION=ProviderInvalidOutput
+ASSEMBLY_X2=PASS
+REGISTRY_RESOLVE=PASS
+PROXY_FORWARD_AUTH_HEADERS_MATCH=True
+PROXY_AUTH_FAILURES=0
+TARGET_REQUESTS=1
+SECRET_EXPOSED_IN_OUTPUT=False
+R5_REVIEW_PROBE=PASS
+VAULT_CLEANUP=True
+PROBE_EXIT=0
+```
+
+`ProviderInvalidOutput` is expected response-format noise after the local
+target returned HTTP 200; the authenticated forward and exact Basic header
+assertions are the decisive transport evidence.
+
 | Check | Shell / result | Exit |
 |---|---|---:|
 | R5 assembly + fail-closed focused | PowerShell: 5 passed | 0 |
@@ -198,16 +237,36 @@ Full suite: known environment failure only
 compileall: PASS
 bootstrap smoke: PASS
 diff check: PASS
-Codex integration: AUTHORIZED / NEXT STEP
-T1.2.1: READY_FOR_INTEGRATION_VERIFICATION
-T2.1.1: NOT_STARTED
+Codex integration: VERIFIED at `9a14310`; evidence `e92c414`
+T1.2.1: VERIFIED_COMPLETE
+T2.1.1: NOT_STARTED at the R5 review point; current STATUS later records it
+as VERIFIED_COMPLETE at `5da1cf6`
 ```
 
 Evidence source: [author probe](author-r5-credential-store-probe.md).
 
 ## Next task
 
-Codex now performs the serial T1.2.1 integration in an isolated integration
-worktree, reruns the final gate, and only then updates `STATUS` and the Task
-to `done`/`VERIFIED_COMPLETE`. ZCode must not merge master. T2.1.1 remains
-unreleased until the integration gate closes.
+- **Task**: `T2.2.1 Reader & Workbench Polish`; first obtain its own Codex
+  Release Gate. Dependency `T2.1.1` is now integrated.
+- **Agent**: ZCode for the implementation; Codex as non-author reviewer and
+  integrator. Qoder remains responsible for QML/UI/UX decisions.
+- **Recovery point**: `G:\CODEX\New Manga`, `master`, current head
+  `24c8005`; implementation branch/worktree is **待 Codex 创建**.
+- **Scope**: only the paths released by `doc/tasks/T2.2.1.md`; no shared
+  contract, Schema, dependency, or unrelated QML changes without a new Task
+  authorization.
+- **Deliverables**: implementation, focused tests, Handoff, Review and
+  `verification/T2.2.1/**` evidence.
+- **Verification**: record shell, interpreter, full counts, skips and exit
+  codes; run the Task-focused suite, compile, smoke and non-author review
+  before marking `done`.
+
+Forwardable instruction:
+
+> Codex: first create/release the T2.2.1 Release Gate from `master` at
+> `24c8005`; do not start implementation before its dependencies and allowed
+> paths are frozen. After release, assign ZCode to the isolated implementation
+> worktree, require focused tests/Handoff/verification with shell, venv,
+> counts, skips and exit codes, then perform non-author review and serial
+> integration. Do not modify T1.2.1 history or merge from ZCode.
