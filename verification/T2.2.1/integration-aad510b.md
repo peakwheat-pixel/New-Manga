@@ -47,6 +47,6 @@ command-error clearing with unchanged run state, webtoon canvas ground, and
 the ZCode ViewModel seam all have executable evidence. No bootstrap, storage,
 provider/runtime, dependency, schema, or top-level page change was added.
 
-T2.2.1 is eligible for `VERIFIED_COMPLETE` with the known environment probe
-recorded as an external verification limitation. The next release gate is
-T3.1.1; it is not started by this integration.
+T2.2.1 is `VERIFIED_COMPLETE`; the known environment probe is recorded as an
+external verification limitation. The next release gate is T3.1.1; it is not
+started by this integration.
