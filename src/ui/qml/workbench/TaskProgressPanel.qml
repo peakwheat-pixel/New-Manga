@@ -1,15 +1,19 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../theme"
 
 // D05 §31/§32/§33 + D06 §102/§103: the fixed bottom TaskProgressPanel.
 // Fixed in the workbench layout (AC-PROGRESS-001) — never a popup. All
 // fields come from the shared task projection via workbenchViewModel
 // (AC-PROGRESS-007); the panel infers nothing about step success.
+//
+// T2.1.1: colors and sizes come from Tokens, and the run status is a
+// contract §7.2 badge — background + text token + glyph, never color alone.
 Rectangle {
     id: panel
     objectName: "taskProgressPanel"
-    color: "#ffffff"
+    color: Tokens.bgPanel
 
     // Bound by WorkbenchView to the viewmodel's taskProgress map.
     property var progress: ({})
@@ -28,17 +32,19 @@ Rectangle {
     // D05 §33: collapsed compact strip ↔ expanded layout.
     property bool expanded: true
 
-    implicitHeight: expanded ? 132 : 40
+    implicitHeight: expanded ? Tokens.progH : 40
 
+    // Page-level six states (§7.2 tail): waiting is deliberately neutral ink
+    // rather than a status color, so "not yet run" never reads as a result.
     function statusColor(status) {
         return {
-            waiting: "#9ca3af",
-            processing: "#2563eb",
-            completed: "#16a34a",
-            failed: "#dc2626",
-            skipped: "#a855f7",
-            blocked: "#d97706"
-        }[status] || "#9ca3af";
+            waiting: Tokens.ink3,
+            processing: Tokens.stRun,
+            completed: Tokens.stOk,
+            failed: Tokens.stFail,
+            skipped: Tokens.stSkip,
+            blocked: Tokens.stBlock
+        }[status] || Tokens.ink3;
     }
 
     function statusGlyph(status) {
@@ -52,18 +58,45 @@ Rectangle {
         }[status] || "○";
     }
 
+    // Run-state badges, §7.2 table. "completed with failures" is a success
+    // ground with warning text on purpose: a whole batch must not read as a
+    // failure (contract §7.2 closing note), which is why it is not warn-soft.
+    readonly property var badgeStyles: ({
+        pending:                   { bg: Tokens.bgInset,   fg: Tokens.ink2,    glyph: "○" },
+        running:                   { bg: Tokens.runSoft,   fg: Tokens.stRun,   glyph: "●" },
+        paused:                    { bg: Tokens.bgInset,   fg: Tokens.ink2,    glyph: "⏸" },
+        blocked:                   { bg: Tokens.blockSoft, fg: Tokens.stBlock, glyph: "⊘" },
+        interrupted:               { bg: Tokens.warnSoft,  fg: Tokens.stWarnT, glyph: "⚠" },
+        completed:                 { bg: Tokens.okSoft,    fg: Tokens.stOkT,   glyph: "✓" },
+        completed_with_failures:   { bg: Tokens.okSoft,    fg: Tokens.stWarnT, glyph: "✓!" },
+        failed:                    { bg: Tokens.failSoft,  fg: Tokens.stFail,  glyph: "!" },
+        cancelled:                 { bg: Tokens.skipSoft,  fg: Tokens.ink2,    glyph: "■" }
+    })
+
+    function badgeKey(progress) {
+        if (progress.run_status === "running" && progress.pausing === true)
+            return "paused";                       // AC-PAUSE-001 optimistic
+        return progress.run_status || "pending";
+    }
+
+    function badgeStyle(progress) {
+        var key = badgeKey(progress);
+        return badgeStyles[key] || badgeStyles.pending;
+    }
+
     // D05 §62 Task 无运行任务: an honest "no running task" line.
     Label {
         anchors.centerIn: parent
         visible: !panel.hasRun
         objectName: "taskProgressEmpty"
         text: "当前无运行任务"
-        color: "#6b7280"
+        color: Tokens.ink3
+        font.pixelSize: Tokens.fsBase
     }
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 8
+        anchors.margins: Tokens.gap
         spacing: 4
         visible: panel.hasRun
 
@@ -73,10 +106,30 @@ Rectangle {
             Layout.fillWidth: true
             visible: !panel.expanded
             spacing: 8
-            Label { text: panel.progress.run_title || ""; Layout.fillWidth: true; elide: Text.ElideRight }
-            Label { objectName: "taskProgressPercentCompact"; text: (panel.progress.progress_percent || 0) + "%" }
-            Label { text: panel.progress.current_page_name ? ("当前 " + panel.progress.current_page_name) : "" }
-            Label { objectName: "taskProgressStatusCompact"; text: panel.progress.run_status || "" }
+            Label {
+                text: panel.progress.run_title || ""
+                Layout.fillWidth: true
+                elide: Text.ElideRight
+                color: Tokens.ink
+                font.pixelSize: Tokens.fsBase
+            }
+            Label {
+                objectName: "taskProgressPercentCompact"
+                text: (panel.progress.progress_percent || 0) + "%"
+                color: Tokens.ink
+                font.pixelSize: Tokens.fsBase
+            }
+            Label {
+                text: panel.progress.current_page_name ? ("当前 " + panel.progress.current_page_name) : ""
+                color: Tokens.ink2
+                font.pixelSize: Tokens.fsSm
+            }
+            Label {
+                objectName: "taskProgressStatusCompact"
+                text: panel.progress.run_status || ""
+                color: Tokens.ink2
+                font.pixelSize: Tokens.fsSm
+            }
         }
 
         // Expanded header: title + percent + expand/collapse toggle.
@@ -88,17 +141,42 @@ Rectangle {
                 objectName: "taskProgressTitle"
                 text: panel.progress.run_title || ""
                 font.bold: true
+                font.pixelSize: Tokens.fsLg
+                color: Tokens.ink
                 Layout.fillWidth: true
                 elide: Text.ElideRight
             }
-            Label {
-                objectName: "taskProgressStatus"
-                text: panel.statusLabel(panel.progress)
+            Rectangle {
+                objectName: "taskProgressStatusBadge"
+                visible: panel.hasRun
+                radius: Tokens.radSm
+                color: panel.badgeStyle(panel.progress).bg
+                height: statusLabel.implicitHeight + 4
+                width: statusLabel.implicitWidth + 10
+                Row {
+                    anchors.centerIn: parent
+                    spacing: 4
+                    Label {
+                        objectName: "taskProgressStatusGlyph"
+                        text: panel.badgeStyle(panel.progress).glyph
+                        color: panel.badgeStyle(panel.progress).fg
+                        font.pixelSize: Tokens.fsSm
+                    }
+                    Label {
+                        id: statusLabel
+                        objectName: "taskProgressStatus"
+                        text: panel.statusLabel(panel.progress)
+                        color: panel.badgeStyle(panel.progress).fg
+                        font.pixelSize: Tokens.fsSm
+                    }
+                }
             }
             Label {
                 objectName: "taskProgressPercent"
                 text: (panel.progress.progress_percent || 0) + "%"
                 font.bold: true
+                font.pixelSize: Tokens.fsLg
+                color: Tokens.ink
             }
             Button {
                 objectName: "taskProgressToggle"
@@ -117,7 +195,11 @@ Rectangle {
                 model: panel.progress.step_flow || []
                 RowLayout {
                     spacing: 2
-                    Label { text: modelData.label || modelData.type; color: "#374151" }
+                    Label {
+                        text: modelData.label || modelData.type
+                        color: Tokens.ink2
+                        font.pixelSize: Tokens.fsSm
+                    }
                     Label {
                         text: panel.statusGlyph(
                             modelData.state === "running" ? "processing"
@@ -130,7 +212,12 @@ Rectangle {
                             : modelData.state === "failed" ? "failed"
                             : modelData.state === "skipped" ? "skipped" : "waiting")
                     }
-                    Label { text: "→"; visible: index < (panel.progress.step_flow || []).length - 1; color: "#d1d5db" }
+                    Label {
+                        text: "→"
+                        visible: index < (panel.progress.step_flow || []).length - 1
+                        color: Tokens.inkDis
+                        font.pixelSize: Tokens.fsSm
+                    }
                 }
             }
         }
@@ -140,7 +227,11 @@ Rectangle {
             Layout.fillWidth: true
             visible: panel.expanded
             spacing: 12
-            Label { text: "当前页：" }
+            Label {
+                text: "当前页："
+                color: Tokens.ink2
+                font.pixelSize: Tokens.fsBase
+            }
             Button {
                 objectName: "taskProgressCurrentPage"
                 flat: true
@@ -203,7 +294,8 @@ Rectangle {
                 objectName: "taskProgressBlockedReason"
                 visible: (panel.progress.blocked_reasons || []).length > 0
                 text: "阻塞原因：" + (panel.progress.blocked_reasons || []).join("、")
-                color: "#d97706"
+                color: Tokens.stWarnT
+                font.pixelSize: Tokens.fsSm
                 elide: Text.ElideRight
                 Layout.fillWidth: true
             }
