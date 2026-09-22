@@ -102,6 +102,30 @@ class TestShelfCrud:
         assert detail["title"] == "书B"
         assert vm.chapterListModel.rowCount(QModelIndex()) == 1
 
+    def test_selecting_another_book_refreshes_chapters_before_reader_handoff(
+        self, vm, library
+    ) -> None:
+        first = library.create_book("第一本")
+        first_chapter = library.create_chapter(first.book_id, "第1话")
+        second = library.create_book("第二本")
+        second_chapter = library.create_chapter(second.book_id, "第2话")
+        vm.refreshBooks()
+
+        vm.selectBook(first.book_id)
+        vm.selectBook(second.book_id)
+
+        model = vm.chapterListModel
+        chapter_id_role = model.roleForName("chapterId")
+        chapter_ids = [
+            model.data(model.index(row, 0), chapter_id_role)
+            for row in range(model.rowCount(QModelIndex()))
+        ]
+        assert chapter_ids == [second_chapter.chapter_id]
+
+        vm.enterReading(second_chapter.chapter_id)
+        assert vm.navigation.readerContext["book_id"] == second.book_id
+        assert vm.navigation.readerContext["chapter_id"] == second_chapter.chapter_id
+
     def test_delete_book_removes_from_shelf(self, vm, library) -> None:
         book = library.create_book("将删")
         vm.refreshBooks()

@@ -17,6 +17,7 @@ from test_workbench_viewmodel import completed_vm  # module-local helper
 import pytest
 
 from application.tasks.service import PipelineError
+from domain.tasks.models import ScopeType
 
 
 def test_selection_failures_surface_with_diagnosis_and_clear(qapp):
@@ -36,6 +37,25 @@ def test_selection_failures_surface_with_diagnosis_and_clear(qapp):
     # clearing again stays a no-op (no spurious notify storms)
     vm.clearCommandError()
     assert vm.commandErrorText == ""
+
+
+def test_clear_command_error_preserves_existing_run_projection(qapp):
+    service, vm = completed_vm()
+    run = service.create_run(
+        "translate_all", ScopeType.CHAPTER, chapter_id="chapter-1"
+    )
+    service.plan_run(run.run_id)
+    vm._run = run
+    vm.refreshProgress()
+    before = vm.taskProgress
+    assert before["run_status"] == "pending"
+
+    vm._record_command_error("temporary failure", stage="run")
+    vm.clearCommandError()
+
+    assert vm.commandErrorText == ""
+    assert vm.runStatus == "pending"
+    assert vm.taskProgress == before
 
 
 def test_provider_binding_failure_keeps_code_and_detail(qapp):
