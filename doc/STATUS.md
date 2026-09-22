@@ -11,14 +11,14 @@ Audit checkpoint: 2026-09-21 (Asia/Shanghai)
 | Integrated code HEAD | `f56f441c1ce981ff83a3af98c5862917e35711f1` |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Active product task | `T1.1.1 — Production Text Detector = INTEGRATED / VERIFIED_COMPLETE`; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`. |
+| Active product task | `T1.1.1 — Production Text Detector = INTEGRATED / VERIFIED_COMPLETE`; `T1.1.2 — Region Canvas & Creator = VERIFIED_COMPLETE`; `T1.2.1 — Settings UI & ViewModel = REVIEW_BLOCKED`. |
 | Product task owner/reviewer | Implementation: ZCode; non-author review/integration: Codex; T1.1.1 blocking findings: 0; IMPORTANT deferred findings: 2. |
 | Execution branch/worktree | Integrated from `agent/codex/T1.1.1-integration` / `C:\Users\49745\.codex\worktrees\t111-codex-integration\New Manga`; author preserved at `agent/zcode/T1.1.1-production-text-detector` |
 | Execution base/head | review base `4a1ed6ca`; delivery head `2f116a2`; R2 docs head `4a631355` |
 | Verified test status | Fresh Python 3.12 implementation venv: `1077 collected = 1070 passed + 6 skipped + 1 known environment failure`, exit 1. The failure is the pre-existing model-runtime readiness assertion; six skips are OpenSSL-unavailable TLS cases; one existing MOBI deprecation warning. |
 | Smoke status | `python -m bootstrap.app --smoke-test --data-root <temp>` exit 0; SQLite and managed directory created. |
 | Compile status | `python -m compileall -q src tests` exit 0. |
-| Current blockers | No T1.1.1 integration blockers. Deferred outside this task: the expected model-runtime readiness assertion in the implementation venv and the previously observed export signal race; neither is in the detector diff. Settings page is a placeholder with no Settings VM; Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
+| Current blockers | No T1.1.1 integration blockers. T1.2.1 review found unresolved production provider-registry binding and network/proxy transport wiring blockers. Deferred outside these tasks: the expected model-runtime readiness assertion in the implementation venv and the previously observed export signal race; neither is in the detector diff. Graphite F is not applied to production QML; reading/export history remain JSON-backed; product packaging and clean-machine gate are absent. |
 | Dirty main-worktree files | Preserve: `experiments/TASK-017/README.md` (tracked modification); `.qoder-credits/` (19 untracked files); `.codewiki/`, `wiki/`, `.repowikiignore`, `doc/AI_COORDINATION.md` (untracked parallel/generated material). |
 | Worktrees | Existing inventory is a 2026-09-20 conservative snapshot. Old `TASK-013-qoder` is clean but based on pre-Stage-A history and contains prior Qoder work; preserved, not selected. T1.1.2 worktree is clean at `5b91745`. No deletion or prune is authorized. |
 | Last product integration | `5b91745` T1.1.2 Region Canvas & Creator; prior product integration was `38d6eaa` TASK-057. |
@@ -133,6 +133,31 @@ skipped + 1 known environment failure`, exit 1; the failure is the expected
 The historical export signal race remains a separate deferred issue and was
 not part of this diff. Full evidence:
 [T1.1.1 Codex integration evidence](../verification/T1.1.1/integration-f56f441.md).
+
+## T1.2.1 Non-author Review / Integration Gate checkpoint
+
+Codex reviewed ZCode delivery `c54f360` against base `d11d927` in
+`G:\CODEX\New Manga.worktrees\T1.2.1-settings-ui-viewmodel`; the author
+handoff is `ace633a`.
+
+- Result: **REVIEW_BLOCKED — NOT APPROVED FOR INTEGRATION**.
+- Scope: the implementation diff stays within the authorized settings,
+  ViewModel, SettingsView.qml, bootstrap and two test paths. The author
+  worktree was clean.
+- Blocking findings: the UI-created provider profile ID is not resolvable by
+  the production registry, and saved network/proxy settings are not applied
+  to the provider transport. A minimal provider-to-pipeline mirror repair was
+  tested and committed only in isolated Codex candidate `0b4e434`; it was not
+  merged to master.
+- Fresh evidence: focused candidate tests `161 passed, 6 skipped`, exit 0;
+  compileall, bootstrap smoke, source-protection subset, and diff check exit
+  0. Full suite `1094 passed, 6 skipped, 1 failed, 1 warning`, exit 1; the
+  only failure is the known torch-installed registry-readiness environment
+  assertion.
+- Evidence: [T1.2.1 review](../verification/T1.2.1/review-c54f360.md) and
+  [Codex integration evidence](../verification/T1.2.1/integration-0b4e434.md).
+- Status: `T1.2.1 = REVIEW_BLOCKED / IMPLEMENTED_NOT_VERIFIED`. Do not start
+  T2.1.1. ZCode must resolve B-001/B-002 and wait for re-review.
 
 ## Recovery instruction
 
