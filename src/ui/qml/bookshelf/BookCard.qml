@@ -1,8 +1,13 @@
 import QtQuick
 import QtQuick.Controls
+import "../theme"
 
 // D05 §7.1 Book Card: cover placeholder, titles, tags summary, progress,
 // favorite/archive states. No business logic — display only.
+//
+// T2.1.1: every value comes from Tokens (F · Graphite Atelier). Text items set
+// an explicit color and font.pixelSize because the accepted default theme is
+// dark: an unstyled Label inherits the platform's black text and disappears.
 Rectangle {
     id: card
     property string bookId: ""
@@ -16,13 +21,15 @@ Rectangle {
     signal cardActivated(string bookId)
     signal favoriteToggled(string bookId, bool favorite)
 
-    color: cardMouse.containsPress ? "#e8e8e4" : "#ffffff"
-    border.color: "#d9d9d6"
-    radius: 6
+    color: cardMouse.containsPress ? Tokens.bgPress
+           : cardMouse.containsMouse ? Tokens.bgHover : Tokens.bgRaised
+    border.color: Tokens.border
+    radius: Tokens.radSm
 
     MouseArea {
         id: cardMouse
         anchors.fill: parent
+        hoverEnabled: true
         onClicked: card.cardActivated(card.bookId)
     }
 
@@ -35,17 +42,20 @@ Rectangle {
             // cover placeholder until covers exist (TASK-007 stores none)
             width: parent.width
             height: parent.height * 0.45
-            radius: 4
-            color: "#dfe3ee"
+            radius: Tokens.radSm
+            color: Tokens.bgInset
             Label {
                 anchors.centerIn: parent
                 text: "封面"
-                color: "#9aa1b0"
+                color: Tokens.inkDis
+                font.pixelSize: Tokens.fsSm
             }
         }
         Label {
             width: parent.width
             text: card.title
+            color: Tokens.ink
+            font.pixelSize: Tokens.fsLg
             font.weight: Font.DemiBold
             elide: Text.ElideRight
         }
@@ -53,22 +63,36 @@ Rectangle {
             width: parent.width
             visible: card.originalTitle !== ""
             text: card.originalTitle
-            color: "#6b7280"
-            font.pixelSize: 11
+            color: Tokens.ink2
+            font.pixelSize: Tokens.fsSm
             elide: Text.ElideRight
         }
         Item { width: 1; height: 1 }
         Row {
             spacing: 6
+            // Triple-encoded badge: glyph + tokenized color + text (§7.2).
             Rectangle {
                 visible: card.isArchived
-                color: "#f0b429"
-                radius: 3
+                color: Tokens.skipSoft
+                radius: Tokens.radSm
                 width: archivedLabel.implicitWidth + 8
                 height: archivedLabel.implicitHeight + 4
-                Label { id: archivedLabel; anchors.centerIn: parent; text: "归档"; font.pixelSize: 10 }
+                Label {
+                    id: archivedLabel
+                    anchors.centerIn: parent
+                    text: "▣ 归档"
+                    // §7.2 audited badge pair for skip is ink-2 on the
+                    // composited skip-soft ground; st-skip is only audited as
+                    // direct text on a panel.
+                    color: Tokens.ink2
+                    font.pixelSize: Tokens.fsSm
+                }
             }
-            Label { text: "进度 " + card.progress; color: "#6b7280"; font.pixelSize: 11 }
+            Label {
+                text: "进度 " + card.progress
+                color: Tokens.ink3
+                font.pixelSize: Tokens.fsSm
+            }
         }
     }
 
@@ -78,14 +102,18 @@ Rectangle {
         anchors.top: parent.top
         anchors.right: parent.right
         anchors.margins: 6
-        width: 24
-        height: 24
+        width: Tokens.ctlH
+        height: Tokens.ctlH
         text: card.isFavorite ? "★" : "☆"
-        font.pixelSize: 16
+        font.pixelSize: Tokens.fsSub
         ToolTip.visible: hovered
         ToolTip.text: card.isFavorite ? "取消收藏" : "收藏"
         onClicked: card.favoriteToggled(card.bookId, !card.isFavorite)
-        contentItem: Label { text: favoriteButton.text; font.pixelSize: 16; color: "#e2a400" }
+        contentItem: Label {
+            text: favoriteButton.text
+            color: card.isFavorite ? Tokens.accentText : Tokens.ink3
+            font.pixelSize: Tokens.fsSub
+        }
         background: Item {}
     }
 }

@@ -1,5 +1,7 @@
 import QtQuick
 import QtQuick.Controls
+import "../common"
+import "../theme"
 
 // T1.1.2: draw text regions on the Original page and see the existing ones.
 //
@@ -80,7 +82,7 @@ Rectangle {
                 if (!geometry || !geometry.bbox) continue;
                 var box = geometry.bbox;
                 var selected = regions[i].region_id === overlay.vm.inspectorRegionId;
-                ctx.strokeStyle = selected ? "#ea580c" : "#0ea5e9";
+                ctx.strokeStyle = selected ? Tokens.accent : Tokens.stRun;
                 ctx.lineWidth = selected ? 2 : 1;
                 ctx.beginPath();
                 ctx.rect(overlay.toItemX(box[0]), overlay.toItemY(box[1]),
@@ -88,9 +90,11 @@ Rectangle {
                 ctx.stroke();
             }
 
-            // The draft, in item px straight from the pointer.
-            ctx.strokeStyle = "#16a34a";
-            ctx.fillStyle = "#16a34a";
+            // The draft, in item px straight from the pointer. Amber rather
+            // than the region blues so an unfinished box never reads as a
+            // stored Region (.roi=st-run, .roi.sel=accent in the contract).
+            ctx.strokeStyle = Tokens.stWarn;
+            ctx.fillStyle = Tokens.stWarn;
             ctx.lineWidth = 1;
             ctx.beginPath();
             if (overlay.drawingMode === "rect" && overlay.dragging) {
@@ -173,36 +177,48 @@ Rectangle {
     }
 
     // Reachable controls: declared after the MouseArea so they take their own
-    // clicks instead of being treated as the start of a shape.
-    Row {
+    // clicks instead of being treated as the start of a shape. The pill ground
+    // is ui-reference .vfloat: viewer chrome floats as a bg-panel pill, because
+    // this row sits on bg-canvas. `highlighted` rather than a local palette
+    // override -- writing any palette role on a Control cut it off from the
+    // window palette and left its label black.
+    Rectangle {
         objectName: "regionToolbar"
         anchors.top: parent.top
         anchors.right: parent.right
-        anchors.margins: 8
-        spacing: 4
+        anchors.margins: Tokens.gap
+        radius: Tokens.radSm
+        color: Tokens.bgPanel
+        border.color: Tokens.border
         visible: overlay.visible
+        width: regionTools.implicitWidth + 4
+        height: regionTools.implicitHeight + 4
 
-        Button {
-            id: rectTool
-            objectName: "regionToolRect"
-            text: "矩形"
-            visible: overlay.visible
-            enabled: input.enabled
-            palette.buttonText: overlay.drawingMode === "rect" ? "#ffffff" : "#44403c"
-            onClicked: overlay.drawingMode = "rect"
-        }
-        Button {
-            id: polygonTool
-            objectName: "regionToolPolygon"
-            text: "多边形"
-            visible: overlay.visible
-            enabled: input.enabled
-            palette.buttonText: overlay.drawingMode === "polygon" ? "#ffffff" : "#44403c"
-            onClicked: overlay.drawingMode = "polygon"
+        Row {
+            id: regionTools
+            anchors.centerIn: parent
+            spacing: 4
+
+            Button {
+                objectName: "regionToolRect"
+                text: "矩形"
+                visible: overlay.visible
+                enabled: input.enabled
+                highlighted: overlay.drawingMode === "rect"
+                onClicked: overlay.drawingMode = "rect"
+            }
+            Button {
+                objectName: "regionToolPolygon"
+                text: "多边形"
+                visible: overlay.visible
+                enabled: input.enabled
+                highlighted: overlay.drawingMode === "polygon"
+                onClicked: overlay.drawingMode = "polygon"
+            }
         }
     }
 
-    Label {
+    CanvasCaption {
         objectName: "regionToolHint"
         anchors.top: parent.top
         anchors.left: parent.left
@@ -211,7 +227,6 @@ Rectangle {
         text: overlay.drawingMode === "polygon"
               ? "左键添加节点 · 右键闭合并保存 · Esc 取消 · Delete 删除选中"
               : "拖拽框选 · Esc 取消 · Delete 删除选中"
-        color: "#57534e"
     }
 
     Connections {

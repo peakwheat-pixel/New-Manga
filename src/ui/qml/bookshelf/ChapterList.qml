@@ -1,15 +1,20 @@
 import QtQuick
 import QtQuick.Controls
+import "../theme"
 
 // D05 §9 Chapter List: chapter number/title/type/direction/page count +
 // row actions. Row actions call the viewmodel directly; 编辑/页面管理/
 // 翻译设置 are honest placeholders until TASK-013/022 deliver them.
+//
+// T2.1.1: Tokens only. The selected row paints accent-soft over the panel,
+// which is the pair the contract audits as `ink/selected-row` (§6C R3-001),
+// so its text must stay `Tokens.ink` rather than the pre-F blue.
 Rectangle {
     id: chapterList
     objectName: "chapterList"
-    color: "#ffffff"
-    border.color: "#d9d9d6"
-    radius: 6
+    color: Tokens.bgPanel
+    border.color: Tokens.border
+    radius: Tokens.radSm
 
     property var shelf: bookshelfViewModel
     property string currentChapterId: ""
@@ -27,9 +32,9 @@ Rectangle {
 
         delegate: Rectangle {
             width: ListView.view.width
-            height: 44
-            radius: 4
-            color: listView.currentIndex === index ? "#e8edff" : "#fafafa"
+            height: Tokens.rowH
+            radius: Tokens.radSm
+            color: listView.currentIndex === index ? Tokens.accentSoft : Tokens.bgRaised
 
             Row {
                 anchors.fill: parent
@@ -40,12 +45,18 @@ Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
                     text: model.chapterNumber !== "" ? model.chapterNumber : "·"
                     font.weight: Font.DemiBold
-                    color: "#4f6bed"
+                    font.pixelSize: Tokens.fsSm
+                    color: Tokens.accentText
                 }
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: 0
-                    Label { text: model.title; font.weight: Font.DemiBold }
+                    Label {
+                        text: model.title
+                        font.weight: Font.DemiBold
+                        font.pixelSize: Tokens.fsBase
+                        color: Tokens.ink
+                    }
                     Label {
                         text: (model.chapterType === "webtoon" ? "Webtoon" : "分页")
                               + " · "
@@ -53,8 +64,9 @@ Rectangle {
                                  : model.readingDirection === "ltr" ? "从左到右"
                                  : "竖排")
                               + " · " + model.pageCount + " 页"
-                        color: "#6b7280"
-                        font.pixelSize: 11
+                        color: Tokens.ink3
+                        font.pixelSize: Tokens.fsSm
+                        elide: Text.ElideRight
                     }
                 }
                 Item { width: 1; height: 1 }  // spacer before actions
@@ -88,7 +100,8 @@ Rectangle {
             anchors.centerIn: parent
             visible: listView.count === 0
             text: "暂无章节"
-            color: "#6b7280"
+            color: Tokens.ink3
+            font.pixelSize: Tokens.fsBase
         }
     }
 }

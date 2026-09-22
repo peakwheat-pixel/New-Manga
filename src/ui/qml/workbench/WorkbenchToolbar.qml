@@ -1,13 +1,14 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../theme"
 
 // D05 §17 Workbench Toolbar: Book/Chapter context, page navigation,
 // viewer mode switch, and the batch command entries (D05 §56).
 Rectangle {
     id: toolbar
     objectName: "workbenchToolbar"
-    color: "#ffffff"
+    color: Tokens.bgPanel
 
     property string bookTitle: ""
     property string chapterTitle: ""
@@ -22,23 +23,25 @@ Rectangle {
     signal translateUntranslatedClicked()
     signal translateSelectedClicked()
 
-    implicitHeight: 48
+    implicitHeight: Tokens.tbH
 
     RowLayout {
         anchors.fill: parent
-        anchors.margins: 8
-        spacing: 8
+        anchors.margins: Tokens.gap
+        spacing: Tokens.gap
 
         Label {
             objectName: "toolbarContext"
             text: toolbar.bookTitle + (toolbar.chapterTitle ? " · " + toolbar.chapterTitle : "")
             font.bold: true
+            color: Tokens.ink
+            font.pixelSize: Tokens.fsSub
         }
 
         Button { objectName: "toolbarPrevPage"; flat: true; text: "上一页"; onClicked: toolbar.previousPageClicked() }
         Button { objectName: "toolbarNextPage"; flat: true; text: "下一页"; onClicked: toolbar.nextPageClicked() }
 
-        Rectangle { width: 1; height: 24; color: "#e5e7eb" }
+        Rectangle { width: 1; height: 24; color: Tokens.divider }
 
         // D05 §20.1 viewer modes.
         RowLayout {

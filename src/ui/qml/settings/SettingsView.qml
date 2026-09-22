@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
+import "../theme"
 
 // D05 §43.1 SettingsView: the settings page is top-level; inside, a fixed
 // left category list (no sub-routes) and a content pane on the right.
@@ -14,7 +15,7 @@ import QtQuick.Layouts
 Rectangle {
     id: settings
     objectName: "settingsView"
-    color: "#f5f5f4"
+    color: Tokens.bgPage
 
     property var pendingNetworkPayload: null
 
@@ -29,11 +30,11 @@ Rectangle {
     Component.onCompleted: {
         if (settingsViewModel) {
             settingsViewModel.saved.connect(function (message) {
-                statusLabel.color = "#166534";
+                statusLabel.color = Tokens.stOkT;
                 statusLabel.text = message;
             });
             settingsViewModel.failed.connect(function (message) {
-                statusLabel.color = "#991b1b";
+                statusLabel.color = Tokens.stFail;
                 statusLabel.text = message;
             });
             settingsViewModel.confirmationRequired.connect(function () {
@@ -117,8 +118,8 @@ Rectangle {
         anchors.left: parent.left
         anchors.margins: 8
         width: 180
-        color: "#ffffff"
-        border.color: "#d9d9d6"
+        color: Tokens.bgPanel
+        border.color: Tokens.border
         radius: 6
 
         ListView {
@@ -145,8 +146,8 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 8
         anchors.leftMargin: 0
-        color: "#ffffff"
-        border.color: "#d9d9d6"
+        color: Tokens.bgPanel
+        border.color: Tokens.border
         radius: 6
         clip: true
 
@@ -249,7 +250,7 @@ Rectangle {
                                 ? settingsViewModel.profiles[providerSelect.currentIndex].credential_set
                                 : false
                             text: hasSecret ? "已保存（内容不可查看）" : "未保存"
-                            color: "#6b7280"
+                            color: Tokens.ink3
                         }
                     }
                     Label { text: "代理策略" }
@@ -513,7 +514,7 @@ Rectangle {
             anchors.centerIn: parent
             visible: categoryList.currentIndex >= 2
             text: "设置项将在后续切片接入"
-            color: "#6b7280"
+            color: Tokens.ink3
         }
     }
 
@@ -524,7 +525,7 @@ Rectangle {
         anchors.right: parent.right
         anchors.margins: 8
         elide: Text.ElideRight
-        color: "#374151"
+        color: Tokens.ink
     }
 
     // AC-SEC-005: the dangerous-setting confirmation. Accepting re-submits
