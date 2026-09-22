@@ -1,0 +1,8 @@
+Task: T2.2.1
+Commit: 16810c55c28ada960420d8053f47f29b1f71b8f0
+Shell: PowerShell
+Worktree: G:\CODEX\New Manga.worktrees\T2.2.1-qoder
+Interpreter: G:\CODEX\New Manga.task-envs\T1.1.1-impl-py312\Scripts\python.exe
+Environment: PYTHONPATH=src; PYTHONDONTWRITEBYTECODE not set
+Command: python -m pytest tests/ui_shell tests/workbench/test_qml_workbench.py tests/reading_export/test_qml_contract.py -q -p no:cacheprovider -rs
+Result: 167 passed, 0 skipped, 0 failed, exit 0
