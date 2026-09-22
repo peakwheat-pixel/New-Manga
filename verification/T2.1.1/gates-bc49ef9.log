@@ -42,3 +42,4 @@ tests/ui_shell/test_design_f_applied.py
 tests/ui_shell/test_design_tokens.py
 tests/workbench/test_qml_workbench.py
 verification/T2.1.1/generate_tokens.py
+on the final HEAD 672902d (evidence + handoff only; code unchanged) every gate was re-run from a clean `git status`: full suite 1183 passed / 5 skipped / exit 0, compileall exit 0, `git diff --check 7f34135..HEAD -- src tests doc` no output, `git diff --name-only 7f34135..HEAD | grep -c '^src/.*[.]py$'` = 0 (the no-business-logic-change acceptance item).
