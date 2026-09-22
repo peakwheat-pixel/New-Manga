@@ -78,9 +78,18 @@ class ProviderRegistration:
 
 @dataclass
 class ProviderRegistry:
-    """Registry of provider descriptors with probed readiness."""
+    """Registry of provider descriptors with probed readiness.
+
+    ``binding_aliases`` maps Settings-UI provider profile ids to the fixed
+    registry id whose slot carries that profile's configuration (the
+    projection built at assembly by ``build_provider_runtime``). Resolution
+    translates an aliased id up front, so a Run's frozen snapshot can name
+    the user profile while readiness and instance caching stay keyed by
+    the one registry id.
+    """
 
     credential_resolver: Callable[[str], str | None] | None = None
+    binding_aliases: Mapping[str, str] = field(default_factory=dict, repr=False)
     _registrations: dict[str, ProviderRegistration] = field(default_factory=dict, repr=False)
     _instances: dict[str, Any] = field(default_factory=dict, repr=False)
 
@@ -224,6 +233,7 @@ class ProviderRegistry:
 
     def resolve(self, capability: str, provider_id: str) -> Any:
         """Return the provider instance for one capability or fail closed."""
+        provider_id = self.binding_aliases.get(provider_id, provider_id)
         registration = self._registrations.get(provider_id)
         if registration is None:
             raise ProviderUnavailable(

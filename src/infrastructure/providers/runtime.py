@@ -55,6 +55,11 @@ from infrastructure.providers.translation_openai import (
     sakura_config,
 )
 from ports.inpaint.ports import ROUTE_EDGE_BLEED, ROUTE_SIMPLE_FILL
+from ports.network.profiles import (
+    DEFAULT_TIMEOUT_SECONDS,
+    MODE_DIRECT,
+    NetworkProfile,
+)
 from ports.network.transport import Transport
 from ports.providers.profiles import (
     CAPABILITY_DETECTION,
@@ -185,11 +190,141 @@ def _openai_config(
         credential_ref=(
             str(profile["credential_ref"]) if profile.get("credential_ref") else None
         ),
+        network_profile=_network_profile_for(settings, profile),
         extra_options=tuple(
             (str(key), str(value))
             for key, value in dict(profile.get("options", {}) or {}).items()
         ),
     )
+
+
+def _network_profile_for(
+    settings: Mapping[str, Any], profile: Mapping[str, Any]
+) -> NetworkProfile | None:
+    """The network profile one provider profile names, or ``None``.
+
+    The mirrored settings shape stores network profiles under
+    ``providers.networks``; an id that matches nothing leaves the config
+    without one, and the client then falls back to the direct default.
+    """
+    network_id = str(profile.get("network_profile_id", "") or "").strip()
+    if not network_id:
+        return None
+    providers = settings.get("providers")
+    networks = providers.get("networks") if isinstance(providers, Mapping) else None
+    raw = networks.get(network_id) if isinstance(networks, Mapping) else None
+    if not isinstance(raw, Mapping):
+        return None
+    return _network_profile_from_settings(network_id, raw)
+
+
+def _network_profile_from_settings(
+    network_id: str, raw: Mapping[str, Any]
+) -> NetworkProfile:
+    """Rebuild one network profile from its mirrored settings dict."""
+    bypass = raw.get("bypass_hosts")
+    return NetworkProfile(
+        network_profile_id=network_id,
+        name=str(raw.get("name", network_id)),
+        mode=str(raw.get("mode", MODE_DIRECT)),
+        http_proxy=str(raw.get("http_proxy", "")),
+        https_proxy=str(raw.get("https_proxy", "")),
+        socks5_proxy=str(raw.get("socks5_proxy", "")),
+        username=str(raw.get("username", "")),
+        credential_ref=(
+            str(raw["credential_ref"]) if raw.get("credential_ref") else None
+        ),
+        bypass_hosts=frozenset(str(h) for h in bypass) if bypass else frozenset(),
+        inherit_system=bool(raw.get("inherit_system", True)),
+        timeout_seconds=float(raw.get("timeout_seconds", DEFAULT_TIMEOUT_SECONDS)),
+        verify_tls=bool(raw.get("verify_tls", True)),
+        allow_proxy_failure_direct_fallback=bool(
+            raw.get("allow_proxy_failure_direct_fallback", False)
+        ),
+    )
+
+
+# -- profile binding projection (T1.2.1 R3 B-001) --------------------------
+
+#: Vision steps map onto one fixed registry provider each; ``translate``
+#: splits by provider type and every other step has no remote profile
+#: semantics (local baselines, render, unimplemented learned routes).
+_STEP_VISION_TARGETS = {
+    "detect": PROVIDER_VISION_DETECTION,
+    "ocr": PROVIDER_VISION_OCR,
+}
+
+
+def _registry_target_for_step(step: str, provider_type: str) -> str | None:
+    if step == "translate":
+        return (
+            PROVIDER_SAKURA
+            if provider_type == "local-sakura"
+            else PROVIDER_OPENAI_TRANSLATION
+        )
+    return _STEP_VISION_TARGETS.get(step)
+
+
+def _binding_named_profile_id(binding: Any) -> str:
+    """The user profile id one stored binding names, if any."""
+    if isinstance(binding, str):
+        return binding.strip()
+    if isinstance(binding, Mapping):
+        for key in ("provider_profile_id", "id", "provider_id"):
+            value = binding.get(key)
+            if isinstance(value, str) and value.strip():
+                return value.strip()
+    return ""
+
+
+def _apply_profile_bindings(
+    settings: Mapping[str, Any], provider_bindings: Mapping[str, Any] | None
+) -> tuple[Mapping[str, Any], dict[str, str]]:
+    """Project bound user profiles onto the fixed registry slots.
+
+    The Settings UI binds pipeline steps to *user-named* profile ids while
+    the registry resolves fixed provider ids only. For every step binding
+    that names a stored, enabled profile, the profile data is copied into
+    the fixed slot of the registry provider serving that step, and a
+    ``profile id → registry id`` alias is returned so
+    ``ProviderRegistry.resolve`` accepts the profile id as well.
+
+    The input mappings are never mutated; bindings that already name a
+    fixed id (the pre-T1.2.1 shape) pass through untouched, and disabled
+    or unknown profiles stay unprojected so resolution keeps failing
+    closed.
+    """
+    if not provider_bindings:
+        return settings, {}
+    providers = settings.get("providers")
+    profiles = providers.get("profiles") if isinstance(providers, Mapping) else None
+    if not isinstance(profiles, Mapping):
+        return settings, {}
+
+    effective_profiles = dict(profiles)
+    aliases: dict[str, str] = {}
+    for step, binding in provider_bindings.items():
+        profile_id = _binding_named_profile_id(binding)
+        if not profile_id or profile_id not in effective_profiles:
+            continue
+        raw = effective_profiles[profile_id]
+        if not isinstance(raw, Mapping) or raw.get("enabled") is False:
+            continue
+        target = _registry_target_for_step(
+            str(step), str(raw.get("provider_type", ""))
+        )
+        if target is None or target == profile_id:
+            continue
+        effective_profiles[target] = dict(raw)
+        aliases[profile_id] = target
+    if not aliases:
+        return settings, {}
+
+    effective = dict(settings)
+    effective_providers = dict(providers)
+    effective_providers["profiles"] = effective_profiles
+    effective["providers"] = effective_providers
+    return effective, aliases
 
 
 def _openai_requirements(
@@ -211,17 +346,22 @@ def _openai_requirements(
 def build_provider_registry(
     *,
     settings: Mapping[str, Any] | None = None,
+    provider_bindings: Mapping[str, Any] | None = None,
     transport: Transport | None = None,
     credential_resolver: Callable[[str], str | None] | None = None,
     models: ModelManager | None = None,
 ) -> tuple[ProviderRegistry, ModelManager]:
     """Register every provider this build knows about."""
     settings = settings or {}
+    settings, binding_aliases = _apply_profile_bindings(settings, provider_bindings)
     model_manager = models or ModelManager()
     for spec in _model_specs(settings):
         model_manager.register(spec)
 
-    registry = ProviderRegistry(credential_resolver=credential_resolver)
+    registry = ProviderRegistry(
+        credential_resolver=credential_resolver,
+        binding_aliases=binding_aliases,
+    )
 
     def vision_client(provider_id: str, provider_type: str) -> Callable[[], Any]:
         def factory() -> VisionOcrProvider:
@@ -393,16 +533,22 @@ def build_provider_registry(
 def build_provider_runtime(
     *,
     settings: Mapping[str, Any] | None = None,
+    provider_bindings: Mapping[str, Any] | None = None,
     transport: Transport | None = None,
     credential_resolver: Callable[[str], str | None] | None = None,
     devices: DeviceManager | None = None,
 ) -> ProviderRuntime:
     settings = settings or {}
+    settings, _ = _apply_profile_bindings(settings, provider_bindings)
     registry, models = build_provider_registry(
         settings=settings,
+        provider_bindings=provider_bindings,
         transport=transport,
         credential_resolver=credential_resolver,
     )
+    # The projection is idempotent: the second pass inside
+    # build_provider_registry reproduces the same slots and aliases, so
+    # the sakura reads below see the projected settings too.
     sakura_profile = _provider_settings(settings, PROVIDER_SAKURA)
     sakura_base_url = str(sakura_profile.get("base_url", "http://127.0.0.1:8080/v1"))
     probe = (

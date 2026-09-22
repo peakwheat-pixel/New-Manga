@@ -634,8 +634,11 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         # the provider runtime. Nothing is wired when no provider is ready:
         # the step then fails with PROVIDER_UNAVAILABLE / Not-Ready instead of
         # inventing a deterministic placeholder.
+        # T1.2.1 R3: the persisted step bindings ride along so a bound
+        # settings profile is projected onto its registry slot at assembly.
         provider_runtime = build_provider_runtime(
             settings=_load_pipeline_settings(conn),
+            provider_bindings=_load_pipeline_defaults(conn)["provider_bindings"],
             transport=StdlibTransport(),
             credential_resolver=_credential_resolver(),
         )
