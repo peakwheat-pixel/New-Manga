@@ -8,7 +8,7 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 |---|---|
 | Latest product integration | `f56f441c1ce981ff83a3af98c5862917e35711f1` (T1.1.1 product merge) |
 | Branch | `master` |
-| Mainline HEAD at this checkpoint | `ef8d0e02a21f2834420130a2553e90fdf9443368` (later documentation commits; no `src/**`, `tests/**` or `requirements.txt` change since `f56f441`) |
+| Mainline base checked before this reconciliation | `ef8d0e02a21f2834420130a2553e90fdf9443368` (later documentation commits; no `src/**`, `tests/**` or `requirements.txt` change since `f56f441`). Read live HEAD with `git rev-parse HEAD`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
 | Current product checkpoint | `T1.2.1 — Settings UI & ViewModel = REVIEW_BLOCKED / NOT INTEGRATED`; T1.1.1 and T1.1.2 are `VERIFIED_COMPLETE`. |
