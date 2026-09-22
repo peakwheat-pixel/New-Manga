@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "../theme"
 
 // D05 §61 nav badge subset: workbench task-state pill. StatusBadge polish
 // lands in TASK-022. (Was an inline `component` first, but the 6.11 engine
@@ -7,8 +8,8 @@ import QtQuick.Controls
 Rectangle {
     id: badge
     property string text: ""
-    color: "#4f6bed"
-    radius: 4
+    color: Tokens.stRun
+    radius: Tokens.radSm
     width: badgeLabel.implicitWidth + 8
     height: badgeLabel.implicitHeight + 4
 
@@ -16,7 +17,7 @@ Rectangle {
         id: badgeLabel
         anchors.centerIn: parent
         text: badge.text
-        color: "white"
-        font.pixelSize: 10
+        color: Tokens.onAccent
+        font.pixelSize: Tokens.fsSm
     }
 }

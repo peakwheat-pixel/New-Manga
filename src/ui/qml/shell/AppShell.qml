@@ -4,6 +4,7 @@ import "../bookshelf"
 import "../workbench"
 import "../reader"
 import "../settings"
+import "../theme"
 
 // D05 §3.1 App Shell: fixed primary navigation rail on the left, current
 // top-level page on the right. All four pages stay instantiated — only
@@ -23,7 +24,7 @@ Item {
         anchors.top: parent.top
         anchors.bottom: parent.bottom
         anchors.left: parent.left
-        width: 64
+        width: Tokens.railW
     }
 
     Item {

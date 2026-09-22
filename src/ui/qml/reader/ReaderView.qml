@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import "../common"
+import "../theme"
 import "../windows"
 
 // Reader page (TASK-015; D05 §37~42).
@@ -21,7 +22,7 @@ import "../windows"
 Rectangle {
     id: rv
     objectName: "readerView"
-    color: "#f5f5f4"
+    color: Tokens.bgPage
     focus: true  // keyboard paging (D05 §39) needs active focus on this page
 
     property var model: (typeof readerViewModel !== "undefined" ? readerViewModel : null)
@@ -158,7 +159,8 @@ Rectangle {
             Layout.fillWidth: true
             Layout.leftMargin: 8
             text: active ? model.statusMessage : ""
-            color: "#9a3412"
+            color: Tokens.stWarnT
+            font.pixelSize: Tokens.fsSm
             visible: text !== ""
             wrapMode: Text.WordWrap
         }
@@ -172,7 +174,8 @@ Rectangle {
             text: active && model.bookSummary.has_progress
                   ? "最后阅读 " + model.bookSummary.last_read_at + " · 累计 " + Math.round(model.totalReadSeconds) + " 秒"
                   : ""
-            color: "#57534e"
+            color: Tokens.ink3
+            font.pixelSize: Tokens.fsSm
         }
 
         // ---- Viewer (D05 §39 paged / §40 webtoon) ----
@@ -186,7 +189,7 @@ Rectangle {
         Component {
             id: pagedViewer
             Rectangle {
-                color: "#1c1917"
+                color: Tokens.bgCanvas
                 Image {
                     objectName: "readerPage"
                     anchors.centerIn: parent

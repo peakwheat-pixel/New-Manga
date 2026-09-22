@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import QtQuick.Dialogs
+import "../theme"
 
 // Export window (TASK-015; D05 §51): 范围 / 格式 / 输出位置 / 渲染设置
 // (content mode + stale policy) / 文件命名 / 覆盖策略, 导出 + 取消, and
@@ -18,6 +19,19 @@ Window {
     width: 560
     height: 480
     modality: Qt.ApplicationModal
+    color: Tokens.bgPage
+    // F ships dark by default, so the Controls that still draw with the
+    // platform style have to read the same palette: Button, TextField and
+    // Dialog take these roles, and every Label inherits windowText.
+    palette.window: Tokens.bgPage
+    palette.windowText: Tokens.ink
+    palette.base: Tokens.bgInset
+    palette.button: Tokens.bgRaised
+    palette.buttonText: Tokens.ink
+    palette.highlight: Tokens.accent
+    palette.highlightedText: Tokens.onAccent
+    palette.text: Tokens.ink
+    palette.placeholderText: Tokens.ink3
 
     property var controller: (typeof exportViewModel !== "undefined" ? exportViewModel : null)
     readonly property bool ready: controller !== null && controller.pageCount > 0
@@ -153,7 +167,8 @@ Window {
             id: staleBanner
             objectName: "exportStaleBanner"
             Layout.fillWidth: true
-            color: "#9a3412"
+            color: Tokens.stWarnT
+            font.pixelSize: Tokens.fsSm
             wrapMode: Text.WordWrap
             visible: false
         }
@@ -162,7 +177,8 @@ Window {
             id: statusLabel
             objectName: "exportStatus"
             Layout.fillWidth: true
-            color: "#1f2328"
+            color: Tokens.ink
+            font.pixelSize: Tokens.fsSm
             wrapMode: Text.WordWrap
             visible: text !== ""
         }

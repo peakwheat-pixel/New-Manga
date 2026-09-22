@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "../theme"
 
 // D05 §3.1 primary navigation rail: exactly four sibling entries, the
 // bookshelf selected at startup. Switching pages never destroys views —
@@ -7,7 +8,7 @@ import QtQuick.Controls
 Rectangle {
     id: rail
     objectName: "navRail"
-    color: "#ececea"
+    color: Tokens.bgRail
 
     Column {
         anchors.top: parent.top

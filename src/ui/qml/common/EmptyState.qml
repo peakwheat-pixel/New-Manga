@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls
+import "../theme"
 
 // D05 §62 empty state: title + optional description + action buttons
 // provided by the user of this component (default property).
@@ -9,24 +10,25 @@ Column {
     property string description: ""
     default property alias actions: actionsRow.data
 
-    spacing: 12
+    spacing: Tokens.gap
 
     Label {
         anchors.horizontalCenter: parent.horizontalCenter
         text: root.title
-        font.pixelSize: 18
+        font.pixelSize: Tokens.fsSub
         font.weight: Font.DemiBold
-        color: "#1f2328"
+        color: Tokens.ink
     }
     Label {
         anchors.horizontalCenter: parent.horizontalCenter
         visible: root.description !== ""
         text: root.description
-        color: "#6b7280"
+        color: Tokens.ink3
+        font.pixelSize: Tokens.fsSm
     }
     Row {
         id: actionsRow
         anchors.horizontalCenter: parent.horizontalCenter
-        spacing: 8
+        spacing: Tokens.gap
     }
 }
