@@ -14,7 +14,7 @@ loss or mutation of user data.
 
 ## Execution sequence
 
-1. Create the Codex worktree from base `e771179` and record its exact path.
+1. Create the Antigravity worktree from base `e771179` and record its exact path.
 2. Add only the next SQLite migration and the smallest adapters that preserve the
    existing application ports. Reuse `application_metadata` for one-time import
    markers unless a smaller v4 mechanism is required by the implementation.

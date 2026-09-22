@@ -106,3 +106,22 @@ Codex may now create the isolated worktree and implement T3.1.1. DeepSeek Harnes
 must remain independent and cannot review an implementation it authored. No
 downstream T3.2.1 release is permitted until this Task reaches
 `VERIFIED_COMPLETE`.
+
+## Reassignment addendum — 2026-09-22
+
+Per the user's explicit reassignment, implementation ownership is now
+**Antigravity**. Codex remains Lead / Architect / Integrator and DeepSeek Harness
+remains the independent non-author Reviewer. The original Gate base and frozen
+scope are unchanged.
+
+The released implementation worktree was created from `e771179` with:
+
+```text
+branch: agent/antigravity/T3.1.1-storage-sqlite
+worktree: G:/CODEX/New Manga.worktrees/T3.1.1-antigravity-storage-sqlite
+HEAD: e771179
+status: clean
+```
+
+The prior Codex worktree is preserved but is no longer the active implementation
+workspace. No product code or database was changed by this reassignment.
