@@ -28,6 +28,11 @@ Popup {
 
     Accessible.name: "选择作品和章节"
 
+    Keys.onEscapePressed: function(event) {
+        close();
+        event.accepted = true;
+    }
+
     function syncBook() {
         if (shelf === null || chapterPickerBookList.currentValue === undefined
                 || chapterPickerBookList.currentValue === "")

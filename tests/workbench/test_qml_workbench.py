@@ -325,6 +325,7 @@ def test_command_error_bar_visible_only_when_a_failure_is_held(workbench, qapp):
     text_item = workbench.view.findChild(QObject, "commandErrorText")
     assert text_item is not None
     assert "未选择任何 Page" in str(text_item.property("text"))
+    run_status_before_dismiss = workbench.vm.runStatus
 
     # copy action runs the clipboard helper without error
     copy_button = workbench.view.findChild(QObject, "commandErrorCopyButton")
@@ -341,6 +342,7 @@ def test_command_error_bar_visible_only_when_a_failure_is_held(workbench, qapp):
     click_button(close_button)
     qapp.processEvents()
     assert workbench.vm.commandErrorText == ""
+    assert workbench.vm.runStatus == run_status_before_dismiss
     assert bool(bar.property("visible")) is False
 
 

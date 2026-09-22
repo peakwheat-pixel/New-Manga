@@ -25,9 +25,10 @@ from fakes import InMemoryLibraryRepository, StubImporter
 
 import pytest
 
-from PySide6.QtCore import QObject, QUrl
+from PySide6.QtCore import QObject, QUrl, Qt
 from PySide6.QtQml import QQmlComponent, QQmlEngine
 from PySide6.QtQuick import QQuickWindow  # noqa: F401  (registers QQuickItem* converters for itemAt)
+from PySide6.QtTest import QTest
 
 SHELL_QML = helpers.SRC_ROOT / "ui" / "qml" / "shell" / "AppShell.qml"
 PAGES = ("bookshelf", "workbench", "reader", "settings")
@@ -299,7 +300,12 @@ def test_workbench_and_reader_pick_existing_book_chapter_context(shell, qapp):
     click_button(pick)
     picker = find_one(shell.root, "readerChapterPicker")
     assert bool(picker.property("visible")) is True
-    click_button(find_one(picker, "chapterPickerCancel"))
+    picker.setProperty("focus", True)
+    shell.window.show()
+    shell.window.requestActivate()
+    qapp.processEvents()
+    QTest.keyClick(shell.window, Qt.Key_Escape)
+    qapp.processEvents()
     assert bool(picker.property("visible")) is False
     click_button(pick)
     reader_book_list = find_one(picker, "chapterPickerBookList")
