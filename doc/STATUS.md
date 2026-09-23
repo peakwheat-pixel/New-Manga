@@ -15,7 +15,7 @@ Execution checkpoint: 2026-09-23 (Asia/Shanghai)
 | Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 remains `CHANGES_REQUESTED`; `T3.2.1-REPAIR-3` is released but not started. |
 | Current Active Task | [T3.2.1-REPAIR-3](tasks/T3.2.1-REPAIR-3.md) is registered and released to Antigravity; no implementation has started. |
 | Current owner/reviewer | `T3.2.1-REPAIR-3`: Antigravity implementation; DeepSeek Harness independent non-author re-Review; Codex Lead / Architect / Integrator. |
-| Current branch/worktree | Main: `master` remains product-unintegrated; REPAIR-3 branch `agent/antigravity/T3.2.1-repair-3`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3`, base `ffff7c6`; prior delivery worktree remains preserved. |
+| Current branch/worktree | Main: `master` remains product-unintegrated; REPAIR-3 branch `agent/antigravity/T3.2.1-repair-3`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3`, base `ffff7c6`; additional branch commits only sync Codex release documents. Prior delivery worktree remains preserved. |
 | Current review base/head | T3.2.1 product base `c2fcb1c`; REPAIR-2 product head `7d687f5`; evidence head `ffff7c6`; DSH Review `4613338` is `CHANGES_REQUESTED` (R-008 and AC7 consistency remain open). |
 | Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
 | Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
