@@ -43,9 +43,11 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
   不归因于 New Manga，也不把 Sandbox 或 AC3 记为可用/PASS。用户随后在管理员终端
   运行 `DISM.exe /Online /Cleanup-Image /RestoreHealth`（成功）和 `sfc /scannow`
   （发现损坏并成功修复），并重启。2026-09-23 22:28:36 再次通过 Windows 功能界面
-  启用 Sandbox 仍失败；新 CBS 记录同一 `0x80073712` 组件存储错误。下一步用管理员
-  PowerShell 单独启用 `Containers-DisposableClientVM`，以隔离功能界面的批量事务；
-  结果未取得，AC3 仍为 `NOT_RUN`。
+  启用 Sandbox 仍失败；新 CBS 记录同一 `0x80073712` 组件存储错误。用户随后在管理员
+  PowerShell 单独运行 `Enable-WindowsOptionalFeature -Online -FeatureName
+  Containers-DisposableClientVM -All`，仍收到「组件存储已损坏」。Sandbox 路线暂停；
+  转向同一宿主的独立 Hyper-V Windows 11 VM。宿主 `vmms`、`vmcompute` 均在运行，
+  提升账户 `Get-VM` 此前为空；VM 创建与干净机测试尚未执行，AC3 仍为 `NOT_RUN`。
 
 ## 未闭环项与完成证据
 
