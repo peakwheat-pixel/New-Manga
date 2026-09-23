@@ -156,6 +156,9 @@ REPAIR-8 delivery `3cdfdee` / Handoff `37d5488` was independently approved at
 Review commit `2585efd`; the approval covers only this documentation repair.
 Codex deferred the non-blocking F-003 wording to the T3.2.1 closure checklist;
 no REPAIR-9 is released. AC3/AC5 and the full product Release Gate remain open.
+Codex's [full Gate closure assessment](../verification/T3.2.1/closure-assessment-253af07.md)
+records the missing clean Windows environment, evidence and execution order.
+It releases no new implementation slice or integration.
 
 ## Project control baseline — 2026-09-22
 
