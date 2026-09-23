@@ -152,6 +152,14 @@ Execution Event；退出不等于完成。只有 AC、独立 Review、集成和�
 
 使用 [Review 模板](templates/REVIEW.md)。Review 必须固定 base_commit 与 reviewed_head；分支随后变化不延用旧批准。
 
+### 6.1 DeepSeek Harness CLI 与 Web 会话可见性
+
+用真实 DSH CLI 派发 Review 时，从被审查任务的 linked worktree 根目录运行 `dsh --profile headless --json`，保存退出码并记录 JSONL `session` 事件中的 session ID。`--json` 只输出本次运行事件并报告 ID；每次默认新建独立会话，不会把内容追加到当前打开的 Web 对话。只有 Web 端实际看到该会话及其 Review 内容，才可记为 Web 可见。
+
+若需要从 DSH Web 查看 CLI 会话，先把该 Review 的**精确 worktree 路径**登记为 Web Workspace；主仓库 Workspace 不自动覆盖另一个 linked worktree。headless 会话未出现在 Web 列表时，重启 DSH Web 主机以重新发现已持久化会话，再到对应 Workspace 核对会话和 transcript。仅刷新浏览器页面或拥有 session ID 均不算显示成功。
+
+若重启后仍不可见，记录 DSH 版本、worktree 路径、session ID 和检查结果，标记 `web_visibility=unverified`；不要把 headless 运行描述成 Web 对话已显示，也不要用 Codex 模拟代替真实 DSH Review。继续已有会话时才传入 `--session-id <id>`，并确认该会话属于相同工作目录且可由当前 profile 接管。
+
 1. Reviewer 在独立工作区读完整 diff、受影响调用链、需求和测试，不只看作者摘要。
 2. **Standards 视角（建议，非强制；2026-09-18 用户决定取消"双轴"强制口径）**：代码是否符合**本仓库记录下来的**标准——`AGENTS.md`、本协议、[02 技术架构](02_TECHNICAL_ARCHITECTURE_.md) §架构方向与 §16、D03/D06/D08 相关条文、本 Task 的允许/禁止范围。仓库**未记录**标准的方面适用 Fowler smell baseline（_Refactoring_ 第 3 章）作为**判断项**（须带 label 并引用 hunk）；**仓库记录的标准优先于 baseline**，工具已强制的项跳过。
 3. **Spec 视角（建议，非强制；同上）**：AC、写回范围、命令语义、数据保护、失败/暂停/恢复、UI 行为是否符合来源。来源顺序：本 Task 文件 AC → 其引用的 D01～D08 条文与 `doc/contracts/**` → STATUS 中的用户裁决；**不得**用聊天记录或旧仓库推断已有实现。
