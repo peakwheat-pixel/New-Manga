@@ -152,6 +152,10 @@ Codex released Antigravity's documentation-only repair from base `e24ea5b` at
 task-registration commit `a8d6303`; DeepSeek Harness remains the independent
 reviewer. This release does not approve T3.2.1 product integration or change
 the full Release Gate.
+REPAIR-8 delivery `3cdfdee` / Handoff `37d5488` was independently approved at
+Review commit `2585efd`; the approval covers only this documentation repair.
+Codex deferred the non-blocking F-003 wording to the T3.2.1 closure checklist;
+no REPAIR-9 is released. AC3/AC5 and the full product Release Gate remain open.
 
 ## Project control baseline — 2026-09-22
 
