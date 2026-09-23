@@ -16,7 +16,7 @@ Execution checkpoint: 2026-09-23 (Asia/Shanghai)
 | Current Active Task | [T3.2.1-REPAIR-6](tasks/T3.2.1-REPAIR-6.md) is `ready`; owner Antigravity, independent reviewer DeepSeek Harness. |
 | Current owner/reviewer | Antigravity owns REPAIR-6; DeepSeek Harness reviews its new fixed head; Codex owns status, release boundary and the later full integration Gate. |
 | Current branch/worktree | `master` remains product-unintegrated. REPAIR-6 base is `297c3dd7d0c977eb22eedefd0ba1ae03d29b64cd`; branch `agent/antigravity/T3.2.1-repair-6` / worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-6` is at Codex release checkpoint `dcafd9e153b158312124771a1dc461bbdb1c78e0`. REPAIR-5 remains isolated at its reviewed tip. |
-| Latest reviewed base/head | T3.2.1 base `c2fcb1ce575099f6e74f69c711f423040a545951`; REPAIR-4 parent `d37088a46f0bdae14b7a068f93bbcec38ffe5bad`; delivery `f39ddc0fcaeb8c8271d73376f82b3ec9f15c0fd9`; Handoff `f2581a44d1198639ad00fd386e1fbe1dc61c1f7a`; DSH review `dc199f607c407adce40d303cb182b28f9a76a1db` is `CHANGES_REQUESTED` (F-001). |
+| Latest reviewed base/head | T3.2.1 base `c2fcb1ce575099f6e74f69c711f423040a545951`; REPAIR-5 base `0e0905f8041743175239183d9c4ab7eabb78cb90`; delivery `740503e8c13171f5361888379ab39754019cd4ce`; Handoff `e54a7b6990b10fa63f273629685caa471f2d321b`; DSH review `60d1d5035e32b0709c00f2ab0fdde844e2acee9e` is `CHANGES_REQUESTED` (G-001). |
 | Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
 | Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
 | Compile status | T3.1.1 fresh `python -m compileall -q src tests` exit 0. |
