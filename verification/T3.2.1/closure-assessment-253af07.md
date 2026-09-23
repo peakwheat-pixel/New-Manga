@@ -40,8 +40,12 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
   `STATUS_SXS_COMPONENT_STORE_CORRUPT` / `0x80073712`：解压 IIS 可选组件的
   `Microsoft.Web.Management.Aspnet.resources.dll` 失败，功能事务随后把
   `Containers-DisposableClientVM` 回滚为 Off。此为宿主组件存储修复前置，
-  不归因于 New Manga，也不把 Sandbox 或 AC3 记为可用/PASS。当前会话无提升权限，
-  未执行 DISM/SFC 修复；由用户在管理员终端按微软官方流程运行并回报结果。
+  不归因于 New Manga，也不把 Sandbox 或 AC3 记为可用/PASS。用户随后在管理员终端
+  运行 `DISM.exe /Online /Cleanup-Image /RestoreHealth`（成功）和 `sfc /scannow`
+  （发现损坏并成功修复），并重启。2026-09-23 22:28:36 再次通过 Windows 功能界面
+  启用 Sandbox 仍失败；新 CBS 记录同一 `0x80073712` 组件存储错误。下一步用管理员
+  PowerShell 单独启用 `Containers-DisposableClientVM`，以隔离功能界面的批量事务；
+  结果未取得，AC3 仍为 `NOT_RUN`。
 
 ## 未闭环项与完成证据
 
