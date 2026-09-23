@@ -12,18 +12,18 @@ Execution checkpoint: 2026-09-23 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 delivery review is `CHANGES_REQUESTED`, and `T3.2.1-REPAIR` is released but not started. |
-| Current Active Task | `T3.2.1-REPAIR` is registered and released to Antigravity; no repair or re-review has started. |
-| Current owner/reviewer | `T3.2.1-REPAIR`: Antigravity implementation; DeepSeek Harness independent non-author re-Review; Codex Lead / Architect / Integrator. |
-| Current branch/worktree | Main: `master` remains unintegrated; delivery branch `agent/antigravity/T3.2.1-windows-packaging`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging`, current handoff head `cfd7c4`; repair is released but not started. |
-| Current review base/head | T3.2.1 base `c2fcb1c`; delivery `92c9307`; handoff `cfd7c4`; DSH result `CHANGES_REQUESTED` / not approved for Codex integration; repaired head and re-review are pending. |
+| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 remains `CHANGES_REQUESTED`; `T3.2.1-REPAIR-3` is released but not started. |
+| Current Active Task | [T3.2.1-REPAIR-3](tasks/T3.2.1-REPAIR-3.md) is registered and released to Antigravity; no implementation has started. |
+| Current owner/reviewer | `T3.2.1-REPAIR-3`: Antigravity implementation; DeepSeek Harness independent non-author re-Review; Codex Lead / Architect / Integrator. |
+| Current branch/worktree | Main: `master` remains product-unintegrated; REPAIR-3 branch `agent/antigravity/T3.2.1-repair-3`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3`, base `ffff7c6`; prior delivery worktree remains preserved. |
+| Current review base/head | T3.2.1 product base `c2fcb1c`; REPAIR-2 product head `7d687f5`; evidence head `ffff7c6`; DSH Review `4613338` is `CHANGES_REQUESTED` (R-008 and AC7 consistency remain open). |
 | Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
 | Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
 | Compile status | T3.1.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | T3.2.1 is not approved for Codex integration. Repair must correct delivery-head provenance, rebuild and rerun artifact evidence, restore raw pytest/compileall logs, mark AC3 `NOT_RUN` until real clean Windows passes, rerun AC6 with `NewManga.exe`, and explain `Database Queryable: False`; no automatic repair or re-review is running. |
-| Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
+| Current blockers | T3.2.1 is not approved for integration. REPAIR-3 addresses R-008 test discrimination and AC7 scope consistency; AC3 stays `NOT_RUN`, AC6 stays `PARTIAL / NOT_RUN`, and R-014–R-016 remain outside this slice. No product integration is allowed before a fresh independent Review and Codex Gate check. |
+| Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md`, the uncommitted `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.tmp.driveupload/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, `wiki/codewiki/temp/`, and all other pre-existing dirty paths. No cleanup or overwrite was performed. |
 | Worktrees | T2.2.1 ZCode and Qoder worktrees remain preserved and clean at their delivery heads; all existing worktrees remain preserved. No deletion or prune was performed. |
-| Evidence | [T3.2.1 Task](tasks/T3.2.1.md); [T3.2.1 Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md); [T3.1.1 integration](../verification/T3.1.1/integration-899bd3c.md); [T2.2.1 integration](../verification/T2.2.1/integration-aad510b.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
+| Evidence | [T3.2.1-REPAIR-3](tasks/T3.2.1-REPAIR-3.md); [T3.2.1 Task](tasks/T3.2.1.md); [T3.2.1 Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md); DSH REPAIR-2 Review branch `agent/deepseek/T3.2.1-review-7d687f5` @ `4613338`; [T3.1.1 integration](../verification/T3.1.1/integration-899bd3c.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
 
 ## Verified completed capability
 
@@ -122,32 +122,34 @@ implementation has not started.
 
 Codex established the formal [T3.2.1 Task](tasks/T3.2.1.md) and
 [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) from the verified
-T3.1.1 baseline `c2fcb1c`. Antigravity delivered implementation head
-`92c9307`; the follow-up handoff is `cfd7c4`. The DeepSeek Harness delivery
-Review is **CHANGES_REQUESTED — NOT APPROVED FOR CODEX INTEGRATION**. The
-delivery remains isolated; `master` has not received any T3.2.1 product or
-delivery commit.
+T3.1.1 baseline `c2fcb1c`. REPAIR-2 delivered product head
+`7d687f51567d4f947fee9b3f6eff4bc95e2b6413` and evidence/Handoff head
+`ffff7c688df07165c6e801c0c9572e9c4910cb9e`. DeepSeek Harness independently
+reviewed it at commit `4613338815406be0fdf2240cb1e5715a619f61f7` and returned
+`CHANGES_REQUESTED`: R-008 still passes after its production branch is removed,
+and AC7's Handoff `PASS` conflicts with the Task's `PARTIAL / NOT_RUN`. The
+delivery remains isolated; `master` has no T3.2.1 product integration.
 
-### T3.2.1-REPAIR release record
+### T3.2.1-REPAIR-3 release record
 
-`T3.2.1-REPAIR` is registered and released to Antigravity, but is **not
-started automatically**. The repair scope is fixed to:
+[T3.2.1-REPAIR-3](tasks/T3.2.1-REPAIR-3.md) is `ready` and released to
+Antigravity, but has **not started**. Its fixed base is
+`ffff7c688df07165c6e801c0c9572e9c4910cb9e`; its branch/worktree are
+`agent/antigravity/T3.2.1-repair-3` and
+`G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-3`.
 
-1. Correct all four `delivery_head` values in the Handoff using a real
-   `git rev-parse <sha>^{commit}`-verified SHA.
-2. Rebuild from the corrected head and rerun the complete artifact evidence.
-3. Check in raw pytest and `compileall` logs with shell, interpreter and exit
-   code.
-4. Keep AC3 `NOT_RUN` until real clean Windows validation passes; rerun AC6
-   against `NewManga.exe`; explain the root cause of `Database Queryable:
-   False`.
-5. Deliver a new implementation head and new Handoff, then trigger a new
-   independent DeepSeek Harness Review. No Codex integration is permitted
-   before that Review is approved.
+The bounded scope is: (1) isolate fake `_MEIPASS` under `tmp_path`, create
+`ui/qml/Main.qml`, and prove the frozen-path test fails when the production
+branch is removed, with a mutation artefact; (2) align AC7 in the Task and new
+Handoff as `PARTIAL / NOT_RUN`, distinguishing source-level evidence from
+unverified packaged-app safety, and remove the related “fully covered” claim.
+AC3 remains `NOT_RUN`; AC6 remains `PARTIAL / NOT_RUN`. R-014–R-016 and other
+Review residuals are not included in this slice.
 
-Antigravity may begin only through the normal Task start path; Codex has not
-started the repair, launched a new Review, modified product code, or merged
-anything.
+The new head requires a fresh independent DeepSeek Harness Review. Even an
+approved finding-level re-review does not itself authorize integration:
+Codex must check the full T3.2.1 Review/Release Gate, and no product change may
+enter `master` before those gates pass. Antigravity must not merge `master`.
 
 The hard final boundary is D07/D08: a real Windows x64 machine without Python,
 venv, source checkout or developer PATH must complete the package workflow,
@@ -384,15 +386,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE`; T3.2.1 `changes_requested` / `T3.2.1-REPAIR RELEASED_NOT_STARTED` |
-| `ExecutionState` | `IDLE`; T3.2.1 delivery is isolated, repair released, no repair or re-review running |
-| `Current Executor` | Antigravity is the released repair owner but has not started; DeepSeek Harness is the required independent re-Reviewer; Codex remains Lead/Architect/Integrator |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 delivery `CHANGES_REQUESTED` → repair released, not started |
-| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 repair → independent re-Review approval → Codex integration verification |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE`; T3.2.1 `changes_requested` / `T3.2.1-REPAIR-3 ready, not started` |
+| `ExecutionState` | `IDLE`; REPAIR-3 is released but no implementation or re-review is running |
+| `Current Executor` | Antigravity is the released REPAIR-3 owner but has not started; DeepSeek Harness is the required independent non-author Reviewer; Codex remains Lead/Architect/Integrator |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 REPAIR-2 `CHANGES_REQUESTED` → REPAIR-3 released, not started |
+| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1-REPAIR-3 → independent re-Review → full T3.2.1 Gate and Codex integration verification |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
-| `Conditional` | T3.2.1 repair only within the registered packaging paths and evidence requirements |
-| `Do Not Start Yet` | Codex integration, new DSH Review, installer/updater/CI release work, or any repair outside the registered T3.2.1 worktree |
-| `Safe To Resume` | Antigravity may start only the registered `T3.2.1-REPAIR` scope; current state is released but not auto-started |
+| `Conditional` | T3.2.1-REPAIR-3 only within its registered test, evidence, Task and Handoff paths |
+| `Do Not Start Yet` | Product integration into `master`, final release claims, or work outside REPAIR-3's allowed paths |
+| `Safe To Resume` | Antigravity may start only the registered `T3.2.1-REPAIR-3` scope; it is released but not auto-started |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -422,7 +424,7 @@ T3.2.1 packaging implementation and clean-machine validation
 | T1.2.1 | complete | closed | provider runtime, VM, Settings QML, bootstrap integrated |
 | T2.1.1 | complete | `CLOSED` | four-page QML/theme; F token contract; T1.2.1 UI contracts |
 | T3.1.1 | complete | closed | SQLite v4 progress/export persistence integrated and independently approved |
-| T3.2.1-REPAIR | released / not started | conditional | Delivery Review changes requested; repair and new independent Review are required before integration |
+| T3.2.1-REPAIR-3 | ready / not started | conditional | R-008 mutation evidence and AC7 scope alignment only; fresh independent Review and full Codex Gate remain required before integration |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
 
