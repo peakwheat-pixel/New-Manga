@@ -2,7 +2,7 @@
 
 Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
-Execution checkpoint: 2026-09-22 (Asia/Shanghai)
+Execution checkpoint: 2026-09-23 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
@@ -12,15 +12,15 @@ Execution checkpoint: 2026-09-22 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 Release Gate is passed and its implementation is not started. |
-| Current Active Task | T3.2.1 implementation released to Antigravity; no delivery yet. |
-| Current owner/reviewer | T3.2.1: Antigravity implementation; DeepSeek Harness independent non-author Review; Codex Lead / Architect / Integrator; Qoder only if a separately authorized QML/resource seam is needed. |
-| Current branch/worktree | Main: `master` at the current governance baseline; T3.2.1 branch `agent/antigravity/T3.2.1-windows-packaging`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging`, clean at `c2fcb1c`. |
-| Current review base/head | T3.2.1 base `c2fcb1c`; delivery/review/integration not yet available. Gate evidence: `verification/T3.2.1/release-gate-c2fcb1c.md`. |
+| Current product checkpoint | `T1.1.1`, `T1.1.2`, `T1.2.1`, `T2.1.1`, `T2.2.1`, and `T3.1.1` are `VERIFIED_COMPLETE`; T3.2.1 delivery review is `CHANGES_REQUESTED`, and `T3.2.1-REPAIR` is released but not started. |
+| Current Active Task | `T3.2.1-REPAIR` is registered and released to Antigravity; no repair or re-review has started. |
+| Current owner/reviewer | `T3.2.1-REPAIR`: Antigravity implementation; DeepSeek Harness independent non-author re-Review; Codex Lead / Architect / Integrator. |
+| Current branch/worktree | Main: `master` remains unintegrated; delivery branch `agent/antigravity/T3.2.1-windows-packaging`, worktree `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-packaging`, current handoff head `cfd7c4`; repair is released but not started. |
+| Current review base/head | T3.2.1 base `c2fcb1c`; delivery `92c9307`; handoff `cfd7c4`; DSH result `CHANGES_REQUESTED` / not approved for Codex integration; repaired head and re-review are pending. |
 | Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
 | Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
 | Compile status | T3.1.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | No Gate scope blocker. T3.2.1 clean Windows validation is a hard final-release prerequisite and is not yet available; implementation must remain within the released paths. |
+| Current blockers | T3.2.1 is not approved for Codex integration. Repair must correct delivery-head provenance, rebuild and rerun artifact evidence, restore raw pytest/compileall logs, mark AC3 `NOT_RUN` until real clean Windows passes, rerun AC6 with `NewManga.exe`, and explain `Database Queryable: False`; no automatic repair or re-review is running. |
 | Pre-reconciliation dirty main-worktree files | Preserve the tracked `experiments/TASK-017/README.md` modification and all existing untracked `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, and `wiki/codewiki/temp/` paths. No cleanup or overwrite was performed. |
 | Worktrees | T2.2.1 ZCode and Qoder worktrees remain preserved and clean at their delivery heads; all existing worktrees remain preserved. No deletion or prune was performed. |
 | Evidence | [T3.2.1 Task](tasks/T3.2.1.md); [T3.2.1 Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md); [T3.1.1 integration](../verification/T3.1.1/integration-899bd3c.md); [T2.2.1 integration](../verification/T2.2.1/integration-aad510b.md); [Project audit](../verification/PROJECT-AUDIT-2026-09-22.md) |
@@ -118,14 +118,36 @@ disposition; R-002 remains a documented non-blocking P2 defer.
 Result: **T3.1.1 = VERIFIED_COMPLETE**. T3.2.1 now has its own Release Gate;
 implementation has not started.
 
-## T3.2.1 Windows Packaging Release Gate checkpoint
+## T3.2.1 Windows Packaging Release Gate / delivery Review checkpoint
 
 Codex established the formal [T3.2.1 Task](tasks/T3.2.1.md) and
 [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) from the verified
-T3.1.1 baseline `c2fcb1c`. The Gate is **PASS TO START** for Antigravity
-implementation. No packaging spec, build script, artifact or clean-machine
-result is being claimed by this documentation change. The fixed worktree is now
-created and clean at `c2fcb1c`; implementation is released to Antigravity.
+T3.1.1 baseline `c2fcb1c`. Antigravity delivered implementation head
+`92c9307`; the follow-up handoff is `cfd7c4`. The DeepSeek Harness delivery
+Review is **CHANGES_REQUESTED — NOT APPROVED FOR CODEX INTEGRATION**. The
+delivery remains isolated; `master` has not received any T3.2.1 product or
+delivery commit.
+
+### T3.2.1-REPAIR release record
+
+`T3.2.1-REPAIR` is registered and released to Antigravity, but is **not
+started automatically**. The repair scope is fixed to:
+
+1. Correct all four `delivery_head` values in the Handoff using a real
+   `git rev-parse <sha>^{commit}`-verified SHA.
+2. Rebuild from the corrected head and rerun the complete artifact evidence.
+3. Check in raw pytest and `compileall` logs with shell, interpreter and exit
+   code.
+4. Keep AC3 `NOT_RUN` until real clean Windows validation passes; rerun AC6
+   against `NewManga.exe`; explain the root cause of `Database Queryable:
+   False`.
+5. Deliver a new implementation head and new Handoff, then trigger a new
+   independent DeepSeek Harness Review. No Codex integration is permitted
+   before that Review is approved.
+
+Antigravity may begin only through the normal Task start path; Codex has not
+started the repair, launched a new Review, modified product code, or merged
+anything.
 
 The hard final boundary is D07/D08: a real Windows x64 machine without Python,
 venv, source checkout or developer PATH must complete the package workflow,
@@ -362,15 +384,15 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE`; T3.2.1 `ready` / `PASS TO START` |
-| `ExecutionState` | `READY` after T3.2.1 Gate; isolated Antigravity worktree is clean at `c2fcb1c` |
-| `Current Executor` | Antigravity is released for T3.2.1 implementation; DeepSeek Harness is the independent Reviewer; Codex remains Lead/Architect/Integrator |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 Gate passed |
-| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 implementation → clean-machine release validation |
+| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE`; T3.2.1 `changes_requested` / `T3.2.1-REPAIR RELEASED_NOT_STARTED` |
+| `ExecutionState` | `IDLE`; T3.2.1 delivery is isolated, repair released, no repair or re-review running |
+| `Current Executor` | Antigravity is the released repair owner but has not started; DeepSeek Harness is the required independent re-Reviewer; Codex remains Lead/Architect/Integrator |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 delivery `CHANGES_REQUESTED` → repair released, not started |
+| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → T3.2.1 repair → independent re-Review approval → Codex integration verification |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
-| `Conditional` | T3.2.1 implementation only within the released packaging paths and evidence requirements |
-| `Do Not Start Yet` | Any implementation outside the created T3.2.1 worktree; installer/updater/CI release work outside this Task |
-| `Safe To Resume` | Antigravity implements the frozen T3.2.1 scope in the clean worktree from `c2fcb1c` |
+| `Conditional` | T3.2.1 repair only within the registered packaging paths and evidence requirements |
+| `Do Not Start Yet` | Codex integration, new DSH Review, installer/updater/CI release work, or any repair outside the registered T3.2.1 worktree |
+| `Safe To Resume` | Antigravity may start only the registered `T3.2.1-REPAIR` scope; current state is released but not auto-started |
 | `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
 
 ### Current position map
@@ -400,7 +422,7 @@ T3.2.1 packaging implementation and clean-machine validation
 | T1.2.1 | complete | closed | provider runtime, VM, Settings QML, bootstrap integrated |
 | T2.1.1 | complete | `CLOSED` | four-page QML/theme; F token contract; T1.2.1 UI contracts |
 | T3.1.1 | complete | closed | SQLite v4 progress/export persistence integrated and independently approved |
-| T3.2.1 | ready | conditional | Release Gate passed; packaging implementation and clean Windows validation pending |
+| T3.2.1-REPAIR | released / not started | conditional | Delivery Review changes requested; repair and new independent Review are required before integration |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
 
