@@ -35,6 +35,13 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
   若启用，须先记录 Sandbox 内 OS、无开发依赖、完整包 hash 和 GUI 能力，再决定
   其证据能否满足 AC3/AC6/AC7；历史 runbook 中“物理机”字样不能据此写成实测。
   如 Sandbox 不可用或 GUI/进程/文件证据不足，退回 Hyper-V 完整 VM 路线。
+- 用户启用 Windows Sandbox 时，Windows 功能报「并非所有的功能成功更改」。
+  宿主 `C:/Windows/Logs/CBS/CBS.log` 在 2026-09-23 21:27:57 记录
+  `STATUS_SXS_COMPONENT_STORE_CORRUPT` / `0x80073712`：解压 IIS 可选组件的
+  `Microsoft.Web.Management.Aspnet.resources.dll` 失败，功能事务随后把
+  `Containers-DisposableClientVM` 回滚为 Off。此为宿主组件存储修复前置，
+  不归因于 New Manga，也不把 Sandbox 或 AC3 记为可用/PASS。当前会话无提升权限，
+  未执行 DISM/SFC 修复；由用户在管理员终端按微软官方流程运行并回报结果。
 
 ## 未闭环项与完成证据
 
