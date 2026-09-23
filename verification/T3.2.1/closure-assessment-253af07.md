@@ -46,8 +46,13 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
   启用 Sandbox 仍失败；新 CBS 记录同一 `0x80073712` 组件存储错误。用户随后在管理员
   PowerShell 单独运行 `Enable-WindowsOptionalFeature -Online -FeatureName
   Containers-DisposableClientVM -All`，仍收到「组件存储已损坏」。Sandbox 路线暂停；
-  转向同一宿主的独立 Hyper-V Windows 11 VM。宿主 `vmms`、`vmcompute` 均在运行，
-  提升账户 `Get-VM` 此前为空；VM 创建与干净机测试尚未执行，AC3 仍为 `NOT_RUN`。
+  复查 2026-09-23 22:32:02–03 的 CBS，确认 `deltastore.cpp(3124)` 在
+  `CRawStoreLayout::RecursivelyRegenerateComponentPayload` 报
+  `STATUS_SXS_COMPONENT_STORE_CORRUPT`，随后解压 OC content 失败。宿主为 Windows 11
+  Pro 25H2 x64 build 26200.9457。下一步先尝试 Settings > System > Recovery >
+  Fix problems using Windows Update > Reinstall now 修复当前版本；该项不可用或修复后
+  仍失败时，改用匹配版本/语言的官方安装媒体或转回独立 Hyper-V VM 路线。Sandbox
+  与 VM 均未成功运行，AC3 仍为 `NOT_RUN`。
 
 ## 未闭环项与完成证据
 
