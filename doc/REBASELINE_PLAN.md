@@ -146,6 +146,13 @@ implementation only; clean Windows, P0/P1, data-safety, benchmark and
 independent Review evidence remain required before `VERIFIED_COMPLETE` or
 `READY` for release.
 
+The current bounded T3.2.1 repair slice is [T3.2.1-REPAIR-8](tasks/T3.2.1-REPAIR-8.md):
+DeepSeek Harness's REPAIR-7 review `6cf9185` requested correction of F-001/F-002.
+Codex released Antigravity's documentation-only repair from base `e24ea5b` at
+task-registration commit `a8d6303`; DeepSeek Harness remains the independent
+reviewer. This release does not approve T3.2.1 product integration or change
+the full Release Gate.
+
 ## Project control baseline — 2026-09-22
 
 The detailed modified-V2 audit is [PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md).
