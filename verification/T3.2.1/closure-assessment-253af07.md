@@ -22,6 +22,12 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
 - 本机为 Windows 11 Pro x64 build 26200，有既存两个临时构建产物及 Python 3.12
   打包环境。`Get-VM` 当前账户返回权限不足；尚未验证有可用的独立 Windows 11
   测试机或 VM。现有开发机及剥离 PATH 模拟不能充当 AC3 干净机。
+- 用户没有第二台电脑。优先在这台主机上使用**独立 Windows 11 Hyper-V VM**；
+  宿主有约 32 GB RAM、充足磁盘、虚拟化已启用且 Hyper-V 服务正在运行。
+  当前非提升账户不能运行 `Get-VM` 或查询可选功能；Windows Sandbox 可执行文件
+  不存在。下一步由用户在提升的 PowerShell 运行只读 `Get-VM | Select Name,State`，
+  确认是否已有 VM；若没有，再按 Microsoft 官方 Hyper-V 流程准备 Windows 11 ISO
+  并创建独立 VM。VM 的存在、配置和 AC3 结果目前均未验证。
 
 ## 未闭环项与完成证据
 
