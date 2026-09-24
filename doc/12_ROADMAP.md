@@ -14,7 +14,7 @@ graph, acceptance boundaries and historical Task audit live in
 4. **T2.1.1 — Apply Design F**: implement Graphite Atelier in production QML.
 5. **T2.2.1 — Reader & Workbench Polish**.
 6. **T3.1.1 — Unify Storage into SQLite**.
-7. **T3.2.1 — Windows Packaging & Release Gate**.
+7. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**: full Gate open; AC3 is blocked at image import. Qoder's [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is ready from fixed base `8738c41`.
 
 T2.1.1 remains unreleased until T1.2.1 passes re-review and Codex integration.
 Historical phases and task ledgers remain in place for traceability; they do
