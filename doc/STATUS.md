@@ -35,6 +35,10 @@ Execution checkpoint: 2026-09-25 (Asia/Shanghai)
 | Worktrees | REPAIR-7/8, REPAIR-9/10, legacy REPAIR-11 and Reviewer worktrees remain preserved. REPAIR-12 Owner tip `8738c41` and independent Review `a656486` remain on their own branches. REPAIR-13 Qoder worktree is new and clean at its fixed base. The old REPAIR-11 Handoff is excluded from master and the Codex candidate; no product or repair branch was merged or deleted. |
 | Evidence | [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md); [closeout verification log](../verification/T3.2.1/release-gate-closeout-verification.log); REPAIR-8 Review `2585efd`; REPAIR-9 Review `85f8c59`; REPAIR-10 Review `ddc21a2`; REPAIR-11 Review `4f2f8a0`; REPAIR-12 Delivery/Handoff/Review `a2f6695`/`8738c41`/`a656486`; [manual AC3 observations](../verification/T3.2.1/ac3-interactive-20260925/manual-observations.md); [REPAIR-13 Task](tasks/T3.2.1-REPAIR-13.md); [T3.2.1 Task](tasks/T3.2.1.md); [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) |
 
+## Parallel architecture governance registration
+
+`GOV-001` is a Codex-owned documentation registration on isolated branch `codex/architecture-decision-registration`, based on `master` @ `1e8cb1157c987945316351728f725073b8b109f9`; DeepSeek Harness is the planned independent non-author Reviewer. [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the user-accepted React + TypeScript + Tauri + Python Core target as `ACCEPTED_TARGET_ARCHITECTURE / IMPLEMENTATION_NOT_RELEASED`. [REBASELINE_PLAN](REBASELINE_PLAN.md) registers future M2 `PLANNED / NOT_RELEASED`. The sole proposed successor is Headless & Qt Coupling Audit (`research / audit`), not a released Task. This does not change the Current Active Task row above: T3.2.1 Full Gate stays OPEN, AC3 stays BLOCKED, and REPAIR-13 stays ready. User decisions remain open for T3.2.1 Legacy Closure scope and future React UI ownership. The main-worktree dirty/untracked set observed before GOV-001 is `PRE_EXISTING_WORKTREE_CHANGE`; it was not edited by this registration.
+
 ## Verified completed capability
 
 SQLite v2 core persistence, managed copy, image/PDF/picture-MOBI import,

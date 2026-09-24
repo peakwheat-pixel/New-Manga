@@ -33,6 +33,6 @@
 
 ## 产品边界
 
-目标为 Windows / Python / PySide6 QML / SQLite / Managed Copy；只有书架、工作台、阅读器、设置四个一级页面。具体规则分别以 01～08 文档的职责为准，见索引。目标能力不代表已实现能力。
+当前生产基线为 Windows / Python / PySide6 QML / SQLite / Managed Copy；未来桌面目标已由用户定为 React + TypeScript + Tauri + Python Core，详见 [AD-001 架构决策](doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md)，迁移实现尚未释放。只有书架、工作台、阅读器、设置四个一级页面。具体规则分别以 01～08 文档的职责为准，见索引；其旧技术栈表述待独立文档 Rebaseline。目标能力不代表已实现能力。
 
 所有实现必须保护用户源文件、人工修改、Lock、current/pinned Revision 和任务可恢复性。QML 不直接访问数据库、文件或模型。详细约束按 Task 引用加载，不在本文件复制第二套定义。
