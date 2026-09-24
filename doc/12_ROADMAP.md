@@ -7,7 +7,7 @@ graph, acceptance boundaries and historical Task audit live in
 
 ## Future architecture milestone
 
-[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) is `PLANNED / NOT_RELEASED`. [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the accepted React + TypeScript + Tauri + Python Core target while PySide6/QML remains the current production UI. The only proposed next migration work is Headless & Qt Coupling Audit (`research / audit`); implementation remains unreleased. T3.2.1 retains its existing full Gate and owner.
+[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) is `PLANNED / NOT_RELEASED`. [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the accepted React + TypeScript + Tauri + Python Core target while PySide6/QML remains the current production UI. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `ready` for read-only `research / audit`; implementation remains unreleased. T3.2.1 retains its existing full Gate and owner.
 
 ## Current order
 
