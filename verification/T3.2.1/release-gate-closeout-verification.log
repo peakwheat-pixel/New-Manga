@@ -1,0 +1,33 @@
+T3.2.1 Codex closeout verification
+Local time: 2026-09-24T15:16:31.5846933+08:00
+Host OS: Windows 11 Pro 25H2, NT 10.0.26200.9457 (Win32_OperatingSystem / DisplayVersion + UBR)
+PowerShell: 7.6.6
+Git: git version 2.52.0.windows.1
+Master: 8dd9b4a66096e07f9ad4d72224b85e6029eb4801
+Candidate: 188d72a9d144b8cab16f77757abc46318ac8e5e6
+
+COMMAND: git -C <candidate> diff --check c2fcb1ce575099f6e74f69c711f423040a545951 188d72a9d144b8cab16f77757abc46318ac8e5e6
+(no output)
+exit_code=0
+
+COMMAND: git -C <candidate> diff --check 37d5488ebf8e33f897e802b4147cbd5fb1ad8e04 188d72a9d144b8cab16f77757abc46318ac8e5e6
+(no output)
+exit_code=0
+
+COMMAND: git diff --check b800d117eadc182784097f7694b416b5cdd58e11 HEAD -- doc/STATUS.md doc/REBASELINE_PLAN.md doc/tasks/T3.2.1.md verification/T3.2.1/release-gate-closeout-b800d11.md
+(no output)
+exit_code=0
+
+COMMAND: git diff --exit-code d7edea5f00507a8d9601e6a95294695353cbf7f6 188d72a9d144b8cab16f77757abc46318ac8e5e6 -- src packaging tests requirements.txt requirements-dev.txt
+(no output)
+exit_code=0
+
+COMMAND: git diff --name-only d7edea5f00507a8d9601e6a95294695353cbf7f6 188d72a9d144b8cab16f77757abc46318ac8e5e6
+verification/T3.2.1/repair-9/sandbox-run.log
+exit_code=0
+
+COMMAND: git rev-parse 188d72a9d144b8cab16f77757abc46318ac8e5e6:verification/T3.2.1/repair-9/sandbox-run.log
+df14a64d8e566e05c89b96e4272d48dc033726b2
+exit_code=0
+
+overall_exit=0
