@@ -12,25 +12,25 @@ Execution checkpoint: 2026-09-24 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | T1.1.1, T1.1.2, T1.2.1, T2.1.1, T2.2.1, and T3.1.1 are VERIFIED_COMPLETE. T3.2.1 is not release-ready; REPAIR-8 documentation was independently approved but remains unintegrated, and REPAIR-9 delivery is awaiting the REPAIR-10 evidence/test correction and fresh independent Review. |
-| Current Active Task | [T3.2.1](tasks/T3.2.1.md) full Release Gate closure; current bounded slice is [REPAIR-10](tasks/T3.2.1-REPAIR-10.md), `ready`, to fix F-3(b) packaging-test path independence and evidence hygiene. |
-| Current owner/reviewer | REPAIR-10 Owner=Antigravity; Reviewer=DeepSeek Harness (independent). Codex owns task registration/status, full Gate disposition and integration. REPAIR-8 approval covers documentation only; REPAIR-9 is not independently approved or integrated. |
-| Current branch/worktree | master remains product-unintegrated. REPAIR-10 recovery/base=`eeb095ea94cdf0d477bcb09ab7c761883b06f833` (REPAIR-9 Handoff/tip); branch=`agent/antigravity/T3.2.1-repair-10`, worktree=`G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-10`; Codex-created registration sync commit=`7ab3f8a3e0885cadc2351be2a3a60b7992c61bd9` (parent is the fixed base). REPAIR-9 delivery=`d2bf6a8621c0c89c077e181e3e7bec9ac7cf098f`; its current worktree remains preserved. The reviewed REPAIR-7 tip remains unmerged. |
-| Latest reviewed base/head | DeepSeek Harness Review commit `2585efd69009cd7620c6b020e67df90c7d49b0f1` is APPROVED for REPAIR-8 delivery `3cdfdee` / tip `37d5488`; report `verification/T3.2.1/repair-8/review-3cdfdee.md` on `agent/deepseek/T3.2.1-review-repair-7`. F-001/F-002 closed; O-R1 addressed. REPAIR-9 Delivery `d2bf6a8` / Handoff tip `eeb095e` is not yet independently approved; REPAIR-10 will freeze a new head for review. |
-| Latest integrated product test status | T3.1.1 PowerShell/T1.1.1-impl-py312 focused `220 passed`, core `49 passed`, all exit 0; full suite not repeated in this integration window. |
-| Smoke status | T3.1.1 fresh isolated temp-root bootstrap smoke exit 0. |
-| Compile status | T3.1.1 fresh `python -m compileall -q src tests` exit 0. |
-| Current blockers | AC3 full interactive release workflow=`NOT_RUN` and remains a release blocker; REPAIR-9's scoped smoke result does not close AC3. AC5=`NOT_RUN`; AC6/AC7=`PARTIAL / NOT_RUN`; R-014–R-016 remain open. REPAIR-9's Qt/ICU closure result awaits independent Review and Codex integration; full Gate closure remains required. |
-| Full Gate closure audit | [closure-assessment-253af07](../verification/T3.2.1/closure-assessment-253af07.md) records the ordered Gate work and 2026-09-24 update. [Clean Sandbox AC3 attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md) contains fixed package hashes, raw build/Sandbox logs, and the ICU dependency diagnosis. Existing clean-PATH smoke is a simulation, the safety probe is service-level, and P95=1.09s is offscreen `--smoke-test`, not an interactive bookshelf. |
-| Clean Windows environment route | User enabled Windows Sandbox. The original candidate failed QtCore import; REPAIR-9 Handoff `d2bf6a8` reports a rebuilt package with the incompatible bundled ICU excluded and scoped `--smoke-test` success in Sandbox. That result is still author evidence pending independent Review and does not satisfy the interactive AC3 workflow, which remains `NOT_RUN`. |
+| Current product checkpoint | T1.1.1, T1.1.2, T1.2.1, T2.1.1, T2.2.1, and T3.1.1 are VERIFIED_COMPLETE. T3.2.1 remains unintegrated and not release-ready; two narrow repair reviews are approved, REPAIR-9 remains `changes_requested`, and full Gate closure is active under Codex. |
+| Current Active Task | [T3.2.1](tasks/T3.2.1.md) full Release Gate closeout (Codex; not a new implementation Task). Current isolated source candidate is `188d72a`; no product integration is authorized. |
+| Current owner/reviewer | Owner=Codex for closeout and integration decision; DeepSeek Harness must perform the final independent full-scope Review. Antigravity authored the repair deliveries. Owner and Reviewer remain distinct. |
+| Current branch/worktree | Main recovery point: `G:/CODEX/New Manga`, `master`=`b800d117eadc182784097f7694b416b5cdd58e11` at closeout start. Candidate branch=`codex/T3.2.1-release-gate-closeout`, worktree=`G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout`, base/tip=`d7edea5f00507a8d9601e6a95294695353cbf7f6` → `188d72a` (Codex-only O-1 whitespace fix). Author tip=`d7edea5f00507a8d9601e6a95294695353cbf7f6`; Reviewer branch=`agent/deepseek/T3.2.1-review-be5200e`. |
+| Latest reviewed base/head | REPAIR-8 Review `2585efd69009cd7620c6b020e67df90c7d49b0f1` approved delivery `3cdfdee126e8aab6b7930e49460a753abc69dad0` / tip `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04` for documentation only. REPAIR-9 Review `85f8c59d0a012c1edc4e466187b5b42515297d74` returned `changes_requested` for `d2bf6a8` / `eeb095e`. REPAIR-10 Review `ddc21a2f3cf5521675e95d6e2a8f8f50b1c065fb` approved `be5200e` / `d7edea5` for packaging-test path independence only. No full T3.2.1 Review is approved. |
+| Latest integrated product test status | No T3.2.1 product is integrated. DSH independently ran REPAIR-10 `pytest tests/packaging -v`: 12 passed, 0 skipped, exit 0 with `PYTHONPATH` unset; this does not satisfy the full Gate. T3.1.1 focused/core results remain historical integration evidence. |
+| Smoke status | The original clean Sandbox package failed QtCore import. REPAIR-9's unmodified package `--smoke-test` passed after its ICU packaging repair, but the real GUI workflow remains unrun. |
+| Compile status | No fresh T3.2.1 final-head compile/build is claimed by this closeout. |
+| Current blockers | AC3 full interactive workflow=`NOT_RUN` and release-blocking; AC5=`NOT_RUN`; AC6/AC7/AC8/AC9=`PARTIAL / NOT_RUN`; R-014–R-016 and F-003 remain open. REPAIR-9 F-2/F-4/O-3 still need disposition; final full Review and Codex integration evidence are absent. |
+| Full Gate closure audit | [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md) and [verification log](../verification/T3.2.1/release-gate-closeout-verification.log) bind this decision to `master` b800d11 and candidate `188d72a`. Earlier [closure assessment](../verification/T3.2.1/closure-assessment-253af07.md) and [Sandbox attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md) remain the source evidence for Gate gaps and the initial QtCore failure. |
+| Clean Windows environment route | Windows Sandbox is now available (`C:\Windows\System32\WindowsSandbox.exe`); the recorded guest is Windows 11 Enterprise x64 build 26100, with no `python`, `py` or `git` commands. Use a fresh Sandbox session and an exact final package hash for interactive acceptance. Sandbox smoke evidence is not the full AC3 workflow. |
 | F-003 disposition | Codex chose option (b): defer four P2 wording issues at `doc/tasks/T3.2.1-REPAIR-6.md:46` and `doc/handoffs/T3.2.1-REPAIR-6-f6dc383.md:26,57,68` to the T3.2.1 closure checklist; no F-003-only repair was released. The separate REPAIR-9 fixes the AC3/AC4 packaging runtime defect. Use `Authoritative Reference Revision` / `Authoritative Artefact Blob` or explicit `297c3dd` + `fdddfc19…` when those files are next authorized for editing. F-003 remains open, non-blocking. |
 | G7-002 source ruling | Codex fixed the REPAIR-7 count source to `verification/T3.2.1/repair-5/reference-check.log` blob `fdddfc19225c66ca32a85a3ebe5b5e1cc3fe1dfe` at revision `297c3dd7d0c977eb22eedefd0ba1ae03d29b64cd` (identical at REPAIR-7 base `14f587c`). The `e54a7b6` blob `09b5f2d20a592694031ff40e3c02d7dc8e48d6aa` is historical 40/39 evidence, not the 41/40/27/19 derivation source. Both stay read-only. |
 | REPAIR-8 allowed paths | Antigravity may change only `doc/tasks/T3.2.1-REPAIR-5.md`, `doc/tasks/T3.2.1-REPAIR-6.md`, `doc/handoffs/T3.2.1-REPAIR-6-f6dc383.md`, its new REPAIR-8 Handoff, and `verification/T3.2.1/repair-8/**`. Codex alone maintains this STATUS and the REPAIR-8 Task. Product code, tests, dependencies, Schema, original reference log, REPAIR-7 Handoffs and Reviewer reports are excluded. |
 | REPAIR-9 allowed paths | `packaging/**`, `tests/packaging/**`, `verification/T3.2.1/repair-9/**`, and one new REPAIR-9 Handoff. Codex alone maintains this STATUS and the Task file. `src/**`, dependencies, Schema, REPAIR-7/8 artifacts and existing Review reports are excluded unless Codex separately expands scope. |
 | REPAIR-10 allowed paths | Antigravity may change only `tests/packaging/**` for F-3(b), add evidence under `verification/T3.2.1/repair-9/**`, and add one new REPAIR-10 Handoff. Task/STATUS/Plan/index registration is Codex-owned; `src/**`, `packaging/**`, dependencies, Schema, REPAIR-7/8 artifacts, any Review report and the original `repair-5/reference-check.log` are prohibited. Base=`eeb095ea94cdf0d477bcb09ab7c761883b06f833`. |
 | Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md`, the uncommitted `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.tmp.driveupload/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, `wiki/codewiki/temp/`, and all other pre-existing dirty paths. No cleanup or overwrite was performed. |
-| Worktrees | REPAIR-9 worktree based on `37d5488` remains preserved at handoff tip `eeb095e`; REPAIR-10 has a new isolated Antigravity worktree based on `eeb095e`. All prior worktrees remain preserved; no deletion or prune was performed. |
-| Evidence | [T3.2.1-REPAIR-8](tasks/T3.2.1-REPAIR-8.md); REPAIR-8 Review `2585efd`, report `verification/T3.2.1/repair-8/review-3cdfdee.md` on Reviewer branch; [T3.2.1-REPAIR-9](tasks/T3.2.1-REPAIR-9.md) and [REPAIR-9 Handoff](../doc/handoffs/T3.2.1-REPAIR-9-d2bf6a8.md); [T3.2.1-REPAIR-10](tasks/T3.2.1-REPAIR-10.md); [Clean Sandbox AC3 attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md); [T3.2.1 Task](tasks/T3.2.1.md); [T3.2.1 Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) |
+| Worktrees | REPAIR-7/8, REPAIR-9, REPAIR-10 and Reviewer worktrees remain preserved. Codex created `G:/CODEX/New Manga.worktrees/T3.2.1-codex-release-gate-closeout` from `d7edea5` for the single O-1 correction; no product branch was merged or deleted. |
+| Evidence | [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md); [closeout verification log](../verification/T3.2.1/release-gate-closeout-verification.log); REPAIR-8 Review `2585efd`; REPAIR-9 Review `85f8c59`; REPAIR-10 Review `ddc21a2`; [Sandbox AC3 attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md); [T3.2.1 Task](tasks/T3.2.1.md); [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) |
 
 ## Verified completed capability
 
@@ -48,7 +48,7 @@ verification are now complete.
 
 ## Open gaps
 
-1. T3.2.1: implement and verify a product Windows onedir package on a clean machine; Release Gate passed, implementation and final release validation remain open.
+1. T3.2.1: full Release Gate remains open. The `c2fcb1c` decision was PASS TO START; AC3 interactive Windows workflow is `NOT_RUN` and blocks release.
 
 ## Stage B execution gate
 
@@ -403,16 +403,16 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 
 | Field | Current value |
 |---|---|
-| `TaskStatus` | T1.2.1 `done` / `VERIFIED_COMPLETE`; T2.1.1 `done` / `VERIFIED_COMPLETE`; T2.2.1 `done` / `VERIFIED_COMPLETE`; T3.1.1 `done` / `VERIFIED_COMPLETE`; T3.2.1 `changes_requested`; REPAIR-3 `changes_requested`; REPAIR-4 `ready` |
-| `ExecutionState` | `IDLE`; REPAIR-4 is released but Antigravity has not started |
-| `Current Executor` | Antigravity owns the bounded REPAIR-4 docs/evidence slice; DeepSeek Harness is the independent reviewer |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 REPAIR-3 `CHANGES_REQUESTED` → REPAIR-4 `READY` → fresh independent Review → full T3.2.1 Gate |
-| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → REPAIR-4 closes R-017–R-021 → fresh independent Review → resolve remaining T3.2.1 findings / clean-Windows AC3 → full Codex integration verification |
+| `TaskStatus` | T1.2.1, T2.1.1, T2.2.1 and T3.1.1 `VERIFIED_COMPLETE`; T3.2.1 `in_progress / release_gate_open`; REPAIR-8 approved (docs only); REPAIR-9 `changes_requested`; REPAIR-10 approved (tests only) |
+| `ExecutionState` | `ACTIVE`; Codex is completing T3.2.1 full Release Gate disposition; AC3 interactive acceptance remains `NOT_RUN` |
+| `Current Executor` | Codex owns the closeout and integration decision; Antigravity is the repair author; DeepSeek Harness is the independent final Reviewer |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 isolated repair chain → full Gate open (AC3 NOT_RUN) → final independent Review → Codex integration evidence |
+| `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → close remaining REPAIR-9 findings and R-014–R-016 → final Windows Sandbox AC3/AC5/AC6–AC9 evidence → full independent Review → Codex integration verification |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
-| `Conditional` | REPAIR-4 implementation is ready only in its dedicated worktree and exact allowed paths; later integration remains gated |
-| `Do Not Start Yet` | Product integration into `master`, final release claims, or work outside REPAIR-4's allowed paths |
-| `Safe To Resume` | Antigravity may start REPAIR-4 from its released base/worktree; no product integration is authorized |
-| `Latest audit checkpoint` | `verification/PROJECT-AUDIT-2026-09-22.md`; control baseline `25bff3c`; source baseline `4dfe9e7` |
+| `Conditional` | Codex may continue the documented closeout. Any new implementation repair requires a separately frozen Task/base/scope and an independent Reviewer. |
+| `Do Not Start Yet` | Merge any T3.2.1 delivery branch into `master`, claim release readiness, or publish a release before all Gate criteria and final Review are complete. |
+| `Safe To Resume` | Codex may continue Gate closure from candidate `188d72a`; Antigravity may start only a separately released repair Task. |
+| `Latest audit checkpoint` | `verification/T3.2.1/release-gate-closeout-b800d11.md`; closeout start `master`=`b800d11`; product Gate baseline `c2fcb1c` |
 
 ### Current position map
 
@@ -429,9 +429,11 @@ T2.2.1 VERIFIED_COMPLETE @ fe9fca0
         ↓
 T3.1.1 VERIFIED_COMPLETE @ 0c70e44
         ↓
-T3.2.1 Release Gate PASSED @ c2fcb1c
+T3.2.1 implementation authorization (PASS TO START) @ c2fcb1c
         ↓
-T3.2.1 packaging implementation and clean-machine validation
+T3.2.1 isolated repairs; full Release Gate OPEN (AC3 interactive NOT_RUN)
+        ↓
+final independent Review → Codex integration evidence
 ```
 
 ### Parallel execution matrix
@@ -441,8 +443,10 @@ T3.2.1 packaging implementation and clean-machine validation
 | T1.2.1 | complete | closed | provider runtime, VM, Settings QML, bootstrap integrated |
 | T2.1.1 | complete | `CLOSED` | four-page QML/theme; F token contract; T1.2.1 UI contracts |
 | T3.1.1 | complete | closed | SQLite v4 progress/export persistence integrated and independently approved |
-| T3.2.1-REPAIR-3 | changes_requested | closed for edits | DSH report `54f2627`; R-017–R-021 are assigned to REPAIR-4 |
-| T3.2.1-REPAIR-4 | ready | released | Antigravity at base `d37088a`; docs/evidence only; DeepSeek Harness review required |
+| T3.2.1-REPAIR-8 | approved | documentation slice only | DSH report `2585efd`; no product/Gate approval |
+| T3.2.1-REPAIR-9 | changes_requested | review findings open | DSH report `85f8c59`; Codex O-1 whitespace correction is isolated at `188d72a`; F-2/F-4/O-3 remain |
+| T3.2.1-REPAIR-10 | approved | packaging tests only | DSH report `ddc21a2`; 12 passed without external `PYTHONPATH`; full Gate remains open |
+| T3.2.1 full Release Gate | in_progress | Codex closeout | AC3 interactive workflow `NOT_RUN`; no merge until every criterion and final Review close |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
 
