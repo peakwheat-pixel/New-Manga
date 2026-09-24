@@ -12,7 +12,7 @@ graph, acceptance boundaries and historical Task audit live in
 ## Current order
 
 1. **T1.1.2, T1.1.1, T1.2.1, T2.1.1, T2.2.1, T3.1.1**: verified complete; fixed commits and evidence are in the authoritative Plan.
-2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**: current Active product Task; full Gate OPEN and AC3 BLOCKED at image import. Qoder's [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is ready from fixed base `8738c41`.
+2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**: current Active product Task; full Gate OPEN and AC3 BLOCKED at image import. ZCode's [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is ready from fixed base `8738c41`.
 
 Historical phases and task ledgers remain in place for traceability; they do
 not override the rebaseline.
