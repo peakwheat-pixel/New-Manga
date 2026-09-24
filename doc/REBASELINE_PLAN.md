@@ -155,10 +155,16 @@ the full Release Gate.
 REPAIR-8 delivery `3cdfdee` / Handoff `37d5488` was independently approved at
 Review commit `2585efd`; the approval covers only this documentation repair.
 Codex deferred the non-blocking F-003 wording to the T3.2.1 closure checklist;
-no REPAIR-9 is released. AC3/AC5 and the full product Release Gate remain open.
-Codex's [full Gate closure assessment](../verification/T3.2.1/closure-assessment-253af07.md)
-records the missing clean Windows environment, evidence and execution order.
-It releases no new implementation slice or integration.
+no F-003-only repair was released. The 2026-09-24 Sandbox run then reproduced a
+QtCore startup failure from an incompatible bundled ICU; see
+[clean-sandbox-ac3-20260924](../verification/T3.2.1/clean-sandbox-ac3-20260924.md).
+Codex released [T3.2.1-REPAIR-9](tasks/T3.2.1-REPAIR-9.md) to Antigravity from
+base `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04` in a new isolated worktree. The
+repair is limited to deterministic packaging dependency resolution and its
+checks; it does not approve product integration. AC3 remains a release blocker;
+AC5, AC6/AC7, R-014–R-016 and the full product Release Gate remain open. Codex's
+[full Gate closure assessment](../verification/T3.2.1/closure-assessment-253af07.md)
+records the ordered remaining evidence and Gate conditions.
 
 ## Project control baseline — 2026-09-22
 
