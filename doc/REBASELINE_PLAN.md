@@ -146,25 +146,28 @@ implementation only; clean Windows, P0/P1, data-safety, benchmark and
 independent Review evidence remain required before `VERIFIED_COMPLETE` or
 `READY` for release.
 
-The current bounded T3.2.1 repair slice is [T3.2.1-REPAIR-8](tasks/T3.2.1-REPAIR-8.md):
-DeepSeek Harness's REPAIR-7 review `6cf9185` requested correction of F-001/F-002.
-Codex released Antigravity's documentation-only repair from base `e24ea5b` at
-task-registration commit `a8d6303`; DeepSeek Harness remains the independent
-reviewer. This release does not approve T3.2.1 product integration or change
-the full Release Gate.
-REPAIR-8 delivery `3cdfdee` / Handoff `37d5488` was independently approved at
-Review commit `2585efd`; the approval covers only this documentation repair.
-Codex deferred the non-blocking F-003 wording to the T3.2.1 closure checklist;
-no F-003-only repair was released. The 2026-09-24 Sandbox run then reproduced a
-QtCore startup failure from an incompatible bundled ICU; see
-[clean-sandbox-ac3-20260924](../verification/T3.2.1/clean-sandbox-ac3-20260924.md).
-Codex released [T3.2.1-REPAIR-9](tasks/T3.2.1-REPAIR-9.md) to Antigravity from
-base `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04` in a new isolated worktree. The
-repair is limited to deterministic packaging dependency resolution and its
-checks; it does not approve product integration. AC3 remains a release blocker;
-AC5, AC6/AC7, R-014–R-016 and the full product Release Gate remain open. Codex's
-[full Gate closure assessment](../verification/T3.2.1/closure-assessment-253af07.md)
-records the ordered remaining evidence and Gate conditions.
+The current bounded T3.2.1 follow-up is
+[T3.2.1-REPAIR-10](tasks/T3.2.1-REPAIR-10.md), `ready` for Antigravity with
+DeepSeek Harness as independent Reviewer. Its fixed source base is the clean
+REPAIR-9 Handoff/tip `eeb095ea94cdf0d477bcb09ab7c761883b06f833`; its narrow
+scope is the F-3(b) `tests/packaging` import-path failure, whitespace hygiene
+and complete raw verification evidence. Codex creates the separate
+`agent/antigravity/T3.2.1-repair-10` worktree and owns registration/status sync.
+
+The preceding [T3.2.1-REPAIR-9](tasks/T3.2.1-REPAIR-9.md) delivery is Product
+Delivery `d2bf6a8621c0c89c077e181e3e7bec9ac7cf098f` with Handoff/tip
+`eeb095ea94cdf0d477bcb09ab7c761883b06f833`; independent Review and Codex
+integration are not recorded as complete. REPAIR-10 does not authorize changes
+to its packaging implementation and its eventual DeepSeek Review must cover the
+fixed resulting head. REPAIR-8 delivery `3cdfdee` / Handoff `37d5488` remains
+independently approved only for its documentation scope; deferred F-003 wording
+remains in the T3.2.1 closure checklist.
+
+T3.2.1 is not release-ready: full interactive AC3 remains `NOT_RUN` and is a
+release blocker; AC5, AC6/AC7, R-014–R-016 and the full product Release Gate
+remain open. Codex's [full Gate closure assessment](../verification/T3.2.1/closure-assessment-253af07.md)
+records the remaining evidence and Gate conditions. No related branch may be
+merged to `master` before the full Gate is closed.
 
 ## Project control baseline — 2026-09-22
 
