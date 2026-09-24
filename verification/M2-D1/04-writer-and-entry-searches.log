@@ -1,0 +1,391 @@
+M2-D1 writer-authority and entry-point searches (READ-ONLY)
+captured_at = 2026-09-25T02:28:10+08:00
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+
+=== W1 SQL writes OUTSIDE src/infrastructure/sqlite ===
+CMD: rg -n 'INSERT INTO|INSERT OR|UPDATE [a-z_]+ SET|DELETE FROM|CREATE TABLE|ALTER TABLE|DROP TABLE|executescript' src/bootstrap src/ui src/application src/ports src/domain
+EXIT=1
+HITS=0
+
+=== W2 write-method definitions inside src/infrastructure/sqlite ===
+CMD: rg -n 'def (save|insert|update|delete|add|put|record|write|create|replace|upsert|append|set|remove|mark|bump|clear)[A-Za-z_]*\(' src/infrastructure/sqlite
+src/infrastructure/sqlite\regions.py:117:    def add_region(self, region: Region) -> None:
+src/infrastructure/sqlite\regions.py:149:    def update_region(self, region: Region) -> None:
+src/infrastructure/sqlite\regions.py:164:    def add_revision(self, revision: RegionRevision) -> None:
+src/infrastructure/sqlite\regions.py:183:    def set_revision_pinned(self, region_id: str, revision_no: int, pinned: bool) -> None:
+src/infrastructure/sqlite\reading_export.py:78:    def write(self, state: dict[str, Any]) -> None:
+src/infrastructure/sqlite\reading_export.py:176:    def write(self, records: list[dict[str, Any]]) -> None:
+src/infrastructure/sqlite\pipeline.py:393:    def put(self, run_id: str, run: PipelineRun) -> None:
+src/infrastructure/sqlite\pipeline.py:791:    def set_defaults(
+src/infrastructure/sqlite\migrator.py:24:    def create_backup(self, backup_type: str, source_reason: str) -> str: ...
+src/infrastructure/sqlite\library.py:108:    def add_book(self, book: Book) -> None:
+src/infrastructure/sqlite\library.py:137:    def update_book(self, book: Book) -> None:
+src/infrastructure/sqlite\library.py:166:    def add_chapter(self, chapter: Chapter) -> None:
+src/infrastructure/sqlite\library.py:195:    def update_chapter(self, chapter: Chapter) -> None:
+src/infrastructure/sqlite\library.py:217:    def add_tag(self, tag: Tag) -> None:
+src/infrastructure/sqlite\library.py:242:    def update_tag(self, tag: Tag) -> None:
+src/infrastructure/sqlite\library.py:249:    def delete_tag(self, tag_id: str) -> None:
+src/infrastructure/sqlite\library.py:256:    def add_book_tag(self, book_id: str, tag_id: str) -> None:
+src/infrastructure/sqlite\library.py:264:    def remove_book_tag(self, book_id: str, tag_id: str) -> None:
+src/infrastructure/sqlite\library.py:331:    def add_page(self, page: Page) -> None:
+src/infrastructure/sqlite\library.py:373:    def update_page(self, page: Page) -> None:
+src/infrastructure/sqlite\backup.py:49:    def create_backup(
+src/infrastructure/sqlite\backup.py:293:def write_sidecar(
+src/infrastructure/sqlite\artifacts.py:59:    def create_artifact(self, artifact: NewArtifact) -> ArtifactRecord:
+EXIT=0
+HITS=23
+
+=== W3 repository write-method CALL SITES outside infrastructure/sqlite ===
+CMD: rg -n '\.(save|insert|update|delete|add|put|record|write|create|replace|upsert|append|remove|mark|bump)[A-Za-z_]*\(' src/bootstrap src/ui src/application
+src/bootstrap\app.py:155:        return str(self._store.write(payload.decode("utf-8"), timestamp=timestamp))
+src/bootstrap\app.py:316:        if not crop.save(buffer, "PNG"):
+src/bootstrap\app.py:329:        if not image.save(buffer, "PNG"):
+src/bootstrap\app.py:379:            rows.append(
+src/bootstrap\app.py:443:    if not image.save(buffer, "PNG"):
+src/bootstrap\app.py:707:            region = editing.create_region(
+src/bootstrap\app.py:1009:            set_export_context_updater=lambda updater: export_state.update(
+src/bootstrap\app.py:1079:    parser.add_argument(
+src/bootstrap\app.py:1084:    parser.add_argument(
+src/bootstrap\app.py:1090:    parser.add_argument(
+src/bootstrap\app.py:1096:    parser.add_argument(
+src/bootstrap\app.py:1157:                if not image.save(options.screenshot):
+src/application\editing\service.py:135:        self._repo.add_revision(stored_revision)
+src/application\editing\service.py:145:        self._repo.update_region(stored)
+src/application\editing\service.py:268:        self._repo.add_region(region)
+src/application\editing\service.py:286:        self._repo.update_region(region)
+src/application\editing\service.py:360:        self._repo.add_region(merged)
+src/application\editing\service.py:368:            self._repo.update_region(region)
+src/application\editing\service.py:369:            deleted_ids.append(region.region_id)
+src/application\editing\service.py:399:            self._repo.add_region(part)
+src/application\editing\service.py:404:            created.append(part)
+src/application\editing\service.py:406:        self._repo.update_region(source)
+src/application\editing\service.py:424:                reordered.append(region)
+src/application\editing\service.py:431:            reordered.append(region)
+src/application\editing\service.py:525:        staged.text.save_manual_translation(edited)
+src/application\editing\service.py:614:            outcome = self._service.save_geometry(region_id, geometry)
+src/application\editing\service.py:618:            saved[region_id] = self._service.save_manual_translation(region_id, edited)
+src/application\export\ports.py:71:            os.replace(temp, self._path)
+src/application\export\service.py:93:            parts.append(f"缺少译图的页: {', '.join(self.missing_page_ids)}")
+src/application\export\service.py:95:            parts.append(f"译图不是最新渲染结果的页: {', '.join(self.stale_page_ids)}")
+src/application\export\service.py:256:            os.replace(temp_path, target.path)
+src/application\export\service.py:388:        temp.write_bytes(payload)
+src/application\export\service.py:401:                archive.writestr(entry, page.provider_for(request.mode)())
+src/application\export\service.py:441:            rows.append(
+src/application\export\service.py:460:            self._store.write(rows)
+src/application\export\service.py:569:            digest.update(chunk)
+src/application\maintenance\trash.py:85:                handle.write(payload)
+src/application\maintenance\trash.py:88:            os.replace(temp_path, self._path)
+src/application\maintenance\trash.py:156:        manifest.setdefault("batches", []).append(
+src/application\maintenance\trash.py:164:        self._manifest.write_manifest(manifest)
+src/application\maintenance\trash.py:299:        self._manifest.write_manifest(manifest)
+src/application\maintenance\trash.py:308:        pending.append({"batch_id": batch_id, "targets": list(targets)})
+src/application\maintenance\trash.py:310:        self._manifest.write_manifest(manifest)
+src/application\maintenance\trash.py:346:            self._remover.remove_managed(relative_path)
+src/application\maintenance\trash.py:353:        self._manifest.write_manifest(manifest)
+src/ui\models\tasks\projection.py:181:        by_page.setdefault(task.page_id, []).append(task)
+src/ui\models\tasks\projection.py:196:        rows.append(
+src/ui\models\tasks\projection.py:213:                reasons.append(task.error_code)
+src/ui\models\tasks\projection.py:300:        flow.append((step_type, step_label(step_type), _flow_state(units, step_runs)))
+src/application\export\pdf_qt.py:27:            decoded.append(image)
+src/application\library\service.py:65:        self._repo.add_book(book)
+src/application\library\service.py:82:        self._repo.update_book(book)
+src/application\library\service.py:88:        self._repo.update_book(book)
+src/application\library\service.py:93:        self._repo.update_book(book)
+src/application\library\service.py:99:        self._repo.update_book(book)
+src/application\library\service.py:146:        self._repo.add_chapter(chapter)
+src/application\library\service.py:165:        self._repo.update_chapter(chapter)
+src/application\library\service.py:171:        self._repo.update_chapter(chapter)
+src/application\library\service.py:183:            self._repo.update_chapter(chapter)
+src/application\library\service.py:184:            reordered.append(chapter)
+src/application\library\service.py:195:        self._repo.add_tag(tag)
+src/application\library\service.py:204:        self._repo.update_tag(tag)
+src/application\library\service.py:211:        self._repo.delete_tag(tag_id)
+src/application\library\service.py:219:        self._repo.add_book_tag(book_id, tag_id)
+src/application\library\service.py:224:        self._repo.remove_book_tag(book_id, tag_id)
+src/application\importing\images\service.py:71:                pending.append(source.filename)
+src/application\importing\images\service.py:76:                failed.append(FailedImport(source.filename, "SOURCE_READ_FAILED", str(error)))
+src/application\importing\images\service.py:81:                skipped.append(source.filename)
+src/application\importing\images\service.py:87:                failed.append(FailedImport(source.filename, "INVALID_IMAGE", str(error)))
+src/application\importing\images\service.py:95:                failed.append(FailedImport(source.filename, "COPY_FAILED", str(error)))
+src/application\importing\images\service.py:112:            self._sink.add_page(page)
+src/application\importing\images\service.py:113:            existing_hashes.add(source_hash)
+src/application\importing\images\service.py:114:            imported.append(ImportedPage(source.filename, page))
+src/application\maintenance\diagnostics.py:86:        used_keys.add(output_key)
+src/application\maintenance\diagnostics.py:87:        fields.append((output_key, redact_value(key, value)))
+src/application\maintenance\diagnostics.py:214:        self._entries.append(error)
+src/application\maintenance\diagnostics.py:270:        return self._sink.write_report(report.to_json_bytes(), generated_at)
+src/application\maintenance\cleanup.py:128:                items.append(
+src/application\maintenance\cleanup.py:133:                self._remover.remove_managed(path)
+src/application\maintenance\cleanup.py:134:                items.append((path, CleanupItemResult("ok")))
+src/application\maintenance\cleanup.py:135:                succeeded.append(path)
+src/application\maintenance\cleanup.py:137:                items.append((path, CleanupItemResult("failed", str(error))))
+src/application\maintenance\cleanup.py:138:                failed.append(path)
+src/application\maintenance\cleanup.py:157:                items.append(
+src/application\maintenance\cleanup.py:160:                succeeded.append(path)  # dropped from pending, like the run face
+src/application\maintenance\cleanup.py:163:                self._remover.remove_managed(path)
+src/application\maintenance\cleanup.py:164:                items.append((path, CleanupItemResult("ok")))
+src/application\maintenance\cleanup.py:165:                succeeded.append(path)
+src/application\maintenance\cleanup.py:167:                items.append((path, CleanupItemResult("failed", str(error))))
+src/application\maintenance\cleanup.py:211:        self._manifest.write_manifest(manifest)
+src/application\maintenance\cleanup.py:235:    normalized = relative_path.replace("\\", "/")
+src/ui\viewmodels\workbench\viewmodel.py:532:            regions.append(
+src/ui\viewmodels\workbench\viewmodel.py:634:        self._translation_editor.save_manual_translation(
+src/ui\viewmodels\workbench\viewmodel.py:706:        region = self._region_creator.create_region(page_id, geometry)
+src/ui\viewmodels\workbench\viewmodel.py:729:        self._region_deleter.delete_region(region_id)
+src/ui\viewmodels\workbench\viewmodel.py:761:            self.saveInspector()
+src/ui\viewmodels\workbench\viewmodel.py:834:            run = self._pipeline.create_run(command, scope)
+src/application\importing\documents\service.py:140:                pending.append(source.filename)
+src/application\importing\documents\service.py:146:                failed.append(
+src/application\importing\documents\service.py:163:                failed.append(
+src/application\importing\documents\service.py:177:                failed.append(FailedImport(source.filename, error.reason, error.detail))
+src/application\importing\documents\service.py:189:                    failed.append(
+src/application\importing\documents\service.py:209:                        failed.append(
+src/application\importing\documents\service.py:235:                        failed.append(
+src/application\importing\documents\service.py:257:                    self._sink.add_page(page)
+src/application\importing\documents\service.py:258:                    existing_hashes.add(page_hash)
+src/application\importing\documents\service.py:260:                    imported.append(
+src/application\importing\documents\service.py:270:                skipped.append(source.filename)
+src/ui\viewmodels\workbench\run_controller.py:160:            self._thread.deleteLater()
+src/ui\viewmodels\workbench\run_controller.py:163:            self._worker.deleteLater()
+src/application\reading\ports.py:99:            os.replace(temp, self._path)
+src/ui\qml\bookshelf\BookDetailPanel.qml:101:                        shelf.createChapter(
+src/application\tasks\store.py:154:            active.append(self._active_page(page))
+src/application\tasks\store.py:198:                updated_regions.append(region)
+src/application\tasks\store.py:200:            updated_regions.append(
+src/application\tasks\store.py:225:                regions.append(
+src/application\tasks\store.py:234:                regions.append(region)
+src/application\tasks\store.py:242:        self.update_region(region_id, stage_states={"__deleted__": StageState.CANCELLED})
+src/ui\qml\workbench\WorkbenchView.qml:197:                onSaveClicked: workbench.vm.saveInspector()
+src/application\reading\service.py:148:            self._rows.append(row)
+src/application\reading\service.py:375:            row.update(self.progress.to_row())
+src/application\reading\service.py:380:        self._store.write({"progress_entries": self._rows})
+src/ui\qml\workbench\RegionOverlay.qml:64:            overlay.vm.createPolygon(JSON.stringify(draftPoints));
+src/ui\qml\workbench\RegionOverlay.qml:162:                overlay.vm.createRectangle(cornerA[0], cornerA[1],
+src/ui\qml\workbench\RegionOverlay.qml:244:            overlay.vm.deleteRegion(overlay.vm.inspectorRegionId);
+src/application\tasks\service.py:305:            terminal_ids.update(unit.unit_id for unit in units if unit.decision.is_terminal)
+src/application\tasks\service.py:306:            tasks.append(task)
+src/application\tasks\service.py:396:            units.append(unit)
+src/application\tasks\service.py:621:        run.step_runs.append(step_run)
+src/application\tasks\service.py:622:        task.step_run_ids.append(step_run.step_run_id)
+src/application\tasks\service.py:676:            run.candidates.append(candidate)
+src/application\tasks\service.py:726:            run.terminal_unit_ids.add(unit_id)
+src/application\tasks\service.py:866:            fresh = self.create_run(
+src/application\tasks\service.py:900:            recovered.append(run_id)
+src/application\tasks\service.py:914:        return self.create_run(
+src/application\tasks\service.py:993:            pages.setdefault(task.page_id, []).append(task)
+src/application\tasks\service.py:1047:        self._store.put(run.run_id, run)
+src/ui\qml\bookshelf\BookshelfToolbar.qml:28:            onClicked: toolbar.createBookRequested()
+src/ui\qml\workbench\RegionInspector.qml:127:                onClicked: inspector.saveClicked()
+src/application\translation\pipeline\executor.py:50:        self.calls.append((unit.target_id, unit.step_type))
+src/ui\qml\bookshelf\ChapterList.qml:83:                         onClicked: shelf.deleteChapter(model.chapterId) }
+src/ui\qml\bookshelf\BookshelfView.qml:104:        onAccepted: shelf.createBook(newBookTitle.text, newBookOriginal.text)
+src/application\settings\bindings.py:101:            wanted.append((SCOPE_CHAPTER, chapter_id))
+src/application\settings\bindings.py:103:            wanted.append((SCOPE_BOOK, book_id))
+src/application\settings\bindings.py:104:        wanted.append((SCOPE_GLOBAL, None))
+src/ui\viewmodels\settings\viewmodel.py:113:            views.append(
+src/ui\viewmodels\settings\viewmodel.py:140:            views.append(
+src/ui\viewmodels\settings\viewmodel.py:255:                self._providers.add_profile(profile)
+src/ui\viewmodels\settings\viewmodel.py:257:                self._providers.update_profile(profile)
+src/ui\viewmodels\settings\viewmodel.py:272:            self._providers.delete_profile(profile_id)
+src/ui\viewmodels\settings\viewmodel.py:339:                self._networks.create_profile(profile, confirm_disable_tls=confirm)
+src/ui\viewmodels\settings\viewmodel.py:341:                self._networks.update_profile(profile, confirm_disable_tls=confirm)
+src/ui\viewmodels\settings\viewmodel.py:359:            self._networks.delete_profile(profile_id)
+src/ui\viewmodels\settings\viewmodel.py:405:            self._defaults.save_provider_binding(step, provider_profile_id)
+src/ui\viewmodels\settings\viewmodel.py:435:            self._defaults.save_settings_section(section, values)
+src/ui\viewmodels\settings\viewmodel.py:445:        self.saveSettingsSectionJson(
+src/ui\viewmodels\settings\viewmodel.py:475:        self._defaults.save_settings_section("providers", providers)
+src/ui\viewmodels\settings\viewmodel.py:483:        self._defaults.save_settings_section("providers", providers)
+src/ui\viewmodels\settings\viewmodel.py:511:        self._defaults.save_settings_section("providers", providers)
+src/ui\viewmodels\settings\viewmodel.py:520:        self._defaults.save_settings_section("providers", providers)
+src/ui\viewmodels\settings\viewmodel.py:544:            self._credentials.update_credential(ref, secret)
+src/ui\viewmodels\settings\viewmodel.py:551:            self._credentials.delete_credential(ref)
+src/application\rendering\service.py:167:            translated_record = self._artifacts.create_artifact(
+src/application\rendering\service.py:196:                reports.append(prepared.report)
+src/application\rendering\service.py:202:            reports.append(prepared.report)
+src/application\rendering\service.py:203:            ops.append(prepared.op)
+src/application\rendering\service.py:276:            record = self._artifacts.create_artifact(
+src/ui\qml\settings\SettingsView.qml:285:                            onClicked: settingsViewModel.deleteProviderProfile(
+src/ui\qml\settings\SettingsView.qml:291:                            onClicked: settingsViewModel.saveProviderProfile({
+src/ui\qml\settings\SettingsView.qml:342:                            onClicked: settingsViewModel.saveBinding(
+src/ui\qml\settings\SettingsView.qml:457:                            onClicked: settingsViewModel.deleteNetworkProfile(
+src/ui\qml\settings\SettingsView.qml:484:                                settingsViewModel.saveNetworkProfile(
+src/ui\qml\settings\SettingsView.qml:544:                settingsViewModel.saveNetworkProfile(payload);
+src/ui\qml\reader\ReaderView.qml:156:                        exportWindowComponent.createObject(rv)
+src/ui\qml\reader\ReaderView.qml:246:                        onTriggered: if (active) model.saveScrollOffset(webtoonScroll.contentY)
+src/ui\viewmodels\bookshelf\viewmodel.py:287:        book = self._library.create_book(title, original_title=original_title)
+src/ui\viewmodels\bookshelf\viewmodel.py:293:        self._library.delete_book(book_id)
+src/ui\viewmodels\bookshelf\viewmodel.py:313:        chapter = self._library.create_chapter(
+src/ui\viewmodels\bookshelf\viewmodel.py:326:        self._library.delete_chapter(chapter_id)
+src/application\translation\knowledge\tm.py:182:        self._store.add(entry)
+src/application\translation\knowledge\tm.py:215:        self._store.update(updated)
+src/application\translation\knowledge\tm.py:230:        self._store.update(updated)
+src/application\translation\knowledge\tm.py:281:                    exact.append(TmMatch(entry, "exact", 1.0))
+src/application\translation\knowledge\tm.py:282:                    seen_ids.add(entry.tm_id)
+src/application\translation\knowledge\tm.py:286:                        fuzzy.append(TmMatch(entry, "fuzzy", similarity))
+src/application\translation\knowledge\tm.py:287:                        seen_ids.add(entry.tm_id)
+src/ui\viewmodels\reader\viewmodel.py:279:        self._reading.save_scroll_offset(offset_y)
+src/ui\viewmodels\reader\viewmodel.py:450:            self._reading.add_time(elapsed)
+src/ui\viewmodels\reader\viewmodel.py:470:            pages.append(
+src/application\translation\context\step.py:120:        lines.append(f"[{tag}] {entry.text}")
+src/application\translation\context\step.py:170:            skipped.append(SkippedTarget(entry.region_id, action.status, action.reason))
+src/application\translation\context\step.py:172:            translate_entries.append(entry)
+src/ui\viewmodels\export\viewmodel.py:175:            rows.append(
+src/ui\viewmodels\export\viewmodel.py:239:                stale.append(page.filename)
+src/ui\viewmodels\export\viewmodel.py:241:                missing.append(page.filename)
+src/application\translation\knowledge\term_extraction.py:87:            sources.append("glossary")
+src/application\translation\knowledge\term_extraction.py:93:                    seen.add(key)
+src/application\translation\knowledge\term_extraction.py:94:                    candidates.append(
+src/application\translation\knowledge\term_extraction.py:104:            sources.append("tm")
+src/application\translation\knowledge\term_extraction.py:112:                seen.add(key)
+src/application\translation\knowledge\term_extraction.py:113:                candidates.append(
+src/application\translation\knowledge\term_extraction.py:122:        sources.append("text")
+src/application\translation\knowledge\term_extraction.py:126:            seen.add(ngram)
+src/application\translation\knowledge\term_extraction.py:127:            candidates.append(
+src/application\settings\network.py:65:        self._store.add_profile(profile)
+src/application\settings\network.py:85:        self._store.update_profile(profile)
+src/application\settings\network.py:89:        self._store.delete_profile(network_profile_id)
+src/application\settings\network.py:101:            notes.append("TLS verification disabled (dangerous setting)")
+src/application\settings\network.py:103:            notes.append("proxy failure may fall back to direct (visible)")
+src/application\translation\context\builder.py:133:            entries.append(_entry(region, page.page_id, page.sort_order, role))
+src/application\translation\context\builder.py:191:            neighbors.append(ordered[index - 1])
+src/application\translation\context\builder.py:193:            neighbors.append(ordered[index + 1])
+src/application\translation\context\builder.py:204:            included.append(neighbor)
+src/application\translation\context\builder.py:247:                    included.append(ordered[back])
+src/application\translation\context\builder.py:256:                    included.append(ordered[forward])
+src/application\translation\context\builder.py:305:                chunks.append(ContextChunk(tuple(current)))
+src/application\translation\context\builder.py:308:            current.append(entry)
+src/application\translation\context\builder.py:311:            entries.append(entry)
+src/application\translation\context\builder.py:313:            chunks.append(ContextChunk(tuple(current)))
+src/application\settings\resolution.py:46:            candidates.append(
+src/application\settings\resolution.py:67:                candidates.append(
+src/application\settings\resolution.py:78:            candidates.append(
+src/application\settings\resolution.py:97:        keys.update(o.key for o in overrides)
+src/application\settings\resolution.py:98:        keys.update(task_overrides or ())
+src/application\settings\snapshots.py:115:            issues.append(
+src/application\settings\snapshots.py:123:            issues.append(
+src/application\translation\inpaint\step.py:122:        attempts.append(candidate)
+src/application\translation\inpaint\step.py:161:            routes.append(candidate)
+src/application\translation\inpaint\step.py:190:    provenance.update(decision.as_provenance())
+src/application\translation\inpaint\protection.py:35:                violations.append((x, y))
+src/application\translation\inpaint\router.py:146:        order.append(ROUTE_SIMPLE_FILL)
+src/application\translation\inpaint\router.py:158:        order.append(ROUTE_SIMPLE_FILL)
+src/application\translation\inpaint\router.py:159:    order.append(ROUTE_EDGE_BLEED)  # dependency-free structural last resort
+src/application\translation\inpaint\router.py:166:        seen.add(route)
+src/application\translation\inpaint\router.py:167:        unique.append(route)
+src/application\translation\inpaint\router.py:214:            candidates.append(
+src/application\translation\inpaint\router.py:219:            candidates.append(
+src/application\translation\inpaint\router.py:229:            candidates.append(RouteCandidate(route, False, gate.reason))
+src/application\translation\inpaint\router.py:231:        candidates.append(RouteCandidate(route, True, gate.reason))
+src/application\translation\inpaint\mask.py:87:                crossings.append(x1 + (scan - y1) * (x2 - x1) / (y2 - y1))
+EXIT=0
+HITS=240
+
+=== W4 transaction/commit sites outside src/infrastructure/sqlite ===
+CMD: rg -n '\.commit\(|\.rollback\(|BEGIN IMMEDIATE|BEGIN DEFERRED|BEGIN EXCLUSIVE' src/bootstrap src/ui src/application src/ports src/domain
+src/application\editing\ports.py:66:    §4.2). Implementations must run inside one ``BEGIN IMMEDIATE``:
+EXIT=0
+HITS=1
+
+=== E4 entry points and packaging surfaces tracked by git ===
+CMD: git ls-files | rg '(^main\.py$|^run\.py$|__main__\.py$|\.spec$|^packaging/|^src/main)'
+EXIT=1
+HITS=0
+
+=== E5 data-root resolution ===
+CMD: rg -n 'NEWMANGA_DATA_ROOT|\.newmanga|Path\.home\(\)' src
+src\bootstrap\app.py:17:可用 ``--data-root`` 或环境变量 ``NEWMANGA_DATA_ROOT`` 覆盖；正式的路径
+src\bootstrap\app.py:588:    root = os.environ.get("NEWMANGA_DATA_ROOT")
+src\bootstrap\app.py:592:    base = Path(local_app_data) if local_app_data else Path.home()
+src\application\reading\service.py:437:    """Store on the shared data root (``NEWMANGA_DATA_ROOT`` or home)."""
+src\application\reading\service.py:438:    root = os.environ.get("NEWMANGA_DATA_ROOT")
+src\application\reading\service.py:439:    base = Path(root) if root else Path.home() / ".newmanga"
+src\ui\viewmodels\export\viewmodel.py:60:    return documents or str(Path.home())
+EXIT=0
+HITS=7
+
+=== E6 QGuiApplication-required Qt APIs (fonts, painting, image plugins) ===
+CMD: rg -n 'QFontDatabase|QFontMetrics|QTextLayout|QPainter|QImageReader|QImageWriter|QPdfWriter|QGuiApplication' src/infrastructure src/application src/bootstrap
+src/bootstrap\app.py:37:from PySide6.QtGui import QGuiApplication
+src/bootstrap\app.py:673:        # need a QGuiApplication instance, which the entry creates before
+src/bootstrap\app.py:1105:        # Must be set before QGuiApplication exists to affect the DPI policy.
+src/bootstrap\app.py:1108:    application = QGuiApplication([sys.argv[0]])
+src/application\export\pdf_qt.py:6:from image bytes with ``QImage`` and painted onto a ``QPdfWriter`` page
+src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+src/application\export\pdf_qt.py:31:        writer = QPdfWriter(buffer)
+src/application\export\pdf_qt.py:33:        painter = QPainter(writer)
+src/infrastructure\importing.py:47:        from PySide6.QtGui import QImageReader
+src/infrastructure\importing.py:54:        reader = QImageReader(buffer)
+src/infrastructure\rendering\font_catalog.py:11:from PySide6.QtGui import QFont, QFontDatabase
+src/infrastructure\rendering\font_catalog.py:28:        if family and QFontDatabase.hasFamily(family):
+src/infrastructure\rendering\font_catalog.py:31:            if candidate != family and QFontDatabase.hasFamily(candidate):
+src/infrastructure\rendering\qt_compositor.py:8:Text is rendered through a QPainterPath so the stroke (D03 §11.5 描边)
+src/infrastructure\rendering\qt_compositor.py:21:    QFontMetrics,
+src/infrastructure\rendering\qt_compositor.py:23:    QPainter,
+src/infrastructure\rendering\qt_compositor.py:24:    QPainterPath,
+src/infrastructure\rendering\qt_compositor.py:45:        painter = QPainter(image)
+src/infrastructure\rendering\qt_compositor.py:71:        painter = QPainter(base)
+src/infrastructure\rendering\qt_compositor.py:80:    def _draw_op(self, painter: QPainter, render_op: RenderOp) -> None:
+src/infrastructure\rendering\qt_compositor.py:83:        metrics = QFontMetrics(font)
+src/infrastructure\rendering\qt_compositor.py:88:        path = QPainterPath()
+src/infrastructure\rendering\qt_compositor.py:106:        self, render_op: RenderOp, metrics: QFontMetrics
+src/infrastructure\rendering\qt_layout.py:15:from PySide6.QtGui import QFont, QFontMetrics
+src/infrastructure\rendering\qt_layout.py:51:        metrics = QFontMetrics(font)
+src/infrastructure\rendering\qt_layout.py:83:        metrics: QFontMetrics,
+src/infrastructure\rendering\qt_layout.py:126:        metrics: QFontMetrics,
+EXIT=0
+HITS=27
+
+=== W5 authoritative writer surface: every SQL-write line grouped by file ===
+CMD: rg -l 'INSERT INTO|UPDATE [a-z_]+ SET|DELETE FROM|CREATE TABLE|ALTER TABLE|executescript' src
+src\infrastructure\sqlite\artifacts.py
+src\infrastructure\sqlite\backup.py
+src\infrastructure\sqlite\pipeline.py
+src\infrastructure\sqlite\library.py
+src\infrastructure\sqlite\regions.py
+src\infrastructure\sqlite\migrator.py
+src\infrastructure\sqlite\reading_export.py
+src\infrastructure\sqlite\schema.py
+src\infrastructure\providers\step_writes.py
+EXIT=0
+HITS=9
+
+=== W6 write-line count per non-sqlite file ===
+CMD: rg -c 'INSERT INTO|UPDATE [a-z_]+ SET|DELETE FROM' src/infrastructure/providers/step_writes.py
+5
+EXIT=0
+HITS=1
+
+=== W7 any SQL keyword at all in ui/ + bootstrap (write or read) ===
+CMD: rg -n 'SELECT |INSERT |UPDATE |DELETE ' src/ui src/bootstrap
+src/bootstrap\app.py:466:            "SELECT settings_json, provider_bindings_json, constraint_snapshot_ref,"
+src/bootstrap\app.py:497:            "SELECT settings_json FROM pipeline_defaults WHERE defaults_id = 1"
+EXIT=0
+HITS=2
+
+=== W8 sqlite3 import surface across src ===
+CMD: rg -l 'import sqlite3' src
+src\bootstrap\app.py
+src\infrastructure\rendering\locator.py
+src\infrastructure\sqlite\regions.py
+src\infrastructure\sqlite\reading_export.py
+src\infrastructure\sqlite\pipeline.py
+src\infrastructure\sqlite\migrator.py
+src\infrastructure\sqlite\library.py
+src\infrastructure\sqlite\connection.py
+src\infrastructure\sqlite\artifacts.py
+src\infrastructure\sqlite\backup.py
+src\infrastructure\pipeline\assembly.py
+src\infrastructure\providers\step_writes.py
+EXIT=0
+HITS=12
+
+=== W5b: full file list with write hits (sorted) ===
+src\infrastructure\providers\step_writes.py
+src\infrastructure\sqlite\artifacts.py
+src\infrastructure\sqlite\backup.py
+src\infrastructure\sqlite\library.py
+src\infrastructure\sqlite\migrator.py
+src\infrastructure\sqlite\pipeline.py
+src\infrastructure\sqlite\reading_export.py
+src\infrastructure\sqlite\regions.py
+src\infrastructure\sqlite\schema.py

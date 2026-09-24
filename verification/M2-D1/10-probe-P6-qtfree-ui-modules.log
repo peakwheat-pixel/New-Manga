@@ -1,0 +1,22 @@
+M2-D1 probe P6 — are the Qt-free UI modules reachable without Qt? (PySide6 absent)
+captured_at = 2026-09-25T02:33:57+08:00
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+python = C:\Python314\python.exe  Python 3.14.6
+command = python -B verification/M2-D1/probes/ui_qtfree_bridge_probe.py
+note = ATTEMPT1 exposed a probe defect (synthetic module not registered in sys.modules before exec_module; dataclasses needs it), see 10-...-ATTEMPT1-failed.log. Fixed by registering sys.modules[spec.name] first.
+--- raw stdout+stderr ---
+probe=ui_qtfree_bridge_probe
+python=3.14.6 (C:\Python314\python.exe)
+src_root=G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+qt_available=False
+------------------------------------------------------------
+### target=ui/models/tasks/projection.py
+A_by_module_name=FAIL ModuleNotFoundError: No module named 'PySide6'
+B_by_file_path=OK exported=['CommandType', 'Mapping', 'PageProjectionRow', 'PipelineRun', 'PipelineRunStatus', 'PipelineTaskStatus', 'PlanDecision', 'STATUS_BLOCKED', 'STATUS_COMPLETED', 'STATUS_FAILED', 'STATUS_PROCESSING', 'STATUS_SKIPPED']
+### target=ui/viewmodels/workbench/region_canvas.py
+A_by_module_name=FAIL ModuleNotFoundError: No module named 'PySide6'
+B_by_file_path=OK exported=['BBox', 'DEGENERATE_GEOMETRY', 'PAGE_SIZE_UNAVAILABLE', 'RegionCanvasError', 'RegionGeometry', 'Sequence', 'TOO_FEW_POINTS', 'math', 'normalized_to_page_geometry']
+------------------------------------------------------------
+probe_completed=True
+--- end raw ---
+EXIT=0

@@ -1,0 +1,85 @@
+M2-D1 environment and fixed-point evidence
+captured_at_utc = 2026-09-24T18:26:23Z
+captured_at_local = 2026-09-25T02:26:23+08:00
+shell = pwsh 7.6.6
+host = HOME-MY / Microsoft Windows NT 10.0.26200.0
+cwd = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit
+
+--- git rev-parse --show-toplevel ---
+G:/CODEX/New Manga.worktrees/M2-D1-deepseek-audit
+EXIT=0
+--- git branch --show-current ---
+agent/deepseek/M2-D1-headless-qt-coupling-audit
+EXIT=0
+--- git rev-parse HEAD ---
+bbeb4892746795be4bca92f4e5dda91a77c422a3
+EXIT=0
+--- git rev-parse --git-common-dir ---
+G:/CODEX/New Manga/.git
+EXIT=0
+--- git log --oneline -3 ---
+bbeb489 docs(task): record M2-D1 DSH CLI authentication handoff
+504ed57 docs(task): release M2-D1 headless Qt coupling audit
+307a940 docs(governance): close GOV-001 after approved review and integration
+EXIT=0
+--- git status --porcelain=v1 --branch ---
+## agent/deepseek/M2-D1-headless-qt-coupling-audit
+?? verification/M2-D1/
+EXIT=0
+
+--- fixed code base 307a940265fc325076fe77698750392531f8fce1 ---
+307a940 docs(governance): close GOV-001 after approved review and integration
+EXIT=0
+--- git merge-base --is-ancestor <base> HEAD ---
+EXIT=0
+--- git rev-list --count base..HEAD ---
+2
+EXIT=0
+--- git log --oneline base..HEAD ---
+bbeb489 docs(task): record M2-D1 DSH CLI authentication handoff
+504ed57 docs(task): release M2-D1 headless Qt coupling audit
+EXIT=0
+--- git diff --name-status base..HEAD (registration must not touch code) ---
+M	doc/00_INDEX.md
+M	doc/12_ROADMAP.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+A	doc/tasks/M2-D1.md
+EXIT=0
+
+--- toolchain ---
+rg --version
+ripgrep 15.2.0 (rev e89fff89ac)
+
+features:+pcre2
+simd(compile):+SSE2,-SSSE3,-AVX2
+simd(runtime):+SSE2,+SSSE3,+AVX2
+
+PCRE2 10.45 is available (JIT is available)
+EXIT=0
+python -V (PATH default)
+Python 3.14.6
+EXIT=0
+where.exe python
+C:\Python314\python.exe
+C:\Users\49745\AppData\Local\Programs\Python\Python310\python.exe
+C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe
+C:\Users\49745\AppData\Local\Programs\Python\Python311\python.exe
+C:\Users\49745\AppData\Local\Microsoft\WindowsApps\python.exe
+C:\Users\49745\AppData\Local\Python\bin\python.exe
+EXIT=0
+py -0p
+ -V:3.14 *        C:\Users\49745\AppData\Local\Python\pythoncore-3.14-64\python.exe
+ -V:3.12          C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe
+ -V:3.11          C:\Users\49745\AppData\Local\Programs\Python\Python311\python.exe
+ -V:3.10          C:\Users\49745\AppData\Local\Programs\Python\Python310\python.exe
+EXIT=0
+
+--- six audit directories (file counts) ---
+src/domain             all=  13 py=  13 qml=   0
+src/application        all=  66 py=  66 qml=   0
+src/ports              all=  23 py=  23 qml=   0
+src/infrastructure     all=  56 py=  56 qml=   0
+src/bootstrap          all=   2 py=   2 qml=   0
+src/ui                 all=  47 py=  21 qml=  25
+EXIT=0

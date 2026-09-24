@@ -1,0 +1,58 @@
+M2-D1 probe P5 — import surface of src/ui (PySide6 absent)
+captured_at = 2026-09-25T02:30:05+08:00
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+python = C:\Python314\python.exe  Python 3.14.6
+command = python -B verification/M2-D1/probes/core_import_probe.py ui
+--- raw stdout+stderr ---
+probe=core_import_probe
+trees=['ui']
+python=3.14.6 (C:\Python314\python.exe)
+src_root=G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+sys.path_has_src=True
+qt_available=False
+------------------------------------------------------------
+### tree=ui modules=21
+OK   ui
+OK   ui.models.library
+FAIL ui.models.library.models :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.models.tasks :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.models.tasks.page_list_model :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.models.tasks.projection :: ModuleNotFoundError: No module named 'PySide6'
+OK   ui.viewmodels
+OK   ui.viewmodels.bookshelf
+FAIL ui.viewmodels.bookshelf.viewmodel :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.export :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.export.viewmodel :: ModuleNotFoundError: No module named 'PySide6'
+OK   ui.viewmodels.navigation
+FAIL ui.viewmodels.navigation.viewmodel :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.reader :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.reader.viewmodel :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.settings :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.settings.viewmodel :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.workbench :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.workbench.region_canvas :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.workbench.run_controller :: ModuleNotFoundError: No module named 'PySide6'
+FAIL ui.viewmodels.workbench.viewmodel :: ModuleNotFoundError: No module named 'PySide6'
+------------------------------------------------------------
+imported_ok=5
+imported_failed=16
+FAILED_MODULE tree=ui module=ui.models.library.models reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.models.tasks reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.models.tasks.page_list_model reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.models.tasks.projection reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.bookshelf.viewmodel reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.export reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.export.viewmodel reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.navigation.viewmodel reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.reader reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.reader.viewmodel reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.settings reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.settings.viewmodel reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.workbench reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.workbench.region_canvas reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.workbench.run_controller reason=ModuleNotFoundError: No module named 'PySide6'
+FAILED_MODULE tree=ui module=ui.viewmodels.workbench.viewmodel reason=ModuleNotFoundError: No module named 'PySide6'
+failures_due_to_missing_module=16
+probe_completed=True
+--- end raw ---
+EXIT=0

@@ -1,0 +1,43 @@
+M2-D1 probe P6 — are the Qt-free UI modules reachable without Qt? (PySide6 absent)
+captured_at = 2026-09-25T02:33:21+08:00
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+python = C:\Python314\python.exe  Python 3.14.6
+command = python -B verification/M2-D1/probes/ui_qtfree_bridge_probe.py
+--- raw stdout+stderr ---
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\verification\M2-D1\probes\ui_qtfree_bridge_probe.py", line 61, in main
+    spec.loader.exec_module(module)
+    ~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^
+  File "<frozen importlib._bootstrap_external>", line 759, in exec_module
+  File "<frozen importlib._bootstrap>", line 491, in _call_with_frames_removed
+  File "G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src\ui\models\tasks\projection.py", line 80, in <module>
+    @dataclass(frozen=True)
+     ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Python314\Lib\dataclasses.py", line 1440, in wrap
+    return _process_class(cls, init, repr, eq, order, unsafe_hash,
+                          frozen, match_args, kw_only, slots,
+                          weakref_slot)
+  File "C:\Python314\Lib\dataclasses.py", line 1055, in _process_class
+    and _is_type(type, cls, dataclasses, dataclasses.KW_ONLY,
+        ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                 _is_kw_only))):
+                 ^^^^^^^^^^^^
+  File "C:\Python314\Lib\dataclasses.py", line 814, in _is_type
+    ns = sys.modules.get(cls.__module__).__dict__
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute '__dict__'. Did you mean: '__dir__'?
+probe=ui_qtfree_bridge_probe
+python=3.14.6 (C:\Python314\python.exe)
+src_root=G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+qt_available=False
+------------------------------------------------------------
+### target=ui/models/tasks/projection.py
+A_by_module_name=FAIL ModuleNotFoundError: No module named 'PySide6'
+B_by_file_path=FAIL AttributeError: 'NoneType' object has no attribute '__dict__'
+### target=ui/viewmodels/workbench/region_canvas.py
+A_by_module_name=FAIL ModuleNotFoundError: No module named 'PySide6'
+B_by_file_path=OK exported=['BBox', 'DEGENERATE_GEOMETRY', 'PAGE_SIZE_UNAVAILABLE', 'RegionCanvasError', 'RegionGeometry', 'Sequence', 'TOO_FEW_POINTS', 'math', 'normalized_to_page_geometry']
+------------------------------------------------------------
+probe_completed=True
+--- end raw ---
+EXIT=0

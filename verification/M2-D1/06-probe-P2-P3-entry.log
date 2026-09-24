@@ -1,0 +1,42 @@
+M2-D1 probes P2/P3 — production entry and composition-root import with PySide6 absent
+captured_at = 2026-09-25T02:29:39+08:00
+cwd = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+python = C:\Python314\python.exe  Python 3.14.6
+env.NEWMANGA_DATA_ROOT = C:\Users\49745\AppData\Local\Temp\m2d1-entry-291b58e5
+env.LOCALAPPDATA = C:\Users\49745\AppData\Local\Temp\m2d1-entry-291b58e5
+env.PYTHONDONTWRITEBYTECODE = 1
+env.PYTHONPATH = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+env.QT_QPA_PLATFORM = <removed> (same as tests/core/test_bootstrap.py:48-49)
+
+=== P2: production smoke entry ===
+command = python -B -m bootstrap.app --smoke-test
+--- raw stdout+stderr ---
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src\bootstrap\app.py", line 36, in <module>
+    from PySide6.QtCore import QTimer, QUrl
+ModuleNotFoundError: No module named 'PySide6'
+--- end raw ---
+P2_EXIT=1
+
+=== P3: composition-root import only ===
+command = python -B -c "import bootstrap.app; print('IMPORT_OK')"
+--- raw stdout+stderr ---
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+    import bootstrap.app; print('IMPORT_OK')
+    ^^^^^^^^^^^^^^^^^^^^
+  File "G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src\bootstrap\app.py", line 36, in <module>
+    from PySide6.QtCore import QTimer, QUrl
+ModuleNotFoundError: No module named 'PySide6'
+--- end raw ---
+P3_EXIT=1
+
+=== P3b: does the failure come from the composition root's own Qt import? ===
+command = python -B -c "import ast,sys; t=ast.parse(open('src/bootstrap/app.py',encoding='utf-8').read()); print([n.lineno for n in t.body if isinstance(n,(ast.Import,ast.ImportFrom)) and 'PySide6' in ast.dump(n)])"
+--- raw stdout+stderr ---
+module_level_PySide6_import_lines= [36, 37, 38, 42]
+--- end raw ---
+P3b_EXIT=0

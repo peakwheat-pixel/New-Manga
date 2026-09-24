@@ -1,0 +1,27 @@
+M2-D1 probe P1 — Core import surface (no PySide6 installed)
+captured_at = 2026-09-25T02:29:03+08:00
+shell = pwsh 7.6.6
+cwd = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+python = C:\Python314\python.exe  Python 3.14.6
+env.NEWMANGA_DATA_ROOT = C:\Users\49745\AppData\Local\Temp\m2d1-probe-79db74c0
+env.LOCALAPPDATA = C:\Users\49745\AppData\Local\Temp\m2d1-probe-79db74c0
+env.PYTHONDONTWRITEBYTECODE = 1
+env.PYTHONPATH = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+env.QT_QPA_PLATFORM = <removed>
+command = python -B verification/M2-D1/probes/core_import_probe.py
+--- raw stdout+stderr ---
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\verification\M2-D1\probes\core_import_probe.py", line 80, in <module>
+    raise SystemExit(main())
+                     ~~~~^^
+  File "G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\verification\M2-D1\probes\core_import_probe.py", line 49, in main
+    print(f"qt_available={importlib.util.find_spec('PySide6') is not None}")
+                          ^^^^^^^^^^^^^^
+AttributeError: module 'importlib' has no attribute 'util'
+probe=core_import_probe
+python=3.14.6 (C:\Python314\python.exe)
+src_root=G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+sys.path_has_src=True
+--- end raw ---
+EXIT=2

@@ -1,0 +1,298 @@
+M2-D1 required start command (Task doc/tasks/M2-D1.md:45)
+captured_at = 2026-09-25T02:26:42+08:00
+shell = pwsh 7.6.6
+cwd = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+rg = ripgrep 15.2.0 (rev e89fff89ac)
+command = rg -n 'PySide6|QObject|QImage|QPdfWriter|sqlite3|connect' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+--- raw stdout ---
+src/ui\viewmodels\__init__.py:2:cases. PySide6.QtQml/QtCore only — never infrastructure (architecture
+src/ports\network\transport.py:31:    """TCP connect to the first hop was refused or unreachable."""
+src/ui\models\library\models.py:10:from PySide6.QtCore import (
+src/bootstrap\app.py:32:import sqlite3
+src/bootstrap\app.py:36:from PySide6.QtCore import QTimer, QUrl
+src/bootstrap\app.py:37:from PySide6.QtGui import QGuiApplication
+src/bootstrap\app.py:38:from PySide6.QtQml import QQmlApplicationEngine
+src/bootstrap\app.py:42:from PySide6.QtQuick import QQuickWindow  # noqa: F401
+src/bootstrap\app.py:89:from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
+src/bootstrap\app.py:256:        from PySide6.QtGui import QImage
+src/bootstrap\app.py:276:        image = QImage(str(path))
+src/bootstrap\app.py:284:        from PySide6.QtGui import QImage
+src/bootstrap\app.py:286:        image = self._page_image(page_id).convertToFormat(QImage.Format.Format_RGB32)
+src/bootstrap\app.py:291:        from PySide6.QtCore import QBuffer, QIODevice, QRect
+src/bootstrap\app.py:292:        from PySide6.QtGui import QImage
+src/bootstrap\app.py:313:        crop = image.copy(rect).convertToFormat(QImage.Format.Format_RGB888)
+src/bootstrap\app.py:324:        from PySide6.QtCore import QBuffer, QIODevice
+src/bootstrap\app.py:418:    from PySide6.QtCore import QBuffer, QIODevice
+src/bootstrap\app.py:419:    from PySide6.QtGui import QImage
+src/bootstrap\app.py:436:    image = QImage(raw, width, height, bytes_per_line, QImage.Format.Format_RGB32)
+src/bootstrap\app.py:450:def _load_pipeline_defaults(conn: sqlite3.Connection) -> dict:
+src/bootstrap\app.py:469:    except sqlite3.Error:
+src/bootstrap\app.py:493:def _load_pipeline_settings(conn: sqlite3.Connection) -> dict:
+src/bootstrap\app.py:499:    except sqlite3.Error:
+src/bootstrap\app.py:549:    every per-thread connection before temp-root cleanup — the last writer
+src/bootstrap\app.py:914:        navigation.readerContextChanged.connect(_open_reader_chapter)
+src/bootstrap\app.py:987:        navigation.workbenchContextChanged.connect(sync_workbench_context)
+src/bootstrap\app.py:1053:    """Drain the workbench run thread, then close the connection — only
+src/bootstrap\app.py:1058:    still alive and writing.  Closing the connection under an active
+src/bootstrap\app.py:1071:            "shutdown: workbench drain timed out; connection left open "
+src/bootstrap\app.py:1148:            from PySide6.QtQuick import QQuickWindow
+src/bootstrap\app.py:1174:    # Close SQLite before temp-root cleanup: the connection holds the
+src/ui\viewmodels\navigation\viewmodel.py:10:from PySide6.QtCore import Property, QObject, Signal, Slot
+src/ui\viewmodels\navigation\viewmodel.py:22:class NavigationViewModel(QObject):
+src/ui\viewmodels\navigation\viewmodel.py:28:    def __init__(self, parent: QObject | None = None) -> None:
+src/ui\models\tasks\page_list_model.py:12:from PySide6.QtCore import (
+src/ui\viewmodels\export\viewmodel.py:23:from PySide6.QtCore import Property, QObject, QStandardPaths, QUrl, Signal, Slot
+src/ui\viewmodels\export\viewmodel.py:24:from PySide6.QtGui import QDesktopServices
+src/ui\viewmodels\export\viewmodel.py:63:class ExportViewModel(QObject):
+src/ui\viewmodels\export\viewmodel.py:77:        parent: QObject | None = None,
+src/ui\viewmodels\settings\viewmodel.py:33:from PySide6.QtCore import Property, QObject, Signal, Slot
+src/ui\viewmodels\settings\viewmodel.py:73:class SettingsViewModel(QObject):
+src/ui\viewmodels\settings\viewmodel.py:92:        parent: QObject | None = None,
+src/ui\viewmodels\workbench\viewmodel.py:29:from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
+src/ui\viewmodels\workbench\viewmodel.py:65:class WorkbenchViewModel(QObject):
+src/ui\viewmodels\workbench\viewmodel.py:90:        parent: QObject | None = None,
+src/ui\viewmodels\workbench\viewmodel.py:137:        self._controller.runFinished.connect(self._on_run_finished)
+src/ui\viewmodels\workbench\viewmodel.py:138:        self._controller.runCrashed.connect(self._on_run_crashed)
+src/ui\viewmodels\workbench\viewmodel.py:142:        self._progress_timer.timeout.connect(self._refresh_from_run)
+src/ui\viewmodels\workbench\viewmodel.py:209:    def get_page_list_model(self) -> QObject:
+src/ui\viewmodels\workbench\viewmodel.py:212:    pageListModel = Property(QObject, get_page_list_model, constant=True)
+src/ui\viewmodels\workbench\viewmodel.py:857:        duty before calling this — the VM holds no connection handle,
+src/ui\viewmodels\workbench\run_controller.py:18:from PySide6.QtCore import QObject, QThread, Signal, Slot
+src/ui\viewmodels\workbench\run_controller.py:32:class _Worker(QObject):
+src/ui\viewmodels\workbench\run_controller.py:52:class RunController(QObject):
+src/ui\viewmodels\workbench\run_controller.py:59:    # Emitted on the GUI thread; the queued connection delivers the job to
+src/ui\viewmodels\workbench\run_controller.py:65:    def __init__(self, parent: QObject | None = None) -> None:
+src/ui\viewmodels\workbench\run_controller.py:126:        self._startRequested.connect(self._worker.execute)  # queued → worker
+src/ui\viewmodels\workbench\run_controller.py:127:        self._worker.finishedRun.connect(self._on_finished)
+src/ui\viewmodels\workbench\run_controller.py:128:        self._worker.crashed.connect(self._on_crashed)
+src/ui\viewmodels\workbench\run_controller.py:147:        database connection (TASK-060 Q-003; see
+src/ui\viewmodels\workbench\run_controller.py:155:                # connected, replace this fallback with an acknowledged
+src/ports\repositories\__init__.py:5:of sqlite3/PySide6 imports so domain and application layers can depend on
+src/ports\repositories\database.py:22:    #: True when the connection must not perform writes. ``TOO_NEW`` databases
+src/domain\regions\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/infrastructure\transport\stdlib.py:7:a generic "connection failed" (AC-NET-004).
+src/infrastructure\transport\stdlib.py:11:- ``direct`` — connect straight to the target.
+src/infrastructure\transport\stdlib.py:297:                # R-003: post-connect read/write timeouts must be typed
+src/infrastructure\transport\stdlib.py:307:                    f"connection lost during exchange with {hop}: {err}"
+src/infrastructure\transport\stdlib.py:371:                sock = self._tcp_connect(
+src/infrastructure\transport\stdlib.py:381:                sock = self._socks5_connect(route, profile)
+src/infrastructure\transport\stdlib.py:383:                sock = self._tcp_connect(
+src/infrastructure\transport\stdlib.py:391:                    self._http_connect_tunnel(sock, route, profile)
+src/infrastructure\transport\stdlib.py:427:    def _tcp_connect(self, host: str, port: int, timeout: float) -> socket.socket:
+src/infrastructure\transport\stdlib.py:429:            return socket.create_connection((host, port), timeout=timeout)
+src/infrastructure\transport\stdlib.py:433:            raise TcpConnectionError(f"connection refused: {host}:{port}") from None
+src/infrastructure\transport\stdlib.py:439:                    f"connect timed out after {timeout}s: {host}:{port}"
+src/infrastructure\transport\stdlib.py:441:            raise TcpConnectionError(f"cannot connect {host}:{port}: {err}") from err
+src/infrastructure\transport\stdlib.py:484:    def _http_connect_tunnel(
+src/infrastructure\transport\stdlib.py:537:    def _socks5_connect(
+src/infrastructure\transport\stdlib.py:540:        sock = self._tcp_connect(
+src/infrastructure\transport\stdlib.py:635:                raise ProxyTunnelError("socks5 server closed connection early")
+src/ui\viewmodels\bookshelf\viewmodel.py:15:from PySide6.QtCore import Property, QObject, Signal, Slot
+src/ui\viewmodels\bookshelf\viewmodel.py:24:class BookshelfViewModel(QObject):
+src/ui\viewmodels\bookshelf\viewmodel.py:40:        navigation: QObject,  # NavigationViewModel
+src/ui\viewmodels\bookshelf\viewmodel.py:41:        parent: QObject | None = None,
+src/ui\viewmodels\bookshelf\viewmodel.py:63:    def get_book_list_model(self) -> QObject:
+src/ui\viewmodels\bookshelf\viewmodel.py:66:    bookListModel = Property(QObject, get_book_list_model, constant=True)
+src/ui\viewmodels\bookshelf\viewmodel.py:68:    def get_chapter_list_model(self) -> QObject:
+src/ui\viewmodels\bookshelf\viewmodel.py:71:    chapterListModel = Property(QObject, get_chapter_list_model, constant=True)
+src/ui\viewmodels\bookshelf\viewmodel.py:162:    def get_navigation(self) -> QObject:
+src/ui\viewmodels\bookshelf\viewmodel.py:165:    navigation = Property(QObject, get_navigation, constant=True)
+src/infrastructure\imaging\webtoon_tiles.py:23:unit-testable without PySide6.
+src/infrastructure\network\diagnostics.py:1:"""Staged connection diagnostics (AC-NET-004, D07 §87~89).
+src/infrastructure\network\diagnostics.py:3:The connection test must show DNS → TCP → TLS → HTTP → Provider Auth
+src/infrastructure\network\diagnostics.py:237:            sock = socket.create_connection((host, port), timeout=timeout)
+src/infrastructure\network\diagnostics.py:243:            raise TransportTimeoutError(f"tcp connect timed out: {host}:{port}") from err
+src/infrastructure\network\diagnostics.py:245:            raise TcpConnectionError(f"tcp connect failed: {host}:{port}: {err}") from err
+src/infrastructure\network\diagnostics.py:249:            return f"tcp connect ok to {host}:{port}"
+src/infrastructure\network\diagnostics.py:263:            sock = socket.create_connection((host, port), timeout=profile.timeout_seconds)
+src/infrastructure\importing.py:46:        from PySide6.QtCore import QByteArray, QBuffer, QIODevice
+src/infrastructure\importing.py:47:        from PySide6.QtGui import QImageReader
+src/infrastructure\importing.py:54:        reader = QImageReader(buffer)
+src/infrastructure\importing.py:180:        from PySide6.QtCore import QBuffer, QIODevice
+src/infrastructure\importing.py:181:        from PySide6.QtGui import QImage
+src/infrastructure\importing.py:195:            qformat = QImage.Format.Format_ARGB32
+src/infrastructure\importing.py:201:            qformat = QImage.Format.Format_BGR888
+src/infrastructure\importing.py:211:        image = QImage(raw, width, height, bytes_per_line, qformat)
+src/infrastructure\importing.py:354:        from PySide6.QtCore import QBuffer, QIODevice
+src/infrastructure\importing.py:355:        from PySide6.QtGui import QImage
+src/infrastructure\importing.py:364:        image = QImage()
+src/ui\viewmodels\reader\viewmodel.py:28:from PySide6.QtCore import Property, QObject, QTimer, QUrl, Signal, Slot
+src/ui\viewmodels\reader\viewmodel.py:45:class ReaderViewModel(QObject):
+src/ui\viewmodels\reader\viewmodel.py:58:        parent: QObject | None = None,
+src/ui\viewmodels\reader\viewmodel.py:71:        self._heartbeat.timeout.connect(self.settleReadingTime)
+src/ui\viewmodels\reader\viewmodel.py:236:    def _exporter(self) -> QObject | None:
+src/ui\viewmodels\reader\viewmodel.py:239:    exportController = Property(QObject, _exporter, notify=exportControllerChanged)
+src/ui\viewmodels\reader\viewmodel.py:454:    def openExporter(self) -> QObject | None:
+src/infrastructure\providers\detection_doctr.py:171:        file: ``rgb32`` (QImage Format_RGB32, little-endian BGRA in memory)
+src/domain\constraints\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/infrastructure\pipeline\assembly.py:5:import sqlite3
+src/infrastructure\pipeline\assembly.py:20:    conn: sqlite3.Connection,
+src/infrastructure\rendering\locator.py:11:import sqlite3
+src/infrastructure\rendering\locator.py:21:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\rendering\font_catalog.py:11:from PySide6.QtGui import QFont, QFontDatabase
+src/infrastructure\rendering\pixel_source_style.py:24:from PySide6.QtGui import QImage
+src/infrastructure\rendering\pixel_source_style.py:55:        image = QImage.fromData(original_png)
+src/infrastructure\rendering\pixel_source_style.py:148:        self, image: QImage, x: int, y: int, w: int, h: int
+src/infrastructure\rendering\pixel_source_style.py:157:        self, image: QImage, x: int, y: int, w: int, h: int
+src/infrastructure\rendering\pixel_source_style.py:168:def _border_median_hex(image: QImage, x: int, y: int, w: int, h: int) -> str:
+src/infrastructure\sqlite\artifacts.py:27:import sqlite3
+src/infrastructure\sqlite\artifacts.py:50:        self, conn: sqlite3.Connection, storage: ManagedFileStoragePort
+src/infrastructure\sqlite\artifacts.py:78:        assert record is not None  # freshly inserted in the same connection
+src/infrastructure\sqlite\artifacts.py:174:        except sqlite3.Error as error:
+src/infrastructure\sqlite\artifacts.py:196:        # BEGIN belongs inside the try; failure raises sqlite3.Error which
+src/infrastructure\sqlite\artifacts.py:263:        except sqlite3.Error:
+src/infrastructure\sqlite\artifacts.py:281:    def _revision_from_row(self, row: sqlite3.Row) -> ArtifactRevisionRecord:
+src/infrastructure\rendering\qt_layout.py:15:from PySide6.QtGui import QFont, QFontMetrics
+src/infrastructure\rendering\qt_compositor.py:17:from PySide6.QtCore import QBuffer, QIODevice, QRect, Qt
+src/infrastructure\rendering\qt_compositor.py:18:from PySide6.QtGui import (
+src/infrastructure\rendering\qt_compositor.py:22:    QImage,
+src/infrastructure\rendering\qt_compositor.py:32:def _to_png(image: QImage) -> bytes:
+src/infrastructure\rendering\qt_compositor.py:41:        image = QImage.fromData(base_png)
+src/infrastructure\rendering\qt_compositor.py:44:        image = image.convertToFormat(QImage.Format.Format_ARGB32)
+src/infrastructure\rendering\qt_compositor.py:60:        base = QImage.fromData(base_png)
+src/infrastructure\rendering\qt_compositor.py:61:        clean = QImage.fromData(clean_png)
+src/infrastructure\rendering\qt_compositor.py:64:        base = base.convertToFormat(QImage.Format.Format_ARGB32)
+src/infrastructure\rendering\qt_compositor.py:65:        clean = clean.convertToFormat(QImage.Format.Format_ARGB32)
+src/infrastructure\sqlite\backup.py:8:import sqlite3
+src/infrastructure\sqlite\backup.py:37:        conn: sqlite3.Connection,
+src/infrastructure\sqlite\backup.py:66:            destination = sqlite3.connect(str(temporary))
+src/infrastructure\sqlite\backup.py:112:        except (BackupVerificationError, OSError, sqlite3.Error) as error:
+src/infrastructure\sqlite\backup.py:143:        4. run the SQLite backup API backup-file -> live connection;
+src/infrastructure\sqlite\backup.py:253:        source = sqlite3.connect(str(target))
+src/infrastructure\sqlite\backup.py:255:            # The restore gate guarantees that this real connection is idle.
+src/infrastructure\sqlite\backup.py:353:    check = sqlite3.connect(str(target))
+src/infrastructure\sqlite\backup.py:360:        except sqlite3.Error as error:
+src/infrastructure\sqlite\backup.py:364:    except sqlite3.DatabaseError as error:
+src/infrastructure\providers\handlers.py:3:Handlers connect the capability ports to ``PipelineService`` without inventing
+src/domain\books\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/infrastructure\sqlite\connection.py:8:TASK-048 AC ① — thread ownership of the connection: the production
+src/infrastructure\sqlite\connection.py:9:connection is created on the startup (GUI) thread but is also *used*
+src/infrastructure\sqlite\connection.py:13:TASK-060 (Q-001, P0) — that single shared connection is *not* safe at
+src/infrastructure\sqlite\connection.py:19:ownership model is therefore **one real connection per thread**,
+src/infrastructure\sqlite\connection.py:24:  begin/commit/roll back *its own* connection's transaction — the
+src/infrastructure\sqlite\connection.py:29:  must be able to close connections created on worker threads.  Every
+src/infrastructure\sqlite\connection.py:30:  *statement* still runs on the connection's owning thread via the
+src/infrastructure\sqlite\connection.py:32:  (TASK-061 review R-006): ``open_connection_count()`` runs its
+src/infrastructure\sqlite\connection.py:33:  read-only ``SELECT 1`` probe on *every registered connection*,
+src/infrastructure\sqlite\connection.py:36:- Cross-connection visibility is the WAL read-committed model:
+src/infrastructure\sqlite\connection.py:37:  after a writer commits, an independent connection (AC ② test)
+src/infrastructure\sqlite\connection.py:39:  two connections is bounded by ``busy_timeout`` below; production
+src/infrastructure\sqlite\connection.py:43:  the connection's single transaction … self-healed") described the
+src/infrastructure\sqlite\connection.py:49:import sqlite3
+src/infrastructure\sqlite\connection.py:65:    """Weak-referenceable sentinel co-owned with one thread's connection.
+src/infrastructure\sqlite\connection.py:68:    real connection, so both die *together* when the owning thread dies
+src/infrastructure\sqlite\connection.py:73:    reach the connection (TASK-061 review R-003: an escaped raw
+src/infrastructure\sqlite\connection.py:83:    """Thread-aware facade over one real ``sqlite3.Connection`` per thread.
+src/infrastructure\sqlite\connection.py:87:    real connection, created on first use through the ``opener``.  This
+src/infrastructure\sqlite\connection.py:92:    ``row_factory``, …) forwards to the *calling thread's* connection and
+src/infrastructure\sqlite\connection.py:93:    therefore **opens that thread's connection as a side effect** — the
+src/infrastructure\sqlite\connection.py:94:    per-connection property answers "this thread", never "this database"
+src/infrastructure\sqlite\connection.py:99:    def __init__(self, opener: Callable[[], sqlite3.Connection]) -> None:
+src/infrastructure\sqlite\connection.py:102:        # Registry of the real connections this facade handed out.  Entries
+src/infrastructure\sqlite\connection.py:106:        self._connections: dict[int, sqlite3.Connection] = {}
+src/infrastructure\sqlite\connection.py:111:    def _evict(self, ident: int, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\connection.py:112:        """Drop one dead thread's connection from the registry and close it.
+src/infrastructure\sqlite\connection.py:118:        facade* can reach the connection any more (this closure holds the
+src/infrastructure\sqlite\connection.py:124:        ``sqlite3.Cursor`` (or the real connection object) kept alive
+src/infrastructure\sqlite\connection.py:125:        across threads — still references the closed connection and
+src/infrastructure\sqlite\connection.py:126:        raises ``sqlite3.ProgrammingError`` on use after eviction
+src/infrastructure\sqlite\connection.py:128:        connection handle outlive the facade call that produced it, let
+src/infrastructure\sqlite\connection.py:138:            if self._connections.get(ident) is conn:
+src/infrastructure\sqlite\connection.py:139:                del self._connections[ident]
+src/infrastructure\sqlite\connection.py:146:        except sqlite3.Error:  # already closed by a concurrent shutdown close
+src/infrastructure\sqlite\connection.py:149:    def _current(self) -> sqlite3.Connection:
+src/infrastructure\sqlite\connection.py:153:                raise sqlite3.ProgrammingError(
+src/infrastructure\sqlite\connection.py:154:                    "connection facade is closed"
+src/infrastructure\sqlite\connection.py:165:                stale = self._connections.get(ident)
+src/infrastructure\sqlite\connection.py:170:                    except sqlite3.Error:
+src/infrastructure\sqlite\connection.py:172:                self._connections[ident] = conn
+src/infrastructure\sqlite\connection.py:180:    def execute(self, sql: str, parameters: tuple = ()) -> sqlite3.Cursor:
+src/infrastructure\sqlite\connection.py:183:    def cursor(self) -> sqlite3.Cursor:
+src/infrastructure\sqlite\connection.py:196:    def release_current_thread_connection(self) -> None:
+src/infrastructure\sqlite\connection.py:197:        """Close and evict the *calling thread's* real connection now.
+src/infrastructure\sqlite\connection.py:200:        connection it itself holds, and it must not call this while a
+src/infrastructure\sqlite\connection.py:201:        statement/transaction is in flight on that connection (the
+src/infrastructure\sqlite\connection.py:211:            if self._connections.get(ident) is conn:
+src/infrastructure\sqlite\connection.py:212:                del self._connections[ident]
+src/infrastructure\sqlite\connection.py:218:        except sqlite3.Error:
+src/infrastructure\sqlite\connection.py:222:        """``True`` when *any* live registered connection is in a transaction.
+src/infrastructure\sqlite\connection.py:225:        the per-connection ``in_transaction`` cannot give (TASK-060 review
+src/infrastructure\sqlite\connection.py:226:        R-004).  It reads the registered connections directly — never
+src/infrastructure\sqlite\connection.py:246:            conns = list(self._connections.values())
+src/infrastructure\sqlite\connection.py:252:            return len(self._connections)
+src/infrastructure\sqlite\connection.py:254:    def open_connection_count(self) -> int:
+src/infrastructure\sqlite\connection.py:255:        """How many registered real connections are still open.
+src/infrastructure\sqlite\connection.py:259:        ``SELECT 1`` executed on *other threads'* registered connections
+src/infrastructure\sqlite\connection.py:264:            conns = list(self._connections.values())
+src/infrastructure\sqlite\connection.py:269:            except sqlite3.ProgrammingError:  # closed
+src/infrastructure\sqlite\connection.py:275:        """Close every real connection this facade created.
+src/infrastructure\sqlite\connection.py:282:            for conn in self._connections.values():
+src/infrastructure\sqlite\connection.py:285:                except sqlite3.Error:  # evicted/closed already
+src/infrastructure\sqlite\connection.py:287:            self._connections.clear()
+src/infrastructure\sqlite\connection.py:291:    def __enter__(self) -> sqlite3.Connection:
+src/infrastructure\sqlite\connection.py:300:        # connection.  Note this *opens* the calling thread's connection;
+src/infrastructure\sqlite\connection.py:305:def _read_schema_version(conn: sqlite3.Connection) -> int | None:
+src/infrastructure\sqlite\connection.py:317:def _apply_pragmas(conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\connection.py:332:    gets its own real connection (TASK-060 Q-001 transaction-ownership
+src/infrastructure\sqlite\connection.py:346:    def _open_one() -> sqlite3.Connection:
+src/infrastructure\sqlite\connection.py:347:        conn = sqlite3.connect(str(path), check_same_thread=False)
+src/infrastructure\sqlite\connection.py:348:        conn.row_factory = sqlite3.Row
+src/infrastructure\sqlite\connection.py:359:        # Every thread's connection must be read-only, including ones not
+src/infrastructure\sqlite\connection.py:367:def open_readonly(db_path: str | Path) -> sqlite3.Connection:
+src/infrastructure\sqlite\connection.py:370:    conn = sqlite3.connect(uri, uri=True)
+src/infrastructure\sqlite\connection.py:371:    conn.row_factory = sqlite3.Row
+src/ui\qml\settings\SettingsView.qml:26:    // the context is reliably resolvable — we connect the viewmodel's
+src/ui\qml\settings\SettingsView.qml:27:    // signals imperatively (JS connect bypasses Connections-name
+src/ui\qml\settings\SettingsView.qml:32:            settingsViewModel.saved.connect(function (message) {
+src/ui\qml\settings\SettingsView.qml:36:            settingsViewModel.failed.connect(function (message) {
+src/ui\qml\settings\SettingsView.qml:40:            settingsViewModel.confirmationRequired.connect(function () {
+src/application\export\pdf_qt.py:3:The only module in the export slice that touches PySide6, and it does so
+src/application\export\pdf_qt.py:6:from image bytes with ``QImage`` and painted onto a ``QPdfWriter`` page
+src/application\export\pdf_qt.py:19:        from PySide6.QtCore import QBuffer, QIODevice, QSizeF
+src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+src/application\export\pdf_qt.py:22:        decoded: list[QImage] = []
+src/application\export\pdf_qt.py:24:            image = QImage.fromData(payload)
+src/application\export\pdf_qt.py:31:        writer = QPdfWriter(buffer)
+src/infrastructure\sqlite\library.py:5:structurally over the shared connection. Book/Chapter/Tag live in the v1
+src/infrastructure\sqlite\library.py:13:import sqlite3
+src/infrastructure\sqlite\library.py:21:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\library.py:29:    def _book_from_row(row: sqlite3.Row) -> Book:
+src/infrastructure\sqlite\library.py:53:    def _chapter_from_row(row: sqlite3.Row) -> Chapter:
+src/infrastructure\sqlite\library.py:71:    def _page_from_row(row: sqlite3.Row) -> Page | None:
+src/infrastructure\sqlite\migrator.py:10:import sqlite3
+src/infrastructure\sqlite\migrator.py:14:from infrastructure.sqlite.connection import SchemaTooNewError
+src/infrastructure\sqlite\migrator.py:31:def read_schema_version(conn: sqlite3.Connection) -> int | None:
+src/infrastructure\sqlite\migrator.py:47:        conn: sqlite3.Connection,
+src/infrastructure\sqlite\migrator.py:106:        Uses :func:`sqlite3.complete_statement` so semicolons inside string
+src/infrastructure\sqlite\migrator.py:114:            if sqlite3.complete_statement(buffer):
+src/infrastructure\sqlite\migrator.py:136:            raise sqlite3.IntegrityError(
+src/infrastructure\sqlite\migrator.py:165:        except sqlite3.Error:
+src/infrastructure\sqlite\pipeline.py:6:import sqlite3
+src/infrastructure\sqlite\pipeline.py:389:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\pipeline.py:519:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\pipeline.py:768:        conn: sqlite3.Connection,
+src/infrastructure\sqlite\pipeline.py:858:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\reading_export.py:15:import sqlite3
+src/infrastructure\sqlite\reading_export.py:47:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\reading_export.py:143:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\reading_export.py:248:def import_legacy_reading_progress(conn: sqlite3.Connection, path: str | Path) -> int:
+src/infrastructure\sqlite\reading_export.py:398:def import_legacy_export_history(conn: sqlite3.Connection, path: str | Path) -> int:
+src/infrastructure\sqlite\regions.py:15:import sqlite3
+src/infrastructure\sqlite\regions.py:44:    def __init__(self, conn: sqlite3.Connection) -> None:
+src/infrastructure\sqlite\regions.py:51:    def _region_from_row(self, row: sqlite3.Row) -> Region:
+src/infrastructure\sqlite\regions.py:81:    def _revision_from_row(self, row: sqlite3.Row) -> RegionRevision:
+src/infrastructure\sqlite\regions.py:213:        # raw sqlite3.OperationalError reaching the VM/QML.
+src/infrastructure\sqlite\regions.py:277:            # F-02: non-sqlite3 failures (e.g. serialization) must also
+src/infrastructure\providers\runtime.py:433:    degrades to a direct connection (R4 B-002)."""
+src/infrastructure\providers\runtime.py:577:                "'configured' — reachability is reported by the connection test"
+src/infrastructure\providers\sakura_probe.py:3:U-6 decision: the Sakura profile connection test reports **health and
+src/infrastructure\providers\sakura_probe.py:14:Every outcome is a typed reason code so the connection test can explain
+src/infrastructure\providers\sakura_probe.py:54:    """One connection test result for a Sakura profile."""
+src/infrastructure\providers\step_writes.py:32:import sqlite3
+src/infrastructure\providers\step_writes.py:94:    conn: sqlite3.Connection
+src/infrastructure\providers\step_writes.py:301:    conn: sqlite3.Connection
+--- end raw stdout ---
+EXIT=0
+line_count=
+286

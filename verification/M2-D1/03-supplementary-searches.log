@@ -1,0 +1,539 @@
+M2-D1 supplementary read-only searches over the six audit trees
+captured_at = 2026-09-25T02:27:37+08:00
+shell = pwsh 7.6.6
+cwd = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+scope = src/domain src/application src/ports src/infrastructure src/bootstrap src/ui (READ-ONLY)
+note = each section records the literal command, raw merged output, and exit code; 0 = matches found, 1 = no matches, 2 = error
+
+=== A1 module-level PySide6 imports (top-level, column 1) ===
+CMD: rg -n '^(from|import) PySide6' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:36:from PySide6.QtCore import QTimer, QUrl
+src/bootstrap\app.py:37:from PySide6.QtGui import QGuiApplication
+src/bootstrap\app.py:38:from PySide6.QtQml import QQmlApplicationEngine
+src/bootstrap\app.py:42:from PySide6.QtQuick import QQuickWindow  # noqa: F401
+src/ui\models\tasks\page_list_model.py:12:from PySide6.QtCore import (
+src/ui\viewmodels\export\viewmodel.py:23:from PySide6.QtCore import Property, QObject, QStandardPaths, QUrl, Signal, Slot
+src/ui\viewmodels\export\viewmodel.py:24:from PySide6.QtGui import QDesktopServices
+src/ui\viewmodels\navigation\viewmodel.py:10:from PySide6.QtCore import Property, QObject, Signal, Slot
+src/ui\viewmodels\reader\viewmodel.py:28:from PySide6.QtCore import Property, QObject, QTimer, QUrl, Signal, Slot
+src/ui\models\library\models.py:10:from PySide6.QtCore import (
+src/ui\viewmodels\workbench\run_controller.py:18:from PySide6.QtCore import QObject, QThread, Signal, Slot
+src/ui\viewmodels\workbench\viewmodel.py:29:from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
+src/ui\viewmodels\bookshelf\viewmodel.py:15:from PySide6.QtCore import Property, QObject, Signal, Slot
+src/infrastructure\rendering\font_catalog.py:11:from PySide6.QtGui import QFont, QFontDatabase
+src/infrastructure\rendering\qt_layout.py:15:from PySide6.QtGui import QFont, QFontMetrics
+src/ui\viewmodels\settings\viewmodel.py:33:from PySide6.QtCore import Property, QObject, Signal, Slot
+src/infrastructure\rendering\pixel_source_style.py:24:from PySide6.QtGui import QImage
+src/infrastructure\rendering\qt_compositor.py:17:from PySide6.QtCore import QBuffer, QIODevice, QRect, Qt
+src/infrastructure\rendering\qt_compositor.py:18:from PySide6.QtGui import (
+EXIT=0
+HITS=19
+
+=== A2 function-local/lazy PySide6 imports (indented) ===
+CMD: rg -n '^\s+(from|import) PySide6' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:256:        from PySide6.QtGui import QImage
+src/bootstrap\app.py:284:        from PySide6.QtGui import QImage
+src/bootstrap\app.py:291:        from PySide6.QtCore import QBuffer, QIODevice, QRect
+src/bootstrap\app.py:292:        from PySide6.QtGui import QImage
+src/bootstrap\app.py:324:        from PySide6.QtCore import QBuffer, QIODevice
+src/bootstrap\app.py:418:    from PySide6.QtCore import QBuffer, QIODevice
+src/bootstrap\app.py:419:    from PySide6.QtGui import QImage
+src/bootstrap\app.py:1148:            from PySide6.QtQuick import QQuickWindow
+src/infrastructure\importing.py:46:        from PySide6.QtCore import QByteArray, QBuffer, QIODevice
+src/infrastructure\importing.py:47:        from PySide6.QtGui import QImageReader
+src/infrastructure\importing.py:180:        from PySide6.QtCore import QBuffer, QIODevice
+src/infrastructure\importing.py:181:        from PySide6.QtGui import QImage
+src/infrastructure\importing.py:354:        from PySide6.QtCore import QBuffer, QIODevice
+src/infrastructure\importing.py:355:        from PySide6.QtGui import QImage
+src/application\export\pdf_qt.py:19:        from PySide6.QtCore import QBuffer, QIODevice, QSizeF
+src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+EXIT=0
+HITS=16
+
+=== A3 all distinct PySide6 modules imported ===
+CMD: rg -o --no-filename 'PySide6\.[A-Za-z]+' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui | Sort-Object -Unique
+PySide6.QtCore
+PySide6.QtGui
+PySide6.QtQml
+PySide6.QtQuick
+EXIT=0
+HITS=4
+
+=== B dynamic/reflective module loading ===
+CMD: rg -n 'import_module|__import__|importlib|pkgutil|entry_points|eval\(|exec\(' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:1138:        exit_code = application.exec()
+src/bootstrap\app.py:1168:        exit_code = application.exec()
+src/bootstrap\app.py:1172:        exit_code = application.exec()
+src/infrastructure\devices\manager.py:21:import importlib.util
+src/infrastructure\devices\manager.py:53:        return importlib.util.find_spec(name) is not None
+src/infrastructure\providers\dependencies.py:5:are probed with ``importlib.util.find_spec``, weights by file existence plus
+src/infrastructure\providers\dependencies.py:17:import importlib.util
+src/infrastructure\providers\dependencies.py:84:        satisfied = importlib.util.find_spec(name) is not None
+src/infrastructure\providers\detection_doctr.py:36:import importlib
+src/infrastructure\providers\detection_doctr.py:223:        model.eval()
+src/infrastructure\providers\detection_doctr.py:399:        return importlib.import_module(module_name)
+src/infrastructure\providers\ocr_local.py:21:import importlib
+src/infrastructure\providers\ocr_local.py:47:        return importlib.import_module(module_name)
+EXIT=0
+HITS=13
+
+=== C1 QML engine and context exposure ===
+CMD: rg -n 'setContextProperty|rootContext|qmlRegisterType|QQmlApplicationEngine|QQuickWindow|QQmlContext' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:7:  ``setContextProperty`` 注入 QML 后加载
+src/bootstrap\app.py:38:from PySide6.QtQml import QQmlApplicationEngine
+src/bootstrap\app.py:40:# rootObjects()[0] is normally a strongly typed QQuickWindow. The
+src/bootstrap\app.py:42:from PySide6.QtQuick import QQuickWindow  # noqa: F401
+src/bootstrap\app.py:1020:def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
+src/bootstrap\app.py:1033:    engine = QQmlApplicationEngine()
+src/bootstrap\app.py:1034:    root_context = engine.rootContext()
+src/bootstrap\app.py:1035:    root_context.setContextProperty("navigationViewModel", services.navigation)
+src/bootstrap\app.py:1036:    root_context.setContextProperty("bookshelfViewModel", services.bookshelf)
+src/bootstrap\app.py:1037:    root_context.setContextProperty("workbenchViewModel", services.workbench)
+src/bootstrap\app.py:1038:    root_context.setContextProperty("readerViewModel", services.reader)
+src/bootstrap\app.py:1039:    root_context.setContextProperty("exportViewModel", services.export_viewmodel())
+src/bootstrap\app.py:1040:    root_context.setContextProperty("settingsViewModel", services.settings_vm)
+src/bootstrap\app.py:1042:        lambda view_model: root_context.setContextProperty(
+src/bootstrap\app.py:1144:            # QWindow wrapper (no grabWindow); downcast to QQuickWindow and
+src/bootstrap\app.py:1148:            from PySide6.QtQuick import QQuickWindow
+src/bootstrap\app.py:1152:                    shiboken6.getCppPointer(window)[0], QQuickWindow
+EXIT=0
+HITS=17
+
+=== C2 qml file references and load calls ===
+CMD: rg -n '\.qml|\.load\(|QUrl\.fromLocalFile' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:8:``Main.qml``（它只负责挂载 ``shell/AppShell.qml``）。
+src/bootstrap\app.py:39:# Imported before the engine wraps Main.qml's ApplicationWindow so
+src/bootstrap\app.py:110:QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
+src/bootstrap\app.py:179:        original (ViewerPanel.qml). ``translated`` is the page's current
+src/bootstrap\app.py:1021:    """Inject the viewmodels as context properties and load Main.qml.
+src/bootstrap\app.py:1027:      by the ViewModel from the same ``ExportService``); ReaderView.qml's
+src/bootstrap\app.py:1046:    engine.load(QUrl.fromLocalFile(str(QML_PATH)))
+src/ui\viewmodels\export\viewmodel.py:410:    return QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
+src/ui\viewmodels\reader\viewmodel.py:185:        return QUrl.fromLocalFile(path).toString() if path else ""
+src/ui\viewmodels\reader\viewmodel.py:425:            row["url"] = QUrl.fromLocalFile(str(path)).toString()
+src/ui\qml\Main.qml:6:// TASK-030: entry window only — it mounts shell/AppShell.qml (TASK-012);
+src/ui\qml\theme\qmldir:2:singleton Tokens 1.0 Tokens.qml
+src/ui\qml\shell\AppShell.qml:16:// Main.qml wiring itself is a registered scope change (TASK-012 task
+EXIT=0
+HITS=13
+
+=== D1 application objects and GUI entry points ===
+CMD: rg -n 'QGuiApplication|QApplication\(|__main__|def main\(|sys\.exit' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:37:from PySide6.QtGui import QGuiApplication
+src/bootstrap\app.py:673:        # need a QGuiApplication instance, which the entry creates before
+src/bootstrap\app.py:1077:def main(argv: Sequence[str] | None = None) -> int:
+src/bootstrap\app.py:1105:        # Must be set before QGuiApplication exists to affect the DPI policy.
+src/bootstrap\app.py:1108:    application = QGuiApplication([sys.argv[0]])
+src/bootstrap\app.py:1182:if __name__ == "__main__":
+EXIT=0
+HITS=6
+
+=== D2 headless-relevant GUI-object usage (dialogs/clipboard/screens) ===
+CMD: rg -n 'QFileDialog|QMessageBox|QClipboard|QScreen|QStyleHints|QDesktopServices|QStandardPaths|QSettings' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:1145:            # render a frame offscreen — QScreen.grabWindow returns an
+src/ui\viewmodels\export\viewmodel.py:23:from PySide6.QtCore import Property, QObject, QStandardPaths, QUrl, Signal, Slot
+src/ui\viewmodels\export\viewmodel.py:24:from PySide6.QtGui import QDesktopServices
+src/ui\viewmodels\export\viewmodel.py:57:    documents = QStandardPaths.writableLocation(
+src/ui\viewmodels\export\viewmodel.py:58:        QStandardPaths.StandardLocation.DocumentsLocation
+src/ui\viewmodels\export\viewmodel.py:410:    return QDesktopServices.openUrl(QUrl.fromLocalFile(folder))
+EXIT=0
+HITS=6
+
+=== E1 SQL write keywords ===
+CMD: rg -n 'INSERT INTO|INSERT OR|UPDATE [a-z_]+ SET|DELETE FROM|CREATE TABLE|ALTER TABLE|DROP TABLE|DROP INDEX|CREATE INDEX|CREATE TRIGGER|VACUUM|PRAGMA' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/infrastructure\sqlite\schema.py:32:CREATE TABLE books (
+src/infrastructure\sqlite\schema.py:40:CREATE TABLE chapters (
+src/infrastructure\sqlite\schema.py:49:CREATE INDEX idx_chapters_book_id ON chapters(book_id);
+src/infrastructure\sqlite\schema.py:51:CREATE TABLE pages (
+src/infrastructure\sqlite\schema.py:59:CREATE INDEX idx_pages_chapter_sort ON pages(chapter_id, sort_order);
+src/infrastructure\sqlite\schema.py:61:CREATE TABLE media_artifacts (
+src/infrastructure\sqlite\schema.py:76:CREATE INDEX idx_media_artifacts_page ON media_artifacts(page_id, artifact_type);
+src/infrastructure\sqlite\schema.py:78:CREATE TABLE artifact_revisions (
+src/infrastructure\sqlite\schema.py:103:CREATE INDEX idx_artifact_revisions_artifact ON artifact_revisions(artifact_id, revision_no);
+src/infrastructure\sqlite\schema.py:105:CREATE TABLE schema_migrations (
+src/infrastructure\sqlite\schema.py:112:CREATE TABLE application_metadata (
+src/infrastructure\sqlite\schema.py:118:CREATE TABLE backup_records (
+src/infrastructure\sqlite\schema.py:137:CREATE TRIGGER trg_media_artifacts_current_not_clearable
+src/infrastructure\sqlite\schema.py:151:ALTER TABLE books ADD COLUMN original_title TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:152:ALTER TABLE books ADD COLUMN author TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:153:ALTER TABLE books ADD COLUMN publisher TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:154:ALTER TABLE books ADD COLUMN series_title TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:155:ALTER TABLE books ADD COLUMN description TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:156:ALTER TABLE books ADD COLUMN source_language TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:157:ALTER TABLE books ADD COLUMN target_language TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:158:ALTER TABLE books ADD COLUMN source_url TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:159:ALTER TABLE books ADD COLUMN notes TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:160:ALTER TABLE books ADD COLUMN default_chapter_type TEXT NOT NULL DEFAULT 'paged'
+src/infrastructure\sqlite\schema.py:162:ALTER TABLE books ADD COLUMN default_reading_direction TEXT NOT NULL DEFAULT 'rtl'
+src/infrastructure\sqlite\schema.py:164:ALTER TABLE books ADD COLUMN is_favorite INTEGER NOT NULL DEFAULT 0
+src/infrastructure\sqlite\schema.py:166:ALTER TABLE books ADD COLUMN is_archived INTEGER NOT NULL DEFAULT 0
+src/infrastructure\sqlite\schema.py:168:ALTER TABLE books ADD COLUMN last_opened_at TEXT;
+src/infrastructure\sqlite\schema.py:171:ALTER TABLE chapters ADD COLUMN chapter_number TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:172:ALTER TABLE chapters ADD COLUMN subtitle TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:173:ALTER TABLE chapters ADD COLUMN import_order INTEGER NOT NULL DEFAULT 0;
+src/infrastructure\sqlite\schema.py:174:ALTER TABLE chapters ADD COLUMN chapter_type TEXT NOT NULL DEFAULT 'paged'
+src/infrastructure\sqlite\schema.py:176:ALTER TABLE chapters ADD COLUMN reading_direction TEXT NOT NULL DEFAULT 'rtl'
+src/infrastructure\sqlite\schema.py:178:ALTER TABLE chapters ADD COLUMN notes TEXT NOT NULL DEFAULT '';
+src/infrastructure\sqlite\schema.py:183:ALTER TABLE pages ADD COLUMN source_filename TEXT;
+src/infrastructure\sqlite\schema.py:184:ALTER TABLE pages ADD COLUMN source_order INTEGER
+src/infrastructure\sqlite\schema.py:186:ALTER TABLE pages ADD COLUMN source_hash TEXT
+src/infrastructure\sqlite\schema.py:188:ALTER TABLE pages ADD COLUMN source_size_bytes INTEGER
+src/infrastructure\sqlite\schema.py:190:ALTER TABLE pages ADD COLUMN width INTEGER CHECK (width IS NULL OR width > 0);
+src/infrastructure\sqlite\schema.py:191:ALTER TABLE pages ADD COLUMN height INTEGER CHECK (height IS NULL OR height > 0);
+src/infrastructure\sqlite\schema.py:192:ALTER TABLE pages ADD COLUMN managed_original_ref TEXT
+src/infrastructure\sqlite\schema.py:194:ALTER TABLE pages ADD COLUMN page_locked INTEGER NOT NULL DEFAULT 0
+src/infrastructure\sqlite\schema.py:196:ALTER TABLE pages ADD COLUMN review_state TEXT
+src/infrastructure\sqlite\schema.py:199:ALTER TABLE pages ADD COLUMN overall_status TEXT
+src/infrastructure\sqlite\schema.py:203:CREATE INDEX idx_pages_chapter_source_order ON pages(chapter_id, source_order);
+src/infrastructure\sqlite\schema.py:207:CREATE TABLE tags (
+src/infrastructure\sqlite\schema.py:213:CREATE TABLE book_tags (
+src/infrastructure\sqlite\schema.py:218:CREATE INDEX idx_book_tags_tag_id ON book_tags(tag_id);
+src/infrastructure\sqlite\schema.py:221:CREATE TABLE regions (
+src/infrastructure\sqlite\schema.py:246:CREATE INDEX idx_regions_page_order ON regions(page_id, reading_order);
+src/infrastructure\sqlite\schema.py:248:CREATE TABLE region_revisions (
+src/infrastructure\sqlite\schema.py:268:CREATE INDEX idx_region_revisions_region ON region_revisions(region_id, revision_no);
+src/infrastructure\sqlite\schema.py:272:CREATE TRIGGER trg_regions_current_not_clearable
+src/infrastructure\sqlite\schema.py:287:CREATE TABLE pipeline_runs (
+src/infrastructure\sqlite\schema.py:309:CREATE INDEX idx_pipeline_runs_status ON pipeline_runs(status);
+src/infrastructure\sqlite\schema.py:311:CREATE TABLE pipeline_run_targets (
+src/infrastructure\sqlite\schema.py:323:CREATE INDEX idx_pipeline_run_targets_page ON pipeline_run_targets(page_id);
+src/infrastructure\sqlite\schema.py:325:CREATE TABLE pipeline_tasks (
+src/infrastructure\sqlite\schema.py:339:CREATE INDEX idx_pipeline_tasks_run ON pipeline_tasks(pipeline_run_id);
+src/infrastructure\sqlite\schema.py:341:CREATE TABLE step_runs (
+src/infrastructure\sqlite\schema.py:358:CREATE INDEX idx_step_runs_run ON step_runs(pipeline_run_id);
+src/infrastructure\sqlite\schema.py:360:CREATE TABLE step_run_input_refs (
+src/infrastructure\sqlite\schema.py:368:CREATE TABLE step_run_output_refs (
+src/infrastructure\sqlite\schema.py:376:CREATE TABLE step_result_candidates (
+src/infrastructure\sqlite\schema.py:391:CREATE INDEX idx_step_result_candidates_run ON step_result_candidates(pipeline_run_id);
+src/infrastructure\sqlite\schema.py:393:CREATE TABLE pipeline_stage_states (
+src/infrastructure\sqlite\schema.py:402:CREATE TABLE pipeline_defaults (
+src/infrastructure\sqlite\schema.py:417:CREATE TABLE reading_progress (
+src/infrastructure\sqlite\schema.py:431:CREATE INDEX idx_reading_progress_book ON reading_progress(book_id);
+src/infrastructure\sqlite\schema.py:436:CREATE TABLE export_history (
+src/infrastructure\sqlite\schema.py:451:CREATE INDEX idx_export_history_created_at ON export_history(created_at DESC);
+src/infrastructure\sqlite\schema.py:452:CREATE INDEX idx_export_history_book ON export_history(book_id, chapter_id);
+src/infrastructure\sqlite\connection.py:1:"""Connection opening, PRAGMAs and schema compatibility gating.
+src/infrastructure\sqlite\connection.py:3:Implements D07 §28 (PRAGMA profile), §36 (Unicode paths, no MAX_PATH
+src/infrastructure\sqlite\connection.py:318:    conn.execute(f"PRAGMA busy_timeout = {BUSY_TIMEOUT_MS}")
+src/infrastructure\sqlite\connection.py:319:    conn.execute("PRAGMA foreign_keys = ON")
+src/infrastructure\sqlite\connection.py:320:    conn.execute("PRAGMA journal_mode = WAL")
+src/infrastructure\sqlite\connection.py:321:    conn.execute("PRAGMA synchronous = NORMAL")
+src/infrastructure\sqlite\connection.py:329:    """Open ``db_path`` with the approved PRAGMA profile.
+src/infrastructure\sqlite\connection.py:333:    fix), all sharing the same PRAGMA profile.
+src/infrastructure\sqlite\connection.py:351:            conn.execute("PRAGMA query_only = ON")
+src/infrastructure\sqlite\connection.py:362:        conn.execute("PRAGMA query_only = ON")
+src/infrastructure\sqlite\connection.py:372:    conn.execute("PRAGMA query_only = ON")
+src/infrastructure\providers\step_writes.py:249:                "INSERT INTO region_revisions (region_revision_id, region_id,"
+src/infrastructure\providers\step_writes.py:270:                "UPDATE regions SET text_json = ?, updated_at = ? WHERE region_id = ?",
+src/infrastructure\providers\step_writes.py:365:                "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
+src/infrastructure\providers\step_writes.py:452:                "UPDATE media_artifacts SET current_revision_id = ?, updated_at = ?"
+src/infrastructure\providers\step_writes.py:500:            "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+src/infrastructure\sqlite\regions.py:120:                "INSERT INTO regions (" + _REGION_COLUMNS + ")"
+src/infrastructure\sqlite\regions.py:153:                "UPDATE regions SET deleted_at = ?, updated_at = ? WHERE region_id = ?",
+src/infrastructure\sqlite\regions.py:160:                "UPDATE regions SET deleted_at = ? WHERE region_id = ?",
+src/infrastructure\sqlite\regions.py:188:                "UPDATE region_revisions SET is_pinned = ?"
+src/infrastructure\sqlite\regions.py:268:                "UPDATE regions SET page_id = ?, region_type = ?, reading_order = ?,"
+src/infrastructure\sqlite\regions.py:292:            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+src/infrastructure\sqlite\backup.py:93:                    "INSERT INTO backup_records (backup_id, backup_type, managed_path, status,"
+src/infrastructure\sqlite\backup.py:220:            (integrity,) = self._conn.execute("PRAGMA integrity_check").fetchone()
+src/infrastructure\sqlite\backup.py:355:        (result,) = check.execute("PRAGMA integrity_check").fetchone()
+src/infrastructure\sqlite\artifacts.py:64:                "INSERT INTO media_artifacts (artifact_id, book_id, chapter_id, page_id,"
+src/infrastructure\sqlite\artifacts.py:225:                "INSERT INTO artifact_revisions (artifact_revision_id, artifact_id,"
+src/infrastructure\sqlite\artifacts.py:258:                "UPDATE media_artifacts SET current_revision_id = ?, updated_at = ?"
+src/infrastructure\sqlite\migrator.py:148:                "INSERT INTO schema_migrations (schema_version, migration_name, applied_at, checksum)"
+src/infrastructure\sqlite\migrator.py:158:                "INSERT INTO application_metadata (metadata_key, value_json, updated_at)"
+src/infrastructure\sqlite\reading_export.py:86:                self._conn.execute("DELETE FROM reading_progress")
+src/infrastructure\sqlite\reading_export.py:109:                    INSERT INTO reading_progress (
+src/infrastructure\sqlite\reading_export.py:135:                    f"DELETE FROM reading_progress WHERE progress_id NOT IN ({placeholders})",
+src/infrastructure\sqlite\reading_export.py:183:                self._conn.execute("DELETE FROM export_history")
+src/infrastructure\sqlite\reading_export.py:208:                    INSERT INTO export_history (
+src/infrastructure\sqlite\reading_export.py:238:                    f"DELETE FROM export_history WHERE export_id NOT IN ({placeholders})",
+src/infrastructure\sqlite\reading_export.py:273:                INSERT INTO application_metadata (metadata_key, value_json, updated_at)
+src/infrastructure\sqlite\reading_export.py:359:                INSERT INTO reading_progress (
+src/infrastructure\sqlite\reading_export.py:378:            INSERT INTO application_metadata (metadata_key, value_json, updated_at)
+src/infrastructure\sqlite\reading_export.py:423:                INSERT INTO application_metadata (metadata_key, value_json, updated_at)
+src/infrastructure\sqlite\reading_export.py:495:                INSERT INTO export_history (
+src/infrastructure\sqlite\reading_export.py:518:            INSERT INTO application_metadata (metadata_key, value_json, updated_at)
+src/infrastructure\sqlite\pipeline.py:399:            self._conn.execute("DELETE FROM pipeline_runs WHERE run_id = ?", (run_id,))
+src/infrastructure\sqlite\pipeline.py:401:                "INSERT INTO pipeline_runs (run_id, command_type, scope_type,"
+src/infrastructure\sqlite\pipeline.py:434:                    "INSERT INTO pipeline_run_targets (run_target_id, pipeline_run_id,"
+src/infrastructure\sqlite\pipeline.py:445:                    "INSERT INTO pipeline_tasks (task_id, pipeline_run_id, run_target_id,"
+src/infrastructure\sqlite\pipeline.py:458:                    "INSERT INTO step_runs (step_run_id, pipeline_run_id, task_id,"
+src/infrastructure\sqlite\pipeline.py:472:                        "INSERT INTO step_run_input_refs (step_run_id, input_order, ref_key, revision_id)"
+src/infrastructure\sqlite\pipeline.py:478:                        "INSERT INTO step_run_output_refs (step_run_id, output_order, ref_key, value_json)"
+src/infrastructure\sqlite\pipeline.py:484:                    "INSERT INTO step_result_candidates (candidate_id, pipeline_run_id,"
+src/infrastructure\sqlite\pipeline.py:594:                        "UPDATE regions SET current_revision_id = ?, updated_at = ?"
+src/infrastructure\sqlite\pipeline.py:604:                        "UPDATE media_artifacts SET current_revision_id = ?, updated_at = ?"
+src/infrastructure\sqlite\pipeline.py:614:                    "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+src/infrastructure\sqlite\pipeline.py:786:                    "INSERT INTO pipeline_defaults (defaults_id, settings_json, provider_bindings_json,"
+src/infrastructure\sqlite\pipeline.py:801:                "INSERT INTO pipeline_defaults (defaults_id, settings_json, provider_bindings_json,"
+src/infrastructure\sqlite\pipeline.py:873:                "DELETE FROM pipeline_runs WHERE NOT EXISTS"
+src/infrastructure\sqlite\library.py:111:                "INSERT INTO books (" + self._BOOK_COLUMNS + ")"
+src/infrastructure\sqlite\library.py:140:                "UPDATE books SET title = ?, original_title = ?, author = ?,"
+src/infrastructure\sqlite\library.py:169:                "INSERT INTO chapters (" + self._CHAPTER_COLUMNS + ")"
+src/infrastructure\sqlite\library.py:198:                "UPDATE chapters SET title = ?, chapter_number = ?, subtitle = ?,"
+src/infrastructure\sqlite\library.py:220:                "INSERT INTO tags (" + self._TAG_COLUMNS + ") VALUES (?, ?, ?, ?)",
+src/infrastructure\sqlite\library.py:245:                "UPDATE tags SET name = ?, updated_at = ? WHERE tag_id = ?",
+src/infrastructure\sqlite\library.py:252:                "DELETE FROM book_tags WHERE tag_id = ?", (tag_id,)
+src/infrastructure\sqlite\library.py:254:            self._conn.execute("DELETE FROM tags WHERE tag_id = ?", (tag_id,))
+src/infrastructure\sqlite\library.py:259:                "INSERT INTO book_tags (book_id, tag_id) VALUES (?, ?)"
+src/infrastructure\sqlite\library.py:267:                "DELETE FROM book_tags WHERE book_id = ? AND tag_id = ?",
+src/infrastructure\sqlite\library.py:334:                "INSERT INTO pages (" + self._PAGE_COLUMNS + ")"
+src/infrastructure\sqlite\library.py:376:                "UPDATE pages SET source_filename = ?, source_order = ?,"
+src/infrastructure\sqlite\library.py:394:                "UPDATE pages SET deleted_at = ? WHERE page_id = ?",
+src/infrastructure\sqlite\library.py:430:                "UPDATE pages SET deleted_at = ?, updated_at = ?"
+src/infrastructure\sqlite\library.py:445:                "UPDATE pages SET deleted_at = NULL, updated_at = ?"
+src/infrastructure\sqlite\library.py:518:        re-derived with ``PRAGMA foreign_key_list`` (six tables / seven
+src/infrastructure\sqlite\library.py:558:                "UPDATE artifact_revisions SET source_artifact_revision_id = NULL"
+src/infrastructure\sqlite\library.py:563:                f"DELETE FROM step_result_candidates WHERE page_id IN ({placeholders})",
+src/infrastructure\sqlite\library.py:567:                f"DELETE FROM step_runs WHERE page_id IN ({placeholders})", params
+src/infrastructure\sqlite\library.py:570:                f"DELETE FROM pipeline_tasks WHERE page_id IN ({placeholders})", params
+src/infrastructure\sqlite\library.py:573:                f"DELETE FROM pipeline_run_targets WHERE page_id IN ({placeholders})",
+src/infrastructure\sqlite\library.py:577:                "DELETE FROM artifact_revisions"
+src/infrastructure\sqlite\library.py:582:                f"DELETE FROM media_artifacts WHERE page_id IN ({placeholders})",
+src/infrastructure\sqlite\library.py:586:                "DELETE FROM region_revisions"
+src/infrastructure\sqlite\library.py:591:                "DELETE FROM pipeline_stage_states"
+src/infrastructure\sqlite\library.py:596:                "DELETE FROM pipeline_stage_states"
+src/infrastructure\sqlite\library.py:602:                f"DELETE FROM regions WHERE page_id IN ({placeholders})", params
+src/infrastructure\sqlite\library.py:605:                f"DELETE FROM pages WHERE page_id IN ({placeholders})", params
+EXIT=0
+HITS=155
+
+=== E2 transaction control and commit/rollback ===
+CMD: rg -n '\.commit\(|\.rollback\(|executescript|BEGIN IMMEDIATE|BEGIN DEFERRED|BEGIN EXCLUSIVE|\bBEGIN\b' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/infrastructure\sqlite\artifacts.py:9:    → BEGIN IMMEDIATE, re-read the artifact's current revision
+src/infrastructure\sqlite\artifacts.py:175:            self._conn.rollback()
+src/infrastructure\sqlite\artifacts.py:196:        # BEGIN belongs inside the try; failure raises sqlite3.Error which
+src/infrastructure\sqlite\artifacts.py:199:            conn.execute("BEGIN IMMEDIATE")
+src/infrastructure\sqlite\artifacts.py:206:                conn.rollback()
+src/infrastructure\sqlite\artifacts.py:262:            conn.commit()
+src/infrastructure\sqlite\artifacts.py:264:            conn.rollback()
+src/infrastructure\sqlite\connection.py:15:transaction, so a GUI ``BEGIN IMMEDIATE`` can land inside a worker
+src/infrastructure\sqlite\connection.py:187:        self._current().commit()
+src/infrastructure\sqlite\connection.py:190:        self._current().rollback()
+src/infrastructure\sqlite\backup.py:69:                destination.commit()
+src/infrastructure\sqlite\migrator.py:107:        literals or ``BEGIN...END`` trigger bodies (future migrations) do not
+src/infrastructure\sqlite\migrator.py:143:        conn.execute("BEGIN IMMEDIATE")
+src/infrastructure\sqlite\migrator.py:164:            conn.commit()
+src/infrastructure\sqlite\migrator.py:166:            conn.rollback()
+src/infrastructure\sqlite\pipeline.py:578:            self._conn.execute("BEGIN IMMEDIATE")
+src/infrastructure\sqlite\pipeline.py:581:                self._conn.rollback()
+src/infrastructure\sqlite\pipeline.py:584:                self._conn.rollback()
+src/infrastructure\sqlite\pipeline.py:590:                    self._conn.rollback()
+src/infrastructure\sqlite\pipeline.py:599:                        self._conn.rollback()
+src/infrastructure\sqlite\pipeline.py:609:                        self._conn.rollback()
+src/infrastructure\sqlite\pipeline.py:619:            self._conn.commit()
+src/infrastructure\sqlite\pipeline.py:622:            self._conn.rollback()
+src/infrastructure\sqlite\schema.py:141:BEGIN
+src/infrastructure\sqlite\schema.py:276:BEGIN
+src/infrastructure\sqlite\regions.py:5:pointer" seam: one ``BEGIN IMMEDIATE`` re-reads current and the locks,
+src/infrastructure\sqlite\regions.py:210:        # TASK-060 Q-002: BEGIN IMMEDIATE sits inside the try so a lock or
+src/infrastructure\sqlite\regions.py:215:            conn.execute("BEGIN IMMEDIATE")
+src/infrastructure\sqlite\regions.py:222:                conn.rollback()
+src/infrastructure\sqlite\regions.py:233:                conn.rollback()
+src/infrastructure\sqlite\regions.py:249:                    conn.rollback()
+src/infrastructure\sqlite\regions.py:275:            conn.commit()
+src/infrastructure\sqlite\regions.py:279:            conn.rollback()
+src/infrastructure\providers\step_writes.py:207:            self.conn.execute("BEGIN IMMEDIATE")
+src/infrastructure\providers\step_writes.py:277:            self.conn.commit()
+src/infrastructure\providers\step_writes.py:279:            self.conn.rollback()
+src/infrastructure\providers\step_writes.py:358:            self.conn.execute("BEGIN IMMEDIATE")
+src/infrastructure\providers\step_writes.py:394:            self.conn.commit()
+src/infrastructure\providers\step_writes.py:396:            self.conn.rollback()
+src/infrastructure\providers\step_writes.py:435:            self.conn.execute("BEGIN IMMEDIATE")
+src/infrastructure\providers\step_writes.py:456:            self.conn.commit()
+src/infrastructure\providers\step_writes.py:458:            self.conn.rollback()
+src/infrastructure\providers\step_writes.py:513:        self.conn.commit()
+src/application\editing\ports.py:66:    §4.2). Implementations must run inside one ``BEGIN IMMEDIATE``:
+EXIT=0
+HITS=44
+
+=== E3 sqlite connection openings ===
+CMD: rg -n 'sqlite3\.connect|open_database|open_readonly|ThreadRoutedConnection' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:89:from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
+src/bootstrap\app.py:553:    conn: ThreadRoutedConnection
+src/bootstrap\app.py:600:    ``open_database`` reopens it ``query_only`` and this assembly fails fast
+src/bootstrap\app.py:605:    conn, opened = open_database(db_path, latest_known_schema_version=latest_known)
+src/infrastructure\sqlite\backup.py:66:            destination = sqlite3.connect(str(temporary))
+src/infrastructure\sqlite\backup.py:253:        source = sqlite3.connect(str(target))
+src/infrastructure\sqlite\backup.py:353:    check = sqlite3.connect(str(target))
+src/infrastructure\sqlite\connection.py:20:lazily created and routed by :class:`ThreadRoutedConnection`:
+src/infrastructure\sqlite\connection.py:82:class ThreadRoutedConnection:
+src/infrastructure\sqlite\connection.py:324:def open_database(
+src/infrastructure\sqlite\connection.py:328:) -> tuple[ThreadRoutedConnection, OpenedDatabase]:
+src/infrastructure\sqlite\connection.py:331:    The returned handle is a :class:`ThreadRoutedConnection`: each thread
+src/infrastructure\sqlite\connection.py:347:        conn = sqlite3.connect(str(path), check_same_thread=False)
+src/infrastructure\sqlite\connection.py:354:    conn = ThreadRoutedConnection(_open_one)
+src/infrastructure\sqlite\connection.py:367:def open_readonly(db_path: str | Path) -> sqlite3.Connection:
+src/infrastructure\sqlite\connection.py:370:    conn = sqlite3.connect(uri, uri=True)
+EXIT=0
+HITS=16
+
+=== F1 Qt value types in Core (domain/ports/application) ===
+CMD: rg -n 'QObject|QImage|QPdfWriter|QFont|QTextLayout|QFontMetrics|QBuffer|QIODevice|QPainter|QByteArray|QSizeF|QPageSize|QUrl|QTimer|QThread|Signal\(|Slot\(|Property\(' src/domain src/ports src/application
+src/application\export\pdf_qt.py:6:from image bytes with ``QImage`` and painted onto a ``QPdfWriter`` page
+src/application\export\pdf_qt.py:19:        from PySide6.QtCore import QBuffer, QIODevice, QSizeF
+src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+src/application\export\pdf_qt.py:22:        decoded: list[QImage] = []
+src/application\export\pdf_qt.py:24:            image = QImage.fromData(payload)
+src/application\export\pdf_qt.py:29:        buffer = QBuffer()
+src/application\export\pdf_qt.py:30:        buffer.open(QIODevice.OpenModeFlag.ReadWrite)
+src/application\export\pdf_qt.py:31:        writer = QPdfWriter(buffer)
+src/application\export\pdf_qt.py:33:        painter = QPainter(writer)
+src/application\export\pdf_qt.py:38:                    QPageSize(QSizeF(image.width(), image.height()), QPageSize.Unit.Point)
+src/application\translation\context\step.py:90:            TargetSlot(entry.page_id, entry.region_id)
+EXIT=0
+HITS=11
+
+=== F2 QObject-derived classes per tree ===
+CMD: rg -n 'class \w+\(QObject\)|class \w+\(QAbstractListModel\)|class \w+\(QAbstractItemModel\)' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/ui\models\tasks\page_list_model.py:37:class WorkbenchPageListModel(QAbstractListModel):
+src/ui\viewmodels\workbench\viewmodel.py:65:class WorkbenchViewModel(QObject):
+src/ui\viewmodels\workbench\run_controller.py:32:class _Worker(QObject):
+src/ui\viewmodels\workbench\run_controller.py:52:class RunController(QObject):
+src/ui\models\library\models.py:39:class _RoleModelBase(QAbstractListModel):
+src/ui\viewmodels\settings\viewmodel.py:73:class SettingsViewModel(QObject):
+src/ui\viewmodels\reader\viewmodel.py:45:class ReaderViewModel(QObject):
+src/ui\viewmodels\export\viewmodel.py:63:class ExportViewModel(QObject):
+src/ui\viewmodels\navigation\viewmodel.py:22:class NavigationViewModel(QObject):
+src/ui\viewmodels\bookshelf\viewmodel.py:24:class BookshelfViewModel(QObject):
+EXIT=0
+HITS=10
+
+=== G1 Qt threading and timers ===
+CMD: rg -n 'QThread|QThreadPool|moveToThread|QTimer|QtConcurrent|QRunnable' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:36:from PySide6.QtCore import QTimer, QUrl
+src/bootstrap\app.py:1137:        QTimer.singleShot(0, application.quit)
+src/bootstrap\app.py:1167:        QTimer.singleShot(300, _grab_and_quit)
+src/ui\viewmodels\workbench\viewmodel.py:29:from PySide6.QtCore import Property, QObject, QTimer, Signal, Slot
+src/ui\viewmodels\workbench\viewmodel.py:140:        self._progress_timer = QTimer(self)
+src/ui\viewmodels\workbench\run_controller.py:6:call to a QThread worker.
+src/ui\viewmodels\workbench\run_controller.py:18:from PySide6.QtCore import QObject, QThread, Signal, Slot
+src/ui\viewmodels\workbench\run_controller.py:33:    """Runs inside the QThread; one execution per worker."""
+src/ui\viewmodels\workbench\run_controller.py:61:    # QThread.started runs it on the *sender's* thread — the GUI thread —
+src/ui\viewmodels\workbench\run_controller.py:67:        self._thread: QThread | None = None
+src/ui\viewmodels\workbench\run_controller.py:123:        self._thread = QThread(self)
+src/ui\viewmodels\workbench\run_controller.py:125:        self._worker.moveToThread(self._thread)
+src/ui\viewmodels\reader\viewmodel.py:28:from PySide6.QtCore import Property, QObject, QTimer, QUrl, Signal, Slot
+src/ui\viewmodels\reader\viewmodel.py:69:        self._heartbeat = QTimer(self)
+src/infrastructure\sqlite\connection.py:70:    QThread workers).  The lease's weakref callback is the eviction hook;
+EXIT=0
+HITS=15
+
+=== G2 render/imaging/layout/font/tile call sites ===
+CMD: rg -n 'qt_compositor|qt_layout|font_catalog|pixel_source_style|webtoon_tiles|TiledPageRasterizer|TileGrid|TileCache|QtCompositor|QtLayout|FontCatalog' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:64:from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
+src/bootstrap\app.py:82:from infrastructure.rendering.font_catalog import QtFontCatalog
+src/bootstrap\app.py:85:from infrastructure.rendering.pixel_source_style import PixelSourceStyleAnalyzer
+src/bootstrap\app.py:86:from infrastructure.rendering.qt_compositor import QtImageCompositor
+src/bootstrap\app.py:87:from infrastructure.rendering.qt_layout import QtTextLayoutEngine
+src/bootstrap\app.py:675:        font_catalog = QtFontCatalog()
+src/bootstrap\app.py:682:            layout_engine=QtTextLayoutEngine(font_catalog),
+src/bootstrap\app.py:685:            font_catalog=font_catalog,
+src/bootstrap\app.py:861:        def tile_factory(path: str) -> TiledPageRasterizer:
+src/bootstrap\app.py:862:            return TiledPageRasterizer(
+src/bootstrap\app.py:874:                cache=TileCache(max_bytes=512 * 1024 * 1024),
+src/ports\rendering\ports.py:75:class FontCatalog(Protocol):
+src/ports\rendering\ports.py:160:    "FontCatalog",
+src/ui\viewmodels\reader\viewmodel.py:17:  ``requestTiles``/``clearTileCache``) instead of one whole-page image; the
+src/ui\viewmodels\reader\viewmodel.py:431:    def clearTileCache(self) -> None:
+src/infrastructure\rendering\qt_layout.py:19:    FontCatalog,
+src/infrastructure\rendering\qt_layout.py:44:    def __init__(self, catalog: FontCatalog) -> None:
+src/infrastructure\rendering\font_catalog.py:13:from ports.rendering.ports import FontCatalog, ResolvedFont
+src/infrastructure\rendering\font_catalog.py:26:class QtFontCatalog(FontCatalog):
+src/infrastructure\imaging\tile_cache_sweep.py:21:class WebtoonTileCacheSweeper:
+src/infrastructure\imaging\webtoon_tiles.py:7:- :class:`TileGrid` is pure geometry: it partitions the page into exclusive
+src/infrastructure\imaging\webtoon_tiles.py:11:- :class:`TileCache` is a byte-budgeted LRU over rebuildable entries;
+src/infrastructure\imaging\webtoon_tiles.py:14:- :class:`TiledPageRasterizer` decodes one tile at a time through the
+src/infrastructure\imaging\webtoon_tiles.py:46:#: :meth:`TiledPageRasterizer.clear` — or a manual wipe — reclaims every
+src/infrastructure\imaging\webtoon_tiles.py:115:class TileGrid:
+src/infrastructure\imaging\webtoon_tiles.py:198:class TileCache:
+src/infrastructure\imaging\webtoon_tiles.py:247:class TiledPageRasterizer:
+src/infrastructure\imaging\webtoon_tiles.py:284:        cache: TileCache | None = None,
+src/infrastructure\imaging\webtoon_tiles.py:289:        self._cache = cache if cache is not None else TileCache(max_bytes=256 * 1024 * 1024)
+src/infrastructure\imaging\webtoon_tiles.py:296:        self.grid = TileGrid(
+src/infrastructure\imaging\webtoon_tiles.py:447:    "TileCache",
+src/infrastructure\imaging\webtoon_tiles.py:448:    "TileGrid",
+src/infrastructure\imaging\webtoon_tiles.py:450:    "TiledPageRasterizer",
+src/application\rendering\service.py:60:    FontCatalog,
+src/application\rendering\service.py:118:        font_catalog: FontCatalog,
+src/application\rendering\service.py:138:        self._font_catalog = font_catalog
+src/application\rendering\service.py:398:        resolved_font = self._font_catalog.resolve(style.font_family)
+EXIT=0
+HITS=37
+
+=== G3 document/image importing call sites ===
+CMD: rg -n 'pypdfium2|import mobi|QImageReader|importing|ImportDocuments|ImportService' src/domain src/application src/ports src/infrastructure src/bootstrap src/ui
+src/bootstrap\app.py:50:from application.importing.documents import ImportDocumentsUseCase
+src/bootstrap\app.py:51:from application.importing.images.service import ImportImagesUseCase
+src/bootstrap\app.py:65:from infrastructure.importing import (
+src/bootstrap\app.py:557:    document_importer: ImportDocumentsUseCase
+src/bootstrap\app.py:639:        document_importer = ImportDocumentsUseCase(
+src/infrastructure\devices\manager.py:38:#: importing any of them (torch/cuda/numpy all phrase it differently).
+src/infrastructure\importing.py:14:from application.importing.images.ports import DecodedImage, ImageDecodeError
+src/infrastructure\importing.py:47:        from PySide6.QtGui import QImageReader
+src/infrastructure\importing.py:54:        reader = QImageReader(buffer)
+src/infrastructure\importing.py:119:    """Rasterise PDF pages via pypdfium2 (TASK-023; U-2 approved PDFium).
+src/infrastructure\importing.py:128:    :class:`~application.importing.documents.ports.DocumentDecodeError`
+src/infrastructure\importing.py:139:        from application.importing.documents.ports import DocumentDecodeError
+src/infrastructure\importing.py:142:            import pypdfium2 as pdfium
+src/infrastructure\importing.py:149:                "the pypdfium2 binding required for PDF import is unavailable: "
+src/infrastructure\importing.py:175:        from application.importing.documents.ports import (
+src/infrastructure\importing.py:266:        from application.importing.documents.ports import DocumentDecodeError
+src/infrastructure\importing.py:269:            import mobi  # adapter-local: never leaks past this file
+src/infrastructure\importing.py:349:        from application.importing.documents.ports import (
+src/ui\viewmodels\bookshelf\viewmodel.py:17:from application.importing.images.ports import ImportSource
+src/ui\viewmodels\bookshelf\viewmodel.py:39:        document_importer=None,  # TASK-023: ImportDocumentsUseCase-shaped; None keeps image-only
+src/infrastructure\sqlite\library.py:305:        NOTE: ``application/importing/images/ports.py`` still documents the
+src/application\translation\inpaint\route_catalog.py:8:Inpaint Step can consume the policy without importing infrastructure —
+src/application\importing\documents\ports.py:9:PDFium via pypdfium2). MOBI has no approved parsing dependency — files that
+src/application\importing\images\service.py:17:from application.importing.images.ports import (
+src/application\importing\documents\service.py:40:from application.importing.documents.ports import (
+src/application\importing\documents\service.py:44:from application.importing.images.ports import (
+src/application\importing\documents\service.py:52:from application.importing.images.service import DuplicatePolicy
+src/application\importing\documents\service.py:99:class ImportDocumentsUseCase:
+src/application\importing\documents\__init__.py:3:from application.importing.documents.ports import (
+src/application\importing\documents\__init__.py:9:from application.importing.documents.service import (
+src/application\importing\documents\__init__.py:11:    ImportDocumentsUseCase,
+src/application\importing\documents\__init__.py:19:    "ImportDocumentsUseCase",
+src/application\importing\images\__init__.py:3:from application.importing.images.ports import (
+src/application\importing\images\__init__.py:13:from application.importing.images.service import (
+src/application\importing\images\__init__.py:18:from application.importing.images.sorting import collect_image_files, natural_sort_key
+EXIT=0
+HITS=35
+
+=== H filesystem and process usage in Core only ===
+CMD: rg -n '\bopen\(|Path\(|shutil|subprocess|tempfile|os\.environ|os\.getcwd|QStandardPaths' src/domain src/ports src/application
+src/application\export\pdf_qt.py:30:        buffer.open(QIODevice.OpenModeFlag.ReadWrite)
+src/application\export\service.py:28:import tempfile
+src/application\export\service.py:334:            output_path=Path(record.output_path),
+src/application\export\service.py:369:        target = Path(request.output_path)
+src/application\export\service.py:537:    name = Path(filename).name.strip()
+src/application\export\service.py:550:    fd, name = tempfile.mkstemp(prefix=f".{target.name}.", suffix=".tmp", dir=target.parent)
+src/application\export\service.py:552:    return Path(name)
+src/application\export\service.py:567:    with path.open("rb") as handle:
+src/application\importing\documents\ports.py:59:    def open(self, data: bytes) -> DocumentHandle: ...
+src/application\export\ports.py:18:import tempfile
+src/application\export\ports.py:53:        self._path = Path(path)
+src/application\export\ports.py:64:        fd, temp_name = tempfile.mkstemp(
+src/application\export\ports.py:67:        temp = Path(temp_name)
+src/application\export\ports.py:79:    resolved = Path(path)
+src/application\importing\documents\service.py:82:    stem = Path(source_filename).stem or "document"
+src/application\importing\documents\service.py:175:                handle = selected.open(data)
+src/application\importing\images\sorting.py:23:    root = Path(directory)
+src/application\reading\ports.py:18:import tempfile
+src/application\reading\ports.py:81:        self._path = Path(path)
+src/application\reading\ports.py:92:        fd, temp_name = tempfile.mkstemp(
+src/application\reading\ports.py:95:        temp = Path(temp_name)
+src/application\reading\service.py:24:import tempfile
+src/application\reading\service.py:105:    def open(
+src/application\reading\service.py:176:        self.open(
+src/application\reading\service.py:438:    root = os.environ.get("NEWMANGA_DATA_ROOT")
+src/application\reading\service.py:439:    base = Path(root) if root else Path.home() / ".newmanga"
+src/application\maintenance\cleanup.py:236:    parts = PurePosixPath(normalized).parts
+src/application\rendering\service.py:332:        data = Path(self._storage.absolute_path(relative_path)).read_bytes()
+src/application\maintenance\trash.py:62:        self._path = Path(path)
+src/application\maintenance\trash.py:84:            with open(temp_path, "w", encoding="utf-8") as handle:
+EXIT=0
+HITS=30
