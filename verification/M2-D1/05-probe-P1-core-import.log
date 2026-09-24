@@ -1,0 +1,132 @@
+M2-D1 probe P1 — Core import surface (PySide6 NOT installed in this environment)
+captured_at = 2026-09-25T02:29:16+08:00
+shell = pwsh 7.6.6
+cwd = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit
+HEAD = bbeb4892746795be4bca92f4e5dda91a77c422a3
+python = C:\Python314\python.exe  Python 3.14.6
+env.NEWMANGA_DATA_ROOT = C:\Users\49745\AppData\Local\Temp\m2d1-probe-a5cafecc
+env.LOCALAPPDATA = C:\Users\49745\AppData\Local\Temp\m2d1-probe-a5cafecc
+env.PYTHONDONTWRITEBYTECODE = 1
+env.PYTHONPATH = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+env.QT_QPA_PLATFORM = <removed>
+command = python -B verification/M2-D1/probes/core_import_probe.py
+note = ATTEMPT1 failed with AttributeError (missing 'import importlib.util'); see 05-probe-P1-core-import-ATTEMPT1-failed.log
+--- raw stdout+stderr ---
+probe=core_import_probe
+python=3.14.6 (C:\Python314\python.exe)
+src_root=G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit\src
+sys.path_has_src=True
+qt_available=False
+------------------------------------------------------------
+### tree=domain modules=13
+OK   domain
+OK   domain.books
+OK   domain.books.entities
+OK   domain.constraints
+OK   domain.constraints.candidates
+OK   domain.constraints.entities
+OK   domain.constraints.merge
+OK   domain.pages
+OK   domain.pages.entities
+OK   domain.regions
+OK   domain.regions.entities
+OK   domain.tasks
+OK   domain.tasks.models
+### tree=ports modules=23
+OK   ports.detection
+OK   ports.detection.ports
+OK   ports.inpaint
+OK   ports.inpaint.ports
+OK   ports.network
+OK   ports.network.profiles
+OK   ports.network.transport
+OK   ports.ocr
+OK   ports.ocr.ports
+OK   ports.providers
+OK   ports.providers.credentials
+OK   ports.providers.errors
+OK   ports.providers.profiles
+OK   ports.rendering
+OK   ports.rendering.direction
+OK   ports.rendering.ports
+OK   ports.repositories
+OK   ports.repositories.artifacts
+OK   ports.repositories.database
+OK   ports.repositories.storage
+OK   ports.translation
+OK   ports.translation.ports
+OK   ports.translation.protocol
+### tree=application modules=66
+OK   application
+OK   application.editing
+OK   application.editing.errors
+OK   application.editing.ports
+OK   application.editing.service
+OK   application.export
+OK   application.export.pdf_qt
+OK   application.export.ports
+OK   application.export.service
+OK   application.importing.documents
+OK   application.importing.documents.ports
+OK   application.importing.documents.service
+OK   application.importing.images
+OK   application.importing.images.ports
+OK   application.importing.images.service
+OK   application.importing.images.sorting
+OK   application.library
+OK   application.library.errors
+OK   application.library.ports
+OK   application.library.service
+OK   application.maintenance
+OK   application.maintenance.backup
+OK   application.maintenance.cleanup
+OK   application.maintenance.diagnostics
+OK   application.maintenance.ports
+OK   application.maintenance.trash
+OK   application.navigation
+OK   application.navigation.service
+OK   application.reading
+OK   application.reading.ports
+OK   application.reading.service
+OK   application.rendering
+OK   application.rendering.layout
+OK   application.rendering.service
+OK   application.rendering.style
+OK   application.settings
+OK   application.settings.bindings
+OK   application.settings.errors
+OK   application.settings.models
+OK   application.settings.network
+OK   application.settings.pipeline_defaults
+OK   application.settings.privacy
+OK   application.settings.resolution
+OK   application.settings.snapshots
+OK   application.tasks
+OK   application.tasks.service
+OK   application.tasks.store
+OK   application.translation
+OK   application.translation.color
+OK   application.translation.color.service
+OK   application.translation.context
+OK   application.translation.context.builder
+OK   application.translation.context.gate
+OK   application.translation.context.snapshot
+OK   application.translation.context.step
+OK   application.translation.inpaint
+OK   application.translation.inpaint.mask
+OK   application.translation.inpaint.protection
+OK   application.translation.inpaint.route_catalog
+OK   application.translation.inpaint.router
+OK   application.translation.inpaint.step
+OK   application.translation.knowledge
+OK   application.translation.knowledge.term_extraction
+OK   application.translation.knowledge.tm
+OK   application.translation.pipeline
+OK   application.translation.pipeline.executor
+------------------------------------------------------------
+imported_ok=102
+imported_failed=0
+failures_due_to_missing_module=0
+probe_completed=True
+--- end raw ---
+EXIT=0
