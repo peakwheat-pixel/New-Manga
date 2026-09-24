@@ -1,0 +1,194 @@
+M2-D1 delivery scope and diff check (D1-AC5 evidence)
+captured_at = 2026-09-25T02:49:03+08:00
+shell = pwsh 7.6.6
+cwd = G:\CODEX\New Manga.worktrees\M2-D1-deepseek-audit
+fixed code base = 307a940265fc325076fe77698750392531f8fce1
+delivery head    = 0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+
+
+=== git rev-parse HEAD ===
+CMD: git rev-parse HEAD
+0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+EXIT=0
+
+=== git status --porcelain=v1 --branch ===
+CMD: git status --porcelain=v1 --branch
+## agent/deepseek/M2-D1-headless-qt-coupling-audit
+?? verification/M2-D1/11-delivery-scope-and-diff-check.log
+EXIT=0
+
+=== git merge-base --is-ancestor base delivery ===
+CMD: git merge-base --is-ancestor 307a940265fc325076fe77698750392531f8fce1 0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+EXIT=0
+
+=== git rev-list --count base..delivery ===
+CMD: git rev-list --count 307a940265fc325076fe77698750392531f8fce1..0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+3
+EXIT=0
+
+=== git log --oneline base..delivery ===
+CMD: git log --oneline 307a940265fc325076fe77698750392531f8fce1..0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+0a27a54 docs(research): M2-D1 headless and Qt coupling audit delivery
+bbeb489 docs(task): record M2-D1 DSH CLI authentication handoff
+504ed57 docs(task): release M2-D1 headless Qt coupling audit
+EXIT=0
+
+=== git diff --name-status base..delivery ===
+CMD: git diff --name-status 307a940265fc325076fe77698750392531f8fce1..0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+M	doc/00_INDEX.md
+M	doc/12_ROADMAP.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+A	doc/research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md
+A	doc/tasks/M2-D1.md
+A	verification/M2-D1/01-fixed-point-and-environment.log
+A	verification/M2-D1/02-required-rg.log
+A	verification/M2-D1/03-supplementary-searches.log
+A	verification/M2-D1/04-writer-and-entry-searches.log
+A	verification/M2-D1/05-probe-P1-core-import-ATTEMPT1-failed.log
+A	verification/M2-D1/05-probe-P1-core-import.log
+A	verification/M2-D1/06-probe-P2-P3-entry.log
+A	verification/M2-D1/07-probe-P4-infrastructure-bootstrap-import.log
+A	verification/M2-D1/08-probe-P5-ui-import.log
+A	verification/M2-D1/09-evidence-manifest-and-coverage.md
+A	verification/M2-D1/10-probe-P6-qtfree-ui-modules-ATTEMPT1-failed.log
+A	verification/M2-D1/10-probe-P6-qtfree-ui-modules.log
+A	verification/M2-D1/probes/core_import_probe.py
+A	verification/M2-D1/probes/ui_qtfree_bridge_probe.py
+EXIT=0
+
+=== git diff --stat base..delivery ===
+CMD: git diff --stat 307a940265fc325076fe77698750392531f8fce1..0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+ doc/00_INDEX.md                                    |   2 +-
+ doc/12_ROADMAP.md                                  |   2 +-
+ doc/REBASELINE_PLAN.md                             |   2 +-
+ doc/STATUS.md                                      |   3 +-
+ doc/research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md   | 211 ++++++++
+ doc/tasks/M2-D1.md                                 |  93 ++++
+ .../M2-D1/01-fixed-point-and-environment.log       |  85 ++++
+ verification/M2-D1/02-required-rg.log              | 298 ++++++++++++
+ verification/M2-D1/03-supplementary-searches.log   | 539 +++++++++++++++++++++
+ .../M2-D1/04-writer-and-entry-searches.log         | 391 +++++++++++++++
+ .../05-probe-P1-core-import-ATTEMPT1-failed.log    |  27 ++
+ verification/M2-D1/05-probe-P1-core-import.log     | 132 +++++
+ verification/M2-D1/06-probe-P2-P3-entry.log        |  42 ++
+ ...07-probe-P4-infrastructure-bootstrap-import.log |  89 ++++
+ verification/M2-D1/08-probe-P5-ui-import.log       |  58 +++
+ .../M2-D1/09-evidence-manifest-and-coverage.md     |  70 +++
+ ...-probe-P6-qtfree-ui-modules-ATTEMPT1-failed.log |  43 ++
+ .../M2-D1/10-probe-P6-qtfree-ui-modules.log        |  22 +
+ verification/M2-D1/probes/core_import_probe.py     |  97 ++++
+ .../M2-D1/probes/ui_qtfree_bridge_probe.py         |  81 ++++
+ 20 files changed, 2283 insertions(+), 4 deletions(-)
+EXIT=0
+
+=== git diff --check base..delivery ===
+CMD: git diff --check 307a940265fc325076fe77698750392531f8fce1..0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+EXIT=0
+
+=== forbidden-path scan in delivery diff ===
+CMD: git diff --name-only 307a940265fc325076fe77698750392531f8fce1..0a27a54c9048fa1d3149ef4641a5d67fcb20849a | rg '^(src/|tests/|packaging/|requirements|AGENTS\.md|doc/REBASELINE_PLAN|doc/STATUS|doc/00_INDEX|doc/12_ROADMAP|doc/09_COLLABORATION|doc/reviews/|doc/tasks/(?!M2-D1)|doc/handoffs/(?!M2-D1)|verification/(?!M2-D1))'
+EXIT=2
+
+=== react/tauri/ipc artifact scan in delivery tree ===
+CMD: git ls-tree -r --name-only 0a27a54c9048fa1d3149ef4641a5d67fcb20849a | rg -i '(^frontend/|^src-tauri/|^package\.json|^Cargo\.toml|tauri\.conf\.json|\.tsx$|\.rs$)'
+EXIT=1
+
+=== pycache scan in delivery tree ===
+CMD: git ls-tree -r --name-only 0a27a54c9048fa1d3149ef4641a5d67fcb20849a | rg '__pycache__|\.pyc$'
+EXIT=1
+
+=== delivery file inventory under verification/M2-D1 ===
+CMD: git ls-tree -r --name-only 0a27a54c9048fa1d3149ef4641a5d67fcb20849a -- verification/M2-D1
+verification/M2-D1/01-fixed-point-and-environment.log
+verification/M2-D1/02-required-rg.log
+verification/M2-D1/03-supplementary-searches.log
+verification/M2-D1/04-writer-and-entry-searches.log
+verification/M2-D1/05-probe-P1-core-import-ATTEMPT1-failed.log
+verification/M2-D1/05-probe-P1-core-import.log
+verification/M2-D1/06-probe-P2-P3-entry.log
+verification/M2-D1/07-probe-P4-infrastructure-bootstrap-import.log
+verification/M2-D1/08-probe-P5-ui-import.log
+verification/M2-D1/09-evidence-manifest-and-coverage.md
+verification/M2-D1/10-probe-P6-qtfree-ui-modules-ATTEMPT1-failed.log
+verification/M2-D1/10-probe-P6-qtfree-ui-modules.log
+verification/M2-D1/probes/core_import_probe.py
+verification/M2-D1/probes/ui_qtfree_bridge_probe.py
+EXIT=0
+
+=== CORRECTION: the previous 'forbidden-path scan' exited 2 because ripgrep needs -P for lookahead; that row was an ERROR, not a pass. Authoritative scope checks follow. ===
+
+=== git log --oneline -3 (authorship of the registration commits) ===
+CMD: git log --oneline -3
+0a27a54 docs(research): M2-D1 headless and Qt coupling audit delivery
+bbeb489 docs(task): record M2-D1 DSH CLI authentication handoff
+504ed57 docs(task): release M2-D1 headless Qt coupling audit
+EXIT=0
+
+=== git diff --name-status ownerStart..delivery  (DSH write set only) ===
+CMD: git diff --name-status bbeb4892746795be4bca92f4e5dda91a77c422a3..0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+A	doc/research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md
+M	doc/tasks/M2-D1.md
+A	verification/M2-D1/01-fixed-point-and-environment.log
+A	verification/M2-D1/02-required-rg.log
+A	verification/M2-D1/03-supplementary-searches.log
+A	verification/M2-D1/04-writer-and-entry-searches.log
+A	verification/M2-D1/05-probe-P1-core-import-ATTEMPT1-failed.log
+A	verification/M2-D1/05-probe-P1-core-import.log
+A	verification/M2-D1/06-probe-P2-P3-entry.log
+A	verification/M2-D1/07-probe-P4-infrastructure-bootstrap-import.log
+A	verification/M2-D1/08-probe-P5-ui-import.log
+A	verification/M2-D1/09-evidence-manifest-and-coverage.md
+A	verification/M2-D1/10-probe-P6-qtfree-ui-modules-ATTEMPT1-failed.log
+A	verification/M2-D1/10-probe-P6-qtfree-ui-modules.log
+A	verification/M2-D1/probes/core_import_probe.py
+A	verification/M2-D1/probes/ui_qtfree_bridge_probe.py
+EXIT=0
+
+=== git diff --check ownerStart..delivery ===
+CMD: git diff --check bbeb4892746795be4bca92f4e5dda91a77c422a3..0a27a54c9048fa1d3149ef4641a5d67fcb20849a
+EXIT=0
+
+=== git diff --name-status base..ownerStart (Codex registration, not authored here) ===
+CMD: git diff --name-status 307a940265fc325076fe77698750392531f8fce1..bbeb4892746795be4bca92f4e5dda91a77c422a3
+M	doc/00_INDEX.md
+M	doc/12_ROADMAP.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+A	doc/tasks/M2-D1.md
+EXIT=0
+
+=== PowerShell allowed-path assertion over ownerStart..delivery ===
+checked_paths=0
+allowed_list=doc/research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md, doc/tasks/M2-D1.md, verification/M2-D1/*
+violations=0
+(none)
+EXIT=0
+
+=== protected-path scan over ownerStart..delivery (explicit path list) ===
+CMD: git diff --name-only bbeb4892746795be4bca92f4e5dda91a77c422a3..0a27a54c9048fa1d3149ef4641a5d67fcb20849a | rg '^(src/|tests/|packaging/|requirements|AGENTS\.md|doc/REBASELINE_PLAN\.md|doc/STATUS\.md|doc/00_INDEX\.md|doc/12_ROADMAP\.md|doc/09_COLLABORATION\.md|doc/reviews/|doc/tasks/T3|doc/handoffs/T3)'
+EXIT=1
+
+=== CORRECTION 2: the previous assertion printed checked=0 because PowerShell parsed \bbeb4892746795be4bca92f4e5dda91a77c422a3..\0a27a54c9048fa1d3149ef4641a5d67fcb20849a as its range operator. Revision ranges must be quoted. Corrected assertion follows. ===
+CMD: git diff --name-only 'bbeb4892746795be4bca92f4e5dda91a77c422a3..0a27a54c9048fa1d3149ef4641a5d67fcb20849a'
+doc/research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md
+doc/tasks/M2-D1.md
+verification/M2-D1/01-fixed-point-and-environment.log
+verification/M2-D1/02-required-rg.log
+verification/M2-D1/03-supplementary-searches.log
+verification/M2-D1/04-writer-and-entry-searches.log
+verification/M2-D1/05-probe-P1-core-import-ATTEMPT1-failed.log
+verification/M2-D1/05-probe-P1-core-import.log
+verification/M2-D1/06-probe-P2-P3-entry.log
+verification/M2-D1/07-probe-P4-infrastructure-bootstrap-import.log
+verification/M2-D1/08-probe-P5-ui-import.log
+verification/M2-D1/09-evidence-manifest-and-coverage.md
+verification/M2-D1/10-probe-P6-qtfree-ui-modules-ATTEMPT1-failed.log
+verification/M2-D1/10-probe-P6-qtfree-ui-modules.log
+verification/M2-D1/probes/core_import_probe.py
+verification/M2-D1/probes/ui_qtfree_bridge_probe.py
+checked_paths=16
+allowed=doc/research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md | doc/tasks/M2-D1.md | verification/M2-D1/*
+violations=0
+(none)
+ASSERTION=owner-write-set-within-allowed-paths EXIT=0
