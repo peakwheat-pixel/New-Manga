@@ -72,8 +72,13 @@ artifact was not modified.
 - AC4 Qt runtime closure: **FAIL** for this artifact because `QtCore` cannot
   import with the bundled ICU. AC5 remains **NOT_RUN**. AC6/AC7 remain
   **PARTIAL / NOT_RUN**. R-014–R-016 remain open.
-- Antigravity, as packaging implementation Owner, must fix deterministic Qt/ICU
-  dependency selection within the already released T3.2.1 packaging scope.
+- Codex has released [T3.2.1-REPAIR-9](../../doc/tasks/T3.2.1-REPAIR-9.md), ready and
+  not started, to Antigravity (Owner) with DeepSeek Harness as independent Reviewer.
+  Fixed base: `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04`; branch:
+  `agent/antigravity/T3.2.1-repair-9`; worktree:
+  `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9`; initial Codex
+  release-sync commit: `00e463633f4a0c6d53da676e74ac2a54197feeed`. The scope is deterministic
+  Qt/ICU dependency selection within the T3.2.1 packaging task.
   The correction must not rely on this diagnostic file replacement. Add a
   build-time closure check that confirms imported symbols resolve to the
   selected dependency, then build and test an unchanged package in the

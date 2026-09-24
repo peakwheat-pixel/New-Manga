@@ -83,15 +83,17 @@ are superseded by [clean-sandbox-ac3-20260924](clean-sandbox-ac3-20260924.md).
    hash 匹配，但 `--smoke-test` 因 `QtCore` 的 ICU DLL 错配 exit 1；这把此前的
    AC3 `NOT_RUN` 更新为“启动检查 `FAIL`、完整 GUI 工作流 `NOT_RUN`”。详见
    [`clean-sandbox-ac3-20260924.md`](clean-sandbox-ac3-20260924.md)。
-2. **下一步：Codex 登记定点 runtime 修复后由 Antigravity 实施。** Owner=Antigravity，
-   Reviewer=DeepSeek Harness；建议固定 source base 为现有、未合并的
-   `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04`，从其新建独立修复分支/worktree，
-   不要改写已 Review 的 `agent/antigravity/T3.2.1-repair-7` head。范围限定为
+2. **下一步：Antigravity 实施已释放的 runtime 修复。** Task=
+   [T3.2.1-REPAIR-9](../../doc/tasks/T3.2.1-REPAIR-9.md)，Owner=Antigravity，
+   Reviewer=DeepSeek Harness；base=`37d5488ebf8e33f897e802b4147cbd5fb1ad8e04`；
+   branch=`agent/antigravity/T3.2.1-repair-9`；worktree=
+   `G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-9`。Codex 已创建隔离
+   worktree，release-sync commit=`00e463633f4a0c6d53da676e74ac2a54197feeed`；状态
+   `ready / not started`。不得改写已 Review 的 REPAIR-7 branch/head。范围限定为
    PyInstaller 的 DLL/ICU 选择、必要的 `packaging/**` 与 `tests/packaging/**`、
    新 verification 与 Handoff。修复必须防止构建时拾取 host Poppler `icuuc.dll`，
    并增加 QtCore imported-symbol closure 检查；验证需用未改动的最终包在 Sandbox
-   重跑启动。此次证据更新没有创建该分支/worktree，也没有释放新的实现 Task。
-   固定修复 head 后，再补 R-014 的第二次原始 build 与 tasklist 输出、R-015 类型
+   重跑启动。固定修复 head 后，再补 R-014 的第二次原始 build 与 tasklist 输出、R-015 类型
    修复、R-016 测试数字对账；必要时重跑 `tests/packaging`、focused tests、
    `compileall`、资源/manifest/hash 检查。
 3. **独立 Windows 验收。** 测试操作人使用固定产物与隔离 fixture，按上述
