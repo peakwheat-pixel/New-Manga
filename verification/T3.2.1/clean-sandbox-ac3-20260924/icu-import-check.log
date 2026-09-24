@@ -1,0 +1,35 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260924110240
+Username: HOME-MY\49745
+RunAs User: HOME-MY\49745
+Configuration Name:
+Machine: HOME-MY (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\Users\49745\AppData\Local\Temp\newmanga-ac3-icu-check.ps1
+Process ID: 41228
+PSVersion: 5.1.26100.9444
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
+BuildVersion: 10.0.26100.9444
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+HOST_OS=Microsoft Windows 11 专业版 10.0.26200 build 26200
+SHELL=Desktop 5.1.26100.9444
+PYTHON=G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+
+PYTHON_META_EXIT=0
+PACKAGE_EXE_SHA256=F276CD9C8D25BBB407B7E4337889CCAF994DF5E81C10556ACE567918FCC366A4
+FILE=C:\Users\49745\AppData\Local\Temp\newmanga-ac3-dd8e2130dba140349ff8e788a21743b7\NewManga\_internal\PySide6\Qt6Core.dll VERSION=6.11.2.0 SHA256=D6A3C37C5263C5D418FC0E80B722BC9FCA7C0859E6F635F9624A2FDE00BDC653
+FILE=C:\Users\49745\AppData\Local\Temp\newmanga-ac3-dd8e2130dba140349ff8e788a21743b7\NewManga\_internal\icuuc.dll VERSION=78, 3, 0, 0 SHA256=93CC29031627A72A12C79328F441359CF0570F8E7341D9C4F4555F34D49BB779
+FILE=C:\Users\49745\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\poppler\Library\bin\icuuc.dll VERSION=78, 3, 0, 0 SHA256=93CC29031627A72A12C79328F441359CF0570F8E7341D9C4F4555F34D49BB779
+FILE=C:\Windows\System32\icuuc.dll VERSION=72, 1, 0, 4 (WinBuild.160101.0800) SHA256=59D134DDC15AE0594F0A328979F8201662FC82634DDB7C537B156E7CF871F5EB
+PE import/export comparison:
+
+PE_SCAN_EXIT=0
+**********************
+Windows PowerShell transcript end
+End time: 20260924110241
+**********************

@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "app.py", line 36, in <module>
+ImportError: DLL load failed while importing QtCore: 找不到指定的程序。
+[PYI-2256:ERROR] Failed to execute script 'app' due to unhandled exception!

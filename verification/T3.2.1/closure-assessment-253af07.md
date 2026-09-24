@@ -4,6 +4,11 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
 `253af0720ba932b1af3fe2fe156262616dfedeca`。本文件是收口路线与缺项审计，
 不构成验收 PASS、实现授权或集成许可。
 
+2026-09-24 Codex follow-up: the user enabled Windows Sandbox and Codex attempted
+the fixed package there. The prior environment/status statements below describe
+the 2026-09-23 audit point; the current AC3/AC4 result and root-cause evidence
+are superseded by [clean-sandbox-ac3-20260924](clean-sandbox-ac3-20260924.md).
+
 ## 固定对象与现有证据
 
 - 产品实施基线 `c2fcb1ce575099f6e74f69c711f423040a545951`；交付分支
@@ -58,8 +63,8 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
 
 | Gate | 当前口径 | 下一份必须取得的证据 |
 |---|---|---|
-| AC1/AC2、AC4 | 开发机构建、资源与清单已有证据；正式固定 head 待复验。两次 manifest 比较 exit 1，5437 项中 2 项 hash 不同，不得写成全包字节相同 | 固定 head 的完整 Build 1/Build 2 原始日志、依赖快照、两个 SHA-256 manifest、差异解释、资源检查与 exe hash。对“可复现”是否满足 Task AC2 作明确 Gate 判断 |
-| AC3 / AC-PKG-002/003 | `NOT_RUN`；发布阻断 | 独立 Windows 11 x64 GUI 机器，无 Python、venv、源码、开发机 PATH；普通用户从复制并验 hash 的 onedir 包启动，展示真实主窗口与 Qt/QML 页面；记录 OS/依赖清单、命令或操作、截图/录像、原始 stdout/stderr、exit code 与失败诊断 |
+| AC1/AC2、AC4 | 候选包于 source tree `37d5488` 重建；完整 manifest 已留证。Sandbox 的 QtCore 启动失败揭示包内 ICU 错配，AC4 对该产物为 `FAIL`；固定最终 head 的 Build 1/2 和重建仍待新修复后复验 | 修复后固定 head 的 Build 1/Build 2 原始日志、依赖快照、两个 SHA-256 manifest、差异解释、Qt/QML 资源检查、exe hash；AC4 必须在不替换包文件的原始产物上通过 |
+| AC3 / AC-PKG-002/003 | **启动检查 `FAIL`；完整主流程 `NOT_RUN`；发布阻断**。Sandbox 是可用的隔离 Windows 11 x64 环境；初始包 hash 匹配，但 QtCore 导入失败 | 修复后的原始 onedir 包在 Sandbox 普通用户会话启动，展示真实主窗口和 Qt/QML 页面；记录 OS/依赖清单、命令或操作、截图/录像、原始 stdout/stderr、exit code 与失败诊断。不得使用诊断替换后的 DLL 作为验收产物 |
 | AC5 / AC-OPTIONAL-001/002 | `NOT_RUN` | 固定包/隔离环境无 PyTorch、大型修复模型、OCR runtime；Core/UI 启动，缺依赖 Provider 显示 Not Ready/Missing Dependency 且不崩；记录环境清单和可复核输出 |
 | AC6 / AC-SMOKE | `PARTIAL / NOT_RUN` | 在同一干净机用 `NewManga.exe` 逐步完成书架→Book→Chapter→导入→工作台→至少一个 Mock/Local Pipeline→保存→阅读→导出→退出→重启恢复；步骤截图、产物及 SQLite 前后证据。服务层 `run_clean_flow_probe.py` 不能代替 GUI 发布包走查 |
 | AC7 | `PARTIAL / NOT_RUN` | 同一发布包走查的源文件 hash/mtime 前后值、Managed Copy、Lock、current/pinned Revision、人工确认内容、SQLite 行与 Secret 日志检查；失败时保留隔离 fixture 与错误输出，不碰真实用户数据 |
@@ -73,16 +78,22 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
 
 ## 执行顺序、Owner 与 Gate
 
-1. **Codex 固定测试对象和环境。** 确认独立 Windows 11 x64 实机或 VM 的操作人、
-   GUI/普通用户权限、文件传入及证据取回方式；确认无 Python、源码、venv、开发机
-   PATH。若环境不可得，AC3/AC6/AC7 保持 `NOT_RUN`，T3.2.1 保持 release-blocked。
-   不用本机 stripped-PATH 模拟替代。
-2. **Codex 登记下一实施切片后由 Antigravity 执行。** 从当前交付 tip 与现有
-   `packaging/build.ps1`、`clean-windows-runbook.md` 复核输入，冻结新的构建/测试
-   head；补 R-014 的第二次原始 build 与 tasklist 输出、R-015 类型修复、R-016
-   测试数字对账；在固定 head 重跑必要的 `tests/packaging`、focused tests、
-   `compileall`、资源/manifest/hash 检查。具体 allowed paths、branch、base 由
-   Codex 在释放 Task 时登记；当前安排本身不授权改动交付分支。
+1. **Codex 已确认隔离 Windows 环境并完成首轮尝试。** Sandbox 为 Windows 11
+   Enterprise x64 build 26100，测试用户无 `python`、`py`、`git` 命令。初始包 exe
+   hash 匹配，但 `--smoke-test` 因 `QtCore` 的 ICU DLL 错配 exit 1；这把此前的
+   AC3 `NOT_RUN` 更新为“启动检查 `FAIL`、完整 GUI 工作流 `NOT_RUN`”。详见
+   [`clean-sandbox-ac3-20260924.md`](clean-sandbox-ac3-20260924.md)。
+2. **下一步：Codex 登记定点 runtime 修复后由 Antigravity 实施。** Owner=Antigravity，
+   Reviewer=DeepSeek Harness；建议固定 source base 为现有、未合并的
+   `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04`，从其新建独立修复分支/worktree，
+   不要改写已 Review 的 `agent/antigravity/T3.2.1-repair-7` head。范围限定为
+   PyInstaller 的 DLL/ICU 选择、必要的 `packaging/**` 与 `tests/packaging/**`、
+   新 verification 与 Handoff。修复必须防止构建时拾取 host Poppler `icuuc.dll`，
+   并增加 QtCore imported-symbol closure 检查；验证需用未改动的最终包在 Sandbox
+   重跑启动。此次证据更新没有创建该分支/worktree，也没有释放新的实现 Task。
+   固定修复 head 后，再补 R-014 的第二次原始 build 与 tasklist 输出、R-015 类型
+   修复、R-016 测试数字对账；必要时重跑 `tests/packaging`、focused tests、
+   `compileall`、资源/manifest/hash 检查。
 3. **独立 Windows 验收。** 测试操作人使用固定产物与隔离 fixture，按上述
    AC3→AC5→AC6/AC7→AC8/AC9 顺序执行并存入 `verification/T3.2.1/**`。
    每项记录 shell/OS/hardware、被测 commit、artifact hash、操作或命令、原始
@@ -96,3 +107,15 @@ Codex audit: 2026-09-23，PowerShell，`master` 固定检查点
 
 `verification/T3.2.1/release-gate-c2fcb1c.md` 的 PASS TO START 只授权实施；
 本清单不更改 D08 的阈值或发布优先级，不提供豁免。
+
+## 2026-09-24 Sandbox 结果补记
+
+AC3 baseline 运行时 failure 与 ICU 符号调查见
+[`clean-sandbox-ac3-20260924.md`](clean-sandbox-ac3-20260924.md)。核心结论：包内
+`icuuc.dll` 的 SHA-256 与构建宿主 Codex Poppler PATH 项完全一致，且不导出
+`Qt6Core.dll` 导入的 20 个 ICU 名称；Sandbox 自带的 `System32\icuuc.dll` 提供全部
+20 个名称。诊断副本只替换这一文件后 smoke exit 0 并创建数据库，随后原 DLL 在
+Sandbox 副本内恢复并核对 hash。它证明了启动缺陷的因果方向，不构成包验收。下一
+Gate 先修复确定性依赖收集，再在不替换包内容的情况下完成 AC3/AC4；AC5、AC6/AC7、
+AC8/AC9、R-014～R-016 与最终 Review 仍未关闭。不得合并
+`agent/antigravity/T3.2.1-repair-7` 或其派生交付。

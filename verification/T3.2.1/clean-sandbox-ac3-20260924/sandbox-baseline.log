@@ -1,0 +1,37 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260924103909
+Username: FAA20E00-4E48-4\WDAGUtilityAccount
+RunAs User: FAA20E00-4E48-4\WDAGUtilityAccount
+Configuration Name:
+Machine: FAA20E00-4E48-4 (Microsoft Windows NT 10.0.26100.0)
+Host Application: powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\HostEvidence\ac3-preflight.ps1
+Process ID: 6688
+PSVersion: 5.1.26100.9444
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
+BuildVersion: 10.0.26100.9444
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+SOURCE_HEAD=37d5488ebf8e33f897e802b4147cbd5fb1ad8e04
+EXPECTED_EXE_SHA256=F276CD9C8D25BBB407B7E4337889CCAF994DF5E81C10556ACE567918FCC366A4
+
+
+Caption        : Microsoft Windows 11 Enterprise
+Version        : 10.0.26100
+BuildNumber    : 26100
+OSArchitecture : 64-bit
+
+
+
+SANDBOX_EXE_SHA256=F276CD9C8D25BBB407B7E4337889CCAF994DF5E81C10556ACE567918FCC366A4
+
+SMOKE_EXIT=1
+DATA_ROOT_EXISTS=False
+**********************
+Windows PowerShell transcript end
+End time: 20260924103920
+**********************

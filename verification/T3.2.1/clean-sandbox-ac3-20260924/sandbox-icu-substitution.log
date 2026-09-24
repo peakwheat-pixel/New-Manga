@@ -1,0 +1,65 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20260924105309
+Username: FAA20E00-4E48-4\WDAGUtilityAccount
+RunAs User: FAA20E00-4E48-4\WDAGUtilityAccount
+Configuration Name:
+Machine: FAA20E00-4E48-4 (Microsoft Windows NT 10.0.26100.0)
+Host Application: powershell.exe -NoProfile -ExecutionPolicy Bypass -File C:\HostEvidence\ac3-icu-substitution.ps1
+Process ID: 8796
+PSVersion: 5.1.26100.9444
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9444
+BuildVersion: 10.0.26100.9444
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+SYSTEM_ICU_EXISTS=True
+SYSTEM_ICU_SHA256=59D134DDC15AE0594F0A328979F8201662FC82634DDB7C537B156E7CF871F5EB
+SYSTEM_ICU_VERSION=72, 1, 0, 4 (WinBuild.160101.0800)
+PACKAGE_ICU_SHA256=93CC29031627A72A12C79328F441359CF0570F8E7341D9C4F4555F34D49BB779
+TEST_ICU_SHA256=59D134DDC15AE0594F0A328979F8201662FC82634DDB7C537B156E7CF871F5EB
+SUBSTITUTED_ICU_SMOKE_EXIT=0
+DATABASE_EXISTS=True
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_51(0x1847a3a2510)  is not an Item
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_51(0x1847a4a4d20)  is not an Item
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:137:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_13(0x1847a85c460, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:129:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1847a85e170, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:104:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_13(0x1847a85ac00, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:96:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1847a85c550, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/workbench/RegionInspector.qml:104:25: QML QQuickRectangle: The current style does not support customization of this control (property: "background" item: QQuickRectangle(0x1847a72d7f0, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:137:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_13(0x1847a85ade0, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:129:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1847a85aed0, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:104:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_13(0x1847a85b920, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/common/ChapterPicker.qml:96:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1847a85ba10, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///C:/NewManga/_internal/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookshelfView.qml:65: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookshelfView.qml:49: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookshelfToolbar.qml:63: TypeError: Cannot read property 'viewMode' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookshelfToolbar.qml:57: TypeError: Cannot read property 'sortBy' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookshelfToolbar.qml:52: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/NewManga/_internal/ui/qml/bookshelf/BookshelfToolbar.qml:45: TypeError: Cannot read property 'favoritesOnly' of null
+PS>TerminatingError(Remove-Item): "The running command stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: Cannot remove item C:\NewManga\_internal\icuuc.dll: You do not have sufficient access rights to perform this operation."
+>> TerminatingError(Remove-Item): "The running command stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: Cannot remove item C:\NewManga\_internal\icuuc.dll: You do not have sufficient access rights to perform this operation."
+Remove-Item : Cannot remove item C:\NewManga\_internal\icuuc.dll: You do not ha
+ve sufficient access rights to perform this operation.
+At C:\HostEvidence\ac3-icu-substitution.ps1:21 char:40
++ ...    if (Test-Path -LiteralPath $bad) { Remove-Item -LiteralPath $bad }
++                                           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : PermissionDenied: (C:\NewManga\_internal\icuuc.d
+   ll:FileInfo) [Remove-Item], IOException
+    + FullyQualifiedErrorId : RemoveFileSystemItemUnAuthorizedAccess,Microsoft
+   .PowerShell.Commands.RemoveItemCommand
+**********************
+Windows PowerShell transcript end
+End time: 20260924105312
+**********************
