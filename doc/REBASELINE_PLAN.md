@@ -126,7 +126,7 @@ QML shell changes are serialized through Codex.
 | 4 | [T2.1.1 Apply Design F to QML](tasks/T2.1.1.md) | **VERIFIED_COMPLETE**; product code integrated at `5da1cf6` | Qoder / Codex non-author review and integration; base `7f34135` | Shared F tokens use `pragma Singleton` + `qmldir`; all four pages consume them; 158px bookshelf geometry, accepted/completed-state contrast, and a discriminating hard-code guard are verified without business-logic changes. Review/integration evidence: [`review-bc49ef9`](../verification/T2.1.1/review-bc49ef9.md), [`integration-5da1cf6`](../verification/T2.1.1/integration-5da1cf6.md). |
 | 5 | [T2.2.1 Reader & Workbench Polish](tasks/T2.2.1.md) | **VERIFIED_COMPLETE**; integrated `fe9fca0` | ZCode functional implementation + Qoder QML/UI/UX / Codex non-author review and integration | Chapter picker, Workbench empty-state picker, dismissible command-error notification, and webtoon canvas consistency are accessible and tested. Evidence: [`review-0846573`](../verification/T2.2.1/review-0846573.md), [`integration-aad510b`](../verification/T2.2.1/integration-aad510b.md). |
 | 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **VERIFIED_COMPLETE**; product integrated `0c70e44` | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Evidence: [review-899bd3c](../verification/T3.1.1/review-899bd3c.md), [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md). |
-| 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | **IN PROGRESS; FULL RELEASE GATE OPEN**; REPAIR-11 Review `4f2f8a0` returned `changes_requested`; [REPAIR-12](tasks/T3.2.1-REPAIR-12.md) is released at base `9622395` for evidence correction | Antigravity implements REPAIR-12 / DeepSeek Harness independent Review; Codex owns full Gate closeout and integration | Product onedir must launch on clean Windows without Python, complete the core workflow, protect user/source data, and exit without a residual process. `AC3` remains `NOT_RUN` for the required interactive workflow and blocks release. See [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md). |
+| 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | **IN PROGRESS; FULL RELEASE GATE OPEN**; REPAIR-12 evidence slice Review `a656486` is `approved`; Codex is completing the full Gate closeout | Codex owns Gate closeout and integration; DeepSeek Harness is the required independent final Reviewer | Product onedir must launch on clean Windows without Python, complete the core workflow, protect user/source data, and exit without a residual process. `AC3` remains `NOT_RUN` for the required interactive workflow and blocks release. See [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md). |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
@@ -153,12 +153,15 @@ for documentation only; REPAIR-9 (`d2bf6a8` / `eeb095e`) remains
 `changes_requested` after Review `85f8c59`; REPAIR-10 (`be5200e` / `d7edea5`)
 was approved for packaging-test path independence only. REPAIR-11 Delivery
 `9622395` / Handoff `941dbc8` received `changes_requested` from independent
-Review `4f2f8a0` for F-11-1/F-11-2 and O-11-1/O-11-2; [REPAIR-12](tasks/T3.2.1-REPAIR-12.md)
-is released from pre-Handoff base `9622395` to correct these evidence records.
-This evidence-only follow-up does not alter product behavior or constitute the
-full product Review. AC3's required interactive workflow remains `NOT_RUN` and
-blocks release; AC5, AC6/AC7, AC8/AC9 and R-014–R-016 remain open. No REPAIR-7/9/10/11/12
-or related branch may be merged to `master` before Codex closes the full Gate.
+Review `4f2f8a0`; the evidence findings were corrected by REPAIR-12 Delivery
+`a2f6695` / Handoff `8738c41`, which received slice-only `approved` Review
+`a656486`. The new review does not alter the historical REPAIR-11 decision or
+approve the full product Gate. AC3's required interactive workflow remains
+`NOT_RUN` and blocks release; AC5=`NOT_RUN`, AC6/AC7=`PARTIAL / NOT_RUN`,
+AC8/AC9=`NOT_RUN`, and R-014–R-016=`OPEN`. Codex's current closeout records
+O-12-2 and keeps the legacy REPAIR-11 Handoff outside the integration candidate.
+No REPAIR-7/9/10/11/12 or related branch may be merged to `master` before full
+Gate closure and final independent Review.
 
 ## Project control baseline — 2026-09-22
 

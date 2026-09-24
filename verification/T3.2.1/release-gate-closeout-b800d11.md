@@ -4,6 +4,9 @@ Date: 2026-09-24 (Asia/Shanghai)
 Decision owner: Codex
 Decision: **OPEN — NOT RELEASE READY; NO PRODUCT INTEGRATION AUTHORIZED**
 
+> Latest closeout checkpoint and O-12-2 disposition are appended at the end of
+> this record. The opening section remains the historical assessment snapshot.
+
 This is a Codex closeout assessment, not a new implementation Task. The main
 recovery point at assessment start was `G:/CODEX/New Manga`, `master` at
 `b800d117eadc182784097f7694b416b5cdd58e11`. The product Gate baseline remains
@@ -185,3 +188,75 @@ REPAIR-7/9/10 or any related branch into master before the full Release Gate is
 closed. Do not change product code, test assertions, dependencies or Schema
 without a separately registered and frozen authorization.
 ```
+
+## Current Codex full-Gate closeout checkpoint (2026-09-24)
+
+**Owner:** Codex. **Decision:** `OPEN — NOT RELEASE READY; NO PRODUCT
+INTEGRATION AUTHORIZED`. This checkpoint records the current repair/review
+chain and the explicit O-12-2 disposition. The initial assessment above stays
+historical; this addendum supersedes its proposed REPAIR-11 next-task instruction.
+
+### Fixed repair and Review chain
+
+| Slice | Fixed objects | Review disposition | Scope of decision |
+|---|---|---|---|
+| REPAIR-7 | Delivery `ad62481`; later Handoff `37d5488` | Review `6cf9185` was `changes_requested`; REPAIR-8 superseded its F-001/F-002 documentation dispositions | Historical slice only. |
+| REPAIR-8 | Base `e24ea5b91cef735ff7c40ca8407a3e69c6a1deb7`; Delivery `3cdfdee126e8aab6b7930e49460a753abc69dad0`; Handoff/tip `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04` | Review `2585efd69009cd7620c6b020e67df90c7d49b0f1` `approved` | Documentation slice only. |
+| REPAIR-9 | Delivery `d2bf6a8621c0c89c077e181e3e7bec9ac7cf098f`; Handoff/tip `eeb095ea94cdf0d477bcb09ab7c761883b06f833` | Review `85f8c59d0a012c1edc4e466187b5b42515297d74` `changes_requested` | Full packaging findings remain open; later repair slices do not constitute full approval. |
+| REPAIR-10 | Base `eeb095ea94cdf0d477bcb09ab7c761883b06f833`; Delivery `be5200efe91a365356e5baac93ea6a71f5fa1520`; Handoff/tip `d7edea5f00507a8d9601e6a95294695353cbf7f6` | Review `ddc21a2f3cf5521675e95d6e2a8f8f50b1c065fb` `approved` | `tests/packaging` path independence only. |
+| REPAIR-11 | Base `188d72a9d144b8cab16f77757abc46318ac8e5e6`; Delivery `962239521afbfec72025ab01941f89e08116ffc4`; Handoff/tip `941dbc89e139a2e24e6b1d17c900e363995decfc` | Review `4f2f8a07e5b8119834cdc4cfd0fd0aa5c62ac4cc` `changes_requested` | Historical Review remains unchanged; evidence findings were followed up by REPAIR-12. |
+| REPAIR-12 | Base `962239521afbfec72025ab01941f89e08116ffc4`; Delivery `a2f6695bb289518db656f4d266910dccaa171207`; Handoff/tip `8738c41d7215920935e6fa067d3740e69280cdc6` | Review `a6564862649b00fd91fa4e4ea8a2f64205eb71b7` `approved` | Evidence correction slice only; this is not the final full-scope T3.2.1 Review. |
+
+The REPAIR-12 report is in Reviewer branch `agent/deepseek/T3.2.1-review-a2f6695`,
+path `verification/T3.2.1/repair-12/review-a2f6695.md`. Its approval does not
+change any historical Review decision or authorize a product merge.
+
+### O-12-2 disposition — legacy REPAIR-11 Handoff
+
+O-12-2 identifies an obsolete, incorrect Sandbox executable hash claim in
+`doc/handoffs/T3.2.1-REPAIR-11-9622395.md:31` at the preserved legacy ref
+`agent/antigravity/T3.2.1-repair-11` / commit
+`941dbc89e139a2e24e6b1d17c900e363995decfc`. The Handoff is historical and stays
+read-only; this closeout does not rewrite it. Its claim is superseded by the
+correct SHA-256 `4b6f4734415c2add670c2889b22ea107e28345ca24f4a1c86840d866b775e3e6`
+recorded at `verification/T3.2.1/repair-11/build-evidence-binding.log:76` in
+REPAIR-12 Delivery `a2f6695`, cross-checked against the REPAIR-9 manifest and
+Sandbox run log.
+
+**Integration disposition:** do not merge the legacy REPAIR-11 branch or import
+its Handoff into the Codex candidate or `master`. The old Handoff is absent from
+both current trees. If a later approved integration requires carrying that
+historical document, first add a separately reviewed Codex supersession note or
+corrected copy that points readers to the REPAIR-12 evidence; do not present the
+old value as authoritative. The current `master` search also finds the search
+needle in two REPAIR-12 Task verification instructions; these are test
+instructions, not hash claims. The fixed REPAIR-12 Delivery tree and isolated
+Codex candidate have no matching occurrences.
+
+O-12-1 is also recorded for traceability: the REPAIR-12 Handoff cites the
+corrected evidence as line 75, while the SHA statement is actually at line 76.
+This closeout uses line 76 and preserves the reviewed Handoff unchanged.
+
+### Current Gate disposition (carried forward without validity judgment)
+
+| Item | Current status |
+|---|---|
+| AC3 interactive main workflow | `NOT_RUN` — release blocker; do not mark `PASS`. |
+| AC5 | `NOT_RUN` |
+| AC6 / AC7 | `PARTIAL / NOT_RUN` |
+| AC8 / AC9 | `NOT_RUN` |
+| R-014–R-016 | `OPEN` |
+
+No validity judgment or new acceptance testing was performed for these items
+in this checkpoint. The full Release Gate therefore remains open and not release
+ready. No REPAIR-7/9/10/11/12 branch is merged; no merge is permitted until the
+full Gate is closed and a final independent full-scope Review is approved.
+
+### Closeout verification references
+
+`release-gate-closeout-verification.log` records fixed-ref checks for the
+candidate, current master source checkpoint, REPAIR-12 Delivery, and preserved
+legacy branch. The cumulative whitespace check for `c2fcb1c..188d72a` exits 0;
+the exact review/owner objects and path-only search outcomes are recorded
+there. The current Codex candidate remains isolated at
+`188d72a9d144b8cab16f77757abc46318ac8e5e6`; it has not been merged into `master`.

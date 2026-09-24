@@ -31,3 +31,51 @@ df14a64d8e566e05c89b96e4272d48dc033726b2
 exit_code=0
 
 overall_exit=0
+
+--- 2026-09-24 Codex closeout checkpoint after REPAIR-12 Review ---
+Local time: 2026-09-24 19:46:34 +08:00
+Host OS: Windows 11 Pro 25H2, NT 10.0.26200.9457
+PowerShell: 7.6.6
+Git: git version 2.52.0.windows.1
+Master source checkpoint: 35e55f1b9f10afdf7e5479428f189cffa0222caa
+Isolated candidate: 188d72a9d144b8cab16f77757abc46318ac8e5e6
+REPAIR-12 Delivery: a2f6695bb289518db656f4d266910dccaa171207
+REPAIR-12 Handoff/tip: 8738c41d7215920935e6fa067d3740e69280cdc6
+Independent Review: a6564862649b00fd91fa4e4ea8a2f64205eb71b7 (approved, slice only)
+
+COMMAND: git diff --check c2fcb1ce575099f6e74f69c711f423040a545951 188d72a9d144b8cab16f77757abc46318ac8e5e6
+(no output)
+exit_code=0
+
+COMMAND: git diff --check c2fcb1ce575099f6e74f69c711f423040a545951 35e55f1b9f10afdf7e5479428f189cffa0222caa
+(no output)
+exit_code=0
+
+COMMAND: git diff --exit-code c2fcb1ce575099f6e74f69c711f423040a545951 35e55f1b9f10afdf7e5479428f189cffa0222caa -- src packaging tests requirements.txt requirements-dev.txt
+(no output)
+exit_code=0
+
+COMMAND (PowerShell): $needle = '4f940' + 'bbd'; git grep -n -i $needle <fixed-ref>
+The expression supplies the forbidden-value search needle without copying that
+contiguous text into this tracked log. Matching line contents are not copied;
+fixed paths/line numbers and exit codes below preserve the check result.
+
+Ref 188d72a9d144b8cab16f77757abc46318ac8e5e6: no matches; empty output; exit_code=1.
+Ref a2f6695bb289518db656f4d266910dccaa171207: no matches; empty output; exit_code=1.
+Ref 8738c41d7215920935e6fa067d3740e69280cdc6: no matches; empty output; exit_code=1.
+Ref 941dbc89e139a2e24e6b1d17c900e363995decfc: 2 matches; exit_code=0.
+  doc/handoffs/T3.2.1-REPAIR-11-9622395.md:31 (O-12-2 location)
+  verification/T3.2.1/repair-11/build-evidence-binding.log:76
+Ref master at 35e55f1b9f10afdf7e5479428f189cffa0222caa: 2 matches; exit_code=0.
+  doc/tasks/T3.2.1-REPAIR-12.md:34 and :81 (verification command text only; not a SHA claim).
+
+COMMAND: git ls-tree <ref> -- doc/handoffs/T3.2.1-REPAIR-11-9622395.md
+Ref 941dbc89e139a2e24e6b1d17c900e363995decfc: entry present (blob 7463960837a7b8bfd10fa062e96581472af55cd7).
+Ref 188d72a9d144b8cab16f77757abc46318ac8e5e6: no entry.
+Ref master at 35e55f1b9f10afdf7e5479428f189cffa0222caa: no entry.
+
+O-12-2 disposition: retain the historical REPAIR-11 branch/Handoff unchanged and
+exclude them from the Codex candidate and master. The corrected authoritative
+SHA is bound at REPAIR-12 Delivery a2f6695, build-evidence-binding.log:76, with
+the original REPAIR-9 manifest/Sandbox records cited in the Handoff. No product
+branch was merged. These checks do not judge AC3/AC5/AC6/AC7/AC8/AC9 or R-014–R-016.
