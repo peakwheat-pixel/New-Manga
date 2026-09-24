@@ -237,7 +237,7 @@ O-12-1 is also recorded for traceability: the REPAIR-12 Handoff cites the
 corrected evidence as line 75, while the SHA statement is actually at line 76.
 This closeout uses line 76 and preserves the reviewed Handoff unchanged.
 
-### Current Gate disposition (carried forward without validity judgment)
+### Gate disposition at the 2026-09-24 checkpoint (carried forward without validity judgment)
 
 | Item | Current status |
 |---|---|
@@ -248,9 +248,9 @@ This closeout uses line 76 and preserves the reviewed Handoff unchanged.
 | R-014–R-016 | `OPEN` |
 
 No validity judgment or new acceptance testing was performed for these items
-in this checkpoint. The full Release Gate therefore remains open and not release
-ready. No REPAIR-7/9/10/11/12 branch is merged; no merge is permitted until the
-full Gate is closed and a final independent full-scope Review is approved.
+in that checkpoint. The full Release Gate remained open and not release ready.
+No REPAIR-7/9/10/11/12 branch is merged; no merge is permitted until the full
+Gate is closed and a final independent full-scope Review is approved.
 
 ### Closeout verification references
 
@@ -260,3 +260,34 @@ legacy branch. The cumulative whitespace check for `c2fcb1c..188d72a` exits 0;
 the exact review/owner objects and path-only search outcomes are recorded
 there. The current Codex candidate remains isolated at
 `188d72a9d144b8cab16f77757abc46318ac8e5e6`; it has not been merged into `master`.
+
+## Manual AC3 attempt — 2026-09-25 (supersedes the carried-forward NOT_RUN status)
+
+The user manually tested fixed Build 3 in a fresh Windows Sandbox. The executable
+SHA-256 was `95f9ba68086087c9999804fd0cd2bd4e5f772de350c74a22f2eaf3e329772c10`;
+the GUI launched with no arguments and process exit code 0. The run did not
+complete AC3: the image-import path was blocked by the QML error
+`BookshelfView.qml:23: TypeError: Cannot read property 'currentChapterId' of
+undefined` (31 occurrences in raw stderr). The source points the parent
+`BookshelfView` at `detailArea.chapters`, although `chapters` is an internal ID
+of `BookDetailPanel` and is not exposed across that component boundary. The
+captured Workbench consequently has no pages.
+
+The user also observed that button text and backgrounds are difficult to
+distinguish. This is recorded as a visual finding; no contrast ratio was
+measured. The Reader screenshot explicitly says no chapter is selected and its
+Export control is disabled by `enabled: active`. Thus the click produced no
+export action under the captured state, but the export dialog/output behavior
+was not validly exercised and is not classified as an export implementation
+failure.
+
+The fixed build/source binding, six original screenshots with SHA-256 values,
+process record and raw stderr are recorded in
+[`manual-observations.md`](ac3-interactive-20260925/manual-observations.md).
+The active status changes from `AC3=NOT_RUN` to **`AC3=BLOCKED`**: a real
+interactive attempt has begun but cannot proceed until a separately authorized
+QML repair is implemented, independently reviewed and retested in a fixed
+package. AC3 remains a release blocker; it is not `PASS`. AC5 remains
+`NOT_RUN`; AC6/AC7 remain `PARTIAL / NOT_RUN`; AC8/AC9 remain `NOT_RUN`; and
+R-014–R-016 remain `OPEN`. Do not merge a related branch before the full Gate
+and final independent Review close.

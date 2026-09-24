@@ -1,0 +1,9 @@
+UTC=2026-09-24T16:28:01.3585973Z
+USER=WDAGUtilityAccount
+OS=Windows 10 Enterprise
+OS_BUILD=26100
+PATH=C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Users\WDAGUtilityAccount\AppData\Local\Microsoft\WindowsApps;
+EXE_SHA256=95f9ba68086087c9999804fd0cd2bd4e5f772de350c74a22f2eaf3e329772c10
+WHERE_PYTHON=信息: 用提供的模式无法找到文件。
+WHERE_PY=信息: 用提供的模式无法找到文件。
+WHERE_GIT=信息: 用提供的模式无法找到文件。

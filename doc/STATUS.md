@@ -2,7 +2,7 @@
 
 Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
-Execution checkpoint: 2026-09-24 (Asia/Shanghai)
+Execution checkpoint: 2026-09-25 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
@@ -12,17 +12,17 @@ Execution checkpoint: 2026-09-24 (Asia/Shanghai)
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | **M1 — Alpha Core Loop Closure** |
 | Stage | **Stage B — Controlled Execution** |
-| Current product checkpoint | T1.1.1, T1.1.2, T1.2.1, T2.1.1, T2.2.1, and T3.1.1 are VERIFIED_COMPLETE. T3.2.1 remains unintegrated and not release-ready; REPAIR-8/10/12 slice reviews are approved (scope-limited), REPAIR-9 remains `changes_requested`, and the historical REPAIR-11 `changes_requested` review has a separately approved evidence-only follow-up. Full Gate closure remains Codex-owned. |
+| Current product checkpoint | T1.1.1, T1.1.2, T1.2.1, T2.1.1, T2.2.1, and T3.1.1 are VERIFIED_COMPLETE. T3.2.1 remains unintegrated and not release-ready; REPAIR-8/10/12 slice reviews are approved (scope-limited), REPAIR-9 remains `changes_requested`, and the historical REPAIR-11 `changes_requested` review has a separately approved evidence-only follow-up. A fresh manual Sandbox AC3 attempt is blocked at image import; full Gate closure remains Codex-owned. |
 | Current Active Task | [T3.2.1](tasks/T3.2.1.md) full Release Gate closeout (Codex; no new implementation Task). [REPAIR-12](tasks/T3.2.1-REPAIR-12.md) received slice Review `approved`; its delivery remains unmerged and does not close the parent Gate. |
 | Current owner/reviewer | Full Gate Owner=Codex; final full-scope Reviewer=DeepSeek Harness (independent non-author). Codex retains evidence closeout and integration responsibility. |
-| Current branch/worktree | Main: `G:/CODEX/New Manga`, `master` at closeout source checkpoint `35e55f1` (unrelated dirty files preserved). Isolated product candidate remains `codex/T3.2.1-release-gate-closeout` at `188d72a9d144b8cab16f77757abc46318ac8e5e6`, not merged. REPAIR-12 branch tip=`8738c41d7215920935e6fa067d3740e69280cdc6`; independent Reviewer commit=`a6564862649b00fd91fa4e4ea8a2f64205eb71b7`. The legacy REPAIR-11 branch stays preserved at `941dbc89e139a2e24e6b1d17c900e363995decfc` and is excluded from the candidate. |
+| Current branch/worktree | Main: `G:/CODEX/New Manga`, `master`; this evidence update started at HEAD `5f6cfc945dc96f2dc621013d43d695d431e9789a` (unrelated dirty files preserved). Isolated product candidate remains `codex/T3.2.1-release-gate-closeout` at `188d72a9d144b8cab16f77757abc46318ac8e5e6`, not merged. REPAIR-12 branch tip=`8738c41d7215920935e6fa067d3740e69280cdc6`; independent Reviewer commit=`a6564862649b00fd91fa4e4ea8a2f64205eb71b7`. The tested package was built from the REPAIR-12 product tree. The legacy REPAIR-11 branch stays preserved at `941dbc89e139a2e24e6b1d17c900e363995decfc` and is excluded from the candidate. |
 | Latest reviewed base/head | REPAIR-8 Review `2585efd69009cd7620c6b020e67df90c7d49b0f1` approved delivery `3cdfdee126e8aab6b7930e49460a753abc69dad0` / tip `37d5488ebf8e33f897e802b4147cbd5fb1ad8e04` for documentation only. REPAIR-9 Review `85f8c59d0a012c1edc4e466187b5b42515297d74` returned `changes_requested` for `d2bf6a8` / `eeb095e`. REPAIR-10 Review `ddc21a2f3cf5521675e95d6e2a8f8f50b1c065fb` approved `be5200e` / `d7edea5` for packaging-test path independence only. REPAIR-11 Review `4f2f8a07e5b8119834cdc4cfd0fd0aa5c62ac4cc` returned `changes_requested`; REPAIR-12 base `962239521afbfec72025ab01941f89e08116ffc4`, Delivery `a2f6695bb289518db656f4d266910dccaa171207`, Handoff `8738c41d7215920935e6fa067d3740e69280cdc6`, Review `a6564862649b00fd91fa4e4ea8a2f64205eb71b7` `approved` for its evidence slice only. No full T3.2.1 Review is approved. |
 | Latest integrated product test status | No T3.2.1 product is integrated. DSH independently ran REPAIR-10 `pytest tests/packaging -v`: 12 passed, 0 skipped, exit 0 with `PYTHONPATH` unset; this does not satisfy the full Gate. T3.1.1 focused/core results remain historical integration evidence. |
-| Smoke status | The original clean Sandbox package failed QtCore import. REPAIR-9's unmodified package `--smoke-test` passed after its ICU packaging repair, but the real GUI workflow remains unrun. |
+| Smoke status | The original clean Sandbox package failed QtCore import. REPAIR-9's unmodified package `--smoke-test` passed after its ICU packaging repair. A later real GUI attempt launched fixed Build 3 and exited 0, but image import raised a QML `TypeError` and blocked the workflow; see [manual AC3 observations](../verification/T3.2.1/ac3-interactive-20260925/manual-observations.md). |
 | Compile status | No fresh T3.2.1 final-head compile/build is claimed by this closeout. |
-| Current blockers | AC3 full interactive workflow=`NOT_RUN` and release-blocking; AC5=`NOT_RUN`; AC6/AC7=`PARTIAL / NOT_RUN`; AC8/AC9=`NOT_RUN`; R-014–R-016=`OPEN`. These values are carried forward as directed; no validity judgment was made this round. Final full-scope Review and Codex integration evidence are absent. |
-| Full Gate closure audit | [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md) and [verification log](../verification/T3.2.1/release-gate-closeout-verification.log) record source checkpoint `35e55f1`, isolated candidate `188d72a`, REPAIR-12 Review, and O-12-2 disposition. Earlier [closure assessment](../verification/T3.2.1/closure-assessment-253af07.md) and [Sandbox attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md) remain source evidence for previously observed gaps. |
-| Clean Windows environment route | Windows Sandbox is now available (`C:\Windows\System32\WindowsSandbox.exe`); the recorded guest is Windows 11 Enterprise x64 build 26100, with no `python`, `py` or `git` commands. Use a fresh Sandbox session and an exact final package hash for interactive acceptance. Sandbox smoke evidence is not the full AC3 workflow. |
+| Current blockers | AC3 full interactive workflow=`BLOCKED` after an actual GUI attempt failed to open the image-import flow; this is a release blocker and is not `PASS`. AC5=`NOT_RUN`; AC6/AC7=`PARTIAL / NOT_RUN`; AC8/AC9=`NOT_RUN`; R-014–R-016=`OPEN`. Final full-scope Review and Codex integration evidence are absent. |
+| Full Gate closure audit | [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md) and [verification log](../verification/T3.2.1/release-gate-closeout-verification.log) record source checkpoint `35e55f1`, isolated candidate `188d72a`, REPAIR-12 Review, and O-12-2 disposition. Earlier [closure assessment](../verification/T3.2.1/closure-assessment-253af07.md), [Sandbox attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md), and the new [manual AC3 observation](../verification/T3.2.1/ac3-interactive-20260925/manual-observations.md) are evidence. |
+| Clean Windows environment route | Windows Sandbox is available (`C:\Windows\System32\WindowsSandbox.exe`). Prior status records Windows 11 Enterprise x64 build 26100; the latest manual baseline raw log reports `OS=Windows 10 Enterprise`, `OS_BUILD=26100`. Reconcile this label discrepancy before claiming edition-specific coverage. Build 3's exact hash and real-GUI attempt are recorded in [manual AC3 observations](../verification/T3.2.1/ac3-interactive-20260925/manual-observations.md); smoke evidence is not the full AC3 workflow. |
 | F-003 disposition | REPAIR-11 Delivery `9622395` corrected the four wording instances; Review `4f2f8a0` independently marked R11-AC4 PASS. The REPAIR-11 slice overall remains `changes_requested` for F-11-1/F-11-2; no historical Review/log is to be rewritten. |
 | G7-002 source ruling | Codex fixed the REPAIR-7 count source to `verification/T3.2.1/repair-5/reference-check.log` blob `fdddfc19225c66ca32a85a3ebe5b5e1cc3fe1dfe` at revision `297c3dd7d0c977eb22eedefd0ba1ae03d29b64cd` (identical at REPAIR-7 base `14f587c`). The `e54a7b6` blob `09b5f2d20a592694031ff40e3c02d7dc8e48d6aa` is historical 40/39 evidence, not the 41/40/27/19 derivation source. Both stay read-only. |
 | REPAIR-8 allowed paths | Antigravity may change only `doc/tasks/T3.2.1-REPAIR-5.md`, `doc/tasks/T3.2.1-REPAIR-6.md`, `doc/handoffs/T3.2.1-REPAIR-6-f6dc383.md`, its new REPAIR-8 Handoff, and `verification/T3.2.1/repair-8/**`. Codex alone maintains this STATUS and the REPAIR-8 Task. Product code, tests, dependencies, Schema, original reference log, REPAIR-7 Handoffs and Reviewer reports are excluded. |
@@ -32,7 +32,7 @@ Execution checkpoint: 2026-09-24 (Asia/Shanghai)
 | REPAIR-12 outcome | Base=`962239521afbfec72025ab01941f89e08116ffc4`; Delivery=`a2f6695bb289518db656f4d266910dccaa171207`; Handoff/tip=`8738c41d7215920935e6fa067d3740e69280cdc6`; independent Review=`a6564862649b00fd91fa4e4ea8a2f64205eb71b7` `approved` for the evidence slice only. O-12-2 is handled in the Codex closeout record; no Owner branch is merged. |
 | Pre-reconciliation dirty main-worktree files | Preserve `experiments/TASK-017/README.md`, the uncommitted `.codewiki/`, `.codex/`, `.dsh/`, `.gemini/`, `.qoder-credits/`, `.qoder/`, `.tmp.driveupload/`, `.workbuddy/`, `.zcode/`, `docs/superpowers/plans/`, `material/`, `wiki/codewiki/temp/`, and all other pre-existing dirty paths. No cleanup or overwrite was performed. |
 | Worktrees | REPAIR-7/8, REPAIR-9/10, legacy REPAIR-11 and Reviewer worktrees remain preserved. REPAIR-12 Owner tip `8738c41` and independent Review `a656486` remain on their own branches. The old REPAIR-11 Handoff is excluded from master and the Codex candidate; no product or repair branch was merged or deleted. |
-| Evidence | [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md); [closeout verification log](../verification/T3.2.1/release-gate-closeout-verification.log); REPAIR-8 Review `2585efd`; REPAIR-9 Review `85f8c59`; REPAIR-10 Review `ddc21a2`; REPAIR-11 Review `4f2f8a0`; REPAIR-12 Delivery/Handoff/Review `a2f6695`/`8738c41`/`a656486`; [Sandbox AC3 attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md); [T3.2.1 Task](tasks/T3.2.1.md); [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) |
+| Evidence | [Codex closeout](../verification/T3.2.1/release-gate-closeout-b800d11.md); [closeout verification log](../verification/T3.2.1/release-gate-closeout-verification.log); REPAIR-8 Review `2585efd`; REPAIR-9 Review `85f8c59`; REPAIR-10 Review `ddc21a2`; REPAIR-11 Review `4f2f8a0`; REPAIR-12 Delivery/Handoff/Review `a2f6695`/`8738c41`/`a656486`; [Sandbox AC3 attempt](../verification/T3.2.1/clean-sandbox-ac3-20260924.md); [manual AC3 observations](../verification/T3.2.1/ac3-interactive-20260925/manual-observations.md); [T3.2.1 Task](tasks/T3.2.1.md); [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) |
 
 ## Verified completed capability
 
@@ -50,7 +50,7 @@ verification are now complete.
 
 ## Open gaps
 
-1. T3.2.1: full Release Gate remains open. The `c2fcb1c` decision was PASS TO START; AC3 interactive Windows workflow is `NOT_RUN` and blocks release.
+1. T3.2.1: full Release Gate remains open. The `c2fcb1c` decision was PASS TO START; AC3 interactive Windows workflow is `BLOCKED` after the fixed-package import failure and blocks release.
 
 ## Stage B execution gate
 
@@ -406,14 +406,14 @@ Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PRO
 | Field | Current value |
 |---|---|
 | `TaskStatus` | T1.2.1, T2.1.1, T2.2.1 and T3.1.1 `VERIFIED_COMPLETE`; T3.2.1 `in_progress / release_gate_open`; REPAIR-8 approved (docs only); REPAIR-9 `changes_requested`; REPAIR-10 approved (tests only) |
-| `ExecutionState` | `ACTIVE`; Codex is completing T3.2.1 full Release Gate disposition; AC3 interactive acceptance remains `NOT_RUN` |
+| `ExecutionState` | `ACTIVE`; Codex is completing T3.2.1 full Release Gate disposition; AC3 interactive acceptance is `BLOCKED` by the fixed-package image-import failure |
 | `Current Executor` | Codex owns the closeout and integration decision; Antigravity is the repair author; DeepSeek Harness is the independent final Reviewer |
-| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 isolated repair chain → full Gate open (AC3 NOT_RUN) → final independent Review → Codex integration evidence |
+| `YOU ARE HERE` | T1.1.1 + T1.1.2 + T1.2.1 → T2.1.1 → T2.2.1 → T3.1.1 verified → T3.2.1 isolated repair chain → full Gate open (AC3 BLOCKED at image import) → scoped repair/retest → final independent Review → Codex integration evidence |
 | `Dependency Blocking Chain` | T3.1.1 `VERIFIED_COMPLETE` → close remaining REPAIR-9 findings and R-014–R-016 → final Windows Sandbox AC3/AC5/AC6–AC9 evidence → full independent Review → Codex integration verification |
 | `Safe Parallel` | RepoWiki/derived knowledge refresh; isolated research-only work |
-| `Conditional` | Codex may continue the documented closeout. Any new implementation repair requires a separately frozen Task/base/scope and an independent Reviewer. |
+| `Conditional` | Codex may continue the documented closeout. The image-import QML scope error and low-contrast controls require a separately frozen implementation Task/base/scope and an independent Reviewer before code changes. Retest export only after a chapter with imported pages can be selected. |
 | `Do Not Start Yet` | Merge any T3.2.1 delivery branch into `master`, claim release readiness, or publish a release before all Gate criteria and final Review are complete. |
-| `Safe To Resume` | Codex may continue Gate closure from candidate `188d72a`; Antigravity may start only a separately released repair Task. |
+| `Safe To Resume` | Codex may continue Gate disposition from the current master checkpoint; the release candidate remains isolated at `188d72a`. No implementation Owner may start until Codex separately registers and releases the import/contrast repair scope. |
 | `Latest audit checkpoint` | `verification/T3.2.1/release-gate-closeout-b800d11.md`; closeout start `master`=`b800d11`; product Gate baseline `c2fcb1c` |
 
 ### Current position map
@@ -433,7 +433,7 @@ T3.1.1 VERIFIED_COMPLETE @ 0c70e44
         ↓
 T3.2.1 implementation authorization (PASS TO START) @ c2fcb1c
         ↓
-T3.2.1 isolated repairs; full Release Gate OPEN (AC3 interactive NOT_RUN)
+T3.2.1 isolated repairs; full Release Gate OPEN (AC3 interactive BLOCKED at image import)
         ↓
 final independent Review → Codex integration evidence
 ```
@@ -448,7 +448,7 @@ final independent Review → Codex integration evidence
 | T3.2.1-REPAIR-8 | approved | documentation slice only | DSH report `2585efd`; no product/Gate approval |
 | T3.2.1-REPAIR-9 | changes_requested | review findings open | DSH report `85f8c59`; Codex O-1 whitespace correction is isolated at `188d72a`; F-2/F-4/O-3 remain |
 | T3.2.1-REPAIR-10 | approved | packaging tests only | DSH report `ddc21a2`; 12 passed without external `PYTHONPATH`; full Gate remains open |
-| T3.2.1 full Release Gate | in_progress | Codex closeout | AC3 interactive workflow `NOT_RUN`; no merge until every criterion and final Review close |
+| T3.2.1 full Release Gate | in_progress | Codex closeout | AC3 interactive workflow `BLOCKED` at image import; no merge until repair, all criteria and final Review close |
 | RepoWiki | ready | safe parallel derived write | `wiki/repowiki/**` only |
 | CodeWiki | conditional | derived write, freshness caveat | `wiki/codewiki/**`; not Task truth |
 

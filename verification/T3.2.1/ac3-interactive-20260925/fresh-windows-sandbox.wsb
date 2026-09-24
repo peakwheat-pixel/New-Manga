@@ -1,0 +1,12 @@
+<Configuration>
+  <Networking>Disable</Networking>
+  <ClipboardRedirection>Disable</ClipboardRedirection>
+  <MappedFolders>
+    <MappedFolder><HostFolder>C:\Users\49745\AppData\Local\Temp\codex-t321-ac3-20260925-build3\NewManga</HostFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>C:\Users\49745\AppData\Local\Temp\codex-t321-ac3-fixture-20260925</HostFolder><ReadOnly>true</ReadOnly></MappedFolder>
+    <MappedFolder><HostFolder>G:\CODEX\New Manga\verification\T3.2.1\ac3-interactive-20260925</HostFolder><ReadOnly>false</ReadOnly></MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>powershell.exe -NoLogo -NoProfile -WindowStyle Hidden -ExecutionPolicy Bypass -File "C:\Users\WDAGUtilityAccount\Desktop\ac3-interactive-20260925\launch-app-01.ps1"</Command>
+  </LogonCommand>
+</Configuration>
