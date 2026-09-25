@@ -1,0 +1,10 @@
+=== REVIEWER independent packaging contract test rerun ===
+date_utc=2026-09-25T17:49:04Z
+shell=bash(git) host=MINGW64_NT-10.0-26200 HOME-MY x86_64 Msys
+venv_python=G:/CODEX/New Manga.task-envs/T3.2.1-clean-gate-py312-20260926/Scripts/python.exe (Python 3.12.3)
+worktree=/g/CODEX/New Manga.worktrees/T3.2.1-qoder-review-78aba7c head=78aba7c5781b0bf12aa6a6696371483c22d182f0
+cmd=python -m pytest tests/packaging -q
+(rerun of the same command recorded in ../setup/packaging-tests-determinism.raw.log)
+............                                                             [100%]
+12 passed in 6.75s
+EXIT=0

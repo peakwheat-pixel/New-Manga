@@ -1,0 +1,5 @@
+runs: [1.158, 1.102, 1.09, 1.078, 1.146]
+P50 (median): 1.102
+P95 (linear interpolation): 1.156
+data-root contents: ['library.db', 'managed']
+library.db exists: True size: 303104

@@ -1,0 +1,12 @@
+﻿{
+    "exited":  true,
+    "newmanga_residue_processes":  [
+
+                                   ],
+    "sqlite_lock_probe":  "EXCLUSIVE_OPEN_OK (no SQLite file lock held after exit)",
+    "library_db_sidecar_files":  [
+
+                                 ],
+    "library_db_sha256_after":  "a06b274acfecbf5a1d3b4e797186ef2f3f46779e3390297fddcde0aae683ff82",
+    "captured_at_utc":  "2026-09-25T17:17:56.2521575+00:00"
+}

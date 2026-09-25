@@ -82,7 +82,8 @@ Fixed input unchanged: source HEAD `08f9bd85137965df922db524bc92917af513bd24`, B
 
 ## AC1 build-input completion
 
-- Application version: the product defines no application/version field (no `applicationVersion` in `src/bootstrap/app.py`, none in `packaging/new_manga.spec`); the deliverable is identified by source HEAD + artifact manifest, recorded as such rather than invented.
+- Application version: **`0.1.0`**, defined as `_APP_VERSION = "0.1.0"` at `src/bootstrap/core_assembly.py:90`; it flows into the diagnostics report (`src/application/maintenance/diagnostics.py:105/175/262`) and `backup_records.app_version` (`src/infrastructure/sqlite/schema.py:124`). The earlier checkpoint text claiming "no application/version field" was wrong (it had only inspected `app.py` and `new_manga.spec`) and is superseded by this record (R-002). The deliverable identity is additionally bound to source HEAD + artifact manifest.
+- Build host tooling declaration (R-013): `packaging/build.ps1` calls the host `git` (PATH) to capture HEAD / dirty-tree state / commit time *before* its internal PATH sanitisation, and `git` is not listed in `setup/build-requirements.txt`. This is a declared host dependency: the build host requires git (fail-closed if absent). No build read any undeclared file outside the workspace.
 - Schema/migration version: code `src/infrastructure/sqlite/schema.py` defines `SCHEMA_VERSION_V1..V4` with four migrations; the isolated runtime DB reports `application_metadata.schema_version = '4'` and all four `schema_migrations` rows (`v1__storage_base`, `v2__library_region_persistence`, `v3__production_pipeline_persistence`, `v4__reading_export_storage`), consistent with code.
 - Build inputs: `setup/runtime-versions.txt` (Python 3.12.3, Qt/PySide6/Shiboken6 6.11.2, PyInstaller 6.22.3), `setup/pip-freeze-all.txt`, `setup/build-requirements.txt`, `setup/pip-install-report.json`; exact Build 2 command is recorded above in this checkpoint.
 
@@ -94,29 +95,31 @@ Interactive flow (screenshots `14`–`23`, same folder):
 
 1. `14-recovery-bookshelf-restored.png` — cold start against the reused data root shows Book `本机回归漫画-20260926` and Chapter `本机验收章节` restored. This is the restart-recovery evidence for the earlier interactive session.
 2. `15-workbench-entered.png` — Workbench restores the page list (`1 漫画页-测试.png ○ 等待`).
-3. `16-pipeline-trigger-no-provider.png` / `17-pipeline-failure-diagnostic.png` — `全部翻译` (translate-all) was triggered with no provider configured. The pipeline run reached `completed_with_failures` (detect step `!`), UI shows `完成 0 失败 1`, and the main program did not crash.
+3. `16-pipeline-trigger-no-provider.png` / `17-pipeline-failure-diagnostic.png` — `全部翻译` (translate-all) was triggered with no provider configured. The pipeline run reached `completed_with_failures` (detect step `!`), UI shows `完成 0 失败 1`, and the main program did not crash. **R-006 标注**：两文件字节完全相同（SHA-256 `c8ca96c27014b28084cac48c2a6776e4822faf16ff46a4a5cef2831cd788e28e`，reviewer 与作者侧分别确认）——`17` 并非独立帧，而是点击「失败 1」后 UI 无变化的同帧；图中已含 `检测 !`、`完成 0 失败 1`、页项「失败 ▶ 运行中」，实质结论不受影响。「触发前」状态无独立图像，如实缺记。
 4. Read-only SQLite diagnostic dump `host-simulation/pipeline-diagnostic-dump.json` (dump script `dump-pipeline-diagnostic.py`): run `run-7b54ae37c70e4bcdbb880c1a9e6c306e`, `error_code=PROVIDER_NOT_CONFIGURED`, `error_detail` names the missing docTR weight file, its official fetch URL and expected SHA-256 (`stage=detection`), `provider_binding_snapshot={}`, per-step `lock_snapshot` all false. This is the AC5 missing-dependency diagnostic evidence and the AC6 pipeline step executed fail-closed. The product contains no mock provider by design (`src/infrastructure/providers/runtime.py`: unconfigured providers are `not_configured`, never silently mocked), so the honest diagnostic — not a fabricated success — is the expected release behavior.
 5. `18-reader-recovered.png` → `20-reader-page-restored.png` — Reader restores `1 / 1 页 · 100%`, original image renders, reading progress (`最后阅读 … · 累计 295 秒`) survived the restart.
 6. `21-export-window.png` → `22-export-executed.png` — Export window: content switched to `Original（原图）` via the combo box, format ZIP, output path typed into the isolated `rerun2\exports` directory. Result: `导出完成：…\rerun2\exports\recovery-chapter-1-original.zip`.
 7. Export artifact verification: ZIP SHA-256 `94a1166fb277207627dbf19f59880595f096227597227ba30e99c65bd8ce08ee`, contains `0001_漫画页-测试.png` whose SHA-256 equals the original fixture hash `05026a05…6430` (byte-identical managed-copy round trip). The export-history row was later re-read from the DB with matching `file_hash` (see AC7 dump).
-8. Graceful exit via title-bar close. `logs/process-exit.json` + `logs/post-exit-check.json` (closeout script `closeout-rerun2.ps1`): process exited within the 30 s window (`EXITED=True`), `RESIDUE=0` NewManga processes, SQLite lock probe `EXCLUSIVE_OPEN_OK`, after-hash recorded. Exit code itself was not captured in this run (launcher did not `WaitForExit`); it is captured as `0` in run 3 and all 5 benchmark runs below.
+8. Graceful exit via title-bar close. `logs/process-exit.json` + `logs/post-exit-check.json` (closeout script `closeout-rerun2.ps1`; committed copies under `host-simulation/artifact-run-logs/rerun2/logs/`): process exited within the 30 s window (`EXITED=True`), `RESIDUE=0` NewManga processes, SQLite lock probe `EXCLUSIVE_OPEN_OK`, after-hash recorded. Exit code was not captured in this run (launcher did not `WaitForExit`); graceful exit here rests on process disappearance + zero residue + lock-free probe. Exit code `0` **is** captured by: the rerun1 launcher (`PROCESS_EXIT=0`, earlier session), all 5 cold-start benchmark runs, and the default-data-root probe (see below).
 
 ## Recovery run 3 (`host-simulation-20260926-rerun3`) — final restoration confirmation
 
-Launcher: `run-host-simulation-rerun3.ps1` (backgrounded; waits for exit and records it). PID `26304`, ready in `1.331 s`. Screenshots `24-rerun3-bookshelf-recovered.png` (bookshelf restored again) and `25-rerun3-reader-recovered.png` (Reader `1 / 1 页`, page image and reading progress restored). Graceful close → `logs/process-exit.json`: `RESIDUE=0`, `EXCLUSIVE_OPEN_OK`. PowerShell `Start-Process -PassThru` returned an empty `ExitCode` here despite `WaitForExit` (known behavior when the handle is not pre-cached); the process disappearance, zero residue and lock-free probes stand as the graceful-exit evidence for this run.
+Launcher: `run-host-simulation-rerun3.ps1` (backgrounded; waits for exit and records it; committed copy of its outputs under `host-simulation/artifact-run-logs/rerun3/logs/`). PID `26304`, ready in `1.331 s`. Screenshots `24-rerun3-bookshelf-recovered.png` (bookshelf restored again) and `25-rerun3-reader-recovered.png` (Reader `1 / 1 页`, page image and reading progress restored). Graceful close → `logs/process-exit.json`: `RESIDUE=0`, `EXCLUSIVE_OPEN_OK`. `process-exit.json` records `"exit_code": null` — PowerShell `Start-Process -PassThru` returns an empty `ExitCode` when the process handle was not pre-cached (`$null = $p.Handle`) before `WaitForExit`, which this launcher script omitted. Remediation note (R-005): future launcher runs should add `$null = $p.Handle` right after `Start-Process`; the committed script is deliberately left as-generated to match the evidence it produced. Graceful exit for rerun2/rerun3 rests on process disappearance + zero residue + lock-free probe; exit code `0` is captured by the rerun1 launcher, all 5 benchmark runs and the default-data-root probe.
 
-## AC9 cold-start benchmark + AC8 explicit `--data-root` (one combined run)
+## AC9 repeated-start (warm-cache) benchmark + AC8 explicit `--data-root` (one combined run)
 
-Script `run-cold-start-benchmark.ps1`, results `…\cold-start-benchmark\logs\cold-start-results.json`:
+Script `run-cold-start-benchmark.ps1`, results committed at `host-simulation/artifact-run-logs/cold-start-benchmark/logs/cold-start-results.json` (原仓库外 `…\cold-start-benchmark\logs\` 的原样副本，R-001):
 
-- Attempt 1 (preserved under `cold-start-benchmark\logs-argparse-fail-attempt1\`): passing the path as two tokens failed argparse (`error: unrecognized arguments: Manga.artifacts\…`, exit 2). Preserved as fail-closed evidence of argument validation.
-- Attempt 2 (final): single-token `--data-root="<path>"`, 5 runs, all `READY=True`, graceful `CloseMainWindow` close, `EXIT=0` each: `1.158 / 1.102 / 1.090 / 1.078 / 1.146 s`. P50 (median) = `1.102 s`, P95 (linear interpolation) = `1.156 s` (`cold-start-benchmark\p50-p95-summary.log`).
+- **口径声明（R-008 改述）**：这不是冷启动口径。5 次为同一 `--data-root`、间隔约 4 s 的连续启动（17:21:42/:46/:50/:54/:57），无缓存刷新、无 OS 重启；指标为「MainWindowHandle 就绪」而非首帧绘制。正确读法：**重复启动（暖缓存）P50/P95**。数值本身内部一致并经 reviewer 复算正确。真正冷启动（重启/清缓存后首启）未单独测量，与本轮其他 NOT_RUN 一并挂账。
+- 记录瑕疵：`cold-start-results.json` 的 `args` 字段是重建字符串（`--data-root <path>` 两 token 形式），与实际单 token 传参 `--data-root="<path>"` 不一致；实际传参以脚本源码与本节文字为准。
+- Attempt 1 (preserved under `host-simulation/artifact-run-logs/cold-start-benchmark/logs-argparse-fail-attempt1/`, 原样副本): passing the path as two tokens failed argparse (`error: unrecognized arguments: Manga.artifacts\…`, exit 2). Preserved as fail-closed evidence of argument validation.
+- Attempt 2 (final): single-token `--data-root="<path>"`, 5 runs, all `READY=True`, graceful `CloseMainWindow` close, `EXIT=0` each: `1.158 / 1.102 / 1.090 / 1.078 / 1.146 s`. P50 (median) = `1.102 s`, P95 (linear interpolation) = `1.156 s` (`host-simulation/artifact-run-logs/cold-start-benchmark/p50-p95-summary.log`).
 - Explicit `--data-root` evidence: `…\cold-start-benchmark\data-root\` received `library.db` (303,104 bytes) + `managed\` (AC8).
 - Windows 10 x64: `NOT_RUN` (no Windows 10 machine in this environment; not inferred from anything else).
 
 ## AC8 default data root probe
 
-Script `run-default-data-root-probe.ps1`, record `…\default-data-root-probe\default-data-root-probe.json`: launched with **no** overrides from the same read-only program directory. Real `%LOCALAPPDATA%\New Manga` (`C:\Users\49745\AppData\Local\New Manga`) did not exist before and was created by the app (`root_created_by_probe=true`, `library.db` + `managed\` inside). Window ready `1.138 s`, graceful close `EXIT=0`, `RESIDUE=0`. The created directory is preserved untouched as evidence (not cleaned up).
+Script `run-default-data-root-probe.ps1`, record committed at `host-simulation/artifact-run-logs/default-data-root-probe/default-data-root-probe.json` (原仓库外副本，R-001): launched with **no** overrides from the same read-only program directory. Real `%LOCALAPPDATA%\New Manga` (`C:\Users\49745\AppData\Local\New Manga`) did not exist before and was created by the app (`root_created_by_probe=true`, `library.db` + `managed\` inside). Window ready `1.138 s`, graceful close `EXIT=0`, `RESIDUE=0`. The created directory is preserved untouched as evidence (not cleaned up).
 
 ## AC7 data-safety verification (single read-only pass)
 
@@ -128,23 +131,46 @@ Script `ac7-data-safety-check.py`, output `ac7-data-safety-check.log`:
 - `artifact_revisions=0`, `region_revisions=0` — the fail-closed pipeline created no revisions.
 - `export_history`: exactly one row, `status=completed`, `file_hash` equals the verified ZIP hash; scope snapshot records `mode=original`, the page id and the isolated output path. (Observed, not judged: `book_id`/`chapter_id` columns are empty strings in that row while `scope_snapshot_json.page_ids` is populated — recorded for the Reviewer; not a Gate item and no product change is authorized here.)
 - Secret scan over all rerun/benchmark/probe logs and diagnostics (pattern `api[_-]?key|authorization|bearer\s|password|secret|sk-…`): zero hits, `NO_CREDENTIAL_MATERIAL_IN_LOGS`. No credential was ever configured in these runs (Settings remained at blank defaults, `pipeline_defaults` empty).
+- **Artifact 内容级扫描（R-007 补齐）**：对 `build2/dist/NewManga` 全量 2,475 文件 / 234,071,167 字节做 bytes 级同族正则扫描（脚本 `ac7-artifact-secret-scan.py`，输出 `ac7-artifact-secret-scan.log` 含逐命中 48 字节上下文与判读）。528 个词形命中全部位于运行时/框架字符串表（PySide6 422、OpenSSL/ssl/hashlib 82、Python 运行时 8）与 UI 字段标识符（`SettingsView.qml` 14：`providerApiKeyField`、`echoMode: TextInput.Password` 等）；`sk-` 形态 token **0 命中**；判读 `NO_CREDENTIAL_MATERIAL_IN_ARTIFACT`。「Secret 不进入 artifact、日志或诊断输出」现为日志侧 + 包体内容级双重覆盖。
 
 ## AC status after this continuation (bound to HEAD `08f9bd8`; final judgment belongs to the independent Review)
 
 | AC | Status | Basis |
 |---|---|---|
-| AC1 | PASS | Versions/snapshot/commands above; no app-version field exists in the product (recorded, not invented) |
-| AC2 | PASS | Manifest-identical Build 1/2 (`EXIT_CODE=0`), exclusion scan clean, package closed |
-| AC3 | PASS (local host simulation route, per user direction; not clean-machine coverage) | Full interactive workflow + restart recovery (rerun2/rerun3) on the fixed package; host-sim limitation recorded |
-| AC4 | PASS | Static closure `missing_count=0` + Qt/ICU exit 0 + four pages reached at runtime |
-| AC5 | PASS | `PROVIDER_NOT_CONFIGURED` honest diagnostic; app/UI start unaffected |
-| AC6 | PASS (pipeline step executed fail-closed, recorded) | Full flow incl. export and restart recovery; pipeline honest-failure diagnostic captured |
-| AC7 | PASS | Hash/Lock/Revision/manual-state/secret checks above |
-| AC8 | PASS | Unicode read-only program dir, default root, explicit `--data-root`, zero residue, no SQLite lock |
-| AC9 | PASS (Windows 11 host simulation) / Windows 10 = NOT_RUN | 5 cold starts, P50 `1.102 s`, P95 `1.156 s`, all EXIT=0 |
-| AC10 | IN_PROGRESS (evidence frozen; independent Review requested, awaiting result) | This record + delivery handoff; no integration, push or release |
+| AC1 | PASS（本机模拟路线；非干净机覆盖） | 应用版本 `0.1.0`（`src/bootstrap/core_assembly.py:90`，R-002 修订）；版本/快照/命令见上；构建宿主依赖 git 已声明（R-013） |
+| AC2 | PASS（证据来自固定包与仓库内清单比对；本机模拟路线） | Manifest-identical Build 1/2（`EXIT_CODE=0`）、排除项扫描干净、全包校验器 `verify_artifact.py` `EXIT=0`（reviewer 运行记录已入库，R-009） |
+| AC3 | PASS（**本机模拟路线，per user direction；非干净机覆盖**） | 完整交互工作流 + 重启恢复（rerun2/rerun3）；「完全未装 Python 的干净机」属性未被证明（reviewer 裁定：条件成立） |
+| AC4 | PASS（本机模拟路线） | 静态闭包 `missing_count=0` + Qt/ICU exit 0 + 四页面运行时到达 + reviewer `verify_artifact.py` QML 26/26 哈希一致 |
+| AC5 | PASS（本机模拟路线） | `PROVIDER_NOT_CONFIGURED` 诚实诊断；启动不受影响 |
+| AC6 | **PARTIAL**（本机模拟路线）——11/12 流程步骤 PASS；pipeline 执行步骤 = fail-closed 诊断（该证据同时支撑 AC5 PASS），不是本 AC 字面要求的执行成功 | 全流程含导出与重启恢复均 PASS；产品无 mock provider 且权重下载被排除于 Gate 前置，本 Gate 内不可能取得 pipeline 执行成功证据。**改记 PASS 需用户/Codex 在 Task 内显式裁决（reviewer R-003；不得由作者/Reviewer 推定）** |
+| AC7 | PASS（本机模拟路线） | 哈希/Lock/Revision/人工状态检查 + 日志侧扫描 0 hits + **artifact 内容级扫描 528 词形命中全部为运行时字符串表/UI 字段名，`sk-` token 0 命中，无凭据材料**（R-007） |
+| AC8 | PASS（本机模拟路线） | Unicode 只读程序目录、默认数据根、显式 `--data-root`、零残留、SQLite 无锁 |
+| AC9 | PASS（Windows 11 本机模拟，**重复启动（暖缓存）口径**）；Windows 10 = NOT_RUN | 5 次启动 P50 `1.102 s`、P95 `1.156 s`（数值经 reviewer 复算正确），全部 EXIT=0。非冷启动口径：同一 `--data-root`、间隔约 4 s 的连续启动，无缓存刷新/重启；指标为 MainWindowHandle 就绪（R-008 改述） |
+| AC10 | IN_PROGRESS（78aba7c 收独立 Review `changes_requested`；本轮返修已按 R-001～R-014 落实，等待追加复审） | 见文末返修记录小节 |
 
 Remaining NOT_RUN items (explicit): Windows 10 x64 cold-start matrix; heavy-model (real docTR weights) pipeline success path — out of Gate scope by user direction (no model downloads as a Gate precondition).
 
-Known observations left for the Reviewer (no product change authorized in this Gate): bookshelf chapter row shows `0 页` while the DB and Reader show 1 page (pre-existing, see earlier checkpoint); export-history row leaves `book_id`/`chapter_id` empty while `scope_snapshot_json` is populated; ChapterPicker/style warnings in runtime logs; Qt `qt.qpa.mime: Retrying to obtain clipboard` noise.
+Known observations left for the Reviewer (no product change authorized in this Gate): bookshelf chapter row shows `0 页` while the DB and Reader show 1 page (**R-011**, 已移交子 Task); export-history row leaves `book_id`/`chapter_id` empty while `scope_snapshot_json` is populated (**R-010**, 根因 `src/ui/viewmodels/reader/viewmodel.py:459-461` 不传 book/chapter 上下文，已移交子 Task); ChapterPicker `Keys`/`Accessible`/style warnings and `qt.qpa.mime: Retrying to obtain clipboard` in runtime logs (**R-012①**, 已分诊为已知告警,无 `currentChapterId` TypeError、无 QtCore 缺 DLL); 发布包 `console=True`（`packaging/new_manga.spec:125`，已记 F-011 权衡）与 ICU `icuuc.dll` 解析自宿主 System32（`icu_source_type: windows_system32`）为**发布前待决**项（**R-012②③**，建议进 D08 发布清单，不阻断本 Gate）。
+
+## R-00x 返修记录（2026-09-26 第二轮, changes_requested remediation）
+
+Review 依据：`agent/qoder/T3.2.1-review-78aba7c` @ `4422f79`，报告 `doc/reviews/T3.2.1-78aba7c.md`（reviewer=Qoder，非作者；base `78aba7c`，固定输入 `08f9bd8` 未变，未重新构建，两个固定哈希未动）。本轮返修零产品代码，diff 仍不含 `src/**`、`packaging/**`、`tests/**`、`requirements*.txt`。
+
+| ID | 处理 | 落点 |
+|---|---|---|
+| R-001 (P1) | 15 个仓库外原始运行日志原样入库（copy, 0 字节改写；抽验 sha256 一致） | `host-simulation/artifact-run-logs/{cold-start-benchmark/{logs,logs-argparse-fail-attempt1},default-data-root-probe,rerun1/2/3/logs}/`；checkpoint 引用已改为仓库内路径 |
+| R-009 (P1) | reviewer 自采日志 5 文件从 review 分支原样并入 | `review-78aba7c/`（`review-verify-artifact.log` EXIT=0、`review-staged-dir-vs-manifest.log`、`review-db-probe.log`、`review-packaging-tests.raw.log` 12 passed、`review_db_probe.py`） |
+| R-002 (P2) | 应用版本改记 `0.1.0`（`src/bootstrap/core_assembly.py:90`），删除「产品无版本字段」错误结论 | checkpoint AC1 节、Handoff、Task |
+| R-003 (P2) | AC6 改记 **PARTIAL**（11/12 PASS；pipeline 步骤 = fail-closed 诊断，支撑 AC5 PASS）；未自行推定 PASS，转 PASS 的两条路径（显式裁决 / 另立 mock 子 Task）已注明待用户/Codex 落笔 | checkpoint AC 表、Handoff |
+| R-004 (P2) | AC1/AC2/AC4/AC5/AC6/AC7/AC8 全部加注「本机模拟路线；非干净机覆盖」；**请 Codex 就用户裁决是否延伸到 AC6/AC8 显式表态**（Task:38 现仅点名 AC3） | checkpoint AC 表、Task、STATUS |
+| R-005 (P2) | 退出码口径矛盾已修：exit `0` 由 rerun1、5 次 benchmark、默认数据根探测捕获；rerun2/rerun3 = 进程消失+零残留+无锁，rerun3 `exit_code: null`（raw 已入库佐证）。rerun3 脚本保持生成证据时原貌，修正方法（`Start-Process` 后立即 `$null = $p.Handle`）记录于此，后续运行适用 | checkpoint rerun2/rerun3 节 |
+| R-006 (P2) | 16/17 同帧事实标注（两文件 SHA-256 相同；「触发前」无独立图像如实缺记）；未改名未补拍，避免覆盖/搬动既有证据 | checkpoint rerun2 节 item 3 |
+| R-007 (P2) | artifact 内容级凭据扫描已补（2,475 文件 / 234,071,167 B；528 词形命中全为运行时字符串表/UI 字段名，`sk-` token 0 命中；判读 `NO_CREDENTIAL_MATERIAL_IN_ARTIFACT`） | `host-simulation/ac7-artifact-secret-scan.{py,log}`、checkpoint AC7 节 |
+| R-008 (P2) | AC9 改述为「重复启动（暖缓存）P50/P95」（数值经 reviewer 复算正确，保持不变）；`args` 字段为重建字符串的不一致已如实记录 | checkpoint benchmark 节、AC 表 |
+| R-013 (P3) | 构建宿主依赖 git 已声明（`build.ps1` 于 PATH 净化前调用；`build-requirements.txt` 不含 git；缺席时 fail-closed） | checkpoint AC1 节 |
+| R-014 (P3) | Review 执行方更正：本次全量独立 Review 由 **Qoder** 执行（Codex 指派，非作者）；Handoff/Task/STATUS 同步更正 | Handoff frontmatter/正文、Task、STATUS |
+| R-012 (记录性) | 三项分诊：QML 告警=已知告警非缺陷；`console=True` 与 ICU 宿主 System32 解析=发布前待决（建议进 D08 发布清单） | checkpoint observations 节 |
+| R-010/R-011 (P2 产品缺陷, 移交) | 各另立子 Task 登记为 `proposed / NOT_RELEASED`（Owner 建议 Qoder，非作者 Reviewer；本 Gate 内零产品改动） | `doc/tasks/T3.2.1-REPAIR-15-reader-export-lineage.md`、`doc/tasks/T3.2.1-REPAIR-16-bookshelf-page-count.md`、STATUS |
+
+修订后仍存在的挂账风险（reviewer 要求 STATUS 记录）：干净 Windows（完全未装 Python）启动未证明；Windows 10 x64 全矩阵 NOT_RUN；真实 docTR 权重成功路径 NOT_RUN；发布包 `console=True`；ICU 依赖宿主 System32。
 
