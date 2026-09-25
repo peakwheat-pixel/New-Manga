@@ -12,7 +12,7 @@ graph, acceptance boundaries and historical Task audit live in
 ## Current order
 
 1. **T1.1.2, T1.1.1, T1.2.1, T2.1.1, T2.2.1, T3.1.1**: verified complete; fixed commits and evidence are in the authoritative Plan.
-2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**: current Active product Task; full Gate OPEN and parent AC3 BLOCKED pending the complete fixed-package workflow. ZCode's [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `in_review` at Delivery `aed0094` / Handoff and evidence head `66a13f8`; DeepSeek Harness Review is `APPROVE_WITH_CONDITIONS`, child AC4=PASS, and child local fixed-package AC1–AC5 are accepted. ZCode has one evidence-only F-1/F-3 correction pending before Codex product integration. [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) is proposed for Antigravity to investigate F-13-3 after REPAIR-13 closes; implementation is not released. Parent Gate requirements remain unchanged.
+2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**: current Active product Task; full Gate OPEN and parent AC3 BLOCKED pending the complete fixed-package workflow. Child [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `done` at Codex integration `6fe7455` (delivery `aed0094`, evidence head `13ae23f`, Review conditions satisfied); its two-page child export does not close the parent Gate. [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) remains proposed for Antigravity to investigate F-13-3 and is not released. Parent Gate requirements remain unchanged.
 
 Historical phases and task ledgers remain in place for traceability; they do
 not override the rebaseline.
