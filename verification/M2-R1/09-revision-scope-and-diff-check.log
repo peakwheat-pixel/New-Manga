@@ -1,0 +1,69 @@
+# M2-R1 revision scope check + artifact-count recheck (answers Review P2-001)
+# generated: 2026-09-25 18:47:03 +08:00
+# fixed base          = 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+# owner start HEAD    = 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+# first delivery head = 87afdd2e87c46bc8f19d53e932fb641c2457e45b
+# revision head       = bbc1914b332b15176fd8337340960d753f99cff8
+# worktree=G:/CODEX/New Manga.worktrees/M2-R1-deepseek branch=agent/deepseek/M2-R1-qt-runtime-feasibility
+
+== [A] ancestry ==
+base ancestor of owner-start        : True
+owner-start ancestor of first head  : True
+first head ancestor of revision     : True
+
+== [B] commits owner-start..revision ==
+bbc1914 docs(m2-r1): fix run and artifact counts (Review P2-001)
+1e534c6 docs(m2-r1): record handoff, delivery scope check and head backfill
+87afdd2 research(m2-r1): measure Qt runtime feasibility on windows/offscreen/minimal
+
+== [C] diff between first delivery head and revision head (span includes the first-round documentation commit) ==
+A	doc/handoffs/M2-R1-87afdd2.md
+M	doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md
+M	doc/tasks/M2-R1.md
+M	verification/M2-R1/07-evidence-manifest.md
+M	verification/M2-R1/07b-artifact-hashes.log
+A	verification/M2-R1/08-delivery-scope-and-diff-check.log
+revision changed only documentation/manifest text; no file under raw/ was touched:
+raw/ paths touched in revision = 0
+
+== [D] allowed-path assertion owner-start..revision ==
+changed_path_count=81
+OUT_OF_SCOPE_COUNT=0
+
+== [E] forbidden-path assertion (must be zero) ==
+forbidden_hits=0
+
+== [F] git diff --check owner-start..revision ==
+exit=0
+(no whitespace/conflict diagnostics)
+
+== [G] artifact-count recheck (independent enumeration of raw/**) ==
+probe.json total            = 21
+  main matrix (9 expected)  = 9
+  font remediation (5)      = 5
+  event loop (6)            = 6
+  smoke (1, excluded)       = 1
+formal runs (total-smoke)   = 20
+png total (45 expected)     = 45
+  input_base.png            = 10
+  input_clean.png           = 10
+  output_page.png           = 10
+  output_region.png         = 10
+  output_page_* (remediation)= 5
+runs with exit_code != 0 or non-empty errors = 0 (of 21 JSON, smoke included)
+
+== [H] documentation-count consistency after the revision ==
+doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md  stale-'18' occurrences=0
+doc/tasks/M2-R1.md  stale-'18' occurrences=0
+doc/handoffs/M2-R1-87afdd2.md  stale-'18' occurrences=0
+verification/M2-R1/07-evidence-manifest.md  stale-'18' occurrences=0
+
+== [I] isolated-experiment hygiene ==
+__pycache__ under src/ (must be 0)   : 0
+__pycache__ under tests/ (must be 0) : 0
+requirements* changed owner-start..revision : False
+
+== [J] working tree when this log was generated ==
+
+note: this log, the revised Handoff and the delivery/frontmatter backfill are added by the documentation commit
+      that follows the revision head bbc1914b332b15176fd8337340960d753f99cff8.
