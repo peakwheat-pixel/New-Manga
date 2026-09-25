@@ -1,0 +1,70 @@
+Command: G:/CODEX/New Manga.task-envs/T3.2.1-packaging-py312/Scripts/python.exe -m pytest tests/ui_shell/test_bookshelf_viewmodel.py tests/core/test_bootstrap.py -k "test_initial_hydration_with_existing_books or test_assemble_services_hydrates_bookshelf_viewmodel_with_existing_books" -v
+Exit Code: 1
+Environment: Python 3.12.3, Windows 11, Worktree: G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14
+
+Output:
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\T3.2.1-antigravity-repair-14
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 39 items / 37 deselected / 2 selected
+
+tests/ui_shell/test_bookshelf_viewmodel.py::TestBookListModel::test_initial_hydration_with_existing_books FAILED [ 50%]
+tests/core/test_bootstrap.py::test_assemble_services_hydrates_bookshelf_viewmodel_with_existing_books FAILED [100%]
+
+================================== FAILURES ===================================
+________ TestBookListModel.test_initial_hydration_with_existing_books _________
+
+self = <test_bookshelf_viewmodel.TestBookListModel object at 0x00000292E2F73E90>
+qapp = <PySide6.QtGui.QGuiApplication(0x292e289e0c0) at 0x00000292E3156A40>
+library = <application.library.service.LibraryService object at 0x00000292E3163830>
+importer = <fakes.StubImporter object at 0x00000292E3163650>
+
+    def test_initial_hydration_with_existing_books(
+        self, qapp, library, importer
+    ) -> None:
+        library.create_book("进击的巨人", original_title="進撃の巨人")
+        library.create_book("海贼王")
+        from ui.viewmodels.navigation.viewmodel import NavigationViewModel
+
+        cold_vm = BookshelfViewModel(
+            library=library, importer=importer, navigation=NavigationViewModel()
+        )
+>       assert cold_vm.bookCount == 2
+E       assert 0 == 2
+E        +  where 0 = <ui.viewmodels.bookshelf.viewmodel.BookshelfViewModel(0x292e28b68d0) at 0x00000292E3170B40>.bookCount
+
+tests\ui_shell\test_bookshelf_viewmodel.py:74: AssertionError
+___ test_assemble_services_hydrates_bookshelf_viewmodel_with_existing_books ___
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-29/test_assemble_services_hydrate0')
+qapp = <PySide6.QtGui.QGuiApplication(0x292e289e0c0) at 0x00000292E3156A40>
+
+    def test_assemble_services_hydrates_bookshelf_viewmodel_with_existing_books(
+        tmp_path: Path, qapp
+    ) -> None:
+        from bootstrap.app import assemble_services
+        from PySide6.QtCore import QModelIndex
+
+        services1 = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            book = services1.library.create_book("冷启动测试作品", original_title="Cold Start")
+            services1.library.create_chapter(book.book_id, "第01话")
+        finally:
+            services1.conn.close()
+
+        services2 = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            assert len(services2.library.list_books()) == 1
+>           assert services2.bookshelf.bookCount == 1
+E           AssertionError: assert 0 == 1
+E            +  where 0 = <ui.viewmodels.bookshelf.viewmodel.BookshelfViewModel(0x292e2bb47e0) at 0x00000292E417AB00>.bookCount
+E            +    where <ui.viewmodels.bookshelf.viewmodel.BookshelfViewModel(0x292e2bb47e0) at 0x00000292E417AB00> = AppServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000292E40EF2F0>, repository=<infrastructure.sqlite.library.SqliteLibraryRepository object at 0x00000292E40EF200>, storage=<infrastructure.filesystem.managed_storage.ManagedFileStorage object at 0x00000292E40EF0E0>, importer=<application.importing.images.service.ImportImagesUseCase object at 0x00000292E40EEF30>, document_importer=<application.importing.documents.service.ImportDocumentsUseCase object at 0x00000292E40EEE70>, trash=<application.maintenance.trash.TrashService object at 0x00000292E40EEE10>, reading=<application.reading.service.ReadingService object at 0x00000292E4163860>, export_service=<application.export.service.ExportService object at 0x00000292E4163920>, diagnostics=DiagnosticsService(_provider=_ProductionDiagnosticsSnapshot(database=WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-29/test_assemble_services_hydrate0/library.db'), data_root=WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-29/test_assemble_services_hydrate0'), managed_root=WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-29/test_assemble_services_hydra...on _credential_resolver.<locals>.resolve at 0x00000292E413FCE0>, retry_policy=RetryPolicy(max_attempts=2, backoff_seconds=1.0, retry_codes=None), route_policy=RoutePolicy(allowed_routes=('simple-fill', 'edge-bleed'), fallback_routes=(), color_route=None, requirements={}), sakura_probe=SakuraProbe(transport=<infrastructure.transport.stdlib.StdlibTransport object at 0x00000292E40EED20>, provider_id='sakura-local', readiness_path='/models', health_path='/health'), sakura_base_url='http://127.0.0.1:8080/v1'), navigation=<ui.viewmodels.navigation.viewmodel.NavigationViewModel(0x292e2bb4e70) at 0x00000292E4140DC0>, bookshelf=<ui.viewmodels.bookshelf.viewmodel.BookshelfViewModel(0x292e2bb47e0) at 0x00000292E417AB00>, workbench=<ui.viewmodels.workbench.viewmodel.WorkbenchViewModel(0x292e2bb62c0) at 0x00000292E417AD80>, export_viewmodel=<function assemble_services.<locals>.<lambda> at 0x00000292E4189120>, set_export_context_updater=<function assemble_services.<locals>.<lambda> at 0x00000292E41891C0>, settings_vm=<ui.viewmodels.settings.viewmodel.SettingsViewModel(0x292e2bb46f0) at 0x00000292E417A4C0>, transport=<infrastructure.transport.stdlib.StdlibTransport object at 0x00000292E40EED20>).bookshelf
+
+tests\core\test_bootstrap.py:754: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/ui_shell/test_bookshelf_viewmodel.py::TestBookListModel::test_initial_hydration_with_existing_books
+FAILED tests/core/test_bootstrap.py::test_assemble_services_hydrates_bookshelf_viewmodel_with_existing_books
+====================== 2 failed, 37 deselected in 0.46s =======================

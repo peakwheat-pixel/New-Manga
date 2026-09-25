@@ -1,0 +1,26 @@
+Command: G:/CODEX/New Manga.task-envs/T3.2.1-packaging-py312/Scripts/python.exe verification/T3.2.1/repair-14/post-repair-verification.py
+Exit Code: 0
+Environment: Python 3.12.3, Windows 11, Worktree: G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14
+
+Output:
+=== T3.2.1-REPAIR-14 Post-Repair Verification Run ===
+Data root: C:\Users\49745\AppData\Local\Temp\repair14-verify-1aaslv95
+Database: C:\Users\49745\AppData\Local\Temp\repair14-verify-1aaslv95\library.db
+
+--- Session 1: First launch on clean data root ---
+Session 1 created book: id=ca7307a3c93f4e9e8ca333e8b27db6ae, title=修复验证漫画
+Session 1 closed gracefully.
+
+--- Direct SQLite Inspection ---
+SQLite books table row count: 1
+  Row: book_id=ca7307a3c93f4e9e8ca333e8b27db6ae, title=修复验证漫画, original_title=Verify Manga Vol 1
+
+--- Session 2: Relaunch on the same data root (Restart Verification) ---
+Session 2 bookshelf.isEmpty: False
+Session 2 bookshelf.bookCount: 1
+Session 2 bookshelf.bookListModel.rowCount(): 1
+Session 2 bookListModel row 0 title: 修复验证漫画
+
+>>> [POST-REPAIR VERIFICATION SUCCESS] <<<
+  - BookshelfViewModel successfully hydrated existing books on initialization.
+  - QML BookGrid will immediately render the 1 book present in SQLite.

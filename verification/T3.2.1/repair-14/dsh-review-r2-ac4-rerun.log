@@ -1,0 +1,34 @@
+=== DSH ROUND 2 INDEPENDENT AC4 RE-RUN ===
+Timestamp : 2026-09-25T16:00:17+08:00
+Reviewer  : DeepSeek Harness (independent non-author)
+Worktree  : G:\CODEX\New Manga.worktrees\T3.2.1-deepseek-review-repair-14-r2
+Command   : python verification/T3.2.1/repair-14/verify_ac4_exe_gui.py
+EXE       : G:\CODEX\repair14-build-out\NewManga\NewManga.exe
+EXE sha256: 6aee41b2e36d203e3404000ac89f4f5efaee5d075c8888669fb0760133cc0145 (recomputed by reviewer, matches claim)
+Interpreter: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+
+--- committed artefacts BEFORE rerun ---
+01-session1-initial-empty.png  sha256=383293c342fb6be746ae17507e330c989239a6e96281ecc6b23873e39b5b783e  bytes=40329
+02-session2-restarted-shelf.png sha256=62f455f48a91d44120ea0c775787e9f6e3fd0213ffa4960e947a26179c8702c2  bytes=68405
+ac4-exe-gui-run.log            sha256=ec62fe0f03815fc16e9ff135b7dbe63e114cb10bc513fcf296c5a6dde8955ecf
+
+--- rerun result ---
+EXIT=0
+Session 1 Exit Code: 0
+Session 2 Exit Code: 0
+SQLite books count after restart: 1
+>>> [AC4 & AC1 FIXED PACKAGE GUI VERIFICATION SUCCESS] <<<
+
+--- artefacts AFTER rerun ---
+01-session1-initial-empty.png  sha256=55c726ce0d09d56c0f342592ab278fbaa0d32bb114ede280adac3e46d3409600  bytes=40330
+02-session2-restarted-shelf.png sha256=ef3a9a69c6dc53ab767ba1164b7f14dd75fc830bf6ac4b6dc8791ca7bf24cf99  bytes=68449
+bit-identical: 01=False  02=False
+
+--- conclusion ---
+AC4 is independently reproducible: two real OS process launches on one isolated
+data-root, both exit 0, book count stays 1 across restart.
+Screenshots are NOT bit-identical between runs (40329/40330 and 68405/68449 bytes),
+consistent with genuine nondeterministic GUI rendering rather than a fabricated image.
+Reviewer visually inspected the rerun 02 screenshot: same hydrated shelf
+(book card + detail panel + chapter list) as the committed version.
+Committed screenshot/log files were restored with 'git checkout --' after this rerun.

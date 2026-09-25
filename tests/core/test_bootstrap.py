@@ -733,3 +733,26 @@ def test_document_import_slot_publishes_a_return_type() -> None:
             f"{bytes(method.methodSignature())!r} publishes "
             f"returnType={method.returnMetaType().name()}"
         )
+
+
+def test_assemble_services_hydrates_bookshelf_viewmodel_with_existing_books(
+    tmp_path: Path, qapp
+) -> None:
+    from bootstrap.app import assemble_services
+    from PySide6.QtCore import QModelIndex
+
+    services1 = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        book = services1.library.create_book("冷启动测试作品", original_title="Cold Start")
+        services1.library.create_chapter(book.book_id, "第01话")
+    finally:
+        services1.conn.close()
+
+    services2 = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        assert len(services2.library.list_books()) == 1
+        assert services2.bookshelf.bookCount == 1
+        assert services2.bookshelf.isEmpty is False
+        assert services2.bookshelf.bookListModel.rowCount(QModelIndex()) == 1
+    finally:
+        services2.conn.close()

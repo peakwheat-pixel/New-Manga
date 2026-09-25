@@ -1,0 +1,34 @@
+Task: T3.2.1-REPAIR-14 integration protected-path check
+Working tree: G:\CODEX\New Manga.worktrees\T3.2.1-codex-repair-14-integration
+Base HEAD: 75fa4d796807e52c7e72752bbaeedbeb63064f37
+Shell: Windows PowerShell 7.6.6
+Command: git diff --cached --exit-code 75fa4d796807e52c7e72752bbaeedbeb63064f37 -- src/domain src/application src/ports packaging requirements.txt requirements-dev.txt pyproject.toml uv.lock poetry.lock Pipfile Pipfile.lock
+Git Output:
+
+Protected-path Git Exit Code: 0
+Schema/migration changed paths: <none>
+Schema/migration check Exit Code: 0
+Overall Exit Code: 0
+Changed-path inventory:
+doc/handoffs/T3.2.1-REPAIR-14-43b24ee.md
+src/ui/viewmodels/bookshelf/viewmodel.py
+tests/core/test_bootstrap.py
+tests/ui_shell/test_bookshelf_viewmodel.py
+verification/T3.2.1/repair-14/ac4-exe-gui-run.log
+verification/T3.2.1/repair-14/diff-check.log
+verification/T3.2.1/repair-14/dsh-review-r2-ac4-rerun.log
+verification/T3.2.1/repair-14/dsh-review-r2-independent-run.log
+verification/T3.2.1/repair-14/integration-suite.log
+verification/T3.2.1/repair-14/post-repair-tests.log
+verification/T3.2.1/repair-14/post-repair-verification.log
+verification/T3.2.1/repair-14/post-repair-verification.py
+verification/T3.2.1/repair-14/pre-repair-red.log
+verification/T3.2.1/repair-14/repair14-delivery-artifact-manifest.sha256
+verification/T3.2.1/repair-14/repair14-delivery-exe.sha256
+verification/T3.2.1/repair-14/reproduction.log
+verification/T3.2.1/repair-14/reproduction.py
+verification/T3.2.1/repair-14/review-report-dsh-r2.md
+verification/T3.2.1/repair-14/screenshots/01-session1-initial-empty.png
+verification/T3.2.1/repair-14/screenshots/02-session2-restarted-shelf.png
+verification/T3.2.1/repair-14/verify_ac4_exe_gui.py
+Run time: 2026-09-25T16:22:27.8118767+08:00

@@ -1,0 +1,30 @@
+=== T3.2.1-REPAIR-14 Diff & Scope Audit ===
+Base Commit: 4ab6f58c06cb0691413e2630cb48a145c18c383a
+Timestamp: 2026-09-25T15:53:00+08:00
+
+1. git diff --check 4ab6f58c06cb0691413e2630cb48a145c18c383a
+Exit Code: 0
+Output: (clean, zero warnings, zero trailing whitespace, zero EOF blank lines)
+
+2. Protected paths check:
+Command: git diff --exit-code 4ab6f58c06cb0691413e2630cb48a145c18c383a -- src/domain src/application src/ports packaging requirements.txt requirements-dev.txt doc/tasks doc/STATUS.md doc/REBASELINE_PLAN.md
+Exit Code: 0
+Output: (clean, zero modifications to protected paths)
+
+3. Changed files summary vs base 4ab6f58c06cb0691413e2630cb48a145c18c383a:
+M	src/ui/viewmodels/bookshelf/viewmodel.py
+M	tests/core/test_bootstrap.py
+M	tests/ui_shell/test_bookshelf_viewmodel.py
+A	verification/T3.2.1/repair-14/ac4-exe-gui-run.log
+A	verification/T3.2.1/repair-14/diff-check.log
+A	verification/T3.2.1/repair-14/post-repair-tests.log
+A	verification/T3.2.1/repair-14/post-repair-verification.log
+A	verification/T3.2.1/repair-14/post-repair-verification.py
+A	verification/T3.2.1/repair-14/pre-repair-red.log
+A	verification/T3.2.1/repair-14/repair14-delivery-artifact-manifest.sha256
+A	verification/T3.2.1/repair-14/repair14-delivery-exe.sha256
+A	verification/T3.2.1/repair-14/reproduction.log
+A	verification/T3.2.1/repair-14/reproduction.py
+A	verification/T3.2.1/repair-14/screenshots/01-session1-initial-empty.png
+A	verification/T3.2.1/repair-14/screenshots/02-session2-restarted-shelf.png
+A	verification/T3.2.1/repair-14/verify_ac4_exe_gui.py

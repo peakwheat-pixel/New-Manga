@@ -1,0 +1,89 @@
+=== DSH independent review run (ROUND 2): T3.2.1-REPAIR-14 ===
+Timestamp   : 2026-09-25T15:59:20+08:00
+Reviewer    : DeepSeek Harness (independent non-author)
+Shell       : PowerShell 7.6.6 / Microsoft Windows NT 10.0.26200.0
+Interpreter : G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+Worktree    : G:\CODEX\New Manga.worktrees\T3.2.1-deepseek-review-repair-14-r2
+Branch      : agent/deepseek/T3.2.1-review-repair-14-r2
+Base        : 4ab6f58c06cb0691413e2630cb48a145c18c383a
+Delivery    : 43b24eefaa1d517f51c7fd8dba7c658a58415d89
+ReviewedTip : 2f0d26645a5e3597977859f0624d72f561d38ba1
+CleanAtStart: False
+
+[SHA NOTE] dispatch-provided handoff head does not resolve in this repository:
+  git cat-file -t 2f0d266bb0368a5c378e90635436eeaf8cb2451f
+  -> fatal: git cat-file: could not get object info
+  The actual branch tip sharing the 7-char prefix is 2f0d26645a5e3597977859f0624d72f561d38ba1
+
+--- [1] R14-001 whitespace audit ---
+CMD: git diff --check 4ab6f58c06cb0691413e2630cb48a145c18c383a..43b24eefaa1d517f51c7fd8dba7c658a58415d89
+EXIT=0
+CMD: git diff --check 4ab6f58c06cb0691413e2630cb48a145c18c383a..2f0d26645a5e3597977859f0624d72f561d38ba1
+EXIT=0
+
+--- [2] protected paths ---
+EXIT=0
+
+--- [3] changed paths base..delivery ---
+A	doc/handoffs/T3.2.1-REPAIR-14-56bd33a.md
+M	src/ui/viewmodels/bookshelf/viewmodel.py
+M	tests/core/test_bootstrap.py
+M	tests/ui_shell/test_bookshelf_viewmodel.py
+A	verification/T3.2.1/repair-14/ac4-exe-gui-run.log
+A	verification/T3.2.1/repair-14/diff-check.log
+A	verification/T3.2.1/repair-14/post-repair-tests.log
+A	verification/T3.2.1/repair-14/post-repair-verification.log
+A	verification/T3.2.1/repair-14/post-repair-verification.py
+A	verification/T3.2.1/repair-14/pre-repair-red.log
+A	verification/T3.2.1/repair-14/repair14-delivery-artifact-manifest.sha256
+A	verification/T3.2.1/repair-14/repair14-delivery-exe.sha256
+A	verification/T3.2.1/repair-14/reproduction.log
+A	verification/T3.2.1/repair-14/reproduction.py
+A	verification/T3.2.1/repair-14/screenshots/01-session1-initial-empty.png
+A	verification/T3.2.1/repair-14/screenshots/02-session2-restarted-shelf.png
+A	verification/T3.2.1/repair-14/verify_ac4_exe_gui.py
+count=17
+
+--- [4] focused regression suite on reviewed tip ---
+CMD: python -m pytest tests/ui_shell tests/reading_export/test_qml_contract.py tests/core/test_bootstrap.py
+============================ 184 passed in 11.06s =============================
+EXIT=0
+
+--- [5] post-repair assembly-layer probe ---
+CMD: python verification/T3.2.1/repair-14/post-repair-verification.py
+--- Session 2: Relaunch on the same data root (Restart Verification) ---
+Session 2 bookshelf.isEmpty: False
+Session 2 bookshelf.bookCount: 1
+Session 2 bookshelf.bookListModel.rowCount(): 1
+Session 2 bookListModel row 0 title: 修复验证漫画
+>>> [POST-REPAIR VERIFICATION SUCCESS] <<<
+- BookshelfViewModel successfully hydrated existing books on initialization.
+EXIT=0
+
+--- [6] reproduction probe on reviewed tip (defect must be gone) ---
+--- Session 2: Relaunch on the same data root (Restart Simulation) ---
+Session 2 bookshelf.isEmpty: False
+Session 2 bookshelf.bookCount: 1
+Session 2 bookshelf.bookListModel.rowCount(): 1
+Session 2 bookshelf.selectedBook: {}
+EXIT=1
+
+--- [7] AC4 artefact independent inspection ---
+EXE exists: True
+EXE sha256 (recomputed): 6aee41b2e36d203e3404000ac89f4f5efaee5d075c8888669fb0760133cc0145
+EXE sha256 (claimed)   : 6aee41b2e36d203e3404000ac89f4f5efaee5d075c8888669fb0760133cc0145
+EXE sha256 match       : True
+EXE size bytes         : 50521372
+manifest lines: 5437
+screenshot 01-session1-initial-empty.png : 40329 bytes  sha256=383293c342fb6be746ae17507e330c989239a6e96281ecc6b23873e39b5b783e
+screenshot 02-session2-restarted-shelf.png : 68405 bytes  sha256=62f455f48a91d44120ea0c775787e9f6e3fd0213ffa4960e947a26179c8702c2
+
+--- [8] R14-003 blank-line state ---
+viewmodel.py consecutive blanks at 22/23
+blank-line violations found: 1  (viewmodel.py:58 then one blank line; test file: exactly two blanks before next class)
+
+--- [9] R14-004 UTF-8 check ---
+Session 1 created book: id=7791e6854a78414ca18d2e6fc1b10f2d, title=修复验证漫画
+Row: book_id=7791e6854a78414ca18d2e6fc1b10f2d, title=修复验证漫画, original_title=Verify Manga Vol 1
+
+=== END OF ROUND 2 INDEPENDENT RUN ===

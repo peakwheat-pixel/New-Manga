@@ -1,0 +1,42 @@
+Command: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe verification/T3.2.1/repair-14/verify_ac4_exe_gui.py
+Exit Code: 0
+Environment: Windows 11 x64, Python 3.12.3, Packaged EXE: G:\CODEX\repair14-build-out\NewManga\NewManga.exe
+
+Output:
+=== T3.2.1-REPAIR-14 AC4 / AC1 Real Executable GUI Verification ===
+Target Executable : G:\CODEX\repair14-build-out\NewManga\NewManga.exe
+Executable SHA-256: 6aee41b2e36d203e3404000ac89f4f5efaee5d075c8888669fb0760133cc0145
+Isolated Data Root: C:\Users\49745\AppData\Local\Temp\repair14-ac4-data-at65qwc4
+Database Path     : C:\Users\49745\AppData\Local\Temp\repair14-ac4-data-at65qwc4\library.db
+
+--- Session 1: First Process Launch on Clean Data Root ---
+Command: G:\CODEX\repair14-build-out\NewManga\NewManga.exe --data-root C:\Users\49745\AppData\Local\Temp\repair14-ac4-data-at65qwc4 --screenshot G:\CODEX\New Manga.worktrees\T3.2.1-antigravity-repair-14\verification\T3.2.1\repair-14\screenshots\01-session1-initial-empty.png
+Session 1 Exit Code: 0
+Session 1 Screenshot: 01-session1-initial-empty.png (size: 40329 bytes)
+
+--- Seeding Book in Data Root ---
+Created Book   : id=37e79217dd5e4a7e80307fdec567c1f9, title=固定包验证作品·第一卷
+Created Chapter: id=0214222e18154d8fadd54a6c7be691a1, title=第01话
+
+--- Direct SQLite Inspection after Session 1 ---
+SQLite books count: 1
+  Book Row: id=37e79217dd5e4a7e80307fdec567c1f9, title=固定包验证作品·第一卷, original_title=Fixed Package Manga Vol 1
+SQLite chapters count: 1
+
+--- Session 2: Second Process Launch (Restart on Same Data Root) ---
+Command: G:\CODEX\repair14-build-out\NewManga\NewManga.exe --data-root C:\Users\49745\AppData\Local\Temp\repair14-ac4-data-at65qwc4 --screenshot G:\CODEX\New Manga.worktrees\T3.2.1-antigravity-repair-14\verification\T3.2.1\repair-14\screenshots\02-session2-restarted-shelf.png
+Session 2 Exit Code: 0
+Session 2 Screenshot: 02-session2-restarted-shelf.png (size: 68405 bytes)
+Screenshot Size Comparison: Empty=40329 bytes vs Hydrated=68405 bytes
+
+--- Direct SQLite Inspection after Session 2 ---
+SQLite books count after restart: 1
+
+>>> [AC4 & AC1 FIXED PACKAGE GUI VERIFICATION SUCCESS] <<<
+  - Fixed executable verified across two separate OS process lifecycles.
+  - Session 1: Clean startup, verified empty state, created book, exited gracefully (0).
+  - Session 2: Restarted on exact same data root, hydrated existing book onto bookshelf grid.
+  - Screenshots captured and verified:
+      1. G:\CODEX\New Manga.worktrees\T3.2.1-antigravity-repair-14\verification\T3.2.1\repair-14\screenshots\01-session1-initial-empty.png
+      2. G:\CODEX\New Manga.worktrees\T3.2.1-antigravity-repair-14\verification\T3.2.1\repair-14\screenshots\02-session2-restarted-shelf.png
+  - No book duplication, corruption, or schema divergence occurred.

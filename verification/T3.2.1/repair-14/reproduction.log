@@ -1,0 +1,37 @@
+=== T3.2.1-REPAIR-14: Defect F-13-3 Reproduction Evidence ===
+Timestamp: 2026-09-25 13:14:30 +08:00
+Executor: Antigravity
+Worktree: G:/CODEX/New Manga.worktrees/T3.2.1-antigravity-repair-14
+Branch: agent/antigravity/T3.2.1-repair-14
+Base Commit: 4ab6f58c06cb0691413e2630cb48a145c18c383a
+Python Interpreter: G:/CODEX/New Manga.task-envs/T3.2.1-packaging-py312/Scripts/python.exe (Python 3.12.3)
+Command: G:/CODEX/New Manga.task-envs/T3.2.1-packaging-py312/Scripts/python.exe verification/T3.2.1/repair-14/reproduction.py
+Exit Code: 0
+
+--- Raw Reproduction Output ---
+=== T3.2.1-REPAIR-14 / F-13-3 Reproduction Run ===
+Data root: C:\Users\49745\AppData\Local\Temp\repair14-repro-fpn6jl_1
+Database: C:\Users\49745\AppData\Local\Temp\repair14-repro-fpn6jl_1\library.db
+
+--- Session 1: First launch on clean data root ---
+Session 1 initial isEmpty: True
+Session 1 initial bookCount: 0
+Session 1 created book: id=91633917c1a147d7b3eac0a12700b4d5, title=复现测试漫画
+Session 1 after refreshBooks() bookCount: 1
+Session 1 after refreshBooks() rowCount: 1
+Session 1 closed gracefully.
+
+--- Direct SQLite Inspection ---
+SQLite books table row count: 1
+  Row: book_id=91633917c1a147d7b3eac0a12700b4d5, title=复现测试漫画, original_title=Repro Manga Vol 1
+
+--- Session 2: Relaunch on the same data root (Restart Simulation) ---
+Session 2 bookshelf.isEmpty: False
+Session 2 bookshelf.bookCount: 0
+Session 2 bookshelf.bookListModel.rowCount(): 0
+Session 2 bookshelf.selectedBook: {}
+
+>>> [DEFECT F-13-3 CONFIRMED] <<<
+  - SQLite has 1 book, so bookshelf.isEmpty is False (QML hides EmptyState).
+  - However, bookshelf.bookListModel has rowCount == 0 (QML BookGrid renders 0 items).
+  - Result: The user sees an empty shelf without even an empty state banner.

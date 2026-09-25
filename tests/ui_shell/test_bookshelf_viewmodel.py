@@ -61,6 +61,20 @@ class TestBookListModel:
         model = vm.bookListModel
         assert model.roleForName("nope") == -1
 
+    def test_initial_hydration_with_existing_books(
+        self, qapp, library, importer
+    ) -> None:
+        library.create_book("进击的巨人", original_title="進撃の巨人")
+        library.create_book("海贼王")
+        from ui.viewmodels.navigation.viewmodel import NavigationViewModel
+
+        cold_vm = BookshelfViewModel(
+            library=library, importer=importer, navigation=NavigationViewModel()
+        )
+        assert cold_vm.bookCount == 2
+        assert cold_vm.isEmpty is False
+        assert cold_vm.bookListModel.rowCount(QModelIndex()) == 2
+
 
 class TestChapterListModel:
     def test_chapter_rows_sorted_by_sort_order(self, vm, library) -> None:

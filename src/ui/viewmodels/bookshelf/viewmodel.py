@@ -55,6 +55,7 @@ class BookshelfViewModel(QObject):
         self._sort_by = "recent"
         self._view_mode = "grid"
         self._import_summary = ""
+        self._apply_books()
 
     # ------------------------------------------------------------------
     # models / properties
