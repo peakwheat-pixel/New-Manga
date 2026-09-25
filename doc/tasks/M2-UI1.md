@@ -9,7 +9,7 @@ owner: Qoder
 reviewer: Codex
 depends_on: [M2-D1]
 base_commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
-delivery_head: 80311732c3224c7054ad4bc2ba8ba0bee7f2f765
+delivery_head: 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b
 branch: agent/qoder/M2-UI1-react-parity-visual-contract
 worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder
 integration_commit: null
