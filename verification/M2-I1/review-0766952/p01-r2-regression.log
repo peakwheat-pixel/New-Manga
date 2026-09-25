@@ -1,0 +1,10 @@
+date=2026-09-25T19:26:48.7812207+08:00
+shell=PowerShell
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+workdir=G:/CODEX/New Manga.worktrees/M2-I1-zcode
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+command=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest -q -p no:cacheprovider tests/core/test_bootstrap.py::test_assemble_services_closes_connection_when_qt_assembly_fails
+.                                                                        [100%]
+1 passed in 0.42s
+EXIT=0
