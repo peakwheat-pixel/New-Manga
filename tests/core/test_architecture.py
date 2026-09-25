@@ -20,6 +20,10 @@ M2_I2_QT_FREE_MODULES = (
     APPLICATION_ROOT / "tasks" / "projection.py",
     APPLICATION_ROOT / "editing" / "region_canvas.py",
 )
+LEGACY_UI_SHIMS = (
+    UI_ROOT / "models" / "tasks" / "projection.py",
+    UI_ROOT / "viewmodels" / "workbench" / "region_canvas.py",
+)
 
 #: Calls that import a module from a literal name at runtime (TASK-034 AC ②:
 #: the old line-prefix guard could not see these).
@@ -93,6 +97,39 @@ def find_forbidden_imports(
                         )
                         break
     return sorted(violations)
+
+
+def find_shim_local_definitions(path: Path) -> list[str]:
+    """Report any local function/class definitions or executable logic in a pure re-export shim.
+
+    Legacy UI modules must only act as non-authoritative shims delegating to application layer.
+    """
+    violations: list[str] = []
+    tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+    for node in tree.body:
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            violations.append(
+                f"{path}:{node.lineno}: forbidden local definition in legacy shim: {node.name}"
+            )
+        elif isinstance(node, (ast.Import, ast.ImportFrom)):
+            continue
+        elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
+            # docstring or string constant
+            continue
+        elif isinstance(node, ast.Assign):
+            # allow __all__ assignment
+            targets = [t.id for t in node.targets if isinstance(t, ast.Name)]
+            if targets == ["__all__"]:
+                continue
+            violations.append(
+                f"{path}:{node.lineno}: forbidden assignment in legacy shim: {','.join(targets)}"
+            )
+        else:
+            violations.append(
+                f"{path}:{node.lineno}: forbidden statement in legacy shim: {type(node).__name__}"
+            )
+    return violations
+
 
 
 def test_source_packages_exist_and_respect_boundaries() -> None:
@@ -183,6 +220,23 @@ def test_workbench_ui_consumers_import_from_application_seams() -> None:
         )
 
 
+def test_legacy_ui_shims_contain_no_authoritative_logic() -> None:
+    """M2-I2 AC2/AC4: legacy UI shims must remain pure re-export shims with no local logic.
+
+    Prevents revived or reversed business logic in UI shims by asserting that no local
+    function/class definitions or algorithmic statements exist in the legacy files.
+    """
+    violations: list[str] = []
+    for shim_path in LEGACY_UI_SHIMS:
+        assert shim_path.is_file(), f"missing legacy shim: {shim_path}"
+        violations.extend(find_shim_local_definitions(shim_path))
+    assert not violations, (
+        "legacy UI shims must not contain authoritative business logic or definitions:\n"
+        + "\n".join(violations)
+    )
+
+
+
 def test_application_ui_violation_reports_file_line_and_module(tmp_path: Path) -> None:
     """M2-I2 AC4 discriminative probe: application importing ui must be caught."""
     source = tmp_path / "bad_app.py"
@@ -223,6 +277,26 @@ def test_reversal_guard_reports_legacy_ui_import(tmp_path: Path) -> None:
         f"{source}:1: forbidden import ui.models.tasks.projection",
         f"{source}:2: forbidden import ui.viewmodels.workbench.region_canvas",
     ]
+
+
+def test_reversal_guard_reports_local_definitions_in_legacy_shims(tmp_path: Path) -> None:
+    """M2-I2 AC4 discriminative probe: function or class defined in shim must be caught."""
+    source = tmp_path / "mutant_shim.py"
+    source.write_text(
+        '"""Legacy shim."""\n'
+        "from application.tasks.projection import TaskProjection\n"
+        "def revived_business_rule():\n"
+        "    return 42\n"
+        "class RevivedModel:\n"
+        "    pass\n",
+        encoding="utf-8",
+    )
+    violations = find_shim_local_definitions(source)
+    assert violations == [
+        f"{source}:3: forbidden local definition in legacy shim: revived_business_rule",
+        f"{source}:5: forbidden local definition in legacy shim: RevivedModel",
+    ]
+
 
 
 def test_dynamic_import_of_a_forbidden_root_is_detected(tmp_path: Path) -> None:
