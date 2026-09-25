@@ -1,0 +1,109 @@
+# M2-UI1 Reviewer Gates & Verification Log (Independent Review by Antigravity)
+Timestamp: 2026-09-25T21:55:00+08:00
+Reviewer: Antigravity (Independent Reviewer)
+Owner: Qoder
+Review Worktree: G:/CODEX/New Manga.worktrees/M2-UI1-antigravity-review-23a5ac0
+Branch: agent/antigravity/M2-UI1-review-23a5ac0
+Git Common Dir: G:/CODEX/New Manga/.git
+Base Commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+Delivery Head: 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b
+Handoff Head: 784ce1831adc791882383681a743984c4b847d0b
+Reviewed Head: 784ce1831adc791882383681a743984c4b847d0b
+
+## 1. Zero Source & Test Diff Verification
+Command: git diff --quiet 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b -- src tests
+Exit Code: 0
+Command: git diff --quiet 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a 784ce1831adc791882383681a743984c4b847d0b -- src tests
+Exit Code: 0
+Proof: Production code (src/**) and test suite (tests/**) remain 100% untouched relative to base commit.
+
+## 2. Scope & Whitespace Audit
+Command: git diff --check 5d989bab6c5c8a24a5112303f95c2b8eea356bdc 784ce1831adc791882383681a743984c4b847d0b
+Exit Code: 0
+Modified files 5d989ba..784ce18:
+- doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md
+- doc/handoffs/M2-UI1-23a5ac0.md
+- doc/handoffs/M2-UI1-8031173.md
+- doc/tasks/M2-UI1.md
+- verification/M2-UI1/**
+Out-of-scope files: 0 violations.
+
+## 3. Visual Baseline 14-Frame Hash Verification
+Verified all 14 frames in verification/M2-UI1/baseline-6a68fde/screenshots against manifest.md:
+- 01-bookshelf-empty.png: e19cf1a1d4e18b4e63022d2771831e47ee99a6bec2a17cd3943e0982924f2557 (MATCH)
+- 02-new-book-dialog.png: 705e5d23fd83a316966f53abe0c2c4699233d45bdbfc3458e1916343405f29ed (MATCH)
+- 03-bookshelf-detail.png: 0d07c464d46411b9b8c0881d1d8bf984178e4674924f9cc864d5152c06297455 (MATCH)
+- 04-toolbar-checked.png: 7fe1541e24a5cb587a8d5cf568175df75deb1f59a3afa262b665151cb867c5f8 (MATCH)
+- 05-chapter-selected.png: 5b8b9e7ea603535e601202cf522e605fb5726a0bc6eb5247cef7c9ed5fdc6997 (MATCH)
+- 05b-import-picker-opened.png: 5b8b9e7ea603535e601202cf522e605fb5726a0bc6eb5247cef7c9ed5fdc6997 (MATCH)
+- 06-pages-imported.png: 5b8b9e7ea603535e601202cf522e605fb5726a0bc6eb5247cef7c9ed5fdc6997 (MATCH)
+- 07-reader-active.png: 17162ce0e6f76613f415893d49c4755b8f884321de2514d67fda062a1b23a672 (MATCH)
+- 08-reader-chapter-picker.png: ac89634848eabef706e0303d0cb39c3158af6b08914d134d6aba3b99521055ca (MATCH)
+- 09-export-window.png: 88322bd02f6c8c9f29eb4894f556295371c11244e10c12d57ee0840fd12714ae (MATCH)
+- 10-export-after.png: 831b191ef3e458cc83205c509ee448e6e176e54f6183d31be662bfa5de75eb08 (MATCH)
+- 11-workbench.png: 8bb6e4f31d47fd7f50a35d9ecd88efeadd017588ce89d9ffddb45a1e239b4913 (MATCH)
+- 12-settings.png: e44615c36879ca504cf30d818575b058e55bbe613ef203d532643f8d00bc03ee (MATCH)
+- 13-focus-create-book.png: a4fa38689bf211a530c714ffb66957d48b7c0a1f5728c39a50220d3438372fd1 (MATCH, DEGRADED)
+Result: 14/14 hashes match. 13 frames usable, 1 frame degraded. Focus ring remains NOT_RUN.
+
+## 4. Tokens.qml Attribute Verification (R-004)
+Command: AST/Regex analysis on src/ui/qml/theme/Tokens.qml
+- readonly property color count: 40
+  (bgPage, bgRail, bgPanel, bgRaised, bgInset, bgCanvas, bgHover, bgActive, bgPress, border, borderStrong, divider, ink, ink2, ink3, inkDis, inkInv, accent, accentHov, accentPress, accentText, accentSoft, onAccent, stOk, stOkT, stRun, stWarn, stWarnT, stFail, stSkip, stLock, stBlock, okSoft, runSoft, warnSoft, failSoft, skipSoft, lockSoft, blockSoft, focus)
+- readonly property string count: 2
+  (shadow, shadowSm)
+- readonly property int/real (geometry) count: 21
+- st* color attributes: 9
+- *-soft status background color attributes (excluding accentSoft): 7
+Result: 40 colors + 2 shadow strings (42 theme values) * 2 modes; status family 9+7 confirmed.
+
+## 5. 05 Section 60 Target Component Tree Inventory (R-002)
+Inventory of 05_UI_MAPPING.md §60:
+- shell: 2 (AppShell, PrimaryNavigationRail)
+- bookshelf: 6 (BookshelfView, BookshelfToolbar, BookGrid, BookCard, BookDetailPanel, ChapterList)
+- workbench: 8 (WorkbenchView, WorkbenchToolbar, PageListPanel, PageTile, ViewerCanvas, RegionOverlay, RegionInspector, TaskProgressPanel)
+- reader: 3 (ReaderView, ReaderToolbar, ReaderNavigator)
+- settings: 2 (SettingsView, SettingsSectionList)
+- windows: 12 (FloatingWindowHost, BookEditorWindow, ChapterEditorWindow, ConstraintWindow, TranslationMemoryWindow, TaskDetailWindow, RevisionHistoryWindow, ProviderEditorWindow, NetworkEditorWindow, ImportWindow, ExportWindow, RecycleBinWindow)
+- common: 6 (ConfirmDialog, DirtyCloseDialog, StatusBadge, ProgressBadge, EmptyState, ToastHost)
+Total Target Names in §60: 39
+Existing in src/ui/qml: 18
+Missing from src/ui/qml: 21
+(Missing details: workbench PageTile, ViewerCanvas [2]; reader ReaderToolbar, ReaderNavigator [2]; settings SettingsSectionList [1]; windows 11; common 5).
+Result: 39 targets = 18 existing + 21 missing confirmed.
+
+## 6. WorkbenchView Command Surfaces Verification (R-003)
+Command calls from WorkbenchView.qml to workbenchViewModel:
+- Toolbar navigation/mode (3 sites, 2 methods):
+  - stepPage(-1) (:80 -> :245)
+  - stepPage(1) (:81 -> :245)
+  - setViewerMode (:82)
+- Batch translate (3 sites, 3 methods):
+  - startTranslateAll (:83)
+  - startTranslateUntranslated (:84)
+  - startTranslateSelected (:85)
+- Command error (1 site, 1 method):
+  - clearCommandError (:143)
+- PageList (3 sites, 3 methods):
+  - selectPage (:160)
+  - togglePageSelected (:161)
+  - selectRangeTo (:162)
+- Inspector (5 sites, 5 methods):
+  - selectRegion (:195)
+  - setInspectorText (:196)
+  - saveInspector (:197)
+  - discardInspector (:198)
+  - startRegionCommand (:200)
+- TaskProgress (9 sites, 9 methods):
+  - pauseRun (:212)
+  - stopRun (:213)
+  - continueRun (:214)
+  - restartRun (:215)
+  - abandonRun (:216)
+  - retryFailedPages (:217)
+  - filterByStatus (:218)
+  - locatePipelinePage (:219)
+  - setPageFilter (:220)
+- Dirty confirm (1 site, 1 method):
+  - resolveDirtyConfirm (:231)
+Total: 24 distinct methods, 25 call sites. All line numbers verified against source.
