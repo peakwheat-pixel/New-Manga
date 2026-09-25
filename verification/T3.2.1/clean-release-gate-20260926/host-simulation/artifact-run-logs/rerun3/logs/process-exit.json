@@ -1,0 +1,11 @@
+﻿{
+    "run_id":  "host-simulation-20260926-rerun3",
+    "pid":  26304,
+    "exit_code":  null,
+    "exited_at_utc":  "2026-09-25T17:19:36.6630412+00:00",
+    "newmanga_residue_processes":  [
+
+                                   ],
+    "sqlite_lock_probe":  "EXCLUSIVE_OPEN_OK (no SQLite file lock held after exit)",
+    "library_db_sha256_after":  "41812e697de96c2987189f9a372b6ef2066953ae14c55160ccb8cbeda18bdada"
+}

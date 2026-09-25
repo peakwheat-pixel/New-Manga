@@ -1,0 +1,57 @@
+﻿[
+    {
+        "run":  1,
+        "pid":  49456,
+        "started_at_utc":  "2026-09-25T17:21:42.8174801+00:00",
+        "args":  "--data-root G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\cold-start-benchmark\\data-root",
+        "seconds_to_main_window_handle":  1.158,
+        "main_window_handle_ready":  true,
+        "graceful_close_requested":  true,
+        "exit_code":  0,
+        "forced_kill":  false
+    },
+    {
+        "run":  2,
+        "pid":  31720,
+        "started_at_utc":  "2026-09-25T17:21:46.6211765+00:00",
+        "args":  "--data-root G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\cold-start-benchmark\\data-root",
+        "seconds_to_main_window_handle":  1.102,
+        "main_window_handle_ready":  true,
+        "graceful_close_requested":  true,
+        "exit_code":  0,
+        "forced_kill":  false
+    },
+    {
+        "run":  3,
+        "pid":  43108,
+        "started_at_utc":  "2026-09-25T17:21:50.3526249+00:00",
+        "args":  "--data-root G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\cold-start-benchmark\\data-root",
+        "seconds_to_main_window_handle":  1.09,
+        "main_window_handle_ready":  true,
+        "graceful_close_requested":  true,
+        "exit_code":  0,
+        "forced_kill":  false
+    },
+    {
+        "run":  4,
+        "pid":  45452,
+        "started_at_utc":  "2026-09-25T17:21:54.0756124+00:00",
+        "args":  "--data-root G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\cold-start-benchmark\\data-root",
+        "seconds_to_main_window_handle":  1.078,
+        "main_window_handle_ready":  true,
+        "graceful_close_requested":  true,
+        "exit_code":  0,
+        "forced_kill":  false
+    },
+    {
+        "run":  5,
+        "pid":  47756,
+        "started_at_utc":  "2026-09-25T17:21:57.7783650+00:00",
+        "args":  "--data-root G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\cold-start-benchmark\\data-root",
+        "seconds_to_main_window_handle":  1.146,
+        "main_window_handle_ready":  true,
+        "graceful_close_requested":  true,
+        "exit_code":  0,
+        "forced_kill":  false
+    }
+]

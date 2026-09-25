@@ -1,0 +1,31 @@
+﻿{
+    "purpose":  "AC8 default data root (%LOCALAPPDATA%\\New Manga) probe with no overrides",
+    "expected_root":  "C:\\Users\\49745\\AppData\\Local\\New Manga",
+    "root_existed_before":  false,
+    "root_present_after":  true,
+    "root_created_by_probe":  true,
+    "root_contents":  [
+                          {
+                              "Name":  "managed"
+                          },
+                          {
+                              "Name":  "library.db"
+                          },
+                          {
+                              "Name":  "library.db-shm"
+                          },
+                          {
+                              "Name":  "library.db-wal"
+                          }
+                      ],
+    "pid":  2984,
+    "seconds_to_main_window_handle":  1.138,
+    "main_window_handle_ready":  true,
+    "graceful_close_requested":  true,
+    "exit_code":  0,
+    "forced_kill":  false,
+    "newmanga_residue":  [
+
+                         ],
+    "captured_at_utc":  "2026-09-25T17:22:53.6365788+00:00"
+}

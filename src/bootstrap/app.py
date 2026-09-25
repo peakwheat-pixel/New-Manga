@@ -89,7 +89,18 @@ from ui.viewmodels.reader.viewmodel import ReaderViewModel
 from ui.viewmodels.settings.viewmodel import SettingsViewModel
 from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
 
-QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
+def _resolve_resource_root() -> Path:
+    """Return the source or PyInstaller onedir root that contains bundled QML."""
+    if getattr(sys, "frozen", False):
+        bundle_root = getattr(sys, "_MEIPASS", None)
+        if not bundle_root:
+            raise RuntimeError("Frozen package is missing PyInstaller resource root")
+        return Path(bundle_root).resolve()
+    return Path(__file__).resolve().parents[1]
+
+
+_RESOURCE_ROOT = _resolve_resource_root()
+QML_PATH = _RESOURCE_ROOT / "ui" / "qml" / "Main.qml"
 
 
 @dataclass
