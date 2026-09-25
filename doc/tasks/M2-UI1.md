@@ -7,13 +7,15 @@ approval: approved_by_user_2026-09-25
 suggested_owner: Qoder
 owner: Qoder
 reviewer: Codex
+final_reviewer: Antigravity
 depends_on: [M2-D1]
 base_commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
 delivery_head: 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b
 reviewed_head: 784ce1831adc791882383681a743984c4b847d0b
+review_commit: 83a795b6717b8f4aed2d84cba3405e09a232ebd5
 branch: agent/qoder/M2-UI1-react-parity-visual-contract
 worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder
-integration_commit: 212efa54daee1d57e2c4510c56a022c9b4f65f67
+integration_commit: f730aa4c57fdd7fa48d496e3e8bc6585bf99f2e7
 ---
 
 # M2-UI1 — React Feature Parity & Visual Contract
@@ -70,3 +72,11 @@ integration_commit: 212efa54daee1d57e2c4510c56a022c9b4f65f67
 - AC1–AC5 已完成；AC4 的 NOT_RUN 计数已澄清为与契约 §4.3 一致的 10 项，其中焦点环虽有帧但因采集失败而降级。产品测试套件和 GUI 补采未运行，本集成没有将其记为 PASS。
 - 未决风险：页级 blocked 的 React 目标映射仍等用户/契约维护方裁决；C-1/D-6 来源契约修订与 C-5/C-6 后续产品取舍仍按 Review 归属处理。本次不释放 React 实现。
 - Master 并行推进同步：merge master a91b8f7ed0916b3beb74dd0b88797e82e2305112 的 Codex sync commit=4f20fc24523dfac672b20c9938917d978bdadb0b；提交图允许 fast-forward，但主 worktree 的 REBASELINE_PLAN.md/STATUS.md 有未提交 M2-I2 更新，本轮保留它们，master fast-forward 待这些修改归档后完成。
+
+## Antigravity 独立复审与最终 Integration Gate（2026-09-25）
+
+- 独立复审：[M2-UI1-23a5ac0](../reviews/M2-UI1-23a5ac0.md)，Antigravity 非作者复审，Review commit=`83a795b6717b8f4aed2d84cba3405e09a232ebd5`，decision=`APPROVED`；R-001～R-004 均闭环。Review 明确不授权 React/Tauri 实现，页级 `blocked` 映射仍为 `DEFERRED / CONTRACT_DECISION_REQUIRED`。
+- 本次集成固定 master base=`148981a339d12b45fa9a712b247ed92698349c36`；集成候选=`f730aa4c57fdd7fa48d496e3e8bc6585bf99f2e7`，包含 Qoder Handoff head=`784ce1831adc791882383681a743984c4b847d0b` 与 Review commit；候选以 `--no-ff` 合并既有范围受限的 UI1 文档集成，再纳入最终独立 Review。
+- Gate 结果：base→候选 `git diff --check` exit 0；`src/**` / `tests/**` 零差异；62 个文件均在 UI1 交付/证据或 Codex 治理路径；base、Delivery、Handoff、Review 均为候选祖先；Visual Baseline manifest 的 14/14 个截图 SHA-256 复核匹配（13 个可用、1 个降级）。详见 [`integration-final-83a.md`](../../verification/M2-UI1/integration-final-83a.md)。
+- 产品 `pytest` 与 GUI 采集未运行：该交付仅为设计契约、审查与证据，没有产品代码/测试改动；因此不将它们记录为 PASS。复审记录的 9 类未采状态仍为 `NOT_RUN`。
+- 集成结论：M2-UI1 AC1–AC5 与最终独立 Review 均满足，Task=`done`；integration commit=`f730aa4c57fdd7fa48d496e3e8bc6585bf99f2e7`。M2-C1/M2-S1 与 React/Tauri 生产实现授权不受本结论影响。
