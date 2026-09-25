@@ -28,7 +28,7 @@ releases a task.
 | First-wave Task | Status / Owner / Reviewer | Write authority and boundary |
 |---|---|---|
 | [M2-I1 Core Assembly Seam](tasks/M2-I1.md) | `ready` / ZCode / Codex | `src/bootstrap/**` and its assigned tests; split Core from Legacy Qt assembly, injectable adapters. |
-| [M2-I2 Qt-free Logic Extraction](tasks/M2-I2.md) | `ready` / Antigravity / Codex | Two named UI logic modules, frozen application destinations, named consumers/tests; no Domain Contract change. |
+| [M2-I2 Qt-free Logic Extraction](tasks/M2-I2.md) | `changes_requested` / Antigravity / Codex; Review of `5d4a465` found AC4 guard and evidence gaps; not integrated | Two named UI logic modules, frozen application destinations, named consumers/tests; no Domain Contract change. |
 | [M2-R1 Qt Runtime Feasibility Spike](tasks/M2-R1.md) | `ready` / DeepSeek Harness / Codex | Research, verification and Handoff only; resolve M2D1-22 in matching Windows runtime. |
 | [M2-UI1 React Feature Parity & Visual Contract](tasks/M2-UI1.md) | `ready` / Qoder / Codex | Design, verification and Handoff only; 25 QML files, tokens and visual/behavior parity. |
 

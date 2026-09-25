@@ -7,7 +7,7 @@ graph, acceptance boundaries and historical Task audit live in
 
 ## Future architecture milestone
 
-[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 已进入 `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION`；[M2-I1](tasks/M2-I1.md)、[M2-I2](tasks/M2-I2.md)、[M2-R1](tasks/M2-R1.md)、[M2-UI1](tasks/M2-UI1.md) 四项 `ready`，均由 Codex Review。M2-D1=`done`，integration=`100abfb`；M2-C1/M2-S1 未释放。T3.2.1 Legacy Production Gate 保持独立 OPEN。
+[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 已进入 `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION`；[M2-I1](tasks/M2-I1.md)、[M2-I2](tasks/M2-I2.md)、[M2-R1](tasks/M2-R1.md)、[M2-UI1](tasks/M2-UI1.md) 四项已释放（I2=`changes_requested`，未集成），均由 Codex Review。M2-D1=`done`，integration=`100abfb`；M2-C1/M2-S1 未释放。T3.2.1 Legacy Production Gate 保持独立 OPEN。
 
 ## Current order
 

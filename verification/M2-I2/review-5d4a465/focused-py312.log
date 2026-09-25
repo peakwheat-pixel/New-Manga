@@ -1,0 +1,10 @@
+SHELL=PowerShell
+INTERPRETER=G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+WORKTREE=G:/CODEX/New Manga.worktrees/M2-I2-codex-review
+HEAD=5d4a4650943507ca4053376d6acea36f146c704a
+COMMAND=python -m pytest -q -p no:cacheprovider tests/workbench tests/core/test_architecture.py
+PYTHONDONTWRITEBYTECODE=1
+........................................................................ [ 51%]
+...................................................................      [100%]
+139 passed in 12.61s
+EXIT=0
