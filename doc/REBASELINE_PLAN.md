@@ -28,7 +28,7 @@ releases a task.
 | First-wave Task | Status / Owner / Reviewer | Write authority and boundary |
 |---|---|---|
 | [M2-I1 Core Assembly Seam](tasks/M2-I1.md) | R2 Product Delivery `0766952` / Handoff head `cb45902`; Codex [R2 Review](reviews/M2-I1-0766952.md) `approved` / ZCode / Codex; integration/reconcile sequenced after I2 integration; not integrated | `src/bootstrap/**` and its assigned tests; split Core from Legacy Qt assembly, injectable adapters. |
-| [M2-I2 Qt-free Logic Extraction](tasks/M2-I2.md) | `changes_requested` / Antigravity / Codex; revised Review of `86ecb94` confirms P-01/S-02/S-03, but S-01 attribution and shim import-origin guard remain open; not integrated | Two named UI logic modules, frozen application destinations, named consumers/tests; no Domain Contract change. |
+| [M2-I2 Qt-free Logic Extraction](tasks/M2-I2.md) | `changes_requested` / Antigravity / Codex; Review of `a4705a9` confirms P-01/S-01–S-03 and source-specific seam guard, but static `__all__` validation and OpenSSL executable wording remain open; not integrated | Two named UI logic modules, frozen application destinations, named consumers/tests; no Domain Contract change. |
 | [M2-R1 Qt Runtime Feasibility Spike](tasks/M2-R1.md) | `ready` / DeepSeek Harness / Codex | Research, verification and Handoff only; resolve M2D1-22 in matching Windows runtime. |
 | [M2-UI1 React Feature Parity & Visual Contract](tasks/M2-UI1.md) | `changes_requested` / Qoder / Codex | Delivery `80311732`; [Codex Review](reviews/M2-UI1-8031173.md) requests corrections to state mapping and inventory counts; not integrated. Design, verification and Handoff only; 25 QML files, tokens and visual/behavior parity. |
 
