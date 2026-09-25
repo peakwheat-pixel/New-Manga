@@ -15,7 +15,7 @@ reviewed_head: 784ce1831adc791882383681a743984c4b847d0b
 review_commit: 83a795b6717b8f4aed2d84cba3405e09a232ebd5
 branch: agent/qoder/M2-UI1-react-parity-visual-contract
 worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder
-integration_commit: f730aa4c57fdd7fa48d496e3e8bc6585bf99f2e7
+integration_commit: 5242f64882d2189e177fff19a75ad16630693566
 ---
 
 # M2-UI1 — React Feature Parity & Visual Contract
@@ -76,7 +76,7 @@ integration_commit: f730aa4c57fdd7fa48d496e3e8bc6585bf99f2e7
 ## Antigravity 独立复审与最终 Integration Gate（2026-09-25）
 
 - 独立复审：[M2-UI1-23a5ac0](../reviews/M2-UI1-23a5ac0.md)，Antigravity 非作者复审，Review commit=`83a795b6717b8f4aed2d84cba3405e09a232ebd5`，decision=`APPROVED`；R-001～R-004 均闭环。Review 明确不授权 React/Tauri 实现，页级 `blocked` 映射仍为 `DEFERRED / CONTRACT_DECISION_REQUIRED`。
-- 本次集成固定 master base=`148981a339d12b45fa9a712b247ed92698349c36`；集成候选=`f730aa4c57fdd7fa48d496e3e8bc6585bf99f2e7`，包含 Qoder Handoff head=`784ce1831adc791882383681a743984c4b847d0b` 与 Review commit；候选以 `--no-ff` 合并既有范围受限的 UI1 文档集成，再纳入最终独立 Review。
-- Gate 结果：base→候选 `git diff --check` exit 0；`src/**` / `tests/**` 零差异；62 个文件均在 UI1 交付/证据或 Codex 治理路径；base、Delivery、Handoff、Review 均为候选祖先；Visual Baseline manifest 的 14/14 个截图 SHA-256 复核匹配（13 个可用、1 个降级）。详见 [`integration-final-83a.md`](../../verification/M2-UI1/integration-final-83a.md)。
+- 本轮开工核对指定 master base=`148981a339d12b45fa9a712b247ed92698349c36`。集成过程中 master 前进到 `d13b0b11c169b50024370d16b6cb9394de9a46f5`（包含较早的 UI1 R2 integration `ac521cf` 与后续治理提交）；Codex 在隔离工作树保留该最新主线，并以最终 Integration merge=`5242f64882d2189e177fff19a75ad16630693566` 合入最新 Review 与治理更新。该 merge 的父提交包含最新 master 与 Review 完整的候选。
+- Gate 结果：固定 base→最终 integration merge 的 `git diff --check` exit 0；`src/**` / `tests/**` 零差异；所有改动均在 UI1 交付/证据或 Codex 治理路径；固定 base、Delivery、Handoff、Review 与最新 master 均为 integration merge 祖先；Visual Baseline manifest 的 14/14 个截图 SHA-256 复核匹配（13 个可用、1 个降级）。详见 [`integration-final-83a.md`](../../verification/M2-UI1/integration-final-83a.md)。
 - 产品 `pytest` 与 GUI 采集未运行：该交付仅为设计契约、审查与证据，没有产品代码/测试改动；因此不将它们记录为 PASS。复审记录的 9 类未采状态仍为 `NOT_RUN`。
-- 集成结论：M2-UI1 AC1–AC5 与最终独立 Review 均满足，Task=`done`；integration commit=`f730aa4c57fdd7fa48d496e3e8bc6585bf99f2e7`。M2-C1/M2-S1 与 React/Tauri 生产实现授权不受本结论影响。
+- 集成结论：M2-UI1 AC1–AC5 与最终独立 Review 均满足，Task=`done`；integration commit=`5242f64882d2189e177fff19a75ad16630693566`。M2-C1/M2-S1 与 React/Tauri 生产实现授权不受本结论影响。
