@@ -1,11 +1,12 @@
-Task: T3.2.1-REPAIR-14 Codex integration verification
+Task: T3.2.1-REPAIR-14 post-integration verification
+Integration commit: 296131b57a4c3660949ecbdfb6003c6201023dab
 Working tree: G:\CODEX\New Manga.worktrees\T3.2.1-codex-repair-14-integration
 Base HEAD: 75fa4d796807e52c7e72752bbaeedbeb63064f37
 Shell: Windows PowerShell 7.6.6
 Venv Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
 Python version: Python 3.12.3
 Command: & 'G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe' -m pytest tests/ui_shell tests/reading_export/test_qml_contract.py tests/core/test_bootstrap.py
-Run started: 2026-09-25T16:20:53.7966782+08:00
+Run started: 2026-09-25T16:23:50.5666427+08:00
 Output:
 ============================= test session starts =============================
 platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
@@ -27,7 +28,7 @@ tests\ui_shell\test_settings_viewmodel.py ........................       [ 81%]
 tests\reading_export\test_qml_contract.py .............                  [ 88%]
 tests\core\test_bootstrap.py .....................                       [100%]
 
-============================ 184 passed in 13.10s =============================
+============================ 184 passed in 12.52s =============================
 
 Exit Code: 0
-Run finished: 2026-09-25T16:21:07.6967007+08:00
+Run finished: 2026-09-25T16:24:03.8284941+08:00

@@ -1,9 +1,8 @@
-Task: T3.2.1-REPAIR-14 integration whitespace check
-Working tree: G:\CODEX\New Manga.worktrees\T3.2.1-codex-repair-14-integration
+Task: T3.2.1-REPAIR-14 final staged whitespace check
+Integration source commit: 296131b57a4c3660949ecbdfb6003c6201023dab
+Candidate includes Task/STATUS/Plan closure records
 Base HEAD: 75fa4d796807e52c7e72752bbaeedbeb63064f37
 Shell: Windows PowerShell 7.6.6
 Command: git diff --cached --check 75fa4d796807e52c7e72752bbaeedbeb63064f37
-Output:
-
 Exit Code: 0
-Run time: 2026-09-25T16:22:08.2267939+08:00
+Run time: 2026-09-25T16:40:02.0372101+08:00
