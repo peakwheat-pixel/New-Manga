@@ -439,7 +439,7 @@ T3.1.1 VERIFIED_COMPLETE @ 0c70e44
         ↓
 T3.2.1 implementation authorization (PASS TO START) @ c2fcb1c
         ↓
-T3.2.1 isolated repairs; full Release Gate OPEN (AC3 interactive BLOCKED at image import)
+T3.2.1 isolated repairs; full Release Gate OPEN (AC3 BLOCKED pending the complete fixed-package workflow; REPAIR-13 in_progress, Sandbox not completed)
         ↓
 final independent Review → Codex integration evidence
 ```
