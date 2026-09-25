@@ -7,7 +7,7 @@ graph, acceptance boundaries and historical Task audit live in
 
 ## Future architecture milestone
 
-[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 已进入 `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION`；[M2-I1](tasks/M2-I1.md)、[M2-I2](tasks/M2-I2.md)、[M2-R1](tasks/M2-R1.md) 均已独立 Review、集成并标 `done`（I1 R3 DeepSeek Harness Review approved，integration=`cff1e0a`）；[M2-UI1](tasks/M2-UI1.md) 保持其独立 Task 状态。M2-D1=`done`，integration=`100abfb`；M2-C1/M2-S1 未释放。T3.2.1 Legacy Production Gate 保持独立 OPEN。
+[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 已进入 `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION`；[M2-I1](tasks/M2-I1.md)、[M2-I2](tasks/M2-I2.md)、[M2-R1](tasks/M2-R1.md) 均已独立 Review、集成并标 `done`（I1 R3 DeepSeek Harness Review approved，integration=`cff1e0a`）；[M2-UI1](tasks/M2-UI1.md) 已独立 Review、集成并标为 done（Antigravity Review approved，master integration=ac521cf）。M2-D1=`done`，integration=`100abfb`；M2-C1/M2-S1 未释放。T3.2.1 Legacy Production Gate 保持独立 OPEN。
 
 ## Current order
 

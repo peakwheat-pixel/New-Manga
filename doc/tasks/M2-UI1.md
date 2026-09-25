@@ -13,7 +13,7 @@ delivery_head: 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b
 reviewed_head: 784ce1831adc791882383681a743984c4b847d0b
 branch: agent/qoder/M2-UI1-react-parity-visual-contract
 worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder
-integration_commit: 212efa54daee1d57e2c4510c56a022c9b4f65f67
+integration_commit: ac521cf25cf8c1b25d5d5dc7e8bd9df4a294de79
 ---
 
 # M2-UI1 — React Feature Parity & Visual Contract
@@ -65,8 +65,16 @@ integration_commit: 212efa54daee1d57e2c4510c56a022c9b4f65f67
 ## Codex R2 复审与集成
 
 - R2 Review：[M2-UI1-23a5ac0-r2](../reviews/M2-UI1-23a5ac0-r2.md)，decision=approved；固定 base=6a68fdeb92d8a1c7903166a8076d6260bf8fa79a、Delivery=23a5ac00acc7f11bc7dc8c5eaec207957784fd9b、reviewed head=784ce1831adc791882383681a743984c4b847d0b。
-- 集成：保留 Qoder 原分支的 --no-ff 合并；integration commit=212efa54daee1d57e2c4510c56a022c9b4f65f67。集成起点 master=5803bd7b9e80ba780e7a7f12078b00b9178e6f86，merge-base=5d989bab6c5c8a24a5112303f95c2b8eea356bdc。
+- 历史集成：保留 Qoder 原分支的 --no-ff 合并，旧 integration commit=212efa54daee1d57e2c4510c56a022c9b4f65f67；当时起点 master=5803bd7b9e80ba780e7a7f12078b00b9178e6f86，merge-base=5d989bab6c5c8a24a5112303f95c2b8eea356bdc。当前主线集成见下节。
 - 集成后核验：diff --check 5803bd7b9e80ba780e7a7f12078b00b9178e6f86..212efa54daee1d57e2c4510c56a022c9b4f65f67 exit 0；diff --quiet 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a..212efa54daee1d57e2c4510c56a022c9b4f65f67 -- src tests exit 0；详细证据见 verification/M2-UI1/integration-212efa5.md。
 - AC1–AC5 已完成；AC4 的 NOT_RUN 计数已澄清为与契约 §4.3 一致的 10 项，其中焦点环虽有帧但因采集失败而降级。产品测试套件和 GUI 补采未运行，本集成没有将其记为 PASS。
 - 未决风险：页级 blocked 的 React 目标映射仍等用户/契约维护方裁决；C-1/D-6 来源契约修订与 C-5/C-6 后续产品取舍仍按 Review 归属处理。本次不释放 React 实现。
-- Master 并行推进同步：merge master a91b8f7ed0916b3beb74dd0b88797e82e2305112 的 Codex sync commit=4f20fc24523dfac672b20c9938917d978bdadb0b；提交图允许 fast-forward，但主 worktree 的 REBASELINE_PLAN.md/STATUS.md 有未提交 M2-I2 更新，本轮保留它们，master fast-forward 待这些修改归档后完成。
+- Master 并行推进同步（历史记录）：当时同步 master a91b8f7ed0916b3beb74dd0b88797e82e2305112 的 Codex sync commit=4f20fc24523dfac672b20c9938917d978bdadb0b；主 worktree 有未提交 M2-I2 更新，故当轮保留并暂缓 fast-forward。本次已基于最新 master=148981a339d12b45fa9a712b247ed92698349c36 完成主线集成，详见下节。
+
+## Codex Integration Gate — master
+
+- 独立 R2 Review：[Antigravity Review](../reviews/M2-UI1-23a5ac0.md)，decision=approved；review commit=2e31a4a54e712e571a0e4ee399ef89a1a416feb9，reviewed head / Handoff=784ce1831adc791882383681a743984c4b847d0b。门禁原件：verification/M2-UI1/reviewer-gates-23a5ac0.log。
+- 核验：R-001 至 R-004 与 reviewer gates 内容一致；14 帧 SHA-256 为 14/14 匹配；交付 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b 相对固定 base 的 src/** 与 tests/** 零差异；R2 授权范围及 git diff --check 通过。
+- Master 集成：集成基线=148981a339d12b45fa9a712b247ed92698349c36；Qoder R2 Delivery=23a5ac00acc7f11bc7dc8c5eaec207957784fd9b；Handoff=784ce1831adc791882383681a743984c4b847d0b；独立 Review commit=2e31a4a54e712e571a0e4ee399ef89a1a416feb9；master 集成 merge commit=ac521cf25cf8c1b25d5d5dc7e8bd9df4a294de79。
+- 集成后验证：git diff --check 148981a..ac521cf 通过；相对集成基线的 src/**、tests/** 零差异；未运行产品测试，本 Task 只交付设计契约与验证证据。
+- Task=done。React 实现、QML 修改与页级 blocked 视觉裁决仍不在本 Task 授权范围内。
