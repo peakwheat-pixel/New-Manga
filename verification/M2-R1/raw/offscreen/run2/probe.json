@@ -1,0 +1,226 @@
+{
+  "probe": "M2-R1 qt_platform_probe",
+  "platform_requested": "offscreen",
+  "pid": 22312,
+  "started_at": "2026-09-25 17:49:05",
+  "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\M2-R1-venv\\Scripts\\python.exe",
+  "frozen": false,
+  "cwd": "G:\\CODEX\\New Manga.worktrees\\M2-R1-deepseek",
+  "steps": [
+    {
+      "step": "QGuiApplication",
+      "result": {
+        "PySide6.__version__": "6.11.2",
+        "qVersion": "6.11.2",
+        "app_created_by_probe": true,
+        "platformName": "offscreen",
+        "screens": [
+          {
+            "name": "",
+            "geometry": [
+              0,
+              0,
+              800,
+              800
+            ],
+            "devicePixelRatio": 1.0
+          }
+        ],
+        "screen_count": 1,
+        "topLevelWindows": 0
+      },
+      "ok": true,
+      "seconds": 0.0637
+    },
+    {
+      "step": "QFontDatabase",
+      "result": {
+        "family_count": 0,
+        "families_sample": [],
+        "hasFamily": {
+          "Source Han Sans K Bold": false,
+          "Source Han Sans Bold": false,
+          "Microsoft YaHei": false,
+          "SimSun": false,
+          "Arial": false
+        },
+        "default_QFont_family": "Sans Serif",
+        "systemFont_GeneralFont": "Sans Serif",
+        "writingSystems": 0
+      },
+      "ok": true,
+      "seconds": 0.001
+    },
+    {
+      "step": "QtFontCatalog.resolve",
+      "result": {
+        "Source Han Sans K Bold": {
+          "requested_family": "Source Han Sans K Bold",
+          "resolved_family": "Sans Serif",
+          "available": false
+        },
+        "Missing Family XYZ": {
+          "requested_family": "Missing Family XYZ",
+          "resolved_family": "Sans Serif",
+          "available": false
+        }
+      },
+      "ok": true,
+      "seconds": 0.0335
+    },
+    {
+      "step": "QFontMetrics",
+      "result": {
+        "family_used": "Sans Serif",
+        "pixel_size": 32,
+        "height": 32,
+        "ascent": 32,
+        "descent": 0,
+        "advance_latin": 160,
+        "advance_cjk": 128,
+        "advance_space": 32,
+        "inFont_cjk": false
+      },
+      "ok": true,
+      "seconds": 0.0003
+    },
+    {
+      "step": "QtTextLayoutEngine.layout",
+      "result": {
+        "horizontal": {
+          "wall_seconds": 0.0001,
+          "item_count": 1,
+          "extents_width": 416,
+          "extents_height": 32.0,
+          "fits": true,
+          "font_available": false,
+          "resolved_family": "Sans Serif",
+          "first_items": [
+            {
+              "text": "漫画排版テスト Manga",
+              "x": 0.0,
+              "y": 32.0,
+              "per_char": false
+            }
+          ]
+        },
+        "vertical": {
+          "wall_seconds": 7e-05,
+          "item_count": 6,
+          "extents_width": 56.0,
+          "extents_height": 140,
+          "fits": true,
+          "font_available": false,
+          "resolved_family": "Sans Serif",
+          "first_items": [
+            {
+              "text": "縦",
+              "x": 28.0,
+              "y": 28,
+              "per_char": true
+            },
+            {
+              "text": "書",
+              "x": 28.0,
+              "y": 56,
+              "per_char": true
+            },
+            {
+              "text": "き",
+              "x": 28.0,
+              "y": 84,
+              "per_char": true
+            },
+            {
+              "text": "テ",
+              "x": 28.0,
+              "y": 112,
+              "per_char": true
+            },
+            {
+              "text": "ス",
+              "x": 28.0,
+              "y": 140,
+              "per_char": true
+            }
+          ]
+        }
+      },
+      "ok": true,
+      "seconds": 0.0017
+    },
+    {
+      "step": "QtImageCompositor",
+      "result": {
+        "input_base_png_sha256": "a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6",
+        "input_base_png_bytes": 682,
+        "input_clean_png_sha256": "a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6",
+        "compose_page": {
+          "wall_seconds": 0.01454,
+          "output_png_bytes": 1095,
+          "output_png_sha256": "656d0ac6e5aa7d28cab996c22fc28184db70008eff305b3afe55cacc9eb6b6fa",
+          "identical_to_input": false,
+          "decoded_size": [
+            600,
+            200
+          ],
+          "image_diff_vs_input": {
+            "comparable": true,
+            "width": 600,
+            "height": 200,
+            "total_pixels": 120000,
+            "differing_pixels": 13583,
+            "non_white_pixels_in_b": 13583
+          },
+          "same_process_rerun_sha256_equal": true
+        },
+        "compose_region": {
+          "wall_seconds": 0.0086,
+          "output_png_bytes": 1034,
+          "output_png_sha256": "83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93",
+          "identical_to_input": false,
+          "image_diff_vs_input": {
+            "comparable": true,
+            "width": 600,
+            "height": 200,
+            "total_pixels": 120000,
+            "differing_pixels": 10933,
+            "non_white_pixels_in_b": 10933
+          }
+        }
+      },
+      "ok": true,
+      "seconds": 0.0826
+    },
+    {
+      "step": "window_census",
+      "result": {
+        "top_level_windows": 0,
+        "visible_windows": 0,
+        "visible_details": []
+      },
+      "ok": true,
+      "seconds": 0.0012
+    },
+    {
+      "step": "eventLoopDrain",
+      "result": {
+        "available": true,
+        "topLevelWindows_after": 0
+      },
+      "ok": true,
+      "seconds": 0.0001
+    }
+  ],
+  "errors": [],
+  "exit_code": 0,
+  "qt_log_platform_env": {
+    "QT_QPA_PLATFORM": "offscreen",
+    "QT_QPA_PLATFORM_PLUGIN_PATH": null,
+    "QT_LOGGING_RULES": null,
+    "QT_QPA_FONTDIR": null
+  },
+  "workdir": "verification\\M2-R1\\raw\\offscreen\\run2",
+  "finished_at": "2026-09-25 17:49:05"
+}

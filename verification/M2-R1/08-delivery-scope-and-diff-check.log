@@ -1,0 +1,131 @@
+# M2-R1 delivery scope and diff check (AC5)
+# generated: 2026-09-25 17:54:15 +08:00
+# fixed base       = 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+# owner start HEAD = 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+# delivery head    = 87afdd2e87c46bc8f19d53e932fb641c2457e45b
+# worktree=G:/CODEX/New Manga.worktrees/M2-R1-deepseek  branch=agent/deepseek/M2-R1-qt-runtime-feasibility
+
+== [0] ancestry assertions ==
+base is ancestor of owner-start      : True
+owner-start is ancestor of delivery  : True
+delivery is ancestor of current HEAD : True
+
+== [1] commits from base to delivery (informational) ==
+87afdd2 research(m2-r1): measure Qt runtime feasibility on windows/offscreen/minimal
+5d989ba docs(m2): align architecture status with first-wave release
+58fa0df docs(m2): release bounded first-wave migration tasks
+note: the commits between base and owner-start are Codex registration commits (doc/** only);
+      they are NOT part of the Owner write set and were not modified by this Task.
+
+== [2] git diff --name-status owner-start..delivery (the Owner write set) ==
+A	doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md
+M	doc/tasks/M2-R1.md
+A	verification/M2-R1/01-environment.log
+A	verification/M2-R1/02-probe-windows.log
+A	verification/M2-R1/03-probe-offscreen.log
+A	verification/M2-R1/04-probe-minimal.log
+A	verification/M2-R1/05-supplementary-font-remediation.log
+A	verification/M2-R1/06-eventloop-and-window-census.log
+A	verification/M2-R1/07-evidence-manifest.md
+A	verification/M2-R1/07b-artifact-hashes.log
+A	verification/M2-R1/probes/qt_eventloop_probe.py
+A	verification/M2-R1/probes/qt_font_remediation_probe.py
+A	verification/M2-R1/probes/qt_platform_probe.py
+A	verification/M2-R1/raw/loop-minimal-run1/probe.json
+A	verification/M2-R1/raw/loop-minimal-run2/probe.json
+A	verification/M2-R1/raw/loop-offscreen-run1/probe.json
+A	verification/M2-R1/raw/loop-offscreen-run2/probe.json
+A	verification/M2-R1/raw/loop-windows-run1/probe.json
+A	verification/M2-R1/raw/loop-windows-run2/probe.json
+A	verification/M2-R1/raw/minimal/run1/input_base.png
+A	verification/M2-R1/raw/minimal/run1/input_clean.png
+A	verification/M2-R1/raw/minimal/run1/output_page.png
+A	verification/M2-R1/raw/minimal/run1/output_region.png
+A	verification/M2-R1/raw/minimal/run1/probe.json
+A	verification/M2-R1/raw/minimal/run2/input_base.png
+A	verification/M2-R1/raw/minimal/run2/input_clean.png
+A	verification/M2-R1/raw/minimal/run2/output_page.png
+A	verification/M2-R1/raw/minimal/run2/output_region.png
+A	verification/M2-R1/raw/minimal/run2/probe.json
+A	verification/M2-R1/raw/minimal/run3/input_base.png
+A	verification/M2-R1/raw/minimal/run3/input_clean.png
+A	verification/M2-R1/raw/minimal/run3/output_page.png
+A	verification/M2-R1/raw/minimal/run3/output_region.png
+A	verification/M2-R1/raw/minimal/run3/probe.json
+A	verification/M2-R1/raw/offscreen/run1/input_base.png
+A	verification/M2-R1/raw/offscreen/run1/input_clean.png
+A	verification/M2-R1/raw/offscreen/run1/output_page.png
+A	verification/M2-R1/raw/offscreen/run1/output_region.png
+A	verification/M2-R1/raw/offscreen/run1/probe.json
+A	verification/M2-R1/raw/offscreen/run2/input_base.png
+A	verification/M2-R1/raw/offscreen/run2/input_clean.png
+A	verification/M2-R1/raw/offscreen/run2/output_page.png
+A	verification/M2-R1/raw/offscreen/run2/output_region.png
+A	verification/M2-R1/raw/offscreen/run2/probe.json
+A	verification/M2-R1/raw/offscreen/run3/input_base.png
+A	verification/M2-R1/raw/offscreen/run3/input_clean.png
+A	verification/M2-R1/raw/offscreen/run3/output_page.png
+A	verification/M2-R1/raw/offscreen/run3/output_region.png
+A	verification/M2-R1/raw/offscreen/run3/probe.json
+A	verification/M2-R1/raw/smoke/input_base.png
+A	verification/M2-R1/raw/smoke/input_clean.png
+A	verification/M2-R1/raw/smoke/output_page.png
+A	verification/M2-R1/raw/smoke/output_region.png
+A	verification/M2-R1/raw/smoke/probe.json
+A	verification/M2-R1/raw/supp-minimal-appfont/output_page_minimal_appfont.png
+A	verification/M2-R1/raw/supp-minimal-appfont/probe.json
+A	verification/M2-R1/raw/supp-minimal-fontdir/output_page_minimal_fontdir.png
+A	verification/M2-R1/raw/supp-minimal-fontdir/probe.json
+A	verification/M2-R1/raw/supp-offscreen-appfont/output_page_offscreen_appfont.png
+A	verification/M2-R1/raw/supp-offscreen-appfont/probe.json
+A	verification/M2-R1/raw/supp-offscreen-baseline/output_page_offscreen_baseline.png
+A	verification/M2-R1/raw/supp-offscreen-baseline/probe.json
+A	verification/M2-R1/raw/supp-offscreen-fontdir/output_page_offscreen_fontdir.png
+A	verification/M2-R1/raw/supp-offscreen-fontdir/probe.json
+A	verification/M2-R1/raw/windows/run1/input_base.png
+A	verification/M2-R1/raw/windows/run1/input_clean.png
+A	verification/M2-R1/raw/windows/run1/output_page.png
+A	verification/M2-R1/raw/windows/run1/output_region.png
+A	verification/M2-R1/raw/windows/run1/probe.json
+A	verification/M2-R1/raw/windows/run2/input_base.png
+A	verification/M2-R1/raw/windows/run2/input_clean.png
+A	verification/M2-R1/raw/windows/run2/output_page.png
+A	verification/M2-R1/raw/windows/run2/output_region.png
+A	verification/M2-R1/raw/windows/run2/probe.json
+A	verification/M2-R1/raw/windows/run3/input_base.png
+A	verification/M2-R1/raw/windows/run3/input_clean.png
+A	verification/M2-R1/raw/windows/run3/output_page.png
+A	verification/M2-R1/raw/windows/run3/output_region.png
+A	verification/M2-R1/raw/windows/run3/probe.json
+changed_path_count=79
+
+== [3] allowed-path assertion on owner-start..delivery ==
+allowed paths: doc/tasks/M2-R1.md | doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md | doc/handoffs/M2-R1-*.md | verification/M2-R1/**
+OUT_OF_SCOPE_COUNT=0
+
+== [4] forbidden-path assertion (must be zero) ==
+forbidden_hits=0
+
+== [5] git diff --check owner-start..delivery ==
+exit=0
+(no whitespace/conflict diagnostics)
+
+== [6] git diff --stat owner-start..delivery ==
+ .../M2-R1/raw/windows/run3/output_region.png       | Bin 0 -> 2152 bytes
+ verification/M2-R1/raw/windows/run3/probe.json     | 252 +++++++++++
+ 79 files changed, 4583 insertions(+), 11 deletions(-)
+
+== [7] isolated-experiment hygiene ==
+__pycache__ dirs under src/ (must be 0)           : 0
+__pycache__ dirs under tests/ (must be 0)         : 0
+requirements.txt / -dev.txt changed in Owner diff : False
+probe scripts importing bootstrap.app             : 0
+probe scripts importing sqlite3                   : 0
+probe write targets                               : all --workdir/--json targets are inside verification/M2-R1/raw
+production interpreter untouched                  : C:\Python314 (3.14.6) still has no PySide6; experiment ran only from %TEMP%\M2-R1-venv
+
+== [8] working tree at the time this log was generated ==
+?? verification/M2-R1/08-delivery-scope-and-diff-check.log
+note: this log file and doc/handoffs/M2-R1-*.md are added by the documentation commit that follows the delivery
+      commit; they contain no production change and stay inside the authorized write set. This log is therefore
+      intentionally absent from 07b-artifact-hashes.log (which snapshots the delivery commit's own files).
