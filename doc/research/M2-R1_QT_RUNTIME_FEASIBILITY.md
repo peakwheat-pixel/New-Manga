@@ -8,7 +8,7 @@
 | Owner | DeepSeek Harness（Reviewer/Integrator = Codex，禁止自审） |
 | 固定代码 base | `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`（`master`） |
 | Owner worktree HEAD（开工） | `5d989bab6c5c8a24a5112303f95c2b8eea356bdc`（`agent/deepseek/M2-R1-qt-runtime-feasibility`） |
-| Delivery head | 本报告与 `verification/M2-R1/**` 随 Delivery commit 固定；准确 hash 与提交列表见本 Task 的 Handoff（`doc/handoffs/M2-R1-<delivery>.md`） |
+| Delivery head | `87afdd2e87c46bc8f19d53e932fb641c2457e45b`（本报告与 `verification/M2-R1/**` 在该提交固定；提交列表见 [Handoff](../handoffs/M2-R1-87afdd2.md)） |
 | 实验日期 | 2026-09-25（Asia/Shanghai） |
 | 被测环境 | **Python 3.12.3 + PySide6_Essentials 6.11.2 + shiboken6 6.11.2 + Qt 6.11.2 + Windows 11 专业版 10.0.26200（隔离 venv）** |
 | 环境裁定 | **与生产口径匹配 → 结论有效**（不记 `BLOCKED`；依据见 §2） |
@@ -225,6 +225,7 @@ hwnd=0x11609e8 class='IME'                              title='Default IME' visi
 | `05-supplementary-font-remediation.log` | 字体补救 5 个条件（offscreen/minimal × baseline/fontdir/appfont） |
 | `06-eventloop-and-window-census.log` | 事件循环 3 平台 × 2 次 + 完整 HWND 普查 |
 | `07-evidence-manifest.md` | 证据清单、覆盖表与 AC 对照 |
+| `07b-artifact-hashes.log` | Delivery commit 时刻 `verification/M2-R1/**` 全部文件的 sha256（完整性复核） |
 | `08-delivery-scope-and-diff-check.log` | 交付范围断言、`git diff --check`、`src/**`/`tests/**`/依赖零修改证明 |
 | `probes/qt_platform_probe.py` | 主矩阵探针（生产适配器只读驱动 + 像素/hash/窗口度量） |
 | `probes/qt_font_remediation_probe.py` | 字体补救边界探针 |
