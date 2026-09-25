@@ -10,8 +10,8 @@ import workbench_helpers  # noqa: F401  (sys.path injection)
 from workbench_helpers import fail_first_region_step, make_pipeline
 
 from domain.tasks.models import PipelineScope, ScopeType
+from application.tasks.projection import build_projection
 from ui.models.tasks.page_list_model import WorkbenchPageListModel
-from ui.models.tasks.projection import build_projection
 
 
 def make_model(failed=("p2",)):

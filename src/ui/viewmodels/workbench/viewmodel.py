@@ -37,17 +37,17 @@ from domain.tasks.models import (
     PipelineScope,
     ScopeType,
 )
-from ui.models.tasks.page_list_model import WorkbenchPageListModel
-from ui.models.tasks.projection import (
+from application.editing.region_canvas import (
+    RegionCanvasError,
+    normalized_to_page_geometry,
+)
+from application.tasks.projection import (
     STATUS_WAITING,
     TaskProjection,
     build_projection,
     step_label,
 )
-from ui.viewmodels.workbench.region_canvas import (
-    RegionCanvasError,
-    normalized_to_page_geometry,
-)
+from ui.models.tasks.page_list_model import WorkbenchPageListModel
 from ui.viewmodels.workbench.run_controller import (
     RestoreLatchClosedError,
     RunController,
@@ -222,7 +222,7 @@ class WorkbenchViewModel(QObject):
         self.runStatusChanged.emit()
 
     def _idle_projection(self) -> TaskProjection:
-        from ui.models.tasks.projection import PageProjectionRow
+        from application.tasks.projection import PageProjectionRow
 
         rows = tuple(
             PageProjectionRow(
