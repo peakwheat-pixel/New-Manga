@@ -39,5 +39,5 @@ Results: whitespace/scope check passed; src/** and tests/** were unchanged by th
 ## Governance
 
 - doc/tasks/M2-UI1.md: status=done, integration_commit=ac521cf25cf8c1b25d5d5dc7e8bd9df4a294de79.
-- doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, and doc/12_ROADMAP.md now point to the approved review and master integration.
+- doc/REBASELINE_PLAN.md, doc/STATUS.md, doc/00_INDEX.md, doc/12_ROADMAP.md, and doc/tasks/README.md now point to the approved review and master integration.
 - The master integration is a no-ff merge based on 148981a; it preserves the current M2-I1 and M2-I2 mainline state.
