@@ -159,6 +159,24 @@ def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServi
         source_styles=SourceStyleService(PixelSourceStyleAnalyzer()),
     )
 
+    try:
+        return _assemble_legacy_qt_layer(core)
+    except Exception:
+        # P-01 (M2-I1 Review): the historical assemble_services covered its
+        # whole body with close-on-error. The Core assembly closes its own
+        # span; this restores the remaining span — a failure while building
+        # the Qt viewmodels or their signal wiring must not leak the SQLite
+        # connection (and its Windows file lock).
+        core.conn.close()
+        raise
+
+
+def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
+    """Build the QObject viewmodels and signal wiring over ``CoreServices``.
+
+    Runs inside :func:`assemble_services`' close-on-error span: any failure
+    here closes ``core.conn`` before propagating.
+    """
     # --- Legacy Qt / QML assembly: QObject viewmodels over the Core stack ---
     navigation = NavigationViewModel()
 

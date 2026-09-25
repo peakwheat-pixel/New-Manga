@@ -34,6 +34,18 @@
 - **I1-AC7 PASS**：1226 vs 1218 全量对照，skip 集合一致，失败为零（log 05/06）。
 - **I1-AC8 PASS**：零 React/Tauri/IPC 产物（log 03）。
 
+## R2 修订（2026-09-25，回应 [Review a89447f](../../doc/reviews/M2-I1-a89447f.md) `changes_requested`）
+
+| 项 | 修复 | 判别证据 |
+|---|---|---|
+| **P-01 (P1)** Qt ViewModel/接线段失败时连接泄漏 | `assemble_services` 把 Qt 层装配移入 `_assemble_legacy_qt_layer(core)` 并以 `try/except: core.conn.close(); raise` 覆盖（恢复原版整体 close-on-error 语义；成功路径不提前关闭） | `08-p01-cleanup-probe.log`：unfixed head a89447f（git archive 副本）`CONNECTION_CLOSED=False`→FAIL；修订树 `True`→PASS（与 Review 的 `qt-assembly-failure-probe.log` 同口径）。回归测试 `test_assemble_services_closes_connection_when_qt_assembly_fails`：未修复树上实测 FAIL、修复版 PASS（含成功路径 SELECT 断言 + win32 库文件 unlink 锁判别） |
+| **S-01 (P2)** 无 Qt 解释器整模块跳过 | `tests/core/test_core_assembly.py` 移除模块级 `pytest.importorskip("PySide6")`；唯一需要真实 Qt 实例的注入断言测试改函数内局部 skip；identity 测试改用 Qt-free stub analyzer | `10-r2-qtfree-probes.log`：Python 3.14.6（无 PySide6）`7 passed, 1 skipped, exit 0`（Review 记录的修订前结果为 `1 skipped`、pytest exit 5） |
+
+R2 复跑（venv 3.12.3 + PySide6 6.11.2，Git Bash，`PYTHONDONTWRITEBYTECODE=1`，`QT_QPA_PLATFORM` 不设）：
+- Task 指定套件 `09-r2-task-suite.log`：**468 passed, 5 skipped, exit 0**（467+1=新增 P-01 回归测试；skip 集与 R1/base 相同）。
+- 全量 + 入口 `11-r2-full-suite-and-entry.log`：全量 **1227 passed, 5 skipped, exit 0**（1226+1）；compileall/smoke/screenshot exit 0（真实 1920×1200 帧）；真实人工 GUI 交互仍 **NOT_RUN**。
+- P-01 判别探针脚本：`probe_qt_assembly_cleanup.py`（子进程强制 NavigationViewModel 失败，探针自身恒 EXIT=0，结论由 stdout 承载）。
+
 ## 设计说明（供 Review）
 
 - `src/bootstrap/core_assembly.py`：Qt-free Core Assembly。`assemble_core_services()` 承接原 `assemble_services` 的全部持久化副作用（顺序不变），Qt 适配器全部经 keyword-only 注入。`_ManagedPageImageSource` 与 `_render_content_decoder` 保留函数体内惰性 Qt 导入（M2-D1 M2D1-10/15 已盘点的 DECOUPLE 形态，替代实现属后续切片），模块导入期零 Qt。

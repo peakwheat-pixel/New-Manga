@@ -6,6 +6,10 @@
 ``bootstrap.app`` 必须失败——这个对照证明 blocker 有效，Core Assembly
 的通过是 seam 真实存在，而不是探针失效。
 
+S-01（M2-I1 Review）：本文件**不得**在模块级 importorskip PySide6。
+除注入 Qt 实例断言的测试（函数内局部 skip）外，全部探针在未安装
+PySide6 的解释器上必须实际执行——Core seam 的意义正是无 Qt 可验证。
+
 装配 seam（I1-AC4）：Qt 适配器只经 keyword-only 参数注入 Core；本模块
 用 AST 静态判别 + 运行期 identity 断言两种方式验证 Core 从不构造
 ``QtImageDecoder``/``QtFontCatalog``/``QtTextLayoutEngine``/
@@ -31,8 +35,6 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
-
-pytest.importorskip("PySide6")
 
 DOMAIN_ROOT = SRC_ROOT / "domain"
 PORTS_ROOT = SRC_ROOT / "ports"
@@ -201,12 +203,10 @@ def test_core_assembly_never_imports_or_constructs_qt_adapters() -> None:
 
 def test_core_assembly_uses_injected_adapters_verbatim(tmp_path: Path) -> None:
     # 运行期判别：identity 断言证明注入对象被原样使用——若 Core 忽略
-    # 注入、自行构造 Qt 实现，这里立即失败。
+    # 注入、自行构造 Qt 实现，这里立即失败。S-01：本测试经 stub
+    # analyzer 保持 Qt-free，在未安装 PySide6 的解释器上也实际执行。
     from application.translation.color.service import SourceStyleService
     from bootstrap.core_assembly import assemble_core_services
-    from infrastructure.rendering.pixel_source_style import (
-        PixelSourceStyleAnalyzer,
-    )
 
     decoder = _PassthroughDecoder()
     marker_font_catalog = object()
@@ -219,7 +219,7 @@ def test_core_assembly_uses_injected_adapters_verbatim(tmp_path: Path) -> None:
         font_catalog=marker_font_catalog,
         layout_engine=marker_layout,
         compositor=marker_compositor,
-        source_styles=SourceStyleService(PixelSourceStyleAnalyzer()),
+        source_styles=SourceStyleService(_StubStyleAnalyzer()),
     )
     try:
         assert core.importer._decoder is decoder
@@ -234,7 +234,9 @@ def test_legacy_assembly_injects_the_qt_adapters_into_the_core(
     tmp_path: Path,
 ) -> None:
     # 生产路径（I1-AC3/AC4）：Legacy Qt 装配构造 Qt 适配器并注入 Core；
-    # 组合后的 AppServices 持有的正是这些 Qt 实例。
+    # 组合后的 AppServices 持有的正是这些 Qt 实例。唯一需要真实
+    # PySide6 的测试（S-01：局部 skip，不拖累整模块）。
+    pytest.importorskip("PySide6")
     from bootstrap.app import assemble_services
     from infrastructure.importing import QtImageDecoder
     from infrastructure.rendering.font_catalog import QtFontCatalog
@@ -318,3 +320,10 @@ class _PassthroughDecoder:
 
     def decode(self, data: bytes):  # pragma: no cover - never called
         raise AssertionError("the identity test does not import pages")
+
+
+class _StubStyleAnalyzer:
+    """Qt-free stand-in for the ``SourceStyleAnalyzer`` port."""
+
+    def analyze(self, original_png: bytes, box):  # pragma: no cover - never called
+        raise AssertionError("the identity test does not render")

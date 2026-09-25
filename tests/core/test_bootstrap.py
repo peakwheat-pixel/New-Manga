@@ -223,6 +223,49 @@ def test_assemble_services_refuses_newer_schema(tmp_path: Path) -> None:
         assemble_services(db_path, tmp_path / "managed")
 
 
+def test_assemble_services_closes_connection_when_qt_assembly_fails(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """P-01（M2-I1 Review R1）：Core 装配成功、Qt ViewModel 阶段失败时，
+    连接必须被关闭——旧版 ``assemble_services`` 的整体 close-on-error
+    语义；成功路径不得提前关闭。"""
+    import bootstrap.app as app_module
+    import infrastructure.sqlite.connection as sqlite_connection
+
+    # 成功路径：装配完成后连接必须仍然可用（未提前关闭）
+    services = app_module.assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        assert services.conn.execute("SELECT 1").fetchone()[0] == 1
+    finally:
+        services.conn.close()
+
+    def _failing_viewmodel():
+        raise RuntimeError("forced-ui-assembly-failure")
+
+    monkeypatch.setattr(app_module, "NavigationViewModel", _failing_viewmodel)
+
+    closed: list[bool] = []
+    original_close = sqlite_connection.ThreadRoutedConnection.close
+
+    def _recording_close(self) -> None:
+        closed.append(True)
+        original_close(self)
+
+    monkeypatch.setattr(
+        sqlite_connection.ThreadRoutedConnection, "close", _recording_close
+    )
+
+    with pytest.raises(RuntimeError, match="forced-ui-assembly-failure"):
+        app_module.assemble_services(tmp_path / "library.db", tmp_path / "managed")
+
+    assert closed, "a Qt-layer assembly failure must close the Core connection"
+
+    # Windows 文件锁判别（Review 探针口径）：连接关闭后库文件可删除；
+    # 若连接泄漏，unlink 因文件被占用抛 PermissionError。
+    if sys.platform == "win32":
+        (tmp_path / "library.db").unlink()
+
+
 def test_assemble_services_closes_connection_when_migration_fails(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
