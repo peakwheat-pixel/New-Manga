@@ -18,7 +18,7 @@ from PySide6.QtCore import (
     Slot,
 )
 
-from ui.models.tasks.projection import PageProjectionRow, TaskProjection
+from application.tasks.projection import PageProjectionRow, TaskProjection
 
 _ROLES = (
     ("pageId", "page_id"),

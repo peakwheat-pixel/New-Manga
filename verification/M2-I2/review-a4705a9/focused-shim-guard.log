@@ -1,0 +1,19 @@
+Task: M2-I2 independent review rerun
+Shell: Windows PowerShell
+Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+Command: "G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe" -m pytest -v tests/core/test_architecture.py -k "test_legacy_ui_shims_contain_no_authoritative_logic or test_reversal_guard_reports_local_definitions_in_legacy_shims or test_reversal_guard_reports_ui_imports_in_legacy_shims"
+Started: 2026-09-25T19:52:34.0975606+08:00
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-I2-antigravity
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 15 items / 12 deselected / 3 selected
+
+tests/core/test_architecture.py::test_legacy_ui_shims_contain_no_authoritative_logic PASSED [ 33%]
+tests/core/test_architecture.py::test_reversal_guard_reports_local_definitions_in_legacy_shims PASSED [ 66%]
+tests/core/test_architecture.py::test_reversal_guard_reports_ui_imports_in_legacy_shims PASSED [100%]
+
+====================== 3 passed, 12 deselected in 0.60s =======================
+Exit code: 0

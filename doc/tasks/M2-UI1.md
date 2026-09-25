@@ -2,7 +2,7 @@
 id: M2-UI1
 title: React Feature Parity & Visual Contract
 kind: design
-status: ready
+status: changes_requested
 approval: approved_by_user_2026-09-25
 suggested_owner: Qoder
 owner: Qoder
@@ -42,9 +42,10 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 环境 | 当前结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | planned：`rg --files src/ui/qml -g '*.qml'` 与矩阵逐项比对，确认恰有 25 项并覆盖四页及窗口/共用组件 | 固定基线 | NOT_RUN | `verification/M2-UI1/**` |
-| AC2/3 | planned：逐组件核对 QML、Tokens、05 UI Mapping、User Flow 与 Design F 来源，记录行号/冲突 | 只读源码和文档 | NOT_RUN | 设计契约与来源表 |
-| AC4/5 | planned：隔离 GUI 采集或给可执行复现步骤；`git diff --name-only <base> <delivery>`、`git diff --check <base> <delivery>` | 与生产环境匹配；固定 Delivery head | NOT_RUN | 截图/环境/原始日志或明确 NOT_RUN |
+| AC1 | executed：`rg --files src/ui/qml -g '*.qml'` + 矩阵核对 | 固定基线 `6a68fdeb` | inventory PASS：25 项；矩阵核对有 Review finding R-003，Task 未获批 | `verification/M2-UI1/qml-inventory.txt`；[Review](../reviews/M2-UI1-8031173.md) |
+| AC2/3 | executed：逐组件核对 QML、Tokens、05 UI Mapping、User Flow 与 Design F | 只读源码和文档 | 作者 Handoff 报 PASS；独立 Review `changes_requested`（R-001、R-003、R-004） | [Handoff](../handoffs/M2-UI1-8031173.md)；[Review](../reviews/M2-UI1-8031173.md) |
+| AC4 | executed：Windows GUI 采集；核对基线、NOT_RUN 与逐帧证据 | Windows 11 10.0.26200；base `6a68fdeb` / capture HEAD `5d989ba` | 14 帧中 13 可用、1 降级；采集脚本 `EXIT=1`（焦点断言），焦点环按 `NOT_RUN` 处理 | `verification/M2-UI1/baseline-6a68fde/{manifest.md,capture.log,attempt1-capture.log,attempt2-capture.log}` |
+| AC5 / 写集合 | executed：`git diff --name-only 5d989ba 80311732`；`git diff --check 5d989ba 80311732` | Qoder author branch；固定 Delivery | PASS：作者写集合越界 0；`diff --check` exit 0；生产 QML/React/Tauri 零修改 | [Handoff](../handoffs/M2-UI1-8031173.md)；[Review](../reviews/M2-UI1-8031173.md) |
 
 ## 依赖、风险与阻塞
 
@@ -53,4 +54,12 @@ integration_commit: null
 ## 交付与运行记录
 
 - 固定代码基线 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`。开工核对 worktree/branch/HEAD/common directory、注册提交与干净状态。
-- Handoff、Review、实际验证、integration commit：尚无；上述验证均 `NOT_RUN`。
+- Handoff：[M2-UI1-8031173](../handoffs/M2-UI1-8031173.md)，Delivery `80311732` 的后继 Task/Handoff head=`0cdbec2`。Review：[M2-UI1-8031173](../reviews/M2-UI1-8031173.md)，`changes_requested`；integration commit 尚无。
+
+## Codex 非作者 Review（2026-09-25）
+
+- 固定代码基线：`6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`；产品 Delivery：`80311732c3224c7054ad4bc2ba8ba0bee7f2f765`；复核 Handoff 的 reviewed_head：`0cdbec22643e5ef5578582d8f982f337b535139c`。
+- Review：[M2-UI1-8031173](../reviews/M2-UI1-8031173.md)，结论 `changes_requested`；未集成。
+- Findings：R-001 状态语义映射把页级与 PipelineRun 级 `blocked` 混用（P1）；R-002 §60 目标文件缺失数应复核（P2）；R-003 工作台命令转发计数未与调用面吻合（P2）；R-004 色彩/状态令牌计数不一致（P2）。
+- Review 验证：25 项 QML 清单、3 行源码抽查、11 项 C 冲突及 6 项 D 差异逐条裁决、14 帧 manifest 哈希/日志核对、NOT_RUN 诚实性、作者写集合越界 0；产品测试套件由作者标为 `NOT_RUN`，Reviewer 未运行。
+- 返修仅限授权设计/任务/Handoff/verification 路径；不改现有需求契约正文、`src/**`、`tests/**`。Qoder 新 head 与更新 Handoff 后交 Codex 复审。

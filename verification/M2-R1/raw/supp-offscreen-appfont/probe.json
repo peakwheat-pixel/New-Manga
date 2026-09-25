@@ -1,0 +1,79 @@
+{
+  "probe": "M2-R1 supplementary font-remediation probe",
+  "platform": "offscreen",
+  "mode": "appfont",
+  "fontdir_env": null,
+  "font_file": "C:\\Windows\\Fonts\\msyh.ttc",
+  "pid": 24904,
+  "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\M2-R1-venv\\Scripts\\python.exe",
+  "started_at": "2026-09-25 17:49:58",
+  "errors": [],
+  "exit_code": 0,
+  "PySide6.__version__": "6.11.2",
+  "qVersion": "6.11.2",
+  "platformName": "offscreen",
+  "screen_count": 1,
+  "after_app_construction": {
+    "families_count": 0,
+    "families_sample": []
+  },
+  "addApplicationFont": {
+    "font_id": 0,
+    "loaded": true,
+    "families_for_id": [
+      "Microsoft YaHei",
+      "Microsoft YaHei UI"
+    ],
+    "families_count_after": 2,
+    "font_file_exists": true,
+    "font_file_bytes": 19704352
+  },
+  "render": {
+    "label": "offscreen_appfont",
+    "families_count": 2,
+    "hasFamily_MicrosoftYaHei": true,
+    "hasFamily_Arial": false,
+    "resolved_family_for_requested": "Microsoft YaHei",
+    "font_available_flag": false,
+    "metrics": {
+      "family": "Microsoft YaHei",
+      "height": 42,
+      "ascent": 34,
+      "descent": 8,
+      "advance_cjk_4chars": 128,
+      "advance_latin_Manga": 107,
+      "inFont_cjk": true
+    },
+    "layout_horizontal": {
+      "item_count": 1,
+      "extents_width": 340,
+      "extents_height": 42.0,
+      "fits": true,
+      "font_available": false
+    },
+    "layout_vertical": {
+      "item_count": 6,
+      "extents_width": 56.0,
+      "extents_height": 148
+    },
+    "compose_page": {
+      "output_png_sha256": "c5438e91f21ebc212e155a03d3421e5ae208a48d6242eb3110aacf7bc76e8bb0",
+      "output_png_bytes": 2169,
+      "diff_vs_white_input": {
+        "comparable": true,
+        "width": 600,
+        "height": 200,
+        "total_pixels": 120000,
+        "differing_pixels": 2735,
+        "non_white_pixels_in_b": 2735
+      }
+    }
+  },
+  "window_census": {
+    "top_level_windows": 0,
+    "visible_windows": 0,
+    "visible_details": []
+  },
+  "finished_at": "2026-09-25 17:49:58"
+}

@@ -1,0 +1,10 @@
+Task: M2-I2 integration and completion diff checks
+Shell: Windows PowerShell
+Integration worktree: G:\CODEX\New Manga.worktrees\M2-I2-integration-0d6acc7
+Branch: codex/M2-I2-integration-0d6acc7
+Fixed base: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+Fixed Reviewed HEAD: 0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716
+Product integration commit: 7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9
+git diff --check 6a68fdeb..0d6acc7d: exit 0
+git diff --check 0d6acc7d..7e2da6b: exit 0
+git diff --check HEAD (product integration)..completion working tree: exit 0

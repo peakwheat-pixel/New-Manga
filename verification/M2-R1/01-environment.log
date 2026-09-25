@@ -1,0 +1,45 @@
+# M2-R1 environment evidence (AC1)
+# collected: 2026-09-25 17:48:14 +08:00
+
+== git ==
+worktree   : G:/CODEX/New Manga.worktrees/M2-R1-deepseek
+branch     : agent/deepseek/M2-R1-qt-runtime-feasibility
+HEAD       : 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+common-dir : G:/CODEX/New Manga/.git
+git-dir    : G:/CODEX/New Manga/.git/worktrees/M2-R1-deepseek
+status     : []
+
+== production requirement declarations (read-only) ==
+--- requirements.txt (PySide6 lines) ---
+PySide6_Essentials==6.11.2
+shiboken6==6.11.2
+
+== host OS ==
+Caption        : Microsoft Windows 11 专业版
+Version        : 10.0.26200
+BuildNumber    : 26200
+OSArchitecture : 64 位
+[System.Environment]::OSVersion.Version = 10.0.26200.0
+
+== isolated experiment environment ==
+venv path  : C:\Users\49745\AppData\Local\Temp\M2-R1-venv
+isolation  : dedicated venv created from a stock CPython 3.12 interpreter; NOT the production install; no production dependency file touched
+interpreter: C:\Users\49745\AppData\Local\Temp\M2-R1-venv\Scripts\python.exe
+python     : 3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]
+
+== installed packages in the experiment venv ==
+Package            Version
+------------------ -------
+pip                24.0
+PySide6_Essentials 6.11.2
+shiboken6          6.11.2
+
+== Qt runtime reported by PySide6 ==
+PySide6.__version__ = 6.11.2
+qVersion() = 6.11.2
+QLibraryInfo.version() = 6.11.2
+prefix = C:/Users/49745/AppData/Local/Temp/M2-R1-venv/Lib/site-packages/PySide6/.
+plugins = C:/Users/49745/AppData/Local/Temp/M2-R1-venv/Lib/site-packages/PySide6/plugins
+
+== QPA platform plugins shipped ==
+qdirect2d.dll, qminimal.dll, qoffscreen.dll, qwindows.dll

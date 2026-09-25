@@ -27,10 +27,10 @@ releases a task.
 
 | First-wave Task | Status / Owner / Reviewer | Write authority and boundary |
 |---|---|---|
-| [M2-I1 Core Assembly Seam](tasks/M2-I1.md) | `ready` / ZCode / Codex | `src/bootstrap/**` and its assigned tests; split Core from Legacy Qt assembly, injectable adapters. |
-| [M2-I2 Qt-free Logic Extraction](tasks/M2-I2.md) | `ready` / Antigravity / Codex | Two named UI logic modules, frozen application destinations, named consumers/tests; no Domain Contract change. |
-| [M2-R1 Qt Runtime Feasibility Spike](tasks/M2-R1.md) | `ready` / DeepSeek Harness / Codex | Research, verification and Handoff only; resolve M2D1-22 in matching Windows runtime. |
-| [M2-UI1 React Feature Parity & Visual Contract](tasks/M2-UI1.md) | `ready` / Qoder / Codex | Design, verification and Handoff only; 25 QML files, tokens and visual/behavior parity. |
+| [M2-I1 Core Assembly Seam](tasks/M2-I1.md) | R2 Product Delivery `0766952` / Handoff head `cb45902`; Codex [R2 Review](reviews/M2-I1-0766952.md) `approved` / ZCode / Codex; reconcile base=`7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9`; ZCode reconcile pending; not integrated | `src/bootstrap/**` and its assigned tests; split Core from Legacy Qt assembly, injectable adapters. |
+| [M2-I2 Qt-free Logic Extraction](tasks/M2-I2.md) | `done` / Antigravity / Codex; Delivery `e359da7`, Revised HEAD `0d6acc7`, [Codex Review](reviews/M2-I2-0d6acc7.md) `approved`, integration `7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9` | Two named UI logic modules, frozen application destinations, named consumers/tests; no Domain Contract change. |
+| [M2-R1 Qt Runtime Feasibility Spike](tasks/M2-R1.md) | `done` / DeepSeek Harness / Codex; Delivery `5e2800b`, Handoff `052f99c`, Review `79b1a77` `approved`, integration `5803bd7` | Research/verification only. M2D1-22 is measured with platform limits on Windows 11; QML/`QQuickWindow` and production entry remain `UNVERIFIED`/`NOT_RUN`. No implementation authorization. |
+| [M2-UI1 React Feature Parity & Visual Contract](tasks/M2-UI1.md) | `changes_requested` / Qoder / Codex | Delivery `80311732`; [Codex Review](reviews/M2-UI1-8031173.md) requests corrections to state mapping and inventory counts; not integrated. Design, verification and Handoff only; 25 QML files, tokens and visual/behavior parity. |
 
 These four Tasks may run in parallel because their write sets are disjoint; `src/bootstrap/**` belongs only to I1, the two UI logic sources only to I2. Prefer I2 Review/integration before I1 reconciliation/Review/integration; Codex may adjust if fixed diffs show no actual crossing. R1/UI1 are independently integrable non-product deliverables. Typed IPC `M2-C1`, Tauri + React Skeleton `M2-S1`, React production UI, Qt rendering replacement, Tauri packaging and Legacy QML removal remain **NOT_RELEASED**. After all four outcomes are reviewed and integrated, Codex will summarize results and freeze M2-C1 before M2-S1.
 

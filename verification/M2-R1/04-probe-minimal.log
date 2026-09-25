@@ -1,0 +1,47 @@
+# M2-R1 AC2/AC3 probe matrix - QT_QPA_PLATFORM=minimal
+# repo HEAD at run time: 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+# interpreter: C:\Users\49745\AppData\Local\Temp\M2-R1-venv\Scripts\python.exe  (isolated experiment venv; see 01-environment.log)
+# invocation: python -B verification/M2-R1/probes/qt_platform_probe.py --platform minimal
+# each run is a separate OS process; PYTHONDONTWRITEBYTECODE=1, no user data root, no bootstrap.app, no SQLite
+
+===== RUN 1  started 2026-09-25 17:49:05 =====
+--- combined stdout+stderr ---
+[probe] platform=minimal platformName=minimal
+[probe] OK   QGuiApplication (0.0627s)
+[probe] OK   QFontDatabase (0.0009s)
+[probe] OK   QtFontCatalog.resolve (0.0326s)
+[probe] OK   QFontMetrics (0.0002s)
+[probe] OK   QtTextLayoutEngine.layout (0.0017s)
+[probe] OK   QtImageCompositor (0.0817s)
+[probe] OK   window_census (0.0012s)
+[probe] OK   eventLoopDrain (0.0s)
+[probe] errors=0 exit_code=0
+--- EXITCODE=0  wall_seconds=0.68 ---
+
+===== RUN 2  started 2026-09-25 17:49:06 =====
+--- combined stdout+stderr ---
+[probe] platform=minimal platformName=minimal
+[probe] OK   QGuiApplication (0.0603s)
+[probe] OK   QFontDatabase (0.0009s)
+[probe] OK   QtFontCatalog.resolve (0.0323s)
+[probe] OK   QFontMetrics (0.0002s)
+[probe] OK   QtTextLayoutEngine.layout (0.0016s)
+[probe] OK   QtImageCompositor (0.0792s)
+[probe] OK   window_census (0.0013s)
+[probe] OK   eventLoopDrain (0.0003s)
+[probe] errors=0 exit_code=0
+--- EXITCODE=0  wall_seconds=0.498 ---
+
+===== RUN 3  started 2026-09-25 17:49:06 =====
+--- combined stdout+stderr ---
+[probe] platform=minimal platformName=minimal
+[probe] OK   QGuiApplication (0.0606s)
+[probe] OK   QFontDatabase (0.0009s)
+[probe] OK   QtFontCatalog.resolve (0.0322s)
+[probe] OK   QFontMetrics (0.0003s)
+[probe] OK   QtTextLayoutEngine.layout (0.0015s)
+[probe] OK   QtImageCompositor (0.0794s)
+[probe] OK   window_census (0.0013s)
+[probe] OK   eventLoopDrain (0.0s)
+[probe] errors=0 exit_code=0
+--- EXITCODE=0  wall_seconds=0.524 ---

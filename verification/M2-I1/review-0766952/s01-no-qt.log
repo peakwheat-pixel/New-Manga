@@ -1,0 +1,12 @@
+date=2026-09-25T19:26:50.0156717+08:00
+shell=PowerShell
+python=C:/Python314/python.exe
+workdir=G:/CODEX/New Manga.worktrees/M2-I1-zcode
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+command=C:/Python314/python.exe -m pytest -q -p no:cacheprovider -rs tests/core/test_core_assembly.py
+......s.                                                                 [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\core\test_core_assembly.py:239: could not import 'PySide6': No module named 'PySide6'
+7 passed, 1 skipped in 0.80s
+EXIT=0

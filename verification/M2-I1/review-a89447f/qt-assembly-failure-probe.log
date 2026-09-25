@@ -1,0 +1,9 @@
+SHELL=PowerShell
+INTERPRETER=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+WORKTREE=G:/CODEX/New Manga.worktrees/M2-I1-codex-review
+HEAD=a89447fb91c9aa81f4d847d732ebc91320ad24f2
+PROBE=force NavigationViewModel construction failure after fake Core assembly returns an open connection
+RAISED= forced-ui-assembly-failure
+CONNECTION_CLOSED= False
+I1_AC3_AC5_EXCEPTION_CLEANUP= FAIL
+EXIT=0

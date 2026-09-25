@@ -1,0 +1,20 @@
+date=2026-09-25T19:27:39.0816692+08:00
+shell=PowerShell
+workdir=G:\CODEX\New Manga.worktrees\M2-I1-R2-codex-review
+git diff --name-only R1 R2
+src/bootstrap/app.py
+tests/core/test_bootstrap.py
+tests/core/test_core_assembly.py
+verification/M2-I1/08-p01-cleanup-probe.log
+verification/M2-I1/09-r2-task-suite.log
+verification/M2-I1/10-r2-qtfree-probes.log
+verification/M2-I1/11-r2-full-suite-and-entry.log
+verification/M2-I1/README.md
+verification/M2-I1/probe_qt_assembly_cleanup.py
+git diff --check base R2
+BASE_DIFF_EXIT=0
+git diff --check R1 R2
+R2_DIFF_EXIT=0
+git merge-base base R2
+6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+MERGE_BASE_EXIT=0
