@@ -137,9 +137,25 @@ def find_shim_violations(path: Path, allowed_seam: str | None = None) -> list[st
             # docstring or string constant
             continue
         elif isinstance(node, ast.Assign):
-            # allow __all__ assignment
+            # allow static __all__ assignment (list or tuple of string constants only)
             targets = [t.id for t in node.targets if isinstance(t, ast.Name)]
             if targets == ["__all__"]:
+                if isinstance(node.value, (ast.List, ast.Tuple)):
+                    non_string_elts = [
+                        elt for elt in node.value.elts
+                        if not (isinstance(elt, ast.Constant) and isinstance(elt.value, str))
+                    ]
+                    if not non_string_elts:
+                        continue
+                    violations.append(
+                        f"{path}:{node.lineno}: forbidden dynamic __all__ element in legacy shim: "
+                        "each element must be a string constant"
+                    )
+                else:
+                    violations.append(
+                        f"{path}:{node.lineno}: forbidden dynamic __all__ assignment in legacy shim: "
+                        f"must be a static list or tuple of string constants, got {type(node.value).__name__}"
+                    )
                 continue
             violations.append(
                 f"{path}:{node.lineno}: forbidden assignment in legacy shim: {','.join(targets)}"
@@ -338,6 +354,75 @@ def test_reversal_guard_reports_ui_imports_in_legacy_shims(tmp_path: Path) -> No
         f"{source}:2: forbidden import in legacy shim: ui.models.tasks.page_list_model (only application.tasks.projection allowed)",
         f"{source}:3: forbidden import in legacy shim: ui.viewmodels.workbench.viewmodel",
     ]
+
+
+def test_reversal_guard_reports_dynamic_all_assignment_in_legacy_shims(tmp_path: Path) -> None:
+    """M2-I2 AC4 discriminative probe: dynamic __all__ assignment must be rejected."""
+    # 1. Lambda invocation RHS (Reviewer reproduced case)
+    source_lambda = tmp_path / "mutant_lambda_all.py"
+    source_lambda.write_text(
+        '"""Legacy shim with dynamic __all__ via lambda."""\n'
+        "from application.tasks.projection import TaskProjection\n"
+        '__all__ = (lambda: ["TaskProjection"])()\n',
+        encoding="utf-8",
+    )
+    violations_lambda = find_shim_violations(source_lambda, allowed_seam="application.tasks.projection")
+    assert violations_lambda == [
+        f"{source_lambda}:3: forbidden dynamic __all__ assignment in legacy shim: "
+        "must be a static list or tuple of string constants, got Call"
+    ]
+
+    # 2. Variable name RHS
+    source_var = tmp_path / "mutant_var_all.py"
+    source_var.write_text(
+        '"""Legacy shim with dynamic __all__ via variable."""\n'
+        "from application.tasks.projection import TaskProjection\n"
+        "__all__ = exported_names\n",
+        encoding="utf-8",
+    )
+    violations_var = find_shim_violations(source_var, allowed_seam="application.tasks.projection")
+    assert violations_var == [
+        f"{source_var}:3: forbidden dynamic __all__ assignment in legacy shim: "
+        "must be a static list or tuple of string constants, got Name"
+    ]
+
+    # 3. List comprehension RHS
+    source_comp = tmp_path / "mutant_comp_all.py"
+    source_comp.write_text(
+        '"""Legacy shim with dynamic __all__ via list comprehension."""\n'
+        "from application.tasks.projection import TaskProjection\n"
+        "__all__ = [name for name in names]\n",
+        encoding="utf-8",
+    )
+    violations_comp = find_shim_violations(source_comp, allowed_seam="application.tasks.projection")
+    assert violations_comp == [
+        f"{source_comp}:3: forbidden dynamic __all__ assignment in legacy shim: "
+        "must be a static list or tuple of string constants, got ListComp"
+    ]
+
+    # 4. Non-string constant element
+    source_elt = tmp_path / "mutant_elt_all.py"
+    source_elt.write_text(
+        '"""Legacy shim with non-string constant element in __all__."""\n'
+        "from application.tasks.projection import TaskProjection\n"
+        '__all__ = ["TaskProjection", 123]\n',
+        encoding="utf-8",
+    )
+    violations_elt = find_shim_violations(source_elt, allowed_seam="application.tasks.projection")
+    assert violations_elt == [
+        f"{source_elt}:3: forbidden dynamic __all__ element in legacy shim: "
+        "each element must be a string constant"
+    ]
+
+    # 5. Static string tuple positive case
+    source_tuple = tmp_path / "valid_tuple_all.py"
+    source_tuple.write_text(
+        '"""Legacy shim with valid static tuple."""\n'
+        "from application.tasks.projection import TaskProjection\n"
+        '__all__ = ("TaskProjection",)\n',
+        encoding="utf-8",
+    )
+    assert find_shim_violations(source_tuple, allowed_seam="application.tasks.projection") == []
 
 
 
