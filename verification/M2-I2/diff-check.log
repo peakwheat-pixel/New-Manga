@@ -1,17 +1,17 @@
 === Git Diff Check (Whitespace & Formatting) ===
-Command: git diff --check 5d989bab6c5c8a24a5112303f95c2b8eea356bdc d9b718242b6516a2e9e5b3b36913ef2a63be4665
+Command: git diff --check 5d989bab6c5c8a24a5112303f95c2b8eea356bdc be5e8d830fba2f9ca1b0cd79148cc386c4468061
 Exit code: 0
 
-Command: git diff --check 5d4a4650943507ca4053376d6acea36f146c704a d9b718242b6516a2e9e5b3b36913ef2a63be4665
+Command: git diff --check 86ecb94b7f2acd356923d5408c80ac81d942fd03 be5e8d830fba2f9ca1b0cd79148cc386c4468061
 Exit code: 0
 
-=== Git Diff Stat against Reviewed HEAD (5d4a465) (Revision Increment) ===
-Command: git diff --stat 5d4a4650943507ca4053376d6acea36f146c704a d9b718242b6516a2e9e5b3b36913ef2a63be4665
- tests/core/test_architecture.py | 74 +++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+=== Git Diff Stat against Prior HEAD (86ecb94) (Revision Increment) ===
+Command: git diff --stat 86ecb94b7f2acd356923d5408c80ac81d942fd03 be5e8d830fba2f9ca1b0cd79148cc386c4468061
+ tests/core/test_architecture.py | 72 ++++++++++++++++++++++++++++++++---------
+ 1 file changed, 57 insertions(+), 15 deletions(-)
 
 === Git Diff Stat against Starting HEAD (5d989ba) (Src and Tests) ===
-Command: git diff --stat 5d989bab6c5c8a24a5112303f95c2b8eea356bdc d9b718242b6516a2e9e5b3b36913ef2a63be4665 -- src tests
+Command: git diff --stat 5d989bab6c5c8a24a5112303f95c2b8eea356bdc be5e8d830fba2f9ca1b0cd79148cc386c4468061 -- src tests
  src/application/editing/region_canvas.py     |  99 ++++++++
  src/application/tasks/projection.py          | 338 +++++++++++++++++++++++++
  src/ui/models/tasks/__init__.py              |   4 +-
@@ -19,15 +19,15 @@ Command: git diff --stat 5d989bab6c5c8a24a5112303f95c2b8eea356bdc d9b718242b6516
  src/ui/models/tasks/projection.py            | 360 +++------------------------
  src/ui/viewmodels/workbench/region_canvas.py | 111 ++-------
  src/ui/viewmodels/workbench/viewmodel.py     |  14 +-
- tests/core/test_architecture.py              | 203 +++++++++++++--
+ tests/core/test_architecture.py              | 245 ++++++++++++++++--
  tests/workbench/test_page_list_model.py      |   2 +-
  tests/workbench/test_projection.py           |  27 +-
  tests/workbench/test_qml_workbench.py        |   4 +-
  tests/workbench/test_region_canvas.py        |  23 +-
- 12 files changed, 733 insertions(+), 454 deletions(-)
+ 12 files changed, 775 insertions(+), 454 deletions(-)
 
 === Git Diff Stat against Base Commit (6a68fde) (Src and Tests) ===
-Command: git diff --stat 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a d9b718242b6516a2e9e5b3b36913ef2a63be4665 -- src tests
+Command: git diff --stat 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a be5e8d830fba2f9ca1b0cd79148cc386c4468061 -- src tests
  src/application/editing/region_canvas.py     |  99 ++++++++
  src/application/tasks/projection.py          | 338 +++++++++++++++++++++++++
  src/ui/models/tasks/__init__.py              |   4 +-
@@ -35,9 +35,9 @@ Command: git diff --stat 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a d9b718242b6516
  src/ui/models/tasks/projection.py            | 360 +++------------------------
  src/ui/viewmodels/workbench/region_canvas.py | 111 ++-------
  src/ui/viewmodels/workbench/viewmodel.py     |  14 +-
- tests/core/test_architecture.py              | 203 +++++++++++++--
+ tests/core/test_architecture.py              | 245 ++++++++++++++++--
  tests/workbench/test_page_list_model.py      |   2 +-
  tests/workbench/test_projection.py           |  27 +-
  tests/workbench/test_qml_workbench.py        |   4 +-
  tests/workbench/test_region_canvas.py        |  23 +-
- 12 files changed, 733 insertions(+), 454 deletions(-)
+ 12 files changed, 775 insertions(+), 454 deletions(-)

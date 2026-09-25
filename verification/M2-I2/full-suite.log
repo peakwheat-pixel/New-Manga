@@ -1302,5 +1302,8 @@ SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
 ======== 1 failed, 1247 passed, 6 skipped, 1 warning in 75.38s (0:01:15) ========
 
 === Explicit Skip and Failure Attribution ===
-1. tests/network/test_proxy_and_ssl.py: 6 skips due to OpenSSL-unavailable in local environment (known documented skips in STATUS.md: 'six OpenSSL skips').
+1. 6 skips due to OpenSSL unavailable in local test environment:
+   - tests/network/test_connection_tester.py:106 (1 skip)
+   - tests/network/test_transport_tls.py:39,47,62,69,83 (5 skips)
+   (Known documented skips in STATUS.md: 'six OpenSSL skips').
 2. tests/providers/test_registry_readiness.py::test_no_model_runtime_is_installed_in_this_environment: 1 failure due to torch presence in this task venv (known documented assertion in STATUS.md: 'known torch registry-readiness environment assertion').

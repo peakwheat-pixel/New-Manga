@@ -1,9 +1,9 @@
-Task: M2-I2 Qt-free Environment Test Verification
+Task: M2-I2 Qt-Free Environment Test Suite Run (Python 3.14 without PySide6)
 Shell: Windows PowerShell
 Python: C:\Python314\python.exe
 Version: Python 3.14.6
-Command: C:\Python314\python.exe -m pytest -v -rs tests/core/test_architecture.py tests/workbench/test_region_canvas.py tests/workbench/test_projection.py
-Started: 2026-09-25T18:23:30.7801832+08:00
+Command: & C:\Python314\python.exe -m pytest -v tests/workbench/test_projection.py tests/workbench/test_region_canvas.py tests/core/test_architecture.py
+Started: 2026-09-25T19:27:54.5717710+08:00
 Exit code: 0
 ============================= test session starts =============================
 platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
@@ -11,54 +11,53 @@ cachedir: .pytest_cache
 rootdir: G:\CODEX\New Manga.worktrees\M2-I2-antigravity
 configfile: pytest.ini
 plugins: anyio-4.14.2
-collecting ... collected 40 items
+collecting ... collected 41 items
 
-tests/core/test_architecture.py::test_source_packages_exist_and_respect_boundaries PASSED [  2%]
-tests/core/test_architecture.py::test_domain_violation_reports_file_line_and_module PASSED [  5%]
-tests/core/test_architecture.py::test_ui_violation_reports_file_line_and_module PASSED [  7%]
-tests/core/test_architecture.py::test_relative_from_import_reports_forbidden_alias PASSED [ 10%]
-tests/core/test_architecture.py::test_application_layer_does_not_import_infrastructure_or_ui PASSED [ 12%]
-tests/core/test_architecture.py::test_migrated_application_modules_are_qt_free PASSED [ 15%]
-tests/core/test_architecture.py::test_workbench_ui_consumers_import_from_application_seams PASSED [ 17%]
-tests/core/test_architecture.py::test_legacy_ui_shims_contain_no_authoritative_logic PASSED [ 20%]
-tests/core/test_architecture.py::test_application_ui_violation_reports_file_line_and_module PASSED [ 22%]
-tests/core/test_architecture.py::test_qt_free_application_violation_reports_pyside6 PASSED [ 25%]
-tests/core/test_architecture.py::test_reversal_guard_reports_legacy_ui_import PASSED [ 27%]
-tests/core/test_architecture.py::test_reversal_guard_reports_local_definitions_in_legacy_shims PASSED [ 30%]
-tests/core/test_architecture.py::test_dynamic_import_of_a_forbidden_root_is_detected PASSED [ 32%]
-tests/core/test_architecture.py::test_non_literal_dynamic_import_is_not_a_false_positive PASSED [ 35%]
-tests/workbench/test_region_canvas.py::test_design_worked_example_maps_to_documented_pixels PASSED [ 37%]
-tests/workbench/test_region_canvas.py::test_half_tie_rounds_up_not_to_even PASSED [ 40%]
-tests/workbench/test_region_canvas.py::test_rectangle_corners_may_arrive_in_any_order PASSED [ 42%]
-tests/workbench/test_region_canvas.py::test_polygon_keeps_the_ring_it_was_given PASSED [ 45%]
-tests/workbench/test_region_canvas.py::test_out_of_range_points_are_clamped_to_the_page PASSED [ 47%]
-tests/workbench/test_region_canvas.py::test_zero_area_rectangle_is_rejected_before_writing PASSED [ 50%]
-tests/workbench/test_region_canvas.py::test_collapsed_polygon_extent_is_rejected PASSED [ 52%]
-tests/workbench/test_region_canvas.py::test_polygon_that_repeats_two_corners_is_rejected PASSED [ 55%]
-tests/workbench/test_region_canvas.py::test_collinear_polygon_is_rejected_as_degenerate PASSED [ 57%]
-tests/workbench/test_region_canvas.py::test_a_single_point_is_rejected PASSED [ 60%]
-tests/workbench/test_region_canvas.py::test_missing_page_dimensions_fails_fast_instead_of_collapsing PASSED [ 62%]
-tests/workbench/test_region_canvas.py::test_returns_a_real_domain_geometry_not_a_dict PASSED [ 65%]
-tests/workbench/test_region_canvas.py::test_backward_compatibility_reexports SKIPPED [ 67%]
-tests/workbench/test_projection.py::test_pending_run_all_waiting_and_pause_stop_enabled PASSED [ 70%]
-tests/workbench/test_projection.py::test_counts_match_scheduler_projection PASSED [ 72%]
-tests/workbench/test_projection.py::test_completed_run_counts_and_progress PASSED [ 75%]
-tests/workbench/test_projection.py::test_completed_with_failures_is_not_total_failure PASSED [ 77%]
-tests/workbench/test_projection.py::test_button_matrix_all_statuses PASSED [ 80%]
-tests/workbench/test_projection.py::test_paused_buttons PASSED           [ 82%]
-tests/workbench/test_projection.py::test_blocked_run_reasons_and_buttons PASSED [ 85%]
-tests/workbench/test_projection.py::test_interrupted_buttons PASSED      [ 87%]
-tests/workbench/test_projection.py::test_cancelled_buttons PASSED        [ 90%]
-tests/workbench/test_projection.py::test_locked_overlay_does_not_change_run_status PASSED [ 92%]
-tests/workbench/test_projection.py::test_primary_focus_and_step_flow PASSED [ 95%]
-tests/workbench/test_projection.py::test_run_title_uses_command_label PASSED [ 97%]
-tests/workbench/test_projection.py::test_backward_compatibility_reexports SKIPPED [100%]
+tests/workbench/test_projection.py::test_pending_run_all_waiting_and_pause_stop_enabled PASSED [  2%]
+tests/workbench/test_projection.py::test_counts_match_scheduler_projection PASSED [  4%]
+tests/workbench/test_projection.py::test_completed_run_counts_and_progress PASSED [  7%]
+tests/workbench/test_projection.py::test_completed_with_failures_is_not_total_failure PASSED [  9%]
+tests/workbench/test_projection.py::test_button_matrix_all_statuses PASSED [ 12%]
+tests/workbench/test_projection.py::test_paused_buttons PASSED           [ 14%]
+tests/workbench/test_projection.py::test_blocked_run_reasons_and_buttons PASSED [ 17%]
+tests/workbench/test_projection.py::test_interrupted_buttons PASSED      [ 19%]
+tests/workbench/test_projection.py::test_cancelled_buttons PASSED        [ 21%]
+tests/workbench/test_projection.py::test_locked_overlay_does_not_change_run_status PASSED [ 24%]
+tests/workbench/test_projection.py::test_primary_focus_and_step_flow PASSED [ 26%]
+tests/workbench/test_projection.py::test_run_title_uses_command_label PASSED [ 29%]
+tests/workbench/test_projection.py::test_backward_compatibility_reexports SKIPPED [ 31%]
+tests/workbench/test_region_canvas.py::test_design_worked_example_maps_to_documented_pixels PASSED [ 34%]
+tests/workbench/test_region_canvas.py::test_half_tie_rounds_up_not_to_even PASSED [ 36%]
+tests/workbench/test_region_canvas.py::test_rectangle_corners_may_arrive_in_any_order PASSED [ 39%]
+tests/workbench/test_region_canvas.py::test_polygon_keeps_the_ring_it_was_given PASSED [ 41%]
+tests/workbench/test_region_canvas.py::test_out_of_range_points_are_clamped_to_the_page PASSED [ 43%]
+tests/workbench/test_region_canvas.py::test_zero_area_rectangle_is_rejected_before_writing PASSED [ 46%]
+tests/workbench/test_region_canvas.py::test_collapsed_polygon_extent_is_rejected PASSED [ 48%]
+tests/workbench/test_region_canvas.py::test_polygon_that_repeats_two_corners_is_rejected PASSED [ 51%]
+tests/workbench/test_region_canvas.py::test_collinear_polygon_is_rejected_as_degenerate PASSED [ 53%]
+tests/workbench/test_region_canvas.py::test_a_single_point_is_rejected PASSED [ 56%]
+tests/workbench/test_region_canvas.py::test_missing_page_dimensions_fails_fast_instead_of_collapsing PASSED [ 58%]
+tests/workbench/test_region_canvas.py::test_returns_a_real_domain_geometry_not_a_dict PASSED [ 60%]
+tests/workbench/test_region_canvas.py::test_backward_compatibility_reexports SKIPPED [ 63%]
+tests/core/test_architecture.py::test_source_packages_exist_and_respect_boundaries PASSED [ 65%]
+tests/core/test_architecture.py::test_domain_violation_reports_file_line_and_module PASSED [ 68%]
+tests/core/test_architecture.py::test_ui_violation_reports_file_line_and_module PASSED [ 70%]
+tests/core/test_architecture.py::test_relative_from_import_reports_forbidden_alias PASSED [ 73%]
+tests/core/test_architecture.py::test_application_layer_does_not_import_infrastructure_or_ui PASSED [ 75%]
+tests/core/test_architecture.py::test_migrated_application_modules_are_qt_free PASSED [ 78%]
+tests/core/test_architecture.py::test_workbench_ui_consumers_import_from_application_seams PASSED [ 80%]
+tests/core/test_architecture.py::test_legacy_ui_shims_contain_no_authoritative_logic PASSED [ 82%]
+tests/core/test_architecture.py::test_application_ui_violation_reports_file_line_and_module PASSED [ 85%]
+tests/core/test_architecture.py::test_qt_free_application_violation_reports_pyside6 PASSED [ 87%]
+tests/core/test_architecture.py::test_reversal_guard_reports_legacy_ui_import PASSED [ 90%]
+tests/core/test_architecture.py::test_reversal_guard_reports_local_definitions_in_legacy_shims PASSED [ 92%]
+tests/core/test_architecture.py::test_reversal_guard_reports_ui_imports_in_legacy_shims PASSED [ 95%]
+tests/core/test_architecture.py::test_dynamic_import_of_a_forbidden_root_is_detected PASSED [ 97%]
+tests/core/test_architecture.py::test_non_literal_dynamic_import_is_not_a_false_positive PASSED [100%]
 
-=========================== short test summary info ===========================
-SKIPPED [1] tests\workbench\test_region_canvas.py:144: PySide6 not installed; legacy UI package __init__ requires Qt
-SKIPPED [1] tests\workbench\test_projection.py:248: PySide6 not installed; legacy UI package __init__ requires Qt
-======================== 38 passed, 2 skipped in 0.25s ========================
+======================== 39 passed, 2 skipped in 0.42s ========================
 
 === Explicit Skip Attribution ===
-1. tests/workbench/test_region_canvas.py::test_backward_compatibility_reexports: SKIPPED (PySide6 not installed; legacy UI package ui.viewmodels.workbench.__init__ imports RunController which requires PySide6)
-2. tests/workbench/test_projection.py::test_backward_compatibility_reexports: SKIPPED (PySide6 not installed; legacy UI package ui.models.tasks.__init__ imports page_list_model which requires PySide6)
+1. tests/workbench/test_projection.py::test_backward_compatibility_reexports: SKIPPED (PySide6 is not installed: cannot import legacy UI shim 'ui.models.tasks.projection' because UI package __init__ imports PySide6-dependent modules).
+2. tests/workbench/test_region_canvas.py::test_backward_compatibility_reexports: SKIPPED (PySide6 is not installed: cannot import legacy UI shim 'ui.viewmodels.workbench.region_canvas' because UI package __init__ imports PySide6-dependent modules).
+All direct application tests in application.tasks.projection and application.editing.region_canvas passed cleanly without Qt dependencies.
