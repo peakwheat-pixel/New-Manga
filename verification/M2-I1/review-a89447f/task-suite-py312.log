@@ -1,0 +1,21 @@
+SHELL=PowerShell
+INTERPRETER=G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+WORKTREE=G:/CODEX/New Manga.worktrees/M2-I1-codex-review
+HEAD=a89447fb91c9aa81f4d847d732ebc91320ad24f2
+COMMAND=python -m pytest -q -p no:cacheprovider -rs tests/core/test_bootstrap.py tests/core/test_core_assembly.py tests/ui_shell tests/providers tests/pipeline
+PYTHONDONTWRITEBYTECODE=1
+........................................................................ [ 15%]
+........................................................................ [ 30%]
+..........................................................s.s.s......... [ 45%]
+........................................................................ [ 61%]
+........................................................................ [ 76%]
+........................................................................ [ 91%]
+......................................                                   [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detect_seam_t111.py:15: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:173: numpy is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:206: torch is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:236: torch is not installed
+467 passed, 5 skipped in 14.70s
+EXIT=0
