@@ -1,0 +1,9 @@
+
+InputObject                                                                                  SideIndicator
+-----------                                                                                  -------------
+952ba64b977344eb55f2aaf3ff35ac92673b0cdc909567e8f96c044ed21d9978  NewManga.exe               =>
+86b9c56ec40ce9394400eb75b99f1244fe375842d3384df80cc0993858d048df  _internal/base_library.zip =>
+95f9ba68086087c9999804fd0cd2bd4e5f772de350c74a22f2eaf3e329772c10  NewManga.exe               <=
+54baea879179c3a3077288ee1eae7d269d5f936d9384666b6577294bb08e6549  _internal/base_library.zip <=
+
+

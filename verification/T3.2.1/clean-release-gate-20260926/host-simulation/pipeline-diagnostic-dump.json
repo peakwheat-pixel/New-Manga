@@ -1,0 +1,34 @@
+{
+ "pipeline_run": {
+  "run_id": "run-7b54ae37c70e4bcdbb880c1a9e6c306e",
+  "command_type": "translate_all",
+  "scope_type": "chapter",
+  "status": "completed_with_failures",
+  "fatal_error": null,
+  "planned_step_units": 9,
+  "terminal_step_units": 9,
+  "provider_binding_snapshot": {},
+  "settings_snapshot": {}
+ },
+ "failed_steps": [
+  {
+   "step_run_id": "step-0e47b7d3e3704987a11859536d5ab048",
+   "step_type": "detect",
+   "status": "failed",
+   "error_code": "PROVIDER_NOT_CONFIGURED",
+   "error_detail": "docTR weights are not installed: G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\用户配置隔离\\AppData\\Local\\New Manga\\models\\detector\\fast_base-688a8b34.pt is missing (fetch https://doctr-static.mindee.com/models?id=v0.8.1/fast_base-688a8b34.pt&src=0 and verify sha256 688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace) (stage=detection)",
+   "lock_snapshot": {
+    "inpaint_locked": false,
+    "page_locked": false,
+    "region_locked": false,
+    "translation_locked": false
+   }
+  }
+ ],
+ "pipeline_task": {
+  "task_id": "run-7b54ae37c70e4bcdbb880c1a9e6c306e:task:0",
+  "status": "failed",
+  "error_code": "PROVIDER_NOT_CONFIGURED",
+  "error_detail": "docTR weights are not installed: G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\用户配置隔离\\AppData\\Local\\New Manga\\models\\detector\\fast_base-688a8b34.pt is missing (fetch https://doctr-static.mindee.com/models?id=v0.8.1/fast_base-688a8b34.pt&src=0 and verify sha256 688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace) (stage=detection)"
+ }
+}

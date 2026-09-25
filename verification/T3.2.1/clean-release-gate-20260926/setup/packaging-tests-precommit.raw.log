@@ -1,0 +1,9 @@
+....F.......                                                             [100%]
+================================== FAILURES ===================================
+____________ test_build_script_requires_explicit_output_directory _____________
+tests\packaging\test_packaging_contract.py:33: in test_build_script_requires_explicit_output_directory
+    assert "git status --porcelain=v1" in script
+E   assert 'git status --porcelain=v1' in '# Build script for New Manga Windows onedir package (T3.2.1)\n[CmdletBinding()]\nparam (\n    [Parameter(Mandatory = ...e-Host "Artifact: $artifactDir"\n    Write-Host "Manifest: $manifestFile"\n} finally {\n    $env:PATH = $origPath\n}\n'
+=========================== short test summary info ===========================
+FAILED tests/packaging/test_packaging_contract.py::test_build_script_requires_explicit_output_directory
+1 failed, 11 passed in 7.56s

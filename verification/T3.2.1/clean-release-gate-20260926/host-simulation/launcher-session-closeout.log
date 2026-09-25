@@ -1,0 +1,5 @@
+Source: Codex exec session 94490 polling result
+Observed date: 2026-09-26 (Asia/Shanghai)
+Product process PID: 12276 (no longer running when checked)
+Launcher output: PROCESS_EXIT=0
+Interpretation: process exited normally; this does not prove restart recovery, absence of SQLite locks, or completion of AC3.

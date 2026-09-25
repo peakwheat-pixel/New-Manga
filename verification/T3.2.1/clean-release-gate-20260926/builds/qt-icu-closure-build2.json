@@ -1,0 +1,32 @@
+{
+  "status": "passed",
+  "qt_core_path": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\build2\\dist\\NewManga\\_internal\\PySide6\\Qt6Core.dll",
+  "effective_icu_path": "C:\\WINDOWS\\System32\\icuuc.dll",
+  "icu_source_type": "windows_system32",
+  "imported_symbols_count": 20,
+  "exported_symbols_count": 542,
+  "missing_symbols_count": 0,
+  "missing_symbols": [],
+  "imported_symbols": [
+    "ucnv_open",
+    "ucnv_close",
+    "UCNV_FROM_U_CALLBACK_SUBSTITUTE",
+    "UCNV_TO_U_CALLBACK_SUBSTITUTE",
+    "ucnv_reset",
+    "ucnv_getMaxCharSize",
+    "ucnv_getName",
+    "ucnv_getToUCallBack",
+    "ucnv_getFromUCallBack",
+    "ucnv_setToUCallBack",
+    "ucnv_setFromUCallBack",
+    "ucnv_cbToUWriteUChars",
+    "ucnv_toUnicode",
+    "ucnv_cbFromUWriteUChars",
+    "ucnv_toUCountPending",
+    "ucnv_fromUCountPending",
+    "ucnv_getStandardName",
+    "ucnv_getAvailableName",
+    "ucnv_countAvailable",
+    "ucnv_fromUnicode"
+  ]
+}
