@@ -13,3 +13,5 @@ Post-sync checks at integration branch head 4f20fc2:
 - git diff --check 5803bd7 HEAD: PASS, exit 0.
 - git diff --quiet 6a68fdeb HEAD -- src tests: PASS, exit 0.
 - Product tests: NOT_RUN; documentation/status-only sync.
+
+The graph permits a fast-forward, but the root master worktree currently has uncommitted M2-I2 edits in doc/REBASELINE_PLAN.md and doc/STATUS.md. The fast-forward was deferred to preserve those edits; master remains at a91b8f7 until the shared changes are committed and synchronized.
