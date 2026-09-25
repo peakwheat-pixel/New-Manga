@@ -1,0 +1,77 @@
+# M2-UI1 visual baseline capture
+date_utc: 2026-09-25T09:54:19Z
+worktree: /g/CODEX/New Manga.worktrees/M2-UI1-qoder
+head: 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+src_state: identical to base 6a68fde (git diff --name-only 6a68fde 5d989ba lists doc/ only)
+python: /usr/bin/bash: line 1: "G:/CODEX/New: No such file or directory
+pyside6: /usr/bin/bash: line 1: "G:/CODEX/New: No such file or directory
+platform_plugin: default (windows); QT_QPA_PLATFORM unset
+script: verification/T3.2.1/repair-13/probe_ui_states.py (unmodified, reused read-only)
+command: PYTHONDONTWRITEBYTECODE=1 <venv-python> verification/T3.2.1/repair-13/probe_ui_states.py --out-dir verification/M2-UI1/baseline-6a68fde/screenshots
+
+[STEP] colorScheme forced dark before assembly: ColorScheme.Dark
+[STEP] fixtures: a=6d6e58b060f808de3d04befcd70292a6f2f172f295530db3145f821899af0e0d b=30c0f08037f6d6c886c0d030ffb08421e3606f54a52e0457a41701286a608600
+[COLOR] ---- 01-bookshelf-empty.png ----
+[COLOR] btnCreateBook: bg=#a46a6f text≈#fdfdfd contrast=4.24:1 enabled=True
+[COLOR] btnImport: bg=#f9f9f9 text≈#1a1a22 contrast=16.42:1 enabled=False
+[COLOR] importHint: bg=#222226 text≈#8f8e97 contrast=4.89:1 enabled=True
+[COLOR] emptyCreateBook: bg=#a46a6f text≈#fdfdfd contrast=4.24:1 enabled=True
+[COLOR] emptyImport: bg=#a1696d text≈#f9f9f9 contrast=4.19:1 enabled=False
+[COLOR] searchField: bg=#121215 text≈#abadb3 contrast=8.33:1 enabled=True
+[COLOR] btnFavoritesFilter: bg=#f5eeec text≈#181324 contrast=15.83:1 enabled=True
+[COLOR] btnArchivedFilter: bg=#edb86f text≈#201d45 contrast=8.83:1 enabled=True
+[COLOR] btnSort: bg=#fdfdfd text≈#181d25 contrast=16.63:1 enabled=True
+[COLOR] btnViewMode: bg=#e5d2c9 text≈#1e1419 contrast=12.31:1 enabled=True
+[PASS] AC1 empty-shelf: import disabled
+[PASS] AC1 empty-shelf: hint visible — 先新建作品并选择章节，再导入页面
+[COLOR] ---- 03-bookshelf-detail.png ----
+[COLOR] btnImport: bg=#f9f9f9 text≈#1a1a22 contrast=16.42:1 enabled=False
+[COLOR] btnCreateChapter: bg=#f9f9f9 text≈#191c22 contrast=16.21:1 enabled=False
+[COLOR] btnEnterTranslation: bg=#cda286 text≈#1b1635 contrast=7.51:1 enabled=False
+[COLOR] btnEnterReading: bg=#efbc71 text≈#211a2a contrast=9.71:1 enabled=False
+[COLOR] detailFavorite: bg=#92cbbd text≈#222226 contrast=8.68:1 enabled=True
+[COLOR] detailArchived: bg=#6eb1d0 text≈#222226 contrast=6.69:1 enabled=True
+[PASS] AC1 chapter row exists — 1 rows
+[PASS] AC1 chapter-selected: import enabled
+[PASS] AC1 chapter-selected: hint hidden
+[PASS] AC2 import click opens the file picker
+[STEP] import report: {'imported': 2, 'skipped': 0, 'failed': 0, 'summary': '导入 2 页，跳过 0 个重复，失败 0 个'}
+[PASS] AC2 imported == 2 — {'imported': 2, 'skipped': 0, 'failed': 0, 'summary': '导入 2 页，跳过 0 个重复，失败 0 个'}
+[PASS] AC2 managed copy has 2 files — books\07cd42f913504884bad9901a6cb62bd4\chapters\433df5473cb74aba95cb195ea931438e\original\c951655472374a6288aaf29445ef2d95.png; books\07cd42f913504884bad9901a6cb62bd4\chapters\433df5473cb74aba95cb195ea931438e\original\d5dc16c40f434400942786834df20f18.png
+[PASS] AC2 fixture A hash unchanged
+[PASS] AC2 fixture B hash unchanged
+[PASS] AC4 reader: export enabled
+[COLOR] ---- 07-reader-active.png ----
+[COLOR] readerPickChapter: bg=#b0ecfd text≈#181921 contrast=13.55:1 enabled=True
+[COLOR] readerModeOriginal: bg=#733a20 text≈#cce4f7 contrast=6.80:1 enabled=True
+[COLOR] readerModeTranslated: bg=#fbfdfd text≈#1e1126 contrast=17.68:1 enabled=True
+[COLOR] readerPreviousPage: bg=#d1d1d1 text≈#101013 contrast=12.44:1 enabled=False
+[COLOR] readerNextPage: bg=#d4d4d5 text≈#101013 contrast=12.82:1 enabled=True
+[COLOR] readerContinueLast: bg=#fdfdfd text≈#121217 contrast=18.36:1 enabled=True
+[COLOR] readerRestart: bg=#5a2e34 text≈#fdfdfd contrast=11.01:1 enabled=True
+[COLOR] readerExportButton: bg=#d89147 text≈#1e1821 contrast=6.67:1 enabled=True
+[COLOR] ---- 08-reader-chapter-picker.png ----
+[COLOR] chapterPickerBookList: bg=#fdfdfd text≈#5e5e61 contrast=6.35:1 enabled=True
+[COLOR] chapterPickerChapterList: bg=#fdfdfd text≈#5e5e61 contrast=6.35:1 enabled=True
+[COLOR] chapterPickerCancel: bg=#fdfdfd text≈#1a1a1d contrast=17.07:1 enabled=True
+[COLOR] chapterPickerAccept: bg=#f3bf72 text≈#221a2b contrast=10.00:1 enabled=True
+[PASS] AC4 export window opened
+[COLOR] ---- 09-export-window.png ----
+[COLOR] exportMode: bg=#fdfdec text≈#19181c contrast=17.19:1 enabled=True
+[COLOR] exportFormat: bg=#fdfdfd text≈#12141b contrast=18.08:1 enabled=True
+[COLOR] exportRunButton: bg=#fdfbf6 text≈#1a1a1d contrast=16.79:1 enabled=True
+[COLOR] exportCancelButton: bg=#f9f9f9 text≈#1a1a1d contrast=16.49:1 enabled=False
+[COLOR] exportCloseButton: bg=#e8bf72 text≈#111419 contrast=10.66:1 enabled=True
+[PASS] AC4 export run enabled
+[STEP] export statusMessage='导出完成：C:\\Users\\49745\\AppData\\Local\\Temp\\repair13-probe-57ycanum\\export-out\\probe-export.zip' running=False
+[STEP] export history=[{'export_id': 'exp-2d7170f5e792', 'type': 'zip', 'status': 'completed', 'output_path': 'C:\\Users\\49745\\AppData\\Local\\Temp\\repair13-probe-57ycanum\\export-out\\probe-export.zip', 'created_at': '2026-09-25T09:54:26.730+00:00', 'completed_at': '2026-09-25T09:54:30.301+00:00'}]
+[PASS] AC4 export file exists
+[PASS] AC4 export has 2 pages — ['0001_fixture-page-a.png', '0002_fixture-page-b.png']
+[PASS] AC2 workbench lists 2 pages — 2 tiles: ['pageTile-bdbca0b54cd04233a8f2354010aa23d1', 'pageTile-013126d1996c4b8b915c460edfc09629']
+[FAIL] AC2 workbench first page selectable — viewerPageId='' expected 'bdbca0b54cd04233a8f2354010aa23d1'
+[COLOR] ---- 11-workbench.png ----
+[COLOR] pageListPanel: not found on this page
+[COLOR] workbenchPickContext: not visible (skipped)
+[FAIL] AC3 focus active on btnCreateBook
+[DONE] failures: AC2 workbench first page selectable, AC3 focus active on btnCreateBook
+EXIT=1
