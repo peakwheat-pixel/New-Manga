@@ -1,0 +1,23 @@
+# M2-I1 P-01 exception-cleanup discriminating probe
+date: 2026-09-25T18:55:00+08:00
+shell: Git Bash
+python: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+probe: verification/M2-I1/probe_qt_assembly_cleanup.py (forces NavigationViewModel failure after Core assembly returns an open connection; same criterion as the Review's qt-assembly-failure-probe.log)
+
+=== UNFIXED tree (reviewed head a89447f, git archive copy) ===
+python: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+version: 3.12.3
+src_root: C:/Users/49745/AppData/Local/Temp/m2i1-prefix-src/src
+QT_LAYER_RAISED=True
+CONNECTION_CLOSED=False
+I1_AC3_AC5_EXCEPTION_CLEANUP= FAIL
+
+=== FIXED tree (this revision, worktree src) ===
+python: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+version: 3.12.3
+src_root: G:/CODEX/New Manga.worktrees/M2-I1-zcode/src
+QT_LAYER_RAISED=True
+CONNECTION_CLOSED=True
+I1_AC3_AC5_EXCEPTION_CLEANUP= PASS
+
+DISCRIMINATION: unfixed CONNECTION_CLOSED=False (FAIL) vs fixed=True (PASS) — the probe and the regression test both flip on this change.

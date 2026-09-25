@@ -1,0 +1,2 @@
+openssl=C:\Program Files\Git\mingw64\bin\openssl.exe
+QT_QPA_PLATFORM=

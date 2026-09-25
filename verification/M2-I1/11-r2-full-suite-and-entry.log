@@ -1,0 +1,22 @@
+# M2-I1 R2 — full suite (revision) + entry verifications
+date: 2026-09-25T18:56:07+08:00
+shell: Git Bash
+python: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+
+=== full suite: python -m pytest -q -p no:cacheprovider tests ===
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+
+1227 passed, 5 skipped, 1 warning in 63.67s (0:01:03)
+EXIT=0
+
+=== compileall -q src ===
+EXIT=0
+
+=== bootstrap.app --smoke-test --data-root <temp> ===
+EXIT=0
+
+=== bootstrap.app --screenshot <temp>.png ===
+EXIT=0
+/tmp/m2i1-r2-shot.png: PNG image data, 1920 x 1200, 8-bit/color RGBA, non-interlaced
+
+NOTE: real interactive GUI session = NOT_RUN (unchanged from R1; smoke + screenshot render the real QML shell on the default Windows Qt platform).

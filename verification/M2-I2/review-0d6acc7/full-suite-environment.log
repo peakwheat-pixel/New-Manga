@@ -1,0 +1,9 @@
+Task: M2-I2 full-suite environment verification
+Shell: Windows PowerShell
+Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+Command: python -c <ssl/OpenSSL CLI/torch availability probe>
+Started: 2026-09-25T20:17:12.7988439+08:00
+ssl=OpenSSL 3.0.13 30 Jan 2024
+openssl_cli=None
+torch_installed=True
+Exit code: 0

@@ -1,0 +1,7 @@
+src/domain\books\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/domain\constraints\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/application\export\pdf_qt.py:3:The only module in the export slice that touches PySide6, and it does so
+src/application\export\pdf_qt.py:19:        from PySide6.QtCore import QBuffer, QIODevice, QSizeF
+src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+src/domain\regions\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/ports\repositories\__init__.py:5:of sqlite3/PySide6 imports so domain and application layers can depend on

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import workbench_helpers  # noqa: F401  (sys.path injection)
 from workbench_helpers import fail_first_region_step, make_pipeline
+import pytest
 
 from application.translation.pipeline.executor import DeterministicStepExecutor
 from domain.tasks.models import (
@@ -20,7 +21,7 @@ from domain.tasks.models import (
     StepRun,
     StepRunStatus,
 )
-from ui.models.tasks.projection import (
+from application.tasks.projection import (
     STATUS_FAILED,
     STATUS_WAITING,
     build_projection,
@@ -233,3 +234,27 @@ def test_run_title_uses_command_label():
     run = run_of(service, command="translate_untranslated")
     projection = build_projection(run)
     assert projection.run_title == "全部翻译（跳过已翻译）"
+
+
+def test_backward_compatibility_reexports():
+    """Verify legacy ui.models.tasks.projection acts as a seamless shim (M2-I2).
+
+    Note: ui.models.tasks package __init__ imports page_list_model (PySide6),
+    so importing via module name requires PySide6 in legacy UI tree.
+    """
+    try:
+        import PySide6  # noqa: F401
+    except ImportError:
+        pytest.skip("PySide6 not installed; legacy UI package __init__ requires Qt")
+
+    import application.tasks.projection as app_proj
+    import ui.models.tasks.projection as ui_proj
+
+    assert ui_proj.build_projection is app_proj.build_projection
+    assert ui_proj.TaskProjection is app_proj.TaskProjection
+    assert ui_proj.PageProjectionRow is app_proj.PageProjectionRow
+    assert ui_proj.command_label is app_proj.command_label
+    assert ui_proj.run_title is app_proj.run_title
+    assert ui_proj.step_label is app_proj.step_label
+    assert ui_proj.STATUS_WAITING is app_proj.STATUS_WAITING
+    assert ui_proj.STATUS_FAILED is app_proj.STATUS_FAILED

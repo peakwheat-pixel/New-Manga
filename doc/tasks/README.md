@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。Legacy T3.2.1 Gate 与 M2 第一波并行，写集合隔离。
 
-Current released work: [T3.2.1](T3.2.1.md) Legacy Full Gate OPEN / AC3 BLOCKED（REPAIR-13=`done` at `6fe7455`，REPAIR-14=`done` at `296131b`）；M2 first wave [I1](M2-I1.md) (R2 Review `approved`, no integration) / [I2](M2-I2.md) (`changes_requested`, no integration) / [R1](M2-R1.md) / [UI1](M2-UI1.md) released from local base `6a68fde`, with distinct branches/worktrees/allowed paths. [M2-D1](M2-D1.md) is `done` at `100abfb`. M2-C1/M2-S1 remain unreleased.
+Current released work: [T3.2.1](T3.2.1.md) Legacy Full Gate OPEN / AC3 BLOCKED（REPAIR-13=`done` at `6fe7455`，REPAIR-14=`done` at `296131b`）；M2 first wave [I1](M2-I1.md) (`done`, R3 DeepSeek Harness Review approved, integration `cff1e0a`) / [I2](M2-I2.md) (`done`, approved Review, integration `7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9`) / [R1](M2-R1.md) (`done`) / [UI1](M2-UI1.md) (Task-local status) released from local base `6a68fde`, with distinct branches/worktrees/allowed paths. [M2-D1](M2-D1.md) is `done` at `100abfb`. M2-C1/M2-S1 remain unreleased. [DIAG-READING-EXPORT-001](DIAG-READING-EXPORT-001.md) is a separate `proposed` Legacy reliability diagnostic, not released.
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 

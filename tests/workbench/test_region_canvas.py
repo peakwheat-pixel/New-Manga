@@ -12,7 +12,7 @@ import workbench_helpers  # noqa: F401  (sys.path injection)
 import pytest
 
 from domain.regions.entities import BBox, RegionGeometry
-from ui.viewmodels.workbench.region_canvas import (
+from application.editing.region_canvas import (
     RegionCanvasError,
     normalized_to_page_geometry,
 )
@@ -130,3 +130,24 @@ def test_returns_a_real_domain_geometry_not_a_dict():
         "bbox": [0, 0, 800, 1200],
         "polygon": [[0, 0], [800, 0], [800, 1200], [0, 1200]],
     }
+
+
+def test_backward_compatibility_reexports():
+    """Verify legacy ui.viewmodels.workbench.region_canvas acts as a seamless shim (M2-I2).
+
+    Note: ui.viewmodels.workbench package __init__ imports RunController (PySide6),
+    so importing via module name requires PySide6 in legacy UI tree.
+    """
+    try:
+        import PySide6  # noqa: F401
+    except ImportError:
+        pytest.skip("PySide6 not installed; legacy UI package __init__ requires Qt")
+
+    import application.editing.region_canvas as app_rc
+    import ui.viewmodels.workbench.region_canvas as ui_rc
+
+    assert ui_rc.normalized_to_page_geometry is app_rc.normalized_to_page_geometry
+    assert ui_rc.RegionCanvasError is app_rc.RegionCanvasError
+    assert ui_rc.PAGE_SIZE_UNAVAILABLE is app_rc.PAGE_SIZE_UNAVAILABLE
+    assert ui_rc.TOO_FEW_POINTS is app_rc.TOO_FEW_POINTS
+    assert ui_rc.DEGENERATE_GEOMETRY is app_rc.DEGENERATE_GEOMETRY

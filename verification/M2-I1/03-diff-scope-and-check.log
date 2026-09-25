@@ -1,0 +1,55 @@
+# M2-I1 I1-AC5/AC8 delivery scope + zero React/Tauri
+date: 2026-09-25T18:01:50+08:00
+worktree: /g/CODEX/New Manga.worktrees/M2-I1-zcode
+
+command: git status --short; git diff --name-only <start-HEAD 5d989ba>; git diff --check <start-HEAD>
+
+=== worktree status (author delta vs start HEAD 5d989ba) ===
+ M src/bootstrap/app.py
+ M tests/core/test_bootstrap.py
+?? src/bootstrap/core_assembly.py
+?? tests/core/test_core_assembly.py
+?? verification/M2-I1/
+
+=== tracked diff vs start HEAD ===
+src/bootstrap/app.py
+tests/core/test_bootstrap.py
+
+=== React/Tauri artifacts in the delta ===
+(zero hits — I1-AC8 holds)
+
+=== whitespace check (base -> worktree) ===
+DIFF-CHECK-EXIT=0
+
+## 固定 Delivery 复核（base → b8741eb）
+date: 2026-09-25T18:05:36+08:00
+
+```
+doc/00_INDEX.md
+doc/12_ROADMAP.md
+doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+doc/REBASELINE_PLAN.md
+doc/STATUS.md
+doc/tasks/M2-I1.md
+doc/tasks/M2-I2.md
+doc/tasks/M2-R1.md
+doc/tasks/M2-UI1.md
+doc/tasks/README.md
+src/bootstrap/app.py
+src/bootstrap/core_assembly.py
+tests/core/test_bootstrap.py
+tests/core/test_core_assembly.py
+verification/M2-I1/01-import-blocker-probe-base.log
+verification/M2-I1/01-import-blocker-probe-delivery.log
+verification/M2-I1/02-core-layer-rg-audit.log
+verification/M2-I1/03-diff-scope-and-check.log
+verification/M2-I1/04-task-suite.log
+verification/M2-I1/05-full-suite-delivery.log
+verification/M2-I1/06-full-suite-baseline-control.log
+verification/M2-I1/07-entry-compileall-smoke-screenshot.log
+verification/M2-I1/README.md
+verification/M2-I1/probe_import_blocker.py
+
+git diff --check exit: 0
+```
+说明：doc/** 两文件为开工 HEAD 与 base 之间既有的 docs 注册提交（58fa0df/5d989ba），非 M2-I1 作者 delta；M2-I1 作者 delta = doc/tasks/M2-I1.md 之外的全部 src/tests/verification 路径。

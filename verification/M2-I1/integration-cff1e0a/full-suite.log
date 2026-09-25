@@ -1,0 +1,38 @@
+date=2026-09-25T22:22:06.9745242+08:00
+shell=PowerShell
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+head=cff1e0a8658f57a2e9caf774a9de0961e8f65da3
+PATH prefix=C:/Program Files/Git/usr/bin
+command=python -m pytest -q -p no:cacheprovider -rs tests
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 34%]
+..................................................s.s.s................. [ 40%]
+........................................................................ [ 46%]
+........................................................................ [ 52%]
+........................................................................ [ 58%]
+........................................................................ [ 63%]
+........................................................................ [ 69%]
+........................................................................ [ 75%]
+........................................................................ [ 81%]
+........................................................................ [ 87%]
+........................................................................ [ 92%]
+........................................................................ [ 98%]
+.................                                                        [100%]
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detect_seam_t111.py:15: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:173: numpy is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:206: torch is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:236: torch is not installed
+1238 passed, 5 skipped, 1 warning in 70.47s (0:01:10)
+EXIT=0
