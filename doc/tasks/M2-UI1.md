@@ -2,7 +2,7 @@
 id: M2-UI1
 title: React Feature Parity & Visual Contract
 kind: design
-status: ready
+status: in_review
 approval: approved_by_user_2026-09-25
 suggested_owner: Qoder
 owner: Qoder
@@ -42,9 +42,10 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 环境 | 当前结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | planned：`rg --files src/ui/qml -g '*.qml'` 与矩阵逐项比对，确认恰有 25 项并覆盖四页及窗口/共用组件 | 固定基线 | NOT_RUN | `verification/M2-UI1/**` |
-| AC2/3 | planned：逐组件核对 QML、Tokens、05 UI Mapping、User Flow 与 Design F 来源，记录行号/冲突 | 只读源码和文档 | NOT_RUN | 设计契约与来源表 |
-| AC4/5 | planned：隔离 GUI 采集或给可执行复现步骤；`git diff --name-only <base> <delivery>`、`git diff --check <base> <delivery>` | 与生产环境匹配；固定 Delivery head | NOT_RUN | 截图/环境/原始日志或明确 NOT_RUN |
+| AC1 | `rg --files src/ui/qml -g '*.qml'` 与矩阵逐项比对，确认恰有 25 项并覆盖四页及窗口/共用组件 | 固定基线 worktree | **PASS**：25 文件 + `theme/qmldir`，四页齐全，矩阵 25 行（§1.1–1.7） | `verification/M2-UI1/qml-inventory.txt`；契约 §0/§1 |
+| AC2/3 | 逐组件核对 QML、Tokens、05 UI Mapping、User Flow 与 Design F 来源，记录行号/冲突 | 只读源码和文档 | **PASS**：映射表 + 令牌表逐项落位；冲突 11 条（C-1…C-11）与偏差 D-1…D-6 附行号 | 契约 §2/§3/§7 |
+| AC4 | 隔离 GUI 采集：`capture_baseline.py`（派生自 repair-13 probe，+窗口激活/VM 直驱回退）在 src≡base 的工作树实采 14 帧；三次尝试日志全留 | Windows 真平台（禁 offscreen）、venv TASK-012-py312、1280×800@100% dark | **PASS(13/14)**：13 帧有效；焦点环帧降级、9 类画面 `NOT_RUN`（含步骤），未虚构基线图 | `verification/M2-UI1/baseline-6a68fde/**`（manifest + capture.log + 帧 sha256 + attempt1/2 失败日志） |
+| AC5 | parity Gate 七步定义 + 本 Task 自身零生产改动：`git diff --name-only <base> <delivery>`、`git diff --check <base> <delivery> -- src tests doc` | 固定 Delivery head | **PASS**：Gate 见契约 §5；写集合仅授权 4 路径，`src/**` 零命中；diff --check 结果见 Handoff | 契约 §5/§8；Handoff 验证表 |
 
 ## 依赖、风险与阻塞
 
@@ -52,5 +53,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- 固定代码基线 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`。开工核对 worktree/branch/HEAD/common directory、注册提交与干净状态。
-- Handoff、Review、实际验证、integration commit：尚无；上述验证均 `NOT_RUN`。
+- 固定代码基线 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`。开工核对：worktree `G:/CODEX/New Manga.worktrees/M2-UI1-qoder`、branch `agent/qoder/M2-UI1-react-parity-visual-contract`、HEAD `5d989ba`、common dir `G:/CODEX/New Manga/.git`、工作区干净——全部一致；`git diff --name-only 6a68fde 5d989ba` 仅 `doc/**`，src 树与 base 逐字节一致。
+- 交付物：`doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md`（矩阵/映射/令牌/基线/Gate/冲突清单）+ `verification/M2-UI1/**`（盘点、派生采集脚本、基线帧与三次尝试日志）。
+- 采集环境事实：本机（非 Sandbox）合成指针事件不触达 TapHandler/MouseArea、`forceActiveFocus` 不生效——tile 选中改由 `vm.selectPage` 直驱（状态等价、已在脚本 docstring 与 manifest 注记），焦点环帧记降级。
+- Handoff：见 `doc/handoffs/M2-UI1-*.md`（delivery commit 以 Handoff frontmatter 为准）；Review：待 Codex。
