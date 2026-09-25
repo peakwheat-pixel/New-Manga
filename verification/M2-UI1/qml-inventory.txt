@@ -1,0 +1,40 @@
+# M2-UI1 QML inventory (AC1)
+command: rg --files src/ui/qml -g '*.qml' | sort
+run_at: 2026-09-25T09:49:15Z
+worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder
+branch: agent/qoder/M2-UI1-react-parity-visual-contract
+head: 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+base: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+
+     1	src/ui/qml\Main.qml
+     2	src/ui/qml\bookshelf\BookCard.qml
+     3	src/ui/qml\bookshelf\BookDetailPanel.qml
+     4	src/ui/qml\bookshelf\BookGrid.qml
+     5	src/ui/qml\bookshelf\BookshelfToolbar.qml
+     6	src/ui/qml\bookshelf\BookshelfView.qml
+     7	src/ui/qml\bookshelf\ChapterList.qml
+     8	src/ui/qml\common\CanvasCaption.qml
+     9	src/ui/qml\common\ChapterPicker.qml
+    10	src/ui/qml\common\EmptyState.qml
+    11	src/ui/qml\reader\ReaderView.qml
+    12	src/ui/qml\settings\SettingsView.qml
+    13	src/ui/qml\shell\AppShell.qml
+    14	src/ui/qml\shell\NavBadge.qml
+    15	src/ui/qml\shell\PrimaryNavigationRail.qml
+    16	src/ui/qml\theme\Tokens.qml
+    17	src/ui/qml\windows\ExportWindow.qml
+    18	src/ui/qml\workbench\DirtyConfirmDialog.qml
+    19	src/ui/qml\workbench\PageListPanel.qml
+    20	src/ui/qml\workbench\RegionInspector.qml
+    21	src/ui/qml\workbench\RegionOverlay.qml
+    22	src/ui/qml\workbench\TaskProgressPanel.qml
+    23	src/ui/qml\workbench\ViewerPanel.qml
+    24	src/ui/qml\workbench\WorkbenchToolbar.qml
+    25	src/ui/qml\workbench\WorkbenchView.qml
+
+count: 25
+
+## qmldir files (token registration dependency, not counted in 25)
+src/ui/qml/theme/qmldir
+module theme
+singleton Tokens 1.0 Tokens.qml

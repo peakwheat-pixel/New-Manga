@@ -1,0 +1,75 @@
+# M2-UI1 R2 repair gates (run 2026-09-25T11:30:10Z)
+reviewed: doc/reviews/M2-UI1-8031173.md (changes_requested, R-001..R-004)
+author start HEAD: 5d989ba; original delivery: 8031173; handoff1: 0cdbec2; R2 head: 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b
+
+## git diff --name-only 5d989ba 23a5ac0 (write set, expect only allowed paths)
+doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md
+doc/handoffs/M2-UI1-8031173.md
+doc/tasks/M2-UI1.md
+verification/M2-UI1/baseline-6a68fde/attempt1-capture.log
+verification/M2-UI1/baseline-6a68fde/attempt1-capture.stderr.log
+verification/M2-UI1/baseline-6a68fde/attempt2-capture.log
+verification/M2-UI1/baseline-6a68fde/attempt2-capture.stderr.log
+verification/M2-UI1/baseline-6a68fde/capture.log
+verification/M2-UI1/baseline-6a68fde/capture.stderr.log
+verification/M2-UI1/baseline-6a68fde/manifest.md
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/01-bookshelf-empty.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/02-new-book-dialog.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/03-bookshelf-detail.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/04-toolbar-checked.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/05-chapter-selected.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/05b-import-picker-opened.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/06-pages-imported.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/07-reader-active.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/08-reader-chapter-picker.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/09-export-window.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/10-export-after.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/11-workbench.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/12-settings.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt1-failed/13-focus-create-book.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/01-bookshelf-empty.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/02-new-book-dialog.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/03-bookshelf-detail.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/04-toolbar-checked.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/05-chapter-selected.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/05b-import-picker-opened.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/06-pages-imported.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/07-reader-active.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/08-reader-chapter-picker.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/09-export-window.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/10-export-after.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/11-workbench.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/12-settings.png
+verification/M2-UI1/baseline-6a68fde/screenshots-attempt2/13-focus-create-book.png
+verification/M2-UI1/baseline-6a68fde/screenshots/01-bookshelf-empty.png
+verification/M2-UI1/baseline-6a68fde/screenshots/02-new-book-dialog.png
+verification/M2-UI1/baseline-6a68fde/screenshots/03-bookshelf-detail.png
+verification/M2-UI1/baseline-6a68fde/screenshots/04-toolbar-checked.png
+verification/M2-UI1/baseline-6a68fde/screenshots/05-chapter-selected.png
+verification/M2-UI1/baseline-6a68fde/screenshots/05b-import-picker-opened.png
+verification/M2-UI1/baseline-6a68fde/screenshots/06-pages-imported.png
+verification/M2-UI1/baseline-6a68fde/screenshots/07-reader-active.png
+verification/M2-UI1/baseline-6a68fde/screenshots/08-reader-chapter-picker.png
+verification/M2-UI1/baseline-6a68fde/screenshots/09-export-window.png
+verification/M2-UI1/baseline-6a68fde/screenshots/10-export-after.png
+verification/M2-UI1/baseline-6a68fde/screenshots/11-workbench.png
+verification/M2-UI1/baseline-6a68fde/screenshots/12-settings.png
+verification/M2-UI1/baseline-6a68fde/screenshots/13-focus-create-book.png
+verification/M2-UI1/capture_baseline.py
+verification/M2-UI1/qml-inventory.txt
+
+## out-of-scope filter (empty = zero violations)
+(none)
+
+## git diff --check 5d989ba 23a5ac0
+CHECK_EXIT=0
+
+## zero src/tests diff proof: git diff --quiet 6a68fdeb 23a5ac00 -- src tests
+SRC_TESTS_DIFF_EXIT=0 (0 = zero diff)
+
+## src/tests name-only proof (empty = zero files)
+
+## counts re-verified against base sources (R-002/R-003/R-004)
+S60 target names: 39 (shell2+bookshelf6+workbench8+reader3+settings2+windows12+common6); existing 18; missing 21
+workbench commands: 24 distinct vm methods, 25 call/callback sites (stepPage x2)
+Tokens.qml: readonly property color = 40, readonly property string = 2 (shadow/shadowSm); st-* = 9, *-soft = 7 per mode
