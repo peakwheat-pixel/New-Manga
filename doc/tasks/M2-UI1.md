@@ -9,6 +9,7 @@ owner: Qoder
 reviewer: Codex
 depends_on: [M2-D1]
 base_commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+delivery_head: 80311732c3224c7054ad4bc2ba8ba0bee7f2f765
 branch: agent/qoder/M2-UI1-react-parity-visual-contract
 worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder
 integration_commit: null
@@ -56,4 +57,4 @@ integration_commit: null
 - 固定代码基线 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`。开工核对：worktree `G:/CODEX/New Manga.worktrees/M2-UI1-qoder`、branch `agent/qoder/M2-UI1-react-parity-visual-contract`、HEAD `5d989ba`、common dir `G:/CODEX/New Manga/.git`、工作区干净——全部一致；`git diff --name-only 6a68fde 5d989ba` 仅 `doc/**`，src 树与 base 逐字节一致。
 - 交付物：`doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md`（矩阵/映射/令牌/基线/Gate/冲突清单）+ `verification/M2-UI1/**`（盘点、派生采集脚本、基线帧与三次尝试日志）。
 - 采集环境事实：本机（非 Sandbox）合成指针事件不触达 TapHandler/MouseArea、`forceActiveFocus` 不生效——tile 选中改由 `vm.selectPage` 直驱（状态等价、已在脚本 docstring 与 manifest 注记），焦点环帧记降级。
-- Handoff：见 `doc/handoffs/M2-UI1-*.md`（delivery commit 以 Handoff frontmatter 为准）；Review：待 Codex。
+- Handoff：`doc/handoffs/M2-UI1-8031173.md`（Delivery `80311732c3224c7054ad4bc2ba8ba0bee7f2f765`）；Review：待 Codex。
