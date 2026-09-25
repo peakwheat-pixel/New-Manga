@@ -13,7 +13,13 @@ DOMAIN_FORBIDDEN = frozenset(
     {"PySide6", "sqlite3", "torch", "transformers", "onnxruntime"}
 )
 UI_FORBIDDEN = frozenset({"infrastructure"})
-APPLICATION_FORBIDDEN = frozenset({"infrastructure"})
+# M2-I2: application layer must not import infrastructure or UI presentation
+APPLICATION_FORBIDDEN = frozenset({"infrastructure", "ui"})
+QT_FORBIDDEN = frozenset({"PySide6"})
+M2_I2_QT_FREE_MODULES = (
+    APPLICATION_ROOT / "tasks" / "projection.py",
+    APPLICATION_ROOT / "editing" / "region_canvas.py",
+)
 
 #: Calls that import a module from a literal name at runtime (TASK-034 AC ②:
 #: the old line-prefix guard could not see these).
@@ -35,7 +41,7 @@ def _dynamic_import_target(node: ast.Call) -> str | None:
 def find_forbidden_imports(
     root: Path, forbidden_roots: frozenset[str]
 ) -> list[str]:
-    """Report static *and* literal dynamic imports of a forbidden root.
+    """Report static *and* literal dynamic imports of a forbidden root or module path.
 
     Static: ``import x.y`` / ``from x import y`` (including relative forms).
     Dynamic: ``importlib.import_module("x.y")`` / ``__import__("x.y")`` with a
@@ -43,7 +49,8 @@ def find_forbidden_imports(
     (TASK-034 AC ②).
     """
     violations: list[str] = []
-    for path in sorted(root.rglob("*.py")):
+    paths = [root] if root.is_file() else sorted(root.rglob("*.py"))
+    for path in paths:
         tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
         for node in ast.walk(tree):
             if isinstance(node, ast.Import):
@@ -57,19 +64,34 @@ def find_forbidden_imports(
                 )
             elif isinstance(node, ast.Call):
                 dynamic = _dynamic_import_target(node)
-                if dynamic is not None and dynamic.split(".", 1)[0] in forbidden_roots:
-                    violations.append(
-                        f"{path}:{node.lineno}: forbidden dynamic import {dynamic}"
-                    )
+                if dynamic is not None:
+                    dyn_clean = dynamic.lstrip(".")
+                    for fb in forbidden_roots:
+                        if (
+                            dyn_clean == fb
+                            or dyn_clean.startswith(fb + ".")
+                            or ("." not in fb and dyn_clean.split(".", 1)[0] == fb)
+                        ):
+                            violations.append(
+                                f"{path}:{node.lineno}: forbidden dynamic import {dynamic}"
+                            )
+                            break
                 continue
             else:
                 continue
 
             for module in modules:
-                if module.lstrip(".").split(".", 1)[0] in forbidden_roots:
-                    violations.append(
-                        f"{path}:{node.lineno}: forbidden import {module}"
-                    )
+                mod_clean = module.lstrip(".")
+                for fb in forbidden_roots:
+                    if (
+                        mod_clean == fb
+                        or mod_clean.startswith(fb + ".")
+                        or ("." not in fb and mod_clean.split(".", 1)[0] == fb)
+                    ):
+                        violations.append(
+                            f"{path}:{node.lineno}: forbidden import {module}"
+                        )
+                        break
     return sorted(violations)
 
 
@@ -116,20 +138,91 @@ def test_relative_from_import_reports_forbidden_alias(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 
 
-def test_application_layer_does_not_import_infrastructure() -> None:
-    """Standards S-1 (TASK-019) + T-4 (TASK-034): the layer direction holds.
+def test_application_layer_does_not_import_infrastructure_or_ui() -> None:
+    """Standards S-1 (TASK-019) + T-4 (TASK-034) + M2-I2: layer direction holds.
 
     ``doc/02_TECHNICAL_ARCHITECTURE_.md`` §架构方向 requires
     ``QML/UI → Application → Domain/Ports → Infrastructure Adapters``. The
-    Inpaint Step once imported the route policy, route table and non-target
-    protection rule from ``infrastructure.providers``; those live in the
-    application layer now, and this guard keeps the inversion from coming back
-    — including via ``importlib.import_module("infrastructure…")``.
+    application layer must not import infrastructure nor UI presentation modules.
+    This guard prevents architecture inversion and keeps logic from flowing back to UI.
     """
     violations = find_forbidden_imports(APPLICATION_ROOT, APPLICATION_FORBIDDEN)
-    assert not violations, "application layer must not import infrastructure:\n" + "\n".join(
+    assert not violations, "application layer must not import infrastructure or ui:\n" + "\n".join(
         violations
     )
+
+
+def test_migrated_application_modules_are_qt_free() -> None:
+    """M2-I2 AC3/AC4: migrated application modules must be completely Qt-free."""
+    violations: list[str] = []
+    for module_path in M2_I2_QT_FREE_MODULES:
+        assert module_path.is_file(), f"missing migrated module: {module_path}"
+        violations.extend(find_forbidden_imports(module_path, QT_FORBIDDEN))
+    assert not violations, "migrated application modules must not import Qt:\n" + "\n".join(
+        violations
+    )
+
+
+def test_workbench_ui_consumers_import_from_application_seams() -> None:
+    """M2-I2 AC2/AC4: legacy UI consumers must consume projection and region canvas via application seams.
+
+    Prevents reversal of authoritative logic into UI by asserting that consumer
+    modules do not import from the non-authoritative legacy shims.
+    """
+    page_list_model = UI_ROOT / "models" / "tasks" / "page_list_model.py"
+    workbench_vm = UI_ROOT / "viewmodels" / "workbench" / "viewmodel.py"
+    legacy_shims = frozenset({
+        "ui.models.tasks.projection",
+        "ui.viewmodels.workbench.region_canvas",
+    })
+    for path in (page_list_model, workbench_vm):
+        assert path.is_file(), f"missing consumer file: {path}"
+        violations = find_forbidden_imports(path, legacy_shims)
+        assert not violations, (
+            f"{path} must not import from legacy UI logic modules:\n" + "\n".join(violations)
+        )
+
+
+def test_application_ui_violation_reports_file_line_and_module(tmp_path: Path) -> None:
+    """M2-I2 AC4 discriminative probe: application importing ui must be caught."""
+    source = tmp_path / "bad_app.py"
+    source.write_text(
+        "from ui.models.tasks.projection import TaskProjection\n",
+        encoding="utf-8",
+    )
+    assert find_forbidden_imports(tmp_path, APPLICATION_FORBIDDEN) == [
+        f"{source}:1: forbidden import ui.models.tasks.projection"
+    ]
+
+
+def test_qt_free_application_violation_reports_pyside6(tmp_path: Path) -> None:
+    """M2-I2 AC4 discriminative probe: PySide6 import in qt-free module must be caught."""
+    source = tmp_path / "bad_qt_free.py"
+    source.write_text(
+        "from PySide6.QtCore import QObject\n",
+        encoding="utf-8",
+    )
+    assert find_forbidden_imports(tmp_path, QT_FORBIDDEN) == [
+        f"{source}:1: forbidden import PySide6.QtCore"
+    ]
+
+
+def test_reversal_guard_reports_legacy_ui_import(tmp_path: Path) -> None:
+    """M2-I2 AC4 discriminative probe: legacy shim imports must be reported."""
+    source = tmp_path / "bad_consumer.py"
+    source.write_text(
+        "from ui.models.tasks.projection import build_projection\n"
+        "from ui.viewmodels.workbench.region_canvas import normalized_to_page_geometry\n",
+        encoding="utf-8",
+    )
+    forbidden = frozenset({
+        "ui.models.tasks.projection",
+        "ui.viewmodels.workbench.region_canvas",
+    })
+    assert find_forbidden_imports(tmp_path, forbidden) == [
+        f"{source}:1: forbidden import ui.models.tasks.projection",
+        f"{source}:2: forbidden import ui.viewmodels.workbench.region_canvas",
+    ]
 
 
 def test_dynamic_import_of_a_forbidden_root_is_detected(tmp_path: Path) -> None:
