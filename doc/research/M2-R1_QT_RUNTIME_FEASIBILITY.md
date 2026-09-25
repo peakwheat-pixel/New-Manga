@@ -8,7 +8,7 @@
 | Owner | DeepSeek Harness（Reviewer/Integrator = Codex，禁止自审） |
 | 固定代码 base | `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`（`master`） |
 | Owner worktree HEAD（开工） | `5d989bab6c5c8a24a5112303f95c2b8eea356bdc`（`agent/deepseek/M2-R1-qt-runtime-feasibility`） |
-| Delivery head | 首轮 `87afdd2e87c46bc8f19d53e932fb641c2457e45b`；**P2-001 计数修订** `bbc1914b332b15176fd8337340960d753f99cff8`（提交列表见 [首轮 Handoff](../handoffs/M2-R1-87afdd2.md) 与 [修订 Handoff](../handoffs/M2-R1-bbc1914.md)） |
+| Delivery head | 首轮 `87afdd2e87c46bc8f19d53e932fb641c2457e45b`；**P2-001 计数修订** `bbc1914b332b15176fd8337340960d753f99cff8`；**残留字面清扫** `5e2800b93da1d3516449f8765a06828822a7e9b1`（提交列表见 [首轮 Handoff](../handoffs/M2-R1-87afdd2.md)、[修订 Handoff](../handoffs/M2-R1-bbc1914.md) 与 [第二轮 Handoff](../handoffs/M2-R1-5e2800b.md)） |
 | 实验日期 | 2026-09-25（Asia/Shanghai） |
 | 被测环境 | **Python 3.12.3 + PySide6_Essentials 6.11.2 + shiboken6 6.11.2 + Qt 6.11.2 + Windows 11 专业版 10.0.26200（隔离 venv）** |
 | 环境裁定 | **与生产口径匹配 → 结论有效**（不记 `BLOCKED`；依据见 §2） |
