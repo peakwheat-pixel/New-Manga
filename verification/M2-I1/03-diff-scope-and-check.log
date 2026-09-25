@@ -1,0 +1,22 @@
+# M2-I1 I1-AC5/AC8 delivery scope + zero React/Tauri
+date: 2026-09-25T18:01:50+08:00
+worktree: /g/CODEX/New Manga.worktrees/M2-I1-zcode
+
+command: git status --short; git diff --name-only <start-HEAD 5d989ba>; git diff --check <start-HEAD>
+
+=== worktree status (author delta vs start HEAD 5d989ba) ===
+ M src/bootstrap/app.py
+ M tests/core/test_bootstrap.py
+?? src/bootstrap/core_assembly.py
+?? tests/core/test_core_assembly.py
+?? verification/M2-I1/
+
+=== tracked diff vs start HEAD ===
+src/bootstrap/app.py
+tests/core/test_bootstrap.py
+
+=== React/Tauri artifacts in the delta ===
+(zero hits — I1-AC8 holds)
+
+=== whitespace check (base -> worktree) ===
+DIFF-CHECK-EXIT=0

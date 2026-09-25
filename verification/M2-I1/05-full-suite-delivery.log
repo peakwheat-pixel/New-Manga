@@ -1,0 +1,36 @@
+# M2-I1 I1-AC7 — full suite (delivery tree, M2-I1 changes applied)
+date: 2026-09-25T18:02:28+08:00
+shell: Git Bash
+python: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+worktree: /g/CODEX/New Manga.worktrees/M2-I1-zcode  HEAD=5d989bab6c5c8a24a5112303f95c2b8eea356bdc + uncommitted M2-I1 delta
+
+command: python -m pytest -q -p no:cacheprovider -rs tests
+
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 35%]
+........................................s.s.s........................... [ 41%]
+........................................................................ [ 46%]
+........................................................................ [ 52%]
+..... [ 58%]
+........................................................................ [ 64%]
+........................................................................ [ 70%]
+........................................................................ [ 76%]
+........................................................................ [ 82%]
+. [ 87%]
+........................................................................ [ 93%]
+........................................................................ [ 99%]
+.....                                                                    [100%]
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detect_seam_t111.py:15: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:173: numpy is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:206: torch is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:236: torch is not installed
+1226 passed, 5 skipped, 1 warning in 61.71s (0:01:01)
+EXIT=0

@@ -1,0 +1,24 @@
+# M2-I1 I1-AC3/AC6/AC7 — Task-specified suite (delivery tree)
+date: 2026-09-25T18:02:03+08:00
+shell: Git Bash
+python: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+worktree: /g/CODEX/New Manga.worktrees/M2-I1-zcode  HEAD=5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+env: PYTHONDONTWRITEBYTECODE=1; QT_QPA_PLATFORM unset (product boundary)
+
+command: python -m pytest -q -p no:cacheprovider -rs tests/core/test_bootstrap.py tests/core/test_core_assembly.py tests/ui_shell tests/providers tests/pipeline
+
+........................................................................ [ 15%]
+. [ 30%]
+...............................................s.s.s......... [ 45%]
+........................................................................ [ 61%]
+........................................................................ [ 76%]
+........................................................................ [ 91%]
+......................................                                   [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detect_seam_t111.py:15: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:173: numpy is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:206: torch is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:236: torch is not installed
+467 passed, 5 skipped in 13.42s
+EXIT=0

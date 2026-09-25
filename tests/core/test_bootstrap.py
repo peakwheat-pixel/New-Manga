@@ -230,6 +230,11 @@ def test_assemble_services_closes_connection_when_migration_fails(
     from types import SimpleNamespace
 
     import bootstrap.app as app_module
+    # M2-I1: open_database/MigrationRunner are called inside the Qt-free
+    # Core assembly now, so the patch targets bootstrap.core_assembly; the
+    # production entry under test is still bootstrap.app.assemble_services
+    # and the assertion (the connection is closed) is unchanged.
+    import bootstrap.core_assembly as core_assembly
 
     conn = sqlite3.connect(":memory:")
 
@@ -241,14 +246,14 @@ def test_assemble_services_closes_connection_when_migration_fails(
             raise RuntimeError("migration failed")
 
     monkeypatch.setattr(
-        app_module,
+        core_assembly,
         "open_database",
         lambda *args, **kwargs: (
             conn,
             SimpleNamespace(writable=True, schema_version=0),
         ),
     )
-    monkeypatch.setattr(app_module, "MigrationRunner", FailingMigrationRunner)
+    monkeypatch.setattr(core_assembly, "MigrationRunner", FailingMigrationRunner)
 
     with pytest.raises(RuntimeError, match="migration failed"):
         app_module.assemble_services(tmp_path / "library.db", tmp_path / "managed")
