@@ -1,0 +1,13 @@
+Task: M2-I2 revised-head review probe — shim import origin
+Shell: Windows PowerShell
+Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+Version: Python 3.12.3
+Reviewed commit: 86ecb94b7f2acd356923d5408c80ac81d942fd03
+Command: & 'G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe' verification/M2-I2/review-86ecb94-shim-import-probe.py 'G:\CODEX\New Manga.worktrees\M2-I2-antigravity\tests\core\test_architecture.py'
+Started: 2026-09-25 (Asia/Shanghai)
+Environment: PYTHONDONTWRITEBYTECODE=1
+Exit code: 0
+Reviewed guard: G:\CODEX\New Manga.worktrees\M2-I2-antigravity\tests\core\test_architecture.py
+Mutant shim: from ui.experimental.business_rules import revived_business_rule
+Guard violations: []
+Result: NOT DETECTED
