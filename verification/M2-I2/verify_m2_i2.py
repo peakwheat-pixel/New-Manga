@@ -20,6 +20,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src"
 TESTS_WB = REPO_ROOT / "tests" / "workbench"
 
+sys.path.insert(0, str(REPO_ROOT))
 sys.path.insert(0, str(SRC_ROOT))
 sys.path.insert(0, str(TESTS_WB))
 
@@ -125,12 +126,10 @@ def verify_ac2_authority_and_seams() -> dict:
     tasks_init_path = SRC_ROOT / "ui" / "models" / "tasks" / "__init__.py"
 
     # Verify shims do not contain function definitions or algorithmic logic
+    from tests.core.test_architecture import find_shim_local_definitions
     for path in (ui_proj_path, ui_rc_path):
-        tree = ast.parse(path.read_text(encoding="utf-8"))
-        for node in tree.body:
-            assert not isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)), (
-                f"Shim {path} contains local definition: {getattr(node, 'name', type(node))}"
-            )
+        violations = find_shim_local_definitions(path)
+        assert not violations, f"Shim {path} contains local definition: {violations}"
 
     # Verify consumer imports
     plm_ast = ast.parse(page_list_model_path.read_text(encoding="utf-8"))
