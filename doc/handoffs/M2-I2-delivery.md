@@ -5,7 +5,7 @@ recipient: Codex（独立非作者 Review 与集成）
 base_commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
 opening_head: 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
 delivery_commit: e359da759d1160467f61ced7061cdfe09772232f
-status: in_review
+status: done
 ---
 
 # Handoff：M2-I2 Qt-free Logic Extraction（修订版 3）
@@ -19,7 +19,7 @@ status: in_review
 - **开工 HEAD**：`5d989bab6c5c8a24a5112303f95c2b8eea356bdc`
 - **本次开工前 Reviewed HEAD**：`a4705a9f473d0e8d9087068edc4bec572d90439a`
 - **本次产品与架构测试 Delivery Commit**：`e359da759d1160467f61ced7061cdfe09772232f`
-- **交付状态**：`in_review`
+- **交付状态**：`done`
 - **交付目标**：迁出 M2-D1 矩阵 M2D1-25/26 已验证为 Qt-free 的两个模块至应用层权威位置；严格限定两个旧 shim 只能从各自对应的 `application.*` seam 重导出；彻底闭环 Codex 非作者复审 `doc/reviews/M2-I2-a4705a9.md` 提出的 Finding R-003（收紧 `__all__` 静态语法分析与增加动态 RHS 负例）与 Finding R-004（纠正 OpenSSL CLI 可执行文件检测文案）。
 
 ---
@@ -124,6 +124,7 @@ status: in_review
 - **空白审计**：
   - `git diff --check 5d989bab6c5c8a24a5112303f95c2b8eea356bdc e359da759d1160467f61ced7061cdfe09772232f`：**Exit Code 0**（零警告、零 trailing whitespace、零 EOF 换行问题）。
   - `git diff --check a4705a9f473d0e8d9087068edc4bec572d90439a e359da759d1160467f61ced7061cdfe09772232f`：**Exit Code 0**。
+  - Codex 集成检查：固定 Base→Reviewed HEAD、Reviewed HEAD→产品集成提交及产品集成→完成记录的 `git diff --check` 均 **Exit Code 0**，见 [`verification/M2-I2/integration-check.log`](../../verification/M2-I2/integration-check.log)。
 - **受保护路径审计**：
   `src/application/**`、`src/ui/**`、`src/bootstrap/**`、`src/domain/**`、`src/ports/**`、`src/infrastructure/**`、Schema、requirements、React、Tauri、IPC 零改动。本次修改严格限于 `tests/core/test_architecture.py`、`doc/handoffs/M2-I2-delivery.md`、`doc/tasks/M2-I2.md` 与 `verification/M2-I2/**`。
 
@@ -138,6 +139,7 @@ status: in_review
 - [`verification/M2-I2/full-suite-delivery-pre-rerun.log`](../../verification/M2-I2/full-suite-delivery-pre-rerun.log)：作者原始交付日志；运行早于新增架构测试，统计为 1254 collected / 1247 passed，不作为当前结果。
 - [`verification/M2-I2/review-0d6acc7/`](../../verification/M2-I2/review-0d6acc7/)：固定 Revised HEAD 的环境探针、工作台/架构与 Qt-free 独立复跑原始日志。
 - [`verification/M2-I2/integration-*.log`](../../verification/M2-I2/)：Codex 集成候选树的工作台+架构、Qt-free 与 shim guard 验证日志。
+- [`verification/M2-I2/integration-check.log`](../../verification/M2-I2/integration-check.log)：固定 Base、Reviewed HEAD、集成提交与完成记录之间的 diff/whitespace 检查。
 - [`verification/M2-I2/post-migration-verification.log`](../../verification/M2-I2/post-migration-verification.log)：修改后 65 项 focused 测试通过日志与 28 项跨模块语义/字节等价性探针聚合日志。
 - [`verification/M2-I2/verify_m2_i2.py`](../../verification/M2-I2/verify_m2_i2.py)：综合验证探针脚本，覆盖 AC1~AC4 的可重复自动测试。
 - [`verification/M2-I2/diff-check.log`](../../verification/M2-I2/diff-check.log)：空白检查（Exit Code 0）及对开工 HEAD、基线 Commit、前次 HEAD 的 diff stat 记录。
@@ -146,6 +148,5 @@ status: in_review
 
 ## 8. 后续交接与下一步建议
 
-按照《协作协议》（09_COLLABORATION.md §5.1）规范：
-- 修订交付提交为 `e359da759d1160467f61ced7061cdfe09772232f`，完整 Revised HEAD 为 `0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716`；状态 `in_review` 仅表示该作者交付等待 Codex 集成状态更新。
-- 独立 Review 与集成后验证记录见 `doc/reviews/M2-I2-0d6acc7.md`；集成状态完成后，此交付记录与 Task 状态同步更新为 `done`。
+- 按照《协作协议》（09_COLLABORATION.md §5.1）规范：修订交付提交为 `e359da759d1160467f61ced7061cdfe09772232f`，完整 Revised HEAD 为 `0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716`；Codex Review 已批准，M2-I2 集成提交=`7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9`，Task 与 Handoff 均为 `done`。
+- **下一 Task：M2-I1 Core Assembly Seam（ZCode）**。先将原交付 HEAD `cb459027f111f381d906e944edb5ac78eb641dea` reconcile 到 M2-I2 集成基线 `7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9`，保留 Task 冻结写集合；提交新的固定 HEAD/Handoff 后由 Codex 复审并做集成验证。不得把 I1 状态直接推进为 `done`。

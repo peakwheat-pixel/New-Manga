@@ -6,7 +6,7 @@ base_commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
 reviewed_head: 0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716
 delivery_commit: e359da759d1160467f61ced7061cdfe09772232f
 decision: approved
-integration_commit: pending
+integration_commit: 7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9
 ---
 
 # Review：M2-I2（R-003 / R-004 修订）
@@ -30,6 +30,7 @@ integration_commit: pending
 | Workbench + Architecture | `python -m pytest -v tests/workbench tests/core/test_architecture.py` | Python 3.12.3；集成候选树 | PASS：143 passed，Exit 0 | `verification/M2-I2/integration-workbench-architecture.log` |
 | Qt-free | `python -m pytest -v -rs tests/workbench/test_projection.py tests/workbench/test_region_canvas.py tests/core/test_architecture.py` | Python 3.14.6，无 PySide6；集成候选树 | PASS：40 passed, 2 skipped，Exit 0；两个兼容重导出用例因缺少 PySide6 跳过 | `verification/M2-I2/integration-qtfree-suite.log` |
 | 全仓 | `python -m pytest -v -rs` | Python 3.12.3；固定 Reviewed HEAD `0d6acc7d` | 1249 passed, 6 skipped, 1 failed，Exit 1，1256 collected；六个 skip 因 PATH 中无 openssl CLI（`shutil.which("openssl") is None`）；唯一 failure 为环境已安装 `torch` 导致的 `test_no_model_runtime_is_installed_in_this_environment` | `verification/M2-I2/full-suite.log` 与 `review-0d6acc7/full-suite-environment.log` |
+| 集成范围/空白 | 固定 Base→Reviewed HEAD、Reviewed HEAD→产品集成提交及产品集成→完成记录的 `git diff --check` | Codex integration worktree | PASS：全部 Exit 0 | `verification/M2-I2/integration-check.log` |
 
 全仓测试作者原始日志早于动态 `__all__` 新增测试，故其 1254 collected / 1247 passed 不能代表当前树。Codex 已在固定 Reviewed HEAD 独立重跑，当前日志记录 1256 collected / 1249 passed；旧日志作为 `full-suite-delivery-pre-rerun.log` 保留。全仓唯一失败与 skip 原因均有对应环境探针和逐项归因；受影响的 Workbench、Architecture 与 Qt-free 门禁通过。
 
@@ -50,4 +51,4 @@ integration_commit: pending
 
 ## 结论与复审
 
-**批准集成。** 固定 Reviewed HEAD `0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716` 可集成至 `master`。集成后 Workbench + Architecture、Qt-free 与指定 shim 守卫测试已在集成候选树复跑通过。集成 commit 待写入完成 Task 状态的后续提交；本 Review 不替代集成 commit 记录。
+**批准并完成集成。** 固定 Reviewed HEAD `0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716` 已由集成提交 `7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9` 合入主线。Workbench + Architecture、Qt-free 与指定 shim 守卫测试已在集成候选树复跑通过；M2-I2 Task/Handoff 状态为 `done`。
