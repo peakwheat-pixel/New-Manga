@@ -2,13 +2,14 @@
 id: M2-UI1
 title: React Feature Parity & Visual Contract
 kind: design
-status: changes_requested
+status: in_review
 approval: approved_by_user_2026-09-25
 suggested_owner: Qoder
 owner: Qoder
 reviewer: Codex
 depends_on: [M2-D1]
 base_commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+delivery_head: 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b
 branch: agent/qoder/M2-UI1-react-parity-visual-contract
 worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder
 integration_commit: null
@@ -42,10 +43,10 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 环境 | 当前结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | executed：`rg --files src/ui/qml -g '*.qml'` + 矩阵核对 | 固定基线 `6a68fdeb` | inventory PASS：25 项；矩阵核对有 Review finding R-003，Task 未获批 | `verification/M2-UI1/qml-inventory.txt`；[Review](../reviews/M2-UI1-8031173.md) |
-| AC2/3 | executed：逐组件核对 QML、Tokens、05 UI Mapping、User Flow 与 Design F | 只读源码和文档 | 作者 Handoff 报 PASS；独立 Review `changes_requested`（R-001、R-003、R-004） | [Handoff](../handoffs/M2-UI1-8031173.md)；[Review](../reviews/M2-UI1-8031173.md) |
-| AC4 | executed：Windows GUI 采集；核对基线、NOT_RUN 与逐帧证据 | Windows 11 10.0.26200；base `6a68fdeb` / capture HEAD `5d989ba` | 14 帧中 13 可用、1 降级；采集脚本 `EXIT=1`（焦点断言），焦点环按 `NOT_RUN` 处理 | `verification/M2-UI1/baseline-6a68fde/{manifest.md,capture.log,attempt1-capture.log,attempt2-capture.log}` |
-| AC5 / 写集合 | executed：`git diff --name-only 5d989ba 80311732`；`git diff --check 5d989ba 80311732` | Qoder author branch；固定 Delivery | PASS：作者写集合越界 0；`diff --check` exit 0；生产 QML/React/Tauri 零修改 | [Handoff](../handoffs/M2-UI1-8031173.md)；[Review](../reviews/M2-UI1-8031173.md) |
+| AC1 | `rg --files src/ui/qml -g '*.qml'` 与矩阵逐项比对，确认恰有 25 项并覆盖四页及窗口/共用组件 | 固定基线 worktree | **PASS**：25 文件 + `theme/qmldir`，四页齐全，矩阵 25 行（§1.1–1.7） | `verification/M2-UI1/qml-inventory.txt`；契约 §0/§1 |
+| AC2/3 | 逐组件核对 QML、Tokens、05 UI Mapping、User Flow 与 Design F 来源，记录行号/冲突 | 只读源码和文档 | **PASS**：映射表 + 令牌表逐项落位；冲突 11 条（C-1…C-11）与偏差 D-1…D-6 附行号 | 契约 §2/§3/§7 |
+| AC4 | 隔离 GUI 采集：`capture_baseline.py`（派生自 repair-13 probe，+窗口激活/VM 直驱回退）在 src≡base 的工作树实采 14 帧；三次尝试日志全留 | Windows 真平台（禁 offscreen）、venv TASK-012-py312、1280×800@100% dark | **PASS(13/14)**：13 帧有效；焦点环帧降级、9 类画面 `NOT_RUN`（含步骤），未虚构基线图 | `verification/M2-UI1/baseline-6a68fde/**`（manifest + capture.log + 帧 sha256 + attempt1/2 失败日志） |
+| AC5 | parity Gate 七步定义 + 本 Task 自身零生产改动：`git diff --name-only <base> <delivery>`、`git diff --check <base> <delivery> -- src tests doc` | 固定 Delivery head | **PASS**：Gate 见契约 §5；写集合仅授权 4 路径，`src/**` 零命中；diff --check 结果见 Handoff | 契约 §5/§8；Handoff 验证表 |
 
 ## 依赖、风险与阻塞
 
@@ -53,13 +54,9 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- 固定代码基线 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`。开工核对 worktree/branch/HEAD/common directory、注册提交与干净状态。
-- Handoff：[M2-UI1-8031173](../handoffs/M2-UI1-8031173.md)，Delivery `80311732` 的后继 Task/Handoff head=`0cdbec2`。Review：[M2-UI1-8031173](../reviews/M2-UI1-8031173.md)，`changes_requested`；integration commit 尚无。
-
-## Codex 非作者 Review（2026-09-25）
-
-- 固定代码基线：`6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`；产品 Delivery：`80311732c3224c7054ad4bc2ba8ba0bee7f2f765`；复核 Handoff 的 reviewed_head：`0cdbec22643e5ef5578582d8f982f337b535139c`。
-- Review：[M2-UI1-8031173](../reviews/M2-UI1-8031173.md)，结论 `changes_requested`；未集成。
-- Findings：R-001 状态语义映射把页级与 PipelineRun 级 `blocked` 混用（P1）；R-002 §60 目标文件缺失数应复核（P2）；R-003 工作台命令转发计数未与调用面吻合（P2）；R-004 色彩/状态令牌计数不一致（P2）。
-- Review 验证：25 项 QML 清单、3 行源码抽查、11 项 C 冲突及 6 项 D 差异逐条裁决、14 帧 manifest 哈希/日志核对、NOT_RUN 诚实性、作者写集合越界 0；产品测试套件由作者标为 `NOT_RUN`，Reviewer 未运行。
-- 返修仅限授权设计/任务/Handoff/verification 路径；不改现有需求契约正文、`src/**`、`tests/**`。Qoder 新 head 与更新 Handoff 后交 Codex 复审。
+- 固定代码基线 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`。开工核对：worktree `G:/CODEX/New Manga.worktrees/M2-UI1-qoder`、branch `agent/qoder/M2-UI1-react-parity-visual-contract`、HEAD `5d989ba`、common dir `G:/CODEX/New Manga/.git`、工作区干净——全部一致；`git diff --name-only 6a68fde 5d989ba` 仅 `doc/**`，src 树与 base 逐字节一致。
+- 交付物：`doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md`（矩阵/映射/令牌/基线/Gate/冲突清单）+ `verification/M2-UI1/**`（盘点、派生采集脚本、基线帧与三次尝试日志）。
+- 采集环境事实：本机（非 Sandbox）合成指针事件不触达 TapHandler/MouseArea、`forceActiveFocus` 不生效——tile 选中改由 `vm.selectPage` 直驱（状态等价、已在脚本 docstring 与 manifest 注记），焦点环帧记降级。
+- Handoff：`doc/handoffs/M2-UI1-8031173.md`（Delivery `80311732c3224c7054ad4bc2ba8ba0bee7f2f765`）；Review：Codex `doc/reviews/M2-UI1-8031173.md`（decision=**changes_requested**，R-001 P1 + R-002/3/4 P2）。
+- **R2 返修（2026-09-25，本轮）**：按 Review 修订契约——R-001 §3.3 重写为页级/Run 级两组状态域，页级 `blocked` 映射记为源契约未定义项留裁决（不擅改 QML、不声称修复已授权），§7 C-4/§1.4 #16/§4.3 同步；R-002 C-2 目标树缺项 11→**21**（附 39/18/21 计数口径与逐项清单）；R-003 新增 §1.4a 命令面枚举=**24 方法/25 站点**（stepPage 双汇入），§1.4 #14 与 §2.2 替换「12」；R-004 令牌计数改 **40 色 + 2 阴影串（×2 主题=42 主题值）、状态 9+7**（§1.7 #25、§2.2、§3 引言、§3.1）。另回填 Review 对 C-9/C-11 的裁决（现状无缺陷/节流在 VM `PROGRESS_REFRESH_MS=250`）并修正 §0 页面文件数（工作台 8）。原始采集日志未覆盖；本轮无重跑采集。
+- 返修门禁证据：`verification/M2-UI1/repair-gates-<R2head>.log`（`git diff --name-only/--check 5d989ba..<R2 head>`、base→head `src tests` 零差分）；新 Handoff 见 frontmatter `delivery_head` 同名文件。复审：待 Codex，同 base 口径。
