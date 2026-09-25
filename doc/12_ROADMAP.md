@@ -7,12 +7,12 @@ graph, acceptance boundaries and historical Task audit live in
 
 ## Future architecture milestone
 
-[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) is `PLANNED / NOT_RELEASED`. [AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the accepted React + TypeScript + Tauri + Python Core target while PySide6/QML remains the current production UI. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` as read-only `research / audit` after [Codex Review](reviews/M2-D1-0a27a54.md); implementation remains unreleased. T3.2.1 retains its existing full Gate and owner.
+[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 已进入 `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION`；[M2-I1](tasks/M2-I1.md)、[M2-I2](tasks/M2-I2.md)、[M2-R1](tasks/M2-R1.md)、[M2-UI1](tasks/M2-UI1.md) 四项 `ready`，均由 Codex Review。M2-D1=`done`，integration=`100abfb`；M2-C1/M2-S1 未释放。T3.2.1 Legacy Production Gate 保持独立 OPEN。
 
 ## Current order
 
 1. **T1.1.2, T1.1.1, T1.2.1, T2.1.1, T2.2.1, T3.1.1**: verified complete; fixed commits and evidence are in the authoritative Plan.
-2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**: current Active product Task; full Gate OPEN and parent AC3 BLOCKED pending the complete fixed-package workflow. Child [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `done` at Codex integration `6fe7455` (delivery `aed0094`, evidence head `13ae23f`, Review conditions satisfied); its two-page child export does not close the parent Gate. Child [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) for F-13-3 has delivery `56bd33a` / Handoff `9cff94f`; DeepSeek Harness Review `4301939` returned `changes_requested`. Antigravity retains base `4ab6f58` and the registered worktree for bounded revision; applicable AC4 fixed-package GUI verification is outstanding. Parent Gate requirements remain unchanged.
+2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**：Legacy Production Gate `OPEN`，父 AC3=`BLOCKED`；REPAIR-13=`done`（`6fe7455`）、REPAIR-14=`done`（`296131b`）。M2 启动不改变父 Gate，具体阻塞与验证状态见 [STATUS](STATUS.md)。
 
 Historical phases and task ledgers remain in place for traceability; they do
 not override the rebaseline.

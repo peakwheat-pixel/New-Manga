@@ -1,6 +1,6 @@
 # AD-001 — Target Desktop Architecture
 
-Status: **ACCEPTED_TARGET_ARCHITECTURE / IMPLEMENTATION_NOT_RELEASED**
+Status: **ACCEPTED_TARGET_ARCHITECTURE / M2_FIRST_WAVE_RELEASED** (2026-09-25; bounded Tasks only, see [REBASELINE_PLAN](REBASELINE_PLAN.md))
 
 Decision owner: User. Registration owner: Codex. Registration base: `master` @ `1e8cb1157c987945316351728f725073b8b109f9` (2026-09-25). Independent review: DeepSeek Harness, pending. This decision records the user's approved target; it does not approve any implementation Task.
 
@@ -37,7 +37,7 @@ The four top-level product areas remain Library/Bookshelf, Workspace/Workbench, 
 
 ## Governance and open decisions
 
-The future migration is registered in [REBASELINE_PLAN](REBASELINE_PLAN.md) as **M2 — Desktop Architecture Migration, PLANNED / NOT_RELEASED**. Its logical order is Architecture Decision → Migration Discovery / Headless Audit → Python Core Decoupling → Contract / IPC → Tauri + React Skeleton → Incremental Feature Migration → Feature Parity → Packaging → Legacy QML Removal. This is a dependency sketch, not released implementation work. The only successor proposal is Headless & Qt Coupling Audit (`research / audit`). Its audit output will classify findings as `KEEP`, `DECOUPLE`, `REPLACE`, `LEGACY` or `UNVERIFIED`.
+The original registration marked M2 `PLANNED / NOT_RELEASED`. On 2026-09-25 the user separately authorized the bounded first wave: [M2-I1](tasks/M2-I1.md), [M2-I2](tasks/M2-I2.md), [M2-R1](tasks/M2-R1.md) and [M2-UI1](tasks/M2-UI1.md). [REBASELINE_PLAN](REBASELINE_PLAN.md) owns the current release state and [STATUS](STATUS.md) the execution state. The logical order remains Architecture Decision → Migration Discovery / Headless Audit → Python Core Decoupling → Contract / IPC → Tauri + React Skeleton → Incremental Feature Migration → Feature Parity → Packaging → Legacy QML Removal. Only the four named first-wave Tasks are released; contract/IPC, skeleton, product React UI, packaging and QML removal are not.
 
 The proposed audit must inspect `src/domain`, `src/application`, `src/ports`, `src/infrastructure`, `src/bootstrap` and `src/ui`. It must trace PySide6 imports, QObject, QImage, QPdfWriter, Qt compositor/layout/font handling, Webtoon tile decoding, importing, bootstrap engine coupling, SQLite writer paths and headless entry feasibility. Its deliverable is an evidence-linked `KEEP` / `DECOUPLE` / `REPLACE` / `LEGACY` / `UNVERIFIED` matrix with risks and follow-up candidates; no code migration is authorized by that audit proposal.
 
