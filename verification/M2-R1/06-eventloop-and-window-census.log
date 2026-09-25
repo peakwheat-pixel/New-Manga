@@ -1,0 +1,27 @@
+# M2-R1 supplementary probe - event loop stability + full HWND census
+# interpreter: C:\Users\49745\AppData\Local\Temp\M2-R1-venv\Scripts\python.exe ; repo HEAD: 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+# each run: QGuiApplication + QTimer(300ms)->quit + app.exec(); no window is ever created or shown
+
+===== windows run1 =====
+[loop] platform=windows platformName=windows exec_rc=0 timer_fired=True wall=0.3066s visible_windows=0 top_level=3 exit_code=0
+--- EXITCODE=0 ---
+
+===== windows run2 =====
+[loop] platform=windows platformName=windows exec_rc=0 timer_fired=True wall=0.316s visible_windows=0 top_level=3 exit_code=0
+--- EXITCODE=0 ---
+
+===== offscreen run1 =====
+[loop] platform=offscreen platformName=offscreen exec_rc=0 timer_fired=True wall=0.3086s visible_windows=0 top_level=0 exit_code=0
+--- EXITCODE=0 ---
+
+===== offscreen run2 =====
+[loop] platform=offscreen platformName=offscreen exec_rc=0 timer_fired=True wall=0.314s visible_windows=0 top_level=0 exit_code=0
+--- EXITCODE=0 ---
+
+===== minimal run1 =====
+[loop] platform=minimal platformName=minimal exec_rc=0 timer_fired=True wall=0.3161s visible_windows=0 top_level=0 exit_code=0
+--- EXITCODE=0 ---
+
+===== minimal run2 =====
+[loop] platform=minimal platformName=minimal exec_rc=0 timer_fired=True wall=0.3086s visible_windows=0 top_level=0 exit_code=0
+--- EXITCODE=0 ---
