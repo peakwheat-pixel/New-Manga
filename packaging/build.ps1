@@ -29,10 +29,14 @@ if ($LASTEXITCODE -ne 0 -or -not $gitHead) { throw "Unable to resolve source HEA
 $gitStatus = @(git -C $repoRoot status --porcelain=v1)
 if ($LASTEXITCODE -ne 0) { throw "Unable to inspect source working tree at $repoRoot" }
 if ($gitStatus.Count -ne 0) { throw "Build source working tree is not clean; refusing uncommitted inputs" }
+$sourceDateEpoch = (git -C $repoRoot show -s --format=%ct HEAD)
+if ($LASTEXITCODE -ne 0 -or -not $sourceDateEpoch) { throw "Unable to resolve source commit timestamp" }
 
 Write-Host "=== New Manga Package Build ==="
 Write-Host "Repository root: $repoRoot"
 Write-Host "Git Delivery Head: $gitHead"
+Write-Host "Source tree: clean"
+Write-Host "SOURCE_DATE_EPOCH: $sourceDateEpoch"
 Write-Host "Python: $PythonExe"
 Write-Host "Target output dir: $OutputDir"
 
@@ -57,6 +61,10 @@ if (-not (Test-Path $specFile)) {
 
 # Sanitize build PATH to prevent leaking unapproved host native binaries (T3.2.1-REPAIR-9)
 $origPath = $env:PATH
+$savedEnv = @{}
+foreach ($name in @("PYTHONPATH", "PYTHONNOUSERSITE", "PYINSTALLER_CONFIG_DIR", "PYTHONDONTWRITEBYTECODE", "PYTHONHASHSEED", "SOURCE_DATE_EPOCH")) {
+    $savedEnv[$name] = [Environment]::GetEnvironmentVariable($name, "Process")
+}
 $scriptsDir = Split-Path -Parent $PythonExe
 $pythonDir = Split-Path -Parent $scriptsDir
 $systemRoot = [System.Environment]::GetFolderPath([System.Environment+SpecialFolder]::Windows)
@@ -82,6 +90,9 @@ try {
     $env:PYTHONPATH = (Join-Path $repoRoot "src")
     $env:PYTHONNOUSERSITE = "1"
     $env:PYINSTALLER_CONFIG_DIR = $ConfigDir
+    $env:PYTHONDONTWRITEBYTECODE = "1"
+    $env:PYTHONHASHSEED = "0"
+    $env:SOURCE_DATE_EPOCH = $sourceDateEpoch
     $prevEA = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
 
@@ -134,4 +145,7 @@ try {
     Write-Host "Manifest: $manifestFile"
 } finally {
     $env:PATH = $origPath
+    foreach ($name in $savedEnv.Keys) {
+        [Environment]::SetEnvironmentVariable($name, $savedEnv[$name], "Process")
+    }
 }

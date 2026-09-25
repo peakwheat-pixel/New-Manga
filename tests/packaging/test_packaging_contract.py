@@ -30,6 +30,8 @@ def test_build_script_requires_explicit_output_directory():
     assert "Sanitized build PATH" in script
     assert "check_qt_closure.py" in script
     assert "PYINSTALLER_CONFIG_DIR" in script
+    assert "SOURCE_DATE_EPOCH" in script
+    assert "PYTHONHASHSEED" in script
     assert "status --porcelain=v1" in script
     assert "Refusing to reuse an existing output/work/config directory" in script
     assert "New Manga.task-envs" not in script
