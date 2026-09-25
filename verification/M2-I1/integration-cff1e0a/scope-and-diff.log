@@ -1,0 +1,30 @@
+date=2026-09-25T22:22:07.3377129+08:00
+shell=PowerShell
+base=0275290c3cc64e92dc53157b7d35028447d4d54f
+merged_head=cff1e0a8658f57a2e9caf774a9de0961e8f65da3
+command=git diff --name-only base merged_head
+doc/handoffs/M2-I1-0766952.md
+doc/handoffs/M2-I1-b8741eb.md
+src/bootstrap/app.py
+src/bootstrap/core_assembly.py
+tests/core/test_bootstrap.py
+tests/core/test_core_assembly.py
+verification/M2-I1/01-import-blocker-probe-base.log
+verification/M2-I1/01-import-blocker-probe-delivery.log
+verification/M2-I1/02-core-layer-rg-audit.log
+verification/M2-I1/03-diff-scope-and-check.log
+verification/M2-I1/04-task-suite.log
+verification/M2-I1/05-full-suite-delivery.log
+verification/M2-I1/06-full-suite-baseline-control.log
+verification/M2-I1/07-entry-compileall-smoke-screenshot.log
+verification/M2-I1/08-p01-cleanup-probe.log
+verification/M2-I1/09-r2-task-suite.log
+verification/M2-I1/10-r2-qtfree-probes.log
+verification/M2-I1/11-r2-full-suite-and-entry.log
+verification/M2-I1/README.md
+verification/M2-I1/probe_import_blocker.py
+verification/M2-I1/probe_qt_assembly_cleanup.py
+command=git diff --check base merged_head
+DIFF_CHECK_EXIT=0
+PROTECTED_PATH_MATCHES
+NONE

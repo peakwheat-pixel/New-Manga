@@ -1,0 +1,80 @@
+# M2-I1 R3 — reconcile to master 0275290 (M2-I2 integrated) and re-verification
+date: 2026-09-25T21:52:39+08:00
+shell: Git Bash
+python: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe (3.12.3, PySide6 6.11.2)
+review baseline: 0275290c3cc64e92dc53157b7d35028447d4d54f
+original authorized base: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+reconcile_base_commit: 7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9
+
+=== 1. master position + ancestry (read-only checks before merge) ===
+0275290c3cc64e92dc53157b7d35028447d4d54f
+PASS: 7e2da6b is ancestor of 0275290
+
+=== 2. git diff --name-status 7e2da6b 0275290 (docs/governance only — no product drift) ===
+M	doc/00_INDEX.md
+M	doc/12_ROADMAP.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+M	doc/handoffs/M2-I2-delivery.md
+M	doc/reviews/M2-I2-0d6acc7.md
+M	doc/tasks/M2-I1.md
+M	doc/tasks/M2-I2.md
+M	doc/tasks/README.md
+A	verification/M2-I2/integration-check.log
+
+=== 3. merge (no-ff, author history preserved; sole conflict doc/tasks/M2-I1.md resolved to the Codex-maintained mainline version) ===
+09ad43a reconcile(m2-i1): merge master 0275290 (M2-I2 integrated) into the author branch
+
+=== 4. Required: pytest tests/core/test_bootstrap.py tests/core/test_core_assembly.py tests/ui_shell tests/providers tests/pipeline ===
+.......................................                                  [100%]
+468 passed, 5 skipped in 14.49s
+EXIT=0
+
+=== 5. Required: pytest tests/core/test_architecture.py ===
+................                                                         [100%]
+16 passed in 0.20s
+EXIT=0
+
+=== 6. Required: Qt-free interpreter reruns tests/core/test_core_assembly.py ===
+interpreter: C:/Python314/python.exe (3.14.6, PySide6 NOT installed)
+......s.                                                                 [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\core\test_core_assembly.py:239: could not import 'PySide6': No module named 'PySide6'
+7 passed, 1 skipped in 0.79s
+EXIT=0
+skip reason: the single local-skip test asserts REAL Qt adapter injection (function-level importorskip PySide6) — the only test that cannot run without Qt; all 7 pure-Core probes (blocker x2, AST x3, identity, layer guard) execute.
+
+=== 7. Required: rg Core-layer audit (same 7 pre-existing hits as R1/R2 — zero new) ===
+src/domain\constraints\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/application\export\pdf_qt.py:3:The only module in the export slice that touches PySide6, and it does so
+src/application\export\pdf_qt.py:19:        from PySide6.QtCore import QBuffer, QIODevice, QSizeF
+src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+src/domain\regions\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/domain\books\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/ports\repositories\__init__.py:5:of sqlite3/PySide6 imports so domain and application layers can depend on
+EXIT=0
+
+=== 8. Required: git diff --name-only 0275290 <delivery 09ad43a> (scope) ===
+doc/handoffs/M2-I1-0766952.md
+doc/handoffs/M2-I1-b8741eb.md
+src/bootstrap/app.py
+src/bootstrap/core_assembly.py
+tests/core/test_bootstrap.py
+tests/core/test_core_assembly.py
+verification/M2-I1/01-import-blocker-probe-base.log
+verification/M2-I1/01-import-blocker-probe-delivery.log
+verification/M2-I1/02-core-layer-rg-audit.log
+verification/M2-I1/03-diff-scope-and-check.log
+verification/M2-I1/04-task-suite.log
+verification/M2-I1/05-full-suite-delivery.log
+verification/M2-I1/06-full-suite-baseline-control.log
+verification/M2-I1/07-entry-compileall-smoke-screenshot.log
+verification/M2-I1/08-p01-cleanup-probe.log
+verification/M2-I1/09-r2-task-suite.log
+verification/M2-I1/10-r2-qtfree-probes.log
+verification/M2-I1/11-r2-full-suite-and-entry.log
+verification/M2-I1/README.md
+verification/M2-I1/probe_import_blocker.py
+verification/M2-I1/probe_qt_assembly_cleanup.py
+
+CONCLUSION: relative to review baseline 0275290 the delivery delta includes the already-reviewed I1 product code from author commits b8741eb/0766952, with no additional product rewrite; doc/tasks/M2-I1.md equals the Codex mainline version at this point — R3 owner record + Handoff follow in the documentation commit.

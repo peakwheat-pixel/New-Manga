@@ -51,3 +51,12 @@ R2 复跑（venv 3.12.3 + PySide6 6.11.2，Git Bash，`PYTHONDONTWRITEBYTECODE=1
 - `src/bootstrap/core_assembly.py`：Qt-free Core Assembly。`assemble_core_services()` 承接原 `assemble_services` 的全部持久化副作用（顺序不变），Qt 适配器全部经 keyword-only 注入。`_ManagedPageImageSource` 与 `_render_content_decoder` 保留函数体内惰性 Qt 导入（M2-D1 M2D1-10/15 已盘点的 DECOUPLE 形态，替代实现属后续切片），模块导入期零 Qt。
 - `src/bootstrap/app.py`：Legacy Qt 装配。构造 `QtImageDecoder`/`QtFontCatalog`/`QtTextLayoutEngine(font_catalog)`/`QtImageCompositor`/`SourceStyleService(PixelSourceStyleAnalyzer())` 注入 Core，再组装 6 个 QObject ViewModel 与导航/导出接线；`assemble_engine`/`_shutdown_services`/`main`/`QML_PATH` 原样。被既有测试引用的移位私有名经 re-export 保持 `from bootstrap.app import ...` 兼容。
 - 顺序重排说明：QObject ViewModel（Navigation/Settings/Reader/Bookshelf/Workbench）与 export_state 接线的构造点从「散布于 Core 副作用之间」变为「Core 副作用完成后」——这些构造均无外部持久化副作用，全部持久化副作用顺序不变（log 05/06 两树全量对照为证）。
+
+## R3 reconcile、非作者 Review 与集成（2026-09-25）
+
+| 证据 | 对象与口径 | 结论 |
+|---|---|---|
+| [`12-r3-reconcile-verification.log`](12-r3-reconcile-verification.log) | ZCode 将已审 I1 R2 交付协调到含 I2 的 `master@0275290`，固定 Product Delivery=`09ad43a`；P3-001 结论句已修正 | 交付 delta **包含已审 I1 产品代码**，未新增产品改写；21 个授权路径，`git diff --check` exit 0 |
+| [R3 Handoff](../../doc/handoffs/M2-I1-09ad43a.md) | 作者 Handoff head=`8dab0ab`，产品交付=`09ad43a` | 固定 merge 祖先和恢复点；真实人工 GUI 交互 `NOT_RUN` |
+| [DeepSeek Harness R3 Review](../../doc/reviews/M2-I1-09ad43a-deepseek.md) 与 [`review-09ad43a/`](review-09ad43a/) | 独立非作者 Review 的原始 Task/架构/无 Qt/双树全仓证据 | `approved`；P3-001～P3-003 由集成登记处理；P3-004 reading_export 间歇失败是基线已有的范围外发现 |
+| [`integration-cff1e0a/`](integration-cff1e0a/) | Codex 在产品 merge `cff1e0a` 上运行全仓 pytest（含 `openssl`）、架构守卫和范围核验 | 以目录内原始日志及 [集成记录](integration-cff1e0a/record.md) 为准；测试完成前不标 `done` |
