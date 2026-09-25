@@ -57,4 +57,6 @@ integration_commit: null
 - 固定代码基线 `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`。开工核对：worktree `G:/CODEX/New Manga.worktrees/M2-UI1-qoder`、branch `agent/qoder/M2-UI1-react-parity-visual-contract`、HEAD `5d989ba`、common dir `G:/CODEX/New Manga/.git`、工作区干净——全部一致；`git diff --name-only 6a68fde 5d989ba` 仅 `doc/**`，src 树与 base 逐字节一致。
 - 交付物：`doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md`（矩阵/映射/令牌/基线/Gate/冲突清单）+ `verification/M2-UI1/**`（盘点、派生采集脚本、基线帧与三次尝试日志）。
 - 采集环境事实：本机（非 Sandbox）合成指针事件不触达 TapHandler/MouseArea、`forceActiveFocus` 不生效——tile 选中改由 `vm.selectPage` 直驱（状态等价、已在脚本 docstring 与 manifest 注记），焦点环帧记降级。
-- Handoff：`doc/handoffs/M2-UI1-8031173.md`（Delivery `80311732c3224c7054ad4bc2ba8ba0bee7f2f765`）；Review：待 Codex。
+- Handoff：`doc/handoffs/M2-UI1-8031173.md`（Delivery `80311732c3224c7054ad4bc2ba8ba0bee7f2f765`）；Review：Codex `doc/reviews/M2-UI1-8031173.md`（decision=**changes_requested**，R-001 P1 + R-002/3/4 P2）。
+- **R2 返修（2026-09-25，本轮）**：按 Review 修订契约——R-001 §3.3 重写为页级/Run 级两组状态域，页级 `blocked` 映射记为源契约未定义项留裁决（不擅改 QML、不声称修复已授权），§7 C-4/§1.4 #16/§4.3 同步；R-002 C-2 目标树缺项 11→**21**（附 39/18/21 计数口径与逐项清单）；R-003 新增 §1.4a 命令面枚举=**24 方法/25 站点**（stepPage 双汇入），§1.4 #14 与 §2.2 替换「12」；R-004 令牌计数改 **40 色 + 2 阴影串（×2 主题=42 主题值）、状态 9+7**（§1.7 #25、§2.2、§3 引言、§3.1）。另回填 Review 对 C-9/C-11 的裁决（现状无缺陷/节流在 VM `PROGRESS_REFRESH_MS=250`）并修正 §0 页面文件数（工作台 8）。原始采集日志未覆盖；本轮无重跑采集。
+- 返修门禁证据：`verification/M2-UI1/repair-gates-<R2head>.log`（`git diff --name-only/--check 5d989ba..<R2 head>`、base→head `src tests` 零差分）；新 Handoff 见 frontmatter `delivery_head` 同名文件。复审：待 Codex，同 base 口径。

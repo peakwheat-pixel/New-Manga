@@ -4,10 +4,11 @@
 - code_base: `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`（本文所有 `src/**` 行号与结论绑定此 commit；开工 HEAD `5d989ba` 相对 base 仅差 `doc/**`，`git diff --name-only 6a68fde 5d989ba` 零 `src/` 命中）
 - 性质: 迁移契约（设计文档）。**不释放任何 React/Tauri/IPC 实现，不修改生产 QML/Tokens/Schema/T3.2.1**；本文与代码不一致处按 §7 冲突清单交 Codex 裁决，不以目标图推断已实现。
 - 依据: [AD-001](../AD-001_TARGET_DESKTOP_ARCHITECTURE.md)（增量 parity / parity-before-removal，AD-001 第 30–32 行）、[UI_UX_GUI_DESIGN（Design F · Graphite Atelier）](../contracts/UI_UX_GUI_DESIGN.md)、[tokens-cand-f.json](../design/tokens-cand-f.json)、[Tokens.qml](../../src/ui/qml/theme/Tokens.qml)、[05_UI_MAPPING](../05_UI_MAPPING.md)、[04_USER_FLOW](../04_USER_FLOW.md)、[M2-D1 审计报告](../research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md)、真实 QML/测试源码。
+- 修订: R2（2026-09-25）按 [Review `M2-UI1-8031173`](../reviews/M2-UI1-8031173.md)（decision=changes_requested）返修 R-001（页级/Run 级 blocked 分域，§3.3/§7 C-4）、R-002（§60 缺失目标文件 11→21，§7 C-2）、R-003（工作台命令面列举口径 24 方法/25 站点，§1.4a/§2.2）、R-004（令牌计数改 40 色 + 2 阴影串、状态 9+7，§1.7/§3.1）；并回填 Review 对 C-9/C-11 的裁决。原 Delivery `8031173` 不改写，修订以追加提交进入新 head。
 
 ## 0. 盘点总览（AC1 前提）
 
-`rg --files src/ui/qml -g '*.qml'` 在 base 上恰得 **25 个 `.qml`**（清单与命令输出：`verification/M2-UI1/qml-inventory.txt`），另有 **1 个 `theme/qmldir`**（`module theme` + `singleton Tokens 1.0 Tokens.qml`）——它是 token 注册依赖，不计入 25。四个一级页面齐全：书架（6 文件）、工作台（9）、阅读器（1 + 共用 2 + 窗口 1）、设置（1），外加窗口/共用/壳层/主题（8）。
+`rg --files src/ui/qml -g '*.qml'` 在 base 上恰得 **25 个 `.qml`**（清单与命令输出：`verification/M2-UI1/qml-inventory.txt`），另有 **1 个 `theme/qmldir`**（`module theme` + `singleton Tokens 1.0 Tokens.qml`）——它是 token 注册依赖，不计入 25。四个一级页面齐全：书架（6 文件）、工作台（8）、阅读器（1 + 窗口 1）、设置（1），外加入口/壳层（Main + shell 3 = 4）、共用件（3）、主题（1）——合计 25。
 
 QML 侧的全部数据来源是 6 个上下文属性（`src/bootstrap/app.py:1035-1040`，M2-D1 结论 1/3）：`navigationViewModel`、`bookshelfViewModel`、`workbenchViewModel`、`readerViewModel`、`exportViewModel`、`settingsViewModel`。QML 不访问数据库/文件系统/模型（`src/ui/**` 零 SQL，M2-D1 W7）。
 
@@ -21,8 +22,8 @@ QML 侧的全部数据来源是 6 个上下文属性（`src/bootstrap/app.py:103
 |---|---|---|---|---|---|---|---|
 | 1 | `Main.qml`（44） | ApplicationWindow 入口 | 1280×800 窗口、标题 "New Manga"、`Tokens.bgPage` 底色、11 个 palette 角色（含 REPAIR-13 的 `palette.buttonText: Tokens.inkInv` 原生控件补偿，:23-33）、挂载 AppShell（:41-43） | 无 VM 输入 → 常量 → 装配由 `bootstrap.app` 注入上下文后加载 | F§3 启动；M§3.1 | `tests/core/test_bootstrap.py`（路径/装配失败信息）；`tests/ui_shell/test_design_f_applied.py`（加载真实 Main.qml 树做运行时配色） | DPI 125–200% 下的实际呈现（基线仅 100%，见 §4 NOT_RUN） |
 | 2 | `shell/AppShell.qml`（59） | 壳层 | 左 rail + `pageHost`（钉 `appShell`/`pageHost`）；四页**常驻实例化**，仅切 `visible`（:38-57，钉 `page-bookshelf/workbench/reader/settings`） | `navigationViewModel.currentPage` → 可见性 → 无命令 | M§3.1 规则 150-157（启动选书架、切换不销毁上下文、任务不停） | `tests/ui_shell/test_qml_shell.py`（12 用例，宿主加载） | 运行中任务跨页持续性的 GUI 级取证（依赖真实 pipeline，本 Task NOT_RUN） |
-| 3 | `shell/PrimaryNavigationRail.qml`（46） | 一级导航 | Repeater over `navigationViewModel.pages`；按钮钉 `nav-<id>`；bookshelf 初始 focus（:31）；workbench 项挂 NavBadge（:36-42） | `pages`/`currentPage` → checked → `navigate(id)` | M§3.1 | `test_qml_shell.py`（四入口同级、切换） | 徽标 4Hz 节流刷新（契约 §8.1 要求，QML 未见节流实现 → 记 §7 C-11） |
-| 4 | `shell/NavBadge.qml`（23） | 徽标件 | 单一 pill：`runSoft` 底 + `stRun` 字（:11-21），文本来自 `workbenchBadge` | `visible: workbenchRunning` + `text` → 无输出 | M§61 子集 | `test_design_f_applied.py`（静态断言 runSoft/stRun 配对，:236-241） | 非 running 语义（暂停/有失败）配色——VM 若给不同文本仍画 run 色 → §7 C-11 |
+| 3 | `shell/PrimaryNavigationRail.qml`（46） | 一级导航 | Repeater over `navigationViewModel.pages`；按钮钉 `nav-<id>`；bookshelf 初始 focus（:31）；workbench 项挂 NavBadge（:36-42） | `pages`/`currentPage` → checked → `navigate(id)` | M§3.1 | `test_qml_shell.py`（四入口同级、切换） | 徽标 4Hz 节流画面未采（§4.3）；节流本体在 VM：`PROGRESS_REFRESH_MS=250`（`src/ui/viewmodels/workbench/viewmodel.py:59`）+ 投影刷新时 `_sync_navigation_badge()`（:220,303），QML 直绑≠无节流（Review 裁 C-11） |
+| 4 | `shell/NavBadge.qml`（23） | 徽标件 | 单一 pill：`runSoft` 底 + `stRun` 字（:11-21），文本来自 `workbenchBadge` | `visible: workbenchRunning` + `text` → 无输出 | M§61 子集 | `test_design_f_applied.py`（静态断言 runSoft/stRun 配对，:236-241） | 当前 VM 只在运行时传 `●`，恒 run 色即现状运行指示器，无已证实的多状态冲突（Review 裁 C-9）；若未来扩展多状态徽标需另定义变体 |
 
 ### 1.2 书架页（6）
 
@@ -47,14 +48,30 @@ QML 侧的全部数据来源是 6 个上下文属性（`src/bootstrap/app.py:103
 
 | # | 文件 | 定位 | 可见功能与交互 | 输入 → 状态 → 输出 | 用户流程 | 现有测试 | 未验证项 |
 |---|---|---|---|---|---|---|---|
-| 14 | `workbench/WorkbenchView.qml`（247） | 页面根 | 钉 `workbenchView`；无 VM/无上下文时诚实空态 + `workbenchPickContext`（:51-63）；五区常驻：Toolbar/`commandErrorBar`/PageList|Viewer|Inspector/TaskProgress（:65-222）；全部 `w*` 别名带 null-guard（:27-42）；`Connections.onPageLocateRequested` → `pageListPanel.locatePage`（:164-169）；DirtyConfirmDialog 由 `onInspectorDirtyConfirmRequested` 打开、决策回 `resolveDirtyConfirm(action)`（:224-241） | `workbenchViewModel` 14 个读面 → 布局可见性 → 12 个命令转发 | F§15–16；M§15/16/55 | `test_qml_workbench.py`（16）；`test_qml_shell.py` 静态源检；`tests/workbench/test_command_error_surface.py` | 「已完成（有失败）」整批呈现的真实 pipeline 画面（NOT_RUN，§4） |
+| 14 | `workbench/WorkbenchView.qml`（247） | 页面根 | 钉 `workbenchView`；无 VM/无上下文时诚实空态 + `workbenchPickContext`（:51-63）；五区常驻：Toolbar/`commandErrorBar`/PageList|Viewer|Inspector/TaskProgress（:65-222）；全部 `w*` 别名带 null-guard（:27-42）；`Connections.onPageLocateRequested` → `pageListPanel.locatePage`（:164-169）；DirtyConfirmDialog 由 `onInspectorDirtyConfirmRequested` 打开、决策回 `resolveDirtyConfirm(action)`（:224-241） | `workbenchViewModel` 14 个读面 → 布局可见性 → **24 个不同 VM 方法 / 25 个调用站点**（清单见 §1.4a） | F§15–16；M§15/16/55 | `test_qml_workbench.py`（16）；`test_qml_shell.py` 静态源检；`tests/workbench/test_command_error_surface.py` | 「已完成（有失败）」整批呈现的真实 pipeline 画面（NOT_RUN，§4） |
 | 15 | `workbench/WorkbenchToolbar.qml`（101） | 工具栏 | implicitHeight `tbH`；钉 `toolbarContext`（书·章）、`toolbarPrevPage`/`toolbarNextPage`、模式四键 `modeOriginal/Clean/Translated/Compare`（highlighted 表当前）、批命令 `cmdTranslateAll`/`cmdTranslateUntranslated`（runActive 禁用）、`cmdTranslateSelected`（还需 hasSelection） | 5 属性 → 文本/highlighted/enabled → 6 信号 | F§11–13；M§17/56 | `test_qml_workbench.py` | — |
-| 16 | `workbench/PageListPanel.qml`（155） | 页面列表 | 钉 `pageListPanel`（宿主钉 `pageListPanelHost`）；`implicitWidth: collapsed?36:176` 字面量（:23，值=契约 §8.1，未经 token）；折叠钮 `pageListCollapse`；tile 高 64/缩略 48 字面量；行内容：序号占位、文件名 ElideMiddle、状态字（○等待/●处理中/✓已完成/!失败/↷跳过/⏸阻塞 + 色 :110-127）、🔒（`pageLock-`，stLock）、▶运行中（`pagePipelineCurrent-`）；单/Ctrl/Shift 三 TapHandler（:64-75）；`locatePage` 滚动（:148-153） | `pageListModel` + `viewerPageId` → 选中底 `accentSoft`/当前 `bgActive`+focus 边框 → 3 信号 | F§10；M§18/19/61 | `test_qml_workbench.py`；`tests/workbench/test_page_list_model.py` | 真实缩略图（未实现）；blocked 字形 ⏸ 与契约 paused ⊘/blocked 语义错位（§7 C-4）；合成点击在本机不生效（§4 采集注记） |
+| 16 | `workbench/PageListPanel.qml`（155） | 页面列表 | 钉 `pageListPanel`（宿主钉 `pageListPanelHost`）；`implicitWidth: collapsed?36:176` 字面量（:23，值=契约 §8.1，未经 token）；折叠钮 `pageListCollapse`；tile 高 64/缩略 48 字面量；行内容：序号占位、文件名 ElideMiddle、状态字（○等待/●处理中/✓已完成/!失败/↷跳过/⏸阻塞 + 色 :110-127）、🔒（`pageLock-`，stLock）、▶运行中（`pagePipelineCurrent-`）；单/Ctrl/Shift 三 TapHandler（:64-75）；`locatePage` 滚动（:148-153） | `pageListModel` + `viewerPageId` → 选中底 `accentSoft`/当前 `bgActive`+focus 边框 → 3 信号 | F§10；M§18/19/61 | `test_qml_workbench.py`；`tests/workbench/test_page_list_model.py` | 真实缩略图（未实现）；页级 `blocked` 画「⏸」是**页级状态域**现状，与 Run 级 `blocked`=⊘ 不同域（分域见 §3.3，源契约未定义页级 blocked → §7 C-4）；合成点击在本机不生效（§4 采集注记） |
 | 17 | `workbench/ViewerPanel.qml`（134） | 画布 | 钉 `viewerPanel`（宿主 `viewerPanelHost`）；页名 `viewerPageName` + 模式标签 `viewerModeLabel`；原图 pane（钉 `viewerImagePane`，`bgCanvas` 底 + Image PreserveAspectFit）；RegionOverlay 仅 original 模式挂载（:96-102，产物图无保证同尺寸）；compare 双 pane（钉 `viewerComparePane`）；空态 `viewerEmpty`「在左侧选择一个 Page」+ CanvasCaption 诚实占位（「原图不可用/该模式暂无产物/译图尚未产出」） | imageUrl/translatedUrl/pageName/mode/vm → 图像+overlay → 无 | M§20 | `test_qml_workbench.py` | compare 模式实图（需译图产物，NOT_RUN） |
 | 18 | `workbench/RegionInspector.qml`（161） | 右 Inspector | implicitWidth `inspW`；钉 `regionInspector`（宿主 `regionInspectorHost`）、`inspectorDirtyBadge`（"● 未保存" stWarnT）、`regionListView`（行高 `rowH`，选中 accentSoft+accent 边，钉 `regionRow-<id>`；`#序号`、译文/（无译文）ink2、🔒）、`inspectorTranslationInput`（TextArea，dirty 双向 :109-119）、`inspectorSave`/`inspectorDiscard`（enabled=dirty）、单 Region 命令 `regionCommandOcr`/`regionCommandRetranslate`/`regionCommandRetranslateFull` | regions/selectedRegionId/text/dirty → 表单 → 5 信号 | F§27；M§22–30（样式/修复/Lock/Revision 分组**未实现**） | `test_qml_workbench.py`；`tests/workbench/test_region_create_persistence.py`（VM 面） | 05 §27 样式控制、§28 修复、§29/30 Lock/Revision 界面（目标能力，QML 无 → 矩阵记未实现，见 §5 范围注） |
 | 19 | `workbench/RegionOverlay.qml`（253） | 画布几何层 | 透明 Rectangle + Canvas；**页面尺寸只取 VM `viewerPageWidth/Height`**、归一化坐标才过界（:9-15 两条硬规则）；letterbox 数学与 Image 同参（:28-33）；已有 Region 描边（stRun/选中 accent，:80-91）；草稿 rect 拖拽 / polygon 逐点+右键闭合（stWarn :96-123）；工具 pill `regionToolbar`（`regionToolRect`/`regionToolPolygon`，bgPanel 浮底 :185-219）；操作提示 `regionToolHint`；Esc 取消 / Delete 删除选中（:241-247） | vm.inspectorRegions + 指针 → 画布 → `createRectangle/createPolygon/deleteRegion` | F§18；M§21 | `test_qml_workbench.py`（`_OverlayHost.qml`）；`tests/workbench/test_region_canvas.py` | 真实拖拽手势下的画面（合成事件不生效 → 草稿态基线 NOT_RUN，§4） |
 | 20 | `workbench/TaskProgressPanel.qml`（321） | 底部进度 | implicitHeight `progH`/折叠 40 字面量；钉 `taskProgressPanel`（宿主 `taskProgressPanelHost`）；九态 badge 表 `badgeStyles`（:65-75，逐对=契约 §7.2 表；`completed_with_failures`=warn-soft/st-warn-t ✓）；乐观 `pausing→paused`（:77-81）；步流 `检测✓→OCR●→…`（:191-224）；当前页按钮 `taskProgressCurrentPage`；统计五键 `statCompleted/Failed/Blocked/Skipped/Waiting`；控制行 `btnPauseRun/StopRun/ContinueRun/RestartRun/AbandonRun/RetryFailed`（enablement 全取投影）；`taskProgressBlockedReason`；空态 `taskProgressEmpty`「当前无运行任务」；折叠条保名 `taskProgressPercentCompact/StatusCompact` | `progress` 投影 map → 徽标/按钮 enabled → 9 信号 | F§30–31；M§31–33 | `test_qml_workbench.py`；`tests/workbench/test_projection.py`（数据面） | 运行中/暂停/失败/中断的真实动画与 4Hz 节流画面（NOT_RUN）；「保留已提交成果」提示（契约 §7.2 Cancelled 主操作，QML 无 → §7 C-5） |
 | 21 | `workbench/DirtyConfirmDialog.qml`（40） | 脏守卫窗 | 模态 Dialog；钉 `dirtyConfirmDialog`（宿主 `dirtyConfirmDialogHost`）、`dirtySave`/`dirtyDiscard`/`dirtyCancel`；NoAutoClose | 打开请求 → 决策 → `resolveDirtyConfirm` | F§27/32；M§55 | `test_qml_workbench.py` | — |
+
+### 1.4a WorkbenchView 命令面清单（R-003 口径）
+
+口径 = `WorkbenchView.qml` 内对 `workbenchViewModel` 的**方法调用**（读别名 `w*` 与 `vm.viewerImageUrlFor()` 属读面不计；`ChapterPicker` 的 `shelf.enterTranslation` 属 bookshelf VM 不计）。共 **24 个不同方法、25 个调用/回调站点**（`stepPage` 被前/后页两站点汇入，:80-81→:244-246）：
+
+| 组 | 方法（WorkbenchView.qml 站点行） |
+|---|---|
+| Toolbar 导航/模式 | `stepPage(-1)`(:80)、`stepPage(1)`(:81)、`setViewerMode`(:82) |
+| 批翻译 | `startTranslateAll`(:83)、`startTranslateUntranslated`(:84)、`startTranslateSelected`(:85) |
+| 错误条 | `clearCommandError`(:143) |
+| PageList | `selectPage`(:160)、`togglePageSelected`(:161)、`selectRangeTo`(:162) |
+| Inspector | `selectRegion`(:195)、`setInspectorText`(:196)、`saveInspector`(:197)、`discardInspector`(:198)、`startRegionCommand`(:199-201) |
+| TaskProgress | `pauseRun`(:212)、`stopRun`(:213)、`continueRun`(:214)、`restartRun`(:215)、`abandonRun`(:216)、`retryFailedPages`(:217)、`filterByStatus`(:218)、`locatePipelinePage`(:219)、`setPageFilter("all")`(:220) |
+| 脏确认 | `resolveDirtyConfirm`(:231) |
+
+React 迁移时此表即 workbench 通道的**最小命令 IPC 面**：不得合并丢失（Review R-003）。
 
 ### 1.5 阅读器（1 + 窗口 1）
 
@@ -73,7 +90,7 @@ QML 侧的全部数据来源是 6 个上下文属性（`src/bootstrap/app.py:103
 
 | # | 文件 | 定位 | 可见功能与交互 | 输入 → 状态 → 输出 | 用户流程 | 现有测试 | 未验证项 |
 |---|---|---|---|---|---|---|---|
-| 25 | `theme/Tokens.qml`（231） | 设计令牌单例 | 42 色 × dark/light + 21 几何（值与 `tokens-cand-f.json` 逐字一致，`test_design_tokens.py` 漂移即红）；`colorFor()` 把契约的 CSS `rgba()` 转 QML 色（:149-163，未识别值→全透明让测试失败而非猜色）；`mode` 属性存在但产品无切换入口（ND-4/ND-5 待决） | `mode` → 调色板选择 → 命名属性/`value()`/`geometry()` | — | `test_design_tokens.py`（7）；`test_design_f_applied.py`（运行时+对比度 24 对） | 亮色模式的产品内画面（无入口 → 基线 NOT_RUN） |
+| 25 | `theme/Tokens.qml`（231） | 设计令牌单例 | **40 个颜色属性 + 2 个阴影串（`shadow`/`shadowSm`）= 42 个主题值** × dark/light，另 21 几何（值与 `tokens-cand-f.json` 逐字一致，`test_design_tokens.py` 漂移即红）；`colorFor()` 把契约的 CSS `rgba()` 转 QML 色（:149-163，未识别值→全透明让测试失败而非猜色）；`mode` 属性存在但产品无切换入口（ND-4/ND-5 待决） | `mode` → 调色板选择 → 命名属性/`value()`/`geometry()` | — | `test_design_tokens.py`（7）；`test_design_f_applied.py`（运行时+对比度 24 对） | 亮色模式的产品内画面（无入口 → 基线 NOT_RUN） |
 | — | `theme/qmldir` | token 注册依赖 | `module theme` + `singleton Tokens 1.0 Tokens.qml`——所有页面 `import "../theme"` 的前提 | — | — | 随全部 Tokens 测试 | React 侧对应物 = tokens.css + ThemeProvider（§3.4），无 QML 等价注册 |
 
 **四页覆盖核对**：书架 #5–10、工作台 #14–21、阅读器 #22–23（+共用 #13）、设置 #24 —— AC1 的「四个一级页面齐全」成立。
@@ -108,7 +125,7 @@ QML 侧的全部数据来源是 6 个上下文属性（`src/bootstrap/app.py:103
 | `EmptyState.qml` | `<EmptyState>` | 共用件 | props | — |
 | `CanvasCaption.qml` | `<CanvasCaption>` | 共用件（画布可读性契约的载体） | props | — |
 | `ChapterPicker.qml` | `<ChapterPickerDialog>`（Radix Dialog 类） | 双实例单组件（action prop） | bookshelf: `bookListModel/chapterListModel/bookCount` | `selectBook/enterTranslation/enterReading` |
-| `WorkbenchView.qml` | `<WorkbenchPage>` | 五区 grid 骨架；空态/有上下文两形态；commandErrorBar 保留 provisional 语义 | workbench: 14 读面（§1.4 #14 全列） | 12 命令面 |
+| `WorkbenchView.qml` | `<WorkbenchPage>` | 五区 grid 骨架；空态/有上下文两形态；commandErrorBar 保留 provisional 语义 | workbench: 14 读面（§1.4 #14 全列） | 24 方法 / 25 站点，逐条见 §1.4a |
 | `WorkbenchToolbar.qml` | `<WorkbenchToolbar>` | — | workbench: `contextInfo/viewerMode/selectedPageCount/runStatus` | `stepPage/setViewerMode/startTranslate*` |
 | `PageListPanel.qml` | `<PageListPanel>` + `<PageTile>`（**按 05 §60 目标边界拆出 Tile**） | 折叠宽/行高取 §3.2 待裁决值 | workbench: `pageListModel/viewerPageId` | `selectPage/togglePageSelected/selectRangeTo` + locate 事件订阅 |
 | `ViewerPanel.qml` | `<ViewerPanel>` | compare 双 pane 语义保留 | workbench: `viewerImageUrl(For)/viewerPageName/viewerMode` | — |
@@ -119,7 +136,7 @@ QML 侧的全部数据来源是 6 个上下文属性（`src/bootstrap/app.py:103
 | `ReaderView.qml` | `<ReaderPage>` + `<PagedViewer>` + `<WebtoonViewer>`（按 05 §60 拆出 `<ReaderToolbar>`/`<ReaderNavigator>` 为**目标边界**，允许实现合并） | RTL 镜像、键盘翻页、瓦片带、滚动节流四语义必须原样 | reader: `hasChapter/mode/direction/pageNumber/pageCount/progressPercent/sourcePath/tiles/scrollOffsetY/statusMessage/bookSummary/canGoNext/Previous` | `setMode/nextPage/previousPage/continueReading/restartFromBeginning/saveScrollOffset/requestTiles/openExporter` |
 | `ExportWindow.qml` | 独立 Tauri 子窗 `<ExportWindow>`（保持「工具窗」容器类，M§4 C 类） | 不用页内 Modal 冒充；stale 横幅语义保留 | export: `scopeSummary/mode/formats/outputPath/overwritePolicy/stalePolicy/staleWarning*/statusMessage/running/history/pageCount` | `setMode/setFormat/setOutputPath/setOverwritePolicy/setStalePolicy/startExport/cancelExport/openOutputFolder/repeatExport` |
 | `SettingsView.qml` | `<SettingsPage>` + `<ProviderPane>` + `<NetworkPane>`（类目 ≥3 = 占位组件） | 密钥只写不回显（flag-only）是**契约级**约束，React input 同样 password+不回填 | settings: `profiles/networks/capabilityList/bindings/defaultNetworkProfileId/networkModes` | `save/delete/setDefault/saveBinding/clearBinding/refresh` + saved/failed/confirmationRequired 事件 |
-| `Tokens.qml` + `qmldir` | `tokens.css`（42×2 色 + 21 几何 → `--bg-page` 等 kebab 同名变量）+ `<ThemeProvider data-theme>` | 见 §3；`colorFor` 的 rgba 转换是 QML-only 规避，React 直接消费 CSS `rgba()` | — | — |
+| `Tokens.qml` + `qmldir` | `tokens.css`（40 色 + 2 阴影串 × 2 主题 + 21 几何 → `--bg-page` 等 kebab 同名变量）+ `<ThemeProvider data-theme>` | 见 §3；`colorFor` 的 rgba 转换是 QML-only 规避，React 直接消费 CSS `rgba()` | — | — |
 
 ### 2.3 调用关系（迁移后目标拓扑，与 M§58 同构）
 
@@ -137,9 +154,9 @@ flowchart LR
 
 ## 3. Design Token Migration Map（UI1-AC3）
 
-真值链不变（DDR-3）：`ui-reference.html`（视觉真值）→ `tokens-cand-f.json`（机器可读）→ `Tokens.qml`（生产转写，`test_design_tokens.py` 防漂移）。本表**不复制色值**（避免第四份真值），只登记名称/语义/落点。
+真值链不变（DDR-3）：`ui-reference.html`（视觉真值）→ `tokens-cand-f.json`（机器可读）→ `Tokens.qml`（生产转写，`test_design_tokens.py` 防漂移）。本表**不复制色值**（避免第四份真值），只登记名称/语义/落点。计数口径（R-004）：JSON 每主题 42 个键 = **40 个颜色值 + `shadow`/`shadow-sm` 2 个阴影串**；`Tokens.qml` 对应 40 个 `readonly property color` + 2 个 `readonly property string`（实测 grep 计数一致）。
 
-### 3.1 色彩（42 × 2 mode）
+### 3.1 主题值（40 色 + 2 阴影串，× 2 mode）
 
 | 族（契约 §7.1） | Tokens.qml 属性 | JSON 键 = 建议 CSS 变量（kebab 同名） | React 落点 |
 |---|---|---|---|
@@ -147,8 +164,8 @@ flowchart LR
 | 线 3 | `border/borderStrong/divider` | 同名 | 描边/焦点外框/分隔 |
 | 文字 5 | `ink/ink2/ink3/inkDis/inkInv` | `ink/ink-2/ink-3/ink-dis/ink-inv` | `ink-inv` 在 React 中回归本义（反色文字），不再承担原生控件补偿（§3.4 D-1） |
 | 强调 6 | `accent…onAccent` | 同名 | 主操作唯一来源 |
-| 状态 8+7 | `stOk/stOkT/stRun/stWarn/stWarnT/stFail/stSkip/stLock/stBlock` + `okSoft…blockSoft` | 同名 | `<StatusBadge>` 变体表：底= `*-soft`（CSS 原生支持 rgba，无需转换）、字= 对应 `-t`/主变体；**三重编码规则原样平移**（契约 §7.2） |
-| 其他 3 | `focus/shadow/shadowSm` | `focus/shadow/shadow-sm` | 焦点环 2px；shadow 串在 CSS 直接可用（QML 需解析是转写层问题） |
+| 状态 9+7 | `stOk/stOkT/stRun/stWarn/stWarnT/stFail/stSkip/stLock/stBlock` + `okSoft…blockSoft` | 同名 | `<StatusBadge>` 变体表：底= `*-soft`（CSS 原生支持 rgba，无需转换）、字= 对应 `-t`/主变体；**三重编码规则原样平移**（契约 §7.2） |
+| 其他 1+2 | `focus`（色）；`shadow/shadowSm`（串） | `focus/shadow/shadow-sm` | 焦点环 2px；shadow 串在 CSS 直接可用（QML 需解析是转写层问题） |
 
 ### 3.2 几何（21 项，mode 无关）
 
@@ -159,9 +176,13 @@ flowchart LR
 | `rad-sm/md/lg/win` | 8/11/14/16 | SettingsView 用字面量 6（D-2） | 同名变量 |
 | `tb-h/list-w/insp-w/prog-h/det-w/card-w` | 52/176/288/150/336/158 | `list-w`/折叠 36、`prog-h`/折叠 40 在 QML 是**字面量恰等于契约 §8.1 值**（PageListPanel:23、TaskProgressPanel:35） | 变量化；折叠值 36/40 需先入令牌（D-2 裁决） |
 
-### 3.3 状态语义映射
+### 3.3 状态语义映射（R-001：两组状态域，不得互借）
 
-九态 PipelineRun 表（契约 §7.2 ↔ `TaskProgressPanel.badgeStyles:65-75` 逐对一致，含 `completed_with_failures`=warn-soft/st-warn-t「成功底+警示字不整批判失败」）；页级六态 ↔ `PageListPanel` 字形表（差异 C-4）；Region 八态（M§61）与「叠加语义不合并」规则：React 侧同样禁止单徽标合并 Process/Review/Lock——QML 现状已遵守（lock 用角标 🔒、译文锁定用行内 🔒、处理态独立）。
+**Run 级（PipelineRun 九态）**——源契约 §7.2 表 ↔ `TaskProgressPanel.badgeStyles:65-75` 逐对一致：pending ○（bgInset/ink2）、running ●（runSoft/stRun）、paused ⏸（bgInset/ink2）、blocked **⊘**（blockSoft/stBlock）、interrupted ⚠（warnSoft/stWarnT）、completed ✓（okSoft/stOkT）、completed_with_failures ✓!（warnSoft/stWarnT，「成功底+警示字，不整批判失败」）、failed !（failSoft/stFail）、cancelled ■（skipSoft/ink2）；乐观 `pausing→paused`（:77-81）。此域**已闭合、可作 React 契约**。
+
+**页级（Page 处理态）**——源契约 §7.2 页级六态为 ○等待/●处理中/✓已完成/↷跳过/!失败/🔒已锁定，**未定义 `blocked`**；M§61 的页级文案还列「已完成（有警告）/需校对」，QML 未呈现（C-10）。As-Is 现状：`PageListPanel.qml:112-115` 与 `TaskProgressPanel.statusGlyph:50-59` 在页级额外画 `blocked`=「⏸ 阻塞」（色 stBlock）——该字形与 Run 级 paused 的 ⏸ 同形不同域。**页级 blocked 的目标映射是源契约未定义项**：改 QML 字形还是补契约，归用户/契约维护方裁决；本契约不声称任何 glyph 修复已获授权，React 侧在裁决前**不得**把 Run 级 ⊘/⏸ 映射直接复用到页级，该帧视觉验收记为未决（§4.3）。
+
+**Region 态与叠加语义**：Region 八态（M§61）与「Process Status + Review State + Lock 不用单徽标合并」——React 侧同样禁止合并；QML 现状已遵守（lock 用角标 🔒、译文锁定用行内 🔒、处理态独立）。
 
 ### 3.4 实际生产值 vs 文档目标 vs 需裁决差异（AC3 核心）
 
@@ -203,6 +224,7 @@ flowchart LR
 | DPI 125/150/175/200 五档 | NOT_RUN | 需 OS 级缩放；步骤=改系统缩放后重跑脚本并核对 §8.2 降级序列（PageList 折叠/Inspector 覆盖/TaskProgress 折叠） |
 | 亮色模式全部画面 | NOT_RUN | 产品无 mode 切换入口（D-4）；裁决后需加 `Tokens.mode="light"` 前置的变体脚本 |
 | 任务运行/暂停/失败/中断态（九态徽标、步流、4Hz 节流） | NOT_RUN | 需真实 pipeline + Provider 凭据；步骤=装配带 run 的 workbench VM 后扩展脚本；数据面防线现由 `tests/workbench/test_projection.py` 承担 |
+| 页级 `blocked` 徽标帧 | NOT_RUN | 需真实 blocked 页；且页级 blocked 映射本身未决（§3.3/C-4），裁决前该帧不可作为契约验收 |
 | Region 草稿态（拖拽中/多边形逐点） | NOT_RUN | 合成指针事件在本机不触达 TapHandler/MouseArea（两次采集实证）；需真实输入或 Sandbox |
 | compare 模式实图、译图/修复图产物态 | NOT_RUN | 需跑通翻译/渲染产物链（依赖未授权切片） |
 | webtoon 瓦片滚动、进度恢复画面 | NOT_RUN | 需 webtoon 夹具 + 进度数据；`test_webtoon_tiles.py` 只证数据面 |
@@ -236,23 +258,25 @@ AD-001 第 30–32 条的操作化。任一 QML 功能在 React 侧「完成」�
 
 ## 6. 未验证项汇总（诚实面）
 
-除 §4.3 NOT_RUN 外：运行中任务跨页不停（依赖真实 pipeline）；4Hz 徽标节流（QML 未见实现证据，契约 §8.1 要求 vs `PrimaryNavigationRail` 直绑属性 → C-11）；真实封面/进度字段（TASK-007 未落地，占位即 As-Is）；Inspector 样式/修复/Lock/Revision 分组（M§27–30 目标）；设置其余 10 类目（占位即 As-Is）。
+除 §4.3 NOT_RUN 外：运行中任务跨页不停（依赖真实 pipeline）；4Hz 徽标节流画面未采（节流本体已由 Review 裁定在 VM 投影层，`PROGRESS_REFRESH_MS=250`，见 C-11——不再是「无实现证据」）；真实封面/进度字段（TASK-007 未落地，占位即 As-Is）；Inspector 样式/修复/Lock/Revision 分组（M§27–30 目标）；设置其余 10 类目（占位即 As-Is）。
 
-## 7. 冲突清单（文档 vs 代码，交 Codex 裁决）
+## 7. 冲突清单（文档 vs 代码）
+
+[Review `M2-UI1-8031173`](../reviews/M2-UI1-8031173.md) 已对 C-1…C-11 与 D-1…D-6 逐条给出 disposition；R2 已按裁决重写受影响的 C-2/C-4/C-9/C-11 行，其余行的「建议」列保持交付原意，最终处置以 Review 表为准（C-1/D-6 的契约修订、C-5/C-6/C-7/C-8/C-10 的后续归属均归 Codex/用户，不由本文执行）。
 
 | # | 冲突 | 证据 | 建议 |
 |---|---|---|---|
 | C-1 | 契约 §10 Q-011 硬编码表已过时 | `WorkbenchView.qml:19,97-98,172,185,205` 现全为 `Tokens.*`；T2.1.1 交付 | 修订契约或标注「已由 T2.1.1 消解」 |
-| C-2 | 05 §60 目标树 ≠ 实际 25 文件树（11 个目标文件不存在，delegates 内联） | `qml-inventory.txt` vs 05:1954-2008 | 属目标边界非缺陷；迁移映射以本文 §2 为准 |
+| C-2 | 05 §60 目标树 ≠ 实际 25 文件树：**39 个目标 `.qml` 名中 21 个当前不存在**（shell 2 + bookshelf 6 + workbench 8 + reader 3 + settings 2 + windows 12 + common 6 = 39；存在 18 = shell 2、bookshelf 6、workbench 6、reader 1、settings 1、windows 1（ExportWindow）、common 1（EmptyState））。缺项 21：workbench `PageTile/ViewerCanvas`；reader `ReaderToolbar/ReaderNavigator`；settings `SettingsSectionList`；windows `FloatingWindowHost/BookEditorWindow/ChapterEditorWindow/ConstraintWindow/TranslationMemoryWindow/TaskDetailWindow/RevisionHistoryWindow/ProviderEditorWindow/NetworkEditorWindow/ImportWindow/RecycleBinWindow`（11）；common `ConfirmDialog/DirtyCloseDialog/StatusBadge/ProgressBadge/ToastHost`（5）（R-002 修正原「11」误计） | `qml-inventory.txt` vs 05:1954-2008 | 属目标边界非缺陷；迁移映射以本文 §2 为准 |
 | C-3 | 原生控件浅底深字与 F 暗色面并存 | D-1；基线帧 01/09/11 | LEGACY-only 偏差入档，React 豁免 |
-| C-4 | PageList blocked 用「⏸」，契约 §7.2 paused=⏸/blocked=⊘（TaskProgressPanel 用 ⊘ 正确） | PageListPanel.qml:114 vs TaskProgressPanel.qml:69 | 小修候选（实现切片），本文不擅改 |
+| C-4 | **两组状态域分列（R-001 重写）**：Run 级 `blocked`=⊘（`TaskProgressPanel.badgeStyles:69`，与源契约 §7.2 一致 ✓）；页级 `blocked`=⏸（`PageListPanel.qml:112-115`、`TaskProgressPanel.statusGlyph:50-59`）——而源契约页级六态**未定义 blocked**（只列 🔒 锁定）。原表述把两域混比、且误称页级应=⊘，不成立 | 见左；§3.3 | 页级 blocked 的目标映射=**契约未定义项，留用户/契约维护方裁决**；本契约仅记录 QML 页级现状 ⏸，不声称 glyph 修复已获授权，React 不得复用 Run 级映射（§3.3） |
 | C-5 | 契约 §7.2 Cancelled 主操作「保留已提交成果（提示）」无 QML 呈现 | TaskProgressPanel 全文无 | 归实现 Task 或修订契约 |
 | C-6 | 导入后章节行页数不刷新（需重选作品） | `models.py:113-132` 仅 set_chapters reset；VM import 路径不 refresh；帧 05==06 | As-Is 行为入 parity 基线；是否算缺陷归 Codex |
 | C-7 | SettingsView 圆角 6 vs rad-sm 8；类目列宽 180 无令牌 | SettingsView.qml:120,123,151 | D-2 一并裁决 |
 | C-8 | Reader 工具栏英文标签 Original/Translated 与全站中文并存 | ReaderView.qml:106-118 | 保持 As-Is（objectName+文案双钉），文案统一属产品裁决 |
-| C-9 | NavBadge 恒用 run 色对，不随 `workbenchBadge` 语义变色 | NavBadge.qml:11,20 | 与 §7.2 三重编码有张力；实现切片或契约注记 |
+| C-9 | NavBadge 恒用 run 色对，不随 `workbenchBadge` 语义变色 | NavBadge.qml:11,20 | **Review 已裁（R2 回填）**：VM 只在运行时传 `●`，恒 run 色即现状运行指示器，无已证实缺陷；未来扩展多状态徽标时再定义变体 |
 | C-10 | 页级「已完成（有警告）/需校对」徽标（M§61/契约 §7.2 虚线框）无 QML 实现 | rg 零命中（本文 §0 核验命令） | 未实现能力，禁止在 parity 比对中当作回归 |
-| C-11 | rail 徽标 4Hz 刷新节流无 QML 侧证据 | PrimaryNavigationRail.qml:36-42 直绑 | 待 M2-I1/投影层确认节流位置后注记 |
+| C-11 | rail 徽标 4Hz 刷新节流无 QML 侧证据 | PrimaryNavigationRail.qml:36-42 直绑 | **Review 已裁（R2 回填）**：节流在 VM——`PROGRESS_REFRESH_MS=250`（`src/ui/viewmodels/workbench/viewmodel.py:59`），投影刷新即 `_sync_navigation_badge()`（:220,303）；QML 直绑不等于无节流，React 侧对应「订阅 VM 通知」而非自建节流 |
 
 ## 8. 交付边界自证
 
