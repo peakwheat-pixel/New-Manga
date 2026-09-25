@@ -69,3 +69,4 @@ integration_commit: 212efa54daee1d57e2c4510c56a022c9b4f65f67
 - 集成后核验：diff --check 5803bd7b9e80ba780e7a7f12078b00b9178e6f86..212efa54daee1d57e2c4510c56a022c9b4f65f67 exit 0；diff --quiet 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a..212efa54daee1d57e2c4510c56a022c9b4f65f67 -- src tests exit 0；详细证据见 verification/M2-UI1/integration-212efa5.md。
 - AC1–AC5 已完成；AC4 的 NOT_RUN 计数已澄清为与契约 §4.3 一致的 10 项，其中焦点环虽有帧但因采集失败而降级。产品测试套件和 GUI 补采未运行，本集成没有将其记为 PASS。
 - 未决风险：页级 blocked 的 React 目标映射仍等用户/契约维护方裁决；C-1/D-6 来源契约修订与 C-5/C-6 后续产品取舍仍按 Review 归属处理。本次不释放 React 实现。
+- Master 并行推进同步：merge master a91b8f7ed0916b3beb74dd0b88797e82e2305112 的 Codex sync commit=4f20fc24523dfac672b20c9938917d978bdadb0b；其后 integration branch 包含当前 master，准备 fast-forward。
