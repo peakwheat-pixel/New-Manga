@@ -1,0 +1,3 @@
+timestamp_utc=2026-09-25T18:48:47.4642678Z shell=PowerShell worktree=G:\CODEX\New Manga.worktrees\T3.2.1-integration-20260926 integration_head=6519125406161924b0021e021e79fea07cf673fc fixed_build_input=08f9bd85137965df922db524bc92917af513bd24 cmd=git diff --exit-code 08f9bd85137965df922db524bc92917af513bd24 HEAD -- src packaging tests requirements.txt requirements-dev.txt
+NO_DIFF
+EXIT=0

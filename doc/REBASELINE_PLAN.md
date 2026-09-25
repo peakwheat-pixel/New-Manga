@@ -6,13 +6,7 @@ Audit date: 2026-09-21 (Asia/Shanghai)
 
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
-Current integration checkpoint (2026-09-22): T1.1.1 product merge `f56f441`;
-T1.2.1 is integrated and verified at code merge `9a14310`, with final evidence
-commit `e92c414`. The R5 B-003 credential-store repair passed non-author review
-and production probe. T3.1.1 is integrated at product merge `0c70e44` after
-DeepSeek Harness approval `4e1eb3a`; its integration evidence is
-`verification/T3.1.1/integration-899bd3c.md`. Live HEAD and execution details are in
-[`STATUS.md`](STATUS.md).
+Current integration checkpoint (2026-09-26): T3.2.1 delivery b18fa0e and Qoder Review b66788a are integrated at merge 6519125; AC10 is closed with integrated-head evidence. The parent Release Gate remains OPEN: AC3 passes only on the user-approved local simulation route, AC6/AC8/AC9 remain PARTIAL, and explicit clean-machine / Windows 10 / real-weight / true-cold-start items remain NOT_RUN. Fixed package input 08f9bd8 was not rebuilt; see [STATUS.md](STATUS.md) and [integration evidence](../verification/T3.2.1/integration-6519125/integration-evidence.md).
 
 This file is the sole source of truth for sequencing. `doc/STATUS.md` is the
 only live execution checkpoint. `doc/tasks/`, `doc/handoffs/`, `doc/reviews/`
@@ -36,7 +30,7 @@ These four Tasks may run in parallel because their write sets are disjoint; `src
 
 **Separate Legacy reliability backlog:** [DIAG-READING-EXPORT-001](tasks/DIAG-READING-EXPORT-001.md) is `proposed / NOT_RELEASED`. M2-I1 R3 Review P3-004 resurfaced a historically recorded `reading_export` signal/connection-lifetime flaky on the pre-I1 baseline. Its diagnosis is read-only and outside M2-I1, M2 first-wave authorization and the T3.2.1 Full Gate; a future Codex release must freeze its own base, worktree and scope.
 
-**Parallel legacy track:** [T3.2.1](tasks/T3.2.1.md) remains an independent Legacy Production Gate, Full Gate `OPEN`. By user direction on 2026-09-26, ZCode continues the open Gate; Codex retains integration responsibility and DeepSeek Harness remains the final independent Reviewer. Sandbox use is prohibited; the user accepts a complete local host simulation as the test venue, without representing it as clean-machine coverage. On 2026-09-26 (later session) ZCode completed the remaining AC1–AC9 evidence on the fixed package `08f9bd8` under that route and froze it; the Gate is now `review_requested` — the DeepSeek Harness full-scope independent Review has been requested and nothing may integrate, merge, push or publish before its verdict. Evidence is in the [2026-09-26 checkpoint](../verification/T3.2.1/clean-release-gate-20260926/checkpoint.md) (ZCode Continuation Run Record) and the [delivery Handoff](handoffs/T3.2.1-zcode-delivery-20260926.md). M2 start neither passes, cancels, completes nor supersedes T3.2.1. T3.2.1 and M2 write sets and evidence must stay isolated. The logical M2 order remains AD-001 → D1 → bounded Core/Qt/UI-contract first wave → Contract / IPC → Tauri + React Skeleton → incremental feature migration → parity → sidecar packaging → Legacy QML removal.
+**Parallel legacy track:** [T3.2.1](tasks/T3.2.1.md) remains the independent Legacy Production Gate, Full Gate OPEN. The 2026-09-26 fixed input 08f9bd8, delivery b18fa0e, and Qoder Review b66788a are locally integrated at merge 6519125; Codex integration checks close AC10 only. AC3=PASS（本机模拟路线；非干净机覆盖）; AC6/AC8/AC9=PARTIAL; clean Windows/no-Python start, Windows 10 matrix, true docTR-weight success, and true cold-start measurement remain NOT_RUN. AC6 fail-closed diagnostics do not count as successful Mock/Local output; REPAIR-17 is proposed and unreleased. Sandbox is prohibited; local route is accepted only for AC3. M2 start neither passes, cancels, completes nor supersedes T3.2.1. T3.2.1 and M2 write sets and evidence stay isolated.
 
 T3.2.1 remains the sole Active product Task with Full Release Gate OPEN. Child [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `done`: fixed base=`8738c41`, product delivery=`aed0094`, final Handoff/evidence head=`13ae23f`, independent Review=`ccd26a4` (`APPROVE_WITH_CONDITIONS`, C1/C2 satisfied), Codex integration=`6fe7455`. Integration used only the 62-path fixed task delta; the full author branch was not merged because its ancestry includes unrelated REPAIR-9–12 candidate history. Post-integration focused suite: 162 passed, exit 0. C2 cleanup cleared all trailing whitespace; Codex recount found 13 pre-cleanup diagnostics vs 12 stated in the supplement, recorded in the integration report. Parent Full Gate remains OPEN and parent AC3 remains `BLOCKED`; this child completion does not change them. The former Sandbox attempts remain historical evidence; the parent clean-Windows/Sandbox Gate is unchanged. [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) for F-13-3 is `done`: fixed base=`4ab6f58c06cb0691413e2630cb48a145c18c383a`, delivery=`43b24ee`, Handoff tip=`2f0d266`, DeepSeek Harness Review=`f616175e` (`approved`), Codex integration=`296131b`. R14-008 records the accepted fixture-seeding deviation and unrun GUI-native creation substep; R14-010 path counts are corrected in the integration record. Parent Gate remains OPEN / AC3 BLOCKED.
 
@@ -77,11 +71,7 @@ T3.2.1 remains the sole Active product Task with Full Release Gate OPEN. Child [
 - **T3.1.1 verified complete:** reading progress and export history now use the
   SQLite v4 adapters with non-destructive one-time legacy import; P2 follow-ups
   are recorded in the Task and integration evidence.
-- **T3.2.1 gap:** packaging implementation and Sandbox smoke evidence now exist
-  on isolated repair branches, but no final product head has passed the full
-  Release Gate or been integrated. The `c2fcb1c` decision was **PASS TO START**
-  (implementation authorization), not a release pass. Clean interactive Windows,
-  data-safety, optional-dependency, performance and final Review evidence remain open.
+- **T3.2.1 gap:** packaging implementation and fixed-package evidence are integrated at merge 6519125; the full Release Gate remains OPEN. AC10 Review/integration closure is PASS, while AC6/AC8/AC9 are PARTIAL and clean-machine, Windows 10, real-weight success and true cold-start items remain NOT_RUN. The 2026-09-26 local simulation is an accepted route only for AC3; see [integration evidence](../verification/T3.2.1/integration-6519125/integration-evidence.md).
 - Real provider quality and external endpoint behavior are not proven by the
   unit suite; adapters and fail-closed paths are not production quality claims.
 
@@ -147,7 +137,7 @@ QML shell changes are serialized through Codex.
 | 4 | [T2.1.1 Apply Design F to QML](tasks/T2.1.1.md) | **VERIFIED_COMPLETE**; product code integrated at `5da1cf6` | Qoder / Codex non-author review and integration; base `7f34135` | Shared F tokens use `pragma Singleton` + `qmldir`; all four pages consume them; 158px bookshelf geometry, accepted/completed-state contrast, and a discriminating hard-code guard are verified without business-logic changes. Review/integration evidence: [`review-bc49ef9`](../verification/T2.1.1/review-bc49ef9.md), [`integration-5da1cf6`](../verification/T2.1.1/integration-5da1cf6.md). |
 | 5 | [T2.2.1 Reader & Workbench Polish](tasks/T2.2.1.md) | **VERIFIED_COMPLETE**; integrated `fe9fca0` | ZCode functional implementation + Qoder QML/UI/UX / Codex non-author review and integration | Chapter picker, Workbench empty-state picker, dismissible command-error notification, and webtoon canvas consistency are accessible and tested. Evidence: [`review-0846573`](../verification/T2.2.1/review-0846573.md), [`integration-aad510b`](../verification/T2.2.1/integration-aad510b.md). |
 | 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **VERIFIED_COMPLETE**; product integrated `0c70e44` | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Evidence: [review-899bd3c](../verification/T3.1.1/review-899bd3c.md), [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md). |
-| 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | **IN PROGRESS; FULL RELEASE GATE OPEN**; parent AC3 remains `BLOCKED`; child [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `done` at integration `6fe7455` (delivery `aed0094`, evidence head `13ae23f`, Review C1/C2 conditions satisfied). Child [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) for F-13-3 is `done` at integration `296131b` (delivery `43b24ee`, Handoff `2f0d266`, Review `f616175e` approved); R14-008 deviation is explicit and parent Gate remains unchanged. Current continuation input=`08f9bd8`; user prohibits Sandbox and permits a complete local host simulation. 2026-09-26 (later): AC1–AC9 evidence completed and frozen on that route; Gate `review_requested`, DeepSeek Harness full-scope Review requested. | ZCode continues Gate verification by user direction; Codex integrates; DeepSeek Harness performs independent full-scope Review | REPAIR-13/14 do not close the parent Gate. AC1–AC9 host-simulation evidence is frozen (pipeline step fail-closed, export verified, restart recovery ×2, P50/P95 recorded, Windows 10 = NOT_RUN); AC10 waits for the independent Review; see [2026-09-26 checkpoint](../verification/T3.2.1/clean-release-gate-20260926/checkpoint.md) (ZCode Continuation Run Record) and the [delivery Handoff](handoffs/T3.2.1-zcode-delivery-20260926.md). |
+| 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | IN PROGRESS; FULL RELEASE GATE OPEN; Codex integration merge=6519125; AC10=PASS; AC3=PASS（本机模拟路线；非干净机覆盖）; AC6/AC8/AC9=PARTIAL. REPAIR-13/14 remain done; REPAIR-15/16/17 are proposed and unreleased. Fixed input=08f9bd8, no rebuild; Review b66788a approved for integration input only. | ZCode supplied evidence; Codex integrates; current Qoder independent Review approved | Integration evidence: [integration-6519125](../verification/T3.2.1/integration-6519125/integration-evidence.md). Full Gate remains OPEN: AC6 pipeline fail-closed is not successful Mock/Local output; AC6/AC8 clean-Windows coverage is NOT_RUN; AC9 true cold start and Windows 10 matrix are NOT_RUN; real docTR-weight success and completely Python-absent clean-machine startup are NOT_RUN. console=True and host-System32 ICU resolution remain pre-publication/D08 items; no publish or push authorized. |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
@@ -196,7 +186,7 @@ are maintained there; this Plan retains the authoritative phase, dependency
 and release order. The live dashboard, `TaskStatus`/`ExecutionState`, current
 branch/HEAD, dirty-file safety and next actions remain in [STATUS](STATUS.md).
 
-Current blocking chain:
+Current blocking chain (updated 2026-09-26):
 
 ```text
 T1.2.1 VERIFIED_COMPLETE
@@ -204,11 +194,11 @@ T1.2.1 VERIFIED_COMPLETE
   → T2.1.1 VERIFIED_COMPLETE @ 5da1cf6
   → T2.2.1 VERIFIED_COMPLETE @ fe9fca0
   → T3.1.1 VERIFIED_COMPLETE @ 0c70e44
-  → T3.2.1 implementation authorization (PASS TO START) @ c2fcb1c
-  → T3.2.1 full Release Gate OPEN; parent AC3 BLOCKED pending complete fixed-package workflow
-  → REPAIR-13 done @ integration `6fe7455` (delivery `aed0094`, evidence `13ae23f`; parent Gate unchanged)
-  → REPAIR-14 F-13-3 done @ integration `296131b` (delivery `43b24ee`, Handoff `2f0d266`, Review `f616175e` approved; R14-008/010 disposition recorded; parent Gate OPEN / AC3 BLOCKED)
-  → parent T3.2.1 local host-simulation AC1–AC9 evidence frozen (user-approved venue) → Gate `review_requested`; DeepSeek Harness full-scope Review requested, integration blocked until `approved`; Sandbox prohibited
+  → T3.2.1 full Release Gate OPEN; AC3 PASS only on the approved local-simulation route (not clean-machine coverage)
+  → REPAIR-13 done @ integration `6fe7455`; REPAIR-14 done @ integration `296131b`
+  → T3.2.1 delivery `b18fa0e` + Qoder Review `b66788a` integrated at `6519125`; AC10 PASS (integration closure only)
+  → AC6/AC8/AC9 remain PARTIAL; REPAIR-17 is proposed / NOT_RELEASED; clean-machine, Windows 10 x64, real docTR-weight success, Python-absent startup, and true cold-start evidence remain NOT_RUN
+  → parent Release Gate remains OPEN; no publish/push authorization
 ```
 
 This is a dependency blocking chain, not a schedule critical path; no reliable

@@ -12,7 +12,7 @@ graph, acceptance boundaries and historical Task audit live in
 ## Current order
 
 1. **T1.1.2, T1.1.1, T1.2.1, T2.1.1, T2.2.1, T3.1.1**: verified complete; fixed commits and evidence are in the authoritative Plan.
-2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**：Legacy Production Gate `OPEN`，父 AC3=`BLOCKED`；REPAIR-13=`done`（`6fe7455`）、REPAIR-14=`done`（`296131b`）。M2 启动不改变父 Gate，具体阻塞与验证状态见 [STATUS](STATUS.md)。
+2. **[T3.2.1 — Windows Packaging & Release Gate](tasks/T3.2.1.md)**：Legacy Full Gate OPEN；Codex integration=6519125；AC10=PASS；AC3=PASS（本机模拟路线；非干净机覆盖）；AC6/AC8/AC9=PARTIAL。Clean Windows/no-Python、Windows 10 x64、true docTR-weight success、true cold-start=NOT_RUN。REPAIR-13/14=done；REPAIR-15/16/17=proposed / NOT_RELEASED。详见 [STATUS](STATUS.md)。
 
 Historical phases and task ledgers remain in place for traceability; they do
 not override the rebaseline.

@@ -137,18 +137,18 @@ Script `ac7-data-safety-check.py`, output `ac7-data-safety-check.log`:
 
 | AC | Status | Basis |
 |---|---|---|
-| AC1 | PASS（本机模拟路线；非干净机覆盖） | 应用版本 `0.1.0`（`src/bootstrap/core_assembly.py:90`，R-002 修订）；版本/快照/命令见上；构建宿主依赖 git 已声明（R-013） |
-| AC2 | PASS（证据来自固定包与仓库内清单比对；本机模拟路线） | Manifest-identical Build 1/2（`EXIT_CODE=0`）、排除项扫描干净、全包校验器 `verify_artifact.py` `EXIT=0`（reviewer 运行记录已入库，R-009） |
-| AC3 | PASS（**本机模拟路线，per user direction；非干净机覆盖**） | 完整交互工作流 + 重启恢复（rerun2/rerun3）；「完全未装 Python 的干净机」属性未被证明（reviewer 裁定：条件成立） |
-| AC4 | PASS（本机模拟路线） | 静态闭包 `missing_count=0` + Qt/ICU exit 0 + 四页面运行时到达 + reviewer `verify_artifact.py` QML 26/26 哈希一致 |
-| AC5 | PASS（本机模拟路线） | `PROVIDER_NOT_CONFIGURED` 诚实诊断；启动不受影响 |
-| AC6 | **PARTIAL**（本机模拟路线）——11/12 流程步骤 PASS；pipeline 执行步骤 = fail-closed 诊断（该证据同时支撑 AC5 PASS），不是本 AC 字面要求的执行成功 | 全流程含导出与重启恢复均 PASS；产品无 mock provider 且权重下载被排除于 Gate 前置，本 Gate 内不可能取得 pipeline 执行成功证据。**改记 PASS 需用户/Codex 在 Task 内显式裁决（reviewer R-003；不得由作者/Reviewer 推定）** |
-| AC7 | PASS（本机模拟路线） | 哈希/Lock/Revision/人工状态检查 + 日志侧扫描 0 hits + **artifact 内容级扫描 528 词形命中全部为运行时字符串表/UI 字段名，`sk-` token 0 命中，无凭据材料**（R-007） |
-| AC8 | PASS（本机模拟路线） | Unicode 只读程序目录、默认数据根、显式 `--data-root`、零残留、SQLite 无锁 |
-| AC9 | PASS（Windows 11 本机模拟，**重复启动（暖缓存）口径**）；Windows 10 = NOT_RUN | 5 次启动 P50 `1.102 s`、P95 `1.156 s`（数值经 reviewer 复算正确），全部 EXIT=0。非冷启动口径：同一 `--data-root`、间隔约 4 s 的连续启动，无缓存刷新/重启；指标为 MainWindowHandle 就绪（R-008 改述） |
-| AC10 | IN_PROGRESS（78aba7c 收独立 Review `changes_requested`；本轮返修已按 R-001～R-014 落实，等待追加复审） | 见文末返修记录小节 |
+| AC1 | PASS（固定输入构建记录；本机路线证据，不是干净机覆盖） | 应用版本 0.1.0；构建快照/命令见本节；集成后全包验证绑定固定输入 08f9bd8 |
+| AC2 | PASS（固定包与清单完整校验；本机模拟路线） | Build 1/2 manifest-identical；7 项全包校验通过，详见 Codex integration evidence |
+| AC3 | PASS（本机模拟路线；非干净机覆盖） | 完整交互工作流 + 重启恢复（rerun2/rerun3）；完全未装 Python 的干净机属性未证明，覆盖 NOT_RUN |
+| AC4 | PASS（本机模拟路线；非干净机覆盖） | 静态闭包 missing_count=0 + Qt/ICU exit 0 + 四页面运行时到达 + 固定包 QML 26/26 哈希一致 |
+| AC5 | PASS（本机模拟路线；非干净机覆盖） | PROVIDER_NOT_CONFIGURED 诚实诊断；启动不受影响；真实 docTR 权重成功路径 NOT_RUN |
+| AC6 | PARTIAL（本机模拟路线；非干净机覆盖）——11/12 主流程项 PASS；Pipeline 以 completed_with_failures / PROVIDER_NOT_CONFIGURED 结束，没有成功 Mock/Local 输出；干净 Windows 覆盖 NOT_RUN |
+| AC7 | PASS（本机模拟路线；非干净机覆盖） | 哈希/Lock/Revision/人工状态检查 + 日志与 artifact 内容级扫描；sk- token 0 命中 |
+| AC8 | PARTIAL（本机模拟路线；非干净机覆盖） | Unicode 只读程序目录、默认/显式数据根、零残留和 SQLite 无锁均有本机证据；AC 原文干净 Windows 前提未豁免，覆盖 NOT_RUN |
+| AC9 | PARTIAL（暖缓存重复启动，不是冷启动）；Windows 10 x64 矩阵 NOT_RUN | 5 次 MainWindowHandle-ready 测量 P50 1.102 s / P95 1.156 s；真正冷启动测量 NOT_RUN |
+| AC10 | PASS（AC10 Review/集成闭环） | Handoff + Qoder 独立 Review b66788a approved（仅可作集成输入）+ Codex merge 6519125 + 集成后门日志/hash；不代表 Release Gate 关闭 |
 
-Remaining NOT_RUN items (explicit): Windows 10 x64 cold-start matrix; heavy-model (real docTR weights) pipeline success path — out of Gate scope by user direction (no model downloads as a Gate precondition).
+Remaining NOT_RUN items (explicit): Windows 10 x64 matrix; completely Python-absent clean Windows startup; real docTR-weight pipeline success path; true cold-start P50/P95. None is inferred from local host simulation. Windows 10 x64 cold-start matrix; heavy-model (real docTR weights) pipeline success path — out of Gate scope by user direction (no model downloads as a Gate precondition).
 
 Known observations left for the Reviewer (no product change authorized in this Gate): bookshelf chapter row shows `0 页` while the DB and Reader show 1 page (**R-011**, 已移交子 Task); export-history row leaves `book_id`/`chapter_id` empty while `scope_snapshot_json` is populated (**R-010**, 根因 `src/ui/viewmodels/reader/viewmodel.py:459-461` 不传 book/chapter 上下文，已移交子 Task); ChapterPicker `Keys`/`Accessible`/style warnings and `qt.qpa.mime: Retrying to obtain clipboard` in runtime logs (**R-012①**, 已分诊为已知告警,无 `currentChapterId` TypeError、无 QtCore 缺 DLL); 发布包 `console=True`（`packaging/new_manga.spec:125`，已记 F-011 权衡）与 ICU `icuuc.dll` 解析自宿主 System32（`icu_source_type: windows_system32`）为**发布前待决**项（**R-012②③**，建议进 D08 发布清单，不阻断本 Gate）。
 
@@ -174,3 +174,11 @@ Review 依据：`agent/qoder/T3.2.1-review-78aba7c` @ `4422f79`，报告 `doc/re
 
 修订后仍存在的挂账风险（reviewer 要求 STATUS 记录）：干净 Windows（完全未装 Python）启动未证明；Windows 10 x64 全矩阵 NOT_RUN；真实 docTR 权重成功路径 NOT_RUN；发布包 `console=True`；ICU 依赖宿主 System32。
 
+## Codex 集成裁决（2026-09-26；当前状态覆盖上方作者侧待裁决文字）
+
+- R-003 / AC6：fail-closed run (completed_with_failures / PROVIDER_NOT_CONFIGURED) proves AC5 missing-provider diagnostics and orchestration failure persistence, not a successful Mock/Local Pipeline result. AC6 remains PARTIAL (11/12). REPAIR-17 is proposed, not released.
+- R-004：local host-simulation route is accepted only for AC3. AC6/AC8 original clean-Windows precondition is not waived; both remain PARTIAL, clean-machine coverage NOT_RUN.
+- R-015：STATUS smoke, environment-route and full-Gate rows synchronized to AC3 PASS（本机模拟路线；非干净机覆盖）, with clean-machine coverage NOT_RUN.
+- R-016：REPAIR-15 now requires storing book/chapter ids in openChapter before passing them from openExporter; only VM parameter passing is proposed. Schema CHECK/migration is excluded pending separate authorization.
+- AC10：closed as an integration subcriterion after Qoder Review approval, integrated-head checks and this evidence. Parent Release Gate remains OPEN.
+- Integration validation ran on code merge 6519125406161924b0021e021e79fea07cf673fc; fixed build input 08f9bd85137965df922db524bc92917af513bd24 was not rebuilt. See [Codex integration evidence](../../integration-6519125/integration-evidence.md).
