@@ -20,10 +20,11 @@ M2_I2_QT_FREE_MODULES = (
     APPLICATION_ROOT / "tasks" / "projection.py",
     APPLICATION_ROOT / "editing" / "region_canvas.py",
 )
-LEGACY_UI_SHIMS = (
-    UI_ROOT / "models" / "tasks" / "projection.py",
-    UI_ROOT / "viewmodels" / "workbench" / "region_canvas.py",
-)
+LEGACY_UI_SHIM_SEAMS = {
+    UI_ROOT / "models" / "tasks" / "projection.py": "application.tasks.projection",
+    UI_ROOT / "viewmodels" / "workbench" / "region_canvas.py": "application.editing.region_canvas",
+}
+LEGACY_UI_SHIMS = tuple(LEGACY_UI_SHIM_SEAMS.keys())
 
 #: Calls that import a module from a literal name at runtime (TASK-034 AC ②:
 #: the old line-prefix guard could not see these).
@@ -99,11 +100,15 @@ def find_forbidden_imports(
     return sorted(violations)
 
 
-def find_shim_local_definitions(path: Path) -> list[str]:
-    """Report any local function/class definitions or executable logic in a pure re-export shim.
+def find_shim_violations(path: Path, allowed_seam: str | None = None) -> list[str]:
+    """Report any local definition, non-application import, or logic in a pure re-export shim.
 
-    Legacy UI modules must only act as non-authoritative shims delegating to application layer.
+    Legacy UI modules must only act as non-authoritative shims delegating to their
+    respective application seam and re-exporting symbols via __all__.
     """
+    if allowed_seam is None:
+        allowed_seam = LEGACY_UI_SHIM_SEAMS.get(path)
+
     violations: list[str] = []
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
     for node in tree.body:
@@ -111,8 +116,23 @@ def find_shim_local_definitions(path: Path) -> list[str]:
             violations.append(
                 f"{path}:{node.lineno}: forbidden local definition in legacy shim: {node.name}"
             )
-        elif isinstance(node, (ast.Import, ast.ImportFrom)):
-            continue
+        elif isinstance(node, ast.ImportFrom):
+            mod = node.module or ""
+            if mod == "__future__":
+                continue
+            if allowed_seam is not None and (mod != allowed_seam or node.level != 0):
+                violations.append(
+                    f"{path}:{node.lineno}: forbidden import in legacy shim: {mod} (only {allowed_seam} allowed)"
+                )
+            elif allowed_seam is None and (mod.startswith("ui") or mod.startswith(".ui")):
+                violations.append(
+                    f"{path}:{node.lineno}: forbidden import in legacy shim: {mod}"
+                )
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                violations.append(
+                    f"{path}:{node.lineno}: forbidden import in legacy shim: {alias.name}"
+                )
         elif isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant):
             # docstring or string constant
             continue
@@ -129,6 +149,11 @@ def find_shim_local_definitions(path: Path) -> list[str]:
                 f"{path}:{node.lineno}: forbidden statement in legacy shim: {type(node).__name__}"
             )
     return violations
+
+
+def find_shim_local_definitions(path: Path, allowed_seam: str | None = None) -> list[str]:
+    """Backward-compatible alias for find_shim_violations."""
+    return find_shim_violations(path, allowed_seam=allowed_seam)
 
 
 
@@ -221,17 +246,18 @@ def test_workbench_ui_consumers_import_from_application_seams() -> None:
 
 
 def test_legacy_ui_shims_contain_no_authoritative_logic() -> None:
-    """M2-I2 AC2/AC4: legacy UI shims must remain pure re-export shims with no local logic.
+    """M2-I2 AC2/AC4: legacy UI shims must remain pure re-export shims from application seams.
 
     Prevents revived or reversed business logic in UI shims by asserting that no local
-    function/class definitions or algorithmic statements exist in the legacy files.
+    function/class definitions or assignments exist, and imports strictly originate only
+    from each shim's corresponding application seam.
     """
     violations: list[str] = []
-    for shim_path in LEGACY_UI_SHIMS:
+    for shim_path, allowed_seam in LEGACY_UI_SHIM_SEAMS.items():
         assert shim_path.is_file(), f"missing legacy shim: {shim_path}"
-        violations.extend(find_shim_local_definitions(shim_path))
+        violations.extend(find_shim_violations(shim_path, allowed_seam=allowed_seam))
     assert not violations, (
-        "legacy UI shims must not contain authoritative business logic or definitions:\n"
+        "legacy UI shims must not contain authoritative business logic or non-application imports:\n"
         + "\n".join(violations)
     )
 
@@ -291,10 +317,26 @@ def test_reversal_guard_reports_local_definitions_in_legacy_shims(tmp_path: Path
         "    pass\n",
         encoding="utf-8",
     )
-    violations = find_shim_local_definitions(source)
+    violations = find_shim_violations(source, allowed_seam="application.tasks.projection")
     assert violations == [
         f"{source}:3: forbidden local definition in legacy shim: revived_business_rule",
         f"{source}:5: forbidden local definition in legacy shim: RevivedModel",
+    ]
+
+
+def test_reversal_guard_reports_ui_imports_in_legacy_shims(tmp_path: Path) -> None:
+    """M2-I2 AC4 discriminative probe: import from ui.* in legacy shim must be caught."""
+    source = tmp_path / "mutant_ui_shim.py"
+    source.write_text(
+        '"""Legacy shim with forbidden ui import."""\n'
+        "from ui.models.tasks.page_list_model import PageListModel\n"
+        "import ui.viewmodels.workbench.viewmodel\n",
+        encoding="utf-8",
+    )
+    violations = find_shim_violations(source, allowed_seam="application.tasks.projection")
+    assert violations == [
+        f"{source}:2: forbidden import in legacy shim: ui.models.tasks.page_list_model (only application.tasks.projection allowed)",
+        f"{source}:3: forbidden import in legacy shim: ui.viewmodels.workbench.viewmodel",
     ]
 
 
