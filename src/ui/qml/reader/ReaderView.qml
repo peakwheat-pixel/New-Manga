@@ -59,7 +59,10 @@ Rectangle {
         id: exportWindowComponent
         ExportWindow {
             controller: rv.model ? rv.model.exportController : null
-            Component.onCompleted: open()
+            // F-13-2: ExportWindow's root is a Window, not a Popup — `open()`
+            // does not exist on it and threw `ReferenceError` on every export
+            // click, so the window was created but never shown.
+            Component.onCompleted: show()
             onVisibleChanged: if (!visible) destroy()
         }
     }

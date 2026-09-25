@@ -1,0 +1,127 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0
+rootdir: G:\CODEX\New Manga.worktrees\T3.2.1-zcode-repair-13
+configfile: pytest.ini
+collected 5 items
+
+tests\ui_shell\test_repair13_import_entry.py FFFF.file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:65: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:49: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:63: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:57: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:52: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:45: TypeError: Cannot read property 'favoritesOnly' of null
+                       [100%]
+
+================================== FAILURES ===================================
+____________ test_import_entry_disabled_with_hint_before_selection ____________
+
+harness = <test_repair13_import_entry.Harness object at 0x000002BC5EF0BAA0>
+
+    def test_import_entry_disabled_with_hint_before_selection(harness):
+        btn = find_one(harness.root, "btnImport")
+>       hint = find_one(harness.root, "importHint")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\ui_shell\test_repair13_import_entry.py:142:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = <PySide6.QtQuick.QQuickItem(0x2bc5eb8dcf0, name="bookshelfView", parent=0x2bc5eb269e0, geometry=0,0 1280x800) at 0x000002BC5F477800>
+object_name = 'importHint'
+
+    def find_one(root, object_name):
+        listed = root.findChildren(QObject, object_name)
+>       assert listed, f"expected an item named {object_name!r}"
+E       AssertionError: expected an item named 'importHint'
+E       assert []
+
+tests\ui_shell\test_repair13_import_entry.py:62: AssertionError
+________________ test_current_chapter_alias_follows_row_click _________________
+
+harness = <test_repair13_import_entry.Harness object at 0x000002BC5F465C10>
+
+    def test_current_chapter_alias_follows_row_click(harness):
+        _, chapter_id = _make_book_and_chapter(harness)
+        detail = find_one(harness.root, "bookDetailPanel")
+>       assert detail.property("currentChapterId") == "", "no row clicked yet"
+E       AssertionError: no row clicked yet
+E       assert None == ''
+E        +  where None = <built-in method property of PySide6.QtQuick.QQuickItem object at 0x000002BC5F474480>('currentChapterId')
+E        +    where <built-in method property of PySide6.QtQuick.QQuickItem object at 0x000002BC5F474480> = <PySide6.QtQuick.QQuickItem(0x2bc60d55e20, id="detailArea", name="bookDetailPanel", parent=0x2bc60d55c60, geometry=912,0 336x716) at 0x000002BC5F474480>.property
+
+tests\ui_shell\test_repair13_import_entry.py:152: AssertionError
+__________________ test_import_entry_enabled_after_row_click __________________
+
+harness = <test_repair13_import_entry.Harness object at 0x000002BC5F465100>
+
+    def test_import_entry_enabled_after_row_click(harness):
+        _make_book_and_chapter(harness)
+        btn = find_one(harness.root, "btnImport")
+>       hint = find_one(harness.root, "importHint")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\ui_shell\test_repair13_import_entry.py:160:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+root = <PySide6.QtQuick.QQuickItem(0x2bc4808c4b0, name="bookshelfView", parent=0x2bc60b0c360, geometry=0,0 1280x800) at 0x000002BC5F44E180>
+object_name = 'importHint'
+
+    def find_one(root, object_name):
+        listed = root.findChildren(QObject, object_name)
+>       assert listed, f"expected an item named {object_name!r}"
+E       AssertionError: expected an item named 'importHint'
+E       assert []
+
+tests\ui_shell\test_repair13_import_entry.py:62: AssertionError
+________ test_import_requested_without_chapter_raises_no_qml_typeerror ________
+
+harness = <test_repair13_import_entry.Harness object at 0x000002BC5F465EE0>
+
+    def test_import_requested_without_chapter_raises_no_qml_typeerror(harness):
+        """Discriminating guard: the pre-repair handler threw
+        ``Cannot read property 'currentChapterId' of undefined`` every time the
+        toolbar emitted importRequested without a selection (31 occurrences in
+        the Build 3 stderr). The message handler below must see no QML error."""
+        toolbar = find_one(harness.root, "bookshelfToolbar")
+        dialog = find_one(harness.root, "importDialog")
+        messages: list[str] = []
+
+        def capture(mode, context, message):
+            messages.append(message)
+
+        qInstallMessageHandler(capture)
+        try:
+            meta = toolbar.metaObject()
+            index = meta.indexOfMethod("importRequested()")
+            assert index >= 0, "importRequested() signal missing"
+            for _ in range(3):
+                meta.method(index).invoke(toolbar)
+            QTest.qWait(100)
+        finally:
+            qInstallMessageHandler(None)
+
+        errors = [m for m in messages if "TypeError" in m]
+>       assert not errors, f"QML TypeError on the import path: {errors}"
+E       AssertionError: QML TypeError on the import path: ["file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:23: TypeError: Cannot read property 'currentChapterId' of undefined", "file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:23: TypeError: Cannot read property 'currentChapterId' of undefined", "file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:23: TypeError: Cannot read property 'currentChapterId' of undefined"]
+E       assert not ["file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:23: TypeError: Ca...-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:23: TypeError: Cannot read property 'currentChapterId' of undefined"]
+
+tests\ui_shell\test_repair13_import_entry.py:191: AssertionError
+---------------------------- Captured stderr call -----------------------------
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:65: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfView.qml:49: TypeError: Cannot read property 'isEmpty' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:63: TypeError: Cannot read property 'viewMode' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:57: TypeError: Cannot read property 'sortBy' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:52: TypeError: Cannot read property 'archivedFilter' of null
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/bookshelf/BookshelfToolbar.qml:45: TypeError: Cannot read property 'favoritesOnly' of null
+========================= 4 failed, 1 passed in 2.15s =========================

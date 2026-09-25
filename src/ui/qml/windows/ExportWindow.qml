@@ -27,7 +27,13 @@ Window {
     palette.windowText: Tokens.ink
     palette.base: Tokens.bgInset
     palette.button: Tokens.bgRaised
-    palette.buttonText: Tokens.ink
+    // REPAIR-13 R-13-1: same defect as Main.qml — the native Windows style
+    // ignores palette.button and QML background customization while
+    // honoring buttonText, so the light `ink` labels were unreadable on
+    // its light system surfaces (see screenshots/09-export-window.png from
+    // delivery 2f18e78). `ink-inv` is the F token for text on inverted
+    // (light) surfaces; the Graphite dark surfaces stay unchanged.
+    palette.buttonText: Tokens.inkInv
     palette.highlight: Tokens.accent
     palette.highlightedText: Tokens.onAccent
     palette.text: Tokens.ink
@@ -107,6 +113,11 @@ Window {
             RowLayout {
                 Layout.fillWidth: true
                 TextField {
+                    // F-13-4: the run button's onClicked reads
+                    // `exportOutputPath.text`; without this id that name
+                    // resolved to nothing and every export click threw
+                    // `ReferenceError` before startExport() was reached.
+                    id: exportOutputPath
                     objectName: "exportOutputPath"
                     Layout.fillWidth: true
                     enabled: ready

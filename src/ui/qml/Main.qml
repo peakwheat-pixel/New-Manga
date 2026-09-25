@@ -20,14 +20,23 @@ ApplicationWindow {
     palette.windowText: Tokens.ink
     palette.base: Tokens.bgInset
     palette.button: Tokens.bgRaised
-    palette.buttonText: Tokens.ink
+    // REPAIR-13 R13-AC3: the native Windows Quick Controls style ignores
+    // palette.button and QML background customization (Build 3 Sandbox
+    // screenshots: light system surfaces), while palette.buttonText *is*
+    // honored — it previously painted the light `ink` text onto those
+    // light surfaces, leaving button labels unreadable on all four pages.
+    // `ink-inv` is the F token for text on inverted (light) surfaces, so
+    // native-styled buttons render dark-on-light and stay readable while
+    // the Graphite Atelier dark surfaces around them are unchanged.
+    // (QStyleHints.colorScheme was probed as a fix and does not affect the
+    // native style — verification/T3.2.1/repair-13/probe-ui-states.*.log.)
+    palette.buttonText: Tokens.inkInv
     palette.highlight: Tokens.accent
     palette.highlightedText: Tokens.onAccent
     palette.text: Tokens.ink
     palette.placeholderText: Tokens.ink3
     palette.toolTipBase: Tokens.bgPanel
     palette.toolTipText: Tokens.ink
-
 
     AppShell {
         anchors.fill: parent

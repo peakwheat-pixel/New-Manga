@@ -24,7 +24,10 @@ Popup {
     palette.window: Tokens.bgPanel
     palette.windowText: Tokens.ink
     palette.text: Tokens.ink
-    palette.buttonText: Tokens.ink
+    // REPAIR-13 R-13-1: native-style surfaces are light and ignore QML
+    // customization, so the light `ink` button labels were unreadable.
+    // `ink-inv` is the F token for text on inverted (light) surfaces.
+    palette.buttonText: Tokens.inkInv
 
     Accessible.name: "选择作品和章节"
 
@@ -91,8 +94,10 @@ Popup {
             model: root.shelf !== null ? root.shelf.bookListModel : null
             textRole: "title"
             valueRole: "bookId"
-            palette.text: Tokens.ink
-            palette.buttonText: Tokens.ink
+            // The native ComboBox paints its display text with the *text*
+            // role on a light system surface, so this must be ink-inv too.
+            palette.text: Tokens.inkInv
+            palette.buttonText: Tokens.inkInv
             contentItem: Text {
                 leftPadding: Tokens.gap / 2
                 rightPadding: Tokens.gap * 2
@@ -124,8 +129,10 @@ Popup {
             model: root.shelf !== null ? root.shelf.chapterListModel : null
             textRole: "title"
             valueRole: "chapterId"
-            palette.text: Tokens.ink
-            palette.buttonText: Tokens.ink
+            // The native ComboBox paints its display text with the *text*
+            // role on a light system surface, so this must be ink-inv too.
+            palette.text: Tokens.inkInv
+            palette.buttonText: Tokens.inkInv
             contentItem: Text {
                 leftPadding: Tokens.gap / 2
                 rightPadding: Tokens.gap * 2

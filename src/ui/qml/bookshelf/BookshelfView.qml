@@ -18,10 +18,27 @@ Rectangle {
         anchors.top: parent.top
         anchors.left: parent.left
         anchors.right: parent.right
+        // REPAIR-13 R13-AC1: read the selection through the panel's public
+        // alias; the old `detailArea.chapters.currentChapterId` reached into
+        // an inner QML id and threw a TypeError on every import click.
+        readonly property bool chapterSelected:
+            detailArea.currentChapterId !== ""
+        importReady: chapterSelected
+        importHint: {
+            if (chapterSelected)
+                return ""
+            var book = shelf !== null ? shelf.selectedBook : null
+            var bookSelected = book !== null && book !== undefined
+                               && book.book_id !== undefined
+                               && book.book_id !== ""
+            return bookSelected
+                ? "已选作品还未选择章节：请在右侧新建或点击章节后再导入页面"
+                : "先新建作品并选择章节，再导入页面"
+        }
         onCreateBookRequested: newBookDialog.open()
         onImportRequested: {
-            if (detailArea.chapters.currentChapterId !== "") {
-                importDialog.targetChapterId = detailArea.chapters.currentChapterId
+            if (chapterSelected) {
+                importDialog.targetChapterId = detailArea.currentChapterId
                 importDialog.open()
             }
         }

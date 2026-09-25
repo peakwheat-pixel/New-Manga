@@ -12,6 +12,11 @@ Rectangle {
     height: Tokens.tbH
 
     property var shelf: bookshelfViewModel
+    // REPAIR-13 R13-AC1: the import entry must not fail silently. The view
+    // binds these — the button stays disabled with a visible reason until a
+    // book and a chapter are selected.
+    property bool importReady: false
+    property string importHint: ""
 
     signal createBookRequested()
     signal importRequested()
@@ -30,7 +35,16 @@ Rectangle {
         Button {
             objectName: "btnImport"
             text: "导入"
+            enabled: toolbar.importReady
             onClicked: toolbar.importRequested()
+        }
+        Label {
+            objectName: "importHint"
+            text: toolbar.importHint
+            visible: toolbar.importHint !== ""
+            anchors.verticalCenter: parent.verticalCenter
+            color: Tokens.ink3
+            font.pixelSize: Tokens.fsSm
         }
         TextField {
             objectName: "searchField"

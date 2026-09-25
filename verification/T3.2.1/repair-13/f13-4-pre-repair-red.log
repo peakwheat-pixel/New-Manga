@@ -1,0 +1,62 @@
+F                                                                        [100%]
+================================== FAILURES ===================================
+________________ test_export_run_button_passes_path_and_starts ________________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x1ebbec03690) at 0x000001EBBF335480>
+
+    def test_export_run_button_passes_path_and_starts(qapp):
+        """F-13-4 guard: the export window's 导出 button must reach the
+        controller. The onClicked handler reads ``exportOutputPath.text``, but
+        the output TextField historically had only an objectName and no id, so
+        the handler's first line threw ``ReferenceError: exportOutputPath is
+        not defined`` and ``startExport()`` was never reached — the real-UI
+        export silently did nothing (local GUI run against build 7)."""
+        engine, window, root, model, _component = _make_harness(qapp)
+        messages: list[str] = []
+
+        def capture(mode, context, message):
+            messages.append(message)
+
+        try:
+            qInstallMessageHandler(capture)
+            _invoke_export_button(root)
+            QTest.qWait(100)
+            export_window = root.findChildren(QQuickWindow, "exportWindow")[0]
+
+            path_field = export_window.findChild(QObject, "exportOutputPath")
+            assert path_field is not None, "exportOutputPath text field missing"
+            path_field.setProperty("text", r"G:\verify\out\two-pages.zip")
+
+            run_button = export_window.findChild(QObject, "exportRunButton")
+            assert run_button is not None, "exportRunButton missing"
+            meta = run_button.metaObject()
+            index = meta.indexOfMethod("clicked()")
+            meta.method(index).invoke(run_button)
+            QTest.qWait(100)
+        finally:
+            qInstallMessageHandler(None)
+            try:
+                window.deleteLater()
+                engine.deleteLater()
+                qapp.processEvents()
+            except RuntimeError:
+                pass  # QML may already have destroyed the host window
+
+        errors = [m for m in messages if "ReferenceError" in m]
+>       assert not errors, (
+            f"QML ReferenceError on the export-run path (F-13-4): {errors}"
+        )
+E       AssertionError: QML ReferenceError on the export-run path (F-13-4): ['file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/windows/ExportWindow.qml:205: ReferenceError: exportOutputPath is not defined']
+E       assert not ['file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/windows/ExportWindow.qml:205: ReferenceError: exportOutputPath is not defined']
+
+tests\ui_shell\test_repair13_export_window_open.py:309: AssertionError
+---------------------------- Captured stderr call -----------------------------
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_49(0x1ebbedc5dd0)  is not an Item
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/common/ChapterPicker.qml:144:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_4(0x1ebbf1bd280, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/common/ChapterPicker.qml:136:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1ebbf1bd730, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/common/ChapterPicker.qml:109:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_4(0x1ebbf1be630, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/common/ChapterPicker.qml:101:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1ebbf1bdeb0, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+1 failed in 0.92s
+file:///G:/CODEX/New Manga.worktrees/T3.2.1-zcode-repair-13/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+RED_RUN_EXIT=1

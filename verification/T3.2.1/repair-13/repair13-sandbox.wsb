@@ -1,0 +1,15 @@
+<Configuration>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>G:\CODEX\repair13-build-out</HostFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>G:\CODEX\repair13-sandbox-exchange</HostFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>C:\users\WDAGUtilityAccount\Desktop\repair13-build-out\NewManga\NewManga.exe</Command>
+  </LogonCommand>
+</Configuration>

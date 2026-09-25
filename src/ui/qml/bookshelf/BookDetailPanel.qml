@@ -16,6 +16,14 @@ Rectangle {
     property var shelf: bookshelfViewModel
     property var info: shelf.selectedBook
 
+    // REPAIR-13 R13-AC1: the toolbar's import entry lives in BookshelfView
+    // but needs the selected chapter id. `chapters` is an inner id — QML ids
+    // are not visible across components, so the previous cross-component
+    // `detailArea.chapters.currentChapterId` access raised "TypeError:
+    // Cannot read property 'currentChapterId' of undefined" (Build 3
+    // stderr, 31 occurrences). Expose the id as a proper property instead.
+    readonly property alias currentChapterId: chapters.currentChapterId
+
     Column {
         anchors.fill: parent
         anchors.margins: 10

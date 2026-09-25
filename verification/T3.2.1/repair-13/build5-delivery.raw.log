@@ -1,0 +1,215 @@
+=== New Manga Package Build ===
+Repository root: G:\CODEX\New Manga.worktrees\T3.2.1-zcode-repair-13
+Git Delivery Head: 2f18e784b7a4bdcc71672a949550594e7958846e
+Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+Target output dir: G:/CODEX/repair13-build-out
+Sanitized build PATH: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts;G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312;C:\WINDOWS\System32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0
+Running PyInstaller...
+97 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.7
+98 INFO: Python: 3.12.3
+115 INFO: Platform: Windows-11-10.0.26200-SP0
+115 INFO: Python environment: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312
+2289 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\T3.2.1-zcode-repair-13',
+ 'G:\\CODEX\\New Manga.worktrees\\T3.2.1-zcode-repair-13\\src',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312',
+ 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages',
+ 'G:\\CODEX\\New Manga.worktrees\\T3.2.1-zcode-repair-13\\src']
+2553 INFO: Appending 'datas' from .spec
+2724 INFO: checking Analysis
+2724 INFO: Building Analysis because Analysis-00.toc is non existent
+2724 INFO: Looking for Python shared library...
+2724 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+2724 INFO: Running Analysis Analysis-00.toc
+2724 INFO: Target bytecode optimization level: 0
+2724 INFO: Initializing module dependency graph...
+2725 INFO: Initializing module graph hook caches...
+2735 INFO: Analyzing modules for base_library.zip ...
+3440 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+3487 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+4650 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+4844 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+5979 INFO: Caching module dependency graph...
+6004 INFO: Analyzing G:\CODEX\New Manga.worktrees\T3.2.1-zcode-repair-13\src\bootstrap\app.py
+6057 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+6063 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+6271 INFO: Processing standard module hook 'hook-PySide6.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+6395 INFO: Processing standard module hook 'hook-shiboken6.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+6485 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+7619 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+9078 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+12909 INFO: Processing standard module hook 'hook-PySide6.QtQml.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+13705 WARNING: QtLibraryInfo(PySide6): QML plugin binary 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\Qt\\labs\\assetdownloader\\qmlassetdownloaderprivateplugin.dll' does not exist!
+16650 INFO: Processing standard module hook 'hook-PySide6.QtQuick.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+18214 INFO: Processing standard module hook 'hook-PySide6.QtOpenGL.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+19756 INFO: Processing standard module hook 'hook-difflib.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+19841 INFO: Processing standard module hook 'hook-pypdfium2.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+19865 INFO: Processing standard module hook 'hook-pypdfium2_raw.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+19888 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+20034 INFO: Processing standard module hook 'hook-PIL.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+20120 INFO: Processing standard module hook 'hook-PIL.Image.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+20354 INFO: Processing standard module hook 'hook-numpy.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+20647 INFO: Processing pre-safe-import-module hook 'hook-typing_extensions.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+20648 INFO: SetuptoolsInfo: initializing cached setuptools info...
+21287 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+21395 INFO: Processing standard module hook 'hook-xml.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+22284 INFO: Processing standard module hook 'hook-sysconfig.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+22417 INFO: Processing standard module hook 'hook-webbrowser.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+23852 INFO: Processing standard module hook 'hook-xml.etree.cElementTree.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+24012 INFO: Processing standard module hook 'hook-PIL.ImageFilter.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+24719 INFO: Processing pre-safe-import-module hook 'hook-importlib_resources.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+24761 INFO: Processing standard module hook 'hook-cv2.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+25108 INFO: Processing standard module hook 'hook-scipy.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+25607 INFO: Processing standard module hook 'hook-scipy.linalg.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+25731 INFO: Processing standard module hook 'hook-torch.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+1163 WARNING: Failed to collect submodules for 'torch.utils.tensorboard' because importing 'torch.utils.tensorboard' raised: ModuleNotFoundError: No module named 'tensorboard'
+G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(name)
+G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\PyInstaller\utils\hooks\__init__.py:665: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(name)
+39098 INFO: hook-torch: this torch build does not depend on MKL...
+40227 INFO: Processing standard module hook 'hook-py.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+46782 INFO: Processing standard module hook 'hook-scipy.special._ufuncs.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+52907 INFO: Processing standard module hook 'hook-setuptools.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+52923 INFO: Processing pre-safe-import-module hook 'hook-distutils.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+52944 INFO: Processing pre-safe-import-module hook 'hook-jaraco.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+52944 INFO: Setuptools: 'jaraco' appears to be a full setuptools-vendored copy - creating alias to 'setuptools._vendor.jaraco'!
+52953 INFO: Processing pre-safe-import-module hook 'hook-more_itertools.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+52953 INFO: Setuptools: 'more_itertools' appears to be a setuptools-vendored copy - creating alias to 'setuptools._vendor.more_itertools'!
+53227 INFO: Processing standard module hook 'hook-_osx_support.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+53238 INFO: Processing pre-safe-import-module hook 'hook-packaging.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+53505 INFO: Processing standard module hook 'hook-setuptools._vendor.jaraco.text.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+53511 INFO: Processing pre-safe-import-module hook 'hook-backports.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+53512 INFO: Setuptools: 'backports' appears to be a full setuptools-vendored copy - creating alias to 'setuptools._vendor.backports'!
+53902 INFO: Processing pre-safe-import-module hook 'hook-tomli.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+53903 INFO: Setuptools: 'tomli' appears to be a setuptools-vendored copy - creating alias to 'setuptools._vendor.tomli'!
+54261 INFO: Processing pre-safe-import-module hook 'hook-wheel.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+54262 INFO: Setuptools: 'wheel' appears to be a setuptools-vendored copy - creating alias to 'setuptools._vendor.wheel'!
+54292 INFO: Processing pre-safe-import-module hook 'hook-win32com.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+65370 INFO: Processing standard module hook 'hook-scipy.spatial._ckdtree.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+65801 INFO: Processing standard module hook 'hook-scipy.spatial.transform.rotation.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+66520 INFO: Processing standard module hook 'hook-scipy.stats._stats.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+66902 INFO: Processing standard module hook 'hook-scipy.sparse.csgraph.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+69402 INFO: Processing standard module hook 'hook-torchvision.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+69459 INFO: Processing standard module hook 'hook-torchvision.io.image.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+70822 INFO: Processing standard module hook 'hook-scipy.io.matlab.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+71141 INFO: Processing standard module hook 'hook-h5py.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+78035 INFO: Processing standard module hook 'hook-jinja2.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+80927 INFO: Processing standard module hook 'hook-fsspec.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+85433 INFO: Processing standard module hook 'hook-scipy.special._ellip_harm_2.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+86608 INFO: Processing standard module hook 'hook-xml.dom.domreg.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+89067 INFO: Processing standard module hook 'hook-shapely.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+89842 INFO: Processing standard module hook 'hook-langdetect.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+89908 INFO: Processing pre-safe-import-module hook 'hook-six.moves.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_safe_import_module'
+90363 INFO: Processing standard module hook 'hook-certifi.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+90450 INFO: Processing standard module hook 'hook-anyio.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+91360 INFO: Processing standard module hook 'hook-pygments.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+93877 INFO: Analyzing hidden import 'PySide6.QtQuickControls2'
+93879 INFO: Processing standard module hook 'hook-PySide6.QtQuickControls2.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+94617 INFO: Analyzing hidden import 'application.export.pdf_qt'
+94619 INFO: Analyzing hidden import 'application.maintenance.backup'
+94620 INFO: Analyzing hidden import 'application.maintenance.cleanup'
+94625 INFO: Analyzing hidden import 'application.settings.bindings'
+94629 INFO: Analyzing hidden import 'application.settings.privacy'
+94630 INFO: Analyzing hidden import 'application.settings.resolution'
+94632 INFO: Analyzing hidden import 'application.settings.snapshots'
+94635 INFO: Analyzing hidden import 'domain.constraints.candidates'
+94638 INFO: Analyzing hidden import 'infrastructure.imaging.tile_cache_sweep'
+94639 INFO: Analyzing hidden import 'infrastructure.network'
+94640 INFO: Analyzing hidden import 'infrastructure.network.diagnostics'
+94647 INFO: Analyzing hidden import 'infrastructure.network.retry'
+94648 INFO: Analyzing hidden import 'infrastructure.sqlite.backup'
+94657 INFO: Processing module hooks (post-graph stage)...
+96384 INFO: Processing pre-safe-import-module hook 'hook-tensorflow.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\pre_safe_import_module'
+99911 WARNING: Hidden import "torchvision.image" not found!
+99911 WARNING: Hidden import "torchvision._C" not found!
+100129 INFO: Processing standard module hook 'hook-PIL.SpiderImagePlugin.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+101793 WARNING: Hidden import "scipy.special._cdflib" not found!
+101955 INFO: Performing binary vs. data reclassification (2550 entries)
+102446 INFO: Looking for ctypes DLLs
+102653 WARNING: Ignoring /usr/lib64/libgomp.so.1 imported from G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\torch\_inductor\codecache.py - only basenames are supported with ctypes imports!
+103011 INFO: Analyzing run-time hooks ...
+103034 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+103036 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+103038 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+103040 INFO: Including run-time hook 'pyi_rth_setuptools.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+103041 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+103043 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+103044 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PyInstaller\\hooks'
+103180 INFO: Creating base_library.zip...
+103200 INFO: Looking for dynamic libraries
+G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharding_spec` will be deprecated, use `torch.distributed._shard.sharding_spec` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._sharded_tensor` will be deprecated, use `torch.distributed._shard.sharded_tensor` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\PyInstaller\building\build_main.py:227: DeprecationWarning: `torch.distributed._shard.checkpoint` will be deprecated, use `torch.distributed.checkpoint` instead
+  __import__(package)
+G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+  import imghdr
+gc:0: ResourceWarning: gc: 58 uncollectable objects at shutdown; use gc.set_debug(gc.DEBUG_UNCOLLECTABLE) to list them
+111242 INFO: Extra DLL search directories (AddDllDirectory): ['G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\shiboken6', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\torch\\lib', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\numpy.libs', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\scipy.libs', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\torchvision', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\onnx.libs', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\ml_dtypes.libs', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\cv2\\../../x64/vc17/bin', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\shapely.libs', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\rapidfuzz.libs']
+111243 INFO: Extra DLL search directories (PATH): ['G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\cv2\\../../x64/vc17/bin', 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6']
+115163 WARNING: Library not found: could not resolve 'Qt6WebEngineWidgets.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\designer\\qwebengineview.dll'.
+115171 WARNING: Library not found: could not resolve 'Qt6Pdf.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qpdf.dll'.
+115182 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\platforminputcontexts\\qtvirtualkeyboardplugin.dll'.
+115200 WARNING: Library not found: could not resolve 'Qt6Quick3DUtils.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\qmltooling\\qmldbg_quick3dprofiler.dll'.
+115206 WARNING: Library not found: could not resolve 'fbclient.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqlibase.dll'.
+115209 WARNING: Library not found: could not resolve 'MIMAPI64.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqlmimer.dll'.
+115210 WARNING: Library not found: could not resolve 'OCI.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqloci.dll'.
+115213 WARNING: Library not found: could not resolve 'LIBPQ.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqlpsql.dll'.
+115224 WARNING: Library not found: could not resolve 'Qt6StateMachineQml.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQml\\StateMachine\\qtqmlstatemachineplugin.dll'.
+115251 WARNING: Library not found: could not resolve 'Qt6PdfQuick.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\Pdf\\pdfquickplugin.dll'.
+115252 WARNING: Library not found: could not resolve 'Qt63DQuickScene2D.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\Scene2D\\qtquickscene2dplugin.dll'.
+115253 WARNING: Library not found: could not resolve 'Qt63DQuickScene3D.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\Scene3D\\qtquickscene3dplugin.dll'.
+115263 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Core\\virtualkeyboardplugin.dll'.
+115266 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\Hangul\\qtvkbhangulplugin.dll'.
+115267 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\OpenWNN\\qtvkbopenwnnplugin.dll'.
+115270 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\Pinyin\\qtvkbpinyinplugin.dll'.
+115271 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\TCIme\\qtvkbtcimeplugin.dll'.
+115272 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\Thai\\qtvkbthaiplugin.dll'.
+115275 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboardSettings.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Settings\\qtvkbsettingsplugin.dll'.
+115278 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboardQml.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-packaging-py312\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\qtvkbplugin.dll'.
+115987 INFO: Warnings written to C:\Users\49745\AppData\Local\Temp\newmanga-buildwork-6060f71b07f04f2e814bc9ffa89db4f6\new_manga\warn-new_manga.txt
+116492 INFO: Graph cross-reference written to C:\Users\49745\AppData\Local\Temp\newmanga-buildwork-6060f71b07f04f2e814bc9ffa89db4f6\new_manga\xref-new_manga.html
+116722 INFO: checking PYZ
+116722 INFO: Building PYZ because PYZ-00.toc is non existent
+116722 INFO: Building PYZ (ZlibArchive) C:\Users\49745\AppData\Local\Temp\newmanga-buildwork-6060f71b07f04f2e814bc9ffa89db4f6\new_manga\PYZ-00.pyz
+120399 INFO: Building PYZ (ZlibArchive) C:\Users\49745\AppData\Local\Temp\newmanga-buildwork-6060f71b07f04f2e814bc9ffa89db4f6\new_manga\PYZ-00.pyz completed successfully.
+120507 INFO: checking PKG
+120507 INFO: Building PKG because PKG-00.toc is non existent
+120507 INFO: Building PKG (CArchive) NewManga.pkg
+120554 INFO: Building PKG (CArchive) NewManga.pkg completed successfully.
+120554 INFO: Bootloader G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+120554 INFO: checking EXE
+120554 INFO: Building EXE because EXE-00.toc is non existent
+120555 INFO: Building EXE from EXE-00.toc
+120555 INFO: Copying bootloader EXE to C:\Users\49745\AppData\Local\Temp\newmanga-buildwork-6060f71b07f04f2e814bc9ffa89db4f6\new_manga\NewManga.exe
+120584 INFO: Copying icon to EXE
+120608 INFO: Copying 0 resources to EXE
+120608 INFO: Embedding manifest in EXE
+120633 INFO: Appending PKG archive to EXE
+120690 INFO: Fixing EXE headers
+121045 INFO: Building EXE from EXE-00.toc completed successfully.
+121087 INFO: checking COLLECT
+121087 INFO: Building COLLECT because COLLECT-00.toc is non existent
+121087 INFO: Building COLLECT COLLECT-00.toc
+125692 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+125784 INFO: Build complete! The results are available in: G:\CODEX\repair13-build-out
+Verifying Qt/ICU runtime symbol closure on built distribution...
+=== Qt6Core ICU Symbol Closure Verification: PASSED ===
+Qt6Core Path:         G:\CODEX\repair13-build-out\NewManga\_internal\PySide6\Qt6Core.dll
+Effective ICU Path:   C:\WINDOWS\System32\icuuc.dll (windows_system32)
+Imported ICU Symbols: 20
+Candidate Exports:    542
+All required symbols resolved successfully.
+Generating SHA-256 manifest...
+Wrote 5437 file records to G:\CODEX\repair13-build-out\artifact-manifest.sha256
+=== Build Completed Successfully ===
+Artifact: G:\CODEX\repair13-build-out\NewManga
+Manifest: G:\CODEX\repair13-build-out\artifact-manifest.sha256
