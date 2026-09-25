@@ -15,7 +15,7 @@ The approved Review was bound to `reviewed_head=5e2800b`; the appended `052f99c`
 
 | Check | Result |
 |---|---|
-| Stale initial-count phrase, all 15 scoped M2-R1 text files including the new Handoff and `09` log | **PASS** — 0 matches |
+| Stale initial-count phrase | **PASS** — the reviewed author set had 15 text files including the new Handoff and `09` log, with 0 matches; the added integration record was also scanned, so all 16 current M2-R1 text files have 0 matches |
 | Artifacts | **PASS** — 20 formal runs (9+5+6), 21 `probe.json` files including one excluded smoke, 45 PNGs; all JSON records exit 0 with empty `errors` |
 | Original evidence since first delivery `87afdd2` | **PASS** — no changes under `verification/M2-R1/raw/` |
 | Whitespace | **PASS** — `git diff --check` from `owner-start` through both `5e2800b` and `052f99c` exits 0 |
