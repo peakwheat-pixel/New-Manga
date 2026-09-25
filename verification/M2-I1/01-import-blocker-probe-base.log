@@ -1,0 +1,15 @@
+# M2-I1 I1-AC1/AC6 discriminating import probe — BASE tree (6a68fde, before M2-I1)
+date: 2026-09-25T18:01:38+08:00
+shell: Git Bash
+python: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+source: git archive 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a src -> %TEMP%/m2i1-base-src
+
+command: python verification/M2-I1/probe_import_blocker.py <tmp>/m2i1-base-src/src bootstrap.core_assembly bootstrap.app
+
+python: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+version: 3.12.3
+src_root: C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src
+blocked roots: ['PySide6', 'shiboken6', 'ui']
+FAIL bootstrap.core_assembly: ModuleNotFoundError: No module named 'bootstrap.core_assembly'
+FAIL bootstrap.app: ImportError: BLOCKED-IMPORT: PySide6
+EXIT=0

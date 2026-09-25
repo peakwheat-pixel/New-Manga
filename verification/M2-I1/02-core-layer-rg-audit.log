@@ -1,0 +1,25 @@
+# M2-I1 I1-AC2 audit: Core layers must not gain PySide6/src-ui imports
+date: 2026-09-25T18:01:38+08:00
+command: rg -n 'PySide6|src\.ui|from ui|import ui' src/domain src/ports src/application (delivery) vs base archive
+
+=== DELIVERY ===
+src/application\export\pdf_qt.py:3:The only module in the export slice that touches PySide6, and it does so
+src/application\export\pdf_qt.py:19:        from PySide6.QtCore import QBuffer, QIODevice, QSizeF
+src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+src/domain\regions\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/ports\repositories\__init__.py:5:of sqlite3/PySide6 imports so domain and application layers can depend on
+src/domain\constraints\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+src/domain\books\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+DELIVERY-EXIT=0
+
+=== BASE (6a68fde) ===
+C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src/domain\regions\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src/ports\repositories\__init__.py:5:of sqlite3/PySide6 imports so domain and application layers can depend on
+C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src/application\export\pdf_qt.py:3:The only module in the export slice that touches PySide6, and it does so
+C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src/application\export\pdf_qt.py:19:        from PySide6.QtCore import QBuffer, QIODevice, QSizeF
+C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src/application\export\pdf_qt.py:20:        from PySide6.QtGui import QImage, QPainter, QPageSize, QPdfWriter
+C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src/domain\constraints\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+C:/Users/49745/AppData/Local/Temp/m2i1-base-src/src/domain\books\entities.py:3:Pure domain: no sqlite3/PySide6 imports (TASK-005 architecture guards).
+BASE-EXIT=0
+
+CONCLUSION: identical hit sets (3 domain purity comments, 1 ports comment, pdf_qt docstring + 2 lazy imports — all pre-existing per M2-D1); zero new PySide6/ui dependency in src/domain, src/ports, src/application.

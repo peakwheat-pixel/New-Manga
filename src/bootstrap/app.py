@@ -1,11 +1,14 @@
-"""Production entry assembly (TASK-030).
+"""Production entry assembly (TASK-030) — Legacy Qt side of the M2-I1 seam.
 
-唯一入口：在真实数据根上打开并迁移 SQLite，构造生产服务栈
-（``SqliteLibraryRepository``、``ManagedFileStorage``、``QtImageDecoder``、
-  ``ManagedCopyStoreAdapter``、``ImportImagesUseCase``、``LibraryService``、
-  生产 Pipeline、Region 编辑和导航/书架/工作台 ViewModel），通过
-  ``setContextProperty`` 注入 QML 后加载
-``Main.qml``（它只负责挂载 ``shell/AppShell.qml``）。
+The Qt-free Python Core services (SQLite + migrations, Managed Copy,
+providers, pipeline, diagnostics, reading/export) are assembled by
+:mod:`bootstrap.core_assembly`, which never imports ``PySide6`` or
+``src/ui``.  This module keeps the historical entry contract: it builds
+the Qt imaging/rendering adapters, injects them into the Core assembly,
+layers the QObject viewmodels on top
+(:class:`ui.viewmodels...`), and through ``setContextProperty`` injects
+them into QML before loading ``Main.qml`` (it only mounts
+``shell/AppShell.qml``).
 
 不变量（AC-IMPORT-002/003, D07 §37~39, D05 §60）：
 - QML 不接触数据库与文件系统——页面只消费三个 ViewModel 上下文属性；
@@ -24,12 +27,8 @@ from __future__ import annotations
 import argparse
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
-from datetime import datetime, timezone
-import json
 import os
-import platform
 from pathlib import Path
-import sqlite3
 import sys
 import tempfile
 
@@ -51,55 +50,38 @@ from application.importing.documents import ImportDocumentsUseCase
 from application.importing.images.service import ImportImagesUseCase
 from application.library.service import LibraryService
 from application.maintenance import TrashService
-from application.maintenance.diagnostics import BoundedErrorLog, DiagnosticsService
-from application.maintenance.trash import _JsonTrashManifest
+from application.maintenance.diagnostics import DiagnosticsService
 from application.reading.service import ReadingService
 from application.rendering.service import RenderService
 from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
-from application.translation.knowledge.term_extraction import TermExtractionService
-from domain.regions.entities import BBox, RegionGeometry, RegionOrigin
-from infrastructure.filesystem.bounded_log_store import BoundedLogStore
+from bootstrap.core_assembly import (
+    assemble_core_services,
+    default_data_root,
+)
+# Re-exported for the historical assembly consumers (tests observe these
+# seams through ``bootstrap.app``); the implementations live in the
+# Qt-free Core assembly now.
+from bootstrap.core_assembly import (  # noqa: F401
+    CoreServices,
+    _ManagedPageCatalog,
+    _ManagedPageImageSource,
+    _ManagedReaderCatalog,
+    _RegionGeometrySource,
+    _credential_resolver,
+    _credential_store,
+    _load_pipeline_defaults,
+    _render_content_decoder,
+)
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
-from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
-from infrastructure.importing import (
-    ManagedCopyStoreAdapter,
-    MobiDocumentRaster,
-    PdfiumDocumentRaster,
-    QtImageDecoder,
-)
-from infrastructure.pipeline.assembly import build_production_pipeline
-from infrastructure.providers.detection_doctr import (
-    DOCTR_WEIGHTS_FILENAME,
-    DoctrDetectionProvider,
-)
-from infrastructure.providers.handlers import (
-    RegionMaskGeometry,
-    build_production_handlers,
-)
-from infrastructure.providers.runtime import build_provider_runtime
-from infrastructure.providers.step_writes import ArtifactStepWriter, RegionStepWriter
+from infrastructure.importing import QtImageDecoder
 from infrastructure.rendering.font_catalog import QtFontCatalog
-from infrastructure.rendering.locator import SqlitePageArtifactLocator
-from ports.repositories.artifacts import ArtifactType
 from infrastructure.rendering.pixel_source_style import PixelSourceStyleAnalyzer
 from infrastructure.rendering.qt_compositor import QtImageCompositor
 from infrastructure.rendering.qt_layout import QtTextLayoutEngine
-from infrastructure.sqlite.artifacts import SqliteArtifactRepository
-from infrastructure.sqlite.connection import ThreadRoutedConnection, open_database
+from infrastructure.sqlite.connection import ThreadRoutedConnection
 from infrastructure.sqlite.library import SqliteLibraryRepository
-from infrastructure.sqlite.migrator import MigrationRunner
-from infrastructure.sqlite.reading_export import (
-    SqliteExportHistoryStore,
-    SqliteReadingProgressStore,
-    import_legacy_export_history,
-    import_legacy_reading_progress,
-)
-from infrastructure.sqlite.regions import SqliteRegionRepository
-from infrastructure.sqlite.schema import default_migrations
 from infrastructure.transport.stdlib import StdlibTransport
-from ports.inpaint.ports import ImageFrame
-from ports.providers.errors import ProviderInputError
 from ui.viewmodels.bookshelf.viewmodel import BookshelfViewModel
 from ui.viewmodels.export.viewmodel import ExportViewModel
 from ui.viewmodels.navigation.viewmodel import NavigationViewModel
@@ -108,437 +90,6 @@ from ui.viewmodels.settings.viewmodel import SettingsViewModel
 from ui.viewmodels.workbench.viewmodel import WorkbenchViewModel
 
 QML_PATH = Path(__file__).resolve().parents[1] / "ui" / "qml" / "Main.qml"
-_APP_VERSION = "0.1.0"
-
-
-@dataclass(frozen=True)
-class _ProductionDiagnosticsSnapshot:
-    database: Path
-    data_root: Path
-    managed_root: Path
-    diagnostics_root: Path
-    schema: int
-    configured: bool
-
-    def app_version(self) -> str:
-        return _APP_VERSION
-
-    def platform_python(self) -> str:
-        return platform.python_version()
-
-    def schema_version(self) -> int:
-        return self.schema
-
-    def database_path(self) -> str:
-        return str(self.database)
-
-    def settings_summary(self) -> dict[str, str]:
-        return {
-            "pipeline_defaults": "configured" if self.configured else "not-configured"
-        }
-
-    def environment_paths(self) -> dict[str, str]:
-        return {
-            "data_root": str(self.data_root),
-            "managed_root": str(self.managed_root),
-            "diagnostics_root": str(self.diagnostics_root),
-        }
-
-
-class _BoundedDiagnosticsSink:
-    def __init__(self, store: BoundedLogStore) -> None:
-        self._store = store
-
-    def write_report(self, payload: bytes, generated_at: str) -> str:
-        del generated_at
-        timestamp = datetime.now(timezone.utc).isoformat(timespec="microseconds")
-        return str(self._store.write(payload.decode("utf-8"), timestamp=timestamp))
-
-
-class _ManagedPageCatalog:
-    """Expose SQLite pages and immutable Managed Copy URLs to the Viewer."""
-
-    def __init__(
-        self,
-        repository: SqliteLibraryRepository,
-        storage: ManagedFileStorage,
-        locator: SqlitePageArtifactLocator,
-    ) -> None:
-        self._repository = repository
-        self._storage = storage
-        self._locator = locator
-
-    def list_pages(self, chapter_id: str):
-        return self._repository.list_pages(chapter_id)
-
-    def image_url(self, page_id: str, mode: str) -> str:
-        """Workbench viewer image for one mode (TASK-051 AC ①).
-
-        ``original``/``compare`` both show the immutable Managed Copy —
-        compare is the D05 §20.1 side-by-side, whose left pane *is* the
-        original (ViewerPanel.qml). ``translated`` is the page's current
-        TRANSLATED artifact revision, resolved through the same locator
-        the reader uses, so both surfaces show the same revision (AC ②).
-        Every failure collapses to "" (the QML empty-state contract);
-        :meth:`image_state` carries the typed reason.
-        """
-        page = self._repository.get_page(page_id)
-        if page is None:
-            return ""
-        if mode == "translated":
-            located = self._locator.locate_current(page_id, ArtifactType.TRANSLATED)
-            if located is None:
-                return ""
-            _record, revision = located
-            return self._uri_within(revision.managed_path)
-        if mode in ("original", "compare"):
-            if not page.managed_original_ref:
-                return ""
-            return self._uri_within(page.managed_original_ref)
-        return ""  # unknown mode: not a silent wrong image
-
-    def image_state(self, page_id: str, mode: str) -> str:
-        """Typed empty-state channel (TASK-051 AC ③): ``ok``/``missing``/``invalid``.
-
-        ``missing`` = the page or its artifact does not exist yet; ``invalid``
-        = a reference exists but escapes the managed root or the file is gone.
-        The VM exposes this so "no data" and "broken path" stay
-        distinguishable without changing the QML contract (TASK-047-gated).
-        """
-        page = self._repository.get_page(page_id)
-        if page is None:
-            return "missing"
-        if mode == "translated":
-            located = self._locator.locate_current(page_id, ArtifactType.TRANSLATED)
-            if located is None:
-                return "missing"
-            ref: str | None = located[1].managed_path
-        else:
-            ref = page.managed_original_ref
-        if not ref:
-            return "missing"
-        root = self._storage.root.resolve()
-        path = Path(self._storage.absolute_path(ref)).resolve()
-        try:
-            path.relative_to(root)
-        except ValueError:
-            return "invalid"
-        return "ok" if path.is_file() else "invalid"
-
-    def _uri_within(self, ref: str) -> str:
-        root = self._storage.root.resolve()
-        path = Path(self._storage.absolute_path(ref)).resolve()
-        try:
-            path.relative_to(root)
-        except ValueError:
-            return ""
-        return path.as_uri() if path.is_file() else ""
-
-
-class _ManagedPageImageSource:
-    """Pixel access for provider steps (D06 §6/§7 input, D07 §37).
-
-    Only the immutable Managed Copy is read; a missing or undecodable file is a
-    typed provider-input failure, never an empty image.
-    """
-
-    def __init__(
-        self,
-        repository: SqliteLibraryRepository,
-        storage: ManagedFileStorage,
-        regions: SqliteRegionRepository,
-    ) -> None:
-        self._repository = repository
-        self._storage = storage
-        self._regions = regions
-
-    def _page_image(self, page_id: str):
-        from PySide6.QtGui import QImage
-
-        page = self._repository.get_page(page_id)
-        if page is None or not page.managed_original_ref:
-            raise ProviderInputError(
-                f"page {page_id!r} has no managed original", stage="image-source"
-            )
-        root = self._storage.root.resolve()
-        path = Path(self._storage.absolute_path(page.managed_original_ref)).resolve()
-        try:
-            path.relative_to(root)
-        except ValueError as error:
-            raise ProviderInputError(
-                f"managed original for {page_id!r} escapes the data root",
-                stage="image-source",
-            ) from error
-        if not path.is_file():
-            raise ProviderInputError(
-                f"managed original is missing: {path}", stage="image-source"
-            )
-        image = QImage(str(path))
-        if image.isNull():
-            raise ProviderInputError(
-                f"managed original is not decodable: {path}", stage="image-source"
-            )
-        return image
-
-    def page_frame(self, page_id: str) -> ImageFrame:
-        from PySide6.QtGui import QImage
-
-        image = self._page_image(page_id).convertToFormat(QImage.Format.Format_RGB32)
-        width, height = image.width(), image.height()
-        return ImageFrame(width, height, "rgb32", bytes(image.constBits()))
-
-    def region_crop(self, page_id: str, region_id: str) -> tuple[bytes, int, int]:
-        from PySide6.QtCore import QBuffer, QIODevice, QRect
-        from PySide6.QtGui import QImage
-
-        page = self._repository.get_page(page_id)
-        if page is None:
-            raise ProviderInputError(
-                f"page {page_id!r} is not available", stage="image-source"
-            )
-        region = self._regions.get_region(region_id)
-        if region is None:
-            raise ProviderInputError(
-                f"region {region_id!r} is not available", stage="image-source"
-            )
-        image = self._page_image(page_id)
-        bbox = region.geometry.bbox
-        rect = QRect(bbox.x, bbox.y, bbox.width, bbox.height).intersected(
-            QRect(0, 0, image.width(), image.height())
-        )
-        if rect.isEmpty():
-            raise ProviderInputError(
-                f"region {region_id!r} lies outside the page", stage="image-source"
-            )
-        crop = image.copy(rect).convertToFormat(QImage.Format.Format_RGB888)
-        buffer = QBuffer()
-        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-        if not crop.save(buffer, "PNG"):
-            raise ProviderInputError(
-                "region crop could not be encoded", stage="image-source"
-            )
-        return bytes(buffer.data()), crop.width(), crop.height()
-
-    def page_png(self, page_id: str) -> bytes:
-        """The whole Managed Copy page as PNG (TASK-033 color step input)."""
-        from PySide6.QtCore import QBuffer, QIODevice
-
-        image = self._page_image(page_id)
-        buffer = QBuffer()
-        buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-        if not image.save(buffer, "PNG"):
-            raise ProviderInputError(
-                f"page {page_id!r} could not be re-encoded as PNG",
-                stage="image-source",
-            )
-        return bytes(buffer.data())
-
-
-class _ManagedReaderCatalog:
-    """Repository pages in the reader's ``ReaderPage`` contract (TASK-038).
-
-    Originals come straight from the Managed Copy; the translated image is
-    the page's current TRANSLATED artifact (empty when the page has none —
-    the reader then falls back to the original with an explicit status
-    message, D06 §97). OCR text lives on Regions, not on the page, so
-    ``text`` stays empty here (translated-export text is a separate seam).
-    """
-
-    def __init__(
-        self,
-        repository: SqliteLibraryRepository,
-        storage: ManagedFileStorage,
-        locator: SqlitePageArtifactLocator,
-    ) -> None:
-        self._repository = repository
-        self._storage = storage
-        self._locator = locator
-
-    def list_pages(self, chapter_id: str) -> list:
-        from application.reading.ports import ReaderPage
-        from ports.repositories.artifacts import ArtifactType
-
-        rows = []
-        for page in self._repository.list_pages(chapter_id):
-            original = (
-                self._storage.absolute_path(page.managed_original_ref)
-                if page.managed_original_ref
-                else ""
-            )
-            translated = ""
-            translated_revision = None
-            current_revision = None
-            located = self._locator.locate_current(
-                page.page_id, ArtifactType.TRANSLATED
-            )
-            if located is not None:
-                _record, revision = located
-                translated = self._storage.absolute_path(revision.managed_path)
-                translated_revision = revision.artifact_revision_id
-                current_revision = revision.artifact_revision_id
-            rows.append(
-                ReaderPage(
-                    page_id=page.page_id,
-                    filename=page.source_filename,
-                    original_path=original,
-                    translated_path=translated or None,
-                    translated_revision_id=translated_revision,
-                    current_translated_revision_id=current_revision,
-                )
-            )
-        return rows
-
-
-class _RegionGeometrySource:
-    """Region geometry as mask primitives (D06 §19 Segment input)."""
-
-    def __init__(self, regions: SqliteRegionRepository) -> None:
-        self._regions = regions
-
-    def mask_geometry(self, region_id: str) -> RegionMaskGeometry:
-        region = self._regions.get_region(region_id)
-        if region is None or region.deleted:
-            raise ProviderInputError(
-                f"region {region_id!r} is not available", stage="segment"
-            )
-        bbox = region.geometry.bbox
-        boxes = ((bbox.x, bbox.y, bbox.x + bbox.width, bbox.y + bbox.height),)
-        return RegionMaskGeometry(boxes=boxes, polygons=(region.geometry.polygon,) if region.geometry.polygon else ())
-
-
-def _render_content_decoder(relative_path: str, payload: bytes) -> bytes:
-    """TASK-033 assembly bridge: pipeline ``NMFR`` containers → PNG.
-
-    Inpaint/Clean revisions are stored in the provider layer's
-    ``application/x-newmanga-frame`` container (a deliberate non-shareable
-    format, TASK-018); rendering composes on PNG. Payloads that are not
-    ``NMFR`` (PNG originals, translated PNGs) pass through unchanged, so this
-    is a pure format bridge at the seam — the stored revisions stay untouched.
-    """
-    from PySide6.QtCore import QBuffer, QIODevice
-    from PySide6.QtGui import QImage
-
-    if not payload.startswith(b"NMFR"):
-        return payload
-    from infrastructure.providers.step_writes import decode_frame_payload
-
-    header, raw = decode_frame_payload(payload)
-    mode = str(header.get("mode", ""))
-    width, height = int(header["width"]), int(header["height"])
-    if mode != "rgb32":
-        raise ProviderInputError(
-            f"unsupported frame mode {mode!r} for the render bridge",
-            stage="render",
-        )
-    bytes_per_line = width * 4
-    if len(raw) < bytes_per_line * height:
-        raise ProviderInputError("frame payload is truncated", stage="render")
-    image = QImage(raw, width, height, bytes_per_line, QImage.Format.Format_RGB32)
-    if image.isNull():
-        raise ProviderInputError(
-            "frame payload could not be decoded for rendering", stage="render"
-        )
-    buffer = QBuffer()
-    buffer.open(QIODevice.OpenModeFlag.WriteOnly)
-    if not image.save(buffer, "PNG"):
-        raise ProviderInputError(
-            "clean frame could not be re-encoded as PNG", stage="render"
-        )
-    return bytes(buffer.data())
-
-
-def _load_pipeline_defaults(conn: sqlite3.Connection) -> dict:
-    """Read the persisted pipeline defaults row (TASK-050 AC ①).
-
-    Same tolerant decoding as :func:`_load_pipeline_settings`, extended to
-    all four columns. An unconfigured (or corrupt) install decodes to
-    all-empty values so the assembly keeps passing ``None`` and the
-    snapshot provider's bootstrap stays byte-identical.
-    """
-    empty = {
-        "settings": {},
-        "provider_bindings": {},
-        "constraint_snapshot_ref": None,
-        "context_policy": {},
-    }
-    try:
-        row = conn.execute(
-            "SELECT settings_json, provider_bindings_json, constraint_snapshot_ref,"
-            " context_policy_json FROM pipeline_defaults WHERE defaults_id = 1"
-        ).fetchone()
-    except sqlite3.Error:
-        return dict(empty)  # un-migrated storage: all-empty, never a crash
-    if row is None:
-        # a fresh database has no defaults row until the snapshot provider
-        # seeds one — identical semantics to an explicitly empty row
-        return dict(empty)
-
-    def _mapping(raw: object) -> dict:
-        if not isinstance(raw, str) or not raw:
-            return {}
-        try:
-            loaded = json.loads(raw)
-        except (ValueError, TypeError):
-            return {}
-        return loaded if isinstance(loaded, dict) else {}
-
-    return {
-        "settings": _mapping(row[0]),
-        "provider_bindings": _mapping(row[1]),
-        "constraint_snapshot_ref": row[2] if isinstance(row[2], str) else None,
-        "context_policy": _mapping(row[3]),
-    }
-
-
-def _load_pipeline_settings(conn: sqlite3.Connection) -> dict:
-    """Read the persisted pipeline defaults (empty when never configured)."""
-    try:
-        row = conn.execute(
-            "SELECT settings_json FROM pipeline_defaults WHERE defaults_id = 1"
-        ).fetchone()
-    except sqlite3.Error:
-        return {}
-    if row is None or not row[0]:
-        return {}
-    try:
-        loaded = json.loads(row[0])
-    except (ValueError, TypeError):
-        return {}
-    return loaded if isinstance(loaded, dict) else {}
-
-
-def _credential_store() -> "WindowsCredentialStore | None":
-    """The production Windows vault, best effort (AC-OPTIONAL-001).
-
-    A vault that cannot be opened must not stop the app from starting:
-    ``None`` keeps providers reporting Not-Ready with
-    ``MISSING_CREDENTIAL`` and leaves the transport without a proxy
-    credential source instead of failing the assembly.
-    """
-    try:
-        from infrastructure.credentials.windows import WindowsCredentialStore
-
-        return WindowsCredentialStore()
-    except Exception:
-        return None
-
-
-def _credential_resolver(
-    store: "WindowsCredentialStore | None" = None,
-) -> Callable[[str], str | None] | None:
-    """Resolve provider credentials from the production vault, best effort."""
-    if store is None:
-        store = _credential_store()
-    if store is None:
-        return None
-
-    def resolve(ref: str) -> str | None:
-        try:
-            return store.resolve_credential(ref).reveal()
-        except Exception:
-            return None
-
-    return resolve
 
 
 @dataclass
@@ -581,440 +132,209 @@ class AppServices:
     #: T1.2.1 B-003 (R5): the production transport. Exposed so assembly
     #: tests and probes can observe the credential store actually injected
     #: into it; ``None`` on headless constructions that predate the field.
-    transport: StdlibTransport | None = None
-
-
-def default_data_root() -> Path:
-    root = os.environ.get("NEWMANGA_DATA_ROOT")
-    if root:
-        return Path(root)
-    local_app_data = os.environ.get("LOCALAPPDATA")
-    base = Path(local_app_data) if local_app_data else Path.home()
-    return base / "New Manga"
+    transport: "StdlibTransport | None" = None
 
 
 def assemble_services(db_path: str | Path, managed_root: str | Path) -> AppServices:
-    """Open + migrate the SQLite library and build every production service.
+    """Assemble the full production stack: Qt adapters → Core services →
+    QObject viewmodels (M2-I1).
 
-    Refuses to run against a database written by a newer schema (AC-DB-005):
-    ``open_database`` reopens it ``query_only`` and this assembly fails fast
-    instead of blind-writing.
+    The Core assembly owns every persistence side effect in its historical
+    order (schema check → migrations → managed layout → provider settings →
+    ``recover_running_runs`` → diagnostics store → legacy JSON import); this
+    Qt layer only constructs the Qt adapter implementations and the
+    viewmodels, which are side-effect-free, after the Core stack exists.
     """
-    migrations = default_migrations()
-    latest_known = max(migration.schema_version for migration in migrations)
-    conn, opened = open_database(db_path, latest_known_schema_version=latest_known)
+    # TASK-033: the Qt-based rendering adapters need a QGuiApplication
+    # instance, which the entry creates before calling this; pure headless
+    # consumers assemble the Core with their own (Qt-free) adapters.
+    font_catalog = QtFontCatalog()
+    core = assemble_core_services(
+        db_path,
+        managed_root,
+        image_decoder=QtImageDecoder(),
+        font_catalog=font_catalog,
+        layout_engine=QtTextLayoutEngine(font_catalog),
+        compositor=QtImageCompositor(),
+        source_styles=SourceStyleService(PixelSourceStyleAnalyzer()),
+    )
+
     try:
-        if not opened.writable:
-            raise RuntimeError(
-                f"database schema v{opened.schema_version} is newer than this "
-                f"application knows (v{latest_known}); refusing to run"
-            )
-        MigrationRunner(conn, migrations).apply_pending()
+        return _assemble_legacy_qt_layer(core)
+    except Exception:
+        # P-01 (M2-I1 Review): the historical assemble_services covered its
+        # whole body with close-on-error. The Core assembly closes its own
+        # span; this restores the remaining span — a failure while building
+        # the Qt viewmodels or their signal wiring must not leak the SQLite
+        # connection (and its Windows file lock).
+        core.conn.close()
+        raise
 
-        repository = SqliteLibraryRepository(conn)
-        storage = ManagedFileStorage(managed_root)
-        storage.ensure_layout()
-        library = LibraryService(repository)
-        regions = SqliteRegionRepository(conn)
 
-        def book_id_for_chapter(chapter_id: str) -> str:
-            # Real Chapter→Book lookup for the D03 §18 managed layout; an
-            # unknown chapter fails the copy, so no page can be written.
-            chapter = repository.get_chapter(chapter_id)
-            if chapter is None:
-                raise ValueError(f"unknown chapter: {chapter_id!r}")
-            return chapter.book_id
+def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
+    """Build the QObject viewmodels and signal wiring over ``CoreServices``.
 
-        copy_store = ManagedCopyStoreAdapter(storage, book_id_for_chapter)
-        importer = ImportImagesUseCase(
-            QtImageDecoder(),
-            copy_store,
-            repository,
-        )
-        # TASK-023 AC ④ / TASK-041 AC ②: document import rides the same
-        # Managed Copy store and page sink as image import. PDF goes through
-        # PDFium; picture MOBI (user-approved dependency mobi==0.4.1) goes
-        # through its own adapter behind the same port. Text-only and
-        # DRM-protected MOBI fail typed at the adapter.
-        document_importer = ImportDocumentsUseCase(
-            PdfiumDocumentRaster(),
-            copy_store,
-            repository,
-            mobi_raster=MobiDocumentRaster(),
-        )
-        # TASK-021 trash subset: page-level soft delete / batch restore /
-        # controlled-only purge. The manifest lives next to the managed data.
-        trash = TrashService(
-            repository,
-            storage,
-            _JsonTrashManifest(Path(managed_root) / "trash-manifest.json"),
-        )
-        # TASK-019: the production Pipeline receives real handlers built from
-        # the provider runtime. Nothing is wired when no provider is ready:
-        # the step then fails with PROVIDER_UNAVAILABLE / Not-Ready instead of
-        # inventing a deterministic placeholder.
-        # T1.2.1 R3: the persisted step bindings ride along so a bound
-        # settings profile is projected onto its registry slot at assembly.
-        # B-003 (R5): the transport shares the same production vault as the
-        # providers, so authenticated proxies resolve their credential at
-        # send time; a vault that cannot be opened leaves it ``None`` and
-        # the app still starts (AC-OPTIONAL-001).
-        credential_store = _credential_store()
-        transport = StdlibTransport(credential_store=credential_store)
-        provider_runtime = build_provider_runtime(
-            settings=_load_pipeline_settings(conn),
-            provider_bindings=_load_pipeline_defaults(conn)["provider_bindings"],
-            transport=transport,
-            credential_resolver=_credential_resolver(credential_store),
-        )
-        # TASK-033: the render step needs the application-layer RenderService,
-        # assembled here from the existing infrastructure/rendering adapters
-        # (no adapter implementation is added or modified). Qt-based classes
-        # need a QGuiApplication instance, which the entry creates before
-        # calling this; pure headless consumers construct their own.
-        font_catalog = QtFontCatalog()
-        source_styles = SourceStyleService(PixelSourceStyleAnalyzer())
-        render_service = RenderService(
-            region_repo=regions,
-            locator=SqlitePageArtifactLocator(conn),
-            artifacts=SqliteArtifactRepository(conn, storage),
-            storage=storage,
-            layout_engine=QtTextLayoutEngine(font_catalog),
-            compositor=QtImageCompositor(),
-            source_styles=source_styles,
-            font_catalog=font_catalog,
-            content_decoder=_render_content_decoder,
-        )
-        # TASK-049 AC ②: the one application-layer Region write path —
-        # ``RegionEditingService.create_region`` (first revision + pointer in
-        # one atomic commit, TASK-002 §2.1) — is also what the ``detect``
-        # step's candidates flow through; the handler never writes Regions
-        # itself and no second write path is invented.
-        editing = RegionEditingService(regions)
+    Runs inside :func:`assemble_services`' close-on-error span: any failure
+    here closes ``core.conn`` before propagating.
+    """
+    # --- Legacy Qt / QML assembly: QObject viewmodels over the Core stack ---
+    navigation = NavigationViewModel()
 
-        def _create_detected_region(
-            page_id: str,
-            polygon: tuple[tuple[float, float], ...],
-            reading_order: int,
-            _provenance: dict,
-        ) -> str:
-            xs = [int(round(x)) for x, _ in polygon]
-            ys = [int(round(y)) for _, y in polygon]
-            geometry = RegionGeometry(
-                bbox=BBox(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)),
-                polygon=tuple((int(round(x)), int(round(y))) for x, y in polygon),
-            )
-            region = editing.create_region(
-                page_id,
-                geometry,
-                reading_order=reading_order,
-                origin=RegionOrigin.MACHINE,
-            )
-            return region.region_id
+    # T1.2.1: the settings page stack — JSON-backed profile stores (the
+    # durable ports adapters stay a later coordinated slice; same
+    # JSON-interim as progress/export history), the OS credential vault
+    # and the settings viewmodel. Secrets go straight to the vault;
+    # only credential_ref strings cross the stores (AC-SEC-001~003).
+    # The vault is the same best-effort instance the transport and the
+    # provider resolver share (B-003): one construction, one fallback.
+    from application.settings.network import NetworkProfileService
+    from infrastructure.settings.json_profile_stores import (
+        JsonNetworkProfileStore,
+        JsonProviderProfileStore,
+    )
 
-        # T1.1.1: the selected production detector (docTR fast_base, see
-        # doc/research/T1.1.1-detector-evaluation.md) is wired through the
-        # application-layer region_creator below. The provider is lazy and
-        # strictly offline: weights must exist as a local file (default
-        # <data root>/models/detector/, override NEWMANGA_DETECTOR_WEIGHTS)
-        # with the pinned SHA-256, or the ``detect`` step fails closed with
-        # PROVIDER_NOT_CONFIGURED at run time — the same diagnosable gap as
-        # an unwired detector. No download, no fallback.
-        detector_weights = Path(
-            os.environ.get(
-                "NEWMANGA_DETECTOR_WEIGHTS",
-                str(
-                    Path(db_path).resolve().parent
-                    / "models"
-                    / "detector"
-                    / DOCTR_WEIGHTS_FILENAME
+    settings_dir = core.data_root / "settings"
+    settings_vm = SettingsViewModel(
+        provider_store=JsonProviderProfileStore(settings_dir),
+        network_service=NetworkProfileService(
+            JsonNetworkProfileStore(settings_dir)
+        ),
+        credential_store=core.credential_store,
+        pipeline_defaults=core.pipeline_defaults,
+    )
+
+    reader = ReaderViewModel(
+        core.reading,
+        core.reader_catalog,
+        export_service=core.export_service,
+        tile_factory=core.tile_factory,
+    )
+
+    def _open_reader_chapter() -> None:
+        # AC-NAV-003: entering the reader page carries the chapter the
+        # shelf/workbench action selected; without one the reader stays
+        # on its empty state.
+        context = navigation.get_reader_context()
+        chapter_id = context.get("chapter_id")
+        if not chapter_id:
+            return
+        chapter = core.library.get_chapter(chapter_id)
+        if chapter is None:
+            return
+        if not core.page_catalog.list_pages(chapter_id):
+            # nothing to read yet: keep the reader's empty state instead
+            # of failing the navigation signal handler
+            return
+        reader.openChapter(
+            chapter.book_id,
+            chapter.chapter_id,
+            chapter.title,
+            chapter.chapter_type.value,
+            chapter.reading_direction.value,
+            True,
+        )
+
+    navigation.readerContextChanged.connect(_open_reader_chapter)
+
+    # TASK-038 AC ② path B: the standalone export window controller
+    # follows the workbench chapter context (reader-initiated exports go
+    # through ``readerViewModel.exportController`` — path A).
+    export_state: dict = {"vm": None, "updater": None}
+
+    def _chapter_export_pages(chapter_id: str) -> list:
+        return [
+            ExportPage(
+                page_id=page.page_id,
+                filename=page.filename,
+                source_provider=file_bytes_provider(page.original_path),
+                translated_provider=(
+                    file_bytes_provider(page.translated_path)
+                    if page.translated_path
+                    else None
                 ),
+                translated_revision_id=page.translated_revision_id,
+                current_translated_revision_id=page.current_translated_revision_id,
+                text=page.text,
             )
+            for page in core.page_catalog.list_pages(chapter_id)
+        ]
+
+    def _rebuild_export_viewmodel(book, chapter) -> None:
+        view_model = ExportViewModel(
+            core.export_service,
+            lambda: _chapter_export_pages(chapter.chapter_id),
+            book_id=book.book_id,
+            chapter_id=chapter.chapter_id,
+            output_dir=str(core.data_root / "exports"),
         )
-        handlers = build_production_handlers(
-            registry=provider_runtime.registry,
-            regions=regions,
-            region_writer=RegionStepWriter(conn, regions),
-            artifacts=ArtifactStepWriter(conn, storage),
-            images=_ManagedPageImageSource(repository, storage, regions),
-            geometry=_RegionGeometrySource(regions),
-            retry_policy=provider_runtime.retry_policy,
-            heavy_runner=provider_runtime.heavy_runner,
-            route_policy=provider_runtime.route_policy,
-            source_styles=source_styles,
-            terms=TermExtractionService(),
-            render_service=render_service,
-            detector=DoctrDetectionProvider(
-                weights_path=detector_weights,
-                device=os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu"),
-            ),
-            region_creator=_create_detected_region,
-        )
-        # TASK-040 AC ①: wire the TASK-039 Clean-availability probe into the
-        # production planner. The probe reuses the same read-only page
-        # artifact locator the render/reader paths already use — a page is
-        # clean-available iff its current Clean revision exists; no second
-        # Clean judgement is invented here.
-        from ports.repositories.artifacts import ArtifactType
+        export_state["vm"] = view_model
+        updater = export_state["updater"]
+        if callable(updater):
+            updater(view_model)
 
-        clean_locator = SqlitePageArtifactLocator(conn)
+    bookshelf = BookshelfViewModel(
+        library=core.library,
+        importer=core.importer,
+        document_importer=core.document_importer,
+        navigation=navigation,
+    )
+    workbench = WorkbenchViewModel(
+        pipeline=core.pipeline,
+        page_catalog=core.page_catalog,
+        region_catalog=core.editing,
+        translation_editor=core.editing,
+        region_creator=core.editing,
+        region_deleter=core.editing,
+        navigation=navigation,
+    )
 
-        def clean_probe(page_id: str) -> bool:
-            return (
-                clean_locator.locate_current(page_id, ArtifactType.CLEAN)
-                is not None
-            )
-
-        # TASK-050 AC ①: seed the pipeline's frozen snapshots from the
-        # persisted settings storage. All-empty output decodes to ``None``
-        # injections, so an unconfigured install keeps the pre-TASK-050
-        # bootstrap byte-for-byte; a configured one is re-projected into
-        # the same row the snapshots are read from (idempotent, no second
-        # settings parse).
-        defaults = _load_pipeline_defaults(conn)
-        pipeline = build_production_pipeline(
-            conn,
-            handlers=handlers,
-            clean_probe=clean_probe,
-            settings=defaults["settings"] or None,
-            provider_bindings=defaults["provider_bindings"] or None,
-            constraint_snapshot_ref=defaults["constraint_snapshot_ref"],
-            context_policy=defaults["context_policy"] or None,
-        )
-        # TASK-048 AC ③: a run left RUNNING by a previous process (crash,
-        # kill) must never look active forever — startup reaps those rows to
-        # INTERRUPTED before any ViewModel can observe them.
-        pipeline.recover_running_runs()
-        # TASK-050 AC ②: the application-layer defaults channel over the
-        # same storage row. The save bridge reuses the infrastructure
-        # snapshot provider's own persistence (no second writer); the
-        # known-step set comes from the handler table itself, so the
-        # write face can never accept a step the pipeline would not run.
-        from application.settings.pipeline_defaults import (
-            PipelineDefaults,
-            PipelineDefaultsService,
-        )
-        from infrastructure.sqlite.pipeline import SqliteSnapshotProvider
-
-        pipeline_defaults = PipelineDefaultsService(
-            load=lambda: PipelineDefaults(**_load_pipeline_defaults(conn)),
-            save=lambda **kwargs: SqliteSnapshotProvider(conn, **kwargs),
-            known_steps=frozenset(handlers),  # build_production_handlers returns the step table already
-        )
-        navigation = NavigationViewModel()
-
-        # TASK-038 AC ①/③: the reader ViewModel over the same data root —
-        # progress and export history live next to the library database, and
-        # the tile factory is Python-only (QML never touches files/models).
-        # Tiles are a rebuildable cache under the managed root; the byte
-        # budget is the TASK-020 R-002 memory ledger in production.
-        data_root = Path(db_path).parent
-        diagnostics_root = data_root / "diagnostics"
-        diagnostics = DiagnosticsService(
-            _ProductionDiagnosticsSnapshot(
-                database=Path(db_path),
-                data_root=data_root,
-                managed_root=Path(managed_root),
-                diagnostics_root=diagnostics_root,
-                schema=latest_known,
-                configured=bool(
-                    defaults["settings"]
-                    or defaults["provider_bindings"]
-                    or defaults["constraint_snapshot_ref"]
-                    or defaults["context_policy"]
-                ),
-            ),
-            _BoundedDiagnosticsSink(BoundedLogStore(diagnostics_root)),
-            BoundedErrorLog(),
-        )
-        # T3.1.1 (D03 §29, D03 §31, AC-READ-002, AC-EXPORT-002):
-        # One-time legacy JSON import into SQLite; SQLite is now the sole
-        # write source of truth, legacy JSON files are preserved read-only.
-        import_legacy_reading_progress(conn, data_root / "reading_progress.json")
-        import_legacy_export_history(conn, data_root / "export_history.json")
-
-        reading = ReadingService(SqliteReadingProgressStore(conn))
-        export_service = ExportService(SqliteExportHistoryStore(conn))
-        # T1.2.1: the settings page stack — JSON-backed profile stores (the
-        # durable ports adapters stay a later coordinated slice; same
-        # JSON-interim as progress/export history), the OS credential vault
-        # and the settings viewmodel. Secrets go straight to the vault;
-        # only credential_ref strings cross the stores (AC-SEC-001~003).
-        # The vault is the same best-effort instance the transport and the
-        # provider resolver share (B-003): one construction, one fallback.
-        from application.settings.network import NetworkProfileService
-        from infrastructure.settings.json_profile_stores import (
-            JsonNetworkProfileStore,
-            JsonProviderProfileStore,
-        )
-
-        settings_dir = data_root / "settings"
-        settings_vm = SettingsViewModel(
-            provider_store=JsonProviderProfileStore(settings_dir),
-            network_service=NetworkProfileService(
-                JsonNetworkProfileStore(settings_dir)
-            ),
-            credential_store=credential_store,
-            pipeline_defaults=pipeline_defaults,
-        )
-
-        def tile_factory(path: str) -> TiledPageRasterizer:
-            return TiledPageRasterizer(
-                path,
-                cache_dir=Path(managed_root) / "cache" / "webtoon-tiles",
-                tile_height=4000,
-                # overlap=0 (TASK-046): after TASK-045 F-4 crops the decode
-                # window to the content band, an overlap contributes nothing
-                # to the stored pixels — it only pushed every tile after the
-                # first behind the streaming cursor, forcing a per-tile
-                # rewind (O(tiles^2) per sweep). 0 makes the full-page sweep
-                # one sequential scan; pixels are byte-identical (AC 1).
-                overlap=0,
-                prefetch=1,
-                cache=TileCache(max_bytes=512 * 1024 * 1024),
-            )
-
-        page_catalog = _ManagedPageCatalog(
-            repository, storage, SqlitePageArtifactLocator(conn)
-        )
-        reader_catalog = _ManagedReaderCatalog(
-            repository, storage, SqlitePageArtifactLocator(conn)
-        )
-        reader = ReaderViewModel(
-            reading,
-            reader_catalog,
-            export_service=export_service,
-            tile_factory=tile_factory,
-        )
-
-        def _open_reader_chapter() -> None:
-            # AC-NAV-003: entering the reader page carries the chapter the
-            # shelf/workbench action selected; without one the reader stays
-            # on its empty state.
-            context = navigation.get_reader_context()
-            chapter_id = context.get("chapter_id")
-            if not chapter_id:
-                return
-            chapter = library.get_chapter(chapter_id)
-            if chapter is None:
-                return
-            if not page_catalog.list_pages(chapter_id):
-                # nothing to read yet: keep the reader's empty state instead
-                # of failing the navigation signal handler
-                return
-            reader.openChapter(
-                chapter.book_id,
-                chapter.chapter_id,
-                chapter.title,
-                chapter.chapter_type.value,
-                chapter.reading_direction.value,
-                True,
-            )
-
-        navigation.readerContextChanged.connect(_open_reader_chapter)
-
-        # TASK-038 AC ② path B: the standalone export window controller
-        # follows the workbench chapter context (reader-initiated exports go
-        # through ``readerViewModel.exportController`` — path A).
-        export_state: dict = {"vm": None, "updater": None}
-
-        def _chapter_export_pages(chapter_id: str) -> list:
-            return [
-                ExportPage(
-                    page_id=page.page_id,
-                    filename=page.filename,
-                    source_provider=file_bytes_provider(page.original_path),
-                    translated_provider=(
-                        file_bytes_provider(page.translated_path)
-                        if page.translated_path
-                        else None
-                    ),
-                    translated_revision_id=page.translated_revision_id,
-                    current_translated_revision_id=page.current_translated_revision_id,
-                    text=page.text,
-                )
-                for page in page_catalog.list_pages(chapter_id)
-            ]
-
-        def _rebuild_export_viewmodel(book, chapter) -> None:
-            view_model = ExportViewModel(
-                export_service,
-                lambda: _chapter_export_pages(chapter.chapter_id),
-                book_id=book.book_id,
-                chapter_id=chapter.chapter_id,
-                output_dir=str(data_root / "exports"),
-            )
-            export_state["vm"] = view_model
+    def sync_workbench_context() -> None:
+        context = navigation.get_workbench_context()
+        chapter_id = context.get("chapter_id")
+        if not chapter_id:
+            workbench.clearContext()
+            export_state["vm"] = None
             updater = export_state["updater"]
             if callable(updater):
-                updater(view_model)
-
-        bookshelf = BookshelfViewModel(
-            library=library,
-            importer=importer,
-            document_importer=document_importer,
-            navigation=navigation,
+                updater(None)
+            return
+        chapter = core.library.get_chapter(chapter_id)
+        book = core.library.get_book(chapter.book_id)
+        if context.get("book_id") != book.book_id:
+            raise ValueError("workbench context book does not own chapter")
+        workbench.setContext(
+            book.book_id, chapter.chapter_id, book.title, chapter.title
         )
-        workbench = WorkbenchViewModel(
-            pipeline=pipeline,
-            page_catalog=page_catalog,
-            region_catalog=editing,
-            translation_editor=editing,
-            region_creator=editing,
-            region_deleter=editing,
-            navigation=navigation,
-        )
+        _rebuild_export_viewmodel(book, chapter)
 
-        def sync_workbench_context() -> None:
-            context = navigation.get_workbench_context()
-            chapter_id = context.get("chapter_id")
-            if not chapter_id:
-                workbench.clearContext()
-                export_state["vm"] = None
-                updater = export_state["updater"]
-                if callable(updater):
-                    updater(None)
-                return
-            chapter = library.get_chapter(chapter_id)
-            book = library.get_book(chapter.book_id)
-            if context.get("book_id") != book.book_id:
-                raise ValueError("workbench context book does not own chapter")
-            workbench.setContext(
-                book.book_id, chapter.chapter_id, book.title, chapter.title
-            )
-            _rebuild_export_viewmodel(book, chapter)
-
-        navigation.workbenchContextChanged.connect(sync_workbench_context)
-        return AppServices(
-            conn=conn,
-            repository=repository,
-            storage=storage,
-            importer=importer,
-            document_importer=document_importer,
-            trash=trash,
-            reading=reading,
-            export_service=export_service,
-            diagnostics=diagnostics,
-            reader=reader,
-            library=library,
-            pipeline=pipeline,
-            pipeline_defaults=pipeline_defaults,
-            editing=editing,
-            render=render_service,
-            providers=provider_runtime,
-            navigation=navigation,
-            bookshelf=bookshelf,
-            workbench=workbench,
-            export_viewmodel=lambda: export_state["vm"],
-            set_export_context_updater=lambda updater: export_state.update(
-                updater=updater
-            ),
-            settings_vm=settings_vm,
-            transport=transport,
-        )
-    except Exception:
-        conn.close()
-        raise
+    navigation.workbenchContextChanged.connect(sync_workbench_context)
+    return AppServices(
+        conn=core.conn,
+        repository=core.repository,
+        storage=core.storage,
+        importer=core.importer,
+        document_importer=core.document_importer,
+        trash=core.trash,
+        reading=core.reading,
+        export_service=core.export_service,
+        diagnostics=core.diagnostics,
+        reader=reader,
+        library=core.library,
+        pipeline=core.pipeline,
+        pipeline_defaults=core.pipeline_defaults,
+        editing=core.editing,
+        render=core.render,
+        providers=core.providers,
+        navigation=navigation,
+        bookshelf=bookshelf,
+        workbench=workbench,
+        export_viewmodel=lambda: export_state["vm"],
+        set_export_context_updater=lambda updater: export_state.update(
+            updater=updater
+        ),
+        settings_vm=settings_vm,
+        transport=core.transport,
+    )
 
 
 def assemble_engine(services: AppServices) -> QQmlApplicationEngine:
