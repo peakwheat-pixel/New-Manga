@@ -1,10 +1,10 @@
 === Git Post-Migration Status ===
 Branch: agent/antigravity/M2-I2-qtfree-logic-extraction
-Delivery Commit: be5e8d830fba2f9ca1b0cd79148cc386c4468061
+Delivery Commit: e359da759d1160467f61ced7061cdfe09772232f
 Common Dir: G:/CODEX/New Manga/.git
 Status: clean
 
-=== PySide6 Environment: Focused Suite (64 passed) ===
+=== PySide6 Environment: Focused Suite (65 passed) ===
 Shell: Windows PowerShell
 Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
 Version: Python 3.12.3
@@ -16,7 +16,7 @@ cachedir: .pytest_cache
 rootdir: G:\CODEX\New Manga.worktrees\M2-I2-antigravity
 configfile: pytest.ini
 plugins: anyio-4.15.1
-collecting ... collected 64 items
+collecting ... collected 65 items
 
 tests/workbench/test_projection.py::test_pending_run_all_waiting_and_pause_stop_enabled PASSED [  1%]
 tests/workbench/test_projection.py::test_counts_match_scheduler_projection PASSED [  3%]
@@ -26,64 +26,65 @@ tests/workbench/test_projection.py::test_button_matrix_all_statuses PASSED [  7%
 tests/workbench/test_projection.py::test_paused_buttons PASSED           [  9%]
 tests/workbench/test_projection.py::test_blocked_run_reasons_and_buttons PASSED [ 10%]
 tests/workbench/test_projection.py::test_interrupted_buttons PASSED      [ 12%]
-tests/workbench/test_projection.py::test_cancelled_buttons PASSED        [ 14%]
+tests/workbench/test_projection.py::test_cancelled_buttons PASSED        [ 13%]
 tests/workbench/test_projection.py::test_locked_overlay_does_not_change_run_status PASSED [ 15%]
-tests/workbench/test_projection.py::test_primary_focus_and_step_flow PASSED [ 17%]
+tests/workbench/test_projection.py::test_primary_focus_and_step_flow PASSED [ 16%]
 tests/workbench/test_projection.py::test_run_title_uses_command_label PASSED [ 18%]
 tests/workbench/test_projection.py::test_backward_compatibility_reexports PASSED [ 20%]
 tests/workbench/test_region_canvas.py::test_design_worked_example_maps_to_documented_pixels PASSED [ 21%]
 tests/workbench/test_region_canvas.py::test_half_tie_rounds_up_not_to_even PASSED [ 23%]
-tests/workbench/test_region_canvas.py::test_rectangle_corners_may_arrive_in_any_order PASSED [ 25%]
+tests/workbench/test_region_canvas.py::test_rectangle_corners_may_arrive_in_any_order PASSED [ 24%]
 tests/workbench/test_region_canvas.py::test_polygon_keeps_the_ring_it_was_given PASSED [ 26%]
-tests/workbench/test_region_canvas.py::test_out_of_range_points_are_clamped_to_the_page PASSED [ 28%]
+tests/workbench/test_region_canvas.py::test_out_of_range_points_are_clamped_to_the_page PASSED [ 27%]
 tests/workbench/test_region_canvas.py::test_zero_area_rectangle_is_rejected_before_writing PASSED [ 29%]
-tests/workbench/test_region_canvas.py::test_collapsed_polygon_extent_is_rejected PASSED [ 31%]
+tests/workbench/test_region_canvas.py::test_collapsed_polygon_extent_is_rejected PASSED [ 30%]
 tests/workbench/test_region_canvas.py::test_polygon_that_repeats_two_corners_is_rejected PASSED [ 32%]
-tests/workbench/test_region_canvas.py::test_collinear_polygon_is_rejected_as_degenerate PASSED [ 34%]
+tests/workbench/test_region_canvas.py::test_collinear_polygon_is_rejected_as_degenerate PASSED [ 33%]
 tests/workbench/test_region_canvas.py::test_a_single_point_is_rejected PASSED [ 35%]
-tests/workbench/test_region_canvas.py::test_missing_page_dimensions_fails_fast_instead_of_collapsing PASSED [ 37%]
-tests/workbench/test_region_canvas.py::test_returns_a_real_domain_geometry_not_a_dict PASSED [ 39%]
+tests/workbench/test_region_canvas.py::test_missing_page_dimensions_fails_fast_instead_of_collapsing PASSED [ 36%]
+tests/workbench/test_region_canvas.py::test_returns_a_real_domain_geometry_not_a_dict PASSED [ 38%]
 tests/workbench/test_region_canvas.py::test_backward_compatibility_reexports PASSED [ 40%]
-tests/workbench/test_page_list_model.py::test_roles_carry_projection_fields PASSED [ 42%]
+tests/workbench/test_page_list_model.py::test_roles_carry_projection_fields PASSED [ 41%]
 tests/workbench/test_page_list_model.py::test_filter_failed_shows_only_failed_rows PASSED [ 43%]
-tests/workbench/test_page_list_model.py::test_filter_completed_and_skipped_sets PASSED [ 45%]
+tests/workbench/test_page_list_model.py::test_filter_completed_and_skipped_sets PASSED [ 44%]
 tests/workbench/test_page_list_model.py::test_selection_toggle_and_clear PASSED [ 46%]
-tests/workbench/test_page_list_model.py::test_selection_ignores_unknown_pages PASSED [ 48%]
-tests/workbench/test_page_list_model.py::test_projection_refresh_preserves_selection PASSED [ 50%]
-tests/workbench/test_page_list_model.py::test_row_index_of_respects_filter PASSED [ 51%]
-tests/workbench/test_qml_workbench.py::test_no_viewmodel_keeps_honest_empty_state PASSED [ 53%]
-tests/workbench/test_qml_workbench.py::test_viewmodel_without_context_shows_empty_state PASSED [ 54%]
-tests/workbench/test_qml_workbench.py::test_context_reveals_all_five_fixed_areas PASSED [ 56%]
-tests/workbench/test_qml_workbench.py::test_task_progress_reflects_run_through_qml PASSED [ 57%]
-tests/workbench/test_qml_workbench.py::test_statistic_click_filters_pagelist_through_qml PASSED [ 59%]
+tests/workbench/test_page_list_model.py::test_selection_ignores_unknown_pages PASSED [ 47%]
+tests/workbench/test_page_list_model.py::test_projection_refresh_preserves_selection PASSED [ 49%]
+tests/workbench/test_page_list_model.py::test_row_index_of_respects_filter PASSED [ 50%]
+tests/workbench/test_qml_workbench.py::test_no_viewmodel_keeps_honest_empty_state PASSED [ 52%]
+tests/workbench/test_qml_workbench.py::test_viewmodel_without_context_shows_empty_state PASSED [ 53%]
+tests/workbench/test_qml_workbench.py::test_context_reveals_all_five_fixed_areas PASSED [ 55%]
+tests/workbench/test_qml_workbench.py::test_task_progress_reflects_run_through_qml PASSED [ 56%]
+tests/workbench/test_qml_workbench.py::test_statistic_click_filters_pagelist_through_qml PASSED [ 58%]
 tests/workbench/test_qml_workbench.py::test_dirty_confirm_dialog_blocks_and_resumes PASSED [ 60%]
-tests/workbench/test_qml_workbench.py::test_toolbar_mode_switch_roundtrip PASSED [ 62%]
-tests/workbench/test_qml_workbench.py::test_command_error_bar_visible_only_when_a_failure_is_held PASSED [ 64%]
-tests/workbench/test_qml_workbench.py::test_region_overlay_mounts_and_follows_viewer_mode PASSED [ 65%]
-tests/workbench/test_qml_workbench.py::test_overlay_scales_by_the_viewmodel_extent_not_the_image PASSED [ 67%]
-tests/workbench/test_qml_workbench.py::test_overlay_tool_buttons_switch_the_drawing_mode PASSED [ 68%]
-tests/workbench/test_qml_workbench.py::test_overlay_reproduces_the_documented_worked_example PASSED [ 70%]
-tests/workbench/test_qml_workbench.py::test_page_pixels_survive_the_round_trip_at_every_display_scale PASSED [ 71%]
-tests/workbench/test_qml_workbench.py::test_overlay_refuses_a_stroke_started_in_the_letterbox_band PASSED [ 73%]
-tests/workbench/test_qml_workbench.py::test_overlay_without_a_page_extent_maps_nothing PASSED [ 75%]
-tests/workbench/test_qml_workbench.py::test_workbench_panel_geometry_comes_from_the_f_tokens PASSED [ 76%]
-tests/core/test_architecture.py::test_source_packages_exist_and_respect_boundaries PASSED [ 78%]
-tests/core/test_architecture.py::test_domain_violation_reports_file_line_and_module PASSED [ 79%]
-tests/core/test_architecture.py::test_ui_violation_reports_file_line_and_module PASSED [ 81%]
-tests/core/test_architecture.py::test_relative_from_import_reports_forbidden_alias PASSED [ 82%]
-tests/core/test_architecture.py::test_application_layer_does_not_import_infrastructure_or_ui PASSED [ 84%]
-tests/core/test_architecture.py::test_migrated_application_modules_are_qt_free PASSED [ 85%]
-tests/core/test_architecture.py::test_workbench_ui_consumers_import_from_application_seams PASSED [ 87%]
-tests/core/test_architecture.py::test_legacy_ui_shims_contain_no_authoritative_logic PASSED [ 89%]
-tests/core/test_architecture.py::test_application_ui_violation_reports_file_line_and_module PASSED [ 90%]
-tests/core/test_architecture.py::test_qt_free_application_violation_reports_pyside6 PASSED [ 92%]
-tests/core/test_architecture.py::test_reversal_guard_reports_legacy_ui_import PASSED [ 93%]
-tests/core/test_architecture.py::test_reversal_guard_reports_local_definitions_in_legacy_shims PASSED [ 95%]
-tests/core/test_architecture.py::test_reversal_guard_reports_ui_imports_in_legacy_shims PASSED [ 96%]
+tests/workbench/test_qml_workbench.py::test_toolbar_mode_switch_roundtrip PASSED [ 61%]
+tests/workbench/test_qml_workbench.py::test_command_error_bar_visible_only_when_a_failure_is_held PASSED [ 63%]
+tests/workbench/test_qml_workbench.py::test_region_overlay_mounts_and_follows_viewer_mode PASSED [ 64%]
+tests/workbench/test_qml_workbench.py::test_overlay_scales_by_the_viewmodel_extent_not_the_image PASSED [ 66%]
+tests/workbench/test_qml_workbench.py::test_overlay_tool_buttons_switch_the_drawing_mode PASSED [ 67%]
+tests/workbench/test_qml_workbench.py::test_overlay_reproduces_the_documented_worked_example PASSED [ 69%]
+tests/workbench/test_qml_workbench.py::test_page_pixels_survive_the_round_trip_at_every_display_scale PASSED [ 70%]
+tests/workbench/test_qml_workbench.py::test_overlay_refuses_a_stroke_started_in_the_letterbox_band PASSED [ 72%]
+tests/workbench/test_qml_workbench.py::test_overlay_without_a_page_extent_maps_nothing PASSED [ 73%]
+tests/workbench/test_qml_workbench.py::test_workbench_panel_geometry_comes_from_the_f_tokens PASSED [ 75%]
+tests/core/test_architecture.py::test_source_packages_exist_and_respect_boundaries PASSED [ 76%]
+tests/core/test_architecture.py::test_domain_violation_reports_file_line_and_module PASSED [ 78%]
+tests/core/test_architecture.py::test_ui_violation_reports_file_line_and_module PASSED [ 80%]
+tests/core/test_architecture.py::test_relative_from_import_reports_forbidden_alias PASSED [ 81%]
+tests/core/test_architecture.py::test_application_layer_does_not_import_infrastructure_or_ui PASSED [ 83%]
+tests/core/test_architecture.py::test_migrated_application_modules_are_qt_free PASSED [ 84%]
+tests/core/test_architecture.py::test_workbench_ui_consumers_import_from_application_seams PASSED [ 86%]
+tests/core/test_architecture.py::test_legacy_ui_shims_contain_no_authoritative_logic PASSED [ 87%]
+tests/core/test_architecture.py::test_application_ui_violation_reports_file_line_and_module PASSED [ 89%]
+tests/core/test_architecture.py::test_qt_free_application_violation_reports_pyside6 PASSED [ 90%]
+tests/core/test_architecture.py::test_reversal_guard_reports_legacy_ui_import PASSED [ 92%]
+tests/core/test_architecture.py::test_reversal_guard_reports_local_definitions_in_legacy_shims PASSED [ 93%]
+tests/core/test_architecture.py::test_reversal_guard_reports_ui_imports_in_legacy_shims PASSED [ 95%]
+tests/core/test_architecture.py::test_reversal_guard_reports_dynamic_all_assignment_in_legacy_shims PASSED [ 96%]
 tests/core/test_architecture.py::test_dynamic_import_of_a_forbidden_root_is_detected PASSED [ 98%]
 tests/core/test_architecture.py::test_non_literal_dynamic_import_is_not_a_false_positive PASSED [100%]
 
-============================= 64 passed in 1.35s ==============================
+============================= 65 passed in 1.43s ==============================
 
 === Comprehensive Verification Probes (verify_m2_i2.py) ===
 Command: & 'G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe' verification/M2-I2/verify_m2_i2.py
