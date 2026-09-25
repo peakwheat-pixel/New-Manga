@@ -1,10 +1,11 @@
-# M2-R1 artifact hashes (sha256, full) - generated 2026-09-25 17:54:04 +08:00
+# M2-R1 artifact hashes (sha256, full) - regenerated 2026-09-25 18:46:50 +08:00
 # purpose: independent integrity check of the evidence files below verification/M2-R1/
-# scope  : every file under verification/M2-R1/ that exists at this delivery commit, except this log itself
-#          and except 08-delivery-scope-and-diff-check.log (it belongs to the following documentation commit
-#          and records this commit's hash, so listing it here would be circular).
+# scope  : every file under verification/M2-R1/ present at this revision, except this log itself and except
+#          08/09-delivery-scope-and-diff-check logs (they belong to the documentation commits that follow
+#          the delivery commit and record its hash, so listing them here would be circular).
 # note   : probe.json sha256 differs per run by design (pid/timestamps/durations); the compared determinism
 #          signal is the PNG sha256 recorded in 07-evidence-manifest.md and inside each probe.json.
+# count  : raw/ holds 21 probe.json (20 formal runs + 1 excluded smoke) and 45 PNG files.
 
 4ed375f222940cff3462a56499922044e37cd5d921019b97fa039952955743b4      1719  verification/M2-R1/01-environment.log
 e9f0d89905b406be2d292dc70ae1193047ad91b0ceb630ef860b11bfb4396fcf      2036  verification/M2-R1/02-probe-windows.log
@@ -12,7 +13,7 @@ e9f0d89905b406be2d292dc70ae1193047ad91b0ceb630ef860b11bfb4396fcf      2036  veri
 6e869f4ca0c8639418743a1ac58539e0df983ad51484a57925cebc3068857d35      2038  verification/M2-R1/04-probe-minimal.log
 597558f3f81ede729755cf33c74064ab9114a20354105e561904a873746125c6      1427  verification/M2-R1/05-supplementary-font-remediation.log
 03c8c0c98f43b2b5e29496e2379bcd0ce2bacea35d0a450d6e56c8babd23bc71      1371  verification/M2-R1/06-eventloop-and-window-census.log
-a9f175eb4d08e953ee041703374e5eb5179cf2bfc9f1c0f0302cd19387e0f8c0      7817  verification/M2-R1/07-evidence-manifest.md
+cacf9aac7b890008ddf59d3621cce02af09e1c2a44fe818d168876c6fbb89f9e      9229  verification/M2-R1/07-evidence-manifest.md
 54b68d7cc66c0ba2dabe8ef8118322d7b60bf76aa7089154f331f1a31c74b9ab      5021  verification/M2-R1/probes/qt_eventloop_probe.py
 761268e08619961c8bb47ce3f1d33792d356fac492fde41ff61bd2ee5dc9bf92      8195  verification/M2-R1/probes/qt_font_remediation_probe.py
 7221d01f5f803ba349d7f9bb624af6289f1270dd5c342e1998e2a0f769055ecf     17340  verification/M2-R1/probes/qt_platform_probe.py
@@ -84,3 +85,5 @@ a7768dd3e9980211a1c90a250d9d0482ee967f1ad56692e9402483e26271e9b0      2689  veri
 a6de198a34ce57a4df8093d1e1019fa4edb6674ff41794ee890d4b589d5b7931      7071  verification/M2-R1/raw/windows/run3/probe.json
 
 TOTAL_FILES=76
+RAW_JSON_COUNT=21
+RAW_PNG_COUNT=45

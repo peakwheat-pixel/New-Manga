@@ -144,6 +144,18 @@ hwnd=0x11609e8 class='IME'                              title='Default IME' visi
 
 ### 3.4 稳定性与退出码（AC3）
 
+**运行与产物计数（本文所有计数的统一口径）**：
+
+| 类别 | 次数 | 构成 | 退出码 | 日志 |
+|---|---:|---|---|---|
+| 主矩阵 | 9 | `windows`/`offscreen`/`minimal` × 3 次 | 0（9/9） | `02/03/04-probe-*.log` |
+| 字体补救 | 5 | `offscreen`{baseline,fontdir,appfont} + `minimal`{fontdir,appfont} | 0（5/5） | `05-supplementary-font-remediation.log` |
+| 事件循环 / HWND 普查 | 6 | 3 平台 × 2 次 | 0（6/6） | `06-eventloop-and-window-census.log` |
+| **正式运行合计** | **20** | 9 + 5 + 6 | **0（20/20）** | 上列 4 份日志 |
+| 探针冒烟（**不计入**） | 1 | `windows`，探针首次可用性验证 | 0 | `raw/smoke/` |
+
+产物：`raw/**/probe.json` 共 **21** 个（20 个正式运行 + 1 个冒烟）；该目录下 PNG 共 **45** 个（主矩阵 9 次 + 冒烟各 4 张 = 40，字体补救 5 张，事件循环 0 张）。逐类复核见 [`07-evidence-manifest.md` §2.5](../../verification/M2-R1/07-evidence-manifest.md)。
+
 - **3 平台 × 3 次独立进程 = 9 次运行，`EXITCODE=0`，`errors=0`**（`02/03/04-probe-*.log` 每次运行的 `--- EXITCODE=0 ---` 段）。
 - **逐字节确定性**：同平台 3 次进程的输出 PNG sha256 完全相同；同进程内重复 `compose_page` 亦相同。
 - 事件循环 6 次运行（3 平台 × 2）全部按时退出（0.31 s 量级，预算 5 s），无挂起、无崩溃。

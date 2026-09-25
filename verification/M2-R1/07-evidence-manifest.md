@@ -23,7 +23,7 @@
 | 同上 | `minimal` | `appfont` | 1 | 0 | 同上 |
 | `probes/qt_eventloop_probe.py` | `windows` / `offscreen` / `minimal` | `QTimer(300ms)` + `exec()` + HWND 普查 | 6（3×2） | 0（全部） | `06-eventloop-and-window-census.log` |
 
-合计 **18 次独立进程运行，退出码全部为 0**，无 Python 异常、无 QPA 插件加载失败、无挂起。
+合计 **20 次正式独立进程运行（主矩阵 9 + 字体补救 5 + 事件循环 6），退出码全部为 0**，无 Python 异常、无 QPA 插件加载失败、无挂起。另有 **1 次探针冒烟运行**（`raw/smoke/`，见 §5）**不计入**这 20 次；因此 `raw/` 下 `probe.json` 共 **21** 个（20 个正式 + 1 个冒烟）。
 
 主矩阵每次运行驱动**四个** AC2 要求的对象：`QGuiApplication`、`QFontDatabase`（+ 生产 `QtFontCatalog`）、生产 `QtTextLayoutEngine`（横向 + 竖向）、生产 `QtImageCompositor`（`compose_page` + `compose_region`）。
 
@@ -33,7 +33,7 @@
 
 | 产物 | 字节 | sha256（前 32） | 出现次数 | 一致性 |
 |---|---|---|---|---|
-| `input_base.png` / `input_clean.png` | 682 | `a5f9021b328bd79e65aac0186530ab76` | 18 份（3 平台 × 3 次 + 冒烟） | **全部相同**（输入确定，可复算） |
+| `input_base.png` / `input_clean.png` | 682 | `a5f9021b328bd79e65aac0186530ab76` | 20 份（10 个主矩阵 run 目录 = 9 次正式 + 1 次冒烟，各 2 个文件） | **全部相同**（输入确定，可复算） |
 
 ### 2.2 合成输出页图（`compose_page`，两个 op：横向 + 竖向）
 
@@ -61,6 +61,25 @@
 
 > `probe.json` 每次运行的 sha256 **不同**（含 `pid`、时间戳、耗时），这是预期行为；判定确定性使用的是上表中的 PNG 与 JSON 内的数值列，而非 JSON 文件自身的 hash。
 
+### 2.5 产物计数复核（对应 Review P2-001 的修订）
+
+只读枚举 `verification/M2-R1/raw/**` 得到的实际数量（与 `09-revision-scope-and-diff-check.log` 的复核一致）：
+
+| 类别 | 数量 | 构成 |
+|---|---:|---|
+| `probe.json` 总计 | **21** | 主矩阵 9 + 字体补救 5 + 事件循环 6 + 冒烟 1 |
+| 其中**正式运行** | **20** | 9 + 5 + 6（全部 `exit_code=0`、`errors` 为空） |
+| 其中冒烟运行（不计入） | 1 | `raw/smoke/` |
+| PNG 总计 | **45** | 下表逐类列出 |
+| ├ 主矩阵 `input_base.png` | 10 | 9 次正式 + 1 次冒烟 |
+| ├ 主矩阵 `input_clean.png` | 10 | 同上（与 `input_base.png` 内容相同） |
+| ├ 主矩阵 `output_page.png` | 10 | 9 次正式 + 1 次冒烟 |
+| ├ 主矩阵 `output_region.png` | 10 | 9 次正式 + 1 次冒烟 |
+| └ 字体补救 `output_page_*.png` | 5 | 5 个补救/对照条件各 1 张 |
+| 事件循环运行的 PNG | 0 | 该探针只写 JSON |
+
+> 计数口径统一为：**正式运行 = 20**、**`probe.json` = 21（含 1 个明确排除的冒烟）**、**PNG = 45**。
+
 完整逐文件 hash 清单见 [`07b-artifact-hashes.log`](07b-artifact-hashes.log)。
 
 ## 3. AC 对照
@@ -84,7 +103,7 @@
 ## 5. 冒烟运行与工具记录
 
 - `raw/smoke/` 是本 Task 探针的**首次冒烟运行**（windows 平台，验证探针可运行），其数值与主矩阵 `windows/run1` 一致，但**不作为矩阵证据**，故单列。
-- 本 Task 未出现探针缺陷重跑或失败尝试；18 次正式运行全部一次通过。`raw/*/probe.json` 内 `errors` 数组均为空。
+- 本 Task 未出现探针缺陷重跑或失败尝试；20 次正式运行全部一次通过。`raw/*/probe.json` 内 `errors` 数组均为空（含冒烟共 21 个 JSON，全部 `exit_code=0`）。
 - `05-supplementary-font-remediation.log` 与 `06-eventloop-and-window-census.log` 为**补充探测**（超出 AC2 最低要求），用于量化"字体缺失能否补救"与"无 GUI 下事件循环是否稳定退出"。
 
 ## 6. 未测项（不构成本清单的覆盖）

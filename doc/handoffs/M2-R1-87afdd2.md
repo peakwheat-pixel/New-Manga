@@ -14,8 +14,10 @@ status: in_review
 用户批准的 M2 第一波研究任务 M2-R1 已完成并冻结。交付物是**证据与结论**，不是代码：
 
 - 研究报告与平台实测矩阵：[`doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md`](../research/M2-R1_QT_RUNTIME_FEASIBILITY.md)。
-- 原始证据：[`verification/M2-R1/**`](../../verification/M2-R1)（8 个日志/清单文件 + 3 个探针脚本 + 18 次运行的 JSON 与 PNG），索引见 [`07-evidence-manifest.md`](../../verification/M2-R1/07-evidence-manifest.md)，逐文件 sha256 见 [`07b-artifact-hashes.log`](../../verification/M2-R1/07b-artifact-hashes.log)。
+- 原始证据：[`verification/M2-R1/**`](../../verification/M2-R1)（日志/清单文件 + 3 个探针脚本 + **21 个 `probe.json`**（20 次正式运行 + 1 次不计入的冒烟）与 **45 张 PNG**），索引见 [`07-evidence-manifest.md`](../../verification/M2-R1/07-evidence-manifest.md)，逐文件 sha256 见 [`07b-artifact-hashes.log`](../../verification/M2-R1/07b-artifact-hashes.log)。
 - 本 Handoff；[`doc/tasks/M2-R1.md`](../tasks/M2-R1.md) 回填 checkpoint、AC 勾选、测试要求表与 delivery head。
+
+> **修订记录（Review P2-001）**：本 Handoff 首版把正式运行数误记为 **18**；实际为 **20 次正式运行**（主矩阵 9 + 字体补救 5 + 事件循环 6），另有 **1 次不计入**的探针冒烟运行（`raw/smoke/`），故 `raw/` 下 `probe.json` 共 **21** 个、PNG 共 **45** 张。本文件、Task、研究报告与 evidence manifest 已按此口径统一修正；**原始运行证据与结论未变**。修订后的固定 head 与范围证据见后续 Handoff 与 `09-revision-scope-and-diff-check.log`。
 
 **写集合**：`owner-start`(`5d989ba`) → `delivery`(`87afdd2`) 共改动 **79 个路径**，全部落在本 Task 授权路径（`doc/tasks/M2-R1.md`、`doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md`、`doc/handoffs/M2-R1-*.md`、`verification/M2-R1/**`）；**越界 0、禁止路径命中 0**（证据：[`08-delivery-scope-and-diff-check.log`](../../verification/M2-R1/08-delivery-scope-and-diff-check.log) §3/§4）。
 
@@ -43,7 +45,7 @@ status: in_review
 | AC5 只读范围 | `git diff --name-status/--stat/--check owner-start..delivery`；授权路径断言；`src`/`tests` 的 `__pycache__` 计数；依赖清单检出 | `87afdd2` | **PASS**：越界 0；`git diff --check` `exit=0`；`__pycache__`=0；`requirements*` 未改；探针 0 处 import `bootstrap`/`sqlite3` | `08-delivery-scope-and-diff-check.log` |
 | 产品测试 | — | — | **NOT_RUN**（`src/**` 零修改；实验 venv 只装 Qt 栈，未装 pytest/torch 等），**不得记为 PASS** | — |
 
-**探针安全与只读性**：探针只读导入 `infrastructure.rendering.*` 与 `ports.rendering.*`，**不导入** `bootstrap.app`、**不打开**任何 SQLite、**不读写**用户数据根；全部运行 `python -B` + `PYTHONDONTWRITEBYTECODE=1`，运行后 `src/**`、`tests/**` 内 `__pycache__` 计数为 **0**；字体补救只**读取** `C:\Windows\Fonts\msyh.ttc`（19,704,352 字节），未安装/未复制；探针从不创建或 `show()` 任何 `QWindow`。本 Task 无失败重跑，18 次正式运行一次通过（`raw/*/probe.json` 的 `errors` 均为空）；`raw/smoke/` 为探针首次冒烟运行，**不作为矩阵证据**。
+**探针安全与只读性**：探针只读导入 `infrastructure.rendering.*` 与 `ports.rendering.*`，**不导入** `bootstrap.app`、**不打开**任何 SQLite、**不读写**用户数据根；全部运行 `python -B` + `PYTHONDONTWRITEBYTECODE=1`，运行后 `src/**`、`tests/**` 内 `__pycache__` 计数为 **0**；字体补救只**读取** `C:\Windows\Fonts\msyh.ttc`（19,704,352 字节），未安装/未复制；探针从不创建或 `show()` 任何 `QWindow`。本 Task 无失败重跑，**20 次正式运行**一次通过（`raw/*/probe.json` 共 21 个含 1 个不计入的冒烟，`exit_code` 全为 0、`errors` 均为空）；`raw/smoke/` 为探针首次冒烟运行，**不作为矩阵证据**。
 
 ## AC 对照
 
@@ -115,7 +117,7 @@ foreach ($p in 'windows','offscreen','minimal') {
 - **字体输入**：`C:\Windows\Fonts\msyh.ttc`（19,704,352 字节，只读）用于 `addApplicationFont` 补救探测；未改变系统字体配置。
 - **硬件 / 网络策略**：本机 Windows 11 `10.0.26200`，2 屏（主屏 2560×1440）；仅安装阶段需要网络（PyPI 镜像），实验本身离线。
 - **参数**：`QT_QPA_PLATFORM` ∈ {windows, offscreen, minimal}；文字 `漫画排版テスト Manga`（横向，32 px，含 2 px 描边）、`縦書きテスト`（竖向，28 px）；基准图 600×200 白底；事件循环 `QTimer` 300 ms。
-- **运行次数**：主矩阵 3 平台 × 3 次；字体补救 5 条件 × 1 次；事件循环 3 平台 × 2 次；合计 18 次独立进程，全部退出码 0。
+- **运行次数**：主矩阵 3 平台 × 3 次 = 9；字体补救 5 条件 × 1 次 = 5；事件循环 3 平台 × 2 次 = 6；**正式运行合计 20 次独立进程，全部退出码 0**。另有 1 次探针冒烟运行（`raw/smoke/`）不计入；`raw/` 下 `probe.json` 共 21 个、PNG 共 45 张。
 - **原始结果**：`verification/M2-R1/raw/**`（JSON + PNG）；逐文件 sha256 见 `07b-artifact-hashes.log`。
 - **质量判断办法**：不采信"退出码 0 或 PNG 非空"；用 `inFont()`/`families()`/`hasFamily()` 判定字形可用性，用与输入基准图的逐像素差异数 + 人眼复核 PNG 判定渲染真实性，用跨进程 sha256 判定确定性。
 - **失败样例与限制**：无失败运行；限制见报告 §6（QML 未测、DPI/多屏未测、长期运行未测、非 PNG imageformats 未测、`minimal` 补救失败）。
