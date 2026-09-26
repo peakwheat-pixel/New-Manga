@@ -70,6 +70,6 @@ DSH 需在新 worktree 自行重跑必要 Git 检查并完成完整技术 Review
 ## 当前状态
 
 - Qoder：正式 `APPROVED`，Review commit=`0d73983a5e1f37f104c76d8bd4c70c6f98fa36f5`，绑定 `b237728...`。
-- DSH：原工作区阻塞现场已保留；新 C: worktree 已创建并授权，完整 Review 尚待重新派发/提交。
+- DSH：原 G: 工作区阻塞现场已保留；新 C: worktree 已创建并授权，完整独立 Review 已重新派发并正在进行。Codex terminal exec session=`18242`（不是 DSH 内部 session ID）。
 - M2-C1 保持 `blocked`，等待 DSH 正式提交 Review。
 - Integration Gate 未 ready、未开启；未集成、未启动 M2-S1。页级 `blocked` 映射和 React UI Owner 仍是 `USER_DECISION_REQUIRED / DEFERRED`。
