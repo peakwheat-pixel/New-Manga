@@ -37,7 +37,7 @@
 
 | 项 | 值 |
 |---|---|
-| tauri（Rust crate） | `2`（Cargo.toml 语义版本；精确解析版本见 `experiments/M2-S3/probe/Cargo.lock`，构建时从 crates.io 解析） |
+| tauri（Rust crate） | `2.11.6`（`tauri-build 2.6.3`、`wry 0.55.1`、`tao 0.35.3`；Cargo.lock 锁定） |
 | tauri-build | `2` |
 | 其他插件 | 无（探针不引入 tauri-plugin-*） |
 | 前端 | 纯静态 HTML/JS（无框架），Tauri core invoke API（`window.__TAURI__.core.invoke`，由 Tauri 注入） |

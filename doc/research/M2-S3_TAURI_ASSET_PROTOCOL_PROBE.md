@@ -52,7 +52,7 @@
 | WebView2 Runtime | `153.0.4234.48`（Evergreen，HKLM） |
 | Rust | `rustc/cargo 1.98.1`（stable-x86_64-pc-windows-msvc） |
 | Node | `v24.15.0`（探针**未使用**——前端纯静态，`frontendDist` 直指目录） |
-| Tauri | `tauri 2` / `tauri-build 2`（精确版本见 `Cargo.lock`） |
+| Tauri | `tauri 2.11.6` / `tauri-build 2.6.3`（`wry 0.55.1`、`tao 0.35.3`；见 `experiments/M2-S3/probe/Cargo.lock`） |
 | 页面源 | `http://tauri.localhost`（Windows 上 Tauri 2 的自定义 scheme 映射为 `http://<scheme>.localhost`） |
 
 ---
@@ -104,8 +104,8 @@
 | N-02 畸形 ID | 非 ID 文本 | `400 REF_MALFORMED` |
 | N-03 已撤销 ID | revoke 后 fetch | `410 REF_REVOKED` |
 | N-04 已过期 ID | TTL 2.5 s 到期后 fetch | `410 REF_EXPIRED` |
-| N-05 user-source fixture | host 尝试签发 scope 外 `user_source_private.png` | **issue 层拒绝** `REF_OUT_OF_SCOPE`；WebView 无 ID 可请求（`webview_reachable: false`） |
-| N-06 词法 traversal | `/m2id/../outside/outside_secret.png` | `400 REF_MALFORMED`（非合法 ID 格式，格式门先于表查询） |
+| N-05 user-source fixture | host 以该 fixture 的**绝对路径**直接判定 scope 越界 | host 守卫 `REF_OUT_OF_SCOPE`（`sign_all` 显式调用 `ensure_inside_scope`；对绝对路径无需 canonicalize 即可判定）。注意：`issue()` 本身不做 containment（见 §2），因此这是专门的 host 守卫场景而非 issue 层通用防线；WebView 侧无对应 ID 可请求（`webview_reachable: false`） |
+| N-06 词法 traversal | `/m2id/../outside/outside_secret.png`（**fetch 前被浏览器 URL 解析器归一化**为 `/m2id/outside/outside_secret.png`——DSH F-03 更正：抵达 handler 的已是归一化形态） | `400 REF_MALFORMED`（归一化后末段仍非合法 ID 格式，格式门先于表查询）；真正穿透原始 `..` 的是编码形态 N-07 |
 | N-07 编码 traversal | `/m2id/%2E%2E%2Foutside%2F…` | `400 REF_MALFORMED`（percent-decode 后仍非 ID） |
 | N-08 路径参数/绝对路径段 | `/file?path=…`、`/abs/C:\…` | `400 REF_MALFORMED`（协议只接受 `/m2id/<id>`） |
 | N-09 junction 逃逸 | ID 映射到 `linkj/nested.png`（scope 内 junction → scope 外） | `403 REF_OUT_OF_SCOPE`（resolve 时 canonicalize containment 拦截） |
@@ -135,7 +135,7 @@
 |---|---|---|
 | S3-AC1 固定基线与实验环境 | **PASS** | `verification/M2-S3/baseline-selfcheck.md`、`environment.md`（WebView2/Rust/Node/Tauri 精确版本）；依赖与锁文件仅在 `experiments/M2-S3/probe/` |
 | S3-AC2 真实 asset protocol 路径 | **PASS** | §3.1 P-01..P-04；`raw/probe-results-*.json` |
-| S3-AC3 负向权限矩阵 | **PASS** | §3.2 N-01..N-09（reparse/junction 平台支持实测；symlink 未构造——junction 已覆盖 reparse 逃逸类，`NOT_RUN` 注明）；泄漏扫描 `raw/leakage-scan.json` 0 命中 |
+| S3-AC3 负向权限矩阵 | **PASS** | §3.2 N-01..N-09（reparse/junction 平台支持实测；symlink 未构造——junction 已覆盖 reparse 逃逸类，`NOT_RUN` 注明）；泄漏扫描 `raw/leakage-scan.json`：host 侧零泄漏（2 个词表命中为探针自编攻击 URL——N-06/N-08 场景输入，已分类） |
 | S3-AC4 缓存与引用生命周期 | **PASS（限制如实标注）** | §3.3 L-01..L-03；T6 逐条对照：撤销→next resolve 拒绝 ✓、在途不中断 ✓（形态限制）、缓存未绕过 resolve ✓（单样本观察） |
 | S3-AC5 可复核结论与交接 | **PASS** | 本报告（S1-B1=PASS + 边界）+ `raw/00-run-log.md`（命令/exit/缺陷记录）+ fixture SHA + Handoff |
 | S3-AC6 范围与恢复性 | **PASS** | `git diff --name-status 90c3e459..HEAD` 仅授权路径、`git diff --check` 干净（`raw/scope.log`，随 Handoff 提交入库）；产品路径零触碰 |

@@ -44,10 +44,11 @@
         const text = await resp.text();
         let code = null;
         try { code = JSON.parse(text).code; } catch {}
-        return { status: resp.status, headers, code, bodySnippet: text.slice(0, 200), ms };
+        return { url, status: resp.status, headers, code, bodySnippet: text.slice(0, 200), ms };
       }
       const buf = await resp.arrayBuffer();
       return {
+        url,
         status: resp.status,
         headers,
         bytes: buf.byteLength,
@@ -117,10 +118,22 @@
         });
       } catch (e) { recordEx({ id: "P-03-fetch-large-asset", status: "FAIL", observed: String(e) }); }
 
-      recordEx({
-        id: "P-04-webview-visibility", status: "PASS",
-        observed: { href: location.href, protocol_page_origin: location.origin, note: "JS sees opaque IDs only; OS paths appear nowhere in page-reachable material (see P-01/P-03 observed.url/headers)" },
-      });
+      // P-04 (DSH F-01): programmatic visibility audit over the material this
+      // page can actually see (its own URL/origin + every URL whose bytes we
+      // fetched), not a literal. Fetched response bodies are asserted clean by
+      // the offline leakage scan; headers were captured in P-01/P-03 observed.
+      {
+        const seenUrls = results
+          .filter((r) => r.observed && typeof r.observed === "object" && r.observed.url)
+          .map((r) => r.observed.url);
+        const probeText = [location.href, location.origin, ...seenUrls].join("\n");
+        const pathLeak = /([A-Za-z]:\\)|(%5C)|(\bUsers\b)|(AppData)/.test(probeText);
+        recordEx({
+          id: "P-04-webview-visibility", status: pathLeak ? "FAIL" : "PASS",
+          observed: { href: location.href, protocol_page_origin: location.origin, fetched_urls: seenUrls, path_leak_pattern_hit: pathLeak },
+          note: "page-reachable URL material contains only the opaque-ID scheme form; response bodies are swept offline (leakage-scan.json)",
+        });
+      }
 
       // ---- negative matrix (S3-AC3) ---------------------------------------
       async function expectRejection(id, scenario, opts, expectCode, expectStatus) {
@@ -196,24 +209,39 @@
         });
       } catch (e) { recordEx({ id: "L-02-inflight-read-survives-revoke", status: "FAIL", observed: String(e) }); }
 
-      // L-03 cache-bypass contrast (AC4 blocker risk): revoke between two fetches
+      // L-03 cache-bypass contrast (AC4 blocker risk): revoke between two fetches.
+      // DSH F-04: a fetch *error* is NOT evidence of no-bypass — it is recorded
+      // as its own verdict and fails the scenario; only a post-revoke typed
+      // re-resolution (410 with a stable code) counts as "no bypass observed".
       try {
+        const classifyAfterRevoke = (r) => {
+          if (r === undefined) return "FETCH_ERROR";
+          if (r.fetchError) return "FETCH_ERROR";
+          if (r.status === 200) return "BYPASSED";
+          if (r.code) return `RE_RESOLVED_${r.code}`;
+          return "UNEXPECTED";
+        };
         const bare1 = await probe(url(state.ids.cache_bare));
         await invoke("revoke", { id: state.ids.cache_bare });
         let bare2;
         try { bare2 = await probe(url(state.ids.cache_bare)); } catch (e) { bare2 = { fetchError: String(e) }; }
-        const bareBypassed = bare2 && bare2.status === 200;
+        const bareVerdict = classifyAfterRevoke(bare2);
         const ctrl1 = await probe(url(state.ids.cache_ctrl));
         await invoke("revoke", { id: state.ids.cache_ctrl });
         let ctrl2;
         try { ctrl2 = await probe(url(state.ids.cache_ctrl)); } catch (e) { ctrl2 = { fetchError: String(e) }; }
-        const ctrlBypassed = ctrl2 && ctrl2.status === 200;
+        const ctrlVerdict = classifyAfterRevoke(ctrl2);
+        const noBypass = bareVerdict.startsWith("RE_RESOLVED") && ctrlVerdict.startsWith("RE_RESOLVED");
         recordEx({
-          id: "L-03-cache-bypass-contrast", status: !ctrlBypassed ? (bareBypassed ? "FAIL" : "PASS") : "FAIL",
-          observed: { bare_after_revoke: bare2, nostore_after_revoke: ctrl2 },
-          note: bareBypassed
-            ? "BLOCKER-RISK: without Cache-Control the WebView cache served bytes AFTER revocation (resolve bypassed)"
-            : "no-store responses re-resolve after revocation; bare responses also re-resolved (no bypass observed)",
+          id: "L-03-cache-bypass-contrast", status: noBypass ? "PASS" : "FAIL",
+          observed: {
+            bare_before_revoke: { status: bare1.status, bytes: bare1.bytes },
+            bare_after_revoke: bare2, bare_verdict: bareVerdict,
+            nostore_after_revoke: ctrl2, nostore_verdict: ctrlVerdict,
+          },
+          note: noBypass
+            ? "both variants re-resolved with typed REF_REVOKED after revocation (no bypass observed)"
+            : `bypass/error observed: bare=${bareVerdict} ctrl=${ctrlVerdict}`,
         });
       } catch (e) { recordEx({ id: "L-03-cache-bypass-contrast", status: "FAIL", observed: String(e) }); }
 
