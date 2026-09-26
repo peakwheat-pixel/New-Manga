@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "m2s3-probe",
+  "version": "0.1.0",
+  "identifier": "com.newmanga.m2s3.probe",
+  "build": {
+    "frontendDist": "../ui"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "M2-S3 asset protocol probe",
+        "width": 1100,
+        "height": 800
+      }
+    ],
+    "security": {
+      "csp": null,
+      "assetProtocol": {
+        "enable": false,
+        "scope": []
+      }
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": ["icons/icon.ico"]
+  }
+}

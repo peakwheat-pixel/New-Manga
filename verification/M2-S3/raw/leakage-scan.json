@@ -1,0 +1,38 @@
+{
+  "scan": "M2-S3 caller-visible evidence leakage scan (re-run after DSH review findings closure)",
+  "files": [
+    "probe-results-first.json",
+    "probe-results-repeat.json",
+    "probe-results-post-findings.json"
+  ],
+  "fragments_checked": [
+    "49745",
+    "C:\\Users",
+    "AppData",
+    "m2s3-lab",
+    "asset.png",
+    "typical.png",
+    "outside_secret",
+    "user_source_private",
+    "outside\\dir",
+    "scope\\derived",
+    "linkj",
+    "nested.png",
+    "win.ini"
+  ],
+  "hits": [
+    {
+      "file": "probe-results-post-findings.json",
+      "fragment": "outside_secret",
+      "context": "\": {\n        \"url\": \"http://m2res.localhost/m2id/../outside/outside_secret.png\",\n        \"status\": 400,\n        \"headers\": {\n          \"cach",
+      "classification": "probe-authored attack request URL (scenario input N-06/N-08, recorded in observed.url after F-01 fix; refused 400 by the format gate before any table/filesystem access) -- NOT a host-side leak"
+    },
+    {
+      "file": "probe-results-post-findings.json",
+      "fragment": "win.ini",
+      "context": "    \"url\": \"http://m2res.localhost/file?path=C:%5CWindows%5Cwin.ini\",\n          \"status\": 400,\n          \"headers\": {\n            \"cache-con",
+      "classification": "probe-authored attack request URL (scenario input N-06/N-08, recorded in observed.url after F-01 fix; refused 400 by the format gate before any table/filesystem access) -- NOT a host-side leak"
+    }
+  ],
+  "verdict": "CLEAN: no host-side (handler/error/fixture) path or mapping-table leakage in any run. The 2 fragment hits are the probe's own attack-request URLs (scenario inputs), expected evidence, refused with 400."
+}

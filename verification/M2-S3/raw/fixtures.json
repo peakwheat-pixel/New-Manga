@@ -1,0 +1,41 @@
+{
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab",
+  "generator": "experiments/M2-S3/fixtures/gen_fixtures.py",
+  "fixtures": {
+    "asset": {
+      "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab\\scope\\derived\\asset.png",
+      "bytes": 2882143,
+      "sha256": "50f5a4cc4cba0a90455c040ca5acfc5c5afd0db96d66aa3b9e9cd7b06f4526a3",
+      "role": "scope"
+    },
+    "typical": {
+      "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab\\scope\\derived\\typical.png",
+      "bytes": 11525983,
+      "sha256": "46ecef997ac6aed37f3bb4e9b79048b72447e3e35f5f9bb8097b40caefbc564e",
+      "role": "scope"
+    },
+    "outside_secret": {
+      "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab\\outside\\outside_secret.png",
+      "bytes": 2882143,
+      "sha256": "b27fbab17787ccca3ed70da0fc0a600bb73eac60ff3df5510126b673a5d37ff0",
+      "role": "outside"
+    },
+    "outside_nested": {
+      "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab\\outside\\dir\\nested.png",
+      "bytes": 2882143,
+      "sha256": "2b8314c987dd55d8142674fe89fd0859565d1cc9610a053fef95147f8d41d08d",
+      "role": "outside"
+    },
+    "user_source_private": {
+      "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab\\outside\\user_source_private.png",
+      "bytes": 2882143,
+      "sha256": "a795e126a99084e7edccbb3d4ceb933f2fdd445063ad1112b2e1674b4d7c1511",
+      "role": "outside"
+    }
+  },
+  "junction": {
+    "link": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab\\scope\\derived\\linkj",
+    "target": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s3-lab\\outside\\dir",
+    "created": true
+  }
+}

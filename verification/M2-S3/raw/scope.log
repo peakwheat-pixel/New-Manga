@@ -1,0 +1,34 @@
+# M2-S3 delivery scope check (delivery head bf749332)
+
+## git diff --name-status 90c3e459..HEAD
+A	doc/research/M2-S3_TAURI_ASSET_PROTOCOL_PROBE.md
+A	doc/tasks/M2-S3.md
+A	experiments/M2-S3/.gitignore
+A	experiments/M2-S3/fixtures/gen_fixtures.py
+A	experiments/M2-S3/probe/Cargo.lock
+A	experiments/M2-S3/probe/Cargo.toml
+A	experiments/M2-S3/probe/build.rs
+A	experiments/M2-S3/probe/gen/schemas/acl-manifests.json
+A	experiments/M2-S3/probe/gen/schemas/capabilities.json
+A	experiments/M2-S3/probe/gen/schemas/desktop-schema.json
+A	experiments/M2-S3/probe/gen/schemas/windows-schema.json
+A	experiments/M2-S3/probe/icons/icon.ico
+A	experiments/M2-S3/probe/src/main.rs
+A	experiments/M2-S3/probe/tauri.conf.json
+A	experiments/M2-S3/ui/index.html
+A	verification/M2-S3/baseline-selfcheck.md
+A	verification/M2-S3/environment.md
+A	verification/M2-S3/raw/00-run-log.md
+A	verification/M2-S3/raw/fixtures.json
+A	verification/M2-S3/raw/leakage-scan.json
+A	verification/M2-S3/raw/probe-results-first.json
+A	verification/M2-S3/raw/probe-results-repeat.json
+
+## forbidden-path filter (should be empty)
+(clean: no product/contract/AD-001/dependency paths touched)
+
+## root dependency files (should be empty)
+(clean: no root dependency/lock files touched)
+
+## git diff --check 90c3e459 HEAD
+(clean)
