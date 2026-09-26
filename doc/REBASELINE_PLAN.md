@@ -1,12 +1,12 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — T3.2.1 LEGACY FULL GATE OPEN; M2 FIRST WAVE RELEASED**
+Status: **ACTIVE DEVELOPMENT BASELINE — M2 FIRST WAVE COMPLETE; T3.2.1 CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2**
 
-Audit date: 2026-09-21 (Asia/Shanghai)
+Audit date: 2026-09-26 (Asia/Shanghai)
 
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
-Current integration checkpoint (2026-09-26): T3.2.1 delivery b18fa0e and Qoder Review b66788a are integrated at merge 6519125; AC10 is closed with integrated-head evidence. The parent Release Gate remains OPEN: AC3 passes only on the user-approved local simulation route, AC6/AC8/AC9 remain PARTIAL, and explicit clean-machine / Windows 10 / real-weight / true-cold-start items remain NOT_RUN. Fixed package input 08f9bd8 was not rebuilt; see [STATUS.md](STATUS.md) and [integration evidence](../verification/T3.2.1/integration-6519125/integration-evidence.md).
+Current governance checkpoint (2026-09-26): T3.2.1 is `closed_with_limitations` / `SUPERSEDED_BY_M2` under the user-confirmed React + TypeScript + Tauri + Python Core target. The prior integration at `6519125` remains valid historical evidence: fixed input `08f9bd8` was not rebuilt; AC3 remains `PASS（本机模拟路线；非干净机覆盖）`; AC6/AC8/AC9 remain `PARTIAL`; clean Windows/no-Python, Windows 10, real docTR-weight success and true cold-start remain `NOT_RUN`. This is not a Legacy Release approval. Detailed AC/Finding disposition: [closure audit](../verification/T3.2.1/legacy-closure-audit-20260926.md); live execution state: [STATUS.md](STATUS.md).
 
 This file is the sole source of truth for sequencing. `doc/STATUS.md` is the
 only live execution checkpoint. `doc/tasks/`, `doc/handoffs/`, `doc/reviews/`
@@ -15,9 +15,9 @@ releases a task.
 
 ## Architecture decision and future migration registration
 
-[AD-001 Target Desktop Architecture](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the user's accepted future target: React + TypeScript presentation, Tauri/Rust desktop shell and IPC, headless Python Core business/persistence authority, and SQLite as persistent source of truth. Current status: `ACCEPTED_TARGET_ARCHITECTURE / M2_FIRST_WAVE_RELEASED` within the four bounded Tasks below. The current production baseline remains Python + PySide6/QML + SQLite; historical evidence and current T3.2.1 acceptance remain judged against that baseline.
+[AD-001 Target Desktop Architecture](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the user's accepted formal target: React + TypeScript presentation, Tauri/Rust desktop shell and IPC, headless Python Core business/persistence authority, and SQLite as persistent source of truth. M2 first wave M2-I1, M2-I2, M2-R1 and M2-UI1 is complete and integrated. The existing PySide6/QML application may remain operational during migration, but its PyInstaller Windows Release Gate is historical and no longer defines future formal product release acceptance.
 
-**M2 — Desktop Architecture Migration: FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION.** User authorization on 2026-09-25 releases only the four Tasks below from the verified local `master` base `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` after Codex non-author [Review](reviews/M2-D1-0a27a54.md) `approved` and integration `100abfb`. Its [report](research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md) supplies the first-wave evidence. AD-001 remains the fixed React + TypeScript / Tauri / Python Core / SQLite target. Migration is incremental; current PySide6/QML production remains in service.
+**M2 — Desktop Architecture Migration: FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION.** User authorization on 2026-09-25 releases only the four Tasks below from the verified local `master` base `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` after Codex non-author [Review](reviews/M2-D1-0a27a54.md) `approved` and integration `100abfb`. Its [report](research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md) supplies the first-wave evidence. AD-001 remains the fixed React + TypeScript / Tauri / Python Core / SQLite target. Migration is incremental; the existing PySide6/QML application may remain operational during transition, but its PyInstaller Release Gate is retired as the future formal release gate.
 
 | First-wave Task | Status / Owner / Reviewer | Write authority and boundary |
 |---|---|---|
@@ -26,13 +26,29 @@ releases a task.
 | [M2-R1 Qt Runtime Feasibility Spike](tasks/M2-R1.md) | `done` / DeepSeek Harness / Codex; Delivery `5e2800b`, Handoff `052f99c`, Review `79b1a77` `approved`, integration `5803bd7` | Research/verification only. M2D1-22 is measured with platform limits on Windows 11; QML/`QQuickWindow` and production entry remain `UNVERIFIED`/`NOT_RUN`. No implementation authorization. |
 | [M2-UI1 React Feature Parity & Visual Contract](tasks/M2-UI1.md) | `done` / Qoder / Antigravity; Delivery `23a5ac0`, Handoff `784ce18`, [independent Review](reviews/M2-UI1-23a5ac0.md) `APPROVED` at `83a795b`, integration `5242f64` | Design, verification and Handoff only; no React/QML product implementation. Page-level blocked mapping remains an explicit user/contract decision. |
 
-These four Tasks may run in parallel because their write sets are disjoint; `src/bootstrap/**` belongs only to I1, the two UI logic sources only to I2. Prefer I2 Review/integration before I1 reconciliation/Review/integration; Codex may adjust if fixed diffs show no actual crossing. R1/UI1 are independently integrable non-product deliverables. Typed IPC `M2-C1`, Tauri + React Skeleton `M2-S1`, React production UI, Qt rendering replacement, Tauri packaging and Legacy QML removal remain **NOT_RELEASED**. After all four outcomes are reviewed and integrated, Codex will summarize results and freeze M2-C1 before M2-S1.
+These four Tasks were authorized as bounded first-wave work with disjoint write sets and are now integrated. The next M2 Task is the already user-authorized M2-C1 — Typed IPC Contract (candidate branch `agent/codex/M2-C1-typed-ipc-contract` @ `531647e`): current candidate status is `in_review`; Qoder must submit the formal R3 Review/evidence for fixed `reviewed_head=ac38dede84ff22290c9b9d579c1372c8184a7bd5`. It is not integrated into this mainline yet. M2-S1 remains unreleased until C1's own Gate completes. No C1 contract change is part of this Legacy closure.
 
 **Separate Legacy reliability backlog:** [DIAG-READING-EXPORT-001](tasks/DIAG-READING-EXPORT-001.md) is `proposed / NOT_RELEASED`. M2-I1 R3 Review P3-004 resurfaced a historically recorded `reading_export` signal/connection-lifetime flaky on the pre-I1 baseline. Its diagnosis is read-only and outside M2-I1, M2 first-wave authorization and the T3.2.1 Full Gate; a future Codex release must freeze its own base, worktree and scope.
 
-**Parallel legacy track:** [T3.2.1](tasks/T3.2.1.md) remains the independent Legacy Production Gate, Full Gate OPEN. The 2026-09-26 fixed input 08f9bd8, delivery b18fa0e, and Qoder Review b66788a are locally integrated at merge 6519125; Codex integration checks close AC10 only. AC3=PASS（本机模拟路线；非干净机覆盖）; AC6/AC8/AC9=PARTIAL; clean Windows/no-Python start, Windows 10 matrix, true docTR-weight success, and true cold-start measurement remain NOT_RUN. AC6 fail-closed diagnostics do not count as successful Mock/Local output; REPAIR-17 is proposed and unreleased. Sandbox is prohibited; local route is accepted only for AC3. M2 start neither passes, cancels, completes nor supersedes T3.2.1. T3.2.1 and M2 write sets and evidence stay isolated.
+**Legacy closure:** [T3.2.1](tasks/T3.2.1.md) is terminal `closed_with_limitations`, disposition `CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2`. It retains all historical AC states: AC1/2/3/4/5/7/10 remain PASS within their documented scopes; AC6=`PARTIAL (11/12)`, AC8=`PARTIAL`, AC9=`PARTIAL`; clean-machine, Windows 10 x64, real-weight success and true cold-start items remain `NOT_RUN`. The old Release Gate is not a future release gate and its unfinished ACs do not block M2. REPAIR-15/16/17 remain `proposed / NOT_RELEASED` with `SUPERSEDED / DO_NOT_RELEASE`; no Legacy repair will be prepared or released.
 
-T3.2.1 remains the sole Active product Task with Full Release Gate OPEN. Child [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `done`: fixed base=`8738c41`, product delivery=`aed0094`, final Handoff/evidence head=`13ae23f`, independent Review=`ccd26a4` (`APPROVE_WITH_CONDITIONS`, C1/C2 satisfied), Codex integration=`6fe7455`. Integration used only the 62-path fixed task delta; the full author branch was not merged because its ancestry includes unrelated REPAIR-9–12 candidate history. Post-integration focused suite: 162 passed, exit 0. C2 cleanup cleared all trailing whitespace; Codex recount found 13 pre-cleanup diagnostics vs 12 stated in the supplement, recorded in the integration report. Parent Full Gate remains OPEN and parent AC3 remains `BLOCKED`; this child completion does not change them. The former Sandbox attempts remain historical evidence; the parent clean-Windows/Sandbox Gate is unchanged. [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) for F-13-3 is `done`: fixed base=`4ab6f58c06cb0691413e2630cb48a145c18c383a`, delivery=`43b24ee`, Handoff tip=`2f0d266`, DeepSeek Harness Review=`f616175e` (`approved`), Codex integration=`296131b`. R14-008 records the accepted fixture-seeding deviation and unrun GUI-native creation substep; R14-010 path counts are corrected in the integration record. Parent Gate remained OPEN / AC3 BLOCKED at that integration checkpoint; see the current parent status above.
+### M2 Acceptance Backlog (unreleased requirements)
+
+These are requirements carried forward for M2 acceptance planning; this table creates no Task and grants no implementation scope. M2-C1 remains limited to its existing typed IPC contract.
+
+| Future acceptance requirement | Classification | Placement |
+|---|---|---|
+| Deterministic successful Mock/Local pipeline, saved result, restart recovery, Reader verification and export verification | `MIGRATE_TO_M2_ACCEPTANCE` | Future end-to-end acceptance; keep deterministic test provider separate from real docTR claims. |
+| Source hash integrity, Managed Copy, user edits, Lock and current/pinned Revision integrity | `CORE_REQUIREMENT` | Python Core/data safety acceptance and end-to-end recovery checks. |
+| Missing Provider fails closed with durable, diagnosable status | `CORE_REQUIREMENT` | Python Core/Pipeline acceptance. |
+| Reader export lineage and Library page-count/unknown semantics | `MIGRATE_TO_M2_ACCEPTANCE` | Reader/Export and Library parity acceptance. |
+| Tauri + Python Core clean installation/start, no system Python dependency, migrated AC6/AC8 workflow/path/exit behavior | `MIGRATE_TO_M2_ACCEPTANCE` | Future target-package acceptance, scoped by a later authorized release task. |
+| Real docTR-weight success qualification | `CORE_REQUIREMENT` | Deferred execution until controlled weights, environment and quality criteria are available. |
+| Cold-start metrics, target Windows support matrix, GUI console policy and packaged dependency closure | `DEFERRED` | Decide and verify in a future M2 Release Gate/D08; do not inherit the Legacy results. |
+
+The detailed AC and Qoder finding matrix is in the [Legacy Closure Audit](../verification/T3.2.1/legacy-closure-audit-20260926.md).
+
+Historical REPAIR-13/14 completion facts follow for traceability; they do not reopen T3.2.1 or block M2. Child [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `done`: fixed base=`8738c41`, product delivery=`aed0094`, final Handoff/evidence head=`13ae23f`, independent Review=`ccd26a4` (`APPROVE_WITH_CONDITIONS`, C1/C2 satisfied), Codex integration=`6fe7455`. Integration used only the 62-path fixed task delta; the full author branch was not merged because its ancestry includes unrelated REPAIR-9–12 candidate history. Post-integration focused suite: 162 passed, exit 0. C2 cleanup cleared all trailing whitespace; Codex recount found 13 pre-cleanup diagnostics vs 12 stated in the supplement, recorded in the integration report. At that historical checkpoint the Parent Full Gate was OPEN and AC3 was `BLOCKED`; this child completion did not change them. The former Sandbox attempts remain historical evidence; the parent clean-Windows/Sandbox Gate is unchanged. [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) for F-13-3 is `done`: fixed base=`4ab6f58c06cb0691413e2630cb48a145c18c383a`, delivery=`43b24ee`, Handoff tip=`2f0d266`, DeepSeek Harness Review=`f616175e` (`approved`), Codex integration=`296131b`. R14-008 records the accepted fixture-seeding deviation and unrun GUI-native creation substep; R14-010 path counts are corrected in the integration record. Parent Gate remained OPEN / AC3 BLOCKED at that historical integration checkpoint; current closure and preserved AC statuses are recorded in the closure audit.
 
 ## Current implemented state
 
@@ -71,7 +87,7 @@ T3.2.1 remains the sole Active product Task with Full Release Gate OPEN. Child [
 - **T3.1.1 verified complete:** reading progress and export history now use the
   SQLite v4 adapters with non-destructive one-time legacy import; P2 follow-ups
   are recorded in the Task and integration evidence.
-- **T3.2.1 gap:** packaging implementation and fixed-package evidence are integrated at merge 6519125; the full Release Gate remains OPEN. AC10 Review/integration closure is PASS, while AC6/AC8/AC9 are PARTIAL and clean-machine, Windows 10, real-weight success and true cold-start items remain NOT_RUN. The 2026-09-26 local simulation is an accepted route only for AC3; see [integration evidence](../verification/T3.2.1/integration-6519125/integration-evidence.md).
+- **T3.2.1 Legacy closure:** `closed_with_limitations / SUPERSEDED_BY_M2`; unfinished Legacy ACs remain at their recorded statuses and no longer block M2. See [closure evidence](../verification/T3.2.1/legacy-closure-audit-20260926.md).
 - Real provider quality and external endpoint behavior are not proven by the
   unit suite; adapters and fail-closed paths are not production quality claims.
 
@@ -93,7 +109,7 @@ Historical files are not rewritten merely to change this classification.
 | `OBSOLETE` | none | Retired scope is recorded as superseded so its history remains traceable. |
 | `DOC_ONLY` | TASK-001–003, TASK-024, TASK-028 | These are intentionally document/contract/design deliverables; their completion does not imply product implementation. |
 
-The old task ledgers remain in place for traceability. Their frontmatter is
+The old task ledgers remain in place for traceability. T3.2.1 closure does not rewrite its historic Review, Handoff, integration or verification records.
 historical metadata, not a second scheduling source of truth.
 
 ## Dependency graph
@@ -120,7 +136,7 @@ T2.1.1 Graphite Atelier QML
 
 T3.1.1 SQLite progress/export history
   requires: TASK-057 backup/recovery slice; recommended after T2 stabilization
-  -> T3.2.1 packaging and clean-machine release gate
+  -> T3.2.1 PyInstaller packaging and clean-machine Release Gate (historical downstream; closed with limitations / superseded by M2)
 ```
 
 No downstream task is released before its prerequisite is integrated. Product
@@ -137,7 +153,8 @@ QML shell changes are serialized through Codex.
 | 4 | [T2.1.1 Apply Design F to QML](tasks/T2.1.1.md) | **VERIFIED_COMPLETE**; product code integrated at `5da1cf6` | Qoder / Codex non-author review and integration; base `7f34135` | Shared F tokens use `pragma Singleton` + `qmldir`; all four pages consume them; 158px bookshelf geometry, accepted/completed-state contrast, and a discriminating hard-code guard are verified without business-logic changes. Review/integration evidence: [`review-bc49ef9`](../verification/T2.1.1/review-bc49ef9.md), [`integration-5da1cf6`](../verification/T2.1.1/integration-5da1cf6.md). |
 | 5 | [T2.2.1 Reader & Workbench Polish](tasks/T2.2.1.md) | **VERIFIED_COMPLETE**; integrated `fe9fca0` | ZCode functional implementation + Qoder QML/UI/UX / Codex non-author review and integration | Chapter picker, Workbench empty-state picker, dismissible command-error notification, and webtoon canvas consistency are accessible and tested. Evidence: [`review-0846573`](../verification/T2.2.1/review-0846573.md), [`integration-aad510b`](../verification/T2.2.1/integration-aad510b.md). |
 | 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **VERIFIED_COMPLETE**; product integrated `0c70e44` | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Evidence: [review-899bd3c](../verification/T3.1.1/review-899bd3c.md), [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md). |
-| 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | IN PROGRESS; FULL RELEASE GATE OPEN; Codex integration merge=6519125; AC10=PASS; AC3=PASS（本机模拟路线；非干净机覆盖）; AC6/AC8/AC9=PARTIAL. REPAIR-13/14 remain done; REPAIR-15/16/17 are proposed and unreleased. Fixed input=08f9bd8, no rebuild; Review b66788a approved for integration input only. | ZCode supplied evidence; Codex integrates; current Qoder independent Review approved | Integration evidence: [integration-6519125](../verification/T3.2.1/integration-6519125/integration-evidence.md). Full Gate remains OPEN: AC6 pipeline fail-closed is not successful Mock/Local output; AC6/AC8 clean-Windows coverage is NOT_RUN; AC9 true cold start and Windows 10 matrix are NOT_RUN; real docTR-weight success and completely Python-absent clean-machine startup are NOT_RUN. console=True and host-System32 ICU resolution remain pre-publication/D08 items; no publish or push authorized. |
+| 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2; AC states preserved. | Codex governance closure; evidence `verification/T3.2.1/legacy-closure-audit-20260926.md`. | Legacy unfinished ACs are not M2 blockers; REPAIR-15/16/17 are superseded and not released. |
+| 8 | M2-C1 — Typed IPC Contract (candidate Task on `agent/codex/M2-C1-typed-ipc-contract` @ `531647e`) | Authorized; `in_review`; formal Qoder R3 pending on fixed `ac38dede84ff22290c9b9d579c1372c8184a7bd5`. | Codex Owner; Qoder independent Reviewer. | Await R3 report/evidence; after its Gate, Codex reconciles candidate with current master. M2-S1 does not start before C1 closes. |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
@@ -152,11 +169,13 @@ Review, and Codex [integration evidence](../verification/T3.1.1/integration-899b
 are complete. The product delivery is integrated at `0c70e44`; R-002 and the
 remaining P2 follow-ups are explicitly deferred rather than hidden.
 
+## Historical T3.2.1 Legacy Release Gate record (superseded 2026-09-26)
+
 The formal [T3.2.1 Task](tasks/T3.2.1.md) and
 [Release Gate](../verification/T3.2.1/release-gate-c2fcb1c.md) use the product
-baseline `c2fcb1c`. The Gate decision is **PASS TO START** only. The current ZCode
+baseline `c2fcb1c`. The Gate decision is **PASS TO START** only. At the pre-closure checkpoint, the ZCode
 continuation input, local host-simulation status, remaining evidence, and no-Sandbox
-instruction are in
+instruction were recorded in
 [checkpoint](../verification/T3.2.1/clean-release-gate-20260926/checkpoint.md)
 and [Handoff](handoffs/T3.2.1-zcode-continuation-20260926.md); the older Codex
 closeout record remains historical.
@@ -169,12 +188,12 @@ was approved for packaging-test path independence only. REPAIR-11 Delivery
 Review `4f2f8a0`; the evidence findings were corrected by REPAIR-12 Delivery
 `a2f6695` / Handoff `8738c41`, which received slice-only `approved` Review
 `a656486`. The new review does not alter the historical REPAIR-11 decision or
-approve the full product Gate. AC3's required interactive workflow remains
-`NOT_RUN` and blocks release; AC5=`NOT_RUN`, AC6/AC7=`PARTIAL / NOT_RUN`,
-AC8/AC9=`NOT_RUN`, and R-014–R-016=`OPEN`. Codex's current closeout records
+approve the full product Gate. At that historical checkpoint AC3's required interactive workflow was
+`NOT_RUN`; AC5=`NOT_RUN`, AC6/AC7=`PARTIAL / NOT_RUN`,
+AC8/AC9=`NOT_RUN`, and R-014–R-016=`OPEN`. These values are not the later integrated checkpoint or the closure audit's final disposition. Codex's historical closeout records
 O-12-2 and keeps the legacy REPAIR-11 Handoff outside the integration candidate.
-No REPAIR-7/9/10/11/12 or related branch may be merged to `master` before full
-Gate closure and final independent Review.
+At that pre-closure checkpoint, no REPAIR-7/9/10/11/12 or related branch was to
+be merged to `master` before full Gate closure and final independent Review.
 
 ## Project control baseline — 2026-09-22
 
@@ -186,19 +205,14 @@ are maintained there; this Plan retains the authoritative phase, dependency
 and release order. The live dashboard, `TaskStatus`/`ExecutionState`, current
 branch/HEAD, dirty-file safety and next actions remain in [STATUS](STATUS.md).
 
-Current blocking chain (updated 2026-09-26):
+Current successor gate (updated 2026-09-26):
 
 ```text
-T1.2.1 VERIFIED_COMPLETE
-  → independent T2.1.1 Release Gate (PASSED)
-  → T2.1.1 VERIFIED_COMPLETE @ 5da1cf6
-  → T2.2.1 VERIFIED_COMPLETE @ fe9fca0
-  → T3.1.1 VERIFIED_COMPLETE @ 0c70e44
-  → T3.2.1 full Release Gate OPEN; AC3 PASS only on the approved local-simulation route (not clean-machine coverage)
-  → REPAIR-13 done @ integration `6fe7455`; REPAIR-14 done @ integration `296131b`
-  → T3.2.1 delivery `b18fa0e` + Qoder Review `b66788a` integrated at `6519125`; AC10 PASS (integration closure only)
-  → AC6/AC8/AC9 remain PARTIAL; REPAIR-17 is proposed / NOT_RELEASED; clean-machine, Windows 10 x64, real docTR-weight success, Python-absent startup, and true cold-start evidence remain NOT_RUN
-  → parent Release Gate remains OPEN; no publish/push authorization
+M2-I1 / M2-I2 / M2-R1 / M2-UI1 = integrated first wave complete
+  → T3.2.1 = closed_with_limitations / SUPERSEDED_BY_M2; unfinished Legacy ACs do not block M2
+  → M2-C1 — Typed IPC Contract = authorized candidate in_review
+  → Qoder formal R3 Review/evidence pending on fixed head ac38dede84ff22290c9b9d579c1372c8184a7bd5
+  → Codex review/integration decision; M2-S1 stays unreleased until C1 closes its Gate
 ```
 
 This is a dependency blocking chain, not a schedule critical path; no reliable

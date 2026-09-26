@@ -2,9 +2,9 @@
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。
 
-> **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。Legacy T3.2.1 Gate 与 M2 第一波并行，写集合隔离。
+> **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-Current released work: [T3.2.1](T3.2.1.md) Legacy Full Gate OPEN; integration=6519125, AC10=PASS; AC3=PASS（本机模拟路线；非干净机覆盖）; AC6/AC8/AC9=PARTIAL; clean Windows/no-Python, Windows 10 x64, true docTR-weight success and true cold-start=NOT_RUN. REPAIR-13/14=done; [REPAIR-15](T3.2.1-REPAIR-15-reader-export-lineage.md), [REPAIR-16](T3.2.1-REPAIR-16-bookshelf-page-count.md), and [REPAIR-17](T3.2.1-REPAIR-17-mock-local-pipeline-smoke.md) are proposed / NOT_RELEASED. M2 first-wave [I1](M2-I1.md) (done, R3 DeepSeek Harness Review approved, integration cff1e0a) / [I2](M2-I2.md) (done, approved Review, integration 7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9) / [R1](M2-R1.md) (done) / [UI1](M2-UI1.md) (done, Antigravity independent Review 83a795b approved, integration 5242f64) remain independent. [M2-D1](M2-D1.md) is done at 100abfb; M2-C1/M2-S1 remain unreleased.
+Current work: [T3.2.1](T3.2.1.md) is `closed_with_limitations / SUPERSEDED_BY_M2`; its unfinished Legacy ACs retain their historical states. [REPAIR-15](T3.2.1-REPAIR-15-reader-export-lineage.md), [REPAIR-16](T3.2.1-REPAIR-16-bookshelf-page-count.md) and [REPAIR-17](T3.2.1-REPAIR-17-mock-local-pipeline-smoke.md) remain `proposed / NOT_RELEASED` and are `SUPERSEDED / DO_NOT_RELEASE`. M2 first wave [I1](M2-I1.md), [I2](M2-I2.md), [R1](M2-R1.md), [UI1](M2-UI1.md) and [M2-D1](M2-D1.md) are done. The next authorized candidate is M2-C1 — Typed IPC Contract, `in_review` on `agent/codex/M2-C1-typed-ipc-contract` @ `531647e`, waiting for Qoder formal R3/evidence; M2-S1 remains unreleased.
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 

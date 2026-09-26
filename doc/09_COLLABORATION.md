@@ -62,7 +62,7 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 
 必须包含：ID、kind、status、suggested_owner、实际 owner、reviewer、depends_on、approval、base_commit、branch、worktree、需求来源、结果目标、Acceptance Criteria、allowed_paths、禁止范围、测试计划、产物与交接链接、已知阻塞。
 
-状态：proposed → ready → in_progress → in_review → approved → done。
+状态：proposed → ready → in_progress → in_review → approved → done；经架构取代而收口的任务可进入终态 `closed_with_limitations`。
 
 - proposed：规划，不允许实施。
 - ready：阶段已获准、依赖已集成、Owner 和范围确定。
@@ -71,7 +71,8 @@ linked worktree 的 toplevel 可以不同，但 common directory 必须指向本
 - in_review：交付 head 固定、测试和 Handoff 齐全。
 - changes_requested：Reviewer 要求修订，修订后回到 in_review。
 - approved：独立审查通过，等待 Codex 集成。
-- done：Codex 已集成，记录 integration_commit 并完成集成后验证。
+- done：Codex 已集成，记录 integration_commit 并完成集成后验证，且已释放的 AC 均按证据满足。
+- closed_with_limitations：终态，仅用于用户明确裁决或已批准目标架构取代旧 Task 时的治理收口。必须记录替代依据、closure evidence、每项未完成 AC/Finding 的分类及原始状态；不得把未完成项提升为 PASS，也不声称技术完成或可发布。除新用户授权外，不再恢复该 Task 的实现；该状态与 `done` 不等价。
 
 Task 的开发状态与产品 PipelineRun 状态是两套不同概念，不能混入应用 Schema。
 
