@@ -1,5 +1,9 @@
 # M2-S1 证据清单与复现说明
 
+> **修订（2026-09-26）**：Codex 非作者初审 `doc/reviews/M2-S1-4eaad68.md`（`f709e39`）为
+> `decision=changes_requested`（R-001=P1 检查→打开竞态、R-002=P2 引用并非不透明）。本清单已加入修订
+> 证据（§6），并明确：**A–E 的原始日志未重跑**，`run_all.ps1` 未改动；修订新增 probe F 为独立命令。
+
 - 权威执行转录：[`raw/00-run-all.log`](raw/00-run-all.log)（含确切命令、日志行数、逐探针 exit code、
   收集到的结果 JSON 的 SHA-256）。
 - 重复运行（第二次在已存在旧 report 文件的情况下）：[`raw/04-repeat-run-1.log`](raw/04-repeat-run-1.log)。
@@ -12,14 +16,15 @@
 |---|---|
 | `probes/00_recon.ps1` | 只读固定点/clone/环境转录 → `raw/00-recon.log` |
 | `probes/00_meminfo.py` | 主机内存/CPU/OS 事实（ctypes，绕开被沙箱拒绝的 CIM） |
-| `probes/m2s1_lab.py` | 共享库：psapi 内存计量、确定性 PNG 生成、capability token 原型、section/handle ctypes 封装 |
+| `probes/m2s1_lab.py` | 共享库：psapi 内存计量、确定性 PNG 生成、**签名可解码引用**原型、section/handle ctypes 封装；修订仅改 docstring（`raw/08-revision-code-diff.log`） |
 | `probes/make_fixtures.py` | 合成 fixture 生成器（固定种子）→ `raw/fixtures.json` |
-| `probes/probe_a_token.py` | 路线 A：受限引用/token（Core 子进程 + JSON 控制通道 + 带外读文件） |
+| `probes/probe_a_token.py` | 路线 A：受限签名引用（Core 子进程 + JSON 控制通道 + 带外读文件） |
 | `probes/probe_b_stream.py` | 路线 B：管道流式/分块（含背压、取消、截断、崩溃、超限拒绝） |
 | `probes/probe_c_section.py` | 路线 C1/C2/C3：命名 section、匿名 section + `DuplicateHandle`、只读写屏障 |
 | `probes/probe_d_base64.py` | 路线 D：JSON/Base64 对照（含按文档内分块与按消息边界分块、naive 最坏情况一次） |
 | `probes/probe_e_concurrency.py` | 并发/容量：A/B/C 三路线的 1/2/4/8 消费者 |
-| `probes/run_all.ps1` | 统一 runner（首次运行前会清理陈旧 report；不清理则第二次运行会误读旧结果——见 §5） |
+| `probes/probe_f_boundary.py` | **修订新增**：R-001/R-002 边界实测（TOCTOU 替换、大小竞态、等大小换内容、句柄绑定对照、引用可解码性） |
+| `probes/run_all.ps1` | 统一 runner（首次运行前会清理陈旧 report；**修订未改动**，故 A–E 日志的脚本身份仍成立） |
 
 ## 2. 结果与日志
 
@@ -31,8 +36,13 @@
 | `raw/probeC-result.json` | 路线 C 的 14 个场景（C1/C2/C3） |
 | `raw/probeD-result.json` | 路线 D 的 8 个场景（含 0 字节拒绝与 naive 最坏情况） |
 | `raw/probeE-result.json` | 并发 11 个场景 |
+| `raw/probeF-result.json` | **修订新增**：边界 8 个场景（F-01..F-08） |
 | `raw/05-final-digest.log` | 上述 JSON 的紧凑摘要（便于 Reviewer 快速比对） |
-| `raw/10..14-*.log` | 各探针的完整 stdout + `exit_code=` |
+| `raw/10..14-*.log` | 各探针的完整 stdout + `exit_code=`（原交付产物） |
+| `raw/15-probe-F-boundary.log` | **修订新增**：probe F 完整 stdout + `exit_code=0` |
+| `raw/07-revision-script-hashes.log` | 修订后各探针脚本 SHA-256（附 A–E 未重跑说明） |
+| `raw/08-revision-code-diff.log` | 共享库 `m2s1_lab.py` 的 diff + **AST 等价证明**（去 docstring 后 AST 完全一致 → 无行为变更） |
+| `raw/16-revision-fixture-reproducibility.log` | 原会话 lab 被平台回收后重建 fixture，10/10 SHA-256 与 `raw/fixtures.json` 一致 |
 
 所有收集到的结果 JSON 的 SHA-256 同时出现在 `raw/00-run-all.log` 的 `P-04` 段与
 `raw/06-evidence-hashes.log`，两者一致（已核对）。
@@ -97,6 +107,24 @@ report**。第二次运行时轮询立即读到旧文件，于是用了**已退�
 冷缓存吞吐（页缓存热）；打包/沙箱形态；模型权重通道；Revision 绑定撤销；
 产品 pytest/GUI/IPC runtime（Task 范围要求不运行）。
 
-`UNVERIFIED`：源文件边界的 OS 级 ACL/完整性级别；真实漫画页压缩率下的字节量；
-低完整性/跨会话对手的拒绝；命名 section 的显式 security descriptor 方案；
+`UNVERIFIED`：**检查→打开竞态（TOCTOU）的产品级防护（R-001 / S1-B11；窗口已实测为开，防护未测）**；
+**引用的路径保密性（R-002 / S1-B12；实测为“不保密”）**；源文件边界的 OS 级 ACL/完整性级别；
+真实漫画页压缩率下的字节量；低完整性/跨会话对手的拒绝；命名 section 的显式 security descriptor 方案；
 `DuplicateHandle` 在非默认 DACL 下的行为。
+
+## 6. 修订证据（对应 Codex Review R-001 / R-002）
+
+Review 固定点：`origin/master:doc/reviews/M2-S1-4eaad68.md`（`f709e39`），`decision=changes_requested`。
+修订以**新增 commit** 交付，旧提交 `4eaad684` / `7766a2bb` 保留。
+
+| 项 | 内容 |
+|---|---|
+| 新探针 | `probes/probe_f_boundary.py`（8 场景，F-01..F-08），独立命令运行；`run_all.ps1` **未改动** |
+| 新日志 | `raw/15-probe-F-boundary.log`（exit_code=0）、`raw/probeF-result.json`（8/8 PASS） |
+| 共享库变更证明 | `raw/08-revision-code-diff.log`：diff + 去 docstring 后 **AST 完全一致**（63,981 字符，无行为变更） |
+| 脚本 hash 现状 | `raw/07-revision-script-hashes.log`（含 A–E 未重跑的说明） |
+| fixture 复现 | `raw/16-revision-fixture-reproducibility.log`：10/10 SHA-256 与 `raw/fixtures.json` 一致 |
+| 环境变化 | 原会话 lab `…\Temp\dsh-K8Ki2H\m2s1-lab` 被平台回收；修订在新会话 lab `…\Temp\dsh-jvt911\m2s1-lab` 下运行。A–E 的原始日志仍引用原路径，属首次执行事实，未被改写 |
+| R-001 处置 | 报告把权限结论限定为**静态路径输入**；新增 F-03/F-04/F-05/F-06 实测竞态窗口；新增 S1-B11（含 4 条解除条件）；§12 逐项回应 |
+| R-002 处置 | 全文改为「签名的可解码引用」；F-01 实测无密钥可解出 `rel` 等字段；§5/§6.2/§6.3/§8.1/§8.2 更新；新增 S1-B12；§12 逐项回应 |
+| 未做的事 | 未在产品实现中修防护；F-07/F-08 仅为隔离对照；未实现映射 ID/加密；未重跑 A–E；未改 `src/**`、`tests/**`、共享契约、AD-001、Plan/STATUS、Review |

@@ -13,16 +13,15 @@
 - 未访问真实用户漫画库、源文件、凭据或模型缓存。全部载荷是 `%TEMP%` 下**合成**生成的 PNG。
 - 探针不导入 `src/**`，只用 CPython 标准库 + ctypes，可被非作者 Reviewer 直接重跑。
 
-## Codex 释放证据的位置（重要）
+## Codex 释放证据与 Review 的位置（重要）
 
-Codex 的释放/派发证据位于共享仓库 `origin/master`（`610f99dc79923e0be48c5b5dd633ff4facfb40e4`）：
+Codex 的释放/派发证据位于共享仓库 `origin/master`：
 
-- `verification/M2-S1/release-85a2aa7.md`
-- `verification/M2-S1/dispatch-85a2aa7.md`
+- `verification/M2-S1/release-85a2aa7.md`、`verification/M2-S1/dispatch-85a2aa7.md`（释放提交 `610f99d`）
+- `doc/reviews/M2-S1-4eaad68.md`（**非作者初审**，`decision=changes_requested`，提交 `f709e39c`）
 
-按派发要求，Owner 分支停留在固定 base、**不 merge 治理提交**，因此这两个文件**不在本分支**，本 Task
-也**没有**创建、修改或删除它们。需要查阅时用
-`git show origin/master:verification/M2-S1/release-85a2aa7.md`。
+按派发要求，Owner 分支以固定 base 为起点、**不 merge 治理提交**，因此上述文件**不在本分支**，本 Task
+也**没有**创建、修改或删除它们。需要查阅时用 `git show origin/master:<path>`。Owner 未编写任何 Review。
 
 ## 文件索引
 
@@ -30,11 +29,19 @@ Codex 的释放/派发证据位于共享仓库 `origin/master`（`610f99dc79923e
 |---|---|
 | [`00-environment-and-recon.md`](00-environment-and-recon.md) | 固定点、clone 形态、Contract blob、环境与判定（文字版） |
 | [`01-source-and-consumer-reality.md`](01-source-and-consumer-reality.md) | AC1：AS-IS 图片/tile 生产者与消费者、四类资源生命周期、Core/host seam |
-| [`02-evidence-manifest.md`](02-evidence-manifest.md) | 证据清单、脚本/结果 hash、复现步骤、`NOT_RUN`/`UNVERIFIED` 汇总 |
-| [`03-checkpoint.md`](03-checkpoint.md) | 恢复检查点（另一 Agent 可据此继续） |
-| [`probes/`](probes/) | 可重跑探针与 runner（`00_recon.ps1`、`m2s1_lab.py`、`make_fixtures.py`、`probe_a..e`、`run_all.ps1`） |
-| [`raw/`](raw/) | 原始日志（含确切命令与 exit code）、收集到的结果 JSON、fixture 清单与 hash |
-| [`04-verification-plan-results.md`](04-verification-plan-results.md) | Task「验证计划」四行的实际执行结果与命令/exit 摘要 |
+| [`02-evidence-manifest.md`](02-evidence-manifest.md) | 证据清单、脚本/结果 hash、复现步骤、`NOT_RUN`/`UNVERIFIED` 汇总、**§6 修订证据（R-001/R-002）** |
+| [`03-checkpoint.md`](03-checkpoint.md) | 恢复检查点（§5.2 格式，另一 Agent 可据此继续） |
+| [`04-verification-plan-results.md`](04-verification-plan-results.md) | Task「验证计划」各行的实际执行结果与命令/exit 摘要（含修订行） |
+| [`probes/`](probes/) | 可重跑探针与 runner（`00_recon.ps1`、`m2s1_lab.py`、`make_fixtures.py`、`probe_a..f`、`run_all.ps1`） |
+| [`raw/`](raw/) | 原始日志（含确切命令与 exit code）、收集到的结果 JSON、fixture 清单与 hash、证据 hash、delivery/revision scope log |
+
+**修订（2026-09-26）**：Codex 非作者初审 `doc/reviews/M2-S1-4eaad68.md`（`f709e39`）为
+`decision=changes_requested`。Owner 在**原授权路径内**、以**新增 commit**（不 reset/amend）修订了
+研究报告、Task、Handoff 与证据：新增 `probes/probe_f_boundary.py`（TOCTOU 与引用可解码性实测）、
+`raw/15-probe-F-boundary.log`、`raw/probeF-result.json`、`raw/07-revision-script-hashes.log`、
+`raw/08-revision-code-diff.log`、`raw/16-revision-fixture-reproducibility.log`、`raw/21-revision-scope.log`。
+**A–E 原始日志未重跑**，`run_all.ps1` 未改动；共享库 `m2s1_lab.py` 仅 docstring 变更（去 docstring 后
+AST 完全一致）。详见研究报告 §12。
 
 ## 复现
 
@@ -42,9 +49,13 @@ Codex 的释放/派发证据位于共享仓库 `origin/master`（`610f99dc79923e
 # 只读固定点核验
 pwsh -NoProfile -File verification/M2-S1/probes/00_recon.ps1
 
-# 全套探针（合成 fixture 生成在 %TEMP%\m2s1-lab，仓库内只留 hash 与日志）
+# 原交付 A–E 全套（合成 fixture 生成在 %TEMP%\m2s1-lab，仓库内只留 hash 与日志）
 pwsh -NoProfile -File verification/M2-S1/probes/run_all.ps1 `
   | Tee-Object -FilePath verification/M2-S1/raw/00-run-all.log
+
+# 修订新增：边界实测（probe F），独立命令，runner 未改动
+python verification/M2-S1/probes/probe_f_boundary.py --lab "$env:TEMP\m2s1-lab" `
+  --out "$env:TEMP\m2s1-lab\probeF-result.json"
 ```
 
 要求：Windows 10/11 x64、Python 3.14（本机 `C:\Python314\python.exe`，3.14.6）、PowerShell 7。

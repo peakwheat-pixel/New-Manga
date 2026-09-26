@@ -17,6 +17,20 @@ Labels used in the results
 ``PROPOSAL``   a design prototype implemented here only to be measurable.
 ``UNVERIFIED`` not exercised (say why in ``notes``).
 
+Known limits (M2-S1 Review R-001/R-002, see ../../doc/research report section 12)
+--------------------------------------------------------------------------------
+- The reference is **signed but not opaque**: the payload is Base64URL JSON.
+  HMAC-SHA256 gives integrity/authenticity, never confidentiality, so the
+  relative path and resource id are readable by anyone holding the string.
+  (R-002)
+- :meth:`ScopedResourceResolver.resolve` and :func:`read_file_bounded` are
+  **check-then-use**: they validate a path/size, and the caller opens the file
+  afterwards. A concurrent replacement of the file, of a directory component
+  or of the size between validation and open is **out of scope and not
+  mitigated** here; the static negative scenarios only prove behaviour for a
+  static path input. (R-001, measured boundary in
+  ``probes/probe_f_boundary.py``)
+
 The controlled rejection limit below is a *probe configuration*, not a product
 threshold. The user has not supplied a large-media size budget, so no PASS
 threshold is invented from it: exceeding it must produce a typed rejection
@@ -259,7 +273,13 @@ def mint_token(
     expires_at: float,
     mode: str = "read",
 ) -> str:
-    """Mint an opaque, signed, scoped, expiring resource reference.
+    """Mint a signed, scoped, expiring resource reference -- readable, not opaque.
+
+    The wire form is ``m2s1.<base64url(json)>.<base64url(hmac-sha256)>``. The
+    signature proves the reference was minted by the key holder (integrity and
+    authenticity); it does **not** hide the payload. ``rel``, ``rid``,
+    ``scope``, ``exp`` and ``mode`` can be decoded by anyone who has the
+    string. See Review finding R-002 and `probe_f_boundary.py` F-01.
 
     PROPOSAL only: the wire shape is a research prototype so the permission
     and lifecycle behaviour can be measured. It is not an M2-C1 Contract
@@ -313,6 +333,16 @@ class ScopedResourceResolver:
     Order of checks is deliberate and is itself part of the measurement:
     structure -> signature -> expiry -> revocation -> scope class -> mode ->
     lexical safety -> containment -> reparse walk -> existence.
+
+    **This is check-then-use, not check-and-use.** :meth:`resolve` returns a
+    *path*; the caller opens it later in a separate filesystem operation. The
+    guarantees below therefore hold only for a **static path input**: a
+    concurrent rename/replace of the file, of a directory component (including
+    swapping a plain directory for a junction into an out-of-scope tree) or of
+    the file size between the checks and the caller's open is **not mitigated
+    and not measured** here (M2-S1 Review finding R-001; the open window is
+    demonstrated by ``probe_f_boundary.py``, and the handle-bound variant
+    F-05/F-06 is an isolated demonstration only, not a product guarantee).
     """
 
     #: Scope classes this resolver is willing to serve. ``user-source`` is
@@ -388,10 +418,16 @@ class ScopedResourceResolver:
 
 
 def read_file_bounded(path: str | Path, limit: int = MEDIA_LIMIT_BYTES) -> tuple[bytes, dict]:
-    """Read a file only if its size is within the controlled limit.
+    """Read a file only if its *stat size* is within the controlled limit.
 
     The size is checked *before* allocation so an over-limit resource is
-    rejected without allocating its bytes (AC3 "controlled rejection").
+    rejected without allocating its bytes (AC3 "controlled rejection"). This is
+    check-then-use: the size comes from :func:`os.path.getsize` and the bytes
+    from a later, separate ``open``. A concurrent size change between the two
+    calls is not mitigated here (M2-S1 Review finding R-001; demonstrated by
+    ``probe_f_boundary.py`` F-04). A bound implementation must re-verify the
+    size from the opened handle (``os.fstat``) before reading, and must verify
+    the file identity against what was validated.
     """
 
     size = os.path.getsize(path)
