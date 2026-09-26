@@ -55,7 +55,12 @@ The checkouts are separate directories and branches; neither shares a writable w
 
 - `dsh --version` returned `0.1.7-rc.2`; `dsh --profile headless --dump-config` exited 0 and confirmed the headless profile is available.
 - Qoder CLI is installed at `C:/Users/49745/.qoder-cn/bin/qoderclicn/qoderclicn.exe`; `--help` exited 0. Qoder desktop process is present. No `qoder` command/MCP tool is registered; the installed Qoder CLI is the available dispatch route.
-- Dispatch status before launching reviewer sessions: `READY_TO_DISPATCH`. Record actual DSH/Qoder session IDs, resulting Review commits, and post-review worktree checks below after completion. A configured CLI or prepared prompt is not itself a Review or an approval.
+- Dispatch status: `RUNNING`.
+
+- DeepSeek Harness: `dsh headless <authorized review prompt>` was started from the DSH worktree; Codex terminal exec session `72166` returned initial task acceptance/reconnaissance and remains the active process handle. This is a shell session handle, not a claimed DSH Review commit/session ID.
+- Qoder: installed Qoder CLI was started with `--cwd` set to the Qoder Review worktree, `--permission-mode accept_edits`, and the authorized Review prompt; Codex terminal exec session `15760` is the active process handle. The CLI had not emitted output at the initial dispatch poll. This is a shell session handle, not a claimed Qoder Review commit/session ID.
+
+After completion, record each agent session identity if returned, independent decision, Review commit, exact commands/exit codes, and post-review worktree checks. A started CLI process is not itself a Review or an approval.
 
 ## Review constraints
 
