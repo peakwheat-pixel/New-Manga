@@ -1,5 +1,5 @@
 # M2-S1 evidence file hashes (sha256, bytes, repo-relative path)
-# generated_utc: 2026-09-26T10:37:16Z
+# generated_utc: 2026-09-26T10:38:47Z
 843b0430f988de7bdafa1873a9322c772b3dcb76a120a9df6bffc7d7ae3de3bc        3561  verification/M2-S1/00-environment-and-recon.md
 6581af1e2ab9ac2e3b8fc37e841f215afdb3a7247413b47f85fa1b0146d208da       10498  verification/M2-S1/01-source-and-consumer-reality.md
 ff2d5704f75b17ae2a509aa230ead3ff6d8420c7327798aec290b5e0d27f37af        9478  verification/M2-S1/02-evidence-manifest.md
@@ -33,6 +33,7 @@ e10ee16fcb798d9f41263df0bf7dd7ff29895015cdb6d90573bf8db012b26c05        9280  ve
 4c6abd938b582a4305709fb93784119179bbc941d086bcce567e324c35a38248        9063  verification/M2-S1/raw/15-probe-F-boundary.log
 306f88625e1c51e612101ec1161e2c8f8438da34bd9f09669413f605b5b00fad        3054  verification/M2-S1/raw/16-revision-fixture-reproducibility.log
 4398b040994fca1f11bf15f5180a9e8b1d57f70050f43a58d68360d533b86ce7        4737  verification/M2-S1/raw/20-delivery-scope.log
+ccdc66156bc3897eae99b4bb7e1c2beb1c9aa0c7c954d9c7415ad11ceb8574c1        5339  verification/M2-S1/raw/21-revision-scope.log
 510ca77609fbbbd0c17cb8002834e767a5a09944e0bfc105fec90a0269261680        5271  verification/M2-S1/raw/fixtures.json
 2950a449efef5aac01e19a4195fe39bf026e26761e18ac0409d6df0cfa043e89        7711  verification/M2-S1/raw/probeA-result.json
 0fc94b7d80d319acf7f6fabe8a31c5c80f034939f71f0d9a88bea5916d944b2b       14607  verification/M2-S1/raw/probeB-result.json

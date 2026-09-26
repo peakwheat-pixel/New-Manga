@@ -4,10 +4,16 @@ author: DeepSeek Harness
 recipient: Codex
 base_commit: 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc
 delivery_head: 4eaad684769a02035748b95186d478bbed926042
-status: in_review
+status: superseded_by_revision
 ---
 
 # Handoff：M2-S1 — Large-Media Resource Channel Feasibility Spike
+
+> **已被取代（2026-09-26，保留为审计记录）**：Codex 非作者初审
+> [`doc/reviews/M2-S1-4eaad68.md`](../reviews/M2-S1-4eaad68.md)（`f709e39`）为 `decision=changes_requested`
+> （R-001=P1 检查→打开竞态、R-002=P2 引用并非不透明）。当前有效交接为
+> [`M2-S1-64c87d1.md`](M2-S1-64c87d1.md)，`reviewed_head=64c87d13faa3889c749096dedeacf5afbe8dda16`。
+> 本文件正文未改动；其中「不透明引用」「越界/重解析逃逸已缓解」等表述**已由修订取代**，请以修订版为准。
 
 ## 交付结果
 
