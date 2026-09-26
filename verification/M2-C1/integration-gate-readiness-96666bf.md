@@ -15,7 +15,7 @@
 
 ## 更正先前 blocker 误报
 
-先前未提交的 Gate 核验命令把固定 Handoff SHA 的 `...2299fd7...` 误写为 `...2299df7...`。两个值都是 40 字符；错误 SHA 不存在，因此 `git cat-file` exit 128。正确 SHA 在共享仓库和 DSH r3 standalone clone 都返回 `commit`；共享仓库的 loose object 与 pack、DSH r3 clone 的 pack 中均能定位。并非 Git 对象间歇性丢失。先前“对象缺失”的判断撤销，保留此纠错说明以供审计。
+先前未提交的 Gate 核验命令把固定 Handoff SHA 的 `...2299fd7...` 误写为 `...2299df7...`。两个值都是 40 字符；错误 SHA 不存在，因此 `git cat-file` exit 128。正确 SHA 在共享仓库和 DSH r3 standalone clone 都返回 `commit`；共享仓库的 loose object 与 pack、DSH r3 clone 的 pack 中均能定位。并非 Git 对象间歇性丢失。既有历史记录 `verification/M2-C1/review-environment-recovery-7de1cd2-r2.md` 的两处固定 SHA 文本也含同一转置；该历史文件原样保留，r2 worktree 实际 `git rev-parse HEAD` 返回正确 SHA。先前“对象缺失”的判断撤销，保留此纠错说明以供审计。
 
 ## Gate 核验
 
