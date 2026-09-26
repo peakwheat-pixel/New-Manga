@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-当前工作：[T3.2.1](T3.2.1.md) 为 closed_with_limitations / SUPERSEDED_BY_M2；REPAIR-15/16/17 保持 NOT_RELEASED 且不再释放。M2 首波任务、[M2-C1](M2-C1.md)、[M2-S1](M2-S1.md) 研究与 [M2-S2](M2-S2.md) 安全验证均已完成。2026-09-26：M2-S1 §7 的 7 项产品阈值已由用户授权代行[裁决](../../verification/M2-S1/product-thresholds-ruling-67c3d56.md)；[M2-S2](M2-S2.md) `done`（Owner=ZCode delivery=`d502aa5a`、[Antigravity Review](../reviews/M2-S2-fbdf1bc2.md) `approved`、集成 merge=`bf1d1230`、[集成核验](../../verification/M2-S2/integration-bf1d1230.md)）——原型层关闭 S1-B11/S1-B12 验证缺口，产品级保证保留 `UNVERIFIED`，为 Contract 修订提供输入。大媒体产品实现未释放。详见 [STATUS](../STATUS.md)。
+当前工作：[T3.2.1](T3.2.1.md) 为 closed_with_limitations / SUPERSEDED_BY_M2；REPAIR-15/16/17 保持 NOT_RELEASED 且不再释放。M2 首波任务、[M2-C1](M2-C1.md)、[M2-S1](M2-S1.md) 研究与 [M2-S2](M2-S2.md) 安全验证均已完成。2026-09-26：M2-S1 §7 的 7 项产品阈值已由用户授权代行[裁决](../../verification/M2-S1/product-thresholds-ruling-67c3d56.md)；[M2-S2](M2-S2.md) `done`（integration=`bf1d1230`）；**[M2-C2](M2-C2.md) 契约修订已释放 `ready`**（Owner=ZCode、Reviewer=DeepSeek Harness，base=`3f468e6e`，branch=`agent/zcode/M2-C2-typed-ipc-contract-revision`，[释放证据](../../verification/M2-C2/release-3f468e6e.md)）——把 T1–T7 与安全结论落入 Contract `1.1`，不授权 runtime 实现。详见 [STATUS](../STATUS.md)。
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 
