@@ -1,0 +1,56 @@
+=== A. TaskProjection field count ===
+class TaskProjection at line 96
+field count = 23
+  97: run_id
+  98: run_status
+  99: run_title
+  100: overall_progress
+  101: current_page_id
+  102: current_step_type
+  103: step_flow
+  104: rows
+  105: total_page_count
+  106: completed_page_count
+  107: failed_page_count
+  108: skipped_page_count
+  109: blocked_page_count
+  110: waiting_page_count
+  111: processing_page_count
+  112: blocked_reasons
+  113: can_pause
+  114: can_stop
+  115: can_continue
+  116: can_restart
+  117: can_abandon
+  118: can_retry_failed
+  119: extra
+
+=== B. service.py control/lifecycle line numbers ===
+'def control_run': :829
+      829: def control_run(self, run_id: str, action: str) -> ControlResult:
+'def recover_running_runs': :886
+      886: def recover_running_runs(self) -> tuple[str, ...]:
+'def retry_failed_targets': :903
+      903: def retry_failed_targets(self, run_id: str) -> PipelineRun:
+'TARGET_NOT_FOUND': :573, :575, :684, :913, :1042, :1057 (total 7)
+'pause_requested': :775, :807, :834, :852, :858
+'INVALID_RUN_TRANSITION': :275, :280, :282, :284, :634, :833 (total 9)
+
+=== C. editing/service.py revision API ===
+def list_revisions hits: 0
+  'def restore_revision' 550: def restore_revision(self, region_id: str, revision_no: int) -> Region:
+  'def set_revision_pinned' 574: def set_revision_pinned(self, region_id: str, revision_no: int, pinned: bool) -> None:
+  '\\.list_revisions\\(' 131: (rev.revision_no for rev in self._repo.list_revisions(region.region_id)),
+
+=== D. CredentialRef in src/ at fixed base ===
+exit = 1 (1 == zero hits)
+stdout: (empty)
+
+=== E. CommandType members vs Contract ��5.1 enum list ===
+CommandType member count = 18
+values: ['translate_all', 'translate_untranslated', 'translate_selected', 'translate_single', 'rerender_all', 'rerender_selected', 'rerender_single', 'reinpaint_all', 'reinpaint_selected', 'reinpaint_single', 'reocr_all', 'reocr_selected', 'reocr_single', 'ocr_region', 'retranslate_region', 'retranslate_region_full', 'reinpaint_region', 'rerender_region']
+Contract ��5.1 listed count = 18
+listed: ['translate_all', 'translate_untranslated', 'translate_selected', 'translate_single', 'rerender_all', 'rerender_selected', 'rerender_single', 'reinpaint_all', 'reinpaint_selected', 'reinpaint_single', 'reocr_all', 'reocr_selected', 'reocr_single', 'ocr_region', 'retranslate_region', 'retranslate_region_full', 'reinpaint_region', 'rerender_region']
+SET EQUAL = True
+missing from contract: []
+extra in contract   : []
