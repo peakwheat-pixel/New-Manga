@@ -173,10 +173,17 @@ rc=0
 
 (empty above = zero changes)
 
-## bookkeeping commit after the Handoff commit
-A final bookkeeping commit removes the self-referential SHA field from the revision Handoff
-(collaboration protocol section 5), records the Handoff commit SHA in doc/tasks/M2-S1.md, appends
-this section and refreshes raw/06-evidence-hashes.log. It touches only doc/handoffs/M2-S1-64c87d1.md,
-doc/tasks/M2-S1.md, verification/M2-S1/raw/21-revision-scope.log and
-verification/M2-S1/raw/06-evidence-hashes.log -- all inside the authorized write set.
+## bookkeeping commits after the Handoff commit
+Two small bookkeeping commits follow the Handoff commit: the first removes the self-referential SHA
+field from the revision Handoff (collaboration protocol section 5) and records the Handoff commit SHA
+in doc/tasks/M2-S1.md; the second corrects the checkpoint's reference to that removed field name and
+refreshes this log and the hash manifest. Together they touch only:
+  doc/handoffs/M2-S1-64c87d1.md
+  doc/tasks/M2-S1.md
+  verification/M2-S1/03-checkpoint.md
+  verification/M2-S1/raw/21-revision-scope.log
+  verification/M2-S1/raw/06-evidence-hashes.log
+-- all inside the authorized Owner write set. The branch tip after them is reported in the Owner
+delivery reply. The reviewed fixed point remains:
 revision delivery head (reviewed_head) = 64c87d13faa3889c749096dedeacf5afbe8dda16
+handoff commit (first) = 37808abd895294e5c508b662db0a4166bb22ba08

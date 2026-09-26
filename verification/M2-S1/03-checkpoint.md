@@ -9,8 +9,9 @@ ExecutionState       : CHECKPOINTED
 Branch               : agent/deepseek/M2-S1-resource-channel-spike
 Worktree             : C:/Users/49745/.codex/worktrees/M2-S1-dsh-resource-channel（C: 独立 clone，非 linked worktree）
 start commit         : 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc
-current HEAD         : 见 `doc/handoffs/M2-S1-*.md` 的 `delivery_head` / `handoff_commit`
-                       （本文件随修订提交入库，不自引用自身 hash）
+current HEAD         : 见 `doc/handoffs/M2-S1-64c87d1.md` 的 `delivery_head`（= 修订 reviewed_head）；
+                       Handoff 提交与后续记账提交的 SHA 记录在 `doc/tasks/M2-S1.md` 的交付与运行记录
+                       与 `raw/21-revision-scope.log`（本文件不自引用自身 hash）
 Working Tree         : 干净（修订交付提交后）；修订 Handoff 提交只新增/修改授权文档
 Completed Steps      : 1) 固定点/clone 形态/Contract blob 核验
                        2) AS-IS 图片/tile 生产者与消费者、四类资源生命周期、Core/host seam 勘察
