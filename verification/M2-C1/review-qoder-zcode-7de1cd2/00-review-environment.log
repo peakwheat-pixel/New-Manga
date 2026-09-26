@@ -1,0 +1,48 @@
+# Qoder Reviewer B — 00 Review Environment & Worktree Binding
+
+Reviewer: Qoder (Reviewer B, non-author independent Reviewer).
+Task: M2-C1 (Typed IPC Contract — ZCode Owner Delivery).
+Review branch: `review/qoder/M2-C1-zcode-7de1cd2`.
+Review worktree: `G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2`.
+Fixed reviewed_head: `b2377288680569dbee4e2299fd7dfae4de067c54`.
+
+## Worktree binding
+
+| Check | Command | Observed | Result |
+|---|---|---|---|
+| Worktree root | `git rev-parse --show-toplevel` | `G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-7de1cd2` | PASS |
+| Branch | `git branch --show-current` | `review/qoder/M2-C1-zcode-7de1cd2` | PASS |
+| HEAD | `git rev-parse HEAD` | `b2377288680569dbee4e2299fd7dfae4de067c54` (= reviewed_head) | PASS |
+| Common dir | `git rev-parse --git-common-dir` | `G:/CODEX/New Manga/.git` (shared history with main repo) | PASS |
+| Status | `git status --porcelain=v1` | 0 lines; working tree clean | PASS |
+
+## Environment
+
+- Git: 2.52.0.windows.1 (per `git --version`).
+- Shell: Git Bash on Windows (commands below are semantically identical to the
+  PowerShell-form prescriptions in the Task; exit code semantics unchanged).
+- Python: 3.14.x (available but not used for product code execution).
+- CLI session ID: 31a451ce-4440-47f4-9794-48550a1bc0ba (UNVERIFIED - reported by user,
+  not independently provable by Reviewer)
+
+## Historical objects resolved
+
+| Object | `git cat-file -t` | Resolves? |
+|---|---|---|
+| `7478f72fe6f9872cae29f4fa12888b5e1f2380f1` (fixed base) | commit | YES |
+| `7de1cd27e22037d4b76b235c9f11399b0cea9463` (Owner Delivery) | commit | YES |
+| `b2377288680569dbee4e2299fd7dfae4de067c54` (Owner Handoff / reviewed_head) | commit | YES |
+| `ac38dede84ff22290c9b9d579c1372c8184a7bd5` (adopted draft head / Qoder R3 reviewed_head) | commit | YES |
+| `1950a23619ae489ecc88209593eac75546d61105` (Qoder R3 Review commit) | commit | YES |
+
+All historical objects resolve in the shared object database and were read via `git show`
+only. No historical object was merged, cherry-picked, or rebased into the Review branch.
+
+## NOT_RUN register
+
+| Item | Status | Reason |
+|---|---|---|
+| Product pytest | NOT_RUN | Document-only Task; adding/running product tests is out of scope |
+| GUI / QML runtime checks | NOT_RUN | No UI change; no UI run authorized |
+| IPC Runtime / serialization / version handshake tests | NOT_RUN | No runtime exists; implementing/starting one is forbidden (M2-S1 NOT_RELEASED) |
+| Large-media channel capacity tests | NOT_RUN | Deferred to independent Spike |

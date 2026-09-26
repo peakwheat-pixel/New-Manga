@@ -1,0 +1,79 @@
+# Qoder Reviewer B — 05 §1 Relative Link Limitation Assessment
+
+Reviewer: Qoder (Reviewer B).
+Contract: `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` (blob `4b503a17…`).
+
+## The limitation
+
+Contract §1 line 16 contains a relative link:
+
+```markdown
+来源、行号、commit 和证据分类见 [`verification/M2-C1/source-trace.md`](../../verification/M2-C1/source-trace.md)。
+```
+
+This link resolves within the adopted draft head tree (`ac38dede…`) but has **no target**
+inside the Owner branch tree, because:
+1. Case A requires the Contract blob to stay byte-identical (changing the link would be
+   a semantic-anchor change).
+2. The allowed Owner paths do not include creating files under `verification/M2-C1/`
+   outside `zcode-owner/**`.
+
+## Assessment
+
+### 1. Historical object remains readable
+
+The target content is readable from the fixed historical object:
+
+```bash
+git show ac38dede84ff22290c9b9d579c1372c8184a7bd5:verification/M2-C1/source-trace.md
+```
+
+The draft evidence file remains accessible in the shared Git object database.
+
+### 2. Owner provides equivalent trace
+
+The Owner provides an equivalent Owner-base-anchored trace at:
+
+`verification/M2-C1/zcode-owner/01-source-trace-owner-base.md`
+
+This file covers:
+- Blob identity of all Contract-cited evidence files at Owner base `7478f72` (section A)
+- Independent spot checks of Contract claims at `7478f72` (section B)
+- Coverage of mandated topics (section C)
+- Draft trace equivalence statement (section D)
+
+### 3. Contract body is self-contained
+
+The Contract正文 (body) contains all AS-IS evidence declarations inline. Understanding
+the contract clauses does not require reading the external trace file. The trace is a
+reference for source verification, not a normative part of the contract.
+
+### 4. Not a semantic defect
+
+The broken relative link is a link-scope limitation of the adoption path, not a semantic
+defect. It does not alter any normative clause. All Contract claims remain valid and
+verifiable.
+
+## Usability judgment
+
+For subsequent implementers:
+- The Contract's relative link is broken in the Owner tree, but:
+  1. The Contract body contains all necessary AS-IS evidence declarations.
+  2. The historical trace is readable from fixed object `ac38dede…`.
+  3. The Owner equivalent trace at `zcode-owner/01-source-trace-owner-base.md` provides
+     the same verification coverage at the Owner base.
+
+**Conclusion**: The limitation does **not block usability** and does **not merit a
+finding**. If Codex integration wishes to eliminate the broken link in the tree, it is
+a governance navigation decision on the integration side, requiring appropriate Case
+semantic assessment, and is outside this Review's authorization.
+
+## Owner decision reference
+
+This assessment aligns with Owner decision D-O2 in
+`verification/M2-C1/zcode-owner/02-decision-log.md`:
+
+> The Contract's §1 relative link `../../verification/M2-C1/source-trace.md` resolves
+> inside the draft head tree (`ac38dede…`) but has no target inside the Owner branch
+> tree… This is a link-scope limitation of the adoption path, not a semantic defect;
+> it does not alter any normative clause.

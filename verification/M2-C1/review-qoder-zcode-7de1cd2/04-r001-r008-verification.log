@@ -1,0 +1,148 @@
+# Qoder Reviewer B — 04 R-001…R-008 Independent Verification
+
+Reviewer: Qoder (Reviewer B).
+Fixed base: `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`.
+Contract: `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` (blob `4b503a17…`, 276 lines).
+
+## Method
+
+Each R-001…R-008 finding from Qoder R3 review (`1950a23:doc/reviews/M2-C1-4d66523-r3.md`)
+was independently re-verified at the fixed base `7478f72` by inspecting the actual source
+files cited by the Contract. The R3 dispositions were used as input, but each verification
+was re-run independently.
+
+## R-001: §6.1 TaskProjection wire DTO labeling
+
+**Contract location**: §6.1 `:143-170` ↔ `src/application/tasks/projection.py:95-119`
+
+**Verification**:
+- `TaskProjection` dataclass field count at `projection.py:96-119` = **23 fields**
+- Contract §6.1 mapping table (7 rows) covers 6+1+1+7+1+6+1 = 23 fields ✓
+- `:143` first sentence contains `PROPOSAL — wire DTO` ✓
+- `PageProjectionRow:82-92` has 7 row fields (page_id, page_order, filename, status,
+  is_locked, is_pipeline_current, error_code) matching Contract `:166` ✓
+- `extra: Mapping[str, str]` → `Record<string, string>` preserved at `:170` ✓
+
+**Disposition**: **closed** — Contract correctly labels §6.1 as PROPOSAL wire DTO with
+complete field mapping.
+
+## R-002: AD-001 large-media boundary citation
+
+**Contract location**: `verification/M2-C1/source-trace.md:26` → `AD-001:33`
+
+**Verification**:
+- `doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md:33` reads:
+  `4. **Large binary boundary.** Large comic images, Webtoon assets and model weights
+  must not traverse ordinary JSON IPC or Base64 IPC…`
+- The cited line is stable between draft baseline `eec1aa4` and Owner base `7478f72`
+
+**Disposition**: **closed** — AD-001:33 correctly supports Contract §10 large-media
+prohibition.
+
+## R-003: AD-001 section reference precision
+
+**Contract location**: §2 `:34`
+
+**Verification**:
+- `AD-001:15` = `## TARGET_INTENT and decision` (table `:19-24`)
+- `AD-001:28` = `## Migration constraints`
+- 6th item `**SQLite authority.**` is at `:35`
+- Contract cites "17–25" (covering intro + table) and "6th item (line 35)" — both precise
+
+**Disposition**: **closed** — AD-001 references are accurate.
+
+## R-004: §7.1 Run lifecycle state machine
+
+**Contract location**: §7.1 `:197-203` ↔ `src/application/tasks/service.py:829-884`
+
+**Verification**:
+- `control_run:829` exists with signature `def control_run(self, run_id: str, action: str)`
+- pause gate at `:832`: `status not in {PENDING, RUNNING}` → sets `pause_requested=True`
+  then `_persist` (`:832-837`) ✓
+- stop rejects COMPLETED/COMPLETED_WITH_FAILURES/FAILED/CANCELLED at `:841` ✓
+- stop immediately cancels PENDING/PAUSED at `:844-846` ✓
+- continue covers paused→pending and interrupted replan at `:850-861`, else
+  `INVALID_RUN_TRANSITION` ✓
+- restart only for interrupted, writes `interruption_disposition="restarted"` at `:863-874` ✓
+- abandon writes `termination_reason="abandoned_after_interruption"` and does not set
+  disposition at `:876-882` ✓
+- `retry_failed_targets:903` raises `TARGET_NOT_FOUND:913` on no failed pages ✓
+- `recover_running_runs:886` exists ✓
+- `PipelineRunStatus` 9 values at `models.py:91-99` (pending, running, paused, blocked,
+  completed, completed_with_failures, failed, cancelled, interrupted) match Contract `:193`
+  **verbatim** ✓
+
+**Disposition**: **closed** — Contract §7.1 lifecycle description matches actual state
+machine.
+
+## R-005: §5 CredentialRef honesty
+
+**Contract location**: §5 `:114`
+
+**Verification**:
+- `git grep 'CredentialRef' 7478f72 -- src/` → exit 1 (zero hits)
+- No `CredentialRef` type definition exists in codebase
+- Contract correctly marks credential DTO/exchange as `UNKNOWN / DEFERRED`
+
+**Disposition**: **closed** — Contract does not invent unsupported credential types.
+
+## R-006: §9 half-up conversion formula
+
+**Contract location**: §9 `:75`, `:243` ↔ `region_canvas.py:40-41,67-99`
+
+**Verification**:
+- `region_canvas.py:40-41`: `_to_pixels = min(size, max(0, math.floor(axis * size + 0.5)))`
+  — pixel-space half-up then clamp to `[0,size]` ✓
+- `normalized_to_page_geometry` validates `page_w/h > 0` and ≥2 points ✓
+- No `[0,1]` pre-clamp on normalized input ✓
+- Typed `RegionCanvasError` with stable `.code` (PAGE_SIZE_UNAVAILABLE, TOO_FEW_POINTS,
+  DEGENERATE_GEOMETRY) ✓
+
+**Disposition**: **closed** — Contract §9 conversion formula matches actual implementation.
+
+## R-007: M2-S1 link removal
+
+**Contract location**: `doc/tasks/README.md:7`
+
+**Verification**:
+- `git grep 'M2-S1\.md' 7478f72 -- doc/tasks/README.md` → exit 1 (no link)
+- `git ls-tree -r 7478f72 | grep -i M2-S1` → exit 1 (no M2-S1.md file in tree)
+- README text contains `M2-S1 remains unreleased.` ✓
+
+**Disposition**: **closed** — M2-S1 link removed, no unreleased Task referenced.
+
+## R-008: §5 list_revisions attribution
+
+**Contract location**: §5 `:112`
+
+**Verification**:
+- `ports.py:30`: `RegionRepository.list_revisions` definition count = **1** ✓
+- `service.py` internal `def list_revisions` = exit 1 (zero definitions) ✓
+- service provides `restore_revision:550`, `set_revision_pinned:574` (count = 2) ✓
+- `service.py:131` delegates via `self._repo.list_revisions(...)` ✓
+- `service.py:577` delegates `set_revision_pinned` ✓
+- `_repo` injected as `repository: RegionRepository` at `:154/:157` ✓
+
+**Disposition**: **closed** — Contract correctly attributes `list_revisions` to repository
+port, restore/pin to service.
+
+## Regression check
+
+The Contract blob `4b503a17…` is byte-identical between adopted head `ac38ded` and
+reviewed_head `b237728`. All line numbers cited by R3 remain valid. No regression
+detected.
+
+## Summary
+
+| ID | Disposition |
+|---|---|
+| R-001 | closed |
+| R-002 | closed |
+| R-003 | closed |
+| R-004 | closed |
+| R-005 | closed |
+| R-006 | closed |
+| R-007 | closed |
+| R-008 | closed |
+
+All 8 findings independently verified and closed at fixed base `7478f72`.
