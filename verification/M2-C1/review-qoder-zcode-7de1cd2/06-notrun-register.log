@@ -1,0 +1,62 @@
+# Qoder Reviewer B — 06 NOT_RUN Register
+
+Reviewer: Qoder (Reviewer B).
+Task: M2-C1 (Typed IPC Contract — ZCode Owner Delivery).
+
+## NOT_RUN items
+
+This Review did **not** run any of the following, in accordance with the document-only
+Task scope:
+
+| Item | Status | Reason |
+|---|---|---|
+| Product pytest | NOT_RUN | Document-only Task; adding/running product tests is out of scope |
+| GUI / QML runtime checks | NOT_RUN | No UI change; no UI run authorized |
+| IPC Runtime / serialization tests | NOT_RUN | No runtime exists; implementing/starting one is forbidden (M2-S1 NOT_RELEASED) |
+| Version handshake tests | NOT_RUN | No runtime exists; handshake is PROPOSAL / NOT_IMPLEMENTED |
+| Event ordering / replay / idempotency tests | NOT_RUN | No runtime exists; these are PROPOSAL / UNKNOWN |
+| Error mapping runtime validation | NOT_RUN | No runtime exists; error envelope is PROPOSAL |
+| Large-media channel capacity tests | NOT_RUN | Deferred to independent Spike |
+| Large-media security / lifecycle tests | NOT_RUN | Deferred to independent Spike |
+| Tauri / React / Python IPC integration tests | NOT_RUN | No implementation authorized |
+| Schema / migration tests | NOT_RUN | No Schema change authorized |
+
+## Collected / Passed / Failed / Skipped / Exit
+
+For all NOT_RUN items:
+- Collected: N/A
+- Passed: N/A
+- Failed: N/A
+- Skipped: N/A
+- Exit: N/A
+
+## Scope justification
+
+The Task authorization explicitly limits the Owner to document-only delivery:
+- Contract file (`doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`)
+- Owner verification files (`verification/M2-C1/zcode-owner/**`)
+- Owner Handoff (`doc/handoffs/M2-C1-zcode-7de1cd2.md`)
+
+No product code, tests, runtime, Schema, or integration work is authorized. The Task
+does not authorize Integration Gate, M2-S1, or any implementation.
+
+## What this Review verified
+
+This Review independently verified:
+1. Case A blob equivalence (Contract byte-identical to R3 reviewed Contract)
+2. Diff scope and allowed paths (8 files, all within allowed paths)
+3. Dependency ancestry (D1/I1/I2/R1/UI1 all ancestors of base)
+4. R-001…R-008 source code evidence at fixed base `7478f72`
+5. §1 relative link limitation (assessed, not blocking)
+6. Architecture stance (independently confirmed against AD-001 and source)
+7. React consumer usability (command/query/event/resource mapping clarity)
+
+All verification was read-only inspection of source files and Git objects. No runtime
+behavior was tested.
+
+## Approval boundary
+
+The `APPROVED` decision covers **the document contract only**, not product behavior.
+Any subsequent implementation Task must independently verify runtime semantics
+(handshake, event delivery/replay/idempotency, error mapping, large-media channel
+capacity and security). The approval does not carry over to implementation.

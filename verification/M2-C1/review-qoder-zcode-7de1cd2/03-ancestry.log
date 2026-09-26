@@ -1,0 +1,25 @@
+# Qoder Reviewer B — 03 Dependency Ancestry
+
+Reviewer: Qoder (Reviewer B).
+Fixed base: `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`.
+
+## Dependency ancestry at fixed base
+
+`git merge-base --is-ancestor <dependency> 7478f72fe6f9872cae29f4fa12888b5e1f2380f1`,
+independently re-run by Qoder Reviewer B:
+
+| Dependency | Integrated commit | Exit code |
+|---|---|---:|
+| M2-D1 | `100abfb` (full: `100abfbb51e2d59d0b0dccbb0cb6aa15ba9f6e02`) | 0 |
+| M2-I1 | `cff1e0a8658f57a2e9caf774a9de0961e8f65da3` | 0 |
+| M2-I2 | `7e2da6b8eb55e437d36fa3fa11cbf3e976a834c9` | 0 |
+| M2-R1 | `5803bd7` | 0 |
+| M2-UI1 | `5242f64` | 0 |
+
+All five dependencies are ancestors of the fixed base. This reproduces the Owner
+verification in `zcode-owner/00-environment.md` and the Scheduler registration result.
+
+## Conclusion
+
+All required dependencies (D1, I1, I2, R1, UI1) are properly integrated into the
+fixed base `7478f72`. No ancestry violations detected.

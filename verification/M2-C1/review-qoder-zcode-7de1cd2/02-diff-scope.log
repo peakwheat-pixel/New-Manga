@@ -1,0 +1,72 @@
+# Qoder Reviewer B — 02 Diff Scope & Allowed Paths
+
+Reviewer: Qoder (Reviewer B).
+Fixed base: `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`.
+Reviewed head: `b2377288680569dbee4e2299fd7dfae4de067c54`.
+
+## A. Full diff scope
+
+`git diff --name-status 7478f72fe6f9872cae29f4fa12888b5e1f2380f1..HEAD`
+(raw, exit 0):
+
+```text
+A	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+A	doc/handoffs/M2-C1-zcode-7de1cd2.md
+A	verification/M2-C1/zcode-owner/00-environment.md
+A	verification/M2-C1/zcode-owner/01-source-trace-owner-base.md
+A	verification/M2-C1/zcode-owner/02-decision-log.md
+A	verification/M2-C1/zcode-owner/03-blob-equivalence.md
+A	verification/M2-C1/zcode-owner/04-git-scope-check.md
+A	verification/M2-C1/zcode-owner/05-drift-and-links.md
+```
+
+Total: 8 added files.
+
+## B. Allowed-path verification, item by item
+
+| Path | Allowed by Task? |
+|---|---|
+| `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` | YES — the one authoritative Owner Contract |
+| `doc/handoffs/M2-C1-zcode-7de1cd2.md` | YES — Owner Handoff |
+| `verification/M2-C1/zcode-owner/00-environment.md` | YES — `verification/M2-C1/zcode-owner/**` |
+| `verification/M2-C1/zcode-owner/01-source-trace-owner-base.md` | YES |
+| `verification/M2-C1/zcode-owner/02-decision-log.md` | YES |
+| `verification/M2-C1/zcode-owner/03-blob-equivalence.md` | YES |
+| `verification/M2-C1/zcode-owner/04-git-scope-check.md` | YES |
+| `verification/M2-C1/zcode-owner/05-drift-and-links.md` | YES |
+
+All 8 paths are within the allowed Owner paths.
+
+## C. Forbidden-path probes
+
+Probes over the diff for forbidden paths:
+
+| Forbidden path pattern | Probe result |
+|---|---|
+| `src/**` | Empty (no matches) |
+| `tests/**` | Empty |
+| `packaging/**` | Empty |
+| `src-tauri/**` | Empty |
+| `*.qml` | Empty |
+| `*.jsx` / `*.tsx` | Empty |
+| `*.sql` (Schema/migration) | Empty |
+| Lock files / dependency manifests | Empty |
+| `src/bootstrap/**` | Empty |
+| Domain Contract files | Empty |
+| `doc/tasks/**` / `doc/STATUS.md` / `doc/REBASELINE_PLAN.md` / `doc/00_INDEX.md` | Empty |
+| Historical Review/evidence files | Empty |
+
+**No forbidden-path violation detected.**
+
+## D. Whitespace check
+
+`git diff --check 7478f72fe6f9872cae29f4fa12888b5e1f2380f1 HEAD`
+→ no output, exit 0 (no trailing whitespace / conflict markers).
+
+## E. Summary
+
+- Total changed files: 8 (all Added)
+- All paths within allowed scope: YES
+- Forbidden-path violations: 0
+- Whitespace issues: 0
+- Exit code: 0
