@@ -1,0 +1,379 @@
+### doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+  L16   [md-link  ] ../../verification/M2-C1/source-trace.md
+        resolved=verification/M2-C1/source-trace.md -> MISSING@HEAD (present@ac38)
+  L16   [code-path] verification/M2-C1/source-trace.md
+        resolved=verification/M2-C1/source-trace.md -> MISSING@HEAD (present@ac38)
+  L35   [code-path] src/application/tasks/projection.py
+        resolved=src/application/tasks/projection.py -> RESOLVES@HEAD
+  L35   [code-path] src/application/editing/region_canvas.py
+        resolved=src/application/editing/region_canvas.py -> RESOLVES@HEAD
+
+### doc/handoffs/M2-C1-zcode-7de1cd2.md
+  L17   [md-link  ] ../../verification/M2-C1/zcode-owner/03-blob-equivalence.md
+        resolved=verification/M2-C1/zcode-owner/03-blob-equivalence.md -> RESOLVES@HEAD
+  L17   [code-path] doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+        resolved=doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md -> RESOLVES@HEAD
+  L26   [code-path] verification/M2-C1/zcode-owner/00-environment.md
+        resolved=verification/M2-C1/zcode-owner/00-environment.md -> RESOLVES@HEAD
+  L31   [code-path] src/bootstrap/app.py
+        resolved=src/bootstrap/app.py -> RESOLVES@HEAD
+  L76   [code-path] verification/M2-C1/zcode-owner/01-source-trace-owner-base.md
+        resolved=verification/M2-C1/zcode-owner/01-source-trace-owner-base.md -> RESOLVES@HEAD
+
+### verification/M2-C1/zcode-owner/00-environment.md
+  L30   [code-path] verification/M2-C1/scheduler-registration-7478f72.md
+        resolved=verification/M2-C1/scheduler-registration-7478f72.md -> MISSING@HEAD/BROKEN
+  L56   [code-path] verification/M2-C1/review-r3-4d66523/03-finding-recheck.md
+        resolved=verification/M2-C1/review-r3-4d66523/03-finding-recheck.md -> MISSING@HEAD/BROKEN
+
+### verification/M2-C1/zcode-owner/01-source-trace-owner-base.md
+  L20   [code-path] src/application/tasks/projection.py
+        resolved=src/application/tasks/projection.py -> RESOLVES@HEAD
+  L21   [code-path] src/application/editing/region_canvas.py
+        resolved=src/application/editing/region_canvas.py -> RESOLVES@HEAD
+  L22   [code-path] src/application/tasks/service.py
+        resolved=src/application/tasks/service.py -> RESOLVES@HEAD
+  L23   [code-path] src/domain/tasks/models.py
+        resolved=src/domain/tasks/models.py -> RESOLVES@HEAD
+  L24   [code-path] src/application/editing/ports.py
+        resolved=src/application/editing/ports.py -> RESOLVES@HEAD
+  L25   [code-path] src/application/editing/service.py
+        resolved=src/application/editing/service.py -> RESOLVES@HEAD
+  L26   [code-path] src/bootstrap/core_assembly.py
+        resolved=src/bootstrap/core_assembly.py -> RESOLVES@HEAD
+  L27   [code-path] doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+        resolved=doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md -> RESOLVES@HEAD
+  L28   [code-path] doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md
+        resolved=doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md -> RESOLVES@HEAD
+  L76   [code-path] src/bootstrap/app.py
+        resolved=src/bootstrap/app.py -> RESOLVES@HEAD
+  L77   [code-path] src/bootstrap/app.py
+        resolved=src/bootstrap/app.py -> RESOLVES@HEAD
+
+### verification/M2-C1/zcode-owner/02-decision-log.md
+  L11   [code-path] doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+        resolved=doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md -> RESOLVES@HEAD
+  L31   [code-path] src/bootstrap/app.py
+        resolved=src/bootstrap/app.py -> RESOLVES@HEAD
+
+### verification/M2-C1/zcode-owner/03-blob-equivalence.md
+  L11   [code-path] doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+        resolved=doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md -> RESOLVES@HEAD
+  L46   [code-path] doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+        resolved=doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md -> RESOLVES@HEAD
+  L47   [code-path] doc/tasks/M2-C1.md
+        resolved=doc/tasks/M2-C1.md -> MISSING@HEAD (present@ac38)
+  L48   [code-path] doc/handoffs/M2-C1-4d66523.md
+        resolved=doc/handoffs/M2-C1-4d66523.md -> MISSING@HEAD (present@ac38)
+  L49   [code-path] doc/00_INDEX.md
+        resolved=doc/00_INDEX.md -> RESOLVES@HEAD
+  L49   [code-path] doc/REBASELINE_PLAN.md
+        resolved=doc/REBASELINE_PLAN.md -> RESOLVES@HEAD
+  L49   [code-path] doc/STATUS.md
+        resolved=doc/STATUS.md -> RESOLVES@HEAD
+  L49   [code-path] doc/tasks/README.md
+        resolved=doc/tasks/README.md -> RESOLVES@HEAD
+  L50   [code-path] verification/M2-C1/review-remediation-r3.md
+        resolved=verification/M2-C1/review-remediation-r3.md -> MISSING@HEAD (present@ac38)
+  L50   [code-path] verification/M2-C1/reviewer-prompt-r3.md
+        resolved=verification/M2-C1/reviewer-prompt-r3.md -> MISSING@HEAD (present@ac38)
+  L51   [code-path] verification/M2-C1/source-trace.md
+        resolved=verification/M2-C1/source-trace.md -> MISSING@HEAD (present@ac38)
+  L51   [code-path] verification/M2-C1/zcode-owner/01-source-trace-owner-base.md
+        resolved=verification/M2-C1/zcode-owner/01-source-trace-owner-base.md -> RESOLVES@HEAD
+
+### verification/M2-C1/zcode-owner/04-git-scope-check.md
+  L32   [code-path] doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+        resolved=doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md -> RESOLVES@HEAD
+  L33   [code-path] verification/M2-C1/zcode-owner/00-environment.md
+        resolved=verification/M2-C1/zcode-owner/00-environment.md -> RESOLVES@HEAD
+  L34   [code-path] verification/M2-C1/zcode-owner/01-source-trace-owner-base.md
+        resolved=verification/M2-C1/zcode-owner/01-source-trace-owner-base.md -> RESOLVES@HEAD
+  L35   [code-path] verification/M2-C1/zcode-owner/02-decision-log.md
+        resolved=verification/M2-C1/zcode-owner/02-decision-log.md -> RESOLVES@HEAD
+  L36   [code-path] verification/M2-C1/zcode-owner/03-blob-equivalence.md
+        resolved=verification/M2-C1/zcode-owner/03-blob-equivalence.md -> RESOLVES@HEAD
+  L37   [code-path] verification/M2-C1/zcode-owner/05-drift-and-links.md
+        resolved=verification/M2-C1/zcode-owner/05-drift-and-links.md -> RESOLVES@HEAD
+
+### verification/M2-C1/zcode-owner/05-drift-and-links.md
+  L13   [code-path] src/bootstrap/app.py
+        resolved=src/bootstrap/app.py -> RESOLVES@HEAD
+  L14   [code-path] tests/packaging/conftest.py
+        resolved=tests/packaging/conftest.py -> RESOLVES@HEAD
+  L15   [code-path] tests/packaging/test_frozen_runtime_contract.py
+        resolved=tests/packaging/test_frozen_runtime_contract.py -> RESOLVES@HEAD
+  L16   [code-path] tests/packaging/test_packaging_contract.py
+        resolved=tests/packaging/test_packaging_contract.py -> RESOLVES@HEAD
+  L17   [code-path] tests/packaging/test_qt_closure.py
+        resolved=tests/packaging/test_qt_closure.py -> RESOLVES@HEAD
+  L27   [code-path] doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+        resolved=doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md -> RESOLVES@HEAD
+  L35   [code-path] verification/M2-C1/zcode-owner/01-source-trace-owner-base.md
+        resolved=verification/M2-C1/zcode-owner/01-source-trace-owner-base.md -> RESOLVES@HEAD
+
+=== SUMMARY of non-resolving references inside reviewed_head ===
+  doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md:16 [md-link] ../../verification/M2-C1/source-trace.md -> verification/M2-C1/source-trace.md :: MISSING@HEAD (present@ac38)
+  doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md:16 [code-path] verification/M2-C1/source-trace.md -> verification/M2-C1/source-trace.md :: MISSING@HEAD (present@ac38)
+  verification/M2-C1/zcode-owner/00-environment.md:30 [code-path] verification/M2-C1/scheduler-registration-7478f72.md -> verification/M2-C1/scheduler-registration-7478f72.md :: MISSING@HEAD/BROKEN
+  verification/M2-C1/zcode-owner/00-environment.md:56 [code-path] verification/M2-C1/review-r3-4d66523/03-finding-recheck.md -> verification/M2-C1/review-r3-4d66523/03-finding-recheck.md :: MISSING@HEAD/BROKEN
+  verification/M2-C1/zcode-owner/03-blob-equivalence.md:47 [code-path] doc/tasks/M2-C1.md -> doc/tasks/M2-C1.md :: MISSING@HEAD (present@ac38)
+  verification/M2-C1/zcode-owner/03-blob-equivalence.md:48 [code-path] doc/handoffs/M2-C1-4d66523.md -> doc/handoffs/M2-C1-4d66523.md :: MISSING@HEAD (present@ac38)
+  verification/M2-C1/zcode-owner/03-blob-equivalence.md:50 [code-path] verification/M2-C1/review-remediation-r3.md -> verification/M2-C1/review-remediation-r3.md :: MISSING@HEAD (present@ac38)
+  verification/M2-C1/zcode-owner/03-blob-equivalence.md:50 [code-path] verification/M2-C1/reviewer-prompt-r3.md -> verification/M2-C1/reviewer-prompt-r3.md :: MISSING@HEAD (present@ac38)
+  verification/M2-C1/zcode-owner/03-blob-equivalence.md:51 [code-path] verification/M2-C1/source-trace.md -> verification/M2-C1/source-trace.md :: MISSING@HEAD (present@ac38)
+  total references checked = 49; non-resolving = 9
+
+=== Qoder review artefacts (NOT in reviewed_head) link check ===
+  doc/reviews/GOV-001-2e8f4bf.md:15 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/GOV-001-2e8f4bf.md:15 ../templates/REVIEW.md -> doc/templates/REVIEW.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/GOV-001-2e8f4bf.md:27 ../tasks/GOV-001.md -> doc/tasks/GOV-001.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/GOV-001-2e8f4bf.md:61 ../tasks/GOV-001.md -> doc/tasks/GOV-001.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/GOV-001-2e8f4bf.md:68 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/GOV-001-2e8f4bf.md:78 ../tasks/GOV-001.md -> doc/tasks/GOV-001.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-D1-0a27a54.md:17 ../tasks/M2-D1.md -> doc/tasks/M2-D1.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-D1-0a27a54.md:17 ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md -> doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-D1-0a27a54.md:17 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-D1-0a27a54.md:17 ../research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md -> doc/research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-D1-0a27a54.md:17 ../handoffs/M2-D1-0a27a54.md -> doc/handoffs/M2-D1-0a27a54.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:17 ../../verification/M2-I1/review-0766952/scope-and-diff.log -> verification/M2-I1/review-0766952/scope-and-diff.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:31 ../../verification/M2-I1/review-0766952/p01-r1-probe.log -> verification/M2-I1/review-0766952/p01-r1-probe.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:31 ../../verification/M2-I1/review-0766952/p01-r2-probe.log -> verification/M2-I1/review-0766952/p01-r2-probe.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:32 ../../verification/M2-I1/review-0766952/p01-r1-regression.log -> verification/M2-I1/review-0766952/p01-r1-regression.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:32 ../../verification/M2-I1/review-0766952/p01-r2-regression.log -> verification/M2-I1/review-0766952/p01-r2-regression.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:33 ../../verification/M2-I1/review-0766952/s01-no-qt.log -> verification/M2-I1/review-0766952/s01-no-qt.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:34 ../../verification/M2-I1/review-0766952/task-suite.log -> verification/M2-I1/review-0766952/task-suite.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:35 ../../verification/M2-I1/review-0766952/full-suite.log -> verification/M2-I1/review-0766952/full-suite.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:35 ../../verification/M2-I1/review-0766952/full-suite-with-openssl.log -> verification/M2-I1/review-0766952/full-suite-with-openssl.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:37 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:41 ../tasks/M2-I1.md -> doc/tasks/M2-I1.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-0766952.md:41 ../REBASELINE_PLAN.md -> doc/REBASELINE_PLAN.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:23 ../../doc/tasks/M2-I1.md -> doc/tasks/M2-I1.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:23 M2-I1-0766952.md -> M2-I1-0766952.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/M2-I1-09ad43a-deepseek.md:23 M2-I1-a89447f.md -> M2-I1-a89447f.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/M2-I1-09ad43a-deepseek.md:23 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:23 ../../AGENTS.md -> AGENTS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:43 ../../AGENTS.md -> AGENTS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:43 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:62 ../../verification/M2-I1/review-09ad43a/ -> verification/M2-I1/review-09ad43a :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:66 ../../verification/M2-I1/review-09ad43a/task-suite.log -> verification/M2-I1/review-09ad43a/task-suite.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:66 ../../verification/M2-I1/review-09ad43a/task-suite.exit.txt -> verification/M2-I1/review-09ad43a/task-suite.exit.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:67 ../../verification/M2-I1/review-09ad43a/task-suite-skip-reasons.log -> verification/M2-I1/review-09ad43a/task-suite-skip-reasons.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:68 ../../verification/M2-I1/review-09ad43a/architecture.log -> verification/M2-I1/review-09ad43a/architecture.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:69 ../../verification/M2-I1/review-09ad43a/qtfree-py314.log -> verification/M2-I1/review-09ad43a/qtfree-py314.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:70 ../../verification/M2-I1/review-09ad43a/rg-core-three-layers.log -> verification/M2-I1/review-09ad43a/rg-core-three-layers.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:72 ../../verification/M2-I1/review-09ad43a/task-suite.log -> verification/M2-I1/review-09ad43a/task-suite.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:73 ../../verification/M2-I1/review-09ad43a/task-suite.log -> verification/M2-I1/review-09ad43a/task-suite.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:74 ../../verification/M2-I1/review-09ad43a/full-suite.log -> verification/M2-I1/review-09ad43a/full-suite.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:74 ../../verification/M2-I1/review-09ad43a/delivery-full-suite-run2.log -> verification/M2-I1/review-09ad43a/delivery-full-suite-run2.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:74 ../../verification/M2-I1/review-09ad43a/baseline-full-suite-0275290.log -> verification/M2-I1/review-09ad43a/baseline-full-suite-0275290.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:74 ../../verification/M2-I1/review-09ad43a/baseline-full-suite-run2.log -> verification/M2-I1/review-09ad43a/baseline-full-suite-run2.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:75 ../../verification/M2-I1/review-09ad43a/baseline-repeat-1.log -> verification/M2-I1/review-09ad43a/baseline-repeat-1.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:75 ../../verification/M2-I1/review-09ad43a/delivery-repeat-1.log -> verification/M2-I1/review-09ad43a/delivery-repeat-1.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-09ad43a-deepseek.md:86 ../../doc/tasks/M2-I1.md -> doc/tasks/M2-I1.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:20 ../../AGENTS.md -> AGENTS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:20 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:20 ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md -> doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:22 ../../verification/M2-I1/review-a89447f/qtfree-py314-coverage.log -> verification/M2-I1/review-a89447f/qtfree-py314-coverage.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:26 ../tasks/M2-I1.md -> doc/tasks/M2-I1.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:26 ../REBASELINE_PLAN.md -> doc/REBASELINE_PLAN.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:26 ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md -> doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:28 ../../verification/M2-I1/review-a89447f/qt-assembly-failure-probe.log -> verification/M2-I1/review-a89447f/qt-assembly-failure-probe.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I1-a89447f.md:34 ../../verification/M2-I1/review-a89447f/task-suite-py312.log -> verification/M2-I1/review-a89447f/task-suite-py312.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:22 ../../AGENTS.md -> AGENTS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:22 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:22 ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md -> doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:25 ../tasks/M2-I2.md -> doc/tasks/M2-I2.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:30 ../tasks/M2-I2.md -> doc/tasks/M2-I2.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:30 ../REBASELINE_PLAN.md -> doc/REBASELINE_PLAN.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:30 ../AD-001_TARGET_DESKTOP_ARCHITECTURE.md -> doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:32 ../../verification/M2-I2/review-5d4a465/guard-mutant.log -> verification/M2-I2/review-5d4a465/guard-mutant.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:38 ../../verification/M2-I2/review-5d4a465/focused-py312.log -> verification/M2-I2/review-5d4a465/focused-py312.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:38 ../../verification/M2-I2/review-5d4a465/qtfree-py314.log -> verification/M2-I2/review-5d4a465/qtfree-py314.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-5d4a465.md:38 ../../verification/M2-I2/review-5d4a465/guard-mutant.log -> verification/M2-I2/review-5d4a465/guard-mutant.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-86ecb94.md:36 ../../verification/M2-I2/review-86ecb94-shim-import-probe.log -> verification/M2-I2/review-86ecb94-shim-import-probe.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-86ecb94.md:70 ../tasks/M2-I1.md -> doc/tasks/M2-I1.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-86ecb94.md:70 ../STATUS.md -> doc/STATUS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-86ecb94.md:70 ../REBASELINE_PLAN.md -> doc/REBASELINE_PLAN.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-a4705a9.md:25 ../../verification/M2-I2/review-a4705a9/dynamic-all-guard-probe.log -> verification/M2-I2/review-a4705a9/dynamic-all-guard-probe.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-a4705a9.md:29 ../../verification/M2-I2/review-a4705a9/focused-shim-guard.log -> verification/M2-I2/review-a4705a9/focused-shim-guard.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-a4705a9.md:30 ../../../New%20Manga.worktrees/M2-I2-antigravity/verification/M2-I2/workbench-suite.log -> New%20Manga.worktrees/M2-I2-antigravity/verification/M2-I2/workbench-suite.log :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/M2-I2-a4705a9.md:30 ../../../New%20Manga.worktrees/M2-I2-antigravity/verification/M2-I2/qtfree-suite.log -> New%20Manga.worktrees/M2-I2-antigravity/verification/M2-I2/qtfree-suite.log :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/M2-I2-a4705a9.md:30 ../../../New%20Manga.worktrees/M2-I2-antigravity/verification/M2-I2/full-suite.log -> New%20Manga.worktrees/M2-I2-antigravity/verification/M2-I2/full-suite.log :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/M2-I2-a4705a9.md:35 ../../verification/M2-I2/review-a4705a9/workbench-architecture.log -> verification/M2-I2/review-a4705a9/workbench-architecture.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-I2-a4705a9.md:35 ../../verification/M2-I2/review-a4705a9/qtfree.log -> verification/M2-I2/review-a4705a9/qtfree.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:18 ../tasks/M2-UI1.md -> doc/tasks/M2-UI1.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:18 ../design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md -> doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:18 ../handoffs/M2-UI1-8031173.md -> doc/handoffs/M2-UI1-8031173.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:72 ../design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md -> doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:72 ../contracts/UI_UX_GUI_DESIGN.md -> doc/contracts/UI_UX_GUI_DESIGN.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:73 ../design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md -> doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:74 ../design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md -> doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/M2-UI1-8031173.md:75 ../design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md -> doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-17.md:13 ../handoffs/POSTHOC-REVIEW-BRIEF-2026-09-18.md -> doc/handoffs/POSTHOC-REVIEW-BRIEF-2026-09-18.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-17.md:130 POSTHOC-WINDOW-DSH-2026-09-18.md -> POSTHOC-WINDOW-DSH-2026-09-18.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/POSTHOC-WINDOW-2026-09-17.md:143 ../tasks/TASK-043.md -> doc/tasks/TASK-043.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-17.md:144 ../tasks/TASK-044.md -> doc/tasks/TASK-044.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-17.md:145 ../tasks/TASK-045.md -> doc/tasks/TASK-045.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md:16 ../handoffs/POSTHOC-REVIEW-BRIEF-2026-09-19.md -> doc/handoffs/POSTHOC-REVIEW-BRIEF-2026-09-19.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md:17 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md:18 ../../AGENTS.md -> AGENTS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md:18 ../10_CURRENT_STATE_AND_GAPS.md -> doc/10_CURRENT_STATE_AND_GAPS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md:21 ../../verification/POSTHOC-WINDOW-2026-09-19/Qoder/ -> verification/POSTHOC-WINDOW-2026-09-19/Qoder :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md:129 ../../verification/POSTHOC-WINDOW-2026-09-19/Qoder/w1_thread_collision_probe.py -> verification/POSTHOC-WINDOW-2026-09-19/Qoder/w1_thread_collision_probe.py :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md:17 ../handoffs/POSTHOC-REVIEW-BRIEF-2026-09-18.md -> doc/handoffs/POSTHOC-REVIEW-BRIEF-2026-09-18.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md:17 POSTHOC-WINDOW-2026-09-17.md -> POSTHOC-WINDOW-2026-09-17.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md:59 ../../verification/POSTHOC-WINDOW-2026-09-18/purge-fk-failure-probe.txt -> verification/POSTHOC-WINDOW-2026-09-18/purge-fk-failure-probe.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md:68 ../../verification/POSTHOC-WINDOW-2026-09-18/pdf-channel-swap-probe.txt -> verification/POSTHOC-WINDOW-2026-09-18/pdf-channel-swap-probe.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md:133 ../../verification/POSTHOC-WINDOW-2026-09-18/pdf-channel-swap-probe.txt -> verification/POSTHOC-WINDOW-2026-09-18/pdf-channel-swap-probe.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md:145 ../../verification/POSTHOC-WINDOW-2026-09-18/purge-fk-failure-probe.txt -> verification/POSTHOC-WINDOW-2026-09-18/purge-fk-failure-probe.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-001-cdc736c.md:12 TASK-001-615a073.md -> TASK-001-615a073.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-002-885c9a9.md:12 TASK-002-c335315.md -> TASK-002-c335315.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-003-588383f.md:16 ../tasks/TASK-003.md -> doc/tasks/TASK-003.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-003-588383f.md:16 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-003-588383f.md:16 ../00_INDEX.md -> doc/00_INDEX.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-003-588383f.md:17 ../contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md -> doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-004-181a356.md:20 ../handoffs/TASK-004-181a356.md -> doc/handoffs/TASK-004-181a356.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-005-f343008.md:12 TASK-005-e914f39.md -> TASK-005-e914f39.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-006-ba1e769.md:20 ../contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md -> doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-006-e1d3e2c.md:12 TASK-006-ba1e769.md -> TASK-006-ba1e769.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-008-1f373ac.md:19 ../handoffs/TASK-008-1f373ac.md -> doc/handoffs/TASK-008-1f373ac.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-008-1f373ac.md:19 ../../verification/TASK-008/author-verification.md -> verification/TASK-008/author-verification.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-009-b42fc32.md:12 TASK-009-f1dd602.md -> TASK-009-f1dd602.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-009-b42fc32.md:20 ../../handoffs/TASK-009-b42fc32.md -> handoffs/TASK-009-b42fc32.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-009-f1dd602.md:17 ../../handoffs/TASK-009-f1dd602.md -> handoffs/TASK-009-f1dd602.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-014-72cb2be.md:20 ../contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md -> doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-017-protocol.md:17 ../tasks/TASK-017.md -> doc/tasks/TASK-017.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-018-965bcd2.md:12 TASK-018-6c33e7f.md -> TASK-018-6c33e7f.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-018-965bcd2.md:12 TASK-018-5063315.md -> TASK-018-5063315.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-019-ab26601.md:21 TASK-019-standards-addendum.md -> TASK-019-standards-addendum.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-019-ab26601.md:21 ../handoffs/TASK-019-ab26601.md -> doc/handoffs/TASK-019-ab26601.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-019-ab26601.md:21 ../../verification/TASK-019/layering-fix-ab26601.md -> verification/TASK-019/layering-fix-ab26601.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-019-standards-addendum.md:14 TASK-019-726baf5.md -> TASK-019-726baf5.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-019-standards-addendum.md:52 TASK-019-ab26601.md -> TASK-019-ab26601.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-019-standards-addendum.md:54 ../../verification/TASK-019/integration-9a5486a.md -> verification/TASK-019/integration-9a5486a.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-020-7833604.md:191 ../reviews/POSTHOC-WINDOW-DSH-2026-09-18.md -> doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-020-7833604.md:191 ../../doc/tasks/TASK-045.md -> doc/tasks/TASK-045.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-020-7833604.md:192 ../../verification/TASK-045/posthoc-zcode/qml_shadow_probe.py -> verification/TASK-045/posthoc-zcode/qml_shadow_probe.py :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-020-7833604.md:192 TASK-045-posthoc-zcode.md -> TASK-045-posthoc-zcode.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-021-887e0d6.md:132 ../reviews/POSTHOC-WINDOW-DSH-2026-09-18.md -> doc/reviews/POSTHOC-WINDOW-DSH-2026-09-18.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-021-887e0d6.md:132 ../../doc/tasks/TASK-044.md -> doc/tasks/TASK-044.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-024-design.md:12 ../../STATUS.md -> STATUS.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-024-design.md:22 ../tasks/TASK-024.md -> doc/tasks/TASK-024.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-028-e7f9e41.md:12 TASK-028-f9f2811.md -> TASK-028-f9f2811.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-028-e7f9e41.md:22 ../contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md -> doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-028-f9f2811.md:22 ../contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md -> doc/contracts/TASK-002_MINIMUM_DATA_EXECUTION_CONTRACT.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-029-5abc173.md:12 TASK-029-a2348e9.md -> TASK-029-a2348e9.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-029-a2348e9.md:22 ../contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md -> doc/contracts/TASK-028_UNIFIED_SQLITE_PERSISTENCE_DESIGN.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-002889e.md:23 ../tasks/TASK-034.md -> doc/tasks/TASK-034.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-002889e.md:23 TASK-034-ac1-route-policy-ruling.md -> TASK-034-ac1-route-policy-ruling.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-034-002889e.md:23 ../../verification/TASK-034/route-policy-decision-request.md -> verification/TASK-034/route-policy-decision-request.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-002889e.md:31 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-002889e.md:32 ../02_TECHNICAL_ARCHITECTURE_.md -> doc/02_TECHNICAL_ARCHITECTURE_.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-002889e.md:64 TASK-034-ac1-route-policy-ruling.md -> TASK-034-ac1-route-policy-ruling.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-034-ac1-route-policy-ruling.md:13 ../../verification/TASK-034/route-policy-decision-request.md -> verification/TASK-034/route-policy-decision-request.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-ac1-route-policy-ruling.md:13 ../research/TASK-018.md -> doc/research/TASK-018.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-ac1-route-policy-ruling.md:36 ../tasks/TASK-034.md -> doc/tasks/TASK-034.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-ac1-route-policy-ruling.md:36 ../STATUS.md -> doc/STATUS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-ac1-route-policy-ruling.md:43 ../research/TASK-018.md -> doc/research/TASK-018.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-ac1-route-policy-ruling.md:80 TASK-034-f83a33e.md -> TASK-034-f83a33e.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-034-f83a33e.md:15 TASK-034-ac1-route-policy-ruling.md -> TASK-034-ac1-route-policy-ruling.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-034-f83a33e.md:17 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-f83a33e.md:17 ../02_TECHNICAL_ARCHITECTURE_.md -> doc/02_TECHNICAL_ARCHITECTURE_.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-f83a33e.md:30 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-f83a33e.md:31 ../02_TECHNICAL_ARCHITECTURE_.md -> doc/02_TECHNICAL_ARCHITECTURE_.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-034-f83a33e.md:56 TASK-034-ac1-route-policy-ruling.md -> TASK-034-ac1-route-policy-ruling.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-034-f83a33e.md:68 TASK-034-ac1-route-policy-ruling.md -> TASK-034-ac1-route-policy-ruling.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-034-f83a33e.md:104 TASK-034-ac1-route-policy-ruling.md -> TASK-034-ac1-route-policy-ruling.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-035-6ddd955.md:17 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-035-6ddd955.md:17 ../02_TECHNICAL_ARCHITECTURE_.md -> doc/02_TECHNICAL_ARCHITECTURE_.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-035-6ddd955.md:31 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-035-6ddd955.md:32 ../02_TECHNICAL_ARCHITECTURE_.md -> doc/02_TECHNICAL_ARCHITECTURE_.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-035-6ddd955.md:55 TASK-034.md -> TASK-034.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-035-6ddd955.md:98 ../tasks/TASK-035.md -> doc/tasks/TASK-035.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-036-c931db0.md:17 ../STATUS.md -> doc/STATUS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-036-c931db0.md:22 ../tasks/TASK-036.md -> doc/tasks/TASK-036.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-036-c931db0.md:30 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-036-c931db0.md:31 ../02_TECHNICAL_ARCHITECTURE_.md -> doc/02_TECHNICAL_ARCHITECTURE_.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-036-c931db0.md:69 ../STATUS.md -> doc/STATUS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-037-7b96e72.md:20 ../tasks/TASK-037.md -> doc/tasks/TASK-037.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-037-7b96e72.md:20 ../handoffs/TASK-037-7b96e72.md -> doc/handoffs/TASK-037-7b96e72.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-037-7b96e72.md:20 ../templates/REVIEW.md -> doc/templates/REVIEW.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-037-7b96e72.md:20 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-037-7b96e72.md:20 ../STATUS.md -> doc/STATUS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-037-7b96e72.md:20 ../../verification/TASK-037/clamp-race-probe.md -> verification/TASK-037/clamp-race-probe.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-038-317f33e.md:96 ../../verification/TASK-045/posthoc-zcode/qml_shadow_probe.py -> verification/TASK-045/posthoc-zcode/qml_shadow_probe.py :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-038-317f33e.md:96 TASK-045-posthoc-zcode.md -> TASK-045-posthoc-zcode.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-041-237e623.md:15 TASK-041-d114253.md -> TASK-041-d114253.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-041-237e623.md:37 ../../verification/TASK-041/review-237e623/first-probe-rerun-on-revision.txt -> verification/TASK-041/review-237e623/first-probe-rerun-on-revision.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-237e623.md:37 ../../verification/TASK-041/review-237e623/reviewer_probe_revision.py -> verification/TASK-041/review-237e623/reviewer_probe_revision.py :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-237e623.md:37 ../../verification/TASK-041/review-237e623/discriminating-revised-tests-vs-d114253-src.txt -> verification/TASK-041/review-237e623/discriminating-revised-tests-vs-d114253-src.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-237e623.md:69 ../../verification/TASK-041/review-237e623/reviewer-tests-237e623.txt -> verification/TASK-041/review-237e623/reviewer-tests-237e623.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-237e623.md:71 ../../verification/TASK-041/review-237e623/first-probe-rerun-on-revision.txt -> verification/TASK-041/review-237e623/first-probe-rerun-on-revision.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-237e623.md:72 ../../verification/TASK-041/review-237e623/probe-revision-output.txt -> verification/TASK-041/review-237e623/probe-revision-output.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-237e623.md:73 ../../verification/TASK-041/review-237e623/discriminating-revised-tests-vs-d114253-src.txt -> verification/TASK-041/review-237e623/discriminating-revised-tests-vs-d114253-src.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:31 ../02_TECHNICAL_ARCHITECTURE_.md -> doc/02_TECHNICAL_ARCHITECTURE_.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:77 ../../verification/TASK-041/review-d114253/reviewer-full-suite-822-6.txt -> verification/TASK-041/review-d114253/reviewer-full-suite-822-6.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:78 ../../verification/TASK-041/review-d114253/discriminating-base-6ea3dd3.txt -> verification/TASK-041/review-d114253/discriminating-base-6ea3dd3.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:79 ../../verification/TASK-041/review-d114253/static-checks.txt -> verification/TASK-041/review-d114253/static-checks.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:80 ../../verification/TASK-041/review-d114253/probe-extract-tree.txt -> verification/TASK-041/review-d114253/probe-extract-tree.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:81 ../../verification/TASK-041/review-d114253/probe-collect-output.txt -> verification/TASK-041/review-d114253/probe-collect-output.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:95 ../../verification/TASK-041/review-d114253/probe-collect-output.txt -> verification/TASK-041/review-d114253/probe-collect-output.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:95 ../../verification/TASK-041/review-d114253/static-checks.txt -> verification/TASK-041/review-d114253/static-checks.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:99 ../../verification/TASK-041/review-d114253/probe-collect-output.txt -> verification/TASK-041/review-d114253/probe-collect-output.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-041-d114253.md:100 ../../verification/TASK-041/review-d114253/static-checks.txt -> verification/TASK-041/review-d114253/static-checks.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-042-fc6c649.md:101 ../tasks/TASK-045.md -> doc/tasks/TASK-045.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-042-fc6c649.md:112 ../tasks/TASK-045.md -> doc/tasks/TASK-045.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-1171bc5.md:19 TASK-042-fc6c649.md -> TASK-042-fc6c649.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-045-1171bc5.md:78 ../../verification/TASK-045/review-1171bc5/reviewer-tests-1171bc5.txt -> verification/TASK-045/review-1171bc5/reviewer-tests-1171bc5.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-1171bc5.md:80 ../../verification/TASK-045/review-1171bc5/reviewer-probe-delivered.txt -> verification/TASK-045/review-1171bc5/reviewer-probe-delivered.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-1171bc5.md:81 ../../verification/TASK-045/review-1171bc5/reviewer-probe-base-6ea3dd3.txt -> verification/TASK-045/review-1171bc5/reviewer-probe-base-6ea3dd3.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-1171bc5.md:83 ../../verification/TASK-045/review-1171bc5/author-probes-rerun.txt -> verification/TASK-045/review-1171bc5/author-probes-rerun.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-1171bc5.md:96 ../../verification/TASK-045/review-1171bc5/reviewer-probe-delivered.txt -> verification/TASK-045/review-1171bc5/reviewer-probe-delivered.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-a165aa3.md:15 TASK-045-1171bc5.md -> TASK-045-1171bc5.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-045-a165aa3.md:37 ../../verification/TASK-045/review-a165aa3/reviewer-probe-on-revision.txt -> verification/TASK-045/review-a165aa3/reviewer-probe-on-revision.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-a165aa3.md:38 ../../verification/TASK-045/review-a165aa3/discriminating-revision-tests-vs-1171bc5.txt -> verification/TASK-045/review-a165aa3/discriminating-revision-tests-vs-1171bc5.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-a165aa3.md:65 ../../verification/TASK-045/review-a165aa3/reviewer-probe-on-revision.txt -> verification/TASK-045/review-a165aa3/reviewer-probe-on-revision.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-a165aa3.md:66 ../../verification/TASK-045/review-a165aa3/reviewer-tests-a165aa3.txt -> verification/TASK-045/review-a165aa3/reviewer-tests-a165aa3.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-a165aa3.md:68 ../../verification/TASK-045/review-a165aa3/discriminating-revision-tests-vs-1171bc5.txt -> verification/TASK-045/review-a165aa3/discriminating-revision-tests-vs-1171bc5.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-a165aa3.md:69 ../../verification/TASK-045/review-a165aa3/comment-drift-and-skip-scan.txt -> verification/TASK-045/review-a165aa3/comment-drift-and-skip-scan.txt :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-045-posthoc-zcode.md:20 TASK-045-1171bc5.md -> TASK-045-1171bc5.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-046-7bf476b.md:18 ../verification/TASK-046/review-7bf476b/ -> doc/verification/TASK-046/review-7bf476b :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-046-7bf476b.md:23 ../tasks/TASK-046.md -> doc/tasks/TASK-046.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-046-7bf476b.md:23 ../handoffs/TASK-046-a40e228.md -> doc/handoffs/TASK-046-a40e228.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-046-7bf476b.md:24 ../../AGENTS.md -> AGENTS.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-046-7bf476b.md:24 TASK-045-1171bc5.md -> TASK-045-1171bc5.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-046-7bf476b.md:107 ../verification/TASK-046/review-7bf476b/ac1_filtered_pages_probe.py -> doc/verification/TASK-046/review-7bf476b/ac1_filtered_pages_probe.py :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-046-7bf476b.md:107 ../verification/TASK-046/review-7bf476b/ac1-filtered-pages-post-fix.log -> doc/verification/TASK-046/review-7bf476b/ac1-filtered-pages-post-fix.log :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-046-7bf476b.md:109 ../handoffs/TASK-046-a40e228.md -> doc/handoffs/TASK-046-a40e228.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-046-7bf476b.md:110 ../tasks/TASK-046.md -> doc/tasks/TASK-046.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-046-7bf476b.md:120 ../verification/TASK-046/review-7bf476b/ -> doc/verification/TASK-046/review-7bf476b :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-055-ba05bc9.md:16 TASK-055-c175657.md -> TASK-055-c175657.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-056-4c8b8a7.md:16 TASK-056-15f977a.md -> TASK-056-15f977a.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-057-b0e4cb1.md:22 ../tasks/TASK-057.md -> doc/tasks/TASK-057.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-057-b0e4cb1.md:22 POSTHOC-WINDOW-2026-09-19-Qoder.md -> POSTHOC-WINDOW-2026-09-19-Qoder.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-057-b0e4cb1.md:22 TASK-061-067e432.md -> TASK-061-067e432.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-057-b0e4cb1.md:22 ../handoffs/TASK-057-unfreeze.md -> doc/handoffs/TASK-057-unfreeze.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-058-9c8cd52.md:17 ../tasks/TASK-058.md -> doc/tasks/TASK-058.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-058-9c8cd52.md:17 ../handoffs/TASK-058-5df4168.md -> doc/handoffs/TASK-058-5df4168.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-058-9c8cd52.md:17 POSTHOC-WINDOW-2026-09-19-Qoder.md -> POSTHOC-WINDOW-2026-09-19-Qoder.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-058-9c8cd52.md:17 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-060-b28c615.md:25 ../tasks/TASK-060.md -> doc/tasks/TASK-060.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-060-b28c615.md:25 ../handoffs/TASK-060-zcode-handoff.md -> doc/handoffs/TASK-060-zcode-handoff.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-060-b28c615.md:26 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-060-b28c615.md:26 POSTHOC-WINDOW-2026-09-19-Qoder.md -> POSTHOC-WINDOW-2026-09-19-Qoder.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-061-067e432.md:21 ../tasks/TASK-061.md -> doc/tasks/TASK-061.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-061-067e432.md:21 TASK-060-b28c615.md -> TASK-060-b28c615.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-061-067e432.md:21 ../handoffs/TASK-061-zcode-handoff.md -> doc/handoffs/TASK-061-zcode-handoff.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-061-067e432.md:59 ../../verification/TASK-061/prefix-discrimination/connection-ownership-unit-prefix-run1.log -> verification/TASK-061/prefix-discrimination/connection-ownership-unit-prefix-run1.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-061-067e432.md:60 ../../verification/TASK-061/prefix-discrimination/managed-storage-traverse-prefix-run1.log -> verification/TASK-061/prefix-discrimination/managed-storage-traverse-prefix-run1.log :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-062-9ba21f8.md:27 ../tasks/TASK-062.md -> doc/tasks/TASK-062.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-062-9ba21f8.md:27 ../handoffs/TASK-062-9ba21f8.md -> doc/handoffs/TASK-062-9ba21f8.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-062-9ba21f8.md:28 ../../verification/TASK-062/README.md -> verification/TASK-062/README.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-062-9ba21f8.md:28 ../../verification/TASK-062/r009-erratum.md -> verification/TASK-062/r009-erratum.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-062-9ba21f8.md:29 POSTHOC-WINDOW-2026-09-19-Qoder.md -> POSTHOC-WINDOW-2026-09-19-Qoder.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-062-9ba21f8.md:30 TASK-046-7bf476b.md -> TASK-046-7bf476b.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-062-9ba21f8.md:30 TASK-060-b28c615.md -> TASK-060-b28c615.md :: @qoder=False @reviewed_head=False @ac38=False
+  doc/reviews/TASK-062-9ba21f8.md:31 ../09_COLLABORATION.md -> doc/09_COLLABORATION.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-062-9ba21f8.md:116 ../reviews/TASK-060-b28c615.md -> doc/reviews/TASK-060-b28c615.md :: @qoder=True @reviewed_head=True @ac38=True
+  doc/reviews/TASK-064-d154044.md:27 ../../verification/TASK-064/discrimination.log -> verification/TASK-064/discrimination.log :: @qoder=True @reviewed_head=True @ac38=True

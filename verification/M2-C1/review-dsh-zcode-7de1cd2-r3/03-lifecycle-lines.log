@@ -1,0 +1,104 @@
+--- control_run (829-884) ---
+ 829:     def control_run(self, run_id: str, action: str) -> ControlResult:
+ 830:         run = self._require_run(run_id)
+ 831:         if action == "pause":
+ 832:             if run.status not in {PipelineRunStatus.PENDING, PipelineRunStatus.RUNNING}:
+ 833:                 raise PipelineError("INVALID_RUN_TRANSITION", "pause requires pending or running")
+ 834:             run.pause_requested = True
+ 835:             if run.status is PipelineRunStatus.PENDING:
+ 836:                 run.status = PipelineRunStatus.PAUSED
+ 837:             self._persist(run)
+ 838:             return ControlResult(run.run_id, run.status)
+ 839:
+ 840:         if action == "stop":
+ 841:             if run.status in {PipelineRunStatus.COMPLETED, PipelineRunStatus.COMPLETED_WITH_FAILURES, PipelineRunStatus.FAILED, PipelineRunStatus.CANCELLED}:
+ 842:                 raise PipelineError("INVALID_RUN_TRANSITION", "run is already terminal")
+ 843:             run.cancel_requested = True
+ 844:             if run.status in {PipelineRunStatus.PENDING, PipelineRunStatus.PAUSED}:
+ 845:                 self._cancel_pending_tasks(run)
+ 846:                 run.status = PipelineRunStatus.CANCELLED
+ 847:             self._persist(run)
+ 848:             return ControlResult(run.run_id, run.status)
+ 849:
+ 850:         if action == "continue":
+ 851:             if run.status is PipelineRunStatus.PAUSED:
+ 852:                 run.pause_requested = False
+ 853:                 run.status = PipelineRunStatus.PENDING
+ 854:                 self._persist(run)
+ 855:                 return ControlResult(run.run_id, run.status)
+ 856:             if run.status is PipelineRunStatus.INTERRUPTED:
+ 857:                 run.cancel_requested = False
+ 858:                 run.pause_requested = False
+ 859:                 self.plan_run(run_id, mode="continue")
+ 860:                 return ControlResult(run.run_id, run.status)
+ 861:             raise PipelineError("INVALID_RUN_TRANSITION", "continue requires paused or interrupted")
+ 862:
+ 863:         if action == "restart":
+ 864:             if run.status is not PipelineRunStatus.INTERRUPTED:
+ 865:                 raise PipelineError("RUN_NOT_INTERRUPTED", run.run_id)
+ 866:             fresh = self.create_run(
+ 867:                 run.command_type,
+ 868:                 run.scope,
+ 869:                 source_run_id=run.run_id,
+ 870:                 retry_reason="restart_after_interruption",
+ 871:             )
+ 872:             run.interruption_disposition = "restarted"
+ 873:             self._persist(run)
+ 874:             return ControlResult(run.run_id, run.status, fresh.run_id)
+ 875:
+ 876:         if action == "abandon":
+ 877:             if run.status is not PipelineRunStatus.INTERRUPTED:
+ 878:                 raise PipelineError("RUN_NOT_INTERRUPTED", run.run_id)
+ 879:             run.status = PipelineRunStatus.CANCELLED
+ 880:             run.termination_reason = "abandoned_after_interruption"
+ 881:             self._persist(run)
+ 882:             return ControlResult(run.run_id, run.status)
+ 883:
+ 884:         raise PipelineError("INVALID_RUN_TRANSITION", f"unknown control action {action}")
+
+--- recover_running_runs (886-902) ---
+ 886:     def recover_running_runs(self) -> tuple[str, ...]:
+ 887:         recovered: list[str] = []
+ 888:         for run_id in self._store.list_ids():
+ 889:             run = self._store.get(run_id)
+ 890:             if run is None or run.status is not PipelineRunStatus.RUNNING:
+ 891:                 continue
+ 892:             run.status = PipelineRunStatus.INTERRUPTED
+ 893:             for task in run.tasks:
+ 894:                 if task.status is PipelineTaskStatus.RUNNING:
+ 895:                     task.status = PipelineTaskStatus.INTERRUPTED
+ 896:             for step in run.step_runs:
+ 897:                 if step.status is StepRunStatus.RUNNING:
+ 898:                     step.status = StepRunStatus.INTERRUPTED
+ 899:             self._persist(run)
+ 900:             recovered.append(run_id)
+ 901:         return tuple(recovered)
+ 902:
+
+--- retry_failed_targets (903-916) ---
+ 903:     def retry_failed_targets(self, run_id: str) -> PipelineRun:
+ 904:         run = self._require_run(run_id)
+ 905:         failed_pages = tuple(
+ 906:             dict.fromkeys(
+ 907:                 task.page_id
+ 908:                 for task in run.tasks
+ 909:                 if task.status is PipelineTaskStatus.FAILED and task.target_type is TargetType.PAGE
+ 910:             )
+ 911:         )
+ 912:         if not failed_pages:
+ 913:             raise PipelineError("TARGET_NOT_FOUND", "run has no failed page targets")
+ 914:         return self.create_run(
+ 915:             run.command_type,
+ 916:             PipelineScope(ScopeType.PAGE_SELECTION, selected_ids=failed_pages),
+
+=== transition gates inside control_run ===
+  PENDING                          -> 4 hit(s)
+  RUNNING                          -> 1 hit(s)
+  PAUSED                           -> 3 hit(s)
+  INTERRUPTED                      -> 5 hit(s)
+  completed_with_failures          -> 0 hit(s)
+  INVALID_RUN_TRANSITION           -> 4 hit(s)
+  abandoned_after_interruption     -> 1 hit(s)
+  restarted                        -> 1 hit(s)
+  retry_reason                     -> 1 hit(s)
+  source_run_id                    -> 1 hit(s)
