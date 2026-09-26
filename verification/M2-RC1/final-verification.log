@@ -1,0 +1,61 @@
+# M2-RC1 final verification runs (delivery head 991097d7)
+
+## 1. python -m pytest tests/m2_resource_channel -q
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+35 passed, 1 warning in 1.58s
+pytest exit: 0
+
+## 2. cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked
+test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+cargo test exit: 0
+
+## 3. npm test --prefix apps/desktop/frontend -- --run
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+npm test exit: 0
+
+## 4. git diff --check 2dca20cd HEAD
+(clean)
+
+## 5. delivery diff paths
+A	apps/desktop/.gitignore
+A	apps/desktop/frontend/index.html
+A	apps/desktop/frontend/package-lock.json
+A	apps/desktop/frontend/package.json
+A	apps/desktop/frontend/src/App.tsx
+A	apps/desktop/frontend/src/main.tsx
+A	apps/desktop/frontend/src/resourceChannel/client.test.ts
+A	apps/desktop/frontend/src/resourceChannel/client.ts
+A	apps/desktop/frontend/tsconfig.json
+A	apps/desktop/frontend/vite.config.ts
+A	apps/desktop/src-tauri/Cargo.lock
+A	apps/desktop/src-tauri/Cargo.toml
+A	apps/desktop/src-tauri/build.rs
+A	apps/desktop/src-tauri/gen/schemas/acl-manifests.json
+A	apps/desktop/src-tauri/gen/schemas/capabilities.json
+A	apps/desktop/src-tauri/gen/schemas/desktop-schema.json
+A	apps/desktop/src-tauri/gen/schemas/windows-schema.json
+A	apps/desktop/src-tauri/icons/icon.ico
+A	apps/desktop/src-tauri/src/core_bridge.rs
+A	apps/desktop/src-tauri/src/main.rs
+A	apps/desktop/src-tauri/src/resource_protocol.rs
+A	apps/desktop/src-tauri/tauri.conf.json
+A	doc/tasks/M2-RC1.md
+A	src/application/resource_channel/__init__.py
+A	src/application/resource_channel/dto.py
+A	src/application/resource_channel/ports.py
+A	src/application/resource_channel/service.py
+A	src/infrastructure/resource_channel/__init__.py
+A	src/infrastructure/resource_channel/handle_resolver.py
+A	src/infrastructure/resource_channel/host_bridge.py
+A	src/infrastructure/resource_channel/scope.py
+A	tests/m2_resource_channel/conftest.py
+A	tests/m2_resource_channel/test_bridge_and_thresholds.py
+A	tests/m2_resource_channel/test_handle_resolver.py
+A	tests/m2_resource_channel/test_service.py
+A	verification/M2-RC1/baseline-selfcheck.md
+A	verification/M2-RC1/raw/e2e-fixtures.json
+A	verification/M2-RC1/raw/e2e-results-first.json
+A	verification/M2-RC1/raw/e2e-results-repeat.json
+A	verification/M2-RC1/raw/leakage-scan.json
+A	verification/M2-RC1/run_e2e.py

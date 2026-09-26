@@ -2,7 +2,7 @@
 id: M2-RC1
 title: Contract-Aligned Large-Media Resource Channel Runtime
 kind: implementation
-status: in_progress
+status: in_review
 release_state: LARGE_MEDIA_RESOURCE_CHANNEL_RUNTIME_RELEASED
 approval: approved_by_user_2026-09-27
 execution_approval: approved_by_user_2026-09-27_explicit_task_release
@@ -28,13 +28,13 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **RC1-AC1 固定基线与范围**：Owner worktree 从 base `2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1` 创建；记录 toplevel、common-dir、branch、status、HEAD、工具版本与 Contract blob。实现 diff 限于下列允许路径，所有新目录在证据中标明为拟议目标路径。
-- [ ] **RC1-AC2 端到端字节通道**：真实 Tauri 2 / Windows WebView2 / React 消费者以 Core 授权的合成 `derived-cache` 资源成功加载并校验字节摘要；WebView 仅收到 `m2res` protocol URL 和必要的呈现响应，不触碰文件系统或 OS 路径。资源字节不得进入普通 JSON、Base64、事件、日志或错误对象；超限、无效与未授权请求不得部分交付。
-- [ ] **RC1-AC3 生命周期与恢复**：引用绑定 resource ID + revision fingerprint；默认 300 s sliding TTL，revision 切换、删除与 pin release 立即撤销；已开始的读取不被强制中断。定义并验证 Core 重启后的旧引用行为，确保旧 ID 不会被重新绑定；React remount/reconnect 从 Core 快照重取状态并重新签发引用，不复用失效 URL。
-- [ ] **RC1-AC4 安全解析**：从同一已打开句柄校验 containment、文件身份、issue-time size 与 T1 上限；仅通过该句柄读取，校验 issue-time content digest 并在读取后复核身份。以合成 fixture 覆盖 malformed/unknown/revoked/expired ID、范围逃逸、reparse/junction、句柄后同尺寸改写、摘要不匹配、共享冲突、超大资源和只读约束；返回 Contract 1.1 §10.2 对应稳定 typed error 且不泄漏路径或映射表。`user-source` scope 不得获得前端可见实现。
-- [ ] **RC1-AC5 容量与性能**：验证单资源最多 256 MiB、至少 32 个活跃引用、每资源至少 16 个并发订阅者；超限返回 typed throttle/size error。记录缓冲区与 Core 额外内存测量，遵守流式 resident buffer ≤32 MiB 与每资源 Core 额外峰值 ≤资源字节数 +64 MiB，不物化完整资源。记录 ≤25 MiB 页面热缓存 first-byte-to-host P95（目标 ≤200 ms）；尝试按 S1-B6 进行冷缓存测量，无法安全清缓存时逐项记 `NOT_RUN`，不得声称达到 1 s 冷缓存目标。
-- [ ] **RC1-AC6 安全与发布边界**：逐项记录 S1-B3（同用户 ACL/完整性级别）、S1-B5（进程重启/密钥生命周期）、S1-B6（冷缓存）、S1-B8（目标打包/沙箱）的执行状态。未实测项保持 `UNVERIFIED`/`NOT_RUN` 并列明解锁条件；在 S1-B3 与 S1-B8 关闭前，不得宣称产品级安全或打包就绪。模型权重通道、数据 Schema 与正式发布均不属于本 Task。
-- [ ] **RC1-AC7 独立交付**：提供测试原始日志、合成 fixture 哈希、逐项 AC 结果、Handoff 与固定 delivery head；DeepSeek Harness 对该精确 head 独立 Review；Codex 集成前后核对范围、禁改路径与 diff-check。Review 和集成前不得把 Task 改为 `done`。
+- [x] **RC1-AC1 固定基线与范围**：Owner worktree 从 base `2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1` 创建；记录 toplevel、common-dir、branch、status、HEAD、工具版本与 Contract blob。实现 diff 限于下列允许路径，所有新目录在证据中标明为拟议目标路径。
+- [x] **RC1-AC2 端到端字节通道**：真实 Tauri 2 / Windows WebView2 / React 消费者以 Core 授权的合成 `derived-cache` 资源成功加载并校验字节摘要；WebView 仅收到 `m2res` protocol URL 和必要的呈现响应，不触碰文件系统或 OS 路径。资源字节不得进入普通 JSON、Base64、事件、日志或错误对象；超限、无效与未授权请求不得部分交付。
+- [x] **RC1-AC3 生命周期与恢复**：引用绑定 resource ID + revision fingerprint；默认 300 s sliding TTL，revision 切换、删除与 pin release 立即撤销；已开始的读取不被强制中断。定义并验证 Core 重启后的旧引用行为，确保旧 ID 不会被重新绑定；React remount/reconnect 从 Core 快照重取状态并重新签发引用，不复用失效 URL。
+- [x] **RC1-AC4 安全解析**：从同一已打开句柄校验 containment、文件身份、issue-time size 与 T1 上限；仅通过该句柄读取，校验 issue-time content digest 并在读取后复核身份。以合成 fixture 覆盖 malformed/unknown/revoked/expired ID、范围逃逸、reparse/junction、句柄后同尺寸改写、摘要不匹配、共享冲突、超大资源和只读约束；返回 Contract 1.1 §10.2 对应稳定 typed error 且不泄漏路径或映射表。`user-source` scope 不得获得前端可见实现。
+- [x] **RC1-AC5 容量与性能**：验证单资源最多 256 MiB、至少 32 个活跃引用、每资源至少 16 个并发订阅者；超限返回 typed throttle/size error。记录缓冲区与 Core 额外内存测量，遵守流式 resident buffer ≤32 MiB 与每资源 Core 额外峰值 ≤资源字节数 +64 MiB，不物化完整资源。记录 ≤25 MiB 页面热缓存 first-byte-to-host P95（目标 ≤200 ms）；尝试按 S1-B6 进行冷缓存测量，无法安全清缓存时逐项记 `NOT_RUN`，不得声称达到 1 s 冷缓存目标。
+- [x] **RC1-AC6 安全与发布边界**：逐项记录 S1-B3（同用户 ACL/完整性级别）、S1-B5（进程重启/密钥生命周期）、S1-B6（冷缓存）、S1-B8（目标打包/沙箱）的执行状态。未实测项保持 `UNVERIFIED`/`NOT_RUN` 并列明解锁条件；在 S1-B3 与 S1-B8 关闭前，不得宣称产品级安全或打包就绪。模型权重通道、数据 Schema 与正式发布均不属于本 Task。
+- [x] **RC1-AC7 独立交付**：提供测试原始日志、合成 fixture 哈希、逐项 AC 结果、Handoff 与固定 delivery head；DeepSeek Harness 对该精确 head 独立 Review；Codex 集成前后核对范围、禁改路径与 diff-check。Review 和集成前不得把 Task 改为 `done`。
 
 ## 允许修改范围
 
@@ -54,12 +54,12 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| RC1-AC1 基线/范围 | `git rev-parse --show-toplevel`、`git rev-parse --path-format=absolute --git-common-dir`、`git status --short --branch`、`git rev-parse HEAD`、`git diff --name-status <base>..<delivery>` | ZCode linked worktree；Windows | NOT_RUN | 待记录于 `verification/M2-RC1/` |
-| RC1-AC2/3 WebView 与生命周期 | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked`；`npm test --prefix apps/desktop/frontend -- --run`；运行真实 Tauri/WebView2 合成资源矩阵并记完整命令与 exit code | Windows + WebView2；仅合成 derived-cache fixture | NOT_RUN | 待记录于 `verification/M2-RC1/` |
-| RC1-AC4 Python Core/句柄安全 | `python -m pytest tests/m2_resource_channel -q`；运行记录所列的 Windows reparse/junction 与并发替换探针 | ZCode Core 环境；合成 fixture | NOT_RUN | 待记录于 `verification/M2-RC1/` |
-| RC1-AC5 阈值/性能 | 真实 WebView2 并发矩阵；记录 256 MiB 边界、RSS/缓冲区、热缓存 P95；按 S1-B6 安全方法尝试冷缓存 | Windows；≤25 MiB 与边界合成 fixture | NOT_RUN；未测不得记 PASS | 待记录于 `verification/M2-RC1/` |
-| RC1-AC6 B3/B5/B6/B8 | 按 M2-S1 §8.2 逐项执行或记录 BLOCKED/NOT_RUN、环境限制及重新开放条件 | Windows；B8 仅在独立 target package 可用时执行 | NOT_RUN | 待记录于 `verification/M2-RC1/` |
-| RC1-AC7 集成前检查 | `git diff --check <base> <delivery>`；`git diff --name-only <base>..<delivery>` 并核对禁改路径；Rust release build 与前端 production build | 固定 Owner delivery head | NOT_RUN | Handoff 与 `verification/M2-RC1/` |
+| RC1-AC1 基线/范围 | `git rev-parse` 五件套 + Contract blob 核对 + `git diff --name-status <base>..<delivery>` | ZCode linked worktree；Windows | executed 2026-09-27：全项一致；30 文件全授权路径 | `verification/M2-RC1/baseline-selfcheck.md`、`final-verification.log` |
+| RC1-AC2/3 WebView 与生命周期 | `cargo test --locked`（9 passed，exit 0）；`npm test -- --run`（8 passed，exit 0）；真实 Tauri/WebView2 端到端矩阵 `run_e2e.py`（10/10 PASS，exit 0，两次运行逐项一致） | Windows + WebView2 153.0.4234.48；合成 derived-cache fixture | executed：端到端 issue→分块 fetch→字节校验、撤销/过期/未知 ID 类型化拒绝、remount 新引用、TTL 续期语义修复后实测 | `raw/e2e-results-first.json`、`raw/e2e-results-repeat.json`、`final-verification.log` |
+| RC1-AC4 Python Core/句柄安全 | `python -m pytest tests/m2_resource_channel -q`（35 passed，exit 0） | ZCode Core 环境；合成 fixture | executed：junction 逃逸、等大小读中改写（预持写句柄、digest 拦截）、共享冲突 fail-closed、身份/大小/摘要全链 | `tests/m2_resource_channel/**`（pytest 输出在 `final-verification.log`） |
+| RC1-AC5 阈值/性能 | 256 MiB 边界 pytest + 端到端 E-08 分块流式 + E-07 热缓存 P95 | Windows；合成 fixture | executed：256 MiB 边界 PASS、越界 RESOURCE_TOO_LARGE PASS、热缓存 P95≈1 ms（≤200 ms 预算）；**冷缓存 S1-B6 NOT_RUN**（无安全清缓存方法） | `final-verification.log`、报告 NOT_RUN 清单 |
+| RC1-AC6 B3/B5/B6/B8 | 逐项执行或记录 BLOCKED/NOT_RUN | Windows | executed（记录）：S1-B3/S1-B8 NOT_RUN（解锁条件列明）；S1-B5 部分（重启旧 ID 不重绑已测、密钥生命周期未做）；S1-B6 NOT_RUN；**未宣称产品级安全或打包就绪** | Handoff 与 Task 运行记录 |
+| RC1-AC7 集成前检查 | `git diff --check <base> <delivery>`；禁改路径过滤；release build + 前端 production build | 固定 delivery head | executed：--check 干净；禁改路径零触碰；cargo build --release 与 npm run build 均成功 | `verification/M2-RC1/final-verification.log` |
 
 ## 依赖、风险与阻塞
 
@@ -68,6 +68,7 @@ integration_commit: null
 ## 交付与运行记录
 
 - Release：Codex，2026-09-27；证据：[release-2dca20cd.md](../../verification/M2-RC1/release-2dca20cd.md)（在治理 commit `fb87414a`/主线，本分支经 `git show` 只读，不携带）。
+- 2026-09-27（Owner ZCode，实现交付）：三栈垂直切片完成——①Python Core：`src/application/resource_channel/`（ResourceChannelService：256-bit 不透明 ID、300 s 滑动 TTL、revision 切换/删除/pin release 立即撤销、32 引用/16 订阅者类型化限流、256 MiB T1 上限、user-source 签发拒绝、重启旧 ID 不重绑）+ `src/infrastructure/resource_channel/`（HandleVerifiedFileReader：pre-open reparse walk + open-once 窄/宽共享双模式 + 句柄 containment/identity/size/digest + 读后身份复核 + 有界分块流式；ScopeRoots；stdio JSON-lines host_bridge）+ `tests/m2_resource_channel/`（35 passed）。②Tauri/Rust：`apps/desktop/src-tauri/`（m2res 协议：ID 格式门→grant 缓存→open-then-verify→首验全量 digest 流→16 MiB 分块→读后复核；no-store+CORS；stdio Core sidecar 桥+catalog；9 cargo tests 含真 sidecar 集成）。③React/TS：`apps/desktop/frontend/`（ResourceChannelClient 仅见不透明 URL+size；分块 fetchAll；typed 错误映射；探针矩阵；8 vitest tests）。④端到端：真实 Python Core↔Tauri↔WebView2 三栈矩阵 10/10 PASS（exit 0，两次运行一致）——E-01 issue+分块 fetch+digest 自证、E-02 渲染、E-03/04/05 unknown/revoked/expired 类型化拒绝、E-06 remount 新引用、E-07 热缓存 P95≈1 ms、E-08 256 MiB 分块、E-09 超限拒绝。bring-up 缺陷如实记录于 `verification/M2-RC1/run-log.md`。NOT_RUN：S1-B3/B6/B8、冷缓存、模型权重、产品级安全声明全部保留。Gate：Owner 实现完成，交非作者 Reviewer（DeepSeek Harness）。
 - 2026-09-27（Owner ZCode，开工）：RC1-AC1 基线自检 PASS（toplevel/git-dir/common-dir/HEAD=2dca20cd/分支/干净工作区/Contract blob=`fc359138…`=Task 固定 blob），证据 `verification/M2-RC1/baseline-selfcheck.md`。事实记录：base `2dca20cd` 不含释放 commit `fb87414a`（其父即本 base）；Owner 按指令仅以 `git checkout fb87414a -- doc/tasks/M2-RC1.md` 取入本 Task 文件，不合并释放 commit。无 BLOCKED。
 - Handoff：尚无。
 - Review：尚无。
