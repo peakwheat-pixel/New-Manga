@@ -2,7 +2,7 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-26）**：T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2；[M2-C1](tasks/M2-C1.md) Typed IPC Contract=`done`，[Gate 核验](../verification/M2-C1/integration-gate-readiness-96666bf.md) 与双 Review 已集成；§7 产品阈值已由用户授权代行裁决于 [product-thresholds-ruling-67c3d56](../verification/M2-S1/product-thresholds-ruling-67c3d56.md)；[M2-S2](tasks/M2-S2.md) 安全验证 Spike=`done`（[Antigravity Review](reviews/M2-S2-fbdf1bc2.md) `approved`，集成 merge=`bf1d1230`）；[M2-C2](tasks/M2-C2.md) 契约修订=`done`（[DSH Review](reviews/M2-C2-c18f273a.md) `approved`，集成 merge=`d574ec1e`，Contract `1.1` blob=`fc359138`）——T1–T7 与安全语义已落约，大媒体产品实现未释放。当前授权与依赖见 [REBASELINE_PLAN](REBASELINE_PLAN.md)，运行状态见 [STATUS](STATUS.md)。
+> **Current pointer（2026-09-26）**：M2-S3 Tauri Asset Protocol Feasibility Probe 已按 `90c3e459` 释放给 DeepSeek Harness（非作者 Reviewer=ZCode），状态 `ready`；当前授权仅为隔离研究，runtime 仍未释放。M2-C2 已完成（`d574ec1e`，Contract blob=`fc359138`），其 4×P3 延至下一次触碰 Contract 的 Task；T1–T7 与 M2-S2 安全结论已落约，大媒体 runtime 尚未实现。当前详细授权与依赖见 [REBASELINE_PLAN](REBASELINE_PLAN.md)，运行状态见 [STATUS](STATUS.md)。
 
 > **Architecture Decision / M2 release（2026-09-26）**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持；M2-D1 与 M2 首波 I1/I2/R1/UI1 已完成，M2-C1 Typed IPC Contract 已完成文档集成。M2-S1 独立研究已集成；A/B 通道是条件性建议，产品通道选型与实现仍待后续 Gate。
 

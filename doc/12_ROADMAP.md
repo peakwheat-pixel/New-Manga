@@ -17,6 +17,7 @@ graph, acceptance boundaries and historical Task audit live in
 4. **[M2-S1 — Large-Media Resource Channel Feasibility Spike](tasks/M2-S1.md)**：`done`；固定 base=`85a2aa7`，DeepSeek Harness Owner / Codex 非作者[复审](reviews/M2-S1-64c87d1.md) `APPROVED`，merge=`4103493`。研究给出条件性 A/B 建议；12 项产品验证与 7 项阈值决定仍未完成，产品实现未释放。
 5. **[M2-S2 — Resource Channel Security Verification Spike](tasks/M2-S2.md)**：`done`（2026-09-26）；Owner=ZCode（delivery `d502aa5a`）、Reviewer=Antigravity（非作者；[Review](reviews/M2-S2-fbdf1bc2.md) `ea11d109` `approved`）、base=`67c3d56e`、integration=`bf1d1230`。原型层关闭 S1-B11（TOCTOU open-then-verify-from-handle，16/16）与 S1-B12（映射 ID 保密，8/8）；产品级保证保留 `UNVERIFIED`；§7 产品阈值已由用户授权代行[裁决](../verification/M2-S1/product-thresholds-ruling-67c3d56.md)，结果作为 Contract 修订与 runtime Task 输入。
 6. **[M2-C2 — Typed IPC Contract Revision](tasks/M2-C2.md)**：`done`（2026-09-26）；Owner=ZCode（delivery `67f814ff`）、Reviewer=DeepSeek Harness（非作者；[Review](reviews/M2-C2-c18f273a.md) `approved`，4×P3 deferred）、base=`3f468e6e`、integration=`d574ec1e`。Contract 原位修订 `1.0`→`1.1`（blob `4b503a17`→`fc359138`）：T1–T7 阈值与安全语义以设计要求口径落约；既有保护语义零放松；不授权 runtime 实现。
+7. **[M2-S3 — Tauri Asset Protocol Feasibility Probe](tasks/M2-S3.md)**：`ready`；base=`90c3e459`，Owner=DeepSeek Harness / Reviewer=ZCode（非作者）。先验证 S1-B1 的真实 Tauri/WebView 权限、缓存与引用生命周期；仅研究，不改产品代码或 Contract。集成 Review 后再裁决 runtime release；S1-B6 冷缓存测量留到通道存在后。
 
 Historical phases and task ledgers remain in place for traceability; they do
 not override the rebaseline.
