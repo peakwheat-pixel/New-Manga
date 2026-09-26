@@ -154,7 +154,7 @@ QML shell changes are serialized through Codex.
 | 5 | [T2.2.1 Reader & Workbench Polish](tasks/T2.2.1.md) | **VERIFIED_COMPLETE**; integrated `fe9fca0` | ZCode functional implementation + Qoder QML/UI/UX / Codex non-author review and integration | Chapter picker, Workbench empty-state picker, dismissible command-error notification, and webtoon canvas consistency are accessible and tested. Evidence: [`review-0846573`](../verification/T2.2.1/review-0846573.md), [`integration-aad510b`](../verification/T2.2.1/integration-aad510b.md). |
 | 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **VERIFIED_COMPLETE**; product integrated `0c70e44` | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Evidence: [review-899bd3c](../verification/T3.1.1/review-899bd3c.md), [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md). |
 | 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2; AC states preserved. | Codex governance closure; evidence `verification/T3.2.1/legacy-closure-audit-20260926.md`. | Legacy unfinished ACs are not M2 blockers; REPAIR-15/16/17 are superseded and not released. |
-| 8 | [M2-C1 Typed IPC Contract](tasks/M2-C1.md) | `ready` from fixed base `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`; Integration Gate paused/not opened. | ZCode Owner; DeepSeek Harness + Qoder independent Reviews; Codex Scheduler/Integrator. | Adopt the preserved Codex architecture draft or record a bounded semantic delta; final dual Review must bind ZCode final head. M2-S1 stays `NOT_RELEASED` until C1 is `integrated_verified / done` and a separate M2-S1 Task is authorized. |
+| 8 | [M2-C1 Typed IPC Contract](tasks/M2-C1.md) | `in_review`; Owner Delivery=`7de1cd2`, Handoff/final reviewed_head=`b237728`; Integration Gate not opened. | ZCode Owner; DeepSeek Harness + Qoder independent Reviews in progress; Codex Integrator. | Case A adoption is blob-identical to the draft; both Reviews must bind the same Owner head before Gate. M2-S1 stays `NOT_RELEASED` until C1 is `integrated_verified / done` and a separate M2-S1 Task is authorized. |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
@@ -210,11 +210,10 @@ Current successor gate (updated 2026-09-26):
 ```text
 M2-D1 / M2-I1 / M2-I2 / M2-R1 / M2-UI1 = integrated; ancestry verified at base 7478f72fe6f9872cae29f4fa12888b5e1f2380f1
   -> T3.2.1 = closed_with_limitations / SUPERSEDED_BY_M2; unfinished Legacy ACs do not block M2
-  -> M2-C1 = ready; Owner ZCode; base 7478f72fe6f9872cae29f4fa12888b5e1f2380f1
-  -> Codex draft 4d66523 = ARCHITECTURE_DRAFT / PRE_OWNER_BASELINE; Qoder R3 1950a23 = APPROVED_ARCHITECTURE_DRAFT
-  -> ZCode freezes Owner Delivery + Handoff
-  -> DeepSeek Harness full Review || Qoder final/equivalence Review, both on the same ZCode reviewed_head
-  -> Codex may open M2-C1 Integration Gate only after both APPROVED and all evidence is frozen
+  -> M2-C1 = in_review; ZCode Delivery 7de1cd2; Handoff/reviewed_head b237728
+  -> Case A = OWNER_ADOPTED_WITHOUT_SEMANTIC_CHANGE; Contract blob equals adopted source blob 4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3
+  -> DeepSeek Harness full Review || Qoder Case A equivalence re-validation or full Review; both use b237728
+  -> Codex may open M2-C1 Integration Gate only after both independent Reviews APPROVED and evidence is frozen
   -> M2-S1 remains NOT_RELEASED until M2-C1 integrated_verified / done and a separate M2-S1 Task is authorized
 ```
 

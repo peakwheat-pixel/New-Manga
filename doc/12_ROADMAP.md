@@ -7,7 +7,7 @@ graph, acceptance boundaries and historical Task audit live in
 
 ## Future architecture milestone
 
-[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) is `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION`; M2-I1/I2/R1/UI1 and M2-D1 are integrated and done. T3.2.1 is `closed_with_limitations / SUPERSEDED_BY_M2`; its unfinished Legacy ACs do not block M2. The next authorized Task is [M2-C1 — Typed IPC Contract](tasks/M2-C1.md), `ready` for ZCode Owner work from fixed base `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`. The prior Codex Delivery and Qoder R3 are preserved architecture-draft evidence only; final DSH + Qoder Reviews and the Integration Gate remain pending/paused. M2-S1 is `NOT_RELEASED`.
+[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) is `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION`; M2-I1/I2/R1/UI1 and M2-D1 are integrated and done. T3.2.1 is `closed_with_limitations / SUPERSEDED_BY_M2`; its unfinished Legacy ACs do not block M2. The next authorized Task is [M2-C1 — Typed IPC Contract](tasks/M2-C1.md), `in_review` for ZCode Owner work from fixed base `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`. The prior Codex Delivery and Qoder R3 are preserved architecture-draft evidence only; Owner Delivery=`7de1cd2`, reviewed_head=`b237728`; DSH + Qoder Reviews are in progress. Integration Gate not open. M2-S1 is `NOT_RELEASED`.
 
 ## Current order
 
