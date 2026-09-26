@@ -64,16 +64,18 @@ class CoreChannelServer:
         if method == "ping":
             return {"result": {"pong": True, "service": "m2-rc1-resource-channel"}}
         if method == "issue":
-            reader = self._roots.reader_for(params["scope_class"])
+            scope_class = params.get("scope_class", "derived-read-only")
+            reader = self._roots.reader_for(scope_class)
             facts = reader.capture_facts(params["rel_path"])
             opaque_id = self._service.issue(
-                scope_class=params["scope_class"],
+                scope_class=scope_class,
                 resource_id=params["resource_id"],
                 revision_fingerprint=params["revision_fingerprint"],
                 rel_path=params["rel_path"],
                 facts=facts,
+                ttl_seconds=params.get("ttl_seconds"),
             )
-            return {"result": {"id": opaque_id}}
+            return {"result": {"id": opaque_id, "size": facts.size}}
         if method == "resolve":
             grant = self._service.resolve(params["id"])
             return {
@@ -139,7 +141,15 @@ class CoreChannelServer:
 
 
 def main() -> int:
-    server = CoreChannelServer()
+    import os
+
+    derived = os.environ.get("M2RC1_DERIVED_ROOT")
+    managed = os.environ.get("M2RC1_MANAGED_ROOT")
+    roots = ScopeRoots(
+        derived_root=Path(derived) if derived else None,
+        managed_root=Path(managed) if managed else None,
+    )
+    server = CoreChannelServer(roots=roots)
     return server.serve_forever()
 
 

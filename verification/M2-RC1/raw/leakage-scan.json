@@ -1,0 +1,19 @@
+{
+  "scan": "M2-RC1 e2e caller-visible evidence scan",
+  "files": [
+    "e2e-results-first.json",
+    "e2e-results-repeat.json"
+  ],
+  "fragments_checked": [
+    "49745",
+    "C:\\Users",
+    "AppData",
+    "m2rc1-lab",
+    "asset.png",
+    "boundary.bin",
+    "oversize.bin",
+    "scope\\derived"
+  ],
+  "hits": [],
+  "verdict": "CLEAN"
+}

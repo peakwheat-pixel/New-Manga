@@ -19,7 +19,13 @@ from application.resource_channel.dto import (
 class ScopeRoots:
     """Resolves scope classes to absolute scope roots on this machine."""
 
-    def __init__(self, derived_root: Path, managed_root: Path) -> None:
+    def __init__(self, derived_root: Path | None = None, managed_root: Path | None = None) -> None:
+        if derived_root is None or managed_root is None:
+            import tempfile
+
+            temp = Path(tempfile.gettempdir()) / "m2rc1-lab" / "scope"
+            derived_root = derived_root or temp / "derived"
+            managed_root = managed_root or temp / "managed"
         self._roots = {
             "derived-read-only": Path(derived_root).resolve(),
             "managed-read-only": Path(managed_root).resolve(),
