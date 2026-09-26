@@ -2,7 +2,7 @@
 id: M2-RC1
 title: Contract-Aligned Large-Media Resource Channel Runtime
 kind: implementation
-status: in_review
+status: changes_requested
 release_state: LARGE_MEDIA_RESOURCE_CHANNEL_RUNTIME_RELEASED
 approval: approved_by_user_2026-09-27
 execution_approval: approved_by_user_2026-09-27_explicit_task_release
@@ -67,6 +67,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
+- 2026-09-27（Review）：DSH 非作者 Review 派发（协议 §6.1，session `session-dec2cbeb-6fc4-445b-acda-3126ba79c5c0`，exit 0）——**决定 `changes_requested`**（1×P1 + 4×P2 + 7×P3），报告 `doc/reviews/M2-RC1-f8ce10a2.md`（346 行，未提交，归集成方）。DSH 沙箱 SHELL_UNAVAILABLE（沿用 M2-C2/S3 交叉核验替代法）。**P1 阻断项 F-01**：`resource_protocol.rs` grant 缓存命中时不经 Core resolve → issue→fetch→revoke→fetch 仍 200，违反 T6 立即撤销（测试顺序恰绕过该窗口）。P2：F-02 首验后 digest 不再校验、F-03 probe/register 命令对 WebView 开放、F-04 T3 用 49KB fixture、F-05 sidecar 传递性导入产品模块、F-13 只读/open-once/读后复核/T2 真实上限未覆盖；7×P3 含 Handoff 文件数矛盾（F-11）。DSH 建议：M2-RC1-FIX 独立修复（F-01/F-02 必修，F-04/F-11/F-13 准入），修复后非作者复核再转 approve。派发记录：`verification/M2-RC1/dispatch-review-f8ce10a2.md`。
 - Release：Codex，2026-09-27；证据：[release-2dca20cd.md](../../verification/M2-RC1/release-2dca20cd.md)（在治理 commit `fb87414a`/主线，本分支经 `git show` 只读，不携带）。
 - 2026-09-27（Owner ZCode，实现交付）：三栈垂直切片完成——①Python Core：`src/application/resource_channel/`（ResourceChannelService：256-bit 不透明 ID、300 s 滑动 TTL、revision 切换/删除/pin release 立即撤销、32 引用/16 订阅者类型化限流、256 MiB T1 上限、user-source 签发拒绝、重启旧 ID 不重绑）+ `src/infrastructure/resource_channel/`（HandleVerifiedFileReader：pre-open reparse walk + open-once 窄/宽共享双模式 + 句柄 containment/identity/size/digest + 读后身份复核 + 有界分块流式；ScopeRoots；stdio JSON-lines host_bridge）+ `tests/m2_resource_channel/`（35 passed）。②Tauri/Rust：`apps/desktop/src-tauri/`（m2res 协议：ID 格式门→grant 缓存→open-then-verify→首验全量 digest 流→16 MiB 分块→读后复核；no-store+CORS；stdio Core sidecar 桥+catalog；9 cargo tests 含真 sidecar 集成）。③React/TS：`apps/desktop/frontend/`（ResourceChannelClient 仅见不透明 URL+size；分块 fetchAll；typed 错误映射；探针矩阵；8 vitest tests）。④端到端：真实 Python Core↔Tauri↔WebView2 三栈矩阵 10/10 PASS（exit 0，两次运行一致）——E-01 issue+分块 fetch+digest 自证、E-02 渲染、E-03/04/05 unknown/revoked/expired 类型化拒绝、E-06 remount 新引用、E-07 热缓存 P95≈1 ms、E-08 256 MiB 分块、E-09 超限拒绝。bring-up 缺陷如实记录于 `verification/M2-RC1/run-log.md`。NOT_RUN：S1-B3/B6/B8、冷缓存、模型权重、产品级安全声明全部保留。Gate：Owner 实现完成，交非作者 Reviewer（DeepSeek Harness）。
 - 2026-09-27（Owner ZCode，开工）：RC1-AC1 基线自检 PASS（toplevel/git-dir/common-dir/HEAD=2dca20cd/分支/干净工作区/Contract blob=`fc359138…`=Task 固定 blob），证据 `verification/M2-RC1/baseline-selfcheck.md`。事实记录：base `2dca20cd` 不含释放 commit `fb87414a`（其父即本 base）；Owner 按指令仅以 `git checkout fb87414a -- doc/tasks/M2-RC1.md` 取入本 Task 文件，不合并释放 commit。无 BLOCKED。
