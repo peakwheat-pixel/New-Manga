@@ -1,0 +1,325 @@
+{
+  "probe": "S2-TOCTOU",
+  "purpose": "systematic negative probes for M2-S1 blocker S1-B11 (TOCTOU) against the open-then-verify-from-handle reference resolver",
+  "release_reference": "doc/tasks/M2-S2.md (S2-AC2/S2-AC3); M2-S1 搂8.2 S1-B11 conditions 1-3",
+  "toctou_limit_bytes": 8388608,
+  "toctou_limit_label": "probe configuration, NOT a product threshold",
+  "media_limit_bytes": 67108864,
+  "scope_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\scope",
+  "outside_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\outside",
+  "small_fixture_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+  "typical_fixture_sha256": "92781dc9f5e8d5825c023ee19f765b1fa66cd7e4662836add70af4a97d5a6793",
+  "scenarios": [
+    {
+      "id": "T-01P-positive-small-asset",
+      "status": "PASS",
+      "sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+      "expected_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+      "bytes_read": 2882143,
+      "identity": {
+        "key": "volume_serial+file_index",
+        "value": [
+          1485189147,
+          56294995342462417
+        ],
+        "size": 2882143,
+        "attributes": 32
+      },
+      "final_path": "\\\\?\\C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\scope\\derived\\asset.png",
+      "note": "open once, verify identity+size+containment from the handle, read through the handle"
+    },
+    {
+      "id": "T-02P-positive-larger-asset",
+      "status": "PASS",
+      "sha256": "92781dc9f5e8d5825c023ee19f765b1fa66cd7e4662836add70af4a97d5a6793",
+      "expected_sha256": "92781dc9f5e8d5825c023ee19f765b1fa66cd7e4662836add70af4a97d5a6793",
+      "bytes_read": 11525983,
+      "limit_bytes": 67108864,
+      "note": "larger legitimate asset served within the M2-S1-parity probe limit"
+    },
+    {
+      "id": "T-03P-over-limit-typed-rejection",
+      "status": "PASS",
+      "error_code": "MEDIA_TOO_LARGE_BY_HANDLE",
+      "limit_bytes": 8388608,
+      "limit_label": "probe configuration, NOT a product threshold",
+      "note": "size is verified from the opened handle before any byte is read"
+    },
+    {
+      "id": "T-04P-static-negative-controls",
+      "status": "PASS",
+      "cases": [
+        {
+          "case": "lexical-traversal",
+          "expected": "REF_OUT_OF_SCOPE",
+          "actual": "REF_OUT_OF_SCOPE"
+        },
+        {
+          "case": "absolute-path",
+          "expected": "REF_OUT_OF_SCOPE",
+          "actual": "REF_OUT_OF_SCOPE"
+        },
+        {
+          "case": "in-scope-junction-reparse",
+          "expected": "REF_REPARSE_POINT",
+          "actual": "REF_REPARSE_POINT"
+        },
+        {
+          "case": "user-source-scope",
+          "expected": "REF_SCOPE_DENIED",
+          "actual": "REF_SCOPE_DENIED"
+        },
+        {
+          "case": "write-mode",
+          "expected": "REF_READ_ONLY",
+          "actual": "REF_READ_ONLY"
+        }
+      ],
+      "junction": {
+        "link": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\scope\\derived\\link",
+        "target": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\outside\\dir",
+        "created": true,
+        "output": "为 C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\scope\\derived\\link <<===>> C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\outside\\dir 锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷\r\n"
+      },
+      "note": "static path inputs only; re-confirms the early-rejection layer (M2-S1 F-02 parity)"
+    },
+    {
+      "id": "T-10-swap-file-between-check-and-open-small",
+      "status": "PASS",
+      "expected_rejection_code": "FILE_IDENTITY_CHANGED",
+      "actual_rejection_code": "FILE_IDENTITY_CHANGED",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": "swapped-small"
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "check/open window: file replaced with a small out-of-scope file; identity from the handle catches it"
+    },
+    {
+      "id": "T-11-swap-file-between-check-and-open-large",
+      "status": "PASS",
+      "expected_rejection_code": "FILE_IDENTITY_CHANGED",
+      "actual_rejection_code": "FILE_IDENTITY_CHANGED",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": "swapped-large"
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "check/open window: file replaced with a much larger out-of-scope file; identity is checked before size"
+    },
+    {
+      "id": "T-12-equal-size-swap-between-check-and-open",
+      "status": "PASS",
+      "expected_rejection_code": "FILE_IDENTITY_CHANGED",
+      "actual_rejection_code": "FILE_IDENTITY_CHANGED",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": "swapped-same-size"
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "equal-size different-content swap (F-06 pattern): size alone cannot see it, handle identity can",
+      "same_size_variant": {
+        "source_bytes": 2882143,
+        "variant_bytes": 2882143,
+        "same_size": true,
+        "variant_sha256": "fc9fd0af0cce035be95af0dc9480b1cbb1724bf217cb246c3945e9b04de7e0e8",
+        "source_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      }
+    },
+    {
+      "id": "T-13-dir-component-swapped-for-junction",
+      "status": "PASS",
+      "expected_rejection_code": "REF_OUT_OF_SCOPE",
+      "actual_rejection_code": "REF_OUT_OF_SCOPE",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": [
+          null,
+          null,
+          true
+        ]
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "check/open window: directory component replaced by a junction pointing outside the scope; containment re-derived from the opened handle rejects"
+    },
+    {
+      "id": "T-14-scope-root-swapped-for-junction",
+      "status": "PASS",
+      "expected_rejection_code": "REF_OUT_OF_SCOPE",
+      "actual_rejection_code": "REF_OUT_OF_SCOPE",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": [
+          null,
+          true
+        ]
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "adversary-writable parent: the whole scope root is renamed away and replaced by a junction into an out-of-scope mirror tree; containment from the handle rejects"
+    },
+    {
+      "id": "T-15-parent-dir-component-swapped-for-junction",
+      "status": "PASS",
+      "expected_rejection_code": "REF_OUT_OF_SCOPE",
+      "actual_rejection_code": "REF_OUT_OF_SCOPE",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": [
+          null,
+          null,
+          true
+        ]
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "a parent directory component of the referenced file is swapped for a junction; handle containment rejects"
+    },
+    {
+      "id": "T-16-in-place-equal-size-rewrite-preheld-handle",
+      "status": "PASS",
+      "expected_rejection_code": "CONTENT_DIGEST_MISMATCH",
+      "actual_rejection_code": "CONTENT_DIGEST_MISMATCH",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": "rewrote-first-4k-equal-size"
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "adversary held a write handle before the resolver opened; equal-size rewrite is invisible to identity+size, the issue-time content digest catches it"
+    },
+    {
+      "id": "T-17-in-place-size-changing-rewrite-preheld-handle",
+      "status": "PASS",
+      "expected_rejection_code": "FILE_SIZE_CHANGED",
+      "actual_rejection_code": "FILE_SIZE_CHANGED",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": "extended-file-past-eof"
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "in-place write extending the file past EOF (pre-held handle, availability-first mode) is caught by the handle size re-verification before any byte is read"
+    },
+    {
+      "id": "T-18-in-place-rewrite-during-read",
+      "status": "PASS",
+      "expected_rejection_code": "CONTENT_DIGEST_MISMATCH",
+      "actual_rejection_code": "CONTENT_DIGEST_MISMATCH",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": "rewrote-second-block-during-read"
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "rewrite lands while the handle read is in flight; the same-handle digest check catches the mix"
+    },
+    {
+      "id": "T-19-new-writer-open-blocked-by-share-mode",
+      "status": "PASS",
+      "resolver_read_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+      "expected_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+      "attack_outcome": {
+        "attack_result": {
+          "new_writer_open_ok": false,
+          "win32_error": 32
+        }
+      },
+      "expected_win32_error": 32,
+      "note": "while the resolver holds the handle (FILE_SHARE_READ only), a new writer open fails with ERROR_SHARING_VIOLATION (32) and the legitimate read is unaffected"
+    },
+    {
+      "id": "T-21-pre-held-writer-fails-closed",
+      "status": "PASS",
+      "actual_rejection_code": "OPEN_FAILED_SHARING_VIOLATION",
+      "expected_rejection_code": "OPEN_FAILED_SHARING_VIOLATION",
+      "bytes_read": null,
+      "note": "default narrow-share mode: an adversary that already holds a write handle makes the resolver's open fail closed (ERROR_SHARING_VIOLATION 32); no byte is read. Availability-first parity (share_write=True) is exercised by T-16..T-18 where the digest layer carries the load."
+    },
+    {
+      "id": "T-20-dir-component-swapped-for-symlink",
+      "status": "PASS",
+      "expected_rejection_code": "REF_OUT_OF_SCOPE",
+      "actual_rejection_code": "REF_OUT_OF_SCOPE",
+      "typed_rejection": true,
+      "read_through_handle_result": null,
+      "attack_outcome": {
+        "attack_result": [
+          null,
+          null,
+          true
+        ]
+      },
+      "restore_check": {
+        "restore_ok": true,
+        "restore_sha256": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3",
+        "restore_expected": "d7e589cb36cba524c3e86316f5b5888a217d4e7489232a1e8ad1b2fa044bbfd3"
+      },
+      "note": "same race as T-13 with a symbolic link; symlink creation privilege was available on this host",
+      "symlink_environment": {
+        "link": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\scope\\derived\\symdir",
+        "target": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou\\outside\\dir",
+        "created": true,
+        "error": null
+      }
+    }
+  ],
+  "boundary_summary": {
+    "open_then_verify_direction": "detects every exercised swap with a typed rejection (T-10..T-18) and serves legitimate resources (T-01P..T-03P)",
+    "static_rejection_layer": "reconfirmed (T-04P)",
+    "share_mode_defence": "narrow share fails closed against a pre-held writer (T-21) and blocks new writer opens while the handle is held (T-19); availability-first mode (share_write=True) is covered by the size/digest layers (T-16..T-18)",
+    "product_guarantee": "UNVERIFIED -- see limitations"
+  },
+  "limitations": [
+    "This is an isolated Python/Win32 prototype exercising S1-B11 release conditions (1) and (2); it is not a product implementation and does not by itself make the product boundary verified.",
+    "S1-B11 condition (3) 'target packaging/sandbox form' (MSIX/AppContainer re-run) and condition (4) (DACL/integrity level, S1-B3) are NOT_RUN here -- they need S1-B8 and S1-B3 respectively.",
+    "Handle identity is (volume serial, file index); NTFS may reuse an index after deletion. The issue-time content digest is the defence-in-depth layer that also covers in-place equal-size rewrites by an adversary that already held a write handle (T-16/T-18).",
+    "The pre-open reparse walk is an early rejection with its own race window; the authoritative containment decision is derived from the opened handle (GetFinalPathNameByHandle)."
+  ],
+  "summary": {
+    "pass": 16,
+    "fail": 0,
+    "blocked": 0,
+    "not_run": 0
+  }
+}

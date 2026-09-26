@@ -1,0 +1,142 @@
+{
+  "probe": "S2-MAPPING",
+  "purpose": "opacity, lifecycle and leakage probes for M2-S1 blocker S1-B12 against the Core-side random mapping-ID reference prototype (threshold ruling T5.4)",
+  "release_reference": "doc/tasks/M2-S2.md (S2-AC4); M2-S1 搂8.2 S1-B12",
+  "id_random_bits": 192,
+  "ids_issued": 10,
+  "elapsed_seconds": 1.254,
+  "scenarios": [
+    {
+      "id": "M-01-issue-resolve-happy-path",
+      "status": "PASS",
+      "resolved_rel": "books/book-001/pages/page-001.png",
+      "resolved_scope": "derived",
+      "note": "the Core-side table maps the ID back correctly for the trusted caller"
+    },
+    {
+      "id": "M-02-format-analysis-no-path-semantics",
+      "status": "PASS",
+      "id_shape": "m2id.v1.<43-char base64url token_urlsafe(24)>",
+      "id_lengths": [
+        40
+      ],
+      "same_path_two_issues_distinct": true,
+      "max_common_prefix_among_segments": 0,
+      "path_fragment_hits_in_ids": [],
+      "codec_decode_hits": [],
+      "codecs_tried": [
+        "b64url",
+        "b64url_pad_fixed",
+        "b64std",
+        "base32",
+        "hex",
+        "raw_ascii"
+      ],
+      "note": "IDs are unlinkable per path, constant-length, and contain no path fragment under any tried codec"
+    },
+    {
+      "id": "M-03-no-recovery-without-core",
+      "status": "PASS",
+      "adversary_holds": "all issued ID strings (and nothing else)",
+      "attempts": [
+        "substring match of every path/resource fragment against every ID",
+        "base64url/base64/base32/hex/raw decodes of the random segment",
+        "md5/sha1/sha256/sha512 hex and b64 of rel, backslash rel, file name and rid"
+      ],
+      "hash_dictionary_hits": [],
+      "recovered_paths": 0,
+      "recovered_resource_ids": 0,
+      "note": "inductive evidence: the exercised analysis space recovers nothing (see limitations)"
+    },
+    {
+      "id": "M-04-guessing-enumeration-typed-and-uniform",
+      "status": "PASS",
+      "guesses": 5029,
+      "random_guesses": 5000,
+      "observed_codes": [
+        "REF_UNKNOWN_ID"
+      ],
+      "uniform_error_shape": true,
+      "keyspace_bits": 192,
+      "note": "every guess returns the same typed REF_UNKNOWN_ID; no oracle distinguishes near-misses"
+    },
+    {
+      "id": "M-05-errors-logs-telemetry-no-leakage",
+      "status": "PASS",
+      "scanned_texts": 20,
+      "leak_hits": [],
+      "error_codes_seen": [
+        "REF_EXPIRED",
+        "REF_REVOKED",
+        "REF_UNKNOWN_ID"
+      ],
+      "revoked_before_revoked_resolved": true,
+      "log_sample": [
+        "issue ttl=0.4",
+        "resolve ok",
+        "revoke ok",
+        "resolve REF_REVOKED",
+        "resolve REF_REVOKED"
+      ],
+      "telemetry_sample": [
+        {
+          "event": "mapping_issued"
+        },
+        {
+          "event": "mapping_resolved"
+        },
+        {
+          "event": "mapping_revoked"
+        },
+        {
+          "event": "mapping_resolve_failed",
+          "code": "REF_REVOKED"
+        },
+        {
+          "event": "mapping_resolve_failed",
+          "code": "REF_REVOKED"
+        }
+      ],
+      "note": "the caller-visible surfaces carry events and stable codes only -- no rel, no rid, no table rows"
+    },
+    {
+      "id": "M-06-expiry-typed-error",
+      "status": "PASS",
+      "resolved_before_expiry": true,
+      "code_after_expiry": "REF_EXPIRED",
+      "note": "expired mappings stay typeable and unreachable (ruling T6 semantics)"
+    },
+    {
+      "id": "M-07-revocation-typed-error",
+      "status": "PASS",
+      "resolved_before_revoke": true,
+      "code_after_revoke": "REF_REVOKED",
+      "note": "revocation is immediate on next resolve (ruling T6); the opened-consumption carve-out is a runtime concern outside this prototype"
+    },
+    {
+      "id": "M-08-sliding-renewal",
+      "status": "PASS",
+      "alive_after_touch": true,
+      "code_after_idle_expiry": "REF_EXPIRED",
+      "note": "touch() re-arms the TTL; idle references expire (ruling T6 sliding renewal)"
+    }
+  ],
+  "boundary_summary": {
+    "opacity": "no path or resource id recoverable from ID strings across the exercised analysis space (M-02/M-03); guessing is uniform-typed (M-04)",
+    "leakage": "errors, logs and telemetry carry no mapping-table entries (M-05)",
+    "lifecycle": "expiry, revocation and sliding renewal are typed (M-06/M-07/M-08)",
+    "product_guarantee": "UNVERIFIED -- see limitations"
+  },
+  "limitations": [
+    "Opacity is inductive evidence: a bounded analysis space (substrings, common codecs, hash dictionaries, 5k+ guesses, neighbour mutations) recovers nothing from 192-bit random IDs. This is not a cryptographic proof and not a product guarantee.",
+    "The mapping table lives inside the Core process by construction; protecting Core memory, crash dumps or a compromised host is out of scope (ruling T5 makes the host a trusted layer).",
+    "No product IPC runtime, Tauri command or React consumer exists behind these surfaces; the log/telemetry streams here are prototype-level stand-ins for the caller-visible output.",
+    "Core restart / table persistence semantics (S1-B5) are not exercised."
+  ],
+  "summary": {
+    "pass": 8,
+    "fail": 0,
+    "blocked": 0,
+    "not_run": 0
+  }
+}
