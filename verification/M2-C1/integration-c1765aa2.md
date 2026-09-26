@@ -39,4 +39,14 @@
 - 产品 pytest、GUI、IPC runtime、序列化与大媒体容量验证：`NOT_RUN`。M2-C1 是文档契约 Task；没有实现路径或产品测试变化。页级 `blocked` 映射、React UI Owner、大媒体通道和 runtime 语义仍 `USER_DECISION_REQUIRED / DEFERRED`。
 - 原 G: DSH worktree、C: r2 linked worktree 及未提交报告/evidence、C: r3 standalone clone、Qoder worktree 与 `.qoder-credits/`、ZCode Owner worktree全部保留。没有 reset、clean、stash、force checkout 或历史 Review 重写。
 
-完成状态：M2-C1=`done`（待本治理提交进入 master 后最终复核）；Integration Gate=`PASSED`；M2-S1=`NOT_RELEASED`。
+## master 集成后复核
+
+Codex 治理提交 `b4c3fc1b15a84d22f8ba46dadb01817fe5ff3631` 从原 master `4ad205ddbd1af4d9d2bf64478a042cf519fdf709` 通过 `git merge --ff-only codex/M2-C1-integration-gate-r3` 进入 master。随后在 master 的干净工作区复核：
+
+- `git rev-parse HEAD` = `b4c3fc1b15a84d22f8ba46dadb01817fe5ff3631`；`git branch --show-current` = `master`；`git rev-parse --git-common-dir` = `G:/CODEX/New Manga/.git`；`git status --porcelain=v1` 为空。
+- `git merge-base --is-ancestor <Owner|Handoff|Qoder|DSH> HEAD` 四次 exit 0。`git rev-parse Qoder^` 与 `git rev-parse DSH^` 均为固定 Handoff `b2377288680569dbee4e2299fd7dfae4de067c54`。
+- `git rev-parse HEAD:doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` = 固定 blob `4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3`；`git rev-parse HEAD:verification/M2-C1/source-trace.md` = adopted source blob `bf8ca76ce597afc044e2448add246a4db7b4ce13`；Contract 的相对链接解析到工作区文件，`Test-Path` = True。
+- `git diff --check 4ad205ddbd1af4d9d2bf64478a042cf519fdf709 HEAD` 无输出、exit 0；`git fsck --connectivity-only --no-dangling` exit 0。
+- Owner worktree clean；Qoder 仅保留原 `.qoder-credits/`；DSH r3 standalone clone clean；DSH r2 与原 G: Review 的未提交报告/evidence 均在原位置保留。
+
+完成状态：M2-C1=`done`，Integration Gate=`PASSED`，M2-S1=`NOT_RELEASED`。该验证只覆盖文档契约与集成身份，产品 pytest/GUI/IPC runtime 仍为 `NOT_RUN`。
