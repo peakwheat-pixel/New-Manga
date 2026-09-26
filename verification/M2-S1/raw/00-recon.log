@@ -1,0 +1,89 @@
+# M2-S1 reconnaissance transcript
+# generated_utc: 2026-09-26T10:00:26Z
+# repo: C:\Users\49745\.codex\worktrees\M2-S1-dsh-resource-channel
+--- git rev-parse --show-toplevel ---
+C:/Users/49745/.codex/worktrees/M2-S1-dsh-resource-channel
+--- git rev-parse --git-dir ---
+.git
+--- git rev-parse --absolute-git-dir ---
+C:/Users/49745/.codex/worktrees/M2-S1-dsh-resource-channel/.git
+--- git rev-parse --git-common-dir ---
+.git
+--- git rev-parse HEAD ---
+85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc
+--- git rev-parse --abbrev-ref HEAD ---
+agent/deepseek/M2-S1-resource-channel-spike
+--- git rev-parse --short HEAD ---
+85a2aa7
+--- git status --porcelain=v1 --branch ---
+## agent/deepseek/M2-S1-resource-channel-spike
+?? verification/M2-S1/probes/
+?? verification/M2-S1/raw/
+--- git remote -v ---
+origin	G:/CODEX/New Manga (fetch)
+origin	G:/CODEX/New Manga (push)
+--- git worktree list ---
+C:/Users/49745/.codex/worktrees/M2-S1-dsh-resource-channel  85a2aa7 [agent/deepseek/M2-S1-resource-channel-spike]
+--- worktree-marker .git/commondir exists? ---
+NO (standalone clone)
+--- .git/objects/info/alternates exists? ---
+NO
+--- .git/config ---
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = false
+	logallrefupdates = true
+	symlinks = false
+	ignorecase = true
+[remote "origin"]
+	url = G:/CODEX/New Manga
+	fetch = +refs/heads/master:refs/remotes/origin/master
+[branch "master"]
+	remote = origin
+	merge = refs/heads/master
+--- refs/remotes/origin/master ---
+610f99dc79923e0be48c5b5dd633ff4facfb40e4
+--- git log -3 --oneline --decorate ---
+85a2aa7 (HEAD -> agent/deepseek/M2-S1-resource-channel-spike, master) docs(m2-s1): register resource channel spike scope
+0c2e202 docs(m2-c1): clarify historical SHA typo evidence
+7bd3aff docs(m2-c1): record master post-integration verification
+--- fixed Contract blob (HEAD:...)  ---
+4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3
+--- fixed base blob (base:...)  ---
+4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3
+--- origin/master Contract blob ---
+4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3
+--- tracked file counts ---
+all=2187
+src=210
+tests=141
+verification/M2-S1=1
+--- git version ---
+git version 2.52.0.windows.1
+--- python --version ---
+Python 3.14.6
+--- python executable ---
+C:\Python314\python.exe
+--- OS version ---
+Microsoft Windows NT 10.0.26200.0
+--- pwsh version / language mode ---
+7.6.6 / FullLanguage
+--- TEMP ---
+C:\Users\49745\AppData\Local\Temp\dsh-K8Ki2H
+--- processor identifier ---
+AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD
+--- processor architecture ---
+AMD64
+--- logical processors ---
+32
+--- USERNAME / USERDOMAIN ---
+49745 / HOME-MY
+--- total physical memory (ctypes) ---
+  File "<string>", line 1
+    import ctypes,ctypes.wintypes as w;class M(ctypes.Structure):_fields_=[('dwLength',w.DWORD),('dwMemoryLoad',w.DWORD),('ullTotalPhys',ctypes.c_ulonglong),('ullAvailPhys',ctypes.c_ulonglong),('ullTotalPageFile',ctypes.c_ulonglong),('ullAvailPageFile',ctypes.c_ulonglong),('ullTotalVirtual',ctypes.c_ulonglong),('ullAvailVirtual',ctypes.c_ulonglong),('ullAvailExtendedVirtual',ctypes.c_ulonglong)];m=M();m.dwLength=ctypes.sizeof(m);ctypes.windll.kernel32.GlobalMemoryStatusEx(ctypes.byref(m));print('TotalPhysMB=%.1f AvailPhysMB=%.1f Load=%d%%'%(m.ullTotalPhys/1048576,m.ullAvailPhys/1048576,m.dwMemoryLoad))
+                                       ^^^^^
+SyntaxError: invalid syntax
+--- disk free on C: ---
+UsedGB=487.63 FreeGB=442.76
+# END

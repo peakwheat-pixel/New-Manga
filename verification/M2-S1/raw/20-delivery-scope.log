@@ -1,0 +1,119 @@
+# M2-S1 delivery scope check
+# generated_utc: 2026-09-26T10:23:52Z
+
+## base
+85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc
+
+## pre-commit: staged paths of the delivery commit (git diff --cached --name-only)
+doc/research/M2-S1_RESOURCE_CHANNEL_SPIKE.md
+doc/tasks/M2-S1.md
+verification/M2-S1/00-environment-and-recon.md
+verification/M2-S1/01-source-and-consumer-reality.md
+verification/M2-S1/02-evidence-manifest.md
+verification/M2-S1/03-checkpoint.md
+verification/M2-S1/04-verification-plan-results.md
+verification/M2-S1/README.md
+verification/M2-S1/probes/00_meminfo.py
+verification/M2-S1/probes/00_recon.ps1
+verification/M2-S1/probes/m2s1_lab.py
+verification/M2-S1/probes/make_fixtures.py
+verification/M2-S1/probes/probe_a_token.py
+verification/M2-S1/probes/probe_b_stream.py
+verification/M2-S1/probes/probe_c_section.py
+verification/M2-S1/probes/probe_d_base64.py
+verification/M2-S1/probes/probe_e_concurrency.py
+verification/M2-S1/probes/run_all.ps1
+verification/M2-S1/raw/00-recon.log
+verification/M2-S1/raw/00-run-all.log
+verification/M2-S1/raw/01-probe-script-hashes.log
+verification/M2-S1/raw/02-host-memory-and-environment.log
+verification/M2-S1/raw/03-fixture-generation.log
+verification/M2-S1/raw/04-repeat-run-1.log
+verification/M2-S1/raw/05-final-digest.log
+verification/M2-S1/raw/06-evidence-hashes.log
+verification/M2-S1/raw/10-probe-A-capability-token.log
+verification/M2-S1/raw/11-probe-B-streaming-pipe.log
+verification/M2-S1/raw/12-probe-C-windows-section.log
+verification/M2-S1/raw/13-probe-D-base64-control.log
+verification/M2-S1/raw/14-probe-E-concurrency.log
+verification/M2-S1/raw/20-delivery-scope.log
+verification/M2-S1/raw/fixtures.json
+verification/M2-S1/raw/probeA-result.json
+verification/M2-S1/raw/probeB-result.json
+verification/M2-S1/raw/probeC-result.json
+verification/M2-S1/raw/probeD-result.json
+verification/M2-S1/raw/probeE-result.json
+
+## pre-commit: staged whitespace check (git diff --cached --check)
+
+rc=0
+
+## pre-commit: unauthorized staged path check (must be empty)
+
+
+## pre-commit: protected paths unchanged vs base (must be empty)
+
+(empty above = zero changes)
+
+## post-commit sections
+The delivery SHA, base..delivery name-status and base..delivery diff --check are appended
+by the Handoff commit, whose delivery_head is the commit created right after this file.
+
+# ===== post-commit record (appended by the Handoff commit) =====
+# delivery_head = 4eaad684769a02035748b95186d478bbed926042
+# recorded_utc: 2026-09-26T10:24:01Z
+
+## git diff --name-status 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc..4eaad684769a02035748b95186d478bbed926042
+A	doc/research/M2-S1_RESOURCE_CHANNEL_SPIKE.md
+M	doc/tasks/M2-S1.md
+A	verification/M2-S1/00-environment-and-recon.md
+A	verification/M2-S1/01-source-and-consumer-reality.md
+A	verification/M2-S1/02-evidence-manifest.md
+A	verification/M2-S1/03-checkpoint.md
+A	verification/M2-S1/04-verification-plan-results.md
+A	verification/M2-S1/README.md
+A	verification/M2-S1/probes/00_meminfo.py
+A	verification/M2-S1/probes/00_recon.ps1
+A	verification/M2-S1/probes/m2s1_lab.py
+A	verification/M2-S1/probes/make_fixtures.py
+A	verification/M2-S1/probes/probe_a_token.py
+A	verification/M2-S1/probes/probe_b_stream.py
+A	verification/M2-S1/probes/probe_c_section.py
+A	verification/M2-S1/probes/probe_d_base64.py
+A	verification/M2-S1/probes/probe_e_concurrency.py
+A	verification/M2-S1/probes/run_all.ps1
+A	verification/M2-S1/raw/00-recon.log
+A	verification/M2-S1/raw/00-run-all.log
+A	verification/M2-S1/raw/01-probe-script-hashes.log
+A	verification/M2-S1/raw/02-host-memory-and-environment.log
+A	verification/M2-S1/raw/03-fixture-generation.log
+A	verification/M2-S1/raw/04-repeat-run-1.log
+A	verification/M2-S1/raw/05-final-digest.log
+A	verification/M2-S1/raw/06-evidence-hashes.log
+A	verification/M2-S1/raw/10-probe-A-capability-token.log
+A	verification/M2-S1/raw/11-probe-B-streaming-pipe.log
+A	verification/M2-S1/raw/12-probe-C-windows-section.log
+A	verification/M2-S1/raw/13-probe-D-base64-control.log
+A	verification/M2-S1/raw/14-probe-E-concurrency.log
+A	verification/M2-S1/raw/20-delivery-scope.log
+A	verification/M2-S1/raw/fixtures.json
+A	verification/M2-S1/raw/probeA-result.json
+A	verification/M2-S1/raw/probeB-result.json
+A	verification/M2-S1/raw/probeC-result.json
+A	verification/M2-S1/raw/probeD-result.json
+A	verification/M2-S1/raw/probeE-result.json
+
+## git diff --check 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc 4eaad684769a02035748b95186d478bbed926042
+
+rc=0
+
+## forbidden-path check (must be empty)
+
+
+## protected paths vs base (must be empty)
+
+(empty above = zero changes)
+
+## M2-C1 artifacts vs base (must be empty)
+
+(empty above = zero changes)

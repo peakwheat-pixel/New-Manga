@@ -1,0 +1,26 @@
+# M2-S1 revision: shared-code change proof
+# generated_utc: 2026-09-26T10:37:06Z
+# command: git diff -- verification/M2-S1/probes/m2s1_lab.py
+# expectation: docstring/comment lines only -- no executable statement changes, so the
+#              original A-E logs remain valid evidence for the unchanged behaviour.
+# fidelity note: each transcript line has trailing whitespace stripped so this log file
+#              itself passes git diff --check; the authoritative comparison is the
+#              git diff command above, and the AST check below is whitespace-insensitive.
+
+## raw diff (trailing whitespace stripped per line)
+
+
+## AST equivalence check (rigorous, docstring-insensitive)
+# method: parse the delivered blob and the working tree, remove Module/Class/Function
+#         docstrings, compare ast.dump(..., include_attributes=False)
+{
+  "old_lines": 639,
+  "new_lines": 675,
+  "ast_identical_after_docstring_removal": true,
+  "old_ast_chars": 63981,
+  "new_ast_chars": 63981
+}
+exit_code=0
+# interpretation: an identical AST after docstring removal proves no executable statement,
+#               signature, literal or control-flow change. Comments are not represented in
+#               the AST, so the byte-level diff above is retained to show them too.

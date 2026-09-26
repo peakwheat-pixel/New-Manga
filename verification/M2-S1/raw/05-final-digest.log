@@ -1,0 +1,78 @@
+== A == {'pass': 15, 'fail': 0, 'blocked': 0, 'not_run': 0}
+  A-01-small PASS None bytes 2882143 resolve_ms 0.469 core_ms 0.41 read_ms 2.113 sha True tok 227
+  A-02-typical PASS None bytes 11525983 resolve_ms 0.389 core_ms 0.334 read_ms 6.993 sha True tok 233
+  A-03-webtoon-tile PASS None bytes 10129021 resolve_ms 0.419 core_ms 0.355 read_ms 6.061 sha True tok 243
+  A-04-webtoon-long-page PASS None bytes 60773055 resolve_ms 0.416 core_ms 0.354 read_ms 35.242 sha True tok 247
+  A-05-oversize-rejection PASS MEDIA_TOO_LARGE bytes None resolve_ms 0.427 core_ms 0.358 read_ms None sha None tok 244
+  A-06-expired PASS REF_EXPIRED bytes None resolve_ms None core_ms None read_ms None sha None tok None
+  A-07-revoked PASS None bytes None resolve_ms None core_ms None read_ms None sha None tok None
+  A-08-tampered-signature PASS REF_SIGNATURE_INVALID bytes None resolve_ms None core_ms None read_ms None sha None tok None
+  A-09-traversal PASS REF_OUT_OF_SCOPE bytes None resolve_ms None core_ms None read_ms None sha None tok None
+  A-10-absolute-path PASS REF_OUT_OF_SCOPE bytes None resolve_ms None core_ms None read_ms None sha None tok None
+  A-11-write-mode PASS REF_READ_ONLY bytes None resolve_ms 0.05 core_ms None read_ms None sha None tok 235
+  A-12-scope-denied PASS REF_SCOPE_DENIED bytes None resolve_ms 0.05 core_ms None read_ms None sha None tok 228
+  A-13-reparse-escape-outside PASS REF_OUT_OF_SCOPE bytes None resolve_ms None core_ms None read_ms None sha None tok None
+  A-14-missing-file PASS REF_NOT_FOUND bytes None resolve_ms 0.368 core_ms None read_ms None sha None tok 236
+  A-15-reparse-junction-inside PASS REF_REPARSE_POINT bytes None resolve_ms None core_ms None read_ms None sha None tok None
+ channel {'exit_code': 0, 'stderr': '', 'bytes_to_core': 7098, 'bytes_from_core': 7997} media_out_of_band 85310202
+ host {'working_set_mb': 24.23, 'peak_working_set_mb': 26.234, 'pagefile_usage_mb': 15.77, 'peak_pagefile_usage_mb': 17.848} core {'working_set_mb': 23.555, 'peak_working_set_mb': 23.555, 'pagefile_usage_mb': 15.004, 'peak_pagefile_usage_mb': 15.004}
+== B == {'pass': 12, 'fail': 0, 'blocked': 0, 'not_run': 0} hostfinal {'working_set_mb': 23.789, 'peak_working_set_mb': 28.785, 'pagefile_usage_mb': 15.137, 'peak_pagefile_usage_mb': 20.211}
+  B-01-small-1MiB PASS bytes 2882143 ms 86.5 MBps 31.78 first 85.023 wsdelta 0.98 err None
+  B-02-typical-1MiB PASS bytes 11525983 ms 83.226 MBps 132.07 first 77.252 wsdelta 0.992 err None
+  B-03-webtoon-tile-1MiB PASS bytes 10129021 ms 82.27 MBps 117.42 first 76.741 wsdelta 0.66 err None
+  B-04-webtoon-long-1MiB PASS bytes 60773055 ms 109.16 MBps 530.94 first 77.437 wsdelta 0.961 err None
+  B-05-chunk-64KiB PASS bytes 11525983 ms 86.073 MBps 127.71 first 78.546 wsdelta 0.117 err None
+  B-06-chunk-256KiB PASS bytes 11525983 ms 85.153 MBps 129.09 first 78.381 wsdelta 0.355 err None
+  B-07-chunk-4MiB PASS bytes 11525983 ms 87.558 MBps 125.54 first 78.803 wsdelta 0.993 err None
+  B-08-oversize-reject PASS bytes 0 ms 0.012 MBps 0.0 first None wsdelta 0.0 err MEDIA_TOO_LARGE
+  B-09-cancel-after-4MiB PASS bytes 4194304 ms 79.379 MBps 50.39 first 77.191 wsdelta 1.016 err CHANNEL_CANCELLED_BY_CONSUMER
+  B-10-truncated-stream PASS bytes 8388608 ms 87.368 MBps 91.57 first 76.085 wsdelta 0.0 err STREAM_TRUNCATED
+  B-11-producer-crash PASS bytes 4194304 ms 79.354 MBps 50.41 first 75.468 wsdelta 0.0 err STREAM_TRUNCATED
+  B-12-backpressure-slow-consumer PASS bytes 60773055 ms 1158.651 MBps 50.02 first 74.802 wsdelta 0.961 err None
+== C == {'pass': 14, 'fail': 0, 'blocked': 0, 'not_run': 0} hostfinal {'working_set_mb': 26.766, 'peak_working_set_mb': 38.746, 'pagefile_usage_mb': 19.219, 'peak_pagefile_usage_mb': 19.34}
+  {"id": "C1-00-create-named", "status": "PASS", "bytes": 2882143, "host_working_set_delta_mb": 2.757}
+  {"id": "C1-01-read-by-name", "status": "PASS"}
+  {"id": "C1-02-unauthenticated-writable-open", "status": "PASS"}
+  {"id": "C1-03-post-corruption-verify", "status": "PASS", "corruption_was_observable": true}
+  {"id": "C1-04-unknown-name-denied", "status": "PASS", "error_code": "SECTION_OPEN_FAILED"}
+  {"id": "C1-05-named-section-after-creator-exit", "status": "PASS", "error_code": "SECTION_OPEN_FAILED", "open_after_exit_result": "DENIED"}
+  {"id": "C2-01-duplicate-handle-into-host", "status": "PASS", "sha256_match": true, "host_working_set_delta_mb": 10.942, "survives_creator_exit": true, "bytes_hashed": 11525983}
+  {"id": "C2-02-same-user-hostile-duplication", "status": "PASS", "hostile_duplication_succeeded": true}
+  {"id": "C2-03-guessed-handle-value-rejected", "status": "PASS", "error_code": "DUPLICATE_HANDLE_FAILED"}
+  {"id": "C2-06-adjacent-handle-value-is-not-the-section", "status": "PASS", "error_code": "SECTION_MAP_FAILED", "result_status": "DENIED"}
+  {"id": "C2-04-foreign-handle-value-in-own-table", "status": "PASS", "error_code": "SECTION_MAP_FAILED", "result_status": "DENIED"}
+  {"id": "C2-05-oversize-section-rejected", "status": "PASS", "host_working_set_delta_mb": 0.0, "error_code": "SECTION_LIMIT_EXCEEDED", "declared_bytes": 75948811}
+  {"id": "C3-01-generic-read-handle-write", "status": "PASS", "write_error_code": 5}
+  {"id": "C3-02-readonly-mapping-write", "status": "PASS", "error_type": "TypeError"}
+== D == {'pass': 8, 'fail': 0, 'blocked': 0, 'not_run': 0} hostfinal {'working_set_mb': 24.684, 'peak_working_set_mb': 386.902, 'pagefile_usage_mb': 16.582, 'peak_pagefile_usage_mb': 427.898}
+  {"id": "D-01-small-envelope", "status": "PASS", "raw_bytes": 2882143, "envelope_bytes": 3843070, "inflation_ratio": 1.3334, "host_working_set_delta_mb": 11.106, "chunk_count": 1, "host_peak_working_set_mb": 37.949}
+  {"id": "D-02-typical-envelope", "status": "PASS", "raw_bytes": 11525983, "envelope_bytes": 15368190, "inflation_ratio": 1.3334, "host_working_set_delta_mb": 42.156, "chunk_count": 1, "host_peak_working_set_mb": 80.152}
+  {"id": "D-03-webtoon-tile-envelope", "status": "PASS", "raw_bytes": 10129021, "envelope_bytes": 13505574, "inflation_ratio": 1.3334, "host_working_set_delta_mb": 35.425, "chunk_count": 1, "host_peak_working_set_mb": 80.152}
+  {"id": "D-04-webtoon-long-envelope", "status": "PASS", "raw_bytes": 60773055, "envelope_bytes": 81030950, "inflation_ratio": 1.3333, "host_working_set_delta_mb": 212.515, "chunk_count": 1, "host_peak_working_set_mb": 314.98}
+  {"id": "D-05-chunked-base64-typical", "status": "PASS", "raw_bytes": 11525983, "envelope_bytes": 15368245, "inflation_ratio": 1.3334, "host_working_set_delta_mb": 29.378, "chunk_count": 11, "host_peak_working_set_mb": 314.98}
+  {"id": "D-05b-message-chunked-typical", "status": "PASS", "raw_bytes": 11525983, "envelope_bytes": 15370491, "inflation_ratio": 1.3336, "host_working_set_delta_mb": 2.789, "chunk_count": 11, "host_peak_working_set_mb": 314.98}
+  {"id": "D-06-oversize-controlled-reject", "status": "PASS", "raw_bytes": 75948811, "host_working_set_delta_mb": 0.0, "error_code": "MEDIA_TOO_LARGE"}
+  {"id": "D-07-oversize-naive-unbounded-encode", "status": "PASS", "raw_bytes": 75948811, "envelope_bytes": 101265294, "inflation_ratio": 1.3333, "host_working_set_delta_mb": 265.582, "b64_chars": 101265084, "elapsed_ms": 315.952, "host_peak_working_set_mb": 386.902}
+== E == {'pass': 11, 'fail': 0, 'blocked': 0, 'not_run': 0}
+  E-A-route-A-consumers-1 PASS bytes 10129021 ms 6.855 aggMBps 1409.24 wsdelta 0.113 peak 25.754
+  E-A-route-A-consumers-2 PASS bytes 20258056 ms 7.384 aggMBps 2616.48 wsdelta 0.008 peak 26.688
+  E-A-route-A-consumers-4 PASS bytes 40516380 ms 8.534 aggMBps 4527.6 wsdelta 0.02 peak 29.895
+  E-A-route-A-consumers-8 PASS bytes 81032259 ms 11.593 aggMBps 6665.78 wsdelta -0.109 peak 37.461
+  E-B-route-B-consumers-1 PASS bytes 10129021 ms 94.699 aggMBps 102.01 wsdelta 0.012 peak 37.461
+  E-B-route-B-consumers-2 PASS bytes 20258056 ms 96.991 aggMBps 199.19 wsdelta 0.0 peak 37.461
+  E-B-route-B-consumers-4 PASS bytes 40516380 ms 111.732 aggMBps 345.82 wsdelta 0.0 peak 37.461
+  E-C-route-C-consumers-1 PASS bytes 11525983 ms 106.036 aggMBps 103.66 wsdelta 0.016 peak 45.512
+  E-C-route-C-consumers-2 PASS bytes 23051966 ms 112.364 aggMBps 195.65 wsdelta 0.015 peak 45.527
+  E-C-route-C-consumers-4 PASS bytes 46103932 ms 125.2 aggMBps 351.18 wsdelta 0.063 peak 45.559
+  E-C-route-C-consumers-8 PASS bytes 92207864 ms 160.925 aggMBps 546.44 wsdelta 0.113 peak 45.609
+== fixtures ==
+  small_page_800x1200 800 x 1200 2882143 5742503dbea6128436fb level 6
+  typical_page_1600x2400 1600 x 2400 11525983 c312ef5e98d6e5c7b50f level 6
+  webtoon_long_800x24000 800 x 24000 60773055 1dd9efa8eee2a3ae6f55 level 1
+  oversize_2000x12000 2000 x 12000 75948811 dde3d730ae7f49075572 level 1
+  webtoon_tile_00_800x4000 800 x 4000 10129021 68666003d52481d73d98 level 1
+  webtoon_tile_01_800x4000 800 x 4000 10129035 8ed1e2e17d432c62cc8e level 1
+  webtoon_tile_02_800x4000 800 x 4000 10129225 2d239b38569c58a26b11 level 1
+  webtoon_tile_03_800x4000 800 x 4000 10129099 c196c6d524a5b7028bf2 level 1
+  webtoon_tile_04_800x4000 800 x 4000 10128990 c0868a8799e09776cfd9 level 1
+  webtoon_tile_05_800x4000 800 x 4000 10128833 093a1dbe83eec73c10f5 level 1
