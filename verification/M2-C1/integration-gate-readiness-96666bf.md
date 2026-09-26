@@ -1,7 +1,6 @@
 # M2-C1 Integration Gate 就绪核验 — READY_FOR_INTEGRATION_GATE
 
-日期：2026-09-26（Asia/Shanghai）  
-执行：Codex，`G:/CODEX/New Manga.worktrees/M2-C1-integration-gate-r3`，共享 Git common-dir=`G:/CODEX/New Manga/.git`。
+日期：2026-09-26（Asia/Shanghai）。执行：Codex，`G:/CODEX/New Manga.worktrees/M2-C1-integration-gate-r3`，共享 Git common-dir=`G:/CODEX/New Manga/.git`。
 
 ## 固定输入
 
