@@ -1,6 +1,6 @@
 # M2-S1 — Task「验证计划」实际执行结果
 
-对应 [M2-S1](../tasks/M2-S1.md) 的「验证计划」四行。全部命令与 exit code 见
+对应 [M2-S1](../../doc/tasks/M2-S1.md) 的「验证计划」四行。全部命令与 exit code 见
 [`raw/00-run-all.log`](raw/00-run-all.log) 与各探针日志。
 
 | 场景 | 计划命令/步骤 | 环境 | 实际结果 | 证据 |

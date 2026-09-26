@@ -2,9 +2,9 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-26）**：T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2；M2-C1 Typed IPC Contract=`done`，[Gate 核验](../verification/M2-C1/integration-gate-readiness-96666bf.md) 与双 Review 已集成。[M2-S1](tasks/M2-S1.md) 研究已释放给 DeepSeek Harness，状态 `ready / RESEARCH_RELEASED`；产品实现未释放。当前授权与依赖见 [REBASELINE_PLAN](REBASELINE_PLAN.md)，运行状态见 [STATUS](STATUS.md)。
+> **Current pointer（2026-09-26）**：T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2；M2-C1 Typed IPC Contract=`done`，[Gate 核验](../verification/M2-C1/integration-gate-readiness-96666bf.md) 与双 Review 已集成。[M2-S1](tasks/M2-S1.md) 研究已完成并集成（[复审](reviews/M2-S1-64c87d1.md) `APPROVED`）；大媒体产品实现未释放。当前授权与依赖见 [REBASELINE_PLAN](REBASELINE_PLAN.md)，运行状态见 [STATUS](STATUS.md)。
 
-> **Architecture Decision / M2 release（2026-09-26）**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持；M2-D1 与 M2 首波 I1/I2/R1/UI1 已完成，M2-C1 Typed IPC Contract 已完成文档集成。M2-S1 独立研究已释放；通道选型与产品实现尚待研究和后续 Gate。
+> **Architecture Decision / M2 release（2026-09-26）**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持；M2-D1 与 M2 首波 I1/I2/R1/UI1 已完成，M2-C1 Typed IPC Contract 已完成文档集成。M2-S1 独立研究已集成；A/B 通道是条件性建议，产品通道选型与实现仍待后续 Gate。
 
 2026-09-20 TASK-059 集成：设计重做 Task 已 `done`，integration=`53ae2e4`，最终 Review [TASK-059-58272ab](reviews/TASK-059-58272ab.md) `approved`。ND-1 选定 **F · Graphite Atelier**（A 色彩/状态色/主题 + B 几何含 `card-w=158px` + A IA；无 C 玻璃/D 顶栏/E 命令面板）；设计已集成但未释放实现 Task，ND-4/5/6/7 待用户裁决。
 
