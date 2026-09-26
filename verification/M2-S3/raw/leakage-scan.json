@@ -1,0 +1,22 @@
+{
+  "scan": "M2-S3 caller-visible evidence leakage scan",
+  "files": [
+    "probe-results-first.json",
+    "probe-results-repeat.json"
+  ],
+  "fragments_checked": [
+    "49745",
+    "C:\\Users",
+    "AppData",
+    "m2s3-lab",
+    "asset.png",
+    "typical.png",
+    "outside_secret",
+    "user_source_private",
+    "outside\\dir",
+    "scope\\derived",
+    "linkj"
+  ],
+  "hits": [],
+  "verdict": "CLEAN - no OS path, host identity, mapping-table entry or fixture name visible to the WebView layer"
+}
