@@ -6,7 +6,7 @@
 - **Owner / Reviewer / Integrator:** ZCode / DeepSeek Harness (non-author) / Codex
 - **Dependencies:** M2-C1, M2-S1, M2-S2, M2-C2 and M2-S3 are all `done` at this release.
 - **Fixed base:** `2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1`
-- **Registration/release commit:** recorded in this file's containing commit; the Owner worktree starts from the fixed base above.
+- **Registration/release commit:** `fb87414af906348666ffd7d001a276e86c4cd5bc`; the Owner worktree starts from the fixed base above.
 - **Owner branch:** `agent/zcode/M2-RC1-large-media-resource-channel-runtime`
 - **Owner worktree:** `G:/CODEX/New Manga.worktrees/M2-RC1-zcode`
 - **Contract baseline:** `fc35913801297ee1876ea395f9c5041a16226f20` (M2-C1 1.1)
@@ -23,4 +23,4 @@ The release commit is newer than the fixed implementation base. Create the Owner
 
 Required initial checks: `git rev-parse --show-toplevel`, `git rev-parse --path-format=absolute --git-common-dir`, `git branch --show-current`, `git status --short --branch`, `git worktree list --porcelain`, `git rev-parse HEAD`, and `git rev-parse HEAD:doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md`. Record shell/venv and exact results under `verification/M2-RC1/`.
 
-Owner worktree was created by Codex at the fixed base and verified clean before handoff. See Task frontmatter for the final release commit and path.
+Owner worktree was created by Codex at the fixed base and verified clean before handoff: HEAD=`2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1`, branch=`agent/zcode/M2-RC1-large-media-resource-channel-runtime`, Contract blob=`fc35913801297ee1876ea395f9c5041a16226f20`, common dir=`G:/CODEX/New Manga/.git`, status clean. The Owner worktree intentionally does not contain the release-only Task file yet; ZCode must copy that single file from release commit `fb87414af906348666ffd7d001a276e86c4cd5bc` and commit the `ready` → `in_progress` claim before implementation.

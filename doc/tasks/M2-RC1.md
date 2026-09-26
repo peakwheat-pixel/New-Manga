@@ -67,7 +67,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Release：Codex，2026-09-27；证据：[release-2dca20cd.md](../../verification/M2-RC1/release-2dca20cd.md)。
+- Release：Codex，2026-09-27，主线登记/释放 commit=`fb87414af906348666ffd7d001a276e86c4cd5bc`；证据：[release-2dca20cd.md](../../verification/M2-RC1/release-2dca20cd.md)。
 - Handoff：尚无。
 - Review：尚无。
 - 实际测试：尚无；本次只登记与释放 Task，未运行产品测试。
