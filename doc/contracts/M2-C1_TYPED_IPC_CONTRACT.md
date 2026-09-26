@@ -1,6 +1,11 @@
 # M2-C1 — Typed IPC Contract
 
-状态：文档冻结候选；独立 Review 前。版本：`1.0`（本 Task 提案，不代表已实现协议）。
+状态：文档冻结候选；独立 Review 前。版本：`1.1`（M2-C2 resource-channel revision；不代表已实现协议）。
+
+## Revision history
+
+- `1.1`（M2-C2，2026-09-26）：§10 新增 **10.1 Ruled resource-channel thresholds**（[M2-S1 §7 产品阈值裁决](../../verification/M2-S1/product-thresholds-ruling-67c3d56.md) T1–T7 落约）与 **10.2 Resource reference security semantics**（[M2-S1 报告](../research/M2-S1_RESOURCE_CHANNEL_SPIKE.md) R-001/R-002/§6.3 与 [M2-S2 报告](../research/M2-S2_SECURITY_VERIFICATION_SPIKE.md) S1-B11/S1-B12 结论落约：open-then-verify-from-handle 解析、不透明映射 ID、路径下发禁止、类型化错误码最小集）；§11 large-media 行更新为 `PARTIALLY RULED`。§1–§9 与 §12 语义不变；§10 新条款对 §8 `ErrorEnvelope.code` 的引用是值域使用，未改 §8 定义。全部新条款为**设计要求**（`RULED`/`TO-BE`/`UNVERIFIED` 标签，语义在 §10.1 头部定义），不代表已实现或已通过产品验证（`AS-IS: NOT_IMPLEMENTED` 不变）。
+- `1.0`（M2-C1，2026-09-26）：原始冻结候选（blob `4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3`）。
 
 ## 1. 范围与证据等级
 
@@ -100,7 +105,7 @@ Event<T> = {
 | `CreateBook` / `DeleteBook` | `{title, original_title?}` / `{book_id}` → `BookSummary` / `Unit` | `BookshelfViewModel.createBook/deleteBook` 调用 Library service。删除需 Core 检查关联和保留规则。 |
 | `SetBookFavorite` / `SetBookArchived` | `{book_id, value: boolean}` → `BookSummary` | 对应 Library service 调用。 |
 | `ListChapters` / `CreateChapter` / `DeleteChapter` | `{book_id}` / `{book_id,title,chapter_number?}` / `{chapter_id}` → `ChapterSummary[]` / `ChapterSummary` / `Unit` | ViewModel 使用 `list/get/create/delete_chapter`。 |
-| `ImportPages` | `{chapter_id, sources: ImportSourceRef[]}` → `ImportReport` | 当前导入接受路径/URL 类来源；未来 IPC 必须由 Tauri host 授权并传递不透明、受限、可过期的 `ImportSourceRef`，不得把大型图片 bytes/Base64 放进 JSON。URI/token 具体形态 **DEFERRED to data-channel Spike**。 |
+| `ImportPages` | `{chapter_id, sources: ImportSourceRef[]}` → `ImportReport` | 当前导入接受路径/URL 类来源；未来 IPC 必须由 Tauri host 授权并传递不透明、受限、可过期的 `ImportSourceRef`，不得把大型图片 bytes/Base64 放进 JSON。URI/token 具体形态 **DEFERRED to the runtime Task**；security/lifecycle semantics 现已 ruled in §10.1/§10.2（M2-C2）。 |
 | `StartRun` | `{command: PipelineCommand, scope: PipelineScope, overrides?: JsonObject}` → `RunAccepted` | 当前 Workbench 依次调用 `PipelineService.create_run`、`plan_run` 并启动 worker。未来 handler 应先持久化并规划，再安排 Core 后台执行；精确 acceptance 时点是 Proposal，需 runtime Task 定义和验证。 |
 | `GetRunSnapshot` | `{run_id}` → `RunSnapshot` | 从持久 Run 状态恢复查询的 **PROPOSAL**；`PipelineService` 能查 Run，IPC 查询尚未实现。 |
 | `GetTaskProjection` | `{run_id}` → `TaskProjection` | `build_projection` 是应用层唯一投影，可含页面统计、焦点、步骤流、错误原因和控制按钮能力；禁止 UI 自行重算权威业务状态。 |
@@ -255,8 +260,37 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 - Preserve human edits, `Lock`, current Revision, pinned Revision, and recoverable task state across commands, errors, retries, cancellation and reconnect. Lock/revision decisions must be checked at the write boundary, not trusted from stale UI projections.
 - Do not encode large images, Webtoon page/tile resources, or model weights in ordinary JSON/Base64 IPC. No IPC command/event in this contract accepts those byte arrays.
 - This contract does not pick file URI/token, OS handle, shared-memory, streaming, tile or chunk transport. Capacity, permission, lifecycle, cleanup, threat model and recovery must be independently spiked and verified before any large-media command is released.
-- Import sources may use only Core/host mediated, scoped references; exact value object and expiry semantics are **DEFERRED** to that Spike.
+- Import sources may use only Core/host mediated, scoped references; their security and lifecycle semantics are now ruled in §10.1 (T5/T6) and §10.2, while the exact wire value-object form remains **DEFERRED** to a future runtime Task.
 - Credentials/secrets are excluded from ordinary DTOs, event payloads, errors and logs. Credential storage remains host/Core secure flow; exact typed secret exchange is **UNKNOWN** pending credential contract.
+
+### 10.1 Ruled resource-channel thresholds (M2-S1 §7 product threshold ruling, T1–T7)
+
+**RULED** 标签语义（本节局部定义，补充 §1 的既有标签；不改变其含义）：条款来自 2026-09-26 的
+[M2-S1 §7 产品阈值裁决](../../verification/M2-S1/product-thresholds-ruling-67c3d56.md)（用户授权的治理决定）——作为**未来大媒体 runtime Task 的验收线需求输入**具有约束力；它既不是现状证明（不用 `AS-IS`），也不是 AD-001 决定（不用 `TO-BE` 单独标注），且**没有任何条款代表已实现**（`AS-IS: NOT_IMPLEMENTED` 整体保持）。产品验收在 runtime Task 执行；本修订不授权任何 runtime 实现。
+
+每条来源锚点为裁决编号（`T#`）；逐条与裁决原文的追溯见 `verification/M2-C2/clause-source-trace.md`。
+
+- **RULED（T1）— 单资源字节上限**：A single resource (a single page or a single Webtoon tile) must be servable up to **256 MiB**; a larger resource must be rejected with a typed error (suggested stable code `RESOURCE_TOO_LARGE`) and no partial delivery. The 64 MiB value used by M2-S1 probes remains a probe configuration, not a product threshold. The default may be revised by a runtime Task after re-measurement, but changing the *commitment line* itself requires a new ruling.
+- **RULED（T2）— 并发资源与订阅者**：The channel must support **≥ 32 active references** and **≥ 16 concurrent subscribers per resource**; exceeding either returns a typed throttling error rather than unbounded silent queueing.
+- **RULED（T3）— 首帧延迟预算（含未测标注）**：For a typical page (≤ 25 MiB) the *channel-layer* first-byte-to-host budget is **≤ 200 ms P95 with a hot OS file cache**, and **≤ 1 s P95 as the cold-cache target**; first frame excludes image decoding and rendering. **诚实边界：冷缓存 1 s 是目标值——S1-B6（冷缓存实测）为 `NOT_RUN`，在 S1-B6 复测完成前该值不得表述为"达标"**；热缓存 200 ms 同为预算承诺，产品实测验收归 runtime Task。
+- **RULED（T4）— 内存预算**：Core-side peak additional memory per resource ≤ resource bytes + 64 MiB (streaming/chunked implementation target: resident buffer ≤ 32 MiB); host ≈ 0 incremental via the out-of-band route, ≤ 32 MiB bounded buffer via a streaming route. Materializing a whole resource as Base64/JSON is prohibited (reiterating the existing §10 prohibition as an acceptance line, per ruling T4).
+- **RULED（T5）— 分层信任与路径暴露**：
+  1. The React/WebView layer must never touch any OS path (neither user source files nor derived caches); bytes are delivered only through restricted asset URLs (Tauri asset-protocol *form*; its verification status is `NOT_RUN`, S1-B1).
+  2. The Tauri host is a trusted layer: it may hold restricted references and resolve *derived-cache* relative paths, and must not forward absolute paths to the WebView.
+  3. Core approvals must not return user-source absolute paths to any layer; a `user-source` scope must have no frontend-visible implementation.
+  4. The WebView-visible part of a resource reference must be an opaque mapping ID (see §10.2).
+- **RULED（T6）— 引用生命周期**：A resource reference is bound to `resource_id` + a revision fingerprint; the default TTL is **300 s with sliding renewal** (active consumption auto-renews); revision switch, deletion, pin release and management operations trigger **immediate revocation** (the next resolve returns a typed `REF_REVOKED`); an already-opened handle/stream for the current consumption is not forcibly interrupted. TTL 300 s 是默认配置，产品可配置。
+- **RULED（T7）— 模型权重独立通道**：Model weights travel over an independent channel with an independent lifecycle; they do not share the page/tile reference channel, and T1–T4 thresholds and T6 TTL/revocation semantics do not apply. Weight loading is a Core-side controlled read (with hash verification) at startup/first use and never passes through the frontend reference mechanism. The concrete transport mechanism (direct controlled file read vs streaming) and packaging/sandbox impact (S1-B8, `NOT_RUN`) are left to the runtime Task.
+
+### 10.2 Resource reference security semantics (M2-S1 R-001/R-002; M2-S2 S1-B11/S1-B12)
+
+本小节条款是**设计要求**，不是已验证的产品保证：M2-S2 在隔离原型层验证了该方向（TOCTOU 16 场景、映射 ID 8 场景全 PASS），但 **S1-B11 的产品级防护保持 `UNVERIFIED`**（S1-B3 DACL/完整性级别、S1-B8 打包/沙箱复跑均未做）；落约的是设计要求本身。M2-S2 证据的归纳性边界（如映射 ID 不透明性证明）原文适用，逐条对照见 `verification/M2-C2/clause-source-trace.md`。
+
+- **RULED/TO-BE（M2-S1 §6.3 条 3、§8.1 限定 1，M2-S2 §3）— 引用解析必须 open-then-verify-from-handle**：A runtime implementation must resolve a resource reference by opening the target **once** and verifying **from that handle**: containment (final path re-derived from the handle must stay inside the scope root), file identity, and size (issue-time facts plus the T1 limit) — on Windows with `FILE_FLAG_BACKUP_SEMANTICS` and reparse handling as needed; then read **only through that handle**; verify the content digest against the issue-time digest (covers an equal-size in-place rewrite that identity and size cannot see) and re-check identity after reading. A check-then-use flow (validating a path, then opening it in a separate operation) must not be the security boundary. `S1-B11` release conditions ③ (target packaging/sandbox re-run) and ④ (DACL/integrity level, S1-B3) remain `NOT_RUN` and are prerequisites for any product-level security claim.
+- **RULED/TO-BE（M2-S1 F-01/R-002/§6.3 条 4，M2-S2 §5，裁决 T5.4）— WebView 层引用保密 = Core 侧不透明映射 ID**：The reference visible to the WebView layer must be an opaque, random mapping ID resolved by a Core-side table; it must not encode or otherwise reveal any path or resource identifier. The Core↔host trusted-layer reference format is exempt from this clause. **The encrypted-payload alternative is closed by ruling T5.4**; reopening it requires a new ruling (i.e., only if the mapping-ID approach is proven infeasible).
+- **RULED/TO-BE（M2-S1 §6.3 条 2，裁决 T5，明确化既有 §10 语义）— 绝对路径下发禁止**：User-source absolute paths must not be sent down through IPC to any layer (Core approvals, host, or WebView); derived-cache relative paths may exist only inside the trusted host/Core layers, never in WebView-visible material.
+- **TO-BE（M2-S2 §3/§4/§5 实测提取）— 类型化错误码最小集**：Resource-reference resolution must surface a stable typed error-code minimum set, riding the §8 `ErrorEnvelope.code` field (no change to §8's definition): `REF_MALFORMED`, `REF_SIGNATURE_INVALID`, `REF_EXPIRED`, `REF_REVOKED`, `REF_UNKNOWN_ID` (mapping-ID miss), `REF_SCOPE_DENIED`, `REF_READ_ONLY`, `REF_OUT_OF_SCOPE` (lexical, absolute-path and handle-derived containment escapes), `REF_REPARSE_POINT`, `REF_NOT_FOUND`, `RESOURCE_TOO_LARGE` (T1 channel-level limit, suggested code), `MEDIA_TOO_LARGE_BY_HANDLE`, `FILE_IDENTITY_CHANGED`, `FILE_SIZE_CHANGED`, `CONTENT_DIGEST_MISMATCH`, `OPEN_FAILED_SHARING_VIOLATION`. Error responses must never leak mapping-table entries or paths (§8 `message` constraint; M2-S2 M-05). Runtime Tasks may add codes but must preserve these semantics; wire naming may be refined in a later contract revision without weakening the semantics.
+- **RULED（T7，条款正文见 §10.1）**：模型权重独立通道——不与页/tile 共用引用通道，不适用 T1–T4 与 T6 语义。
 
 ## 11. Explicitly deferred / undecided
 
@@ -264,7 +298,7 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 |---|---|---|
 | Page-level `blocked` UI meaning, glyph, copy and behavior | `DEFERRED / USER_DECISION_REQUIRED` | Page projection may carry typed status `blocked`; do not reuse Run `blocked` UI mapping (`⊘`, `⏸`, or any other glyph). No user-visible behavior is selected here. |
 | React UI Owner | `DEFERRED / USER_DECISION_REQUIRED` | This Task does not select an owner. |
-| Large-media transport and import path capability | `DEFERRED` | Independent data-channel Spike with capacity/security/lifecycle evidence. |
+| Large-media transport and import path capability | `PARTIALLY RULED` (M2-C2) | Thresholds (T1–T7, §10.1) and security semantics (§10.2) were ruled at M2-C2 from the M2-S1 §7 ruling and the M2-S1/M2-S2 spikes. The runtime form remains `DEFERRED` to a future runtime Task: transport selection stays conditional (M2-S1 §8.1), the Tauri asset protocol is `NOT_RUN` (S1-B1), and S1-B11 product-level protection is `UNVERIFIED` (S1-B3/S1-B8 outstanding). |
 | Runtime serialization library, Tauri command names, process supervision, auth/permission handshake | `UNKNOWN / NOT_IN_SCOPE` | No implementation claimed; separate runtime Task must decide against this transport-neutral contract. |
 | Event ordering/replay/retention and idempotency | `UNKNOWN / NOT_FROZEN` | Snapshot resync is the safe proposal; stronger guarantees need runtime tests. |
 | Lock/revision conflict response details and concurrent edit policy | `UNKNOWN` | Core remains authority; later contract may refine typed conflict details without weakening protection. |
