@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-当前工作：[T3.2.1](T3.2.1.md) 为 closed_with_limitations / SUPERSEDED_BY_M2；REPAIR-15/16/17 保持 NOT_RELEASED 且不再释放。M2 首波任务及 [M2-C1](M2-C1.md) 已完成。M2-C1 双 Review `APPROVED` 并绑定同一 reviewed_head；Gate 核验和集成完成，先前 Handoff 对象缺失为 SHA 字符转置误报，见 [Gate 核验](../verification/M2-C1/integration-gate-readiness-96666bf.md)。M2-S1=`NOT_RELEASED`。
+当前工作：[T3.2.1](T3.2.1.md) 为 closed_with_limitations / SUPERSEDED_BY_M2；REPAIR-15/16/17 保持 NOT_RELEASED 且不再释放。M2 首波任务及 [M2-C1](M2-C1.md) 已完成。[M2-S1](M2-S1.md) 为用户授权的 Codex 范围登记成果，仍为 `proposed / NOT_RELEASED`；未派发研究执行或产品实现。详见 [STATUS](../STATUS.md) 与 [登记证据](../../verification/M2-S1/scheduler-registration-0c2e202.md)。
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 

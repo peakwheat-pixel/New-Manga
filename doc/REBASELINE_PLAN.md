@@ -28,6 +28,8 @@ releases a task.
 
 M2 首波四项任务已集成。M2-C1 固定 base=`7478f72fe6f9872cae29f4fa12888b5e1f2380f1`、Owner Delivery=`7de1cd27e22037d4b76b235c9f11399b0cea9463`、Handoff/reviewed_head=`b2377288680569dbee4e2299fd7dfae4de067c54`、Contract blob=`4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3`。Qoder Review=`0d73983a5e1f37f104c76d8bd4c70c6f98fa36f5`、DSH r3 Review=`96666bf063c8a514b3f8a58f78453a397dd93f75` 均 `APPROVED`，同一 reviewed_head，Gate=`PASSED`；原始提交已并入共享历史，M2-C1=`done`。先前对象缺失系 SHA 字符转置误报，见 [Gate 核验](../verification/M2-C1/integration-gate-readiness-96666bf.md)。M2-S1=`NOT_RELEASED`。
 
+**M2-S1 范围登记（2026-09-26）**：用户授权 Codex 准备后续 Task 的范围冻结与登记，未派发实验或产品实现。[M2-S1 Large-Media Resource Channel Feasibility Spike](tasks/M2-S1.md) 以已集成 `master=0c2e202c6aded5326bec9a5460b5142155db0240` 为拟定执行 base，依赖 M2-C1=`done`；建议 Owner=DeepSeek Harness、非作者 Reviewer=Codex。当前状态 `proposed / NOT_RELEASED`，研究执行需要单独释放、专属 Owner branch/worktree 与 STATUS 登记；不得从本登记推定图片/tile 通道已选定或 IPC runtime 已授权。范围登记证据见 [M2-S1 scheduler registration](../verification/M2-S1/scheduler-registration-0c2e202.md)。
+
 **Separate Legacy reliability backlog:** [DIAG-READING-EXPORT-001](tasks/DIAG-READING-EXPORT-001.md) is `proposed / NOT_RELEASED`. M2-I1 R3 Review P3-004 resurfaced a historically recorded `reading_export` signal/connection-lifetime flaky on the pre-I1 baseline. Its diagnosis is read-only and outside M2-I1, M2 first-wave authorization and the T3.2.1 Full Gate; a future Codex release must freeze its own base, worktree and scope.
 
 **Legacy closure:** [T3.2.1](tasks/T3.2.1.md) is terminal `closed_with_limitations`, disposition `CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2`. It retains all historical AC states: AC1/2/3/4/5/7/10 remain PASS within their documented scopes; AC6=`PARTIAL (11/12)`, AC8=`PARTIAL`, AC9=`PARTIAL`; clean-machine, Windows 10 x64, real-weight success and true cold-start items remain `NOT_RUN`. The old Release Gate is not a future release gate and its unfinished ACs do not block M2. REPAIR-15/16/17 remain `proposed / NOT_RELEASED` with `SUPERSEDED / DO_NOT_RELEASE`; no Legacy repair will be prepared or released.
@@ -155,6 +157,7 @@ QML shell changes are serialized through Codex.
 | 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **VERIFIED_COMPLETE**; product integrated `0c70e44` | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Evidence: [review-899bd3c](../verification/T3.1.1/review-899bd3c.md), [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md). |
 | 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2; AC states preserved. | Codex governance closure; evidence `verification/T3.2.1/legacy-closure-audit-20260926.md`. | Legacy unfinished ACs are not M2 blockers; REPAIR-15/16/17 are superseded and not released. |
 | 8 | [M2-C1 Typed IPC Contract](tasks/M2-C1.md) | `done`；Owner Delivery=`7de1cd27e22037d4b76b235c9f11399b0cea9463`，Handoff/reviewed_head=`b2377288680569dbee4e2299fd7dfae4de067c54`；Qoder 与 DSH r3 Review 均 `APPROVED`；Gate=`PASSED`；集成 merge=`c1765aa2`。 | ZCode Owner；Qoder=`0d73983a5e1f37f104c76d8bd4c70c6f98fa36f5`；DeepSeek Harness r3=`96666bf063c8a514b3f8a58f78453a397dd93f75`；Codex Integrator。 | Owner/Reviewer 原始提交保留；source-trace 断链由 Codex 在集成层补齐。全部旧现场保留；M2-S1=`NOT_RELEASED`。
+| 9 | [M2-S1 Large-Media Resource Channel Feasibility Spike](tasks/M2-S1.md) | `proposed / NOT_RELEASED`；仅完成 Codex 范围登记；拟定 base=`0c2e202c6aded5326bec9a5460b5142155db0240`。 | 建议 DeepSeek Harness Owner / Codex 非作者 Reviewer；尚未派发。 | 仅隔离研究图片/tile 资源通道的容量、权限、生命周期、安全与恢复；不改产品代码或 M2-C1 Contract。单独释放前不得执行。
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
@@ -214,7 +217,7 @@ M2-D1 / M2-I1 / M2-I2 / M2-R1 / M2-UI1 = integrated; ancestry verified at base 7
   -> Case A = OWNER_ADOPTED_WITHOUT_SEMANTIC_CHANGE; Contract blob equals adopted source blob 4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3
   -> DSH r3 Review commit 96666bf reports APPROVED and is present unchanged in shared history
   -> Codex corrected a transposed SHA in the former blocker check; exact object ancestry, Contract blob and authorized paths passed
-  -> M2-S1 remains NOT_RELEASED until M2-C1 integrated_verified / done and a separate M2-S1 Task is authorized
+  -> M2-S1 scope registration authorized at master 0c2e202; proposed / NOT_RELEASED; execution requires a separate release and Owner workspace
 ```
 
 This is a dependency blocking chain, not a schedule critical path; no reliable
