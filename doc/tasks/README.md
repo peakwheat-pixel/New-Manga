@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-当前状态：无 Active Task。[M2-S3](M2-S3.md) Tauri Asset Protocol Feasibility Probe=`done`（Owner=ZCode，DeepSeek Harness 非作者 Review=`approved` @`233d0901`，Codex integration=`6799c73a`；集成证据见 [integration](../../verification/M2-S3/integration-bcef79e7/integration.md)）。M2-C2 已集成 `d574ec1e`，4×P3 等下一次 Contract touch；大媒体 runtime 仍 `NOT_RELEASED`，不得据此自动开工。
+当前 Active Task：[M2-RC1](M2-RC1.md) — Contract-Aligned Large-Media Resource Channel Runtime，`ready / LARGE_MEDIA_RESOURCE_CHANNEL_RUNTIME_RELEASED`；Owner=ZCode，Reviewer=DeepSeek Harness，base=`2dca20cd`。释放证据见 [release-2dca20cd](../../verification/M2-RC1/release-2dca20cd.md)。[M2-S3](M2-S3.md) 已 `done`（Owner=ZCode，DeepSeek Harness 非作者 Review=`approved` @`233d0901`，Codex integration=`6799c73a`；集成证据见 [integration](../../verification/M2-S3/integration-bcef79e7/integration.md)）。M2-C2 已集成 `d574ec1e`，4×P3 仍 deferred 至未来 Contract touch。
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 

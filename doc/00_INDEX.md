@@ -2,7 +2,7 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-26）**：M2-S3 Tauri Asset Protocol Feasibility Probe 已完成并集成（Owner=ZCode、非作者 Reviewer=DeepSeek Harness、integration=`6799c73a`）；S1-B1=`PASS` 仅限探针边界，产品 runtime 仍未释放。原 DeepSeek Harness worktree 保留且不再获授权；改派证据见 [reassignment-9b2d40c2](../verification/M2-S3/reassignment-9b2d40c2.md)，集成证据见 [integration-bcef79e7](../verification/M2-S3/integration-bcef79e7/integration.md)。M2-C2 已完成（`d574ec1e`，Contract blob=`fc359138`），4×P3 延至下一次触碰 Contract 的 Task。当前无 Active Task；详细授权与依赖见 [REBASELINE_PLAN](REBASELINE_PLAN.md)，运行状态见 [STATUS](STATUS.md)。
+> **Current pointer（2026-09-27）**：M2-S3 Tauri Asset Protocol Feasibility Probe 已完成并集成（Owner=ZCode、非作者 Reviewer=DeepSeek Harness、integration=`6799c73a`）；S1-B1=`PASS` 仅限探针边界。按用户授权，[M2-RC1](tasks/M2-RC1.md) 大媒体 runtime 已单独释放 `ready`，Owner=ZCode、Reviewer=DeepSeek Harness，固定 base=`2dca20cd`；Task 范围与释放证据见 [release-2dca20cd](../verification/M2-RC1/release-2dca20cd.md)。M2-C2 已完成（`d574ec1e`，Contract blob=`fc359138`），4×P3 仍待下一次 Contract touch。原 DeepSeek Harness 的 M2-S3 worktree 保留且不再获授权；改派证据见 [reassignment-9b2d40c2](../verification/M2-S3/reassignment-9b2d40c2.md)，集成证据见 [integration-bcef79e7](../verification/M2-S3/integration-bcef79e7/integration.md)。运行状态见 [STATUS](STATUS.md)。
 
 > **Architecture Decision / M2 release（2026-09-26）**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持；M2-D1 与 M2 首波 I1/I2/R1/UI1 已完成，M2-C1 Typed IPC Contract 已完成文档集成。M2-S1 独立研究已集成；A/B 通道是条件性建议，产品通道选型与实现仍待后续 Gate。
 
