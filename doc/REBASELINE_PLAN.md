@@ -26,7 +26,7 @@ releases a task.
 | [M2-R1 Qt Runtime Feasibility Spike](tasks/M2-R1.md) | `done` / DeepSeek Harness / Codex; Delivery `5e2800b`, Handoff `052f99c`, Review `79b1a77` `approved`, integration `5803bd7` | Research/verification only. M2D1-22 is measured with platform limits on Windows 11; QML/`QQuickWindow` and production entry remain `UNVERIFIED`/`NOT_RUN`. No implementation authorization. |
 | [M2-UI1 React Feature Parity & Visual Contract](tasks/M2-UI1.md) | `done` / Qoder / Antigravity; Delivery `23a5ac0`, Handoff `784ce18`, [independent Review](reviews/M2-UI1-23a5ac0.md) `APPROVED` at `83a795b`, integration `5242f64` | Design, verification and Handoff only; no React/QML product implementation. Page-level blocked mapping remains an explicit user/contract decision. |
 
-These four Tasks were authorized as bounded first-wave work with disjoint write sets and are now integrated. The next M2 Task is the already user-authorized M2-C1 — Typed IPC Contract (candidate branch `agent/codex/M2-C1-typed-ipc-contract` @ `531647e`): current candidate status is `in_review`; Qoder must submit the formal R3 Review/evidence for fixed `reviewed_head=ac38dede84ff22290c9b9d579c1372c8184a7bd5`. It is not integrated into this mainline yet. M2-S1 remains unreleased until C1's own Gate completes. No C1 contract change is part of this Legacy closure.
+These four Tasks were authorized as bounded first-wave work with disjoint write sets and are now integrated. The next Task is [M2-C1 — Typed IPC Contract](tasks/M2-C1.md), formally registered `ready` from actual master base `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`, Owner=ZCode, Reviewer A=DeepSeek Harness, Reviewer B=Qoder, Integrator=Codex. The former Codex-authored Delivery `4d66523` is `ARCHITECTURE_DRAFT / PRE_OWNER_BASELINE`; Qoder R3 `1950a23` is `APPROVED_ARCHITECTURE_DRAFT`, both preserved as historical input and neither integrated. The ZCode Delivery and final independent Reviews are not yet produced. M2-C1 Integration Gate is paused/not opened. M2-S1 remains `NOT_RELEASED` until M2-C1 reaches `integrated_verified / done` and a separate M2-S1 Task is authorized. No C1 contract change is part of this Legacy closure.
 
 **Separate Legacy reliability backlog:** [DIAG-READING-EXPORT-001](tasks/DIAG-READING-EXPORT-001.md) is `proposed / NOT_RELEASED`. M2-I1 R3 Review P3-004 resurfaced a historically recorded `reading_export` signal/connection-lifetime flaky on the pre-I1 baseline. Its diagnosis is read-only and outside M2-I1, M2 first-wave authorization and the T3.2.1 Full Gate; a future Codex release must freeze its own base, worktree and scope.
 
@@ -154,7 +154,7 @@ QML shell changes are serialized through Codex.
 | 5 | [T2.2.1 Reader & Workbench Polish](tasks/T2.2.1.md) | **VERIFIED_COMPLETE**; integrated `fe9fca0` | ZCode functional implementation + Qoder QML/UI/UX / Codex non-author review and integration | Chapter picker, Workbench empty-state picker, dismissible command-error notification, and webtoon canvas consistency are accessible and tested. Evidence: [`review-0846573`](../verification/T2.2.1/review-0846573.md), [`integration-aad510b`](../verification/T2.2.1/integration-aad510b.md). |
 | 6 | [T3.1.1 Unify Storage into SQLite](tasks/T3.1.1.md) | **VERIFIED_COMPLETE**; product integrated `0c70e44` | Antigravity implementation / DeepSeek Harness independent Review; Codex Lead / Architect / Integrator | JSON progress/export stores migrate once into transactional SQLite with rollback, non-destructive legacy import and no data loss. Evidence: [review-899bd3c](../verification/T3.1.1/review-899bd3c.md), [integration-899bd3c](../verification/T3.1.1/integration-899bd3c.md). |
 | 7 | [T3.2.1 Windows Packaging & Release Gate](tasks/T3.2.1.md) | CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2; AC states preserved. | Codex governance closure; evidence `verification/T3.2.1/legacy-closure-audit-20260926.md`. | Legacy unfinished ACs are not M2 blockers; REPAIR-15/16/17 are superseded and not released. |
-| 8 | M2-C1 — Typed IPC Contract (candidate Task on `agent/codex/M2-C1-typed-ipc-contract` @ `531647e`) | Authorized; `in_review`; formal Qoder R3 pending on fixed `ac38dede84ff22290c9b9d579c1372c8184a7bd5`. | Codex Owner; Qoder independent Reviewer. | Await R3 report/evidence; after its Gate, Codex reconciles candidate with current master. M2-S1 does not start before C1 closes. |
+| 8 | [M2-C1 Typed IPC Contract](tasks/M2-C1.md) | `ready` from fixed base `7478f72fe6f9872cae29f4fa12888b5e1f2380f1`; Integration Gate paused/not opened. | ZCode Owner; DeepSeek Harness + Qoder independent Reviews; Codex Scheduler/Integrator. | Adopt the preserved Codex architecture draft or record a bounded semantic delta; final dual Review must bind ZCode final head. M2-S1 stays `NOT_RELEASED` until C1 is `integrated_verified / done` and a separate M2-S1 Task is authorized. |
 
 The [formal T1.2.1 Task](tasks/T1.2.1.md), [R5 review](../verification/T1.2.1/review-e5716ac.md)
 and [integration evidence](../verification/T1.2.1/integration-9a14310.md) record
@@ -208,11 +208,14 @@ branch/HEAD, dirty-file safety and next actions remain in [STATUS](STATUS.md).
 Current successor gate (updated 2026-09-26):
 
 ```text
-M2-I1 / M2-I2 / M2-R1 / M2-UI1 = integrated first wave complete
-  → T3.2.1 = closed_with_limitations / SUPERSEDED_BY_M2; unfinished Legacy ACs do not block M2
-  → M2-C1 — Typed IPC Contract = authorized candidate in_review
-  → Qoder formal R3 Review/evidence pending on fixed head ac38dede84ff22290c9b9d579c1372c8184a7bd5
-  → Codex review/integration decision; M2-S1 stays unreleased until C1 closes its Gate
+M2-D1 / M2-I1 / M2-I2 / M2-R1 / M2-UI1 = integrated; ancestry verified at base 7478f72fe6f9872cae29f4fa12888b5e1f2380f1
+  -> T3.2.1 = closed_with_limitations / SUPERSEDED_BY_M2; unfinished Legacy ACs do not block M2
+  -> M2-C1 = ready; Owner ZCode; base 7478f72fe6f9872cae29f4fa12888b5e1f2380f1
+  -> Codex draft 4d66523 = ARCHITECTURE_DRAFT / PRE_OWNER_BASELINE; Qoder R3 1950a23 = APPROVED_ARCHITECTURE_DRAFT
+  -> ZCode freezes Owner Delivery + Handoff
+  -> DeepSeek Harness full Review || Qoder final/equivalence Review, both on the same ZCode reviewed_head
+  -> Codex may open M2-C1 Integration Gate only after both APPROVED and all evidence is frozen
+  -> M2-S1 remains NOT_RELEASED until M2-C1 integrated_verified / done and a separate M2-S1 Task is authorized
 ```
 
 This is a dependency blocking chain, not a schedule critical path; no reliable
