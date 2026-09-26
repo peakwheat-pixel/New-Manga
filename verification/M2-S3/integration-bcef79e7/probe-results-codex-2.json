@@ -1,0 +1,287 @@
+{
+  "probe": "M2-S3 asset protocol fetch matrix",
+  "scheme_base": "http://m2res.localhost",
+  "page_origin": "http://tauri.localhost",
+  "webview_user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/153.0.0.0 Safari/537.36 Edg/153.0.0.0",
+  "state_issued": {
+    "scheme_base": "http://m2res.localhost",
+    "ids": {
+      "cache_bare": "a0QSp5hU1yMJayzqBYk2zkc4NmQeHghyUzQ2VO7RblA",
+      "cache_ctrl": "N82QDdV-Gn-mx1CGIjkizbNxOns9-YSSSZaYQ7NRCb4",
+      "expiring": "LlyW1YS90b1PKpF6yoi_WyXYaniUml94TXF-tXymfwU",
+      "inflight": "KaSEYgmdVbqfqgVYW_OU3REtkoGPof45tzAgYLvhckg",
+      "junction": "MSKiVrqgXA6oZN6TnWHIfG4aXxn29OxQ2c22ZkXJ8as",
+      "large": "cgT7HqOHyEURFJiLGHsL9Y_ugasmUcsVI3p5VHaLC6o",
+      "revocable": "L2BfsUgb0Rd03sjwnh_gemSfvMQMPTBUCEWl93w-y1o",
+      "valid": "6dlcVn5mF6HjIKf1UjodNJMWIV07ZLg6XF_l-AFkQ4w"
+    },
+    "expiring_ttl_ms": 2500,
+    "fixtures": {
+      "asset": "50f5a4cc4cba0a90455c040ca5acfc5c5afd0db96d66aa3b9e9cd7b06f4526a3",
+      "typical": "46ecef997ac6aed37f3bb4e9b79048b72447e3e35f5f9bb8097b40caefbc564e"
+    },
+    "issue_guard": "REF_OUT_OF_SCOPE"
+  },
+  "results": [
+    {
+      "id": "P-01-fetch-valid-id",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/6dlcVn5mF6HjIKf1UjodNJMWIV07ZLg6XF_l-AFkQ4w",
+        "status": 200,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "image/png"
+        },
+        "bytes": 2882143,
+        "sha256": "50f5a4cc4cba0a90455c040ca5acfc5c5afd0db96d66aa3b9e9cd7b06f4526a3",
+        "ms": 19
+      },
+      "note": "opaque mapping ID -> 200 image/png, sha matches fixture"
+    },
+    {
+      "id": "P-02-img-render",
+      "status": "PASS",
+      "observed": {
+        "ok": true,
+        "naturalWidth": 800,
+        "naturalHeight": 1200
+      },
+      "note": "WebView decodes and renders the served PNG (naturalWidth 800)"
+    },
+    {
+      "id": "P-03-fetch-large-asset",
+      "status": "PASS",
+      "observed": {
+        "status": 200,
+        "bytes": 11525983,
+        "sha256": "46ecef997ac6aed37f3bb4e9b79048b72447e3e35f5f9bb8097b40caefbc564e",
+        "ms": 70
+      },
+      "note": "11.5 MB asset complete over the scheme"
+    },
+    {
+      "id": "P-04-webview-visibility",
+      "status": "PASS",
+      "observed": {
+        "href": "http://tauri.localhost/",
+        "protocol_page_origin": "http://tauri.localhost",
+        "fetched_urls": [
+          "http://m2res.localhost/m2id/6dlcVn5mF6HjIKf1UjodNJMWIV07ZLg6XF_l-AFkQ4w"
+        ],
+        "path_leak_pattern_hit": false
+      },
+      "note": "page-reachable URL material contains only the opaque-ID scheme form; response bodies are swept offline (leakage-scan.json)"
+    },
+    {
+      "id": "N-01-unknown-id",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/K8sdNcjY7FoSUVnNuQAI2ydWXRDHEsA4ssE-MbCDYnk",
+        "status": 404,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "application/json"
+        },
+        "code": "REF_UNKNOWN_ID",
+        "bodySnippet": "{\"code\":\"REF_UNKNOWN_ID\"}",
+        "ms": 1
+      },
+      "note": "expected 404 REF_UNKNOWN_ID"
+    },
+    {
+      "id": "N-02-malformed-id",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/not-an-id",
+        "status": 400,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "application/json"
+        },
+        "code": "REF_MALFORMED",
+        "bodySnippet": "{\"code\":\"REF_MALFORMED\"}",
+        "ms": 1
+      },
+      "note": "expected 400 REF_MALFORMED"
+    },
+    {
+      "id": "N-03-revoked-id",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/L2BfsUgb0Rd03sjwnh_gemSfvMQMPTBUCEWl93w-y1o",
+        "status": 410,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "application/json"
+        },
+        "code": "REF_REVOKED",
+        "bodySnippet": "{\"code\":\"REF_REVOKED\"}",
+        "ms": 1
+      },
+      "note": "revoked -> next resolve 410 REF_REVOKED"
+    },
+    {
+      "id": "N-05-user-source-fixture",
+      "status": "PASS",
+      "observed": {
+        "host_issue_guard": "REF_OUT_OF_SCOPE",
+        "webview_reachable": false
+      },
+      "note": "host refuses to issue a user-source path (REF_OUT_OF_SCOPE); no ID for it exists, so the WebView has nothing to request"
+    },
+    {
+      "id": "N-06-lexical-traversal",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/../outside/outside_secret.png",
+        "status": 400,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "application/json"
+        },
+        "code": "REF_MALFORMED",
+        "bodySnippet": "{\"code\":\"REF_MALFORMED\"}",
+        "ms": 1
+      },
+      "note": "expected 400 REF_MALFORMED"
+    },
+    {
+      "id": "N-07-encoded-traversal",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/%2E%2E%2Foutside%2Foutside_secret.png",
+        "status": 400,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "application/json"
+        },
+        "code": "REF_MALFORMED",
+        "bodySnippet": "{\"code\":\"REF_MALFORMED\"}",
+        "ms": 1
+      },
+      "note": "expected 400 REF_MALFORMED"
+    },
+    {
+      "id": "N-08-path-parameter-forms",
+      "status": "PASS",
+      "observed": {
+        "query_form": {
+          "url": "http://m2res.localhost/file?path=C:%5CWindows%5Cwin.ini",
+          "status": 400,
+          "headers": {
+            "cache-control": "no-store",
+            "content-type": "application/json"
+          },
+          "code": "REF_MALFORMED",
+          "bodySnippet": "{\"code\":\"REF_MALFORMED\"}",
+          "ms": 1
+        },
+        "abs_segment": {
+          "url": "http://m2res.localhost/abs/C:%5CWindows%5Cwin.ini",
+          "status": 400,
+          "headers": {
+            "cache-control": "no-store",
+            "content-type": "application/json"
+          },
+          "code": "REF_MALFORMED",
+          "bodySnippet": "{\"code\":\"REF_MALFORMED\"}",
+          "ms": 1
+        }
+      },
+      "note": "protocol accepts only /m2id/<opaque-id>"
+    },
+    {
+      "id": "N-09-junction-escape-at-resolve",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/MSKiVrqgXA6oZN6TnWHIfG4aXxn29OxQ2c22ZkXJ8as",
+        "status": 403,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "application/json"
+        },
+        "code": "REF_OUT_OF_SCOPE",
+        "bodySnippet": "{\"code\":\"REF_OUT_OF_SCOPE\"}",
+        "ms": 1
+      },
+      "note": "expected 403 REF_OUT_OF_SCOPE"
+    },
+    {
+      "id": "L-01-repeat-reads",
+      "status": "PASS",
+      "observed": {
+        "first": {
+          "bytes": 2882143,
+          "ms": 18
+        },
+        "second": {
+          "bytes": 2882143,
+          "ms": 18
+        }
+      },
+      "note": "content identical across repeat reads"
+    },
+    {
+      "id": "L-02-inflight-read-survives-revoke",
+      "status": "PASS",
+      "observed": {
+        "bytes": 11525983,
+        "chunks": 1,
+        "sha256": "46ecef997ac6aed37f3bb4e9b79048b72447e3e35f5f9bb8097b40caefbc564e"
+      },
+      "note": "revoke landed after first chunk; the in-flight read completed intact (T6 carve-out)"
+    },
+    {
+      "id": "L-03-cache-bypass-contrast",
+      "status": "PASS",
+      "observed": {
+        "bare_before_revoke": {
+          "status": 200,
+          "bytes": 2882143
+        },
+        "bare_after_revoke": {
+          "url": "http://m2res.localhost/m2id/a0QSp5hU1yMJayzqBYk2zkc4NmQeHghyUzQ2VO7RblA",
+          "status": 410,
+          "headers": {
+            "cache-control": "no-store",
+            "content-type": "application/json"
+          },
+          "code": "REF_REVOKED",
+          "bodySnippet": "{\"code\":\"REF_REVOKED\"}",
+          "ms": 1
+        },
+        "bare_verdict": "RE_RESOLVED_REF_REVOKED",
+        "nostore_after_revoke": {
+          "url": "http://m2res.localhost/m2id/N82QDdV-Gn-mx1CGIjkizbNxOns9-YSSSZaYQ7NRCb4",
+          "status": 410,
+          "headers": {
+            "cache-control": "no-store",
+            "content-type": "application/json"
+          },
+          "code": "REF_REVOKED",
+          "bodySnippet": "{\"code\":\"REF_REVOKED\"}",
+          "ms": 1
+        },
+        "nostore_verdict": "RE_RESOLVED_REF_REVOKED"
+      },
+      "note": "both variants re-resolved with typed REF_REVOKED after revocation (no bypass observed)"
+    },
+    {
+      "id": "N-04-expired-id",
+      "status": "PASS",
+      "observed": {
+        "url": "http://m2res.localhost/m2id/LlyW1YS90b1PKpF6yoi_WyXYaniUml94TXF-tXymfwU",
+        "status": 410,
+        "headers": {
+          "cache-control": "no-store",
+          "content-type": "application/json"
+        },
+        "code": "REF_EXPIRED",
+        "bodySnippet": "{\"code\":\"REF_EXPIRED\"}",
+        "ms": 2
+      },
+      "note": "expected 410 REF_EXPIRED"
+    }
+  ]
+}
