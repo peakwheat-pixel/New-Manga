@@ -1,0 +1,258 @@
+  A-01-small: PASS
+  A-02-typical: PASS
+  A-03-webtoon-tile: PASS
+  A-04-webtoon-long-page: PASS
+  A-05-oversize-rejection: PASS MEDIA_TOO_LARGE
+  A-06-expired: PASS REF_EXPIRED
+  A-07-revoked: PASS
+  A-08-tampered-signature: PASS REF_SIGNATURE_INVALID
+  A-09-traversal: PASS REF_OUT_OF_SCOPE
+  A-10-absolute-path: PASS REF_OUT_OF_SCOPE
+  A-11-write-mode: PASS REF_READ_ONLY
+  A-12-scope-denied: PASS REF_SCOPE_DENIED
+  A-13-reparse-escape-outside: PASS REF_OUT_OF_SCOPE
+  A-14-missing-file: PASS REF_NOT_FOUND
+  A-15-reparse-junction-inside: PASS REF_REPARSE_POINT
+{
+  "probe": "A",
+  "route": "capability-scoped resource reference / token",
+  "label": "PROPOSAL (research prototype; no product runtime)",
+  "limit_bytes": 67108864,
+  "limit_label": "probe-configured controlled rejection limit, NOT a product threshold",
+  "scope_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\scope",
+  "outside_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\outside",
+  "seed_methods": [
+    "hardlink"
+  ],
+  "junction_created": true,
+  "junction_detail": "derived/escape_link->C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\outside created=True; derived/link_to_managed->C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\scope\\managed created=True",
+  "junctions": [
+    {
+      "relative": "derived/escape_link",
+      "target": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\outside",
+      "created": true,
+      "output": "Junction created for C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\scope\\derived\\escape_link <<===>> C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\outside\r\n"
+    },
+    {
+      "relative": "derived/link_to_managed",
+      "target": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\scope\\managed",
+      "created": true,
+      "output": "Junction created for C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\scope\\derived\\link_to_managed <<===>> C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-K8Ki2H\\m2s1-lab\\probeA\\scope\\managed\r\n"
+    }
+  ],
+  "host_pid": 56456,
+  "host_memory": {
+    "working_set_mb": 24.23,
+    "peak_working_set_mb": 26.234,
+    "pagefile_usage_mb": 15.77,
+    "peak_pagefile_usage_mb": 17.848
+  },
+  "channel": {
+    "exit_code": 0,
+    "stderr": "",
+    "bytes_to_core": 7098,
+    "bytes_from_core": 7997
+  },
+  "channel_media_bytes": 0,
+  "channel_media_bytes_note": "the JSON control channel carried no media payload; it is measured separately from the out-of-band file reads",
+  "media_bytes_delivered_out_of_band": 85310202,
+  "core_stats": {
+    "request_id": "r33",
+    "ok": true,
+    "memory": {
+      "working_set_mb": 23.555,
+      "peak_working_set_mb": 23.555,
+      "pagefile_usage_mb": 15.004,
+      "peak_pagefile_usage_mb": 15.004
+    },
+    "revoked": [
+      "rid-revoked"
+    ]
+  },
+  "core_report": {
+    "role": "core",
+    "pid": 57156,
+    "secret_hex_length": 64,
+    "memory": {
+      "working_set_mb": 23.555,
+      "peak_working_set_mb": 23.555,
+      "pagefile_usage_mb": 15.004,
+      "peak_pagefile_usage_mb": 15.004
+    }
+  },
+  "scenarios": [
+    {
+      "id": "A-01-small",
+      "kind": "happy_path",
+      "status": "PASS",
+      "token_chars": 227,
+      "resolve_ms": 0.469,
+      "core_resolve_ms": 0.41,
+      "read_ms": 2.113,
+      "bytes_read": 2882143,
+      "sha256_match": true,
+      "media_bytes": 2882143,
+      "host_peak_working_set_mb": 26.113,
+      "host_working_set_delta_mb": 0.019
+    },
+    {
+      "id": "A-02-typical",
+      "kind": "happy_path",
+      "status": "PASS",
+      "token_chars": 233,
+      "resolve_ms": 0.389,
+      "core_resolve_ms": 0.334,
+      "read_ms": 6.993,
+      "bytes_read": 11525983,
+      "sha256_match": true,
+      "media_bytes": 11525983,
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.118
+    },
+    {
+      "id": "A-03-webtoon-tile",
+      "kind": "happy_path",
+      "status": "PASS",
+      "token_chars": 243,
+      "resolve_ms": 0.419,
+      "core_resolve_ms": 0.355,
+      "read_ms": 6.061,
+      "bytes_read": 10129021,
+      "sha256_match": true,
+      "media_bytes": 10129021,
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-04-webtoon-long-page",
+      "kind": "happy_path",
+      "status": "PASS",
+      "token_chars": 247,
+      "resolve_ms": 0.416,
+      "core_resolve_ms": 0.354,
+      "read_ms": 35.242,
+      "bytes_read": 60773055,
+      "sha256_match": true,
+      "media_bytes": 60773055,
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-05-oversize-rejection",
+      "kind": "happy_path",
+      "status": "PASS",
+      "token_chars": 244,
+      "resolve_ms": 0.427,
+      "core_resolve_ms": 0.358,
+      "error_code": "MEDIA_TOO_LARGE",
+      "expected_rejection": true,
+      "host_read_skipped_bytes": 75948811,
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.003
+    },
+    {
+      "id": "A-06-expired",
+      "kind": "expired",
+      "status": "PASS",
+      "error_code": "REF_EXPIRED",
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-07-revoked",
+      "kind": "revoked",
+      "status": "PASS",
+      "first_resolve_ok": true,
+      "after_revoke_error": "REF_REVOKED",
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-08-tampered-signature",
+      "kind": "tampered",
+      "status": "PASS",
+      "error_code": "REF_SIGNATURE_INVALID",
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-09-traversal",
+      "kind": "traversal_rel",
+      "status": "PASS",
+      "error_code": "REF_OUT_OF_SCOPE",
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-10-absolute-path",
+      "kind": "absolute_rel",
+      "status": "PASS",
+      "error_code": "REF_OUT_OF_SCOPE",
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-11-write-mode",
+      "kind": "write_mode",
+      "status": "PASS",
+      "token_chars": 235,
+      "resolve_ms": 0.05,
+      "core_resolve_ms": null,
+      "error_code": "REF_READ_ONLY",
+      "expected_rejection": true,
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-12-scope-denied",
+      "kind": "scope_denied",
+      "status": "PASS",
+      "token_chars": 228,
+      "resolve_ms": 0.05,
+      "core_resolve_ms": null,
+      "error_code": "REF_SCOPE_DENIED",
+      "expected_rejection": true,
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-13-reparse-escape-outside",
+      "kind": "reparse_escape",
+      "status": "PASS",
+      "rel": "derived/escape_link/user_source_stand_in.png",
+      "expected_error_code": "REF_OUT_OF_SCOPE",
+      "error_code": "REF_OUT_OF_SCOPE",
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-14-missing-file",
+      "kind": "missing",
+      "status": "PASS",
+      "token_chars": 236,
+      "resolve_ms": 0.368,
+      "core_resolve_ms": null,
+      "error_code": "REF_NOT_FOUND",
+      "expected_rejection": true,
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    },
+    {
+      "id": "A-15-reparse-junction-inside",
+      "kind": "reparse_inside",
+      "status": "PASS",
+      "rel": "derived/link_to_managed/managed_small.png",
+      "expected_error_code": "REF_REPARSE_POINT",
+      "error_code": "REF_REPARSE_POINT",
+      "host_peak_working_set_mb": 26.234,
+      "host_working_set_delta_mb": 0.0
+    }
+  ],
+  "summary": {
+    "pass": 15,
+    "fail": 0,
+    "blocked": 0,
+    "not_run": 0
+  }
+}
+exit_code=0

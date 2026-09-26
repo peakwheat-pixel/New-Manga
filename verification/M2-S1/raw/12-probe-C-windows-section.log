@@ -1,0 +1,227 @@
+{
+  "probe": "C",
+  "route": "Windows handle / shared-memory routes",
+  "limit_bytes": 67108864,
+  "section_limit_bytes": 67108864,
+  "limit_label": "probe-configured controlled rejection limit, NOT a product threshold",
+  "host_pid": 50812,
+  "host_memory": {
+    "working_set_mb": 26.766,
+    "peak_working_set_mb": 38.746,
+    "pagefile_usage_mb": 19.219,
+    "peak_pagefile_usage_mb": 19.34
+  },
+  "named_section_name_used": "Local\\m2s1-50812-e1fb54090d94",
+  "scenarios": [
+    {
+      "id": "C1-00-create-named",
+      "status": "PASS",
+      "name": "Local\\m2s1-50812-e1fb54090d94",
+      "bytes": 2882143,
+      "host_working_set_delta_mb": 2.757,
+      "host_peak_working_set_mb": 29.152
+    },
+    {
+      "id": "C1-01-read-by-name",
+      "status": "PASS",
+      "spawn": {
+        "role": "named_reader",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "report": {
+          "role": "named_reader",
+          "pid": 3584,
+          "name": "Local\\m2s1-50812-e1fb54090d94",
+          "opened_by_name": true,
+          "mapped": true,
+          "sha256": "5742503dbea6128436fb7cd3a018ab0da236cf58ecd4f8f18e79b449e8c5c096",
+          "bytes_hashed": 2882143,
+          "sha256_match": true,
+          "status": "OK",
+          "memory": {
+            "working_set_mb": 23.5,
+            "peak_working_set_mb": 27.102,
+            "pagefile_usage_mb": 15.137,
+            "peak_pagefile_usage_mb": 16.348
+          }
+        }
+      },
+      "host_peak_working_set_mb": 29.516
+    },
+    {
+      "id": "C1-02-unauthenticated-writable-open",
+      "status": "PASS",
+      "spawn": {
+        "role": "hostile_named_writer",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "report": {
+          "role": "hostile_named_writer",
+          "pid": 58880,
+          "name": "Local\\m2s1-50812-e1fb54090d94",
+          "opened_writable": true,
+          "before": "89504e470d0a1a0a",
+          "after": "484f5354494c4521",
+          "write_performed": true,
+          "status": "WROTE",
+          "memory": {
+            "working_set_mb": 23.742,
+            "peak_working_set_mb": 23.742,
+            "pagefile_usage_mb": 15.488,
+            "peak_pagefile_usage_mb": 15.492
+          }
+        }
+      },
+      "effect_on_payload_first8": "484f5354494c4521",
+      "note": "the name is the only credential; any same-user, same-session process that learns it can open the section writable under the default DACL"
+    },
+    {
+      "id": "C1-03-post-corruption-verify",
+      "status": "PASS",
+      "spawn_ok": true,
+      "corruption_was_observable": true
+    },
+    {
+      "id": "C1-04-unknown-name-denied",
+      "status": "PASS",
+      "error_code": "SECTION_OPEN_FAILED"
+    },
+    {
+      "id": "C1-05-named-section-after-creator-exit",
+      "status": "PASS",
+      "creator_exit_code": 0,
+      "open_after_exit_result": "DENIED",
+      "error_code": "SECTION_OPEN_FAILED"
+    },
+    {
+      "id": "C2-01-duplicate-handle-into-host",
+      "status": "PASS",
+      "creator": {
+        "role": "anonymous_creator",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "report": {
+          "role": "anonymous_creator",
+          "pid": 44276,
+          "target_pid": 50812,
+          "own_pid": 44276,
+          "created": true,
+          "section_bytes": 11525983,
+          "sha256": "c312ef5e98d6e5c7b50f2585446797864df90217509bfd232ca7ede4c2d52b50",
+          "own_handle": 432,
+          "duplicated_into_target": true,
+          "target_handle_value": 592,
+          "closed_own_handle": true,
+          "status": "OK",
+          "memory": {
+            "working_set_mb": 34.793,
+            "peak_working_set_mb": 45.77,
+            "pagefile_usage_mb": 26.484,
+            "peak_pagefile_usage_mb": 26.535
+          }
+        }
+      },
+      "sha256_match": true,
+      "bytes_hashed": 11525983,
+      "mapped_in_host": true,
+      "creator_exited": true,
+      "survives_creator_exit": true,
+      "host_working_set_delta_mb": 10.942,
+      "host_peak_working_set_mb": 38.746,
+      "note": "the kernel validates the handle value against the host's own handle table; the section also survives the creator's exit while the host holds the duplicated handle"
+    },
+    {
+      "id": "C2-02-same-user-hostile-duplication",
+      "status": "PASS",
+      "holder_pid": 40700,
+      "handle_value": 468,
+      "holder_alive_while_hostile_ran": true,
+      "spawn": {
+        "role": "handle_user",
+        "exit_code": 0,
+        "stdout": "",
+        "stderr": "",
+        "report": {
+          "role": "handle_user",
+          "pid": 53032,
+          "source_pid": 40700,
+          "handle_value": 468,
+          "mode": "dup",
+          "duplicated": true,
+          "new_handle": 476,
+          "mapped": true,
+          "first8": "89504e470d0a1a0a",
+          "status": "OK",
+          "memory": {
+            "working_set_mb": 23.59,
+            "peak_working_set_mb": 23.59,
+            "pagefile_usage_mb": 15.109,
+            "peak_pagefile_usage_mb": 15.133
+          }
+        }
+      },
+      "hostile_duplication_succeeded": true,
+      "hostile_error_code": null,
+      "note": "DuplicateHandle is guarded by the source process ACL only. On this host a same-user process with PROCESS_DUP_HANDLE could open the creator and duplicate its section handle; this is a limitation to design around, not a defect of the probe."
+    },
+    {
+      "id": "C2-03-guessed-handle-value-rejected",
+      "status": "PASS",
+      "error_code": "DUPLICATE_HANDLE_FAILED",
+      "holder_alive_while_guessed": true,
+      "note": "a handle value that names no object in the owner is refused by the kernel; the value is validated against the owner's handle table"
+    },
+    {
+      "id": "C2-06-adjacent-handle-value-is-not-the-section",
+      "status": "PASS",
+      "error_code": "SECTION_MAP_FAILED",
+      "result_status": "DENIED",
+      "note": "handle values are 4-byte aligned; +4 can name another live handle in the same owner, and the kernel still refuses to view it as the section"
+    },
+    {
+      "id": "C2-04-foreign-handle-value-in-own-table",
+      "status": "PASS",
+      "result_status": "DENIED",
+      "error_code": "SECTION_MAP_FAILED"
+    },
+    {
+      "id": "C2-05-oversize-section-rejected",
+      "status": "PASS",
+      "error_code": "SECTION_LIMIT_EXCEEDED",
+      "declared_bytes": 75948811,
+      "limit_bytes": 67108864,
+      "section_created": false,
+      "bytes_allocated": 0,
+      "host_working_set_delta_mb": 0.0,
+      "note": "size checked before CreateFileMappingW; no section, no pagefile growth"
+    },
+    {
+      "read_only_handle_created": true,
+      "write_via_read_only_handle_ok": false,
+      "write_error_code": 5,
+      "write_error_is_access_denied": true,
+      "id": "C3-01-generic-read-handle-write",
+      "status": "PASS",
+      "host_peak_working_set_mb": 38.746
+    },
+    {
+      "write_via_readonly_mapping_ok": false,
+      "error_type": "TypeError",
+      "error_text": "mmap can't modify a readonly memory map.",
+      "id": "C3-02-readonly-mapping-write",
+      "status": "PASS",
+      "host_peak_working_set_mb": 38.746,
+      "note": "a read-only handle/mapping is not a source-file protection mechanism: the same user can open the same file writable, and OS ACL design for the product is UNVERIFIED here"
+    }
+  ],
+  "summary": {
+    "pass": 14,
+    "fail": 0,
+    "blocked": 0,
+    "not_run": 0
+  }
+}
+exit_code=0
