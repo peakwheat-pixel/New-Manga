@@ -1,0 +1,2 @@
+timestamp_utc=2026-09-25T18:48:47.0757954Z shell=PowerShell python=G:\CODEX\New Manga.task-envs\T3.2.1-clean-gate-py312-20260926\Scripts\python.exe (Python 3.12.3) worktree=G:\CODEX\New Manga.worktrees\T3.2.1-integration-20260926 head=6519125406161924b0021e021e79fea07cf673fc cmd=python -m compileall -q src/bootstrap packaging
+EXIT=0

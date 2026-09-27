@@ -1,0 +1,30 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "m2rc1-desktop",
+  "version": "0.1.0",
+  "identifier": "com.newmanga.m2rc1.desktop",
+  "build": {
+    "frontendDist": "../frontend/dist"
+  },
+  "app": {
+    "withGlobalTauri": true,
+    "windows": [
+      {
+        "title": "M2-RC1 resource channel runtime",
+        "width": 1180,
+        "height": 860
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' blob: http://m2res.localhost; connect-src 'self' ipc: http://ipc.localhost http://m2res.localhost; font-src 'self'",
+      "assetProtocol": {
+        "enable": false,
+        "scope": []
+      }
+    }
+  },
+  "bundle": {
+    "active": false,
+    "icon": ["icons/icon.ico"]
+  }
+}

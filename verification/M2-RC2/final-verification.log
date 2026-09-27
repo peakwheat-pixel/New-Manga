@@ -1,0 +1,102 @@
+# M2-RC2 Final Verification Log (FIX round R2-01..R2-08 — supersedes the
+# delivery-round version at 4d4aef35, preserved in git history)
+
+## 0. Verified tree
+
+- Branch: agent/zcode/M2-RC2-resource-channel-hardening
+- Worktree: C:/Users/49745/.codex/worktrees/m2-rc2-zcode/New Manga
+- Base (frozen release base): 22a2c2bf9a70d8c3b81edcdbe0e1ef146db556e5
+- Delivery head (reviewed by DSH, changes_requested): a8fb17ca; reviewed doc head 4d4aef35
+- FIX round review input: doc/reviews/M2-RC2-a8fb17ca.md (untracked, Reviewer-owned)
+- FIX head verified by the commands below: see §6 (git rev-parse HEAD at run time)
+- Head chain: 22a2c2bf (base) -> b4a78f0c (claim) -> 9b50dedc -> 65ea015e -> 24da5a91
+  -> a8fb17ca (delivery) -> 4d4aef35 (docs) -> d93a233f (dispatch) [reviewed history]
+  -> 4cd97397 (FIX: R2-01a/R2-02/R2-03/R2-04/R2-05/R2-06) -> eac5cb3e (FIX: R2-07 completion)
+
+Runtime transcription:
+  $ git rev-parse HEAD
+  eac5cb3e... (see §6)
+  $ git status --porcelain   (after the docs commit: only the untracked
+    Reviewer report and verification/M2-RC2/review-dsh-a8fb17ca/ remain)
+
+## 1. Environment
+
+| Tool | Version |
+|---|---|
+| OS | Windows 11 Pro build 26200 |
+| Python | 3.14.6 (C:\Python314\python.exe) |
+| Cargo | 1.98.1 (797e8a9bc 2026-08-05) |
+| rustc | 1.98.1 (48a229cea 2026-09-01) |
+| Node | v24.15.0 |
+| npm | 12.0.1 (via npm.cmd; R2-06 probe now resolves it) |
+| Vitest | v2.1.9 |
+
+Raw: raw/e2e-environment.json (E2E stage-0 record, now gate-enforced),
+raw/claim-baseline-versions.log (release-baseline record).
+
+## 2. Fixed Task commands — results at the FIX tree
+
+| # | Command | Exit | Result | Raw log |
+|---|---|---:|---|---|
+| 1 | `python -m pytest tests/m2_resource_channel -q` | 0 | 66 passed (delivery 64 + 2 R2-02 non-finite/bool TTL cases) | raw/fix-pytest.log |
+| 2 | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | 0 | 20 passed (delivery 19 + 1 ACL build-artifact test) | raw/fix-cargo.log |
+| 3 | `npm test --prefix apps/desktop/frontend -- --run` | 0 | 2 files / 15 tests passed (unchanged by FIX) | raw/fix-vitest.log |
+| 4 | `python verification/M2-RC2/run_e2e.py` | 0 | GATE PASS 10/10; probe 13/13 (expected-id set asserted, R2-05) | raw/fix-e2e-runner-stdout.log |
+| 5 | `python verification/M2-RC2/review-dsh-a8fb17ca/probe_ttl_nan.py` | 0 | NaN/±Inf/0/301 ALL REFUSED; 300 accepted — R2-02 acceptance met | raw/fix-probe-ttl-nan.log |
+
+Claim baseline (pre-implementation, b4a78f0c): 43 / 12 / 8 / BLOCKED.
+Delivery round (a8fb17ca): 64 / 19 / 15 / GATE PASS (raw/final-*.log).
+
+## 3. E2E gate detail (command 4, FIX tree)
+
+| Gate | Result |
+|---|---|
+| environment (R2-06: which-resolved, missing tool now FAILs) | PASS |
+| lab | PASS |
+| catalog-seeding (real `catalog_loader` CLI, 5 rows) | PASS |
+| sidecar-import-isolation (headless subprocess, F-05 whitelist) | PASS |
+| runtime-build (cargo build --release --locked) | PASS |
+| probe-phase (13/13 PASS **and** expected-id set equality, R2-05; exit 0) | PASS |
+| probe-allowlist-announcement (exactly 7 commands) | PASS |
+| sidecar-module-dump-probe (9 project modules, all whitelisted) | PASS |
+| interactive-production-surface (R2-03 renamed; exactly 3 commands; alive 10 s; no probe results; in-page matrix NOT machine-verified — stated) | PASS |
+| sidecar-module-dump-interactive (9 project modules, all whitelisted) | PASS |
+
+Artefacts now in raw/ (R2-05): e2e-probe-results.json (13 records; D-01
+observed error = "Command register_catalog not allowed by ACL" — the live
+R2-01(a) ACL evidence), e2e-sidecar-modules-probe.json,
+e2e-sidecar-modules-interactive.json.
+
+## 4. Scope transcription
+
+- FIX round (d93a233f..eac5cb3e): 31 paths — raw/fix-diff-name-status.txt.
+- Cumulative (22a2c2bf..eac5cb3e): 58 paths — raw/final-diff-name-status.txt.
+- All paths inside the Task/Review-authorised fix scope. No shared Contract,
+  no src/infrastructure/sqlite/**, no Legacy QML, no root dependency/lock
+  files; bundle.active stays false; Cargo.toml/Cargo.lock untouched.
+- Conditional-path note: src/infrastructure/__init__.py unchanged in the FIX
+  round (its delivery-round justification stands, DSH §2.6 accepted).
+- `git diff --check 22a2c2bf..eac5cb3e`: **clean, exit 0**. (Correction per
+  R2-07: the delivery-round claim of a clean --check was wrong — the runner
+  wrote trailing blank lines into two raw logs, recorded as hits at
+  d93a233f. The writer now strips the whole record to one trailing newline,
+  and the rerun artifacts are clean. The hit-bearing blobs remain in the
+  reviewed history by design — no history rewrite.)
+
+## 5. Honest gates (S1-B series)
+
+| Item | Status |
+|---|---|
+| S1-B3 (DACL/integrity, product-level) | NOT_RUN |
+| S1-B5 (key/reference lifecycle beyond old-IDs-never-rebind) | UNVERIFIED (unchanged) |
+| S1-B6 (cold page cache, 1 s target) | NOT_RUN |
+| S1-B8 (packaging/sandbox) | NOT_RUN |
+| Product-level security / install / packaging readiness | NOT CLAIMED (bundle.active stays false) |
+
+## 6. Findings disposition index (full text in the FIX Handoff)
+
+R2-01 FIXED (option a, live ACL evidence) · R2-02 FIXED (probe acceptance met)
+· R2-03 FIXED (gate renamed + disclosure) · R2-04 FIXED (wording corrected)
+· R2-05 DONE this round (was deferrable) · R2-06 DONE this round (was deferrable)
+· R2-07 FIXED (writer + statement; history blobs kept) · R2-08 DOCUMENTED
+(platform assumption; no code change).

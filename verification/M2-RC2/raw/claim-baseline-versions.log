@@ -1,0 +1,9 @@
+=== M2-RC2 claim baseline (head b4a78f0c808b7f312cee2626d59483cb6224c880) ===
+2026-09-27T07:33:34Z
+
+--- tool versions ---
+Python 3.14.6
+cargo 1.98.1 (797e8a9bc 2026-08-05)
+rustc 1.98.1 (48a229cea 2026-09-01)
+v24.15.0
+12.0.1

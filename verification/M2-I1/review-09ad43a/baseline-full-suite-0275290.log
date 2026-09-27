@@ -1,0 +1,410 @@
+........................................................................ [  5%]
+........................................................................ [ 11%]
+........................................................................ [ 17%]
+........................................................................ [ 23%]
+........................................................................ [ 29%]
+........................................................................ [ 35%]
+.........................................s.s.s.......................... [ 40%]
+........................................................................ [ 46%]
+........................................................................ [ 52%]
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 58%]
+........................................................F............... [ 64%]
+........................................................................ [ 70%]
+........................................................................ [ 75%]
+........................................................................ [ 81%]
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+........................................................................ [ 87%]
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/AppData/Local/Temp/M2-I1-baseline-0275290/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+........................................................................ [ 93%]
+........................................................................ [ 99%]
+........                                                                 [100%]
+================================== FAILURES ===================================
+_______________ test_start_export_completes_and_updates_history _______________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x18727419410) at 0x00000187270C7840>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-157/test_start_export_completes_an0')
+pages = [ReaderPage(page_id='p0', filename='page_00_��0ҳ.png', original_path='C:\\Users\\49745\\AppData\\Local\\Temp\\pytest-of..._an0\\page_02_translated.png', translated_revision_id='rev-2', current_translated_revision_id='rev-2', text='�� 2 ҳ����')]
+export_service = <application.export.service.ExportService object at 0x00000187E7BC1AF0>
+
+    @requires_pyside6
+    def test_start_export_completes_and_updates_history(qapp, tmp_path, pages, export_service):
+        vm = make_export_vm(tmp_path, pages, export_service)
+        vm.setOutputPath(str(tmp_path / "out" / "result.zip"))
+        finished = []
+        vm.exportFinished.connect(lambda summary: finished.append(summary))
+        vm.startExport()
+        assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, finished)
+>       assert len(finished) == 1, export_diagnostics(vm, finished)
+E       AssertionError: export did not settle as expected: running=False signals=[] staleWarningVisible=False statusMessage='������ɣ�C:\\Users\\49745\\AppData\\Local\\Temp\\pytest-of-49745\\pytest-157\\test_start_export_completes_an0\\out\\result.zip' history=1
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests\reading_export\test_viewmodels.py:275: AssertionError
+---------------------------- Captured stderr call -----------------------------
+Traceback (most recent call last):
+  File "C:\Users\49745\AppData\Local\Temp\M2-I1-baseline-0275290\src\ui\viewmodels\reader\viewmodel.py", line 450, in settleReadingTime
+    self._reading.add_time(elapsed)
+  File "C:\Users\49745\AppData\Local\Temp\M2-I1-baseline-0275290\src\application\reading\service.py", line 241, in add_time
+    self._touch(now=True)
+  File "C:\Users\49745\AppData\Local\Temp\M2-I1-baseline-0275290\src\application\reading\service.py", line 377, in _touch
+    self._persist()
+  File "C:\Users\49745\AppData\Local\Temp\M2-I1-baseline-0275290\src\application\reading\service.py", line 380, in _persist
+    self._store.write({"progress_entries": self._rows})
+  File "C:\Users\49745\AppData\Local\Temp\M2-I1-baseline-0275290\src\infrastructure\sqlite\reading_export.py", line 84, in write
+    with self._conn:
+  File "C:\Users\49745\AppData\Local\Temp\M2-I1-baseline-0275290\src\infrastructure\sqlite\connection.py", line 292, in __enter__
+    return self._current().__enter__()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.ProgrammingError: Cannot operate on a closed database.
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detect_seam_t111.py:15: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:173: numpy is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:206: torch is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:236: torch is not installed
+1 failed, 1228 passed, 5 skipped, 1 warning in 64.71s (0:01:04)

@@ -1,0 +1,44 @@
+{
+  "purpose": "M2-S2 probe repeatability check (first run vs repeat run)",
+  "toctou": {
+    "first": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou-result.json",
+    "repeat": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\toctou-result.json",
+    "scenario_count": 16,
+    "summary_consistent": true,
+    "summary_first": {
+      "pass": 16,
+      "fail": 0,
+      "blocked": 0,
+      "not_run": 0
+    },
+    "summary_repeat": {
+      "pass": 16,
+      "fail": 0,
+      "blocked": 0,
+      "not_run": 0
+    },
+    "differences": [],
+    "consistent": true
+  },
+  "mapping": {
+    "first": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\mapping-result.json",
+    "repeat": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2s2-lab\\mapping-result.json",
+    "scenario_count": 8,
+    "summary_consistent": true,
+    "summary_first": {
+      "pass": 8,
+      "fail": 0,
+      "blocked": 0,
+      "not_run": 0
+    },
+    "summary_repeat": {
+      "pass": 8,
+      "fail": 0,
+      "blocked": 0,
+      "not_run": 0
+    },
+    "differences": [],
+    "consistent": true
+  },
+  "consistent": true
+}

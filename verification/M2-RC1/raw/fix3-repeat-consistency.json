@@ -1,0 +1,73 @@
+{
+  "generator": "verification/M2-RC1/compare_e2e_runs.py",
+  "first": "fix3-e2e-results-first.json",
+  "repeat": "fix3-e2e-results-repeat.json",
+  "first_status_counts": {
+    "PASS": 10
+  },
+  "repeat_status_counts": {
+    "PASS": 10
+  },
+  "status_differences": [],
+  "ids_missing_in_repeat": [],
+  "ids_missing_in_first": [],
+  "observed_differences": [
+    {
+      "id": "E-06-remount-fresh-references",
+      "field": "observed.first",
+      "first": "lYS0b-jpm4",
+      "repeat": "vkE91UMmvM"
+    },
+    {
+      "id": "E-06-remount-fresh-references",
+      "field": "observed.second",
+      "first": "RWd-0MR65w",
+      "repeat": "F_sgL8tgWA"
+    },
+    {
+      "id": "E-07-per-reference-first-byte-p95",
+      "field": "observed.p95_ms",
+      "first": 75,
+      "repeat": 73
+    },
+    {
+      "id": "E-07-per-reference-first-byte-p95",
+      "field": "observed.timings_ms",
+      "first": [
+        73,
+        73,
+        73,
+        73,
+        74,
+        74,
+        74,
+        75
+      ],
+      "repeat": [
+        70,
+        70,
+        70,
+        71,
+        71,
+        72,
+        72,
+        73
+      ]
+    }
+  ],
+  "unclassified_differences": [],
+  "nondeterministic_whitelist": {
+    "E-06-remount-fresh-references": [
+      "observed"
+    ],
+    "E-07-hot-cache-p95": [
+      "observed.p95_ms",
+      "observed.timings_ms"
+    ],
+    "E-07-per-reference-first-byte-p95": [
+      "observed.p95_ms",
+      "observed.timings_ms"
+    ]
+  },
+  "consistent": true
+}

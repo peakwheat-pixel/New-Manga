@@ -1,0 +1,41 @@
+# Qoder Reviewer B — 01 Case A Blob Equivalence
+
+Reviewer: Qoder (Reviewer B).
+Case: A — `OWNER_ADOPTED_WITHOUT_SEMANTIC_CHANGE`.
+
+## Compared objects
+
+- Adopted draft source head: `ac38dede84ff22290c9b9d579c1372c8184a7bd5`
+- Owner Delivery head: `7de1cd27e22037d4b76b235c9f11399b0cea9463`
+- Owner Handoff (reviewed_head): `b2377288680569dbee4e2299fd7dfae4de067c54`
+- Expected Contract blob: `4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3`
+
+## Independent verification commands (Git Bash, from Review worktree)
+
+```bash
+git rev-parse HEAD:doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+git hash-object doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+wc -l doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+```
+
+## Observed values (2026-09-26, Qoder Reviewer B run)
+
+| Quantity | Observed | Expected | Equal? |
+|---|---|---|---|
+| Git blob SHA-1 at HEAD | `4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3` | `4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3` | YES |
+| Line count | 276 | 276 | YES |
+
+The Git blob OID is exact-content identity evidence: the reviewed_head Contract is the
+same object as the Qoder-R3-reviewed draft Contract and the Owner Delivery Contract, so
+semantic equivalence holds by construction.
+
+## Case A equivalence statement
+
+The Owner disposition `OWNER_ADOPTED_WITHOUT_SEMANTIC_CHANGE` (Case A) is independently
+confirmed. The Contract blob `4b503a17…` at reviewed_head `b237728` is byte-identical to:
+- The adopted draft head `ac38dede` Contract blob (Qoder R3 reviewed_head)
+- The Owner Delivery `7de1cd2` Contract blob
+- The expected blob `4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3` recorded by the Owner
+
+No semantic delta exists. The R3 evidence on the semantic Contract remains valid for
+the reviewed_head.

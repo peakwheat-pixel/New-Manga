@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-revoke-resource-refs"
+description = "Enables the revoke_resource_refs command without any pre-configured scope."
+commands.allow = ["revoke_resource_refs"]
+
+[[permission]]
+identifier = "deny-revoke-resource-refs"
+description = "Denies the revoke_resource_refs command without any pre-configured scope."
+commands.deny = ["revoke_resource_refs"]

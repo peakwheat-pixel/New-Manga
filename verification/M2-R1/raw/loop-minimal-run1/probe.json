@@ -1,0 +1,33 @@
+{
+  "probe": "M2-R1 event-loop / window-census probe",
+  "platform_requested": "minimal",
+  "pid": 15700,
+  "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\M2-R1-venv\\Scripts\\python.exe",
+  "started_at": "2026-09-25 17:50:28",
+  "errors": [],
+  "exit_code": 0,
+  "PySide6.__version__": "6.11.2",
+  "qVersion": "6.11.2",
+  "platformName": "minimal",
+  "topLevelWindows_before_loop": 0,
+  "census_before_loop": {
+    "top_level_windows": 0,
+    "visible_windows": 0,
+    "entries": []
+  },
+  "event_loop": {
+    "requested_ms": 300,
+    "timer_fired": true,
+    "exec_return_code": 0,
+    "wall_seconds": 0.3161,
+    "exited_within_budget": true
+  },
+  "census_after_loop": {
+    "top_level_windows": 0,
+    "visible_windows": 0,
+    "entries": []
+  },
+  "topLevelWindows_after_loop": 0,
+  "finished_at": "2026-09-25 17:50:28"
+}

@@ -1,0 +1,203 @@
+{
+  "probe": "F",
+  "purpose": "Review-driven boundary measurement for M2-S1 findings R-001 and R-002",
+  "review_reference": "doc/reviews/M2-S1-4eaad68.md (decision=changes_requested)",
+  "limit_bytes": 67108864,
+  "limit_label": "probe-configured controlled rejection limit, NOT a product threshold",
+  "scope_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope",
+  "outside_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\outside",
+  "host_pid": 58544,
+  "host_memory": {
+    "working_set_mb": 23.59,
+    "peak_working_set_mb": 25.562,
+    "pagefile_usage_mb": 14.941,
+    "peak_pagefile_usage_mb": 17.02
+  },
+  "scenarios": [
+    {
+      "id": "F-01-token-payload-readable-without-key",
+      "finding": "R-002",
+      "status": "PASS",
+      "decoded_payload": {
+        "exp": 1790419312.193,
+        "mode": "read",
+        "rel": "derived/asset.png",
+        "rid": "rid-asset",
+        "scope": "derived-read-only",
+        "v": 1
+      },
+      "decoded_codepath_present": true,
+      "readable_without_key": true,
+      "signature_check_without_key_rejects": true,
+      "confidentiality": "NONE (payload is Base64URL JSON)",
+      "integrity": "HMAC-SHA256 over the payload segment",
+      "token_chars": 201,
+      "note": "a signed reference proves who minted it; it does not hide the relative path, resource id, scope, expiry or mode from the holder"
+    },
+    {
+      "id": "F-02-static-negative-controls-reconfirmed",
+      "finding": "R-001 (limits the claim)",
+      "status": "PASS",
+      "cases": [
+        {
+          "case": "traversal",
+          "expected": "REF_OUT_OF_SCOPE",
+          "actual": "REF_OUT_OF_SCOPE",
+          "ok": true
+        },
+        {
+          "case": "absolute",
+          "expected": "REF_OUT_OF_SCOPE",
+          "actual": "REF_OUT_OF_SCOPE",
+          "ok": true
+        },
+        {
+          "case": "internal-junction",
+          "expected": "REF_REPARSE_POINT",
+          "actual": "REF_REPARSE_POINT",
+          "ok": true
+        },
+        {
+          "case": "scope-denied",
+          "expected": "REF_SCOPE_DENIED",
+          "actual": "REF_SCOPE_DENIED",
+          "ok": true
+        },
+        {
+          "case": "write-mode",
+          "expected": "REF_READ_ONLY",
+          "actual": "REF_READ_ONLY",
+          "ok": true
+        }
+      ],
+      "junction": {
+        "link": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope\\derived\\link_to_managed",
+        "target": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope\\managed",
+        "created": true,
+        "output": "Junction created for C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope\\derived\\link_to_managed <<===>> C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope\\managed\r\n"
+      },
+      "note": "these PASSes apply to a static path input only; they are a reconfirmation of the original A-09/A-10/A-11/A-12/A-15 results, not evidence about a concurrent adversary"
+    },
+    {
+      "id": "F-03-file-replaced-between-check-and-open",
+      "finding": "R-001",
+      "status": "PASS",
+      "resolved_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope\\derived\\asset.png",
+      "validated_identity": {
+        "key": "dev+inode",
+        "value": [
+          2763106124046938139,
+          4785074605211146
+        ],
+        "size": 2882143
+      },
+      "validated_sha256": "5742503dbea6128436fb7cd3a018ab0da236cf58ecd4f8f18e79b449e8c5c096",
+      "opened_sha256": "c312ef5e98d6e5c7b50f2585446797864df90217509bfd232ca7ede4c2d52b50",
+      "outside_sha256": "c312ef5e98d6e5c7b50f2585446797864df90217509bfd232ca7ede4c2d52b50",
+      "opened_bytes_are_out_of_scope_file": true,
+      "toctou_window_confirmed": true,
+      "note": "the resolver's checks and the caller's open are two separate filesystem operations; a replacement in between is not detected by any static check"
+    },
+    {
+      "id": "F-04-directory-component-swapped-for-junction",
+      "finding": "R-001",
+      "status": "PASS",
+      "junction": {
+        "link": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope\\derived\\dir",
+        "target": "C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\outside\\dir",
+        "created": true,
+        "output": "Junction created for C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\scope\\derived\\dir <<===>> C:\\Users\\49745\\AppData\\Local\\Temp\\dsh-jvt911\\m2s1-lab\\probeF\\outside\\dir\r\n"
+      },
+      "validated_sha256": "5742503dbea6128436fb7cd3a018ab0da236cf58ecd4f8f18e79b449e8c5c096",
+      "opened_sha256": "c312ef5e98d6e5c7b50f2585446797864df90217509bfd232ca7ede4c2d52b50",
+      "reads_out_of_scope_tree": true,
+      "note": "the reparse walk passed while the directory was real; replacing it with a junction after validation redirects the later open"
+    },
+    {
+      "id": "F-05-size-check-then-open-race",
+      "finding": "R-001",
+      "status": "PASS",
+      "limit_bytes": 67108864,
+      "validated_size": 2882143,
+      "validated_size_within_limit": true,
+      "actual_size_after_swap": 75948811,
+      "bytes_read": 68157440,
+      "bytes_read_exceeds_validated_limit": true,
+      "demo_read_cap_bytes": 68157440,
+      "note": "the naive read follows getsize() with a separate open; the demo streams at most limit+1 MiB so the probe itself stays bounded"
+    },
+    {
+      "id": "F-06-same-size-different-content-swap",
+      "finding": "R-001",
+      "status": "PASS",
+      "same_size_variant": {
+        "source_bytes": 2882143,
+        "variant_bytes": 2882143,
+        "same_size": true,
+        "variant_sha256": "e7b6d92ceb8aec80a666543a2be7b91ded08ba5d5398c653ceda6bb1f77f511c",
+        "source_sha256": "5742503dbea6128436fb7cd3a018ab0da236cf58ecd4f8f18e79b449e8c5c096"
+      },
+      "identity_key": "dev+inode",
+      "validated_identity": {
+        "key": "dev+inode",
+        "value": [
+          2763106124046938139,
+          4785074605211146
+        ],
+        "size": 2882143
+      },
+      "identity_after_swap": {
+        "key": "dev+inode",
+        "value": [
+          2763106124046938139,
+          8444249302450110
+        ],
+        "size": 2882143
+      },
+      "size_only_check_would_pass": true,
+      "identity_check_detects_swap": true,
+      "note": "a size re-check alone cannot detect this swap; only a file identity/version check on the opened handle can"
+    },
+    {
+      "id": "F-07-handle-bound-identity-check-detects-swap",
+      "finding": "R-001 (release-condition direction, isolated)",
+      "status": "PASS",
+      "expected_identity": {
+        "key": "dev+inode",
+        "value": [
+          2763106124046938139,
+          4785074605211146
+        ],
+        "size": 2882143
+      },
+      "detected_error": "FILE_IDENTITY_CHANGED",
+      "note": "opening once and comparing the identity from the handle defeats this specific swap on this host; it is a demonstration of the required property, not a product guarantee"
+    },
+    {
+      "id": "F-08-handle-bound-baseline-positive-control",
+      "finding": "R-001 (control)",
+      "status": "PASS",
+      "sha256": "5742503dbea6128436fb7cd3a018ab0da236cf58ecd4f8f18e79b449e8c5c096",
+      "expected_sha256": "5742503dbea6128436fb7cd3a018ab0da236cf58ecd4f8f18e79b449e8c5c096",
+      "note": "the bound path must still serve the legitimate resource unchanged"
+    }
+  ],
+  "boundary_summary": {
+    "static_path_input": "negative controls PASS (F-02)",
+    "check_then_use_window": "CONFIRMED OPEN (F-03, F-04, F-05, F-06)",
+    "handle_bound_mitigation_direction": "detects the exercised swaps (F-07), serves the legitimate resource (F-08)",
+    "product_guarantee": "UNVERIFIED -- see limitations"
+  },
+  "limitations": [
+    "F-07/F-08 show that an open-then-verify implementation detects the two specific swaps exercised here; they do not make the product boundary verified.",
+    "An adversary with write access to the scope root, to its parent directories, or to the volume can still race the validation, replace a reparse point at open time, or replace the validated file with a same-identity handle obtained another way; none of that is measured.",
+    "The product design must decide: open with FILE_FLAG_OPEN_REPARSE_POINT / FILE_FLAG_BACKUP_SEMANTICS as appropriate, re-derive containment from the opened handle, verify identity+size from that handle, and keep DACL/integrity level checks (S1-B3) outside this proposal.",
+    "No Tauri/WebView asset protocol, no product Core process model and no OS-level ACL/integrity level were exercised; those remain NOT_RUN/UNVERIFIED."
+  ],
+  "summary": {
+    "pass": 8,
+    "fail": 0,
+    "blocked": 0,
+    "not_run": 0
+  }
+}

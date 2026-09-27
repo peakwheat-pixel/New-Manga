@@ -1,0 +1,68 @@
+{
+  "probe": "M2-R1 supplementary font-remediation probe",
+  "platform": "minimal",
+  "mode": "fontdir",
+  "fontdir_env": "C:\\Windows\\Fonts",
+  "font_file": null,
+  "pid": 55844,
+  "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\M2-R1-venv\\Scripts\\python.exe",
+  "started_at": "2026-09-25 17:49:58",
+  "errors": [],
+  "exit_code": 0,
+  "PySide6.__version__": "6.11.2",
+  "qVersion": "6.11.2",
+  "platformName": "minimal",
+  "screen_count": 1,
+  "after_app_construction": {
+    "families_count": 0,
+    "families_sample": []
+  },
+  "render": {
+    "label": "minimal_fontdir",
+    "families_count": 0,
+    "hasFamily_MicrosoftYaHei": false,
+    "hasFamily_Arial": false,
+    "resolved_family_for_requested": "Helvetica",
+    "font_available_flag": false,
+    "metrics": {
+      "family": "Helvetica",
+      "height": 32,
+      "ascent": 32,
+      "descent": 0,
+      "advance_cjk_4chars": 128,
+      "advance_latin_Manga": 160,
+      "inFont_cjk": false
+    },
+    "layout_horizontal": {
+      "item_count": 1,
+      "extents_width": 416,
+      "extents_height": 32.0,
+      "fits": true,
+      "font_available": false
+    },
+    "layout_vertical": {
+      "item_count": 6,
+      "extents_width": 56.0,
+      "extents_height": 140
+    },
+    "compose_page": {
+      "output_png_sha256": "83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93",
+      "output_png_bytes": 1034,
+      "diff_vs_white_input": {
+        "comparable": true,
+        "width": 600,
+        "height": 200,
+        "total_pixels": 120000,
+        "differing_pixels": 10933,
+        "non_white_pixels_in_b": 10933
+      }
+    }
+  },
+  "window_census": {
+    "top_level_windows": 0,
+    "visible_windows": 0,
+    "visible_details": []
+  },
+  "finished_at": "2026-09-25 17:49:58"
+}

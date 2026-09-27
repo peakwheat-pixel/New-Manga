@@ -1,0 +1,57 @@
+{
+ "fixture": {
+  "path": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\fixture\\漫画页-测试.png",
+  "sha256_now": "05026a0531c0f053ec7d58db35849338c93ddd70edbf9185f354663567c16430",
+  "sha256_expected": "05026a0531c0f053ec7d58db35849338c93ddd70edbf9185f354663567c16430",
+  "unchanged": true
+ },
+ "pages": [
+  {
+   "page_id": "4155c0a1afa547f9ae3dd56e42fa56f4",
+   "page_locked": 0,
+   "review_state": "unreviewed",
+   "overall_status": "not_started",
+   "source_hash": "05026a0531c0f053ec7d58db35849338c93ddd70edbf9185f354663567c16430",
+   "managed_ref": "books/356fc058d9b84d59b549c65875163043/chapters/aca70c4c9b92463f847295c643e8ff2a/original/674700a7897c439c86e37aa41cf6a8a4.png"
+  }
+ ],
+ "managed_copy": {
+  "path": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\用户配置隔离\\AppData\\Local\\New Manga\\managed\\books\\356fc058d9b84d59b549c65875163043\\chapters\\aca70c4c9b92463f847295c643e8ff2a\\original\\674700a7897c439c86e37aa41cf6a8a4.png",
+  "exists": true,
+  "sha256": "05026a0531c0f053ec7d58db35849338c93ddd70edbf9185f354663567c16430",
+  "matches_source_hash": true
+ },
+ "revisions": {
+  "artifact_revisions": 0,
+  "region_revisions": 0
+ },
+ "export_history": [
+  {
+   "export_id": "exp-4590d28f38ef",
+   "book_id": "",
+   "chapter_id": "",
+   "pipeline_run_id": null,
+   "export_type": "zip",
+   "scope_snapshot_json": "{\"page_ids\": [\"4155c0a1afa547f9ae3dd56e42fa56f4\"], \"filenames\": [\"漫画页-测试.png\"], \"mode\": \"original\", \"overwrite_policy\": \"overwrite\", \"stale_policy\": \"abort\"}",
+   "output_path": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun2\\exports\\recovery-chapter-1-original.zip",
+   "render_profile_snapshot_json": "{}",
+   "status": "completed",
+   "file_hash": "94a1166fb277207627dbf19f59880595f096227597227ba30e99c65bd8ce08ee",
+   "created_at": "2026-09-25T17:15:38.652+00:00",
+   "completed_at": "2026-09-25T17:15:38.659+00:00",
+   "detail": ""
+  }
+ ],
+ "secret_scan": {
+  "pattern": "(?i)(api[_-]?key|authorization|bearer\\s|password|secret|sk-[a-z0-9]{8,})",
+  "files_scanned_dirs": [
+   "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\logs",
+   "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun2\\logs",
+   "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun3\\logs",
+   "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\cold-start-benchmark\\logs",
+   "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\default-data-root-probe"
+  ],
+  "hits": [],
+  "verdict": "NO_CREDENTIAL_MATERIAL_IN_LOGS"
+ }
+}

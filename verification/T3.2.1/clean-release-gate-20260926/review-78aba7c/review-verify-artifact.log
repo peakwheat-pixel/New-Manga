@@ -1,0 +1,53 @@
+=== REVIEWER INDEPENDENT RUN ===
+date_utc=2026-09-25T17:44:12Z
+shell=bash(git) host=MINGW64_NT-10.0-26200 HOME-MY 3.6.5-22c95533.x86_64 2025-10-10 12:02 UTC x86_64 Msys
+venv_python=G:/CODEX/New Manga.task-envs/T3.2.1-clean-gate-py312-20260926/Scripts/python.exe
+worktree=/g/CODEX/New Manga.worktrees/T3.2.1-qoder-review-78aba7c
+head=78aba7c5781b0bf12aa6a6696371483c22d182f0
+cmd=python verification/T3.2.1/clean-release-gate-20260926/verify_artifact.py --source-head 08f9bd8... --package build2/dist/NewManga --manifest builds/build2/artifact-manifest.sha256 --qml-source src/ui/qml
+{
+  "source_head": "08f9bd85137965df922db524bc92917af513bd24",
+  "package": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\build2\\dist\\NewManga",
+  "manifest": "G:\\CODEX\\New Manga.worktrees\\T3.2.1-qoder-review-78aba7c\\verification\\T3.2.1\\clean-release-gate-20260926\\builds\\build2\\artifact-manifest.sha256",
+  "manifest_entries": 2475,
+  "package_file_count": 2475,
+  "package_total_bytes": 234071167,
+  "exe_sha256": "3aac341ace018a6884322ea2602c90c350844330154d63dc51ff16aa0bef74b2",
+  "required_runtime_files": [
+    "NewManga.exe",
+    "_internal/PySide6/Qt6Core.dll",
+    "_internal/PySide6/Qt6Gui.dll",
+    "_internal/PySide6/Qt6Qml.dll",
+    "_internal/PySide6/Qt6Quick.dll",
+    "_internal/PySide6/Qt6QuickControls2.dll",
+    "_internal/PySide6/plugins/platforms/qwindows.dll"
+  ],
+  "qml_source_file_count": 26,
+  "qml_imports": [
+    "QtQuick",
+    "QtQuick.Controls",
+    "QtQuick.Dialogs",
+    "QtQuick.Layouts"
+  ],
+  "qt_qmldirs_missing": [],
+  "package_excluded_tests_cache_source_user_data": [],
+  "optional_heavy_dependencies_absent": true,
+  "optional_heavy_dependency_paths": [],
+  "checks": {
+    "manifest_matches_package_file_set": true,
+    "manifest_hashes_match_package": true,
+    "required_qt_runtime_files_present": true,
+    "all_production_qml_and_qmldir_files_match_source": true,
+    "all_imported_qt_qmldirs_present": true,
+    "tests_cache_source_and_user_data_excluded": true,
+    "optional_model_dependencies_excluded": true
+  },
+  "details": {
+    "unlisted_package_files": [],
+    "missing_manifest_files": [],
+    "manifest_hash_mismatches": [],
+    "required_files_missing": [],
+    "qml_mismatches": []
+  }
+}
+EXIT=0

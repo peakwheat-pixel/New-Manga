@@ -1,0 +1,18 @@
+lab ready: C:\Users\49745\AppData\Local\Temp\m2rc1-lab
+asset sha256: 476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [0927/124335.310:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
+exit_code=0 elapsed=4.8s
+E-00-probe-mode-detected                 PASS
+E-01-issue-fetch-digest                  PASS
+E-02-img-render                          PASS
+E-03-unknown-id                          PASS
+E-04-revoke-after-cached-fetch           PASS
+E-05-expired-ttl                         PASS
+E-06-remount-fresh-references            PASS
+E-07-per-reference-first-byte-p95        PASS
+E-08-boundary-256mib                     PASS
+E-09-over-limit-typed                    PASS
+summary: {'PASS': 10}
+results: C:\Users\49745\AppData\Local\Temp\m2rc1-lab\probe-results.json

@@ -1,0 +1,202 @@
+  E-A-route-A-consumers-1: PASS bytes=10129021 ms=6.855 aggMB/s=1409.24 errors=[]
+  E-A-route-A-consumers-2: PASS bytes=20258056 ms=7.384 aggMB/s=2616.48 errors=[]
+  E-A-route-A-consumers-4: PASS bytes=40516380 ms=8.534 aggMB/s=4527.6 errors=[]
+  E-A-route-A-consumers-8: PASS bytes=81032259 ms=11.593 aggMB/s=6665.78 errors=[]
+  E-B-route-B-consumers-1: PASS bytes=10129021 ms=94.699 aggMB/s=102.01 errors=[]
+  E-B-route-B-consumers-2: PASS bytes=20258056 ms=96.991 aggMB/s=199.19 errors=[]
+  E-B-route-B-consumers-4: PASS bytes=40516380 ms=111.732 aggMB/s=345.82 errors=[]
+  E-C-route-C-consumers-1: PASS matches=1/1 ms=106.036 aggMB/s=103.66 errors=[]
+  E-C-route-C-consumers-2: PASS matches=2/2 ms=112.364 aggMB/s=195.65 errors=[]
+  E-C-route-C-consumers-4: PASS matches=4/4 ms=125.2 aggMB/s=351.18 errors=[]
+  E-C-route-C-consumers-8: PASS matches=8/8 ms=160.925 aggMB/s=546.44 errors=[]
+{
+  "probe": "E",
+  "route": "concurrency / capacity comparison",
+  "limit_bytes": 67108864,
+  "logical_processors": 32,
+  "host_pid": 10680,
+  "host_memory": {
+    "working_set_mb": 23.527,
+    "peak_working_set_mb": 45.609,
+    "pagefile_usage_mb": 15.152,
+    "peak_pagefile_usage_mb": 30.781
+  },
+  "scenarios": [
+    {
+      "id": "E-A-route-A-consumers-1",
+      "consumers": 1,
+      "resource": "webtoon_tile (rotating over 6 tiles)",
+      "bytes_delivered": 10129021,
+      "expected_bytes": 10129021,
+      "errors": [],
+      "control_requests": 3,
+      "elapsed_ms": 6.855,
+      "aggregate_mb_s": 1409.24,
+      "host_working_set_delta_mb": 0.113,
+      "host_peak_working_set_mb": 25.754,
+      "core_channel": {
+        "exit_code": 0,
+        "stderr": "",
+        "bytes_to_core": 445,
+        "bytes_from_core": 671
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "E-A-route-A-consumers-2",
+      "consumers": 2,
+      "resource": "webtoon_tile (rotating over 6 tiles)",
+      "bytes_delivered": 20258056,
+      "expected_bytes": 20258056,
+      "errors": [],
+      "control_requests": 5,
+      "elapsed_ms": 7.384,
+      "aggregate_mb_s": 2616.48,
+      "host_working_set_delta_mb": 0.008,
+      "host_peak_working_set_mb": 26.688,
+      "core_channel": {
+        "exit_code": 0,
+        "stderr": "",
+        "bytes_to_core": 822,
+        "bytes_from_core": 1267
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "E-A-route-A-consumers-4",
+      "consumers": 4,
+      "resource": "webtoon_tile (rotating over 6 tiles)",
+      "bytes_delivered": 40516380,
+      "expected_bytes": 40516380,
+      "errors": [],
+      "control_requests": 9,
+      "elapsed_ms": 8.534,
+      "aggregate_mb_s": 4527.6,
+      "host_working_set_delta_mb": 0.02,
+      "host_peak_working_set_mb": 29.895,
+      "core_channel": {
+        "exit_code": 0,
+        "stderr": "",
+        "bytes_to_core": 1576,
+        "bytes_from_core": 2462
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "E-A-route-A-consumers-8",
+      "consumers": 8,
+      "resource": "webtoon_tile (rotating over 6 tiles)",
+      "bytes_delivered": 81032259,
+      "expected_bytes": 81032259,
+      "errors": [],
+      "control_requests": 17,
+      "elapsed_ms": 11.593,
+      "aggregate_mb_s": 6665.78,
+      "host_working_set_delta_mb": -0.109,
+      "host_peak_working_set_mb": 37.461,
+      "core_channel": {
+        "exit_code": 0,
+        "stderr": "",
+        "bytes_to_core": 3092,
+        "bytes_from_core": 4856
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "E-B-route-B-consumers-1",
+      "consumers": 1,
+      "bytes_delivered": 10129021,
+      "errors": [],
+      "elapsed_ms": 94.699,
+      "aggregate_mb_s": 102.01,
+      "host_working_set_delta_mb": 0.012,
+      "host_peak_working_set_mb": 37.461,
+      "status": "PASS"
+    },
+    {
+      "id": "E-B-route-B-consumers-2",
+      "consumers": 2,
+      "bytes_delivered": 20258056,
+      "errors": [],
+      "elapsed_ms": 96.991,
+      "aggregate_mb_s": 199.19,
+      "host_working_set_delta_mb": 0.0,
+      "host_peak_working_set_mb": 37.461,
+      "status": "PASS"
+    },
+    {
+      "id": "E-B-route-B-consumers-4",
+      "consumers": 4,
+      "bytes_delivered": 40516380,
+      "errors": [],
+      "elapsed_ms": 111.732,
+      "aggregate_mb_s": 345.82,
+      "host_working_set_delta_mb": 0.0,
+      "host_peak_working_set_mb": 37.461,
+      "status": "PASS"
+    },
+    {
+      "id": "E-C-route-C-consumers-1",
+      "consumers": 1,
+      "resource_bytes": 11525983,
+      "bytes_read_by_consumers": 11525983,
+      "copies_of_payload_in_section": 1,
+      "matches": 1,
+      "errors": [],
+      "elapsed_ms": 106.036,
+      "aggregate_mb_s": 103.66,
+      "host_working_set_delta_mb": 0.016,
+      "host_peak_working_set_mb": 45.512,
+      "status": "PASS"
+    },
+    {
+      "id": "E-C-route-C-consumers-2",
+      "consumers": 2,
+      "resource_bytes": 11525983,
+      "bytes_read_by_consumers": 23051966,
+      "copies_of_payload_in_section": 1,
+      "matches": 2,
+      "errors": [],
+      "elapsed_ms": 112.364,
+      "aggregate_mb_s": 195.65,
+      "host_working_set_delta_mb": 0.015,
+      "host_peak_working_set_mb": 45.527,
+      "status": "PASS"
+    },
+    {
+      "id": "E-C-route-C-consumers-4",
+      "consumers": 4,
+      "resource_bytes": 11525983,
+      "bytes_read_by_consumers": 46103932,
+      "copies_of_payload_in_section": 1,
+      "matches": 4,
+      "errors": [],
+      "elapsed_ms": 125.2,
+      "aggregate_mb_s": 351.18,
+      "host_working_set_delta_mb": 0.063,
+      "host_peak_working_set_mb": 45.559,
+      "status": "PASS"
+    },
+    {
+      "id": "E-C-route-C-consumers-8",
+      "consumers": 8,
+      "resource_bytes": 11525983,
+      "bytes_read_by_consumers": 92207864,
+      "copies_of_payload_in_section": 1,
+      "matches": 8,
+      "errors": [],
+      "elapsed_ms": 160.925,
+      "aggregate_mb_s": 546.44,
+      "host_working_set_delta_mb": 0.113,
+      "host_peak_working_set_mb": 45.609,
+      "status": "PASS"
+    }
+  ],
+  "summary": {
+    "pass": 11,
+    "fail": 0,
+    "blocked": 0,
+    "not_run": 0
+  }
+}
+exit_code=0

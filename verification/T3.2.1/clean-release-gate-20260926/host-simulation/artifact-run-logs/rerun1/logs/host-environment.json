@@ -1,0 +1,23 @@
+{
+  "captured_at_utc": "2026-09-25T16:29:43.9700569+00:00",
+  "computer": "HOME-MY",
+  "user_sid": "S-1-5-21-2196946971-914346751-4210154634-1001",
+  "os_caption": "Microsoft Windows 11 专业版",
+  "os_version": "10.0.26200",
+  "os_build": "26200",
+  "os_architecture": "64 位",
+  "app_source_head": "08f9bd85137965df922db524bc92917af513bd24",
+  "app_exe": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\程序目录只读\\NewManga\\NewManga.exe",
+  "app_cwd": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\程序目录只读\\NewManga",
+  "data_root_expected": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\用户配置隔离\\AppData\\Local\\New Manga",
+  "localappdata_override": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\用户配置隔离\\AppData\\Local",
+  "program_directory_acl_write_probe": "DENIED",
+  "path_value": "C:\\WINDOWS\\System32;C:\\WINDOWS",
+  "python_visible_on_path": false,
+  "py_visible_on_path": false,
+  "git_visible_on_path": false,
+  "source_fixture": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\fixture\\漫画页-测试.png",
+  "source_fixture_sha256_before": "05026a0531c0f053ec7d58db35849338c93ddd70edbf9185f354663567c16430",
+  "log_directory": "G:\\CODEX\\New Manga.artifacts\\T3.2.1-clean-release-gate-20260926\\host-simulation-20260926-rerun1\\logs",
+  "claim_scope": "User-approved local host simulation; not a separate clean Windows machine or Sandbox."
+}

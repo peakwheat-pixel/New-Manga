@@ -1,0 +1,189 @@
+# M2-S1 revision scope check (Review R-001/R-002)
+# generated_utc: 2026-09-26T10:38:23Z
+
+## base
+85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc
+
+## first delivery head (preserved, not rewritten)
+4eaad684769a02035748b95186d478bbed926042
+
+## revision delivery head (new reviewed_head)
+64c87d13faa3889c749096dedeacf5afbe8dda16
+
+## history preservation checks
+git merge-base --is-ancestor 4eaad684769a02035748b95186d478bbed926042 HEAD  -> rc=0  (0 = still an ancestor, history preserved)
+git merge-base --is-ancestor 7766a2bb2b1a21f398c73019135bb705bb03aa25 HEAD -> rc=0  (0 = preserved)
+git merge-base --is-ancestor origin/master HEAD -> rc=1  (1 = governance commit NOT merged)
+git log --oneline 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc..64c87d13faa3889c749096dedeacf5afbe8dda16
+(that was HEAD when this log was written; the Handoff commit is created immediately after it and
+ adds only the files listed under "Handoff commit" below):
+64c87d1 fix(m2-s1): bound the R-001 TOCTOU and R-002 opacity claims
+7766a2b docs(m2-s1): add M2-S1 handoff and record delivery SHAs
+4eaad68 docs(m2-s1): deliver large-media resource channel research evidence
+
+## revision delta only: git diff --name-status 4eaad684769a02035748b95186d478bbed926042..64c87d13faa3889c749096dedeacf5afbe8dda16
+A	doc/handoffs/M2-S1-4eaad68.md
+M	doc/research/M2-S1_RESOURCE_CHANNEL_SPIKE.md
+M	doc/tasks/M2-S1.md
+M	verification/M2-S1/02-evidence-manifest.md
+M	verification/M2-S1/03-checkpoint.md
+M	verification/M2-S1/04-verification-plan-results.md
+M	verification/M2-S1/README.md
+M	verification/M2-S1/probes/m2s1_lab.py
+A	verification/M2-S1/probes/probe_f_boundary.py
+M	verification/M2-S1/raw/06-evidence-hashes.log
+A	verification/M2-S1/raw/07-revision-script-hashes.log
+A	verification/M2-S1/raw/08-revision-code-diff.log
+A	verification/M2-S1/raw/15-probe-F-boundary.log
+A	verification/M2-S1/raw/16-revision-fixture-reproducibility.log
+M	verification/M2-S1/raw/20-delivery-scope.log
+A	verification/M2-S1/raw/probeF-result.json
+
+## full delivery: git diff --name-status 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc..64c87d13faa3889c749096dedeacf5afbe8dda16
+A	doc/handoffs/M2-S1-4eaad68.md
+A	doc/research/M2-S1_RESOURCE_CHANNEL_SPIKE.md
+M	doc/tasks/M2-S1.md
+A	verification/M2-S1/00-environment-and-recon.md
+A	verification/M2-S1/01-source-and-consumer-reality.md
+A	verification/M2-S1/02-evidence-manifest.md
+A	verification/M2-S1/03-checkpoint.md
+A	verification/M2-S1/04-verification-plan-results.md
+A	verification/M2-S1/README.md
+A	verification/M2-S1/probes/00_meminfo.py
+A	verification/M2-S1/probes/00_recon.ps1
+A	verification/M2-S1/probes/m2s1_lab.py
+A	verification/M2-S1/probes/make_fixtures.py
+A	verification/M2-S1/probes/probe_a_token.py
+A	verification/M2-S1/probes/probe_b_stream.py
+A	verification/M2-S1/probes/probe_c_section.py
+A	verification/M2-S1/probes/probe_d_base64.py
+A	verification/M2-S1/probes/probe_e_concurrency.py
+A	verification/M2-S1/probes/probe_f_boundary.py
+A	verification/M2-S1/probes/run_all.ps1
+A	verification/M2-S1/raw/00-recon.log
+A	verification/M2-S1/raw/00-run-all.log
+A	verification/M2-S1/raw/01-probe-script-hashes.log
+A	verification/M2-S1/raw/02-host-memory-and-environment.log
+A	verification/M2-S1/raw/03-fixture-generation.log
+A	verification/M2-S1/raw/04-repeat-run-1.log
+A	verification/M2-S1/raw/05-final-digest.log
+A	verification/M2-S1/raw/06-evidence-hashes.log
+A	verification/M2-S1/raw/07-revision-script-hashes.log
+A	verification/M2-S1/raw/08-revision-code-diff.log
+A	verification/M2-S1/raw/10-probe-A-capability-token.log
+A	verification/M2-S1/raw/11-probe-B-streaming-pipe.log
+A	verification/M2-S1/raw/12-probe-C-windows-section.log
+A	verification/M2-S1/raw/13-probe-D-base64-control.log
+A	verification/M2-S1/raw/14-probe-E-concurrency.log
+A	verification/M2-S1/raw/15-probe-F-boundary.log
+A	verification/M2-S1/raw/16-revision-fixture-reproducibility.log
+A	verification/M2-S1/raw/20-delivery-scope.log
+A	verification/M2-S1/raw/fixtures.json
+A	verification/M2-S1/raw/probeA-result.json
+A	verification/M2-S1/raw/probeB-result.json
+A	verification/M2-S1/raw/probeC-result.json
+A	verification/M2-S1/raw/probeD-result.json
+A	verification/M2-S1/raw/probeE-result.json
+A	verification/M2-S1/raw/probeF-result.json
+
+## git diff --check 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc 64c87d13faa3889c749096dedeacf5afbe8dda16
+
+rc=0
+
+## forbidden-path check (must be empty)
+
+
+## protected paths incl. doc/reviews and verification/M2-C1 vs base (must be empty)
+
+(empty above = zero changes)
+
+## Handoff commit (the commit carrying this log)
+The Handoff commit adds/modifies only: doc/handoffs/M2-S1-64c87d1.md (new),
+doc/handoffs/M2-S1-4eaad68.md (superseding note only), doc/tasks/M2-S1.md (revision SHAs +
+Review disposition), verification/M2-S1/raw/21-revision-scope.log (this file) and
+verification/M2-S1/raw/06-evidence-hashes.log (refresh). All are inside the authorized Owner
+write set; git diff --name-status 85a2aa7 <handoff-commit> is reported in the Owner delivery reply.
+
+## A-E experiments
+Not re-run in this revision. probes/probe_a..e and run_all.ps1 are unchanged; only
+probes/m2s1_lab.py received a docstring/comment-only edit (AST equivalence proven in
+raw/08-revision-code-diff.log). Their original logs, commands and exit codes are unchanged.
+
+# ===== post-commit record for the revision Handoff commit =====
+# handoff_commit = 37808abd895294e5c508b662db0a4166bb22ba08
+# recorded_utc: 2026-09-26T10:39:36Z
+
+## git diff --name-status 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc..37808abd895294e5c508b662db0a4166bb22ba08
+A	doc/handoffs/M2-S1-4eaad68.md
+A	doc/handoffs/M2-S1-64c87d1.md
+A	doc/research/M2-S1_RESOURCE_CHANNEL_SPIKE.md
+M	doc/tasks/M2-S1.md
+A	verification/M2-S1/00-environment-and-recon.md
+A	verification/M2-S1/01-source-and-consumer-reality.md
+A	verification/M2-S1/02-evidence-manifest.md
+A	verification/M2-S1/03-checkpoint.md
+A	verification/M2-S1/04-verification-plan-results.md
+A	verification/M2-S1/README.md
+A	verification/M2-S1/probes/00_meminfo.py
+A	verification/M2-S1/probes/00_recon.ps1
+A	verification/M2-S1/probes/m2s1_lab.py
+A	verification/M2-S1/probes/make_fixtures.py
+A	verification/M2-S1/probes/probe_a_token.py
+A	verification/M2-S1/probes/probe_b_stream.py
+A	verification/M2-S1/probes/probe_c_section.py
+A	verification/M2-S1/probes/probe_d_base64.py
+A	verification/M2-S1/probes/probe_e_concurrency.py
+A	verification/M2-S1/probes/probe_f_boundary.py
+A	verification/M2-S1/probes/run_all.ps1
+A	verification/M2-S1/raw/00-recon.log
+A	verification/M2-S1/raw/00-run-all.log
+A	verification/M2-S1/raw/01-probe-script-hashes.log
+A	verification/M2-S1/raw/02-host-memory-and-environment.log
+A	verification/M2-S1/raw/03-fixture-generation.log
+A	verification/M2-S1/raw/04-repeat-run-1.log
+A	verification/M2-S1/raw/05-final-digest.log
+A	verification/M2-S1/raw/06-evidence-hashes.log
+A	verification/M2-S1/raw/07-revision-script-hashes.log
+A	verification/M2-S1/raw/08-revision-code-diff.log
+A	verification/M2-S1/raw/10-probe-A-capability-token.log
+A	verification/M2-S1/raw/11-probe-B-streaming-pipe.log
+A	verification/M2-S1/raw/12-probe-C-windows-section.log
+A	verification/M2-S1/raw/13-probe-D-base64-control.log
+A	verification/M2-S1/raw/14-probe-E-concurrency.log
+A	verification/M2-S1/raw/15-probe-F-boundary.log
+A	verification/M2-S1/raw/16-revision-fixture-reproducibility.log
+A	verification/M2-S1/raw/20-delivery-scope.log
+A	verification/M2-S1/raw/21-revision-scope.log
+A	verification/M2-S1/raw/fixtures.json
+A	verification/M2-S1/raw/probeA-result.json
+A	verification/M2-S1/raw/probeB-result.json
+A	verification/M2-S1/raw/probeC-result.json
+A	verification/M2-S1/raw/probeD-result.json
+A	verification/M2-S1/raw/probeE-result.json
+A	verification/M2-S1/raw/probeF-result.json
+
+## git diff --check 85a2aa7fd07a2dca843bf5cea3ec34070b63bdbc 37808abd895294e5c508b662db0a4166bb22ba08
+
+rc=0
+
+## forbidden-path check (must be empty)
+
+
+## protected paths incl. doc/reviews and verification/M2-C1 (must be empty)
+
+(empty above = zero changes)
+
+## bookkeeping commits after the Handoff commit
+Two small bookkeeping commits follow the Handoff commit: the first removes the self-referential SHA
+field from the revision Handoff (collaboration protocol section 5) and records the Handoff commit SHA
+in doc/tasks/M2-S1.md; the second corrects the checkpoint's reference to that removed field name and
+refreshes this log and the hash manifest. Together they touch only:
+  doc/handoffs/M2-S1-64c87d1.md
+  doc/tasks/M2-S1.md
+  verification/M2-S1/03-checkpoint.md
+  verification/M2-S1/raw/21-revision-scope.log
+  verification/M2-S1/raw/06-evidence-hashes.log
+-- all inside the authorized Owner write set. The branch tip after them is reported in the Owner
+delivery reply. The reviewed fixed point remains:
+revision delivery head (reviewed_head) = 64c87d13faa3889c749096dedeacf5afbe8dda16
+handoff commit (first) = 37808abd895294e5c508b662db0a4166bb22ba08

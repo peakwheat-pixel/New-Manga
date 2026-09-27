@@ -1,0 +1,178 @@
+# M2-RC1 final verification runs — FIX-3 ROUND (records/evidence closure after DSH round-3 review)
+
+## 0. Head attribution (R-01 closure — read this first)
+
+- **Verified tree**: HEAD = `a33f34422f8604448954ccccf490605c4b4243f3` (commit
+  "FIX-2 closure") **plus the FIX-3 working-tree changes** listed in the
+  `git status --porcelain` transcript below. All four suites were executed
+  against that tree. The FIX-3 delivery commit adds/modifies only the paths in
+  that porcelain list — code paths touched by FIX-3 are exactly:
+  `tests/m2_resource_channel/test_service.py` (one test rewritten),
+  `apps/desktop/frontend/src/resourceChannel/client.test.ts`,
+  `apps/desktop/frontend/src/App.tsx` (E-07 id/label),
+  `apps/desktop/src-tauri/src/resource_protocol.rs` (header comment only),
+  `verification/M2-RC1/run_e2e.py` (gate + comments). Documentation paths
+  (`doc/tasks`, `doc/handoffs`, `doc/reviews`, this log) were finalised after
+  the runs and do not affect any test outcome.
+- **Head chain** (why older artefacts cite `702b02b0`): `702b02b0` (fix commit,
+  pytest 40) → `7d20b4ca` (handoff) → `844c0395` (log rewrite) → `a33f3442`
+  (FIX-2 closure, pytest 43) → FIX-3 (this round). The previous version of
+  this log wrongly titled itself "delivery head 702b02b0" while carrying
+  a33f3442's numbers — that mismatch is DSH finding R-01, closed by this
+  rewrite.
+- `git rev-parse HEAD` at run time: `a33f34422f8604448954ccccf490605c4b4243f3`
+
+`git status --porcelain` at run time (staged FIX-3 delta over a33f3442):
+
+```text
+M  apps/desktop/frontend/src/App.tsx
+M  apps/desktop/frontend/src/resourceChannel/client.test.ts
+M  apps/desktop/src-tauri/src/resource_protocol.rs
+A  doc/reviews/M2-RC1-FIX-702b02b0-round2.md
+M  doc/reviews/M2-RC1-FIX-702b02b0.md
+ M doc/tasks/M2-RC1.md
+M  tests/m2_resource_channel/test_service.py
+A  verification/M2-RC1/compare_e2e_runs.py
+A  verification/M2-RC1/leakage_scan.py
+A  verification/M2-RC1/raw/fix3-e2e-results-first.json
+A  verification/M2-RC1/raw/fix3-e2e-results-repeat.json
+A  verification/M2-RC1/raw/fix3-e2e-run1-console.log
+A  verification/M2-RC1/raw/fix3-e2e-run2-console.log
+A  verification/M2-RC1/raw/fix3-leakage-scan.json
+A  verification/M2-RC1/raw/fix3-repeat-consistency.json
+M  verification/M2-RC1/run_e2e.py
+```
+
+Supersedes the pre-repair version of this log (head 991097d7, 35/9/8 tests)
+and the repair-round rewrite (which carried a33f3442 numbers under a 702b02b0
+title — R-01).
+
+## 1. python -m pytest tests/m2_resource_channel -q
+43 passed in 1.99s
+pytest exit: 0
+
+## 2. cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+cargo test exit: 0
+
+## 3. npm test --prefix apps/desktop/frontend -- --run
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+npm test exit: 0
+
+## 4. e2e matrix (run_e2e.py, two runs — NOT_RUN now fails the gate, R-03)
+
+run 1: exit_code=0 elapsed=5.0s
+E-00-probe-mode-detected                 PASS
+E-01-issue-fetch-digest                  PASS
+E-02-img-render                          PASS
+E-03-unknown-id                          PASS
+E-04-revoke-after-cached-fetch           PASS
+E-05-expired-ttl                         PASS
+E-06-remount-fresh-references            PASS
+E-07-per-reference-first-byte-p95        PASS
+E-08-boundary-256mib                     PASS
+E-09-over-limit-typed                    PASS
+summary: {'PASS': 10}
+e2e run1 exit: 0   (console: raw/fix3-e2e-run1-console.log; results: raw/fix3-e2e-results-first.json)
+
+run 2: exit_code=0 (console: raw/fix3-e2e-run2-console.log; results: raw/fix3-e2e-results-repeat.json)
+e2e run2 exit: 0
+
+E-07 observed: p95_ms 75 (run1) / 73 (run2), timings 73-75 ms, fixture
+`typical.png (11525983 B)`, scenario label
+`per-reference first-byte (cold grant cache, warm OS page cache)` (R-06
+relabel; every sample mints a new reference so each includes the
+first-verification digest stream).
+
+Consistency (generator: raw/../compare_e2e_runs.py): id+status identical
+10/10; observed differences confined to the whitelisted nondeterministic
+fields (E-06 random reference fragments, E-07 wall-clock timings);
+`consistent: true` — raw/fix3-repeat-consistency.json.
+Leakage scan (generator: verification/M2-RC1/leakage_scan.py): 2 hits, both
+the probe-authored `typical.png` scenario label, 0 unclassified —
+raw/fix3-leakage-scan.json.
+
+## 5. git diff --check 2dca20cd HEAD
+(clean)
+
+## 6. delivery diff (62 files, base 2dca20cd..FIX-3 delivery head)
+
+R-01 conclusion on the previously missing path: `verification/M2-RC1/raw/fix-pre-failure-demo.log`
+**is tracked** — it entered the tree in commit `a33f3442` (FIX-2 closure, git
+add -A). The old 49-path transcript was the `702b02b0`-era listing and is
+superseded by this one. Count evolution: 49 @702b02b0 → 53 @a33f3442 → 62
+@FIX-3 (9 new paths: 2 generators, 6 FIX-3 raw artefacts, 1 round-2 review
+archive). Transcript below is verbatim
+`git diff --cached --name-status 2dca20cd` output (62 paths; the only
+pre-existing path modified by this branch is `pytest.ini`, which gained the
+`slow` marker registration in the FIX-2 round):
+
+```text
+A	apps/desktop/.gitignore
+A	apps/desktop/frontend/index.html
+A	apps/desktop/frontend/package-lock.json
+A	apps/desktop/frontend/package.json
+A	apps/desktop/frontend/src/App.tsx
+A	apps/desktop/frontend/src/main.tsx
+A	apps/desktop/frontend/src/resourceChannel/client.test.ts
+A	apps/desktop/frontend/src/resourceChannel/client.ts
+A	apps/desktop/frontend/tsconfig.json
+A	apps/desktop/frontend/vite.config.ts
+A	apps/desktop/src-tauri/Cargo.lock
+A	apps/desktop/src-tauri/Cargo.toml
+A	apps/desktop/src-tauri/build.rs
+A	apps/desktop/src-tauri/gen/schemas/acl-manifests.json
+A	apps/desktop/src-tauri/gen/schemas/capabilities.json
+A	apps/desktop/src-tauri/gen/schemas/desktop-schema.json
+A	apps/desktop/src-tauri/gen/schemas/windows-schema.json
+A	apps/desktop/src-tauri/icons/icon.ico
+A	apps/desktop/src-tauri/src/core_bridge.rs
+A	apps/desktop/src-tauri/src/main.rs
+A	apps/desktop/src-tauri/src/resource_protocol.rs
+A	apps/desktop/src-tauri/tauri.conf.json
+A	doc/handoffs/M2-RC1-39552370.md
+A	doc/handoffs/M2-RC1-FIX-702b02b0.md
+A	doc/reviews/M2-RC1-FIX-702b02b0-round2.md
+A	doc/reviews/M2-RC1-FIX-702b02b0.md
+A	doc/reviews/M2-RC1-f8ce10a2.md
+A	doc/tasks/M2-RC1.md
+M	pytest.ini
+A	src/application/resource_channel/__init__.py
+A	src/application/resource_channel/dto.py
+A	src/application/resource_channel/ports.py
+A	src/application/resource_channel/service.py
+A	src/infrastructure/resource_channel/__init__.py
+A	src/infrastructure/resource_channel/handle_resolver.py
+A	src/infrastructure/resource_channel/host_bridge.py
+A	src/infrastructure/resource_channel/scope.py
+A	tests/m2_resource_channel/conftest.py
+A	tests/m2_resource_channel/test_bridge_and_thresholds.py
+A	tests/m2_resource_channel/test_handle_resolver.py
+A	tests/m2_resource_channel/test_service.py
+A	verification/M2-RC1/baseline-selfcheck.md
+A	verification/M2-RC1/compare_e2e_runs.py
+A	verification/M2-RC1/dispatch-review-f8ce10a2.md
+A	verification/M2-RC1/final-verification.log
+A	verification/M2-RC1/leakage_scan.py
+A	verification/M2-RC1/raw/e2e-fixtures.json
+A	verification/M2-RC1/raw/e2e-results-first.json
+A	verification/M2-RC1/raw/e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix-e2e-results-first.json
+A	verification/M2-RC1/raw/fix-e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix-pre-failure-demo.log
+A	verification/M2-RC1/raw/fix-repeat-consistency.json
+A	verification/M2-RC1/raw/fix3-e2e-results-first.json
+A	verification/M2-RC1/raw/fix3-e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix3-e2e-run1-console.log
+A	verification/M2-RC1/raw/fix3-e2e-run2-console.log
+A	verification/M2-RC1/raw/fix3-leakage-scan.json
+A	verification/M2-RC1/raw/fix3-repeat-consistency.json
+A	verification/M2-RC1/raw/leakage-scan.json
+A	verification/M2-RC1/run-log.md
+A	verification/M2-RC1/run_e2e.py
+```
+
+All 62 paths fall within the authorized path set of doc/tasks/M2-RC1.md; no
+doc/contracts/**, src/ui/**, src/bootstrap/app.py, packaging/**, root
+dependency/lock files, AD-001, or M2-S1/S2/C2/S3 artefacts appear.

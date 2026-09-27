@@ -1,0 +1,14 @@
+# M2-I1 R2 — S-01: Qt-free interpreter actually runs the Core probes
+date: 2026-09-25T18:55:52+08:00
+shell: Git Bash
+python: C:\Python314\python.exe (3.14.6, NO PySide6 installed)
+
+command: python -m pytest -q -p no:cacheprovider -rs tests/core/test_core_assembly.py
+
+......s.                                                                 [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\core\test_core_assembly.py:239: could not import 'PySide6': No module named 'PySide6'
+7 passed, 1 skipped in 0.78s
+EXIT=0
+
+CONCLUSION: 7 passed, 1 skipped, exit 0 (was: 1 skipped module-level, pytest exit 5 on the reviewed head — review-a89447f/qtfree-py314-coverage.log). The only skip is the single test that asserts real Qt adapter injection (local importorskip); every pure-Core probe now executes without PySide6.

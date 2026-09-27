@@ -417,7 +417,7 @@ def test_overlay_reproduces_the_documented_worked_example(overlay_item):
     # and a fit rect spanning item x 100..500. A drag from (150,100) to
     # (350,400) must normalize to the pair documented to become
     # bbox [100, 200, 400, 600] on the page.
-    from ui.viewmodels.workbench.region_canvas import normalized_to_page_geometry
+    from application.editing.region_canvas import normalized_to_page_geometry
 
     assert float(overlay_item.property("scale")) == 0.5
     assert float(overlay_item.property("offsetX")) == 100
@@ -437,7 +437,7 @@ def test_page_pixels_survive_the_round_trip_at_every_display_scale(overlay_item)
     # judged by eye: a page location taken out to item coordinates through the
     # fit rect has to come back as the same canonical pixel at any viewport,
     # including the two extreme sides of letterboxing.
-    from ui.viewmodels.workbench.region_canvas import normalized_to_page_geometry
+    from application.editing.region_canvas import normalized_to_page_geometry
 
     page_w, page_h = 800, 1200
     rectangles = [

@@ -1,0 +1,4 @@
+......s.                                                                 [100%]
+=========================== short test summary info ===========================
+SKIPPED [1] tests\core\test_core_assembly.py:239: could not import 'PySide6': No module named 'PySide6'
+7 passed, 1 skipped in 0.81s

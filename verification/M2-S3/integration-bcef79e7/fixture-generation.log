@@ -1,0 +1,8 @@
+asset: 2882143 B sha256=50f5a4cc4cba0a90455c040ca5acfc5c5afd0db96d66aa3b9e9cd7b06f4526a3
+typical: 11525983 B sha256=46ecef997ac6aed37f3bb4e9b79048b72447e3e35f5f9bb8097b40caefbc564e
+outside_secret: 2882143 B sha256=b27fbab17787ccca3ed70da0fc0a600bb73eac60ff3df5510126b673a5d37ff0
+outside_nested: 2882143 B sha256=2b8314c987dd55d8142674fe89fd0859565d1cc9610a053fef95147f8d41d08d
+user_source_private: 2882143 B sha256=a795e126a99084e7edccbb3d4ceb933f2fdd445063ad1112b2e1674b4d7c1511
+junction created=True
+icon written
+manifest=C:\Users\49745\AppData\Local\Temp\codex-m2s3-integration-147e701debb04212a979528772c49294\m2s3-lab\fixtures.json

@@ -1,0 +1,252 @@
+{
+  "probe": "M2-R1 qt_platform_probe",
+  "platform_requested": "windows",
+  "pid": 25768,
+  "started_at": "2026-09-25 17:49:04",
+  "python": "3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]",
+  "python_executable": "C:\\Users\\49745\\AppData\\Local\\Temp\\M2-R1-venv\\Scripts\\python.exe",
+  "frozen": false,
+  "cwd": "G:\\CODEX\\New Manga.worktrees\\M2-R1-deepseek",
+  "steps": [
+    {
+      "step": "QGuiApplication",
+      "result": {
+        "PySide6.__version__": "6.11.2",
+        "qVersion": "6.11.2",
+        "app_created_by_probe": true,
+        "platformName": "windows",
+        "screens": [
+          {
+            "name": "AG273QS3R4B",
+            "geometry": [
+              0,
+              0,
+              2560,
+              1440
+            ],
+            "devicePixelRatio": 1.0
+          },
+          {
+            "name": "PHL 279M1RV",
+            "geometry": [
+              2560,
+              0,
+              2560,
+              1440
+            ],
+            "devicePixelRatio": 1.5
+          }
+        ],
+        "screen_count": 2,
+        "topLevelWindows": 0
+      },
+      "ok": true,
+      "seconds": 0.0787
+    },
+    {
+      "step": "QFontDatabase",
+      "result": {
+        "family_count": 221,
+        "families_sample": [
+          "AniMe Vision - MB_EN",
+          "Arial",
+          "Arial Black",
+          "Bahnschrift",
+          "Bahnschrift Condensed",
+          "Bahnschrift Light",
+          "Bahnschrift Light Condensed",
+          "Bahnschrift Light SemiCondensed",
+          "Bahnschrift SemiBold",
+          "Bahnschrift SemiBold Condensed",
+          "Bahnschrift SemiBold SemiCondensed",
+          "Bahnschrift SemiCondensed",
+          "Bahnschrift SemiLight",
+          "Bahnschrift SemiLight Condensed",
+          "Bahnschrift SemiLight SemiCondensed"
+        ],
+        "hasFamily": {
+          "Source Han Sans K Bold": false,
+          "Source Han Sans Bold": false,
+          "Microsoft YaHei": true,
+          "SimSun": true,
+          "Arial": true
+        },
+        "default_QFont_family": "Microsoft YaHei UI",
+        "systemFont_GeneralFont": "Microsoft YaHei UI",
+        "writingSystems": 33
+      },
+      "ok": true,
+      "seconds": 0.2194
+    },
+    {
+      "step": "QtFontCatalog.resolve",
+      "result": {
+        "Source Han Sans K Bold": {
+          "requested_family": "Source Han Sans K Bold",
+          "resolved_family": "Microsoft YaHei",
+          "available": false
+        },
+        "Missing Family XYZ": {
+          "requested_family": "Missing Family XYZ",
+          "resolved_family": "Microsoft YaHei",
+          "available": false
+        }
+      },
+      "ok": true,
+      "seconds": 0.0321
+    },
+    {
+      "step": "QFontMetrics",
+      "result": {
+        "family_used": "Microsoft YaHei",
+        "pixel_size": 32,
+        "height": 42,
+        "ascent": 34,
+        "descent": 8,
+        "advance_latin": 107,
+        "advance_cjk": 128,
+        "advance_space": 9,
+        "inFont_cjk": true
+      },
+      "ok": true,
+      "seconds": 0.0006
+    },
+    {
+      "step": "QtTextLayoutEngine.layout",
+      "result": {
+        "horizontal": {
+          "wall_seconds": 9e-05,
+          "item_count": 1,
+          "extents_width": 340,
+          "extents_height": 42.0,
+          "fits": true,
+          "font_available": false,
+          "resolved_family": "Microsoft YaHei",
+          "first_items": [
+            {
+              "text": "漫画排版テスト Manga",
+              "x": 0.0,
+              "y": 34.0,
+              "per_char": false
+            }
+          ]
+        },
+        "vertical": {
+          "wall_seconds": 0.0002,
+          "item_count": 6,
+          "extents_width": 56.0,
+          "extents_height": 148,
+          "fits": true,
+          "font_available": false,
+          "resolved_family": "Microsoft YaHei",
+          "first_items": [
+            {
+              "text": "縦",
+              "x": 28.0,
+              "y": 30,
+              "per_char": true
+            },
+            {
+              "text": "書",
+              "x": 28.0,
+              "y": 67,
+              "per_char": true
+            },
+            {
+              "text": "き",
+              "x": 28.0,
+              "y": 104,
+              "per_char": true
+            },
+            {
+              "text": "テ",
+              "x": 28.0,
+              "y": 141,
+              "per_char": true
+            },
+            {
+              "text": "ス",
+              "x": 0.0,
+              "y": 30,
+              "per_char": true
+            }
+          ]
+        }
+      },
+      "ok": true,
+      "seconds": 0.0017
+    },
+    {
+      "step": "QtImageCompositor",
+      "result": {
+        "input_base_png_sha256": "a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6",
+        "input_base_png_bytes": 682,
+        "input_clean_png_sha256": "a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6",
+        "compose_page": {
+          "wall_seconds": 0.01394,
+          "output_png_bytes": 2689,
+          "output_png_sha256": "a7768dd3e9980211a1c90a250d9d0482ee967f1ad56692e9402483e26271e9b0",
+          "identical_to_input": false,
+          "decoded_size": [
+            600,
+            200
+          ],
+          "image_diff_vs_input": {
+            "comparable": true,
+            "width": 600,
+            "height": 200,
+            "total_pixels": 120000,
+            "differing_pixels": 3601,
+            "non_white_pixels_in_b": 3601
+          },
+          "same_process_rerun_sha256_equal": true
+        },
+        "compose_region": {
+          "wall_seconds": 0.01076,
+          "output_png_bytes": 2152,
+          "output_png_sha256": "6a413a509dacfa7c6bfd49a736ec9e2a7375b45d87078a84e4f3980a8cc765de",
+          "identical_to_input": false,
+          "image_diff_vs_input": {
+            "comparable": true,
+            "width": 600,
+            "height": 200,
+            "total_pixels": 120000,
+            "differing_pixels": 2762,
+            "non_white_pixels_in_b": 2762
+          }
+        }
+      },
+      "ok": true,
+      "seconds": 0.0824
+    },
+    {
+      "step": "window_census",
+      "result": {
+        "top_level_windows": 3,
+        "visible_windows": 0,
+        "visible_details": []
+      },
+      "ok": true,
+      "seconds": 0.0012
+    },
+    {
+      "step": "eventLoopDrain",
+      "result": {
+        "available": true,
+        "topLevelWindows_after": 0
+      },
+      "ok": true,
+      "seconds": 0.0
+    }
+  ],
+  "errors": [],
+  "exit_code": 0,
+  "qt_log_platform_env": {
+    "QT_QPA_PLATFORM": "windows",
+    "QT_QPA_PLATFORM_PLUGIN_PATH": null,
+    "QT_LOGGING_RULES": null,
+    "QT_QPA_FONTDIR": null
+  },
+  "workdir": "verification\\M2-R1\\raw\\windows\\run2",
+  "finished_at": "2026-09-25 17:49:04"
+}

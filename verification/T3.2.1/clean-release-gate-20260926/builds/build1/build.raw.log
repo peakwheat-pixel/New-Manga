@@ -1,0 +1,133 @@
+121 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.7
+121 INFO: Python: 3.12.3
+144 INFO: Platform: Windows-11-10.0.26200-SP0
+144 INFO: Python environment: G:\CODEX\New Manga.task-envs\T3.2.1-clean-gate-py312-20260926
+2764 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\T3.2.1-clean-release-gate-20260925',
+ 'G:\\CODEX\\New Manga.worktrees\\T3.2.1-clean-release-gate-20260925\\src',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926',
+ 'G:\\CODEX\\New '
+ 'Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages',
+ 'G:\\CODEX\\New Manga.worktrees\\T3.2.1-clean-release-gate-20260925\\src']
+3038 INFO: Appending 'datas' from .spec
+3279 INFO: checking Analysis
+3279 INFO: Building Analysis because Analysis-00.toc is non existent
+3279 INFO: Looking for Python shared library...
+3279 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+3279 INFO: Running Analysis Analysis-00.toc
+3279 INFO: Target bytecode optimization level: 0
+3279 INFO: Initializing module dependency graph...
+3282 INFO: Initializing module graph hook caches...
+3297 INFO: Analyzing modules for base_library.zip ...
+4241 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+4732 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+5506 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+6218 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+7168 INFO: Caching module dependency graph...
+7192 INFO: Analyzing G:\CODEX\New Manga.worktrees\T3.2.1-clean-release-gate-20260925\src\bootstrap\app.py
+7204 INFO: Processing standard module hook 'hook-PySide6.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+7381 INFO: Processing standard module hook 'hook-shiboken6.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+7487 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+8775 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+10703 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+19112 INFO: Processing standard module hook 'hook-PySide6.QtQml.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+20182 WARNING: QtLibraryInfo(PySide6): QML plugin binary 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\Qt\\labs\\assetdownloader\\qmlassetdownloaderprivateplugin.dll' does not exist!
+25163 INFO: Processing standard module hook 'hook-PySide6.QtQuick.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+26437 INFO: Processing standard module hook 'hook-PySide6.QtOpenGL.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+28450 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+28609 INFO: Processing standard module hook 'hook-difflib.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+28661 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+28999 INFO: Processing standard module hook 'hook-pypdfium2.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+29024 INFO: Processing standard module hook 'hook-pypdfium2_raw.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\_pyinstaller_hooks_contrib\\stdhooks'
+29050 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+29315 INFO: Processing standard module hook 'hook-multiprocessing.util.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+29463 INFO: Processing standard module hook 'hook-xml.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+30195 INFO: Processing standard module hook 'hook-sysconfig.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+31020 INFO: Analyzing hidden import 'PySide6.QtQuickControls2'
+31027 INFO: Processing standard module hook 'hook-PySide6.QtQuickControls2.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+31281 INFO: Analyzing hidden import 'application.export.pdf_qt'
+31282 INFO: Analyzing hidden import 'application.maintenance.backup'
+31283 INFO: Analyzing hidden import 'application.maintenance.cleanup'
+31288 INFO: Analyzing hidden import 'application.settings.bindings'
+31290 INFO: Analyzing hidden import 'application.settings.privacy'
+31292 INFO: Analyzing hidden import 'application.settings.resolution'
+31294 INFO: Analyzing hidden import 'application.settings.snapshots'
+31296 INFO: Analyzing hidden import 'domain.constraints.candidates'
+31299 INFO: Analyzing hidden import 'infrastructure.imaging.tile_cache_sweep'
+31300 INFO: Analyzing hidden import 'infrastructure.network'
+31300 INFO: Analyzing hidden import 'infrastructure.network.diagnostics'
+31306 INFO: Analyzing hidden import 'infrastructure.network.retry'
+31307 INFO: Analyzing hidden import 'infrastructure.sqlite.backup'
+31313 INFO: Analyzing hidden import 'ui.viewmodels.workbench.region_canvas'
+31314 INFO: Processing module hooks (post-graph stage)...
+31378 INFO: Performing binary vs. data reclassification (2437 entries)
+39791 INFO: Looking for ctypes DLLs
+39816 INFO: Analyzing run-time hooks ...
+39818 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+39820 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+39822 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+39823 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks'
+39827 INFO: Including run-time hook 'pyi_rth_pkgutil.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+39829 INFO: Including run-time hook 'pyi_rth_multiprocessing.py' from 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+39873 INFO: Creating base_library.zip...
+39884 INFO: Looking for dynamic libraries
+40483 INFO: Extra DLL search directories (AddDllDirectory): ['G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\shiboken6']
+40484 INFO: Extra DLL search directories (PATH): ['G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6']
+42463 WARNING: Library not found: could not resolve 'Qt6WebEngineWidgets.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\designer\\qwebengineview.dll'.
+42469 WARNING: Library not found: could not resolve 'Qt6Pdf.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\imageformats\\qpdf.dll'.
+42477 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\platforminputcontexts\\qtvirtualkeyboardplugin.dll'.
+42493 WARNING: Library not found: could not resolve 'Qt6Quick3DUtils.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\qmltooling\\qmldbg_quick3dprofiler.dll'.
+42497 WARNING: Library not found: could not resolve 'fbclient.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqlibase.dll'.
+42500 WARNING: Library not found: could not resolve 'MIMAPI64.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqlmimer.dll'.
+42501 WARNING: Library not found: could not resolve 'OCI.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqloci.dll'.
+42505 WARNING: Library not found: could not resolve 'LIBPQ.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\plugins\\sqldrivers\\qsqlpsql.dll'.
+42514 WARNING: Library not found: could not resolve 'Qt6StateMachineQml.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQml\\StateMachine\\qtqmlstatemachineplugin.dll'.
+42536 WARNING: Library not found: could not resolve 'Qt6PdfQuick.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\Pdf\\pdfquickplugin.dll'.
+42537 WARNING: Library not found: could not resolve 'Qt63DQuickScene2D.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\Scene2D\\qtquickscene2dplugin.dll'.
+42539 WARNING: Library not found: could not resolve 'Qt63DQuickScene3D.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\Scene3D\\qtquickscene3dplugin.dll'.
+42546 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Core\\virtualkeyboardplugin.dll'.
+42548 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\Hangul\\qtvkbhangulplugin.dll'.
+42549 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\OpenWNN\\qtvkbopenwnnplugin.dll'.
+42550 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\Pinyin\\qtvkbpinyinplugin.dll'.
+42553 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\TCIme\\qtvkbtcimeplugin.dll'.
+42555 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboard.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Plugins\\Thai\\qtvkbthaiplugin.dll'.
+42557 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboardSettings.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\Settings\\qtvkbsettingsplugin.dll'.
+42559 WARNING: Library not found: could not resolve 'Qt6VirtualKeyboardQml.dll', dependency of 'G:\\CODEX\\New Manga.task-envs\\T3.2.1-clean-gate-py312-20260926\\Lib\\site-packages\\PySide6\\qml\\QtQuick\\VirtualKeyboard\\qtvkbplugin.dll'.
+42739 INFO: Warnings written to G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\work\new_manga\warn-new_manga.txt
+42769 INFO: Graph cross-reference written to G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\work\new_manga\xref-new_manga.html
+42859 INFO: checking PYZ
+42859 INFO: Building PYZ because PYZ-00.toc is non existent
+42859 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\work\new_manga\PYZ-00.pyz
+43077 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\work\new_manga\PYZ-00.pyz completed successfully.
+43086 INFO: checking PKG
+43086 INFO: Building PKG because PKG-00.toc is non existent
+43086 INFO: Building PKG (CArchive) NewManga.pkg
+43105 INFO: Building PKG (CArchive) NewManga.pkg completed successfully.
+43105 INFO: Bootloader G:\CODEX\New Manga.task-envs\T3.2.1-clean-gate-py312-20260926\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+43107 INFO: checking EXE
+43107 INFO: Building EXE because EXE-00.toc is non existent
+43107 INFO: Building EXE from EXE-00.toc
+43107 INFO: Copying bootloader EXE to G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\work\new_manga\NewManga.exe
+43132 INFO: Copying icon to EXE
+43157 INFO: Copying 0 resources to EXE
+43157 INFO: Embedding manifest in EXE
+43182 INFO: Appending PKG archive to EXE
+43217 INFO: Fixing EXE headers
+43356 INFO: Building EXE from EXE-00.toc completed successfully.
+43370 INFO: checking COLLECT
+43370 INFO: Building COLLECT because COLLECT-00.toc is non existent
+43371 INFO: Building COLLECT COLLECT-00.toc
+45259 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+45295 INFO: Build complete! The results are available in: G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\dist
+=== Qt6Core ICU Symbol Closure Verification: PASSED ===
+Qt6Core Path:         G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\dist\NewManga\_internal\PySide6\Qt6Core.dll
+Effective ICU Path:   C:\WINDOWS\System32\icuuc.dll (windows_system32)
+Imported ICU Symbols: 20
+Candidate Exports:    542
+All required symbols resolved successfully.
+Wrote 2475 file records to G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\dist\artifact-manifest.sha256
+EXIT_CODE=0

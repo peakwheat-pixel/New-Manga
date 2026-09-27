@@ -1,0 +1,11 @@
+SHELL=PowerShell
+INTERPRETER=C:\Python314\python.exe
+WORKTREE=G:/CODEX/New Manga.worktrees/M2-I1-codex-review
+HEAD=a89447fb91c9aa81f4d847d732ebc91320ad24f2
+COMMAND=python -m pytest -q -p no:cacheprovider -rs tests/core/test_core_assembly.py
+PYTHONDONTWRITEBYTECODE=1
+
+=========================== short test summary info ===========================
+SKIPPED [1] tests\core\test_core_assembly.py:35: could not import 'PySide6': No module named 'PySide6'
+1 skipped in 0.02s
+EXIT=5

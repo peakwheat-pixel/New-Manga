@@ -1,0 +1,103 @@
+# M2-R1 revision scope check + artifact-count recheck (Review P2-001, rounds 1-2)
+# generated: 2026-09-25 19:25:08 +08:00
+# fixed base            = 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+# owner start HEAD      = 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+# first delivery head   = 87afdd2e87c46bc8f19d53e932fb641c2457e45b
+# revision head round 1 = bbc1914b332b15176fd8337340960d753f99cff8
+# revision head round 2 = 5e2800b93da1d3516449f8765a06828822a7e9b1
+# worktree=G:/CODEX/New Manga.worktrees/M2-R1-deepseek branch=agent/deepseek/M2-R1-qt-runtime-feasibility
+
+== [A] ancestry ==
+base ancestor of owner-start          : True
+owner-start ancestor of first head    : True
+first head ancestor of round-1 head   : True
+round-1 head ancestor of round-2 head : True
+
+== [B] commits owner-start..round-2 head ==
+5e2800b docs(m2-r1): scrub stale count literal from revision handoff (Review round 2)
+31008ea docs(m2-r1): add revised handoff and revision scope evidence
+bbc1914 docs(m2-r1): fix run and artifact counts (Review P2-001)
+1e534c6 docs(m2-r1): record handoff, delivery scope check and head backfill
+87afdd2 research(m2-r1): measure Qt runtime feasibility on windows/offscreen/minimal
+
+== [C] diff between round-1 and round-2 heads (round-2 scrub) ==
+A	doc/handoffs/M2-R1-bbc1914.md
+M	doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md
+M	doc/tasks/M2-R1.md
+A	verification/M2-R1/09-revision-scope-and-diff-check.log
+raw/ paths touched in round 2 = 0
+
+== [C2] diff between first delivery head and round-2 head (span includes both documentation commits) ==
+A	doc/handoffs/M2-R1-87afdd2.md
+A	doc/handoffs/M2-R1-bbc1914.md
+M	doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md
+M	doc/tasks/M2-R1.md
+M	verification/M2-R1/07-evidence-manifest.md
+M	verification/M2-R1/07b-artifact-hashes.log
+A	verification/M2-R1/08-delivery-scope-and-diff-check.log
+A	verification/M2-R1/09-revision-scope-and-diff-check.log
+raw/ paths touched across the whole revision = 0
+
+== [D] allowed-path assertion owner-start..round-2 head ==
+changed_path_count=83
+OUT_OF_SCOPE_COUNT=0
+
+== [E] forbidden-path assertion (must be zero) ==
+forbidden_hits=0
+
+== [F] git diff --check owner-start..round-2 head ==
+exit=0
+(no whitespace/conflict diagnostics)
+
+== [G] artifact-count recheck (independent enumeration of raw/**) ==
+probe.json total            = 21
+  main matrix (9 expected)  = 9
+  font remediation (5)      = 5
+  event loop (6)            = 6
+  smoke (1, excluded)       = 1
+formal runs (total-smoke)   = 20
+png total (45 expected)     = 45
+  input_base.png            = 10
+  input_clean.png           = 10
+  output_page.png           = 10
+  output_region.png         = 10
+  output_page_* (remediation)= 5
+runs with exit_code != 0 or non-empty errors = 0 (of 21 JSON, smoke included)
+
+== [H] round-1 count scan (4 documents; superseded by [K]) ==
+pattern was built from the superseded two-digit count; result lines:
+  doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md  stale-literal occurrences=0
+  doc/tasks/M2-R1.md  stale-literal occurrences=0
+  doc/handoffs/M2-R1-87afdd2.md  stale-literal occurrences=0
+  verification/M2-R1/07-evidence-manifest.md  stale-literal occurrences=0
+note: round 1 did NOT scan the round-1 handoff itself (doc/handoffs/M2-R1-bbc1914.md) - that gap is closed in [K].
+
+== [K] round-2 scan: ALL M2-R1 documents (mode pattern built by variable concatenation) ==
+scan root = doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md, doc/tasks/M2-R1.md, doc/handoffs/M2-R1-*.md,
+            verification/M2-R1/*.log, verification/M2-R1/*.md
+pattern   = "$stale <unit1>|$stale <unit2>|" + <prefix> + " $stale"   where $stale is the superseded count
+  doc/handoffs/M2-R1-87afdd2.md                                  stale-literal occurrences=0
+  doc/handoffs/M2-R1-bbc1914.md                                  stale-literal occurrences=0
+  doc/research/M2-R1_QT_RUNTIME_FEASIBILITY.md                   stale-literal occurrences=0
+  doc/tasks/M2-R1.md                                             stale-literal occurrences=0
+  verification/M2-R1/01-environment.log                          stale-literal occurrences=0
+  verification/M2-R1/02-probe-windows.log                        stale-literal occurrences=0
+  verification/M2-R1/03-probe-offscreen.log                      stale-literal occurrences=0
+  verification/M2-R1/04-probe-minimal.log                        stale-literal occurrences=0
+  verification/M2-R1/05-supplementary-font-remediation.log       stale-literal occurrences=0
+  verification/M2-R1/06-eventloop-and-window-census.log          stale-literal occurrences=0
+  verification/M2-R1/07-evidence-manifest.md                     stale-literal occurrences=0
+  verification/M2-R1/07b-artifact-hashes.log                     stale-literal occurrences=0
+  verification/M2-R1/08-delivery-scope-and-diff-check.log        stale-literal occurrences=0
+  verification/M2-R1/09-revision-scope-and-diff-check.log        stale-literal occurrences=0
+TOTAL stale-literal occurrences across all scanned documents = 0 (expected 0)
+
+== [L] isolated-experiment hygiene ==
+__pycache__ under src/ (must be 0)   : 0
+__pycache__ under tests/ (must be 0) : 0
+requirements* changed owner-start..round-2 head : False
+
+== [M] working tree when this log was generated ==
+
+note: this log, the round-2 handoff and the delivery/frontmatter backfill are added by the documentation commit
+      that follows round-2 head 5e2800b93da1d3516449f8765a06828822a7e9b1.

@@ -1,0 +1,11 @@
+total manifest lines: 2475
+{
+ "tests": [
+  "_internal/PySide6/qml/QtTest/TestSchedule.qml"
+ ]
+}
+absolute-path entries: 0 []
+top-level: {
+ "_internal": 2474,
+ "NewManga.exe": 1
+}

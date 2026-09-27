@@ -1,0 +1,32 @@
+   Compiling m2s3-probe v0.1.0 (G:\CODEX\New Manga.worktrees\M2-UI1-integration-final-83a\experiments\M2-S3\probe)
+warning: variable does not need to be mutable
+   --> src\main.rs:264:9
+    |
+264 |     let mut put = |ids: &mut std::collections::BTreeMap<String, String>, key: &str, result: Result<String, String>| {
+    |         ----^^^
+    |         |
+    |         help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused `Result` that must be used
+   --> src\main.rs:493:5
+    |
+493 | /     tauri::Builder::default()
+494 | |         .manage(state)
+495 | |         .register_uri_scheme_protocol(SCHEME, |ctx, request| {
+496 | |             let state: tauri::State<ProbeState> = ctx.app_handle().state();
+...   |
+510 | |         })
+511 | |         .run(tauri::generate_context!());
+    | |________________________________________^
+    |
+    = note: this `Result` may be an `Err` variant, which should be handled
+    = note: `#[warn(unused_must_use)]` (part of `#[warn(unused)]`) on by default
+help: use `let _ = ...` to ignore the resulting value
+    |
+493 |     let _ = tauri::Builder::default()
+    |     +++++++
+
+warning: `m2s3-probe` (bin "m2s3-probe") generated 2 warnings (run `cargo fix --bin "m2s3-probe" -p m2s3-probe` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 7.35s

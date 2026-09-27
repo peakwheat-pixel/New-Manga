@@ -1,0 +1,89 @@
+# M2-R1 artifact hashes (sha256, full) - regenerated 2026-09-25 18:46:50 +08:00
+# purpose: independent integrity check of the evidence files below verification/M2-R1/
+# scope  : every file under verification/M2-R1/ present at this revision, except this log itself and except
+#          08/09-delivery-scope-and-diff-check logs (they belong to the documentation commits that follow
+#          the delivery commit and record its hash, so listing them here would be circular).
+# note   : probe.json sha256 differs per run by design (pid/timestamps/durations); the compared determinism
+#          signal is the PNG sha256 recorded in 07-evidence-manifest.md and inside each probe.json.
+# count  : raw/ holds 21 probe.json (20 formal runs + 1 excluded smoke) and 45 PNG files.
+
+4ed375f222940cff3462a56499922044e37cd5d921019b97fa039952955743b4      1719  verification/M2-R1/01-environment.log
+e9f0d89905b406be2d292dc70ae1193047ad91b0ceb630ef860b11bfb4396fcf      2036  verification/M2-R1/02-probe-windows.log
+82797d10619d36506f041dab8fa15fef46645b5c60fc146b91a4d0ee36b5f91d      2801  verification/M2-R1/03-probe-offscreen.log
+6e869f4ca0c8639418743a1ac58539e0df983ad51484a57925cebc3068857d35      2038  verification/M2-R1/04-probe-minimal.log
+597558f3f81ede729755cf33c74064ab9114a20354105e561904a873746125c6      1427  verification/M2-R1/05-supplementary-font-remediation.log
+03c8c0c98f43b2b5e29496e2379bcd0ce2bacea35d0a450d6e56c8babd23bc71      1371  verification/M2-R1/06-eventloop-and-window-census.log
+cacf9aac7b890008ddf59d3621cce02af09e1c2a44fe818d168876c6fbb89f9e      9229  verification/M2-R1/07-evidence-manifest.md
+54b68d7cc66c0ba2dabe8ef8118322d7b60bf76aa7089154f331f1a31c74b9ab      5021  verification/M2-R1/probes/qt_eventloop_probe.py
+761268e08619961c8bb47ce3f1d33792d356fac492fde41ff61bd2ee5dc9bf92      8195  verification/M2-R1/probes/qt_font_remediation_probe.py
+7221d01f5f803ba349d7f9bb624af6289f1270dd5c342e1998e2a0f769055ecf     17340  verification/M2-R1/probes/qt_platform_probe.py
+4a191ed532aa895fd22281a6dd1f91ddc61816991121b2a10be771f69f045825       970  verification/M2-R1/raw/loop-minimal-run1/probe.json
+b3799a218a026712b2f91d97ea1ceba51003c470e566c3177c9edbf4d150426c       970  verification/M2-R1/raw/loop-minimal-run2/probe.json
+b529a73062f35ae5cff6007e208e1d6e2deb6a3804b077e22bd6535a773401df       974  verification/M2-R1/raw/loop-offscreen-run1/probe.json
+4dc03d94e52d09a2cdf139351b4813983716132094b8f553f06e28924ec25470       973  verification/M2-R1/raw/loop-offscreen-run2/probe.json
+51fbab9ee3a31025a590762facba72d57fac16c0a5886ef9b6cd3984fe994488      2160  verification/M2-R1/raw/loop-windows-run1/probe.json
+9d161bb5aac0db61fcdc581fcbd3eb4f5df00c5317971942ddcceee506d8913f      2157  verification/M2-R1/raw/loop-windows-run2/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/minimal/run1/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/minimal/run1/input_clean.png
+656d0ac6e5aa7d28cab996c22fc28184db70008eff305b3afe55cacc9eb6b6fa      1095  verification/M2-R1/raw/minimal/run1/output_page.png
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/minimal/run1/output_region.png
+a021bd5d4f1a5bce83b8f3c14a8756db9afc5c7365bb1b25f6b4fb12e079e5cd      6219  verification/M2-R1/raw/minimal/run1/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/minimal/run2/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/minimal/run2/input_clean.png
+656d0ac6e5aa7d28cab996c22fc28184db70008eff305b3afe55cacc9eb6b6fa      1095  verification/M2-R1/raw/minimal/run2/output_page.png
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/minimal/run2/output_region.png
+82e845d260a240d473a0320a95eba17164717515a4646d8d5049a1be2075464b      6221  verification/M2-R1/raw/minimal/run2/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/minimal/run3/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/minimal/run3/input_clean.png
+656d0ac6e5aa7d28cab996c22fc28184db70008eff305b3afe55cacc9eb6b6fa      1095  verification/M2-R1/raw/minimal/run3/output_page.png
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/minimal/run3/output_region.png
+919806e0ddef6232cee24a1b5f9c68c9ebb91bfdef7a07ce4aaa2ff5edd437c6      6219  verification/M2-R1/raw/minimal/run3/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/offscreen/run1/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/offscreen/run1/input_clean.png
+656d0ac6e5aa7d28cab996c22fc28184db70008eff305b3afe55cacc9eb6b6fa      1095  verification/M2-R1/raw/offscreen/run1/output_page.png
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/offscreen/run1/output_region.png
+e5c4e3afa0ae40135c87b3278b8ddca5ac684d483a783383a921952fd6b6da61      6232  verification/M2-R1/raw/offscreen/run1/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/offscreen/run2/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/offscreen/run2/input_clean.png
+656d0ac6e5aa7d28cab996c22fc28184db70008eff305b3afe55cacc9eb6b6fa      1095  verification/M2-R1/raw/offscreen/run2/output_page.png
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/offscreen/run2/output_region.png
+001a35eedf5f7df450f3fd68c3bbec9975081bb8e1c0504a83a85da8d9016c62      6235  verification/M2-R1/raw/offscreen/run2/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/offscreen/run3/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/offscreen/run3/input_clean.png
+656d0ac6e5aa7d28cab996c22fc28184db70008eff305b3afe55cacc9eb6b6fa      1095  verification/M2-R1/raw/offscreen/run3/output_page.png
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/offscreen/run3/output_region.png
+80442dae01ccbfc76806e5fae502e7952cab1f73d86d58a065991e91873267ee      6231  verification/M2-R1/raw/offscreen/run3/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/smoke/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/smoke/input_clean.png
+a7768dd3e9980211a1c90a250d9d0482ee967f1ad56692e9402483e26271e9b0      2689  verification/M2-R1/raw/smoke/output_page.png
+6a413a509dacfa7c6bfd49a736ec9e2a7375b45d87078a84e4f3980a8cc765de      2152  verification/M2-R1/raw/smoke/output_region.png
+904a9d90c4e95714b3e3793841ae2db6764fa20db7064c3d8d0deb55335a711d      7067  verification/M2-R1/raw/smoke/probe.json
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/supp-minimal-appfont/output_page_minimal_appfont.png
+6804a65ac1b735a420e4e1b79fa0c0090147591567878f59df0a31256faf952f      2150  verification/M2-R1/raw/supp-minimal-appfont/probe.json
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/supp-minimal-fontdir/output_page_minimal_fontdir.png
+65c21eb2f8a5dd4d0ba4b36d4fc2c5fde800a55a694ef5f3be822d5cb1b4a67d      1941  verification/M2-R1/raw/supp-minimal-fontdir/probe.json
+c5438e91f21ebc212e155a03d3421e5ae208a48d6242eb3110aacf7bc76e8bb0      2169  verification/M2-R1/raw/supp-offscreen-appfont/output_page_offscreen_appfont.png
+85b9b7929e52744be1d438e16ca13f4b7248219362464bc1fab1eaa9be9c8120      2222  verification/M2-R1/raw/supp-offscreen-appfont/probe.json
+83e38c265d7cd9cb8d5289ed35081879893eb92719645fe6dccccad341c85e93      1034  verification/M2-R1/raw/supp-offscreen-baseline/output_page_offscreen_baseline.png
+0c1554f627f45fdb39bb126283245422463d136239db8d9562b3c059cd67bd77      1935  verification/M2-R1/raw/supp-offscreen-baseline/probe.json
+784ae5c30accf78f7f3a557723e3bf049c13c589acea252686c45426162ef69a      2132  verification/M2-R1/raw/supp-offscreen-fontdir/output_page_offscreen_fontdir.png
+9c8455826ddf80ee7303d83235aaa37aed10fccc72a133cae8a23ecd4c99477b      2155  verification/M2-R1/raw/supp-offscreen-fontdir/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/windows/run1/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/windows/run1/input_clean.png
+a7768dd3e9980211a1c90a250d9d0482ee967f1ad56692e9402483e26271e9b0      2689  verification/M2-R1/raw/windows/run1/output_page.png
+6a413a509dacfa7c6bfd49a736ec9e2a7375b45d87078a84e4f3980a8cc765de      2152  verification/M2-R1/raw/windows/run1/output_region.png
+649f87557c13309e425764513e1fe379040163a3f9109b9a168b7b43c8499aee      7069  verification/M2-R1/raw/windows/run1/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/windows/run2/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/windows/run2/input_clean.png
+a7768dd3e9980211a1c90a250d9d0482ee967f1ad56692e9402483e26271e9b0      2689  verification/M2-R1/raw/windows/run2/output_page.png
+6a413a509dacfa7c6bfd49a736ec9e2a7375b45d87078a84e4f3980a8cc765de      2152  verification/M2-R1/raw/windows/run2/output_region.png
+95829433caa9b53eb19dec015a8cba9a6f3793af57a3e7afa65296b80f97dea7      7069  verification/M2-R1/raw/windows/run2/probe.json
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/windows/run3/input_base.png
+a5f9021b328bd79e65aac0186530ab761b4dc10324d7728ea9da701c924f98f6       682  verification/M2-R1/raw/windows/run3/input_clean.png
+a7768dd3e9980211a1c90a250d9d0482ee967f1ad56692e9402483e26271e9b0      2689  verification/M2-R1/raw/windows/run3/output_page.png
+6a413a509dacfa7c6bfd49a736ec9e2a7375b45d87078a84e4f3980a8cc765de      2152  verification/M2-R1/raw/windows/run3/output_region.png
+a6de198a34ce57a4df8093d1e1019fa4edb6674ff41794ee890d4b589d5b7931      7071  verification/M2-R1/raw/windows/run3/probe.json
+
+TOTAL_FILES=76
+RAW_JSON_COUNT=21
+RAW_PNG_COUNT=45

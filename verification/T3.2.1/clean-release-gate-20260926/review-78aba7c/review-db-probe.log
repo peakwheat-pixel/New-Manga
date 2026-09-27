@@ -1,0 +1,16 @@
+=== REVIEWER independent DB probe (mode=ro; no writes to frozen DB) ===
+date_utc=2026-09-25T17:46:45Z host=HOME-MY Windows 11 10.0.26200
+python=G:/CODEX/New Manga.task-envs/T3.2.1-clean-gate-py312-20260926/Scripts/python.exe (3.12.3)
+script=review_db_probe.py
+db_path G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\host-simulation-20260926-rerun1\”√ªß≈‰÷√∏Ù¿Î\AppData\Local\New Manga\library.db
+db_sha256 41812e697de96c2987189f9a372b6ef2066953ae14c55160ccb8cbeda18bdada
+sidecars ['library.db', 'library.db-shm', 'library.db-wal']
+schema_version [('schema_version', '4')]
+migrations [(1, 'v1__storage_base'), (2, 'v2__library_region_persistence'), (3, 'v3__production_pipeline_persistence'), (4, 'v4__reading_export_storage')]
+books/chapters/pages (1, 1, 1)
+page_row [('4155c0a1afa547f9ae3dd56e42fa56f4', 0, 'unreviewed', 'not_started', '05026a0531c0f053ec7d58db35849338c93ddd70edbf9185f354663567c16430')]
+export_history [('exp-4590d28f38ef', "''", "''", 'completed', '94a1166fb277207627dbf19f59880595f096227597227ba30e99c65bd8ce08ee')]
+wal_sidecar_present True
+wal_size 0
+shm_sidecar_present True
+EXIT=0

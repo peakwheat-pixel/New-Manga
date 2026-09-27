@@ -1,0 +1,32 @@
+# M2-I1 I1-AC3 entry verifications: compileall / smoke / screenshot
+date: 2026-09-25T18:01:50+08:00
+shell: Git Bash
+python: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+QT_QPA_PLATFORM: (unset — default Windows platform, TASK-030 rule)
+
+=== python -m compileall -q src ===
+EXIT=0
+
+=== python -m bootstrap.app --smoke-test --data-root <temp> ===
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_16(0x1af8a5a9e60)  is not an Item
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_16(0x1af8a698830)  is not an Item
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:144:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_6(0x1af8abc4780, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:136:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1af8abc2200, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:109:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_6(0x1af8abc15d0, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:101:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1af8abc4b40, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/workbench/RegionInspector.qml:104:25: QML QQuickRectangle: The current style does not support customization of this control (property: "background" item: QQuickRectangle(0x1af8aba5dd0, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:144:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_6(0x1af8abc3c40, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:136:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1af8abc1210, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:109:24: QML Label: The current style does not support customization of this control (property: "indicator" item: Label_QMLTYPE_6(0x1af8abc1300, parent=0x0, geometry=0,0 0x0)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:101:26: QML QQuickText: The current style does not support customization of this control (property: "contentItem" item: QQuickText(0x1af8abc2a70, parent=0x0, geometry=0,0 0x0 ?)). Please customize a non-native style (such as Basic, Fusion, Material, etc). For more information, see: https://doc.qt.io/qt-6/qtquickcontrols2-customize.html#customization-reference
+EXIT=0
+
+=== python -m bootstrap.app --screenshot <temp>.png ===
+Could not attach Keys property to:  ChapterPicker_QMLTYPE_87(0x1cc41f93310)  is not an Item
+file:///G:/CODEX/New Manga.worktrees/M2-I1-zcode/src/ui/qml/common/ChapterPicker.qml:8:1: QML ChapterPicker: Accessible attached property must be attached to an object deriving from Item or Action
+EXIT=0
+/tmp/m2i1-shot-evidence.png: PNG image data, 1280 x 800, 8-bit/color RGBA, non-interlaced
+
+NOTE: the filtered QML TypeError lines are the pre-existing teardown noise present on the base tree as well; real interactive GUI session = NOT_RUN (no interactive user session in this environment; smoke loads the real QML shell on the default Windows Qt platform and the screenshot renders a real 1280x800 frame).

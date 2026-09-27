@@ -1,0 +1,197 @@
+# M2-UI1 Reviewer Gates & Independent Verification Log
+Timestamp: 2026-09-25T22:38:00+08:00
+Reviewer: Antigravity (Independent Reviewer, Non-Author)
+Owner: Qoder
+Review Worktree: G:/CODEX/New Manga.worktrees/M2-UI1-antigravity-review-23a5ac0
+Review Branch: agent/antigravity/M2-UI1-review-23a5ac0
+Git Common Dir: G:/CODEX/New Manga/.git
+Base Commit: 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+Delivery Head: 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b
+Handoff Head: 784ce1831adc791882383681a743984c4b847d0b
+Reviewed Head: 784ce1831adc791882383681a743984c4b847d0b
+Author Worktree: G:/CODEX/New Manga.worktrees/M2-UI1-qoder (READ-ONLY, untouched)
+
+---
+
+## 1. Git Environment & Master Verification
+Command 1: git rev-parse --show-toplevel
+Output: G:/CODEX/New Manga.worktrees/M2-UI1-antigravity-review-23a5ac0
+Exit Code: 0
+
+Command 2: git branch --show-current
+Output: agent/antigravity/M2-UI1-review-23a5ac0
+Exit Code: 0
+
+Command 3: git rev-parse HEAD
+Output: 2e31a4a54e712e571a0e4ee399ef89a1a416feb9
+Exit Code: 0
+
+Command 4: git status --short
+Output: (clean, empty)
+Exit Code: 0
+
+Command 5: git rev-parse --git-common-dir
+Output: G:/CODEX/New Manga/.git
+Exit Code: 0
+
+Command 6: git rev-parse master
+Output: 148981a339d12b45fa9a712b247ed92698349c36
+Exit Code: 0
+Note: Live master verified as 148981a339d12b45fa9a712b247ed92698349c36.
+
+Command 7: Ancestry Check
+- git merge-base --is-ancestor 6a68fde 23a5ac0 -> Exit Code: 0 (PASS)
+- git merge-base --is-ancestor 23a5ac0 784ce18 -> Exit Code: 0 (PASS)
+- git merge-base --is-ancestor 784ce18 2e31a4a -> Exit Code: 0 (PASS)
+- git merge-base --is-ancestor 6a68fde 148981a -> Exit Code: 0 (PASS)
+- git merge-base 148981a 784ce18 -> 5d989bab6c5c8a24a5112303f95c2b8eea356bdc
+
+---
+
+## 2. Zero Source & Test Diff Verification (Scope Guard)
+Command: git diff --quiet 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a 23a5ac00acc7f11bc7dc8c5eaec207957784fd9b -- src tests
+Exit Code: 0
+
+Command: git diff --quiet 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a 784ce1831adc791882383681a743984c4b847d0b -- src tests
+Exit Code: 0
+
+Command: git diff --check 5d989bab6c5c8a24a5112303f95c2b8eea356bdc 784ce1831adc791882383681a743984c4b847d0b
+Exit Code: 0
+
+Written Files in 5d989ba..784ce18:
+- doc/design/M2-UI1_REACT_FEATURE_PARITY_VISUAL_CONTRACT.md
+- doc/handoffs/M2-UI1-23a5ac0.md
+- doc/handoffs/M2-UI1-8031173.md
+- doc/tasks/M2-UI1.md
+- verification/M2-UI1/**
+Out-of-scope files: 0 violations.
+Whitespace / format violations: 0.
+
+---
+
+## 3. Inventory of All 25 QML Files & 8 Domain Spot-Checks
+Inventory of `src/ui/qml/**` (recursively sorted):
+1. bookshelf/BookCard.qml
+2. bookshelf/BookDetailPanel.qml
+3. bookshelf/BookGrid.qml
+4. bookshelf/BookshelfToolbar.qml
+5. bookshelf/BookshelfView.qml
+6. bookshelf/ChapterList.qml
+7. common/CanvasCaption.qml
+8. common/ChapterPicker.qml
+9. common/EmptyState.qml
+10. Main.qml
+11. reader/ReaderView.qml
+12. settings/SettingsView.qml
+13. shell/AppShell.qml
+14. shell/NavBadge.qml
+15. shell/PrimaryNavigationRail.qml
+16. theme/Tokens.qml (plus theme/qmldir registration dependency)
+17. windows/ExportWindow.qml
+18. workbench/DirtyConfirmDialog.qml
+19. workbench/PageListPanel.qml
+20. workbench/RegionInspector.qml
+21. workbench/RegionOverlay.qml
+22. workbench/TaskProgressPanel.qml
+23. workbench/ViewerPanel.qml
+24. workbench/WorkbenchToolbar.qml
+25. workbench/WorkbenchView.qml
+
+Spot-checks across 8 Domains:
+- Library: BookshelfView, BookCard, ChapterList checked against models/library/models.py and test_repair13_import_entry.py.
+- Workspace: WorkbenchView, PageListPanel, ViewerPanel checked against workbench/viewmodel.py and test_qml_workbench.py.
+- Reader: ReaderView checked against reading_export/test_qml_contract.py (RTL flip, webtoon tile strip, 500ms scroll throttle).
+- Settings: SettingsView checked against settings_viewmodel.py (AC-SEC password flag-only, confirm_disable_tls dialog).
+- Region/Canvas: RegionOverlay (letterbox math, normalized coordinates, Canvas->SVG plan) and RegionInspector (dirty guard).
+- Task/Progress: TaskProgressPanel (9-state badge table, 4Hz throttle in VM, optimistic pausing->paused).
+- Navigation: PrimaryNavigationRail (pages repeater, nav-<id> pins) and NavBadge (runSoft/stRun running pill).
+- Dialogs/Auxiliary UI: ChapterPicker, DirtyConfirmDialog, ExportWindow (560x480 modal, stale banner).
+Result: All 25 files accounted for in §1 matrix. No fabricated screens. All features backed by real QML/ViewModel code.
+
+---
+
+## 4. Workspace 12-Dimension Parity Verification
+- Page navigation: PageListPanel (:148-153 locatePage, TapHandlers), WorkbenchToolbar (stepPage) -> COVERED
+- Viewport: ViewerPanel (PreserveAspectFit, letterbox, viewerImagePane) -> COVERED
+- Zoom/Pan: Legacy QML has NO dynamic zoom/pan implementation (fixed PreserveAspectFit) -> As-Is HONESTLY RECORDED
+- Region selection: RegionInspector (regionListView, selectRegion), RegionOverlay (highlight accent) -> COVERED
+- Region geometry: RegionOverlay (normalized coordinates, viewerPageWidth/Height, Canvas draw) -> COVERED
+- OCR state: RegionInspector (regionCommandOcr), TaskProgressPanel (step flow) -> COVERED
+- Translation state: RegionInspector (inspectorTranslationInput, retranslate), Toolbar (translate batch) -> COVERED
+- Task progress: TaskProgressPanel (9-state badge table, stats, control actions, VM 4Hz throttle) -> COVERED
+- Properties/inspector: RegionInspector (dirty guard, translation input, lock status) -> COVERED
+- Error: WorkbenchView (commandErrorBar, clearCommandError), TaskProgressPanel (failures) -> COVERED
+- Empty state: WorkbenchView (workbenchPickContext), ViewerPanel (viewerEmpty), TaskProgressPanel (empty) -> COVERED
+- Loading: TaskProgressPanel (running ●, pausing->paused), Image.asynchronous -> COVERED
+Result: All 12 dimensions verified against actual code. Unimplemented capabilities honestly marked As-Is / NOT_RUN.
+
+---
+
+## 5. React Component Map & Architecture Boundary Check
+Boundary rules verified against §2.1 and §2.2:
+- Python Core Authority: Core is sole business authority. React component tree consumes read-only VM snapshots via 6 IPC domain channels and dispatches commands. No SQLite / filesystem / model calls in frontend.
+- Single-direction Dependency: React Presentation -> Typed Contract -> Python Core. No business ViewModels recreated in React.
+- State Layering: Server state (VM projections) vs UI state (hover/press, collapse, draft points, dirty input). Operations calling vm.*() strictly classified as commands.
+- No Premature Lock-in: No premature locking of unverified React state libraries or IPC implementation details. Large binary policy adheres to file URIs.
+Result: Architectural boundaries strictly respected.
+
+---
+
+## 6. Design Token Migration Verification (Design F · Graphite Atelier)
+Analysis of src/ui/qml/theme/Tokens.qml and tokens-cand-f.json:
+- Readonly property color count: 40
+- Readonly property string count: 2 (shadow, shadowSm)
+- Readonly property int/real (geometry) count: 21 (6 font sizes, 5 control sizes, 4 radii, 6 panel/card dimensions)
+- Status family count: 9 st* + 7 *Soft (excluding accentSoft)
+- Nature: Visual Migration (pure translation of Design F tokens to CSS variables), NOT a redesign.
+- Discrepancy Ledger (§3.4): D-1 (native control compensation), D-2 (untokenized literals), D-3 (system font stack), D-4 (light mode entrance deferred) correctly isolated for Codex disposition without unauthorized design drift.
+Result: Tokens count and semantics verified 100%.
+
+---
+
+## 7. Visual Baseline 14-Frame Hash Verification
+Python verification script output on verification/M2-UI1/baseline-6a68fde/manifest.md:
+- screenshots/01-bookshelf-empty.png: e19cf1a1d4e18b4e63022d2771831e47ee99a6bec2a17cd3943e0982924f2557 (MATCH)
+- screenshots/02-new-book-dialog.png: 705e5d23fd83a316966f53abe0c2c4699233d45bdbfc3458e1916343405f29ed (MATCH)
+- screenshots/03-bookshelf-detail.png: 0d07c464d46411b9b8c0881d1d8bf984178e4674924f9cc864d5152c06297455 (MATCH)
+- screenshots/04-toolbar-checked.png: 7fe1541e24a5cb587a8d5cf568175df75deb1f59a3afa262b665151cb867c5f8 (MATCH)
+- screenshots/05-chapter-selected.png: 5b8b9e7ea603535e601202cf522e605fb5726a0bc6eb5247cef7c9ed5fdc6997 (MATCH)
+- screenshots/05b-import-picker-opened.png: 5b8b9e7ea603535e601202cf522e605fb5726a0bc6eb5247cef7c9ed5fdc6997 (MATCH)
+- screenshots/06-pages-imported.png: 5b8b9e7ea603535e601202cf522e605fb5726a0bc6eb5247cef7c9ed5fdc6997 (MATCH)
+- screenshots/07-reader-active.png: 17162ce0e6f76613f415893d49c4755b8f884321de2514d67fda062a1b23a672 (MATCH)
+- screenshots/08-reader-chapter-picker.png: ac89634848eabef706e0303d0cb39c3158af6b08914d134d6aba3b99521055ca (MATCH)
+- screenshots/09-export-window.png: 88322bd02f6c8c9f29eb4894f556295371c11244e10c12d57ee0840fd12714ae (MATCH)
+- screenshots/10-export-after.png: 831b191ef3e458cc83205c509ee448e6e176e54f6183d31be662bfa5de75eb08 (MATCH)
+- screenshots/11-workbench.png: 8bb6e4f31d47fd7f50a35d9ecd88efeadd017588ce89d9ffddb45a1e239b4913 (MATCH)
+- screenshots/12-settings.png: e44615c36879ca504cf30d818575b058e55bbe613ef203d532643f8d00bc03ee (MATCH)
+- screenshots/13-focus-create-book.png: a4fa38689bf211a530c714ffb66957d48b7c0a1f5728c39a50220d3438372fd1 (MATCH, DEGRADED)
+Discipline check:
+- 14/14 hashes match. 13 frames usable, 1 frame degraded.
+- Frame 13 degraded because synthetic focus did not activate focus ring on local platform; honest capture EXIT=1 retained.
+- 9 uncaptured scenarios (DPI scaling, light mode, running pipeline 9-states, page-level blocked, draft interaction, compare mode real artifacts, webtoon tiles, 10 settings categories, 5 export formats) remain strictly NOT_RUN.
+- Principle maintained: NOT_RUN != PASS, DEGRADED != VERIFIED_COMPLETE.
+
+---
+
+## 8. Review Findings R-001..R-004 Independent Re-audit
+- R-001 (Page-level vs Run-level blocked domain split):
+  - PageListPanel.qml:112-115 renders blocked as '⏸ 阻塞'.
+  - UI_UX_GUI_DESIGN.md:195 defines Run-level blocked as '⊘', but does NOT define page-level blocked.
+  - Qoder split the two domains in §3.3 and §7 C-4, marked page-level blocked as DEFERRED / CONTRACT_DECISION_REQUIRED, and prohibited React from borrowing Run-level glyphs. CLOSED / PASS.
+- R-002 (05 Section 60 Target Inventory):
+  - §60 defines 39 target names. 18 exist in QML. Exactly 21 are missing.
+  - Corrected in §7 C-2 with exhaustive list of 21 missing items. CLOSED / PASS.
+- R-003 (WorkbenchView Command Surface):
+  - 24 distinct methods across 25 call sites (stepPage invoked at 2 sites) verified against WorkbenchView.qml lines 80-231.
+  - Exhaustively documented in §1.4a table across 7 functional groups. CLOSED / PASS.
+- R-004 (Tokens Attribute Count):
+  - 40 colors + 2 shadow strings (42 theme values) * 2 modes, 21 geometry items, 9+7 status family.
+  - Reconciled in §1.7, §3.0, §3.1, §3.2. CLOSED / PASS.
+
+---
+
+## 9. Product Test Suite & GUI Capture Status
+- Product pytest suite: NOT_RUN for this review (Design / Contract task, zero src/tests diff).
+- GUI baseline capture: NOT_RUN in R2 (retained baseline-6a68fde from delivery 8031173, exit code 1 due to focus ring degradation faithfully documented).
+- Manifest and frame SHA-256 checks: PASS (14/14).
+- Link, scope, and evidence checks: PASS.

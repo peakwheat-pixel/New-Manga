@@ -1,0 +1,8 @@
+SHELL=PowerShell
+INTERPRETER=G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+HEAD=5d4a4650943507ca4053376d6acea36f146c704a
+PROBE=append local rule to temporary copies of both legacy shims; run persistent architecture guard against temporary UI_ROOT
+MUTANT_LEGACY_SHIMS_HAVE_LOCAL_RULE=True
+PERSISTENT_CONSUMER_GUARD_PASSED=True
+I2_AC4_AUTHORITY_GUARD=FAIL
+EXIT=0

@@ -1,0 +1,24 @@
+# M2-C2 grep-level guard checks (revision head, worktree blob fc35913801297ee1876ea395f9c5041a16226f20)
+
+## Guard 1: every 'absolute path' mention must be a prohibition (must not/never/不得)
+279:  2. The Tauri host is a trusted layer: it may hold restricted references and resolve *derived-cache* relative paths, and must not forward absolute paths to the WebView.
+280:  3. Core approvals must not return user-source absolute paths to any layer; a `user-source` scope must have no frontend-visible implementation.
+291:- **RULED/TO-BE（M2-S1 §6.3 条 2，裁决 T5，明确化既有 §10 语义）— 绝对路径下发禁止**：User-source absolute paths must not be sent down through IPC to any layer (Core approvals, host, or WebView); derived-cache relative paths may exist only inside the trusted host/Core layers, never in WebView-visible material.
+
+## Guard 2: no boundary-violation wording (return/send/give path TO WebView/frontend WITHOUT negation)
+279:  2. The Tauri host is a trusted layer: it may hold restricted references and resolve *derived-cache* relative paths, and must not forward absolute paths to the WebView.
+
+## Guard 3: added diff lines must not claim implementation
+6:+- `1.1`（M2-C2，2026-09-26）：§10 新增 **10.1 Ruled resource-channel thresholds**（[M2-S1 §7 产品阈值裁决](../../verification/M2-S1/product-thresholds-ruling-67c3d56.md) T1–T7 落约）与 **10.2 Resource reference security semantics**（[M2-S1 报告](../research/M2-S1_RESOURCE_CHANNEL_SPIKE.md) R-001/R-002/§6.3 与 [M2-S2 报告](../research/M2-S2_SECURITY_VERIFICATION_SPIKE.md) S1-B11/S1-B12 结论落约：open-then-verify-from-handle 解析、不透明映射 ID、路径下发禁止、类型化错误码最小集）；§11 large-media 行更新为 `PARTIALLY RULED`。§1–§9 与 §12 语义不变；§10 新条款对 §8 `ErrorEnvelope.code` 的引用是值域使用，未改 §8 定义。全部新条款为**设计要求**（`RULED`/`TO-BE`/`UNVERIFIED` 标签，语义在 §10.1 头部定义），不代表已实现或已通过产品验证（`AS-IS: NOT_IMPLEMENTED` 不变）。
+13:+[M2-S1 §7 产品阈值裁决](../../verification/M2-S1/product-thresholds-ruling-67c3d56.md)（用户授权的治理决定）——作为**未来大媒体 runtime Task 的验收线需求输入**具有约束力；它既不是现状证明（不用 `AS-IS`），也不是 AD-001 决定（不用 `TO-BE` 单独标注），且**没有任何条款代表已实现**（`AS-IS: NOT_IMPLEMENTED` 整体保持）。产品验收在 runtime Task 执行；本修订不授权任何 runtime 实现。
+
+## Guard 4: added diff lines must preserve the UNVERIFIED boundary (positive check)
+7
+added lines carrying UNVERIFIED/NOT_RUN markers (count above)
+
+## Guard 5: version header and revision history present
+3:状态：文档冻结候选；独立 Review 前。版本：`1.1`（M2-C2 resource-channel revision；不代表已实现协议）。
+5:## Revision history
+
+## Guard 6: §1–§9 untouched except the single ImportPages pointer (diff context check)
++## Revision history

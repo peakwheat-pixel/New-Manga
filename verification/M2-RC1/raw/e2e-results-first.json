@@ -1,0 +1,82 @@
+{
+  "probe": "M2-RC1 end-to-end matrix",
+  "results": [
+    {
+      "id": "E-00-probe-mode-detected",
+      "status": "PASS",
+      "observed": {
+        "probe_auto": true
+      }
+    },
+    {
+      "id": "E-01-issue-fetch-digest",
+      "status": "PASS",
+      "observed": {
+        "bytes": 49363,
+        "sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3",
+        "expected_sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3"
+      }
+    },
+    {
+      "id": "E-02-img-render",
+      "status": "PASS",
+      "observed": {
+        "ok": true,
+        "w": 128
+      }
+    },
+    {
+      "id": "E-03-unknown-id",
+      "status": "PASS",
+      "observed": "REF_UNKNOWN_ID"
+    },
+    {
+      "id": "E-04-revoked-next-resolve",
+      "status": "PASS",
+      "observed": "REF_REVOKED"
+    },
+    {
+      "id": "E-05-expired-ttl",
+      "status": "PASS",
+      "observed": "REF_EXPIRED"
+    },
+    {
+      "id": "E-06-remount-fresh-references",
+      "status": "PASS",
+      "observed": {
+        "first": "napVYmU4lo",
+        "second": "_S8y56JXTQ"
+      }
+    },
+    {
+      "id": "E-07-hot-cache-p95",
+      "status": "PASS",
+      "observed": {
+        "p95_ms": 2,
+        "timings_ms": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          2
+        ]
+      }
+    },
+    {
+      "id": "E-08-boundary-256mib",
+      "status": "PASS",
+      "observed": {
+        "served": 268435456,
+        "declared": 268435456
+      }
+    },
+    {
+      "id": "E-09-over-limit-typed",
+      "status": "PASS",
+      "observed": "RESOURCE_TOO_LARGE"
+    }
+  ]
+}

@@ -1,0 +1,289 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>M2-S3 probe</title>
+  <style>
+    body { font-family: Consolas, monospace; font-size: 12px; margin: 12px; background: #101418; color: #d8e0e8; }
+    h1 { font-size: 15px; }
+    #log { white-space: pre-wrap; }
+    .pass { color: #7fdc7f; }
+    .fail { color: #ff7f7f; }
+  </style>
+</head>
+<body>
+  <h1>M2-S3 Tauri asset-protocol probe (WebView2 fetch matrix)</h1>
+  <div id="status">starting…</div>
+  <div id="log"></div>
+  <script>
+    const { invoke } = window.__TAURI__.core;
+    const results = [];
+    const logEl = document.getElementById("log");
+    const statusEl = document.getElementById("status");
+
+    function render(entry) {
+      const line = document.createElement("div");
+      line.className = entry.status === "PASS" ? "pass" : entry.status === "FAIL" ? "fail" : "";
+      line.textContent = `${entry.id}  ${entry.status}  ${entry.note ?? ""}`;
+      logEl.appendChild(line);
+      statusEl.textContent = `running… (${results.length} recorded)`;
+    }
+
+    async function sha256(buf) {
+      const digest = await crypto.subtle.digest("SHA-256", buf);
+      return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    async function probe(url, opts = {}) {
+      const t0 = performance.now();
+      const resp = await fetch(url, opts);
+      const ms = Math.round(performance.now() - t0);
+      const headers = {};
+      resp.headers.forEach((v, k) => (headers[k] = v));
+      if (!resp.ok) {
+        const text = await resp.text();
+        let code = null;
+        try { code = JSON.parse(text).code; } catch {}
+        return { url, status: resp.status, headers, code, bodySnippet: text.slice(0, 200), ms };
+      }
+      const buf = await resp.arrayBuffer();
+      return {
+        url,
+        status: resp.status,
+        headers,
+        bytes: buf.byteLength,
+        sha256: await sha256(buf),
+        ms,
+      };
+    }
+
+    function imgRender(url) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve({ ok: img.naturalWidth > 0, naturalWidth: img.naturalWidth, naturalHeight: img.naturalHeight });
+        img.onerror = () => resolve({ ok: false, error: "img-load-error" });
+        img.src = url;
+      });
+    }
+
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const P = true, N = false;
+    function record(id, pass, observed, note) {
+      const entry = { id, status: pass ? "PASS" : "FAIL", observed, note };
+      results.push(entry);
+      render(entry);
+    }
+    function recordEx(entry) {
+      results.push(entry);
+      render(entry);
+    }
+
+    // heartbeat: persist partial results so a later hang cannot erase evidence
+    async function flush() {
+      try {
+        await invoke("write_results", {
+          payload: JSON.stringify({ probe: "M2-S3", partial: true, results }, null, 2),
+        });
+      } catch {}
+    }
+
+    async function run() {
+      const state = await invoke("get_probe_state");
+      const base = state.scheme_base;
+      const url = (id) => `${base}/m2id/${id}`;
+      const t0 = performance.now();
+
+      // ---- positive controls (S3-AC2) -------------------------------------
+      try {
+        const r = await probe(url(state.ids.valid));
+        recordEx({
+          id: "P-01-fetch-valid-id", status: r.status === 200 && r.sha256 === state.fixtures.asset && r.bytes === 2882143 ? "PASS" : "FAIL",
+          observed: r, note: "opaque mapping ID -> 200 image/png, sha matches fixture",
+        });
+      } catch (e) { recordEx({ id: "P-01-fetch-valid-id", status: "FAIL", observed: String(e), note: "fetch threw" }); }
+
+      try {
+        const r = await imgRender(url(state.ids.valid));
+        recordEx({
+          id: "P-02-img-render", status: r.ok && r.naturalWidth === 800 ? "PASS" : "FAIL",
+          observed: r, note: "WebView decodes and renders the served PNG (naturalWidth 800)",
+        });
+      } catch (e) { recordEx({ id: "P-02-img-render", status: "FAIL", observed: String(e) }); }
+
+      try {
+        const r = await probe(url(state.ids.large));
+        recordEx({
+          id: "P-03-fetch-large-asset", status: r.status === 200 && r.sha256 === state.fixtures.typical && r.bytes === 11525983 ? "PASS" : "FAIL",
+          observed: { status: r.status, bytes: r.bytes, sha256: r.sha256, ms: r.ms }, note: "11.5 MB asset complete over the scheme",
+        });
+      } catch (e) { recordEx({ id: "P-03-fetch-large-asset", status: "FAIL", observed: String(e) }); }
+
+      // P-04 (DSH F-01): programmatic visibility audit over the material this
+      // page can actually see (its own URL/origin + every URL whose bytes we
+      // fetched), not a literal. Fetched response bodies are asserted clean by
+      // the offline leakage scan; headers were captured in P-01/P-03 observed.
+      {
+        const seenUrls = results
+          .filter((r) => r.observed && typeof r.observed === "object" && r.observed.url)
+          .map((r) => r.observed.url);
+        const probeText = [location.href, location.origin, ...seenUrls].join("\n");
+        const pathLeak = /([A-Za-z]:\\)|(%5C)|(\bUsers\b)|(AppData)/.test(probeText);
+        recordEx({
+          id: "P-04-webview-visibility", status: pathLeak ? "FAIL" : "PASS",
+          observed: { href: location.href, protocol_page_origin: location.origin, fetched_urls: seenUrls, path_leak_pattern_hit: pathLeak },
+          note: "page-reachable URL material contains only the opaque-ID scheme form; response bodies are swept offline (leakage-scan.json)",
+        });
+      }
+
+      // ---- negative matrix (S3-AC3) ---------------------------------------
+      async function expectRejection(id, scenario, opts, expectCode, expectStatus) {
+        try {
+          const r = await probe(url(id), opts);
+          const pass = r.status === expectStatus && r.code === expectCode;
+          recordEx({ id: scenario, status: pass ? "PASS" : "FAIL", observed: r, note: `expected ${expectStatus} ${expectCode}` });
+        } catch (e) {
+          recordEx({ id: scenario, status: "FAIL", observed: String(e), note: "fetch threw (typed rejection unreachable)" });
+        }
+      }
+
+      // well-formed random ID (43-char base64url of 32 bytes) that is NOT in the table:
+      // the format gate must pass and the lookup must miss -> REF_UNKNOWN_ID
+      const raw = crypto.getRandomValues(new Uint8Array(32));
+      const randomId = btoa(String.fromCharCode(...raw)).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
+      await expectRejection(randomId, "N-01-unknown-id", {}, "REF_UNKNOWN_ID", 404);
+      await expectRejection("not-an-id", "N-02-malformed-id", {}, "REF_MALFORMED", 400);
+
+      try {
+        await invoke("revoke", { id: state.ids.revocable });
+        const r = await probe(url(state.ids.revocable));
+        recordEx({ id: "N-03-revoked-id", status: r.status === 410 && r.code === "REF_REVOKED" ? "PASS" : "FAIL", observed: r, note: "revoked -> next resolve 410 REF_REVOKED" });
+      } catch (e) { recordEx({ id: "N-03-revoked-id", status: "FAIL", observed: String(e) }); }
+
+      // N-05 user-source: recorded from host-side guard + no WebView path to it
+      recordEx({
+        id: "N-05-user-source-fixture", status: state.issue_guard === "REF_OUT_OF_SCOPE" ? "PASS" : "FAIL",
+        observed: { host_issue_guard: state.issue_guard, webview_reachable: false },
+        note: "host refuses to issue a user-source path (REF_OUT_OF_SCOPE); no ID for it exists, so the WebView has nothing to request",
+      });
+
+      // N-06/N-07/N-08: path-shaped requests (not valid opaque IDs)
+      await expectRejection("../outside/outside_secret.png", "N-06-lexical-traversal", {}, "REF_MALFORMED", 400);
+      await expectRejection("%2E%2E%2Foutside%2Foutside_secret.png", "N-07-encoded-traversal", {}, "REF_MALFORMED", 400);
+      try {
+        const r1 = await probe(`${base}/file?path=C:%5CWindows%5Cwin.ini`);
+        const r2 = await probe(`${base}/abs/C:%5CWindows%5Cwin.ini`);
+        const pass = r1.code === "REF_MALFORMED" && r2.code === "REF_MALFORMED";
+        recordEx({ id: "N-08-path-parameter-forms", status: pass ? "PASS" : "FAIL", observed: { query_form: r1, abs_segment: r2 }, note: "protocol accepts only /m2id/<opaque-id>" });
+      } catch (e) { recordEx({ id: "N-08-path-parameter-forms", status: "FAIL", observed: String(e) }); }
+
+      await expectRejection(state.ids.junction, "N-09-junction-escape-at-resolve", {}, "REF_OUT_OF_SCOPE", 403);
+
+      // ---- lifecycle (S3-AC4) ---------------------------------------------
+      // L-01 repeat read
+      try {
+        const a = await probe(url(state.ids.valid));
+        const b = await probe(url(state.ids.valid));
+        recordEx({ id: "L-01-repeat-reads", status: a.sha256 === b.sha256 && b.sha256 === state.fixtures.asset ? "PASS" : "FAIL", observed: { first: { bytes: a.bytes, ms: a.ms }, second: { bytes: b.bytes, ms: b.ms } }, note: "content identical across repeat reads" });
+      } catch (e) { recordEx({ id: "L-01-repeat-reads", status: "FAIL", observed: String(e) }); }
+
+      // L-02 in-flight stream survives revocation (T6: opened consumption not interrupted)
+      try {
+        const resp = await fetch(url(state.ids.inflight));
+        const reader = resp.body.getReader();
+        const chunks = [];
+        let first = await reader.read();
+        chunks.push(first.value);
+        await invoke("revoke", { id: state.ids.inflight });
+        let done = false;
+        while (!done) {
+          const r = await reader.read();
+          done = r.done;
+          if (r.value) chunks.push(r.value);
+        }
+        const total = new Blob(chunks);
+        const sha = await sha256(await total.arrayBuffer());
+        const bytes = total.size;
+        recordEx({
+          id: "L-02-inflight-read-survives-revoke", status: bytes === 11525983 && sha === state.fixtures.typical ? "PASS" : "FAIL",
+          observed: { bytes, chunks: chunks.length, sha256: sha }, note: "revoke landed after first chunk; the in-flight read completed intact (T6 carve-out)",
+        });
+      } catch (e) { recordEx({ id: "L-02-inflight-read-survives-revoke", status: "FAIL", observed: String(e) }); }
+
+      // L-03 cache-bypass contrast (AC4 blocker risk): revoke between two fetches.
+      // DSH F-04: a fetch *error* is NOT evidence of no-bypass — it is recorded
+      // as its own verdict and fails the scenario; only a post-revoke typed
+      // re-resolution (410 with a stable code) counts as "no bypass observed".
+      try {
+        const classifyAfterRevoke = (r) => {
+          if (r === undefined) return "FETCH_ERROR";
+          if (r.fetchError) return "FETCH_ERROR";
+          if (r.status === 200) return "BYPASSED";
+          if (r.code) return `RE_RESOLVED_${r.code}`;
+          return "UNEXPECTED";
+        };
+        const bare1 = await probe(url(state.ids.cache_bare));
+        await invoke("revoke", { id: state.ids.cache_bare });
+        let bare2;
+        try { bare2 = await probe(url(state.ids.cache_bare)); } catch (e) { bare2 = { fetchError: String(e) }; }
+        const bareVerdict = classifyAfterRevoke(bare2);
+        const ctrl1 = await probe(url(state.ids.cache_ctrl));
+        await invoke("revoke", { id: state.ids.cache_ctrl });
+        let ctrl2;
+        try { ctrl2 = await probe(url(state.ids.cache_ctrl)); } catch (e) { ctrl2 = { fetchError: String(e) }; }
+        const ctrlVerdict = classifyAfterRevoke(ctrl2);
+        const noBypass = bareVerdict.startsWith("RE_RESOLVED") && ctrlVerdict.startsWith("RE_RESOLVED");
+        recordEx({
+          id: "L-03-cache-bypass-contrast", status: noBypass ? "PASS" : "FAIL",
+          observed: {
+            bare_before_revoke: { status: bare1.status, bytes: bare1.bytes },
+            bare_after_revoke: bare2, bare_verdict: bareVerdict,
+            nostore_after_revoke: ctrl2, nostore_verdict: ctrlVerdict,
+          },
+          note: noBypass
+            ? "both variants re-resolved with typed REF_REVOKED after revocation (no bypass observed)"
+            : `bypass/error observed: bare=${bareVerdict} ctrl=${ctrlVerdict}`,
+        });
+      } catch (e) { recordEx({ id: "L-03-cache-bypass-contrast", status: "FAIL", observed: String(e) }); }
+
+      // N-04 expiry (last: TTL elapsed by now; force-wait the remainder)
+      const elapsed = performance.now() - t0;
+      const wait = state.expiring_ttl_ms - elapsed + 1200;
+      if (wait > 0) await sleep(wait);
+      await expectRejection(state.ids.expiring, "N-04-expired-id", {}, "REF_EXPIRED", 410);
+
+      // ---- write results and exit -----------------------------------------
+      statusEl.textContent = "writing results…";
+      const payload = {
+        probe: "M2-S3 asset protocol fetch matrix",
+        scheme_base: base,
+        page_origin: location.origin,
+        webview_user_agent: navigator.userAgent,
+        state_issued: state,
+        results,
+      };
+      await invoke("write_results", { payload: JSON.stringify(payload, null, 2) });
+      statusEl.textContent = "done";
+      await invoke("exit_probe", { code: 0 });
+    }
+
+    // hard-exit fallbacks if the invoke bridge itself is broken
+    setTimeout(() => {
+      if (results.length === 0) {
+        statusEl.textContent = "no progress after 20s — bridge likely broken, closing";
+        window.close();
+        setTimeout(() => fetch("http://m2res.localhost/__force_fail__").catch(() => {}), 500);
+      }
+    }, 20000);
+
+    run().catch(async (e) => {
+      statusEl.textContent = "fatal: " + e;
+      results.push({ id: "FATAL", status: "FAIL", observed: String(e) });
+      try {
+        await invoke("write_results", { payload: JSON.stringify({ probe: "M2-S3", fatal: String(e), results }, null, 2) });
+        await invoke("exit_probe", { code: 1 });
+      } catch {}
+      window.close();
+    });
+  </script>
+</body>
+</html>

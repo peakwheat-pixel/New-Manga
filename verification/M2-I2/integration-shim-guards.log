@@ -1,0 +1,19 @@
+Task: M2-I2 targeted legacy shim architecture guards
+Shell: Windows PowerShell
+Environment: Python 3.12.3, pytest 9.1.1
+Command: & 'G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe' -m pytest -v tests/core/test_architecture.py -k "test_legacy_ui_shims_contain_no_authoritative_logic or test_reversal_guard_reports_local_definitions_in_legacy_shims or test_reversal_guard_reports_ui_imports_in_legacy_shims or test_reversal_guard_reports_dynamic_all_assignment_in_legacy_shims"
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-I2-integration-0d6acc7
+configfile: pytest.ini
+plugins: anyio-4.15.1
+collecting ... collected 16 items / 12 deselected / 4 selected
+
+tests/core/test_architecture.py::test_legacy_ui_shims_contain_no_authoritative_logic PASSED [ 25%]
+tests/core/test_architecture.py::test_reversal_guard_reports_local_definitions_in_legacy_shims PASSED [ 50%]
+tests/core/test_architecture.py::test_reversal_guard_reports_ui_imports_in_legacy_shims PASSED [ 75%]
+tests/core/test_architecture.py::test_reversal_guard_reports_dynamic_all_assignment_in_legacy_shims PASSED [100%]
+
+====================== 4 passed, 12 deselected in 0.77s =======================
+Exit code: 0

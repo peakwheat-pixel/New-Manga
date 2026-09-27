@@ -1,0 +1,14 @@
+date=2026-09-25T19:26:46.4695428+08:00
+shell=PowerShell
+python=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+workdir=G:/CODEX/New Manga.worktrees/M2-I1-r1-review-archive
+PYTHONDONTWRITEBYTECODE=1
+PYTHONIOENCODING=utf-8
+command=G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe G:/CODEX/New Manga.worktrees/M2-I1-zcode/verification/M2-I1/probe_qt_assembly_cleanup.py G:/CODEX/New Manga.worktrees/M2-I1-r1-review-archive/src
+python: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+version: 3.12.3
+src_root: G:/CODEX/New Manga.worktrees/M2-I1-r1-review-archive/src
+QT_LAYER_RAISED=True
+CONNECTION_CLOSED=False
+I1_AC3_AC5_EXCEPTION_CLEANUP= FAIL
+EXIT=0

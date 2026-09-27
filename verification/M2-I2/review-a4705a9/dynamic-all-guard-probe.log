@@ -1,0 +1,9 @@
+Task: M2-I2 dynamic __all__ guard probe
+Shell: Windows PowerShell
+Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+Command: python - < inline temporary shim probe
+Started: 2026-09-25T19:52:34.0975606+08:00
+Probe expression: __all__ = (lambda: [\"TaskProjection\"])()
+Guard violations: []
+Result: dynamic __all__ assignment NOT DETECTED
+Exit code: 0

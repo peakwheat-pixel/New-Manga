@@ -1,0 +1,108 @@
+{
+ "checked": [
+  {
+   "path": "_internal/ui/qml/Main.qml",
+   "state": "OK",
+   "bytes": 1942
+  },
+  {
+   "path": "_internal/ui/qml/bookshelf/BookshelfView.qml",
+   "state": "OK",
+   "bytes": 4599
+  },
+  {
+   "path": "_internal/ui/qml/workbench/WorkbenchView.qml",
+   "state": "OK",
+   "bytes": 10456
+  },
+  {
+   "path": "_internal/ui/qml/reader/ReaderView.qml",
+   "state": "OK",
+   "bytes": 13753
+  },
+  {
+   "path": "_internal/ui/qml/settings/SettingsView.qml",
+   "state": "OK",
+   "bytes": 25374
+  },
+  {
+   "path": "_internal/ui/qml/shell",
+   "state": "OK",
+   "bytes": 0
+  },
+  {
+   "path": "_internal/ui/qml/theme",
+   "state": "OK",
+   "bytes": 0
+  },
+  {
+   "path": "_internal/PySide6/plugins/platforms/qwindows.dll",
+   "state": "OK",
+   "bytes": 991032
+  },
+  {
+   "path": "_internal/PySide6/Qt6Core.dll",
+   "state": "OK",
+   "bytes": 10363704
+  },
+  {
+   "path": "_internal/PySide6/Qt6Gui.dll",
+   "state": "OK",
+   "bytes": 9546552
+  },
+  {
+   "path": "_internal/PySide6/Qt6Qml.dll",
+   "state": "OK",
+   "bytes": 5337912
+  },
+  {
+   "path": "_internal/PySide6/Qt6Quick.dll",
+   "state": "OK",
+   "bytes": 6569272
+  },
+  {
+   "path": "_internal/PySide6/Qt6QuickControls2.dll",
+   "state": "OK",
+   "bytes": 103224
+  },
+  {
+   "path": "_internal/PySide6/Qt6Widgets.dll",
+   "state": "OK",
+   "bytes": 6497080
+  },
+  {
+   "path": "_internal/python312.dll",
+   "state": "OK",
+   "bytes": 6928664
+  }
+ ],
+ "missing_count": 0,
+ "qml_modules": [
+  "Qt",
+  "QtCore",
+  "QtNetwork",
+  "QtQml",
+  "QtQuick",
+  "QtTest",
+  "builtins.qmltypes",
+  "jsroot.qmltypes"
+ ],
+ "platform_plugins": [
+  "qdirect2d.dll",
+  "qminimal.dll",
+  "qoffscreen.dll",
+  "qwindows.dll"
+ ],
+ "imageformat_plugins": [
+  "qgif.dll",
+  "qicns.dll",
+  "qico.dll",
+  "qjpeg.dll",
+  "qpdf.dll",
+  "qsvg.dll",
+  "qtga.dll",
+  "qtiff.dll",
+  "qwbmp.dll",
+  "qwebp.dll"
+ ]
+}

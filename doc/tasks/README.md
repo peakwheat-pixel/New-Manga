@@ -2,9 +2,9 @@
 
 > **2026-09-21 audit**：本索引与 TASK-001～065 文件是历史证据。当前分类、依赖和唯一下一任务见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前 checkpoint 见 [STATUS](../STATUS.md)。不要根据旧 frontmatter 的 `status: done` 单独判定完成。
 
-> **Historical ledger after 2026-09-20 Rebaseline.** TASK-001～065 文件、Handoff、Review 与 verification 保留为历史证据；它们不再构成当前排期。当前任务树和 Legacy Mapping 见 [REBASELINE_PLAN](../REBASELINE_PLAN.md)，当前唯一 Active Task 见 [STATUS](../STATUS.md)。本目录暂不批量移动或删除文件，以保护既有链接与 Git 追溯。
+> **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-Current Codex-owned closeout: [T3.2.1 Windows Packaging & Release Gate](T3.2.1.md), full Gate `OPEN`. REPAIR-12 (`9622395` → delivery `a2f6695` → Handoff `8738c41`) received slice Review `a656486` `approved`; it corrects evidence only. [REPAIR-13](T3.2.1-REPAIR-13.md) is `done` under ZCode from fixed base `8738c41`, product delivery `aed0094`, final evidence head `13ae23f`; DeepSeek Harness Review=`APPROVE_WITH_CONDITIONS` with C1/C2 satisfied; Codex integration=`6fe7455` (162 focused tests passed). C2's supplement count differs from the fixed-base recount (12 vs 13); all whitespace is removed and post-C2 check passes. [REPAIR-14](T3.2.1-REPAIR-14.md) is `changes_requested` after DeepSeek Harness Review=`4301939` (`56bd33a` product delivery, `9cff94f` Handoff/evidence head). Antigravity retains base `4ab6f58`, branch and worktree; evidence correction and applicable AC4 fixed-package GUI verification are pending before re-review. Parent AC3=`BLOCKED`; parent AC5=`NOT_RUN`, AC6/AC7=`PARTIAL / NOT_RUN`, AC8/AC9=`NOT_RUN`, R-014–R-016=`OPEN`. This line is navigation only; [REBASELINE_PLAN](../REBASELINE_PLAN.md) and [STATUS](../STATUS.md) remain authoritative.
+当前 Active Task：无；[M2-RC1](M2-RC1.md) 已 `done`（integration=`3a246840`）。[M2-RC2](M2-RC2.md) 为 F-03/F-05 的 `proposed / NOT_RELEASED` 承接 Task，尚未授权执行。M2-RC1 集成证据：[integration](../../verification/M2-RC1/integration-2f6a31cd/integration.md)。
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 

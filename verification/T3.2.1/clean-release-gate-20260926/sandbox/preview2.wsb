@@ -1,0 +1,26 @@
+<Configuration>
+  <vGPU>Disable</vGPU>
+  <Networking>Disable</Networking>
+  <ClipboardRedirection>Disable</ClipboardRedirection>
+  <PrinterRedirection>Disable</PrinterRedirection>
+  <MappedFolders>
+    <MappedFolder>
+      <HostFolder>G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\build1\dist</HostFolder>
+      <SandboxFolder>C:\Program Files\New Manga</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>G:\CODEX\New Manga.worktrees\T3.2.1-clean-release-gate-20260925\verification\T3.2.1\clean-release-gate-20260926\sandbox\harness-preview</HostFolder>
+      <SandboxFolder>C:\GateHarness</SandboxFolder>
+      <ReadOnly>true</ReadOnly>
+    </MappedFolder>
+    <MappedFolder>
+      <HostFolder>G:\CODEX\New Manga.artifacts\T3.2.1-clean-release-gate-20260926\sandbox-preview2-output</HostFolder>
+      <SandboxFolder>C:\GateEvidence</SandboxFolder>
+      <ReadOnly>false</ReadOnly>
+    </MappedFolder>
+  </MappedFolders>
+  <LogonCommand>
+    <Command>powershell.exe -NoLogo -NoProfile -ExecutionPolicy Bypass -File C:\GateHarness\preview.ps1</Command>
+  </LogonCommand>
+</Configuration>

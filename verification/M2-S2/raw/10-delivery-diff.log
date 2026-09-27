@@ -1,0 +1,31 @@
+# git diff --name-status 67c3d56e..HEAD (delivery head d502aa5a)
+A	doc/research/M2-S2_SECURITY_VERIFICATION_SPIKE.md
+A	doc/tasks/M2-S2.md
+A	verification/M2-S2/baseline-selfcheck.md
+A	verification/M2-S2/probes/compare_runs.py
+A	verification/M2-S2/probes/m2s2_lab.py
+A	verification/M2-S2/probes/make_fixtures.py
+A	verification/M2-S2/probes/probe_s2_mapping.py
+A	verification/M2-S2/probes/probe_s2_toctou.py
+A	verification/M2-S2/probes/run_all.ps1
+A	verification/M2-S2/raw/00-run-all.log
+A	verification/M2-S2/raw/01-script-hashes.log
+A	verification/M2-S2/raw/02-environment.log
+A	verification/M2-S2/raw/03-make-fixtures.log
+A	verification/M2-S2/raw/04-toctou-first.log
+A	verification/M2-S2/raw/05-mapping-first.log
+A	verification/M2-S2/raw/06-make-fixtures-repeat.log
+A	verification/M2-S2/raw/07-toctou-repeat.log
+A	verification/M2-S2/raw/08-mapping-repeat.log
+A	verification/M2-S2/raw/09-repeat-consistency.json
+A	verification/M2-S2/raw/09-repeat-consistency.log
+A	verification/M2-S2/raw/mapping-result.json
+A	verification/M2-S2/raw/toctou-result.json
+
+# git diff --check 67c3d56e HEAD
+verification/M2-S2/raw/01-script-hashes.log:9: new blank line at EOF.
+
+# diff --stat summary
+ verification/M2-S2/raw/mapping-result.json         |  142 +++
+ verification/M2-S2/raw/toctou-result.json          |  325 +++++++
+ 22 files changed, 5280 insertions(+)

@@ -1,0 +1,7 @@
+python=3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]
+executable=G:\CODEX\New Manga.task-envs\T3.2.1-clean-gate-py312-20260926\Scripts\python.exe
+platform=Windows-11-10.0.26200-SP0
+qt=6.11.2
+pyside6=6.11.2
+shiboken6=6.11.2
+pyinstaller=6.22.3
