@@ -3,9 +3,10 @@ task_id: DIAG-READING-EXPORT-001-FIX-A
 author: ZCode
 recipient: DeepSeek Harness（非作者 Review）→ 代行 Codex（集成）
 base_commit: 32ef1dd60cd82ac3a5fa18dfc5f834ec8639164a
-owner_head: 77a78b25（实现交付；Handoff 为其后的 docs commit）
+owner_head: 77a78b25（R1 实现交付；Handoff 为其后的 docs commit）
+r2_head: 见 §6（DSH 首轮 changes_requested 后的修订交付）
 status: delivered
-review_status: awaiting_review
+review_status: re-review_requested
 parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-A.md
 ---
 
@@ -30,33 +31,39 @@ parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-A.md
 事件投递，可在终态信号槽运行前看到 `running == False`——历史全仓失败形态（`running=False, finished=[]`
 而 `statusMessage` 已完成）由此产生。
 
-修复（纯测试侧）：凡谓词返回后**立即消费信号列表**的 4 处等待，改为轮询"终态信号已到达"：
+修复（纯测试侧）：凡谓词返回后**消费排队投递信号列表**（`finished`/`failures`/`snapshots`）的等待，
+改为轮询"终态信号已到达"。R1 为 4 处；DSH 首轮 Review 的 P2 指出 `record_changes` 的 `snapshots` 同样
+是排队投递消费者（`assert snapshots` 非空断言、`half_published` 真空面），R2 修订扩为 **6 处**：
 
-| 测试（test_viewmodels.py） | 旧谓词 | 新谓词 |
-|---|---|---|
-| `test_start_export_completes_and_updates_history`（历史失败点 :274） | `not vm.running` | `not vm.running and finished` |
-| `test_start_export_stale_abort_surfaces_failure`（:289） | `not vm.running` | `not vm.running and failures` |
-| `test_repeat_export_os_error_surfaces_failure_not_stuck`（:426） | `not vm.running` | `not vm.running and failures` |
-| `test_export_without_pages_surfaces_status`（:442） | `not vm.running` | `not vm.running and failures` |
+| 测试（test_viewmodels.py，base 行号） | 旧谓词 | 新谓词 | 性质 |
+|---|---|---|---|
+| `test_start_export_completes_and_updates_history`（:274，历史失败点） | `not vm.running` | `… and finished` | 竞态修复 |
+| `test_start_export_stale_abort_surfaces_failure`（:289） | `not vm.running` | `… and failures` | 竞态修复 |
+| `test_export_outcome_wait_does_not_accept_the_half_published_state`（:339） | `not vm.running` | `… and snapshots` | 竞态修复（R2，DSH P2） |
+| `test_success_path_also_publishes_before_clearing_running`（:365） | `not vm.running` | `… and snapshots` | 竞态修复 + 消除真空断言（R2） |
+| `test_repeat_export_os_error_surfaces_failure_not_stuck`（:426） | `not vm.running` | `… and failures` | 竞态修复 |
+| `test_export_without_pages_surfaces_status`（:442） | `not vm.running` | `… and failures` | **一致性改动**：空 pages 走主线程同步 `_fail`（`viewmodel.py:262-264`），无工作线程与排队投递，非竞态点 |
 
-其余 6 处 `not vm.running` 等待只读工作线程先写的**普通属性**（`statusMessage`/`history`/DirectConnection
-槽内记录，GIL 下跨线程读无需事件投递），无排队竞态暴露面，保持原样；文件头 TASK-036 注释已更正为
-"程序顺序 ≠ 跨线程可观察顺序"的准确表述。未加 sleep/重试/skip，未放宽任何断言（信号永不到达时
-`pump_until` 超时返回 False → 断言照常失败）。
+其余 4 处 `not vm.running` 等待，其后语句只读工作线程先写的**普通属性**（`statusMessage`/`history`）或
+DirectConnection 槽在工作线程内同步填充的列表（`in_call`，emit 程序顺序保证先于清 flag），跨线程读无需
+事件投递，保持原样；文件头 TASK-036 注释已更正为"程序顺序 ≠ 跨线程可观察顺序 + 信号列表消费者才需
+终态等待"的准确表述。未加 sleep/重试/skip，未放宽任何断言（信号永不到达时 `pump_until` 超时返回
+False → 断言照常失败）。
 
 ## 2. AC 对照
 
-- **AC1（历史形态不可再命中，≥200 次）**：判别探针阶段 B——新谓词 + 忙碌主线程刺激 **0/400 miss**。PASS。
+- **AC1（历史形态不可再命中，≥200 次）**：判别探针阶段 B——新谓词 + 忙碌主线程刺激，**completed=N/N 且 miss=0**（R1：400/400；R2 复跑见 §6；依据以 `completed==iterations` 与 `misses==0` 双条件为准——R1 首版探针的 misses 对新谓词数学上恒 0，DSH P3 已修正判定逻辑）。PASS。
 - **AC2（判别力：先红后绿 + 故障注入保持红）**：
-  - 阶段 A——同一刺激下**旧谓词 324/400 miss**（历史形态复现：`running=False statusMessage='导出完成：…' history=49`，与诊断字符串同形）→ 修复前红；
-  - 阶段 B——新谓词 0/400 → 修复后绿；
-  - 阶段 C——探针内 `BrokenVM`（清 flag 不发终态信号，受控历史形态）+ 新谓词：**3/3 正确超时报告"终态未达"** → 修复未学会接受缺失信号。PASS。
+  - 阶段 A——同一刺激下**旧谓词 324/400 miss**（R1；历史形态复现：`running=False statusMessage='导出完成：…' history=49`，与诊断字符串同形）→ 修复前红；
+  - 阶段 B——新谓词 0 miss 且全 completed → 修复后绿；
+  - 阶段 C——探针内 `BrokenVM`（清 flag 不发终态信号，受控历史形态）+ 新谓词：R1 **3/3 正确超时报告"终态未达"** → 修复未学会接受缺失信号。PASS。
+  - 证据强度口径（DSH P3）：探针以**逐字副本**复刻测试等待模式（Task 禁止 monkeypatch/编辑测试文件，副本为合规做法），证明的是**同款谓词模式**的判别力，非测试函数本身的执行。
 - **AC3（产品侧方案）**：未采用（Task 默认；测试侧探针实证已足够）。
 - **AC4（定向 + 全仓，passed/skipped 分列）**：
-  - 定向 `tests/reading_export/test_viewmodels.py`：**15 passed**，EXIT=0；
-  - 全仓 `python -m pytest -q -p no:cacheprovider -rs tests`：**1316 passed, 5 skipped, 1 warning, 71.48s**，EXIT=0（[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-A/full-suite.log)）。
+  - 定向 `tests/reading_export/test_viewmodels.py`：R1 **15 passed**（会话转录）；R2 修订后 **15 passed**，EXIT=0（[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-A/targeted-suite.log)，DSH P3 补归档）；
+  - 全仓（R1 基线）：**1316 passed, 5 skipped, 1 warning, 71.48s**，EXIT=0（[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-A/full-suite.log)）。
 - **AC5（不以 sleep/重试/skip 掩盖）**：diff 仅谓词与注释；无新 skip。PASS。
-- **AC6（Handoff + 非作者 Review + 集成）**：本 Handoff；DSH Review 待派发。
+- **AC6（Handoff + 非作者 Review + 集成）**：本 Handoff（R2）；DSH 首轮 `changes_requested` 已处置（§6），复核轮待派发。
 
 ## 3. 测试证据（Q-009 口径）
 
@@ -84,7 +91,22 @@ CLI 不在 PATH 而记 skip（[T1.2.1 R5 已记录的同款 shell 差异](../../
 
 ## 5. 给 Reviewer（DeepSeek Harness）的要点
 
-1. 核对 4 处谓词修改与其余 6 处不动的理由（§1 表；普通属性读 vs 信号消费的区别）。
-2. 核对判别探针三阶段判定与日志数字（324/0/3）及脚本无 monkeypatch、无产品/测试文件编辑。
+1. 核对 6 处谓词修改与其余 4 处不动的理由（§1 表；排队信号列表消费 vs 普通属性读/DirectConnection 同步记录的区别）。
+2. 核对判别探针三阶段判定与日志数字及脚本无 monkeypatch、无产品/测试文件编辑；R2 起 verdict 带 `completed==iterations` 校验且负判定返回非 0 退出码。
 3. 核对全仓口径差异解释（1316+5 vs 1310+11，6 OpenSSL）。
 4. 结论格式：`decision=approved|changes_requested` + findings（级别/文件行/触发/建议）。
+
+## 6. R2 修订记录（DSH 首轮 changes_requested 处置）
+
+DSH 首轮 Review（只读；其沙箱 shell 不可用，静态审查 + 主仓交叉比对）返回 `changes_requested`（1×P2、5×P3）。逐条处置：
+
+| ID | 级别 | 内容 | 处置 |
+|---|---|---|---|
+| F1 | P2 | `test_export_outcome_wait_...` 的 `assert snapshots` 消费排队投递列表，谓词无终态等待；"其余 6 处无暴露面"结论失真并被写进文件头注释 | **fixed**：该测试与 `test_success_path_...` 两处谓词改 `… and snapshots`（§1 表）；文件头注释改述为"信号列表消费者才需终态等待" |
+| F2 | P3 | 探针阶段 B 的 misses 对新谓词数学上恒 0；verdict 未校验 completed；`main()` 恒 return 0 | **fixed**：verdict A/B/C 均加 `completed==iterations` 与负判定置 `exit_code=1`；AC1 依据改引 completed+misses 双条件（§2） |
+| F3 | P3 | 探针 `pump_until` 为逐字副本，证据非真实测试函数执行 | **accepted + 披露**：Task 禁止编辑/monkeypatch 测试文件，副本合规；§2 已注明证据强度口径 |
+| F4 | P3 | 定向 15 passed 无日志归档 | **fixed**：R2 定向运行日志入库（targeted-suite.log） |
+| F5 | P3 | STATUS 仍记 FIX-A proposed，与 Task 不一致；STATUS 不在 Owner 写集合内 | **集成侧待办**：Integrator 集成时同步 STATUS（标注代行 Codex 待追认） |
+| F6 | P3 | `:442` 空页路径为主线程同步 `_fail`，改动实为惰性 | **accepted + 披露**：§1 表已标注"一致性改动，非竞态点" |
+
+R2 变更文件：`tests/reading_export/test_viewmodels.py`（2 处谓词 + 注释）、`verification/.../probe-terminal-wait-discrimination.py`（verdict/exit code）、`verification/.../targeted-suite.log`（新增）、`verification/.../probe-r2.log`（R2 探针复跑）、本 Handoff。R1 证据（probe log、full-suite.log）保留不覆盖。
