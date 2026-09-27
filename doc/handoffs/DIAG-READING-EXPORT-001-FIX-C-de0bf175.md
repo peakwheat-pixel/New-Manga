@@ -3,9 +3,10 @@ task_id: DIAG-READING-EXPORT-001-FIX-C
 author: ZCode
 recipient: DeepSeek Harness（非作者 Review）→ 代行 Codex（集成）
 base_commit: 0e34c5c3c0a753be3e9f310daa0e413959f4ca5d
-owner_head: de0bf175（实现交付；Handoff 为其后的 docs commit）
+owner_head: de0bf175（R1 实现交付）
+reviewed_head: e9f61f5b（R2 返修交付，当前被审固定点）
 status: delivered
-review_status: awaiting_review
+review_status: re_review_requested
 parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-C.md
 ---
 
@@ -14,7 +15,7 @@ parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-C.md
 - **Owner**：ZCode；**非作者 Reviewer**：DeepSeek Harness；**Integrator**：代行 Codex（ZCode 会话，待真 Codex 追认）
 - **Base**：`0e34c5c3c0a753be3e9f310daa0e413959f4ca5d`（FIX-B 集成治理 commit；FIX-B AC1 生产接线缺口的承接 Task）
 - **Branch / worktree**：`agent/zcode/DIAG-READING-EXPORT-001-FIX-C-quit-and-leave-wiring` / `G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode`
-- **Commit 链**：`0e34c5c3`（base）→ `b1f4cedf`（claim）→ `de0bf175`（实现交付）→ 本 Handoff
+- **Commit 链**：`0e34c5c3`（base）→ `b1f4cedf`（claim）→ `de0bf175`（R1 实现交付）→ 本 Handoff（R1 docs）→ `e9f61f5b`（R2 返修，当前被审 HEAD）
 - **变更面**（git 实际 7 文件 = 代码 2 + 证据 4 + 治理 1；Task 文件为 R0 释放带入，无独立改动提交）：
   - 代码 2：`src/bootstrap/app.py`（两处接线，见 §1）、`tests/core/test_bootstrap.py`（接线断言测试）
   - 证据 4：`verification/DIAG-READING-EXPORT-001-FIX-C/` 下 `wiring-test-pre-wiring-red.log`、`wiring-test-post-wiring-green.log`、`targeted-suite.log`、`full-suite.log`
@@ -85,3 +86,19 @@ FIX-B `done` 时披露的生产缺口（DSH R-01）：`closeReader()` 终结点�
 cd 'G:\CODEX\New Manga.worktrees\DIAG-FIX-C-zcode'
 G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe -m pytest -q -p no:cacheprovider tests/core/test_bootstrap.py::test_navigation_away_from_reader_closes_it
 ```
+
+
+## 6. R2 修订记录（DSH 首轮 approved 的 F-1..F-6 处置）
+
+DSH 首轮 Review `decision=approved`（0×P0/P1；6×Minor）。逐条处置：
+
+| ID | 级别 | 内容 | 处置 |
+|---|---|---|---|
+| F-1 | Minor（集成前须 Codex 处置） | Task AC1 字面要求 `hasChapter is False` 与 closeReader 冻结语义矛盾 | **交代行 Codex 于集成时裁决**（建议采纳 Review 建议：AC 判"文本缺陷，非实现缺陷"，集成时修订 AC1 为"心跳停 + 进度 flush（hasChapter 按既有语义保留）"并记入集成记录） |
+| F-2 | Minor | AC1"进度已持久化"无断言 | **fixed**：navigate 后断言 `services.reading.progress` 非 None 且 chapter_id 匹配 |
+| F-3 | Minor | 新测试 finally 未收口心跳（FIX-B 纪律） | **fixed**：finally 改为 `if hasChapter: closeReader()` + `conn.close()` |
+| F-4 | Nit | docstring 与红日志失败点不符 | **fixed**：改为"failed on the heartbeat-stopped assertion" |
+| F-5 | Minor（行为回退） | 经导航栏重返读者页仅 emit page 信号，心跳不 re-arm（丢 5s 粒度） | **fixed**：handler 的 `page == "reader"` 分支加 re-arm（有章节且心跳停时复用 `_open_reader_chapter()` 重开；无章节 no-op） |
+| F-6 | Minor | 退出 flush 与 workbench 写者争锁时 `_reading.close()` 异常可从 aboutToQuit 槽逃逸 | **fixed**：`_close_reader_on_quit` 包 try/except，stderr 报告（沿用 `_shutdown_services` 惯例） |
+
+R2 变更（`de0bf175..e9f61f5b`，git 实际）：`src/bootstrap/app.py`（F-5 re-arm、F-6 quit 守卫）、`tests/core/test_bootstrap.py`（F-2/F-3/F-4）、`verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r2.log`、`full-suite-r2.log`、本 Handoff。R2 证据：定向 **210 passed** EXIT=0（[targeted-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r2.log)）、全仓 **1318 passed, 5 skipped** EXIT=0（[full-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r2.log)）。F-1 的 AC1 修订按 R1 建议留给集成裁决，本 Handoff 不改 Task AC 文本。
