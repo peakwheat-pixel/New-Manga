@@ -4,7 +4,7 @@ author: ZCode
 recipient: DeepSeek Harness（非作者 Review）→ 代行 Codex（集成）
 base_commit: 0e34c5c3c0a753be3e9f310daa0e413959f4ca5d
 owner_head: de0bf175（R1 实现交付）
-reviewed_head: 27dbedda（R3 handoff）→ R4 被审固定点见 §8
+reviewed_head: 46c7ff5a（R4 交付，当前被审固定点；区间 27dbedda..46c7ff5a）
 status: delivered
 review_status: re_review_4_requested
 parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-C.md
@@ -62,10 +62,10 @@ FIX-B `done` 时披露的生产缺口（DSH R-01）：`closeReader()` 终结点�
 
 | # | 命令 | 环境 | 结果 | EXIT | 证据 |
 |---|---|---|---|---|---|
-| 1 | 接线测试（PRE-wiring，base bootstrap；R3 最终测试版重取） | TASK-012-py312，Git Bash | FAILED（红，接线缺失） | 1 | [red log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-pre-wiring-red.log) |
-| 2 | 接线测试（POST-wiring；R3 最终测试版重取） | 同上 | passed（绿） | 0 | [green log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-post-wiring-green.log) |
-| 3 | `python -m pytest -q -p no:cacheprovider -rs tests/core tests/reading_export` | 同上 | 210 passed | 0 | R1：[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite.log)；R3：[targeted-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r3.log) |
-| 4 | `python -m pytest -q -p no:cacheprovider -rs tests` | 同上 | 1318 passed, 5 skipped, 1 warning | 0 | R1：[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite.log)；R3：[full-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r3.log) |
+| 1 | 接线测试（PRE-wiring，base bootstrap；R4 最终测试版重取） | TASK-012-py312，Git Bash | FAILED（红，接线缺失） | 1 | [red log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-pre-wiring-red.log) |
+| 2 | 接线测试（POST-wiring；R4 最终测试版重取） | 同上 | passed（绿） | 0 | [green log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-post-wiring-green.log) |
+| 3 | `python -m pytest -q -p no:cacheprovider -rs tests/core tests/reading_export` | 同上 | 210 passed | 0 | R1：[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite.log)；**R4（最终）：[targeted-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r4.log)**；R3 历史：[targeted-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r3.log) |
+| 4 | `python -m pytest -q -p no:cacheprovider -rs tests` | 同上 | 1318 passed, 5 skipped, 1 warning | 0 | R1：[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite.log)；**R4（最终）：[full-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r4.log)**；R3 历史：[full-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r3.log) |
 
 注：`wiring-test-pre-wiring-red.log` 内含原始 pytest 输出的行尾空白（忠实转录，按 Q-009 原始字节入库，
 未清洗）；代码与治理文件无卫生问题（`git diff --check` 对非日志文件干净）。
@@ -131,4 +131,6 @@ R3 复核：N-1 产品修复正确（守卫位置/顺序正面确认）、N-2/N-
 | T-3 | `import time` 顺序 | **fixed**：移至 `tempfile` 后恢复字母序 |
 | T-4 | "心跳非 active=离开态"在 FIX-B 存储故障停跳时也重置基线（该段时长本已写不入库，无实质损失） | **accepted + 注释披露**：守卫注释已含该口径；公开 pause/resume 面留后续 VM Task（同 N-6） |
 
-R4 变更（git 实际）：`tests/core/test_bootstrap.py`（断言）、`src/bootstrap/app.py`（import 顺序）、红/绿日志重取、本 Handoff。产品接线自 R3 起零改动（R3 复核确认）。
+R4 变更（git 实际 `27dbedda..46c7ff5a`，7 文件）：`tests/core/test_bootstrap.py`（断言）、`src/bootstrap/app.py`（import 顺序）、`verification/DIAG-READING-EXPORT-001-FIX-C/` 下 `wiring-test-pre-wiring-red.log`、`wiring-test-post-wiring-green.log`（R4 重取）、`targeted-suite-r4.log`、`full-suite-r4.log`（新增）、本 Handoff。R4 证据（最终交付测试版）：定向 **210 passed** EXIT=0（[targeted-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r4.log)）、全仓 **1318 passed, 5 skipped** EXIT=0（[full-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r4.log)）。产品接线自 R3 起零改动（R3 复核确认）。
+
+R5 doc-only 收口（DSH R4 复核 H-1/H-2/H-3）：本提交仅改本 Handoff——补被审固定点 `27dbedda..46c7ff5a`（H-1）、§3 第 1/2 行轮次标签 R3→R4（H-2）、§3/§8 补引 r4 日志（H-3）。不改产品/测试/日志，不重跑 suite。
