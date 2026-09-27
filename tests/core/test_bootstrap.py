@@ -647,8 +647,8 @@ def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
     """DIAG-READING-EXPORT-001-FIX-C: leaving the reader page in the
     production assembly closes the reader — progress flushed, heartbeat
     stopped — so no leaked 5 s timer can fire against a later-torn-down
-    store.  Pre-wiring this failed on ``hasChapter is False`` (the reader
-    stayed open after navigating away)."""
+    store.  Pre-wiring this failed on the heartbeat-stopped assertion
+    (the heartbeat kept running after navigating away)."""
     from bootstrap.app import assemble_services
 
     services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
@@ -669,12 +669,19 @@ def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
         # closeReader keeps the loaded chapter readable (service.close()
         # only flushes); the wiring contract is the heartbeat stop + flush.
         assert services.reader._heartbeat.isActive() is False, "the heartbeat must stop"
+        # AC1: the leave-flush actually persisted (AC1 persistence clause,
+        # DSH F-2): the progress row must exist for the open chapter.
+        assert services.reading.progress is not None
+        assert services.reading.progress.chapter_id == chapter.chapter_id
 
         # re-entering the reader works after the close (idempotent endpoint)
         services.navigation.enterReader(book.book_id, chapter.chapter_id)
         assert services.reader.hasChapter is True
         assert services.reader._heartbeat.isActive() is True
     finally:
+        # FIX-B discipline: never leave a live heartbeat behind a conn.close
+        if services.reader.hasChapter:
+            services.reader.closeReader()
         services.conn.close()
 
 

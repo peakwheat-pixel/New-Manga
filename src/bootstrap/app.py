@@ -255,7 +255,15 @@ def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
     # production face).  Entering the reader emits page "reader", which
     # never closes; closeReader is a no-op without an open chapter.
     def _close_reader_when_leaving(page: str) -> None:
-        if page != "reader" and reader.hasChapter:
+        if page == "reader":
+            # F-5 re-arm: returning via the nav rail emits only the page
+            # signal (no readerContextChanged), so the chapter stays loaded
+            # with a stopped heartbeat — reopen it to restore the 5 s
+            # crash-granularity saves.  No-op when nothing is loaded yet.
+            if reader.hasChapter and not reader._heartbeat.isActive():
+                _open_reader_chapter()
+            return
+        if reader.hasChapter:
             reader.closeReader()
 
     navigation.currentPageChanged.connect(_close_reader_when_leaving)
@@ -480,7 +488,15 @@ def main(argv: Sequence[str] | None = None) -> int:
     # DIAG-READING-EXPORT-001-FIX-C: quit endpoint — stop the reader
     # heartbeat (flushing progress) via aboutToQuit, while the connection
     # is still alive (exec returns before _shutdown_services closes it).
-    application.aboutToQuit.connect(services.reader.closeReader)
+    # F-6: a live workbench writer may hold the write lock; report a failed
+    # flush on stderr instead of letting the exception escape the slot.
+    def _close_reader_on_quit() -> None:
+        try:
+            services.reader.closeReader()
+        except Exception as error:  # noqa: BLE001
+            print(f"reader flush on quit failed: {error}", file=sys.stderr)
+
+    application.aboutToQuit.connect(_close_reader_on_quit)
 
     if options.smoke_test:
         QTimer.singleShot(0, application.quit)
