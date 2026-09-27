@@ -24,7 +24,6 @@ if str(SRC_ROOT) not in sys.path:
 from application.resource_channel import (  # noqa: E402
     ResourceChannelService,
     ResourceFacts,
-    ResourceChannelService as _Svc,
 )
 from infrastructure.resource_channel.handle_resolver import (  # noqa: E402
     HandleVerifiedFileReader,
@@ -135,5 +134,4 @@ __all__ = [
     "ResourceChannelService",
     "ResourceFacts",
     "HandleVerifiedFileReader",
-    "_Svc",
 ]

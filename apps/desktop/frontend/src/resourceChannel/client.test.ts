@@ -5,9 +5,12 @@ function makeInvoke() {
   const revoked = new Set<string>();
   const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
     if (command === "issue_resource_url") {
-      const opaque = `m2id.v1.${Math.random().toString(36).slice(2)}${Date.now()}`
-        .padEnd(51, "0")
-        .slice(0, 51);
+      // exact convention: m2id.v1.<43-char segment> (8 + 43 = 51 chars)
+      const segment = (Math.random().toString(36).slice(2) + Date.now().toString(36))
+        .padEnd(43, "0")
+        .slice(0, 43)
+        .replace(/[^A-Za-z0-9_-]/g, "0");
+      const opaque = `m2id.v1.${segment}`;
       return { url: `http://m2res.localhost/m2id/${opaque}`, size: 1024, opaque_id: opaque };
     }
     if (command === "revoke_ref") {

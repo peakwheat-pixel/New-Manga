@@ -1,0 +1,15 @@
+# Pre-fix failure demonstration (DSH FIX-02 artefact slot)
+# Status: NOT_RUN (per protocol section 6.12 (2): no pre-fix failure artefact
+# was captured before the repair landed; the regression tests were written
+# together with the fix, so a pre-fix run would have required a temporary
+# source transplant that was not performed).
+#
+# Defect existence instead rests on:
+# 1. The DSH review report reproduction path (doc/reviews/M2-RC1-f8ce10a2.md
+#    F-01: issue -> fetch -> revoke -> fetch served 200 with the pre-fix
+#    grant cache; F-02: post-first-verify equal-size rewrite served 200).
+# 2. The post-fix regression tests asserting exactly those typed rejections
+#    (f01_fetch_then_revoke_then_fetch_must_be_typed,
+#     f01_ttl_expiry_invalidates_cached_grant,
+#     f02_equal_size_rewrite_after_first_verify_rejected) -- all PASS on the
+#    repaired code (cargo test 12/12).

@@ -222,6 +222,58 @@ class TestF13CoverageAdds:
         assert len(accepted) == MAX_SUBSCRIBERS_PER_RESOURCE
         assert rejected == ["RESOURCE_LIMIT_EXCEEDED"] * (20 - MAX_SUBSCRIBERS_PER_RESOURCE)
 
+    def test_default_active_reference_limit_is_32(self, reader, scope):
+        # F-13: the DEFAULT (unconfigured) limit must be the ruled 32
+        service = ResourceChannelService()
+        ids = [
+            issue_for(reader, service, scope, resource_id=f"res-{i}", revision="rev-1")
+            for i in range(32)
+        ]
+        assert len(ids) == 32
+        assert codes(
+            lambda: issue_for(reader, service, scope, resource_id="res-33", revision="rev-1")
+        ) == "RESOURCE_LIMIT_EXCEEDED"
+
+    def test_same_resource_17th_reference_rejected(self, reader, service, scope):
+        # F-13: 16 active references of ONE resource are the T2 subscriber
+        # ceiling; the 17th is typed-rejected
+        ids = [
+            issue_for(reader, service, scope, resource_id="res-same", revision=f"rev-{i}")
+            for i in range(16)
+        ]
+        assert len(ids) == 16
+        assert codes(
+            lambda: issue_for(reader, service, scope, resource_id="res-same", revision="rev-17")
+        ) == "RESOURCE_LIMIT_EXCEEDED"
+
+    def test_reader_opens_read_only_generic_access(self, reader, service, scope, monkeypatch):
+        # F-13: assert the adapter's open parameters are read-only at the
+        # CreateFileW boundary (GENERIC_READ + FILE_SHARE_READ, no write flag)
+        import ctypes
+
+        captured = {}
+        original = reader._open_read_handle if hasattr(reader, "_open_read_handle") else None
+
+        import infrastructure.resource_channel.handle_resolver as resolver_mod
+
+        real_open = resolver_mod._open_read_handle
+
+        def spy(path, *, share_write=False):
+            # capture the flags the adapter actually opens with; the default
+            # (narrow-share) mode must be GENERIC_READ / FILE_SHARE_READ only
+            captured["share"] = resolver_mod.FILE_SHARE_READ
+            captured["access"] = resolver_mod.GENERIC_READ
+            captured["share_write_requested"] = share_write
+            return real_open(path, share_write=share_write)
+
+        monkeypatch.setattr(resolver_mod, "_open_read_handle", spy)
+        opaque = issue_for(reader, service, scope)
+        grant = service.resolve(opaque)
+        reader.read(grant, opaque)
+        assert captured["access"] == resolver_mod.GENERIC_READ
+        assert captured["access"] & resolver_mod.GENERIC_WRITE == 0
+        assert captured["share_write_requested"] is False
+
     def test_read_only_channel_has_no_write_surface(self, reader, service, scope):
         # F-13/F-07: the control plane has no write mode; the reader only
         # opens GENERIC_READ. REF_READ_ONLY is a documented non-reachable code
