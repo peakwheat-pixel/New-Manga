@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-当前 Active Task：无；[M2-RC1](M2-RC1.md) 已 done（integration=3a246840），[M2-RC2](M2-RC2.md) 已 done（integration=88f972fe）。没有已授权的下一 Task；Codex 须先按 [STATUS](../STATUS.md) 与 [REBASELINE_PLAN](../REBASELINE_PLAN.md) 规划，再按协作协议 §5.1 登记、释放和分配。M2-RC2 集成核验：[integration](../../verification/M2-RC2/integration-88f972fe/integration.md)。
+当前 Active Task：[DIAG-READING-EXPORT-001](DIAG-READING-EXPORT-001.md) 已按 §5.1 释放为 `ready`，Owner=DeepSeek Harness、Reviewer=Codex，固定 base=`83de13df`；须先通过 Task 的环境启动 Gate。它是独立只读诊断，不是 M2 successor。M2-RC1 已 done（integration=3a246840），M2-RC2 已 done（integration=88f972fe），无 M2 successor。M2-RC2 集成核验：[integration](../../verification/M2-RC2/integration-88f972fe/integration.md)；诊断 Task 释放证据：[release](../../verification/DIAG-READING-EXPORT-001/release-83de13df.md)。
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 
