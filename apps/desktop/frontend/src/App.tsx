@@ -46,6 +46,19 @@ async function expectTypedRejection(
   }
 }
 
+/** RC2-AC1 deny probe: the invocation must be rejected by the hardened
+ * command surface (command absent from this mode's allowlist, or refused by
+ * the ACL). Any resolved value is a surface regression. */
+async function expectCommandDenied(action: () => Promise<unknown>): Promise<ScenarioResult> {
+  try {
+    const observed = await action();
+    return { status: "FAIL", observed: `resolved: ${JSON.stringify(observed)?.slice(0, 80)}` };
+  } catch (error) {
+    const code = error instanceof Error ? error.message : String(error);
+    return { status: "PASS", observed: code };
+  }
+}
+
 export default function App() {
   const [log, setLog] = useState<string[]>([]);
   const [status, setStatus] = useState("idle");
@@ -66,21 +79,6 @@ export default function App() {
     };
     observed("starting");
 
-    // failsafe: an unusable invoke bridge must not hang the runner
-    const failsafe = setTimeout(() => {
-      if (probeWindow.__probeFinished !== true) {
-        observed("FAILSAFE-CLOSE");
-        window.close();
-      }
-    }, 60000);
-
-    const finish = (code: number) => {
-      probeWindow.__probeFinished = true;
-      clearTimeout(failsafe);
-      if (!cancelled) {
-        void tauriInvokeSafe()(code === 0 ? "probe_exit" : "probe_exit", { code });
-      }
-    };
     const tauriInvokeSafe = (): InvokeFn => {
       try {
         return tauriInvoke();
@@ -89,10 +87,114 @@ export default function App() {
       }
     };
 
+    // ---- production/interactive mode: the hardened-surface deny matrix ----
+    // RC2-AC1 evidence channel: in production mode the probe commands and
+    // register_catalog do NOT exist on the invoke surface, so the report goes
+    // out through document.title (mirrored to stderr by the host) instead of
+    // probe_write_results. The window stays open: this is the user-facing
+    // mode, nothing here may call probe_exit.
+    const runInteractiveDenyMatrix = async (invoke: InvokeFn) => {
+      const record = (id: string, result: ScenarioResult) => {
+        results.push({ id, ...result });
+        append(`${id}  ${result.status}${result.note ? ` — ${result.note}` : ""}`);
+      };
+      const denied = (id: string, action: () => Promise<unknown>) =>
+        expectCommandDenied(action).then((result) => record(id, result));
+
+      await denied("IP-1-register-catalog-denied", () =>
+        invoke("register_catalog", { resourceId: "res-x", relPath: "asset.png" }),
+      );
+      await denied("IP-2-probe-config-denied", () => invoke("probe_config"));
+      await denied("IP-3-probe-write-results-denied", () =>
+        invoke("probe_write_results", { payload: "{}" }),
+      );
+      await denied("IP-4-probe-exit-denied", () => invoke("probe_exit", { code: 0 }));
+      await denied("IP-5-probe-issue-denied", () =>
+        invoke("probe_issue_url", { resourceId: "res-x", revision: "rev-1", ttlSeconds: 0.001 }),
+      );
+
+      // a smuggled TTL override on the production shape must be inert: the
+      // command has no such parameter, the Core keeps the ruled default, and
+      // the reference stays servable (0.001 s would have expired instantly)
+      try {
+        const issued = (await invoke("issue_resource_url", {
+          resourceId: "res-cataloged",
+          revision: "rev-1",
+          ttlOverride: 0.001,
+        })) as { url: string; size: number };
+        const response = await fetch(`${issued.url}?chunk=0`);
+        record("IP-6-ttl-override-inert", {
+          status: response.ok ? "PASS" : "FAIL",
+          observed: { fetch_status: response.status },
+          note: "ttlOverride is not a parameter of the production issue shape",
+        });
+      } catch (error) {
+        record("IP-6-ttl-override-inert", {
+          status: "FAIL",
+          observed: error instanceof Error ? error.message : String(error),
+        });
+      }
+
+      // allow-side control: the production surface still serves its product
+      try {
+        const issued = (await invoke("issue_resource_url", {
+          resourceId: "res-cataloged",
+          revision: "rev-1",
+        })) as { url: string; size: number; opaque_id: string };
+        record("IA-1-production-issue-allowed", {
+          status: issued.url.startsWith("http://m2res.localhost/m2id/") ? "PASS" : "FAIL",
+          observed: { opaque_tail: issued.opaque_id.slice(-6) },
+        });
+      } catch (error) {
+        record("IA-1-production-issue-allowed", {
+          status: "FAIL",
+          observed: error instanceof Error ? error.message : String(error),
+        });
+      }
+
+      const deny = results.filter((r) => String(r.id).startsWith("IP-"));
+      const allow = results.filter((r) => String(r.id).startsWith("IA-"));
+      const denyPassed = deny.filter((r) => r.status === "PASS").length;
+      const allowPassed = allow.filter((r) => r.status === "PASS").length;
+      observed(
+        `interactive|deny=${denyPassed}/${deny.length}|allow=${allowPassed}/${allow.length}`,
+      );
+    };
+
     void (async () => {
-      const invoke = tauriInvoke();
-      const call = <T,>(command: string, args?: Record<string, unknown>) =>
-        invoke(command, args) as Promise<T>;
+      let invoke: InvokeFn;
+      try {
+        invoke = tauriInvoke();
+      } catch {
+        observed("TAURI_BRIDGE_MISSING");
+        return;
+      }
+
+      // probe_config exists only in probe mode: in production mode this very
+      // call is denied, which switches the page into the interactive matrix
+      let config: ProbeState | null = null;
+      try {
+        config = await call<ProbeState>(invoke)("probe_config");
+      } catch {
+        await runInteractiveDenyMatrix(invoke);
+        return;
+      }
+      if (!config.probe_auto) {
+        observed("interactive mode");
+        return;
+      }
+
+      // failsafe: an unusable invoke bridge must not hang the PROBE runner
+      // (interactive mode stays open; it is the user-facing mode)
+      const probeWindowHandle = probeWindow;
+      probeWindowHandle.__probeFinished = false;
+      const failsafe = setTimeout(() => {
+        if (probeWindow.__probeFinished !== true) {
+          observed("FAILSAFE-CLOSE");
+          window.close();
+        }
+      }, 60000);
+
       const client = new ResourceChannelClient(invoke);
       const record = (id: string, result: ScenarioResult) => {
         results.push({ id, ...result });
@@ -100,26 +202,23 @@ export default function App() {
         observed(`probe running (${results.length} recorded)`);
       };
       const flush = () =>
-        call<string>("probe_write_results", {
+        call<string>(invoke)("probe_write_results", {
           payload: JSON.stringify(
-            { probe: "M2-RC1 end-to-end matrix", results },
+            { probe: "M2-RC2 hardened command surface + RC1 resource channel matrix", results },
             null,
             2,
           ),
         });
+      const finishProbe = (code: number) => {
+        probeWindow.__probeFinished = true;
+        clearTimeout(failsafe);
+        if (!cancelled) {
+          void tauriInvokeSafe()("probe_exit", { code });
+        }
+      };
 
       try {
-        // the embedded page URL has no query string: probe mode comes from
-        // the host (M2RC1_PROBE_OUT presence) via probe_config, not location
-        const config = await call<ProbeState>("probe_config");
-        if (!config.probe_auto) {
-          observed("interactive mode");
-          finish(0);
-          return;
-        }
         record("E-00-probe-mode-detected", { status: "PASS", observed: { probe_auto: true } });
-        await call("register_catalog", { resourceId: "res-probe", relPath: "asset.png" });
-        await call("register_catalog", { resourceId: "res-boundary", relPath: "boundary.bin" });
 
         // E-01 issue + full chunked fetch; the digest is computed here only
         // for self-verification (the WebView-visible object never carries one)
@@ -168,11 +267,13 @@ export default function App() {
           );
         }
 
-        // E-05 expiry (probe-only TTL override; the product default is 300 s)
-        const expiring = await call<{ url: string; opaque_id: string }>("issue_resource_url", {
+        // E-05 expiry through the probe-only TTL command (the production
+        // issue shape has no TTL parameter; RC2 moved the override behind
+        // probe_issue_url which exists only in probe mode)
+        const expiring = await call<{ url: string; opaque_id: string }>(invoke)("probe_issue_url", {
           resourceId: "res-probe",
           revision: "rev-3",
-          ttlOverride: 1.0,
+          ttlSeconds: 1.0,
         });
         await sleep(1600);
         record(
@@ -197,7 +298,6 @@ export default function App() {
         // issue mints a NEW opaque reference, so the grant cache is cold and
         // every sample includes the host's first-verification full-file
         // digest pass -- only the OS page cache is warm (R-06 relabel).
-        await call("register_catalog", { resourceId: "res-hot", relPath: "typical.png" });
         const timings: number[] = [];
         for (let i = 0; i < 8; i += 1) {
           const hot = await client.issue("res-hot", "rev-1");
@@ -236,10 +336,9 @@ export default function App() {
           record("E-08-boundary-256mib", { status: "NOT_RUN", observed: code });
         }
 
-        // E-09 over-limit issue -> typed RESOURCE_TOO_LARGE (registered only
-        // when the runner lab contains oversize.bin)
+        // E-09 over-limit issue -> typed RESOURCE_TOO_LARGE (the lab catalogs
+        // oversize.bin; the Core refuses it at issue time)
         try {
-          await call("register_catalog", { resourceId: "res-oversize", relPath: "oversize.bin" });
           await client.issue("res-oversize", "rev-1");
           record("E-09-over-limit-typed", { status: "FAIL", observed: "issued over-limit" });
         } catch (error) {
@@ -250,9 +349,52 @@ export default function App() {
           });
         }
 
+        // ---- RC2-AC1 probe-mode deny additions (the catalog surface is
+        // gone in EVERY mode, and a TTL smuggled onto the production shape
+        // must be inert) ----
+        record(
+          "D-01-register-catalog-denied",
+          await expectCommandDenied(() =>
+            invoke("register_catalog", { resourceId: "res-x", relPath: "asset.png" }),
+          ),
+        );
+        try {
+          const smuggled = await call<{ url: string; opaque_id: string }>(invoke)(
+            "issue_resource_url",
+            { resourceId: "res-probe", revision: "rev-d", ttlOverride: 0.001 },
+          );
+          await sleep(100);
+          const still = await fetch(`${smuggled.url}?chunk=0`);
+          record("D-02-ttl-override-inert", {
+            status: still.ok ? "PASS" : "FAIL",
+            observed: { fetch_status: still.status },
+            note: "ttlOverride is not a parameter of the production issue shape",
+          });
+        } catch (error) {
+          record("D-02-ttl-override-inert", {
+            status: "FAIL",
+            observed: error instanceof Error ? error.message : String(error),
+          });
+        }
+        // probe-mode control: the probe issue command is present HERE
+        // (allow-side counterpart of IP-5)
+        try {
+          await call(invoke)("probe_issue_url", {
+            resourceId: "res-probe",
+            revision: "rev-p",
+            ttlSeconds: 60,
+          });
+          record("D-03-probe-issue-allowed-in-probe-mode", { status: "PASS", observed: "resolved" });
+        } catch (error) {
+          record("D-03-probe-issue-allowed-in-probe-mode", {
+            status: "FAIL",
+            observed: error instanceof Error ? error.message : String(error),
+          });
+        }
+
         observed("probe done");
         await flush();
-        finish(0);
+        finishProbe(0);
       } catch (error) {
         append(`FATAL ${String(error)}`);
         results.push({
@@ -263,9 +405,14 @@ export default function App() {
         });
         observed("fatal");
         await flush();
-        finish(1);
+        finishProbe(1);
       }
     })();
+
+    function call<T>(inv: InvokeFn) {
+      return (command: string, args?: Record<string, unknown>) =>
+        inv(command, args) as Promise<T>;
+    }
 
     return () => {
       cancelled = true;
@@ -282,7 +429,7 @@ export default function App() {
         background: "#101418",
       }}
     >
-      <h1 style={{ fontSize: 15 }}>M2-RC1 resource channel runtime</h1>
+      <h1 style={{ fontSize: 15 }}>M2-RC2 resource channel runtime</h1>
       <div>{status}</div>
       <div>
         {log.map((line, index) => (
