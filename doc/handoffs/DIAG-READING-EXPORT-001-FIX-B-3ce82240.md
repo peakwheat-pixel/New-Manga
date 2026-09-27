@@ -3,9 +3,10 @@ task_id: DIAG-READING-EXPORT-001-FIX-B
 author: ZCode
 recipient: DeepSeek Harness（非作者 Review）→ 代行 Codex（集成）
 base_commit: a8b94df1f1ee091a9cca894c421e9ffc3ad30614
-owner_head: 3ce82240（实现交付；Handoff 为其后的 docs commit）
+owner_head: 3ce82240（R1 实现交付）
+reviewed_head: 2a1078b6（R2 交付，当前被审固定点）
 status: delivered
-review_status: re-review_requested
+review_status: re_review_2_changes_requested_docs_only
 parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-B.md
 ---
 
@@ -14,13 +15,12 @@ parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-B.md
 - **Owner**：ZCode；**非作者 Reviewer**：DeepSeek Harness；**Integrator**：代行 Codex（ZCode 会话，待真 Codex 追认）
 - **Base**：`a8b94df1f1ee091a9cca894c421e9ffc3ad30614`（FIX-A 集成 merge；串行释放）
 - **Branch / worktree**：`agent/zcode/DIAG-READING-EXPORT-001-FIX-B-reader-heartbeat-lifecycle` / `G:/CODEX/New Manga.worktrees/DIAG-FIX-B-zcode`
-- **Commit 链**：`a8b94df1`（base）→ `6e37f05d`（claim：Task 置 `in_progress`）→ `3ce82240`（实现交付）→ 本 Handoff
-- **变更面**（R2 修订后共 10 文件 = 代码 4 + 证据 4 + 治理 2，全在 allowed 清单）：
-  - `src/ui/viewmodels/reader/viewmodel.py`（唯一产品文件；Task allowed 首项）
-  - `tests/reading_export/test_viewmodels.py`（回归测试 + reader fixture teardown）
-  - `tests/reading_export/test_qml_contract.py`（三个 reader_stack fixture teardown）
-  - `tests/core/test_bootstrap.py`（生产装配读者路径 teardown，仅 :636 一处 finally）
-  - `verification/DIAG-READING-EXPORT-001-FIX-B/**`（探针 + 三份日志）+ 本 Task 文件 + 本 Handoff
+- **Commit 链**：`a8b94df1`（base）→ `6e37f05d`（claim）→ `3ce82240`（R1 实现交付）→ `528ba4d4`（R1 Handoff）→ `2a1078b6`（R2 交付 = R1 复核返修 + Handoff 修订，当前被审 HEAD）
+- **变更面**（以 git 为准：`git diff --name-only a8b94df1..2a1078b6` = **12 文件 = 代码 4 + 证据 6 + 治理 2**，全在 allowed 清单）：
+  - 代码 4：`src/ui/viewmodels/reader/viewmodel.py`（唯一产品文件）、`tests/reading_export/test_viewmodels.py`、`tests/reading_export/test_qml_contract.py`、`tests/core/test_bootstrap.py`
+  - 证据 6：`verification/DIAG-READING-EXPORT-001-FIX-B/` 下 `probe-heartbeat-leak-fixed.{py,log}`、`targeted-suite.log`、`full-suite.log`、`targeted-suite-r2.log`、`full-suite-r2.log`
+  - 治理 2：本 Task 文件 + 本 Handoff
+  - R2 增量（`528ba4d4..2a1078b6`，5 文件）：Handoff、`viewmodel.py`（docstring/注释）、`test_viewmodels.py`（:162 teardown）、两份 `-r2.log`
 
 ## 1. 做了什么
 
@@ -35,10 +35,11 @@ parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-B.md
    （`"sqlite3.ProgrammingError: …"`）并 emit 新信号 `heartbeatErrorChanged`。**不是吞异常**：错误被类型化
    记录、可观察、可断言，心跳死亡；不向 Qt 事件循环泄漏原始 traceback（历史 stderr 噪音源）。`import sqlite3`
    为 stdlib，不构成跨层依赖（UI→application→infrastructure 方向未变）。
-2. **测试 teardown 关闭读者**（4 处）：`test_viewmodels.py` 的 `reader` fixture（yield + `if vm.hasChapter:
+2. **测试 teardown 关闭读者**（5 处落点）：`test_viewmodels.py` 的 `reader` fixture（yield + `if vm.hasChapter:
    vm.closeReader()`）、`test_qml_contract.py` 的 `reader_stack`/`reader_stack_webtoon`/`reader_stack_tiled`
    三个 fixture（共享 `_close_reader_stack` 帮助函数）、`test_bootstrap.py:636` 的 finally（`enterReader` 的
-   生产装配用例——在 `conn.close()` **之前** `services.reader.closeReader()`，进度在连接存活时 flush）。
+   生产装配用例——在 `conn.close()` **之前** `services.reader.closeReader()`，进度在连接存活时 flush）、
+   `test_viewmodels.py` 的 `test_reader_missing_translation_message`（R2 补 try/finally）。
    未开章节的 VM teardown 为 no-op（`hasChapter` 守卫 / `closeReader` 对无章节安全）。
 3. **回归测试** `test_reader_heartbeat_stops_after_store_tear_down`：真实 SQLite（`open_database` +
    `MigrationRunner` v4 + `SqliteReadingProgressStore`）+ `openChapter` → `conn.close()` → 心跳同款调用
@@ -55,19 +56,21 @@ parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-B.md
   - 范围缺口（披露）：**生产侧终结点接线为零**——`closeReader()` 作为终结点仅存在于 API 面，生产 QML 从不调用、`aboutToQuit` 无接线（`src/bootstrap/**` 与 QML 属本 Task 禁止范围；Task §已知阻塞要求此时停止并交 Codex 裁决，本交付按此停止并在此披露）。生产泄漏由 `settleReadingTime` 的 stop-on-error 兜底（异常噪音与重复写已消除，但心跳在真实连接消失时是"报错一次后停止"而非"离开页面时干净停止"）。**需要 Codex/用户裁决**：是否另立 Task 在生产装配/QML 层接线终结点。
 - **AC1-附（心跳自停行为）**：PASS（见上）。
 - **AC2（类型化可诊断处理，不吞 ProgrammingError）**：`sqlite3.Error` 类型化捕获；错误全文（含类型名）落 `heartbeat_error` + signal；心跳停止 = 行为后果可见；回归测试逐断言锁定。PASS。
-- **AC3（teardown 关闭读者 + 先红后绿回归）**：R2 修订后 teardown 覆盖 5 处（§1.2 的 4 处 + `test_reader_missing_translation_message` 的 try/finally）；`test_webtoon_tiles.py` 的三处共享辅助函数构造（`_make_reader_stack`/`_make_multipage_webtoon_stack`/一处内联）**判定不收口并在此披露**（DSH R-02 选项 ii）：均为 JSON-store 局部 VM、测试函数结束即 GC、QTimer 随 QObject 销毁、无 sqlite 错误面，收口需改动全部调用方测试而收益为零。回归测试修前红（诊断探针 2 的确定性复现为同构红证据，已归档）、修后绿（定向含新用例全过）。PASS（覆盖面披露如上）。
+- **AC3（teardown 关闭读者 + 先红后绿回归）**：teardown 共 **6 处落点**（§1.2 枚举的 reader fixture、三个 qml_contract fixture、bootstrap finally、`test_reader_missing_translation_message` 的 try/finally）；`test_webtoon_tiles.py` 的三处共享辅助函数构造（`_make_reader_stack`/`_make_multipage_webtoon_stack`/一处内联）**判定不收口并在此披露**（DSH R-02 选项 ii）：均为 JSON-store 局部 VM、测试函数结束即 GC、QTimer 随 QObject 销毁、无 sqlite 错误面，收口需改动全部调用方测试而收益为零。回归测试修前红（诊断探针 2 的确定性复现为同构红证据，已归档）、修后绿（定向含新用例全过）。PASS（覆盖面披露如上）。
 - **AC4（U1/U2 收口记录）**：teardown 关闭后全仓再无存活心跳指向已关闭连接的面；U1（历史那次具体是哪个用例）与 U2（store 类型归属）作为历史归因问题**关闭为不再可复现**——修复后无论哪个用例留下读者，teardown 都会关闭它，且即使泄漏也已类型化防御。见 §4 残余边界。
-- **AC5（定向 + 全仓，passed/skipped 分列）**：定向 `tests/reading_export tests/core/test_bootstrap.py` **163 passed**，EXIT=0（[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/targeted-suite.log)）；全仓 **1317 passed, 5 skipped, 1 warning**，EXIT=0（[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/full-suite.log)）。5 skip = 2 docTR + 1 numpy + 2 torch（环境缺依赖）；6 个 OpenSSL 用例本 shell 实跑通过（同 FIX-A 口径差异说明）。PASS。
-- **AC6（未新增 skip/放宽断言/新依赖）**：diff 仅上述 8 文件；无新 skip；`import sqlite3` 为 stdlib。PASS。
-- **AC7（Handoff + 非作者 Review + 集成）**：本 Handoff；DSH Review 待派发。
+- **AC5（定向 + 全仓，passed/skipped 分列）**：R1 与 R2 各一轮，数值相同——定向 `tests/reading_export tests/core/test_bootstrap.py` **163 passed**，EXIT=0（R1：[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/targeted-suite.log)；**R2：[targeted-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/targeted-suite-r2.log)**）；全仓 **1317 passed, 5 skipped, 1 warning**，EXIT=0（R1：[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/full-suite.log)；**R2：[full-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/full-suite-r2.log)**）。5 skip = 2 docTR + 1 numpy + 2 torch（环境缺依赖）；6 个 OpenSSL 用例本 shell 实跑通过（同 FIX-A 口径差异说明）。PASS。
+- **AC6（未新增 skip/放宽断言/新依赖）**：diff 仅 §变更面所列 12 文件（git 清单为准）；无新 skip；`import sqlite3` 为 stdlib。PASS。
+- **AC7（Handoff + 非作者 Review + 集成）**：本 Handoff（R2 修订版）；DSH R1 `changes_requested`（6 findings）→ R2 处置后复核"代码与测试面通过，剩余 5 条文档事实性缺口（N-01..N-05）"→ R3 本轮文档修订收口；集成待代行 Codex 复验。
 
 ## 3. 测试证据（Q-009 口径）
 
 | # | 命令 | 环境 | 结果 | EXIT | 证据 |
 |---|---|---|---|---|---|
 | 1 | `python verification/DIAG-READING-EXPORT-001-FIX-B/probe-heartbeat-leak-fixed.py` | TASK-012-py312，Git Bash | 7/7 检查 PASS，LEAK CLOSED | 0 | [probe log](../../verification/DIAG-READING-EXPORT-001-FIX-B/probe-heartbeat-leak-fixed.log) |
-| 2 | `python -m pytest -q -p no:cacheprovider -rs tests/reading_export tests/core/test_bootstrap.py` | 同上 | 163 passed | 0 | [targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/targeted-suite.log) |
-| 3 | `python -m pytest -q -p no:cacheprovider -rs tests` | 同上 | 1317 passed, 5 skipped, 1 warning | 0 | [full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/full-suite.log) |
+| 2a | 定向（R1 交付时点） | 同上 | 163 passed | 0 | [targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/targeted-suite.log) |
+| 2b | 定向（R2 交付时点，含 :162 teardown） | 同上 | 163 passed | 0 | [targeted-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/targeted-suite-r2.log) |
+| 3a | 全仓（R1 交付时点） | 同上 | 1317 passed, 5 skipped, 1 warning | 0 | [full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/full-suite.log) |
+| 3b | 全仓（R2 交付时点） | 同上 | 1317 passed, 5 skipped, 1 warning | 0 | [full-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-B/full-suite-r2.log) |
 
 全仓 1317+5 与 FIX-A 集成基线 1316+5 的差值 = 本 Task 新增的 1 个回归测试；5 skip 口径与 FIX-A 相同。
 
@@ -117,4 +120,6 @@ DSH 首轮 Review（只读；沙箱 shell 不可用，以 base 等价 worktree �
 | R-05 | P3 | Handoff 变更面"8 文件"计数不实 | **fixed**：改分组口径"10 文件 = 代码 4 + 证据 4 + 治理 2" |
 | R-06 | P3 | stop 后无重启路径；OperationalError 也停表 | **accepted + 披露**：§4.2 增列残余边界（瞬时 locked → 静默停表至下次 openChapter；分类处理另立 Task）；DSH 明确不建议收窄捕获范围 |
 
-设计取舍裁决（Handoff §4）：(a) closeReader fail-loud 接受（含心跳停止后再调用的组合场景披露）；(b) `sqlite3.Error` 捕获范围接受不收窄；(c) 信号不改 QML。R2 变更文件：`src/ui/viewmodels/reader/viewmodel.py`（docstring/注释）、`tests/reading_export/test_viewmodels.py`（:162 teardown）、本 Handoff；重跑定向与全仓见 §3 更新。
+设计取舍裁决（Handoff §4）：(a) closeReader fail-loud 接受（含心跳停止后再调用的组合场景披露）；(b) `sqlite3.Error` 捕获范围接受不收窄；(c) 信号不改 QML。
+
+R2 交付（`2a1078b6`）的 git 变更（`git diff --name-only 528ba4d4..2a1078b6`，5 文件）：`doc/handoffs/DIAG-READING-EXPORT-001-FIX-B-3ce82240.md`（本 Handoff 修订）、`src/ui/viewmodels/reader/viewmodel.py`（docstring/注释）、`tests/reading_export/test_viewmodels.py`（:162 try/finally teardown）、`verification/DIAG-READING-EXPORT-001-FIX-B/targeted-suite-r2.log`、`verification/DIAG-READING-EXPORT-001-FIX-B/full-suite-r2.log`。R2 重跑数值与 R1 相同（163 / 1317+5），仅证据指针更新至 `-r2.log`（§2 AC5、§3 表）。
