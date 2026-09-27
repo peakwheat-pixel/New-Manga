@@ -1,8 +1,8 @@
-# FIX-C wiring assertion test (final version), POST-wiring -- expected GREEN
+# FIX-C wiring assertion test (R3 final version), POST-wiring -- expected GREEN
 # Command: python -m pytest -q -p no:cacheprovider tests/core/test_bootstrap.py::test_navigation_away_from_reader_closes_it
 # Interpreter: TASK-012-py312 (Python 3.12.3 / PySide6 6.11.2)
-# Start (UTC): 2026-09-27T18:03:02.540293800Z
+# Start (UTC): 2026-09-27T18:21:17.939295200Z
 .                                                                        [100%]
-1 passed in 0.39s
-# End (UTC): 2026-09-27T18:03:03.215871100Z
+1 passed in 0.40s
+# End (UTC): 2026-09-27T18:21:18.632762400Z
 EXIT=0

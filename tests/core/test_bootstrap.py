@@ -16,6 +16,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 
 import pytest
 
@@ -665,19 +666,49 @@ def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
         assert services.reader.hasChapter is True
         assert services.reader._heartbeat.isActive() is True
 
+        # FIX-C R3 (N-5): the leave must run closeReader through the wiring
+        # (pre-wiring, navigating away never calls it).  Timestamps are
+        # millisecond-resolution and can tie with the open-time touch, so
+        # count the close call itself.
+        closes = []
+        original_close = services.reader.closeReader
+
+        def _counting_close():
+            closes.append(True)
+            original_close()
+
+        services.reader.closeReader = _counting_close
+
         services.navigation.navigate("bookshelf")
         # closeReader keeps the loaded chapter readable (service.close()
         # only flushes); the wiring contract is the heartbeat stop + flush.
         assert services.reader._heartbeat.isActive() is False, "the heartbeat must stop"
-        # AC1: the leave-flush actually persisted (AC1 persistence clause,
-        # DSH F-2): the progress row must exist for the open chapter.
-        assert services.reading.progress is not None
-        assert services.reading.progress.chapter_id == chapter.chapter_id
+        # AC1: the leave-flush ran through the wiring (DSH F-2/N-5)
+        assert closes, "leaving the reader page must run closeReader"
 
-        # re-entering the reader works after the close (idempotent endpoint)
-        services.navigation.enterReader(book.book_id, chapter.chapter_id)
-        assert services.reader.hasChapter is True
+        # FIX-C R3 (N-1)+(N-2): the nav-rail return must open exactly once
+        # through the re-arm, must restart the heartbeat, and must NOT bill
+        # the away wall-time to the chapter (simulated 600 s absence); a
+        # further enterReader onto the already-open reader is then guarded.
+        services.reader._last_settle = time.monotonic() - 600.0
+        total_before_return = services.reading.progress.total_read_seconds
+        opens = []
+        original_open = services.reader._reading.open
+
+        def _counting_open(*args, **kwargs):
+            opens.append(args)
+            return original_open(*args, **kwargs)
+
+        services.reader._reading.open = _counting_open
+
+        services.navigation.navigate("reader")
         assert services.reader._heartbeat.isActive() is True
+        assert len(opens) == 1, f"the nav-rail re-arm must open exactly once, got {len(opens)}"
+        assert services.reading.progress.total_read_seconds == total_before_return, (
+            "away wall-time must not be folded into total_read_seconds"
+        )
+        services.navigation.enterReader(book.book_id, chapter.chapter_id)
+        assert len(opens) == 1, "the idempotence guard must skip the duplicate open"
     finally:
         # FIX-B discipline: never leave a live heartbeat behind a conn.close
         if services.reader.hasChapter:

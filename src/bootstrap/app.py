@@ -30,6 +30,7 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 import sys
+import time
 import tempfile
 
 from PySide6.QtCore import QTimer, QUrl
@@ -222,6 +223,25 @@ def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
     )
 
     def _open_reader_chapter() -> None:
+        # FIX-C R3 (N-2): idempotence guard — after the leave-endpoint the
+        # chapter stays loaded (closeReader only flushes), so a nav-rail
+        # re-entry (page signal) followed by readerContextChanged would
+        # otherwise openChapter the same chapter twice (double persist,
+        # discarded tile rebuild).
+        if (
+            reader.hasChapter
+            and reader._reading.chapter_id == navigation.get_reader_context().get("chapter_id")
+            and reader._heartbeat.isActive()
+        ):
+            return
+        # FIX-C R3 (N-1): returning to a *closed* reader (heartbeat stopped
+        # by the leave/quit endpoint) must not bill the away wall-time to
+        # the previously open chapter — openChapter settles the elapsed
+        # time on entry.  A stopped heartbeat marks the away state; reset
+        # the settle baseline so that settle folds nothing.  In-session
+        # chapter switches (heartbeat active) keep the existing semantics.
+        if not reader._heartbeat.isActive():
+            reader._last_settle = time.monotonic()
         # AC-NAV-003: entering the reader page carries the chapter the
         # shelf/workbench action selected; without one the reader stays
         # on its empty state.
@@ -260,8 +280,13 @@ def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
             # signal (no readerContextChanged), so the chapter stays loaded
             # with a stopped heartbeat — reopen it to restore the 5 s
             # crash-granularity saves.  No-op when nothing is loaded yet.
+            # R3 (N-3): same stderr guard as the quit endpoint — a store
+            # failure inside reopen must not escape into the QML call site.
             if reader.hasChapter and not reader._heartbeat.isActive():
-                _open_reader_chapter()
+                try:
+                    _open_reader_chapter()
+                except Exception as error:  # noqa: BLE001
+                    print(f"reader reopen on re-entry failed: {error}", file=sys.stderr)
             return
         if reader.hasChapter:
             reader.closeReader()
