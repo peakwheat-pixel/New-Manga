@@ -66,11 +66,14 @@ def pump_until(app, condition, timeout=5.0):
 # observable to the main thread: the slot is invoked through Qt's queued
 # delivery, so a main-thread observer can see `running == False` before the
 # terminal-signal slot has run. Terminal waits therefore poll the signal
-# receipt itself (`not vm.running and <terminal-signals>`) wherever the very
-# next statements consume the signal list; waits that only read plain
+# receipt itself (`not vm.running and <queued signal list>`) wherever the
+# statements after the wait consume a queued signal list (`finished`,
+# `failures`, `snapshots`); waits whose following statements only read plain
 # attributes (written before the flag clears, no event delivery needed) keep
-# the natural `not vm.running`. The diagnostic trace is still attached to
-# every failure message.
+# the natural `not vm.running`. Note `test_export_without_pages_surfaces_status`
+# takes the synchronous in-thread `_fail` path (no worker thread), so its
+# predicate change is a consistency edit, not a race fix. The diagnostic
+# trace is still attached to every failure message.
 # ---------------------------------------------------------------------------
 
 
@@ -343,7 +346,9 @@ def test_export_outcome_wait_does_not_accept_the_half_published_state(
         lambda message: in_call.append(vm.running), Qt.ConnectionType.DirectConnection
     )
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, in_call)
+    assert pump_until(qapp, lambda: not vm.running and snapshots), export_diagnostics(
+        vm, in_call
+    )
 
     assert half_published(snapshots) == [], half_published(snapshots)
     assert snapshots, "the changed signal must have fired"
@@ -369,7 +374,9 @@ def test_success_path_also_publishes_before_clearing_running(
         Qt.ConnectionType.DirectConnection,
     )
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, in_call)
+    assert pump_until(qapp, lambda: not vm.running and snapshots), export_diagnostics(
+        vm, in_call
+    )
 
     assert half_published(snapshots) == [], half_published(snapshots)
     assert [snapshot[0] for snapshot in in_call] == [True], in_call

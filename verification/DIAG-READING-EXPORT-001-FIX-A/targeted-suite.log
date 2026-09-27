@@ -1,0 +1,9 @@
+# FIX-A targeted run (R2 revision: 6 predicates after DSH review)
+# Command: python -m pytest -q -p no:cacheprovider -rs tests/reading_export/test_viewmodels.py
+# Interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe (Python 3.12.3 / PySide6 6.11.2 / Qt 6.11.2)
+# CWD: /g/CODEX/New Manga.worktrees/DIAG-FIX-A-zcode
+# Start (UTC): 2026-09-27T17:07:37.774749800Z
+...............                                                          [100%]
+15 passed in 0.42s
+# End (UTC): 2026-09-27T17:07:38.482305100Z
+EXIT=0

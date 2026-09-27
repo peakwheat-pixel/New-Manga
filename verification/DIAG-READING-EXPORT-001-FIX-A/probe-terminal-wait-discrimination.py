@@ -215,21 +215,37 @@ def main() -> int:
         print()
 
     verdict_parts = []
-    if old["misses"] > 0:
+    exit_code = 0
+    if old["misses"] > 0 and old["completed"] == old["iterations"]:
         verdict_parts.append("A: OLD predicate reproduces the historical miss shape (discrimination intact)")
     else:
-        verdict_parts.append("A: OLD predicate produced no miss in this sample (stimulus may be too weak this run)")
-    if new["misses"] == 0:
-        verdict_parts.append("B: NEW predicate is clean under the same stimulus")
+        verdict_parts.append(
+            "A: NEGATIVE -- OLD predicate produced no miss or did not complete "
+            f"(misses={old['misses']}, completed={old['completed']}/{old['iterations']}); "
+            "stimulus may be too weak this run"
+        )
+        exit_code = 1
+    if new["misses"] == 0 and new["completed"] == new["iterations"]:
+        verdict_parts.append(
+            f"B: NEW predicate is clean under the same stimulus (completed={new['completed']}/{new['iterations']})"
+        )
     else:
-        verdict_parts.append("B: NEW predicate STILL MISSES -- fix insufficient")
+        verdict_parts.append(
+            "B: NEGATIVE -- NEW predicate still misses or did not complete "
+            f"(misses={new['misses']}, completed={new['completed']}/{new['iterations']}); fix insufficient"
+        )
+        exit_code = 1
     if broken["detected_failures"] == broken["iterations"] and broken["iterations"] > 0:
         verdict_parts.append("C: NEW predicate correctly reports terminal-not-reached under fault injection")
     else:
-        verdict_parts.append("C: fault injection was ACCEPTED by the NEW predicate -- wait lost discrimination")
+        verdict_parts.append(
+            "C: NEGATIVE -- fault injection was ACCEPTED by the NEW predicate "
+            f"(detected={broken['detected_failures']}/{broken['iterations']}); wait lost discrimination"
+        )
+        exit_code = 1
     for part in verdict_parts:
         print("verdict: " + part)
-    return 0
+    return exit_code
 
 
 if __name__ == "__main__":
