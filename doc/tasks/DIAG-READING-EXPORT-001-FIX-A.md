@@ -2,7 +2,7 @@
 id: DIAG-READING-EXPORT-001-FIX-A
 title: Export terminal-state wait/signal-delivery semantics fix (symptom A)
 kind: fix
-status: in_progress
+status: done
 approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: []
 base_commit: 32ef1dd60cd82ac3a5fa18dfc5f834ec8639164a
 branch: agent/zcode/DIAG-READING-EXPORT-001-FIX-A-terminal-wait-semantics
 worktree: G:/CODEX/New Manga.worktrees/DIAG-FIX-A-zcode
-integration_commit: null
+integration_commit: a8b94df1f1ee091a9cca894c421e9ffc3ad30614
 ---
 
 # DIAG-READING-EXPORT-001-FIX-A — 导出终态等待/信号投递语义修复（症状 A）
@@ -43,12 +43,12 @@ FIX-B 保持 `proposed / NOT_RELEASED`，待本 Task 集成后串行释放（两
 
 ## Acceptance Criteria
 
-- [ ] 历史失败形态不可再命中：忙碌主线程判别探针（复用/扩展诊断探针 1 的两阶段设计，隔离入库 `verification/**`）在修复后跑 ≥200 次无 `running=False, finished=[]` 形态命中；探针只读，不编辑/monkeypatch 产品或测试文件。
-- [ ] 目标测试在等待语义修改后仍具判别力：对"终态未达"的注入故障保持红（先红后绿的回归证据入库）。
-- [ ] 若采用产品侧主线程派发：必须先在 Task 记录 QML 侧可观察时序影响分析，并经 Reviewer 确认无契约破坏；默认不采用。
-- [ ] 定向套件与全仓回归：`tests/reading_export` 全部通过；全仓运行结果按实际环境分列 passed/skipped，skip 逐条给原因。
-- [ ] 未以 sleep、重试、放宽断言或新增 skip 掩盖竞态；不引入新依赖。
-- [ ] Handoff 与非作者 Review 齐备；Codex 集成核验通过后才可 `done`。
+- [x] 历史失败形态不可再命中：忙碌主线程判别探针（复用/扩展诊断探针 1 的两阶段设计，隔离入库 `verification/**`）在修复后跑 ≥200 次无 `running=False, finished=[]` 形态命中；探针只读，不编辑/monkeypatch 产品或测试文件。（R1 新谓词 400/400 completed、0 miss；R2 复跑 200/200、0 miss——[probe-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-A/probe-r2.log)）
+- [x] 目标测试在等待语义修改后仍具判别力：对"终态未达"的注入故障保持红（先红后绿的回归证据入库）。（旧谓词 R1 324/400 / R2 27/200 miss=红；新谓词 0 miss=绿；故障注入 R1 3/3、R2 2/2 正确检出=判别力保留）
+- [x] 若采用产品侧主线程派发：必须先在 Task 记录 QML 侧可观察时序影响分析，并经 Reviewer 确认无契约破坏；默认不采用。（未采用产品侧方案，`src/**` 零改动）
+- [x] 定向套件与全仓回归：`tests/reading_export` 全部通过；全仓运行结果按实际环境分列 passed/skipped，skip 逐条给原因。（定向 [targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-A/targeted-suite.log) 15 passed；全仓 R1 [full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-A/full-suite.log) 1316 passed/5 skipped（6 OpenSSL=shell PATH 差值，已解释）；集成 head 复跑见集成记录）
+- [x] 未以 sleep、重试、放宽断言或新增 skip 掩盖竞态；不引入新依赖。（diff 仅谓词/注释/探针/日志；DSH 双轮核对确认合取谓词严格强于旧谓词）
+- [x] Handoff 与非作者 Review 齐备；Codex 集成核验通过后才可 `done`。（[Handoff R2](../handoffs/DIAG-READING-EXPORT-001-FIX-A-77a78b25.md)；DSH R1 `changes_requested` 全处置 → [R2 复核](../reviews/DIAG-READING-EXPORT-001-FIX-A-dsh-r2.md) `approved` @`6fe7bd86`；集成核验通过）
 
 ## 允许修改范围（释放时最终冻结）
 
@@ -71,4 +71,11 @@ FIX-B 保持 `proposed / NOT_RELEASED`，待本 Task 集成后串行释放（两
 
 ## 已知阻塞
 
-- 未释放：等待用户/Codex 排期与 §5.1 释放登记；base/branch/worktree 未冻结前不得开工。
+- 无（已集成 done）。DSH R2 复核的 5 条 P4 非阻塞观察 deferred 至集成后择机（详见集成核验记录）。
+
+## 集成记录（Integrator=代行 Codex，2026-09-28）
+
+- **双轮非作者 Review**：DSH R1 `changes_requested`（1×P2、5×P3；[r1 报告](../reviews/DIAG-READING-EXPORT-001-FIX-A-dsh-r1.md)，逐字节导入 SHA256 见 `verification/DIAG-READING-EXPORT-001-FIX-A/review-dsh-import/sha256.txt`）→ Owner R2 修订（6 处谓词、探针严格判定、定向日志）→ DSH R2 [复核](../reviews/DIAG-READING-EXPORT-001-FIX-A-dsh-r2.md) `decision=approved` @`6fe7bd86`（6/6 处置通过、无新增 P0-P2、5×P4 观察 deferred）。
+- **集成 merge**：`a8b94df1f1ee091a9cca894c421e9ffc3ad30614`（parents `0b30d3d9`（Review 归档）+ `6fe7bd86`（Owner tip）；Owner 历史未改写；唯一冲突 Task 文件取 Owner 交付版）。R1 交付=`77a78b25`、R2 交付=`db5ee918`。
+- **集成核验**：merge-base=`32ef1dd6`（固定 base）；Owner 变更 8 路径全在 allowed 清单、禁改路径零命中；`git diff --check` exit 0；集成 head 全仓复跑 EXIT=0。详见 [integration-a8b94df1](../../verification/DIAG-READING-EXPORT-001-FIX-A/integration-a8b94df1/integration.md)。
+- **结论口径**：本修复只改测试等待语义，历史 flaky 的产品层窗口（排队投递本身）未变，QML/用户路径不受影响；诊断 U3（真实全仓触发条件）仍未决。

@@ -2,15 +2,15 @@
 id: DIAG-READING-EXPORT-001-FIX-B
 title: Reader heartbeat lifecycle fix (symptom B)
 kind: fix
-status: proposed
-approval: not_released
+status: ready
+approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
-owner: null
+owner: ZCode
 reviewer: DeepSeek Harness
 depends_on: []
-base_commit: null
-branch: null
-worktree: null
+base_commit: a8b94df1f1ee091a9cca894c421e9ffc3ad30614
+branch: agent/zcode/DIAG-READING-EXPORT-001-FIX-B-reader-heartbeat-lifecycle
+worktree: G:/CODEX/New Manga.worktrees/DIAG-FIX-B-zcode
 integration_commit: null
 ---
 
@@ -31,15 +31,16 @@ integration_commit: null
 `settleReadingTime` 在存储不可用时不再写入——**不以 `try/except` 吞异常代替生命周期修复**；同时让测试在
 teardown 关闭读者，使诊断未决项 U1（哪个用例留下活心跳）/U2（store 类型归属）在修复后自然收口。
 
-**本 Task 状态 `proposed / NOT_RELEASED`：未冻结释放，不得开始实现。** 释放前 Codex 须按协作协议 §5.1
-在 STATUS 登记并冻结 base/branch/worktree。
+**释放记录（2026-09-28 01:3x，用户全夜自主推进指令授权；FIX-A 集成后按串行规则释放）：** 本 Task 已由代行
+Codex（ZCode 会话）释放为 `ready`。FIX-A 已 `done`（integration=`a8b94df1`，DSH r2 approved），`tests/reading_export/**`
+写集合冲突解除。Owner=ZCode 开始实现，交付后交 DeepSeek Harness 非作者 Review；Integrator=代行 Codex（待追认）。
 
-## 固定恢复点与角色（释放时冻结）
+## 固定恢复点与角色
 
-- 固定 base：**待释放时冻结**为当时 main HEAD；登记参考锚点 = DIAG 集成 merge `e0a0e784498fc339a4d666dd931cc67cfb65bbdb` 之后的治理提交。
-- Owner：ZCode（建议）；非作者 Reviewer：DeepSeek Harness（诊断方，非修复作者）；Integrator：Codex。
-- branch/worktree：待 Codex 创建。
-- depends_on：`[]`（诊断已 done）。建议与 FIX-A **串行释放**：两者写集合在 `tests/reading_export/**` 重叠。
+- 固定 base：`a8b94df1f1ee091a9cca894c421e9ffc3ad30614`（FIX-A 集成 merge，治理提交之前）。
+- Owner：ZCode（本会话亲自实现）；非作者 Reviewer：DeepSeek Harness（诊断方，非修复作者）；Integrator：代行 Codex（ZCode 会话，待追认）。
+- branch/worktree：`agent/zcode/DIAG-READING-EXPORT-001-FIX-B-reader-heartbeat-lifecycle` / `G:/CODEX/New Manga.worktrees/DIAG-FIX-B-zcode`。
+- depends_on：`[]`（FIX-A 已 done；串行释放已执行）。
 
 ## Acceptance Criteria
 
