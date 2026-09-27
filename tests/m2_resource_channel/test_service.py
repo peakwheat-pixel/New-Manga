@@ -247,32 +247,45 @@ class TestF13CoverageAdds:
         ) == "RESOURCE_LIMIT_EXCEEDED"
 
     def test_reader_opens_read_only_generic_access(self, reader, service, scope, monkeypatch):
-        # F-13: assert the adapter's open parameters are read-only at the
-        # CreateFileW boundary (GENERIC_READ + FILE_SHARE_READ, no write flag)
-        import ctypes
-
-        captured = {}
-        original = reader._open_read_handle if hasattr(reader, "_open_read_handle") else None
-
+        # F-13/R-04: capture the REAL CreateFileW arguments by wrapping the
+        # module-level kernel32 binding (a spy on _open_read_handle can only
+        # echo module constants back, which is tautological). The default
+        # narrow-share open must request GENERIC_READ / FILE_SHARE_READ with
+        # no write flag; the availability-first variant opts into
+        # FILE_SHARE_WRITE explicitly.
         import infrastructure.resource_channel.handle_resolver as resolver_mod
 
-        real_open = resolver_mod._open_read_handle
+        captured: list[tuple[str, int, int]] = []
 
-        def spy(path, *, share_write=False):
-            # capture the flags the adapter actually opens with; the default
-            # (narrow-share) mode must be GENERIC_READ / FILE_SHARE_READ only
-            captured["share"] = resolver_mod.FILE_SHARE_READ
-            captured["access"] = resolver_mod.GENERIC_READ
-            captured["share_write_requested"] = share_write
-            return real_open(path, share_write=share_write)
+        class _K32Spy:
+            def __init__(self, real):
+                self._real = real
 
-        monkeypatch.setattr(resolver_mod, "_open_read_handle", spy)
+            def CreateFileW(self, name, desired_access, share_mode, *rest):
+                captured.append((str(name), desired_access, share_mode))
+                return self._real.CreateFileW(name, desired_access, share_mode, *rest)
+
+            def __getattr__(self, item):
+                return getattr(self._real, item)
+
+        monkeypatch.setattr(resolver_mod, "_k32", _K32Spy(resolver_mod._k32))
+
         opaque = issue_for(reader, service, scope)
         grant = service.resolve(opaque)
         reader.read(grant, opaque)
-        assert captured["access"] == resolver_mod.GENERIC_READ
-        assert captured["access"] & resolver_mod.GENERIC_WRITE == 0
-        assert captured["share_write_requested"] is False
+        reader.read(grant, opaque, share_write=True)
+
+        assert captured, "CreateFileW was never invoked through the resolver"
+        share_modes = {share for _, _, share in captured}
+        for name, access, share in captured:
+            assert access == resolver_mod.GENERIC_READ
+            assert access & resolver_mod.GENERIC_WRITE == 0
+            assert share in (
+                resolver_mod.FILE_SHARE_READ,
+                resolver_mod.FILE_SHARE_READ | resolver_mod.FILE_SHARE_WRITE,
+            ), f"unexpected share mode {share:#x} for {name}"
+        assert resolver_mod.FILE_SHARE_READ in share_modes
+        assert (resolver_mod.FILE_SHARE_READ | resolver_mod.FILE_SHARE_WRITE) in share_modes
 
     def test_read_only_channel_has_no_write_surface(self, reader, service, scope):
         # F-13/F-07: the control plane has no write mode; the reader only

@@ -191,12 +191,12 @@ export default function App() {
           },
         });
 
-        // E-07 hot-cache first-byte-to-host P95 on a ~11.5 MiB fixture
+        // E-07 per-reference first-byte P95 on an 11,525,983 B fixture
         // (DSH F-04: a 49 KB fixture cannot speak for the <=25 MiB T3 line;
-        // the cold cache measurement is S1-B6 and stays NOT_RUN). Each issue
-        // mints a NEW opaque reference, so every sample includes the host's
-        // first-verified full-file digest pass -- the honest per-reference
-        // first-byte cost.
+        // the cold-page-cache measurement is S1-B6 and stays NOT_RUN). Each
+        // issue mints a NEW opaque reference, so the grant cache is cold and
+        // every sample includes the host's first-verification full-file
+        // digest pass -- only the OS page cache is warm (R-06 relabel).
         await call("register_catalog", { resourceId: "res-hot", relPath: "typical.png" });
         const timings: number[] = [];
         for (let i = 0; i < 8; i += 1) {
@@ -208,12 +208,13 @@ export default function App() {
         }
         timings.sort((a, b) => a - b);
         const p95 = timings[Math.min(timings.length - 1, Math.floor(timings.length * 0.95))];
-        record("E-07-hot-cache-p95", {
+        record("E-07-per-reference-first-byte-p95", {
           status: p95 <= 200 ? "PASS" : "FAIL",
           observed: {
             p95_ms: Math.round(p95),
             timings_ms: timings.map((t) => Math.round(t)),
-            fixture: "typical.png (~11.5 MiB)",
+            fixture: "typical.png (11525983 B)",
+            scenario: "per-reference first-byte (cold grant cache, warm OS page cache)",
           },
         });
 

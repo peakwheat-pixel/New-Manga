@@ -41,7 +41,8 @@ def prepare_lab() -> dict:
     from conftest import write_noise_png  # noqa: E402
 
     payload = write_noise_png(derived / "asset.png", 128, 128, seed=5101)
-    # F-04: a <=25 MiB "typical page" fixture for the T3 hot-cache P95 line
+    # F-04: an 11,525,983 B "typical page" fixture for the T3 per-reference
+    # first-byte P95 line (E-07)
     typical = write_noise_png(derived / "typical.png", 1600, 2400, seed=5202)
 
     # boundary (exactly 256 MiB) and oversize (+1) as sparse files
@@ -141,7 +142,13 @@ def main() -> int:
         print(f"{record.get('id', '?'):40s} {status}")
     print("summary:", statuses)
     print(f"results: {results_path}")
-    failed = statuses.get("FAIL", 0) + statuses.get("MISSING", 0)
+    # R-03: NOT_RUN is a gate failure, not a pass — the runner must be able
+    # to tell "scenario did not run" apart from "scenario passed"
+    failed = (
+        statuses.get("FAIL", 0)
+        + statuses.get("MISSING", 0)
+        + statuses.get("NOT_RUN", 0)
+    )
     return 0 if exit_code == 0 and failed == 0 else 1
 
 

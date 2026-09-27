@@ -4,16 +4,18 @@
 //!
 //! Serving pipeline per request (RC1-AC4, M2-S2 semantics productised):
 //! 1. opaque-ID format gate (43-char base64url) — malformed before any lookup;
-//! 2. grant cache miss ⇒ resolve via the Core control bridge (typed errors
-//!    propagate: REF_UNKNOWN_ID / REF_REVOKED / REF_EXPIRED);
+//! 2. EVERY request resolves via the Core control bridge before the grant
+//!    cache is consulted (F-01): a Core rejection evicts the cached entry and
+//!    propagates typed errors (REF_UNKNOWN_ID / REF_REVOKED / REF_EXPIRED);
 //! 3. open the target **once** (GENERIC_READ / FILE_SHARE_READ /
 //!    FILE_FLAG_BACKUP_SEMANTICS) and verify **from that handle**: containment
 //!    (final path re-derived from the handle stays inside the scope root),
 //!    file identity (volume serial + file index vs issue-time facts), size
 //!    (issue-time size + T1 256 MiB limit);
-//! 4. first-verified grant also streams the whole file once through the handle
-//!    to check the issue-time digest (catches equal-size in-place rewrites)
-//!    without materialising it;
+//! 4. the issue-time digest is re-verified through the handle whenever the
+//!    grant has never been verified OR its LastWriteTime moved since the last
+//!    verification (F-02: catches equal-size in-place rewrites) without
+//!    materialising the file;
 //! 5. serve the requested chunk (≤16 MiB) read through the same handle;
 //! 6. re-check identity after reading.
 //!

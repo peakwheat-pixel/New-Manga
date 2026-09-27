@@ -11,7 +11,9 @@ function makeInvoke() {
         .slice(0, 43)
         .replace(/[^A-Za-z0-9_-]/g, "0");
       const opaque = `m2id.v1.${segment}`;
-      return { url: `http://m2res.localhost/m2id/${opaque}`, size: 1024, opaque_id: opaque };
+      // build_url serves only the 43-char segment in the path, never the
+      // prefixed opaque id (R-05)
+      return { url: `http://m2res.localhost/m2id/${segment}`, size: 1024, opaque_id: opaque };
     }
     if (command === "revoke_ref") {
       revoked.add(String(args?.opaqueId));
@@ -50,7 +52,13 @@ describe("ResourceChannelClient", () => {
     const issued = await client.issue("res-001", "rev-1");
     expect(issued.url.startsWith("http://m2res.localhost/m2id/")).toBe(true);
     expect(issued.size).toBe(1024);
-    expect(issued.opaqueId.length).toBeGreaterThan(0);
+    // wire shape pinned: opaque id = "m2id.v1." + 43-char segment (51 chars);
+    // the URL path carries only the segment, never the prefixed form (R-05)
+    expect(issued.opaqueId).toMatch(/^m2id\.v1\.[A-Za-z0-9_-]{43}$/);
+    expect(issued.opaqueId.length).toBe(51);
+    expect(issued.url.slice("http://m2res.localhost/m2id/".length)).toMatch(
+      /^[A-Za-z0-9_-]{43}$/,
+    );
     // no path/digest/revision fingerprint ever crosses the WebView boundary
     expect(JSON.stringify(issued)).not.toMatch(/C:\\|asset\.png|sha256|rev-1/);
   });
