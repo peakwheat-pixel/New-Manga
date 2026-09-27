@@ -1,5 +1,6 @@
 """Stdio control-bridge protocol (RC1-AC2 control plane) and 256 MiB threshold
-(RC1-AC5, T1)."""
+(RC1-AC5, T1). RC2: issue requests name catalog entries only -- paths are
+Core/SQLite authority (``test_catalog_authority.py`` covers the denial side)."""
 
 from __future__ import annotations
 
@@ -9,24 +10,36 @@ import os
 
 import pytest
 
+from infrastructure.resource_channel.catalog_store import ResourceCatalogStore
 from infrastructure.resource_channel.host_bridge import CoreChannelServer
 
 from conftest import issue_for
 
 
-def make_server(scope, reader, service):
+def make_server(scope, reader, service, catalog=None):
     from infrastructure.resource_channel.scope import ScopeRoots
 
     roots = ScopeRoots(derived_root=scope.derived, managed_root=scope.managed)
-    return CoreChannelServer(service=service, roots=roots, stdin=io.StringIO(), stdout=io.StringIO())
+    return CoreChannelServer(
+        service=service,
+        roots=roots,
+        catalog=catalog or ResourceCatalogStore(":memory:"),
+        stdin=io.StringIO(),
+        stdout=io.StringIO(),
+    )
+
+
+def seed(catalog: ResourceCatalogStore, resource_id: str, rel_path: str) -> None:
+    catalog.upsert(resource_id, "derived-read-only", rel_path)
 
 
 class TestBridge:
     def test_issue_and_resolve_roundtrip(self, scope, reader, service):
-        server = make_server(scope, reader, service)
+        catalog = ResourceCatalogStore(":memory:")
+        seed(catalog, "res-001", "asset.png")
+        server = make_server(scope, reader, service, catalog)
         response = server._dispatch({"id": 1, "method": "issue", "params": {
-            "scope_class": "derived-read-only", "resource_id": "res-001",
-            "revision_fingerprint": "rev-1", "rel_path": "asset.png",
+            "resource_id": "res-001", "revision_fingerprint": "rev-1",
         }})
         assert "error" not in response
         opaque = response["result"]["id"]
@@ -60,10 +73,11 @@ class TestBridge:
     def test_wire_loop_end_to_end(self, scope, reader, service):
         """stdin JSON-lines -> stdout JSON-lines, bytes never on the wire."""
 
-        server = make_server(scope, reader, service)
+        catalog = ResourceCatalogStore(":memory:")
+        seed(catalog, "res-001", "asset.png")
+        server = make_server(scope, reader, service, catalog)
         issue_request = json.dumps({"id": 1, "method": "issue", "params": {
-            "scope_class": "derived-read-only", "resource_id": "res-001",
-            "revision_fingerprint": "rev-1", "rel_path": "asset.png",
+            "resource_id": "res-001", "revision_fingerprint": "rev-1",
         }})
         server._stdin = io.StringIO(issue_request + "\n" + json.dumps({"id": 2, "method": "shutdown"}) + "\n")
         buffer = io.StringIO()

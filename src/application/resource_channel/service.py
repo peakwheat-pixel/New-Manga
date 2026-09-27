@@ -46,6 +46,7 @@ from application.resource_channel.dto import (
     E_SCOPE_DENIED,
     E_TOO_LARGE,
     E_UNKNOWN_ID,
+    validate_rel_path,
 )
 
 
@@ -90,20 +91,27 @@ class ResourceChannelService:
 
         ``rel_path`` must be a derived-cache relative path (plain '/'-separated
         segments). Absolute paths, traversal segments and the ``user-source``
-        scope are refused with typed errors before any ID exists.
+        scope are refused with typed errors before any ID exists. A
+        ``ttl_seconds`` override may only *shorten* the reference lifetime:
+        zero/negative values and anything above the ruled default are refused,
+        so no caller (WebView or host) can extend a grant beyond the Core's
+        sliding default (RC2-AC1).
         """
 
         if scope_class not in ALLOWED_SCOPE_CLASSES:
             raise TypedResourceChannelError(
                 E_SCOPE_DENIED, f"scope class not servable: {scope_class}"
             )
-        if not rel_path or rel_path.startswith("/") or rel_path.startswith("\\\\"):
-            raise TypedResourceChannelError(E_MALFORMED, "rel_path must be relative")
-        if len(rel_path) > 1 and rel_path[1] == ":":
-            raise TypedResourceChannelError(E_MALFORMED, "drive-qualified path refused")
-        segments = rel_path.replace("\\", "/").split("/")
-        if any(segment in ("", ".", "..") for segment in segments):
-            raise TypedResourceChannelError(E_MALFORMED, "traversal segment in rel_path")
+        validate_rel_path(rel_path)
+        if ttl_seconds is not None and (
+            not isinstance(ttl_seconds, (int, float))
+            or ttl_seconds <= 0
+            or ttl_seconds > self._default_ttl
+        ):
+            raise TypedResourceChannelError(
+                E_MALFORMED,
+                "ttl_seconds must be within (0, default TTL]; lifetime cannot be extended",
+            )
         if facts.size < 0:
             raise TypedResourceChannelError(E_MALFORMED, "negative size")
         if facts.size > MAX_RESOURCE_BYTES:

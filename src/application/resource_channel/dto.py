@@ -84,3 +84,27 @@ E_SIZE_CHANGED = "FILE_SIZE_CHANGED"
 E_DIGEST_MISMATCH = "CONTENT_DIGEST_MISMATCH"
 E_SHARING_VIOLATION = "OPEN_FAILED_SHARING_VIOLATION"
 E_OPEN_FAILED = "OPEN_FAILED"
+#: RC2 (F-03): the host can only name catalog entries; the Core/SQLite store
+#: owns resource_id -> rel_path. Issuing for an uncataloged id is this code.
+E_NOT_CATALOGED = "RESOURCE_NOT_CATALOGED"
+
+
+def validate_rel_path(rel_path: object) -> str:
+    """Shared rel-path shape gate for every catalog/issue entry point.
+
+    A servable relative path is plain '/'-separated segments: relative only
+    (no drive, no UNC prefix), no empty/``.``/``..`` traversal segments, and
+    never absolute. Every violation is ``REF_MALFORMED`` before any grant or
+    catalog row can exist. Returns the validated string unchanged.
+    """
+
+    if not isinstance(rel_path, str) or not rel_path:
+        raise TypedResourceChannelError(E_MALFORMED, "rel_path must be a non-empty string")
+    if rel_path.startswith("/") or rel_path.startswith("\\\\"):
+        raise TypedResourceChannelError(E_MALFORMED, "rel_path must be relative")
+    if len(rel_path) > 1 and rel_path[1] == ":":
+        raise TypedResourceChannelError(E_MALFORMED, "drive-qualified path refused")
+    segments = rel_path.replace("\\", "/").split("/")
+    if any(segment in ("", ".", "..") for segment in segments):
+        raise TypedResourceChannelError(E_MALFORMED, "traversal segment in rel_path")
+    return rel_path
