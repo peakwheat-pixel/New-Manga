@@ -1,5 +1,5 @@
 {
-  "pid": 43584,
+  "pid": 7116,
   "argv": [],
   "modules": [
     "__future__",
@@ -8,7 +8,6 @@
     "_ast",
     "_blake2",
     "_codecs",
-    "_codecs_cn",
     "_collections",
     "_collections_abc",
     "_contextvars",
@@ -22,7 +21,6 @@
     "_imp",
     "_io",
     "_json",
-    "_multibytecodec",
     "_opcode",
     "_opcode_metadata",
     "_operator",
@@ -65,7 +63,6 @@
     "encodings",
     "encodings._win_cp_codecs",
     "encodings.aliases",
-    "encodings.gbk",
     "encodings.utf_8",
     "encodings.utf_8_sig",
     "enum",
@@ -96,6 +93,7 @@
     "keyword",
     "linecache",
     "marshal",
+    "math",
     "nt",
     "ntpath",
     "opcode",

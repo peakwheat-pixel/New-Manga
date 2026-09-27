@@ -44,24 +44,24 @@
       "id": "E-06-remount-fresh-references",
       "status": "PASS",
       "observed": {
-        "first": "mMrT7lHl4s",
-        "second": "qTOEUBLoag"
+        "first": "Kqhjdzqu78",
+        "second": "p2Ds2LfsRg"
       }
     },
     {
       "id": "E-07-per-reference-first-byte-p95",
       "status": "PASS",
       "observed": {
-        "p95_ms": 73,
+        "p95_ms": 70,
         "timings_ms": [
+          66,
+          66,
+          67,
+          67,
           67,
           68,
-          71,
-          71,
-          72,
-          72,
-          72,
-          73
+          68,
+          70
         ],
         "fixture": "typical.png (11525983 B)",
         "scenario": "per-reference first-byte (cold grant cache, warm OS page cache)"

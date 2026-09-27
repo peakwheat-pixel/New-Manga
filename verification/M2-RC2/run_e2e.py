@@ -140,10 +140,18 @@ def seed_catalog() -> tuple[int, str]:
         cwd=SRC_ROOT,
         timeout=120,
     )
+    # R2-07: a trailing newline discipline -- the whole record is stripped
+    # and closed with exactly ONE newline (an empty stderr inside the f-string
+    # would otherwise leave a blank line at EOF, which `git diff --check`
+    # flags and the review correctly called out).
     (RAW / "e2e-catalog-loader.log").write_text(
-        "$ python -m infrastructure.resource_channel.catalog_loader "
-        f"--db {catalog_db} --set ... (5 rows)\n"
-        f"exit={completed.returncode}\n{completed.stdout.rstrip()}\n{completed.stderr.rstrip()}\n",
+        (
+            "$ python -m infrastructure.resource_channel.catalog_loader "
+            f"--db {catalog_db} --set ... (5 rows)\n"
+            f"exit={completed.returncode}\n"
+            f"{completed.stdout}\n"
+            f"{completed.stderr}"
+        ).rstrip() + "\n",
         encoding="utf-8",
     )
     return completed.returncode, str(catalog_db)
@@ -165,8 +173,12 @@ def check_import_isolation() -> tuple[bool, str]:
         timeout=120,
     )
     (RAW / "e2e-sidecar-import-isolation.log").write_text(
-        f"$ python -c <import infrastructure.resource_channel.host_bridge; dump modules>\n"
-        f"exit={completed.returncode}\n{completed.stdout.rstrip()}\n{completed.stderr.rstrip()}\n",
+        (
+            "$ python -c <import infrastructure.resource_channel.host_bridge; dump modules>\n"
+            f"exit={completed.returncode}\n"
+            f"{completed.stdout}\n"
+            f"{completed.stderr}"
+        ).rstrip() + "\n",
         encoding="utf-8",
     )
     if completed.returncode != 0:
