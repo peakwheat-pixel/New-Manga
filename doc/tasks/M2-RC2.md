@@ -57,6 +57,8 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- 状态：`ready / RESOURCE_CHANNEL_COMMAND_SURFACE_RELEASED`；Owner=ZCode，Reviewer=DeepSeek Harness（非作者），Codex Integrator。
+- 状态：`in_review`（FIX 轮已交付，待 DSH 复审）；Owner=ZCode，Reviewer=DeepSeek Harness（非作者），Codex Integrator。
 - 来源：M2-RC1 F-03/F-05 `accepted_deferral`；依赖 M2-RC1=`done`；用户于 2026-09-27 明确授权本 Task 单独释放。
 - 固定实现基线、branch/worktree 和启动核验见 [release-22a2c2bf](../../verification/M2-RC2/release-22a2c2bf.md)。Task 文件只由 Owner 从记录的 release commit 取入实现分支，再提交 `ready`→`in_progress` 认领；不要把 release 治理提交并入实现历史。
+- **交付轮（delivery）**：head=`a8fb17ca`（文档收口 `4d4aef35`，派发 `d93a233f`）；四命令 64/19/15/GATE PASS；Handoff=[M2-RC2-a8fb17ca](../handoffs/M2-RC2-a8fb17ca.md)；DSH Review=changes_requested（R2-01..R2-08，`doc/reviews/M2-RC2-a8fb17ca.md`）。
+- **修复轮（FIX）**：fix head=`eac5cb3e`（追加 commit `4cd97397`+`eac5cb3e`，无历史改写）；R2-01 采 (a)（app_manifest ACL 生效 + "not allowed by ACL" 实测）、R2-02 修（NaN/bool 拒绝，探针全 REFUSED）、R2-03/04/07 修（gate 改名与表述对齐、`diff --check` 干净）、R2-05/06 本轮完成、R2-08 文档声明；五命令 66/20/15/GATE PASS/探针全 REFUSED，全 exit 0；Handoff=[M2-RC2-FIX-eac5cb3e](../handoffs/M2-RC2-FIX-eac5cb3e.md)；等 DSH 复审，通过后交 Codex 集成。
