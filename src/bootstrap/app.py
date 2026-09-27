@@ -247,6 +247,19 @@ def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
 
     navigation.readerContextChanged.connect(_open_reader_chapter)
 
+    # DIAG-READING-EXPORT-001-FIX-C: the reader heartbeat's production
+    # leave-endpoint.  Navigating away from the reader page (any target
+    # other than "reader" while a chapter is open) closes the reader —
+    # flushing progress and stopping the 5 s heartbeat — so no leaked
+    # timer can later fire against a torn-down store (DIAG symptom B's
+    # production face).  Entering the reader emits page "reader", which
+    # never closes; closeReader is a no-op without an open chapter.
+    def _close_reader_when_leaving(page: str) -> None:
+        if page != "reader" and reader.hasChapter:
+            reader.closeReader()
+
+    navigation.currentPageChanged.connect(_close_reader_when_leaving)
+
     # TASK-038 AC ② path B: the standalone export window controller
     # follows the workbench chapter context (reader-initiated exports go
     # through ``readerViewModel.exportController`` — path A).
@@ -463,6 +476,11 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
 
     window = engine.rootObjects()[0]
+
+    # DIAG-READING-EXPORT-001-FIX-C: quit endpoint — stop the reader
+    # heartbeat (flushing progress) via aboutToQuit, while the connection
+    # is still alive (exec returns before _shutdown_services closes it).
+    application.aboutToQuit.connect(services.reader.closeReader)
 
     if options.smoke_test:
         QTimer.singleShot(0, application.quit)

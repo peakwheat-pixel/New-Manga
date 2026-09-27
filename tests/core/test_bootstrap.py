@@ -643,6 +643,41 @@ def test_assemble_engine_registers_reader_export_and_tiled_reader(
         services.conn.close()
 
 
+def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
+    """DIAG-READING-EXPORT-001-FIX-C: leaving the reader page in the
+    production assembly closes the reader — progress flushed, heartbeat
+    stopped — so no leaked 5 s timer can fire against a later-torn-down
+    store.  Pre-wiring this failed on ``hasChapter is False`` (the reader
+    stayed open after navigating away)."""
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        from application.importing.images.ports import ImportSource
+
+        book = services.library.create_book("终结点接线书")
+        chapter = services.library.create_chapter(book.book_id, "第1话")
+        services.importer.import_files(
+            chapter.chapter_id,
+            [ImportSource(filename="p0.png", data_provider=lambda: _make_png(400, 300))],
+        )
+        services.navigation.enterReader(book.book_id, chapter.chapter_id)
+        assert services.reader.hasChapter is True
+        assert services.reader._heartbeat.isActive() is True
+
+        services.navigation.navigate("bookshelf")
+        # closeReader keeps the loaded chapter readable (service.close()
+        # only flushes); the wiring contract is the heartbeat stop + flush.
+        assert services.reader._heartbeat.isActive() is False, "the heartbeat must stop"
+
+        # re-entering the reader works after the close (idempotent endpoint)
+        services.navigation.enterReader(book.book_id, chapter.chapter_id)
+        assert services.reader.hasChapter is True
+        assert services.reader._heartbeat.isActive() is True
+    finally:
+        services.conn.close()
+
+
 def test_reader_service_and_tile_cache_live_on_the_data_root(tmp_path: Path) -> None:
     """TASK-038 AC ①③: reading progress and export history persist next to
     the library database (one data root), so a restart resumes."""
