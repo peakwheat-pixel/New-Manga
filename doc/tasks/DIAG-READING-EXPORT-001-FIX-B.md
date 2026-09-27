@@ -2,7 +2,7 @@
 id: DIAG-READING-EXPORT-001-FIX-B
 title: Reader heartbeat lifecycle fix (symptom B)
 kind: fix
-status: in_progress
+status: done
 approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: []
 base_commit: a8b94df1f1ee091a9cca894c421e9ffc3ad30614
 branch: agent/zcode/DIAG-READING-EXPORT-001-FIX-B-reader-heartbeat-lifecycle
 worktree: G:/CODEX/New Manga.worktrees/DIAG-FIX-B-zcode
-integration_commit: null
+integration_commit: 9c9c9087b8f2a6e51fa670ab99486d4a11edff49
 ---
 
 # DIAG-READING-EXPORT-001-FIX-B — Reader 心跳生命周期修复（症状 B）
@@ -44,13 +44,13 @@ Codex（ZCode 会话）释放为 `ready`。FIX-A 已 `done`（integration=`a8b94
 
 ## Acceptance Criteria
 
-- [ ] 心跳生命周期闭环：存在明确的"离开读者"终结点使 `_heartbeat.stop()` 必达；泄漏形态（连接关闭后心跳触发写库）不再可复现——复用/扩展诊断探针 2（只读、隔离入库）验证修复后 0 次未处理异常。
-- [ ] `settleReadingTime` 对存储不可用路径的行为有类型化、可诊断的处理（记录或转发），**不吞 `ProgrammingError`**；失败后心跳不得继续重复报错。
-- [ ] 相关测试 teardown 关闭读者（至少覆盖 `tests/reading_export/test_viewmodels.py`、`tests/reading_export/test_qml_contract.py` 的 `openChapter` 用例与 `tests/core/test_bootstrap.py` 的生产装配读者路径）；新增"心跳不泄漏"回归测试先红后绿。
-- [ ] U1/U2 收口记录：修复后以 teardown 枚举/日志确认无存活心跳指向已关闭连接（探针或测试断言均可），在 Task/Handoff 记录结论。
-- [ ] 定向套件与全仓回归：`tests/reading_export` 与 `tests/core` 相关文件全部通过；passed/skipped 分列，skip 逐条给原因。
-- [ ] 未新增 skip、未放宽既有断言、不引入新依赖。
-- [ ] Handoff 与非作者 Review 齐备；Codex 集成核验通过后才可 `done`。
+- [x] 心跳生命周期闭环：泄漏形态（连接关闭后心跳触发写库）不再可复现——泄漏探针（真实事件循环跨 2 个完整心跳周期）7/7 PASS、EXIT=0、verdict=`LEAK CLOSED`（[probe log](../../verification/DIAG-READING-EXPORT-001-FIX-B/probe-heartbeat-leak-fixed.log)）。**部分达成披露（DSH R-01，代行 Codex 采信）**：`closeReader()` 终结点在 API/测试面成立，生产 QML/bootstrap 接线为零（禁止范围），生产路径由 stop-on-error 兜底；生产接线缺口登记为后续候选 Task（见集成记录）。
+- [x] `settleReadingTime` 对存储不可用路径类型化处理：`except sqlite3.Error` → 停心跳 + `heartbeat_error` 属性 + `heartbeatErrorChanged` 信号；不吞（错误全文可断言、心跳死亡不重复）；DSH r3 确认捕获范围裁决成立。
+- [x] 相关测试 teardown 关闭读者：6 处落点（reader fixture、3 个 qml_contract fixture、bootstrap finally、missing_translation 用例 try/finally）；webtoon_tiles 三处 JSON-store 局部 VM 按披露理由不收口（Handoff §2 AC3）；回归测试 `test_reader_heartbeat_stops_after_store_tear_down` 修前红（诊断探针 2 同构 artefact）修后绿。
+- [x] U1/U2 收口：泄漏面关闭后"哪个用例留下活心跳"失去现实意义（修复后 teardown 都会关闭、即使泄漏也已类型化防御），结论记录于 Handoff §4.4。
+- [x] 定向 163 passed、全仓 1317 passed/5 skipped（R1/R2 双轮同值），均 EXIT=0（Handoff §3 表 2a/2b/3a/3b）；skip=2 docTR+1 numpy+2 torch 逐条给原因，6 OpenSSL=shell PATH 口径已解释。
+- [x] 未新增 skip、未放宽既有断言、不引入新依赖（`import sqlite3` 为 stdlib；DSH 三轮核对确认）。
+- [x] Handoff 与非作者 Review 齐备：DSH R1 `changes_requested`（2P2+4P3 全处置）→ R2 复核"代码与测试面通过"（5 条文档缺口 N-01..N-05）→ R3 docs-only 返修后 [approved](../reviews/DIAG-READING-EXPORT-001-FIX-B-dsh-r3.md) @`f93ea667`；集成核验通过（[integration-9c9c9087](../../verification/DIAG-READING-EXPORT-001-FIX-B/integration-9c9c9087/integration.md)）。
 
 ## 允许修改范围（释放时最终冻结）
 
@@ -75,5 +75,12 @@ Codex（ZCode 会话）释放为 `ready`。FIX-A 已 `done`（integration=`a8b94
 
 ## 已知阻塞
 
-- 未释放：等待用户/Codex 排期与 §5.1 释放登记；base/branch/worktree 未冻结前不得开工。
-- 产品侧"离开读者页"信号的接线（`src/bootstrap/**`）当前在禁止范围；若实现发现必须动 bootstrap 才能关闭终结点，停止并交 Codex 作范围决定。
+- 无（已集成 done）。生产终结点接线缺口与 r3 的 2 条 P3 advisory 见集成记录（deferred/候选 Task）。
+
+## 集成记录（Integrator=代行 Codex，2026-09-28）
+
+- **三轮非作者 Review**：R1 `changes_requested`（2×P2 + 4×P3；[r1](../reviews/DIAG-READING-EXPORT-001-FIX-B-dsh-r1.md)）→ R2 返修后复核"代码与测试面通过"，剩 5 条文档缺口（[r2](../reviews/DIAG-READING-EXPORT-001-FIX-B-dsh-r2.md)）→ R3 docs-only 返修后 `approved` @`f93ea667`（[r3](../reviews/DIAG-READING-EXPORT-001-FIX-B-dsh-r3.md)）。报告逐字节导入，SHA256 见 `verification/DIAG-READING-EXPORT-001-FIX-B/review-dsh-import/sha256.txt`。
+- **交付链**：claim `6e37f05d` → R1 `3ce82240`/`528ba4d4` → R2 `2a1078b6` → R3 docs `f93ea667`（Owner tip）。
+- **集成 merge**：`9c9c9087b8f2a6e51fa670ab99486d4a11edff49`（parents `dbae0240`（Review 归档）+ `f93ea667`；Owner 历史未改写；唯一冲突 Task 文件取 Owner 交付版）。Owner 变更 12 路径全授权、禁改路径（bootstrap/QML/reading service/sqlite 实现）零命中、`diff --check` exit 0、集成 head 全仓 1317 passed/5 skipped EXIT=0。
+- **AC1 范围缺口裁决（代行 Codex，待追认）**：本 Task 的诊断修复目标（泄漏噪音/重复写/测试泄漏面）全部达成，判 `done`；**生产终结点接线**（QML 离开读者页 / `aboutToQuit` 调 `closeReader`）登记为独立 `proposed` 候选 Task，不在本 Task 内实现。
+- 诊断三症状至此全部修复落位：症状 A（FIX-A `done`）、症状 B（本 Task `done`）；DIAG-READING-EXPORT-001 `done`。
