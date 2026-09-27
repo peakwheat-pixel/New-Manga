@@ -2,15 +2,15 @@
 id: DIAG-READING-EXPORT-001-FIX-A
 title: Export terminal-state wait/signal-delivery semantics fix (symptom A)
 kind: fix
-status: proposed
-approval: not_released
+status: in_progress
+approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
-owner: null
+owner: ZCode
 reviewer: DeepSeek Harness
 depends_on: []
-base_commit: null
-branch: null
-worktree: null
+base_commit: 32ef1dd60cd82ac3a5fa18dfc5f834ec8639164a
+branch: agent/zcode/DIAG-READING-EXPORT-001-FIX-A-terminal-wait-semantics
+worktree: G:/CODEX/New Manga.worktrees/DIAG-FIX-A-zcode
 integration_commit: null
 ---
 
@@ -29,15 +29,17 @@ integration_commit: null
 （等待"终态信号已到达或终态状态已发布"）；产品侧方案（终态信号经队列调用/`QMetaObject.invokeMethod` 在主线程派发）
 仅在测试侧不足以关闭窗口时评估，且必须先分析对 QML 可观察时序的影响。
 
-**本 Task 状态 `proposed / NOT_RELEASED`：未冻结释放，不得开始实现。** 释放前 Codex 须按协作协议 §5.1
-在 STATUS 登记并冻结 base/branch/worktree。
+**释放记录（2026-09-28 00:2x，用户全夜自主推进指令授权）：** 本 Task 已按协作协议 §5.1 由代行 Codex（ZCode
+会话）释放为 `ready`。固定 base 冻结为释放时 main HEAD；branch/worktree 已创建；Owner=ZCode 开始实现，
+交付 head 冻结后交 DeepSeek Harness 非作者 Review；Integrator=代行 Codex（集成记录标注"代行 Codex"供事后追认）。
+FIX-B 保持 `proposed / NOT_RELEASED`，待本 Task 集成后串行释放（两者在 `tests/reading_export/**` 写集合重叠）。
 
-## 固定恢复点与角色（释放时冻结）
+## 固定恢复点与角色
 
-- 固定 base：**待释放时冻结**为当时 main HEAD；登记参考锚点 = DIAG 集成 merge `e0a0e784498fc339a4d666dd931cc67cfb65bbdb` 之后的治理提交。
-- Owner：ZCode（建议）；非作者 Reviewer：DeepSeek Harness（诊断方，非修复作者）；Integrator：Codex。
-- branch/worktree：待 Codex 创建。
-- depends_on：`[]`（诊断已 done）。建议与 FIX-B **串行释放**：两者写集合在 `tests/reading_export/**` 重叠。
+- 固定 base：`32ef1dd60cd82ac3a5fa18dfc5f834ec8639164a`（main，DIAG 集成与链接修正后的治理 head）。
+- Owner：ZCode（本会话亲自实现）；非作者 Reviewer：DeepSeek Harness（诊断方，非修复作者）；Integrator：代行 Codex（ZCode 会话，待追认）。
+- branch/worktree：`agent/zcode/DIAG-READING-EXPORT-001-FIX-A-terminal-wait-semantics` / `G:/CODEX/New Manga.worktrees/DIAG-FIX-A-zcode`。
+- depends_on：`[]`（诊断已 done）。与 FIX-B 串行释放。
 
 ## Acceptance Criteria
 
