@@ -5,6 +5,10 @@
       "sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3",
       "bytes": 49363
     },
+    "typical": {
+      "sha256": "dc5cc22b3d389be4d1b268d353ddd9dc4afa069db6dc8f1e23db548bed811d05",
+      "bytes": 11525983
+    },
     "boundary": {
       "sha256": "a6d72ac7690f53be6ae46ba88506bd97302a093f7108472bd9efc3cefda06484",
       "bytes": 268435456

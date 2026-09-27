@@ -12,7 +12,7 @@ from application.resource_channel import (
     TypedResourceChannelError,
 )
 
-from conftest import issue_for
+from conftest import issue_for, sha256_hex
 
 
 def codes(callable_):
@@ -155,3 +155,86 @@ class TestLimits:
     def test_max_constants_match_ruling(self):
         assert MAX_ACTIVE_REFERENCES == 32
         assert MAX_SUBSCRIBERS_PER_RESOURCE == 16
+        from application.resource_channel import DEFAULT_TTL_SECONDS
+        assert DEFAULT_TTL_SECONDS == 300.0  # T6 default (F-13: asserted, not assumed)
+
+
+class TestF13CoverageAdds:
+    # DSH F-13: coverage adds for the claims the review found unchecked.
+
+    def test_default_ttl_is_300s_and_touch_renews(self, reader, scope):
+        from application.resource_channel import DEFAULT_TTL_SECONDS
+
+        clock = {"now": 0.0}
+        service = ResourceChannelService(
+            clock=lambda: clock["now"], default_ttl_seconds=DEFAULT_TTL_SECONDS
+        )
+        opaque = issue_for(reader, service, scope)
+        # far inside the default window
+        clock["now"] = DEFAULT_TTL_SECONDS - 10
+        assert service.resolve(opaque) is not None
+        # touch re-arms from *now* (sliding, T6)
+        service.touch(opaque)
+        clock["now"] = DEFAULT_TTL_SECONDS + 5
+        assert service.resolve(opaque) is not None
+
+    def test_pin_release_alias_revokes(self, reader, service, scope):
+        # deletion/pin-release call sites revoke every reference of the
+        # resource (the alias exists to make those call sites explicit)
+        a = issue_for(reader, service, scope, resource_id="res-pin", revision="rev-1")
+        assert service.revoke_bookkeeping_for("res-pin") == 1
+        assert codes(lambda: service.resolve(a)) == "REF_REVOKED"
+
+    def test_inflight_consumption_survives_revoke(self, reader, service, scope):
+        # T6 carve-out: revoking a reference does not force-abort a read that
+        # already resolved its grant (the handle holder owns the lifecycle)
+        opaque = issue_for(reader, service, scope)
+        grant = service.resolve(opaque)  # in-flight consumption starts here
+        service.revoke(opaque)
+        # the granted object still reads through its verified handle
+        data = reader.read(grant, opaque)
+        assert sha256_hex(data) == scope.small_sha
+        # while the *next* resolve is rejected immediately
+        assert codes(lambda: service.resolve(opaque)) == "REF_REVOKED"
+
+    def test_t2_concurrent_subscriber_matrix(self, reader, service, scope):
+        # F-13: real concurrent acquisition up to the T2 subscriber limit
+        import threading
+
+        opaque = issue_for(reader, service, scope)
+        accepted, rejected = [], []
+        lock = threading.Lock()
+
+        def try_acquire():
+            try:
+                service.acquire_subscriber(opaque)
+                with lock:
+                    accepted.append(1)
+            except TypedResourceChannelError as error:
+                with lock:
+                    rejected.append(error.code)
+
+        threads = [threading.Thread(target=try_acquire) for _ in range(20)]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(10)
+        assert len(accepted) == MAX_SUBSCRIBERS_PER_RESOURCE
+        assert rejected == ["RESOURCE_LIMIT_EXCEEDED"] * (20 - MAX_SUBSCRIBERS_PER_RESOURCE)
+
+    def test_read_only_channel_has_no_write_surface(self, reader, service, scope):
+        # F-13/F-07: the control plane has no write mode; the reader only
+        # opens GENERIC_READ. REF_READ_ONLY is a documented non-reachable code
+        # for this slice (no write-mode request shape exists)
+        opaque = issue_for(reader, service, scope)
+        grant = service.resolve(opaque)
+        # the grant carries no write capability and the reader takes no mode
+        data = reader.read(grant, opaque)
+        assert sha256_hex(data) == scope.small_sha
+        # writing through the *channel* is not expressible: the service has
+        # no write entry point at all
+        write_entries = [
+            name for name in dir(service)
+            if name.startswith("write") and callable(getattr(service, name))
+        ]
+        assert write_entries == []

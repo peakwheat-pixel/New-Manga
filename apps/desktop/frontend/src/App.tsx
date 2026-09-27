@@ -149,16 +149,24 @@ export default function App() {
           await expectTypedRejection(() => client.fetchChunk(unknownUrl, 0), "REF_UNKNOWN_ID"),
         );
 
-        // E-04 revoke -> next resolve typed 410 (T6 immediate revocation)
+        // E-04 revoke -> next resolve typed 410 (T6 immediate revocation).
+        // DSH F-01 regression form: the FIRST fetch warms the host grant
+        // cache, so the post-revoke fetch proves a warm cache cannot bypass
+        // the Core (the pre-fix build served 200 here).
         const revocable = await client.issue("res-probe", "rev-2");
-        await client.revoke(revocable.opaqueId);
-        record(
-          "E-04-revoked-next-resolve",
-          await expectTypedRejection(
-            () => client.fetchChunk(revocable.url, 0),
-            "REF_REVOKED",
-          ),
-        );
+        const warmed = await client.fetchAll(revocable.url, revocable.size);
+        if (warmed.size !== revocable.size) {
+          record("E-04-revoke-after-cached-fetch", { status: "FAIL", observed: "warm-up fetch short" });
+        } else {
+          await client.revoke(revocable.opaqueId);
+          record(
+            "E-04-revoke-after-cached-fetch",
+            await expectTypedRejection(
+              () => client.fetchChunk(revocable.url, 0),
+              "REF_REVOKED",
+            ),
+          );
+        }
 
         // E-05 expiry (probe-only TTL override; the product default is 300 s)
         const expiring = await call<{ url: string; opaque_id: string }>("issue_resource_url", {
@@ -183,11 +191,16 @@ export default function App() {
           },
         });
 
-        // E-07 hot-cache first-byte-to-host P95 (T3 target ≤200 ms; the cold
-        // cache measurement is S1-B6 and stays NOT_RUN in this slice)
+        // E-07 hot-cache first-byte-to-host P95 on a ~11.5 MiB fixture
+        // (DSH F-04: a 49 KB fixture cannot speak for the <=25 MiB T3 line;
+        // the cold cache measurement is S1-B6 and stays NOT_RUN). Each issue
+        // mints a NEW opaque reference, so every sample includes the host's
+        // first-verified full-file digest pass -- the honest per-reference
+        // first-byte cost.
+        await call("register_catalog", { resourceId: "res-hot", relPath: "typical.png" });
         const timings: number[] = [];
         for (let i = 0; i < 8; i += 1) {
-          const hot = await client.issue("res-probe", "rev-1");
+          const hot = await client.issue("res-hot", "rev-1");
           const start = performance.now();
           const response = await fetch(`${hot.url}?chunk=0`);
           await response.arrayBuffer();
@@ -197,7 +210,11 @@ export default function App() {
         const p95 = timings[Math.min(timings.length - 1, Math.floor(timings.length * 0.95))];
         record("E-07-hot-cache-p95", {
           status: p95 <= 200 ? "PASS" : "FAIL",
-          observed: { p95_ms: Math.round(p95), timings_ms: timings.map((t) => Math.round(t)) },
+          observed: {
+            p95_ms: Math.round(p95),
+            timings_ms: timings.map((t) => Math.round(t)),
+            fixture: "typical.png (~11.5 MiB)",
+          },
         });
 
         // E-08 256 MiB boundary through chunked streaming (T4: the resident
@@ -237,7 +254,12 @@ export default function App() {
         finish(0);
       } catch (error) {
         append(`FATAL ${String(error)}`);
-        results.push({ id: "FATAL", status: "FAIL", observed: String(error) });
+        results.push({
+          id: "FATAL",
+          status: "FAIL",
+          observed: String(error),
+          stack: error instanceof Error ? error.stack : null,
+        });
         observed("fatal");
         await flush();
         finish(1);

@@ -236,6 +236,9 @@ pub struct MockCoreChannel {
 pub struct MockEntry {
     pub grant: Grant,
     pub revoked: bool,
+    /// None = no expiry (mirrors the Core's default TTL); Some(instant) when
+    /// the issue carried a ttl_override (probe-only path).
+    pub expires_at: Option<std::time::Instant>,
 }
 
 impl MockCoreChannel {
@@ -266,7 +269,7 @@ impl CoreChannel for MockCoreChannel {
         &self,
         resource_id: &str,
         revision: &str,
-        _ttl: Option<f64>,
+        ttl_override: Option<f64>,
     ) -> Result<IssuedRef, CoreError> {
         let rel = self
             .catalog
@@ -294,10 +297,11 @@ impl CoreChannel for MockCoreChannel {
             file_index: 0,
         };
         let size = grant.size;
-        self.table
-            .lock()
-            .unwrap()
-            .insert(opaque_id.clone(), MockEntry { grant, revoked: false });
+        let expires_at = ttl_override.map(|secs| std::time::Instant::now() + std::time::Duration::from_secs_f64(secs));
+        self.table.lock().unwrap().insert(
+            opaque_id.clone(),
+            MockEntry { grant, revoked: false, expires_at },
+        );
         Ok(IssuedRef { opaque_id, size })
     }
 
@@ -308,6 +312,11 @@ impl CoreChannel for MockCoreChannel {
             .ok_or_else(|| CoreError::new("REF_UNKNOWN_ID"))?;
         if entry.revoked {
             return Err(CoreError::new("REF_REVOKED"));
+        }
+        if let Some(expires_at) = entry.expires_at {
+            if std::time::Instant::now() >= expires_at {
+                return Err(CoreError::new("REF_EXPIRED"));
+            }
         }
         Ok(entry.grant.clone())
     }

@@ -59,7 +59,16 @@ impl ScopeRoots {
 struct CachedGrant {
     grant: Grant,
     digest_verified: bool,
+    /// LastWriteTime observed when the full-file digest check last passed
+    /// (F-02: an equal-size in-place rewrite bumps mtime while keeping the
+    /// NTFS file index, so an mtime change forces a digest re-verification).
+    verified_mtime: Option<u64>,
 }
+
+/// F-10 (partial): the cache must not grow without bound. Entries are always
+/// re-derivable from the Core, so clearing is a performance event, not a
+/// correctness one.
+const GRANT_CACHE_MAX_ENTRIES: usize = 1024;
 
 #[derive(Default)]
 pub struct GrantCache {
@@ -118,11 +127,12 @@ struct ParsedRequest {
     chunk: u64,
 }
 
-fn parse_request(uri: &str) -> Option<ParsedRequest> {
+fn parse_request(uri: &str) -> Option<(String, ParsedRequest)> {
+    // returns (host, parsed); the caller validates the host (F-10)
     let rest = uri.split_once("://")?.1;
-    let host_path = match rest.split_once('/') {
-        Some((_, hp)) => hp,
-        None => return Some(ParsedRequest { opaque_id: String::new(), chunk: 0 }),
+    let (host, host_path) = match rest.split_once('/') {
+        Some((h, hp)) => (h.to_string(), hp),
+        None => (rest.to_string(), ""),
     };
     let (path, query) = match host_path.split_once('?') {
         Some((p, q)) => (p, Some(q)),
@@ -141,10 +151,13 @@ fn parse_request(uri: &str) -> Option<ParsedRequest> {
             })
         })
         .unwrap_or(0);
-    Some(ParsedRequest {
-        opaque_id: percent_decode(segment),
-        chunk,
-    })
+    Some((
+        host.to_lowercase(),
+        ParsedRequest {
+            opaque_id: percent_decode(segment),
+            chunk,
+        },
+    ))
 }
 
 fn percent_decode(text: &str) -> String {
@@ -251,16 +264,18 @@ impl Drop for OpenedFile {
     }
 }
 
-fn identity_size(handle: *mut std::ffi::c_void) -> Result<(u32, u64, u64), CoreError> {
+fn identity_size_mtime(
+    handle: *mut std::ffi::c_void,
+) -> Result<(u32, u64, u64, u64), CoreError> {
     let mut raw = win32::RawInfo::default();
     let ok = unsafe { win32::GetFileInformationByHandle(handle, &mut raw) };
     if ok == 0 {
-        let error = win32::last_error();
         return Err(CoreError::new("OPEN_FAILED"));
     }
     let size = ((raw.size_high as u64) << 32) | raw.size_low as u64;
     let index = ((raw.index_high as u64) << 32) | raw.index_low as u64;
-    Ok((raw.volume_serial, index, size))
+    let mtime = ((raw.write_hi as u64) << 32) | raw.write_lo as u64;
+    Ok((raw.volume_serial, index, size, mtime))
 }
 
 fn final_path(handle: *mut std::ffi::c_void) -> Result<String, CoreError> {
@@ -374,11 +389,12 @@ pub(crate) fn hex(bytes: impl AsRef<[u8]>) -> String {
 
 // ------------------------------------------------------------- verification
 
-fn verify_from_handle(
+fn verify_and_serve(
     grant: &Grant,
     roots: &ScopeRoots,
-    mut cache_entry: Option<&mut CachedGrant>,
-) -> Result<OpenedFile, CoreError> {
+    entry: &mut CachedGrant,
+    chunk_offset: u64,
+) -> Result<Vec<u8>, CoreError> {
     let root = roots
         .root_for(&grant.scope_class)
         .ok_or_else(|| CoreError::new("REF_SCOPE_DENIED"))?;
@@ -393,8 +409,8 @@ fn verify_from_handle(
         return Err(CoreError::new("REF_OUT_OF_SCOPE"));
     }
 
-    // identity + size from the handle vs issue-time facts
-    let (volume, index, size) = identity_size(opened.handle)?;
+    // identity + size from the handle vs issue-time facts (every request)
+    let (volume, index, size, mtime) = identity_size_mtime(opened.handle)?;
     if volume != grant.volume_serial || index != grant.file_index {
         return Err(CoreError::new("FILE_IDENTITY_CHANGED"));
     }
@@ -405,18 +421,30 @@ fn verify_from_handle(
         return Err(CoreError::new("RESOURCE_TOO_LARGE"));
     }
 
-    // first-verified: stream the whole file through the handle to check the
-    // issue-time digest (no materialisation; T4 resident buffer ≤ 32 MiB)
-    if let Some(entry) = cache_entry.as_deref_mut() {
-        if !entry.digest_verified {
-            let digest = stream_digest(opened.handle, size)?;
-            if digest != grant.sha256 {
-                return Err(CoreError::new("CONTENT_DIGEST_MISMATCH"));
-            }
-            entry.digest_verified = true;
+    // F-02: the issue-time digest is re-verified when never verified, or when
+    // the file's LastWriteTime moved since the last verified pass (an
+    // equal-size in-place rewrite keeps the NTFS file index but bumps mtime).
+    let needs_digest = !entry.digest_verified || entry.verified_mtime != Some(mtime);
+    if needs_digest {
+        let digest = stream_digest(opened.handle, size)?;
+        if digest != grant.sha256 {
+            return Err(CoreError::new("CONTENT_DIGEST_MISMATCH"));
         }
+        entry.digest_verified = true;
+        entry.verified_mtime = Some(mtime);
     }
-    Ok(opened)
+
+    // serve the requested chunk through the same handle
+    let want = ((grant.size - chunk_offset).min(CHUNK_SIZE)) as usize;
+    read_through(opened.handle, chunk_offset, want)?;
+
+    // post-read identity re-check (RC1-AC4)
+    let (post_volume, post_index, _, _) = identity_size_mtime(opened.handle)?;
+    if post_volume != grant.volume_serial || post_index != grant.file_index {
+        return Err(CoreError::new("FILE_IDENTITY_CHANGED"));
+    }
+    // re-read the chunk AFTER the post-check so no unchecked bytes escape
+    read_through(opened.handle, chunk_offset, want)
 }
 
 // ------------------------------------------------------------- request flow
@@ -427,29 +455,34 @@ pub fn handle_m2res_request(
     cache: &GrantCache,
     roots: &ScopeRoots,
 ) -> HttpResponse {
-    let parsed = match parse_request(uri) {
-        Some(parsed) => parsed,
+    let (host, parsed) = match parse_request(uri) {
+        Some(pair) => pair,
         None => return HttpResponse::error("REF_MALFORMED", 400),
     };
+    // F-10 (partial): the protocol only answers its own scheme. Both
+    // documented forms are accepted: the native `m2res://localhost/...`
+    // (measured: WebView2 normalises the fetch back to the custom scheme)
+    // and the Windows http mapping `http://m2res.localhost/...` that
+    // build_url emits. Anything else is malformed.
+    if host != "localhost" && host != SCHEME_HOST {
+        return HttpResponse::error("REF_MALFORMED", 400);
+    }
     if !is_well_formed_id(&parsed.opaque_id) {
         return HttpResponse::error("REF_MALFORMED", 400);
     }
 
     let full_id = full_id_from_segment(&parsed.opaque_id);
-    let (grant, digest_verified) = {
-        let mut guard = cache.map.lock().unwrap();
-        match guard.get(&full_id) {
-            Some(entry) => (entry.grant.clone(), entry.digest_verified),
-            None => match channel.resolve(&full_id) {
-                Ok(grant) => {
-                    guard.insert(
-                        full_id.clone(),
-                        CachedGrant { grant: grant.clone(), digest_verified: false },
-                    );
-                    (grant, false)
-                }
-                Err(error) => return typed_error(&error),
-            },
+
+    // F-01: EVERY request consults the Core (resolve carries revocation and
+    // expiry semantics) -- a warm cache never bypasses T6. A Core rejection
+    // evicts the cache entry and propagates the typed code; a pass refreshes
+    // the cached grant (the Core-side resolve also slides the TTL, which is
+    // the T6 "active consumption" renewal for this request).
+    let fresh_grant = match channel.resolve(&full_id) {
+        Ok(grant) => grant,
+        Err(error) => {
+            cache.map.lock().unwrap().remove(&full_id);
+            return typed_error(&error);
         }
     };
 
@@ -458,47 +491,58 @@ pub fn handle_m2res_request(
         .checked_mul(CHUNK_SIZE)
         .ok_or_else(|| HttpResponse::error("REF_MALFORMED", 400));
     let chunk_offset = match chunk_offset {
-        Ok(offset) if offset < grant.size => offset,
+        Ok(offset) if offset < fresh_grant.size => offset,
         _ => return HttpResponse::error("REF_MALFORMED", 400),
     };
 
-    // verify against the cloned grant; mark/clear the digest flag afterwards
-    let opened = match verify_from_handle(&grant, roots, Some(&mut CachedGrant {
-        grant: grant.clone(),
-        digest_verified,
-    })) {
-        Ok(opened) => opened,
-        Err(error) => {
-            // an identity/size/containment failure invalidates the cache entry
-            if matches!(
-                error.code.as_str(),
-                "FILE_IDENTITY_CHANGED" | "FILE_SIZE_CHANGED" | "REF_OUT_OF_SCOPE"
-            ) {
-                cache.map.lock().unwrap().remove(&full_id);
+    let mut guard = cache.map.lock().unwrap();
+    if guard.len() >= GRANT_CACHE_MAX_ENTRIES {
+        guard.clear(); // re-derivable from the Core; bounded memory (F-10)
+    }
+    let entry = match guard.get_mut(&full_id) {
+        Some(entry) => {
+            // keep the digest flag only if the Core's issue-time facts are
+            // unchanged; different facts force a full re-verification
+            if entry.grant.sha256 != fresh_grant.sha256
+                || entry.grant.size != fresh_grant.size
+                || entry.grant.rel_path != fresh_grant.rel_path
+            {
+                entry.digest_verified = false;
+                entry.verified_mtime = None;
             }
-            return typed_error(&error);
+            entry.grant = fresh_grant.clone();
+            entry
+        }
+        None => {
+            guard.insert(
+                full_id.clone(),
+                CachedGrant {
+                    grant: fresh_grant.clone(),
+                    digest_verified: false,
+                    verified_mtime: None,
+                },
+            );
+            guard.get_mut(&full_id).unwrap()
         }
     };
 
-    let want = ((grant.size - chunk_offset).min(CHUNK_SIZE)) as usize;
-    let chunk = match read_through(opened.handle, chunk_offset, want) {
-        Ok(chunk) => chunk,
-        Err(error) => return typed_error(&error),
-    };
-    // post-read identity re-check (RC1-AC4)
-    if let Ok((volume, index, _)) = identity_size(opened.handle) {
-        if volume != grant.volume_serial || index != grant.file_index {
-            return HttpResponse::error("FILE_IDENTITY_CHANGED", 400);
+    match verify_and_serve(&fresh_grant, roots, entry, chunk_offset) {
+        Ok(chunk) => HttpResponse::ok("application/octet-stream", chunk),
+        Err(error) => {
+            // an identity/size/containment/digest failure invalidates the entry
+            if matches!(
+                error.code.as_str(),
+                "FILE_IDENTITY_CHANGED"
+                    | "FILE_SIZE_CHANGED"
+                    | "REF_OUT_OF_SCOPE"
+                    | "CONTENT_DIGEST_MISMATCH"
+            ) {
+                drop(guard);
+                cache.map.lock().unwrap().remove(&full_id);
+            }
+            typed_error(&error)
         }
     }
-    drop(opened);
-    if let Some(entry) = cache.map.lock().unwrap().get_mut(&full_id) {
-        if !entry.digest_verified {
-            // the verify pass streamed the full digest just now
-            entry.digest_verified = true;
-        }
-    }
-    HttpResponse::ok("application/octet-stream", chunk)
 }
 
 /// URL builder used by the `issue_resource_url` command; the WebView-visible
@@ -516,9 +560,9 @@ fn full_id_from_segment(segment: &str) -> String {
 }
 
 #[cfg(test)]
-pub fn capture_facts_for_tests(path: &PathBuf) -> Result<(u32, u64, u64), CoreError> {
-    // open once, capture identity+size, close (no leaked handle clashing
-    // with later writes in the same test)
+pub fn capture_facts_for_tests(path: &PathBuf) -> Result<(u32, u64, u64, u64), CoreError> {
+    // open once, capture identity+size+mtime, close (no leaked handle
+    // clashing with later writes in the same test)
     let opened = open_once(&path.to_string_lossy())?;
-    identity_size(opened.handle)
+    identity_size_mtime(opened.handle)
 }

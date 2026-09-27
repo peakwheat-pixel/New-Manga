@@ -41,6 +41,8 @@ def prepare_lab() -> dict:
     from conftest import write_noise_png  # noqa: E402
 
     payload = write_noise_png(derived / "asset.png", 128, 128, seed=5101)
+    # F-04: a <=25 MiB "typical page" fixture for the T3 hot-cache P95 line
+    typical = write_noise_png(derived / "typical.png", 1600, 2400, seed=5202)
 
     # boundary (exactly 256 MiB) and oversize (+1) as sparse files
     boundary = derived / "boundary.bin"
@@ -54,6 +56,7 @@ def prepare_lab() -> dict:
         "lab": str(LAB),
         "fixtures": {
             "asset": {"sha256": sha256_hex(payload), "bytes": len(payload)},
+            "typical": {"sha256": sha256_hex(typical), "bytes": len(typical)},
             "boundary": {"sha256": hashlib.sha256(b"\x00" * BOUNDARY_BYTES).hexdigest(), "bytes": BOUNDARY_BYTES},
         },
     }

@@ -256,7 +256,7 @@ mod tests {
         let metadata = std::fs::metadata(env.roots.derived.join(rel)).unwrap();
         // capture real identity via the same helper the product uses
         drop(table);
-        let (volume, index, _size) =
+        let (volume, index, _size, _mtime) =
             resource_protocol::capture_facts_for_tests(&env.roots.derived.join(rel))
                 .expect("issue-time facts from fixture handle");
         let mut table = env.channel.table.lock().unwrap();
@@ -352,6 +352,100 @@ mod tests {
         let second = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
         assert_eq!(second.status, 400);
         assert_eq!(std::str::from_utf8(&second.body).unwrap(), "{\"code\":\"FILE_IDENTITY_CHANGED\"}");
+    }
+
+    // ---- M2-RC1-FIX regression tests (DSH F-01/F-02) ----------------------
+    // These MUST fail against the pre-fix cache (grant served from cache
+    // without consulting the Core) and pass after the repair.
+
+    #[test]
+    fn f01_fetch_then_revoke_then_fetch_must_be_typed() {
+        let payload = b"cached-then-revoked";
+        let (env, _sha) = env_with_fixture(payload);
+        let opaque = registered(&env, "asset.png", payload);
+        let url = url_for(&opaque, Some(0));
+
+        // first fetch establishes the grant cache
+        let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        assert_eq!(first.status, 200, "first fetch must serve");
+
+        // Core-side revocation AFTER the cache is warm
+        env.channel.revoke(&opaque).unwrap();
+
+        // the next request must consult the Core and reject
+        let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        assert_eq!(second.status, 410, "revoked URL must not be served from cache");
+        assert_eq!(
+            std::str::from_utf8(&second.body).unwrap(),
+            "{\"code\":\"REF_REVOKED\"}"
+        );
+    }
+
+    #[test]
+    fn f01_ttl_expiry_invalidates_cached_grant() {
+        let payload = b"cached-then-expired";
+        let (env, _sha) = env_with_fixture(payload);
+        // probe-only short TTL through the issue override
+        env.channel.register("res-001", "asset.png").unwrap();
+        let issued = env.channel.issue("res-001", "rev-1", Some(0.3)).unwrap();
+        // align mock facts like registered() does
+        {
+            let mut table = env.channel.table.lock().unwrap();
+            let entry = table.get_mut(&issued.opaque_id).unwrap();
+            entry.grant.size = payload.len() as u64;
+            entry.grant.sha256 = sha_hex(payload);
+        }
+        let facts = resource_protocol::capture_facts_for_tests(&env.roots.derived.join("asset.png"))
+            .expect("fixture facts");
+        {
+            let mut table = env.channel.table.lock().unwrap();
+            let entry = table.get_mut(&issued.opaque_id).unwrap();
+            entry.grant.volume_serial = facts.0;
+            entry.grant.file_index = facts.1;
+        }
+        let url = url_for(&issued.opaque_id, Some(0));
+
+        let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        assert_eq!(first.status, 200, "first fetch must serve within TTL");
+
+        std::thread::sleep(std::time::Duration::from_millis(500));
+
+        let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        assert_eq!(second.status, 410, "expired URL must not be served from cache");
+        assert_eq!(
+            std::str::from_utf8(&second.body).unwrap(),
+            "{\"code\":\"REF_EXPIRED\"}"
+        );
+    }
+
+    #[test]
+    fn f02_equal_size_rewrite_after_first_verify_rejected() {
+        let payload = b"equal-size-rewrite-payload";
+        let (env, _sha) = env_with_fixture(payload);
+        let opaque = registered(&env, "asset.png", payload);
+        let url = url_for(&opaque, Some(0));
+
+        let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        assert_eq!(first.status, 200, "first fetch verifies and caches");
+
+        // equal-size IN-PLACE rewrite: same path, same length, same file index
+        // (NTFS keeps the index on overwrite), different bytes + new mtime
+        let flipped: Vec<u8> = payload.iter().map(|b| b ^ 0x5A).collect();
+        let target = env.roots.derived.join("asset.png");
+        let existing = std::fs::OpenOptions::new().write(true).open(&target).unwrap();
+        {
+            use std::io::{Seek, SeekFrom, Write};
+            let mut existing = existing;
+            existing.seek(SeekFrom::Start(0)).unwrap();
+            existing.write_all(&flipped).unwrap();
+        }
+
+        let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        assert_eq!(second.status, 400, "rewritten content must not be served");
+        assert_eq!(
+            std::str::from_utf8(&second.body).unwrap(),
+            "{\"code\":\"CONTENT_DIGEST_MISMATCH\"}"
+        );
     }
 
     /// Integration with the real Python Core sidecar: exercises the stdio

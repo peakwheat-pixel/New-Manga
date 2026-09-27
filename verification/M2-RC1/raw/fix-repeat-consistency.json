@@ -1,0 +1,11 @@
+{
+  "fix_round": "M2-RC1-FIX (DSH review F-01..F-13)",
+  "first_status_counts": {
+    "PASS": 10
+  },
+  "repeat_status_counts": {
+    "PASS": 10
+  },
+  "differences": {},
+  "consistent": true
+}
