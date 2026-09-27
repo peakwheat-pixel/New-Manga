@@ -127,7 +127,12 @@ def pages(tmp_path):
 
 @pytest.fixture()
 def reader(reading, pages):
-    return ReaderViewModel(reading, Catalog(pages))
+    # DIAG-READING-EXPORT-001-FIX-B: close on teardown so a VM whose test
+    # opened a chapter does not leave a live 5 s heartbeat behind.
+    vm = ReaderViewModel(reading, Catalog(pages))
+    yield vm
+    if vm.hasChapter:
+        vm.closeReader()
 
 
 @pytest.fixture()
@@ -456,3 +461,40 @@ def test_export_without_pages_surfaces_status(qapp, tmp_path, export_service):
     assert pump_until(qapp, lambda: not vm.running and failures)
     assert vm.pageCount == 0
     assert len(failures) == 1
+
+
+@requires_pyside6
+def test_reader_heartbeat_stops_after_store_tear_down(qapp, tmp_path):
+    """DIAG-READING-EXPORT-001-FIX-B: the historical symptom-B shape.
+
+    A reader with an open chapter keeps a live heartbeat.  When the storage
+    connection is torn down the way a SQLite fixture teardown does, the next
+    settle (the exact call the heartbeat makes) must not raise, must record
+    the typed storage failure on the view model, and must stop the heartbeat
+    so the error does not repeat every HEARTBEAT_MS.  Pre-fix this raised
+    ``sqlite3.ProgrammingError`` straight through the timer slot with the
+    heartbeat still active; the deterministic pre-fix reproduction is
+    archived as DIAG probe 2 (verification/DIAG-READING-EXPORT-001/).
+    """
+    from application.reading import ReadingService
+    from infrastructure.sqlite import SqliteReadingProgressStore
+    from infrastructure.sqlite.connection import open_database
+    from infrastructure.sqlite.migrator import MigrationRunner
+    from infrastructure.sqlite.schema import SCHEMA_VERSION_V4, default_migrations
+
+    conn, _opened = open_database(
+        tmp_path / "library.db", latest_known_schema_version=SCHEMA_VERSION_V4
+    )
+    MigrationRunner(conn, default_migrations()).apply_pending()
+    reading = ReadingService(SqliteReadingProgressStore(conn))
+    reader = ReaderViewModel(reading, Catalog(make_pages(tmp_path, count=1)))
+    reader.openChapter("b", "c", "第1话", "paged", "rtl")
+    assert reader._heartbeat.isActive()
+
+    conn.close()  # fixture-teardown equivalent
+    reader._last_settle = time.monotonic() - 2.0
+    reader.settleReadingTime()  # the exact call the heartbeat makes
+
+    assert reader.heartbeat_error is not None, "the failure must stay diagnosable"
+    assert "sqlite3.ProgrammingError" in reader.heartbeat_error
+    assert reader._heartbeat.isActive() is False, "the heartbeat must not repeat"

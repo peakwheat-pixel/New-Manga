@@ -1,0 +1,30 @@
+# FIX-B heartbeat-leak verification probe (post-fix)
+# Command: python verification/DIAG-READING-EXPORT-001-FIX-B/probe-heartbeat-leak-fixed.py
+# Interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe (Python 3.12.3 / PySide6 6.11.2 / sqlite3 3.45.1)
+# CWD: /g/CODEX/New Manga.worktrees/DIAG-FIX-B-zcode
+# Start (UTC): 2026-09-27T17:35:05.836448900Z
+after openChapter : heartbeat active = True
+sqlite connection closed (teardown equivalent)
+
+--- (a) real QTimer heartbeat, one full interval (5000 ms + 800 ms) ---
+unhandled exceptions captured : 0
+heartbeat still active        : False
+heartbeat_error               : 'sqlite3.ProgrammingError: Cannot operate on a closed database.'
+
+--- (b) one more interval after the stop ---
+unhandled exceptions captured : 0
+heartbeat still active        : False
+
+--- (c) synchronous settleReadingTime() after the loss ---
+synchronous settle raised     : no
+
+check [PASS] heartbeat active after openChapter
+check [PASS] (a) zero unhandled exceptions across one interval
+check [PASS] (a) heartbeat stopped itself
+check [PASS] (a) failure recorded on the VM
+check [PASS] (b) zero unhandled exceptions in the second interval
+check [PASS] (b) heartbeat still stopped
+check [PASS] (c) synchronous settle does not raise
+verdict: LEAK CLOSED -- a torn-down storage under a live heartbeat is recorded, not raised, and the heartbeat stops
+# End (UTC): 2026-09-27T17:35:17.727263500Z
+EXIT=0

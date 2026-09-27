@@ -635,6 +635,11 @@ def test_assemble_engine_registers_reader_export_and_tiled_reader(
         assert summary["failed"] == 1
     finally:
         engine.deleteLater()
+        # DIAG-READING-EXPORT-001-FIX-B: enterReader above started the reader
+        # heartbeat; close the reader (flush + stop the timer) while the
+        # connection is still alive, so no leaked 5 s timer can fire after
+        # conn.close().
+        services.reader.closeReader()
         services.conn.close()
 
 

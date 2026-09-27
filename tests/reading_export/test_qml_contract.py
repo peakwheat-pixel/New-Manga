@@ -195,13 +195,22 @@ def real_png_pages(tmp_path, count=3, page_height=60):
     return rows
 
 
+def _close_reader_stack(vm):
+    """DIAG-READING-EXPORT-001-FIX-B: a fixture VM that opened a chapter
+    keeps a 5 s heartbeat alive; close it on teardown so no leaked timer
+    can fire after later tests tore their storage down."""
+    if vm.hasChapter:
+        vm.closeReader()
+
+
 @pytest.fixture()
 def reader_stack(tmp_path):
     pages = real_png_pages(tmp_path)
     reading = make_reading_service(tmp_path)
     export_service = make_service(tmp_path)
     vm = ReaderViewModel(reading, Catalog(pages), export_service=export_service)
-    return vm, reading, pages
+    yield vm, reading, pages
+    _close_reader_stack(vm)
 
 
 @pytest.fixture()
@@ -216,7 +225,8 @@ def reader_stack_webtoon(tmp_path):
     reading = make_reading_service(tmp_path)
     export_service = make_service(tmp_path)
     vm = ReaderViewModel(reading, Catalog(pages), export_service=export_service)
-    return vm, reading, pages
+    yield vm, reading, pages
+    _close_reader_stack(vm)
 
 
 class _EmptyCatalog:
@@ -477,7 +487,8 @@ def reader_stack_tiled(tmp_path):
     vm = ReaderViewModel(
         reading, Catalog(pages), export_service=export_service, tile_factory=factory
     )
-    return vm, reading, pages
+    yield vm, reading, pages
+    _close_reader_stack(vm)
 
 
 def served_tile_sources(root) -> list:
