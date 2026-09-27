@@ -1,0 +1,91 @@
+# M2-RC2 Final Verification Log
+
+## 0. Verified tree
+
+- Branch: agent/zcode/M2-RC2-resource-channel-hardening
+- Worktree: C:/Users/49745/.codex/worktrees/m2-rc2-zcode/New Manga
+- Base (frozen release base): 22a2c2bf9a70d8c3b81edcdbe0e1ef146db556e5
+- Delivery head verified by the commands below: a8fb17cab78e53cdafb8656ab3d9e7044da0f411
+- Working tree at run time: clean (`git status --porcelain` empty); the docs
+  commit (Task backfill + Handoff) that follows adds documentation only.
+- Head chain: 22a2c2bf (base) -> b4a78f0c (claim: task file import + in_progress)
+  -> 9b50dedc (Python: catalog authority + import isolation)
+  -> 65ea015e (Rust: command surface hardening + ACL/CSP)
+  -> 24da5a91 (frontend: deny matrix + RC2 scenarios)
+  -> a8fb17ca (RC2 E2E runner + allowlist announcement + evidence)
+
+Runtime transcription:
+  $ git rev-parse HEAD
+  a8fb17cab78e53cdafb8656ab3d9e7044da0f411
+  $ git status --porcelain
+  (empty)
+
+## 1. Environment
+
+| Tool | Version |
+|---|---|
+| OS | Windows 11 Pro build 26200 |
+| Python | 3.14.6 (C:\Python314\python.exe) |
+| Cargo | 1.98.1 (797e8a9bc 2026-08-05) |
+| rustc | 1.98.1 (48a229cea 2026-09-01) |
+| Node | v24.15.0 |
+| npm | 12.0.1 |
+| Vitest | v2.1.9 |
+
+Identical to the release baseline environment (verification/M2-RC2 in
+registration commit cb8336d6). Raw tool transcription: raw/claim-baseline-versions.log.
+
+## 2. Fixed Task commands (release gate) — results at the delivery tree
+
+| # | Command | Exit | Result | Raw log |
+|---|---|---:|---|---|
+| 1 | `python -m pytest tests/m2_resource_channel -q` | 0 | 64 passed in 2.48s (claim baseline 43 passed) | raw/final-pytest.log |
+| 2 | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | 0 | 19 passed; 0 failed (claim baseline 12 passed) | raw/final-cargo.log |
+| 3 | `npm test --prefix apps/desktop/frontend -- --run` | 0 | Vitest: 2 files / 15 tests passed (claim baseline 8) | raw/final-vitest.log |
+| 4 | `python verification/M2-RC2/run_e2e.py` | 0 | GATE PASS — 10/10 gates; probe matrix 13/13 PASS | raw/final-e2e-runner-stdout.log |
+
+Claim-baseline (pre-implementation, head b4a78f0c) results for the same
+commands: 43 passed / 12 passed / 8 passed / E2E BLOCKED (runner did not
+exist — it is this Task's deliverable). Raw: raw/claim-baseline-*.log.
+
+## 3. E2E gate detail (command 4)
+
+From raw/e2e-gate.json and raw/final-e2e-runner-stdout.log:
+
+| Gate | Result |
+|---|---|
+| environment | PASS |
+| lab | PASS |
+| catalog-seeding (real `catalog_loader` CLI, 5 rows) | PASS |
+| sidecar-import-isolation (headless subprocess, F-05 whitelist) | PASS |
+| runtime-build (cargo build --release --locked) | PASS |
+| probe-phase (E-00..E-09 RC1 regressions + D-01..D-03 RC2, 13/13 PASS, exit 0) | PASS |
+| probe-allowlist-announcement (exactly 7 commands) | PASS |
+| sidecar-module-dump-probe (9 project modules, all whitelisted) | PASS |
+| interactive-deny-matrix (production allowlist exactly 3 commands; process alive through the 10 s watch; no probe results file) | PASS |
+| sidecar-module-dump-interactive (9 project modules, all whitelisted) | PASS |
+
+Loaded project modules in the REAL sidecar (both phases): application{,.resource_channel{,.dto,.service}},
+infrastructure{,.resource_channel{,.catalog_store,.handle_resolver,.scope}} — no infrastructure.filesystem,
+no infrastructure.sqlite, no domain.* (host_bridge itself runs as __main__ under `python -m`).
+
+## 4. Scope transcription (base..delivery head)
+
+39 paths, all inside the Task's allowed paths; `git diff --check` clean.
+Full verbatim transcription: raw/final-diff-name-status.txt.
+Conditional path used: src/infrastructure/__init__.py (PEP 562 lazy imports;
+necessity evidence: raw/sidecar-import-before-fix.log, captured BEFORE any
+code change at claim head b4a78f0c; rationale in Task + Handoff).
+
+## 5. Honest gates (S1-B series)
+
+| Item | Status |
+|---|---|
+| S1-B3 (DACL/integrity, product-level) | NOT_RUN |
+| S1-B5 (key/reference lifecycle beyond old-IDs-never-rebind) | UNVERIFIED (RC1 scope only; unchanged) |
+| S1-B6 (cold page cache, 1 s target) | NOT_RUN |
+| S1-B8 (packaging/sandbox) | NOT_RUN |
+| Product-level security / install / packaging readiness | NOT CLAIMED (bundle.active stays false) |
+
+WebView2 E2E ran on the dev machine with the Microsoft Edge WebView2 Runtime
+preinstalled; no installer, sandbox or distribution claim is made.

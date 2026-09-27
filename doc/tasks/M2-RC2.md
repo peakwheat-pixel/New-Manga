@@ -2,7 +2,7 @@
 id: M2-RC2
 title: Resource Channel Command Surface and Sidecar Boundary Hardening
 kind: implementation
-status: in_progress
+status: in_review
 release_state: RESOURCE_CHANNEL_COMMAND_SURFACE_RELEASED
 approval: approved_by_user_2026-09-27
 execution_approval: approved_by_user_2026-09-27_explicit_task_release
@@ -24,9 +24,9 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **RC2-AC1 命令面收敛（F-03）**：列出并测试 `register_catalog`、`probe_*`、`ttl_override` 的生产暴露面；在 Tauri command allowlist、capability、ACL/CSP 与 Core 权威边界下，WebView 不得提交 OS 路径、任意 TTL 或可伪造的 catalog 状态；catalog 生命周期由 Core/SQLite 管理。提供授权与拒绝矩阵及日志证据。
-- [ ] **RC2-AC2 独立 sidecar 入口（F-05）**：resource-channel sidecar 可由最小独立入口启动，避免导入 `src.infrastructure` 包时的无关传递依赖；提供 headless/import 边界测试并记录实际加载模块。
-- [ ] **RC2-AC3 诚实 Gate 与证据**：交付授权/拒绝测试、sidecar 隔离证据、原始日志和 Handoff；将 S1-B3/B5/B6/B8 状态保持如实（未验证项为 `UNVERIFIED`/`NOT_RUN`），不宣称产品级安全、安装或打包就绪；Handoff 明确列出仍需独立验证的条件。
+- [x] **RC2-AC1 命令面收敛（F-03）**：列出并测试 `register_catalog`、`probe_*`、`ttl_override` 的生产暴露面；在 Tauri command allowlist、capability、ACL/CSP 与 Core 权威边界下，WebView 不得提交 OS 路径、任意 TTL 或可伪造的 catalog 状态；catalog 生命周期由 Core/SQLite 管理。提供授权与拒绝矩阵及日志证据。（矩阵：[verification/M2-RC2/allow-deny-matrix.md](../../verification/M2-RC2/allow-deny-matrix.md)；`register_catalog` 全模式删除、`probe_*` 仅 probe 模式注册、`issue_resource_url` 无 TTL 形状、catalog 移入 Core SQLite store、host wire issue 不再携带路径、Core 拒绝 TTL 延长）
+- [x] **RC2-AC2 独立 sidecar 入口（F-05）**：resource-channel sidecar 可由最小独立入口启动，避免导入 `src.infrastructure` 包时的无关传递依赖；提供 headless/import 边界测试并记录实际加载模块。（修前传递导入证据 + PEP 562 惰性导入修复 + 子进程白名单门禁 + 真实 sidecar 模块 dump；见 [sidecar-isolation.md](../../verification/M2-RC2/sidecar-isolation.md)）
+- [x] **RC2-AC3 诚实 Gate 与证据**：交付授权/拒绝测试、sidecar 隔离证据、原始日志和 Handoff；将 S1-B3/B5/B6/B8 状态保持如实（未验证项为 `UNVERIFIED`/`NOT_RUN`），不宣称产品级安全、安装或打包就绪；Handoff 明确列出仍需独立验证的条件。
 
 ## 允许修改范围（Codex 于 2026-09-27 释放时冻结）
 
@@ -45,11 +45,11 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| RC2-AC1 Python/Core | `python -m pytest tests/m2_resource_channel -q`（含新增 catalog authority 与 bridge 拒绝用例） | Windows；项目 Python 环境；仅合成资源 | RC2 AC `NOT_RUN`（尚无实现）；释放基线 `PASS`（43 passed） | [baseline log](../../verification/M2-RC2/release-validation-22a2c2bf.md)；Owner 原始日志 / Handoff |
-| RC2-AC1 Tauri/Rust | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked`（含 command allow/deny 与 capability 边界用例） | Windows；Rust/Cargo 工具链 | RC2 AC `NOT_RUN`（尚无实现）；释放基线 `PASS`（12 passed） | [baseline log](../../verification/M2-RC2/release-validation-22a2c2bf.md)；Owner 原始日志 / Handoff |
-| RC2-AC1 frontend | `npm test --prefix apps/desktop/frontend -- --run`（含 WebView invoke allow/deny 矩阵） | Node/npm；仅合成资源 | RC2 AC `NOT_RUN`（尚无实现）；释放基线 `PASS`（8 passed） | [baseline log](../../verification/M2-RC2/release-validation-22a2c2bf.md)；Owner 原始日志 / Handoff |
-| RC2-AC1/2 E2E 与隔离 | `python verification/M2-RC2/run_e2e.py`（此 runner 为本 Task 交付项；通过真实 sidecar 启动验证拒绝边界并记录加载模块） | Windows + WebView2；项目 Python/Rust/Node 环境；仅合成资源 | `BLOCKED`（RC2 runner 尚未交付；命令未能启动 E2E）；RC2 AC `NOT_RUN` | [baseline log](../../verification/M2-RC2/release-validation-22a2c2bf.md)；`verification/M2-RC2/**` 原始日志及模块跟踪 |
-| RC2-AC3 honest gates | 对照 S1-B3/B5/B6/B8 状态、Handoff 与 Reviewer 独立 Review | 完成 Owner 交付后 | NOT_RUN（Owner 尚未交付） | Handoff / Review |
+| RC2-AC1 Python/Core | `python -m pytest tests/m2_resource_channel -q`（含新增 catalog authority 与 bridge 拒绝用例） | Windows；项目 Python 环境；仅合成资源 | **PASS**（64 passed，exit 0；claim 基线 43 passed；新增 17 项 catalog/TTL 拒绝 + 4 项隔离） | [final-pytest.log](../../verification/M2-RC2/raw/final-pytest.log)；[final-verification.log](../../verification/M2-RC2/final-verification.log) |
+| RC2-AC1 Tauri/Rust | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked`（含 command allow/deny 与 capability 边界用例） | Windows；Rust/Cargo 工具链 | **PASS**（19 passed，exit 0；claim 基线 12；新增 allowlist 矩阵/wire 形状/真实 sidecar 拒绝） | [final-cargo.log](../../verification/M2-RC2/raw/final-cargo.log) |
+| RC2-AC1 frontend | `npm test --prefix apps/desktop/frontend -- --run`（含 WebView invoke allow/deny 矩阵） | Node/npm；仅合成资源 | **PASS**（2 文件 15 tests，exit 0；claim 基线 8） | [final-vitest.log](../../verification/M2-RC2/raw/final-vitest.log) |
+| RC2-AC1/2 E2E 与隔离 | `python verification/M2-RC2/run_e2e.py`（此 runner 为本 Task 交付项；通过真实 sidecar 启动验证拒绝边界并记录加载模块） | Windows + WebView2；项目 Python/Rust/Node 环境；仅合成资源 | **PASS**（GATE 10/10；probe 13/13；真实 sidecar 加载 9 个白名单内项目模块；claim 时 BLOCKED → runner 已交付） | [final-e2e-runner-stdout.log](../../verification/M2-RC2/raw/final-e2e-runner-stdout.log)、[run_e2e.py](../../verification/M2-RC2/run_e2e.py) |
+| RC2-AC3 honest gates | 对照 S1-B3/B5/B6/B8 状态、Handoff 与 Reviewer 独立 Review | 完成 Owner 交付后 | Owner 已交付：S1-B3/B6/B8=NOT_RUN、S1-B5=UNVERIFIED（范围同 RC1）；等 DSH 独立 Review | [Handoff](../handoffs/M2-RC2-a8fb17ca.md)、[final-verification.log §5](../../verification/M2-RC2/final-verification.log) |
 
 ## 依赖、风险与阻塞
 
