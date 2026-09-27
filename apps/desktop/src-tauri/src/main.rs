@@ -235,7 +235,14 @@ fn main() {
 
     // RC2-AC1: the conditional allowlist. The probe surface physically does
     // not exist in production mode; `register_catalog` exists in no mode.
+    // The effective allowlist is announced on stderr (same source of truth
+    // as the registration below) so the E2E runner can pin the mode's
+    // actual command surface against its expectation.
     let builder = if probe_mode {
+        eprintln!(
+            "[m2rc2-allowlist] probe:{}",
+            command_allowlist(true).join(",")
+        );
         builder.invoke_handler(tauri::generate_handler![
             issue_resource_url,
             revoke_ref,
@@ -246,6 +253,10 @@ fn main() {
             probe_issue_url
         ])
     } else {
+        eprintln!(
+            "[m2rc2-allowlist] production:{}",
+            command_allowlist(false).join(",")
+        );
         builder.invoke_handler(tauri::generate_handler![
             issue_resource_url,
             revoke_ref,

@@ -88,11 +88,15 @@ export default function App() {
     };
 
     // ---- production/interactive mode: the hardened-surface deny matrix ----
-    // RC2-AC1 evidence channel: in production mode the probe commands and
-    // register_catalog do NOT exist on the invoke surface, so the report goes
-    // out through document.title (mirrored to stderr by the host) instead of
-    // probe_write_results. The window stays open: this is the user-facing
-    // mode, nothing here may call probe_exit.
+    // RC2-AC1 evidence protocol: in production mode the probe commands and
+    // register_catalog do NOT exist on the invoke surface, so the page has NO
+    // write channel (no probe_write_results) and no exit command (no
+    // probe_exit) — the matrix result cannot leave the page, by design. The
+    // runner therefore judges this phase from the OUTSIDE: the host announces
+    // its effective command allowlist on stderr at startup, the page stays
+    // alive (no exit command to call), and no probe results file may appear.
+    // The matrix below keeps the page honest and observable on screen; a red
+    // scenario is a visible regression, not a gate channel.
     const runInteractiveDenyMatrix = async (invoke: InvokeFn) => {
       const record = (id: string, result: ScenarioResult) => {
         results.push({ id, ...result });
@@ -159,6 +163,11 @@ export default function App() {
       observed(
         `interactive|deny=${denyPassed}/${deny.length}|allow=${allowPassed}/${allow.length}`,
       );
+      // NOTE: no self-close here. window.close() is script-blocked on
+      // WebView2 and there is deliberately no exit command on this surface:
+      // the window stays open (user-facing mode), the runner judges the
+      // phase on the host's stderr allowlist announcement + process liveness
+      // + absence of probe results.
     };
 
     void (async () => {
