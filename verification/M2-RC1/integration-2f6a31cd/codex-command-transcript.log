@@ -1,0 +1,250 @@
+M2-RC1 Codex integration command transcript
+Date: 2026-09-27 (Asia/Shanghai)
+Shell: Windows PowerShell
+Repository: G:\CODEX\New Manga
+Execution worktree: G:\CODEX\New Manga.worktrees\M2-RC1-zcode
+Branch: agent/zcode/M2-RC1-large-media-resource-channel-runtime
+Execution HEAD: ce3c3771d15c60b743b1e1da936edc445676b305
+Approved reviewed head: 2f6a31cd67e983e789c02cb4e33c194f0e012f23
+Fixed base: 2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1
+Reviewed head to execution HEAD is evidence/docs-only; product tree unchanged.
+PowerShell: 
+7.6.6
+Python: 
+C:\Python314\python.exe
+Cargo: 
+cargo 1.98.1 (797e8a9bc 2026-08-05)
+Node: 
+v24.15.0
+npm: 
+12.0.1
+Isolated TEMP: G:\CODEX\NewManga-M2-RC1-integration-temp-20260927
+
+COMMAND: python -m pytest tests/m2_resource_channel -q
+...........................................                              [100%]
+43 passed in 2.15s
+EXIT_CODE=0
+
+COMMAND: cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-RC1-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:17:5
+   |
+17 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:197:66
+    |
+197 |         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+    |                                                                  ^^^^^^^^^^
+
+warning: unused import: `std::io::Write`
+   --> src\main.rs:199:9
+    |
+199 |     use std::io::Write;
+    |         ^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 3 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 5.75s
+     Running unittests src\main.rs (apps\desktop\src-tauri\target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 12 tests
+test tests::url_builder_is_opaque_only ... ok
+test tests::malformed_ids_rejected_before_lookup ... ok
+test tests::responses_carry_no_store ... ok
+test tests::unknown_well_formed_id_typed_404 ... ok
+test tests::f01_fetch_then_revoke_then_fetch_must_be_typed ... ok
+test tests::chunk_offset_beyond_size_rejected ... ok
+test tests::revoked_id_propagates_typed_410 ... ok
+test tests::identity_change_invalidates_cache_entry ... ok
+test tests::full_chunk_serving_matches_bytes_and_digest_check ... ok
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... ok
+test tests::real_core_sidecar_round_trip ... ok
+test tests::f01_ttl_expiry_invalidates_cached_grant ... ok
+
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+EXIT_CODE=0
+
+COMMAND: npm test --prefix apps/desktop/frontend -- --run
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --run
+
+ RUN  v2.1.9 G:/CODEX/New Manga.worktrees/M2-RC1-zcode/apps/desktop/frontend
+
+ ✓ src/resourceChannel/client.test.ts (8 tests) 5ms
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  13:37:26
+   Duration  331ms (transform 25ms, setup 0ms, collect 27ms, tests 5ms, environment 0ms, prepare 94ms)
+
+EXIT_CODE=0
+
+COMMAND: cargo build --release --locked --manifest-path apps/desktop/src-tauri/Cargo.toml (E2E prerequisite; not a separate suite)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-RC1-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:17:5
+   |
+17 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:231:12
+    |
+231 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:236:12
+    |
+236 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated function `new` is never used
+   --> src\core_bridge.rs:245:12
+    |
+244 | impl MockCoreChannel {
+    | -------------------- associated function in this implementation
+245 |     pub fn new() -> Self {
+    |            ^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 4 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 2.33s
+EXIT_CODE=0
+
+COMMAND: python verification/M2-RC1/run_e2e.py (run 1/2; TEMP isolated)
+lab ready: G:\CODEX\NewManga-M2-RC1-integration-temp-20260927\m2rc1-lab
+asset sha256: 476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [0927/133754.947:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
+exit_code=0 elapsed=5.2s
+E-00-probe-mode-detected                 PASS
+E-01-issue-fetch-digest                  PASS
+E-02-img-render                          PASS
+E-03-unknown-id                          PASS
+E-04-revoke-after-cached-fetch           PASS
+E-05-expired-ttl                         PASS
+E-06-remount-fresh-references            PASS
+E-07-per-reference-first-byte-p95        PASS
+E-08-boundary-256mib                     PASS
+E-09-over-limit-typed                    PASS
+summary: {'PASS': 10}
+results: G:\CODEX\NewManga-M2-RC1-integration-temp-20260927\m2rc1-lab\probe-results.json
+EXIT_CODE=0
+
+COMMAND: python verification/M2-RC1/run_e2e.py (run 2/2; TEMP isolated)
+lab ready: G:\CODEX\NewManga-M2-RC1-integration-temp-20260927\m2rc1-lab
+asset sha256: 476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [0927/133811.645:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
+exit_code=0 elapsed=5.1s
+E-00-probe-mode-detected                 PASS
+E-01-issue-fetch-digest                  PASS
+E-02-img-render                          PASS
+E-03-unknown-id                          PASS
+E-04-revoke-after-cached-fetch           PASS
+E-05-expired-ttl                         PASS
+E-06-remount-fresh-references            PASS
+E-07-per-reference-first-byte-p95        PASS
+E-08-boundary-256mib                     PASS
+E-09-over-limit-typed                    PASS
+summary: {'PASS': 10}
+results: G:\CODEX\NewManga-M2-RC1-integration-temp-20260927\m2rc1-lab\probe-results.json
+EXIT_CODE=0
+
+COMMAND: git diff --name-status 2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1..2f6a31cd67e983e789c02cb4e33c194f0e012f23
+A	apps/desktop/.gitignore
+A	apps/desktop/frontend/index.html
+A	apps/desktop/frontend/package-lock.json
+A	apps/desktop/frontend/package.json
+A	apps/desktop/frontend/src/App.tsx
+A	apps/desktop/frontend/src/main.tsx
+A	apps/desktop/frontend/src/resourceChannel/client.test.ts
+A	apps/desktop/frontend/src/resourceChannel/client.ts
+A	apps/desktop/frontend/tsconfig.json
+A	apps/desktop/frontend/vite.config.ts
+A	apps/desktop/src-tauri/Cargo.lock
+A	apps/desktop/src-tauri/Cargo.toml
+A	apps/desktop/src-tauri/build.rs
+A	apps/desktop/src-tauri/gen/schemas/acl-manifests.json
+A	apps/desktop/src-tauri/gen/schemas/capabilities.json
+A	apps/desktop/src-tauri/gen/schemas/desktop-schema.json
+A	apps/desktop/src-tauri/gen/schemas/windows-schema.json
+A	apps/desktop/src-tauri/icons/icon.ico
+A	apps/desktop/src-tauri/src/core_bridge.rs
+A	apps/desktop/src-tauri/src/main.rs
+A	apps/desktop/src-tauri/src/resource_protocol.rs
+A	apps/desktop/src-tauri/tauri.conf.json
+A	doc/handoffs/M2-RC1-39552370.md
+A	doc/handoffs/M2-RC1-FIX-702b02b0.md
+A	doc/reviews/M2-RC1-FIX-702b02b0-round2.md
+A	doc/reviews/M2-RC1-FIX-702b02b0.md
+A	doc/reviews/M2-RC1-f8ce10a2.md
+A	doc/tasks/M2-RC1.md
+M	pytest.ini
+A	src/application/resource_channel/__init__.py
+A	src/application/resource_channel/dto.py
+A	src/application/resource_channel/ports.py
+A	src/application/resource_channel/service.py
+A	src/infrastructure/resource_channel/__init__.py
+A	src/infrastructure/resource_channel/handle_resolver.py
+A	src/infrastructure/resource_channel/host_bridge.py
+A	src/infrastructure/resource_channel/scope.py
+A	tests/m2_resource_channel/conftest.py
+A	tests/m2_resource_channel/test_bridge_and_thresholds.py
+A	tests/m2_resource_channel/test_handle_resolver.py
+A	tests/m2_resource_channel/test_service.py
+A	verification/M2-RC1/baseline-selfcheck.md
+A	verification/M2-RC1/compare_e2e_runs.py
+A	verification/M2-RC1/dispatch-review-f8ce10a2.md
+A	verification/M2-RC1/final-verification.log
+A	verification/M2-RC1/leakage_scan.py
+A	verification/M2-RC1/raw/e2e-fixtures.json
+A	verification/M2-RC1/raw/e2e-results-first.json
+A	verification/M2-RC1/raw/e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix-e2e-results-first.json
+A	verification/M2-RC1/raw/fix-e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix-pre-failure-demo.log
+A	verification/M2-RC1/raw/fix-repeat-consistency.json
+A	verification/M2-RC1/raw/fix3-e2e-results-first.json
+A	verification/M2-RC1/raw/fix3-e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix3-e2e-run1-console.log
+A	verification/M2-RC1/raw/fix3-e2e-run2-console.log
+A	verification/M2-RC1/raw/fix3-leakage-scan.json
+A	verification/M2-RC1/raw/fix3-repeat-consistency.json
+A	verification/M2-RC1/raw/leakage-scan.json
+A	verification/M2-RC1/run-log.md
+A	verification/M2-RC1/run_e2e.py
+PATH_COUNT=62
+EXIT_CODE=0
+
+COMMAND: git diff --check 2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1 2f6a31cd67e983e789c02cb4e33c194f0e012f23
+(no diagnostics)
+EXIT_CODE=0
+
+COMMAND: git rev-parse master:doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+fc35913801297ee1876ea395f9c5041a16226f20
+EXIT_CODE=0
+
+COMMAND: git rev-parse 2f6a31cd:doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+fc35913801297ee1876ea395f9c5041a16226f20
+EXIT_CODE=0
+
+COMMAND: git diff --name-only 2f6a31cd67e983e789c02cb4e33c194f0e012f23..ce3c3771d15c60b743b1e1da936edc445676b305
+doc/handoffs/M2-RC1-FIX-702b02b0.md
+doc/reviews/M2-RC1-FIX3-2f6a31cd.md
+doc/tasks/M2-RC1.md
+verification/M2-RC1/dispatch-review-fix3-2f6a31cd.md
+verification/M2-RC1/raw/fix3-review-dispatch.log
+EXIT_CODE=0
+

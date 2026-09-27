@@ -1,0 +1,33 @@
+{
+  "scan": "M2-RC1-FIX e2e caller-visible evidence scan",
+  "files": [
+    "fix-e2e-results-first.json",
+    "fix-e2e-results-repeat.json"
+  ],
+  "fragments_checked": [
+    "49745",
+    "C:\\Users",
+    "AppData",
+    "m2rc1-lab",
+    "asset.png",
+    "typical.png",
+    "boundary.bin",
+    "oversize.bin",
+    "scope\\derived"
+  ],
+  "hits": [
+    {
+      "file": "fix-e2e-results-first.json",
+      "fragment": "typical.png",
+      "context": "  87,\n          87\n        ],\n        \"fixture\": \"typical.png (~11.5 MiB)\"\n      }\n    },\n    {\n      \"id\": \"E-08-bounda",
+      "classification": "probe-authored scenario label (E-07 fixture note written by the page itself, not host-served material); the product command face (issue_resource_url) never returns a path"
+    },
+    {
+      "file": "fix-e2e-results-repeat.json",
+      "fragment": "typical.png",
+      "context": "  87,\n          88\n        ],\n        \"fixture\": \"typical.png (~11.5 MiB)\"\n      }\n    },\n    {\n      \"id\": \"E-08-bounda",
+      "classification": "probe-authored scenario label (E-07 fixture note written by the page itself, not host-served material); the product command face (issue_resource_url) never returns a path"
+    }
+  ],
+  "verdict": "CLEAN: no host-side path/identifer leakage; 2 hits are the probe scenario own fixture label (E-07 note)"
+}
