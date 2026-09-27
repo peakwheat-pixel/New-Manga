@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-当前 Active Task：[DIAG-READING-EXPORT-001](DIAG-READING-EXPORT-001.md) 已按 §5.1 释放为 `ready`，Owner=DeepSeek Harness、Reviewer=Codex，固定 base=`83de13df`；须先通过 Task 的环境启动 Gate。它是独立只读诊断，不是 M2 successor。M2-RC1 已 done（integration=3a246840），M2-RC2 已 done（integration=88f972fe），无 M2 successor。M2-RC2 集成核验：[integration](../../verification/M2-RC2/integration-88f972fe/integration.md)；诊断 Task 释放证据：[release](../../verification/DIAG-READING-EXPORT-001/release-83de13df.md)。
+当前 Active Task：无已释放 Task。[DIAG-READING-EXPORT-001](DIAG-READING-EXPORT-001.md) 已于 2026-09-28 集成 `done`（Owner=DeepSeek Harness `77c661b0`、Codex 代行非作者 Review `approved`、integration=`e0a0e784`；15/15 固定矩阵 `NOT_REPRODUCED`，两个历史机制由恰好 2 个只读探针定位；**NOT_REPRODUCED ≠ 已修复**）。修复后续 [DIAG-READING-EXPORT-001-FIX-A](DIAG-READING-EXPORT-001-FIX-A.md)（导出终态等待/投递语义）与 [DIAG-READING-EXPORT-001-FIX-B](DIAG-READING-EXPORT-001-FIX-B.md)（Reader 心跳生命周期）均 `proposed / NOT_RELEASED`，未冻结 base/branch/worktree。M2-RC1 已 done（integration=3a246840），M2-RC2 已 done（integration=88f972fe），无 M2 successor。诊断集成核验：[integration-e0a0e784](../../verification/DIAG-READING-EXPORT-001/integration-e0a0e784/integration.md)；诊断 Task 释放证据：[release](../../verification/DIAG-READING-EXPORT-001/release-83de13df.md)。
 
 2026-09-19 TASK-059 改派：Owner 由 Qoder 改为 **ZCode**，Reviewer 仍为 Codex；新 branch=`agent/zcode/TASK-059-ui-redesign`、worktree=`G:/CODEX/New Manga.worktrees/TASK-059-zcode`。原 Qoder 指派未实施，仅留档。
 

@@ -2,7 +2,7 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-27）**：M2-RC1 大媒体 runtime 已由 Codex 集成并标记 `done`（merge=`3a24684007fd5a5e855f324077ad996841300f27`）；DSH round-4 Review=`approve` @`2f6a31cd`，Codex 命令级复跑 pytest 43 / Cargo 12 / Vitest 8 / E2E 10/10 ×2 均 exit 0。固定 Contract blob=`fc359138` 未变；Owner 分支 tip=`ce3c3771` 保留。M2-RC2 已完成（Codex integration=88f972fe；DSH Review approved）；集成核验见 [integration-88f972fe](../verification/M2-RC2/integration-88f972fe/integration.md)。M2-C2 的 4×P3 仍待下一次 Contract touch。运行状态见 [STATUS](STATUS.md)。
+> **Current pointer（2026-09-28）**：独立 Legacy 只读诊断 [DIAG-READING-EXPORT-001](tasks/DIAG-READING-EXPORT-001.md) 已集成 `done`（DSH Owner `77c661b0`、Codex 代行非作者 Review `approved`、integration=`e0a0e784`；15/15 矩阵 `NOT_REPRODUCED`，两个机制由 2 个只读探针定位；**未修复**）。修复后续 [FIX-A](tasks/DIAG-READING-EXPORT-001-FIX-A.md) 与 [FIX-B](tasks/DIAG-READING-EXPORT-001-FIX-B.md) 均 `proposed / NOT_RELEASED`；集成核验见 [integration-e0a0e784](../verification/DIAG-READING-EXPORT-001/integration-e0a0e784/integration.md)。M2-RC1（merge=`3a246840`）与 M2-RC2（integration=`88f972fe`）保持 `done`；Contract blob=`fc359138` 未变；M2-C2 的 4×P3 仍待下一次 Contract touch。无 M2 successor。运行状态见 [STATUS](STATUS.md)。
 
 > **Architecture Decision / M2 release（2026-09-26）**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持；M2-D1 与 M2 首波 I1/I2/R1/UI1 已完成，M2-C1 Typed IPC Contract 已完成文档集成。M2-S1 独立研究已集成；A/B 通道是条件性建议，产品通道选型与实现仍待后续 Gate。
 

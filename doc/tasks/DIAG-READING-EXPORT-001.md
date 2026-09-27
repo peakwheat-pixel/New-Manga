@@ -2,7 +2,7 @@
 id: DIAG-READING-EXPORT-001
 title: Reading/export completion signal and connection-lifetime flaky diagnosis
 kind: diagnostic
-status: in_progress
+status: done
 approval: approved_by_user_2026-09-27
 execution_approval: approved_by_user_2026-09-27_explicit_task_release
 suggested_owner: DeepSeek Harness
@@ -12,7 +12,7 @@ depends_on: []
 base_commit: 83de13dfe0521125715c2e26da75b96a63103938
 branch: agent/deepseek/DIAG-READING-EXPORT-001-reading-export-flaky-diagnosis
 worktree: C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga
-integration_commit: null
+integration_commit: e0a0e784498fc339a4d666dd931cc67cfb65bbdb
 ---
 
 # DIAG-READING-EXPORT-001 — reading_export 间歇失败诊断
@@ -33,12 +33,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] 记录固定 base、OS/shell、绝对 Python 路径与版本、pytest、PySide6/Qt、SQLite、`openssl`、`QT_QPA_PLATFORM`；测试期间保持同一环境。若找不到项目支持且可导入 PySide6 的 Python 环境，先记录证据并将 Task 标 `blocked`，不得把缺依赖的 pytest skip 记为通过。
-- [ ] 按下方固定矩阵运行至多 15 次；每次保存原始 stdout/stderr、精确命令和 `EXIT`。不得因为首次失败而删日志、只报告重跑结果或增加未批准的循环。
-- [ ] 对比全仓、单文件、单测试及双文件正/反收集顺序；根据源码与运行记录分析 `exportFinished` 投递、测试等待、reader heartbeat/`settleReadingTime` 和 SQLite 连接生命周期，提出可证伪的根因假设及最多两个只读/隔离探针。
-- [ ] 如果矩阵复现失败，保留首次失败的完整日志和可复现上下文；如果未复现，报告准确次数与 `NOT_REPRODUCED`，不声称已修复。测试失败、skip、环境差异和阻塞均逐项披露。
-- [ ] 提交诊断报告、证据、Handoff；给出风险边界及是否建议另立修复 Task。修复 Task 需由 Codex 另行冻结并释放。
-- [ ] Codex 以非作者身份完成范围/证据 Review 并集成；Review 或集成 Gate 未过时 Task 不得标为 `done`。
+- [x] 记录固定 base、OS/shell、绝对 Python 路径与版本、pytest、PySide6/Qt、SQLite、`openssl`、`QT_QPA_PLATFORM`；测试期间保持同一环境。若找不到项目支持且可导入 PySide6 的 Python 环境，先记录证据并将 Task 标 `blocked`，不得把缺依赖的 pytest skip 记为通过。（[environment.txt](../../verification/DIAG-READING-EXPORT-001/environment.txt)；15 次运行同一 `TASK-012-py312` 解释器；环境 Gate=PASS）
+- [x] 按下方固定矩阵运行至多 15 次；每次保存原始 stdout/stderr、精确命令和 `EXIT`。不得因为首次失败而删日志、只报告重跑结果或增加未批准的循环。（15/15 完成、全 EXIT=0、逐次转录 `run-01..15.log`；未扩次数）
+- [x] 对比全仓、单文件、单测试及双文件正/反收集顺序；根据源码与运行记录分析 `exportFinished` 投递、测试等待、reader heartbeat/`settleReadingTime` 和 SQLite 连接生命周期，提出可证伪的根因假设及最多两个只读/隔离探针。（矩阵五场景 + 报告 §4 + 恰好 2 个隔离探针，均无 monkeypatch/编辑产品或测试文件）
+- [x] 如果矩阵复现失败，保留首次失败的完整日志和可复现上下文；如果未复现，报告准确次数与 `NOT_REPRODUCED`，不声称已修复。测试失败、skip、环境差异和阻塞均逐项披露。（0 失败 → `NOT_REPRODUCED`；run-01 的 11 个环境 skip 逐条披露，未计为通过）
+- [x] 提交诊断报告、证据、Handoff；给出风险边界及是否建议另立修复 Task。修复 Task 需由 Codex 另行冻结并释放。（[报告](../../doc/research/DIAG-READING-EXPORT-001.md)、[Handoff](../../doc/handoffs/DIAG-READING-EXPORT-001-8b36e98e.md)；建议 FIX-A/FIX-B，已另行登记为 `proposed`）
+- [x] Codex 以非作者身份完成范围/证据 Review 并集成；Review 或集成 Gate 未过时 Task 不得标为 `done`。（[Review](../reviews/DIAG-READING-EXPORT-001-77c661b0.md) `approved` @ `77c661b0`；integration_commit=`e0a0e784498fc339a4d666dd931cc67cfb65bbdb`）
 
 ## 允许修改范围
 
@@ -90,3 +90,10 @@ integration_commit: null
 - **交付物**：本 Task 文件、[doc/research/DIAG-READING-EXPORT-001.md](../../doc/research/DIAG-READING-EXPORT-001.md)、Handoff `doc/handoffs/DIAG-READING-EXPORT-001-<head>.md`、`verification/DIAG-READING-EXPORT-001/**`（environment.txt、matrix.tsv、run-01..15.log、2 个隔离探针脚本与日志）。
 - **越权核对**：相对 base 的唯一差异是新目录 `verification/DIAG-READING-EXPORT-001/` 与本文档/报告/Handoff；**未修改任何生产代码、测试文件/断言/等待预算、Schema、依赖或历史证据**；未加 skip、未加重试、未以等待掩盖失败。
 - 不授权修复：建议另立 FIX-A（等待/投递语义）与 FIX-B（读者心跳生命周期），由 Codex 冻结范围后释放。状态保持 `in_progress`，等 Codex 非作者 Review 与集成；本 Task 在 Review/集成 Gate 通过前不得标 `done`。
+
+## 集成记录（Integrator=Codex 代行，2026-09-28）
+
+- **非作者 Review**：[DIAG-READING-EXPORT-001-77c661b0](../reviews/DIAG-READING-EXPORT-001-77c661b0.md) `decision=approved`，绑定 `base=83de13df` → `reviewed_head=77c661b0`；0×P0/P1，1×P2（R-001：报告 §4.1 把"全仓事件负载"写成确定放大条件、与 §5 U3 未决矛盾——集成层修正措辞，保留 U3）、1×P3（R-002：探针 r1/r2 中间日志被覆盖，accepted）。U1–U3 维持未决，U4（两症状独立）采信。
+- **集成 merge**：`e0a0e784498fc339a4d666dd931cc67cfb65bbdb`（parents `c90b8b27`（Review）+ `77c661b0`（Owner tip）；Owner 提交历史未改写）。唯一冲突 `doc/tasks/DIAG-READING-EXPORT-001.md` 按用户指示以 Owner 已交付版为底。
+- **集成核验**：24 路径全授权、禁改路径零改动、`git diff --check` exit 0；`_finish` 顺序 `0275290` vs base 逐字节相同；矩阵 15 条记录与 run-01..15.log 逐条一致。详见 [integration-e0a0e784](../../verification/DIAG-READING-EXPORT-001/integration-e0a0e784/integration.md)。
+- **结论口径**：`NOT_REPRODUCED` 维持，不写"已解决"；该 flaky 的修复归属 [DIAG-READING-EXPORT-001-FIX-A](DIAG-READING-EXPORT-001-FIX-A.md) 与 [DIAG-READING-EXPORT-001-FIX-B](DIAG-READING-EXPORT-001-FIX-B.md)（均 `proposed / NOT_RELEASED`，未启动实现）。
