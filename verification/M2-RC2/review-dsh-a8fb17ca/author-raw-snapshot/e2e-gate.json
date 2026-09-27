@@ -1,0 +1,18 @@
+{
+  "gate": {
+    "environment": "PASS",
+    "lab": "PASS",
+    "catalog-seeding": "PASS",
+    "sidecar-import-isolation": "PASS",
+    "runtime-build": "PASS",
+    "probe-phase": "PASS",
+    "probe-allowlist-announcement": "PASS",
+    "sidecar-module-dump-probe": "PASS",
+    "interactive-deny-matrix": "PASS",
+    "sidecar-module-dump-interactive": "PASS"
+  },
+  "failed": [],
+  "probe_statuses": {
+    "PASS": 13
+  }
+}

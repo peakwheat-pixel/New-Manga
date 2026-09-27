@@ -1,0 +1,17 @@
+M2-RC2 Codex integration verification
+started_utc=2026-09-27T13:15:58.7854423Z
+finished_utc=2026-09-27T13:15:59.4241472Z
+shell=Core 7.6.6
+python=C:\Python314\python.exe / Python 3.14.6
+cargo=C:\Users\49745\.cargo\bin\cargo.exe / cargo 1.98.1 (797e8a9bc 2026-08-05)
+node=E:\Program Files\nodejs\node.exe / v24.15.0
+npm=E:\Program Files\nodejs\npm.ps1 / 12.0.1
+HEAD=88f972fed921c7d7a010bef38a734de2601d9ca5
+worktree=C:\Users\49745\.codex\worktrees\m2-rc2-integration\New Manga
+command=E:\Program Files\nodejs\npm.ps1 test --prefix apps/desktop/frontend -- --run
+
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --run
+'vitest' is not recognized as an internal or external command,
+operable program or batch file.
+EXIT=1

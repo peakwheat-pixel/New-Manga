@@ -2,7 +2,7 @@
 id: M2-RC2
 title: Resource Channel Command Surface and Sidecar Boundary Hardening
 kind: implementation
-status: in_review
+status: done
 release_state: RESOURCE_CHANNEL_COMMAND_SURFACE_RELEASED
 approval: approved_by_user_2026-09-27
 execution_approval: approved_by_user_2026-09-27_explicit_task_release
@@ -13,7 +13,7 @@ depends_on: [M2-RC1]
 base_commit: 22a2c2bf9a70d8c3b81edcdbe0e1ef146db556e5
 branch: agent/zcode/M2-RC2-resource-channel-hardening
 worktree: C:/Users/49745/.codex/worktrees/m2-rc2-zcode/New Manga
-integration_commit: null
+integration_commit: 88f972fed921c7d7a010bef38a734de2601d9ca5
 ---
 
 # M2-RC2 — Resource Channel Command Surface and Sidecar Boundary Hardening
@@ -43,13 +43,15 @@ integration_commit: null
 
 ## 测试要求
 
+下表保留 Owner 交付轮的原始结果；Codex 集成后复跑结果见本文件末尾的关闭记录。
+
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | RC2-AC1 Python/Core | `python -m pytest tests/m2_resource_channel -q`（含新增 catalog authority 与 bridge 拒绝用例） | Windows；项目 Python 环境；仅合成资源 | **PASS**（64 passed，exit 0；claim 基线 43 passed；新增 17 项 catalog/TTL 拒绝 + 4 项隔离） | [final-pytest.log](../../verification/M2-RC2/raw/final-pytest.log)；[final-verification.log](../../verification/M2-RC2/final-verification.log) |
 | RC2-AC1 Tauri/Rust | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked`（含 command allow/deny 与 capability 边界用例） | Windows；Rust/Cargo 工具链 | **PASS**（19 passed，exit 0；claim 基线 12；新增 allowlist 矩阵/wire 形状/真实 sidecar 拒绝） | [final-cargo.log](../../verification/M2-RC2/raw/final-cargo.log) |
 | RC2-AC1 frontend | `npm test --prefix apps/desktop/frontend -- --run`（含 WebView invoke allow/deny 矩阵） | Node/npm；仅合成资源 | **PASS**（2 文件 15 tests，exit 0；claim 基线 8） | [final-vitest.log](../../verification/M2-RC2/raw/final-vitest.log) |
 | RC2-AC1/2 E2E 与隔离 | `python verification/M2-RC2/run_e2e.py`（此 runner 为本 Task 交付项；通过真实 sidecar 启动验证拒绝边界并记录加载模块） | Windows + WebView2；项目 Python/Rust/Node 环境；仅合成资源 | **PASS**（GATE 10/10；probe 13/13；真实 sidecar 加载 9 个白名单内项目模块；claim 时 BLOCKED → runner 已交付） | [final-e2e-runner-stdout.log](../../verification/M2-RC2/raw/final-e2e-runner-stdout.log)、[run_e2e.py](../../verification/M2-RC2/run_e2e.py) |
-| RC2-AC3 honest gates | 对照 S1-B3/B5/B6/B8 状态、Handoff 与 Reviewer 独立 Review | 完成 Owner 交付后 | Owner 已交付：S1-B3/B6/B8=NOT_RUN、S1-B5=UNVERIFIED（范围同 RC1）；等 DSH 独立 Review | [Handoff](../handoffs/M2-RC2-a8fb17ca.md)、[final-verification.log §5](../../verification/M2-RC2/final-verification.log) |
+| RC2-AC3 honest gates | 对照 S1-B3/B5/B6/B8 状态、Handoff 与 Reviewer 独立 Review | Owner 交付轮 | Owner 交付时 S1-B3/B6/B8=NOT_RUN、S1-B5=UNVERIFIED（范围同 RC1）；该轮等待中的 DSH Review 已在下方集成记录中批准 | [Handoff](../handoffs/M2-RC2-a8fb17ca.md)、[final-verification.log §5](../../verification/M2-RC2/final-verification.log) |
 
 ## 依赖、风险与阻塞
 
@@ -57,8 +59,16 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- 状态：`in_review`（FIX 轮已交付，待 DSH 复审）；Owner=ZCode，Reviewer=DeepSeek Harness（非作者），Codex Integrator。
+- 状态：`done`；Owner=ZCode，Reviewer=DeepSeek Harness（非作者），Codex Integrator。
 - 来源：M2-RC1 F-03/F-05 `accepted_deferral`；依赖 M2-RC1=`done`；用户于 2026-09-27 明确授权本 Task 单独释放。
 - 固定实现基线、branch/worktree 和启动核验见 [release-22a2c2bf](../../verification/M2-RC2/release-22a2c2bf.md)。Task 文件只由 Owner 从记录的 release commit 取入实现分支，再提交 `ready`→`in_progress` 认领；不要把 release 治理提交并入实现历史。
 - **交付轮（delivery）**：head=`a8fb17ca`（文档收口 `4d4aef35`，派发 `d93a233f`）；四命令 64/19/15/GATE PASS；Handoff=[M2-RC2-a8fb17ca](../handoffs/M2-RC2-a8fb17ca.md)；DSH Review=changes_requested（R2-01..R2-08，`doc/reviews/M2-RC2-a8fb17ca.md`）。
-- **修复轮（FIX）**：fix head=`eac5cb3e`（追加 commit `4cd97397`+`eac5cb3e`，无历史改写）；R2-01 采 (a)（app_manifest ACL 生效 + "not allowed by ACL" 实测）、R2-02 修（NaN/bool 拒绝，探针全 REFUSED）、R2-03/04/07 修（gate 改名与表述对齐、`diff --check` 干净）、R2-05/06 本轮完成、R2-08 文档声明；五命令 66/20/15/GATE PASS/探针全 REFUSED，全 exit 0；Handoff=[M2-RC2-FIX-eac5cb3e](../handoffs/M2-RC2-FIX-eac5cb3e.md)；等 DSH 复审，通过后交 Codex 集成。
+- **修复轮（FIX）**：fix head=`eac5cb3e`（追加 commit `4cd97397`+`eac5cb3e`，无历史改写）；R2-01 采 (a)（app_manifest ACL 生效 + "not allowed by ACL" 实测）、R2-02 修（NaN/bool 拒绝，探针全 REFUSED）、R2-03/04/07 修（gate 改名与表述对齐、`diff --check` 干净）、R2-05/06 本轮完成、R2-08 文档声明；五命令 66/20/15/GATE PASS/探针全 REFUSED，全 exit 0；Handoff=[M2-RC2-FIX-eac5cb3e](../handoffs/M2-RC2-FIX-eac5cb3e.md)。该记录写入时等待中的 DSH 复审已批准，Codex 集成见下方。
+
+## Codex 集成与关闭记录（2026-09-27）
+
+- **状态：** `done`；Codex 集成 merge=`88f972fed921c7d7a010bef38a734de2601d9ca5`，parents=`6a68fdeb` + `dc8e5c95`。ZCode Owner branch/worktree 保留在 `agent/zcode/M2-RC2-resource-channel-hardening` @ `dc8e5c95`；实现验证 head `eac5cb3e` 保留在源历史中。
+- **独立复审：** DSH FIX 复审 `doc/reviews/M2-RC2-FIX-eac5cb3e.md` 批准；首轮 `changes_requested` 报告与复审报告、两轮原始证据均已逐字节导入，SHA256 清单见 [review-dsh-import-sha256.txt](../../verification/M2-RC2/review-dsh-import-sha256.txt)。
+- **R3-01：** 已按复审意见更正 [allow-deny-matrix.md](../../verification/M2-RC2/allow-deny-matrix.md)：ACL 拒绝文本证据仅归于 probe D-01；interactive IP-1 标为无归档输出。
+- **Codex 集成验证：** [integration record](../../verification/M2-RC2/integration-88f972fe/integration.md) 和逐命令转录记录集成后结果：pytest 66 passed、Cargo 20 passed、Vitest 15 passed、E2E GATE 10/10 与 probe 13/13、TTL 探针无效值拒绝；全部 `EXIT=0`。前端锁文件安装与构建为 Tauri `frontendDist` 所需环境准备，转录一并保留。首次缺少 `node_modules`/前端 `dist` 的失败尝试另存，不计入通过。
+- **边界：** S1-B3/B6/B8 仍为 `NOT_RUN`，S1-B5 仍为 `UNVERIFIED`；`bundle.active=false`；不作产品级安全、安装或打包就绪声明。没有已释放的下一 Task；后续由 Codex 依据当前 Plan/STATUS 按协作协议 §5.1 另行规划与释放。

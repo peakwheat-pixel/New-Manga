@@ -1,0 +1,16 @@
+=== M2-RC2 final verification: vitest --run ===
+2026-09-27T08:13:14Z
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mC:/Users/49745/.codex/worktrees/m2-rc2-zcode/New Manga/apps/desktop/frontend[39m
+
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
+[2m      Tests [22m [1m[32m15 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 16:13:15
+[2m   Duration [22m 352ms[2m (transform 48ms, setup 0ms, collect 68ms, tests 12ms, environment 0ms, prepare 194ms)[22m
+
+EXIT=0

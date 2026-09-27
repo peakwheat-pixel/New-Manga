@@ -1,0 +1,64 @@
+== reviewer rerun: python verification/M2-RC2/run_e2e.py ==
+
+=== 0. environment ===
+{
+  "python": "Python 3.14.6",
+  "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "node": "v24.15.0",
+  "npm": "UNAVAILABLE: [WinError 2] \u7cfb\u7edf\u627e\u4e0d\u5230\u6307\u5b9a\u7684\u6587\u4ef6\u3002"
+}
+
+=== 1. synthetic lab ===
+lab ready: C:\Users\49745\AppData\Local\Temp\m2rc2-lab
+
+=== 2. catalog seeding (real loader entry point) ===
+catalog loader exit=0 db=C:\Users\49745\AppData\Local\Temp\m2rc2-lab\catalog.sqlite
+
+=== 3. sidecar import isolation (headless, F-05) ===
+PASS: 10 project modules, all whitelisted
+
+=== 4. desktop runtime build ===
+cargo build exit=0
+exe: C:\Users\49745\.codex\worktrees\m2-rc2-zcode\New Manga\apps\desktop\src-tauri\target\release\m2rc1-desktop.exe
+
+=== 5. PROBE phase (E2E matrix through the real sidecar) ===
+  [runtime] [m2rc2-allowlist] probe:issue_resource_url,revoke_ref,revoke_resource_refs,probe_config,probe_write_results,probe_exit,probe_issue_url
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [m2rc1-title] M2-RC1 resource channel runtime
+  [runtime] [0927/184801.673:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412
+probe phase: exit_code=0 elapsed=5.5s
+E-00-probe-mode-detected                   PASS
+E-01-issue-fetch-digest                    PASS
+E-02-img-render                            PASS
+E-03-unknown-id                            PASS
+E-04-revoke-after-cached-fetch             PASS
+E-05-expired-ttl                           PASS
+E-06-remount-fresh-references              PASS
+E-07-per-reference-first-byte-p95          PASS
+E-08-boundary-256mib                       PASS
+E-09-over-limit-typed                      PASS
+D-01-register-catalog-denied               PASS
+D-02-ttl-override-inert                    PASS
+D-03-probe-issue-allowed-in-probe-mode     PASS
+summary: {'PASS': 13}
+PASS: probe allowlist exactly ['issue_resource_url', 'revoke_ref', 'revoke_resource_refs', 'probe_config', 'probe_write_results', 'probe_exit', 'probe_issue_url']
+PASS: probe: 9 project modules, all whitelisted
+
+=== 6. INTERACTIVE phase (production-surface deny matrix) ===
+PASS: production allowlist exactly ['issue_resource_url', 'revoke_ref', 'revoke_resource_refs']; process stayed alive through the 10s watch; no probe results written
+PASS: interactive: 9 project modules, all whitelisted
+
+=== 7. gate ===
+environment                        PASS
+lab                                PASS
+catalog-seeding                    PASS
+sidecar-import-isolation           PASS
+runtime-build                      PASS
+probe-phase                        PASS
+probe-allowlist-announcement       PASS
+sidecar-module-dump-probe          PASS
+interactive-deny-matrix            PASS
+sidecar-module-dump-interactive    PASS
+GATE PASS: all phases green
+EXIT=0

@@ -1,0 +1,87 @@
+== reviewer: shared src/infrastructure/__init__.py regression probe (outside frozen commands) ==
+
+--- A. import-level collection of ALL test suites ---
+ERROR tests/core/test_transport_credential_assembly.py
+ERROR tests/rendering/test_rerender.py
+ERROR tests/ui_shell/test_design_f_applied.py
+ERROR tests/ui_shell/test_design_tokens.py
+ERROR tests/ui_shell/test_qml_shell.py
+ERROR tests/ui_shell/test_repair13_export_window_open.py
+ERROR tests/ui_shell/test_repair13_import_entry.py
+ERROR tests/workbench/test_gui_write_during_run.py
+ERROR tests/workbench/test_page_list_model.py
+ERROR tests/workbench/test_qml_workbench.py
+ERROR tests/workbench/test_region_create_persistence.py
+ERROR tests/workbench/test_run_thread_e2e.py
+ERROR tests/workbench/test_ui_responsiveness.py
+!!!!!!!!!!!!!!!!!! Interrupted: 16 errors during collection !!!!!!!!!!!!!!!!!!!
+1009 tests collected, 16 errors in 2.27s
+COLLECT_EXIT=2
+
+--- B. suites that import infrastructure.sqlite / infrastructure.credentials ---
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\core\test_transport_credential_assembly.py:18: in <module>
+    from bootstrap.app import _credential_resolver, _credential_store, assemble_services
+src\bootstrap\app.py:35: in <module>
+    from PySide6.QtCore import QTimer, QUrl
+E   ModuleNotFoundError: No module named 'PySide6'
+=========================== short test summary info ===========================
+ERROR tests/core/test_transport_credential_assembly.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.13s
+PYTEST_EXIT=2
+
+--- C. tests/storage/test_backup_restore.py alone (imports infrastructure.sqlite.backup) ---
+...................                                                      [100%]
+19 passed in 1.37s
+EXIT=0
+
+--- D. are the 16 collection errors pre-existing (PySide6 absent)? ---
+PySide6 installed: False
+
+--- E. same collect on the frozen BASE tree (git stash-free worktree check via git worktree of 22a2c2bf is out of scope; base file content restored in-place would dirty the tree, so record the direct cause instead) ---
+
+tests\ui_shell\test_qml_shell.py:11:Notes on the harness (PySide6 6.11 specific):
+tests\ui_shell\test_qml_shell.py:21:from __future__ import annotations
+tests\ui_shell\test_qml_shell.py:23:import helpers  # noqa: F401  (sys.path injection; SRC_ROOT below)
+
+
+--- F. broader infrastructure-consumer suites (import-surface regression for src/infrastructure/__init__.py) ---
+ERROR tests/reading_export/test_webtoon_tiles.py::test_tiled_reader_serves_viewport_tiles
+ERROR tests/reading_export/test_webtoon_tiles.py::test_tiled_reader_restores_saved_scroll_offset
+ERROR tests/reading_export/test_webtoon_tiles.py::test_oversize_page_streams_bands_within_a_measured_memory_bound
+ERROR tests/reading_export/test_webtoon_tiles.py::test_materialised_tiles_carry_exactly_their_declared_band
+ERROR tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_leaves_tile_files_byte_identical[pattern]
+ERROR tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_leaves_tile_files_byte_identical[noise]
+ERROR tests/reading_export/test_webtoon_tiles.py::test_opening_a_tiled_chapter_serves_the_first_band_by_itself
+ERROR tests/reading_export/test_webtoon_tiles.py::test_page_turn_serves_the_remembered_viewport_without_a_request
+ERROR tests/reading_export/test_webtoon_tiles.py::test_next_page_rebuilds_the_tiles_for_the_new_page
+ERROR tests/reading_export/test_webtoon_tiles.py::test_jump_to_page_rebuilds_the_tiles_too
+ERROR tests/reading_export/test_webtoon_tiles.py::test_request_tiles_converts_display_pixels_to_page_pixels
+ERROR tests/reading_export/test_webtoon_tiles.py::test_ensure_viewport_rewind_accounting_is_per_tile
+ERROR tests/reading_export/test_webtoon_tiles.py::test_same_size_rewrite_does_not_reuse_a_stale_tile
+ERROR tests/reading_export/test_webtoon_tiles.py::test_damaged_payload_degrades_through_the_viewmodel
+ERROR tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_on_a_qt_encoded_page
+ERROR tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_on_hand_filtered_pages[up]
+ERROR tests/reading_export/test_webtoon_tiles.py::test_overlap_choice_on_hand_filtered_pages[average]
+1 failed, 206 passed, 7 skipped, 17 errors in 7.44s
+EXIT=1
+
+--- G. failure detail (same suites) ---
+
+=================================== ERRORS ====================================
+__________ ERROR at setup of test_tiled_reader_serves_viewport_tiles __________
+E   ModuleNotFoundError: No module named 'PySide6'
+______ ERROR at setup of test_tiled_reader_restores_saved_scroll_offset _______
+E   ModuleNotFoundError: No module named 'PySide6'
+_ ERROR at setup of test_oversize_page_streams_bands_within_a_measured_memory_bound _
+E   ModuleNotFoundError: No module named 'PySide6'
+_ ERROR at setup of test_materialised_tiles_carry_exactly_their_declared_band _
+E   ModuleNotFoundError: No module named 'PySide6'
+_ ERROR at setup of test_overlap_choice_leaves_tile_files_byte_identical[pattern] _
+E   ModuleNotFoundError: No module named 'PySide6'
+_ ERROR at setup of test_overlap_choice_leaves_tile_files_byte_identical[noise] _
+
+EXIT=

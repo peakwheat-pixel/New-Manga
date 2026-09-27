@@ -1,0 +1,4 @@
+$ python -c <import infrastructure.resource_channel.host_bridge; dump modules>
+exit=0
+["application", "application.resource_channel", "application.resource_channel.dto", "application.resource_channel.service", "infrastructure", "infrastructure.resource_channel", "infrastructure.resource_channel.catalog_store", "infrastructure.resource_channel.handle_resolver", "infrastructure.resource_channel.host_bridge", "infrastructure.resource_channel.scope"]
+

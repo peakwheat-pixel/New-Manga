@@ -1,0 +1,26 @@
+M2-RC2 Codex integration verification
+started_utc=2026-09-27T13:18:46.0278537Z
+finished_utc=2026-09-27T13:18:48.8108851Z
+shell=Core 7.6.6
+python=C:\Python314\python.exe / Python 3.14.6
+cargo=C:\Users\49745\.cargo\bin\cargo.exe / cargo 1.98.1 (797e8a9bc 2026-08-05)
+node=E:\Program Files\nodejs\node.exe / v24.15.0
+npm=E:\Program Files\nodejs\npm.ps1 / 12.0.1
+HEAD=88f972fed921c7d7a010bef38a734de2601d9ca5
+worktree=C:\Users\49745\.codex\worktrees\m2-rc2-integration\New Manga
+command=E:\Program Files\nodejs\npm.ps1 test --prefix apps/desktop/frontend -- --run
+
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --run
+
+ RUN  v2.1.9 C:/Users/49745/.codex/worktrees/m2-rc2-integration/New Manga/apps/desktop/frontend
+
+ ✓ src/resourceChannel/commandSurface.test.ts (7 tests) 7ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 7ms
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  21:18:47
+   Duration  1.02s (transform 51ms, setup 0ms, collect 90ms, tests 14ms, environment 0ms, prepare 912ms)
+
+EXIT=0

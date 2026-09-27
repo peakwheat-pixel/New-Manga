@@ -1,0 +1,15 @@
+== reviewer rerun: npm test --prefix apps/desktop/frontend -- --run ==
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --run
+
+ RUN  v2.1.9 C:/Users/49745/.codex/worktrees/m2-rc2-zcode/New Manga/apps/desktop/frontend
+
+ ✓ src/resourceChannel/client.test.ts (8 tests) 6ms
+ ✓ src/resourceChannel/commandSurface.test.ts (7 tests) 7ms
+
+ Test Files  2 passed (2)
+      Tests  15 passed (15)
+   Start at  18:47:27
+   Duration  883ms (transform 52ms, setup 0ms, collect 83ms, tests 13ms, environment 0ms, prepare 941ms)
+
+EXIT=0

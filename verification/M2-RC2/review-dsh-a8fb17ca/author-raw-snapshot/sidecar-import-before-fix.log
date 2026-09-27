@@ -1,0 +1,23 @@
+=== F-05 pre-fix import isolation evidence (head b4a78f0c808b7f312cee2626d59483cb6224c880) ===
+2026-09-27T07:34:49Z
+--- command: python -c 'import infrastructure.resource_channel.host_bridge' (PYTHONPATH=src) ---
+{
+  "loaded_project_modules": [
+    "application",
+    "application.resource_channel",
+    "application.resource_channel.dto",
+    "application.resource_channel.service",
+    "domain",
+    "domain.books",
+    "domain.books.entities",
+    "infrastructure",
+    "infrastructure.filesystem",
+    "infrastructure.resource_channel",
+    "infrastructure.resource_channel.handle_resolver",
+    "infrastructure.resource_channel.host_bridge",
+    "infrastructure.resource_channel.scope",
+    "infrastructure.sqlite",
+    "infrastructure.sqlite.reading_export"
+  ]
+}
+EXIT=0

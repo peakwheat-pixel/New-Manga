@@ -1,0 +1,13 @@
+== reviewer probe: TTL validator with non-finite values ==
+== A. service.issue() with non-finite ttl_seconds ==
+  ttl= NaN  ACCEPTED; expires_at=nan; still resolves after clock jump to 1e9 (never expires)
+  ttl=+Inf  REFUSED (REF_MALFORMED)
+  ttl=-Inf  REFUSED (REF_MALFORMED)
+  ttl=   0  REFUSED (REF_MALFORMED)
+  ttl= 301  REFUSED (REF_MALFORMED)
+  ttl= 300  ACCEPTED; expires_at=1300.0; expired (REF_EXPIRED)
+== B. stdio wire: raw JSON NaN / Infinity literals (json.loads default) ==
+         NaN -> {"result":{"id":"m2id.v1.7plGP2M0qxqpQr0iDXbPw8IsIoWgvvdGrInmFmJ_p2Y","size":4},"id":1}
+    Infinity -> {"error":{"code":"REF_MALFORMED"},"id":1}
+      999999 -> {"error":{"code":"REF_MALFORMED"},"id":1}
+EXIT=0

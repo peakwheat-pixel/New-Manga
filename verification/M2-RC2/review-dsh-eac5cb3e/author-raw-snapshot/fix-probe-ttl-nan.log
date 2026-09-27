@@ -1,0 +1,14 @@
+== fix round rerun: reviewer probe probe_ttl_nan.py ==
+2026-09-27T11:15:00Z
+== A. service.issue() with non-finite ttl_seconds ==
+  ttl= NaN  REFUSED (REF_MALFORMED)
+  ttl=+Inf  REFUSED (REF_MALFORMED)
+  ttl=-Inf  REFUSED (REF_MALFORMED)
+  ttl=   0  REFUSED (REF_MALFORMED)
+  ttl= 301  REFUSED (REF_MALFORMED)
+  ttl= 300  ACCEPTED; expires_at=1300.0; expired (REF_EXPIRED)
+== B. stdio wire: raw JSON NaN / Infinity literals (json.loads default) ==
+         NaN -> {"error":{"code":"REF_MALFORMED"},"id":1}
+    Infinity -> {"error":{"code":"REF_MALFORMED"},"id":1}
+      999999 -> {"error":{"code":"REF_MALFORMED"},"id":1}
+EXIT=0

@@ -1,0 +1,5 @@
+=== M2-RC2 final verification: pytest (head 24da5a91aaaa08d4202b1163280b0b2b0fdc9195 + E2E/docs working tree) ===
+2026-09-27T08:12:53Z
+................................................................         [100%]
+64 passed in 2.48s
+EXIT=0

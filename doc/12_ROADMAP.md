@@ -7,7 +7,7 @@ graph, acceptance boundaries and historical Task audit live in
 
 ## Future architecture milestone
 
-[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 为 FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION；M2-I1/I2/R1/UI1、M2-D1、M2-C1、M2-S1、M2-S2、M2-C2 与 M2-S3 均已完成。大媒体 runtime [M2-RC1](tasks/M2-RC1.md) 已集成 `done`（merge=`3a246840`；Codex 四套命令级验证全通过）；F-03/F-05 仅登记于 [M2-RC2](tasks/M2-RC2.md) `proposed / NOT_RELEASED`，未授权实现。Contract 1.1 blob=`fc359138` 未变；S1-B3/B5/B6/B8 仍是验证边界，禁止产品级安全或打包就绪声明。S1-B1=`PASS` 仅限单宿主/Rust 模拟表/一次性 body/非打包探针。T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2.
+[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 为 FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION；M2 首波与 [M2-RC2](tasks/M2-RC2.md) F-03/F-05 切片均已集成。M2-RC1 merge=`3a246840`；M2-RC2 Codex integration=`88f972fe`，复跑 pytest 66、Cargo 20、Vitest 15、E2E GATE 10/10 / probe 13/13 与 TTL 探针全部 EXIT=0。Contract 1.1 blob=`fc359138` 未变；S1-B3/B6/B8=`NOT_RUN`、S1-B5=`UNVERIFIED`，产品级安全/打包声明仍受限。S1-B1=`PASS` 仅限单宿主/Rust 模拟表/一次性 body/非打包探针。T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2；无已释放的 successor Task。
 
 ## Current order
 
@@ -19,7 +19,7 @@ graph, acceptance boundaries and historical Task audit live in
 6. **[M2-C2 — Typed IPC Contract Revision](tasks/M2-C2.md)**：`done`（2026-09-26）；Owner=ZCode（delivery `67f814ff`）、Reviewer=DeepSeek Harness（非作者；[Review](reviews/M2-C2-c18f273a.md) `approved`，4×P3 deferred）、base=`3f468e6e`、integration=`d574ec1e`。Contract 原位修订 `1.0`→`1.1`（blob `4b503a17`→`fc359138`）：T1–T7 阈值与安全语义以设计要求口径落约；既有保护语义零放松；不授权 runtime 实现。
 7. **[M2-S3 — Tauri Asset Protocol Feasibility Probe](tasks/M2-S3.md)**：`done`；base=`90c3e459`，Owner=ZCode / DeepSeek Harness 非作者 Review=`approved` @`233d0901`；Codex 核对 Owner follow-up 至 `bcef79e7` 并集成于 `6799c73a`。S1-B1=`PASS` 仅限报告 §5/§6 边界，禁改产品路径为零；[集成核验](../verification/M2-S3/integration-bcef79e7/integration.md)。S1-B6 冷缓存测量由 runtime Task 执行。原改派记录：[reassignment-9b2d40c2](../verification/M2-S3/reassignment-9b2d40c2.md)。
 8. **[M2-RC1 — Contract-Aligned Large-Media Resource Channel Runtime](tasks/M2-RC1.md)**：`done`；base=`2dca20cd`，reviewed head=`2f6a31cd`（DeepSeek Harness round-4 `approve`），Owner evidence tip=`ce3c3771`，Codex merge=`3a246840`。Codex 复跑四套验证：pytest 43、Cargo 12、Vitest 8、E2E 10/10 ×2，均 exit 0；Contract blob=`fc359138` 不变。集成证据：[integration](../verification/M2-RC1/integration-2f6a31cd/integration.md)。
-9. **[M2-RC2 — Resource Channel Command Surface and Sidecar Boundary Hardening](tasks/M2-RC2.md)**：`proposed / NOT_RELEASED`；承接 M2-RC1 F-03/F-05；建议 Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Codex 另行释放与集成。
+9. **[M2-RC2 — Resource Channel Command Surface and Sidecar Boundary Hardening](tasks/M2-RC2.md)**：done；base=`22a2c2bf`，FIX/reviewed head=`eac5cb3e`，DSH Review=approved，Codex integration=`88f972fe`；Codex 集成复验及 SHA256 导入清单见 [integration record](../verification/M2-RC2/integration-88f972fe/integration.md)。无已释放的 successor Task。
 
 Historical phases and task ledgers remain in place for traceability; they do
 not override the rebaseline.

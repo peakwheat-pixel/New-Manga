@@ -1,0 +1,5 @@
+== fix round rerun: python -m pytest tests/m2_resource_channel -q ==
+2026-09-27T11:14:44Z
+..................................................................       [100%]
+66 passed in 2.28s
+EXIT=0

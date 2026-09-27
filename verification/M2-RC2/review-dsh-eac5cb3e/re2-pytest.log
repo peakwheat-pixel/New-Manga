@@ -1,0 +1,4 @@
+== re-review rerun: python -m pytest tests/m2_resource_channel -q @ eac5cb3e ==
+..................................................................       [100%]
+66 passed in 3.26s
+EXIT=0

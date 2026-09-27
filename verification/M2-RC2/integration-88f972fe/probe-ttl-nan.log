@@ -1,0 +1,24 @@
+M2-RC2 Codex integration verification
+started_utc=2026-09-27T13:19:33.4980538Z
+finished_utc=2026-09-27T13:19:33.6442825Z
+shell=Core 7.6.6
+python=C:\Python314\python.exe / Python 3.14.6
+cargo=C:\Users\49745\.cargo\bin\cargo.exe / cargo 1.98.1 (797e8a9bc 2026-08-05)
+node=E:\Program Files\nodejs\node.exe / v24.15.0
+npm=E:\Program Files\nodejs\npm.ps1 / 12.0.1
+HEAD=88f972fed921c7d7a010bef38a734de2601d9ca5
+worktree=C:\Users\49745\.codex\worktrees\m2-rc2-integration\New Manga
+command=C:\Python314\python.exe verification/M2-RC2/review-dsh-a8fb17ca/probe_ttl_nan.py
+
+== A. service.issue() with non-finite ttl_seconds ==
+  ttl= NaN  REFUSED (REF_MALFORMED)
+  ttl=+Inf  REFUSED (REF_MALFORMED)
+  ttl=-Inf  REFUSED (REF_MALFORMED)
+  ttl=   0  REFUSED (REF_MALFORMED)
+  ttl= 301  REFUSED (REF_MALFORMED)
+  ttl= 300  ACCEPTED; expires_at=1300.0; expired (REF_EXPIRED)
+== B. stdio wire: raw JSON NaN / Infinity literals (json.loads default) ==
+         NaN -> {"error":{"code":"REF_MALFORMED"},"id":1}
+    Infinity -> {"error":{"code":"REF_MALFORMED"},"id":1}
+      999999 -> {"error":{"code":"REF_MALFORMED"},"id":1}
+EXIT=0
