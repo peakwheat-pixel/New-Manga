@@ -50,7 +50,7 @@ skip 清单（run-01，均因环境缺依赖，非通过）：`docTR` ×2（`tes
 
 ## 3. 历史失败原始证据（复读，AC3 的一半）
 
-来源：[baseline-full-suite-0275290.log](../../verification/M2-I1/review-09ad43a/baseline-full-suite-0275290.log)（`1 failed, 1228 passed`）+ [M2-I1 Review P3-004](../reviews/M2-I1-09ad43a-deepseek.md:56) + 更早同测先例 [T1.1.1 Review R2-I02](../../verification/T1.1.1/review-2f116a2.md:60)
+来源：[baseline-full-suite-0275290.log](../../verification/M2-I1/review-09ad43a/baseline-full-suite-0275290.log)（`1 failed, 1228 passed`）+ [M2-I1 Review P3-004](../reviews/M2-I1-09ad43a-deepseek.md)（`:56`）+ 更早同测先例 [T1.1.1 Review R2-I02](../../verification/T1.1.1/review-2f116a2.md)（`:60`）
 
 失败形态（本 Task 的判据模板）：
 
