@@ -15,7 +15,7 @@ parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-C.md
 - **Owner**：ZCode；**非作者 Reviewer**：DeepSeek Harness；**Integrator**：代行 Codex（ZCode 会话，待真 Codex 追认）
 - **Base**：`0e34c5c3c0a753be3e9f310daa0e413959f4ca5d`（FIX-B 集成治理 commit；FIX-B AC1 生产接线缺口的承接 Task）
 - **Branch / worktree**：`agent/zcode/DIAG-READING-EXPORT-001-FIX-C-quit-and-leave-wiring` / `G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode`
-- **Commit 链**：`0e34c5c3`（base）→ `b1f4cedf`（claim）→ `de0bf175`（R1 实现交付）→ 本 Handoff（R1 docs）→ `e9f61f5b`（R2 返修，当前被审 HEAD）
+- **Commit 链**：`0e34c5c3`（base）→ `b1f4cedf`（claim）→ `de0bf175`（R1 实现）→ Handoff（R1 docs）→ `e9f61f5b`（R2）→ `132aa5e1`（R3）→ Handoff（R3 docs）→ `46c7ff5a`（R4）→ Handoff（R4 docs）→ `5d541bee`（R5 doc-only）→ 本 Handoff（R6 doc-only）；被审固定点 `46c7ff5a`（R4 交付，R5/R6 为纯文档收口）
 - **变更面**（git 实际 7 文件 = 代码 2 + 证据 4 + 治理 1；Task 文件为 R0 释放带入，无独立改动提交）：
   - 代码 2：`src/bootstrap/app.py`（两处接线，见 §1）、`tests/core/test_bootstrap.py`（接线断言测试）
   - 证据 4：`verification/DIAG-READING-EXPORT-001-FIX-C/` 下 `wiring-test-pre-wiring-red.log`、`wiring-test-post-wiring-green.log`、`targeted-suite.log`、`full-suite.log`
@@ -51,8 +51,8 @@ FIX-B `done` 时披露的生产缺口（DSH R-01）：`closeReader()` 终结点�
 - **AC3（aboutToQuit 接线）**：`main()` 一行 connect（§1.2）。单测不覆盖 `main()` 内接线（无 application
   注入路径）；以 Review 静态审查 + 运行时 smoke 覆盖。**披露为弱验证面**（一行标准 Qt connect，风险低）。
 - **AC4（定向 + 全仓，分列）**：定向 `tests/core tests/reading_export` **210 passed**，EXIT=0
-  （[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite.log)）；全仓
-  **1318 passed, 5 skipped, 1 warning**，EXIT=0（[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite.log)）。
+  （[targeted-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r4.log)，R4 最终；R1 历史：[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite.log)）；全仓
+  **1318 passed, 5 skipped, 1 warning**，EXIT=0（[full-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r4.log)，R4 最终；R1 历史：[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite.log)）。
   5 skip = 2 docTR + 1 numpy + 2 torch（环境缺依赖）；6 OpenSSL = 本 shell PATH 实跑通过（同 FIX-A/B 口径）；
   +1 = 本 Task 新接线测试。PASS。
 - **AC5（不新增 skip/放宽断言/依赖；不改 QML/Schema/Contract）**：diff 仅 §变更面 7 文件。PASS。
@@ -134,3 +134,5 @@ R3 复核：N-1 产品修复正确（守卫位置/顺序正面确认）、N-2/N-
 R4 变更（git 实际 `27dbedda..46c7ff5a`，7 文件）：`tests/core/test_bootstrap.py`（断言）、`src/bootstrap/app.py`（import 顺序）、`verification/DIAG-READING-EXPORT-001-FIX-C/` 下 `wiring-test-pre-wiring-red.log`、`wiring-test-post-wiring-green.log`（R4 重取）、`targeted-suite-r4.log`、`full-suite-r4.log`（新增）、本 Handoff。R4 证据（最终交付测试版）：定向 **210 passed** EXIT=0（[targeted-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r4.log)）、全仓 **1318 passed, 5 skipped** EXIT=0（[full-suite-r4.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r4.log)）。产品接线自 R3 起零改动（R3 复核确认）。
 
 R5 doc-only 收口（DSH R4 复核 H-1/H-2/H-3）：本提交仅改本 Handoff——补被审固定点 `27dbedda..46c7ff5a`（H-1）、§3 第 1/2 行轮次标签 R3→R4（H-2）、§3/§8 补引 r4 日志（H-3）。不改产品/测试/日志，不重跑 suite。
+
+R6 收口（DSH R5 复核）：H-3 尾项——`§2 AC4` 证据指针补引 r4 日志（R5 漏项）；顺带清理 Commit 链的"当前被审 HEAD"遗留措辞（R5 观察项）。仅改本 Handoff，不改产品/测试/日志，不重跑 suite。
