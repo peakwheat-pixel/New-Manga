@@ -1,13 +1,11 @@
-# FIX-C wiring assertion test (R3 final version), PRE-wiring (base bootstrap) -- expected RED
-# Command: python -m pytest -q -p no:cacheprovider tests/core/test_bootstrap.py::test_navigation_away_from_reader_closes_it
-# Interpreter: TASK-012-py312 (Python 3.12.3 / PySide6 6.11.2)
-# Start (UTC): 2026-09-27T18:21:17.099291400Z
+# FIX-C wiring assertion test (R4 final version), PRE-wiring (base bootstrap) -- expected RED
+# Start (UTC): 2026-09-27T18:27:54.683845900Z
 F                                                                        [100%]
 ================================== FAILURES ===================================
 _________________ test_navigation_away_from_reader_closes_it __________________
 
-qapp = <PySide6.QtGui.QGuiApplication(0x2478ee42af0) at 0x000002478F7D3740>
-tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-273/test_navigation_away_from_read0')
+qapp = <PySide6.QtGui.QGuiApplication(0x2f2528bb420) at 0x000002F253345800>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-277/test_navigation_away_from_read0')
 
     def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
         """DIAG-READING-EXPORT-001-FIX-C: leaving the reader page in the
@@ -50,14 +48,14 @@ tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest
 >           assert services.reader._heartbeat.isActive() is False, "the heartbeat must stop"
 E           AssertionError: the heartbeat must stop
 E           assert True is False
-E            +  where True = <built-in method isActive of PySide6.QtCore.QTimer object at 0x000002478ED20680>()
-E            +    where <built-in method isActive of PySide6.QtCore.QTimer object at 0x000002478ED20680> = <PySide6.QtCore.QTimer(0x2478f45d610) at 0x000002478ED20680>.isActive
-E            +      where <PySide6.QtCore.QTimer(0x2478f45d610) at 0x000002478ED20680> = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x2478f45d7f0) at 0x0000024790925140>._heartbeat
-E            +        where <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x2478f45d7f0) at 0x0000024790925140> = AppServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000247908E77D0>, repository=<i...e600) at 0x0000024790834280>, transport=<infrastructure.transport.stdlib.StdlibTransport object at 0x000002479092D190>).reader
+E            +  where True = <built-in method isActive of PySide6.QtCore.QTimer object at 0x000002F2543EDB80>()
+E            +    where <built-in method isActive of PySide6.QtCore.QTimer object at 0x000002F2543EDB80> = <PySide6.QtCore.QTimer(0x2f252ef8100) at 0x000002F2543EDB80>.isActive
+E            +      where <PySide6.QtCore.QTimer(0x2f252ef8100) at 0x000002F2543EDB80> = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x2f252ef80b0) at 0x000002F2543EDA80>._heartbeat
+E            +        where <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x2f252ef80b0) at 0x000002F2543EDA80> = AppServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000002F254386B10>, repository=<i...8290) at 0x000002F2543EC400>, transport=<infrastructure.transport.stdlib.StdlibTransport object at 0x000002F254387EF0>).reader
 
 tests\core\test_bootstrap.py:685: AssertionError
 =========================== short test summary info ===========================
 FAILED tests/core/test_bootstrap.py::test_navigation_away_from_reader_closes_it
-1 failed in 0.48s
-# End (UTC): 2026-09-27T18:21:17.887874700Z
+1 failed in 0.52s
+# End (UTC): 2026-09-27T18:27:55.517417600Z
 EXIT=1

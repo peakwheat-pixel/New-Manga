@@ -4,9 +4,9 @@ author: ZCode
 recipient: DeepSeek Harness（非作者 Review）→ 代行 Codex（集成）
 base_commit: 0e34c5c3c0a753be3e9f310daa0e413959f4ca5d
 owner_head: de0bf175（R1 实现交付）
-reviewed_head: e9f61f5b（R2）→ R3 被审固定点见 §7
+reviewed_head: 27dbedda（R3 handoff）→ R4 被审固定点见 §8
 status: delivered
-review_status: re_review_3_requested
+review_status: re_review_4_requested
 parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-C.md
 ---
 
@@ -62,10 +62,10 @@ FIX-B `done` 时披露的生产缺口（DSH R-01）：`closeReader()` 终结点�
 
 | # | 命令 | 环境 | 结果 | EXIT | 证据 |
 |---|---|---|---|---|---|
-| 1 | 接线测试（PRE-wiring，base bootstrap） | TASK-012-py312，Git Bash | FAILED（红，接线缺失） | 1 | [red log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-pre-wiring-red.log) |
-| 2 | 接线测试（POST-wiring） | 同上 | passed（绿） | 0 | [green log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-post-wiring-green.log) |
-| 3 | `python -m pytest -q -p no:cacheprovider -rs tests/core tests/reading_export` | 同上 | 210 passed | 0 | [targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite.log) |
-| 4 | `python -m pytest -q -p no:cacheprovider -rs tests` | 同上 | 1318 passed, 5 skipped, 1 warning | 0 | [full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite.log) |
+| 1 | 接线测试（PRE-wiring，base bootstrap；R3 最终测试版重取） | TASK-012-py312，Git Bash | FAILED（红，接线缺失） | 1 | [red log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-pre-wiring-red.log) |
+| 2 | 接线测试（POST-wiring；R3 最终测试版重取） | 同上 | passed（绿） | 0 | [green log](../../verification/DIAG-READING-EXPORT-001-FIX-C/wiring-test-post-wiring-green.log) |
+| 3 | `python -m pytest -q -p no:cacheprovider -rs tests/core tests/reading_export` | 同上 | 210 passed | 0 | R1：[targeted-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite.log)；R3：[targeted-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r3.log) |
+| 4 | `python -m pytest -q -p no:cacheprovider -rs tests` | 同上 | 1318 passed, 5 skipped, 1 warning | 0 | R1：[full-suite.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite.log)；R3：[full-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r3.log) |
 
 注：`wiring-test-pre-wiring-red.log` 内含原始 pytest 输出的行尾空白（忠实转录，按 Q-009 原始字节入库，
 未清洗）；代码与治理文件无卫生问题（`git diff --check` 对非日志文件干净）。
@@ -118,3 +118,17 @@ R2 复核实体认可（F-3/F-4/F-6 通过、F-5 re-arm 目标成立、F-1 交�
 | N-6 | P4 | handler 访问私有 `_heartbeat`/`_last_settle` | **accepted + 披露**：公开 pause/resume 面留给后续 VM Task；bootstrap 访问点已在注释标注 |
 
 R3 变更（git 实际 `ee30172f..<R3 head>`）：`src/bootstrap/app.py`（N-1/N-2/N-3 守卫 + `import time`）、`tests/core/test_bootstrap.py`（N-5 计数 + N-1 判别 + N-2 断言 + import time + import time 顺序）、红/绿日志重取、`targeted-suite-r3.log`、`full-suite-r3.log`、本 Handoff。R3 证据：接线测试红（EXIT=1）→绿（EXIT=0）；定向 **210 passed** EXIT=0；全仓 **1318 passed, 5 skipped** EXIT=0（[targeted-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r3.log) / [full-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r3.log)）。F-1（Task AC1 文本裁决）仍按计划留集成层。
+
+
+## 8. R4 修订记录（DSH R3 复核收口）
+
+R3 复核：N-1 产品修复正确（守卫位置/顺序正面确认）、N-2/N-3 通过、无新产品缺陷与越权。剩余 3 项小修：
+
+| ID | 内容 | 处置 |
+|---|---|---|
+| T-1 | N-1 判别断言严格相等对时钟 tick 非确定 | **fixed**：改容忍式 `total_read_seconds - total_before_return < 1.0`（无守卫时增量 ≈600，判别力保留）；以 R4 最终测试重取红/绿日志（pre EXIT=1 / post EXIT=0） |
+| T-2 | Handoff 证据链接仍指 R1 日志 | **fixed**：§3 表改为 R1/R3 双指针（R3 实际证据 = `-r3.log`） |
+| T-3 | `import time` 顺序 | **fixed**：移至 `tempfile` 后恢复字母序 |
+| T-4 | "心跳非 active=离开态"在 FIX-B 存储故障停跳时也重置基线（该段时长本已写不入库，无实质损失） | **accepted + 注释披露**：守卫注释已含该口径；公开 pause/resume 面留后续 VM Task（同 N-6） |
+
+R4 变更（git 实际）：`tests/core/test_bootstrap.py`（断言）、`src/bootstrap/app.py`（import 顺序）、红/绿日志重取、本 Handoff。产品接线自 R3 起零改动（R3 复核确认）。

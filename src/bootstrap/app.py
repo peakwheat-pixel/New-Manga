@@ -30,8 +30,8 @@ from dataclasses import dataclass
 import os
 from pathlib import Path
 import sys
-import time
 import tempfile
+import time
 
 from PySide6.QtCore import QTimer, QUrl
 from PySide6.QtGui import QGuiApplication

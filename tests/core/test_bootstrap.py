@@ -704,7 +704,10 @@ def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
         services.navigation.navigate("reader")
         assert services.reader._heartbeat.isActive() is True
         assert len(opens) == 1, f"the nav-rail re-arm must open exactly once, got {len(opens)}"
-        assert services.reading.progress.total_read_seconds == total_before_return, (
+        # Tolerant compare (DSH r3 T-1): the reset leaves at most a
+        # sub-millisecond residue, while a missing N-1 guard would add the
+        # full simulated 600 s absence -- the gap keeps the discrimination.
+        assert services.reading.progress.total_read_seconds - total_before_return < 1.0, (
             "away wall-time must not be folded into total_read_seconds"
         )
         services.navigation.enterReader(book.book_id, chapter.chapter_id)
