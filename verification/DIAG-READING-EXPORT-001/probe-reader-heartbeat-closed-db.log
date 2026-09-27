@@ -1,0 +1,49 @@
+# Probe 2 (rev 3): leaked reader heartbeat writing a closed SQLite reading store
+# Command: python verification/DIAG-READING-EXPORT-001/probe-reader-heartbeat-closed-db.py
+# Interpreter: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe   (Python 3.12.3 / PySide6 6.11.2 / sqlite3 3.45.1)
+# PYTHONIOENCODING=utf-8 (console decoding only)
+# Start (UTC): 2026-09-27T14:47:40.4368632Z
+Traceback (most recent call last):
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\ui\viewmodels\reader\viewmodel.py", line 450, in settleReadingTime
+    self._reading.add_time(elapsed)
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\application\reading\service.py", line 241, in add_time
+    self._touch(now=True)
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\application\reading\service.py", line 377, in _touch
+    self._persist()
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\application\reading\service.py", line 380, in _persist
+    self._store.write({"progress_entries": self._rows})
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\infrastructure\sqlite\reading_export.py", line 84, in write
+    with self._conn:
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\infrastructure\sqlite\connection.py", line 292, in __enter__
+    return self._current().__enter__()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.ProgrammingError: Cannot operate on a closed database.
+after openChapter : heartbeat active = True
+                    hasChapter      = True
+                    progress loaded = True
+sqlite connection closed (teardown equivalent: tests/.../fresh_db yields conn.close())
+
+--- (a) synchronous settleReadingTime() after close ---
+RESULT: sqlite3.ProgrammingError: Cannot operate on a closed database.
+call chain: main -> settleReadingTime -> add_time -> _touch -> _persist -> write -> __enter__
+
+--- (b) real QTimer heartbeat (interval 5000 ms) ---
+unhandled exceptions captured while the loop ran: 1
+Traceback (most recent call last):
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\ui\viewmodels\reader\viewmodel.py", line 450, in settleReadingTime
+    self._reading.add_time(elapsed)
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\application\reading\service.py", line 241, in add_time
+    self._touch(now=True)
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\application\reading\service.py", line 377, in _touch
+    self._persist()
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\application\reading\service.py", line 380, in _persist
+    self._store.write({"progress_entries": self._rows})
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\infrastructure\sqlite\reading_export.py", line 84, in write
+    with self._conn:
+  File "C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga\src\infrastructure\sqlite\connection.py", line 292, in __enter__
+    return self._current().__enter__()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.ProgrammingError: Cannot operate on a closed database.
+heartbeat still active after the failed fire = True
+verdict: LEAK CONFIRMED -- an unclosed reader heartbeat writes a closed store
+EXIT=0

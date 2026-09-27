@@ -80,3 +80,13 @@ integration_commit: null
 本 Task 已由用户于 2026-09-27 明确授权并由 Codex 按协作协议 §5.1 释放为 `ready`。Owner 先记录工作区恢复检查与环境启动 Gate；开始实际诊断前，仅从本 Task 注册/释放 commit 将这一个 Task 文件复制到上述 Owner worktree，改为 `in_progress` 并提交 claim。不得把治理释放 commit 合入 Owner 分支，也不得在 claim commit 前运行验证矩阵。若环境 Gate 失败，提交环境证据并置 `blocked`，等待 Codex 决定；不改产品代码、不自行解阻。
 
 本 Task 不属于 M2 首波授权、不重开 M2-RC2，也不改变 T3.2.1 Full Gate。历史来源证据：[M2-I1 Review](../../doc/reviews/M2-I1-09ad43a-deepseek.md)、[M2-I1 integration](../../verification/M2-I1/integration-cff1e0a/record.md)。
+
+## 交付记录（Owner=DeepSeek Harness）
+
+- **认领**：`064ff980`（仅取入释放版 Task 文件 + `status: in_progress`；未把治理释放 commit `ceab572b` 合入 Owner 分支；claim 前未运行验证矩阵）。
+- **环境 Gate：PASS** —— 冻结解释器 `G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe`（Python 3.12.3 / PySide6 6.11.2 / Qt 6.11.2 / pytest 9.1.1 / sqlite3 3.45.1；与 `requirements*.txt` pin 一致）。清单与导入检查：[environment.txt](../../verification/DIAG-READING-EXPORT-001/environment.txt)。主 `python`（3.14.6）无 PySide6，未使用。
+- **固定矩阵：15/15 次完成，全部 exit 0，目标测试 0 次失败 → `NOT_REPRODUCED`**。全仓 `1310 passed, 11 skipped`；单文件 15 passed ×3；目标测试 1 passed ×5；双文件正/反序 30 passed ×6。命令、顺序、结果、exit、日志、起止时间：[matrix.tsv](../../verification/DIAG-READING-EXPORT-001/matrix.tsv)；逐次原始转录：`verification/DIAG-READING-EXPORT-001/run-01..15.log`（含 `EXIT=`）。**11 个 skip 逐条为环境缺依赖**（6 OpenSSL、2 docTR、1 numpy、2 torch），不计为通过。
+- **机制结论（报告 §4）**：症状 A（`exportFinished` 未投递）＝终态信号排队投递 vs 等待谓词轮询 `running` 的竞态 —— 探针 1 隔离 0/400、忙碌主线程 **26/200** 命中历史诊断形态；症状 B（后台 `settleReadingTime` 写已关闭 SQLite）＝未停止的读者心跳（`openChapter` 启动、仅 `closeReader` 停止）—— 探针 2 **确定性复现**，栈帧与历史 stderr 逐帧相同且失败后心跳仍 active。两者均与 M2-I1/I2 交付无关，与 [T1.1.1 Review R2-I02](../../verification/T1.1.1/review-2f116a2.md) 既有记录一致。
+- **交付物**：本 Task 文件、[doc/research/DIAG-READING-EXPORT-001.md](../../doc/research/DIAG-READING-EXPORT-001.md)、Handoff `doc/handoffs/DIAG-READING-EXPORT-001-<head>.md`、`verification/DIAG-READING-EXPORT-001/**`（environment.txt、matrix.tsv、run-01..15.log、2 个隔离探针脚本与日志）。
+- **越权核对**：相对 base 的唯一差异是新目录 `verification/DIAG-READING-EXPORT-001/` 与本文档/报告/Handoff；**未修改任何生产代码、测试文件/断言/等待预算、Schema、依赖或历史证据**；未加 skip、未加重试、未以等待掩盖失败。
+- 不授权修复：建议另立 FIX-A（等待/投递语义）与 FIX-B（读者心跳生命周期），由 Codex 冻结范围后释放。状态保持 `in_progress`，等 Codex 非作者 Review 与集成；本 Task 在 Review/集成 Gate 通过前不得标 `done`。

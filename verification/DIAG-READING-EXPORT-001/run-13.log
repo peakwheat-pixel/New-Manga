@@ -1,0 +1,12 @@
+# Run ID: 13
+# Scenario: export -> reader collection order
+# Command: python -m pytest -q -p no:cacheprovider -rs tests/reading_export/test_viewmodels.py tests/reading_export/test_reading.py
+# Interpreter: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+# Env ID: TASK-012-py312 (PySide6 6.11.2 / Qt 6.11.2 / pytest 9.1.1 / sqlite3 3.45.1)
+# CWD: C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga
+# QT_QPA_PLATFORM: []
+# Start (UTC): 2026-09-27T14:29:23.3012369Z
+..............................                                           [100%]
+30 passed in 0.52s
+# End (UTC): 2026-09-27T14:29:24.0976005Z
+EXIT=0

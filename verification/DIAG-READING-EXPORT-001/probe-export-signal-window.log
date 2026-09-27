@@ -1,0 +1,26 @@
+# Probe 1 (rev 3, two phases): export terminal-signal delivery window
+# Command: python verification/DIAG-READING-EXPORT-001/probe-export-signal-window.py 400 200
+# Interpreter: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe   (Python 3.12.3 / PySide6 6.11.2 / Qt 6.11.2)
+# PYTHONIOENCODING=utf-8 (console decoding only)
+# Start (UTC): 2026-09-27T14:38:51.3071292Z
+=== phase: isolated ===
+  replays of the test wait pattern : 400
+  completed / failed               : 400 / 0
+  MISSES (running=False, finished=[] immediately after the wait) : 0
+    delivered by ONE more processEvents                          : 0
+  slot thread(s)                   : ['main'] (main tid=57992)
+  observed ordering                : {'slot_before_flag': 400, 'slot_after_flag': 0}
+  queued-delivery latency (us)     : min=0.0 p50=15000.0 p95=16000.0 max=16000.0
+
+=== phase: busy-main-thread ===
+  replays of the test wait pattern : 200
+  completed / failed               : 200 / 0
+  MISSES (running=False, finished=[] immediately after the wait) : 26
+    delivered by ONE more processEvents                          : 26
+  slot thread(s)                   : ['main'] (main tid=57992)
+  observed ordering                : {'slot_before_flag': 176, 'slot_after_flag': 24}
+  queued-delivery latency (us)     : min=31000.0 p50=1500000.0 p95=1516000.0 max=1516000.0
+  first miss                       : iteration=28 running=False statusMessage='导出完成：C:\\Users\\49745\\AppData\\Local\\Temp\\tmprd7vcd7t\\out\\busy-main-thread-28.zip' history=429
+
+verdict: WINDOW DEMONSTRATED -- the running flag can be observed before the terminal signal
+EXIT=0

@@ -1,0 +1,402 @@
+# Run ID: 01
+# Scenario: full-repo baseline (tests/)
+# Command: python -m pytest -q -p no:cacheprovider -rs tests
+# Interpreter: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+# Python: 3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]
+# Env ID: TASK-012-py312 (PySide6 6.11.2 / Qt 6.11.2 / pytest 9.1.1 / sqlite3 3.45.1)
+# CWD: C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga
+# QT_QPA_PLATFORM: []
+# Start (UTC): 2026-09-27T14:26:39.5394711Z
+........................................................................ [  5%]
+........................................................................ [ 10%]
+........................................................................ [ 16%]
+........................................................................ [ 21%]
+...................................................................s.... [ 27%]
+........................................................................ [ 32%]
+...................sssss................................................ [ 38%]
+........................................................s.s.s........... [ 43%]
+........................................................................ [ 49%]
+........................................................................ [ 54%]
+........................................................................ [ 60%]
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+........................................................................ [ 65%]
+........................................................................ [ 70%]
+........................................................................ [ 76%]
+........................................................................ [ 81%]
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+........................................................................ [ 87%]
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
+file:///C:/Users/49745/.codex/worktrees/diag-reading-export-001/New Manga/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
+........................................................................ [ 92%]
+........................................................................ [ 98%]
+.......................                                                  [100%]
+============================== warnings summary ===============================
+tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
+  G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
+    import imghdr
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detect_seam_t111.py:15: docTR (python-doctr) is not installed
+SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr) is not installed
+SKIPPED [1] tests\network\test_connection_tester.py:106: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:39: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:47: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:62: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:69: openssl unavailable
+SKIPPED [1] tests\network\test_transport_tls.py:83: openssl unavailable
+SKIPPED [1] tests\providers\test_detection_doctr.py:173: numpy is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:206: torch is not installed
+SKIPPED [1] tests\providers\test_detection_doctr.py:236: torch is not installed
+1310 passed, 11 skipped, 1 warning in 76.44s (0:01:16)
+# End (UTC): 2026-09-27T14:27:56.7305579Z
+EXIT=0
