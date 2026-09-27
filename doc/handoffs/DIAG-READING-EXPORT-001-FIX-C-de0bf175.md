@@ -4,9 +4,9 @@ author: ZCode
 recipient: DeepSeek Harness（非作者 Review）→ 代行 Codex（集成）
 base_commit: 0e34c5c3c0a753be3e9f310daa0e413959f4ca5d
 owner_head: de0bf175（R1 实现交付）
-reviewed_head: e9f61f5b（R2 返修交付，当前被审固定点）
+reviewed_head: e9f61f5b（R2）→ R3 被审固定点见 §7
 status: delivered
-review_status: re_review_requested
+review_status: re_review_3_requested
 parent_task: doc/tasks/DIAG-READING-EXPORT-001-FIX-C.md
 ---
 
@@ -102,3 +102,19 @@ DSH 首轮 Review `decision=approved`（0×P0/P1；6×Minor）。逐条处置：
 | F-6 | Minor | 退出 flush 与 workbench 写者争锁时 `_reading.close()` 异常可从 aboutToQuit 槽逃逸 | **fixed**：`_close_reader_on_quit` 包 try/except，stderr 报告（沿用 `_shutdown_services` 惯例） |
 
 R2 变更（`de0bf175..e9f61f5b`，git 实际）：`src/bootstrap/app.py`（F-5 re-arm、F-6 quit 守卫）、`tests/core/test_bootstrap.py`（F-2/F-3/F-4）、`verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r2.log`、`full-suite-r2.log`、本 Handoff。R2 证据：定向 **210 passed** EXIT=0（[targeted-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r2.log)）、全仓 **1318 passed, 5 skipped** EXIT=0（[full-suite-r2.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r2.log)）。F-1 的 AC1 修订按 R1 建议留给集成裁决，本 Handoff 不改 Task AC 文本。
+
+
+## 7. R3 修订记录（DSH R2 复核 changes_requested 处置）
+
+R2 复核实体认可（F-3/F-4/F-6 通过、F-5 re-arm 目标成立、F-1 交集成裁决），新报 N-1（P2）+ N-2/N-3/N-4/N-5（P3）+ N-6（P4 观察）。逐条处置：
+
+| ID | 级别 | 内容 | 处置 |
+|---|---|---|---|
+| N-1 | P2 | 离开读者页的墙钟时长经重返 openChapter 的 settle 语义被计入旧章节 total_read_seconds（FIX-B/FIX-C 修复后暴露） | **fixed（选项 A 最小规避）**：`_open_reader_chapter` 顶部——心跳非 active（离开态）时先重置 `_last_settle` 再 openChapter（settle 折叠为 0）；阅读中切章（心跳 active）保持既有结算语义。判别测试：模拟 600s 缺席后重返，断言 `total_read_seconds` 不变（红→绿见 §3 更新） |
+| N-2 | P3 | enterReader 路径同一章节双重 openChapter | **fixed**：`_open_reader_chapter` 顶部幂等守卫（同章节 + 心跳活 → return）；测试断言 re-arm 恰开 1 次、随后的 enterReader 守卫跳过（opens 计数） |
+| N-3 | P3 | re-arm 的 _open_reader_chapter 无失败保护 | **fixed**：re-arm 调用包 try/except + stderr（与 F-6 同规格） |
+| N-4 | P3 | 红→绿证据与 R2 测试版本 drift | **fixed**：以 R3 最终测试重取红/绿日志（pre-wiring EXIT=1 / post EXIT=0）覆盖同名文件 |
+| N-5 | P3 | F-2 断言判别力不足（progress 在 open 时已持久化） | **fixed**：改为 closeReader 调用计数断言（修前 navigate 永不触发 close → 计数空 → 红） |
+| N-6 | P4 | handler 访问私有 `_heartbeat`/`_last_settle` | **accepted + 披露**：公开 pause/resume 面留给后续 VM Task；bootstrap 访问点已在注释标注 |
+
+R3 变更（git 实际 `ee30172f..<R3 head>`）：`src/bootstrap/app.py`（N-1/N-2/N-3 守卫 + `import time`）、`tests/core/test_bootstrap.py`（N-5 计数 + N-1 判别 + N-2 断言 + import time + import time 顺序）、红/绿日志重取、`targeted-suite-r3.log`、`full-suite-r3.log`、本 Handoff。R3 证据：接线测试红（EXIT=1）→绿（EXIT=0）；定向 **210 passed** EXIT=0；全仓 **1318 passed, 5 skipped** EXIT=0（[targeted-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/targeted-suite-r3.log) / [full-suite-r3.log](../../verification/DIAG-READING-EXPORT-001-FIX-C/full-suite-r3.log)）。F-1（Task AC1 文本裁决）仍按计划留集成层。
