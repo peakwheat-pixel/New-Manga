@@ -2,7 +2,7 @@
 id: DIAG-READING-EXPORT-001-FIX-C
 title: Production reader-page-leave and quit wiring for closeReader (heartbeat endpoint wiring)
 kind: fix
-status: ready
+status: in_progress
 approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
 owner: ZCode

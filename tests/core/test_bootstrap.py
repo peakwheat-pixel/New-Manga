@@ -16,6 +16,7 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import time
 
 import pytest
 
@@ -640,6 +641,81 @@ def test_assemble_engine_registers_reader_export_and_tiled_reader(
         # connection is still alive, so no leaked 5 s timer can fire after
         # conn.close().
         services.reader.closeReader()
+        services.conn.close()
+
+
+def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
+    """DIAG-READING-EXPORT-001-FIX-C: leaving the reader page in the
+    production assembly closes the reader — progress flushed, heartbeat
+    stopped — so no leaked 5 s timer can fire against a later-torn-down
+    store.  Pre-wiring this failed on the heartbeat-stopped assertion
+    (the heartbeat kept running after navigating away)."""
+    from bootstrap.app import assemble_services
+
+    services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+    try:
+        from application.importing.images.ports import ImportSource
+
+        book = services.library.create_book("终结点接线书")
+        chapter = services.library.create_chapter(book.book_id, "第1话")
+        services.importer.import_files(
+            chapter.chapter_id,
+            [ImportSource(filename="p0.png", data_provider=lambda: _make_png(400, 300))],
+        )
+        services.navigation.enterReader(book.book_id, chapter.chapter_id)
+        assert services.reader.hasChapter is True
+        assert services.reader._heartbeat.isActive() is True
+
+        # FIX-C R3 (N-5): the leave must run closeReader through the wiring
+        # (pre-wiring, navigating away never calls it).  Timestamps are
+        # millisecond-resolution and can tie with the open-time touch, so
+        # count the close call itself.
+        closes = []
+        original_close = services.reader.closeReader
+
+        def _counting_close():
+            closes.append(True)
+            original_close()
+
+        services.reader.closeReader = _counting_close
+
+        services.navigation.navigate("bookshelf")
+        # closeReader keeps the loaded chapter readable (service.close()
+        # only flushes); the wiring contract is the heartbeat stop + flush.
+        assert services.reader._heartbeat.isActive() is False, "the heartbeat must stop"
+        # AC1: the leave-flush ran through the wiring (DSH F-2/N-5)
+        assert closes, "leaving the reader page must run closeReader"
+
+        # FIX-C R3 (N-1)+(N-2): the nav-rail return must open exactly once
+        # through the re-arm, must restart the heartbeat, and must NOT bill
+        # the away wall-time to the chapter (simulated 600 s absence); a
+        # further enterReader onto the already-open reader is then guarded.
+        services.reader._last_settle = time.monotonic() - 600.0
+        total_before_return = services.reading.progress.total_read_seconds
+        opens = []
+        original_open = services.reader._reading.open
+
+        def _counting_open(*args, **kwargs):
+            opens.append(args)
+            return original_open(*args, **kwargs)
+
+        services.reader._reading.open = _counting_open
+
+        services.navigation.navigate("reader")
+        assert services.reader._heartbeat.isActive() is True
+        assert len(opens) == 1, f"the nav-rail re-arm must open exactly once, got {len(opens)}"
+        # Tolerant compare (DSH r3 T-1): the reset leaves at most a
+        # sub-millisecond residue, while a missing N-1 guard would add the
+        # full simulated 600 s absence -- the gap keeps the discrimination.
+        assert services.reading.progress.total_read_seconds - total_before_return < 1.0, (
+            "away wall-time must not be folded into total_read_seconds"
+        )
+        services.navigation.enterReader(book.book_id, chapter.chapter_id)
+        assert len(opens) == 1, "the idempotence guard must skip the duplicate open"
+    finally:
+        # FIX-B discipline: never leave a live heartbeat behind a conn.close
+        if services.reader.hasChapter:
+            services.reader.closeReader()
         services.conn.close()
 
 

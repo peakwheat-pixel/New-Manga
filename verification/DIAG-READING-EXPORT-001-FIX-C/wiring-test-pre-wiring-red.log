@@ -1,0 +1,61 @@
+# FIX-C wiring assertion test (R4 final version), PRE-wiring (base bootstrap) -- expected RED
+# Start (UTC): 2026-09-27T18:27:54.683845900Z
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________________ test_navigation_away_from_reader_closes_it __________________
+
+qapp = <PySide6.QtGui.QGuiApplication(0x2f2528bb420) at 0x000002F253345800>
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-277/test_navigation_away_from_read0')
+
+    def test_navigation_away_from_reader_closes_it(qapp, tmp_path: Path) -> None:
+        """DIAG-READING-EXPORT-001-FIX-C: leaving the reader page in the
+        production assembly closes the reader — progress flushed, heartbeat
+        stopped — so no leaked 5 s timer can fire against a later-torn-down
+        store.  Pre-wiring this failed on the heartbeat-stopped assertion
+        (the heartbeat kept running after navigating away)."""
+        from bootstrap.app import assemble_services
+    
+        services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            from application.importing.images.ports import ImportSource
+    
+            book = services.library.create_book("终结点接线书")
+            chapter = services.library.create_chapter(book.book_id, "第1话")
+            services.importer.import_files(
+                chapter.chapter_id,
+                [ImportSource(filename="p0.png", data_provider=lambda: _make_png(400, 300))],
+            )
+            services.navigation.enterReader(book.book_id, chapter.chapter_id)
+            assert services.reader.hasChapter is True
+            assert services.reader._heartbeat.isActive() is True
+    
+            # FIX-C R3 (N-5): the leave must run closeReader through the wiring
+            # (pre-wiring, navigating away never calls it).  Timestamps are
+            # millisecond-resolution and can tie with the open-time touch, so
+            # count the close call itself.
+            closes = []
+            original_close = services.reader.closeReader
+    
+            def _counting_close():
+                closes.append(True)
+                original_close()
+    
+            services.reader.closeReader = _counting_close
+    
+            services.navigation.navigate("bookshelf")
+            # closeReader keeps the loaded chapter readable (service.close()
+            # only flushes); the wiring contract is the heartbeat stop + flush.
+>           assert services.reader._heartbeat.isActive() is False, "the heartbeat must stop"
+E           AssertionError: the heartbeat must stop
+E           assert True is False
+E            +  where True = <built-in method isActive of PySide6.QtCore.QTimer object at 0x000002F2543EDB80>()
+E            +    where <built-in method isActive of PySide6.QtCore.QTimer object at 0x000002F2543EDB80> = <PySide6.QtCore.QTimer(0x2f252ef8100) at 0x000002F2543EDB80>.isActive
+E            +      where <PySide6.QtCore.QTimer(0x2f252ef8100) at 0x000002F2543EDB80> = <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x2f252ef80b0) at 0x000002F2543EDA80>._heartbeat
+E            +        where <ui.viewmodels.reader.viewmodel.ReaderViewModel(0x2f252ef80b0) at 0x000002F2543EDA80> = AppServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000002F254386B10>, repository=<i...8290) at 0x000002F2543EC400>, transport=<infrastructure.transport.stdlib.StdlibTransport object at 0x000002F254387EF0>).reader
+
+tests\core\test_bootstrap.py:685: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/core/test_bootstrap.py::test_navigation_away_from_reader_closes_it
+1 failed in 0.52s
+# End (UTC): 2026-09-27T18:27:55.517417600Z
+EXIT=1

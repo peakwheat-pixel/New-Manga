@@ -1,0 +1,60 @@
+# FIX-C targeted run (R4)
+# Start (UTC): 2026-09-27T18:28:04.775582500Z
+........................................................................ [ 34%]
+..................................file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+..file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+.file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+............................... [ 68%]
+..................................................................       [100%]
+210 passed in 28.68s
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+# End (UTC): 2026-09-27T18:28:34.132280800Z
+EXIT=0

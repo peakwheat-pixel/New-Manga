@@ -31,6 +31,7 @@ import os
 from pathlib import Path
 import sys
 import tempfile
+import time
 
 from PySide6.QtCore import QTimer, QUrl
 from PySide6.QtGui import QGuiApplication
@@ -222,6 +223,25 @@ def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
     )
 
     def _open_reader_chapter() -> None:
+        # FIX-C R3 (N-2): idempotence guard — after the leave-endpoint the
+        # chapter stays loaded (closeReader only flushes), so a nav-rail
+        # re-entry (page signal) followed by readerContextChanged would
+        # otherwise openChapter the same chapter twice (double persist,
+        # discarded tile rebuild).
+        if (
+            reader.hasChapter
+            and reader._reading.chapter_id == navigation.get_reader_context().get("chapter_id")
+            and reader._heartbeat.isActive()
+        ):
+            return
+        # FIX-C R3 (N-1): returning to a *closed* reader (heartbeat stopped
+        # by the leave/quit endpoint) must not bill the away wall-time to
+        # the previously open chapter — openChapter settles the elapsed
+        # time on entry.  A stopped heartbeat marks the away state; reset
+        # the settle baseline so that settle folds nothing.  In-session
+        # chapter switches (heartbeat active) keep the existing semantics.
+        if not reader._heartbeat.isActive():
+            reader._last_settle = time.monotonic()
         # AC-NAV-003: entering the reader page carries the chapter the
         # shelf/workbench action selected; without one the reader stays
         # on its empty state.
@@ -246,6 +266,32 @@ def _assemble_legacy_qt_layer(core: CoreServices) -> AppServices:
         )
 
     navigation.readerContextChanged.connect(_open_reader_chapter)
+
+    # DIAG-READING-EXPORT-001-FIX-C: the reader heartbeat's production
+    # leave-endpoint.  Navigating away from the reader page (any target
+    # other than "reader" while a chapter is open) closes the reader —
+    # flushing progress and stopping the 5 s heartbeat — so no leaked
+    # timer can later fire against a torn-down store (DIAG symptom B's
+    # production face).  Entering the reader emits page "reader", which
+    # never closes; closeReader is a no-op without an open chapter.
+    def _close_reader_when_leaving(page: str) -> None:
+        if page == "reader":
+            # F-5 re-arm: returning via the nav rail emits only the page
+            # signal (no readerContextChanged), so the chapter stays loaded
+            # with a stopped heartbeat — reopen it to restore the 5 s
+            # crash-granularity saves.  No-op when nothing is loaded yet.
+            # R3 (N-3): same stderr guard as the quit endpoint — a store
+            # failure inside reopen must not escape into the QML call site.
+            if reader.hasChapter and not reader._heartbeat.isActive():
+                try:
+                    _open_reader_chapter()
+                except Exception as error:  # noqa: BLE001
+                    print(f"reader reopen on re-entry failed: {error}", file=sys.stderr)
+            return
+        if reader.hasChapter:
+            reader.closeReader()
+
+    navigation.currentPageChanged.connect(_close_reader_when_leaving)
 
     # TASK-038 AC ② path B: the standalone export window controller
     # follows the workbench chapter context (reader-initiated exports go
@@ -463,6 +509,19 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 1
 
     window = engine.rootObjects()[0]
+
+    # DIAG-READING-EXPORT-001-FIX-C: quit endpoint — stop the reader
+    # heartbeat (flushing progress) via aboutToQuit, while the connection
+    # is still alive (exec returns before _shutdown_services closes it).
+    # F-6: a live workbench writer may hold the write lock; report a failed
+    # flush on stderr instead of letting the exception escape the slot.
+    def _close_reader_on_quit() -> None:
+        try:
+            services.reader.closeReader()
+        except Exception as error:  # noqa: BLE001
+            print(f"reader flush on quit failed: {error}", file=sys.stderr)
+
+    application.aboutToQuit.connect(_close_reader_on_quit)
 
     if options.smoke_test:
         QTimer.singleShot(0, application.quit)
