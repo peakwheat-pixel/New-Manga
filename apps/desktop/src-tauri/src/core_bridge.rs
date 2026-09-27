@@ -69,37 +69,50 @@ fn decode_response(line: &str) -> Result<serde_json::Value, CoreError> {
 
 /// Control-plane transport; `MockCoreChannel` drives Rust-side unit tests,
 /// `StdioCoreChannel` talks to the real Python Core sidecar.
+///
+/// RC2 (F-03): there is no `register` on this surface. The catalog
+/// (`resource_id -> rel_path`) lives in the Core/SQLite store; the host can
+/// only name catalog entries when issuing. `issue` never carries a TTL
+/// override -- the probe-only override lives on `issue_probe` and is only
+/// reachable from the probe-mode command surface.
 pub trait CoreChannel: Send + Sync {
-    fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError>;
-    /// Issue an opaque reference for a cataloged resource. `ttl_override` is
-    /// probe-only (lifecycle scenarios); the product path passes `None` and
-    /// the Core applies the ruled 300 s sliding default.
-    fn issue(&self, resource_id: &str, revision: &str, ttl_override: Option<f64>)
-        -> Result<IssuedRef, CoreError>;
+    /// Issue an opaque reference for a cataloged resource; the Core resolves
+    /// the path from its catalog authority and applies the ruled 300 s
+    /// sliding default TTL.
+    fn issue(&self, resource_id: &str, revision: &str) -> Result<IssuedRef, CoreError>;
+    /// Probe-only issue with an explicit TTL override (evidence runner
+    /// lifecycle scenarios). The production command surface never exposes
+    /// this; the Core refuses values above its default.
+    fn issue_probe(
+        &self,
+        resource_id: &str,
+        revision: &str,
+        ttl_seconds: f64,
+    ) -> Result<IssuedRef, CoreError>;
     fn resolve(&self, opaque_id: &str) -> Result<Grant, CoreError>;
     fn revoke(&self, opaque_id: &str) -> Result<(), CoreError>;
     fn revoke_resource(&self, resource_id: &str) -> Result<u32, CoreError>;
 }
 
-/// Real Python Core sidecar over stdio JSON-lines (wire v1) plus the
-/// host-configured resource catalog (resource_id -> derived-cache rel path;
-/// the product reads it from SQLite, this slice seeds it at startup).
+/// Real Python Core sidecar over stdio JSON-lines (wire v1). The catalog
+/// authority is the Core's SQLite store (path handed over via
+/// `M2RC2_CATALOG_DB`); the host holds no catalog state at all (RC2 F-03).
 pub struct StdioCoreChannel {
     child: Mutex<Child>,
     stdin: Mutex<ChildStdin>,
     stdout: Mutex<BufReader<ChildStdout>>,
-    catalog: Mutex<HashMap<String, String>>,
 }
 
 impl StdioCoreChannel {
     /// Spawn `python -m infrastructure.resource_channel.host_bridge` with the
-    /// repository `src` on the module path and the servable scope roots in
-    /// the environment.
+    /// repository `src` on the module path, the servable scope roots and the
+    /// catalog database in the environment.
     pub fn spawn(
         python_exe: &str,
         src_root: &std::path::Path,
         derived_root: &std::path::Path,
         managed_root: &std::path::Path,
+        catalog_db: &std::path::Path,
     ) -> Result<Self, CoreError> {
         let mut child = Command::new(python_exe)
             .arg("-m")
@@ -107,6 +120,7 @@ impl StdioCoreChannel {
             .current_dir(src_root)
             .env("M2RC1_DERIVED_ROOT", derived_root)
             .env("M2RC1_MANAGED_ROOT", managed_root)
+            .env("M2RC2_CATALOG_DB", catalog_db)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::inherit())
@@ -124,7 +138,6 @@ impl StdioCoreChannel {
             child: Mutex::new(child),
             stdin: Mutex::new(stdin),
             stdout: Mutex::new(BufReader::new(stdout)),
-            catalog: Mutex::new(HashMap::new()),
         })
     }
 
@@ -174,37 +187,17 @@ impl Drop for StdioCoreChannel {
 }
 
 impl CoreChannel for StdioCoreChannel {
-    fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
-        self.catalog
-            .lock()
-            .unwrap()
-            .insert(resource_id.to_string(), rel_path.to_string());
-        Ok(())
+    fn issue(&self, resource_id: &str, revision: &str) -> Result<IssuedRef, CoreError> {
+        self.issue_via_wire(resource_id, revision, None)
     }
 
-    fn issue(
+    fn issue_probe(
         &self,
         resource_id: &str,
         revision: &str,
-        ttl_override: Option<f64>,
+        ttl_seconds: f64,
     ) -> Result<IssuedRef, CoreError> {
-        let rel = self
-            .catalog
-            .lock()
-            .unwrap()
-            .get(resource_id)
-            .cloned()
-            .ok_or_else(|| CoreError::new("RESOURCE_NOT_CATALOGED"))?;
-        let mut params = serde_json::json!({
-            "resource_id": resource_id,
-            "revision_fingerprint": revision,
-            "rel_path": rel,
-        });
-        if let Some(ttl) = ttl_override {
-            params["ttl_seconds"] = serde_json::json!(ttl);
-        }
-        let value = self.round_trip("issue", params)?;
-        serde_json::from_value(value).map_err(|_| CoreError::new("REF_MALFORMED"))
+        self.issue_via_wire(resource_id, revision, Some(ttl_seconds))
     }
 
     fn resolve(&self, opaque_id: &str) -> Result<Grant, CoreError> {
@@ -226,8 +219,46 @@ impl CoreChannel for StdioCoreChannel {
     }
 }
 
+impl StdioCoreChannel {
+    /// Wire shape pinned here: the host names a catalog entry only — no
+    /// rel_path, no scope_class (Core/SQLite authority, F-03); the TTL
+    /// override exists only on the probe path.
+    fn issue_via_wire(
+        &self,
+        resource_id: &str,
+        revision: &str,
+        ttl_seconds: Option<f64>,
+    ) -> Result<IssuedRef, CoreError> {
+        let value =
+            self.round_trip("issue", build_issue_params(resource_id, revision, ttl_seconds))?;
+        serde_json::from_value(value).map_err(|_| CoreError::new("REF_MALFORMED"))
+    }
+}
+
+/// Pure wire-shape builder (unit-tested): the issue request names a catalog
+/// entry only. There is no rel_path/scope_class key to smuggle paths through,
+/// and `ttl_seconds` exists only on the probe path (F-03).
+pub(crate) fn build_issue_params(
+    resource_id: &str,
+    revision: &str,
+    ttl_seconds: Option<f64>,
+) -> serde_json::Value {
+    let mut params = serde_json::json!({
+        "resource_id": resource_id,
+        "revision_fingerprint": revision,
+    });
+    if let Some(ttl) = ttl_seconds {
+        params["ttl_seconds"] = serde_json::json!(ttl);
+    }
+    params
+}
+
 /// In-process mock for Rust unit tests; mirrors the Python semantics that the
-/// pytest suite verifies against the real service.
+/// pytest suite verifies against the real service. The catalog map plays the
+/// role of the Core's SQLite store: tests seed it through `register` (the
+/// stand-in for the catalog loader), and `issue` resolves paths from it --
+/// mirroring the fail-closed `RESOURCE_NOT_CATALOGED` behaviour of the real
+/// bridge.
 pub struct MockCoreChannel {
     pub catalog: Mutex<HashMap<String, String>>,
     pub table: Mutex<HashMap<String, MockEntry>>,
@@ -237,7 +268,7 @@ pub struct MockEntry {
     pub grant: Grant,
     pub revoked: bool,
     /// None = no expiry (mirrors the Core's default TTL); Some(instant) when
-    /// the issue carried a ttl_override (probe-only path).
+    /// the issue came through the probe-only TTL override path.
     pub expires_at: Option<std::time::Instant>,
 }
 
@@ -248,16 +279,10 @@ impl MockCoreChannel {
             table: Mutex::new(HashMap::new()),
         }
     }
-}
 
-impl Default for MockCoreChannel {
-    fn default() -> Self {
-        Self::new()
-    }
-}
-
-impl CoreChannel for MockCoreChannel {
-    fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    /// Seed the mock catalog (the stand-in for the Core-side catalog loader);
+    /// not part of the `CoreChannel` transport surface.
+    pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
         self.catalog
             .lock()
             .unwrap()
@@ -265,7 +290,7 @@ impl CoreChannel for MockCoreChannel {
         Ok(())
     }
 
-    fn issue(
+    fn issue_internal(
         &self,
         resource_id: &str,
         revision: &str,
@@ -297,12 +322,34 @@ impl CoreChannel for MockCoreChannel {
             file_index: 0,
         };
         let size = grant.size;
-        let expires_at = ttl_override.map(|secs| std::time::Instant::now() + std::time::Duration::from_secs_f64(secs));
+        let expires_at = ttl_override
+            .map(|secs| std::time::Instant::now() + std::time::Duration::from_secs_f64(secs));
         self.table.lock().unwrap().insert(
             opaque_id.clone(),
             MockEntry { grant, revoked: false, expires_at },
         );
         Ok(IssuedRef { opaque_id, size })
+    }
+}
+
+impl Default for MockCoreChannel {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl CoreChannel for MockCoreChannel {
+    fn issue(&self, resource_id: &str, revision: &str) -> Result<IssuedRef, CoreError> {
+        self.issue_internal(resource_id, revision, None)
+    }
+
+    fn issue_probe(
+        &self,
+        resource_id: &str,
+        revision: &str,
+        ttl_seconds: f64,
+    ) -> Result<IssuedRef, CoreError> {
+        self.issue_internal(resource_id, revision, Some(ttl_seconds))
     }
 
     fn resolve(&self, opaque_id: &str) -> Result<Grant, CoreError> {

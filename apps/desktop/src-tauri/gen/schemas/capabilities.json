@@ -1,1 +1,1 @@
-{}
+{"m2rc1-commands":{"identifier":"m2rc1-commands","description":"RC2 hardened command surface: the main window may invoke only the resource-channel commands of the inlined m2rc1-commands plugin (probe_* entries only exist in probe mode; register_catalog exists in no mode).","local":true,"windows":["main"],"permissions":["m2rc1-commands:default"]}}

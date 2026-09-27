@@ -1,9 +1,18 @@
-//! M2-RC1 — Contract-Aligned Large-Media Resource Channel Runtime.
+//! M2-RC1/M2-RC2 — Contract-Aligned Large-Media Resource Channel Runtime.
 //!
-//! Vertical slice: Python Core (reference authority) ⇄ Tauri/Rust host
-//! (`m2res` custom protocol over a stdio control bridge) ⇄ React/WebView
+//! Vertical slice: Python Core (reference + catalog authority) ⇄ Tauri/Rust
+//! host (`m2res` custom protocol over a stdio control bridge) ⇄ React/WebView
 //! (opaque protocol URLs only). Bytes stay outside the JSON/Base64 IPC plane
 //! (Contract 1.1 §10); the WebView never sees an OS path (T5.1).
+//!
+//! RC2 (F-03) command-surface hardening: the WebView-facing invoke surface is
+//! the allowlist in [`command_allowlist`] — three production commands, no
+//! catalog registration (`register_catalog` is gone entirely; the catalog is
+//! Core/SQLite authority), no TTL override on the production issue shape, and
+//! the probe commands exist only in probe mode (host env sets
+//! `M2RC1_PROBE_OUT`). `capabilities/m2rc1-commands.json` + the inlined
+//! `m2rc1-commands` plugin put every command behind the Tauri ACL for the
+//! main window; the hardened CSP replaces the RC1 `csp: null`.
 
 // console kept visible on purpose: probe evidence includes startup stderr
 
@@ -16,6 +25,32 @@ use serde::Serialize;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tauri::Manager;
+
+/// Commands every mode exposes: the product WebView surface. No path-shaped
+/// parameter, no TTL parameter, no probe capability.
+pub const PRODUCTION_COMMANDS: &[&str] = &["issue_resource_url", "revoke_ref", "revoke_resource_refs"];
+
+/// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
+/// evidence runner). In production mode they are not registered, so a
+/// WebView invoke fails with "command not found" before any logic runs.
+pub const PROBE_ONLY_COMMANDS: &[&str] =
+    &["probe_config", "probe_write_results", "probe_exit", "probe_issue_url"];
+
+/// Commands removed outright by RC2 (F-03). They must never reappear on any
+/// surface: catalog state is Core/SQLite authority (F-03) and cannot be
+/// written or fabricated from the host/WebView side.
+pub const REMOVED_COMMANDS: &[&str] = &["register_catalog"];
+
+/// The single source of truth for the WebView-facing command surface.
+/// `main` feeds this into the conditional `invoke_handler` registration; the
+/// unit tests gate its content (allow/deny matrix, RC2-AC1).
+pub fn command_allowlist(probe_mode: bool) -> Vec<&'static str> {
+    let mut commands = PRODUCTION_COMMANDS.to_vec();
+    if probe_mode {
+        commands.extend_from_slice(PROBE_ONLY_COMMANDS);
+    }
+    commands
+}
 
 struct AppState {
     channel: Box<dyn CoreChannel>,
@@ -41,24 +76,18 @@ fn into_issued(issued: core_bridge::IssuedRef) -> Result<IssuedUrl, CoreError> {
     })
 }
 
-#[tauri::command]
-fn register_catalog(state: tauri::State<'_, AppState>, resource_id: String, rel_path: String) -> Result<(), String> {
-    state
-        .channel
-        .register(&resource_id, &rel_path)
-        .map_err(|error| error.code)
-}
-
+/// Production issue shape: catalog entry name + revision only. There is no
+/// TTL parameter on this command (RC2-AC1) — reference lifetimes are Core
+/// policy (ruled 300 s sliding default), never caller input.
 #[tauri::command]
 fn issue_resource_url(
     state: tauri::State<'_, AppState>,
     resource_id: String,
     revision: String,
-    ttl_override: Option<f64>,
 ) -> Result<IssuedUrl, String> {
     let issued = state
         .channel
-        .issue(&resource_id, &revision, ttl_override)
+        .issue(&resource_id, &revision)
         .map_err(|error| error.code)?;
     into_issued(issued).map_err(|error| error.code)
 }
@@ -73,13 +102,14 @@ fn revoke_resource_refs(state: tauri::State<'_, AppState>, resource_id: String) 
     state.channel.revoke_resource(&resource_id).map_err(|error| error.code)
 }
 
+// ---- probe-mode-only command surface (evidence runner) --------------------
+// These #[tauri::command] fns are registered only when `M2RC1_PROBE_OUT` is
+// set; in production mode they are absent from the invoke handler entirely.
+
 #[tauri::command]
 fn probe_config(state: tauri::State<'_, AppState>) -> serde_json::Value {
-    // the embedded page URL has no query string, so the probe mode switch is
-    // the presence of M2RC1_PROBE_OUT (set only by the evidence runner)
-    let probe_auto = std::env::var("M2RC1_PROBE_OUT").is_ok();
     serde_json::json!({
-        "probe_auto": probe_auto,
+        "probe_auto": true,
         "scheme_host": resource_protocol::SCHEME_HOST,
         "chunk_size": resource_protocol::CHUNK_SIZE,
         "fixture_shas": state.fixture_shas,
@@ -101,6 +131,23 @@ fn probe_write_results(payload: String) -> Result<String, String> {
 #[tauri::command]
 fn probe_exit(app: tauri::AppHandle, code: i32) {
     app.exit(code);
+}
+
+/// Probe-only issue with an explicit TTL override (lifecycle scenarios such
+/// as the E-05 expiry case). Deliberately NOT on the production surface: the
+/// WebView can never extend (or set) a product reference lifetime.
+#[tauri::command]
+fn probe_issue_url(
+    state: tauri::State<'_, AppState>,
+    resource_id: String,
+    revision: String,
+    ttl_seconds: f64,
+) -> Result<IssuedUrl, String> {
+    let issued = state
+        .channel
+        .issue_probe(&resource_id, &revision, ttl_seconds)
+        .map_err(|error| error.code)?;
+    into_issued(issued).map_err(|error| error.code)
 }
 
 fn env_path(name: &str) -> Option<PathBuf> {
@@ -134,9 +181,18 @@ fn main() {
     let src_root = env_path("M2RC1_SRC_ROOT").expect("M2RC1_SRC_ROOT must point at the repo src dir");
     let derived_root = env_path("M2RC1_DERIVED_ROOT").expect("M2RC1_DERIVED_ROOT required");
     let managed_root = env_path("M2RC1_MANAGED_ROOT").expect("M2RC1_MANAGED_ROOT required");
+    // RC2 (F-03): the app refuses to run without its catalog authority. The
+    // launcher seeds the Core/SQLite store (catalog_loader) and passes the
+    // path; without it every issue would fail closed anyway.
+    let catalog_db = env_path("M2RC2_CATALOG_DB").expect("M2RC2_CATALOG_DB required (Core/SQLite catalog authority)");
+    // the embedded page URL has no query string, so the probe mode switch is
+    // the presence of M2RC1_PROBE_OUT (set only by the evidence runner)
+    let probe_mode = std::env::var("M2RC1_PROBE_OUT").is_ok();
 
-    let channel = StdioCoreChannel::spawn(&python_exe, &src_root, &derived_root, &managed_root)
-        .expect("python core sidecar failed to start");
+    let channel = StdioCoreChannel::spawn(
+        &python_exe, &src_root, &derived_root, &managed_root, &catalog_db,
+    )
+    .expect("python core sidecar failed to start");
     let state = AppState {
         channel: Box::new(channel),
         cache: GrantCache::default(),
@@ -144,7 +200,7 @@ fn main() {
         fixture_shas: fixture_shas(),
     };
 
-    tauri::Builder::default()
+    let builder = tauri::Builder::default()
         .setup(|app| {
             // progress channel: mirror the page's window title to stderr so
             // the runner can observe probe progress without the invoke bridge
@@ -166,33 +222,46 @@ fn main() {
             let uri = request.uri().to_string();
             let response =
                 resource_protocol::handle_m2res_request(&uri, state.channel.as_ref(), &state.cache, &state.roots);
-            let mut builder = tauri::http::Response::builder()
+            let mut response_builder = tauri::http::Response::builder()
                 .status(response.status)
                 .header("Content-Type", response.content_type)
                 .header("Cache-Control", response.cache_control)
                 .header("Access-Control-Allow-Origin", "*");
             if response.status == 206 || !response.body.is_empty() {
-                builder = builder.header("X-M2RC1-Served", "chunk");
+                response_builder = response_builder.header("X-M2RC1-Served", "chunk");
             }
-            builder.body(response.body).unwrap()
-        })
-        .invoke_handler(tauri::generate_handler![
-            register_catalog,
+            response_builder.body(response.body).unwrap()
+        });
+
+    // RC2-AC1: the conditional allowlist. The probe surface physically does
+    // not exist in production mode; `register_catalog` exists in no mode.
+    let builder = if probe_mode {
+        builder.invoke_handler(tauri::generate_handler![
             issue_resource_url,
             revoke_ref,
             revoke_resource_refs,
             probe_config,
             probe_write_results,
-            probe_exit
+            probe_exit,
+            probe_issue_url
         ])
+    } else {
+        builder.invoke_handler(tauri::generate_handler![
+            issue_resource_url,
+            revoke_ref,
+            revoke_resource_refs
+        ])
+    };
+
+    builder
         .run(tauri::generate_context!())
-        .expect("error while running M2-RC1 desktop runtime");
+        .expect("error while running M2-RC2 desktop runtime");
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core_bridge::MockCoreChannel;
+    use crate::core_bridge::{build_issue_params, MockCoreChannel};
     use crate::resource_protocol::{
         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
     };
@@ -243,10 +312,11 @@ mod tests {
         }
     }
 
-    fn registered(env: &TestEnv, rel: &str, payload: &[u8]) -> String {
+    fn registered(env: &TestEnv, resource_id: &str, rel: &str, payload: &[u8]) -> String {
         let sha = write_resource(&env.roots.derived, rel, payload);
-        env.channel.register("res-001", rel).unwrap();
-        let issued = env.channel.issue("res-001", "rev-1", None).unwrap();
+        // seed the mock catalog (the stand-in for the Core-side SQLite store)
+        env.channel.register(resource_id, rel).unwrap();
+        let issued = env.channel.issue(resource_id, "rev-1").unwrap();
         // make the mock grant match the real file so handle verification passes
         let opaque = issued.opaque_id.clone();
         let mut table = env.channel.table.lock().unwrap();
@@ -265,6 +335,64 @@ mod tests {
         entry.grant.file_index = index;
         let _ = metadata;
         opaque
+    }
+
+    // ---- RC2-AC1: WebView-facing command surface allow/deny matrix --------
+
+    #[test]
+    fn production_surface_is_exactly_three_commands() {
+        assert_eq!(command_allowlist(false), vec!["issue_resource_url", "revoke_ref", "revoke_resource_refs"]);
+    }
+
+    #[test]
+    fn probe_surface_adds_exactly_the_four_probe_commands() {
+        let probe = command_allowlist(true);
+        for command in PROBE_ONLY_COMMANDS {
+            assert!(probe.contains(command), "{command} missing from probe surface");
+        }
+        assert_eq!(probe.len(), PRODUCTION_COMMANDS.len() + PROBE_ONLY_COMMANDS.len());
+    }
+
+    #[test]
+    fn register_catalog_exists_on_no_surface() {
+        for command in REMOVED_COMMANDS {
+            assert!(!command_allowlist(false).contains(command));
+            assert!(!command_allowlist(true).contains(command));
+        }
+        // the removed surface must stay removed even if someone re-adds to
+        // the probe list: gate the exact constants, not just membership
+        assert_eq!(REMOVED_COMMANDS, &["register_catalog"]);
+    }
+
+    #[test]
+    fn no_surface_command_carries_a_ttl_parameter_shape() {
+        // the production issue command fn signature has no TTL parameter
+        // (compile-time); this pins the wire/request level: the issued probe
+        // override lives behind `probe_issue_url` only.
+        assert!(!PRODUCTION_COMMANDS.contains(&"probe_issue_url"));
+    }
+
+    #[test]
+    fn issue_wire_never_carries_path_or_ttl() {
+        let params = build_issue_params("res-001", "rev-1", None);
+        let text = serde_json::to_string(&params).unwrap();
+        assert!(text.contains("\"resource_id\""));
+        assert!(text.contains("\"revision_fingerprint\""));
+        assert!(!text.contains("rel_path"));
+        assert!(!text.contains("scope_class"));
+        assert!(!text.contains("ttl"));
+        let probe_params = build_issue_params("res-001", "rev-1", Some(0.3));
+        let probe_text = serde_json::to_string(&probe_params).unwrap();
+        assert!(probe_text.contains("\"ttl_seconds\":0.3"));
+        assert!(!probe_text.contains("rel_path"));
+    }
+
+    #[test]
+    fn mock_issue_without_catalog_entry_fails_closed() {
+        let channel = MockCoreChannel::new();
+        let error = channel.issue("res-never", "rev-1").unwrap_err();
+        assert_eq!(error.code, "RESOURCE_NOT_CATALOGED");
+        assert!(channel.issue_probe("res-never", "rev-1", 5.0).unwrap_err().code == "RESOURCE_NOT_CATALOGED");
     }
 
     #[test]
@@ -297,7 +425,7 @@ mod tests {
     #[test]
     fn chunk_offset_beyond_size_rejected() {
         let (env, _sha) = env_with_fixture(b"tiny payload");
-        let opaque = registered(&env, "asset.png", b"tiny payload");
+        let opaque = registered(&env, "res-001", "asset.png", b"tiny payload");
         let response = handle_m2res_request(&url_for(&opaque, Some(1)), &env.channel, &env.cache, &env.roots);
         assert_eq!(response.status, 400);
         let body = std::str::from_utf8(&response.body).unwrap();
@@ -315,7 +443,7 @@ mod tests {
     #[test]
     fn revoked_id_propagates_typed_410() {
         let (env, _sha) = env_with_fixture(b"payload");
-        let opaque = registered(&env, "asset.png", b"payload");
+        let opaque = registered(&env, "res-001", "asset.png", b"payload");
         env.channel.revoke(&opaque).unwrap();
         let response = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
         assert_eq!(response.status, 410);
@@ -326,7 +454,7 @@ mod tests {
     fn full_chunk_serving_matches_bytes_and_digest_check() {
         let payload: Vec<u8> = (0..64_000u32).map(|i| (i % 251) as u8).collect();
         let (env, sha) = env_with_fixture(&payload);
-        let opaque = registered(&env, "asset.png", &payload);
+        let opaque = registered(&env, "res-001", "asset.png", &payload);
         assert_eq!(sha.len(), 64);
         let response = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
         assert_eq!(response.status, 200);
@@ -339,7 +467,7 @@ mod tests {
     fn identity_change_invalidates_cache_entry() {
         let payload = b"payload-v1".to_vec();
         let (env, _sha) = env_with_fixture(&payload);
-        let opaque = registered(&env, "asset.png", &payload);
+        let opaque = registered(&env, "res-001", "asset.png", &payload);
         // first request verifies and caches
         let first = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
         assert_eq!(first.status, 200);
@@ -362,7 +490,7 @@ mod tests {
     fn f01_fetch_then_revoke_then_fetch_must_be_typed() {
         let payload = b"cached-then-revoked";
         let (env, _sha) = env_with_fixture(payload);
-        let opaque = registered(&env, "asset.png", payload);
+        let opaque = registered(&env, "res-001", "asset.png", payload);
         let url = url_for(&opaque, Some(0));
 
         // first fetch establishes the grant cache
@@ -385,9 +513,9 @@ mod tests {
     fn f01_ttl_expiry_invalidates_cached_grant() {
         let payload = b"cached-then-expired";
         let (env, _sha) = env_with_fixture(payload);
-        // probe-only short TTL through the issue override
+        // probe-only short TTL through the probe issue path
         env.channel.register("res-001", "asset.png").unwrap();
-        let issued = env.channel.issue("res-001", "rev-1", Some(0.3)).unwrap();
+        let issued = env.channel.issue_probe("res-001", "rev-1", 0.3).unwrap();
         // align mock facts like registered() does
         {
             let mut table = env.channel.table.lock().unwrap();
@@ -422,7 +550,7 @@ mod tests {
     fn f02_equal_size_rewrite_after_first_verify_rejected() {
         let payload = b"equal-size-rewrite-payload";
         let (env, _sha) = env_with_fixture(payload);
-        let opaque = registered(&env, "asset.png", payload);
+        let opaque = registered(&env, "res-001", "asset.png", payload);
         let url = url_for(&opaque, Some(0));
 
         let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
@@ -449,7 +577,9 @@ mod tests {
     }
 
     /// Integration with the real Python Core sidecar: exercises the stdio
-    /// JSON-lines bridge end to end (issue -> resolve -> grant facts).
+    /// JSON-lines bridge end to end (catalog seed -> issue -> resolve ->
+    /// grant facts), including the RC2 catalog-authority denial (an
+    /// uncataloged id must fail closed).
     #[test]
     fn real_core_sidecar_round_trip() {
         let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
@@ -470,15 +600,34 @@ mod tests {
         std::fs::create_dir_all(&derived).unwrap();
         std::fs::write(derived.join("asset.png"), b"sidecar-payload").unwrap();
 
+        // seed the Core/SQLite catalog through the real loader entry point
+        let catalog_db = dir.path().join("catalog.sqlite");
+        let seed = std::process::Command::new(&python)
+            .arg("-m")
+            .arg("infrastructure.resource_channel.catalog_loader")
+            .current_dir(&src_root)
+            .arg("--db")
+            .arg(&catalog_db)
+            .arg("--set")
+            .arg("res-sidecar=asset.png")
+            .env("PYTHONPATH", &src_root)
+            .output()
+            .expect("catalog loader spawn");
+        assert!(
+            seed.status.success(),
+            "catalog loader failed: {}",
+            String::from_utf8_lossy(&seed.stderr)
+        );
+
         let channel = StdioCoreChannel::spawn(
             &python,
             &src_root,
             &derived,
             &dir.path().join("scope").join("managed"),
+            &catalog_db,
         )
         .expect("sidecar spawn");
-        channel.register("res-sidecar", "asset.png").unwrap();
-        let issued = channel.issue("res-sidecar", "rev-1", None).expect("issue");
+        let issued = channel.issue("res-sidecar", "rev-1").expect("issue");
         assert!(issued.opaque_id.starts_with("m2id.v1."));
         let grant = channel.resolve(&issued.opaque_id).expect("resolve");
         assert_eq!(grant.rel_path, "asset.png");
@@ -487,5 +636,57 @@ mod tests {
         channel.revoke(&issued.opaque_id).unwrap();
         let error = channel.resolve(&issued.opaque_id).unwrap_err();
         assert_eq!(error.code, "REF_REVOKED");
+    }
+
+    /// RC2 (F-03) denial through the REAL bridge: an uncataloged resource id
+    /// fails closed, and a ttl_seconds above the Core default is refused.
+    #[test]
+    fn real_core_sidecar_denies_uncataloged_and_extended_ttl() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let src_root = std::env::var("M2RC1_SRC_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                for _ in 0..3 {
+                    path.pop();
+                }
+                path.join("src")
+            });
+        let dir = tempfile::tempdir().unwrap();
+        let derived = dir.path().join("scope").join("derived");
+        std::fs::create_dir_all(&derived).unwrap();
+        std::fs::write(derived.join("asset.png"), b"sidecar-payload").unwrap();
+        let catalog_db = dir.path().join("catalog.sqlite");
+        let seed = std::process::Command::new(&python)
+            .arg("-m")
+            .arg("infrastructure.resource_channel.catalog_loader")
+            .current_dir(&src_root)
+            .arg("--db")
+            .arg(&catalog_db)
+            .arg("--set")
+            .arg("res-sidecar=asset.png")
+            .env("PYTHONPATH", &src_root)
+            .output()
+            .expect("catalog loader spawn");
+        assert!(seed.status.success());
+
+        let channel = StdioCoreChannel::spawn(
+            &python,
+            &src_root,
+            &derived,
+            &dir.path().join("scope").join("managed"),
+            &catalog_db,
+        )
+        .expect("sidecar spawn");
+
+        // uncataloged id -> typed fail-closed
+        let error = channel.issue("res-never-cataloged", "rev-1").unwrap_err();
+        assert_eq!(error.code, "RESOURCE_NOT_CATALOGED");
+
+        // ttl extension above the ruled default -> typed refusal
+        let error = channel
+            .issue_probe("res-sidecar", "rev-1", 999_999.0)
+            .unwrap_err();
+        assert_eq!(error.code, "REF_MALFORMED");
     }
 }
