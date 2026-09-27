@@ -2,7 +2,7 @@
 id: DIAG-READING-EXPORT-001-FIX-B
 title: Reader heartbeat lifecycle fix (symptom B)
 kind: fix
-status: ready
+status: in_progress
 approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
 owner: ZCode

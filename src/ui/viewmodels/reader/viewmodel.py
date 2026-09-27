@@ -22,6 +22,7 @@ its store, QML only renders state and calls slots (D05 §60).
 from __future__ import annotations
 
 import math
+import sqlite3
 import time
 from typing import Callable
 
@@ -47,6 +48,7 @@ class ReaderViewModel(QObject):
     summaryChanged = Signal()
     exportControllerChanged = Signal()
     tilesChanged = Signal()
+    heartbeatErrorChanged = Signal()
 
     def __init__(
         self,
@@ -70,6 +72,12 @@ class ReaderViewModel(QObject):
         self._heartbeat.setInterval(HEARTBEAT_MS)
         self._heartbeat.timeout.connect(self.settleReadingTime)
         self._last_settle = 0.0
+        # DIAG-READING-EXPORT-001 symptom B: a heartbeat firing after the
+        # storage connection was torn down.  The failure (if any) is recorded
+        # here, observable via the ``heartbeat_error`` attribute and the
+        # ``heartbeatErrorChanged`` signal (no QML consumer yet; Python tests
+        # are the observers of record).
+        self.heartbeat_error: str | None = None
 
     # ------------------------------------------------------------------
     # session control
@@ -439,16 +447,33 @@ class ReaderViewModel(QObject):
 
     @Slot()
     def settleReadingTime(self) -> None:
-        """Fold elapsed wall time into the mode's accumulated duration."""
+        """Fold elapsed wall time into the mode's accumulated duration.
+
+        DIAG-READING-EXPORT-001-FIX-B: if the storage connection was torn
+        down under a live heartbeat, the write fails with a typed sqlite
+        error.  The heartbeat is then stopped (no repeat every
+        ``HEARTBEAT_MS``) and the failure stays diagnosable on the view
+        model via the ``heartbeat_error`` attribute and the
+        ``heartbeatErrorChanged`` signal — it is recorded, not swallowed.
+        Until a UI task consumes the signal, Python-side tests/readers are
+        the observers of record.
+        """
         if self._reading.progress is None:
             self._last_settle = time.monotonic()
             return
         now = time.monotonic()
         elapsed = now - (self._last_settle or now)
         self._last_settle = now
-        if elapsed > 0:
+        if elapsed <= 0:
+            return
+        try:
             self._reading.add_time(elapsed)
-            self.summaryChanged.emit()
+        except sqlite3.Error as error:
+            self._heartbeat.stop()
+            self.heartbeat_error = f"{type(error).__module__}.{type(error).__name__}: {error}"
+            self.heartbeatErrorChanged.emit()
+            return
+        self.summaryChanged.emit()
 
     @Slot()
     def openExporter(self) -> QObject | None:
