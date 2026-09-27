@@ -2,7 +2,8 @@
 
 Exercises the REAL sidecar launch path and the hardened command surface:
 
-  0. environment record (Python/Cargo/Node versions, WebView2 presence)
+  0. environment record (Python/Cargo/Node versions, WebView2 presence);
+     a missing tool FAILS the gate (R2-06)
   1. synthetic lab preparation (asset/typical/boundary/oversize, scope roots)
   2. catalog seeding through the REAL loader entry point
      (``python -m infrastructure.resource_channel.catalog_loader``) into the
@@ -11,11 +12,14 @@ Exercises the REAL sidecar launch path and the hardened command surface:
      captured module set is gated against the F-05 whitelist)
   4. PROBE phase: the built desktop runtime runs the full WebView matrix
      (RC1 resource-channel scenarios E-01..E-09 + RC2 hardened-surface
-     scenarios D-01..D-03) and exits through probe_exit; the sidecar's
-     actually-loaded module set is dumped by the Core and gated
-  5. INTERACTIVE phase: the same runtime without M2RC1_PROBE_OUT runs the
-     production-surface deny matrix (IP-1..IP-6 + IA-1) and reports through
-     document.title (mirrored to stderr); the runner then terminates it
+     scenarios D-01..D-03) and exits through probe_exit; the gate asserts
+     the EXPECTED scenario SET (R2-05), and copies the discriminating
+     artefacts (probe results JSON, sidecar module dumps) into raw/
+  5. INTERACTIVE phase: the same runtime without M2RC1_PROBE_OUT. The gate
+     (`interactive-production-surface`) verifies externally observable facts
+     only -- the announced production allowlist, process liveness, absence
+     of probe results; the in-page IP/IA matrix is NOT machine-verified
+     (R2-03). A reader thread keeps draining stderr throughout.
   6. gate: every recorded scenario must be PASS (FAIL/MISSING/NOT_RUN are
      gate failures, the RC1 R-03 rule)
 
@@ -35,6 +39,7 @@ import re
 import shutil
 import subprocess
 import sys
+import threading
 import time
 from pathlib import Path
 
@@ -138,7 +143,7 @@ def seed_catalog() -> tuple[int, str]:
     (RAW / "e2e-catalog-loader.log").write_text(
         "$ python -m infrastructure.resource_channel.catalog_loader "
         f"--db {catalog_db} --set ... (5 rows)\n"
-        f"exit={completed.returncode}\n{completed.stdout}\n{completed.stderr}",
+        f"exit={completed.returncode}\n{completed.stdout.rstrip()}\n{completed.stderr.rstrip()}\n",
         encoding="utf-8",
     )
     return completed.returncode, str(catalog_db)
@@ -161,7 +166,7 @@ def check_import_isolation() -> tuple[bool, str]:
     )
     (RAW / "e2e-sidecar-import-isolation.log").write_text(
         f"$ python -c <import infrastructure.resource_channel.host_bridge; dump modules>\n"
-        f"exit={completed.returncode}\n{completed.stdout}\n{completed.stderr}",
+        f"exit={completed.returncode}\n{completed.stdout.rstrip()}\n{completed.stderr.rstrip()}\n",
         encoding="utf-8",
     )
     if completed.returncode != 0:
@@ -252,6 +257,16 @@ def run_probe_phase(exe: Path, catalog_db: str) -> tuple[int, dict | None]:
             results = json.loads(out_path.read_text(encoding="utf-8"))
         except json.JSONDecodeError:
             print("  probe results JSON unreadable")
+    # R2-05: keep a copy of the discriminating artefacts in raw/ (the
+    # interactive phase deliberately deletes the live probe-results file to
+    # prove the write-command denial, so only the copy survives in-tree).
+    for source in (
+        out_path,
+        LAB / "sidecar-modules-probe.json",
+        LAB / "sidecar-modules-interactive.json",
+    ):
+        if source.exists():
+            shutil.copy2(source, RAW / f"e2e-{source.name}")
     return proc.returncode, results
 
 
@@ -264,24 +279,44 @@ PROBE_EXPECTED = PRODUCTION_EXPECTED + [
     "probe_issue_url",
 ]
 
+#: R2-05: the exact set of scenario ids the probe phase must report. The
+#: gate asserts set equality -- an empty or partial results file is a gate
+#: failure, not a pass.
+EXPECTED_PROBE_IDS = [
+    "E-00-probe-mode-detected",
+    "E-01-issue-fetch-digest",
+    "E-02-img-render",
+    "E-03-unknown-id",
+    "E-04-revoke-after-cached-fetch",
+    "E-05-expired-ttl",
+    "E-06-remount-fresh-references",
+    "E-07-per-reference-first-byte-p95",
+    "E-08-boundary-256mib",
+    "E-09-over-limit-typed",
+    "D-01-register-catalog-denied",
+    "D-02-ttl-override-inert",
+    "D-03-probe-issue-allowed-in-probe-mode",
+]
+
 
 def run_interactive_phase(exe: Path, catalog_db: str) -> tuple[bool, str]:
-    """Production-surface deny matrix, observed from the OUTSIDE.
+    """Production-surface facts, observed from the OUTSIDE.
 
-    In interactive mode the page has no write channel (probe_write_results is
-    unregistered), no exit command (probe_exit is unregistered) and script
-    window.close() is blocked on WebView2 — the matrix result cannot leave
-    the page, by design. The gate therefore rests on externally observable
-    facts, each tying back to a deny row of the matrix:
+    R2-03 disclosure: this phase does NOT machine-verify the in-page IP/IA
+    matrix (that matrix cannot leave the page by design, and a white-screen
+    page would pass this gate). The gate -- therefore named
+    `interactive-production-surface`, not a deny-matrix check -- rests on
+    externally observable facts only:
 
     - the host's stderr allowlist announcement (emitted at startup from the
-      same function that feeds the conditional invoke_handler registration)
-      must be exactly the 3 production commands in this mode;
+      `command_allowlist` CONSTANT ARRAY -- one of THREE hand-maintained
+      views of the command surface, see main.rs; R2-04) must be exactly the
+      3 production commands in this mode;
     - the process must stay alive (an early death = probe_exit leak);
     - no probe results file may appear (a write = probe_write_results leak).
 
-    Judgement: alive after MIN_ALIVE_SECONDS with the expected allowlist and
-    no results file -> PASS; anything else -> FAIL.
+    A reader thread keeps draining the process output throughout the watch
+    so any crash/panic text still lands in the log.
     """
 
     MIN_ALIVE_SECONDS = 10.0
@@ -298,27 +333,34 @@ def run_interactive_phase(exe: Path, catalog_db: str) -> tuple[bool, str]:
     )
     tail: list[str] = []
     announcement: tuple[str, list[str]] | None = None
-    deadline = time.time() + 60
     assert proc.stdout is not None
-    while time.time() < deadline:
-        line = proc.stdout.readline()
-        if not line:
-            break
-        text = line.decode("utf-8", errors="replace").rstrip()
-        tail.append(text)
-        match = ALLOWLIST_RE.search(text)
-        if match:
-            announcement = (match.group(1), [c for c in match.group(2).split(",") if c])
-            break
+
+    def _drain() -> None:
+        for raw_line in proc.stdout:  # type: ignore[union-attr]
+            tail.append(raw_line.decode("utf-8", errors="replace").rstrip())
+
+    reader = threading.Thread(target=_drain, daemon=True)
+    reader.start()
+    deadline = time.time() + 60
+    while time.time() < deadline and announcement is None:
+        for text in tail:
+            match = ALLOWLIST_RE.search(text)
+            if match:
+                announcement = (match.group(1), [c for c in match.group(2).split(",") if c])
+                break
+        if announcement is None:
+            time.sleep(0.2)
     if announcement is None:
         proc.kill()
         proc.wait(timeout=30)
+        reader.join(timeout=10)
         log_path.write_text("\n".join(tail), encoding="utf-8")
         return False, "host never announced its command allowlist (startup failed?)"
     # allow the page to boot and run its on-screen matrix while we watch for
-    # an early death (probe_exit leak)
+    # an early death (probe_exit leak); the reader thread keeps the log alive
     while time.time() - start < MIN_ALIVE_SECONDS:
         if proc.poll() is not None:
+            reader.join(timeout=10)
             log_path.write_text("\n".join(tail), encoding="utf-8")
             return False, (
                 f"interactive runtime died after {time.time() - start:.1f}s: "
@@ -332,6 +374,7 @@ def run_interactive_phase(exe: Path, catalog_db: str) -> tuple[bool, str]:
             proc.wait(timeout=30)
         except subprocess.TimeoutExpired:
             proc.kill()
+    reader.join(timeout=10)
     elapsed = time.time() - start
     log_path.write_text(
         "\n".join(tail) + f"\n[runner] elapsed={elapsed:.1f}s alive_through_watch={not early_death}\n",
@@ -353,7 +396,8 @@ def run_interactive_phase(exe: Path, catalog_db: str) -> tuple[bool, str]:
         return False, "probe results file appeared in interactive mode (probe_write_results leak)"
     return True, (
         f"production allowlist exactly {PRODUCTION_EXPECTED}; process stayed alive "
-        f"through the {MIN_ALIVE_SECONDS:.0f}s watch; no probe results written"
+        f"through the {MIN_ALIVE_SECONDS:.0f}s watch; no probe results written; "
+        "the in-page IP/IA matrix itself is NOT machine-verified (R2-03)"
     )
 
 
@@ -400,16 +444,31 @@ def main() -> int:
 
     log("0. environment")
     tools = {}
+    missing = []
     for name, argv in (("python", [sys.executable, "--version"]), ("cargo", ["cargo", "--version"]),
                        ("rustc", ["rustc", "--version"]), ("node", ["node", "--version"]),
                        ("npm", ["npm", "--version"])):
+        # R2-06: resolve through shutil.which so bare names like `npm`
+        # resolve to npm.cmd on Windows; a tool that cannot be found or run
+        # is recorded as UNAVAILABLE and FAILS the gate instead of being
+        # silently PASSed.
+        resolved = shutil.which(argv[0]) or shutil.which(argv[0] + ".cmd")
+        if resolved is None:
+            tools[name] = "UNAVAILABLE: not on PATH"
+            missing.append(name)
+            continue
         try:
-            tools[name] = subprocess.run(argv, capture_output=True, text=True, timeout=60).stdout.strip()
+            tools[name] = subprocess.run(
+                [resolved] + argv[1:], capture_output=True, text=True, timeout=60
+            ).stdout.strip()
         except (OSError, subprocess.TimeoutExpired) as error:
             tools[name] = f"UNAVAILABLE: {error}"
+            missing.append(name)
     print(json.dumps(tools, indent=2))
     (RAW / "e2e-environment.json").write_text(json.dumps(tools, indent=2), encoding="utf-8")
-    gate["environment"] = "PASS"
+    gate["environment"] = "FAIL" if missing else "PASS"
+    if missing:
+        print(f"environment gate FAIL: missing tools: {missing}")
 
     log("1. synthetic lab")
     manifest = prepare_lab()
@@ -445,16 +504,39 @@ def main() -> int:
 
     log("5. PROBE phase (E2E matrix through the real sidecar)")
     exit_code, results = run_probe_phase(exe, catalog_db)
+    reported: dict[str, str] = {}
     if results is not None:
         for record in results["results"]:
+            reported[str(record.get("id", "?"))] = record.get("status", "MISSING")
             print(f"{record.get('id', '?'):42s} {record.get('status', 'MISSING')}")
     statuses: dict[str, int] = {}
-    if results is not None:
-        for record in results["results"]:
-            statuses[record.get("status", "MISSING")] = statuses.get(record.get("status", "MISSING"), 0) + 1
+    for status in reported.values():
+        statuses[status] = statuses.get(status, 0) + 1
     print("summary:", statuses)
-    failed_probe = statuses.get("FAIL", 0) + statuses.get("MISSING", 0) + statuses.get("NOT_RUN", 0)
-    gate["probe-phase"] = "PASS" if (results is not None and exit_code == 0 and failed_probe == 0) else "FAIL"
+    # R2-05: assert the EXPECTED scenario SET, not just the status
+    # distribution -- a missing, empty or partial results file cannot pass.
+    expected_set = set(EXPECTED_PROBE_IDS)
+    reported_set = set(reported)
+    missing_ids = sorted(expected_set - reported_set)
+    unexpected_ids = sorted(reported_set - expected_set)
+    bad_ids = sorted(id_ for id_, status in reported.items() if status != "PASS")
+    if missing_ids:
+        print(f"missing scenario ids: {missing_ids}")
+    if unexpected_ids:
+        print(f"unexpected scenario ids: {unexpected_ids}")
+    if bad_ids:
+        print(f"non-PASS scenarios: {bad_ids}")
+    gate["probe-phase"] = (
+        "PASS"
+        if (
+            results is not None
+            and exit_code == 0
+            and not missing_ids
+            and not unexpected_ids
+            and not bad_ids
+        )
+        else "FAIL"
+    )
 
     ok, detail = check_announcement(LAB / "probe-runtime.log", "probe")
     gate["probe-allowlist-announcement"] = "PASS" if ok else "FAIL"
@@ -464,9 +546,10 @@ def main() -> int:
     gate["sidecar-module-dump-probe"] = "PASS" if ok else "FAIL"
     print(f"{'PASS' if ok else 'FAIL'}: {detail}")
 
-    log("6. INTERACTIVE phase (production-surface deny matrix)")
+    log("6. INTERACTIVE phase (production-surface facts; the in-page IP/IA")
+    log("   matrix is NOT machine-verified here — R2-03, see gate name)")
     ok, detail = run_interactive_phase(exe, catalog_db)
-    gate["interactive-deny-matrix"] = "PASS" if ok else "FAIL"
+    gate["interactive-production-surface"] = "PASS" if ok else "FAIL"
     print(f"{'PASS' if ok else 'FAIL'}: {detail}")
 
     ok, detail = check_sidecar_dump(LAB / "sidecar-modules-interactive.json", "interactive")
@@ -478,7 +561,17 @@ def main() -> int:
     for name, status in gate.items():
         print(f"{name:34s} {status}")
     (RAW / "e2e-gate.json").write_text(
-        json.dumps({"gate": gate, "failed": failed, "probe_statuses": statuses}, indent=2),
+        json.dumps(
+            {
+                "gate": gate,
+                "failed": failed,
+                "probe_statuses": statuses,
+                "probe_missing_ids": missing_ids,
+                "probe_unexpected_ids": unexpected_ids,
+                "probe_non_pass_ids": bad_ids,
+            },
+            indent=2,
+        ),
         encoding="utf-8",
     )
     if failed:

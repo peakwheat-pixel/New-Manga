@@ -193,6 +193,41 @@ class TestTtlCannotBeExtended:
             )
         assert excinfo.value.code == "REF_MALFORMED"
 
+    def test_service_level_non_finite_and_boolean_ttl_refused(self, reader, service, scope):
+        """R2-02: NaN survives every comparison, so it must be refused
+        explicitly (a NaN expiry would never fire and the entry would evade
+        the active-reference limit). Booleans subclass int and must not pass
+        as 1 s."""
+
+        import math
+
+        facts = reader.capture_facts("asset.png")
+        for bad in (float("nan"), float("inf"), float("-inf"), True, False):
+            with pytest.raises(TypedResourceChannelError) as excinfo:
+                service.issue(
+                    scope_class="derived-read-only", resource_id="res-ttl-bad",
+                    revision_fingerprint="rev-1", rel_path="asset.png", facts=facts,
+                    ttl_seconds=bad,
+                )
+            assert excinfo.value.code == "REF_MALFORMED", bad
+        assert service.active_reference_count() == 0
+
+    def test_wire_level_nan_literal_refused(self, scope, service, seeded_server):
+        """R2-02 at the wire: json.loads accepts bare NaN/Infinity literals,
+        so a raw bridge line could smuggle them to the service; the typed
+        refusal must survive the round trip."""
+
+        import json as json_module
+
+        server = seeded_server()
+        for literal in ("NaN", "Infinity"):
+            request = json_module.loads(
+                '{"id":1,"method":"issue","params":{"resource_id":"res-001",'
+                f'"revision_fingerprint":"rev-1","ttl_seconds":{literal}}}}}'
+            )
+            response = server._dispatch(request)
+            assert response["error"]["code"] == "REF_MALFORMED", literal
+
     def test_sliding_renewal_rearms_to_ruled_default(self, reader, scope):
         """Sliding renewal (T6, unchanged from RC1) always re-arms the ruled
         default TTL -- never a caller-chosen value and never an accumulation

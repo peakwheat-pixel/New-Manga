@@ -26,6 +26,7 @@ Design boundaries:
 
 from __future__ import annotations
 
+import math
 import threading
 import time
 from dataclasses import dataclass, replace
@@ -104,13 +105,20 @@ class ResourceChannelService:
             )
         validate_rel_path(rel_path)
         if ttl_seconds is not None and (
-            not isinstance(ttl_seconds, (int, float))
+            isinstance(ttl_seconds, bool)
+            or not isinstance(ttl_seconds, (int, float))
+            or not math.isfinite(ttl_seconds)
             or ttl_seconds <= 0
             or ttl_seconds > self._default_ttl
         ):
+            # bool is refused even though it subclasses int (True would
+            # otherwise pass as 1 s); NaN must be refused explicitly because
+            # every comparison on it is False -- a NaN expiry would never
+            # fire and the entry would evade the active-reference limit.
             raise TypedResourceChannelError(
                 E_MALFORMED,
-                "ttl_seconds must be within (0, default TTL]; lifetime cannot be extended",
+                "ttl_seconds must be a finite number within (0, default TTL]; "
+                "lifetime cannot be extended",
             )
         if facts.size < 0:
             raise TypedResourceChannelError(E_MALFORMED, "negative size")

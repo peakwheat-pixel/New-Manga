@@ -177,6 +177,90 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the issue_resource_url command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-issue-resource-url",
+          "markdownDescription": "Enables the issue_resource_url command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the probe_config command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-probe-config",
+          "markdownDescription": "Enables the probe_config command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the probe_exit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-probe-exit",
+          "markdownDescription": "Enables the probe_exit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the probe_issue_url command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-probe-issue-url",
+          "markdownDescription": "Enables the probe_issue_url command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the probe_write_results command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-probe-write-results",
+          "markdownDescription": "Enables the probe_write_results command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the revoke_ref command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-revoke-ref",
+          "markdownDescription": "Enables the revoke_ref command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the revoke_resource_refs command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-revoke-resource-refs",
+          "markdownDescription": "Enables the revoke_resource_refs command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the issue_resource_url command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-issue-resource-url",
+          "markdownDescription": "Denies the issue_resource_url command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the probe_config command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-probe-config",
+          "markdownDescription": "Denies the probe_config command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the probe_exit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-probe-exit",
+          "markdownDescription": "Denies the probe_exit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the probe_issue_url command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-probe-issue-url",
+          "markdownDescription": "Denies the probe_issue_url command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the probe_write_results command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-probe-write-results",
+          "markdownDescription": "Denies the probe_write_results command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the revoke_ref command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-revoke-ref",
+          "markdownDescription": "Denies the revoke_ref command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the revoke_resource_refs command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-revoke-resource-refs",
+          "markdownDescription": "Denies the revoke_resource_refs command without any pre-configured scope."
+        },
+        {
           "description": "Default core plugins set.\n#### This default permission set includes:\n\n- `core:path:default`\n- `core:event:default`\n- `core:window:default`\n- `core:webview:default`\n- `core:app:default`\n- `core:image:default`\n- `core:resources:default`\n- `core:menu:default`\n- `core:tray:default`",
           "type": "string",
           "const": "core:default",
@@ -2215,96 +2299,6 @@
           "type": "string",
           "const": "core:window:deny-unminimize",
           "markdownDescription": "Denies the unminimize command without any pre-configured scope."
-        },
-        {
-          "description": "Default plugin permissions.\n#### This default permission set includes:\n\n- `allow-issue-resource-url`\n- `allow-revoke-ref`\n- `allow-revoke-resource-refs`\n- `allow-probe-config`\n- `allow-probe-write-results`\n- `allow-probe-exit`\n- `allow-probe-issue-url`",
-          "type": "string",
-          "const": "m2rc1-commands:default",
-          "markdownDescription": "Default plugin permissions.\n#### This default permission set includes:\n\n- `allow-issue-resource-url`\n- `allow-revoke-ref`\n- `allow-revoke-resource-refs`\n- `allow-probe-config`\n- `allow-probe-write-results`\n- `allow-probe-exit`\n- `allow-probe-issue-url`"
-        },
-        {
-          "description": "Enables the issue_resource_url command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:allow-issue-resource-url",
-          "markdownDescription": "Enables the issue_resource_url command without any pre-configured scope."
-        },
-        {
-          "description": "Enables the probe_config command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:allow-probe-config",
-          "markdownDescription": "Enables the probe_config command without any pre-configured scope."
-        },
-        {
-          "description": "Enables the probe_exit command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:allow-probe-exit",
-          "markdownDescription": "Enables the probe_exit command without any pre-configured scope."
-        },
-        {
-          "description": "Enables the probe_issue_url command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:allow-probe-issue-url",
-          "markdownDescription": "Enables the probe_issue_url command without any pre-configured scope."
-        },
-        {
-          "description": "Enables the probe_write_results command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:allow-probe-write-results",
-          "markdownDescription": "Enables the probe_write_results command without any pre-configured scope."
-        },
-        {
-          "description": "Enables the revoke_ref command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:allow-revoke-ref",
-          "markdownDescription": "Enables the revoke_ref command without any pre-configured scope."
-        },
-        {
-          "description": "Enables the revoke_resource_refs command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:allow-revoke-resource-refs",
-          "markdownDescription": "Enables the revoke_resource_refs command without any pre-configured scope."
-        },
-        {
-          "description": "Denies the issue_resource_url command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:deny-issue-resource-url",
-          "markdownDescription": "Denies the issue_resource_url command without any pre-configured scope."
-        },
-        {
-          "description": "Denies the probe_config command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:deny-probe-config",
-          "markdownDescription": "Denies the probe_config command without any pre-configured scope."
-        },
-        {
-          "description": "Denies the probe_exit command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:deny-probe-exit",
-          "markdownDescription": "Denies the probe_exit command without any pre-configured scope."
-        },
-        {
-          "description": "Denies the probe_issue_url command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:deny-probe-issue-url",
-          "markdownDescription": "Denies the probe_issue_url command without any pre-configured scope."
-        },
-        {
-          "description": "Denies the probe_write_results command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:deny-probe-write-results",
-          "markdownDescription": "Denies the probe_write_results command without any pre-configured scope."
-        },
-        {
-          "description": "Denies the revoke_ref command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:deny-revoke-ref",
-          "markdownDescription": "Denies the revoke_ref command without any pre-configured scope."
-        },
-        {
-          "description": "Denies the revoke_resource_refs command without any pre-configured scope.",
-          "type": "string",
-          "const": "m2rc1-commands:deny-revoke-resource-refs",
-          "markdownDescription": "Denies the revoke_resource_refs command without any pre-configured scope."
         }
       ]
     },

@@ -235,9 +235,13 @@ fn main() {
 
     // RC2-AC1: the conditional allowlist. The probe surface physically does
     // not exist in production mode; `register_catalog` exists in no mode.
-    // The effective allowlist is announced on stderr (same source of truth
-    // as the registration below) so the E2E runner can pin the mode's
-    // actual command surface against its expectation.
+    // R2-04: the announcement below is emitted from the `command_allowlist`
+    // CONSTANT ARRAY, which is one of THREE hand-maintained views of the
+    // same surface (constants / generate_handler! literal list below /
+    // build.rs app-manifest list) -- there is no compile-time binding
+    // between them. The unit tests pin the constants, the runner pins the
+    // announcement per mode, and tauri-build validates the capability
+    // against the manifest; keep all three in sync in the same commit.
     let builder = if probe_mode {
         eprintln!(
             "[m2rc2-allowlist] probe:{}",
@@ -349,6 +353,42 @@ mod tests {
     }
 
     // ---- RC2-AC1: WebView-facing command surface allow/deny matrix --------
+
+    /// R2-01(a): the ACL must be enforced for BARE app commands, which only
+    /// happens when the generated acl-manifests.json carries the
+    /// `__app-acl__` application manifest (an inlined-plugin declaration is
+    /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
+    /// ACL layer silently skipped them, DSH R2-01). This pins the build
+    /// artifact: the app manifest declares exactly the seven live commands,
+    /// and no plugin-shaped surface remains.
+    #[test]
+    fn app_acl_manifest_is_generated_and_enforced() {
+        let manifest: serde_json::Value = serde_json::from_str(
+            include_str!("../gen/schemas/acl-manifests.json"),
+        )
+        .expect("acl-manifests.json must be present and valid");
+        let app = manifest
+            .get("__app-acl__")
+            .expect("acl-manifests.json must carry __app-acl__ (R2-01a)");
+        let permissions = app
+            .get("permissions")
+            .and_then(|p| p.as_object())
+            .expect("__app-acl__ permissions object");
+        for command in command_allowlist(true) {
+            let allow = format!("allow-{}", command.replace('_', "-"));
+            assert!(
+                permissions.contains_key(&allow),
+                "app ACL must define {allow} (from {command})"
+            );
+        }
+        // the deleted catalog surface must not be declared anywhere either
+        assert!(
+            !serde_json::to_string(&manifest)
+                .unwrap()
+                .contains("register_catalog"),
+            "register_catalog must not re-enter any ACL surface"
+        );
+    }
 
     #[test]
     fn production_surface_is_exactly_three_commands() {

@@ -8,11 +8,14 @@
     "probe-phase": "PASS",
     "probe-allowlist-announcement": "PASS",
     "sidecar-module-dump-probe": "PASS",
-    "interactive-deny-matrix": "PASS",
+    "interactive-production-surface": "PASS",
     "sidecar-module-dump-interactive": "PASS"
   },
   "failed": [],
   "probe_statuses": {
     "PASS": 13
-  }
+  },
+  "probe_missing_ids": [],
+  "probe_unexpected_ids": [],
+  "probe_non_pass_ids": []
 }
