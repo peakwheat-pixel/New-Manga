@@ -1,0 +1,39 @@
+# DIAG-READING-EXPORT-001 frozen environment
+# generated (UTC): 2026-09-27T14:48:05.3861360Z
+# worktree: C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga
+# head: 064ff98041f29e35732b305d922083404485c167   base: 83de13dfe0521125715c2e26da75b96a63103938
+
+== platform ==
+OS          : Microsoft Windows 11 专业版 build 26200
+Shell       : pwsh 7.6.6 / Windows PowerShell host
+QT_QPA_PLATFORM : []  (empty = Qt default 'windows' platform)
+
+== interpreter (all matrix runs used this exact absolute path) ==
+python -> G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+command: "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" -c ...
+python      : 3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)]
+executable  : G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+platform    : Windows-11-10.0.26200-SP0
+EXIT=0
+<string>:1: DeprecationWarning: version is deprecated and will be removed in Python 3.14
+PySide6     : 6.11.2
+Qt          : 6.11.2
+shiboken6   : 6.11.2
+sqlite3     : 3.45.1 (module 2.6.0 )
+openssl(Py) : OpenSSL 3.0.13 30 Jan 2024
+EXIT=0
+pytest      : pytest 9.1.1
+EXIT=0
+
+== openssl CLI ==
+openssl CLI : NOT on PATH (tests/network/test_transport_tls.py + test_connection_tester.py skip with reason 'openssl unavailable')
+
+== other declared requirements absent from this venv (skip reasons in run-01.log) ==
+numpy       : ABSENT
+torch       : ABSENT
+torchvision : ABSENT
+docTR       : ABSENT
+doctr       : ABSENT
+pypdfium2   : present
+mobi        : present
+EXIT=0

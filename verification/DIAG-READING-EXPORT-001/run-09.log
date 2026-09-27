@@ -1,0 +1,12 @@
+# Run ID: 09
+# Scenario: targeted test isolation
+# Command: python -m pytest -q -p no:cacheprovider -rs tests/reading_export/test_viewmodels.py::test_start_export_completes_and_updates_history
+# Interpreter: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+# Env ID: TASK-012-py312 (PySide6 6.11.2 / Qt 6.11.2 / pytest 9.1.1 / sqlite3 3.45.1)
+# CWD: C:\Users\49745\.codex\worktrees\diag-reading-export-001\New Manga
+# QT_QPA_PLATFORM: []
+# Start (UTC): 2026-09-27T14:29:20.6015344Z
+.                                                                        [100%]
+1 passed in 0.13s
+# End (UTC): 2026-09-27T14:29:20.9833890Z
+EXIT=0
