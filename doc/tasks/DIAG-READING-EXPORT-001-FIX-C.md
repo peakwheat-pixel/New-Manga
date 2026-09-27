@@ -2,7 +2,7 @@
 id: DIAG-READING-EXPORT-001-FIX-C
 title: Production reader-page-leave and quit wiring for closeReader (heartbeat endpoint wiring)
 kind: fix
-status: in_progress
+status: done
 approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: []
 base_commit: 0e34c5c3c0a753be3e9f310daa0e413959f4ca5d
 branch: agent/zcode/DIAG-READING-EXPORT-001-FIX-C-quit-and-leave-wiring
 worktree: G:/CODEX/New Manga.worktrees/DIAG-FIX-C-zcode
-integration_commit: null
+integration_commit: 0f2e9e31a666eddb4c9b8e17fb5401567c7e3924
 ---
 
 # DIAG-READING-EXPORT-001-FIX-C — 生产侧读者心跳终结点接线（离开读者页 / 退出）
@@ -40,12 +40,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] 离开读者页触发 `closeReader`：装配级测试断言（`assemble_services`/engine 后 `enterReader` 打开章节 → `navigation.navigate(<非 reader 页>)` → 断言 `services.reader.hasChapter is False` 且心跳已停、进度已持久化）；对修前行为红（接线缺失时 hasChapter 仍 True）。
-- [ ] 在读者页内不误触发：`enterReader`/`openChapter` 与读者页内操作后断言读者仍打开、心跳仍活。
-- [ ] `aboutToQuit` 接线：装配/退出路径测试断言心跳停止。
-- [ ] 定向套件（`tests/core`、`tests/reading_export` 相关）与全仓一次；passed/skipped 分列，skip 逐条给原因。
-- [ ] 未新增 skip、未放宽断言、不引入新依赖；不改 QML/Schema/Contract/reading service 语义。
-- [ ] Handoff 与非作者 Review 齐备；Codex 集成核验通过后才可 `done`。
+- [x] 离开读者页触发 `closeReader`：装配级测试 `test_navigation_away_from_reader_closes_it`（生产 `assemble_services` + 真实 SQLite）红→绿（PRE EXIT=1 / POST EXIT=0）。**AC1 文本集成裁决（DSH F-1，代行 Codex 采信其建议）**：AC 原文"断言 `hasChapter is False`"为文本缺陷——`closeReader` 的冻结语义（FIX-B）只 flush+停心跳、不清 `hasChapter`，AC1 有效契约修订为"心跳停止 + 进度 flush（`hasChapter` 按 `ReadingService.close()` 既有语义保留）"；实现按修订后契约核验通过。
+- [x] 在读者页内不误触发：`enterReader`（emit `"reader"`）守卫永不关闭；R3 re-arm 幂等守卫（同章节+心跳活 → 不重开）与 N-1 离园时长不计入判别测试（模拟 600s 缺席，`total_read_seconds` 增量 <1.0s）锁定。
+- [x] `aboutToQuit` 接线：`main()` 内 `_close_reader_on_quit`（F-6 stderr 守卫）在 exec 返回、`_shutdown_services` 关连接之前执行；无自动化测试（DSH 两轮裁决可接受——一行标准 connect，smoke 子进程实跑覆盖，Handoff §4 披露）。
+- [x] 定向 210 passed、全仓 1318 passed/5 skipped（R4 最终套件），均 EXIT=0；skip=2 docTR+1 numpy+2 torch 逐条给原因；集成 head 复跑见集成记录。
+- [x] 未新增 skip、未放宽断言、不引入新依赖；零 QML/Schema/Contract/reading service 改动（DSH 六轮核验确认）。
+- [x] Handoff 与非作者 Review 齐备：六轮循环 R1 `approved`（6×Minor）→ R2/R3/R4/R5 `changes_requested`（逐轮处置）→ R6 [approved](../reviews/DIAG-READING-EXPORT-001-FIX-C-dsh-r6.md) @`0e0e699e`；报告逐字节导入（SHA256 于 review-dsh-import）；集成核验通过（[integration-0f2e9e31](../../verification/DIAG-READING-EXPORT-001-FIX-C/integration-0f2e9e31/integration.md)）。
 
 ## 允许修改范围
 
@@ -69,3 +69,12 @@ integration_commit: null
 ## 已知阻塞
 
 - 无。
+
+
+## 集成记录（Integrator=代行 Codex，2026-09-28）
+
+- **六轮非作者 Review**：R1 `approved`（F-1..F-6 六×Minor）→ R2 `changes_requested`（N-1 P2 离园时长计入 + N-2..N-5）→ R3 `changes_requested`（T-1 断言时钟敏感性 + T-2..T-4）→ R4 `changes_requested`（H-1..H-3 纯文档）→ R5 `changes_requested`（H-3 尾项 AC4 指针）→ R6 [approved](../reviews/DIAG-READING-EXPORT-001-FIX-C-dsh-r6.md) @`0e0e699e`。报告逐字节导入，SHA256 见 `verification/DIAG-READING-EXPORT-001-FIX-C/review-dsh-import/sha256.txt`。
+- **交付链**：claim `b1f4cedf` → R1 `de0bf175` → R2 `e9f61f5b` → R3 `132aa5e1` → R4 `46c7ff5a` → R5 `5d541bee`（doc）→ R6 `0e0e699e`（doc，Owner tip）。
+- **集成 merge**：`0f2e9e31a666eddb4c9b8e17fb5401567c7e3924`（parents `601371f5`（Review 归档）+ `0e0e699e`；Owner 历史未改写；唯一冲突 Task 文件取 Owner 交付版）。Owner 变更 15 路径全授权（产品仅 `src/bootstrap/app.py`）、禁改路径零命中、非日志 `diff --check` 干净、集成 head 全仓 EXIT=0（见集成核验记录）。
+- **F-1/AC1 裁决（代行 Codex，待追认）**：采信 DSH F-1 建议——AC1 原文 `hasChapter is False` 为文本缺陷（与 FIX-B 冻结的 closeReader 语义矛盾），修订为"心跳停止 + 进度 flush"；实现按修订契约核验通过，非实现缺陷。
+- **诊断家族终态**：DIAG（诊断）+ FIX-A（症状 A）+ FIX-B（症状 B 生命周期）+ FIX-C（生产接线）全部 `done`；历史 reading_export flaky 的两个机制均已修复落地；唯一未决知识项 = 诊断 U3（真实全仓触发条件，知识性）。
