@@ -1,0 +1,32 @@
+# FIX-A discrimination probe (new-predicate fix vs old-predicate baseline)
+# Command: python verification/DIAG-READING-EXPORT-001-FIX-A/probe-terminal-wait-discrimination.py 400 400 3
+# Interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe (Python 3.12.3 / PySide6 6.11.2 / Qt 6.11.2)
+# CWD: /g/CODEX/New Manga.worktrees/DIAG-FIX-A-zcode
+# Start (UTC): 2026-09-27T16:25:06.760305300Z
+=== phase: old-predicate-busy ===
+  replays                : 400
+  completed              : 400
+  MISSES (flag seen, terminal signal not yet arrived) : 324
+  detected failures (broken phase: predicate timed out) : 0
+  queued-delivery latency (us)     : min=31000.0 p50=617000.0 p95=1234000.0 max=1391000.0
+  first miss : iteration=48 running=False statusMessage='导出完成：C:\\Users\\49745\\AppData\\Local\\Temp\\tmptz6u_zpx\\out\\old-predicate-busy-48.zip' history=49
+
+=== phase: new-predicate-busy ===
+  replays                : 400
+  completed              : 400
+  MISSES (flag seen, terminal signal not yet arrived) : 0
+  detected failures (broken phase: predicate timed out) : 0
+  queued-delivery latency (us)     : min=16000.0 p50=1500000.0 p95=1516000.0 max=1516000.0
+
+=== phase: broken-vm-fault-injection ===
+  replays                : 3
+  completed              : 0
+  MISSES (flag seen, terminal signal not yet arrived) : 0
+  detected failures (broken phase: predicate timed out) : 3
+  queued-delivery latency (us)     : n/a
+
+verdict: A: OLD predicate reproduces the historical miss shape (discrimination intact)
+verdict: B: NEW predicate is clean under the same stimulus
+verdict: C: NEW predicate correctly reports terminal-not-reached under fault injection
+# End (UTC): 2026-09-27T16:59:12.146102000Z
+EXIT=0

@@ -61,9 +61,19 @@ def pump_until(app, condition, timeout=5.0):
 #                self._running = False → self.changed.emit()
 #
 # So `running == False` now implies the terminal state and signal are already
-# published, which makes the natural terminal wait correct again (TASK-036
-# AC ④: the waits below went back to `not vm.running`). The diagnostic trace
-# is still attached to every failure message.
+# published **in the worker thread's program order** (TASK-036 AC ④). DIAG-
+# READING-EXPORT-001 proved this program order does NOT make the signal
+# observable to the main thread: the slot is invoked through Qt's queued
+# delivery, so a main-thread observer can see `running == False` before the
+# terminal-signal slot has run. Terminal waits therefore poll the signal
+# receipt itself (`not vm.running and <queued signal list>`) wherever the
+# statements after the wait consume a queued signal list (`finished`,
+# `failures`, `snapshots`); waits whose following statements only read plain
+# attributes (written before the flag clears, no event delivery needed) keep
+# the natural `not vm.running`. Note `test_export_without_pages_surfaces_status`
+# takes the synchronous in-thread `_fail` path (no worker thread), so its
+# predicate change is a consistency edit, not a race fix. The diagnostic
+# trace is still attached to every failure message.
 # ---------------------------------------------------------------------------
 
 
@@ -271,7 +281,7 @@ def test_start_export_completes_and_updates_history(qapp, tmp_path, pages, expor
     finished = []
     vm.exportFinished.connect(lambda summary: finished.append(summary))
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, finished)
+    assert pump_until(qapp, lambda: not vm.running and finished), export_diagnostics(vm, finished)
     assert len(finished) == 1, export_diagnostics(vm, finished)
     assert finished[0]["status"] == "completed", export_diagnostics(vm, finished)
     assert "导出完成" in vm.statusMessage, export_diagnostics(vm, finished)
@@ -286,7 +296,7 @@ def test_start_export_stale_abort_surfaces_failure(qapp, tmp_path, pages, export
     failures = []
     vm.exportFailed.connect(lambda message: failures.append(message))
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, failures)
+    assert pump_until(qapp, lambda: not vm.running and failures), export_diagnostics(vm, failures)
     assert len(failures) == 1, export_diagnostics(vm, failures)
     assert "不是最新渲染" in failures[0], export_diagnostics(vm, failures)
     assert vm.staleWarningVisible, export_diagnostics(vm, failures)
@@ -336,7 +346,9 @@ def test_export_outcome_wait_does_not_accept_the_half_published_state(
         lambda message: in_call.append(vm.running), Qt.ConnectionType.DirectConnection
     )
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, in_call)
+    assert pump_until(qapp, lambda: not vm.running and snapshots), export_diagnostics(
+        vm, in_call
+    )
 
     assert half_published(snapshots) == [], half_published(snapshots)
     assert snapshots, "the changed signal must have fired"
@@ -362,7 +374,9 @@ def test_success_path_also_publishes_before_clearing_running(
         Qt.ConnectionType.DirectConnection,
     )
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running), export_diagnostics(vm, in_call)
+    assert pump_until(qapp, lambda: not vm.running and snapshots), export_diagnostics(
+        vm, in_call
+    )
 
     assert half_published(snapshots) == [], half_published(snapshots)
     assert [snapshot[0] for snapshot in in_call] == [True], in_call
@@ -423,7 +437,7 @@ def test_repeat_export_os_error_surfaces_failure_not_stuck(qapp, tmp_path, pages
     failures = []
     vm.exportFailed.connect(lambda message: failures.append(message))
     vm.repeatExport(export_id)
-    assert pump_until(qapp, lambda: not vm.running), "running must reset"
+    assert pump_until(qapp, lambda: not vm.running and failures), "running must reset"
     assert len(failures) == 1 and "disk full" in failures[0]
 
 
@@ -439,6 +453,6 @@ def test_export_without_pages_surfaces_status(qapp, tmp_path, export_service):
     failures = []
     vm.exportFailed.connect(lambda message: failures.append(message))
     vm.startExport()
-    assert pump_until(qapp, lambda: not vm.running)
+    assert pump_until(qapp, lambda: not vm.running and failures)
     assert vm.pageCount == 0
     assert len(failures) == 1

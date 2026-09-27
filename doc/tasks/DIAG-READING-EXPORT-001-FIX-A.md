@@ -2,7 +2,7 @@
 id: DIAG-READING-EXPORT-001-FIX-A
 title: Export terminal-state wait/signal-delivery semantics fix (symptom A)
 kind: fix
-status: ready
+status: in_progress
 approval: released_by_user_overnight_2026-09-28
 suggested_owner: ZCode
 owner: ZCode
