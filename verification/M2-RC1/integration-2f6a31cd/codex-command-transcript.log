@@ -1,6 +1,6 @@
 M2-RC1 Codex integration command transcript
 Date: 2026-09-27 (Asia/Shanghai)
-Shell: Windows PowerShell
+Shell: Windows PowerShell 7.6.6
 Repository: G:\CODEX\New Manga
 Execution worktree: G:\CODEX\New Manga.worktrees\M2-RC1-zcode
 Branch: agent/zcode/M2-RC1-large-media-resource-channel-runtime
@@ -8,16 +8,10 @@ Execution HEAD: ce3c3771d15c60b743b1e1da936edc445676b305
 Approved reviewed head: 2f6a31cd67e983e789c02cb4e33c194f0e012f23
 Fixed base: 2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1
 Reviewed head to execution HEAD is evidence/docs-only; product tree unchanged.
-PowerShell: 
-7.6.6
-Python: 
-C:\Python314\python.exe
-Cargo: 
-cargo 1.98.1 (797e8a9bc 2026-08-05)
-Node: 
-v24.15.0
-npm: 
-12.0.1
+Python: C:\Python314\python.exe (Python 3.14.6)
+Cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+Node: v24.15.0
+npm: 12.0.1
 Isolated TEMP: G:\CODEX\NewManga-M2-RC1-integration-temp-20260927
 
 COMMAND: python -m pytest tests/m2_resource_channel -q
@@ -247,4 +241,95 @@ doc/tasks/M2-RC1.md
 verification/M2-RC1/dispatch-review-fix3-2f6a31cd.md
 verification/M2-RC1/raw/fix3-review-dispatch.log
 EXIT_CODE=0
+COMMAND: git diff --check 2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1 -- (integrated worktree before closeout)
+(no diagnostics)
+EXIT_CODE=0
 
+COMMAND: git diff --name-only cb6e6d5113ee3224e48e3c54b930792c4734be7b HEAD (merge first-parent delta)
+apps/desktop/.gitignore
+apps/desktop/frontend/index.html
+apps/desktop/frontend/package-lock.json
+apps/desktop/frontend/package.json
+apps/desktop/frontend/src/App.tsx
+apps/desktop/frontend/src/main.tsx
+apps/desktop/frontend/src/resourceChannel/client.test.ts
+apps/desktop/frontend/src/resourceChannel/client.ts
+apps/desktop/frontend/tsconfig.json
+apps/desktop/frontend/vite.config.ts
+apps/desktop/src-tauri/Cargo.lock
+apps/desktop/src-tauri/Cargo.toml
+apps/desktop/src-tauri/build.rs
+apps/desktop/src-tauri/gen/schemas/acl-manifests.json
+apps/desktop/src-tauri/gen/schemas/capabilities.json
+apps/desktop/src-tauri/gen/schemas/desktop-schema.json
+apps/desktop/src-tauri/gen/schemas/windows-schema.json
+apps/desktop/src-tauri/icons/icon.ico
+apps/desktop/src-tauri/src/core_bridge.rs
+apps/desktop/src-tauri/src/main.rs
+apps/desktop/src-tauri/src/resource_protocol.rs
+apps/desktop/src-tauri/tauri.conf.json
+doc/handoffs/M2-RC1-39552370.md
+doc/handoffs/M2-RC1-FIX-702b02b0.md
+doc/reviews/M2-RC1-FIX-702b02b0-round2.md
+doc/reviews/M2-RC1-FIX-702b02b0.md
+doc/reviews/M2-RC1-FIX3-2f6a31cd.md
+doc/reviews/M2-RC1-f8ce10a2.md
+doc/tasks/M2-RC1.md
+pytest.ini
+src/application/resource_channel/__init__.py
+src/application/resource_channel/dto.py
+src/application/resource_channel/ports.py
+src/application/resource_channel/service.py
+src/infrastructure/resource_channel/__init__.py
+src/infrastructure/resource_channel/handle_resolver.py
+src/infrastructure/resource_channel/host_bridge.py
+src/infrastructure/resource_channel/scope.py
+tests/m2_resource_channel/conftest.py
+tests/m2_resource_channel/test_bridge_and_thresholds.py
+tests/m2_resource_channel/test_handle_resolver.py
+tests/m2_resource_channel/test_service.py
+verification/M2-RC1/baseline-selfcheck.md
+verification/M2-RC1/compare_e2e_runs.py
+verification/M2-RC1/dispatch-review-f8ce10a2.md
+verification/M2-RC1/dispatch-review-fix3-2f6a31cd.md
+verification/M2-RC1/final-verification.log
+verification/M2-RC1/integration-2f6a31cd/codex-command-transcript.log
+verification/M2-RC1/leakage_scan.py
+verification/M2-RC1/raw/e2e-fixtures.json
+verification/M2-RC1/raw/e2e-results-first.json
+verification/M2-RC1/raw/e2e-results-repeat.json
+verification/M2-RC1/raw/fix-e2e-results-first.json
+verification/M2-RC1/raw/fix-e2e-results-repeat.json
+verification/M2-RC1/raw/fix-pre-failure-demo.log
+verification/M2-RC1/raw/fix-repeat-consistency.json
+verification/M2-RC1/raw/fix3-e2e-results-first.json
+verification/M2-RC1/raw/fix3-e2e-results-repeat.json
+verification/M2-RC1/raw/fix3-e2e-run1-console.log
+verification/M2-RC1/raw/fix3-e2e-run2-console.log
+verification/M2-RC1/raw/fix3-leakage-scan.json
+verification/M2-RC1/raw/fix3-repeat-consistency.json
+verification/M2-RC1/raw/fix3-review-dispatch.log
+verification/M2-RC1/raw/leakage-scan.json
+verification/M2-RC1/run-log.md
+verification/M2-RC1/run_e2e.py
+PATH_COUNT=66
+EXIT_CODE=0
+
+COMMAND: git diff --name-only 2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1 HEAD -- src/ui src/bootstrap/app.py src/domain src/ports packaging
+(no paths)
+EXIT_CODE=0
+COMMAND: git diff --check cb6e6d5113ee3224e48e3c54b930792c4734be7b -- (integrated worktree before closeout)
+(no diagnostics)
+EXIT_CODE=0
+
+COMMAND: git rev-parse HEAD:doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+fc35913801297ee1876ea395f9c5041a16226f20
+EXIT_CODE=0
+
+COMMAND: git show-ref --hash refs/heads/agent/zcode/M2-RC1-large-media-resource-channel-runtime
+ce3c3771d15c60b743b1e1da936edc445676b305
+EXIT_CODE=0
+
+COMMAND: git diff --cached --check 3a24684007fd5a5e855f324077ad996841300f27 (closeout docs staged)
+(no diagnostics)
+EXIT_CODE=0

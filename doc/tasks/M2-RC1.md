@@ -2,7 +2,7 @@
 id: M2-RC1
 title: Contract-Aligned Large-Media Resource Channel Runtime
 kind: implementation
-status: in_review
+status: done
 release_state: LARGE_MEDIA_RESOURCE_CHANNEL_RUNTIME_RELEASED
 approval: approved_by_user_2026-09-27
 execution_approval: approved_by_user_2026-09-27_explicit_task_release
@@ -13,7 +13,7 @@ depends_on: [M2-C1, M2-S1, M2-S2, M2-C2, M2-S3]
 base_commit: 2dca20cd971e3c2ae1a3ab8134ac0acdf98c45f1
 branch: agent/zcode/M2-RC1-large-media-resource-channel-runtime
 worktree: G:/CODEX/New Manga.worktrees/M2-RC1-zcode
-integration_commit: null
+integration_commit: 3a24684007fd5a5e855f324077ad996841300f27
 ---
 
 # M2-RC1 — Contract-Aligned Large-Media Resource Channel Runtime
@@ -66,6 +66,14 @@ integration_commit: null
 ## 依赖、风险与阻塞
 
 硬依赖均已 `done`：M2-C1、M2-S1、M2-S2、M2-C2、M2-S3。固定 Contract blob=`fc35913801297ee1876ea395f9c5041a16226f20`。M2-S3 对 `m2res` 自定义 protocol 的 PASS 仅覆盖单宿主、模拟映射表、一次性 body、未打包探针；本 Task 必须重新验证真实 Core/Rust 运行链。S1-B3/S1-B8 是任何产品级安全声明的前置条件；S1-B6 未测前冷缓存 1 s 仅为目标。M2-C2 的 4×P3 维持 deferred，因为本 Task 禁止修改共享 Contract。
+
+## Codex 集成裁决
+
+2026-09-27 集成裁决：DSH 第 4 轮 Review 对 reviewed head `2f6a31cd67e983e789c02cb4e33c194f0e012f23` 为 `approve`，报告与派发证据随 Owner 证据导入提交 `ce3c3771d15c60b743b1e1da936edc445676b305`；Owner 分支 tip 未推进。Codex 在 Windows 独立复跑 Review §7 命令并保留 EXIT 级日志，所有 Gate 通过；merge=`3a24684007fd5a5e855f324077ad996841300f27`，parents=`cb6e6d5113ee3224e48e3c54b930792c4734be7b` + `ce3c3771d15c60b743b1e1da936edc445676b305`。完整记录见 [M2-RC1 integration](../../verification/M2-RC1/integration-2f6a31cd/integration.md)。
+
+`pytest.ini` 是唯一需范围澄清的路径：仅为本 Task 的 `slow` marker 登记获 Codex 窄例外；它不是依赖/锁文件，也不授权其它根配置变更。DSH O-01/O-03 的单句说明、wire 名偏离与 Python-only `REF_REPARSE_POINT` 结论均见集成记录。
+
+F-03 与 F-05 依 DSH `accepted_deferral` 留入 [M2-RC2 proposed 子 Task](M2-RC2.md)，当前 `NOT_RELEASED`，本次集成不授权其实现。M2-C2 的 4×P3 advisory 仍延至下一次实际触碰 Contract 的 Task。
 
 ## 交付与运行记录
 

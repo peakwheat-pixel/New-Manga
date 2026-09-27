@@ -7,7 +7,7 @@ graph, acceptance boundaries and historical Task audit live in
 
 ## Future architecture milestone
 
-[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 为 FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION；M2-I1/I2/R1/UI1、M2-D1、[M2-C1](tasks/M2-C1.md) 契约、[M2-S1](tasks/M2-S1.md) 研究、[M2-S2](tasks/M2-S2.md) 安全验证、[M2-C2](tasks/M2-C2.md) 契约修订和 [M2-S3](tasks/M2-S3.md) 有界探针均已完成。大媒体 runtime 已按用户授权单独释放为 [M2-RC1](tasks/M2-RC1.md)（Owner=ZCode / Reviewer=DeepSeek Harness，`ready`，base=`2dca20cd`）；该授权不覆盖 Contract 修改、打包或产品级安全声明。S1-B1=`PASS` 仅限单宿主/Rust 模拟表/一次性 body/非打包探针。T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2。
+[M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 为 FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION；M2-I1/I2/R1/UI1、M2-D1、M2-C1、M2-S1、M2-S2、M2-C2 与 M2-S3 均已完成。大媒体 runtime [M2-RC1](tasks/M2-RC1.md) 已集成 `done`（merge=`3a246840`；Codex 四套命令级验证全通过）；F-03/F-05 仅登记于 [M2-RC2](tasks/M2-RC2.md) `proposed / NOT_RELEASED`，未授权实现。Contract 1.1 blob=`fc359138` 未变；S1-B3/B5/B6/B8 仍是验证边界，禁止产品级安全或打包就绪声明。S1-B1=`PASS` 仅限单宿主/Rust 模拟表/一次性 body/非打包探针。T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2.
 
 ## Current order
 
@@ -18,7 +18,8 @@ graph, acceptance boundaries and historical Task audit live in
 5. **[M2-S2 — Resource Channel Security Verification Spike](tasks/M2-S2.md)**：`done`（2026-09-26）；Owner=ZCode（delivery `d502aa5a`）、Reviewer=Antigravity（非作者；[Review](reviews/M2-S2-fbdf1bc2.md) `ea11d109` `approved`）、base=`67c3d56e`、integration=`bf1d1230`。原型层关闭 S1-B11（TOCTOU open-then-verify-from-handle，16/16）与 S1-B12（映射 ID 保密，8/8）；产品级保证保留 `UNVERIFIED`；§7 产品阈值已由用户授权代行[裁决](../verification/M2-S1/product-thresholds-ruling-67c3d56.md)，结果作为 Contract 修订与 runtime Task 输入。
 6. **[M2-C2 — Typed IPC Contract Revision](tasks/M2-C2.md)**：`done`（2026-09-26）；Owner=ZCode（delivery `67f814ff`）、Reviewer=DeepSeek Harness（非作者；[Review](reviews/M2-C2-c18f273a.md) `approved`，4×P3 deferred）、base=`3f468e6e`、integration=`d574ec1e`。Contract 原位修订 `1.0`→`1.1`（blob `4b503a17`→`fc359138`）：T1–T7 阈值与安全语义以设计要求口径落约；既有保护语义零放松；不授权 runtime 实现。
 7. **[M2-S3 — Tauri Asset Protocol Feasibility Probe](tasks/M2-S3.md)**：`done`；base=`90c3e459`，Owner=ZCode / DeepSeek Harness 非作者 Review=`approved` @`233d0901`；Codex 核对 Owner follow-up 至 `bcef79e7` 并集成于 `6799c73a`。S1-B1=`PASS` 仅限报告 §5/§6 边界，禁改产品路径为零；[集成核验](../verification/M2-S3/integration-bcef79e7/integration.md)。S1-B6 冷缓存测量由 runtime Task 执行。原改派记录：[reassignment-9b2d40c2](../verification/M2-S3/reassignment-9b2d40c2.md)。
-8. **[M2-RC1 — Contract-Aligned Large-Media Resource Channel Runtime](tasks/M2-RC1.md)**：`ready / LARGE_MEDIA_RESOURCE_CHANNEL_RUNTIME_RELEASED`；Owner=ZCode / Reviewer=DeepSeek Harness（非作者）/ Codex 集成；base=`2dca20cd`；Contract 1.1 blob=`fc359138`。实现范围限于新 Tauri/React app 与 resource-channel Core 路径，复用已探测的 `m2res` opaque-ID 入口；M2-C2 的 4×P3 继续 deferred，本 Task 禁止修改 Contract。释放证据：[release-2dca20cd](../verification/M2-RC1/release-2dca20cd.md)。
+8. **[M2-RC1 — Contract-Aligned Large-Media Resource Channel Runtime](tasks/M2-RC1.md)**：`done`；base=`2dca20cd`，reviewed head=`2f6a31cd`（DeepSeek Harness round-4 `approve`），Owner evidence tip=`ce3c3771`，Codex merge=`3a246840`。Codex 复跑四套验证：pytest 43、Cargo 12、Vitest 8、E2E 10/10 ×2，均 exit 0；Contract blob=`fc359138` 不变。集成证据：[integration](../verification/M2-RC1/integration-2f6a31cd/integration.md)。
+9. **[M2-RC2 — Resource Channel Command Surface and Sidecar Boundary Hardening](tasks/M2-RC2.md)**：`proposed / NOT_RELEASED`；承接 M2-RC1 F-03/F-05；建议 Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Codex 另行释放与集成。
 
 Historical phases and task ledgers remain in place for traceability; they do
 not override the rebaseline.
