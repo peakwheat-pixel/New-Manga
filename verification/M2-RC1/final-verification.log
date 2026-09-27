@@ -1,12 +1,13 @@
-# M2-RC1 final verification runs (delivery head 991097d7)
+# M2-RC1 final verification runs — REPAIR ROUND (delivery head 702b02b0 + handoff 7d20b4ca)
+
+Supersedes the pre-repair version of this log (which recorded head 991097d7 with 35/9/8 tests).
 
 ## 1. python -m pytest tests/m2_resource_channel -q
--- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-35 passed, 1 warning in 1.58s
+43 passed in 1.79s
 pytest exit: 0
 
 ## 2. cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked
-test result: ok. 9 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s
+test result: ok. 12 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
 cargo test exit: 0
 
 ## 3. npm test --prefix apps/desktop/frontend -- --run
@@ -14,10 +15,25 @@ cargo test exit: 0
 [2m      Tests [22m [1m[32m8 passed[39m[22m[90m (8)[39m
 npm test exit: 0
 
-## 4. git diff --check 2dca20cd HEAD
+## 4. e2e matrix (run_e2e.py, two runs)
+exit_code=0 elapsed=5.1s
+E-00-probe-mode-detected                 PASS
+E-01-issue-fetch-digest                  PASS
+E-02-img-render                          PASS
+E-03-unknown-id                          PASS
+E-04-revoke-after-cached-fetch           PASS
+E-05-expired-ttl                         PASS
+E-06-remount-fresh-references            PASS
+E-07-hot-cache-p95                       PASS
+E-08-boundary-256mib                     PASS
+E-09-over-limit-typed                    PASS
+summary: {'PASS': 10}
+e2e run1 exit: 0
+
+## 5. git diff --check 2dca20cd HEAD
 (clean)
 
-## 5. delivery diff paths
+## 6. delivery diff (49 files, repair round included)
 A	apps/desktop/.gitignore
 A	apps/desktop/frontend/index.html
 A	apps/desktop/frontend/package-lock.json
@@ -40,6 +56,9 @@ A	apps/desktop/src-tauri/src/core_bridge.rs
 A	apps/desktop/src-tauri/src/main.rs
 A	apps/desktop/src-tauri/src/resource_protocol.rs
 A	apps/desktop/src-tauri/tauri.conf.json
+A	doc/handoffs/M2-RC1-39552370.md
+A	doc/handoffs/M2-RC1-FIX-702b02b0.md
+A	doc/reviews/M2-RC1-f8ce10a2.md
 A	doc/tasks/M2-RC1.md
 A	src/application/resource_channel/__init__.py
 A	src/application/resource_channel/dto.py
@@ -54,8 +73,14 @@ A	tests/m2_resource_channel/test_bridge_and_thresholds.py
 A	tests/m2_resource_channel/test_handle_resolver.py
 A	tests/m2_resource_channel/test_service.py
 A	verification/M2-RC1/baseline-selfcheck.md
+A	verification/M2-RC1/dispatch-review-f8ce10a2.md
+A	verification/M2-RC1/final-verification.log
 A	verification/M2-RC1/raw/e2e-fixtures.json
 A	verification/M2-RC1/raw/e2e-results-first.json
 A	verification/M2-RC1/raw/e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix-e2e-results-first.json
+A	verification/M2-RC1/raw/fix-e2e-results-repeat.json
+A	verification/M2-RC1/raw/fix-repeat-consistency.json
 A	verification/M2-RC1/raw/leakage-scan.json
+A	verification/M2-RC1/run-log.md
 A	verification/M2-RC1/run_e2e.py
