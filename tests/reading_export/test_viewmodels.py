@@ -162,11 +162,16 @@ def test_reader_open_chapter_exposes_state(reader):
 def test_reader_missing_translation_message(reading, tmp_path):
     plain = make_pages(tmp_path / "plain", count=1)
     vm = ReaderViewModel(reading, Catalog(plain))
-    vm.openChapter("b", "c", "第1话", "paged", "ltr")
-    vm.setMode("translated")
-    assert "译图缺失" in vm.statusMessage
-    vm.setMode("original")
-    assert vm.statusMessage == ""
+    try:
+        vm.openChapter("b", "c", "第1话", "paged", "ltr")
+        vm.setMode("translated")
+        assert "译图缺失" in vm.statusMessage
+        vm.setMode("original")
+        assert vm.statusMessage == ""
+    finally:
+        # FIX-B: no leaked heartbeat after the test (AC3 teardown surface)
+        if vm.hasChapter:
+            vm.closeReader()
 
 
 @requires_pyside6

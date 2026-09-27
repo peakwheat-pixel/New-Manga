@@ -74,7 +74,9 @@ class ReaderViewModel(QObject):
         self._last_settle = 0.0
         # DIAG-READING-EXPORT-001 symptom B: a heartbeat firing after the
         # storage connection was torn down.  The failure (if any) is recorded
-        # here, observable via ``heartbeatError``/``heartbeatErrorChanged``.
+        # here, observable via the ``heartbeat_error`` attribute and the
+        # ``heartbeatErrorChanged`` signal (no QML consumer yet; Python tests
+        # are the observers of record).
         self.heartbeat_error: str | None = None
 
     # ------------------------------------------------------------------
@@ -451,8 +453,10 @@ class ReaderViewModel(QObject):
         down under a live heartbeat, the write fails with a typed sqlite
         error.  The heartbeat is then stopped (no repeat every
         ``HEARTBEAT_MS``) and the failure stays diagnosable on the view
-        model via ``heartbeat_error``/``heartbeatErrorChanged`` — it is
-        recorded, not swallowed.
+        model via the ``heartbeat_error`` attribute and the
+        ``heartbeatErrorChanged`` signal — it is recorded, not swallowed.
+        Until a UI task consumes the signal, Python-side tests/readers are
+        the observers of record.
         """
         if self._reading.progress is None:
             self._last_settle = time.monotonic()
