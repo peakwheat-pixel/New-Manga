@@ -36,4 +36,4 @@ warning: associated items `new`, `register`, and `issue_internal` are never used
     |        ^^^^^^^^^^^^^^
 
 warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 4 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
-    Finished `release` profile [optimized] target(s) in 6.31s
+    Finished `release` profile [optimized] target(s) in 7.31s
