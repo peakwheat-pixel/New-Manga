@@ -1,0 +1,21 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: "Python 3.12.3"
+head: 2210d642fd1a643c42fafde393e518281d078ff8
+time: 2026-09-29T02:10:42+08:00
+cmd: <py> -m pytest tests/core/test_core_service.py::test_list_books_sqlite_error_typed_response tests/core/test_core_service.py::test_page_count_filtering_discriminating_cases tests/core/test_core_service.py::test_book_summary_dto_known_zero_and_unknown_are_distinguishable tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_corrupt_page_rows_degrade_without_crash_or_fabrication -v
+---
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-FIX-LISTBOOKS-zcode
+configfile: pytest.ini
+collecting ... collected 5 items
+
+tests/core/test_core_service.py::test_list_books_sqlite_error_typed_response PASSED [ 20%]
+tests/core/test_core_service.py::test_page_count_filtering_discriminating_cases PASSED [ 40%]
+tests/core/test_core_service.py::test_book_summary_dto_known_zero_and_unknown_are_distinguishable PASSED [ 60%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero PASSED [ 80%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_corrupt_page_rows_degrade_without_crash_or_fabrication PASSED [100%]
+
+============================== 5 passed in 0.32s ==============================
+EXIT=0

@@ -114,7 +114,11 @@ class BookSummaryDto:
     original_title: str
     is_favorite: bool
     is_archived: bool
-    page_count: int
+    # M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN (frozen None channel): None means
+    # unknown/missing data (the production COUNT predicate yields no row for
+    # this book); a counted value stays an int -- a KNOWN 0 must remain
+    # expressible and distinguishable from None after serialization.
+    page_count: int | None
     created_at: str
     updated_at: str
 
@@ -159,7 +163,10 @@ class CoreServiceServer:
                 original_title=book.original_title,
                 is_favorite=bool(book.is_favorite),
                 is_archived=bool(book.is_archived),
-                page_count=page_counts.get(book.book_id, 0),
+                # GROUP BY returns rows only for books with >=1 qualifying
+                # page: a SQL miss (no chapters / no qualifying pages) is
+                # unknown data -> None, never a plausible-looking 0.
+                page_count=page_counts.get(book.book_id),
                 created_at=book.created_at,
                 updated_at=book.updated_at,
             )

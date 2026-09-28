@@ -855,21 +855,17 @@ def test_ac4_page_count_matches_chapter_total_sqlite_and_reader(core) -> None:
     assert summary_a["is_favorite"] is False and summary_a["is_archived"] is False
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "M2-AC4 AC4(b) known product defect, verified on release commit 252705bf "
-        "(probe: verification/M2-AC4/raw/probe-output.log): "
-        "bootstrap/core_service.py handle_list_books presents "
-        "page_counts.get(book.book_id, 0) -- a book with no chapters/pages "
-        "renders as the plausible real number 0 (int) with no unknown marker, "
-        "violating '缺失数据不得伪造成看似真实的数字'."
-    ),
-)
 def test_ac4_books_without_pages_are_not_presented_as_zero(core) -> None:
     """AC4(b): a book with no chapters and a book with a chapter but no
     pages must NOT present a fabricated-looking count; the presentation
-    must distinguish unknown/missing data from a genuine zero."""
+    must distinguish unknown/missing data from a genuine zero.
+
+    M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN: the former strict xfail (defect F-2,
+    probe verification/M2-AC4/raw/probe-output.log) is lifted by the frozen
+    None channel -- production _fetch_page_counts GROUP BY returns rows only
+    for books with >=1 valid page, so a SQL-miss book (no chapters, or
+    chapters without valid pages) now presents page_count=None while a real
+    count stays a non-negative int (known 0 stays expressible on the DTO)."""
     empty_book = core.library.create_book("M2-AC4 No-chapter Book")
     hollow_book = core.library.create_book("M2-AC4 Chapterless-pages Book")
     core.library.create_chapter(hollow_book.book_id, "no pages inside")
@@ -930,7 +926,10 @@ def test_ac4_corrupt_page_rows_degrade_without_crash_or_fabrication(core) -> Non
     assert book.book_id in summaries
     real_count = core.conn.execute(_PRODUCTION_COUNT_SQL, (book.book_id,)).fetchone()[0]
     assert real_count == 0
-    assert summaries[book.book_id]["page_count"] == real_count == 0
+    # M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN (frozen None channel): with zero
+    # qualifying pages the production GROUP BY returns no row for the book,
+    # so list_books presents the unknown marker None -- never a fabricated 0.
+    assert summaries[book.book_id]["page_count"] is None
     assert summaries[book.book_id]["title"] == "M2-AC4 Corrupt-data Book", (
         "other fields must never be fabricated when page data is broken"
     )

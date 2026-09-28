@@ -1,0 +1,9 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: "Python 3.12.3"
+head: 2210d642fd1a643c42fafde393e518281d078ff8
+time: 2026-09-29T02:10:01+08:00
+cmd: <py> -m pytest tests/m2_acceptance -q
+---
+...................................                                      [100%]
+35 passed in 9.39s
+EXIT=0

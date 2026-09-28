@@ -29,7 +29,10 @@ pub struct BookSummary {
     pub original_title: String,
     pub is_favorite: bool,
     pub is_archived: bool,
-    pub page_count: u32,
+    /// M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN (frozen None channel): `None`
+    /// serializes as JSON `null` = unknown/missing data; a counted value
+    /// stays a number (a KNOWN 0 must stay distinguishable from `null`).
+    pub page_count: Option<u32>,
     pub created_at: String,
     pub updated_at: String,
 }
@@ -364,7 +367,7 @@ mod tests {
             original_title: "Orig".to_string(),
             is_favorite: true,
             is_archived: false,
-            page_count: 5,
+            page_count: Some(5),
             created_at: "2026-09-28T00:00:00Z".to_string(),
             updated_at: "2026-09-28T00:00:00Z".to_string(),
         }]);
@@ -372,12 +375,46 @@ mod tests {
         let loaded = channel.list_books().unwrap();
         assert_eq!(loaded.len(), 1);
         assert_eq!(loaded[0].book_id, "book-1");
-        assert_eq!(loaded[0].page_count, 5);
+        assert_eq!(loaded[0].page_count, Some(5));
 
         channel.set_books_error(LibraryError::unavailable("connection lost"));
         let err = channel.list_books().unwrap_err();
         assert_eq!(err.code, "CORE_UNAVAILABLE");
         assert_eq!(err.retryable, true);
+    }
+
+    #[test]
+    fn book_summary_page_count_known_zero_and_null_are_distinguishable() {
+        // M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN AC2: the frozen None channel must
+        // keep a KNOWN 0 expressible -- the serialized wire forms of a known 0
+        // and an unknown page_count must never conflate (0 != null).
+        let summary = |page_count: Option<u32>| BookSummary {
+            book_id: "book-1".to_string(),
+            title: "T".to_string(),
+            original_title: "O".to_string(),
+            is_favorite: false,
+            is_archived: false,
+            page_count,
+            created_at: "2026-09-28T00:00:00Z".to_string(),
+            updated_at: "2026-09-28T00:00:00Z".to_string(),
+        };
+
+        let zero_json = serde_json::to_string(&summary(Some(0))).unwrap();
+        let null_json = serde_json::to_string(&summary(None)).unwrap();
+        assert!(
+            zero_json.contains(r#""page_count":0"#),
+            "a known 0 must serialize as the JSON number 0, got: {zero_json}"
+        );
+        assert!(
+            null_json.contains(r#""page_count":null"#),
+            "an unknown page_count must serialize as JSON null, got: {null_json}"
+        );
+        assert_ne!(zero_json, null_json);
+
+        let zero_back: BookSummary = serde_json::from_str(&zero_json).unwrap();
+        let null_back: BookSummary = serde_json::from_str(&null_json).unwrap();
+        assert_eq!(zero_back.page_count, Some(0));
+        assert_eq!(null_back.page_count, None);
     }
 
     #[test]
