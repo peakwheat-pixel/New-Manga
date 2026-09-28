@@ -4,14 +4,14 @@
 - Task: `doc/tasks/M2-AC2.md`（`ready / M2_AC2_DATA_INTEGRITY_RELEASED`；纯验收，产品代码零改动）
 - Base / release: `61f9db9b` / `01af7732`
 - Branch / worktree: `agent/zcode/M2-AC2-data-integrity` / `G:/CODEX/New Manga.worktrees/M2-AC2-zcode`
-- Delivery head: 8d72f91fa68b92bf0975004d49f94ffc2d0702a2（返修后；初始 a3e3fb22 + r1 条件返修）
+- Delivery head: 8db6d150225d59719abd94179ba76d6f9bbb0f32（HEAD ledger：a3e3fb22 初始交付 → 8d72f91f r1 条件返修 → 8db6d150 r2 条件 C1-C3 关闭 + 证据/handoff amend）
 - Status: delivered（等 DSH 非作者 Review；Integrator=Codex 新会话，保持 Owner≠Integrator）
 
 ## 交付物
 
 | 文件 | 说明 |
 |---|---|
-| `tests/m2_acceptance/test_data_integrity.py` | 新增验收模块，10 场景覆盖 AC1–AC5 |
+| `tests/m2_acceptance/test_data_integrity.py` | 新增验收模块，11 场景覆盖 AC1–AC5（r1 条件后含 recover_running_runs 语义断言） |
 | `verification/M2-AC2/verification-results.md` | 两级验证原始日志（-v 逐场景 + 全套回归） |
 | `doc/tasks/M2-AC2.md` | 状态推进 delivered + AC3 语义澄清 |
 

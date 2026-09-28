@@ -340,6 +340,9 @@ def test_ac4_page_lock_yields_skip_lock(tmp_path: Path) -> None:
     decisions = {
         (u.step_type): u.decision.value for u in planned.tasks[0].units
     }
+    assert decisions, (
+        "planner produced no units for a locked page; the all() below would be vacuous"
+    )
     assert all(value == "skip_lock" for value in decisions.values()), decisions
     executed = core.pipeline.execute_run(run.run_id)
     assert executed.step_runs == [], "a locked page must produce no StepRuns"
@@ -530,6 +533,9 @@ def test_ac5_reassembly_preserves_every_integrity_promise(tmp_path: Path) -> Non
         PipelineScope(ScopeType.PAGE, selected_ids=(page_b.page_id,)),
     )
     planned = core2.pipeline.plan_run(run.run_id)
+    assert planned.tasks[0].units, (
+        "planner produced no units after restart; the all() below would be vacuous"
+    )
     assert all(
         u.decision.value == "skip_lock" for u in planned.tasks[0].units
     ), "a restored page lock must still gate the planner after restart"

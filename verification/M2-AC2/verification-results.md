@@ -1,10 +1,11 @@
 # shell: Git Bash (Owner=ZCode session)
 # interpreter: TASK-012-py312 python.exe (Python 3.12.3)
-# delivery head: 8d72f91fa68b92bf0975004d49f94ffc2d0702a2
+# workspace tip (delivery head): 8db6d150225d59719abd94179ba76d6f9bbb0f32
+# note: tip = rework 8d72f91f (code) + evidence/handoff/C3 amends; see HEAD ledger in the Handoff
 # branch: agent/zcode/M2-AC2-data-integrity
-2026-09-28T21:18:44+08:00
+2026-09-28T21:29:51+08:00
 
-== cmd 1: pytest tests/m2_acceptance/test_data_integrity.py -q ==
+== cmd 1: pytest tests/m2_acceptance/test_data_integrity.py -v ==
 ============================= test session starts =============================
 platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
 cachedir: .pytest_cache
@@ -24,13 +25,13 @@ tests/m2_acceptance/test_data_integrity.py::test_ac4_restore_revision_moves_curr
 tests/m2_acceptance/test_data_integrity.py::test_ac5_reassembly_preserves_every_integrity_promise PASSED [ 90%]
 tests/m2_acceptance/test_data_integrity.py::test_ac5_running_run_is_reaped_as_interrupted_on_reassembly PASSED [100%]
 
-============================= 11 passed in 0.75s ==============================
+============================= 11 passed in 0.77s ==============================
 EXIT(cmd1)=0
 
 == cmd 2: pytest tests/m2_acceptance -q ==
 ...............                                                          [100%]
-15 passed in 2.98s
+15 passed in 2.93s
 EXIT(cmd2)=0
 
-== cmd 3: git diff --check 61f9db9b..$(delivery head) ==
+== cmd 3: git diff --check 61f9db9b..8db6d150225d59719abd94179ba76d6f9bbb0f32 ==
 EXIT(cmd3)=0

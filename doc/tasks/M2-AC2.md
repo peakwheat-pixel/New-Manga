@@ -14,7 +14,7 @@ depends_on: [M2-IPC1, M2-P1]
 base_commit: 61f9db9b54ae4b7420c7d1a5751cc040a502c88f
 branch: agent/zcode/M2-AC2-data-integrity
 worktree: G:/CODEX/New Manga.worktrees/M2-AC2-zcode
-delivery_head: a3e3fb226f42dc071ac79689563be9aaba187121
+delivery_head: 8db6d150225d59719abd94179ba76d6f9bbb0f32
 dispatch_state: DELIVERED_FOR_REVIEW
 ---
 
