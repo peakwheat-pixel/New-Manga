@@ -60,8 +60,23 @@ pub const AC1_TEST_COMMANDS: &[&str] = &["ac1_request", "ac1_write_results", "ac
 /// The single source of truth for the WebView-facing command surface.
 /// `main` feeds this into the conditional `invoke_handler` registration; the
 /// unit tests gate its content (allow/deny matrix, RC2-AC1).
+/// Production-only commands added by M2-IPC1 (integration ruling on DSH r2
+/// P2-1, option B): they exist solely on the production surface. The frozen
+/// RC2/AC1 test-mode surfaces keep their historical 7/6-command shape, so
+/// the announcement and the `generate_handler!` registration stay identical
+/// in every mode and the runner expectations stay pinned.
+pub const IPC1_PRODUCTION_ONLY_COMMANDS: &[&str] = &["core_ping", "library_list_books"];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
-    let mut commands = PRODUCTION_COMMANDS.to_vec();
+    let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
+        PRODUCTION_COMMANDS
+            .iter()
+            .copied()
+            .filter(|command| !IPC1_PRODUCTION_ONLY_COMMANDS.contains(command))
+            .collect()
+    } else {
+        PRODUCTION_COMMANDS.to_vec()
+    };
     if probe_mode {
         commands.extend_from_slice(PROBE_ONLY_COMMANDS);
     }
@@ -101,6 +116,10 @@ fn into_issued(issued: core_bridge::IssuedRef) -> Result<IssuedUrl, CoreError> {
 
 #[tauri::command]
 fn core_ping(state: tauri::State<'_, AppState>) -> Result<PingResult, String> {
+    // Defensive only (M2-IPC1 ruling on DSH r2 P2-1): in probe/ac1 modes
+    // these commands are not registered at all, so the `None` arm is
+    // unreachable today; it keeps the `Option` state honest if the spawn
+    // gating ever changes.
     state
         .library
         .as_ref()
@@ -538,7 +557,15 @@ mod tests {
         for command in PROBE_ONLY_COMMANDS {
             assert!(probe.contains(command), "{command} missing from probe surface");
         }
-        assert_eq!(probe.len(), PRODUCTION_COMMANDS.len() + PROBE_ONLY_COMMANDS.len());
+        // M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen
+        // RC2 surface — the production-only IPC1 commands are absent.
+        for command in IPC1_PRODUCTION_ONLY_COMMANDS {
+            assert!(!probe.contains(command), "{command} must stay production-only");
+        }
+        assert_eq!(
+            probe.len(),
+            PRODUCTION_COMMANDS.len() - IPC1_PRODUCTION_ONLY_COMMANDS.len() + PROBE_ONLY_COMMANDS.len()
+        );
     }
 
     // ---- M2-AC1: the acceptance surface is test-mode-only -----------------
@@ -549,7 +576,15 @@ mod tests {
         for command in AC1_TEST_COMMANDS {
             assert!(ac1.contains(command), "{command} missing from ac1 surface");
         }
-        assert_eq!(ac1.len(), PRODUCTION_COMMANDS.len() + AC1_TEST_COMMANDS.len());
+        // M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen
+        // AC1 surface — the production-only IPC1 commands are absent.
+        for command in IPC1_PRODUCTION_ONLY_COMMANDS {
+            assert!(!ac1.contains(command), "{command} must stay production-only");
+        }
+        assert_eq!(
+            ac1.len(),
+            PRODUCTION_COMMANDS.len() - IPC1_PRODUCTION_ONLY_COMMANDS.len() + AC1_TEST_COMMANDS.len()
+        );
     }
 
     #[test]

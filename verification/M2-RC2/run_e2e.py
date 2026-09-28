@@ -221,6 +221,10 @@ def runtime_env(out_path: Path, log_path: Path, catalog_db: str, probe: bool) ->
         "M2RC1_MANAGED_ROOT": str(LAB / "scope" / "managed"),
         "M2RC1_FIXTURES": str(LAB / "fixtures.json"),
         "M2RC2_CATALOG_DB": catalog_db,
+        #: M2-IPC1 integration ruling (DSH r2 P2-2): the production phase now
+        #: spawns `bootstrap.core_service`, which must not fall back to the
+        #: real %LOCALAPPDATA% data root — pin it to the lab root.
+        "NEWMANGA_DATA_ROOT": str(LAB / "data-root"),
         "M2RC2_MODULE_DUMP": str(LAB / ("sidecar-modules-probe.json" if probe else "sidecar-modules-interactive.json")),
         "WEBVIEW2_USER_DATA_FOLDER": str(LAB / "webview2-udd"),
     }
@@ -294,7 +298,13 @@ PRODUCTION_EXPECTED = [
     "core_ping",
     "library_list_books",
 ]
-PROBE_EXPECTED = PRODUCTION_EXPECTED + [
+#: M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen RC2
+#: surface — the production-only IPC1 commands are absent from the probe
+#: announcement, so it stays 7 and is pinned explicitly.
+PROBE_EXPECTED = [
+    "issue_resource_url",
+    "revoke_ref",
+    "revoke_resource_refs",
     "probe_config",
     "probe_write_results",
     "probe_exit",
