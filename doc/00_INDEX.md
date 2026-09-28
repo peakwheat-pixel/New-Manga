@@ -2,7 +2,7 @@
 
 > **2026-09-21 Stage A Rebaseline 生效**：后续 Milestone、Task、依赖、Legacy Mapping 与治理以 [REBASELINE_PLAN](REBASELINE_PLAN.md) 为唯一规划事实源；实时状态只看 [STATUS](STATUS.md)。TASK-001～065 及下方历史台账保留为证据，不再决定当前排期。Worktree 清理必须先看 [WORKTREE_SAFETY_INVENTORY](WORKTREE_SAFETY_INVENTORY.md)。
 
-> **Current pointer（2026-09-28）**：GOV-001 与已登记的 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1 及新架构诊断 [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 全部 `done`（诊断 integration=`b5ac097f`；根因已定位并可复现，修复未释放）。[M2-P1](tasks/M2-P1.md) 已于 2026-09-28 `done`（integration=`a174fb9c`；regionless 重绑缺陷关闭）；当前已释放 [M2-IPC1](tasks/M2-IPC1.md)（`ready`，用户批准 2026-09-28；Owner=Antigravity，production IPC seam 已随释放冻结，base=`a54bb8c9`）。其他 M2 Acceptance Backlog 行仍未登记。Legacy PySide6/QML 仅作历史证据，不再生成任务。完整清单和 Mermaid 流程见 [REBASELINE_PLAN](REBASELINE_PLAN.md#2026-09-28-全量任务盘点与当前流程)，运行状态见 [STATUS](STATUS.md)。
+> **Current pointer（2026-09-28）**：GOV-001 与已登记的 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1 及新架构诊断 [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 全部 `done`（诊断 integration=`b5ac097f`；根因已定位并可复现，修复未释放）。[M2-P1](tasks/M2-P1.md) 与 [M2-IPC1](tasks/M2-IPC1.md) 已于 2026-09-28 `done`（integration=`a174fb9c` / `04c1394a`；第一个 production React → Tauri → Python Core → SQLite 只读 Library 竖切打通）；当前无 `in_progress` 或已释放待派发 Task。其他 M2 Acceptance Backlog 行仍未登记。Legacy PySide6/QML 仅作历史证据，不再生成任务。完整清单和 Mermaid 流程见 [REBASELINE_PLAN](REBASELINE_PLAN.md#2026-09-28-全量任务盘点与当前流程)，运行状态见 [STATUS](STATUS.md)。
 
 > **Architecture Decision / M2 release**：[AD-001](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) 的 React + TypeScript / Tauri / Python Core / SQLite 目标保持。资源通道 runtime 与 command-surface hardening 已由 M2-RC1/RC2 集成；production Core 业务 IPC、产品四页 React shell、打包与完整 Release Gate 仍待后续 Task。
 

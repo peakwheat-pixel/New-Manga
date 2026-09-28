@@ -2,7 +2,7 @@
 id: M2-IPC1
 title: Production Core Lifecycle + Read-only Library Vertical Slice
 kind: implementation
-status: delivered
+status: done
 release_state: M2_IPC1_PRODUCTION_CORE_LIBRARY_RELEASED
 approval: approved_by_user_2026-09-28_m2ipc1_release
 execution_approval: approved_by_user_2026-09-28_m2ipc1_release
@@ -14,7 +14,10 @@ depends_on: [M2-P1, M2-RC2, M2-AC1]
 base_commit: a54bb8c92faefa90f4077e7ac2bb000f6b6712fd
 branch: agent/antigravity/M2-IPC1-production-core-library
 worktree: G:/CODEX/New Manga.worktrees/M2-IPC1-agy
-dispatch_state: DELIVERED
+delivery_head: 5556fc8e7a184da25af0f082a3d53f0bd84c56dc
+review: doc/reviews/M2-IPC1-5556fc8e-dsh-r2.md (approved_with_conditions; rulings disposed at integration)
+integration_merge: 04c1394a7aee6c16e8b841f4fd2e4f3550198686
+dispatch_state: INTEGRATED
 ---
 
 # M2-IPC1 — Production Core Lifecycle + Read-only Library Vertical Slice
