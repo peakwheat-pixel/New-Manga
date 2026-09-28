@@ -51,7 +51,9 @@ E_UNKNOWN = "UNKNOWN"
 class _PassthroughImageDecoder:
     def decode(self, payload: bytes) -> DecodedImage:
         del payload
-        return DecodedImage(width=1, height=1, format="rgb")
+        # mime_type keeps the stub's original "rgb" semantics under the image
+        # type, matching the frozen DecodedImage contract (no format= field).
+        return DecodedImage(width=1, height=1, mime_type="image/rgb")
 
 
 class _StubStyleAnalyzer:

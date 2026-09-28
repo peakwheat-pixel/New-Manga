@@ -1,0 +1,9 @@
+=== shell: Git Bash (win32) ===
+=== cmd: TASK-012-py312 python -m pytest tests/m2_acceptance -q (regression) ===
+Python 3.12.3
+0f4f881a3cb83da56cf28dad85513878c772097b
+2026-09-28T16:47:44Z
+---- pytest output ----
+...........................x...x..                                       [100%]
+32 passed, 2 xfailed in 9.42s
+EXIT=0
