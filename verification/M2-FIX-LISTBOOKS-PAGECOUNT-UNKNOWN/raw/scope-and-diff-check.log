@@ -1,0 +1,51 @@
+head: 852a92aefbeffd4b15c701cecd2b19d6229b70ca
+base: 6199df48
+time: 2026-09-29T02:15:44+08:00
+---
+$ git diff --name-status 6199df48..HEAD
+M	apps/desktop/frontend/src/library/LibraryPanel.test.tsx
+M	apps/desktop/frontend/src/library/LibraryPanel.tsx
+M	apps/desktop/frontend/src/library/types.ts
+M	apps/desktop/src-tauri/src/library_bridge.rs
+M	doc/STATUS.md
+M	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+M	doc/tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md
+M	src/bootstrap/core_service.py
+M	tests/core/test_core_service.py
+M	tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/cargo-test.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/npm-test-and-build.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/prod-sql-copy-sync-check.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-core-after-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-core-targeted-anchors.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-m2_acceptance-after-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/red-run-f2-before-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/release-6199df48.md
+---
+$ git diff --check 6199df48..HEAD (whole-tree; expect empty + EXIT=0)
+DIFF_CHECK_EXIT=0
+
+### scope decomposition
+$ git diff --name-status 6199df48..a2380706 (pre-existing release commit, not owner-authored):
+M	doc/STATUS.md
+M	doc/tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/release-6199df48.md
+
+$ git diff --name-status 2210d642..852a92ae (owner delivery commit):
+M	apps/desktop/frontend/src/library/LibraryPanel.test.tsx
+M	apps/desktop/frontend/src/library/LibraryPanel.tsx
+M	apps/desktop/frontend/src/library/types.ts
+M	apps/desktop/src-tauri/src/library_bridge.rs
+M	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+M	src/bootstrap/core_service.py
+M	tests/core/test_core_service.py
+M	tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/cargo-test.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/npm-test-and-build.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/prod-sql-copy-sync-check.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-core-after-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-core-targeted-anchors.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-m2_acceptance-after-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/red-run-f2-before-fix.log
+
+verdict: STATUS.md + release-6199df48.md + task file initial state came from the orchestrator release commit a2380706; owner-authored delta vs claim 2210d642 stays inside allowed paths.

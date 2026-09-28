@@ -142,7 +142,7 @@ export function LibraryPanel({ client, initialState }: LibraryPanelProps) {
                 )}
               </div>
               <div style={{ fontSize: 12, color: "#8b949e", marginTop: 6, display: "flex", gap: 16 }}>
-                <span>{`页数: ${book.page_count}`}</span>
+                <span>{`页数: ${book.page_count ?? "—"}`}</span>
                 <span>{`创建时间: ${book.created_at}`}</span>
                 {book.is_favorite && <span style={{ color: "#e3b341" }}>★ 收藏</span>}
                 {book.is_archived && <span style={{ color: "#8b949e" }}>[已归档]</span>}

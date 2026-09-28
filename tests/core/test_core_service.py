@@ -26,10 +26,12 @@ from bootstrap.core_service import (
     E_UNKNOWN_COMMAND,
     PROTOCOL_MAJOR,
     PROTOCOL_NAME,
+    BookSummaryDto,
     CoreServiceServer,
     assemble_production_core,
     make_error_envelope,
 )
+from dataclasses import asdict
 from domain.books.entities import Book, Chapter
 from domain.pages.entities import Page
 from infrastructure.sqlite.library import SqliteLibraryRepository
@@ -414,11 +416,12 @@ def test_list_books_sqlite_error_typed_response(
 
 
 def test_page_count_filtering_discriminating_cases(tmp_path: Path) -> None:
-    """Verify page_count rules (R5):
+    """Verify page_count rules (R5 + M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN):
     - soft-deleted page not counted
     - soft-deleted chapter not counted
     - incomplete page (missing hash/ref/width/height) not counted
-    - book without chapters has count 0
+    - book without chapters has unknown page_count (None), never a
+      plausible-looking 0 (frozen None channel)
     - normal valid pages counted accurately
     """
     data_root = tmp_path / "data_filter"
@@ -492,7 +495,8 @@ def test_page_count_filtering_discriminating_cases(tmp_path: Path) -> None:
         # Page 7: valid attributes, but inside soft-deleted chapter -> should NOT count
         insert_raw_page("p-in-del-chap", "chap-a-2")
 
-        # Book B: book without chapters -> count must be 0
+        # Book B: book without chapters -> unknown page_count (None channel:
+        # the production COUNT predicate yields no row for this book)
         book_b = Book(book_id="book-b", title="Book B (Empty)")
         repo.add_book(book_b)
 
@@ -517,7 +521,54 @@ def test_page_count_filtering_discriminating_cases(tmp_path: Path) -> None:
         books_by_id = {b["book_id"]: b for b in res["result"]}
 
         assert books_by_id["book-a"]["page_count"] == 1
-        assert books_by_id["book-b"]["page_count"] == 0
+        assert books_by_id["book-b"]["page_count"] is None, (
+            "a book with no qualifying pages must present unknown (None), "
+            "never a plausible-looking 0"
+        )
         assert books_by_id["book-c"]["page_count"] == 2
     finally:
         core.conn.close()
+
+
+def test_book_summary_dto_known_zero_and_unknown_are_distinguishable() -> None:
+    """AC2 (M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN): the DTO channel keeps a
+    KNOWN 0 expressible -- after serialization the wire forms of a known 0
+    (JSON number 0) and an unknown page_count (JSON null) must never
+    conflate. Constructed directly at the DTO layer; production under the
+    current COUNT predicate has no known-0 scenario (semantic fact, not
+    fabricated as a product scenario)."""
+    known_zero = BookSummaryDto(
+        book_id="b-zero",
+        title="Known Zero Book",
+        original_title="",
+        is_favorite=False,
+        is_archived=False,
+        page_count=0,
+        created_at="2026-09-28T00:00:00Z",
+        updated_at="2026-09-28T00:00:00Z",
+    )
+    unknown = BookSummaryDto(
+        book_id="b-unknown",
+        title="Unknown Pages Book",
+        original_title="",
+        is_favorite=False,
+        is_archived=False,
+        page_count=None,
+        created_at="2026-09-28T00:00:00Z",
+        updated_at="2026-09-28T00:00:00Z",
+    )
+
+    zero_json = json.dumps(asdict(known_zero))
+    unknown_json = json.dumps(asdict(unknown))
+
+    assert json.loads(zero_json)["page_count"] == 0, (
+        "a known 0 must survive serialization as the JSON number 0"
+    )
+    assert json.loads(unknown_json)["page_count"] is None, (
+        "unknown page_count must survive serialization as JSON null"
+    )
+    assert '"page_count": 0' in zero_json
+    assert '"page_count": null' in unknown_json
+    assert zero_json != unknown_json, (
+        "known-0 and unknown wire forms must be distinguishable"
+    )

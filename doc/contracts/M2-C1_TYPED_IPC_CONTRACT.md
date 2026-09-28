@@ -1,9 +1,10 @@
 # M2-C1 — Typed IPC Contract
 
-状态：文档冻结候选；独立 Review 前。版本：`1.1`（M2-C2 resource-channel revision；不代表已实现协议）。
+状态：文档冻结候选；独立 Review 前。版本：`1.2`（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN `BookSummary.page_count` widening；不代表已实现协议）。
 
 ## Revision history
 
+- `1.2`（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN，2026-09-29）：**授权契约修订**——§5 `ListBooks` 结果 DTO `BookSummary.page_count` 由 `int` widened 为 `int | null`（[Task 冻结裁决](../tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md)：None 通道）。语义：production COUNT 谓词（GROUP BY 仅覆盖有 ≥1 合格页的书）对某书无行的（无章、有章无合格页——含页行损坏被谓词排除的情况）→ `null`（unknown：数据不可用/未统计/导入未完成）；有合格页的书 → 真实计数 int。**known-0 通道保留**：SQL 数出的 0（若有）保持 JSON number `0`，与 `null` 序列化后可区分（单测锁定，三侧：Python/Rust/TS）；当前 production 谓词下无 known-0 场景属语义事实。命令名、payload、错误码与命令面清单不变（仅本字段 widening；§3 版本规则下属类型变化，由本授权 Task 承接，例外指针见 §3.2）。三侧落地：Python `BookSummaryDto.page_count: int | None`、Rust `library_bridge.rs` `BookSummary.page_count: Option<u32>`（serde → `null`）、TS `types.ts` `page_count: number | null`；`LibraryPanel` 对 `null` 渲染非数字占位（`—`），不得渲染为 `0`。
 - `1.1`（M2-C2，2026-09-26）：§10 新增 **10.1 Ruled resource-channel thresholds**（[M2-S1 §7 产品阈值裁决](../../verification/M2-S1/product-thresholds-ruling-67c3d56.md) T1–T7 落约）与 **10.2 Resource reference security semantics**（[M2-S1 报告](../research/M2-S1_RESOURCE_CHANNEL_SPIKE.md) R-001/R-002/§6.3 与 [M2-S2 报告](../research/M2-S2_SECURITY_VERIFICATION_SPIKE.md) S1-B11/S1-B12 结论落约：open-then-verify-from-handle 解析、不透明映射 ID、路径下发禁止、类型化错误码最小集）；§11 large-media 行更新为 `PARTIALLY RULED`。§1–§9 与 §12 语义不变；§10 新条款对 §8 `ErrorEnvelope.code` 的引用是值域使用，未改 §8 定义。全部新条款为**设计要求**（`RULED`/`TO-BE`/`UNVERIFIED` 标签，语义在 §10.1 头部定义），不代表已实现或已通过产品验证（`AS-IS: NOT_IMPLEMENTED` 不变）。
 - `1.0`（M2-C1，2026-09-26）：原始冻结候选（blob `4b503a170ff8ff6e995e5e5d70e3a053f9cc62c3`）。
 
@@ -84,7 +85,7 @@ Event<T> = {
 
 - `major` 不同必须在执行命令前拒绝，返回 `PROTOCOL_VERSION_UNSUPPORTED`；不得猜测兼容。
 - 同 major 下 minor 可向前增加可选字段和新 command/event；接收端忽略未知可选字段，但未知 command/event/status 必须显式返回/保留 `UNKNOWN`，不能重解释成其他状态。
-- 字段删除、改名、类型变化、枚举旧值语义变化或必填性变化属于 major 变更。
+- 字段删除、改名、类型变化、枚举旧值语义变化或必填性变化属于 major 变更。**例外**：经授权 Task 在 Revision history 登记的 nullability widening（`T → T | null`）不升 major，现仅有 §5 `ListBooks` 的 `BookSummary.page_count`（`1.2` 修订，[M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN](../tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md)）；1.1 版消费者遇 `null` 属该登记修订的授权破坏面。
 - 本 Task 未实现版本握手、协商、兼容矩阵或自动迁移（**AS-IS: NOT_IMPLEMENTED**）。`PROTOCOL_VERSION_UNSUPPORTED` 是拟议稳定错误码。
 
 ## 4. Request/response 语义
@@ -101,7 +102,7 @@ Event<T> = {
 
 | Name | Typed payload → result | As-Is evidence / To-Be boundary |
 |---|---|---|
-| `ListBooks` | `{}` → `BookSummary[]` | ViewModel 调 Library service 取书目；当前搜索、归档/收藏过滤、排序由 ViewModel 本地完成。AS-IS service call，IPC 未实现。 |
+| `ListBooks` | `{}` → `BookSummary[]` | ViewModel 调 Library service 取书目；当前搜索、归档/收藏过滤、排序由 ViewModel 本地完成。AS-IS service call，IPC 未实现。**`1.2` 修订（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN）**：`BookSummary.page_count: int \| null`——COUNT 谓词无行的书 → `null`（unknown），有合格页的书 → 真实计数；known `0` 与 `null` 可区分（详见 Revision history `1.2`）。 |
 | `CreateBook` / `DeleteBook` | `{title, original_title?}` / `{book_id}` → `BookSummary` / `Unit` | `BookshelfViewModel.createBook/deleteBook` 调用 Library service。删除需 Core 检查关联和保留规则。 |
 | `SetBookFavorite` / `SetBookArchived` | `{book_id, value: boolean}` → `BookSummary` | 对应 Library service 调用。 |
 | `ListChapters` / `CreateChapter` / `DeleteChapter` | `{book_id}` / `{book_id,title,chapter_number?}` / `{chapter_id}` → `ChapterSummary[]` / `ChapterSummary` / `Unit` | ViewModel 使用 `list/get/create/delete_chapter`。 |

@@ -1,0 +1,167 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: "Python 3.12.3"
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+node: v24.15.0 / npm: 12.0.1
+head (run-at): f4f778082dd25fd8a08aab71698e9f9e76fd198c
+time: 2026-09-29T02:33:28+08:00
+purpose: DSH r1 C1-C2 r2 delivery-tip-bound rerun -- all four suites + whole-tree diff --check bound to the r2 revision commit (this log amended into it); closes the P2-4 binding gap owner-side (integrator C3 rerun at integration head still pending)
+---
+$ <py> -m pytest tests/m2_acceptance -q
+...................................                                      [100%]
+35 passed in 8.95s
+EXIT=0
+
+$ <py> -m pytest tests/core -q
+........................................................................ [ 93%]
+.....                                                                    [100%]
+77 passed in 7.39s
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXIT=0
+
+$ cargo test --bin m2rc1-desktop (cwd=apps/desktop/src-tauri; frontend/dist present from earlier npm run build)
+EXIT=1        # ABORTED INVOCATION: bash redirect used a wrong relative log path (cwd had changed), the redirect failed before cargo executed; no test ran, no result produced -- superseded by the annotated rerun further below
+$ npm test && npm run build (cwd=apps/desktop/frontend)
+EXIT_TEST=1   # ABORTED INVOCATION: ditto (same redirect error), nothing executed
+EXIT_BUILD=1  # ABORTED INVOCATION: ditto
+
+$ git diff --check 6199df48..HEAD (whole tree; expect empty + EXIT=0)
+DIFF_CHECK_EXIT=0
+
+$ cargo test --bin m2rc1-desktop (cwd=apps/desktop/src-tauri; frontend/dist present from earlier npm run build) [rerun after a log-path redirect error aborted the first invocation -- nothing executed in it, no result was produced]
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-LISTBOOKS-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:421:66
+    |
+421 |         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+    |                                                                  ^^^^^^^^^^
+
+warning: unused import: `std::io::Write`
+   --> src\main.rs:423:9
+    |
+423 |     use std::io::Write;
+    |         ^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 3 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.86s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 33 tests
+test ac1_bridge::tests::decode_response_maps_typed_errors ... ok
+test library_bridge::tests::mock_channel_round_trip ... ok
+test library_bridge::tests::spawn_args_target_core_service_module ... ok
+test ac1_bridge::tests::spawn_args_target_the_acceptance_module ... ok
+test library_bridge::tests::book_summary_page_count_known_zero_and_null_are_distinguishable ... ok
+test tests::ac1_commands_never_reappear_on_the_removed_surface ... ok
+test tests::ac1_surface_adds_exactly_the_three_acceptance_commands ... ok
+test library_bridge::tests::decode_response_parses_success_and_error ... ok
+test tests::no_surface_command_carries_a_ttl_parameter_shape ... ok
+test tests::production_surface_is_exactly_five_commands ... ok
+test tests::register_catalog_exists_on_no_surface ... ok
+test tests::issue_wire_never_carries_path_or_ttl ... ok
+test tests::mock_issue_without_catalog_entry_fails_closed ... ok
+test tests::mock_library_channel_integration ... ok
+test tests::probe_surface_adds_exactly_the_four_probe_commands ... ok
+test tests::production_and_probe_surfaces_never_gain_ac1_commands ... ok
+test tests::url_builder_is_opaque_only ... ok
+test ac1_bridge::tests::spawn_fails_typed_on_missing_python ... ok
+test tests::malformed_ids_rejected_before_lookup ... ok
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... ok
+test tests::app_acl_manifest_is_generated_and_enforced ... ok
+test tests::identity_change_invalidates_cache_entry ... ok
+test tests::responses_carry_no_store ... ok
+test tests::unknown_well_formed_id_typed_404 ... ok
+test tests::chunk_offset_beyond_size_rejected ... ok
+test tests::revoked_id_propagates_typed_410 ... ok
+test tests::f01_fetch_then_revoke_then_fetch_must_be_typed ... ok
+test tests::full_chunk_serving_matches_bytes_and_digest_check ... ok
+test library_bridge::tests::wait_timeout_or_kill_terminates_hanging_process ... ok
+test tests::real_core_sidecar_denies_uncataloged_and_extended_ttl ... ok
+test tests::real_core_sidecar_round_trip ... ok
+test tests::real_library_sidecar_round_trip_and_eof ... ok
+test tests::f01_ttl_expiry_invalidates_cached_grant ... ok
+
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+EXIT=0
+
+$ npm test && npm run build (cwd=apps/desktop/frontend)
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/apps/desktop/frontend[39m
+
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 78[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+[2m   Start at [22m 02:34:02
+[2m   Duration [22m 474ms[2m (transform 177ms, setup 0ms, collect 289ms, tests 95ms, environment 1ms, prepare 626ms)[22m
+
+EXIT_TEST=0
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 34 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
+[2mdist/[22m[36massets/index-CarQV9Yg.js  [39m[1m[2m157.11 kB[22m[1m[22m[2m │ gzip: 51.23 kB[22m
+[32m✓ built in 363ms[39m
+EXIT_BUILD=0

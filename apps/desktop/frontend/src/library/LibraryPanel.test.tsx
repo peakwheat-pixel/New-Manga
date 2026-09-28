@@ -31,6 +31,59 @@ describe("LibraryPanel Component", () => {
     expect(html).toContain('data-testid="library-book-list"');
   });
 
+  it("renders a non-numeric placeholder for an unknown (null) page_count, never 0", () => {
+    // M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN AC1: null page_count (unknown
+    // data) must not render as the plausible number 0.
+    const books: BookSummary[] = [
+      {
+        book_id: "book-unknown-pages",
+        title: "未知页数书",
+        original_title: "",
+        is_favorite: false,
+        is_archived: false,
+        page_count: null,
+        created_at: "2026-09-28T10:00:00Z",
+        updated_at: "2026-09-28T10:00:00Z",
+      },
+    ];
+
+    const html = renderToString(
+      <LibraryPanel initialState={{ books, loading: false, error: null }} />
+    );
+
+    expect(html).toContain("未知页数书");
+    expect(html).toContain("页数: —");
+    expect(html).not.toContain("页数: 0");
+    expect(html).toContain('data-testid="library-book-list"');
+  });
+
+  it("renders a known page_count of 0 as the number 0, never the unknown placeholder", () => {
+    // M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN AC2 (DSH r1 P2-1 / C1): a KNOWN 0
+    // must stay the number 0 on the UI leg too -- `??` must not be mutated
+    // into `||` (falsy trap would swallow 0 into the unknown placeholder).
+    const books: BookSummary[] = [
+      {
+        book_id: "book-known-zero",
+        title: "已知零页书",
+        original_title: "",
+        is_favorite: false,
+        is_archived: false,
+        page_count: 0,
+        created_at: "2026-09-28T10:00:00Z",
+        updated_at: "2026-09-28T10:00:00Z",
+      },
+    ];
+
+    const html = renderToString(
+      <LibraryPanel initialState={{ books, loading: false, error: null }} />
+    );
+
+    expect(html).toContain("已知零页书");
+    expect(html).toContain("页数: 0");
+    expect(html).not.toContain("页数: —");
+    expect(html).toContain('data-testid="library-book-list"');
+  });
+
   it("renders empty state message when book list is empty", () => {
     const html = renderToString(
       <LibraryPanel initialState={{ books: [], loading: false, error: null }} />

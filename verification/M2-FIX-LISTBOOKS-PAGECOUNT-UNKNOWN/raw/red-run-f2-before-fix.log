@@ -1,0 +1,53 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: "Python 3.12.3"
+head: 2210d642fd1a643c42fafde393e518281d078ff8
+time: 2026-09-29T02:07:28+08:00
+cmd: <py> -m pytest tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero -q  (xfail removed BEFORE fix, red-proof)
+---
+F                                                                        [100%]
+================================== FAILURES ===================================
+___________ test_ac4_books_without_pages_are_not_presented_as_zero ____________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000021C2879FBC0>, repository=<...thout_pages_a0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x0000021C288284A0>)
+
+    def test_ac4_books_without_pages_are_not_presented_as_zero(core) -> None:
+        """AC4(b): a book with no chapters and a book with a chapter but no
+        pages must NOT present a fabricated-looking count; the presentation
+        must distinguish unknown/missing data from a genuine zero.
+
+        M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN: the former strict xfail (defect F-2,
+        probe verification/M2-AC4/raw/probe-output.log) is lifted by the frozen
+        None channel -- production _fetch_page_counts GROUP BY returns rows only
+        for books with >=1 valid page, so a SQL-miss book (no chapters, or
+        chapters without valid pages) now presents page_count=None while a real
+        count stays a non-negative int (known 0 stays expressible on the DTO)."""
+        empty_book = core.library.create_book("M2-AC4 No-chapter Book")
+        hollow_book = core.library.create_book("M2-AC4 Chapterless-pages Book")
+        core.library.create_chapter(hollow_book.book_id, "no pages inside")
+
+        summaries = _list_books(core)
+        # the books themselves must be listed honestly
+        assert empty_book.book_id in summaries
+        assert hollow_book.book_id in summaries
+
+        for book_id in (empty_book.book_id, hollow_book.book_id):
+            summary = summaries[book_id]
+            known_flag = summary.get("page_count_known")
+            presented_unknown = (
+                summary["page_count"] is None
+                or (isinstance(summary["page_count"], int) and summary["page_count"] < 0)
+                or known_flag is False
+            )
+>           assert presented_unknown, (
+                f"book {book_id} presents page_count={summary['page_count']!r} with "
+                f"page_count_known={known_flag!r}: unknown data rendered as a "
+                "plausible number instead of an unknown marker"
+            )
+E           AssertionError: book 57c88a3369a44ee6ae212e37436916c7 presents page_count=0 with page_count_known=None: unknown data rendered as a plausible number instead of an unknown marker
+E           assert False
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:886: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero
+1 failed in 0.88s
+EXIT=1

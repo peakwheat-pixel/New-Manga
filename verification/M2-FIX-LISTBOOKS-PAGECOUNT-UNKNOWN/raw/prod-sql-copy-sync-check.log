@@ -1,0 +1,57 @@
+head: 2210d642fd1a643c42fafde393e518281d078ff8
+time: 2026-09-29T02:14:52+08:00
+purpose: AC5 copy-sync check -- production _fetch_page_counts SQL untouched by this fix, therefore _PRODUCTION_COUNT_SQL copy requires no edit; verify via diff that the SQL literal is byte-identical to base 6199df48
+---
+$ git diff 6199df48 -- src/bootstrap/core_service.py
+diff --git a/src/bootstrap/core_service.py b/src/bootstrap/core_service.py
+index 4f2bd1c9..0b3333f8 100644
+--- a/src/bootstrap/core_service.py
++++ b/src/bootstrap/core_service.py
+@@ -114,7 +114,11 @@ class BookSummaryDto:
+     original_title: str
+     is_favorite: bool
+     is_archived: bool
+-    page_count: int
++    # M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN (frozen None channel): None means
++    # unknown/missing data (the production COUNT predicate yields no row for
++    # this book); a counted value stays an int -- a KNOWN 0 must remain
++    # expressible and distinguishable from None after serialization.
++    page_count: int | None
+     created_at: str
+     updated_at: str
+
+@@ -159,7 +163,10 @@ class CoreServiceServer:
+                 original_title=book.original_title,
+                 is_favorite=bool(book.is_favorite),
+                 is_archived=bool(book.is_archived),
+-                page_count=page_counts.get(book.book_id, 0),
++                # GROUP BY returns rows only for books with >=1 qualifying
++                # page: a SQL miss (no chapters / no qualifying pages) is
++                # unknown data -> None, never a plausible-looking 0.
++                page_count=page_counts.get(book.book_id),
+                 created_at=book.created_at,
+                 updated_at=book.updated_at,
+             )
+---
+$ grep -A12 _fetch_page_counts (current)
+        page_counts = self._fetch_page_counts()
+
+        summaries: list[dict[str, Any]] = []
+        for book in books:
+            dto = BookSummaryDto(
+                book_id=book.book_id,
+                title=book.title,
+                original_title=book.original_title,
+                is_favorite=bool(book.is_favorite),
+                is_archived=bool(book.is_archived),
+                # GROUP BY returns rows only for books with >=1 qualifying
+                # page: a SQL miss (no chapters / no qualifying pages) is
+                # unknown data -> None, never a plausible-looking 0.
+--
+    def _fetch_page_counts(self) -> dict[str, int]:
+        """Read-only query calculating valid non-deleted page counts per book."""
+        rows = self._core.conn.execute(
+            """
+            SELECT c.book_id, COUNT(p.page_id) AS cnt
+            FROM chapters c
+EXIT=0

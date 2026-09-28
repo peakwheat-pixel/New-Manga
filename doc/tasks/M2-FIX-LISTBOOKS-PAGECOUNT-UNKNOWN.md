@@ -2,22 +2,22 @@
 id: M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN
 title: ListBooks page_count unknown/已知度通道（F-2 修复）
 kind: fix
-status: ready
+status: in_review
 release_state: M2_FIX_LISTBOOKS_PAGECOUNT_UNKNOWN_RELEASED
 approval: released_by_orchestrator_2026-09-29_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
 execution_approval: released_by_orchestrator_2026-09-29_goal_g2
 suggested_owner: ZCode
-owner: ZCode（待认领）
+owner: ZCode（子 agent 代行，用户授权 2026-09-28）
 reviewer: DeepSeek Harness
 integrator: Codex（另一子 agent 以 Codex 身份执行，保持 Owner≠Integrator）
 depends_on: [M2-AC4]
 base_commit: 6199df48
 branch: agent/zcode/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN
 worktree: G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode
-delivery_head: null
+delivery_head: 852a92aefbeffd4b15c701cecd2b19d6229b70ca
 review: null
 integration_merge: null
-dispatch_state: RELEASED
+dispatch_state: DELIVERED_FOR_REVIEW
 ---
 
 # M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN — Library page_count unknown/已知度通道补齐
@@ -43,12 +43,12 @@ dispatch_state: RELEASED
 
 ## Acceptance Criteria（2026-09-29 冻结为正式 AC）
 
-- [ ] **AC1 — unknown 通道落地：** 按上述语义判定改 `core_service.py` DTO/handler：无合格页书 `page_count=None`、有页书真实 int；Rust/TS 类型同步（`Option<u32>`/`number | null`）；`LibraryPanel.tsx` 对 None 渲染非数字占位（如 `—` 或「未知」），**不得渲染成 0**。
-- [ ] **AC2 — 已知 0 通道保留：** 单测锁定 DTO 可表达「已知 0」且与 None 可区分（序列化后 `0` ≠ `null`；直接构造 DTO/序列化层断言，不要求造产品场景）。
-- [ ] **AC3 — xfail 移除转 PASS：** 移除 `test_ac4_books_without_pages_are_not_presented_as_zero` 的 `@pytest.mark.xfail`（strict）转 PASS；**先证实修复再移除**（修复前证红留痕）；XPASS 一旦出现即处理。
-- [ ] **AC4 — typed 错误回归保护：** `sqlite3.Error → E_LIST_BOOKS_FAILED`（retryable）语义不得回归；既有 `tests/core/test_core_service.py` 断言保持绿；契约改动触碰 handler 分支则强化断言。
-- [ ] **AC5 — 契约与副本同步：** 契约文档 ListBooks DTO 段登记本修订（最小修改）；`_PRODUCTION_COUNT_SQL` 副本与 production SQL 逐字一致（如动 SQL）。
-- [ ] **AC6 — 证据纪律：** 命令日志带 shell、解释器、固定 HEAD、EXIT；Python/pytest、cargo（Rust 侧）、vitest/tsc（前端侧，如适用）三层验证各自留痕；`git diff --check <base>..<delivery-head>` exit 0（整树判据，含 apps/**——证据文件如有固有行尾空白按 M2-AC4 §D 先例 whitespace-only 清理后 amend）；范围自检仅落允许路径。
+- [x] **AC1 — unknown 通道落地：** `core_service.py` DTO `page_count: int | None`、handler `get(book_id)`（SQL miss → None、有页书真实 int）；Rust `Option<u32>`（serde→null）、TS `number | null` 同步；`LibraryPanel.tsx` None 渲染 `页数: —`，vitest 用例锁定不渲染 0。
+- [x] **AC2 — 已知 0 通道保留：** 三侧单测锁定序列化后 `0` ≠ `null`（Python DTO 层 `json.dumps` 断言、Rust serde 断言、TS UI 占位锁定）；直接构造 DTO，未造产品场景。
+- [x] **AC3 — xfail 移除转 PASS：** 修复前证红（`presented_unknown` False、EXIT=1，raw/red-run-f2-before-fix.log）后移除 strict xfail；全套 **35 passed, 0 xfailed**（无 XPASS）。
+- [x] **AC4 — typed 错误回归保护：** `E_LIST_BOOKS_FAILED` 既有断言保持绿（点名复跑 PASSED）；handler 分支被触碰 → 已有 sqlite3.Error→typed 断言 + 语义更新后的 filtering 测试 + 新增 known-0 测试共同强化。
+- [x] **AC5 — 契约与副本同步：** 契约 M2-C1 rev `1.2` 登记授权 widening（头部版本 + Revision history + §5 ListBooks 行）；production SQL 零改动（diff 逐字核对）→ `_PRODUCTION_COUNT_SQL` 副本无需编辑、逐字一致保持。
+- [x] **AC6 — 证据纪律：** 全部命令日志带 shell/解释器/固定 HEAD/ISO 时间戳/EXIT（`verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/`）；Python/cargo/npm 三层各自留痕；`git diff --check 6199df48..852a92ae` 整树 EXIT=0；范围自检 owner delta 全落允许路径（STATUS.md/release checkpoint 来自编排者 release commit `a2380706`，非 owner 改动）。
 
 ## 允许修改范围（2026-09-29 冻结）
 
@@ -66,4 +66,4 @@ dispatch_state: RELEASED
 
 ## 交付与运行记录
 
-- 尚无。释放时按 TASK 模板补全 Contract 并登记 release checkpoint。
+- **DELIVERED_FOR_REVIEW（2026-09-29，ZCode 子 agent 代行）**：commit ledger claim `2210d642` → 交付 `852a92ae` → 回填 `bee7bf59` → **r2 返修**（DSH r1 `approved_with_conditions` 条件 C1+C2；hash 见 `git log` / [raw/r2-final-bind-rerun.log](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/r2-final-bind-rerun.log) 头部 run-at 戳）。r2 内容：TS known-0 正向用例 + `??`→`||` 变异红证/还原绿（C1/P2-1）、模块 docstring :39 陈旧句修正（P3-2）、契约 §3.2 授权例外指针（P2-2）+ 1.2 日期修正（P3-3）、`verification-results.md` 新建（P2-3）、Handoff tip 表述更正（P2-4）+ NOT_RUN 小节（C4 预置）。验证数字：m2_acceptance **35 passed, 0 xfailed**、core **77 passed**、cargo `--bin m2rc1-desktop` **33 passed**、vitest 5 files（LibraryPanel 8 tests）、整树 `git diff --check` EXIT=0（r1 期四套 EXIT=0 原日志保留；r2 tip 绑定复跑见 raw/r2-final-bind-rerun.log）。C3/C4 留 Codex 集成收口。详见 [Owner Handoff](../handoffs/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-owner-delivery.md) 与 [verification-results.md](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/verification-results.md)。待 DSH 非作者 Review r2 → Codex 集成收口。
