@@ -21,7 +21,7 @@ releases a task.
 
 ### 2026-09-28 全量任务盘点与当前流程
 
-Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。当前没有 `in_progress` 或已释放待派发的 Task；下一节点是 M2-P1 修复 Task 的登记与释放（未释放）。
+Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。当前已释放待执行的是 [M2-P1](tasks/M2-P1.md)（`ready`，用户批准 2026-09-28）；无 `in_progress` Task。
 
 | 已完成 Task | Owner | 非作者 Reviewer / Integrator | Integration |
 |---|---|---|---|
@@ -43,7 +43,7 @@ Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前
 
 | 未完成 / 下一阶段 | 状态 | 建议 Owner / Reviewer | 说明 |
 |---|---|---|---|
-| M2-P1 Regionless Detection Fan-out and Guard Rebinding（候选名 FIX-M2-REGIONLESS-REGION-REBIND-001） | **根因已定位；Task 未登记未释放** | Antigravity 或 ZCode / DeepSeek Harness 或 Antigravity（非作者） | 按[诊断报告](research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md)：仅改 `service.py:_backfill_detected_regions` 同时重绑 `target_id`+`region_id`、不改 `unit_id`；回归 R0–R5 / 负向 N1–N7 矩阵。 |
+| [M2-P1](tasks/M2-P1.md) Regionless Detection Fan-out and Guard Rebinding | **ready；已释放（用户批准 2026-09-28）** | Antigravity / DeepSeek Harness | fixed base=`33826641`；修复=诊断报告 §5.4 单函数（重绑 `target_id`+`region_id`、不改 `unit_id`）+ R0–R5/N1–N7 矩阵；[release evidence](../verification/M2-P1/release-33826641.md)。 |
 | M2-IPC1 Production Core Lifecycle + Read-only Library Vertical Slice | planning；未释放 | Antigravity / DeepSeek Harness；Codex 冻结 seam | 打通 production React → Tauri → Python Core → SQLite；只读 Library。 |
 | M2-AC2 Data Integrity Acceptance | planning；未释放 | ZCode / DeepSeek Harness | source hash、Managed Copy、人工修改、Lock、current/pinned Revision；依赖 P1 与 IPC1。 |
 | Provider fail-closed acceptance | backlog；未登记 | ZCode / DeepSeek Harness | 对应下方 Backlog 第 3 行。 |

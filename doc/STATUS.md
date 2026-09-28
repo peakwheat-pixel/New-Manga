@@ -12,11 +12,11 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 |---|---|
 | Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
 | Current Active Task | **None (`in_progress`=0).** |
-| Current released Task | **None.** [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) is `done` at Codex（代行）merge `b5ac097f`; root cause located and reproducible; the fix is **NOT released**. |
-| Owner / Reviewer / Integrator | DeepSeek Harness（静态交付，执行证据由集成方代采）/ Antigravity（非作者，`approved`）/ Codex（代行=ZCode 会话） |
-| Recovery point | base=`5789b30b`; Owner branch=`agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001` @`7a03ac5f`; worktree=`G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh`（保留） |
+| Current released Task | [M2-P1](tasks/M2-P1.md) Regionless Detection Fan-out and Guard Rebinding = `ready / M2_P1_REGIONLESS_REGION_REBINDING_RELEASED`（用户批准 2026-09-28；Owner=Antigravity、Reviewer=DSH、Integrator=Codex 代行）；fixed base=`33826641`；修复范围=诊断报告 §5.4 单函数 + R0–R5/N1–N7 矩阵 |
+| Owner / Reviewer / Integrator | Antigravity / DeepSeek Harness（非作者）/ Codex（代行=ZCode 会话） |
+| Recovery point | base=`33826641`; branch=`agent/antigravity/M2-P1-regionless-region-rebinding`; worktree=`G:/CODEX/New Manga.worktrees/M2-P1-agy`（从 release commit 检出） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1 及 DIAG-M2-REGIONLESS-LOCK-CHANGED-001 全部 `done`；最新 integration=`b5ac097f` |
-| Planned next | `M2-P1` regionless 修复（候选名 FIX-M2-REGIONLESS-REGION-REBIND-001，按诊断报告 R0–R5/N1–N7 矩阵）→ `M2-IPC1` production Core read-only Library slice → `M2-AC2` data integrity acceptance；均未释放，等待用户批准释放顺序 |
+| Planned next | `M2-IPC1` production Core read-only Library slice → `M2-AC2` data integrity acceptance；均未释放 |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex quota exhausted；自 2026-09-28 起由 ZCode 会话代行 Codex Lead/Integrator 职责（用户全权授权）；追认批次见下方 ratification checkpoint |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |
