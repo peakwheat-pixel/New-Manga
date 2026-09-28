@@ -1,0 +1,7 @@
+=== shell: Git Bash | date: 2026-09-28T23:41:24+08:00 ===
+=== python: Python 3.12.3 ===
+=== HEAD (post-merge, pre-integration-commit): cac374855b6e6a4310f557ae362d34d0572cd649 ===
+=== CMD: pytest tests/m2_acceptance -q (QT_QPA_PLATFORM=offscreen) ===
+.......................                                                  [100%]
+23 passed in 8.41s
+EXIT=0

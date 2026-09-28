@@ -4,7 +4,7 @@
 - Task: `doc/tasks/M2-AC3.md`（`ready / M2_AC3_PROVIDER_FAIL_CLOSED_RELEASED`；纯验收，产品代码零改动）
 - Base / release: `319c5e4b` / `7e88de4b`
 - Branch / worktree: `agent/zcode/M2-AC3-provider-fail-closed` / `G:/CODEX/New Manga.worktrees/M2-AC3-zcode`
-- Head ledger: claim=`c754e714` → 实现=`b0112834` → evidence/handoff=交付 tip（Owner 分支 HEAD）
+- Head ledger: claim=`c754e714` → 实现=`b0112834` → evidence/handoff=交付 tip（Owner 分支 HEAD）= `a63d3372ebbd364da9fb5fb53af835559235bb6c`（「集成方补充」：DSH r1 条件 C2，tip hash 落地）
 - Status: delivered（等 DeepSeek Harness 非作者 Review；Integrator=新会话代行 Codex，保持 Owner≠Integrator）
 
 ## 交付物

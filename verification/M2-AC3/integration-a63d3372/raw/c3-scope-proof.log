@@ -1,0 +1,39 @@
+=== C3: git diff --name-status 319c5e4b..a63d3372 ===
+M	doc/00_INDEX.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+A	doc/handoffs/M2-AC3-owner-delivery.md
+A	doc/tasks/M2-AC3.md
+A	doc/tasks/M2-FIX-STUB-DECODER.md
+M	doc/tasks/README.md
+A	tests/m2_acceptance/test_provider_fail_closed.py
+A	verification/M2-AC3/discrimination-mutations.md
+A	verification/M2-AC3/raw/git-diff-check.log
+A	verification/M2-AC3/raw/pytest-m2-acceptance-regression.log
+A	verification/M2-AC3/raw/pytest-provider-fail-closed-v.log
+A	verification/M2-AC3/release-319c5e4b.md
+A	verification/M2-AC3/verification-results.md
+EXIT=0
+=== diff --check ===
+EXIT=0
+=== forbidden-path hits (src/ apps/ doc/contracts/) ===
+0
+EXIT=0
+=== C3 corrected scope: git diff --name-status 7e88de4b..a63d3372 ===
+A	doc/handoffs/M2-AC3-owner-delivery.md
+M	doc/tasks/M2-AC3.md
+A	tests/m2_acceptance/test_provider_fail_closed.py
+A	verification/M2-AC3/discrimination-mutations.md
+A	verification/M2-AC3/raw/git-diff-check.log
+A	verification/M2-AC3/raw/pytest-m2-acceptance-regression.log
+A	verification/M2-AC3/raw/pytest-provider-fail-closed-v.log
+A	verification/M2-AC3/verification-results.md
+EXIT=0
+=== commit count 7e88de4b..HEAD ===
+3
+EXIT=0
+=== forbidden-path hits (src/ apps/ doc/contracts/) on corrected range ===
+0
+EXIT=0
+=== diff --check on corrected range ===
+EXIT=0

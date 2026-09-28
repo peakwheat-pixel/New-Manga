@@ -1,0 +1,136 @@
+############ MUTATION M1 ############
+=== [M1] 2026-09-28T23:35:29+08:00 HEAD=a63d3372 ===
+=== baseline git status --porcelain src/ ===
+EXIT=0
+=== apply M1: sed elif FAILED -> elif False and FAILED ===
+EXIT=0
+=== grep -n 'elif False and PipelineTaskStatus.FAILED' (expect 1) ===
+1
+EXIT=0
+=== CMD: pytest test_ac2_network_failure_typed_and_existing_results_intact -q (expect RED) ===
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_ac2_network_failure_typed_and_existing_results_intact __________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-368/test_ac2_network_failure_typed0')
+
+    def test_ac2_network_failure_typed_and_existing_results_intact(
+        tmp_path: Path,
+    ) -> None:
+        """AC2: a provider transport failure mid-run surfaces as the typed
+        retryable code (not swallowed, not reported as success), and every
+        pre-existing result survives byte-for-byte: the manual translation,
+        its content lock, the pinned revision and the revision sequence."""
+        core = _assemble(tmp_path / "data-root", mock_providers=True)
+        source_dir = tmp_path / "user-sources"
+        source_dir.mkdir()
+    
+        page, _source = _import_page(
+            core, source_dir, synthetic_page_png(3), "001.png"
+        )
+        region = _region_on(core, page)
+        manual_text = "人工译文：网络失败后必须原样保留"
+        manual_no = core.editing.save_manual_translation(region.region_id, manual_text)
+        core.editing.set_revision_pinned(region.region_id, 1, True)
+        stored_before = core.editing._repo.get_region(region.region_id)
+        assert stored_before is not None
+        assert stored_before.text.translation_locked is True
+        revisions_before = _revision_count(core, region.region_id)
+    
+        provider = _UnreachableOcrProvider()
+        _register_ocr_provider(core, provider)
+        core.pipeline_defaults.save_provider_binding("ocr", provider.provider_id)
+    
+        executed = _plan_and_execute(core, (page.page_id,))
+    
+>       assert executed.status is PipelineRunStatus.COMPLETED_WITH_FAILURES, (
+            f"a network-failed run must not report success, got {executed.status!r}"
+        )
+E       AssertionError: a network-failed run must not report success, got <PipelineRunStatus.COMPLETED: 'completed'>
+E       assert <PipelineRunStatus.COMPLETED: 'completed'> is <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'>
+E        +  where <PipelineRunStatus.COMPLETED: 'completed'> = PipelineRun(run_id='run-f49594ac8b90493e80edb7eaf68ae7ee', command_type=<CommandType.REOCR_ALL: 'reocr_all'>, scope=Pi...False, source_run_id=None, retry_reason=None, interruption_disposition=None, termination_reason=None, fatal_error=None).status
+E        +  and   <PipelineRunStatus.COMPLETED_WITH_FAILURES: 'completed_with_failures'> = PipelineRunStatus.COMPLETED_WITH_FAILURES
+
+tests\m2_acceptance\test_provider_fail_closed.py:404: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_provider_fail_closed.py::test_ac2_network_failure_typed_and_existing_results_intact
+1 failed in 1.44s
+EXIT=1
+=== restore ===
+EXIT=0
+=== post-restore git status --porcelain src/ (expect empty) ===
+EXIT=0
+############ MUTATION M2 ############
+=== [M2] 2026-09-28T23:35:46+08:00 HEAD=a63d3372 ===
+=== apply M2 via python (exact-indent match, count must be 1) ===
+match count: 1
+replaced OK; task.error_code preserved: True
+EXIT=0
+=== git diff --stat (mutated file) ===
+ src/application/tasks/service.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+EXIT=0
+=== CMD: pytest test_ac2_network_failure_typed_and_existing_results_intact -q (expect RED at ~413) ===
+F                                                                        [100%]
+================================== FAILURES ===================================
+_________ test_ac2_network_failure_typed_and_existing_results_intact __________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-369/test_ac2_network_failure_typed0')
+
+    def test_ac2_network_failure_typed_and_existing_results_intact(
+        tmp_path: Path,
+    ) -> None:
+        """AC2: a provider transport failure mid-run surfaces as the typed
+        retryable code (not swallowed, not reported as success), and every
+        pre-existing result survives byte-for-byte: the manual translation,
+        its content lock, the pinned revision and the revision sequence."""
+        core = _assemble(tmp_path / "data-root", mock_providers=True)
+        source_dir = tmp_path / "user-sources"
+        source_dir.mkdir()
+    
+        page, _source = _import_page(
+            core, source_dir, synthetic_page_png(3), "001.png"
+        )
+        region = _region_on(core, page)
+        manual_text = "人工译文：网络失败后必须原样保留"
+        manual_no = core.editing.save_manual_translation(region.region_id, manual_text)
+        core.editing.set_revision_pinned(region.region_id, 1, True)
+        stored_before = core.editing._repo.get_region(region.region_id)
+        assert stored_before is not None
+        assert stored_before.text.translation_locked is True
+        revisions_before = _revision_count(core, region.region_id)
+    
+        provider = _UnreachableOcrProvider()
+        _register_ocr_provider(core, provider)
+        core.pipeline_defaults.save_provider_binding("ocr", provider.provider_id)
+    
+        executed = _plan_and_execute(core, (page.page_id,))
+    
+        assert executed.status is PipelineRunStatus.COMPLETED_WITH_FAILURES, (
+            f"a network-failed run must not report success, got {executed.status!r}"
+        )
+        task = executed.tasks[0]
+        assert task.status is PipelineTaskStatus.FAILED
+        assert task.error_code == "PROVIDER_TIMEOUT", (
+            f"a transport fault must keep its typed code, got {task.error_code!r}"
+        )
+        step = _fail_step(executed, task)
+>       assert step.error_code == "PROVIDER_TIMEOUT"
+E       AssertionError: assert 'STEP_FAILED' == 'PROVIDER_TIMEOUT'
+E         
+E         - PROVIDER_TIMEOUT
+E         + STEP_FAILED
+
+tests\m2_acceptance\test_provider_fail_closed.py:413: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_provider_fail_closed.py::test_ac2_network_failure_typed_and_existing_results_intact
+1 failed in 1.40s
+EXIT=1
+=== restore ===
+EXIT=0
+=== post-restore git status --porcelain src/ (expect empty) ===
+EXIT=0
+=== baseline rerun full new module -q (expect 8 passed) ===
+........                                                                 [100%]
+8 passed in 5.84s
+EXIT=0

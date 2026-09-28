@@ -1,0 +1,7 @@
+=== shell: Git Bash | date: 2026-09-28T23:34:06+08:00 ===
+=== python: Python 3.12.3 ===
+=== HEAD: a63d3372ebbd364da9fb5fb53af835559235bb6c ===
+=== CMD: pytest tests/m2_acceptance -q (QT_QPA_PLATFORM=offscreen) ===
+.......................                                                  [100%]
+23 passed in 8.50s
+EXIT=0
