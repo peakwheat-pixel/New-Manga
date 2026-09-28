@@ -87,14 +87,23 @@ def record_environment(gate: Gate) -> bool:
     print("[0] environment")
     # The runner's own interpreter IS the desktop/Core sidecar interpreter
     # (M2RC1_PYTHON = sys.executable below), so it is recorded explicitly and
-    # must not be confused with the PATH-level `python` probe next to it.
+    # must not be confused with the PATH-level tool probes next to it.
+    # R2-07 (DSH r2): the acceptance loop needs PySide6 in THIS interpreter
+    # (in-gate PNG decode); missing it is an environment gap -> BLOCKED.
+    try:
+        import PySide6  # noqa: F401
+
+        pyside6_ok, pyside6_detail = True, PySide6.__version__
+    except (OSError, ImportError) as error:
+        pyside6_ok, pyside6_detail = False, str(error)
+    gate.pass_or(pyside6_ok, "EVN-pyside6", {"version": pyside6_detail})
     gate.pass_or(
         True,
         "EVN-runner-python",
         {"executable": sys.executable, "version": sys.version.split()[0]},
     )
+    usable = pyside6_ok
     tools = ("cargo", "rustc", "node", "npm")
-    usable = True
     for name in tools:
         resolved = resolve_tool(name)
         gate.pass_or(resolved is not None, f"EVN-{name}-resolved", {"path": resolved})
@@ -296,32 +305,54 @@ def run_sample(gate: Gate, exe: Path, lab_root: Path, sample: str, venv_python: 
     # itself — that re-read must equal the run1 saved summary (compared
     # order-independently by index), and the run2 view/export must be
     # consistent with the run2 re-read, not only with run1's.
+    # R2-04 (DSH r2): tolerate null/missing keys instead of crashing the gate.
     saved2 = run2.get("saved") or {}
+    saved_pages = saved.get("pages") if isinstance(saved.get("pages"), list) else []
+    saved2_pages = saved2.get("pages") if isinstance(saved2.get("pages"), list) else []
+
+    def page_sort_key(page: dict):
+        index = page.get("index") if isinstance(page, dict) else None
+        return (0, index) if isinstance(index, int) else (1, str(index))
+
+    def pages_comparable(pages: list) -> bool:
+        return all(
+            isinstance(page, dict)
+            and isinstance(page.get("index"), int)
+            and isinstance(page.get("sha256"), str)
+            for page in pages
+        )
+
+    if not pages_comparable(saved_pages) or not pages_comparable(saved2_pages):
+        gate.record(
+            f"{sample}-restore-saved-matches-run1",
+            "FAIL",
+            {"error": "saved pages missing index/sha256 keys"},
+        )
+        return None
     gate.pass_or(
-        sorted(saved2.get("pages") or [], key=lambda page: page["index"])
-        == sorted(saved.get("pages") or [], key=lambda page: page["index"])
+        sorted(saved2_pages, key=page_sort_key) == sorted(saved_pages, key=page_sort_key)
         and saved2.get("providers") == saved.get("providers")
         and saved2.get("run_status") == saved.get("run_status") == "completed",
         f"{sample}-restore-saved-matches-run1",
         {
-            "run1_pages": [(p["index"], p["sha256"][:12]) for p in saved.get("pages") or []],
-            "run2_pages": [(p["index"], p["sha256"][:12]) for p in saved2.get("pages") or []],
+            "run1_pages": [(p["index"], p["sha256"][:12]) for p in saved_pages],
+            "run2_pages": [(p["index"], p["sha256"][:12]) for p in saved2_pages],
         },
     )
-    saved2_by_index = {page["index"]: page["sha256"] for page in saved2.get("pages") or []}
+    saved2_by_index = {page["index"]: page["sha256"] for page in saved2_pages}
+    exported = run2.get("exported") or {}
     gate.pass_or(
         bool(saved2_by_index)
         and all(
             entry.get("sha256") == saved2_by_index.get(entry.get("index"))
             for entry in viewed
         )
-        and exported_sha(run2) == saved2_by_index.get(run2.get("exported", {}).get("page_index")),
+        and exported_sha(run2) == saved2_by_index.get(exported.get("page_index")),
         f"{sample}-restore-internals-match-restored-saved",
         {"exported_sha": (exported_sha(run2) or "")[:12]},
     )
 
     # AC5: the exported PNG is non-empty, decodable and is the Reader's page
-    exported = run2.get("exported") or {}
     output_name = exported.get("output_path")
     if not isinstance(output_name, str) or not output_name:
         gate.record(f"{sample}-export-png", "FAIL", {"error": "missing output_path in results"})
@@ -436,18 +467,26 @@ def main() -> int:
 
 
 def implementation_commit() -> str:
-    """The worktree HEAD the gate is testing (evidence ↔ commit binding)."""
+    """The worktree HEAD the gate is testing (evidence ↔ commit binding).
+
+    R2-05 (DSH r2): an absent, non-zero or empty git answer degrades to a
+    visible ``UNKNOWN`` — never a silently empty binding.
+    """
     try:
-        return subprocess.run(
+        completed = subprocess.run(
             ["git", "rev-parse", "HEAD"],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
             timeout=30,
             check=False,
-        ).stdout.strip()
+        )
     except (OSError, subprocess.TimeoutExpired):
         return "UNKNOWN"
+    commit = completed.stdout.strip()
+    if completed.returncode != 0 or not commit:
+        return "UNKNOWN"
+    return commit
 
 
 def write_gate(gate: Gate, lab_root: Path) -> None:

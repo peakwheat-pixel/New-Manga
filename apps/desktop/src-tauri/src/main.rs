@@ -433,7 +433,8 @@ mod tests {
     /// `__app-acl__` application manifest (an inlined-plugin declaration is
     /// keyed `plugin:<name>|<cmd>` and never matches bare invocations -- the
     /// ACL layer silently skipped them, DSH R2-01). This pins the build
-    /// artifact: the app manifest declares exactly the seven live commands,
+    /// artifact: the app manifest declares exactly the ten live commands
+    /// (seven resource-channel + three M2-AC1 acceptance; R2-06),
     /// and no plugin-shaped surface remains.
     #[test]
     fn app_acl_manifest_is_generated_and_enforced() {

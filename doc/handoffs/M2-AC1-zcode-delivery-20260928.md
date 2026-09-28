@@ -3,7 +3,7 @@ task_id: M2-AC1
 author: ZCode (heavy_task_executor)
 recipient: DeepSeek Harness (non-author Review) → Codex (Integrator)
 base_commit: 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d
-delivery_head: 035bbdf9 (implementation) / a74ce105 (implementation + verification evidence)
+delivery_head: 035bbdf9 (implementation) / a74ce105 (r1 evidence) / 5a59ddfe (r1 findings fixed) / branch tip (r2 复核被审 head；见 §接收方式 head 演进)
 status: delivered_awaiting_review
 ---
 
@@ -49,9 +49,9 @@ status: delivered_awaiting_review
 | AC3 进程重启恢复 | 每样本两次真实 exe 启动（run1→ac1_exit→run2）；desktop PID 与 Core sidecar PID 断言不同；不重跑 pipeline（phase 由 SQLite 状态决定） | 同上 | PASS（如 sample-a：desktop 34580→8720、core 22156→35268） | e2e-gate.json `restart-*-pid-differs` 场景 |
 | AC4 Reader 阅读 | run2 `reader_pages` → 前端经 m2res 协议逐页 fetch+解码（naturalWidth>0）两页 → `record_reading` 持久化进度 | 同上 | PASS（viewed sha == saved sha，逐页） | run2.json `viewed` |
 | AC5 导出验证 | run2 `export_page`（SINGLE_IMAGE/translated）→ runner 独立读文件重算 sha256；Core 测试另做 QImage 像素摘要比对 | 同上 | PASS（导出 sha `4afc6738…` == Reader 页 2 == translated artifact；1122 字节非空可解码） | e2e-gate.json `export-png`；test_full_loop |
-| AC6 诚实 Gate | `python verification/M2-AC1/run_e2e.py`（完整构建版）+ `--skip-build` 复跑 | 同上；cargo 1.98.1、Node v24.15.0、npm 12.0.1 | PASS×2（GATE PASS；40/27 场景；gate 对 FAIL/缺失/NOT_RUN 失败关闭，环境缺失→BLOCKED exit 2） | [e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json)、[e2e-evidence](../../verification/M2-AC1/e2e-evidence/raw/e2e-gate.json) |
-| Tauri host regression | `cargo test --locked` | 同上 | PASS（25 passed, 0 failed） | [cargo-test.log](../../verification/M2-AC1/cargo-test.log) |
-| React regression | `npm test`（=vitest run） | 同上 | PASS（3 files, 18 passed） | [vitest.log](../../verification/M2-AC1/vitest.log) |
+| AC6 诚实 Gate | `python verification/M2-AC1/run_e2e.py`（完整构建版，最终证据） | 同上；cargo 1.98.1、Node v24.15.0、npm 12.0.1 | PASS（最终 gate GATE PASS 44 场景，含 F-001/002/004 新增断言与跨样本像素摘要一致；gate 对 FAIL/缺失/NOT_RUN 失败关闭，PySide6 等环境缺失→BLOCKED exit 2） | [e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json)（`implementation_commit`/`runner_executable` 字段机器绑定）；[e2e-evidence](../../verification/M2-AC1/e2e-evidence/raw/e2e-gate.json) 为 r1 前旧格式存档（见其 NOTE.md） |
+| Tauri host regression | `cargo test --locked` | 同上 | PASS（26 passed, 0 failed，含 F-003 ACL 全命令断言与 F-011 argv 钉死） | [cargo-test.log](../../verification/M2-AC1/cargo-test.log) |
+| React regression | `npm test`（=vitest run） | 同上 | PASS（3 files, 19 passed，含 F-012 ac1 拒绝面） | [vitest.log](../../verification/M2-AC1/vitest.log) |
 | 全仓回归（Owner 加跑） | `python -m pytest -q -p no:cacheprovider -rs` | 同上 | PASS（1322 passed, 5 skipped, exit 0；M2-RC2 集成基线 1318+新增 4，零回归） | [pytest-full-suite.log](../../verification/M2-AC1/pytest-full-suite.log) |
 | 范围与 whitespace | `git diff --name-status 7db0e7b6..035bbdf9`；`git diff --check 7db0e7b6..035bbdf9` | 证据 head `a74ce105` | PASS（19 路径见 §范围审计；diff --check exit 0） | 本 Handoff |
 
