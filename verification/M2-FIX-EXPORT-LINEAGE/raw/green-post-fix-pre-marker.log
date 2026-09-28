@@ -1,0 +1,20 @@
+# M2-FIX-EXPORT-LINEAGE green evidence (post-fix, marker still temporarily removed)
+python: /usr/bin/bash: line 5: G:/CODEX/New: No such file or directory
+git HEAD: 4e76b2fa60e60958cc8132c6d541e3ba649d1e8f (claim 4e76b2fa + unstaged fix)
+ISO time: 2026-09-28T17:13:18Z
+---
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-FIX-EXPORT-LINEAGE-zcode
+configfile: pytest.ini
+collecting ... collected 1 item
+
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included PASSED [100%]
+
+============================== 1 passed in 0.33s ==============================
+---
+...............................x..                                       [100%]
+33 passed, 1 xfailed in 9.80s
+---
+EXIT=0

@@ -1,0 +1,155 @@
+# M2-FIX-EXPORT-LINEAGE regression (post-fix, marker formally removed, legacy scenario added)
+shell: MINGW64_NT-10.0-26200 HOME-MY 3.6.5-22c95533.x86_64 2025-10-10 12:02 UTC x86_64 Msys
+python: /usr/bin/bash: line 6: G:/CODEX/New: No such file or directory
+git HEAD: 4e76b2fa60e60958cc8132c6d541e3ba649d1e8f
+git branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO time: 2026-09-28T17:14:47Z
+command 1: $PY -m pytest tests/m2_acceptance -q
+---
+............................F...x..                                      [100%]
+================================== FAILURES ===================================
+______ test_ac2_legacy_scope_rows_without_included_keys_stay_compatible _______
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000024E694B57C0>, repository=<...cope_rows_wit0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x0000024E694D9440>)
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-403/test_ac2_legacy_scope_rows_wit0')
+
+    def test_ac2_legacy_scope_rows_without_included_keys_stay_compatible(core, tmp_path: Path) -> None:
+        """M2-FIX-EXPORT-LINEAGE AC3: history rows written before included ids
+        were persisted (scope_snapshot_json without the two new keys) must read
+        back without error through the new code -- parsed as "no included ids
+        recorded" (empty lists), never a crash or a fabricated non-empty
+        lineage. Covers both persistence channels of pre-fix rows (the SQLite
+        row shape the old ExportService wrote, and the legacy export_history.json
+        import) plus the parse contract repeat() relies on, including the
+        corrupt-value guard."""
+        legacy_scope = json.dumps(
+            {
+                "page_ids": ["legacy-page-1", "legacy-page-2"],
+                "filenames": [FILENAME_A, FILENAME_B],
+                "mode": "translated",
+                "overwrite_policy": "overwrite",
+                "stale_policy": "continue",
+            },
+            ensure_ascii=False,
+        )
+
+        # channel 1: the exact row shape the pre-fix ExportService wrote into
+        # export_history (13 columns, no included-ids keys in the snapshot JSON)
+        core.conn.execute(
+            """
+            INSERT INTO export_history (
+                export_id, book_id, chapter_id, pipeline_run_id, export_type,
+                scope_snapshot_json, output_path, render_profile_snapshot_json,
+                status, file_hash, created_at, completed_at, detail
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                "exp-legacy-001", "book-legacy", "chapter-legacy", None, "zip",
+                legacy_scope, str(tmp_path / "legacy.zip"), "", "completed",
+                "a" * 64, "2026-01-01T00:00:00+00:00", "2026-01-01T00:00:01+00:00",
+                "row written before the included-ids fix",
+            ),
+        )
+        core.conn.commit()
+
+        row = core.export_service.find_export("exp-legacy-001")
+        assert row is not None, "the pre-fix row must survive the upgraded read path"
+        assert row.status == "completed"
+        stored_scope = json.loads(row.scope_snapshot_json)
+        assert "included_stale_page_ids" not in stored_scope, "fixture sanity: pre-fix shape"
+        assert "included_missing_page_ids" not in stored_scope, "fixture sanity: pre-fix shape"
+        parsed = _parse_scope(row.scope_snapshot_json)
+        assert parsed["page_ids"] == ["legacy-page-1", "legacy-page-2"], "legacy keys stay intact"
+        assert parsed["included_stale_page_ids"] == [], (
+            "a pre-fix row parses to an EMPTY included-stale set, not an error"
+        )
+        assert parsed["included_missing_page_ids"] == [], (
+            "a pre-fix row parses to an EMPTY included-missing set, not an error"
+        )
+
+        # channel 2: legacy JSON import of a pre-fix export_history.json
+        legacy_file = tmp_path / "export_history.json"
+        legacy_file.write_text(
+            json.dumps(
+                [
+                    {
+                        "export_id": "exp-legacy-002",
+                        "book_id": "book-legacy",
+                        "chapter_id": "chapter-legacy",
+                        "pipeline_run_id": None,
+                        "export_type": "zip",
+                        "scope_snapshot_json": legacy_scope,
+                        "output_path": str(tmp_path / "legacy2.zip"),
+                        "render_profile_snapshot_json": "",
+                        "status": "completed",
+                        "file_hash": "",
+                        "created_at": "2026-01-01T00:00:00+00:00",
+                        "completed_at": "2026-01-01T00:00:01+00:00",
+                        "detail": "",
+                    }
+                ],
+                ensure_ascii=False,
+            ),
+            encoding="utf-8",
+        )
+        imported = import_legacy_export_history(core.conn, legacy_file)
+>       assert imported == 1
+E       assert 0 == 1
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:664: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_legacy_scope_rows_without_included_keys_stay_compatible
+1 failed, 33 passed, 1 xfailed in 9.28s
+EXIT1=1
+command 2: $PY -m pytest tests/core -q
+---
+........................................................................ [ 94%]
+....                                                                     [100%]
+76 passed in 7.73s
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+EXIT2=0
+OVERALL: EXIT1=1 EXIT2=0
