@@ -2,10 +2,12 @@
 id: M2-AC3
 title: Provider Fail-closed Acceptance (unconfigured / network failure / partial failure)
 kind: acceptance
-status: ready
+status: in_progress
 release_state: M2_AC3_PROVIDER_FAIL_CLOSED_RELEASED
 approval: approved_by_user_2026-09-28_m2ac3_release
 execution_approval: approved_by_user_2026-09-28_m2ac3_release
+claimed_by: ZCode
+claimed_at: 2026-09-28
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness
@@ -17,7 +19,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-AC3-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: READY_FOR_CLAIM
+dispatch_state: CLAIMED_BY_OWNER_ZCODE_2026-09-28
 ---
 
 # M2-AC3 — Provider Fail-closed Acceptance
