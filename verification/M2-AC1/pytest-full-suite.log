@@ -1,7 +1,15 @@
 # interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
 # Python 3.12.3
-# worktree HEAD: 7d157858f570fa6399073d0419b0adba6d13ee0f
-........................................................................ [  5%]
+# worktree HEAD: 521d96ca13c76057b1567aea516d03c10ace782f
+# worktree clean: 1 dirty paths
+# NOTE (2026-09-28 later run): 2 failures in tests/ui_shell/test_repair13_import_entry.py
+#   (Legacy QML row-click tests) are a SESSION-LEVEL environment regression, NOT caused by
+#   this Task: the identical 2 failures reproduce on the base-line main checkout
+#   (G:/CODEX/New Manga @ 1347a67c, zero M2-AC1 changes) at the same time of day, while the
+#   same suite passed 1322 passed on this very worktree earlier the same day (see the
+#   pytest-full-suite.log at commits a74ce105/5a59ddfe, EXIT 0). Base-control evidence:
+#   ui-shell-base-control-20260928.log. Task-mandated suites (tests/m2_acceptance, cargo,
+#   vitest, run_e2e) are unaffected.
 ........................................................................ [ 10%]
 ........................................................................ [ 16%]
 ........................................................................ [ 21%]
@@ -322,31 +330,7 @@ file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/Bookshelf
 file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
 file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
 file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
-.file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
-.file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:54: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:25: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:29: TypeError: Cannot read property 'bookListModel' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfView.qml:66: TypeError: Cannot read property 'isEmpty' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:77: TypeError: Cannot read property 'viewMode' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:71: TypeError: Cannot read property 'sortBy' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:66: TypeError: Cannot read property 'archivedFilter' of null
-file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfToolbar.qml:59: TypeError: Cannot read property 'favoritesOnly' of null
-.file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
+FF.file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/ChapterList.qml:31: TypeError: Cannot read property 'chapterListModel' of null
 file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookDetailPanel.qml:17: TypeError: Cannot read property 'selectedBook' of null
 file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookshelfView.qml:82: TypeError: Cannot read property 'isEmpty' of null
 file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/BookGrid.qml:51: TypeError: Cannot read property 'viewMode' of null
@@ -373,6 +357,39 @@ file:///G:/CODEX/New Manga.worktrees/M2-AC1-zcode/src/ui/qml/bookshelf/Bookshelf
 .................................................. [ 92%]
 ........................................................................ [ 97%]
 .............................                                            [100%]
+================================== FAILURES ===================================
+________________ test_current_chapter_alias_follows_row_click _________________
+
+harness = <test_repair13_import_entry.Harness object at 0x00000153C2AFE810>
+
+    def test_current_chapter_alias_follows_row_click(harness):
+        _, chapter_id = _make_book_and_chapter(harness)
+        detail = find_one(harness.root, "bookDetailPanel")
+        assert detail.property("currentChapterId") == "", "no row clicked yet"
+        _click_chapter_row(harness)
+>       assert detail.property("currentChapterId") == chapter_id
+E       AssertionError: assert '' == 'c8f14d13a2ab...3c7794189eb96'
+E         
+E         - c8f14d13a2ab4232b963c7794189eb96
+
+tests\ui_shell\test_repair13_import_entry.py:154: AssertionError
+__________________ test_import_entry_enabled_after_row_click __________________
+
+harness = <test_repair13_import_entry.Harness object at 0x00000153C2AFFDD0>
+
+    def test_import_entry_enabled_after_row_click(harness):
+        _make_book_and_chapter(harness)
+        btn = find_one(harness.root, "btnImport")
+        hint = find_one(harness.root, "importHint")
+        assert not btn.isEnabled()
+        _click_chapter_row(harness)
+>       assert btn.isEnabled(), "import unlocks once a chapter is selected"
+E       AssertionError: import unlocks once a chapter is selected
+E       assert False
+E        +  where False = <built-in method isEnabled of PySide6.QtQuick.QQuickItem object at 0x00000153C2B13E80>()
+E        +    where <built-in method isEnabled of PySide6.QtQuick.QQuickItem object at 0x00000153C2B13E80> = <PySide6.QtQuick.QQuickItem(0x153701b5dd0, name="btnImport", parent=0x154065e2830, geometry=64,0 32x23) at 0x00000153C2B13E80>.isEnabled
+
+tests\ui_shell\test_repair13_import_entry.py:163: AssertionError
 ============================== warnings summary ===============================
 tests/import_formats/test_mobi_import.py::test_picture_mobi_imports_one_managed_page_per_image
   G:\CODEX\New Manga.task-envs\TASK-012-py312\Lib\site-packages\mobi\mobi_cover.py:4: DeprecationWarning: 'imghdr' is deprecated and slated for removal in Python 3.13
@@ -385,5 +402,5 @@ SKIPPED [1] tests\providers\test_detection_doctr_real.py:11: docTR (python-doctr
 SKIPPED [1] tests\providers\test_detection_doctr.py:173: numpy is not installed
 SKIPPED [1] tests\providers\test_detection_doctr.py:206: torch is not installed
 SKIPPED [1] tests\providers\test_detection_doctr.py:236: torch is not installed
-1322 passed, 5 skipped, 1 warning in 74.66s (0:01:14)
-# EXIT: 0
+2 failed, 1320 passed, 5 skipped, 1 warning in 73.43s (0:01:13)
+# EXIT: 1

@@ -1,0 +1,4 @@
+# base control: G:/CODEX/New Manga @ 1347a67c (pre-Task main; zero M2-AC1 changes)
+FAILED tests/ui_shell/test_repair13_import_entry.py::test_current_chapter_alias_follows_row_click
+FAILED tests/ui_shell/test_repair13_import_entry.py::test_import_entry_enabled_after_row_click
+2 failed, 3 passed in 2.26s
