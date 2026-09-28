@@ -12,11 +12,11 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 |---|---|
 | Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
 | Current Active Task | **None (`in_progress`=0).** |
-| Current released Task | **None.** [M2-P1](tasks/M2-P1.md) Regionless Detection Fan-out and Guard Rebinding is `done` at Codex（代行）merge `a174fb9c`；regionless `LOCK_CHANGED` 缺陷已关闭 |
-| Owner / Reviewer / Integrator | Antigravity / DeepSeek Harness（非作者，`approved_with_conditions`，P2 已处置）/ Codex（代行=ZCode 会话） |
-| Recovery point | base=`33826641`; Owner branch=`agent/antigravity/M2-P1-regionless-region-rebinding` tip=`59acb340`; worktree=`G:/CODEX/New Manga.worktrees/M2-P1-agy`（保留） |
+| Current released Task | [M2-IPC1](tasks/M2-IPC1.md) Production Core Lifecycle + Read-only Library Vertical Slice = `ready / M2_IPC1_PRODUCTION_CORE_LIBRARY_RELEASED`（用户批准 2026-09-28；Owner=Antigravity、Reviewer=DSH、Integrator=Codex 代行）；fixed base=`a54bb8c9`；production IPC seam 已随释放冻结（Task §Seam 冻结） |
+| Owner / Reviewer / Integrator | Antigravity / DeepSeek Harness（非作者）/ Codex（代行=ZCode 会话） |
+| Recovery point | base=`a54bb8c9`; branch=`agent/antigravity/M2-IPC1-production-core-library`; worktree=`G:/CODEX/New Manga.worktrees/M2-IPC1-agy`（从 release commit 检出） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1、DIAG-M2-REGIONLESS-LOCK-CHANGED-001 及 M2-P1 全部 `done`；最新 integration=`a174fb9c` |
-| Planned next | `M2-IPC1` production Core read-only Library slice → `M2-AC2` data integrity acceptance；均未释放；M2-P1 集成记录中的 P3 项（term_extract book_id 错配、expected_* Page 形状）作为未来 fan-out/调度切片输入 |
+| Planned next | `M2-AC2` data integrity acceptance（依赖 IPC1）；M2-P1 集成记录中的 P3 项（term_extract book_id 错配、expected_* Page 形状）与 IPC1 的自动进程监督作为后续切片输入 |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex quota exhausted；自 2026-09-28 起由 ZCode 会话代行 Codex Lead/Integrator 职责（用户全权授权）；追认批次见下方 ratification checkpoint |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |
