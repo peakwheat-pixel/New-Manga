@@ -8,20 +8,20 @@
 |---|---|---|---|
 | Codex Desktop | Lead / Architect / Integrator；盘点、契约、拆任务、协调依赖、处理冲突 | 基线文档、Task、集成验证与决策记录 | 唯一主线写入和合并责任人 |
 | ZCode | 独立 Feature、长任务 | 固定 commit、代码与必要测试、Handoff | 自己的任务分支；不得自行合并主线 |
-| Qoder | UI/UX、GUI 与 QML 视觉/交互设计责任方；独立 Feature、长任务实现（与 ZCode 同面）；亦可作为**非作者** Reviewer | 设计规范、视觉/交互参考、固定 commit、代码与必要测试、Handoff；Review 报告 | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
+| Qoder | 新架构 React/Tauri UI/UX 与 GUI 视觉/交互设计责任方；独立 Feature、长任务实现（与 ZCode 同面）；亦可作为**非作者** Reviewer | 设计规范、视觉/交互参考、固定 commit、代码与必要测试、Handoff；Review 报告 | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
 | DeepSeek Harness | 技术实验、OCR/Translation/Inpainting 研究、测试、Bug 分析、独立 Code Review | 可复现实验、测试证据、诊断/Review 报告 | 自己的实验或测试分支；不得自行改生产实现以“证明”Review |
 | Antigravity | 通用编程实现；承担 Codex 释放的 Python、应用、基础设施或测试 Feature/长任务 | 固定 commit、代码、必要测试与 Handoff | 自己的任务分支；不得自行合并主线；不得审自己的实现 |
 | 用户 | 产品取舍、阶段审核、重大范围变化 | 由 Codex 记录的审核决定 | 决定接管及后续阶段范围 |
 
 Owner 与 Reviewer 必须不同。DeepSeek 自己的测试/实验由 Codex 或 ZCode 独立审查；Codex 的实现优先由 DeepSeek 审查；ZCode / Qoder / Antigravity 的实现由 Codex、DeepSeek Harness 或 Qoder（**非作者**）独立审查。工具不可用时记录 reviewer_unavailable，等待可用 Reviewer；不得虚构独立批准。
 
-UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 QML 组件边界由 Qoder 主责设计；设计结论先以只读设计 Task 固化并经非作者 Review、Codex 集成，之后才能在单独释放的实现 Task 中落代码。Qoder 的设计身份不自动授予 `src/**` 写权限，也不改变产品需求、四页一级导航、共享契约或 Schema。产品取舍仍由用户决定。
+UI/UX/GUI 的规范、信息层级、交互状态、视觉系统和 React 组件边界由 Qoder 主责设计；设计结论先以只读设计 Task 固化并经非作者 Review、Codex 集成，之后才能在单独释放的实现 Task 中落代码。Qoder 的设计身份不自动授予产品代码写权限，也不改变产品需求、四页一级导航、共享契约或 Schema。产品取舍仍由用户决定。
 
 研究结论不自动成为产品需求。诊断任务只读分析与复现；修复需要有允许修改生产代码的 Task。Reviewer 默认只写 Review 报告。
 
 ## 2. Git：一个仓库、多个 linked worktree
 
-实际主工作区 G:/CODEX/New Manga；当前分支 master。保留现有名字，未要求改为 main。无 remote，当前不设计 PR/push 为必需流程。
+实际主工作区 `G:/CODEX/New Manga`。当前分支、HEAD、remote 和 dirty 状态必须在每次 Task 开始时由 Git 实测，不在本协议静态写死；截至 2026-09-28 主分支名为 `main`。
 
 批准接管后先由 Codex 创建可复现的初始基线 commit，再开放任务分支。未提交的当前接管文件不能充当可跨 worktree 同步的基线。第一次提交的 author 使用实际 Git 身份，不能冒用其他 Agent 的签名。
 
@@ -98,7 +98,7 @@ Handoff 在交付 head 之后以文档提交追加，引用之前的实现 head�
 
 1. **Task**：Roadmap ID 或现有 Task ID、标题、推荐启动条件和依赖。
 2. **Agent**：根据任务性质指定合适的 Owner；ZCode 负责独立 Feature/长任务，
-   Antigravity 负责通用编程实现，Qoder 负责 QML/UI/UX，DeepSeek Harness 负责研究/实验/测试/独立 Review，
+   Antigravity 负责通用编程实现，Qoder 负责 React/Tauri UI/UX，DeepSeek Harness 负责研究/实验/测试/独立 Review，
    Codex 负责契约、共享 seam、主线集成和 Release Gate。Owner 与 Reviewer 必须不同。
 3. **Recovery point**：实际仓库路径、branch/worktree、固定 `base_commit` 和当前
    `head`；若 worktree 尚未创建，写明“待 Codex 创建”，不得臆造路径或 commit。
@@ -164,7 +164,7 @@ Execution Event；退出不等于完成。只有 AC、独立 Review、集成和�
 1. Reviewer 在独立工作区读完整 diff、受影响调用链、需求和测试，不只看作者摘要。
 2. **Standards 视角（建议，非强制；2026-09-18 用户决定取消"双轴"强制口径）**：代码是否符合**本仓库记录下来的**标准——`AGENTS.md`、本协议、[02 技术架构](02_TECHNICAL_ARCHITECTURE_.md) §架构方向与 §16、D03/D06/D08 相关条文、本 Task 的允许/禁止范围。仓库**未记录**标准的方面适用 Fowler smell baseline（_Refactoring_ 第 3 章）作为**判断项**（须带 label 并引用 hunk）；**仓库记录的标准优先于 baseline**，工具已强制的项跳过。
 3. **Spec 视角（建议，非强制；同上）**：AC、写回范围、命令语义、数据保护、失败/暂停/恢复、UI 行为是否符合来源。来源顺序：本 Task 文件 AC → 其引用的 D01～D08 条文与 `doc/contracts/**` → STATUS 中的用户裁决；**不得**用聊天记录或旧仓库推断已有实现。
-4. Architecture 轴：分层、共享契约、依赖、安全、持久化、可选 AI 依赖边界；含依赖方向 `QML/UI → Application → Domain/Ports → Infrastructure Adapters`，禁止反向依赖。
+4. Architecture 轴：分层、共享契约、依赖、安全、持久化、可选 AI 依赖边界；新架构依赖方向为 `React/WebView → explicit Tauri IPC → Python Application → Domain/Ports → Infrastructure Adapters`，禁止 React/Rust 直接访问 SQLite、任意 OS 路径或模型，也禁止反向依赖。Legacy QML 只作历史证据。
 5. Verification 轴：运行相关检查；逐项写 PASS/FAIL/BLOCKED/NOT_RUN。没有运行环境时不能批准未核实的关键路径。
 6. **报告形式（不强制）**：报告须覆盖 **Architecture** 与 **Verification** 两面（第 4/5 条）。`code-review` 技能的 Standards/Spec 两视角**可采用也可不用**；采用时建议分别呈现（一个变更可能通过一面而在另一面失败），但**不再强制**分节、命名或"不跨轴排名"的写法。**取消**下列强制项（2026-09-18 用户决定，理由：并行双轴子代理能力不可用）：①不再要求两视角各由独立 sub-agent **并行**执行；②不再要求"两遍相互隔离"检查；③不再要求在报告中声明该偏差或附派发尝试证据。该能力**会话相关**（本会话多次派发未启动；DSH 会话曾成功），故不作为任何 Review 的前置条件。
 7. **视角状态声明（建议）**：如报告采用了多个视角，建议各自标注 `executed`/`N/A` 并给一行小结；**缺声明不再视为 Review 未完成**，也不影响能否批准。批准与否只取决于第 8 条（P0/P1 是否未解决、关键验证是否缺失）。

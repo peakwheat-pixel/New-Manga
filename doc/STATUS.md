@@ -6,6 +6,24 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 
 > **Current architecture directive（2026-09-28；用户裁决）:** 所有后续 Task、问题诊断、修复和验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构上进行。Legacy PySide6/QML 仅保留历史证据，不再释放相关工作；`DIAG-LEGACY-QML-IMPORT-ENTRY-001` planning candidate 已撤销、从未释放。旧架构问题如仍代表目标产品行为，须转化为 M2 新架构需求后处理。
 
+## Live execution state
+
+| Field | Current value |
+|---|---|
+| Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
+| Current Active Task | **None (`in_progress`=0).** |
+| Released next Task | [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) = `ready / AWAITING_EXTERNAL_DISPATCH` |
+| Owner / Reviewer / Integrator | DeepSeek Harness / Antigravity（非作者）/ Codex |
+| Recovery point | base=`5789b30b`; branch=`agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001`; worktree=`G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh`（待创建） |
+| Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1 全部 `done`；最新 integration=`f162193b` |
+| Planned after diagnosis | `M2-P1` regionless 修复 → `M2-IPC1` production Core read-only Library slice → `M2-AC2` data integrity acceptance；均未释放 |
+| Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
+| Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |
+
+完整完成/未完成清单与 Mermaid 流程图见 [REBASELINE_PLAN：2026-09-28 全量任务盘点与当前流程](REBASELINE_PLAN.md#2026-09-28-全量任务盘点与当前流程)。
+
+## Historical checkpoints — NO SCHEDULING AUTHORITY
+
 > **DIAG FIX-A release checkpoint（2026-09-28 00:2x；用户全夜自主推进指令授权，代行 Codex 释放）:** [DIAG-READING-EXPORT-001-FIX-A](tasks/DIAG-READING-EXPORT-001-FIX-A.md)（导出终态等待/投递语义修复，症状 A）released `ready`。Owner=ZCode（本会话亲自实现），非作者 Reviewer=DeepSeek Harness，Integrator=代行 Codex（集成记录标注"代行 Codex"待追认）；fixed base=`32ef1dd60cd82ac3a5fa18dfc5f834ec8639164a`（释放时 main HEAD）；branch=`agent/zcode/DIAG-READING-EXPORT-001-FIX-A-terminal-wait-semantics`；worktree=`G:/CODEX/New Manga.worktrees/DIAG-FIX-A-zcode`。Allowed paths：`tests/reading_export/test_viewmodels.py`、`verification/DIAG-READING-EXPORT-001-FIX-A/**`、本 Task 文件、`doc/handoffs/DIAG-READING-EXPORT-001-FIX-A-*.md`；`src/ui/viewmodels/export/viewmodel.py` 仅在测试侧方案不足时按 Task AC 评估（默认不动）。FIX-B 保持 `proposed / NOT_RELEASED` 串行释放。
 > **DIAG FIX-A integration checkpoint（2026-09-28 01:3x；代行 Codex 集成，待追认）:** [DIAG-READING-EXPORT-001-FIX-A](tasks/DIAG-READING-EXPORT-001-FIX-A.md) is `done`。双轮 DSH 非作者 Review：R1 `changes_requested`（1×P2 snapshots 排队消费暴露面 + 5×P3；[r1](reviews/DIAG-READING-EXPORT-001-FIX-A-dsh-r1.md)）→ R2 修订（6 处谓词、探针严格判定 completed/exit-code、定向日志）→ R2 [复核](reviews/DIAG-READING-EXPORT-001-FIX-A-dsh-r2.md) `approved` @`6fe7bd86`（6/6 处置通过、无新增 P0-P2、5×P4 观察 deferred）。两轮报告逐字节导入（SHA256 于 review-dsh-import）。R1 交付=`77a78b25`、R2 交付=`db5ee918`、Owner tip=`6fe7bd86`；集成 merge=`a8b94df1f1ee091a9cca894c421e9ffc3ad30614`（parents `0b30d3d9`+`6fe7bd86`；唯一 Task 冲突取 Owner 交付版）。判别证据：旧谓词忙碌主线程 R1 324/400、R2 27/200 miss（先红）→ 新谓词 0 miss + completed 全满（后绿）→ 故障注入 3/3、2/2 正确检出（判别力保留）。集成核验：8 Owner 路径全授权、禁改零命中、`diff --check` exit 0、集成 head 全仓复跑 **1316 passed, 5 skipped, EXIT=0**（6 OpenSSL 差值=shell PATH，已解释）；记录：[integration-a8b94df1](../verification/DIAG-READING-EXPORT-001-FIX-A/integration-a8b94df1/integration.md)。修复为测试等待语义，产品排队投递行为未变；诊断 U3 仍未决。
 > **DIAG FIX-B release checkpoint（2026-09-28 01:3x；用户全夜自主推进指令授权，代行 Codex 串行释放）:** [DIAG-READING-EXPORT-001-FIX-B](tasks/DIAG-READING-EXPORT-001-FIX-B.md)（Reader 心跳生命周期，症状 B）released `ready`。Owner=ZCode，非作者 Reviewer=DeepSeek Harness，Integrator=代行 Codex；fixed base=`a8b94df1f1ee091a9cca894c421e9ffc3ad30614`（FIX-A 集成 merge，治理 commit 之前）；branch=`agent/zcode/DIAG-READING-EXPORT-001-FIX-B-reader-heartbeat-lifecycle`；worktree=`G:/CODEX/New Manga.worktrees/DIAG-FIX-B-zcode`。Allowed/forbidden paths 以 Task 文件为准。
@@ -50,12 +68,12 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 |---|---|
 | Historical T3.2.1 child-slice integration | REPAIR-14 was the latest child-slice integration at `296131b57a4c3660949ecbdfb6003c6201023dab`; 184 focused tests passed. The parent integration `6519125` and this child record remain historical evidence, not current blockers. |
 | T3.1.1 Release Gate base | `e771179`; delivery `899bd3c`; independent Review `4e1eb3a` approved |
-| Branch | `master` |
+| Branch | `main`（此表为历史快照；live 值以上方 Live execution state 为准） |
 | Mainline base checked before this audit/control baseline | `ade58140ac37d972385be416b4cc3ee7d81073b3`; T1.2.1 integrated at `9a14310`, evidence at `e92c414`. |
 | Current milestone | M2 Desktop Architecture Migration first wave `FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION` is complete; T3.2.1 Legacy track is `CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2`. |
 | Stage | **Stage B — Controlled Execution** |
 | Current product checkpoint | T1.1.1, T1.1.2, T1.2.1, T2.1.1, T2.2.1 and T3.1.1 are verified complete. M2 first-wave M2-I1/I2/R1/UI1 and M2-AC1 are integrated. T3.2.1 is closed with limitations; AC6/AC8/AC9 remain PARTIAL and the listed clean-machine/Windows 10/real-weight/cold-start items remain NOT_RUN. |
-| Current Active Task | **None.** [M2-AC1](tasks/M2-AC1.md) is `done` at `f162193b`; no successor is released. One M2 diagnosis candidate is planning-only / NOT_RELEASED; the Legacy QML candidate is withdrawn. M2-RC1/M2-RC2 are `done`; Legacy records are historical only. |
+| Current Active Task | **历史快照，已被上方 Live execution state 取代。** M2-AC1=`done`；当前 successor 为已释放的 DIAG Task。 |
 | M2 first-wave release | M2-D1, M2-I1/I2/R1/UI1, M2-C1, M2-S1, M2-S2, M2-C2, M2-S3, M2-RC1 and the separate M2-RC2 F-03/F-05 slice are integrated. |
 | Most recent Owner/reviewer | M2-AC1: Owner=ZCode (`51f70ed1`); independent non-author DSH r4 Review=`approved` at `d102bf70` (static); Codex integration=`f162193b` with independent test replay recorded under `verification/M2-AC1/integration-51f70ed1/`. Owner branch/worktree is preserved at `agent/zcode/M2-AC1-end-to-end-acceptance` / `G:/CODEX/New Manga.worktrees/M2-AC1-zcode`. |
 | M2-RC1 Owner branch/worktree | `agent/zcode/M2-RC1-large-media-resource-channel-runtime` at tip `ce3c3771d15c60b743b1e1da936edc445676b305`; verification left worktree clean and the integrator did not advance the branch. Worktree=`G:/CODEX/New Manga.worktrees/M2-RC1-zcode`. Master integration worktree=`G:/CODEX/New Manga.worktrees/M2-UI1-integration-final-83a`; the pre-existing dirty user main worktree remains untouched. |
@@ -63,7 +81,7 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 | T3.2.1 integration evidence | At head `6519125`, focused packaging/bootstrap tests: 34 passed; artifact verifier 7/7 checks true; compileall exit 0. These are historical Legacy checks and do not imply clean-machine or real-weight coverage. Logs: `verification/T3.2.1/integration-6519125/`. |
 | T3.2.1 smoke evidence | Fixed input `08f9bd85137965df922db524bc92917af513bd24`; local host simulation covered Book/Chapter/Page, Reader export and restart recovery. Pipeline returned `completed_with_failures / PROVIDER_NOT_CONFIGURED`, supporting AC5 diagnostics only; it is not successful AC6 output. AC3 remains PASS（本机模拟路线；非干净机覆盖）; no-Python clean Windows `NOT_RUN`; AC6/AC8 `PARTIAL`. |
 | T3.2.1 compile evidence | No rebuild. Fixed Build 2 was hash-verified against its manifest and exe hash; integrated-head `compileall -q src/bootstrap packaging` exited 0. Full record: `verification/T3.2.1/integration-6519125/integration-evidence.md`. |
-| Current blockers | S1-B3/B5/B6/B8 and product-grade security/IPC/packaging remain verification boundaries; no product-level security or package-readiness claim is authorized. The released diagnostic must stop as `blocked` if its supported PySide6 environment cannot be established; no code implementation is authorized by it. |
+| Current blockers | 历史快照。当前 DIAG 只依赖 Python Core/SQLite production seam；不依赖 PySide6/QML。产品级 security/IPC/packaging 边界仍未关闭。 |
 | Full Gate closure audit | Current disposition and AC/Finding matrix: [legacy-closure-audit-20260926.md](../verification/T3.2.1/legacy-closure-audit-20260926.md). Prior Codex closeout `b800d11`, integration `6519125`, fixed-package checkpoint and ZCode Handoffs remain historical evidence; none is rewritten. |
 | AC3 environment route | User prohibits Sandbox and accepts complete local host simulation for AC3. At this historical checkpoint AC3=PASS（本机模拟路线；非干净机覆盖）; fully Python-absent clean Windows coverage=NOT_RUN. Sandbox artifacts are historical and must not be launched. Windows 10 x64=NOT_RUN. |
 | F-003 disposition | REPAIR-11 Delivery `9622395` corrected the four wording instances; Review `4f2f8a0` independently marked R11-AC4 PASS. The REPAIR-11 slice overall remains `changes_requested` for F-11-1/F-11-2; no historical Review/log is to be rewritten. |
@@ -448,9 +466,9 @@ worktree. The author worktree is clean at `a527b85`.
   start T2.1.1. Next executor: ZCode for the bounded repair; Codex remains
   non-author Reviewer/Integrator.
 
-## Current Project Control Dashboard
+## Historical Project Control Dashboard (superseded; no scheduling authority)
 
-Detailed evidence and maps are in [PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md).
+这是 M2-S1 时点的历史快照，已由本文件顶部 Live execution state 取代。详细历史证据在 [PROJECT-AUDIT-2026-09-22](../verification/PROJECT-AUDIT-2026-09-22.md)。
 
 | Field | Current value |
 |---|---|

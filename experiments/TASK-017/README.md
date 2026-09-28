@@ -23,6 +23,8 @@ python run_experiment.py                  # 全场景，写 results.json（退�
 - `test_protocol.py`：20 例（含故障注入、预算截断、显式 fallback 链、
   时延/Token 测量，以及 Review R-001/R-002/R-003 的回归 5 例）。
 - `run_experiment.py`：S1~S8 场景机读结果 → `results.json`。
+- `test_run_experiment_cli.py`：1 例——以 `PYTHONIOENCODING=ascii` 子进程运行
+  `run_experiment.py`，断言退出码 0 且 stdout 可按 ASCII 解码。
 - **`results.json` 的 `latency_ms` 是易变字段**（运行期测量值，每次复跑都会
   不同）：比对"与提交版本一致"时必须排除该字段；可指纹化的确定性证据是
   `kind` / `retryable` / `payload_hash` / `context_truncated_pages` / `match`

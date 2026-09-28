@@ -1,8 +1,8 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — M2 FIRST WAVE COMPLETE; M2-AC1 INTEGRATED; M2-RC2 SLICE COMPLETE; T3.2.1 CLOSED_WITH_LIMITATIONS / SUPERSEDED_BY_M2**
+Status: **ACTIVE DEVELOPMENT BASELINE — M2-AC1 INTEGRATED; REGIONLESS DIAGNOSTIC RELEASED; LEGACY SUPERSEDED**
 
-Audit date: 2026-09-27 (Asia/Shanghai)
+Audit date: 2026-09-28 (Asia/Shanghai)
 
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
@@ -18,6 +18,70 @@ releases a task.
 [AD-001 Target Desktop Architecture](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the user's accepted formal target: React + TypeScript presentation, Tauri/Rust desktop shell and IPC, headless Python Core business/persistence authority, and SQLite as persistent source of truth. M2 first wave M2-I1, M2-I2, M2-R1 and M2-UI1 is complete and integrated. The existing PySide6/QML application may remain operational during migration, but its PyInstaller Windows Release Gate is historical and no longer defines future formal product release acceptance.
 
 **New-architecture-only directive（2026-09-28；用户裁决）**：后续 Task、问题诊断、修复与验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构上登记和执行。PySide6/QML 代码、测试、Task 与 verification 只保留为历史证据，不再释放 Legacy 实现、诊断或修复工作；旧架构问题若仍对应目标产品行为，必须改写为 M2 新架构需求，并在新架构路径复现、解决和验收。此前仅为 planning recommendation 的 `DIAG-LEGACY-QML-IMPORT-ENTRY-001` 已撤销，未曾释放。
+
+### 2026-09-28 全量任务盘点与当前流程
+
+Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；当前没有 `in_progress` Task。唯一已释放而待派发的工作是 [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md)，状态 `ready / AWAITING_EXTERNAL_DISPATCH`。
+
+| 已完成 Task | Owner | 非作者 Reviewer / Integrator | Integration |
+|---|---|---|---|
+| GOV-001 | Codex | DeepSeek Harness / Codex | `969f7a5e` |
+| M2-D1 | DeepSeek Harness | Codex / Codex | `100abfbb` |
+| M2-I1 | ZCode | DeepSeek Harness / Codex | `cff1e0a8` |
+| M2-I2 | Antigravity | Codex / Codex | `7e2da6b8` |
+| M2-R1 | DeepSeek Harness | Codex / Codex | `5803bd7b` |
+| M2-UI1 | Qoder | Antigravity / Codex | `5242f648` |
+| M2-C1 | ZCode | Qoder + DeepSeek Harness / Codex | `c1765aa2` |
+| M2-S1 | DeepSeek Harness | Codex / Codex | `4103493f` |
+| M2-S2 | ZCode | Antigravity / Codex | `bf1d1230` |
+| M2-C2 | ZCode | DeepSeek Harness / Codex | `d574ec1e` |
+| M2-S3 | ZCode | DeepSeek Harness / Codex | `6799c73a` |
+| M2-RC1 | ZCode | DeepSeek Harness / Codex | `3a246840` |
+| M2-RC2 | ZCode | DeepSeek Harness / Codex | `88f972fe` |
+| M2-AC1 | ZCode | DeepSeek Harness / Codex | `f162193b` |
+
+| 未完成 / 下一阶段 | 状态 | 建议 Owner / Reviewer | 说明 |
+|---|---|---|---|
+| DIAG-M2-REGIONLESS-LOCK-CHANGED-001 | **ready；待外部派发** | DeepSeek Harness / Antigravity | 当前下一 Task；只读诊断，不改产品代码。 |
+| M2-P1 Regionless Detection Fan-out and Guard Rebinding | planning；未释放 | Antigravity / DeepSeek Harness | 仅在 DIAG 给出根因和最小范围后登记。 |
+| M2-IPC1 Production Core Lifecycle + Read-only Library Vertical Slice | planning；未释放 | Antigravity / DeepSeek Harness；Codex 冻结 seam | 打通 production React → Tauri → Python Core → SQLite；只读 Library。 |
+| M2-AC2 Data Integrity Acceptance | planning；未释放 | ZCode / DeepSeek Harness | source hash、Managed Copy、人工修改、Lock、current/pinned Revision；依赖 P1 与 IPC1。 |
+| Provider fail-closed acceptance | backlog；未登记 | ZCode / DeepSeek Harness | 对应下方 Backlog 第 3 行。 |
+| Reader lineage + Library page-count acceptance | backlog；未登记 | ZCode / Qoder | 对应下方 Backlog 第 4 行；必须通过 production seam。 |
+| Package / clean-start acceptance | backlog；未登记 | ZCode / DeepSeek Harness | clean install、无系统 Python、workflow/path/exit。 |
+| Real docTR qualification | backlog；未登记 | DeepSeek Harness / Codex | 需要受控权重、环境和质量阈值。 |
+| M2 Release Gate | backlog；未登记 | Codex / DeepSeek Harness | cold start、Windows matrix、console policy、packaged dependencies。 |
+
+```mermaid
+flowchart TD
+  GOV["GOV-001 ✓"] --> D1["M2-D1 ✓"]
+  D1 --> I1["M2-I1 ✓"]
+  D1 --> I2["M2-I2 ✓"]
+  D1 --> R1["M2-R1 ✓"]
+  D1 --> UI1["M2-UI1 ✓"]
+  I1 --> C1["M2-C1 ✓"]
+  I2 --> C1
+  R1 --> C1
+  UI1 --> C1
+  C1 --> S1["M2-S1 ✓"] --> S2["M2-S2 ✓"] --> C2["M2-C2 ✓"] --> S3["M2-S3 ✓"] --> RC1["M2-RC1 ✓"] --> RC2["M2-RC2 ✓"] --> AC1["M2-AC1 ✓"]
+  AC1 --> DIAG["DIAG-M2-REGIONLESS... READY"]
+  DIAG --> P1["M2-P1 planned"]
+  P1 --> IPC1["M2-IPC1 planned"]
+  IPC1 --> AC2["M2-AC2 planned"]
+  AC2 --> AC3["Provider fail-closed backlog"]
+  AC3 --> AC4["Reader/Library semantics backlog"]
+  AC4 --> PKG["Package + clean-start backlog"]
+  PKG --> ML["Real docTR qualification backlog"]
+  ML --> RG["M2 Release Gate backlog"]
+  classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
+  classDef ready fill:#fff0b3,stroke:#8a6d00,color:#123;
+  classDef planned fill:#eef1f5,stroke:#697386,color:#123;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1 done;
+  class DIAG ready;
+  class P1,IPC1,AC2,AC3,AC4,PKG,ML,RG planned;
+```
+
+上图中灰色节点只是排序与建议分工，不构成释放。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
 
 **M2 — Desktop Architecture Migration: FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION.** User authorization on 2026-09-25 releases only the four Tasks below from the verified local `master` base `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` after Codex non-author [Review](reviews/M2-D1-0a27a54.md) `approved` and integration `100abfb`. Its [report](research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md) supplies the first-wave evidence. AD-001 remains the fixed React + TypeScript / Tauri / Python Core / SQLite target. Migration is incremental; the existing PySide6/QML application may remain operational during transition, but its PyInstaller Release Gate is retired as the future formal release gate.
 
@@ -70,21 +134,21 @@ These are requirements carried forward for M2 acceptance planning. Only a row li
 | Real docTR-weight success qualification | `CORE_REQUIREMENT` | Deferred execution until controlled weights, environment and quality criteria are available. |
 | Cold-start metrics, target Windows support matrix, GUI console policy and packaged dependency closure | `DEFERRED` | Decide and verify in a future M2 Release Gate/D08; do not inherit the Legacy results. |
 
-### Separate M2 diagnostic candidate (not released)
+### Released M2 diagnostic
 
-This is an independent new-architecture diagnosis recommendation from the M2-AC1 Review, **not** a row in or release from the M2 Acceptance Backlog. No Task file, implementation branch, or product-code authorization is created yet.
+This is an independent new-architecture diagnosis from the M2-AC1 Review, **not** a row in the M2 Acceptance Backlog and not a product-code authorization.
 
-| Candidate | Scope and evidence | Suggested Owner |
+| Task | Scope and evidence | Owner / Reviewer |
 |---|---|---|
-| `DIAG-M2-REGIONLESS-LOCK-CHANGED-001` — regionless planner lock-change diagnosis | Reproduce the M2 Python Core regionless `detect → backfill → ocr` path ending in `LOCK_CHANGED`; trace the planner's OCR `input_refs` snapshot and lock/version comparison through the new Tauri/Python Core flow. M2-AC1 pre-seeds a Region and does not cover this path. Diagnose only; any fix needs a later M2 Task. | DeepSeek Harness (Python Core planner diagnosis); non-author Reviewer to be set on release. |
+| [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) | `ready / AWAITING_EXTERNAL_DISPATCH`；fixed base=`5789b30b`。复现 M2 Python Core regionless `detect → backfill → ocr` 的 `LOCK_CHANGED`，追踪 OCR `input_refs` snapshot 与 lock/version 比较。只诊断；修复须另立 Task。 | DeepSeek Harness / Antigravity；Integrator=Codex。 |
 
-The candidate remains **planning only / NOT_RELEASED**. At a later release, Codex must assign a base, branch, worktree, allowed paths, Owner, Reviewer and concrete verification before implementation can start.
+释放证据：[release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md)。Task 已冻结 base、branch、worktree、allowed/forbidden paths、AC 与验证命令；产品代码仍未获授权。
 
 The detailed AC and Qoder finding matrix is in the [Legacy Closure Audit](../verification/T3.2.1/legacy-closure-audit-20260926.md).
 
 Historical REPAIR-13/14 completion facts follow for traceability; they do not reopen T3.2.1 or block M2. Child [REPAIR-13](tasks/T3.2.1-REPAIR-13.md) is `done`: fixed base=`8738c41`, product delivery=`aed0094`, final Handoff/evidence head=`13ae23f`, independent Review=`ccd26a4` (`APPROVE_WITH_CONDITIONS`, C1/C2 satisfied), Codex integration=`6fe7455`. Integration used only the 62-path fixed task delta; the full author branch was not merged because its ancestry includes unrelated REPAIR-9–12 candidate history. Post-integration focused suite: 162 passed, exit 0. C2 cleanup cleared all trailing whitespace; Codex recount found 13 pre-cleanup diagnostics vs 12 stated in the supplement, recorded in the integration report. At that historical checkpoint the Parent Full Gate was OPEN and AC3 was `BLOCKED`; this child completion did not change them. The former Sandbox attempts remain historical evidence; the parent clean-Windows/Sandbox Gate is unchanged. [REPAIR-14](tasks/T3.2.1-REPAIR-14.md) for F-13-3 is `done`: fixed base=`4ab6f58c06cb0691413e2630cb48a145c18c383a`, delivery=`43b24ee`, Handoff tip=`2f0d266`, DeepSeek Harness Review=`f616175e` (`approved`), Codex integration=`296131b`. R14-008 records the accepted fixture-seeding deviation and unrun GUI-native creation substep; R14-010 path counts are corrected in the integration record. Parent Gate remained OPEN / AC3 BLOCKED at that historical integration checkpoint; current closure and preserved AC statuses are recorded in the closure audit.
 
-## Current implemented state
+## Historical Legacy implemented-state audit — no scheduling authority
 
 ### Verified complete on the integrated product baseline
 
@@ -146,7 +210,7 @@ Historical files are not rewritten merely to change this classification.
 The old task ledgers remain in place for traceability. T3.2.1 closure does not rewrite its historic Review, Handoff, integration or verification records.
 historical metadata, not a second scheduling source of truth.
 
-## Dependency graph
+## Historical Legacy dependency graph — no scheduling authority
 
 ```text
 T1.1.2 Region Canvas & Creator
@@ -177,7 +241,7 @@ No downstream task is released before its prerequisite is integrated. Product
 code, shared contracts, `src/bootstrap/app.py`, SQLite migrations and top-level
 QML shell changes are serialized through Codex.
 
-## New roadmap and execution order
+## Historical migration execution record — superseded by the 2026-09-28 flow above
 
 | Order | Task | State | Owner / reviewer | Acceptance boundary |
 |---:|---|---|---|---|
@@ -264,7 +328,8 @@ M2-D1 / M2-I1 / M2-I2 / M2-R1 / M2-UI1 = integrated; ancestry verified at base 7
   -> M2-S3 probe done at merge 6799c73a; S1-B1 PASS within documented boundaries; product resource-channel runtime Task separately released as M2-RC1
   -> M2-RC1 done at merge 3a246840; round-4 DSH approve @2f6a31cd; all Codex command-level integration checks passed; Contract blob fc359138 unchanged; product security/packaging claims remain gated
   -> M2-RC2 done at merge 88f972fe; DSH FIX review approved; S1-B3/B6/B8=NOT_RUN, S1-B5=UNVERIFIED
-  -> M2-AC1 done at Codex merge f162193b (2026-09-28): fixed base 7db0e7b6; bounded deterministic Mock/Local -> SQLite save -> process restart/recovery -> Reader -> PNG export acceptance; M2 regionless-planner diagnosis candidate remains NOT_RELEASED; Legacy QML candidate withdrawn by user directive
+  -> M2-AC1 done at Codex merge f162193b (2026-09-28): fixed base 7db0e7b6; bounded deterministic Mock/Local -> SQLite save -> process restart/recovery -> Reader -> PNG export acceptance
+  -> DIAG-M2-REGIONLESS-LOCK-CHANGED-001 ready at fixed base 5789b30b; AWAITING_EXTERNAL_DISPATCH; Legacy QML candidate withdrawn by user directive
   -> Separate Legacy DIAG-READING-EXPORT-001 done at merge e0a0e784 (2026-09-28, proxy Codex review+integration): 15/15 matrix NOT_REPRODUCED, both mechanisms probe-reproduced
   -> DIAG FIX-A done at integration a8b94df1 (2026-09-28, overnight directive): DSH dual-round review r2 approved; test-wait semantics; FIX-B released serially
   -> DIAG FIX-B done at integration 9c9c9087 (2026-09-28, overnight directive): DSH three-round review r3 approved; typed heartbeat-error handling + teardowns; leak probe 7/7 LEAK CLOSED
