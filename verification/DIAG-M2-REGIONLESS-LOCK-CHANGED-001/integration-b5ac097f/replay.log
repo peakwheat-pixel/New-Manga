@@ -1,0 +1,19 @@
+# integration replay at merge head b5ac097f98d9c06e2548c69d7361d475c0f13388 (main)
+# interpreter: TASK-012-py312 python.exe (Python 3.12.3)
+2026-09-28T15:47:54+08:00
+  "5f66a4933a894e46aa7a07b7e89f6502": 1
+}
+
+===== AC1 VERDICT =====
+  [PASS] detect step ran and committed  -- detect=completed
+  [PASS] ocr step is FAILED with LOCK_CHANGED  -- ocr=LOCK_CHANGED
+  [PASS] failure is the writer guard on a None expectation  -- detail=region current revision changed during the step (expected None, found '8a0f4bb4901e4b27b42fd6ba3a080ec1') (provider=fake-ocr) (stage=region-write)
+  [PASS] smoking gun: ocr target_id still the Page, region_id set  -- target_id=page-1 region_id=60b0414947a74278a4c6e949974c182f
+  [PASS] ocr input_refs carries no 'region' key  -- input_refs={}
+  [PASS] run ends COMPLETED_WITH_FAILURES  -- status=completed_with_failures
+  [PASS] no Region write happened (1 revision = detect first revision)  -- region_ids=['60b0414947a74278a4c6e949974c182f', '5f66a4933a894e46aa7a07b7e89f6502']
+  [PASS] counterfactual: the Region DOES have a current revision  -- region current_revision_id non-empty
+
+VERDICT: DEFECT_REPRODUCED (expected red)
+.........                                                                [100%]
+9 passed in 1.30s

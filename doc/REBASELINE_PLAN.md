@@ -21,7 +21,7 @@ releases a task.
 
 ### 2026-09-28 全量任务盘点与当前流程
 
-Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；当前没有 `in_progress` Task。唯一已释放而待派发的工作是 [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md)，状态 `ready / AWAITING_EXTERNAL_DISPATCH`。
+Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。当前没有 `in_progress` 或已释放待派发的 Task；下一节点是 M2-P1 修复 Task 的登记与释放（未释放）。
 
 | 已完成 Task | Owner | 非作者 Reviewer / Integrator | Integration |
 |---|---|---|---|
@@ -39,11 +39,11 @@ Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前
 | M2-RC1 | ZCode | DeepSeek Harness / Codex | `3a246840` |
 | M2-RC2 | ZCode | DeepSeek Harness / Codex | `88f972fe` |
 | M2-AC1 | ZCode | DeepSeek Harness / Codex | `f162193b` |
+| DIAG-M2-REGIONLESS-LOCK-CHANGED-001 | DeepSeek Harness（静态交付，执行由集成方代采） | Antigravity / Codex（代行） | `b5ac097f` |
 
 | 未完成 / 下一阶段 | 状态 | 建议 Owner / Reviewer | 说明 |
 |---|---|---|---|
-| DIAG-M2-REGIONLESS-LOCK-CHANGED-001 | **ready；待外部派发** | DeepSeek Harness / Antigravity | 当前下一 Task；只读诊断，不改产品代码。 |
-| M2-P1 Regionless Detection Fan-out and Guard Rebinding | planning；未释放 | Antigravity / DeepSeek Harness | 仅在 DIAG 给出根因和最小范围后登记。 |
+| M2-P1 Regionless Detection Fan-out and Guard Rebinding（候选名 FIX-M2-REGIONLESS-REGION-REBIND-001） | **根因已定位；Task 未登记未释放** | Antigravity 或 ZCode / DeepSeek Harness 或 Antigravity（非作者） | 按[诊断报告](research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md)：仅改 `service.py:_backfill_detected_regions` 同时重绑 `target_id`+`region_id`、不改 `unit_id`；回归 R0–R5 / 负向 N1–N7 矩阵。 |
 | M2-IPC1 Production Core Lifecycle + Read-only Library Vertical Slice | planning；未释放 | Antigravity / DeepSeek Harness；Codex 冻结 seam | 打通 production React → Tauri → Python Core → SQLite；只读 Library。 |
 | M2-AC2 Data Integrity Acceptance | planning；未释放 | ZCode / DeepSeek Harness | source hash、Managed Copy、人工修改、Lock、current/pinned Revision；依赖 P1 与 IPC1。 |
 | Provider fail-closed acceptance | backlog；未登记 | ZCode / DeepSeek Harness | 对应下方 Backlog 第 3 行。 |
@@ -64,8 +64,8 @@ flowchart TD
   R1 --> C1
   UI1 --> C1
   C1 --> S1["M2-S1 ✓"] --> S2["M2-S2 ✓"] --> C2["M2-C2 ✓"] --> S3["M2-S3 ✓"] --> RC1["M2-RC1 ✓"] --> RC2["M2-RC2 ✓"] --> AC1["M2-AC1 ✓"]
-  AC1 --> DIAG["DIAG-M2-REGIONLESS... READY"]
-  DIAG --> P1["M2-P1 planned"]
+  AC1 --> DIAG["DIAG-M2-REGIONLESS ✓"]
+  DIAG --> P1["M2-P1 根因已定位<br>未登记未释放"]
   P1 --> IPC1["M2-IPC1 planned"]
   IPC1 --> AC2["M2-AC2 planned"]
   AC2 --> AC3["Provider fail-closed backlog"]
@@ -76,8 +76,7 @@ flowchart TD
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef ready fill:#fff0b3,stroke:#8a6d00,color:#123;
   classDef planned fill:#eef1f5,stroke:#697386,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1 done;
-  class DIAG ready;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DIAG done;
   class P1,IPC1,AC2,AC3,AC4,PKG,ML,RG planned;
 ```
 
@@ -140,7 +139,7 @@ This is an independent new-architecture diagnosis from the M2-AC1 Review, **not*
 
 | Task | Scope and evidence | Owner / Reviewer |
 |---|---|---|
-| [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) | `ready / AWAITING_EXTERNAL_DISPATCH`；fixed base=`5789b30b`。复现 M2 Python Core regionless `detect → backfill → ocr` 的 `LOCK_CHANGED`，追踪 OCR `input_refs` snapshot 与 lock/version 比较。只诊断；修复须另立 Task。 | DeepSeek Harness / Antigravity；Integrator=Codex。 |
+| [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) | `done`（integration=`b5ac097f`）；fixed base=`5789b30b`、delivery=`7a03ac5f`。根因已定位并可复现：`_backfill_detected_regions` 只重绑 `region_id` 未重绑 `target_id` ⇒ OCR 守卫以 `None` 比对 Region current revision ⇒ `LOCK_CHANGED`。只诊断；修复须另立 Task（M2-P1 候选）。 | DeepSeek Harness（静态交付，执行由集成方代采）/ Antigravity（`approved`）；Integrator=Codex（代行）。 |
 
 释放证据：[release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md)。Task 已冻结 base、branch、worktree、allowed/forbidden paths、AC 与验证命令；产品代码仍未获授权。
 
