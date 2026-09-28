@@ -4,6 +4,7 @@
 - Task: `doc/tasks/M2-AC2.md`（`ready / M2_AC2_DATA_INTEGRITY_RELEASED`；纯验收，产品代码零改动）
 - Base / release: `61f9db9b` / `01af7732`
 - Branch / worktree: `agent/zcode/M2-AC2-data-integrity` / `G:/CODEX/New Manga.worktrees/M2-AC2-zcode`
+- Delivery head: 8d72f91fa68b92bf0975004d49f94ffc2d0702a2（返修后；初始 a3e3fb22 + r1 条件返修）
 - Status: delivered（等 DSH 非作者 Review；Integrator=Codex 新会话，保持 Owner≠Integrator）
 
 ## 交付物
@@ -22,8 +23,8 @@
 | AC2 | managed 副本字节一致且不在用户源目录内；删源文件后 managed 仍权威可读；managed 缺失经 page_catalog 显式检出（`invalid`≠`ok`，不静默伪造） | **PASS**（2 场景） |
 | AC3 | save_manual_translation → 新 revision + `manual_edited` + RegionText 层 `translation_locked`；pipeline OCR 真跑（mock provider 绑定 + 真实 PNG）后 `edited_translation` 人工译文原样保留 | **PASS**（1 场景，含语义澄清见下） |
 | AC4 | page_locked → plan 全 `skip_lock` 且零 StepRun；region_locked（M2-P1 N2 时序）→ OCR `LOCK_CHANGED` 零写；pinned revision 在 CleanupService.run() 后保持；restore_revision → current 指回恢复内容、产生带 `restored_from_revision_id` 溯源的新 revision | **PASS**（4 场景） |
-| AC5 | 同 data root 重装配后 hash/Lock/pin/current/人工文本全部保持；restored page lock 仍约束 planner | **PASS**（1 场景） |
-| AC6 | 两级 pytest EXIT 0（10 passed / 14 passed）；`git diff --check` EXIT 0；FAIL/BLOCKED/NOT_RUN 无 | **PASS** |
+| AC5 | 同 data root 重装配后 hash/Lock/pin/current/人工文本全部保持；restored page lock 仍约束 planner；**RUNNING run 在重装配时被 recover_running_runs 重收为 INTERRUPTED（语义断言，r1 P1-1 已闭合）** | **PASS**（2 场景） |
+| AC6 | 两级 pytest EXIT 0（11 passed / 15 passed，返修后）；`git diff --check` EXIT 0；Qt provider 读面 NOT_RUN（见下） | **PASS** |
 
 ## 验证命令（worktree 根目录，$py=TASK-012-py312）
 
@@ -33,12 +34,17 @@
 
 ## 实现过程中的语义发现（供 Reviewer 重点核对）
 
-1. **双层锁语义（Owner 澄清，已写入 Task AC3）**：`RegionText.translation_locked`（内容保护锁，`save_manual_translation` 置它，`apply_machine_translation` 的 PermissionError 由它触发）与 Region 顶层 `region_locked/translation_locked`（pipeline 写守卫读的列）是**两个不同的字段**。OCR 链不受 text 层锁拦截——OCR 结果写入 `ocr_text` 并推进 current 是预期行为；人工译文承诺体现为 `edited_translation` 不被清除。Task AC3 原措辞（"current 指针保持在人工版本"）基于 Owner 语义误解，已按实测语义修正。
+1. **双层锁语义（Owner 澄清，已写入 Task AC3）**：`RegionText.translation_locked`（内容保护锁，`save_manual_translation` 置它；entities 层的 `apply_machine_translation` 会因它抛 PermissionError，但 service 层在调用 entities 前已拦截并返回 `LOCK_CHANGED`，生产路径不会看到该异常——DSH r1 P3-4 措辞修正）与 Region 顶层 `region_locked/translation_locked`（pipeline 写守卫读的列）是**两个不同的字段**。OCR 链不受 text 层锁拦截——OCR 结果写入 `ocr_text` 并推进 current 是预期行为；人工译文承诺体现为 `edited_translation` 不被清除。Task AC3 原措辞（"current 指针保持在人工版本"）基于 Owner 语义误解，已按实测语义修正。
 2. **`core_service._PassthroughImageDecoder` 签名缺陷（DSH r2 P3-3 的实证）**：sidecar 的 stub decoder 传 `format=` 给 `DecodedImage`（真实字段 `width/height/mime_type`）→ 任何经该 stub 的导入都会 TypeError。M2-IPC1 命令面不含 import 所以未受影响；本验收按 assembly 的 adapter-injection（I1-AC4）自备 `_AcceptanceDecoder` 绕开。**登记为后续修复项**：未来 core_service 扩 ImportPages 命令前必须替换该 stub。
 3. **region 锁场景时序**：plan 前置锁会使 planner 直接跳过（无 StepRun 可断言）；按 M2-P1 N2 时序（plan 后、execute 前置锁）才能真实触达写守卫，实测 `LOCK_CHANGED` + 零写。
 4. **image-source 前置**：pipeline OCR 需要真实可解码 PNG（production crop/decode 管线），合成场景用 `acceptance_bridge.synthetic_page_png`（M2-AC1 先例）。
 5. **`RevisionText` 快照契约**：revision snapshot 含 `edited_translation` 全字段（`snapshot_state`），restore 产生带 `restored_from_revision_id` 溯源的新 revision——人工文本在 restore 语义下不丢失。
 
 ## NOT_RUN / BLOCKED
+
+- **Qt provider 读面的 typed ProviderInputError 分支（r1 P2-2 第二支）**：NOT_RUN——该读面走 QImage 适配器，headless 验收装配不可达；headless 可达的 image_state 读面已断言 `== "invalid"`。需要 Qt/WebView2 环境的 E2E 才能覆盖，登记为后续 E2E slice 输入。
+- 其余无。r1 的 P1-1/P2-1/P2-3/P2-4/P3-1/P3-2/P3-3/P3-4 均已闭合（见上方 AC 表与交付说明）。
+
+
 
 无。

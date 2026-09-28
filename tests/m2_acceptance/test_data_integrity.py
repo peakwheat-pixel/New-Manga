@@ -1,8 +1,8 @@
 """M2-AC2 Data Integrity Acceptance suite (doc/tasks/M2-AC2.md).
 
-Verifies the Rebaseline Plan M2 Acceptance Backlog row 2 promises on the
-PRODUCTION assembly path (``bootstrap.core_service.assemble_production_core``
--- the same assembly the production sidecar runs) with a real SQLite store
+Verifies the Rebaseline Plan M2 Acceptance Backlog row 2 promises through
+the PRODUCTION assembly function (``assemble_core_services`` -- the exact
+assembly the production sidecar calls) with a real SQLite store
 and a real filesystem, plus one pipeline-family group over the acceptance
 ``mock_local_providers`` assembly (the M2-AC1 precedent inside
 ``tests/m2_acceptance/``):
@@ -21,6 +21,7 @@ valid delivery outcome -- the defect is reported, not patched.
 from __future__ import annotations
 
 from dataclasses import replace
+import hashlib
 from pathlib import Path
 import sys
 
@@ -141,13 +142,29 @@ def test_ac1_source_hash_matches_and_source_file_untouched(tmp_path: Path) -> No
     source_dir.mkdir()
 
     before_bytes = SOURCE_BYTES_A
-    page, source_path = _import_one_book(core, source_dir, before_bytes, "001.png")
+    source_path = source_dir / "001.png"
+    source_path.write_bytes(before_bytes)
+    mtime_before = source_path.stat().st_mtime_ns
 
-    assert page.source_hash == sha256_bytes(before_bytes)
-    assert source_path.read_bytes() == before_bytes, "source bytes changed"
-    # No write into the user source directory at all.
-    assert sorted(p.name for p in source_dir.iterdir()) == ["001.png"]
+    book = core.library.create_book('M2-AC2 Integrity Book')
+    chapter = core.library.create_chapter(book.book_id, 'Chapter 1')
+    report = core.importer.import_files(
+        chapter.chapter_id,
+        [ImportSource(filename='001.png', data_provider=lambda: before_bytes)],
+    )
+    assert len(report.imported) == 1, f'import failed: {report.failed}'
+    page = report.imported[0].page
+
+    # Independent oracle: hashlib directly, not the implementation helper.
+    assert page.source_hash == hashlib.sha256(before_bytes).hexdigest()
+
+    # The user source file is untouched: bytes, size, mtime, directory.
+    assert source_path.read_bytes() == before_bytes, 'source bytes changed'
+    assert sorted(p.name for p in source_dir.iterdir()) == ['001.png']
     assert source_path.stat().st_size == len(before_bytes)
+    assert source_path.stat().st_mtime_ns == mtime_before, (
+        'the user source file was rewritten (mtime changed)'
+    )
 
 
 def test_ac1_duplicate_import_is_skipped_without_second_copy(tmp_path: Path) -> None:
@@ -217,7 +234,11 @@ def test_ac2_missing_managed_file_is_detectable_not_silent(tmp_path: Path) -> No
     status_missing = core.page_catalog.image_state(page.page_id, mode="original")
 
     assert status_present == "ok"
-    assert status_missing != "ok", (
+    # The on-disk disappearance hits the explicit invalid branch
+    # (file existence check), distinct from missing (no ref at all);
+    # the Qt provider-read-face typed ProviderInputError needs a QImage
+    # adapter and stays NOT_RUN in this headless suite.
+    assert status_missing == "invalid", (
         f"a vanished managed original must be detectable, got {status_missing!r}"
     )
 
@@ -372,8 +393,17 @@ def test_ac4_pinned_revision_survives_cleanup(tmp_path: Path) -> None:
     cache_dir.mkdir(parents=True, exist_ok=True)
     stale = cache_dir / "tile-stale.bin"
     stale.write_bytes(b"stale-tile-bytes")
-    inventory_items = (CleanupTarget(relative_path="cache/tile-stale.bin",
-                                     size_bytes=stale.stat().st_size),)
+    # A REAL business file (the page managed original) is also offered
+    # to the inventory: the controlled remover must refuse it outright.
+    business = _managed_file(core, page)
+    assert business.is_file()
+    business_rel = page.managed_original_ref.replace(chr(92), "/")
+    inventory_items = (
+        CleanupTarget(relative_path="cache/tile-stale.bin",
+                      size_bytes=stale.stat().st_size),
+        CleanupTarget(relative_path=business_rel,
+                      size_bytes=business.stat().st_size),
+    )
 
     class _Inventory:
         def list_cache_files(self) -> tuple[CleanupTarget, ...]:
@@ -387,7 +417,11 @@ def test_ac4_pinned_revision_survives_cleanup(tmp_path: Path) -> None:
     outcome = cleanup.run()
 
     assert outcome.removed == 1
+    assert outcome.skipped >= 1, "the business file must be refused, not removed"
     assert not stale.exists(), "cache population must be cleanable"
+    assert business.is_file(), (
+        "cleanup must never remove managed business originals"
+    )
     after = core.editing._repo.list_revisions(region.region_id)
     pinned = [r for r in after if r.revision_no == target.revision_no]
     assert pinned and pinned[0].is_pinned is True, (
@@ -416,7 +450,7 @@ def test_ac4_restore_revision_moves_current(tmp_path: Path) -> None:
     # v1 = the machine origin revision from create_region (empty text);
     # manual saves produce v2/v3 with the real snapshot content.
     first_manual_no = core.editing.save_manual_translation(region.region_id, "第一版译文")
-    core.editing.save_manual_translation(region.region_id, "第二版译文")
+    second_manual_no = core.editing.save_manual_translation(region.region_id, "第二版译文")
 
     after_two = core.editing._repo.get_region(region.region_id)
     assert after_two is not None
@@ -427,12 +461,21 @@ def test_ac4_restore_revision_moves_current(tmp_path: Path) -> None:
         "restore must move the current pointer back to the restored revision"
     )
     revisions = core.editing._repo.list_revisions(region.region_id)
-    assert len(revisions) == 4, (
+    assert len(revisions) == second_manual_no + 1, (
         "restore is recorded as its own new revision (v4 = content of v2)"
     )
-    restored_revision = [r for r in revisions if r.revision_no == 4]
-    assert restored_revision and restored_revision[0].restored_from_revision_id, (
-        "the restored revision must carry provenance back to its source"
+    restored_no = max(r.revision_no for r in revisions)
+    restored_revision = [r for r in revisions if r.revision_no == restored_no]
+    source_revision = core.editing._repo.get_revision(region.region_id, first_manual_no)
+    assert source_revision is not None
+    assert restored_revision and (
+        restored_revision[0].restored_from_revision_id
+        == source_revision.region_revision_id
+    ), (
+        "the restored revision must carry provenance back to its exact source"
+    )
+    assert restored.current_revision_id == restored_revision[0].region_revision_id, (
+        "current must point at the freshly restored revision"
     )
 
 
@@ -490,3 +533,34 @@ def test_ac5_reassembly_preserves_every_integrity_promise(tmp_path: Path) -> Non
     assert all(
         u.decision.value == "skip_lock" for u in planned.tasks[0].units
     ), "a restored page lock must still gate the planner after restart"
+
+
+def test_ac5_running_run_is_reaped_as_interrupted_on_reassembly(
+    tmp_path: Path,
+) -> None:
+    """AC5 recovery semantics: a run left RUNNING before the process died is
+    reaped to INTERRUPTED by the startup recovery, not silently resumed
+    or dropped."""
+    core = _assemble(tmp_path / "data-root")
+    source_dir = tmp_path / "user-sources"
+    source_dir.mkdir()
+    page, _source = _import_one_book(core, source_dir, SOURCE_BYTES_A, "001.png")
+    run = core.pipeline.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(page.page_id,)),
+    )
+    # Simulate the crash window: the run was persisted as RUNNING.
+    from domain.tasks.models import PipelineRunStatus
+    stored = core.pipeline._store.get(run.run_id)
+    assert stored is not None
+    stored.status = PipelineRunStatus.RUNNING
+    core.pipeline._store.put(run.run_id, stored)
+    # Process-restart equivalent: full re-assembly runs the startup
+    # recover_running_runs() as part of assembly.
+    core.conn.close()
+    core2 = _assemble(tmp_path / "data-root")
+    reaped = core2.pipeline._store.get(run.run_id)
+    assert reaped is not None
+    assert reaped.status is PipelineRunStatus.INTERRUPTED, (
+        f"a RUNNING run must be reaped as INTERRUPTED, got {reaped.status!r}"
+    )
