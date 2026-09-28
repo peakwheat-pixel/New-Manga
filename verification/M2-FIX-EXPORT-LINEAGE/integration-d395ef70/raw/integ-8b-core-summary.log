@@ -1,0 +1,10 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: Python 3.12.3
+run-at HEAD: d395ef70b311b0d960cddcb0680e9fc423c0b09c
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO: 2026-09-29T01:53:44+08:00
+note: supplement to integ-8-regression-three.log section B (summary line was flooded by QML stderr noise); command identical; v1 of this supplement log had an unquoted $py interpreter line that failed exactly like the r1-era legacy headers, rewritten
+command B: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/core -q   (expect 76 passed, EXIT=0)
+=== B rerun: summary lines ===
+76 passed in 7.52s
+EXITB=0

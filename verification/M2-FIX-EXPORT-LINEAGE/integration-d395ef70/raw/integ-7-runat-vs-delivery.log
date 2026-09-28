@@ -1,0 +1,17 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: Python 3.12.3
+run-at HEAD: d395ef70b311b0d960cddcb0680e9fc423c0b09c
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO: 2026-09-29T01:51:48+08:00
+command: git diff --stat 297c9655..HEAD  (expect evidence-log-only diff, no src/** or test semantics)
+---
+ .../M2-FIX-EXPORT-LINEAGE-owner-delivery.md        |   7 +-
+ doc/tasks/M2-FIX-EXPORT-LINEAGE.md                 |  19 ++--
+ .../raw/diff-check-evidence.log                    |  55 ++++++++++
+ .../raw/final-tip-rerun-r2.log                     | 118 +++++++++++++++++++++
+ .../M2-FIX-EXPORT-LINEAGE/raw/final-tip-rerun.log  |  14 +++
+ .../M2-FIX-EXPORT-LINEAGE/raw/scope-self-check.log |  38 +++++++
+ .../M2-FIX-EXPORT-LINEAGE/verification-results.md  |  63 ++++++++---
+ 7 files changed, 289 insertions(+), 25 deletions(-)
+---
+EXIT=0

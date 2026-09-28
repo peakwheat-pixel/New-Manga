@@ -1,0 +1,9 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: Python 3.12.3
+run-at HEAD: d71883ec9a6c6fccb14b62908c02790bb3beb99c
+branch: main
+ISO: 2026-09-29T01:59:23+08:00
+command: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/core -q   (expect 76 passed, EXIT=0)
+---
+76 passed in 7.78s
+EXIT=0

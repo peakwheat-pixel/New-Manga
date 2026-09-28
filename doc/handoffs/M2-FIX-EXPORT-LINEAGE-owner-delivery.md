@@ -38,7 +38,7 @@ Commit ledger（r2 重建后，amend 轨迹与 `e05696fd`/`cba8db48` 来历见 v
 
 - branch=`agent/zcode/M2-FIX-EXPORT-LINEAGE`；worktree=`G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode`；base=`8b0d9040`。
 - 复现命令：`G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance -q`（预期 34 passed, 1 xfailed）与 `... -m pytest tests/core -q`（预期 76 passed）。
-- Review 重点建议：`_record` fallback 路径（SKIPPED/CANCELLED/FAILED）不带 included 键的语义边界（verification-results §6）、P3-7 并发评估结论（§7）是否接受为充分留痕。
+- Review 重点建议（集成方修正 N1，DSH r2 P3-N1：原文「不带 included 键」与代码及本文件风险条、verification-results §6 相反，改为下述口径）：`_record` fallback 路径（SKIPPED/CANCELLED/FAILED）行键存在、值为空 list 的语义边界（verification-results §6）、P3-7 并发评估结论（§7）是否接受为充分留痕。
 
 ## 下一任务建议（必填）
 

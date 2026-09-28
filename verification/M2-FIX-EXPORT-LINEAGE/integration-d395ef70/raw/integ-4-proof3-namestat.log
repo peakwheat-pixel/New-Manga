@@ -1,0 +1,20 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: Python 3.12.3
+run-at HEAD: d395ef70b311b0d960cddcb0680e9fc423c0b09c
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO: 2026-09-29T01:51:10+08:00
+command: git diff --name-status 0ec1f052..297c9655 && git diff --ignore-all-space --stat 0ec1f052..297c9655
+---
+M	doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md
+M	tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py
+M	verification/M2-FIX-EXPORT-LINEAGE/raw/red-pre-fix-test_ac2_history.log
+M	verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final.log
+M	verification/M2-FIX-EXPORT-LINEAGE/verification-results.md
+[--stat]
+ doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md              | 4 ++--
+ .../m2_acceptance/test_reader_export_lineage_library_pagecount.py | 5 +++++
+ verification/M2-FIX-EXPORT-LINEAGE/verification-results.md        | 8 ++++----
+ 3 files changed, 11 insertions(+), 6 deletions(-)
+---
+EXIT_namestatus=0
+EXIT=0

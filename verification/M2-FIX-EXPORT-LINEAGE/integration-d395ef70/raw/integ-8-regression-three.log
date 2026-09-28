@@ -1,0 +1,50 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: /usr/bin/bash: line 3: /g/CODEX/New: No such file or directory
+run-at HEAD: d395ef70b311b0d960cddcb0680e9fc423c0b09c
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO: 2026-09-29T01:52:30+08:00
+command A: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance -q            (expect 34 passed, 1 xfailed, EXIT=0)
+command B: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/core -q                    (expect 76 passed, EXIT=0)
+command C: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance -q --runxfail (expect exactly 1 failed = F-2 scenario, EXIT=1)
+=== A: tests/m2_acceptance -q ===
+................................x..                                      [100%]
+34 passed, 1 xfailed in 9.19s
+EXITA=0
+=== B: tests/core -q ===
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXITB=0
+=== C: tests/m2_acceptance -q --runxfail ===
+        must distinguish unknown/missing data from a genuine zero."""
+        empty_book = core.library.create_book("M2-AC4 No-chapter Book")
+        hollow_book = core.library.create_book("M2-AC4 Chapterless-pages Book")
+        core.library.create_chapter(hollow_book.book_id, "no pages inside")
+    
+        summaries = _list_books(core)
+        # the books themselves must be listed honestly
+        assert empty_book.book_id in summaries
+        assert hollow_book.book_id in summaries
+    
+        for book_id in (empty_book.book_id, hollow_book.book_id):
+            summary = summaries[book_id]
+            known_flag = summary.get("page_count_known")
+            presented_unknown = (
+                summary["page_count"] is None
+                or (isinstance(summary["page_count"], int) and summary["page_count"] < 0)
+                or known_flag is False
+            )
+>           assert presented_unknown, (
+                f"book {book_id} presents page_count={summary['page_count']!r} with "
+                f"page_count_known={known_flag!r}: unknown data rendered as a "
+                "plausible number instead of an unknown marker"
+            )
+E           AssertionError: book 39b9016a086b4462a2b0be9554d546e7 presents page_count=0 with page_count_known=None: unknown data rendered as a plausible number instead of an unknown marker
+E           assert False
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:890: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero
+1 failed, 34 passed in 9.51s
+EXITC=1
+=== OVERALL: A/B/C done ===

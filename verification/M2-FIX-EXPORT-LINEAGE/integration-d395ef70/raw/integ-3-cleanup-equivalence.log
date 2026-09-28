@@ -1,0 +1,74 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: Python 3.12.3
+run-at HEAD: d395ef70b311b0d960cddcb0680e9fc423c0b09c
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO: 2026-09-29T01:55:35+08:00
+command: git diff --ignore-all-space 0ec1f052..297c9655 -- verification/M2-FIX-EXPORT-LINEAGE/raw/  (Proof1, expect empty)
+command2: git diff --quiet 0ec1f052..297c9655 -- verification/M2-FIX-EXPORT-LINEAGE/raw/  (hard exit-code check; expect EXIT=1 = diff exists, hunks are whitespace-only-removed lines)
+command3: git diff 0ec1f052..297c9655 -- verification/M2-FIX-EXPORT-LINEAGE/raw/  (show hunks)
+note: v1 recorded plain 'git diff' EXIT2=0; that is git's default exit semantics (diff presence does not set exit code unless diff.exitCode=true, which is NOT set in this repo); --quiet gives the hard judgment
+---
+[Proof1: --ignore-all-space]
+(empty output)
+EXIT1=0
+[quiet check]
+EXIT_quiet=1 (1 = differences exist, as expected)
+[no -w diff hunks]
+diff --git a/verification/M2-FIX-EXPORT-LINEAGE/raw/red-pre-fix-test_ac2_history.log b/verification/M2-FIX-EXPORT-LINEAGE/raw/red-pre-fix-test_ac2_history.log
+index f4e9257d..52aeb9f8 100644
+--- a/verification/M2-FIX-EXPORT-LINEAGE/raw/red-pre-fix-test_ac2_history.log
++++ b/verification/M2-FIX-EXPORT-LINEAGE/raw/red-pre-fix-test_ac2_history.log
+@@ -43,7 +43,7 @@ core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnectio
+         )
+         assert result.status.value == "completed"
+         assert result.included_stale_page_ids == (stale_page_id,)
+-    
++
+         row = core.export_service.find_export(result.export_id)
+         assert row is not None, "the completed export must be in the persisted history"
+         scope = json.loads(row.scope_snapshot_json)
+@@ -53,10 +53,10 @@ core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnectio
+         )
+ E       AssertionError: the persisted export record must carry the included stale page ids
+ E       assert set() == {'daa1851f46d...cdfabd1d8f67'}
+-E         
++E
+ E         Extra items in the right set:
+ E         'daa1851f46db4dab9ddacdfabd1d8f67'
+-E         
++E
+ E         Full diff:
+ E         + set()
+ E         - {
+diff --git a/verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final.log b/verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final.log
+index 86911aab..b6faf8a3 100644
+--- a/verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final.log
++++ b/verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final.log
+@@ -32,7 +32,7 @@ tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest
+             },
+             ensure_ascii=False,
+         )
+-    
++
+         # channel 1: the exact row shape the pre-fix ExportService wrote into
+         # export_history (13 columns, no included-ids keys in the snapshot JSON)
+         core.conn.execute(
+@@ -51,7 +51,7 @@ tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest
+             ),
+         )
+         core.conn.commit()
+-    
++
+         row = core.export_service.find_export("exp-legacy-001")
+         assert row is not None, "the pre-fix row must survive the upgraded read path"
+         assert row.status == "completed"
+@@ -66,7 +66,7 @@ tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest
+         assert parsed["included_missing_page_ids"] == [], (
+             "a pre-fix row parses to an EMPTY included-missing set, not an error"
+         )
+-    
++
+         # channel 2: legacy JSON import of a pre-fix export_history.json
+         legacy_file = tmp_path / "export_history.json"
+         legacy_file.write_text(
+EXIT3=0

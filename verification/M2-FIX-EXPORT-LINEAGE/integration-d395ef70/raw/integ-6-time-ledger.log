@@ -1,0 +1,23 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: Python 3.12.3
+run-at HEAD: d395ef70b311b0d960cddcb0680e9fc423c0b09c
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO: 2026-09-29T01:51:48+08:00
+command: git log --format='%h %cI %s' -8 ; git log -1 --format=%cI <aa1e0c7c|4e76b2fa|0ec1f052|b0ef7f76>
+---
+d395ef70 2026-09-29T01:43:21+08:00 backfill(M2-FIX-EXPORT-LINEAGE) r2: AC1-AC5 PASS with DSH-r1 conditions closed — C1 whole-tree diff --check EXIT=0 at delivery_head 297c9655 (whitespace-only cleanup, --ignore-all-space empty-diff proof in raw/diff-check-evidence.log), C2 e05696fd/cba8db48 = amend predecessors of r1 backfill (reflog ledger in verification-results §9.1), C3 scope self-check raw evidence (raw/scope-self-check.log), C4 fallback-row wording corrected (keys present, empty lists), C6 log headers fixed + time ledger via git %cI (release 01:07:24+08 precedes red 01:12:41+08); status in_review, dispatch_state DELIVERED_FOR_REVIEW, delivery_head=297c9655; next: DSH r2 re-review then Codex integration
+297c9655 2026-09-29T01:36:09+08:00 accept(M2-FIX-EXPORT-LINEAGE): plan-A fix — persisted scope_snapshot_json carries included_stale/missing_page_ids (source=ExportResult, COMPLETED path); _parse_scope defaults empty + type guard; F-1 xfail removed after true red (red point=original :584 persisted assertion, EXIT=1) turned PASS; legacy forward-compat scenario (SQLite pre-fix row / legacy JSON import / corrupt-value ExportError); reading_export.py untouched (whole-string channel verified), schema.py zero hits; regression 34 passed+1 xfailed (F-2 only) / tests/core 76 passed, all EXIT=0; P3-7 concurrency assessed-not-fixed per frozen scope [r2 amend of 0ec1f052 per DSH r1 sec.D: whitespace-only cleanup of raw/red-pre-fix-test_ac2_history.log:46/56/59 + raw/regression-final.log:35/54/69 (traceback wording byte-kept); C4 fallback-shape doc fix (keys present, empty lists); C5 persisted included_missing_page_ids assertion]
+4e76b2fa 2026-09-29T01:12:09+08:00 claim(M2-FIX-EXPORT-LINEAGE): ZCode (subagent, user-authorized 2026-09-28) claims owner from release aa1e0c7c (base 8b0d9040); plan-A frozen (scope_snapshot_json keys, no schema change); dispatch_state RELEASED->CLAIMED
+aa1e0c7c 2026-09-29T01:07:24+08:00 docs: release M2-FIX-EXPORT-LINEAGE (ready, base=8b0d9040, owner=ZCode via subagent, plan-A frozen, goal G2)
+8b0d9040 2026-09-29T01:05:54+08:00 accept(M2-FIX-STUB-DECODER): integration complete — task done at merge 121a281c (DSH r1 approved_with_conditions 0xP0/P1/P2, C1-C2 closed, P3-4 red evidence)
+32a66a17 2026-09-29T01:03:14+08:00 integration(M2-FIX-STUB-DECODER): close DSH r1 conditions C1-C2 (rerun 2/76/32+2xf passed at tip 69250a39, scope +3/-1 recheck clean), archive review, red evidence for P3-4, backfill delivery_head=5cacebfa/integration_merge=121a281c, status done
+121a281c 2026-09-29T01:00:34+08:00 integration: merge M2-FIX-STUB-DECODER stub signature fix (owner tip 69250a39, DSH r1 approved_with_conditions 0xP0/P1/P2, C1-C2 closed)
+69250a39 2026-09-29T00:52:21+08:00 task backfill(M2-FIX-STUB-DECODER): status in_review, DELIVERED_FOR_REVIEW — AC1/AC2/AC3 PASS, delivery tip=5cacebfa (delivery_head stays null for integrator), scope self-check EXIT=0, next=DeepSeek Harness review
+[per-commit %cI]
+aa1e0c7c (release):  2026-09-29T01:07:24+08:00
+4e76b2fa (claim):    2026-09-29T01:12:09+08:00
+0ec1f052 (delivery): 2026-09-29T01:18:42+08:00
+b0ef7f76 (r1 backfill): 2026-09-29T01:22:18+08:00
+---
+EXIT_log8=0
+EXIT=0

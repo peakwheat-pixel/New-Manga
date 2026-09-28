@@ -1,0 +1,12 @@
+shell: bash 5.2.37(1)-release (Git Bash, MINGW64)
+interpreter: Python 3.12.3
+run-at HEAD: d395ef70b311b0d960cddcb0680e9fc423c0b09c
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO: 2026-09-29T01:51:09+08:00
+command: git rev-parse HEAD && git log -1 --format='%H %cI %s'
+---
+d395ef70b311b0d960cddcb0680e9fc423c0b09c
+d395ef70b311b0d960cddcb0680e9fc423c0b09c 2026-09-29T01:43:21+08:00 backfill(M2-FIX-EXPORT-LINEAGE) r2: AC1-AC5 PASS with DSH-r1 conditions closed — C1 whole-tree diff --check EXIT=0 at delivery_head 297c9655 (whitespace-only cleanup, --ignore-all-space empty-diff proof in raw/diff-check-evidence.log), C2 e05696fd/cba8db48 = amend predecessors of r1 backfill (reflog ledger in verification-results §9.1), C3 scope self-check raw evidence (raw/scope-self-check.log), C4 fallback-row wording corrected (keys present, empty lists), C6 log headers fixed + time ledger via git %cI (release 01:07:24+08 precedes red 01:12:41+08); status in_review, dispatch_state DELIVERED_FOR_REVIEW, delivery_head=297c9655; next: DSH r2 re-review then Codex integration
+---
+EXIT_revparse=0
+EXIT=0

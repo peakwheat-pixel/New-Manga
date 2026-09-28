@@ -2,7 +2,7 @@
 id: M2-FIX-EXPORT-LINEAGE
 title: Export history 持久层补 included_stale/missing page ids（F-1 修复）
 kind: fix
-status: in_review
+status: done
 release_state: M2_FIX_EXPORT_LINEAGE_RELEASED
 approval: released_by_orchestrator_2026-09-29_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
 execution_approval: released_by_orchestrator_2026-09-29_goal_g2
@@ -15,9 +15,9 @@ base_commit: 8b0d9040
 branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
 worktree: G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode
 delivery_head: 297c96557f1aa0ac41bc19fdf38c90a06badbea1（r2 amend 自 0ec1f052，DSH r1 §D whitespace-only 清理 + C4/C5，轨迹见 verification-results.md §9）
-review: null
-integration_merge: null
-dispatch_state: DELIVERED_FOR_REVIEW
+review: doc/reviews/M2-FIX-EXPORT-LINEAGE-0ec1f052-dsh-r1.md (approved_with_conditions) -> doc/reviews/M2-FIX-EXPORT-LINEAGE-d395ef70-dsh-r2.md (approved; C1-C6 closed)
+integration_merge: d71883ec9a6c6fccb14b62908c02790bb3beb99c
+dispatch_state: INTEGRATED
 ---
 
 # M2-FIX-EXPORT-LINEAGE — Export history 持久层 included_stale/missing page ids 修复
@@ -72,5 +72,6 @@ dispatch_state: DELIVERED_FOR_REVIEW
 
 ## 交付与运行记录
 
+- **2026-09-29 Codex 集成收口（集成方修正；本节以下字段为准）**：DSH r2 **`approved`**（C1-C6 全部真实关闭，无 P0/P1/P2），集成 merge=`d71883ec9a6c6fccb14b62908c02790bb3beb99c`（`--no-ff`，无冲突，parent2=Owner 最终 tip **`d395ef70b311b0d960cddcb0680e9fc423c0b09c`**，dispatch_state→INTEGRATED，status→done）。DSH r2 §4 八组 not_verified 由集成方在 Owner worktree 代跑全部符合期望：①tip 身份=上述 hash；②整树 `git diff --check 8b0d9040..HEAD` 空输出 EXIT=0；③`--ignore-all-space 0ec1f052..297c9655 -- raw/` 空输出（`--quiet` 判差异=1，hunk 全为行尾空白删空）；④Proof3 名单 5 文件、11+/6-（Handoff 2+2、verification-results 4+4、test +5）；⑤`e05696fd`/`cba8db48` 均 commit、reflog 轨迹与 §9.1/§9.2 ledger 一致；⑥`%cI` 时间序 01:07:24<01:12:09<01:18:42<01:22:18 成立；⑦`297c9655..HEAD` 仅证据/文档差异（无 `src/**`、无测试语义）；⑧回归三组 34 passed+1 xfailed EXIT=0 / 76 passed EXIT=0 / `--runxfail` 恰 1 failed=F-2（`:890`）EXIT=1。集成 head 复跑：34 passed, 1 xfailed EXIT=0 / 76 passed EXIT=0。AC1-AC5 集成复核全部 PASS（数字按上述实测，与 AC 判定一致）。双轮 Review 报告归档 doc/reviews/（原字节，SHA256 见集成记录）；DSH r2 P3 残留 N1-N3 由集成方收口（N1=Handoff:41 fallback 措辞改「行键存在、值为空 list」并标注集成方修正；N2=记账口径澄清见集成记录 §3；N3=final tip hash 补登于集成记录）。P3-7 采信 Owner §7 评估（未修，候选留 planning）；C6 时间口径采信 §9.3 `%cI`（release evidence「02:1x」为近似偏晚，不回改）。证据：[集成记录](../verification/M2-FIX-EXPORT-LINEAGE/integration-d395ef70/integration.md) 及 [raw/](../verification/M2-FIX-EXPORT-LINEAGE/integration-d395ef70/raw/)。
 - **2026-09-29 Owner 交付 r2（DSH r1 `approved_with_conditions` 返修）**：代码层 approved 不变；证据层条件 C1-C6 全部关闭——C1 whitespace-only 清理（`raw/red-pre-fix-test_ac2_history.log` 46/56/59、`raw/regression-final.log` 35/54/69，`--ignore-all-space` 空 diff 证明）后交付 commit amend 重建为 `297c9655`（前身 `0ec1f052`），整树 `git diff --check 8b0d9040..297c9655` = 空 EXIT=0，交付 tip 绑定复跑三组（34 passed+1 xfailed EXIT=0 / 76 passed EXIT=0 / `--runxfail` 恰 1 failed=F-2 EXIT=1，raw/final-tip-rerun-r2.log）；C2 `e05696fd`/`cba8db48` 来历=回填 commit 两次 amend 前身（reflog 逐条登记 §9.1）；C3 范围自检 raw 证据 raw/scope-self-check.log；C4 三处 fallback 描述更正（键存在、值为空 list）；C5 F-1 场景补 persisted `included_missing_page_ids` 断言；C6 新日志头修正（解释器路径加引号+shell/command 行）+ 时间口径以 `git log --format=%cI` 核定（release 01:07:24+08 先于 claim 01:12:09 先于 red 01:12:41，时间序成立）。
 - **2026-09-29 Owner 交付 r1（ZCode 子 agent 代行，用户授权 2026-09-28）**：三 commit ledger——claim `4e76b2fa` → 实现+证据 `0ec1f052`（delivery_head）→ 回填。方案 A 落地：`_scope_snapshot` 加 2 个 keyword-only 参数并序列化 `included_stale_page_ids`/`included_missing_page_ids`（数据源=`ExportResult.included_*`，COMPLETED 路径同源传入）；`_parse_scope` 缺省空 list + 非 list → `ExportError`；`reading_export.py` 整体字符串存取探查后零改动；`schema.py` 零触碰。先红（原 `:584` 持久断言 EXIT=1）→ 转 PASS；legacy 三通道兼容场景新增。回归：`tests/m2_acceptance -q` = **34 passed, 1 xfailed**（仅剩 F-2；+1=新增 legacy 场景，见 AC4）、`tests/core -q` = **76 passed**，均 EXIT=0。P3-7 并发 write 只评估未修（verification-results.md §7）。证据：[verification-results.md](../verification/M2-FIX-EXPORT-LINEAGE/verification-results.md)、[raw/](../verification/M2-FIX-EXPORT-LINEAGE/raw/)、[Handoff](../doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md)。状态 `in_review / DELIVERED_FOR_REVIEW`，r1 Review=DSH `approved_with_conditions`（代码层 approved、证据层 changes_requested），r2 已交付待复审。
