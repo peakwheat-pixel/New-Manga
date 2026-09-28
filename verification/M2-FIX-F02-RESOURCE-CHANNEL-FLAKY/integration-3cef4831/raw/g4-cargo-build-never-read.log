@@ -1,0 +1,7 @@
+=== cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+=== git rev-parse HEAD: 3cef4831fa20a73d3792ef0e24b819186ec88947
+=== ISO time: 2026-09-29T03:28:37+08:00
+=== cmd: cargo build --bin m2rc1-desktop 2>&1 | grep 'never read' (expect resource_protocol.rs hit)
+warning: field `grant` is never read
+EXIT=0
+=== end ISO time: 2026-09-29T03:28:56+08:00

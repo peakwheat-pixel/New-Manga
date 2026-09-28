@@ -1,0 +1,15 @@
+=== shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+=== cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+=== git rev-parse HEAD: 3cef4831fa20a73d3792ef0e24b819186ec88947
+=== ISO time: 2026-09-29T03:27:14+08:00
+=== cmd: git rev-parse HEAD
+3cef4831fa20a73d3792ef0e24b819186ec88947
+=== cmd: git status --porcelain (expect empty)
+=== cmd: git diff --stat fd31a7ad..HEAD (expect docs/verification only)
+ ...IX-F02-RESOURCE-CHANNEL-FLAKY-owner-delivery.md | 93 ++++++++++++++++++++++
+ doc/tasks/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY.md     | 31 ++++----
+ .../raw/final-tip-bind-rerun.log                   | 72 +++++++++++++++++
+ .../raw/scope-and-diff-check.log                   | 26 ++++++
+ 4 files changed, 207 insertions(+), 15 deletions(-)
+=== cmd: git diff fd31a7ad..HEAD -- apps/desktop/src-tauri/src (expect empty)
+EXIT=0

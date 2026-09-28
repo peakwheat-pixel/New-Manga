@@ -1,0 +1,11 @@
+=== git rev-parse HEAD: 3cef4831fa20a73d3792ef0e24b819186ec88947
+=== ISO time: 2026-09-29T03:27:25+08:00
+=== cmd: git log --format='%H %an %ae %s' 2b81f91c..HEAD
+3cef4831fa20a73d3792ef0e24b819186ec88947 peakwheat-pixel peak.wheat@gmail.com task(M2-FIX-F02-RESOURCE-CHANNEL-FLAKY): backfill AC1-AC5 pass, status ready->in_review, DELIVERED_FOR_REVIEW, delivery_head=fd31a7ad
+fd31a7ad7e8bff338d87f3648577b5abeb173aac peakwheat-pixel peak.wheat@gmail.com accept(M2-FIX-F02-RESOURCE-CHANNEL-FLAKY): remove unsound mtime digest short-circuit — full re-verify every request
+6a404c19b114148f59f06341f0bb87d7c4bc6007 peakwheat-pixel peak.wheat@gmail.com claim(M2-FIX-F02-RESOURCE-CHANNEL-FLAKY): owner=ZCode (subagent deputized, user authorization 2026-09-28), dispatch_state RELEASED->CLAIMED, base=2b81f91c, worktree branch agent/zcode/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY, diagnose-then-fix frozen per AC1-AC5
+0ef9155e86e88f8de5ec9696dfb01c2ddad41bfa peakwheat-pixel peak.wheat@gmail.com docs: release M2-FIX-F02-RESOURCE-CHANNEL-FLAKY (ready, base=2b81f91c, owner=ZCode via subagent, diagnose-then-fix frozen, goal G2)
+EXIT=0
+=== note: STATUS/release files attribution (which commit touched doc/STATUS.md, REBASELINE_PLAN)
+0ef9155e86e88f8de5ec9696dfb01c2ddad41bfa docs: release M2-FIX-F02-RESOURCE-CHANNEL-FLAKY (ready, base=2b81f91c, owner=ZCode via subagent, diagnose-then-fix frozen, goal G2)
+EXIT=0

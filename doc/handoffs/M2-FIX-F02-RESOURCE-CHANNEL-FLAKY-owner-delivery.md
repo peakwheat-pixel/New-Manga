@@ -13,7 +13,7 @@ status: DELIVERED_FOR_REVIEW
 
 按冻结 AC1-AC5 完成「先诊断后修复」：**诊断实证推翻"测试 flake"定性——这是真实 M2-S2 产品安全缺口**。AC1 探针 3/3 次运行捕获失败（round 5 / 0 / 2），dump 铁证：等长原地重写后经 handle 读回的 LastWriteTime 与首 verify 记录值**逐位相同**（`mtime_delta_100ns=0`，NTFS 时间戳取值粒度受系统定时器 tick 约束），`needs_digest` 短路为 false，**重写内容被当作已验证内容以 200 serve**；vol/file-index/size 全程不变，排除 identity/size 竞态，唯一通路即 mtime 比对。
 
-AC2 按冻结预期方向修复：`verify_and_serve` **移除 mtime 短路，每次请求都 `stream_digest` 全量重验并对比 `grant.sha256`**，不匹配即 `CONTENT_DIGEST_MISMATCH`（f02 语义保持：重写后必须 400）。`CachedGrant` 删除 `digest_verified`/`verified_mtime` 状态字段（**选清理**：字段唯一用途即短路判定，短路移除后为死代码，全仓 grep 确认无外部引用）；grant cache 退化为只 memoise Core resolve 结果（F-01 语义不变），`CONTENT_DIGEST_MISMATCH` 时的 entry 驱逐保留。
+AC2 按冻结预期方向修复：`verify_and_serve` **移除 mtime 短路，每次请求都 `stream_digest` 全量重验并对比 `grant.sha256`**，不匹配即 `CONTENT_DIGEST_MISMATCH`（f02 语义保持：重写后必须 400）。`CachedGrant` 删除 `digest_verified`/`verified_mtime` 状态字段（**选清理**：字段唯一用途即短路判定，短路移除后为死代码，全仓 grep 确认无外部引用）；**缓存已无读取方，仅保留计数/驱逐副作用**（集成方修正：本行原文"grant cache 退化为只 memoise Core resolve 结果（F-01 语义不变）"与代码不符——缓存并未 memoise 任何被消费的结果，经 DSH r1 P2-1 指出后于集成期更正，dead-code 显式接受并登记 follow-up `M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF`）；`CONTENT_DIGEST_MISMATCH` 时的 entry 驱逐保留。
 
 变更路径（全部在允许范围）：
 
@@ -39,7 +39,7 @@ F02-DIAG entry(digest_verified,verified_mtime)=(Some((true, Some(134350960517034
 F02-DIAG: flaky failure captured at round 5 (see stderr dump)
 ```
 
-- 捕获率：3/3 运行，失败概率极高（LISTBOOKS 集成"三连首跑红"与此一致）；未触发 100 轮降级路径。
+- 捕获率：**3/3 运行捕获，单轮碰撞概率约 0.3–0.5（集成方修正：按捕获轮次 0/2/5 推算，p≈1/(mean round+1)，运行内必捕获；原文"失败概率极高"把 run 级必捕获率误作单次失败率，经 DSH r1 轴 1 指出后于集成期更正）**（LISTBOOKS 集成"三连首跑红"与此一致）；未触发 100 轮降级路径。
 - 单线程绿的解释：不是并发竞态，而是 tick 边界概率——fixture 写入与重写跨越系统 tick 时 mtime 不同 → 400（绿）；同 tick → 200（红）。多/单线程只通过耗时分布间接影响落点。
 - 修复前基线佐证间歇性：默认线程全量一轮 33 passed f02 绿（raw/f02_baseline_run1.log）。
 
@@ -65,7 +65,7 @@ F02-DIAG: flaky failure captured at round 5 (see stderr dump)
 
 ## 偏差与判定（review 重点）
 
-1. **性能代价 ~50x（0.34 ms → 18.4 ms/request @1 MiB debug profile）**：Task AC2 冻结明示接受方向（"性能注记=每请求一次全文件 hash…记录实测前后请求耗时对比"），如实记录；release 构建显著低于该量级，真实负载（16 MiB chunk 封顶、按需拉取）下的产品影响由集成/产品侧知悉即可。
+1. **性能代价 ~50x（0.34 ms → 18.4 ms/request @1 MiB debug profile）**：Task AC2 冻结明示接受方向（"性能注记=每请求一次全文件 hash…记录实测前后请求耗时对比"），如实记录；~~release 构建显著低于该量级~~（**unverified——集成方修正：release profile NOT_RUN，该断言无实测支撑，按 DSH r1 P3-9 标注**），真实负载（16 MiB chunk 封顶、按需拉取）下的产品影响由集成/产品侧知悉即可。
 2. **`CachedGrant` 选清理而非保留兼容**：AC2 给出两选项（"清理或保留兼容（最小，选一注明）"）；清理选最小且无兼容负担——字段为私有 struct 私有字段、全仓无外部引用，删除不构成契约变更。
 3. **`mtime` 读取保留**（`_mtime` 绑定）：`identity_size_mtime` 一次返回四元组，identity/size 校验仍每请求执行；mtime 值本身不再参与判定。
 4. **worktree dist 构建**：`apps/desktop/frontend/dist` worktree 缺失，`npm install && npm run build` 生成（gitignored，不进交付）；与 LISTBOOKS Handoff 记录的环境前置一致。

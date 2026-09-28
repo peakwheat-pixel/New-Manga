@@ -1,0 +1,11 @@
+=== cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+=== git rev-parse HEAD: 3cef4831fa20a73d3792ef0e24b819186ec88947
+=== ISO time: 2026-09-29T03:29:15+08:00
+=== cmd: touch src/resource_protocol.rs && cargo build --bin m2rc1-desktop 2>&1 | grep -B1 -A3 'never read'
+
+warning: field `grant` is never read
+  --> src\resource_protocol.rs:68:5
+   |
+67 | struct CachedGrant {
+EXIT=0
+=== end ISO time: 2026-09-29T03:29:17+08:00

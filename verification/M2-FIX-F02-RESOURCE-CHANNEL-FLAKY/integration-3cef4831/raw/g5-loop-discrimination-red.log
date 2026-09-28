@@ -1,0 +1,46 @@
+=== cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+=== git rev-parse HEAD: 3cef4831fa20a73d3792ef0e24b819186ec88947
+=== checked-out file origin: 6a404c19 (claim commit, pre-fix resource_protocol.rs)
+=== ISO time: 2026-09-29T03:29:34+08:00
+=== cmd: cargo test --bin m2rc1-desktop f02_equal_size_rewrite_stability_loop (expect FAILED: 50 rounds hit mtime tick collision on pre-fix code)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-F02-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:421:66
+    |
+421 |         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+    |                                                                  ^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.83s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 1 test
+test tests::f02_equal_size_rewrite_stability_loop ... FAILED
+
+failures:
+
+---- tests::f02_equal_size_rewrite_stability_loop stdout ----
+
+thread 'tests::f02_equal_size_rewrite_stability_loop' (39388) panicked at src\main.rs:857:13:
+assertion `left == right` failed: round 0: rewritten content must not be served
+  left: 200
+ right: 400
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+
+failures:
+    tests::f02_equal_size_rewrite_stability_loop
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 33 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `--bin m2rc1-desktop`
+EXIT=101
+=== end ISO time: 2026-09-29T03:29:36+08:00
