@@ -2,7 +2,7 @@
 id: M2-AC2
 title: Data Integrity Acceptance (source hash / Managed Copy / user edits / Lock / current & pinned Revision)
 kind: acceptance
-status: ready
+status: in_review
 release_state: M2_AC2_DATA_INTEGRITY_RELEASED
 approval: approved_by_user_2026-09-28_m2ac2_release
 execution_approval: approved_by_user_2026-09-28_m2ac2_release
@@ -14,7 +14,9 @@ depends_on: [M2-IPC1, M2-P1]
 base_commit: 61f9db9b54ae4b7420c7d1a5751cc040a502c88f
 branch: agent/zcode/M2-AC2-data-integrity
 worktree: G:/CODEX/New Manga.worktrees/M2-AC2-zcode
-dispatch_state: OWNER_IS_SESSION
+delivery_head: c3ee8dbebc860f67abd668301dc81ab78d917bac
+review: doc/reviews/M2-AC2-375cf43b-dsh-r2.md (approved_with_conditions; C1-C3 closed by owner)
+dispatch_state: DELIVERED_FOR_REVIEW
 ---
 
 # M2-AC2 — Data Integrity Acceptance

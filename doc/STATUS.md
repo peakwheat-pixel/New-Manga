@@ -12,7 +12,7 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 |---|---|
 | Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
 | Current Active Task | **None (`in_progress`=0).** |
-| Current released Task | [M2-AC2](tasks/M2-AC2.md) Data Integrity Acceptance = `ready / M2_AC2_DATA_INTEGRITY_RELEASED`（用户批准 2026-09-28；Owner=ZCode 本会话实现、Reviewer=DSH、Integrator=Codex 新会话）；fixed base=`61f9db9b`；纯验收（产品代码零改动） |
+| Current released Task | [M2-AC2](tasks/M2-AC2.md) Data Integrity Acceptance = `in_review / DELIVERED_FOR_REVIEW closed`；Owner=ZCode（本会话）交付 tip=`c3ee8dbe`（11 场景），DSH r1 changes_requested → 返修 → r2 approved_with_conditions（C1-C3 Owner 已闭）；**集成待执行（Codex 新会话）** |
 | Owner / Reviewer / Integrator | ZCode（Owner 会话）/ DeepSeek Harness（非作者）/ Codex（新 ZCode 会话，保持 Owner≠Integrator） |
 | Recovery point | base=`61f9db9b`; branch=`agent/zcode/M2-AC2-data-integrity`; worktree=`G:/CODEX/New Manga.worktrees/M2-AC2-zcode`（从 release commit 检出） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1 及 M2-IPC1 全部 `done`；最新 integration=`66416eb6` |
