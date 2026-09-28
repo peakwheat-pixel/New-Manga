@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { runAc1OrFailClosed } from "./ac1/driver";
+import { LibraryPanel } from "./library/LibraryPanel";
 import { ResourceChannelClient, TypedChannelError } from "./resourceChannel/client";
 
 type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
@@ -468,6 +469,7 @@ export default function App() {
           <div key={index}>{line}</div>
         ))}
       </div>
+      <LibraryPanel />
     </div>
   );
 }
