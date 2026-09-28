@@ -1,0 +1,20 @@
+# shell: Git Bash (win32) / worktree: G:/CODEX/New Manga.worktrees/M2-AC3-zcode / HEAD at run: c754e71499d01ecefb39f86f63020af6d07f3f68
+# cmd: TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance/test_provider_fail_closed.py -v
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-AC3-zcode
+configfile: pytest.ini
+collecting ... collected 8 items
+
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac1_zero_config_detect_fails_closed_without_fabricated_regions PASSED [ 12%]
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac1_missing_binding_fails_closed_with_typed_slot PASSED [ 25%]
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac1_dangling_binding_reports_unavailable_not_silent PASSED [ 37%]
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac2_network_failure_typed_and_existing_results_intact PASSED [ 50%]
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac3_partial_failure_run_boundary_is_honest PASSED [ 62%]
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac4_source_files_untouched_across_failure_runs PASSED [ 75%]
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac5_reassembly_after_failure_preserves_run_truth PASSED [ 87%]
+tests/m2_acceptance/test_provider_fail_closed.py::test_ac5_retry_after_fix_leaves_no_duplicates_or_dangling PASSED [100%]
+
+============================== 8 passed in 5.85s ==============================
+EXIT=0

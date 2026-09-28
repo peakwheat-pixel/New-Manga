@@ -2,7 +2,7 @@
 id: M2-AC3
 title: Provider Fail-closed Acceptance (unconfigured / network failure / partial failure)
 kind: acceptance
-status: in_progress
+status: in_review
 release_state: M2_AC3_PROVIDER_FAIL_CLOSED_RELEASED
 approval: approved_by_user_2026-09-28_m2ac3_release
 execution_approval: approved_by_user_2026-09-28_m2ac3_release
@@ -19,7 +19,8 @@ worktree: G:/CODEX/New Manga.worktrees/M2-AC3-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: CLAIMED_BY_OWNER_ZCODE_2026-09-28
+dispatch_state: DELIVERED_FOR_REVIEW
+delivery_ledger: claim=c754e714 -> implementation=b0112834 -> evidence/handoff=this commit (Owner branch tip = delivery head)
 ---
 
 # M2-AC3 — Provider Fail-closed Acceptance
@@ -36,12 +37,12 @@ Owner=ZCode；非作者 Reviewer=DeepSeek Harness；Integrator=Codex（**新会�
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — Provider 未配置 fail-closed：** 空 registry / provider 未就绪时，pipeline 执行不产出任何半成品成果（无 revision、无 artifact 文件、无 StepResult 半成品落库）；失败以 typed 错误呈现（`PROVIDER_NOT_CONFIGURED` taxonomy 或 `ProviderNotConfigured`/`PipelineError`），错误信息可诊断（能区分"未配置"与其他失败）；页/run 状态如实，不得伪造成成功。
-- [ ] **AC2 — 网络失败 fail-closed 与既有成果保护：** provider 运行中失败（transport/请求错误）时，失败以 typed 错误呈现且可诊断；**既有成果零损坏**——失败前已存在的人工修改、revision、pinned 标记、current 指针全部保持（复用 M2-AC2 断言口径）；无半成品 revision/artifact 留库。
-- [ ] **AC3 — 部分失败边界如实：** 多页/多 region 的 run 中部分成功部分失败时，run 终态如实（如 `COMPLETED_WITH_FAILURES`），成功页与失败页边界可查询、失败页无伪造成果；成功页成果完整可用；失败原因按页可诊断。
-- [ ] **AC4 — 源文件零风险：** 上述全部失败场景中，用户源文件字节与 mtime 全程不变（Core 对源目录零写入），managed copy 无部分写入（字节与源一致）。
-- [ ] **AC5 — 可恢复：** 失败后同一 data root 重新装配（进程重启等价），状态一致可查询；失败 run 可被重试/恢复路径触达（如 `recover_running_runs` 语义、剩余 units 可重试），重试成功后不留重复或悬空成果。
-- [ ] **AC6 — 证据纪律：** 所有命令记录 shell、解释器、固定 HEAD、EXIT；`FAIL`/`BLOCKED`/`NOT_RUN` 分开报告；提交 Handoff 与 delivery head；`git diff --check <base>..<delivery-head>` exit 0。
+- [x] **AC1 — Provider 未配置 fail-closed：** 空 registry / provider 未就绪时，pipeline 执行不产出任何半成品成果（无 revision、无 artifact 文件、无 StepResult 半成品落库）；失败以 typed 错误呈现（`PROVIDER_NOT_CONFIGURED` taxonomy 或 `ProviderNotConfigured`/`PipelineError`），错误信息可诊断（能区分"未配置"与其他失败）；页/run 状态如实，不得伪造成成功。→ **PASS（3 场景）**：零配置 detect 缺口（detail="weights are not installed"）、无 binding（detail 含 `no provider binding configured for step 'ocr'`）、悬空 binding（`PROVIDER_UNAVAILABLE`，detail 含 `no provider registered as 'm2ac3-ghost-ocr'`，与网络失败可区分）；三场景均零 Region/零 candidate/零 revision/零新 managed 文件、run=`COMPLETED_WITH_FAILURES`。
+- [x] **AC2 — 网络失败 fail-closed 与既有成果保护：** provider 运行中失败（transport/请求错误）时，失败以 typed 错误呈现且可诊断；**既有成果零损坏**——失败前已存在的人工修改、revision、pinned 标记、current 指针全部保持（复用 M2-AC2 断言口径）；无半成品 revision/artifact 留库。→ **PASS（1 场景）**：fixture provider 每次调用抛 typed `ProviderTimeout` → step/task error_code=`PROVIDER_TIMEOUT`（≠`PROVIDER_NOT_CONFIGURED`，detail 带 provider id）；人工译文/translation lock/manual_edited/pinned/revision 计数/current 指针全部原样。
+- [x] **AC3 — 部分失败边界如实：** 多页/多 region 的 run 中部分成功部分失败时，run 终态如实（如 `COMPLETED_WITH_FAILURES`），成功页与失败页边界可查询、失败页无伪造成果；成功页成果完整可用；失败原因按页可诊断。→ **PASS（1 场景）**：双页 run（A 成功/B transport 失败）→ run=`COMPLETED_WITH_FAILURES`、task A=COMPLETED/B=FAILED 可查询；A 恰好 +1 revision 且 current 在其上、B 零 revision 零伪文本、B 的 typed detail 按页可诊断。
+- [x] **AC4 — 源文件零风险：** 上述全部失败场景中，用户源文件字节与 mtime 全程不变（Core 对源目录零写入），managed copy 无部分写入（字节与源一致）。→ **PASS（1 场景）**：连续两个失败 run（无 binding → 悬空 binding）后源 bytes/size/mtime_ns/目录清单不变、managed copy 逐字节等于源。
+- [x] **AC5 — 可恢复：** 失败后同一 data root 重新装配（进程重启等价），状态一致可查询；失败 run 可被重试/恢复路径触达（如 `recover_running_runs` 语义、剩余 units 可重试），重试成功后不留重复或悬空成果。→ **PASS（2 场景）**：重装配后 run/task/step 的 typed 失败状态全部持久可查询；binding 修复后重试 run=`COMPLETED`，旧 run 不复活，revision 序列 `[1,2]` 连续无重复、current 在最新且携带 provider 文本。
+- [x] **AC6 — 证据纪律：** 所有命令记录 shell、解释器、固定 HEAD、EXIT；`FAIL`/`BLOCKED`/`NOT_RUN` 分开报告；提交 Handoff 与 delivery head；`git diff --check <base>..<delivery-head>` exit 0。→ **PASS**：两级 pytest 日志（8 passed / 23 passed 均 EXIT=0）+ diff-check（实现区间 EXIT=0 实测，交付 tip 全区间由集成方复跑为准）；Qt/WebView2 错误呈现读面 NOT_RUN 单列；证据在 [verification/M2-AC3/verification-results.md](../verification/M2-AC3/verification-results.md)。
 
 ## 允许修改范围
 
@@ -57,9 +58,9 @@ Owner=ZCode；非作者 Reviewer=DeepSeek Harness；Integrator=Codex（**新会�
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1–AC5 各场景族 | planned：`$py -m pytest tests/m2_acceptance/test_provider_fail_closed.py -v` | production assembly + 临时 data root + 固定 HEAD（worktree 根目录；`$py`=`G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe`） | NOT_RUN | 无 |
-| 回归：m2_acceptance 既有套件 | planned：`$py -m pytest tests/m2_acceptance -q` | 同上（预期 15 passed + 新增） | NOT_RUN | 无 |
-| 范围与空白 | planned：`git diff --check <base>..<delivery-head>` | 同上 | NOT_RUN | 无 |
+| AC1–AC5 各场景族 | planned：`$py -m pytest tests/m2_acceptance/test_provider_fail_closed.py -v` | production assembly + 临时 data root + 固定 HEAD（worktree 根目录；`$py`=`G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe`） | **executed：8 passed, 0 skipped, EXIT=0**（HEAD at run=b0112834） | [raw/pytest-provider-fail-closed-v.log](../../verification/M2-AC3/raw/pytest-provider-fail-closed-v.log) |
+| 回归：m2_acceptance 既有套件 | planned：`$py -m pytest tests/m2_acceptance -q` | 同上（预期 15 passed + 新增） | **executed：23 passed**（既有 15 + 新增 8，零回归），EXIT=0 | [raw/pytest-m2-acceptance-regression.log](../../verification/M2-AC3/raw/pytest-m2-acceptance-regression.log) |
+| 范围与空白 | planned：`git diff --check <base>..<delivery-head>` | 同上 | **executed：EXIT=0**（base..实现 head b0112834 实测；交付 tip 全区间由集成方复跑为准） | [raw/git-diff-check.log](../../verification/M2-AC3/raw/git-diff-check.log) |
 
 ## 依赖、风险与阻塞
 
@@ -69,7 +70,8 @@ Owner=ZCode；非作者 Reviewer=DeepSeek Harness；Integrator=Codex（**新会�
 
 ## 交付与运行记录
 
-- Handoff：尚无（`doc/handoffs/M2-AC3-<short-head>.md`）。
-- Review：尚无（DeepSeek Harness 非作者）。
-- 实际测试：尚无。
+- Handoff：[doc/handoffs/M2-AC3-owner-delivery.md](../handoffs/M2-AC3-owner-delivery.md)（2026-09-28，Owner=ZCode）。
+- Review：尚无（DeepSeek Harness 非作者，待派发）。
+- 实际测试：见上方矩阵与 [verification/M2-AC3/verification-results.md](../verification/M2-AC3/verification-results.md)（含判别力 mutation 先红记录）。
+- Head ledger：claim=`c754e714` → 实现=`b0112834` → evidence/handoff=交付 tip（本 commit）。
 - 交付后由 Integrator（新会话代行 Codex）集成：复跑验收命令、核对 allowed paths、merge 进 main、置 `done` 并填 `integration_merge`。
