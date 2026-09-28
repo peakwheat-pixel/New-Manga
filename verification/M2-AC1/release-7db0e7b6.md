@@ -5,7 +5,7 @@
 - **Owner / Reviewer / Integrator:** ZCode（建议执行角色 `heavy_task_executor`）/ DeepSeek Harness（非作者）/ Codex。
 - **Dependency:** M2-RC2=`done`, integration=`88f972fed921c7d7a010bef38a734de2601d9ca5`。
 - **Fixed implementation base:** `7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d`.
-- **Registration/release commit:** recorded in the final Codex handoff after the governance commit is created.
+- **Registration/release commit:** `dee2e0faef34868a4cf2ab86ff1b450d158d9777`.
 - **Owner branch:** `agent/zcode/M2-AC1-end-to-end-acceptance`.
 - **Owner worktree:** `G:/CODEX/New Manga.worktrees/M2-AC1-zcode` (frozen path; awaiting Codex creation).
 - **Scope:** deterministic Mock/Local success path, SQLite result persistence, actual process restart/recovery, Reader page reading and one PNG export verification. The detailed AC, allowed/forbidden paths and commands in the Task are authoritative.
