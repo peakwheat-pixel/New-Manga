@@ -12,9 +12,11 @@
 //!    (final path re-derived from the handle stays inside the scope root),
 //!    file identity (volume serial + file index vs issue-time facts), size
 //!    (issue-time size + T1 256 MiB limit);
-//! 4. the issue-time digest is re-verified through the handle whenever the
-//!    grant has never been verified OR its LastWriteTime moved since the last
-//!    verification (F-02: catches equal-size in-place rewrites) without
+//! 4. the issue-time digest is re-verified through the handle on EVERY
+//!    request (F-02: catches equal-size in-place rewrites; an mtime-gated
+//!    short-circuit is unsound because NTFS LastWriteTime granularity
+//!    follows the system timer tick, so a rewrite landing in the same tick
+//!    as the verified write reads back the identical mtime) without
 //!    materialising the file;
 //! 5. serve the requested chunk (≤16 MiB) read through the same handle;
 //! 6. re-check identity after reading.
@@ -58,13 +60,12 @@ impl ScopeRoots {
     }
 }
 
+/// Memoised Core resolve result (F-01). Deliberately carries NO verification
+/// state: the content verdict (digest) is recomputed from the file on every
+/// request (F-02 fix — the former `digest_verified`/`verified_mtime`
+/// short-circuit let a same-tick equal-size rewrite through).
 struct CachedGrant {
     grant: Grant,
-    digest_verified: bool,
-    /// LastWriteTime observed when the full-file digest check last passed
-    /// (F-02: an equal-size in-place rewrite bumps mtime while keeping the
-    /// NTFS file index, so an mtime change forces a digest re-verification).
-    verified_mtime: Option<u64>,
 }
 
 /// F-10 (partial): the cache must not grow without bound. Entries are always
@@ -394,7 +395,6 @@ pub(crate) fn hex(bytes: impl AsRef<[u8]>) -> String {
 fn verify_and_serve(
     grant: &Grant,
     roots: &ScopeRoots,
-    entry: &mut CachedGrant,
     chunk_offset: u64,
 ) -> Result<Vec<u8>, CoreError> {
     let root = roots
@@ -412,7 +412,7 @@ fn verify_and_serve(
     }
 
     // identity + size from the handle vs issue-time facts (every request)
-    let (volume, index, size, mtime) = identity_size_mtime(opened.handle)?;
+    let (volume, index, size, _mtime) = identity_size_mtime(opened.handle)?;
     if volume != grant.volume_serial || index != grant.file_index {
         return Err(CoreError::new("FILE_IDENTITY_CHANGED"));
     }
@@ -423,17 +423,17 @@ fn verify_and_serve(
         return Err(CoreError::new("RESOURCE_TOO_LARGE"));
     }
 
-    // F-02: the issue-time digest is re-verified when never verified, or when
-    // the file's LastWriteTime moved since the last verified pass (an
-    // equal-size in-place rewrite keeps the NTFS file index but bumps mtime).
-    let needs_digest = !entry.digest_verified || entry.verified_mtime != Some(mtime);
-    if needs_digest {
-        let digest = stream_digest(opened.handle, size)?;
-        if digest != grant.sha256 {
-            return Err(CoreError::new("CONTENT_DIGEST_MISMATCH"));
-        }
-        entry.digest_verified = true;
-        entry.verified_mtime = Some(mtime);
+    // F-02 (fixed): the issue-time digest is re-verified through the handle
+    // on EVERY request. The former `digest_verified`/`verified_mtime` gate
+    // was unsound: NTFS LastWriteTime granularity follows the system timer
+    // tick, so an equal-size in-place rewrite landing in the same tick as
+    // the verified write read back the IDENTICAL mtime (AC1 probe:
+    // mtime_delta_100ns=0, rewritten content served with status 200) and
+    // the rewritten bytes bypassed the digest check. Cost accepted: one
+    // full-file stream digest per request, bounded by MAX_RESOURCE_BYTES.
+    let digest = stream_digest(opened.handle, size)?;
+    if digest != grant.sha256 {
+        return Err(CoreError::new("CONTENT_DIGEST_MISMATCH"));
     }
 
     // serve the requested chunk through the same handle
@@ -501,34 +501,16 @@ pub fn handle_m2res_request(
     if guard.len() >= GRANT_CACHE_MAX_ENTRIES {
         guard.clear(); // re-derivable from the Core; bounded memory (F-10)
     }
-    let entry = match guard.get_mut(&full_id) {
-        Some(entry) => {
-            // keep the digest flag only if the Core's issue-time facts are
-            // unchanged; different facts force a full re-verification
-            if entry.grant.sha256 != fresh_grant.sha256
-                || entry.grant.size != fresh_grant.size
-                || entry.grant.rel_path != fresh_grant.rel_path
-            {
-                entry.digest_verified = false;
-                entry.verified_mtime = None;
-            }
-            entry.grant = fresh_grant.clone();
-            entry
-        }
-        None => {
-            guard.insert(
-                full_id.clone(),
-                CachedGrant {
-                    grant: fresh_grant.clone(),
-                    digest_verified: false,
-                    verified_mtime: None,
-                },
-            );
-            guard.get_mut(&full_id).unwrap()
-        }
-    };
+    // the cache memoises only the Core resolve result; the content verdict
+    // is recomputed from the file on every request (F-02 fix)
+    guard.insert(
+        full_id.clone(),
+        CachedGrant {
+            grant: fresh_grant.clone(),
+        },
+    );
 
-    match verify_and_serve(&fresh_grant, roots, entry, chunk_offset) {
+    match verify_and_serve(&fresh_grant, roots, chunk_offset) {
         Ok(chunk) => HttpResponse::ok("application/octet-stream", chunk),
         Err(error) => {
             // an identity/size/containment/digest failure invalidates the entry

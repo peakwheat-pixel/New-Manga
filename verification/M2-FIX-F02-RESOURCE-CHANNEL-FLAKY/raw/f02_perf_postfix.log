@@ -1,0 +1,39 @@
+=== AC2 perf post-fix (always re-verify) ===
+2026-09-29T03:13:10+08:00
+=== HEAD: 6a404c19b114148f59f06341f0bb87d7c4bc6007 ===
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-F02-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:421:66
+    |
+421 |         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+    |                                                                  ^^^^^^^^^^
+
+warning: field `grant` is never read
+  --> src\resource_protocol.rs:68:5
+   |
+67 | struct CachedGrant {
+   |        ----------- field in this struct
+68 |     grant: Grant,
+   |     ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 3 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.85s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 1 test
+F02-PERF 1MiB fixture, 200 warm requests: total=3.6848978s mean=18424.5us/request
+test tests::f02_perf_probe_request_cost ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 3.75s
+
+EXIT=0
