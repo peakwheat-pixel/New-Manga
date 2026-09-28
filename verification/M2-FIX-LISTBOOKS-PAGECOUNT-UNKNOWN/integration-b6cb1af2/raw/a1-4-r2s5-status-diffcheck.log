@@ -1,0 +1,8 @@
+shell: Git Bash (win32)
+time: 2026-09-29T02:44:21+08:00
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+purpose: DSH r2 §5-4 worktree clean + whole-tree diff --check
+--- git status --porcelain ---
+STATUS_EXIT=0
+--- git diff --check 6199df48..b6cb1af2 ---
+DIFF_CHECK_EXIT=0

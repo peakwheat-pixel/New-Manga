@@ -1,0 +1,9 @@
+shell: Git Bash (win32)
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+head: 699610291f1536a1a1dbda62ba73f2587def1d91  (= integration merge 69961029)
+time: 2026-09-29T02:54:12+08:00
+purpose: C3 post-merge cargo run 2 (run 1 = f02 FAILED 32 passed @main.rs:821, EXIT=101; protocol per integration ruling: rerun default threads)
+cmd: cargo test --bin m2rc1-desktop (default threads)
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... ok
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+EXIT=0

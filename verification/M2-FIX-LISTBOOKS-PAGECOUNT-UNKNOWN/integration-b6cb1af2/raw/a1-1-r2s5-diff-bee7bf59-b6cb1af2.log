@@ -1,0 +1,30 @@
+shell: Git Bash (win32) / integrator=Codex (delegated)
+time: 2026-09-29T02:43:58+08:00
+head (worktree): b6cb1af2299b887461e1e7b2914b7577f8a6871c
+branch: agent/zcode/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN
+purpose: DSH r2 §5-1 name-status+stat bee7bf59..b6cb1af2 (r2 delta = tests/docs/logs only, src/ untouched)
+cmd: git diff --name-status bee7bf59..b6cb1af2; git diff --stat bee7bf59..b6cb1af2
+--- name-status ---
+M	apps/desktop/frontend/src/library/LibraryPanel.test.tsx
+M	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+M	doc/handoffs/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-owner-delivery.md
+M	doc/tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md
+M	tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/final-tip-rerun.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/npm-test-after-known0-case.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/npm-vitest-known0-mutation-red.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/r2-final-bind-rerun.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/verification-results.md
+--- stat ---
+ .../frontend/src/library/LibraryPanel.test.tsx     |  27 ++++
+ doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md          |   4 +-
+ ...X-LISTBOOKS-PAGECOUNT-UNKNOWN-owner-delivery.md |  27 +++-
+ doc/tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md    |   2 +-
+ ...test_reader_export_lineage_library_pagecount.py |   8 +-
+ .../raw/final-tip-rerun.log                        |  61 ++++++++
+ .../raw/npm-test-after-known0-case.log             |  38 +++++
+ .../raw/npm-vitest-known0-mutation-red.log         |  41 +++++
+ .../raw/r2-final-bind-rerun.log                    | 167 +++++++++++++++++++++
+ .../verification-results.md                        |  72 +++++++++
+ 10 files changed, 434 insertions(+), 13 deletions(-)
+EXIT=0

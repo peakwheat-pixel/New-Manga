@@ -1,0 +1,26 @@
+shell: Git Bash (win32)
+time: 2026-09-29T02:47:22+08:00
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+purpose: r1 §2-2 scope name-status (expect 11 paths, same set as raw/scope-and-diff-check.log) ; diff --check already covered at r2§5-4 (6199df48..b6cb1af2 empty EXIT=0)
+cmd: git diff --name-status 6199df48..852a92ae
+M	apps/desktop/frontend/src/library/LibraryPanel.test.tsx
+M	apps/desktop/frontend/src/library/LibraryPanel.tsx
+M	apps/desktop/frontend/src/library/types.ts
+M	apps/desktop/src-tauri/src/library_bridge.rs
+M	doc/STATUS.md
+M	doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+M	doc/tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md
+M	src/bootstrap/core_service.py
+M	tests/core/test_core_service.py
+M	tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/cargo-test.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/npm-test-and-build.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/prod-sql-copy-sync-check.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-core-after-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-core-targeted-anchors.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/pytest-m2_acceptance-after-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/red-run-f2-before-fix.log
+A	verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/release-6199df48.md
+EXIT=0
+--- count paths ---
+18

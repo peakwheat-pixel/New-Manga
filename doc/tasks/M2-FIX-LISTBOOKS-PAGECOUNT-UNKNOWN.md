@@ -2,7 +2,7 @@
 id: M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN
 title: ListBooks page_count unknown/已知度通道（F-2 修复）
 kind: fix
-status: in_review
+status: done
 release_state: M2_FIX_LISTBOOKS_PAGECOUNT_UNKNOWN_RELEASED
 approval: released_by_orchestrator_2026-09-29_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
 execution_approval: released_by_orchestrator_2026-09-29_goal_g2
@@ -14,10 +14,10 @@ depends_on: [M2-AC4]
 base_commit: 6199df48
 branch: agent/zcode/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN
 worktree: G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode
-delivery_head: 852a92aefbeffd4b15c701cecd2b19d6229b70ca
-review: null
-integration_merge: null
-dispatch_state: DELIVERED_FOR_REVIEW
+delivery_head: b6cb1af2299b887461e1e7b2914b7577f8a6871c（r2 终版；claim 2210d642 → 交付 852a92ae → 回填 bee7bf59 → r2 amend 链 f4f77808→c3f8bb3a→b6cb1af2，逐段差集见 verification-results.md §1 #4 与 integration.md §C5）
+review: doc/reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-852a92ae-dsh-r1.md (approved_with_conditions; 0×P0/P1) -> doc/reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-b6cb1af2-dsh-r2.md (approved_with_conditions; C1=通过 C2=通过可集成，C3/C4/C5 集成关闭)
+integration_merge: 699610291f1536a1a1dbda62ba73f2587def1d91
+dispatch_state: INTEGRATED
 ---
 
 # M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN — Library page_count unknown/已知度通道补齐
@@ -48,7 +48,7 @@ dispatch_state: DELIVERED_FOR_REVIEW
 - [x] **AC3 — xfail 移除转 PASS：** 修复前证红（`presented_unknown` False、EXIT=1，raw/red-run-f2-before-fix.log）后移除 strict xfail；全套 **35 passed, 0 xfailed**（无 XPASS）。
 - [x] **AC4 — typed 错误回归保护：** `E_LIST_BOOKS_FAILED` 既有断言保持绿（点名复跑 PASSED）；handler 分支被触碰 → 已有 sqlite3.Error→typed 断言 + 语义更新后的 filtering 测试 + 新增 known-0 测试共同强化。
 - [x] **AC5 — 契约与副本同步：** 契约 M2-C1 rev `1.2` 登记授权 widening（头部版本 + Revision history + §5 ListBooks 行）；production SQL 零改动（diff 逐字核对）→ `_PRODUCTION_COUNT_SQL` 副本无需编辑、逐字一致保持。
-- [x] **AC6 — 证据纪律：** 全部命令日志带 shell/解释器/固定 HEAD/ISO 时间戳/EXIT（`verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/`）；Python/cargo/npm 三层各自留痕；`git diff --check 6199df48..852a92ae` 整树 EXIT=0；范围自检 owner delta 全落允许路径（STATUS.md/release checkpoint 来自编排者 release commit `a2380706`，非 owner 改动）。
+- [x] **AC6 — 证据纪律：** 全部命令日志带 shell/解释器/固定 HEAD/ISO 时间戳/EXIT（`verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/`）；Python/cargo/npm 三层各自留痕；`git diff --check 6199df48..852a92ae` 整树 EXIT=0（**集成方并注 r2 tip 口径（DSH r2 P3-4）**：`git diff --check 6199df48..b6cb1af2` 同样空 + EXIT=0，integration-b6cb1af2/raw/a1-4-r2s5-status-diffcheck.log）；范围自检 owner delta 全落允许路径（STATUS.md/release checkpoint 来自编排者 release commit `a2380706`，非 owner 改动）。
 
 ## 允许修改范围（2026-09-29 冻结）
 
@@ -66,4 +66,5 @@ dispatch_state: DELIVERED_FOR_REVIEW
 
 ## 交付与运行记录
 
-- **DELIVERED_FOR_REVIEW（2026-09-29，ZCode 子 agent 代行）**：commit ledger claim `2210d642` → 交付 `852a92ae` → 回填 `bee7bf59` → **r2 返修**（DSH r1 `approved_with_conditions` 条件 C1+C2；hash 见 `git log` / [raw/r2-final-bind-rerun.log](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/r2-final-bind-rerun.log) 头部 run-at 戳）。r2 内容：TS known-0 正向用例 + `??`→`||` 变异红证/还原绿（C1/P2-1）、模块 docstring :39 陈旧句修正（P3-2）、契约 §3.2 授权例外指针（P2-2）+ 1.2 日期修正（P3-3）、`verification-results.md` 新建（P2-3）、Handoff tip 表述更正（P2-4）+ NOT_RUN 小节（C4 预置）。验证数字：m2_acceptance **35 passed, 0 xfailed**、core **77 passed**、cargo `--bin m2rc1-desktop` **33 passed**、vitest 5 files（LibraryPanel 8 tests）、整树 `git diff --check` EXIT=0（r1 期四套 EXIT=0 原日志保留；r2 tip 绑定复跑见 raw/r2-final-bind-rerun.log）。C3/C4 留 Codex 集成收口。详见 [Owner Handoff](../handoffs/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-owner-delivery.md) 与 [verification-results.md](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/verification-results.md)。待 DSH 非作者 Review r2 → Codex 集成收口。
+- **DELIVERED_FOR_REVIEW（2026-09-29，ZCode 子 agent 代行）**：commit ledger claim `2210d642` → 交付 `852a92ae` → 回填 `bee7bf59` → **r2 返修**（DSH r1 `approved_with_conditions` 条件 C1+C2；hash 见 `git log` / [raw/r2-final-bind-rerun.log](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/r2-final-bind-rerun.log) 头部 run-at 戳）。r2 内容：TS known-0 正向用例 + `??`→`||` 变异红证/还原绿（C1/P2-1）、模块 docstring :39 陈旧句修正（P3-2）、契约 §3.2 授权例外指针（P2-2）+ 1.2 日期修正（P3-3）、`verification-results.md` 新建（P2-3）、Handoff tip 表述更正（P2-4）+ NOT_RUN 小节（C4 预置）。验证数字：m2_acceptance **35 passed, 0 xfailed**、core **77 passed**、cargo `--bin m2rc1-desktop` **33 passed**、vitest 5 files（LibraryPanel 8 tests）、整树 `git diff --check` EXIT=0（r1 期四套 EXIT=0 原日志保留；r2 tip 绑定复跑见 raw/r2-final-bind-rerun.log）。详见 [Owner Handoff](../handoffs/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-owner-delivery.md) 与 [verification-results.md](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/verification-results.md)。
+- **INTEGRATED（2026-09-29，Codex 集成，本文件 frontmatter 由集成方修正）**：DSH r2 判定 `approved_with_conditions`（C1=通过、C2=通过，无需 Owner 返修；r2 报告归档 [doc/reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-b6cb1af2-dsh-r2.md](../reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-b6cb1af2-dsh-r2.md)，r1 报告归档 [doc/reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-852a92ae-dsh-r1.md](../reviews/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN-852a92ae-dsh-r1.md)）。**最终 r2 tip = `b6cb1af2299b887461e1e7b2914b7577f8a6871c`**（amend 链 `f4f77808`→`c3f8bb3a`→`b6cb1af2`）。集成 merge `699610291f1536a1a1dbda62ba73f2587def1d91`（--no-ff，无冲突）；C3（集成 head 复跑四套：35/77/33/31）、C4（f02 flaky 裁定：默认线程三连 1 失败 2 绿 + 单线程对照绿 → 既有资源通道潜伏 flake，另立 flaky Task 建议，不计本 Task 回归；`LibraryPanel.test.tsx` 属 AC1 必然要求范围解释；NOT_RUN 裁定）、C5（amend 轨迹+final tip 落档）全部关闭于 [integration.md](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/integration-b6cb1af2/integration.md)。

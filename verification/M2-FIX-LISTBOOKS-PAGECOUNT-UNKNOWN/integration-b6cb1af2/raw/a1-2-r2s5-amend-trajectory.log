@@ -1,0 +1,17 @@
+shell: Git Bash (win32)
+time: 2026-09-29T02:43:58+08:00
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+purpose: DSH r2 §5-2 amend-trajectory diff f4f77808..b6cb1af2 (P2-1: delta = the log file itself)
+--- f4f77808..c3f8bb3a ---
+ .../raw/r2-final-bind-rerun.log                    | 167 +++++++++++++++++++++
+ 1 file changed, 167 insertions(+)
+EXIT1=0
+--- c3f8bb3a..b6cb1af2 ---
+ verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/verification-results.md | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+EXIT2=0
+--- f4f77808..b6cb1af2 (full trajectory) ---
+ .../raw/r2-final-bind-rerun.log                    | 167 +++++++++++++++++++++
+ .../verification-results.md                        |   2 +-
+ 2 files changed, 168 insertions(+), 1 deletion(-)
+EXIT3=0

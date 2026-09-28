@@ -1,0 +1,13 @@
+shell: Git Bash (win32)
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+head: 699610291f1536a1a1dbda62ba73f2587def1d91  (= integration merge 69961029)
+time: 2026-09-29T02:53:55+08:00
+cwd: apps/desktop/src-tauri (frontend/dist pre-verified present)
+purpose: C3 post-merge rerun at integration head — cargo (expect 33 passed; if f02 flakes, protocol: default-threads rerun per integration ruling)
+cmd: cargo test --bin m2rc1-desktop (default threads)
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... FAILED
+---- tests::f02_equal_size_rewrite_after_first_verify_rejected stdout ----
+thread 'tests::f02_equal_size_rewrite_after_first_verify_rejected' (41436) panicked at src\main.rs:821:9:
+    tests::f02_equal_size_rewrite_after_first_verify_rejected
+test result: FAILED. 32 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+EXIT=101

@@ -1,0 +1,24 @@
+shell: Git Bash (win32)
+node: v24.15.0 / npm: 12.0.1
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+time: 2026-09-29T02:49:22+08:00
+cwd: apps/desktop/frontend
+purpose: DSH r2 §5-5d vitest rerun at final tip b6cb1af2 (expect 5 files / 31 tests, LibraryPanel 8)
+cmd: npm test (= vitest run)
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/apps/desktop/frontend[39m
+
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 84[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+[2m   Start at [22m 02:49:23
+[2m   Duration [22m 469ms[2m (transform 168ms, setup 0ms, collect 290ms, tests 103ms, environment 1ms, prepare 606ms)[22m
+
+EXIT=0

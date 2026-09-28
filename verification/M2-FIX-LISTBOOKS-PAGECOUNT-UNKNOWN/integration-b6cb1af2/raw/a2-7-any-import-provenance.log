@@ -1,0 +1,11 @@
+shell: Git Bash (win32)
+time: 2026-09-29T02:48:13+08:00
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+purpose: r1 §2-7 / P3-6 Any import provenance — base 6199df48 also lacks 'from typing import Any' (pre-existing latent item, not introduced by this task)
+cmd: git show 6199df48:tests/core/test_core_service.py | grep -n 'typing' ; grep -n 'Any' tests/core/test_core_service.py (current)
+--- base ---
+BASE_GREP_EXIT=1
+--- current tip ---
+TIP_GREP_EXIT=1
+--- Any usage lines (current) ---
+394:        def fail_execute(*args: Any, **kwargs: Any) -> Any:

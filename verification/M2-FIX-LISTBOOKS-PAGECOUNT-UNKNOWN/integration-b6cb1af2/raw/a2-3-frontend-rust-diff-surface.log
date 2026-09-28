@@ -1,0 +1,149 @@
+shell: Git Bash (win32)
+time: 2026-09-29T02:48:13+08:00
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+purpose: r1 §2-3 frontend/Rust diff surface (expect only page_count-related lines)
+cmd: git diff 6199df48..852a92ae -- apps/desktop/frontend apps/desktop/src-tauri
+diff --git a/apps/desktop/frontend/src/library/LibraryPanel.test.tsx b/apps/desktop/frontend/src/library/LibraryPanel.test.tsx
+index 2bc79c17..67f1939c 100644
+--- a/apps/desktop/frontend/src/library/LibraryPanel.test.tsx
++++ b/apps/desktop/frontend/src/library/LibraryPanel.test.tsx
+@@ -31,6 +31,32 @@ describe("LibraryPanel Component", () => {
+     expect(html).toContain('data-testid="library-book-list"');
+   });
+ 
++  it("renders a non-numeric placeholder for an unknown (null) page_count, never 0", () => {
++    // M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN AC1: null page_count (unknown
++    // data) must not render as the plausible number 0.
++    const books: BookSummary[] = [
++      {
++        book_id: "book-unknown-pages",
++        title: "未知页数书",
++        original_title: "",
++        is_favorite: false,
++        is_archived: false,
++        page_count: null,
++        created_at: "2026-09-28T10:00:00Z",
++        updated_at: "2026-09-28T10:00:00Z",
++      },
++    ];
++
++    const html = renderToString(
++      <LibraryPanel initialState={{ books, loading: false, error: null }} />
++    );
++
++    expect(html).toContain("未知页数书");
++    expect(html).toContain("页数: —");
++    expect(html).not.toContain("页数: 0");
++    expect(html).toContain('data-testid="library-book-list"');
++  });
++
+   it("renders empty state message when book list is empty", () => {
+     const html = renderToString(
+       <LibraryPanel initialState={{ books: [], loading: false, error: null }} />
+diff --git a/apps/desktop/frontend/src/library/LibraryPanel.tsx b/apps/desktop/frontend/src/library/LibraryPanel.tsx
+index 45e02239..b0174ed6 100644
+--- a/apps/desktop/frontend/src/library/LibraryPanel.tsx
++++ b/apps/desktop/frontend/src/library/LibraryPanel.tsx
+@@ -142,7 +142,7 @@ export function LibraryPanel({ client, initialState }: LibraryPanelProps) {
+                 )}
+               </div>
+               <div style={{ fontSize: 12, color: "#8b949e", marginTop: 6, display: "flex", gap: 16 }}>
+-                <span>{`页数: ${book.page_count}`}</span>
++                <span>{`页数: ${book.page_count ?? "—"}`}</span>
+                 <span>{`创建时间: ${book.created_at}`}</span>
+                 {book.is_favorite && <span style={{ color: "#e3b341" }}>★ 收藏</span>}
+                 {book.is_archived && <span style={{ color: "#8b949e" }}>[已归档]</span>}
+diff --git a/apps/desktop/frontend/src/library/types.ts b/apps/desktop/frontend/src/library/types.ts
+index fcfa49d9..c080ef50 100644
+--- a/apps/desktop/frontend/src/library/types.ts
++++ b/apps/desktop/frontend/src/library/types.ts
+@@ -15,7 +15,12 @@ export interface BookSummary {
+   original_title: string;
+   is_favorite: boolean;
+   is_archived: boolean;
+-  page_count: number;
++  /**
++   * M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN (frozen None channel):
++   * null = unknown/missing data (no qualifying-page row for this book);
++   * a counted value stays a number (a KNOWN 0 is distinct from null).
++   */
++  page_count: number | null;
+   created_at: string;
+   updated_at: string;
+ }
+diff --git a/apps/desktop/src-tauri/src/library_bridge.rs b/apps/desktop/src-tauri/src/library_bridge.rs
+index 489b5e47..f2efa449 100644
+--- a/apps/desktop/src-tauri/src/library_bridge.rs
++++ b/apps/desktop/src-tauri/src/library_bridge.rs
+@@ -29,7 +29,10 @@ pub struct BookSummary {
+     pub original_title: String,
+     pub is_favorite: bool,
+     pub is_archived: bool,
+-    pub page_count: u32,
++    /// M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN (frozen None channel): `None`
++    /// serializes as JSON `null` = unknown/missing data; a counted value
++    /// stays a number (a KNOWN 0 must stay distinguishable from `null`).
++    pub page_count: Option<u32>,
+     pub created_at: String,
+     pub updated_at: String,
+ }
+@@ -364,7 +367,7 @@ mod tests {
+             original_title: "Orig".to_string(),
+             is_favorite: true,
+             is_archived: false,
+-            page_count: 5,
++            page_count: Some(5),
+             created_at: "2026-09-28T00:00:00Z".to_string(),
+             updated_at: "2026-09-28T00:00:00Z".to_string(),
+         }]);
+@@ -372,7 +375,7 @@ mod tests {
+         let loaded = channel.list_books().unwrap();
+         assert_eq!(loaded.len(), 1);
+         assert_eq!(loaded[0].book_id, "book-1");
+-        assert_eq!(loaded[0].page_count, 5);
++        assert_eq!(loaded[0].page_count, Some(5));
+ 
+         channel.set_books_error(LibraryError::unavailable("connection lost"));
+         let err = channel.list_books().unwrap_err();
+@@ -380,6 +383,40 @@ mod tests {
+         assert_eq!(err.retryable, true);
+     }
+ 
++    #[test]
++    fn book_summary_page_count_known_zero_and_null_are_distinguishable() {
++        // M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN AC2: the frozen None channel must
++        // keep a KNOWN 0 expressible -- the serialized wire forms of a known 0
++        // and an unknown page_count must never conflate (0 != null).
++        let summary = |page_count: Option<u32>| BookSummary {
++            book_id: "book-1".to_string(),
++            title: "T".to_string(),
++            original_title: "O".to_string(),
++            is_favorite: false,
++            is_archived: false,
++            page_count,
++            created_at: "2026-09-28T00:00:00Z".to_string(),
++            updated_at: "2026-09-28T00:00:00Z".to_string(),
++        };
++
++        let zero_json = serde_json::to_string(&summary(Some(0))).unwrap();
++        let null_json = serde_json::to_string(&summary(None)).unwrap();
++        assert!(
++            zero_json.contains(r#""page_count":0"#),
++            "a known 0 must serialize as the JSON number 0, got: {zero_json}"
++        );
++        assert!(
++            null_json.contains(r#""page_count":null"#),
++            "an unknown page_count must serialize as JSON null, got: {null_json}"
++        );
++        assert_ne!(zero_json, null_json);
++
++        let zero_back: BookSummary = serde_json::from_str(&zero_json).unwrap();
++        let null_back: BookSummary = serde_json::from_str(&null_json).unwrap();
++        assert_eq!(zero_back.page_count, Some(0));
++        assert_eq!(null_back.page_count, None);
++    }
++
+     #[test]
+     fn wait_timeout_or_kill_terminates_hanging_process() {
+         let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+EXIT=0

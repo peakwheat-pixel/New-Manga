@@ -1,0 +1,9 @@
+shell: Git Bash (win32)
+python: Python 3.12.3
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+time: 2026-09-29T02:45:07+08:00
+purpose: DSH r2 §5-5a m2_acceptance rerun at final tip b6cb1af2 (expect 35 passed, 0 xfailed)
+cmd: $py -m pytest tests/m2_acceptance -q
+...................................                                      [100%]
+35 passed in 9.04s
+EXIT=0

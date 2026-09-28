@@ -1,0 +1,9 @@
+shell: Git Bash (win32)
+python: Python 3.12.3
+head: 699610291f1536a1a1dbda62ba73f2587def1d91  (= integration merge 69961029)
+time: 2026-09-29T02:53:30+08:00
+purpose: C3 post-merge rerun at integration head — m2_acceptance (expect 35 passed, 0 xfailed)
+cmd: $py -m pytest tests/m2_acceptance -q
+...................................                                      [100%]
+35 passed in 9.18s
+EXIT=0

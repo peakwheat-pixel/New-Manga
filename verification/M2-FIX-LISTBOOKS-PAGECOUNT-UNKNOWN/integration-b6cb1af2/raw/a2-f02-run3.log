@@ -1,0 +1,9 @@
+shell: Git Bash (win32)
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+time: 2026-09-29T02:46:40+08:00
+purpose: f02 default-threads run 3/3 (r1 §2-6; run 1 FAILED, run 2 ok)
+cmd: cargo test --bin m2rc1-desktop (default threads)
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... ok
+test result: ok. 33 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.50s
+EXIT=0

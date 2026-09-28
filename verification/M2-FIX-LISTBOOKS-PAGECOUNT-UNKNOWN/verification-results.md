@@ -13,8 +13,8 @@
 |---|---|---|
 | 1 | `2210d642` | claim（Task frontmatter owner/dispatch_state RELEASED→IN_PROGRESS） |
 | 2 | `852a92ae`（= delivery_head） | r1 交付：三层 None 通道（Python/Rust/TS）+ 契约 rev 1.2 + F-2 xfail 移除 + known-0 单测（Python/Rust/TS 单向）+ raw 日志 |
-| 3 | r1 回填 `bee7bf59` | Task 回填 AC 判定、status: in_review、DELIVERED_FOR_REVIEW + Handoff + final-tip-rerun 日志（该日志实际随 #3 提交） |
-| 4 | r2 返修 commit（本文件所在 tip，hash 见 `git log`；Task frontmatter `delivery_head` 仍指向 #2，r2 tip 在正文 ledger 登记） | DSH r1 C1+C2：TS known-0 正向用例 + `??`→`||` 变异红证/还原、模块 docstring :39 陈旧句、契约 §3.2 例外指针 + 1.2 日期修正、本验证文档、Handoff 修正（tip 表述 + NOT_RUN 小节）；r2 tip 绑定复跑日志 amend 并入 |
+| 3 | r1 回填 `bee7bf59` | Task 回填 AC 判定、status: in_review、DELIVERED_FOR_REVIEW + Handoff + final-tip-rerun 日志（~~该日志实际随 #3 提交~~ **集成方 2026-09-29 修正（DSH r2 P3-1）**：`git log --diff-filter=A` 实证该日志首次加入 = #4 `b6cb1af2`（2026-09-29T02:35:19+08:00），且日志头时间 02:17:45 晚于 `bee7bf59` ref 时间 02:17:38，不可能随 #3 提交；证据 [integration-b6cb1af2/raw/a1-3-r2s5-final-tip-log-added-at.log](integration-b6cb1af2/raw/a1-3-r2s5-final-tip-log-added-at.log)） |
+| 4 | r2 返修 commit `b6cb1af2299b887461e1e7b2914b7577f8a6871c`（= 最终 r2 tip；**集成方 2026-09-29 回填完整 hash（DSH r2 P2-1/C5）**；amend 轨迹 `f4f77808` → `c3f8bb3a` → `b6cb1af2` 及每次差集登记于 [integration-b6cb1af2/integration.md](integration-b6cb1af2/integration.md)） | DSH r1 C1+C2：TS known-0 正向用例 + `??`→`||` 变异红证/还原、模块 docstring :39 陈旧句、契约 §3.2 例外指针 + 1.2 日期修正、本验证文档、Handoff 修正（tip 表述 + NOT_RUN 小节）；r2 tip 绑定复跑日志 amend 并入 |
 
 ## 2. 先红证据（AC3 前置：修复前证红留痕）
 
@@ -50,14 +50,14 @@ cargo f02 flaky 事件（首跑默认线程 `f02_equal_size_rewrite_after_first_
 | 步骤 | 命令 | 日志 | 结果 | EXIT |
 |---|---|---|---|---|
 | 变异红证 | `LibraryPanel.tsx:145` 临时 `??`→`||`（工作区未提交）→ `npx vitest run src/library/LibraryPanel.test.tsx` | [raw/npm-vitest-known0-mutation-red.log](raw/npm-vitest-known0-mutation-red.log) | **恰新 known-0 用例 FAILED**（`0` 被吞成 `页数: —`，`toContain("页数: 0")` 失败 `:82`），其余 7 用例（null→—、24→24 等）保持绿——变异仅由新用例拦截 | **1** |
-| 还原 + 绿证 | `||` 还原 `??`（`git diff --stat` 对该文件为空 = 零残留，见日志尾）→ `npm test` + `npm run build` | [raw/npm-test-after-known0-case.log](raw/npm-test-after-known0-case.log) | LibraryPanel.test.tsx **8 tests** 全绿；5 files passed；build 通过 | 0 / 0 |
+| 还原 + 绿证 | `||` 还原 `??`（~~`git diff --stat` 对该文件为空 = 零残留，见日志尾~~ **集成方 2026-09-29 修正指针（DSH r2 P3-2）**：原指向日志尾部仅自述括注、无 diff 输出；零残留实证改指 [raw/r2-final-bind-rerun.log](raw/r2-final-bind-rerun.log)（整树 `git diff --check 6199df48..HEAD` 空 + EXIT=0，且 `LibraryPanel.tsx:145` 现为 `??`）与 [integration-b6cb1af2/integration.md](integration-b6cb1af2/integration.md) §C5）→ `npm test` + `npm run build` | [raw/npm-test-after-known0-case.log](raw/npm-test-after-known0-case.log) | LibraryPanel.test.tsx **8 tests** 全绿；5 files passed；build 通过 | 0 / 0 |
 
 新用例：`renders a known page_count of 0 as the number 0, never the unknown placeholder`（`apps/desktop/frontend/src/library/LibraryPanel.test.tsx`）。
 
 ## 6. head 戳绑定说明（DSH r1 P2-4 / C3 背景，Owner 侧如实登记）
 
 - r1 期 cargo/npm 日志 head=`2210d642`（claim，交付前）：执行时刻交付 commit 尚未创建；内容层对应交付树（新增用例名、7 tests、33 `#[test]` 与交付文件逐一吻合，DSH r1 §0 轴 6 独立复核）。Handoff 原文「交付 tip」表述已随 r2 修正为「工作树等价于 `852a92ae`，日志 head 戳 `2210d642`（交付前）」。
-- **r2 tip 绑定复跑（commit 级绑定，amend 并入 r2 返修 commit）**：[raw/r2-final-bind-rerun.log](raw/r2-final-bind-rerun.log)——在 r2 返修 commit 上复跑 `pytest tests/m2_acceptance -q`（35 passed）、`pytest tests/core -q`（77 passed）、`cargo test --bin m2rc1-desktop`（33 passed）、`npm test`（5 files / 31 tests，LibraryPanel 8）+ `npm run build`、`git diff --check 6199df48..HEAD`（空 + EXIT=0）；日志头 run-at hash = r2 初版 `f4f77808`（本日志自身经 amend 并入，被验树与最终 r2 tip 的差集 = 本日志文件；最终 r2 hash 见 `git log`）。日志中段三条 `EXIT=1` 为一次 bash 重定向路径错误的中止调用（cargo/npm 未执行、无结果产生），已逐行 `ABORTED INVOCATION` 括注，其后的注记 rerun 为有效结果。
+- **r2 tip 绑定复跑（commit 级绑定，amend 并入 r2 返修 commit）**：[raw/r2-final-bind-rerun.log](raw/r2-final-bind-rerun.log)——在 r2 返修 commit 上复跑 `pytest tests/m2_acceptance -q`（35 passed）、`pytest tests/core -q`（77 passed）、`cargo test --bin m2rc1-desktop`（33 passed）、`npm test`（5 files / 31 tests，LibraryPanel 8）+ `npm run build`、`git diff --check 6199df48..HEAD`（空 + EXIT=0）；日志头 run-at hash = r2 初版 `f4f77808`（本日志自身经 amend 并入；**集成方 2026-09-29 修正（DSH r2 P2-1/C5）**：被验树与最终 r2 tip `b6cb1af2` 的完整差集 = 本日志文件 + 本文件 1 行括注修正，并非仅日志文件；逐段差集：`f4f77808→c3f8bb3a` = +raw/r2-final-bind-rerun.log（167 行），`c3f8bb3a→b6cb1af2` = 本文件 1 行，证据 [integration-b6cb1af2/raw/a1-2-r2s5-amend-trajectory.log](integration-b6cb1af2/raw/a1-2-r2s5-amend-trajectory.log)）。日志中段三条 `EXIT=1` 为一次 bash 重定向路径错误的中止调用（cargo/npm 未执行、无结果产生），已逐行 `ABORTED INVOCATION` 括注，其后的注记 rerun 为有效结果。
 
 ## 7. 范围自检
 

@@ -1,0 +1,14 @@
+shell: Git Bash (win32)
+time: 2026-09-29T02:44:21+08:00
+head: b6cb1af2299b887461e1e7b2914b7577f8a6871c
+purpose: DSH r2 §5-3 when final-tip-rerun.log first added (closes P3-1)
+cmd: git log --diff-filter=A --format='%h %cI' -- verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/final-tip-rerun.log
+b6cb1af2 2026-09-29T02:35:19+08:00
+EXIT=0
+--- P3-1 cross-check: log header head-stamp line ---
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: "Python 3.12.3"
+head: bee7bf597d597355d52c41618c67af4d218ca1cc
+time: 2026-09-29T02:17:45+08:00
+purpose: delivery-tip-bound rerun (run-at hash = this head, includes backfill commit; code identical to delivery 852a92ae)
+---

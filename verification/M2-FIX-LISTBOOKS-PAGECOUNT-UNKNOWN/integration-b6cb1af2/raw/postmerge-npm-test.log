@@ -1,0 +1,15 @@
+shell: Git Bash (win32)
+node: v24.15.0 / npm: 12.0.1
+head: 699610291f1536a1a1dbda62ba73f2587def1d91  (= integration merge 69961029)
+time: 2026-09-29T02:54:23+08:00
+cwd: apps/desktop/frontend
+purpose: C3 post-merge rerun at integration head — vitest (expect 5 files / 31 tests, LibraryPanel 8)
+cmd: npm test (= vitest run)
+ [32m✓[39m src/library/client.test.ts [2m([22m[2m4 tests[22m[2m)[22m[90m 4[2mms[22m[39m
+ [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 5[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 7[2mms[22m[39m
+ [32m✓[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m)[22m[90m 178[2mms[22m[39m
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+EXIT=0
