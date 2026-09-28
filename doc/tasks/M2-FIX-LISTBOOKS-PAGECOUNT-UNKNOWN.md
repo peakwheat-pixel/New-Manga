@@ -7,7 +7,7 @@ release_state: M2_FIX_LISTBOOKS_PAGECOUNT_UNKNOWN_RELEASED
 approval: released_by_orchestrator_2026-09-29_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
 execution_approval: released_by_orchestrator_2026-09-29_goal_g2
 suggested_owner: ZCode
-owner: ZCode（待认领）
+owner: ZCode（子 agent 代行，用户授权 2026-09-28）
 reviewer: DeepSeek Harness
 integrator: Codex（另一子 agent 以 Codex 身份执行，保持 Owner≠Integrator）
 depends_on: [M2-AC4]
@@ -17,7 +17,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: RELEASED
+dispatch_state: IN_PROGRESS
 ---
 
 # M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN — Library page_count unknown/已知度通道补齐
