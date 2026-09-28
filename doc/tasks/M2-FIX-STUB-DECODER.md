@@ -2,7 +2,7 @@
 id: M2-FIX-STUB-DECODER
 title: core_service stub decoder signature fix（ImportPages 扩面前置）
 kind: fix
-status: in_review
+status: done
 release_state: M2_FIX_STUB_DECODER_RELEASED
 approval: released_by_orchestrator_2026-09-29_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
 execution_approval: released_by_orchestrator_2026-09-29_goal_g2
@@ -14,10 +14,10 @@ depends_on: [M2-IPC1]
 base_commit: f5d91425
 branch: agent/zcode/M2-FIX-STUB-DECODER
 worktree: G:/CODEX/New Manga.worktrees/M2-FIX-STUB-DECODER-zcode
-delivery_head: null
-review: null
-integration_merge: null
-dispatch_state: DELIVERED_FOR_REVIEW
+delivery_head: 5cacebfa25ef17ea3a487ac4fcb11a4590636661
+review: doc/reviews/M2-FIX-STUB-DECODER-69250a39-dsh-r1.md (DSH r1 approved_with_conditions, 0xP0/P1/P2, C1-C2 closed)
+integration_merge: 121a281cbf65f62c57b177efc44fa4649b11c9ae
+dispatch_state: INTEGRATED
 ---
 
 # M2-FIX-STUB-DECODER — core_service stub decoder 签名修复
@@ -62,7 +62,7 @@ dispatch_state: DELIVERED_FOR_REVIEW
 ## 交付与运行记录
 
 - Handoff：`doc/handoffs/M2-FIX-STUB-DECODER-owner-delivery.md`（Owner=ZCode 子 agent 代行，用户授权 2026-09-28）。
-- Review：尚无（下一接收者=DeepSeek Harness 非作者 Review）。
+- Review：DSH r1（非作者静态）**approved_with_conditions**，0×P0/P1/P2，6×P3 不阻塞；归档 `doc/reviews/M2-FIX-STUB-DECODER-69250a39-dsh-r1.md`（SHA256 `d17b4262466ce4b9382b63319859f44c40aeb3c498db03692b61908c3a7d7fe6`）。C1/C2 由 Integrator 代跑关闭，P3-1..P3-6 处置见 [集成记录](../verification/M2-FIX-STUB-DECODER/integration-69250a39/integration.md)。
 - 实际测试（2026-09-28，TASK-012-py312，Windows x64 · Git Bash · Python 3.12.3 · pytest 9.1.1）：
   - 先红：TypeError @ `core_service.py:54`，2 failed，EXIT=1 → 修复后 2 passed，EXIT=0（`tests/core/test_stub_decoder.py`）。
   - 回归：`tests/core/` 76 passed；`tests/m2_acceptance` 32 passed + 2 xfailed（F-1/F-2 受控缺陷证据，未触碰）；均 EXIT=0。

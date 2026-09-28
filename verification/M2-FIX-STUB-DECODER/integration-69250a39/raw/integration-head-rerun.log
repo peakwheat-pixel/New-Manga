@@ -1,0 +1,8 @@
+shell: bash (GNU bash, version 5.2.37(1)-release (x86_64-pc-msys))
+Python 3.12.3
+b318aecb2bf3a669c1c84726ea5387cba2e673a6
+2026-09-29T01:02:47+08:00
+=== cmd: python -m pytest tests/core/test_stub_decoder.py tests/m2_acceptance -q (integration head) ===
+.............................x...x..                                     [100%]
+34 passed, 2 xfailed in 9.61s
+EXIT=0

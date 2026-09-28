@@ -1,0 +1,8 @@
+shell: bash (GNU bash, version 5.2.37(1)-release (x86_64-pc-msys))
+Python 3.12.3
+69250a39ac3ff48c13c28cfd34241eb9fb78a494
+2026-09-29T00:59:37+08:00
+=== cmd: python -m pytest tests/m2_acceptance -q ===
+...........................x...x..                                       [100%]
+32 passed, 2 xfailed in 9.64s
+EXIT=0

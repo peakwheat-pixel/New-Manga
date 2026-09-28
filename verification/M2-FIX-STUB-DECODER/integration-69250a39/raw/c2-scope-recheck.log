@@ -1,0 +1,37 @@
+=== C2-1: git diff --name-status fc419905..5cacebfa ===
+A	doc/handoffs/M2-FIX-STUB-DECODER-owner-delivery.md
+M	doc/tasks/M2-FIX-STUB-DECODER.md
+M	src/bootstrap/core_service.py
+A	tests/core/test_stub_decoder.py
+A	verification/M2-FIX-STUB-DECODER/raw/02-red-before-fix.log
+A	verification/M2-FIX-STUB-DECODER/raw/03-green-after-fix.log
+A	verification/M2-FIX-STUB-DECODER/raw/04-regression-tests-core.log
+A	verification/M2-FIX-STUB-DECODER/raw/05-regression-tests-m2_acceptance.log
+A	verification/M2-FIX-STUB-DECODER/verification-results.md
+EXIT=0
+
+=== C2-2: git diff f5d91425..5cacebfa -- src/ (含 numstat) ===
+ src/bootstrap/core_service.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+diff --git a/src/bootstrap/core_service.py b/src/bootstrap/core_service.py
+index 9d5639b6..4f2bd1c9 100644
+--- a/src/bootstrap/core_service.py
++++ b/src/bootstrap/core_service.py
+@@ -51,7 +51,9 @@ E_UNKNOWN = "UNKNOWN"
+ class _PassthroughImageDecoder:
+     def decode(self, payload: bytes) -> DecodedImage:
+         del payload
+-        return DecodedImage(width=1, height=1, format="rgb")
++        # mime_type keeps the stub's original "rgb" semantics under the image
++        # type, matching the frozen DecodedImage contract (no format= field).
++        return DecodedImage(width=1, height=1, mime_type="image/rgb")
+ 
+ 
+ class _StubStyleAnalyzer:
+EXIT=0
+
+=== C2-2b: git diff --numstat f5d91425..5cacebfa -- src/ ===
+3	1	src/bootstrap/core_service.py
+
+=== C2-3: git diff --check f5d91425..5cacebfa ===
+EXIT=0
