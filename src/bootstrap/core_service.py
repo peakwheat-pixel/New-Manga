@@ -44,6 +44,7 @@ PROTOCOL_MINOR = 0
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
 E_UNKNOWN_COMMAND = "UNKNOWN_COMMAND"
+E_LIST_BOOKS_FAILED = "LIST_BOOKS_FAILED"
 E_UNKNOWN = "UNKNOWN"
 
 
@@ -165,24 +166,21 @@ class CoreServiceServer:
 
     def _fetch_page_counts(self) -> dict[str, int]:
         """Read-only query calculating valid non-deleted page counts per book."""
-        try:
-            rows = self._core.conn.execute(
-                """
-                SELECT c.book_id, COUNT(p.page_id) AS cnt
-                FROM chapters c
-                JOIN pages p ON p.chapter_id = c.chapter_id
-                WHERE c.deleted_at IS NULL
-                  AND p.deleted_at IS NULL
-                  AND p.source_hash IS NOT NULL
-                  AND p.managed_original_ref IS NOT NULL
-                  AND p.width IS NOT NULL
-                  AND p.height IS NOT NULL
-                GROUP BY c.book_id
-                """
-            ).fetchall()
-            return {row["book_id"]: int(row["cnt"]) for row in rows}
-        except sqlite3.Error:
-            return {}
+        rows = self._core.conn.execute(
+            """
+            SELECT c.book_id, COUNT(p.page_id) AS cnt
+            FROM chapters c
+            JOIN pages p ON p.chapter_id = c.chapter_id
+            WHERE c.deleted_at IS NULL
+              AND p.deleted_at IS NULL
+              AND p.source_hash IS NOT NULL
+              AND p.managed_original_ref IS NOT NULL
+              AND p.width IS NOT NULL
+              AND p.height IS NOT NULL
+            GROUP BY c.book_id
+            """
+        ).fetchall()
+        return {row["book_id"]: int(row["cnt"]) for row in rows}
 
     def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.
@@ -227,12 +225,18 @@ class CoreServiceServer:
 
         request_id = req.get("request_id")
         protocol = req.get("protocol")
-        version = req.get("version") or {}
+        version = req.get("version")
         command = req.get("command")
         payload = req.get("payload") if isinstance(req.get("payload"), dict) else {}
 
-        # Validate protocol name and version major
-        if protocol != PROTOCOL_NAME or version.get("major") != PROTOCOL_MAJOR:
+        # Validate protocol name and version (must be dict with integer major == PROTOCOL_MAJOR)
+        is_valid_version = (
+            isinstance(version, dict)
+            and isinstance(version.get("major"), int)
+            and not isinstance(version.get("major"), bool)
+            and version.get("major") == PROTOCOL_MAJOR
+        )
+        if protocol != PROTOCOL_NAME or not is_valid_version:
             return (
                 {
                     "protocol": PROTOCOL_NAME,
@@ -242,7 +246,7 @@ class CoreServiceServer:
                     "error": make_error_envelope(
                         code=E_PROTOCOL_VERSION_UNSUPPORTED,
                         category="validation",
-                        message=f"Unsupported protocol {protocol!r} or version {version!r}",
+                        message="Unsupported protocol or version",
                         retryable=False,
                     ),
                 },
@@ -272,6 +276,22 @@ class CoreServiceServer:
                         "request_id": request_id,
                         "result": books,
                         "error": None,
+                    },
+                    False,
+                )
+            except sqlite3.Error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_LIST_BOOKS_FAILED,
+                            category="internal",
+                            message="Failed to query library books",
+                            retryable=True,
+                        ),
                     },
                     False,
                 )

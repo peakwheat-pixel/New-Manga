@@ -17,9 +17,11 @@ SRC_ROOT = Path(__file__).resolve().parents[2] / "src"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
+import sqlite3
 import pytest
 
 from bootstrap.core_service import (
+    E_LIST_BOOKS_FAILED,
     E_PROTOCOL_VERSION_UNSUPPORTED,
     E_UNKNOWN_COMMAND,
     PROTOCOL_MAJOR,
@@ -82,7 +84,7 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         assert res["result"] is None
         assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
 
-        # 3. Unsupported protocol version (major != 1)
+        # 3. Unsupported protocol version (major != 1, non-dict, string, missing)
         bad_ver_req = json.dumps({
             "protocol": PROTOCOL_NAME,
             "version": {"major": 2, "minor": 0},
@@ -97,6 +99,23 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
         assert res["error"]["category"] == "validation"
         assert res["error"]["retryable"] is False
+
+        # 3b. Malformed versions (string, missing, None, boolean, string major)
+        for bad_ver in ["1.0", None, {}, {"major": True}, {"major": "1"}, {"minor": 0}]:
+            bad_req = json.dumps({
+                "protocol": PROTOCOL_NAME,
+                "version": bad_ver,
+                "request_id": "req-bad-ver",
+                "command": "core.ping",
+                "payload": {},
+            })
+            res, exit_flag = server.dispatch_request(bad_req)
+            assert not exit_flag
+            assert res["request_id"] == "req-bad-ver"
+            assert res["result"] is None
+            assert res["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+            assert res["error"]["category"] == "validation"
+            assert res["error"]["retryable"] is False
 
         # 4. Unknown command
         unknown_cmd_req = json.dumps({
@@ -302,6 +321,32 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         assert bad_ver_resp["error"]["category"] == "validation"
         assert bad_ver_resp["error"]["retryable"] is False
 
+        # 5b. String version rejection (does not crash or throw unhandled AttributeError)
+        str_ver_resp = send_and_recv({
+            "protocol": PROTOCOL_NAME,
+            "version": "1.0",
+            "request_id": "v-str",
+            "command": "core.ping",
+            "payload": {},
+        })
+        assert str_ver_resp["request_id"] == "v-str"
+        assert str_ver_resp["result"] is None
+        assert str_ver_resp["error"]["code"] == E_PROTOCOL_VERSION_UNSUPPORTED
+        assert str_ver_resp["error"]["category"] == "validation"
+        assert str_ver_resp["error"]["retryable"] is False
+
+        # Verify process is still alive and responsive after malformed version
+        alive_resp = send_and_recv({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": 1, "minor": 0},
+            "request_id": "v-alive",
+            "command": "core.ping",
+            "payload": {},
+        })
+        assert alive_resp["request_id"] == "v-alive"
+        assert alive_resp["error"] is None
+        assert alive_resp["result"]["status"] == "ready"
+
         # 6. Unknown command rejection
         unknown_resp = send_and_recv({
             "protocol": PROTOCOL_NAME,
@@ -332,3 +377,147 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         if proc.poll() is None:
             proc.kill()
             proc.wait()
+
+
+def test_list_books_sqlite_error_typed_response(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    data_root = tmp_path / "data_err"
+    core = assemble_production_core(data_root)
+    try:
+        server = CoreServiceServer(core)
+
+        # Force SQLite failure during page count calculation
+        def fail_execute(*args: Any, **kwargs: Any) -> Any:
+            raise sqlite3.OperationalError("simulated database disk failure")
+
+        monkeypatch.setattr(core.conn, "execute", fail_execute)
+
+        list_req = json.dumps({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": 1, "minor": 0},
+            "request_id": "req-err-1",
+            "command": "ListBooks",
+            "payload": {},
+        })
+        res, exit_flag = server.dispatch_request(list_req)
+        assert exit_flag is False
+        assert res["request_id"] == "req-err-1"
+        assert res["result"] is None
+        assert res["error"]["code"] == E_LIST_BOOKS_FAILED
+        assert res["error"]["category"] == "internal"
+        assert res["error"]["retryable"] is True
+        assert res["error"]["message"] == "Failed to query library books"
+    finally:
+        core.conn.close()
+
+
+def test_page_count_filtering_discriminating_cases(tmp_path: Path) -> None:
+    """Verify page_count rules (R5):
+    - soft-deleted page not counted
+    - soft-deleted chapter not counted
+    - incomplete page (missing hash/ref/width/height) not counted
+    - book without chapters has count 0
+    - normal valid pages counted accurately
+    """
+    data_root = tmp_path / "data_filter"
+    core = assemble_production_core(data_root)
+    try:
+        server = CoreServiceServer(core)
+        repo = SqliteLibraryRepository(core.conn)
+
+        # Book A: 1 valid page, multiple excluded pages, 1 soft-deleted chapter
+        book_a = Book(book_id="book-a", title="Book A")
+        repo.add_book(book_a)
+
+        chap_valid = Chapter(chapter_id="chap-a-1", book_id="book-a", title="Ch 1")
+        repo.add_chapter(chap_valid)
+
+        def insert_raw_page(
+            page_id: str,
+            chapter_id: str,
+            *,
+            source_hash: str | None = "valid-hash",
+            managed_ref: str | None = "managed/ref.png",
+            width: int | None = 800,
+            height: int | None = 1200,
+            deleted_at: str | None = None,
+        ) -> None:
+            core.conn.execute(
+                """
+                INSERT INTO pages (
+                    page_id, chapter_id, source_filename, source_order, sort_order,
+                    source_hash, source_size_bytes, width, height, managed_original_ref,
+                    page_locked, review_state, overall_status, created_at, updated_at,
+                    deleted_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    page_id, chapter_id, "file.png", 1, 1,
+                    source_hash, 100, width, height, managed_ref,
+                    0, "unreviewed", "not_started", "2026-09-28T00:00:00Z", "2026-09-28T00:00:00Z",
+                    deleted_at,
+                ),
+            )
+            core.conn.commit()
+
+        # Page 1: valid -> should count
+        insert_raw_page("p-valid-1", "chap-a-1")
+
+        # Page 2: soft-deleted page -> should NOT count
+        insert_raw_page("p-soft-del", "chap-a-1", deleted_at="2026-01-01T00:00:00Z")
+
+        # Page 3: missing source_hash -> should NOT count
+        insert_raw_page("p-no-hash", "chap-a-1", source_hash=None)
+
+        # Page 4: missing managed_original_ref -> should NOT count
+        insert_raw_page("p-no-ref", "chap-a-1", managed_ref=None)
+
+        # Page 5: missing width -> should NOT count
+        insert_raw_page("p-no-width", "chap-a-1", width=None)
+
+        # Page 6: missing height -> should NOT count
+        insert_raw_page("p-no-height", "chap-a-1", height=None)
+
+        # Chapter 2: soft-deleted chapter
+        chap_del = Chapter(
+            chapter_id="chap-a-2",
+            book_id="book-a",
+            title="Ch 2 Deleted",
+            deleted_at="2026-01-01T00:00:00Z",
+        )
+        repo.add_chapter(chap_del)
+
+        # Page 7: valid attributes, but inside soft-deleted chapter -> should NOT count
+        insert_raw_page("p-in-del-chap", "chap-a-2")
+
+        # Book B: book without chapters -> count must be 0
+        book_b = Book(book_id="book-b", title="Book B (Empty)")
+        repo.add_book(book_b)
+
+        # Book C: 2 valid pages
+        book_c = Book(book_id="book-c", title="Book C")
+        repo.add_book(book_c)
+        chap_c = Chapter(chapter_id="chap-c-1", book_id="book-c", title="Ch C1")
+        repo.add_chapter(chap_c)
+        insert_raw_page("p-c-1", "chap-c-1")
+        insert_raw_page("p-c-2", "chap-c-1")
+
+        # Query via server ListBooks
+        list_req = json.dumps({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": 1, "minor": 0},
+            "request_id": "filter-test",
+            "command": "ListBooks",
+            "payload": {},
+        })
+        res, _ = server.dispatch_request(list_req)
+        assert res["error"] is None
+        books_by_id = {b["book_id"]: b for b in res["result"]}
+
+        assert books_by_id["book-a"]["page_count"] == 1
+        assert books_by_id["book-b"]["page_count"] == 0
+        assert books_by_id["book-c"]["page_count"] == 2
+    finally:
+        core.conn.close()

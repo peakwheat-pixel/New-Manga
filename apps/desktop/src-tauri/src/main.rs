@@ -78,7 +78,8 @@ struct AppState {
     fixture_shas: serde_json::Value,
     /// Present only in the M2-AC1 explicit test startup configuration.
     ac1: Option<Ac1Channel>,
-    library: Box<dyn LibraryChannel>,
+    /// Present only in production mode; probe and ac1 modes do not spawn library sidecar.
+    library: Option<Box<dyn LibraryChannel>>,
 }
 
 #[derive(Serialize)]
@@ -100,12 +101,22 @@ fn into_issued(issued: core_bridge::IssuedRef) -> Result<IssuedUrl, CoreError> {
 
 #[tauri::command]
 fn core_ping(state: tauri::State<'_, AppState>) -> Result<PingResult, String> {
-    state.library.ping().map_err(|error| error.code)
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .ping()
+        .map_err(|error| error.code)
 }
 
 #[tauri::command]
 fn library_list_books(state: tauri::State<'_, AppState>) -> Result<Vec<BookSummary>, String> {
-    state.library.list_books().map_err(|error| error.code)
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .list_books()
+        .map_err(|error| error.code)
 }
 
 /// Production issue shape: catalog entry name + revision only. There is no
@@ -272,12 +283,18 @@ fn main() {
         None
     };
     let data_root = env_path("NEWMANGA_DATA_ROOT");
-    let library = StdioLibraryChannel::spawn(
-        &python_exe,
-        &src_root,
-        data_root.as_deref(),
-    )
-    .expect("production core library sidecar failed to start");
+    let is_production = !probe_mode && !ac1_mode;
+    let library: Option<Box<dyn LibraryChannel>> = if is_production {
+        let chan = StdioLibraryChannel::spawn(
+            &python_exe,
+            &src_root,
+            data_root.as_deref(),
+        )
+        .expect("production core library sidecar failed to start");
+        Some(Box::new(chan))
+    } else {
+        None
+    };
 
     let state = AppState {
         channel: Box::new(channel),
@@ -285,7 +302,7 @@ fn main() {
         roots: ScopeRoots { derived: derived_root, managed: managed_root },
         fixture_shas: fixture_shas(),
         ac1,
-        library: Box::new(library),
+        library,
     };
 
     let builder = tauri::Builder::default()
@@ -900,5 +917,48 @@ mod tests {
 
         let books = channel.list_books().unwrap();
         assert!(books.is_empty());
+    }
+
+    #[test]
+    fn real_library_sidecar_round_trip_and_eof() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let src_root = std::env::var("M2RC1_SRC_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                for _ in 0..3 {
+                    path.pop();
+                }
+                path.join("src")
+            });
+        let dir = tempfile::tempdir().unwrap();
+        let data_root = dir.path().join("data_root");
+        std::fs::create_dir_all(&data_root).unwrap();
+
+        let channel = StdioLibraryChannel::spawn(
+            &python,
+            &src_root,
+            Some(&data_root),
+        )
+        .expect("library sidecar spawn");
+
+        // 1. Ping round-trip succeeds
+        let ping = channel.ping().expect("ping");
+        assert_eq!(ping.status, "ready");
+        assert_eq!(ping.protocol_version.major, 1);
+        assert_eq!(ping.protocol_version.minor, 0);
+        assert!(ping.capabilities.contains(&"library.list_books".to_string()));
+
+        // 2. List books succeeds on empty store
+        let books = channel.list_books().expect("list_books");
+        assert!(books.is_empty());
+
+        // 3. Kill child to simulate EOF / process exit
+        channel.kill_for_test();
+
+        // 4. Subsequent call maps to CORE_UNAVAILABLE
+        let err = channel.ping().unwrap_err();
+        assert_eq!(err.code, "CORE_UNAVAILABLE");
+        assert!(err.retryable);
     }
 }

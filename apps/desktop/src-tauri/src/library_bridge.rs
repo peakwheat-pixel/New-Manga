@@ -214,6 +214,30 @@ impl StdioLibraryChannel {
 
         decode_response(response_line.trim_end())
     }
+
+    #[cfg(test)]
+    pub fn kill_for_test(&self) {
+        if let Ok(mut child) = self.child.lock() {
+            let _ = child.kill();
+            let _ = child.wait();
+        }
+    }
+}
+
+pub fn wait_timeout_or_kill(
+    child: &mut Child,
+    timeout: std::time::Duration,
+) -> Result<std::process::ExitStatus, std::io::Error> {
+    let start = std::time::Instant::now();
+    let poll_interval = std::time::Duration::from_millis(50);
+    while start.elapsed() < timeout {
+        if let Some(status) = child.try_wait()? {
+            return Ok(status);
+        }
+        std::thread::sleep(poll_interval);
+    }
+    let _ = child.kill();
+    child.wait()
 }
 
 impl Drop for StdioLibraryChannel {
@@ -230,7 +254,7 @@ impl Drop for StdioLibraryChannel {
             let _ = stdin.flush();
         }
         if let Ok(mut child) = self.child.lock() {
-            let _ = child.wait();
+            let _ = wait_timeout_or_kill(&mut child, std::time::Duration::from_secs(5));
         }
     }
 }
@@ -354,5 +378,24 @@ mod tests {
         let err = channel.list_books().unwrap_err();
         assert_eq!(err.code, "CORE_UNAVAILABLE");
         assert_eq!(err.retryable, true);
+    }
+
+    #[test]
+    fn wait_timeout_or_kill_terminates_hanging_process() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let mut child = Command::new(&python)
+            .args(&["-c", "import time; time.sleep(10)"])
+            .stdin(Stdio::null())
+            .stdout(Stdio::null())
+            .stderr(Stdio::null())
+            .spawn()
+            .expect("spawn hanging process");
+
+        let start = std::time::Instant::now();
+        let status = wait_timeout_or_kill(&mut child, std::time::Duration::from_millis(150))
+            .expect("wait_timeout_or_kill succeeds");
+
+        assert!(start.elapsed() < std::time::Duration::from_secs(3));
+        assert!(!status.success());
     }
 }
