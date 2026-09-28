@@ -1,0 +1,39 @@
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-AC1-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:28:5
+   |
+28 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:262:12
+    |
+262 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:267:12
+    |
+267 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:276:12
+    |
+275 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+276 |     pub fn new() -> Self {
+    |            ^^^
+...
+285 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+293 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 4 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `release` profile [optimized] target(s) in 6.84s

@@ -1,0 +1,331 @@
+{
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac1-e2e-scabmhr2",
+  "scenarios": [
+    {
+      "id": "EVN-python-resolved",
+      "observed": {
+        "path": "C:\\Python314\\python.EXE"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-python",
+      "observed": {
+        "version": [
+          "Python 3.14.6"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-cargo-resolved",
+      "observed": {
+        "path": "C:\\Users\\49745\\.cargo\\bin\\cargo.EXE"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-cargo",
+      "observed": {
+        "version": [
+          "cargo 1.98.1 (797e8a9bc 2026-08-05)"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-rustc-resolved",
+      "observed": {
+        "path": "C:\\Users\\49745\\.cargo\\bin\\rustc.EXE"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-rustc",
+      "observed": {
+        "version": [
+          "rustc 1.98.1 (48a229cea 2026-09-01)"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-node-resolved",
+      "observed": {
+        "path": "E:\\Program Files\\nodejs\\node.EXE"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-node",
+      "observed": {
+        "version": [
+          "v24.15.0"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-npm-resolved",
+      "observed": {
+        "path": "E:\\Program Files\\nodejs\\npm.CMD"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-npm",
+      "observed": {
+        "version": [
+          "12.0.1"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "BLD-frontend",
+      "observed": {
+        "exit": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "BLD-cargo",
+      "observed": {
+        "exit": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "BLD-exe-present",
+      "observed": {
+        "exe": "G:\\CODEX\\New Manga.worktrees\\M2-AC1-zcode\\apps\\desktop\\src-tauri\\target\\release\\m2rc1-desktop.exe"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run1-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run1-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/105927.795:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run1-results-phase",
+      "observed": {
+        "phase": "run1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run2-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run2-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/105928.317:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run2-results-phase",
+      "observed": {
+        "phase": "run2"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-restart-desktop-pid-differs",
+      "observed": {
+        "run1": 35252,
+        "run2": 4696
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-restart-core-pid-differs",
+      "observed": {
+        "run1": 25516,
+        "run2": 35308
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-saved-summary",
+      "observed": {
+        "pages": 2,
+        "run_status": "completed"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-mock-local-providers",
+      "observed": {
+        "providers": {
+          "ocr": "m2ac1-mock-ocr",
+          "translate": "m2ac1-mock-translate"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-reader-pages-match-saved",
+      "observed": {
+        "viewed": [
+          {
+            "index": 0,
+            "sha": "f66af60a9846"
+          },
+          {
+            "index": 1,
+            "sha": "4afc67386c25"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-export-png",
+      "observed": {
+        "sha": "4afc67386c25",
+        "size": 1122
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run1-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run1-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/105929.441:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run1-results-phase",
+      "observed": {
+        "phase": "run1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run2-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run2-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/105929.978:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run2-results-phase",
+      "observed": {
+        "phase": "run2"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-restart-desktop-pid-differs",
+      "observed": {
+        "run1": 27420,
+        "run2": 35168
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-restart-core-pid-differs",
+      "observed": {
+        "run1": 27460,
+        "run2": 20756
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-saved-summary",
+      "observed": {
+        "pages": 2,
+        "run_status": "completed"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-mock-local-providers",
+      "observed": {
+        "providers": {
+          "ocr": "m2ac1-mock-ocr",
+          "translate": "m2ac1-mock-translate"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-reader-pages-match-saved",
+      "observed": {
+        "viewed": [
+          {
+            "index": 0,
+            "sha": "f66af60a9846"
+          },
+          {
+            "index": 1,
+            "sha": "4afc67386c25"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-export-png",
+      "observed": {
+        "sha": "4afc67386c25",
+        "size": 1122
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "independent-samples-identical-summaries",
+      "observed": {
+        "sample-a": [
+          "f66af60a9846",
+          "4afc67386c25"
+        ],
+        "sample-b": [
+          "f66af60a9846",
+          "4afc67386c25"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-gate",
+      "observed": {},
+      "status": "PASS"
+    }
+  ],
+  "task": "M2-AC1",
+  "verdict": "PASS"
+}

@@ -28,12 +28,12 @@ Owner=ZCode（建议执行角色：`heavy_task_executor`）；非作者 Reviewer
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — 确定性 Pipeline 成功路径：** 使用仓库内或临时目录中的合成 Book / Chapter / 多页输入，走 M2 Python Core 与桌面宿主的真实调用链，以 Mock/Local provider 成功执行。记录 provider、输入 fixture 清单、预期结果和输出摘要；两个独立运行的摘要一致，状态为成功完成，且未触碰真实模型或网络。
-- [ ] **AC2 — 结果保存：** 成功结果通过 M2 SQLite 持久化路径保存。重启前核对结果记录与生成页面/文件可由持久化状态重新读取；若确有必要新增 schema/migration，仅限本 AC 所需的非破坏性结果持久化，并提交升级与恢复证据。
-- [ ] **AC3 — 进程重启恢复：** 先正常结束桌面进程及其 Core 子进程，再以相同的临时数据根目录启动新进程。以不同 PID 或等价的进程级证据证明确实重启；不依赖内存对象、不重新运行 Pipeline 或重建 fixture，即可恢复同一 Chapter 与结果。
-- [ ] **AC4 — Reader 阅读：** 在恢复后的桌面会话中打开同一结果，显示合成页面并完成至少两页的阅读/翻页；证据需关联到 AC2 保存的结果，不能用进程内 mock 状态替代读取路径。
-- [ ] **AC5 — 导出验证：** 从恢复后的 Reader 导出当前页的单图 PNG；验证导出文件非空、可解码，且像素摘要与 Reader 展示的同一合成页面一致。此项只覆盖该确定性样例的 PNG 导出，不代表 D08 全部导出格式均已验收。
-- [ ] **AC6 — 可复现证据与诚实 Gate：** 提供可从仓库根目录运行的 `python verification/M2-AC1/run_e2e.py`，覆盖至少两次独立确定性运行及其真实进程重启，并将命令、环境、PID/恢复结果、摘要、Reader/export 结果和原始日志写入 `verification/M2-AC1/`。Gate 必须对 `FAIL`、缺失结果、`NOT_RUN` 失败关闭；环境不满足时标 `BLOCKED`，不得写成 PASS。Handoff 说明所有未覆盖项及独立 Review 所需固定 head。
+- [x] **AC1 — 确定性 Pipeline 成功路径：** 使用仓库内或临时目录中的合成 Book / Chapter / 多页输入，走 M2 Python Core 与桌面宿主的真实调用链，以 Mock/Local provider 成功执行。记录 provider、输入 fixture 清单、预期结果和输出摘要；两个独立运行的摘要一致，状态为成功完成，且未触碰真实模型或网络。
+- [x] **AC2 — 结果保存：** 成功结果通过 M2 SQLite 持久化路径保存。重启前核对结果记录与生成页面/文件可由持久化状态重新读取；若确有必要新增 schema/migration，仅限本 AC 所需的非破坏性结果持久化，并提交升级与恢复证据。
+- [x] **AC3 — 进程重启恢复：** 先正常结束桌面进程及其 Core 子进程，再以相同的临时数据根目录启动新进程。以不同 PID 或等价的进程级证据证明确实重启；不依赖内存对象、不重新运行 Pipeline 或重建 fixture，即可恢复同一 Chapter 与结果。
+- [x] **AC4 — Reader 阅读：** 在恢复后的桌面会话中打开同一结果，显示合成页面并完成至少两页的阅读/翻页；证据需关联到 AC2 保存的结果，不能用进程内 mock 状态替代读取路径。
+- [x] **AC5 — 导出验证：** 从恢复后的 Reader 导出当前页的单图 PNG；验证导出文件非空、可解码，且像素摘要与 Reader 展示的同一合成页面一致。此项只覆盖该确定性样例的 PNG 导出，不代表 D08 全部导出格式均已验收。
+- [x] **AC6 — 可复现证据与诚实 Gate：** 提供可从仓库根目录运行的 `python verification/M2-AC1/run_e2e.py`，覆盖至少两次独立确定性运行及其真实进程重启，并将命令、环境、PID/恢复结果、摘要、Reader/export 结果和原始日志写入 `verification/M2-AC1/`。Gate 必须对 `FAIL`、缺失结果、`NOT_RUN` 失败关闭；环境不满足时标 `BLOCKED`，不得写成 PASS。Handoff 说明所有未覆盖项及独立 Review 所需固定 head。
 
 ## 允许修改范围
 
@@ -55,11 +55,12 @@ Owner=ZCode（建议执行角色：`heavy_task_executor`）；非作者 Reviewer
 
 | 场景 / AC | 计划命令或步骤 | 环境与判定 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Core acceptance | `python -m pytest tests/m2_acceptance -q` | Windows；项目 Python 环境；合成输入；新建专用测试集 | `NOT_RUN` | 待 `verification/M2-AC1/` |
-| Tauri host regression（如有 Rust 改动） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | Windows；Rust/Cargo | `NOT_RUN` | 待 `verification/M2-AC1/` |
-| React regression（如有前端改动） | `npm test --prefix apps/desktop/frontend -- --run` | Node/npm；既有 lockfile | `NOT_RUN` | 待 `verification/M2-AC1/` |
-| M2 end-to-end gate | `python verification/M2-AC1/run_e2e.py` | Windows + WebView2；Python、Rust/Cargo、Node/npm；同一隔离临时数据根；不得使用用户数据 | `NOT_RUN` | 待新增 runner 与逐命令日志 |
-| 范围与 whitespace | `git diff --name-status 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>`；`git diff --check 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>` | 固定 reviewed head；逐项对照允许/禁止路径 | `NOT_RUN` | Handoff / Review / Codex integration record |
+| Core acceptance | `python -m pytest tests/m2_acceptance -q` | Windows；TASK-012-py312 venv（Python 3.12.3）；合成输入；新建专用测试集 | **PASS**（4 passed, 0 failed） | [pytest-m2-acceptance.log](../../verification/M2-AC1/pytest-m2-acceptance.log) |
+| Tauri host regression（如有 Rust 改动） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | Windows；cargo 1.98.1 | **PASS**（25 passed, 0 failed） | [cargo-test.log](../../verification/M2-AC1/cargo-test.log) |
+| React regression（如有前端改动） | `npm test --prefix apps/desktop/frontend -- --run` | Node v24.15.0 / npm 12.0.1；既有 lockfile | **PASS**（3 files, 18 passed） | [vitest.log](../../verification/M2-AC1/vitest.log) |
+| M2 end-to-end gate | `python verification/M2-AC1/run_e2e.py` | Windows + WebView2；Python 3.12.3 venv、cargo 1.98.1、Node v24.15.0；同一隔离临时数据根（%TEMP%）；未使用用户数据 | **PASS**（两次 gate 运行均 GATE PASS：完整构建版 40 场景 + skip-build 复跑 27 场景；桌面/Core PID 均跨启动不同） | [e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json)、[e2e-evidence](../../verification/M2-AC1/e2e-evidence/raw/e2e-gate.json) |
+| 范围与 whitespace | `git diff --name-status 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>`；`git diff --check 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>` | 固定 reviewed head；逐项对照允许/禁止路径 | **PASS**（diff --check exit 0；全路径审计见 Handoff §范围审计） | Handoff / Review / Codex integration record |
+| 全仓回归（Owner 加跑） | `python -m pytest -q -p no:cacheprovider -rs` | 同 venv；验证 core_assembly 生产装配零回归 | **PASS**（1322 passed, 5 skipped, exit 0；基线 1318+新增 4） | [pytest-full-suite.log](../../verification/M2-AC1/pytest-full-suite.log) |
 
 只运行实际有改动的语言套件；E2E 与范围 Gate 必须执行。工具或环境不可用时写 `BLOCKED` / `NOT_RUN`，不可从 unit tests 推断端到端 PASS。
 
