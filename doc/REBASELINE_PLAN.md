@@ -21,7 +21,7 @@ releases a task.
 
 ### 2026-09-28 全量任务盘点与当前流程
 
-Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。当前已释放待执行的是 [M2-P1](tasks/M2-P1.md)（`ready`，用户批准 2026-09-28）；无 `in_progress` Task。
+Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。[M2-P1](tasks/M2-P1.md) 已于 2026-09-28 释放、实现、Review 通过并集成（merge=`a174fb9c`）；当前无 `in_progress` 或已释放待派发 Task。
 
 | 已完成 Task | Owner | 非作者 Reviewer / Integrator | Integration |
 |---|---|---|---|
@@ -43,7 +43,7 @@ Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前
 
 | 未完成 / 下一阶段 | 状态 | 建议 Owner / Reviewer | 说明 |
 |---|---|---|---|
-| [M2-P1](tasks/M2-P1.md) Regionless Detection Fan-out and Guard Rebinding | **ready；已释放（用户批准 2026-09-28）** | Antigravity / DeepSeek Harness | fixed base=`33826641`；修复=诊断报告 §5.4 单函数（重绑 `target_id`+`region_id`、不改 `unit_id`）+ R0–R5/N1–N7 矩阵；[release evidence](../verification/M2-P1/release-33826641.md)。 |
+| [M2-P1](tasks/M2-P1.md) Regionless Detection Fan-out and Guard Rebinding | **done**（integration=`a174fb9c`） | Antigravity / DeepSeek Harness（`approved_with_conditions`，P2 已处置） | fixed base=`33826641`、tip=`59acb340`；修复=诊断报告 §5.4 单函数 + R0–R5/N1–N7 全落测；[release evidence](../verification/M2-P1/release-33826641.md)、[集成记录](../verification/M2-P1/integration-record/integration.md)。 |
 | M2-IPC1 Production Core Lifecycle + Read-only Library Vertical Slice | planning；未释放 | Antigravity / DeepSeek Harness；Codex 冻结 seam | 打通 production React → Tauri → Python Core → SQLite；只读 Library。 |
 | M2-AC2 Data Integrity Acceptance | planning；未释放 | ZCode / DeepSeek Harness | source hash、Managed Copy、人工修改、Lock、current/pinned Revision；依赖 P1 与 IPC1。 |
 | Provider fail-closed acceptance | backlog；未登记 | ZCode / DeepSeek Harness | 对应下方 Backlog 第 3 行。 |
@@ -65,7 +65,7 @@ flowchart TD
   UI1 --> C1
   C1 --> S1["M2-S1 ✓"] --> S2["M2-S2 ✓"] --> C2["M2-C2 ✓"] --> S3["M2-S3 ✓"] --> RC1["M2-RC1 ✓"] --> RC2["M2-RC2 ✓"] --> AC1["M2-AC1 ✓"]
   AC1 --> DIAG["DIAG-M2-REGIONLESS ✓"]
-  DIAG --> P1["M2-P1 根因已定位<br>未登记未释放"]
+  DIAG --> P1["M2-P1 ✓"]
   P1 --> IPC1["M2-IPC1 planned"]
   IPC1 --> AC2["M2-AC2 planned"]
   AC2 --> AC3["Provider fail-closed backlog"]
@@ -76,7 +76,7 @@ flowchart TD
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef ready fill:#fff0b3,stroke:#8a6d00,color:#123;
   classDef planned fill:#eef1f5,stroke:#697386,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DIAG done;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DIAG,P1 done;
   class P1,IPC1,AC2,AC3,AC4,PKG,ML,RG planned;
 ```
 
