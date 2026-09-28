@@ -1,0 +1,35 @@
+=== M2-AC4 git diff --check hygiene trail (owner phase) ===
+shell: Git Bash (win32)
+cwd: G:/CODEX/New Manga.worktrees/M2-AC4-zcode
+interpreter: n/a (git only)
+base: a5529181
+
+check 1: git diff --check a5529181..f615d5da
+  date: 2026-09-29T00:11:59+08:00  HEAD at check: f615d5dacecae52667693a1815f4d4825c4a6367
+  result: EXIT=2 -- pytest-emitted trailing whitespace inside the three dev-phase
+  failing-traceback logs (pytest-new-suite-run1.log, mutation-MU1-run.log,
+  mutation-MU2-run.log; pytest writes indented/blank-padded traceback lines).
+  fix: stripped trailing whitespace from those 3 logs (whitespace-only edit,
+  content otherwise byte-identical) and amended into commit 130dd7db.
+
+check 2: git diff --check a5529181..130dd7db
+  date: 2026-09-29T00:13:07+08:00  HEAD at check: 130dd7db22c0aebf8406bdef05e9e017223f9aca
+  result: EXIT=2 -- the only remaining offenses were inside this very log file:
+  its first revision had captured check-1's raw output lines (with their
+  trailing whitespace) verbatim.
+  fix: this log was rewritten as a hand-written whitespace-clean trail; the
+  rewritten file ships with the delivery commit.
+
+check 3 (owner pre-verification of the pending delivery commit):
+  date: see rerun line appended below
+  command: git diff --check a5529181   (base vs working tree, i.e. every line
+  the delivery commit will add, including this file, doc/tasks/M2-AC4.md and
+  doc/handoffs/M2-AC4-owner-delivery.md)
+  result: appended below as "rerun:".
+  The protocol check against the final delivery tip
+  (git diff --check a5529181..<delivery-tip>) is re-run by the Integrator;
+  expected EXIT=0 since the working-tree pre-verification covers the same lines.
+
+rerun: git diff --check a5529181 (base vs working tree incl. all pending delivery-commit content)
+  date: 2026-09-29T00:16:38+08:00
+  result: EXIT=0 (no whitespace errors across the full pending diff, incl. this log, doc/tasks/M2-AC4.md, doc/handoffs/M2-AC4-owner-delivery.md)

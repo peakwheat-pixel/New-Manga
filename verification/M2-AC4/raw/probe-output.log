@@ -1,0 +1,24 @@
+imported pages: ['9b8cd6ad93124f4480a396df896c791f', '4f321d27ea8649959d0fb7df1f478a59']
+R1 commit: COMMITTED c304238cceb0490ead179c2578ca5fb4
+R2 commit: COMMITTED 618b117adcbf43129569518f7b01269e
+snapshot translated_revision_id: 618b117adcbf43129569518f7b01269e
+live current revision: 618b117adcbf43129569518f7b01269e | R1 was: c304238cceb0490ead179c2578ca5fb4
+region final_translation: 第一页的OCR文本
+ABORT probe: raised StaleExportError stale= ('9b8cd6ad93124f4480a396df896c791f',) missing= ('4f321d27ea8649959d0fb7df1f478a59',)
+history rows after ABORT: 0
+abort.zip exists: False
+CONTINUE result status: completed
+result.included_stale_page_ids: ('9b8cd6ad93124f4480a396df896c791f',)
+result.included_missing_page_ids: ('4f321d27ea8649959d0fb7df1f478a59',)
+history rows after CONTINUE: 1
+history row keys: ['book_id', 'chapter_id', 'completed_at', 'created_at', 'detail', 'export_id', 'export_type', 'file_hash', 'output_path', 'pipeline_run_id', 'render_profile_snapshot_json', 'scope_snapshot_json', 'status']
+scope_snapshot keys: ['filenames', 'mode', 'overwrite_policy', 'page_ids', 'stale_policy']
+status: completed | export_type: zip | detail: ''
+file_hash == sha256 of output: True
+zip entries: ['0001_第01页.png', '0002_第02页.png']
+zip stale entry bytes == R1: True
+zip missing-page entry bytes == ORIGINAL: True
+list_books: [{"book_id": "4dfda8bf6b9145ba9afc6d5f2c4382cd", "title": "Probe Book", "original_title": "", "is_favorite": false, "is_archived": false, "page_count": 2, "created_at": "2026-09-28T15:58:57.969+00:00", "updated_at": "2026-09-28T15:58:57.969+00:00"}]
+  book: Probe Book page_count: 2
+  book: Probe Empty Book page_count: 0
+PROBE DONE
