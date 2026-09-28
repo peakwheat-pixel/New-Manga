@@ -11,7 +11,7 @@
 | R3-02 | P3 | **fixed** | 场景计数三处统一为终版 **45**（Task gate 行 / Handoff AC6 行）；NOTE.md 修正为 **36（旧存档）vs 45（终版）**。 |
 | R3-03 | P3 | **fixed** | Handoff AC3 行不再引用 r1 旧 PID 数值，改为引用场景 id（`restart-*-pid-differs`）并注明"数值随每次运行不同"，附终版运行数值作示例。 |
 | R3-04 | P3（治理） | **fixed** | 补 [review-dsh-r2-disposition.md](review-dsh-r2-disposition.md)（R2-01..07 逐条 fixed/deferred/open + 证据指针）；本文件为 r3 处置。 |
-| R3-05 | P4 | **fixed** | `vitest.log` 在干净 tip 真正重采（r2 轮该日志的重定向缺陷导致未落盘，r3 指正准确）：头部 `worktree HEAD=cd261f70` + dirty 计数，正文 19 passed，`# EXIT: 0`。四日志格式统一（interpreter/toolchain + HEAD + clean 计数 + EXIT；cargo/vitest/m2-acceptance 头部 HEAD=521d96ca，其后至 tip 仅文档/日志变化，被测代码相同）。 |
+| R3-05 | P4 | **fixed** | `vitest.log` 在干净 tip 真正重采（r2 轮该日志的重定向缺陷导致未落盘，r3 指正准确）：头部 `worktree HEAD=cd261f70` + dirty 计数，正文 19 passed，`# EXIT: 0`。四日志均含 interpreter/toolchain 头 + HEAD 行 + `# EXIT:`；其中 vitest/pytest-full-suite 另含 clean 计数。cargo 与 pytest-m2-acceptance 捕获于干净 tip `521d96ca`（其后至 tip 仅文档/日志变化，被测代码相同），vitest 重采于 `cd261f70`（R4-03 措辞修正）。 |
 | R3-06 | P4 | **fixed** | Handoff §接收方式 head 演进链补全：aaf21a13 → 7d157858（r1 被审）→ 5a59ddfe（r1 返修）→ d8c1173b（r2 被审）→ 521d96ca（r2 返修）→ b9d9a8ab（日志重采）→ a57e4834（终版 gate）→ cd261f70（r3 被审）→ 本轮返修 tip，每环附报告/处置链接。 |
 | R3-07 | P4 | **fixed** | 历史日志取回方式写入 Task 全仓行、Handoff 全仓行、NOTE.md 三处（`git show a74ce105:...`）。 |
 | R3-08 | P4 | **fixed** | 对照日志重采并补全：base checkout commit + 与 base 7db0e7b6 的关系（docs only）、scope（定向对照 5 tests，非全量）、解释器/Python 版本、ISO 时间戳、完整 stderr（含 QML TypeError 根因线索：viewmodel context 注入为 null）、`# EXIT: 1`。 |

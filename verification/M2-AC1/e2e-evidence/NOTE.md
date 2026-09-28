@@ -2,7 +2,7 @@
 
 本目录是 M2-AC1 **DSH r1 之前**的一次 skip-build gate 运行存档（2026-09-28 早期）。
 
-它已被 `verification/M2-AC1/e2e-gate-full/`（r1 返修后、完整构建版、44 场景）**取代**：
+它已被 `verification/M2-AC1/e2e-gate-full/`（r1 返修后、完整构建版、45 场景）**取代**：
 
 - 本存档的 gate JSON 为**旧格式**：无顶层 `implementation_commit` / `runner_executable` 字段；
 - `EVN-python` / `EVN-python-resolved` 场景记录的是 PATH 上系统 Python 3.14.6（工具链探测），

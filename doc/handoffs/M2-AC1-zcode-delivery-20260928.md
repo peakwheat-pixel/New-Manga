@@ -40,6 +40,8 @@ status: delivered_awaiting_review
 
 若 Reviewer/Integrator 认定这 3 组超出授权，扩大范围登记即可修复（机械回退不涉及实现逻辑）。
 
+**reviewed-tip 增量（R4-01）**：§范围审计枚举覆盖实现 commit `035bbdf9`。其后至 reviewed tip 的全部增量路径均落在 Task 允许清单的 `verification/M2-AC1/**`、本 Task 文件、`doc/handoffs/M2-AC1-*.md` 与评审惯例面 `doc/reviews/M2-AC1-*`（r1–r4 报告、r1/r2/r3 disposition、NOTE.md、日志重采与 gate 证据更新），无任何实现/测试面新增。
+
 ## 验证证据
 
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
@@ -60,7 +62,7 @@ status: delivered_awaiting_review
 ## 接收方式
 
 - 仓库 `G:/CODEX/New Manga`；branch `agent/zcode/M2-AC1-end-to-end-acceptance`；worktree `G:/CODEX/New Manga.worktrees/M2-AC1-zcode`。
-- **head 演进**：`aaf21a13`（本 Handoff 提交点）→ `7d157858`（DSH r1 被审 head）→ `5a59ddfe`（r1 findings 返修：F-001/002/003/004/005/007/009/010c/011/012/013 fixed，F-006/010ab deferred，F-008 待 Codex；[disposition](../../verification/M2-AC1/review-dsh-r1-disposition.md)）→ `d8c1173b`（DSH r2 被审 head，[报告](../reviews/M2-AC1-d8c1173b-dsh-r2.md) approved 条件批准）→ `521d96ca`（r2 findings 返修 R2-01..07，[disposition](../../verification/M2-AC1/review-dsh-r2-disposition.md)）→ `b9d9a8ab`（干净 tip 重采四套件日志，R2-02）→ `a57e4834`（终版 gate 证据 45 场景）→ `cd261f70`（DSH r3 被审，[报告](../reviews/M2-AC1-cd261f70-dsh-r3.md) approved 条件批准）→ r3 返修提交（R3-01..08 处置，[disposition](../../verification/M2-AC1/review-dsh-r3-disposition.md)）。复审以 branch tip 为准。
+- **head 演进**：`aaf21a13`（本 Handoff 提交点）→ `7d157858`（DSH r1 被审 head）→ `5a59ddfe`（r1 findings 返修：F-001/002/003/004/005/007/009/010c/011/012/013 fixed，F-006/010ab deferred，F-008 待 Codex；[disposition](../../verification/M2-AC1/review-dsh-r1-disposition.md)）→ `d8c1173b`（DSH r2 被审 head，[报告](../reviews/M2-AC1-d8c1173b-dsh-r2.md) approved 条件批准）→ `521d96ca`（r2 findings 返修 R2-01..07，[disposition](../../verification/M2-AC1/review-dsh-r2-disposition.md)）→ `b9d9a8ab`（干净 tip 重采四套件日志，R2-02）→ `a57e4834`（终版 gate 证据 45 场景）→ `cd261f70`（DSH r3 被审，[报告](../reviews/M2-AC1-cd261f70-dsh-r3.md) approved 条件批准）→ `793693a5`（r3 findings R3-01..08 返修）→ `d102bf70`（whitespace；DSH r4 被审 head，[报告](../reviews/M2-AC1-d102bf70-dsh-r4.md) **approved**，新增 R4-01..05 全为非阻断记录精度项并已在本轮收尾处置）。复审以 branch tip 为准。
 - 复现：venv（`G:/CODEX/New Manga.task-envs/TASK-012-py312`）下从仓库根运行 `python verification/M2-AC1/run_e2e.py`（约 3 分钟；或 `--skip-build` 复用产物）；Core 层 `python -m pytest tests/m2_acceptance -q`。
 - Reviewer 需要的固定 head：**branch tip**（head 演进见上；DSH r1 已审 `7d157858`，复审针对返修后 tip）。git 操作在 DSH 沙箱可能被拒时按静态 Review 模式进行即可。
 - 无依赖变化（Cargo.lock/package lockfile 均未动）；无 schema/migration 变更。
