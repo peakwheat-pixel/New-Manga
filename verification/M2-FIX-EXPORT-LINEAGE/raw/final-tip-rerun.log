@@ -1,0 +1,14 @@
+# M2-FIX-EXPORT-LINEAGE final tip rerun (delivery tip)
+python: /usr/bin/bash: line 5: G:/CODEX/New: No such file or directory
+git HEAD: e05696fd1f44f076d1e4cc3483e5c1bdb70fbd2d
+ISO time: 2026-09-28T17:21:51Z
+---
+................................x..                                      [100%]
+34 passed, 1 xfailed in 9.33s
+EXIT1=0
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+EXIT2=0 (tail of full output; full run EXIT captured)
+---
+$ git diff --check -- src tests doc
+EXIT3=0

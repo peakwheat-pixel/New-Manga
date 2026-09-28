@@ -1,0 +1,55 @@
+# M2-FIX-EXPORT-LINEAGE diff --check evidence (r2 rewrite; supersedes the
+# r1 version that pasted verbatim output containing trailing whitespace)
+# Written by hand after the DSH-r1 section-D whitespace-only cleanup.
+# ISO time: 2026-09-28T17:35:40Z (approx., +08 2026-09-29 01:35)
+# git HEAD at write time: 297c96557f1aa0ac41bc19fdf38c90a06badbea1 (re-cleaned delivery commit)
+
+## Cleanup ledger (per DSH r1 review, section D; two-repository precedent:
+## M2-AC4 git-diff-check-owner-tip.log check-1, M2-FIX-STUB-DECODER §52)
+pre-clean delivery tip:  0ec1f052ff4a3b3875d9e242deb9fb3cb381fa5a
+cleaned delivery tip:    297c96557f1aa0ac41bc19fdf38c90a06badbea1  (amend of 0ec1f052)
+lines cleaned (trailing whitespace ONLY; traceback wording byte-kept):
+  raw/red-pre-fix-test_ac2_history.log  lines 46 (4 spaces -> empty), 56 and 59 ("E" + 9 spaces -> "E")
+  raw/regression-final.log              lines 35, 54, 69 (4 spaces -> empty each)
+line counts after cleanup: red-pre-fix 71, regression-final 155 (unchanged)
+
+## Proof 1: cleanup is whitespace-only (raw/ compared across the amend)
+$ git diff --ignore-all-space 0ec1f052..297c9655 -- verification/M2-FIX-EXPORT-LINEAGE/raw/
+(no output)
+EXIT=0
+
+## Proof 2: frozen AC5 criterion now met on the whole tree
+$ git diff --check 8b0d9040..297c9655
+(no output)
+EXIT=0
+
+## Proof 3: everything else the amend touches vs pre-clean tip
+$ git diff --name-status 0ec1f052..297c9655
+M  doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md          (C4 wording fix, 2 lines)
+M  tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py  (C5 persisted-missing assertion, +5 lines)
+M  verification/M2-FIX-EXPORT-LINEAGE/raw/red-pre-fix-test_ac2_history.log   (whitespace-only, see Proof 1)
+M  verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final.log               (whitespace-only, see Proof 1)
+M  verification/M2-FIX-EXPORT-LINEAGE/verification-results.md   (C4 wording fix + C2/C6 ledger/time corrections)
+$ git diff --ignore-all-space --stat 0ec1f052..297c9655
+ doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md              | 4 ++--
+ .../m2_acceptance/test_reader_export_lineage_library_pagecount.py | 5 +++++
+ verification/M2-FIX-EXPORT-LINEAGE/verification-results.md        | 8 ++++----
+ 3 files changed, 11 insertions(+), 6 deletions(-)
+(src/ absent from both listings: zero product-code change in the amend)
+
+## Historical note (kept for the r1 record): the pre-cleanup whole-tree
+## check exited 2 with exactly six trailing-whitespace findings inside the
+## two raw logs above (lines red:46/56/59, regression-final:35/54/69) --
+## verbatim pytest indentation artifacts, per verification-results.md §9.
+## Those findings are not re-pasted here on purpose (no verbatim blank-line
+## output in this rewritten log).
+
+## Postscript (r2 backfill): after this log was rewritten, the NEW r2 rerun
+## log itself introduced two verbatim-pytest blank-indent lines
+## (raw/final-tip-rerun-r2.log lines 91/96, "    " empty-source-line
+## artifacts inside the --runxfail traceback). They were cleaned under the
+## same section-D whitespace-only authorization (line counts unchanged,
+## 118 lines) and the backfill commit amended. Whole-tree
+## git diff --check 8b0d9040..<r2 backfill tip> = EMPTY, EXIT=0, verified
+## again after every amend (reflog chain of the r2 backfill:
+## db975e7a -> f412cd47 -> 46a444c8 -> final tip, see verification-results §9.2).

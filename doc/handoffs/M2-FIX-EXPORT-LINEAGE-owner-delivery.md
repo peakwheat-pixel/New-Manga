@@ -3,7 +3,7 @@ task_id: M2-FIX-EXPORT-LINEAGE
 author: ZCode（子 agent 代行，用户授权 2026-09-28）
 recipient: DeepSeek Harness（非作者 Review r1）→ Codex（Integrator）
 base_commit: 8b0d9040
-delivery_head: （见 doc/tasks/M2-FIX-EXPORT-LINEAGE.md frontmatter delivery_head，交付 commit 后回填）
+delivery_head: 297c96557f1aa0ac41bc19fdf38c90a06badbea1（r2 amend 自 0ec1f052，见 verification-results.md §9）
 status: DELIVERED_FOR_REVIEW
 ---
 
@@ -18,7 +18,7 @@ status: DELIVERED_FOR_REVIEW
 - `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py`（F-1 xfail 标记移除、docstring 同步、新增 `test_ac2_legacy_scope_rows_without_included_keys_stay_compatible`；其余场景断言零改动、F-2 xfail 零触碰）
 - `verification/M2-FIX-EXPORT-LINEAGE/**`、本 Handoff、Task 回填
 
-Commit ledger：claim `4e76b2fa` → 实现+证据（本交付 commit）→ Task 回填。tip hash 以 Task frontmatter `delivery_head` 为准。
+Commit ledger（r2 重建后，amend 轨迹与 `e05696fd`/`cba8db48` 来历见 verification-results.md §9）：claim `4e76b2fa` → 交付 `297c9655`（r2 amend 自 `0ec1f052`：whitespace-only 清理 + C4/C5）→ Task 回填（delivery_head=`297c9655`，r2 复跑/自检日志经一次 amend 并入，run-at hash 见 raw/final-tip-rerun-r2.log 头部）。
 
 ## 验证证据
 
@@ -29,7 +29,8 @@ Commit ledger：claim `4e76b2fa` → 实现+证据（本交付 commit）→ Task
 | AC1/AC2/AC3 全套 | `$py -m pytest tests/m2_acceptance -q` | 交付 tip | **34 passed, 1 xfailed**（仅剩 F-2）EXIT=0 | raw/regression-final-rerun.log |
 | AC4 既有面回归 | `$py -m pytest tests/core -q` | 交付 tip | **76 passed** EXIT=0 | raw/regression-final-rerun.log |
 | 首跑留痕 | 同全套（新场景首版触发 one-time import 标记问题） | 同上 | 1 failed（测试自身修正，非产品缺陷；详见 verification-results §5） | raw/regression-final.log |
-| AC5 范围/纪律 | `git diff --check 8b0d9040..HEAD`（三种口径）；`git diff --name-status`；`schema.py` 计数 | 交付 tip | src/tests/doc 及排除 raw 口径 EXIT=0；整树 EXIT=2 唯一来源=raw 日志内 pytest 原样输出固有行尾空白（证据本体字节保真，披露见 verification-results §8）；全落允许路径；schema.py 0 命中 | raw/diff-check-evidence.log |
+| AC5 范围/纪律 | `git diff --check 8b0d9040..<delivery_head>` 整树；`git diff --name-status`；`schema.py`/`reading_export.py` 计数 | 交付 tip `297c9655` | **整树 EXIT=0**（r2 whitespace-only 清理后达成，等价性证明 `--ignore-all-space` 空 diff）；范围自检 raw 证据落盘；schema.py 0 命中 | raw/diff-check-evidence.log、raw/scope-self-check.log |
+| r2 交付 tip 绑定复跑 | `$py -m pytest tests/m2_acceptance -q`；`$py -m pytest tests/core -q`；`$py -m pytest tests/m2_acceptance -q --runxfail` | 交付 tip（run-at hash 见日志头） | **34 passed, 1 xfailed EXIT=0；76 passed EXIT=0；--runxfail 恰 1 failed（F-2）+34 passed EXIT=1** | raw/final-tip-rerun-r2.log |
 
 34 vs AC4 预期 33 的偏差：+1 = 本 Task 按指令新增的 legacy 兼容场景（AC4 预期未计入新场景）；33 = 原 32 passed + F-1 转 PASS。如实登记于 verification-results.md §4。
 

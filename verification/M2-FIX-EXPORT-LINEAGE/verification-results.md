@@ -3,17 +3,19 @@
 - Owner：ZCode（子 agent 代行，用户授权 2026-09-28）
 - base：`8b0d9040`；release commit：`aa1e0c7c`；branch：`agent/zcode/M2-FIX-EXPORT-LINEAGE`
 - worktree：`G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode`
-- 解释器：`G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe`（Python 3.12.x，日志头有原样版本串）
-- 证据纪律：所有命令日志带 shell/解释器/固定 HEAD/ISO 时间戳，尾部 EXIT；raw 日志见 [raw/](raw/)
-- 日期：2026-09-29 Asia/Shanghai
+- 解释器：`"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe"`（路径含空格，r2 起日志头部以引号包裹；版本 = Python 3.12.3 + pytest 9.1.1，以 pytest 自带头行为准——r1 期 5 个旧日志头部的 `python:` 行是路径未加引号的取版本命令失败记录（DSH r1 P3-2），原样保留未改，非版本串）
+- 证据纪律：所有命令日志带 shell/解释器/固定 HEAD/ISO 时间戳，尾部 EXIT；raw 日志见 [raw/](raw/)；时间口径（DSH r1 P3-3，以 `git log --format=%cI` 为准）：release `aa1e0c7c`=2026-09-29T01:07:24+08:00、claim `4e76b2fa`=01:12:09+08:00、交付（pre-clean）`0ec1f052`=01:18:42+08:00、r1 回填 tip `b0ef7f76`=01:22:18+08:00；证据 ISO（UTC）=2026-09-28T17:12:41Z–17:2x Z ≙ +08 01:12–01:2x，**释放（01:07:24+08）先于实施（red 01:12:41+08）**，时间序成立；`release-8b0d9040.md`/`doc/STATUS.md` 所记「02:1x」为近似偏晚记载，以本节 %cI 口径为准（旧文件不改）
+- 日期：2026-09-29 Asia/Shanghai（r2 返修同日凌晨完成）
 
-## 1. Commit ledger（claim → 实现+证据 → 回填）
+## 1. Commit ledger（claim → 实现+证据 → 回填；r2 重建后实际 hash，见 §9 amend 轨迹）
 
 | # | commit | 内容 |
 |---|---|---|
 | 1 | `4e76b2fa` | claim（Task frontmatter owner/dispatch_state RELEASED→CLAIMED） |
-| 2 | （本交付 commit，hash 见交付后 frontmatter delivery_head） | 实现（`service.py`）+ 测试（xfail 移除/legacy 场景）+ raw 红绿日志 + 本验证文档 + Handoff |
-| 3 | （回填 commit） | Task 回填 AC 判定、status: in_review、DELIVERED_FOR_REVIEW，注 tip hash |
+| 2 | `297c9655`（= delivery_head；`0ec1f052` 的 r2 amend：whitespace-only 清理 + C4/C5，前身链见 §9） | 实现（`service.py`）+ 测试（xfail 移除/legacy 场景/C5 persisted missing 断言）+ raw 红绿日志（清理后）+ 本验证文档 + Handoff |
+| 3 | 回填 commit（本文件随交付 tip 运行的复跑/自检日志经一次 amend 并入其中，run-at hash 见 [raw/final-tip-rerun-r2.log](raw/final-tip-rerun-r2.log) 头部；Task frontmatter `delivery_head` 指向 #2） | Task 回填 AC 判定、status: in_review、DELIVERED_FOR_REVIEW + C1b/C1c/C3 证据日志 |
+
+r1 期 ledger（历史，全部可由 reflog 复核，见 §9）：claim `4e76b2fa` → 交付 `0ec1f052` → 回填 `cba8db48` --amend→ `e05696fd` --amend→ `b0ef7f76`。
 
 ## 2. 先红证据（AC2 前置：修复前证红留痕）
 
@@ -46,11 +48,12 @@
 | AC2 xfail 移除转 PASS | **PASS** | 先红留痕（§2）→ 修复 → 转 PASS；标记正式移除；默认套件无 XPASS（strict 下若有残留会报 xpassed，实际 `34 passed, 1 xfailed`）；F-2 xfail 场景零触碰 |
 | AC3 legacy 前向兼容 | **PASS** | 新场景 `test_ac2_legacy_scope_rows_without_included_keys_stay_compatible`：①手工 INSERT 修复前 13 列旧行（5 键无 included 键）→ `find_export` 读回不崩、`_parse_scope` → included 双键=空 list、旧键完好；②legacy JSON import 通道（`import_legacy_export_history`，旧行无新键）→ 导入成功、解析空集；③损坏 guard：新键为字符串（非 list）→ 类型化 `ExportError`，不静默伪造 |
 | AC4 回归如实 | **PASS（数字偏差已解释）** | `tests/m2_acceptance -q` = **34 passed, 1 xfailed**（仅剩 F-2）EXIT=0；`tests/core -q` = **76 passed** EXIT=0。34 与预期 33 的差异 = 本 Task 按指令新增的 legacy 兼容场景 1 条（AC4 预期未计入新场景）：33 = 原 32 passed + F-1 转 PASS。两次回归日志均留痕（见 §5） |
-| AC5 证据纪律 | **PASS（diff --check 事实精确披露）** | raw 日志带头尾；P3-7 评估见 §7；`git diff --check` 对 `src tests doc` 及「排除 raw 证据日志的全树」均 EXIT=0（raw/diff-check-evidence.log）；整树 EXIT=2 的唯一来源 = `raw/*.log` 内 pytest 原样输出的 6 行固有行尾空白（断言缩进行如 `E␣␣…`，证据本体，字节保真未改写）；`schema.py` 0 命中 |
+| AC5 证据纪律 | **PASS（r2 达成冻结判据）** | 日志带头（shell/python/HEAD/ISO）尾 EXIT——r1 期 5 个旧日志的 `python:` 头行为取版本命令失败记录（路径未加引号），版本以 pytest 头行为准，r2 起新日志头部已修正（DSH r1 P3-2）；P3-7 评估见 §7；**整树 `git diff --check 8b0d9040..<delivery_head>` = EXIT 0**（`297c9655` 上复核；6 处 raw 日志行尾空白已按 DSH §D whitespace-only 清理，`--ignore-all-space` 空 diff 证明见 [raw/diff-check-evidence.log](raw/diff-check-evidence.log) 与 §9）；范围自检 raw 证据 [raw/scope-self-check.log](raw/scope-self-check.log)；交付 tip 绑定复跑 [raw/final-tip-rerun-r2.log](raw/final-tip-rerun-r2.log)；`schema.py` 0 命中 |
 
 ## 5. 回归日志
 
-- 权威 rerun：[raw/regression-final-rerun.log](raw/regression-final-rerun.log) — `tests/m2_acceptance -q`：**34 passed, 1 xfailed**，EXIT1=0；`tests/core -q`：**76 passed**，EXIT2=0。
+- **r2 交付 tip 绑定复跑（权威）**：[raw/final-tip-rerun-r2.log](raw/final-tip-rerun-r2.log)——`tests/m2_acceptance -q` = **34 passed, 1 xfailed** EXIT=0；`tests/core -q` = **76 passed** EXIT=0；`tests/m2_acceptance -q --runxfail` = **1 failed（恰 F-2 场景 `test_ac4_books_without_pages_are_not_presented_as_zero`）+ 34 passed** EXIT=1（证明套件内恰一处已知 xfail、无 XPASS 掩盖、无第二处隐藏 xfail）。日志头记录执行时刻 HEAD（run-at）与本文件并入方式（amend）。
+- r1 期权威 rerun（历史保留）：[raw/regression-final-rerun.log](raw/regression-final-rerun.log) — `tests/m2_acceptance -q`：**34 passed, 1 xfailed**，EXIT1=0；`tests/core -q`：**76 passed**，EXIT2=0（运行于 claim+unstaged 修复态，HEAD=`4e76b2fa`）。
 - 首跑 [raw/regression-final.log](raw/regression-final.log) `1 failed, 33 passed, 1 xfailed EXIT1=1` 如实保留：失败 = 新 legacy 场景首版断言 `imported==1`，但 production 装配（`core_assembly.py:850`）已对同一 conn 执行过 one-time import（文件缺失 → 写入 `missing_empty` 标记，`import_legacy_export_history` 直接返回 0）。修正 = 场景内先删除 `application_metadata` 的 `legacy_export_history_imported` 标记行再调用，复现"升级前 legacy 文件存在"状态；非产品代码问题。
 
 ## 6. 语义边界（如实披露，非缺陷）
@@ -71,11 +74,45 @@
 
 ## 8. 范围自检
 
-- 交付区间改动路径（claim+交付 commit，`git diff --name-status 8b0d9040..<delivery-head>`）：
+- 交付区间改动路径（claim+交付 commit，`git diff --name-status 8b0d9040..<delivery-head>`）：**raw 证据落盘见 [raw/scope-self-check.log](raw/scope-self-check.log)（r2 补，DSH r1 P2-1）**，本节为其判读：
   - `src/application/export/service.py`（允许）
-  - `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py`（显式授权：F-1 xfail 移除 + docstring 同步 + legacy 场景；其余场景断言零改动）
+  - `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py`（显式授权：F-1 xfail 移除 + docstring 同步 + legacy 场景 + C5 persisted missing 断言；其余场景断言零改动）
   - `verification/M2-FIX-EXPORT-LINEAGE/**`、`doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md`（允许）
-  - `doc/tasks/M2-FIX-EXPORT-LINEAGE.md`（claim/回填，允许）
-- `git diff --check 8b0d9040..HEAD`（整树）EXIT=2——**唯一来源** = `raw/red-pre-fix-test_ac2_history.log`（3 行）与 `raw/regression-final.log`（3 行）内 pytest 原样输出的固有行尾空白（断言缩进行）。这些行是红证/回归证据本体，**字节保真保留、不做 whitespace 改写**；等效纪律证明：`git diff --check -- src tests doc` EXIT=0、`git diff --check -- . ':(exclude)verification/M2-FIX-EXPORT-LINEAGE/raw/*'` EXIT=0，完整命令与两种口径输出见 [raw/diff-check-evidence.log](raw/diff-check-evidence.log)。裁决权交 Review/Integrator：若裁定必须整树 EXIT=0，唯一手段是改写 raw 证据字节，需明确授权。
-- `src/infrastructure/sqlite/schema.py`：0 命中；`src/infrastructure/sqlite/reading_export.py`：0 改动（整体存取探查结论）。
+  - `doc/tasks/M2-FIX-EXPORT-LINEAGE.md`、`doc/STATUS.md`（claim/回填/release，允许；STATUS.md 改动属 release commit `aa1e0c7c`，非本 Owner 区间）
+- `git diff --check 8b0d9040..<delivery_head>` 整树 **EXIT=0**（r2 起；r1 期曾 EXIT=2，已按 DSH §D whitespace-only 清理收口，轨迹与证明见 §9 与 [raw/diff-check-evidence.log](raw/diff-check-evidence.log)）。
+- `src/infrastructure/sqlite/schema.py`：0 命中；`src/infrastructure/sqlite/reading_export.py`：0 改动（整体存取探查结论）；计数命令输出见 [raw/scope-self-check.log](raw/scope-self-check.log)。
 - 未 git push；未删分支；未动 worktree 外文件。
+
+## 9. amend 轨迹与 hash 来历（DSH r1 P1-1/P1-2，指令所指 §8 登记位——§8 已被范围自检占用，故以 §9 落实）
+
+### 9.1 r1 期回填 commit 的两次 amend（`e05696fd`/`cba8db48` 来历，reflog 核实）
+
+`git reflog show --date=iso HEAD`（2026-09-29 +08）逐条：
+
+| reflog 项 | hash | 动作 | 内容 |
+|---|---|---|---|
+| 01:19:33 | `cba8db48` | commit | 第一次回填：Task AC 判定 + status in_review + DELIVERED_FOR_REVIEW + delivery_head=`0ec1f052` |
+| 01:21:40 | `e05696fd` | commit (amend) | 第 1 次 amend：补 diff-check 披露（`raw/diff-check-evidence.log` 初版 + AC5/§8/Handoff 三处措辞） |
+| 01:22:18 | `b0ef7f76` | commit (amend) | 第 2 次 amend：补交付 tip 终验 `raw/final-tip-rerun.log`（其头部 HEAD=`e05696fd` = run-at 时刻，amend 并入后 tip 变更——此即 r1 被指出的「日志 HEAD ≠ 声明 tip」来源） |
+
+`git cat-file -t e05696fd` / `git cat-file -t cba8db48` 均 = `commit`（对象仍可达，为 `b0ef7f76` 的 amend 前身，非推送、非删除、无数据丢失）。r1 期文档未披露该轨迹，属 P1-1 缺陷，本节补登。
+
+### 9.2 r2 whitespace-only 清理 amend（DSH §D 裁决执行）
+
+- pre-clean delivery tip：`0ec1f052ff4a3b3875d9e242deb9fb3cb381fa5a`（r1 声明的 delivery_head）
+- cleaned delivery tip：`297c96557f1aa0ac41bc19fdf38c90a06badbea1`（`0ec1f052` 的 amend 重建；**Task frontmatter `delivery_head` 已同步更新为此值**）
+- 清理内容（仅行尾空白，traceback 文案逐字保留，行数不变 71/155）：`raw/red-pre-fix-test_ac2_history.log` 46/56/59 行、`raw/regression-final.log` 35/54/69 行
+- 等价性证明：`git diff --ignore-all-space 0ec1f052..297c9655 -- verification/M2-FIX-EXPORT-LINEAGE/raw/` = **空输出 EXIT=0**；`git diff --check 8b0d9040..297c9655` = **空输出 EXIT=0**（冻结 AC5 判据在整树达成）；amend 全部差异 = 2 日志 whitespace + C4 文档 4 行 + C5 断言 5 行，`src/` 零差异。完整登记：[raw/diff-check-evidence.log](raw/diff-check-evidence.log)（r2 手写重写版，不再粘贴带空白原样输出）
+- 重建方式：`git reset 4e76b2fa`（mixed，工作区保留）→ 交付文件集重建 commit `297c9655`（amend 语义，message 注明 r2 amend 与清理行号）→ 回填层重建。旧日志保留运行时刻 HEAD 原样（red/green/regression-final/regression-final-rerun 头部 `git HEAD: 4e76b2fa…` 系 claim+unstaged 态执行，final-tip-rerun 头部 `e05696fd` 系 run-at 时刻），r2 起交付 tip 绑定以 [raw/final-tip-rerun-r2.log](raw/final-tip-rerun-r2.log) 为准。
+- r2 回填 commit 的 amend 链（reflog 逐条，全部为并入证据日志/whitespace 清理，测试与产品代码零改动）：`db975e7a`（回填首建：Task + C1b/C2/C4/C6 文档 + 重写版 diff-check-evidence.log + 旧 final-tip-rerun.log）→ `f412cd47`（amend：并入 r2 复跑 `final-tip-rerun-r2.log` 与范围自检 `scope-self-check.log`，两者均 run-at `db975e7a`）→ `46a444c8` 及最终收口 tip（amend：`final-tip-rerun-r2.log` 91/96 行——`--runxfail` traceback 内 pytest 空源码行缩进——按同一 §D 授权行尾空白清理，行数 118 不变；登记见 diff-check-evidence.log Postscript）。每次 amend 后整树 `git diff --check 8b0d9040..<tip>` 均复核 = 空 EXIT=0。
+
+### 9.3 时间口径核定（DSH r1 P3-3，`git log --format=%cI`）
+
+| commit | %cI |
+|---|---|
+| release `aa1e0c7c` | 2026-09-29T01:07:24+08:00 |
+| claim `4e76b2fa` | 2026-09-29T01:12:09+08:00 |
+| 交付（pre-clean）`0ec1f052` | 2026-09-29T01:18:42+08:00 |
+| r1 回填 tip `b0ef7f76` | 2026-09-29T01:22:18+08:00 |
+
+证据日志 ISO（UTC）：red `17:12:41Z`、green `17:13:18Z`、regression `17:14:47Z`、rerun `17:15:41Z`（≙ +08 01:12:41–01:15:41）。**时间序成立：release（01:07:24+08）先于 claim（01:12:09）先于 red（01:12:41）**；`release-8b0d9040.md` 与 `doc/STATUS.md` 所记「02:1x」为近似偏晚记载（本 Task 范围内不改这两个文件，以本节口径为准）。

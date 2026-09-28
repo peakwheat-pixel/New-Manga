@@ -1,0 +1,38 @@
+# M2-FIX-EXPORT-LINEAGE scope self-check (DSH r1 P2-1 / C3 raw evidence)
+shell: bash (Git Bash on win32, MINGW64_NT-10.0-26200 3.6.5-22c95533.x86_64)
+interpreter: "G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" (not invoked in this log; git-only checks)
+git HEAD (run-at, pre-amend): db975e7a0a3782bff1f1862a15a339e8ef28c8fd
+git branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO time: 2026-09-28T17:41:31Z
+note: executed at the hash above; committed into the backfill commit via one amend (test/product code identical across the amend).
+
+$ git diff --name-status 8b0d9040..HEAD
+M	doc/STATUS.md
+A	doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md
+M	doc/tasks/M2-FIX-EXPORT-LINEAGE.md
+M	src/application/export/service.py
+M	tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py
+A	verification/M2-FIX-EXPORT-LINEAGE/raw/diff-check-evidence.log
+A	verification/M2-FIX-EXPORT-LINEAGE/raw/final-tip-rerun.log
+A	verification/M2-FIX-EXPORT-LINEAGE/raw/green-post-fix-pre-marker.log
+A	verification/M2-FIX-EXPORT-LINEAGE/raw/red-pre-fix-test_ac2_history.log
+A	verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final-rerun.log
+A	verification/M2-FIX-EXPORT-LINEAGE/raw/regression-final.log
+A	verification/M2-FIX-EXPORT-LINEAGE/release-8b0d9040.md
+A	verification/M2-FIX-EXPORT-LINEAGE/verification-results.md
+EXIT1=0
+
+$ git diff 8b0d9040..HEAD -- src/infrastructure/sqlite/schema.py   # expect EMPTY (frozen: no schema change)
+EXIT2=0 (empty diff above => schema.py untouched)
+
+$ git diff --stat 8b0d9040..HEAD -- src/infrastructure/sqlite/schema.py src/infrastructure/sqlite/reading_export.py   # expect EMPTY
+EXIT3=0 (empty stat above => both frozen-path files untouched)
+
+$ git diff --name-only 8b0d9040..HEAD | grep -cE 'schema\.py|reading_export\.py'   # expect 0
+hit_count=0
+
+$ git diff --check 8b0d9040..HEAD   # expect empty, EXIT=0 (frozen AC5 criterion, post-cleanup)
+EXIT4=0
+
+allowed-path check: all name-status entries above are within doc/tasks/M2-FIX-EXPORT-LINEAGE.md, doc/STATUS.md (release commit aa1e0c7c side), doc/handoffs/M2-FIX-EXPORT-LINEAGE-owner-delivery.md, src/application/export/service.py, tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py, verification/M2-FIX-EXPORT-LINEAGE/**
+OVERALL: EXIT1=0 EXIT2=0 EXIT3=0 EXIT4=0 hit_count=0
