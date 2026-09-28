@@ -78,4 +78,3 @@ $stderr | Set-Content -LiteralPath $stderrPath -Encoding UTF8
   "EXIT_CODE=$($proc.ExitCode)"
   "PROCESS_STILL_RUNNING=$([bool](Get-Process -Id $childProcessId -ErrorAction SilentlyContinue))"
 ) | Set-Content -LiteralPath $processPath -Encoding UTF8
-

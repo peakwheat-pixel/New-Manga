@@ -5,5 +5,3 @@ cf597fefd5da485e9437b5e467cf65903873088bf5d24557aa42422324ee0fe5  NewManga.exe  
 68fe3f3535066f8d5d3634fd2cfc26a945bb41f7cd2873afd055b5abaf4e44b1  _internal/base_library.zip =>
 dd66be24922d8ff8438c3b990ef16b5d12a4c1d1997e2dbd347c24315258dd27  NewManga.exe               <=
 862e21f655749573c4cd9eef5b243cbb0cf05b65b45d3a9cf3fa4460c5054c4f  _internal/base_library.zip <=
-
-

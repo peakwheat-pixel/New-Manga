@@ -148,5 +148,3 @@ Python 3.14 无 Qt 套件的另外两个 skip 是 tests/workbench/test_projectio
 ## 停止点
 
 R-003、R-004、R-005 修订并经新的固定 Handoff head 复审前，M2-I2 保持 changes_requested、integration_commit=null。作者分支现 HEAD `0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716` 尚未审查；本报告不对其内容作结论。此 Review 不授权集成、M2-I1 重定基线、M2-C1、React 或 Tauri。
-
-

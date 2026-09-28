@@ -276,5 +276,3 @@ with tempfile.TemporaryDirectory(prefix="m2-i2-review-dynamic-all-") as director
     print("R-003 dynamic __all__ expression bypass reproduced: Guard violations: []")
 
 print("RESULT: PASS")
-
-
