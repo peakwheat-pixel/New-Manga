@@ -1,0 +1,183 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-AC4-zcode
+configfile: pytest.ini
+collecting ... collected 11 items
+
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_zip_export_history_reconciles_with_output PASSED [  9%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_text_payload_and_two_exports_are_distinguishable PASSED [ 18%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_stale_abort_fail_closed_zero_side_effects FAILED [ 27%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_continue_passes_stale_and_missing_distinguishable PASSED [ 36%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included XFAIL [ 45%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_mid_export_failure_preserves_target_and_sources FAILED [ 54%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_cancellation_preserves_target_and_records_state FAILED [ 63%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_page_count_matches_chapter_total_sqlite_and_reader PASSED [ 72%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero XFAIL [ 81%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_corrupt_page_rows_degrade_without_crash_or_fabrication PASSED [ 90%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac5_sources_and_managed_files_untouched_across_export_paths FAILED [100%]
+
+================================== FAILURES ===================================
+_____________ test_ac2_stale_abort_fail_closed_zero_side_effects ______________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000014ABFE2B860>, repository=<...ort_fail_clos0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x0000014ABFE56520>)
+
+    def test_ac2_stale_abort_fail_closed_zero_side_effects(core) -> None:
+        """AC2(a): default ABORT refuses a stale translated render with the
+        typed error carrying the stale page ids; zero output file and zero
+        history rows (no completed record may exist for the refused export)."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        # reader snapshot holds R1; a newer render (R2) is now current
+        stale_page_id = seed.page_a.page_id
+        history_before = core.export_service.history()
+        assert history_before == []
+
+        target = core.data_root / "exports" / "stale-abort.zip"
+        request = ExportRequest(
+            book_id=seed.book.book_id,
+            chapter_id=seed.chapter.chapter_id,
+            format=ExportFormat.ZIP,
+            output_path=target,
+            pages=_snapshot_export_pages(core, seed.snapshot),
+            mode="translated",
+        )
+        with pytest.raises(StaleExportError) as excinfo:
+            core.export_service.export(request)
+
+        error = excinfo.value
+        assert error.stale_page_ids == (stale_page_id,), (
+            "the stale page must be reported by id, as-is"
+        )
+>       assert error.missing_page_ids == (), "no page in this scope is missing"
+E       AssertionError: no page in this scope is missing
+E       assert ('a2ef94c3ada...22b54681e51',) == ()
+E
+E         Left contains one more item: 'a2ef94c3ada6491eb761322b54681e51'
+E
+E         Full diff:
+E         - ()
+E         + (
+E         +     'a2ef94c3ada6491eb761322b54681e51',
+E         + )
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:468: AssertionError
+__________ test_ac3_mid_export_failure_preserves_target_and_sources ___________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000014ABFE67F80>, repository=<...rt_failure_pr0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x0000014ABFE55940>)
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-373/test_ac3_mid_export_failure_pr0')
+
+    def test_ac3_mid_export_failure_preserves_target_and_sources(core, tmp_path: Path) -> None:
+        """AC3(a)(b)(c): a provider failure after the first archive entry keeps
+        the pre-existing target byte-identical, leaves no temp file, writes no
+        source, and records a failed terminal state with a non-empty detail."""
+        seed = _seed_chapter_with_translated_page(core, translated_payloads=[TRANS_R1])
+        exports = core.data_root / "exports"
+        target = exports / "existing-target.zip"
+>       target.write_bytes(b"M2-AC4 pre-existing target bytes")
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:597:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1036: in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-373/test_ac3_mid_export_failure_pr0/data-root/exports/existing-target.zip')
+mode = 'wb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\49745\\AppData\\Local\\Temp\\pytest-of-49745\\pytest-373\\test_ac3_mid_export_failure_pr0\\data-root\\exports\\existing-target.zip'
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: FileNotFoundError
+__________ test_ac3_cancellation_preserves_target_and_records_state ___________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000014ABFE64B60>, repository=<...tion_preserve0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x0000014ABFEA0D60>)
+
+    def test_ac3_cancellation_preserves_target_and_records_state(core) -> None:
+        """AC3(a)(b)(c): a cancel firing between archive entries keeps the
+        pre-existing target byte-identical, never writes sources, and records
+        a cancelled terminal state with a non-empty detail."""
+        seed = _seed_chapter_with_translated_page(core, translated_payloads=[TRANS_R1])
+        exports = core.data_root / "exports"
+        target = exports / "cancelled-target.zip"
+>       target.write_bytes(b"M2-AC4 target before cancellation")
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:656:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1036: in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-373/test_ac3_cancellation_preserve0/data-root/exports/cancelled-target.zip')
+mode = 'wb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\49745\\AppData\\Local\\Temp\\pytest-of-49745\\pytest-373\\test_ac3_cancellation_preserve0\\data-root\\exports\\cancelled-target.zip'
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: FileNotFoundError
+______ test_ac5_sources_and_managed_files_untouched_across_export_paths _______
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x0000014ABFF31970>, repository=<...and_managed_f0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x0000014ABFEA3060>)
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-373/test_ac5_sources_and_managed_f0')
+
+    def test_ac5_sources_and_managed_files_untouched_across_export_paths(core, tmp_path: Path) -> None:
+        """AC5: success, ABORT refusal, CONTINUE, mid-export failure and
+        cancellation over one data root leave every user source file and every
+        Managed Copy/artifact file byte-, size- and mtime_ns-identical."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        exports = core.data_root / "exports"
+        existing_target = exports / "kept.zip"
+>       existing_target.write_bytes(b"M2-AC4 durable target")
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:839:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1036: in write_bytes
+    with self.open(mode='wb') as f:
+         ^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-373/test_ac5_sources_and_managed_f0/data-root/exports/kept.zip')
+mode = 'wb', buffering = -1, encoding = None, errors = None, newline = None
+
+    def open(self, mode='r', buffering=-1, encoding=None,
+             errors=None, newline=None):
+        """
+        Open the file pointed by this path and return a file object, as
+        the built-in open() function does.
+        """
+        if "b" not in mode:
+            encoding = io.text_encoding(encoding)
+>       return io.open(self, mode, buffering, encoding, errors, newline)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\49745\\AppData\\Local\\Temp\\pytest-of-49745\\pytest-373\\test_ac5_sources_and_managed_f0\\data-root\\exports\\kept.zip'
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: FileNotFoundError
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_stale_abort_fail_closed_zero_side_effects
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_mid_export_failure_preserves_target_and_sources
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_cancellation_preserves_target_and_records_state
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac5_sources_and_managed_files_untouched_across_export_paths
+=================== 4 failed, 5 passed, 2 xfailed in 0.98s ====================

@@ -1,0 +1,53 @@
+=== M2-AC4 git diff --check (owner implementation tip) ===
+shell: Git Bash (win32)
+cwd: G:/CODEX/New Manga.worktrees/M2-AC4-zcode
+git HEAD: f615d5dacecae52667693a1815f4d4825c4a6367
+date: 2026-09-29T00:12:37+08:00
+command: git diff --check a5529181..f615d5da
+note: dev-phase failing-traceback logs (pytest-new-suite-run1, mutation-MU1/MU2) had pytest-emitted trailing whitespace stripped (whitespace-only edit, content byte-identical otherwise) before this check.
+
+verification/M2-AC4/raw/mutation-MU1-run.log:36: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU1-run.log:68: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU1-run.log:77: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU1-run.log:99: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU1-run.log:104: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU1-run.log:118: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU1-run.log:120: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU1-run.log:133: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU2-run.log:35: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU2-run.log:39: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU2-run.log:42: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU2-run.log:49: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU2-run.log:54: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU2-run.log:71: trailing whitespace.
++    
+verification/M2-AC4/raw/mutation-MU2-run.log:78: trailing whitespace.
++    
+verification/M2-AC4/raw/pytest-new-suite-run1.log:36: trailing whitespace.
++    
+verification/M2-AC4/raw/pytest-new-suite-run1.log:48: trailing whitespace.
++    
+verification/M2-AC4/raw/pytest-new-suite-run1.log:56: trailing whitespace.
++E         
+verification/M2-AC4/raw/pytest-new-suite-run1.log:58: trailing whitespace.
++E         
+verification/M2-AC4/raw/pytest-new-suite-run1.log:80: trailing whitespace.
++tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:597: 
+verification/M2-AC4/raw/pytest-new-suite-run1.log:116: trailing whitespace.
++tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:656: 
+verification/M2-AC4/raw/pytest-new-suite-run1.log:155: trailing whitespace.
++tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:839: 
+EXIT=2

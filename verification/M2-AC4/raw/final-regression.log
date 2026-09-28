@@ -1,0 +1,12 @@
+=== M2-AC4 verification command 2 (regression) ===
+shell: Git Bash (win32)
+cwd: G:/CODEX/New Manga.worktrees/M2-AC4-zcode
+git HEAD: 5f9f54abbada9cf108a03af6abf4bf8f5eac4b82
+date: 2026-09-29T00:08:29+08:00
+interpreter: Python 3.12.3 at G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+command: $py -m pytest tests/m2_acceptance -q
+
+...........................x...x..                                       [100%]
+32 passed, 2 xfailed in 9.28s
+
+EXIT=0

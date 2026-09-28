@@ -1,0 +1,143 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-AC4-zcode
+configfile: pytest.ini
+collecting ... collected 11 items
+
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_zip_export_history_reconciles_with_output PASSED [  9%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_text_payload_and_two_exports_are_distinguishable PASSED [ 18%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_stale_abort_fail_closed_zero_side_effects FAILED [ 27%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_continue_passes_stale_and_missing_distinguishable FAILED [ 36%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included XFAIL [ 45%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_mid_export_failure_preserves_target_and_sources PASSED [ 54%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_cancellation_preserves_target_and_records_state PASSED [ 63%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_page_count_matches_chapter_total_sqlite_and_reader PASSED [ 72%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero XFAIL [ 81%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_corrupt_page_rows_degrade_without_crash_or_fabrication PASSED [ 90%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac5_sources_and_managed_files_untouched_across_export_paths FAILED [100%]
+
+================================== FAILURES ===================================
+_____________ test_ac2_stale_abort_fail_closed_zero_side_effects ______________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000002522B26F680>, repository=<...ort_fail_clos0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x000002522B2B67A0>)
+
+    def test_ac2_stale_abort_fail_closed_zero_side_effects(core) -> None:
+        """AC2(a): default ABORT refuses a stale translated render with the
+        typed error carrying the stale page ids; zero output file and zero
+        history rows (no completed record may exist for the refused export)."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        # reader snapshot holds R1; a newer render (R2) is now current
+        stale_page_id = seed.page_a.page_id
+        history_before = core.export_service.history()
+        assert history_before == []
+
+        target = core.data_root / "exports" / "stale-abort.zip"
+        # scope narrowed to the stale page only: a pure stale case (the mixed
+        # stale+missing case is AC2's next scenario)
+        stale_only_pages = _snapshot_export_pages(core, seed.snapshot)[:1]
+        request = ExportRequest(
+            book_id=seed.book.book_id,
+            chapter_id=seed.chapter.chapter_id,
+            format=ExportFormat.ZIP,
+            output_path=target,
+            pages=stale_only_pages,
+            mode="translated",
+        )
+>       with pytest.raises(StaleExportError) as excinfo:
+E       Failed: DID NOT RAISE StaleExportError
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:464: Failed
+_________ test_ac2_continue_passes_stale_and_missing_distinguishable __________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000002522B26F080>, repository=<..._passes_stale0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x000002522B308860>)
+
+    def test_ac2_continue_passes_stale_and_missing_distinguishable(core) -> None:
+        """AC2(b)(c): with one stale and one missing page, the refusal names
+        both lists disjointly; explicit CONTINUE succeeds, ships the stale
+        render's own bytes (never silently current ones) and the missing
+        page's original, and the in-memory result carries both id lists."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        stale_page_id = seed.page_a.page_id
+        missing_page_id = seed.page_b.page_id  # never had a TRANSLATED render
+        target = core.data_root / "exports" / "stale-continue.zip"
+
+        request = ExportRequest(
+            book_id=seed.book.book_id,
+            chapter_id=seed.chapter.chapter_id,
+            format=ExportFormat.ZIP,
+            output_path=target,
+            pages=_snapshot_export_pages(core, seed.snapshot),
+            mode="translated",
+        )
+
+        # (c) the refusal distinguishes stale from missing
+>       with pytest.raises(StaleExportError) as excinfo:
+E       Failed: DID NOT RAISE StaleExportError
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:503: Failed
+______ test_ac5_sources_and_managed_files_untouched_across_export_paths _______
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000002522B3366F0>, repository=<...and_managed_f0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x000002522B309080>)
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-375/test_ac5_sources_and_managed_f0')
+
+    def test_ac5_sources_and_managed_files_untouched_across_export_paths(core, tmp_path: Path) -> None:
+        """AC5: success, ABORT refusal, CONTINUE, mid-export failure and
+        cancellation over one data root leave every user source file and every
+        Managed Copy/artifact file byte-, size- and mtime_ns-identical."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        exports = core.data_root / "exports"
+        exports.mkdir(parents=True, exist_ok=True)
+        existing_target = exports / "kept.zip"
+        existing_target.write_bytes(b"M2-AC4 durable target")
+
+        # user source files outside the managed root (import payload provenance)
+        user_sources = [tmp_path / "user-src-1.png", tmp_path / "user-src-2.png"]
+        user_sources[0].write_bytes(PAGE_A)
+        user_sources[1].write_bytes(PAGE_B)
+
+        r1_path = core.storage.absolute_path(
+            SqlitePageArtifactLocator(core.conn)
+            .locate_current(seed.page_a.page_id, ArtifactType.TRANSLATED)[1]
+            .managed_path
+        )
+        # fingerprint everything AC3/AC5 protects BEFORE the operations
+        protected = (
+            user_sources
+            + [core.data_root / "managed" / page.managed_original_ref for page in (seed.page_a, seed.page_b)]
+            + [Path(r1_path)]
+        )
+        before = [_fingerprint(path) for path in protected]
+        target_before = _fingerprint(existing_target)
+
+        pages = _snapshot_export_pages(core, seed.snapshot)
+
+        # 1. successful zip export (original mode)
+        result = core.export_service.export(
+            ExportRequest(
+                book_id=seed.book.book_id,
+                chapter_id=seed.chapter.chapter_id,
+                format=ExportFormat.ZIP,
+                output_path=exports / "ok.zip",
+                pages=pages,
+                mode="original",
+            )
+        )
+        assert result.status.value == "completed"
+
+        # 2. stale ABORT refusal (translated mode)
+>       with pytest.raises(StaleExportError):
+E       Failed: DID NOT RAISE StaleExportError
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:882: Failed
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_stale_abort_fail_closed_zero_side_effects
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_continue_passes_stale_and_missing_distinguishable
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac5_sources_and_managed_files_untouched_across_export_paths
+=================== 3 failed, 6 passed, 2 xfailed in 0.96s ====================
