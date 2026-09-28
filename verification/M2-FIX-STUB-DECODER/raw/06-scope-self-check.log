@@ -1,0 +1,37 @@
+=== shell: Git Bash (win32) ===
+=== scope self-check on delivery tip ===
+5cacebfa25ef17ea3a487ac4fcb11a4590636661
+2026-09-28T16:50:55Z
+
+---- [1] full diff vs base: git diff --name-status f5d91425..5cacebfa ----
+M	doc/STATUS.md
+A	doc/handoffs/M2-FIX-STUB-DECODER-owner-delivery.md
+M	doc/tasks/M2-FIX-STUB-DECODER.md
+M	src/bootstrap/core_service.py
+A	tests/core/test_stub_decoder.py
+A	verification/M2-FIX-STUB-DECODER/raw/02-red-before-fix.log
+A	verification/M2-FIX-STUB-DECODER/raw/03-green-after-fix.log
+A	verification/M2-FIX-STUB-DECODER/raw/04-regression-tests-core.log
+A	verification/M2-FIX-STUB-DECODER/raw/05-regression-tests-m2_acceptance.log
+A	verification/M2-FIX-STUB-DECODER/release-f5d91425.md
+A	verification/M2-FIX-STUB-DECODER/verification-results.md
+EXIT=0
+
+---- [2] owner-only diff (after release commit fc419905): git diff --name-status fc419905..5cacebfa ----
+A	doc/handoffs/M2-FIX-STUB-DECODER-owner-delivery.md
+M	doc/tasks/M2-FIX-STUB-DECODER.md
+M	src/bootstrap/core_service.py
+A	tests/core/test_stub_decoder.py
+A	verification/M2-FIX-STUB-DECODER/raw/02-red-before-fix.log
+A	verification/M2-FIX-STUB-DECODER/raw/03-green-after-fix.log
+A	verification/M2-FIX-STUB-DECODER/raw/04-regression-tests-core.log
+A	verification/M2-FIX-STUB-DECODER/raw/05-regression-tests-m2_acceptance.log
+A	verification/M2-FIX-STUB-DECODER/verification-results.md
+EXIT=0
+
+---- [3] whitespace: git diff --check f5d91425..5cacebfa ----
+DIFF_CHECK_EXIT=0
+
+NOTE: doc/STATUS.md + verification/M2-FIX-STUB-DECODER/release-f5d91425.md in [1] come from
+the release commit fc419905 (orchestrator release, pre-claim), not from owner changes.
+Owner changes ([2] claim 0f4f881a + delivery 5cacebfa) stay strictly within allowed paths.

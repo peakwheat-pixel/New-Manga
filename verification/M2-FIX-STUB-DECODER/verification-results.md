@@ -46,8 +46,10 @@
 
 ## 范围自检
 
-- 命令：`git diff --name-status f5d91425..<delivery-tip>` 与 `git diff --check f5d91425..<delivery-tip>`
-- 结果：见 `raw/06-scope-self-check.log`（在交付 tip 上实测）；变更仅落允许路径（`src/bootstrap/core_service.py`、`tests/core/test_stub_decoder.py`、`doc/tasks/M2-FIX-STUB-DECODER.md`、`verification/M2-FIX-STUB-DECODER/**`、`doc/handoffs/M2-FIX-STUB-DECODER-owner-delivery.md`），diff --check EXIT=0。
+- 命令：`git diff --name-status` / `git diff --check`，实测于交付 tip `5cacebfa`；日志：`raw/06-scope-self-check.log`。
+- 全量 `f5d91425..5cacebfa` 中的 `doc/STATUS.md` 与 `verification/M2-FIX-STUB-DECODER/release-f5d91425.md` 来自 **release commit `fc419905`**（编排者释放变更，claim 之前已在分支上），非 Owner 变更。
+- **Owner 变更**（claim `0f4f881a` + 交付 `5cacebfa`，即 `fc419905..5cacebfa`）仅落允许路径：`src/bootstrap/core_service.py`、`tests/core/test_stub_decoder.py`、`doc/tasks/M2-FIX-STUB-DECODER.md`、`verification/M2-FIX-STUB-DECODER/**`、`doc/handoffs/M2-FIX-STUB-DECODER-owner-delivery.md`。
+- `git diff --check f5d91425..5cacebfa` **EXIT=0**。轨迹说明：初版交付 commit（`550b4269`，已 amend）中 `raw/02-red-before-fix.log` 含 2 处 pytest 原样输出带来的行尾空白（EXIT=2），按 M2-AC4 先例做 whitespace-only 清理（traceback 内容逐字保留，仅去行尾空格）后 amend 为 `5cacebfa`。最终 tip 复跑按协议归 Integrator。
 
 ## 实现过程中的语义发现（供 Reviewer 参考）
 

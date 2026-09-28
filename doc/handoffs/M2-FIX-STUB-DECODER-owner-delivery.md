@@ -18,7 +18,7 @@
 | `verification/M2-FIX-STUB-DECODER/raw/03-green-after-fix.log` | 修复后同测试 2 passed，EXIT=0 |
 | `verification/M2-FIX-STUB-DECODER/raw/04-regression-tests-core.log` | `tests/core/ -q` → 76 passed，EXIT=0 |
 | `verification/M2-FIX-STUB-DECODER/raw/05-regression-tests-m2_acceptance.log` | `tests/m2_acceptance -q` → 32 passed, 2 xfailed，EXIT=0（2 xfailed=M2-AC4 F-1/F-2 受控缺陷证据，未触碰） |
-| `verification/M2-FIX-STUB-DECODER/raw/06-scope-self-check.log` | 交付 tip 上 `git diff --name-status` + `git diff --check`（EXIT=0）自检 |
+| `verification/M2-FIX-STUB-DECODER/raw/06-scope-self-check.log` | 交付 tip `5cacebfa` 上自检：全量 diff（[1]）、Owner 专属 diff `fc419905..5cacebfa`（[2]，仅允许路径）、`git diff --check f5d91425..5cacebfa` **EXIT=0**（[3]）；[1] 中 `STATUS.md`/`release-f5d91425.md` 来自 release commit `fc419905`（编排者，pre-claim），日志内 NOTE 说明 |
 | `doc/tasks/M2-FIX-STUB-DECODER.md` | AC 判定回填、测试矩阵 executed、`status: in_review` / `dispatch_state: DELIVERED_FOR_REVIEW`（回填 commit） |
 
 ## AC 判定表（全部实测）
@@ -34,7 +34,7 @@
 1. `$py -m pytest tests/core/test_stub_decoder.py -v` → **2 passed**，EXIT=0
 2. `$py -m pytest tests/core/ -q` → **76 passed**，EXIT=0（含新增 2 条）
 3. `$py -m pytest tests/m2_acceptance -q` → **32 passed, 2 xfailed**，EXIT=0
-4. `git diff --name-status f5d91425..<delivery-tip>` → 仅允许路径；`git diff --check f5d91425..<delivery-tip>` → **EXIT=0**
+4. `git diff --name-status fc419905..HEAD` → Owner 变更仅允许路径；`git diff --check f5d91425..HEAD` → **EXIT=0**（全量 vs base 中 `STATUS.md`/`release-f5d91425.md` 来自 release commit `fc419905`）
 
 环境：Windows x64 · Git Bash · Python 3.12.3 · pytest 9.1.1。
 
@@ -53,6 +53,7 @@
 
 ## 风险 / 遗留
 
+- 交付 commit 有一次 amend 轨迹：初版 `550b4269` 中 `raw/02-red-before-fix.log` 含 2 处 pytest 原样输出的行尾空白（diff --check EXIT=2），按 M2-AC4 先例做 whitespace-only 清理（traceback 内容逐字保留，仅去行尾空格）后 amend 为交付 tip `5cacebfa`；轨迹见 `raw/06-scope-self-check.log` 与 `verification-results.md` §范围自检。
 - 2 xfailed（M2-AC4 F-1/F-2）与本 Task 无耦合，保持原状；其修复落地会 XPASS 报错提醒移除标记（既有约定）。
 - 回归 `tests/core/` 日志尾部的 QML TypeError 行为既有 UI shell 测试 stderr 噪音，pytest 判定全绿，与本 Task 无关。
 
