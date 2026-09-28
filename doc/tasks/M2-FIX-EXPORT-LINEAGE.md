@@ -7,7 +7,7 @@ release_state: M2_FIX_EXPORT_LINEAGE_RELEASED
 approval: released_by_orchestrator_2026-09-29_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
 execution_approval: released_by_orchestrator_2026-09-29_goal_g2
 suggested_owner: ZCode
-owner: ZCode（待认领）
+owner: ZCode（子 agent 代行，用户授权 2026-09-28）
 reviewer: DeepSeek Harness
 integrator: Codex（另一子 agent 以 Codex 身份执行，保持 Owner≠Integrator）
 depends_on: [M2-AC4]
@@ -17,7 +17,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: RELEASED
+dispatch_state: CLAIMED
 ---
 
 # M2-FIX-EXPORT-LINEAGE — Export history 持久层 included_stale/missing page ids 修复
