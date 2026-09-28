@@ -369,7 +369,7 @@ harness = <test_repair13_import_entry.Harness object at 0x00000153C2AFE810>
         _click_chapter_row(harness)
 >       assert detail.property("currentChapterId") == chapter_id
 E       AssertionError: assert '' == 'c8f14d13a2ab...3c7794189eb96'
-E         
+E
 E         - c8f14d13a2ab4232b963c7794189eb96
 
 tests\ui_shell\test_repair13_import_entry.py:154: AssertionError
