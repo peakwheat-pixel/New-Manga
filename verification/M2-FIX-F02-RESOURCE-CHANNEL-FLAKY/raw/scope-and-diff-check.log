@@ -1,0 +1,26 @@
+=== AC5 scope self-check at delivery tip ===
+2026-09-29T03:17:12+08:00
+=== HEAD: fd31a7ad7e8bff338d87f3648577b5abeb173aac ===
+--- git diff --name-status 2b81f91c..HEAD ---
+M	apps/desktop/src-tauri/src/main.rs
+M	apps/desktop/src-tauri/src/resource_protocol.rs
+M	doc/STATUS.md
+A	doc/tasks/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY.md
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_baseline_run1.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_diag_run1.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_diag_run2.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_diag_run3.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_final_tip_verify.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_fix_directed_loop.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_fix_round1.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_fix_round2.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_fix_round3.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_fix_singlethread.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_perf_postfix.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_perf_prefix.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_py_core_full.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/raw/f02_py_m2acceptance.log
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/release-2b81f91c.md
+A	verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/verification-results.md
+--- git diff --check 2b81f91c..HEAD (full tree) ---
+DIFF_CHECK_EXIT=0
