@@ -1,0 +1,10 @@
+[36mvite v5.4.21 [32mbuilding for production...[36m[39m
+transforming...
+[32m✓[39m 32 modules transformed.
+rendering chunks...
+computing gzip size...
+[2mdist/[22m[32mindex.html                [39m[1m[2m  0.28 kB[22m[1m[22m[2m │ gzip:  0.21 kB[22m
+[2mdist/[22m[36massets/index-CTP500qd.js  [39m[1m[2m153.85 kB[22m[1m[22m[2m │ gzip: 49.90 kB[22m
+[32m✓ built in 458ms[39m
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build

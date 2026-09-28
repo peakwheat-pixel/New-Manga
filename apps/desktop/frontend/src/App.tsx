@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { runAc1OrFailClosed } from "./ac1/driver";
 import { ResourceChannelClient, TypedChannelError } from "./resourceChannel/client";
 
 type InvokeFn = (command: string, args?: Record<string, unknown>) => Promise<unknown>;
@@ -176,6 +177,28 @@ export default function App() {
         invoke = tauriInvoke();
       } catch {
         observed("TAURI_BRIDGE_MISSING");
+        return;
+      }
+
+      // ---- M2-AC1 acceptance driver: explicit test startup config only ----
+      // `ac1_request` is registered only when the host runs with
+      // M2AC1_TEST_MODE=1; production and probe mode deny it, and the page
+      // then falls through to the RC1/RC2 behaviour below unchanged.
+      const ac1Detected = await (async () => {
+        try {
+          await invoke("ac1_request", { method: "ping", params: {} });
+          return true;
+        } catch {
+          return false;
+        }
+      })();
+      if (ac1Detected) {
+        await runAc1OrFailClosed(
+          invoke,
+          { log: append, status: observed },
+          (payload) => invoke("ac1_write_results", { payload }) as Promise<void>,
+          (code) => invoke("ac1_exit", { code }) as Promise<void>,
+        );
         return;
       }
 
