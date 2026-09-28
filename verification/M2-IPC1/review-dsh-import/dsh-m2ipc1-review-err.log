@@ -1,0 +1,739 @@
+dsh: reasoning:
+Let me start by reading the authoritative documents and code. This is a read-only static review. Let me plan.
+
+Let me read the key files:
+- doc/tasks/M2-IPC1.md
+- doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md
+- src/bootstrap/core_service.py
+- tests/core/test_core_service.py
+- tests/providers/test_bootstrap_providers.py
+- library_bridge.rs, main.rs, build.rs
+- doc/handoffs/M2-IPC1-c4461c88.md
+- verification/M2-IPC1/verification-results.md
+
+Let me use glob and read. No shell. Start with parallel reads.
+dsh: reasoning:
+Now read the core service implementation and tests.
+dsh: reasoning:
+Now the Rust side. Let's find library_bridge.rs, main.rs, build.rs, and the frontend.
+dsh: reasoning:
+Now build.rs and frontend files, plus handoff and verification results.
+
+Note: the delivery head is a2f8d6b8, but I'm reading the worktree state. The task says session workspace is Owner worktree. But the delivery head may differ from what's checked out. I can't run git commands (no shell expected). Actually the sandbox says no shell. Let me check if there's a .git available... The instructions say sandbox has no shell (expected), don't execute commands. So I review the working tree as-is.
+
+Let me note key observations so far:
+
+Seam §2 (envelope):
+- Protocol check: `protocol != PROTOCOL_NAME or version.get("major") != PROTOCOL_MAJOR`. Good. Major != 1 → PROTOCOL_VERSION_UNSUPPORTED. Note: `version.get("major")` where version = req.get("version") or {}. If version is not a dict, e.g. version = "abc", then `"abc".get` → AttributeError → uncaught → crash! Let's check: `version = req.get("version") or {}`. If req has `"version": "abc"` (a truthy string), then `version.get` raises AttributeError, which is not caught in dispatch_request, and serve_forever would propagate → process crash with traceback to stderr. Similarly `version.get("major")` if version is a list → AttributeError. Hmm, but actually `req.get("protocol")` — protocol could be anything; comparison is fine.
+
+Actually wait: is that a real issue? A malformed request with version as a non-dict string would crash the server loop, printing a traceback to stderr (stderr inherited by host). That's an unhandled exception → process exits non-zero → host sees CORE_UNAVAILABLE. Contract §3.1 requires typed validation errors for unknown enums; robustness against malformed input. Also §8 "未知或未映射错误应使用 category=unknown ... 不得伪装". A crash with traceback does leak traceback to stderr (inherited → console). Does stderr go to WebView? host uses `Stdio::inherit()` for stderr, so it goes to the host console, not the WebView. But the seam §5 says "内部异常与 traceback 永不出 Core". Inherited stderr is the host's console—arguably not "out of Core" to the WebView. Still, an unhandled traceback from malformed input is a robustness P2.
+
+Let me verify: `payload = req.get("payload") if isinstance(req.get("payload"), dict) else {}` — safe.
+
+`request_id = req.get("request_id")` — could be dict; response includes it as-is → json.dumps works. Not a big deal.
+
+So malformed `version` type → AttributeError. Also malformed `protocol`? No .get on protocol. So only version.
+
+Also: message in PROTOCOL_VERSION_UNSUPPORTED includes `{protocol!r}` and `{version!r}` — these could contain a path if the caller sent a path. But it's caller-provided, so it's echoing input. Hmm, seam §5 says message safe short phrase. Echoing the caller's own input is not a leak of Core internals. But a path could be echoed — however the caller provided it. Low.
+
+The ListBooks error path: generic "Failed to list books" — no detail leak. Good. But it swallows all exceptions with category="internal". Contract §8 says unknown/unmapped error should use category "unknown" and source code if exists, else code="UNKNOWN". Here code=E_UNKNOWN="UNKNOWN", category="internal" — §8 lists `internal` as a valid category, and "unclassified Python exception / worker crash → unknown or internal". So ok.
+
+Now `_fetch_page_counts` catches sqlite3.Error → returns {} → all page_count=0 silently. That's a silent degradation: if the SQL fails, books show page_count 0 rather than an error. Is that a correctness issue? Requirements say page_count per declared semantics. Silent 0 could be misleading but not a security leak. P2/P3.
+
+Big one: `_fetch_page_counts` uses `self._core.conn`. Is `conn` part of CoreServices? Need to check bootstrap/core_assembly.py. Also whether the SQL matches the declared semantics: "未删除章节下有效未删除且含 managed copy 的 page". The SQL: `c.deleted_at IS NULL AND p.deleted_at IS NULL AND p.source_hash IS NOT NULL AND p.managed_original_ref IS NOT NULL AND p.width IS NOT NULL AND p.height IS NOT NULL`. Need to check the schema: does `pages` table have `deleted_at`, `source_hash`, `managed_original_ref`, `width`, `height`? And does the app's own notion of "valid page" match? Let me look at the library repository list_books and the schema, plus any existing page-count query in the app (e.g., BookshelfViewModel) to compare semantics. If the existing app counts pages differently (e.g., including pages with no managed copy), then the React panel's page_count would differ from the legacy UI — a consistency issue. Owner claims "未删除章节下有效未删除且含 managed copy 的 page". Need to verify SQL == claim. The claim mentions "有效" (valid) and "含 managed copy". SQL requires source_hash not null AND managed_original_ref not null AND width/height not null. Hmm, that's the implementation's definition of "valid". Is there an existing definition in the codebase? Let's search for page count queries.
+
+Also, ListBooks ordering: `library.list_books()` — need to check whether it returns all books including archived. The DTO includes is_archived, so presumably all.
+
+Also, the `sqlite3` import in core_service is used for except sqlite3.Error. The conn: does `execute` work with Row factory? `row["book_id"]` requires sqlite3.Row row_factory. Need to check core_assembly sets row_factory. If row_factory is not set, `row["book_id"]` raises TypeError, which is NOT sqlite3.Error → propagates up to handle_list_books → caught by the except Exception in dispatch → "Failed to list books". So if conn lacks row_factory, page_count always errors → all books get an internal error?! Wait no — the exception would propagate from handle_list_books to the dispatch except Exception, returning an internal error for every ListBooks call. But the e2e test asserts ListBooks returns 1 book with page_count 1, and integration confirmed 7 passed. So row_factory must be Row. Still verify.
+
+Now the Rust side.
+
+Seam §4: spawn args pinned `-m bootstrap.core_service`. ✓. EOF → CORE_UNAVAILABLE ✓ (stdout read_line empty → unavailable). Non-zero exit → hmm: `round_trip` reads a line; if the child exits non-zero without output, read_line returns 0 → empty → CORE_UNAVAILABLE ✓. But if child exits non-zero AFTER writing a response? Not relevant. What about "后续请求" (subsequent requests) after crash: Round trip writes to stdin, write may fail (broken pipe) → CORE_UNAVAILABLE ✓. But note: on crash, writing to a closed pipe raises BrokenPipeError → mapped ✓. However, reading from a closed stdout returns empty → CORE_UNAVAILABLE ✓. Good.
+
+But there's a subtle issue: no `child.try_wait()` / exit status inspection — the task says "EOF 或非零退出 → CORE_UNAVAILABLE". Both covered via EOF/pipe errors. OK.
+
+No auto-restart: there's no supervision loop; `main` spawns once with `.expect(...)`, so if spawn fails the app panics (that's startup, not restart). No restart ✓.
+
+Timeouts: `core.shutdown` host waits 5s then kill — contract seam §3 says "host 等待 5s，超时 kill". In library_bridge `Drop`: `child.wait()` with NO timeout — blocks indefinitely! The seam says host waits 5s, timeout kill. That's a deviation: Drop does `let _ = child.wait();` with no timeout and no kill. Hmm, but wait — Drop sends core.shutdown then waits. If Core hangs, the app shutdown hangs forever. There's no 5s timeout+kill. That's a real gap vs Seam §3: "core.shutdown：{} → {status:"stopped"}；Core flush 后以 exit 0 退出。host 等待 5s，超时 kill。" So P2 finding (no timeout/kill at shutdown). Let me double check there's no other place with a timeout. In main.rs, no wait-with-timeout. So confirmed.
+
+Also seam §4 says "host 等待 5s" — actually it's §3 shutdown bullet. Whatever; the deviation stands.
+
+Now the Mock: `MockLibraryChannel::set_ping_error` is `#[allow(dead_code)]`.
+
+Now command surface three views:
+1. main.rs PRODUCTION_COMMANDS constant: includes core_ping, library_list_books ✓
+2. generate_handler! production branch: includes core_ping, library_list_books ✓ (lines 366-372). Probe branch and ac1 branch unchanged — probe branch doesn't include core_ping/library_list_books. Hmm: is that a problem? Seam §6: "production allowlist 在同一 commit 内同步全部三个视图… probe/ac1 模式面不得变化". So probe/ac1 must be unchanged, meaning they should NOT get core_ping/library_list_books. Indeed probe branch remains 7 commands, ac1 remains 6. ✓. But note `command_allowlist(true,false)` = PRODUCTION_COMMANDS + probe → includes core_ping/library_list_books, while the probe generate_handler! list does NOT include core_ping/library_list_books. So the "single source of truth" allowlist and the actual registered handler for probe mode diverge. That's pre-existing design tension (the comment at lines 328-333 says three hand-maintained views). The test `app_acl_manifest_is_generated_and_enforced` checks ACL manifest contains all commands from command_allowlist(true,false) and (false,true) — so ACL must include core_ping/library_list_books. Need to check build.rs / capabilities to confirm the ACL includes them (integration says cargo test passes, and that test asserts the manifest). Actually the test reads acl-manifests.json generated at build; it asserts allow-* for every command in command_allowlist(true,false) chained with (false,true) — that includes core_ping, library_list_books, issue_resource_url etc. So build.rs must include them; the test would fail otherwise. Since cargo test passes (30 passed), it does. But let me verify build.rs anyway.
+
+Hmm wait — but the test does not check the probe generate_handler! list; so the three-view sync claim rests on manual consistency. Notably probe/ac1 invoke handlers do not register core_ping/library_list_books even though the ACL (built from build.rs) presumably allows them — meaning in probe mode, invoking core_ping fails with "command not found". Is that intended? Seam says probe/ac1 surfaces must not change. Adding core_ping to probe handler would be a change. So keeping them out is correct per the seam. But then command_allowlist(true,false) being a "single source of truth for the WebView-facing command surface" now overstates probe's actual surface — a documentation/semantic wrinkle, arguably pre-existing. Let's check whether the frontend probe/ac1 drivers would be affected. Not likely.
+
+Actually, wait. There's a more interesting question: does the ACL gating mean production invokes of core_ping work? build.rs must add allow-core-ping, allow-library-list-books capabilities for the main window. Let's read build.rs and capabilities.
+
+3. build.rs manifest.
+
+Also "probe/ac1 分支是否零变化" — I can't diff without git. But I can check that probe/ac1 handler lists match what I'd expect and that no probe/ac1-related test changed... I can't verify zero change without the diff. The integrator confirmed delta 21 paths all in allowlist. I could note the limitation: static reading of the checked-out tree can't prove "zero change" vs base; but the handler lists still contain only the original commands, and PRODUCTION_COMMANDS additions are additive.
+
+Let me now read build.rs, capabilities, core_assembly.py, schema, library repo, frontend files, handoff, verification.
+
+Let me batch reads.
+dsh: reasoning:
+Note: `assemble_core_services` at line 901-903 closes conn on exception and re-raises. In core_service.assemble_production_core, if assembly fails, the exception propagates out of main → traceback to stderr and exit non-zero. Host sees EOF/unavailable. Fine.
+
+Now, `self._core.conn` is ThreadRoutedConnection. Need to check its `execute` and row_factory. Let's read infrastructure/sqlite/connection.py. Also the library repo list_books and schema pages/chapters table definitions.
+
+Also note core_service.py imports `sqlite3` for except sqlite3.Error; ThreadRoutedConnection.execute might raise a different error. Let's check.
+
+Also verify `LibraryService.list_books()` return type and fields (book.created_at etc.).
+
+Let me read those files.
+dsh: reasoning:
+Key: the repository's own notion of a "complete/live page" is `_COMPLETE_PAGE_WHERE` + `deleted_at IS NULL`, exactly `source_hash IS NOT NULL AND managed_original_ref IS NOT NULL AND width IS NOT NULL AND height IS NOT NULL`. The core_service SQL replicates this. ✓ So the SQL matches the codebase's definition of a valid page, and `p.deleted_at IS NULL`, `c.deleted_at IS NULL`. Owner's claim matches.
+
+BUT: `list_books` in the repository does NOT filter `books.deleted_at IS NULL`! `SELECT ... FROM books` returns soft-deleted books too. So ListBooks returns soft-deleted books as BookSummary. Hmm — does LibraryService.list_books filter deleted? Let's read application/library/service.py. Also the legacy BookshelfViewModel might filter. This matters for consistency of page_count semantics and for the "read-only" correct display. Not necessarily in scope of AC but a correctness note: if LibraryService.list_books returns all books including soft-deleted, then the React panel shows deleted books. Let's check.
+
+Also: does the book DTO's created_at exist always? yes.
+
+Now let's check application/library/service.py.
+
+Also check `_fetch_page_counts` semantics: `page_counts.get(book_id, 0)`. The SQL groups by c.book_id, joining chapters→pages. Books with no chapters get 0 ✓.
+
+One more: `COUNT(p.page_id)` counts rows matching the WHERE, ✓.
+
+Potential issue: the SQL filters `c.deleted_at IS NULL` — but no book filter. Fine.
+
+Another: page_count for pages in soft-deleted books. Minor.
+
+Now let's read application/library/service.py and domain/books/entities.py BookSummary? Actually ListBooks DTO defined in core_service.
+
+Let's also check the frontend and docs. Batch reads.
+dsh: reasoning:
+LibraryService.list_books filters out deleted books ✓. So the panel shows non-deleted books, but page_count includes... pages of deleted books? No, books are filtered out, so irrelevant.
+
+But wait: page_count counts pages in non-deleted chapters. Books are non-deleted. Fine.
+
+Hmm, one subtlety: LibraryService.list_books returns every non-deleted book, archived included ✓ (matches DTO is_archived and Contract §5 "排序/过滤留给 React 本地").
+
+Now frontend LibraryPanel.tsx, types.ts, App.tsx, tests.
+dsh: reasoning:
+Now the tests for frontend and App.tsx.
+dsh: reasoning:
+Now the docs: handoff, verification-results, release evidence.
+
+Note: the frontend component tests use renderToString with initialState — so they don't exercise the real fetch path in the component (except the client test with a mock invoke). The three-state coverage is via initialState, which does render the error/empty/success branches. That's OK but somewhat "static" — the component's own fetch path (client injected) is only tested via client.test.ts, not LibraryPanel with an injected client that rejects. The 5th test only calls client.listBooks directly, not the component. So the claim "组件测试覆盖成功/空/不可用三态" holds via initialState, though not through the async fetch path. Minor P3 note: no test that LibraryPanel (without initialState, with a rejecting client) renders the error state; the error branch is only reached via initialState. Acceptable but worth noting as a discrimination gap.
+
+Also note LibraryPanel mounts with `library_list_books`, but the AC3 says新组件 + App.tsx 挂载 ✓ (line 472).
+
+Now docs.
+dsh: reasoning:
+Important observation: Handoff and verification-results both record delivery head = c4461c88. But the review request states release commit=4792faa0 (Task file + seam freeze) and delivery head=a2f8d6b882085b45f8db0d84222b33ff5421c06f. So the docs' recorded delivery_head (c4461c88) is STALE relative to the actual delivery head a2f8d6b8. That's an inconsistency axis item — docs claim c4461c88 while the review target is a2f8d6b8. I must note this. Possibly a2f8d6b8 is a later commit (docs commit) — e.g., the handoff itself says "最终治理与交付文档提交" (4th commit) without a recorded SHA. So the handoff file name M2-IPC1-c4461c88.md and delivery_head field refer to the code commit chain head before the doc commits; the final delivery head a2f8d6b8 includes doc changes. Is that an inconsistency? The Task file delivery section says "Handoff：doc/handoffs/M2-IPC1-<short-head>.md". The task file itself doesn't state the delivery head. The task file lists release commit? Actually the task file's front-matter has base_commit and branch, not delivery head. Hmm, the review prompt says "release commit=4792faa0（含 Task 文件与 seam 冻结）" — that's the commit that contained the Task file + seam freeze (i.e., release of the task). And delivery head a2f8d6b8.
+
+So: the handoff/verification docs say delivery_head c4461c88, but the actual delivery head to be reviewed is a2f8d6b8. Also the task-file front matter (read from the worktree) has no delivery_head; approval fields. Let me check whether the task file has a delivery field at all — no. Hmm, but the task file read has `release_state: M2_IPC1_PRODUCTION_CORE_LIBRARY_RELEASED`, `approval: approved_by_user_2026-09-28_m2ipc1_release`. So the Task file at the worktree includes content that came from release commit 4792faa0? The task says release commit=4792faa0 includes Task 文件与 seam 冻结. But the worktree task file's status is `delivered` and ACs checked — which would be the Owner's later commit (the doc commit). So the worktree task file reflects delivery, not the release state. Fine.
+
+The mismatch: handoff (c4461c88) / verification-results (c4461c88) vs the delivery head a2f8d6b8 given in the review request, and the handoff file's own name is M2-IPC1-c4461c88.md. This is a real consistency finding: the recorded delivery head in the two evidence documents does not equal the actual delivery head (a2f8d6b8). Since the review prompt itself cites "delivery head=a2f8d6b882085b45f8db0d84222b33ff5421c06f", and the docs say c4461c88..., either (a) the docs are stale (doc commit added later, and the docs should have recorded the final head, or the handoff name/field should reflect the final delivery head), or (b) the handoff intentionally names the code-head commit. The Handoff template likely requires "delivery head". Let me check the HANDOFF template to be precise. Also check whether the base commit a54bb8c9 appears in release-a54bb8c9.md (that's the release evidence file, named by base commit). Let me read release-a54bb8c9.md to see the seam freeze text and check consistency (the review prompt says release commit=4792faa0; the file release-a54bb8c9.md is named after a54bb8c9 which is the base... Actually the task file refers to [release evidence](../../verification/M2-IPC1/release-a54bb8c9.md) as authority for the seam freeze).
+
+Let me read verification/M2-IPC1/release-a54bb8c9.md and doc/templates/HANDOFF.md, and the capabilities json + permissions to confirm three-view sync.
+
+Also: cargo test 30 passed includes the tests; consistent with the log. vitest 28 = 4+3+8+8+5 ✓ matches listing. pytest 7 = 3 (core) + 4 (bootstrap providers)? Need to check tests/providers/test_bootstrap_providers.py count. The handoff says test_core_service.py is 3 passed. Let's verify the count of test functions in tests/providers/test_bootstrap_providers.py → should be 4. Let me grep for "def test_" in that file.
+
+Also inconsistency: Handoff §4 line 99 says `& "$py" -m pytest tests/core/test_core_service.py tests/providers/test_bootstrap_providers.py -q` ✓ matches; and the note about the path typo ✓ recorded (line 104). Task file line 77 has the typo `tests/core/test_bootstrap_providers.py`. The handoff records it. Good — consistency axis asks whether Handoff faithfully records the typo correction: yes, line 104.
+
+But wait: Task file "验证命令" section line 77 says `tests/core/test_core_service.py tests/core/test_bootstrap_providers.py`. Since the Task file is authoritative for verification commands and it has a wrong path, but the handoff notes it. The Owner modified the Task file (allowed path) — did they fix the typo in the Task file? No, line 77 still has `tests/core/test_bootstrap_providers.py`. Hmm — the task file wasn't corrected; the handoff notes the discrepancy. The review prompt asks: "Handoff 是否如实记录 ... 任务文本笔误修正（tests/core/→tests/providers/）". Handoff records it as a note (line 104). It's arguably "如实记录". Whether the Task file should have been fixed is a minor point.
+
+Also the review prompt says the integration run was "pytest tests/core/test_core_service.py + tests/providers/test_bootstrap_providers.py = 7 passed" ✓ consistent.
+
+Now BookSummary page_count model difference: Handoff §3 records it ✓ (line 88). Good.
+
+Now let me check the SQL semantics against "Owner 声明": The Owner's declaration is presumably in the handoff or a comment. In core_service.py the docstring for _fetch_page_counts says "Read-only query calculating valid non-deleted page counts per book." The declared semantics "未删除章节下有效未删除且含 managed copy 的 page" — where is that declared? Possibly in the Task file? No. Maybe in the handoff? §3 says "通过只读 SQL 聚合统计该书所有有效章节下已导入且未删除页面的数量". The SQL matches: non-deleted chapter, non-deleted page, complete page (source_hash/managed_original_ref/width/height not null) = same as repository's _COMPLETE_PAGE_WHERE. ✓ consistent with the codebase's definition.
+
+Wait, one subtle inconsistency: SourceStyleService/_StubStyleAnalyzer and _PassthroughImageDecoder — `assemble_production_core` passes `font_catalog=object()`, `layout_engine=object()`, `compositor=object()`. These stubs mean the production Core sidecar cannot actually render; but this task is read-only ListBooks, so fine. However: is this "production" assembly? The docstring says "assemble the production Core services". Using a passthrough image decoder that fabricates a 1x1 image and stub renderers is a risk if any pipeline step runs. But no pipeline commands are exposed. It's a scope-limited stub; note as P3 observation (a decoder that returns a fabricated 1×1 image instead of failing closed is a false-success adapter — but unreachable via the 3-command surface). Actually `_PassthroughImageDecoder.decode` returns width=1,height=1 — for the real import path this would silently fabricate dimensions. Since import commands aren't exposed in M2-IPC1, it's latent. Worth a P3/P2 note: the seam §5/§7 says production assembly; using fabricating stubs could produce wrong data if a later task adds ImportPages without replacing them. I'll call it P3 (latent, out of current command surface) or P2. I'd say P3.
+
+Hmm, but also: `font_catalog=object()` — RenderService stores it; no method calls until render. OK.
+
+Now check the envelope robustness issue more carefully:
+
+```python
+request_id = req.get("request_id")
+protocol = req.get("protocol")
+version = req.get("version") or {}
+command = req.get("command")
+payload = req.get("payload") if isinstance(req.get("payload"), dict) else {}
+if protocol != PROTOCOL_NAME or version.get("major") != PROTOCOL_MAJOR:
+```
+
+Python evaluates `protocol != PROTOCOL_NAME` first; if protocol mismatches, short-circuit → no version.get. So `{"protocol":"new-manga.core","version":"x"}` → version = "x" (truthy) → `"x".get` → AttributeError. Uncaught → propagates out of dispatch_request → out of serve_forever → main's try/finally closes conn → traceback printed to stderr, process exits 1. Host: reads EOF → CORE_UNAVAILABLE. So the failure mode is a non-typed crash on a malformed-but-JSON request. Contract §3.1/§8 would want a typed validation error. This is a real P2 (robustness/typed-error gap), not P0 since it requires a malformed client request and does not leak to WebView; it does print a traceback to the inherited stderr (seam §5 "内部异常与 traceback 永不出 Core" — arguably violated since stderr is inherited by the host process console; but that's the host's console, not WebView).
+
+Hmm, actually is it a violation of §5? "OS 路径、SQLite 细节、内部异常与 traceback 永不出 Core" — a traceback printed to stderr goes out of the Core process. The Rust host sets stderr to inherit, so a Python traceback containing absolute paths (e.g., `File "G:\...\src\bootstrap\core_service.py", line 235`) would appear on the host's stderr/console. Is that "出 Core"? Literally yes: the traceback leaves the Core process onto the host console. But the seam's intent is not to send it to the WebView/DTO. I'd flag as P2 with clear reasoning: malformed `version` type (non-dict) causes an uncaught AttributeError → traceback (containing absolute source paths) on inherited stderr + process exit 1, instead of a typed validation error. Also note: `version: null` → `or {}` → fine; `version: 1` (int) → truthy → `1 .get` AttributeError.
+
+Similarly `command` being a non-string is fine.
+
+Let's double-check the exception path: in serve_forever, no try/except around dispatch_request. Yes.
+
+Also `"request_id": request_id` — if request_id is a set, json.dumps fails. Edge. Not worth.
+
+Now, envelope field presence: Response requires protocol/version/request_id/result/error ✓ all present in every branch.
+
+But: does the response echo the *request's* protocol/version or the server's? It emits server constants. Contract §3 Response version = {major:1,minor:0}. Fine.
+
+Now Seam §2 says "major 不同必须拒绝并返回 PROTOCOL_VERSION_UNSUPPORTED（category=validation, retryable=false）". ✓.
+
+"同 major 的未知 command 返回 typed UNKNOWN_COMMAND（category=validation）" ✓.
+
+Seam §3: core.ping → {status:"ready", protocol_version:{major:1,minor:0}, capabilities:["library.list_books"]} ✓ exactly.
+ListBooks → BookSummary[] ✓.
+core.shutdown → {status:"stopped"} then exit 0 ✓ (serve_forever returns 0 after emitting; main returns 0; finally closes conn). Verify flush: _emit flushes stdout ✓.
+
+Seam §3 also: "三条之外的命令一律 UNKNOWN_COMMAND" ✓.
+
+Seam §4: spawn `<python> -m bootstrap.core_service` ✓ (spawn_args + Rust spawn). Child inherits NEWMANGA_DATA_ROOT: Rust sets NEWMANGA_DATA_ROOT only when data_root is Some (main passes env_path("NEWMANGA_DATA_ROOT") which may be None). If None, the child uses default_data_root() = LOCALAPPDATA/New Manga. Note: Rust passes `env("NEWMANGA_DATA_ROOT", root)` only if provided. And "子进程继承 NEWMANGA_DATA_ROOT 等环境" ✓ (Command inherits parent env by default anyway).
+
+Hmm — important: does the Rust side's data_root align with the Python core_bridge's data root? The existing core_bridge uses `M2RC1_DERIVED_ROOT` etc. The library sidecar uses NEWMANGA_DATA_ROOT, which in the RC2 desktop runtime is presumably not set (main.rs reads env_path("NEWMANGA_DATA_ROOT")). If unset, the library sidecar writes/opens `%LOCALAPPDATA%\New Manga\library.db`, while the resource-channel Core uses M2RC2_CATALOG_DB (a different SQLite file!). So the production desktop app now spawns a SECOND Python Core process (StdioLibraryChannel) that opens a library.db — a separate process from the resource-channel Core sidecar (StdioCoreChannel). Two Core processes. Is that a seam/architecture concern? The seam §7 says React → Tauri → Rust bridge → stdio sidecar → Python Core → SQLite. It doesn't forbid two sidecars, but the app now maintains two SQLite connections/processes. Given "生产首版" and the read-only vertical slice, acceptable but noteworthy as a design observation (P3) — the library sidecar's DB root is not tied to the RC2 catalog/runtime roots, so the IPC1 Core may read a different library than the rest of the desktop runtime. Also note that main.rs requires M2RC2_CATALOG_DB etc. and will panic if missing, so M2-IPC1's commands are only reachable inside the RC2 runtime.
+
+Also, `StdioLibraryChannel::spawn` uses `current_dir(src_root)` and sets PYTHONPATH — consistent with ac1_bridge? Let me check ac1_bridge for comparison (isomorphic claim). Let me read ac1_bridge.rs and core_bridge.rs spawn for the "解释器定位沿用 core_bridge.rs 的既有机制" claim. main.rs uses `python_exe = env M2RC1_PYTHON or "python"` — that's the existing mechanism ✓ (same as core_bridge spawn call).
+
+Let me read ac1_bridge.rs quickly to compare isomorphism and check round-trip read with no timeout etc.
+
+Also need capabilities/m2rc1-commands.json to verify allow entries, and permissions/autogenerated files exist.
+
+Let me also check that the frontend commandSurface.test.ts (RC2 test) asserts production surface unfiltered—could a change break it? It passed. Let's read it briefly to see whether it pins the surface (and whether M2-IPC1's new commands were added there or not — the delta 21 paths allowlist may include it).
+
+Let me batch: ac1_bridge.rs, capabilities/m2rc1-commands.json, frontend commandSurface.test.ts, doc/templates/HANDOFF.md, release-a54bb8c9.md.
+dsh: reasoning:
+Note capability description says "the ten commands" but the list now has twelve (adding core-ping and library-list-books → 7+3=10, now 5+4+3=12). Wait: PRODUCTION 5 + probe 4 + ac1 3 = 12. build.rs comment says "grants exactly the ten commands below (seven RC1/RC2 + three M2-AC1 acceptance commands)" — but the list has 12 entries. The comment in build.rs (lines 8-9) and the capability description ("exactly the ten commands") are now stale/wrong: 12 declared. Also main.rs test comment at line 469-471 says "the app manifest declares exactly the ten live commands (seven resource-channel + three M2-AC1 acceptance; R2-06)". These comments were not updated. Is that a P2/P3? It's a documentation consistency issue in comments (and capability description is user-facing metadata). Not functionally load-bearing (the test iterates command_allowlist). Note: the test `app_acl_manifest_is_generated_and_enforced` comment says ten commands — stale text. This is a P3 (comment drift), but it does touch Seam §6 ("三视图同步") — the counts in the comments are wrong, though the actual arrays are in sync. Let me verify the manifest actually contains 12 permissions and that the ACL test covers core_ping/library_list_books: it iterates command_allowlist(true,false) chained with (false,true) → includes PRODUCTION_COMMANDS (so core_ping, library_list_books) ✓, plus probe and ac1. So the test does cover the two new ones. Good.
+
+Wait: does it cover commands only in probe list that aren't in command_allowlist(true,false)? command_allowlist(true,false) = production+probe ✓ all. ac1 via (false,true) ✓. So all 12 ✓.
+
+Let me check the autogenerated permission files exist: permissions/autogenerated/core_ping.toml and library_list_books.toml.
+
+Also check gen/schemas/acl-manifests.json contains allow-core-ping etc. Let me grep.
+
+Also check that probe/ac1 handler lists are unchanged — can't diff, but note.
+
+Let me also confirm the frontend commandSurface.test.ts didn't need changes (it passed) — check whether it asserts a command count that would break; it passed so fine. But it's in the delta? The review says delta 21 paths all in allowlist. Let's not worry.
+
+Let me grep for "ten commands" and check permission files.
+dsh: reasoning:
+Interesting: `permissions/autogenerated/ac1_write_results.toml` exists. But wait — permissions/autogenerated is generated by tauri-build for commands in build.rs manifest. Git-tracked? They are committed. Fine.
+
+Three-view sync:
+- View 1: main.rs PRODUCTION_COMMANDS includes core_ping/library_list_books ✓
+- View 2: generate_handler! production branch includes both ✓; probe/ac1 branches unchanged ✓ (they don't include the new commands)
+- View 3: build.rs app_manifest includes both ✓; capabilities include allow entries ✓; generated acl-manifests and permission toml present ✓.
+
+But note the divergence: probe/ac1 `generate_handler!` lists do NOT include core_ping/library_list_books even though build.rs manifest + capabilities + PRODUCTION_COMMANDS (part of probe/ac1 allowlist function) include them. So in probe/ac1 modes, the ACL allows invoking core_ping but the handler isn't registered → "command not found". Is this a violation of Seam §6 ("三视图同步")? The seam requires the production allowlist synced across three views and probe/ac1 unchanged. Since probe/ac1 must be unchanged, not registering the new commands there is correct behavior; the "single source of truth" comment in main.rs line 60-62 is now imprecise for non-production modes. Also the announcement printed in probe mode (`command_allowlist(true,false)`) now announces core_ping/library_list_books as if available, while they aren't registered → the stderr announcement overstates the probe surface. That could matter for the RC2 evidence runner which "pins the announcement per mode". Hmm — does the RC2 runner compare the announced allowlist to an expected list? If the runner has a frozen expectation of the probe announcement, adding commands to PRODUCTION_COMMANDS would change the announced probe string and could break the RC2 evidence runner (not part of M2-IPC1's tests; cargo test can't catch a runner expectation). That's a real integration risk worth flagging as P2: `command_allowlist(true,false)` announcement in probe mode now includes core_ping/library_list_books, but probe's registered handler doesn't, so the announcement is inconsistent with the actual surface in probe mode; and the probe announcement is an evidence-gate artifact (R2-04).
+
+Actually wait: in probe mode the announcement is `[m2rc2-allowlist] probe:issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,probe_config,...`. If the RC2 runner asserts an exact string/list, this is a cross-task regression. M2-RC2 is done; its runner lives where? Let's search for "m2rc2-allowlist" in the repo outside main.rs to see if a runner pins it.
+
+Let me grep for m2rc2-allowlist and for the probe runner.
+
+Also grep "ten commands" for stale counts.
+
+Also check frontend commandSurface.test.ts content — it might pin the production surface list (client-side constants?) Let's read it.
+
+Let me run these greps.
+dsh: reasoning:
+Now this is important: the M2-RC2 evidence runner (verification/M2-RC2/run_e2e.py) pins the announced allowlist per mode exactly. From M2-RC2 docs: "runner 在两个阶段分别对照：production 必须恰好为 issue_resource_url, revoke_ref, revoke_resource_refs；probe 必须恰好再加 4 个 probe 命令". Let me check run_e2e.py's expected strings. If M2-IPC1 changed PRODUCTION_COMMANDS to add core_ping/library_list_books, the announcement in production mode becomes `issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books` and the probe announcement gains two more. If the M2-RC2 runner asserts exact equality, the RC2 E2E gate would now FAIL. That's a cross-task integration regression — the M2-IPC1 task claims "probe/ac1 模式面不得变化" and cargo tests pass, but the RC2 E2E runner's exact-match expectation is likely broken.
+
+Let me read verification/M2-RC2/run_e2e.py relevant lines. If the runner uses exact equality, that's a P1 finding (M2-RC2's frozen evidence gate breaks), though M2-RC2 is already done and its runner may not be re-run. Still, the "probe/ac1 面零变化" claim is violated at the announcement level: the announced probe allowlist changed (it now includes the two new production commands). Actually is that "面变化"? The probe *announcement* changed. The probe *registered handler* didn't. The RC2 gate compares announcement to expected. So if re-run, RC2 gate fails. Also the interactive production phase in RC2 expects exactly 3 production commands; now the production announcement has 5. The RC2 runner's interactive gate would fail. This is a genuine cross-task regression that the M2-IPC1 test suite cannot catch (it's in verification/M2-RC2/run_e2e.py, not run by cargo/vitest/pytest).
+
+Let me verify run_e2e.py content.
+dsh: reasoning:
+Confirmed: `verification/M2-RC2/run_e2e.py` lines 285-287, 400-403, 428-433 use exact equality against PRODUCTION_EXPECTED = 3 commands and PROBE_EXPECTED = 3+4 = 7 commands.
+
+M2-IPC1 changed main.rs PRODUCTION_COMMANDS to 5 commands, so the host now announces 5 in production and 9 in probe. Re-running the M2-RC2 E2E gate would FAIL both the probe-allowlist-announcement and the interactive production-surface checks. This is a cross-task regression that M2-IPC1's own tests cannot catch. Severity: the M2-RC2 task is `done`; its frozen E2E gate evidence is historical. But the runner is a living artifact, and re-running it now fails. Task M2-IPC1's claim "probe/ac1 模式面零变化" is only true for generate_handler! registration, not for the announced/ACL-visible surface.
+
+Also more importantly: in probe and ac1 modes, the ACL (capabilities/m2rc1-commands.json + build.rs manifest) now allows core_ping/library_list_books but those aren't registered → invoke fails. That's benign (fail-closed). The announcement overstates. And the RC2 runner gate breaks.
+
+Is this P1 or P2? Review severity: it doesn't break the 4 verification commands of M2-IPC1, and it doesn't break product behavior. It breaks another task's frozen evidence gate (which is a documented integration expectation). I'd call it P2 (integration/evidence-gate drift), maybe P1 since a previously-passing gate now fails if re-run — that's a regression of a completed task's verification. Hmm. The instruction: P0 blocks integration; P1 should be fixed. The RC2 gate is a historical record; re-running old gates on new HEAD isn't necessarily required. But the runner in the repo will fail → the repo's own E2E evidence can't be reproduced. Given that M2-IPC1's seam explicitly says "probe/ac1 模式面不得变化", and the announcement is the probe/ac1 surface's runtime evidence, this deviation is in-scope and should be recorded. I'll rate P2 (must be dispositioned by Codex before integration, e.g., update RC2 runner expectations or acknowledge). Actually, wait — the delta path list: did M2-IPC1 touch verification/M2-RC2/run_e2e.py? The review prompt says delta 21 paths all in the allowlist. The M2-IPC1 allowed paths do NOT include verification/M2-RC2/**, so the Owner could not update the RC2 runner. So this is a genuine cross-task consequence that the integrator must handle. Good finding.
+
+Let me confirm the production announcement changes: `command_allowlist(false,false)` = PRODUCTION_COMMANDS = 5 items ✓ and it's printed. Yes.
+
+Also the ACL now allows core_ping in probe mode but probe handler lacks it → the RC2 runner's "production allowlist exactly" check reads the announcement (5 items) → mismatch → FAIL. Confirmed by reading lines 285-296 and 400-410. Let me read that section fully to be precise about line numbers and behavior.
+
+Let me read run_e2e.py lines 280-300 and 390-435.
+
+Also, I should check the frontend ac1 driver / commandSurface tests not affected ✓.
+
+Another cross-check: M2-AC1 evidence runner might also pin the allowlist announcement (`EXPECTED_AC1_ALLOWLIST` in run_e2e.py per doc/reviews/M2-AC1 line 85). If M2-AC1's runner is in verification/M2-AC1/, it also pins the ac1 announcement exactly (likely 6 commands: 3 production + 3 ac1). Now it announces 8 (5 production + 3 ac1) → M2-AC1 E2E gate also breaks if re-run. Let me check verification/M2-AC1/**/run_e2e.py for EXPECTED_AC1_ALLOWLIST.
+
+Let me grep.
+dsh: reasoning:
+Confirmed both frozen E2E runners pin exact allowlists:
+- M2-RC2: PRODUCTION_EXPECTED = 3, PROBE_EXPECTED = 7.
+- M2-AC1: EXPECTED_AC1_ALLOWLIST — let me read lines 40-50 to confirm it's the 6-command string.
+
+Both will now mismatch because PRODUCTION_COMMANDS gained two commands (announced in every mode: production 5, probe 9, ac1 8).
+
+Let me read M2-AC1 run_e2e.py lines 40-50.
+dsh: reasoning:
+Confirmed. Both frozen E2E gates (M2-RC2 and M2-AC1) will now FAIL if re-run on this delivery head, because they compare the announced allowlist for exact equality:
+
+- M2-RC2 production: announced would be `issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books` ≠ expected 3 → FAIL (lines 400-404).
+- M2-RC2 probe: announced 9 ≠ expected 7 → FAIL (line 432).
+- M2-AC1: announced `...,core_ping,library_list_books,ac1_request,...` ≠ EXPECTED_AC1_ALLOWLIST (line 44) → FAIL (line 240).
+
+This is a strong P1: it breaks two previously-frozen verification gates of done tasks, and M2-IPC1's own evidence does not mention it. Since M2-IPC1's allowed paths exclude verification/M2-RC2/** and verification/M2-AC1/**, the Owner couldn't fix it; Codex must arbitrate. Also the seam says "probe/ac1 模式面不得变化" — the announcement changed, so this is a seam deviation in the runtime-observable surface (not in registration).
+
+But hold on — is the announcement really part of the "probe/ac1 面"? The registered commands in probe mode are unchanged (7), ac1 unchanged (6). The announcement is computed from command_allowlist which includes PRODUCTION_COMMANDS. An alternative reading: the "面" is the registration surface; the announcement is a self-report. But the announcement is the evidence channel, and it now asserts commands that aren't registered in those modes → also a correctness bug in the announcement (it claims availability that doesn't exist). I'll report as P1 (must be dispositioned) with both facts.
+
+Also, the capability JSON description and build.rs/main.rs comments say "ten commands" while 12 are declared — stale counts (P3).
+
+Now let me check the remaining items:
+
+1. Seam §4 "host 等待 5s，超时 kill" — library_bridge Drop does an unbounded child.wait() with no timeout/kill. Deviation from seam §3 bullet 3 (core.shutdown: host waits 5s, timeout kill). This is P2. Evidence: library_bridge.rs:219-235 (Drop) and no wait_timeout anywhere.
+
+Actually let me double-check: is there any timeout elsewhere? grep for "timeout" in library_bridge / main.rs. Rust std has no wait_timeout; would need wait-timeout crate or try_wait loop. Let me grep "5" / "timeout" in the tauri src.
+
+2. Unknown-command/major check: fine.
+
+3. `dispatch_request` on `version` non-dict → AttributeError. Confirmed P2 (typed error gap + traceback with absolute paths on inherited stderr).
+
+Also `"message": f"Unsupported protocol {protocol!r} or version {version!r}"` — echoes caller input; not a leak of internals. But note: seam §5 says message 安全短句; echoing the raw protocol/version is fine.
+
+4. `_fetch_page_counts` swallows sqlite3.Error → returns {} → all page_count 0. Silent degradation. But note: with WAL and query_only possibilities... Actually could the SELECT fail legitimately? If the DB schema is older (e.g., pages table lacks deleted_at?), migrations ensure latest. It's a defensive catch. Silently reporting 0 pages is a correctness/observability concern: the React panel would show "页数: 0" for every book instead of an error. Contract §8 says unknown/unmapped errors should surface typed codes, not silent fallback. P2/P3. Also note that the catch is `sqlite3.Error`, but the row access happens outside... no, inside try. `row["book_id"]` inside try too. Fine.
+
+But also: `ThreadRoutedConnection.execute` → `_current()` → raises `sqlite3.ProgrammingError` if closed (subclass of sqlite3.Error ✓) or `_opener()` raising sqlite3.OperationalError ✓. So catch covers.
+
+5. Assembly ordering: main() assembles first (line 344), then serves (346-347) ✓. recover_running_runs inside assemble_core_services line 804 ✓ before returning. ✓ Seam §3 ping = ready after assembly.
+
+6. shutdown exit 0 path: serve_forever returns 0 after core.shutdown; main returns 0 from serve_forever; finally closes conn ✓. Note: `return server.serve_forever()` inside try/finally → conn.close() runs ✓. Exit code 0 ✓ (e2e asserts exit_code == 0 ✓).
+
+But: after core.shutdown, `main` returns 0 → `raise SystemExit(0)` ✓.
+
+Hmm, one more: `serve_forever` returns 0 on EOF (stdin closed) too — that's a normal exit 0; so a host that just closes stdin gets exit 0, not an error. Per seam §4, EOF → CORE_UNAVAILABLE for pending requests, which is the host's mapping; Core exiting 0 on EOF is fine.
+
+7. BookSummary security: no path fields ✓; test asserts no `managed_original_ref`, no `source_filename`, no data_root string ✓ (test lines 287-289).
+
+8. Dependency direction: React/Rust don't touch SQLite/OS paths. Rust library_bridge only pipes JSON ✓. Frontend only invoke ✓. The Python side reads SQLite — Core authority ✓. But core_service reads SQLite directly via `self._core.conn` rather than through the repository/application layer! That's an architecture-direction concern: the seam §7 says the direction is React → Tauri → Rust → stdio → Python Core service → SQLite. Reading SQLite from the bootstrap module is within Python Core (allowed—Core owns SQLite). But is it acceptable for `bootstrap/core_service.py` (a composition root) to hand-write SQL, duplicating the repository's completeness predicate? The predicate is duplicated (`_COMPLETE_PAGE_WHERE` in library.py vs inline SQL in core_service.py) — a DRY/consistency smell: if the domain definition of a "complete page" changes, page_count silently diverges. P3/P2. Also layering: the composition root issues raw SQL against the connection instead of an application/repository port; the Task allowed only `src/bootstrap/core_service.py` (no repository change), so there was no authorized way to add a repository method... Actually the Task allows only core_service.py + tests, so no new repository method is permitted — the Owner's approach is arguably forced by the allowlist. I'll note as P3 with the forced-scope explanation.
+
+9. Tests discrimination:
+- test_real_subprocess_e2e_round_trip: real spawn ✓, uses sys.executable (the pytest interpreter) ✓, asserts ping/list/seed/DTO fields/page_count/version rejection/unknown command/shutdown exit 0 ✓. Strong.
+  - Weakness: `send_and_recv` uses blocking `proc.stdout.readline()` with no timeout → if the Core hangs, the test hangs (pytest has no timeout plugin?) rather than failing. Minor P3.
+  - It seeds SQLite via a *second* connection while the Core process holds its own (WAL) ✓ fine.
+  - The seeded page's `managed_original_ref` is a relative ref ✓.
+  - Note: it doesn't assert error/result mutual exclusion for the seeded DTO (does assert error is None). It asserts `res["result"] is None` for failures ✓ mutual exclusion partially.
+  - It doesn't test the empty-chapter book page_count=0 case or soft-deleted page exclusion. So the SQL's filtering branches (deleted page/chapter, incomplete page) are NOT covered by any test. That's a genuine discrimination gap for the aggregation claim: the "valid non-deleted" semantics are untested. P2 (test discrimination) — AC4 only required 0 books → [] and 1 book → 1 DTO, so the task's AC is met, but the Owner's declared page_count semantics has no discriminating test. I'll report as P2 (with the note that AC4 as frozen doesn't demand it).
+  - `test_dispatch_pure_functions` uses assemble_production_core(tmp) → opens DB, migrates ✓ quick.
+
+- Rust: spawn_args pin ✓ (library_bridge.rs:305-311), mock channel round trip ✓ (327-357), decode_response success/error ✓. But NO test of StdioLibraryChannel's real round trip (unlike core_bridge's real_core_sidecar_round_trip). So the Rust side of the M2-IPC1 seam (actual spawn of bootstrap.core_service over stdio, EOF→CORE_UNAVAILABLE, non-zero exit) is never exercised by a Rust test. AC2 says "spawn/EOF/超时行为符合 Seam 冻结 §4" and "cargo test 通过（含 Mock channel round-trip 与 allowlist pin 更新）" — so AC2 only demanded mock. But the real Rust↔Core pairing is untested: e.g. the Rust request shape vs Python's expected envelope (protocol/version/request_id/command/payload) and BookSummary field types (Rust page_count u32 vs Python int). A discriminating Rust test would catch mismatches. P2 test gap (the Python e2e covers only the Python side).
+  - Also note EOF→CORE_UNAVAILABLE isn't unit-tested (decode_response tested only).
+  - Also `LibraryError.message` etc. fine.
+
+- vitest: three states ✓ via initialState renderToString; but LibraryPanel's own async fetch path with a rejecting client is untested (only the client is tested directly). Also no test asserts that the panel calls `library_list_books` on mount (i.e., the wiring between panel and client is untested). Given the AC says "client 单测 + 组件测试覆盖成功/空/不可用三态" — satisfied literally. P3 gap: the error branch is only reachable through initialState in tests; the real fetch-failure path (catch → setError → error UI) has no test. Also `renderToString` can't run effects, so no test that useEffect fires fetchBooks.
+
+Let me verify: LibraryPanel.test.tsx test 5 calls client.listBooks directly (not the component) — so indeed there's no component-level test of the fetch path.
+
+10. Consistency axis:
+- Handoff delivery_head c4461c88 vs review's delivery head a2f8d6b8 → mismatch. Also verification-results delivery head c4461c88. Handoff filename M2-IPC1-c4461c88.md. So both evidence docs record c4461c88, while the actual delivery head is a2f8d6b8. This means the evidence documents describe a head that is not the delivered head. Also the handoff's commit chain lists 4 commits but gives SHAs only for the first 3 and calls the 4th "最终治理与交付文档提交" without a SHA → the recorded delivery head (c4461c88) is that doc commit? Hmm: the chain lists fdff10f3, 12978bb2, c221cf81, then "4. 最终治理与交付文档提交" with no SHA. But delivery_head = c4461c88. If c4461c88 is the 4th commit, then a2f8d6b8 would be a 5th commit (perhaps the review-dispatch or later doc edit). I cannot run git to verify. I'll report the discrepancy as recorded facts: docs say c4461c88; the integration target head is a2f8d6b8 → the evidence does not cover the delivered head's content (at minimum, whatever a2f8d6b8 added is unverified by the recorded evidence). P2 (evidence discipline / traceability). Note also: the Task file at the worktree is `status: delivered` with all ACs checked.
+- Numbers: pytest 7, cargo 30, vitest 28, diff check exit 0 — all consistent between handoff and verification-results, and match the integration run given in the review request ✓. The cargo log lists 30 tests including library_bridge tests and production_surface_is_exactly_five_commands ✓ (consistent with the new 5-command constant). Good.
+- Handoff §3 records page_count model difference ✓.
+- Handoff line 104 records the tests/core/→tests/providers/ typo note ✓. But the Task file line 77 still contains the wrong path (not corrected). Also Task file line 74 defines `$py` ✓.
+- verification-results line 29 note ✓.
+- Consistency: task file 允许修改范围 mentions `build.rs` / `capabilities/` / `permissions/` ✓ so the generated ACL files are in-scope (F-008 mechanism) ✓. And `gen/schemas/*` — the task allowlist says "`build.rs` / `capabilities/` / `permissions/`（仅当 invoke 面扩展需要，沿用 F-008 机制）". `gen/schemas/*` isn't explicitly listed; delta 21 paths "all in allowlist" per integrator, presumably treating gen/schemas as generated artifacts covered by F-008. The M2-AC1 review F-008 established that build.rs/capabilities/gen/permissions are mechanism-forced and require Codex 追认. The M2-IPC1 task itself explicitly lists build.rs/capabilities/permissions (line 60), so it's pre-authorized; `gen/schemas/**` (generated by tauri-build) is the only loosely-covered set. Handoff §5 lists gen/schemas as 自动生成 ✓ disclosed. Fine — not a finding, maybe P3 note. Actually, hmm: are the gen/schemas files supposed to be committed at all? They were committed before (M2-AC1). Fine.
+
+- One more consistency item: verification-results says "Delivery Head: c4461c8887163f8db112bf8bfa831969a244439c" and the handoff has the same. The review prompt's delivery head a2f8d6b8 differs → drift.
+
+- Task file front-matter: `status: delivered`, `review_status`? not present. Handoff has review_status: awaiting_review ✓.
+
+- Also: The Task file says AC1 依据 `tests/core/test_core_service.py` "pytest PASS" ✓; AC4 依据 test_real_subprocess_e2e_round_trip ✓ exists.
+
+11. Now check the "probe/ac1 零变化" claim more: did the Owner change the probe/ac1 *registration* lists? In the current tree, probe list = 7 commands (no core_ping/library_list_books), ac1 = 6. Consistent with pre-M2-IPC1 (per RC2 docs: production 3, probe 7; AC1: ac1 6). So registration unchanged ✓. But three-view sync for production: constants ✓, generate_handler production ✓, build.rs ✓.
+
+But here's a subtlety: build.rs app_manifest lists core_ping/library_list_books which means they're ACL-declared in ALL modes (the ACL manifest is global). Fine (F-008 pattern).
+
+12. cargo test 30: In main.rs tests, `production_surface_is_exactly_five_commands` name vs. earlier RC2 `production_surface_is_exactly_three_commands`. Renaming a test that RC2 docs cite as evidence (RC2 allow-deny-matrix.md line 6 cites `production_surface_is_exactly_three_commands`) → the RC2 evidence doc now references a test that no longer exists. Cross-doc drift (P3) — RC2's frozen evidence quotes a test name that M2-IPC1 renamed. Minor.
+
+Also `commandSurface.test.ts` comment says "production surface = ... ONLY 3" while the Rust constant is now 5; but that frontend test's mock intentionally models only the resource-channel subset. It still passes. Wording drift (P3) — the frontend matrix mock now diverges from the host's actual production surface (5 commands) though the test's scope is the RC surface. Hmm, `commandSurface.test.ts` claims the mock "reproduces the hardened host semantics pinned by the Rust suite (main.rs command_allowlist + capabilities...)" — that's now false (host production surface is 5). P3 comment/claim drift.
+
+13. Check `main.rs` drop of `library` state: AppState holds Box<dyn LibraryChannel>; on app exit, dropped → StdioLibraryChannel::Drop sends shutdown and waits unbounded. Also note: if the Core already exited (crash), `writeln!` fails silently, `child.wait()` returns Ok with the exit status → fine (no hang). The hang risk is if Core is alive but stuck. Unbounded wait in Drop at app shutdown. P2 per seam §3 (5s timeout → kill).
+
+Wait — also: is Drop even reached on normal Tauri exit? AppState is managed by Tauri; on exit the state is dropped. Probably. Fine.
+
+14. Another check: `StdioLibraryChannel::round_trip` does not verify the response's `request_id` matches the request, nor that `protocol`/`version` match. Seam §1 says request_id is only for correlation. Not verifying is acceptable for a serial channel. P3 note maybe. Not worth much.
+
+15. Envelope `payload`: Python ignores non-dict payloads (`{}`). Unknown extra fields ignored ✓ per §3.2.
+
+16. `core.ping` capability string "library.list_books" (dotted) while the command is "ListBooks". Task seam §3 freezes capabilities:["library.list_books"] ✓ exactly.
+
+17. Missing: version minor mismatch acceptance (minor != 0 but major 1) → accepted ✓ (only major checked) per §3.2 ✓.
+
+18. `PROTOCOL_VERSION_UNSUPPORTED` when protocol name is wrong: seam §2 says major mismatch → that code. Protocol name mismatch → the code also returns PROTOCOL_VERSION_UNSUPPORTED (no distinct code exists in the contract). Fine.
+
+19. Check that Python's error envelope includes `details` only when provided ✓.
+
+20. Also check `handle_list_books` uses `book.created_at` — Book dataclass default? If None → DTO created_at None → BookSummaryDto typed str but asdict puts null → Rust `created_at: String` deserialization fails → PROTOCOL_MALFORMED from Rust. Are created_at/updated_at ever NULL in DB? The schema presumably has defaults. Let me check the schema for books.created_at NOT NULL. If nullable, a legacy row could yield null → Rust parse error → UI error. Let me check the migration/schema.
+
+Let me grep the schema for books table definition.
+
+21. Also `is_favorite`/`is_archived`: Python returns bool ✓ Rust bool ✓.
+
+22. `page_count` Python int; Rust u32 — BookSummary.page_count u32. If the DB count were huge (impossible) fine. But negative? COUNT never negative ✓.
+
+23. Frontend: `page_count: number` ✓.
+
+Let me check the schema for created_at/updated_at NOT NULL and the pages columns, to confirm the SQL columns exist (deleted_at on chapters/pages). Let me grep schema.py.
+dsh: reasoning:
+created_at/updated_at NOT NULL ✓. Pages has deleted_at ✓. Good.
+
+Now let me read the schema pages/chapters table lines 32-60 to confirm column names (source_hash, managed_original_ref, width, height) exist as used.
+
+Also double check the books table doesn't have page_count column (it doesn't).
+
+Let me read those lines.
+dsh: reasoning:
+Confirmed: only `child.wait()` at line 233, no timeout/kill anywhere in library_bridge.rs → seam §3's "host 等待 5s，超时 kill" is not implemented. P2.
+
+The v1 pages table lacks source_hash/managed_original_ref/width/height (added in v2). The SQL uses those columns — present post-migration ✓ (v2 adds them). Fine.
+
+Now let me double check one thing about the Python e2e test: it asserts `b0["page_count"] == 1` after seeding via `repo.add_page(page)`. Note the Page constructor default created_at etc. Also `source_order`/`sort_order`. Fine.
+
+But wait — the seeded page insert happens on a *separate* connection (raw sqlite3.connect) while the Core process has its own connection in WAL mode. The Core's ListBooks query runs on the Core's thread connection. WAL read-committed: a new read transaction sees committed data ✓.
+
+Now, does `_fetch_page_counts` run on the same connection/thread as the request loop? Yes, single thread.
+
+Now consider: `assemble_production_core` receives `data_root`; `db_path = data_root / "library.db"`. It does NOT mkdir data_root; `open_database` creates path.parent ✓.
+
+Now `main()`: env_root → Path; else default_data_root() (which already reads NEWMANGA_DATA_ROOT, so redundant but harmless).
+
+Now the security question: does any error message carry paths?
+- "Failed to spawn Core: {e}" — OS error from spawn (could include the python exe path). That message goes to... LibraryError::unavailable → in main.rs, `core_ping` maps error → `error.code` only ("CORE_UNAVAILABLE"), so the message never crosses to the WebView ✓. Good: main.rs map_err(|error| error.code) — only the code is returned to the frontend. ✓ So even the malformed/spawn messages with paths stay in Rust. The frontend only ever sees the code string ✓. That's a good property worth stating.
+  - But `LibraryError::malformed(&e.to_string())` includes serde error text (no paths typically) — again only code crosses.
+- Python's "Unsupported protocol {protocol!r} or version {version!r}" echoes caller input; the host never surfaces error.message to the WebView ✓ (Rust decode_response captures message but main.rs returns only code). ✓
+
+So seam §5 (no path/exception leakage to WebView) is satisfied. The only leak vector is the Python traceback to inherited stderr (host console), which is not WebView-visible. I'll frame the AttributeError finding as: uncaught exception → process dies → typed-vs-crash gap + traceback on the host console (which includes absolute source paths). Severity P2 (robustness), noting §5's intent is not violated for the WebView but the malformed-input path is untyped.
+
+Now, are there any P0/P1 correctness issues? Let me think about the `version` non-dict crash more: could a legitimate host send a non-dict version? Rust always sends a dict. So it's a hostile/buggy-client scenario. The Core is a local sidecar fed only by the Rust host, so the practical impact is low. P2 at most, maybe P2/P3. I'll say P2 (contract §3.1 requires typed validation for malformed input; the crash is a denial-of-service of the sidecar requiring no auto-restart → the app's library panel then shows CORE_UNAVAILABLE permanently since there's no restart. Actually that's notable: because the seam forbids auto-restart, ANY uncaught exception in the request loop permanently disables the library panel for the app session. That elevates the robustness finding. Good argument for P2 (arguably P1?). A malformed line can only come from the Rust host, which never sends it... The only producer is our own code. So exploitability is nil today; risk is future/hostile-in-process. Keep P2 with the "no auto-restart amplifies it" note.
+
+Now let me consider the biggest question: **是否达到可集成标准**. The seam deviations found:
+1. No 5s shutdown timeout+kill (seam §3 explicit) — P2, functional gap.
+2. PRODUCTION_COMMANDS change breaks two frozen E2E gates (RC2/AC1) and makes the probe/ac1 announcement overstate their surface — P1 (integration-blocking drift, needs Codex disposition; cannot be fixed by Owner due to path allowlist).
+3. Malformed version → uncaught crash (P2).
+4. Silent page_count=0 on SQL error (P3).
+5. Duplicated complete-page predicate (P3).
+6. Missing Rust real-sidecar test + no page_count filter discrimination test + no panel fetch-path test (P2/P3).
+7. Stale "ten commands" comments/capability description (P3).
+8. Docs record delivery_head c4461c88 ≠ actual a2f8d6b8 (P2, evidence traceability).
+9. Fabricating stub image decoder in "production" assembly (P3 latent).
+
+Given item 2 is a real cross-task gate break and item 1 is an explicit seam clause not implemented, I'd decide `changes_requested` or `approved_with_conditions`. The decision options: approved | approved_with_conditions | changes_requested.
+
+Hmm. Item 1 is an explicit, literal seam requirement ("host 等待 5s，超时 kill") that is unimplemented. Item 2 breaks two frozen verification gates of completed tasks. AC2 says "spawn/EOF/超时行为符合 Seam 冻结 §4" — note §4 is the lifecycle section; the 5s timeout is in §3's shutdown bullet. AC2 says 超时行为 must comply — the shutdown timeout+kill is a 超时行为 and it's missing → AC2 is not fully met as written. That pushes toward changes_requested... but is it? Let me re-read AC2: "spawn/EOF/超时行为符合 Seam 冻结 §4". §4 has: spawn, 断开/崩溃, 重启恢复, and no mention of 5s. The 5s is §3 (core.shutdown bullet). But AC2 says "超时行为" which most plausibly refers to the shutdown timeout. So AC2's literal text references the timeout behavior → not implemented → AC2 partially unfulfilled.
+
+However, a pragmatic reviewer might treat the unbounded `wait()` in Drop as equivalent-ish (no timeout means never prematurely killing) — but the seam explicitly wants a bounded 5s then kill to avoid a hung app exit. It's a genuine deviation.
+
+Also, is there a "timeout" at all in the Rust channel? `round_trip`'s `read_line` blocks indefinitely with no timeout → if the Core hangs (e.g., assembling for a long time, or deadlock), a WebView invoke of `library_list_books` blocks that IPC forever (until the Core replies). Seam §4 doesn't mandate a per-request timeout; it mandates the shutdown timeout. So the blocking read is not a seam violation per se.
+
+I'll decide `changes_requested` — because (a) an explicit frozen seam clause (§3 host 5s wait → kill) is unimplemented, and (b) the change silently breaks two previously-frozen E2E gates (M2-RC2, M2-AC1) whose expectations live outside the Task's writable scope, so it must go back for disposition/repair rather than being waved through.
+
+Hmm, but let me weigh: the guidance in this repo's review culture (from the review docs I saw) treats P2 as "must record disposition", P0/P1 as blocking. Let me consider whether item 2 is truly P1. Is it a regression? M2-RC2 is `done` and its evidence is a historical record at commit a8fb17ca. Re-running the RC2 runner today requires a full Tauri E2E lab (fixtures, etc.) — a heavyweight environment. The runner's expectation is "the production surface is exactly the 3 resource-channel commands". M2-IPC1 legitimately extends the production surface by 2 commands; the RC2 runner's expectation is now obsolete by design (it's an old task's frozen expectation, not a contract). So one could argue the *right* fix is to update the RC2/AC1 runners' expectations — but that's outside the Task's allowed paths and belongs to Codex. So this is an integration-coordination finding (P1 in governance terms: "a done task's verification gate is now red; integrator must update or explicitly re-scope"). I'd still call it P1 because it's a repo-verifiable regression of frozen evidence that the delivery doesn't disclose.
+
+Hmm, actually, "P1" in the repo's review schema (from the samples) seems to mean "must fix before approval". The fix here is in verification/M2-RC2/** and verification/M2-AC1/** — not Owner-authorizable. But the Owner *could* have disclosed it in the Handoff (no change to those files needed). The absence of disclosure is the Owner-side defect. So P1 = "cross-task evidence-gate regression undisclosed; requires Codex to update the two runners' expectations or record a ruling, plus the announcement semantics fix."
+
+Additionally: the announcement itself is arguably a *bug* (it announces commands that aren't registered in probe/ac1 modes). A minimal fix inside the Owner's allowlist: make the announcement mode-accurate (e.g., announce the actual registered surface). But the announcement uses command_allowlist which is the ACL surface... In probe mode, the ACL *does* allow core_ping (build.rs declares it globally) but the handler doesn't register it → invoke fails. So the announced list is a lie about the *registered* surface but the truth about the ACL. The two diverge because build.rs/capabilities are mode-agnostic while generate_handler! is mode-specific. Hmm, so the real story: build.rs declares all 12 commands globally; the capability file grants all 12 to the main window in every mode; only generate_handler! is conditional. So in probe mode, core_ping is ACL-allowed but unregistered. That divergence is the F-008/RC2 mechanism (probe commands were already like that? No — probe commands are also declared in build.rs globally and granted, and they're registered only in probe mode; in production mode the ACL allows probe_config but the handler doesn't register it → invoke fails "command not found". So the same divergence already exists for probe/ac1 commands. It's accepted architecture: "probe commands additionally require probe mode registration at runtime"). OK — so the announcement overstating is consistent with the pre-existing design (the announcement has never been an exact list of registered handlers; it's the constants array). RC2's matrix doc says the announcement is the constants array and the runner compares per mode.
+
+Given that, the RC2 runner braking is the real, concrete consequence.
+
+Let me also double check the interactive production phase in RC2 (line 400) → mismatch → FAIL. And probe phase line 432/554 → FAIL. So RC2's gate would report FAIL on 2 keys. And AC1's gate line 240 → FAIL on 4 announcements.
+
+Decision: I'll go `changes_requested`, with P1 = gate regression + undisclosed; P1/P2 = missing 5s shutdown timeout+kill. Hmm, is the missing timeout P2 or P1? It's an explicit seam clause → I'll make it P1 as well? The repo convention (from the M2-* reviews) seems P0=blocker, P1=must fix, P2=record disposition. A literal violation of a frozen seam clause ("实现偏离即违宪" per release-a54bb8c9.md line 14: "Task 文件 §Seam 冻结 为权威全文，此处为摘要；实现偏离即违宪") — that's strong language: deviation = unconstitutional. So the 5s timeout omission IS a seam violation → must fix → P1. Good, that gives a clean justification for changes_requested on the Owner's own code, independent of the cross-task gates.
+
+Wait, let me double check the exact seam wording in the Task file §4: "断开/崩溃：stdin/stdout EOF 或非零退出 → 对挂起与后续请求返回 typed error CORE_UNAVAILABLE（category=unavailable，retryable=true）。host 不自动重启 sidecar". §3 core.shutdown: "{} → {status:"stopped"}；Core flush 后以 exit 0 退出。host 等待 5s，超时 kill。"
+
+So YES: "host 等待 5s，超时 kill" is an explicit frozen requirement in §3, and library_bridge.rs Drop does `child.wait()` unbounded with no kill. Violation. P1.
+
+Also check: does the Rust host actually *send* core.shutdown and wait? Yes in Drop. But there's also the question: does the host ever send core.shutdown while the app runs (e.g., on window close)? Only via Drop. Fine.
+
+Another seam §4 check: "对挂起与后续请求返回 typed error CORE_UNAVAILABLE" — after EOF, the channel's stdin lock write would fail with BrokenPipe → unavailable ✓; read_line → 0 → unavailable ✓. But note: `child.stdin` is not dropped/closed, so writing to a dead child's stdin raises BrokenPipeError (Rust io error) ✓. And there is no persistent "unavailable" state flag, but each subsequent call fails again with a write error ✓ typed. OK. Category unavailable, retryable true ✓ (LibraryError::unavailable). ✓
+
+Also non-zero exit: if the child exits non-zero *after* writing nothing, EOF path ✓. If it exits non-zero *with* a partial line? read_line returns a partial line without '\n' → decode_response may fail → PROTOCOL_MALFORMED (validation) instead of CORE_UNAVAILABLE. Edge case; P3.
+
+Now one more thing to check: does `main.rs` handle the library sidecar spawn failure gracefully? `.expect("production core library sidecar failed to start")` → panic if python missing. Existing core_bridge also `.expect(...)`. Consistent with existing behavior ✓ (fail fast). But note: in an environment without the libraries (e.g., a dev machine), the whole desktop app now fails to start because of the library sidecar. That's a product-level risk: M2-IPC1 made the *library* sidecar mandatory for app startup, so any failure to spawn `bootstrap.core_service` (e.g., missing deps) panics the app before any UI. Actually the existing StdioCoreChannel also `.expect`s. So the app already required a sidecar. Now it requires two. P3 note.
+
+Also `NEWMANGA_DATA_ROOT` not required — library sidecar defaults to %LOCALAPPDATA%\New Manga while the RC2 runtime uses M2RC2_CATALOG_DB (a different catalog db, maybe under a lab temp root). So the desktop app's "library" may point at the user's real %LOCALAPPDATA% store while the resource channel serves a lab catalog → inconsistent data story for the vertical slice. Given the vertical slice is "React reads books via Core → SQLite", the data root must be the real one; acceptable. I'll note as P3 observation: the library sidecar's data root is not derived from the same env as the resource-channel Core (M2RC2_CATALOG_DB), so the two sidecars can address different SQLite stores; the seam doesn't freeze a single root, but the desktop runtime's data-root story is now split.
+
+Hmm — actually that's interesting and worth stating as a P2 design-gap for integration? The Task's goal is "React 前端通过 Tauri invoke → Rust → stdio JSON-lines sidecar → Python Core → SQLite 读取书目并渲染". For that to be meaningful in the product, the Python Core must read the *same* library the user has. It does (default data root). Fine, P3.
+
+Let me also verify there's no `tests/core/` directory conflict: the test file is at tests/core/test_core_service.py ✓ and Task line 59 allows `tests/core/test_core_service.py` ✓. Note tests/core/ may be a new directory. Task line 77's verification command has the typo. Also Task line 51 says "依据：`tests/core/test_core_service.py`" ✓.
+
+Is there a conftest.py needed for tests/core/ to import `bootstrap`? The test inserts SRC_ROOT into sys.path manually (lines 16-18) ✓. Does tests/providers/test_bootstrap_providers.py do the same? Presumably. Also pytest rootdir config: does pytest need `pythonpath = src`? The test handles it. But wait: the manual `sys.path.insert` at import time of the test module — module-level code runs at collection ✓ works.
+
+Hmm, but tests/core/ is a new directory: does the repo's pytest config have `testpaths` that includes it? Integration ran the file explicitly ✓.
+
+Now let me check whether `tests/core/__init__.py` exists / conflicts with a `core` package. glob tests/core.
+
+Also check `doc/templates/HANDOFF.md` requirements for delivery head to substantiate the c4461c88 vs a2f8d6b8 finding. Let me read the template quickly.
+
+Let me batch: glob tests/core/**, read doc/templates/HANDOFF.md.
+dsh: reasoning:
+The HANDOFF template says: "delivery_head 指向实现提交，本 Handoff 可在后续文档提交中记录该 hash。" — i.e., delivery_head points at the *implementation* commit, and the handoff may record that hash in a later document commit. So recording c4461c88 (the implementation/doc commit at handoff time) is per template acceptable; the eventual delivery head a2f8d6b8 (the commit that contains the handoff itself) can be later. So the "mismatch" is partially legitimized by the template. Still worth noting: the evidence documents record c4461c88 while the integration target is a2f8d6b8; the delta between them is unverified by the recorded evidence (per the template that's expected: the doc commits themselves). And the review prompt explicitly gives delivery head a2f8d6b8 — I should state the relationship as a factual consistency observation with lower severity (P3), not P2, since the template sanctions it. Also the handoff filename short-head convention: "doc/handoffs/M2-IPC1-<short-head>.md" — using c4461c88 (the implementation head) is consistent with the template.
+
+Also, interesting: tests/core/__pycache__ .pyc files are present in the worktree — `test_core_assembly.cpython-312-pytest-9.1.1.pyc` and `test_core_service.cpython-312-pytest-9.1.1.pyc`. Are they git-tracked? The delta path count is 21 and the review says all in the allowlist. If .pyc files were committed that would be a hygiene finding. `__pycache__` is usually gitignored. The e2e test sets PYTHONDONTWRITEBYTECODE=1 but the pure-function test doesn't, hence the .pyc. If gitignored (likely), not a delta path. I can't verify .gitignore presence... let me check .gitignore for __pycache__. Quick grep.
+
+Also note: the presence of `test_core_assembly.cpython-312-pytest-9.1.1.pyc` suggests tests were run. Fine.
+
+Let me check .gitignore includes __pycache__ to close that off.
+
+Then I should also verify the Task file's "允许修改范围" covers verification/M2-IPC1/** ✓ (line 62) and doc/handoffs ✓ and doc/tasks ✓.
+
+One more axis-1 item: "③命令面恰好三条（core.ping/ListBooks/core.shutdown，多一条即违规）" — the Python dispatch has exactly 3 command branches ✓ (lines 253, 265, 295) and everything else → UNKNOWN_COMMAND ✓. Verified: handle_ping, handle_list_books, plus the shutdown branch. No extra commands. ✓
+
+"①stdio JSON-lines 同构串行" — Python reads line by line, writes one line, flushes ✓; Rust mutexes serialize ✓. One JSON object per line, UTF-8 ✓ (json.dumps default ensure_ascii=True → ASCII-escaped, valid UTF-8; the Chinese title 测试书目 would be \uXXXX escaped — still valid JSON, decode fine on the Rust side ✓). Hmm: ensure_ascii=True means non-ASCII is escaped; that's fine for JSON but not "raw UTF-8" — seam says "一行一个 JSON 对象，UTF-8" — escaping is still UTF-8 bytes. Not an issue. Actually worth noting? No.
+
+Now let me double-check `_emit` uses `separators=(",", ":")` → compact JSON ✓ one line (no embedded newlines since json.dumps never emits raw newlines) ✓. Good — no line-splitting hazard. Note: if a book title contained "\n", json.dumps escapes it as \n ✓ no literal newline. ✓
+
+Now the e2e test's `send_and_recv` reads exactly one line ✓.
+
+Rust `decode_response(response_line.trim_end())` — trim_end removes trailing whitespace ✓.
+
+Potential Rust issue: `line.push('\n')` and Python's `json.dumps` compact ✓.
+
+One more: Python `serve_forever` iterates `for line in self._stdin:` — iterating sys.stdin is buffered; the flush on stdout ensures the host gets responses ✓. Python's stdin iteration may block-buffer? `for line in sys.stdin` uses a read-ahead buffer in Python 3? Known issue: in Python 3, iterating a file object uses the io module's readline, which is fine (no 8KB block buffering issue like Python 2). But `sys.stdin` in text mode is line-buffered when interactive... For a pipe, sys.stdin is block-buffered (8192) but readline() returns as soon as a line is available? With BufferedReader, readline() reads a chunk and may block until the buffer is filled? Actually `io.BufferedReader.readline()` calls `readline` on the raw stream and returns at the first newline without waiting to fill the buffer (it does a raw read into the buffer, which can block if no data yet, but returns as soon as the requested data is available... hmm). In CPython, BufferedReader.readline() loops calling raw.read() until a newline is found; a raw read returns whatever's available (for a pipe, at least 1 byte), so it returns as soon as the line arrives ✓. The e2e test passing (fast, 0.82s for 7 tests) proves request/response liveness works ✓. Good — no deadlock.
+
+Now, let me also double check the frontend `App.tsx` mounting: `<LibraryPanel />` without a client → LibraryPanel constructs `new LibraryClient()` → `getTauriInvoke()` reads window.__TAURI__ → in the probe/ac1 modes __TAURI__ exists ✓. In App.tsx the panel is always mounted; in AC1/probe mode the panel will fire `library_list_books` on mount. In probe mode, is `library_list_books` registered? NO — probe mode's generate_handler! has only 7 commands → the panel's invoke rejects → the panel shows the error state, and its error text says "Core 服务不可用"? No: the error code would be something like "Command library_list_books not found"/LibraryClientError with code = the raw error string. In App.tsx probe mode, that rejection is unhandled inside LibraryPanel? No — it's caught (setError). But does it interfere with the probe/ac1 evidence flows? The panel mutation happens in parallel with the App's async probe flow. Risk: In AC1 mode, the AC1 driver runs the acceptance loop; the extra library sidecar is spawned in ALL modes (main.rs line 275 is unconditional!). So the app always spawns the library sidecar, including AC1 and probe modes. The library sidecar writes to NEWMANGA_DATA_ROOT (the lab temp root) — same root as the AC1 acceptance data! Two Python processes (acceptance_bridge and core_service) both opening/migrating the same library.db concurrently. That's a real concurrency hazard: AC1's acceptance loop seeds and reads the DB while core_service holds a second connection (WAL allows multi-process, so mostly OK), and core_service runs migrations/recover_running_runs at startup. The AC1 restart phase etc. Now:
+
+- core_service on startup runs `MigrationRunner.apply_pending()` and `recover_running_runs()` — the latter converts persisted `running` runs to `interrupted`. In AC1 mode, the acceptance loop starts a run and then restarts the app; if core_service starts while a run is RUNNING, it would reap it to interrupted — interfering with the AC1 acceptance semantics! Also in probe mode. And recover_running_runs runs twice (once by acceptance_bridge when it starts, once by core_service).
+
+That's a genuine cross-mode side effect: M2-IPC1 added an unconditional second Core sidecar that (a) mutates shared state (recover_running_runs) at startup, and (b) opens the same DB in every mode. This could break M2-AC1's acceptance evidence (which is precisely about run recovery across restart) or the RC2 probe (which uses M2RC2_CATALOG_DB, not library.db, so the resource channel is unaffected, but the library sidecar still starts and writes to NEWMANGA_DATA_ROOT — in probe mode, is NEWMANGA_DATA_ROOT set? Probably yes for the lab).
+
+This is a strong finding: probe/ac1 mode behavior is NOT unchanged — a new Core process is spawned unconditionally in all modes (main.rs:275-280), which mutates the library DB at startup (recover_running_runs, migrations). The seam says "probe/ac1 模式面不得变化" (the command surface), and the announcement/gates break as noted; but the *process* side-effect is arguably a bigger cross-mode change. Severity: P1 (undisclosed cross-mode side effect that can invalidate the AC1 acceptance evidence, whose entire point is restart recovery).
+
+Let me verify main.rs line 275: yes, `let library = StdioLibraryChannel::spawn(...).expect(...)` is unconditional before mode branching. And AC1 mode = M2AC1_TEST_MODE=1 with the acceptance bridge also spawned (line 269-273). So in AC1 mode both sidecars run against NEWMANGA_DATA_ROOT.
+
+Does core_service's assembly on the AC1 data root cause harm beyond recover_running_runs? It runs migrations (idempotent), ensure_layout, provider runtime, legacy JSON import (`import_legacy_reading_progress`, `import_legacy_export_history`) — one-time imports that write to SQLite! `import_legacy_*` reads legacy JSON files and writes to the DB. If the AC1 acceptance evidence asserts exact DB state or export history contents, this second process's legacy import could alter it. Also it creates `managed/` layout and a diagnostics dir. And at Drop (app exit) it sends core.shutdown → exits 0.
+
+Also: two processes writing the same SQLite (WAL) is supported, but the acceptance runner may hold the file open with exclusive expectations (e.g., it might assert no extra files?) — the core_service also creates %NEWMANGA_DATA_ROOT%/library.db if not present. If the AC1 harness's data root is a temp dir that it inspects/copies, extra artifacts (library.db-wal etc.) could appear. Hmm, the AC1 acceptance bridge presumably uses the same library.db anyway (it's the Core DB). So the DB already exists. The extra effects: recover_running_runs at core_service startup (duplicate of acceptance_bridge's) and legacy imports (idempotent-ish, guarded by "one-time"?). Let me check whether import_legacy_reading_progress is guarded to run only once (e.g., only if the table is empty). If it re-imports on every startup, that's a pre-existing behavior of every assembly (bootstrap.app, acceptance_bridge) — so core_service doing it too is consistent. The key novel one is recover_running_runs — but that's also run by the existing every-assembly path, so any second assembly of the same DB already reaps running runs. Since acceptance_bridge already does it, adding a second one doesn't change semantics much... but the *timing* does: core_service starts at app launch, concurrently with acceptance_bridge (both at launch). Both run recover_running_runs at startup. In the AC1 restart phase, the app is relaunched → acceptance_bridge reaps runs; core_service also reaps them. Equivalent outcome. Probably harmless in practice. But if the AC1 acceptance intentionally started a run and *didn't* want it reaped before the acceptance bridge could observe it... The acceptance flow (from M2-AC1) runs the pipeline, then restarts and expects interruption recovery — so reaping is expected. I'll report it as a P2 (unverified cross-mode side effect) rather than P1, and clearly flag that the AC1/RC2 E2E gates must be re-run because of both the announcement mismatch and this new unconditional process.
+
+Actually — important: does the *probe* mode's E2E gate already assert the set of spawned sidecar processes? The M2-AC1 runner's "sidecar-module-dump-probe" (from the review docs: "probe: 9 project modules") suggests the RC2 runner dumps loaded project modules in the sidecar. Hmm, "PASS: probe: 9 project modules" — that's about the resource-channel sidecar's loaded modules. Adding a second process shouldn't change that one.
+
+But a serious one: the AC1 runner may assert that only expected processes exist, or the desktop app's stderr. Actually the RC2 interactive gate watches the process stay alive; the new sidecar doesn't exit the app. Fine.
+
+So: probe/ac1 面零变化 is violated in three observable ways: (1) announced allowlist, (2) an extra unconditionally spawned Core process, (3) new ACL entries visible in those modes. (1) breaks the frozen gates. That's enough for a P1.
+
+Let me also double check whether `StdioLibraryChannel::spawn` in probe/ac1 modes could fail and panic the app: probe mode sets M2RC1_PYTHON etc. and NEWMANGA_DATA_ROOT (probably). If NEWMANGA_DATA_ROOT is unset in probe mode, core_service would use %LOCALAPPDATA%\New Manga — creating a real user DB in the lab run. That's a lab-hygiene issue: the E2E probe could pollute the developer's real data root. Worth a P3 note.
+
+Let me quickly check whether the RC2/AC1 runners set NEWMANGA_DATA_ROOT. grep in verification/M2-RC2/run_e2e.py for NEWMANGA_DATA_ROOT.
+
+Let me batch: grep NEWMANGA_DATA_ROOT in verification/**, and check .gitignore for __pycache__.
+dsh: reasoning:
+- `__pycache__/` is gitignored ✓ so the .pyc files aren't delta paths. Good, no hygiene finding.
+- M2-AC1 runner sets NEWMANGA_DATA_ROOT to an isolated temp root (line 179) ✓ so the unconditional library sidecar in AC1 mode writes into the AC1 lab root (both sidecars share it) — confirming the double-assembly/reap concern and that it doesn't pollute the user's real root in AC1 runs. For M2-RC2's runner: no NEWMANGA_DATA_ROOT in verification/M2-RC2/run_e2e.py → the library sidecar would use %LOCALAPPDATA%\New Manga — i.e., **re-running the M2-RC2 probe/interactive E2E would now create/migrate the developer's real %LOCALAPPDATA%\New Manga library.db**. That's a concrete lab-hygiene regression (P2/P3): an E2E probe intended to be isolated now touches the real user data root via the new unconditionally-spawned sidecar. Let me verify that M2-RC2/run_e2e.py sets other env vars but not NEWMANGA_DATA_ROOT. The grep found NEWMANGA_DATA_ROOT only in M2-AC1/run_e2e.py among the M2-* dirs. Let me confirm M2-RC2/run_e2e.py's env setup lines (it sets M2RC1_*, M2RC2_CATALOG_DB). I'll check the env block quickly.
+
+Also note the M2-RC2 runner in *interactive* phase asserts `not wrote_probe_results` and liveness. Adding a second sidecar doesn't affect those except the announcement mismatch.
+
+Let me read M2-RC2/run_e2e.py env block.
+dsh: reasoning:
+Confirmed: M2-RC2's runner sets M2RC1_*/M2RC2_* but **not** NEWMANGA_DATA_ROOT, and passes `**os.environ`. So on this delivery head, launching the RC2 runtime also spawns `bootstrap.core_service` with no NEWMANGA_DATA_ROOT → `default_data_root()` → `%LOCALAPPDATA%\New Manga` (or `Path.home()/"New Manga"`). It will create/migrate a library DB, managed layout, diagnostics dir, and run legacy JSON import in the developer's REAL data root. That's an unintended side effect of an evidence/lab run — a real P2 finding (lab isolation regression), and it also means the RC2 probe runtime's data root differs from M2RC2_CATALOG_DB.
+
+Wait — but is NEWMANGA_DATA_ROOT possibly set in the ambient environment (os.environ) on the dev machine? `**os.environ` passes through whatever is set; typically not set. If the runner's parent shell has it unset, the sidecar falls back to LOCALAPPDATA. So yes, P2.
+
+Also, this reinforces that "probe/ac1 模式面零变化" is violated behaviorally.
+
+Now let me also confirm that library_bridge's spawn doesn't fall back to something safer. Lines 131-146: `if let Some(root) = data_root { cmd.env("NEWMANGA_DATA_ROOT", root); }` → main passes `env_path("NEWMANGA_DATA_ROOT")` = None if unset → no env set. Confirmed.
+
+OK. I think I have a comprehensive picture. Let me do a couple more targeted checks:
+
+A) `main.rs` test `production_surface_is_exactly_five_commands` ✓ (line 505). And `app_acl_manifest_is_generated_and_enforced` iterates command_allowlist(true,false) ∪ (false,true) → covers core_ping/library_list_books ✓. So the ACL three-view is genuinely tested ✓ (good for axis 1 item 6). But it does NOT test the production generate_handler! literal list against the constant (R2-04's known gap, unchanged).
+
+B) Confirm the three Python command branches and that `make_error_envelope` has no path leak ✓.
+
+C) Check `tests/providers/test_bootstrap_providers.py` count = 4 to validate the 7 total. Let me grep "def test_" count.
+
+D) Also confirm there is no other place that leaks `error.message` to the frontend: main.rs maps to `error.code` ✓ only code. Frontend LibraryClientError message = `library_list_books failed: ${code}` ✓ no path.
+
+Let me do C quickly.
+dsh: reasoning:
+4 + 3 = 7 ✓ consistent with the recorded pytest count.
+
+Let me also double-check: does `tests/providers/test_bootstrap_providers.py` relate to core_service at all (the Task's verification command grouped it)? It tests the bootstrap providers assembly. Not core_service. Fine.
+
+Now let me re-verify one detail for the seam axis 2 claim about `version`: I want to be 100% sure the code would raise.
+
+```python
+version = req.get("version") or {}
+...
+if protocol != PROTOCOL_NAME or version.get("major") != PROTOCOL_MAJOR:
+```
+If `req = {"protocol":"new-manga.core","version":"1.0","command":"core.ping"}` → protocol == PROTOCOL_NAME → evaluate `version.get` where version = "1.0" (a str, truthy) → AttributeError: 'str' object has no attribute 'get'. Yes. If version is `{"major":...}` dict → fine. If version is a *number* 1 → truthy → AttributeError. If version is `[]` (empty list) → falsy → `or {}` → {} → major None ≠ 1 → typed rejection ✓. So only truthy non-dicts crash. Confirmed.
+
+Also `req.get("version")` could be a dict-like? no.
+
+Traceback content: AttributeError traceback shows `File "G:\CODEX\New Manga.worktrees\M2-IPC1-agy\src\bootstrap\core_service.py", line 235, in dispatch_request` — an absolute path on the inherited stderr. So the "traceback 不出 Core" clause is technically breached (it leaves the Core process). I'll fold this into a P2 finding with the path-leak angle, noting the WebView never sees it.
+
+Now let me also double check axis 3 "Rust mock channel 与 spawn_args pin" and "vitest 三态" — done.
+
+And "找假绿风险":
+- vitest: `LibraryPanel.test.tsx` uses renderToString + initialState → the "不可用态" is only asserted via the initialState path; the real failure path (client rejects) inside the component is never exercised. Also no test asserts the panel invokes `library_list_books` on mount. So a regression where `fetchBooks` never calls the client (or the catch sets the wrong state) would still be green. That's a genuine "假绿" risk within the AC3 claim "组件测试覆盖成功/空/不可用三态". P2 test-discrimination finding.
+- cargo: no Rust test ever spawns the real `bootstrap.core_service` from the Rust bridge, so the Rust↔Python wire contract (field names, types, envelope) is only tested on one side each. If Python's `page_count` were emitted as a string, the Rust mock test would still pass; only the Python e2e asserts the Python side. P2.
+- pytest: the e2e covers the happy path + version/unknown/shutdown; it does not cover a poisoned `version`, nor the page_count filters (deleted/incomplete), nor the internal-error path (ListBooks failure → error envelope). P3.
+- Rust: `MockLibraryChannel::set_ping_error` is dead_code-allowed → the ping error path is untested (no test calls it) → P3.
+
+Now, one more possible correctness issue: `library_list_books` in Rust returns `Vec<BookSummary>`; on the Python side `BookSummaryDto.page_count: int`. If the SQL aggregate returns a count and Rust's u32 parse fails for >4B — irrelevant.
+
+Another: Python emits `created_at`/`updated_at` from Book — Rust expects String (not Option) ✓ NOT NULL in schema ✓.
+
+Another envelope check: Python's success response for ListBooks sets `result` to a list ✓ Contract says result: T|null ✓.
+
+Another: `handle_ping` returns capabilities ["library.list_books"] — Task seam says exactly that ✓.
+
+One thing I should verify: the seam says `core.ping` is the lifecycle handshake meaning "Core 完成应用装配后才进入请求循环, core.ping 成功即 ready". main() assembles before serve_forever ✓. But the Rust host spawns the library sidecar at app startup and doesn't ping it. Not required. But: main.rs doesn't call `library.ping()` anywhere in production startup — the ping command exists but is only reachable from the WebView (the panel never calls corePing either; LibraryPanel only calls listBooks). So `core_ping` is an IPC surface with no consumer: the AC3 flow uses only `library_list_books`. Is that a problem? The seam defines ping as the lifecycle handshake; AC2 requires exposing `core_ping`. It's exposed ✓. Not calling it is a design choice. But it means the "handshake" is not actually performed by the host before declaring ready — the UI just tries ListBooks. Minor P3 note: no consumer performs the handshake; Frontend LibraryClient.corePing exists but is unused (dead API surface). Let me verify no one calls corePing: grep in frontend for corePing usages: client.ts defines it, client.test.ts tests it. LibraryPanel doesn't call it. App.tsx doesn't. So `corePing` is exercised only by tests → the friendly "ready" handshake is effectively dead code in the UI. P3.
+
+Now let me think about whether the Review should be `changes_requested` or `approved_with_conditions`.
+
+Frozen seam violation (5s timeout→kill missing) is explicit and in the Owner's writable scope → must fix. Cross-task gate regression → integrator must update the two runners (outside Owner scope) but the Owner should have disclosed, and the announcement claim needs a decision. Malformed-version crash → fixable in scope.
+
+Given at least one explicit seam clause is unimplemented (and the release record says deviation = 违宪), `changes_requested` is the defensible verdict. I'll provide precise fix suggestions, noting which are Owner-fixable and which need Codex.
+
+Hmm, but let me reconsider the 5s timeout severity: is `child.wait()` in Drop really the place where "host 等待 5s，超时 kill" applies? Yes — the shutdown handshake is exactly Drop. There is no other shutdown path. It waits indefinitely. So the frozen behavior "wait 5s then kill" is absent. Confirmed P1.
+
+Actually hold on. Let me re-read the seam bullet: "`core.shutdown`：`{}` → `{status:"stopped"}`；Core flush 后以 exit 0 退出。host 等待 5s，超时 kill。" — "host 等待 5s，超时 kill" — host waits 5s, then kills on timeout. The Rust code: sends core.shutdown, then `child.wait()` forever. So if Core hangs, app shutdown hangs forever. Clear violation. P1. Also the "Core flush 后以 exit 0" part is satisfied on the Python side ✓.
+
+Let me also check: does the host wait for the *response* to core.shutdown or just the process exit? It writes the request and then waits for process exit — it does not read the `{"status":"stopped"}` response. Since the Core emits the response and then exits, and Drop never reads stdout, no problem (the pipe buffer holds one line). Fine. But note: the seam's contract is the response shape; the host ignores it. Not a violation.
+
+One more: `Drop for StdioLibraryChannel` sends request_id "shutdown-drop" and writes `writeln!(stdin, "{req}")` — `req` is a serde_json::Value; Display for Value gives compact JSON ✓.
+
+Now let me also consider: does the seam require the host to expose `core_ping`/`library_list_books` in a specific naming (core_ping/library_list_books) ✓ exact.
+
+I think I'm ready. Let me also double check the `PRODUCTION_COMMANDS` docstring comment at main.rs lines 33-34: "the product WebView surface. No path-shaped parameter, no TTL parameter, no probe capability." — fine, though now includes library commands.
+
+Let me also confirm there's no leftover `docs` inconsistency in the Task file: AC2 says "30 passed" ✓ matches; AC3 "28 passed" ✓; AC1 "pytest PASS" ✓; AC5 ✓.
+
+Task file §允许修改范围 line 60 mentions `build.rs`/`capabilities/`/`permissions/` ✓ and line 61 frontend ✓.
+
+One more consistency check: Handoff §5 says `apps/desktop/src-tauri/permissions/autogenerated/core_ping.toml` (自动生成) and library_list_books.toml ✓ exist. And gen/schemas/* ✓ exists. The delta "21 paths" — plausible: python(2) + rust(4: library_bridge, main.rs, build.rs, Cargo.toml? — Cargo.toml wasn't changed per handoff; actually handoff lists only 3 rust code files + capabilities + 2 permissions + gen/schemas (let's count gen/schemas: acl-manifests.json, capabilities.json, desktop-schema.json, windows-schema.json = 4) + frontend (5: types, client, LibraryPanel, client.test, LibraryPanel.test, App.tsx = 6) + docs (3: task, handoff, verification-results) = 2+3+1+2+4+6+3 = 21 ✓ Exactly 21.
+
+So delta = 21 paths ✓ consistent, and no verification/M2-RC2 or M2-AC1 file was touched → confirming the Owner could not have updated those runners (they're outside the allowlist), and also confirming that the RC2/AC1 gate regression is undisclosed (the handoff claims "probe 模式与 ac1 模式面保持零变化" without qualification).
+
+Great: the 21-path count matching the handoff's file list is itself a nice consistency datapoint. Let me verify the count: handoff §5 lists:
+Python: core_service.py, test_core_service.py = 2
+Rust: library_bridge.rs, main.rs, build.rs, capabilities/m2rc1-commands.json = 4 (handoff lists capabilities separately, plus permissions x2, gen/schemas/*)
+permissions: 2
+gen/schemas: * (4 files: acl-manifests.json, capabilities.json, desktop-schema.json, windows-schema.json)
+React: types.ts, client.ts, LibraryPanel.tsx, client.test.ts, LibraryPanel.test.tsx, App.tsx = 6
+Docs: doc/tasks/M2-IPC1.md, verification-results.md, handoff = 3
+Total: 2+3+1+2+4+6+3 = 21 ✓
+
+Let me quickly double-check the gen/schemas dir has exactly 4 files to make the arithmetic honest — not necessary; the integrator confirmed 21 paths in the allowlist. I'll present the arithmetic with the caveat that I derived it from the Handoff list, not from git.
+
+Now let me write the review. Output format required:
+- decision line: `decision: changes_requested` (or approved_with_conditions)
+- 四轴小结 (each 2-4 sentences + path:line)
+- Findings 分级 P0/P1/P2/P3
+- 明确回答是否达到可集成标准
+
+Language: Simplified Chinese per the global instruction. Path:line evidence.
+
+I must be careful to be honest about what I could not verify (no shell, no git) — e.g., "probe/ac1 分支零变化" cannot be proven without a diff; I verified the current registration lists and the runner expectations but not the absence of edits to those branches (though the 21-path delta excludes the runner files, the probe/ac1 branches live in main.rs which WAS touched — so I cannot prove those branches are byte-identical to base; I can only confirm their command sets are unchanged and that the announcement changed).
+
+Let me structure findings:
+
+P1:
+1. **Shutdown 5s 超时→kill 未实现**：`apps/desktop/src-tauri/src/library_bridge.rs:219-235`(Drop, 尤其 233 `child.wait()` 无超时/无 kill)；对照 `doc/tasks/M2-IPC1.md:37`「host 等待 5s，超时 kill」与 `verification/M2-IPC1/release-a54bb8c9.md:14,18`（"实现偏离即违宪"）。影响：Core 挂死时应用退出无限阻塞；AC2「超时行为符合 Seam」不成立。
+2. **跨 Task 证据门回归且未披露**：`main.rs:35-41` 把 PRODUCTION_COMMANDS 由 3 条扩到 5 条 → 每模式 stderr 自报（`main.rs:334-373`）随之变化；而两个已 done Task 的冻结 runner 做精确等值比对：`verification/M2-RC2/run_e2e.py:286-292`（production=3/probe=7，用于 :400-404 与 :428-433）与 `verification/M2-AC1/run_e2e.py:43-45`（ac1=6 条字符串，用于 :240）。本 head 上再跑这两个 E2E，RC2 的 `probe-allowlist-announcement` / interactive production-surface 及 AC1 的 4 次 allowlist 断言都会 FAIL；且 `main.rs:275-280` 在所有模式（含 probe/ac1）无条件 spawn 第二个 Python Core。Handoff 第 45 行却写「probe 模式与 ac1 模式面保持零变化」，Task 第 44 行 seam §6 同旨。这些文件不在 Task 允许修改范围（`doc/tasks/M2-IPC1.md:57-62`），需 Codex 裁决：更新两 runner 期望值或明确重定范围；同时修正自报口径。
+   - 另：RC2 runner 未设 NEWMANGA_DATA_ROOT（`verification/M2-RC2/run_e2e.py:217-224` 只设 M2RC1_*/M2RC2_*），新无条件 sidecar 会落到 `%LOCALAPPDATA%\New Manga`（`src/bootstrap/core_assembly.py:562-568`），使原本隔离的 E2E 写真实数据根（迁移/建库/recover_running_runs/legacy import）。这条可并入 P1 或单列 P2；我并入 P1 的子项？更清楚单列 P2。
+
+P2:
+3. **畸形 `version` 触发未捕获 AttributeError → 进程崩+绝对路径 traceback**：`src/bootstrap/core_service.py:230,235`（`version = req.get("version") or {}` 与 `version.get("major")`），`serve_forever` 无 try/except（:324-334）。契约 §3.1/§8 要求 typed validation；因 seam 禁止自动重启（Task:41），一次畸形帧即永久失去 library 面。对照 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md:230,242`。
+4. **page_count 静默降级为 0**：`core_service.py:184-185` 捕获任意 `sqlite3.Error` 返回 `{}` → `:159` 全部 0；契约 §8 要求未映射错误以 typed code 呈现，而非伪装成「0 页」（`doc/contracts/...:234,242`）。UI 无法区分「真 0 页」与「查询失败」。
+5. **真实 Rust↔Python 通道无任何测试**：`library_bridge.rs:169-250` 的 `StdioLibraryChannel::round_trip` 只被 mock 覆盖（`:328-357`），`decode_response`（:314-325）只测字符串；没有对应 `core_bridge.rs` 的 `real_core_sidecar_round_trip`（`main.rs:781-836`）那样的集成测试，EOF/非零退出→CORE_UNAVAILABLE（:211-213）也无测试。AC2 的「spawn/EOF/超时行为符合 seam」缺乏判别证据。
+6. **AC3 三态测试的假绿面**：`apps/desktop/frontend/src/library/LibraryPanel.test.tsx:23-69` 三态全部经 `initialState` 直通渲染（`renderToString`，不跑 effect），组件自身的 fetch/catch 路径（`LibraryPanel.tsx:20-40`）无任何测试；第 71-88 行只测 `LibraryClient`，未挂载组件，也没有断言 mount 时会调用 `library_list_books`。改坏 `fetchBooks` 仍全绿。
+7. **page_count 语义（软删/无效页）零判别测试**：`core_service.py:166-183` 的四条件过滤（与仓库既有口径 `infrastructure/sqlite/library.py:291-294` 一致）在 `tests/core/test_core_service.py:220-289` 只覆盖 1 条完整 page；无「软删页/软删章节/不完整 page 不计入」「无章节书=0」的用例。
+8. **无条件第二 sidecar 破坏 E2E 隔离与 ac1 语义**（如上述 RC2 runner 不设 NEWMANGA_DATA_ROOT；AC1 runner 虽设隔离根 `verification/M2-AC1/run_e2e.py:179`，但第二个装配会再跑 `recover_running_runs` 与 legacy import，见 `src/bootstrap/core_assembly.py:804,849-850`）。属跨模式副作用，未在 Handoff 披露。
+9. **证据 head 与集成 head 不一致**：`doc/handoffs/M2-IPC1-c4461c88.md:6` 与 `verification/M2-IPC1/verification-results.md:8` 记 c4461c88，而本次集成目标 head 为 a2f8d6b8；模板 `doc/templates/HANDOFF.md:14` 允许「后续文档提交中记录该 hash」，故非违规，但 c4461c88..a2f8d6b8 之间内容无验证记录（仅治理文档提交则影响低）。→ 其实这条更像 P3。我放 P3。
+
+P3:
+10. **注释/描述陈旧计数**：`build.rs:8`、`main.rs:466-468`、`capabilities/m2rc1-commands.json:4`（及生成物 `gen/schemas/capabilities.json`）仍写 "ten commands / 十条"，实际 12 条 ACL 权限；`apps/desktop/frontend/src/resourceChannel/commandSurface.test.ts:8-10` 声称复刻 host 生产面（3 条），现实际 5 条。
+11. **命名的 RC2 证据引用失效**：`main.rs:505` 将 `production_surface_is_exactly_three_commands` 更名为 `..._five_commands`，但 `verification/M2-RC2/allow-deny-matrix.md:6` 仍引用旧名。
+12. **生产程序集用「伪造成功」适配器**：`core_service.py:50-53,80-84`（1×1 passthrough decoder、`object()` 作为 font/layout/compositor）；当前三命令面不可达，但后续追加 ImportPages/render 命令前必须替换，否则会伪造尺寸/渲染结果。
+13. **`_fetch_page_counts` 复制了仓库的完整性谓词**：`core_service.py:176-179` vs `infrastructure/sqlite/library.py:291-294`（`_COMPLETE_PAGE_WHERE`），两处定义无绑定；受 Task 允许路径限制（只许改 core_service.py），但应在 Handoff/后续 Task 登记为可收敛点。
+14. **`core_ping` 无消费者**：`apps/desktop/frontend/src/library/client.ts:33-41` 定义但仅在 `client.test.ts:6-20` 使用；`LibraryPanel.tsx:25` 只调 listBooks。seam 的「ping 即 ready」握手未被 host/UI 实际执行。
+15. **e2e 无超时读**：`tests/core/test_core_service.py:186-191` 阻塞 `readline()` 无 timeout，Core 挂起时测试会挂而不会 FAIL（判别力/可诊断性）。
+16. **Partial-line 崩溃映射偏差**：`library_bridge.rs:211-215` 仅在整行为空时报 CORE_UNAVAILABLE；子进程非零退出但已写出半行时会落到 PROTOCOL_MALFORMED（category=validation）而非 seam §4 的 unavailable。
+17. `.pyc` 存在于 worktree（`tests/core/__pycache__/*`）但 `.gitignore:1` 已含 `__pycache__/` → 非 delta，无需处理。（可不列）
+
+I should trim to the most valuable. The required output: Findings 分级 P0/P1/P2/P3，无则 none. I'll list maybe 2 P1, 5-6 P2, 5-6 P3. Need path:line evidence for each.
+
+Also the four-axis summaries with path:line.
+
+Axis 1 (Seam compliance):
+① transport: `core_service.py:324-338` line-loop + flush; `library_bridge.rs:169-216` mutex-serialized round trip → 合规。
+② envelope: `core_service.py:228-322` — protocol/major 拒绝 `:235-250`（PROTOCOL_VERSION_UNSUPPORTED/validation/false），未知命令 `:307-322`，result/error 互斥各分支齐备；但 `:230,235` 对非 dict `version` 无防护（P2-3）。
+③ 命令面恰好三条：`core_service.py:253/265/295` 三分支，余者 UNKNOWN_COMMAND（:307）→ 合规，无第四条。
+④ 生命周期：spawn pin `library_bridge.rs:119-121` + `:136-146`（-m bootstrap.core_service、PYTHONPATH、NEWMANGA_DATA_ROOT 继承）；EOF→CORE_UNAVAILABLE `:211-213`；无监督循环（`main.rs:275-280` 一次性 spawn）→ 合规；但 5s 超时→kill 缺失（P1-1）。
+⑤ 安全：DTO `core_service.py:107-116` 仅展示字段；错误短句 `:89-104`；Rust 仅把 `error.code` 交给前端（`main.rs:102-109`）→ 无路径/异常外泄；唯一例外是畸形输入导致的 traceback 到继承 stderr（P2-3）。
+⑥ 三视图：`main.rs:35-41`／`:366-372`／`build.rs:20-37` + `capabilities/m2rc1-commands.json:6-19` + `gen/schemas/*` 五处含 core_ping/library_list_books 且 ACL 断言（`main.rs:469-502`）覆盖 → 同步；probe/ac1 注册清单仍 7/6 条（`main.rs:339-360`）未加新命令，但自报串与 ACL 已变（P1-2）。
+⑦ 依赖方向：React 仅 invoke（`library/client.ts:35,45`）、Rust 仅 stdio（`library_bridge.rs:136-146` 无 SQLite/路径 API）→ 合规。
+
+Axis 2 (correctness):
+装配顺序 `core_service.py:341-349`（assemble→serve；recover_running_runs 在 `core_assembly.py:804`）→ 合规。SQL 聚合 `core_service.py:169-181` 与声明一致，且与仓库既有 complete-page 口径 `library.py:291-294` 一致（只读 SELECT）。错误处理不外泄细节（`core_service.py:278-293` 固定短句）。shutdown exit 0 `:295-305,324-334` + `tests/core/test_core_service.py:329-330`。问题：静默 0（P2-4）、非 dict version 崩溃（P2-3）。
+
+Axis 3 (test discrimination): Python e2e 真 spawn（`test_core_service.py:175-184`）且断言硬（:277-303 字段/互斥/版本/退出码）→ 强；Rust 侧 spawn_args pin（`library_bridge.rs:305-311`）+ mock round-trip（:328-357），但无真实通道测试（P2-5）；vitest 三态经 initialState（`LibraryPanel.test.tsx:23-69`）→ 有假绿面（P2-6）。额外缺口：page_count 过滤无判别用例（P2-7）。
+
+Axis 4 (consistency): 数字一致（handoff :99-102 = verification-results :23-92 = 集成实跑 7/30/28/0；`tests/providers/test_bootstrap_providers.py` 4 + core 3 = 7 ✓）。Handoff §3（:88）如实记录 Book 无 page_count、由 SQL 聚合；§4 注（:104）如实记录 tests/core/→tests/providers/ 笔误（Task:77 未改，仅记录）。差异：evidence head c4461c88（handoff:6、verification-results:8）≠ 集成 head a2f8d6b8（P3，模板允许）；21 路径与 Handoff §5 清单可对齐（我按清单合计 21，未跑 git 验证）。P3 陈旧注释计数（P3-10）。
+
+Decision: changes_requested.
+
+Hmm — let me reconsider once more between approved_with_conditions and changes_requested, since the user may expect a strict but fair call. P1-1 is an explicit frozen seam clause unimplemented → "changes_requested". I'm comfortable.
+
+Actually, wait. I should double-check one thing about P1-1: maybe the "host 等待 5s，超时 kill" is about the *disconnect* path in the host when it *issues* shutdown as a request and waits for the response, not Drop. Let me check main.rs again: is core.shutdown ever sent as an explicit request from Rust (e.g., via round_trip) elsewhere? grep "core.shutdown" in the Rust tree: only library_bridge Drop (line 225). And Python handles it. So no 5s anywhere. Confirmed.
+
+Also let me double check there's no `wait_timeout` crate in Cargo.toml. Let me grep Cargo.toml for "timeout". Quick.
+
+Also verify library_bridge is registered as a module in main.rs ✓ line 21.
+
+Let me do the Cargo.toml check and also check whether the Task allowed Cargo.toml change and whether it was changed (handoff doesn't list Cargo.toml → no new dep; hence no wait-timeout available). That strengthens the finding: no timeout capability without a dep, and the Task allowed Cargo.toml only if necessary.
+
+Let me grep.
+dsh: reasoning:
+Confirmed: no `wait-timeout` crate; std has no `wait_timeout`. So implementing the 5s kill requires either a `try_wait()` poll loop (no new dep) or a new dep (Task allows Cargo.toml only if necessary). A poll loop is straightforward → the deviation was avoidable without new dependencies. Good, I can state the fix is dep-free: `try_wait()` loop with deadline, then `kill()` + `wait()`.
+
+I have enough. Let me write the final review in Chinese, Markdown, with the required decision line, four axis summaries, findings by severity with path:line, and a clear answer on integrability.
+
+I should also explicitly note the limits of a read-only static review: no shell/git, so "probe/ac1 零变化" could not be diff-verified; the 21-path delta and the 7/30/28/0 results are taken from the integrator's run (stated as given), and my conclusions are based on the checked-out tree.
+
+Keep it organized and reasonably concise but complete. Include the decision line at the very top as requested ("结论行 decision: ...").
+
+Let me write it.
+
+One more check I want to make sure about claim P1-2: does the RC2 runner compare the *probe* announcement with the mode expectation at line 428-433 where `expected = PROBE_EXPECTED if expected_mode == "probe" else PRODUCTION_EXPECTED` → probe phase uses PROBE_EXPECTED (7). Announced will be 9 → mismatch → FAIL at `gate["probe-allowlist-announcement"]` (line 554). ✓ And interactive (line 400) uses PRODUCTION_EXPECTED (3) vs announced 5 → FAIL. ✓ AC1: line 240 announced == EXPECTED_AC1_ALLOWLIST (6-command string) → announced is "issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,library_list_books,ac1_request,ac1_write_results,ac1_exit" (8) → FAIL, recorded as `{sample}-{launch}-allowlist-announcement` FAIL (4 times). ✓
+
+Note the ac1 announcement order: command_allowlist(false,true) = PRODUCTION_COMMANDS + AC1_TEST_COMMANDS = [issue_resource_url, revoke_ref, revoke_resource_refs, core_ping, library_list_books, ac1_request, ac1_write_results, ac1_exit] ✓ 8 items.
+
+And the probe announcement = 5 + 4 = 9 ✓.
+
+Good.
+
+Also double-check: main.rs line numbers for the announcement: probe branch eprintln at 335-338, ac1 at 349-352, production at 362-365. I cited 334-373 as the block. Fine.
+
+Let me write the final answer now. I'll be careful with the format:
+
+---
+decision: changes_requested
+
+## 审查范围与方法说明
+...
+
+## 一、Seam 合规轴
+...
+
+## 二、正确性轴
+...
+
+## 三、测试判别力轴
+...
+
+## 四、一致性轴
+...
+
+## Findings
+### P0
+none
+### P1
+...
+### P2
+...
+### P3
+...
+
+## 是否达到可集成标准
+...
+---
+
+I'll include fix suggestions inside findings. Let me write it.

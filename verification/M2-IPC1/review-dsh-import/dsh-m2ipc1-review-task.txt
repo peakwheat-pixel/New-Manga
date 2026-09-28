@@ -1,0 +1,13 @@
+你是 DeepSeek Harness，担任 M2-IPC1（Production Core Lifecycle + Read-only Library Vertical Slice）的独立非作者 Reviewer。Owner=Antigravity；集成方=ZCode 会话（代行 Codex）。这是一次只读静态 Review：沙箱无 shell（预期内），不要执行命令或写文件；用 read/grep/glob 读代码，全部结论放进最终回答。session workspace 就是 Owner worktree，相对路径直接读。
+
+审查对象：分支 agent/antigravity/M2-IPC1-production-core-library；base=a54bb8c92faefa90f4077e7ac2bb000f6b6712fd；release commit=4792faa0（含 Task 文件与 seam 冻结）；delivery head=a2f8d6b882085b45f8db0d84222b33ff5421c06f。
+权威依据（按序读）：doc/tasks/M2-IPC1.md 的「Seam 冻结」七条与 AC1-AC5；doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md §3/§5/§8/§12。
+集成方已独立实跑确认（你无需执行）：pytest tests/core/test_core_service.py + tests/providers/test_bootstrap_providers.py = 7 passed EXIT 0；cargo test = 30 passed EXIT 0；vitest = 28 passed EXIT 0；git diff --check = EXIT 0；delta 21 路径全在允许清单。
+
+审查轴（逐轴给结论 + path:line 证据）：
+1. Seam 合规轴：逐条对照 Task「Seam 冻结」七条——①stdio JSON-lines 同构串行；②envelope 形状与 version/protocol 拒绝逻辑（读 src/bootstrap/core_service.py：major!=1 或 protocol 不匹配必须 PROTOCOL_VERSION_UNSUPPORTED、未知命令 UNKNOWN_COMMAND、result/error 互斥）；③命令面恰好三条（core.ping/ListBooks/core.shutdown，多一条即违规）；④生命周期（spawn args、EOF/非零退出→CORE_UNAVAILABLE、不自动重启——检查 library_bridge.rs 与 spawn_args pin）；⑤安全（BookSummary 无 OS 路径/内部异常/traceback 泄漏；错误 message 是否可能携带路径或异常细节）；⑥三视图同步（main.rs 常量数组、generate_handler!、build.rs manifest——命令名 core_ping/library_list_books 是否三处一致，probe/ac1 分支是否零变化）；⑦依赖方向（Rust/React 是否直接碰 SQLite 或 OS 路径）。
+2. 正确性轴：core_service.py 的装配顺序（装配完成后才进请求循环）、ListBooks 的 SQL 聚合（page_count 统计口径——chapters+pages 聚合是否只读、是否可能把软删/无效页计入；Owner 声明"未删除章节下有效未删除且含 managed copy 的 page"——验证 SQL 与声明一致）；错误处理是否可能把内部异常细节写进 error.message；shutdown 后 exit 0 路径。
+3. 测试判别力轴：tests/core/test_core_service.py 的真实 subprocess e2e（是否真 spawn、断言是否够硬）；Rust mock channel 与 spawn_args pin；vitest 三态（成功/空/不可用）。找"假绿"风险。
+4. 一致性轴：doc/handoffs/M2-IPC1-c4461c88.md、verification/M2-IPC1/verification-results.md、doc/tasks/M2-IPC1.md 三者数字与事实是否一致；Handoff 是否如实记录 BookSummary page_count 的模型差异（Book 实体无 page_count，SQL 聚合）与任务文本笔误修正（tests/core/→tests/providers/）。
+
+输出格式（Markdown）：结论行 decision: approved | approved_with_conditions | changes_requested；四轴小结（各 2-4 句 + path:line）；Findings 分级（P0/P1/P2/P3，无则 none）；明确回答是否达到可集成标准。
