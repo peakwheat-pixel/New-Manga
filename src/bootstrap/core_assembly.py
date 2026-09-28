@@ -578,6 +578,7 @@ def assemble_core_services(
     compositor: ImageCompositor,
     source_styles: SourceStyleService,
     content_decoder: Callable[[str, bytes], bytes] | None = None,
+    mock_local_providers: bool = False,
 ) -> CoreServices:
     """Open + migrate the SQLite library and build the Qt-free services.
 
@@ -589,6 +590,13 @@ def assemble_core_services(
     keyword arguments — this assembly never constructs a Qt implementation
     itself. ``content_decoder`` defaults to the lazy ``NMFR`` bridge, keeping
     the historical production behaviour when the caller does not override.
+
+    ``mock_local_providers`` (M2-AC1): opt-in acceptance mode. When set, the
+    deterministic Mock/Local detect/OCR/translation providers are registered
+    on the runtime registry and the ``detect`` step uses the mock detector
+    instead of the docTR weights path. The default ``False`` keeps the
+    production assembly behaviour byte-identical; only the acceptance
+    harness (``bootstrap.acceptance_bridge``) may set it.
     """
     migrations = default_migrations()
     latest_known = max(migration.schema_version for migration in migrations)
@@ -657,6 +665,41 @@ def assemble_core_services(
             transport=transport,
             credential_resolver=_credential_resolver(credential_store),
         )
+        # M2-AC1 acceptance mode: the Mock/Local providers join the runtime
+        # registry only behind this explicit flag (never in production).
+        detector: object
+        if mock_local_providers:
+            from infrastructure.providers.mock_local import (
+                MockLocalDetectionProvider,
+                register_mock_local_providers,
+            )
+
+            register_mock_local_providers(provider_runtime.registry)
+            detector = MockLocalDetectionProvider()
+        else:
+            # T1.1.1: the selected production detector (docTR fast_base, see
+            # doc/research/T1.1.1-detector-evaluation.md) is wired through the
+            # application-layer region_creator below. The provider is lazy and
+            # strictly offline: weights must exist as a local file (default
+            # <data root>/models/detector/, override NEWMANGA_DETECTOR_WEIGHTS)
+            # with the pinned SHA-256, or the ``detect`` step fails closed with
+            # PROVIDER_NOT_CONFIGURED at run time — the same diagnosable gap as
+            # an unwired detector. No download, no fallback.
+            detector_weights = Path(
+                os.environ.get(
+                    "NEWMANGA_DETECTOR_WEIGHTS",
+                    str(
+                        Path(db_path).resolve().parent
+                        / "models"
+                        / "detector"
+                        / DOCTR_WEIGHTS_FILENAME
+                    ),
+                )
+            )
+            detector = DoctrDetectionProvider(
+                weights_path=detector_weights,
+                device=os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu"),
+            )
         # TASK-033: the render step needs the application-layer RenderService,
         # assembled here from the existing infrastructure/rendering adapters
         # (no adapter implementation is added or modified). The Qt adapters
@@ -704,25 +747,6 @@ def assemble_core_services(
             )
             return region.region_id
 
-        # T1.1.1: the selected production detector (docTR fast_base, see
-        # doc/research/T1.1.1-detector-evaluation.md) is wired through the
-        # application-layer region_creator below. The provider is lazy and
-        # strictly offline: weights must exist as a local file (default
-        # <data root>/models/detector/, override NEWMANGA_DETECTOR_WEIGHTS)
-        # with the pinned SHA-256, or the ``detect`` step fails closed with
-        # PROVIDER_NOT_CONFIGURED at run time — the same diagnosable gap as
-        # an unwired detector. No download, no fallback.
-        detector_weights = Path(
-            os.environ.get(
-                "NEWMANGA_DETECTOR_WEIGHTS",
-                str(
-                    Path(db_path).resolve().parent
-                    / "models"
-                    / "detector"
-                    / DOCTR_WEIGHTS_FILENAME
-                ),
-            )
-        )
         handlers = build_production_handlers(
             registry=provider_runtime.registry,
             regions=regions,
@@ -736,10 +760,7 @@ def assemble_core_services(
             source_styles=source_styles,
             terms=TermExtractionService(),
             render_service=render_service,
-            detector=DoctrDetectionProvider(
-                weights_path=detector_weights,
-                device=os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu"),
-            ),
+            detector=detector,
             region_creator=_create_detected_region,
         )
         # TASK-040 AC ①: wire the TASK-039 Clean-availability probe into the

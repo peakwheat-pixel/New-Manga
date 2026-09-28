@@ -16,9 +16,11 @@
 
 // console kept visible on purpose: probe evidence includes startup stderr
 
+mod ac1_bridge;
 mod core_bridge;
 mod resource_protocol;
 
+use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use resource_protocol::{GrantCache, ScopeRoots};
 use serde::Serialize;
@@ -41,13 +43,22 @@ pub const PROBE_ONLY_COMMANDS: &[&str] =
 /// written or fabricated from the host/WebView side.
 pub const REMOVED_COMMANDS: &[&str] = &["register_catalog"];
 
+/// M2-AC1 acceptance commands: they exist ONLY in the explicit test startup
+/// configuration (`M2AC1_TEST_MODE=1`), never in production or probe mode.
+/// The WebView drives the deterministic acceptance loop through them; the
+/// production surface stays exactly `PRODUCTION_COMMANDS`.
+pub const AC1_TEST_COMMANDS: &[&str] = &["ac1_request", "ac1_write_results", "ac1_exit"];
+
 /// The single source of truth for the WebView-facing command surface.
 /// `main` feeds this into the conditional `invoke_handler` registration; the
 /// unit tests gate its content (allow/deny matrix, RC2-AC1).
-pub fn command_allowlist(probe_mode: bool) -> Vec<&'static str> {
+pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands = PRODUCTION_COMMANDS.to_vec();
     if probe_mode {
         commands.extend_from_slice(PROBE_ONLY_COMMANDS);
+    }
+    if ac1_mode {
+        commands.extend_from_slice(AC1_TEST_COMMANDS);
     }
     commands
 }
@@ -57,6 +68,8 @@ struct AppState {
     cache: GrantCache,
     roots: ScopeRoots,
     fixture_shas: serde_json::Value,
+    /// Present only in the M2-AC1 explicit test startup configuration.
+    ac1: Option<Ac1Channel>,
 }
 
 #[derive(Serialize)]
@@ -150,6 +163,44 @@ fn probe_issue_url(
     into_issued(issued).map_err(|error| error.code)
 }
 
+// ---- M2-AC1 acceptance-mode-only command surface ---------------------------
+// Registered only when `M2AC1_TEST_MODE=1`; production and probe mode never
+// see these commands. `ac1_request` forwards a method call to the acceptance
+// Core sidecar (bootstrap.acceptance_bridge); `ac1_write_results` writes the
+// run evidence file named by `M2AC1_RESULTS_OUT`; `ac1_exit` terminates the
+// desktop process so the runner can relaunch it for the restart phase.
+
+#[tauri::command]
+fn ac1_request(
+    state: tauri::State<'_, AppState>,
+    method: String,
+    params: serde_json::Value,
+) -> Result<serde_json::Value, String> {
+    state
+        .ac1
+        .as_ref()
+        .ok_or_else(|| "AC1_BRIDGE_DOWN".to_string())?
+        .round_trip(&method, params)
+        .map_err(|error| error.code)
+}
+
+#[tauri::command]
+fn ac1_write_results(payload: String) -> Result<String, String> {
+    let out = std::env::var("M2AC1_RESULTS_OUT").unwrap_or_else(|_| {
+        std::env::temp_dir()
+            .join("m2ac1-results.json")
+            .to_string_lossy()
+            .into_owned()
+    });
+    std::fs::write(&out, payload).map_err(|error| error.to_string())?;
+    Ok(out)
+}
+
+#[tauri::command]
+fn ac1_exit(app: tauri::AppHandle, code: i32) {
+    app.exit(code);
+}
+
 fn env_path(name: &str) -> Option<PathBuf> {
     std::env::var(name).ok().map(PathBuf::from)
 }
@@ -188,16 +239,25 @@ fn main() {
     // the embedded page URL has no query string, so the probe mode switch is
     // the presence of M2RC1_PROBE_OUT (set only by the evidence runner)
     let probe_mode = std::env::var("M2RC1_PROBE_OUT").is_ok();
+    // M2-AC1: the acceptance mode is its own explicit test startup
+    // configuration — never combined with the RC1 probe mode.
+    let ac1_mode = !probe_mode && std::env::var("M2AC1_TEST_MODE").as_deref() == Ok("1");
 
     let channel = StdioCoreChannel::spawn(
         &python_exe, &src_root, &derived_root, &managed_root, &catalog_db,
     )
     .expect("python core sidecar failed to start");
+    let ac1 = if ac1_mode {
+        Some(Ac1Channel::spawn(&python_exe, &src_root).expect("acceptance core sidecar failed to start"))
+    } else {
+        None
+    };
     let state = AppState {
         channel: Box::new(channel),
         cache: GrantCache::default(),
         roots: ScopeRoots { derived: derived_root, managed: managed_root },
         fixture_shas: fixture_shas(),
+        ac1,
     };
 
     let builder = tauri::Builder::default()
@@ -235,7 +295,8 @@ fn main() {
 
     // RC2-AC1: the conditional allowlist. The probe surface physically does
     // not exist in production mode; `register_catalog` exists in no mode.
-    // R2-04: the announcement below is emitted from the `command_allowlist`
+    // M2-AC1: the acceptance commands exist only in the explicit test mode.
+    // R2-04: the announcements below are emitted from the `command_allowlist`
     // CONSTANT ARRAY, which is one of THREE hand-maintained views of the
     // same surface (constants / generate_handler! literal list below /
     // build.rs app-manifest list) -- there is no compile-time binding
@@ -245,7 +306,7 @@ fn main() {
     let builder = if probe_mode {
         eprintln!(
             "[m2rc2-allowlist] probe:{}",
-            command_allowlist(true).join(",")
+            command_allowlist(true, false).join(",")
         );
         builder.invoke_handler(tauri::generate_handler![
             issue_resource_url,
@@ -256,10 +317,23 @@ fn main() {
             probe_exit,
             probe_issue_url
         ])
+    } else if ac1_mode {
+        eprintln!(
+            "[m2ac1-allowlist] ac1:{}",
+            command_allowlist(false, true).join(",")
+        );
+        builder.invoke_handler(tauri::generate_handler![
+            issue_resource_url,
+            revoke_ref,
+            revoke_resource_refs,
+            ac1_request,
+            ac1_write_results,
+            ac1_exit
+        ])
     } else {
         eprintln!(
             "[m2rc2-allowlist] production:{}",
-            command_allowlist(false).join(",")
+            command_allowlist(false, false).join(",")
         );
         builder.invoke_handler(tauri::generate_handler![
             issue_resource_url,
@@ -374,7 +448,7 @@ mod tests {
             .get("permissions")
             .and_then(|p| p.as_object())
             .expect("__app-acl__ permissions object");
-        for command in command_allowlist(true) {
+        for command in command_allowlist(true, false) {
             let allow = format!("allow-{}", command.replace('_', "-"));
             assert!(
                 permissions.contains_key(&allow),
@@ -392,23 +466,49 @@ mod tests {
 
     #[test]
     fn production_surface_is_exactly_three_commands() {
-        assert_eq!(command_allowlist(false), vec!["issue_resource_url", "revoke_ref", "revoke_resource_refs"]);
+        assert_eq!(command_allowlist(false, false), vec!["issue_resource_url", "revoke_ref", "revoke_resource_refs"]);
     }
 
     #[test]
     fn probe_surface_adds_exactly_the_four_probe_commands() {
-        let probe = command_allowlist(true);
+        let probe = command_allowlist(true, false);
         for command in PROBE_ONLY_COMMANDS {
             assert!(probe.contains(command), "{command} missing from probe surface");
         }
         assert_eq!(probe.len(), PRODUCTION_COMMANDS.len() + PROBE_ONLY_COMMANDS.len());
     }
 
+    // ---- M2-AC1: the acceptance surface is test-mode-only -----------------
+
+    #[test]
+    fn ac1_surface_adds_exactly_the_three_acceptance_commands() {
+        let ac1 = command_allowlist(false, true);
+        for command in AC1_TEST_COMMANDS {
+            assert!(ac1.contains(command), "{command} missing from ac1 surface");
+        }
+        assert_eq!(ac1.len(), PRODUCTION_COMMANDS.len() + AC1_TEST_COMMANDS.len());
+    }
+
+    #[test]
+    fn production_and_probe_surfaces_never_gain_ac1_commands() {
+        for command in AC1_TEST_COMMANDS {
+            assert!(!command_allowlist(false, false).contains(command));
+            assert!(!command_allowlist(true, false).contains(command));
+        }
+    }
+
+    #[test]
+    fn ac1_commands_never_reappear_on_the_removed_surface() {
+        for command in REMOVED_COMMANDS {
+            assert!(!command_allowlist(false, true).contains(command));
+        }
+    }
+
     #[test]
     fn register_catalog_exists_on_no_surface() {
         for command in REMOVED_COMMANDS {
-            assert!(!command_allowlist(false).contains(command));
-            assert!(!command_allowlist(true).contains(command));
+            assert!(!command_allowlist(false, false).contains(command));
+            assert!(!command_allowlist(true, false).contains(command));
         }
         // the removed surface must stay removed even if someone re-adds to
         // the probe list: gate the exact constants, not just membership

@@ -177,6 +177,24 @@
       "description": "Permission identifier",
       "oneOf": [
         {
+          "description": "Enables the ac1_exit command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-ac1-exit",
+          "markdownDescription": "Enables the ac1_exit command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the ac1_request command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-ac1-request",
+          "markdownDescription": "Enables the ac1_request command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the ac1_write_results command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-ac1-write-results",
+          "markdownDescription": "Enables the ac1_write_results command without any pre-configured scope."
+        },
+        {
           "description": "Enables the issue_resource_url command without any pre-configured scope.",
           "type": "string",
           "const": "allow-issue-resource-url",
@@ -217,6 +235,24 @@
           "type": "string",
           "const": "allow-revoke-resource-refs",
           "markdownDescription": "Enables the revoke_resource_refs command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the ac1_exit command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-ac1-exit",
+          "markdownDescription": "Denies the ac1_exit command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the ac1_request command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-ac1-request",
+          "markdownDescription": "Denies the ac1_request command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the ac1_write_results command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-ac1-write-results",
+          "markdownDescription": "Denies the ac1_write_results command without any pre-configured scope."
         },
         {
           "description": "Denies the issue_resource_url command without any pre-configured scope.",
