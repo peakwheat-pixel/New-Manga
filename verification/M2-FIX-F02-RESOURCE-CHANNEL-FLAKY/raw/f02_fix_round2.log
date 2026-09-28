@@ -1,0 +1,72 @@
+=== shell: /bin/bash.exe ===
+=== cargo cargo 1.98.1 (797e8a9bc 2026-08-05) ===
+=== HEAD: 6a404c19b114148f59f06341f0bb87d7c4bc6007 ===
+=== ISO: 2026-09-29T03:10:56+08:00 ===
+=== AC3 post-fix full suite round 2 (default threads) ===
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:421:66
+    |
+421 |         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+    |                                                                  ^^^^^^^^^^
+
+warning: field `grant` is never read
+  --> src\resource_protocol.rs:68:5
+   |
+67 | struct CachedGrant {
+   |        ----------- field in this struct
+68 |     grant: Grant,
+   |     ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 3 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.35s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 34 tests
+test ac1_bridge::tests::spawn_args_target_the_acceptance_module ... ok
+test ac1_bridge::tests::decode_response_maps_typed_errors ... ok
+test tests::ac1_surface_adds_exactly_the_three_acceptance_commands ... ok
+test library_bridge::tests::spawn_args_target_core_service_module ... ok
+test library_bridge::tests::decode_response_parses_success_and_error ... ok
+test tests::ac1_commands_never_reappear_on_the_removed_surface ... ok
+test tests::probe_surface_adds_exactly_the_four_probe_commands ... ok
+test library_bridge::tests::book_summary_page_count_known_zero_and_null_are_distinguishable ... ok
+test library_bridge::tests::mock_channel_round_trip ... ok
+test tests::issue_wire_never_carries_path_or_ttl ... ok
+test tests::mock_issue_without_catalog_entry_fails_closed ... ok
+test tests::no_surface_command_carries_a_ttl_parameter_shape ... ok
+test tests::production_and_probe_surfaces_never_gain_ac1_commands ... ok
+test tests::register_catalog_exists_on_no_surface ... ok
+test tests::mock_library_channel_integration ... ok
+test tests::production_surface_is_exactly_five_commands ... ok
+test tests::url_builder_is_opaque_only ... ok
+test ac1_bridge::tests::spawn_fails_typed_on_missing_python ... ok
+test tests::chunk_offset_beyond_size_rejected ... ok
+test tests::f01_fetch_then_revoke_then_fetch_must_be_typed ... ok
+test tests::app_acl_manifest_is_generated_and_enforced ... ok
+test tests::malformed_ids_rejected_before_lookup ... ok
+test tests::responses_carry_no_store ... ok
+test tests::unknown_well_formed_id_typed_404 ... ok
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... ok
+test tests::revoked_id_propagates_typed_410 ... ok
+test tests::identity_change_invalidates_cache_entry ... ok
+test tests::full_chunk_serving_matches_bytes_and_digest_check ... ok
+test tests::f02_equal_size_rewrite_stability_loop ... ok
+test library_bridge::tests::wait_timeout_or_kill_terminates_hanging_process ... ok
+test tests::real_core_sidecar_denies_uncataloged_and_extended_ttl ... ok
+test tests::real_core_sidecar_round_trip ... ok
+test tests::real_library_sidecar_round_trip_and_eof ... ok
+test tests::f01_ttl_expiry_invalidates_cached_grant ... ok
+
+test result: ok. 34 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+EXIT=0

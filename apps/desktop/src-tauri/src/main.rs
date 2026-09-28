@@ -825,6 +825,44 @@ mod tests {
         );
     }
 
+    /// F-02 fix stability loop (M2-FIX-F02 AC3): replays the exact f02
+    /// scenario (first fetch verifies, equal-size in-place rewrite, second
+    /// fetch) for 50 independent rounds under the default harness and
+    /// requires the typed rejection EVERY round. The AC1 diagnostic probe
+    /// reproduced the pre-fix flake 3/3 runs (rounds 5/0/2, stat mtime
+    /// identical across the rewrite, delta=0), so 50 green rounds here is
+    /// the directed stability evidence for the always-reverify fix.
+    #[test]
+    fn f02_equal_size_rewrite_stability_loop() {
+        let payload = b"equal-size-rewrite-payload";
+        for round in 0..50u32 {
+            let (env, _sha) = env_with_fixture(payload);
+            let opaque = registered(&env, "res-001", "asset.png", payload);
+            let url = url_for(&opaque, Some(0));
+
+            let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+            assert_eq!(first.status, 200, "round {round}: first fetch must serve");
+
+            let flipped: Vec<u8> = payload.iter().map(|b| b ^ 0x5A).collect();
+            let target = env.roots.derived.join("asset.png");
+            let existing = std::fs::OpenOptions::new().write(true).open(&target).unwrap();
+            {
+                use std::io::{Seek, SeekFrom};
+                let mut existing = existing;
+                existing.seek(SeekFrom::Start(0)).unwrap();
+                existing.write_all(&flipped).unwrap();
+            }
+
+            let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+            assert_eq!(second.status, 400, "round {round}: rewritten content must not be served");
+            assert_eq!(
+                std::str::from_utf8(&second.body).unwrap(),
+                "{\"code\":\"CONTENT_DIGEST_MISMATCH\"}",
+                "round {round}: typed rejection required"
+            );
+        }
+    }
+
     /// Integration with the real Python Core sidecar: exercises the stdio
     /// JSON-lines bridge end to end (catalog seed -> issue -> resolve ->
     /// grant facts), including the RC2 catalog-authority denial (an
