@@ -1,0 +1,878 @@
+dsh: reasoning:
+The worktree path may not exist, or the sandbox is denying access. Let me check.
+
+The pwsh error: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga) — sandbox setup failed. Hmm. This is a sandbox issue. Let me try again with simpler commands.
+
+Let me check if the worktree exists.
+dsh: reasoning:
+The glob found `doc\tasks\DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md` — relative to what? The glob path was G:/CODEX, so it might be G:/CODEX/doc/tasks/... which is odd. Actually glob may resolve relative to session workspace. Session workspace is "G:\CODEX\New Manga". Hmm, glob with path G:/CODEX returned "doc\tasks\..." which suggests it searched... unclear. Let me glob in the workspace.
+
+Also pwsh is completely broken: SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga). The sandbox can't set up. This is a sandbox failure — file access denied. Approval policy is "ask". The error is about granting write to the workspace. Maybe I should retry with sandbox_permissions? The instructions say: "a blocked file operation is reported as `[sandbox: file access denied under <mode> mode]`, a policy denial: do not retry another way." But this error is different — SetNamedSecurityInfoW failed (Win32 5) = access denied while granting write ACL on G:\CODEX\New Manga.
+
+Hmm. The pwsh tool runs sandboxed. Every pwsh call fails at setup. That's a hard blocker for executing commands. Let me try again once to confirm it's consistent, maybe with workdir in the session workspace.
+
+Let me first explore the filesystem via read/glob tools which seem to work.
+dsh: reasoning:
+pwsh consistently fails. The worktree glob under New Manga.worktrees found nothing for that task file name pattern... Let me list the worktrees dir.
+
+Note glob returns files only, and pattern **/DIAG-M2-...md should match doc/tasks/DIAG-M2-....md. It found nothing under New Manga.worktrees — maybe the path doesn't exist or glob can't traverse. Earlier glob with path G:/CODEX found doc\tasks\DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md — possibly that's relative path under G:/CODEX? Let's test glob with path G:/CODEX and pattern "**/*" limited... Let me instead glob G:/CODEX/New Manga for the task file.
+dsh: reasoning:
+So glob path G:/CODEX/New Manga found "doc\tasks\DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md". That's likely relative to the session workspace "G:\CODEX\New Manga" — i.e., the main repo, not the worktree. Hmm, or does it actually search the given path and return relative paths? It returned relative path doc\tasks\... so the path param maybe restricted to workspace root. The session workspace is "G:\CODEX\New Manga" which is the MAIN repo, not the worktree.
+
+Wait — the sandbox says "Any available operation enforced by the DSH file sandbox may modify files under the session workspace: G:\CODEX\New Manga". The worktree is G:\CODEX\New Manga.worktrees\... which is OUTSIDE the session workspace (it's a sibling dir). Hmm, "G:\CODEX\New Manga.worktrees" is a sibling of "G:\CODEX\New Manga". So my workspace-write scope is the main repo only, not the worktree!
+
+But the task says my worktree is G:/CODEX/New Manga.worktrees/DIAG-...-dsh. And read of that path failed "not found". Glob of that path found nothing.
+
+So maybe the worktree path uses a different name/format. Let me read the task file in the main repo to see infra details. Actually the main repo doc/tasks file is the same content presumably (branch base 5789b30b may include it). Let's read it.
+
+Also I need to check whether the worktree directory exists at all. glob timed out on G:/CODEX with "*". Let me try glob with path "G:/CODEX/New Manga.worktrees" pattern "*".
+
+Earlier glob path G:/CODEX/New Manga.worktrees pattern **/DIAG-M2-....md → no files. Maybe dir doesn't exist. Try pattern "*".
+dsh: reasoning:
+The worktrees dir exists and has content (glob returned too much). Let me check with a narrower glob, e.g. pattern "DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh" at depth 1... pattern without "/" matches basenames at any depth — that's why it recursed. Use pattern "*/doc/tasks/DIAG-M2-*.md" anchored depth.
+
+Actually simpler: try to read a file in the worktree directly. Earlier read of worktree doc/tasks failed "not found". Maybe path is correct but read tool is confined to workspace? No — error said "not found", not sandbox denial.
+
+Hmm, glob G:/CODEX/New Manga.worktrees **/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md found nothing. But glob G:/CODEX/New Manga doc/tasks/DIAG-M2-*.md found it. Maybe glob's path param is ignored/clamped to workspace root? If path is ignored, then glob on New Manga.worktrees would actually search the workspace (G:/CODEX/New Manga) and pattern **/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md should have found doc/tasks/... Hmm, it didn't. So path isn't fully ignored.
+
+Let me try glob path "G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh" with pattern "doc/tasks/*.md".
+dsh: reasoning:
+So the path G:/CODEX/New Manga.worktrees appears inaccessible/empty to the file tools — likely because the sandbox's allowed root is G:\CODEX\New Manga only, and reads outside may be denied as "not found". Actually if denied, we'd get a sandbox error. Hmm.
+
+Wait — maybe the directory really is named differently. Let me test with glob path "G:/CODEX" pattern "*/doc/STATUS.md"? That timed out earlier for "*". Let's try a depth-anchored pattern.
+
+Alternative: pwsh is broken entirely, so I can't run git, python, or anything. This is a hard blocker for AC1-AC2 execution (repro must run $py). Per降级规则: if sandbox cannot execute a command or write files, don't fake PASS — record the actual error and mark ACs BLOCKED/NOT_RUN; if files can't be written, put all deliverables in the final answer.
+
+But before concluding, let me determine whether pwsh failure is a one-time thing. It failed 3 times identically at sandbox setup: "SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga)". This is the sandbox trying to grant write ACL to the workspace root and failing with access denied (Win32 5). Since approval policy is "ask", maybe I can retry with sandbox_permissions: "danger-full-access" which would ask the user. The tool description says: sandbox_permissions — "The narrowest wider sandbox mode for a one-shot retry of the exact operation the sandbox just denied; the retry asks the user for approval." This is a legitimate case: the workspace-write sandbox setup itself failed. Let me try a retry with sandbox_permissions workspace-write first (narrowest wider)... but we're already in workspace-write mode. The narrowest wider mode would be danger-full-access. Hmm, "workspace-write" is a valid enum. Since current mode is workspace-write and it failed, the wider one is danger-full-access.
+
+Let me try retrying with sandbox_permissions: "danger-full-access" for a trivial read-only command, with justification. Actually the justification must be in the language of the user's request (Chinese).
+
+Let me first try to confirm whether file writes work at all (write tool). Let me check whether I can write into the main workspace... But the task requires writing into the worktree, not the main repo. Writing to the main repo would violate "你的一切读写与提交都只在这个 worktree 内进行".
+
+Hmm, but AGENTS.md warns not to touch other agents' work; the main repo is Codex's. I should not write there.
+
+Let me try the read tool on the worktree with forward slashes and different formatting. Earlier: read "G:\CODEX\New Manga.worktrees\DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh\doc\tasks\..." → not found. Backslashes were normalized. Let me try read with forward slashes.
+
+Also maybe the worktree dir has a trailing different name, e.g. "DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh" vs something. Let me glob G:/CODEX/New Manga.worktrees with pattern "*/.git" (depth 2, anchored) to list worktrees.
+dsh: reasoning:
+The worktree is invisible to the file tools. Possibly the file sandbox restricts reads to the session workspace (G:\CODEX\New Manga) and outside paths report "not found".
+
+Let me test read on a known-existing outside path, e.g. "G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe" — binary, read will fail differently maybe. Better: check if G:/CODEX/New Manga.worktrees exists at all via a glob that would be cheap: path "G:/CODEX/New Manga.worktrees" pattern "*/AGENTS.md"? Already tried similar. All "no files found".
+
+Interpretation A: the worktree does not exist (integrator didn't create it). Interpretation B: sandbox hides it.
+
+I need a shell to resolve this, and the shell is broken. Let me try the pwsh with sandbox_permissions escalation once — this is the documented path when the sandbox denies the operation.
+
+Actually, wait. Let me re-read the error: "SetNamedSecurityInfoW failed (Win32 5): grantWrite(G:\CODEX\New Manga)". The sandbox process runs as a user lacking WRITE_DAC on G:\CODEX\New Manga, so it can't apply the write-grant ACL. This is an environment/permission problem, not a per-command denial. Escalating to danger-full-access would skip the ACL grant → pwsh would run unsandboxed. That requires approval via the answerer. Let's try it once; if it fails or is denied, I report BLOCKED.
+
+Let me make the command trivial and safe: print location, git status, list worktrees.
+dsh: reasoning:
+No approval channel. So I cannot escalate. Shell is dead.
+
+Now: file writes. Let me test whether write tool works in the workspace (main repo). If file tools are clamped to G:\CODEX\New Manga, I cannot write into the worktree. Let me test with a scratch write to see behavior — but writing into the main repo is out of scope and could pollute another agent's work. Hmm. However, a transient probe file that I immediately delete is low-risk... but policy says my reads/writes must be inside the worktree. Writing a probe into the main repo violates that.
+
+Better: try writing directly to the worktree path and see the error. If it fails, that confirms the block without polluting anything.
+
+Let me try write to the worktree verification dir.
+dsh: reasoning:
+Confirmed: write to worktree is denied by sandbox (workspace-write). The session workspace is G:\CODEX\New Manga (the main repo), and the worktree is outside it. Since no approval channel is available, escalation fails.
+
+So: I cannot write to the worktree, and cannot run any shell command. Per降级规则, I must:
+- record actual errors verbatim
+- mark ACs as BLOCKED/NOT_RUN honestly
+- put all deliverables in the final answer (report full text, script full text, command/output records)
+
+But hold on. Before giving up, can I at least do the static analysis part? I can read source files in the main repo (G:\CODEX\New Manga) — read-only is allowed? Let me test reading src files there. The main repo is at base? Actually the main repo may be on master with more commits. The task's base is 5789b30b. I can read files from the main repo as static evidence, but I cannot verify the exact HEAD in the worktree.
+
+Priority: the highest-value deliverable I can still produce is a real static diagnosis of the root cause (which requires reading the actual pipeline code). That's substantive and honest if labeled 静态分析.
+
+Let me first verify read access to the main repo's src and find the relevant Python Core pipeline code.
+
+Let me check git state of the main repo — can't (no shell). I can read .git/HEAD via read tool.
+
+Let me start exploring: find the Python Core pipeline: detect handler, backfill, LOCK_CHANGED.
+
+Let me grep for LOCK_CHANGED.
+dsh: reasoning:
+Very useful. The main repo contains the code. Note key clues already:
+
+1. `src/application/tasks/service.py` L661: `commit_step_result` — for detect step, calls `self._backfill_detected_regions(task, unit, result)` after commit. TASK-049 AC③.
+2. But `StepRun.input_refs` and `lock_snapshot` are captured at plan/dispatch time. If backfill happens after detect commit, and OCR step_run was already planned/dispatched with the old input_refs (page target snapshot = regionless), then commit_step for ocr compares expected_lock (captured when regionless) against stored region locks → LOCK_CHANGED.
+
+Also `tests/providers/test_handlers_pipeline.py` line 714 asserts LOCK_CHANGED — probably a test that documents the current failing behavior.
+
+I cannot run anything. But I can produce a thorough static diagnosis. Let me read the real files.
+
+Key files:
+- src/application/tasks/service.py (PipelineService commit_step_result, _backfill_detected_regions, _dispatch)
+- src/application/tasks/... planner
+- src/ports/... catalog, TargetCatalog
+- src/application/providers/... handlers (detect, ocr)
+- tests/providers/test_handlers_pipeline.py around 714
+- src/application/... snapshot provider
+
+Let me locate them.
+
+Given the constraint that the deliverable can't be written to the worktree, I should still do the best possible job: full static root-cause analysis, plus a complete reproduce.py script (written as text in the final answer) that the integrator can run. That maximizes value.
+
+But wait — maybe I can write files somewhere allowed? The session workspace is G:\CODEX\New Manga. Writing there is forbidden by the task ("你的一切读写与提交都只在这个 worktree 内进行") and by AGENTS.md (don't touch others' work). However... Consider: is the main repo currently on branch main, and writing files there would pollute. I'll not write there.
+
+Hmm, but actually, one thought: maybe the worktree directory is genuinely absent, and the file tools' "not found" is truthful. Either way I can't act.
+
+Let me also double check: is there a way to reach the worktree through a relative path from the workspace? E.g., file_path "../New Manga.worktrees/...". Path traversal would still be denied by the sandbox (outside workspace). But it's worth one probe to distinguish "worktree missing" from "outside sandbox". Actually the sandbox denial message for write was explicit ("file access denied under workspace-write mode"), while read said "not found". Let me try read with a traversal path to see which error appears.
+
+Let me do that quickly, then get to the analysis.
+
+Actually reading outside workspace: read of worktree gave "not found" — that suggests read isn't sandbox-scoped but the path truly doesn't exist? Or read sandbox denies silently. Let me test read of a definitely-existing outside file: e.g., "G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" (binary). Or better, a text file outside: G:/CODEX/AGENTS.md? Unknown. Let's test with glob on G:/CODEX/New Manga.task-envs for "*/Scripts/python.exe". Hmm glob of outside dir may behave.
+
+Let me test: read "G:/CODEX/New Manga.worktrees" — a directory, error will differ. And read "G:/CODEX/New Manga/AGENTS.md" (inside) to confirm read works.
+
+Let me just try two probes.
+dsh: reasoning:
+"not a regular file" means G:\CODEX\New Manga.worktrees EXISTS and is a directory. So reads outside the workspace work (at least stat). And glob found nothing for python.exe under New Manga.task-envs/*/Scripts — hmm, maybe glob restricts to the workspace, or the pattern anchoring. But read says worktrees dir exists.
+
+So why "not found" for the worktree subpath? Let's probe: read "G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh" → if "not a regular file", the dir exists; if "not found", it doesn't.
+
+Let me also probe a couple of name variants.
+dsh: reasoning:
+The worktree EXISTS. But earlier read of doc/tasks/DIAG-M2-....md said "not found". That's because... hmm. Maybe the file path resolution needs exact case? Or maybe the worktree is a fresh checkout whose doc/tasks doesn't have that file? No — it should, at base 5789b30b.
+
+Wait, maybe the earlier read failed because at that time the worktree was... no.
+
+Let me re-try the read now.
+
+Also the glob "no files found" might be because glob's path param outside workspace isn't traversed — but read works. Let me re-try the read of the task file.
+
+Interesting: maybe the worktree is currently being created by the integrator (race). Let's just retry.
+dsh: reasoning:
+The worktree git metadata exists and is registered. But the worktree's working files aren't visible to the file tools?? read of doc/tasks says "not found", but read of the worktree root dir says "not a regular file" (exists). So the directory exists but is EMPTY (no doc/ subdir) — i.e., the worktree was registered (git worktree add metadata) but the checkout is empty or partially created.
+
+Hmm, or reads are sandbox-limited to the workspace root... but then root read would also fail. Root read succeeded ("not a regular file" = it could stat it). So stat works outside. And doc/tasks not found → likely the worktree working tree hasn't been populated yet.
+
+Wait, maybe the file sandbox has a read-allowlist = workspace, and paths outside get "not found" if... no, stat of the dir worked.
+
+Let me probe a bit more: read a top-level file that must exist in a checkout, e.g. "G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh/AGENTS.md" and ".gitattributes". Also `git worktree list` metadata: read .git/worktrees/<name>/gitdir.
+
+Let me probe.
+dsh: reasoning:
+The worktree IS populated (AGENTS.md, src/ exist). So why did doc/tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md read as "not found"?
+
+Ah — maybe the file doesn't exist at base 5789b30b in that branch? But base is 5789b30b and the task file was in main repo. The worktree is on branch agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001 created from 5789b30b. If the task file was added to main AFTER 5789b30b... Actually the release doc verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md exists in the main repo — implying 5789b30b is the release commit which may include the task file.
+
+Hmm, but maybe the release commit is 5789b30b and the task file was committed in it. Let me check path existence differently: read the worktree's doc/tasks directory listing isn't possible (glob outside workspace returns "no files found" apparently — that's a glob limitation).
+
+Let me test glob inside the worktree again with a path that definitely has files: path=worktree, pattern="AGENTS.md". Earlier glob with path=worktree, pattern="doc/tasks/DIAG-M2-....md" → no files found. And glob(path=worktrees, pattern="*/doc/STATUS.md") → none. It seems glob does NOT search outside the workspace at all (returns empty), while read does work. So glob can't help outside; I must use read with known paths.
+
+So: does doc/tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md exist in the worktree? read says not found. Let me try reading worktree's doc/tasks directory (should say "not a regular file" if exists).
+
+Also try the worktree's verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md.
+
+Wait, actually maybe there's a subtlety: the task file might have been added in the release commit AFTER creating the worktree base... no, base is defined as 5789b30b which is likely the commit adding the task file.
+
+Let me check main repo's git log for the file to see which commit added it. I can't run git. But I can read .git logs? Refs: read G:/CODEX/New Manga/.git/refs/heads/main gives a SHA. And .git/logs/HEAD gives reflog with messages. Not enough for file history.
+
+Alternative: read the worktree's doc/tasks dir.
+dsh: reasoning:
+doc/tasks exists in the worktree. And the task file is not there → the task file at base 5789b30b doesn't exist? But the release verification dir also doesn't exist in the worktree. Interesting: those two artifacts (task file + release doc) were likely ADDED in the commit 5789b30b... which is the base. Hmm, contradiction.
+
+Unless: base 5789b30b is the release commit on main, and the worktree branch was created from an EARLIER commit, or the worktree was created from a different base. Or the worktree is currently at a commit that predates the release.
+
+Wait, alternatively the task file IS in the worktree but under a different name? Let me list doc/tasks of the worktree — can't list. But I can read a few known task names, e.g. doc/tasks/M2-AC1.md.
+
+Hmm, actually — critical realization: maybe the *task file* in the worktree exists but read resolves case-insensitively on Windows... no.
+
+Let me check whether worktree has doc/tasks/M2-AC1.md, and also check the diff: does the worktree have src/application/tasks/service.py with _backfill_detected_regions? Let me compare a file between main and worktree.
+
+Actually, more efficient: I realize the release process: Codex created the release commit 5789b30b on main which added doc/tasks/DIAG-....md and verification/DIAG-.../release-5789b30b.md, then created the worktree from that commit. But the worktree appears to lack both files while having AGENTS.md and src.
+
+Possibility: the worktree checkout is stale/partial? Or the owner of these files... hmm.
+
+Or possibility: the worktree's branch agent/deepseek/DIAG-M2-... was created from 5789b30b, BUT the release commit 5789b30b is the *parent* and these files were added in a later commit that's only on main. The release doc says "fixed base=5789b30b" and its own filename is release-5789b30b.md → that file was likely committed in a commit AFTER 5789b30b (naming the base). Similarly the task file might have been committed after creating the release... but then the worktree wouldn't have the task file, consistent with what we see! And it would explain STATUS.md line 143 saying `ready / AWAITING_EXTERNAL_DISPATCH` (that's in main).
+
+Hmm, but the dispatch instruction tells the owner to read the task file. If the task file is absent at base, that's an environment inconsistency worth reporting. But wait, the read of the worktree doc/tasks dir worked; let me verify whether the worktree has verification/ dir at all and whether doc/STATUS.md exists there.
+
+Actually, hold on. Let me reconsider: maybe the worktree is on a *different* branch/commit. Let me read .git/worktrees/<name>/gitdir and HEAD (done: ref agent/deepseek/DIAG-...). Let me read the branch ref file: .git/refs/heads/agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001 → gives the SHA the worktree is at. That's readable! Let me do that, plus .git/refs/heads/main.
+
+Then I can compare with base 5789b30b.
+
+Also, more importantly for the diagnosis: the worktree files that matter (src/application/tasks/service.py) are readable. Let me confirm the worktree's version of that file contains _backfill_detected_regions, and use the WORKTREE as the source of truth for static analysis (it's the frozen base).
+
+Plan for reading efficient: the files are large. Let me use grep with path pointing INTO the worktree — grep worked on main; will it work outside workspace? grep uses ripgrep on the given path; let's try.
+
+Let me do: read ref heads, and grep worktree service.py for "backfill".
+dsh: reasoning:
+The worktree is at 5789b30b (correct base). grep works outside workspace.
+
+So the task file genuinely doesn't exist at base 5789b30b in the worktree. Interesting — actually wait. Maybe the task file IS at base but Codex's `git worktree add` used the base commit and the task file was committed in a *later* commit on main (e.g., the release commit itself is a child of 5789b30b named by its hash). Hmm, the release doc file is named release-5789b30b.md; it'd typically be committed along with the task file in the release commit, and base is set to that commit hash. But the ref says base = 5789b30b exactly.
+
+Whatever — the important thing: at the frozen base, doc/tasks/DIAG-M2-...md and verification/DIAG-M2-.../ don't exist. But read of the MAIN repo (main branch at acddebcb) has them. So the main repo has advanced beyond base and includes the task/release docs.
+
+That's a fine detail: I read the task file from main, which is a descendant; the task file content is presumably identical to what Codex authored. I'll note it.
+
+Now, let's be pragmatic. My situation:
+- No shell (pwsh sandbox setup fails, no approval channel) → cannot run reproduce.py, cannot run pytest, cannot run git commit, cannot compute delivery head.
+- Writes: denied to the worktree (outside workspace-write root); escalation unavailable.
+
+So AC1 (execution), AC5 (commands/git commit) are BLOCKED. But I can still deliver:
+- A full static root-cause analysis (real evidence from the worktree source at 5789b30b) for AC2/AC3/AC4 as static analysis.
+- A complete, ready-to-run reproduce.py text.
+
+Hmm, wait. Let me double-check the write denial: the write attempt error said "[sandbox: file access denied under workspace-write mode]" with escalation available but no approval channel. So writes to worktree = impossible. But CAN I write inside the session workspace (G:\CODEX\New Manga)? Probably yes. Should I? The task forbids it (writes only in worktree). Writing scratch files to main repo would violate. I'll avoid it — but this is a judgment call: the降级规则 says if I can't write files, put everything in the final answer. It doesn't authorize writing to the wrong place. Also main is at a different commit (acddebcb) and is Codex's integration branch — polluting it is worse. I'll not write.
+
+Hmm, but hold on: would it be acceptable to write deliverables under the main workspace as a staging area with explicit disclosure? Risky: it changes another agent's working tree and could be committed accidentally. The instruction explicitly restricts my writes to the worktree. So no.
+
+Decision: Do maximal static analysis, produce all deliverable texts in the final answer, report AC statuses honestly:
+- AC1: BLOCKED (cannot execute $py; cannot write reproduce.py). Provide full script text + exact commands for integrator.
+- AC2: BLOCKED for runtime state chain (requires reproduction); deliver static analysis of the comparison point with exact code refs → mark as static analysis, not executed evidence.
+- AC3: static analysis (achievable, but must be labeled static).
+- AC4: static recommendation (design-level; achievable but must be labeled static).
+- AC5: BLOCKED (no commands executed, no git commit, no delivery head). Report environment errors verbatim.
+
+Actually, before finalizing, is there ANY way to execute code? Tools available: pwsh (broken), subagent (subagents probably inherit the same sandbox... but maybe a subagent runs in a different sandbox context? Unlikely to help; and the sandbox is per-session/workspace config). workflow tool spawns agents — same environment. Could a subagent have a working shell? It says agents run in their own context but the same harness environment. Worth ONE cheap test: spawn a subagent with a trivial pwsh probe? That costs a bit but could unlock everything. Actually the sandbox config is host-level (DSH_* env), not per-agent. The failure is an ACL grant on the workspace root — deterministic. Hmm, but maybe the failure is transient (a file lock/permission set by another process). It failed 4 times identically.
+
+Hmm, but actually, wait: maybe the pwsh sandbox failure depends on the workdir argument. I tried workdir session workspace. Let me try workdir = the worktree path! The sandbox tried to grantWrite(G:\CODEX\New Manga) — that's the workspace root, independent of workdir. Still, one more probe with a different workdir (e.g., worktree) is cheap and could reveal that the failure is tied to which dir it tries to ACL. If I set workdir to the worktree, maybe the sandbox tries to grantWrite(worktree) which might succeed (different ACL). Worth trying!
+
+Let me try: pwsh with workdir = worktree, command = simple.
+
+Also try workdir = a temp dir.
+
+Let me do these two probes in parallel.
+
+Actually also: does the pwsh tool accept `description`? yes.
+
+Let me try.
+dsh: reasoning:
+Deterministic failure regardless of workdir. Shell is unusable.
+
+Let me try one subagent to see if it has a working shell — cheap insurance. Actually, the sandbox is enforced by the harness process, and the ACL grant happens per command execution. Subagents run in the same process tree? Possibly a separate sandbox instance but same config → same failure. I'll spend one parallel subagent probe while I continue reading code. Good use of parallelism.
+
+Let me launch a subagent with a trivial task: run `pwsh -Command "Write-Output OK"`-equivalent — but subagents get the same tool set with the same sandbox. Its report will tell me.
+
+Actually the subagent tool description says agents run their own context; the file sandbox config likely same. Let me just do it — if it works, I can delegate the whole execution to the subagent (which has cwd = session workspace though, not the worktree... hmm, workdir param exists in pwsh).
+
+Let's launch it in background and keep reading.
+
+Now the core work: static diagnosis. Let me read the relevant code in the worktree.
+
+Priority reads:
+1. src/application/tasks/service.py — full-ish: create_run/plan (input_refs/lock capture ~L560-625), commit_step_result (L627-700), dispatch (L700-900), _backfill_detected_regions (L922+).
+2. The catalog: TargetCatalog commit_step (expected_revisions/expected_lock) — find it.
+3. The detect handler / providers: tests/providers/test_handlers_pipeline.py:714 context (documents existing LOCK_CHANGED expectation).
+
+Let me read service.py sections.
+dsh: reasoning:
+Very good. Now read _backfill_detected_regions (L922+) and the planning part.
+dsh: reasoning:
+Now the key: `_backfill_detected_regions` only rewrites `PlanUnit.region_id` on the *task's units in memory*. It does NOT rebind `step_run.input_refs` / `lock_snapshot` for the already-planned units... well, those are captured at `_record_step_attempt` time per unit, which happens later (during execute_run, after backfill). Wait — `_record_step_attempt` is called at unit execution time (L787), after the detect commit and backfill. So for the ocr unit, `unit.region_id` is now the new region... but `unit.target_id` is NOT updated by backfill! `_backfill_detected_regions` only replaces region_id, leaving target_id pointing at the page target.
+
+So then `_record_step_attempt` does `current = self._catalog.current(unit.target_id)` — using the still-page target_id. That returns the PAGE target's current revisions and lock. Then commit_step uses target_id=unit.target_id (page). Hmm, so the lock snapshot is from the page target.
+
+So where does LOCK_CHANGED come from? Let's look at the detect step: detect's unit.target_id — what is it? If the page-level detect step targets the PAGE target where page_locked=False initially. Then detect creates regions and commits stage update to the page target.
+
+Hmm. The key question: at the ocr unit, `unit.target_id` is still the page target, but region_id is set. `_record_step_attempt` reads page target current → input_refs = page revisions, lock = page lock. Then ocr executes and produces revision_updates probably for the region? Then commit_step(target_id=page target, expected_revisions=page revisions, expected_lock=page lock, revision_updates=region revisions, stage_updates=...). If the catalog's commit_step for a page target with a region-scoped update... hmm.
+
+Actually LOCK_CHANGED arises from comparing expected_lock vs stored lock. Where is the compare in the catalog? Let me find TargetCatalog.commit_step and the lock comparison, plus how detect's commit updates the page target lock/region.
+
+Key suspicion: detect commit applies `stage_updates` and *region creation*, and the page target's lock snapshot changes (e.g., page_locked becomes True, or expected revisions changed by detect's own revision_updates). Then the ocr StepRun, recorded with the OLD page snapshot (no—recorded after detect, so fresh)...
+
+Hmm wait. Careful with ordering: `_record_step_attempt(run, task, unit)` at line 787 happens per-unit inside the loop, right before execute. So the ocr StepRun's input_refs/lock are captured AFTER detect committed and backfilled. So the snapshot should be fresh. Unless... the catalog's `current(target_id)` for a **page** target returns page-level lock (page_locked) and revisions, and commit compares against the same → fine. So why LOCK_CHANGED?
+
+Unless the planner creates the OCR unit against the *page* target with stage "ocr" and the catalog's commit_step for ocr requires region-level lock compare computed from the region (derived from unit.region_id) while expected_lock came from the page target → mismatch!
+
+Let's look at the catalog implementation: `src/application/.../catalog`? Let me grep for `def commit_step` and `TargetCatalog`.
+
+Also the earlier M2-AC1 note: "ocr input_refs 冻结自 page target 快照" — OCR's input_refs frozen from the page-target snapshot. That suggests input_refs IS frozen earlier. Where? Maybe the planner itself creates StepRun? No... Or `expected_revisions` compare against region-level revisions.
+
+Let me read the catalog code.
+dsh: reasoning:
+Confirmed: no execution path at all. Proceed with static diagnosis, produce full deliverables as text.
+
+Now let me continue reading the key code to nail the root cause:
+1. src/application/tasks/store.py L167-190 (InMemory catalog commit_step), infrastructure/sqlite/pipeline.py L568-600.
+2. The planner: where units are created (regionless targeting), and how target_id is chosen for region units.
+3. tests/providers/test_handlers_pipeline.py:714 — the dev-visible proof.
+
+Let me read those.
+dsh: reasoning:
+Key finding: `TargetSnapshot.lock` for a PAGE target is the page lock; for a REGION target the region lock. Now the root cause candidate:
+
+PlanUnit has both `target_id` and `region_id`, plus `expected_lock`/`expected_revisions` captured at plan time (L393-394) — and `StepRun.lock_snapshot` is captured at record time from `catalog.current(unit.target_id)`.
+
+Now, `_backfill_detected_regions` sets `region_id` on remaining units but NOT `target_id`. So the OCR unit keeps `target_id = page_id`. At record time, `current(page_id)` → page lock (page_locked=False) and page current_revisions. Then the OCR handler's StepResult has `target_id` = ? commit_step_result requires `result.target_id == unit.target_id` (page) and output_targets == {page_id}. So OCR commits against the page target. Hmm, then lock compare is page vs page — equal. So where's LOCK_CHANGED?
+
+Unless the unit's target_id is CHANGED to the region by backfill... no, backfill only replaces region_id.
+
+Hmm. But maybe the planner creates region-targeted units when the page HAS regions: in `_plan_task` it iterates target.regions and creates units with target_id=region_id. For a regionless page, regions=() → units created with target_id=page_id, region_id=None. That's the regionless path. Then detect commits → creates regions in DB → `_backfill_detected_regions` sets region_id=primary on remaining units but leaves target_id=page.
+
+Wait — but maybe the OCR handler uses `unit.region_id` to decide, and produces `output_target_ids` = {region_id} → then commit_step_result's mapping check fails with OUTPUT_MAPPING_MISMATCH, not LOCK_CHANGED.
+
+Let me look at the planner code (L300-400) to see unit creation and what target_id/region_id are, and then the detect handler and the executor. Let me read the planning section.
+dsh: reasoning:
+Now the crucial mechanics. Let's think about how detect, ocr handlers behave on a regionless page.
+
+`_plan_region` with region=None: steps=("detect", "ocr", ...); target_id = page_id; region_id=None; lock = target.lock (page lock).
+
+Then detect unit: target_id=page_id. Running detect: the executor/handler runs detection and creates Regions in the DB; StepResult includes region_ids in outputs, probably `target_id=page_id`, `revision_updates={...}`.
+
+commit_step_result(detect): unit.target_id=page, result.target_id=page → ok. catalog.commit_step(page) → compares expected_revisions (page revisions at plan time) and expected_lock (page lock at plan time... wait no: at record_step_attempt time, `current = catalog.current(unit.target_id)` fresh. For detect that's the page lock. Fine → applied.
+
+Then `_backfill_detected_regions` replaces region_id on all other units of the task (ocr, translate, ...) with the primary region id, leaving target_id = page_id.
+
+Then the loop continues: next unit = ocr, now with region_id=primary (e.g. "region-1") but target_id=page_id.
+
+`_record_step_attempt`: `current = self._catalog.current(unit.target_id)` = catalog.current(page_id) → page snapshot. input_refs = page.current_revisions; lock = page.lock. StepRun(target_id=page_id, region_id=primary, ...).
+
+Then the OCR handler executes. It needs the region: it uses `step_run.region_id`? or `unit.region_id`? Let's check the executor/handler code. The handler probably looks up target from region_id when region_id is set, or from target_id.
+
+Then result.target_id must equal unit.target_id (page_id) else OUTPUT_MAPPING_MISMATCH. If the OCR handler returns target_id=region_id (because region_id is set), mapping fails → OUTPUT_MAPPING_MISMATCH, not LOCK_CHANGED.
+
+Hmm. So where does LOCK_CHANGED come from? Let's look at the handler + writer: `RegionStepWriter.prepare_ocr_text(region_id, ..., expected_current_revision_id=...)`. In the M2-AC1 note: "ocr input_refs 冻结自 page target 快照" and the LOCK_CHANGED is at the writer seam? No — `LockBlocked` error_code LOCK_CHANGED comes from ports/providers/errors.py:155. That's a provider-layer error. So the OCR handler's writer raises LockBlocked→ error_code LOCK_CHANGED when expected_current_revision_id mismatches!
+
+Look at test line 704-722: `writer.prepare_ocr_text("region-b", "stale", expected_current_revision_id="region-b-rev-999")` raises LockBlocked with error_code LOCK_CHANGED. So the writer maps *stale revision* to LOCK_CHANGED as well.
+
+So the OCR handler passes `expected_current_revision_id` derived from `step_run.input_refs` — which, for the regionless backfilled unit, is the PAGE target's current_revisions dict (e.g. {"clean": ..., "mask": ...} or empty {}). If input_refs contains no "region" key... Let's see how the handler picks the expected revision: probably `step_run.input_refs.get("region")` → None or the page's refs. Then the writer compares against the region's current revision → mismatch → LockBlocked LOCK_CHANGED!
+
+That fits perfectly: "ocr input_refs 冻结自 page target 快照" → the OCR step's expected region revision is taken from the page snapshot where "region" key is absent/None, while the region actually has a current revision created by detect → the writer's optimistic guard sees a mismatch and raises LockBlocked(error_code="LOCK_CHANGED").
+
+Now I need to verify by reading:
+- The OCR handler in src/providers/... handlers.py or the executor in the production assembly.
+- RegionStepWriter in infrastructure (prepare_ocr_text).
+- Where input_refs "region" key is consumed.
+
+Let me grep for prepare_ocr_text and expected_current_revision_id in src.
+dsh: reasoning:
+Excellent. `handlers.py:349`: `expected_current_revision_id=step_run.input_refs.get("region")`.
+
+So for the OCR step in the regionless path, `step_run.input_refs` = the PAGE target's current_revisions (captured at `_record_step_attempt` from `catalog.current(unit.target_id)` where target_id == page_id). Page current_revisions keys are artifact types (e.g. "original", "clean", "mask"...), NOT "region". So `input_refs.get("region")` → None.
+
+Then `prepare_ocr_text(region_id, text, expected_current_revision_id=None)`. Let's check step_writes.py:101-135 to see how None is handled: probably `None` means "skip guard" or "must be None/no current revision". Let me read it.
+
+If None skips the check → no LOCK_CHANGED. If None means "expect no current revision" → mismatch → LockBlocked LOCK_CHANGED. Let's read.
+
+Also the detect handler creates regions with a current revision? `_detect_result` returns outputs + revision_updates maybe. And `RegionStepWriter` — check.
+
+Let's read step_writes.py:80-240 and handlers.py:320-370 and 230-310.
+dsh: reasoning:
+Now, the critical question: for the OCR unit, is `unit.target_id` the page or the region?
+
+Note `handle_ocr` calls `self._require_region(unit)` — let's check that: probably `if unit.region_id is None: raise ProviderInputError("requires a Region target")`. And `StepResult(target_id=unit.target_id, ..., revision_updates={"region": ...})`.
+
+Then `commit_step_result` requires `result.target_id == unit.target_id` and `output_targets == {unit.target_id}` → consistent.
+
+Then `catalog.commit_step(target_id=unit.target_id, ..., revision_updates={"region": rev})`:
+- In SQLite impl: if `current.target_type is REGION`: ok. If PAGE: goes to else branch → for artifact_type="region", UPDATE media_artifacts WHERE page_id=? AND artifact_type='region' → rowcount 0 → returns target_not_found → DB_FAILED/TARGET_NOT_FOUND. Not LOCK_CHANGED.
+
+Hmm, so if target_id were the page for OCR, we'd see TARGET_NOT_FOUND, not LOCK_CHANGED.
+
+So the LOCK_CHANGED must come from `step_writes._persist` (LockBlocked with error_code LOCK_CHANGED) at handlers.py:349 — `expected_current_revision_id=step_run.input_refs.get("region")`.
+
+For this to mismatch, `row["current_revision_id"] != expected`. With expected = input_refs.get("region"):
+- Case A: unit.region_id set (backfilled), target_id = region? Then input_refs at record time = region.current_revisions → is the key "region" present? Look at how RegionSnapshot.current_revisions is built: probably {"region": region.current_revision_id}. Let's verify.
+- Case B: unit.target_id = page (regionless), input_refs = page.current_revisions which has keys like "original"/"clean"/"mask" → .get("region") = None. Then expected=None → row["current_revision_id"] must be None to pass. But detect's region creation creates Region with a current revision (initial revision created by RegionEditingService.create_region!). So row["current_revision_id"] = some id ≠ None → LockBlocked LOCK_CHANGED.
+
+That fits perfectly with the M2-AC1 note "ocr input_refs 冻结自 page target 快照".
+
+But wait — for case B, would the region-scoped unit be planned against the page target? Only if the unit is regionless at record time (region_id None)... but the OCR handler requires a region. Hmm, but the backfill sets region_id but not target_id! So unit.region_id = region-X (so `_require_region(unit)` succeeds and the OCR handler works), while unit.target_id = page-X → input_refs captured from the PAGE target → no "region" key → expected None → mismatch → LockBlocked("region current revision changed during the step (expected None, found '<rev>')") → error_code LOCK_CHANGED.
+
+That's exactly the bug: the backfill rebinds `region_id` but not `target_id`, so the StepRun snapshot source (target_id) stays page-level, while the write goes to a region target.
+
+But then how does the commit pass? It doesn't matter — the handler raises first, so the step fails with LOCK_CHANGED and the task is FAILED, and a candidate is never created (StepExecutionError path → _fail_step → error_code LOCK_CHANGED). Actually the LOCK_CHANGED surfaces as StepExecutionError from the provider error. The final run error is LOCK_CHANGED.
+
+Now wait — is that right? Let's double check `_require_region(unit)`. Read it. And also check whether `unit.region_id` vs `unit.target_id` are used. Also RegionSnapshot.current_revisions keys. Let me check store.py RegionSnapshot and `current_revisions` for regions ("region" key). Let's grep.
+
+Also need to check `_COMMAND_STEPS` for the command used in the repro (e.g., OCR_ALL / FULL page chain) and whether a page-level detect→ocr chain really leaves target_id as page.
+
+Let me read:
+1. handlers.py `_require_region`.
+2. store.py RegionSnapshot / region current_revisions construction.
+3. `_COMMAND_STEPS`.
+
+Also check whether `_backfill_detected_regions` leaves target_id — confirmed, it only replaces region_id.
+
+One more consideration: maybe `unit.target_id` for regionless page units is page_id, and after backfill the model requires target_id == region → the OCR handler's `StepResult(target_id=unit.target_id)` = page. Then commit_step would go to the page branch and fail with TARGET_NOT_FOUND — but since the handler raises LockBlocked first (during prepare_ocr_text), we never reach commit. So the observed terminal code is LOCK_CHANGED. Consistent with the bug report.
+
+Hmm, but careful: is `input_refs.get("region")` on the PAGE snapshot really None? Page current_revisions keys are artifact types. Let's verify how page current_revisions are built: `_page_or_error` likely builds {"clean": ..., "mask": ...} keyed by artifact_type. Let me check. If a page had an artifact_type literally named "region"... no.
+
+Let me verify these details.
+dsh: reasoning:
+Confirmed: `sqlite/pipeline.py:722`: region snapshot → `current_revisions={"region": row["current_revision_id"]}`.
+
+Let me now read:
+- handlers.py:955-1000 `_require_region`
+- service.py:98-130 `_COMMAND_STEPS`
+- domain/tasks/models.py:180-270 RegionSnapshot / region_snapshots / PlanUnit
+- sqlite/pipeline.py around 700-760 (`_region_or_error`)
+dsh: reasoning:
+Everything confirmed:
+
+- Page snapshot `current_revisions` keys = artifact_type values (e.g. "mask", "clean", "inpaint", "original"), never "region" (page artifacts). So `input_refs.get("region")` is None when the StepRun was recorded against the page target.
+- Region snapshot current_revisions = {"region": current_revision_id}.
+
+Root cause chain (regionless path, page-scope command with ocr in steps):
+1. Plan time (`_plan_region`, region=None): all units target_id = page_id, region_id = None; steps prepended with "detect".
+2. detect unit: `_record_step_attempt` → input_refs = page revisions, lock = page lock. detect handler creates Regions (via app-layer region_creator → `RegionEditingService.create_region`), each with an initial current revision. detect StepResult target_id = page_id (page-level, no revision_updates). commit_step(page) → applied.
+3. `_backfill_detected_regions` replaces `region_id` on remaining units (ocr, translate, ...) but NOT `target_id` (still page_id).
+4. ocr unit: `_record_step_attempt` → `catalog.current(unit.target_id)` = **page** snapshot → input_refs = page artifact revisions (no "region" key), lock = page lock. StepRun.target_id = page_id, region_id = region-1.
+5. OCR handler: `_require_region(unit)` OK (region_id set) → runs OCR → `prepare_ocr_text(..., expected_current_revision_id=step_run.input_refs.get("region"))` = **None**.
+6. `RegionStepWriter._persist`: expected None vs stored region current_revision_id (created by detect) → mismatch → raises `LockBlocked` whose `error_code = "LOCK_CHANGED"`. In `BEGIN IMMEDIATE`; the raise happens after BEGIN but before any write; the exception propagates... note: no rollback in the except path? Let's check the rest of _persist — there's `except sqlite3.Error:` maybe. Actually the exception raised is LockBlocked, not sqlite3.Error, so if there is `except sqlite3.Error` only, the transaction might be left open! That's a secondary finding worth checking. Let me read the rest of _persist (L244-300).
+7. `execute_run` catches StepExecutionError (the executor maps ProviderError → StepExecutionError with error_code) → `_fail_step(... "LOCK_CHANGED")` → task FAILED / run COMPLETED_WITH_FAILURES with step error LOCK_CHANGED.
+
+Now also verify the executor mapping ProviderError→StepExecutionError preserving code: verification/TASK-019 says "handler 捕获 ProviderError 并抛 StepExecutionError(error_code, …)". Let me confirm in handlers.py / executor: grep for StepExecutionError in infrastructure/providers.
+
+Also for AC2, the exhibit: the comparison point is `step_writes._persist` line 219-231 (LockBlocked) — NOT the catalog `commit_step` LOCK_CHANGED branch. Important nuance: the final error code is identical string to the catalog's guard, but the actual failing comparison point is the writer's optimistic guard because the StepRun's input_refs came from the wrong target (page instead of region).
+
+Wait — but is it possible that the observed failure is instead the catalog's lock_changed (page target lock vs expected page lock)? No: same source, they'd be equal.
+
+Hmm, but hold on. Is it possible that `_backfill_detected_regions` sets region_id but the unit's target_id stays page, and there's ANOTHER path where the target_id is set to the region? Let me search for any other place that mutates unit.target_id (e.g., `replace(item, target_id=`). grep for "target_id=" with replace.
+
+Also check `_mark_terminal`, `_cancel_remaining` for the ordering (the run's final status). And `TEST-049` design note.
+
+Also verify the interrupt/resume path: `plan_run(mode="continue")` re-plans from catalog current state; units for a page that now HAS regions get region-scoped units (target_id = region_id) → after restart, the chain would be planned region-scoped → `input_refs` = {"region": rev} → guard passes. That's the "restart recovery" nuance for AC3: the bug is a same-run planning artifact; a restarted resumed run may actually succeed (masking the bug). Very relevant to AC3.
+
+Let me also confirm: does `PlanUnit` have `region_id` used by `_require_region`, and is `unit.target_id` used by the detect result mapping? Yes.
+
+Now let me verify there is no other place that rebinds target_id. grep "replace(" in service.py.
+
+And check `_find_step` mapping: unit lookup by unit_id.
+
+Let me also read the rest of _persist to check transaction handling on the raise (secondary risk), and the executor's error mapping.
+
+Then I need to check tests: tests/providers/test_detect_handler.py and test_bootstrap_providers.py (the required test commands) — to know what they cover (for AC coverage statements).
+
+Also the production assembly: `build_production_handlers` (handlers.py:998) and the bootstrap providers to know what a "production Pipeline 装配" is for the repro script. And how tests construct `_pipeline(workspace)` in tests/providers/test_handlers_pipeline.py — that's the best template for my reproduce.py (it uses real SQLite workspace fixture + production handlers + deterministic detector). Let me read the top of that test file (fixtures, _pipeline) since I need to write a standalone repro script.
+
+That's essential: my reproduce.py must be runnable standalone with $py. Let me read tests/providers/test_handlers_pipeline.py fully (757 lines) — at least the first ~250 lines and the detect/full chain test.
+
+Let me also check tests/providers/conftest.py for the workspace fixture.
+dsh: reasoning:
+Good: `_persist` does rollback on any Exception. So no leaked transaction. Secondary risk cleared.
+
+Confirmed: only one place mutates unit region binding: `replace(item, region_id=primary)` at L941. target_id is never updated → root cause proven statically.
+
+Now let me confirm the error propagation: handler raises LockBlocked (ProviderError) → who converts to StepExecutionError with code? Let's check `DeterministicStepExecutor` / the production executor and `_typed`. grep StepExecutionError.
+dsh: reasoning:
+Read handlers.py:190-225 to confirm the ProviderError → StepExecutionError translation with error.error_code.
+
+Then read the test file's fixtures to build the repro script. Let me read tests/providers/test_handlers_pipeline.py lines 1-200 and its conftest.
+dsh: reasoning:
+I need the `_pipeline(workspace, bindings=...)` helper and the full-chain test, plus the detect test. Let me read lines 200-400 and check tests/providers/test_full_chain.py and test_detect_handler.py. Since shell is unavailable, my reproduce.py must be self-contained enough to run standalone — best approach: a script that inserts sys.path for src/ and tests/ (providers_helpers), builds the workspace fixture inline (copying the fixture SQL), assembles production pipeline via build_production_pipeline, and runs a page-scope command on a regionless page.
+
+Let me read 200-330 of the test (the _pipeline helper) and the full chain test file.
+dsh: reasoning:
+Note: `glob` with path inside the worktree WORKED here (returned files). Earlier globs returned nothing... because `**/DIAG-M2-...` maybe, and `*/doc/STATUS.md` — hmm, whatever. glob works now. Good.
+
+Now, the required verification test files: tests/providers/test_detect_handler.py and test_bootstrap_providers.py. Let me read test_detect_handler.py — it likely contains a page-level detect→ocr chain test that PASSES, which would be interesting (maybe it doesn't wire ocr, or pre-creates regions). Let me read it, and also look for any existing test covering the regionless detect→ocr chain (test_full_chain.py?).
+
+Let me read test_detect_handler.py and grep test_full_chain.py for regionless/page-level.
+dsh: reasoning:
+This is the key insight: `test_detect_lands_candidates_as_regions_and_ocr_advances` — ocr runs and fails at PROVIDER_NOT_CONFIGURED, NOT LOCK_CHANGED. Why? Because the OCR handler first runs the provider chain: `run_chain(...)` — with no OCR binding, `_invoke_provider` raises ProviderNotConfigured BEFORE `prepare_ocr_text` is reached. So with a *successful* OCR provider, we reach `prepare_ocr_text(expected_current_revision_id=step_run.input_refs.get("region"))` → None → mismatch → LockBlocked LOCK_CHANGED.
+
+So the existing test suite never covered the case where the OCR provider actually succeeds after a regionless detect (they used a semantic test with no OCR binding). That's exactly the AC1 gap — and it confirms my static root cause: the failing comparison is the writer's guard, only reachable when OCR actually answers.
+
+Wait: I must double check `input_refs.get("region")` for the ocr StepRun in this exact scenario. The detect unit's target_id = page-1; after backfill the ocr unit has region_id = region-X, target_id = page-1. `_record_step_attempt` → `self._catalog.current(unit.target_id)` → `current("page-1")` → SQLite: SELECT region_id FROM regions WHERE region_id='page-1' → none → `_page_or_error("page-1")` → TargetSnapshot with current_revisions = `_page_revisions("page-1")` = {artifact_type: rev} — for a fresh page with no artifacts, `{}`. So input_refs = {} → .get("region") = None. And the region's current_revision_id is a real revision id from create_region → mismatch → LockBlocked LOCK_CHANGED with detail "region current revision changed during the step (expected None, found '...')".
+
+So predicted error_detail contains "expected None". Excellent — that's a discriminating prediction I can state (and the repro script asserts it).
+
+Note nuance: even if the page DID have a "region"-keyed artifact (it can't; artifact_type is mask/clean/original etc.), fine.
+
+Also note: `step_run.input_refs` for ocr = page artifact revisions (possibly {} in a fresh workspace). So the guard compares against None.
+
+Hmm wait, one important check: in `_record_step_attempt`, is the region unit's target_id really page-1? Let me re-verify `_backfill_detected_regions` → `replace(item, region_id=primary)` only. Yes (L939-946).
+
+And `PlanUnit.target_id` is used everywhere else. Also note `_mark_terminal(run, unit.unit_id)` uses unit_id which encodes target_id ("{task}:{target_id}:{step_type}") — the backfilled units keep their old unit_id with page target in the string, so terminal bookkeeping is consistent.
+
+Now, one more important consideration for AC2: "记录 detect 前后 PlanUnit.target_id/region_id/unit_id". So the repro should dump PlanUnit before/after detect.
+
+Also for AC3: multi-Region fan-out — `_backfill_detected_regions` binds ALL remaining regionless units to region_ids[0] (first detected, reading_order sorted? Actually region_ids order = order returned by region_creator loop = candidate order (reading_order or index)), and the docstring admits fan-out is deferred. Consequences:
+- Only the primary region ever gets ocr/translate/segment/inpaint in a page-level run; other regions keep NOT_STARTED stages.
+- Because target_id stays page-level, the catalog commit for ocr would... (never reached due to handler failure). If the guard were skipped (expected None matches when region has no current revision — can't happen since create_region sets first revision), it would then commit with target_id=page → SQLite commit_step PAGE branch → revision_updates {"region": rev} → UPDATE media_artifacts ... artifact_type='region' → rowcount 0 → target_not_found → TARGET_NOT_FOUND. So there are TWO latent defects: the snapshot source (writer guard LOCK_CHANGED) and the commit routing (TARGET_NOT_FOUND). Worth reporting: fixing only the guard would surface the next failure. Actually wait — careful: if target_id were the region, the catalog would take the REGION branch and work. So the real fix is to rebind target_id (and unit_id?) — but unit_id is used as an identity key and is already persisted in step_runs/terminal_unit_ids; changing unit_id mid-run would break `_mark_terminal` bookkeeping of the detect unit? Let me check: `_backfill_detected_regions` skips `item.unit_id != unit.unit_id` (the detect unit). If we also replaced unit_id, the terminal ids for already-terminal units... The backfill runs right after detect commit but BEFORE `self._mark_terminal(run, unit.unit_id)` for the detect unit (line 656 runs after backfill at 655). Wait order: line 655 backfill, then 656 _mark_terminal(run, unit.unit_id) where unit is the detect unit (unchanged by backfill since it skips itself). Then 657 persist. OK.
+
+But note: any unit that was already terminal at plan time (SKIP_VALID etc.) is in run.terminal_unit_ids; those aren't RUN units. Fine.
+
+Also risk: a unit that was already converted... only one detect per task.
+
+So the minimal fix: in `_backfill_detected_regions`, rebind both `target_id=primary` and `region_id=primary` for the remaining regionless units (keeping unit_id stable to preserve terminal bookkeeping and Task id encoding, or accept changing unit_id since those units have no step_runs yet — they can't: the loop processes units in order, and any unit after detect has no StepRun yet... but a unit BEFORE detect? detect is always first among RUN-able regionless units? In the regionless plan, steps = ("detect", *steps) so detect is first. But could some units be non-RUN (SKIP) and others RUN? The loop skips SKIP decisions by decision, not by ordering; the backfill rewrites all units with region_id None regardless of decision. Changing unit_id for SKIP units would break terminal_unit_ids bookkeeping (they're already marked terminal by unit_id). So safest: keep unit_id, change target_id.)
+
+But then `PlanUnit.expected_lock`/`expected_revisions` on the remaining units are still the plan-time page-level ones — the StepRun snapshot comes from `catalog.current(target_id)` at record time (fresh), so those stale plan-time fields are only used... let me check where PlanUnit.expected_lock/expected_revisions are consumed. In sqlite/pipeline.py L187/202 they're persisted/reloaded (`_lock_dict(unit.expected_lock)`). Are they used in commit? commit uses step_run.input_refs/lock_snapshot. Let me grep for `unit.expected_lock` / `.expected_revisions` usage — maybe only persistence + projection. Need to check for AC4 completeness (a fix must also refresh these or acknowledge they're advisory).
+
+Also for AC3 "终态计数": `run.planned_step_units` = number of units planned; `terminal_step_units` increments per marked terminal unit. Cancel path marks remaining RUN units terminal via `_cancel_remaining`. On LOCK_CHANGED failure, `_cancel_remaining(run, task, unit)` marks all subsequent RUN units terminal → terminal == planned → progress reaches 1.0 while the task FAILED. Worth noting: the failed unit itself is marked terminal in `_fail_step` via `_mark_terminal(run, unit.unit_id)` — yes L719. Good.
+
+Also multi-Region fan-out semantics: with N regions detected, only region_ids[0] gets bound; the other regions get no steps at all — "planning-time fan-out is deferred" is documented in the docstring (TASK-049). But the AC3 asks to analyze the impact for the fix: a correct fix must not create a per-region fan-out silently; the fix must decide whether the page-level unit should (a) rebind to the primary region (current intent) or (b) fan out N units. The minimal fix keeps (a).
+
+Restart recovery: `plan_run(mode="continue")` / `resume_interrupted` re-plans: for a page that now has regions, `_plan_target` iterates region_views → region-scoped units with target_id=region_id, and NO detect unit. So after a process restart, the same page's chain is planned region-scoped → `input_refs={"region": current}` → guard passes → the run can silently succeed, hiding the defect (non-determinism between "same-process" and "restart" paths). That's a crucial AC3 point. But careful: on `continue`/`resume_blocked`, are the region-scoped units the same chain? `steps = _COMMAND_STEPS[command]`; no detect prepend since region is not None. So yes — after restart, ocr runs against target_id=region → works. So the failure is same-session-only. Let me verify resume path: `_recover_*`? Let me look at service.py lines 850-905 (recover_interrupted_runs) and how pending tasks are re-planned.
+
+Let me read 850-905.
+
+Also check that a *repeat* run (new run after the region exists) works — that's the "restart" analogue: a second create_run on the same page would see regions → region-level chain → passes. So a user-visible symptom: first-ever translate run on a fresh regionless page fails at ocr with LOCK_CHANGED; a retry succeeds. That matches "retry_failed_targets" creating a new run (which would then be region-level). Good insight for AC3/AC4.
+
+Let me read the recovery code and the `_page_or_error` region snapshot ordering, then check `unit.expected_lock` consumers.
+dsh: reasoning:
+Confirmed: `PlanUnit.expected_lock/expected_revisions` are only persisted (audit) and never used as the commit guard — the guard uses StepRun.input_refs/lock_snapshot. So a fix only needs to correct the record-time target.
+
+Now I have a complete static root cause. Let me also check the detect handler's `region_creator` production wiring in assembly (`build_production_pipeline`) to make my repro script realistic and self-contained. Let me look at src/infrastructure/pipeline/assembly.py.
+
+Also, for the repro script, I want to avoid depending on tests/providers/providers_helpers.py (tests/ is in the forbidden-to-modify set, but reading/importing is fine; my script may import it if sys.path includes tests/providers — that's fine since I'm not modifying). But a standalone script that imports from tests/ is acceptable in verification/. However "可独立运行" — better to be self-contained: define fakes inline (FakeOcrProvider-like simple provider implementing the OCR port, a FakeDetector, FakePageImages). Let me check what the provider ports require: OcrProvider protocol (recognize(request) -> OcrResult), and `run_chain` needs a registry+descriptor+binding. Let me read providers_helpers.py to copy the minimal fake shape and the registry/binding expectations, plus how build_production_pipeline wires bindings.
+
+Let me read providers_helpers.py and assembly.py.
+dsh: reasoning:
+Let me read the assembly fully, and also the detect provider/region_creator production wiring if any (build_production_handlers at handlers.py:998). My repro will assemble handlers manually like the tests do (that IS the production handler set: ProductionHandlers + HandlerDependencies) and build the PipelineService through `build_production_pipeline` (the production seam). Plus a deterministic detector and deterministic OCR provider — matching AC1's "production Pipeline 装配 + 成功的确定性 detector/OCR".
+
+Let me read assembly.py (small) and handlers.py:998-1065 (build_production_handlers).
+dsh: reasoning:
+I have everything needed to write a complete, self-contained reproduce.py. I need a few more details to write it correctly:
+
+1. `HandlerDependencies` fields (detector, region_creator signature) — I saw them used. The region_creator signature: `(page_id, polygon, reading_order, provenance) -> region_id`.
+2. `CommandType.TRANSLATE_ALL` + page scope: PipelineScope(ScopeType.PAGE, selected_ids=("page-1",)) — check ScopeType values: "page_selection", "page", "chapter", "book", "region". `_PAGE_COMMANDS` requires scope not REGION. For `ScopeType.PAGE` with selected_ids ("page-1",) — expand() handles `page_selection`/`page` by `_page_or_error(page_id)`. Let me check ScopeType enum values.
+3. `create_run(command_type, scope, ...)` signature: `create_run(command_type, scope, selected_ids=(), *, book_id, chapter_id, ...)`. In tests they pass `PipelineScope(ScopeType.CHAPTER, chapter_id="chapter-1")`. So `PipelineScope(ScopeType.PAGE, selected_ids=("page-1",))`.
+4. `RegionEditingService.create_region(page_id, geometry, reading_order=..., origin=...)` signature — from test: `editing.create_region(page_id, RegionGeometry(bbox=..., polygon=...), reading_order=reading_order, origin=RegionOrigin.MACHINE)`.
+5. Region creation sets current_revision_id (first revision) — confirmed by test assertion "first revision pointer must be set".
+6. Need `default_migrations()` + MigrationRunner + open_database.
+7. Need `ManagedFileStorage`, `ArtifactStepWriter`, `RegionStepWriter`, `SqliteRegionRepository`.
+8. `RegionMaskGeometry` for geometry source; `_FakeGeometrySource.mask_geometry(region_id)`.
+9. `RetryPolicy(max_attempts=1, backoff_seconds=0)`.
+10. For the OCR provider to answer, we need the `stream`/chain: `self._chain(run, STEP_OCR)` → uses provider_binding_snapshot; must provide provider_bindings={"ocr": {"provider_id": "fake-ocr"}} and registry with descriptor capability OCR. Registry needs ProviderDescriptor(provider_id, provider_type, capabilities=frozenset({CAPABILITY_OCR})) and a factory. Check whether `registry.register` requires a `factory` callable returning the instance (yes: `lambda: ocr_provider`).
+11. Also `page_png` may be needed by the color step — avoid by using TRANSLATE_ALL? _FULL_TRANSLATION = ("ocr", "translate", "segment", "mask_refine", "color", "term_extract", "inpaint", "render")? Let me check _FULL_TRANSLATION / _REOCR definitions (service.py ~L90). Simplest choice: `CommandType.REOCR_ALL` → _REOCR steps; if _REOCR = ("ocr",) then the regionless page plan = ("detect","ocr") — minimal and exactly the AC1 chain "detect → backfill → ocr".
+
+Let me read service.py L60-96 for _FULL_TRANSLATION/_REOCR/_RERENDER/_REINPAINT.
+
+12. `PipelineRunStatus` import for assertions.
+13. Also the script must dump the AC2 state chain: PlanUnit before/after detect (task.units), StepRun fields, catalog current states, region current_revision_id, and the final error.
+
+Also: does `create_run` require `overrides`/settings? `settings_snapshot` comes from SqliteSnapshotProvider(settings=...). Fine.
+
+One more: the OCR step needs `ColorStepWriter`? No.
+
+Also `_decide_step` checks `_provider_available(run, step_type)` using provider_binding_snapshot → binding {"provider_id": "fake-ocr"} has no "available" key → available. Good.
+
+Let me read service.py 60-96 and domain ScopeType, and check RegionEditingService.create_region signature.
+dsh: reasoning:
+Now I need `create_region` signature. Let me grep in editing/service.py for "def create_region".
+
+Also check CommandType has REOCR_ALL (yes).
+
+Let me get create_region signature and the region creation's initial revision (does it create current_revision_id?).
+dsh: reasoning:
+`create_region` sets the first revision and pointer → region.current_revision_id is non-NULL. Confirms the guard mismatch.
+
+Now I have enough to write the repro script. Let me also double check `RegionGeometry`/`BBox` imports (domain.regions.entities) as used in the test.
+
+Also need to check how the OCR chain resolves the provider: `self._chain(run, STEP_OCR)` reads provider_binding_snapshot. ProviderRegistry + ProviderDescriptor with CAPABILITY_OCR, and `run_chain(chain, invoke, policy, payload_hash_provider)`.
+
+I'm fairly confident the script mirrors test_handlers_pipeline's workspace + test_detect_handler's detector, plus a real OCR provider binding. The exact shape of `_chain` matters — it uses provider_binding_snapshot which comes from SqliteSnapshotProvider with provider_bindings. In test_handlers_pipeline `_pipeline()` passes bindings {"ocr": {"provider_id": "fake-ocr"}, ...} and it works (test_ocr_region_writes_only_the_target_region passes). Good.
+
+Now — critical decision: I cannot run the script. Writing a script I can't test risks errors. That's acceptable IF I label it clearly as NOT_RUN/UNVERIFIED. The AC1 deliverable explicitly requires a runnable script + first-red log; I can deliver the script but the log is NOT_RUN.
+
+Given the degradation rules, my final answer must contain: the full report text, the full script text, and the command/output record. That's what I'll do.
+
+Let me now also gather the AC3 details:
+- multi-Region fan-out: `_backfill_detected_regions` binds all remaining regionless units to `region_ids[0]`. With the fix (rebinding target_id), only region 1 gets the chain; regions 2..N remain NOT_STARTED. The docstring says fan-out is a later slice. So the fix must NOT change that semantics (keeps single-primary binding); but must ensure per-region progress/terminal counts stay correct: `planned_step_units` counts units, not regions; a multi-region page therefore reports progress based on 1 region's chain — pre-existing semantics.
+- terminal counting: `run.terminal_step_units` / `planned_step_units`; `_mark_terminal` dedups by unit_id. If a fix changed unit_id during backfill (e.g., to the region), units already marked terminal (SKIP_* planned terminal) would double-count or lose their terminal marking → must keep unit_id stable. Also `run.tasks[].units` is persisted in SqlitePipelineStore — check whether the persisted units carry region_id (so a resume reads the mutated tuple). Important for restart analysis: `plan_run(mode="continue")` re-plans from the catalog anyway (mode continue ignores run_target.snapshot, uses catalog.current(target_id)), so persisted unit mutation doesn't matter for continue.
+
+Let me verify `_persist`/store serializes task.units with target_id/region_id → sqlite/pipeline.py L187 area shows unit dict with target_id? Let me read that mapping (L170-210) to confirm.
+
+Then: what does resume do for a page that now has regions? `plan_run(mode="continue")` → for each run_target, view = catalog.current(run_target.target_id). Here run_target.target_id = page_id (from the original run). `_plan_target`: target.target_type is PAGE and target.regions is non-empty now → region_views = regions → plans region-scoped units (target_id=region_id) for EACH region (fan-out happens at plan time!). So after a restart, EVERY detected region gets its own ocr/translate/... chain with correct region-scoped snapshots → no LOCK_CHANGED. That's the "restart masks the defect / multi-region fan-out only exists on the re-planned path" asymmetry. This is a crucial AC3 finding: the same code has two different semantics for the same page depending on whether the plan was made before or after Regions existed. Let me double check `run_target.snapshot` vs `catalog.current`: for mode "initial" it uses `run_target.snapshot` (captured at create_run). For continue/resume_blocked it uses catalog.current. Yes (L288-293).
+
+Also `retry_failed_targets` creates a NEW run → create_run → expand(scope) → `_active_page(page)` snapshot at create time (regions already exist) → initial plan sees regions → region-scoped chain → succeeds. So the user-visible symptom: first run on regionless page fails with LOCK_CHANGED at ocr; retry succeeds. Strong AC3/AC4 material.
+
+Let me verify `create_run` captures snapshots (L240-260).
+
+Let me read service.py 200-270 and sqlite/pipeline.py 170-215.
+dsh: reasoning:
+All confirmed. I now have a complete, evidence-backed static diagnosis.
+
+One more check for AC3/AC4: does `RegionSnapshot` get included in the page TargetSnapshot (`target.regions`) — yes, `_page_or_error` builds `regions=tuple(self._region_from_id(...) ...)` ordered by reading_order, region_id. And `region_snapshots()` in models.py L261 — let me quickly check it filters deleted. Minor.
+
+Also for AC2 I want the exact SQL/state to record: `regions.current_revision_id` after detect, `step_run_input_refs` table.
+
+Now let me also confirm what happens if I "fixed" only the input_refs (i.e., if expected were the region revision): then the OCR handler would return StepResult(target_id=page-1, revision_updates={"region": rev}) → commit_step_result mapping passes (result.target_id == unit.target_id == page-1) → catalog.commit_step(target_id=page-1) → SQLite PAGE branch → `UPDATE media_artifacts SET current_revision_id=? WHERE page_id='page-1' AND artifact_type='region'` → rowcount 0 → CatalogCommit("target_not_found", "artifact region") → service maps to code "TARGET_NOT_FOUND" (L684: `code = "DB_FAILED" if outcome.status == "db_failed" else "TARGET_NOT_FOUND"`) → step fails TARGET_NOT_FOUND. So the minimal fix MUST rebind target_id (not just input_refs). This is a strong AC4 claim: fixing only the snapshot source converts LOCK_CHANGED into TARGET_NOT_FOUND; the shared seam that needs the change is `_backfill_detected_regions` (+ possibly the plan-time unit target), i.e. `src/application/tasks/service.py`.
+
+Alternative minimal fix option B: make `_record_step_attempt` derive the snapshot from `unit.region_id or unit.target_id` — that alone doesn't fix commit routing (still page target_id) → TARGET_NOT_FOUND. So option B must also include commit routing: e.g. commit against `unit.region_id or unit.target_id`. Both work; the cleanest is rebinding target_id in backfill (single write point, keeps identity of target_id == write target invariant).
+
+Also consider plan-time alternative: instead of a page-scoped unit for ocr, plan the regionless chain as detect-only and re-plan after detect (no backfill). That's a bigger change.
+
+Now the regression/negative test matrix (AC4):
+Regression:
+1. Fresh regionless page + page-scope command (REOCR_ALL / TRANSLATE_ALL) + working detector + working OCR → run COMPLETED; ocr StepRun.target_id == region id; region current_revision_id advanced; region_revisions count 2 (initial + ocr).
+2. PlanUnit after detect: ocr/translate/... units have target_id == region_id == primary AND region_id == primary; unit_id unchanged (assert stability).
+3. Multi-region page (2+ candidates): only region_ids[0] gets the chain; other regions keep NOT_STARTED; run terminal counts: terminal_step_units == planned_step_units; progress 1.0; run status COMPLETED.
+4. Existing detect tests (test_detect_handler.py) still pass: detect-only failures preserved; reuse-existing-regions preserved.
+5. second run on the same page (region-scoped plan) still fine → no double-region, no duplicate first revisions.
+Negative:
+N1. stale region current_revision_id (simulate concurrent edit between _record_step_attempt and handler write) → still LOCK_CHANGED (writer guard intact) and no region_revisions row added, region text unchanged.
+N2. region_locked=true mid-step → LOCK_CHANGED, no write.
+N3. detector returns no candidates → INVALID_INPUT and ocr never runs; no region created.
+N4. OCR provider missing → PROVIDER_NOT_CONFIGURED at ocr (pre-existing test).
+N5. page_locked → plan SKIP_LOCK, no step runs.
+N6. multi-region where region_ids[0] is soft-deleted between detect and ocr → ocr fails hard with typed code, not silent fallback to another region.
+N7. resume/restart path: interrupt after detect, `control_run(continue)` → re-plan region-scoped → assert no LOCK_CHANGED and no duplicated regions (the fan-out semantics change here).
+
+Persistence/recovery risks:
+- `_backfill_detected_regions` mutates the in-memory tuple then `_persist(run)` stores units with new region_id but old target_id (as today) — after the fix, persisted units will carry region-scoped target_id mid-run; `SqlitePipelineStore` must round-trip it (it does: _unit_dict has target_id/region_id).
+- `run.terminal_unit_ids` keyed by unit_id — do NOT change unit_id in the fix (else terminal bookkeeping breaks for SKIP_* units already marked terminal).
+- Crash between detect commit and backfill: run is RUNNING with a page-scoped plan and persisted units still regionless; on restart `recover_running_runs()` marks INTERRUPTED; `continue` re-plans from catalog.current (mode="continue") → region-scoped plan → fresh step_runs (run.step_runs = [] is NOT reset for continue! L312: `run.step_runs = [] if mode == "initial" else run.step_runs`) → so step_runs accumulate across a continue; the old RUNNING/interrupted detect StepRun remains. Note: for continue, `terminal_unit_ids` is recomputed from the new plan only (L305-311) → previously terminal units from the old plan that are not terminal in the new plan could be re-executed. Worth flagging as a persistence/recovery risk adjacent to the fix, and a candidate negative test.
+Actually careful: L310-311 `run.terminal_unit_ids = terminal_ids` overwrites! For continue, units whose step already completed (e.g., detect completed) are re-planned: new plan is region-scoped with no detect unit, so the completed detect isn't re-run, but the old units' terminal ids are dropped and the new units re-plan from stage states. Since detect committed stage states? detect's StepResult had no next_stage_states... note detect handler returns no next_stage_states (only outputs) → commit_step uses default `result.next_stage_states or {unit.step_type: COMPLETED}` → detect stage marked completed on the PAGE target. Then the region-scoped re-plan reads region stage_states (none) → ocr planned RUN. OK, no double detect since a region exists and `_plan_target` goes region-level. Fine, but if regions exist AND page has detect stage completed, fine.
+
+Enough. Also let me note the `max_step_runs` limit: not relevant.
+
+One more AC2 item: "catalog current 状态" — I'll have the script dump `catalog.current("page-1")` and `catalog.current(region_id)` current_revisions/lock before and after detect.
+
+Now, since I can't run anything, the "先红日志" (first-red log) cannot be produced. I'll clearly mark it NOT_RUN.
+
+Let me now write the final deliverables as text. It's going to be long. Let me structure:
+
+1. 执行摘要 / 环境阻塞声明
+2. 证据纪律表（命令、shell、解释器、HEAD、EXIT）
+3. AC1..AC5 状态表
+4. 静态根因分析（代码级证据链，带文件:行）
+5. AC2 状态链（静态推导 + 脚本会打印的字段）
+6. AC3 反事实与语义分析
+7. AC4 修复建议（最小路径、seam、测试矩阵、持久化风险）
+8. 交付物全文：reproduce.py、报告 md、handoff md（供集成方落盘）
+9. 建议下一步
+
+Also I should double check the "先红" prediction precisely: error_detail should be:
+"region current revision changed during the step (expected None, found '<rev>') (provider=fake-ocr) (stage=region-write)"
+
+Wait — detail construction: ProviderError.detail. Let's check ProviderError.__init__ to see how `detail` is built from the message and stage. `LockBlocked("region current revision changed during the step (expected None, found 'x')", provider_id=..., stage="region-write")`. And `_typed` does `detail = error.detail` then appends "(provider=...)"" (stage=...)". Let me check ProviderError.__init__ quickly to get detail semantics right. Let me read errors.py:27-60.
+
+Also `stage=unit.step_type`? No — the writer passes stage="region-write" and provider_id=result.provider_id ("fake-ocr").
+
+Let me read the ProviderError class.
+dsh: reasoning:
+I have all details. Predicted error detail:
+`region current revision changed during the step (expected None, found '<region-rev-id>') (provider=fake-ocr) (stage=region-write)`
+
+and step_run.error_code == "LOCK_CHANGED", task.error_code == "LOCK_CHANGED", run.status == COMPLETED_WITH_FAILURES.
+
+Wait: is that right? `_fail_step` sets step error; then `task_failed=True` → `_cancel_remaining` → break → task FAILED → `_aggregate_run`: statuses has FAILED → run COMPLETED_WITH_FAILURES. Yes.
+
+Now, let me write the deliverables. I need to decide how to present. The task requires files, but I cannot write them. So the final answer contains:
+- Evidence/blocked report
+- Full report markdown content
+- Full reproduce.py content
+- Handoff markdown content
+
+That's a LOT of text. I should be thorough but keep the script tight and the report substantive. The user is an integrator (Codex) who will land the files.
+
+Let me write the reproduce.py carefully so it has a high chance of running correctly. Key structure:
+
+```python
+#!/usr/bin/env python
+"""AC1 reproducer ... run with $py verification/.../reproduce.py"""
+from __future__ import annotations
+import json, os, sqlite3, sys, tempfile, shutil
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+SRC = REPO_ROOT / "src"
+if str(SRC) not in sys.path: sys.path.insert(0, str(SRC))
+
+from application.editing.service import RegionEditingService
+from application.tasks.service import PipelineService
+from domain.regions.entities import BBox, RegionGeometry, RegionOrigin
+from domain.tasks.models import (CommandType, PipelineRunStatus, PipelineScope, ScopeType, StageState, StepRunStatus)
+from infrastructure.filesystem.managed_storage import ManagedFileStorage
+from infrastructure.pipeline.assembly import build_production_pipeline
+from infrastructure.providers.handlers import HandlerDependencies, ProductionHandlers, RegionMaskGeometry
+from infrastructure.providers.registry import ProviderDescriptor, ProviderRegistry
+from infrastructure.providers.retry import RetryPolicy
+from infrastructure.providers.step_writes import ArtifactStepWriter, RegionStepWriter
+from infrastructure.sqlite.connection import open_database
+from infrastructure.sqlite.migrator import MigrationRunner
+from infrastructure.sqlite.regions import SqliteRegionRepository
+from infrastructure.sqlite.schema import default_migrations
+from ports.detection.ports import DetectionRequest, DetectionResult, RegionCandidate
+from ports.inpaint.ports import ImageFrame
+from ports.ocr.ports import OcrResult
+from ports.providers.profiles import CAPABILITY_OCR
+```
+
+Careful: does `RegionGeometry` accept bbox+polygon? From the test: `RegionGeometry(bbox=BBox(min,max...), polygon=tuple((x,y),...))`. Also `BBox(min(xs), min(ys), max(xs)-min(xs), max(ys)-min(ys))` — 4 positional args. Good.
+
+Fakes inline: DeterministicDetector, DeterministicOcr, FakeImages (page_frame + region_crop + page_png), FakeGeometrySource (mask_geometry returning RegionMaskGeometry(boxes=(...))).
+
+Detector candidates: RegionCandidate(polygon=((0,0),(10,0),(10,5))). Does RegionCandidate have `reading_order` and `provider_label` defaults? In test: `RegionCandidate(polygon=..., provider_label="unmapped-0")` and with `reading_order=7`. Good. Also `DetectionResult(page_id=..., candidates=..., provider_id=..., provider_type=...)`.
+
+Wiring: region_creator = production `RegionEditingService(regions).create_region` adapted to (page_id, polygon, reading_order, provenance) → region_id. I'll wrap like the test's creator.
+
+Note: `editing` must be defined BEFORE creator uses it in the test (they reference `editing` later defined; Python closure resolves at call time → fine as long as `editing` is defined before execution). I'll define editing first for clarity.
+
+ProviderRegistry register: ProviderDescriptor(provider_id="fake-ocr", provider_type="fake", capabilities=frozenset({CAPABILITY_OCR})) + lambda: ocr_provider.
+
+provider_bindings={"ocr": {"provider_id": "fake-ocr"}}.
+
+Steps: use CommandType.REOCR_ALL with page scope → _REOCR=("ocr",) → regionless plan = ("detect","ocr"). Perfect minimal AC1 chain. Command validation: REOCR_ALL ∈ _PAGE_COMMANDS → requires scope not REGION. Use PipelineScope(ScopeType.PAGE, selected_ids=("page-1",)).
+
+Hmm — `expand()` for "page" scope: `candidates = [self._page_or_error(page_id) for page_id in scope.selected_ids]`. Good.
+
+Then the script:
+1. tmp dir via tempfile.mkdtemp(prefix="diag-m2-regionless-")
+2. open_database(tmp/"app.db", latest_known_schema_version=latest), MigrationRunner apply_pending
+3. seed book/chapter/page (mirror the fixture)
+4. build regions repo, storage, handlers, service
+5. create_run(REOCR_ALL, PAGE scope), record plan units BEFORE (copy dicts), plan_run
+6. record units after plan_run; then execute_run
+7. print the state chain: for each step_run (step_type, target_id, region_id, unit_id, input_refs, lock_snapshot before/after, status, error_code, error_detail)
+8. Note: to capture PlanUnit after detect we need a hook. Options: subclass PipelineService overriding `_backfill_detected_regions`? Simpler: since `run.tasks[0].units` is mutated in place and the run object is the same object returned by create_run (run = service.create_run(...) returns the in-memory PipelineRun), after execute_run we can inspect `run.tasks[0].units` (post-backfill). To capture "before detect", we snapshot the units right after plan_run (the same objects, tuples are replaced so the earlier tuple stays intact if we copy it). Yes: `task.units` is replaced by a NEW tuple, so `before = tuple(task.units)` (holding references to the old PlanUnit objects) remains the pre-backfill view.
+
+But is the returned `run` from create_run the same object the service mutates? `create_run` returns `run` and `_persist(run)`; `plan_run(run_id)` does `self._require_run(run_id)` → from the SqlitePipelineStore, which may return a *deserialized copy*! Let me check SqlitePipelineStore.get — if it re-reads from DB, then `run` in my hands is a different object and my "before" snapshot must be taken from `service.plan_run(...)`'s return value instead. `plan_run` returns the run it mutated (`self._require_run(run_id)` object) — so use `planned = service.plan_run(run.run_id)` and `executed = service.execute_run(run.run_id)` returns the same in-memory object it mutated. `execute_run` re-reads via `_require_run` → same store object? If the store caches, returns same instance. Let me check SqlitePipelineStore.get quickly — it probably reconstructs from DB each call. Then `executed` is a fresh object reflecting the persisted state (but NOT the in-memory pre-save mutation... it IS saved by _persist before return). Since _persist is called after each mutation, `executed` reflects final persisted state. Good enough: I'll use `executed.tasks[0].units` for post-backfill and `planned.tasks[0].units` for pre-detect (captured right after plan_run — that object was persisted before execute starts, and detect's backfill happens on the execute_run object).
+
+Careful: `planned` object holds pre-backfill units; `execute_run`'s object is a different instance whose units got replaced. So `before = [(u.unit_id, u.target_id, u.region_id, u.step_type) for u in planned.tasks[0].units]` — good. But if the store caches instances (same object), `planned.tasks[0].units` would be mutated too, making before == after and hiding the transition. Let me check SqlitePipelineStore.get to be sure. Let me grep for `class SqlitePipelineStore` and its get/_load.
+
+That's important for the script's correctness. Let me read it.
+dsh: reasoning:
+Important: `SqlitePipelineStore.get` uses an in-memory cache → `create_run`, `plan_run`, `execute_run` all return THE SAME object. So `planned.tasks[0].units` and `executed.tasks[0].units` are the same tuple → my "before" snapshot must be a deep copy taken right after plan_run.
+
+I'll capture before = tuple of frozen dataclasses via `dataclasses.replace`? Simpler: capture plain tuples of fields (unit_id, target_id, region_id, step_type, decision) right after plan_run — these are immutable values, so copying the field values is enough since the tuple itself is replaced (backfill creates a NEW tuple with replace()). Wait: backfill does `task.units = tuple(replace(item, region_id=primary) if ... else item for item in task.units)` → it rebinds task.units to a new tuple; the OLD PlanUnit objects are untouched. So if I capture `before_units = planned.tasks[0].units` (the tuple object) right after plan_run, that tuple object stays the pre-backfill view even though task.units is later rebound.
+
+So: `before = planned.tasks[0].units` (tuple reference) and `after_ref = ...` after execute → `executed.tasks[0].units`. Since it's the same run object, `before` holds the old tuple. Correct.
+
+Also to document "detect 前后的 catalog current 状态", I'll call `catalog.current(...)` directly: I can access `service._catalog`... better to construct `SqliteTargetCatalog(conn)` myself (that's the production catalog) and query it directly for the report. That's clean and doesn't touch privates.
+
+Now let me write the script. Also include the AC2 dumps: PlanUnit before/after, StepRun input_refs/lock_snapshot (from executed.step_runs), catalog current states (page + region) before and after detect, region current_revision_id, and the final error.
+
+Additionally the script should assert the repro (AC1 "先红"): expected failure = ocr StepRun with error_code LOCK_CHANGED and detail matching "expected None". Exit code 0 when the defect reproduces (documented "red" = defect reproduced). I'll make the script print a verdict and exit non-zero only if the defect does NOT reproduce (to make it a proper red/green harness). Hmm — careful: "先红日志" means the log showing the defect. I'll define: exit 0 = defect reproduced as predicted (diagnostic red), exit 1 = prediction not met. And document that clearly.
+
+Let me now write everything. I'll write the script text into the final answer. It's long but necessary.
+
+Also: the script must be robust if `region_creator` needs `provenance` kwargs. From handlers.py: `self.deps.region_creator(unit.page_id, candidate.polygon, candidate.reading_order or index, provenance)` → 4 positional args.
+
+`candidate.polygon` is a tuple of (float,float) pairs. RegionGeometry(polygon=...) — the test converts to ints. RegionGeometry probably accepts floats. I'll convert with int(round()).
+
+`RegionMaskGeometry` import from handlers used for geometry source (only needed for segment steps; REOCR_ALL doesn't need it, but HandlerDependencies requires geometry param). I'll pass a minimal geometry source.
+
+FakeImages.region_crop must return (bytes, int, int) — used by the OCR handler. Good.
+
+`page_png` — not needed for REOCR_ALL. I'll raise like the test.
+
+Let me write it now, and also produce the report and handoff.
+
+One more thing to verify for the script: `HandlerDependencies` required fields — registry, regions, region_writer, artifacts, images, geometry, retry_policy (+ optional detector, region_creator). In test_handlers_pipeline they didn't pass route_policy (default exists?). Let me check HandlerDependencies definition to get required/optional right. Let me read handlers.py around 60-190 for HandlerDependencies.
+dsh: reasoning:
+I have everything. Now write the deliverables.
+
+Let me be careful about a couple of script details:
+- `open_database(path, latest_known_schema_version=...)` — returns (conn, bool). Confirmed from tests.
+- `RegionGeometry` fields: need to check it accepts bbox/polygon. Test uses `RegionGeometry(bbox=BBox(...), polygon=...)` and also `RegionGeometry(bbox=BBox(0,0,4,4))`. Good.
+- `connection` row factory: rows accessed by name → open_database sets row_factory. Good.
+- `PipelineScope(ScopeType.PAGE, selected_ids=("page-1",))`.
+
+Now, write the final answer. Structure with clear sections. Include:
+
+A. 执行摘要 + 环境阻塞（BLOCKED 原因，原始错误）
+B. 证据纪律表（AC5）
+C. AC 状态表
+D. 静态根因（AC2 静态推导，含证据链）
+E. AC3 反事实分析
+F. AC4 修复建议 + 测试矩阵 + 恢复风险
+G. 交付物全文（reproduce.py / 报告 md / handoff md）—— 供集成方落盘
+H. 建议下一步（还需给出下一 Task 建议 per AGENTS.md? The final answer must include a recommended next step; the worktree doc/handoffs content also should. Since this is a Task completion/blocking, I should recommend the next Task per §5.1. I'll give a concrete dispatch instruction for Codex/Integrator to land the deliverables + release the fix Task.)
+
+Also: delivery head cannot be fixed (no commits possible). Report NOT_RUN.
+
+Let me now write the report content. It must be substantial but I'll keep it organized. I'll write the markdown for doc/research/... in the final answer.
+
+Also note: the task file says verification command 1 must run reproduce.py; if a fix is later made, this script becomes the regression harness.
+
+For the handoff, filename pattern doc/handoffs/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-<short-head>.md — no head available → I'll name it with the placeholder and instruct the integrator: `DIAG-M2-REGIONLESS-LOCK-CHANGED-001-NO_COMMIT-BLOCKED.md`? Better: give the integrator the file named `DIAG-M2-REGIONLESS-LOCK-CHANGED-001-blocked-dsh.md` (clearly non-head) — but the template requires <short-head>. I'll suggest using the base short head `5789b30b` since delivery head == base (no commits made), i.e. `doc/handoffs/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-5789b30b.md`, which is truthful: handoff against base 5789b30b with status BLOCKED. Good.
+
+Let me write it all out now. I'll keep code blocks accurate.
+
+For the reproduce.py, let me write the final version carefully:
+
+```python
+# -*- coding: utf-8 -*-
+"""DIAG-M2-REGIONLESS-LOCK-CHANGED-001 / AC1 reproducer  (READ-ONLY: writes only to a temp dir).
+
+Predicted defect (static diagnosis, task DIAG-M2-REGIONLESS-LOCK-CHANGED-001):
+a page-scoped run on a *regionless* page plans ``detect`` first; after detect
+commits, ``_backfill_detected_regions`` rebinds the remaining units' ``region_id``
+to the first detected Region but leaves ``target_id`` pointing at the Page.
+The ``ocr`` StepRun therefore snapshots the *Page* target
+(``input_refs`` = page artifact revisions, i.e. no "region" key) while the handler
+writes Region text and passes ``expected_current_revision_id=step_run.input_refs["region"]``
+-> ``None``.  The Region already has its first revision (created by detect through
+``RegionEditingService.create_region``), so the writer's optimistic guard
+(``RegionStepWriter._persist``) raises ``LockBlocked`` whose ``error_code`` is
+``LOCK_CHANGED`` -> the run ends ``COMPLETED_WITH_FAILURES`` with ocr ``LOCK_CHANGED``.
+
+Exit code 0 = the predicted defect reproduced (diagnostic RED as expected).
+Exit code 1 = prediction NOT met (either fixed, or the analysis is wrong) - the log says which.
+"""
+```
+
+Then the code. I'll include a `--keep` option? Keep it simple: always write into a temp dir and print the path; don't delete, so logs can reference the db. Actually for reproducibility, accept optional argv[1] as workspace dir. I'll support `--workdir PATH` else tempfile.mkdtemp.
+
+Let me write out the whole thing now.
+
+Note on `ImageFrame(width, height, mode, data)` — test: `ImageFrame(width=32, height=16, mode="rgb24", data=b"\x00"*(32*16*3))`. providers_helpers uses rgb32 with 4 bytes/px. For detect, only width/height used. Use rgb24 with correct size 32*16*3.
+
+Detector: must be deterministic and successful. Candidate polygon in page pixel coords.
+
+Also: `detect` requires `deps.images.page_frame(page_id)`.
+
+For OCR: `region_crop` returns crop bytes, w, h. The OCR provider ignores bytes.
+
+Registry: `ProviderRegistry()`, `registry.register(descriptor, lambda: ocr_provider)`.
+
+Let me confirm ProviderRegistry.register signature — used in tests as `registry.register(descriptor, lambda: ocr_provider)`. Good.
+
+Also need `RetryPolicy(max_attempts=1, backoff_seconds=0)` — confirmed signature from tests.
+
+Then service = build_production_pipeline(conn, handlers=handlers.as_mapping(), settings={"ocr": {"script": "japanese"}}, provider_bindings={"ocr": {"provider_id": "fake-ocr"}}).
+
+Seed SQL mirrors the fixture.
+
+Then:
+
+run = service.create_run(CommandType.REOCR_ALL, PipelineScope(ScopeType.PAGE, selected_ids=("page-1",)))
+planned = service.plan_run(run.run_id)
+before_units = planned.tasks[0].units  # tuple snapshot, pre-backfill
+executed = service.execute_run(run.run_id)
+
+Wait: `plan_run` returns the run; `execute_run` returns the same cached object. `before_units` still references the old tuple. Good.
+
+But hmm: `create_run` → `plan_run` is called inside execute_run only if not run.tasks. We call plan_run explicitly. Fine.
+
+Then dumps + assertions.
+
+Assertions:
+- detect step: status COMPLETED, error_code None
+- ocr step: status FAILED, error_code == "LOCK_CHANGED"
+- "expected None" in (ocr.error_detail or "")
+- executed.status is COMPLETED_WITH_FAILURES
+- region_revisions count == 1 (the detect-created first revision) → proves no OCR write happened
+- ocr step region_id set, target_id == "page-1" (the smoking gun)
+- ocr step input_refs has no "region" key
+- counterfactual assert: catalog.current(region_id).current_revisions["region"] is not None (so a non-None expectation would have matched)
+
+Print JSON dumps for AC2.
+
+I'll structure printing with clear markers: `=== AC2 ... ===`.
+
+Also print the derived prediction vs actual; final line `VERDICT: DEFECT_REPRODUCED` / `VERDICT: NOT_REPRODUCED`.
+
+Edge: if the defect is fixed later (target_id rebound), the script exits 1 with "NOT_REPRODUCED (fix detected)" — good regression semantics.
+
+Now write the final answer. Length is unavoidable; I'll be efficient in prose but complete in code/deliverable text.
+
+One more consideration: should I write the deliverable files into the *session workspace* as a fallback? The instruction explicitly says writes must be in the worktree, and if I can't write files, put everything in the final answer. So no.
+
+Let me also record for AC5 the exact commands I attempted and their raw errors, plus the reads I performed (the static evidence commands: grep/read tool calls with file:line). I'll list the static evidence commands as `grep`/`read` (DSH file tools) — noting they are not part of the Task's verification command set.
+
+Also honestly: HEAD could not be read via git; I read `.git/refs/heads/agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001` = 5789b30b37dfbf79d9bca707b5fdaaa562ada707, and `.git/worktrees/.../HEAD` = the branch ref. That's file-level evidence, not `git rev-parse`. I'll mark it as such.
+
+Let me write the answer now.
+
+Time to produce. I'll write it in Chinese, with English identifiers.
+
+Regarding the AC statuses:
+- AC1: BLOCKED (script authored but NOT_RUN; no first-red log).
+- AC2: BLOCKED (runtime state chain not captured) — static chain delivered as static analysis.
+- AC3: 部分完成（静态分析）→ mark as "PROVIDED (静态分析, 未执行验证)" — per AC5 discipline, I should mark it as "静态分析（STATIC）" not PASS. I'll use: AC3 = PARTIAL/STATIC.
+- AC4: same, STATIC.
+- AC5: BLOCKED (no commands executed, no commit, no delivery head).
+
+Let me write.
+dsh: reasoning:
+Let me write the final answer now. It must be complete. I'll write it as the deliverable.

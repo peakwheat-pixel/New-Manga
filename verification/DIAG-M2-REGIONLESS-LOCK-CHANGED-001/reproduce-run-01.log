@@ -1,0 +1,187 @@
+# shell: Git Bash (ZCode integrator proxy run, DSH sandbox has no shell)
+# interpreter: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe (Python 3.12.3)
+# worktree HEAD: 5789b30b37dfbf79d9bca707b5fdaaa562ada707
+# branch: agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001
+2026-09-28T15:40:43+08:00
+[reproduce] workspace: C:\Users\49745\AppData\Local\Temp\diag-m2-regionless-j4pmelcu
+
+===== AC2-A PlanUnit BEFORE detect (plan time) =====
+[
+  {
+    "unit_id": "run-8e2e40405212426a9b7f1c9144904be7:task:0:page-1:detect",
+    "step_type": "detect",
+    "target_id": "page-1",
+    "region_id": null,
+    "decision": "run"
+  },
+  {
+    "unit_id": "run-8e2e40405212426a9b7f1c9144904be7:task:0:page-1:ocr",
+    "step_type": "ocr",
+    "target_id": "page-1",
+    "region_id": null,
+    "decision": "run"
+  }
+]
+
+===== AC2-B catalog.current(page) at plan time =====
+{
+  "target_id": "page-1",
+  "target_type": "page",
+  "current_revisions": {},
+  "lock": {
+    "page_locked": false,
+    "region_locked": false,
+    "translation_locked": false,
+    "inpaint_locked": false
+  },
+  "stage_states": {}
+}
+
+===== AC2-C PlanUnit AFTER detect/backfill =====
+[
+  {
+    "unit_id": "run-8e2e40405212426a9b7f1c9144904be7:task:0:page-1:detect",
+    "step_type": "detect",
+    "target_id": "page-1",
+    "region_id": null,
+    "decision": "run"
+  },
+  {
+    "unit_id": "run-8e2e40405212426a9b7f1c9144904be7:task:0:page-1:ocr",
+    "step_type": "ocr",
+    "target_id": "page-1",
+    "region_id": "3856f1d132a6485797c7041f22e63f1f",
+    "decision": "run"
+  }
+]
+
+===== AC2-D regions created by detect =====
+[
+  {
+    "region_id": "3856f1d132a6485797c7041f22e63f1f",
+    "reading_order": 1,
+    "current_revision_id": "161a6be3fde64f6cab4f34be418f89df"
+  },
+  {
+    "region_id": "7bc809d9ea13478d8a2d889bd794a746",
+    "reading_order": 7,
+    "current_revision_id": "c15cae14e4de4f778b1596c07f26fabd"
+  }
+]
+
+===== AC2-E catalog.current(page) after detect =====
+{
+  "target_id": "page-1",
+  "target_type": "page",
+  "current_revisions": {},
+  "lock": {
+    "page_locked": false,
+    "region_locked": false,
+    "translation_locked": false,
+    "inpaint_locked": false
+  },
+  "stage_states": {
+    "detect": "completed"
+  }
+}
+
+===== AC2-F catalog.current(3856f1d132a6485797c7041f22e63f1f) after detect =====
+{
+  "target_id": "3856f1d132a6485797c7041f22e63f1f",
+  "target_type": "region",
+  "current_revisions": {
+    "region": "161a6be3fde64f6cab4f34be418f89df"
+  },
+  "lock": {
+    "page_locked": false,
+    "region_locked": false,
+    "translation_locked": false,
+    "inpaint_locked": false
+  },
+  "stage_states": {}
+}
+
+===== AC2-F catalog.current(7bc809d9ea13478d8a2d889bd794a746) after detect =====
+{
+  "target_id": "7bc809d9ea13478d8a2d889bd794a746",
+  "target_type": "region",
+  "current_revisions": {
+    "region": "c15cae14e4de4f778b1596c07f26fabd"
+  },
+  "lock": {
+    "page_locked": false,
+    "region_locked": false,
+    "translation_locked": false,
+    "inpaint_locked": false
+  },
+  "stage_states": {}
+}
+
+===== AC2-G StepRun chain (input_refs / lock_snapshot / error) =====
+[
+  {
+    "step_run_id": "step-4e3690f2a51a4a51a79fa1e254fa009f",
+    "step_type": "detect",
+    "unit_id": "run-8e2e40405212426a9b7f1c9144904be7:task:0:page-1:detect",
+    "target_id": "page-1",
+    "page_id": "page-1",
+    "region_id": null,
+    "status": "completed",
+    "input_refs": {},
+    "lock_snapshot": {
+      "page_locked": false,
+      "region_locked": false,
+      "translation_locked": false,
+      "inpaint_locked": false
+    },
+    "error_code": null,
+    "error_detail": null
+  },
+  {
+    "step_run_id": "step-f513d98376034f068e8a425ad6d11d02",
+    "step_type": "ocr",
+    "unit_id": "run-8e2e40405212426a9b7f1c9144904be7:task:0:page-1:ocr",
+    "target_id": "page-1",
+    "page_id": "page-1",
+    "region_id": "3856f1d132a6485797c7041f22e63f1f",
+    "status": "failed",
+    "input_refs": {},
+    "lock_snapshot": {
+      "page_locked": false,
+      "region_locked": false,
+      "translation_locked": false,
+      "inpaint_locked": false
+    },
+    "error_code": "LOCK_CHANGED",
+    "error_detail": "region current revision changed during the step (expected None, found '161a6be3fde64f6cab4f34be418f89df') (provider=fake-ocr) (stage=region-write)"
+  }
+]
+
+===== AC2-H final =====
+{
+  "run_status": "completed_with_failures",
+  "task_status": "failed",
+  "task_error_code": "LOCK_CHANGED",
+  "task_error_detail": "region current revision changed during the step (expected None, found '161a6be3fde64f6cab4f34be418f89df') (provider=fake-ocr) (stage=region-write)",
+  "planned_step_units": 2,
+  "terminal_step_units": 2,
+  "candidates": []
+}
+
+===== AC2-I region revisions (write evidence) =====
+{
+  "3856f1d132a6485797c7041f22e63f1f": 1,
+  "7bc809d9ea13478d8a2d889bd794a746": 1
+}
+
+===== AC1 VERDICT =====
+  [PASS] detect step ran and committed  -- detect=completed
+  [PASS] ocr step is FAILED with LOCK_CHANGED  -- ocr=LOCK_CHANGED
+  [PASS] failure is the writer guard on a None expectation  -- detail=region current revision changed during the step (expected None, found '161a6be3fde64f6cab4f34be418f89df') (provider=fake-ocr) (stage=region-write)
+  [PASS] smoking gun: ocr target_id still the Page, region_id set  -- target_id=page-1 region_id=3856f1d132a6485797c7041f22e63f1f
+  [PASS] ocr input_refs carries no 'region' key  -- input_refs={}
+  [PASS] run ends COMPLETED_WITH_FAILURES  -- status=completed_with_failures
+  [PASS] no Region write happened (1 revision = detect first revision)  -- region_ids=['3856f1d132a6485797c7041f22e63f1f', '7bc809d9ea13478d8a2d889bd794a746']
+  [PASS] counterfactual: the Region DOES have a current revision  -- region current_revision_id non-empty
+
+VERDICT: DEFECT_REPRODUCED (expected red)
