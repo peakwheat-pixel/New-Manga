@@ -1,0 +1,132 @@
+Task: M2-I2 independent Review
+Shell: Windows PowerShell 7.6.6
+Checked author worktree: G:\CODEX\New Manga.worktrees\M2-I2-antigravity
+
+> git rev-parse --show-toplevel
+G:/CODEX/New Manga.worktrees/M2-I2-antigravity
+Exit code: 0
+
+> git branch --show-current
+agent/antigravity/M2-I2-qtfree-logic-extraction
+Exit code: 0
+
+> git rev-parse HEAD
+a4705a9f473d0e8d9087068edc4bec572d90439a
+Exit code: 0
+
+> git status --short
+<no output>
+Exit code: 0
+
+> git merge-base --is-ancestor 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a a4705a9f473d0e8d9087068edc4bec572d90439a
+<no output>
+Exit code: 0
+
+> git log --oneline --decorate -8
+a4705a9 (HEAD -> agent/antigravity/M2-I2-qtfree-logic-extraction) docs(handoff): deliver revised M2-I2 evidence, reinforced shim guard, and test attribution
+be5e8d8 fix(architecture): restrict legacy UI shims strictly to application seams (M2-I2)
+86ecb94 docs(handoff): deliver revised M2-I2 evidence, architecture guards, and test logs
+d9b7182 fix(architecture): enforce pure re-export constraint on legacy UI shims (M2-I2)
+5d4a465 (codex/M2-I2-review-5d4a465) docs(handoff): deliver M2-I2 Qt-free logic extraction and verification evidence
+df26908 feat(application): extract projection and region_canvas to application layer (M2-I2)
+5d989ba docs(m2): align architecture status with first-wave release
+58fa0df docs(m2): release bounded first-wave migration tasks
+Exit code: 0
+
+> git diff --name-status 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a..be5e8d830fba2f9ca1b0cd79148cc386c4468061
+M	doc/00_INDEX.md
+M	doc/12_ROADMAP.md
+M	doc/AD-001_TARGET_DESKTOP_ARCHITECTURE.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+A	doc/handoffs/M2-I2-delivery.md
+A	doc/tasks/M2-I1.md
+A	doc/tasks/M2-I2.md
+A	doc/tasks/M2-R1.md
+A	doc/tasks/M2-UI1.md
+M	doc/tasks/README.md
+A	src/application/editing/region_canvas.py
+A	src/application/tasks/projection.py
+M	src/ui/models/tasks/__init__.py
+M	src/ui/models/tasks/page_list_model.py
+M	src/ui/models/tasks/projection.py
+M	src/ui/viewmodels/workbench/region_canvas.py
+M	src/ui/viewmodels/workbench/viewmodel.py
+M	tests/core/test_architecture.py
+M	tests/workbench/test_page_list_model.py
+M	tests/workbench/test_projection.py
+M	tests/workbench/test_qml_workbench.py
+M	tests/workbench/test_region_canvas.py
+A	verification/M2-I2/diff-check.log
+A	verification/M2-I2/full-suite.log
+A	verification/M2-I2/post-migration-verification.log
+A	verification/M2-I2/pre-migration-baseline.log
+A	verification/M2-I2/qtfree-suite.log
+A	verification/M2-I2/verify_m2_i2.py
+A	verification/M2-I2/workbench-suite.log
+Exit code: 0
+
+> git diff --check 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a..a4705a9f473d0e8d9087068edc4bec572d90439a
+<no output>
+Exit code: 0
+
+> git diff --name-status 5d989bab6c5c8a24a5112303f95c2b8eea356bdc..a4705a9f473d0e8d9087068edc4bec572d90439a
+A	doc/handoffs/M2-I2-delivery.md
+M	doc/tasks/M2-I2.md
+A	src/application/editing/region_canvas.py
+A	src/application/tasks/projection.py
+M	src/ui/models/tasks/__init__.py
+M	src/ui/models/tasks/page_list_model.py
+M	src/ui/models/tasks/projection.py
+M	src/ui/viewmodels/workbench/region_canvas.py
+M	src/ui/viewmodels/workbench/viewmodel.py
+M	tests/core/test_architecture.py
+M	tests/workbench/test_page_list_model.py
+M	tests/workbench/test_projection.py
+M	tests/workbench/test_qml_workbench.py
+M	tests/workbench/test_region_canvas.py
+A	verification/M2-I2/diff-check.log
+A	verification/M2-I2/full-suite.log
+A	verification/M2-I2/post-migration-verification.log
+A	verification/M2-I2/pre-migration-baseline.log
+A	verification/M2-I2/qtfree-suite.log
+A	verification/M2-I2/verify_m2_i2.py
+A	verification/M2-I2/workbench-suite.log
+Exit code: 0
+
+> git diff --name-status be5e8d830fba2f9ca1b0cd79148cc386c4468061..a4705a9f473d0e8d9087068edc4bec572d90439a -- src tests
+<no output>
+Exit code: 0
+
+> git diff --name-status 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a..be5e8d830fba2f9ca1b0cd79148cc386c4468061 -- src/bootstrap src/domain doc/contracts requirements.txt pyproject.toml packaging frontend src/ui/react src/tauri
+<no output>
+Exit code: 0
+
+> git rev-parse 6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+6a68fdeb92d8a1c7903166a8076d6260bf8fa79a
+Exit code: 0
+
+> git rev-parse be5e8d830fba2f9ca1b0cd79148cc386c4468061
+be5e8d830fba2f9ca1b0cd79148cc386c4468061
+Exit code: 0
+
+> git rev-parse a4705a9f473d0e8d9087068edc4bec572d90439a
+a4705a9f473d0e8d9087068edc4bec572d90439a
+Exit code: 0
+
+> git merge-base --is-ancestor be5e8d830fba2f9ca1b0cd79148cc386c4468061 a4705a9f473d0e8d9087068edc4bec572d90439a
+<no output>
+Exit code: 0
+
+Final author-worktree drift check (2026-09-25T20:11:16.2314536+08:00):
+> git branch --show-current
+agent/antigravity/M2-I2-qtfree-logic-extraction
+> git rev-parse HEAD
+0d6acc7d985a0a96f5a27c2f25b7b2afcd66e716
+> git status --short
+<no output>
+> git log -1 --oneline --decorate
+0d6acc7 (HEAD -> agent/antigravity/M2-I2-qtfree-logic-extraction) docs(handoff): deliver revised M2-I2 evidence, static __all__ guard, and CLI skip attribution
+> git rev-parse a4705a9f473d0e8d9087068edc4bec572d90439a
+a4705a9f473d0e8d9087068edc4bec572d90439a
+Disposition: branch/worktree advanced after the fixed review began. The new HEAD is outside this review scope and was not inspected; this decision remains pinned to a4705a9f473d0e8d9087068edc4bec572d90439a.

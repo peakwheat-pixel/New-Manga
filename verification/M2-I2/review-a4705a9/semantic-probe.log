@@ -1,0 +1,22 @@
+Task: M2-I2 independent Review semantic and architecture negative probes
+Shell: Windows PowerShell 7.6.6
+Python: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe
+Environment: G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe | 3.12.3 (tags/v3.12.3:f6650f9, Apr  9 2024, 14:05:25) [MSC v.1938 64 bit (AMD64)] | Windows-11-10.0.26200-SP0
+Command: & 'G:\CODEX\New Manga.task-envs\T3.2.1-packaging-py312\Scripts\python.exe' 'verification/M2-I2/review-a4705a9/semantic-probe.py'
+Started: 2026-09-25T19:59:05.6182717+08:00
+AST compatibility after module docstring removal: projection=IDENTICAL; region_canvas=IDENTICAL
+projection scenario pending: IDENTICAL
+projection scenario completed: IDENTICAL
+projection scenario blocked: IDENTICAL
+projection scenario running_focus_step_flow: IDENTICAL
+projection scenario failed_page: IDENTICAL
+projection page-status sets compared: 64
+projection precedence/button checks passed: 82
+region_canvas output/error contract comparisons passed: 14
+half-up exact tie check: floor(n * size + 0.5) yields 13 and 63
+Negative A (application -> ui import) detected: C:\Users\49745\AppData\Local\Temp\m2-i2-review-negative-ry07txig\src\application\tasks\projection.py:1: forbidden import ui.models.tasks.projection
+Negative B (PySide6 in copied application seam) detected: C:\Users\49745\AppData\Local\Temp\m2-i2-review-negative-ry07txig\src\application\editing\region_canvas.py:101: forbidden import PySide6
+required precedence failed > processing > blocked > completed > skipped > waiting: PASS
+R-003 dynamic __all__ expression bypass reproduced: Guard violations: []
+RESULT: PASS
+Exit code: 0
