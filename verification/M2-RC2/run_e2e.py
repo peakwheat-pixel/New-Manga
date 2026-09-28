@@ -283,7 +283,17 @@ def run_probe_phase(exe: Path, catalog_db: str) -> tuple[int, dict | None]:
 
 
 ALLOWLIST_RE = re.compile(r"\[m2rc2-allowlist\] (probe|production):(.*)")
-PRODUCTION_EXPECTED = ["issue_resource_url", "revoke_ref", "revoke_resource_refs"]
+#: M2-IPC1 integration ruling (2026-09-28, Codex proxy): the production
+#: surface intentionally grows from 3 to 5 commands (core_ping,
+#: library_list_books); this runner's expectations are maintained by the
+#: M2-IPC1 integration, not by the Owner branch.
+PRODUCTION_EXPECTED = [
+    "issue_resource_url",
+    "revoke_ref",
+    "revoke_resource_refs",
+    "core_ping",
+    "library_list_books",
+]
 PROBE_EXPECTED = PRODUCTION_EXPECTED + [
     "probe_config",
     "probe_write_results",

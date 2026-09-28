@@ -40,8 +40,11 @@ SAMPLES = ("sample-a", "sample-b")
 LAUNCHES = ("run1", "run2")
 
 ANNOUNCE_AC1_PREFIX = "[m2ac1-allowlist] ac1:"
+#: M2-IPC1 integration ruling (2026-09-28, Codex proxy): the shared
+#: production prefix grows to 5 commands, so the ac1 announcement becomes 8.
 EXPECTED_AC1_ALLOWLIST = (
-    "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+    "issue_resource_url,revoke_ref,revoke_resource_refs,core_ping,"
+    "library_list_books,ac1_request,ac1_write_results,ac1_exit"
 )
 
 
