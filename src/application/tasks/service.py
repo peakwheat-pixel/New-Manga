@@ -924,6 +924,18 @@ class PipelineService:
     ) -> None:
         """Bind the task's regionless units to the first detected Region.
 
+        Invariant:
+            PlanUnit.target_id ≡ 该步骤的写目标 (Region 步骤 ⇒ Region id; Page 步骤 ⇒ Page id).
+            _record_step_attempt 以 target_id 作为向 catalog 请求 current 快照的键。
+            因此当 detect 生成 Region 之后，后续 Region 步骤必须将 target_id 与 region_id
+            一同重绑到 primary Region，确保其 input_refs 与 optimistic lock 守卫比对
+            真实的 Region revision，避免抛出 LOCK_CHANGED (DIAG-M2-REGIONLESS-LOCK-CHANGED-001).
+
+        Why unit_id is NOT changed:
+            PlanUnit.unit_id 保持不变，因为 run.terminal_unit_ids 以 unit_id 为键，
+            且在 plan 阶段已经标记终态。若在 backfill 时更改 unit_id，会导致终态计数丢失
+            或双计。unit_id 内嵌 page id 与真实 target 不一致为已知展示层债务，本处不改。
+
         Multi-Region pages still run their pipeline steps against the first
         Region (``reading_order`` 1); fanning a page task out over every
         detected Region is a later scheduling slice — the full id list stays
@@ -935,10 +947,11 @@ class PipelineService:
         primary = region_ids[0]
         # rebuild the tuple in place on the task: the index-based loop in
         # ``execute_run`` re-reads ``task.units[index]`` each iteration, so
-        # the units after the detect step see their new region_id
+        # the units after the detect step see their new region_id and target_id.
+        # PlanUnit.target_id 必须等于该步骤的写目标；不改 unit_id（terminal_unit_ids 以它为键，plan 阶段已标终态）。
         task.units = tuple(
             (
-                replace(item, region_id=primary)
+                replace(item, region_id=primary, target_id=primary)
                 if item.unit_id != unit.unit_id and item.region_id is None
                 else item
             )
