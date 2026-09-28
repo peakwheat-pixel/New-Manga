@@ -2,7 +2,7 @@
 id: DIAG-M2-REGIONLESS-LOCK-CHANGED-001
 title: M2 regionless planner LOCK_CHANGED diagnosis
 kind: research
-status: ready
+status: in_review
 release_state: M2_REGIONLESS_LOCK_CHANGED_DIAGNOSTIC_RELEASED
 approval: approved_by_user_2026-09-28_rebaseline_orchestration
 execution_approval: approved_by_user_2026-09-28_rebaseline_orchestration
@@ -14,7 +14,8 @@ depends_on: [M2-AC1]
 base_commit: 5789b30b37dfbf79d9bca707b5fdaaa562ada707
 branch: agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001
 worktree: G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh
-dispatch_state: AWAITING_EXTERNAL_DISPATCH
+delivery_head: 7a03ac5f9677c359c6e13c007d77d46e604e8df0
+dispatch_state: DELIVERED_AWAITING_REVIEW
 ---
 
 # DIAG-M2-REGIONLESS-LOCK-CHANGED-001
@@ -65,4 +66,4 @@ git diff --check 5789b30b37dfbf79d9bca707b5fdaaa562ada707..<delivery-head>
 - 诊断报告：`doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md`
 - 原始日志与复现脚本：`verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/`
 - Handoff：`doc/handoffs/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-<short-head>.md`
-- 当前状态：`ready / AWAITING_EXTERNAL_DISPATCH`；branch/worktree 路径已冻结，待 Codex 或执行方从固定 base 创建。
+- 当前状态：`in_review / DELIVERED_AWAITING_REVIEW`；Owner=DeepSeek Harness 以文本交付静态诊断（headless 沙箱无 shell、无法写 worktree，环境错误逐字节记录于 dispatch 存档），集成方（ZCode 代行 Codex，用户授权 2026-09-28）按 M2-C2 先例原字节 import 落盘并代跑验证命令：`reproduce.py` 判定 `DEFECT_REPRODUCED`（8/8 checks PASS、EXIT=0，先红达成）、既有受影响 pytest 9 passed EXIT=0、`git diff --check` EXIT=0；delivery head=`7a03ac5f9677c359c6e13c007d77d46e604e8df0`（Owner branch 单 commit import，base=5789b30b）。执行证据日志与 DSH 原始回答存档均在 `verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/`。

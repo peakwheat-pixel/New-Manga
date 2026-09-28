@@ -12,9 +12,9 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 |---|---|
 | Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
 | Current Active Task | **None (`in_progress`=0).** |
-| Released next Task | [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) = `ready / AWAITING_EXTERNAL_DISPATCH` |
-| Owner / Reviewer / Integrator | DeepSeek Harness / Antigravity（非作者）/ Codex |
-| Recovery point | base=`5789b30b`; branch=`agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001`; worktree=`G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh`（待创建） |
+| Released next Task | [DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) = `in_review / DELIVERED_AWAITING_REVIEW`；Owner=DSH 静态交付（沙箱无 shell）+ 集成方代跑执行，delivery head=`7a03ac5f`；`reproduce.py`=`DEFECT_REPRODUCED` 8/8 PASS；Reviewer=Antigravity 待审 |
+| Owner / Reviewer / Integrator | DeepSeek Harness（静态交付，执行证据由集成方代采）/ Antigravity（非作者，待派发）/ Codex（代行=ZCode 会话） |
+| Recovery point | base=`5789b30b`; branch=`agent/deepseek/DIAG-M2-REGIONLESS-LOCK-CHANGED-001`; worktree=`G:/CODEX/New Manga.worktrees/DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh`（已创建 @base，Owner branch tip=`7a03ac5f`） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1 全部 `done`；最新 integration=`f162193b` |
 | Planned after diagnosis | `M2-P1` regionless 修复 → `M2-IPC1` production Core read-only Library slice → `M2-AC2` data integrity acceptance；均未释放 |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
