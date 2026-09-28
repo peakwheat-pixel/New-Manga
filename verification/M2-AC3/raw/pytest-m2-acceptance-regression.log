@@ -1,0 +1,5 @@
+# shell: Git Bash (win32) / worktree: G:/CODEX/New Manga.worktrees/M2-AC3-zcode / HEAD at run: c754e71499d01ecefb39f86f63020af6d07f3f68
+# cmd: TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance -q
+.......................                                                  [100%]
+23 passed in 8.34s
+EXIT=0
