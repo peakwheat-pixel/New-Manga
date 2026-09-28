@@ -12,14 +12,15 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 |---|---|
 | Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
 | Current Active Task | **None (`in_progress`=0).** |
-| Current released Task | [M2-AC3](tasks/M2-AC3.md) Provider Fail-closed Acceptance = `ready / M2_AC3_PROVIDER_FAIL_CLOSED_RELEASED`（用户批准 2026-09-28）；Owner=ZCode（待认领），非作者 Reviewer=DeepSeek Harness，Integrator=新会话代行 Codex；base=`319c5e4b`；纯验收产品代码零改动；**等 Owner 认领开工** |
-| Owner / Reviewer / Integrator | ZCode（Owner，待认领）/ DeepSeek Harness（非作者）/ Codex（新 ZCode 会话代行，保持 Owner≠Integrator） |
+| Current released Task | [M2-AC3](tasks/M2-AC3.md) Provider Fail-closed Acceptance = `in_review / DELIVERED_FOR_REVIEW`（Owner=ZCode 已认领并交付：claim `c754e714` → 实现 `b0112834` → 交付 tip `a63d3372`；8/8 场景 PASS AC1–AC6、回归 23 passed、mutation M1/M2 先红；Qt 读面 NOT_RUN 如实登记）；非作者 Reviewer=DeepSeek Harness（待派发），Integrator=新会话代行 Codex；base=`319c5e4b`；纯验收产品代码零改动 |
+| Owner / Reviewer / Integrator | ZCode（Owner，已交付 `a63d3372`）/ DeepSeek Harness（非作者 Review，待派发）/ Codex（新 ZCode 会话子 agent 代行，保持 Owner≠Integrator） |
 | Recovery point | base=`319c5e4b`; branch=`agent/zcode/M2-AC3-provider-fail-closed`; worktree=`G:/CODEX/New Manga.worktrees/M2-AC3-zcode`（从 release commit 检出） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 及 **M2-AC2** 全部 `done`；最新 integration=`9d3c1db5`（M2-AC2 数据完整性验收） |
 | Planned next | M2 Acceptance Backlog 未登记行（Provider fail-closed、Reader lineage + Library page-count、Package/clean-start、Real docTR、M2 Release Gate）、自动进程监督、写命令竖切；以及 M2-P1/IPC1 集成记录中的 P3 项（term_extract book_id 错配、expected_* Page 形状、LIST_BOOKS_FAILED retryable 语义、core_service stub decoder 缺陷、M2-AC2 C4 P3-1..P3-6 测试清洁项） |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex quota exhausted；自 2026-09-28 起由 ZCode 会话代行 Codex Lead/Integrator 职责（用户全权授权）；追认批次见下方 ratification checkpoint |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |
+| Active Goal | [GOAL](GOAL.md) 2026-09-28/29 全自主推进——**本会话编排授权登记**（Codex 代行=ZCode 会话，用户授权 2026-09-28；启动 2026-09-28 23:13，截止 2026-09-29 09:00 Asia/Shanghai，≥08:40 收尾窗口）；验收标准 G1–G5；推进顺序 M2-AC3 → Backlog 按 [GOAL §验收标准 G2](GOAL.md) |
 
 完整完成/未完成清单与 Mermaid 流程图见 [REBASELINE_PLAN：2026-09-28 全量任务盘点与当前流程](REBASELINE_PLAN.md#2026-09-28-全量任务盘点与当前流程)。
 
