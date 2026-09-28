@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { LibraryClient, LibraryClientError } from "./client";
 import type { BookSummary } from "./types";
 
