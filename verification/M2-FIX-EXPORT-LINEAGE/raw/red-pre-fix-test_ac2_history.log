@@ -1,0 +1,71 @@
+# M2-FIX-EXPORT-LINEAGE red evidence (pre-fix) — F-1 xfail marker temporarily removed
+shell: /bin/bash.exe  (MINGW64_NT-10.0-26200 HOME-MY 3.6.5-22c95533.x86_64 2025-10-10 12:02 UTC x86_64 Msys)
+python: /usr/bin/bash: line 6: G:/CODEX/New: No such file or directory
+git HEAD: 4e76b2fa60e60958cc8132c6d541e3ba649d1e8f
+git branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+ISO time: 2026-09-28T17:12:41Z
+worktree state: xfail marker on test_ac2_history_records_which_stale_pages_were_included temporarily removed (unstaged), src/ untouched
+command: $PY -m pytest tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included -v
+---
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-FIX-EXPORT-LINEAGE-zcode
+configfile: pytest.ini
+collecting ... collected 1 item
+
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included FAILED [100%]
+
+================================== FAILURES ===================================
+__________ test_ac2_history_records_which_stale_pages_were_included ___________
+
+core = CoreServices(conn=<infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x00000233E6293B90>, repository=<...records_which0/data-root'), tile_factory=<function assemble_core_services.<locals>.tile_factory at 0x00000233E6687A60>)
+
+    def test_ac2_history_records_which_stale_pages_were_included(core) -> None:
+        """AC1(a)/AC2(b) persisted-lineage half: the export history row must
+        make the included stale pages queryable (the in-memory result does;
+        the persisted record must too)."""
+        seed = _seed_chapter_with_translated_page(
+            core, translated_payloads=[TRANS_R1, TRANS_R2]
+        )
+        stale_page_id = seed.page_a.page_id
+        target = core.data_root / "exports" / "stale-lineage.zip"
+        result = core.export_service.export(
+            ExportRequest(
+                book_id=seed.book.book_id,
+                chapter_id=seed.chapter.chapter_id,
+                format=ExportFormat.ZIP,
+                output_path=target,
+                pages=_snapshot_export_pages(core, seed.snapshot),
+                mode="translated",
+                stale_policy=StalePolicy.CONTINUE,
+            )
+        )
+        assert result.status.value == "completed"
+        assert result.included_stale_page_ids == (stale_page_id,)
+
+        row = core.export_service.find_export(result.export_id)
+        assert row is not None, "the completed export must be in the persisted history"
+        scope = json.loads(row.scope_snapshot_json)
+        persisted_stale = set(scope.get("included_stale_page_ids") or ())
+>       assert persisted_stale == {stale_page_id}, (
+            "the persisted export record must carry the included stale page ids"
+        )
+E       AssertionError: the persisted export record must carry the included stale page ids
+E       assert set() == {'daa1851f46d...cdfabd1d8f67'}
+E
+E         Extra items in the right set:
+E         'daa1851f46db4dab9ddacdfabd1d8f67'
+E
+E         Full diff:
+E         + set()
+E         - {
+E         -     'daa1851f46db4dab9ddacdfabd1d8f67',
+E         - }
+
+tests\m2_acceptance\test_reader_export_lineage_library_pagecount.py:572: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included
+============================== 1 failed in 0.54s ==============================
+---
+EXIT=1

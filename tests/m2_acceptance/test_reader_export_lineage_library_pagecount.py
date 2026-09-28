@@ -28,11 +28,15 @@ mirroring the M2-AC2/M2-AC3 precedent inside ``tests/m2_acceptance/``:
        across every export path above
 
 Pure acceptance: NO product code may change here. A failing scenario is a
-valid delivery outcome -- the defect is reported, not patched. The two
-known-defect scenarios are marked ``xfail(strict=True)``: they encode
-ACCEPTANCE verdict FAIL evidence (verified on release commit 252705bf) so
-the rest of the suite stays green; if a fix lands, XPASS fails loudly and
-the marker must be removed by the confirming review.
+valid delivery outcome -- the defect is reported, not patched. Known-defect
+scenarios are marked ``xfail(strict=True)``: they encode ACCEPTANCE verdict
+FAIL evidence so the rest of the suite stays green; if a fix lands, XPASS
+fails loudly and the marker must be removed by the confirming review. The
+F-1 marker (persisted included stale/missing page ids, verified red on
+release commit 252705bf and re-proven red pre-fix under M2-FIX-EXPORT-LINEAGE,
+see verification/M2-FIX-EXPORT-LINEAGE/raw/) was removed once the plan-A fix
+(scope_snapshot_json included-ids keys) turned the scenario green; F-2
+(page_count unknown semantics) remains xfail(strict=True).
 """
 
 from __future__ import annotations
@@ -54,12 +58,14 @@ if str(SRC_ROOT) not in sys.path:
 
 from application.export.service import (  # noqa: E402
     ExportCancelledError,
+    ExportError,
     ExportFormat,
     ExportPage,
     ExportRequest,
     StaleExportError,
     StalePolicy,
 )
+from application.export.service import _parse_scope  # noqa: E402  (white-box: parse contract)
 from application.export.ports import file_bytes_provider  # noqa: E402
 from application.importing.images.ports import DecodedImage, ImportSource  # noqa: E402
 from application.reading.ports import ReaderPage  # noqa: E402
@@ -69,6 +75,10 @@ from bootstrap.core_service import CoreServiceServer  # noqa: E402
 from domain.regions.entities import BBox, Region, RegionGeometry, RegionText  # noqa: E402
 from infrastructure.rendering.locator import SqlitePageArtifactLocator  # noqa: E402
 from infrastructure.sqlite.artifacts import SqliteArtifactRepository  # noqa: E402
+from infrastructure.sqlite.reading_export import (  # noqa: E402
+    METADATA_KEY_EXPORT_HISTORY_IMPORTED,
+    import_legacy_export_history,
+)
 from infrastructure.sqlite.regions import SqliteRegionRepository  # noqa: E402
 from ports.repositories.artifacts import (  # noqa: E402
     ArtifactType,
@@ -542,18 +552,6 @@ def test_ac2_continue_passes_stale_and_missing_distinguishable(core) -> None:
     )
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason=(
-        "M2-AC4 AC1(a)/AC2(b) known product defect, verified on release commit "
-        "252705bf (probe: verification/M2-AC4/raw/probe-output.log): the export "
-        "history row carries neither included_stale_page_ids nor "
-        "included_missing_page_ids, and scope_snapshot_json records only the "
-        "stale_policy string -- the stale pages actually shipped are NOT "
-        "traceable from the persisted lineage (ExportService._record / "
-        "_scope_snapshot in src/application/export/service.py)."
-    ),
-)
 def test_ac2_history_records_which_stale_pages_were_included(core) -> None:
     """AC1(a)/AC2(b) persisted-lineage half: the export history row must
     make the included stale pages queryable (the in-memory result does;
@@ -584,6 +582,116 @@ def test_ac2_history_records_which_stale_pages_were_included(core) -> None:
     assert persisted_stale == {stale_page_id}, (
         "the persisted export record must carry the included stale page ids"
     )
+    missing_page_id = seed.page_b.page_id  # never had a TRANSLATED render
+    persisted_missing = set(scope.get("included_missing_page_ids") or ())
+    assert persisted_missing == {missing_page_id}, (
+        "the persisted export record must carry the included missing page ids"
+    )
+
+
+def test_ac2_legacy_scope_rows_without_included_keys_stay_compatible(core, tmp_path: Path) -> None:
+    """M2-FIX-EXPORT-LINEAGE AC3: history rows written before included ids
+    were persisted (scope_snapshot_json without the two new keys) must read
+    back without error through the new code -- parsed as "no included ids
+    recorded" (empty lists), never a crash or a fabricated non-empty
+    lineage. Covers both persistence channels of pre-fix rows (the SQLite
+    row shape the old ExportService wrote, and the legacy export_history.json
+    import) plus the parse contract repeat() relies on, including the
+    corrupt-value guard."""
+    legacy_scope = json.dumps(
+        {
+            "page_ids": ["legacy-page-1", "legacy-page-2"],
+            "filenames": [FILENAME_A, FILENAME_B],
+            "mode": "translated",
+            "overwrite_policy": "overwrite",
+            "stale_policy": "continue",
+        },
+        ensure_ascii=False,
+    )
+
+    # channel 1: the exact row shape the pre-fix ExportService wrote into
+    # export_history (13 columns, no included-ids keys in the snapshot JSON)
+    core.conn.execute(
+        """
+        INSERT INTO export_history (
+            export_id, book_id, chapter_id, pipeline_run_id, export_type,
+            scope_snapshot_json, output_path, render_profile_snapshot_json,
+            status, file_hash, created_at, completed_at, detail
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            "exp-legacy-001", "book-legacy", "chapter-legacy", None, "zip",
+            legacy_scope, str(tmp_path / "legacy.zip"), "", "completed",
+            "a" * 64, "2026-01-01T00:00:00+00:00", "2026-01-01T00:00:01+00:00",
+            "row written before the included-ids fix",
+        ),
+    )
+    core.conn.commit()
+
+    row = core.export_service.find_export("exp-legacy-001")
+    assert row is not None, "the pre-fix row must survive the upgraded read path"
+    assert row.status == "completed"
+    stored_scope = json.loads(row.scope_snapshot_json)
+    assert "included_stale_page_ids" not in stored_scope, "fixture sanity: pre-fix shape"
+    assert "included_missing_page_ids" not in stored_scope, "fixture sanity: pre-fix shape"
+    parsed = _parse_scope(row.scope_snapshot_json)
+    assert parsed["page_ids"] == ["legacy-page-1", "legacy-page-2"], "legacy keys stay intact"
+    assert parsed["included_stale_page_ids"] == [], (
+        "a pre-fix row parses to an EMPTY included-stale set, not an error"
+    )
+    assert parsed["included_missing_page_ids"] == [], (
+        "a pre-fix row parses to an EMPTY included-missing set, not an error"
+    )
+
+    # channel 2: legacy JSON import of a pre-fix export_history.json.
+    # The production assembly already ran the one-time import against this
+    # data root (file missing -> "missing_empty" marker); reset the marker
+    # to reproduce the pre-upgrade state where the legacy file exists.
+    core.conn.execute(
+        "DELETE FROM application_metadata WHERE metadata_key = ?",
+        (METADATA_KEY_EXPORT_HISTORY_IMPORTED,),
+    )
+    core.conn.commit()
+    legacy_file = tmp_path / "export_history.json"
+    legacy_file.write_text(
+        json.dumps(
+            [
+                {
+                    "export_id": "exp-legacy-002",
+                    "book_id": "book-legacy",
+                    "chapter_id": "chapter-legacy",
+                    "pipeline_run_id": None,
+                    "export_type": "zip",
+                    "scope_snapshot_json": legacy_scope,
+                    "output_path": str(tmp_path / "legacy2.zip"),
+                    "render_profile_snapshot_json": "",
+                    "status": "completed",
+                    "file_hash": "",
+                    "created_at": "2026-01-01T00:00:00+00:00",
+                    "completed_at": "2026-01-01T00:00:01+00:00",
+                    "detail": "",
+                }
+            ],
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+    imported = import_legacy_export_history(core.conn, legacy_file)
+    assert imported == 1
+    imported_row = core.export_service.find_export("exp-legacy-002")
+    assert imported_row is not None
+    parsed_imported = _parse_scope(imported_row.scope_snapshot_json)
+    assert parsed_imported["included_stale_page_ids"] == []
+    assert parsed_imported["included_missing_page_ids"] == []
+
+    # corrupt-value guard: a NON-list included key is corruption, not an
+    # empty lineage -- the parse must refuse it loudly (typed ExportError)
+    for corrupt_key in ("included_stale_page_ids", "included_missing_page_ids"):
+        corrupt = json.loads(legacy_scope)
+        corrupt[corrupt_key] = "legacy-page-1"  # string instead of list
+        with pytest.raises(ExportError) as excinfo:
+            _parse_scope(json.dumps(corrupt, ensure_ascii=False))
+        assert "corrupt export scope snapshot" in str(excinfo.value)
 
 
 # ----------------------------------------------------------------------

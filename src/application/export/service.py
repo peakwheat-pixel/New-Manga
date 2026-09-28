@@ -287,7 +287,19 @@ class ExportService:
             completed_at=utc_now(),
             **result_kwargs,
         )
-        self._record(request, result, created_at, scope=_scope_snapshot(request))
+        # The completed record must carry the stale/missing pages CONTINUE
+        # actually shipped (D03 §31 lineage): the in-memory result already
+        # holds them, so they fold into the persisted scope snapshot here.
+        self._record(
+            request,
+            result,
+            created_at,
+            scope=_scope_snapshot(
+                request,
+                included_stale_page_ids=result.included_stale_page_ids,
+                included_missing_page_ids=result.included_missing_page_ids,
+            ),
+        )
         return result
 
     # ------------------------------------------------------------------
@@ -464,7 +476,12 @@ class ExportService:
             return
 
 
-def _scope_snapshot(request: ExportRequest) -> str:
+def _scope_snapshot(
+    request: ExportRequest,
+    *,
+    included_stale_page_ids: tuple[str, ...] | list[str] = (),
+    included_missing_page_ids: tuple[str, ...] | list[str] = (),
+) -> str:
     import json
 
     return json.dumps(
@@ -474,6 +491,10 @@ def _scope_snapshot(request: ExportRequest) -> str:
             "mode": request.mode,
             "overwrite_policy": request.overwrite_policy.value,
             "stale_policy": request.stale_policy.value,
+            # Which stale/missing pages CONTINUE shipped (M2-FIX-EXPORT-LINEAGE
+            # plan A); empty for scopes that never continued past a refusal.
+            "included_stale_page_ids": list(included_stale_page_ids),
+            "included_missing_page_ids": list(included_missing_page_ids),
         },
         ensure_ascii=False,
     )
@@ -488,6 +509,13 @@ def _parse_scope(snapshot_json: str) -> dict:
         raise ExportError(f"corrupt export scope snapshot: {error}") from error
     if not isinstance(value, dict) or not isinstance(value.get("page_ids"), list):
         raise ExportError("corrupt export scope snapshot")
+    # Rows written before included ids were persisted (and refusals) carry
+    # neither key: default to an empty list, never crash or fabricate.
+    # A non-list value means the snapshot is corrupt, not empty.
+    for key in ("included_stale_page_ids", "included_missing_page_ids"):
+        included = value.setdefault(key, [])
+        if not isinstance(included, list):
+            raise ExportError("corrupt export scope snapshot")
     return value
 
 
