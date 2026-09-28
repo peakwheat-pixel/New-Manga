@@ -7,7 +7,7 @@ release_state: M2_AC4_READER_LINEAGE_LIBRARY_PAGECOUNT_RELEASED
 approval: released_by_orchestrator_2026-09-28_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
 execution_approval: released_by_orchestrator_2026-09-28_goal_g2
 suggested_owner: ZCode
-owner: ZCode（待认领）
+owner: ZCode（子agent代行，用户授权 2026-09-28）
 reviewer: DeepSeek Harness
 integrator: Codex（子 agent 以 Codex 身份执行，保持 Owner≠Integrator）
 depends_on: [M2-AC3]
@@ -17,7 +17,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-AC4-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: RELEASED
+dispatch_state: CLAIMED_IN_PROGRESS
 ---
 
 # M2-AC4 — Reader Export Lineage + Library Page-count/Unknown Semantics Acceptance
