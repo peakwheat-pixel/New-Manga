@@ -17,6 +17,8 @@ releases a task.
 
 [AD-001 Target Desktop Architecture](AD-001_TARGET_DESKTOP_ARCHITECTURE.md) records the user's accepted formal target: React + TypeScript presentation, Tauri/Rust desktop shell and IPC, headless Python Core business/persistence authority, and SQLite as persistent source of truth. M2 first wave M2-I1, M2-I2, M2-R1 and M2-UI1 is complete and integrated. The existing PySide6/QML application may remain operational during migration, but its PyInstaller Windows Release Gate is historical and no longer defines future formal product release acceptance.
 
+**New-architecture-only directive（2026-09-28；用户裁决）**：后续 Task、问题诊断、修复与验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构上登记和执行。PySide6/QML 代码、测试、Task 与 verification 只保留为历史证据，不再释放 Legacy 实现、诊断或修复工作；旧架构问题若仍对应目标产品行为，必须改写为 M2 新架构需求，并在新架构路径复现、解决和验收。此前仅为 planning recommendation 的 `DIAG-LEGACY-QML-IMPORT-ENTRY-001` 已撤销，未曾释放。
+
 **M2 — Desktop Architecture Migration: FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION.** User authorization on 2026-09-25 releases only the four Tasks below from the verified local `master` base `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` after Codex non-author [Review](reviews/M2-D1-0a27a54.md) `approved` and integration `100abfb`. Its [report](research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md) supplies the first-wave evidence. AD-001 remains the fixed React + TypeScript / Tauri / Python Core / SQLite target. Migration is incremental; the existing PySide6/QML application may remain operational during transition, but its PyInstaller Release Gate is retired as the future formal release gate.
 
 | First-wave Task | Status / Owner / Reviewer | Write authority and boundary |
@@ -68,16 +70,15 @@ These are requirements carried forward for M2 acceptance planning. Only a row li
 | Real docTR-weight success qualification | `CORE_REQUIREMENT` | Deferred execution until controlled weights, environment and quality criteria are available. |
 | Cold-start metrics, target Windows support matrix, GUI console policy and packaged dependency closure | `DEFERRED` | Decide and verify in a future M2 Release Gate/D08; do not inherit the Legacy results. |
 
-### Separate diagnostic candidates (not released)
+### Separate M2 diagnostic candidate (not released)
 
-These are independent diagnosis recommendations from the M2-AC1 Review, **not** rows in or releases from the M2 Acceptance Backlog. No Task file, implementation branch, or product-code authorization is created yet.
+This is an independent new-architecture diagnosis recommendation from the M2-AC1 Review, **not** a row in or release from the M2 Acceptance Backlog. No Task file, implementation branch, or product-code authorization is created yet.
 
 | Candidate | Scope and evidence | Suggested Owner |
 |---|---|---|
-| `DIAG-LEGACY-QML-IMPORT-ENTRY-001` — Legacy QML import-entry failure root-cause diagnosis | Reproduce the two failures in `tests/ui_shell/test_repair13_import_entry.py` and trace why QML viewmodel context values are null (`ChapterList.qml`, `BookDetailPanel.qml`, `BookshelfToolbar.qml`); prior control run reproduced them without M2-AC1 changes. Diagnose only; any fix needs a later Task. | Qoder (QML/UI); non-author Reviewer to be set on release. |
-| `DIAG-M2-REGIONLESS-LOCK-CHANGED-001` — regionless planner lock-change diagnosis | Reproduce the production regionless `detect → backfill → ocr` path ending in `LOCK_CHANGED`; trace the planner's OCR `input_refs` snapshot and lock/version comparison. M2-AC1 pre-seeds a Region and does not cover this path. Diagnose only; any fix needs a later Task. | DeepSeek Harness (Python planner diagnosis); non-author Reviewer to be set on release. |
+| `DIAG-M2-REGIONLESS-LOCK-CHANGED-001` — regionless planner lock-change diagnosis | Reproduce the M2 Python Core regionless `detect → backfill → ocr` path ending in `LOCK_CHANGED`; trace the planner's OCR `input_refs` snapshot and lock/version comparison through the new Tauri/Python Core flow. M2-AC1 pre-seeds a Region and does not cover this path. Diagnose only; any fix needs a later M2 Task. | DeepSeek Harness (Python Core planner diagnosis); non-author Reviewer to be set on release. |
 
-Both candidates remain **planning only / NOT_RELEASED**. At a later release, Codex must assign a base, branch, worktree, allowed paths, Owner, Reviewer and concrete verification before implementation can start.
+The candidate remains **planning only / NOT_RELEASED**. At a later release, Codex must assign a base, branch, worktree, allowed paths, Owner, Reviewer and concrete verification before implementation can start.
 
 The detailed AC and Qoder finding matrix is in the [Legacy Closure Audit](../verification/T3.2.1/legacy-closure-audit-20260926.md).
 
@@ -263,7 +264,7 @@ M2-D1 / M2-I1 / M2-I2 / M2-R1 / M2-UI1 = integrated; ancestry verified at base 7
   -> M2-S3 probe done at merge 6799c73a; S1-B1 PASS within documented boundaries; product resource-channel runtime Task separately released as M2-RC1
   -> M2-RC1 done at merge 3a246840; round-4 DSH approve @2f6a31cd; all Codex command-level integration checks passed; Contract blob fc359138 unchanged; product security/packaging claims remain gated
   -> M2-RC2 done at merge 88f972fe; DSH FIX review approved; S1-B3/B6/B8=NOT_RUN, S1-B5=UNVERIFIED
-  -> M2-AC1 done at Codex merge f162193b (2026-09-28): fixed base 7db0e7b6; bounded deterministic Mock/Local -> SQLite save -> process restart/recovery -> Reader -> PNG export acceptance; separate Legacy QML and regionless-planner diagnosis candidates remain NOT_RELEASED
+  -> M2-AC1 done at Codex merge f162193b (2026-09-28): fixed base 7db0e7b6; bounded deterministic Mock/Local -> SQLite save -> process restart/recovery -> Reader -> PNG export acceptance; M2 regionless-planner diagnosis candidate remains NOT_RELEASED; Legacy QML candidate withdrawn by user directive
   -> Separate Legacy DIAG-READING-EXPORT-001 done at merge e0a0e784 (2026-09-28, proxy Codex review+integration): 15/15 matrix NOT_REPRODUCED, both mechanisms probe-reproduced
   -> DIAG FIX-A done at integration a8b94df1 (2026-09-28, overnight directive): DSH dual-round review r2 approved; test-wait semantics; FIX-B released serially
   -> DIAG FIX-B done at integration 9c9c9087 (2026-09-28, overnight directive): DSH three-round review r3 approved; typed heartbeat-error handling + teardowns; leak probe 7/7 LEAK CLOSED

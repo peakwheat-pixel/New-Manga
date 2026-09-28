@@ -9,6 +9,8 @@ graph, acceptance boundaries and historical Task audit live in
 
 [M2 — Desktop Architecture Migration](REBASELINE_PLAN.md#architecture-decision-and-future-migration-registration) 为 FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION；M2 首波、[M2-RC2](tasks/M2-RC2.md) F-03/F-05 切片与 successor [M2-AC1](tasks/M2-AC1.md) 均已集成。M2-RC1 merge=`3a246840`；M2-RC2 integration=`88f972fe`；M2-AC1 Codex merge=`f162193b`（base=`7db0e7b6`，Owner=`51f70ed1`，DSH r4 static Review=`approved` @`d102bf70`）。M2-AC1 集成复跑 pytest 4、Cargo 26、Vitest 19、E2E 45/45 及全仓 pytest 1316 passed/11 skipped，全部 EXIT=0；F-008 仅追认 9 个测试模式 Tauri ACL 机制文件。其他 M2 Acceptance Backlog 行仍未登记。Contract 1.1 blob=`fc359138` 未变；S1-B3/B6/B8=`NOT_RUN`、S1-B5=`UNVERIFIED`，产品级安全/打包声明仍受限。S1-B1=`PASS` 仅限单宿主/Rust 模拟表/一次性 body/非打包探针。T3.2.1 为 closed_with_limitations / SUPERSEDED_BY_M2。独立 Legacy reliability 诊断 [DIAG-READING-EXPORT-001](tasks/DIAG-READING-EXPORT-001.md) 已 `done`（integration=`e0a0e784`）；症状 A 修复 [FIX-A](tasks/DIAG-READING-EXPORT-001-FIX-A.md) `done`（integration=`a8b94df1`，DSH r2 approved，测试等待语义）；症状 B 修复 [FIX-B](tasks/DIAG-READING-EXPORT-001-FIX-B.md) `done`（`9c9c9087`）；生产接线 [FIX-C](tasks/DIAG-READING-EXPORT-001-FIX-C.md) `done`（`0f2e9e31`，DSH r6 approved，零 QML）。
 
+自 2026-09-28 用户裁决起，后续 Task、缺陷和验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构推进。Legacy PySide6/QML 台账只作历史追溯，不再生成工作项；相关产品行为统一转写为 M2 需求。
+
 ## Current order
 
 1. **T1.1.2, T1.1.1, T1.2.1, T2.1.1, T2.2.1, T3.1.1**: verified complete; fixed commits and evidence are in the authoritative Plan.
@@ -22,12 +24,11 @@ graph, acceptance boundaries and historical Task audit live in
 9. **[M2-RC2 — Resource Channel Command Surface and Sidecar Boundary Hardening](tasks/M2-RC2.md)**：done；base=`22a2c2bf`，FIX/reviewed head=`eac5cb3e`，DSH Review=approved，Codex integration=`88f972fe`；Codex 集成复验及 SHA256 导入清单见 [integration record](../verification/M2-RC2/integration-88f972fe/integration.md)。
 10. **[M2-AC1 — end-to-end acceptance on the M2 baseline](tasks/M2-AC1.md)**：`done`；fixed base=`7db0e7b6`，Owner tip=`51f70ed1`，DSH r4 `approved` @`d102bf70`（静态），Codex merge=`f162193b`。Codex 独立复跑 Core/Cargo/Vitest/E2E 全通过；[integration evidence](../verification/M2-AC1/integration-51f70ed1/integration.md)。
 
-### Unreleased diagnostic candidates
+### Unreleased M2 diagnostic candidate
 
-These are planning recommendations only; neither candidate grants implementation scope. See [authoritative candidate details](REBASELINE_PLAN.md#separate-diagnostic-candidates-not-released).
+This is a planning recommendation only and grants no implementation scope. See [authoritative candidate details](REBASELINE_PLAN.md#separate-m2-diagnostic-candidate-not-released).
 
-- `DIAG-LEGACY-QML-IMPORT-ENTRY-001`: diagnose two `test_repair13_import_entry.py` failures and null QML viewmodel context; suggested Owner=Qoder.
-- `DIAG-M2-REGIONLESS-LOCK-CHANGED-001`: diagnose the regionless planner path ending in `LOCK_CHANGED`; suggested Owner=DeepSeek Harness.
+- `DIAG-M2-REGIONLESS-LOCK-CHANGED-001`: diagnose the M2 Tauri/Python Core regionless planner path ending in `LOCK_CHANGED`; suggested Owner=DeepSeek Harness.
 
 Separate Legacy reliability backlog：[DIAG-READING-EXPORT-001](tasks/DIAG-READING-EXPORT-001.md) 已 `done`（2026-09-28；integration=`e0a0e784`）。症状 A 修复 [FIX-A](tasks/DIAG-READING-EXPORT-001-FIX-A.md) 已 `done`（integration=`a8b94df1`；DSH 双轮 Review，R2 `approved`；测试等待语义——终态信号消费者等待信号到达，判别探针旧谓词 324/400 miss → 新谓词 0 miss + 故障注入检出）；症状 B 修复 [FIX-B](tasks/DIAG-READING-EXPORT-001-FIX-B.md) `done`（`9c9c9087`）；生产接线 [FIX-C](tasks/DIAG-READING-EXPORT-001-FIX-C.md) `done`（`0f2e9e31`；DSH 六轮 Review R6 `approved`；纯 Python bootstrap 接线：离开读者页 `closeReader` + `aboutToQuit`，零 QML）。诊断家族（DIAG+FIX-A+FIX-B+FIX-C）全部 `done`，历史 reading_export flaky 两机制均已修复；诊断 U3（真实全仓触发条件）为唯一未决知识项。集成核验：[FIX-A integration-a8b94df1](../verification/DIAG-READING-EXPORT-001-FIX-A/integration-a8b94df1/integration.md)。
 
