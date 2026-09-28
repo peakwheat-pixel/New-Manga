@@ -1,0 +1,20 @@
+=== shell: Git Bash (win32) ===
+=== cmd: TASK-012-py312 python -m pytest tests/core/test_stub_decoder.py -v (after fix) ===
+Python 3.12.3
+0f4f881a3cb83da56cf28dad85513878c772097b
+ src/bootstrap/core_service.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+2026-09-28T16:47:16Z
+---- pytest output ----
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-FIX-STUB-DECODER-zcode
+configfile: pytest.ini
+collecting ... collected 2 items
+
+tests/core/test_stub_decoder.py::test_production_stub_decoder_returns_valid_decoded_image PASSED [ 50%]
+tests/core/test_stub_decoder.py::test_stub_decoder_passthrough_any_payload_does_not_raise PASSED [100%]
+
+============================== 2 passed in 0.30s ==============================
+EXIT=0

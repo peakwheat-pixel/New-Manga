@@ -1,0 +1,71 @@
+=== shell: Git Bash (win32) ===
+=== cmd: TASK-012-py312 python -m pytest tests/core/test_stub_decoder.py -v ===
+Python 3.12.3
+0f4f881a3cb83da56cf28dad85513878c772097b
+2026-09-28T16:47:04Z
+---- pytest output ----
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-FIX-STUB-DECODER-zcode
+configfile: pytest.ini
+collecting ... collected 2 items
+
+tests/core/test_stub_decoder.py::test_production_stub_decoder_returns_valid_decoded_image FAILED [ 50%]
+tests/core/test_stub_decoder.py::test_stub_decoder_passthrough_any_payload_does_not_raise FAILED [100%]
+
+================================== FAILURES ===================================
+__________ test_production_stub_decoder_returns_valid_decoded_image ___________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-389/test_production_stub_decoder_r0')
+
+    def test_production_stub_decoder_returns_valid_decoded_image(tmp_path: Path) -> None:
+        """AC2: the decoder injected by the production assembly must decode to a
+        valid ``DecodedImage`` (real contract fields only)."""
+        core = assemble_production_core(tmp_path / "data")
+        try:
+            # CoreServices exposes the injected decoder inside the ImportImagesUseCase
+            # slot (``core.importer``); that is the production-assembled instance.
+            decoder = core.importer._decoder
+>           img = decoder.decode(b"fake")
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\core\test_stub_decoder.py:38:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <bootstrap.core_service._PassthroughImageDecoder object at 0x0000026BA1B3D5B0>
+
+    def decode(self, payload: bytes) -> DecodedImage:
+        del payload
+>       return DecodedImage(width=1, height=1, format="rgb")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: DecodedImage.__init__() got an unexpected keyword argument 'format'
+
+src\bootstrap\core_service.py:54: TypeError
+__________ test_stub_decoder_passthrough_any_payload_does_not_raise ___________
+
+    def test_stub_decoder_passthrough_any_payload_does_not_raise() -> None:
+        """Passthrough semantics: decode never raises and always returns a valid
+        DecodedImage, regardless of payload."""
+        decoder = _PassthroughImageDecoder()
+        for payload in (b"fake", b"", b"\x00\xff\x10" * 32, b"not an image at all"):
+>           img = decoder.decode(payload)
+                  ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\core\test_stub_decoder.py:54:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <bootstrap.core_service._PassthroughImageDecoder object at 0x0000026BA1B3E450>
+
+    def decode(self, payload: bytes) -> DecodedImage:
+        del payload
+>       return DecodedImage(width=1, height=1, format="rgb")
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: DecodedImage.__init__() got an unexpected keyword argument 'format'
+
+src\bootstrap\core_service.py:54: TypeError
+=========================== short test summary info ===========================
+FAILED tests/core/test_stub_decoder.py::test_production_stub_decoder_returns_valid_decoded_image
+FAILED tests/core/test_stub_decoder.py::test_stub_decoder_passthrough_any_payload_does_not_raise
+============================== 2 failed in 0.91s ==============================
+EXIT=1
