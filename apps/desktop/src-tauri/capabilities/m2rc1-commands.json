@@ -7,6 +7,8 @@
     "allow-issue-resource-url",
     "allow-revoke-ref",
     "allow-revoke-resource-refs",
+    "allow-core-ping",
+    "allow-library-list-books",
     "allow-probe-config",
     "allow-probe-write-results",
     "allow-probe-exit",

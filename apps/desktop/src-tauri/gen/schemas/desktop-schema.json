@@ -195,10 +195,22 @@
           "markdownDescription": "Enables the ac1_write_results command without any pre-configured scope."
         },
         {
+          "description": "Enables the core_ping command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-core-ping",
+          "markdownDescription": "Enables the core_ping command without any pre-configured scope."
+        },
+        {
           "description": "Enables the issue_resource_url command without any pre-configured scope.",
           "type": "string",
           "const": "allow-issue-resource-url",
           "markdownDescription": "Enables the issue_resource_url command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the library_list_books command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-library-list-books",
+          "markdownDescription": "Enables the library_list_books command without any pre-configured scope."
         },
         {
           "description": "Enables the probe_config command without any pre-configured scope.",
@@ -255,10 +267,22 @@
           "markdownDescription": "Denies the ac1_write_results command without any pre-configured scope."
         },
         {
+          "description": "Denies the core_ping command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-core-ping",
+          "markdownDescription": "Denies the core_ping command without any pre-configured scope."
+        },
+        {
           "description": "Denies the issue_resource_url command without any pre-configured scope.",
           "type": "string",
           "const": "deny-issue-resource-url",
           "markdownDescription": "Denies the issue_resource_url command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the library_list_books command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-library-list-books",
+          "markdownDescription": "Denies the library_list_books command without any pre-configured scope."
         },
         {
           "description": "Denies the probe_config command without any pre-configured scope.",

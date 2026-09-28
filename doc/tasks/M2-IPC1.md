@@ -2,7 +2,7 @@
 id: M2-IPC1
 title: Production Core Lifecycle + Read-only Library Vertical Slice
 kind: implementation
-status: ready
+status: delivered
 release_state: M2_IPC1_PRODUCTION_CORE_LIBRARY_RELEASED
 approval: approved_by_user_2026-09-28_m2ipc1_release
 execution_approval: approved_by_user_2026-09-28_m2ipc1_release
@@ -14,7 +14,7 @@ depends_on: [M2-P1, M2-RC2, M2-AC1]
 base_commit: a54bb8c92faefa90f4077e7ac2bb000f6b6712fd
 branch: agent/antigravity/M2-IPC1-production-core-library
 worktree: G:/CODEX/New Manga.worktrees/M2-IPC1-agy
-dispatch_state: AWAITING_DISPATCH
+dispatch_state: DELIVERED
 ---
 
 # M2-IPC1 — Production Core Lifecycle + Read-only Library Vertical Slice
@@ -48,11 +48,11 @@ Owner=Antigravity；非作者 Reviewer=DeepSeek Harness；Integrator=Codex（当
 
 ## Acceptance Criteria
 
-- [ ] **AC1 — Core sidecar：** 新增 `src/bootstrap/core_service.py`：完成应用装配后进入 stdio 请求循环；实现 `core.ping` / `ListBooks` / `core.shutdown` 三命令；envelope 与 Seam 冻结 §2 逐条一致（版本拒绝、未知命令、错误互斥 `result=null XOR error!=null`）；错误经 `ErrorEnvelope` 形状输出且无 traceback/路径泄漏。
-- [ ] **AC2 — Rust production 通道：** 新增 `library_bridge.rs`（或等价泛化，不得破坏既有 `core_bridge.rs` 资源语义）+ production invoke `core_ping` / `library_list_books`；spawn/EOF/超时行为符合 Seam 冻结 §4；三视图同步（§6）；probe/ac1 面零变化；`cargo test` 通过（含 Mock channel round-trip 与 allowlist pin 更新）。
-- [ ] **AC3 — React 只读竖切：** 前端新增 Library 只读面板（新组件 + `App.tsx` 挂载）：调用 `library_list_books` 渲染 `BookSummary[]`（空态与 `CORE_UNAVAILABLE` 不可用态必须有明确 UI 呈现）；`vitest` 通过（client 单测 + 组件测试至少覆盖成功/空/不可用三态）。
-- [ ] **AC4 — 端到端判别：** 至少一条真实进程链测试（Python 侧 round-trip 或 Rust 集成测试）：真实 spawn `$py -m bootstrap.core_service`（临时 SQLite：0 本书 → `[]`；seed 1 本书 → 1 条 DTO 字段完整），并用坏 version 请求验证 `PROTOCOL_VERSION_UNSUPPORTED`。
-- [ ] **AC5 — 证据纪律：** 全部命令记录 shell、解释器/工具链、HEAD、EXIT；提交 Handoff 与 delivery head；`git diff --check <base>..<delivery-head>` exit 0。
+- [x] **AC1 — Core sidecar：** 新增 `src/bootstrap/core_service.py`：完成应用装配后进入 stdio 请求循环；实现 `core.ping` / `ListBooks` / `core.shutdown` 三命令；envelope 与 Seam 冻结 §2 逐条一致（版本拒绝、未知命令、错误互斥 `result=null XOR error!=null`）；错误经 `ErrorEnvelope` 形状输出且无 traceback/路径泄漏。（依据：`tests/core/test_core_service.py` 覆盖纯函数分发与互斥，pytest PASS）
+- [x] **AC2 — Rust production 通道：** 新增 `library_bridge.rs`（或等价泛化，不得破坏既有 `core_bridge.rs` 资源语义）+ production invoke `core_ping` / `library_list_books`；spawn/EOF/超时行为符合 Seam 冻结 §4；三视图同步（§6）；probe/ac1 面零变化；`cargo test` 通过（含 Mock channel round-trip 与 allowlist pin 更新，30 passed）。
+- [x] **AC3 — React 只读竖切：** 前端新增 Library 只读面板（新组件 + `App.tsx` 挂载）：调用 `library_list_books` 渲染 `BookSummary[]`（空态与 `CORE_UNAVAILABLE` 不可用态必须有明确 UI 呈现）；`vitest` 通过（client 单测 + 组件测试覆盖成功/空/不可用三态，28 passed）。
+- [x] **AC4 — 端到端判别：** 至少一条真实进程链测试（Python 侧 round-trip 或 Rust 集成测试）：真实 spawn `$py -m bootstrap.core_service`（临时 SQLite：0 本书 → `[]`；seed 1 本书 → 1 条 DTO 字段完整），并用坏 version 请求验证 `PROTOCOL_VERSION_UNSUPPORTED`。（依据：`tests/core/test_core_service.py::test_real_subprocess_e2e_round_trip` PASS）
+- [x] **AC5 — 证据纪律：** 全部命令记录 shell、解释器/工具链、HEAD、EXIT；提交 Handoff 与 delivery head；`git diff --check <base>..<delivery-head>` exit 0。（依据：`verification/M2-IPC1/verification-results.md` 全覆盖）
 
 ## 允许修改范围
 

@@ -21,6 +21,8 @@ fn main() {
             "issue_resource_url",
             "revoke_ref",
             "revoke_resource_refs",
+            "core_ping",
+            "library_list_books",
             "probe_config",
             "probe_write_results",
             "probe_exit",
