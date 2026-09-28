@@ -1,22 +1,23 @@
 ---
 id: M2-FIX-EXPORT-LINEAGE
-title: Export history 持久层补 included_stale/missing page ids（F-1 修复候选）
+title: Export history 持久层补 included_stale/missing page ids（F-1 修复）
 kind: fix
-status: proposed
-release_state: NOT_RELEASED
-approval: null
+status: ready
+release_state: M2_FIX_EXPORT_LINEAGE_RELEASED
+approval: released_by_orchestrator_2026-09-29_goal_g2 (Codex 代行,用户授权 2026-09-28;代理裁决,用户可撤销)
+execution_approval: released_by_orchestrator_2026-09-29_goal_g2
 suggested_owner: ZCode
-owner: null
+owner: ZCode（待认领）
 reviewer: DeepSeek Harness
-integrator: Codex（届时新会话代行）
+integrator: Codex（另一子 agent 以 Codex 身份执行，保持 Owner≠Integrator）
 depends_on: [M2-AC4]
-base_commit: null
-branch: null
-worktree: null
+base_commit: 8b0d9040
+branch: agent/zcode/M2-FIX-EXPORT-LINEAGE
+worktree: G:/CODEX/New Manga.worktrees/M2-FIX-EXPORT-LINEAGE-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: NOT_RELEASED
+dispatch_state: RELEASED
 ---
 
 # M2-FIX-EXPORT-LINEAGE — Export history 持久层 included_stale/missing page ids 修复
@@ -42,30 +43,32 @@ dispatch_state: NOT_RELEASED
 - 必要时导出 DTO 与前端展示
 - `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py`（xfail 移除与断言转 PASS，见 AC）
 
-**方案取舍（释放时冻结，二选一）**：
-- **方案 A（低成本）**：`scope_snapshot_json` 内加 `included_stale_page_ids`/`included_missing_page_ids` 键。`_parse_scope`（`service.py:482-491`）只校验 `page_ids` 是 list，加键向后兼容，旧行解析无歧义。
-- **方案 B（强契约）**：独立列 + migration，可查询性更好但触碰 schema；按仓库 migration 纪律（版本号 + checksum）补齐。
+**方案取舍（2026-09-29 释放时由编排会话冻结，代理裁决，用户可撤销）**：**采用方案 A**——`scope_snapshot_json` 内加 `included_stale_page_ids`/`included_missing_page_ids` 键。理由：`_parse_scope`（`service.py:482-491`）只校验 `page_ids` 是 list，加键向后兼容、旧行解析无歧义；不触碰 schema migration 纪律；方案 B 的可查询性收益当前无命令面消费者。**若实现中发现方案 A 不可行必须动 schema，停下登记 FAIL/BLOCKED 证据，不得擅自升级为方案 B**（那是范围变更）。
 
-**per-page revision 范围裁定（DSH r1 P2-3，释放时必须显式裁定）**：记录里也没有 per-page 导出 revision/内容指纹（`_scope_snapshot` 无、schema 无）。AC1(a) 原文「页 scope（book/chapter/page **版本**）」若解释为含 revision，则仅补 included ids 仍无法从历史行复原「那次导出实际用了哪一版渲染」。释放时必须裁定：本 Task 是否包含 per-page revision 字段，还是拆独立 Task。
+**per-page revision 范围裁定（DSH r1 P2-3，2026-09-29 冻结）**：**拆出本 Task 范围**——per-page 导出 revision/内容指纹需要触达导出执行路径抓取 revision 信息，范围显著更大，登记为未来独立候选（登记与否留 planning），本 Task 仅补 included ids。
 
-## Acceptance Criteria（释放时冻结为正式 AC）
+**并发风险评估（DSH r1 P3-7，2026-09-29 冻结）**：`reading_export.py:176-240` write 的 read-modify-write + `DELETE … NOT IN` 并发互删问题**不在本 Task 修复范围**（既有问题、非本修复引入），Owner 在验证记录中做评估留痕即可，修复另立候选。
 
-1. **核心**：移除 `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py` 中 `test_ac2_history_records_which_stale_pages_were_included` 的 `@pytest.mark.xfail`（`strict=True`）标记，断言转 PASS；**XPASS 一旦出现即处理**（先证实修复再移除标记，不留「意外通过」）。
-2. 补 legacy 前向兼容断言：schema 变更后，变更前写入的旧 history 行（无新键/新列）经新代码读取解析不报错、语义为「无 included ids 记录」而非崩溃或伪造。
-3. 若选方案 B：按仓库 migration 纪律补版本号 + checksum。
-4. 回归 `tests/m2_acceptance -q` 保持既有场景全绿（修复后该套件应为 33 passed + 1 xfailed——仅剩 F-2 xfail——或按届时状态如实记录）。
-5. 并发风险评估（DSH r1 P3-7）：`src/infrastructure/sqlite/reading_export.py:176-240` 的 `write` 是 read-modify-write + `DELETE … NOT IN (active_ids)`，并发导出会互相删除记录；本修复触碰同一函数，释放时一并评估是否同期修复或登记独立缺陷。
+## Acceptance Criteria（2026-09-29 释放时冻结为正式 AC）
 
-## 允许修改范围（释放时冻结）
+- [ ] **AC1 — 方案 A 落地：** `_scope_snapshot` 序列化新增 `included_stale_page_ids`/`included_missing_page_ids` 键（CONTINUE 放行时非空；ABORT 拒绝场景「零任何记录」语义不变）；`_record` 落库经 `scope_snapshot_json` 携带新键；`_parse_scope` 解析兼容（新键缺省为空、类型校验 list）。`ExportRecord`/读取路径（`reading_export.py` SELECT/INSERT/legacy import）如需映射同步补齐——**以最小变更为限，不新增列、不动 schema.py**。
+- [ ] **AC2 — xfail 移除转 PASS：** 移除 `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py` 中 `test_ac2_history_records_which_stale_pages_were_included` 的 `@pytest.mark.xfail`（strict）标记，断言转 PASS；**先证实修复再移除标记**（修复前该测试证红留痕）；XPASS 一旦出现即处理，不留「意外通过」。
+- [ ] **AC3 — legacy 前向兼容：** 新增断言：变更前写入的旧 history 行（`scope_snapshot_json` 无新键）经新代码读取解析不报错、语义为「无 included ids 记录」而非崩溃或伪造。
+- [ ] **AC4 — 回归如实：** `tests/m2_acceptance -q` 修复后预期 **33 passed + 1 xfailed**（仅剩 F-2 xfail）；如实际数字不同，如实记录原因。既有其余测试面（tests/core 等）零回归。
+- [ ] **AC5 — 证据纪律：** 命令日志带 shell、解释器、固定 HEAD、EXIT；P3-7 并发评估留痕；`git diff --check <base>..<delivery-head>` exit 0；范围自检仅落允许路径。
 
-- 上列触点文件 + `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py`（**显式含对应 `@pytest.mark.xfail` 的移除与断言转 PASS**——这是 DSH r1 §5 承接条件，修复 Task 必须授权该测试文件）
+## 允许修改范围（2026-09-29 冻结）
+
+- `src/application/export/service.py`（`_record`/`_scope_snapshot`/`_parse_scope`/`ExportRecord` 映射）
+- `src/infrastructure/sqlite/reading_export.py`（SELECT/INSERT/legacy import 的 scope_snapshot 映射，**不新增列**）
+- `tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py`（**显式授权**：F-1 xfail 移除转 PASS + legacy 兼容新增断言；其余场景断言不改语义）
 - `doc/tasks/M2-FIX-EXPORT-LINEAGE.md`、`verification/M2-FIX-EXPORT-LINEAGE/**`、`doc/handoffs/M2-FIX-EXPORT-LINEAGE-*.md`
 
 ## 禁止范围
 
-- **未释放禁止实施**（status=proposed / NOT_RELEASED）。
+- `src/infrastructure/sqlite/schema.py`（方案 A 不动 schema；发现必须动 schema 即停下登记，不得擅自升级方案 B）、per-page revision 字段（已裁定拆出）、并发 write 修复（P3-7 只评估）。
 - 不得顺手把「导出失败留 failed 记录」等 accepted-but-unspecified 语义一起改：被拒导出零任何记录是 D03 §31 语义澄清事项（M2-AC4 Handoff 已披露），应单独裁定。
-- 不修改与 F-1 无关的 IPC 契约、Library page-count 面（归 M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN）。
+- 不修改与 F-1 无关的 IPC 契约、Library page-count 面（归 M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN，仍 proposed/NOT_RELEASED）；不修改 F-2 xfail 场景；不修改其他 src 路径、apps/**、doc/contracts/**、依赖。
 
 ## 交付与运行记录
 
