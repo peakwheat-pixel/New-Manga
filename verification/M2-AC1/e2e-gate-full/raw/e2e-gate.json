@@ -1,6 +1,6 @@
 {
-  "implementation_commit": "7d157858f570fa6399073d0419b0adba6d13ee0f",
-  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac1-e2e-1nmofcpq",
+  "implementation_commit": "5a59ddfeb6ddac1f846ec03bc570a687191f255d",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac1-e2e-w4mwv3jg",
   "runner_executable": "G:\\CODEX\\New Manga.task-envs\\TASK-012-py312\\Scripts\\python.exe",
   "scenarios": [
     {
@@ -107,7 +107,7 @@
       "id": "sample-a-run1-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/113205.442:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/113921.140:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -129,7 +129,7 @@
       "id": "sample-a-run2-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/113206.797:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/113921.641:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -143,16 +143,16 @@
     {
       "id": "sample-a-restart-desktop-pid-differs",
       "observed": {
-        "run1": 37484,
-        "run2": 40356
+        "run1": 32248,
+        "run2": 30700
       },
       "status": "PASS"
     },
     {
       "id": "sample-a-restart-core-pid-differs",
       "observed": {
-        "run1": 45288,
-        "run2": 44248
+        "run1": 32408,
+        "run2": 30572
       },
       "status": "PASS"
     },
@@ -251,7 +251,7 @@
       "id": "sample-b-run1-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/113208.247:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/113922.837:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -273,7 +273,7 @@
       "id": "sample-b-run2-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/113208.760:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/113923.336:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -287,16 +287,16 @@
     {
       "id": "sample-b-restart-desktop-pid-differs",
       "observed": {
-        "run1": 40132,
-        "run2": 44468
+        "run1": 27816,
+        "run2": 35528
       },
       "status": "PASS"
     },
     {
       "id": "sample-b-restart-core-pid-differs",
       "observed": {
-        "run1": 40964,
-        "run2": 44544
+        "run1": 37876,
+        "run2": 29804
       },
       "status": "PASS"
     },
