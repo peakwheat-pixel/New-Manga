@@ -1,0 +1,416 @@
+{
+  "implementation_commit": "f162193b5255f06bcbbfc0d1820f38cd81f89d32",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac1-e2e-74p56hwd",
+  "runner_executable": "G:\\CODEX\\New Manga.task-envs\\TASK-012-py312\\Scripts\\python.exe",
+  "scenarios": [
+    {
+      "id": "EVN-pyside6",
+      "observed": {
+        "version": "6.11.2"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-runner-python",
+      "observed": {
+        "executable": "G:\\CODEX\\New Manga.task-envs\\TASK-012-py312\\Scripts\\python.exe",
+        "version": "3.12.3"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-cargo-resolved",
+      "observed": {
+        "path": "C:\\Users\\49745\\.cargo\\bin\\cargo.EXE"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-cargo",
+      "observed": {
+        "version": [
+          "cargo 1.98.1 (797e8a9bc 2026-08-05)"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-rustc-resolved",
+      "observed": {
+        "path": "C:\\Users\\49745\\.cargo\\bin\\rustc.EXE"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-rustc",
+      "observed": {
+        "version": [
+          "rustc 1.98.1 (48a229cea 2026-09-01)"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-node-resolved",
+      "observed": {
+        "path": "E:\\Program Files\\nodejs\\node.EXE"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-node",
+      "observed": {
+        "version": [
+          "v24.15.0"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-npm-resolved",
+      "observed": {
+        "path": "E:\\Program Files\\nodejs\\npm.CMD"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "EVN-npm",
+      "observed": {
+        "version": [
+          "12.0.1"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "BLD-frontend",
+      "observed": {
+        "exit": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "BLD-cargo",
+      "observed": {
+        "exit": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "BLD-exe-present",
+      "observed": {
+        "exe": "C:\\Users\\49745\\.codex\\worktrees\\m2-ac1-integration\\New Manga\\apps\\desktop\\src-tauri\\target\\release\\m2rc1-desktop.exe"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run1-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run1-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/124100.193:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run1-results-phase",
+      "observed": {
+        "phase": "run1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run2-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run2-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/124100.675:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-run2-results-phase",
+      "observed": {
+        "phase": "run2"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-restart-desktop-pid-differs",
+      "observed": {
+        "run1": 42860,
+        "run2": 20216
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-restart-core-pid-differs",
+      "observed": {
+        "run1": 45776,
+        "run2": 10624
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-saved-summary",
+      "observed": {
+        "pages": 2,
+        "run_status": "completed"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-mock-local-providers",
+      "observed": {
+        "providers": {
+          "ocr": "m2ac1-mock-ocr",
+          "translate": "m2ac1-mock-translate"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-reader-pages-match-saved",
+      "observed": {
+        "viewed": [
+          {
+            "index": 0,
+            "sha": "f66af60a9846"
+          },
+          {
+            "index": 1,
+            "sha": "4afc67386c25"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-restore-saved-matches-run1",
+      "observed": {
+        "run1_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ],
+        "run2_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-restore-internals-match-restored-saved",
+      "observed": {
+        "exported_sha": "4afc67386c25"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-export-png",
+      "observed": {
+        "sha": "4afc67386c25",
+        "size": 1122
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-export-png-decodes",
+      "observed": {
+        "height": 320,
+        "pixel_sha": "b191d8e5fad6",
+        "width": 240
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run1-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run1-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/124101.813:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run1-results-phase",
+      "observed": {
+        "phase": "run1"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run2-allowlist-announcement",
+      "observed": {
+        "announced": "issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run2-exit-code",
+      "observed": {
+        "exit": 0,
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/124102.325:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-run2-results-phase",
+      "observed": {
+        "phase": "run2"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-restart-desktop-pid-differs",
+      "observed": {
+        "run1": 35664,
+        "run2": 14840
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-restart-core-pid-differs",
+      "observed": {
+        "run1": 39468,
+        "run2": 18792
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-saved-summary",
+      "observed": {
+        "pages": 2,
+        "run_status": "completed"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-mock-local-providers",
+      "observed": {
+        "providers": {
+          "ocr": "m2ac1-mock-ocr",
+          "translate": "m2ac1-mock-translate"
+        }
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-reader-pages-match-saved",
+      "observed": {
+        "viewed": [
+          {
+            "index": 0,
+            "sha": "f66af60a9846"
+          },
+          {
+            "index": 1,
+            "sha": "4afc67386c25"
+          }
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-restore-saved-matches-run1",
+      "observed": {
+        "run1_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ],
+        "run2_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-restore-internals-match-restored-saved",
+      "observed": {
+        "exported_sha": "4afc67386c25"
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-export-png",
+      "observed": {
+        "sha": "4afc67386c25",
+        "size": 1122
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-export-png-decodes",
+      "observed": {
+        "height": 320,
+        "pixel_sha": "b191d8e5fad6",
+        "width": 240
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "independent-samples-identical-summaries",
+      "observed": {
+        "sample-a": [
+          "f66af60a9846",
+          "4afc67386c25"
+        ],
+        "sample-b": [
+          "f66af60a9846",
+          "4afc67386c25"
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "E2E-gate",
+      "observed": {},
+      "status": "PASS"
+    }
+  ],
+  "task": "M2-AC1",
+  "verdict": "PASS"
+}

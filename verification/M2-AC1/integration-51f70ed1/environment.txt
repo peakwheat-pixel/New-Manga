@@ -1,0 +1,5 @@
+# project Python: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+# Python: Python 3.12.3
+# Cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+# Node: v24.15.0
+# npm: 12.0.1

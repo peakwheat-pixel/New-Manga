@@ -1,0 +1,10 @@
+# shell: PowerShell 7.6.6
+# worktree: C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga
+# worktree HEAD: f162193b5255f06bcbbfc0d1820f38cd81f89d32
+# executable: E:\Program Files\nodejs\npm.ps1
+# command: npm test --prefix apps/desktop/frontend -- --run
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --run
+'vitest' is not recognized as an internal or external command,
+operable program or batch file.
+# EXIT: 1

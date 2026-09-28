@@ -1,0 +1,17 @@
+# shell: PowerShell 7.6.6
+# worktree: C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga
+# worktree HEAD: f162193b5255f06bcbbfc0d1820f38cd81f89d32
+# PYTHONUTF8: 1
+# executable: E:\Program Files\nodejs\npm.ps1
+# command: npm run build --prefix apps/desktop/frontend
+npm notice run m2rc1-frontend@0.1.0 build
+npm notice run tsc && vite build
+vite v5.4.21 building for production...
+transforming...
+✓ 32 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                  0.28 kB │ gzip:  0.21 kB
+dist/assets/index-CTP500qd.js  153.85 kB │ gzip: 49.90 kB
+✓ built in 444ms
+# EXIT: 0

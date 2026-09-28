@@ -1,0 +1,5 @@
+core acceptance EXIT=pytest-m2-acceptance EXIT=0 0
+Tauri regression EXIT=cargo-test EXIT=101 101
+React regression EXIT=vitest EXIT=1 1
+M2 E2E gate EXIT=e2e-command EXIT=2 2
+Full suite EXIT=pytest-full-suite EXIT=0 0

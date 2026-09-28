@@ -1,0 +1,9 @@
+# shell: PowerShell 7.6.6
+# worktree: C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga
+# worktree HEAD: f162193b5255f06bcbbfc0d1820f38cd81f89d32
+# PYTHONUTF8: 1
+# executable: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+# command: python -m pytest tests/m2_acceptance -q
+....                                                                     [100%]
+4 passed in 2.94s
+# EXIT: 0

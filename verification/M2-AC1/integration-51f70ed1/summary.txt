@@ -1,0 +1,7 @@
+core acceptance EXIT=0
+npm ci EXIT=0
+frontend build EXIT=0
+Tauri regression EXIT=0
+React regression EXIT=0
+M2 E2E gate EXIT=0
+Full suite EXIT=0

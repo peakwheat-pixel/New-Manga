@@ -1,0 +1,21 @@
+# shell: PowerShell 7.6.6
+# worktree: C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga
+# worktree HEAD: f162193b5255f06bcbbfc0d1820f38cd81f89d32
+# PYTHONUTF8: 1
+# executable: E:\Program Files\nodejs\npm.ps1
+# command: npm test --prefix apps/desktop/frontend -- --run
+npm notice run m2rc1-frontend@0.1.0 test
+npm notice run vitest run --run
+
+ RUN  v2.1.9 C:/Users/49745/.codex/worktrees/m2-ac1-integration/New Manga/apps/desktop/frontend
+
+ ✓ src/ac1/driver.test.ts (3 tests) 2ms
+ ✓ src/resourceChannel/client.test.ts (8 tests) 5ms
+ ✓ src/resourceChannel/commandSurface.test.ts (8 tests) 7ms
+
+ Test Files  3 passed (3)
+      Tests  19 passed (19)
+   Start at  12:39:57
+   Duration  460ms (transform 72ms, setup 0ms, collect 110ms, tests 14ms, environment 0ms, prepare 640ms)
+
+# EXIT: 0

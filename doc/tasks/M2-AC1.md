@@ -2,7 +2,7 @@
 id: M2-AC1
 title: M2-AC1 end-to-end acceptance on the M2 baseline
 kind: implementation
-status: approved
+status: done
 release_state: M2_END_TO_END_ACCEPTANCE_RELEASED
 approval: approved_by_user_2026-09-28
 execution_approval: approved_by_user_2026-09-28_explicit_task_release
@@ -13,7 +13,7 @@ depends_on: [M2-RC2]
 base_commit: 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d
 branch: agent/zcode/M2-AC1-end-to-end-acceptance
 worktree: G:/CODEX/New Manga.worktrees/M2-AC1-zcode
-integration_commit: null
+integration_commit: f162193b5255f06bcbbfc0d1820f38cd81f89d32
 ---
 
 # M2-AC1 end-to-end acceptance on the M2 baseline
@@ -55,12 +55,12 @@ Owner=ZCode（建议执行角色：`heavy_task_executor`）；非作者 Reviewer
 
 | 场景 / AC | 计划命令或步骤 | 环境与判定 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Core acceptance | `python -m pytest tests/m2_acceptance -q` | Windows；runner 与被测代码均用 TASK-012-py312 venv（Python 3.12.3，日志头记录解释器路径）；合成输入；新建专用测试集 | **PASS**（4 passed, 0 failed, EXIT 0） | [pytest-m2-acceptance.log](../../verification/M2-AC1/pytest-m2-acceptance.log) |
-| Tauri host regression（如有 Rust 改动） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | Windows；cargo 1.98.1 | **PASS**（26 passed, 0 failed, EXIT 0） | [cargo-test.log](../../verification/M2-AC1/cargo-test.log) |
-| React regression（如有前端改动） | `npm test --prefix apps/desktop/frontend -- --run` | Node v24.15.0 / npm 12.0.1；既有 lockfile | **PASS**（3 files, 19 passed, EXIT 0） | [vitest.log](../../verification/M2-AC1/vitest.log) |
-| M2 end-to-end gate | `python verification/M2-AC1/run_e2e.py`（完整构建版，最终证据） | Windows + WebView2；gate runner 与桌面/Core sidecar 均运行于 TASK-012-py312 venv（gate JSON `EVN-runner-python`/`runner_executable` 字段记录，证据↔commit 经 `implementation_commit` 绑定）；同一隔离临时数据根（%TEMP%）；未使用用户数据 | **PASS**（终版 gate GATE PASS **45 场景**，含 `EVN-pyside6` 环境门与 F-001/002/004 新增断言；r1 前 36 场景旧格式存档见 [e2e-evidence](../../verification/M2-AC1/e2e-evidence/raw/e2e-gate.json) 及其 NOTE.md；桌面/Core PID 均跨启动不同） | [e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json) |
-| 范围与 whitespace | `git diff --name-status 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>`；`git diff --check 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>` | 固定 reviewed head；逐项对照允许/禁止路径 | **PASS**（diff --check exit 0；全路径审计见 Handoff §范围审计） | Handoff / Review / Codex integration record |
-| 全仓回归（Owner 加跑） | `python -m pytest -q -p no:cacheprovider -rs` | 同 venv；验证 core_assembly 生产装配零回归 | **非本 Task 引入的 2 failed**：最终重采 `2 failed, 1320 passed, 5 skipped, EXIT 1`——失败集中在 Legacy QML 行点击测试 `tests/ui_shell/test_repair13_import_entry.py`（Task 禁改域 `tests/ui_shell/**`，与本 Task 19 路径零交集）；同一时刻在零 M2-AC1 改动的主 checkout @1347a67c 复现完全相同 2 失败（[base 对照](../../verification/M2-AC1/ui-shell-base-control-20260928.log)）；同工作区当天早些时候曾 **1322 passed / EXIT 0**（历史日志取回：`git show a74ce105:verification/M2-AC1/pytest-full-suite.log`）→ 判为会话级环境回归；失败原样保留未隐藏 | [pytest-full-suite.log](../../verification/M2-AC1/pytest-full-suite.log)（头部 NOTE）、[ui-shell-base-control-20260928.log](../../verification/M2-AC1/ui-shell-base-control-20260928.log) |
+| Core acceptance | `python -m pytest tests/m2_acceptance -q` | Windows；runner 与被测代码均用 TASK-012-py312 venv（Python 3.12.3）；合成输入 | **Owner 4 passed；Codex 独立复跑 4 passed, 0 skipped, EXIT 0** | [Owner log](../../verification/M2-AC1/pytest-m2-acceptance.log)；[Codex log](../../verification/M2-AC1/integration-51f70ed1/pytest-m2-acceptance.log) |
+| Tauri host regression | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | Windows；cargo 1.98.1 | **Owner 26 passed；Codex 独立复跑 26 passed, 0 failed, EXIT 0** | [Owner log](../../verification/M2-AC1/cargo-test.log)；[Codex log](../../verification/M2-AC1/integration-51f70ed1/cargo-test.log) |
+| React regression | `npm test --prefix apps/desktop/frontend -- --run` | Node v24.15.0 / npm 12.0.1；既有 lockfile | **Owner 19 passed；Codex 独立复跑 3 files, 19 passed, EXIT 0** | [Owner log](../../verification/M2-AC1/vitest.log)；[Codex log](../../verification/M2-AC1/integration-51f70ed1/vitest.log) |
+| M2 end-to-end gate | `python verification/M2-AC1/run_e2e.py` | Windows + WebView2；TASK-012-py312 Python 3.12.3；隔离临时数据根；未使用用户数据 | **Owner PASS 45 场景；Codex 独立复跑 45/45 PASS, EXIT 0**；Codex gate 的 `implementation_commit=f162193b`，两个样本的 desktop/Core PID 均跨启动变化，结果、Reader 与 PNG 摘要一致 | [Owner gate](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json)；[Codex gate、原始运行数据与日志](../../verification/M2-AC1/integration-51f70ed1/integration.md) |
+| 范围与 whitespace | `git diff --name-status 7db0e7b6..51f70ed1`；`git diff --check 7db0e7b6..51f70ed1`；`git diff --check 1347a67c..f162193b` | 固定 Owner tip 和 Codex merge；对照 allowed/forbidden paths | **PASS**：108 个 Owner delta 路径，99 个位于原 Task 允许面，F-008 追认 9 个 ACL 机制文件，未解释越界 0；两个 `diff --check` EXIT 0 | [Codex integration record](../../verification/M2-AC1/integration-51f70ed1/integration.md) |
+| 全仓回归（Owner 加跑及 Codex 集成复跑） | `python -m pytest -q -p no:cacheprovider -rs` | 同 venv；全仓结果，不用于外推 M2 产品级覆盖 | Owner run：`2 failed, 1320 passed, 5 skipped, EXIT 1`，同一时刻在无 M2-AC1 改动的主 checkout 复现该 Legacy QML 失败；Codex integration run：**1316 passed, 11 skipped, 1 warning, EXIT 0**，两失败未复现。skip 来源（docTR 2 / OpenSSL 6 / numpy 1 / torch 2）逐项列在 Codex 日志，不计为通过 | [Owner full-suite log](../../verification/M2-AC1/pytest-full-suite.log)；[Owner base control](../../verification/M2-AC1/ui-shell-base-control-20260928.log)；[Codex full-suite log](../../verification/M2-AC1/integration-51f70ed1/pytest-full-suite.log) |
 
 只运行实际有改动的语言套件；E2E 与范围 Gate 必须执行。工具或环境不可用时写 `BLOCKED` / `NOT_RUN`，不可从 unit tests 推断端到端 PASS。
 
@@ -72,6 +72,6 @@ Owner=ZCode（建议执行角色：`heavy_task_executor`）；非作者 Reviewer
 
 ## 交付与运行记录
 
-- 状态：`approved`；Owner=ZCode（`heavy_task_executor`），DeepSeek Harness 非作者 Review r4=`approved`，Codex 集成复跑待完成。
+- 状态：`done`；Owner=ZCode（`heavy_task_executor`），DeepSeek Harness 非作者 Review r4=`approved`，Codex integration merge=`f162193b5255f06bcbbfc0d1820f38cd81f89d32`。
 - Owner Handoff：[M2-AC1-zcode-delivery-20260928](../handoffs/M2-AC1-zcode-delivery-20260928.md)；复审链及逐轮处置见 Handoff 与 `verification/M2-AC1/review-dsh-r*-disposition.md`。
-- 释放证据：[release-7db0e7b6](../../verification/M2-AC1/release-7db0e7b6.md)。Owner branch/worktree 按冻结路径保留；集成验证与 `integration_commit` 由 Codex 独立记录。
+- 释放证据：[release-7db0e7b6](../../verification/M2-AC1/release-7db0e7b6.md)；独立集成核验：[integration-51f70ed1](../../verification/M2-AC1/integration-51f70ed1/integration.md)。Owner branch/worktree 按冻结路径保留；无后续 Owner 侧操作。

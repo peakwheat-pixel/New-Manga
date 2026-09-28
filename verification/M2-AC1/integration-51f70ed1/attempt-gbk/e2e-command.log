@@ -1,0 +1,41 @@
+# shell: PowerShell 7.6.6
+# worktree: C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga
+# worktree HEAD: f162193b5255f06bcbbfc0d1820f38cd81f89d32
+# executable: G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+# command: python verification/M2-AC1/run_e2e.py
+Exception in thread Thread-9 (_readerthread):
+Traceback (most recent call last):
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 1599, in _readerthread
+    buffer.append(fh.read())
+                  ^^^^^^^^^
+UnicodeDecodeError: 'gbk' codec can't decode byte 0x93 in position 58: illegal multibyte sequence
+lab: C:\Users\49745\AppData\Local\Temp\m2ac1-e2e-y__j4k2u
+[0] environment
+  [PASS] EVN-pyside6: {"version": "6.11.2"}
+  [PASS] EVN-runner-python: {"executable": "G:\\CODEX\\New Manga.task-envs\\TASK-012-py312\\Scripts\\python.exe", "version": "3.12.3"}
+  [PASS] EVN-cargo-resolved: {"path": "C:\\Users\\49745\\.cargo\\bin\\cargo.EXE"}
+  [PASS] EVN-cargo: {"version": ["cargo 1.98.1 (797e8a9bc 2026-08-05)"]}
+  [PASS] EVN-rustc-resolved: {"path": "C:\\Users\\49745\\.cargo\\bin\\rustc.EXE"}
+  [PASS] EVN-rustc: {"version": ["rustc 1.98.1 (48a229cea 2026-09-01)"]}
+  [PASS] EVN-node-resolved: {"path": "E:\\Program Files\\nodejs\\node.EXE"}
+  [PASS] EVN-node: {"version": ["v24.15.0"]}
+  [PASS] EVN-npm-resolved: {"path": "E:\\Program Files\\nodejs\\npm.CMD"}
+  [PASS] EVN-npm: {"version": ["12.0.1"]}
+[2a] frontend build (npm run build)
+Traceback (most recent call last):
+  File "C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga\verification\M2-AC1\run_e2e.py", line 507, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga\verification\M2-AC1\run_e2e.py", line 431, in main
+    if not build_frontend(gate) or not build_host(gate, exe):
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\49745\.codex\worktrees\m2-ac1-integration\New Manga\verification\M2-AC1\run_e2e.py", line 146, in build_frontend
+    completed.stdout + completed.stderr, encoding="utf-8"
+    ~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~
+TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'
+# EXIT: 1
+# artifact copy: BLOCKED (runner did not report an evidence directory)

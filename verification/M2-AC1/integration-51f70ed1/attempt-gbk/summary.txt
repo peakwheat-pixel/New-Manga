@@ -1,0 +1,7 @@
+core acceptance EXIT=pytest-m2-acceptance EXIT=0 0
+npm ci EXIT=npm-ci EXIT=0 0
+frontend build EXIT=frontend-build EXIT=0 0
+Tauri regression EXIT=cargo-test EXIT=0 0
+React regression EXIT=vitest EXIT=0 0
+M2 E2E gate EXIT=e2e-command EXIT=1 1
+Full suite EXIT=pytest-full-suite EXIT=0 0

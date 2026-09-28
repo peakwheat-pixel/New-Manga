@@ -1,0 +1,2 @@
+[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit
+[0928/124101.813:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412

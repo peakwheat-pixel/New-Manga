@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-当前 Active Task：[M2-AC1](M2-AC1.md) 已释放 `ready`（尚未认领），Owner=ZCode（`heavy_task_executor`），Reviewer=DeepSeek Harness（非作者），Integrator=Codex；fixed base=`7db0e7b6`，依赖 M2-RC2=`done`。只覆盖 Backlog 首行的确定性 Mock/Local Pipeline、SQLite 保存、真实进程重启恢复、Reader 与 PNG 导出；[释放证据](../../verification/M2-AC1/release-7db0e7b6.md)。其余 Backlog 行仍未登记。
+当前 Active Task：**无**。[M2-AC1](M2-AC1.md) `done`，fixed base=`7db0e7b6`，Owner tip=`51f70ed1`，DeepSeek Harness r4 Review=`approved`（静态），Codex integration=`f162193b`；Codex 独立复跑 Core 4、Cargo 26、Vitest 19、E2E 45/45 与全仓 pytest 1316 passed/11 skipped，全部 EXIT 0。集成与 F-008 裁定：[integration-51f70ed1](../../verification/M2-AC1/integration-51f70ed1/integration.md)。M2 Acceptance Backlog 其余行未登记；两个独立诊断候选仍为 planning-only / NOT_RELEASED，暂无 Owner 操作。
 
 Legacy 诊断家族收口（2026-09-28）：[DIAG-READING-EXPORT-001](DIAG-READING-EXPORT-001.md) `done`（`e0a0e784`），[FIX-A](DIAG-READING-EXPORT-001-FIX-A.md) `done`（`a8b94df1`），[FIX-B](DIAG-READING-EXPORT-001-FIX-B.md) `done`（`9c9c9087`），[FIX-C](DIAG-READING-EXPORT-001-FIX-C.md) `done`（`0f2e9e31`；DSH 六轮 Review R6 `approved`；生产接线零 QML）。诊断集成核验：[integration-e0a0e784](../../verification/DIAG-READING-EXPORT-001/integration-e0a0e784/integration.md)；FIX-A [integration-a8b94df1](../../verification/DIAG-READING-EXPORT-001-FIX-A/integration-a8b94df1/integration.md)；FIX-B [integration-9c9c9087](../../verification/DIAG-READING-EXPORT-001-FIX-B/integration-9c9c9087/integration.md)。M2-RC1/RC2 均已 `done`（integration=`3a246840` / `88f972fe`）。
 
