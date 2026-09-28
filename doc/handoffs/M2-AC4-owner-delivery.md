@@ -25,10 +25,10 @@
 | AC | 判定 | 要点 |
 |---|---|---|
 | AC1 导出 lineage 与输出对账 | **FAIL（部分）→ F-1** | (b) zip 条目名/字节=页 scope、text payload=页文本（Region 同源）、file_hash=输出 SHA-256 全 PASS；(c) export_id 唯一、history 最近优先 PASS；(a) history() 字段覆盖 `included_stale_page_ids` **实测缺失**（`_record`/`_scope_snapshot` 不含该字段） |
-| AC2 stale 防线 fail-closed | **PASS**（附 F-1 引用） | (a) 默认 ABORT 抛 `StaleExportError`（stale/missing ids 如实、可区分），零输出文件、零 temp、**零 history 记录**；(b) CONTINUE 成功：输出=旧译文字节（非 current），missing 页 fallback 原图字节，`ExportResult.included_stale/missing_page_ids` 如实；history 持久留痕缺口即 F-1 |
+| AC2 stale 防线 fail-closed | **PASS（a、c）/ 部分不满足（b 持久留痕，同一 F-1）**【集成方修正（DSH r1 P1-2）】 | (a) 默认 ABORT 抛 `StaleExportError`（stale/missing ids 如实、可区分），零输出文件、零 temp、**零 history 记录**【PASS】；(b) CONTINUE 成功：输出=旧译文字节（非 current），missing 页 fallback 原图字节，`ExportResult.included_stale/missing_page_ids` 如实【内存留痕 PASS】；**history 持久留痕缺失=部分不满足，即 F-1（与 AC1(a) 同一缺陷）**；(c) stale/missing 可区分【PASS】 |
 | AC3 失败/取消 durability | **PASS**（2 场景） | 中途 provider 失败 / 页间取消：既有目标文件字节逐位原样、源与 Managed 文件指纹（size/mtime_ns/sha256）不变、零 temp 残留、history 记 failed/cancelled 且 detail 非空（含 "OSError" 类型名/取消文案） |
 | AC4 Library page-count/unknown | **FAIL（部分）→ F-2** | (a) 有页书 page_count == 章页合计 == production 谓词 SQLite COUNT == Reader 侧（reader_catalog 长度 + `ReadingService.page_count`）全一致；(c) 受控破坏页行后不崩溃、计数如实、其他字段不伪造；(b) 无章/无页书呈现 `page_count=0`（int，无 unknown 通道）= Task 预期验收张力，记 FAIL |
-| AC5 源文件零风险 + 证据纪律 | **PASS** | 混合轮（成功/ABORT/CONTINUE/失败/取消）后用户源文件+Managed Copy+译文 revision 指纹全部不变；32 passed 回归 EXIT=0；命令日志带头带 EXIT；`git diff --check` 轨迹见 raw（最终 tip 复跑归 Integrator） |
+| AC5 源文件零风险 + 证据纪律 | **PASS（证据纪律子项：部分满足（交付日志），集成复跑补足）**【集成方修正（DSH r1 P1-1/P2-1）】 | 混合轮（成功/ABORT/CONTINUE/失败/取消）后 **Core 层可达面**（Managed Copy 原图 + 译文 revision——导出实际读取、指纹承重）不变；「用户源文件」在 Core 侧结构性不可达（`data_provider` 常量，非 PASS 证据）；32 passed 回归 EXIT=0；Owner 交付 8 日志中 probe/run1/run2/MU1/MU2 五日志无头无 EXIT（final-\* 带头但 HEAD=claim commit）——以集成方 tip `890f0c74` 复跑的带头带 EXIT 日志（`verification/M2-AC4/integration-890f0c74/raw/`）为准 |
 
 ## 验证命令（worktree 根目录，$py=TASK-012-py312，均带 `PYTHONIOENCODING=utf-8`）
 
@@ -49,7 +49,7 @@
 ## 实现过程中的语义发现（供 Reviewer 重点核对）
 
 1. **F-1（AC1(a) FAIL）**：export history 行（SQLite `export_history`，经 `SqliteExportHistoryStore`）**不含** `included_stale_page_ids`/`included_missing_page_ids`；`scope_snapshot_json` 仅记录 `stale_policy` 字符串。CONTINUE 放行了哪些 stale 页在持久 lineage 中不可追溯（内存 `ExportResult` 字段正确——`export()` 返回值如实）。探针 + xfail 场景双重证据。修复建议方向：`_record` 落行时并入 `result.included_stale_page_ids/included_missing_page_ids`（scope_snapshot 或独立列，属 schema/契约变更，留给修复 Task）。
-2. **F-2（AC4(b) FAIL，Task 预期张力）**：`core_service.py:160` `page_counts.get(book.book_id, 0)`——无章书与有章无页书都呈现 `page_count=0`（int），`BookSummaryDto` 无 unknown 标志，违反「缺失数据不得伪造成看似真实的数字」。探针输出原句：`Probe Empty Book page_count: 0`。修复建议方向：DTO 增加 `page_count_known`/可选 null 语义（IPC 契约变更，留给修复 Task）。
+2. **F-2（AC4(b) FAIL，Task 预期张力）**：`core_service.py:160` `page_counts.get(book.book_id, 0)`——无章书与有章无页书都呈现 `page_count=0`（int），`BookSummaryDto` 无 unknown 标志。探针输出原句：`Probe Empty Book page_count: 0`。**定性收窄（集成方修正/DSH r1 P1-3，代理裁决，用户可撤销）：unknown/已知度通道缺失——0 与真实计数一致（非数值造假：`_fetch_page_counts` 无 `except`、SQL 失败已转 typed `E_LIST_BOOKS_FAILED`），但无法区分『确认 0 页』与『数据不可用/未统计/导入未完成』；AC4(b) FAIL 保留（原文要求如实反映未知/缺失）。**修复建议方向：DTO 增加 `page_count_known`/可选 null 语义（IPC 契约变更，登记为 `doc/tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md`，proposed/NOT_RELEASED；不得把真实 0 改 null）。
 3. **ABORT 是真·零痕迹**：`StaleExportError` 在 `created_at`/`_record` 之前抛出（`service.py:216-220`），被拒绝的导出连 failed 记录都不留——本套件将其断言为承诺语义（「零 completed 记录」实测为零*任何*记录）。Reviewer 若认为被拒导出也应留痕，属 D03 §31 语义澄清，超出本 Task。
 4. **history 排序精度**：`utc_now()` 毫秒精度（`domain/books/entities.py:15`），同一毫秒内的两次导出顺序依赖 SQLite `ORDER BY created_at DESC` 的稳定行为；AC1 顺序断言以 20ms 间隔保证可分。真实 UI 间隔远大于此，未列为缺陷。
 5. **取消时机**：`cancel` poll 点=导出开始、archive 每条目前、写盘终检前（`service.py:224/255/397`）；套件用「条目 1 写入后、条目 2 前」的真实中途取消。

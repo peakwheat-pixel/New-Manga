@@ -15,9 +15,9 @@
 | 2 | `$py -m pytest tests/m2_acceptance -q`（回归：既有 23 + 新增 11） | `final-regression.log` | **32 passed, 2 xfailed**（= 既有 23 全绿 + 新增 9 passed + 2 xfailed） | 0 |
 | 3 | MU1 变异运行（`service.py:219` ABORT 条件 → 恒 False） | `mutation-MU1-run.log` | 3 failed（AC2 主判别 + 2 次生），红点测试行 `:464/:503/:882` | 1 |
 | 4 | MU2 变异运行（`core_service.py:160` → `page_count=999`） | `mutation-MU2-run.log` | 2 failed（AC4 主判别 + 1 次生），红点测试行 `:731/:810` | 1 |
-| 5 | `git diff --check a5529181..<delivery-tip>` | 见 Handoff「启动复现」 | 待交付 commit 后执行（结果见 Handoff） | 0 |
+| 5 | `git diff --check a5529181..<delivery-tip>` | 见 Handoff「启动复现」 | 集成方 tip 复跑（`890f0c74`）实测 EXIT=0；Owner 阶段为工作树预演 EXIT=0（本表交付时该行未跑，EXIT 列的 0 以集成复跑为准） | 0 |
 
-每个日志文件带头记录 shell、cwd、`git rev-parse HEAD`、ISO 时间戳、解释器版本；尾部记录 EXIT 码。变异前后 `git status --porcelain src/` 均为空；基线复跑绿（还原验证见 `discrimination-mutations.md`）。
+日志带头/EXIT 覆盖情况（集成方修正，DSH r1 P1-1）：final-\* 与 git-diff-check 日志带头记录 shell、cwd、`git rev-parse HEAD`、ISO 时间戳、解释器版本，尾部记录 EXIT 码；**Owner 交付的 probe-output/run1/run2/MU1/MU2 五日志无头部元数据无 EXIT（纯 pytest/探针原始输出，如实保留）**，且 final-\* 两日志的 HEAD=claim commit `5f9f54ab`。最终证据以集成方 tip `890f0c74` 复跑的带头带 EXIT 日志为准（`integration-890f0c74/raw/integration-*.log`）。变异前后 `git status --porcelain src/` 均为空（Owner 与集成方复现均验证）；基线复跑绿（还原验证见 `discrimination-mutations.md` + 集成复现）。
 
 ## 2. 场景 → AC 判定表（测试文件：`tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py`）
 
@@ -42,15 +42,15 @@
 | AC | 判定 | 依据 |
 |---|---|---|
 | AC1 导出 lineage 与输出对账 | **FAIL（部分）** | (b)(c) PASS；(a) 的「history() 字段覆盖 included_stale_page_ids」实测缺失 → **F-1**（两场景 PASS + xfail 场景为 FAIL 证据） |
-| AC2 stale 防线 fail-closed | **PASS**（附 F-1 引用） | (a) ABORT 零副作用 PASS；(c) stale/missing 可区分 PASS；(b) CONTINUE 放行、输出正确、`ExportResult` 留痕 PASS——但 history 持久留痕缺失（F-1，与 AC1(a) 同一缺陷，Review 裁定 AC 措辞归属） |
+| AC2 stale 防线 fail-closed | **PASS（a、c）/ 部分不满足（b 持久留痕，同一 F-1）**【集成方修正（DSH r1 P1-2）】 | (a) ABORT 零副作用 PASS；(c) stale/missing 可区分 PASS；(b) CONTINUE 放行、输出正确、`ExportResult` 留痕 PASS——但 **history 持久留痕缺失=部分不满足（F-1，与 AC1(a) 同一缺陷）** |
 | AC3 失败/取消 durability | **PASS** | 2 场景全 PASS（既有目标字节原样、源零写入、failed/cancelled 终态 detail 非空） |
 | AC4 Library page-count/unknown | **FAIL（部分）** | (a)(c) PASS；(b) 无章/无页书 unknown 呈现为 0 → **F-2**（Task 预期验收张力；xfail 场景为 FAIL 证据） |
 | AC5 源文件零风险 + 证据纪律 | **PASS** | 指纹跨全部导出路径不变；回归 32 passed EXIT=0；本文件与 mutation 记录完整；`git diff --check` 结果见 Handoff |
 
 ## 4. 缺陷清单（如实记录，未改产品代码）
 
-- **F-1（AC1(a) FAIL 证据；AC2(b) 留痕缺口）**：`ExportService._record`/`_scope_snapshot`（`src/application/export/service.py`）写入 export history 的行不含 `included_stale_page_ids`/`included_missing_page_ids`，`scope_snapshot_json` 仅含 `stale_policy` 字符串；CONTINUE 放行的 stale 页在持久 lineage 中不可追溯（内存 `ExportResult` 字段正确）。探针证据：`raw/probe-output.log`（`history row keys` / `scope_snapshot keys` 无该字段）；xfail 场景：`test_ac2_history_records_which_stale_pages_were_included`。
-- **F-2（AC4(b) FAIL 证据，Task 预期验收张力）**：`src/bootstrap/core_service.py:160` `page_counts.get(book.book_id, 0)` 使无章/无页书在 production `ListBooks` 呈现 `page_count=0`（int），`BookSummaryDto` 无 unknown 标志——「缺失数据不得伪造成看似真实的数字」不满足。探针证据：`raw/probe-output.log`（`Probe Empty Book page_count: 0`）；xfail 场景：`test_ac4_books_without_pages_are_not_presented_as_zero`。
+- **F-1（AC1(a) FAIL 证据；AC2(b) 部分不满足：持久留痕缺口）**：`ExportService._record`/`_scope_snapshot`（`src/application/export/service.py`）写入 export history 的行不含 `included_stale_page_ids`/`included_missing_page_ids`，`scope_snapshot_json` 仅含 `stale_policy` 字符串；CONTINUE 放行的 stale 页在持久 lineage 中不可追溯（内存 `ExportResult` 字段正确）。探针证据：`raw/probe-output.log`（`history row keys` / `scope_snapshot keys` 无该字段）；xfail 场景：`test_ac2_history_records_which_stale_pages_were_included`（runxfail 真实 traceback 失败点 `:584`，集成复跑落盘）。修复候选：`doc/tasks/M2-FIX-EXPORT-LINEAGE.md`（proposed/NOT_RELEASED）。
+- **F-2（AC4(b) FAIL 证据，Task 预期验收张力）**：`src/bootstrap/core_service.py:160` `page_counts.get(book.book_id, 0)` 使无章/无页书在 production `ListBooks` 呈现 `page_count=0`（int），`BookSummaryDto` 无 unknown 标志。**定性收窄（集成方修正/DSH r1 P1-3，代理裁决，用户可撤销）：unknown/已知度通道缺失——0 与真实计数一致（非数值造假：`_fetch_page_counts` 无 `except`，SQL 失败已转 typed `E_LIST_BOOKS_FAILED`），但无法区分『确认 0 页』与『数据不可用/未统计/导入未完成』；AC4(b) FAIL 保留（AC4(b) 原文要求如实反映未知/缺失，0 无未知通道即不可区分）。**探针证据：`raw/probe-output.log`（`Probe Empty Book page_count: 0`）；xfail 场景：`test_ac4_books_without_pages_are_not_presented_as_zero`（runxfail 失败点 `:782`，集成复跑落盘）。修复候选：`doc/tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md`（proposed/NOT_RELEASED；不得把真实 0 改 null）。
 
 两处 xfail 均为 `strict=True`：若后续修复 Task 落地，将 XPASS 并使套件红，提醒 Review/集成方移除标记并复核。
 

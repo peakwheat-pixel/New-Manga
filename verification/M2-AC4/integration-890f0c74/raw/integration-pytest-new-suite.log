@@ -1,0 +1,26 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: Python 3.12.3
+git HEAD: 890f0c745809f1978786ae26193dd29fadce1d23
+timestamp: 2026-09-29T00:29:54+08:00
+command: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py -v
+============================= test session starts =============================
+platform win32 -- Python 3.12.3, pytest-9.1.1, pluggy-1.6.0 -- G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-AC4-zcode
+configfile: pytest.ini
+collecting ... collected 11 items
+
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_zip_export_history_reconciles_with_output PASSED [  9%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac1_text_payload_and_two_exports_are_distinguishable PASSED [ 18%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_stale_abort_fail_closed_zero_side_effects PASSED [ 27%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_continue_passes_stale_and_missing_distinguishable PASSED [ 36%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac2_history_records_which_stale_pages_were_included XFAIL [ 45%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_mid_export_failure_preserves_target_and_sources PASSED [ 54%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac3_cancellation_preserves_target_and_records_state PASSED [ 63%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_page_count_matches_chapter_total_sqlite_and_reader PASSED [ 72%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero XFAIL [ 81%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_corrupt_page_rows_degrade_without_crash_or_fabrication PASSED [ 90%]
+tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac5_sources_and_managed_files_untouched_across_export_paths PASSED [100%]
+
+======================== 9 passed, 2 xfailed in 0.94s =========================
+EXIT=0

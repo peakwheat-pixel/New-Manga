@@ -1,0 +1,8 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: Python 3.12.3
+git HEAD: 002b91ae34063e1dd02ab9212717c360c1aea060
+timestamp: 2026-09-29T00:39:36+08:00
+command: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance -q  (post-merge integration head rerun)
+...........................x...x..                                       [100%]
+32 passed, 2 xfailed in 9.16s
+EXIT=0

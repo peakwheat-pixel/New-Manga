@@ -1,0 +1,8 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+python: Python 3.12.3
+git HEAD: 890f0c745809f1978786ae26193dd29fadce1d23
+timestamp: 2026-09-29T00:30:31+08:00
+command: /g/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe -m pytest tests/m2_acceptance -q
+...........................x...x..                                       [100%]
+32 passed, 2 xfailed in 9.10s
+EXIT=0
