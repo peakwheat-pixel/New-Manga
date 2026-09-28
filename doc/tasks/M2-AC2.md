@@ -2,20 +2,22 @@
 id: M2-AC2
 title: Data Integrity Acceptance (source hash / Managed Copy / user edits / Lock / current & pinned Revision)
 kind: acceptance
-status: delivered
+status: done
 release_state: M2_AC2_DATA_INTEGRITY_RELEASED
 approval: approved_by_user_2026-09-28_m2ac2_release
 execution_approval: approved_by_user_2026-09-28_m2ac2_release
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness
-integrator: Codex
+integrator: Codex（本集成由 ZCode 会话代行，用户 2026-09-28 全权授权；Owner≠Integrator 保持）
 depends_on: [M2-IPC1, M2-P1]
 base_commit: 61f9db9b54ae4b7420c7d1a5751cc040a502c88f
 branch: agent/zcode/M2-AC2-data-integrity
 worktree: G:/CODEX/New Manga.worktrees/M2-AC2-zcode
-delivery_head: 8db6d150225d59719abd94179ba76d6f9bbb0f32
-dispatch_state: DELIVERED_FOR_REVIEW
+delivery_head: c3ee8dbebc860f67abd668301dc81ab78d917bac
+review: doc/reviews/M2-AC2-375cf43b-dsh-r2.md (approved_with_conditions; C1-C3 closed by owner; C4 P3-1..P3-6 deferred)
+integration_merge: 9d3c1db5ffafd9ff2c7cd8aeb4f209c1e5c1df0c
+dispatch_state: INTEGRATED
 ---
 
 # M2-AC2 — Data Integrity Acceptance

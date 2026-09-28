@@ -28,9 +28,9 @@
 
 ## 验证命令（worktree 根目录，$py=TASK-012-py312）
 
-1. `$py -m pytest tests/m2_acceptance/test_data_integrity.py -v` → **10 passed**，EXIT=0
-2. `$py -m pytest tests/m2_acceptance -q` → **14 passed**（M2-AC1 4 + 本模块 10，零回归），EXIT=0
-3. `git diff --check 61f9db9b..<delivery-head>` → EXIT=0
+1. `$py -m pytest tests/m2_acceptance/test_data_integrity.py -v` → **11 passed**，EXIT=0（集成方修正 2026-09-28：C2 残留，原 10 passed 为返修前数字；实测见 [integration record](../../verification/M2-AC2/integration-c3ee8dbe/integration.md)）
+2. `$py -m pytest tests/m2_acceptance -q` → **15 passed**（M2-AC1 4 + 本模块 11，零回归），EXIT=0（集成方修正 2026-09-28：C2 残留，原 14 passed 为返修前数字）
+3. `git diff --check 61f9db9b..<delivery-head>` → EXIT=0（集成方实测区间 `61f9db9b..c3ee8dbe` EXIT=0）
 
 ## 实现过程中的语义发现（供 Reviewer 重点核对）
 
