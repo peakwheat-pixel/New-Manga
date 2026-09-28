@@ -448,7 +448,13 @@ mod tests {
             .get("permissions")
             .and_then(|p| p.as_object())
             .expect("__app-acl__ permissions object");
-        for command in command_allowlist(true, false) {
+        // F-003 (DSH r1): the ACL existence check covers the ac1 test-mode
+        // commands too — a capability/manifest typo for an ac1 command must
+        // fail here, not only surface as an E2E ACL denial.
+        for command in command_allowlist(true, false)
+            .into_iter()
+            .chain(command_allowlist(false, true))
+        {
             let allow = format!("allow-{}", command.replace('_', "-"));
             assert!(
                 permissions.contains_key(&allow),

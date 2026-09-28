@@ -18,6 +18,10 @@ import { ResourceChannelClient } from "./client";
 const PRODUCTION_COMMANDS = ["issue_resource_url", "revoke_ref", "revoke_resource_refs"];
 const PROBE_ONLY_COMMANDS = ["probe_config", "probe_write_results", "probe_exit", "probe_issue_url"];
 const REMOVED_COMMANDS = ["register_catalog"];
+// M2-AC1: the acceptance commands exist ONLY in the explicit test startup
+// configuration (M2AC1_TEST_MODE=1) — never on the production or probe
+// surface, so a page-side ac1 probe is the mode detector (App.tsx).
+const AC1_TEST_COMMANDS = ["ac1_request", "ac1_write_results", "ac1_exit"];
 
 type Mode = "production" | "probe";
 
@@ -76,6 +80,18 @@ describe("RC2 command surface allow/deny matrix", () => {
     const { invoke } = makeSurfaceInvoke("production");
     for (const command of PROBE_ONLY_COMMANDS) {
       await expect(invoke(command, {})).rejects.toThrow(new RegExp(command));
+    }
+  });
+
+  // F-012 (DSH r1): the ac1 acceptance commands must be denied on BOTH the
+  // production and probe surfaces — the App's ac1 mode detection relies on
+  // that rejection falling through to the RC1/RC2 behaviour unchanged.
+  it("ac1 commands are denied on production and probe surfaces", async () => {
+    for (const mode of ["production", "probe"] as const) {
+      const { invoke } = makeSurfaceInvoke(mode);
+      for (const command of AC1_TEST_COMMANDS) {
+        await expect(invoke(command, {})).rejects.toThrow(new RegExp(command));
+      }
     }
   });
 

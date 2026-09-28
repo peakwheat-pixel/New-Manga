@@ -667,6 +667,10 @@ def assemble_core_services(
         )
         # M2-AC1 acceptance mode: the Mock/Local providers join the runtime
         # registry only behind this explicit flag (never in production).
+        # The acceptance loop seeds Regions up front, so its pipeline plans
+        # the region-level chain and never executes ``detect``; the mock
+        # detector exists so a region-less page still fails closed at the
+        # detect capability gap instead of a missing handler (DSH r1 F-007).
         detector: object
         if mock_local_providers:
             from infrastructure.providers.mock_local import (

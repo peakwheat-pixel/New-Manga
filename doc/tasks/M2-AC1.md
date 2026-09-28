@@ -55,12 +55,12 @@ Owner=ZCode（建议执行角色：`heavy_task_executor`）；非作者 Reviewer
 
 | 场景 / AC | 计划命令或步骤 | 环境与判定 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Core acceptance | `python -m pytest tests/m2_acceptance -q` | Windows；TASK-012-py312 venv（Python 3.12.3）；合成输入；新建专用测试集 | **PASS**（4 passed, 0 failed） | [pytest-m2-acceptance.log](../../verification/M2-AC1/pytest-m2-acceptance.log) |
-| Tauri host regression（如有 Rust 改动） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | Windows；cargo 1.98.1 | **PASS**（25 passed, 0 failed） | [cargo-test.log](../../verification/M2-AC1/cargo-test.log) |
-| React regression（如有前端改动） | `npm test --prefix apps/desktop/frontend -- --run` | Node v24.15.0 / npm 12.0.1；既有 lockfile | **PASS**（3 files, 18 passed） | [vitest.log](../../verification/M2-AC1/vitest.log) |
-| M2 end-to-end gate | `python verification/M2-AC1/run_e2e.py` | Windows + WebView2；Python 3.12.3 venv、cargo 1.98.1、Node v24.15.0；同一隔离临时数据根（%TEMP%）；未使用用户数据 | **PASS**（两次 gate 运行均 GATE PASS：完整构建版 40 场景 + skip-build 复跑 27 场景；桌面/Core PID 均跨启动不同） | [e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json)、[e2e-evidence](../../verification/M2-AC1/e2e-evidence/raw/e2e-gate.json) |
+| Core acceptance | `python -m pytest tests/m2_acceptance -q` | Windows；runner 与被测代码均用 TASK-012-py312 venv（Python 3.12.3，日志头记录解释器路径）；合成输入；新建专用测试集 | **PASS**（4 passed, 0 failed, EXIT 0） | [pytest-m2-acceptance.log](../../verification/M2-AC1/pytest-m2-acceptance.log) |
+| Tauri host regression（如有 Rust 改动） | `cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml --locked` | Windows；cargo 1.98.1 | **PASS**（26 passed, 0 failed, EXIT 0） | [cargo-test.log](../../verification/M2-AC1/cargo-test.log) |
+| React regression（如有前端改动） | `npm test --prefix apps/desktop/frontend -- --run` | Node v24.15.0 / npm 12.0.1；既有 lockfile | **PASS**（3 files, 19 passed, EXIT 0） | [vitest.log](../../verification/M2-AC1/vitest.log) |
+| M2 end-to-end gate | `python verification/M2-AC1/run_e2e.py` | Windows + WebView2；gate runner 与桌面/Core sidecar 均运行于 TASK-012-py312 venv（gate JSON `EVN-runner-python`/`runner_executable` 字段记录，证据↔commit 经 `implementation_commit` 绑定）；同一隔离临时数据根（%TEMP%）；未使用用户数据 | **PASS**（DSH r1 返修后完整构建版 GATE PASS 44 场景，含 F-001/002/004 新增断言；r1 前另有两次 PASS 运行存档于 [e2e-evidence](../../verification/M2-AC1/e2e-evidence/raw/e2e-gate.json)；桌面/Core PID 均跨启动不同） | [e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json) |
 | 范围与 whitespace | `git diff --name-status 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>`；`git diff --check 7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d..<reviewed-head>` | 固定 reviewed head；逐项对照允许/禁止路径 | **PASS**（diff --check exit 0；全路径审计见 Handoff §范围审计） | Handoff / Review / Codex integration record |
-| 全仓回归（Owner 加跑） | `python -m pytest -q -p no:cacheprovider -rs` | 同 venv；验证 core_assembly 生产装配零回归 | **PASS**（1322 passed, 5 skipped, exit 0；基线 1318+新增 4） | [pytest-full-suite.log](../../verification/M2-AC1/pytest-full-suite.log) |
+| 全仓回归（Owner 加跑） | `python -m pytest -q -p no:cacheprovider -rs` | 同 venv；验证 core_assembly 生产装配零回归 | **PASS**（1322 passed, 5 skipped, EXIT 0；基线 1318+新增 4） | [pytest-full-suite.log](../../verification/M2-AC1/pytest-full-suite.log) |
 
 只运行实际有改动的语言套件；E2E 与范围 Gate 必须执行。工具或环境不可用时写 `BLOCKED` / `NOT_RUN`，不可从 unit tests 推断端到端 PASS。
 

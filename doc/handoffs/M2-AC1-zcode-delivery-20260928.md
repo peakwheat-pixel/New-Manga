@@ -44,7 +44,7 @@ status: delivered_awaiting_review
 
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
-| AC1 确定性 Pipeline | `python -m pytest tests/m2_acceptance -q`；E2E `run_pipeline`（mock ocr/translate + 生产 color/term/segment/mask_refine/inpaint(simple-fill)/render） | TASK-012-py312 venv（Python 3.12.3）；head `a74ce105` | PASS（4 passed；providers 记录于 results；两独立样本摘要一致 `f66af60a…`/`4afc6738…`） | [pytest-m2-acceptance.log](../../verification/M2-AC1/pytest-m2-acceptance.log)；[e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json) |
+| AC1 确定性 Pipeline | `python -m pytest tests/m2_acceptance -q`；E2E `run_pipeline`（mock ocr/translate + 生产 color/term/segment/mask_refine/inpaint(simple-fill)/render） | TASK-012-py312 venv（Python 3.12.3；gate runner 与桌面/Core sidecar 同解释器，由 gate JSON `EVN-runner-python`/`runner_executable` 记录）；head 演进见 §接收方式 | PASS（4 passed；providers 记录于 results；两独立样本摘要一致 `f66af60a…`/`4afc6738…`） | [pytest-m2-acceptance.log](../../verification/M2-AC1/pytest-m2-acceptance.log)；[e2e-gate-full](../../verification/M2-AC1/e2e-gate-full/raw/e2e-gate.json) |
 | AC2 结果保存 | E2E `saved_summary`（SQLite 重读 + managed 文件 sha256 核对）；fixture/输出清单在 run1.json | 同上 | PASS（run_status=completed；2 页 sha/size 落库核对） | [sample-a/run1.json](../../verification/M2-AC1/e2e-gate-full/sample-a/run1.json) |
 | AC3 进程重启恢复 | 每样本两次真实 exe 启动（run1→ac1_exit→run2）；desktop PID 与 Core sidecar PID 断言不同；不重跑 pipeline（phase 由 SQLite 状态决定） | 同上 | PASS（如 sample-a：desktop 34580→8720、core 22156→35268） | e2e-gate.json `restart-*-pid-differs` 场景 |
 | AC4 Reader 阅读 | run2 `reader_pages` → 前端经 m2res 协议逐页 fetch+解码（naturalWidth>0）两页 → `record_reading` 持久化进度 | 同上 | PASS（viewed sha == saved sha，逐页） | run2.json `viewed` |
@@ -59,9 +59,10 @@ status: delivered_awaiting_review
 
 ## 接收方式
 
-- 仓库 `G:/CODEX/New Manga`；branch `agent/zcode/M2-AC1-end-to-end-acceptance`；worktree `G:/CODEX/New Manga.worktrees/M2-AC1-zcode`（当前 clean @ `aaf21a13`，即 reviewed head）。
+- 仓库 `G:/CODEX/New Manga`；branch `agent/zcode/M2-AC1-end-to-end-acceptance`；worktree `G:/CODEX/New Manga.worktrees/M2-AC1-zcode`。
+- **head 演进**：`aaf21a13`（本 Handoff 提交点）→ `7d157858`（DSH r1 被审 head，仅 docs/log whitespace 修正）→ 返修 head（DSH r1 disposition 落实：F-001/002/003/004/005/007/009/010c/011/012/013 fixed，F-006/010ab deferred，F-008 待 Codex）。逐条处置见 [review-dsh-r1-disposition.md](../../verification/M2-AC1/review-dsh-r1-disposition.md)；r1 报告 [M2-AC1-7d157858-dsh-r1.md](../reviews/M2-AC1-7d157858-dsh-r1.md)（decision: approved 条件批准）。复审以 branch tip 为准。
 - 复现：venv（`G:/CODEX/New Manga.task-envs/TASK-012-py312`）下从仓库根运行 `python verification/M2-AC1/run_e2e.py`（约 3 分钟；或 `--skip-build` 复用产物）；Core 层 `python -m pytest tests/m2_acceptance -q`。
-- Reviewer 需要的固定 head：**`aaf21a13`**（tip；实现面为 `035bbdf9` + 证据 `a74ce105`）。git 操作在 DSH 沙箱可能被拒时按静态 Review 模式进行即可。
+- Reviewer 需要的固定 head：**branch tip**（head 演进见上；DSH r1 已审 `7d157858`，复审针对返修后 tip）。git 操作在 DSH 沙箱可能被拒时按静态 Review 模式进行即可。
 - 无依赖变化（Cargo.lock/package lockfile 均未动）；无 schema/migration 变更。
 
 ## 下一任务建议（必填）

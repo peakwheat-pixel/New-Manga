@@ -47,6 +47,13 @@ pub struct Ac1Channel {
     stdout: Mutex<BufReader<ChildStdout>>,
 }
 
+/// The acceptance sidecar argv shape, pinned here and unit-tested (F-011,
+/// DSH r1): the module must be `bootstrap.acceptance_bridge`, never the
+/// production resource-channel control plane.
+pub fn spawn_args() -> Vec<&'static str> {
+    vec!["-m", "bootstrap.acceptance_bridge"]
+}
+
 impl Ac1Channel {
     /// Spawn `python -m bootstrap.acceptance_bridge` with the repository
     /// `src` on the module path. The child inherits the host environment
@@ -57,7 +64,7 @@ impl Ac1Channel {
         src_root: &std::path::Path,
     ) -> Result<Self, Ac1Error> {
         let mut child = Command::new(python_exe)
-            .args(["-m", "bootstrap.acceptance_bridge"])
+            .args(spawn_args())
             .current_dir(src_root)
             .env("PYTHONPATH", src_root)
             .stdin(Stdio::piped())
@@ -141,14 +148,22 @@ mod tests {
         assert_eq!(value.get("pong").and_then(|p| p.as_bool()), Some(true));
     }
 
-    /// The spawned module must be the acceptance bridge, not the production
-    /// resource-channel sidecar; pinned here so a refactor cannot silently
-    /// re-point the acceptance channel at the control plane.
+    /// The spawn argv literally targets the acceptance bridge module (F-011,
+    /// DSH r1: the original test name promised this but only asserted the
+    /// failure path; the argv is now pinned as data).
     #[test]
-    fn spawn_targets_the_acceptance_module() {
-        // spawn a real python only when one is available; the assertion is
-        // about the argv shape, so a failing spawn is also a valid probe of
-        // the error path.
+    fn spawn_args_target_the_acceptance_module() {
+        assert_eq!(
+            spawn_args(),
+            vec!["-m", "bootstrap.acceptance_bridge"],
+            "the acceptance channel must spawn bootstrap.acceptance_bridge, \
+             never the resource-channel control plane"
+        );
+    }
+
+    /// A bogus python executable fails the spawn with the typed code.
+    #[test]
+    fn spawn_fails_typed_on_missing_python() {
         let error = Ac1Channel::spawn(
             "definitely-not-a-real-python-executable",
             std::path::Path::new("."),

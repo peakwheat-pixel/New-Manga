@@ -1,13 +1,16 @@
+# toolchain: node v24.15.0 / npm 12.0.1
 npm notice run m2rc1-frontend@0.1.0 test
 npm notice run vitest run
 
 [1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/M2-AC1-zcode/apps/desktop/frontend[39m
 
  [32m✓[39m src/ac1/driver.test.ts [2m([22m[2m3 tests[22m[2m)[22m[90m 2[2mms[22m[39m
- [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 5[2mms[22m[39m
- [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m7 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/client.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 6[2mms[22m[39m
+ [32m✓[39m src/resourceChannel/commandSurface.test.ts [2m([22m[2m8 tests[22m[2m)[22m[90m 7[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m3 passed[39m[22m[90m (3)[39m
-[2m      Tests [22m [1m[32m18 passed[39m[22m[90m (18)[39m
-[2m   Start at [22m 11:02:34
-[2m   Duration [22m 333ms[2m (transform 71ms, setup 0ms, collect 110ms, tests 13ms, environment 0ms, prepare 328ms)[22m
+[2m      Tests [22m [1m[32m19 passed[39m[22m[90m (19)[39m
+[2m   Start at [22m 11:32:17
+[2m   Duration [22m 335ms[2m (transform 70ms, setup 0ms, collect 112ms, tests 14ms, environment 0ms, prepare 328ms)[22m
+
+# EXIT: 0

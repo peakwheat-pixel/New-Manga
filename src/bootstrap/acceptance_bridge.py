@@ -312,7 +312,10 @@ class AcceptanceBridge:
                 page.page_id,
                 _fixture_region_geometry(page.width or FIXTURE_PAGE_WIDTH, page.height or FIXTURE_PAGE_HEIGHT),
                 reading_order=1,
-                origin=RegionOrigin.USER,
+                # MACHINE, same origin the detect step's region_creator uses:
+                # this is a harness-fabricated fixture region, not a user
+                # edit, so USER would misrepresent its provenance (F-013).
+                origin=RegionOrigin.MACHINE,
             )
         state.book_id = book.book_id
         state.chapter_id = chapter.chapter_id
@@ -327,12 +330,15 @@ class AcceptanceBridge:
     def method_run_pipeline(self, params: dict) -> dict:
         """The Mock/Local pipeline through the production run seam (AC1).
 
-        Drives the planner's designed two phases: the initial plan on a
-        region-less page schedules ``detect`` first and blocks the region
-        steps; after detect commits its Regions the run is re-planned with
-        ``resume_blocked`` (the service's own mode for exactly this) and
-        executed to completion. Both phases are the production service API —
-        no planner logic is reimplemented here.
+        The seeded fixture always carries Regions, so the planner plans the
+        designed region-level chain (starting at ``ocr``) and a single
+        plan/execute pair completes the run. The ``resume_blocked`` branch
+        below is kept as a fail-closed safety net for the region-less case;
+        it is NOT exercised by the released acceptance evidence (DSH r1
+        F-007), and the region-less detect→backfill chain has a known
+        production planner gap (Handoff §风险与遗留) that must not be
+        reported as covered by this Task. Both phases are the production
+        service API — no planner logic is reimplemented here.
         """
         state = self._require_state()
         pages = self._pages()

@@ -1,19 +1,13 @@
 {
-  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac1-e2e-scabmhr2",
+  "implementation_commit": "7d157858f570fa6399073d0419b0adba6d13ee0f",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac1-e2e-1nmofcpq",
+  "runner_executable": "G:\\CODEX\\New Manga.task-envs\\TASK-012-py312\\Scripts\\python.exe",
   "scenarios": [
     {
-      "id": "EVN-python-resolved",
+      "id": "EVN-runner-python",
       "observed": {
-        "path": "C:\\Python314\\python.EXE"
-      },
-      "status": "PASS"
-    },
-    {
-      "id": "EVN-python",
-      "observed": {
-        "version": [
-          "Python 3.14.6"
-        ]
+        "executable": "G:\\CODEX\\New Manga.task-envs\\TASK-012-py312\\Scripts\\python.exe",
+        "version": "3.12.3"
       },
       "status": "PASS"
     },
@@ -113,7 +107,7 @@
       "id": "sample-a-run1-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/105927.795:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/113205.442:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -135,7 +129,7 @@
       "id": "sample-a-run2-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/105928.317:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/113206.797:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -149,16 +143,16 @@
     {
       "id": "sample-a-restart-desktop-pid-differs",
       "observed": {
-        "run1": 35252,
-        "run2": 4696
+        "run1": 37484,
+        "run2": 40356
       },
       "status": "PASS"
     },
     {
       "id": "sample-a-restart-core-pid-differs",
       "observed": {
-        "run1": 25516,
-        "run2": 35308
+        "run1": 45288,
+        "run2": 44248
       },
       "status": "PASS"
     },
@@ -197,10 +191,52 @@
       "status": "PASS"
     },
     {
+      "id": "sample-a-restore-saved-matches-run1",
+      "observed": {
+        "run1_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ],
+        "run2_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-restore-internals-match-restored-saved",
+      "observed": {
+        "exported_sha": "4afc67386c25"
+      },
+      "status": "PASS"
+    },
+    {
       "id": "sample-a-export-png",
       "observed": {
         "sha": "4afc67386c25",
         "size": 1122
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-a-export-png-decodes",
+      "observed": {
+        "height": 320,
+        "pixel_sha": "b191d8e5fad6",
+        "width": 240
       },
       "status": "PASS"
     },
@@ -215,7 +251,7 @@
       "id": "sample-b-run1-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/105929.441:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "ac1_request,ac1_write_results,ac1_exit\nQFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/TASK-012-py312/Lib/site-packages/PySide6/lib/fonts.\nNote that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.\n[0928/113208.247:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -237,7 +273,7 @@
       "id": "sample-b-run2-exit-code",
       "observed": {
         "exit": 0,
-        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/105929.978:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
+        "tail": "[m2ac1-allowlist] ac1:issue_resource_url,revoke_ref,revoke_resource_refs,ac1_request,ac1_write_results,ac1_exit\n[0928/113208.760:ERROR:ui\\gfx\\win\\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412\n"
       },
       "status": "PASS"
     },
@@ -251,16 +287,16 @@
     {
       "id": "sample-b-restart-desktop-pid-differs",
       "observed": {
-        "run1": 27420,
-        "run2": 35168
+        "run1": 40132,
+        "run2": 44468
       },
       "status": "PASS"
     },
     {
       "id": "sample-b-restart-core-pid-differs",
       "observed": {
-        "run1": 27460,
-        "run2": 20756
+        "run1": 40964,
+        "run2": 44544
       },
       "status": "PASS"
     },
@@ -299,10 +335,52 @@
       "status": "PASS"
     },
     {
+      "id": "sample-b-restore-saved-matches-run1",
+      "observed": {
+        "run1_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ],
+        "run2_pages": [
+          [
+            0,
+            "f66af60a9846"
+          ],
+          [
+            1,
+            "4afc67386c25"
+          ]
+        ]
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-restore-internals-match-restored-saved",
+      "observed": {
+        "exported_sha": "4afc67386c25"
+      },
+      "status": "PASS"
+    },
+    {
       "id": "sample-b-export-png",
       "observed": {
         "sha": "4afc67386c25",
         "size": 1122
+      },
+      "status": "PASS"
+    },
+    {
+      "id": "sample-b-export-png-decodes",
+      "observed": {
+        "height": 320,
+        "pixel_sha": "b191d8e5fad6",
+        "width": 240
       },
       "status": "PASS"
     },

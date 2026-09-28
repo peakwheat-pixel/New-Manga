@@ -41,7 +41,16 @@ MOCK_TRANSLATION_TEXT = "MOCK-TRANSLATED-TEXT"
 
 @dataclass
 class MockLocalDetectionProvider:
-    """One fixed, page-sized text region — no weights, no network."""
+    """One fixed, page-sized text region — no weights, no network.
+
+    NOTE (DSH r1 F-007): the released acceptance loop seeds Regions through
+    the production ``RegionEditingService`` BEFORE the pipeline runs, so the
+    planner plans the designed region-level chain and the ``detect`` step
+    never executes — this provider is registered for assembly completeness
+    (a region-less page must keep failing closed at the capability gap, not
+    at a missing handler) but its detect path is NOT exercised or accepted
+    by the M2-AC1 evidence.
+    """
 
     provider_id: str = "m2ac1-mock-detect"
     provider_type: str = "mock-local"

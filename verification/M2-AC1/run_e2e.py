@@ -85,7 +85,15 @@ def resolve_tool(name: str) -> str | None:
 
 def record_environment(gate: Gate) -> bool:
     print("[0] environment")
-    tools = ("python", "cargo", "rustc", "node", "npm")
+    # The runner's own interpreter IS the desktop/Core sidecar interpreter
+    # (M2RC1_PYTHON = sys.executable below), so it is recorded explicitly and
+    # must not be confused with the PATH-level `python` probe next to it.
+    gate.pass_or(
+        True,
+        "EVN-runner-python",
+        {"executable": sys.executable, "version": sys.version.split()[0]},
+    )
+    tools = ("cargo", "rustc", "node", "npm")
     usable = True
     for name in tools:
         resolved = resolve_tool(name)
@@ -284,9 +292,41 @@ def run_sample(gate: Gate, exe: Path, lab_root: Path, sample: str, venv_python: 
         },
     )
 
+    # F-001/F-002 (DSH r1): the restore launch re-reads the persisted result
+    # itself — that re-read must equal the run1 saved summary (compared
+    # order-independently by index), and the run2 view/export must be
+    # consistent with the run2 re-read, not only with run1's.
+    saved2 = run2.get("saved") or {}
+    gate.pass_or(
+        sorted(saved2.get("pages") or [], key=lambda page: page["index"])
+        == sorted(saved.get("pages") or [], key=lambda page: page["index"])
+        and saved2.get("providers") == saved.get("providers")
+        and saved2.get("run_status") == saved.get("run_status") == "completed",
+        f"{sample}-restore-saved-matches-run1",
+        {
+            "run1_pages": [(p["index"], p["sha256"][:12]) for p in saved.get("pages") or []],
+            "run2_pages": [(p["index"], p["sha256"][:12]) for p in saved2.get("pages") or []],
+        },
+    )
+    saved2_by_index = {page["index"]: page["sha256"] for page in saved2.get("pages") or []}
+    gate.pass_or(
+        bool(saved2_by_index)
+        and all(
+            entry.get("sha256") == saved2_by_index.get(entry.get("index"))
+            for entry in viewed
+        )
+        and exported_sha(run2) == saved2_by_index.get(run2.get("exported", {}).get("page_index")),
+        f"{sample}-restore-internals-match-restored-saved",
+        {"exported_sha": (exported_sha(run2) or "")[:12]},
+    )
+
     # AC5: the exported PNG is non-empty, decodable and is the Reader's page
     exported = run2.get("exported") or {}
-    export_file = sample_root / "root" / "exports" / str(exported.get("output_path") or "")
+    output_name = exported.get("output_path")
+    if not isinstance(output_name, str) or not output_name:
+        gate.record(f"{sample}-export-png", "FAIL", {"error": "missing output_path in results"})
+        return None
+    export_file = sample_root / "root" / "exports" / output_name
     gate.pass_or(
         bool(exported.get("sha256"))
         and export_file.is_file()
@@ -299,7 +339,42 @@ def run_sample(gate: Gate, exe: Path, lab_root: Path, sample: str, venv_python: 
             "sha": (exported.get("sha256") or "")[:12],
         },
     )
+    # F-004 (DSH r1): decode the exported PNG in the gate itself (the runner
+    # runs on the acceptance venv, which has PySide6) and record the pixel
+    # digest — byte equality alone does not prove the file decodes.
+    try:
+        pixel = png_pixel_digest(export_file)
+        gate.pass_or(
+            pixel is not None and pixel["width"] == 240 and pixel["height"] == 320,
+            f"{sample}-export-png-decodes",
+            {"width": pixel["width"] if pixel else None, "height": pixel["height"] if pixel else None,
+             "pixel_sha": (pixel["sha256"][:12] if pixel else "")},
+        )
+    except Exception as error:  # noqa: BLE001 - a decode failure IS the failing signal
+        gate.record(f"{sample}-export-png-decodes", "FAIL", {"error": str(error)})
     return evidence
+
+
+def exported_sha(run2_results: dict) -> str | None:
+    exported = run2_results.get("exported") or {}
+    value = exported.get("sha256")
+    return value if isinstance(value, str) else None
+
+
+def png_pixel_digest(path: Path) -> dict | None:
+    """Decode a PNG via Qt and return its dimensions + RGB32 pixel digest."""
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtGui import QImage
+
+    image = QImage(str(path))
+    if image.isNull():
+        return None
+    rgb32 = image.convertToFormat(QImage.Format.Format_RGB32)
+    return {
+        "width": rgb32.width(),
+        "height": rgb32.height(),
+        "sha256": hashlib.sha256(bytes(rgb32.constBits())).hexdigest(),
+    }
 
 
 def main() -> int:
@@ -360,10 +435,27 @@ def main() -> int:
     return 0 if verdict == "PASS" else 1
 
 
+def implementation_commit() -> str:
+    """The worktree HEAD the gate is testing (evidence ↔ commit binding)."""
+    try:
+        return subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        ).stdout.strip()
+    except (OSError, subprocess.TimeoutExpired):
+        return "UNKNOWN"
+
+
 def write_gate(gate: Gate, lab_root: Path) -> None:
     payload = {
         "task": "M2-AC1",
         "verdict": gate.verdict,
+        "implementation_commit": implementation_commit(),
+        "runner_executable": sys.executable,
         "scenarios": gate.scenarios,
         "lab": str(lab_root),
     }
