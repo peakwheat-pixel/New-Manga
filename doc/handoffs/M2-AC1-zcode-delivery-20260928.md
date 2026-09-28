@@ -53,15 +53,15 @@ status: delivered_awaiting_review
 | Tauri host regression | `cargo test --locked` | 同上 | PASS（25 passed, 0 failed） | [cargo-test.log](../../verification/M2-AC1/cargo-test.log) |
 | React regression | `npm test`（=vitest run） | 同上 | PASS（3 files, 18 passed） | [vitest.log](../../verification/M2-AC1/vitest.log) |
 | 全仓回归（Owner 加跑） | `python -m pytest -q -p no:cacheprovider -rs` | 同上 | PASS（1322 passed, 5 skipped, exit 0；M2-RC2 集成基线 1318+新增 4，零回归） | [pytest-full-suite.log](../../verification/M2-AC1/pytest-full-suite.log) |
-| 范围与 whitespace | `git diff --name-status 7db0e7b6..035bbdf9`；`git diff --check 7db0e7b6..035bbdf9` | head `a74ce105` | PASS（19 路径见 §范围审计；diff --check exit 0） | 本 Handoff |
+| 范围与 whitespace | `git diff --name-status 7db0e7b6..035bbdf9`；`git diff --check 7db0e7b6..035bbdf9` | 证据 head `a74ce105` | PASS（19 路径见 §范围审计；diff --check exit 0） | 本 Handoff |
 
 **未覆盖项（诚实声明）**：真实 docTR/模型权重、联网 Provider、Provider 缺失 fail-closed、源哈希/Managed Copy/人工修改/Lock/current 或 pinned Revision 完整性、Reader export lineage、Library page-count/unknown 语义、干净机安装、无系统 Python 启动、打包发布、冷启动、Windows 支持矩阵、GUI console policy——均按 Task 禁止范围未实现未验收，M2 安全及打包边界保持既有 `UNVERIFIED`/`NOT_RUN`。Mock 成功不声称模型质量或产品就绪。E2E 两次 gate 运行的 stderr 含 Qt `QFontDatabase` 字体目录提示与 WebView2 `window_impl` ERROR 日志，均为 offscreen/有头环境噪音，闭环判定不受影响（详见 run*.stderr.log）。
 
 ## 接收方式
 
-- 仓库 `G:/CODEX/New Manga`；branch `agent/zcode/M2-AC1-end-to-end-acceptance`；worktree `G:/CODEX/New Manga.worktrees/M2-AC1-zcode`（当前 clean @ `a74ce105`）。
+- 仓库 `G:/CODEX/New Manga`；branch `agent/zcode/M2-AC1-end-to-end-acceptance`；worktree `G:/CODEX/New Manga.worktrees/M2-AC1-zcode`（当前 clean @ `aaf21a13`，即 reviewed head）。
 - 复现：venv（`G:/CODEX/New Manga.task-envs/TASK-012-py312`）下从仓库根运行 `python verification/M2-AC1/run_e2e.py`（约 3 分钟；或 `--skip-build` 复用产物）；Core 层 `python -m pytest tests/m2_acceptance -q`。
-- Reviewer 需要的固定 head：**`a74ce105`**（实现 `035bbdf9` + 证据）。git 操作在 DSH 沙箱可能被拒时按静态 Review 模式进行即可。
+- Reviewer 需要的固定 head：**`aaf21a13`**（tip；实现面为 `035bbdf9` + 证据 `a74ce105`）。git 操作在 DSH 沙箱可能被拒时按静态 Review 模式进行即可。
 - 无依赖变化（Cargo.lock/package lockfile 均未动）；无 schema/migration 变更。
 
 ## 下一任务建议（必填）
@@ -69,7 +69,7 @@ status: delivered_awaiting_review
 - Task ID / 标题：无新 Task——M2-AC1 进入 Review/集成；后续 successor 候选（S1 收口 / Core 安全 / React 对齐）仍按 REBASELINE_PLAN Backlog 待 Codex 释放。
 - 推荐 Agent / Reviewer：DeepSeek Harness（M2-AC1 非作者 Review，已排定）；Codex（集成与 `done` 裁决）。
 - 推荐原因与前置依赖：Task §交付与运行记录已排定 Owner→Reviewer→Integrator 流水；无新增依赖。
-- Recovery point：branch/worktree 见上；reviewed head 待 Review 通过后由 Reviewer 报告固定。
+- Recovery point：branch/worktree 见上；reviewed head=`aaf21a13`（tip），Review 通过后由 Reviewer 报告固定。
 - 允许修改路径：Review 报告按惯例落 `doc/reviews/` 与 `verification/M2-AC1/review-*/**`；Owner 返修仅限 Task 允许路径。
 - 禁止范围与新增授权条件：同 Task §禁止范围；范围边缘 3 组文件（§范围审计）的追认/扩大登记由 Codex 裁决。
 - 交付物：Review 报告 + （集成时）integration record。
@@ -79,7 +79,8 @@ status: delivered_awaiting_review
 ```
 致 DeepSeek Harness（非作者 Reviewer）：对 M2-AC1 交付执行独立 Review。仓库 G:/CODEX/New Manga，
 branch agent/zcode/M2-AC1-end-to-end-acceptance，worktree G:/CODEX/New Manga.worktrees/M2-AC1-zcode，
-固定 base=7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d，被审 head=a74ce105（实现 035bbdf9 + 证据）。
+固定 base=7db0e7b6ef77b5d403e3d485dc1378d4c786bc7d，被审 head=aaf21a13（branch tip：实现 035bbdf9
++ 证据 a74ce105 + 本 Handoff；diff 审计范围 7db0e7b6..aaf21a13）。
 任务文件 doc/tasks/M2-AC1.md（AC1-AC6、允许/禁止路径、测试表）；Owner Handoff
 doc/handoffs/M2-AC1-zcode-delivery-20260928.md；证据 verification/M2-AC1/**（E2E gate 两次 PASS、
 四套件日志、逐样本 results/stderr）。重点复核：(1) 19 路径范围审计——尤其 Handoff §范围审计披露的
