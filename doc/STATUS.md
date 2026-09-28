@@ -12,11 +12,11 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 |---|---|
 | Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
 | Current Active Task | **None (`in_progress`=0).** |
-| Current released Task | **None.** [M2-IPC1](tasks/M2-IPC1.md) is `done` at Codex（代行）merge `04c1394a`；第一个 production React → Tauri → Python Core → SQLite 只读竖切已打通 |
-| Owner / Reviewer / Integrator | Antigravity / DeepSeek Harness（非作者，r1 `changes_requested` → r2 `approved_with_conditions`，裁决已实施）/ Codex（代行=ZCode 会话） |
-| Recovery point | base=`a54bb8c9`; Owner branch=`agent/antigravity/M2-IPC1-production-core-library` tip=`5556fc8e`; worktree=`G:/CODEX/New Manga.worktrees/M2-IPC1-agy`（保留） |
+| Current released Task | [M2-AC2](tasks/M2-AC2.md) Data Integrity Acceptance = `ready / M2_AC2_DATA_INTEGRITY_RELEASED`（用户批准 2026-09-28；Owner=ZCode 本会话实现、Reviewer=DSH、Integrator=Codex 新会话）；fixed base=`61f9db9b`；纯验收（产品代码零改动） |
+| Owner / Reviewer / Integrator | ZCode（Owner 会话）/ DeepSeek Harness（非作者）/ Codex（新 ZCode 会话，保持 Owner≠Integrator） |
+| Recovery point | base=`61f9db9b`; branch=`agent/zcode/M2-AC2-data-integrity`; worktree=`G:/CODEX/New Manga.worktrees/M2-AC2-zcode`（从 release commit 检出） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1 及 M2-IPC1 全部 `done`；最新 integration=`66416eb6` |
-| Planned next | `M2-AC2` data integrity acceptance（未释放）；M2-P1/IPC1 集成记录中的 P3 项（term_extract book_id 错配、expected_* Page 形状、LIST_BOOKS_FAILED retryable 语义等）与自动进程监督作为后续切片输入 |
+| Planned next | M2-P1/IPC1 集成记录中的 P3 项（term_extract book_id 错配、expected_* Page 形状、LIST_BOOKS_FAILED retryable 语义等）、自动进程监督、写命令竖切作为后续切片输入 |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex quota exhausted；自 2026-09-28 起由 ZCode 会话代行 Codex Lead/Integrator 职责（用户全权授权）；追认批次见下方 ratification checkpoint |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |

@@ -21,7 +21,7 @@ releases a task.
 
 ### 2026-09-28 全量任务盘点与当前流程
 
-Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。[M2-P1](tasks/M2-P1.md) 已集成（`a174fb9c`）；[M2-IPC1](tasks/M2-IPC1.md) 已于 2026-09-28 释放、实现、两轮 Review、返修并集成（merge=`04c1394a`）；当前无 `in_progress` 或已释放待派发 Task。
+Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。[M2-P1](tasks/M2-P1.md) 已集成（`a174fb9c`）；[M2-IPC1](tasks/M2-IPC1.md) 已集成（`04c1394a`）；当前已释放待执行的是 [M2-AC2](tasks/M2-AC2.md)（`ready`，用户批准 2026-09-28，Owner=ZCode）。
 
 | 已完成 Task | Owner | 非作者 Reviewer / Integrator | Integration |
 |---|---|---|---|
@@ -45,7 +45,7 @@ Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前
 |---|---|---|---|
 | [M2-P1](tasks/M2-P1.md) Regionless Detection Fan-out and Guard Rebinding | **done**（integration=`a174fb9c`） | Antigravity / DeepSeek Harness（`approved_with_conditions`，P2 已处置） | fixed base=`33826641`、tip=`59acb340`；修复=诊断报告 §5.4 单函数 + R0–R5/N1–N7 全落测；[release evidence](../verification/M2-P1/release-33826641.md)、[集成记录](../verification/M2-P1/integration-record/integration.md)。 |
 | [M2-IPC1](tasks/M2-IPC1.md) Production Core Lifecycle + Read-only Library Vertical Slice | **done**（integration=`04c1394a`） | Antigravity / DeepSeek Harness（r1 changes_requested → r2 approved_with_conditions，裁决已实施） | tip=`5556fc8e`；seam 冻结全落地（含方案 B 冻结面保持）；[release evidence](../verification/M2-IPC1/release-a54bb8c9.md)、[集成记录](../verification/M2-IPC1/integration-record/integration.md)。 |
-| M2-AC2 Data Integrity Acceptance | planning；未释放 | ZCode / DeepSeek Harness | source hash、Managed Copy、人工修改、Lock、current/pinned Revision；依赖 P1 与 IPC1。 |
+| [M2-AC2](tasks/M2-AC2.md) Data Integrity Acceptance | **ready；已释放（用户批准 2026-09-28）** | ZCode / DeepSeek Harness | fixed base=`61f9db9b`；纯验收（产品代码零改动）：source hash、Managed Copy、人工修改、Lock、current/pinned Revision + 端到端恢复；[release evidence](../verification/M2-AC2/release-61f9db9b.md)。 |
 | Provider fail-closed acceptance | backlog；未登记 | ZCode / DeepSeek Harness | 对应下方 Backlog 第 3 行。 |
 | Reader lineage + Library page-count acceptance | backlog；未登记 | ZCode / Qoder | 对应下方 Backlog 第 4 行；必须通过 production seam。 |
 | Package / clean-start acceptance | backlog；未登记 | ZCode / DeepSeek Harness | clean install、无系统 Python、workflow/path/exit。 |
@@ -67,7 +67,7 @@ flowchart TD
   AC1 --> DIAG["DIAG-M2-REGIONLESS ✓"]
   DIAG --> P1["M2-P1 ✓"]
   P1 --> IPC1["M2-IPC1 ✓"]
-  IPC1 --> AC2["M2-AC2 planned"]
+  IPC1 --> AC2["M2-AC2 READY"]
   AC2 --> AC3["Provider fail-closed backlog"]
   AC3 --> AC4["Reader/Library semantics backlog"]
   AC4 --> PKG["Package + clean-start backlog"]
@@ -77,7 +77,8 @@ flowchart TD
   classDef ready fill:#fff0b3,stroke:#8a6d00,color:#123;
   classDef planned fill:#eef1f5,stroke:#697386,color:#123;
   class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DIAG,P1 done;
-  class P1,IPC1,AC2,AC3,AC4,PKG,ML,RG planned;
+  class P1,IPC1,AC3,AC4,PKG,ML,RG planned;
+  class AC2 ready;
 ```
 
 上图中灰色节点只是排序与建议分工，不构成释放。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
