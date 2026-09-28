@@ -24,25 +24,28 @@ F-2 xfail 场景 `test_ac4_books_without_pages_are_not_presented_as_zero` **先�
 - `tests/core/test_core_service.py`（无章书断言 0 → None + docstring；新增 DTO 层 known-0 vs None 序列化测试）
 - `verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/**`、本 Handoff、Task 回填
 
-Commit ledger：claim `2210d642` → 交付 `852a92ae` → Task 回填（delivery_head=`852a92ae`）。
+Commit ledger：claim `2210d642` → 交付 `852a92ae` → Task 回填（delivery_head=`852a92ae`）→ **r2 返修（DSH r1 C1+C2，keep in_review/DELIVERED_FOR_REVIEW；hash 见 Task 正文 ledger 与 `git log`）**：TS known-0 正向用例 + `??`→`||` 变异红证/还原绿、模块 docstring :39 陈旧句修正（P3-2）、契约 §3.2 授权例外指针（P2-2）+ 1.2 日期修正（P3-3）、`verification-results.md` 新建（P2-3）、本 Handoff tip 表述更正（P2-4）+ NOT_RUN 小节（C4 预置）、r2 tip 绑定复跑日志。证据索引统一见 [verification-results.md](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/verification-results.md)。
 
 ## 验证证据
 
 | AC/场景 | 实际命令 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
 | 先红（AC3 前置） | 移除 xfail 标记 → `$py -m pytest tests/m2_acceptance/test_reader_export_lineage_library_pagecount.py::test_ac4_books_without_pages_are_not_presented_as_zero -q` | py3.12 task-env，HEAD=`2210d642`（src 零改动） | **FAIL（预期红）**：`assert presented_unknown` False（`page_count=0`, `page_count_known=None`），EXIT=1 | raw/red-run-f2-before-fix.log |
-| AC1/AC3 全套 | `$py -m pytest tests/m2_acceptance -q` | 交付 tip | **35 passed, 0 xfailed** EXIT=0（F-2 转 PASS，无 XPASS） | raw/pytest-m2_acceptance-after-fix.log |
-| AC2/AC4 core 回归 | `$py -m pytest tests/core -q` | 交付 tip | **77 passed** EXIT=0（原 76 + 新增 1） | raw/pytest-core-after-fix.log |
-| 锚点点名 | 5 个锚点测试 `-v`（E_LIST_BOOKS_FAILED、filtering、known-0 新测、F-2 场景、corrupt 场景） | 交付 tip | **5 passed** EXIT=0 | raw/pytest-core-targeted-anchors.log |
-| Rust 侧 | `cargo test --bin m2rc1-desktop`（cwd=`apps/desktop/src-tauri`） | 交付 tip | **33 passed, 0 failed** EXIT=0（32 + 新增 serde 测试；f02 首跑 flaky 事件与三重复证记录于日志尾部 FLAKY INCIDENT RECORD） | raw/cargo-test.log |
-| 前端侧 | `npm test`（vitest run）→ `npm run build`（tsc && vite build） | 交付 tip | vitest **5 files passed**（LibraryPanel 7 tests 含新 None 用例）EXIT=0；build **34 modules** EXIT=0 | raw/npm-test-and-build.log |
-| AC5 副本同步 | `git diff 6199df48 -- src/bootstrap/core_service.py` 核对 SQL 字面量 | 交付 tip | SQL 零改动 → `_PRODUCTION_COUNT_SQL` 副本无需编辑、逐字一致保持 | raw/prod-sql-copy-sync-check.log |
+| AC1/AC3 全套 | `$py -m pytest tests/m2_acceptance -q` | 交付树* | **35 passed, 0 xfailed** EXIT=0（F-2 转 PASS，无 XPASS） | raw/pytest-m2_acceptance-after-fix.log |
+| AC2/AC4 core 回归 | `$py -m pytest tests/core -q` | 交付树* | **77 passed** EXIT=0（原 76 + 新增 1） | raw/pytest-core-after-fix.log |
+| 锚点点名 | 5 个锚点测试 `-v`（E_LIST_BOOKS_FAILED、filtering、known-0 新测、F-2 场景、corrupt 场景） | 交付树* | **5 passed** EXIT=0 | raw/pytest-core-targeted-anchors.log |
+| Rust 侧 | `cargo test --bin m2rc1-desktop`（cwd=`apps/desktop/src-tauri`） | 交付树* | **33 passed, 0 failed** EXIT=0（32 + 新增 serde 测试；f02 首跑 flaky 事件与三重复证记录于日志尾部 FLAKY INCIDENT RECORD） | raw/cargo-test.log |
+| 前端侧 | `npm test`（vitest run）→ `npm run build`（tsc && vite build） | 交付树* | vitest **5 files passed**（LibraryPanel 7 tests 含新 None 用例）EXIT=0；build **34 modules** EXIT=0 | raw/npm-test-and-build.log |
+| AC5 副本同步 | `git diff 6199df48 -- src/bootstrap/core_service.py` 核对 SQL 字面量 | 交付树* | SQL 零改动 → `_PRODUCTION_COUNT_SQL` 副本无需编辑、逐字一致保持 | raw/prod-sql-copy-sync-check.log |
 | AC6 范围/纪律 | `git diff --check 6199df48..HEAD` 整树；`git diff --name-status` 分解 | 交付 tip `852a92ae` | **整树 EXIT=0**（无 whitespace amend 需要）；owner delta vs claim 全落允许路径；`STATUS.md`/`release-6199df48.md` 来自编排者 release commit `a2380706` 非 owner 改动 | raw/scope-and-diff-check.log |
+| r2 tip 绑定复跑（DSH r1 C3 前置证据，Owner 侧） | pytest 两套 + `cargo test --bin` + `npm test`/`npm run build` + `git diff --check 6199df48..HEAD` | r2 返修 commit（run-at hash 见日志头） | 35 passed / 77 passed / 33 passed / 5 files(31 tests, LibraryPanel 8) + build / diff-check 空，全 EXIT=0 | raw/r2-final-bind-rerun.log（随 r2 amend 并入） |
+
+\* **「交付树*」head 戳更正（DSH r1 P2-4/C3，原文误写「交付 tip」）**：r1 期修复后与 Rust/前端验证均执行于交付 commit 创建之前的修复后工作树——该工作树内容与交付 commit `852a92ae` 的树逐字一致（唯一中间 diff 为 claim→交付的 commit 动作本身），但日志头部 `head:` 记录的是当时尚未前进的 `2210d642`。即：**工作树等价于 `852a92ae`，日志 head 戳 `2210d642`（交付前）**；commit 级绑定由 r2 tip 绑定复跑行补齐（DSH r1 §2.4 在集成 head 的复跑仍归集成方 C3）。
 
 known-0 vs None 可区分性（AC2）三侧锁定：
 - Python：`tests/core/test_core_service.py::test_book_summary_dto_known_zero_and_unknown_are_distinguishable`——直接构造 `page_count=0` 与 `page_count=None` 两个 DTO，`asdict`+`json.dumps` 后断言 `"page_count": 0` ≠ `"page_count": null`、round-trip 后 `== 0` / `is None`。
 - Rust：`library_bridge.rs::tests::book_summary_page_count_known_zero_and_null_are_distinguishable`——serde 序列化 `Some(0)` → `"page_count":0`、`None` → `"page_count":null`，反序列化 round-trip 断言。
-- TS：`LibraryPanel.test.tsx` None 占位用例锁定 UI 层不把 null 折叠成 0（`页数: —` 且 `not.toContain("页数: 0")`）。
+- TS：`LibraryPanel.test.tsx` None 占位用例锁定 UI 层不把 null 折叠成 0（`页数: —` 且 `not.toContain("页数: 0")`）；**r2（DSH r1 C1/P2-1）补齐正向腿**：新用例锁定 known `0 → "页数: 0"` 且 `not "页数: —"`，并以 `??`→`||` 变异证红（仅该用例 FAILED，EXIT=1）后还原绿（8 tests 全绿，EXIT=0）——三侧对称锁定自此闭合，日志 raw/npm-vitest-known0-mutation-red.log、raw/npm-test-after-known0-case.log。
 
 ## 偏差与判定（review 重点）
 
@@ -51,6 +54,14 @@ known-0 vs None 可区分性（AC2）三侧锁定：
 3. **`cargo test --lib` 探针**：`m2rc1-desktop` 为 binary-only crate（no library targets，EXIT=101），改用 `cargo test --bin m2rc1-desktop` 全量口径；前置依赖 `apps/desktop/frontend/dist` 存在（tauri build script 要求 frontendDist），故先 `npm run build` 再 cargo。全程留痕。
 4. **环境设置**：worktree 前端 `node_modules` 缺失，`npm install --no-audit --no-fund` 后方可 vitest/tsc（gitignored，不进交付）。
 5. **git auto-maintenance 噪音**：交付 commit 时 git 自动维护尝试删除主 repo `.git/worktrees/New-Manga*` 元数据报 Permission denied——删除失败、无实际副作用，其他 worktree 注册未被破坏；非 owner 主动操作，如实登记。
+
+## NOT_RUN / 未覆盖（如实登记；DSH r1 C4 要求）
+
+- **Rust 真通道 unknown-page 端到端未覆盖（DSH r1 P3-1，留集成方）**：`main.rs::real_library_sidecar_round_trip_and_eof` 仅对空库断言 `books.is_empty()`；「Python 真进程发出的 `"page_count":null` 被 Rust `Option<u32>` 接住」无判别用例——若 Rust 侧未来退回 `u32`，现有 33 个 Rust 测试与 35 个验收测试仍全绿。建议集成收口时在该测试 seed 一本无页书并断言 `page_count == None`（成本 1 条）。两侧半程证据：Python null 序列化（`json.dumps` 单测）与 Rust null→None 解码（serde 单测）各自成立。
+- **TS known-0 正向锁定（DSH r1 P2-1）——本轮（r2）已补齐，此处为补齐前状态说明**：r1 交付时 TS 侧仅有 null→`—` 单向锁定（`0→"页数: 0"` 无用例，`??`→`||` 变异可逃逸）；r2 按条件 C1 补 `page_count: 0` 正向用例并完成变异红证（`||` 下恰该用例 FAILED）+ 还原绿，三侧对称自此闭合（见上文 known-0 TS 行与 raw/npm-vitest-known0-mutation-red.log）。
+- **交付 commit 级绑定的 Rust/前端复跑（DSH r1 P2-4/C3）**：r1 期 cargo/npm 日志 head 戳为交付前 `2210d642`（工作树=交付树，见上表注）；Owner 已在 r2 tip 补绑定复跑（raw/r2-final-bind-rerun.log），**集成 head 上的最终复跑仍归集成方 C3**。
+- **f02 flaky 集成复跑口径（DSH r1 P3-4/C4）**：建议 ≥3 次默认线程全量 + 复现时 `-- --test-threads=1` 对照；复现则另立 flaky Task（M2-S2 资源通道 mtime/digest 判定），不计本 Task 回归。
+- **`Any` 导入来源（DSH r1 P3-6/C4）**：`tests/core/test_core_service.py` 使用 `Any` 而文件无 `from typing import Any`——`from __future__ import annotations` 下运行期无碍（77 passed 覆盖该测试）；是否 base 既有留集成方按 `git show 6199df48:tests/core/test_core_service.py` 比对，非本 Task 有意改动。
 
 ## 回退方法
 

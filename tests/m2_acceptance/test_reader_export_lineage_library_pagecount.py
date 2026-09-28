@@ -35,8 +35,12 @@ fails loudly and the marker must be removed by the confirming review. The
 F-1 marker (persisted included stale/missing page ids, verified red on
 release commit 252705bf and re-proven red pre-fix under M2-FIX-EXPORT-LINEAGE,
 see verification/M2-FIX-EXPORT-LINEAGE/raw/) was removed once the plan-A fix
-(scope_snapshot_json included-ids keys) turned the scenario green; F-2
-(page_count unknown semantics) remains xfail(strict=True).
+(scope_snapshot_json included-ids keys) turned the scenario green; the F-2
+marker (page_count unknown semantics, verified red on the same release
+commit and re-proven red pre-fix under M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN,
+see verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/raw/) was likewise
+removed once the frozen None-channel fix turned the scenario PASS -- as of
+this suite the tree carries no xfail markers at all (DSH r1 P3-2).
 """
 
 from __future__ import annotations

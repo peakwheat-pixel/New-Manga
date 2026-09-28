@@ -1,0 +1,41 @@
+shell: GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)
+node: v24.15.0 / npm: 12.0.1
+head: bee7bf597d597355d52c41618c67af4d218ca1cc
+time: 2026-09-29T02:28:42+08:00
+purpose: DSH r1 C1 (P2-1) mutation red-proof -- with the new known-0 vitest case in place, LibraryPanel.tsx:145 temporarily mutated from ?? to || (falsy trap); expected: the known-0 case FAILS (0 swallowed into the unknown placeholder em-dash) while the null/24 cases stay green
+mutation: <span>{`页数: ${book.page_count || "—"}`}</span>  (uncommitted, reverted right after this run)
+cmd: npx vitest run src/library/LibraryPanel.test.tsx (cwd=apps/desktop/frontend)
+---
+npm notice run m2rc1-frontend@0.1.0 npx
+npm notice run vitest run src/library/LibraryPanel.test.tsx
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90mG:/CODEX/New Manga.worktrees/M2-FIX-LISTBOOKS-zcode/apps/desktop/frontend[39m
+
+ [31m❯[39m src/library/LibraryPanel.test.tsx [2m([22m[2m8 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[90m 84[2mms[22m[39m
+[31m   [31m×[31m LibraryPanel Component[2m > [22mrenders a known page_count of 0 as the number 0, never the unknown placeholder[90m 5[2mms[22m[31m[39m
+[31m     → expected '<section data-testid="library-panel" …' to contain '页数: 0'[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[1m[7m Failed Tests 1 [27m[22m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[31m[1m[7m FAIL [27m[22m[39m src/library/LibraryPanel.test.tsx[2m > [22mLibraryPanel Component[2m > [22mrenders a known page_count of 0 as the number 0, never the unknown placeholder
+[31m[1mAssertionError[22m: expected '<section data-testid="library-panel" …' to contain '页数: 0'[39m
+
+Expected: [32m"页数: 0"[39m
+Received: [31m"<section data-testid="library-panel" style="margin-top:20px;padding:16px;border:1px solid #2a3441;border-radius:6px;background:#161b22;color:#e6edf3"><header style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><h2 style="font-size:16px;margin:0;font-weight:600">书库书目 (Library)</h2><button data-testid="library-refresh-btn" style="padding:4px 10px;font-size:12px;background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:4px;cursor:pointer">刷新</button></header><div data-testid="library-book-list" style="display:grid;gap:10px"><div data-testid="book-item-book-known-zero" style="padding:10px;background:#0d1117;border:1px solid #30363d;border-radius:4px"><div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-weight:600;font-size:14px">已知零页书</span></div><div style="font-size:12px;color:#8b949e;margin-top:6px;display:flex;gap:16px"><span>页数: —</span><span>创建时间: 2026-09-28T10:00:00Z</span></div></div></div></section>"[39m
+
+[36m [2m❯[22m src/library/LibraryPanel.test.tsx:[2m82:18[22m[39m
+    [90m 80| [39m
+    [90m 81| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m"已知零页书"[39m)[33m;[39m
+    [90m 82| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m"页数: 0"[39m)[33m;[39m
+    [90m   | [39m                 [31m^[39m
+    [90m 83| [39m    [34mexpect[39m(html)[33m.[39mnot[33m.[39m[34mtoContain[39m([32m"页数: —"[39m)[33m;[39m
+    [90m 84| [39m    [34mexpect[39m(html)[33m.[39m[34mtoContain[39m([32m'data-testid="library-book-list"'[39m)[33m;[39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (8)[39m
+[2m   Start at [22m 02:28:43
+[2m   Duration [22m 438ms[2m (transform 39ms, setup 0ms, collect 64ms, tests 84ms, environment 0ms, prepare 103ms)[22m
+
+EXIT=1
