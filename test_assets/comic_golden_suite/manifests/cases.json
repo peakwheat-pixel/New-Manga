@@ -113,7 +113,7 @@
       "local_image_file_count": 0,
       "local_path": "日漫_JA/02_public_annotations",
       "license": "CC BY 4.0 (annotations only)",
-      "checksum_inventory": "manifests/local_asset_inventory.json",
+      "checksum_inventory": "test_assets/comic_golden_suite/manifests/local_asset_inventory.json",
       "local_file_count": 76,
       "byte_size": 6739782,
       "ground_truth_types": [
@@ -146,7 +146,7 @@
     {
       "id": "ko_sfx_dialogue_cleaned_webtoon",
       "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
-      "status": "PARTIAL",
+      "status": "READY",
       "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset",
       "local_file_count": 80,
       "byte_size": 884913245,
@@ -158,11 +158,12 @@
         "bubble_confidence",
         "metadata"
       ],
-      "checksum_inventory": "verification/M2-TA2C/ko-webtoon-audit.json (per-file SHA-256; CLI checks PNG CRC and JSON)",
+      "checksum_inventory": "verification/M2-TA2C/ko-webtoon-audit.json",
       "source_name": "ko_sfx_dialogue_cleaned_webtoon",
       "pipeline_applicability": [],
       "pipeline_status": "NOT_RUN",
-      "image_redistribution_status": "Raw manga image redistribution not established"
+      "image_redistribution_status": "Raw manga image redistribution not established",
+      "notes": "READY covers only the fixed 10 local Cleaned Webtoon examples and structural/CRC integrity; underlying manga redistribution remains prohibited and application pipeline checks are NOT_RUN."
     },
     {
       "id": "peppercarrot_japanese_localized_pages",
@@ -188,7 +189,7 @@
         "svg_text_layer_partial"
       ],
       "source_name": "peppercarrot_japanese_localized_pages",
-      "checksum_inventory": null
+      "checksum_inventory": "test_assets/comic_golden_suite/manifests/local_asset_inventory.json"
     },
     {
       "id": "openmantra_candidate",
@@ -235,7 +236,7 @@
         "text_detection",
         "manga_page_render"
       ],
-      "checksum_inventory": "manifests/local_asset_inventory.json",
+      "checksum_inventory": "test_assets/comic_golden_suite/manifests/local_asset_inventory.json",
       "source_name": "peppercarrot_korean_localized_pages",
       "pipeline_status": "NOT_RUN"
     },

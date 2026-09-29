@@ -2,7 +2,7 @@
 id: M2-TA2C
 title: No-HF JA/KO Asset Migration
 kind: asset_infrastructure
-status: in_review
+status: changes_requested
 approval: user_authorized_2026-09-29
 suggested_owner: Codex Desktop
 owner: Codex Desktop
@@ -51,4 +51,8 @@ M2-TA1 与 M2-TA2A 均已 `done`，本 Task 可释放。来源/许可只读审�
 
 ## 交付与 Gate
 
-Owner 交付固定实现 HEAD=`2e9797013dcb73280462a7b34390abcb2be12977`、[Handoff](../handoffs/M2-TA2C-2e979701.md)、[运行证据](../../verification/M2-TA2C/run-results.md)；DeepSeek Harness 将在固定交付 HEAD 独立 Review；Codex 仅在无未解决 P0/P1 且关键验证完成后集成并复验，之后才可置 `done`。已在上述 linked worktree 认领，Git common directory=`G:/CODEX/New Manga/.git`。当前 `in_review`，Review 尚未完成。
+Owner 已交付初版固定实现 HEAD=`2e9797013dcb73280462a7b34390abcb2be12977`、[Handoff](../handoffs/M2-TA2C-2e979701.md)、[运行证据](../../verification/M2-TA2C/run-results.md)；DeepSeek Harness r1 已独立审查并要求返修，不能视为批准。Codex 仅在返修、复审及关键验证完成后集成并复验，之后才可置 `done`。已在上述 linked worktree 认领，Git common directory=`G:/CODEX/New Manga/.git`。
+
+## Review r1 与返修
+
+[DeepSeek Harness r1](../reviews/M2-TA2C-2c12ba1e-dsh-r1.md) 对 Handoff HEAD=`2c12ba1ec9d302de10a210211dfa46cd490845df` 给出 `changes_requested`：0×P0、0×P1、2×P2、7×P3。P2-1 为 KO Cleaned Webtoon 来源层 `PARTIAL` 与固定 10 Case `READY` 口径冲突；P2-2 为 JA Pepper&Carrot `checksum_inventory=null` 且来源索引路径基准不统一。本次返修已将来源层限定为固定 10 Case 的资产状态并统一仓库根相对 checksum 路径；另修正语言成员校验与 SVG 文本计数措辞。返修后的固定 HEAD、测试和复审另行登记，不复用 r1 结论。

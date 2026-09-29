@@ -9,6 +9,7 @@ Case 的 `READY` 只表示预期本地文件存在且通过完整性验证。它
 ## 路径与工具
 
 - `manifests/cases.json` 是 JA/KO 统一清单和困难标签 taxonomy；Case 路径相对本目录，适用于 Windows。每个 Case 共用 `source_name`、`asset_type`、`image_available`、`annotation_available`、`source_url`、`license`、`ground_truth_types`、`pipeline_status` 等字段。`image_available` / `annotation_available` 是本次本机文件快照，实时状态仍须由 CLI 复算。
+- `benchmark_sources[*].checksum_inventory` 的非空路径以仓库根目录为基准；`null` 表示本地没有可校验的对应文件。来源层 `READY` 只覆盖该条目注明的已取得范围（KO Cleaned Webtoon 为固定 10 Case），不表示原图再分发许可或应用 Pipeline 通过。
 - `cases.json` 中的 `status` / `asset_status` 是维护清单时的快照；每次运行时以 CLI 根据当前本地文件、inventory checksum 和格式检查计算出的状态为准。
 - `manifests/local_asset_inventory.json` 记录已取得的 JA 资源及本次 KO Pepper&Carrot 页的许可、内容类型、文件数、字节数、逐文件 SHA-256、GT 能力和 Pipeline 状态；`verify`、`list`、`missing` 均重新计算 inventory 文件的哈希。必需 XML / license 缺失或任一文件哈希不符会返回失败；缺失的图像会在状态与 `missing` 输出中显示。
 - 继承自 M2-TA1 的 80 个 KO Webtoon 资产未纳入运行时 SHA inventory；其 `READY` 表示所需 PNG/JSON 文件存在、PNG chunk CRC 与结构有效、JSON 可解析。本次将 80 个文件的 SHA-256 固定记录在 `../../verification/M2-TA2C/ko-webtoon-audit.json` 供外部复核；当前 CLI 不据此拒绝另一个结构正确的 PNG。
