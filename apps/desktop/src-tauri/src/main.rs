@@ -863,6 +863,50 @@ mod tests {
         }
     }
 
+    // ---- AC2 chunk-request cost probe (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF)
+    // `#[ignore]`d: measured explicitly, never in the default suite. Run with
+    // `cargo test --bin m2rc1-desktop perf_chunk_request_digest_cost -- --ignored --nocapture`
+    // (same command under `--release` for the release-profile column). Warm
+    // request first, then N timed identical requests; the average is the
+    // per-request figure recorded in the task's comparison table.
+    #[test]
+    #[ignore]
+    fn perf_chunk_request_digest_cost() {
+        let cases: &[(&str, usize, u64, u32)] = &[
+            // (label, payload_bytes, chunk_index, timed rounds)
+            ("1MiB-chunk0", 1024 * 1024, 0, 20),
+            ("16MiB-chunk0", 16 * 1024 * 1024, 0, 10),
+            ("32MiB-chunk1", 32 * 1024 * 1024, 1, 5),
+        ];
+        for (label, size, chunk, rounds) in cases {
+            let payload: Vec<u8> = (0..*size as u64).map(|i| (i % 251) as u8).collect();
+            let (env, _sha) = env_with_fixture(&payload);
+            let opaque = registered(&env, "res-001", "asset.png", &payload);
+            let url = url_for(&opaque, Some(*chunk));
+            let want = std::cmp::min(
+                *size as u64 - chunk * resource_protocol::CHUNK_SIZE,
+                resource_protocol::CHUNK_SIZE,
+            ) as usize;
+            // untimed warm-up: OS file cache + allocator reach steady state
+            let warm = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+            assert_eq!(warm.status, 200, "{label}: warm-up request must serve");
+            assert_eq!(warm.body.len(), want, "{label}: warm-up body size");
+            let start = std::time::Instant::now();
+            for _ in 0..*rounds {
+                let response = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+                assert_eq!(response.status, 200, "{label}: timed request must serve");
+                assert_eq!(response.body.len(), want, "{label}: timed body size");
+                assert_eq!(response.cache_control, "no-store");
+            }
+            let elapsed = start.elapsed();
+            println!(
+                "PERF {label}: rounds={} total={elapsed:?} avg={:?}/request",
+                rounds,
+                elapsed / *rounds
+            );
+        }
+    }
+
     /// Integration with the real Python Core sidecar: exercises the stdio
     /// JSON-lines bridge end to end (catalog seed -> issue -> resolve ->
     /// grant facts), including the RC2 catalog-authority denial (an
