@@ -1,0 +1,7 @@
+
+=== phase 0: environment record + PATH purge ===
+  [FAIL] CS-E1-python-purged-from-path: {"detail": "python still resolves under purged PATH: C:\\Users\\49745\\AppData\\Local\\Microsoft\\WindowsApps\\python.exe", "removed_entries": ["C:\\Python314\\Scripts", "C:\\Python314", "C:\\Users\\49745\\AppData\\Local
+  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\M2-AC5-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe"}
+  [FAIL] CS-BLOCKED: {"reason": "installer missing or python purge failed"}
+
+GATE: FAIL

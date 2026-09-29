@@ -1,0 +1,69 @@
+# M2-AC5 f2 final scope audit — r1 closure range
+shell: Git Bash / win32; date: 2026-09-29 11:19:17 +0800
+cwd: G:/CODEX/New Manga.worktrees/M2-AC5-zcode (branch agent/zcode/M2-AC5-package-clean-start)
+audited range: 6f79c040..e3740b25 (r1 closure content head; this log ships in the bookkeeping commit on top)
+
+$ git diff --name-status 6f79c040..e3740b25
+M	apps/desktop/src-tauri/src/core_bridge.rs
+M	apps/desktop/src-tauri/src/main.rs
+M	apps/desktop/src-tauri/tauri.conf.json
+M	doc/00_INDEX.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+A	doc/handoffs/M2-AC5-eccf88e3.md
+A	doc/tasks/M2-AC5.md
+M	doc/tasks/README.md
+A	packaging/m2ac5/README.md
+A	packaging/m2ac5/build_sidecar.ps1
+A	packaging/m2ac5/core_sidecar.spec
+A	packaging/m2ac5/entries/entry_acceptance_bridge.py
+A	packaging/m2ac5/entries/entry_catalog_loader.py
+A	packaging/m2ac5/entries/entry_core_service.py
+A	packaging/m2ac5/entries/entry_host_bridge.py
+A	packaging/m2ac5/requirements-build.txt
+A	packaging/m2ac5/run_clean_start_e2e.py
+A	verification/M2-AC5/checkpoint.md
+A	verification/M2-AC5/raw/README.md
+A	verification/M2-AC5/raw/ac1-input-hashes-build1.txt
+A	verification/M2-AC5/raw/ac1-repro-run1-hashes.txt
+A	verification/M2-AC5/raw/ac1-repro-run2-hashes.txt
+A	verification/M2-AC5/raw/ac1-repro-sidecar-diff.txt
+A	verification/M2-AC5/raw/ac1-repro-sidecar-runA.txt
+A	verification/M2-AC5/raw/ac1-repro-sidecar-runB.txt
+A	verification/M2-AC5/raw/artifact-inventory-final.txt
+A	verification/M2-AC5/raw/baseline-cargo-test.log
+A	verification/M2-AC5/raw/baseline-pytest-m2-acceptance.log
+A	verification/M2-AC5/raw/baseline-vitest-run.log
+A	verification/M2-AC5/raw/cleanstart-ac1-run1-stdout.log
+A	verification/M2-AC5/raw/cleanstart-ac1-run2-stdout.log
+A	verification/M2-AC5/raw/cleanstart-final.log
+A	verification/M2-AC5/raw/cleanstart-gate.json
+A	verification/M2-AC5/raw/cleanstart-probe-stdout.log
+A	verification/M2-AC5/raw/cleanstart-production-stdout.log
+A	verification/M2-AC5/raw/cleanstart-r1-final.log
+A	verification/M2-AC5/raw/cleanstart-run1.log
+A	verification/M2-AC5/raw/cleanstart-run2.log
+A	verification/M2-AC5/raw/cleanstart-run3.log
+A	verification/M2-AC5/raw/cleanstart-run4.log
+A	verification/M2-AC5/raw/cleanstart-run5.log
+A	verification/M2-AC5/raw/environment-record.log
+A	verification/M2-AC5/raw/f1-scope-audit.log
+A	verification/M2-AC5/raw/pyinstaller-build-closure-pyside6.log
+A	verification/M2-AC5/raw/pyinstaller-rebuild-repro.log
+A	verification/M2-AC5/raw/r1-baseline-cargo-test.log
+A	verification/M2-AC5/raw/r1-baseline-pytest-m2-acceptance.log
+A	verification/M2-AC5/raw/r1-baseline-vitest-run.log
+A	verification/M2-AC5/raw/r1-library-probe.log
+A	verification/M2-AC5/raw/sidecar-entries-smoke.log
+A	verification/M2-AC5/raw/tauri-build-run1.log
+A	verification/M2-AC5/raw/tauri-build-run2.log
+A	verification/M2-AC5/release-6f79c040.md
+A	verification/M2-AC5/verification-results.md
+--- command exit=0 ---
+
+$ git diff --check 6f79c040..e3740b25; echo EXIT=$?
+EXIT=0
+
+$ git status --porcelain (at audit time: only this audit file + Task frontmatter update pending, committed as the bookkeeping commit on top of e3740b25)
+?? verification/M2-AC5/raw/f2-final-scope-audit.log
+--- porcelain end ---

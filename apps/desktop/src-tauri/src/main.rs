@@ -253,6 +253,61 @@ fn env_path(name: &str) -> Option<PathBuf> {
     std::env::var(name).ok().map(PathBuf::from)
 }
 
+// ---- M2-AC5 packaged-mode resolution ---------------------------------------
+//
+// The packaged app carries a self-contained PyInstaller sidecar directory at
+// `<install>/resources/core-sidecar/` (declared in tauri.conf.json
+// `bundle.resources`; exe names pinned by packaging/m2ac5/core_sidecar.spec:
+// host_bridge / core_service / acceptance_bridge / catalog_loader).
+//
+// Packaged mode is entered when EITHER:
+//   a) `M2RC1_PACKAGED=1` is set explicitly (the unambiguous switch), or
+//   b) `M2RC1_SRC_ROOT` is absent AND the install-relative sidecar dir
+//      exists (an installed app launched bare).
+// Dev mode (M2RC1_* present, no installed layout) keeps the frozen env
+// contract byte-for-byte; existing tests and runners all hit that path.
+//
+// Fail-closed (AC2): in packaged mode a missing sidecar exe surfaces as the
+// typed `CORE_SPAWN_FAILED:PACKAGED_SIDECAR_MISSING` at spawn time; there is
+// deliberately NO fallback to a system `python`.
+
+/// The sidecar directory relative to the running exe's directory.
+fn sidecar_dir_for(exe_dir: Option<&std::path::Path>) -> Option<PathBuf> {
+    exe_dir.map(|dir| dir.join("resources").join("core-sidecar"))
+}
+
+/// Pure decision core of packaged-mode resolution (unit-tested): explicit
+/// flag wins, then the src-root-less bare-launch heuristic gated on the
+/// sidecar exe actually existing. `exe_dir = None` (no current exe) never
+/// resolves packaged.
+fn resolve_packaged_sidecar_dir(
+    explicit_packaged: Option<&str>,
+    src_root: Option<&str>,
+    exe_dir: Option<&std::path::Path>,
+) -> Option<PathBuf> {
+    if explicit_packaged == Some("1") {
+        return sidecar_dir_for(exe_dir);
+    }
+    if src_root.is_none() {
+        if let Some(dir) = sidecar_dir_for(exe_dir) {
+            if dir.join("host_bridge.exe").is_file() {
+                return Some(dir);
+            }
+        }
+    }
+    None
+}
+
+/// Packaged default user-data root (AC4): `%APPDATA%/<identifier>` — data
+/// and derived/managed/catalog live in the user profile, never in the
+/// install directory. Explicit `M2RC1_*` env still wins over these defaults
+/// (evidence runners pin lab dirs through the same env contract as dev).
+fn packaged_user_root() -> Option<PathBuf> {
+    std::env::var("APPDATA")
+        .ok()
+        .map(|appdata| PathBuf::from(appdata).join("com.newmanga.m2rc1.desktop"))
+}
+
 fn fixture_shas() -> serde_json::Value {
     let path = env_path("M2RC1_FIXTURES").unwrap_or_default();
     let text = match std::fs::read_to_string(&path) {
@@ -276,14 +331,69 @@ fn fixture_shas() -> serde_json::Value {
 }
 
 fn main() {
-    let python_exe = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string());
-    let src_root = env_path("M2RC1_SRC_ROOT").expect("M2RC1_SRC_ROOT must point at the repo src dir");
-    let derived_root = env_path("M2RC1_DERIVED_ROOT").expect("M2RC1_DERIVED_ROOT required");
-    let managed_root = env_path("M2RC1_MANAGED_ROOT").expect("M2RC1_MANAGED_ROOT required");
+    let exe_dir = std::env::current_exe()
+        .ok()
+        .and_then(|exe| exe.parent().map(|dir| dir.to_path_buf()));
+    let packaged_dir = resolve_packaged_sidecar_dir(
+        std::env::var("M2RC1_PACKAGED").ok().as_deref(),
+        std::env::var("M2RC1_SRC_ROOT").ok().as_deref(),
+        exe_dir.as_deref(),
+    );
+
+    // DEV spawn inputs: exactly the pre-M2-AC5 contract, consumed only on the
+    // dev path. Packaged mode spawns the frozen sidecar exes instead.
+    let (python_exe, src_root) = match &packaged_dir {
+        None => (
+            std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".to_string()),
+            env_path("M2RC1_SRC_ROOT").expect("M2RC1_SRC_ROOT must point at the repo src dir"),
+        ),
+        Some(_) => (String::new(), PathBuf::new()),
+    };
+
+    // Data roots (M2-AC5): dev keeps the `expect` contract; packaged mode
+    // defaults under %APPDATA%/<identifier> (created on first launch) and
+    // still honours explicit env so runners can pin a lab dir.
+    let user_root = match &packaged_dir {
+        Some(_) => packaged_user_root(),
+        None => None,
+    };
+    let ensure_dir = |path: &std::path::Path| {
+        let _ = std::fs::create_dir_all(path);
+    };
+    let derived_root = match &user_root {
+        Some(root) => {
+            env_path("M2RC1_DERIVED_ROOT").unwrap_or_else(|| {
+                let path = root.join("derived");
+                ensure_dir(&path);
+                path
+            })
+        }
+        None => env_path("M2RC1_DERIVED_ROOT").expect("M2RC1_DERIVED_ROOT required"),
+    };
+    let managed_root = match &user_root {
+        Some(root) => {
+            env_path("M2RC1_MANAGED_ROOT").unwrap_or_else(|| {
+                let path = root.join("managed");
+                ensure_dir(&path);
+                path
+            })
+        }
+        None => env_path("M2RC1_MANAGED_ROOT").expect("M2RC1_MANAGED_ROOT required"),
+    };
     // RC2 (F-03): the app refuses to run without its catalog authority. The
-    // launcher seeds the Core/SQLite store (catalog_loader) and passes the
-    // path; without it every issue would fail closed anyway.
-    let catalog_db = env_path("M2RC2_CATALOG_DB").expect("M2RC2_CATALOG_DB required (Core/SQLite catalog authority)");
+    // launcher seeds the Core/SQLite store (catalog_loader in packaged form)
+    // and passes the path; without it every issue would fail closed anyway.
+    let catalog_db = match &user_root {
+        Some(root) => {
+            env_path("M2RC2_CATALOG_DB").unwrap_or_else(|| {
+                let path = root.join("catalog").join("catalog.sqlite");
+                ensure_dir(path.parent().unwrap_or(root));
+                path
+            })
+        }
+        None => env_path("M2RC2_CATALOG_DB")
+            .expect("M2RC2_CATALOG_DB required (Core/SQLite catalog authority)"),
+    };
     // the embedded page URL has no query string, so the probe mode switch is
     // the presence of M2RC1_PROBE_OUT (set only by the evidence runner)
     let probe_mode = std::env::var("M2RC1_PROBE_OUT").is_ok();
@@ -291,23 +401,60 @@ fn main() {
     // configuration — never combined with the RC1 probe mode.
     let ac1_mode = !probe_mode && std::env::var("M2AC1_TEST_MODE").as_deref() == Ok("1");
 
-    let channel = StdioCoreChannel::spawn(
-        &python_exe, &src_root, &derived_root, &managed_root, &catalog_db,
-    )
+    // M2-AC5 packaged-vs-dev spawn dispatch. The library/acceptance bridges
+    // keep their frozen `spawn(python_exe, src_root, ...)` signatures (their
+    // files are outside this task's allowed paths): in packaged mode the
+    // arguments are repointed at the frozen exes — the PyInstaller entry
+    // wrappers ignore the `-m <module>` argv, and the sidecar dir as
+    // cwd/PYTHONPATH is inert — so the channel code stays untouched.
+    let channel = match &packaged_dir {
+        Some(dir) => StdioCoreChannel::spawn_packaged(
+            &dir.join("host_bridge.exe"),
+            &derived_root,
+            &managed_root,
+            &catalog_db,
+        ),
+        None => StdioCoreChannel::spawn(
+            &python_exe, &src_root, &derived_root, &managed_root, &catalog_db,
+        ),
+    }
     .expect("python core sidecar failed to start");
     let ac1 = if ac1_mode {
-        Some(Ac1Channel::spawn(&python_exe, &src_root).expect("acceptance core sidecar failed to start"))
+        Some(
+            match &packaged_dir {
+                Some(dir) => Ac1Channel::spawn(
+                    &dir.join("acceptance_bridge.exe").to_string_lossy(),
+                    dir,
+                ),
+                None => Ac1Channel::spawn(&python_exe, &src_root),
+            }
+            .expect("acceptance core sidecar failed to start"),
+        )
     } else {
         None
     };
-    let data_root = env_path("NEWMANGA_DATA_ROOT");
+    let data_root = match &user_root {
+        Some(root) => Some(env_path("NEWMANGA_DATA_ROOT").unwrap_or_else(|| {
+            let path = root.join("data");
+            ensure_dir(&path);
+            path
+        })),
+        None => env_path("NEWMANGA_DATA_ROOT"),
+    };
     let is_production = !probe_mode && !ac1_mode;
     let library: Option<Box<dyn LibraryChannel>> = if is_production {
-        let chan = StdioLibraryChannel::spawn(
-            &python_exe,
-            &src_root,
-            data_root.as_deref(),
-        )
+        let chan = match &packaged_dir {
+            Some(dir) => StdioLibraryChannel::spawn(
+                &dir.join("core_service.exe").to_string_lossy(),
+                dir,
+                data_root.as_deref(),
+            ),
+            None => StdioLibraryChannel::spawn(
+                &python_exe,
+                &src_root,
+                data_root.as_deref(),
+            ),
+        }
         .expect("production core library sidecar failed to start");
         Some(Box::new(chan))
     } else {
@@ -1082,5 +1229,72 @@ mod tests {
         let err = channel.ping().unwrap_err();
         assert_eq!(err.code, "CORE_UNAVAILABLE");
         assert!(err.retryable);
+    }
+
+    // ---- M2-AC5: packaged-mode resolution (fail-closed spawn) -------------
+
+    /// The explicit `M2RC1_PACKAGED=1` switch resolves the sidecar dir from
+    /// the running exe's directory, even before any sidecar exe is checked.
+    #[test]
+    fn packaged_resolution_explicit_flag_wins() {
+        let dir = tempfile::tempdir().unwrap();
+        let resolved = resolve_packaged_sidecar_dir(Some("1"), None, Some(dir.path()));
+        assert_eq!(resolved, Some(dir.path().join("resources").join("core-sidecar")));
+        // explicit flag wins over a dev src_root too
+        let resolved =
+            resolve_packaged_sidecar_dir(Some("1"), Some("G:/repo/src"), Some(dir.path()));
+        assert_eq!(resolved, Some(dir.path().join("resources").join("core-sidecar")));
+    }
+
+    /// A bare launch (no M2RC1_SRC_ROOT) is packaged ONLY when the
+    /// install-relative sidecar exe actually exists; anything else falls
+    /// back to the dev contract.
+    #[test]
+    fn packaged_resolution_bare_launch_requires_sidecar_exe() {
+        let dir = tempfile::tempdir().unwrap();
+        // no sidecar exe on disk -> not packaged (dev contract applies)
+        let resolved = resolve_packaged_sidecar_dir(None, None, Some(dir.path()));
+        assert_eq!(resolved, None);
+        // with host_bridge.exe present -> packaged
+        let sidecar = dir.path().join("resources").join("core-sidecar");
+        std::fs::create_dir_all(&sidecar).unwrap();
+        std::fs::write(sidecar.join("host_bridge.exe"), b"fake").unwrap();
+        let resolved = resolve_packaged_sidecar_dir(None, None, Some(dir.path()));
+        assert_eq!(resolved, Some(sidecar));
+    }
+
+    /// Dev environments (M2RC1_SRC_ROOT set, no explicit flag) never enter
+    /// packaged mode, even when an installed layout is visible nearby.
+    #[test]
+    fn packaged_resolution_dev_env_stays_dev() {
+        let dir = tempfile::tempdir().unwrap();
+        let sidecar = dir.path().join("resources").join("core-sidecar");
+        std::fs::create_dir_all(&sidecar).unwrap();
+        std::fs::write(sidecar.join("host_bridge.exe"), b"fake").unwrap();
+        let resolved =
+            resolve_packaged_sidecar_dir(None, Some("G:/repo/src"), Some(dir.path()));
+        assert_eq!(resolved, None);
+        // no current exe at all -> never packaged
+        let resolved = resolve_packaged_sidecar_dir(None, None, None);
+        assert_eq!(resolved, None);
+    }
+
+    /// AC2 fail-closed: a missing packaged sidecar exe is the typed
+    /// PACKAGED_SIDECAR_MISSING error — no system-python fallback is even
+    /// attempted (the error surfaces before any Command is built).
+    #[test]
+    fn packaged_spawn_missing_sidecar_fails_closed() {
+        let dir = tempfile::tempdir().unwrap();
+        let missing = dir.path().join("host_bridge.exe");
+        let error = match StdioCoreChannel::spawn_packaged(
+            &missing,
+            &dir.path().join("d"),
+            &dir.path().join("m"),
+            &dir.path().join("c.sqlite"),
+        ) {
+            Err(error) => error,
+            Ok(_) => panic!("packaged spawn must fail closed for a missing sidecar exe"),
+        };
+        assert_eq!(error.code, "CORE_SPAWN_FAILED:PACKAGED_SIDECAR_MISSING");
     }
 }

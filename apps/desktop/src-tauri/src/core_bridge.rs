@@ -107,6 +107,9 @@ impl StdioCoreChannel {
     /// Spawn `python -m infrastructure.resource_channel.host_bridge` with the
     /// repository `src` on the module path, the servable scope roots and the
     /// catalog database in the environment.
+    ///
+    /// DEV-mode path (M2-AC5): unchanged byte-for-byte — same argv, same
+    /// cwd contract, same env contract.
     pub fn spawn(
         python_exe: &str,
         src_root: &std::path::Path,
@@ -114,7 +117,7 @@ impl StdioCoreChannel {
         managed_root: &std::path::Path,
         catalog_db: &std::path::Path,
     ) -> Result<Self, CoreError> {
-        let mut child = Command::new(python_exe)
+        let child = Command::new(python_exe)
             .arg("-m")
             .arg("infrastructure.resource_channel.host_bridge")
             .current_dir(src_root)
@@ -126,6 +129,36 @@ impl StdioCoreChannel {
             .stderr(Stdio::inherit())
             .spawn()
             .map_err(|error| CoreError { code: format!("CORE_SPAWN_FAILED:{error}") })?;
+        Self::adopt_child(child)
+    }
+
+    /// Packaged-mode spawn (M2-AC5): launch the self-contained PyInstaller
+    /// sidecar exe directly — no `-m`, no src-tree cwd, no system Python.
+    /// Fail-closed: a missing/unreadable sidecar exe is the typed
+    /// `CORE_SPAWN_FAILED:PACKAGED_SIDECAR_MISSING`; there is deliberately NO
+    /// fallback to a system `python` in this path.
+    pub fn spawn_packaged(
+        sidecar_exe: &std::path::Path,
+        derived_root: &std::path::Path,
+        managed_root: &std::path::Path,
+        catalog_db: &std::path::Path,
+    ) -> Result<Self, CoreError> {
+        if !sidecar_exe.is_file() {
+            return Err(CoreError::new("CORE_SPAWN_FAILED:PACKAGED_SIDECAR_MISSING"));
+        }
+        let child = Command::new(sidecar_exe)
+            .env("M2RC1_DERIVED_ROOT", derived_root)
+            .env("M2RC1_MANAGED_ROOT", managed_root)
+            .env("M2RC2_CATALOG_DB", catalog_db)
+            .stdin(Stdio::piped())
+            .stdout(Stdio::piped())
+            .stderr(Stdio::inherit())
+            .spawn()
+            .map_err(|error| CoreError { code: format!("CORE_SPAWN_FAILED:{error}") })?;
+        Self::adopt_child(child)
+    }
+
+    fn adopt_child(mut child: Child) -> Result<Self, CoreError> {
         let stdin = child
             .stdin
             .take()

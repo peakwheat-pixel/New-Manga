@@ -1,0 +1,44 @@
+Exception in thread Thread-4 (_readerthread):
+Traceback (most recent call last):
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1073, in _bootstrap_inner
+    self.run()
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\threading.py", line 1010, in run
+    self._target(*self._args, **self._kwargs)
+  File "C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\subprocess.py", line 1599, in _readerthread
+    buffer.append(fh.read())
+                  ^^^^^^^^^
+  File "<frozen codecs>", line 322, in decode
+UnicodeDecodeError: 'utf-8' codec can't decode byte 0xd0 in position 0: invalid continuation byte
+
+=== phase 0: environment record + PATH purge ===
+  [PASS] CS-E1-python-purged-from-path: {"detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False", "removed_entries": ["C:\\Python314\\Scripts", "C:\\Python314", "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scrip
+  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\M2-AC5-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe"}
+
+=== phase 1: NSIS silent install ===
+  [PASS] CS-I1-silent-install: {"detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"}
+  install dir files: 163
+  [PASS] CS-I2-catalog-seeded-packaged-loader: {"detail": "catalog seeded (5 rows) via packaged catalog_loader.exe"}
+
+=== phase 2: PROBE mode (resource channel matrix, packaged sidecar) ===
+  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-hnjeumd0\\probe\\probe-results.json"}
+  [PASS] CS-P2-probe-scenarios-all-pass: {"count": 13, "failed": [], "ids": ["E-00-probe-mode-detected", "E-01-issue-fetch-digest", "E-02-img-render", "E-03-unknown-id", "E-04-revoke-after-cached-fetch", "E-05-expired-ttl", "E-06-remount-fresh-references", "E-0
+  [PASS] CS-P3-sidecar-roundtrip-digest: {"e01": {"id": "E-01-issue-fetch-digest", "observed": {"bytes": 49363, "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334", "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b
+
+=== phase 3: AC1 test mode (acceptance loop, packaged sidecar) ===
+  [PASS] CS-A1-ac1-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-hnjeumd0\\ac1\\results.json"}
+  [FAIL] CS-A2-ac1-scenarios-all-pass: {"count": 0, "failed": []}
+
+=== phase 4: PRODUCTION mode (real window, %APPDATA% userData) ===
+  [PASS] CS-R1-production-process-alive: {"poll": null}
+  [PASS] CS-R2-userdata-layout-created: {"catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop"}
+  [PASS] CS-R3-production-surface-announced: {"announcement": "[m2rc2-allowlist] production:", "present": true}
+  [PASS] CS-R4-no-spawn-failures-in-log: {"spawn_failed_mentions": 0}
+
+=== phase 5: AC4 zero-touch assertions ===
+  [PASS] CS-Z1-install-dir-zero-write: {"changed_entries": []}
+  [PASS] CS-Z2-user-source-files-byte-identical: {"files": 4}
+  [PASS] CS-Z3-no-surviving-sidecar-processes: {"acceptance_bridge.exe": 0, "catalog_loader.exe": 0, "core_service.exe": 0, "host_bridge.exe": 0, "python.exe": 7}
+
+=== gate ===
+
+GATE: FAIL

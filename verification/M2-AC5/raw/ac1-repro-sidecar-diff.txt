@@ -1,0 +1,20 @@
+14a15
+> 16CF64B800E49DDFA74F162408A7B8D08DD92DC3DF029DA83FD27EDD704B3398  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\acceptance_bridge.exe
+24d24
+< 210334231935C9BB0B26F422EEF2AD7B6BB0C68C0D053CE771D8147DA8BC89CB  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe
+43a44
+> 3DD62960E937E51AB190A4DBABD39E7E8187ABFA364894C98B708301BAF4585F  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\host_bridge.exe
+79d79
+< 6BF129F2AD22AFCF527B823C0C00A7061E2D7BBFDE4A6C00E4F6782D56735A37  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\acceptance_bridge.exe
+82d81
+< 751A4E4B22206D6A4A062DCF14E5E39BEAD3CA442733C09A0E77796AC79BB792  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\host_bridge.exe
+98d96
+< 8DBF6A7548356D3C07F4F26F29AC07124A9757E12BFD89B9FC5BFA08CC962836  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe
+101a100
+> 98ECF8B43A24BC10A46B0FF49E790B9CE19135250E36E20FB1DD2042192C3BE7  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\base_library.zip
+108a108
+> B05A57C2EFD8867312B4FAFF6102548CC475C0C97C949979CDA55AB475946B2C  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\catalog_loader.exe
+122d121
+< CA06B78BD44017E55DF6959A458D171992BAFACBE4228958DF4C1E630EAFE2B6  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\_internal\base_library.zip
+150a150
+> F4BD4CE0D7DA2888DAC1246DBF6047B999A01A724191A9A07B387E261032F111  apps\desktop\src-tauri\target\core-sidecar\core-sidecar\core_service.exe

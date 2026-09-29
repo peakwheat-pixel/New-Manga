@@ -1,0 +1,26 @@
+# M2-AC5 build venv requirements (build tooling ONLY).
+#
+# This file never enters the product runtime dependency list: it is installed
+# into a dedicated build venv (G:/CODEX/New Manga.task-envs/m2ac5-build) used
+# solely to run PyInstaller. The sidecar import closure is stdlib + in-repo
+# packages (verified; see packaging/m2ac5/README.md), so the build venv needs
+# nothing beyond the pinned packager itself.
+#
+# The product runtime requirements (../requirements.txt) stay untouched.
+#
+# PySide6_Essentials/shiboken6 are pinned to the SAME versions as
+# ../requirements.txt: `bootstrap.acceptance_bridge` hard-requires PySide6
+# through its frozen `assemble_acceptance_core` assembly (QGuiApplication +
+# the production Qt imaging/rendering adapters) — measured 2026-09-29: with
+# Qt excluded the frozen acceptance_bridge.exe failed with
+# ModuleNotFoundError at startup, so the closure ships Qt. The other sidecar
+# entries (host_bridge / core_service / catalog_loader) remain Qt-free by
+# their import closure.
+#
+# pypdfium2/mobi are NOT in the build venv on purpose (minimal closure): the
+# PDF/MOBI document rasters import them lazily and no clean-start acceptance
+# scenario touches those commands; a missing-module warning in the PyInstaller
+# warn file documents that boundary.
+pyinstaller==6.22.3
+PySide6_Essentials==6.11.2
+shiboken6==6.11.2
