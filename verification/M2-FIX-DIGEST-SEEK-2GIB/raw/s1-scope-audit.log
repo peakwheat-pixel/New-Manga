@@ -1,0 +1,12 @@
+# M2-FIX-DIGEST-SEEK-2GIB s1 scope audit (pre-implementation-commit)
+# shell: cwd=/g/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode date: 2026-09-30T01:16:42+08:00
+$ git status --porcelain
+ M apps/desktop/src-tauri/src/resource_protocol.rs
+?? verification/M2-FIX-DIGEST-SEEK-2GIB/
+$ git diff --stat (working tree vs claim HEAD)
+ apps/desktop/src-tauri/src/resource_protocol.rs | 98 +++++++++++++++++++++++--
+ 1 file changed, 93 insertions(+), 5 deletions(-)
+$ git diff --check
+DIFF_CHECK_EXIT=0
+$ Cargo.lock changed:
+LOCK_CLEAN=1

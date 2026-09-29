@@ -1,0 +1,45 @@
+# M2-FIX-DIGEST-SEEK-2GIB red evidence: new tests on pre-fix code (HEAD 298aa24b)
+# shell: cwd=/g/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode/apps/desktop/src-tauri cmd=cargo test read_through_ -- --nocapture
+# date: 2026-09-30T01:12:31+08:00
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-DIGEST-SEEK-2GIB-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:40:5
+   |
+40 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:576:54
+    |
+576 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+    |                                                      ^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.51s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 4 tests
+
+thread 'resource_protocol::tests::read_through_rejects_offset_beyond_i32_seek_range' (58000) panicked at src\resource_protocol.rs:585:67:
+called `Result::unwrap_err()` on an `Ok` value: [48, 49, 50, 51]
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+
+thread 'resource_protocol::tests::read_through_rejects_offset_above_resource_limit' (55756) panicked at src\resource_protocol.rs:571:76:
+called `Result::unwrap_err()` on an `Ok` value: []
+test resource_protocol::tests::read_through_serves_requested_window_within_limit ... ok
+test resource_protocol::tests::read_through_at_limit_offset_yields_empty_tail ... ok
+test resource_protocol::tests::read_through_rejects_offset_beyond_i32_seek_range ... FAILED
+test resource_protocol::tests::read_through_rejects_offset_above_resource_limit ... FAILED
+
+failures:
+
+failures:
+    resource_protocol::tests::read_through_rejects_offset_above_resource_limit
+    resource_protocol::tests::read_through_rejects_offset_beyond_i32_seek_range
+
+test result: FAILED. 2 passed; 2 failed; 0 ignored; 0 measured; 39 filtered out; finished in 0.01s
+
+error: test failed, to rerun pass `--bin m2rc1-desktop`
+# EXIT=101
