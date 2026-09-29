@@ -1,13 +1,19 @@
 {
-  "comment": "M2-DOCTR-QUAL-PREFLIGHT default quality thresholds (user-directed 2026-09-29). The user text specifies IoU matching; the primary judging layer uses coverage (intersection/gt_area) because docTR word-level output cannot reach IoU 0.5 against block-level GT (granularity mismatch, evidence in verification/M2-DOCTR-QUAL/baseline-summary.md §4). This criterion substitution is a judging-contract deviation from the user-default text and is flagged for the pending qualification ruling; block_strict (true IoU) numbers are always reported alongside.",
+  "comment": "M2-DOCTR-QUAL thresholds — user ruling 2026-09-30 (binds the formal qualification run). Primary judging = coverage on production merged blocks with production pad (MERGE_PAD_PX=6) as the FORMAL result; pad-offset (strip 6px) reported alongside as diagnostic. Precision is a POLLUTION-BOUNDED OBSERVATION ONLY (SFX/background-text annotation blind spot) and is NOT a gate. Recognition outputs are never consulted.",
   "primary_layer": "block_coverage",
   "judging_criterion": "coverage",
-  "criterion_note": "coverage = intersection/gt_area >= iou_match_threshold; parallel strict layer block_coverage vs block_strict is reported in every result",
+  "pad_protocol": "production_pad_6px_is_formal; pad-offset (strip 6px per side) reported as diagnostic",
+  "gates": {
+    "min_recall": 0.92,
+    "min_mean_coverage": 0.6,
+    "max_severe_page_miss_rate": 0.05
+  },
+  "non_gate_observations": {
+    "precision_note": "pollution-bounded lower bound (GT blind spot: SFX/background text unannotated); reported, never gates",
+    "min_precision_reference": 0.85,
+    "block_strict_iou": "parallel diagnostic (user-default literal wording)"
+  },
   "iou_match_threshold": 0.5,
-  "min_recall": 0.92,
-  "min_precision": 0.85,
-  "min_mean_iou": 0.6,
-  "max_severe_page_miss_rate": 0.05,
   "severe_page_miss_definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
   "severe_page_miss_min_gt": 3,
   "fp_attribution_iou_threshold": 0.3

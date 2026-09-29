@@ -1,4 +1,25 @@
-# GOAL — 2026-09-30 全自主推进：M2 遗留技术债清算（编排会话）
+# GOAL — 2026-09-30（第二轮）用户三项裁决落地：docTR 正式 qualification / TA2B 开放素材池 / TA3 拆阶段
+
+- 授权：用户 2026-09-30 三项裁决（原文见 STATUS checkpoint），编排会话代行 Codex 执行并留痕。
+- 执行顺序：T-D1 M2-DOCTR-QUAL-RUN（正式 qualification run，冻结口径）→ T-D2 M2-TA2B（开放素材池）→ T-D3 M2-TA3-A（E2E Smoke，硬依赖 T-D2）。
+
+## 验收标准
+
+- **GD1**：docTR 正式 qualification 按冻结口径（coverage 主判定/生产 pad 6px 正式+抵消附报/Precision 下界不作 Gate）完成正式 run + 独立 Review + 集成 done；产出 Gate 判定与调参/换模型候选流程建议。
+- **GD2**：TA2B 按新方案 `done`：densho810 官方 BJ ≥3 卷自动下载校验（SHA256）+ pypdfium2 页面转换 + 特性覆盖 case 选取（BJ01..）+ cases.json/测试接入 + Manga109 标注取消 + OpenMantra optional 隔离（或如实 BLOCKED-OPTIONAL）+ 许可义务（署名落地 + 用户报告邮件草稿）。
+- **GD3**：TA3-A `done`：5 case（≥2 日漫 BJ + ≥2 韩漫）detect→OCR→translate→inpaint→render/export 全链真实产物 smoke，逐 stage PASS/FAIL 归因；TA3-B 登记暂缓。
+- **GD4**：全程 Owner≠Reviewer≠Integrator；DSH 非作者 Review；证据按 §6.12（shell/HEAD/EXIT 头尾）；STATUS 每轮 checkpoint。
+
+## 明确排除
+
+- 检测器调参/DBNet 替换的**实施**（本 Goal 只产出候选流程建议，实施另行释放）。
+- TA3-B 20-case 质量 qualification（暂缓，待 Provider 稳定）。
+- 真实外部翻译/OCR API 凭据使用；对外发送任何内容（densho810 报告邮件=用户待办）。
+- Manga109 素材获取（永久取消）；NC 素材进生产许可基线。
+
+---
+
+# 归档：GOAL — 2026-09-30 全自主推进：M2 遗留技术债清算（编排会话）——已达成（停止条件 3，T1/T2/T3 全 done）
 
 - 授权：Codex（代行，ZCode 会话，用户全权授权 2026-09-28 与 2026-09-29/30 编排指令「全自主推进启动指令」）。
 - 启动：2026-09-30 Asia/Shanghai（STATUS 同步登记启动时间）；停止条件同编排指令 §7（用户停止 / 熔断 / 全部验收达成出总结报告）。
