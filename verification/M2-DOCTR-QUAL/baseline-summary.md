@@ -100,7 +100,7 @@ Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md) · 
 
 见 [experiments/M2-DOCTR-QUAL/README.md](../../experiments/M2-DOCTR-QUAL/README.md)。全部脚本确定性运行（无随机源）；权重 SHA-256 先校验后加载；results 与 manifest 以 SHA-256 指纹绑定。
 
-## 8. r1 → r2 修订记录
+## 8. r1 → r5 修订与 Review 轨迹记录
 
 DSH r1 verdict `changes_requested`（P0×1 P1×6 P2×9 P3×8，事实层全部独立确认）。r2 修订（含 r1 P3-5 git 层证据）：P0-1 Handoff 固定 head；P1-1 `snapshot_weights.py` 入库；P1-2 [env-gpu-py312.json](env-gpu-py312.json)；P1-3 FP 归因 `attribution_available` 语义修正 + 报告改用 union 2985/2；P1-4 `thresholds.json` 显式 `primary_layer`/`judging_criterion` + 双口径并列 + 裁决项上交；P1-5 results 增加 `manifest_sha256`/`gt_mode`/`n_gt_boxes`（全部重跑绑定 v2 manifest）；P1-6 adapter 坐标比对（maxΔ=0.0）；P2-1/2/3/5/6/7/8/9 与 P3-1/2/3/4/6/7/8 落实（Pillow 声明、manifest 文件名、region 断言、severe 层级标注、CPU/GPU diff 精确化、torchvision 披露、license 措辞统一 cases.json 原文、素材 hash、UTC 时间戳、manifest `verified_by`/`command`、三处 pin 注释、IoU 措辞、AC 勾选注记 owner 自评、docstring 同步、`union_params` 结构化）；P2-4 pad 敏感性对照新增（§4）。Git 层证据（ls-tree + diff --stat，r1 与 r2 两段）：[git-evidence.txt](git-evidence.txt)。
 
