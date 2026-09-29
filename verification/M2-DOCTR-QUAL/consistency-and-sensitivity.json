@@ -1,0 +1,76 @@
+{
+ "task": "M2-DOCTR-QUAL-PREFLIGHT",
+ "purpose": "DSH r1 missing-evidence #6 (CPU/GPU per-region diff) + #8 (granularity cardinality stats + pad sensitivity)",
+ "cpu_gpu_diff": {
+  "n_regions_compared": 80,
+  "n_identical_regions": 78,
+  "layer_note": "all diffs are on the raw (word) layer; block layer differs on 1 region only",
+  "diffs": [
+   {
+    "case_id": "K01",
+    "region_index": 5,
+    "fields": {
+     "n_det_raw": [
+      16,
+      15
+     ]
+    }
+   },
+   {
+    "case_id": "K01",
+    "region_index": 17,
+    "fields": {
+     "n_det_raw": [
+      23,
+      22
+     ],
+     "n_det_block": [
+      20,
+      19
+     ]
+    }
+   }
+  ],
+  "gpu_torch": "2.11.0+cu128",
+  "cpu_torch": "2.14.0 (production pin)",
+  "primary_block_coverage": {
+   "gpu": {
+    "precision": 0.0682,
+    "recall": 0.4462,
+    "mean_matched_coverage": 0.7611,
+    "severe_rate": 0.0154
+   },
+   "cpu": {
+    "precision": 0.0683,
+    "recall": 0.4462,
+    "mean_matched_coverage": 0.7611,
+    "severe_rate": 0.0154
+   }
+  }
+ },
+ "granularity_cardinality": {
+  "note": "word-level detections vs block-level GT: mean raw boxes per GT box across GT-bearing regions",
+  "mean_raw_boxes_per_region": 10.47,
+  "mean_gt_boxes_per_region": 1.79,
+  "mean_raw_boxes_per_gt_box_gt_regions_only": 6.34,
+  "total_raw": 5350,
+  "total_gt": 917,
+  "total_blocks": 3505
+ },
+ "pad_sensitivity_fast_base_seg05": {
+  "note": "production merge grows blocks by MERGE_PAD_PX=6 per side; this control shrinks 6px per side before matching",
+  "primary_block_coverage_production_pad": {
+   "precision": 0.125,
+   "recall": 0.4776,
+   "mean_matched_coverage": 0.7531,
+   "severe_rate": 0.0385
+  },
+  "primary_block_coverage_shrunk_pad6": {
+   "precision": 0.0688,
+   "recall": 0.2628,
+   "mean_matched_coverage": 0.6842,
+   "severe_rate": 0.1034
+  }
+ },
+ "generated_at": "2026-09-29T16:42:03+00:00"
+}

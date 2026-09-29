@@ -1,0 +1,40 @@
+{
+  "schema": "m2-doctr-qual/weights-manifest@2",
+  "generated_at": "2026-09-29T16:25:27+00:00",
+  "purpose": "M2-DOCTR-QUAL-PREFLIGHT AC1 controlled weights",
+  "verified_by": "ZCode (M2-DOCTR-QUAL-PREFLIGHT owner)",
+  "command": "python experiments/M2-DOCTR-QUAL/snapshot_weights.py --cache-dir C:\\Users\\49745\\.cache\\doctr\\models --snapshot-dir G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL\\weights",
+  "verification": "sha256 recomputed from snapshot bytes after copy; mismatch aborts",
+  "weights": [
+    {
+      "filename": "fast_base-688a8b34.pt",
+      "role": "primary (production-pinned detection weights, T1.1.1)",
+      "source_url": "https://doctr-static.mindee.com/models?id=v0.8.1/fast_base-688a8b34.pt&src=0",
+      "artifact_version": "doctr-static v0.8.1",
+      "framework": "PyTorch (python-doctr==1.1.0 default_cfgs url anchor)",
+      "license": "Apache-2.0 (docTR project, MINDEE, https://github.com/mindee/doctr/blob/main/LICENSE); artifacts distributed via doctr-static.mindee.com without a separate license file and follow the project license",
+      "size_bytes": 65814772,
+      "sha256": "688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace",
+      "expected_sha256": "688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace",
+      "sha256_verified": true,
+      "official_anchor": "doctr 1.1.0 default_cfgs url (doctr/models/detection/fast/pytorch.py:42) and production pin (src/infrastructure/providers/detection_doctr.py)",
+      "snapshot_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL\\weights\\fast_base-688a8b34.pt",
+      "cache_origin": "C:\\Users\\49745\\.cache\\doctr\\models\\fast_base-688a8b34.pt"
+    },
+    {
+      "filename": "db_resnet50-79bd7d70.pt",
+      "role": "comparison detection weights (official docTR artifact)",
+      "source_url": "https://doctr-static.mindee.com/models?id=v0.7.0/db_resnet50-79bd7d70.pt&src=0",
+      "artifact_version": "doctr-static v0.7.0",
+      "framework": "PyTorch (python-doctr==1.1.0 default_cfgs url anchor)",
+      "license": "Apache-2.0 (docTR project, MINDEE, https://github.com/mindee/doctr/blob/main/LICENSE); artifacts distributed via doctr-static.mindee.com without a separate license file and follow the project license",
+      "size_bytes": 102021912,
+      "sha256": "79bd7d702506703b89cf11afa42d12aebf5cf25c3618e6ffd5f85772240ca483",
+      "expected_sha256": "79bd7d702506703b89cf11afa42d12aebf5cf25c3618e6ffd5f85772240ca483",
+      "sha256_verified": true,
+      "official_anchor": "doctr 1.1.0 default_cfgs url (doctr/models/detection/differentiable_binarization/pytorch.py:31); filename embeds the official content hash prefix",
+      "snapshot_path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL\\weights\\db_resnet50-79bd7d70.pt",
+      "cache_origin": "C:\\Users\\49745\\.cache\\doctr\\models\\db_resnet50-79bd7d70.pt"
+    }
+  ]
+}
