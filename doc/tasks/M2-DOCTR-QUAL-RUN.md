@@ -2,13 +2,13 @@
 id: M2-DOCTR-QUAL-RUN
 title: "Real docTR 正式 qualification run（用户口径裁决 2026-09-30：coverage 主判定 + 生产 pad 正式 + Precision 下界不作 Gate）"
 kind: acceptance
-status: ready
+status: in_progress
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（待派发，非作者静态）
 depends_on: []
-base_commit: PENDING_SET_AT_CLAIM
+base_commit: 5b3a477a371a662288998f86d23ae56439179524
 branch: agent/zcode/M2-DOCTR-QUAL-RUN
 worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-RUN-zcode
 integration_commit: null
