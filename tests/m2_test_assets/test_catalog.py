@@ -48,6 +48,7 @@ def test_manifest_has_unique_cases_and_exact_taxonomy():
 def test_source_registry_does_not_count_code_or_blocked_assets_as_ready():
     manifest = assets.load_manifest()
     sources = manifest["benchmark_sources"]
+    by_id = {source["id"]: source for source in sources}
     assert len({source["id"] for source in sources}) == len(sources)
     assert all(case["source_id"] and case["source_url"].startswith("https://") for case in manifest["cases"])
     assert all(source["local_file_count"] > 0 for source in sources if source["status"] == "READY")
@@ -55,6 +56,10 @@ def test_source_registry_does_not_count_code_or_blocked_assets_as_ready():
         "openmantra_candidate", "jmangabench", "text_mask", "artificial_manga", "ebdtheque", "public_domain_japan"
     })
     assert all(not case["image_available"] for case in manifest["cases"] if case["asset_type"] == "manga109_title")
+    assert by_id["ko_sfx_dialogue_cleaned_webtoon"]["status"] == "READY"
+    assert all(by_id[source_id]["checksum_inventory"] == "test_assets/comic_golden_suite/manifests/local_asset_inventory.json" for source_id in (
+        "coo_and_manga109_dialog", "peppercarrot_japanese_localized_pages", "peppercarrot_korean_localized_pages"
+    ))
 
 
 def test_manifest_rejects_path_escape(tmp_path):
