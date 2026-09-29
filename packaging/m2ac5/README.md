@@ -33,6 +33,9 @@ C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe -m venv "G:/CO
 
 ### 2.0 fresh checkout：先跑 build_sidecar.ps1（M2-AC5-BUILD-FRESH-CHECKOUT）
 
+> 注意（DSH r1 P3-2）：cargo 路径前置不止 sidecar——`frontend/dist` 同为 gitignored 构建产物（`frontendDist`），fresh checkout 需先完成 frontend build（§2a），否则 `generate_context!` 将以类似方式失败。
+
+
 sidecar onedir 产物（`apps/desktop/src-tauri/target/core-sidecar/core-sidecar/`）
 是 **gitignored 构建产物**：fresh clone / fresh worktree 里不存在，而
 `tauri.conf.json` 的 `bundle.resources` 引用它，任何 cargo 驱动的构建
@@ -46,7 +49,7 @@ sidecar onedir 产物（`apps/desktop/src-tauri/target/core-sidecar/core-sidecar
 powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1
 ```
 
-然后即可正常 `cargo check` / `cargo test` / `npm run tauri build`。
+然后即可正常 `cargo check` / `cargo test` / `npx --yes @tauri-apps/cli@2 build`。
 
 防护语义：
 

@@ -1,0 +1,23 @@
+
+## M2-AC5-BUILD-FRESH-CHECKOUT final scope audit (251f7425..ed8a6ea6, captured at integration)
+M	apps/desktop/src-tauri/build.rs
+A	doc/handoffs/M2-AC5-BUILD-FRESH-CHECKOUT-d3ce2190.md
+M	doc/tasks/M2-AC5-BUILD-FRESH-CHECKOUT.md
+M	packaging/m2ac5/README.md
+M	packaging/m2ac5/build_sidecar.ps1
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/01-ac1-red-fresh-cargo-check.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/02-ac1-green-cargo-check-with-probe.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/03-ac2-copy-sidecar-from-main-worktree.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/04-ac2-skip-when-exists.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/05-ac2-force-full-rebuild.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/06-ac3-copy-frontend-dist-from-main-worktree.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/07-ac3-cargo-test.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/08-ac3-cargo-check-exists.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/09-ac5-diff-scope.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/r2-01-cargo-test-full-output.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/r2-02-skip-when-exists.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/r2-03-force-full-rebuild.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/r2-04-cargo-build.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/r2-05-hot-rename-experiment.log
+A	verification/M2-AC5-BUILD-FRESH-CHECKOUT/raw/r2-06-negative-control-pyexe.log
+DIFFCHECK_EXIT=0
