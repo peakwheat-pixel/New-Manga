@@ -14,7 +14,7 @@ depends_on: [M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF]
 base_commit: 6f79c040c79ae4389cf73abcae1b26617b1a2fba
 branch: agent/zcode/M2-AC5-package-clean-start
 worktree: G:/CODEX/New Manga.worktrees/M2-AC5-zcode
-delivery_head: eccf88e36e088d31231469c298f95d919468a2ba
+delivery_head: e3740b25e6ee45aed8f6e51b061aae0817a33280
 review: null
 integration_merge: null
 dispatch_state: DELIVERED_FOR_REVIEW

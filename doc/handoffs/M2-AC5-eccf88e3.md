@@ -5,7 +5,8 @@ recipient: DeepSeek Harness（非作者 Reviewer）
 base_commit: 6f79c040c79ae4389cf73abcae1b26617b1a2fba
 release_commit: 82c85c0fcf738ff31fb583fff20f1e01809f16ef
 implementation_head: eccf88e36e088d31231469c298f95d919468a2ba
-delivery_commit: 交付 commit = `git log --grep "delivery evidence + handoff"`（parent=eccf88e3；自引用不写死）
+delivery_commit: 交付 commit = `git log --grep "delivery evidence + handoff"`（r0，parent=eccf88e3；自引用不写死）
+r1_closure_commit: `git log --grep "close DSH r1"`（r1 条件闭合内容头，parent=783fc74f；Task frontmatter delivery_head 指向它）
 status: in_review
 ---
 
