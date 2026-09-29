@@ -1,0 +1,16 @@
+Shell: PowerShell 7.6.6
+Python: Python 3.14.6 (C:\Python314\python.exe)
+Venv: none; system interpreter
+Worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+Branch: agent/codex/M2-TA1-comic-test-asset-foundation
+HEAD: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
+Command: stdlib urllib HEAD checks of manifest URLs; no downloads
+
+200 https://huggingface.co/api/resolve-cache/datasets/Vasyanator2/cleaned_webtoon_dataset/23eead4282ed481dd1220dea2db7ccba94d5b36d/examples%2F724815_1%2Finfo.json?download=true&etag=%220859fc00a01dc299260a8417cbcd25d4cb0f4a67%22 https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main/examples/724815_1/info.json?download=true
+200 https://huggingface.co/datasets/hal-utokyo/Manga109 https://huggingface.co/datasets/hal-utokyo/Manga109
+200 https://www.peppercarrot.com/kr/webcomic-sources/ep06_The-Potion-Contest.html https://www.peppercarrot.com/kr/webcomic-sources/ep06_The-Potion-Contest.html
+200 https://codeload.github.com/manga109/public-annotations/zip/refs/heads/main https://github.com/manga109/public-annotations/archive/refs/heads/main.zip
+200 https://codeload.github.com/muscgab/JMangaBench_Mixed/zip/refs/heads/main https://github.com/muscgab/JMangaBench_Mixed/archive/refs/heads/main.zip
+200 https://zenodo.org/records/4511796 https://zenodo.org/records/4511796
+HTTP 403 https://aihub.or.kr/aihubdata/data/view.do?aihubDataSe=data&dataSetSn=71717&topMenu=103 https://aihub.or.kr/aihubdata/data/view.do?aihubDataSe=data&dataSetSn=71717&topMenu=103
+EXIT=0

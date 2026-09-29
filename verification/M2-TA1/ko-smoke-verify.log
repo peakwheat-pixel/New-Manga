@@ -1,0 +1,19 @@
+Shell: PowerShell 7.6.6
+Python: Python 3.14.6 (C:\Python314\python.exe)
+Venv: none; system interpreter
+Recorded worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+Branch: agent/codex/M2-TA1-comic-test-asset-foundation
+HEAD at evidence capture: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
+Command: python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke
+K01	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K01_724815_1
+K02	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K02_651664_112
+K03	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K03_671421_148
+K04	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K04_670145_145
+K05	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K05_131385_302
+K06	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K06_570506_196
+K07	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K07_641253_141
+K08	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K08_701535_160
+K09	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+SUMMARY	READY=10
+EXIT=0

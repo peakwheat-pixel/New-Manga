@@ -1,0 +1,4 @@
+Shell: PowerShell 7.6.6
+Repository: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+Python: Python 3.14.6
+Date: 2026-09-29T18:41:26.6678118+08:00
