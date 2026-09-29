@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
+import stat
 import struct
 import sys
 import tempfile
@@ -20,10 +22,17 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "manifests" / "cases.json"
+INVENTORY_PATH = ROOT / "manifests" / "local_asset_inventory.json"
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 COPY_BLOCK = 1024 * 1024
 MAX_ANNOTATION_BYTES = 32 * 1024 * 1024
 MAX_IMAGE_BYTES = 128 * 1024 * 1024
+MAX_PUBLIC_ZIP_BYTES = 64 * 1024 * 1024
+MAX_PUBLIC_ZIP_ENTRIES = 10000
+MAX_PUBLIC_ZIP_TOTAL_BYTES = 128 * 1024 * 1024
+MAX_PUBLIC_ZIP_ENTRY_BYTES = 16 * 1024 * 1024
+MAX_PUBLIC_XML_BYTES = 8 * 1024 * 1024
+PUBLIC_COMIC_HOST = "www.peppercarrot.com"
 
 
 def load_manifest() -> dict:
@@ -59,6 +68,8 @@ def load_manifest() -> dict:
                 raise ValueError(f"invalid Webtoon repo_subpath: {case['case_id']}")
             if any(Path(name).name != name or "\\" in name for name in profile.get("files", [])):
                 raise ValueError(f"invalid asset filename: {case['case_id']}")
+        if profile.get("kind") == "open_public_comic_page":
+            validate_public_profile(profile)
     return manifest
 
 
@@ -83,6 +94,10 @@ def required_files(case: dict) -> list[Path]:
         return [directory / name for name in case["asset_profile"]["files"]]
     if kind == "manga109_title":
         return [*sorted((directory / "images").glob("*.jpg")), directory / "annotations.xml"]
+    if kind == "open_public_comic_page":
+        profile = case["asset_profile"]
+        validate_public_profile(profile)
+        return [directory / profile["image_filename"], directory / profile["transcript_zip_filename"]]
     if kind == "manual_source_page":
         return [path for path in directory.iterdir() if path.is_file()] if directory.is_dir() else []
     return []
@@ -92,7 +107,7 @@ def manga_marker(case: dict) -> Path:
     return local_dir(case) / ".asset-complete.json"
 
 
-def status(case: dict) -> str:
+def status(case: dict, invalid_inventory_paths: set[str] | None = None) -> str:
     kind = case.get("asset_profile", {}).get("kind")
     paths = required_files(case)
     if kind == "manga109_title":
@@ -102,25 +117,92 @@ def status(case: dict) -> str:
                 data = json.loads(marker.read_text(encoding="utf-8"))
                 images = sorted(path.name for path in paths if path.suffix.lower() == ".jpg")
                 if data.get("case_id") == case["case_id"] and data.get("images") == images:
-                    return "READY"
+                    ok, _ = validate_manga_case(case)
+                    return "READY" if ok else "PARTIAL"
             except (OSError, UnicodeDecodeError, json.JSONDecodeError):
                 pass
         return "PARTIAL" if any(path.is_file() for path in paths) else "MISSING_GATED_ASSET"
     if kind == "manual_source_page":
         return "PARTIAL" if any(path.is_file() and path.stat().st_size > 0 for path in paths) else "MISSING"
+    if kind == "open_public_comic_page":
+        if not any(path.exists() for path in paths):
+            return "MISSING"
+        if invalid_inventory_paths and any(
+            path.relative_to(ROOT).as_posix() in invalid_inventory_paths for path in paths
+        ):
+            return "PARTIAL"
+        ok, _ = validate_public_case(case)
+        return "READY" if ok else "PARTIAL"
     if paths and all(path.is_file() and path.stat().st_size > 0 for path in paths):
+        if kind == "hf_cleaned_webtoon":
+            ok, _ = validate_present(case)
+            return "READY" if ok else "PARTIAL"
         return "READY"
     return "MISSING"
 
 
-def print_cases(cases: list[dict], show_missing_only: bool = False) -> None:
+def print_cases(
+    cases: list[dict],
+    show_missing_only: bool = False,
+    invalid_inventory_paths: set[str] | None = None,
+) -> dict[str, str]:
     counts: dict[str, int] = {}
+    statuses: dict[str, str] = {}
     for case in cases:
-        current = status(case)
+        current = status(case, invalid_inventory_paths)
+        statuses[case["case_id"]] = current
         counts[current] = counts.get(current, 0) + 1
         if not show_missing_only or current != "READY":
             print(f"{case['case_id']}\t{case['language']}\t{current}\t{case['local_path']}")
     print("SUMMARY\t" + " ".join(f"{key}={counts[key]}" for key in sorted(counts)))
+    return statuses
+
+
+def verify_inventory_files() -> tuple[list[str], int, int, set[str]]:
+    inventory = json.loads(INVENTORY_PATH.read_text(encoding="utf-8"))
+    failures: list[str] = []
+    checked = 0
+    missing = 0
+    invalid_paths: set[str] = set()
+    root = ROOT.resolve()
+    for asset in inventory["assets"]:
+        for item in asset.get("files", []):
+            name = item["path"]
+            relative = PurePosixPath(name)
+            if (
+                "\\" in name or ":" in name or PureWindowsPath(name).drive
+                or relative.is_absolute() or ".." in relative.parts or relative.as_posix() != name
+            ):
+                failures.append(f"{asset['asset_id']}: unsafe inventory path {item['path']}")
+                continue
+            candidate = ROOT / Path(*relative.parts)
+            if candidate.is_symlink():
+                failures.append(f"{asset['asset_id']}: inventory path is a symlink: {item['path']}")
+                continue
+            path = candidate.resolve()
+            if not path.is_relative_to(root):
+                failures.append(f"{asset['asset_id']}: inventory path escapes suite: {item['path']}")
+                continue
+            if not path.exists():
+                missing += 1
+                if path.suffix.lower() not in {".jpg", ".jpeg", ".png", ".webp", ".zip", ".cbz"}:
+                    failures.append(f"{asset['asset_id']}: required inventory file is missing: {item['path']}")
+                    invalid_paths.add(name)
+                continue
+            if not path.is_file():
+                failures.append(f"{asset['asset_id']}: inventory path is not a regular file: {item['path']}")
+                continue
+            digest = hashlib.sha256()
+            size = 0
+            with path.open("rb") as stream:
+                while chunk := stream.read(COPY_BLOCK):
+                    size += len(chunk)
+                    digest.update(chunk)
+            checked += 1
+            if size != item["byte_size"] or digest.hexdigest() != item["sha256"]:
+                failures.append(f"{asset['asset_id']}: size or SHA-256 mismatch: {item['path']}")
+                invalid_paths.add(name)
+    return failures, checked, missing, invalid_paths
 
 
 def valid_png(path: Path) -> bool:
@@ -170,6 +252,163 @@ def valid_jpeg(path: Path) -> bool:
         return False
 
 
+def is_public_comic_url(url: str) -> bool:
+    try:
+        parsed = urllib.parse.urlsplit(url)
+        return (
+            parsed.scheme.lower() == "https"
+            and parsed.hostname is not None
+            and parsed.hostname.lower() == PUBLIC_COMIC_HOST
+            and parsed.username is None
+            and parsed.password is None
+            and parsed.port in (None, 443)
+        )
+    except (TypeError, ValueError):
+        return False
+
+
+class PublicComicRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, request, response, code, message, headers, new_url):
+        target = urllib.parse.urljoin(request.full_url, new_url)
+        if not is_public_comic_url(target):
+            raise urllib.error.HTTPError(request.full_url, code, "redirect target is outside the approved HTTPS host", headers, response)
+        return super().redirect_request(request, response, code, message, headers, target)
+
+
+def open_public_comic_url(request):
+    opener = urllib.request.build_opener(PublicComicRedirectHandler())
+    return opener.open(request, timeout=60)
+
+
+def validate_public_filename(name: str) -> bool:
+    return bool(
+        name
+        and name not in {".", ".."}
+        and "/" not in name
+        and "\\" not in name
+        and ":" not in name
+        and "\x00" not in name
+        and PureWindowsPath(name).name == name
+    )
+
+
+def validate_public_profile(profile: dict) -> None:
+    fields = ("image_url", "image_filename", "transcript_zip_url", "transcript_zip_filename", "transcript_member")
+    if any(not isinstance(profile.get(key), str) or not profile[key] for key in fields):
+        raise ValueError("public comic profile is missing required fields")
+    if not is_public_comic_url(profile["image_url"]) or not is_public_comic_url(profile["transcript_zip_url"]):
+        raise ValueError("public comic URLs must use HTTPS www.peppercarrot.com")
+    if not validate_public_filename(profile["image_filename"]) or not profile["image_filename"].lower().endswith((".jpg", ".jpeg")):
+        raise ValueError("public comic image filename must be a local JPEG filename")
+    if not validate_public_filename(profile["transcript_zip_filename"]) or not profile["transcript_zip_filename"].lower().endswith(".zip"):
+        raise ValueError("public comic transcript filename must be a local ZIP filename")
+    member = profile["transcript_member"]
+    if "\\" in member or "\x00" in member or ":" in member or PureWindowsPath(member).drive:
+        raise ValueError("unsafe public comic transcript member")
+    member_path = PurePosixPath(member)
+    if member_path.is_absolute() or any(part in {"", ".", ".."} for part in member.split("/")):
+        raise ValueError("unsafe public comic transcript member")
+    if member_path.suffix.lower() not in {".svg", ".xml"}:
+        raise ValueError("public comic transcript member must be SVG or XML")
+
+
+def public_xml_valid(data: bytes, name: str) -> tuple[bool, str]:
+    if len(data) > MAX_PUBLIC_XML_BYTES:
+        return False, "SVG/XML member exceeds size limit"
+    upper = data.upper()
+    if b"<!DOCTYPE" in upper or b"<!ENTITY" in upper:
+        return False, "DTD/entity declarations are not accepted"
+    try:
+        root = ET.fromstring(data)
+    except ET.ParseError:
+        return False, "invalid SVG/XML member"
+    if name.lower().endswith(".svg") and root.tag.rsplit("}", 1)[-1].lower() != "svg":
+        return False, "SVG member root element is not svg"
+    return True, "ok"
+
+
+def inspect_public_transcript_zip(path: Path, required_member: str) -> tuple[bool, str]:
+    if not path.is_file() or path.stat().st_size == 0:
+        return False, "transcript ZIP is missing or empty"
+    if path.stat().st_size > MAX_PUBLIC_ZIP_BYTES:
+        return False, "transcript ZIP exceeds size limit"
+    try:
+        with zipfile.ZipFile(path) as archive:
+            if len(archive.infolist()) > MAX_PUBLIC_ZIP_ENTRIES:
+                return False, "transcript ZIP has too many entries"
+            seen: set[str] = set()
+            total_size = 0
+            found_member = False
+            for info in archive.infolist():
+                parts = zip_parts(info)
+                folded_name = "/".join(parts).casefold()
+                if folded_name in seen:
+                    return False, f"duplicate ZIP entry: {info.filename}"
+                seen.add(folded_name)
+                mode = (info.external_attr >> 16) & 0xF000
+                if mode == stat.S_IFLNK or mode not in {0, stat.S_IFREG, stat.S_IFDIR}:
+                    return False, f"unsupported ZIP entry type: {info.filename}"
+                if info.is_dir():
+                    continue
+                if info.flag_bits & 1:
+                    return False, f"encrypted ZIP entry is not accepted: {info.filename}"
+                if info.file_size > MAX_PUBLIC_ZIP_ENTRY_BYTES:
+                    return False, f"ZIP entry exceeds size limit: {info.filename}"
+                total_size += info.file_size
+                if total_size > MAX_PUBLIC_ZIP_TOTAL_BYTES:
+                    return False, "transcript ZIP uncompressed size exceeds limit"
+                if info.filename == required_member:
+                    found_member = True
+                check_xml = info.filename.lower().endswith((".svg", ".xml"))
+                check_json = info.filename == "lang/ja/info.json"
+                if not (check_xml or check_json):
+                    # Still read each member to verify its ZIP CRC without extracting it.
+                    data = None
+                else:
+                    data = bytearray()
+                size = 0
+                with archive.open(info) as stream:
+                    while chunk := stream.read(COPY_BLOCK):
+                        size += len(chunk)
+                        if size > info.file_size:
+                            return False, f"ZIP entry expands beyond its declared size: {info.filename}"
+                        if data is not None:
+                            data.extend(chunk)
+                if size != info.file_size:
+                    return False, f"ZIP entry size mismatch: {info.filename}"
+                if data is not None and check_xml:
+                    ok, reason = public_xml_valid(bytes(data), info.filename)
+                    if not ok:
+                        return False, f"{info.filename}: {reason}"
+                if data is not None and check_json:
+                    try:
+                        json.loads(data.decode("utf-8"))
+                    except (UnicodeDecodeError, json.JSONDecodeError):
+                        return False, "lang/ja/info.json is invalid"
+            if not found_member:
+                return False, f"required transcript member is missing: {required_member}"
+    except (OSError, RuntimeError, EOFError, NotImplementedError, zipfile.BadZipFile, zlib.error, ValueError) as exc:
+        return False, f"invalid transcript ZIP: {type(exc).__name__}: {exc}"
+    return True, "transcript ZIP and required SVG/XML member are valid"
+
+
+def validate_public_case(case: dict) -> tuple[bool, str]:
+    try:
+        profile = case["asset_profile"]
+        validate_public_profile(profile)
+        directory = local_dir(case)
+        image = directory / profile["image_filename"]
+        transcript_zip = directory / profile["transcript_zip_filename"]
+        for path in (image, transcript_zip):
+            if path.is_symlink() or not path.is_file() or not path.resolve().is_relative_to(directory.resolve()):
+                return False, f"missing or unsafe asset path: {path.name}"
+        if not valid_jpeg(image):
+            return False, "image is not a complete JPEG"
+        return inspect_public_transcript_zip(transcript_zip, profile["transcript_member"])
+    except (KeyError, OSError, ValueError) as exc:
+        return False, f"invalid public comic profile or files: {exc}"
+
+
 def manga_page_names(pages: ET.Element) -> list[str]:
     indices = []
     for page in pages.findall("page"):
@@ -214,6 +453,8 @@ def validate_present(case: dict) -> tuple[bool, str]:
     kind = case.get("asset_profile", {}).get("kind")
     if kind == "manga109_title":
         return validate_manga_case(case)
+    if kind == "open_public_comic_page":
+        return validate_public_case(case)
     paths = required_files(case)
     if not paths:
         return False, "required files are absent"
@@ -228,6 +469,86 @@ def validate_present(case: dict) -> tuple[bool, str]:
             except (UnicodeDecodeError, json.JSONDecodeError):
                 return False, "invalid info.json"
     return True, "required files present and structurally valid"
+
+
+def download_public_file(url: str, destination: Path, size_limit: int, validator) -> tuple[int, int]:
+    if not is_public_comic_url(url):
+        raise ValueError("download URL is outside the approved HTTPS host")
+    if destination.is_symlink():
+        raise OSError(f"existing path is a symlink; left untouched: {destination.name}")
+    if destination.exists():
+        valid, reason = validator(destination)
+        if valid:
+            return 0, 1
+        raise OSError(f"existing file is invalid; left untouched: {destination.name}: {reason}")
+
+    temp_name = None
+    try:
+        request = urllib.request.Request(url, headers={"User-Agent": "NewManga-TestAssets/1.0"})
+        with open_public_comic_url(request) as response:
+            if not is_public_comic_url(response.geturl()):
+                raise OSError("redirected download is outside the approved HTTPS host")
+            content_length = response.headers.get("Content-Length")
+            if not content_length or not content_length.isdecimal():
+                raise OSError("response has no verifiable Content-Length")
+            expected_size = int(content_length)
+            if expected_size <= 0 or expected_size > size_limit:
+                raise OSError(f"remote file size is outside limits: {expected_size} bytes")
+            with tempfile.NamedTemporaryFile(prefix=f".{destination.name}.", suffix=".part", dir=destination.parent, delete=False) as temp:
+                temp_name = temp.name
+                written = 0
+                while chunk := response.read(COPY_BLOCK):
+                    written += len(chunk)
+                    if written > expected_size or written > size_limit:
+                        raise OSError("download exceeds declared or allowed size")
+                    temp.write(chunk)
+        temp_path = Path(temp_name)
+        if written != expected_size:
+            raise OSError(f"incomplete download: expected {expected_size} bytes, received {written}")
+        valid, reason = validator(temp_path)
+        if not valid:
+            raise OSError(reason)
+        try:
+            os.link(temp_path, destination)
+        except FileExistsError:
+            if destination.is_symlink():
+                raise OSError(f"destination appeared as a symlink; left untouched: {destination.name}")
+            valid, reason = validator(destination)
+            if not valid:
+                raise OSError(f"destination appeared with invalid content; left untouched: {destination.name}: {reason}")
+            return 0, 1
+        return 1, 0
+    finally:
+        if temp_name:
+            Path(temp_name).unlink(missing_ok=True)
+
+
+def download_public_comic_case(case: dict) -> tuple[int, int, bool]:
+    profile = case["asset_profile"]
+    directory = local_dir(case)
+    downloaded = skipped = 0
+    try:
+        validate_public_profile(profile)
+        directory.mkdir(parents=True, exist_ok=True)
+        image = directory / profile["image_filename"]
+        archive = directory / profile["transcript_zip_filename"]
+        image_count, image_skipped = download_public_file(
+            profile["image_url"], image, MAX_IMAGE_BYTES,
+            lambda path: (valid_jpeg(path), "downloaded JPEG is invalid"),
+        )
+        downloaded += image_count
+        skipped += image_skipped
+        zip_count, zip_skipped = download_public_file(
+            profile["transcript_zip_url"], archive, MAX_PUBLIC_ZIP_BYTES,
+            lambda path: inspect_public_transcript_zip(path, profile["transcript_member"]),
+        )
+        downloaded += zip_count
+        skipped += zip_skipped
+        print(f"{case['case_id']}\tDOWNLOADED\tfiles={downloaded} existing={skipped}")
+        return downloaded, skipped, False
+    except (OSError, ValueError, urllib.error.URLError, zipfile.BadZipFile) as exc:
+        print(f"{case['case_id']}\tDOWNLOAD_FAILED\t{type(exc).__name__}: {exc}", file=sys.stderr)
+        return downloaded, skipped, True
 
 
 def download_webtoon_case(case: dict) -> tuple[int, int, bool]:
@@ -298,8 +619,13 @@ def validate_download_file(path: Path, name: str) -> tuple[bool, str]:
 def zip_parts(info: zipfile.ZipInfo) -> tuple[str, ...]:
     name = info.filename
     path = PurePosixPath(name)
-    if not name or "\\" in name or "\x00" in name or path.is_absolute() or PureWindowsPath(name).drive or ".." in path.parts:
-        raise ValueError(f"unsafe path in Manga109 archive: {name!r}")
+    clean_name = name[:-1] if info.is_dir() and name.endswith("/") else name
+    if (
+        not clean_name or "\\" in name or "\x00" in name or ":" in name
+        or path.is_absolute() or PureWindowsPath(name).drive
+        or any(part in {"", ".", ".."} for part in clean_name.split("/"))
+    ):
+        raise ValueError(f"unsafe path in ZIP archive: {name!r}")
     return path.parts
 
 
@@ -458,6 +784,8 @@ def download_case(case: dict) -> tuple[int, int, bool]:
     if kind == "manga109_title":
         print(f"{case['case_id']}\tBLOCKED_BY_ASSET_ACCESS\tObtain the official gated ZIP, then pass --archive <path>.")
         return 0, 0, False
+    if kind == "open_public_comic_page":
+        return download_public_comic_case(case)
     if kind != "hf_cleaned_webtoon":
         print(f"{case['case_id']}\tMANUAL_SOURCE_REQUIRED\t{case['source']}")
         return 0, 0, False
@@ -476,13 +804,35 @@ def main() -> int:
         parser.error("--archive is supported only with download --language ja")
     manifest = load_manifest()
     cases = selected(manifest, args.language, args.level)
-    if args.command in {"list", "missing"}:
-        print_cases(cases, show_missing_only=args.command == "missing")
-        return 0
-    if args.command == "verify":
-        print_cases(cases)
+    if args.command in {"verify", "list", "missing"}:
+        inventory_failures, inventory_checked, inventory_missing, invalid_paths = verify_inventory_files()
+        case_statuses = print_cases(cases, show_missing_only=args.command == "missing", invalid_inventory_paths=invalid_paths)
+        print(f"INVENTORY\tchecked={inventory_checked} missing={inventory_missing} failures={len(inventory_failures)}")
+        for failure in inventory_failures:
+            print(f"INVALID_INVENTORY\t{failure}")
+        if inventory_failures:
+            print("SUMMARY\tFAILED")
+            return 1
+        if args.command in {"list", "missing"}:
+            return 0
         for case in cases:
-            if status(case) == "READY":
+            kind = case.get("asset_profile", {}).get("kind")
+            case_status = case_statuses[case["case_id"]]
+            if kind in {"open_public_comic_page", "hf_cleaned_webtoon"}:
+                if case_status != "READY":
+                    ok, reason = validate_present(case)
+                    message = reason if not ok else f"asset status is {case_status}"
+                    print(f"INVALID\t{case['case_id']}\t{message}")
+                    return 1
+                continue
+            if kind == "manga109_title":
+                if case_status == "PARTIAL":
+                    ok, reason = validate_present(case)
+                    message = reason if not ok else "asset status is PARTIAL"
+                    print(f"INVALID\t{case['case_id']}\t{message}")
+                    return 1
+                continue
+            if case_status == "READY":
                 ok, reason = validate_present(case)
                 if not ok:
                     print(f"INVALID\t{case['case_id']}\t{reason}")

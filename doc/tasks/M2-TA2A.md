@@ -22,7 +22,7 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1：逐项审计 JMangaBench_Mixed、Manga109 public annotations、COO、Manga109Dialog、Text Mask、Open Ground Truth 及本地已登记的 JA 来源；区分图像、annotation、transcription、mask、metadata、code-only，并分别记录来源、license、图像再分发状态、实际访问/下载入口和是否依赖 gated 图像。
+- [ ] AC1：逐项审计 JMangaBench_Mixed、Manga109 public annotations、COO、Manga109Dialog、Text Mask、Open Ground Truth 及本地已登记的 JA 来源；区分图像、annotation、transcription、mask、metadata、code-only，并分别记录来源、license、图像再分发状态、实际访问/下载入口和是否依赖 gated 图像。证据：`verification/M2-TA2A/source-audit.md`。
 - [ ] AC2：对无需额外授权且许可明确的来源执行实际下载；至少取得一组日语图像与其真实 source transcription/ground-truth 文件。若来源是日语翻译版开放 webcomic，须准确标为该类型，不得称为日本原创 Manga。
 - [ ] AC3：只有 annotation 没有配对图像的 Manga109 相关数据保持 `PARTIAL`；JMangaBench、Text Mask 或其他依赖 Manga109 图像的可运行范围保持 `BLOCKED_BY_ASSET_ACCESS` / `PARTIAL`，不得标为 `READY`。
 - [ ] AC4：每个实际落地来源记录 source、license、image redistribution status、local path、file count、byte size、SHA-256 或等效完整性信息、ground-truth 类型、可用于检查的 Pipeline，以及该 Pipeline 的真实执行状态。
@@ -60,17 +60,21 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Catalog/校验器 | `python -m pytest tests/m2_test_assets -q` | Windows / Python；跟随资产工具变更 | NOT_RUN | `verification/M2-TA2A/` |
-| 新增 JA 素材 | `python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke` | 已下载的公开源 | NOT_RUN | `verification/M2-TA2A/` |
-| 重复下载与网络失败 | 执行公开源下载两次；对离线/损坏输入执行 verify，不覆盖有效文件 | 临时或本地缓存 | NOT_RUN | `verification/M2-TA2A/` |
-| Manga109 gated 不误报 | `list/missing/download --language ja` 无官方 archive | 不提供 gated 凭据 | NOT_RUN | `verification/M2-TA2A/` |
-| Git/版权边界 | `git ls-files`、`git check-ignore --no-index -v`、`git diff --check` | 集成 HEAD | NOT_RUN | `verification/M2-TA2A/` |
+| Catalog/校验器 | `python -m pytest tests/m2_test_assets -q` | Windows / Python；跟随资产工具变更 | PASS：23 passed | `verification/M2-TA2A/run-results.md` |
+| 新增 JA 素材 | `python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke` | 已下载的公开源 | PASS：READY=10，`INVENTORY checked=88 missing=0 failures=0`，exit 0 | `verification/M2-TA2A/run-results.md` |
+| 重复下载与网络失败 | 执行公开源下载两次；对离线/损坏输入执行 verify，不覆盖有效文件 | 临时或本地缓存 | PASS：第二次 downloaded=0/existing=20/failures=0；原子/损坏输入由定向测试覆盖 | `verification/M2-TA2A/run-results.md` |
+| Manga109 gated 不误报 | `list/missing/download --language ja` 无官方 archive | 不提供 gated 凭据 | PASS：`download --language ja --level regression` 返回 gated_cases=37、failures=0；随后 verify 枚举 MISSING_GATED_ASSET=37、公开页 READY=10 | `verification/M2-TA2A/run-results.md` |
+| Git/版权边界 | `git ls-files`、`git check-ignore --no-index -v`、`git diff --check` | 集成 HEAD | PASS：公共图像/归档均被忽略；只放行 CC BY 4.0 注释 XML 与许可证文本；最终集成后复核 | `verification/M2-TA2A/run-results.md` |
 | 应用 Pipeline | OCR/Detection/Translation/Inpainting/Typesetting 等 | 本 Task 不改生产链路 | NOT_RUN | 不作为本 Task 的 READY 含义 |
 
 Known baseline: `tests/m2_acceptance` 之前已证明 `8 failed / 24 passed / 3 skipped` 为 `BASELINE_FAILURE`；`tests/core` 因缺 PySide6 为 `BLOCKED_BY_ENV`。本 Task 不修复它们。
 
 ## 交付与运行记录
 
-- Handoff：待完成。
-- Review：待完成，Reviewer 必须为非作者。
-- Integration：待 Codex 审核固定 delivery head 后记录。
+- 来源实物与访问/许可审计：`verification/M2-TA2A/source-audit.md`。
+- 本地日语页：10 张 JPEG + 两个官方语言包 ZIP，逐文件 SHA-256 和文件字节数在 `test_assets/comic_golden_suite/manifests/local_asset_inventory.json`。
+- Manga109 公共标注：37 个 COO + 37 个 Manga109Dialog XML 和两份 CC BY 4.0 许可证已下载、解析并按许可放行进 Git；对应 Manga109 页图像仍为 0。
+- 首次 Smoke 下载因 language-pack URL 缺少 episode 路径返回 HTTP 404；修正 manifest 后重跑通过。首轮没有覆盖或发布损坏文件。
+- Handoff：待 integration commit 后完成。
+- Review：固定提交 `a6977cf9ddea3f2e15a19c8d5ca06a3e82e342a9` 收到 DeepSeek Harness `APPROVED`（0×P0/P1；4×P2 已处置/记录，报告见 `verification/M2-TA2A/dsh-r1-result.md`）；后续安全/完整性口径修复需对新 tip 复审。
+- Integration：待 Codex 在主工作区审核、合入并执行集成验证。

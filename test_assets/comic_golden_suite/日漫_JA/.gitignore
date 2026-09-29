@@ -1,3 +1,22 @@
 /*
 !/.gitignore
+!/.gitattributes
 !/.gitkeep
+
+# Only the selected CC BY 4.0 annotation XML and source license texts are trackable.
+!/02_public_annotations/
+!/02_public_annotations/COO-Comic-Onomatopoeia/
+!/02_public_annotations/COO-Comic-Onomatopoeia/LICENSE_COO
+!/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/
+!/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/*.xml
+!/02_public_annotations/Manga109Dialog/
+!/02_public_annotations/Manga109Dialog/LICENSE_Manga109Dialog
+!/02_public_annotations/Manga109Dialog/*.xml
+
+# The annotation whitelist must never allow raw images or dataset archives.
+/02_public_annotations/**/*.jpg
+/02_public_annotations/**/*.jpeg
+/02_public_annotations/**/*.png
+/02_public_annotations/**/*.webp
+/02_public_annotations/**/*.zip
+/02_public_annotations/**/*.cbz
