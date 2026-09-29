@@ -80,6 +80,22 @@ def test_public_page_download_is_atomic_validated_and_idempotent(tmp_path):
     assert not list(assets.local_dir(case).glob("*.part"))
 
 
+def test_korean_public_page_uses_same_download_and_member_checks(tmp_path):
+    case = make_case()
+    case["language"] = "ko"
+    case["asset_profile"]["transcript_member"] = "lang/kr/E01P00.svg"
+    payloads = [Response(JPEG, IMAGE_URL), Response(make_zip(member="lang/kr/E01P00.svg"), ZIP_URL)]
+    with patch.object(assets, "ROOT", tmp_path / "suite"), patch.object(
+        assets, "open_public_comic_url", side_effect=payloads
+    ) as fetch:
+        assert assets.download_case(case) == (2, 0, False)
+        assert assets.status(case) == "READY"
+        assert assets.download_case(case) == (0, 2, False)
+        assert fetch.call_count == 2
+        case["asset_profile"]["transcript_member"] = MEMBER
+        assert assets.status(case) == "PARTIAL"
+
+
 def test_cases_in_one_directory_reuse_and_validate_shared_transcript_zip(tmp_path):
     first = make_case()
     first["local_path"] = "ja/shared"
