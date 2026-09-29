@@ -1,0 +1,34 @@
+# after-optimize perf (debug profile) @ working tree (pre-commit, single-pass hash+capture implementation)
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:06:28+08:00
+# cwd: apps/desktop/src-tauri
+# implementation state: POST-OPTIMIZATION (single-pass stream_digest_and_capture: one sequential read accumulates digest AND captures chunk; GrantCache removed)
+# cmd: cargo test perf_chunk_request_digest_cost -- --ignored --nocapture  (debug/test profile, same harness as baseline b2)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-DIGEST-PERF-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:419:54
+    |
+419 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+    |                                                      ^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 2.42s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 1 test
+PERF 1MiB-chunk0: rounds=20 total=353.8999ms avg=17.694995ms/request
+PERF 16MiB-chunk0: rounds=10 total=3.1639606s avg=316.39606ms/request
+PERF 32MiB-chunk1: rounds=5 total=2.8822456s avg=576.44912ms/request
+test tests::perf_chunk_request_digest_cost ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 9.57s
+
+# EXIT=0

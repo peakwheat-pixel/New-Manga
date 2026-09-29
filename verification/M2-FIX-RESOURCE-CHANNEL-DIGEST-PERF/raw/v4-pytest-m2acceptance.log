@@ -1,0 +1,9 @@
+# v4: python m2_acceptance @ 5d7cff11315b36a9b43390e28930a91d39282496
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:08:26+08:00
+# cwd: worktree root
+# interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe
+# cmd: python -m pytest tests/m2_acceptance -q
+...................................                                      [100%]
+35 passed in 10.45s
+# EXIT=0

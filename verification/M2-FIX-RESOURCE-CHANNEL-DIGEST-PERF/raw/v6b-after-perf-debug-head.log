@@ -1,0 +1,33 @@
+# v6b: debug perf re-run bound to implementation head 5d7cff11315b36a9b43390e28930a91d39282496 (same harness as baseline b2)
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:10:32+08:00
+# cwd: apps/desktop/src-tauri
+# implementation state: POST-OPTIMIZATION (single-pass), committed at HEAD
+# cmd: cargo test perf_chunk_request_digest_cost -- --ignored --nocapture (debug/test profile)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:419:54
+    |
+419 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+    |                                                      ^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.36s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 1 test
+PERF 1MiB-chunk0: rounds=20 total=380.3895ms avg=19.019475ms/request
+PERF 16MiB-chunk0: rounds=10 total=3.0282547s avg=302.82547ms/request
+PERF 32MiB-chunk1: rounds=5 total=3.0221572s avg=604.43144ms/request
+test tests::perf_chunk_request_digest_cost ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 9.66s
+
+# EXIT=0

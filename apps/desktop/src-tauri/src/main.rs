@@ -24,7 +24,7 @@ mod resource_protocol;
 use ac1_bridge::Ac1Channel;
 use core_bridge::{CoreChannel, CoreError, StdioCoreChannel};
 use library_bridge::{BookSummary, LibraryChannel, PingResult, StdioLibraryChannel};
-use resource_protocol::{GrantCache, ScopeRoots};
+use resource_protocol::{ScopeRoots};
 use serde::Serialize;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -88,7 +88,6 @@ pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> 
 
 struct AppState {
     channel: Box<dyn CoreChannel>,
-    cache: GrantCache,
     roots: ScopeRoots,
     fixture_shas: serde_json::Value,
     /// Present only in the M2-AC1 explicit test startup configuration.
@@ -317,7 +316,6 @@ fn main() {
 
     let state = AppState {
         channel: Box::new(channel),
-        cache: GrantCache::default(),
         roots: ScopeRoots { derived: derived_root, managed: managed_root },
         fixture_shas: fixture_shas(),
         ac1,
@@ -345,7 +343,7 @@ fn main() {
             let state = ctx.app_handle().state::<AppState>();
             let uri = request.uri().to_string();
             let response =
-                resource_protocol::handle_m2res_request(&uri, state.channel.as_ref(), &state.cache, &state.roots);
+                resource_protocol::handle_m2res_request(&uri, state.channel.as_ref(), &state.roots);
             let mut response_builder = tauri::http::Response::builder()
                 .status(response.status)
                 .header("Content-Type", response.content_type)
@@ -418,14 +416,17 @@ mod tests {
     use super::*;
     use crate::core_bridge::{build_issue_params, MockCoreChannel};
     use crate::resource_protocol::{
-        build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+        build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
     };
     use std::io::Write;
 
     struct TestEnv {
+        /// Owns the tempdir so every fixture directory is cleaned up on drop
+        /// (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF: replaces the former
+        /// `mem::forget` that leaked ~50 tempdirs per stability-loop run).
+        _dir: tempfile::TempDir,
         roots: ScopeRoots,
         channel: MockCoreChannel,
-        cache: GrantCache,
     }
 
     fn write_resource(root: &std::path::Path, rel: &str, payload: &[u8]) -> String {
@@ -450,12 +451,10 @@ mod tests {
         std::fs::create_dir_all(&managed).unwrap();
         let sha = write_resource(&derived, "asset.png", payload);
         let env = TestEnv {
+            _dir: dir,
             roots: ScopeRoots { derived, managed },
             channel: MockCoreChannel::new(),
-            cache: GrantCache::default(),
         };
-        // leak the tempdir for the duration of the test scope
-        std::mem::forget(dir);
         (env, sha)
     }
 
@@ -656,7 +655,7 @@ mod tests {
     fn malformed_ids_rejected_before_lookup() {
         let (env, _sha) = env_with_fixture(b"payload");
         for bad in ["not-an-id", "", &"x".repeat(ID_LENGTH + 1), "../escape"] {
-            let response = handle_m2res_request(&url_for(bad, Some(0)), &env.channel, &env.cache, &env.roots);
+            let response = handle_m2res_request(&url_for(bad, Some(0)), &env.channel, &env.roots);
             assert_eq!(response.status, 400, "id {bad:?}");
             assert_eq!(std::str::from_utf8(&response.body).unwrap(), "{\"code\":\"REF_MALFORMED\"}");
         }
@@ -666,7 +665,7 @@ mod tests {
     fn unknown_well_formed_id_typed_404() {
         let (env, _sha) = env_with_fixture(b"payload");
         let well_formed = "A".repeat(ID_LENGTH).replace('A', "a");
-        let response = handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.cache, &env.roots);
+        let response = handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.roots);
         assert_eq!(response.status, 404);
         assert_eq!(std::str::from_utf8(&response.body).unwrap(), "{\"code\":\"REF_UNKNOWN_ID\"}");
     }
@@ -675,7 +674,7 @@ mod tests {
     fn chunk_offset_beyond_size_rejected() {
         let (env, _sha) = env_with_fixture(b"tiny payload");
         let opaque = registered(&env, "res-001", "asset.png", b"tiny payload");
-        let response = handle_m2res_request(&url_for(&opaque, Some(1)), &env.channel, &env.cache, &env.roots);
+        let response = handle_m2res_request(&url_for(&opaque, Some(1)), &env.channel, &env.roots);
         assert_eq!(response.status, 400);
         let body = std::str::from_utf8(&response.body).unwrap();
         assert!(body.contains("REF_MALFORMED") || body.contains("REF_UNKNOWN_ID"), "{body}");
@@ -685,7 +684,7 @@ mod tests {
     fn responses_carry_no_store() {
         let (env, _sha) = env_with_fixture(b"payload");
         let well_formed = "b".repeat(ID_LENGTH).replace('b', "c");
-        let response = handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.cache, &env.roots);
+        let response = handle_m2res_request(&url_for(&well_formed, Some(0)), &env.channel, &env.roots);
         assert_eq!(response.cache_control, "no-store");
     }
 
@@ -694,7 +693,7 @@ mod tests {
         let (env, _sha) = env_with_fixture(b"payload");
         let opaque = registered(&env, "res-001", "asset.png", b"payload");
         env.channel.revoke(&opaque).unwrap();
-        let response = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
+        let response = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.roots);
         assert_eq!(response.status, 410);
         assert_eq!(std::str::from_utf8(&response.body).unwrap(), "{\"code\":\"REF_REVOKED\"}");
     }
@@ -705,20 +704,26 @@ mod tests {
         let (env, sha) = env_with_fixture(&payload);
         let opaque = registered(&env, "res-001", "asset.png", &payload);
         assert_eq!(sha.len(), 64);
-        let response = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
+        let response = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.roots);
         assert_eq!(response.status, 200);
         assert_eq!(response.body.len(), payload.len());
         assert_eq!(&response.body[..], &payload[..]);
         assert_eq!(response.cache_control, "no-store");
     }
 
+    /// Renamed from `identity_change_invalidates_cache_entry`
+    /// (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF): with the write-only GrantCache
+    /// removed there is no cache entry to invalidate. What the test actually
+    /// pins is the per-request file-identity check: a file replaced by a NEW
+    /// inode (different NTFS file index) is refused with the typed
+    /// FILE_IDENTITY_CHANGED on the very next request.
     #[test]
-    fn identity_change_invalidates_cache_entry() {
+    fn identity_change_rejected_by_per_request_verification() {
         let payload = b"payload-v1".to_vec();
         let (env, _sha) = env_with_fixture(&payload);
         let opaque = registered(&env, "res-001", "asset.png", &payload);
-        // first request verifies and caches
-        let first = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
+        // first request verifies and serves
+        let first = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.roots);
         assert_eq!(first.status, 200);
         // replace with a *new* file (unlink first: an in-place overwrite keeps
         // the same NTFS file index, the M2-S2 lesson)
@@ -726,7 +731,7 @@ mod tests {
         let target = env.roots.derived.join("asset.png");
         std::fs::remove_file(&target).unwrap();
         std::fs::write(&target, replaced).unwrap();
-        let second = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.cache, &env.roots);
+        let second = handle_m2res_request(&url_for(&opaque, Some(0)), &env.channel, &env.roots);
         assert_eq!(second.status, 400);
         assert_eq!(std::str::from_utf8(&second.body).unwrap(), "{\"code\":\"FILE_IDENTITY_CHANGED\"}");
     }
@@ -743,14 +748,14 @@ mod tests {
         let url = url_for(&opaque, Some(0));
 
         // first fetch establishes the grant cache
-        let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        let first = handle_m2res_request(&url, &env.channel, &env.roots);
         assert_eq!(first.status, 200, "first fetch must serve");
 
         // Core-side revocation AFTER the cache is warm
         env.channel.revoke(&opaque).unwrap();
 
         // the next request must consult the Core and reject
-        let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        let second = handle_m2res_request(&url, &env.channel, &env.roots);
         assert_eq!(second.status, 410, "revoked URL must not be served from cache");
         assert_eq!(
             std::str::from_utf8(&second.body).unwrap(),
@@ -782,12 +787,12 @@ mod tests {
         }
         let url = url_for(&issued.opaque_id, Some(0));
 
-        let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        let first = handle_m2res_request(&url, &env.channel, &env.roots);
         assert_eq!(first.status, 200, "first fetch must serve within TTL");
 
         std::thread::sleep(std::time::Duration::from_millis(500));
 
-        let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        let second = handle_m2res_request(&url, &env.channel, &env.roots);
         assert_eq!(second.status, 410, "expired URL must not be served from cache");
         assert_eq!(
             std::str::from_utf8(&second.body).unwrap(),
@@ -802,7 +807,7 @@ mod tests {
         let opaque = registered(&env, "res-001", "asset.png", payload);
         let url = url_for(&opaque, Some(0));
 
-        let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        let first = handle_m2res_request(&url, &env.channel, &env.roots);
         assert_eq!(first.status, 200, "first fetch verifies and caches");
 
         // equal-size IN-PLACE rewrite: same path, same length, same file index
@@ -817,7 +822,7 @@ mod tests {
             existing.write_all(&flipped).unwrap();
         }
 
-        let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+        let second = handle_m2res_request(&url, &env.channel, &env.roots);
         assert_eq!(second.status, 400, "rewritten content must not be served");
         assert_eq!(
             std::str::from_utf8(&second.body).unwrap(),
@@ -840,7 +845,7 @@ mod tests {
             let opaque = registered(&env, "res-001", "asset.png", payload);
             let url = url_for(&opaque, Some(0));
 
-            let first = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+            let first = handle_m2res_request(&url, &env.channel, &env.roots);
             assert_eq!(first.status, 200, "round {round}: first fetch must serve");
 
             let flipped: Vec<u8> = payload.iter().map(|b| b ^ 0x5A).collect();
@@ -853,12 +858,56 @@ mod tests {
                 existing.write_all(&flipped).unwrap();
             }
 
-            let second = handle_m2res_request(&url, &env.channel, &env.cache, &env.roots);
+            let second = handle_m2res_request(&url, &env.channel, &env.roots);
             assert_eq!(second.status, 400, "round {round}: rewritten content must not be served");
             assert_eq!(
                 std::str::from_utf8(&second.body).unwrap(),
                 "{\"code\":\"CONTENT_DIGEST_MISMATCH\"}",
                 "round {round}: typed rejection required"
+            );
+        }
+    }
+
+    // ---- AC2 chunk-request cost probe (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF)
+    // `#[ignore]`d: measured explicitly, never in the default suite. Run with
+    // `cargo test --bin m2rc1-desktop perf_chunk_request_digest_cost -- --ignored --nocapture`
+    // (same command under `--release` for the release-profile column). Warm
+    // request first, then N timed identical requests; the average is the
+    // per-request figure recorded in the task's comparison table.
+    #[test]
+    #[ignore]
+    fn perf_chunk_request_digest_cost() {
+        let cases: &[(&str, usize, u64, u32)] = &[
+            // (label, payload_bytes, chunk_index, timed rounds)
+            ("1MiB-chunk0", 1024 * 1024, 0, 20),
+            ("16MiB-chunk0", 16 * 1024 * 1024, 0, 10),
+            ("32MiB-chunk1", 32 * 1024 * 1024, 1, 5),
+        ];
+        for (label, size, chunk, rounds) in cases {
+            let payload: Vec<u8> = (0..*size as u64).map(|i| (i % 251) as u8).collect();
+            let (env, _sha) = env_with_fixture(&payload);
+            let opaque = registered(&env, "res-001", "asset.png", &payload);
+            let url = url_for(&opaque, Some(*chunk));
+            let want = std::cmp::min(
+                *size as u64 - chunk * resource_protocol::CHUNK_SIZE,
+                resource_protocol::CHUNK_SIZE,
+            ) as usize;
+            // untimed warm-up: OS file cache + allocator reach steady state
+            let warm = handle_m2res_request(&url, &env.channel, &env.roots);
+            assert_eq!(warm.status, 200, "{label}: warm-up request must serve");
+            assert_eq!(warm.body.len(), want, "{label}: warm-up body size");
+            let start = std::time::Instant::now();
+            for _ in 0..*rounds {
+                let response = handle_m2res_request(&url, &env.channel, &env.roots);
+                assert_eq!(response.status, 200, "{label}: timed request must serve");
+                assert_eq!(response.body.len(), want, "{label}: timed body size");
+                assert_eq!(response.cache_control, "no-store");
+            }
+            let elapsed = start.elapsed();
+            println!(
+                "PERF {label}: rounds={} total={elapsed:?} avg={:?}/request",
+                rounds,
+                elapsed / *rounds
             );
         }
     }

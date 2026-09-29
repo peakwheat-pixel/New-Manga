@@ -2,7 +2,7 @@
 id: M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF
 title: Resource channel digest 重验成本优化（单趟 hash+capture / per-chunk digest）与 GrantCache 死结构收敛
 kind: fix
-status: ready
+status: in_progress
 release_state: M2_FIX_DIGEST_PERF_RELEASED
 approval: approved_by_user_2026-09-29_digestperf_release
 execution_approval: approved_by_user_2026-09-29_digestperf_release
@@ -14,10 +14,10 @@ depends_on: [M2-FIX-F02-RESOURCE-CHANNEL-FLAKY]
 base_commit: 956e6c3ad3b37fdc274cd6353b285da530e7aeaf
 branch: agent/zcode/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF
 worktree: G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-PERF-zcode
-delivery_head: null
+delivery_head: 5d7cff11315b36a9b43390e28930a91d39282496
 review: null
 integration_merge: null
-dispatch_state: READY_FOR_CLAIM
+dispatch_state: DELIVERED_FOR_REVIEW
 ---
 
 # M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF — Resource channel digest 重验成本优化与 GrantCache 死结构收敛
@@ -54,13 +54,14 @@ dispatch_state: READY_FOR_CLAIM
 
 ## 验收标准（已冻结 2026-09-29）
 
-- AC1：等长重写必拒语义不弱化——全量 `cargo test --bin m2rc1-desktop` 34 passed（数字随套件演进核实）+ stability loop 定向绿；并留一份"对优化前代码 loop 必红"的判别力红证（F02 集成组 5 已证 50 轮内必红，本 Task 可引用该 artefact 并在优化后 head 复验一次先红）。
-- AC2：性能回退目标——chunk 请求成本从 O(文件) 降到 O(chunk)（per-chunk 路线）或消除冗余读（单趟路线），实测前后对比日志留痕（1 MiB 与 ≥16 MiB 各一档，debug profile；release profile 补测以闭合 F02 P3-9 的 unverified 断言，纯测量不涉代码）。
-- AC3：TOCTOU 残留窗口消除（单趟 capture 路线）或书面说明剩余窗口不大于现状。
-- AC4：dead-code warning 清零（`cargo build 2>&1 | grep "never read"` 空输出）；`identity_change_invalidates_cache_entry` 更名后语义与名称一致。
-- AC5：证据纪律同既有惯例（头尾齐全、固定 HEAD、diff --check、范围自检）；三层验证义务——Rust cargo 全量+loop、Python m2_acceptance 全绿（35 passed 0 xfailed 基线不回退）、`git diff --check` 整树 EXIT 0。
+- [x] AC1：等长重写必拒语义不弱化——全量 `cargo test --bin m2rc1-desktop` 34 passed（数字随套件演进核实）+ stability loop 定向绿；并留一份"对优化前代码 loop 必红"的判别力红证（F02 集成组 5 已证 50 轮内必红，本 Task 可引用该 artefact 并在优化后 head 复验一次先红）。（实测 @`5d7cff11`：34 passed 1 ignored + loop 1 passed；红证引用 `verification/M2-FIX-F02-RESOURCE-CHANNEL-FLAKY/integration-3cef4831/raw/g5-loop-discrimination-red.log`（FAILED EXIT=101）+ 本 head 复验绿，raw/v1、raw/v2）
+- [x] AC2：性能回退目标——chunk 请求成本从 O(文件) 降到 O(chunk)（per-chunk 路线）或消除冗余读（单趟路线），实测前后对比日志留痕（1 MiB 与 ≥16 MiB 各一档，debug profile；release profile 补测以闭合 F02 P3-9 的 unverified 断言，纯测量不涉代码）。（**单趟路线达标**：消除 2 次冗余读，debug 四档 + release 三档前后对比见 [verification-results](../verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/verification-results.md) §3，release 1MiB −14.6%/16MiB −24.4%/32MiB −17.9%，P3-9 实测闭合；per-chunk 不实施，Handoff §5）
+- [x] AC3：TOCTOU 残留窗口消除（单趟 capture 路线）或书面说明剩余窗口不大于现状。（单趟 capture：served bytes ≡ digest-covered bytes，digest→serve 窗口结构性消除，Handoff §3-AC3）
+- [x] AC4：dead-code warning 清零（`cargo build 2>&1 | grep "never read"` 空输出）；`identity_change_invalidates_cache_entry` 更名后语义与名称一致。（raw/v3 空输出；更名 `identity_change_rejected_by_per_request_verification`）
+- [x] AC5：证据纪律同既有惯例（头尾齐全、固定 HEAD、diff --check、范围自检）；三层验证义务——Rust cargo 全量+loop、Python m2_acceptance 全绿（35 passed 0 xfailed 基线不回退）、`git diff --check` 整树 EXIT 0。（raw/v1-v5 全绿；条件允许路径未启用）
 
 ## 状态
 
 - 2026-09-29：F02 集成收口时由 Codex（Integrator）登记为候选；**未释放，无 owner/base/branch**。
 - 2026-09-29：用户批准释放（编排会话代行 Codex），`proposed → ready`。冻结 base=`956e6c3a`、branch/worktree、两级允许路径、AC1-AC5、硬约束与"等长重写必拒"语义；per-chunk 契约流程范围已由 Codex 划定（见触点 2）。Owner=ZCode（子 agent 代行实现），非作者 Reviewer=DeepSeek Harness，Integrator=另一子 agent 代行 Codex。
+- 2026-09-29：Owner 交付（claim=`b43a1e2a`、探针=`9df29a6f`、delivery_head=`5d7cff11`）。单趟 hash+capture + GrantCache 删除 + 测试更名 + TempDir 守卫；**per-chunk 不实施、条件允许路径未启用**（host_bridge.py 序列化层超范围 + AC2 单趟达标，[Handoff §5](../handoffs/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF-5d7cff11.md)）；触点 6 机理对照 NOT_RUN。AC1-AC5 全勾（实测见 [verification-results](../verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/verification-results.md)）。`ready → in_review`，待 DeepSeek Harness 非作者 Review。

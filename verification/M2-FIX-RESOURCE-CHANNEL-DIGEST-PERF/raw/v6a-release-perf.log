@@ -1,0 +1,38 @@
+# v6a: release-profile perf (baseline probe vs single-pass) @ 5d7cff11315b36a9b43390e28930a91d39282496
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:09:17+08:00
+# cwd: apps/desktop/src-tauri
+# cmd part 1: cargo test --release --no-run  (build release test binary)
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `release` profile [optimized] target(s) in 40.51s
+  Executable unittests src\main.rs (target\release\deps\m2rc1_desktop-940e08690d5da8a2.exe)
+# build EXIT=0
+# cmd part 2: cargo test --release perf_chunk_request_digest_cost -- --ignored --nocapture
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-DIGEST-PERF-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:419:54
+    |
+419 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+    |                                                      ^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `release` profile [optimized] target(s) in 1.43s
+     Running unittests src\main.rs (target\release\deps\m2rc1_desktop-940e08690d5da8a2.exe)
+
+running 1 test
+PERF 1MiB-chunk0: rounds=20 total=15.3324ms avg=766.62µs/request
+PERF 16MiB-chunk0: rounds=10 total=114.4283ms avg=11.44283ms/request
+PERF 32MiB-chunk1: rounds=5 total=106.0289ms avg=21.20578ms/request
+test tests::perf_chunk_request_digest_cost ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.40s
+
+# EXIT=0

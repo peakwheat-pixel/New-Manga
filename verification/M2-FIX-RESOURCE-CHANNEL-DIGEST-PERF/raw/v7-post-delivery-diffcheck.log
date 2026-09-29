@@ -1,0 +1,9 @@
+# v7 (post-delivery recheck): git diff --check 956e6c3a..64e6c9a7 (whole tree incl. delivery commit)
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:15:44+08:00
+# cwd: worktree root
+# EXIT=0 (0 = clean)
+
+% git status --porcelain (must be empty)
+?? verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v7-post-delivery-diffcheck.log
+# porcelain done
