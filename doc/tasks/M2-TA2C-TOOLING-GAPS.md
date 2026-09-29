@@ -11,7 +11,7 @@ depends_on: []
 base_commit: f3d684eb767414a3c5ac010f7920657204cc9336
 branch: agent/zcode/M2-TA2C-TOOLING-GAPS
 worktree: G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode
-integration_commit: null
+integration_commit: 04165c76fab939e4a106f4a87f5045d674e8dac3
 ---
 
 # M2-TA2C-TOOLING-GAPS：TA2C P3-6/P3-10 工具清算
@@ -69,7 +69,10 @@ integration_commit: null
 - 风险 2：verify 复核 local_asset_inventory.json 哈希需要素材在位——worktree 无素材时按 AC2 注记方式验证并如实记录。
 - 阻塞：无。
 
-## 交付与运行记录
+## 交付与运行记录（终态）
+
+- **集成（2026-09-30，Codex 代行）**：merge=`04165c76`；post-merge main head 复跑 pytest tests/m2_test_assets **34 passed EXIT=0**；[integration record](../../verification/M2-TA2C-TOOLING-GAPS/integration-record/integration.md)。
+- Review：DSH 非作者静态 **r1 `approved` 一次通过**（0×P0/P1/P2，7×P3 非阻塞；报告 [1fd2787d-dsh-r1](../../doc/reviews/M2-TA2C-TOOLING-GAPS-1fd2787d-dsh-r1.md)）。7×P3 全部登记 planning 候选（integration record 遗留移交节）。
 
 - Handoff：[M2-TA2C-TOOLING-GAPS-a164e414](../handoffs/M2-TA2C-TOOLING-GAPS-a164e414.md)（2026-09-30，delivery_head=`a164e414e8ff62940229d60d4dc046f89308b8b3`，status=in_review）。
 - Review：尚无（待 DeepSeek Harness 非作者静态审查）。

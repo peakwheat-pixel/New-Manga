@@ -1,0 +1,17 @@
+
+## M2-TA2C-TOOLING-GAPS final scope audit (f3d684eb..1fd2787d, captured at integration)
+A	doc/handoffs/M2-TA2C-TOOLING-GAPS-a164e414.md
+M	doc/tasks/M2-TA2C-TOOLING-GAPS.md
+M	test_assets/comic_golden_suite/README.md
+M	test_assets/comic_golden_suite/manifests/cases.json
+M	test_assets/comic_golden_suite/tools/assets.py
+M	tests/m2_test_assets/test_catalog.py
+A	verification/M2-TA2C-TOOLING-GAPS/raw/01-host-whitelist-reconnaissance.log
+A	verification/M2-TA2C-TOOLING-GAPS/raw/02-ac1-red-demo-old-vs-new.log
+A	verification/M2-TA2C-TOOLING-GAPS/raw/03-ac2-verify-ja-smoke.log
+A	verification/M2-TA2C-TOOLING-GAPS/raw/04-ac2-verify-ko-smoke.log
+A	verification/M2-TA2C-TOOLING-GAPS/raw/05-ac2-list-benchmark-status.log
+A	verification/M2-TA2C-TOOLING-GAPS/raw/06-ac5-pytest-full.log
+A	verification/M2-TA2C-TOOLING-GAPS/raw/07-ac5-diff-check-and-scope-proof.log
+A	verification/M2-TA2C-TOOLING-GAPS/raw/08-ac3-detection-demo-direct-call.log
+DIFFCHECK_EXIT=0
