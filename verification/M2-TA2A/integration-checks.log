@@ -70,6 +70,56 @@ A separate Reviewer built a temporary valid JPEG + valid SVG ZIP fixture with a 
 
 Application Pipeline execution (OCR/detection/translation/inpainting/typesetting/reading order/SFX/speaker/webtoon slicing and reassembly): NOT_RUN.
 
+## Main-worktree integration replay after merge
+
+DATE_LOCAL=2026-09-29
+SHELL=PowerShell on Windows
+PYTHON=C:\Python314\python.exe
+DELIVERY_HEAD=f8ef48c4079e03e57a7ed0da1e9b79c05e90979c
+INTEGRATION_COMMIT=ef13a77bedf8bb06ee222113da186c7bfff09714
+
+COMMAND=python -m pytest tests/m2_test_assets -q
+OUTPUT=23 passed in 0.48s
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke
+OUTPUT=READY=10; inventory checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py list --language ja --level smoke
+OUTPUT=READY=10; inventory checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py missing --language ja --level smoke
+OUTPUT=READY=10; inventory checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level regression
+OUTPUT=MISSING_GATED_ASSET=37 READY=10; inventory checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py download --language ja --level smoke
+OUTPUT=downloaded=0 existing=20 gated_cases=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke
+OUTPUT=READY=10; inventory checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=PowerShell manifest-driven transfer of E04/E20 media; per-file Get-FileHash SHA256 and byte-size verification
+OUTPUT=12 files copied or matched; all inventory SHA-256 and byte sizes matched
+EXIT=0
+
+COMMAND=Python manifest parse and case catalog count
+OUTPUT=65 cases / 65 unique; smoke=20 (JA=10, KO=10)
+EXIT=0
+
+COMMAND=Git tracked-media extension audit and git check-ignore --no-index probes for annotation-dir evil.jpg/png/zip
+OUTPUT=tracked catalog files=85; tracked comic media=0; ignore probe exit codes=[0,0,0]
+EXIT=0
+
+Unrelated workspace edits present before and after integration were preserved; no unrelated paths were staged.
+
 ## Post-review P2 repairs verification
 DATE_LOCAL=2026-09-29T21:15:36.499761+08:00
 PYTHON=C:\Python314\python.exe

@@ -25,9 +25,9 @@ releases a task.
 
 ### 2026-09-29 用户授权阶段：M2-TA2A / M2-TA2B / M2-TA3
 
-[M2-TA2A](tasks/M2-TA2A.md)「JA Public Assets Bootstrap」已由用户本次请求正式释放为唯一 Active Task；基线=`eb41a352c03df84400d90a78c29d2dfbe28a76c9`，Owner=Codex Desktop，Reviewer=DeepSeek Harness（非作者），Integrator=Codex Desktop。目标是实际取得并验证可合法公开取得的 JA 图像及可配对标注；只有标注的来源不得标为 `READY`。M2-TA2A 与 M2-TA2B 的资料源审计可并行，互不重叠的公开资产获取可并行；共享 manifest/README/状态文档由 Integrator 串行集成。
+[M2-TA2A](tasks/M2-TA2A.md)「JA Public Assets Bootstrap」已完成并由 Codex 集成于 `ef13a77bedf8bb06ee222113da186c7bfff09714`（delivery=`f8ef48c4079e03e57a7ed0da1e9b79c05e90979c`）；Owner=Codex Desktop，Reviewer=DeepSeek Harness（非作者），Integrator=Codex Desktop。实际取得 10 张 Pepper&Carrot 日语本地化页面图像与 2 个官方 SVG language-pack ZIP，以及 74 个 COO/Manga109Dialog XML 和 2 个 license 文件；JA inventory 为 88 文件 / 47,024,650 bytes。图像与归档留在本地 ignored 路径。该结果提供 10 个可枚举的 JA Smoke Case，但并非日本原创 Manga；E20P06/P07 仅有部分机器可读日文文字层，Open Ground Truth 仍为 `PARTIAL`。Manga109 图像仍为 0，L1 保持 65 个定义 / `PARTIAL`。
 
-[M2-TA2B](tasks/M2-TA2B.md)「Manga109 Authorized Import」登记为 `proposed / BLOCKED_BY_ASSET_ACCESS` gated follow-up，不在无官方授权归档时执行。依赖用户取得 Manga109-v2026 官方访问权限并提供合法本地归档。`M2-TA3` L1 扩展继续为 proposed：依赖 M2-TA2A 完成，且 M2-TA2B 已形成明确可用范围；不以 manifest Case 数量作为可运行覆盖，目标 100–150 个真实、可获取或明确 blocked 的困难 Case，blocked 项不计入 runnable。
+[M2-TA2B](tasks/M2-TA2B.md)「Manga109 Authorized Import」保留为 `proposed / BLOCKED_BY_ASSET_ACCESS` gated follow-up，未 release。只有官方 Manga109-v2026 归档已通过合法官方渠道取得并在本机可核验时，Codex 才能重新登记 base/branch/worktree/allowed paths 并释放；当前没有可用归档，因此没有并行执行项。`M2-TA3` L1 扩展继续为 proposed：须在 M2-TA2A 完成且 TA2B 可用范围明确后规划；不以 manifest Case 数量作为可运行覆盖，100–150 是目标范围，blocked 项不计入 runnable。当前没有可安全并行的实现 Task；以后 TA2B 与无共享写集合的只读来源审计可并行，TA3 依赖 TA2B 范围而不得并行扩充。
 
 ### 2026-09-28 任务盘点（当日快照；当前执行状态见 STATUS）
 

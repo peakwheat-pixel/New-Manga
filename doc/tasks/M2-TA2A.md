@@ -2,7 +2,7 @@
 id: M2-TA2A
 title: JA Public Assets Bootstrap
 kind: asset_infrastructure
-status: in_progress
+status: done
 approval: user_authorized_2026-09-29
 suggested_owner: ZCode
 owner: Codex Desktop
@@ -11,7 +11,7 @@ depends_on: [M2-TA1]
 base_commit: eb41a352c03df84400d90a78c29d2dfbe28a76c9
 branch: agent/codex/M2-TA2A-ja-public-assets
 worktree: C:/Users/49745/.codex/worktrees/comic-test-assets/New Manga
-integration_commit: null
+integration_commit: ef13a77bedf8bb06ee222113da186c7bfff09714
 ---
 
 # M2-TA2A：JA Public Assets Bootstrap
@@ -22,13 +22,13 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1：逐项审计 JMangaBench_Mixed、Manga109 public annotations、COO、Manga109Dialog、Text Mask、Open Ground Truth 及本地已登记的 JA 来源；区分图像、annotation、transcription、mask、metadata、code-only，并分别记录来源、license、图像再分发状态、实际访问/下载入口和是否依赖 gated 图像。证据：`verification/M2-TA2A/source-audit.md`。
-- [ ] AC2：对无需额外授权且许可明确的来源执行实际下载；至少取得一组日语图像与其真实 source transcription/ground-truth 文件。若来源是日语翻译版开放 webcomic，须准确标为该类型，不得称为日本原创 Manga。
-- [ ] AC3：只有 annotation 没有配对图像的 Manga109 相关数据保持 `PARTIAL`；JMangaBench、Text Mask 或其他依赖 Manga109 图像的可运行范围保持 `BLOCKED_BY_ASSET_ACCESS` / `PARTIAL`，不得标为 `READY`。
-- [ ] AC4：每个实际落地来源记录 source、license、image redistribution status、local path、file count、byte size、SHA-256 或等效完整性信息、ground-truth 类型、可用于检查的 Pipeline，以及该 Pipeline 的真实执行状态。
-- [ ] AC5：本地资产有确定性枚举与校验；重复运行不覆盖已有文件，不完整/损坏下载不发布为 READY；路径兼容 Windows。离线 verify 不应破坏已有资产。
-- [ ] AC6：原始漫画/漫画图像与外部归档全部留在 Git 忽略路径；Git 不跟踪任何受版权限制图像。不得修改生产 Schema/migration/Pipeline/Provider、依赖锁、QML/UI 或用户作品数据。
-- [ ] AC7：完成独立非作者 Review、Codex 集成检查和证据化 Handoff。OCR、Detection、Translation、Inpainting、Typesetting、Reading Order、SFX、Speaker、Webtoon slicing/reassembly 等应用级结果若未实际运行，保持 `NOT_RUN`。
+- [x] AC1：逐项审计 JMangaBench_Mixed、Manga109 public annotations、COO、Manga109Dialog、Text Mask、Open Ground Truth 及本地已登记的 JA 来源；区分图像、annotation、transcription、mask、metadata、code-only，并分别记录来源、license、图像再分发状态、实际访问/下载入口和是否依赖 gated 图像。证据：`verification/M2-TA2A/source-audit.md`。
+- [x] AC2：已取得 10 张 Pepper&Carrot 日语本地化页面图像及其官方 SVG language packs；E20P06/P07 含部分日文文字层，未将其夸大为完整转录或日本原创 Manga。
+- [x] AC3：只有 annotation 没有配对图像的 Manga109 相关数据保持 `PARTIAL`；JMangaBench、Text Mask 或其他依赖 Manga109 图像的可运行范围保持 `BLOCKED_BY_ASSET_ACCESS` / `PARTIAL`，未标为 `READY`。
+- [x] AC4：每个实际落地来源记录 source、license、image redistribution status、local path、file count、byte size、SHA-256 或等效完整性信息、ground-truth 类型、可用于检查的 Pipeline，以及该 Pipeline 的真实执行状态。
+- [x] AC5：本地资产有确定性枚举与校验；重复运行不覆盖已有文件，不完整/损坏下载不发布为 READY；路径兼容 Windows。离线 verify 不会破坏已有资产。
+- [x] AC6：原始漫画/漫画图像与外部归档全部留在 Git 忽略路径；Git 不跟踪漫画图片或归档。没有修改生产 Schema/migration/Pipeline/Provider、依赖锁、QML/UI 或用户作品数据。
+- [x] AC7：完成独立非作者 Review、Codex 集成检查和证据化 Handoff。未运行的应用级 Pipeline 均保持 `NOT_RUN`。
 
 ## 允许修改范围
 
@@ -60,7 +60,7 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Catalog/校验器 | `python -m pytest tests/m2_test_assets -q` | Windows / Python；跟随资产工具变更 | PASS：23 passed | `verification/M2-TA2A/run-results.md` |
+| Catalog/校验器 | `python -m pytest tests/m2_test_assets -q` | Windows / Python；跟随资产工具变更 | PASS：23 passed；集成后重跑同样 23 passed | `verification/M2-TA2A/run-results.md`、`verification/M2-TA2A/integration-checks.log` |
 | 新增 JA 素材 | `python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke` | 已下载的公开源 | PASS：READY=10，`INVENTORY checked=88 missing=0 failures=0`，exit 0 | `verification/M2-TA2A/run-results.md` |
 | 重复下载与网络失败 | 执行公开源下载两次；对离线/损坏输入执行 verify，不覆盖有效文件 | 临时或本地缓存 | PASS：第二次 downloaded=0/existing=20/failures=0；原子/损坏输入由定向测试覆盖 | `verification/M2-TA2A/run-results.md` |
 | Manga109 gated 不误报 | `list/missing/download --language ja` 无官方 archive | 不提供 gated 凭据 | PASS：`download --language ja --level regression` 返回 gated_cases=37、failures=0；随后 verify 枚举 MISSING_GATED_ASSET=37、公开页 READY=10 | `verification/M2-TA2A/run-results.md` |
@@ -75,6 +75,6 @@ Known baseline: `tests/m2_acceptance` 之前已证明 `8 failed / 24 passed / 3 
 - 本地日语页：10 张 JPEG + 两个官方语言包 ZIP，逐文件 SHA-256 和文件字节数在 `test_assets/comic_golden_suite/manifests/local_asset_inventory.json`。
 - Manga109 公共标注：37 个 COO + 37 个 Manga109Dialog XML 和两份 CC BY 4.0 许可证已下载、解析并按许可放行进 Git；对应 Manga109 页图像仍为 0。
 - 首次 Smoke 下载因 language-pack URL 缺少 episode 路径返回 HTTP 404；修正 manifest 后重跑通过。首轮没有覆盖或发布损坏文件。
-- Handoff：待 integration commit 后完成。
-- Review：固定提交 `a6977cf9ddea3f2e15a19c8d5ca06a3e82e342a9` 收到 DeepSeek Harness `APPROVED`（0×P0/P1；4×P2 已处置/记录，报告见 `verification/M2-TA2A/dsh-r1-result.md`）；后续安全/完整性口径修复需对新 tip 复审。
-- Integration：待 Codex 在主工作区审核、合入并执行集成验证。
+- Handoff：[M2-TA2A-f8ef48c](../handoffs/M2-TA2A-f8ef48c.md)。
+- Review：[M2-TA2A-f8ef48c](../reviews/M2-TA2A-f8ef48c.md)；DeepSeek Harness 对 `f8ef48c4079e03e57a7ed0da1e9b79c05e90979c` 二轮 `APPROVED`，0×P0/P1/P2；R1 的 4 项 P2 均已修复或明确记录为完整性口径限制。
+- Integration：`ef13a77bedf8bb06ee222113da186c7bfff09714`；Codex 在主工作区重跑 23 项资产测试、JA/KO Smoke、JA Regression、重复下载、Git ignore/tracked-media 检查均通过。应用级 Pipeline 保持 `NOT_RUN`。

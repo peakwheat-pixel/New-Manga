@@ -44,6 +44,10 @@ JA 本地总计 88 个文件 / 47,024,650 bytes（12 个公开漫画媒体文件
 
 OCR、Text Detection、Bubble Detection、Region、Reading Order、SFX 应用检测、Speaker Attribution、Translation、Inpainting、Typesetting、页面重新渲染及 Webtoon 临时切片/拼接均为 `NOT_RUN`。`READY` 不代表这些 Pipeline 已验证。
 
-DeepSeek Harness r1 审查见 `verification/M2-TA2A/dsh-r1-result.md`。其 4 项 P2 中：P2-1 以文档明确 KO 结构校验不等于 SHA-256 内容身份固定的方式界定；P2-2 修复为 list/missing/verify 对 KO 与 gated Manga 的可用本地页执行结构校验；P2-3 修复为 JA Smoke 必需页图/ZIP 缺失时 verify 失败；P2-4 通过注释目录内原图/归档 ignore 规则修复。P3-1 将在集成状态回填时关闭；P3-2 已在 inventory 错误输出增加 `SUMMARY FAILED`；P3-3/4 是继承的 KO 下载器行为，`verify` 可识别损坏文件，Task 不扩展重试/重写边界。
+DeepSeek Harness r1 审查见 `verification/M2-TA2A/dsh-r1-result.md`。其 4 项 P2 中：P2-1 以文档明确 KO 结构校验不等于 SHA-256 内容身份固定的方式界定；P2-2 修复为 list/missing/verify 对 KO 与 gated Manga 的可用本地页执行结构校验；P2-3 修复为 JA Smoke 必需页图/ZIP 缺失时 verify 失败；P2-4 通过注释目录内原图/归档 ignore 规则修复。P3-1 已在集成收口时更新 STATUS/Plan/索引；P3-2 已在 inventory 错误输出增加 `SUMMARY FAILED`；P3-3/4 是继承的 KO 下载器行为，`verify` 可识别损坏文件，Task 不扩展重试/重写边界。
 
 本次运行命令、结果和退出码见 `integration-checks.log`；来源实物类型、许可和不可获取原因见 `source-audit.md`。
+
+## Codex 主工作区集成回放
+
+TA2A 已在 `ef13a77bedf8bb06ee222113da186c7bfff09714` 集成。主工作区复跑 `python -m pytest tests/m2_test_assets -q` 为 **23 passed / EXIT 0**；JA Smoke verify/list/missing 均 `READY=10` 且 inventory `checked=88 missing=0 failures=0`；JA Regression 为 `MISSING_GATED_ASSET=37 READY=10`；重复下载新增 0、已有 20；KO Smoke `READY=10`。逐文件哈希核验后迁入 12 个本地 ignored Pepper&Carrot 媒体；Case Catalog 为 65/65 唯一 ID，Smoke 为 JA 10 + KO 10。Git extension audit 为 0 个 tracked comic media，annotation 子目录的 jpg/png/zip 探针均命中 ignore。完整命令、结果和退出码见 `integration-checks.log`。
