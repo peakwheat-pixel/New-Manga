@@ -6,7 +6,8 @@
 - base_commit：`14720230b101908cfc586b31273fcd9574f50097`（main）
 - release commit：`480f12a2`（治理登记）
 - 实现交付 head（被审对象，r1）：`4d9d8d0c`——提交列表：`480f12a2`（release 治理：Task/STATUS/REBASELINE_PLAN/tasks README）+ `4d9d8d0c`（实现交付：experiments/M2-DOCTR-QUAL 全部 5 文件 + verification/M2-DOCTR-QUAL 7 份证据 + Task/STATUS/Handoff 回填）。变更路径全集：`doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/tasks/README.md`、`doc/handoffs/`、`experiments/M2-DOCTR-QUAL/**`、`verification/M2-DOCTR-QUAL/**`（git 证据：[git-evidence.txt](../../verification/M2-DOCTR-QUAL/git-evidence.txt)）。
-- r2 修订提交：本文件之后的文档/脚本提交（DSH r1 `changes_requested` 的 P0-1..P3-8 修订，含 adapter 坐标比对重跑与全量 results 对 v2 manifest 指纹重绑定）；修订记录见 [baseline-summary §8](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
+- r2 修订头（DSH r1 修订，被 r2 复核固定）：`3e86c800f4c9b28b246787ae470a364c90ae1e42`（单提交，parent `4d9d8d0c`；20 文件，含 `snapshot_weights.py`、`env-gpu-py312.json`、`hash-recomputation.txt`、`consistency-and-sensitivity.json`、`git-evidence.txt` 5 个新增）；r1 交付 verification 文件实为 8 个（含 weights-manifest），前文「7 份证据」计数有误，以 [git-evidence.txt](../../verification/M2-DOCTR-QUAL/git-evidence.txt) 的 ls-tree 清单为准。
+- r3 修订提交：本文件之后的提交（DSH r2 `approved_with_conditions` 条件 C1–C5 闭合 + N6/N7，纯文档/脚本修订，无重测除 adapter 复跑）；修订记录见 [baseline-summary §8](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
 - 分支：`agent/zcode/M2-DOCTR-QUAL-PREFLIGHT`（主工作区，代行模式）
 - 状态：`in_review`
 
@@ -25,7 +26,7 @@
 
 - venv：`G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312`（Python 3.12.3，独立新建）。
 - 栈：torch **2.11.0+cu128**、torchvision **0.26.0+cu128**、**python-doctr==1.1.0（=生产 pin）**、numpy 2.3.5、Pillow 12.3.0。
-- GPU：RTX 5070 Ti 16GB（`cuda=True`），推理稳态 ~37 ms/region，峰值显存 523 MiB。
+- GPU：RTX 5070 Ti 16GB（`cuda=True`），推理稳态 33.4–34.6 ms/region（5 次实测），峰值显存 522.6 MiB，engine_build 0.54 s、首次推理 0.38 s（机器可读证据：[env-gpu-py312.json](../../verification/M2-DOCTR-QUAL/env-gpu-py312.json)）。
 - 版本差异披露：cu128 索引无 torch 2.14.0（2026-09-29 HEAD 复核），GPU 环境与生产 CPU pin（2.14.0）不同号；延续 T1.1.1 §5.1 已验证组合并另做 CPU 对照弥合（见 §3）。
 - CPU 对照环境：复用既有 `T1.1.1-impl-py312`（torch 2.14.0 = 生产精确 pin）只读运行。
 - 生产共享 venv、数据根、模型缓存均未修改。

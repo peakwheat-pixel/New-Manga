@@ -28,6 +28,7 @@ Usage:
 from __future__ import annotations
 
 import argparse
+from datetime import datetime, timezone
 import json
 from pathlib import Path
 
@@ -242,7 +243,7 @@ def main() -> int:
 
     manifest = {
         "schema": "m2-doctr-qual/eval-manifest@2",
-        "generated_at": "2026-09-29",
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "task": "M2-DOCTR-QUAL-PREFLIGHT",
         "suite_manifest": str(CASES_JSON),
         "gt_mode": args.gt_mode,

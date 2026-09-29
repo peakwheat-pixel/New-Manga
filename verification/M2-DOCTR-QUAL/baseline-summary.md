@@ -75,7 +75,7 @@ Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md) · 
 | Precision | ≥0.85 | **0.1250**（GT 盲区污染下界） | 0.1181（同） | 0.1858（同） | **FAIL**（两口径） |
 | Mean matched | ≥0.60 | 0.7531（coverage） | 0.7034（IoU） | 0.7751 | PASS |
 | 严重整页漏检率 | ≤0.05 | **0.0385** | — | 0.0192 | PASS（pad 收缩对照 0.1034 超，见 §4） |
-| 耗时 | — | 23.4 s（GPU） | 同次前向 | 22.0 s | — |
+| 耗时 | — | 23.31 s（GPU，results JSON `elapsed_seconds`） | 同次前向 | 17.11 s | — |
 
 （db_resnet50 明细：[results-db_resnet50-cuda-seg05.json](results-db_resnet50-cuda-seg05.json)；union 证据层对照：[results-fast_base-cuda-union.json](results-fast_base-cuda-union.json)）
 
@@ -86,7 +86,7 @@ Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md) · 
 
 ### FP 性质（人工预览审计，n=4 case 抽样）
 
-- **归因层证据力声明（r1 P1-3 修订）**：seg05 manifest 不携带 `supplementary_boxes`，其 FP 归因**结构性不可用**（脚本现输出 `attribution_available: false`，不再输出恒零的 pure 计数）。可用的自动归因仅在 union 口径：2985 个 block_coverage FP 中仅 **2 个（0.07%）** 与辅助标注重叠（IoU≥0.3）——该归因层的证据力极弱，因为 SFX/背景文字在数据集辅助标注中几乎不存在，无法自动区分"GT 盲区正确检出"与"真误报"。
+- **归因层证据力声明（r1 P1-3 修订）**：seg05 manifest 不携带 `supplementary_boxes`，其 FP 归因**结构性不可用**——脚本输出 `attribution_available: false`，不再据此计算归因计数（JSON 中残留的 `pure: 0` 为零分母占位，无观测含义）。可用的自动归因仅在 union 口径：2985 个 block_coverage FP 中仅 **2 个（0.07%）** 与辅助标注重叠（IoU≥0.3）——该归因层的证据力极弱，因为 SFX/背景文字在数据集辅助标注中几乎不存在，无法自动区分"GT 盲区正确检出"与"真误报"。
 - 人工抽样预览（4 case）：K05 型（**GT 盲区 FP**）——整段未清洗对白被正确检出但 text_seg 只标了部分片段；K07 型（**真误报**）——人脸/纹理被检为文字。真实 Precision 夹在「下界 0.125」与「盲区修正后的未知值」之间，无法用本集高置信度度量。
 - 预览图（含版权像素，**不入 Git**）：`G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/previews/`（12 张 GT+检出）、`fp-previews/`（4 张 FP 归因）、`diag-K03.png`（union 坏框证据）。
 
@@ -102,4 +102,6 @@ Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md) · 
 
 ## 8. r1 → r2 修订记录
 
-DSH r1 verdict `changes_requested`（P0×1 P1×6 P2×9 P3×8，事实层全部独立确认）。r2 修订：P0-1 Handoff 固定 head；P1-1 `snapshot_weights.py` 入库；P1-2 [env-gpu-py312.json](env-gpu-py312.json)；P1-3 FP 归因 `attribution_available` 语义修正 + 报告改用 union 2985/2；P1-4 `thresholds.json` 显式 `primary_layer`/`judging_criterion` + 双口径并列 + 裁决项上交；P1-5 results 增加 `manifest_sha256`/`gt_mode`/`n_gt_boxes`（全部重跑绑定 v2 manifest）；P1-6 adapter 坐标比对（maxΔ=0.0）；P2-1/2/3/5/6/7/8/9 与 P3-1/2/3/4/6/7/8 落实（Pillow 声明、manifest 文件名、region 断言、severe 层级标注、CPU/GPU diff 精确化、torchvision 披露、license 措辞统一 cases.json 原文、素材 hash、UTC 时间戳、manifest `verified_by`/`command`、三处 pin 注释、IoU 措辞、AC 勾选注记 owner 自评、docstring 同步、`union_params` 结构化）；P2-4 pad 敏感性对照新增（§4）。Git 层证据（ls-tree + diff --stat）：[git-evidence.txt](git-evidence.txt)。
+DSH r1 verdict `changes_requested`（P0×1 P1×6 P2×9 P3×8，事实层全部独立确认）。r2 修订（含 r1 P3-5 git 层证据）：P0-1 Handoff 固定 head；P1-1 `snapshot_weights.py` 入库；P1-2 [env-gpu-py312.json](env-gpu-py312.json)；P1-3 FP 归因 `attribution_available` 语义修正 + 报告改用 union 2985/2；P1-4 `thresholds.json` 显式 `primary_layer`/`judging_criterion` + 双口径并列 + 裁决项上交；P1-5 results 增加 `manifest_sha256`/`gt_mode`/`n_gt_boxes`（全部重跑绑定 v2 manifest）；P1-6 adapter 坐标比对（maxΔ=0.0）；P2-1/2/3/5/6/7/8/9 与 P3-1/2/3/4/6/7/8 落实（Pillow 声明、manifest 文件名、region 断言、severe 层级标注、CPU/GPU diff 精确化、torchvision 披露、license 措辞统一 cases.json 原文、素材 hash、UTC 时间戳、manifest `verified_by`/`command`、三处 pin 注释、IoU 措辞、AC 勾选注记 owner 自评、docstring 同步、`union_params` 结构化）；P2-4 pad 敏感性对照新增（§4）。Git 层证据（ls-tree + diff --stat，r1 与 r2 两段）：[git-evidence.txt](git-evidence.txt)。
+
+DSH r2 verdict `approved_with_conditions`（r2 head=`3e86c800`；AC1–AC4 事实层经独立复算确认成立，0 open）。r3 修订闭合 C1–C5：C1 Handoff 登记 r2 head + git-evidence 追加 r2 段；C2 计时口径统一为机器可读证据值（env-gpu：engine_build 0.54 s / first_inference 0.38 s / 稳态 33.4–34.6 ms / 峰值 522.6 MiB；全量 fast_base 23.31 s、db_resnet50 17.11 s——早期会话叙述值 4.2 s/0.59 s/38 ms 为含冷启动的另一次测量，口径不同，以 JSON 为准）；C3 §5 归因措辞修正；C4 adapter/consistency JSON 补 UTC、manifest 脚本 `generated_at` 改真实 UTC（schema@2 既有 manifest 为硬编码日期，内容不受影响，脚本修正对未来运行生效）；C5 adapter 空块集语义（两侧 0 块 = match）。不阻塞项：N6 severe 层注记、N7 REBASELINE_PLAN/Task reviewer 字段同步。

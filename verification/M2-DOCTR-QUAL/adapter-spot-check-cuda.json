@@ -1,6 +1,7 @@
 {
  "task": "M2-DOCTR-QUAL-PREFLIGHT",
  "purpose": "AC4 production-adapter end-to-end spot check (count + coordinates)",
+ "generated_at": "2026-09-29T16:42:08+00:00",
  "device": "cuda",
  "weights": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL\\weights\\fast_base-688a8b34.pt",
  "n_regions": 6,
@@ -85,7 +86,7 @@
      630.3984375
     ]
    ],
-   "elapsed_ms": 819
+   "elapsed_ms": 764
   },
   {
    "case_id": "K01",
@@ -213,7 +214,7 @@
      626.35546875
     ]
    ],
-   "elapsed_ms": 35
+   "elapsed_ms": 34
   },
   {
    "case_id": "K01",
@@ -384,7 +385,7 @@
      620.333984375
     ]
    ],
-   "elapsed_ms": 35
+   "elapsed_ms": 34
   }
  ]
 }

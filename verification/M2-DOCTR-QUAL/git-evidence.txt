@@ -3327,3 +3327,29 @@ wiki/repowiki/repo-map.txt
  .../results-fast_base-gpu-limit80.json             | 1152 ++++
  verification/M2-DOCTR-QUAL/weights-manifest.json   |   34 +
  18 files changed, 24066 insertions(+), 5 deletions(-)
+
+## git diff --stat 4d9d8d0c..3e86c800 (r2 revision scope)
+ doc/handoffs/M2-DOCTR-QUAL-PREFLIGHT-baseline.md   |    5 +-
+ doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md               |   12 +-
+ experiments/M2-DOCTR-QUAL/README.md                |   18 +-
+ experiments/M2-DOCTR-QUAL/build_eval_manifest.py   |   56 +-
+ experiments/M2-DOCTR-QUAL/eval_detection.py        |  127 +-
+ experiments/M2-DOCTR-QUAL/smoke_adapter_check.py   |   81 +-
+ experiments/M2-DOCTR-QUAL/snapshot_weights.py      |  141 +
+ experiments/M2-DOCTR-QUAL/thresholds.json          |   10 +-
+ .../M2-DOCTR-QUAL/adapter-spot-check-cuda.json     |   47 +-
+ verification/M2-DOCTR-QUAL/baseline-summary.md     |  108 +-
+ .../M2-DOCTR-QUAL/consistency-and-sensitivity.json |   75 +
+ verification/M2-DOCTR-QUAL/env-gpu-py312.json      |   34 +
+ verification/M2-DOCTR-QUAL/git-evidence.txt        | 3329 ++++++++++++++++++++
+ verification/M2-DOCTR-QUAL/hash-recomputation.txt  |   19 +
+ .../results-db_resnet50-cuda-seg05.json            |   37 +-
+ .../results-fast_base-cpu-limit80-torch2.14.json   |   37 +-
+ .../results-fast_base-cuda-seg05.json              |   37 +-
+ .../results-fast_base-cuda-union.json              |   35 +-
+ .../results-fast_base-gpu-limit80.json             |   37 +-
+ verification/M2-DOCTR-QUAL/weights-manifest.json   |   24 +-
+ 20 files changed, 4072 insertions(+), 197 deletions(-)
+
+## git diff --stat 4d9d8d0c..3e86c800 -- requirements.txt requirements-dev.txt src/ (empty = zero production changes in r2)
+(end of r2 production diff - empty above means zero changes)

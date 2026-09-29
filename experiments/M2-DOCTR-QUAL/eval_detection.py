@@ -353,6 +353,8 @@ def main() -> int:
             "f1": 2 * precision * recall / (precision + recall) if precision + recall else 0.0,
             metric_name: mean_score,
             "severe_page_miss": {
+                # primary-layer statistic, repeated across the three layer
+                # summaries for reference only — computed on block_coverage
                 "layer": "block_coverage",
                 "definition": THRESHOLDS["severe_page_miss_definition"],
                 "regions_with_gt": severe["regions_with_gt"],

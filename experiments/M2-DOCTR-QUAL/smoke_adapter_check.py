@@ -97,9 +97,14 @@ def main() -> int:
         harness_rects = harness_blocks(entry["image"], predictor, cluster_fn)
 
         count_match = len(adapter_rects) == len(harness_rects)
+        # edge case: when both sides produce zero blocks, count AND
+        # coordinates agree trivially — that is a match, not a mismatch
+        both_empty = len(adapter_rects) == 0 and len(harness_rects) == 0
         max_delta = None
         coords_match = False
-        if count_match and adapter_rects:
+        if both_empty:
+            coords_match = True
+        elif count_match and adapter_rects:
             deltas = [
                 max(abs(float(a) - float(b)) for a, b in zip(ra, rb))
                 for ra, rb in zip(adapter_rects, harness_rects)
@@ -134,6 +139,9 @@ def main() -> int:
     out = {
         "task": "M2-DOCTR-QUAL-PREFLIGHT",
         "purpose": "AC4 production-adapter end-to-end spot check (count + coordinates)",
+        "generated_at": __import__("datetime").datetime.now(
+            __import__("datetime").timezone.utc
+        ).isoformat(timespec="seconds"),
         "device": args.device,
         "weights": str(args.weights),
         "n_regions": len(records),

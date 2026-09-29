@@ -6,7 +6,7 @@ status: in_review
 approval: user_authorized_2026-09-29
 suggested_owner: ZCode
 owner: ZCode
-reviewer: DeepSeek Harness（待派发，非作者）
+reviewer: DeepSeek Harness（非作者；r1 `changes_requested`、r2 `approved_with_conditions`，见交付记录）
 depends_on: []
 base_commit: 14720230b101908cfc586b31273fcd9574f50097
 branch: agent/zcode/M2-DOCTR-QUAL-PREFLIGHT
@@ -57,7 +57,7 @@ integration_commit: null
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | AC1 权重校验 | `python experiments/M2-DOCTR-QUAL/snapshot_weights.py` | 标准库 | **executed 2026-09-29（r2）**：fast_base=pin 一致、db_resnet50=官方文件名 hash 一致、快照字节级复算一致、失败即中止；命令与 verified_by 入 manifest | verification/M2-DOCTR-QUAL/weights-manifest.json、hash-recomputation.txt |
-| AC2 GPU 冒烟 | GPU venv 加载 fast_base pin 权重对样例 region detect | RTX 5070 Ti / torch 2.11.0+cu128 | **executed 2026-09-29**：engine 4.2s 构建、首次推理 0.59s、稳态 35-38ms、峰值 523 MiB | verification/M2-DOCTR-QUAL/env-gpu-py312.json（机器可读） |
+| AC2 GPU 冒烟 | GPU venv 加载 fast_base pin 权重对样例 region detect | RTX 5070 Ti / torch 2.11.0+cu128 | **executed 2026-09-29（r3 数值与证据同步）**：engine_build 0.54 s、首次推理 0.38 s、稳态 33.4–34.6 ms、峰值 522.6 MiB（早期叙述 4.2 s/0.59 s/38 ms 为含冷启动的另一次测量，口径不同，以机器可读证据为准） | verification/M2-DOCTR-QUAL/env-gpu-py312.json（机器可读） |
 | AC3 eval manifest | `python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --level full --gt-mode seg05\|union` | 标准库 | **executed 2026-09-29**：10 cases / 511 regions / GT-A 917 框、GT-B 1184 框、跨区丢失 0 | task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.*.json |
 | AC3/AC4 评测 | `eval_detection.py --arch fast_base\|db_resnet50 --device cuda\|cpu` | GPU venv / impl venv | **executed 2026-09-29**：fast_base seg05 primary Recall 0.4776 / Precision 0.1250 / meanCov 0.7531 / severe 0.0385（FAIL×2 PASS×2）；db_resnet50 0.6085/0.1858/0.7751/0.0192 | verification/M2-DOCTR-QUAL/results-*.json |
 | AC4 adapter 一致性 | `smoke_adapter_check.py` vs harness 独立复算（块数 + 逐块坐标） | GPU venv + PYTHONPATH=src | **executed 2026-09-29（r2）**：6/6 块数一致且坐标最大绝对偏差 0.0 px | verification/M2-DOCTR-QUAL/adapter-spot-check-cuda.json |
@@ -74,7 +74,7 @@ integration_commit: null
 ## 交付与运行记录
 
 - **2026-09-29 ZCode 交付（delivery head 见 Handoff）**：三项前置全部完成。受控权重快照+manifest；独立 GPU venv（doctr 1.1.0 = 生产 pin）；评测基座（511 regions / 917 GT-A 框 / 三层判定口径 / 用户默认阈值）；首跑基线：fast_base（生产 pin）primary block_coverage **Recall 0.4776 / Precision 0.1250（GT 盲区污染下界）FAIL**，meanCov 0.7531 / severe_miss 0.0385 PASS；db_resnet50 对照 0.6085/0.1858 仍 FAIL；CPU/GPU 一致、adapter 6/6。核心 gap：docTR 默认检测权重到韩漫 webtoon 域的适配缺口 + 伪 GT 的 SFX 标注盲区（Precision 无法用此集高置信度度量）。证据：[baseline-summary](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
-- 状态：`in_review`，等 DeepSeek Harness 非作者静态 Review；Review 通过并集成后由 Codex 填 integration_commit 改 done。
+- Review 轨迹：DSH r1 `changes_requested`（2026-09-29，24 项，事实层全部独立确认）→ r2 修订 `3e86c800`（20 closed / 2 partially_closed / 0 open）→ DSH r2 `approved_with_conditions`（AC1–AC4 事实层经原始 JSON 复算确认成立；条件 C1–C5 + 不阻塞 N6/N7）→ r3 条件闭合提交。状态：`in_review`，等 r3 定点复核；复核通过并集成后由 Codex 填 integration_commit 改 done。
 - Handoff：[M2-DOCTR-QUAL-PREFLIGHT-baseline](../handoffs/M2-DOCTR-QUAL-PREFLIGHT-baseline.md)。
 - Review：尚无。
 - 遗留：①正式 qualification run 的三项裁决（均超出作者自决范围）：主判定口径（coverage 替代用户默认文本的 IoU，见 thresholds.json `judging_criterion`）、pad 处理协议（生产 MERGE_PAD_PX=6 使真实 Recall 夹在 [0.26, 0.48]，见 baseline-summary §4 敏感性对照）、Precision 可测性方案（人工审计子集）；②架构选型输入：db_resnet50 显著优于 fast_base，替换属产品/契约变更须独立切片；③union GT-B 坏框问题与 text_ctd 低分框不可用已记录于 baseline-summary §4-5；④GPU 环境 torch/torchvision 与生产 pin 的偏差（2.11.0+cu128/0.26.0+cu128 vs 2.14.0/0.29.0，cu128 无 2.14.0）已披露并以 CPU 对照弥合。
