@@ -1,0 +1,694 @@
+{
+  "gate": "m2rg1-release-gate",
+  "ruling": "windows local-machine (2026-09-29): this machine is the clean Windows basis; local pass => gate PASS",
+  "base_commit": "875eb818abc74a498c84026016dd1a1c72e0ad50",
+  "runner_python": "3.12.3",
+  "environment": {
+    "path_removed_entries": [
+      "C:\\Python314\\Scripts",
+      "C:\\Python314",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311",
+      "C:\\Users\\49745\\AppData\\Local\\Microsoft\\WindowsApps",
+      "C:\\Users\\49745\\AppData\\Local\\Python\\bin",
+      "C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\Scripts"
+    ],
+    "path_kept_entries": [
+      "C:\\Users\\49745\\.local\\bin",
+      "C:\\Users\\49745\\bin",
+      "C:\\Program Files\\Git\\mingw64\\bin",
+      "C:\\Program Files\\Git\\usr\\local\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Program Files\\Git\\mingw64\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Users\\49745\\bin",
+      "C:\\WINDOWS\\system32",
+      "C:\\WINDOWS",
+      "C:\\WINDOWS\\System32\\Wbem",
+      "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0",
+      "C:\\WINDOWS\\System32\\OpenSSH",
+      "C:\\Program Files\\NVIDIA Corporation\\NVIDIA App\\NvDLISR",
+      "C:\\Program Files\\dotnet",
+      "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common",
+      "C:\\Program Files (x86)\\QuickTime\\QTSystem",
+      "E:\\software\\Bandizip",
+      "E:\\software\\Process Lasso",
+      "C:\\Program Files\\Git\\cmd",
+      "E:\\Program Files\\nodejs",
+      "C:\\ProgramData\\chocolatey\\bin",
+      "C:\\Program Files\\GitHub CLI",
+      "C:\\Program Files\\PowerShell\\7",
+      "C:\\Program Files\\Docker\\Docker\\resources\\bin",
+      "C:\\Program Files\\Go\\bin",
+      "C:\\Users\\49745\\.qoder-cn\\entry",
+      "C:\\Users\\49745\\.repo-knowledge\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\agy\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin",
+      "C:\\Users\\49745\\.cargo\\bin",
+      "E:\\software\\delevoper\\flutter\\bin",
+      "C:\\Users\\49745\\.dotnet\\tools",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
+      "C:\\Users\\49745\\AppData\\Roaming\\npm",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Ollama",
+      "C:\\Users\\49745\\AppData\\Local\\GitHubDesktop\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\skills-manager",
+      "C:\\Users\\49745\\.qoder-cn\\bin\\qoderclicn",
+      "C:\\Users\\49745\\go\\bin",
+      "E:\\Program Files\\ZCode\\resources\\tools\\ripgrep",
+      "E:\\Program Files\\ZCode\\resources\\tools\\ugrep",
+      "C:\\Program Files\\Git\\usr\\bin\\vendor_perl",
+      "C:\\Program Files\\Git\\usr\\bin\\core_perl"
+    ],
+    "purge_markers": [
+      "python",
+      "venv",
+      "conda",
+      "WindowsApps"
+    ],
+    "installer": "G:\\CODEX\\New Manga.worktrees\\M2-RG1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+    "installer_sha256": "d222073becc50d593a3f0d706ef799df45d369a51f13c1e81423dbeef7ed09db",
+    "os": "Microsoft Windows [\u7248\u672c 10.0.26200.9457]",
+    "processor_architecture": "AMD64",
+    "host_real_user_root_never_touched": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
+    "console_delegation_registry": {
+      "DelegationConsole": null,
+      "DelegationTerminal": null,
+      "key_path": "HKCU\\Console\\%%Startup"
+    },
+    "console_window_classes_observed": [
+      "ConsoleWindowClass",
+      "CASCADIA_HOSTING_WINDOW_CLASS"
+    ]
+  },
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-r09fbuts",
+  "timings": {
+    "app_cold_start": {
+      "n": 3,
+      "min_ms": 46.9,
+      "median_ms": 49.9,
+      "max_ms": 160.2,
+      "samples_ms": [
+        160.2,
+        46.9,
+        49.9
+      ]
+    },
+    "core_ready": {
+      "n": 3,
+      "min_ms": 237.6,
+      "median_ms": 247.6,
+      "max_ms": 251.4,
+      "samples_ms": [
+        247.6,
+        251.4,
+        237.6
+      ]
+    },
+    "ac1_handshake": {
+      "n": 3,
+      "min_ms": 267.2,
+      "median_ms": 267.6,
+      "max_ms": 268.5,
+      "samples_ms": [
+        268.5,
+        267.2,
+        267.6
+      ]
+    },
+    "appdata_isolation": "APPDATA pinned per round into the lab; host real %APPDATA% unreachable"
+  },
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install",
+  "verdict": "PASS",
+  "scenarios": [
+    {
+      "id": "RG1-E1-python-purged-from-path",
+      "status": "PASS",
+      "observed": {
+        "detail": "python not on purged PATH (where exit=1)",
+        "removed_entries": 11,
+        "kept_entries": 45
+      }
+    },
+    {
+      "id": "RG1-E2-installer-present",
+      "status": "PASS",
+      "observed": {
+        "installer": "G:\\CODEX\\New Manga.worktrees\\M2-RG1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+        "sha256": "d222073becc50d593a3f0d706ef799df45d369a51f13c1e81423dbeef7ed09db"
+      }
+    },
+    {
+      "id": "RG1-E3-install-path-no-spaces",
+      "status": "PASS",
+      "observed": {
+        "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install"
+      }
+    },
+    {
+      "id": "RG1-I1-silent-install",
+      "status": "PASS",
+      "observed": {
+        "detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"
+      }
+    },
+    {
+      "id": "RG1-PE1-app-exe-subsystem-gui",
+      "status": "PASS",
+      "observed": {
+        "subsystem": 2,
+        "optional_header_magic": 523,
+        "offset": 324
+      }
+    },
+    {
+      "id": "RG1-PE2-console-policy-source-audit",
+      "status": "PASS",
+      "observed": {
+        "windows_subsystem_attr_gated_by_not_debug_assertions": true,
+        "create_no_window_inside_cfg_windows": true,
+        "creation_flags_counts_per_bridge": {
+          "core_bridge.rs": 2,
+          "ac1_bridge.rs": 1,
+          "library_bridge.rs": 1
+        },
+        "core_sidecar_spec_console_true_unchanged": true
+      }
+    },
+    {
+      "id": "RG1-DC4-catalog-loader-seed-readback",
+      "status": "PASS",
+      "observed": {
+        "source_confirmed_args": [
+          "--db",
+          "--set",
+          "--dump",
+          "--count",
+          "--remove"
+        ],
+        "loader_exit": 0,
+        "loader_stderr_tail": "",
+        "dump_ok": true,
+        "sqlite_rows": [
+          {
+            "resource_id": "rg1-res",
+            "scope_class": "derived-read-only",
+            "rel_path": "asset.png"
+          },
+          {
+            "resource_id": "rg1-res-2",
+            "scope_class": "derived-read-only",
+            "rel_path": "asset.png"
+          }
+        ],
+        "sqlite_error": null
+      }
+    },
+    {
+      "id": "RG1-DC1a-listbooks-seed-fixture",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "seed_ok": true,
+        "seed_response_keys": [
+          "fixture_shas",
+          "page_count"
+        ],
+        "seed_error": null,
+        "shutdown_ok": true
+      }
+    },
+    {
+      "id": "RG1-DC1b-core-service-ping-listbooks",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_ok": true,
+        "ping_response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 1,
+            "minor": 0
+          },
+          "request_id": "rg1-dc1-ping",
+          "result": {
+            "status": "ready",
+            "protocol_version": {
+              "major": 1,
+              "minor": 0
+            },
+            "capabilities": [
+              "library.list_books"
+            ]
+          },
+          "error": null
+        },
+        "books_ok": true,
+        "books_count": 1,
+        "expect_books_min": 1,
+        "books_required_keys": [
+          "book_id",
+          "created_at",
+          "is_archived",
+          "is_favorite",
+          "original_title",
+          "page_count",
+          "title",
+          "updated_at"
+        ],
+        "books_error": null,
+        "shutdown_ok": true
+      }
+    },
+    {
+      "id": "RG1-DC2-host-bridge-handshake-issue-resolve",
+      "status": "PASS",
+      "observed": {
+        "ping": {
+          "result": {
+            "pong": true,
+            "service": "m2-rc1-resource-channel"
+          },
+          "id": 1
+        },
+        "issue": {
+          "result": {
+            "id": "m2id.v1.hNXhZ1O4yaPhVDcdpcVYBX7VUmQ1A37HqqHGzPtvl8M",
+            "size": 21
+          },
+          "id": 2
+        },
+        "resolve": {
+          "result": {
+            "scope_class": "derived-read-only",
+            "resource_id": "rg1-res",
+            "revision_fingerprint": "rev-1",
+            "rel_path": "asset.png",
+            "size": 21,
+            "sha256": "6b84b41224494296233f04dc2060403f03689066a14428e73ddfd305d1d30a79",
+            "volume_serial": 1485189147,
+            "file_index": 5910974512792634
+          },
+          "id": 3
+        },
+        "revoke": {
+          "result": {
+            "revoked": true
+          },
+          "id": 4
+        },
+        "shutdown": {
+          "result": {
+            "bye": true
+          },
+          "id": 0
+        },
+        "exit": 0
+      }
+    },
+    {
+      "id": "RG1-DC3-acceptance-bridge-handshake",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_ok": true,
+        "service": "m2-ac1-acceptance",
+        "shutdown_ok": true,
+        "error": null
+      }
+    },
+    {
+      "id": "RG1-W1-warn-files-copied-and-classified",
+      "status": "PASS",
+      "observed": {
+        "copied": 1,
+        "merged_per_spec_layout": true,
+        "review": [
+          {
+            "warn_file": "warn-core_sidecar.txt",
+            "missing_total": 11,
+            "missing_excluded_by_spec": [],
+            "missing_other_disclosed": [
+              "_frozen_importlib_external",
+              "_posixsubprocess",
+              "_winreg",
+              "fcntl",
+              "grp",
+              "java",
+              "posix",
+              "pwd",
+              "readline",
+              "resource",
+              "vms_lib"
+            ],
+            "note": "operative load-time-critical evidence = the four install-state stdio round trips in this gate; a missing load-time module would crash the entry at spawn, not merely warn. 'missing_other_disclosed' entries are conditional/optional imports observed by PyInstaller's static analysis."
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CW0-positive-control-hits-console",
+      "status": "PASS",
+      "observed": {
+        "control_pid": 47772,
+        "control_carrier": "powershell -NoProfile -Command Start-Sleep -Seconds 30 with CREATE_NEW_CONSOLE(0x10)",
+        "powershell_pids_scanned": [
+          47772
+        ],
+        "scan_ok": true,
+        "hits": [
+          {
+            "hwnd": 9571146,
+            "class": "CASCADIA_HOSTING_WINDOW_CLASS",
+            "title": "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+            "pid": 25252,
+            "visible": true
+          }
+        ],
+        "classes_expected": [
+          "ConsoleWindowClass",
+          "CASCADIA_HOSTING_WINDOW_CLASS"
+        ],
+        "attribution": "pid-owner match (classic conhost) OR title heuristic 'powershell' (Windows Terminal delegation)"
+      }
+    },
+    {
+      "id": "RG1-CS1-R1-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "app_pid": 44720,
+        "first_window": {
+          "hwnd": 6491298,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 44720,
+          "visible": true
+        },
+        "first_window_ms": 160.2299999940442,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R1-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "hits": [],
+        "alive_hold_s": 10.0,
+        "app_alive_through_hold": true,
+        "pid_scan": {
+          "scan_ok": true,
+          "app_pid": 44720,
+          "scanned": {
+            "host_bridge.exe": [
+              32436
+            ],
+            "core_service.exe": [
+              51696
+            ],
+            "acceptance_bridge.exe": [],
+            "catalog_loader.exe": []
+          },
+          "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here"
+        },
+        "sidecar_pids_seen": 2
+      }
+    },
+    {
+      "id": "RG1-CW2-R1-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS1-R2-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "app_pid": 46804,
+        "first_window": {
+          "hwnd": 10095754,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 46804,
+          "visible": true
+        },
+        "first_window_ms": 46.90129999653436,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R2-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "hits": [],
+        "alive_hold_s": 10.0,
+        "app_alive_through_hold": true,
+        "pid_scan": {
+          "scan_ok": true,
+          "app_pid": 46804,
+          "scanned": {
+            "host_bridge.exe": [
+              32524
+            ],
+            "core_service.exe": [
+              13896
+            ],
+            "acceptance_bridge.exe": [],
+            "catalog_loader.exe": []
+          },
+          "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here"
+        },
+        "sidecar_pids_seen": 2
+      }
+    },
+    {
+      "id": "RG1-CW2-R2-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS1-R3-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "app_pid": 35372,
+        "first_window": {
+          "hwnd": 6228822,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 35372,
+          "visible": true
+        },
+        "first_window_ms": 49.857599995448254,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R3-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "hits": [],
+        "alive_hold_s": 10.0,
+        "app_alive_through_hold": true,
+        "pid_scan": {
+          "scan_ok": true,
+          "app_pid": 35372,
+          "scanned": {
+            "host_bridge.exe": [
+              38372
+            ],
+            "core_service.exe": [
+              51128
+            ],
+            "acceptance_bridge.exe": [],
+            "catalog_loader.exe": []
+          },
+          "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here"
+        },
+        "sidecar_pids_seen": 2
+      }
+    },
+    {
+      "id": "RG1-CW2-R3-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS2-core-ready-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 237.6,
+          "median_ms": 247.6,
+          "max_ms": 251.4,
+          "samples_ms": [
+            247.6,
+            251.4,
+            237.6
+          ]
+        },
+        "details": [
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 0
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 0
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 0
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CS3-ac1-handshake-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 267.2,
+          "median_ms": 267.6,
+          "max_ms": 268.5,
+          "samples_ms": [
+            268.5,
+            267.2,
+            267.6
+          ]
+        },
+        "details": [
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 37048,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-r09fbuts\\cs3\\round1\\data-root"
+              },
+              "id": 1
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 8516,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-r09fbuts\\cs3\\round2\\data-root"
+              },
+              "id": 1
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 44556,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-r09fbuts\\cs3\\round3\\data-root"
+              },
+              "id": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CS1-app-cold-start-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 46.9,
+          "median_ms": 49.9,
+          "max_ms": 160.2,
+          "samples_ms": [
+            160.2,
+            46.9,
+            49.9
+          ]
+        },
+        "method": "CreateProcess -> first visible non-console top-level window of the app pid; new lab APPDATA per round (every round is a cold start)"
+      }
+    }
+  ]
+}

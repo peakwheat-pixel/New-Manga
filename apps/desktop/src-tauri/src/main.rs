@@ -1,3 +1,9 @@
+// M2-RG1 AC2 (GUI console policy, release builds only): the packaged app is a
+// GUI-subsystem binary — no console window may appear for the app itself.
+// Dev builds (debug_assertions) keep the console on purpose: probe evidence
+// includes startup stderr (comment below, dev behavior unchanged).
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 //! M2-RC1/M2-RC2 — Contract-Aligned Large-Media Resource Channel Runtime.
 //!
 //! Vertical slice: Python Core (reference + catalog authority) ⇄ Tauri/Rust
@@ -14,7 +20,11 @@
 //! `m2rc1-commands` plugin put every command behind the Tauri ACL for the
 //! main window; the hardened CSP replaces the RC1 `csp: null`.
 
-// console kept visible on purpose: probe evidence includes startup stderr
+// console note (updated M2-RG1 r1 rework, P3-1): dev builds keep the console
+// on purpose — probe evidence includes startup stderr. Release builds are
+// GUI-subsystem (windows_subsystem attribute above); the sidecar spawn points
+// carry CREATE_NO_WINDOW, so on Windows the packaged app and its sidecars
+// surface no console window while stdio (pipe) semantics stay unchanged.
 
 mod ac1_bridge;
 mod core_bridge;

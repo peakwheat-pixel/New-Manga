@@ -1,0 +1,26 @@
+# M2-RG1 OS detail snapshot (appendix to rg1-environment-record.log)
+recorded_at: 2026-09-29 12:37:26 +0800
+
+
+Caption        : Microsoft Windows 11 ×¨Òµ°æ
+Version        : 10.0.26200
+BuildNumber    : 26200
+OSArchitecture : 64 Î»
+
+
+
+
+
+Name                      : AMD Ryzen 9 7950X3D 16-Core Processor
+NumberOfCores             : 16
+NumberOfLogicalProcessors : 32
+
+
+
+
+
+TotalPhysicalMemory : 33981165568
+
+
+
+EXIT=0

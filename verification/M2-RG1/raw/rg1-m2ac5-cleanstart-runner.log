@@ -1,0 +1,52 @@
+$ TASK-012-py312 python packaging/m2ac5/run_clean_start_e2e.py (r1-rework rerun on same installer d222073b) @ HEAD=e218cc653310a1f04d422e24c367df1acd2aa728
+interpreter: Python 3.12.3
+shell: Git Bash / win32
+NOTE: runner writes verification/M2-AC5/raw/ (hardcoded, M2-AC5 P3-9(b) known behavior); evidence is moved to verification/M2-RG1/raw/ as rg1-m2ac5-* and verification/M2-AC5/ is git-restored afterwards
+
+=== phase 0: environment record + PATH purge ===
+  [PASS] CS-E1-python-purged-from-path: {"detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False", "removed_entries": ["C:\\Python314\\Scripts", "C:\\Python314", "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scrip
+  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\M2-RG1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "d222073becc50d593a3f0d706ef799df45d369a51f13c1e81423dbe
+  [PASS] CS-E3-install-path-no-spaces: {"install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install", "space_free": true}
+
+=== phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof) ===
+  host user root: C:\Users\49745\AppData\Roaming\com.newmanga.m2rc1.desktop (present, files=2)
+
+=== phase 1: NSIS silent install ===
+  [PASS] CS-I1-silent-install: {"detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"}
+  install dir files: 163
+  [PASS] CS-I2-catalog-seeded-packaged-loader: {"detail": "catalog seeded (5 rows) via packaged catalog_loader.exe"}
+
+=== phase 1.5: packaged library sidecar probe (install-state stdio, P2-2) ===
+  [PASS] CS-L1-packaged-core-ping: {"error": null, "result": {"capabilities": ["library.list_books"], "protocol_version": {"major": 1, "minor": 0}, "status": "ready"}}
+  [PASS] CS-L2-packaged-ListBooks-structure: {"count": 0, "envelope_valid": true, "error": null}
+  [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
+
+=== phase 2: PROBE mode (resource channel matrix, packaged sidecar) ===
+  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-mxaoyhd7\\probe\\probe-results.json"}
+  [PASS] CS-P2-probe-scenarios-all-pass: {"count": 13, "failed": [], "ids": ["E-00-probe-mode-detected", "E-01-issue-fetch-digest", "E-02-img-render", "E-03-unknown-id", "E-04-revoke-after-cached-fetch", "E-05-expired-ttl", "E-06-remount-fresh-references", "E-0
+  [PASS] CS-P3-sidecar-roundtrip-digest: {"e01": {"id": "E-01-issue-fetch-digest", "observed": {"bytes": 49363, "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334", "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b
+
+=== phase 3: AC1 test mode (acceptance loop, packaged sidecar) ===
+  [PASS] CS-A1-run1-completed: {"exit": 0, "phase": "run1"}
+  [PASS] CS-A1-run2-completed: {"exit": 0, "phase": "run2"}
+  [PASS] CS-A2-restart-new-pids: {"run1": [40736, 24164], "run2": [37744, 19556]}
+  [PASS] CS-A3-saved-summary-complete: {"pages": 2, "providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}, "run_status": "completed"}
+  [PASS] CS-A4-restored-reader-matches-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
+  [PASS] CS-A5-export-png-digest-matches: {"sha": "4afc67386c25", "size": 1122}
+
+=== phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData) ===
+  [PASS] CS-R1-production-process-alive: {"poll": null}
+  [PASS] CS-R2-userdata-layout-created: {"appdata_isolated": true, "catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-mxaoyhd7\\production\\roamin
+  [PASS] CS-R3-production-surface-announced: {"announcement": "[m2rc2-allowlist] production:", "present": true}
+  [PASS] CS-R4-no-spawn-failures-in-log: {"spawn_failed_mentions": 0}
+
+=== phase 5: AC4 zero-touch assertions ===
+  [PASS] CS-Z1-install-dir-zero-write: {"changed_entries": []}
+  [PASS] CS-Z4-host-real-appdata-untouched: {"changed_entries": [], "files": 2, "note": "runner never deletes here; app APPDATA pinned into the lab", "root": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop"}
+  [PASS] CS-Z2-user-source-files-byte-identical: {"files": 4}
+  [PASS] CS-Z3-no-surviving-sidecar-processes: {"acceptance_bridge.exe": 0, "catalog_loader.exe": 0, "core_service.exe": 0, "host_bridge.exe": 0, "python.exe": 8}
+
+=== gate ===
+
+GATE: PASS
+EXIT=0

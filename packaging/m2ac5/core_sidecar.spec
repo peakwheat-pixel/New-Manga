@@ -88,6 +88,11 @@ for stem, name in ENTRIES:
             bootloader_ignore_signals=False,
             strip=False,
             upx=False,
+            # M2-RG1 (AC2): console=True is FROZEN — the stdio JSON-lines
+            # protocol depends on pipe semantics that PyInstaller windowed
+            # mode would alter. Console-window suppression for packaged
+            # launches is done host-side (Rust CREATE_NO_WINDOW on the spawn
+            # sections + windows_subsystem="windows" for the app exe).
             console=True,
             disable_windowed_traceback=False,
             argv_emulation=False,

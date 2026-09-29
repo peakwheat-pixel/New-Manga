@@ -136,6 +136,8 @@ impl StdioLibraryChannel {
         src_root: &std::path::Path,
         data_root: Option<&std::path::Path>,
     ) -> Result<Self, LibraryError> {
+        // M2-RG1 AC2: Command-construction section only — CREATE_NO_WINDOW on
+        // Windows; argv/cwd/env/stdio semantics unchanged.
         let mut cmd = Command::new(python_exe);
         cmd.args(spawn_args())
             .current_dir(src_root)
@@ -146,6 +148,13 @@ impl StdioLibraryChannel {
 
         if let Some(root) = data_root {
             cmd.env("NEWMANGA_DATA_ROOT", root);
+        }
+
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
         }
 
         let mut child = cmd

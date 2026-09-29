@@ -108,8 +108,10 @@ impl StdioCoreChannel {
     /// repository `src` on the module path, the servable scope roots and the
     /// catalog database in the environment.
     ///
-    /// DEV-mode path (M2-AC5): unchanged byte-for-byte — same argv, same
-    /// cwd contract, same env contract.
+    /// DEV-mode path (M2-AC5): argv, cwd and env contract unchanged — the
+    /// M2-RG1 rework only rewrote the builder chain into a `cmd` binding to
+    /// insert the Windows-only CREATE_NO_WINDOW flag (M2-RG1 AC2); stdio and
+    /// spawn semantics are identical.
     pub fn spawn(
         python_exe: &str,
         src_root: &std::path::Path,
@@ -117,8 +119,10 @@ impl StdioCoreChannel {
         managed_root: &std::path::Path,
         catalog_db: &std::path::Path,
     ) -> Result<Self, CoreError> {
-        let child = Command::new(python_exe)
-            .arg("-m")
+        // M2-RG1 AC2: Command-construction section only — the sidecar must
+        // never surface a console window on Windows (CREATE_NO_WINDOW).
+        let mut cmd = Command::new(python_exe);
+        cmd.arg("-m")
             .arg("infrastructure.resource_channel.host_bridge")
             .current_dir(src_root)
             .env("M2RC1_DERIVED_ROOT", derived_root)
@@ -126,7 +130,14 @@ impl StdioCoreChannel {
             .env("M2RC2_CATALOG_DB", catalog_db)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
+            .stderr(Stdio::inherit());
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        let child = cmd
             .spawn()
             .map_err(|error| CoreError { code: format!("CORE_SPAWN_FAILED:{error}") })?;
         Self::adopt_child(child)
@@ -146,13 +157,22 @@ impl StdioCoreChannel {
         if !sidecar_exe.is_file() {
             return Err(CoreError::new("CORE_SPAWN_FAILED:PACKAGED_SIDECAR_MISSING"));
         }
-        let child = Command::new(sidecar_exe)
-            .env("M2RC1_DERIVED_ROOT", derived_root)
+        // M2-RG1 AC2: Command-construction section only — CREATE_NO_WINDOW on
+        // Windows; argv/env/stdio semantics unchanged.
+        let mut cmd = Command::new(sidecar_exe);
+        cmd.env("M2RC1_DERIVED_ROOT", derived_root)
             .env("M2RC1_MANAGED_ROOT", managed_root)
             .env("M2RC2_CATALOG_DB", catalog_db)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
+            .stderr(Stdio::inherit());
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        let child = cmd
             .spawn()
             .map_err(|error| CoreError { code: format!("CORE_SPAWN_FAILED:{error}") })?;
         Self::adopt_child(child)

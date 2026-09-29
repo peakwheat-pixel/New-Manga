@@ -1,0 +1,6 @@
+$ TASK-012-py312 python -m pytest tests/m2_acceptance -q @ HEAD=a1100d75bdf4b454d2e26626d67afe7b9589210f
+interpreter: Python 3.12.3
+shell: Git Bash / win32
+...................................                                      [100%]
+35 passed in 9.56s
+EXIT=0
