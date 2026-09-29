@@ -10,16 +10,16 @@ Execution checkpoint: 2026-09-29 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
-| Branch / audit base | `main`; integration=`1ef8fe7e7e66044869f8c59646d28bfca7692bbe`; M2-TA1 base=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`; reviewed delivery=`00df8f1dd4d480d4e4432c833981481f2c01dd3e` |
-| Current Active Task | None. Latest [M2-TA1](tasks/M2-TA1.md) is `done` at integration `1ef8fe7e`. |
-| Current released Task | None. [M2-TA1](tasks/M2-TA1.md) was released by the user request dated 2026-09-29 and is now `done`; M2-RG1 remains done at `b796bed3`. |
-| Owner / Reviewer / Integrator | M2-TA1: Codex primary / Codex independent Reviewer subagent (`approved` at `00df8f1d`) / Codex primary. |
-| Recovery point | main integration=`1ef8fe7e7e66044869f8c59646d28bfca7692bbe`; delivery branch=`agent/codex/M2-TA1-comic-test-asset-foundation` at `b72f865b234943b6b075f36d72ede527d0cb74c7`; worktree=`C:/Users/49745/.codex/worktrees/comic-test-assets/New Manga`; base=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`. |
+| Branch / audit base | `main`; current HEAD=`eb41a352c03df84400d90a78c29d2dfbe28a76c9`; M2-TA1 integration=`1ef8fe7e7e66044869f8c59646d28bfca7692bbe`; M2-TA2A base=`eb41a352c03df84400d90a78c29d2dfbe28a76c9` |
+| Current Active Task | [M2-TA2A](tasks/M2-TA2A.md) JA Public Assets Bootstrap; `ready`, authorized 2026-09-29. Asset Ready means local asset integrity only; application Pipeline checks remain `NOT_RUN`. |
+| Current released Task | [M2-TA2A](tasks/M2-TA2A.md) is released. [M2-TA2B](tasks/M2-TA2B.md) is a gated `proposed` follow-up and is not released. M2-TA3 remains proposed. |
+| Owner / Reviewer / Integrator | M2-TA2A: Codex Desktop / DeepSeek Harness (non-author) / Codex Desktop. |
+| Recovery point | branch=`agent/codex/M2-TA2A-ja-public-assets`; worktree=`C:/Users/49745/.codex/worktrees/comic-test-assets/New Manga` (reused, 80 ignored KO files preserved); base=`eb41a352c03df84400d90a78c29d2dfbe28a76c9`. |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/FIX-F02-RESOURCE-CHANNEL-FLAKY、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`aa2f99b8`（F02 资源通道安全缺口修复）；**m2_acceptance 35 passed 0 xfailed 全绿、tests/core 77 passed、cargo 34 passed、vitest 31 tests** |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`69961029`（F-2 unknown 通道，契约 1.2） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`d71883ec`（M2-FIX-EXPORT-LINEAGE F-1 修复） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`121a281c`（M2-FIX-STUB-DECODER stub 签名修复） |
-| Planned next | No Task is released. Recommended candidate M2-TA2 L1 case evidence-based expansion is in [M2-TA1 Handoff](handoffs/M2-TA1-codex.md). |
+| Planned next | Execute M2-TA2A public asset acquisition. M2-TA2B waits for official Manga109 archive; M2-TA3 waits for TA2A and a defined TA2B usable scope. |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex quota exhausted；自 2026-09-28 起由 ZCode 会话代行 Codex Lead/Integrator 职责（用户全权授权）；追认批次见下方 ratification checkpoint |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |

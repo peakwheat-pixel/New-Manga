@@ -21,7 +21,13 @@ releases a task.
 
 ### 2026-09-29 用户授权 Task：M2-TA1
 
-[M2-TA1](tasks/M2-TA1.md)「日漫 / 韩漫统一测试素材基础设施」由用户本次请求授权，依赖已完成的 M2-RG1；独立 Review=`approved`，Codex 已于 `1ef8fe7e7e66044869f8c59646d28bfca7692bbe` 集成并通过定向集成验证，Task=`done`。实现交付=`00df8f1dd4d480d4e4432c833981481f2c01dd3e`；范围只含独立 case manifest、素材 CLI、下载数据忽略规则、工具专用测试及文档；生产 Schema/Pipeline/Provider/依赖零改动。用户授权本地测试，已取得固定 10 个 KO smoke case（主仓库 80 files / 884,913,245 bytes）；受版权限制原图不入库；Manga109 仍 gated 且当前无获批归档。L1 目标集数量不足与未取得素材保留为 `PARTIAL` / `BLOCKED_BY_ASSET_ACCESS` / `NOT_RUN`。下一候选为 M2-TA2 L1 case 证据化扩充；目前没有其他 Task 释放。
+[M2-TA1](tasks/M2-TA1.md)「日漫 / 韩漫统一测试素材基础设施」由用户本次请求授权，依赖已完成的 M2-RG1；独立 Review=`approved`，Codex 已于 `1ef8fe7e7e66044869f8c59646d28bfca7692bbe` 集成并通过定向集成验证，Task=`done`。实现交付=`00df8f1dd4d480d4e4432c833981481f2c01dd3e`；范围只含独立 case manifest、素材 CLI、下载数据忽略规则、工具专用测试及文档；生产 Schema/Pipeline/Provider/依赖零改动。用户授权本地测试，已取得固定 10 个 KO smoke case（主仓库 80 files / 884,913,245 bytes）；受版权限制原图不入库；Manga109 仍 gated 且当前无获批归档。L1 扩到 100–150 暂缓，先补真实可运行 JA 资产。
+
+### 2026-09-29 用户授权阶段：M2-TA2A / M2-TA2B / M2-TA3
+
+[M2-TA2A](tasks/M2-TA2A.md)「JA Public Assets Bootstrap」已由用户本次请求正式释放为唯一 Active Task；基线=`eb41a352c03df84400d90a78c29d2dfbe28a76c9`，Owner=Codex Desktop，Reviewer=DeepSeek Harness（非作者），Integrator=Codex Desktop。目标是实际取得并验证可合法公开取得的 JA 图像及可配对标注；只有标注的来源不得标为 `READY`。M2-TA2A 与 M2-TA2B 的资料源审计可并行，互不重叠的公开资产获取可并行；共享 manifest/README/状态文档由 Integrator 串行集成。
+
+[M2-TA2B](tasks/M2-TA2B.md)「Manga109 Authorized Import」登记为 `proposed / BLOCKED_BY_ASSET_ACCESS` gated follow-up，不在无官方授权归档时执行。依赖用户取得 Manga109-v2026 官方访问权限并提供合法本地归档。`M2-TA3` L1 扩展继续为 proposed：依赖 M2-TA2A 完成，且 M2-TA2B 已形成明确可用范围；不以 manifest Case 数量作为可运行覆盖，目标 100–150 个真实、可获取或明确 blocked 的困难 Case，blocked 项不计入 runnable。
 
 ### 2026-09-28 任务盘点（当日快照；当前执行状态见 STATUS）
 
