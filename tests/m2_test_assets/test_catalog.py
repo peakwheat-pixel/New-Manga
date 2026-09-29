@@ -10,8 +10,8 @@ from test_assets.comic_golden_suite.tools import assets
 def test_manifest_has_unique_cases_and_exact_taxonomy():
     manifest = assets.load_manifest()
     cases = manifest["cases"]
-    assert len(cases) == 55
-    assert len({case["case_id"] for case in cases}) == 55
+    assert len(cases) == 65
+    assert len({case["case_id"] for case in cases}) == 65
     assert manifest["taxonomy"]["difficulty_tags"] == [
         "normal_dialogue", "dense_dialogue", "tiny_text", "huge_text",
         "vertical_text", "horizontal_text", "rotated_text", "curved_text",

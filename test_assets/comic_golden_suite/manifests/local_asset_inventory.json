@@ -1,0 +1,625 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-09-29",
+  "task_id": "M2-TA2A",
+  "asset_ready_semantics": "Local files exist and source-appropriate integrity checks passed; application pipeline verification is tracked separately and currently NOT_RUN.",
+  "assets": [
+    {
+      "asset_id": "peppercarrot_e04_ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "license": "CC BY 4.0 with attribution",
+      "image_redistribution_status": "Images may be redistributed with attribution; kept out of Git by local asset policy",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "status": "READY",
+      "file_count": 4,
+      "image_file_count": 3,
+      "byte_size": 15940323,
+      "files": [
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ep04_Stroke-of-genius_lang-pack.zip",
+          "byte_size": 14428439,
+          "sha256": "cff6d3cfef4f59cd55e13683c5b2b76fb08914e8929cebf11414ce6b848fe38f"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+          "byte_size": 657353,
+          "sha256": "17a008bbcbc72e133bdc4e198091a9e422b2960694098bb0dfa57b07f6e4eefe"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+          "byte_size": 605434,
+          "sha256": "fb36b9c8ee40448e52100b393978869c9946d664a6c402f0f0f5dd1e2b3f41fe"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+          "byte_size": 249097,
+          "sha256": "695ebf3df7c3a428881bf5d096843774cf258644213bfd0dfc40f00524569a5c"
+        }
+      ],
+      "ground_truth_type": "Language-pack SVG files paired with 3 page images; selected SVG members contain no non-empty Japanese text nodes; no boxes or masks",
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "French-origin open webcomic with Japanese localization; not Japanese-origin Manga.",
+      "attribution": "Artwork and episode by David Revoy; follow attribution details on the official E04 source page."
+    },
+    {
+      "asset_id": "peppercarrot_e20_ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "license": "CC BY 4.0 with attribution",
+      "image_redistribution_status": "Images may be redistributed with attribution; kept out of Git by local asset policy",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "status": "READY",
+      "file_count": 8,
+      "image_file_count": 7,
+      "byte_size": 24344545,
+      "files": [
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ep20_The-Picnic_lang-pack.zip",
+          "byte_size": 20373782,
+          "sha256": "5626914a60654d0fe5fb55cb74489433caf7c52665a825210ab3822f098e2f5a"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+          "byte_size": 477560,
+          "sha256": "250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+          "byte_size": 512573,
+          "sha256": "e6ea0d306bd353db62275c344e17807d4252d6f5574fc30d7120f28f783878c6"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+          "byte_size": 587669,
+          "sha256": "dc23b0f16b02ce14f7d60ad1805dd13b9ce4e0ad5f6ead75cf4b955713d6e638"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+          "byte_size": 474212,
+          "sha256": "87a342f78a2b1c387b4edfb8ed3b835f748dc13c1de15fcccea3d273daaf7b26"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+          "byte_size": 495759,
+          "sha256": "c50404045f08bdd81001896082ede352bebd938e541ae31b2d119a9f6b5900cc"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ja_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+          "byte_size": 521950,
+          "sha256": "495a02acf23ac1655ccc7f2e3e8321fd37f31b1d480fec9bee7f44f8ccc9f639"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20/ja_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
+          "byte_size": 901040,
+          "sha256": "79ae6668f8fa2ba97b87f4ce8e8b1b787b2a1c7d982f93f3e0a4ce389480e6cc"
+        }
+      ],
+      "ground_truth_type": "Language-pack SVG contains partial Japanese text layers for E20P06/E20P07 only; no dialogue boxes or masks",
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "translation",
+        "manga_page_render"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "French-origin open webcomic with Japanese localization; E20P01-P05 have no machine-readable text in selected SVG members.",
+      "attribution": "Artwork and episode by David Revoy; Japanese translation credited to guruguru on the official E20 source page."
+    },
+    {
+      "asset_id": "coo_selected_annotations",
+      "source": "https://github.com/manga109/public-annotations/tree/main/COO-Comic-Onomatopoeia/v2022.07.07",
+      "license": "CC BY 4.0 (annotations)",
+      "image_redistribution_status": "No images in this source; Manga109 page image rights are separate and still gated",
+      "local_path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia",
+      "status": "PARTIAL",
+      "file_count": 38,
+      "image_file_count": 0,
+      "byte_size": 3333257,
+      "files": [
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/LICENSE_COO",
+          "byte_size": 18656,
+          "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+          "source_sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/AisazuNihaIrarenai.xml",
+          "byte_size": 51096,
+          "sha256": "4e7d416df9a7afda3263b923702dccfd08677e493e96f7cdbacbb0a554945c03"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/AkkeraKanjinchou.xml",
+          "byte_size": 183321,
+          "sha256": "5705fc396c0b704f85d6b7109472ef714007362c1de309362bfe86a2fd5e8fe2"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/Akuhamu.xml",
+          "byte_size": 113673,
+          "sha256": "c0b0ae3d55fbd1928ffe56f6d58678f9264d6858ef79cc7ee5b32eecf793a843"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/AosugiruHaru.xml",
+          "byte_size": 88647,
+          "sha256": "871d128172e071fd57bed1691daca9cb3a9319152236438bb06dfdf41fc7da87"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/ARMS.xml",
+          "byte_size": 100342,
+          "sha256": "1a42c620b32d0a55f51a494bdf4c70ab6802bca79c52d24395f375077c547e4b"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/BEMADER_P.xml",
+          "byte_size": 221323,
+          "sha256": "3044aa4ee4a230ce62626047470a70b53925e4061e0f10913ee5daac446860ab"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/BurariTessenTorimonocho.xml",
+          "byte_size": 97086,
+          "sha256": "9aa59fdd1ace6e92d33e782e10eadce923558a34b227fbbd449e3ed38d1da35b"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/Count3DeKimeteAgeru.xml",
+          "byte_size": 110145,
+          "sha256": "f5d052dbc58b6db6cd7242de0f53170648a40f1968c11a56b9d99bece03c5089"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/DollGun.xml",
+          "byte_size": 140183,
+          "sha256": "243028f4561d6ecd4cded6106ffb9eae5b20476867accf017d294af1489d84f9"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/DualJustice.xml",
+          "byte_size": 92554,
+          "sha256": "2a3a26df3830760cb6897217f1ea2d3104042f2d117aa64a27b4737c66c61fa7"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/GarakutayaManta.xml",
+          "byte_size": 172943,
+          "sha256": "928f8ac8d4feeef01f4c9c5898b07ea7d6f3704c9a45b34b363909a3ff49c8c5"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/JangiriPonpon.xml",
+          "byte_size": 73607,
+          "sha256": "58ff21fe809187943bc4818f3a3fe13666e3b17b0fa9393359eff7e235e514b9"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/JijiBabaFight.xml",
+          "byte_size": 91647,
+          "sha256": "7e73ae04c0034f8896d9d405b3ef3901e10185f1d7e05ded77d1de3b952f0603"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/Jyovolley.xml",
+          "byte_size": 58628,
+          "sha256": "e53ae2253d6bbb48170b207e71f8d95b87a522fd0fc2b04541af0bb305630576"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/KimiHaBokuNoTaiyouDa.xml",
+          "byte_size": 61331,
+          "sha256": "1a2155510e90a2d7529c6d7e9c06d307b493d2536a8305644c9c9b0f03a7b89a"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/KoukouNoHitotachi.xml",
+          "byte_size": 69755,
+          "sha256": "75646bbb8d7b3d4460ecbec16c593d9869048035332affc209dfd8811808fde2"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/KuroidoGanka.xml",
+          "byte_size": 106867,
+          "sha256": "48c8619cc43d046c0edd1d94b948699865287a20e4cd468c6ff85b5ce9741502"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/KyokugenCyclone.xml",
+          "byte_size": 67996,
+          "sha256": "6585c0dd18daf1fce50344bd9c78e51d85bdbb8b94bf863e17808e3586d874b2"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/LancelotFullThrottle.xml",
+          "byte_size": 171979,
+          "sha256": "b48fdc320af5a7ab0a29293f264ac0c80eec3f48606dd45faa0149a772156dbc"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/MAD_STONE.xml",
+          "byte_size": 55596,
+          "sha256": "81acdc03efcd8d8e0e8580801a9f912b799deda127c8bb0a20a1aa8d5b36e0a8"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/MagicStarGakuin.xml",
+          "byte_size": 87046,
+          "sha256": "8427ff8e852f578e0cd757170fb9b3483d4d754335ae469779782c7014d1d9ab"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/MayaNoAkaiKutsu.xml",
+          "byte_size": 33235,
+          "sha256": "3d6744a47e1001f2f6414d8614f7271e717ac78f48c41f44f2f0b8862e378457"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/MomoyamaHaikagura.xml",
+          "byte_size": 31739,
+          "sha256": "31823233023659ec01b07610973a58ed03d46b6e8273419743401334771545b3"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/Nekodama.xml",
+          "byte_size": 108595,
+          "sha256": "f11470d36ebe20f4df912150d68567a8dc829b07824cc447b0e7680e31493193"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/Ningyoushi.xml",
+          "byte_size": 44352,
+          "sha256": "5ad8d9ee08189f3fe1ad113b8d7bf9766552a5607eb5bfd1ab66fc705ddae230"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/OL_Lunch.xml",
+          "byte_size": 55195,
+          "sha256": "de87cb2d85a2c6ba977ae262e0579f9046d665898be67437af4dae7db1eced38"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/ParaisoRoad.xml",
+          "byte_size": 121545,
+          "sha256": "3c236e3fb78f87df88ae541411a6cc8564d8bd444b6aff25658038cbb38cd512"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/PLANET7.xml",
+          "byte_size": 68988,
+          "sha256": "2c1d242a899fe40af028cb03ce90344a1bddf7bed9c1ad522edc5cf58d91c043"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/PlatinumJungle.xml",
+          "byte_size": 40004,
+          "sha256": "41c783dd654214ff29cdfc7bf8b1ee5cd9b7083a88d75c89093ed5cf36a2cc1d"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/RinToSiteSippuNoNaka.xml",
+          "byte_size": 40118,
+          "sha256": "18ea35276854fdb98433e7f972a26e04a4248fb7ce526b0536fc624b39b5e347"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/RisingGirl.xml",
+          "byte_size": 84994,
+          "sha256": "72238e966cfa94d00f3f902a96a5dcecf7eb3fd730fd84d2a6a2dea4d6ce4785"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/SeisinkiVulnus.xml",
+          "byte_size": 105997,
+          "sha256": "be8a4bfe9d7890ba346740390cb18b14c06fd3ea314094f17bdb8afe5824630f"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/SyabondamaKieta.xml",
+          "byte_size": 47461,
+          "sha256": "88e8c72eacc3bbb232989802f7e05f8b68b99669867ad55a6e9e2c749a1e5fc0"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/YamatoNoHane.xml",
+          "byte_size": 112977,
+          "sha256": "050d648bc49190eff6f2140101c7acba221564e71b4a5693f6b1310c57c258f9"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/YouchienBoueigumi.xml",
+          "byte_size": 28338,
+          "sha256": "fba32b529f04638634380c4ae6c3885dd5af75b52f0a44ac60dc746921b9ed33"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/YukiNoFuruMachi.xml",
+          "byte_size": 112908,
+          "sha256": "44c887bc7557b29bf6e77225faebff1a56548d806de7da22e0ff3bcefd85e7ea"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/YumeiroCooking.xml",
+          "byte_size": 62390,
+          "sha256": "fed888ceb65963af099c2c92e02d4c8d8d38ca3306225d1157555adfa9f71bd4"
+        }
+      ],
+      "ground_truth_type": "COO Japanese SFX transcriptions with page-coordinate polygon annotations; no paired images",
+      "pipeline_applicability": [
+        "annotation_parse",
+        "sfx_annotation_reference"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "37 selected title XMLs plus license text. Visual SFX/OCR evaluation requires matching authorized Manga109 pages.",
+      "attribution": "Aizawa Yamakata Matsui Lab; cite Baek, Matsui, and Aizawa, ECCV 2022, “COO: Comic Onomatopoeia Dataset for Recognizing Arbitrary or Truncated Texts”.",
+      "integrity_validation": "All 37 selected XML files parsed with Python xml.etree.ElementTree; per-file SHA-256 recorded."
+    },
+    {
+      "asset_id": "manga109dialog_selected_annotations",
+      "source": "https://github.com/manga109/public-annotations/tree/main/Manga109Dialog",
+      "license": "CC BY 4.0 (annotations)",
+      "image_redistribution_status": "No images in this source; Manga109 page image rights are separate and still gated",
+      "local_path": "日漫_JA/02_public_annotations/Manga109Dialog",
+      "status": "PARTIAL",
+      "file_count": 38,
+      "image_file_count": 0,
+      "byte_size": 3406525,
+      "files": [
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/AisazuNihaIrarenai.xml",
+          "byte_size": 110510,
+          "sha256": "0d87575f7a149485fe4888b8d7b5d99d0c477a9fa5585ffaed7f4a9dca5c4377"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/AkkeraKanjinchou.xml",
+          "byte_size": 86882,
+          "sha256": "14eb9317d60a7b7ee08c2f2b78d0cdc9d67a06e0b338dae1fb78b2954579cab4"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/Akuhamu.xml",
+          "byte_size": 96985,
+          "sha256": "084a8c4da74fd272f12857ea2e6c7a0645b017be0fd42c72d888333fc34b4738"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/AosugiruHaru.xml",
+          "byte_size": 86832,
+          "sha256": "43d68f533113de0176e2fc6ea996945233de5810fb978197d16cd2012e2e1e29"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/ARMS.xml",
+          "byte_size": 62817,
+          "sha256": "1d2837fd929f00c5228098822b8f46659b4809a09b2ef8ffde29389cede79629"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/BEMADER_P.xml",
+          "byte_size": 103208,
+          "sha256": "44e162f0c943d08587629a831964f77e181d85c2b9b0b6c13ccb963e3b2aab7e"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/BurariTessenTorimonocho.xml",
+          "byte_size": 115933,
+          "sha256": "3da2d700c864314ef8c92109cba58dd7476840d5f515e04a1318de2d493985e9"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/Count3DeKimeteAgeru.xml",
+          "byte_size": 69674,
+          "sha256": "59d2f0b45aa8db1c3f6a057894e76f865c4e26b040199fad093e051647ba29e8"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/DollGun.xml",
+          "byte_size": 101817,
+          "sha256": "cb0dcfd3d92a5917a4d5f6f16d59ec868f70a2c06d8d5a4d99a3a3d6b2dcf906"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/DualJustice.xml",
+          "byte_size": 62070,
+          "sha256": "edb4c08cba0ff4ad95cd19e9149f55df8392651d1f3278053747210e99f6f31e"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/GarakutayaManta.xml",
+          "byte_size": 85450,
+          "sha256": "3101ade661d032d26b07557862f2f1ccacb24e365a177166bd7936d12a3fa1c6"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/JangiriPonpon.xml",
+          "byte_size": 108202,
+          "sha256": "01572d1ddde0bbb86b23563893e32d26d31de26f361868603c1bf08ac631f673"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/JijiBabaFight.xml",
+          "byte_size": 121696,
+          "sha256": "77b1d3837de849799de47524fe029e6860f87040c4c88b8af057ec699dddb4be"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/Jyovolley.xml",
+          "byte_size": 64231,
+          "sha256": "4c9f6c8e2dac2e8bd40f4ebb8ffb9b05d703968023a310b6d81a527e14e4ec6d"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/KimiHaBokuNoTaiyouDa.xml",
+          "byte_size": 107814,
+          "sha256": "b73959e4946d6b4a262a34c13673db32eda3af49d0c33057ae9051bf956f91e3"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/KoukouNoHitotachi.xml",
+          "byte_size": 164274,
+          "sha256": "d105e8e934543cff34ba573e74ba54e7a603769d33e3ea813e65b7b2b242fbad"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/KuroidoGanka.xml",
+          "byte_size": 93860,
+          "sha256": "46097fb058158738eda6e3fb66e52066ea408184dd698c980338755652727afc"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/KyokugenCyclone.xml",
+          "byte_size": 53178,
+          "sha256": "e71aee5a7819e27b4d4d09aba87e1f1d91671e63c45b6e8451086c8ef809a119"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/LancelotFullThrottle.xml",
+          "byte_size": 114225,
+          "sha256": "dbbadfe2ff1d67d8d04af88bc88b9b4b2de33b5fba4da2b017e9a81fc1854877"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/LICENSE_Manga109Dialog",
+          "byte_size": 18656,
+          "sha256": "9e5f1b3c610b9c2da5c313bf81d577a7d1acec686bdb0384edefa6df0f90cd94",
+          "source_sha256": "9ba9550ad48438d0836ddab3da480b3b69ffa0aac7b7878b5a0039e7ab429411"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/MAD_STONE.xml",
+          "byte_size": 46737,
+          "sha256": "a419e337658a25b9640018366d2b5724df7417aaff927d89a0e45616215798d4"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/MagicStarGakuin.xml",
+          "byte_size": 101675,
+          "sha256": "3e8ce6f174060d03d7043073aa7929851b912aa0b376912710eba585117a3ebe"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/MayaNoAkaiKutsu.xml",
+          "byte_size": 76585,
+          "sha256": "ccbde6493846cba251c8014b3131e9875ffc44b0bd027275655f6136864aa3fe"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/MomoyamaHaikagura.xml",
+          "byte_size": 54167,
+          "sha256": "f21b666e48dbaad7843219c0e015363bde1142e8835a6d38ba0236fc2f75b84e"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/Nekodama.xml",
+          "byte_size": 108096,
+          "sha256": "1d85ee0ab497d0f834a95279bc0fea2a6a441cafa7f3bbbed208696b08fbc290"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/Ningyoushi.xml",
+          "byte_size": 67403,
+          "sha256": "e3cb97fe33ac8a99e906aed1ee87d96fb274e5cc65ef11e596bbded23a247f20"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/OL_Lunch.xml",
+          "byte_size": 111801,
+          "sha256": "ab9646b3e305d50564e5fe244b5e6bdcc2a05f85199f968f281241f8d4f0704a"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/ParaisoRoad.xml",
+          "byte_size": 109722,
+          "sha256": "b19f9599c1285eb276e1a1ddf37597878fca16d9fd3244c877711b15c1d03c2f"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/PLANET7.xml",
+          "byte_size": 115916,
+          "sha256": "6783884a16f4f12d5a64876f3295136e7abc839d32aa19e9a6f1e4b182ee1b53"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/PlatinumJungle.xml",
+          "byte_size": 67605,
+          "sha256": "a33c47f384ebdf450c9f72fe8aefdb92da15121719dba7583d1da4082fb1d908"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/RinToSiteSippuNoNaka.xml",
+          "byte_size": 101170,
+          "sha256": "99b85eaeecae1d640e22bdc651b89dab2a0d17985000dfca1aa977a6e973b032"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/RisingGirl.xml",
+          "byte_size": 107574,
+          "sha256": "a9fdfee5e03be5f4ef841c60b505cfdfd08f5d3d848b412f3842487203e0d898"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/SeisinkiVulnus.xml",
+          "byte_size": 77009,
+          "sha256": "6132547531ee6222fa3f3c43c96b8458bbc7eb37cc260fcacbe5c609a3aa7eea"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/SyabondamaKieta.xml",
+          "byte_size": 73683,
+          "sha256": "48afb76dcbb5b22d18c5406190ac0bc8ab365e7cdfbfce1134502dda3029ac6a"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/YamatoNoHane.xml",
+          "byte_size": 78363,
+          "sha256": "ac8873cfd362ef48313d8128371836cd04dad00a748b1162cc2fa442b8566329"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/YouchienBoueigumi.xml",
+          "byte_size": 60277,
+          "sha256": "4bccad485317d294192824c589bf8d5fda4a009e54631ffc56e133d5d5110e00"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/YukiNoFuruMachi.xml",
+          "byte_size": 121122,
+          "sha256": "41fdb0c78360ca96c80cf3272f79e3062afa07904a493fd7904291d5e90128cb"
+        },
+        {
+          "path": "日漫_JA/02_public_annotations/Manga109Dialog/YumeiroCooking.xml",
+          "byte_size": 99306,
+          "sha256": "a81fbf48528c11e8d26444d90650a3a30c003ed4b6ce54cb54cd456386b44f15"
+        }
+      ],
+      "ground_truth_type": "Speaker-to-text ID relations; not the dialogue text transcription itself; no paired images",
+      "pipeline_applicability": [
+        "annotation_parse",
+        "speaker_attribution_reference"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "37 selected title XMLs plus license text. Requires Manga109 base text annotations and page images for full attribution checks.",
+      "attribution": "Aizawa Yamakata Matsui Lab; cite Li, Aizawa, and Matsui, ICME 2024, “Manga109Dialog: A Large-scale Dialogue Dataset for Comics Speaker Detection”.",
+      "integrity_validation": "All 37 selected XML files parsed with Python xml.etree.ElementTree; per-file SHA-256 recorded."
+    },
+    {
+      "asset_id": "manga109_selected_or_full",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "license": "Official gated access terms",
+      "image_redistribution_status": "Not redistributable; official access still required",
+      "local_path": "日漫_JA/01_manga109_real",
+      "status": "BLOCKED_BY_ASSET_ACCESS",
+      "file_count": 0,
+      "image_file_count": 0,
+      "byte_size": 0,
+      "files": [],
+      "ground_truth_type": "Official annotations exist separately; images absent",
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "No Manga109 image archive or authorized local image files are present."
+    },
+    {
+      "asset_id": "jmangabench_mixed",
+      "source": "https://github.com/muscgab/JMangaBench_Mixed",
+      "license": "Code GPL-3.0-only; image assets remain under Manga109-s restrictions",
+      "image_redistribution_status": "Manga109-s source images not present; code-only source is not a runnable image benchmark",
+      "local_path": "日漫_JA/04_jmangabench",
+      "status": "BLOCKED_BY_ASSET_ACCESS",
+      "file_count": 0,
+      "image_file_count": 0,
+      "byte_size": 0,
+      "files": [],
+      "ground_truth_type": "GPL-3.0-only code, recipes, metadata, hashes/evaluator, and released rendering layers; complete benchmark images are built locally and include 1,286 Manga109-s-derived real crops plus 2,000 synthetic samples, so no complete runnable image set is available here",
+      "pipeline_applicability": [
+        "ocr",
+        "translation",
+        "inpainting"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "Public repository contains construction material and evaluator but no Manga109-s pixels; full build requires the separately obtained Manga109-v2026/Manga109-s image package."
+    },
+    {
+      "asset_id": "text_mask",
+      "source": "https://zenodo.org/records/4511796",
+      "license": "Not verified on the record",
+      "image_redistribution_status": "Source images are Manga109-derived and gated; no files downloaded",
+      "local_path": "日漫_JA/03_text_mask",
+      "status": "BLOCKED_BY_ASSET_ACCESS",
+      "file_count": 0,
+      "image_file_count": 0,
+      "byte_size": 0,
+      "files": [],
+      "ground_truth_type": "450 Manga109-derived text segmentation images/masks in pre-processed and post-processed ZIP files; source page images require Manga109 access",
+      "pipeline_applicability": [
+        "inpainting"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "Zenodo record lists 7.9 MB pre-processed and 11.3 MB post-processed ZIPs but no license value; no files downloaded because contents derive from Manga109 and record does not establish redistribution rights."
+    },
+    {
+      "asset_id": "openmantra_candidate",
+      "source": "https://github.com/mantra-inc/open-mantra-dataset",
+      "license": "CC BY-NC 4.0",
+      "image_redistribution_status": "Non-commercial only; project use scope not classified as non-commercial, so not acquired.",
+      "local_path": "日漫_JA/05_openmantra_candidate",
+      "status": "MISSING",
+      "file_count": 0,
+      "image_file_count": 0,
+      "byte_size": 0,
+      "files": [],
+      "ground_truth_type": "Japanese manga page images with Japanese/English/Chinese text and bounding boxes per public repository description",
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "translation"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "Not counted runnable and no data copied. Revisit only if a non-commercial-only use scope is established."
+    }
+  ]
+}

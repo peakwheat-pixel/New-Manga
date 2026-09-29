@@ -1,0 +1,71 @@
+M2-TA2A Integration Verification
+SHELL=PowerShell
+PYTHON=C:\Python314\python.exe
+WORKDIR=C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+DATE_LOCAL=2026-09-29T20:57:03.147837+08:00
+NOTE=Commands below were run against the task worktree. Per-case list output is summarized; exact exit status and decision totals are retained.
+
+## Tests and asset CLI
+
+COMMAND=python -m pytest tests/m2_test_assets -q
+STDOUT=21 passed in 0.31s
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke
+STDOUT=SUMMARY READY=10; INVENTORY checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py list --language ja --level smoke
+STDOUT=10 JA Smoke cases enumerated; SUMMARY READY=10; INVENTORY checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py missing --language ja --level smoke
+STDOUT=no missing cases; SUMMARY READY=10; INVENTORY checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py download --language ja --level smoke (repeat run; assets already present)
+STDOUT=downloaded=0 existing=20 gated_cases=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py download --language ja --level regression (no archive supplied)
+STDOUT=gated_cases=37 failures=0 downloaded=0; no gated download attempted
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level regression
+STDOUT=MISSING_GATED_ASSET=37 READY=10; INVENTORY checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke
+STDOUT=10/10 KO Webtoon READY; INVENTORY checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=offline Python harness: patch urllib.request.urlopen to raise AssertionError, then invoke assets.main() with verify --language ja --level smoke
+STDOUT=READY=10; INVENTORY checked=88 missing=0 failures=0; no network access attempted
+EXIT=0
+
+## Asset/inventory and Git checks
+
+COMMAND=PowerShell here-string piped to C:\Python314\python.exe; recompute each inventory size/SHA-256, parse XML, read all ZIP members/CRC, check case IDs, tracked media, raw Git index blobs and ignore rules
+STDOUT=INVENTORY checked=88 bytes=47024650 xml_parsed=74 zips_crc_read=2 failures=0; CASE_IDS total=65 unique=65; ANNOTATION_LICENSE_TRACKED=76 raw_git_blob_matches=76/76; TRACKED_COMIC_MEDIA=0; JA_MEDIA_LOCAL=12 ignored=12/12; KO_ASSET_FILES=80 bytes=884913245
+EXIT=0
+
+COMMAND=python -m json.tool test_assets/comic_golden_suite/manifests/cases.json (stdout redirected to DEVNULL)
+EXIT=0
+COMMAND=python -m json.tool test_assets/comic_golden_suite/manifests/local_asset_inventory.json (stdout redirected to DEVNULL)
+EXIT=0
+COMMAND=git diff --check
+EXIT=0 (Git printed only LF-to-CRLF advisory warnings)
+COMMAND=git diff --cached --check
+EXIT=0
+
+## Regression probe
+
+A separate Reviewer built a temporary valid JPEG + valid SVG ZIP fixture with a deliberately drifted inventory SHA-256 and invoked CLI list, missing and verify. Each command reported the Case as PARTIAL and exited 1; none reported READY. The temporary fixture was outside the repository and removed with its temporary directory.
+
+## Historical attempts, superseded by the passing runs above
+
+- Initial Pepper&Carrot language-pack URL omitted the episode segment: 10 download requests failed (HTTP 404/connection reset), no partial file was published. Manifest URL was corrected; both official ZIPs and all 10 JPEGs were subsequently downloaded and verified.
+- The first temporary Git-index audit harness used an incorrectly escaped byte delimiter and exited 1. Its script was corrected and rerun; the final audit above is EXIT 0.
+- The earlier pre-fix focused test run was 19 passed. The final code and current verification are 21 passed.
+
+Application Pipeline execution (OCR/detection/translation/inpainting/typesetting/reading order/SFX/speaker/webtoon slicing and reassembly): NOT_RUN.

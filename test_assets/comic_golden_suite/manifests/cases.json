@@ -34,19 +34,19 @@
         "ko": 10
       },
       "case_count": 20,
-      "notes": "Daily enumeration; JA images remain gated and may be missing locally."
+      "notes": "JA smoke selects 10 acquired Japanese-localized open webcomic pages; Manga109 cases remain gated and are not counted as runnable smoke assets."
     },
     "regression": {
-      "case_count": 55,
+      "case_count": 65,
       "target_range": [
         100,
         150
       ],
       "status": "PARTIAL",
-      "notes": "55 defined cases; below the desired 100–150 until separately authorized sources are selected and curated."
+      "notes": "65 defined cases, including 10 newly acquired public JA pages; defer number-driven expansion until TA2B usable scope is clear."
     },
     "full": {
-      "case_count": 55,
+      "case_count": 65,
       "status": "PARTIAL",
       "notes": "The catalog's selected cases only. Benchmark corpora below remain external and are not downloaded by default."
     }
@@ -56,30 +56,84 @@
       "id": "manga109_selected_or_full",
       "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
       "status": "BLOCKED_BY_ASSET_ACCESS",
-      "redistributable": false
+      "redistributable": false,
+      "local_image_file_count": 0,
+      "notes": "37 selected title definitions; no official Manga109 image archive or authorized local image files present."
     },
     {
       "id": "jmangabench",
       "source": "https://github.com/muscgab/JMangaBench_Mixed",
-      "status": "MISSING",
-      "requires": "separately obtained Manga109-s image release"
+      "status": "BLOCKED_BY_ASSET_ACCESS",
+      "requires": "separately obtained Manga109-s image release",
+      "provides": [
+        "code",
+        "recipes",
+        "metadata",
+        "reference text"
+      ],
+      "image_redistribution_status": "Manga109-s imagery not included; gated image release required",
+      "local_images_file_count": 0,
+      "notes": "Buildable examples and benchmark images depend on Manga109-s source pages; code-only access is not a runnable benchmark."
     },
     {
       "id": "coo_and_manga109_dialog",
       "source": "https://github.com/manga109/public-annotations",
       "status": "PARTIAL",
-      "notes": "Public annotations are available; Manga109 images remain gated."
+      "notes": "37 COO XML + 37 Manga109Dialog XML + 2 license texts downloaded and XML validated; no paired Manga109 images. Manga109Dialog is speaker-to-text ID relation data, not standalone dialogue transcription.",
+      "local_annotation_file_count": 74,
+      "local_license_file_count": 2,
+      "local_image_file_count": 0,
+      "local_path": "日漫_JA/02_public_annotations",
+      "license": "CC BY 4.0 (annotations only)",
+      "checksum_inventory": "manifests/local_asset_inventory.json"
     },
     {
       "id": "text_mask",
       "source": "https://zenodo.org/records/4511796",
-      "status": "NOT_RUN",
-      "notes": "Current record lists two ZIPs totaling about 19.2 MB; derived image rights not verified."
+      "status": "BLOCKED_BY_ASSET_ACCESS",
+      "notes": "No files downloaded: masks derive from gated Manga109 pages, the record did not establish image redistribution rights, and the paired source images are unavailable.",
+      "local_file_count": 0,
+      "local_path": "日漫_JA/03_text_mask"
     },
     {
       "id": "ko_sfx_dialogue_cleaned_webtoon",
       "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
       "status": "PARTIAL"
+    },
+    {
+      "id": "peppercarrot_japanese_localized_pages",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "status": "READY",
+      "license": "CC BY 4.0 with attribution",
+      "image_redistribution_status": "redistributable with attribution; raw files remain git-ignored",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot",
+      "local_image_file_count": 10,
+      "local_transcript_archive_count": 2,
+      "ground_truth_type": "partial SVG text layer: E20P06/E20P07; no dialogue boxes or masks",
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "translation",
+        "manga_page_render"
+      ],
+      "pipeline_status": "NOT_RUN",
+      "notes": "10 Japanese-localized page images and two SVG language-pack archives; partial SVG text is available on E20P06/E20P07 only, with no dialogue boxes or masks."
+    },
+    {
+      "id": "openmantra_candidate",
+      "source": "https://github.com/mantra-inc/open-mantra-dataset",
+      "status": "MISSING",
+      "provides": [
+        "Japanese page images",
+        "Japanese/English/Chinese transcription",
+        "text bounding boxes"
+      ],
+      "license": "CC BY-NC 4.0",
+      "image_redistribution_status": "Non-commercial only; not acquired because project-use scope is not classified as non-commercial.",
+      "local_path": "日漫_JA/05_openmantra_candidate",
+      "local_file_count": 0,
+      "reason": "License scope prevents treating it as an unrestricted product test asset; no files copied or counted runnable.",
+      "notes": "Source repository describes five Japanese manga titles and annotations. Revisit only for a non-commercial-only test scope; this does not block M2-TA2A."
     }
   ],
   "sources": {
@@ -138,7 +192,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -192,7 +246,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -243,7 +297,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -296,7 +350,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -349,7 +403,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -400,7 +454,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -453,7 +507,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -506,7 +560,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -559,7 +613,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -612,7 +666,7 @@
         "regression",
         "full"
       ],
-      "asset_status": "MISSING",
+      "asset_status": "READY",
       "asset_profile": {
         "kind": "hf_cleaned_webtoon",
         "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
@@ -923,7 +977,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -962,7 +1015,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1001,7 +1053,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1040,7 +1091,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1079,7 +1129,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1118,7 +1167,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1157,7 +1205,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1196,7 +1243,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1235,7 +1281,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -1274,7 +1319,6 @@
       ],
       "ground_truth_available": "public_annotations_available_images_gated",
       "levels": [
-        "smoke",
         "regression",
         "full"
       ],
@@ -2307,6 +2351,383 @@
       "asset_status": "MISSING_GATED_ASSET",
       "asset_profile": {
         "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J38",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P02",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P02.svg"
+      }
+    },
+    {
+      "case_id": "J39",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P03",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P03.svg"
+      }
+    },
+    {
+      "case_id": "J40",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P06",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P06.svg"
+      }
+    },
+    {
+      "case_id": "J41",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P01",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/ja/E20P01.svg"
+      }
+    },
+    {
+      "case_id": "J42",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P02",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/ja/E20P02.svg"
+      }
+    },
+    {
+      "case_id": "J43",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P03",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/ja/E20P03.svg"
+      }
+    },
+    {
+      "case_id": "J44",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P04",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/ja/E20P04.svg"
+      }
+    },
+    {
+      "case_id": "J45",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P05",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/ja/E20P05.svg"
+      }
+    },
+    {
+      "case_id": "J46",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P06",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "japanese_end_card_and_credits",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [
+        "horizontal_text"
+      ],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "translation",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "partial_svg_text_layer",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/ja/E20P06.svg"
+      }
+    },
+    {
+      "case_id": "J47",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P07",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "dense_multilingual_credits",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [
+        "horizontal_text",
+        "tiny_text"
+      ],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "translation",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "partial_svg_text_layer",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/ja/E20P07.svg"
       }
     }
   ]
