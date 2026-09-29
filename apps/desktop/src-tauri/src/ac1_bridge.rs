@@ -63,13 +63,22 @@ impl Ac1Channel {
         python_exe: &str,
         src_root: &std::path::Path,
     ) -> Result<Self, Ac1Error> {
-        let mut child = Command::new(python_exe)
-            .args(spawn_args())
+        // M2-RG1 AC2: Command-construction section only — CREATE_NO_WINDOW on
+        // Windows; argv/cwd/env/stdio semantics unchanged.
+        let mut cmd = Command::new(python_exe);
+        cmd.args(spawn_args())
             .current_dir(src_root)
             .env("PYTHONPATH", src_root)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
-            .stderr(Stdio::inherit())
+            .stderr(Stdio::inherit());
+        #[cfg(windows)]
+        {
+            use std::os::windows::process::CommandExt;
+            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+            cmd.creation_flags(CREATE_NO_WINDOW);
+        }
+        let mut child = cmd
             .spawn()
             .map_err(|error| Ac1Error { code: format!("AC1_SPAWN_FAILED:{error}") })?;
         let stdin = child

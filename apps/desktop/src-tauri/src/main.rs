@@ -1,3 +1,9 @@
+// M2-RG1 AC2 (GUI console policy, release builds only): the packaged app is a
+// GUI-subsystem binary — no console window may appear for the app itself.
+// Dev builds (debug_assertions) keep the console on purpose: probe evidence
+// includes startup stderr (comment below, dev behavior unchanged).
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
+
 //! M2-RC1/M2-RC2 — Contract-Aligned Large-Media Resource Channel Runtime.
 //!
 //! Vertical slice: Python Core (reference + catalog authority) ⇄ Tauri/Rust
