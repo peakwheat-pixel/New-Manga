@@ -11,10 +11,10 @@ Execution checkpoint: 2026-09-29 (Asia/Shanghai)
 | Field | Current value |
 |---|---|
 | Branch / audit base | `main`; M2-TA2C fixed base=`d4d3977907bc64177ef85c61da4c95901f135fc6`. Resolve live HEAD with `git rev-parse HEAD`. |
-| Current Active Task | None. [M2-TA2C](tasks/M2-TA2C.md) is released `ready` after read-only audit; implementation claim pending. |
-| Current released Task | [M2-TA2C](tasks/M2-TA2C.md) No-HF JA/KO Asset Migration, `ready`. [M2-TA2B](tasks/M2-TA2B.md) remains gated `proposed / BLOCKED_BY_ASSET_ACCESS`; M2-TA3 remains proposed. |
+| Current Active Task | [M2-TA2C](tasks/M2-TA2C.md) No-HF JA/KO Asset Migration, `in_progress` in `agent/codex/M2-TA2C-no-hf-assets`. |
+| Current released Task | M2-TA2C is claimed. [M2-TA2B](tasks/M2-TA2B.md) remains gated `proposed / BLOCKED_BY_ASSET_ACCESS`; M2-TA3 remains proposed. |
 | Owner / Reviewer / Integrator | M2-TA2C: Codex Desktop / DeepSeek Harness (non-author) / Codex Desktop. M2-TA2B when access gate clears: ZCode / DeepSeek Harness / Codex Desktop. |
-| Recovery point | Main worktree=`G:/CODEX/New Manga`, fixed base=`d4d3977907bc64177ef85c61da4c95901f135fc6`; M2-TA2C worktree is pending creation. M2-TA2A remains integrated at `ef13a77bedf8bb06ee222113da186c7bfff09714`. |
+| Recovery point | Main worktree=`G:/CODEX/New Manga`; M2-TA2C fixed base=`d4d3977907bc64177ef85c61da4c95901f135fc6`, release=`ff2dee6c0dc0a20991dd2bfc3436b690d091e6e4`, claim=`391faae830e35ffec687863721d82cb0f1ac89bd`, worktree=`C:/Users/49745/.codex/worktrees/no-hf-comic-assets/New Manga`. M2-TA2A remains integrated at `ef13a77bedf8bb06ee222113da186c7bfff09714`. |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/FIX-F02-RESOURCE-CHANNEL-FLAKY、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；产品代码最新 integration=`aa2f99b8`（F02 资源通道安全缺口修复）；随后 M2-TA2A 素材集成=`ef13a77b`（资产定向测试 23 passed）；**m2_acceptance 35 passed 0 xfailed 全绿、tests/core 77 passed、cargo 34 passed、vitest 31 tests** |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`69961029`（F-2 unknown 通道，契约 1.2） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`d71883ec`（M2-FIX-EXPORT-LINEAGE F-1 修复） |
