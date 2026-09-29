@@ -1,0 +1,5 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode HEAD=a164e414e8ff62940229d60d4dc046f89308b8b3 date=2026-09-29T18:41:36Z cmd=python - <ac1 red/green demo: old load_manifest (git show f3d684eb) accepts evil source_url, new one rejects>
+RED  (old f3d684eb load_manifest): NO ERROR raised; case source_url accepted: https://evil.example/x
+GREEN (working-tree load_manifest): ValueError raised: source_url host is outside the approved whitelist: K01
+DEMO RESULT: red (old accepts evil.example) + green (new rejects) = discriminative
+# EXIT=0

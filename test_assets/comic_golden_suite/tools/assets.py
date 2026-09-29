@@ -21,6 +21,7 @@ from pathlib import Path, PurePosixPath, PureWindowsPath
 
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = ROOT.resolve().parents[1]
 MANIFEST_PATH = ROOT / "manifests" / "cases.json"
 INVENTORY_PATH = ROOT / "manifests" / "local_asset_inventory.json"
 PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
@@ -33,6 +34,28 @@ MAX_PUBLIC_ZIP_TOTAL_BYTES = 128 * 1024 * 1024
 MAX_PUBLIC_ZIP_ENTRY_BYTES = 16 * 1024 * 1024
 MAX_PUBLIC_XML_BYTES = 8 * 1024 * 1024
 PUBLIC_COMIC_HOST = "www.peppercarrot.com"
+# Frozen from the set of https hosts actually present in manifests/cases.json
+# source_url values (reconnaissance 2026-09-29: 47 cases on huggingface.co,
+# 21 cases on www.peppercarrot.com). Adding a host requires an explicit change
+# here; unknown hosts fail closed at manifest load time.
+SOURCE_URL_HOSTS = frozenset({"www.peppercarrot.com", "huggingface.co"})
+
+
+def validate_source_url(case_id: str, url: str) -> None:
+    try:
+        parsed = urllib.parse.urlsplit(url)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"invalid source_url: {case_id}") from exc
+    accepted = (
+        parsed.scheme.lower() == "https"
+        and parsed.hostname is not None
+        and parsed.hostname.lower() in SOURCE_URL_HOSTS
+        and parsed.username is None
+        and parsed.password is None
+        and parsed.port in (None, 443)
+    )
+    if not accepted:
+        raise ValueError(f"source_url host is outside the approved whitelist: {case_id}")
 
 
 def load_manifest() -> dict:
@@ -66,6 +89,7 @@ def load_manifest() -> dict:
             raise ValueError(f"invalid pipeline status: {case['case_id']}")
         if not all(isinstance(case.get(key), str) and case[key] for key in ("source_name", "asset_type", "source_url", "license")):
             raise ValueError(f"missing source metadata: {case['case_id']}")
+        validate_source_url(case["case_id"], case["source_url"])
         if not isinstance(case.get("ground_truth_types"), list) or not all(isinstance(item, str) for item in case["ground_truth_types"]):
             raise ValueError(f"invalid ground truth types: {case['case_id']}")
         local = (ROOT / Path(case["local_path"])).resolve()
@@ -214,6 +238,39 @@ def verify_inventory_files() -> tuple[list[str], int, int, set[str]]:
                 failures.append(f"{asset['asset_id']}: size or SHA-256 mismatch: {item['path']}")
                 invalid_paths.add(name)
     return failures, checked, missing, invalid_paths
+
+
+def verify_benchmark_source_inventories(manifest: dict) -> tuple[list[str], int]:
+    """Existence check for every non-empty benchmark_sources checksum_inventory path.
+
+    Paths are repository-root relative (see README). The per-file hash recheck for
+    local_asset_inventory.json is performed once by verify_inventory_files(); this
+    pass adds the previously unconsumed benchmark_sources entries to that flow.
+    """
+    failures: list[str] = []
+    checked = 0
+    for source in manifest.get("benchmark_sources", []):
+        raw = source.get("checksum_inventory")
+        if not isinstance(raw, str) or not raw:
+            continue
+        source_id = source.get("id", "<unknown>")
+        relative = PurePosixPath(raw)
+        if (
+            "\\" in raw or ":" in raw or PureWindowsPath(raw).drive
+            or relative.is_absolute() or ".." in relative.parts or relative.as_posix() != raw
+        ):
+            failures.append(f"{source_id}: unsafe checksum_inventory path {raw}")
+            continue
+        candidate = REPO_ROOT / Path(*relative.parts)
+        if candidate.is_symlink() or not candidate.is_file():
+            failures.append(f"{source_id}: checksum_inventory file is missing: {raw}")
+            continue
+        # For local_asset_inventory.json entries the full per-file hash recheck is
+        # performed by verify_inventory_files() in the same command run; other audit
+        # files (e.g. verification/M2-TA2C/ko-webtoon-audit.json) are consumed at
+        # existence level per the frozen plan.
+        checked += 1
+    return failures, checked
 
 
 def valid_png(path: Path) -> bool:
@@ -825,11 +882,15 @@ def main() -> int:
             parser.error("--case-id must name a case in the selected language and level")
     if args.command in {"verify", "list", "missing"}:
         inventory_failures, inventory_checked, inventory_missing, invalid_paths = verify_inventory_files()
+        benchmark_failures, benchmark_checked = verify_benchmark_source_inventories(manifest)
         case_statuses = print_cases(cases, show_missing_only=args.command == "missing", invalid_inventory_paths=invalid_paths)
         print(f"INVENTORY\tchecked={inventory_checked} missing={inventory_missing} failures={len(inventory_failures)}")
+        print(f"BENCHMARK_INVENTORY\tchecked={benchmark_checked} failures={len(benchmark_failures)}")
         for failure in inventory_failures:
             print(f"INVALID_INVENTORY\t{failure}")
-        if inventory_failures:
+        for failure in benchmark_failures:
+            print(f"INVALID_BENCHMARK_INVENTORY\t{failure}")
+        if inventory_failures or benchmark_failures:
             print("SUMMARY\tFAILED")
             return 1
         if args.command in {"list", "missing"}:

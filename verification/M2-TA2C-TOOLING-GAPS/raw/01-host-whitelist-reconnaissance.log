@@ -1,0 +1,11 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode HEAD=a164e414e8ff62940229d60d4dc046f89308b8b3 date=2026-09-29T18:41:16Z cmd=python -c <enumerate all case source_url https hosts in manifests/cases.json>
+total cases: 68
+host https://huggingface.co cases= 47
+host https://www.peppercarrot.com cases= 21
+FROZEN WHITELIST = ['huggingface.co', 'www.peppercarrot.com']
+non-empty benchmark checksum_inventory entries: 4
+   coo_and_manga109_dialog -> test_assets/comic_golden_suite/manifests/local_asset_inventory.json
+   ko_sfx_dialogue_cleaned_webtoon -> verification/M2-TA2C/ko-webtoon-audit.json
+   peppercarrot_japanese_localized_pages -> test_assets/comic_golden_suite/manifests/local_asset_inventory.json
+   peppercarrot_korean_localized_pages -> test_assets/comic_golden_suite/manifests/local_asset_inventory.json
+# EXIT=0

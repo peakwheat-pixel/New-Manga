@@ -1,0 +1,46 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode HEAD=a164e414e8ff62940229d60d4dc046f89308b8b3 date=2026-09-29T18:41:16Z cmd=python -m pytest tests/m2_test_assets -v (system python 3.14.6, pytest 9.1.1)
+============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- C:\Python314\python.exe
+cachedir: .pytest_cache
+rootdir: G:\CODEX\New Manga.worktrees\M2-TA2C-TOOLING-GAPS-zcode
+configfile: pytest.ini
+plugins: anyio-4.14.2
+collecting ... collected 34 items
+
+tests/m2_test_assets/test_catalog.py::test_manifest_has_unique_cases_and_exact_taxonomy PASSED [  2%]
+tests/m2_test_assets/test_catalog.py::test_source_registry_does_not_count_code_or_blocked_assets_as_ready PASSED [  5%]
+tests/m2_test_assets/test_catalog.py::test_manifest_rejects_path_escape PASSED [  8%]
+tests/m2_test_assets/test_catalog.py::test_manifest_rejects_non_whitelisted_source_url[https://evil.example/x] PASSED [ 11%]
+tests/m2_test_assets/test_catalog.py::test_manifest_rejects_non_whitelisted_source_url[http://www.peppercarrot.com/kr/webcomic-sources/ep06_The-Potion-Contest.html] PASSED [ 14%]
+tests/m2_test_assets/test_catalog.py::test_benchmark_checksum_inventory_paths_exist[coo_and_manga109_dialog] PASSED [ 17%]
+tests/m2_test_assets/test_catalog.py::test_benchmark_checksum_inventory_paths_exist[ko_sfx_dialogue_cleaned_webtoon] PASSED [ 20%]
+tests/m2_test_assets/test_catalog.py::test_benchmark_checksum_inventory_paths_exist[peppercarrot_japanese_localized_pages] PASSED [ 23%]
+tests/m2_test_assets/test_catalog.py::test_benchmark_checksum_inventory_paths_exist[peppercarrot_korean_localized_pages] PASSED [ 26%]
+tests/m2_test_assets/test_catalog.py::test_ko_sfx_dialogue_cleaned_webtoon_inventory_semantics PASSED [ 29%]
+tests/m2_test_assets/test_catalog.py::test_benchmark_inventory_missing_path_detection_demo PASSED [ 32%]
+tests/m2_test_assets/test_catalog.py::test_ko_ground_truth_directory_naming_snapshot PASSED [ 35%]
+tests/m2_test_assets/test_catalog.py::test_download_skips_existing_file_without_network PASSED [ 38%]
+tests/m2_test_assets/test_catalog.py::test_failed_download_cleans_partial_file PASSED [ 41%]
+tests/m2_test_assets/test_catalog.py::test_gated_cases_are_not_fetched PASSED [ 44%]
+tests/m2_test_assets/test_catalog.py::test_clean_eof_before_content_length_does_not_publish_asset PASSED [ 47%]
+tests/m2_test_assets/test_catalog.py::test_partial_manual_and_gated_titles_never_report_ready PASSED [ 50%]
+tests/m2_test_assets/test_catalog.py::test_webtoon_list_status_checks_png_structure PASSED [ 52%]
+tests/m2_test_assets/test_catalog.py::test_verify_fails_when_public_smoke_page_is_missing PASSED [ 55%]
+tests/m2_test_assets/test_catalog.py::test_official_manga_archive_import_is_selective_and_idempotent PASSED [ 58%]
+tests/m2_test_assets/test_catalog.py::test_manga_archive_rejects_zip_slip_paths PASSED [ 61%]
+tests/m2_test_assets/test_catalog.py::test_manga_archive_page_names_must_match_annotation_indices PASSED [ 64%]
+tests/m2_test_assets/test_public_assets.py::test_public_page_download_is_atomic_validated_and_idempotent PASSED [ 67%]
+tests/m2_test_assets/test_public_assets.py::test_korean_public_page_uses_same_download_and_member_checks PASSED [ 70%]
+tests/m2_test_assets/test_public_assets.py::test_cases_in_one_directory_reuse_and_validate_shared_transcript_zip PASSED [ 73%]
+tests/m2_test_assets/test_public_assets.py::test_public_page_requires_both_image_and_transcript_member PASSED [ 76%]
+tests/m2_test_assets/test_public_assets.py::test_corrupt_zip_crc_and_unsafe_entries_never_report_ready PASSED [ 79%]
+tests/m2_test_assets/test_public_assets.py::test_public_download_rejects_wrong_host_and_redirect_without_publishing PASSED [ 82%]
+tests/m2_test_assets/test_public_assets.py::test_redirect_handler_blocks_cross_host_request_before_following PASSED [ 85%]
+tests/m2_test_assets/test_public_assets.py::test_interrupted_or_short_download_leaves_no_published_file PASSED [ 88%]
+tests/m2_test_assets/test_public_assets.py::test_public_transcript_rejects_invalid_svg_xml PASSED [ 91%]
+tests/m2_test_assets/test_public_assets.py::test_inventory_verifier_detects_checksum_drift PASSED [ 94%]
+tests/m2_test_assets/test_public_assets.py::test_missing_media_is_counted_but_missing_annotation_fails PASSED [ 97%]
+tests/m2_test_assets/test_public_assets.py::test_checksum_drift_keeps_structurally_valid_public_page_out_of_ready PASSED [100%]
+
+============================= 34 passed in 0.54s ==============================
+# EXIT=0

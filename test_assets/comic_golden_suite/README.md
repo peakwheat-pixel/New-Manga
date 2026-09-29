@@ -8,13 +8,14 @@ Case 的 `READY` 只表示预期本地文件存在且通过完整性验证。它
 
 ## 路径与工具
 
-- `manifests/cases.json` 是 JA/KO 统一清单和困难标签 taxonomy；Case 路径相对本目录，适用于 Windows。每个 Case 共用 `source_name`、`asset_type`、`image_available`、`annotation_available`、`source_url`、`license`、`ground_truth_types`、`pipeline_status` 等字段。`image_available` / `annotation_available` 是本次本机文件快照，实时状态仍须由 CLI 复算。
-- `benchmark_sources[*].checksum_inventory` 的非空路径以仓库根目录为基准；`null` 表示本地没有可校验的对应文件。来源层 `READY` 只覆盖该条目注明的已取得范围（KO Cleaned Webtoon 为固定 10 Case），不表示原图再分发许可或应用 Pipeline 通过。
+- `manifests/cases.json` 是 JA/KO 统一清单和困难标签 taxonomy；Case 路径相对本目录，适用于 Windows。每个 Case 共用 `source_name`、`asset_type`、`image_available`、`annotation_available`、`source_url`、`license`、`ground_truth_types`、`pipeline_status` 等字段。`image_available` / `annotation_available` 是本次本机文件快照，实时状态仍须由 CLI 复算。`load_manifest` 会对每个 Case 的 `source_url` 施加 HTTPS 主机白名单（`www.peppercarrot.com`、`huggingface.co`，与清单实际出现的 host 集合一致）；非白名单 host、非 HTTPS 或带凭据/非常规端口的 URL 会被 `ValueError` 拒绝（fail-closed）。
+- `benchmark_sources[*].checksum_inventory` 的非空路径以仓库根目录为基准；`null` 表示本地没有可校验的对应文件。`verify`、`list`、`missing` 均在运行时消费该字段：非空路径会做存在性校验，`local_asset_inventory.json` 条目沿用既有逐文件 SHA-256 复核，其他审计清单（如 KO Cleaned Webtoon 审计）按存在性消费；缺失会以 `INVALID_BENCHMARK_INVENTORY` 报告并使命令失败。来源层 `READY` 只覆盖该条目注明的已取得范围（KO Cleaned Webtoon 为固定 10 Case），不表示原图再分发许可或应用 Pipeline 通过。
 - `cases.json` 中的 `status` / `asset_status` 是维护清单时的快照；每次运行时以 CLI 根据当前本地文件、inventory checksum 和格式检查计算出的状态为准。
 - `manifests/local_asset_inventory.json` 记录已取得的 JA 资源及本次 KO Pepper&Carrot 页的许可、内容类型、文件数、字节数、逐文件 SHA-256、GT 能力和 Pipeline 状态；`verify`、`list`、`missing` 均重新计算 inventory 文件的哈希。必需 XML / license 缺失或任一文件哈希不符会返回失败；缺失的图像会在状态与 `missing` 输出中显示。
 - 继承自 M2-TA1 的 80 个 KO Webtoon 资产未纳入运行时 SHA inventory；其 `READY` 表示所需 PNG/JSON 文件存在、PNG chunk CRC 与结构有效、JSON 可解析。本次将 80 个文件的 SHA-256 固定记录在 `../../verification/M2-TA2C/ko-webtoon-audit.json` 供外部复核；当前 CLI 不据此拒绝另一个结构正确的 PNG。
 - `../../verification/M2-TA2A/source-audit.md` 记录来源实物类型、许可/访问边界和本次不下载原因；只有注释而无图像的来源不会记为可运行资产。
 - `韩漫_KO/` 与 `日漫_JA/` 是本地原始素材位置。原始图像和归档默认忽略；只有 `日漫_JA/02_public_annotations/` 下明确标为 CC BY 4.0 的选定 XML 标注及相应许可文本进入 Git。该注释目录通过 `.gitattributes` 保留源字节，避免 Windows 行尾转换影响哈希。
+- KO Pepper&Carrot 两族目录前缀不同（O01–O08 用 `02_open_ground_truth_peppercarrot`，K11–K13 用 `02_public_ground_truth_peppercarrot`）是已知命名观察（TA2C P3-6）；为保证本地素材路径稳定性不改盘上目录，差异已作为受管事实记录在相关 Case 的 `naming_note` 字段并由 `tests/m2_test_assets/test_catalog.py` 的快照断言锁定，统一留待后续 Task。
 - `tools/assets.py` 使用 Python 标准库，提供 `download`、`verify`、`list`、`missing`；支持 `--language ja|ko`、`--level smoke|regression|full` 和重复传入的 `--case-id`。新增公共 JA/KO 页面只接受 HTTPS `www.peppercarrot.com`，校验 URL/重定向、响应大小、JPEG、ZIP 路径、CRC 和对应语言 SVG/XML 成员，原子发布且不覆盖有效文件。保留旧 KO Webtoon 下载入口供显式恢复；日常 L0/L1 已有本地文件无需 HF 账号或重新下载。
 
 ## 资产状态（M2-TA2C，2026-09-29）

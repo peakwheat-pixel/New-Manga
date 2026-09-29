@@ -2,13 +2,13 @@
 id: M2-TA2C-TOOLING-GAPS
 title: "comic_golden_suite 工具清算：source_url 主机白名单 + checksum_inventory 运行时消费与判别性断言（TA2C P3-6/P3-10）"
 kind: fix
-status: ready
+status: in_review
 approval: orchestrator_delegated_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（待派发，非作者静态）
 depends_on: []
-base_commit: PENDING_SET_AT_CLAIM
+base_commit: f3d684eb767414a3c5ac010f7920657204cc9336
 branch: agent/zcode/M2-TA2C-TOOLING-GAPS
 worktree: G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode
 integration_commit: null
@@ -33,11 +33,11 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1（白名单）：非白名单 host 的 `source_url` 在 `load_manifest` 被拒（单测：tmp manifest 注入 `https://evil.example/x` → ValueError）；白名单内既有 manifest 加载不受影响（既有测试全绿）。
-- [ ] AC2（inventory 运行时消费）：`assets.py verify` 对非空 `checksum_inventory` 路径做存在性与（对 local_asset_inventory.json）逐文件哈希复核；`python tools/assets.py verify --language ja --level smoke` 与 `--language ko --level smoke` EXIT=0（素材在主工作区，若 worktree 无素材则以 `--manifest` 注入或从主工作区只读复制方式验证，如实记录）。
-- [ ] AC3（判别性断言）：参数化断言覆盖全部 sources 的非空 inventory 路径存在性；判别演示（坏路径 → 红）入日志。
-- [ ] AC4（命名快照）：同族目录命名现状以受管断言固化 + 注释（不重命名）。
-- [ ] AC5（范围与证据）：diff 仅触及允许路径；`git diff --check` EXIT=0；pytest `tests/m2_test_assets` 全绿 EXIT=0；日志带 shell 头/HEAD/EXIT。
+- [x] AC1（白名单）：非白名单 host 的 `source_url` 在 `load_manifest` 被拒（单测：tmp manifest 注入 `https://evil.example/x` → ValueError）；白名单内既有 manifest 加载不受影响（既有测试全绿）。白名单以 cases.json 实测 host 集合冻结：`{www.peppercarrot.com, huggingface.co}`（47+21 cases；manga109.github.io 实测未出现在任何 case source_url，未纳入）。
+- [x] AC2（inventory 运行时消费）：`assets.py verify` 对非空 `checksum_inventory` 路径做存在性与（对 local_asset_inventory.json）逐文件哈希复核；`python tools/assets.py verify --language ja --level smoke` 与 `--language ko --level smoke` EXIT=0（worktree 无素材，已从主工作区只读复制 96 个 gitignored 媒体文件验证并如实记录）。
+- [x] AC3（判别性断言）：参数化断言覆盖全部 sources 的非空 inventory 路径存在性（4 条）；判别演示（坏路径 → 红）入日志。侦察确认 `ko_sfx_dialogue_cleaned_webtoon` 的 checksum_inventory 实测**非 null**（= `verification/M2-TA2C/ko-webtoon-audit.json`），按预案断言存在并注释 README null 语义。
+- [x] AC4（命名快照）：同族目录命名现状以受管断言固化 + 注释（不重命名）；O01-O08/K11-K13 共 11 个 case 新增 `naming_note`，快照断言锁定 `02_open_`/`02_public_` 前缀现状。
+- [x] AC5（范围与证据）：diff 仅触及允许路径（4 个代码/数据文件 + 本 Task 文档与日志）；`git diff --check` EXIT=0；pytest `tests/m2_test_assets` 34 passed EXIT=0；日志带 shell 头/HEAD/EXIT。
 
 ## 允许修改范围
 
@@ -57,10 +57,11 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 白名单拒毒 | tmp manifest 注入非白名单 URL → ValueError（先红演示） | 标准 pytest | NOT_RUN | 待入 verification |
-| AC2 verify 消费 inventory | `assets.py verify` 两语言 smoke EXIT=0 | 素材可用 | NOT_RUN | 待入 verification |
-| AC3 参数化存在性断言 | pytest tests/m2_test_assets EXIT=0 + 坏路径红演示 | 标准 pytest | NOT_RUN | 待入 verification |
-| AC5 回归 | pytest tests/m2_test_assets 全套 + diff --check | 标准 pytest | NOT_RUN | 待入 verification |
+| AC1 白名单拒毒 | tmp manifest 注入非白名单 URL → ValueError（先红演示） | 系统 Python 3.14.6 + pytest 9.1.1（HEAD=`a164e414`） | PASS：旧版（`git show f3d684eb`）静默接受，新版 ValueError（34 passed 含参数化 2 例） | verification/M2-TA2C-TOOLING-GAPS/raw/02-ac1-red-demo-old-vs-new.log、06-ac5-pytest-full.log |
+| AC2 verify 消费 inventory | `assets.py verify` 两语言 smoke EXIT=0 | 素材可用（worktree 从主工作区只读复制 96 个 gitignored 媒体文件） | PASS：ja/ko 均 EXIT=0、READY=10、INVENTORY checked=92 failures=0、BENCHMARK_INVENTORY checked=4 failures=0；list EXIT=0 READY=20 | raw/03-ac2-verify-ja-smoke.log、04-ac2-verify-ko-smoke.log、05-ac2-list-benchmark-status.log |
+| AC3 参数化存在性断言 | pytest tests/m2_test_assets EXIT=0 + 坏路径红演示 | 同上 | PASS：4 个非空 inventory source 参数化断言 + 判别演示（BROKEN checked=3 failures=[missing]） | raw/06-ac5-pytest-full.log、08-ac3-detection-demo-direct-call.log |
+| AC4 命名快照 | cases.json naming_note 插入 + 快照断言（不重命名） | 同上 | PASS：11 case 增量、剥离 naming_note 后与基线 JSON 全等 | raw/06-ac5-pytest-full.log |
+| AC5 回归 | pytest tests/m2_test_assets 全套 + diff --check | 同上 | PASS：34 passed EXIT=0；diff --check EXIT=0；改动仅 4 个允许路径 | raw/06-ac5-pytest-full.log、07-ac5-diff-check-and-scope-proof.log |
 
 ## 依赖、风险与阻塞
 
@@ -70,7 +71,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
+- Handoff：[M2-TA2C-TOOLING-GAPS-a164e414](../handoffs/M2-TA2C-TOOLING-GAPS-a164e414.md)（2026-09-30，delivery_head=`a164e414e8ff62940229d60d4dc046f89308b8b3`，status=in_review）。
+- Review：尚无（待 DeepSeek Harness 非作者静态审查）。
+- 实际测试：2026-09-30，ZCode 于 worktree `M2-TA2C-TOOLING-GAPS-zcode` 执行；系统 Python 3.14.6 + pytest 9.1.1；`pytest tests/m2_test_assets -v` 34 passed EXIT=0；verify ja/ko smoke EXIT=0（BENCHMARK_INVENTORY checked=4 failures=0）；判别演示与红/绿演示见 `verification/M2-TA2C-TOOLING-GAPS/raw/*.log`（HEAD 均为 `a164e414`）。侦察差异记录：白名单实测 2 host（编排预期 3）；ko_sfx checksum_inventory 实测非 null（编排预期 null，按预案断言存在）。未运行：`tests/m2_acceptance`、`download` 命令（不在本 Task 范围）。
 - 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 Codex（代行）填写 integration_commit 并改 done。
