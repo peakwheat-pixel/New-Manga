@@ -5,17 +5,23 @@ an environment that provably has NO system Python on PATH and NO M2RC1_*
 source-tree env:
 
   0. environment record + PATH purge assertion (``python`` must NOT resolve)
-  1. NSIS silent install into a space-free temp dir (``/S /D=...``)
+     + READ-ONLY snapshot of the HOST's real %APPDATA% user root (P2-4)
+  1. NSIS silent install into a space-free temp dir (``/S /D=...``; the
+     /D= target is guarded against spaces, P3-6)
+  1.5 packaged library probe (P2-2): the INSTALLED core_service.exe serves
+     core.ping / ListBooks / core.shutdown over stdio JSON-lines
   2. PROBE mode: launcher-side catalog seeding through the packaged
      catalog_loader.exe (the frozen equivalent of the dev runners'
      ``python -m infrastructure.resource_channel.catalog_loader``), then the
      full WebView resource-channel matrix; gate = probe results JSON verdicts
   3. AC1 test mode: the deterministic acceptance loop (pipeline -> SQLite ->
      restart -> restore -> reader -> PNG export); gate = results JSON verdicts
-  4. PRODUCTION mode: real window, %APPDATA% userData layout assertions,
-     graceful close, sidecar reaping assertion
-  5. AC4: install-dir write-diff (hash before/after all runs), user source
-     files byte-identical, no surviving sidecar/python processes
+  4. PRODUCTION mode: real window, ISOLATED %APPDATA% userData layout
+     assertions (every launch env pins APPDATA into the lab — P2-4), graceful
+     close, sidecar reaping assertion
+  5. AC4: install-dir write-diff (hash before/after all runs), host real
+     %APPDATA% byte-identical proof (CS-Z4), user source files byte-identical,
+     no surviving sidecar processes
 
 Scope note (frozen at release): this is the LOCAL host-simulation route
 (python purged from PATH + M2RC1_* cleared); a truly clean Windows machine is
@@ -63,7 +69,12 @@ SIDECAR_EXES = (
     "acceptance_bridge.exe",
     "catalog_loader.exe",
 )
-USER_ROOT = Path(os.environ.get("APPDATA", "")) / "com.newmanga.m2rc1.desktop"
+#: The HOST's real user-data root — READ-ONLY for the P2-4 untouched proof
+#: (hashed before/after the whole run, never written, never deleted). The app
+#: itself never sees this path: every launch env pins APPDATA into the lab
+#: (see *_env functions), which is exactly what packaged main.rs
+#: `packaged_user_root()` consumes via std::env::var("APPDATA").
+HOST_USER_ROOT = Path(os.environ.get("APPDATA", "")) / "com.newmanga.m2rc1.desktop"
 
 ANNOUNCE_PRODUCTION = "[m2rc2-allowlist] production:"
 LAUNCH_TIMEOUT = 240
@@ -151,9 +162,16 @@ def assert_no_python_on_path(env: dict) -> tuple[bool, str]:
     if probe.returncode == 0:
         return False, f"python still resolves under purged PATH: {probe.stdout.strip()}"
     # also prove the packaged exes themselves are independent of any python:
-    # list what IS resolvable for the record
+    # list what IS resolvable for the record (P3-2: mbcs decode — `where`
+    # localizes its output and would explode the reader thread on zh-CN)
     where_py_exes = subprocess.run(
-        ["where", "host_bridge.exe"], env=env, capture_output=True, text=True, timeout=30
+        ["where", "host_bridge.exe"],
+        env=env,
+        capture_output=True,
+        text=True,
+        encoding="mbcs",
+        errors="replace",
+        timeout=30,
     )
     return True, (
         "python not on purged PATH (where exit="
@@ -174,6 +192,16 @@ def dir_tree_hashes(root: Path) -> dict[str, str]:
 
 
 def silent_install(installer: Path, target: Path, env: dict) -> tuple[bool, str]:
+    # P3-6 guard: NSIS `/D=` must be the LAST argument, unquoted, and the
+    # target path must not contain spaces (the unquoted-/D= rule makes
+    # space-containing install dirs ambiguous — fail closed instead).
+    if " " in str(target):
+        return False, (
+            f"/D= target contains a space (NSIS unquoted-/D= ambiguity): {target} — "
+            "pick a space-free install dir"
+        )
+    argv = [str(installer), "/S", f"/D={target}"]
+    assert argv[-1].startswith("/D="), "NSIS /D= must be the last installer argument"
     if target.exists():
         subprocess.run(["taskkill", "/F", "/IM", INSTALLED_EXE_NAME], capture_output=True)
         time.sleep(1)
@@ -184,7 +212,7 @@ def silent_install(installer: Path, target: Path, env: dict) -> tuple[bool, str]
     # The NSIS setup exe is a GUI-subsystem process: wait for the installer
     # process itself, then poll for the payload to be fully on disk.
     proc = subprocess.Popen(
-        [str(installer), "/S", f"/D={target}"],
+        argv,
         env=env,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
@@ -286,6 +314,9 @@ def seed_catalog_packaged(install_dir: Path, catalog_db: Path) -> tuple[bool, st
 def probe_env(env: dict, lab: Path) -> dict:
     out = dict(env)
     out["M2RC1_PACKAGED"] = "1"
+    # P2-4 APPDATA isolation: packaged_user_root() reads %APPDATA%; pin it
+    # into the lab so NO app launch can touch the host's real user profile.
+    out["APPDATA"] = str(lab / "probe" / "roaming")
     out["M2RC1_DERIVED_ROOT"] = str(lab / "probe" / "scope" / "derived")
     out["M2RC1_MANAGED_ROOT"] = str(lab / "probe" / "scope" / "managed")
     out["M2RC1_FIXTURES"] = str(lab / "probe" / "fixtures.json")
@@ -299,6 +330,7 @@ def probe_env(env: dict, lab: Path) -> dict:
 def ac1_env(env: dict, lab: Path) -> dict:
     out = dict(env)
     out["M2RC1_PACKAGED"] = "1"
+    out["APPDATA"] = str(lab / "ac1" / "roaming")
     out["M2AC1_TEST_MODE"] = "1"
     # launcher-side lab prep (same contract as the dev AC1 runner): explicit
     # M2RC1_* paths are prepared by the runner, NOT by the host
@@ -317,8 +349,17 @@ def ac1_env(env: dict, lab: Path) -> dict:
 def production_env(env: dict, lab: Path) -> dict:
     out = dict(env)
     out["M2RC1_PACKAGED"] = "1"
+    # P2-4 APPDATA isolation: the packaged defaults (%APPDATA% user root)
+    # resolve INSIDE the lab; the host's real user profile is never visible
+    # to the app and never touched by this runner.
+    out["APPDATA"] = str(lab / "production" / "roaming")
     out["WEBVIEW2_USER_DATA_FOLDER"] = str(lab / "production" / "webview2-udd")
     return out
+
+
+def lab_user_root(lab: Path) -> Path:
+    """The isolated user root the app actually resolves (APPDATA override)."""
+    return lab / "production" / "roaming" / "com.newmanga.m2rc1.desktop"
 
 
 def run_app(exe: Path, env: dict, timeout: int) -> tuple[int, str, int]:
@@ -371,6 +412,108 @@ def list_processes(names: tuple[str, ...]) -> dict[str, int]:
 # --------------------------------------------------------------------------
 # phases
 # --------------------------------------------------------------------------
+
+def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> None:
+    """P2-2: install-state ListBooks workflow assertion (AC3).
+
+    Drives the INSTALLED `<install>/resources/core-sidecar/core_service.exe`
+    directly over stdio JSON-lines (Contract 1.1 envelope) under the purged
+    environment: core.ping round trip, then the ListBooks production command
+    (the exact command the production WebView surface exposes), then
+    core.shutdown. This gives AC3's "ListBooks workflow returns" a
+    machine-observable assertion against the installed artifact itself,
+    independent of the WebView phases.
+    """
+    log("phase 1.5: packaged library sidecar probe (install-state stdio, P2-2)")
+    exe = install_dir / "resources" / "core-sidecar" / "core_service.exe"
+    data_root = lab / "library-probe" / "data-root"
+    data_root.mkdir(parents=True, exist_ok=True)
+    lenv = dict(env)
+    lenv["NEWMANGA_DATA_ROOT"] = str(data_root)
+    lenv["APPDATA"] = str(lab / "library-probe" / "roaming")
+
+    def envelope(request_id: str, command: str) -> str:
+        return json.dumps(
+            {
+                "protocol": "new-manga.core",
+                "version": {"major": 1, "minor": 0},
+                "request_id": request_id,
+                "command": command,
+                "payload": {},
+            }
+        )
+
+    requests = "\n".join(
+        [
+            envelope("r1", "core.ping"),
+            envelope("r2", "ListBooks"),
+            envelope("r3", "core.shutdown"),
+        ]
+    ) + "\n"
+    proc = subprocess.Popen(
+        [str(exe)],
+        env=lenv,
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    try:
+        out, err = proc.communicate(input=requests.encode("utf-8"), timeout=120)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+        out, err = proc.communicate(timeout=15)
+    text = out.decode("utf-8", errors="replace")
+    err_text = err.decode("utf-8", errors="replace")
+    (RAW / "r1-library-probe.log").write_text(
+        f"$ <installed>\\resources\\core-sidecar\\core_service.exe (purged PATH, install-state stdio)\n"
+        f"exit={proc.returncode}\n--- stdout ---\n{text}--- stderr ---\n{err_text}",
+        encoding="utf-8",
+    )
+
+    responses: dict[str, dict] = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            value = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        request_id = value.get("request_id")
+        if request_id:
+            responses[request_id] = value
+
+    ping = responses.get("r1", {})
+    ping_result = ping.get("result") or {}
+    gate.pass_or(
+        ping.get("error") is None
+        and ping_result.get("status") == "ready"
+        and ping_result.get("protocol_version") == {"major": 1, "minor": 0}
+        and "library.list_books" in (ping_result.get("capabilities") or []),
+        "CS-L1-packaged-core-ping",
+        {"result": ping_result, "error": ping.get("error")},
+    )
+
+    books = responses.get("r2", {})
+    books_result = books.get("result")
+    required_keys = {"book_id", "title", "original_title", "is_favorite", "is_archived", "page_count", "created_at", "updated_at"}
+    books_valid = isinstance(books_result, list) and all(
+        isinstance(entry, dict) and required_keys.issubset(entry.keys()) for entry in books_result
+    )
+    gate.pass_or(
+        books.get("error") is None and books_valid,
+        "CS-L2-packaged-ListBooks-structure",
+        {"count": len(books_result) if isinstance(books_result, list) else None,
+         "envelope_valid": books_valid, "error": books.get("error")},
+    )
+
+    shutdown = responses.get("r3", {})
+    gate.pass_or(
+        (shutdown.get("result") or {}).get("status") == "stopped",
+        "CS-L3-packaged-core-shutdown",
+        {"result": shutdown.get("result"), "exit": proc.returncode},
+    )
+
 
 def run_probe_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
     log("phase 2: PROBE mode (resource channel matrix, packaged sidecar)")
@@ -491,16 +634,12 @@ def run_ac1_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
 
 
 def run_production_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
-    log("phase 4: PRODUCTION mode (real window, %APPDATA% userData)")
-    for child in ("catalog", "derived", "managed", "data"):
-        target = USER_ROOT / child
-        if target.exists():
-            import shutil
-
-            shutil.rmtree(target, ignore_errors=True)
-    catalog_sqlite = USER_ROOT / "catalog" / "catalog.sqlite"
-    if catalog_sqlite.exists():
-        catalog_sqlite.unlink()
+    log("phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData)")
+    # P2-4: NO deletion against the host's real %APPDATA% — the app resolves
+    # its packaged defaults under the lab roaming override (production_env),
+    # so this phase only ever creates lab space.
+    user_root = lab_user_root(lab)
+    catalog_sqlite = user_root / "catalog" / "catalog.sqlite"
 
     proc = subprocess.Popen(
         [str(exe)],
@@ -518,12 +657,17 @@ def run_production_phase(gate: Gate, exe: Path, env: dict, lab: Path) -> None:
     alive = proc.poll() is None
     gate.pass_or(alive, "CS-R1-production-process-alive", {"poll": proc.poll()})
     user_dirs = {
-        child: (USER_ROOT / child).is_dir() for child in ("catalog", "derived", "managed", "data")
+        child: (user_root / child).is_dir() for child in ("catalog", "derived", "managed", "data")
     }
     gate.pass_or(
         all(user_dirs.values()) and catalog_sqlite.is_file(),
         "CS-R2-userdata-layout-created",
-        {"dirs": user_dirs, "catalog.sqlite": catalog_sqlite.is_file(), "root": str(USER_ROOT)},
+        {
+            "dirs": user_dirs,
+            "catalog.sqlite": catalog_sqlite.is_file(),
+            "root": str(user_root),
+            "appdata_isolated": True,
+        },
     )
     # graceful close (WM_CLOSE, no /F): lets the host drop the channels so the
     # sidecars receive `shutdown` and exit — the AC4 reaping precondition
@@ -568,7 +712,7 @@ def main() -> int:
     gate.pass_or(
         installer.is_file(),
         "CS-E2-installer-present",
-        {"installer": str(installer)},
+        {"installer": str(installer), "sha256": sha256_file(installer)},
     )
     if not installer.is_file() or not purged_ok:
         gate.record("CS-BLOCKED", "FAIL", {"reason": "installer missing or python purge failed"})
@@ -576,6 +720,28 @@ def main() -> int:
         return 1
 
     install_dir = Path(tempfile.gettempdir()) / "m2ac5-cleanstart" / "install"
+    # P3-6: NSIS /D= must stay unquoted and space-free — fail closed here
+    # with an actionable message instead of an ambiguous silent install.
+    if " " in str(install_dir):
+        gate.record(
+            "CS-E3-install-path-no-spaces",
+            "FAIL",
+            {"install_dir": str(install_dir), "hint": "set TEMP to a space-free directory"},
+        )
+        print(f"\nGATE: {gate.verdict}")
+        return 1
+    gate.pass_or(
+        True,
+        "CS-E3-install-path-no-spaces",
+        {"install_dir": str(install_dir), "space_free": True},
+    )
+
+    # P2-4: snapshot the HOST's real user-data root READ-ONLY. The runner
+    # never writes or deletes here; the phase-5 comparison proves the whole
+    # run left it byte-identical.
+    log("phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof)")
+    host_hashes_before = dir_tree_hashes(HOST_USER_ROOT) if HOST_USER_ROOT.exists() else {}
+    print(f"  host user root: {HOST_USER_ROOT} ({'present' if host_hashes_before else 'absent'}, files={len(host_hashes_before)})")
 
     log("phase 1: NSIS silent install")
     ok, detail = silent_install(installer, install_dir, env)
@@ -591,6 +757,7 @@ def main() -> int:
     seed_ok, seed_detail = seed_catalog_packaged(install_dir, lab / "probe" / "catalog.sqlite")
     gate.pass_or(seed_ok, "CS-I2-catalog-seeded-packaged-loader", {"detail": seed_detail})
 
+    run_library_probe(gate, install_dir, env, lab)
     run_probe_phase(gate, exe, env, lab)
     run_ac1_phase(gate, exe, env, lab)
     run_production_phase(gate, exe, env, lab)
@@ -602,6 +769,24 @@ def main() -> int:
         if install_hashes_before.get(key) != install_hashes_after.get(key)
     }
     gate.pass_or(not changed, "CS-Z1-install-dir-zero-write", {"changed_entries": sorted(changed)[:8]})
+
+    # P2-4 untouched proof: the host's real user-data root must be
+    # byte-identical across the whole run (install + 3 modes + probes).
+    host_hashes_after = dir_tree_hashes(HOST_USER_ROOT) if HOST_USER_ROOT.exists() else {}
+    host_changed = {
+        key for key in set(host_hashes_before) | set(host_hashes_after)
+        if host_hashes_before.get(key) != host_hashes_after.get(key)
+    }
+    gate.pass_or(
+        not host_changed,
+        "CS-Z4-host-real-appdata-untouched",
+        {
+            "root": str(HOST_USER_ROOT),
+            "files": len(host_hashes_after),
+            "changed_entries": sorted(host_changed)[:8],
+            "note": "runner never deletes here; app APPDATA pinned into the lab",
+        },
+    )
 
     before = json.loads((lab / "probe" / "source-hashes-before.json").read_text(encoding="utf-8"))
     after = {
@@ -632,8 +817,14 @@ def main() -> int:
     results = {
         "gate": "m2ac5-clean-start",
         "installer": str(installer),
+        "installer_sha256": sha256_file(installer),
         "install_dir": str(install_dir),
         "lab": str(lab),
+        "appdata_isolation": {
+            "app_env_appdata": "pinned into the lab (probe/ac1/production)",
+            "host_real_appdata": str(HOST_USER_ROOT),
+            "host_real_appdata_files": len(host_hashes_after),
+        },
         "verdict": gate.verdict,
         "scenarios": gate.scenarios,
     }

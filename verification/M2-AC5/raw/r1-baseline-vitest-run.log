@@ -1,0 +1,9 @@
+# r1 baseline: npx vitest run
+shell: Git Bash / win32; date: 2026-09-29 11:11:01 +0800
+HEAD (pre-commit working tree, r0 tip=783fc74f)
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+[2m   Start at [22m 11:11:02
+[2m   Duration [22m 527ms[2m (transform 185ms, setup 0ms, collect 329ms, tests 101ms, environment 1ms, prepare 706ms)[22m
+
+EXIT=0

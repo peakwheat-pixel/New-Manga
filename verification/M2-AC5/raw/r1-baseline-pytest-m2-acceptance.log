@@ -1,0 +1,7 @@
+# r1 baseline: pytest tests/m2_acceptance -q
+shell: Git Bash / win32; date: 2026-09-29 11:11:11 +0800
+HEAD (pre-commit working tree, r0 tip=783fc74f)
+$ TASK-012-py312 python -m pytest tests/m2_acceptance -q
+...................................                                      [100%]
+35 passed in 9.82s
+EXIT=0

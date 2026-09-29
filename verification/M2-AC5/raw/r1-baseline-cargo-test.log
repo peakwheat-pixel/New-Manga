@@ -1,0 +1,10 @@
+# r1 baseline: cargo test --bin m2rc1-desktop
+shell: Git Bash / win32; date: 2026-09-29 11:10:56 +0800
+HEAD (pre-commit working tree, parent=eccf88e3, r0 tip=783fc74f)
+$ M2RC1_PYTHON=... M2RC1_SRC_ROOT=... cargo test --bin m2rc1-desktop
+test tests::real_library_sidecar_round_trip_and_eof ... ok
+test tests::f01_ttl_expiry_invalidates_cached_grant ... ok
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+EXIT=0
