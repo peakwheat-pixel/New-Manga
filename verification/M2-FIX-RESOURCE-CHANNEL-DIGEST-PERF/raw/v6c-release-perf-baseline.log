@@ -1,0 +1,49 @@
+# v6c: release-profile perf of the BASELINE (pre-optimization three-read) implementation @ source state 9df29a6fcd97b08dfc7ad99f3cb3ce11eed9169b
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:10:59+08:00
+# cwd: apps/desktop/src-tauri
+# procedure: git checkout 9df29a6f -- src/main.rs src/resource_protocol.rs (both files, self-consistent baseline); cargo test --release perf; restore with git checkout HEAD -- src/main.rs src/resource_protocol.rs; porcelain re-check
+# cmd: git checkout 9df29a6f -- src/main.rs src/resource_protocol.rs
+# checkout EXIT=0
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-DIGEST-PERF-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:421:66
+    |
+421 |         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+    |                                                                  ^^^^^^^^^^
+
+warning: field `grant` is never read
+  --> src\resource_protocol.rs:68:5
+   |
+67 | struct CachedGrant {
+   |        ----------- field in this struct
+68 |     grant: Grant,
+   |     ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 3 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `release` profile [optimized] target(s) in 2.12s
+     Running unittests src\main.rs (target\release\deps\m2rc1_desktop-940e08690d5da8a2.exe)
+
+running 1 test
+PERF 1MiB-chunk0: rounds=20 total=17.9609ms avg=898.045µs/request
+PERF 16MiB-chunk0: rounds=10 total=151.41ms avg=15.141ms/request
+PERF 32MiB-chunk1: rounds=5 total=129.1192ms avg=25.82384ms/request
+test tests::perf_chunk_request_digest_cost ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.46s
+
+# test EXIT=0
+# restore: git checkout HEAD -- src/main.rs src/resource_protocol.rs
+# restore EXIT=0
+# post-restore git status --porcelain (src/):
+# porcelain done (empty above = clean)

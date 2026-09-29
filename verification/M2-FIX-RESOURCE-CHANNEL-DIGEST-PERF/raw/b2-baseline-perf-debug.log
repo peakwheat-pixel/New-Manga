@@ -1,0 +1,44 @@
+# baseline perf (debug profile) @ probe head 9df29a6fcd97b08dfc7ad99f3cb3ce11eed9169b
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:01:07+08:00
+# cwd: apps/desktop/src-tauri
+# implementation state: PRE-OPTIMIZATION (three-read verify_and_serve: full stream_digest + throwaway chunk read + chunk re-read)
+# cmd: cargo test perf_chunk_request_digest_cost -- --ignored --nocapture  (debug/test profile)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-DIGEST-PERF-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:30:5
+   |
+30 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:421:66
+    |
+421 |         build_url, handle_m2res_request, ScopeRoots, GrantCache, CHUNK_SIZE, ID_LENGTH,
+    |                                                                  ^^^^^^^^^^
+
+warning: field `grant` is never read
+  --> src\resource_protocol.rs:68:5
+   |
+67 | struct CachedGrant {
+   |        ----------- field in this struct
+68 |     grant: Grant,
+   |     ^^^^^
+   |
+   = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 3 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 10.15s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 1 test
+PERF 1MiB-chunk0: rounds=20 total=376.7927ms avg=18.839635ms/request
+PERF 16MiB-chunk0: rounds=10 total=3.0049485s avg=300.49485ms/request
+PERF 32MiB-chunk1: rounds=5 total=3.050819s avg=610.1638ms/request
+test tests::perf_chunk_request_digest_cost ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 9.62s
+
+# EXIT=0

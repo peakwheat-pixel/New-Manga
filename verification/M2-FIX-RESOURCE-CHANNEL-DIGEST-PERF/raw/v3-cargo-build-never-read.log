@@ -1,0 +1,6 @@
+# v3: dead-code check @ 5d7cff11315b36a9b43390e28930a91d39282496
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:08:14+08:00
+# cwd: apps/desktop/src-tauri
+# cmd: cargo build 2>&1 | grep 'never read'  (AC4: expected EMPTY)
+# grep exit=1 (1 = no match = PASS; output above this line must be empty)

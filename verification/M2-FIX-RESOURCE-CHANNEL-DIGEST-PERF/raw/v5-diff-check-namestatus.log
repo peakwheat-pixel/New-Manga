@@ -1,0 +1,24 @@
+# v5: diff hygiene + scope self-check @ 5d7cff11315b36a9b43390e28930a91d39282496 (base=956e6c3a)
+# shell: Git Bash 5.2.37 (win32 10.0.26200)
+# date: 2026-09-29T09:08:49+08:00
+# cwd: worktree root
+
+% git diff --check 956e6c3a..HEAD (expected: no output, exit 0)
+# diff --check EXIT=0
+
+% git diff --name-status 956e6c3a..HEAD
+M	apps/desktop/src-tauri/src/main.rs
+M	apps/desktop/src-tauri/src/resource_protocol.rs
+M	doc/00_INDEX.md
+M	doc/REBASELINE_PLAN.md
+M	doc/STATUS.md
+M	doc/tasks/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF.md
+M	doc/tasks/README.md
+A	verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/release-956e6c3a.md
+# name-status EXIT=0
+
+% git log --format='%h %an %s' 956e6c3a..HEAD
+5d7cff11 peakwheat-pixel task(M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF): single-pass hash+capture in verify_and_serve (eliminate three-read path and digest->serve TOCTOU window); remove write-only GrantCache/CachedGrant dead structure; rename identity_change_invalidates_cache_entry -> identity_change_rejected_by_per_request_verification; replace mem::forget tempdir leak with TestEnv-owned TempDir guard
+9df29a6f peakwheat-pixel task(M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF): add #[ignore]d perf_chunk_request_digest_cost probe (baseline measurement harness, no behavior change)
+b43a1e2a peakwheat-pixel claim(M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF): owner=ZCode (subagent deputized), dispatch_state READY_FOR_CLAIM->CLAIMED, base=956e6c3a
+6c3d7b34 peakwheat-pixel docs: release M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF (ready, base=956e6c3a, owner=ZCode via subagent, digest-perf + GrantCache cleanup)
