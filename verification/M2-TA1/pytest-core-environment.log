@@ -1,0 +1,16 @@
+Shell: PowerShell 7.6.6
+Python: Python 3.14.6 (C:\Python314\python.exe)
+Venv: none; system interpreter
+Recorded worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+Branch: agent/codex/M2-TA1-comic-test-asset-foundation
+HEAD at evidence capture: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
+Command: python -m pytest tests/core -q --tb=no
+
+=========================== short test summary info ===========================
+ERROR tests/core/test_page_catalog_modes.py
+ERROR tests/core/test_pipeline_defaults_assembly.py
+ERROR tests/core/test_pipeline_defaults_service.py
+ERROR tests/core/test_transport_credential_assembly.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!
+1 skipped, 4 errors in 0.35s
+EXIT=2

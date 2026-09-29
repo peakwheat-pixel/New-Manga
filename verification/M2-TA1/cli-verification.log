@@ -1,0 +1,40 @@
+Shell: PowerShell 7.6.6
+Python: Python 3.14.6 (C:\Python314\python.exe)
+Venv: none; system interpreter
+Worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+Branch: agent/codex/M2-TA1-comic-test-asset-foundation
+Tested HEAD: 00df8f1dd4d480d4e4432c833981481f2c01dd3e
+Command: python test_assets/comic_golden_suite/tools/assets.py list --level smoke ; EXIT=0
+Command: python test_assets/comic_golden_suite/tools/assets.py missing --language ko --level regression ; EXIT=0
+
+K01	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K01_724815_1
+K02	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K02_651664_112
+K03	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K03_671421_148
+K04	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K04_670145_145
+K05	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K05_131385_302
+K06	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K06_570506_196
+K07	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K07_641253_141
+K08	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K08_701535_160
+K09	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+J01	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/AisazuNihaIrarenai
+J02	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/AosugiruHaru
+J03	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/KimiHaBokuNoTaiyouDa
+J04	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/YukiNoFuruMachi
+J05	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/YumeiroCooking
+J06	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/AkkeraKanjinchou
+J07	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/DollGun
+J08	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/DualJustice
+J09	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/MAD_STONE
+J10	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/SeisinkiVulnus
+SUMMARY	MISSING_GATED_ASSET=10 READY=10
+O01	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O01_E06
+O02	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O02_E12
+O03	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O03_E16
+O04	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O04_E19
+O05	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O05_E22
+O06	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O06_E24
+O07	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O07_E28
+O08	ko	MISSING	韩漫_KO/02_open_ground_truth_peppercarrot/O08_E29
+SUMMARY	MISSING=8 READY=10
+EXIT=0

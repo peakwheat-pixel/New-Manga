@@ -1,6 +1,6 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED (28 TASKS DONE AND INTEGRATED, NONE ACTIVE); NEXT RELEASE DECISION RESTS WITH USER**
+Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED; M2-RG1 DONE; USER-AUTHORIZED M2-TA1 ACTIVE (2026-09-29)**
 
 Audit date: 2026-09-29 (Asia/Shanghai)
 
@@ -19,7 +19,11 @@ releases a task.
 
 **New-architecture-only directive（2026-09-28；用户裁决）**：后续 Task、问题诊断、修复与验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构上登记和执行。PySide6/QML 代码、测试、Task 与 verification 只保留为历史证据，不再释放 Legacy 实现、诊断或修复工作；旧架构问题若仍对应目标产品行为，必须改写为 M2 新架构需求，并在新架构路径复现、解决和验收。此前仅为 planning recommendation 的 `DIAG-LEGACY-QML-IMPORT-ENTRY-001` 已撤销，未曾释放。
 
-### 2026-09-28 全量任务盘点与当前流程
+### 2026-09-29 用户授权 Task：M2-TA1
+
+[M2-TA1](tasks/M2-TA1.md)「日漫 / 韩漫统一测试素材基础设施」由用户本次请求授权，依赖已完成的 M2-RG1；固定交付 `00df8f1d` 经独立 Review=`approved`，当前等待 Codex 集成及集成后验证。基线=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`；Task branch/worktree 与允许路径见 Task 和 STATUS。范围只含独立 case manifest、素材 CLI、下载数据忽略规则、工具专用测试及文档；生产 Schema/Pipeline/Provider/依赖零改动。用户授权本地测试，已取得固定 10 个 KO smoke case；受版权限制原图不入库；Manga109 仍 gated 且当前无获批归档。L1 目标集数量不足与未取得素材保留为 `PARTIAL` / `BLOCKED_BY_ASSET_ACCESS` / `NOT_RUN`。下一候选为 M2-TA2 L1 case 证据化扩充，不会在本 Task 中启动或自动下载数据。
+
+### 2026-09-28 任务盘点（当日快照；当前执行状态见 STATUS）
 
 Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。已登记并闭环的 Task 共 28 个（GOV-001；M2 首波 D1/I1/I2/R1/UI1；契约与资源通道 C1/S1/S2/C2/S3/RC1/RC2；验收 AC1/AC2/AC3/AC4；DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1；Legacy 诊断家族 DIAG-READING-EXPORT-001/FIX-A/FIX-B/FIX-C；FIX-STUB-DECODER、FIX-EXPORT-LINEAGE、FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、FIX-F02-RESOURCE-CHANNEL-FLAKY），全部 `done` 且集成 main；最新集成=`aa2f99b8`（F02 资源通道安全缺口修复）。**GOAL（G1-G5）已于 2026-09-29 03:4x 达成（停止条件 3）**；随后用户批准释放的 [M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF](tasks/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF.md) 已于 2026-09-29 完整走通 release→implement→review→integrate 链并 `done`（integration=`bc2529f0`，DSH r1 `approved_with_conditions` 0×P0/P1/P2）。验收面终态：m2_acceptance 35 passed 0 xfailed 全绿、tests/core 77 passed、cargo 34 passed、vitest 31 tests；历届 Owner branch/worktree 全保留。未完成仅剩：BLOCKED 待用户资源的 Real docTR、前置未满足的 M2 Release Gate（可测对象已由 M2-AC5 就位），与散落 P3 遗留清单（见下表末列与 STATUS Goal completion checkpoint，新增 DIGEST-PERF P3-5 `SetFilePointer` 2 GiB 既有隐患、M2-AC5 fresh-checkout 构建顺序/beforeBuildCommand 候选）。
 

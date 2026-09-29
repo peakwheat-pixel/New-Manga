@@ -2,7 +2,7 @@
 
 Planning source of truth: [Project Rebaseline Plan](REBASELINE_PLAN.md)
 
-Execution checkpoint: 2026-09-28 (Asia/Shanghai)
+Execution checkpoint: 2026-09-29 (Asia/Shanghai)
 
 > **Current architecture directive（2026-09-28；用户裁决）:** 所有后续 Task、问题诊断、修复和验收只在 React + TypeScript + Tauri + Python Core + SQLite 新架构上进行。Legacy PySide6/QML 仅保留历史证据，不再释放相关工作；`DIAG-LEGACY-QML-IMPORT-ENTRY-001` planning candidate 已撤销、从未释放。旧架构问题如仍代表目标产品行为，须转化为 M2 新架构需求后处理。
 
@@ -10,16 +10,16 @@ Execution checkpoint: 2026-09-28 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
-| Branch / audit base | `main`；本次 REBASELINE 审计基线=`5789b30b37dfbf79d9bca707b5fdaaa562ada707` |
-| Current Active Task | **None (`in_progress`=0).** |
-| Current released Task | **无。** [M2-RG1](tasks/M2-RG1.md) M2 Release Gate（Windows 本机口径）= **`done`**（integration=`b796bed3`；用户裁决 2026-09-29"把本机视为干净widows环境。若本机通过，则视为pass"解除干净机前置；**GATE PASS 25/25**——AC2 console policy PASS（PE Subsystem=2 GUI + CREATE_NO_WINDOW×4 + CW0 阳性对照真命中证明检测器能红 + 运行期零命中）、AC3 冷启动测录（app 46.9/49.9/160.2 ms、core ready 237.6/247.6/251.4、ac1 267.2/267.6/268.5，n=3 无阈值）、AC4 四入口安装态 stdio 闭环 + warn 11 条全条件导入 + M2-AC5 回归 25/25、AC5 Win11 x64 build 26200 已验证/Win10 NOT_RUN 披露；DSH r1 `approved_with_conditions`（1×P1/3×P2）→ gate v2 返修 → r2 `changes_requested`（P1-1(N) pin 声明不实 + P2-1(N) 字面量）→ 纯文字收口 `e752ba39`/`8e0100ba` → 集成方终验 + merge + 集成复跑 cargo 38+1/pytest 35/vitest 31/diff-check 全绿；M2 验收 Backlog 四项全部闭环，**Real docTR 维持 BLOCKED 待用户受控权重**） |
-| Owner / Reviewer / Integrator | M2-RG1：ZCode（Owner，子 agent 代行交付，终 tip `8e0100ba`）/ DeepSeek Harness（非作者 r1 `session-1e36fc83` + r2 `session-3cc0ef38`，两轮条件全部闭合）/ Codex（编排会话代行集成，Owner≠Integrator 保持） |
-| Recovery point | main=最新收口 commit（见 git log）；历届 Owner branch/worktree 全保留（AC3 `a63d3372` / AC4 `890f0c74` / FIX-STUB `69250a39` / EXPORT-LINEAGE `d395ef70` / LISTBOOKS `b6cb1af2` / F02 `3cef4831` / DIGEST-PERF `510202ac` / AC5 `0541b86b` / RG1 `8e0100ba`） |
+| Branch / audit base | `agent/codex/M2-TA1-comic-test-asset-foundation`; base=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`; reviewed delivery=`00df8f1dd4d480d4e4432c833981481f2c01dd3e` |
+| Current Active Task | **[M2-TA1](tasks/M2-TA1.md) `approved`** — unified JA/KO comic test asset foundation; awaiting Codex integration and post-integration verification. |
+| Current released Task | **[M2-TA1](tasks/M2-TA1.md) `approved`** under the user request dated 2026-09-29; scope and AC are frozen in the Task. M2-RG1 remains done at `b796bed3`. |
+| Owner / Reviewer / Integrator | Codex primary / Codex independent reviewer subagent (`approved` at `00df8f1d`) / Codex primary. |
+| Recovery point | branch=`agent/codex/M2-TA1-comic-test-asset-foundation`; worktree=`C:/Users/49745/.codex/worktrees/comic-test-assets/New Manga`; base=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`; reviewed delivery=`00df8f1dd4d480d4e4432c833981481f2c01dd3e`. |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/FIX-F02-RESOURCE-CHANNEL-FLAKY、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`aa2f99b8`（F02 资源通道安全缺口修复）；**m2_acceptance 35 passed 0 xfailed 全绿、tests/core 77 passed、cargo 34 passed、vitest 31 tests** |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`69961029`（F-2 unknown 通道，契约 1.2） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`d71883ec`（M2-FIX-EXPORT-LINEAGE F-1 修复） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`121a281c`（M2-FIX-STUB-DECODER stub 签名修复） |
-| Planned next | M2 Acceptance Backlog 未登记行（Package/clean-start、Real docTR、M2 Release Gate）、写命令竖切；proposed 候选（M2-FIX-EXPORT-LINEAGE、M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、M2-FIX-STUB-DECODER 已 done）；P3 遗留（term_extract book_id 错配、expected_* Page 形状、stub 家族 font_catalog/layout_engine/compositor、export write 并发 P3-7） |
+| Planned next | Codex serial integration and post-integration checks for approved M2-TA1. No other Task is released; proposed M2-TA2 L1 expansion is recorded in M2-TA1 Handoff only. |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex quota exhausted；自 2026-09-28 起由 ZCode 会话代行 Codex Lead/Integrator 职责（用户全权授权）；追认批次见下方 ratification checkpoint |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |

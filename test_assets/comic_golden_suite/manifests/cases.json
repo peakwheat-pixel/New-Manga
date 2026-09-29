@@ -1,0 +1,2313 @@
+{
+  "schema_version": 1,
+  "suite_id": "comic_golden_suite",
+  "generated_from": "漫画测试素材包_日漫_韩漫.zip plus repository audit",
+  "generated_at": "2026-09-29",
+  "languages": [
+    "ja",
+    "ko"
+  ],
+  "taxonomy": {
+    "difficulty_tags": [
+      "normal_dialogue",
+      "dense_dialogue",
+      "tiny_text",
+      "huge_text",
+      "vertical_text",
+      "horizontal_text",
+      "rotated_text",
+      "curved_text",
+      "fragmented_sfx",
+      "overlapping_text",
+      "complex_background",
+      "low_contrast",
+      "narration",
+      "multi_speaker",
+      "unusual_balloon",
+      "extreme_size"
+    ]
+  },
+  "levels": {
+    "smoke": {
+      "target": {
+        "ja": 10,
+        "ko": 10
+      },
+      "case_count": 20,
+      "notes": "Daily enumeration; JA images remain gated and may be missing locally."
+    },
+    "regression": {
+      "case_count": 55,
+      "target_range": [
+        100,
+        150
+      ],
+      "status": "PARTIAL",
+      "notes": "55 defined cases; below the desired 100–150 until separately authorized sources are selected and curated."
+    },
+    "full": {
+      "case_count": 55,
+      "status": "PARTIAL",
+      "notes": "The catalog's selected cases only. Benchmark corpora below remain external and are not downloaded by default."
+    }
+  },
+  "benchmark_sources": [
+    {
+      "id": "manga109_selected_or_full",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "status": "BLOCKED_BY_ASSET_ACCESS",
+      "redistributable": false
+    },
+    {
+      "id": "jmangabench",
+      "source": "https://github.com/muscgab/JMangaBench_Mixed",
+      "status": "MISSING",
+      "requires": "separately obtained Manga109-s image release"
+    },
+    {
+      "id": "coo_and_manga109_dialog",
+      "source": "https://github.com/manga109/public-annotations",
+      "status": "PARTIAL",
+      "notes": "Public annotations are available; Manga109 images remain gated."
+    },
+    {
+      "id": "text_mask",
+      "source": "https://zenodo.org/records/4511796",
+      "status": "NOT_RUN",
+      "notes": "Current record lists two ZIPs totaling about 19.2 MB; derived image rights not verified."
+    },
+    {
+      "id": "ko_sfx_dialogue_cleaned_webtoon",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "status": "PARTIAL"
+    }
+  ],
+  "sources": {
+    "ko_webtoon": {
+      "repo_id": "Vasyanator2/cleaned_webtoon_dataset",
+      "license": "CC-BY-NC-4.0 for annotations/metadata; source artwork remains copyrighted",
+      "expected_case_count": 10,
+      "estimated_total_bytes": 884913245
+    },
+    "peppercarrot": {
+      "license": "CC-BY-4.0 source page; attribution required; redistributable remains false pending per-file verification",
+      "expected_case_count": 8
+    },
+    "manga109": {
+      "repo_id": "hal-utokyo/Manga109",
+      "filename": "Manga109_released_2026_05_21.zip",
+      "gated": true,
+      "expected_case_count": 37,
+      "estimated_archive_bytes": 4070000000
+    }
+  },
+  "cases": [
+    {
+      "case_id": "K01",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "724815_1",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "normal_dialogue"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K01_724815_1",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K02",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "651664_112",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "dense_dialogue",
+        "tiny_text"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K02_651664_112",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K03",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "671421_148",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K03_671421_148",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K04",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "670145_145",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "narration"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K04_670145_145",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K05",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "131385_302",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "complex_background"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K05_131385_302",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K06",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "570506_196",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K06_570506_196",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K07",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "641253_141",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "multi_speaker"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K07_641253_141",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K08",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "701535_160",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "rotated_text"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K08_701535_160",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K09",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "717481_124",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "complex_background"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "K10",
+      "language": "ko",
+      "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset",
+      "source_id": "730656_11",
+      "source_type": "dataset_derived",
+      "layout_type": "webtoon_long_strip",
+      "reading_direction": "top_to_bottom",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "source_tagged_partial",
+      "tags": [
+        "normal_dialogue"
+      ],
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11",
+      "license_class": "noncommercial_research_source_restricted",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "bubble_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "webtoon_slice_reassemble"
+      ],
+      "ground_truth_available": "dataset_auxiliary_annotations_present",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "hf_cleaned_webtoon",
+        "resolve_url": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset/resolve/main",
+        "files": [
+          "base.png",
+          "cleaned.png",
+          "clean_mask.png",
+          "conf_bubble_seg.png",
+          "conf_text_seg.png",
+          "conf_text_ctd.png",
+          "info.json",
+          "visualization.png"
+        ],
+        "repo_subpath": "examples"
+      }
+    },
+    {
+      "case_id": "O01",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep06_The-Potion-Contest.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O01_E06",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "O02",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep12_Autumn-Clearout__files.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O02_E12",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "O03",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep16_The-Sage-of-the-Mountain__files.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O03_E16",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "O04",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep19_Pollution.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O04_E19",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "O05",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep22_The-Voting-System.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O05_E22",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "O06",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep24_The-Unity-Tree.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O06_E24",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "O07",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep28_The-Festivities.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O07_E28",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "O08",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic-sources/ep29_Destroyer-of-Worlds__files.html",
+      "source_type": "open_ground_truth_source_page",
+      "layout_type": "single_page_comic",
+      "reading_direction": "left_to_right",
+      "text_type": "unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "local_path": "韩漫_KO/02_open_ground_truth_peppercarrot/O08_E29",
+      "license_class": "CC-BY-4.0_source_page_requires_attribution",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "translation",
+        "inpainting",
+        "typesetting"
+      ],
+      "ground_truth_available": "source_page_available_local_files_not_downloaded",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      }
+    },
+    {
+      "case_id": "J01",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "AisazuNihaIrarenai",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "01_dialogue_romance",
+      "local_path": "日漫_JA/01_manga109_real/01_dialogue_romance/AisazuNihaIrarenai",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J02",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "AosugiruHaru",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "01_dialogue_romance",
+      "local_path": "日漫_JA/01_manga109_real/01_dialogue_romance/AosugiruHaru",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J03",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "KimiHaBokuNoTaiyouDa",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "01_dialogue_romance",
+      "local_path": "日漫_JA/01_manga109_real/01_dialogue_romance/KimiHaBokuNoTaiyouDa",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J04",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "YukiNoFuruMachi",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "01_dialogue_romance",
+      "local_path": "日漫_JA/01_manga109_real/01_dialogue_romance/YukiNoFuruMachi",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J05",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "YumeiroCooking",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "01_dialogue_romance",
+      "local_path": "日漫_JA/01_manga109_real/01_dialogue_romance/YumeiroCooking",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J06",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "AkkeraKanjinchou",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_battle_sfx",
+      "local_path": "日漫_JA/01_manga109_real/02_battle_sfx/AkkeraKanjinchou",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J07",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "DollGun",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_battle_sfx",
+      "local_path": "日漫_JA/01_manga109_real/02_battle_sfx/DollGun",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J08",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "DualJustice",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_battle_sfx",
+      "local_path": "日漫_JA/01_manga109_real/02_battle_sfx/DualJustice",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J09",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "MAD_STONE",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_battle_sfx",
+      "local_path": "日漫_JA/01_manga109_real/02_battle_sfx/MAD_STONE",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J10",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "SeisinkiVulnus",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_battle_sfx",
+      "local_path": "日漫_JA/01_manga109_real/02_battle_sfx/SeisinkiVulnus",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "smoke",
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J11",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "ARMS",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "03_fantasy_sf",
+      "local_path": "日漫_JA/01_manga109_real/03_fantasy_sf/ARMS",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J12",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "BEMADER_P",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "03_fantasy_sf",
+      "local_path": "日漫_JA/01_manga109_real/03_fantasy_sf/BEMADER_P",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J13",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "PLANET7",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "03_fantasy_sf",
+      "local_path": "日漫_JA/01_manga109_real/03_fantasy_sf/PLANET7",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J14",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "ParaisoRoad",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "03_fantasy_sf",
+      "local_path": "日漫_JA/01_manga109_real/03_fantasy_sf/ParaisoRoad",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J15",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "MagicStarGakuin",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "03_fantasy_sf",
+      "local_path": "日漫_JA/01_manga109_real/03_fantasy_sf/MagicStarGakuin",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J16",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "Akuhamu",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "04_yonkoma",
+      "local_path": "日漫_JA/01_manga109_real/04_yonkoma/Akuhamu",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J17",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "OL_Lunch",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "04_yonkoma",
+      "local_path": "日漫_JA/01_manga109_real/04_yonkoma/OL_Lunch",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J18",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "KoukouNoHitotachi",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "04_yonkoma",
+      "local_path": "日漫_JA/01_manga109_real/04_yonkoma/KoukouNoHitotachi",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J19",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "YouchienBoueigumi",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "04_yonkoma",
+      "local_path": "日漫_JA/01_manga109_real/04_yonkoma/YouchienBoueigumi",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J20",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "MayaNoAkaiKutsu",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "05_horror_suspense",
+      "local_path": "日漫_JA/01_manga109_real/05_horror_suspense/MayaNoAkaiKutsu",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J21",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "KuroidoGanka",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "05_horror_suspense",
+      "local_path": "日漫_JA/01_manga109_real/05_horror_suspense/KuroidoGanka",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J22",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "Ningyoushi",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "05_horror_suspense",
+      "local_path": "日漫_JA/01_manga109_real/05_horror_suspense/Ningyoushi",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J23",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "PlatinumJungle",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "05_horror_suspense",
+      "local_path": "日漫_JA/01_manga109_real/05_horror_suspense/PlatinumJungle",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J24",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "SyabondamaKieta",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "05_horror_suspense",
+      "local_path": "日漫_JA/01_manga109_real/05_horror_suspense/SyabondamaKieta",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J25",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "Count3DeKimeteAgeru",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "06_sports",
+      "local_path": "日漫_JA/01_manga109_real/06_sports/Count3DeKimeteAgeru",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J26",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "Jyovolley",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "06_sports",
+      "local_path": "日漫_JA/01_manga109_real/06_sports/Jyovolley",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J27",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "KyokugenCyclone",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "06_sports",
+      "local_path": "日漫_JA/01_manga109_real/06_sports/KyokugenCyclone",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J28",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "RisingGirl",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "06_sports",
+      "local_path": "日漫_JA/01_manga109_real/06_sports/RisingGirl",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J29",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "YamatoNoHane",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "06_sports",
+      "local_path": "日漫_JA/01_manga109_real/06_sports/YamatoNoHane",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J30",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "GarakutayaManta",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "07_comedy",
+      "local_path": "日漫_JA/01_manga109_real/07_comedy/GarakutayaManta",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J31",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "JijiBabaFight",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "07_comedy",
+      "local_path": "日漫_JA/01_manga109_real/07_comedy/JijiBabaFight",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J32",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "LancelotFullThrottle",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "07_comedy",
+      "local_path": "日漫_JA/01_manga109_real/07_comedy/LancelotFullThrottle",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J33",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "Nekodama",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "07_comedy",
+      "local_path": "日漫_JA/01_manga109_real/07_comedy/Nekodama",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J34",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "BurariTessenTorimonocho",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "08_historical",
+      "local_path": "日漫_JA/01_manga109_real/08_historical/BurariTessenTorimonocho",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J35",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "JangiriPonpon",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "08_historical",
+      "local_path": "日漫_JA/01_manga109_real/08_historical/JangiriPonpon",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J36",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "MomoyamaHaikagura",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "08_historical",
+      "local_path": "日漫_JA/01_manga109_real/08_historical/MomoyamaHaikagura",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    },
+    {
+      "case_id": "J37",
+      "language": "ja",
+      "source": "https://huggingface.co/datasets/hal-utokyo/Manga109",
+      "source_id": "RinToSiteSippuNoNaka",
+      "source_type": "gated_dataset",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "08_historical",
+      "local_path": "日漫_JA/01_manga109_real/08_historical/RinToSiteSippuNoNaka",
+      "license_class": "gated_dataset_terms",
+      "redistributable": false,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "public_annotations_available_images_gated",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "MISSING_GATED_ASSET",
+      "asset_profile": {
+        "kind": "manga109_title"
+      }
+    }
+  ]
+}
