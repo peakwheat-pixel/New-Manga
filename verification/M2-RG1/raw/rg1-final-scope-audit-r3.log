@@ -1,0 +1,72 @@
+# M2-RG1 final scope audit r3 — r2-rework bookkeeping-commit content head (post DSH-r2 rework)
+shell: Git Bash / win32; date: 2026-09-29 14:13:53 +0800
+HEAD=e752ba39c2cd2e566105ff00ec3150f50a09e0e3 (repo HEAD at audit time = the r2 content-fix commit; the bookkeeping commit carrying this log follows immediately)
+audited range: 875eb818..working tree (= the r2-rework bookkeeping commit content; this log ships inside that commit)
+note: this audit-r3 log itself is untracked at audit time, so it does not appear in the diffs below
+
+$ git diff --name-status 875eb818..<final tip> (working tree, incl. content-fix commit e752ba39c2cd2e566105ff00ec3150f50a09e0e3)
+M	apps/desktop/src-tauri/src/ac1_bridge.rs
+M	apps/desktop/src-tauri/src/core_bridge.rs
+M	apps/desktop/src-tauri/src/library_bridge.rs
+M	apps/desktop/src-tauri/src/main.rs
+A	doc/handoffs/M2-RG1-a1100d75.md
+A	doc/reviews/M2-RG1-6b6366fc-dsh-r2.md
+A	doc/reviews/M2-RG1-a1100d75-dsh-r1.md
+A	doc/tasks/M2-RG1.md
+M	packaging/m2ac5/core_sidecar.spec
+A	packaging/release-gate/README.md
+A	packaging/release-gate/run_release_gate.py
+A	verification/M2-RG1/raw/README.md
+A	verification/M2-RG1/raw/rg1-baseline-cargo-test-r2.log
+A	verification/M2-RG1/raw/rg1-baseline-cargo-test.log
+A	verification/M2-RG1/raw/rg1-baseline-pytest-m2-acceptance.log
+A	verification/M2-RG1/raw/rg1-baseline-vitest-run.log
+A	verification/M2-RG1/raw/rg1-build-sidecar.log
+A	verification/M2-RG1/raw/rg1-console-policy-fix-stat.log
+A	verification/M2-RG1/raw/rg1-console-policy-fix.diff
+A	verification/M2-RG1/raw/rg1-environment-record.log
+A	verification/M2-RG1/raw/rg1-final-scope-audit-r2.log
+A	verification/M2-RG1/raw/rg1-final-scope-audit.log
+A	verification/M2-RG1/raw/rg1-frontend-build.log
+A	verification/M2-RG1/raw/rg1-frontend-npm-install.log
+A	verification/M2-RG1/raw/rg1-gate-run.log
+A	verification/M2-RG1/raw/rg1-gate-run1.json
+A	verification/M2-RG1/raw/rg1-gate.json
+A	verification/M2-RG1/raw/rg1-localappdata-newmanga-forensics.log
+A	verification/M2-RG1/raw/rg1-m2ac5-cleanstart-ac1-run1-stdout.log
+A	verification/M2-RG1/raw/rg1-m2ac5-cleanstart-ac1-run2-stdout.log
+A	verification/M2-RG1/raw/rg1-m2ac5-cleanstart-gate.json
+A	verification/M2-RG1/raw/rg1-m2ac5-cleanstart-probe-stdout.log
+A	verification/M2-RG1/raw/rg1-m2ac5-cleanstart-production-stdout.log
+A	verification/M2-RG1/raw/rg1-m2ac5-cleanstart-runner.log
+A	verification/M2-RG1/raw/rg1-m2ac5-r1-library-probe.log
+A	verification/M2-RG1/raw/rg1-os-detail.log
+A	verification/M2-RG1/raw/rg1-scope-audit.log
+A	verification/M2-RG1/raw/rg1-sidecar-manifest-build1.txt
+A	verification/M2-RG1/raw/rg1-sidecar-manifest-gen.log
+A	verification/M2-RG1/raw/rg1-tauri-build-run1.log
+A	verification/M2-RG1/raw/rg1-tauri-build-run2-fix.log
+A	verification/M2-RG1/raw/rg1-warn-warn-core_sidecar.txt
+A	verification/M2-RG1/release-875eb818.md
+A	verification/M2-RG1/verification-results.md
+EXIT=0
+
+$ git diff --check 875eb818..<final tip> (working tree)
+EXIT=0
+
+historical note (DSH r1 P2-2 / r2 P2-1(N)): over the same range, 'git diff --check 875eb818..a1100d75' returned EXIT=2 BEFORE the trailing-whitespace cleanup (batch-1 logs); EXIT=0 since b38a646c. Literal-hash criterion: 875eb818..e752ba39c2cd2e566105ff00ec3150f50a09e0e3.
+
+$ git status --porcelain
+M  doc/tasks/M2-RG1.md
+M  verification/M2-RG1/verification-results.md
+?? verification/M2-RG1/raw/rg1-final-scope-audit-r3.log
+EXIT=0
+
+$ git diff --check 875eb818..e752ba39 (content-fix commit)
+EXIT=0
+
+post-audit amendment (disclosed, same amend as this log): after the snapshot
+above was taken, one line in doc/tasks/M2-RG1.md (the Handoff product link)
+was updated to reflect the r2 delivery_head chain and folded into the same
+amend that carries this log — it is therefore not in the name-status snapshot
+above; everything else in the final tip tree matches this snapshot exactly.

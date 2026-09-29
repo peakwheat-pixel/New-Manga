@@ -16,7 +16,7 @@ depends_on: [M2-AC5]
 base_commit: 875eb818abc74a498c84026016dd1a1c72e0ad50
 branch: agent/zcode/M2-RG1-release-gate
 worktree: G:/CODEX/New Manga.worktrees/M2-RG1-zcode
-delivery_head: 05a8f93a7a96e9b073824e6a490d64f034fac645
+delivery_head: e752ba39c2cd2e566105ff00ec3150f50a09e0e3
 review: doc/reviews/M2-RG1-a1100d75-dsh-r1.md（approved_with_conditions：0×P0、1×P1、3×P2、8×P3；r1 返修已闭合全部必闭项，见 Handoff r1 返修节）；doc/reviews/M2-RG1-6b6366fc-dsh-r2.md（changes_requested：P1-1(N)/P2-1(N) 必闭 + P3-1..8(N) 落字；r1 P1-1/P2-1 判定"真闭"，产品与 Gate 结论 25/25 成立——r2 返修见 Handoff r2 返修节）
 integration_commit: null
 dispatch_state: DELIVERED_FOR_REVIEW
@@ -84,7 +84,7 @@ dispatch_state: DELIVERED_FOR_REVIEW
 ### AC6 证据纪律与范围
 
 - [x] 所有 raw 日志带 shell/解释器头 + 固定 HEAD + 每命令 EXIT；gate 汇总 JSON 机器可读。（实测：rg1-gate.json verdict=PASS **25/25（v2）**；r1 前 23/23 原样存档 `raw/rg1-gate-run1.json` 供 DSH r1 审计对照；例外披露：行尾空白/CR 规范化权威清单共 **10 份**（仅空白差异；r1 P3-3 统一，见 verification-results 披露 6）、M2-AC5 runner 产物为 runner 自有格式）
-- [x] `git diff --name-status <base>..<delivery_head>` 对照两级允许路径（日志入库）；`git diff --check <base>..<delivery_head>` EXIT=0。（实测：4 个条件允许源文件 + spec 注释 + 新增 gate/evidence/doc；EXIT=0——r1 P2-2 口径：范围与 check 均以 `875eb818..05a8f93a7a96…`（含 bookkeeping 终 tip）为准，历史注记：区间在 `a1100d75` 时点（规范化前）EXIT=2，自 `b38a646c` 起恢复 EXIT=0；见 raw/rg1-final-scope-audit.log 与 raw/rg1-final-scope-audit-r2.log）
+- [x] `git diff --name-status <base>..<delivery_head>` 对照两级允许路径（日志入库）；`git diff --check <base>..<delivery_head>` EXIT=0。（实测：4 个条件允许源文件 + spec 注释 + 新增 gate/evidence/doc；EXIT=0——r2 P2-1(N) 字面量口径：范围与 check 均以 `875eb818..e752ba39c2cd2e566105ff00ec3150f50a09e0e3`（内容修正 commit）为准，历史注记：区间在 `a1100d75` 时点（规范化前）EXIT=2，自 `b38a646c` 起恢复 EXIT=0；见 raw/rg1-final-scope-audit.log、raw/rg1-final-scope-audit-r2.log、raw/rg1-final-scope-audit-r3.log）
 - [x] 三层基线不回退：`cargo test --bin m2rc1-desktop`（≥38 passed + 1 ignored）/ `pytest tests/m2_acceptance -q`（≥35）/ `npx vitest run`（≥31）全 EXIT=0；触碰 Rust spawn 段后 cargo 必须全绿。（实测：38+1 / 35 / 31 全 EXIT=0；r1 返修 P3-1 注释改动后 cargo 重跑 38+1 绿，raw/rg1-baseline-cargo-test-r2.log）
 - [x] NSIS 卸载测试 NOT_RUN 如实披露（不在 Backlog 四项范围）；**`src/**` Python 零改动**（发现缺陷只记 FAIL/候选）。（实测：NOT_RUN 已披露于本表、Handoff、verification-results；src/** 零改动）
 
@@ -115,11 +115,11 @@ dispatch_state: DELIVERED_FOR_REVIEW
 | AC2 | gate runner：PE subsystem 解析 + EnumWindows 运行期观测（双类名）+ CW0 阳性对照 | 安装态 | v2：Subsystem=2；CW0 命中 1（CASCADIA，WindowsTerminal pid 25252）；CW1/CW2 三轮命中 0；注册表双 null；静态源审计全过 | raw/rg1-gate.json（RG1-PE1/PE2/CW0/CW1/CW2 + environment）、rg1-console-policy-fix.diff |
 | AC3 | gate runner：三类冷启动计时 ≥3 采样 | 安装态 + 净化 PATH | v2：app 46.9/49.9/160.2 ms；core ready 237.6/247.6/251.4 ms；ac1 267.2/267.6/268.5 ms（n=3）；v1 数值存档 rg1-gate-run1.json | raw/rg1-gate.json（timings）、rg1-gate-run.log、rg1-gate-run1.json |
 | AC4 | 四入口 stdio 往返（DC1a seed → DC1b ≥1 行 8 键）+ warn 审查 + M2-AC5 25 场景回归 | 安装态 + lab 根 | v2：四入口全 PASS、DC1b books_count=1；warn 11 条全条件导入、0 load-time-critical；25/25 PASS @ 同 installer | raw/rg1-gate.json（RG1-DC1a/DC1b/DC2/DC3/DC4/W1）、rg1-warn-*.txt、rg1-m2ac5-cleanstart-gate.json |
-| AC6 | 三层基线 + diff --check + name-status | worktree @ delivery head | cargo 38+1（r2 重跑）/ pytest 35 / vitest 31 全 EXIT=0；diff --check `875eb818..<终 tip>` EXIT=0（a1100d75 区间规范化前 EXIT=2 已注记）；name-status 全落允许路径 | raw/rg1-baseline-*.log、rg1-scope-audit.log、rg1-final-scope-audit.log、rg1-final-scope-audit-r2.log |
+| AC6 | 三层基线 + diff --check + name-status | worktree @ delivery head | cargo 38+1（r2 重跑）/ pytest 35 / vitest 31 全 EXIT=0；diff --check `875eb818..e752ba39c2cd2e566105ff00ec3150f50a09e0e3`（内容修正 commit，r2 P2-1(N) 字面量）EXIT=0（a1100d75 区间规范化前 EXIT=2 已注记）；name-status 全落允许路径 | raw/rg1-baseline-*.log、rg1-scope-audit.log、rg1-final-scope-audit.log、rg1-final-scope-audit-r2.log、rg1-final-scope-audit-r3.log |
 
 ## 产物与交接链接
 
-- Handoff：`doc/handoffs/M2-RG1-a1100d75.md`（初交付版 + **r1 返修节**：引用新 delivery_head `05a8f93a7a96…` 与 DSH r1 报告）
+- Handoff：`doc/handoffs/M2-RG1-a1100d75.md`（初交付版 + r1 返修节 + **r2 返修节**；r1 返修 delivery_head `05a8f93a7a96…`（仅历史），r2 后现行 delivery_head = 内容修正 commit `e752ba39c2cd…`，见 frontmatter 与 P2-1(N) 字面量口径）
 - Release evidence：`verification/M2-RG1/release-875eb818.md`（已交付；汇总表 [verification-results.md](../verification/M2-RG1/verification-results.md)——r1 返修后为 v2 版）
 - Review 报告：`doc/reviews/M2-RG1-a1100d75-dsh-r1.md`（DSH 非作者 r1，approved_with_conditions，集成方导入 @ e218cc65；r1 返修闭合清单见 Handoff r1 返修节）
 
