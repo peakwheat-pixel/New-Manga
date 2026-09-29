@@ -2,7 +2,7 @@
 id: M2-FIX-DIGEST-SEEK-2GIB
 title: "Resource channel read_through 64 位 seek 修复（SetFilePointer i32 截断高位恒空，DIGEST-PERF P3-5）"
 kind: fix
-status: in_progress
+status: in_review
 approval: orchestrator_delegated_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -25,11 +25,11 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1（64 位 seek）：`read_through` 不再使用 32 位 `SetFilePointer` 截断路径；改用 `SetFilePointerEx`（LARGE_INTEGER 64 位）或等价 64 位机制，大 offset（≥ 2^31）下语义正确。
-- [ ] AC2（fail-closed 纵深）：seek 前/后对 offset 越界（> `MAX_RESOURCE_BYTES` 或 seek 返回失败/位置不符）显式返回 typed `CoreError`，不静默继续。
-- [ ] AC3（测试）：新增单测覆盖①大 offset 请求被 fail-closed 拒绝（不静默截断）；②常规路径回归不受影响（既有 resource protocol 测试全绿）。
-- [ ] AC4（回归与证据）：`cargo test`（src-tauri 全套）EXIT=0；`cargo clippy`（若基线可用）无新增告警；运行日志带 EXIT 码与 shell 头入库 verification/。
-- [ ] AC5（范围纪律）：`git diff <base>..<delivery>` 仅触及允许路径；`diff --check` EXIT=0。
+- [x] AC1（64 位 seek）：`read_through` 不再使用 32 位 `SetFilePointer` 截断路径；改用 `SetFilePointerEx`（LARGE_INTEGER 64 位）或等价 64 位机制，大 offset（≥ 2^31）下语义正确。（FFI 以 `i64` 内联，旧 `SetFilePointer` 声明删除，全仓唯一调用点）
+- [x] AC2（fail-closed 纵深）：seek 前/后对 offset 越界（> `MAX_RESOURCE_BYTES` 或 seek 返回失败/位置不符）显式返回 typed `CoreError`，不静默继续。（越界 → `RESOURCE_TOO_LARGE:seek_offset=<n> exceeds limit=<n>`；seek 失败/落点不符 → `OPEN_FAILED:seek_to=<n> landed_at=<n>`；`typed_error` 只取冒号前 code 进响应）
+- [x] AC3（测试）：新增单测覆盖①大 offset 请求被 fail-closed 拒绝（不静默截断）；②常规路径回归不受影响（既有 resource protocol 测试全绿）。（同文件 `#[cfg(test)]` 4 测，2 fail-closed + 2 界内回归锚）
+- [x] AC4（回归与证据）：`cargo test`（src-tauri 全套）EXIT=0；`cargo clippy`（若基线可用）无新增告警；运行日志带 EXIT 码与 shell 头入库 verification/。（42 passed/1 ignored 基线既有，EXIT=0；clippy -D warnings 基线 6 error 与修复后集合一致，无新增）
+- [x] AC5（范围纪律）：`git diff <base>..<delivery>` 仅触及允许路径；`diff --check` EXIT=0。（gen/、permissions/ 构建临时改动已恢复，Cargo.lock 无变化）
 
 ## 允许修改范围
 
@@ -48,10 +48,10 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC3 大 offset fail-closed | 新单测：构造 >2^31 offset 请求断言 typed error | worktree cargo | NOT_RUN | 待入 verification |
-| AC3 回归 | `cargo test` 全套 | worktree cargo | NOT_RUN | 待入 verification |
-| AC4 clippy | `cargo clippy`（与基线对比无新增） | worktree cargo | NOT_RUN | 待入 verification |
-| AC5 范围 | `git diff --stat` + `diff --check` | worktree git | NOT_RUN | 待入 verification |
+| AC1/AC3 大 offset fail-closed | 新单测：构造 >2^31 offset 请求断言 typed error | worktree cargo | PASS（修复前红：offset=2^32 实测 `Ok([48,49,50,51])` 误读文件头、`MAX_RESOURCE_BYTES+1` 实测 `Ok([])` 静默空读；修复后 2 测绿） | raw/r1-red-large-offset.log（红 EXIT=101）、raw/g1-cargo-test-full.log（绿） |
+| AC3 回归 | `cargo test` 全套 | worktree cargo | PASS：42 passed / 0 failed / 1 ignored（`perf_chunk_request_digest_cost` 基线既有 ignored），EXIT=0 | raw/g1-cargo-test-full.log |
+| AC4 clippy | `cargo clippy`（与基线对比无新增） | worktree cargo | PASS：`-D warnings` 修复后 6 error 与基线（stash 修复后复测）6 error 集合一致，无新增；均 EXIT=101（既有基线不干净，如实记录） | raw/c0-clippy-baseline.log、raw/c1-clippy-deny-warnings.log |
+| AC5 范围 | `git diff --stat` + `diff --check` | worktree git | PASS：`d1a4b406..9fa92475` 仅 resource_protocol.rs + Task 文件 + verification/**；`diff --check` EXIT=0；gen/、permissions/、Cargo.lock 无改动 | raw/s1-scope-audit.log、raw/s2-delivery-range-audit.log |
 
 ## 依赖、风险与阻塞
 
@@ -62,7 +62,11 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
-- 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 Codex（代行）填写 integration_commit 并改 done。
+- Handoff：`doc/handoffs/M2-FIX-DIGEST-SEEK-2GIB-9fa92475.md`（实现 head `9fa924750bfea18a29e57557a69a641d87fe64cc`）。
+- Review：尚无（DeepSeek Harness 待派发，非作者静态）。
+- 实际测试：2026-09-30，worktree `G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode`，cargo 1.98.1 / rustc 1.98.1：
+  - `cargo test`（apps/desktop/src-tauri 全套）→ 42 passed / 0 failed / 1 ignored，EXIT=0（raw/g1-cargo-test-full.log）；
+  - 先红后绿：修复前 `cargo test read_through_` 2 failed（红证 raw/r1-red-large-offset.log，offset=2^32 实测误读文件头字节 `Ok([48,49,50,51])`，超限 offset 实测静默空读 `Ok([])`），修复后 4/4 绿；
+  - `cargo clippy --bin m2rc1-desktop -- -D warnings`：基线 6 error（raw/c0）与修复后 6 error（raw/c1）集合一致，无新增（基线本不干净，如实记录）；
+  - 范围：`git diff --check` EXIT=0，base..9fa92475 仅触及允许路径（raw/s1、raw/s2）；gen/、permissions/ 构建临时改动已恢复原样。
+- 交付记录：claim `298aa24b`（base d1a4b406）→ 实现 `9fa92475` → 本交付 commit（Task 回填 + Handoff）。2026-09-30。遗留：无功能遗留；clippy 6 个基线既有 error 建议另立清理 Task。后续由 Codex（代行）填写 integration_commit 并改 done。
