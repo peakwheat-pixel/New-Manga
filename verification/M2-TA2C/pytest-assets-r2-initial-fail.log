@@ -21,7 +21,7 @@ tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest
 >           assert assets.status(case) == "PARTIAL"
                    ^^^^^^^^^^^^^^^^^^^
 
-tests\m2_test_assets\test_public_assets.py:96: 
+tests\m2_test_assets\test_public_assets.py:96:
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 test_assets\comic_golden_suite\tools\assets.py:123: in status
     paths = required_files(case)
