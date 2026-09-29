@@ -1,0 +1,71 @@
+# M2-FIX-DIGEST-SEEK-2GIB clippy BASELINE at claim HEAD 298aa24b (resource_protocol.rs stashed back to pre-fix)
+# shell: cwd=/g/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode/apps/desktop/src-tauri cmd=cargo clippy --bin m2rc1-desktop -- -D warnings
+# date: 2026-09-30T01:16:15+08:00
+    Checking m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-FIX-DIGEST-SEEK-2GIB-zcode\apps\desktop\src-tauri)
+error: unused import: `std::sync::Arc`
+  --> src\main.rs:40:5
+   |
+40 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `-D unused-imports` implied by `-D warnings`
+   = help: to override `-D warnings` add `#[allow(unused_imports)]`
+
+error: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:315:12
+    |
+315 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `-D dead-code` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[expect(dead_code)]` or `#[allow(dead_code)]`
+
+error: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:320:12
+    |
+320 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+error: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:329:12
+    |
+328 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+329 |     pub fn new() -> Self {
+    |            ^^^
+...
+338 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+346 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+error: methods `set_books` and `set_books_error` are never used
+   --> src\library_bridge.rs:306:12
+    |
+294 | impl MockLibraryChannel {
+    | ----------------------- methods in this implementation
+...
+306 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+    |            ^^^^^^^^^
+...
+310 |     pub fn set_books_error(&self, error: LibraryError) {
+    |            ^^^^^^^^^^^^^^^
+
+error: called `Iterator::last` on a `DoubleEndedIterator`; this will needlessly iterate the entire iterator
+   --> src\resource_protocol.rs:136:19
+    |
+136 |     let segment = path.split('/').last().unwrap_or("");
+    |                   ^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = help: for further information visit https://rust-lang.github.io/rust-clippy/rust-1.98.0/index.html#double_ended_iterator_last
+    = note: `-D clippy::double-ended-iterator-last` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::double_ended_iterator_last)]`
+help: try
+    |
+136 -     let segment = path.split('/').last().unwrap_or("");
+136 +     let segment = path.split('/').next_back().unwrap_or("");
+    |
+
+error: could not compile `m2rc1-desktop` (bin "m2rc1-desktop") due to 6 previous errors
+# EXIT=101

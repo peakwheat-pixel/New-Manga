@@ -1,0 +1,16 @@
+# M2-FIX-DIGEST-SEEK-2GIB s2 delivery range audit (base d1a4b406 .. implementation head)
+# shell: cwd=/g/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode date: 2026-09-30T01:17:46+08:00
+$ git diff --name-status d1a4b406..9fa92475 (full 40: 9fa9247553.)
+M	apps/desktop/src-tauri/src/resource_protocol.rs
+M	doc/tasks/M2-FIX-DIGEST-SEEK-2GIB.md
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/c0-clippy-baseline.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/c1-clippy-deny-warnings.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/g1-cargo-test-full.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r1-red-large-offset.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/s1-scope-audit.log
+$ git diff --check d1a4b406..9fa92475
+DIFF_CHECK_EXIT=0
+$ full SHAs:
+d1a4b4067a2222732867d16fc42ee0b6e4bfa228
+298aa24b11acf5339458d1e815dffdb04e8a2b60
+9fa924750bfea18a29e57557a69a641d87fe64cc

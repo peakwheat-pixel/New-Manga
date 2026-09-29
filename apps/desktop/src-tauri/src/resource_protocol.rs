@@ -226,12 +226,17 @@ mod win32 {
             read: *mut u32,
             overlapped: *mut c_void,
         ) -> i32;
-        pub fn SetFilePointer(
+        // 64-bit seek (M2-FIX-DIGEST-SEEK-2GIB): replaces the former 32-bit
+        // `SetFilePointer(distance: i32, high: *mut i32)` whose `offset as i32`
+        // cast truncated every offset ≥ 2^31 (and whose null HIGHDWORD pointer
+        // made the upper half permanently zero). LARGE_INTEGER is inlined as a
+        // plain `i64` (same 8-byte value type, no crate dependency).
+        pub fn SetFilePointerEx(
             handle: *mut c_void,
-            distance: i32,
-            high: *mut i32,
+            distance: i64,
+            new_position: *mut i64,
             method: u32,
-        ) -> u32;
+        ) -> i32;
         pub fn GetFileInformationByHandle(handle: *mut c_void, info: *mut RawInfo) -> i32;
         pub fn GetFinalPathNameByHandleW(
             handle: *mut c_void,
@@ -328,8 +333,33 @@ fn read_through(
     offset: u64,
     length: usize,
 ) -> Result<Vec<u8>, CoreError> {
+    // Defence in depth (M2-FIX-DIGEST-SEEK-2GIB): the issue path already
+    // refuses files above MAX_RESOURCE_BYTES, but the seek itself must also
+    // fail closed instead of ever positioning past the ruled limit (a
+    // truncated or mis-positioned seek used to surface as a silently empty
+    // or wrong-window read).
+    if offset > MAX_RESOURCE_BYTES {
+        return Err(CoreError::new(&format!(
+            "RESOURCE_TOO_LARGE:seek_offset={offset} exceeds limit={MAX_RESOURCE_BYTES}"
+        )));
+    }
+    // 64-bit seek (M2-FIX-DIGEST-SEEK-2GIB): SetFilePointerEx takes the
+    // offset as one 64-bit LARGE_INTEGER, so nothing is truncated, and the
+    // resulting position is verified against the request instead of being
+    // ignored (the former fire-and-forget SetFilePointer call could fail or
+    // land elsewhere and the read would proceed from the wrong offset).
     unsafe {
-        win32::SetFilePointer(handle, offset as i32, std::ptr::null_mut(), FILE_BEGIN);
+        let mut landed: i64 = -1;
+        let ok = win32::SetFilePointerEx(handle, offset as i64, &mut landed, FILE_BEGIN);
+        if ok == 0 || landed != offset as i64 {
+            // P3-5 (DSH r1): carry the raw GetLastError() code for
+            // diagnosability (same style as open_once); typed_error's colon
+            // split keeps the wire code plain "OPEN_FAILED".
+            let error = win32::last_error();
+            return Err(CoreError::new(&format!(
+                "OPEN_FAILED:seek_to={offset} landed_at={landed} last_error={error}"
+            )));
+        }
     }
     let mut buffer = vec![0u8; length];
     let mut total = 0usize;
@@ -545,4 +575,114 @@ pub fn capture_facts_for_tests(path: &PathBuf) -> Result<(u32, u64, u64, u64), C
     // clashing with later writes in the same test)
     let opened = open_once(&path.to_string_lossy())?;
     identity_size_mtime(opened.handle)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Small on-disk fixture opened through the production `open_once` path;
+    /// `OpenedFile`'s Drop closes the handle before the TempDir is removed
+    /// (reverse declaration order), matching the main.rs test-fixture style.
+    fn open_fixture(payload: &[u8]) -> (tempfile::TempDir, OpenedFile) {
+        let dir = tempfile::tempdir().expect("tempdir");
+        let path = dir.path().join("asset.bin");
+        std::fs::write(&path, payload).expect("write fixture");
+        let opened = open_once(&path.to_string_lossy()).expect("open fixture");
+        (dir, opened)
+    }
+
+    // (M2-FIX-DIGEST-SEEK-2GIB) AC3①: an offset above MAX_RESOURCE_BYTES must
+    // fail closed with a discriminable typed error instead of silently
+    // seeking/truncating (the pre-fix code served an empty Ok here).
+    #[test]
+    fn read_through_rejects_offset_above_resource_limit() {
+        let (_dir, opened) = open_fixture(b"0123456789");
+        let error = read_through(opened.handle, MAX_RESOURCE_BYTES + 1, 4).unwrap_err();
+        assert!(
+            error.code.starts_with("RESOURCE_TOO_LARGE"),
+            "expected RESOURCE_TOO_LARGE-prefixed code, got {}",
+            error.code
+        );
+    }
+
+    /// AC3①/AC1: an offset beyond the 32-bit seek range (2^32, which the old
+    /// `SetFilePointer(offset as i32)` path truncated to 0 and served FILE
+    /// HEAD bytes for) must be rejected, not silently mis-read.
+    #[test]
+    fn read_through_rejects_offset_beyond_i32_seek_range() {
+        let (_dir, opened) = open_fixture(b"0123456789");
+        let error = read_through(opened.handle, 0x1_0000_0000, 4).unwrap_err();
+        assert!(
+            error.code.starts_with("RESOURCE_TOO_LARGE"),
+            "expected RESOURCE_TOO_LARGE-prefixed code, got {}",
+            error.code
+        );
+    }
+
+    /// C1 (DSH r1 P2-1) — the discriminative artefact for AC1's 64-bit-width
+    /// clause. The read_through guard short-circuits every offset ≥ 2^31
+    /// before the FFI, so the rejection tests above cannot prove the seek
+    /// WIDTH; this drives SetFilePointerEx directly on the fixture handle
+    /// past 2^31 (Windows permits seeking beyond EOF) and asserts the landed
+    /// position is exact — impossible under the former `as i32` truncation.
+    #[test]
+    fn large_offset_high_bits_reach_the_64_bit_seek() {
+        let (_dir, opened) = open_fixture(b"0123456789");
+        let target = 0x1_0000_0000i64;
+        let mut landed: i64 = -1;
+        let ok = unsafe { win32::SetFilePointerEx(opened.handle, target, &mut landed, FILE_BEGIN) };
+        assert!(
+            ok != 0,
+            "SetFilePointerEx failed, last_error={}",
+            win32::last_error()
+        );
+        assert_eq!(landed, target);
+    }
+
+    /// C2 (DSH r1 P2-2): the seek-failure branch must fail closed. A null
+    /// (invalid) handle makes SetFilePointerEx return 0, which read_through
+    /// maps to the typed OPEN_FAILED error (never a silent Ok).
+    /// C4 (DSH r2 P3-10): assert the seek-branch-specific markers, not just
+    /// the code prefix — with the seek check removed, the null handle would
+    /// still fail in ReadFile with the same OPEN_FAILED code, so `landed_at=`
+    /// /`last_error=` (only ever produced by the seek branch) give this test
+    /// discriminative power and back the P3-5 suffix by test output.
+    #[test]
+    fn read_through_invalid_handle_fails_closed_with_open_failed() {
+        let handle: *mut std::ffi::c_void = std::ptr::null_mut();
+        let error = read_through(handle, 0, 4).unwrap_err();
+        assert!(
+            error.code.starts_with("OPEN_FAILED"),
+            "expected OPEN_FAILED-prefixed code, got {}",
+            error.code
+        );
+        assert!(
+            error.code.contains("landed_at=") && error.code.contains("last_error="),
+            "{}",
+            error.code
+        );
+    }
+
+    // AC3② regression anchors: behaviour strictly inside the 256 MiB limit is
+    // byte-for-byte unchanged by the 64-bit seek fix.
+    #[test]
+    fn read_through_serves_requested_window_within_limit() {
+        let (_dir, opened) = open_fixture(b"0123456789");
+        assert_eq!(read_through(opened.handle, 2, 3).unwrap(), b"234");
+        assert_eq!(read_through(opened.handle, 8, 8).unwrap(), b"89");
+    }
+
+    /// An in-limit offset past EOF still yields an empty (truncated) buffer —
+    /// unchanged short-read semantics at the boundary. (P3-7, DSH r1):
+    /// `offset == MAX_RESOURCE_BYTES` is INSIDE the limit — the guard rejects
+    /// only `>` — and this exact call is unreachable in production (the
+    /// single-pass caller seeks at `served < size ≤ MAX`), so this pins
+    /// unchanged behaviour, not a boundary-defence gap.
+    #[test]
+    fn read_through_at_limit_offset_yields_empty_tail() {
+        let (_dir, opened) = open_fixture(b"0123456789");
+        let buffer = read_through(opened.handle, MAX_RESOURCE_BYTES, 4).unwrap();
+        assert!(buffer.is_empty());
+    }
 }
