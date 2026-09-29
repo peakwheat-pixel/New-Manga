@@ -1,8 +1,8 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — M2-AC1 INTEGRATED; REGIONLESS DIAGNOSTIC RELEASED; LEGACY SUPERSEDED**
+Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED (28 TASKS DONE AND INTEGRATED, NONE ACTIVE); NEXT RELEASE DECISION RESTS WITH USER**
 
-Audit date: 2026-09-28 (Asia/Shanghai)
+Audit date: 2026-09-29 (Asia/Shanghai)
 
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
@@ -21,7 +21,7 @@ releases a task.
 
 ### 2026-09-28 全量任务盘点与当前流程
 
-Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前）。已登记的 GOV/M2 Task 共 14 个，全部已集成；[DIAG-M2-REGIONLESS-LOCK-CHANGED-001](tasks/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md) 已于 2026-09-28 释放、交付（DSH 静态交付 + 集成方代执行）、Antigravity 非作者 Review `approved` 并集成（merge=`b5ac097f`，见 [STATUS](STATUS.md) integration checkpoint）。[M2-P1](tasks/M2-P1.md) 已集成（`a174fb9c`）；[M2-IPC1](tasks/M2-IPC1.md) 已集成（`04c1394a`）；[M2-AC2](tasks/M2-AC2.md) 已集成并 `done`（integration=`9d3c1db5`，DSH r2 `approved_with_conditions`，2026-09-28）。当前已释放 [M2-AC3](tasks/M2-AC3.md)（`ready`，用户批准 2026-09-28，Owner=ZCode 待认领）；M2 Acceptance Backlog 其余行未登记。
+Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。已登记并闭环的 Task 共 28 个（GOV-001；M2 首波 D1/I1/I2/R1/UI1；契约与资源通道 C1/S1/S2/C2/S3/RC1/RC2；验收 AC1/AC2/AC3/AC4；DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1；Legacy 诊断家族 DIAG-READING-EXPORT-001/FIX-A/FIX-B/FIX-C；FIX-STUB-DECODER、FIX-EXPORT-LINEAGE、FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、FIX-F02-RESOURCE-CHANNEL-FLAKY），全部 `done` 且集成 main；最新集成=`aa2f99b8`（F02 资源通道安全缺口修复）。**GOAL（G1-G5）已于 2026-09-29 03:4x 达成（停止条件 3）：当前无 Active / 无 released Task**。验收面终态：m2_acceptance 35 passed 0 xfailed 全绿、tests/core 77 passed、cargo 34 passed、vitest 31 tests；历届 Owner branch/worktree 全保留。未完成仅剩：proposed 候选 [M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF](tasks/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF.md)（未释放，禁止实施）、未登记 backlog 三行（Package/clean-start、Real docTR、M2 Release Gate）与散落 P3 遗留清单（见下表末列与 STATUS Goal completion checkpoint）；释放权在用户。
 
 | 已完成 Task | Owner | 非作者 Reviewer / Integrator | Integration |
 |---|---|---|---|
@@ -59,31 +59,50 @@ Live Git=`main@5789b30b37dfbf79d9bca707b5fdaaa562ada707`（本次治理修改前
 
 ```mermaid
 flowchart TD
-  GOV["GOV-001 ✓"] --> D1["M2-D1 ✓"]
-  D1 --> I1["M2-I1 ✓"]
-  D1 --> I2["M2-I2 ✓"]
-  D1 --> R1["M2-R1 ✓"]
-  D1 --> UI1["M2-UI1 ✓"]
-  I1 --> C1["M2-C1 ✓"]
+  %% ✓ = done（已集成 main）；O = Owner；R = 非作者 Reviewer；黄色 = proposed 未释放；灰色 = backlog 未登记
+  GOV["GOV-001 治理基线 · O:Codex ✓"] --> D1["M2-D1 耦合审计 · O:DSH ✓"]
+  D1 --> I1["M2-I1 核心装配缝 · O:ZCode ✓"]
+  D1 --> I2["M2-I2 Qt-free 逻辑抽取 · O:AGY ✓"]
+  D1 --> R1["M2-R1 Qt 运行时验证 · O:DSH ✓"]
+  D1 --> UI1["M2-UI1 React 视觉契约 · O:Qoder ✓"]
+  I1 --> C1["M2-C1 Typed IPC 契约 1.0 · O:ZCode ✓"]
   I2 --> C1
   R1 --> C1
   UI1 --> C1
-  C1 --> S1["M2-S1 ✓"] --> S2["M2-S2 ✓"] --> C2["M2-C2 ✓"] --> S3["M2-S3 ✓"] --> RC1["M2-RC1 ✓"] --> RC2["M2-RC2 ✓"] --> AC1["M2-AC1 ✓"]
-  AC1 --> DIAG["DIAG-M2-REGIONLESS ✓"]
-  DIAG --> P1["M2-P1 ✓"]
-  P1 --> IPC1["M2-IPC1 ✓"]
-  IPC1 --> AC2["M2-AC2 ✓"]
-  AC2 --> AC3["M2-AC3 READY"]
-  AC3 --> AC4["Reader/Library semantics backlog"]
-  AC4 --> PKG["Package + clean-start backlog"]
-  PKG --> ML["Real docTR qualification backlog"]
-  ML --> RG["M2 Release Gate backlog"]
+  C1 --> S1["M2-S1 大媒体可行性 · O:DSH ✓"]
+  S1 --> S2["M2-S2 安全验证原型 · O:ZCode ✓"]
+  S2 --> C2["M2-C2 契约 1.1（T1-T7） · O:ZCode ✓"]
+  C2 --> S3["M2-S3 Tauri 协议探针 · O:ZCode ✓"]
+  S3 --> RC1["M2-RC1 资源通道 runtime · O:ZCode ✓"]
+  RC1 --> RC2["M2-RC2 命令面/sidecar 加固 · O:ZCode ✓"]
+  RC2 --> AC1["M2-AC1 端到端验收 · O:ZCode ✓"]
+  AC1 --> DGR["DIAG-REGIONLESS 诊断 · O:DSH ✓"]
+  DGR --> P1["M2-P1 regionless 重绑修复 · O:AGY ✓"]
+  P1 --> IPC1["M2-IPC1 生产 IPC 竖切 · O:AGY ✓"]
+  IPC1 --> AC2["M2-AC2 数据完整性验收 · O:ZCode ✓"]
+  AC2 --> AC3["M2-AC3 Provider fail-closed 验收 · O:ZCode ✓"]
+  AC3 --> AC4["M2-AC4 导出谱系/页数语义验收 · O:ZCode ✓"]
+  AC4 -->|"发现 F-1"| FXE["FIX-EXPORT-LINEAGE · O:ZCode ✓"]
+  AC4 -->|"发现 F-2"| FXL["FIX-LISTBOOKS-PAGECOUNT · O:ZCode ✓"]
+  IPC1 --> FXS["FIX-STUB-DECODER · O:ZCode ✓"]
+  FXL --> FXF["FIX-F02 资源通道安全缺口 · O:ZCode ✓"]
+  GOV -. 独立 Legacy 诊断支线 .-> DIO["DIAG-READING-EXPORT-001 · O:DSH ✓"]
+  DIO --> FXA["FIX-A 等待语义 · O:ZCode ✓"]
+  FXA --> FXB["FIX-B 心跳生命周期 · O:ZCode ✓"]
+  FXB --> FXC["FIX-C 生产接线 · O:ZCode ✓"]
+
+  %% 未完成：候选与 backlog（均未释放，禁止实施）
+  FXF -.-> DP["DIGEST-PERF 资源通道性能优化 · proposed 未释放"]
+  FXF --> PKG["Package/clean-start 验收 · backlog 未登记"]
+  PKG --> DOC["Real docTR 资质 · backlog（需受控权重）"]
+  DOC --> RG["M2 Release Gate · backlog"]
+
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
-  classDef ready fill:#fff0b3,stroke:#8a6d00,color:#123;
-  classDef planned fill:#eef1f5,stroke:#697386,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DIAG,P1 done;
-  class P1,IPC1,AC3,AC4,PKG,ML,RG planned;
-  class AC2 ready;
+  classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
+  classDef backlog fill:#eef1f5,stroke:#697386,color:#123;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC done;
+  class DP proposed;
+  class PKG,DOC,RG backlog;
 ```
 
 上图中灰色节点只是排序与建议分工，不构成释放。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
