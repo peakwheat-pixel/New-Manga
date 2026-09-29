@@ -1,0 +1,5 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode HEAD=a164e414e8ff62940229d60d4dc046f89308b8b3 date=2026-09-29T18:41:16Z cmd=python - <ac3 discriminative demo: broken checksum_inventory path detected>
+REAL manifest: checked=4 failures=[]
+BROKEN manifest: checked=3 failures=['ko_sfx_dialogue_cleaned_webtoon: checksum_inventory file is missing: verification/M2-TA2C/does-not-exist.json']
+DEMO RESULT: bad checksum_inventory path -> failure reported (red), real manifest green
+# EXIT=0

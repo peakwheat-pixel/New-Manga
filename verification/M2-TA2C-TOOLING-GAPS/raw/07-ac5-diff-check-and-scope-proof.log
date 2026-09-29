@@ -1,0 +1,15 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode HEAD=a164e414e8ff62940229d60d4dc046f89308b8b3 date=2026-09-29T18:41:16Z cmd=git diff --check; git status --short; git diff --name-only (at implementation HEAD, pre-delivery diff)
+--- git diff --check ---
+diff --check EXIT=0 (empty diff at implementation HEAD)
+--- git status --short ---
+?? verification/M2-TA2C-TOOLING-GAPS/
+--- untracked non-ignored files ---
+verification/M2-TA2C-TOOLING-GAPS/raw/01-host-whitelist-reconnaissance.log
+verification/M2-TA2C-TOOLING-GAPS/raw/02-ac1-red-demo-old-vs-new.log
+verification/M2-TA2C-TOOLING-GAPS/raw/03-ac2-verify-ja-smoke.log
+verification/M2-TA2C-TOOLING-GAPS/raw/04-ac2-verify-ko-smoke.log
+verification/M2-TA2C-TOOLING-GAPS/raw/05-ac2-list-benchmark-status.log
+verification/M2-TA2C-TOOLING-GAPS/raw/06-ac5-pytest-full.log
+verification/M2-TA2C-TOOLING-GAPS/raw/07-ac5-diff-check-and-scope-proof.log
+verification/M2-TA2C-TOOLING-GAPS/raw/08-ac3-detection-demo-direct-call.log
+# EXIT=0

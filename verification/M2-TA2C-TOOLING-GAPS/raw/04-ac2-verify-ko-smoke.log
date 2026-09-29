@@ -1,0 +1,15 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode HEAD=a164e414e8ff62940229d60d4dc046f89308b8b3 date=2026-09-29T18:41:16Z cmd=python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke (media copied read-only from main worktree)
+K01	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K01_724815_1
+K02	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K02_651664_112
+K03	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K03_671421_148
+K04	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K04_670145_145
+K05	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K05_131385_302
+K06	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K06_570506_196
+K07	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K07_641253_141
+K08	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K08_701535_160
+K09	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+SUMMARY	READY=10
+INVENTORY	checked=92 missing=0 failures=0
+BENCHMARK_INVENTORY	checked=4 failures=0
+# EXIT=0

@@ -1,0 +1,15 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode HEAD=a164e414e8ff62940229d60d4dc046f89308b8b3 date=2026-09-29T18:41:16Z cmd=python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke (media copied read-only from main worktree; annotations tracked)
+J38	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep04
+J39	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep04
+J40	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep04
+J41	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J42	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J43	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J44	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J45	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J46	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J47	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+SUMMARY	READY=10
+INVENTORY	checked=92 missing=0 failures=0
+BENCHMARK_INVENTORY	checked=4 failures=0
+# EXIT=0
