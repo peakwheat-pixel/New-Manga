@@ -2,7 +2,7 @@
 id: M2-AC5
 title: Windows packaging & clean-start acceptance (bundle / self-contained sidecar / no-system-Python workflow)
 kind: implementation
-status: ready
+status: in_progress
 release_state: M2_AC5_PACKAGE_CLEAN_START_RELEASED
 approval: approved_by_user_2026-09-29_m2ac5_release
 execution_approval: approved_by_user_2026-09-29_m2ac5_release
@@ -17,7 +17,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-AC5-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: READY_FOR_CLAIM
+dispatch_state: CLAIMED
 ---
 
 # M2-AC5 — Windows Packaging & Clean-start Acceptance
