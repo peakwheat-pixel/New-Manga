@@ -2,7 +2,7 @@
 id: M2-TA2A
 title: JA Public Assets Bootstrap
 kind: asset_infrastructure
-status: ready
+status: in_progress
 approval: user_authorized_2026-09-29
 suggested_owner: ZCode
 owner: Codex Desktop

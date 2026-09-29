@@ -11,7 +11,7 @@ Execution checkpoint: 2026-09-29 (Asia/Shanghai)
 | Field | Current value |
 |---|---|
 | Branch / audit base | `main`; current HEAD=`eb41a352c03df84400d90a78c29d2dfbe28a76c9`; M2-TA1 integration=`1ef8fe7e7e66044869f8c59646d28bfca7692bbe`; M2-TA2A base=`eb41a352c03df84400d90a78c29d2dfbe28a76c9` |
-| Current Active Task | [M2-TA2A](tasks/M2-TA2A.md) JA Public Assets Bootstrap; `ready`, authorized 2026-09-29. Asset Ready means local asset integrity only; application Pipeline checks remain `NOT_RUN`. |
+| Current Active Task | [M2-TA2A](tasks/M2-TA2A.md) JA Public Assets Bootstrap; `in_progress`, authorized 2026-09-29. Asset Ready means local asset integrity only; application Pipeline checks remain `NOT_RUN`. |
 | Current released Task | [M2-TA2A](tasks/M2-TA2A.md) is released. [M2-TA2B](tasks/M2-TA2B.md) is a gated `proposed` follow-up and is not released. M2-TA3 remains proposed. |
 | Owner / Reviewer / Integrator | M2-TA2A: Codex Desktop / DeepSeek Harness (non-author) / Codex Desktop. |
 | Recovery point | branch=`agent/codex/M2-TA2A-ja-public-assets`; worktree=`C:/Users/49745/.codex/worktrees/comic-test-assets/New Manga` (reused, 80 ignored KO files preserved); base=`eb41a352c03df84400d90a78c29d2dfbe28a76c9`. |
