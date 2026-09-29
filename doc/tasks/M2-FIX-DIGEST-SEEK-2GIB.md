@@ -2,7 +2,7 @@
 id: M2-FIX-DIGEST-SEEK-2GIB
 title: "Resource channel read_through 64 位 seek 修复（SetFilePointer i32 截断高位恒空，DIGEST-PERF P3-5）"
 kind: fix
-status: in_review
+status: done
 approval: orchestrator_delegated_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: []
 base_commit: d1a4b4067a2222732867d16fc42ee0b6e4bfa228
 branch: agent/zcode/M2-FIX-DIGEST-SEEK-2GIB
 worktree: G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-SEEK-2GIB-zcode
-integration_commit: null
+integration_commit: a0ffc4f342d50c7b7cf2fb7f682c1717120c1a86
 ---
 
 # M2-FIX-DIGEST-SEEK-2GIB：read_through 64 位 seek 修复
@@ -63,7 +63,10 @@ integration_commit: null
 - 风险 2：`f02_equal_size_rewrite_after_first_verify_rejected`、`f02_equal_size_rewrite_stability_loop` 等既有测试对 resource protocol 行为有强断言；seek 路径改动不得改变任何现有可观测行为（256 MiB 内行为逐字节一致）。
 - 阻塞：无。
 
-## 交付与运行记录
+## 交付与运行记录（终态）
+
+- **集成（2026-09-30，Codex 代行）**：merge=`a0ffc4f3`（parents `d1a4b406`+`8a1bc1e8`）；post-merge main head 复跑 cargo test **44 passed EXIT=0**；[integration record](../../verification/M2-FIX-DIGEST-SEEK-2GIB/integration-record/integration.md)、[release evidence](../../verification/M2-FIX-DIGEST-SEEK-2GIB/release-d1a4b406.md)。
+- Review 轨迹：DSH r1 `approved_with_conditions`（被审 `ea07b4b1`，C1-C3+P3-1..9）→ r2 返修 `d459d7bb` → r2 定点复审 `approved_with_conditions`（仅余 C4）→ r3 `8a1bc1e8` 关闭 C4 → 集成放行。报告：[r1](../../doc/reviews/M2-FIX-DIGEST-SEEK-2GIB-ea07b4b1-dsh-r1.md)、[r2](../../doc/reviews/M2-FIX-DIGEST-SEEK-2GIB-d459d7bb-dsh-r2.md)。
 
 - Handoff：`doc/handoffs/M2-FIX-DIGEST-SEEK-2GIB-9fa92475.md`（实现 head `9fa924750bfea18a29e57557a69a641d87fe64cc`）。
 - Review：尚无（DeepSeek Harness 待派发，非作者静态）。

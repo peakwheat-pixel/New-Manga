@@ -139,3 +139,9 @@ r2 复审（对象 = r2 返修 head，条件闭合清单见上文 r1 复审轨�
   侧产物，待集成 commit 补/声明。
 - seek 失败码 `OPEN_FAILED` → 400 的语义取舍（IO 类失败映射 5xx）为后续
   可选项，r1 P3-5 仅要求 last_error 可观测，未改映射。
+
+
+## 集成收口（Codex 代行，2026-09-30）
+
+- delivery head 链：`9fa92475`（实现）→ `8a1bc1e8`（r3 终 tip，含 C4 断言强化）；integration=`a0ffc4f3`；post-merge 复跑 44 passed EXIT=0。
+- 下一任务建议：clippy 6 个基线既有 error 清理为唯一登记候选（需 Codex 显式释放）；seek 失败 400→5xx 映射为可选后续。

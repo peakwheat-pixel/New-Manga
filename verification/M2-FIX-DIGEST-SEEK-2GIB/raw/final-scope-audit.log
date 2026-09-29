@@ -1,0 +1,30 @@
+
+## M2-FIX-DIGEST-SEEK-2GIB final scope audit (d1a4b406..8a1bc1e8, captured at integration)
+M	apps/desktop/src-tauri/src/resource_protocol.rs
+A	doc/handoffs/M2-FIX-DIGEST-SEEK-2GIB-9fa92475.md
+M	doc/tasks/M2-FIX-DIGEST-SEEK-2GIB.md
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/c0-clippy-baseline.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/c1-clippy-deny-warnings.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/g1-cargo-test-full.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r1-red-large-offset.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r2-cargo-test-full.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r2-scope-audit.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r3-cargo-test-full.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/s1-scope-audit.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/s2-delivery-range-audit.log
+DIFFCHECK_EXIT=0
+
+## M2-FIX-DIGEST-SEEK-2GIB final scope audit (d1a4b406..8a1bc1e8, captured at integration)
+M	apps/desktop/src-tauri/src/resource_protocol.rs
+A	doc/handoffs/M2-FIX-DIGEST-SEEK-2GIB-9fa92475.md
+M	doc/tasks/M2-FIX-DIGEST-SEEK-2GIB.md
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/c0-clippy-baseline.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/c1-clippy-deny-warnings.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/g1-cargo-test-full.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r1-red-large-offset.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r2-cargo-test-full.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r2-scope-audit.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/r3-cargo-test-full.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/s1-scope-audit.log
+A	verification/M2-FIX-DIGEST-SEEK-2GIB/raw/s2-delivery-range-audit.log
+DIFFCHECK_EXIT=0
