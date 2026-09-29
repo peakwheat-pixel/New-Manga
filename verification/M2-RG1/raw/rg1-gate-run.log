@@ -28,7 +28,7 @@ raw evidence: G:\CODEX\New Manga.worktrees\M2-RG1-zcode\verification\M2-RG1\raw
   [PASS] RG1-DC3-acceptance-bridge-handshake: {"error": null, "exit": 0, "ping_ok": true, "service": "m2-ac1-acceptance", "shutdown_ok": true}
 
 === phase 5: AC4 PyInstaller warn files copied + classified ===
-  [PASS] RG1-W1-warn-files-copied-and-classified: {"copied": 1, "merged_per_spec_layout": true, "review": [{"missing_excluded_by_spec": [], "missing_other_disclosed": ["_frozen_importlib_external", "_posixsubprocess", "_winreg", "fcntl", "grp", "java", "posix", "pwd", "readline", "resource", "vms_lib"], "missing_total": 11, "note": "operative load-time-critical evidence = the four install-state stdio round trips in this gate; a missing load-time 
+  [PASS] RG1-W1-warn-files-copied-and-classified: {"copied": 1, "merged_per_spec_layout": true, "review": [{"missing_excluded_by_spec": [], "missing_other_disclosed": ["_frozen_importlib_external", "_posixsubprocess", "_winreg", "fcntl", "grp", "java", "posix", "pwd", "readline", "resource", "vms_lib"], "missing_total": 11, "note": "operative load-time-critical evidence = the four install-state stdio round trips in this gate; a missing load-time
 
 === phase 6: AC3 cold-start timers + AC2-2 runtime console observation ===
   [PASS] RG1-CS1-R1-app-window-observed: {"app_pid": 19792, "exit_poll": null, "first_window": {"class": "Tauri Window", "hwnd": 11800648, "pid": 19792, "title": "M2-RC1 resource channel runtime", "visible": true}, "first_window_ms": 157.07289999409113, "round": 1}

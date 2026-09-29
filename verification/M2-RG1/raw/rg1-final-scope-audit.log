@@ -1,0 +1,57 @@
+# M2-RG1 final scope audit — bookkeeping-commit content head
+shell: Git Bash / win32; date: 2026-09-29 13:02:28 +0800
+audited range: 875eb818..working tree (= the bookkeeping commit content; this log ships inside that commit)
+
+$ git diff --name-status 875eb818 (working tree)
+M	apps/desktop/src-tauri/src/ac1_bridge.rs
+M	apps/desktop/src-tauri/src/core_bridge.rs
+M	apps/desktop/src-tauri/src/library_bridge.rs
+M	apps/desktop/src-tauri/src/main.rs
+A	doc/tasks/M2-RG1.md
+M	packaging/m2ac5/core_sidecar.spec
+A	packaging/release-gate/README.md
+A	packaging/release-gate/run_release_gate.py
+A	verification/M2-RG1/raw/rg1-build-sidecar.log
+A	verification/M2-RG1/raw/rg1-console-policy-fix-stat.log
+A	verification/M2-RG1/raw/rg1-console-policy-fix.diff
+A	verification/M2-RG1/raw/rg1-environment-record.log
+A	verification/M2-RG1/raw/rg1-frontend-build.log
+A	verification/M2-RG1/raw/rg1-frontend-npm-install.log
+A	verification/M2-RG1/raw/rg1-gate-run.log
+A	verification/M2-RG1/raw/rg1-gate.json
+A	verification/M2-RG1/raw/rg1-os-detail.log
+A	verification/M2-RG1/raw/rg1-sidecar-manifest-build1.txt
+A	verification/M2-RG1/raw/rg1-sidecar-manifest-gen.log
+A	verification/M2-RG1/raw/rg1-tauri-build-run1.log
+A	verification/M2-RG1/raw/rg1-tauri-build-run2-fix.log
+A	verification/M2-RG1/raw/rg1-warn-warn-core_sidecar.txt
+EXIT=0
+
+$ git diff --check 875eb818 (working tree)
+warning: in the working copy of 'verification/M2-RG1/raw/rg1-console-policy-fix.diff', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/M2-RG1/raw/rg1-gate-run.log', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'verification/M2-RG1/raw/rg1-os-detail.log', LF will be replaced by CRLF the next time Git touches it
+EXIT=0
+
+$ git status --porcelain
+ M doc/tasks/M2-RG1.md
+ M verification/M2-RG1/raw/rg1-console-policy-fix.diff
+ M verification/M2-RG1/raw/rg1-gate-run.log
+ M verification/M2-RG1/raw/rg1-os-detail.log
+?? doc/handoffs/M2-RG1-a1100d75.md
+?? verification/M2-RG1/raw/README.md
+?? verification/M2-RG1/raw/rg1-baseline-cargo-test.log
+?? verification/M2-RG1/raw/rg1-baseline-pytest-m2-acceptance.log
+?? verification/M2-RG1/raw/rg1-baseline-vitest-run.log
+?? verification/M2-RG1/raw/rg1-final-scope-audit.log
+?? verification/M2-RG1/raw/rg1-m2ac5-cleanstart-ac1-run1-stdout.log
+?? verification/M2-RG1/raw/rg1-m2ac5-cleanstart-ac1-run2-stdout.log
+?? verification/M2-RG1/raw/rg1-m2ac5-cleanstart-gate.json
+?? verification/M2-RG1/raw/rg1-m2ac5-cleanstart-probe-stdout.log
+?? verification/M2-RG1/raw/rg1-m2ac5-cleanstart-production-stdout.log
+?? verification/M2-RG1/raw/rg1-m2ac5-cleanstart-runner.log
+?? verification/M2-RG1/raw/rg1-m2ac5-r1-library-probe.log
+?? verification/M2-RG1/raw/rg1-scope-audit.log
+?? verification/M2-RG1/release-875eb818.md
+?? verification/M2-RG1/verification-results.md
+EXIT=0

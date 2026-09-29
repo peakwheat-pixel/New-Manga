@@ -1,0 +1,239 @@
+# M2-RG1 baseline: cargo test --bin m2rc1-desktop @ HEAD=a1100d75bdf4b454d2e26626d67afe7b9589210f
+shell: Git Bash / win32
+$ M2RC1_PYTHON=<TASK-012-py312> M2RC1_SRC_ROOT=<worktree>/src cargo test --bin m2rc1-desktop
+   Compiling windows-link v0.2.1
+   Compiling cfg-if v1.0.5
+   Compiling smallvec v1.16.2
+   Compiling siphasher v1.0.4
+   Compiling writeable v0.6.4
+   Compiling litemap v0.8.3
+   Compiling memchr v2.8.3
+   Compiling utf8_iter v1.0.4
+   Compiling itoa v1.0.18
+   Compiling num-conv v0.2.2
+   Compiling time-core v0.1.9
+   Compiling stable_deref_trait v1.2.1
+   Compiling scopeguard v1.2.0
+   Compiling winnow v1.0.4
+   Compiling deranged v0.5.8
+   Compiling powerfmt v0.2.0
+   Compiling toml_writer v1.1.2+spec-1.1.0
+   Compiling log v0.4.34
+   Compiling fnv v1.0.7
+   Compiling serde_core v1.0.229
+   Compiling icu_normalizer_data v2.3.0
+   Compiling icu_properties_data v2.3.0
+   Compiling zmij v1.0.23
+   Compiling typeid v1.0.3
+   Compiling web-time v1.1.0
+   Compiling regex-syntax v0.8.11
+   Compiling getrandom v0.4.3
+   Compiling hashbrown v0.17.1
+   Compiling alloc-no-stdlib v3.0.0
+   Compiling zerofrom v0.1.8
+   Compiling thiserror v2.0.21
+   Compiling equivalent v1.0.2
+   Compiling bytes v1.12.1
+   Compiling windows-sys v0.61.2
+   Compiling phf_shared v0.13.1
+   Compiling parking_lot_core v0.9.12
+   Compiling lock_api v0.4.14
+   Compiling dunce v1.0.5
+   Compiling toml_parser v1.1.3+spec-1.1.0
+   Compiling base64 v0.23.1
+   Compiling aho-corasick v1.1.5
+   Compiling quick-xml v0.42.0
+   Compiling alloc-stdlib v0.3.0
+   Compiling serde_json v1.0.151
+   Compiling yoke v0.8.3
+   Compiling phf_generator v0.13.1
+   Compiling indexmap v2.14.2
+   Compiling http v1.5.0
+   Compiling serde_spanned v1.1.1
+   Compiling parking_lot v0.12.5
+   Compiling brotli-decompressor v6.0.1
+   Compiling toml_datetime v1.1.1+spec-1.1.0
+   Compiling form_urlencoded v1.2.2
+   Compiling uuid v1.26.1
+   Compiling libc v0.2.189
+   Compiling anyhow v1.0.104
+   Compiling windows-strings v0.5.1
+   Compiling windows-result v0.4.1
+   Compiling glob v0.3.4
+   Compiling ctor v1.0.13
+   Compiling time v0.3.55
+   Compiling erased-serde v0.4.10
+   Compiling zerovec v0.11.8
+   Compiling phf_codegen v0.13.1
+   Compiling zerotrie v0.2.5
+   Compiling string_cache_codegen v0.6.1
+   Compiling option-ext v0.2.0
+   Compiling phf_macros v0.13.1
+   Compiling toml v1.1.6+spec-1.1.0
+   Compiling string_cache v0.9.0
+   Compiling windows-core v0.62.2
+   Compiling selectors v0.38.0
+   Compiling vswhom-sys v0.1.3
+   Compiling cfb v0.14.0
+   Compiling serde_with v3.24.0
+   Compiling windows-threading v0.2.1
+   Compiling vswhom v0.1.0
+   Compiling winreg v0.55.0
+   Compiling serde-untagged v0.1.9
+   Compiling time-macros v0.2.32
+   Compiling percent-encoding v2.3.2
+   Compiling typenum v1.20.1
+   Compiling crc32fast v1.5.2
+   Compiling webview2-com-sys v0.39.1
+   Compiling heck v0.5.0
+   Compiling regex-automata v0.4.18
+   Compiling jsonptr v0.7.1
+   Compiling cargo_metadata v0.19.2
+   Compiling tinystr v0.8.4
+   Compiling potential_utf v0.1.6
+   Compiling web_atoms v0.2.6
+   Compiling brotli v9.0.0
+   Compiling infer v0.22.0
+   Compiling windows-collections v0.3.2
+   Compiling icu_collections v2.3.0
+   Compiling windows-future v0.3.2
+   Compiling icu_locale_core v2.3.0
+   Compiling winapi-util v0.1.11
+   Compiling windows-numerics v0.3.1
+   Compiling json-patch v4.2.0
+   Compiling phf v0.13.1
+   Compiling embed-resource v3.0.11
+   Compiling serde v1.0.229
+   Compiling same-file v1.0.6
+   Compiling generic-array v0.14.7
+   Compiling dirs-sys v0.5.0
+   Compiling cssparser v0.37.0
+   Compiling walkdir v2.5.0
+   Compiling raw-window-handle v0.6.2
+   Compiling tauri-winres v0.3.6
+   Compiling dirs v7.0.0
+   Compiling windows v0.62.2
+   Compiling cargo_toml v1.0.1
+   Compiling flate2 v1.1.10
+   Compiling crossbeam-utils v0.8.23
+   Compiling bitflags v2.13.2
+   Compiling dpi v0.1.2
+   Compiling windows-version v0.1.7
+   Compiling once_cell v1.21.4
+   Compiling pin-project-lite v0.2.17
+   Compiling icu_provider v2.3.1
+   Compiling plist v1.10.1
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling png v0.17.16
+   Compiling crossbeam-channel v0.5.17
+   Compiling digest v0.10.7
+   Compiling icu_properties v2.3.0
+   Compiling icu_normalizer v2.3.0
+   Compiling cpufeatures v0.2.17
+   Compiling tracing-core v0.1.36
+   Compiling semver v1.0.28
+   Compiling sha2 v0.10.9
+   Compiling png v0.18.1
+   Compiling zerocopy v0.8.59
+   Compiling getrandom v0.2.17
+   Compiling unicode-segmentation v1.13.3
+   Compiling rand_core v0.6.4
+   Compiling keyboard-types v0.8.3
+   Compiling markup5ever v0.39.0
+   Compiling regex v1.13.1
+   Compiling tracing v0.1.44
+   Compiling html5ever v0.39.0
+   Compiling ico v0.5.0
+   Compiling serialize-to-javascript v0.1.2
+   Compiling getrandom v0.3.4
+   Compiling tokio v1.53.1
+   Compiling fastrand v2.5.0
+   Compiling mime v0.3.17
+   Compiling idna_adapter v1.2.2
+   Compiling idna v1.1.0
+   Compiling dom_query v0.28.0
+   Compiling softbuffer v0.4.8
+   Compiling window-vibrancy v0.8.1
+   Compiling muda v0.20.0
+   Compiling tempfile v3.27.0
+   Compiling url v2.5.8
+   Compiling cookie v0.18.2
+   Compiling schemars v0.8.22
+   Compiling urlpattern v0.6.0
+   Compiling tauri-utils v2.10.0
+   Compiling ppv-lite86 v0.2.21
+   Compiling rand_chacha v0.3.1
+   Compiling rand v0.8.8
+   Compiling tauri-build v2.7.0
+   Compiling tauri-codegen v2.7.0
+   Compiling tauri v2.12.0
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-RG1-zcode\apps\desktop\src-tauri)
+   Compiling tauri-macros v2.7.0
+   Compiling tao v0.37.1
+   Compiling webview2-com v0.39.1
+   Compiling tauri-runtime v2.12.0
+   Compiling wry v0.57.0
+   Compiling tauri-runtime-wry v2.12.0
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:36:5
+   |
+36 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: unused import: `CHUNK_SIZE`
+   --> src\main.rs:572:54
+    |
+572 |         build_url, handle_m2res_request, ScopeRoots, CHUNK_SIZE, ID_LENGTH,
+    |                                                      ^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop" test) generated 2 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop --tests` to apply 2 suggestions)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 30.91s
+     Running unittests src\main.rs (target\debug\deps\m2rc1_desktop-c2118cdc632a8f23.exe)
+
+running 39 tests
+test tests::ac1_surface_adds_exactly_the_three_acceptance_commands ... ok
+test ac1_bridge::tests::decode_response_maps_typed_errors ... ok
+test library_bridge::tests::book_summary_page_count_known_zero_and_null_are_distinguishable ... ok
+test tests::ac1_commands_never_reappear_on_the_removed_surface ... ok
+test tests::issue_wire_never_carries_path_or_ttl ... ok
+test tests::perf_chunk_request_digest_cost ... ignored
+test library_bridge::tests::decode_response_parses_success_and_error ... ok
+test tests::probe_surface_adds_exactly_the_four_probe_commands ... ok
+test tests::mock_library_channel_integration ... ok
+test tests::mock_issue_without_catalog_entry_fails_closed ... ok
+test tests::no_surface_command_carries_a_ttl_parameter_shape ... ok
+test ac1_bridge::tests::spawn_args_target_the_acceptance_module ... ok
+test tests::production_and_probe_surfaces_never_gain_ac1_commands ... ok
+test tests::production_surface_is_exactly_five_commands ... ok
+test library_bridge::tests::spawn_args_target_core_service_module ... ok
+test tests::url_builder_is_opaque_only ... ok
+test tests::register_catalog_exists_on_no_surface ... ok
+test library_bridge::tests::mock_channel_round_trip ... ok
+test ac1_bridge::tests::spawn_fails_typed_on_missing_python ... ok
+test tests::app_acl_manifest_is_generated_and_enforced ... ok
+test tests::packaged_resolution_explicit_flag_wins ... ok
+test tests::packaged_spawn_missing_sidecar_fails_closed ... ok
+test tests::packaged_resolution_bare_launch_requires_sidecar_exe ... ok
+test tests::packaged_resolution_dev_env_stays_dev ... ok
+test tests::malformed_ids_rejected_before_lookup ... ok
+test tests::responses_carry_no_store ... ok
+test tests::unknown_well_formed_id_typed_404 ... ok
+test tests::chunk_offset_beyond_size_rejected ... ok
+test tests::f01_fetch_then_revoke_then_fetch_must_be_typed ... ok
+test tests::revoked_id_propagates_typed_410 ... ok
+test tests::f02_equal_size_rewrite_after_first_verify_rejected ... ok
+test tests::identity_change_rejected_by_per_request_verification ... ok
+test tests::full_chunk_serving_matches_bytes_and_digest_check ... ok
+test library_bridge::tests::wait_timeout_or_kill_terminates_hanging_process ... ok
+test tests::f02_equal_size_rewrite_stability_loop ... ok
+test tests::real_core_sidecar_denies_uncataloged_and_extended_ttl ... ok
+test tests::real_core_sidecar_round_trip ... ok
+test tests::real_library_sidecar_round_trip_and_eof ... ok
+test tests::f01_ttl_expiry_invalidates_cached_grant ... ok
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+EXIT=0

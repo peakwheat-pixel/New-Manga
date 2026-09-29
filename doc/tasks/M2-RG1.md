@@ -2,7 +2,7 @@
 id: M2-RG1
 title: M2 Release Gate（Windows 本机口径）：cold start metrics / Windows matrix / console policy / packaged dependency closure
 kind: acceptance
-status: in_progress
+status: in_review
 release_state: M2_RG1_RELEASE_GATE_RELEASED
 approval: approved_by_user_2026-09-29_local_machine_ruling
 execution_approval: approved_by_user_2026-09-29_local_machine_ruling
@@ -16,10 +16,10 @@ depends_on: [M2-AC5]
 base_commit: 875eb818abc74a498c84026016dd1a1c72e0ad50
 branch: agent/zcode/M2-RG1-release-gate
 worktree: G:/CODEX/New Manga.worktrees/M2-RG1-zcode
-delivery_head: null
+delivery_head: a1100d75bdf4b454d2e26626d67afe7b9589210f
 review: null
 integration_commit: null
-dispatch_state: CLAIMED
+dispatch_state: DELIVERED_FOR_REVIEW
 ---
 
 # M2-RG1 — M2 Release Gate（Windows 本机口径）
@@ -38,9 +38,9 @@ dispatch_state: CLAIMED
 
 ### AC1 构建锚定（可复现发布候选）
 
-- [ ] Owner worktree 从 `base_commit` 干净构建：先 `packaging/m2ac5/build_sidecar.ps1`（fresh-checkout 约束），后 Tauri NSIS bundle；构建日志带 shell 头 + 固定 HEAD + EXIT 入库。
-- [ ] 记录并锚定：installer sha256、sidecar 全清单 hash（沿用 M2-AC5 的清单格式）、工具链版本（pyinstaller/PySide6/tauri CLI/rustc/NSIS）；本机 OS 版本快照（Windows 11 x64 build 26200）。
-- [ ] 后续所有 gate 运行绑定该 installer sha256（gate.json 记录），被测物与 release candidate 一一对应。
+- [x] Owner worktree 从 `base_commit` 干净构建：先 `packaging/m2ac5/build_sidecar.ps1`（fresh-checkout 约束），后 Tauri NSIS bundle；构建日志带 shell 头 + 固定 HEAD + EXIT 入库。（实测：三步全 EXIT=0；顺序=sidecar→frontend install/build→tauri build）
+- [x] 记录并锚定：installer sha256、sidecar 全清单 hash（沿用 M2-AC5 的清单格式）、工具链版本（pyinstaller/PySide6/tauri CLI/rustc/NSIS）；本机 OS 版本快照（Windows 11 x64 build 26200）。（实测：pre-fix build1=`def5b92b…`；**修复后 Gate 锚定=`d222073b…`**；清单 161 文件、首文件 sha256 与 M2-AC5 runA 一致；tauri-cli 2.12.0/pyinstaller 6.22.3/PySide6 6.11.2/rustc 1.98.1）
+- [x] 后续所有 gate 运行绑定该 installer sha256（gate.json 记录），被测物与 release candidate 一一对应。（实测：rg1-gate.json 与 rg1-m2ac5-cleanstart-gate.json 均记录 `d222073b…`）
 
 ### AC2 GUI console policy —— 裁决 + 验证（现状 FAIL，授权有界修复）
 
@@ -50,42 +50,42 @@ dispatch_state: CLAIMED
 - `target/release/m2rc1-desktop.exe` PE OptionalHeader Subsystem=**3（CONSOLE）**（python 解析 e_lfanew→Subsystem 字段实测）；main.rs 无 `windows_subsystem` 属性——安装态双击即弹应用自身控制台。
 - 全仓 `grep creation_flags|CREATE_NO_WINDOW` 零命中；`packaging/m2ac5/core_sidecar.spec:91` `console=True`——production 分派（main.rs:410-462）派生 `host_bridge.exe`+`core_service.exe`（ac1 模式再加 `acceptance_bridge.exe`）时各自弹控制台。
 
-- [ ] 机器可验证判据（gate runner 实现）：① installed `m2rc1-desktop.exe` PE Subsystem=2（GUI）；② 运行期 EnumWindows 观测：类名 `ConsoleWindowClass` 且窗口标题或属主进程涉及 `m2rc1-desktop`/四 frozen 入口 exe 的顶层可见窗口数=0（app 运行中与退出后各采样）；③ dev 模式行为零变化（cfg_attr 仅 release 生效）。
-- [ ] **授权的有界修复**（仅此，不得扩大）：
+- [x] 机器可验证判据（gate runner 实现）：① installed `m2rc1-desktop.exe` PE Subsystem=2（GUI）；② 运行期 EnumWindows 观测：类名 `ConsoleWindowClass` 且窗口标题或属主进程涉及 `m2rc1-desktop`/四 frozen 入口 exe 的顶层可见窗口数=0（app 运行中与退出后各采样）；③ dev 模式行为零变化（cfg_attr 仅 release 生效）。（实测：①=2；② 3 轮运行中与退出后命中均=0；③ 静态源审计全过——cfg_attr 门控/cfg(windows) 门控/spec 参数冻结）
+- [x] **授权的有界修复**（仅此，不得扩大）：（commit 29c71024；diff 见 raw/rg1-console-policy-fix.diff）
   - `apps/desktop/src-tauri/src/main.rs` 顶部加 `#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`；
   - `core_bridge.rs` / `ac1_bridge.rs` / `library_bridge.rs` 的 **Command 构建段**加 `creation_flags(CREATE_NO_WINDOW=0x08000000)`（`#[cfg(windows)]` 门控）；不改协议、不改参数语义、不改其他任何逻辑；
-  - **`packaging/m2ac5/core_sidecar.spec` 的 `console=True` 参数值禁改**（stdio JSON 协议依赖管道；PyInstaller windowed 模式会改变 stdout 语义）——如注释需同步可改注释。
-- [ ] 修复后重建 → 重装 → 复测 AC2 三判据全过；若修复引入回归（三层基线跌破）停下登记，不得用放宽断言换绿。
+  - **`packaging/m2ac5/core_sidecar.spec` 的 `console=True` 参数值禁改**（stdio JSON 协议依赖管道；PyInstaller windowed 模式会改变 stdout 语义）——如注释需同步可改注释。（实测：仅注释同步，参数值未改）
+- [x] 修复后重建 → 重装 → 复测 AC2 三判据全过；若修复引入回归（三层基线跌破）停下登记，不得用放宽断言换绿。（实测：重建 EXIT=0（raw/rg1-tauri-build-run2-fix.log）；三层基线全绿不回退）
 
 ### AC3 Cold start metrics —— 测录（无阈值）
 
 **裁决（frozen）**：本 Gate **只测录、不设阈值**——冷启动阈值属用户产品裁决，Backlog 行仅要求 "cold-start metrics"。
 
-- [ ] 安装态（净化 PATH + `APPDATA=<lab>`）测量并落 gate.json + raw 日志，每项 ≥3 次采样（报 min/median/max）：
-  - ① app 冷启动：`CreateProcess(installed exe)` → 首个可见顶层窗口（EnumWindows by pid, IsWindowVisible）耗时 ms；
-  - ② core ready：安装态 `core_service.exe` stdio probe spawn → `ready` 应答耗时 ms；
-  - ③ ac1 handshake：安装态 `acceptance_bridge.exe` spawn → ready 耗时 ms。
-- [ ] 环境快照（PATH 净化条目数、APPDATA lab 路径、采样轮次）随数值入库；NOT_RUN 项（如有）如实标注原因。
+- [x] 安装态（净化 PATH + `APPDATA=<lab>`）测量并落 gate.json + raw 日志，每项 ≥3 次采样（报 min/median/max）：
+  - ① app 冷启动：`CreateProcess(installed exe)` → 首个可见顶层窗口（EnumWindows by pid, IsWindowVisible）耗时 ms；（实测：46.0 / 48.2 / 157.1 ms，n=3）
+  - ② core ready：安装态 `core_service.exe` stdio probe spawn → `ready` 应答耗时 ms；（实测：239.1 / 240.5 / 240.9 ms，n=3）
+  - ③ ac1 handshake：安装态 `acceptance_bridge.exe` spawn → ready 耗时 ms。（实测：266.5 / 268.2 / 280.1 ms，n=3；probe 按该 bridge 冻结契约 pin `M2AC1_TEST_MODE=1`）
+- [x] 环境快照（PATH 净化条目数、APPDATA lab 路径、采样轮次）随数值入库；NOT_RUN 项（如有）如实标注原因。（实测：净化移除 11 条/保留 45 条；逐轮新 lab APPDATA（每轮均冷启动口径）；无 NOT_RUN）
 
 ### AC4 Packaged dependency closure —— 安装态闭环
 
-- [ ] 安装态**四入口** stdio 往返全部成功：`core_service.exe`（core.ping ready + ListBooks envelope）、`host_bridge.exe`（资源通道握手）、`acceptance_bridge.exe`（ac1 handshake）、`catalog_loader.exe`（lab 数据根真实 seed + SQLite 读回）。
-- [ ] PyInstaller warn 文件（4 入口，`build_sidecar.ps1` 产物）入库并逐类审查：缺 load-time-critical 模块=FAIL；仅条件导入/可选模块=逐条披露。
-- [ ] 复用 M2-AC5 clean-start runner（25 场景）作为回归基线并在本 installer 上全 PASS；其证据按 **"运行 → 搬运（改名 `rg1-m2ac5-*` 入 `verification/M2-RG1/raw/`）→ `git restore verification/M2-AC5/`"** 处理——M2-AC5 raw 在本 Task worktree 中**不得提交**（runner 写死 `verification/M2-AC5/raw/` 绝对路径，属 M2-AC5 P3-9(b) 已知行为，披露即可）。
+- [x] 安装态**四入口** stdio 往返全部成功：`core_service.exe`（core.ping ready + ListBooks envelope）、`host_bridge.exe`（资源通道握手）、`acceptance_bridge.exe`（ac1 handshake）、`catalog_loader.exe`（lab 数据根真实 seed + SQLite 读回）。（实测：RG1-DC1..DC4 全 PASS；host_bridge 额外做 issue/resolve/revoke；catalog_loader CLI 参数从 worktree 源确认后 seed 2 行 + sqlite3 读回）
+- [x] PyInstaller warn 文件（4 入口，`build_sidecar.ps1` 产物）入库并逐类审查：缺 load-time-critical 模块=FAIL；仅条件导入/可选模块=逐条披露。（实测：PyInstaller 6.22 产出**一份合并** warn-core_sidecar.txt 覆盖 4 入口（布局与释放侦察预期不同，已披露）；missing 共 11 条全部为条件/可选导入、0 条 load-time-critical；逐条清单见 gate.json）
+- [x] 复用 M2-AC5 clean-start runner（25 场景）作为回归基线并在本 installer 上全 PASS；其证据按 **"运行 → 搬运（改名 `rg1-m2ac5-*` 入 `verification/M2-RG1/raw/`）→ `git restore verification/M2-AC5/`"** 处理——M2-AC5 raw 在本 Task worktree 中**不得提交**（runner 写死 `verification/M2-AC5/raw/` 绝对路径，属 M2-AC5 P3-9(b) 已知行为，披露即可）。（实测：25/25 PASS @ `d222073b…`；M2-AC5 目录 restore 后零变更）
 
 ### AC5 Windows support matrix —— 裁决 + 记录
 
 **裁决（frozen）**：当前支持矩阵声明 = **"Windows 11 x64（本机 build 26200）已验证（本 Gate）；Windows 10 及其他 build 未验证（NOT_RUN，如实披露）"**。矩阵扩展（Win10 物理/虚拟机覆盖）登记为后续候选，不阻断本 Gate。
 
-- [ ] 本机环境快照入库：OS 名称/版本/build、架构、CPU/内存摘要。
-- [ ] Windows 10 / 其他版本 NOT_RUN 在 Task、Handoff、verification-results 三处如实标注（不得写成 N/A 或 PASS）。
+- [x] 本机环境快照入库：OS 名称/版本/build、架构、CPU/内存摘要。（实测：Windows 11 专业版 10.0.26200.9457 x64；Ryzen 9 7950X3D 16C/32T；33.98 GB）
+- [x] Windows 10 / 其他版本 NOT_RUN 在 Task、Handoff、verification-results 三处如实标注（不得写成 N/A 或 PASS）。（实测：三处均标注 NOT_RUN）
 
 ### AC6 证据纪律与范围
 
-- [ ] 所有 raw 日志带 shell/解释器头 + 固定 HEAD + 每命令 EXIT；gate 汇总 JSON 机器可读。
-- [ ] `git diff --name-status <base>..<delivery_head>` 对照两级允许路径（日志入库）；`git diff --check <base>..<delivery_head>` EXIT=0。
-- [ ] 三层基线不回退：`cargo test --bin m2rc1-desktop`（≥38 passed + 1 ignored）/ `pytest tests/m2_acceptance -q`（≥35）/ `npx vitest run`（≥31）全 EXIT=0；触碰 Rust spawn 段后 cargo 必须全绿。
-- [ ] NSIS 卸载测试 NOT_RUN 如实披露（不在 Backlog 四项范围）；**`src/**` Python 零改动**（发现缺陷只记 FAIL/候选）。
+- [x] 所有 raw 日志带 shell/解释器头 + 固定 HEAD + 每命令 EXIT；gate 汇总 JSON 机器可读。（实测：rg1-gate.json verdict=PASS 23/23；例外披露：3 份日志行尾空格规范化、M2-AC5 runner 产物为 runner 自有格式）
+- [x] `git diff --name-status <base>..<delivery_head>` 对照两级允许路径（日志入库）；`git diff --check <base>..<delivery_head>` EXIT=0。（实测：4 个条件允许源文件 + spec 注释 + 新增 gate/evidence/doc；EXIT=0，见 raw/rg1-final-scope-audit.log）
+- [x] 三层基线不回退：`cargo test --bin m2rc1-desktop`（≥38 passed + 1 ignored）/ `pytest tests/m2_acceptance -q`（≥35）/ `npx vitest run`（≥31）全 EXIT=0；触碰 Rust spawn 段后 cargo 必须全绿。（实测：38+1 / 35 / 31 全 EXIT=0）
+- [x] NSIS 卸载测试 NOT_RUN 如实披露（不在 Backlog 四项范围）；**`src/**` Python 零改动**（发现缺陷只记 FAIL/候选）。（实测：NOT_RUN 已披露于本表、Handoff、verification-results；src/** 零改动）
 
 ## 允许修改范围
 
@@ -109,16 +109,16 @@ dispatch_state: CLAIMED
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 | build_sidecar.ps1 + `npx tauri build`（worktree 内） | fresh worktree @ base | 计划中 | verification/M2-RG1/raw/ |
-| AC2 | gate runner：PE subsystem 解析 + EnumWindows 运行期观测 | 安装态 | 计划中 | gate.json + raw |
-| AC3 | gate runner：三类冷启动计时 ≥3 采样 | 安装态 + 净化 PATH | 计划中 | gate.json + raw |
-| AC4 | 四入口 stdio 往返 + warn 审查 + M2-AC5 25 场景回归 | 安装态 + lab 根 | 计划中 | gate.json + raw |
-| AC6 | 三层基线 + diff --check + name-status | worktree @ delivery head | 计划中 | raw |
+| AC1 | build_sidecar.ps1 + `npx tauri build`（worktree 内） | fresh worktree @ base | 全 EXIT=0；installer（修复后锚定）sha256=`d222073b…`；sidecar 清单 161 文件 | verification/M2-RG1/raw/rg1-build-sidecar.log、rg1-tauri-build-run1/run2-fix.log、rg1-sidecar-manifest-build1.txt、rg1-environment-record.log |
+| AC2 | gate runner：PE subsystem 解析 + EnumWindows 运行期观测 | 安装态 | Subsystem=2；3 轮运行中/退出后 Console 命中 0；静态源审计全过 | raw/rg1-gate.json（RG1-PE1/PE2/CW1/CW2）、rg1-console-policy-fix.diff |
+| AC3 | gate runner：三类冷启动计时 ≥3 采样 | 安装态 + 净化 PATH | app 46.0/48.2/157.1 ms；core ready 239.1/240.5/240.9 ms；ac1 266.5/268.2/280.1 ms（n=3） | raw/rg1-gate.json（timings）、rg1-gate-run.log |
+| AC4 | 四入口 stdio 往返 + warn 审查 + M2-AC5 25 场景回归 | 安装态 + lab 根 | 四入口全 PASS；warn 11 条全条件导入、0 load-time-critical；25/25 PASS @ 同 installer | raw/rg1-gate.json（RG1-DC1..DC4/W1）、rg1-warn-*.txt、rg1-m2ac5-cleanstart-gate.json |
+| AC6 | 三层基线 + diff --check + name-status | worktree @ delivery head | cargo 38+1 / pytest 35 / vitest 31 全 EXIT=0；diff --check EXIT=0；name-status 全落允许路径 | raw/rg1-baseline-*.log、rg1-scope-audit.log、rg1-final-scope-audit.log |
 
 ## 产物与交接链接
 
-- Handoff：`doc/handoffs/M2-RG1-<short-head>.md`（交付后回填）
-- Release evidence：`verification/M2-RG1/release-875eb818.md`
+- Handoff：`doc/handoffs/M2-RG1-a1100d75.md`（已回填）
+- Release evidence：`verification/M2-RG1/release-875eb818.md`（已交付；汇总表 [verification-results.md](../verification/M2-RG1/verification-results.md)）
 - Review 报告：`doc/reviews/M2-RG1-<head>-dsh-r1.md`（交付后回填）
 
 ## 已知阻塞

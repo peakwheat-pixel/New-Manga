@@ -1,0 +1,7 @@
+$ <installed>\m2rc1-desktop.exe (purged PATH, no M2RC1_SRC_ROOT/PYTHON)
+exit=0
+[m2rc2-allowlist] probe:issue_resource_url,revoke_ref,revoke_resource_refs,probe_config,probe_write_results,probe_exit,probe_issue_url
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime
+[m2rc1-title] M2-RC1 resource channel runtime
+[0929/125433.055:ERROR:ui\gfx\win\window_impl.cc:172] Failed to unregister class Chrome_WidgetWin_0. Error = 1412

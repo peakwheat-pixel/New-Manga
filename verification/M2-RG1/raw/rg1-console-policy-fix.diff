@@ -103,7 +103,7 @@ index f2efa449..5df49b05 100644
 @@ -148,6 +150,13 @@ impl StdioLibraryChannel {
              cmd.env("NEWMANGA_DATA_ROOT", root);
          }
- 
+
 +        #[cfg(windows)]
 +        {
 +            use std::os::windows::process::CommandExt;
