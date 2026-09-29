@@ -6,7 +6,7 @@ status: in_review
 approval: user_authorized_2026-09-29
 suggested_owner: ZCode
 owner: ZCode
-reviewer: DeepSeek Harness（非作者；r1 `changes_requested`、r2 `approved_with_conditions`，见交付记录）
+reviewer: DeepSeek Harness（非作者；r1 `changes_requested`、r2 `approved_with_conditions`、r3 `changes_requested`、r4 `changes_requested`，报告在 doc/reviews/M2-DOCTR-QUAL-*）
 depends_on: []
 base_commit: 14720230b101908cfc586b31273fcd9574f50097
 branch: agent/zcode/M2-DOCTR-QUAL-PREFLIGHT
@@ -74,7 +74,7 @@ integration_commit: null
 ## 交付与运行记录
 
 - **2026-09-29 ZCode 交付（delivery head 见 Handoff）**：三项前置全部完成。受控权重快照+manifest；独立 GPU venv（doctr 1.1.0 = 生产 pin）；评测基座（511 regions / 917 GT-A 框 / 三层判定口径 / 用户默认阈值）；首跑基线：fast_base（生产 pin）primary block_coverage **Recall 0.4776 / Precision 0.1250（GT 盲区污染下界）FAIL**，meanCov 0.7531 / severe_miss 0.0385 PASS；db_resnet50 对照 0.6085/0.1858 仍 FAIL；CPU/GPU 一致、adapter 6/6。核心 gap：docTR 默认检测权重到韩漫 webtoon 域的适配缺口 + 伪 GT 的 SFX 标注盲区（Precision 无法用此集高置信度度量）。证据：[baseline-summary](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
-- Review 轨迹：DSH r1 `changes_requested`（2026-09-29，24 项，事实层全部独立确认）→ r2 修订 `3e86c800`（20 closed / 2 partially_closed / 0 open）→ DSH r2 `approved_with_conditions`（AC1–AC4 事实层经原始 JSON 复算确认成立；条件 C1–C5 + 不阻塞 N6/N7）→ r3 条件闭合提交。状态：`in_review`，等 r3 定点复核；复核通过并集成后由 Codex 填 integration_commit 改 done。
+- Review 轨迹：DSH r1 `changes_requested`（2026-09-29，24 项，事实层全部独立确认）→ r2 修订 `3e86c800`（20 closed / 2 partially_closed / 0 open）→ DSH r2 `approved_with_conditions`（AC1–AC4 事实层经原始 JSON 复算确认成立；条件 C1–C5）→ r3 提交 `fc9bfd61` 闭合 C1–C5 → DSH r3 `changes_requested`（C2 残留 3 处计时值 + P3-N2..N4）→ r4 提交 `3ec7704a`（部分修正；两处因作者脚本缺陷未写回）→ DSH r4 `changes_requested`（handoff:60、summary 标题/导语、STATUS 事实性、轨迹登记、git-evidence 段、review 落盘）→ r5 提交修正全部 open 项。状态：`in_review`，等 r5 定点复核；复核通过并集成后由 Codex 填 integration_commit 改 done。
 - Handoff：[M2-DOCTR-QUAL-PREFLIGHT-baseline](../handoffs/M2-DOCTR-QUAL-PREFLIGHT-baseline.md)。
 - Review：见上方 Review 轨迹（DSH r1/r2/r3）。
 - 遗留：①正式 qualification run 的三项裁决（均超出作者自决范围）：主判定口径（coverage 替代用户默认文本的 IoU，见 thresholds.json `judging_criterion`）、pad 处理协议（生产 MERGE_PAD_PX=6 使真实 Recall 夹在 [0.26, 0.48]，见 baseline-summary §4 敏感性对照）、Precision 可测性方案（人工审计子集）；②架构选型输入：db_resnet50 显著优于 fast_base，替换属产品/契约变更须独立切片；③union GT-B 坏框问题与 text_ctd 低分框不可用已记录于 baseline-summary §4-5；④GPU 环境 torch/torchvision 与生产 pin 的偏差（2.11.0+cu128/0.26.0+cu128 vs 2.14.0/0.29.0，cu128 无 2.14.0）已披露并以 CPU 对照弥合。

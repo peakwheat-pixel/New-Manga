@@ -1,6 +1,6 @@
-# M2-DOCTR-QUAL-PREFLIGHT：Real docTR Detection 首跑基线摘要（r2）
+# M2-DOCTR-QUAL-PREFLIGHT：Real docTR Detection 首跑基线摘要（r5）
 
-Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md) · 日期：2026-09-29 · 执行：ZCode（用户全权授权）· Review：DeepSeek Harness r1 `changes_requested`（本文档为按 r1 修订后的 r2 版；全部修订点见文末 §8）
+Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md) · 日期：2026-09-29 · 执行：ZCode（用户全权授权）· Review：DeepSeek Harness r1 `changes_requested` → r2 `approved_with_conditions` → r3/r4 `changes_requested`（定点）→ r5 修正待复核（本文档为 r5 版；全部修订点见文末 §8）
 
 ## 0. 一句话结论
 
@@ -104,4 +104,4 @@ Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md) · 
 
 DSH r1 verdict `changes_requested`（P0×1 P1×6 P2×9 P3×8，事实层全部独立确认）。r2 修订（含 r1 P3-5 git 层证据）：P0-1 Handoff 固定 head；P1-1 `snapshot_weights.py` 入库；P1-2 [env-gpu-py312.json](env-gpu-py312.json)；P1-3 FP 归因 `attribution_available` 语义修正 + 报告改用 union 2985/2；P1-4 `thresholds.json` 显式 `primary_layer`/`judging_criterion` + 双口径并列 + 裁决项上交；P1-5 results 增加 `manifest_sha256`/`gt_mode`/`n_gt_boxes`（全部重跑绑定 v2 manifest）；P1-6 adapter 坐标比对（maxΔ=0.0）；P2-1/2/3/5/6/7/8/9 与 P3-1/2/3/4/6/7/8 落实（Pillow 声明、manifest 文件名、region 断言、severe 层级标注、CPU/GPU diff 精确化、torchvision 披露、license 措辞统一 cases.json 原文、素材 hash、UTC 时间戳、manifest `verified_by`/`command`、三处 pin 注释、IoU 措辞、AC 勾选注记 owner 自评、docstring 同步、`union_params` 结构化）；P2-4 pad 敏感性对照新增（§4）。Git 层证据（ls-tree + diff --stat，r1 与 r2 两段）：[git-evidence.txt](git-evidence.txt)。
 
-DSH r2 verdict `approved_with_conditions`（r2 head=`3e86c800`；AC1–AC4 事实层经独立复算确认成立，0 open）。r3 修订闭合 C1–C5：C1 Handoff 登记 r2 head + git-evidence 追加 r2 段；C2 计时口径统一为机器可读证据值（env-gpu：engine_build 0.54 s / first_inference 0.38 s / 稳态 33.4–34.6 ms / 峰值 522.6 MiB；全量 fast_base 23.31 s、db_resnet50 17.11 s——早期会话叙述值 4.2 s/0.59 s/38 ms 为含冷启动的另一次测量，口径不同，以 JSON 为准）；C3 §5 归因措辞修正；C4 adapter/consistency JSON 补 UTC、manifest 脚本 `generated_at` 改真实 UTC（schema@2 既有 manifest 为硬编码日期，内容不受影响，脚本修正对未来运行生效）；C5 adapter 空块集语义（两侧 0 块 = match）。不阻塞项：N6 severe 层注记、N7 REBASELINE_PLAN/Task reviewer 字段同步。
+DSH r2 verdict `approved_with_conditions`（r2 head=`3e86c800`；AC1–AC4 事实层经独立复算确认成立，0 open）。r3 提交 `fc9bfd61` 闭合 C1–C5：C1 Handoff 登记 r2 head + git-evidence 追加 r2 段；C2 计时口径统一为机器可读证据值（env-gpu：engine_build 0.54 s / first_inference 0.38 s / 稳态 33.4–34.6 ms / 峰值 522.6 MiB；全量 fast_base 23.31 s、db_resnet50 17.11 s——早期会话叙述值 4.2 s/0.59 s/38 ms 为含冷启动的另一次测量，口径不同，以 JSON 为准）；C3 §5 归因措辞修正；C4 adapter/consistency JSON 补 UTC、manifest 脚本 `generated_at` 改真实 UTC（schema@2 既有 manifest 为硬编码日期，内容不受影响，脚本修正对未来运行生效）；C5 adapter 空块集语义（两侧 0 块 = match）。不阻塞项：N6 severe 层注记、N7 REBASELINE_PLAN/Task reviewer 字段同步。DSH r3 复核：C1/C3/C4/C5 closed，C2 三处残留计时值 open（+P3-N2..N4）→ r4 提交 `3ec7704a` 修正（因作者脚本缺陷，handoff 冒烟行与本文档标题/导语两处未写回）→ DSH r4 复核：#2/#3/#5/#6 closed，#1（handoff:60 冒烟行）/#4（本文档标题/导语）open，另 P1-2 STATUS 事实性声称、P2-1 轨迹登记、P3-1 git-evidence 缺 r3/r4 段、P3-2 review 报告未落盘 → r5 提交修正全部六点（本文档标题/导语/§8 即 r5 产物；review 报告 r1–r4 已入 [doc/reviews/](../../doc/reviews/)）。

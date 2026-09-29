@@ -3355,3 +3355,26 @@ wiki/repowiki/repo-map.txt
 
 ## git diff --stat 4d9d8d0c..3e86c800 -- requirements.txt requirements-dev.txt src/ (empty = zero production changes in r2)
 (end of r2 production diff - empty above means zero changes)
+
+## git diff --stat 3e86c800..fc9bfd61 (r3 scope: C1-C5 closure)
+ doc/REBASELINE_PLAN.md                             |  2 +-
+ doc/STATUS.md                                      |  4 ++--
+ doc/handoffs/M2-DOCTR-QUAL-PREFLIGHT-baseline.md   |  5 +++--
+ doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md               |  6 ++---
+ experiments/M2-DOCTR-QUAL/build_eval_manifest.py   |  3 ++-
+ experiments/M2-DOCTR-QUAL/eval_detection.py        |  2 ++
+ experiments/M2-DOCTR-QUAL/smoke_adapter_check.py   | 10 ++++++++-
+ .../M2-DOCTR-QUAL/adapter-spot-check-cuda.json     |  7 +++---
+ verification/M2-DOCTR-QUAL/baseline-summary.md     |  8 ++++---
+ .../M2-DOCTR-QUAL/consistency-and-sensitivity.json |  3 ++-
+ verification/M2-DOCTR-QUAL/git-evidence.txt        | 26 ++++++++++++++++++++++
+ 11 files changed, 59 insertions(+), 17 deletions(-)
+
+## git diff --stat fc9bfd61..3ec7704a (r4 scope)
+ doc/STATUS.md                               | 2 +-
+ doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md        | 4 ++--
+ verification/M2-DOCTR-QUAL/git-evidence.txt | 2 ++
+ 3 files changed, 5 insertions(+), 3 deletions(-)
+
+## git diff --stat 3ec7704a..HEAD (r5 scope, captured at commit time in integration record)
+(r5 diff appended at integration)

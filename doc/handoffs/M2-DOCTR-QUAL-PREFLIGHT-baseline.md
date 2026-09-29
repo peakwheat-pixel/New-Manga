@@ -2,12 +2,12 @@
 
 - 日期：2026-09-29
 - Owner：ZCode（用户 2026-09-29 全权授权，ZCode 代行 Codex 登记）
-- Reviewer：DeepSeek Harness（待派发，非作者静态 Review）
+- Reviewer：DeepSeek Harness（非作者静态）。轨迹：r1 `changes_requested`（[报告](../reviews/M2-DOCTR-QUAL-3e86c800-pre-dsh-r1.md)）→ r2 `approved_with_conditions`（[报告](../reviews/M2-DOCTR-QUAL-4d9d8d0c-dsh-r2.md)）→ r3 `changes_requested`（[报告](../reviews/M2-DOCTR-QUAL-3e86c800-dsh-r3.md)）→ r4 `changes_requested`（[报告](../reviews/M2-DOCTR-QUAL-3ec7704a-dsh-r4.md)）→ r5 修正待复核
 - base_commit：`14720230b101908cfc586b31273fcd9574f50097`（main）
 - release commit：`480f12a2`（治理登记）
 - 实现交付 head（被审对象，r1）：`4d9d8d0c`——提交列表：`480f12a2`（release 治理：Task/STATUS/REBASELINE_PLAN/tasks README）+ `4d9d8d0c`（实现交付：experiments/M2-DOCTR-QUAL 全部 5 文件 + verification/M2-DOCTR-QUAL 7 份证据 + Task/STATUS/Handoff 回填）。变更路径全集：`doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/tasks/README.md`、`doc/handoffs/`、`experiments/M2-DOCTR-QUAL/**`、`verification/M2-DOCTR-QUAL/**`（git 证据：[git-evidence.txt](../../verification/M2-DOCTR-QUAL/git-evidence.txt)）。
 - r2 修订头（DSH r1 修订，被 r2 复核固定）：`3e86c800f4c9b28b246787ae470a364c90ae1e42`（单提交，parent `4d9d8d0c`；20 文件，含 `snapshot_weights.py`、`env-gpu-py312.json`、`hash-recomputation.txt`、`consistency-and-sensitivity.json`、`git-evidence.txt` 5 个新增）；r1 交付 verification 文件实为 8 个（含 weights-manifest），前文「7 份证据」计数有误，以 [git-evidence.txt](../../verification/M2-DOCTR-QUAL/git-evidence.txt) 的 ls-tree 清单为准。
-- r3 修订提交：本文件之后的提交（DSH r2 `approved_with_conditions` 条件 C1–C5 闭合 + N6/N7，纯文档/脚本修订，无重测除 adapter 复跑）；修订记录见 [baseline-summary §8](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
+- r3 条件闭合提交：`fc9bfd61`（C1–C5 + N6/N7）；r4 提交：`3ec7704a`（r3 复核残留：STATUS/Task 计时值、Task 占位、git-evidence 树标注；其 handoff/summary 两处修改因作者脚本缺陷未写回，r5 补正）；r5 提交：本文件之后的提交（r4 复核全部 open 项：本行与冒烟行计时、summary 标题/导语/§8、STATUS 事实性措辞、Task 轨迹、git-evidence r3/r4 段、review 报告落盘 doc/reviews/）。修订记录见 [baseline-summary §8](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
 - 分支：`agent/zcode/M2-DOCTR-QUAL-PREFLIGHT`（主工作区，代行模式）
 - 状态：`in_review`
 
@@ -57,7 +57,7 @@
 全部 executed 2026-09-29，明细见 Task 测试表：
 
 - 权重校验：SHA-256 复核 fast_base=pin 一致 ✓
-- GPU 冒烟：engine 4.2s / 稳态 38ms / 523 MiB ✓
+- GPU 冒烟：engine_build 0.54 s、首次推理 0.38 s、稳态 33.4–34.6 ms、峰值 522.6 MiB ✓（与 [env-gpu-py312.json](../../verification/M2-DOCTR-QUAL/env-gpu-py312.json) 同源）
 - manifest：`build_eval_manifest.py --level full --gt-mode seg05|union` → 511/917、511/1184 ✓
 - 评测：`eval_detection.py`（fast_base cuda seg05+union、db_resnet50 cuda seg05、fast_base cpu limit80、fast_base cuda limit80）✓
 - adapter：`smoke_adapter_check.py` → 6/6 ✓
