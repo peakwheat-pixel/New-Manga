@@ -72,6 +72,93 @@ def test_manifest_rejects_path_escape(tmp_path):
             assets.load_manifest()
 
 
+@pytest.mark.parametrize("url", [
+    "https://evil.example/x",
+    "http://www.peppercarrot.com/kr/webcomic-sources/ep06_The-Potion-Contest.html",
+])
+def test_manifest_rejects_non_whitelisted_source_url(tmp_path, url):
+    source = json.loads(assets.MANIFEST_PATH.read_text(encoding="utf-8"))
+    source["cases"][0]["source_url"] = url
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text(json.dumps(source), encoding="utf-8")
+    with patch.object(assets, "MANIFEST_PATH", manifest_path):
+        with pytest.raises(ValueError, match="whitelist"):
+            assets.load_manifest()
+
+
+def benchmark_inventory_params():
+    manifest = assets.load_manifest()
+    return [
+        pytest.param(source["id"], source["checksum_inventory"], id=source["id"])
+        for source in manifest["benchmark_sources"]
+        if isinstance(source.get("checksum_inventory"), str) and source["checksum_inventory"]
+    ]
+
+
+@pytest.mark.parametrize(("source_id", "inventory_path"), benchmark_inventory_params())
+def test_benchmark_checksum_inventory_paths_exist(source_id, inventory_path):
+    # Runtime consumption for benchmark_sources[*].checksum_inventory (TA2C P3-10):
+    # every non-empty path must exist relative to the repository root.
+    assert (assets.REPO_ROOT / inventory_path).is_file(), (
+        f"benchmark source {source_id} checksum_inventory is missing: {inventory_path}"
+    )
+
+
+def test_ko_sfx_dialogue_cleaned_webtoon_inventory_semantics():
+    # README semantics: checksum_inventory == null means "no locally verifiable
+    # files for this source". Reconnaissance (2026-09-29) shows this entry is NOT
+    # null: it pins the KO Cleaned Webtoon audit manifest, so assert the concrete
+    # value and its presence instead of a null assertion.
+    manifest = assets.load_manifest()
+    by_id = {source["id"]: source for source in manifest["benchmark_sources"]}
+    inventory_path = by_id["ko_sfx_dialogue_cleaned_webtoon"]["checksum_inventory"]
+    assert inventory_path == "verification/M2-TA2C/ko-webtoon-audit.json"
+    assert (assets.REPO_ROOT / inventory_path).is_file()
+
+
+def test_benchmark_inventory_missing_path_detection_demo():
+    # Discriminative demo (TA2C P3-10): a checksum_inventory pointing at a
+    # nonexistent path must be reported as a failure by the runtime consumer,
+    # while the real manifest stays green. The "red" side is demonstrated by
+    # calling the checker directly on a mutated copy, not by breaking CI.
+    manifest = assets.load_manifest()
+    healthy_failures, healthy_checked = assets.verify_benchmark_source_inventories(manifest)
+    assert healthy_failures == []
+    assert healthy_checked == sum(
+        1 for source in manifest["benchmark_sources"]
+        if isinstance(source.get("checksum_inventory"), str) and source["checksum_inventory"]
+    )
+
+    broken = json.loads(json.dumps(manifest))
+    next(source for source in broken["benchmark_sources"] if source["id"] == "ko_sfx_dialogue_cleaned_webtoon")[
+        "checksum_inventory"
+    ] = "verification/M2-TA2C/does-not-exist.json"
+    failures, checked = assets.verify_benchmark_source_inventories(broken)
+    assert failures == [
+        "ko_sfx_dialogue_cleaned_webtoon: checksum_inventory file is missing: verification/M2-TA2C/does-not-exist.json"
+    ]
+    assert checked == healthy_checked - 1
+
+
+def test_ko_ground_truth_directory_naming_snapshot():
+    # Known observation (TA2C DSH r2 P3-6): the two KO Pepper&Carrot families use
+    # different directory naming prefixes (02_open_ for O01-O08 manual source
+    # pages, 02_public_ for the K11-K13 localized pages), while JA pages always
+    # use 02_open_. On-disk renames are deliberately out of scope (local asset
+    # path stability); this snapshot pins the current naming so any drift turns
+    # red, and each affected case carries a naming_note field in cases.json.
+    manifest = assets.load_manifest()
+    cases = {case["case_id"]: case for case in manifest["cases"]}
+    for case_id in [f"O{n:02d}" for n in range(1, 9)]:
+        assert cases[case_id]["local_path"].startswith("韩漫_KO/02_open_ground_truth_peppercarrot/"), case_id
+        assert "naming_note" in cases[case_id], case_id
+    for case_id in ("K11", "K12", "K13"):
+        assert cases[case_id]["local_path"].startswith("韩漫_KO/02_public_ground_truth_peppercarrot/"), case_id
+        assert "naming_note" in cases[case_id], case_id
+    for case_id in ("J38", "J39", "J40"):
+        assert cases[case_id]["local_path"].startswith("日漫_JA/02_open_ground_truth_peppercarrot/"), case_id
+
+
 def test_download_skips_existing_file_without_network(tmp_path):
     case = {
         "case_id": "K-test",
