@@ -1,0 +1,10 @@
+{
+  "comment": "M2-DOCTR-QUAL-PREFLIGHT default quality thresholds (user-directed 2026-09-29). Matching is one-to-one greedy by descending confidence; a detection matches a GT box when IoU >= iou_match_threshold.",
+  "iou_match_threshold": 0.5,
+  "min_recall": 0.92,
+  "min_precision": 0.85,
+  "min_mean_iou": 0.6,
+  "max_severe_page_miss_rate": 0.05,
+  "severe_page_miss_definition": "a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+  "severe_page_miss_min_gt": 3
+}

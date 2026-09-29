@@ -2,7 +2,7 @@
 id: M2-DOCTR-QUAL-PREFLIGHT
 title: "Real docTR qualification 前置：受控检测权重、隔离 GPU/CPU 实验环境与可复现检测评测基座"
 kind: research
-status: in_progress
+status: in_review
 approval: user_authorized_2026-09-29
 suggested_owner: ZCode
 owner: ZCode
@@ -29,10 +29,10 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1（受控权重）：`fast_base-688a8b34.pt`（主检测权重，生产 pin）与 `db_resnet50-79bd7d70.pt`（对照检测权重）的来源 URL、artifact 版本（docTR v0.8.1）、License（Apache-2.0）、字节数、SHA-256 记录于 `verification/M2-DOCTR-QUAL/weights-manifest.json`；SHA-256 与生产 pin（fast_base）及 docTR 包内官方 checksum（db_resnet50）一致；权重快照固化到 `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/`。生产 `requirements.txt`/`requirements-dev.txt` 与 `src/` 零改动。
-- [ ] AC2（隔离环境）：新建独立 venv `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312`（Python 3.12），安装 `python-doctr==1.1.0` + torch 2.11.0+cu128 + torchvision 0.26.0+cu128（GPU 优先，RTX 5070 Ti `torch.cuda.is_available()=True`）；用 pin 权重加载 `fast_base` 完成检测冒烟；项目共享环境、生产 venv、requirements 与 lock 未被修改。CPU 对照（与生产 pin 同版本 torch 2.14.0）复用既有 `T1.1.1-impl-py312` 只读运行。
-- [ ] AC3（质量阈值与评测基座）：`experiments/M2-DOCTR-QUAL/` 提供 `build_eval_manifest.py`（KO webtoon 10 case → `approved_regions` 切片 + GT manifest）、`eval_detection.py`（docTR raw 实例级 + 生产 adapter block 级双层指标）、`thresholds.json`（默认阈值 IoU≥0.5、Recall≥92%、Precision≥85%、Mean IoU≥60%、整页严重漏检≤5%）；评测集与 GT 口径（`text_seg` score≥0.5 伪 GT 子集）在 manifest 与报告中显式披露；切片图像等派生像素不入 Git。
-- [ ] AC4（基线测量与判定界限）：smoke → 全量 GPU 运行完成，数值结果与预览索引入 `verification/M2-DOCTR-QUAL/`；本轮结果仅登记为「首跑基线」，正式 qualification PASS/FAIL 判定待独立 Review 后由 qualification run 作出；不使用 docTR recognition 的日/韩文识别结果参与 detector 判定。
+- [x] AC1（受控权重）：`fast_base-688a8b34.pt`（主检测权重，生产 pin）与 `db_resnet50-79bd7d70.pt`（对照检测权重）的来源 URL、artifact 版本（docTR v0.8.1 / v0.7.0）、License（Apache-2.0）、字节数、SHA-256 记录于 `verification/M2-DOCTR-QUAL/weights-manifest.json`；SHA-256 与生产 pin（fast_base）一致、db_resnet50 内容哈希与官方文件名内嵌 hash 一致；权重快照固化到 `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/`。生产 `requirements.txt`/`requirements-dev.txt` 与 `src/` 零改动。（2026-09-29 实测：fast_base 65,814,772 B SHA `688a8b34…2ace`=pin；db_resnet50 102,021,912 B）
+- [x] AC2（隔离环境）：新建独立 venv `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312`（Python 3.12.3），安装 `python-doctr==1.1.0`（=生产 pin）+ torch 2.11.0+cu128 + torchvision 0.26.0+cu128（RTX 5070 Ti `torch.cuda.is_available()=True`，~37 ms/region，峰值 523 MiB）；pin 权重 SHA 校验后加载 fast_base 检测冒烟通过；项目共享环境与生产 venv 未动。cu128 索引无 torch 2.14.0（2026-09-29 复核），GPU 与生产 CPU pin 不同号以 T1.1.1 §5.1 先例 + 本轮 CPU 对照（torch 2.14.0，80 regions 78 全同/2 个 ±1 浮点边界、主指标一致）弥合。
+- [x] AC3（质量阈值与评测基座）：`experiments/M2-DOCTR-QUAL/` 交付 `build_eval_manifest.py`（KO webtoon 10 case → `approved_regions` 511 regions + GT manifest，重建命令确定性）、`eval_detection.py`（三层判定：raw_strict 诊断 / block_strict / block_coverage 主判定）、`smoke_adapter_check.py`（生产 adapter 端到端一致性）、`thresholds.json`（IoU≥0.5、Recall≥92%、Precision≥85%、Mean IoU≥60%、整页严重漏检≤5%）；GT 口径（text_seg score≥0.5 伪 GT）与粒度事实（词级检出 vs 块级 GT）在 manifest 与 baseline-summary §4 显式披露；切片/预览等派生像素全部在仓库外 task-envs，未入 Git。
+- [x] AC4（基线测量与判定界限）：全量 GPU 运行完成（fast_base seg05/union + db_resnet50 seg05 + CPU 对照 limit80 + adapter 抽查 6/6），数值与预览索引入 `verification/M2-DOCTR-QUAL/`（[baseline-summary.md](../../verification/M2-DOCTR-QUAL/baseline-summary.md)）；结果仅登记为「首跑基线」——默认阈值下 Recall 0.4776 / Precision 0.1250（GT 盲区污染下界）FAIL，Mean coverage 0.7531 / 严重整页漏检 0.0385 PASS；正式 qualification PASS/FAIL 判定留待独立 Review 后的 qualification run；未使用任何 docTR recognition 输出参与 detector 判定。
 
 ## 允许修改范围
 
@@ -54,11 +54,12 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 权重校验 | `python experiments/M2-DOCTR-QUAL/snapshot_weights.py` + sha256 复核 | 任意 Python；网络仅需元数据 | NOT_RUN | 待入 verification |
-| AC2 GPU 冒烟 | GPU venv python 加载 fast_base pin 权重对样例图执行 detect | RTX 5070 Ti | NOT_RUN | 待入 verification |
-| AC3 eval manifest | `python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --level smoke\|full` | 标准库 | NOT_RUN | 待入 verification |
-| AC3/AC4 评测 | `python experiments/M2-DOCTR-QUAL/eval_detection.py --manifest … --device cuda` | GPU venv | NOT_RUN | 待入 verification |
-| AC4 adapter 一致性 | 生产 `DoctrDetectionProvider` 端到端抽查 N 切片与 harness block 输出比对 | GPU venv + PYTHONPATH=src | NOT_RUN | 待入 verification |
+| AC1 权重校验 | `python experiments/M2-DOCTR-QUAL/snapshot_weights.py`（内联于 weights-manifest 生成步骤）+ sha256 复核 | 任意 Python | **executed 2026-09-29**：fast_base=pin 一致、db_resnet50=官方文件名 hash 一致、快照字节级一致 | verification/M2-DOCTR-QUAL/weights-manifest.json |
+| AC2 GPU 冒烟 | GPU venv 加载 fast_base pin 权重对样例 region detect | RTX 5070 Ti / torch 2.11.0+cu128 | **executed 2026-09-29**：engine 4.2s 构建、首次推理 0.59s、稳态 38ms、峰值 523 MiB | 会话日志 + baseline-summary §2 |
+| AC3 eval manifest | `python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --level full --gt-mode seg05\|union` | 标准库 | **executed 2026-09-29**：10 cases / 511 regions / GT-A 917 框、GT-B 1184 框、跨区丢失 0 | task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.*.json |
+| AC3/AC4 评测 | `eval_detection.py --arch fast_base\|db_resnet50 --device cuda\|cpu` | GPU venv / impl venv | **executed 2026-09-29**：fast_base seg05 primary Recall 0.4776 / Precision 0.1250 / meanCov 0.7531 / severe 0.0385（FAIL×2 PASS×2）；db_resnet50 0.6085/0.1858/0.7751/0.0192 | verification/M2-DOCTR-QUAL/results-*.json |
+| AC4 adapter 一致性 | `smoke_adapter_check.py` vs harness n_det_block | GPU venv + PYTHONPATH=src | **executed 2026-09-29**：6/6 块数一致（11/9/8/7/10/5） | verification/M2-DOCTR-QUAL/adapter-spot-check-cuda.json |
+| AC4 CPU/GPU 一致性 | 同 manifest limit80 双环境对比 | torch 2.14.0 CPU vs 2.11.0+cu128 | **executed 2026-09-29**：78/80 per-region 全同、2 个 ±1 浮点边界、主指标一致（0.0682/0.0683、recall 全同） | verification/M2-DOCTR-QUAL/results-fast_base-{gpu-limit80,cpu-limit80-torch2.14}.json |
 
 ## 依赖、风险与阻塞
 
@@ -70,7 +71,8 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。
-- Review：尚无（交付后派发 DeepSeek Harness 静态 Review，非作者）。
-- 实际测试：尚无。
-- 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 Codex 填写 integration_commit 并改 done。
+- **2026-09-29 ZCode 交付（delivery head 见 Handoff）**：三项前置全部完成。受控权重快照+manifest；独立 GPU venv（doctr 1.1.0 = 生产 pin）；评测基座（511 regions / 917 GT-A 框 / 三层判定口径 / 用户默认阈值）；首跑基线：fast_base（生产 pin）primary block_coverage **Recall 0.4776 / Precision 0.1250（GT 盲区污染下界）FAIL**，meanCov 0.7531 / severe_miss 0.0385 PASS；db_resnet50 对照 0.6085/0.1858 仍 FAIL；CPU/GPU 一致、adapter 6/6。核心 gap：docTR 默认检测权重到韩漫 webtoon 域的适配缺口 + 伪 GT 的 SFX 标注盲区（Precision 无法用此集高置信度度量）。证据：[baseline-summary](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
+- 状态：`in_review`，等 DeepSeek Harness 非作者静态 Review；Review 通过并集成后由 Codex 填 integration_commit 改 done。
+- Handoff：[M2-DOCTR-QUAL-PREFLIGHT-baseline](../handoffs/M2-DOCTR-QUAL-PREFLIGHT-baseline.md)。
+- Review：尚无。
+- 遗留：①正式 qualification run 与阈值口径裁决（含 Precision 可测性/人工审计子集）属下一步 Task；②架构选型输入：db_resnet50 显著优于 fast_base，替换属产品/契约变更须独立切片；③union GT-B 坏框问题与 text_ctd 低分框不可用已记录于 baseline-summary §4-5。
