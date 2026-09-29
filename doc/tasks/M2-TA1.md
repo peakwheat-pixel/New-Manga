@@ -2,7 +2,7 @@
 id: M2-TA1
 title: Unified Japanese/Korean comic test asset foundation
 kind: test_infrastructure
-status: approved
+status: done
 release_state: M2_TA1_USER_REQUEST_RELEASED
 approval: approved_by_user_request_2026-09-29
 suggested_owner: Codex
@@ -13,7 +13,7 @@ depends_on: [M2-RG1]
 base_commit: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
 branch: agent/codex/M2-TA1-comic-test-asset-foundation
 worktree: C:/Users/49745/.codex/worktrees/comic-test-assets/New Manga
-integration_commit: null
+integration_commit: 1ef8fe7e7e66044869f8c59646d28bfca7692bbe
 ---
 
 # M2-TA1：日漫 / 韩漫统一测试素材基础设施
@@ -30,14 +30,14 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1：一个规范 JSON manifest 覆盖附件的 10 个 KO Webtoon、8 个 KO Pepper&Carrot 来源页、37 个 Manga109 选定作品；55 个 `case_id` 唯一，JA/KO 统一使用同一 schema，20 个 L0 smoke case 可枚举。
-- [ ] AC2：case 字段至少有 `case_id`、`language`、`source`、`source_type`、`layout_type`、`reading_direction`、`text_type`、`orientation`、`difficulty`、`tags`、`local_path`、`license_class`、`redistributable`、`expected_pipeline`、`ground_truth_available`、`levels`、`asset_status`；`levels` 是可多选的 level 字段；difficulty tags 精确覆盖用户列出的 16 项。
-- [ ] AC3：单一标准库 CLI 提供 `download`、`verify`、`list`、`missing` 和 `--language ja|ko`、`--level smoke|regression|full`。无副作用命令离线运行；KO 下载仅在明确请求时联网；Manga109 未取得 gated ZIP 时报告 `BLOCKED_BY_ASSET_ACCESS`，取得后可用 `--archive` 安全导入当前选择的标题。
-- [ ] AC4：脚本不自动安装依赖、不把 token 写入命令行；KO 下载校验 `Content-Length` 和文件格式后原子无覆盖写入；Manga109 只从用户提供的官方 ZIP 导入所选标题，拒绝危险路径并验证 CRC、数字 JPG 页名与 XML `page@index` 一一对应，不调用 `extractall`。第三方图像/归档全部由素材目录内 `.gitignore` 排除。
-- [ ] AC5：README/manifest 如实记录本地资产现状、授权需求、可再分发性与 L0/L1/L2 状态；L1 目前只有 55 个定义（目标 100–150），不得宣称完成；L2 不进入日常运行。
-- [ ] AC6：manifest JSON 可解析、ID 唯一、所有路径限定在套件目录内、Windows 相对路径可用；缺失数据不会被报告为已验证，工具能区分缺失与 gated。
-- [ ] AC7：新增测试只放新架构专用 `tests/m2_test_assets/`；相关工具检查、既有新架构回归和 Git 版权检查按测试计划执行并归档 EXIT/环境证据。
-- [ ] AC8：Task、Handoff、Review、verification 和 STATUS/Plan/Index 导航完整；仅在独立 Review 与集成后复验完成时置 `done`。
+- [x] AC1：一个规范 JSON manifest 覆盖附件的 10 个 KO Webtoon、8 个 KO Pepper&Carrot 来源页、37 个 Manga109 选定作品；55 个 `case_id` 唯一，JA/KO 统一使用同一 schema，20 个 L0 smoke case 可枚举。
+- [x] AC2：case 字段至少有 `case_id`、`language`、`source`、`source_type`、`layout_type`、`reading_direction`、`text_type`、`orientation`、`difficulty`、`tags`、`local_path`、`license_class`、`redistributable`、`expected_pipeline`、`ground_truth_available`、`levels`、`asset_status`；`levels` 是可多选的 level 字段；difficulty tags 精确覆盖用户列出的 16 项。
+- [x] AC3：单一标准库 CLI 提供 `download`、`verify`、`list`、`missing` 和 `--language ja|ko`、`--level smoke|regression|full`。无副作用命令离线运行；KO 下载仅在明确请求时联网；Manga109 未取得 gated ZIP 时报告 `BLOCKED_BY_ASSET_ACCESS`，取得后可用 `--archive` 安全导入当前选择的标题。
+- [x] AC4：脚本不自动安装依赖、不把 token 写入命令行；KO 下载校验 `Content-Length` 和文件格式后原子无覆盖写入；Manga109 只从用户提供的官方 ZIP 导入所选标题，拒绝危险路径并验证 CRC、数字 JPG 页名与 XML `page@index` 一一对应，不调用 `extractall`。第三方图像/归档全部由素材目录内 `.gitignore` 排除。
+- [x] AC5：README/manifest 如实记录本地资产现状、授权需求、可再分发性与 L0/L1/L2 状态；L1 目前只有 55 个定义（目标 100–150），明确标为 `PARTIAL`；L2 不进入日常运行。
+- [x] AC6：manifest JSON 可解析、ID 唯一、所有路径限定在套件目录内、Windows 相对路径可用；缺失数据不会被报告为已验证，工具能区分缺失与 gated。
+- [x] AC7：新增测试只放新架构专用 `tests/m2_test_assets/`；相关工具检查、既有新架构回归和 Git 版权检查按测试计划执行并归档 EXIT/环境证据。新架构 acceptance 的 8 个既有失败在 base、Task 与集成提交上复现相同测试名，记 `BASELINE_FAILURE`。
+- [x] AC8：Task、Handoff、Review、verification 和 STATUS/Plan/Index 导航完整；独立 Review=`approved`，Codex 集成后定向复验通过。
 
 ## 允许修改范围
 
@@ -58,13 +58,14 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/2 manifest 与 ID | `python -m pytest tests/m2_test_assets -q` | Windows PowerShell 7.6.6 + `C:\Python314\python.exe` 3.14.6；离线 | PASS：10 passed | `verification/M2-TA1/pytest-m2-test-assets.log` |
-| AC3 CLI 枚举/缺失/校验 | `assets.py list|missing|verify --language ja|ko --level smoke`；官方归档 ZIP 导入使用合成安全测试包 | Windows PowerShell + Python 3.14 | KO `READY=10`；JA `MISSING_GATED_ASSET=10`；命令 exit 0；synthetic ZIP select/import/repeat PASS | `verification/M2-TA1/cli-verification.log`、`pytest-m2-test-assets.log` |
-| AC4/6 路径安全、重复下载保护、缺失态 | 定向 pytest；ZIP path traversal、页名/index 不匹配、非法 XML index 与截断 HTTP EOF 探针；`git check-ignore` | Windows + Python 3.14；HTTP 错误用 mock | PASS；10 项测试通过；重复下载跳过 80 个文件；原图匹配 ignore | `verification/M2-TA1/pytest-m2-test-assets.log`、`git-ignore-probe.log` |
-| 新架构回归 | `python -m pytest tests/m2_acceptance -q --tb=no` | Python 3.14；分别在 Task worktree 和同基线 main | BASELINE_FAILURE：两处均 8 failed / 24 passed / 3 skipped，测试名完全一致；非本 Task 回归 | `verification/M2-TA1/pytest-m2-acceptance-*.log` |
+| AC1/2 manifest 与 ID | `python -m pytest tests/m2_test_assets -q` | Windows PowerShell 7.6.6 + `C:\Python314\python.exe` 3.14.6；集成 HEAD `1ef8fe7e` | PASS：10 passed | `verification/M2-TA1/post-integration.log` |
+| AC3 CLI 枚举/缺失/校验 | `assets.py list|missing|verify --language ja|ko --level smoke`；官方归档 ZIP 导入使用合成安全测试包 | Windows PowerShell + Python 3.14 | KO `READY=10`；JA `MISSING_GATED_ASSET=10`；命令 exit 0；synthetic ZIP select/import/repeat PASS | `verification/M2-TA1/cli-verification.log`、`post-integration.log`、`pytest-m2-test-assets.log` |
+| AC4/6 路径安全、重复下载保护、缺失态 | 定向 pytest；ZIP path traversal、页名/index 不匹配、非法 XML index 与截断 HTTP EOF 探针；`git check-ignore` | Windows + Python 3.14；HTTP 错误用 mock | PASS；10 项测试通过；重复下载跳过 80 个文件；原图匹配 ignore | `verification/M2-TA1/pytest-m2-test-assets.log`、`git-ignore-probe.log`、`post-integration.log` |
+| 新架构回归 | `python -m pytest tests/m2_acceptance -q --tb=no` | Python 3.14；base main、Task delivery、集成 main | BASELINE_FAILURE：三处均 8 failed / 24 passed / 3 skipped，8 个测试名完全一致；非本 Task 回归 | `pytest-m2-acceptance-*.log`、`post-integration-acceptance.log` |
 | Legacy `tests/core` 尝试 | `python -m pytest tests/core -q --tb=no` | 当前 Python 3.14，无 PySide6 | BLOCKED_BY_ENV：4 个 collection error（`ModuleNotFoundError: PySide6`），不作为新架构验收 | `verification/M2-TA1/pytest-core-environment.log` |
-| 版权 Git 检查 | `git ls-files test_assets/comic_golden_suite` + Git ignore probe | 固定 Task commit；素材保持 ignored | PASS：原图不在 index；KO/JA 素材路径命中 `.gitignore` | `verification/M2-TA1/git-diff-check.log` |
+| 版权 Git 检查 | `git ls-files test_assets/comic_golden_suite` + Git ignore probe | 集成 HEAD `1ef8fe7e`；素材保持 ignored | PASS：仅 7 个清单/脚本/README/ignore/keep 路径被跟踪，跟踪图像/归档=0；KO/JA media path 命中 `.gitignore` | `verification/M2-TA1/post-integration.log` |
 | 外部数据下载/导入 | `assets.py download --language ko --level smoke`；Manga109 gated 路径不取数据；对登记 URL 发送 HEAD | 用户声明授权本地测试；遵循来源非商业研究限制 | KO 10 case / 80 files / 884,913,245 bytes；重复执行 existing=80；M109 无获批 ZIP，真实导入 `NOT_RUN`，仅 synthetic ZIP PASS；AIHub 本次 HTTP 403 | `verification/M2-TA1/asset-sources.md`、`asset-url-head-check.log`、下载器日志 |
+| 集成后 Smoke/Git 检查 | 定向 pytest、KO `verify`/repeat download、JA gated status、`git check-ignore`、`git ls-files`、`git diff --check` | Windows PowerShell 7.6.6 + Python 3.14.6；main integration=`1ef8fe7e` | PASS：10 passed、KO READY=10、重复执行 existing=80、JA gated=10、tracked media=0、diff check 0 | `verification/M2-TA1/post-integration.log` |
 
 ## 依赖、风险与阻塞
 
@@ -78,7 +79,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：[M2-TA1-codex](../handoffs/M2-TA1-codex.md)，状态 `ready_for_integration`。
+- Handoff：[M2-TA1-codex](../handoffs/M2-TA1-codex.md)，状态 `completed`。
 - Review：[M2-TA1-codex](../reviews/M2-TA1-codex.md)，固定 base/head 的独立 Review=`approved`。
 - 实际测试：素材工具 `10 passed`；新架构 acceptance 在 Task head 与 base `main` 同为 `8 failed / 24 passed / 3 skipped`（Python 3.14）；`tests/core` 因缺 `PySide6` collection error；详见 verification。
-- 当前 checkpoint：实现 commit=`00df8f1dd4d480d4e4432c833981481f2c01dd3e`，位于本 Task branch/worktree；Review 已通过，等待 Codex 集成及集成后验证。主工作区原有 dirty 文件不在本 Task 范围，必须保留；清单见 `verification/M2-TA1/main-worktree-preexisting-status.txt`。
+- 集成 checkpoint：merge=`1ef8fe7e7e66044869f8c59646d28bfca7692bbe`（first parent=`40ce1f91`，second parent=`b72f865b`）；post-integration 定向测试 10 passed，KO 10/10 READY，tracked media=0。main 中原有 dirty/untracked 文件按清单原样保留；Task branch/worktree 与忽略的本机 KO 数据仍保留用于恢复。

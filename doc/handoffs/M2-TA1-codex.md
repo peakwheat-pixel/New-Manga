@@ -4,7 +4,7 @@ author: Codex
 recipient: Codex Integrator
 base_commit: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
 delivery_head: 00df8f1dd4d480d4e4432c833981481f2c01dd3e
-status: ready_for_integration
+status: completed
 ---
 
 # Handoff：M2-TA1
@@ -45,12 +45,20 @@ status: ready_for_integration
 - 当前主工作区原有改动清单：`verification/M2-TA1/main-worktree-preexisting-status.txt`。集成应保留它们；`test_assets/comic_golden_suite/` 在集成前不存在。
 - 本机 KO 原图位于 Task worktree 的 ignored 路径。合并后只复制到主仓库同一套 `test_assets/comic_golden_suite/韩漫_KO/` 目录，不覆盖文件；随后在主仓库复跑定向测试、KO verify、重复下载检查、`git check-ignore` 与 `git ls-files`。
 
+### 集成结果
+
+- Integration merge=`1ef8fe7e7e66044869f8c59646d28bfca7692bbe`，first parent=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`，second parent=`b72f865b234943b6b075f36d72ede527d0cb74c7`。
+- 将 Task worktree ignored KO 资产复制到 `G:\CODEX\New Manga\test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset`；源/目标均 80 files、884,913,245 bytes，相对路径和每文件长度相同；主仓库验证 READY=10。
+- 集成后 `python -m pytest tests/m2_test_assets -q` 为 10 passed；KO verify READY=10；重复 download existing=80；JA gated=10；`git ls-files` 图像/归档数 0；Task diff-check EXIT=0。详见 `verification/M2-TA1/post-integration.log` 与 `post-integration-acceptance.log`。
+- 集成后 `tests/m2_acceptance` 为同一组 8 failed / 24 passed / 3 skipped（EXIT=1），与 base、Task delivery 完全相同，分类为 `BASELINE_FAILURE`，不是本 Task 引入的回归。
+- main 预先存在的用户改动在合并前后保持不变；原始快照为 `verification/M2-TA1/main-worktree-preexisting-status.txt`。未提交或触碰其他用户文件。
+
 ## 下一任务建议（必填）
 
 - Task ID / 标题：提议 `M2-TA2` — L1 Core Regression 100–150 固定 case 证据化扩充。
 - 推荐 Agent / Reviewer：Owner=ZCode；Reviewer=DeepSeek Harness（非作者）；Integrator=Codex。Owner 与 Reviewer 不同。
 - 推荐原因与前置依赖：M2-TA1 已统一 schema/taxonomy 和 case CLI；当前仅 55 个 definitions，低于 L1 100–150 目标。用户要求不虚构、遵守许可；扩充前需逐案给出真实来源/标签/许可与可用状态。
-- Recovery point：集成后仓库 `main@<M2-TA1 integration commit>`；worktree 待 Codex 创建；以 `doc/STATUS.md` 的最新 live state 为准。
+- Recovery point：集成后仓库 `main@1ef8fe7e7e66044869f8c59646d28bfca7692bbe`；worktree 待 Codex 创建；以 `doc/STATUS.md` 的最新 live state 为准。
 - 允许修改路径：`test_assets/comic_golden_suite/manifests/cases.json`、套件 README、对应 Task/Handoff/Review 与 `verification/M2-TA2/**`；若不增加案例而只形成证据化候选清单，说明理由并保持现有 55 case。
 - 禁止范围与新增授权条件：不提交漫画原图，不自动下载大数据集、不绕过 gated、不改生产 schema/pipeline/Provider/UI/依赖；仅登记并说明状态的 case 可先完成，获取受限素材必须走来源官方授权。
 - 交付物：100–150 个经证据支持的 case 定义（若来源/许可不足则报告准确的 `PARTIAL` 数量）；覆盖 JA/KO 难例 taxonomy；每个 case 记录许可、可再分发性、GT 状态与所需来源；不得把空占位计入有效样本。

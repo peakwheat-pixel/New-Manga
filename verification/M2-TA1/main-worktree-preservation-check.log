@@ -1,0 +1,9 @@
+Shell: PowerShell 7.6.6
+Repository: G:\CODEX\New Manga
+Main HEAD after integration: 1ef8fe7e7e66044869f8c59646d28bfca7692bbe
+Command: compare pre-integration git status paths with current status; branch ahead count excluded
+PREEXISTING_PATH_ROWS=34
+STILL_PRESENT=34
+MISSING=0
+New M2-TA1 doc/evidence files are expected additional rows.
+EXIT=0

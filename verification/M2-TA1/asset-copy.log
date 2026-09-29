@@ -1,0 +1,12 @@
+Shell: PowerShell 7.6.6
+Python: Python 3.14.6 (C:\Python314\python.exe)
+Venv: none; inventory uses PowerShell filesystem APIs
+Source tree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga\test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset
+Integrated tree: G:\CODEX\New Manga\test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset
+Copy command already executed with destination absent: Copy-Item -LiteralPath <source> -Destination <target> -Recurse -ErrorAction Stop
+Recorded copy result: 80 files, 884913245 bytes, EXIT=0
+Verification command: compare recursive relative file names and lengths between source and integrated tree
+SOURCE_FILES=80 SOURCE_BYTES=884913245
+TARGET_FILES=80 TARGET_BYTES=884913245
+MISSING=0 EXTRA=0 SIZE_MISMATCH=0
+EXIT=0

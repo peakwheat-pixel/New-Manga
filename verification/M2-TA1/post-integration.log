@@ -1,0 +1,89 @@
+Shell: PowerShell 7.6.6
+Python: Python 3.14.6 (C:\Python314\python.exe)
+Venv: none; system interpreter
+Repository: G:\CODEX\New Manga
+Branch: main
+Integration HEAD: 1ef8fe7e7e66044869f8c59646d28bfca7692bbe
+First parent: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
+Second parent: b72f865b234943b6b075f36d72ede527d0cb74c7
+
+COMMAND: python -m pytest tests/m2_test_assets -q
+..........                                                               [100%]
+10 passed in 0.20s
+EXIT=0
+
+COMMAND: python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke
+K01	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K01_724815_1
+K02	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K02_651664_112
+K03	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K03_671421_148
+K04	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K04_670145_145
+K05	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K05_131385_302
+K06	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K06_570506_196
+K07	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K07_641253_141
+K08	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K08_701535_160
+K09	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+SUMMARY	READY=10
+EXIT=0
+
+COMMAND: python test_assets/comic_golden_suite/tools/assets.py download --language ko --level smoke
+SUMMARY	downloaded=0 existing=80 gated_cases=0 failures=0
+EXIT=0
+
+COMMAND: python test_assets/comic_golden_suite/tools/assets.py download --language ja --level smoke
+J01	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J02	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J03	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J04	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J05	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J06	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J07	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J08	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J09	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+J10	BLOCKED_BY_ASSET_ACCESS	Obtain the official gated ZIP, then pass --archive <path>.
+SUMMARY	downloaded=0 existing=0 gated_cases=10 failures=0
+EXIT=0
+
+COMMAND: python test_assets/comic_golden_suite/tools/assets.py list --level smoke
+K01	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K01_724815_1
+K02	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K02_651664_112
+K03	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K03_671421_148
+K04	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K04_670145_145
+K05	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K05_131385_302
+K06	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K06_570506_196
+K07	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K07_641253_141
+K08	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K08_701535_160
+K09	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+J01	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/AisazuNihaIrarenai
+J02	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/AosugiruHaru
+J03	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/KimiHaBokuNoTaiyouDa
+J04	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/YukiNoFuruMachi
+J05	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/01_dialogue_romance/YumeiroCooking
+J06	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/AkkeraKanjinchou
+J07	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/DollGun
+J08	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/DualJustice
+J09	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/MAD_STONE
+J10	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/02_battle_sfx/SeisinkiVulnus
+SUMMARY	MISSING_GATED_ASSET=10 READY=10
+EXIT=0
+
+COMMAND: git check-ignore --no-index -v <KO PNG> <JA JPG>
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/01_real_webtoon_cleaned_dataset/K01_724815_1/base.png"
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":1:/*	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/01_manga109_real/01_dialogue_romance/AisazuNihaIrarenai/000.jpg"
+EXIT=0
+
+COMMAND: git ls-files test_assets/comic_golden_suite; assert no image/archive tracked
+TRACKED_PATHS=7
+TRACKED_MEDIA=0
+test_assets/comic_golden_suite/README.md
+test_assets/comic_golden_suite/manifests/cases.json
+test_assets/comic_golden_suite/tools/assets.py
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore"
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitkeep"
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore"
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitkeep"
+EXIT=0
+
+COMMAND: git diff --check 40ce1f91..1ef8fe7e7e66044869f8c59646d28bfca7692bbe
+EXIT=0
