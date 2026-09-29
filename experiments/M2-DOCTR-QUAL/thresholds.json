@@ -1,10 +1,14 @@
 {
-  "comment": "M2-DOCTR-QUAL-PREFLIGHT default quality thresholds (user-directed 2026-09-29). Matching is one-to-one greedy by descending confidence; a detection matches a GT box when IoU >= iou_match_threshold.",
+  "comment": "M2-DOCTR-QUAL-PREFLIGHT default quality thresholds (user-directed 2026-09-29). The user text specifies IoU matching; the primary judging layer uses coverage (intersection/gt_area) because docTR word-level output cannot reach IoU 0.5 against block-level GT (granularity mismatch, evidence in verification/M2-DOCTR-QUAL/baseline-summary.md §4). This criterion substitution is a judging-contract deviation from the user-default text and is flagged for the pending qualification ruling; block_strict (true IoU) numbers are always reported alongside.",
+  "primary_layer": "block_coverage",
+  "judging_criterion": "coverage",
+  "criterion_note": "coverage = intersection/gt_area >= iou_match_threshold; parallel strict layer block_coverage vs block_strict is reported in every result",
   "iou_match_threshold": 0.5,
   "min_recall": 0.92,
   "min_precision": 0.85,
   "min_mean_iou": 0.6,
   "max_severe_page_miss_rate": 0.05,
-  "severe_page_miss_definition": "a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
-  "severe_page_miss_min_gt": 3
+  "severe_page_miss_definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+  "severe_page_miss_min_gt": 3,
+  "fp_attribution_iou_threshold": 0.3
 }

@@ -25,22 +25,28 @@ IoU≥0.5 匹配；Recall≥92%；Precision≥85%；Mean IoU≥60%；严重整�
 ## 运行
 
 ~~~powershell
-# 1) 评测集（切片与 manifest 写到仓库外 task-envs，版权像素不入 Git）
-python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --level full
+# 0) 受控权重快照与校验（哈希不符即中止）
+python experiments/M2-DOCTR-QUAL/snapshot_weights.py
 
-# 2) 检测评测（GPU venv；raw + block 双层指标；权重 SHA-256 先校验）
+# 1) 评测集（切片与 manifest 写到仓库外 task-envs，版权像素不入 Git；需 Pillow）
+python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --level full --gt-mode seg05
+
+# 2) 检测评测（GPU venv；raw_strict 诊断 + block_strict + block_coverage 主判定；权重 SHA-256 先校验）
 $env:PYTHONPATH="src"
 python experiments/M2-DOCTR-QUAL/eval_detection.py `
-  --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.json" `
+  --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json" `
   --weights "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/fast_base-688a8b34.pt" `
   --arch fast_base --device cuda `
-  --out verification/M2-DOCTR-QUAL/results-fast_base-cuda.json
+  --out verification/M2-DOCTR-QUAL/results-fast_base-cuda-seg05.json
 
-# 3) 生产 adapter 端到端一致性抽查
+# 3) 生产 adapter 端到端一致性（块数 + 坐标逐块比对）
 python experiments/M2-DOCTR-QUAL/smoke_adapter_check.py `
   --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.smoke.json" `
   --weights "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/fast_base-688a8b34.pt" `
   --device cuda --out verification/M2-DOCTR-QUAL/adapter-spot-check-cuda.json
+
+# 4) pad 敏感性对照（收缩生产 MERGE_PAD_PX=6 的块扩张后再匹配）
+#    eval_detection.py 追加 --strip-block-pad 6.0
 ~~~
 
 ## 三层指标（口径定型记录）

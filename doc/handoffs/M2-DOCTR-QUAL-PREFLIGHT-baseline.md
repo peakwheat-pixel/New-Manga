@@ -5,7 +5,8 @@
 - Reviewer：DeepSeek Harness（待派发，非作者静态 Review）
 - base_commit：`14720230b101908cfc586b31273fcd9574f50097`（main）
 - release commit：`480f12a2`（治理登记）
-- delivery head：本文件提交前的任务分支 tip（见 git log `agent/zcode/M2-DOCTR-QUAL-PREFLIGHT`）
+- 实现交付 head（被审对象，r1）：`4d9d8d0c`——提交列表：`480f12a2`（release 治理：Task/STATUS/REBASELINE_PLAN/tasks README）+ `4d9d8d0c`（实现交付：experiments/M2-DOCTR-QUAL 全部 5 文件 + verification/M2-DOCTR-QUAL 7 份证据 + Task/STATUS/Handoff 回填）。变更路径全集：`doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md`、`doc/STATUS.md`、`doc/REBASELINE_PLAN.md`、`doc/tasks/README.md`、`doc/handoffs/`、`experiments/M2-DOCTR-QUAL/**`、`verification/M2-DOCTR-QUAL/**`（git 证据：[git-evidence.txt](../../verification/M2-DOCTR-QUAL/git-evidence.txt)）。
+- r2 修订提交：本文件之后的文档/脚本提交（DSH r1 `changes_requested` 的 P0-1..P3-8 修订，含 adapter 坐标比对重跑与全量 results 对 v2 manifest 指纹重绑定）；修订记录见 [baseline-summary §8](../../verification/M2-DOCTR-QUAL/baseline-summary.md)。
 - 分支：`agent/zcode/M2-DOCTR-QUAL-PREFLIGHT`（主工作区，代行模式）
 - 状态：`in_review`
 
@@ -46,7 +47,7 @@
 | Mean coverage | ≥0.60 | 0.7531 PASS | 0.7751 PASS |
 | 严重整页漏检 | ≤0.05 | 0.0385 PASS | 0.0192 PASS |
 
-- 一致性：CPU（2.14.0 生产 pin）vs GPU（2.11.0+cu128）80 regions 中 78 per-region 全同、2 个 ±1（浮点阈值边界，与 T1.1.1 §5.1 同性质），主指标一致；生产 adapter 端到端抽查 6/6 块数一致。
+- 一致性：CPU（2.14.0 生产 pin）vs GPU（2.11.0+cu128）80 regions 中 78 per-region 全同、2 个差异全部在 raw 层（K01 R5 raw 16↔15；K01 R17 raw 23↔22 且 block 20↔19；浮点阈值边界，与 T1.1.1 §5.1 同性质），主指标一致；生产 adapter 端到端抽查 6/6 块数一致且坐标最大绝对偏差 0.0 px（r2 增强比对）。pad 敏感性对照：生产 +6px 块扩张使真实 Recall 夹在 [0.26, 0.48]，FAIL 结论稳健。
 - 证据：[baseline-summary.md](../../verification/M2-DOCTR-QUAL/baseline-summary.md) 与同目录 5 份 results JSON + adapter-spot-check。
 - **判定界限**：本轮不宣称产品级 qualification PASS/FAIL；FAIL 数值 = 「生产 pin 配置 × 默认阈值 × 本评测集」现状测量。核心 gap：①docTR 默认检测权重（文档域）→ 韩漫 webtoon 域适配缺口；②伪 GT 的 SFX/背景文字标注盲区使 Precision 无法用此集高置信度度量（FP 人工抽样：K05 型 GT 盲区正确检出 + K07 型人脸纹理真误报，预览在 task-envs `previews/`、`fp-previews/`、`diag-K03.png`）。
 

@@ -4,22 +4,24 @@ Read-only over ``test_assets/comic_golden_suite``: region crops and the eval
 manifest are written OUTSIDE the repository (default under task-envs) so no
 copyrighted pixels land in git. The manifest records the exact GT provenance
 (dataset auxiliary ``text_seg`` annotations filtered by score) so the metric
-scope is auditable.
+scope is auditable. Requires Pillow for the region crops (manifest metadata
+computation alone is stdlib).
 
 GT model (KO Cleaned Webtoon ``info.json``):
 - ``text_seg`` boxes carry usable confidence (median ~0.9); this is the GT
-  source, filtered by ``--gt-min-score`` (default 0.5).
-- ``text_ctd`` boxes score median ~0.06 on this dataset and are excluded.
+  source for the judging mode, filtered by ``--gt-min-score`` (default 0.5).
+- ``text_ctd`` boxes score median ~0.06 on this dataset and are excluded
+  from the judging GT (they only feed the union evidence layer).
 - ``uncleaned_boxes`` are cleaning-residual bookkeeping, not scored GT.
 
-A GT box belongs to the region that contains its center point; boxes whose
-center falls outside every region are counted per case as
-``gt_centers_outside_regions``. Boxes assigned to a region are clamped to the
-region rectangle; crossing boxes therefore appear truncated exactly as the
-detector sees them.
+A GT box belongs to the region that contains its center point (regions are
+asserted full-width and non-overlapping in y); boxes whose center falls
+outside every region are counted per case as ``gt_centers_outside_regions``.
+Boxes assigned to a region are clamped to the region rectangle; crossing
+boxes therefore appear truncated exactly as the detector sees them.
 
-Usage (standard library only):
-  python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --level full
+Usage:
+  python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --level full --gt-mode seg05
   python experiments/M2-DOCTR-QUAL/build_eval_manifest.py --cases K01 --cases K02
 """
 
@@ -88,6 +90,20 @@ def main() -> int:
 
     from PIL import Image
 
+    def assert_regions_sane(regions, strip_w):
+        """GT assignment rule assumes full-width, y-disjoint regions; make
+        that explicit instead of implicit (D-side review P2-3)."""
+        spans = sorted((r["y0"], r["y1"]) for r in regions)
+        for (a0, a1), (b0, b1) in zip(spans, spans[1:]):
+            if b0 < a1:
+                raise SystemExit(f"overlapping region y-spans: {a0}-{a1} vs {b0}-{b1}")
+        for r in regions:
+            if r["x0"] != 0 or r["x1"] != strip_w:
+                raise SystemExit(
+                    f"non-full-width region {r}: assignment rule assumes "
+                    "full-width slices"
+                )
+
     def merge_boxes(boxes):
         """Greedy union merge: sort by score desc, absorb IoU>=0.5 overlaps."""
         merged = []
@@ -135,14 +151,16 @@ def main() -> int:
             (b["x1"], b["y1"], b["x2"], b["y2"], 0.4)
             for b in info.get("uncleaned_boxes", [])
         ]
-        if args.gt_mode == "seg05":
-            gt_strip = [b for b in seg_all if b[4] >= args.gt_min_score]
-        else:
-            gt_strip = merge_boxes(
+        gt_strip = (
+            [b for b in seg_all if b[4] >= args.gt_min_score]
+            if args.gt_mode == "seg05"
+            else merge_boxes(
                 [b for b in seg_all if b[4] >= 0.3] + ctd_all + uncleaned
             )
+        )
         n_gt_total = len(gt_strip)
         regions = sorted(info["approved_regions"], key=lambda r: r["y0"])
+        assert_regions_sane(regions, strip_w)
 
         with Image.open(case_dir / "base.png") as strip:
             if strip.size != (strip_w, strip_h):
@@ -223,11 +241,19 @@ def main() -> int:
         )
 
     manifest = {
-        "schema": "m2-doctr-qual/eval-manifest@1",
+        "schema": "m2-doctr-qual/eval-manifest@2",
         "generated_at": "2026-09-29",
         "task": "M2-DOCTR-QUAL-PREFLIGHT",
         "suite_manifest": str(CASES_JSON),
         "gt_mode": args.gt_mode,
+        "union_params": {
+            "text_seg_min_score": 0.3,
+            "text_ctd": "all boxes included",
+            "uncleaned_boxes": "included with pseudo-score 0.4",
+            "merge_rule": "greedy union merge at IoU>=0.5, score-descending",
+        }
+        if args.gt_mode == "union"
+        else None,
         "gt_provenance": (
             "dataset auxiliary annotations (pseudo-GT, not human annotation). "
             "seg05/GT-A: info.json text_boxes where model=='text_seg' and "

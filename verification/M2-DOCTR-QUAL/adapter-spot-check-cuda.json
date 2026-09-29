@@ -1,14 +1,22 @@
 {
  "task": "M2-DOCTR-QUAL-PREFLIGHT",
- "purpose": "AC4 production-adapter end-to-end spot check",
+ "purpose": "AC4 production-adapter end-to-end spot check (count + coordinates)",
  "device": "cuda",
  "weights": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL\\weights\\fast_base-688a8b34.pt",
  "n_regions": 6,
+ "n_match": 6,
+ "coords_max_abs_delta_px_overall": 0.0,
+ "all_match": true,
  "regions": [
   {
    "case_id": "K01",
    "region_index": 1,
    "adapter_blocks": 11,
+   "harness_blocks": 11,
+   "count_match": true,
+   "coords_max_abs_delta_px": 0.0,
+   "coords_match": true,
+   "match": true,
    "adapter_rects": [
     [
      265.552734375,
@@ -77,12 +85,17 @@
      630.3984375
     ]
    ],
-   "elapsed_ms": 4329
+   "elapsed_ms": 819
   },
   {
    "case_id": "K01",
    "region_index": 3,
    "adapter_blocks": 9,
+   "harness_blocks": 9,
+   "count_match": true,
+   "coords_max_abs_delta_px": 0.0,
+   "coords_match": true,
+   "match": true,
    "adapter_rects": [
     [
      328.21875,
@@ -139,12 +152,17 @@
      460.43164062500006
     ]
    ],
-   "elapsed_ms": 38
+   "elapsed_ms": 34
   },
   {
    "case_id": "K01",
    "region_index": 5,
    "adapter_blocks": 8,
+   "harness_blocks": 8,
+   "count_match": true,
+   "coords_max_abs_delta_px": 0.0,
+   "coords_match": true,
+   "match": true,
    "adapter_rects": [
     [
      160.435546875,
@@ -195,12 +213,17 @@
      626.35546875
     ]
    ],
-   "elapsed_ms": 37
+   "elapsed_ms": 35
   },
   {
    "case_id": "K01",
    "region_index": 7,
    "adapter_blocks": 7,
+   "harness_blocks": 7,
+   "count_match": true,
+   "coords_max_abs_delta_px": 0.0,
+   "coords_match": true,
+   "match": true,
    "adapter_rects": [
     [
      62.056640625,
@@ -245,12 +268,17 @@
      494.16992187499994
     ]
    ],
-   "elapsed_ms": 36
+   "elapsed_ms": 35
   },
   {
    "case_id": "K01",
    "region_index": 9,
    "adapter_blocks": 10,
+   "harness_blocks": 10,
+   "count_match": true,
+   "coords_max_abs_delta_px": 0.0,
+   "coords_match": true,
+   "match": true,
    "adapter_rects": [
     [
      413.794921875,
@@ -313,12 +341,17 @@
      376.46484375
     ]
    ],
-   "elapsed_ms": 37
+   "elapsed_ms": 34
   },
   {
    "case_id": "K01",
    "region_index": 11,
    "adapter_blocks": 5,
+   "harness_blocks": 5,
+   "count_match": true,
+   "coords_max_abs_delta_px": 0.0,
+   "coords_match": true,
+   "match": true,
    "adapter_rects": [
     [
      71.490234375,
@@ -351,7 +384,7 @@
      620.333984375
     ]
    ],
-   "elapsed_ms": 37
+   "elapsed_ms": 35
   }
  ]
 }

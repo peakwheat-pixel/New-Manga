@@ -1,0 +1,19 @@
+# M2-DOCTR-QUAL-PREFLIGHT independent hash recomputation (2026-09-29)
+# sha256 recomputed from SNAPSHOT bytes (task-envs/M2-DOCTR-QUAL/weights/) via hashlib
+
+688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace  G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL\weights\fast_base-688a8b34.pt (65814772 bytes)
+79bd7d702506703b89cf11afa42d12aebf5cf25c3618e6ffd5f85772240ca483  G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL\weights\db_resnet50-79bd7d70.pt (102021912 bytes)
+
+# eval-set source hashes (P2-9): suite manifest + per-case info.json (metadata only)
+
+6d41cc7d0a08737ca5bbe50955fdd0d1099e928cd8259ac9ce1237a7bab6da0a  test_assets\comic_golden_suite\manifests\cases.json (150652 bytes)
+ebcce89dc5b0b4bd7087885fbb0ad96af6a8bfc25406d6511883a61267984479  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K01_724815_1\info.json (98070 bytes)
+576de03f6d3c7e43babff949eb76c48e849a932535527d10580bd7007c20732a  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K02_651664_112\info.json (16080 bytes)
+f518cfc08f51363dc164bd0295937087cc2062d7a0a21e243fb8b855a76751ca  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K03_671421_148\info.json (108852 bytes)
+461d500c9b81fff65370e94e260898b6041f8ecdb427261620450b4c162c7fd5  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K04_670145_145\info.json (89130 bytes)
+ea8cc774b0ae8d71d6f746c36f1acd777b40678bd0224a98f03112a3e955e125  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K05_131385_302\info.json (40139 bytes)
+3ebcd4f2fc91f789117b23444de443cb5e808791e8343496332c1f97d94056f9  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K06_570506_196\info.json (85884 bytes)
+34bacd5cd0c5203dc8521882ada19a437fa94529bb80320a44d798bbb7700e95  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K07_641253_141\info.json (170696 bytes)
+308959b9d4a8c6fb455aee5046acbe9adcbb5040c13e0ad12ca223e2d07f0371  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K08_701535_160\info.json (32726 bytes)
+1e90f1454e505239f2a5882917d719dfad0e0554c3d4414e88f47c8e68e04c22  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K09_717481_124\info.json (94080 bytes)
+2d0ce78f7b81be9f2001d219a1243289baf380eba4d168f4399b9d957d7a6ec5  test_assets\comic_golden_suite\韩漫_KO\01_real_webtoon_cleaned_dataset\K10_730656_11\info.json (114447 bytes)

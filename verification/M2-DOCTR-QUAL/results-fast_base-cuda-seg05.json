@@ -1,7 +1,7 @@
 {
- "schema": "m2-doctr-qual/eval-results@1",
+ "schema": "m2-doctr-qual/eval-results@2",
  "task": "M2-DOCTR-QUAL-PREFLIGHT",
- "generated_at": "2026-09-29",
+ "generated_at": "2026-09-29T16:26:40+00:00",
  "arch": "fast_base",
  "device": "cuda",
  "weights": {
@@ -9,21 +9,30 @@
   "sha256": "688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace"
  },
  "manifest": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\eval-manifest.full.seg05.json",
+ "manifest_sha256": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+ "manifest_gt_mode": "seg05",
+ "manifest_n_gt_boxes": 917,
+ "manifest_n_regions": 511,
  "manifest_gt_provenance": "dataset auxiliary annotations (pseudo-GT, not human annotation). seg05/GT-A: info.json text_boxes where model=='text_seg' and score>=0.5. union/GT-B: merged text_seg(>=0.3) + text_ctd + uncleaned_boxes, greedy union merge at IoU>=0.5. union manifests also carry supplementary_boxes = auxiliary text evidence outside GT for FP attribution.",
  "block_policy": "production cluster_words_into_blocks (PYTHONPATH=src)",
+ "strip_block_pad": 0.0,
  "thresholds": {
-  "comment": "M2-DOCTR-QUAL-PREFLIGHT default quality thresholds (user-directed 2026-09-29). Matching is one-to-one greedy by descending confidence; a detection matches a GT box when IoU >= iou_match_threshold.",
+  "comment": "M2-DOCTR-QUAL-PREFLIGHT default quality thresholds (user-directed 2026-09-29). The user text specifies IoU matching; the primary judging layer uses coverage (intersection/gt_area) because docTR word-level output cannot reach IoU 0.5 against block-level GT (granularity mismatch, evidence in verification/M2-DOCTR-QUAL/baseline-summary.md §4). This criterion substitution is a judging-contract deviation from the user-default text and is flagged for the pending qualification ruling; block_strict (true IoU) numbers are always reported alongside.",
+  "primary_layer": "block_coverage",
+  "judging_criterion": "coverage",
+  "criterion_note": "coverage = intersection/gt_area >= iou_match_threshold; parallel strict layer block_coverage vs block_strict is reported in every result",
   "iou_match_threshold": 0.5,
   "min_recall": 0.92,
   "min_precision": 0.85,
   "min_mean_iou": 0.6,
   "max_severe_page_miss_rate": 0.05,
-  "severe_page_miss_definition": "a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
-  "severe_page_miss_min_gt": 3
+  "severe_page_miss_definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+  "severe_page_miss_min_gt": 3,
+  "fp_attribution_iou_threshold": 0.3
  },
  "iou_match_threshold": 0.5,
  "n_regions_evaluated": 511,
- "elapsed_seconds": 23.44,
+ "elapsed_seconds": 23.31,
  "summary": {
   "raw_strict": {
    "n_det": 5350,
@@ -36,7 +45,8 @@
    "f1": 0.05680548906973034,
    "mean_matched_iou": 0.6622098912436426,
    "severe_page_miss": {
-    "definition": "a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
     "regions_with_gt": 416,
     "severe_miss_regions": 16,
     "rate": 0.038461538461538464
@@ -53,7 +63,8 @@
    "f1": 0.18724559023066484,
    "mean_matched_iou": 0.7034090985287651,
    "severe_page_miss": {
-    "definition": "a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
     "regions_with_gt": 416,
     "severe_miss_regions": 16,
     "rate": 0.038461538461538464
@@ -70,18 +81,20 @@
    "f1": 0.1981004070556309,
    "mean_matched_coverage": 0.7530730500617262,
    "severe_page_miss": {
-    "definition": "a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
     "regions_with_gt": 416,
     "severe_miss_regions": 16,
     "rate": 0.038461538461538464
    }
   }
  },
- "fp_attribution_raw": {
-  "note": "FPs scored against manifest supplementary_boxes (auxiliary text evidence outside the GT subset); overlap>=0.3 counts as GT-coverage FP, otherwise pure false positive",
+ "fp_attribution_block_coverage": {
+  "attribution_available": false,
+  "note": "FPs scored against manifest supplementary_boxes (auxiliary text evidence outside the GT subset); Jaccard IoU>=0.3 counts as GT-coverage FP, otherwise pure. Only union-mode manifests carry supplementary_boxes; without them attribution is unavailable (not 'all pure').",
   "fp_total": 3067,
   "with_text_evidence": 0,
-  "pure": 3067
+  "pure": 0
  },
  "verdict_vs_default_thresholds": {
   "judging_layer": "block_coverage (production merged blocks vs block-level GT, coverage = intersection/gt_area >= 0.5); raw_strict kept for granularity diagnosis only, never judged",

@@ -1,0 +1,34 @@
+{
+  "task": "M2-DOCTR-QUAL-PREFLIGHT",
+  "purpose": "AC2 isolated GPU environment evidence (P1-2)",
+  "collected_at": "2026-09-29T16:30:16+00:00",
+  "python": "3.12.3",
+  "executable": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-gpu-py312\\Scripts\\python.exe",
+  "torch": "2.11.0+cu128",
+  "torch.version.cuda": "12.8",
+  "torchvision": "0.26.0+cu128",
+  "python-doctr": "v1.1.0",
+  "numpy": "2.3.5",
+  "pillow": "12.3.0",
+  "cuda_available": true,
+  "gpu_name": "NVIDIA GeForce RTX 5070 Ti",
+  "production_pin_deviation": {
+    "torch": "2.11.0+cu128 vs production 2.14.0 (PyPI CPU); cu128 index has no 2.14.0 as of 2026-09-29",
+    "torchvision": "0.26.0+cu128 vs production 0.29.0 (PyPI CPU)",
+    "python-doctr": "1.1.0 = production pin (no deviation)"
+  },
+  "engine_build_seconds": 0.54,
+  "smoke": {
+    "weights_sha256_checked_at_load": true,
+    "first_inference_seconds": 0.38,
+    "steady_state_ms_per_region_5x": [
+      33.6,
+      33.7,
+      34.2,
+      34.6,
+      33.4
+    ],
+    "raw_boxes_first": 18,
+    "gpu_peak_mib": 522.6
+  }
+}

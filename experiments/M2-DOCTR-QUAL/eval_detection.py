@@ -6,20 +6,26 @@ The engine is built with the exact production call sequence
 ``detection_predictor(assume_straight_pages=True, batch_size=1)`` — no
 runtime download, SHA-256 checked before the model is built.
 
-Two scoring layers against the manifest GT:
-- ``raw``: docTR detection instances ((N,5) straight boxes), the primary
-  qualification surface (detection only; recognition is never consulted);
-- ``block``: the frozen production word-to-block merge policy applied to the
-  same forward pass (imported read-only from the production adapter).
+Three scoring layers against the manifest GT (granularity contract: docTR
+raw output is word-level, GT is block-level, so strict IoU at word
+granularity systematically underestimates and is DIAGNOSTIC ONLY — never
+judged):
+- ``raw_strict``: docTR detection instances vs IoU >= threshold (diagnostic);
+- ``block_strict``: production merged blocks vs IoU >= threshold (strict
+  block-level diagnostic);
+- ``block_coverage`` (PRIMARY judging layer): production merged blocks vs
+  ``intersection/gt_area >= threshold``, one-to-one greedy. The primary
+  layer/criterion contract lives in thresholds.json (``primary_layer`` /
+  ``judging_criterion``) and is subject to the pending qualification ruling.
 
-Matching: one-to-one greedy by descending confidence, IoU >=
-``iou_match_threshold``. Usage:
+Matching: one-to-one greedy by descending confidence. Recognition is never
+consulted. Usage:
 
   PYTHONPATH=src python experiments/M2-DOCTR-QUAL/eval_detection.py \
-      --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.json" \
+      --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json" \
       --weights "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/fast_base-688a8b34.pt" \
       --arch fast_base --device cuda \
-      --out verification/M2-DOCTR-QUAL/results-fast_base-cuda.json
+      --out verification/M2-DOCTR-QUAL/results-fast_base-cuda-seg05.json
 """
 
 from __future__ import annotations
@@ -34,8 +40,10 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parents[2]
 THRESHOLDS = json.loads((Path(__file__).parent / "thresholds.json").read_text(encoding="utf-8"))
 
-#: Weight pins (fast_base = production pin from T1.1.1; db_resnet50 = measured
-#: in this task, snapshot recorded in verification/M2-DOCTR-QUAL/weights-manifest.json).
+#: Weight pins. fast_base = production pin (detection_doctr.py
+#: DOCTR_WEIGHTS_SHA256, also in verification/.../weights-manifest.json);
+#: db_resnet50 = measured in this task, snapshotted in the same manifest.
+#: Three references on purpose: a drift breaks loudly here.
 EXPECTED_SHA256 = {
     "fast_base": "688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace",
     "db_resnet50": "79bd7d702506703b89cf11afa42d12aebf5cf25c3618e6ffd5f85772240ca483",
@@ -135,12 +143,25 @@ def match_greedy(dets, gts, thr, criterion="iou"):
     return pairs, fp, matched_scores
 
 
-def blocks_to_rects(blocks):
+def blocks_to_rects(blocks, shrink_pad=0.0):
+    """rects from block polygons; ``shrink_pad`` pulls each side back in
+    (sensitivity control for the production MERGE_PAD_PX growth, which pads
+    candidates by 6px on every side before we compare them to unpadded GT)."""
     rects = []
     for polygon, conf in blocks:
         xs = [p[0] for p in polygon]
         ys = [p[1] for p in polygon]
-        rects.append(([min(xs), min(ys), max(xs), max(ys)], conf))
+        rects.append(
+            (
+                [
+                    min(xs) + shrink_pad,
+                    min(ys) + shrink_pad,
+                    max(xs) - shrink_pad,
+                    max(ys) - shrink_pad,
+                ],
+                conf,
+            )
+        )
     return rects
 
 
@@ -157,6 +178,14 @@ def main() -> int:
         "--preview-dir",
         type=Path,
         default=Path(r"G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/previews"),
+    )
+    parser.add_argument(
+        "--strip-block-pad",
+        type=float,
+        default=0.0,
+        help="shrink each merged block by this many px per side before "
+        "matching (sensitivity control for the production MERGE_PAD_PX=6 "
+        "growth; 0 keeps the production-faithful path)",
     )
     args = parser.parse_args()
 
@@ -189,7 +218,12 @@ def main() -> int:
         for key in ("raw_strict", "block_strict", "block_coverage")
     }
     severe = {"regions_with_gt": 0, "severe_miss": 0}
-    fp_attr = {"fp_total": 0, "with_text_evidence": 0, "pure": 0}
+    fp_attr = {
+        "fp_total": 0,
+        "with_text_evidence": 0,
+        "pure": 0,
+        "attribution_available": None,
+    }
     supp_iou_thr = 0.3
     preview_written = 0
     started = time.perf_counter()
@@ -222,7 +256,7 @@ def main() -> int:
             blocks = cluster_words_into_blocks(
                 [b[0] for b in raw_boxes], [b[1] for b in raw_boxes], page_size=(w, h)
             )
-            block_rects = blocks_to_rects(blocks)
+            block_rects = blocks_to_rects(blocks, shrink_pad=args.strip_block_pad)
         else:
             block_rects = []
 
@@ -266,15 +300,22 @@ def main() -> int:
         if gts and len(gts) >= min_gt_severe and record["tp_block_coverage"] == 0:
             severe["severe_miss"] += 1
         # FP attribution: how many block-coverage FPs overlap auxiliary text
-        # evidence outside the GT subset (GT coverage gap) vs none at all
-        supp = entry.get("supplementary_boxes") or []
+        # evidence outside the GT subset (GT coverage gap) vs none at all.
+        # Only meaningful when the manifest carries supplementary_boxes
+        # (union mode); without them attribution would be structurally all-
+        # pure, so we mark it unavailable instead of reporting a constant.
+        supp = entry.get("supplementary_boxes")
+        attribution_available = supp is not None
+        if fp_attr["attribution_available"] is None:
+            fp_attr["attribution_available"] = attribution_available
         for box in block_coverage_fp_boxes:
             fp_attr["fp_total"] += 1
-            best = max((iou(box, s) for s in supp), default=0.0) if supp else 0.0
-            if best >= supp_iou_thr:
-                fp_attr["with_text_evidence"] += 1
-            else:
-                fp_attr["pure"] += 1
+            if attribution_available:
+                best = max((iou(box, s) for s in supp), default=0.0) if supp else 0.0
+                if best >= supp_iou_thr:
+                    fp_attr["with_text_evidence"] += 1
+                else:
+                    fp_attr["pure"] += 1
         per_region.append(record)
 
         if preview_written < args.previews and gts:
@@ -312,6 +353,7 @@ def main() -> int:
             "f1": 2 * precision * recall / (precision + recall) if precision + recall else 0.0,
             metric_name: mean_score,
             "severe_page_miss": {
+                "layer": "block_coverage",
                 "definition": THRESHOLDS["severe_page_miss_definition"],
                 "regions_with_gt": severe["regions_with_gt"],
                 "severe_miss_regions": severe["severe_miss"],
@@ -350,10 +392,15 @@ def main() -> int:
     }
     verdict["all_pass"] = all(v["pass"] for v in verdict.values() if isinstance(v, dict) and "pass" in v)
 
+    import hashlib as _hashlib
+
+    manifest_sha256 = _hashlib.sha256(args.manifest.read_bytes()).hexdigest()
     out_payload = {
-        "schema": "m2-doctr-qual/eval-results@1",
+        "schema": "m2-doctr-qual/eval-results@2",
         "task": "M2-DOCTR-QUAL-PREFLIGHT",
-        "generated_at": "2026-09-29",
+        "generated_at": __import__("datetime").datetime.now(
+            __import__("datetime").timezone.utc
+        ).isoformat(timespec="seconds"),
         "arch": args.arch,
         "device": args.device,
         "weights": {
@@ -361,18 +408,26 @@ def main() -> int:
             "sha256": EXPECTED_SHA256[args.arch],
         },
         "manifest": str(args.manifest),
+        "manifest_sha256": manifest_sha256,
+        "manifest_gt_mode": manifest.get("gt_mode"),
+        "manifest_n_gt_boxes": manifest.get("n_gt_boxes"),
+        "manifest_n_regions": manifest.get("n_regions"),
         "manifest_gt_provenance": manifest.get("gt_provenance"),
         "block_policy": block_policy,
+        "strip_block_pad": args.strip_block_pad,
         "thresholds": THRESHOLDS,
         "iou_match_threshold": thr,
         "n_regions_evaluated": len(per_region),
         "elapsed_seconds": round(elapsed, 2),
         "summary": summary,
-        "fp_attribution_raw": {
+        "fp_attribution_block_coverage": {
+            "attribution_available": fp_attr["attribution_available"],
             "note": (
                 "FPs scored against manifest supplementary_boxes (auxiliary "
-                "text evidence outside the GT subset); overlap>=0.3 counts "
-                "as GT-coverage FP, otherwise pure false positive"
+                "text evidence outside the GT subset); Jaccard IoU>=0.3 "
+                "counts as GT-coverage FP, otherwise pure. Only union-mode "
+                "manifests carry supplementary_boxes; without them "
+                "attribution is unavailable (not 'all pure')."
             ),
             **fp_attr,
         },
@@ -408,12 +463,18 @@ def main() -> int:
     print(
         f"diag raw_strict (word granularity, NOT judged): recall={rs['recall']:.4f}"
     )
-    if fp_attr["fp_total"]:
-        cov = fp_attr["with_text_evidence"] / fp_attr["fp_total"]
+    if fp_attr["attribution_available"]:
+        if fp_attr["fp_total"]:
+            cov = fp_attr["with_text_evidence"] / fp_attr["fp_total"]
+            print(
+                f"FP attribution: {fp_attr['fp_total']} block_coverage FPs -> "
+                f"{fp_attr['with_text_evidence']} with text evidence "
+                f"({cov:.1%}, GT coverage gap) / {fp_attr['pure']} pure"
+            )
+    else:
         print(
-            f"FP attribution: {fp_attr['fp_total']} block_coverage FPs -> "
-            f"{fp_attr['with_text_evidence']} with text evidence "
-            f"({cov:.1%}, GT coverage gap) / {fp_attr['pure']} pure"
+            "FP attribution: UNAVAILABLE (manifest has no supplementary_boxes; "
+            "run --gt-mode union manifest for the evidence layer)"
         )
     print(f"verdict all_pass={verdict['all_pass']}")
     print(f"results -> {args.out}")
