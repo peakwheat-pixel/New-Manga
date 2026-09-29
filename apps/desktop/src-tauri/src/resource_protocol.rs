@@ -643,6 +643,11 @@ mod tests {
     /// C2 (DSH r1 P2-2): the seek-failure branch must fail closed. A null
     /// (invalid) handle makes SetFilePointerEx return 0, which read_through
     /// maps to the typed OPEN_FAILED error (never a silent Ok).
+    /// C4 (DSH r2 P3-10): assert the seek-branch-specific markers, not just
+    /// the code prefix — with the seek check removed, the null handle would
+    /// still fail in ReadFile with the same OPEN_FAILED code, so `landed_at=`
+    /// /`last_error=` (only ever produced by the seek branch) give this test
+    /// discriminative power and back the P3-5 suffix by test output.
     #[test]
     fn read_through_invalid_handle_fails_closed_with_open_failed() {
         let handle: *mut std::ffi::c_void = std::ptr::null_mut();
@@ -650,6 +655,11 @@ mod tests {
         assert!(
             error.code.starts_with("OPEN_FAILED"),
             "expected OPEN_FAILED-prefixed code, got {}",
+            error.code
+        );
+        assert!(
+            error.code.contains("landed_at=") && error.code.contains("last_error="),
+            "{}",
             error.code
         );
     }
