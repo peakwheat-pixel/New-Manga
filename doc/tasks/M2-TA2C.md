@@ -55,4 +55,4 @@ Owner 已交付初版固定实现 HEAD=`2e9797013dcb73280462a7b34390abcb2be12977
 
 ## Review r1 与返修
 
-[DeepSeek Harness r1](../reviews/M2-TA2C-2c12ba1e-dsh-r1.md) 对 Handoff HEAD=`2c12ba1ec9d302de10a210211dfa46cd490845df` 给出 `changes_requested`：0×P0、0×P1、2×P2、7×P3。P2-1 为 KO Cleaned Webtoon 来源层 `PARTIAL` 与固定 10 Case `READY` 口径冲突；P2-2 为 JA Pepper&Carrot `checksum_inventory=null` 且来源索引路径基准不统一。本次返修已将来源层限定为固定 10 Case 的资产状态并统一仓库根相对 checksum 路径；另修正语言成员校验与 SVG 文本计数措辞。返修后的固定 HEAD、测试和复审另行登记，不复用 r1 结论。
+[DeepSeek Harness r1](../reviews/M2-TA2C-2c12ba1e-dsh-r1.md) 对 Handoff HEAD=`2c12ba1ec9d302de10a210211dfa46cd490845df` 给出 `changes_requested`：0×P0、0×P1、2×P2、7×P3。P2-1 为 KO Cleaned Webtoon 来源层 `PARTIAL` 与固定 10 Case `READY` 口径冲突；P2-2 为 JA Pepper&Carrot `checksum_inventory=null` 且来源索引路径基准不统一。本次返修已将来源层限定为固定 10 Case 的资产状态并统一仓库根相对 checksum 路径；另澄清 SVG 文本计数口径。P3-2 的 `required_files()` 增传语言参数会使已有无效 profile 的 `status()` 从 `PARTIAL` 变成异常，故保留已有在 `load_manifest` / `download` / `validate_public_case` 的语言校验路径。返修后的固定 HEAD、测试和复审另行登记，不复用 r1 结论。

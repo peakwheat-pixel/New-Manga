@@ -107,7 +107,7 @@ def required_files(case: dict) -> list[Path]:
         return [*sorted((directory / "images").glob("*.jpg")), directory / "annotations.xml"]
     if kind == "open_public_comic_page":
         profile = case["asset_profile"]
-        validate_public_profile(profile, case["language"])
+        validate_public_profile(profile)
         return [directory / profile["image_filename"], directory / profile["transcript_zip_filename"]]
     if kind == "manual_source_page":
         return [path for path in directory.iterdir() if path.is_file()] if directory.is_dir() else []
