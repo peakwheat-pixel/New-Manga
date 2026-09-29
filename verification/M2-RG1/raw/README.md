@@ -32,15 +32,30 @@ verbatim as `rg1-gate-run1.json` (23/23) for the DSH r1 audit trail.
 
 ## Notes
 
-- Zero-touch (DSH r1 P2-3, rewritten): rests on TWO mechanisms — (1) every
-  spawn pins `APPDATA` into the lab; (2) the Rust host derives and passes
-  `NEWMANGA_DATA_ROOT` explicitly (`main.rs:311-315,442-449`;
-  `library_bridge.rs:149-151`), while core_service's fallback root is
-  `%LOCALAPPDATA%\New Manga` (`core_assembly.py:562-568`) — so the runners pin
-  `NEWMANGA_DATA_ROOT` per round as well (incl. timed_app_cold_start). The
+- Zero-touch (DSH r1 P2-3, rewritten; corrected r2 P1-1(N)): rests on TWO
+  mechanisms — (1) every spawn pins `APPDATA` into the lab; (2) the Rust host
+  derives the data roots via `packaged_user_root()`
+  (`main.rs:315-319,366-367`) and passes them explicitly
+  (`main.rs:446-452`; `library_bridge.rs:149-151`), while core_service's
+  fallback root is `%LOCALAPPDATA%\New Manga` (`core_assembly.py:562-568`).
+  `NEWMANGA_DATA_ROOT` is pinned explicitly only inside the
+  core/ac1/seed/DC1b/DC3 probes (run_release_gate.py :409/:445/:658/:702/:802)
+  — the app rounds (timed_app_cold_start, :472-481) do NOT pin it; their
+  zero-touch rests on the APPDATA pin plus the host-side derivation and
+  explicit pass-down. The
   host's real `%APPDATA%\com.newmanga.m2rc1.desktop` is never written or
   deleted (P2-4); the runner never deletes anything outside the lab / install
   dirs it creates under the system temp dir.
+- r2 P3-2(N): the runner docstring was corrected ("four PyInstaller warn
+  files" -> "the one merged warn-<spec>.txt"; the RG1-Z1 reference rewritten
+  as the APPDATA per-process pin wording) — docstring-only text fix, the
+  executable logic is ZERO-DIFFERENT from the version that produced the v2
+  rg1-gate.json (no gate rerun needed per DSH r2).
+- r2 P3-4(N): `rg1-localappdata-newmanga-forensics.log` and
+  `rg1-final-scope-audit-r2.log` each received one `HEAD=<hash>` discipline
+  line inserted at the top (original content untouched) — backfilled after
+  DSH r2 flagged the missing header discipline; the recorded hashes are the
+  repo HEADs at capture/audit time respectively.
 - Authoritative line-ending / trailing-whitespace normalization list (DSH r1
   P3-3 — exactly 10 files, whitespace-only changes, content preserved
   character-for-character otherwise):

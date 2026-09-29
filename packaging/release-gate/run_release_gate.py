@@ -42,16 +42,17 @@ installer produced in the owner worktree (installer sha256 recorded in
        - catalog_loader.exe: seed a lab data root, then read the rows back
          with sqlite3 (CLI arguments confirmed from the worktree source file
          ``src/infrastructure/resource_channel/catalog_loader.py``)
-       Plus: the four PyInstaller warn files are copied into raw/ and every
-       missing module is classified (missing load-time-critical module would
-       FAIL; the operative load-time evidence is the four round trips above —
-       every warn entry is disclosed per class).
+       Plus: the one merged PyInstaller warn-<spec>.txt is copied into raw/
+       and every missing module is classified (missing load-time-critical
+       module would FAIL; the operative load-time evidence is the four round
+       trips above — every warn entry is disclosed per class).
 
 Safety: this runner deletes ONLY lab / install directories it created under
 the system temp dir. It NEVER writes or deletes the host's real
 ``%APPDATA%\\com.newmanga.m2rc1.desktop`` (M2-AC5 r1 P2-4 red line); the
-runner-side proof is RG1-Z1: APPDATA is pinned into the lab for every spawned
-process, so the host user root is unreachable by construction.
+runner-side proof is the APPDATA per-process pin into the lab (no separate
+scenario ID): APPDATA is pinned into the lab for every spawned process, so
+the host user root is unreachable by construction.
 
 Usage (acceptance tooling may use the dev venv python):
     python packaging/release-gate/run_release_gate.py [--installer <path>]

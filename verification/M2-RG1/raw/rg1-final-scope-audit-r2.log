@@ -1,4 +1,5 @@
 # M2-RG1 final scope audit r2 — r1-rework bookkeeping-commit content head (post DSH-r1 rework)
+HEAD=05a8f93a7a96e9b073824e6a490d64f034fac645 (repo HEAD at audit time; the r1-rework bookkeeping commit 6b6366fc carrying this log landed 20 s later; backfilled r2 P3-4(N), original content below untouched)
 shell: Git Bash / win32; date: 2026-09-29 13:49:16 +0800
 audited range: 875eb818..working tree (= the r1-rework bookkeeping commit content; this log ships inside that commit)
 note: this audit-r2 log itself is untracked at audit time (created by this session), so it does not appear in the diffs below; delivery implementation head = 05a8f93a7a96e9b073824e6a490d64f034fac645

@@ -1,4 +1,5 @@
 # P2-3 forensic: %LOCALAPPDATA%\New Manga listing (host real dir)
+HEAD=e218cc653310a1f04d422e24c367df1acd2aa728 (repo HEAD at capture time = DSH r1 review import; backfilled r2 P3-4(N), original content below untouched)
 recorded_at: 2026-09-29 13:20:43 +0800
 purpose: support the P2-3 finding about the first gate run's default-data-root core_ready probes (12:44-12:49 local); RG1 gate run1 started 12:44, second (final) run started 12:52
 
@@ -11,4 +12,4 @@ drwxr-xr-x 1 49745 197609      0 2026-09-26 01:22:51.053272900 +0800 managed
 EXIT=0
 
 $ find "C:/Users/49745/AppData/Local/New Manga" -type f -newer verification/M2-RG1/raw/rg1-tauri-build-run1.log
-EXIT=0 (1 = no files newer than the first RG1 build log of today 12:33)
+EXIT=0 (find printed nothing: no files with mtime later than 12:33; wording fixed r2 P3-4(N) — the original "(1 = no files newer …)" phrasing wrongly implied EXIT=1 meant "no files")

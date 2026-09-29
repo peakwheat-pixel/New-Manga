@@ -17,7 +17,7 @@ base_commit: 875eb818abc74a498c84026016dd1a1c72e0ad50
 branch: agent/zcode/M2-RG1-release-gate
 worktree: G:/CODEX/New Manga.worktrees/M2-RG1-zcode
 delivery_head: 05a8f93a7a96e9b073824e6a490d64f034fac645
-review: doc/reviews/M2-RG1-a1100d75-dsh-r1.md（approved_with_conditions：0×P0、1×P1、3×P2、8×P3；r1 返修已闭合全部必闭项，见 Handoff r1 返修节）
+review: doc/reviews/M2-RG1-a1100d75-dsh-r1.md（approved_with_conditions：0×P0、1×P1、3×P2、8×P3；r1 返修已闭合全部必闭项，见 Handoff r1 返修节）；doc/reviews/M2-RG1-6b6366fc-dsh-r2.md（changes_requested：P1-1(N)/P2-1(N) 必闭 + P3-1..8(N) 落字；r1 P1-1/P2-1 判定"真闭"，产品与 Gate 结论 25/25 成立——r2 返修见 Handoff r2 返修节）
 integration_commit: null
 dispatch_state: DELIVERED_FOR_REVIEW
 ---
@@ -62,7 +62,7 @@ dispatch_state: DELIVERED_FOR_REVIEW
 **裁决（frozen）**：本 Gate **只测录、不设阈值**——冷启动阈值属用户产品裁决，Backlog 行仅要求 "cold-start metrics"。
 
 - [x] 安装态（净化 PATH + `APPDATA=<lab>`）测量并落 gate.json + raw 日志，每项 ≥3 次采样（报 min/median/max）：
-  - ① app 冷启动：`CreateProcess(installed exe)` → 首个可见顶层窗口（EnumWindows by pid, IsWindowVisible）耗时 ms；（实测 v2：46.9 / 49.9 / 160.2 ms，n=3；r1 P2-3：`NEWMANGA_DATA_ROOT` 亦显式 pin 进 lab，计时语义不变）
+  - ① app 冷启动：`CreateProcess(installed exe)` → 首个可见顶层窗口（EnumWindows by pid, IsWindowVisible）耗时 ms；（实测 v2：46.9 / 49.9 / 160.2 ms，n=3；r2 P1-1(N) 更正：app 轮不 pin `NEWMANGA_DATA_ROOT`——app 轮的零触碰由 APPDATA 逐轮 pin + host 侧 `packaged_user_root()`（main.rs:315-319,366-367）派生并显式下传 data root（main.rs:446-452、library_bridge.rs:149-151）保证；`NEWMANGA_DATA_ROOT` 仅在 core/ac1/seed/DC1b/DC3 探针内显式 pin）
   - ② core ready：安装态 `core_service.exe` stdio probe spawn → `ready` 应答耗时 ms；（实测 v2：237.6 / 247.6 / 251.4 ms，n=3）
   - ③ ac1 handshake：安装态 `acceptance_bridge.exe` spawn → ready 耗时 ms。（实测 v2：267.2 / 267.6 / 268.5 ms，n=3；probe 按该 bridge 冻结契约 pin `M2AC1_TEST_MODE=1`）
   - v1（r1 前）数值 46.0/48.2/157.1、239.1/240.5/240.9、266.5/268.2/280.1 ms 存档于 `raw/rg1-gate-run1.json`，仅作对照不作判据。
@@ -94,6 +94,7 @@ dispatch_state: DELIVERED_FOR_REVIEW
 - `packaging/release-gate/**`（新增：gate runner 脚本 + README）
 - `verification/M2-RG1/**`
 - `doc/tasks/M2-RG1.md`、`doc/handoffs/M2-RG1-*.md`
+- `doc/reviews/M2-RG1-*.md`（集成方导入——r2 P3-8(N) 补记）
 
 **条件允许（仅当 AC2 现状 FAIL——释放侦察已实证成立，随 release 激活）**：
 - `apps/desktop/src-tauri/src/main.rs`（仅顶部 `windows_subsystem` 属性）
