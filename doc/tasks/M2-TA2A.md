@@ -60,7 +60,7 @@ integration_commit: null
 
 | 场景/AC | 计划命令或步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| Catalog/校验器 | `python -m pytest tests/m2_test_assets -q` | Windows / Python；跟随资产工具变更 | PASS：21 passed | `verification/M2-TA2A/run-results.md` |
+| Catalog/校验器 | `python -m pytest tests/m2_test_assets -q` | Windows / Python；跟随资产工具变更 | PASS：23 passed | `verification/M2-TA2A/run-results.md` |
 | 新增 JA 素材 | `python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke` | 已下载的公开源 | PASS：READY=10，`INVENTORY checked=88 missing=0 failures=0`，exit 0 | `verification/M2-TA2A/run-results.md` |
 | 重复下载与网络失败 | 执行公开源下载两次；对离线/损坏输入执行 verify，不覆盖有效文件 | 临时或本地缓存 | PASS：第二次 downloaded=0/existing=20/failures=0；原子/损坏输入由定向测试覆盖 | `verification/M2-TA2A/run-results.md` |
 | Manga109 gated 不误报 | `list/missing/download --language ja` 无官方 archive | 不提供 gated 凭据 | PASS：`download --language ja --level regression` 返回 gated_cases=37、failures=0；随后 verify 枚举 MISSING_GATED_ASSET=37、公开页 READY=10 | `verification/M2-TA2A/run-results.md` |
@@ -75,6 +75,6 @@ Known baseline: `tests/m2_acceptance` 之前已证明 `8 failed / 24 passed / 3 
 - 本地日语页：10 张 JPEG + 两个官方语言包 ZIP，逐文件 SHA-256 和文件字节数在 `test_assets/comic_golden_suite/manifests/local_asset_inventory.json`。
 - Manga109 公共标注：37 个 COO + 37 个 Manga109Dialog XML 和两份 CC BY 4.0 许可证已下载、解析并按许可放行进 Git；对应 Manga109 页图像仍为 0。
 - 首次 Smoke 下载因 language-pack URL 缺少 episode 路径返回 HTTP 404；修正 manifest 后重跑通过。首轮没有覆盖或发布损坏文件。
-- Handoff：待固定实现 commit 后完成。
-- Review：待 DeepSeek Harness 独立 Review；Reviewer 非作者。
+- Handoff：待 integration commit 后完成。
+- Review：固定提交 `a6977cf9ddea3f2e15a19c8d5ca06a3e82e342a9` 收到 DeepSeek Harness `APPROVED`（0×P0/P1；4×P2 已处置/记录，报告见 `verification/M2-TA2A/dsh-r1-result.md`）；后续安全/完整性口径修复需对新 tip 复审。
 - Integration：待 Codex 在主工作区审核、合入并执行集成验证。

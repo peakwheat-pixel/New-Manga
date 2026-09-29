@@ -10,7 +10,8 @@ Case 的 `READY` 只表示预期本地文件存在且通过完整性验证。它
 
 - `manifests/cases.json` 是 JA/KO 统一清单和困难标签 taxonomy；Case 路径相对本目录，适用于 Windows。
 - `cases.json` 中的 `status` / `asset_status` 是维护清单时的快照；每次运行时以 CLI 根据当前本地文件、inventory checksum 和格式检查计算出的状态为准。
-- `manifests/local_asset_inventory.json` 记录本次取得资源的许可、内容类型、文件数、字节数、逐文件 SHA-256、GT 能力和 Pipeline 状态；`verify`、`list`、`missing` 均重新计算 inventory 文件的哈希；必需 XML / license 缺失或任一文件哈希不符都会返回失败，缺失的可选原始媒体会单独计入 missing。
+- `manifests/local_asset_inventory.json` 记录本次新增 JA 资源的许可、内容类型、文件数、字节数、逐文件 SHA-256、GT 能力和 Pipeline 状态；`verify`、`list`、`missing` 均重新计算 inventory 文件的哈希。必需 XML / license 缺失或任一文件哈希不符会返回失败；缺失的图像会在状态与 `missing` 输出中显示，JA Smoke 的 `verify` 也会失败。
+- 继承自 M2-TA1 的 80 个 KO Webtoon 资产不在 JA inventory 中；其 `READY` 表示所需 PNG/JSON 文件存在、PNG chunk CRC 与结构有效、JSON 可解析，不代表与某个 SHA-256 内容基线一致。`verify`、`list`、`missing` 对这些 Case 使用相同结构检查。若后续需要识别被另一个合法 PNG 替换的文件，需另行登记 KO SHA-256。
 - `../../verification/M2-TA2A/source-audit.md` 记录来源实物类型、许可/访问边界和本次不下载原因；只有注释而无图像的来源不会记为可运行资产。
 - `韩漫_KO/` 与 `日漫_JA/` 是本地原始素材位置。原始图像和归档默认忽略；只有 `日漫_JA/02_public_annotations/` 下明确标为 CC BY 4.0 的选定 XML 标注及相应许可文本进入 Git。该注释目录通过 `.gitattributes` 保留源字节，避免 Windows 行尾转换影响哈希。
 - `tools/assets.py` 使用 Python 标准库，提供 `download`、`verify`、`list`、`missing`；支持 `--language ja|ko` 和 `--level smoke|regression|full`。公共日语页面只接受 HTTPS `www.peppercarrot.com`，校验 URL/重定向、响应大小、JPEG、ZIP 路径、CRC 和指定日语 SVG/XML 成员，原子发布且不覆盖有效文件。

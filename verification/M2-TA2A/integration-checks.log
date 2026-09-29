@@ -69,3 +69,66 @@ A separate Reviewer built a temporary valid JPEG + valid SVG ZIP fixture with a 
 - The earlier pre-fix focused test run was 19 passed. The final code and current verification are 21 passed.
 
 Application Pipeline execution (OCR/detection/translation/inpainting/typesetting/reading order/SFX/speaker/webtoon slicing and reassembly): NOT_RUN.
+
+## Post-review P2 repairs verification
+DATE_LOCAL=2026-09-29T21:15:36.499761+08:00
+PYTHON=C:\Python314\python.exe
+
+COMMAND=C:\Python314\python.exe -m pytest tests/m2_test_assets -q
+23 passed in 0.36s
+EXIT=0
+
+COMMAND=C:\Python314\python.exe test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke
+SUMMARY	READY=10
+INVENTORY	checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=C:\Python314\python.exe test_assets/comic_golden_suite/tools/assets.py list --language ja --level smoke
+SUMMARY	READY=10
+INVENTORY	checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=C:\Python314\python.exe test_assets/comic_golden_suite/tools/assets.py missing --language ja --level smoke
+SUMMARY	READY=10
+INVENTORY	checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=C:\Python314\python.exe test_assets/comic_golden_suite/tools/assets.py verify --language ja --level regression
+SUMMARY	MISSING_GATED_ASSET=37 READY=10
+INVENTORY	checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=C:\Python314\python.exe test_assets/comic_golden_suite/tools/assets.py download --language ja --level smoke
+SUMMARY	downloaded=0 existing=20 gated_cases=0 failures=0
+EXIT=0
+
+COMMAND=C:\Python314\python.exe test_assets/comic_golden_suite/tools/assets.py list --language ko --level smoke
+SUMMARY	READY=10
+INVENTORY	checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=C:\Python314\python.exe test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke
+SUMMARY	READY=10
+INVENTORY	checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=offline verify harness with urllib.request.urlopen patched to raise
+SUMMARY	READY=10
+INVENTORY	checked=88 missing=0 failures=0
+EXIT=0
+
+COMMAND=git check-ignore --no-index -v -- test_assets/comic_golden_suite/日漫_JA/02_public_annotations/Manga109Dialog/evil.jpg
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":17:/02_public_annotations/**/*.jpg	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/02_public_annotations/Manga109Dialog/evil.jpg"
+EXIT=0
+
+COMMAND=git check-ignore --no-index -v -- test_assets/comic_golden_suite/日漫_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/evil.png
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":19:/02_public_annotations/**/*.png	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/02_public_annotations/COO-Comic-Onomatopoeia/v2022.07.07/evil.png"
+EXIT=0
+
+COMMAND=git check-ignore --no-index -v -- test_assets/comic_golden_suite/日漫_JA/02_public_annotations/evil.zip
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":21:/02_public_annotations/**/*.zip	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/02_public_annotations/evil.zip"
+EXIT=0
+
+COMMAND=git ls-files -z -- test_assets/comic_golden_suite plus extension audit
+TRACKED_COMIC_MEDIA=0
+EXIT=0

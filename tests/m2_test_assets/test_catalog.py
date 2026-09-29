@@ -1,10 +1,30 @@
 import json
+import struct
+import sys
+import zlib
 import zipfile
 from unittest.mock import patch
 
 import pytest
 
 from test_assets.comic_golden_suite.tools import assets
+
+
+def make_png():
+    def chunk(name, data):
+        return struct.pack(">I", len(data)) + name + data + struct.pack(">I", zlib.crc32(name + data) & 0xFFFFFFFF)
+
+    ihdr = struct.pack(">IIBBBBB", 1, 1, 8, 2, 0, 0, 0)
+    return assets.PNG_SIGNATURE + chunk(b"IHDR", ihdr) + chunk(b"IDAT", zlib.compress(b"\0\0\0\0")) + chunk(b"IEND", b"")
+
+
+def make_webtoon_case(local_path="ko/test"):
+    return {
+        "case_id": "K-test",
+        "language": "ko",
+        "local_path": local_path,
+        "asset_profile": {"kind": "hf_cleaned_webtoon", "files": ["page.png"]},
+    }
 
 
 def test_manifest_has_unique_cases_and_exact_taxonomy():
@@ -148,6 +168,44 @@ def test_partial_manual_and_gated_titles_never_report_ready(tmp_path):
         image_dir.mkdir(parents=True)
         (image_dir / "Title_001.jpg").write_bytes(b"\xff\xd8\xff\xd9")
         assert assets.status(manga) == "PARTIAL"
+
+
+def test_webtoon_list_status_checks_png_structure(tmp_path, capsys):
+    case = make_webtoon_case()
+    with patch.object(assets, "ROOT", tmp_path):
+        image = assets.local_dir(case) / "page.png"
+        image.parent.mkdir(parents=True)
+        valid = make_png()
+        image.write_bytes(valid)
+        assert assets.status(case) == "READY"
+
+        damaged = bytearray(valid)
+        damaged[-1] ^= 0x01
+        image.write_bytes(damaged)
+        statuses = assets.print_cases([case])
+
+    assert statuses["K-test"] == "PARTIAL"
+    assert "K-test\tko\tPARTIAL" in capsys.readouterr().out
+
+
+def test_verify_fails_when_public_smoke_page_is_missing(tmp_path, capsys):
+    manifest = assets.load_manifest()
+    case = next(case.copy() for case in manifest["cases"] if case["case_id"] == "J38")
+    case["local_path"] = "ja/absent"
+    manifest["cases"] = [case]
+    manifest_path = tmp_path / "cases.json"
+    inventory_path = tmp_path / "local_asset_inventory.json"
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+    inventory_path.write_text(json.dumps({"assets": []}), encoding="utf-8")
+
+    with patch.object(assets, "ROOT", tmp_path), patch.object(assets, "MANIFEST_PATH", manifest_path), patch.object(
+        assets, "INVENTORY_PATH", inventory_path
+    ), patch.object(sys, "argv", ["assets.py", "verify", "--language", "ja", "--level", "smoke"]):
+        assert assets.main() == 1
+
+    output = capsys.readouterr().out
+    assert "J38\tja\tMISSING" in output
+    assert "INVALID\tJ38" in output
 
 
 def test_official_manga_archive_import_is_selective_and_idempotent(tmp_path):

@@ -117,7 +117,8 @@ def status(case: dict, invalid_inventory_paths: set[str] | None = None) -> str:
                 data = json.loads(marker.read_text(encoding="utf-8"))
                 images = sorted(path.name for path in paths if path.suffix.lower() == ".jpg")
                 if data.get("case_id") == case["case_id"] and data.get("images") == images:
-                    return "READY"
+                    ok, _ = validate_manga_case(case)
+                    return "READY" if ok else "PARTIAL"
             except (OSError, UnicodeDecodeError, json.JSONDecodeError):
                 pass
         return "PARTIAL" if any(path.is_file() for path in paths) else "MISSING_GATED_ASSET"
@@ -133,6 +134,9 @@ def status(case: dict, invalid_inventory_paths: set[str] | None = None) -> str:
         ok, _ = validate_public_case(case)
         return "READY" if ok else "PARTIAL"
     if paths and all(path.is_file() and path.stat().st_size > 0 for path in paths):
+        if kind == "hf_cleaned_webtoon":
+            ok, _ = validate_present(case)
+            return "READY" if ok else "PARTIAL"
         return "READY"
     return "MISSING"
 
@@ -141,14 +145,17 @@ def print_cases(
     cases: list[dict],
     show_missing_only: bool = False,
     invalid_inventory_paths: set[str] | None = None,
-) -> None:
+) -> dict[str, str]:
     counts: dict[str, int] = {}
+    statuses: dict[str, str] = {}
     for case in cases:
         current = status(case, invalid_inventory_paths)
+        statuses[case["case_id"]] = current
         counts[current] = counts.get(current, 0) + 1
         if not show_missing_only or current != "READY":
             print(f"{case['case_id']}\t{case['language']}\t{current}\t{case['local_path']}")
     print("SUMMARY\t" + " ".join(f"{key}={counts[key]}" for key in sorted(counts)))
+    return statuses
 
 
 def verify_inventory_files() -> tuple[list[str], int, int, set[str]]:
@@ -799,24 +806,33 @@ def main() -> int:
     cases = selected(manifest, args.language, args.level)
     if args.command in {"verify", "list", "missing"}:
         inventory_failures, inventory_checked, inventory_missing, invalid_paths = verify_inventory_files()
-        print_cases(cases, show_missing_only=args.command == "missing", invalid_inventory_paths=invalid_paths)
+        case_statuses = print_cases(cases, show_missing_only=args.command == "missing", invalid_inventory_paths=invalid_paths)
         print(f"INVENTORY\tchecked={inventory_checked} missing={inventory_missing} failures={len(inventory_failures)}")
         for failure in inventory_failures:
             print(f"INVALID_INVENTORY\t{failure}")
         if inventory_failures:
+            print("SUMMARY\tFAILED")
             return 1
         if args.command in {"list", "missing"}:
             return 0
         for case in cases:
-            if case.get("asset_profile", {}).get("kind") == "open_public_comic_page":
-                paths = required_files(case)
-                if any(path.exists() for path in paths):
+            kind = case.get("asset_profile", {}).get("kind")
+            case_status = case_statuses[case["case_id"]]
+            if kind in {"open_public_comic_page", "hf_cleaned_webtoon"}:
+                if case_status != "READY":
                     ok, reason = validate_present(case)
-                    if not ok:
-                        print(f"INVALID\t{case['case_id']}\t{reason}")
-                        return 1
+                    message = reason if not ok else f"asset status is {case_status}"
+                    print(f"INVALID\t{case['case_id']}\t{message}")
+                    return 1
                 continue
-            if status(case) == "READY":
+            if kind == "manga109_title":
+                if case_status == "PARTIAL":
+                    ok, reason = validate_present(case)
+                    message = reason if not ok else "asset status is PARTIAL"
+                    print(f"INVALID\t{case['case_id']}\t{message}")
+                    return 1
+                continue
+            if case_status == "READY":
                 ok, reason = validate_present(case)
                 if not ok:
                     print(f"INVALID\t{case['case_id']}\t{reason}")

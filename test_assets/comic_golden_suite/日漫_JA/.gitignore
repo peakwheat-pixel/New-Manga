@@ -12,3 +12,11 @@
 !/02_public_annotations/Manga109Dialog/
 !/02_public_annotations/Manga109Dialog/LICENSE_Manga109Dialog
 !/02_public_annotations/Manga109Dialog/*.xml
+
+# The annotation whitelist must never allow raw images or dataset archives.
+/02_public_annotations/**/*.jpg
+/02_public_annotations/**/*.jpeg
+/02_public_annotations/**/*.png
+/02_public_annotations/**/*.webp
+/02_public_annotations/**/*.zip
+/02_public_annotations/**/*.cbz
