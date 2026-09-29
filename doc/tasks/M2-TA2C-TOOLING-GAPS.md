@@ -2,13 +2,13 @@
 id: M2-TA2C-TOOLING-GAPS
 title: "comic_golden_suite 工具清算：source_url 主机白名单 + checksum_inventory 运行时消费与判别性断言（TA2C P3-6/P3-10）"
 kind: fix
-status: ready
+status: in_progress
 approval: orchestrator_delegated_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（待派发，非作者静态）
 depends_on: []
-base_commit: PENDING_SET_AT_CLAIM
+base_commit: f3d684eb767414a3c5ac010f7920657204cc9336
 branch: agent/zcode/M2-TA2C-TOOLING-GAPS
 worktree: G:/CODEX/New Manga.worktrees/M2-TA2C-TOOLING-GAPS-zcode
 integration_commit: null
