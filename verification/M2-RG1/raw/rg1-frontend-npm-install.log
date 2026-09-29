@@ -1,0 +1,19 @@
+$ npm install @ HEAD=33280f5e9f2f271b0b0e2c5f4718cee74d9abbfa
+shell: Git Bash / win32
+
+added 99 packages, and audited 100 packages in 2s
+
+17 packages are looking for funding
+  run `npm fund` for details
+
+5 vulnerabilities (3 moderate, 1 high, 1 critical)
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+npm warn install-scripts 1 package had install scripts blocked because they are not covered by allowScripts:
+npm warn install-scripts   esbuild@0.21.5 (postinstall: node install.js)
+npm warn install-scripts
+npm warn install-scripts Run `npm install-scripts ls` to review, or `npm install-scripts approve <pkg>` to allow.
+EXIT=0

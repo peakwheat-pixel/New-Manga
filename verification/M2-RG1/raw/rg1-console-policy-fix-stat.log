@@ -1,0 +1,10 @@
+$ git diff <AC2 bounded-fix files> @ HEAD=33280f5e9f2f271b0b0e2c5f4718cee74d9abbfa
+shell: Git Bash / win32
+diff file: rg1-console-policy-fix.diff
+ apps/desktop/src-tauri/src/ac1_bridge.rs     | 15 +++++++++++---
+ apps/desktop/src-tauri/src/core_bridge.rs    | 30 ++++++++++++++++++++++------
+ apps/desktop/src-tauri/src/library_bridge.rs |  9 +++++++++
+ apps/desktop/src-tauri/src/main.rs           |  6 ++++++
+ packaging/m2ac5/core_sidecar.spec            |  5 +++++
+ 5 files changed, 56 insertions(+), 9 deletions(-)
+EXIT=0

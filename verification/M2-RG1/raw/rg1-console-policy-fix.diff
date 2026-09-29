@@ -1,0 +1,146 @@
+diff --git a/apps/desktop/src-tauri/src/ac1_bridge.rs b/apps/desktop/src-tauri/src/ac1_bridge.rs
+index 71e6c2b2..d2dbec5b 100644
+--- a/apps/desktop/src-tauri/src/ac1_bridge.rs
++++ b/apps/desktop/src-tauri/src/ac1_bridge.rs
+@@ -63,13 +63,22 @@ impl Ac1Channel {
+         python_exe: &str,
+         src_root: &std::path::Path,
+     ) -> Result<Self, Ac1Error> {
+-        let mut child = Command::new(python_exe)
+-            .args(spawn_args())
++        // M2-RG1 AC2: Command-construction section only — CREATE_NO_WINDOW on
++        // Windows; argv/cwd/env/stdio semantics unchanged.
++        let mut cmd = Command::new(python_exe);
++        cmd.args(spawn_args())
+             .current_dir(src_root)
+             .env("PYTHONPATH", src_root)
+             .stdin(Stdio::piped())
+             .stdout(Stdio::piped())
+-            .stderr(Stdio::inherit())
++            .stderr(Stdio::inherit());
++        #[cfg(windows)]
++        {
++            use std::os::windows::process::CommandExt;
++            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
++            cmd.creation_flags(CREATE_NO_WINDOW);
++        }
++        let mut child = cmd
+             .spawn()
+             .map_err(|error| Ac1Error { code: format!("AC1_SPAWN_FAILED:{error}") })?;
+         let stdin = child
+diff --git a/apps/desktop/src-tauri/src/core_bridge.rs b/apps/desktop/src-tauri/src/core_bridge.rs
+index 1fd3af5a..da6b3e3a 100644
+--- a/apps/desktop/src-tauri/src/core_bridge.rs
++++ b/apps/desktop/src-tauri/src/core_bridge.rs
+@@ -117,8 +117,10 @@ impl StdioCoreChannel {
+         managed_root: &std::path::Path,
+         catalog_db: &std::path::Path,
+     ) -> Result<Self, CoreError> {
+-        let child = Command::new(python_exe)
+-            .arg("-m")
++        // M2-RG1 AC2: Command-construction section only — the sidecar must
++        // never surface a console window on Windows (CREATE_NO_WINDOW).
++        let mut cmd = Command::new(python_exe);
++        cmd.arg("-m")
+             .arg("infrastructure.resource_channel.host_bridge")
+             .current_dir(src_root)
+             .env("M2RC1_DERIVED_ROOT", derived_root)
+@@ -126,7 +128,14 @@ impl StdioCoreChannel {
+             .env("M2RC2_CATALOG_DB", catalog_db)
+             .stdin(Stdio::piped())
+             .stdout(Stdio::piped())
+-            .stderr(Stdio::inherit())
++            .stderr(Stdio::inherit());
++        #[cfg(windows)]
++        {
++            use std::os::windows::process::CommandExt;
++            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
++            cmd.creation_flags(CREATE_NO_WINDOW);
++        }
++        let child = cmd
+             .spawn()
+             .map_err(|error| CoreError { code: format!("CORE_SPAWN_FAILED:{error}") })?;
+         Self::adopt_child(child)
+@@ -146,13 +155,22 @@ impl StdioCoreChannel {
+         if !sidecar_exe.is_file() {
+             return Err(CoreError::new("CORE_SPAWN_FAILED:PACKAGED_SIDECAR_MISSING"));
+         }
+-        let child = Command::new(sidecar_exe)
+-            .env("M2RC1_DERIVED_ROOT", derived_root)
++        // M2-RG1 AC2: Command-construction section only — CREATE_NO_WINDOW on
++        // Windows; argv/env/stdio semantics unchanged.
++        let mut cmd = Command::new(sidecar_exe);
++        cmd.env("M2RC1_DERIVED_ROOT", derived_root)
+             .env("M2RC1_MANAGED_ROOT", managed_root)
+             .env("M2RC2_CATALOG_DB", catalog_db)
+             .stdin(Stdio::piped())
+             .stdout(Stdio::piped())
+-            .stderr(Stdio::inherit())
++            .stderr(Stdio::inherit());
++        #[cfg(windows)]
++        {
++            use std::os::windows::process::CommandExt;
++            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
++            cmd.creation_flags(CREATE_NO_WINDOW);
++        }
++        let child = cmd
+             .spawn()
+             .map_err(|error| CoreError { code: format!("CORE_SPAWN_FAILED:{error}") })?;
+         Self::adopt_child(child)
+diff --git a/apps/desktop/src-tauri/src/library_bridge.rs b/apps/desktop/src-tauri/src/library_bridge.rs
+index f2efa449..5df49b05 100644
+--- a/apps/desktop/src-tauri/src/library_bridge.rs
++++ b/apps/desktop/src-tauri/src/library_bridge.rs
+@@ -136,6 +136,8 @@ impl StdioLibraryChannel {
+         src_root: &std::path::Path,
+         data_root: Option<&std::path::Path>,
+     ) -> Result<Self, LibraryError> {
++        // M2-RG1 AC2: Command-construction section only — CREATE_NO_WINDOW on
++        // Windows; argv/cwd/env/stdio semantics unchanged.
+         let mut cmd = Command::new(python_exe);
+         cmd.args(spawn_args())
+             .current_dir(src_root)
+@@ -148,6 +150,13 @@ impl StdioLibraryChannel {
+             cmd.env("NEWMANGA_DATA_ROOT", root);
+         }
+ 
++        #[cfg(windows)]
++        {
++            use std::os::windows::process::CommandExt;
++            const CREATE_NO_WINDOW: u32 = 0x0800_0000;
++            cmd.creation_flags(CREATE_NO_WINDOW);
++        }
++
+         let mut child = cmd
+             .spawn()
+             .map_err(|e| LibraryError::unavailable(&format!("Failed to spawn Core: {e}")))?;
+diff --git a/apps/desktop/src-tauri/src/main.rs b/apps/desktop/src-tauri/src/main.rs
+index 0bbfc523..52ba32e8 100644
+--- a/apps/desktop/src-tauri/src/main.rs
++++ b/apps/desktop/src-tauri/src/main.rs
+@@ -1,3 +1,9 @@
++// M2-RG1 AC2 (GUI console policy, release builds only): the packaged app is a
++// GUI-subsystem binary — no console window may appear for the app itself.
++// Dev builds (debug_assertions) keep the console on purpose: probe evidence
++// includes startup stderr (comment below, dev behavior unchanged).
++#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
++
+ //! M2-RC1/M2-RC2 — Contract-Aligned Large-Media Resource Channel Runtime.
+ //!
+ //! Vertical slice: Python Core (reference + catalog authority) ⇄ Tauri/Rust
+diff --git a/packaging/m2ac5/core_sidecar.spec b/packaging/m2ac5/core_sidecar.spec
+index 20bc7697..39219517 100644
+--- a/packaging/m2ac5/core_sidecar.spec
++++ b/packaging/m2ac5/core_sidecar.spec
+@@ -88,6 +88,11 @@ for stem, name in ENTRIES:
+             bootloader_ignore_signals=False,
+             strip=False,
+             upx=False,
++            # M2-RG1 (AC2): console=True is FROZEN — the stdio JSON-lines
++            # protocol depends on pipe semantics that PyInstaller windowed
++            # mode would alter. Console-window suppression for packaged
++            # launches is done host-side (Rust CREATE_NO_WINDOW on the spawn
++            # sections + windows_subsystem="windows" for the app exe).
+             console=True,
+             disable_windowed_traceback=False,
+             argv_emulation=False,

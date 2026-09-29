@@ -1,0 +1,583 @@
+{
+  "gate": "m2rg1-release-gate",
+  "ruling": "windows local-machine (2026-09-29): this machine is the clean Windows basis; local pass => gate PASS",
+  "base_commit": "875eb818abc74a498c84026016dd1a1c72e0ad50",
+  "runner_python": "3.12.3",
+  "environment": {
+    "path_removed_entries": [
+      "C:\\Python314\\Scripts",
+      "C:\\Python314",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311\\Scripts",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python311",
+      "C:\\Users\\49745\\AppData\\Local\\Microsoft\\WindowsApps",
+      "C:\\Users\\49745\\AppData\\Local\\Python\\bin",
+      "C:\\Users\\49745\\AppData\\Roaming\\Python\\Python314\\Scripts"
+    ],
+    "path_kept_entries": [
+      "C:\\Users\\49745\\.local\\bin",
+      "C:\\Users\\49745\\bin",
+      "C:\\Program Files\\Git\\mingw64\\bin",
+      "C:\\Program Files\\Git\\usr\\local\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Program Files\\Git\\mingw64\\bin",
+      "C:\\Program Files\\Git\\usr\\bin",
+      "C:\\Users\\49745\\bin",
+      "C:\\WINDOWS\\system32",
+      "C:\\WINDOWS",
+      "C:\\WINDOWS\\System32\\Wbem",
+      "C:\\WINDOWS\\System32\\WindowsPowerShell\\v1.0",
+      "C:\\WINDOWS\\System32\\OpenSSH",
+      "C:\\Program Files\\NVIDIA Corporation\\NVIDIA App\\NvDLISR",
+      "C:\\Program Files\\dotnet",
+      "C:\\Program Files (x86)\\NVIDIA Corporation\\PhysX\\Common",
+      "C:\\Program Files (x86)\\QuickTime\\QTSystem",
+      "E:\\software\\Bandizip",
+      "E:\\software\\Process Lasso",
+      "C:\\Program Files\\Git\\cmd",
+      "E:\\Program Files\\nodejs",
+      "C:\\ProgramData\\chocolatey\\bin",
+      "C:\\Program Files\\GitHub CLI",
+      "C:\\Program Files\\PowerShell\\7",
+      "C:\\Program Files\\Docker\\Docker\\resources\\bin",
+      "C:\\Program Files\\Go\\bin",
+      "C:\\Users\\49745\\.qoder-cn\\entry",
+      "C:\\Users\\49745\\.repo-knowledge\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\agy\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\OpenAI\\Codex\\bin",
+      "C:\\Users\\49745\\.cargo\\bin",
+      "E:\\software\\delevoper\\flutter\\bin",
+      "C:\\Users\\49745\\.dotnet\\tools",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Microsoft VS Code\\bin",
+      "C:\\Users\\49745\\AppData\\Roaming\\npm",
+      "C:\\Users\\49745\\AppData\\Local\\Programs\\Ollama",
+      "C:\\Users\\49745\\AppData\\Local\\GitHubDesktop\\bin",
+      "C:\\Users\\49745\\AppData\\Local\\skills-manager",
+      "C:\\Users\\49745\\.qoder-cn\\bin\\qoderclicn",
+      "C:\\Users\\49745\\go\\bin",
+      "E:\\Program Files\\ZCode\\resources\\tools\\ripgrep",
+      "E:\\Program Files\\ZCode\\resources\\tools\\ugrep",
+      "C:\\Program Files\\Git\\usr\\bin\\vendor_perl",
+      "C:\\Program Files\\Git\\usr\\bin\\core_perl"
+    ],
+    "purge_markers": [
+      "python",
+      "venv",
+      "conda",
+      "WindowsApps"
+    ],
+    "installer": "G:\\CODEX\\New Manga.worktrees\\M2-RG1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+    "installer_sha256": "d222073becc50d593a3f0d706ef799df45d369a51f13c1e81423dbeef7ed09db",
+    "os": "Microsoft Windows [\u7248\u672c 10.0.26200.9457]",
+    "processor_architecture": "AMD64",
+    "host_real_user_root_never_touched": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop"
+  },
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-8g0yl2_w",
+  "timings": {
+    "app_cold_start": {
+      "n": 3,
+      "min_ms": 46.0,
+      "median_ms": 48.2,
+      "max_ms": 157.1,
+      "samples_ms": [
+        157.1,
+        46.0,
+        48.2
+      ]
+    },
+    "core_ready": {
+      "n": 3,
+      "min_ms": 239.1,
+      "median_ms": 240.5,
+      "max_ms": 240.9,
+      "samples_ms": [
+        240.5,
+        240.9,
+        239.1
+      ]
+    },
+    "ac1_handshake": {
+      "n": 3,
+      "min_ms": 266.5,
+      "median_ms": 268.2,
+      "max_ms": 280.1,
+      "samples_ms": [
+        268.2,
+        266.5,
+        280.1
+      ]
+    },
+    "appdata_isolation": "APPDATA pinned per round into the lab; host real %APPDATA% unreachable"
+  },
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install",
+  "verdict": "PASS",
+  "scenarios": [
+    {
+      "id": "RG1-E1-python-purged-from-path",
+      "status": "PASS",
+      "observed": {
+        "detail": "python not on purged PATH (where exit=1)",
+        "removed_entries": 11,
+        "kept_entries": 45
+      }
+    },
+    {
+      "id": "RG1-E2-installer-present",
+      "status": "PASS",
+      "observed": {
+        "installer": "G:\\CODEX\\New Manga.worktrees\\M2-RG1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
+        "sha256": "d222073becc50d593a3f0d706ef799df45d369a51f13c1e81423dbeef7ed09db"
+      }
+    },
+    {
+      "id": "RG1-E3-install-path-no-spaces",
+      "status": "PASS",
+      "observed": {
+        "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install"
+      }
+    },
+    {
+      "id": "RG1-I1-silent-install",
+      "status": "PASS",
+      "observed": {
+        "detail": "installed to C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate\\install with resources/core-sidecar/host_bridge.exe, core_service.exe, acceptance_bridge.exe, catalog_loader.exe"
+      }
+    },
+    {
+      "id": "RG1-PE1-app-exe-subsystem-gui",
+      "status": "PASS",
+      "observed": {
+        "subsystem": 2,
+        "optional_header_magic": 523,
+        "offset": 324
+      }
+    },
+    {
+      "id": "RG1-PE2-console-policy-source-audit",
+      "status": "PASS",
+      "observed": {
+        "windows_subsystem_attr_gated_by_not_debug_assertions": true,
+        "create_no_window_inside_cfg_windows": true,
+        "creation_flags_counts_per_bridge": {
+          "core_bridge.rs": 2,
+          "ac1_bridge.rs": 1,
+          "library_bridge.rs": 1
+        },
+        "core_sidecar_spec_console_true_unchanged": true
+      }
+    },
+    {
+      "id": "RG1-DC4-catalog-loader-seed-readback",
+      "status": "PASS",
+      "observed": {
+        "source_confirmed_args": [
+          "--db",
+          "--set",
+          "--dump",
+          "--count",
+          "--remove"
+        ],
+        "loader_exit": 0,
+        "loader_stderr_tail": "",
+        "dump_ok": true,
+        "sqlite_rows": [
+          {
+            "resource_id": "rg1-res",
+            "scope_class": "derived-read-only",
+            "rel_path": "asset.png"
+          },
+          {
+            "resource_id": "rg1-res-2",
+            "scope_class": "derived-read-only",
+            "rel_path": "asset.png"
+          }
+        ],
+        "sqlite_error": null
+      }
+    },
+    {
+      "id": "RG1-DC1-core-service-ping-listbooks",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_ok": true,
+        "ping_response": {
+          "protocol": "new-manga.core",
+          "version": {
+            "major": 1,
+            "minor": 0
+          },
+          "request_id": "rg1-dc1-ping",
+          "result": {
+            "status": "ready",
+            "protocol_version": {
+              "major": 1,
+              "minor": 0
+            },
+            "capabilities": [
+              "library.list_books"
+            ]
+          },
+          "error": null
+        },
+        "books_ok": true,
+        "books_count": 0,
+        "books_error": null,
+        "shutdown_ok": true
+      }
+    },
+    {
+      "id": "RG1-DC2-host-bridge-handshake-issue-resolve",
+      "status": "PASS",
+      "observed": {
+        "ping": {
+          "result": {
+            "pong": true,
+            "service": "m2-rc1-resource-channel"
+          },
+          "id": 1
+        },
+        "issue": {
+          "result": {
+            "id": "m2id.v1.irvQki9Vg0hdfbhPgvAPW14BowNYA1KOle5p0c-u0Vc",
+            "size": 21
+          },
+          "id": 2
+        },
+        "resolve": {
+          "result": {
+            "scope_class": "derived-read-only",
+            "resource_id": "rg1-res",
+            "revision_fingerprint": "rev-1",
+            "rel_path": "asset.png",
+            "size": 21,
+            "sha256": "6b84b41224494296233f04dc2060403f03689066a14428e73ddfd305d1d30a79",
+            "volume_serial": 1485189147,
+            "file_index": 4503599629239318
+          },
+          "id": 3
+        },
+        "revoke": {
+          "result": {
+            "revoked": true
+          },
+          "id": 4
+        },
+        "shutdown": {
+          "result": {
+            "bye": true
+          },
+          "id": 0
+        },
+        "exit": 0
+      }
+    },
+    {
+      "id": "RG1-DC3-acceptance-bridge-handshake",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_ok": true,
+        "service": "m2-ac1-acceptance",
+        "shutdown_ok": true,
+        "error": null
+      }
+    },
+    {
+      "id": "RG1-W1-warn-files-copied-and-classified",
+      "status": "PASS",
+      "observed": {
+        "copied": 1,
+        "merged_per_spec_layout": true,
+        "review": [
+          {
+            "warn_file": "warn-core_sidecar.txt",
+            "missing_total": 11,
+            "missing_excluded_by_spec": [],
+            "missing_other_disclosed": [
+              "_frozen_importlib_external",
+              "_posixsubprocess",
+              "_winreg",
+              "fcntl",
+              "grp",
+              "java",
+              "posix",
+              "pwd",
+              "readline",
+              "resource",
+              "vms_lib"
+            ],
+            "note": "operative load-time-critical evidence = the four install-state stdio round trips in this gate; a missing load-time module would crash the entry at spawn, not merely warn. 'missing_other_disclosed' entries are conditional/optional imports observed by PyInstaller's static analysis."
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CS1-R1-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "app_pid": 19792,
+        "first_window": {
+          "hwnd": 11800648,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 19792,
+          "visible": true
+        },
+        "first_window_ms": 157.07289999409113,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R1-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "hits": [],
+        "alive_hold_s": 10.0
+      }
+    },
+    {
+      "id": "RG1-CW2-R1-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 1,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS1-R2-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "app_pid": 47332,
+        "first_window": {
+          "hwnd": 2231140,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 47332,
+          "visible": true
+        },
+        "first_window_ms": 45.97490000014659,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R2-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "hits": [],
+        "alive_hold_s": 10.0
+      }
+    },
+    {
+      "id": "RG1-CW2-R2-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 2,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS1-R3-app-window-observed",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "app_pid": 39324,
+        "first_window": {
+          "hwnd": 12126836,
+          "class": "Tauri Window",
+          "title": "M2-RC1 resource channel runtime",
+          "pid": 39324,
+          "visible": true
+        },
+        "first_window_ms": 48.17690000345465,
+        "exit_poll": null
+      }
+    },
+    {
+      "id": "RG1-CW1-R3-running-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "hits": [],
+        "alive_hold_s": 10.0
+      }
+    },
+    {
+      "id": "RG1-CW2-R3-after-exit-console-hits",
+      "status": "PASS",
+      "observed": {
+        "round": 3,
+        "hits": [],
+        "sidecars_reaped": true
+      }
+    },
+    {
+      "id": "RG1-CS2-core-ready-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 239.1,
+          "median_ms": 240.5,
+          "max_ms": 240.9,
+          "samples_ms": [
+            240.5,
+            240.9,
+            239.1
+          ]
+        },
+        "details": [
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 0
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 0
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "protocol": "new-manga.core",
+              "version": {
+                "major": 1,
+                "minor": 0
+              },
+              "request_id": "rg1-cs2",
+              "result": {
+                "status": "ready",
+                "protocol_version": {
+                  "major": 1,
+                  "minor": 0
+                },
+                "capabilities": [
+                  "library.list_books"
+                ]
+              },
+              "error": null
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CS3-ac1-handshake-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 266.5,
+          "median_ms": 268.2,
+          "max_ms": 280.1,
+          "samples_ms": [
+            268.2,
+            266.5,
+            280.1
+          ]
+        },
+        "details": [
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 51560,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-8g0yl2_w\\cs3\\round1\\data-root"
+              },
+              "id": 1
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 43244,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-8g0yl2_w\\cs3\\round2\\data-root"
+              },
+              "id": 1
+            }
+          },
+          {
+            "exit": 0,
+            "response": {
+              "result": {
+                "pong": true,
+                "service": "m2-ac1-acceptance",
+                "pid": 19948,
+                "data_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2rg1-gate-lab-8g0yl2_w\\cs3\\round3\\data-root"
+              },
+              "id": 1
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "RG1-CS1-app-cold-start-samples",
+      "status": "PASS",
+      "observed": {
+        "stats": {
+          "n": 3,
+          "min_ms": 46.0,
+          "median_ms": 48.2,
+          "max_ms": 157.1,
+          "samples_ms": [
+            157.1,
+            46.0,
+            48.2
+          ]
+        },
+        "method": "CreateProcess -> first visible non-console top-level window of the app pid; new lab APPDATA per round (every round is a cold start)"
+      }
+    }
+  ]
+}
