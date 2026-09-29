@@ -53,6 +53,10 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | M2-RC1 | ZCode | DeepSeek Harness / Codex | `3a246840` |
 | M2-RC2 | ZCode | DeepSeek Harness / Codex | `88f972fe` |
 | M2-AC1 | ZCode | DeepSeek Harness / Codex | `f162193b` |
+| M2-RG1 | ZCode | DeepSeek Harness / Codex（ZCode 代行） | `b796bed3` |
+| M2-TA1 | Codex | Codex（独立 reviewer subagent）/ Codex | `1ef8fe7e` |
+| M2-TA2A | Codex Desktop | DeepSeek Harness / Codex Desktop | `ef13a77b` |
+| M2-TA2C | Codex Desktop（续接/集成=ZCode 代行） | DeepSeek Harness / ZCode（代行 Codex） | `a4cd513d` |
 | DIAG-M2-REGIONLESS-LOCK-CHANGED-001 | DeepSeek Harness（静态交付，执行由集成方代采） | Antigravity / Codex（代行） | `b5ac097f` |
 
 | 未完成 / 下一阶段 | 状态 | 建议 Owner / Reviewer | 说明 |
@@ -61,7 +65,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-IPC1](tasks/M2-IPC1.md) Production Core Lifecycle + Read-only Library Vertical Slice | **done**（integration=`04c1394a`） | Antigravity / DeepSeek Harness（r1 changes_requested → r2 approved_with_conditions，裁决已实施） | tip=`5556fc8e`；seam 冻结全落地（含方案 B 冻结面保持）；[release evidence](../verification/M2-IPC1/release-a54bb8c9.md)、[集成记录](../verification/M2-IPC1/integration-record/integration.md)。 |
 | [M2-AC2](tasks/M2-AC2.md) Data Integrity Acceptance | **done**（integration=`9d3c1db5`） | ZCode / DeepSeek Harness（r1 changes_requested → r2 approved_with_conditions，C1-C3 已闭） | fixed base=`61f9db9b`、tip=`c3ee8dbe`（11 场景）；纯验收（产品代码零改动）：source hash、Managed Copy、人工修改、Lock、current/pinned Revision + 端到端恢复全 PASS；[release evidence](../verification/M2-AC2/release-61f9db9b.md)、[集成记录](../verification/M2-AC2/integration-c3ee8dbe/integration.md)。 |
 | [M2-AC3](tasks/M2-AC3.md) Provider Fail-closed Acceptance | **done**（integration=`cac374855b6e6a4310f557ae362d34d0572cd649`；DSH r1 `approved_with_conditions`，C1-C5 已关闭） | ZCode / DeepSeek Harness | fixed base=`319c5e4b`、tip=`a63d3372`（8 场景）；纯验收（产品代码零改动）：Provider 未配置/网络失败/部分失败时命令计划与页面的 fail-closed 语义（不产出半成品、typed 错误可诊断、可恢复、源文件零风险）全 PASS；[release evidence](../verification/M2-AC3/release-319c5e4b.md)、[集成记录](../verification/M2-AC3/integration-a63d3372/integration.md)。 |
-| [M2-FIX-STUB-DECODER](tasks/M2-FIX-STUB-DECODER.md) core_service stub decoder signature fix | proposed；未登记释放 | ZCode / DeepSeek Harness | M2-AC2 集成遗留：`_PassthroughImageDecoder` 传不存在参数 `format=` → 经 stub 的导入必崩；ImportPages 扩面前置。禁止未释放实施。 |
+| [M2-FIX-STUB-DECODER](tasks/M2-FIX-STUB-DECODER.md) core_service stub decoder signature fix | **done**（integration=`121a281cbf65f62c57b177efc44fa4649b11c9ae`；DSH r1 `approved_with_conditions` 0×P0/P1/P2，C1 tip 复跑、C2 范围复算、P3-4 回滚红证均已闭） | ZCode / DeepSeek Harness | base=`f5d91425`、delivery=`5cacebfa`、终 tip=`69250a39`；`core_service.py` +3/-1 签名修正 + `tests/core/test_stub_decoder.py` 先红后绿；集成 head 复跑 2/76/32 passed 全绿；遗留 P3-2（mime_type 断言）、P3-6（同族 stub：font_catalog/layout_engine/compositor=object()）留 planning；[集成记录](../verification/M2-FIX-STUB-DECODER/integration-69250a39/integration.md)。 |
 | [M2-AC4](tasks/M2-AC4.md) Reader Export Lineage + Library Page-count/Unknown Semantics Acceptance | **done**（integration=`fc99182147bccc89d9bd9124dd17d15b1d428e21`；DSH r1 `approved_with_conditions`，P1-1..P1-3 集成方修正、P2 裁决落字；F-1/F-2 缺陷证据 accepted） | ZCode / DeepSeek Harness | fixed base=`a5529181`、tip=`890f0c74`（11 场景 = 9 passed + 2 xfailed，回归 32 passed + 2 xfailed）；纯验收（产品代码零改动）：缺陷 F-1（export history 无 included_stale/missing ids）、F-2（page_count 无 unknown/已知度通道，定性收窄）以 xfail(strict)+探针固化，AC1/AC4 判 FAIL(部分)、AC2 PASS(a,c)/部分不满足(b)、AC3 PASS、AC5 PASS；[release evidence](../verification/M2-AC4/release-a5529181.md)、[集成记录](../verification/M2-AC4/integration-890f0c74/integration.md)。 |
 | [M2-FIX-EXPORT-LINEAGE](tasks/M2-FIX-EXPORT-LINEAGE.md) Export history 补 included_stale/missing page ids（F-1 修复） | **done**（integration=`d71883ec9a6c6fccb14b62908c02790bb3beb99c`；DSH r1 `approved_with_conditions` → r2 `approved`，C1-C6 已关闭；F-1 关闭、xfail 移除，套件现 34 passed+1 xfailed 仅剩 F-2） | ZCode / DeepSeek Harness | fixed base=`8b0d9040`、delivery=`297c9655`（r2 amend 自 0ec1f052，最终 tip=`d395ef70`）；方案 A：`scope_snapshot_json` 加 included_stale/missing 两键（数据源=ExportResult 同源），`schema.py`/`reading_export.py` 零改动；legacy 三通道兼容场景新增；P3-7 并发评估采信未修（候选留 planning）；[release evidence](../verification/M2-FIX-EXPORT-LINEAGE/release-8b0d9040.md)、[集成记录](../verification/M2-FIX-EXPORT-LINEAGE/integration-d395ef70/integration.md)。 |
 | [M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN](tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md) ListBooks page_count unknown/已知度通道（F-2 修复候选） | **done**（integration=`699610291f1536a1a1dbda62ba73f2587def1d91`；DSH r1 `approved_with_conditions` → r2 `approved_with_conditions`（C1=通过 C2=通过，C3/C4/C5 集成关闭，双轮报告已归档 doc/reviews/）；F-2 关闭、xfail 移除，m2_acceptance 全绿 **35 passed, 0 xfailed**） | ZCode / DeepSeek Harness | fixed base=`6199df48`、delivery=`852a92ae`（r2 amend 自 `f4f77808`→`c3f8bb3a`→最终 tip=`b6cb1af2`）；None 通道三侧（Python `int \| None`+handler `get(book_id)` SQL 零改动、Rust `Option<u32>`+serde 测试、TS `number \| null`+`LibraryPanel ?? "—"`）；known-0 与 null 三侧对称锁定（含 r2 TS 正向用例+`??`→`||` 变异红证）；契约 rev 1.2（§5 widening+§3.2 授权例外指针）；f02 默认线程三连 1 失败 2 绿+单线程对照绿 → 既有资源通道潜伏 flake 另立 flaky Task 建议（不计本 Task 回归）；[release evidence](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/release-6199df48.md)、[集成记录](../verification/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/integration-b6cb1af2/integration.md)。 |
@@ -105,16 +109,23 @@ flowchart TD
   FXA --> FXB["FIX-B 心跳生命周期 · O:ZCode ✓"]
   FXB --> FXC["FIX-C 生产接线 · O:ZCode ✓"]
 
-  %% 未完成：backlog（当前仅 Real docTR，BLOCKED 待用户受控权重）
   FXF --> PKG["M2-AC5 Package/clean-start · O:ZCode ✓"]
-  PKG --> DOC["Real docTR 资质 · backlog（需受控权重）"]
-  DOC --> RG["M2-RG1 Release Gate（本机口径） · O:ZCode ✓"]
+  PKG --> RG["M2-RG1 Release Gate（本机口径） · O:ZCode ✓"]
   FXF -.-> DP["DIGEST-PERF digest 性能优化+GrantCache 收敛 · O:ZCode ✓"]
+
+  %% 测试素材家族（2026-09-29 用户授权阶段）
+  RG --> TA1["M2-TA1 测试素材基础设施 · O:Codex ✓"]
+  TA1 --> TA2A["M2-TA2A JA 公开素材引导 · O:Codex ✓"]
+  TA2A --> TA2C["M2-TA2C No-HF JA/KO 素材迁移 · O:Codex ✓<br/>（集成=ZCode 代行）"]
+  TA1 -.-> TA2B["M2-TA2B Manga109 授权导入 · proposed<br/>BLOCKED_BY_ASSET_ACCESS（待官方归档）"]
+  TA2C -.-> TA3["M2-TA3 素材应用级验证 · proposed（未登记 Task 文件）"]
+  DOC["Real docTR 资质 · backlog BLOCKED（需受控权重）"]
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
   classDef backlog fill:#eef1f5,stroke:#697386,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG done;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C done;
+  class TA2B,TA3 proposed;
   class DOC backlog;
 ```
 
