@@ -4,9 +4,11 @@
 //!
 //! Serving pipeline per request (RC1-AC4, M2-S2 semantics productised):
 //! 1. opaque-ID format gate (43-char base64url) — malformed before any lookup;
-//! 2. EVERY request resolves via the Core control bridge before the grant
-//!    cache is consulted (F-01): a Core rejection evicts the cached entry and
-//!    propagates typed errors (REF_UNKNOWN_ID / REF_REVOKED / REF_EXPIRED);
+//! 2. EVERY request resolves via the Core control bridge first (F-01): a
+//!    Core rejection propagates typed errors (REF_UNKNOWN_ID / REF_REVOKED /
+//!    REF_EXPIRED). There is deliberately NO host-side grant cache: the
+//!    resolve result is consumed directly (the write-only GrantCache remnant
+//!    was removed by M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF);
 //! 3. open the target **once** (GENERIC_READ / FILE_SHARE_READ /
 //!    FILE_FLAG_BACKUP_SEMANTICS) and verify **from that handle**: containment
 //!    (final path re-derived from the handle stays inside the scope root),
@@ -18,7 +20,9 @@
 //!    follows the system timer tick, so a rewrite landing in the same tick
 //!    as the verified write reads back the identical mtime) without
 //!    materialising the file;
-//! 5. serve the requested chunk (≤16 MiB) read through the same handle;
+//! 5. the requested chunk (≤16 MiB) is CAPTURED during that same single
+//!    sequential read, so the served bytes are exactly the digest-covered
+//!    bytes — no digest→serve TOCTOU window remains;
 //! 6. re-check identity after reading.
 //!
 //! Responses are always `Cache-Control: no-store` (revocation must never be
@@ -30,9 +34,7 @@
 use crate::core_bridge::{CoreChannel, CoreError, Grant};
 use serde_json::json;
 use sha2::{Digest as ShaDigest, Sha256};
-use std::collections::HashMap;
 use std::path::PathBuf;
-use std::sync::Mutex;
 
 pub const SCHEME_HOST: &str = "m2res.localhost";
 pub const CHUNK_SIZE: u64 = 16 * 1024 * 1024; // T4: resident buffer ≤ 32 MiB
@@ -60,23 +62,13 @@ impl ScopeRoots {
     }
 }
 
-/// Memoised Core resolve result (F-01). Deliberately carries NO verification
-/// state: the content verdict (digest) is recomputed from the file on every
-/// request (F-02 fix — the former `digest_verified`/`verified_mtime`
-/// short-circuit let a same-tick equal-size rewrite through).
-struct CachedGrant {
-    grant: Grant,
-}
-
-/// F-10 (partial): the cache must not grow without bound. Entries are always
-/// re-derivable from the Core, so clearing is a performance event, not a
-/// correctness one.
-const GRANT_CACHE_MAX_ENTRIES: usize = 1024;
-
-#[derive(Default)]
-pub struct GrantCache {
-    map: Mutex<HashMap<String, CachedGrant>>,
-}
+// (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF) The former `GrantCache`/`CachedGrant`
+// is gone. After the F-02 fix removed the last read consumer, the cache was
+// write-only: `CachedGrant.grant` was inserted and never read (dead code,
+// F02 integration C2-(b)), and every request already resolved via the Core
+// unconditionally (F-01) and consumed `fresh_grant` directly. There is no
+// cached state left to invalidate: revocation/expiry live entirely in the
+// Core resolve, and `Cache-Control: no-store` still forbids WebView caching.
 
 pub struct HttpResponse {
     pub status: u16,
@@ -364,8 +356,26 @@ fn read_through(
     Ok(buffer)
 }
 
-fn stream_digest(handle: *mut std::ffi::c_void, expected_size: u64) -> Result<String, CoreError> {
+/// Single-pass digest + capture (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF): one
+/// sequential read of the whole file accumulates the SHA-256 digest AND
+/// captures the target chunk bytes. The former implementation streamed the
+/// full-file digest, then re-read the chunk once and threw the bytes away,
+/// then read it again to serve — three passes over the storage for one
+/// request. With the single pass, the bytes returned to the caller are
+/// exactly the bytes the digest covered: no digest→serve TOCTOU window
+/// remains (an equal-size in-place rewrite landing between "verify" and
+/// "serve" can no longer be served unchecked; the F-02 semantics that
+/// reject such rewrites are unchanged). Peak resident memory: one streaming
+/// block (≤ CHUNK_SIZE) + the captured chunk (≤ CHUNK_SIZE) = ≤ 32 MiB,
+/// inside the ruled T4 budget.
+fn stream_digest_and_capture(
+    handle: *mut std::ffi::c_void,
+    expected_size: u64,
+    chunk_offset: u64,
+    chunk_len: usize,
+) -> Result<(String, Vec<u8>), CoreError> {
     let mut digest = Sha256::new();
+    let mut captured = vec![0u8; chunk_len];
     let mut served: u64 = 0;
     while served < expected_size {
         let want = usize::try_from((expected_size - served).min(CHUNK_SIZE)).unwrap_or(usize::MAX);
@@ -374,12 +384,23 @@ fn stream_digest(handle: *mut std::ffi::c_void, expected_size: u64) -> Result<St
             break;
         }
         digest.update(&block);
-        served += block.len() as u64;
+        let block_start = served;
+        let block_end = served + block.len() as u64;
+        // copy the slice(s) intersecting [chunk_offset, chunk_offset+chunk_len)
+        let capture_start = chunk_offset.max(block_start);
+        let capture_end = (chunk_offset + chunk_len as u64).min(block_end);
+        if capture_start < capture_end {
+            let from = (capture_start - block_start) as usize;
+            let to = (capture_end - block_start) as usize;
+            let into = (capture_start - chunk_offset) as usize;
+            captured[into..into + (to - from)].copy_from_slice(&block[from..to]);
+        }
+        served = block_end;
     }
     if served != expected_size {
         return Err(CoreError::new("FILE_SIZE_CHANGED"));
     }
-    Ok(hex(digest.finalize()))
+    Ok((hex(digest.finalize()), captured))
 }
 
 pub(crate) fn hex(bytes: impl AsRef<[u8]>) -> String {
@@ -423,30 +444,35 @@ fn verify_and_serve(
         return Err(CoreError::new("RESOURCE_TOO_LARGE"));
     }
 
-    // F-02 (fixed): the issue-time digest is re-verified through the handle
-    // on EVERY request. The former `digest_verified`/`verified_mtime` gate
-    // was unsound: NTFS LastWriteTime granularity follows the system timer
-    // tick, so an equal-size in-place rewrite landing in the same tick as
-    // the verified write read back the IDENTICAL mtime (AC1 probe:
-    // mtime_delta_100ns=0, rewritten content served with status 200) and
-    // the rewritten bytes bypassed the digest check. Cost accepted: one
-    // full-file stream digest per request, bounded by MAX_RESOURCE_BYTES.
-    let digest = stream_digest(opened.handle, size)?;
+    // F-02 (fixed) + single pass (M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF): the
+    // issue-time digest is re-verified through the handle on EVERY request.
+    // The former `digest_verified`/`verified_mtime` gate was unsound: NTFS
+    // LastWriteTime granularity follows the system timer tick, so an
+    // equal-size in-place rewrite landing in the same tick as the verified
+    // write read back the IDENTICAL mtime (AC1 probe: mtime_delta_100ns=0,
+    // rewritten content served with status 200) and the rewritten bytes
+    // bypassed the digest check. One sequential read now both accumulates
+    // the digest and captures the chunk: the served bytes ARE the
+    // digest-covered bytes, so the former digest→serve re-read window is
+    // structurally gone. Cost: one full-file streaming read per request,
+    // bounded by MAX_RESOURCE_BYTES (the "等长重写必拒" semantics are
+    // unchanged — any byte-level rewrite anywhere in the file still fails
+    // the whole request with CONTENT_DIGEST_MISMATCH).
+    let want = ((size - chunk_offset).min(CHUNK_SIZE)) as usize;
+    let (digest, captured) =
+        stream_digest_and_capture(opened.handle, size, chunk_offset, want)?;
     if digest != grant.sha256 {
         return Err(CoreError::new("CONTENT_DIGEST_MISMATCH"));
     }
 
-    // serve the requested chunk through the same handle
-    let want = ((grant.size - chunk_offset).min(CHUNK_SIZE)) as usize;
-    read_through(opened.handle, chunk_offset, want)?;
-
-    // post-read identity re-check (RC1-AC4)
+    // post-read identity re-check (RC1-AC4): every served byte was already
+    // read and digest-covered above, so this re-check only asserts the
+    // handle still names the granted file when the response is assembled.
     let (post_volume, post_index, _, _) = identity_size_mtime(opened.handle)?;
     if post_volume != grant.volume_serial || post_index != grant.file_index {
         return Err(CoreError::new("FILE_IDENTITY_CHANGED"));
     }
-    // re-read the chunk AFTER the post-check so no unchecked bytes escape
-    read_through(opened.handle, chunk_offset, want)
+    Ok(captured)
 }
 
 // ------------------------------------------------------------- request flow
@@ -454,7 +480,6 @@ fn verify_and_serve(
 pub fn handle_m2res_request(
     uri: &str,
     channel: &dyn CoreChannel,
-    cache: &GrantCache,
     roots: &ScopeRoots,
 ) -> HttpResponse {
     let (host, parsed) = match parse_request(uri) {
@@ -476,16 +501,13 @@ pub fn handle_m2res_request(
     let full_id = full_id_from_segment(&parsed.opaque_id);
 
     // F-01: EVERY request consults the Core (resolve carries revocation and
-    // expiry semantics) -- a warm cache never bypasses T6. A Core rejection
-    // evicts the cache entry and propagates the typed code; a pass refreshes
-    // the cached grant (the Core-side resolve also slides the TTL, which is
-    // the T6 "active consumption" renewal for this request).
+    // expiry semantics). With the write-only GrantCache removed there is no
+    // host-side state at all: the fresh grant is consumed directly, and the
+    // Core-side resolve sliding the TTL remains the T6 "active consumption"
+    // renewal for this request.
     let fresh_grant = match channel.resolve(&full_id) {
         Ok(grant) => grant,
-        Err(error) => {
-            cache.map.lock().unwrap().remove(&full_id);
-            return typed_error(&error);
-        }
+        Err(error) => return typed_error(&error),
     };
 
     let chunk_offset = parsed
@@ -497,35 +519,9 @@ pub fn handle_m2res_request(
         _ => return HttpResponse::error("REF_MALFORMED", 400),
     };
 
-    let mut guard = cache.map.lock().unwrap();
-    if guard.len() >= GRANT_CACHE_MAX_ENTRIES {
-        guard.clear(); // re-derivable from the Core; bounded memory (F-10)
-    }
-    // the cache memoises only the Core resolve result; the content verdict
-    // is recomputed from the file on every request (F-02 fix)
-    guard.insert(
-        full_id.clone(),
-        CachedGrant {
-            grant: fresh_grant.clone(),
-        },
-    );
-
     match verify_and_serve(&fresh_grant, roots, chunk_offset) {
         Ok(chunk) => HttpResponse::ok("application/octet-stream", chunk),
-        Err(error) => {
-            // an identity/size/containment/digest failure invalidates the entry
-            if matches!(
-                error.code.as_str(),
-                "FILE_IDENTITY_CHANGED"
-                    | "FILE_SIZE_CHANGED"
-                    | "REF_OUT_OF_SCOPE"
-                    | "CONTENT_DIGEST_MISMATCH"
-            ) {
-                drop(guard);
-                cache.map.lock().unwrap().remove(&full_id);
-            }
-            typed_error(&error)
-        }
+        Err(error) => typed_error(&error),
     }
 }
 
