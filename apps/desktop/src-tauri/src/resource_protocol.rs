@@ -352,8 +352,12 @@ fn read_through(
         let mut landed: i64 = -1;
         let ok = win32::SetFilePointerEx(handle, offset as i64, &mut landed, FILE_BEGIN);
         if ok == 0 || landed != offset as i64 {
+            // P3-5 (DSH r1): carry the raw GetLastError() code for
+            // diagnosability (same style as open_once); typed_error's colon
+            // split keeps the wire code plain "OPEN_FAILED".
+            let error = win32::last_error();
             return Err(CoreError::new(&format!(
-                "OPEN_FAILED:seek_to={offset} landed_at={landed}"
+                "OPEN_FAILED:seek_to={offset} landed_at={landed} last_error={error}"
             )));
         }
     }
@@ -616,6 +620,40 @@ mod tests {
         );
     }
 
+    /// C1 (DSH r1 P2-1) — the discriminative artefact for AC1's 64-bit-width
+    /// clause. The read_through guard short-circuits every offset ≥ 2^31
+    /// before the FFI, so the rejection tests above cannot prove the seek
+    /// WIDTH; this drives SetFilePointerEx directly on the fixture handle
+    /// past 2^31 (Windows permits seeking beyond EOF) and asserts the landed
+    /// position is exact — impossible under the former `as i32` truncation.
+    #[test]
+    fn large_offset_high_bits_reach_the_64_bit_seek() {
+        let (_dir, opened) = open_fixture(b"0123456789");
+        let target = 0x1_0000_0000i64;
+        let mut landed: i64 = -1;
+        let ok = unsafe { win32::SetFilePointerEx(opened.handle, target, &mut landed, FILE_BEGIN) };
+        assert!(
+            ok != 0,
+            "SetFilePointerEx failed, last_error={}",
+            win32::last_error()
+        );
+        assert_eq!(landed, target);
+    }
+
+    /// C2 (DSH r1 P2-2): the seek-failure branch must fail closed. A null
+    /// (invalid) handle makes SetFilePointerEx return 0, which read_through
+    /// maps to the typed OPEN_FAILED error (never a silent Ok).
+    #[test]
+    fn read_through_invalid_handle_fails_closed_with_open_failed() {
+        let handle: *mut std::ffi::c_void = std::ptr::null_mut();
+        let error = read_through(handle, 0, 4).unwrap_err();
+        assert!(
+            error.code.starts_with("OPEN_FAILED"),
+            "expected OPEN_FAILED-prefixed code, got {}",
+            error.code
+        );
+    }
+
     // AC3② regression anchors: behaviour strictly inside the 256 MiB limit is
     // byte-for-byte unchanged by the 64-bit seek fix.
     #[test]
@@ -626,7 +664,11 @@ mod tests {
     }
 
     /// An in-limit offset past EOF still yields an empty (truncated) buffer —
-    /// unchanged short-read semantics at the boundary.
+    /// unchanged short-read semantics at the boundary. (P3-7, DSH r1):
+    /// `offset == MAX_RESOURCE_BYTES` is INSIDE the limit — the guard rejects
+    /// only `>` — and this exact call is unreachable in production (the
+    /// single-pass caller seeks at `served < size ≤ MAX`), so this pins
+    /// unchanged behaviour, not a boundary-defence gap.
     #[test]
     fn read_through_at_limit_offset_yields_empty_tail() {
         let (_dir, opened) = open_fixture(b"0123456789");
