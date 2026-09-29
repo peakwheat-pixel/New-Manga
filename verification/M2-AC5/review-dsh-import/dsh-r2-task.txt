@@ -1,0 +1,18 @@
+你是 DeepSeek Harness，续任 M2-AC5（Windows Packaging & Clean-start Acceptance）的独立非作者复核 Reviewer（round 2）。前一轮（另一 DSH 会话，r1）对 delivery eccf88e3 给出 approved_with_conditions（0×P0/P1、5×P2：P2-1 156/157 更正、P2-2 ListBooks 安装态断言、P2-3 README 缺失、P2-4 runner rmtree 宿主真实 %APPDATA%、P2-5 范围原始证据缺失；另 P3-1/P3-2/P3-6 措辞与健壮性、A-⑤"字节不变"措辞、H 披露漏项）。Owner=ZCode 已返修至新 tip 0541b86b（r1 闭合内容头 e3740b25，delivery_head 已回填）。本轮只读静态复核：不执行命令、不写文件；session workspace 是 Owner worktree（分支 agent/zcode/M2-AC5-package-clean-start）。
+
+## 复核对象
+- 读 doc/tasks/M2-AC5.md、doc/handoffs/M2-AC5-eccf88e3.md（含"r1 条件闭合"节）、verification/M2-AC5/verification-results.md（含 r1 闭合节）、verification/M2-AC5/raw/（新增：cleanstart-r1-final.log、r1-library-probe.log、f1-scope-audit.log、f2-final-scope-audit.log、README.md 更新、cleanstart-r1-gate.json 等）、packaging/m2ac5/run_clean_start_e2e.py（APPDATA 隔离 + CS-L1/L2/L3/CS-E3/CS-Z4 新场景 + mbcs/空格 guard）、packaging/m2ac5/README.md（新增）。
+
+## 逐项复核（verified / not_verified / partially_verified + path:line）
+- C-P2-4：runner 是否已无任何对宿主真实 %APPDATA%\com.newmanga.m2rc1.desktop 的删除/写入调用（源码级核查 run_clean_start_e2e.py 全文）；四类 launch env 是否全部 APPDATA=<lab>/roaming；CS-Z4 是否真实证明宿主目录前后 hash 不变（changed_entries 空 + 被测目录文件数）。
+- C-P2-2：CS-L1/L2/L3 是否为安装态（<install>/resources/core-sidecar/ 下）直接 stdio 往返；断言是否真实（core.ping ready+capabilities、ListBooks 结构、shutdown stopped）；gate 计数 25/25 与日志一致。
+- C-P2-3：packaging/m2ac5/README.md 是否补齐 build venv 命令、固定版本、隔离声明、构建步骤；build_sidecar.ps1:25 与 requirements-build.txt:6 引用是否落空。
+- C-P2-1：四处（Task/Handoff/verification-results/checkpoint）"156/157"+base_library.zip 归类是否一致且与 raw/ac1-repro-sidecar-diff.txt 相符。
+- C-P2-5：f1/f2 审计日志是否含 name-status 全清单 + diff --check EXIT=0 + porcelain；范围是否全落允许路径（packaging/m2ac5/**、verification/M2-AC5/**、doc/handoffs/M2-AC5-*、doc/tasks/M2-AC5.md）；禁改文件（src/**、requirements.txt、contracts、main.rs、core_bridge.rs、library_bridge.rs、ac1_bridge.rs）是否零命中。
+- C-P3：mbcs 修复、空格 guard（CS-E3）、raw/README 如实清单、"11 条目"、"3+1 单测"、A-⑤"行为等价"措辞、H 四项披露（PySide6 许可/体积、catalog_loader.exe、Qt 字体告警、PyInstaller warn 候选）、gate.json installer_sha256——逐项核对。
+- 扫描返修是否引入新问题（runner 改动破坏既有 20 场景、APPDATA 隔离对 production 真窗口语义的影响、gate 数字虚增）。
+
+## Owner 自报（静态采信）
+r1 终版 gate GATE PASS 25/25 EXIT=0（同安装包 sha256 5410e29e 未重建）；三层基线 cargo 38+1 / pytest 35 / vitest 31 全 EXIT=0；CS-Z4 宿主目录 changed_entries: []。
+
+输出格式：首行 decision: approved | approved_with_conditions | changes_requested；逐项判定表；新问题分级（P0-P3，无则 none）；明确回答 r1 条件是否全部闭合、是否达到可集成标准（剩余项列全并标注可否由 Integrator 落字闭合）。
