@@ -1,0 +1,22 @@
+# M2-RG1 integration replay @ main
+shell: Git Bash / win32; date: 2026-09-29 14:21:45 +0800
+HEAD (merge commit) = b796bed3cb3d79b2d4208b29f3e53c956a018dee
+
+$ cargo test --bin m2rc1-desktop  (cwd: apps/desktop/src-tauri)
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.50s
+
+cargo EXIT=0
+
+$ "G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" -m pytest tests/m2_acceptance -q
+...................................                                      [100%]
+35 passed in 9.34s
+pytest EXIT=0
+
+$ npx vitest run  (cwd: apps/desktop/frontend)
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+vitest EXIT=0
+
+$ git diff --check 875eb818..b796bed3cb3d79b2d4208b29f3e53c956a018dee
+diff-check EXIT=0

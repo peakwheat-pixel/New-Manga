@@ -2,7 +2,7 @@
 id: M2-RG1
 title: M2 Release Gate（Windows 本机口径）：cold start metrics / Windows matrix / console policy / packaged dependency closure
 kind: acceptance
-status: in_review
+status: done
 release_state: M2_RG1_RELEASE_GATE_RELEASED
 approval: approved_by_user_2026-09-29_local_machine_ruling
 execution_approval: approved_by_user_2026-09-29_local_machine_ruling
@@ -18,8 +18,9 @@ branch: agent/zcode/M2-RG1-release-gate
 worktree: G:/CODEX/New Manga.worktrees/M2-RG1-zcode
 delivery_head: e752ba39c2cd2e566105ff00ec3150f50a09e0e3
 review: doc/reviews/M2-RG1-a1100d75-dsh-r1.md（approved_with_conditions：0×P0、1×P1、3×P2、8×P3；r1 返修已闭合全部必闭项，见 Handoff r1 返修节）；doc/reviews/M2-RG1-6b6366fc-dsh-r2.md（changes_requested：P1-1(N)/P2-1(N) 必闭 + P3-1..8(N) 落字；r1 P1-1/P2-1 判定"真闭"，产品与 Gate 结论 25/25 成立——r2 返修见 Handoff r2 返修节）
-integration_commit: null
-dispatch_state: DELIVERED_FOR_REVIEW
+integration_commit: b796bed3cb3d79b2d4208b29f3e53c956a018dee
+dispatch_state: INTEGRATED
+delivery_ledger: claim=33280f5e -> ac2-fix=29c71024 -> gate-v1=a1100d75 -> bookkeeping=b38a646c -> [r1 import e218cc65 by integrator] -> r1-rework=05a8f93a/6b6366fc -> [r2 import c1177e5d by integrator] -> r2-closure=e752ba39 (delivery_head) / 8e0100ba (owner branch tip)；Owner branch/worktree 保留于 8e0100ba
 ---
 
 # M2-RG1 — M2 Release Gate（Windows 本机口径）

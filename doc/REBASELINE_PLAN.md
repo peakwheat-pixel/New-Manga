@@ -55,11 +55,11 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF](tasks/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF.md) Resource channel digest 重验成本优化（单趟 hash+capture / per-chunk digest）与 GrantCache 死结构收敛 | **done**（integration=`bc2529f02dfbd3c378d5e9cd4c9f7ac2ecfe4f15`；DSH r1 `approved_with_conditions` 0×P0/P1/P2，C1-C4 集成方闭合；f02 断言逐字保持、判别力红证保持） | ZCode / DeepSeek Harness | fixed base=`956e6c3a`、delivery=`5d7cff11`、终 tip=`510202ac`；单趟 hash+capture 消除三读+TOCTOU 残留、GrantCache 删净、测试更名、loop 守卫；release perf −14.6%/−24.4%/−17.9%（闭合 F02 P3-9）；per-chunk 不实施（`host_bridge.py` 禁止路径，书面留痕）；集成 head 复跑 cargo 34+loop+pytest 35+vitest 31 全绿；[release evidence](../verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/release-956e6c3a.md)、[集成记录](../verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/integration-510202ac/integration.md)。 |
 | [M2-AC5](tasks/M2-AC5.md) Windows Packaging & Clean-start Acceptance | **done**（integration=`9db08dc7548b70e8f4ee1d42e70e2e0c15838e63`；DSH r1 `approved_with_conditions` 5×P2 → 返修 → r2 `approved` 0×P0/P1/P2；剩余 P3 集成落字/候选） | ZCode / DeepSeek Harness | fixed base=`6f79c040`、delivery=`e3740b25`、终 tip=`0541b86b`；NSIS + onedir 四入口自包含 sidecar；clean-start GATE PASS 25/25（宿主 %APPDATA% 零触碰）；fail-closed 无 python 回落；cargo 38+1/pytest 35/vitest 31 全绿；fresh checkout 须先 build_sidecar.ps1（根治候选）；[release evidence](../verification/M2-AC5/release-6f79c040.md)、[集成记录](../verification/M2-AC5/integration-0541b86b/integration.md)。 |
 | Real docTR qualification | backlog；未登记 | DeepSeek Harness / Codex | 需要受控权重、环境和质量阈值。 |
-| [M2-RG1](tasks/M2-RG1.md) M2 Release Gate（Windows 本机口径） | **ready**（2026-09-29 用户裁决"把本机视为干净widows环境。若本机通过，则视为pass"解除干净机前置；实现+验收混合——console policy 现状实证 FAIL 预授权有界修复） | ZCode / DeepSeek Harness | fixed base=`875eb818`；AC1 构建锚定 / AC2 console policy（零可见控制台裁决+有界修复：`windows_subsystem`+`creation_flags`，spec `console=True` 禁改）/ AC3 cold start metrics（只测录无阈值）/ AC4 packaged dependency closure（四入口 stdio+warn 审查+AC5 25 场景回归）/ AC5 Windows matrix（本机已验证、Win10 NOT_RUN）/ AC6 证据纪律；[release evidence](../verification/M2-RG1/release-875eb818.md)。 |
+| [M2-RG1](tasks/M2-RG1.md) M2 Release Gate（Windows 本机口径） | **done**（integration=`b796bed3cb3d79b2d4208b29f3e53c956a018dee`；DSH r1 `approved_with_conditions` 1×P1/3×P2 → gate v2 返修 → r2 `changes_requested` → 纯文字收口；两轮条件全闭） | ZCode / DeepSeek Harness | fixed base=`875eb818`、release=`79510a8b`、delivery=`e752ba39`、终 tip=`8e0100ba`；用户裁决"把本机视为干净widows环境。若本机通过，则视为pass"=干净机基座；**GATE PASS 25/25**：AC2 console policy（PE Subsystem=2 + `CREATE_NO_WINDOW`×4 + CW0 阳性对照真命中）/ AC3 冷启动测录（app 46.9/49.9/160.2 ms 等，无阈值）/ AC4 四入口 stdio 闭环 + warn 审查 + M2-AC5 回归 25/25 / AC5 Win11 已验证、Win10 NOT_RUN；集成复跑 cargo 38+1 / pytest 35 / vitest 31 / diff-check 全绿；[release evidence](../verification/M2-RG1/release-875eb818.md)、[集成记录](../verification/M2-RG1/integration-b796bed3/integration.md)。 |
 
 ```mermaid
 flowchart TD
-  %% ✓ = done（已集成 main）；● = ready（已释放未完成）；O = Owner；R = 非作者 Reviewer；黄色 = ready；灰色 = backlog 未释放
+  %% ✓ = done（已集成 main）；O = Owner；R = 非作者 Reviewer；灰色 = backlog 未释放
   GOV["GOV-001 治理基线 · O:Codex ✓"] --> D1["M2-D1 耦合审计 · O:DSH ✓"]
   D1 --> I1["M2-I1 核心装配缝 · O:ZCode ✓"]
   D1 --> I2["M2-I2 Qt-free 逻辑抽取 · O:AGY ✓"]
@@ -91,17 +91,16 @@ flowchart TD
   FXA --> FXB["FIX-B 心跳生命周期 · O:ZCode ✓"]
   FXB --> FXC["FIX-C 生产接线 · O:ZCode ✓"]
 
-  %% 未完成：ready 与 backlog
+  %% 未完成：backlog（当前仅 Real docTR，BLOCKED 待用户受控权重）
   FXF --> PKG["M2-AC5 Package/clean-start · O:ZCode ✓"]
   PKG --> DOC["Real docTR 资质 · backlog（需受控权重）"]
-  DOC --> RG["M2-RG1 Release Gate（本机口径） · O:ZCode ●"]
+  DOC --> RG["M2-RG1 Release Gate（本机口径） · O:ZCode ✓"]
   FXF -.-> DP["DIGEST-PERF digest 性能优化+GrantCache 收敛 · O:ZCode ✓"]
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
   classDef backlog fill:#eef1f5,stroke:#697386,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG done;
-  class RG proposed;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG done;
   class DOC backlog;
 ```
 
