@@ -16,7 +16,7 @@
 | KO Cleaned Webtoon 固定 10 case | READY（case 定义和 URL） | READY：10 case、80 文件、合计 884,913,245 bytes（约 844 MiB）；已通过本地结构验证 | 用户声明授权本地测试；源卡片将 CC BY-NC-4.0 用于作者注释/metadata，原画仍由权利人持有。`redistributable=false`，禁止提交 Git。 |
 | KO Pepper&Carrot 8 个来源页 | READY（case 定义和来源链接） | MISSING；需逐案下载并核对文件 | 来源页标记 CC BY 4.0；当前清单保守设 `redistributable=false`，素材逐文件核验后再调整。 |
 | JA Manga109 37 个选定作品 | READY（case 定义） | `MISSING_GATED_ASSET`；当前环境未发现 Hugging Face 凭据 | 按官方流程取得 gated ZIP 后，用 `download --language ja --level smoke --archive <path>` 只导入所选作品；不绕过 gated，不把原图提交 Git。用户授权已记录，但不会替代平台访问控制。 |
-| JMangaBench | 外部来源已登记 | MISSING | 当前项目需另行取得 Manga109-s 图像。 |
+| JMangaBench | 外部来源已登记 | BLOCKED_BY_ASSET_ACCESS | 项目源可达；可运行 benchmark 仍需另行取得 Manga109-s 图像。 |
 | COO / Manga109Dialog | 外部来源已登记 | PARTIAL（公开标注来源已登记；图片 gated） | 标注可公开取得不代表 Manga109 图像可公开再分发。 |
 | Text Mask | 外部来源已登记 | MISSING（本机未下载） | 当前 Zenodo 记录列出两份合计约 19.2 MB 的 ZIP；底层图像来源与再分发许可未确认，因此不下载。 |
 | AIHub KO 数据 | 外部来源已登记 | BLOCKED_BY_ASSET_ACCESS（当前环境 HTTP 403） | 403 只记录本次环境结果，不推断账号授权状态。 |

@@ -1,9 +1,10 @@
 Shell: PowerShell 7.6.6
 Python: Python 3.14.6 (C:\Python314\python.exe)
 Venv: none; system interpreter
-Recorded worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+Worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
 Branch: agent/codex/M2-TA1-comic-test-asset-foundation
-HEAD at evidence capture: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
+Tested HEAD: 00df8f1dd4d480d4e4432c833981481f2c01dd3e
 Command: python test_assets/comic_golden_suite/tools/assets.py download --language ko --level smoke
+
 SUMMARY	downloaded=0 existing=80 gated_cases=0 failures=0
 EXIT=0

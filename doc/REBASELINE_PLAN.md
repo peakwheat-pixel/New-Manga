@@ -21,7 +21,7 @@ releases a task.
 
 ### 2026-09-29 用户授权 Task：M2-TA1
 
-[M2-TA1](tasks/M2-TA1.md)「日漫 / 韩漫统一测试素材基础设施」由用户本次请求授权，依赖已完成的 M2-RG1，当前 `in_progress`。基线=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`；Task branch/worktree 与允许路径见 Task 和 STATUS。范围只含独立 case manifest、素材 CLI、下载数据忽略规则、工具专用测试及文档；生产 Schema/Pipeline/Provider/依赖零改动。用户授权本地测试，已下载固定 10 个 KO smoke case；受版权限制原图不入库；Manga109 仍 gated 且当前无凭据。L1 目标集数量不足与未取得素材保留为 `PARTIAL` / `BLOCKED_BY_ASSET_ACCESS` / `NOT_RUN`。
+[M2-TA1](tasks/M2-TA1.md)「日漫 / 韩漫统一测试素材基础设施」由用户本次请求授权，依赖已完成的 M2-RG1；固定交付 `00df8f1d` 经独立 Review=`approved`，当前等待 Codex 集成及集成后验证。基线=`40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be`；Task branch/worktree 与允许路径见 Task 和 STATUS。范围只含独立 case manifest、素材 CLI、下载数据忽略规则、工具专用测试及文档；生产 Schema/Pipeline/Provider/依赖零改动。用户授权本地测试，已取得固定 10 个 KO smoke case；受版权限制原图不入库；Manga109 仍 gated 且当前无获批归档。L1 目标集数量不足与未取得素材保留为 `PARTIAL` / `BLOCKED_BY_ASSET_ACCESS` / `NOT_RUN`。下一候选为 M2-TA2 L1 case 证据化扩充，不会在本 Task 中启动或自动下载数据。
 
 ### 2026-09-28 任务盘点（当日快照；当前执行状态见 STATUS）
 

@@ -2,7 +2,7 @@
 id: M2-TA1
 title: Unified Japanese/Korean comic test asset foundation
 kind: test_infrastructure
-status: in_progress
+status: approved
 release_state: M2_TA1_USER_REQUEST_RELEASED
 approval: approved_by_user_request_2026-09-29
 suggested_owner: Codex
@@ -78,7 +78,7 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：待完成。
-- Review：独立 Reviewer 首轮 `changes_requested`，修复下载截断/状态误报及 Manga109 官方数字页名与异常索引边界；最新代码复审 `approved`，复审与集成证据见 `doc/reviews/M2-TA1-codex.md`、`verification/M2-TA1/`。
+- Handoff：[M2-TA1-codex](../handoffs/M2-TA1-codex.md)，状态 `ready_for_integration`。
+- Review：[M2-TA1-codex](../reviews/M2-TA1-codex.md)，固定 base/head 的独立 Review=`approved`。
 - 实际测试：素材工具 `10 passed`；新架构 acceptance 在 Task head 与 base `main` 同为 `8 failed / 24 passed / 3 skipped`（Python 3.14）；`tests/core` 因缺 `PySide6` collection error；详见 verification。
-- 当前 checkpoint：实现位于本 Task branch/worktree；主工作区中原有 dirty 文件不在本 Task 范围，集成前需保留并核对。
+- 当前 checkpoint：实现 commit=`00df8f1dd4d480d4e4432c833981481f2c01dd3e`，位于本 Task branch/worktree；Review 已通过，等待 Codex 集成及集成后验证。主工作区原有 dirty 文件不在本 Task 范围，必须保留；清单见 `verification/M2-TA1/main-worktree-preexisting-status.txt`。

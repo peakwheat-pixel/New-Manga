@@ -1,10 +1,11 @@
 Shell: PowerShell 7.6.6
 Python: Python 3.14.6 (C:\Python314\python.exe)
 Venv: none; system interpreter
-Recorded worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
+Worktree: C:\Users\49745\.codex\worktrees\comic-test-assets\New Manga
 Branch: agent/codex/M2-TA1-comic-test-asset-foundation
-HEAD at evidence capture: 40ce1f91cc41a8ed13e10e397fe0ddab43d9f5be
-Command: python -m pytest tests/m2_acceptance -q --tb=no; source tree: Task worktree
+Tested HEAD: 00df8f1dd4d480d4e4432c833981481f2c01dd3e
+Command: python -m pytest tests/m2_acceptance -q --tb=no
+
 .sss....F.F....F.FFFF.F............                                      [100%]
 =========================== short test summary info ===========================
 FAILED tests/m2_acceptance/test_data_integrity.py::test_ac3_manual_translation_survives_pipeline_on_locked_region
@@ -15,5 +16,5 @@ FAILED tests/m2_acceptance/test_provider_fail_closed.py::test_ac2_network_failur
 FAILED tests/m2_acceptance/test_provider_fail_closed.py::test_ac3_partial_failure_run_boundary_is_honest
 FAILED tests/m2_acceptance/test_provider_fail_closed.py::test_ac4_source_files_untouched_across_failure_runs
 FAILED tests/m2_acceptance/test_provider_fail_closed.py::test_ac5_retry_after_fix_leaves_no_duplicates_or_dangling
-8 failed, 24 passed, 3 skipped in 2.04s
+8 failed, 24 passed, 3 skipped in 2.18s
 EXIT=1
