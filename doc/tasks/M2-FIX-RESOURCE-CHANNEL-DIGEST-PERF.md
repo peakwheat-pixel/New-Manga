@@ -2,7 +2,7 @@
 id: M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF
 title: Resource channel digest 重验成本优化（单趟 hash+capture / per-chunk digest）与 GrantCache 死结构收敛
 kind: fix
-status: ready
+status: in_progress
 release_state: M2_FIX_DIGEST_PERF_RELEASED
 approval: approved_by_user_2026-09-29_digestperf_release
 execution_approval: approved_by_user_2026-09-29_digestperf_release
@@ -17,7 +17,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-PERF-zcode
 delivery_head: null
 review: null
 integration_merge: null
-dispatch_state: READY_FOR_CLAIM
+dispatch_state: CLAIMED
 ---
 
 # M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF — Resource channel digest 重验成本优化与 GrantCache 死结构收敛
