@@ -1,0 +1,45 @@
+# shell: Git Bash (orchestrator integration replay M2-AC5)
+# head: 9db08dc7548b70e8f4ee1d42e70e2e0c15838e63 (merge, parents ba11a23c+0541b86b)
+2026-09-29T11:36:21+08:00
+== f3: r1-only scope audit git diff --name-status 783fc74f..e3740b25 ==
+M	doc/handoffs/M2-AC5-eccf88e3.md
+M	doc/tasks/M2-AC5.md
+A	packaging/m2ac5/README.md
+M	packaging/m2ac5/run_clean_start_e2e.py
+M	verification/M2-AC5/checkpoint.md
+M	verification/M2-AC5/raw/README.md
+M	verification/M2-AC5/raw/cleanstart-ac1-run1-stdout.log
+M	verification/M2-AC5/raw/cleanstart-ac1-run2-stdout.log
+M	verification/M2-AC5/raw/cleanstart-gate.json
+M	verification/M2-AC5/raw/cleanstart-probe-stdout.log
+M	verification/M2-AC5/raw/cleanstart-production-stdout.log
+A	verification/M2-AC5/raw/cleanstart-r1-final.log
+A	verification/M2-AC5/raw/f1-scope-audit.log
+A	verification/M2-AC5/raw/r1-baseline-cargo-test.log
+A	verification/M2-AC5/raw/r1-baseline-pytest-m2-acceptance.log
+A	verification/M2-AC5/raw/r1-baseline-vitest-run.log
+A	verification/M2-AC5/raw/r1-library-probe.log
+M	verification/M2-AC5/verification-results.md
+EXIT_f3=0
+== i1: cargo test --bin m2rc1-desktop ==
+  thread 'main' (25120) panicked at build.rs:39:6:
+  failed to run tauri-build: resource path `target\core-sidecar\core-sidecar` doesn't exist
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+EXIT_i1=101
+== i2: pytest tests/m2_acceptance -q ==
+...................................                                      [100%]
+35 passed in 9.33s
+EXIT_i2=0
+== i3: vitest ==
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+[2m   Start at [22m 11:36:37
+[2m   Duration [22m 1.10s[2m (transform 194ms, setup 0ms, collect 428ms, tests 189ms, environment 1ms, prepare 1.98s)[22m
+
+EXIT_i3=0
+== i4: git diff --check 6f79c040..9db08dc7 ==
+EXIT_i4=0
+== i1-retry: cargo test --bin m2rc1-desktop (after build_sidecar.ps1, head 9db08dc7) ==
+
+test result: ok. 38 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+EXIT_i1retry=0

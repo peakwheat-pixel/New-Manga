@@ -6,10 +6,10 @@
 # packages (verified; see packaging/m2ac5/README.md), so the build venv needs
 # nothing beyond the pinned packager itself.
 #
-# The product runtime requirements (../requirements.txt) stay untouched.
+# The product runtime requirements (../../requirements.txt, repo root) stay untouched. [r2 P3-6 path fix]
 #
 # PySide6_Essentials/shiboken6 are pinned to the SAME versions as
-# ../requirements.txt: `bootstrap.acceptance_bridge` hard-requires PySide6
+# ../../requirements.txt: `bootstrap.acceptance_bridge` hard-requires PySide6
 # through its frozen `assemble_acceptance_core` assembly (QGuiApplication +
 # the production Qt imaging/rendering adapters) — measured 2026-09-29: with
 # Qt excluded the frozen acceptance_bridge.exe failed with

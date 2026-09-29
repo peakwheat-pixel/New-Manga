@@ -1,8 +1,7 @@
 # M2-AC5 raw/ 证据索引
 
 构建/验收时间线按下列顺序可完整重放。**日志头/EXIT 如实清单（r1 P3-1 更正）**：
-r1 起新产生的日志（`r1-*`、`f1-*`、`f2-*`、`cleanstart-r1-final.log`、
-`r1-library-probe.log`）全部带 shell/解释器头与 EXIT；r0 时期日志中
+r1 起新产生的日志（`r1-*`、`f1-*`、`f2-*`、`r1-library-probe.log`）全部带 shell/解释器头与 EXIT；`cleanstart-r1-final.log` **无命令头、无 EXIT 行**（仅末行 `GATE: PASS` 为终态判据；r2 P3-2 勘误）；r0 时期日志中
 `tauri-build-run1/run2.log` 与 `cleanstart-final.log`、`cleanstart-run5.log`
 **无命令头/无 EXIT 行**（tauri build 经后台任务重定向捕获、gate EXIT 打印在
 控制台而非文件内）——按原样保留作证据，exit 状态以 gate JSON 与
@@ -46,7 +45,7 @@ EXIT 0（AC5 硬 gate）；文本行内容未改动。
 | 文件 | 内容 |
 |---|---|
 | `cleanstart-r1-final.log` | **r1 终版 gate（25/25 场景全 PASS，GATE PASS，EXIT=0）**：新增 CS-E3（无空格 guard）、CS-L1/L2/L3（安装态 library probe）、CS-Z4（宿主真实 %APPDATA% 字节不变）；被测=同一安装包 `5410e29e…`（r0 未重建复用） |
-| `cleanstart-gate.json` | r1 终版 gate 结构化结果（含 installer sha256 与 appdata_isolation 记录） |
+| `cleanstart-gate.json` | r1 终版 gate 结构化结果（含 installer sha256 与 appdata_isolation 记录）；**注：本件被 r1 就地覆盖，r0 版内容仅存 git 历史（归属注记，r2 P3-2）** |
 | `r1-library-probe.log` | P2-2 安装态 stdio probe 原始输出（core.ping/ListBooks/core.shutdown 往返） |
 | `cleanstart-final.log` | r0 终版 gate（20/20，被测=同 sha 安装包；无头日志——见顶部注记） |
 | `cleanstart-run1..5.log` | r0 迭代过程（run1 PATH 剔除 marker 大小写 bug → run2/3 ac1 lab 目录缺失 → run4 desktop_pid 取样错误 → run5 全绿；保留作 fail→fix→pass 证据） |

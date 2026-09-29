@@ -2,7 +2,7 @@
 id: M2-AC5
 title: Windows packaging & clean-start acceptance (bundle / self-contained sidecar / no-system-Python workflow)
 kind: implementation
-status: in_review
+status: done
 release_state: M2_AC5_PACKAGE_CLEAN_START_RELEASED
 approval: approved_by_user_2026-09-29_m2ac5_release
 execution_approval: approved_by_user_2026-09-29_m2ac5_release
@@ -15,9 +15,9 @@ base_commit: 6f79c040c79ae4389cf73abcae1b26617b1a2fba
 branch: agent/zcode/M2-AC5-package-clean-start
 worktree: G:/CODEX/New Manga.worktrees/M2-AC5-zcode
 delivery_head: e3740b25e6ee45aed8f6e51b061aae0817a33280
-review: null
-integration_merge: null
-dispatch_state: DELIVERED_FOR_REVIEW
+review: doc/reviews/M2-AC5-eccf88e3-dsh-r1.md (approved_with_conditions, 0xP0/P1, 5xP2) -> doc/reviews/M2-AC5-0541b86b-dsh-r2.md (approved, 0xP0/P1/P2; remaining P3 closed by integrator corrigendum or registered as candidates)
+integration_merge: 9db08dc7548b70e8f4ee1d42e70e2e0c15838e63
+dispatch_state: INTEGRATED
 ---
 
 # M2-AC5 — Windows Packaging & Clean-start Acceptance
@@ -40,7 +40,7 @@ dispatch_state: DELIVERED_FOR_REVIEW
 
 - [x] **AC1 — 打包产物可复现**：`tauri bundle`（NSIS 目标）产出安装包；Core sidecar 以 PyInstaller onedir（或等效自包含形态）打入安装目录；构建命令、固定输入（frontend build、PyInstaller、tauri bundle）与产物 hash 全部留痕，同一输入重跑产物可复现（hash 一致或差异可解释）。（实测：sidecar `_internal/**` 闭包 157 文件中 **156/157 相同**，唯一差异 `_internal/base_library.zip`=stdlib zip 内嵌时间戳，与入口壳同类工具链时间戳差异；全树 161 文件=156 相同+5 差异（4 入口 exe+base_library.zip）；host exe/NSIS 为工具链时间戳差异，已解释。）
 - [x] **AC2 — packaged spawn 解析（fail-closed）**：packaged 模式下 spawn 不再依赖 `M2RC1_SRC_ROOT`/系统 Python——sidecar 从安装目录相对路径解析；解析失败返回 typed 错误（fail-closed），不回落系统 python。**dev 模式行为零变化**：既有 `cargo test --bin m2rc1-desktop`（34 passed 基线）、`pytest tests/m2_acceptance`（35 passed 基线）、`npx vitest run`（31 passed 基线）全绿不回退。（实测：typed `CORE_SPAWN_FAILED:PACKAGED_SIDECAR_MISSING` + 3 个解析矩阵测试 + 1 个缺失分支测试；cargo 38 passed+1 ignored / pytest 35 passed / vitest 31 passed，全 EXIT=0。）
-- [x] **AC3 — clean-start（无系统 Python）**：在显式剔除 Python 的 PATH、清空 `M2RC1_*` 环境的模拟环境中，静默安装包并启动：主窗口出现、ListBooks workflow 返回（真实 sidecar 往返）、资源通道 chunk 请求成功；全程无系统 Python、无源码树依赖。**口径=本机模拟路线（T3.2.1 已接受），非干净机覆盖，证据如实标注。**（实测：终版 GATE PASS 20/20 场景；probe 13/13、ac1 双 launch、production 真窗口。）
+- [x] **AC3 — clean-start（无系统 Python）**：在显式剔除 Python 的 PATH、清空 `M2RC1_*` 环境的模拟环境中，静默安装包并启动：主窗口出现、ListBooks workflow 返回（真实 sidecar 往返）、资源通道 chunk 请求成功；全程无系统 Python、无源码树依赖。**口径=本机模拟路线（T3.2.1 已接受），非干净机覆盖，证据如实标注。**（实测：终版 GATE PASS **25/25** 场景——r1 新增 CS-E3/L1/L2/L3/Z4 后 20+5，既有 20 场景全保持；probe 13/13、ac1 双 launch、production 真窗口；宿主真实 %APPDATA% 零触碰 CS-Z4。）
 - [x] **AC4 — workflow / path / exit**：数据与 derived/managed/catalog 路径落在用户数据目录（`%APPDATA%` 下），不写安装目录与源码树；用户源文件零触碰；正常退出后无残留 sidecar 进程（进程清单断言）。（实测：`%APPDATA%\com.newmanga.m2rc1.desktop` 布局落盘；安装目录 163 文件 hash 零变化；源 fixture 字节不变；sidecar 进程零残留。）
 - [x] **AC5 — 证据纪律**：固定 HEAD、每命令 shell/解释器头 + EXIT、范围自检（对照允许路径）、`git diff --check <base>..<delivery-head>` 整树 EXIT 0；三层基线（cargo/pytest/vitest）在交付 head 复跑留痕。
 
@@ -68,7 +68,7 @@ dispatch_state: DELIVERED_FOR_REVIEW
 
 ## 交付与运行记录
 
-- Handoff：[doc/handoffs/M2-AC5-eccf88e3.md](../handoffs/M2-AC5-eccf88e3.md)（implementation head=`eccf88e3`；AC1-AC5 全 PASS，clean-start 终版 GATE PASS 20/20）。
-- Verification：[verification/M2-AC5/verification-results.md](../verification/M2-AC5/verification-results.md) + [checkpoint.md](../verification/M2-AC5/checkpoint.md) + [raw/](../verification/M2-AC5/raw/README.md)（27 份原始日志/清单）。
-- Review：尚无（DeepSeek Harness 非作者，下一接收者）。
-- 交付后由 Integrator（另一子 agent 代行 Codex）闭合条件、merge、复跑置 `done`。
+- Handoff：[doc/handoffs/M2-AC5-eccf88e3.md](../handoffs/M2-AC5-eccf88e3.md)（implementation head=`eccf88e3`；AC1-AC5 全 PASS，clean-start 终版 GATE PASS **25/25**）。
+- Verification：[verification/M2-AC5/verification-results.md](../verification/M2-AC5/verification-results.md) + [checkpoint.md](../verification/M2-AC5/checkpoint.md) + [raw/](../verification/M2-AC5/raw/README.md)（**34 份**原始日志/清单 + README，r2 P3-4 勘误）。
+- Review：r1 [approved_with_conditions](../reviews/M2-AC5-eccf88e3-dsh-r1.md)（0×P0/P1、5×P2，session `ebd574e4`）→ Owner 返修 → r2 [approved](../reviews/M2-AC5-0541b86b-dsh-r2.md)（0×P0/P1/P2、10×P3，session `e30a24a6`）。
+- 集成：merge=`9db08dc7`；集成 head 复跑 cargo 38+1 / pytest 35 / vitest 31 / diff --check 全绿（fresh checkout 需先 `packaging/m2ac5/build_sidecar.ps1` 生成 sidecar 产物，见 [integration record](../verification/M2-AC5/integration-0541b86b/integration.md)）。剩余 P3 由集成方落字闭合或登记候选。
