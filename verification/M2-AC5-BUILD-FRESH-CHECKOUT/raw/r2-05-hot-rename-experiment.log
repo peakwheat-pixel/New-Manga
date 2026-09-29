@@ -1,0 +1,89 @@
+# shell=git-bash bash.exe cwd=apps/desktop/src-tauri HEAD=e2aa8d07fb3b02d01fec3b35da7a41dde0d9781b date=2026-09-29T18:09:45Z cmd=hot-rename experiment: check(cache) -> mv core-sidecar{,.bak} -> check(no touch, control) -> touch build.rs + check -> mv restore  (r1 P2-3: does the probe fire on a warm target?)
+### STEP0: establish warm cache (bundle present)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:40:5
+   |
+40 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:315:12
+    |
+315 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:320:12
+    |
+320 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:329:12
+    |
+328 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+329 |     pub fn new() -> Self {
+    |            ^^^
+...
+338 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+346 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: methods `set_books` and `set_books_error` are never used
+   --> src\library_bridge.rs:306:12
+    |
+294 | impl MockLibraryChannel {
+    | ----------------------- methods in this implementation
+...
+306 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+    |            ^^^^^^^^^
+...
+310 |     pub fn set_books_error(&self, error: LibraryError) {
+    |            ^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 5 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.92s
+STEP0 EXIT=0
+### STEP1: rename bundle away
+STEP1 EXIT=0 (renamed to core-sidecar.bak)
+core-sidecar.bak
+### STEP2: cargo check WITHOUT touch (control: does cargo rerun the build script at all?)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri)
+error: failed to run custom build command for `m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri)`
+
+Caused by:
+  process didn't exit successfully: `G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\debug\build\m2rc1-desktop-140058e3381d74b0\build-script-build` (exit code: 101)
+  --- stderr
+
+  thread 'main' (56244) panicked at build.rs:23:9:
+  missing sidecar bundle: G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\core-sidecar\core-sidecar does not exist (gitignored build artifact, absent on a fresh checkout).
+  Fix: run `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1` from the repository root (add -Force to rebuild an existing bundle).
+  See packaging/m2ac5/README.md (fresh checkout section) for the full setup.
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+STEP2 EXIT=101
+### STEP3: touch build.rs then cargo check (force build script rerun)
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri)
+error: failed to run custom build command for `m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri)`
+
+Caused by:
+  process didn't exit successfully: `G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\debug\build\m2rc1-desktop-140058e3381d74b0\build-script-build` (exit code: 101)
+  --- stderr
+
+  thread 'main' (49396) panicked at build.rs:23:9:
+  missing sidecar bundle: G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\core-sidecar\core-sidecar does not exist (gitignored build artifact, absent on a fresh checkout).
+  Fix: run `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1` from the repository root (add -Force to rebuild an existing bundle).
+  See packaging/m2ac5/README.md (fresh checkout section) for the full setup.
+  note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+STEP3 EXIT=101
+### STEP4: restore bundle name, verify zero residue
+core-sidecar
+STEP4 EXIT=0 (restored)
+# EXIT=0

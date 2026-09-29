@@ -1,0 +1,63 @@
+# shell=git-bash bash.exe cwd=apps/desktop/src-tauri HEAD=e2aa8d07fb3b02d01fec3b35da7a41dde0d9781b date=2026-09-29T18:08:30Z cmd=cargo build  (r1 P3-6 close: cargo build EXIT=0 on existing bundle, dev profile)
+   Compiling getrandom v0.4.3
+   Compiling uuid v1.26.1
+   Compiling cfb v0.14.0
+   Compiling schemars v0.8.22
+   Compiling infer v0.22.0
+   Compiling tauri-utils v2.10.0
+   Compiling tauri-build v2.7.0
+   Compiling tauri-codegen v2.7.0
+   Compiling tauri v2.12.0
+   Compiling tauri-macros v2.7.0
+   Compiling m2rc1-desktop v0.1.0 (G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri)
+warning: unused import: `std::sync::Arc`
+  --> src\main.rs:40:5
+   |
+40 | use std::sync::Arc;
+   |     ^^^^^^^^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockCoreChannel` is never constructed
+   --> src\core_bridge.rs:315:12
+    |
+315 | pub struct MockCoreChannel {
+    |            ^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` (part of `#[warn(unused)]`) on by default
+
+warning: struct `MockEntry` is never constructed
+   --> src\core_bridge.rs:320:12
+    |
+320 | pub struct MockEntry {
+    |            ^^^^^^^^^
+
+warning: associated items `new`, `register`, and `issue_internal` are never used
+   --> src\core_bridge.rs:329:12
+    |
+328 | impl MockCoreChannel {
+    | -------------------- associated items in this implementation
+329 |     pub fn new() -> Self {
+    |            ^^^
+...
+338 |     pub fn register(&self, resource_id: &str, rel_path: &str) -> Result<(), CoreError> {
+    |            ^^^^^^^^
+...
+346 |     fn issue_internal(
+    |        ^^^^^^^^^^^^^^
+
+warning: methods `set_books` and `set_books_error` are never used
+   --> src\library_bridge.rs:306:12
+    |
+294 | impl MockLibraryChannel {
+    | ----------------------- methods in this implementation
+...
+306 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+    |            ^^^^^^^^^
+...
+310 |     pub fn set_books_error(&self, error: LibraryError) {
+    |            ^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 5 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 20.54s
+# EXIT=0
