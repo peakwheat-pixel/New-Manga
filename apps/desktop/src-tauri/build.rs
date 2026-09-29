@@ -1,4 +1,33 @@
 fn main() {
+    // M2-AC5-BUILD-FRESH-CHECKOUT: fail-closed, actionable probe for the
+    // gitignored Core sidecar bundle BEFORE tauri_build::try_build runs.
+    //
+    // tauri.conf.json declares `bundle.resources` pointing at
+    // `target/core-sidecar/core-sidecar`, which is a PyInstaller build
+    // artifact (gitignored, so absent on a fresh checkout). When it is
+    // missing, try_build aborts with an opaque internal error
+    // ("resource path ... doesn't exist") that gives the developer no
+    // recoverable next step (root cause of the M2-AC5 integration i1
+    // EXIT=101). This probe replaces that with an actionable panic whose
+    // first line names the problem and points at the regeneration script.
+    //
+    // Deliberately NOT auto-running PyInstaller here: build.rs must stay
+    // fast, deterministic and free of Python/venv dependencies; fail-closed
+    // + diagnosable beats hidden heavy rebuilds. The build script's cwd is
+    // unspecified, so anchor on CARGO_MANIFEST_DIR (this crate's dir).
+    let sidecar_bundle = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+        .join("target")
+        .join("core-sidecar")
+        .join("core-sidecar");
+    if !sidecar_bundle.is_dir() {
+        panic!(
+            "missing sidecar bundle: {} does not exist (gitignored build artifact, absent on a fresh checkout).\n\
+             Fix: run `powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1` from the repository root (add -Force to rebuild an existing bundle).\n\
+             See packaging/m2ac5/README.md (fresh checkout section) for the full setup.",
+            sidecar_bundle.display()
+        );
+    }
+
     // RC2-AC1 (F-03) + R2-01(a): the app's own commands are declared in the
     // APPLICATION manifest of the Access Control List (NOT as an inlined
     // plugin -- plugin entries are keyed `plugin:<name>|<cmd>` and never

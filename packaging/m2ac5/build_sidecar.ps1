@@ -15,12 +15,28 @@
 [CmdletBinding()]
 param (
     [Parameter(Mandatory = $false)]
-    [string]$PythonExe = "G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe"
+    [string]$PythonExe = "G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe",
+    # M2-AC5-BUILD-FRESH-CHECKOUT: force a full PyInstaller rebuild even when
+    # the onedir bundle already exists (default: incremental short-circuit).
+    [switch]$Force
 )
 
 $ErrorActionPreference = "Stop"
 
 $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
+
+# M2-AC5-BUILD-FRESH-CHECKOUT: incremental short-circuit. When the target
+# onedir bundle is already present, skip the (expensive) PyInstaller rebuild
+# and exit 0 so automated callers can invoke this unconditionally. The check
+# runs before the build-venv probe on purpose: taking the skip path must not
+# require the build venv to exist. Use -Force for a full rebuild (all other
+# behavior, parameters and the output layout are unchanged).
+$existingBundle = Join-Path $repoRoot "apps/desktop/src-tauri/target/core-sidecar/core-sidecar"
+if (-not $Force -and (Test-Path -LiteralPath $existingBundle -PathType Container)) {
+    Write-Host "build_sidecar: target exists, skipping (use -Force to rebuild)"
+    exit 0
+}
+
 if (-not (Test-Path -LiteralPath $PythonExe -PathType Leaf)) {
     throw "build venv python not found: $PythonExe (create it per packaging/m2ac5/README.md)"
 }
