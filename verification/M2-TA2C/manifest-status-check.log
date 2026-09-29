@@ -1,0 +1,6 @@
+Shell=PowerShell; Python=C:\Python314\python.exe; Tested_HEAD=2e9797013dcb73280462a7b34390abcb2be12977; Command=local manifest consistency probe
+smoke DEFINED 20 {'READY': 20}
+regression DEFINED 68 {'READY': 23, 'MISSING': 8, 'MISSING_GATED_ASSET': 37}
+full DEFINED 68 {'READY': 23, 'MISSING': 8, 'MISSING_GATED_ASSET': 37}
+CASE_IDS 68 UNIQUE 68 PIPELINE_NOT_RUN 577
+EXIT=0

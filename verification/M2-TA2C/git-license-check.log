@@ -1,0 +1,10 @@
+Shell=PowerShell; Tested_HEAD=2e9797013dcb73280462a7b34390abcb2be12977; Worktree=C:/Users/49745/.codex/worktrees/no-hf-comic-assets/New Manga
+COMMAND=git ls-files -- test_assets/comic_golden_suite | media extension filter
+TRACKED_MEDIA_COUNT=0
+COMMAND=git check-ignore --no-index -v new KO JPEG, KO ZIP, JA JPEG, KO Webtoon PNG
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg"
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/02_public_ground_truth_peppercarrot/ep04/ep04_Stroke-of-genius_lang-pack.zip"
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":1:/*	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg"
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/01_real_webtoon_cleaned_dataset/K01_724815_1/base.png"
+CHECK_IGNORE_EXIT=0
+IMPLEMENTATION_DIFF_CHECK_EXIT=0

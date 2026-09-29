@@ -1,0 +1,11 @@
+Shell=PowerShell; Python=C:\Python314\python.exe; HEAD=391faae830e35ffec687863721d82cb0f1ac89bd; Command=python urllib HEAD probe for official source entry URLs
+200 https://github.com/mantra-inc/open-mantra-dataset -> https://github.com/mantra-inc/open-mantra-dataset
+200 https://ebdtheque.univ-lr.fr/registration/ -> https://ebdtheque.univ-lr.fr/registration/
+200 https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ -> https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/
+200 https://github.com/aasimsani/artificial_manga_panel_dataset -> https://github.com/aasimsani/artificial_manga_panel_dataset
+200 https://github.com/muscgab/JMangaBench_Mixed -> https://github.com/muscgab/JMangaBench_Mixed
+200 https://zenodo.org/records/4511796 -> https://zenodo.org/records/4511796
+200 https://jpsearch.go.jp/ -> https://jpsearch.go.jp/
+200 https://www.ndl.go.jp/en/imagebank/about -> https://www.ndl.go.jp/en/imagebank/about
+200 https://manga109.github.io/manga109-project-website/en/ -> https://manga109.github.io/manga109-project-website/en/
+EXIT=0

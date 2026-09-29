@@ -2,7 +2,7 @@
 id: M2-TA2C
 title: No-HF JA/KO Asset Migration
 kind: asset_infrastructure
-status: in_progress
+status: in_review
 approval: user_authorized_2026-09-29
 suggested_owner: Codex Desktop
 owner: Codex Desktop
@@ -22,12 +22,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] 记录附件静态审计、官方来源的实际内容/许可/访问条件；附件脚本不直接执行或机械导入。
-- [ ] 统一 JA/KO Case schema 与现有 16 项 taxonomy；资产 `READY` 和各 Pipeline `NOT_RUN` 独立表达；已阻塞/仅注释来源不计可运行数。
-- [ ] 保留现有 KO 10 个完整 Smoke 文件和 JA 10 个公开页面；公开、许可适配、体量可控的新资产才下载，逐文件记录路径、大小、SHA-256、来源、许可和 GT 范围。
-- [ ] OpenMantra、eBDtheque、Pepper&Carrot JA/KO、Artificial Manga、JMangaBench_Mixed、TextMasks、Public Domain Japan、Manga109 optional、AIHub 均有真实状态；不以代码仓库或空目录冒充视觉资产。
-- [ ] 现有 CLI `download/list/missing/verify` 保持幂等、离线和失败保护；L0/L1/L2 定义数、READY 数、blocked 数如实报告。
-- [ ] 原图、ZIP、mask、cache 均不进入 Git；定向资产测试、Git 检查、独立非作者 Review 和 Codex 集成后复验留证。生产代码与依赖零改动。
+- [x] 记录附件静态审计、官方来源的实际内容/许可/访问条件；附件脚本不直接执行或机械导入。
+- [x] 统一 JA/KO Case schema 与现有 16 项 taxonomy；资产 `READY` 和各 Pipeline `NOT_RUN` 独立表达；已阻塞/仅注释来源不计可运行数。
+- [x] 保留现有 KO 10 个完整 Smoke 文件和 JA 10 个公开页面；公开、许可适配、体量可控的新资产才下载，逐文件记录路径、大小、SHA-256、来源、许可和 GT 范围。
+- [x] OpenMantra、eBDtheque、Pepper&Carrot JA/KO、Artificial Manga、JMangaBench_Mixed、TextMasks、Public Domain Japan、Manga109 optional、AIHub 均有真实状态；不以代码仓库或空目录冒充视觉资产。
+- [x] 现有 CLI `download/list/missing/verify` 保持幂等、离线和失败保护；L0/L1/L2 定义数、READY 数、blocked 数如实报告。
+- [ ] 原图、ZIP、mask、cache 均不进入 Git；定向资产测试和 Git 检查已留证；独立非作者 Review 与 Codex 集成后复验待执行。生产代码与依赖零改动。
 
 ## 允许修改范围
 
@@ -51,4 +51,4 @@ M2-TA1 与 M2-TA2A 均已 `done`，本 Task 可释放。来源/许可只读审�
 
 ## 交付与 Gate
 
-Owner 交付固定实现 HEAD、Handoff、可复核的命令/EXIT/环境日志；DeepSeek Harness 在固定 HEAD 独立 Review；Codex 仅在无未解决 P0/P1 且关键验证完成后集成并复验，之后才可置 `done`。已在上述 linked worktree 认领，Git common directory=`G:/CODEX/New Manga/.git`。
+Owner 交付固定实现 HEAD=`2e9797013dcb73280462a7b34390abcb2be12977`、[Handoff](../handoffs/M2-TA2C-2e979701.md)、[运行证据](../../verification/M2-TA2C/run-results.md)；DeepSeek Harness 将在固定交付 HEAD 独立 Review；Codex 仅在无未解决 P0/P1 且关键验证完成后集成并复验，之后才可置 `done`。已在上述 linked worktree 认领，Git common directory=`G:/CODEX/New Manga/.git`。当前 `in_review`，Review 尚未完成。
