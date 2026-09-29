@@ -31,7 +31,7 @@ releases a task.
 
 ### 2026-09-29 用户授权 Task：M2-TA2C No-HF JA/KO Asset Migration
 
-[M2-TA2C](tasks/M2-TA2C.md) 在已完成 M2-TA1/TA2A 的同一个 `comic_golden_suite` 上迁移附件来源方案；基线=`d4d3977907bc64177ef85c61da4c95901f135fc6`，Owner=Codex Desktop，非作者 Reviewer=DeepSeek Harness，Integrator=Codex Desktop；状态 `ready`，实际分支/worktree 和执行状态见 [STATUS](STATUS.md)。附件无实物数据，脚本存在自动依赖安装、下载先发布后验哈希、无许可过滤的重打包风险，故不直接运行。公开来源按官方访问与许可逐项核定，Manga109 不再是 JA L0/L1 的硬前置。来源审计与既有资产复核可并行；共享 manifest、inventory 和文档串行集成。`M2-TA3` 仍 `proposed`，待本 Task 完成并核实实际可运行覆盖后再考虑释放；不以 TA2B 为硬依赖，不为数量目标造空 Case。
+[M2-TA2C](tasks/M2-TA2C.md) 在已完成 M2-TA1/TA2A 的同一个 `comic_golden_suite` 上迁移附件来源方案；基线=`d4d3977907bc64177ef85c61da4c95901f135fc6`，Owner=Codex Desktop，非作者 Reviewer=DeepSeek Harness，实现作者交付后由用户指示 ZCode 代行 Codex 集成；**已 `done` @integration `a4cd513d0f7ca6a50e1ae018629b3042612be3bb`**（r2 `approved` @`8cb3a135`，session=`ca1ae6af`）。附件无实物数据，脚本存在自动依赖安装、下载先发布后验哈希、无许可过滤的重打包风险，故不直接运行（静态审计见 `verification/M2-TA2C/attachment-audit.md`）。公开来源按官方访问与许可逐项核定，Manga109 不再是 JA L0/L1 的硬前置。集成后实际覆盖：L0 20/20 READY（JA 10 + KO 10）、L1/L2 68 定义中 23 READY / 8 MISSING / 37 MISSING_GATED_ASSET，inventory 92 文件 / 63,317,229 bytes；KO 新增 Pepper&Carrot E04P02/P03/P07 + language-pack（4 文件 / 16,292,579 bytes，ignored 本地）；应用级 Pipeline 检查仍全部 `NOT_RUN`。`M2-TA3` 仍 `proposed`，按上述实际可运行覆盖再考虑释放；不以 TA2B 为硬依赖，不为数量目标造空 Case。
 
 ### 2026-09-28 任务盘点（当日快照；当前执行状态见 STATUS）
 

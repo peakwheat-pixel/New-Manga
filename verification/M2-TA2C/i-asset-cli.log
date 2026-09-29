@@ -1,0 +1,37 @@
+Shell=/bin/bash.exe; Tested_HEAD=a4cd513d0f7ca6a50e1ae018629b3042612be3bb
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py list --level smoke
+J46	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J47	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+SUMMARY	READY=20
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke
+J46	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+J47	ja	READY	日漫_JA/02_open_ground_truth_peppercarrot/ep20
+SUMMARY	READY=10
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke
+K09	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+SUMMARY	READY=10
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level regression --case-id K11 --case-id K12 --case-id K13
+K12	ko	READY	韩漫_KO/02_public_ground_truth_peppercarrot/ep04
+K13	ko	READY	韩漫_KO/02_public_ground_truth_peppercarrot/ep04
+SUMMARY	READY=3
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py missing --level regression
+J36	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/08_historical/MomoyamaHaikagura
+J37	ja	MISSING_GATED_ASSET	日漫_JA/01_manga109_real/08_historical/RinToSiteSippuNoNaka
+SUMMARY	MISSING=8 MISSING_GATED_ASSET=37 READY=23
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py download --language ko --level regression --case-id K11 --case-id K12 --case-id K13
+K11	DOWNLOADED	files=0 existing=2
+K12	DOWNLOADED	files=0 existing=2
+K13	DOWNLOADED	files=0 existing=2
+SUMMARY	downloaded=0 existing=6 gated_cases=0 failures=0
+EXIT=0

@@ -1,0 +1,12 @@
+=== check-ignore KO new 4 files ===
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"\351\237\251\346\274\253_KO/02_public_ground_truth_peppercarrot/ep04/ep04_Stroke-of-genius_lang-pack.zip"
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"\351\237\251\346\274\253_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg"
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"\351\237\251\346\274\253_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg"
+"test_assets/comic_golden_suite/\351\237\251\346\274\253_KO/.gitignore":1:/*	"\351\237\251\346\274\253_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P07.jpg"
+=== tracked media under test_assets (expect none) ===
+0
+=== diff --check full range ===
+diff-check EXIT=0
+git diff --check d4d39779..HEAD
+EXIT=0
+output_lines=0
