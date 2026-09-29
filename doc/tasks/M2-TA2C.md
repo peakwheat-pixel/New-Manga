@@ -2,7 +2,7 @@
 id: M2-TA2C
 title: No-HF JA/KO Asset Migration
 kind: asset_infrastructure
-status: ready
+status: in_review
 approval: user_authorized_2026-09-29
 suggested_owner: Codex Desktop
 owner: Codex Desktop
@@ -10,7 +10,7 @@ reviewer: DeepSeek Harness
 depends_on: [M2-TA1, M2-TA2A]
 base_commit: d4d3977907bc64177ef85c61da4c95901f135fc6
 branch: agent/codex/M2-TA2C-no-hf-assets
-worktree: pending_codex_managed_worktree
+worktree: C:/Users/49745/.codex/worktrees/no-hf-comic-assets/New Manga
 integration_commit: null
 ---
 
@@ -22,12 +22,12 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] 记录附件静态审计、官方来源的实际内容/许可/访问条件；附件脚本不直接执行或机械导入。
-- [ ] 统一 JA/KO Case schema 与现有 16 项 taxonomy；资产 `READY` 和各 Pipeline `NOT_RUN` 独立表达；已阻塞/仅注释来源不计可运行数。
-- [ ] 保留现有 KO 10 个完整 Smoke 文件和 JA 10 个公开页面；公开、许可适配、体量可控的新资产才下载，逐文件记录路径、大小、SHA-256、来源、许可和 GT 范围。
-- [ ] OpenMantra、eBDtheque、Pepper&Carrot JA/KO、Artificial Manga、JMangaBench_Mixed、TextMasks、Public Domain Japan、Manga109 optional、AIHub 均有真实状态；不以代码仓库或空目录冒充视觉资产。
-- [ ] 现有 CLI `download/list/missing/verify` 保持幂等、离线和失败保护；L0/L1/L2 定义数、READY 数、blocked 数如实报告。
-- [ ] 原图、ZIP、mask、cache 均不进入 Git；定向资产测试、Git 检查、独立非作者 Review 和 Codex 集成后复验留证。生产代码与依赖零改动。
+- [x] 记录附件静态审计、官方来源的实际内容/许可/访问条件；附件脚本不直接执行或机械导入。
+- [x] 统一 JA/KO Case schema 与现有 16 项 taxonomy；资产 `READY` 和各 Pipeline `NOT_RUN` 独立表达；已阻塞/仅注释来源不计可运行数。
+- [x] 保留现有 KO 10 个完整 Smoke 文件和 JA 10 个公开页面；公开、许可适配、体量可控的新资产才下载，逐文件记录路径、大小、SHA-256、来源、许可和 GT 范围。
+- [x] OpenMantra、eBDtheque、Pepper&Carrot JA/KO、Artificial Manga、JMangaBench_Mixed、TextMasks、Public Domain Japan、Manga109 optional、AIHub 均有真实状态；不以代码仓库或空目录冒充视觉资产。
+- [x] 现有 CLI `download/list/missing/verify` 保持幂等、离线和失败保护；L0/L1/L2 定义数、READY 数、blocked 数如实报告。
+- [ ] 原图、ZIP、mask、cache 均不进入 Git；定向资产测试和 Git 检查已留证；独立非作者 Review 与 Codex 集成后复验待执行。生产代码与依赖零改动。
 
 ## 允许修改范围
 
@@ -51,4 +51,10 @@ M2-TA1 与 M2-TA2A 均已 `done`，本 Task 可释放。来源/许可只读审�
 
 ## 交付与 Gate
 
-Owner 交付固定实现 HEAD、Handoff、可复核的命令/EXIT/环境日志；DeepSeek Harness 在固定 HEAD 独立 Review；Codex 仅在无未解决 P0/P1 且关键验证完成后集成并复验，之后才可置 `done`。当前状态 `ready`，尚未认领；worktree 创建后回填实际路径。
+Owner 已交付初版固定实现 HEAD=`2e9797013dcb73280462a7b34390abcb2be12977`、[Handoff](../handoffs/M2-TA2C-2e979701.md)、[运行证据](../../verification/M2-TA2C/run-results.md)；DeepSeek Harness r1 已独立审查并要求返修，不能视为批准。Codex 仅在返修、复审及关键验证完成后集成并复验，之后才可置 `done`。已在上述 linked worktree 认领，Git common directory=`G:/CODEX/New Manga/.git`。
+
+## Review r1 与返修
+
+[DeepSeek Harness r1](../reviews/M2-TA2C-2c12ba1e-dsh-r1.md) 对 Handoff HEAD=`2c12ba1ec9d302de10a210211dfa46cd490845df` 给出 `changes_requested`：0×P0、0×P1、2×P2、7×P3。P2-1 为 KO Cleaned Webtoon 来源层 `PARTIAL` 与固定 10 Case `READY` 口径冲突；P2-2 为 JA Pepper&Carrot `checksum_inventory=null` 且来源索引路径基准不统一。本次返修已将来源层限定为固定 10 Case 的资产状态并统一仓库根相对 checksum 路径；另澄清 SVG 文本计数口径。P3-2 的 `required_files()` 增传语言参数会使已有无效 profile 的 `status()` 从 `PARTIAL` 变成异常，故保留已有在 `load_manifest` / `download` / `validate_public_case` 的语言校验路径。返修后的固定 HEAD、测试和复审另行登记，不复用 r1 结论。
+
+返修实现 HEAD=`66dc361dac18b02fe3e4b773e9d0091ce6e37f60`；[r2 Handoff](../handoffs/M2-TA2C-66dc361d.md)、[r2 运行结果](../../verification/M2-TA2C/run-results-r2.md)。作者复验 25 passed、JA/KO L0 20 READY、KO 新 3 READY；m2_acceptance 仍同组 `BASELINE_FAILURE`。当前重新进入 `in_review`，等待非作者复审，尚未集成。

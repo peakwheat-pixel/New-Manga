@@ -620,6 +620,49 @@
       ],
       "pipeline_execution_status": "NOT_RUN",
       "notes": "Not counted runnable and no data copied. Revisit only if a non-commercial-only use scope is established."
+    },
+    {
+      "asset_id": "peppercarrot_e04_ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
+      "license": "CC BY 4.0 with attribution",
+      "image_redistribution_status": "Images may be redistributed with attribution; kept out of Git by local asset policy",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+      "status": "READY",
+      "file_count": 4,
+      "image_file_count": 3,
+      "byte_size": 16292579,
+      "files": [
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/ep04_Stroke-of-genius_lang-pack.zip",
+          "byte_size": 14428439,
+          "sha256": "cff6d3cfef4f59cd55e13683c5b2b76fb08914e8929cebf11414ce6b848fe38f"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+          "byte_size": 659359,
+          "sha256": "4bd9b181ac6fc9a041f4e7c82570a0b7792f9840e9cfed0cc88bdbf1d61c70c8"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P03.jpg",
+          "byte_size": 602878,
+          "sha256": "3116f5678a5ba95bb9546f1dff3f7add8044545b7ab6825d571b0e5c5e6373c9"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P07.jpg",
+          "byte_size": 601903,
+          "sha256": "a8d831e5512f3127b7b5d89499ca20ffc2a8ed018f92415be39a0607878f5380"
+        }
+      ],
+      "ground_truth_type": "Official Korean SVG text layer in the E04 language pack; three selected rendered pages have paired SVG members; no bounding boxes or masks",
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "French-origin open webcomic with Korean localization; not Korean-origin Webtoon. SVG text nodes exist for all three pages.",
+      "attribution": "Artwork and episode by David Revoy; follow attribution details on the official Korean E04 source page."
     }
-  ]
+  ],
+  "updated_by_task": "M2-TA2C"
 }

@@ -40,7 +40,7 @@ def load_manifest() -> dict:
     ids: set[str] = set()
     allowed_tags = set(manifest["taxonomy"]["difficulty_tags"])
     required = {
-        "case_id", "language", "source", "source_type", "layout_type",
+        "case_id", "language", "source", "source_id", "source_type", "layout_type",
         "reading_direction", "text_type", "orientation", "difficulty", "tags",
         "local_path", "license_class", "redistributable", "expected_pipeline",
         "ground_truth_available", "levels", "asset_status",
@@ -57,6 +57,17 @@ def load_manifest() -> dict:
             raise ValueError(f"unknown difficulty tag: {case['case_id']}")
         if not set(case["levels"]) <= {"smoke", "regression", "full"}:
             raise ValueError(f"invalid level: {case['case_id']}")
+        if not isinstance(case.get("image_available"), bool) or not isinstance(case.get("annotation_available"), bool):
+            raise ValueError(f"invalid local availability snapshot: {case['case_id']}")
+        pipeline = case.get("pipeline_status")
+        if not isinstance(pipeline, dict) or set(pipeline) != set(case["expected_pipeline"]) or not set(pipeline.values()) <= {
+            "NOT_RUN", "PASS", "FAIL", "BLOCKED_BY_ASSET_ACCESS", "BLOCKED_BY_ENV"
+        }:
+            raise ValueError(f"invalid pipeline status: {case['case_id']}")
+        if not all(isinstance(case.get(key), str) and case[key] for key in ("source_name", "asset_type", "source_url", "license")):
+            raise ValueError(f"missing source metadata: {case['case_id']}")
+        if not isinstance(case.get("ground_truth_types"), list) or not all(isinstance(item, str) for item in case["ground_truth_types"]):
+            raise ValueError(f"invalid ground truth types: {case['case_id']}")
         local = (ROOT / Path(case["local_path"])).resolve()
         if not local.is_relative_to(ROOT.resolve()):
             raise ValueError(f"local_path escapes suite: {case['case_id']}")
@@ -69,7 +80,7 @@ def load_manifest() -> dict:
             if any(Path(name).name != name or "\\" in name for name in profile.get("files", [])):
                 raise ValueError(f"invalid asset filename: {case['case_id']}")
         if profile.get("kind") == "open_public_comic_page":
-            validate_public_profile(profile)
+            validate_public_profile(profile, case["language"])
     return manifest
 
 
@@ -292,7 +303,7 @@ def validate_public_filename(name: str) -> bool:
     )
 
 
-def validate_public_profile(profile: dict) -> None:
+def validate_public_profile(profile: dict, language: str | None = None) -> None:
     fields = ("image_url", "image_filename", "transcript_zip_url", "transcript_zip_filename", "transcript_member")
     if any(not isinstance(profile.get(key), str) or not profile[key] for key in fields):
         raise ValueError("public comic profile is missing required fields")
@@ -310,6 +321,8 @@ def validate_public_profile(profile: dict) -> None:
         raise ValueError("unsafe public comic transcript member")
     if member_path.suffix.lower() not in {".svg", ".xml"}:
         raise ValueError("public comic transcript member must be SVG or XML")
+    if language is not None and not member.startswith(f"lang/{'kr' if language == 'ko' else language}/"):
+        raise ValueError("public comic transcript member does not match case language")
 
 
 def public_xml_valid(data: bytes, name: str) -> tuple[bool, str]:
@@ -360,7 +373,7 @@ def inspect_public_transcript_zip(path: Path, required_member: str) -> tuple[boo
                 if info.filename == required_member:
                     found_member = True
                 check_xml = info.filename.lower().endswith((".svg", ".xml"))
-                check_json = info.filename == "lang/ja/info.json"
+                check_json = info.filename.startswith("lang/") and info.filename.endswith("/info.json")
                 if not (check_xml or check_json):
                     # Still read each member to verify its ZIP CRC without extracting it.
                     data = None
@@ -384,7 +397,7 @@ def inspect_public_transcript_zip(path: Path, required_member: str) -> tuple[boo
                     try:
                         json.loads(data.decode("utf-8"))
                     except (UnicodeDecodeError, json.JSONDecodeError):
-                        return False, "lang/ja/info.json is invalid"
+                        return False, f"{info.filename} is invalid"
             if not found_member:
                 return False, f"required transcript member is missing: {required_member}"
     except (OSError, RuntimeError, EOFError, NotImplementedError, zipfile.BadZipFile, zlib.error, ValueError) as exc:
@@ -395,7 +408,7 @@ def inspect_public_transcript_zip(path: Path, required_member: str) -> tuple[boo
 def validate_public_case(case: dict) -> tuple[bool, str]:
     try:
         profile = case["asset_profile"]
-        validate_public_profile(profile)
+        validate_public_profile(profile, case["language"])
         directory = local_dir(case)
         image = directory / profile["image_filename"]
         transcript_zip = directory / profile["transcript_zip_filename"]
@@ -528,7 +541,7 @@ def download_public_comic_case(case: dict) -> tuple[int, int, bool]:
     directory = local_dir(case)
     downloaded = skipped = 0
     try:
-        validate_public_profile(profile)
+        validate_public_profile(profile, case["language"])
         directory.mkdir(parents=True, exist_ok=True)
         image = directory / profile["image_filename"]
         archive = directory / profile["transcript_zip_filename"]
@@ -797,6 +810,7 @@ def main() -> int:
     parser.add_argument("command", choices=("download", "verify", "list", "missing"))
     parser.add_argument("--language", choices=("ja", "ko"))
     parser.add_argument("--level", choices=("smoke", "regression", "full"), default="smoke")
+    parser.add_argument("--case-id", action="append", help="limit the command to a named case; may be repeated")
     parser.add_argument("--archive", type=Path, help="official Manga109 ZIP to import selected titles from")
     args = parser.parse_args()
 
@@ -804,6 +818,11 @@ def main() -> int:
         parser.error("--archive is supported only with download --language ja")
     manifest = load_manifest()
     cases = selected(manifest, args.language, args.level)
+    if args.case_id:
+        requested = set(args.case_id)
+        cases = [case for case in cases if case["case_id"] in requested]
+        if {case["case_id"] for case in cases} != requested:
+            parser.error("--case-id must name a case in the selected language and level")
     if args.command in {"verify", "list", "missing"}:
         inventory_failures, inventory_checked, inventory_missing, invalid_paths = verify_inventory_files()
         case_statuses = print_cases(cases, show_missing_only=args.command == "missing", invalid_inventory_paths=invalid_paths)

@@ -1,0 +1,65 @@
+Shell=PowerShell; Python=C:\Python314\python.exe; Tested_HEAD=0676865b56b9c0349bec5fe7f0fc1c2f3ced0ed9; Command=python -m pytest tests/m2_test_assets -q
+..............F..........                                                [100%]
+================================== FAILURES ===================================
+________ test_korean_public_page_uses_same_download_and_member_checks _________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-500/test_korean_public_page_uses_s0')
+
+    def test_korean_public_page_uses_same_download_and_member_checks(tmp_path):
+        case = make_case()
+        case["language"] = "ko"
+        case["asset_profile"]["transcript_member"] = "lang/kr/E01P00.svg"
+        payloads = [Response(JPEG, IMAGE_URL), Response(make_zip(member="lang/kr/E01P00.svg"), ZIP_URL)]
+        with patch.object(assets, "ROOT", tmp_path / "suite"), patch.object(
+            assets, "open_public_comic_url", side_effect=payloads
+        ) as fetch:
+            assert assets.download_case(case) == (2, 0, False)
+            assert assets.status(case) == "READY"
+            assert assets.download_case(case) == (0, 2, False)
+            assert fetch.call_count == 2
+            case["asset_profile"]["transcript_member"] = MEMBER
+>           assert assets.status(case) == "PARTIAL"
+                   ^^^^^^^^^^^^^^^^^^^
+
+tests\m2_test_assets\test_public_assets.py:96:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+test_assets\comic_golden_suite\tools\assets.py:123: in status
+    paths = required_files(case)
+            ^^^^^^^^^^^^^^^^^^^^
+test_assets\comic_golden_suite\tools\assets.py:110: in required_files
+    validate_public_profile(profile, case["language"])
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+profile = {'kind': 'open_public_comic_page', 'image_url': 'https://www.peppercarrot.com/data/page.jpg', 'image_filename': 'page.jpg', 'transcript_zip_url': 'https://www.peppercarrot.com/data/lang-pack.zip', ...}
+language = 'ko'
+
+    def validate_public_profile(profile: dict, language: str | None = None) -> None:
+        fields = ("image_url", "image_filename", "transcript_zip_url", "transcript_zip_filename", "transcript_member")
+        if any(not isinstance(profile.get(key), str) or not profile[key] for key in fields):
+            raise ValueError("public comic profile is missing required fields")
+        if not is_public_comic_url(profile["image_url"]) or not is_public_comic_url(profile["transcript_zip_url"]):
+            raise ValueError("public comic URLs must use HTTPS www.peppercarrot.com")
+        if not validate_public_filename(profile["image_filename"]) or not profile["image_filename"].lower().endswith((".jpg", ".jpeg")):
+            raise ValueError("public comic image filename must be a local JPEG filename")
+        if not validate_public_filename(profile["transcript_zip_filename"]) or not profile["transcript_zip_filename"].lower().endswith(".zip"):
+            raise ValueError("public comic transcript filename must be a local ZIP filename")
+        member = profile["transcript_member"]
+        if "\\" in member or "\x00" in member or ":" in member or PureWindowsPath(member).drive:
+            raise ValueError("unsafe public comic transcript member")
+        member_path = PurePosixPath(member)
+        if member_path.is_absolute() or any(part in {"", ".", ".."} for part in member.split("/")):
+            raise ValueError("unsafe public comic transcript member")
+        if member_path.suffix.lower() not in {".svg", ".xml"}:
+            raise ValueError("public comic transcript member must be SVG or XML")
+        if language is not None and not member.startswith(f"lang/{'kr' if language == 'ko' else language}/"):
+>           raise ValueError("public comic transcript member does not match case language")
+E           ValueError: public comic transcript member does not match case language
+
+test_assets\comic_golden_suite\tools\assets.py:325: ValueError
+---------------------------- Captured stdout call -----------------------------
+O-test	DOWNLOADED	files=2 existing=0
+O-test	DOWNLOADED	files=0 existing=2
+=========================== short test summary info ===========================
+FAILED tests/m2_test_assets/test_public_assets.py::test_korean_public_page_uses_same_download_and_member_checks
+1 failed, 24 passed in 0.52s
+EXIT=1

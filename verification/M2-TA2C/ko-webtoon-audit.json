@@ -1,0 +1,498 @@
+{
+  "task_id": "M2-TA2C",
+  "source": "Cleaned Webtoon fixed smoke examples",
+  "asset_status": "READY_ASSET_INTEGRITY_ONLY",
+  "pipeline_status": "NOT_RUN",
+  "cases": [
+    {
+      "case_id": "K01",
+      "source_id": "724815_1",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K01_724815_1",
+      "file_count": 8,
+      "bytes": 63994761,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 22750534,
+          "sha256": "600ca7551a186d05e8f6876e66c89e2c44a0ec99c0cc0e53694a67c7622be47b"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 21011885,
+          "sha256": "2eb47d99e4418088366491d3c1e5d473d175dd1ee98374254db2feb0083405bd"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 404770,
+          "sha256": "e5be84f98976b16efd142386c29556066b0ab981e1afa8f6b1bc9ee9f19df230"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 440596,
+          "sha256": "980ef67536185967fe3ef89fcfd51b1da556aa7c306ff5e917c053ac84520b98"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 408175,
+          "sha256": "97c19e4555835a02d484c5b1adaea4c22a5a4b042a1f6ca057461f63a0c1d794"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 1205365,
+          "sha256": "c26146a2cc89ae6e87b09193a3966602c63d084b2a11480f23340b21c30e0afc"
+        },
+        {
+          "name": "info.json",
+          "bytes": 98070,
+          "sha256": "ebcce89dc5b0b4bd7087885fbb0ad96af6a8bfc25406d6511883a61267984479"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 17675366,
+          "sha256": "588671d32ed5160fbc4af941300d562059e4ecf9258bf1da31633c953dd9d1e9"
+        }
+      ]
+    },
+    {
+      "case_id": "K02",
+      "source_id": "651664_112",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K02_651664_112",
+      "file_count": 8,
+      "bytes": 14655143,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 6283468,
+          "sha256": "b1123355e8c451f99100b153679f126676f616c9715ea6e1cbdbfaeeb3134f50"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 6137106,
+          "sha256": "b8e37720b20cd96cbbbd9e71043fb2a4ebe06630861eb62343bfa86acd8ab0cd"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 104637,
+          "sha256": "afafcb697a671fbc5cfd2986a46449792a41a6df52c44f8df74c246096dc20de"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 109233,
+          "sha256": "9c80489ff00a951c506fceb6a788163663dedbc968306a99469d060586465925"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 106739,
+          "sha256": "877fe825da14461f4e46cda1a7218e795b67cf275aa6e184e1d1737c389eeaa8"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 217651,
+          "sha256": "99a43e73175b476f36ed9c236869f643934ddedca553e61b97a43238762f0697"
+        },
+        {
+          "name": "info.json",
+          "bytes": 16080,
+          "sha256": "576de03f6d3c7e43babff949eb76c48e849a932535527d10580bd7007c20732a"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 1680229,
+          "sha256": "16a2767bc9e6e22128c2ac3c1e215526b456c1c7c23d1aa774dfbd9a4dadba44"
+        }
+      ]
+    },
+    {
+      "case_id": "K03",
+      "source_id": "671421_148",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K03_671421_148",
+      "file_count": 8,
+      "bytes": 85303246,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 27207938,
+          "sha256": "2b4b774735e3a3821896da95bf1d9a0e4a90105ef7ff4b13451602b2d199408c"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 25990534,
+          "sha256": "16734bb92ec3d59cf4071fde426700cebe5ed65244f9f91df086017046e6927b"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 514084,
+          "sha256": "8ad6f800d1570e341594a69952f01ec8a2566f6eb0cea58569df53d91fa860bf"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 550329,
+          "sha256": "826ee384c707f19b4153ce303093232ef4a1a4f5fbd9ddf632b20dae4bdd798e"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 522660,
+          "sha256": "87a913a81ea5a75900adc28d8fa445cae0acc1b745900fd7d44a044bc6ac7125"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 2119980,
+          "sha256": "d9746ce27d6f82916c98becd4954bad49304d18abe74d323c4c4d5b7567152f1"
+        },
+        {
+          "name": "info.json",
+          "bytes": 108852,
+          "sha256": "f518cfc08f51363dc164bd0295937087cc2062d7a0a21e243fb8b855a76751ca"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 28288869,
+          "sha256": "bafff5ef1699a0f7f782e73678e59a060de30c4f53138a606866c82efd1b7496"
+        }
+      ]
+    },
+    {
+      "case_id": "K04",
+      "source_id": "670145_145",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K04_670145_145",
+      "file_count": 8,
+      "bytes": 39873800,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 13303354,
+          "sha256": "8bfad8af8e4f7ca594f8223d1b0fffbc916a8617a64baa1c381f078f0e4c1873"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 12322858,
+          "sha256": "e11623811905772ce7aa9f52cd5703bbbfc1911387e14a62980fce3463d4ccd4"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 181221,
+          "sha256": "4725b1d2bb257541123f6e19ed5b4ad570b8edd3b0cdc8fde45a1d33c03b216b"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 230208,
+          "sha256": "2f783df643b8fee9cf98dc6b9a199124deb9f0aacac07d57c6f511ff59acf02b"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 189504,
+          "sha256": "80a435a4e7e49deabd79dc9a33ff330eea406e56a757209363af184e69a90bb7"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 788519,
+          "sha256": "2d85af356ac8f3830abc3800b0757376fc2c448061561bfc7aafaa20c4c2a8c9"
+        },
+        {
+          "name": "info.json",
+          "bytes": 89130,
+          "sha256": "461d500c9b81fff65370e94e260898b6041f8ecdb427261620450b4c162c7fd5"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 12769006,
+          "sha256": "b6b53f07961b09d8c7fe222ada6e07ef752158621b3f6c39e80541fa787d3b8e"
+        }
+      ]
+    },
+    {
+      "case_id": "K05",
+      "source_id": "131385_302",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K05_131385_302",
+      "file_count": 8,
+      "bytes": 47426945,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 16223232,
+          "sha256": "d944f35ee07544920715671a54bb238b0451be0e5f4c76b6b301f67fbd1c448a"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 15492667,
+          "sha256": "2af59574e233cbe703fec0c5201fd17169ccc7939c583e43dce83168793707b4"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 291657,
+          "sha256": "a39bd9ef470c79c897d686cf4c5ef48f68d15daad5f14a3c0c020f5ffb926f62"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 305700,
+          "sha256": "c25cfe9a05fd1d4f8afc7eb97f0c0f404bf88abe8a8af92525aa6c501d5fc433"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 296052,
+          "sha256": "ad0f55bfbfebcfe4c21abe261789efccdcc638b4782379ae8605e02812c4ecb9"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 742658,
+          "sha256": "60567c3e8aa813784585f6db407d05f7e4307b367aa10e4f5294306d8bb8133e"
+        },
+        {
+          "name": "info.json",
+          "bytes": 40139,
+          "sha256": "ea8cc774b0ae8d71d6f746c36f1acd777b40678bd0224a98f03112a3e955e125"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 14034840,
+          "sha256": "2ce2ee32b6fd9f1e0679d737d035ddba8f78983cefa78c22baaed19145c91478"
+        }
+      ]
+    },
+    {
+      "case_id": "K06",
+      "source_id": "570506_196",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K06_570506_196",
+      "file_count": 8,
+      "bytes": 111065080,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 36055173,
+          "sha256": "9a0b445e3dbce2ff92220e3953641aca99c3fec4d6fd1b4ac14378e8933f3c39"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 35109674,
+          "sha256": "7b1c4c61b9058db77e3dca564efe8b5eb27dccfd92412e012a99326045ca0ecb"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 520756,
+          "sha256": "a12090e26b522893c9d3be2b25789656a00b1e0a1660a0f709d421d59958fe57"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 547331,
+          "sha256": "971291d00489b16a6114594c3db74025bd7dddc95e3f3ccb9c80dd5f2cbbb959"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 527594,
+          "sha256": "3bf2ec848224c02bae32dc3376aca7a99b7858dc523601b42cf05ef43ee8fa11"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 1089552,
+          "sha256": "d43d230014f001b396f6e95eaa9c6bf76e18ba2c152b88434e76d0571775c116"
+        },
+        {
+          "name": "info.json",
+          "bytes": 85884,
+          "sha256": "3ebcd4f2fc91f789117b23444de443cb5e808791e8343496332c1f97d94056f9"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 37129116,
+          "sha256": "9366a0d2f7c0c200bce1fc7cf53b89d61400883c49ed81474fac632998091d25"
+        }
+      ]
+    },
+    {
+      "case_id": "K07",
+      "source_id": "641253_141",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K07_641253_141",
+      "file_count": 8,
+      "bytes": 174883440,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 57012428,
+          "sha256": "95435126bab04dba89d34fa230eb49ff39110e546da982cd407c4a49e3527dea"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 55973027,
+          "sha256": "3d88393a5abc13b7f4605813a8f1fa7d9314a52bf38207056b4564d3c9b27401"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 833270,
+          "sha256": "a993b26a10f7ec6a411edf6416dd2c398f2b8dd75b70bfd983df9ecace561635"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 945926,
+          "sha256": "aec86b2fa4fcf34c73e222da172482b484b37423fd2bd7e0be70d055ee2c978f"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 859156,
+          "sha256": "6ebdd18eb392f077d110832466549ee813ab2d2babc459a2d3dbdebaee055235"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 2906559,
+          "sha256": "3e132a07cd8232de6000c8fae451c8e25a3feed2136390c5db543e75bc5c78cb"
+        },
+        {
+          "name": "info.json",
+          "bytes": 170696,
+          "sha256": "34bacd5cd0c5203dc8521882ada19a437fa94529bb80320a44d798bbb7700e95"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 56182378,
+          "sha256": "0d977ae7436c6208d4cdeb4f01503e1961305d15c781c97c7d70d3c7f05acbee"
+        }
+      ]
+    },
+    {
+      "case_id": "K08",
+      "source_id": "701535_160",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K08_701535_160",
+      "file_count": 8,
+      "bytes": 82639196,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 28166209,
+          "sha256": "ee1e8dab35bb55098fd0685e30c6f895eeb55601813b63f5947ea696c52b23c0"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 27647400,
+          "sha256": "ee8c951f085c23d79e95fbc8b361d174e90a00bc719f50039356327707e227b2"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 329139,
+          "sha256": "b6b3ff585e02206e3dedd0b1771c45acb9e0c7ef3b9ded46597a5a0e294ae6a9"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 337723,
+          "sha256": "d406b6c52dcb3f5456c68b526c073d715b55b24d2afdb1f998f431b2ce51c7a8"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 332820,
+          "sha256": "905584f914724172d33a5b34bbaa7012f7f0b0db8b4c1718f70113a212da136f"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 841888,
+          "sha256": "0a018ab69f580b88937390c55c2bd931bcab7c8d8874ed12a4c3e06b9170e2ab"
+        },
+        {
+          "name": "info.json",
+          "bytes": 32726,
+          "sha256": "308959b9d4a8c6fb455aee5046acbe9adcbb5040c13e0ad12ca223e2d07f0371"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 24951291,
+          "sha256": "f26096f48fe834d28a9945739e0a2b6fd25d8a98cd58f68510f6574dc726758c"
+        }
+      ]
+    },
+    {
+      "case_id": "K09",
+      "source_id": "717481_124",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K09_717481_124",
+      "file_count": 8,
+      "bytes": 142492331,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 46128749,
+          "sha256": "9c78dc58f1684da2ad0847edc0f7bc7329bbc4c175fe6cab5b9f8b6667a59764"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 44453414,
+          "sha256": "fbfb06cf0335f0e2e6fca5dca035b71d9804ea2d5962c3cd7d90cd3534c29290"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 643280,
+          "sha256": "42443b6aa1a9be3d849964a6e2d74168cb9f70ad8c2abc449566da6ecc024272"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 728461,
+          "sha256": "9bce5ed365cc88c351b277a9efa3475e04d028881b4b32925674a0c77778f5cc"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 656201,
+          "sha256": "7245ec9c9667175388d8a6bdf135f62834d6ffcec7ba93aaae5d36a1a7a96289"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 1765941,
+          "sha256": "1519067515bfaaf9a2d5baccbb195330e480c56bd0caa7406652b8913bbf7a25"
+        },
+        {
+          "name": "info.json",
+          "bytes": 94080,
+          "sha256": "1e90f1454e505239f2a5882917d719dfad0e0554c3d4414e88f47c8e68e04c22"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 48022205,
+          "sha256": "de077558552e507693e6b3020ad19d3ded696afe0ba7c43b91c4d6d47639e52b"
+        }
+      ]
+    },
+    {
+      "case_id": "K10",
+      "source_id": "730656_11",
+      "local_path": "韩漫_KO/01_real_webtoon_cleaned_dataset/K10_730656_11",
+      "file_count": 8,
+      "bytes": 122579303,
+      "files": [
+        {
+          "name": "base.png",
+          "bytes": 40141409,
+          "sha256": "68024b789ff845e20ed7e69195fc3635c675513b4220ce8a7af941126bdb56a0"
+        },
+        {
+          "name": "cleaned.png",
+          "bytes": 37839419,
+          "sha256": "d6c04ac19313f96777516c2eefab4546bd2d0c3b6f2f961a7335b21e19091989"
+        },
+        {
+          "name": "clean_mask.png",
+          "bytes": 650225,
+          "sha256": "15e9bcb8b6d020af0aeba5cf3f17c2e408c779c97c85a0d2605056a0534e752a"
+        },
+        {
+          "name": "conf_bubble_seg.png",
+          "bytes": 739108,
+          "sha256": "81fefdfb4dc66016eb0c3c573b341abbcae5ab41a6811ec80418f24ad27a0cad"
+        },
+        {
+          "name": "conf_text_seg.png",
+          "bytes": 659400,
+          "sha256": "55d78a731e127f8d59aa0d1118387487649cde6c8871127fe07ad2ead4126564"
+        },
+        {
+          "name": "conf_text_ctd.png",
+          "bytes": 1801927,
+          "sha256": "638f12ea8b4b1c4a7a6066b3d2ae196a4572011d555951f2f65f12533983f759"
+        },
+        {
+          "name": "info.json",
+          "bytes": 114447,
+          "sha256": "2d0ce78f7b81be9f2001d219a1243289baf380eba4d168f4399b9d957d7a6ec5"
+        },
+        {
+          "name": "visualization.png",
+          "bytes": 40633368,
+          "sha256": "a986b7be2cafefa6d27ab4e03c212b7ad29db0d1283fd050613c39e78ab73299"
+        }
+      ]
+    }
+  ]
+}

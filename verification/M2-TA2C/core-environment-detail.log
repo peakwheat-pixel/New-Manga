@@ -1,0 +1,59 @@
+Shell=PowerShell; Python=C:\Python314\python.exe; Tested_HEAD=2e9797013dcb73280462a7b34390abcb2be12977; Command=python -m pytest tests/core -q --tb=short
+
+=================================== ERRORS ====================================
+___________ ERROR collecting tests/core/test_page_catalog_modes.py ____________
+ImportError while importing test module 'C:\Users\49745\.codex\worktrees\no-hf-comic-assets\New Manga\tests\core\test_page_catalog_modes.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\core\test_page_catalog_modes.py:17: in <module>
+    from bootstrap.app import (
+src\bootstrap\app.py:36: in <module>
+    from PySide6.QtCore import QTimer, QUrl
+E   ModuleNotFoundError: No module named 'PySide6'
+_______ ERROR collecting tests/core/test_pipeline_defaults_assembly.py ________
+ImportError while importing test module 'C:\Users\49745\.codex\worktrees\no-hf-comic-assets\New Manga\tests\core\test_pipeline_defaults_assembly.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\core\test_pipeline_defaults_assembly.py:19: in <module>
+    from bootstrap.app import assemble_services
+src\bootstrap\app.py:36: in <module>
+    from PySide6.QtCore import QTimer, QUrl
+E   ModuleNotFoundError: No module named 'PySide6'
+________ ERROR collecting tests/core/test_pipeline_defaults_service.py ________
+ImportError while importing test module 'C:\Users\49745\.codex\worktrees\no-hf-comic-assets\New Manga\tests\core\test_pipeline_defaults_service.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\core\test_pipeline_defaults_service.py:19: in <module>
+    from bootstrap.app import _load_pipeline_defaults
+src\bootstrap\app.py:36: in <module>
+    from PySide6.QtCore import QTimer, QUrl
+E   ModuleNotFoundError: No module named 'PySide6'
+______ ERROR collecting tests/core/test_transport_credential_assembly.py ______
+ImportError while importing test module 'C:\Users\49745\.codex\worktrees\no-hf-comic-assets\New Manga\tests\core\test_transport_credential_assembly.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Python314\Lib\importlib\__init__.py:88: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\core\test_transport_credential_assembly.py:18: in <module>
+    from bootstrap.app import _credential_resolver, _credential_store, assemble_services
+src\bootstrap\app.py:36: in <module>
+    from PySide6.QtCore import QTimer, QUrl
+E   ModuleNotFoundError: No module named 'PySide6'
+=========================== short test summary info ===========================
+ERROR tests/core/test_page_catalog_modes.py
+ERROR tests/core/test_pipeline_defaults_assembly.py
+ERROR tests/core/test_pipeline_defaults_service.py
+ERROR tests/core/test_transport_credential_assembly.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 4 errors during collection !!!!!!!!!!!!!!!!!!!
+1 skipped, 4 errors in 0.42s
+EXIT=2

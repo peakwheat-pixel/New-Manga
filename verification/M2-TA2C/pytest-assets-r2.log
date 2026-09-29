@@ -1,0 +1,4 @@
+Shell=PowerShell; Python=C:\Python314\python.exe; Tested_HEAD=66dc361dac18b02fe3e4b773e9d0091ce6e37f60; Command=python -m pytest tests/m2_test_assets -q
+.........................                                                [100%]
+25 passed in 0.62s
+EXIT=0

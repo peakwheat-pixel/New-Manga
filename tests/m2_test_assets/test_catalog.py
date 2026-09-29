@@ -30,8 +30,8 @@ def make_webtoon_case(local_path="ko/test"):
 def test_manifest_has_unique_cases_and_exact_taxonomy():
     manifest = assets.load_manifest()
     cases = manifest["cases"]
-    assert len(cases) == 65
-    assert len({case["case_id"] for case in cases}) == 65
+    assert len(cases) == 68
+    assert len({case["case_id"] for case in cases}) == 68
     assert manifest["taxonomy"]["difficulty_tags"] == [
         "normal_dialogue", "dense_dialogue", "tiny_text", "huge_text",
         "vertical_text", "horizontal_text", "rotated_text", "curved_text",
@@ -40,6 +40,26 @@ def test_manifest_has_unique_cases_and_exact_taxonomy():
     ]
     assert len(assets.selected(manifest, "ko", "smoke")) == 10
     assert len(assets.selected(manifest, "ja", "smoke")) == 10
+    assert {case["case_id"] for case in cases if case["case_id"] in {"K11", "K12", "K13"}} == {"K11", "K12", "K13"}
+    assert all(case["levels"] == ["regression", "full"] for case in cases if case["case_id"] in {"K11", "K12", "K13"})
+    assert all(case["pipeline_status"] == {stage: "NOT_RUN" for stage in case["expected_pipeline"]} for case in cases)
+
+
+def test_source_registry_does_not_count_code_or_blocked_assets_as_ready():
+    manifest = assets.load_manifest()
+    sources = manifest["benchmark_sources"]
+    by_id = {source["id"]: source for source in sources}
+    assert len({source["id"] for source in sources}) == len(sources)
+    assert all(case["source_id"] and case["source_url"].startswith("https://") for case in manifest["cases"])
+    assert all(source["local_file_count"] > 0 for source in sources if source["status"] == "READY")
+    assert all(source["local_file_count"] == 0 for source in sources if source["id"] in {
+        "openmantra_candidate", "jmangabench", "text_mask", "artificial_manga", "ebdtheque", "public_domain_japan"
+    })
+    assert all(not case["image_available"] for case in manifest["cases"] if case["asset_type"] == "manga109_title")
+    assert by_id["ko_sfx_dialogue_cleaned_webtoon"]["status"] == "READY"
+    assert all(by_id[source_id]["checksum_inventory"] == "test_assets/comic_golden_suite/manifests/local_asset_inventory.json" for source_id in (
+        "coo_and_manga109_dialog", "peppercarrot_japanese_localized_pages", "peppercarrot_korean_localized_pages"
+    ))
 
 
 def test_manifest_rejects_path_escape(tmp_path):

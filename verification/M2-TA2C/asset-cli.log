@@ -1,0 +1,131 @@
+Shell=PowerShell; Python=C:\Python314\python.exe; Tested_HEAD=2e9797013dcb73280462a7b34390abcb2be12977
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py list --level smoke
+K01	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K01_724815_1
+K02	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K02_651664_112
+K03	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K03_671421_148
+K04	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K04_670145_145
+K05	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K05_131385_302
+K06	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K06_570506_196
+K07	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K07_641253_141
+K08	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K08_701535_160
+K09	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+J38	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep04
+J39	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep04
+J40	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep04
+J41	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J42	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J43	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J44	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J45	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J46	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J47	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+SUMMARY	READY=20
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level smoke
+J38	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep04
+J39	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep04
+J40	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep04
+J41	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J42	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J43	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J44	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J45	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J46	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+J47	ja	READY	����_JA/02_open_ground_truth_peppercarrot/ep20
+SUMMARY	READY=10
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level smoke
+K01	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K01_724815_1
+K02	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K02_651664_112
+K03	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K03_671421_148
+K04	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K04_670145_145
+K05	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K05_131385_302
+K06	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K06_570506_196
+K07	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K07_641253_141
+K08	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K08_701535_160
+K09	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K09_717481_124
+K10	ko	READY	����_KO/01_real_webtoon_cleaned_dataset/K10_730656_11
+SUMMARY	READY=10
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py verify --language ko --level regression --case-id K11 --case-id K12 --case-id K13
+K11	ko	READY	����_KO/02_public_ground_truth_peppercarrot/ep04
+K12	ko	READY	����_KO/02_public_ground_truth_peppercarrot/ep04
+K13	ko	READY	����_KO/02_public_ground_truth_peppercarrot/ep04
+SUMMARY	READY=3
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py missing --level regression
+O01	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O01_E06
+O02	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O02_E12
+O03	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O03_E16
+O04	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O04_E19
+O05	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O05_E22
+O06	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O06_E24
+O07	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O07_E28
+O08	ko	MISSING	����_KO/02_open_ground_truth_peppercarrot/O08_E29
+J01	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/01_dialogue_romance/AisazuNihaIrarenai
+J02	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/01_dialogue_romance/AosugiruHaru
+J03	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/01_dialogue_romance/KimiHaBokuNoTaiyouDa
+J04	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/01_dialogue_romance/YukiNoFuruMachi
+J05	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/01_dialogue_romance/YumeiroCooking
+J06	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/02_battle_sfx/AkkeraKanjinchou
+J07	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/02_battle_sfx/DollGun
+J08	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/02_battle_sfx/DualJustice
+J09	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/02_battle_sfx/MAD_STONE
+J10	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/02_battle_sfx/SeisinkiVulnus
+J11	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/03_fantasy_sf/ARMS
+J12	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/03_fantasy_sf/BEMADER_P
+J13	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/03_fantasy_sf/PLANET7
+J14	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/03_fantasy_sf/ParaisoRoad
+J15	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/03_fantasy_sf/MagicStarGakuin
+J16	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/04_yonkoma/Akuhamu
+J17	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/04_yonkoma/OL_Lunch
+J18	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/04_yonkoma/KoukouNoHitotachi
+J19	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/04_yonkoma/YouchienBoueigumi
+J20	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/05_horror_suspense/MayaNoAkaiKutsu
+J21	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/05_horror_suspense/KuroidoGanka
+J22	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/05_horror_suspense/Ningyoushi
+J23	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/05_horror_suspense/PlatinumJungle
+J24	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/05_horror_suspense/SyabondamaKieta
+J25	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/06_sports/Count3DeKimeteAgeru
+J26	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/06_sports/Jyovolley
+J27	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/06_sports/KyokugenCyclone
+J28	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/06_sports/RisingGirl
+J29	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/06_sports/YamatoNoHane
+J30	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/07_comedy/GarakutayaManta
+J31	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/07_comedy/JijiBabaFight
+J32	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/07_comedy/LancelotFullThrottle
+J33	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/07_comedy/Nekodama
+J34	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/08_historical/BurariTessenTorimonocho
+J35	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/08_historical/JangiriPonpon
+J36	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/08_historical/MomoyamaHaikagura
+J37	ja	MISSING_GATED_ASSET	����_JA/01_manga109_real/08_historical/RinToSiteSippuNoNaka
+SUMMARY	MISSING=8 MISSING_GATED_ASSET=37 READY=23
+INVENTORY	checked=92 missing=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py download --language ko --level regression --case-id K11 --case-id K12 --case-id K13
+K11	DOWNLOADED	files=0 existing=2
+K12	DOWNLOADED	files=0 existing=2
+K13	DOWNLOADED	files=0 existing=2
+SUMMARY	downloaded=0 existing=6 gated_cases=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py download --language ja --level smoke
+J38	DOWNLOADED	files=0 existing=2
+J39	DOWNLOADED	files=0 existing=2
+J40	DOWNLOADED	files=0 existing=2
+J41	DOWNLOADED	files=0 existing=2
+J42	DOWNLOADED	files=0 existing=2
+J43	DOWNLOADED	files=0 existing=2
+J44	DOWNLOADED	files=0 existing=2
+J45	DOWNLOADED	files=0 existing=2
+J46	DOWNLOADED	files=0 existing=2
+J47	DOWNLOADED	files=0 existing=2
+SUMMARY	downloaded=0 existing=20 gated_cases=0 failures=0
+EXIT=0
+COMMAND=python test_assets/comic_golden_suite/tools/assets.py download --language ko --level smoke
+SUMMARY	downloaded=0 existing=80 gated_cases=0 failures=0
+EXIT=0
