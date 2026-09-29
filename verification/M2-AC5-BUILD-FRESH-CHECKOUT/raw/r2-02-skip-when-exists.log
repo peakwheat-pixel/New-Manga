@@ -1,0 +1,3 @@
+# shell=powershell powershell.exe cwd=<repo root> HEAD=e2aa8d07fb3b02d01fec3b35da7a41dde0d9781b date=2026-09-29T18:07:47Z cmd=powershell -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1  (r1 P2-1 tip-bound rerun: bundle exists, no -Force -> skip)
+build_sidecar: target exists, skipping (use -Force to rebuild)
+# EXIT=0

@@ -1,0 +1,281 @@
+# shell=powershell powershell.exe cwd=<repo root> HEAD=e2aa8d07fb3b02d01fec3b35da7a41dde0d9781b date=2026-09-29T18:07:57Z cmd=powershell -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force  (r1 P2-1 tip-bound rerun: -Force -> full PyInstaller rebuild)
+build_sidecar: git HEAD=e2aa8d07fb3b02d01fec3b35da7a41dde0d9781b pyinstaller=6.22.3 python=G:\CODEX\New Manga.task-envs\m2ac5-build\Scripts\python.exe
+99 INFO: PyInstaller: 6.22.3, contrib hooks: 2026.7
+99 INFO: Python: 3.12.3
+117 INFO: Platform: Windows-11-10.0.26200-SP0
+117 INFO: Python environment: G:\CODEX\New Manga.task-envs\m2ac5-build
+118 INFO: Removing temporary files and cleaning cache in C:\Users\49745\AppData\Local\pyinstaller
+128 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src']
+334 INFO: checking Analysis
+334 INFO: Building Analysis because Analysis-00.toc is non existent
+334 INFO: Looking for Python shared library...
+334 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+334 INFO: Running Analysis Analysis-00.toc
+334 INFO: Target bytecode optimization level: 1
+334 INFO: Initializing module dependency graph...
+334 INFO: Initializing module graph hook caches...
+343 INFO: Analyzing modules for base_library.zip ...
+1084 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+1454 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+2001 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+2491 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+2727 INFO: Caching module dependency graph...
+2749 INFO: Analyzing G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\packaging\m2ac5\entries\entry_host_bridge.py
+2777 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+3020 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+3044 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+3067 INFO: Processing module hooks (post-graph stage)...
+3081 INFO: Performing binary vs. data reclassification (1 entries)
+3082 INFO: Looking for ctypes DLLs
+3086 INFO: Analyzing run-time hooks ...
+3086 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+3089 INFO: Creating base_library.zip...
+3216 INFO: Looking for dynamic libraries
+3337 INFO: Extra DLL search directories (AddDllDirectory): []
+3337 INFO: Extra DLL search directories (PATH): []
+3482 INFO: Warnings written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+3492 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+3502 INFO: checking PYZ
+3502 INFO: Building PYZ because PYZ-00.toc is non existent
+3502 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-00.pyz
+3868 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-00.pyz completed successfully.
+3871 INFO: checking PKG
+3871 INFO: Building PKG because PKG-00.toc is non existent
+3871 INFO: Building PKG (CArchive) host_bridge.pkg
+3885 INFO: Building PKG (CArchive) host_bridge.pkg completed successfully.
+3886 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+3886 INFO: checking EXE
+3886 INFO: Building EXE because EXE-00.toc is non existent
+3886 INFO: Building EXE from EXE-00.toc
+3886 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\host_bridge.exe
+3916 INFO: Copying icon to EXE
+3943 INFO: Copying 0 resources to EXE
+3943 INFO: Embedding manifest in EXE
+3968 INFO: Appending PKG archive to EXE
+3994 INFO: Fixing EXE headers
+4117 INFO: Building EXE from EXE-00.toc completed successfully.
+4118 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src']
+4325 INFO: checking Analysis
+4325 INFO: Building Analysis because Analysis-01.toc is non existent
+4325 INFO: Looking for Python shared library...
+4325 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+4325 INFO: Running Analysis Analysis-01.toc
+4325 INFO: Target bytecode optimization level: 1
+4325 INFO: Reusing cached module dependency graph...
+4347 INFO: Initializing module graph hook caches...
+4356 INFO: Analyzing G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\packaging\m2ac5\entries\entry_core_service.py
+4379 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+4625 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+4775 INFO: Processing standard module hook 'hook-difflib.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+4775 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+4854 INFO: Processing standard module hook 'hook-PySide6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+4986 INFO: Processing standard module hook 'hook-shiboken6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+5076 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+5700 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6259 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6945 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+6963 INFO: Processing module hooks (post-graph stage)...
+6963 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+7177 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+7177 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+7195 INFO: Performing binary vs. data reclassification (119 entries)
+7226 INFO: Looking for ctypes DLLs
+7229 INFO: Analyzing run-time hooks ...
+7231 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+7232 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+7232 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+7235 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+7243 INFO: Creating base_library.zip...
+7386 INFO: Looking for dynamic libraries
+7639 INFO: Extra DLL search directories (AddDllDirectory): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\shiboken6']
+7639 INFO: Extra DLL search directories (PATH): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PySide6']
+8318 INFO: Warnings written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+8334 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+8346 INFO: checking PYZ
+8346 INFO: Building PYZ because PYZ-01.toc is non existent
+8346 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-01.pyz
+8904 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-01.pyz completed successfully.
+8910 INFO: checking PKG
+8910 INFO: Building PKG because PKG-01.toc is non existent
+8910 INFO: Building PKG (CArchive) core_service.pkg
+8925 INFO: Building PKG (CArchive) core_service.pkg completed successfully.
+8927 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+8927 INFO: checking EXE
+8927 INFO: Building EXE because EXE-01.toc is non existent
+8927 INFO: Building EXE from EXE-01.toc
+8927 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\core_service.exe
+8953 INFO: Copying icon to EXE
+8979 INFO: Copying 0 resources to EXE
+8979 INFO: Embedding manifest in EXE
+9004 INFO: Appending PKG archive to EXE
+9034 INFO: Fixing EXE headers
+9161 INFO: Building EXE from EXE-01.toc completed successfully.
+9163 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src']
+9379 INFO: checking Analysis
+9379 INFO: Building Analysis because Analysis-02.toc is non existent
+9379 INFO: Looking for Python shared library...
+9379 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+9379 INFO: Running Analysis Analysis-02.toc
+9379 INFO: Target bytecode optimization level: 1
+9379 INFO: Reusing cached module dependency graph...
+9393 INFO: Initializing module graph hook caches...
+9404 INFO: Analyzing G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\packaging\m2ac5\entries\entry_acceptance_bridge.py
+9470 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9509 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9823 INFO: Processing standard module hook 'hook-difflib.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9823 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9903 INFO: Processing standard module hook 'hook-PySide6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9906 INFO: Processing standard module hook 'hook-shiboken6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+9989 INFO: Processing standard module hook 'hook-PySide6.QtNetwork.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+10612 INFO: Processing standard module hook 'hook-PySide6.QtCore.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+11182 INFO: Processing standard module hook 'hook-PySide6.QtGui.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+11874 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+11905 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+11920 INFO: Processing module hooks (post-graph stage)...
+11922 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+12125 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+12139 INFO: Performing binary vs. data reclassification (119 entries)
+12161 INFO: Looking for ctypes DLLs
+12165 INFO: Analyzing run-time hooks ...
+12167 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+12169 INFO: Including run-time hook 'pyi_rth_pyside6.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+12170 INFO: Processing pre-find-module-path hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\pre_find_module_path'
+12170 INFO: Processing standard module hook 'hook-_pyi_rth_utils.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+12176 INFO: Creating base_library.zip...
+12304 INFO: Looking for dynamic libraries
+12567 INFO: Extra DLL search directories (AddDllDirectory): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\shiboken6']
+12567 INFO: Extra DLL search directories (PATH): ['G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PySide6']
+13242 INFO: Warnings written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+13259 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+13271 INFO: checking PYZ
+13271 INFO: Building PYZ because PYZ-02.toc is non existent
+13271 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-02.pyz
+13803 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-02.pyz completed successfully.
+13809 INFO: checking PKG
+13809 INFO: Building PKG because PKG-02.toc is non existent
+13811 INFO: Building PKG (CArchive) acceptance_bridge.pkg
+13826 INFO: Building PKG (CArchive) acceptance_bridge.pkg completed successfully.
+13826 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+13826 INFO: checking EXE
+13826 INFO: Building EXE because EXE-02.toc is non existent
+13826 INFO: Building EXE from EXE-02.toc
+13826 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\acceptance_bridge.exe
+13854 INFO: Copying icon to EXE
+13880 INFO: Copying 0 resources to EXE
+13880 INFO: Embedding manifest in EXE
+13904 INFO: Appending PKG archive to EXE
+13937 INFO: Fixing EXE headers
+14065 INFO: Building EXE from EXE-02.toc completed successfully.
+14067 INFO: Module search paths (PYTHONPATH):
+['G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\python312.zip',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\DLLs',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312\\Lib',
+ 'C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python312',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build',
+ 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src',
+ 'G:\\CODEX\\New '
+ 'Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\packaging\\m2ac5\\entries',
+ 'G:\\CODEX\\New Manga.worktrees\\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\\src']
+14278 INFO: checking Analysis
+14278 INFO: Building Analysis because Analysis-03.toc is non existent
+14279 INFO: Looking for Python shared library...
+14279 INFO: Using Python shared library: C:\Users\49745\AppData\Local\Programs\Python\Python312\python312.dll
+14279 INFO: Running Analysis Analysis-03.toc
+14279 INFO: Target bytecode optimization level: 1
+14279 INFO: Reusing cached module dependency graph...
+14294 INFO: Initializing module graph hook caches...
+14304 INFO: Analyzing G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\packaging\m2ac5\entries\entry_catalog_loader.py
+14334 INFO: Processing standard module hook 'hook-sqlite3.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14563 INFO: Processing standard module hook 'hook-platform.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14589 INFO: Processing standard module hook 'hook-_ctypes.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14600 INFO: Processing standard module hook 'hook-math.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14613 INFO: Processing module hooks (post-graph stage)...
+14614 INFO: Processing standard module hook 'hook-encodings.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14819 INFO: Processing standard module hook 'hook-heapq.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14819 INFO: Processing standard module hook 'hook-pickle.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks'
+14831 INFO: Performing binary vs. data reclassification (1 entries)
+14833 INFO: Looking for ctypes DLLs
+14836 INFO: Analyzing run-time hooks ...
+14837 INFO: Including run-time hook 'pyi_rth_inspect.py' from 'G:\\CODEX\\New Manga.task-envs\\m2ac5-build\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks'
+14840 INFO: Creating base_library.zip...
+14968 INFO: Looking for dynamic libraries
+15086 INFO: Extra DLL search directories (AddDllDirectory): []
+15086 INFO: Extra DLL search directories (PATH): []
+15247 INFO: Warnings written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\warn-core_sidecar.txt
+15258 INFO: Graph cross-reference written to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\xref-core_sidecar.html
+15267 INFO: checking PYZ
+15267 INFO: Building PYZ because PYZ-03.toc is non existent
+15267 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-03.pyz
+15624 INFO: Building PYZ (ZlibArchive) G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\PYZ-03.pyz completed successfully.
+15629 INFO: checking PKG
+15629 INFO: Building PKG because PKG-03.toc is non existent
+15629 INFO: Building PKG (CArchive) catalog_loader.pkg
+15642 INFO: Building PKG (CArchive) catalog_loader.pkg completed successfully.
+15644 INFO: Bootloader G:\CODEX\New Manga.task-envs\m2ac5-build\Lib\site-packages\PyInstaller\bootloader\Windows-64bit-intel\run.exe
+15644 INFO: checking EXE
+15644 INFO: Building EXE because EXE-03.toc is non existent
+15644 INFO: Building EXE from EXE-03.toc
+15644 INFO: Copying bootloader EXE to G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\pyinstaller-work\core_sidecar\catalog_loader.exe
+15671 INFO: Copying icon to EXE
+15698 INFO: Copying 0 resources to EXE
+15698 INFO: Embedding manifest in EXE
+15724 INFO: Appending PKG archive to EXE
+15750 INFO: Fixing EXE headers
+15874 INFO: Building EXE from EXE-03.toc completed successfully.
+15877 INFO: checking COLLECT
+15877 INFO: Building COLLECT because COLLECT-00.toc is non existent
+15877 INFO: Removing dir G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\core-sidecar\core-sidecar
+15901 INFO: Building COLLECT COLLECT-00.toc
+16222 INFO: Building COLLECT COLLECT-00.toc completed successfully.
+16223 INFO: Build complete! The results are available in: G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\core-sidecar
+build_sidecar: OK -> G:\CODEX\New Manga.worktrees\M2-AC5-BUILD-FRESH-CHECKOUT-zcode\apps\desktop\src-tauri\target\core-sidecar\core-sidecar (HEAD=e2aa8d07fb3b02d01fec3b35da7a41dde0d9781b, pyinstaller=6.22.3)
+# EXIT=0

@@ -31,6 +31,49 @@ C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe -m venv "G:/CO
 
 ## 2. 构建步骤
 
+### 2.0 fresh checkout：先跑 build_sidecar.ps1（M2-AC5-BUILD-FRESH-CHECKOUT）
+
+sidecar onedir 产物（`apps/desktop/src-tauri/target/core-sidecar/core-sidecar/`）
+是 **gitignored 构建产物**：fresh clone / fresh worktree 里不存在，而
+`tauri.conf.json` 的 `bundle.resources` 引用它，任何 cargo 驱动的构建
+（`cargo check` / `cargo test` / `cargo build` / `tauri build`）在编译期都
+需要它存在。
+
+因此 fresh checkout 的第一件事（先于一切 cargo 命令）：
+
+```powershell
+# 若还没有构建 venv，先按 §1 建好（一次性）
+powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1
+```
+
+然后即可正常 `cargo check` / `cargo test` / `npm run tauri build`。
+
+防护语义：
+
+- **漏跑先建直接 cargo 时 fail-closed 且可诊断**：`apps/desktop/src-tauri/build.rs`
+  在 `tauri_build::try_build` 之前探测该目录，缺失时 panic，首行即
+  `missing sidecar bundle: ...`，并给出修复指引（运行
+  `packaging/m2ac5/build_sidecar.ps1`，详见本 README）。替代了此前
+  tauri 内部报错 `resource path ... doesn't exist`（不可操作，M2-AC5
+  integration i1 EXIT=101 根因）。
+- **脚本幂等短路**：产物目录已存在时 `build_sidecar.ps1` 直接输出
+  `build_sidecar: target exists, skipping (use -Force to rebuild)` 并
+  EXIT=0（且不要求构建 venv 存在），可安全纳入自动化流程；需要强制
+  全量重建时加 `-Force`。注意短路只判目录存在，不校验产物完整性；
+  产物损坏（缺 exe 等）时全量构建路径的 layout sanity gate 会
+  throw——此时手动 `-Force` 重建。
+
+### 2.x 为什么不用 tauri.conf.json 的 `beforeBuildCommand`（方案冻结）
+
+`beforeBuildCommand` 只在 **tauri CLI 流程**（`tauri dev` / `tauri build`）
+里生效；开发者与 CI 的主路径是 `cargo check` / `cargo test`（不经 tauri
+CLI），它们完全覆盖不到。而 build.rs 在**所有** cargo 驱动的构建路径都会
+执行——单一探测点覆盖全部入口，无需为 tauri CLI 再维护第二套钩子，也不
+必改动共享的 `tauri.conf.json`。故方案冻结选择 build.rs 前置探测 +
+fail-closed 指引，不采用 `beforeBuildCommand`。
+
+### 2.a–2.c 常规构建步骤
+
 ```powershell
 # 2a. frontend（tauri::generate_context! 要求 dist 存在）
 cd apps/desktop/frontend

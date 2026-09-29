@@ -1,0 +1,3 @@
+# shell: cwd=<repo root> cmd=powershell -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1  (AC2: bundle exists, no -Force -> skip)
+build_sidecar: target exists, skipping (use -Force to rebuild)
+# EXIT=0

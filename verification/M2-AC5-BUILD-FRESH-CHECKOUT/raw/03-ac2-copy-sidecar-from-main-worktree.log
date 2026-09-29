@@ -1,0 +1,9 @@
+# shell: cwd=<repo root> cmd=robocopy main-worktree target/core-sidecar -> worktree same path (read-only copy, main workspace untouched)
+
+robocopy exit=1 (0-7 = success per robocopy convention)
+_internal
+acceptance_bridge.exe
+catalog_loader.exe
+core_service.exe
+host_bridge.exe
+# EXIT=0

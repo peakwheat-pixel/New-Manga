@@ -1,0 +1,6 @@
+# shell: cwd=<repo root> cmd=robocopy main-worktree frontend/dist -> worktree same path (read-only copy of gitignored build output; generate_context! requires dist to exist)
+
+robocopy exit=1 (0-7 = success per robocopy convention)
+assets
+index.html
+# EXIT=0

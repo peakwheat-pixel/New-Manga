@@ -1,0 +1,17 @@
+# shell: cwd=apps/desktop/src-tauri cmd=cargo check  (AC3/AC1 green: sidecar bundle exists -> probe passes, build succeeds)
+
+warning: methods `set_books` and `set_books_error` are never used
+   --> src\library_bridge.rs:306:12
+    |
+294 | impl MockLibraryChannel {
+    | ----------------------- methods in this implementation
+...
+306 |     pub fn set_books(&self, books: Vec<BookSummary>) {
+    |            ^^^^^^^^^
+...
+310 |     pub fn set_books_error(&self, error: LibraryError) {
+    |            ^^^^^^^^^^^^^^^
+
+warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 5 warnings (run `cargo fix --bin "m2rc1-desktop" -p m2rc1-desktop` to apply 1 suggestion)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 5.74s
+# EXIT=0
