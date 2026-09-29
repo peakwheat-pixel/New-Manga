@@ -2,7 +2,7 @@
 id: M2-TA2C
 title: No-HF JA/KO Asset Migration
 kind: asset_infrastructure
-status: ready
+status: in_progress
 approval: user_authorized_2026-09-29
 suggested_owner: Codex Desktop
 owner: Codex Desktop
@@ -10,7 +10,7 @@ reviewer: DeepSeek Harness
 depends_on: [M2-TA1, M2-TA2A]
 base_commit: d4d3977907bc64177ef85c61da4c95901f135fc6
 branch: agent/codex/M2-TA2C-no-hf-assets
-worktree: pending_codex_managed_worktree
+worktree: C:/Users/49745/.codex/worktrees/no-hf-comic-assets/New Manga
 integration_commit: null
 ---
 
@@ -51,4 +51,4 @@ M2-TA1 与 M2-TA2A 均已 `done`，本 Task 可释放。来源/许可只读审�
 
 ## 交付与 Gate
 
-Owner 交付固定实现 HEAD、Handoff、可复核的命令/EXIT/环境日志；DeepSeek Harness 在固定 HEAD 独立 Review；Codex 仅在无未解决 P0/P1 且关键验证完成后集成并复验，之后才可置 `done`。当前状态 `ready`，尚未认领；worktree 创建后回填实际路径。
+Owner 交付固定实现 HEAD、Handoff、可复核的命令/EXIT/环境日志；DeepSeek Harness 在固定 HEAD 独立 Review；Codex 仅在无未解决 P0/P1 且关键验证完成后集成并复验，之后才可置 `done`。已在上述 linked worktree 认领，Git common directory=`G:/CODEX/New Manga/.git`。
