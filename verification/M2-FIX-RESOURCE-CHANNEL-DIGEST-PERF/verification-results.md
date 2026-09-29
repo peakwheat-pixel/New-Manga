@@ -41,11 +41,13 @@
 - debug 被未优化 SHA256 主导（两路线每请求均必须全文件 hash 一次，语义要求），冗余读消除在 release 真实 IO 口径显现；16MiB 档（chunk0=整文件，三读=3×全文件读→1×）收益最大。
 - **F02 P3-9 闭合**：release 基线 1MiB=898µs，较 F02 冻结的 debug 18424.5µs 低 ~20 倍，"release 构建显著低于该量级"由 unverified 转为实测 verified。
 
-## 4. AC4 对照（warning 集合 stash 对照）
+## 4. AC4 对照（warning 集合，raw 可核验口径；集成方更正 2026-09-29，闭合 DSH r1 C1/P3-1）
 
-- 基线（9df29a6f+探针）`cargo build`：6 warnings，含 `warning: field 'grant' is never read`（CachedGrant）。
-- 优化后（5d7cff11）：5 warnings，`field 'grant' is never read` 消失；其余 5 条（`MockCoreChannel`/`MockEntry` never constructed、`new/register/issue_internal` never used、`set_books*` never used——均非 test 构建下测试专用结构既有告警；`std::sync::Arc` unused——基线既有）逐条与基线 diff 一致，无新增。
-- raw/v3 为 AC4 判定日志（grep "never read" 空输出）。
+> **更正声明（集成方）**：本节原稿以"基线 6 warnings / 优化后 5 warnings 逐条 diff"作证并归因于 `raw/v3` 头注——该归因不实（`raw/v3:1-6` 仅有 grep 命令与空输出），且 6/5 数字来自 Owner 的 stash 对照会话、**未留 raw 原件，现予作废**。以下改以 raw/ 内可直接核验的 warning 全量清单为准（`cargo test` 构建 warning 口径，DSH r1 P3-1 建议采信的同一组日志）：
+
+- **基线**（源码态 `9df29a6f`，探针在位）：**3 warnings** — ① `unused import: std::sync::Arc`（`b2:8`/`v6c:9`）；② `unused import: CHUNK_SIZE`（`b2:16`/`v6c:17`）；③ **`field 'grant' is never read`**（`b2:22`/`v6c:23`，CachedGrant 死字段）。计数行：`b2:32`/`v6c:33`（"generated 3 warnings"）。
+- **优化后**（`5d7cff11`）：**2 warnings** — ① `std::sync::Arc`（`v1:6`/`v6a:12`，基线既有）；② `CHUNK_SIZE`（`v1:14`/`v6a:20`，基线既有）。计数行：`v1:20`/`v6a:26`（"generated 2 warnings"）。**`field 'grant' is never read` 消失，无新增 warning**（两清单逐条对照：3−1=2，仅删死字段告警）。
+- AC4 判定日志仍为 `raw/v3`（`cargo build | grep "never read"` 空输出）；本节 warning 集合对照由上述 5 份 raw 日志独立支撑，集成复跑 `raw/i1-i3`（i3 grep 空输出）再次证实。
 
 ## 5. 范围自检（AC5）
 
@@ -56,3 +58,20 @@ raw/v5：`git diff --name-status 956e6c3a..5d7cff11` 中 Owner 三 commit（b43a
 - 触点 6 机理对照实验（可选授权项）：未实施。
 - `tests/core` 全量：按指令仅 per-chunk 实施时要求；Python 面零改动。
 - 真 Core sidecar f02 复放、时钟矩阵穷举：F02 集成遗留，维持登记。
+
+## 7. 交付后与集成复跑台账（集成方登记 2026-09-29，闭合 DSH r1 C2/P3-2）
+
+- `raw/v7-post-delivery-diffcheck.log`（Owner 交付 commit `64e6c9a7` 的整树 diff-check，EXIT=0）补登记入台账；该日志缺命令回显与尾部 EXIT 行的格式缺陷如实保留（历史原件不改写）。终 tip `510202ac` 自身唯一增量即 v7 日志文件，其绑定 diff-check 由集成复跑 i7（`956e6c3a..510202ac` EXIT=0）覆盖闭合。
+
+### 集成复跑（integration replay，HEAD=merge `bc2529f0`，parents `1ca5328c`+`510202ac`）
+
+| # | 验证项 | 实测 | EXIT | 日志（raw/） |
+|---|---|---|---|---|
+| i1 | `cargo test --bin m2rc1-desktop` 全量 | 34 passed; 0 failed; 1 ignored | 0 | i1-i3-cargo-integration.log |
+| i2 | `f02_equal_size_rewrite_stability_loop`（50 轮） | 1 passed | 0 | 同上 |
+| i3 | `cargo build \| grep "never read"` | 空输出（grep EXIT=1） | 1（PASS 判据） | 同上 |
+| i4 | `pytest tests/m2_acceptance -q` | **35 passed** | 0 | i4-i8-pytest-vitest-diffcheck-integration.log |
+| i5 | `npx vitest run` | 5 files / **31 tests passed** | 0 | 同上 |
+| i6 | `git diff --check 956e6c3a..bc2529f0`（集成 head） | 空 | 0 | 同上 |
+| i7 | `git diff --check 956e6c3a..510202ac`（Owner 终 tip，C2 闭合） | 空 | 0 | 同上 |
+| i8 | `git diff --name-only 6c3d7b34..510202ac`（Owner delta 范围） | 全落无条件允许路径 | — | 同上 |

@@ -2,7 +2,7 @@
 id: M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF
 title: Resource channel digest 重验成本优化（单趟 hash+capture / per-chunk digest）与 GrantCache 死结构收敛
 kind: fix
-status: in_progress
+status: done
 release_state: M2_FIX_DIGEST_PERF_RELEASED
 approval: approved_by_user_2026-09-29_digestperf_release
 execution_approval: approved_by_user_2026-09-29_digestperf_release
@@ -15,9 +15,9 @@ base_commit: 956e6c3ad3b37fdc274cd6353b285da530e7aeaf
 branch: agent/zcode/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF
 worktree: G:/CODEX/New Manga.worktrees/M2-FIX-DIGEST-PERF-zcode
 delivery_head: 5d7cff11315b36a9b43390e28930a91d39282496
-review: null
-integration_merge: null
-dispatch_state: DELIVERED_FOR_REVIEW
+review: doc/reviews/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF-5d7cff11-dsh-r1.md (approved_with_conditions, 0xP0/P1/P2; C1-C4 closed at integration)
+integration_merge: bc2529f02dfbd3c378d5e9cd4c9f7ac2ecfe4f15
+dispatch_state: INTEGRATED
 ---
 
 # M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF — Resource channel digest 重验成本优化与 GrantCache 死结构收敛
@@ -64,4 +64,6 @@ dispatch_state: DELIVERED_FOR_REVIEW
 
 - 2026-09-29：F02 集成收口时由 Codex（Integrator）登记为候选；**未释放，无 owner/base/branch**。
 - 2026-09-29：用户批准释放（编排会话代行 Codex），`proposed → ready`。冻结 base=`956e6c3a`、branch/worktree、两级允许路径、AC1-AC5、硬约束与"等长重写必拒"语义；per-chunk 契约流程范围已由 Codex 划定（见触点 2）。Owner=ZCode（子 agent 代行实现），非作者 Reviewer=DeepSeek Harness，Integrator=另一子 agent 代行 Codex。
+- 2026-09-29：Owner 子 agent 交付（claim `b43a1e2a` → 探针 `9df29a6f` → 实现 `5d7cff11` → 回填 `64e6c9a7` → 终 tip `510202ac`）：单趟 hash+capture、GrantCache 删净、测试更名、loop 守卫；per-chunk 评估后不实施（wire 序列化在 `host_bridge.py` 禁止路径，书面留痕）；AC1-AC5 全 PASS。
+- 2026-09-29：DSH 非作者 r1 [Review](../reviews/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF-5d7cff11-dsh-r1.md) `approved_with_conditions`（0×P0/P1/P2；A-H 七项 verified，C1-C4 文档/证据条件）。**集成完成 `done`**：集成方闭合 C1（§4 warning 对照更正为 raw 可核验口径，6/5 stash 数字作废）、C2（v7 登记 + 终 tip `510202ac` 绑定 diff-check EXIT=0）、C3（main.rs 生产接线行确认属触点 3 必然删除，见 [集成记录](../verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/integration-510202ac/integration.md) §2）、C4（本 frontmatter 回填）。集成 merge=`bc2529f0`；集成 head 复跑全绿（cargo 34 passed+loop 1 passed+never-read 空 / pytest 35 passed / vitest 31 passed / diff-check 双区间 EXIT=0）。登记遗留：P3-5 `SetFilePointer(offset as i32)` 既有隐患（2 GiB 前不可达）为 planning 候选。
 - 2026-09-29：Owner 交付（claim=`b43a1e2a`、探针=`9df29a6f`、delivery_head=`5d7cff11`）。单趟 hash+capture + GrantCache 删除 + 测试更名 + TempDir 守卫；**per-chunk 不实施、条件允许路径未启用**（host_bridge.py 序列化层超范围 + AC2 单趟达标，[Handoff §5](../handoffs/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF-5d7cff11.md)）；触点 6 机理对照 NOT_RUN。AC1-AC5 全勾（实测见 [verification-results](../verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/verification-results.md)）。`ready → in_review`，待 DeepSeek Harness 非作者 Review。

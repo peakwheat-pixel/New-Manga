@@ -1,0 +1,23 @@
+# shell: Git Bash (orchestrator integration replay)
+# head: bc2529f02dfbd3c378d5e9cd4c9f7ac2ecfe4f15 (merge, parents 1ca5328c+510202ac)
+# cwd: apps/desktop/src-tauri
+2026-09-29T09:30:02+08:00
+== i1: cargo test --bin m2rc1-desktop ==
+test tests::f02_equal_size_rewrite_stability_loop ... ok
+test tests::real_core_sidecar_denies_uncataloged_and_extended_ttl ... ok
+test tests::real_core_sidecar_round_trip ... ok
+test tests::real_library_sidecar_round_trip_and_eof ... ok
+test tests::f01_ttl_expiry_invalidates_cached_grant ... ok
+
+test result: ok. 34 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.51s
+
+EXIT_i1=0
+== i2: cargo test f02_equal_size_rewrite_stability_loop -- --nocapture ==
+running 1 test
+test tests::f02_equal_size_rewrite_stability_loop ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 34 filtered out; finished in 0.17s
+
+EXIT_i2=0
+== i3: cargo build 2>&1 | grep 'never read' ==
+EXIT_i3(grep hit=1; 1=empty expected)=1

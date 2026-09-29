@@ -1,0 +1,38 @@
+# shell: Git Bash (orchestrator integration replay)
+# head: bc2529f02dfbd3c378d5e9cd4c9f7ac2ecfe4f15
+2026-09-29T09:31:37+08:00
+== i4: pytest tests/m2_acceptance -q ==
+...................................                                      [100%]
+35 passed in 9.61s
+EXIT_i4=0
+== i5: vitest ==
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m31 passed[39m[22m[90m (31)[39m
+[2m   Start at [22m 09:31:56
+[2m   Duration [22m 1.20s[2m (transform 203ms, setup 0ms, collect 447ms, tests 198ms, environment 1ms, prepare 2.33s)[22m
+
+EXIT_i5=0
+== i6: git diff --check 956e6c3a..bc2529f0 ==
+EXIT_i6=0
+== i7: git diff --check 956e6c3a..510202ac (owner final tip, closes C2) ==
+EXIT_i7=0
+== i8: name-status 6c3d7b34..510202ac (owner delta scope) ==
+apps/desktop/src-tauri/src/main.rs
+apps/desktop/src-tauri/src/resource_protocol.rs
+doc/handoffs/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF-5d7cff11.md
+doc/tasks/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF.md
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/checkpoint.md
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/b1-baseline-loop.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/b2-baseline-perf-debug.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/b3-after-perf-debug.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v1-cargo-full.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v2-cargo-loop.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v3-cargo-build-never-read.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v4-pytest-m2acceptance.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v5-diff-check-namestatus.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v6a-release-perf.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v6b-after-perf-debug-head.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v6c-release-perf-baseline.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/raw/v7-post-delivery-diffcheck.log
+verification/M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF/verification-results.md
