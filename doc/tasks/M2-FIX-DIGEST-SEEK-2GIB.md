@@ -2,7 +2,7 @@
 id: M2-FIX-DIGEST-SEEK-2GIB
 title: "Resource channel read_through 64 位 seek 修复（SetFilePointer i32 截断高位恒空，DIGEST-PERF P3-5）"
 kind: fix
-status: ready
+status: in_progress
 approval: orchestrator_delegated_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
