@@ -1,0 +1,10 @@
+final artifact inventory @ HEAD=eccf88e36e088d31231469c298f95d919468a2ba
+installer (run2 / final acceptance target):
+5410e29e118d24ae28192c241a3fc7a8c3e6f5bcc4def38d7c588e900be61336  m2rc1-desktop_0.1.0_x64-setup.exe
+host exe:
+b32f4d32f4f0cea608861b5eada6176a0d1236eac6d0ad55241f289f52fd6b8a  m2rc1-desktop.exe
+sidecar frozen entry exes (repro rebuild):
+3dd62960e937e51ab190a4dbabd39e7e8187abfa364894c98b708301baf4585f  host_bridge.exe
+f4bd4ce0d7da2888dac1246dbf6047b999a01a724191a9a07b387e261032f111  core_service.exe
+16cf64b800e49ddfa74f162408a7b8d08dd92dc3df029da83fd27edd704b3398  acceptance_bridge.exe
+b05a57c2efd8867312b4faff6102548cc475c0c97c949979cda55ab475946b2c  catalog_loader.exe

@@ -1,0 +1,2 @@
+2d1511eeee93de63a4542da131fe2ca45ffdb51b358677bda83f4785e109f1e2 *apps/desktop/src-tauri/target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe
+15fcd8233ab4c116d3791565912a5e2082b4af33291f5c0f771d73c2796a00f0 *apps/desktop/src-tauri/target/release/m2rc1-desktop.exe

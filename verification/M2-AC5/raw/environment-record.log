@@ -1,0 +1,21 @@
+# M2-AC5 build/acceptance environment record
+recorded_at: 2026-09-29 10:38:33 +0800
+git: git version 2.52.0.windows.1
+rustc: rustc 1.98.1 (48a229cea 2026-09-01)
+cargo: cargo 1.98.1 (797e8a9bc 2026-08-05)
+node: v24.15.0
+npm: 12.0.1
+build venv python: Python 3.12.3
+pyinstaller: 6.22.3
+build venv pip freeze (closure deps):
+  altgraph==0.17.5
+  packaging==26.3
+  pefile==2024.8.26
+  pyinstaller==6.22.3
+  pyinstaller-hooks-contrib==2026.7
+  PySide6_Essentials==6.11.2
+  pywin32-ctypes==0.2.3
+  setuptools==84.0.0
+  shiboken6==6.11.2
+tauri CLI: tauri-cli 2.12.0
+pytest venv: TASK-012-py312 Python 3.12.3

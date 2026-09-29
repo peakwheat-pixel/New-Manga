@@ -1,0 +1,22 @@
+# M2-AC5 sidecar entry smoke (frozen exes, direct stdio, no install wrapper)
+$ shell: Git Bash / win32, HEAD=eccf88e36e088d31231469c298f95d919468a2ba
+--- catalog_loader.exe --set --dump
+{
+  "res-smoke": {
+    "scope_class": "derived-read-only",
+    "rel_path": "asset.png"
+  }
+}
+catalog_loader EXIT=0
+--- host_bridge.exe ping+shutdown
+{"result":{"pong":true,"service":"m2-rc1-resource-channel"},"id":1}
+{"result":{"bye":true},"id":2}
+host_bridge EXIT=0
+--- core_service.exe core.ping+core.shutdown
+{"protocol":"new-manga.core","version":{"major":1,"minor":0},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":0},"capabilities":["library.list_books"]},"error":null}
+{"protocol":"new-manga.core","version":{"major":1,"minor":0},"request_id":"r2","result":{"status":"stopped"},"error":null}
+core_service EXIT=0
+--- acceptance_bridge.exe ping+shutdown (M2AC1_TEST_MODE=1)
+{"result":{"pong":true,"service":"m2-ac1-acceptance","pid":44640,"data_root":"C:\\Users\\49745\\AppData\\Local\\Temp\\pack-smoke2\\data-root-ac1"},"id":1}
+{"result":{"bye":true},"id":2}
+acceptance_bridge EXIT=0
