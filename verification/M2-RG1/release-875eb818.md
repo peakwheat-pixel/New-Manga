@@ -7,7 +7,10 @@ sha256 `d222073becc50d593a3f0d706ef799df45d369a51f13c1e81423dbeef7ed09db`
 frozen entries host_bridge / core_service / acceptance_bridge / catalog_loader).
 
 **GATE VERDICT: PASS** (machine-readable: [raw/rg1-gate.json](raw/rg1-gate.json),
-23/23 scenarios; M2-AC5 clean-start regression on the same installer: 25/25,
+**25/25 scenarios, v2** — r1-rework rerun with detector hardening and the
+RG1-CW0 positive control; the pre-rework run is archived verbatim as
+[raw/rg1-gate-run1.json](raw/rg1-gate-run1.json) (23/23). M2-AC5 clean-start
+regression on the same installer: 25/25,
 [raw/rg1-m2ac5-cleanstart-gate.json](raw/rg1-m2ac5-cleanstart-gate.json)).
 
 Ruling basis: user ruling 2026-09-29 — "把本机视为干净widows环境。若本机通过，
@@ -23,5 +26,8 @@ Support matrix declared by this gate:
 | Windows 10 (any build) | NOT_RUN — disclosed |
 | other Windows builds / ARM64 | NOT_RUN — disclosed |
 
-Details per AC: [verification-results.md](verification-results.md).
-Delivery chain and reproduction: `doc/handoffs/M2-RG1-a1100d75.md`.
+Details per AC: [verification-results.md](verification-results.md) (v2 — DSH
+r1 rework; review: `doc/reviews/M2-RG1-a1100d75-dsh-r1.md`,
+approved_with_conditions, all must-close items closed).
+Delivery chain and reproduction: `doc/handoffs/M2-RG1-a1100d75.md`
+(delivery head `05a8f93a7a96…`; r1-rework section at the end).
