@@ -31,3 +31,93 @@ integration_commit: null
 - 不因 annotation public/CC BY 推导原图许可；不把全部 21k+ 页面加入普通回归。
 - 真实授权归档取得前只维护本 Task 和范围计划；实际下载/导入、Golden Page 确认和执行态必须保持 `BLOCKED_BY_ASSET_ACCESS` / `NOT_RUN`。
 - Task 必须由 Codex 在授权条件满足后重新登记 base、branch、worktree 和 allowed paths，再转为 `ready`。
+
+---
+
+# 方案变更存档（2026-09-30 用户裁决，本文件历史部分至此保留为证据）
+
+> 2026-09-30 用户裁决：**永久取消 Manga109 / Manga109-s 前置**（不再等待人工申请），改为无需申请、可脚本自动下载的开放素材池。上述 Manga109 方案整体归档为历史证据；现行方案见新 Task 文件（重写版，如下）。`BLOCKED_BY_ASSET_ACCESS` 解除。
+
+---
+id: M2-TA2B
+title: "JA/KO 开放素材池（用户方案变更 2026-09-30）：ブラックジャックによろしく官方免费全卷 + Pepper&Carrot 补充；永久取消 Manga109 前置"
+kind: asset
+status: ready
+approval: user_ruling_2026-09-30
+suggested_owner: ZCode
+owner: ZCode
+reviewer: DeepSeek Harness（待派发，非作者静态）
+depends_on: []
+base_commit: PENDING_SET_AT_CLAIM
+branch: agent/zcode/M2-TA2B-OPEN-ASSETS
+worktree: G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode
+integration_commit: null
+---
+
+# M2-TA2B（重写版）：开放素材池（自动下载、校验、manifest、case 接入）
+
+## 来源与目标（用户裁决 2026-09-30）
+
+- **永久取消** Manga109 / Manga109-s 前置，不再等待人工申请；解除 `BLOCKED_BY_ASSET_ACCESS`。
+- 改为**无需申请、可脚本自动下载的开放素材池**，自动完成：下载、完整性检查、SHA256、去重、许可登记、manifest、PDF/Page 转换、case 选取与测试接入。
+- 主素材：官方《ブラックジャックによろしく》日文版。补充：Pepper&Carrot 日语/可用韩语素材。
+- OpenMantra：隔离 optional benchmark（CC BY-NC）；**不作生产许可基线**。
+- 素材特性需覆盖：真实黑白日漫、RTL 分页、竖排/横排对白、气泡、拟声词、复杂背景、小字/大字，支撑检测/OCR/inpaint/翻译/嵌字/分页与长条 E2E 的测试需求。
+- 能自动处理的不得要求人工操作。
+
+## 事实核查（2026-09-30，编排会话 WebSearch+WebFetch 实证）
+
+- **主素材渠道成立**：`https://densho810.com/free/`（電書バト，有限会社佐藤漫画制作所=作者佐藤秀峰的公司运营）提供**全 13 卷**《ブラックジャックによろしく》日语版+英语版 ZIP（内含无 DRM PDF）**直链免费下载**（如 `dl/001bj.zip`），无需注册/付费。
+- **许可**（作者授权声明）：商用/非商用自由、无需事先许可、允许翻译与二次创作；**署名义务**：须标明作品名《ブラックジャックによろしく》与作者名"佐藤秀峰"；**事后报告义务**：公开利用后 1 个月内邮件报告 info@densho810.com；禁止 Kindle 上架；第 2/7/11 卷部分页面含 JASRAC 管理乐曲（选取时避开或登记）。
+- 原作者官网 mangaonweb.com 已下线（域名停放）——電書バト为现行官方分发渠道。
+
+## 许可义务登记（合规边界）
+
+- **用户待办（外部发送，Agent 不代发）**：素材公开用于测试后 1 个月内由用户向 info@densho810.com 发报告邮件（形式不限）。Task 交付物须生成报告草稿文本供用户发送。
+- 署名落地：manifest 每个 BJ case 与 suite README 携带"ブラックジャックによろしく © 佐藤秀峰（電書バト densho810.com 经由、二次利用フリー）"。
+- 版权像素**不入 Git**（同 KO 惯例）：下载/转换产物全部在 gitignored 目录，Git 只入 manifest、SHA256、许可文本与报告草稿。
+
+## Acceptance Criteria
+
+- [ ] AC1（下载与完整性）：脚本化下载 BJ 日语版至少 3 卷（第 1 卷必选；避开第 2/7/11 卷 JASRAC 卷或选取时登记），逐文件 SHA256 记录；ZIP→PDF 校验（页数>0、无 DRM 解码成功）。
+- [ ] AC2（PDF/Page 转换）：用 pypdfium2（生产既有依赖）将所选卷渲染为页面图像（PNG，DPI≥150），选取覆盖特性矩阵的 case 页（黑白、RTL、竖排/横排对白、气泡、SFX、复杂背景、小字/大字），每卷至少 3 个 case 页；产物入 gitignored 目录并在 manifest 登记路径+SHA256。
+- [ ] AC3（去重与登记）：页面级去重（哈希）；cases.json 新增 BJ case（case_id `BJ01`..，language=ja、特性 tags、license_class=commercial_use_permitted_attribution、source_url=densho810.com/free/、署名字段）；suite README 署名与许可义务小节；**用户报告邮件草稿** `verification/M2-TA2B/densho810-report-draft.txt`。
+- [ ] AC4（Pepper&Carrot 补充）：下载 ja/kr 可用补充页（ep04/ep20 语言包内未入库页），同流程登记（若无可补页则如实记录）。
+- [ ] AC5（OpenMantra optional 隔离）：尝试脚本获取 OpenMantra 公开仓库素材至 `test_assets/comic_golden_suite/日漫_JA/99_optional_openmantra/`（gitignored），manifest 标注 `optional_noncommercial_baseline_excluded: true`；获取失败则如实记 BLOCKED-OPTIONAL（不阻塞 Task）。
+- [ ] AC6（Manga109 取消落地）：cases.json 中 37 个 Manga109 case 与 Manga109/JMangaBench/TextMask 相关 source 标注 `removed_from_scope_2026-09-30`（保留历史定义）；tests 相应断言更新；README 资产表更新。
+- [ ] AC7（测试接入与回归）：`tests/m2_test_assets` 更新（BJ case 注册、Manga109 取消断言、白名单 host 增加 densho810.com）全绿；`assets.py verify/list` EXIT=0；`git diff --check` EXIT=0。
+- [ ] AC8（范围纪律）：素材产物零入库（gitignored）；diff 仅触及允许路径。
+
+## 允许修改范围
+
+- `test_assets/comic_golden_suite/manifests/cases.json`（新 case/标注/取消标注）
+- `test_assets/comic_golden_suite/README.md`、`test_assets/comic_golden_suite/tools/assets.py`（白名单+新下载入口函数）
+- `tests/m2_test_assets/**`、`.gitignore`（新增素材产物 ignore 规则）
+- `verification/M2-TA2B/**`、本 Task、Handoff
+
+## 禁止范围
+
+- 素材像素/文件入 Git；删除或改写既有 KO/JA 素材与既有 case 字段值（取消标注除外）
+- `src/**`、`apps/**`、`packaging/**`
+- 向外部发送任何内容（densho810 报告邮件=用户待办）
+- 生产许可基线引入 NC 素材（OpenMantra 隔离）
+
+## 测试要求
+
+| 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
+|---|---|---|---|---|
+| AC1 下载 | 下载脚本 3 卷 + SHA256 | 网络 | NOT_RUN | 待入 verification |
+| AC2 转换 | pypdfium2 渲染脚本 | venv | NOT_RUN | 待入 verification |
+| AC3 manifest | cases.json 更新 + verify EXIT=0 | — | NOT_RUN | 待入 verification |
+| AC6/AC7 测试 | pytest tests/m2_test_assets EXIT=0 | 标准 pytest | NOT_RUN | 待入 verification |
+
+## 依赖、风险与阻塞
+
+- 风险 1：BJ ZIP 体积大（高分辨率）——逐卷下载、抽样 3 卷而非全量；全量 13 卷登记为可选扩展（不阻塞）。
+- 风险 2：densho810 直链形态或限速变化——脚本带重试与 User-Agent；失败则如实 BLOCKED 并报告（不换非官方源）。
+- 风险 3：PDF 页提取方向/RTL 语义——转换脚本保序记录页码，RTL 断言由 case tags 登记。
+- 阻塞：无。
+
+## 交付与运行记录
+
+- Handoff：尚无。Review：尚无。实际测试：尚无。
