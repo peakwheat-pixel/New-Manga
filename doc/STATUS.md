@@ -10,16 +10,16 @@ Execution checkpoint: 2026-09-29 (Asia/Shanghai)
 
 | Field | Current value |
 |---|---|
-| Branch / audit base | `main`; M2-TA2A integration=`ef13a77bedf8bb06ee222113da186c7bfff09714`; task base=`eb41a352c03df84400d90a78c29d2dfbe28a76c9`. Resolve the live documentation HEAD with `git rev-parse HEAD`. |
-| Current Active Task | None. [M2-TA2A](tasks/M2-TA2A.md) JA Public Assets Bootstrap is `done`; `READY` denotes local asset integrity only and application Pipeline checks remain `NOT_RUN`. |
-| Current released Task | None. [M2-TA2B](tasks/M2-TA2B.md) is registered as a gated `proposed` follow-up and remains `BLOCKED_BY_ASSET_ACCESS`; it is not released. M2-TA3 remains proposed. |
-| Owner / Reviewer / Integrator | M2-TA2A: Codex Desktop / DeepSeek Harness (non-author) / Codex Desktop. Recommended M2-TA2B roles after its access gate: ZCode / DeepSeek Harness / Codex Desktop. |
-| Recovery point | Main worktree=`G:/CODEX/New Manga`; M2-TA2A delivery=`f8ef48c4079e03e57a7ed0da1e9b79c05e90979c`; integration=`ef13a77bedf8bb06ee222113da186c7bfff09714`. The linked implementation worktree is preserved at `C:/Users/49745/.codex/worktrees/comic-test-assets/New Manga`. |
+| Branch / audit base | `main`; M2-TA2C fixed base=`d4d3977907bc64177ef85c61da4c95901f135fc6`. Resolve live HEAD with `git rev-parse HEAD`. |
+| Current Active Task | None. [M2-TA2C](tasks/M2-TA2C.md) is released `ready` after read-only audit; implementation claim pending. |
+| Current released Task | [M2-TA2C](tasks/M2-TA2C.md) No-HF JA/KO Asset Migration, `ready`. [M2-TA2B](tasks/M2-TA2B.md) remains gated `proposed / BLOCKED_BY_ASSET_ACCESS`; M2-TA3 remains proposed. |
+| Owner / Reviewer / Integrator | M2-TA2C: Codex Desktop / DeepSeek Harness (non-author) / Codex Desktop. M2-TA2B when access gate clears: ZCode / DeepSeek Harness / Codex Desktop. |
+| Recovery point | Main worktree=`G:/CODEX/New Manga`, fixed base=`d4d3977907bc64177ef85c61da4c95901f135fc6`; M2-TA2C worktree is pending creation. M2-TA2A remains integrated at `ef13a77bedf8bb06ee222113da186c7bfff09714`. |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN/FIX-F02-RESOURCE-CHANNEL-FLAKY、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；产品代码最新 integration=`aa2f99b8`（F02 资源通道安全缺口修复）；随后 M2-TA2A 素材集成=`ef13a77b`（资产定向测试 23 passed）；**m2_acceptance 35 passed 0 xfailed 全绿、tests/core 77 passed、cargo 34 passed、vitest 31 tests** |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE/FIX-LISTBOOKS-PAGECOUNT-UNKNOWN、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`69961029`（F-2 unknown 通道，契约 1.2） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER/FIX-EXPORT-LINEAGE、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`d71883ec`（M2-FIX-EXPORT-LINEAGE F-1 修复） |
 | Completed | GOV-001 与 M2-D1/I1/I2/R1/UI1/C1/S1/S2/C2/S3/RC1/RC2/AC1/AC2/AC3/AC4/FIX-STUB-DECODER、DIAG-M2-REGIONLESS-LOCK-CHANGED-001、M2-P1、M2-IPC1 全部 `done`；最新 integration=`121a281c`（M2-FIX-STUB-DECODER stub 签名修复） |
-| Planned next | M2-TA2B may be released only after an already lawfully obtained official Manga109-v2026 archive is locally present and verifiable. Until then it remains `BLOCKED_BY_ASSET_ACCESS`; M2-TA3 L1 expansion waits for TA2B's usable scope. No Case-count-only expansion. |
+| Planned next | Execute released M2-TA2C. After it is integrated, consider M2-TA3 based on actual runnable coverage; Manga109 is optional and M2-TA2B is not a hard prerequisite. No Case-count-only expansion. |
 | Product boundary | 只推进 React + TypeScript + Tauri + Python Core + SQLite；Legacy PySide6/QML 不再产生 Task |
 | Codex role | Codex quota exhausted；自 2026-09-28 起由 ZCode 会话代行 Codex Lead/Integrator 职责（用户全权授权）；追认批次见下方 ratification checkpoint |
 | Release evidence | [release-5789b30b](../verification/DIAG-M2-REGIONLESS-LOCK-CHANGED-001/release-5789b30b.md) |
