@@ -3304,6 +3304,8 @@ wiki/repowiki/repo-map.json
 wiki/repowiki/repo-map.meta.json
 wiki/repowiki/repo-map.txt
 
+## git ls-tree -r 4d9d8d0c (r1 delivery tree; snapshot of files at r1 — r2/r3 additions tracked in the diff sections below)
+(git ls-tree output follows)
 ## git diff --stat 14720230b101908cfc586b31273fcd9574f50097..4d9d8d0c (production untouched proof)
 (empty diff above = zero changes to requirements*/src)
 
