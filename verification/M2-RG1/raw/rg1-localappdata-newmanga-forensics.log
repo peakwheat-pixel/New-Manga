@@ -1,0 +1,14 @@
+# P2-3 forensic: %LOCALAPPDATA%\New Manga listing (host real dir)
+recorded_at: 2026-09-29 13:20:43 +0800
+purpose: support the P2-3 finding about the first gate run's default-data-root core_ready probes (12:44-12:49 local); RG1 gate run1 started 12:44, second (final) run started 12:52
+
+$ ls -la --full-time "C:/Users/49745/AppData/Local/New Manga"
+total 348
+drwxr-xr-x 1 49745 197609      0 2026-09-29 12:50:09.407565800 +0800 .
+drwxr-xr-x 1 49745 197609      0 2026-09-29 10:25:21.201450200 +0800 ..
+-rw-r--r-- 1 49745 197609 303104 2026-09-26 01:22:53.512760200 +0800 library.db
+drwxr-xr-x 1 49745 197609      0 2026-09-26 01:22:51.053272900 +0800 managed
+EXIT=0
+
+$ find "C:/Users/49745/AppData/Local/New Manga" -type f -newer verification/M2-RG1/raw/rg1-tauri-build-run1.log
+EXIT=0 (1 = no files newer than the first RG1 build log of today 12:33)

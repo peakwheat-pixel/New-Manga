@@ -108,8 +108,10 @@ impl StdioCoreChannel {
     /// repository `src` on the module path, the servable scope roots and the
     /// catalog database in the environment.
     ///
-    /// DEV-mode path (M2-AC5): unchanged byte-for-byte — same argv, same
-    /// cwd contract, same env contract.
+    /// DEV-mode path (M2-AC5): argv, cwd and env contract unchanged — the
+    /// M2-RG1 rework only rewrote the builder chain into a `cmd` binding to
+    /// insert the Windows-only CREATE_NO_WINDOW flag (M2-RG1 AC2); stdio and
+    /// spawn semantics are identical.
     pub fn spawn(
         python_exe: &str,
         src_root: &std::path::Path,

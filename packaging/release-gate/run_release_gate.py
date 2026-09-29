@@ -105,6 +105,16 @@ CONSOLE_TITLE_MARKERS = (
     "acceptance_bridge",
     "catalog_loader",
 )
+#: console-window host classes observed at runtime (AC2 ②, DSH r1 P2-1):
+#: - ConsoleWindowClass        classic conhost-owned console windows
+#: - CASCADIA_HOSTING_WINDOW_CLASS  Windows Terminal (Win11 default terminal
+#:   delegation): the visible top-level window is OWNED BY WindowsTerminal.exe,
+#:   so owner-pid attribution to the spawned child is impossible by design —
+#:   for that class the detector relies on the title heuristic (title contains
+#:   a frozen entry name). Known heuristic boundary, disclosed here and in the
+#:   gate.json environment snapshot (registry DelegationConsole/
+#:   DelegationTerminal records which delegation is actually in force).
+CONSOLE_WINDOW_CLASSES = ("ConsoleWindowClass", "CASCADIA_HOSTING_WINDOW_CLASS")
 #: the host's real user-data root — NEVER touched (P2-4 red line)
 HOST_USER_ROOT = Path(os.environ.get("APPDATA", "")) / "com.newmanga.m2rc1.desktop"
 
@@ -225,12 +235,15 @@ def _window_info(hwnd: int) -> dict:
 
 
 def console_window_hits(target_pids: set[int], title_markers: tuple[str, ...]) -> list[dict]:
-    """Visible top-level ConsoleWindowClass windows owned by a target pid or
-    titled with any frozen-entry marker."""
+    """Visible top-level console-host windows (either host class) owned by a
+    target pid or titled with any frozen-entry marker. For the Windows
+    Terminal delegation class the owner pid belongs to WindowsTerminal.exe
+    (never the spawned child), so pid attribution cannot fire there — the
+    title heuristic is the attribution path (disclosed boundary)."""
     hits = []
     for hwnd in _enum_hwnds():
         info = _window_info(hwnd)
-        if not info["visible"] or info["class"] != "ConsoleWindowClass":
+        if not info["visible"] or info["class"] not in CONSOLE_WINDOW_CLASSES:
             continue
         owned = info["pid"] in target_pids
         titled = any(marker.lower() in info["title"].lower() for marker in title_markers)
@@ -240,22 +253,47 @@ def console_window_hits(target_pids: set[int], title_markers: tuple[str, ...]) -
 
 
 def first_visible_app_window(pid: int) -> dict | None:
-    """First visible, non-console, non-empty-title top-level window owned by pid."""
+    """First visible, non-console-host, non-empty-title top-level window owned by pid."""
     for hwnd in _enum_hwnds():
         info = _window_info(hwnd)
         if (
             info["pid"] == pid
             and info["visible"]
-            and info["class"] != "ConsoleWindowClass"
+            and info["class"] not in CONSOLE_WINDOW_CLASSES
             and info["title"]
         ):
             return info
     return None
 
 
-def pids_of(image_names: tuple[str, ...]) -> dict[str, set[int]]:
-    """Snapshot the pids currently running each image name (tasklist)."""
-    counts = {name: set() for name in image_names}
+def console_delegation_registry() -> dict:
+    """DSH r1 P2-1: which console delegation is in force on this machine —
+    HKCU:\\Console\\%%Startup DelegationConsole/DelegationTerminal. Windows
+    Terminal delegation ({e2a1d611-...} GUIDs) is the configuration where the
+    CASCADIA class + title-heuristic boundary above applies. Missing keys are
+    recorded as null (disclosed), never guessed."""
+    try:
+        import winreg
+
+        key_path = r"Console\%%Startup"
+        with winreg.OpenKey(winreg.HKEY_CURRENT_USER, key_path) as key:
+            result = {}
+            for value_name in ("DelegationConsole", "DelegationTerminal"):
+                try:
+                    result[value_name] = winreg.QueryValueEx(key, value_name)[0]
+                except OSError:
+                    result[value_name] = None
+            result["key_path"] = f"HKCU\\{key_path}"
+            return result
+    except OSError as error:
+        return {"error": repr(error), "key_path": r"HKCU\Console\%%Startup"}
+
+
+def pids_of(image_names: tuple[str, ...]) -> dict[str, set[int]] | None:
+    """Snapshot the pids currently running each image name (tasklist).
+    Returns None when the tasklist call itself fails — callers must treat a
+    None snapshot as an observation FAILURE, never silently degrade to a
+    pid-less / app-only set (DSH r1 P2-1: no silent degradation)."""
     completed = subprocess.run(
         ["tasklist", "/FO", "CSV", "/NH"],
         capture_output=True,
@@ -264,6 +302,9 @@ def pids_of(image_names: tuple[str, ...]) -> dict[str, set[int]]:
         errors="replace",
         timeout=60,
     )
+    if completed.returncode != 0:
+        return None
+    counts = {name: set() for name in image_names}
     for line in completed.stdout.splitlines():
         parts = next(iter(list(csv.reader([line]))), [])
         if len(parts) >= 2:
@@ -469,20 +510,37 @@ def timed_app_cold_start(
     )
 
     hits_running: list[dict] = []
+    alive_through_hold = proc.poll() is None
+    pid_detail: dict = {"scan_ok": False, "scanned": {}}
     if window_ms is not None and proc.poll() is None:
         # hold the app alive; two while-running console samples (mid-hold, end)
         half = ALIVE_HOLD_S / 2.0
         time.sleep(half)
         if proc.poll() is None:
-            hits_running.extend(console_window_hits(sidecar_pid_set(app_pid), CONSOLE_TITLE_MARKERS))
+            target_pids, pid_detail = sidecar_pid_snapshot(app_pid)
+            hits_running.extend(console_window_hits(target_pids, CONSOLE_TITLE_MARKERS))
         if proc.poll() is None:
             time.sleep(half)
         if proc.poll() is None:
-            hits_running.extend(console_window_hits(sidecar_pid_set(app_pid), CONSOLE_TITLE_MARKERS))
+            target_pids, pid_detail = sidecar_pid_snapshot(app_pid)
+            hits_running.extend(console_window_hits(target_pids, CONSOLE_TITLE_MARKERS))
+    alive_through_hold = proc.poll() is None
+    # DSH r1 P2-1: during production-mode run the app MUST have spawned its
+    # sidecars (host_bridge + core_service) — a failed tasklist scan or an
+    # empty sidecar pid set means the observation basis collapsed => FAIL.
+    # app early-exit during the hold also FAILs the round.
+    sidecar_pids_seen = sum(len(v) for v in (pid_detail.get("scanned") or {}).values())
     gate.record(
         f"RG1-CW1-R{sample_index}-running-console-hits",
-        "PASS" if not hits_running else "FAIL",
-        {"round": sample_index, "hits": hits_running, "alive_hold_s": ALIVE_HOLD_S},
+        "PASS" if (not hits_running and alive_through_hold and pid_detail.get("scan_ok") and sidecar_pids_seen >= 1) else "FAIL",
+        {
+            "round": sample_index,
+            "hits": hits_running,
+            "alive_hold_s": ALIVE_HOLD_S,
+            "app_alive_through_hold": alive_through_hold,
+            "pid_scan": pid_detail,
+            "sidecar_pids_seen": sidecar_pids_seen,
+        },
     )
 
     # graceful close (WM_CLOSE semantics via taskkill without /F), then wait
@@ -503,25 +561,120 @@ def timed_app_cold_start(
     return window_ms, app_pid
 
 
-def sidecar_pid_set(app_pid: int) -> set[int]:
-    """app pid + every live sidecar pid (host_bridge/core_service/acceptance_
-    bridge/catalog_loader). Other same-named processes would be included by
-    this host-wide snapshot only if the machine actually runs one — recorded
-    as-is with the observation."""
+def sidecar_pid_snapshot(app_pid: int) -> tuple[set[int], dict]:
+    """app pid + every live sidecar pid, with the full scanned pid sets
+    recorded (DSH r1 P2-1: the observation's pid basis goes into gate.json).
+    scan_ok=False means the tasklist snapshot failed — the caller must FAIL
+    the round instead of silently degrading to {app_pid}. Note: a sidecar
+    name with an EMPTY pid set is a legitimate state (that entry not running),
+    not a scan failure; during production-mode app run host_bridge.exe and
+    core_service.exe are expected non-empty and asserted by the CW scenarios."""
+    snapshot = pids_of(SIDECAR_EXES)
+    if snapshot is None:
+        return {app_pid}, {"scan_ok": False, "app_pid": app_pid, "scanned": {}}
     pids = {app_pid}
-    for name, found in pids_of(SIDECAR_EXES).items():
+    for found in snapshot.values():
         pids |= found
-    return pids
+    detail = {
+        "scan_ok": True,
+        "app_pid": app_pid,
+        "scanned": {name: sorted(found) for name, found in snapshot.items()},
+        "note": "host-wide snapshot: same-named unrelated processes would be included and are visible here",
+    }
+    return pids, detail
 
 
 def wait_sidecars_reaped(timeout: float) -> bool:
     deadline = time.time() + timeout
     while time.time() < deadline:
         live = pids_of(SIDECAR_EXES)
-        if not any(live.values()):
+        # a failed tasklist snapshot is NOT proof of reaping — keep polling
+        # until timeout, then report conservatively False
+        if live is not None and not any(live.values()):
             return True
         time.sleep(1.0)
-    return not any(pids_of(SIDECAR_EXES).values())
+    final = pids_of(SIDECAR_EXES)
+    return final is not None and not any(final.values())
+
+
+def positive_console_control(env: dict, lab: Path) -> tuple[bool, dict]:
+    """DSH r1 P2-1 positive control: prove the AC2 ② detector can see RED.
+    Spawns a console-subsystem child deliberately WITHOUT CREATE_NO_WINDOW
+    (CREATE_NEW_CONSOLE=0x10 forces a visible console host even when the
+    parent has none) and requires the console-window observer to hit >= 1
+    while it is alive. Zero hits => the detector is blind on this machine and
+    this control FAILS.
+
+    Carrier note (established empirically on this machine during the r1
+    rework): `cmd /c timeout` with CREATE_NEW_CONSOLE exits immediately
+    (code 125) without creating any window when spawned from this runner's
+    ConPTY-inherited environment, while `powershell -c Start-Sleep` with the
+    same flag reliably produces a visible CASCADIA_HOSTING_WINDOW_CLASS
+    window owned by WindowsTerminal.exe (Win11 default-terminal delegation —
+    the exact blind spot DSH r1 flagged). Attribution therefore runs through
+    the title heuristic (window title carries the powershell.exe path); the
+    conhost pid-owner path stays in the detector for classic delegation."""
+    control_dir = lab / "positive-control"
+    (control_dir / "roaming").mkdir(parents=True, exist_ok=True)
+    control_env = pin_appdata(env, control_dir / "roaming")
+    proc = subprocess.Popen(
+        ["powershell", "-NoProfile", "-Command", "Start-Sleep -Seconds 30"],
+        env=control_env,
+        creationflags=0x00000010,  # CREATE_NEW_CONSOLE — deliberately no CREATE_NO_WINDOW
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        stdin=subprocess.DEVNULL,
+    )
+    time.sleep(6.0)
+    snapshot = pids_of(("powershell.exe",))
+    scan_ok = snapshot is not None
+    ps_pids = (snapshot or {}).get("powershell.exe", set()) | {proc.pid}
+    hits = console_window_hits(ps_pids, ("powershell",))
+    detail = {
+        "control_pid": proc.pid,
+        "control_carrier": "powershell -NoProfile -Command Start-Sleep -Seconds 30 with CREATE_NEW_CONSOLE(0x10)",
+        "powershell_pids_scanned": sorted(ps_pids),
+        "scan_ok": scan_ok,
+        "hits": hits,
+        "classes_expected": list(CONSOLE_WINDOW_CLASSES),
+        "attribution": "pid-owner match (classic conhost) OR title heuristic 'powershell' (Windows Terminal delegation)",
+    }
+    subprocess.run(["taskkill", "/PID", str(proc.pid), "/T"], capture_output=True)
+    try:
+        proc.wait(timeout=15)
+    except subprocess.TimeoutExpired:
+        proc.kill()
+    return bool(scan_ok and len(hits) >= 1), detail
+
+
+def seed_books_for_listbooks(ac1_exe: Path, env: dict, data_root: Path, roaming: Path) -> dict:
+    """P3-5: give DC1's ListBooks a real row to return. The authorized write
+    path for library books is the acceptance bridge's ``seed_fixture`` (the
+    frozen explicit test configuration, M2-AC5 AC1 mode) — the catalog_loader
+    used by DC2/DC4 writes the resource catalog, which ListBooks does not
+    read. Seeds one synthetic book + chapter + pages into
+    <data_root>/library.db through the production assembly."""
+    aenv = pin_appdata(env, roaming)
+    aenv["NEWMANGA_DATA_ROOT"] = str(data_root)
+    aenv["M2AC1_TEST_MODE"] = "1"
+    data_root.mkdir(parents=True, exist_ok=True)
+    proc = subprocess.Popen(
+        [str(ac1_exe)], env=aenv, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
+    client = LineClient(proc)
+    try:
+        seed = client.request({"id": 1, "method": "seed_fixture", "params": {}}, timeout=LAUNCH_TIMEOUT_S)
+        shutdown = client.request({"id": 0, "method": "shutdown", "params": {}}, timeout=LAUNCH_TIMEOUT_S)
+    finally:
+        exit_code = client.close_and_wait(timeout=60.0)
+    seed_ok = bool(seed) and not seed.get("error") and (seed.get("result") is not None)
+    return {
+        "exit": exit_code,
+        "seed_ok": seed_ok,
+        "seed_response_keys": sorted((seed or {}).get("result") or {}) if seed_ok else None,
+        "seed_error": (seed or {}).get("error"),
+        "shutdown_ok": bool(shutdown) and not shutdown.get("error"),
+    }
 
 
 def stats_block(samples_ms: list[float]) -> dict:
@@ -538,9 +691,13 @@ def stats_block(samples_ms: list[float]) -> dict:
 # AC4 round trips
 # --------------------------------------------------------------------------
 
-def roundtrip_core_service(exe: Path, env: dict, data_root: Path, roaming: Path) -> dict:
+def roundtrip_core_service(
+    exe: Path, env: dict, data_root: Path, roaming: Path, expect_books_min: int = 0
+) -> dict:
     """core.ping (ready) + ListBooks + core.shutdown over the Contract 1.1
-    envelope (same shape as the M2-AC5 packaged library probe)."""
+    envelope (same shape as the M2-AC5 packaged library probe). With
+    ``expect_books_min`` >= 1 (P3-5) the data root must have been seeded
+    first and ListBooks must return at least that many fully-keyed rows."""
     lenv = pin_appdata(env, roaming)
     lenv["NEWMANGA_DATA_ROOT"] = str(data_root)
     data_root.mkdir(parents=True, exist_ok=True)
@@ -568,8 +725,12 @@ def roundtrip_core_service(exe: Path, env: dict, data_root: Path, roaming: Path)
     ping_ok = bool(ping) and not ping.get("error") and (ping.get("result") or {}).get("status") == "ready"
     required_keys = {"book_id", "title", "original_title", "is_favorite", "is_archived", "page_count", "created_at", "updated_at"}
     books_result = (books or {}).get("result")
-    books_ok = isinstance(books_result, list) and all(
-        isinstance(entry, dict) and required_keys.issubset(entry.keys()) for entry in books_result
+    books_ok = (
+        isinstance(books_result, list)
+        and len(books_result) >= expect_books_min
+        and all(
+            isinstance(entry, dict) and required_keys.issubset(entry.keys()) for entry in books_result
+        )
     )
     shutdown_ok = bool(shutdown) and not shutdown.get("error") and (shutdown.get("result") or {}).get("status") == "stopped"
     return {
@@ -578,6 +739,8 @@ def roundtrip_core_service(exe: Path, env: dict, data_root: Path, roaming: Path)
         "ping_response": ping,
         "books_ok": books_ok,
         "books_count": len(books_result) if isinstance(books_result, list) else None,
+        "expect_books_min": expect_books_min,
+        "books_required_keys": sorted(required_keys),
         "books_error": (books or {}).get("error"),
         "shutdown_ok": shutdown_ok,
     }
@@ -826,6 +989,10 @@ def main() -> int:
         "os": subprocess.run(["cmd", "/c", "ver"], capture_output=True, text=True, encoding="mbcs", errors="replace").stdout.strip(),
         "processor_architecture": os.environ.get("PROCESSOR_ARCHITECTURE", ""),
         "host_real_user_root_never_touched": str(HOST_USER_ROOT),
+        # DSH r1 P2-1: which console delegation is in force (Windows Terminal
+        # => the CASCADIA class + title-heuristic boundary applies)
+        "console_delegation_registry": console_delegation_registry(),
+        "console_window_classes_observed": list(CONSOLE_WINDOW_CLASSES),
     }
     gate.pass_or(installer.is_file(), "RG1-E2-installer-present",
                  {"installer": str(installer), "sha256": gate_record["environment"]["installer_sha256"]})
@@ -883,12 +1050,20 @@ def main() -> int:
     }
 
     log("phase 4: AC4 sidecar stdio round trips (install state, purged env)")
+    # P3-5: DC1's ListBooks must return a REAL row — seed one book through the
+    # acceptance bridge's seed_fixture into the same data root first
+    dc1_root = lab / "dc1-data-root"
+    seed_detail = seed_books_for_listbooks(
+        sidecar_dir / "acceptance_bridge.exe", env, dc1_root, lab / "dc1-seed-roaming"
+    )
+    gate.pass_or(seed_detail["seed_ok"] and seed_detail["shutdown_ok"],
+                 "RG1-DC1a-listbooks-seed-fixture", seed_detail)
     core_detail = roundtrip_core_service(
-        sidecar_dir / "core_service.exe", env, lab / "dc1-data-root", lab / "dc1-roaming"
+        sidecar_dir / "core_service.exe", env, dc1_root, lab / "dc1-roaming", expect_books_min=1
     )
     gate.pass_or(
         core_detail["ping_ok"] and core_detail["books_ok"] and core_detail["shutdown_ok"],
-        "RG1-DC1-core-service-ping-listbooks",
+        "RG1-DC1b-core-service-ping-listbooks",
         core_detail,
     )
     host_detail = roundtrip_host_bridge(sidecar_dir / "host_bridge.exe", env, catalog_roots, lab / "dc2-roaming")
@@ -923,6 +1098,11 @@ def main() -> int:
         "RG1-W1-warn-files-copied-and-classified",
         {"copied": warn_copied, "merged_per_spec_layout": True, "review": warn_review},
     )
+
+    log("phase 5.5: AC2 positive control — the detector must see RED")
+    control_ok, control_detail = positive_console_control(env, lab)
+    gate.pass_or(control_ok, "RG1-CW0-positive-control-hits-console",
+                 control_detail)
 
     log("phase 6: AC3 cold-start timers + AC2-2 runtime console observation")
     app_ms: list[float] = []
