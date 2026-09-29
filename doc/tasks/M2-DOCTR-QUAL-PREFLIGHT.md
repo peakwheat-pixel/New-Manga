@@ -11,7 +11,7 @@ depends_on: []
 base_commit: 14720230b101908cfc586b31273fcd9574f50097
 branch: agent/zcode/M2-DOCTR-QUAL-PREFLIGHT
 worktree: 主工作区（代行模式；allowed_paths 严格限定，见下）
-integration_commit: PENDING_INTEGRATION
+integration_commit: 51229d4956d4a83c3892d551a34082ff760690ee
 ---
 
 # M2-DOCTR-QUAL-PREFLIGHT：Real docTR qualification 三项前置
