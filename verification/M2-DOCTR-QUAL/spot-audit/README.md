@@ -17,7 +17,7 @@
 
 ## 怎么开图
 
-工作表每行 `preview_file` 形如 `B1-U07__K06_R036.png`。到预览目录打开同名文件即可。图顶部条带含单元 ID、case/region、conf/coverage；**绿框 = GT（伪 GT 标注框），红框 = 模型检出框**。
+工作表每行 `preview_file` 形如 `B1-U09__K07_R007.png`。到预览目录打开同名文件即可。图顶部条带含单元 ID、case/region、conf/coverage；**绿框 = GT（伪 GT 标注框），红框 = 模型检出框**。
 
 ## 六层各自看什么
 

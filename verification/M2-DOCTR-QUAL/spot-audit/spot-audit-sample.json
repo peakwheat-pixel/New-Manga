@@ -113,6 +113,7 @@
    1.0
   ],
   "method": "conf value-range deciles, largest-remainder proportional quotas, per-decile seeded random",
+  "tie_break_note": "largest-remainder ties resolved by conf-decile bin ascending order (sort key (-(fractional remainder), bin)); r2 addendum per DSH r1 R13 - units payload untouched; regeneration without this note reproduces the phase-1 bytes",
   "B1": [
    {
     "decile": "[0.50,0.55)",
