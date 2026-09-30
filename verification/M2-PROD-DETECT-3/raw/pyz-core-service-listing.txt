@@ -1,4 +1,4 @@
-# core_service PYZ listing (frozen onedir @ commit 983a50d5 build)
+# core_service PYZ listing (frozen onedir @ integration commit 7314ad20 build)
 # total modules: 8571
 
 PIL

@@ -30,7 +30,7 @@ M2-PROD-DETECT-2 AC5 的 PARTIAL 判定源头——「frozen 命令面无 detect
 |---|---|---|---|
 | 命令面 | core.ping / ListBooks / core.shutdown | + `core.detect`（`{"page": base64 PNG/JPEG, "width": int, "height": int}` → `{"candidates":[{provider_label,polygon,reading_order,confidence,coordinate_space}], "elapsed_ms": int}`） | 向后兼容 widening（M2-FIX-LISTBOOKS 契约 rev 1.2 §5 先例） |
 | core.ping version | `{"major":1,"minor":0}` | `{"major":1,"minor":1}` | 客户端按 minor 读取，无破坏 |
-| 既有三命令 | — | 字节级行为零变化（测试钉住） | 无 |
+| 既有三命令 | — | 命令语义（payload/result/错误码）零变化（测试钉住）；envelope protocol minor 随协议 bump 0→1 | 无（DSH r1 R7 口径更正：原文「字节级行为零变化」失实——minor bump 使每个响应的 version.minor 与 ping.protocol_version 字节变化，这正是 GATE CS-L1 需同步的原因） |
 | minor-0 请求 | 接受 | 仍接受（版本校验只看 major） | 旧客户端/Rust 宿主（发 minor 0）不受影响 |
 | 错误信封 | INVALID_JSON / INVALID_REQUEST / PROTOCOL_VERSION_UNSUPPORTED / UNKNOWN_COMMAND / LIST_BOOKS_FAILED / UNKNOWN | + core.detect 的 typed code：`INVALID_REQUEST`（请求契约）、provider `error_code` 直通（`PROVIDER_NOT_CONFIGURED` / `PROVIDER_DEPENDENCY_MISSING` / `PROVIDER_FAILED` / `INVALID_INPUT` / …，retryable 沿用 ProviderError 自身裁定） | 既有 code 零变化 |
 | 消费方影响 | — | Tauri host 不注册 core.detect（apps/** 禁改，裁决⑤）；产品 UI detect 仍走 pipeline | 无 |
@@ -39,7 +39,7 @@ M2-PROD-DETECT-2 AC5 的 PARTIAL 判定源头——「frozen 命令面无 detect
 
 1. **裁决①（minor bump）**：落地；GATE CS-L1 断言硬编码 `minor==0` 过期是其后承——`run_clean_start_e2e.py` 两处字面量同步 1.1（严格相等断言保持，非放宽）。依据：Task 允许范围 `packaging/m2ac5/**`「如需最小适配」条款；不修则 GATE 必然 24/25。
 2. **裁决②（payload/响应/错误）**：wire 契约按裁决落地。**事实修正**：provider 的 `_validate_request` 只收 raw 像素（"never an encoded file"），故 handler 承担 PNG/JPEG→raw RGB 解码（Pillow，transformers 依赖已在闭包）；「解码后尺寸由 provider 校验」落实为 handler 校验声明宽高 vs 解码尺寸（`INVALID_REQUEST`），provider 字节计数校验保持第二道防线（`INVALID_INPUT` 直通）。candidate 序列化按 `RegionCandidate` 实际字段（polygon/reading_order/confidence/provider_label）+ result 级 coordinate_space；空候选直通空数组（观测面语义，区别于 pipeline step 的 INVALID_INPUT）。
-3. **裁决③（同源解析）**：侦察登记「detector 在 registry」与代码不符——registry 的 detection slot 是远程 vision；pipeline detect step 用装配段实例。落地为 `CoreServices.detector` 暴露同一实例（不绕过装配）；mock 装配下 `MockLocalDetectionProvider` 同时注册 registry 并设为 detector，core.detect 自然一致（有测试钉住）。
+3. **裁决③（同源解析）**：侦察登记「detector 在 registry」与代码不符——registry 的 detection slot 是远程 vision；pipeline detect step 用装配段实例。落地为 `CoreServices.detector` 暴露同一实例（不绕过装配）；mock 装配下 `MockLocalDetectionProvider` 同时注册 registry 并设为 detector，core.detect 行为一致——**措辞口径（DSH r1 R8）：registry 实例与 `detector` 字段在 mock 路径是两个实例（该类无状态），行为一致（实例不共享）**；生产路径（manga/doctr）为同一实例。集成轮已补真装配测试（`assemble_core_services(mock_local_providers=True)`）与生产 wiring 同一实例断言。
 4. **裁决④（发布形态口径）**：探针三语义全 PASS（+还原恢复共 4 场景），FD-1 的推理**在 frozen 进程内**执行（对比 DETECT-2 探针的闭包外 L3）；-SkipWeights 产物以「安装后移权重」等价替代（裁决④括号内允许）。
 
 ## 验证证据（构建输入=983a50d5，全量重跑）
@@ -50,7 +50,7 @@ M2-PROD-DETECT-2 AC5 的 PARTIAL 判定源头——「frozen 命令面无 detect
 | onedir | 1,118,300,869 B / 5,557 文件 / 238s | 同上 |
 | NSIS | 460,814,288 B（439.44 MiB）/ sha256 `ea34041cf8fe3a5074c40cb064b92b6fe54e5dcc2c0018a742dd8bf83e340729` / tauri 251s | raw/tauri-build-console.log |
 | GATE | **25/25 PASS**（CS-E2 绑 `ea34041c…`；CS-L1 protocol 1.1） | raw/cleanstart-runner-stdout.log |
-| frozen 探针 | **4/4 PASS**：FD-1 frozen 进程内真实推理（900x1300 合成页，2 候选 manga-1/manga-2，conf 0.943/0.927，page-global；cold 21.4s / 热 4.7s，均含模型加载）+ FD-2 无权重 typed PROVIDER_NOT_CONFIGURED（retryable=false + 装配 stderr `probed candidates` 警告 + ping ready）+ FD-2b 还原恢复（警告消失）+ FD-3 doctr typed PROVIDER_NOT_CONFIGURED（包内无 doctr 权重，反证在案） | frozen-detect-probe-results.json + raw/fd*.log |
+| frozen 探针 | **4/4 PASS**：FD-1 frozen 进程内真实推理（900x1300 合成页，2 候选 manga-1/manga-2，conf 0.943/0.927，page-global；首测 handler elapsed 4.7s——detect 计时**含模型加载**，与 DETECT-2 稳态 273ms/页非同一口径）+ FD-2 无权重 typed PROVIDER_NOT_CONFIGURED（retryable=false + 装配 stderr `probed candidates` 警告 + ping ready）+ FD-2b 还原恢复（警告消失）+ FD-3 doctr typed PROVIDER_NOT_CONFIGURED（包内无 doctr 权重，反证在案）。**口径更正（DSH r1 R12）：本轮叙述中的 `cold 21.4s` 无 raw artifact 支撑，已删除**（入库 FD-1 会话日志 wall 5.4s 与 results JSON elapsed_ms_incl_model_load 4.7s 二者自洽） | frozen-detect-probe-results.json + raw/fd*.log |
 | PYZ 清单 | 8,571 模块；transformers 2,320 / rt_detr+rt_detr_v2 全家 / PIL.Image* 22 | raw/pyz-core-service-listing.txt |
 | pytest 三套件 | providers **289+1**（既有环境性 `test_registry_readiness::test_no_model_runtime_is_installed_in_this_environment`，T3 范围）/ m2_acceptance **35** / core **107**（基数 77 + 新增 30） | 本表 |
 | cargo / vitest | **43 passed + 1 failed + 1 ignored**（失败=main.rs:1228 Rust 测试断言过期，见「已知限制」）/ **31 passed** | 本表 |
@@ -64,8 +64,8 @@ M2-PROD-DETECT-2 AC5 的 PARTIAL 判定源头——「frozen 命令面无 detect
 
 ## 已知限制与遗留
 
-1. **cargo `real_library_sidecar_round_trip_and_eof` 1 failed（未修）**：`apps/desktop/src-tauri/src/main.rs:1228` 断言 `ping.protocol_version.minor==0`，协议 1.1 后过期。`apps/**` 为本 Task 硬禁改面，产品主路径零影响（Rust 请求仍发 minor 0、`decode_response` 不校验 minor 数值、GATE 含 Rust 宿主真实运行 25/25 PASS）。修复=该行断言 `0`→`1`（同文件 :1194 为 MockChannel 自洽桩，可选同步），交集成方或后续 slice。
-2. **core.detect 为验证与工具面**：Tauri host 不注册（apps/** 禁改，裁决⑤）；产品 UI 的 detect 仍走 pipeline。IPC 面暴露真实推理的风险已评估（stdio 本地 spawn、无网络面）。
+1. **cargo `real_library_sidecar_round_trip_and_eof` 1 failed（已由集成轮修复）**：`apps/desktop/src-tauri/src/main.rs:1228` 断言 `ping.protocol_version.minor==0`，协议 1.1 后过期。Owner 受 `apps/**` 硬禁改面约束未修、如实登记；集成方（DSH r1 R4）已将该行断言改 `1`（`:1194` MockChannel 自洽桩保持 minor 0）并复跑 cargo **44 passed + 1 ignored, 0 failed**（见集成节）。
+2. **core.detect 为验证与工具面（verification-only，非产品 IPC 面）**：Tauri host 不注册（apps/** 禁改，裁决⑤）；产品 UI 的 detect 仍走 pipeline。IPC 面暴露真实推理的风险已评估（stdio 本地 spawn、无网络面）。§10 大媒体禁令的例外登记见 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` Revision history（DSH r1 R2 集成裁定）。
 3. **协议 bump 的消费方同步点**：Rust 宿主测试断言（上条）与 GATE（本 Task 已同步）；无其他消费方。
 4. mock 模式 core.detect 只在 `mock_local_providers=True` 装配下可用（仅 acceptance_bridge 设置）——core_service 生产装配恒为 manga/doctr 后端。
 5. 真干净 Windows 覆盖仍为 M2 Release Gate 口径冻结 NOT_RUN（沿用既有边界）。
@@ -77,6 +77,19 @@ M2-PROD-DETECT-2 AC5 的 PARTIAL 判定源头——「frozen 命令面无 detect
 - `983a50d5` fix：spec torchvision stable-ABI pin + binaries 断言；GATE CS-L1 协议 1.1 同步（**构建被测输入 commit**）
 - `46d20842` evidence：verification/M2-PROD-DETECT-3/**（probe + raw + README）+ Task 回填 + 本 Handoff
 - `9bcfd969` hygiene（raw 日志 LF 规范化 + EOF 空行剥离；探针脚本写 LF；内容不变；`git diff --check 46f079e8..HEAD` EXIT=0 恢复）+ task record（frontmatter `delivery_head`→tip、`status`→`in_review`，doc-only，随本 tip 在库）
+
+## 集成轮（acting Codex，2026-10-01）——DSH r1 条件全闭 + 全量重建复跑
+
+DSH r1 `approved_with_conditions`（报告在 task-env，R1-R17）。集成修正 commit `7314ad20`（**重建输入**）+ 集成轮证据（本文所引 raw/ 与 results JSON 现为集成轮复跑版本，绑定新 NSIS；Owner 轮原文见 `46d20842..9bcfd969` 历史）：
+
+| 项 | 结果 |
+|---|---|
+| 重建 | PyInstaller 237s（closure 断言过，`HEAD=7314ad20…`）+ tauri 254s → onedir 1,118,301,886 B / NSIS **460,795,026 B（439.45 MiB）/ sha256 `61c0697360ffac1adf7ae329395bab7f947a7390078f80e27726880cac62bae7`** |
+| GATE | 25/25 PASS（新 NSIS；CS-E2 绑 `61c06973…`）；M2-AC5 raw 6 文件 + gen/schemas（2）+ permissions（12）`git checkout --` 还原，专项 diff 空 |
+| 探针 | 4/4 PASS（复跑）：FD-1 2 候选 conf 0.9430/0.9274、handler elapsed 4,645ms（含模型加载）；**FD-3 message_head=脱敏安全短句（R1 生效实证，路径不再上线）** |
+| pytest | providers 289+1（既有环境性失败；T3 后 main=skipped，本分支基于其前——合并后以 main 复跑为准）/ m2_acceptance 35 / core **111**（+4：R1/R9/R10/R11 新用例；R8 改真装配） |
+| cargo | **44 passed + 1 ignored, 0 failed**（R4：main.rs:1228 断言 0→1，仅此一行，集成追认改动） |
+| R1-R17 处置 | 逐条表见 Task「集成修正记录」；核心：§8 脱敏（重建）、§10 契约 Revision history 例外登记、run_clean_start_e2e.py 偏差追认 + Task 矛盾措辞修订、main.rs:1228、像素上限/格式白名单、DETECT-2 集成后注记、R12/R13/R16 口径、R15 doc-only slice 登记、R17 try/finally |
 
 ## 接收方式
 

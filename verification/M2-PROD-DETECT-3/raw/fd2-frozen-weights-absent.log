@@ -1,4 +1,5 @@
-$ frozen core_service.exe session (wall 316ms)
+$ frozen core_service.exe session (wall 303ms)
 exit=0
 --- stderr ---
 WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\fd2-data-root\models\detector\ogkalu-comic-text-and-bubble-detector | C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
+core.detect provider error [PROVIDER_NOT_CONFIGURED]: PROVIDER_NOT_CONFIGURED: manga detector weights are not installed: directory C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\fd2-data-root\models\detector\ogkalu-comic-text-and-bubble-detector is missing (place the pinned snapshot of ogkalu/comic-text-and-bubble-detector @ 16e8a622 there �� model.safetensors / config.json / preprocessor_config.json, sha256 pinned in src/infrastructure/providers/detection_manga.py; weights are never downloaded at run time; if NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base .pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)

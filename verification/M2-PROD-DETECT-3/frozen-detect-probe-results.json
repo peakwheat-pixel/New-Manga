@@ -23,9 +23,9 @@
           0.9430127143859863,
           0.9273876547813416
         ],
-        "elapsed_ms_incl_model_load": 4687,
+        "elapsed_ms_incl_model_load": 4645,
         "page": "900x1300 PNG base64 (22068 chars)",
-        "stderr_head": "\rLoading weights:   0%|          | 0/770 [00:00<?, ?it/s]\rLoading weights:  66%|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd   | 511/770 [00:00<00:00, 5069.49it/s]\rLoading weights: 100%|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd| 770/770 [00:00<00:00, "
+        "stderr_head": "\rLoading weights:   0%|          | 0/770 [00:00<?, ?it/s]\rLoading weights:  88%|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd | 675/770 [00:00<00:00, 6684.63it/s]\rLoading weights: 100%|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd| 770/770 [00:00<00:00"
       }
     },
     {
@@ -56,7 +56,7 @@
         "ping_status": "ready",
         "error_code": "PROVIDER_NOT_CONFIGURED",
         "retryable": false,
-        "message_head": "PROVIDER_NOT_CONFIGURED: docTR weights are not installed: C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\fd3-data-root\\models\\detector\\fast_base-688"
+        "message_head": "detector is not configured; install weights or set NEWMANGA_DETECTOR_WEIGHTS (see stderr for details)"
       }
     }
   ],

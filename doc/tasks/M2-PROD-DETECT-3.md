@@ -19,6 +19,7 @@ base_commit_note: 分支实际 base=46f079e8（release T1/T2/T3 同基分发）�
 # M2-PROD-DETECT-3：core.detect 命令面扩展 + frozen detect 端到端验证
 
 > 交付记录：`doc/handoffs/M2-PROD-DETECT-3-983a50d5.md`（实现 9d29a0c9 → 修复 983a50d5 → 证据 46d20842；构建输入绑定 983a50d5）。
+> 集成修正：DSH r1 `approved_with_conditions` 全闭 @`7314ad20`（重建输入）+ 集成轮证据（见「集成修正记录」）；最终交付锚点见 frontmatter `delivery_head`。
 
 ## 来源与目标
 
@@ -53,18 +54,34 @@ base_commit_note: 分支实际 base=46f079e8（release T1/T2/T3 同基分发）�
 
 ## 验证证据（M2-PROD-DETECT-3）
 
-全部证据在 `verification/M2-PROD-DETECT-3/`（README 有完整索引），构建输入绑定 `983a50d5`：
+证据在 `verification/M2-PROD-DETECT-3/`（README 有完整索引）。下表为**集成修正轮**（构建输入绑定 `7314ad20`，全量重建复跑）；Owner 轮（绑定 `983a50d5`，NSIS `ea34041c…`）数字见该 commit 历史：
 
 | 验证 | 结果 |
 |---|---|
-| onedir | 1,118,300,869 B / 5,557 文件 / PyInstaller 238s |
-| NSIS | 460,814,288 B / sha256 `ea34041c…` / tauri 251s |
-| GATE（M2-AC5 runner） | 25/25 PASS（CS-E2 绑 `ea34041c…`；CS-L1 protocol 1.1） |
-| frozen 探针 | 4/4 PASS：FD-1 frozen 进程内真实推理（2 候选，conf 0.943/0.927，cold 21.4s/热 4.7s）+ FD-2 无权重 typed NOT_CONFIGURED + FD-2b 恢复 + FD-3 doctr typed NOT_CONFIGURED —— **M2-PROD-DETECT-2 AC5 的 NOT_RUN 子项（frozen 进程内 ML import/detect）转 RUN** |
-| pytest 三套件 | providers 289+1（既有环境性失败保持）/ m2_acceptance 35 / core 107（基数 77 + 新增 30） |
-| cargo / vitest | 43+1 failed（main.rs:1228 Rust 断言过期，登记）/ 31 passed |
+| onedir | 1,118,301,886 B / 5,557 文件 / PyInstaller 237s（closure 断言含 torchvision 两 stable-ABI 扩展） |
+| NSIS | 460,795,026 B（439.45 MiB）/ sha256 `61c06973…` / tauri 254s |
+| GATE（M2-AC5 runner） | 25/25 PASS（CS-E2 绑 `61c06973…`；CS-L1 protocol 1.1）；raw/gen/permissions 已还原，专项 diff 空 |
+| frozen 探针 | 4/4 PASS：FD-1 frozen 进程内真实推理（2 候选，conf 0.9430/0.9274，首测 handler elapsed 4,645ms——含模型加载；与 DETECT-2 稳态 273ms/页非同一口径）+ FD-2 无权重 typed NOT_CONFIGURED + FD-2b 恢复 + FD-3 doctr typed NOT_CONFIGURED（**message=脱敏安全短句，R1 生效实证**）—— **M2-PROD-DETECT-2 AC5 的 NOT_RUN 子项（frozen 进程内 ML import/detect）转 RUN** |
+| pytest 三套件 | providers 289+1（既有环境性失败保持；T3 在 main 已改 skipped，本分支基于其前——口径差如实登记，合并后以 main 复跑为准）/ m2_acceptance 35 / core 111（基数 77 + Owner 轮 30 + 集成轮 +4） |
+| cargo / vitest | **44 passed + 1 ignored, 0 failed**（R4 修复后全绿）/ 未复跑（前端零触碰，引 Owner 轮 31 passed） |
 | diff --check | `46f079e8..HEAD` EXIT=0 |
-| 禁改面 | providers/ports/acceptance_bridge/apps/tauri.conf.json/requirements.txt/experiments 零 diff；唯一偏差=run_clean_start_e2e.py 协议 1.1 同步（上节登记）；权重零 tracked |
+| 禁改面 | providers/ports/acceptance_bridge/tauri.conf.json/requirements.txt/experiments 零 diff；经追认例外=`run_clean_start_e2e.py` 协议 1.1 同步（Owner 轮）+ `main.rs:1228` 断言一行（集成轮 R4）；权重零 tracked |
+
+## 集成修正记录（acting Codex，2026-10-01，DSH r1 条件全闭）
+
+Review：DSH r1 `approved_with_conditions`（报告 `G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-3/dsh-review-r1.md`，R1-R17）。处置（逐条 how+落点见各文件与 Handoff 集成节）：
+
+- **R1[P2] §8 路径泄漏 → 脱敏（选 a，需重建）**：`core_service.py` dispatch 的 ProviderError 分支不再透传 `str(error)`——按 error_code 映射固定安全短句（NOT_CONFIGURED/FAILED/DEPENDENCY_MISSING/UNAVAILABLE，兜底同 FAILED），`INVALID_INPUT` 保留参数级消息（无路径，测试钉住），原文细节只走 stderr；FD-3 message_head 复跑实证脱敏生效。
+- **R2[P2] §10 契约冲突 → 双动作**：契约 Revision history 例外登记（core.detect=verification/tooling surface，本地 stdio 无网络面，32 MiB 文件上限+像素上限，无写库，不构成大媒体先例）+ core.detect 本为 Tauri host 不注册面（Task/Handoff 已标注 verification-only）。
+- **R3[P2] 允许-禁止自相矛盾 → 修订**：允许/禁止条款与 AC5 措辞改为「禁改面除经追认的 GATE 协议字面量同步外为空」——**追认 run_clean_start_e2e.py CS-L1 1.0→1.1**（裁决①必要后承，严格度不变）。
+- **R4[P2] cargo 红灯 → 集成方一行修复**：`main.rs:1228` 断言 minor `0`→`1`（只此一行，`:1194` MockChannel 桩不动）；复跑 **44 passed + 1 ignored, 0 failed**。该一行登记为**集成方追认改动**。
+- **R5-R11, R14（P3）**：e2e env 净化；elapsed_ms docstring=「detect（含首次模型加载）」；「byte-identically」改「命令语义零变化+envelope minor 0→1」；mock 装配测试改真装配（`mock_local_providers=True`）+ 措辞降「行为一致（实例不共享）」；补装配 wiring 同一实例断言；解码像素上限（32 MiB RGB24 等效=11,184,810 px，convert 前校验，注释改「base64-decoded file bytes; pixel-count cap separately enforced」）；格式白名单 `{PNG, JPEG}` fail-closed；category 最小映射（INVALID_INPUT→validation，其余 internal）——各配单测，core 107→111。
+- **R12/R16（P3）**：`cold 21.4s`（无 artifact）从 Task/Handoff/README 删除；耗时口径改「首测 handler elapsed（含模型加载；与 DETECT-2 稳态 273ms/页非同一口径）」；NSIS MiB 修正口径（439.47 而非 439.44）+ PYZ 两统计面口径注。
+- **R13（P3）**：frontmatter `base_commit`→`46f079e8`（分支实际 base；契约编写时基线 095e314d 已注明）；`delivery_head` 由集成轮证据 commit 锚定。
+- **R15（P3）**：`src/ports/detection/ports.py:59` docstring 与两 provider raw-pixel 契约相悖——**doc-only 后续 slice 登记**（本 Task 禁改 ports 正确），见「遗留与边界」。
+- **R17（P4）**：探针 models 树 rename/restore 加 try/finally 复原保护。
+- **DETECT-2 注记（集成方清单#5）**：`verification/M2-PROD-DETECT-2/integration.md` 加「集成后注记」节（不改历史原文）——torchvision `_C_stable` stable-ABI 扩展经动态加载绕过 PyInstaller hook，DETECT-2 轮 frozen 闭包未含（其探针 L3 为闭包外等价推理故结论不受影响，「闭包含 ML 运行时」强表述以注记收窄）；AC5 NOT_RUN 子项由本 Task 转 RUN。
+- **集成轮重建与复跑（绑定 `7314ad20`）**：全量重建（PyInstaller 237s + tauri 254s）→ 新 NSIS `61c06973…`；GATE 25/25；探针 4/4（FD-3 脱敏实证）；pytest 435+1（providers 289+1 / m2_acceptance 35 / core 111）；cargo 44+1ig, 0 failed；M2-AC5 raw/gen/permissions 还原专项 diff 空。
 
 ## 允许修改范围
 
@@ -92,3 +109,4 @@ base_commit_note: 分支实际 base=46f079e8（release T1/T2/T3 同基分发）�
 
 - core.detect 仅为验证与工具面；产品 UI 的 detect 走 pipeline（Tauri host 不新增命令注册——apps/** 禁改）。
 - T2（weights SOP）/T3（registry 断言）由并行 Task 处理，非本 Task 范围。
+- **doc-only 后续 slice（登记不释放，DSH r1 R15）**：修订 `src/ports/detection/ports.py` `DetectionRequest` docstring——现文「the image arrives as encoded bytes」与两 provider 的 raw-pixel 契约（`detection_manga.py:191`、`detection_doctr.py:170-172`）相悖；由独立 doc-only slice 修正（本 Task 禁改 ports）。
