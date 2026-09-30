@@ -16,17 +16,21 @@ status: delivered_awaiting_review
 1. `src/bootstrap/acceptance_bridge.py` `method_run_pipeline` docstring：「…has a known production planner gap (Handoff §风险与遗留) that must not be reported as covered by this Task.」→「The historical region-less detect→backfill ``LOCK_CHANGED`` gap … was fixed by M2-P1 (merge ``a174fb9c``) and verified closed by DIAG-M2-LOCK-CHANGED-REPRO-002 (merge ``1faf6c1b``: pre-fix anchor reproduces, HEAD does not).」；**保留** resume_blocked 分支「NOT exercised by the released acceptance evidence (DSH r1 F-007)」（该证据边界陈述至今真实）。
 2. `experiments/M2-TA3-A/run_smoke.py:273` 行注释「`(real detect; ocr hits the known gap)`」→「`(real detect; page-level chain; the historical LOCK_CHANGED planner gap is FIXED by M2-P1 @a174fb9c, verified by DIAG-M2-LOCK-CHANGED-REPRO-002 @1faf6c1b)`」。
 
-**零逻辑变化的机器证据（AC2）**：字节码探针对两文件改前（`4ed3c044` blob）vs 改后分别 `compile()` 并递归对比全部代码对象 `co_code`——`acceptance_bridge.py` 37 对象 + `run_smoke.py` 15 对象 = **52 全等**（`BYTECODE-PROBE: ALL-EQUAL`）；`py_compile` 双版通过；`tests/m2_acceptance/test_acceptance_loop.py` **4 passed** EXIT=0（`acceptance_bridge` 直接消费方）。AC1 diff 证明变化行全部为注释/docstring 文本。
+**指令流零变化证明（AC2，DSH P2-2 限定口径）**：字节码探针（已入库 [bytecode_probe.py](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/bytecode_probe.py)，运行记录 [ac2-bytecode-probe-r2.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe-r2.log) 带头+EXIT）对两文件改前（`4ed3c044` blob）vs 改后分别 `compile()` 并递归对比全部代码对象 `co_code`——37+15=**52 全等**。**口径限定**：`co_code` 只证明指令流零变化；`co_consts`（本 Task docstring 变更所在维度，属预期差异）、`co_names`、行号信息不在比较面。完整零逻辑结论由 **AC1 注释-only diff + 本探针**共同支撑。回归：`test_acceptance_loop.py` **4 passed** EXIT=0。
 
-与 M2-TA3-A L-7 的关系：L-7 ①「登记不改」的裁量（「被提交脚本==产出证据脚本」锚定）由本 Task 的注释-only diff+字节码全等证明处置——M2-TA3-A 既有证据由其 provenance（dc2b9aca 锚定）继续可追溯；M2-TA3-A.md 正文不改写，效力以本 Task+STATUS 为准。L-7 ②③ 维持不改。
+与 M2-TA3-A L-7 的关系（DSH P2-1 限定口径）：L-7 ① 由注释-only diff + 指令流全等处置——dc2b9aca pin 仍为有效历史标识、行为等价由 AC1/AC2 支撑；但 **M2-TA3-A provenance 的字节级 sha256 自检在 main/tip 上不再全绿**（run_smoke.py `f1b5976d…`→`30d55acd…`，一行 FAILED 属预期），字节级 15/15 须在其交付 worktree 复算——详见 [00-provenance-note.txt](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/00-provenance-note.txt)；集成记录同步此口径。L-7 ②③ 维持不改。
 
 ## 提交链（branch `agent/zcode/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS`，worktree `G:/CODEX/New Manga.worktrees/DOC-FIX-STALE-COMMENTS-zcode`）
 
 | commit | 内容 |
 |---|---|
 | `74022cdc` | claim：Task `ready → in_progress` |
+| `65f0facb` | 实现（两处注释）+ AC1-AC4 证据 |
+| `1dd30dc7` | 本 Handoff 首版 |
+| `768a0933` | generated diff log whitespace-only 规范化（文件内披露）=r1 被审 tip |
+| （本轮） | DSH 条件返修：探针脚本入库+重跑 r2 log、00-provenance-note、ac4-r2、措辞/元数据回填 |
 
-实现与证据为 claim 之上的工作区状态（两目标文件修改 + verification 4 文件）+ 本 Handoff 文档提交；被审 head=分支 tip。范围证据：[ac4-scope-proof.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log)（`git diff --check` EXIT=0、意外产品路径 grep 零命中）。
+证据捕获时点披露：各 log 的 shell 头记录 `worktree @ 74022cdc`（实现后、提交前）；提交链随后成型。范围证据：r1 [ac4-scope-proof.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log)（当时仅已提交 range）、r2 [ac4-scope-proof-r2.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof-r2.log)（tip 全量未过滤枚举，DSH P3-3 闭合）。
 
 ## AC 对照
 
@@ -58,7 +62,7 @@ status: delivered_awaiting_review
 ```bash
 cd "G:/CODEX/New Manga.worktrees/DOC-FIX-STALE-COMMENTS-zcode"
 git diff 4ed3c044 -- src/bootstrap/acceptance_bridge.py experiments/M2-TA3-A/run_smoke.py
-# 字节码探针脚本内嵌于 verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe.log 头部
+"G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe" verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/bytecode_probe.py  # EXIT=0
 ```
 
 ## 下一接收者

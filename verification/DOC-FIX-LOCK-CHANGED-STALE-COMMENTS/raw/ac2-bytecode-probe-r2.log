@@ -1,0 +1,5 @@
+=== shell: Git Bash (win32) / interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe / worktree @ 768a0933a002af881722567bdd8691c03a08e81b / cmd: python verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/bytecode_probe.py (r2: script in-repo, claim scope = co_code only, see P2-2) ===
+[src/bootstrap/acceptance_bridge.py] objects=37 co_code=EQUAL (py_compile OK both)
+[experiments/M2-TA3-A/run_smoke.py] objects=15 co_code=EQUAL (py_compile OK both)
+BYTECODE-PROBE: ALL-EQUAL (instruction stream unchanged)
+EXIT=0

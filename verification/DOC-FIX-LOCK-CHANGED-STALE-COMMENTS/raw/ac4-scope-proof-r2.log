@@ -1,0 +1,24 @@
+=== shell: Git Bash (win32) / cwd: DOC-FIX-STALE-COMMENTS-zcode worktree @ 768a0933a002af881722567bdd8691c03a08e81b / AC4 scope proof r2 (DSH P3-3: unfiltered enumeration at tip) ===
+$ git rev-parse HEAD
+768a0933a002af881722567bdd8691c03a08e81b
+
+$ git status --porcelain
+?? verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/00-provenance-note.txt
+?? verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe-r2.log
+?? verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof-r2.log
+?? verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/bytecode_probe.py
+(empty = clean)
+
+$ git diff --name-status 4ed3c044..HEAD   (UNFILTERED: release commit .. tip)
+A	doc/handoffs/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-zcode-delivery-20260930.md
+M	doc/tasks/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS.md
+M	experiments/M2-TA3-A/run_smoke.py
+M	src/bootstrap/acceptance_bridge.py
+A	verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac1-comment-only-diff.log
+A	verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-acceptance-regression.log
+A	verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe.log
+A	verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log
+EXIT=0
+
+$ git diff --check 4ed3c044..HEAD
+EXIT=0

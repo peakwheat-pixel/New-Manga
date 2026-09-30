@@ -1,0 +1,32 @@
+# provenance note — DOC-FIX-LOCK-CHANGED-STALE-COMMENTS (DSH review P2-1 closure)
+
+生成：2026-09-30，Owner=ZCode。
+
+## M2-TA3-A provenance manifest 的字节级影响（P2-1）
+
+`verification/M2-TA3-A/raw/00-provenance.txt` 以 sha256 钉住
+`experiments/M2-TA3-A/run_smoke.py` = `f1b5976de517290a294b7ea3b0c804e59c87f45b610ed9d8f4a047ce8c4850d9`。
+本 Task 有意演进了该文件的注释字节（仅 :273 注释行，+2 行）：
+
+- 改前（base 4ed3c044 blob，即 M2-TA3-A manifest 所钉值）：f1b5976de517290a294b7ea3b0c804e59c87f45b610ed9d8f4a047ce8c4850d9
+- 改后（本 Task tip 工作区）：30d55acd0f3c98880a68d23920afb6168a9e125f4d2d2fb3d6a082e525c1c9be
+- src/bootstrap/acceptance_bridge.py：改前 b2d7b86eace8750681fda633537931f8ff49f288f462338de4ce296e732d7b76 → 改后 3e4b1fd168d2584a15b43080b786a6d2057a652c66cc957b7aeb42093ec90c61（该文件不在 M2-TA3-A manifest 内）
+
+## 口径限定（取代 Task:29/Handoff:21 原有「不受注释演进影响」的过强表述）
+
+1. **行为锚点不变**：M2-TA3-A 证据的行为等价性由本 Task 的 AC1（注释-only diff）+
+   AC2（52 个 code object 的 co_code 指令流全等，见 ac2-bytecode-probe-r2.log）支撑；
+   dc2b9aca 作为「被提交脚本==产出证据脚本」的历史标识继续有效。
+2. **字节级自检退化（预期内、有意）**：在 main/tip 上对 M2-TA3-A manifest 执行
+   `sha256sum -c` 将出现 run_smoke.py 一行 FAILED（15/15 → 14/15）——这不是证据被
+   推翻，而是注释演进的必然结果。该 manifest 的预期验证环境是 M2-TA3-A 交付
+   worktree（其 00-provenance.txt:13-15 已限定）；字节级 15/15 仅在未受本 Task
+   影响的交付 worktree（Owner branch 保留点）成立。
+3. 集成方将在集成记录中同步此口径（M2-TA3-A.md 正文不改写）。
+
+## AC1 原始捕获披露（P3-6）
+
+`ac1-comment-only-diff.log` 为 whitespace-only 归一化副本（文件内已披露）；
+原始捕获未单独留存、已不可得。归一化仅压平 raw `git diff` 上下文空行的行尾空白，
+未增删任何 diff 内容行；DSH review 已用 tip 文件字节独立复核 `+`/`-` 两侧与
+交付内容逐字一致（其复核点 (1) verified 项）。
