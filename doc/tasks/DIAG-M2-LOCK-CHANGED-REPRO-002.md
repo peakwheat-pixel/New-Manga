@@ -2,8 +2,8 @@
 id: DIAG-M2-LOCK-CHANGED-REPRO-002
 title: M2-AC1 登记的 regionless LOCK_CHANGED 缺口——mock detect 两段式复现核实（M2-TA3-A L-1）
 kind: diagnosis
-status: in_progress
-approval: released_by_codex_proxy
+status: in_review
+approval: delivered_awaiting_review
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness (non-author)
@@ -13,6 +13,7 @@ base_commit: b9fc977017f101a9731d4cb4bf5d270cc6f65d62
 branch: agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002
 worktree: G:/CODEX/New Manga.worktrees/DIAG-LOCK-CHANGED-REPRO-002-zcode
 integration_commit: null
+delivery_head: 18975a7a
 ---
 
 # DIAG-M2-LOCK-CHANGED-REPRO-002：regionless LOCK_CHANGED 缺口 mock detect 两段式复现核实
@@ -37,11 +38,11 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC1（主判定 S1）**：实验脚本（`experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py`，零 `src/**` 改动）在当前 HEAD 用 `mock_local_providers=True` 注册路径装配生产栈，regionless fixture 页跑两段式：Run1 `TRANSLATE_ALL`（PAGE_SELECTION）+ Run2 `RETRANSLATE_REGION_FULL`（REGION，逐 Region）。逐字段记录 run 状态、`step_runs`（step_type/status/error_code/error_detail）、ocr StepRun 的 `target_id`/`region_id`/`input_refs`，机器可读 verdict（`REPRODUCED`/`NOT_REPRODUCED`）落盘。
-- [ ] **AC2（先红反证 S2）**：同一脚本在修复前锚点 `d268a170`（M2-P1 merge `a174fb9c` 的 main 侧 parent）上跑 Run1 部分，**预期 `REPRODUCED`**：ocr StepRun `FAILED` + `error_code=LOCK_CHANGED`，且诊断报告三特征齐备（`target_id==page_id`、`input_refs` 无 `"region"` 键、`error_detail` 含 `expected None`）。若不红，则实验判别力不足，结论按「反证未达成」降级并如实登记（不得强行归因）。
-- [ ] **AC3（时序自愈 S3）**：S1 同一 DB 上，Page 已有 Region 后再次创建 `TRANSLATE_ALL` run（重规划走 region 级链）并执行，记录其状态（预期 `completed`），作为「重规划/重试路径无缺口」的最小时序证据。
-- [ ] **AC4（结论登记）**：按 S1/S2/S3 证据在 Task+Handoff 落四选一结论，并给出对两处登记的处置建议（撤销 / 标注已修复 / 维持）；若 REPRODUCED 则附最小复现步骤与触发条件描述。结论如实，**允许「登记有误/已过时」这一结论**。
-- [ ] **AC5（范围与证据纪律）**：`git diff --check` EXIT=0；Owner delta 全部落在允许路径；所有运行日志带 shell 头+EXIT 尾入库 `verification/DIAG-M2-LOCK-CHANGED-REPRO-002/`。
+- [x] **AC1（主判定 S1）**：实验脚本（`experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py`，零 `src/**` 改动）在当前 HEAD 用 `mock_local_providers=True` 注册路径装配生产栈，regionless fixture 页跑两段式：Run1 `TRANSLATE_ALL`（PAGE_SELECTION）+ Run2 `RETRANSLATE_REGION_FULL`（REGION，逐 Region）。逐字段记录 run 状态、`step_runs`、ocr StepRun 的 `target_id`/`region_id`/`input_refs`，机器可读 verdict 落盘。**结果：verdict=`NOT_REPRODUCED` EXIT=0；Run1 全链 9 步 COMPLETED；ocr `target_id==region_id`、`input_refs_keys=["region"]`。** 证据：[s1-head-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-run.log)、[s1-head-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-verdict.json)。
+- [x] **AC2（先红反证 S2）**：同一脚本在修复前锚点 `d268a170` 上跑，**实际 `REPRODUCED`（预期达成）**：ocr `FAILED` + `error_code=LOCK_CHANGED`，诊断三特征齐备（`target_id_is_page_id=True`、`region_key_in_input_refs=False`、`error_detail_has_expected_none=True`）。证据：[s2-prefix-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-run.log)、[s2-prefix-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-verdict.json)。
+- [x] **AC3（时序自愈 S3）**：S2 轮 run1 失败后 Run2 region 级链 `COMPLETED`（重规划自愈实证，即「首跑失败重试成功」机理）；S1/S2 两轮 Run3（同 DB 二次 `TRANSLATE_ALL`）`COMPLETED` 零新 step_runs（既有完成态幂等重规划语义，如实记录）。
+- [x] **AC4（结论登记）**：结论=**登记缺口真实存在过、已由 M2-P1 修复（`a174fb9c`）、非 mock-detect 特有、非「未修」时序条件性**；M2-TA3-A 未复现根因=其运行于修复后 main。处置建议：M2-TA3-A L-1 闭为已核实；M2-AC1 handoff 原文不改写（历史忠实记录）；`acceptance_bridge.py:338-340` 过时 docstring 登记遗留候选；无需新修复 Task。详见 [Handoff §交付结果](../handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md)。
+- [x] **AC5（范围与证据纪律）**：`git diff --check d69a3e1c..HEAD` EXIT=0；Owner delta 6 路径全落允许清单、禁改路径零命中；日志均带 shell 头+EXIT 尾。
 
 ## 允许修改范围
 
@@ -63,10 +64,12 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| S1 主判定（AC1） | `python experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py --scenario s1`（planned） | TASK-012-py312 venv（Py3.12.3+PySide6 6.11.2 offscreen）；HEAD worktree | NOT_RUN | 无 |
-| S2 先红反证（AC2） | 临时 worktree @`d268a170` + 同脚本 `--scenario s1`（Run1 判定复用）（planned） | 同 venv；修复前锚点 | NOT_RUN | 无 |
-| S3 重规划时序（AC3） | 同脚本 `--scenario s1` 内置 Run3（planned） | 同 S1 | NOT_RUN | 无 |
-| 范围/whitespace（AC5） | `git diff --check <base>..HEAD`；`git diff --name-status <base>..HEAD`（planned） | — | NOT_RUN | 无 |
+| S1 主判定（AC1） | `python experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py --label s1-head --expect not-reproduced --out …/s1-head-verdict.json` | TASK-012-py312 venv（Py3.12.3+PySide6 6.11.2 offscreen）；HEAD worktree | **executed**：verdict=`NOT_REPRODUCED`，Run1 全链 COMPLETED、Run2 COMPLETED、Run3 COMPLETED(0 步) | [s1-head-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-run.log)、[s1-head-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-verdict.json) |
+| S2 先红反证（AC2） | 临时 worktree @`d268a170` + 同脚本 `--expect reproduced` | 同 venv；修复前锚点 | **executed**：verdict=`REPRODUCED`，run1 ocr `failed LOCK_CHANGED` 三特征齐备、run2 COMPLETED（自愈） | [s2-prefix-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-run.log)、[s2-prefix-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-verdict.json) |
+| S3 重规划时序（AC3） | 同脚本内置 Run2/Run3 | 同 S1/S2 | **executed**：两轮 Run2 COMPLETED（S2 轮=失败后自愈实证）；两轮 Run3 COMPLETED 零新 step_runs（幂等语义） | 同上两份 run.log |
+| 范围/whitespace（AC5） | `git diff --check d69a3e1c..HEAD`；`git diff --name-status d69a3e1c..HEAD` | — | **executed**：EXIT=0；6 路径全允许、禁改零命中 | 本文件 §AC5 |
+
+测试迭代披露：脚本 v1（无 provider binding → run1 `PROVIDER_NOT_CONFIGURED`，发现 binding 属 harness 装配步骤后补齐）与 v2（verdict 判定大小写 bug）的原始日志已被 v3 终版覆盖；v3（入库）S1/S2 均一次通过。详见 Handoff §迭代披露。
 
 ## 依赖、风险与阻塞
 
@@ -79,7 +82,7 @@ integration_commit: null
 ## 交付与运行记录
 
 - **2026-09-30 release（代行 Codex）**：`proposed → ready / DIAG_M2_LOCK_CHANGED_REPRO_002_RELEASED`。起草（含登记来源、时间线核实、S1/S2/S3 实验矩阵冻结）与释放同批完成（用户指令授权新建本缺陷核实 Task 并全链交付）。冻结：base=`b9fc977017f101a9731d4cb4bf5d270cc6f65d62`、branch=`agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002`、worktree=`G:/CODEX/New Manga.worktrees/DIAG-LOCK-CHANGED-REPRO-002-zcode`。Release evidence：[release-b9fc9770](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/release-b9fc9770.md)。
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
+- **2026-09-30 交付（Owner=ZCode，head=`18975a7a`）**：`in_progress → in_review`。S1（HEAD）`NOT_REPRODUCED` EXIT=0 + S2（`d268a170` 修复前）`REPRODUCED` EXIT=0 判别矩阵闭合；结论=**缺口真实存在过、已由 M2-P1 修复（`a174fb9c`）、非 mock-detect 特有、非未修时序条件性**（M2-TA3-A 未复现根因=修复后 main）。处置建议：L-1 闭为已核实；M2-AC1 handoff 原文不改写；`acceptance_bridge.py:338-340` 过时 docstring 为遗留候选；无需新修复 Task。`git diff --check d69a3e1c..HEAD` EXIT=0。Handoff：[DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930](../handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md)。
+- Review：尚无（待 DSH 非作者静态 Review）。
+- 实际测试：见上方测试表（S1/S2/S3/范围自查全 executed）。
 - 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 Codex 填写 integration_commit 并改 done。
