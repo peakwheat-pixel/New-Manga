@@ -46,7 +46,7 @@ integration_commit: null
 ### AC2 执行方式与 Provider 身份（如实登记）
 
 - 薄封装 `experiments/M2-TA3-A/run_smoke.py`：只调生产 seam，不改生产代码。
-  - **Run1**：`create_run(TRANSLATE_ALL, PAGE_SELECTION)` —— 生产 planner 自动前插 `detect`（真 docTR fast_base，pin 权重 sha256=688a8b34…，CPU，严格离线），检测经 `RegionEditingService` 建 Region，整页 9 步链（ocr/color/term_extract/translate/segment/mask_refine/inpaint/render）一段式执行。
+  - **Run1**：`create_run(TRANSLATE_ALL, PAGE_SELECTION)` —— 生产 planner 自动前插 `detect`（真 docTR fast_base，pin 权重 sha256=688a8b34…，CPU，严格离线），检测经 `RegionEditingService` 建 Region，整页链一段式执行。Run1 的 region 级步骤按生产 backfill 语义只作用于 primary region（reading_order 1，`application/tasks/service.py:939-942`），其余 region 由 Run2 逐个覆盖（cap 40 见 L-4）。
   - **Run2**：对每个检测 Region 逐个 `create_run(RETRANSLATE_REGION_FULL, REGION)`（region scope 为单 region 选择语义，即阅读器逐格重翻流；BJ06 57 region 触发 40 region smoke 上限，`truncated` 如实记录）。
   - **Export**：生产 `ExportService.export(SINGLE_IMAGE, mode="translated")`。
 - Provider 身份：detect = 生产 `DoctrDetectionProvider`（权重 pin sha256=688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace，`NEWMANGA_DETECTOR_WEIGHTS`/`DEVICE=cpu`）；ocr = `m2ac1-mock-ocr`、translate = `m2ac1-mock-translate`（M2-AC1 deterministic mock，AC2 明示允许，`step_run_output_refs` 样本如实记录 MOCK-OCR-SOURCE-TEXT / MOCK-TRANSLATED-TEXT）；inpaint = 生产 `SimpleFillProvider`（route="simple-fill"）；render/export = 生产 Qt 渲染 + ExportService。
@@ -61,12 +61,13 @@ integration_commit: null
 | BJ06 | completed (21.3s) | 57 | completed（40 runs，cap 40 truncated 如实记录） | OK 8,771,537 B | 820.6 |
 | K01 | completed (67.5s) | 15 | completed（15 runs） | OK 20,408,981 B | 1041.6 |
 | K02 | completed (18.7s) | 7 | completed（7 runs） | OK 5,984,018 B | 137.3 |
-| K11 | completed (5.2s) | 24 | completed（24 runs） | OK 3,036,455 B | 113.0 |
+| K11 | completed (5.2s) | 24 | completed（24 runs） | OK 3,036,455 B | 100.76 |
 
-- 归因：5 case 全部无环境/数据/缺陷归因项（`attribution: []`）。
+- 归因：5 case 全部无环境/数据/缺陷归因项（`attribution: []`）。各 case wall_s 以 `summaries/smoke-*.json` 为准。
 - 导出产物 sha256（与磁盘复算双向一致）：BJ02 `9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1`、BJ06 `c5497a499ac80bc86d563e15193bc4f0f447a3ae78b015bbcc36b9d506f7e147`、K01 `02499d71f86f78ae17b1c9f937a455c28fb087c9a29f9352363f10fe1129275f`、K02 `207410cb599acf203e6eb188d94b310d90245c75c8c01a814a2305ec04ce35ee`、K11 `c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2`。
 - 产物落盘 `verification/M2-TA3-A/artifacts/*.png`（该目录 `.gitignore` 忽略 PNG，像素不入 Git；哈希与尺寸入 summaries）。
-- 译文/OCR/inpaint 身份样本：`verification/M2-TA3-A/summaries/artifact-samples.json`（probe_artifacts.py 从各 case scratch db 只读抽取：ocr_text=MOCK-OCR-SOURCE-TEXT、machine_translation=MOCK-TRANSLATED-TEXT、inpaint route=simple-fill、render_status=committed；K01 16×9 步、BJ06 41×9 步全 completed）。
+- 译文/OCR/inpaint 身份样本：`verification/M2-TA3-A/summaries/artifact-samples.json`（probe_artifacts.py 从各 case scratch db 只读抽取：ocr_text=MOCK-OCR-SOURCE-TEXT、machine_translation=MOCK-TRANSLATED-TEXT、inpaint route=simple-fill、render_status=committed；K01 16×9 步、BJ06 41×9 步全 completed）。导出图为真实 PNG（哈希如实），文字排版为 offscreen 缺字形下的占位框/虚线渲染（L-5）——「真实产物」指产物真实存在且链路真实执行，可读性属 TA3-B。
+- 证据锚定：`verification/M2-TA3-A/raw/00-provenance.txt`（r1 返修新增）——实现 head `dc2b9aca`、3 个脚本与 7 份 summary JSON、5 份 PNG 的 sha256 清单；5 份 raw ac*.log 为执行时点原始捕获（头行 HEAD 为当时工作区态，正文不重写）。
 
 ### AC5 回归与回填完整性
 
@@ -79,9 +80,8 @@ integration_commit: null
 
 **处置**（依据用户 2026-09-28/29/30 对 ZCode 代行 Codex 的全权授权，Lead 裁决留痕）：
 
-- 最小修正：仅放宽 `test_catalog.py:45` 这一条断言——非 TA3-A 94 case 仍强制全 NOT_RUN（fail-closed 不变）；TA3-A 5 case 要求键集合与 expected_pipeline 精确相等、PASS 集合非空且为 expected_pipeline 子集。断言判别力保持（仍锁定其余 94 case 与 5 case 的键集合）。
-- 不触碰该文件其他任何断言；不动共享契约。
-- 同类漂移登记：`test_assets/comic_golden_suite/README.md:7`「当前所有应用 Pipeline 都是 `NOT_RUN`」一句在回填后失实（README 不在本 Task 允许路径）——交集成方随收口修订或登记候选。
+- 最小修正：仅放宽 `test_catalog.py:45` 这一条断言——非 TA3-A 92 case 仍强制全 NOT_RUN（fail-closed 不变）；TA3-A 5 case 用**显式字面快照**逐 case 精确匹配（r1 P3-2 闭合：字面快照使未来任一 TA3-A 段退化 FAIL/NOT_RUN 也会变红，判别力不低于原快照）。不触碰该文件其他任何断言；不动共享契约。
+- 同类漂移登记：`test_assets/comic_golden_suite/README.md:7,26-29` 的「应用 Pipeline `NOT_RUN`」表述在回填后失实（README 不在本 Task 允许路径）——交集成方随收口修订或登记候选。
 
 ## 允许修改范围（含 §冲突记录 追加）
 
@@ -117,10 +117,17 @@ integration_commit: null
 ## 遗留（不阻断，登记候选）
 
 - L-1：M2-AC1 handoff 登记的 LOCK_CHANGED planner 缺口未复现——需缺陷 Task 以 mock detect 复现核实（或修正该登记的条件描述）。
-- L-2：`README.md:7`「所有应用 Pipeline 都是 NOT_RUN」失实一句待集成方修订（README 不在本 Task 允许路径）。
+- L-2：`test_assets/comic_golden_suite/README.md:7,26-29` 的「应用 Pipeline NOT_RUN」表述回填后失实，待集成方随收口修订（README 不在本 Task 允许路径）。
 - L-3：region scope 单 region 语义 + TRANSLATE_ALL 拒绝 region scope（`TARGET_NOT_FOUND: page command requires page scope`）为生产 fail-closed 行为，非缺陷；阅读器批量逐格重翻的用户体验优化属产品层后续。
 - L-4：BJ06 57 region 触发 smoke cap 40（truncated 如实记录）；cap 为本 Task smoke 裁剪，非生产限制。
-- L-5：QT_QPA_PLATFORM=offscreen 下 Qt 无字体目录告警（PySide6 不再自带 fonts）；render 仍 completed，文字排版质量属 TA3-B 范围。
+- L-5：QT_QPA_PLATFORM=offscreen 下 Qt 无字体目录告警（PySide6 不再自带 fonts）；render 仍 committed，导出图文字为占位框/虚线渲染，排版可读性属 TA3-B 范围。
+- L-6：`probe_artifacts.py` 依赖 `%TEMP%/m2-ta3a-*/library.sqlite`（机器本地临时目录，OS 可清理）；scratch db 消失后探针不可复跑，`artifact-samples.json` 为留存的抽取结果（步数与 smoke-*.json 的 `run2.per_region` 互证）。下一轮同类工具应把 scratch 根指到 gitignored verification 目录下。
+- L-7：`run_smoke.py` 三处 cosmetic 项登记不改（保持「被提交脚本 == 产出证据脚本」的锚定简洁性，provenance 锚定 dc2b9aca 版）：① `:273` 注释仍提 known gap（本轮结论为未复现，见 L-1）；② `report["generated_at_utc"]` 实为运行开始时间；③ `--keep-scratch` 为 no-op（scratch 本就不清理）。`probe_artifacts.py` 的 `LIMIT SAMPLES_PER_STEP*4` 放大无效。
+
+## Review 轨迹
+
+- DSH r1（非作者静态，交付 head=dc2b9aca）：`approved_with_conditions`——1×P1（证据链未锚定交付版本/probe 不可复跑）+2×P2（K11 wall_s 失真 113.0→100.76；Run1「整页链」措辞易误读为覆盖全部 region）+3×P3（94→92 计数、断言判别力弱化、cosmetic/README 漂移登记）。核心六核对点全部独立成立（含主仓库对照证明回填 diff 严格 33 处、K11 PNG 像素级复算一致）。
+- r1 返修（本 commit，仅 doc/verification/test_catalog 单 hunk）：P1-1 → `raw/00-provenance.txt` 新增（原始日志正文不重写）；P2-1/P2-2/P3-1 → Task/Handoff 修正；P3-2 → 断言改显式字面快照（82 passed 保持）；P3-3 → cosmetic 项登记 L-7 不改代码、L-2 扩为 README:7,26-29、L-6 新增。
 
 ## 交付与运行记录
 
