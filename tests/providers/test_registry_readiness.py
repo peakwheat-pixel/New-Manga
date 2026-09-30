@@ -188,7 +188,41 @@ def test_runtime_exposes_the_sakura_connection_test() -> None:
 
 
 def test_no_model_runtime_is_installed_in_this_environment() -> None:
-    """Environment evidence for the registered BLOCKED items."""
+    """Environment evidence for the registered BLOCKED items.
+
+    Original premise (TASK-019, 2026-09-17): this environment had NO model
+    runtime ("no torch/diffusers/numpy, measured"), and TASK-019's BLOCKED
+    classifications for weight-dependent quality ACs assume exactly that —
+    the assertion loop below freezes that environment evidence so any drift
+    would be flagged.
+
+    That premise was legitimately superseded by user-approved requirements
+    changes: T1.1.1 put torch==2.14.0 into requirements.txt (M2-PROD-DETECT-1
+    added transformers==5.17.0 + safetensors), so the dev/main venv
+    intentionally carries the ML stack and this test would fail there
+    forever. The deployment-level "no unverified ML closure" guarantee this
+    test once symbolised is now enforced at BUILD time by the packaging
+    closure assertions (``packaging/m2ac5/core_sidecar.spec``
+    ``_assert_ml_closure`` + per-entry warn archives, M2-PROD-DETECT-2 GATE
+    evidence), which is the correct layer for it.
+
+    Conditioning (M2-FIX-REGISTRY-READINESS-ENV, option a): when torch is
+    present (the T1.1.1+ main-venv marker), skip with an explicit reason;
+    on a torch-free environment the ORIGINAL assertion loop below runs
+    verbatim, keeping the full TASK-019-era discrimination power
+    (``diffusers``/``paddleocr``/``manga_ocr`` remain unapproved and are
+    still asserted absent).
+    """
+    if importlib.util.find_spec("torch") is not None:
+        pytest.skip(
+            "dev venv intentionally carries the ML stack since T1.1.1 "
+            "(user-approved requirements: torch==2.14.0, transformers=="
+            "5.17.0); the TASK-019-era 'no model runtime in this "
+            "environment' premise no longer holds here, and the "
+            "closure-level guarantee is enforced at build time by "
+            "packaging/m2ac5 core_sidecar.spec _assert_ml_closure "
+            "(M2-PROD-DETECT-2)"
+        )
     for module in ("torch", "diffusers", "numpy", "paddleocr", "manga_ocr"):
         assert importlib.util.find_spec(module) is None, (
             f"{module} unexpectedly present: the BLOCKED classification in "
