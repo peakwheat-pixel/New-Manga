@@ -58,4 +58,3 @@ warning: `m2rc1-desktop` (bin "m2rc1-desktop") generated 5 warnings (run `cargo 
      Running makensis to produce G:\CODEX\New Manga.worktrees\M2-PROD-DETECT-2-zcode\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe
     Finished 1 bundle at:
         G:\CODEX\New Manga.worktrees\M2-PROD-DETECT-2-zcode\apps\desktop\src-tauri\target\release\bundle\nsis\m2rc1-desktop_0.1.0_x64-setup.exe (438.86 MiB)
-
