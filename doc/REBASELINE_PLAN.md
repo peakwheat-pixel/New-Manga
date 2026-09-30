@@ -1,8 +1,8 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED; M2-RG1 DONE; M2-TA1 DONE (2026-09-29)**
+Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED; Goal「M2 遗留技术债清算」达成（T1/T2/T3 done，2026-09-30）；2026-09-30 用户三项裁决（docTR 口径 / TA2B 开放素材池 / TA3 拆阶段）全链闭环 done：QUAL-RUN 正式结论 FAIL（候选 C1-C5 产出待释放）、M2-TA2B done @`fae0d8f6`、M2-TA3-A done @`5dc69d16`；L-1 核实（DIAG-002）与 DOC-FIX-STALE 亦闭环 @`1970512d`；当前无 Active Task（2026-09-30 REBASELINE 刷新）**
 
-Audit date: 2026-09-29 (Asia/Shanghai)
+Audit date: 2026-09-30 (Asia/Shanghai)（本日 REBASELINE 刷新；上一轮 2026-09-29）
 
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
@@ -58,8 +58,28 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | M2-TA2A | Codex Desktop | DeepSeek Harness / Codex Desktop | `ef13a77b` |
 | M2-TA2C | Codex Desktop（续接/集成=ZCode 代行） | DeepSeek Harness / ZCode（代行 Codex） | `a4cd513d` |
 | DIAG-M2-REGIONLESS-LOCK-CHANGED-001 | DeepSeek Harness（静态交付，执行由集成方代采） | Antigravity / Codex（代行） | `b5ac097f` |
+| M2-P1 | Antigravity | DeepSeek Harness / Codex（代行） | `a174fb9c` |
+| M2-IPC1 | Antigravity | DeepSeek Harness / Codex（代行） | `04c1394a` |
+| M2-AC2 | ZCode | DeepSeek Harness / Codex（代行） | `9d3c1db5` |
+| M2-AC3 | ZCode | DeepSeek Harness / Codex（代行） | `cac37485` |
+| M2-AC4 | ZCode | DeepSeek Harness / Codex（代行） | `fc991821` |
+| M2-FIX-STUB-DECODER | ZCode | DeepSeek Harness / Codex（代行） | `121a281c` |
+| M2-FIX-EXPORT-LINEAGE | ZCode | DeepSeek Harness / Codex（代行） | `d71883ec` |
+| M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN | ZCode | DeepSeek Harness / Codex（代行） | `69961029` |
+| M2-FIX-F02-RESOURCE-CHANNEL-FLAKY | ZCode | DeepSeek Harness / Codex（代行） | `aa2f99b8` |
+| M2-FIX-RESOURCE-CHANNEL-DIGEST-PERF | ZCode | DeepSeek Harness / Codex（代行） | `bc2529f0` |
+| M2-AC5 | ZCode | DeepSeek Harness / Codex（代行） | `9db08dc7` |
+| M2-FIX-DIGEST-SEEK-2GIB | ZCode | DeepSeek Harness / Codex（代行） | `a0ffc4f3` |
+| M2-AC5-BUILD-FRESH-CHECKOUT | ZCode | DeepSeek Harness / Codex（代行） | `1a96f536` |
+| M2-TA2C-TOOLING-GAPS | ZCode | DeepSeek Harness / Codex（代行） | `04165c76` |
+| M2-DOCTR-QUAL-PREFLIGHT | ZCode | DeepSeek Harness / Codex（代行） | `51229d49` |
+| M2-DOCTR-QUAL-RUN | ZCode | DeepSeek Harness / Codex（代行） | `e8c9c120`（正式结论 FAIL） |
+| M2-TA2B | ZCode | DeepSeek Harness / Codex（代行） | `fae0d8f6` |
+| M2-TA3-A | ZCode | DeepSeek Harness / Codex（代行） | `5dc69d16` |
+| DIAG-M2-LOCK-CHANGED-REPRO-002 | ZCode | DeepSeek Harness / Codex（代行） | `1faf6c1b`（收口 `56edc335`） |
+| DOC-FIX-LOCK-CHANGED-STALE-COMMENTS | ZCode | DeepSeek Harness / Codex（代行） | `1970512d`（集成修正 `e81b4220`） |
 
-| 未完成 / 下一阶段 | 状态 | 建议 Owner / Reviewer | 说明 |
+| 已闭环 Task（原「未完成 / 下一阶段」表；新行随收口追加） | 状态 | 建议 Owner / Reviewer | 说明 |
 |---|---|---|---|
 | [M2-P1](tasks/M2-P1.md) Regionless Detection Fan-out and Guard Rebinding | **done**（integration=`a174fb9c`） | Antigravity / DeepSeek Harness（`approved_with_conditions`，P2 已处置） | fixed base=`33826641`、tip=`59acb340`；修复=诊断报告 §5.4 单函数 + R0–R5/N1–N7 全落测；[release evidence](../verification/M2-P1/release-33826641.md)、[集成记录](../verification/M2-P1/integration-record/integration.md)。 |
 | [M2-IPC1](tasks/M2-IPC1.md) Production Core Lifecycle + Read-only Library Vertical Slice | **done**（integration=`04c1394a`） | Antigravity / DeepSeek Harness（r1 changes_requested → r2 approved_with_conditions，裁决已实施） | tip=`5556fc8e`；seam 冻结全落地（含方案 B 冻结面保持）；[release evidence](../verification/M2-IPC1/release-a54bb8c9.md)、[集成记录](../verification/M2-IPC1/integration-record/integration.md)。 |
@@ -77,10 +97,15 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-AC5-BUILD-FRESH-CHECKOUT](tasks/M2-AC5-BUILD-FRESH-CHECKOUT.md) fresh checkout 构建链根治（build.rs 可诊断 sidecar 缺失 + build_sidecar.ps1 增量短路；Goal 2026-09-30 T2） | **done**（integration=`1a96f536d75d7525d51a3da453be1497ad978d78`；DSH r1 `approved_with_conditions`（AC1-AC5 全 PASS 附证据条件）→ r2 证据返修（热态实验实证确定性触发）→ r2 定点复审（仅余机制句，集成落字改正）；post-merge 44 passed EXIT=0；[集成记录](../verification/M2-AC5-BUILD-FRESH-CHECKOUT/integration-record/integration.md)） | ZCode / DeepSeek Harness | base=`251f7425`；不加 beforeBuildCommand（理由记录 README）；tauri.conf.json 零改动。 |
 | [M2-TA2C-TOOLING-GAPS](tasks/M2-TA2C-TOOLING-GAPS.md) comic_golden_suite 工具清算（TA2C P3-6 source_url 白名单与目录命名 + P3-10 checksum_inventory 运行时消费与断言覆盖；Goal 2026-09-30 T3） | **done**（integration=`04165c76fab939e4a106f4a87f5045d674e8dac3`；DSH r1 `approved` 一次通过（0×P0/P1/P2）；post-merge 34 passed EXIT=0；7×P3 登记候选；[集成记录](../verification/M2-TA2C-TOOLING-GAPS/integration-record/integration.md)） | ZCode / DeepSeek Harness | base=`f3d684eb`；素材零改动、目录未重命名（受管快照断言替代）。 |
 | [M2-RG1](tasks/M2-RG1.md) M2 Release Gate（Windows 本机口径） | **done**（integration=`b796bed3cb3d79b2d4208b29f3e53c956a018dee`；DSH r1 `approved_with_conditions` 1×P1/3×P2 → gate v2 返修 → r2 `changes_requested` → 纯文字收口；两轮条件全闭） | ZCode / DeepSeek Harness | fixed base=`875eb818`、release=`79510a8b`、delivery=`e752ba39`、终 tip=`8e0100ba`；用户裁决"把本机视为干净widows环境。若本机通过，则视为pass"=干净机基座；**GATE PASS 25/25**：AC2 console policy（PE Subsystem=2 + `CREATE_NO_WINDOW`×4 + CW0 阳性对照真命中）/ AC3 冷启动测录（app 46.9/49.9/160.2 ms 等，无阈值）/ AC4 四入口 stdio 闭环 + warn 审查 + M2-AC5 回归 25/25 / AC5 Win11 已验证、Win10 NOT_RUN；集成复跑 cargo 38+1 / pytest 35 / vitest 31 / diff-check 全绿；[release evidence](../verification/M2-RG1/release-875eb818.md)、[集成记录](../verification/M2-RG1/integration-b796bed3/integration.md)。 |
+| [M2-DOCTR-QUAL-PREFLIGHT](tasks/M2-DOCTR-QUAL-PREFLIGHT.md) docTR qualification 三项前置（受控权重 / 隔离环境 / 评测基座） | **done**（integration=`51229d49`；DSH 五轮 r5 `approved` 定点 6/6 closed；确定性复现） | ZCode / DeepSeek Harness | release=`480f12a2`、base=`14720230`；fast_base 生产 pin + db_resnet50 对照权重快照、隔离 GPU 环境 Py3.12+cu128 实测、KO webtoon 10 case 511 regions 评测基座三层判定口径；首跑基线 FAIL 稳健（Recall 0.4776）；[handoff](handoffs/M2-DOCTR-QUAL-PREFLIGHT-baseline.md)。 |
+| [M2-TA2B](tasks/M2-TA2B.md) JA/KO 开放素材池（2026-09-30 裁决：Manga109 前置永久取消） | **done**（integration=`fae0d8f6`；DSH r1 `approved_with_conditions` → r2 `approved` 0×P0/P1/P2） | ZCode / DeepSeek Harness | tip=`98766fdc`；densho810 BJ 官方免费 1/3/5 卷（避 JASRAC 乐曲页）+ BJ01-BJ12 case + P&C +17 页 + Manga109 取消标注 + OpenMantra 隔离 optional；pytest 47 passed；**用户待办=1 个月内向 info@densho810.com 发利用报告（草稿已备，Agent 不代发）**。 |
+| [M2-TA3-A](tasks/M2-TA3-A.md) 应用级 E2E Smoke（5 case=BJ02/BJ06/K01/K02/K11） | **done**（integration=`5dc69d16`；DSH r1→r2 条件全闭 approved） | ZCode / DeepSeek Harness | 5 case 全链 COMPLETED pipeline_failures=0（真 docTR detect + mock OCR/translate + 生产 inpaint/render/export）、export 哈希双向复算一致、pytest 82 passed；真 docTR 下 LOCK_CHANGED 未复现=L-1 候选（已由 DIAG-002 核实关闭）；TA3-B 维持暂缓。 |
+| [DIAG-M2-LOCK-CHANGED-REPRO-002](tasks/DIAG-M2-LOCK-CHANGED-REPRO-002.md) M2-TA3-A L-1 缺口核实（mock detect 复现） | **done**（integration=`1faf6c1b`、收口 `56edc335`；DSH r1→r2 `approved_with_conditions` 0×P0/P1/P2） | ZCode / DeepSeek Harness | S2 @`d268a170` 复现 LOCK_CHANGED（DIAG-001 §3 四项预测全对齐）→ 终局结论=缺口真实存在过、已由 M2-P1 修复（S1 HEAD 全链绿）、retry 自愈实证；**L-1 不再保留缺陷候选**；Owner worktree 保留 @`2c13530b`。 |
+| [DOC-FIX-LOCK-CHANGED-STALE-COMMENTS](tasks/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS.md) 两处过时「known planner gap」注释最小修正 | **done**（integration=`1970512d`、集成修正=`e81b4220`；DSH r1 `approved_with_conditions` → r2 `approved`） | ZCode / DeepSeek Harness | 零指令流（co_code）变化+注释-only diff 证明、test_acceptance_loop 4 passed；L-7 ④⑤ 行号换算登记；M2-TA3-A manifest tip 上 14/15 属预期（字节级 15/15 须在其交付 worktree 复算）；Owner worktree 保留 @`8ab9045b`。 |
 
 ```mermaid
 flowchart TD
-  %% ✓ = done（已集成 main）；O = Owner；R = 非作者 Reviewer；灰色 = backlog 未释放
+  %% ✓ = done（已集成 main）；O = Owner；R = 非作者 Reviewer（均为 DSH 除非另注）；虚线 = 候选/后续，未释放不实施
   GOV["GOV-001 治理基线 · O:Codex ✓"] --> D1["M2-D1 耦合审计 · O:DSH ✓"]
   D1 --> I1["M2-I1 核心装配缝 · O:ZCode ✓"]
   D1 --> I2["M2-I2 Qt-free 逻辑抽取 · O:AGY ✓"]
@@ -112,29 +137,39 @@ flowchart TD
   FXA --> FXB["FIX-B 心跳生命周期 · O:ZCode ✓"]
   FXB --> FXC["FIX-C 生产接线 · O:ZCode ✓"]
 
-  FXF --> PKG["M2-AC5 Package/clean-start · O:ZCode ✓"]
+  FXF --> PKG["M2-AC5 打包/clean-start · O:ZCode ✓"]
   PKG --> RG["M2-RG1 Release Gate（本机口径） · O:ZCode ✓"]
-  FXF -.-> DP["DIGEST-PERF digest 性能优化+GrantCache 收敛 · O:ZCode ✓"]
+  FXF -.-> DP["DIGEST-PERF digest 性能优化 · O:ZCode ✓"]
 
-  %% 测试素材家族（2026-09-29 用户授权阶段）
-  RG --> TA1["M2-TA1 测试素材基础设施 · O:Codex ✓"]
-  TA1 --> TA2A["M2-TA2A JA 公开素材引导 · O:Codex ✓"]
-  TA2A --> TA2C["M2-TA2C No-HF JA/KO 素材迁移 · O:Codex ✓<br/>（集成=ZCode 代行）"]
-  TA1 -.-> TA2B["M2-TA2B 开放素材池 · done @fae0d8f6"]
-  TA2C -.-> TA3A["M2-TA3-A E2E Smoke · done @5dc69d16"]
-  TA3A -.-> TA3B["M2-TA3-B 质量 qualification · proposed 暂缓"]
-  DOC["Real docTR qualification · 正式 run done FAIL；候选 C1-C5 待释放"]
+  %% Goal「M2 遗留技术债清算」（2026-09-30 达成：T1/T2/T3）
+  DP -.-> T1["FIX-DIGEST-SEEK-2GIB 64 位 seek（T1） · O:ZCode ✓"]
+  PKG -.-> T2["AC5-BUILD-FRESH-CHECKOUT 构建链根治（T2） · O:ZCode ✓"]
+  TA2C -.-> T3["TA2C-TOOLING-GAPS 工具清算（T3） · O:ZCode ✓"]
+
+  %% 测试素材家族（2026-09-29 用户授权；2026-09-30 裁决后 T-D2/T-D3 闭环）
+  RG --> TA1["M2-TA1 素材基础设施 · O:Codex ✓"]
+  TA1 --> TA2A["M2-TA2A JA 公开素材 · O:Codex ✓"]
+  TA2A --> TA2C["M2-TA2C No-HF 素材迁移 · O:Codex ✓（集成=ZCode 代行）"]
+  TA1 -.-> TA2B["M2-TA2B 开放素材池（T-D2） · O:ZCode ✓"]
+  TA2C -.-> TA3A["M2-TA3-A E2E Smoke 5 case（T-D3） · O:ZCode ✓"]
+  TA3A -.-> TA3B["M2-TA3-B 20-case 质量 qualification · proposed 暂缓（待 Provider 稳定）"]
+
+  %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
+  TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
+  PRE --> QRUN["DOCTR-QUAL-RUN 正式 qualification（T-D1） · O:ZCode ✓（正式结果 FAIL）"]
+  QRUN -.-> C15["检测器调参/换模型候选 C1-C5 · proposed 待释放（C1 需用户/标注者参与；C4 manga 域检测器=唯一可能逼近 Gate）"]
+
+  %% L-1 缺口核实支线（TA3-A 遗留 → DIAG-002 → DOC-FIX-STALE 全闭）
+  TA3A -.-> DG2["DIAG-LOCK-CHANGED-REPRO-002 L-1 核实=已由 M2-P1 修复 · O:ZCode ✓"]
+  DG2 -.-> DOCF["DOC-FIX-STALE 过时注释修正 · O:ZCode ✓"]
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  classDef backlog fill:#eef1f5,stroke:#697386,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C done;
-  class TA3A done;
-  class TA3 proposed;
-  class DOC backlog;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF done;
+  class TA3B,C15 proposed;
 ```
 
-上图中灰色节点只是排序与建议分工，不构成释放。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
+上图中绿色节点全部为 `done` 且已集成 main；黄色节点（M2-TA3-B、C1-C5 候选）只是排序与建议分工，不构成释放——实施前须另行登记并释放 Task。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
 
 **M2 — Desktop Architecture Migration: FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION.** User authorization on 2026-09-25 releases only the four Tasks below from the verified local `master` base `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` after Codex non-author [Review](reviews/M2-D1-0a27a54.md) `approved` and integration `100abfb`. Its [report](research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md) supplies the first-wave evidence. AD-001 remains the fixed React + TypeScript / Tauri / Python Core / SQLite target. Migration is incremental; the existing PySide6/QML application may remain operational during transition, but its PyInstaller Release Gate is retired as the future formal release gate.
 
