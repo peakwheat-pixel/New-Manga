@@ -2,8 +2,8 @@
 id: DIAG-M2-LOCK-CHANGED-REPRO-002
 title: M2-AC1 登记的 regionless LOCK_CHANGED 缺口——mock detect 两段式复现核实（M2-TA3-A L-1）
 kind: diagnosis
-status: ready
-approval: released_by_codex_proxy
+status: in_review
+approval: delivered_awaiting_review
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness (non-author)
@@ -13,6 +13,7 @@ base_commit: b9fc977017f101a9731d4cb4bf5d270cc6f65d62
 branch: agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002
 worktree: G:/CODEX/New Manga.worktrees/DIAG-LOCK-CHANGED-REPRO-002-zcode
 integration_commit: null
+delivery_head: 18975a7a
 ---
 
 # DIAG-M2-LOCK-CHANGED-REPRO-002：regionless LOCK_CHANGED 缺口 mock detect 两段式复现核实
@@ -37,11 +38,11 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] **AC1（主判定 S1）**：实验脚本（`experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py`，零 `src/**` 改动）在当前 HEAD 用 `mock_local_providers=True` 注册路径装配生产栈，regionless fixture 页跑两段式：Run1 `TRANSLATE_ALL`（PAGE_SELECTION）+ Run2 `RETRANSLATE_REGION_FULL`（REGION，逐 Region）。逐字段记录 run 状态、`step_runs`（step_type/status/error_code/error_detail）、ocr StepRun 的 `target_id`/`region_id`/`input_refs`，机器可读 verdict（`REPRODUCED`/`NOT_REPRODUCED`）落盘。
-- [ ] **AC2（先红反证 S2）**：同一脚本在修复前锚点 `d268a170`（M2-P1 merge `a174fb9c` 的 main 侧 parent）上跑 Run1 部分，**预期 `REPRODUCED`**：ocr StepRun `FAILED` + `error_code=LOCK_CHANGED`，且诊断报告三特征齐备（`target_id==page_id`、`input_refs` 无 `"region"` 键、`error_detail` 含 `expected None`）。若不红，则实验判别力不足，结论按「反证未达成」降级并如实登记（不得强行归因）。
-- [ ] **AC3（时序自愈 S3）**：S1 同一 DB 上，Page 已有 Region 后再次创建 `TRANSLATE_ALL` run（重规划走 region 级链）并执行，记录其状态（预期 `completed`），作为「重规划/重试路径无缺口」的最小时序证据。
-- [ ] **AC4（结论登记）**：按 S1/S2/S3 证据在 Task+Handoff 落四选一结论，并给出对两处登记的处置建议（撤销 / 标注已修复 / 维持）；若 REPRODUCED 则附最小复现步骤与触发条件描述。结论如实，**允许「登记有误/已过时」这一结论**。
-- [ ] **AC5（范围与证据纪律）**：`git diff --check` EXIT=0；Owner delta 全部落在允许路径；所有运行日志带 shell 头+EXIT 尾入库 `verification/DIAG-M2-LOCK-CHANGED-REPRO-002/`。
+- [x] **AC1（主判定 S1）**：实验脚本（`experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py`，零 `src/**` 改动）在当前 HEAD 用 `mock_local_providers=True` 注册路径装配生产栈，regionless fixture 页跑两段式：Run1 `TRANSLATE_ALL`（PAGE_SELECTION）+ Run2 `RETRANSLATE_REGION_FULL`（REGION，逐 Region）。逐字段记录 run 状态、`step_runs`、ocr StepRun 的 `target_id`/`region_id`/`input_refs`，机器可读 verdict 落盘。**结果：verdict=`NOT_REPRODUCED` EXIT=0；Run1 全链 9 步 COMPLETED；ocr `target_id==region_id`、`input_refs_keys=["region"]`。** 证据：[s1-head-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-run.log)、[s1-head-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-verdict.json)。
+- [x] **AC2（先红反证 S2）**：同一脚本在修复前锚点 `d268a170` 上跑，**实际 `REPRODUCED`（预期达成）**：ocr `FAILED` + `error_code=LOCK_CHANGED`，诊断 §3 预测四项中三项特征齐备（`target_id_is_page_id=True`、`region_key_in_input_refs=False`、`error_detail_has_expected_none=True`）且第 4 项零写取证达成（run1 后 `region_revisions_count=1`）。证据：[s2-prefix-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-run.log)、[s2-prefix-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-verdict.json)。
+- [x] **AC3（时序自愈 S3）**：S2 轮 run1 失败后 **Run4 `retry_failed_targets` 探针**（v5 起，置于 region 级链之前）真实驱动 region 级链 8 步（ocr→…→render）全执行后 `COMPLETED`——「首跑失败、重试成功」用户症状机理直接实证；Run2（RETRANSLATE_REGION_FULL，强制重跑语义）亦 8 步 COMPLETED；两轮 Run3（同命令 TRANSLATE_ALL 重规划）`COMPLETED` 零新 step_runs（既有完成态幂等语义，如实记录）。
+- [x] **AC4（结论登记）**：结论=**登记缺口真实存在过、已由 M2-P1 修复（`a174fb9c`）、机制上非 mock-detect 特有（真 docTR 在修复前是否同样触发属推断，未实测）、非「未修」时序条件性**；M2-TA3-A 未复现根因=其运行于修复后 main。归因证据（DSH r1 F-001）：`d268a170..57a83485` 区间 `src/` 变更恰 3 文件，其中与本链写守卫路径相关的行为变化唯一= `service.py` 的 M2-P1 重绑（[f001-attribution-diff.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/f001-attribution-diff.log)）。处置建议：M2-TA3-A L-1 闭为已核实；M2-AC1 handoff 原文不改写（历史忠实记录）；`acceptance_bridge.py:338-340` 过时 docstring 与 `run_smoke.py:273` 过时注释登记遗留候选（维持不改、引用本 Task 结论）；无需新修复 Task。详见 [Handoff §交付结果](../handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md)。
+- [x] **AC5（范围与证据纪律）**：`git diff --check` 两 range 均 EXIT=0；禁改路径零命中；日志均带 shell 头+EXIT 尾。范围证据：[ac5-scope-proof.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/ac5-scope-proof.log)。**base 口径（F-008）**：`b9fc9770`=释放时 main 锚点（frontmatter base_commit）；`d69a3e1c`=release commit（worktree 检出点，范围 diff 起点）；`d268a170`=仅 S2 使用的修复前锚点。
 
 ## 允许修改范围
 
@@ -63,10 +64,13 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| S1 主判定（AC1） | `python experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py --scenario s1`（planned） | TASK-012-py312 venv（Py3.12.3+PySide6 6.11.2 offscreen）；HEAD worktree | NOT_RUN | 无 |
-| S2 先红反证（AC2） | 临时 worktree @`d268a170` + 同脚本 `--scenario s1`（Run1 判定复用）（planned） | 同 venv；修复前锚点 | NOT_RUN | 无 |
-| S3 重规划时序（AC3） | 同脚本 `--scenario s1` 内置 Run3（planned） | 同 S1 | NOT_RUN | 无 |
-| 范围/whitespace（AC5） | `git diff --check <base>..HEAD`；`git diff --name-status <base>..HEAD`（planned） | — | NOT_RUN | 无 |
+| S1 主判定（AC1） | `python experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py --label s1-head --expect not-reproduced --out …/s1-head-verdict.json` | TASK-012-py312 venv（Py3.12.3+PySide6 6.11.2 offscreen）；HEAD worktree | **executed（v5 终版）**：verdict=`NOT_REPRODUCED`（正向合取断言全满足），Run1 全链 COMPLETED、Run2 COMPLETED、Run3 COMPLETED(0 步)、Run4 SKIPPED | [s1-head-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-run.log)、[s1-head-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-verdict.json) |
+| S2 先红反证（AC2） | 临时 worktree @`d268a170` + 同脚本 `--expect reproduced` | 同 venv；修复前锚点 | **executed（v5 终版）**：verdict=`REPRODUCED`，run1 ocr `failed LOCK_CHANGED` 三特征+零写（revisions=1）齐备 | [s2-prefix-run.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-run.log)、[s2-prefix-verdict.json](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-verdict.json) |
+| S3 重规划时序（AC3） | 同脚本内置 Run2/Run3/Run4 | 同 S1/S2 | **executed（v5 终版）**：S2 轮 Run4 retry 探针驱动 region 级链 8 步 COMPLETED（自愈实证）；两轮 Run3 COMPLETED 零新 step_runs（幂等语义） | 同上两份 run.log |
+| 归因（F-001） | `git diff --name-status d268a170..57a83485 -- src/` + service.py 专项 diff | — | **executed**：src 变更恰 3 文件、本链相关行为变化唯一=M2-P1 重绑 | [f001-attribution-diff.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/f001-attribution-diff.log) |
+| 范围/whitespace（AC5） | `git diff --check`（两 range）+ name-status + 禁改 grep | — | **executed**：全部 EXIT=0/零命中 | [ac5-scope-proof.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/ac5-scope-proof.log) |
+
+测试迭代披露：v1（无 provider binding → `PROVIDER_NOT_CONFIGURED`，补 binding）与 v2（verdict 大小写 bug）的原始日志已被覆盖、仅文字披露；v3=首个完整入库轮；v4（DSH r1 条件轮：+INCONCLUSIVE 正向合取/+零写取证/+Run4 探针，Run4 排序在 Run2 后致 retry 只余幂等）；v5（终版）=Run4 前置，S2 轮 retry 真实驱动 region 链 8 步。全轨迹见 [00-provenance.txt](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/00-provenance.txt)（v5 sha256=`d71825ff…`，S1/S2 副本同哈希）。
 
 ## 依赖、风险与阻塞
 
@@ -79,7 +83,9 @@ integration_commit: null
 ## 交付与运行记录
 
 - **2026-09-30 release（代行 Codex）**：`proposed → ready / DIAG_M2_LOCK_CHANGED_REPRO_002_RELEASED`。起草（含登记来源、时间线核实、S1/S2/S3 实验矩阵冻结）与释放同批完成（用户指令授权新建本缺陷核实 Task 并全链交付）。冻结：base=`b9fc977017f101a9731d4cb4bf5d270cc6f65d62`、branch=`agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002`、worktree=`G:/CODEX/New Manga.worktrees/DIAG-LOCK-CHANGED-REPRO-002-zcode`。Release evidence：[release-b9fc9770](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/release-b9fc9770.md)。
-- Handoff：尚无。
-- Review：尚无。
-- 实际测试：尚无。
+- **2026-09-30 交付（Owner=ZCode，head=`18975a7a`）**：`in_progress → in_review`。S1（HEAD）`NOT_REPRODUCED` EXIT=0 + S2（`d268a170` 修复前）`REPRODUCED` EXIT=0 判别矩阵闭合；结论=**缺口真实存在过、已由 M2-P1 修复（`a174fb9c`）、机制上非 mock-detect 特有、非未修时序条件性**（M2-TA3-A 未复现根因=修复后 main）。处置建议：L-1 闭为已核实；M2-AC1 handoff 原文不改写；`acceptance_bridge.py:338-340` 过时 docstring 为遗留候选；无需新修复 Task。Handoff：[DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930](../handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md)。
+- **2026-09-30 DSH r1 Review**：[approved_with_conditions](../../doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-57a83485-dsh.md)（0×P0/P1、3×P2、4×P3、3×P4；纯静态——沙箱无法执行命令）。条件：F-001 归因 diff 证据、F-002 自愈探针/措辞、F-003 verdict fail-open、F-004~F-007 证据补齐。
+- **2026-09-30 Owner 返修（r2，v5 终版）**：F-001 归因改写+[f001-attribution-diff.log]（src 变更恰 3 文件、本链相关唯一=重绑）；F-002 Run4 `retry_failed_targets` 探针前置实证（S2 轮 retry 驱动 region 链 8 步 COMPLETED）；F-003 `NOT_REPRODUCED` 升级为正向合取+`INCONCLUSIVE` fail-closed；F-004 零写取证（S2 revisions=1）；F-005 [00-provenance.txt]（v5 sha256=`d71825ff…`）；F-006 [ac5-scope-proof.log]；F-007 落地位置写实（本行+集成记录）；F-008 base 双 hash 口径注明；F-009 AC4 限定词；F-010 归一化。v5 重跑：S1 `NOT_REPRODUCED` EXIT=0、S2 `REPRODUCED` EXIT=0，判别矩阵不变、结论不变。
+- Review：r1 approved_with_conditions → r2 返修中（待 DSH r2 复核）。
+- 实际测试：见上方测试表（S1/S2/S3/归因/范围自查全 executed）。
 - 后续实际记录包含日期、commit、环境、结果、遗留项；最终由 Codex 填写 integration_commit 并改 done。

@@ -1,0 +1,34 @@
+=== shell: Git Bash (win32) / cwd: DIAG-LOCK-CHANGED-REPRO-002-zcode worktree / AC5 scope proof (F-006) ===
+$ git rev-parse HEAD
+57a834851acedb7ac786be6bfe8fa5840536645a
+
+$ git diff --name-status d69a3e1c..57a83485   (release commit .. reviewed head: implementation+evidence)
+A	doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md
+M	doc/tasks/DIAG-M2-LOCK-CHANGED-REPRO-002.md
+A	experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-run.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-verdict.json
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-run.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-verdict.json
+EXIT=0
+
+$ git diff --check d69a3e1c..57a83485
+EXIT=0
+
+$ git diff --name-status d69a3e1c..HEAD   (release commit .. current tip incl. repair round)
+A	doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md
+M	doc/tasks/DIAG-M2-LOCK-CHANGED-REPRO-002.md
+A	experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-run.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-verdict.json
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-run.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-verdict.json
+EXIT=0
+
+$ git diff --check d69a3e1c..HEAD
+EXIT=0
+
+$ git diff --name-only d69a3e1c..HEAD | grep -E '^(src/|apps/|tests/|doc/contracts/|requirements)'   (forbidden-path scan; EXIT 1 = zero hits)
+grep EXIT=1
+
+--- note: d69a3e1c = release commit (worktree checkout point); b9fc9770 = main anchor at release (F-008). d268a170 = M2-P1 pre-fix anchor (S2 only, temp worktree). ===

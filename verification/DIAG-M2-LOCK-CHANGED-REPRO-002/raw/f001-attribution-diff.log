@@ -1,0 +1,53 @@
+=== shell: Git Bash (win32) / cwd: DIAG-LOCK-CHANGED-REPRO-002-zcode worktree / F-001 attribution evidence ===
+$ git rev-parse HEAD
+57a834851acedb7ac786be6bfe8fa5840536645a
+
+$ git diff --name-status d268a170..57a83485 -- src/   (ALL src changes between pre-fix anchor and reviewed head)
+M	src/application/export/service.py
+M	src/application/tasks/service.py
+A	src/bootstrap/core_service.py
+EXIT=0
+
+$ git diff d268a170..57a83485 -- src/application/tasks/service.py   (the ONLY pipeline write-guard-relevant change = M2-P1 rebinding, +15/-2)
+diff --git a/src/application/tasks/service.py b/src/application/tasks/service.py
+index 42306d9a..653cd9ac 100644
+--- a/src/application/tasks/service.py
++++ b/src/application/tasks/service.py
+@@ -924,6 +924,18 @@ class PipelineService:
+     ) -> None:
+         """Bind the task's regionless units to the first detected Region.
+
++        Invariant:
++            PlanUnit.target_id ≡ 该步骤的写目标 (Region 步骤 ⇒ Region id; Page 步骤 ⇒ Page id).
++            _record_step_attempt 以 target_id 作为向 catalog 请求 current 快照的键。
++            因此当 detect 生成 Region 之后，后续 Region 步骤必须将 target_id 与 region_id
++            一同重绑到 primary Region，确保其 input_refs 与 optimistic lock 守卫比对
++            真实的 Region revision，避免抛出 LOCK_CHANGED (DIAG-M2-REGIONLESS-LOCK-CHANGED-001).
++
++        Why unit_id is NOT changed:
++            PlanUnit.unit_id 保持不变，因为 run.terminal_unit_ids 以 unit_id 为键，
++            且在 plan 阶段已经标记终态。若在 backfill 时更改 unit_id，会导致终态计数丢失
++            或双计。unit_id 内嵌 page id 与真实 target 不一致为已知展示层债务，本处不改。
++
+         Multi-Region pages still run their pipeline steps against the first
+         Region (``reading_order`` 1); fanning a page task out over every
+         detected Region is a later scheduling slice — the full id list stays
+@@ -935,10 +947,11 @@ class PipelineService:
+         primary = region_ids[0]
+         # rebuild the tuple in place on the task: the index-based loop in
+         # ``execute_run`` re-reads ``task.units[index]`` each iteration, so
+-        # the units after the detect step see their new region_id
++        # the units after the detect step see their new region_id and target_id.
++        # PlanUnit.target_id 必须等于该步骤的写目标；不改 unit_id（terminal_unit_ids 以它为键，plan 阶段已标终态）。
+         task.units = tuple(
+             (
+-                replace(item, region_id=primary)
++                replace(item, region_id=primary, target_id=primary)
+                 if item.unit_id != unit.unit_id and item.region_id is None
+                 else item
+             )
+EXIT=0
+
+--- attribution note: src/application/export/service.py = M2-AC1 Reader export lineage (read-side export, not on the detect->backfill->ocr write-guard path); src/bootstrap/core_service.py = M2-AC1 stub decoder (bootstrap seam, not planner). All other d268a170..HEAD deltas are tests/apps/docs/experiments and cannot affect planner behaviour. ===
+
+--- provenance note: whitespace-only normalization applied to this generated diff log (trailing-space-only lines from raw git diff context output flattened to empty lines, 2026-09-30 r2; content otherwise byte-identical). ===
