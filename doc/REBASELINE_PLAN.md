@@ -79,6 +79,8 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | DIAG-M2-LOCK-CHANGED-REPRO-002 | ZCode | DeepSeek Harness / Codex（代行） | `1faf6c1b`（收口 `56edc335`） |
 | DOC-FIX-LOCK-CHANGED-STALE-COMMENTS | ZCode | DeepSeek Harness / Codex（代行） | `1970512d`（集成修正 `e81b4220`） |
 | M2-DOCTR-QUAL-C4 | ZCode | DeepSeek Harness / Codex（代行） | `d5b1831d`（**Gate 全 PASS**：Recall 0.9618 / MeanCov 0.9965 / severe 0.0；fine-tune 主线不投入；C1 缩减为抽检） |
+| M2-DOCTR-QUAL-C1 | ZCode（判定=用户本人） | DeepSeek Harness / Codex（代行） | `316abf16`（0 真实对白漏检、Precision 方向性下界 25 盲区+4 幻觉、D 层盲区 5/10 全 SFX；Gate PASS=保守下界） |
+| M2-PROD-DETECT-1 | ZCode | DeepSeek Harness / Codex（代行） | `056617e4`（manga 域 RT-DETR-v2 生产 provider+backend 选择默认 manga 可切回；CPU 315.6ms/页；DSH r1 条件闭合→r2 approved） |
 
 | 已闭环 Task（原「未完成 / 下一阶段」表；新行随收口追加） | 状态 | 建议 Owner / Reviewer | 说明 |
 |---|---|---|---|
@@ -160,7 +162,7 @@ flowchart TD
   PRE --> QRUN["DOCTR-QUAL-RUN 正式 qualification（T-D1） · O:ZCode ✓（正式结果 FAIL）"]
   QRUN --> C4["DOCTR-QUAL-C4 manga 域检测器评估 · O:ZCode ✓（Gate 全 PASS 0.9618）"]
   C4 --> C1SPOT["C1 抽检型校准审计 · O:ZCode+用户 ✓（0 真实漏检；Gate PASS=保守下界）"]
-  C4 -.-> PRODINT["docTR→manga 域生产集成 · proposed（wire 变化，须 Codex 范围化释放）"]
+  C4 --> PRODINT["M2-PROD-DETECT-1 docTR→manga 域生产集成 · O:ZCode ✓（manga 默认/可切回 doctr；CPU 315.6ms/页）"]
 
   %% L-1 缺口核实支线（TA3-A 遗留 → DIAG-002 → DOC-FIX-STALE 全闭）
   TA3A -.-> DG2["DIAG-LOCK-CHANGED-REPRO-002 L-1 核实=已由 M2-P1 修复 · O:ZCode ✓"]
@@ -168,11 +170,11 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT done;
-  class TA3B,PRODINT proposed;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT done;
+  class TA3B proposed;
 ```
 
-上图中绿色节点全部为 `done` 且已集成 main；黄色节点（M2-TA3-B、C1-C5 候选）只是排序与建议分工，不构成释放——实施前须另行登记并释放 Task。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
+上图中绿色节点全部为 `done` 且已集成 main；黄色节点（M2-TA3-B）只是排序与建议分工，不构成释放——实施前须另行登记并释放 Task。C1-C5 检测器候选流程已收官（C4 评估 done、C1 抽检 done、C2/C3/C5 经 C4 裁定无需运行），生产集成 M2-PROD-DETECT-1 已 done。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
 
 **M2 — Desktop Architecture Migration: FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION.** User authorization on 2026-09-25 releases only the four Tasks below from the verified local `master` base `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` after Codex non-author [Review](reviews/M2-D1-0a27a54.md) `approved` and integration `100abfb`. Its [report](research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md) supplies the first-wave evidence. AD-001 remains the fixed React + TypeScript / Tauri / Python Core / SQLite target. Migration is incremental; the existing PySide6/QML application may remain operational during transition, but its PyInstaller Release Gate is retired as the future formal release gate.
 

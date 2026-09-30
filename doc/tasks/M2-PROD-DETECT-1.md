@@ -2,7 +2,8 @@
 id: M2-PROD-DETECT-1
 title: "生产检测器集成第一刀：manga 域 RT-DETR-v2 provider + 装配 backend 选择（用户「继续」推进 2026-09-30）"
 kind: feature
-status: in_review
+status: done
+integration_commit: 056617e4488513ae6336a27a3ba44f0c42dfca12
 approval: user_directive_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -70,6 +71,7 @@ delivery_head: a016d38c
 | AC6 sidecar | build_sidecar.ps1 + M2-AC5 runner | 打包链 | RUN：**构建 OK**（HEAD=d7faea39，pyinstaller 6.22.3，build venv 零改动）；runner **GATE PASS 25/25**；onedir 99,308,142 B/161 文件 vs base 99,286,538 B/161 文件（**+21.6 KB，+0 文件**）；NSIS 26.63 MiB vs 基线 26.62 MiB。注（DSH r1 R1）：+0 文件正说明 transformers/torch **不进闭包**——发布包内默认 manga backend 的 detect 会 `PROVIDER_DEPENDENCY_MISSING`（docTR 在 base 同样如此，非回归）；见「遗留 slice 候选」 | verification/M2-PROD-DETECT-1/{cleanstart-gate.json,cleanstart-runner-stdout.log}、envelope.md 体积表 |
 | AC7 回归 | pytest（providers+m2_acceptance+core）+ cargo + vitest | — | RUN：providers+m2_acceptance **309 passed + 1 既有环境性失败**（`test_no_model_runtime_is_installed_in_this_environment`：TASK-019 时代断言 venv 无 torch；在 base 2fee7d6e 上同 venv 同样失败，非本 Task 回归）；**m2_acceptance 35 passed 基数保持**；tests/core 77 passed；cargo **44 passed + 1 ignored**；vitest **31 passed**；`git diff --check 2fee7d6e..HEAD` **EXIT=0**；禁改路径专项 diff 为空 | 本表、handoff 验证表 |
 | review-fix（DSH r1） | pytest tests/providers/test_detection_manga.py + _real.py；tests/providers；tests/m2_acceptance；tests/core | 主 venv（torch 2.14.0+cpu），PYTHONPATH=src | RUN：manga 单测 **28 passed**（27 基数 + 新增 NaN 几何用例）；real **2 passed**；providers 全套 **275 passed + 1 既有环境性失败**（同上，与 R8 处理后计数自洽：274+NaN 用例）；m2_acceptance **35 passed 基数保持**；core **77 passed**。real 计数不变（字体存在；skip 处理仅为缺字体环境兜底） | 本表、review-fix commit |
+| 集成复跑（acting Codex） | pytest 三套件 + git 层三项 + 三权重文件 SHA-256 复算 | 主 venv，@efd134c2（worktree）与 @056617e4（merge 后 main） | RUN：**28+2 passed 0 skipped**（R8 守卫未触发）；providers **275+1 既有失败**（复现一致）；m2_acceptance **35**；core **77**；merge 后 main 三套件 **387 passed + 1 既有失败**（275+35+77 自洽）；`git diff --check` EXIT=0、禁改专项 diff 为空、commit 归属拆分核对一致；**三权重 sha256 复算逐字一致**（171,543,900/2,320/470 B） | verification/M2-PROD-DETECT-1/integration.md |
 
 ## 依赖、风险与阻塞
 
@@ -97,3 +99,11 @@ delivery_head: a016d38c
 - review 输入：`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1/dsh-review-r1.md`（verdict=`approved_with_conditions`，0×P0/P1、2×P2、8×P3/P4）。R1–R10 全部处置，无降级改动：R1/R2 文档口径（AC6 措辞、GPU 对照口径注）；R3 冻结守卫收紧（MERGE_* 四常数 `is` 身份断言 + sha256 pin 全量 hex）；R4 real 测试 docstring 对齐 envelope §AC3；R5 缺目录错误消息追加 `NEWMANGA_DETECTOR_BACKEND=doctr` 指引（含单测断言）；R6/R1 slice 候选登记（见上节）；R7 装配段注释登记空串 env 边界差异（实现保持回落默认语义）；R8 numpy 用例 `pytest.importorskip` + real 测试字体缺失改 `pytest.skip` 显式原因；R9 clip 前 `math.isfinite` 校验（`ProviderInvalidOutput`，新增 NaN 单测）；R10 三值记账（release base/branch base/delivery_head）+ envelope params 口径注 + `cleanstart-gate.json` 补末尾换行。
 - 允许路径纪律：改动仅落 `detection_manga.py`、`core_assembly.py` 装配段注释、`tests/providers/**`、Task/Handoff/`verification/M2-PROD-DETECT-1/**`；`ports/**`、`detection_doctr.py`、requirements、MERGE_* 常数值零触碰。
 - 锚点说明（R10 记账延续）：frontmatter `delivery_head: a016d38c` = review-fix 终态（最后实质 commit）；其后仅存在一个单独更新本行的记录 commit（零内容变化，见 `git log`），不再产生锚点歧义。
+
+## 集成记录（2026-09-30，acting Codex）
+
+- **Review 轨迹**：DSH r1 [approved_with_conditions](../reviews/M2-PROD-DETECT-1-a016d38c-dsh-r1.md)（0×P0/P1、2×P2、8×P3/P4；契约零修订/fail-closed 四纪律/C4 序列一致/装配语义/范围纪律全 PASS）→ Owner review-fix `a016d38c`（R1-R10 全 closed）→ DSH r2 [approved 可集成](../reviews/M2-PROD-DETECT-1-a016d38c-dsh-r2.md)（R1-R10 全 closed、禁改零回潮；新 N1 死链必改 + N2-N4 可选）。
+- **集成修正 `320d7955`**（acting Codex，doc/注释-only）：N1 release note 死链改 `verification/` 路径、N2 frontmatter `delivery_head` 加消歧注、N3 行数/计数同步（436 行/28 项）、N4 NaN 措辞收紧（±inf 归 clip 既有语义）。
+- **merge=`056617e4`**（parents `2fee7d6e`+`320d7955`，无冲突，11 文件全允许路径、1693 insertions）。集成后 main 三套件 387 passed + 1 既有环境性失败（与 base 集合一致）。
+- **NOT_VERIFIED 复跑处置**（DSH r1/r2 清单）：pytest 计数全对齐（含 R8 skip 未触发确认）；三权重文件 SHA-256 字节级复算逐字一致；git 层（commit 链/归属拆分/diff --check/禁改专项 diff）全过；sidecar GATE 25/25 沿用 Owner 轮证据（review-fix 后源码变化仅错误消息与 NaN 校验，均不在 GATE 场景路径，闭包面 +0 文件不变——如实登记为本集成轮的推定，未重建复跑）；C4 GPU 76.1ms 与 CPU envelope 315.6ms 为已冻结的量级参考（口径注已补，不复测）。
+- **登记**：后续 slice 候选两项（发布形态检测器运行时/权重分发、manga 权重 fetch/verify SOP）见上文「遗留 slice 候选」；`test_registry_readiness` 环境断言遗留另立 slice 候选。记录：[integration.md](../verification/M2-PROD-DETECT-1/integration.md)。Owner branch/worktree 保留于 `320d7955`。
