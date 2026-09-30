@@ -1,0 +1,36 @@
+# shell=Git Bash (Windows)
+# cwd=G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
+# HEAD=b94ebe87c75d2f6fac8b8f50440f8290e740a118
+# date=2026-09-30T03:47:17Z
+# cmd=git diff field-class stats + python -c 'assets.load_manifest()'
+# note=post-backfill manifest integrity. worktree does not carry gitignored asset pixels,
+# note=so 'assets.py verify --level full' cannot run here (would fail on missing K01 base.png etc);
+# note=the backfill touches ONLY pipeline_status values, so schema validation + exact-diff proof is the integrity gate.
+--- committed backfill diff value classes (cases.json, bebcfcde..HEAD) ---
+      4 +        "inpainting": "PASS",
+      3 +        "manga_page_render": "PASS"
+      5 +        "ocr": "PASS",
+      4 +        "reading_order": "PASS",
+      4 +        "region": "PASS",
+      5 +        "text_detection": "PASS",
+      4 +        "translation": "PASS",
+      4 +        "typesetting": "PASS",
+      4 -        "inpainting": "NOT_RUN",
+      3 -        "manga_page_render": "NOT_RUN"
+      5 -        "ocr": "NOT_RUN",
+      4 -        "reading_order": "NOT_RUN",
+      4 -        "region": "NOT_RUN",
+      5 -        "text_detection": "NOT_RUN",
+      4 -        "translation": "NOT_RUN",
+      4 -        "typesetting": "NOT_RUN",
+--- test_catalog.py committed delta (bebcfcde..HEAD) ---
+ tests/m2_test_assets/test_catalog.py | 13 ++++++++++++-
+ 1 file changed, 12 insertions(+), 1 deletion(-)
+--- schema validation (full load_manifest) ---
+manifest schema OK, cases: 97
+K01 PASS keys: ['inpainting', 'ocr', 'reading_order', 'region', 'text_detection', 'translation', 'typesetting']
+K02 PASS keys: ['inpainting', 'ocr', 'reading_order', 'region', 'text_detection', 'translation', 'typesetting']
+K11 PASS keys: ['manga_page_render', 'ocr', 'text_detection']
+BJ02 PASS keys: ['inpainting', 'manga_page_render', 'ocr', 'reading_order', 'region', 'text_detection', 'translation', 'typesetting']
+BJ06 PASS keys: ['inpainting', 'manga_page_render', 'ocr', 'reading_order', 'region', 'text_detection', 'translation', 'typesetting']
+# EXIT=0

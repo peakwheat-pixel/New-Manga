@@ -1,0 +1,66 @@
+{
+  "task": "M2-TA3-A",
+  "generated_at_utc": "2026-09-30T02:52:27Z",
+  "device": "cpu",
+  "detector_weights_sha256": "688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace",
+  "provider_policy": {
+    "detect": "production DoctrDetectionProvider (docTR fast_base, pinned, offline)",
+    "ocr": "m2ac1-mock-ocr (deterministic mock, AC2-allowed)",
+    "translate": "m2ac1-mock-translate (deterministic mock, AC2-allowed)",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "cases": [
+    {
+      "case_id": "BJ02",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "region_count": 33,
+      "run2_status": "completed",
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 668.61
+    },
+    {
+      "case_id": "BJ06",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "region_count": 57,
+      "run2_status": "completed",
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 820.64
+    },
+    {
+      "case_id": "K01",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "region_count": 15,
+      "run2_status": "completed",
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 1041.61
+    },
+    {
+      "case_id": "K02",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "region_count": 7,
+      "run2_status": "completed",
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 137.32
+    },
+    {
+      "case_id": "K11",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "region_count": 24,
+      "run2_status": "completed",
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 100.76
+    }
+  ],
+  "failures": 0
+}

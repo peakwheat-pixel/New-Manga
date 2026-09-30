@@ -1,0 +1,10 @@
+# shell=Git Bash (Windows)
+# cwd=G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
+# HEAD=b94ebe87c75d2f6fac8b8f50440f8290e740a118
+# date=2026-09-30T03:47:17Z
+# cmd=T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/m2_test_assets tests/m2_acceptance -q
+---
+........................................................................ [ 87%]
+..........                                                               [100%]
+82 passed in 10.05s
+# EXIT=0

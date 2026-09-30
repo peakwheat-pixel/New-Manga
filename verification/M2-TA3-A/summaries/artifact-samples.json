@@ -1,0 +1,407 @@
+{
+  "BJ02": {
+    "db": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-BJ02-1v1ot28i\\library.sqlite",
+    "step_counts": {
+      "color": {
+        "total": 34,
+        "completed": 34
+      },
+      "detect": {
+        "total": 1,
+        "completed": 1
+      },
+      "inpaint": {
+        "total": 34,
+        "completed": 34
+      },
+      "mask_refine": {
+        "total": 34,
+        "completed": 34
+      },
+      "ocr": {
+        "total": 34,
+        "completed": 34
+      },
+      "render": {
+        "total": 34,
+        "completed": 34
+      },
+      "segment": {
+        "total": 34,
+        "completed": 34
+      },
+      "term_extract": {
+        "total": 34,
+        "completed": 34
+      },
+      "translate": {
+        "total": 34,
+        "completed": 34
+      }
+    },
+    "ocr_samples": [
+      {
+        "ref_key": "ocr_text",
+        "value": "\"MOCK-OCR-SOURCE-TEXT\""
+      },
+      {
+        "ref_key": "confidence",
+        "value": "1.0"
+      }
+    ],
+    "translate_samples": [
+      {
+        "ref_key": "machine_translation",
+        "value": "\"MOCK-TRANSLATED-TEXT\""
+      },
+      {
+        "ref_key": "final_source",
+        "value": "\"machine\""
+      }
+    ],
+    "inpaint_samples": [
+      {
+        "ref_key": "route",
+        "value": "\"simple-fill\""
+      },
+      {
+        "ref_key": "upstream_revision_id",
+        "value": "\"16b486547703430bbc661e77edae5447\""
+      }
+    ],
+    "render_samples": [
+      {
+        "ref_key": "render_status",
+        "value": "\"committed\""
+      },
+      {
+        "ref_key": "translated_artifact_id",
+        "value": "\"9e9d6c94925448fa81fbda996c47545b\""
+      }
+    ]
+  },
+  "BJ06": {
+    "db": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-BJ06-uv6v_jij\\library.sqlite",
+    "step_counts": {
+      "color": {
+        "total": 41,
+        "completed": 41
+      },
+      "detect": {
+        "total": 1,
+        "completed": 1
+      },
+      "inpaint": {
+        "total": 41,
+        "completed": 41
+      },
+      "mask_refine": {
+        "total": 41,
+        "completed": 41
+      },
+      "ocr": {
+        "total": 41,
+        "completed": 41
+      },
+      "render": {
+        "total": 41,
+        "completed": 41
+      },
+      "segment": {
+        "total": 41,
+        "completed": 41
+      },
+      "term_extract": {
+        "total": 41,
+        "completed": 41
+      },
+      "translate": {
+        "total": 41,
+        "completed": 41
+      }
+    },
+    "ocr_samples": [
+      {
+        "ref_key": "ocr_text",
+        "value": "\"MOCK-OCR-SOURCE-TEXT\""
+      },
+      {
+        "ref_key": "confidence",
+        "value": "1.0"
+      }
+    ],
+    "translate_samples": [
+      {
+        "ref_key": "machine_translation",
+        "value": "\"MOCK-TRANSLATED-TEXT\""
+      },
+      {
+        "ref_key": "final_source",
+        "value": "\"machine\""
+      }
+    ],
+    "inpaint_samples": [
+      {
+        "ref_key": "route",
+        "value": "\"simple-fill\""
+      },
+      {
+        "ref_key": "upstream_revision_id",
+        "value": "\"af0f5cdd1a8f4169ba9dd03250f4516e\""
+      }
+    ],
+    "render_samples": [
+      {
+        "ref_key": "render_status",
+        "value": "\"committed\""
+      },
+      {
+        "ref_key": "translated_artifact_id",
+        "value": "\"0ee8a9ef7d1a4fcc84fa04645e679dca\""
+      }
+    ]
+  },
+  "K01": {
+    "db": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-K01-385hq0yw\\library.sqlite",
+    "step_counts": {
+      "color": {
+        "total": 16,
+        "completed": 16
+      },
+      "detect": {
+        "total": 1,
+        "completed": 1
+      },
+      "inpaint": {
+        "total": 16,
+        "completed": 16
+      },
+      "mask_refine": {
+        "total": 16,
+        "completed": 16
+      },
+      "ocr": {
+        "total": 16,
+        "completed": 16
+      },
+      "render": {
+        "total": 16,
+        "completed": 16
+      },
+      "segment": {
+        "total": 16,
+        "completed": 16
+      },
+      "term_extract": {
+        "total": 16,
+        "completed": 16
+      },
+      "translate": {
+        "total": 16,
+        "completed": 16
+      }
+    },
+    "ocr_samples": [
+      {
+        "ref_key": "ocr_text",
+        "value": "\"MOCK-OCR-SOURCE-TEXT\""
+      },
+      {
+        "ref_key": "confidence",
+        "value": "1.0"
+      }
+    ],
+    "translate_samples": [
+      {
+        "ref_key": "machine_translation",
+        "value": "\"MOCK-TRANSLATED-TEXT\""
+      },
+      {
+        "ref_key": "final_source",
+        "value": "\"machine\""
+      }
+    ],
+    "inpaint_samples": [
+      {
+        "ref_key": "route",
+        "value": "\"simple-fill\""
+      },
+      {
+        "ref_key": "upstream_revision_id",
+        "value": "\"cd4befb9d37340d3b57b551682b6df02\""
+      }
+    ],
+    "render_samples": [
+      {
+        "ref_key": "render_status",
+        "value": "\"committed\""
+      },
+      {
+        "ref_key": "translated_artifact_id",
+        "value": "\"b2f0d7d82a904348a97e8ed16021ead7\""
+      }
+    ]
+  },
+  "K02": {
+    "db": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-K02-_2i0xj4s\\library.sqlite",
+    "step_counts": {
+      "color": {
+        "total": 8,
+        "completed": 8
+      },
+      "detect": {
+        "total": 1,
+        "completed": 1
+      },
+      "inpaint": {
+        "total": 8,
+        "completed": 8
+      },
+      "mask_refine": {
+        "total": 8,
+        "completed": 8
+      },
+      "ocr": {
+        "total": 8,
+        "completed": 8
+      },
+      "render": {
+        "total": 8,
+        "completed": 8
+      },
+      "segment": {
+        "total": 8,
+        "completed": 8
+      },
+      "term_extract": {
+        "total": 8,
+        "completed": 8
+      },
+      "translate": {
+        "total": 8,
+        "completed": 8
+      }
+    },
+    "ocr_samples": [
+      {
+        "ref_key": "ocr_text",
+        "value": "\"MOCK-OCR-SOURCE-TEXT\""
+      },
+      {
+        "ref_key": "confidence",
+        "value": "1.0"
+      }
+    ],
+    "translate_samples": [
+      {
+        "ref_key": "machine_translation",
+        "value": "\"MOCK-TRANSLATED-TEXT\""
+      },
+      {
+        "ref_key": "final_source",
+        "value": "\"machine\""
+      }
+    ],
+    "inpaint_samples": [
+      {
+        "ref_key": "route",
+        "value": "\"simple-fill\""
+      },
+      {
+        "ref_key": "upstream_revision_id",
+        "value": "\"27e1263bd3824f46bc2799fef2d5568f\""
+      }
+    ],
+    "render_samples": [
+      {
+        "ref_key": "render_status",
+        "value": "\"committed\""
+      },
+      {
+        "ref_key": "translated_artifact_id",
+        "value": "\"29edd5d382414c0d8f61b05375f80a2b\""
+      }
+    ]
+  },
+  "K11": {
+    "db": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-K11-erhinxx2\\library.sqlite",
+    "step_counts": {
+      "color": {
+        "total": 25,
+        "completed": 25
+      },
+      "detect": {
+        "total": 1,
+        "completed": 1
+      },
+      "inpaint": {
+        "total": 25,
+        "completed": 25
+      },
+      "mask_refine": {
+        "total": 25,
+        "completed": 25
+      },
+      "ocr": {
+        "total": 25,
+        "completed": 25
+      },
+      "render": {
+        "total": 25,
+        "completed": 25
+      },
+      "segment": {
+        "total": 25,
+        "completed": 25
+      },
+      "term_extract": {
+        "total": 25,
+        "completed": 25
+      },
+      "translate": {
+        "total": 25,
+        "completed": 25
+      }
+    },
+    "ocr_samples": [
+      {
+        "ref_key": "ocr_text",
+        "value": "\"MOCK-OCR-SOURCE-TEXT\""
+      },
+      {
+        "ref_key": "confidence",
+        "value": "1.0"
+      }
+    ],
+    "translate_samples": [
+      {
+        "ref_key": "machine_translation",
+        "value": "\"MOCK-TRANSLATED-TEXT\""
+      },
+      {
+        "ref_key": "final_source",
+        "value": "\"machine\""
+      }
+    ],
+    "inpaint_samples": [
+      {
+        "ref_key": "route",
+        "value": "\"simple-fill\""
+      },
+      {
+        "ref_key": "upstream_revision_id",
+        "value": "\"2633ccd8be31486da1c71165e5537283\""
+      }
+    ],
+    "render_samples": [
+      {
+        "ref_key": "render_status",
+        "value": "\"committed\""
+      },
+      {
+        "ref_key": "translated_artifact_id",
+        "value": "\"5f663c4253d04a6c9df5c8c508bacd83\""
+      }
+    ]
+  }
+}

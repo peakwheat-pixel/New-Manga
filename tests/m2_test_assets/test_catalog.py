@@ -42,7 +42,18 @@ def test_manifest_has_unique_cases_and_exact_taxonomy():
     assert len(assets.selected(manifest, "ja", "smoke")) == 10
     assert {case["case_id"] for case in cases if case["case_id"] in {"K11", "K12", "K13"}} == {"K11", "K12", "K13"}
     assert all(case["levels"] == ["regression", "full"] for case in cases if case["case_id"] in {"K11", "K12", "K13"})
-    assert all(case["pipeline_status"] == {stage: "NOT_RUN" for stage in case["expected_pipeline"]} for case in cases)
+    # M2-TA3-A: the five smoke cases carry their exercised-chain PASS
+    # statuses; every other case must remain all-NOT_RUN (fail-closed).
+    ta3a_cases = {"BJ02", "BJ06", "K01", "K02", "K11"}
+    assert all(
+        case["pipeline_status"] == {stage: "NOT_RUN" for stage in case["expected_pipeline"]}
+        for case in cases if case["case_id"] not in ta3a_cases
+    )
+    for case in cases:
+        if case["case_id"] in ta3a_cases:
+            assert set(case["pipeline_status"]) == set(case["expected_pipeline"])
+            passed = {k for k, v in case["pipeline_status"].items() if v == "PASS"}
+            assert passed and passed <= set(case["expected_pipeline"])
 
 
 def test_black_jack_official_cases_are_registered_with_attribution():

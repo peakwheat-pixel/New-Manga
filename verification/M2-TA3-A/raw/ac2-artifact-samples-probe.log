@@ -1,0 +1,14 @@
+# shell=Git Bash (Windows)
+# cwd=G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
+# HEAD=b94ebe87c75d2f6fac8b8f50440f8290e740a118
+# date=2026-09-30T03:47:17Z
+# cmd=python experiments/M2-TA3-A/probe_artifacts.py
+---
+BJ02	PROBE_OK	steps=9
+BJ06	PROBE_OK	steps=9
+K01	PROBE_OK	steps=9
+K02	PROBE_OK	steps=9
+K11	PROBE_OK	steps=9
+report -> verification\M2-TA3-A\summaries\artifact-samples.json
+SUMMARY cases=5 failures=0
+# EXIT=0
