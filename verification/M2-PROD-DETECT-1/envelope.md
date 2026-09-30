@@ -39,9 +39,16 @@
 - C4 formal（`verification/M2-DOCTR-QUAL/qualification/results-formal-manga_rt_detr_v2-cuda-seg05.json`）：38.9s / 511 页 ≈ **76.1 ms/页**（cuda，conf 0.5）。
 - **CPU/GPU ≈ 4.1×**（315.6 / 76.1）。RT-DETR-v2（42.9M params）CPU 延迟与预期一致地显著高于 GPU；性能优化不在本 Task 范围（Task 风险②如实记录）。detect 为逐页一次性成本，CPU 路径可用性已由本轮 EXIT=0 证明。
 
-## Sidecar 体积（AC6 相关，实测见 checkpoint 记录）
+## Sidecar 体积（AC6，实测）
 
-- 构建前后 onedir 体积对比在 AC6 执行后回填于任务表与本文件末尾（transformers/torch 依赖懒加载、不进 PyInstaller 闭包，预期增量仅为新增 `detection_manga` 模块字节码，KB 级）。
+| 构建点 | 字节数 | 文件数 | 说明 |
+|---|---|---|---|
+| base `2fee7d6e`（主 repo 重建，同 build venv/spec） | 99,286,538 | 161 | 无 manga provider |
+| 本 Task `d7faea39`（worktree 构建） | 99,308,142 | 161 | +21,604 B（≈21.1 KiB，+0.02%） |
+
+- 文件数 161→161（+0）：torch/transformers/doctr 依赖懒加载、不进 PyInstaller 闭包（`core_sidecar.spec` EXCLUDED ML 栈纪律保持），增量仅为新增 `detection_manga` 模块与装配段字节码。
+- NSIS 安装包：本 Task 27,924,371 B（26.63 MiB）vs M2-AC5 r0 记录 26.62 MiB（+0.01 MiB）。
+- sidecar 构建日志：`build_sidecar: OK -> ... (HEAD=d7faea39, pyinstaller=6.22.3)`，见 handoff 验证表。
 
 ## 已知边界
 

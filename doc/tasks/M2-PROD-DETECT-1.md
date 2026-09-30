@@ -2,7 +2,7 @@
 id: M2-PROD-DETECT-1
 title: "生产检测器集成第一刀：manga 域 RT-DETR-v2 provider + 装配 backend 选择（用户「继续」推进 2026-09-30）"
 kind: feature
-status: in_progress
+status: in_review
 approval: user_directive_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -12,6 +12,7 @@ depends_on: []
 base_commit: c8eefb4b
 branch: agent/zcode/M2-PROD-DETECT-1
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
+handoff: doc/handoffs/M2-PROD-DETECT-1-d7faea39.md
 ---
 
 # M2-PROD-DETECT-1：生产检测器集成第一刀
@@ -36,8 +37,8 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 - [x] AC3（依赖授权与 CPU 实测）：`requirements.txt` 授权新增 `transformers==5.17.0` + `safetensors`（版本 pin；torch/doctr 不动）；**torch 2.14.0 CPU wheels 上模型加载+单页推理实测 EXIT=0**（C4 全程 GPU，CPU 兼容性是本 Task 必须闭合的缺口）；不兼容即停下登记（不得降级 torch）。
 - [x] AC4（测试）：`tests/providers/test_detection_manga.py`（mock/单元：fail-closed 矩阵——缺目录/缺文件/hash 错/懒加载缺失依赖/空输出/bubble 丢弃）+ `test_detection_manga_real.py`（真实权重集成，权重缺失时 skip 并显式原因）+ 装配 backend 选择测试；全部先红后绿或与既有测试同风格。
 - [x] AC5（envelope 实测）：CPU 路径延迟实测（ms/region，n≥3）入 `verification/M2-PROD-DETECT-1/envelope.md`；GPU 对照引用 C4（38.9s/511 regions ≈ 76ms/region）；sidecar 体积膨胀（如可测）如实记录。
-- [ ] AC6（sidecar 构建回归）：`packaging/m2ac5/build_sidecar.ps1` 构建通过（含新依赖）；M2-AC5 clean-start runner 25/25 保持 PASS；体积变化如实记录。
-- [ ] AC7（回归与纪律）：pytest 相关目录全绿（providers/m2_acceptance 35 passed 不回退）；cargo/vitest 留痕（预期零影响）；`git diff --check` EXIT=0；禁改路径零触碰。
+- [x] AC6（sidecar 构建回归）：`packaging/m2ac5/build_sidecar.ps1` 构建通过（含新依赖）；M2-AC5 clean-start runner 25/25 保持 PASS；体积变化如实记录。
+- [x] AC7（回归与纪律）：pytest 相关目录全绿（providers/m2_acceptance 35 passed 不回退）；cargo/vitest 留痕（预期零影响）；`git diff --check` EXIT=0；禁改路径零触碰。
 
 ## 允许修改范围
 
@@ -65,8 +66,8 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 | AC4 真实集成 | pytest tests/providers/test_detection_manga_real.py | 本地权重（task-envs C4 快照） | RUN：**2 passed**（合成漫画页 ≥1 候选 + 空白页零候选；权重缺失 module-skip 显式原因） | implement commit |
 | AC3 CPU 实测 | 主 venv（torch 2.14.0 CPU）加载+单页推理 | transformers 安装 | RUN：**EXIT=0**（2.14.0+cpu × 5.17.0；加载 0.4s/770 张量；K01_R001 690x672 推理 2 text box + 2 bubble 丢弃） | verification/M2-PROD-DETECT-1/envelope.md |
 | AC5 envelope | CPU n≥3 计时 | 同上 | RUN：**315.6 ms/页平均（n=5，310–319）**；GPU 对照 76.1 ms/页（C4 38.9s/511），CPU/GPU ≈ 4.1× | verification/M2-PROD-DETECT-1/envelope.md |
-| AC6 sidecar | build_sidecar.ps1 + M2-AC5 runner | 打包链 | RUN：（待 AC6 执行后回填） | — |
-| AC7 回归 | pytest（providers+m2_acceptance+core）+ cargo + vitest | — | RUN：（待 AC7 执行后回填） | — |
+| AC6 sidecar | build_sidecar.ps1 + M2-AC5 runner | 打包链 | RUN：**构建 OK**（HEAD=d7faea39，pyinstaller 6.22.3，build venv 零改动）；runner **GATE PASS 25/25**；onedir 99,308,142 B/161 文件 vs base 99,286,538 B/161 文件（**+21.6 KB，+0 文件**）；NSIS 26.63 MiB vs 基线 26.62 MiB | verification/M2-PROD-DETECT-1/{cleanstart-gate.json,cleanstart-runner-stdout.log}、envelope.md 体积表 |
+| AC7 回归 | pytest（providers+m2_acceptance+core）+ cargo + vitest | — | RUN：providers+m2_acceptance **309 passed + 1 既有环境性失败**（`test_no_model_runtime_is_installed_in_this_environment`：TASK-019 时代断言 venv 无 torch；在 base 2fee7d6e 上同 venv 同样失败，非本 Task 回归）；**m2_acceptance 35 passed 基数保持**；tests/core 77 passed；cargo **44 passed + 1 ignored**；vitest **31 passed**；`git diff --check 2fee7d6e..HEAD` **EXIT=0**；禁改路径专项 diff 为空 | 本表、handoff 验证表 |
 
 ## 依赖、风险与阻塞
 
@@ -76,4 +77,10 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 
 ## 交付与运行记录（终态）
 
-- （待 Owner 交付后回填）
+- 交付（2026-09-30，Owner=ZCode）：commit 链 `2e1d3deb`（claim）→ `d7faea39`=**实现**（`src/infrastructure/providers/detection_manga.py` 418 行 + `core_assembly.py` 检测器装配段 backend 选择 + requirements 授权 + 3 个测试文件 + envelope 证据；`test_detector_assembly.py` 显式 pin doctr backend 的最小适配一并登记）→ handoff/回填 commit（见 frontmatter `handoff`；`delivery_head` 由后续记录 commit 固定）。base=`2fee7d6e`。
+- AC3 go/no-go 门：**PASS**——torch 2.14.0+cpu × transformers 5.17.0 兼容（加载 0.4s/770 张量；单页真实推理 EXIT=0），C4 cuda-only 缺口闭合；未降级 torch、未换模型。
+- 装配语义：`NEWMANGA_DETECTOR_BACKEND=manga`（**默认**，代理裁决可撤销）|`doctr`（原路径逐字节保留）；`NEWMANGA_DETECTOR_WEIGHTS` 覆盖语义按 backend 分别指向目录（manga）/文件（doctr）；未知 backend 装配期 `ValueError`；mock 路径零触碰。
+- 冻结合并：MERGE_* 常数与 `cluster_words_into_blocks` 从 `detection_doctr` **import 复用**（测试断言对象身份），未复制未改值。
+- envelope：CPU 315.6 ms/页（n=5）vs C4 GPU 76.1 ms/页（≈4.1×）；sidecar 体积 +21.6 KB/+0 文件（ML 栈懒加载未进闭包）。
+- 既有环境性失败留痕：`tests/providers/test_registry_readiness.py::test_no_model_runtime_is_installed_in_this_environment` 在主 venv（torch 已装）恒失败，base 上复现同样失败——TASK-019 时代的环境断言与 T1.1.1 后的 venv 事实冲突，属前 Task 遗留，非本 Task 回归（修复需另立 slice）。
+- runner 证据卫生：`run_clean_start_e2e.py` 会重写 `verification/M2-AC5/raw/` 下 6 个历史文件；本轮产物已移至 `verification/M2-PROD-DETECT-1/`，历史文件经 `git checkout --` 原样还原（专项 diff 为空）。
