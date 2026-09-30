@@ -33,7 +33,7 @@
 目标目录布局（与生产解析顺序一致，见
 `bootstrap/core_assembly.py` 的 `_resolve_detector_weights_path`）：
 
-1. env `NEWMANGA_DETECTOR_WEIGHTS`（目录 override）> 
+1. env `NEWMANGA_DETECTOR_WEIGHTS`（目录 override）>
 2. `<数据根>/models/detector/ogkalu-comic-text-and-bubble-detector/` >
 3. 发布形态安装包内置副本（exe 旁 `models/detector/...`，仅 frozen 生效）。
 
