@@ -42,7 +42,7 @@ integration_commit: null
 id: M2-TA2B
 title: "JA/KO 开放素材池（用户方案变更 2026-09-30）：ブラックジャックによろしく官方免费全卷 + Pepper&Carrot 补充；永久取消 Manga109 前置"
 kind: asset
-status: in_progress
+status: in_review
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -79,14 +79,14 @@ integration_commit: null
 
 ## Acceptance Criteria
 
-- [ ] AC1（下载与完整性）：脚本化下载 BJ 日语版至少 3 卷（第 1 卷必选；避开第 2/7/11 卷 JASRAC 卷或选取时登记），逐文件 SHA256 记录；ZIP→PDF 校验（页数>0、无 DRM 解码成功）。
-- [ ] AC2（PDF/Page 转换）：用 pypdfium2（生产既有依赖）将所选卷渲染为页面图像（PNG，DPI≥150），选取覆盖特性矩阵的 case 页（黑白、RTL、竖排/横排对白、气泡、SFX、复杂背景、小字/大字），每卷至少 3 个 case 页；产物入 gitignored 目录并在 manifest 登记路径+SHA256。
-- [ ] AC3（去重与登记）：页面级去重（哈希）；cases.json 新增 BJ case（case_id `BJ01`..，language=ja、特性 tags、license_class=commercial_use_permitted_attribution、source_url=densho810.com/free/、署名字段）；suite README 署名与许可义务小节；**用户报告邮件草稿** `verification/M2-TA2B/densho810-report-draft.txt`。
-- [ ] AC4（Pepper&Carrot 补充）：下载 ja/kr 可用补充页（ep04/ep20 语言包内未入库页），同流程登记（若无可补页则如实记录）。
-- [ ] AC5（OpenMantra optional 隔离）：尝试脚本获取 OpenMantra 公开仓库素材至 `test_assets/comic_golden_suite/日漫_JA/99_optional_openmantra/`（gitignored），manifest 标注 `optional_noncommercial_baseline_excluded: true`；获取失败则如实记 BLOCKED-OPTIONAL（不阻塞 Task）。
-- [ ] AC6（Manga109 取消落地）：cases.json 中 37 个 Manga109 case 与 Manga109/JMangaBench/TextMask 相关 source 标注 `removed_from_scope_2026-09-30`（保留历史定义）；tests 相应断言更新；README 资产表更新。
-- [ ] AC7（测试接入与回归）：`tests/m2_test_assets` 更新（BJ case 注册、Manga109 取消断言、白名单 host 增加 densho810.com）全绿；`assets.py verify/list` EXIT=0；`git diff --check` EXIT=0。
-- [ ] AC8（范围纪律）：素材产物零入库（gitignored）；diff 仅触及允许路径。
+- [x] AC1（下载与完整性）：脚本化下载 BJ 日语版至少 3 卷（第 1 卷必选；避开第 2/7/11 卷 JASRAC 卷或选取时登记），逐文件 SHA256 记录；ZIP→PDF 校验（页数>0、无 DRM 解码成功）。
+- [x] AC2（PDF/Page 转换）：用 pypdfium2（生产既有依赖）将所选卷渲染为页面图像（PNG，DPI≥150），选取覆盖特性矩阵的 case 页（黑白、RTL、竖排/横排对白、气泡、SFX、复杂背景、小字/大字），每卷至少 3 个 case 页；产物入 gitignored 目录并在 manifest 登记路径+SHA256。
+- [x] AC3（去重与登记）：页面级去重（哈希）；cases.json 新增 BJ case（case_id `BJ01`..，language=ja、特性 tags、license_class=commercial_use_permitted_attribution、source_url=densho810.com/free/、署名字段）；suite README 署名与许可义务小节；**用户报告邮件草稿** `verification/M2-TA2B/densho810-report-draft.txt`。
+- [x] AC4（Pepper&Carrot 补充）：下载 ja/kr 可用补充页（ep04/ep20 语言包内未入库页），同流程登记（若无可补页则如实记录）。
+- [x] AC5（OpenMantra optional 隔离）：尝试脚本获取 OpenMantra 公开仓库素材至 `test_assets/comic_golden_suite/日漫_JA/99_optional_openmantra/`（gitignored），manifest 标注 `optional_noncommercial_baseline_excluded: true`；获取失败则如实记 BLOCKED-OPTIONAL（不阻塞 Task）。
+- [x] AC6（Manga109 取消落地）：cases.json 中 37 个 Manga109 case 与 Manga109/JMangaBench/TextMask 相关 source 标注 `removed_from_scope_2026-09-30`（保留历史定义）；tests 相应断言更新；README 资产表更新。
+- [x] AC7（测试接入与回归）：`tests/m2_test_assets` 更新（BJ case 注册、Manga109 取消断言、白名单 host 增加 densho810.com）全绿；`assets.py verify/list` EXIT=0；`git diff --check` EXIT=0。
+- [x] AC8（范围纪律）：素材产物零入库（gitignored）；diff 仅触及允许路径。
 
 ## 允许修改范围
 
@@ -106,18 +106,24 @@ integration_commit: null
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 下载 | 下载脚本 3 卷 + SHA256 | 网络 | NOT_RUN | 待入 verification |
-| AC2 转换 | pypdfium2 渲染脚本 | venv | NOT_RUN | 待入 verification |
-| AC3 manifest | cases.json 更新 + verify EXIT=0 | — | NOT_RUN | 待入 verification |
-| AC6/AC7 测试 | pytest tests/m2_test_assets EXIT=0 | 标准 pytest | NOT_RUN | 待入 verification |
+| AC1 下载 | `python test_assets/comic_golden_suite/tools/fetch_bj.py fetch --volumes 1 3 5` | 网络 | PASS：vol01/03/05 ZIP=343,497,422 / 338,764,008 / 386,575,185 bytes，PDF 页数 209/221/243，逐文件 SHA256 入 `bj_download_manifest.json`；vol05 首次因 `__MACOSX/._005bj.pdf` 成员报 expected-one-PDF 失败，修复（跳过 macOS 元数据成员）后复用已下载 ZIP 重跑 EXIT=0 | `verification/M2-TA2B/raw/ac1-fetch-bj-volumes.log`、`ac1-fetch-bj-vol05-retry.log` |
+| AC2 转换 | `python test_assets/comic_golden_suite/tools/fetch_bj.py render --volumes 1 3 5` | pypdfium2==5.13.0 + Pillow | PASS：12 页 PNG（DPI 150，2946x4167），卷内去重 0，页级 SHA256 入 `bj_pages_manifest.json`；12 页全部人工目检并按 taxonomy 标注 tags | `verification/M2-TA2B/raw/ac2-render-bj-pages.log` |
+| AC3 manifest | cases.json 更新 + `assets.py verify` | — | PASS：BJ01–BJ12 注册（ja、RTL、署名字段、license_class、页 SHA256）；README 署名/许可小节；邮件草稿已生成（用户待发送） | `test_assets/comic_golden_suite/manifests/cases.json`、`verification/M2-TA2B/densho810-report-draft.txt` |
+| AC4 P&C | `assets.py download --level full --case-id J48..K25` | 网络 | PASS：17 个新页（ja E04×5、kr E04×5、kr E20×7）+1 个 ep20 kr ZIP 下载成功 failures=0；inventory 更新后 checked=110 missing=0 failures=0 | `verification/M2-TA2B/raw/ac4-download-pc-additions.log`、`ac7-verify-ja-ko-full.log` |
+| AC5 OpenMantra | curl raw.githubusercontent.com（mantra-inc/open-mantra-dataset） | 网络 | PASS（OPTIONAL 隔离）：annotation.json + LICENSE.md + README.md + 10 张样本页（5 部作品 × 2 页，2,341,834 bytes）入 gitignored `99_optional_openmantra/`；source 标注 `optional_noncommercial_baseline_excluded: true`、`READY_OPTIONAL_ISOLATED` | `verification/M2-TA2B/raw/ac5-openmantra-optional-download.log` |
+| AC6 取消 | cases.json 标注 | — | PASS：37 个 Manga109 case + 3 个 source 带 `removed_from_scope_2026-09-30: true`；与 HEAD 程序化对比确认无其他字段值变化 | `tests/m2_test_assets/test_catalog.py::test_manga109_scope_is_cancelled_by_user_ruling_2026_09_30` |
+| AC6/AC7 测试 | `python -m pytest tests/m2_test_assets -q` | 标准 pytest | PASS：39 passed，EXIT=0 | `verification/M2-TA2B/raw/ac7-pytest-m2-test-assets.log` |
+| AC7 verify | `assets.py verify --language ja|ko --level full` | 本地素材 | PASS：ja SUMMARY MISSING_GATED_ASSET=37 PARTIAL=12 READY=15 EXIT=0；ko SUMMARY MISSING=8（既有 O01–O08 未取得） READY=25 EXIT=0 | `verification/M2-TA2B/raw/ac7-verify-ja-ko-full.log` |
+| AC8 范围 | `git status` / `git diff --check` | — | PASS：素材目录被 `.gitignore` 显式规则忽略（`日漫_JA/01_black_jack_official/`、`99_optional_openmantra/`）；diff 仅触及允许路径；EXIT=0 | git status 输出 |
 
 ## 依赖、风险与阻塞
 
-- 风险 1：BJ ZIP 体积大（高分辨率）——逐卷下载、抽样 3 卷而非全量；全量 13 卷登记为可选扩展（不阻塞）。
-- 风险 2：densho810 直链形态或限速变化——脚本带重试与 User-Agent；失败则如实 BLOCKED 并报告（不换非官方源）。
-- 风险 3：PDF 页提取方向/RTL 语义——转换脚本保序记录页码，RTL 断言由 case tags 登记。
+- 风险 1：BJ ZIP 体积大（高分辨率）——逐卷下载、抽样 3 卷而非全量；全量 13 卷登记为可选扩展（不阻塞）。【实现后确认：3 卷共约 1 GiB，预算内】
+- 风险 2：densho810 直链形态或限速变化——脚本带重试与 User-Agent；失败则如实 BLOCKED 并报告（不换非官方源）。【实现后确认：直链 `dl/00Nbj.zip` 形态稳定；vol05 ZIP 含 `__MACOSX/._005bj.pdf` 元数据成员，脚本已按安全规则跳过】
+- 风险 3：PDF 页提取方向/RTL 语义——转换脚本保序记录页码，RTL 断言由 case tags 登记。【实现后确认：12 页人工目检，RTL+竖排成立】
 - 阻塞：无。
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。实际测试：尚无。
+- 2026-09-30 ZCode 实现：claim `f1be5d2a`（base=9db2dca8）、实现 `704df9bc`。交付物：`tools/fetch_bj.py`、BJ01–BJ12 + J48–J52 + K14–K25 case、`removed_from_scope_2026-09-30` 标注、README 署名/许可小节、邮件草稿、5 份 verification 日志、OpenMantra 隔离条目。素材本体（BJ ZIP/PDF/PNG、P&C 新页、OpenMantra 样本）全部 gitignored 未入库。遗留：densho810 报告邮件=用户待办（草稿已备）；BJ 全 13 卷与 OpenMantra 全量页为可选扩展（未纳入）；vol05 ZIP 含 macOS `__MACOSX` 成员已由脚本跳过；worktree 缺失的 gitignored 既有素材已从主仓库只读复制（KO webtoon 845MB、P&C 既有页）用于 verify。
+- Handoff：`doc/handoffs/M2-TA2B-704df9b.md`。Review：待 DeepSeek Harness（非作者静态）。实际测试：见上表与 `verification/M2-TA2B/raw/`。
