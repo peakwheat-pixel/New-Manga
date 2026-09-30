@@ -2,13 +2,13 @@
 id: M2-TA3-A
 title: "应用级 E2E Smoke（用户裁决 2026-09-30）：5 个真实 case（日漫+韩漫）detect→OCR→translate→inpaint→render/export 全链，不做质量 qualification"
 kind: acceptance
-status: ready
+status: in_progress
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（待派发，非作者静态）
 depends_on: [M2-TA2B]
-base_commit: PENDING_SET_AT_CLAIM
+base_commit: bebcfcde6ded3d20871a2ddeeadba6f8629f50d5
 branch: agent/zcode/M2-TA3-A-E2E-SMOKE
 worktree: G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
 integration_commit: null
