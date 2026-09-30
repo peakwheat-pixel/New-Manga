@@ -187,6 +187,13 @@ def main() -> int:
         "matching (sensitivity control for the production MERGE_PAD_PX=6 "
         "growth; 0 keeps the production-faithful path)",
     )
+    parser.add_argument(
+        "--task",
+        default="M2-DOCTR-QUAL-PREFLIGHT",
+        help="label written into the results payload 'task' field "
+        "(default keeps the preflight value; the formal qualification run "
+        "passes M2-DOCTR-QUAL-RUN). Metadata only — no metric impact.",
+    )
     args = parser.parse_args()
 
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
@@ -365,6 +372,15 @@ def main() -> int:
 
     primary = summary["block_coverage"]
     severe_rate = primary["severe_page_miss"]["rate"]
+    # Frozen contract (thresholds.json, user ruling 2026-09-30): gates live
+    # under "gates" and Precision is a non-gate observation. Flat preflight
+    # files (no "gates" key, flat "min_precision") keep the legacy 4-gate
+    # behavior. Everything above is metric computation and is untouched —
+    # this block only maps the frozen gate set onto the computed summary.
+    gates = THRESHOLDS.get("gates", THRESHOLDS)
+    min_recall = gates["min_recall"]
+    min_mean_cov = gates.get("min_mean_coverage", gates.get("min_mean_iou"))
+    max_severe = gates["max_severe_page_miss_rate"]
     verdict = {
         "judging_layer": (
             "block_coverage (production merged blocks vs block-level GT, "
@@ -372,25 +388,39 @@ def main() -> int:
             "granularity diagnosis only, never judged"
         ),
         "recall": {
-            "threshold": THRESHOLDS["min_recall"],
+            "threshold": min_recall,
             "value": primary["recall"],
-            "pass": primary["recall"] >= THRESHOLDS["min_recall"],
+            "pass": primary["recall"] >= min_recall,
         },
-        "precision": {
-            "threshold": THRESHOLDS["min_precision"],
+    }
+    if "min_precision" in gates:
+        verdict["precision"] = {
+            "threshold": gates["min_precision"],
             "value": primary["precision"],
-            "pass": primary["precision"] >= THRESHOLDS["min_precision"],
-        },
-        "mean_iou": {
-            "threshold": THRESHOLDS["min_mean_iou"],
-            "value": primary["mean_matched_coverage"],
-            "pass": primary["mean_matched_coverage"] >= THRESHOLDS["min_mean_iou"],
-        },
-        "severe_page_miss_rate": {
-            "threshold": THRESHOLDS["max_severe_page_miss_rate"],
-            "value": severe_rate,
-            "pass": severe_rate <= THRESHOLDS["max_severe_page_miss_rate"],
-        },
+            "pass": primary["precision"] >= gates["min_precision"],
+        }
+    else:
+        verdict["precision"] = {
+            "gate": False,
+            "value": primary["precision"],
+            "reference": THRESHOLDS.get("non_gate_observations", {}).get(
+                "min_precision_reference"
+            ),
+            "note": (
+                "pollution-bounded lower bound (GT blind spot: SFX / "
+                "background text unannotated); NOT a gate — user ruling "
+                "2026-09-30"
+            ),
+        }
+    verdict["mean_coverage"] = {
+        "threshold": min_mean_cov,
+        "value": primary["mean_matched_coverage"],
+        "pass": primary["mean_matched_coverage"] >= min_mean_cov,
+    }
+    verdict["severe_page_miss_rate"] = {
+        "threshold": max_severe,
+        "value": severe_rate,
+        "pass": severe_rate <= max_severe,
     }
     verdict["all_pass"] = all(v["pass"] for v in verdict.values() if isinstance(v, dict) and "pass" in v)
 
@@ -399,7 +429,7 @@ def main() -> int:
     manifest_sha256 = _hashlib.sha256(args.manifest.read_bytes()).hexdigest()
     out_payload = {
         "schema": "m2-doctr-qual/eval-results@2",
-        "task": "M2-DOCTR-QUAL-PREFLIGHT",
+        "task": args.task,
         "generated_at": __import__("datetime").datetime.now(
             __import__("datetime").timezone.utc
         ).isoformat(timespec="seconds"),
