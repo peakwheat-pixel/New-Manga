@@ -20,6 +20,8 @@ Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md)（�
 
 ## 阈值（用户默认，thresholds.json）
 
+> 【历史段落（preflight 口径，2026-09-29）】现行正式口径见 M2-DOCTR-QUAL-RUN 正式报告（Precision 非 Gate、Mean coverage、pad 协议）。
+
 IoU≥0.5 匹配；Recall≥92%；Precision≥85%；Mean IoU≥60%；严重整页漏检≤5%（定义：GT≥3 且 0 检出的 region 占含 GT region 比例）。
 
 ## 运行
@@ -67,3 +69,25 @@ python experiments/M2-DOCTR-QUAL/smoke_adapter_check.py `
 
 - GPU torch（2.11.0+cu128）与生产 pin（2.14.0 CPU PyPI）不同号；cu128 索引无 2.14.0（2026-09-29 复核）。T1.1.1 author-verification §5.1 已证 CPU/GPU 结果一致；本轮另做 CPU 对照子集。
 - Pepper&Carrot（JA/KO）SVG 文字层每页仅 0–4 个 `<text>`，只作定性附录，不进阈值判定集。
+
+## 正式 qualification run（M2-DOCTR-QUAL-RUN，2026-09-30）
+
+冻结口径 `thresholds.json`（用户裁决 2026-09-30）：主判定层 `block_coverage`（生产合并块 + 生产 pad 6px 正式），Gate = Recall≥0.92 / Mean coverage≥0.60 / severe≤0.05；Precision 为受污染观测下界、不作 Gate；pad 抵消（`--strip-block-pad 6.0`）附报。正式结论 **FAIL**（Recall 0.4776）与调参/换模型候选流程建议见 [qualification/qualification-report.md](../../verification/M2-DOCTR-QUAL/qualification/qualification-report.md)。
+
+~~~powershell
+# 正式主跑 / 附报 / 对照（GPU venv；运行时 HEAD=f9894184；原始日志在 qualification/raw/）
+$env:PYTHONPATH = "src"
+python experiments/M2-DOCTR-QUAL/eval_detection.py `
+  --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json" `
+  --weights "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/fast_base-688a8b34.pt" `
+  --arch fast_base --device cuda --previews 0 --task M2-DOCTR-QUAL-RUN `
+  --out verification/M2-DOCTR-QUAL/qualification/results-formal-fast_base-cuda-seg05.json
+# pad 抵消附报：追加 --strip-block-pad 6.0，--out 改 ...-padoffset.json
+# db_resnet50 对照：--weights db_resnet50-79bd7d70.pt --arch db_resnet50，--out 改 results-formal-db_resnet50-cuda-seg05.json
+
+# 汇总 + 与 preflight 首跑一致性证据（只读，stdlib）
+python experiments/M2-DOCTR-QUAL/summarize_qualification.py `
+  --out verification/M2-DOCTR-QUAL/qualification/consistency-and-summary.json
+~~~
+
+注意：`eval_detection.py` 自本 Task 起 verdict 段按冻结 gates 契约读取（嵌套 `gates`，Precision 非 Gate；扁平旧阈值文件保持 legacy 行为），并新增 `--task` 元数据参数；测量逻辑零改动（见 qualification-report.md §4 披露）。

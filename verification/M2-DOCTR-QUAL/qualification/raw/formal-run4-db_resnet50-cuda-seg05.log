@@ -1,0 +1,9 @@
+# shell=powershell cwd=/g/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-RUN-zcode HEAD=f98941845d5140ea697d13a654fe66c1edbeef34 date=2026-09-30T00:03:08Z cmd=$env:PYTHONPATH='src'; & 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312/Scripts/python.exe' experiments/M2-DOCTR-QUAL/eval_detection.py --manifest 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json' --weights 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/db_resnet50-79bd7d70.pt' --arch db_resnet50 --device cuda --previews 0 --task M2-DOCTR-QUAL-RUN --out 'verification/M2-DOCTR-QUAL/qualification/results-formal-db_resnet50-cuda-seg05.json'
+arch=db_resnet50 device=cuda regions=511 elapsed=17.2s
+PRIMARY block_coverage: precision=0.1858 recall=0.6085 meanCov=0.7751 severe_miss_rate=0.0192
+diag block_strict:      precision=0.1731 recall=0.5671 meanIoU=0.6832
+diag raw_strict (word granularity, NOT judged): recall=0.2563
+FP attribution: UNAVAILABLE (manifest has no supplementary_boxes; run --gt-mode union manifest for the evidence layer)
+verdict all_pass=False
+results -> verification\M2-DOCTR-QUAL\qualification\results-formal-db_resnet50-cuda-seg05.json
+# EXIT=0

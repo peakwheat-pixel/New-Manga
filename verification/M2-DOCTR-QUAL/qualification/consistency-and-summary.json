@@ -1,0 +1,442 @@
+{
+ "schema": "m2-doctr-qual/qualification-summary@1",
+ "task": "M2-DOCTR-QUAL-RUN",
+ "generated_by": "experiments/M2-DOCTR-QUAL/summarize_qualification.py",
+ "gates_applied": {
+  "source": "experiments/M2-DOCTR-QUAL/thresholds.json (user ruling 2026-09-30)",
+  "primary_layer": "block_coverage",
+  "min_recall": 0.92,
+  "min_mean_coverage": 0.6,
+  "max_severe_page_miss_rate": 0.05,
+  "precision": "non-gate observation (pollution-bounded lower bound)"
+ },
+ "formal_main": {
+  "file": "results-formal-fast_base-cuda-seg05.json",
+  "verdict": {
+   "judging_layer": "block_coverage (production merged blocks vs block-level GT, coverage = intersection/gt_area >= 0.5); raw_strict kept for granularity diagnosis only, never judged",
+   "recall": {
+    "threshold": 0.92,
+    "value": 0.4776444929116685,
+    "pass": false
+   },
+   "precision": {
+    "gate": false,
+    "value": 0.12496433666191155,
+    "reference": 0.85,
+    "note": "pollution-bounded lower bound (GT blind spot: SFX / background text unannotated); NOT a gate — user ruling 2026-09-30"
+   },
+   "mean_coverage": {
+    "threshold": 0.6,
+    "value": 0.7530730500617262,
+    "pass": true
+   },
+   "severe_page_miss_rate": {
+    "threshold": 0.05,
+    "value": 0.038461538461538464,
+    "pass": true
+   },
+   "all_pass": false
+  },
+  "summary": {
+   "raw_strict": {
+    "n_det": 5350,
+    "n_gt": 917,
+    "tp": 178,
+    "fp": 5172,
+    "fn": 739,
+    "precision": 0.03327102803738318,
+    "recall": 0.1941112322791712,
+    "f1": 0.05680548906973034,
+    "mean_matched_iou": 0.6622098912436426,
+    "severe_page_miss": {
+     "layer": "block_coverage",
+     "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+     "regions_with_gt": 416,
+     "severe_miss_regions": 16,
+     "rate": 0.038461538461538464
+    }
+   },
+   "block_strict": {
+    "n_det": 3505,
+    "n_gt": 917,
+    "tp": 414,
+    "fp": 3091,
+    "fn": 503,
+    "precision": 0.1181169757489301,
+    "recall": 0.4514721919302072,
+    "f1": 0.18724559023066484,
+    "mean_matched_iou": 0.7034090985287651,
+    "severe_page_miss": {
+     "layer": "block_coverage",
+     "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+     "regions_with_gt": 416,
+     "severe_miss_regions": 16,
+     "rate": 0.038461538461538464
+    }
+   },
+   "block_coverage": {
+    "n_det": 3505,
+    "n_gt": 917,
+    "tp": 438,
+    "fp": 3067,
+    "fn": 479,
+    "precision": 0.12496433666191155,
+    "recall": 0.4776444929116685,
+    "f1": 0.1981004070556309,
+    "mean_matched_coverage": 0.7530730500617262,
+    "severe_page_miss": {
+     "layer": "block_coverage",
+     "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+     "regions_with_gt": 416,
+     "severe_miss_regions": 16,
+     "rate": 0.038461538461538464
+    }
+   }
+  }
+ },
+ "formal_pad_offset": {
+  "file": "results-formal-fast_base-cuda-seg05-padoffset.json",
+  "block_coverage": {
+   "n_det": 3505,
+   "n_gt": 917,
+   "tp": 241,
+   "fp": 3264,
+   "fn": 676,
+   "precision": 0.06875891583452211,
+   "recall": 0.2628135223555071,
+   "f1": 0.10900045228403438,
+   "mean_matched_coverage": 0.6842480690495881,
+   "severe_page_miss": {
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "regions_with_gt": 416,
+    "severe_miss_regions": 43,
+    "rate": 0.10336538461538461
+   }
+  },
+  "block_strict": {
+   "n_det": 3505,
+   "n_gt": 917,
+   "tp": 236,
+   "fp": 3269,
+   "fn": 681,
+   "precision": 0.0673323823109843,
+   "recall": 0.257360959651036,
+   "f1": 0.10673903211216643,
+   "mean_matched_iou": 0.6683691602071702,
+   "severe_page_miss": {
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "regions_with_gt": 416,
+    "severe_miss_regions": 43,
+    "rate": 0.10336538461538461
+   }
+  }
+ },
+ "formal_db_resnet50": {
+  "file": "results-formal-db_resnet50-cuda-seg05.json",
+  "verdict": {
+   "judging_layer": "block_coverage (production merged blocks vs block-level GT, coverage = intersection/gt_area >= 0.5); raw_strict kept for granularity diagnosis only, never judged",
+   "recall": {
+    "threshold": 0.92,
+    "value": 0.608505997818975,
+    "pass": false
+   },
+   "precision": {
+    "gate": false,
+    "value": 0.18575233022636484,
+    "reference": 0.85,
+    "note": "pollution-bounded lower bound (GT blind spot: SFX / background text unannotated); NOT a gate — user ruling 2026-09-30"
+   },
+   "mean_coverage": {
+    "threshold": 0.6,
+    "value": 0.7750814611436269,
+    "pass": true
+   },
+   "severe_page_miss_rate": {
+    "threshold": 0.05,
+    "value": 0.019230769230769232,
+    "pass": true
+   },
+   "all_pass": false
+  },
+  "block_coverage": {
+   "n_det": 3004,
+   "n_gt": 917,
+   "tp": 558,
+   "fp": 2446,
+   "fn": 359,
+   "precision": 0.18575233022636484,
+   "recall": 0.608505997818975,
+   "f1": 0.2846212700841622,
+   "mean_matched_coverage": 0.7750814611436269,
+   "severe_page_miss": {
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "regions_with_gt": 416,
+    "severe_miss_regions": 8,
+    "rate": 0.019230769230769232
+   }
+  },
+  "block_strict": {
+   "n_det": 3004,
+   "n_gt": 917,
+   "tp": 520,
+   "fp": 2484,
+   "fn": 397,
+   "precision": 0.17310252996005326,
+   "recall": 0.5670665212649946,
+   "f1": 0.2652384595766386,
+   "mean_matched_iou": 0.6832278146224108,
+   "severe_page_miss": {
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "regions_with_gt": 416,
+    "severe_miss_regions": 8,
+    "rate": 0.019230769230769232
+   }
+  },
+  "raw_strict": {
+   "n_det": 5197,
+   "n_gt": 917,
+   "tp": 235,
+   "fp": 4962,
+   "fn": 682,
+   "precision": 0.04521839522801616,
+   "recall": 0.25627044711014174,
+   "f1": 0.07687275106313379,
+   "mean_matched_iou": 0.7249768910381664,
+   "severe_page_miss": {
+    "layer": "block_coverage",
+    "definition": "on the primary layer (block_coverage): a region with >= severe_page_miss_min_gt GT boxes and zero matched detections; rate is over regions that contain at least one GT box",
+    "regions_with_gt": 416,
+    "severe_miss_regions": 8,
+    "rate": 0.019230769230769232
+   }
+  }
+ },
+ "precision_evidence_union": {
+  "file": "results-fast_base-cuda-union.json (preflight, FP attribution layer)",
+  "fp_attribution": {
+   "attribution_available": true,
+   "note": "FPs scored against manifest supplementary_boxes (auxiliary text evidence outside the GT subset); Jaccard IoU>=0.3 counts as GT-coverage FP, otherwise pure. Only union-mode manifests carry supplementary_boxes; without them attribution is unavailable (not 'all pure').",
+   "fp_total": 2985,
+   "with_text_evidence": 2,
+   "pure": 2983
+  }
+ },
+ "consistency": {
+  "fast_base_vs_first_run": {
+   "manifest_sha256_formal": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+   "manifest_sha256_baseline": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+   "manifest_sha256_match": true,
+   "n_regions_formal": 511,
+   "n_regions_baseline": 511,
+   "summary_diff_count": 0,
+   "per_region_diff_count": 0,
+   "summary_diffs": [],
+   "per_region_diffs": [],
+   "deterministic_reproduction": true
+  },
+  "db_resnet50_vs_first_run": {
+   "manifest_sha256_formal": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+   "manifest_sha256_baseline": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+   "manifest_sha256_match": true,
+   "n_regions_formal": 511,
+   "n_regions_baseline": 511,
+   "summary_diff_count": 0,
+   "per_region_diff_count": 0,
+   "summary_diffs": [],
+   "per_region_diffs": [],
+   "deterministic_reproduction": true
+  },
+  "pad_offset_vs_preflight_pad0": {
+   "manifest_sha256_formal": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+   "manifest_sha256_baseline": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+   "manifest_sha256_match": true,
+   "n_regions_formal": 511,
+   "n_regions_baseline": 511,
+   "summary_diff_count": 0,
+   "per_region_diff_count": 0,
+   "summary_diffs": [],
+   "per_region_diffs": [],
+   "deterministic_reproduction": true
+  }
+ },
+ "per_case_block_coverage": [
+  {
+   "case_id": "K01",
+   "n_gt": 91,
+   "tp_block_coverage": 45,
+   "recall_block_coverage": 0.4945,
+   "regions_with_gt": 45
+  },
+  {
+   "case_id": "K02",
+   "n_gt": 19,
+   "tp_block_coverage": 12,
+   "recall_block_coverage": 0.6316,
+   "regions_with_gt": 5
+  },
+  {
+   "case_id": "K03",
+   "n_gt": 95,
+   "tp_block_coverage": 26,
+   "recall_block_coverage": 0.2737,
+   "regions_with_gt": 66
+  },
+  {
+   "case_id": "K04",
+   "n_gt": 113,
+   "tp_block_coverage": 79,
+   "recall_block_coverage": 0.6991,
+   "regions_with_gt": 16
+  },
+  {
+   "case_id": "K05",
+   "n_gt": 44,
+   "tp_block_coverage": 19,
+   "recall_block_coverage": 0.4318,
+   "regions_with_gt": 19
+  },
+  {
+   "case_id": "K06",
+   "n_gt": 101,
+   "tp_block_coverage": 22,
+   "recall_block_coverage": 0.2178,
+   "regions_with_gt": 63
+  },
+  {
+   "case_id": "K07",
+   "n_gt": 185,
+   "tp_block_coverage": 120,
+   "recall_block_coverage": 0.6486,
+   "regions_with_gt": 64
+  },
+  {
+   "case_id": "K08",
+   "n_gt": 34,
+   "tp_block_coverage": 11,
+   "recall_block_coverage": 0.3235,
+   "regions_with_gt": 19
+  },
+  {
+   "case_id": "K09",
+   "n_gt": 105,
+   "tp_block_coverage": 49,
+   "recall_block_coverage": 0.4667,
+   "regions_with_gt": 54
+  },
+  {
+   "case_id": "K10",
+   "n_gt": 130,
+   "tp_block_coverage": 55,
+   "recall_block_coverage": 0.4231,
+   "regions_with_gt": 65
+  }
+ ],
+ "severe_miss_regions_block_coverage": [
+  {
+   "case_id": "K01",
+   "region_index": 7,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K03",
+   "region_index": 47,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K03",
+   "region_index": 91,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K05",
+   "region_index": 38,
+   "n_gt": 4
+  },
+  {
+   "case_id": "K06",
+   "region_index": 16,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K06",
+   "region_index": 42,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K08",
+   "region_index": 29,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K08",
+   "region_index": 73,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K09",
+   "region_index": 24,
+   "n_gt": 4
+  },
+  {
+   "case_id": "K09",
+   "region_index": 30,
+   "n_gt": 4
+  },
+  {
+   "case_id": "K10",
+   "region_index": 33,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K10",
+   "region_index": 77,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K10",
+   "region_index": 81,
+   "n_gt": 4
+  },
+  {
+   "case_id": "K10",
+   "region_index": 85,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K10",
+   "region_index": 91,
+   "n_gt": 3
+  },
+  {
+   "case_id": "K10",
+   "region_index": 93,
+   "n_gt": 3
+  }
+ ],
+ "zero_detection_regions": [
+  {
+   "case_id": "K06",
+   "region_index": 74,
+   "n_gt": 2
+  },
+  {
+   "case_id": "K06",
+   "region_index": 94,
+   "n_gt": 1
+  },
+  {
+   "case_id": "K09",
+   "region_index": 75,
+   "n_gt": 1
+  },
+  {
+   "case_id": "K09",
+   "region_index": 110,
+   "n_gt": 1
+  }
+ ]
+}

@@ -1,0 +1,10 @@
+# shell=powershell cwd=/g/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-RUN-zcode HEAD=6384c807b79fd361b1eeb62ec038acb0e813208f date=2026-09-29T23:56:41Z cmd=$env:PYTHONPATH='src'; & 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312/Scripts/python.exe' experiments/M2-DOCTR-QUAL/eval_detection.py --manifest 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json' --weights 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/fast_base-688a8b34.pt' --arch fast_base --device cuda --previews 0 --out 'verification/M2-DOCTR-QUAL/qualification/results-formal-fast_base-cuda-seg05.json'
+Traceback (most recent call last):
+  File "G:\CODEX\New Manga.worktrees\M2-DOCTR-QUAL-RUN-zcode\experiments\M2-DOCTR-QUAL\eval_detection.py", line 487, in <module>
+    raise SystemExit(main())
+                     ^^^^^^
+  File "G:\CODEX\New Manga.worktrees\M2-DOCTR-QUAL-RUN-zcode\experiments\M2-DOCTR-QUAL\eval_detection.py", line 375, in main
+    "threshold": THRESHOLDS["min_recall"],
+                 ~~~~~~~~~~^^^^^^^^^^^^^^
+KeyError: 'min_recall'
+# EXIT=1
