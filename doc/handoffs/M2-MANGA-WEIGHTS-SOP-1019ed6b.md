@@ -3,7 +3,7 @@ task_id: M2-MANGA-WEIGHTS-SOP
 author: ZCode
 recipient: Codex（转 DeepSeek Harness 非作者 Review）
 base_commit: 46f079e8
-delivery_head: 1019ed6b
+delivery_head: b0dd843c（review-fix DSH r1 终态；1019ed6b 为首轮 implement）
 status: delivered
 ---
 
