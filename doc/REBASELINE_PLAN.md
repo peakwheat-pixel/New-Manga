@@ -31,7 +31,7 @@ releases a task.
 
 ### 2026-09-29 用户授权 Task：M2-TA2C No-HF JA/KO Asset Migration
 
-[M2-TA2C](tasks/M2-TA2C.md) 在已完成 M2-TA1/TA2A 的同一个 `comic_golden_suite` 上迁移附件来源方案；基线=`d4d3977907bc64177ef85c61da4c95901f135fc6`，Owner=Codex Desktop，非作者 Reviewer=DeepSeek Harness，实现作者交付后由用户指示 ZCode 代行 Codex 集成；**已 `done` @integration `a4cd513d0f7ca6a50e1ae018629b3042612be3bb`**（r2 `approved` @`8cb3a135`，session=`ca1ae6af`）。附件无实物数据，脚本存在自动依赖安装、下载先发布后验哈希、无许可过滤的重打包风险，故不直接运行（静态审计见 `verification/M2-TA2C/attachment-audit.md`）。公开来源按官方访问与许可逐项核定，Manga109 不再是 JA L0/L1 的硬前置。集成后实际覆盖：L0 20/20 READY（JA 10 + KO 10）、L1/L2 68 定义中 23 READY / 8 MISSING / 37 MISSING_GATED_ASSET，inventory 92 文件 / 63,317,229 bytes；KO 新增 Pepper&Carrot E04P02/P03/P07 + language-pack（4 文件 / 16,292,579 bytes，ignored 本地）；应用级 Pipeline 检查仍全部 `NOT_RUN`。**2026-09-30 用户裁决拆阶段**：[M2-TA3-A](tasks/M2-TA3-A.md) `ready`（5 case 日漫+韩漫应用级 E2E Smoke，detect→OCR→translate→inpaint→render/export 真实产物，depends_on M2-TA2B）；M2-TA3-B（20-case 正式质量 qualification）`proposed / 暂缓`（待检测器与 OCR/翻译 Provider 稳定，届时单独定义各阶段质量阈值）。
+[M2-TA2C](tasks/M2-TA2C.md) 在已完成 M2-TA1/TA2A 的同一个 `comic_golden_suite` 上迁移附件来源方案；基线=`d4d3977907bc64177ef85c61da4c95901f135fc6`，Owner=Codex Desktop，非作者 Reviewer=DeepSeek Harness，实现作者交付后由用户指示 ZCode 代行 Codex 集成；**已 `done` @integration `a4cd513d0f7ca6a50e1ae018629b3042612be3bb`**（r2 `approved` @`8cb3a135`，session=`ca1ae6af`）。附件无实物数据，脚本存在自动依赖安装、下载先发布后验哈希、无许可过滤的重打包风险，故不直接运行（静态审计见 `verification/M2-TA2C/attachment-audit.md`）。公开来源按官方访问与许可逐项核定，Manga109 不再是 JA L0/L1 的硬前置。集成后实际覆盖：L0 20/20 READY（JA 10 + KO 10）、L1/L2 68 定义中 23 READY / 8 MISSING / 37 MISSING_GATED_ASSET，inventory 92 文件 / 63,317,229 bytes；KO 新增 Pepper&Carrot E04P02/P03/P07 + language-pack（4 文件 / 16,292,579 bytes，ignored 本地）；应用级 Pipeline 检查仍全部 `NOT_RUN`。**2026-09-30 用户裁决拆阶段**：[M2-TA3-A](tasks/M2-TA3-A.md) **`done` @integration `5dc69d16`**（5 case=BJ02/BJ06/K01/K02/K11 全链 COMPLETED pipeline_failures=0，真 docTR detect+mock OCR/translate+生产 inpaint/render/export，pytest 82 passed，DSH r1→r2 条件全闭；已知 LOCK_CHANGED 缺口真检测下未复现=L-1 候选；TA3-B 维持暂缓）；M2-TA3-B（20-case 正式质量 qualification）`proposed / 暂缓`（待检测器与 OCR/翻译 Provider 稳定，届时单独定义各阶段质量阈值）。
 
 ### 2026-09-28 任务盘点（当日快照；当前执行状态见 STATUS）
 
@@ -121,7 +121,7 @@ flowchart TD
   TA1 --> TA2A["M2-TA2A JA 公开素材引导 · O:Codex ✓"]
   TA2A --> TA2C["M2-TA2C No-HF JA/KO 素材迁移 · O:Codex ✓<br/>（集成=ZCode 代行）"]
   TA1 -.-> TA2B["M2-TA2B 开放素材池 · done @fae0d8f6"]
-  TA2C -.-> TA3A["M2-TA3-A E2E Smoke · ready（depends_on TA2B）"]
+  TA2C -.-> TA3A["M2-TA3-A E2E Smoke · done @5dc69d16"]
   TA3A -.-> TA3B["M2-TA3-B 质量 qualification · proposed 暂缓"]
   DOC["Real docTR qualification · 正式 run done FAIL；候选 C1-C5 待释放"]
 
@@ -129,6 +129,7 @@ flowchart TD
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
   classDef backlog fill:#eef1f5,stroke:#697386,color:#123;
   class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C done;
+  class TA3A done;
   class TA3 proposed;
   class DOC backlog;
 ```

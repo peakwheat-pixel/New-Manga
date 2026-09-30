@@ -10,8 +10,10 @@
 # original captures and are intentionally NOT rewritten. ac3 was recaptured on
 # the repaired assertion per DSH r2 (its header states the capture state).
 # The committed scripts below ARE the scripts that produced the evidence.
-# This file alters no code and no case data. sha256sum -c on this file
-# (comments ignored) must report all lines OK.
+# This file alters no code and no case data. Verify environment: the DELIVERY
+# WORKTREE only (PNGs are gitignored on-disk files and the text hashes are the
+# worktree LF bytes; a fresh main checkout with autocrlf will not match).
+# sha256sum -c on this file (comments ignored) must report all lines OK there.
 
 f1b5976de517290a294b7ea3b0c804e59c87f45b610ed9d8f4a047ce8c4850d9 *experiments/M2-TA3-A/run_smoke.py
 d7fe86a4b403dc6be8a1800f86cbd8ad6263264036c53c0005aae8d2f1e81aeb *experiments/M2-TA3-A/probe_artifacts.py

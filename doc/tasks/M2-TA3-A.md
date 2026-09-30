@@ -2,7 +2,7 @@
 id: M2-TA3-A
 title: "应用级 E2E Smoke（用户裁决 2026-09-30）：5 个真实 case（日漫+韩漫）detect→OCR→translate→inpaint→render/export 全链，不做质量 qualification"
 kind: acceptance
-status: in_review
+status: done
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +11,7 @@ depends_on: [M2-TA2B]
 base_commit: bebcfcde6ded3d20871a2ddeeadba6f8629f50d5
 branch: agent/zcode/M2-TA3-A-E2E-SMOKE
 worktree: G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
-integration_commit: null
+integration_commit: 5dc69d16
 ---
 
 # M2-TA3-A：应用级 E2E Smoke（5 case 全链，真实产物）
@@ -134,5 +134,6 @@ integration_commit: null
 ## 交付与运行记录
 
 - 交付 head：`dc2b9aca`（分支 `agent/zcode/M2-TA3-A-E2E-SMOKE`，claim 1328a766，base=bebcfcde）。amend 轨迹：首commit `b94ebe87`→`319a3036`（raw 日志头按当时工作区态重写；stdout 正文未重写）→`dc2b9aca`（Task 补披露行）。代码/数据内容自 `b94ebe87` 起零变化。
-- Handoff：`doc/handoffs/M2-TA3-A-1328a76.md`。Review：待派发（DSH 非作者静态）。
+- Handoff：`doc/handoffs/M2-TA3-A-1328a76.md`。Review：DSH r1 `approved_with_conditions`（条件闭合）→ r2 条件闭合（报告归档 `doc/reviews/M2-TA3-A-*-dsh-r1/r2.md`）。
+- 集成：merge `5dc69d16`（--no-ff，Integrator=ZCode 代行 Codex）；post-merge 复跑 pytest 82 passed、TA3-A 5 case PASS 状态在 merged manifest 复核成立；`sha256sum -c 00-provenance.txt` 15/15 OK（**复算环境=交付 worktree**：PNG 为 gitignored 盘上文件、文本哈希对应 worktree LF 字节，main checkout 因 autocrlf 不适用）；`git diff --check` 对交付路径干净（main 工作区既有会话前构建产物 M 文件的 whitespace 状态不属于本 Task 且未触碰）。L-2（README:7,26-29 + local_asset_inventory.json:5）已随本收口修订。
 - 实际测试：见 §测试要求 与 `verification/M2-TA3-A/`（summaries 7 份 JSON + raw 5 份日志 + artifacts 5 份 PNG[gitignored]）。

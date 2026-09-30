@@ -4,7 +4,7 @@
 
 ## READY 的含义
 
-Case 的 `READY` 只表示预期本地文件存在且通过完整性验证。它不表示 OCR、Text Detection、Translation、Inpainting、Typesetting、Reading Order、SFX、Speaker Attribution 或 Webtoon 切片/重组已经通过。`pipeline_status` 按每个 Case 的 `expected_pipeline` 独立记录；当前所有应用 Pipeline 都是 `NOT_RUN`。资产 READY 与 Pipeline Verified 是不同门槛。
+Case 的 `READY` 只表示预期本地文件存在且通过完整性验证。它不表示 OCR、Text Detection、Translation、Inpainting、Typesetting、Reading Order、SFX、Speaker Attribution 或 Webtoon 切片/重组已经通过。`pipeline_status` 按每个 Case 的 `expected_pipeline` 独立记录；M2-TA3-A（2026-09-30）后 BJ02/BJ06/K01/K02/K11 五个 Case 的 exercised 键为 `PASS`（OCR/翻译由 deterministic mock Provider 完成，质量验收属 TA3-B），其余 Case 仍为 `NOT_RUN`。资产 READY 与 Pipeline Verified 是不同门槛。
 
 ## 路径与工具
 
@@ -23,10 +23,10 @@ Case 的 `READY` 只表示预期本地文件存在且通过完整性验证。它
 
 | 来源 | 本机内容 | 许可与图像边界 | 资产状态 |
 |---|---|---|---|
-| KO Cleaned Webtoon 固定 10 Case | 80 个文件，884,913,245 bytes（约 844 MiB） | 用户已授权本机测试；源页面将 CC BY-NC 4.0 用于作者注释/metadata，底层漫画图像仍由权利人持有。不得进 Git。 | `READY`：文件完整性已验证；应用 Pipeline `NOT_RUN` |
-| 《ブラックジャックによろしく》官方免费页（BJ01–BJ12） | 第 1/3/5 卷官方 ZIP（3 个，共 1,068,836,615 bytes）+ DRM-free PDF 3 个 + pypdfium2 渲染 PNG 12 页（DPI 150，2946x4167）；逐文件 SHA-256 见 `日漫_JA/01_black_jack_official/vol*/bj_download_manifest.json` 与 `bj_pages_manifest.json` | 作者（佐藤秀峰/佐藤漫画制作所）官方免费渠道 densho810.com：商用/非商用自由、署名义务（作品名+作者名）、公开利用后 1 个月内邮件报告 info@densho810.com、禁 Kindle 上架；避开含 JASRAC 乐曲的第 2/7/11 卷。像素不入 Git。 | `READY`：ZIP/PDF/页 PNG 完整性已验证；应用 Pipeline `NOT_RUN` |
+| KO Cleaned Webtoon 固定 10 Case | 80 个文件，884,913,245 bytes（约 844 MiB） | 用户已授权本机测试；源页面将 CC BY-NC 4.0 用于作者注释/metadata，底层漫画图像仍由权利人持有。不得进 Git。 | `READY`：文件完整性已验证；应用 Pipeline：K01/K02 五段链 `PASS`（M2-TA3-A），其余 Case `NOT_RUN` |
+| 《ブラックジャックによろしく》官方免费页（BJ01–BJ12） | 第 1/3/5 卷官方 ZIP（3 个，共 1,068,836,615 bytes）+ DRM-free PDF 3 个 + pypdfium2 渲染 PNG 12 页（DPI 150，2946x4167）；逐文件 SHA-256 见 `日漫_JA/01_black_jack_official/vol*/bj_download_manifest.json` 与 `bj_pages_manifest.json` | 作者（佐藤秀峰/佐藤漫画制作所）官方免费渠道 densho810.com：商用/非商用自由、署名义务（作品名+作者名）、公开利用后 1 个月内邮件报告 info@densho810.com、禁 Kindle 上架；避开含 JASRAC 乐曲的第 2/7/11 卷。像素不入 Git。 | `READY`：ZIP/PDF/页 PNG 完整性已验证；应用 Pipeline：BJ02/BJ06 五段链 `PASS`（M2-TA3-A），其余 Case `NOT_RUN` |
 | Pepper&Carrot 日语本地化页面 | 15 张 JPEG + 2 个 SVG language-pack ZIP；逐文件大小与 SHA-256 见 inventory | 官方页面标为 CC BY 4.0，需保留作者及译者署名。内容是法国原创 webcomic 的日语本地化，不是日本原创 Manga。E20P06/E20P07 有部分机器可读日文文字层；没有对白转录全集、检测框或 mask。原图虽可依许可再分发，仍默认不提交 Git。 | 15 个 Case（J38–J52）资产 `READY`；Open Ground Truth 能力整体 `PARTIAL`；应用 Pipeline `NOT_RUN` |
-| Pepper&Carrot 韩语本地化页面 | E04 5 张 + E20 7 张新增 JPEG（K14–K25），加既有 E04P02/P03/P07（K11–K13），共 15 张 JPEG + 2 个官方 SVG language-pack ZIP（E04 + E20）；逐文件 SHA-256 见 inventory | 同一上游，CC BY 4.0 署名条件。配对 SVG 含韩文文本层，但没有完整检测框或 mask；法国原创韩语本地化，不计原生韩漫。 | 15 个 Case 资产 `READY`，仅列入 L1/L2；应用 Pipeline `NOT_RUN` |
+| Pepper&Carrot 韩语本地化页面 | E04 5 张 + E20 7 张新增 JPEG（K14–K25），加既有 E04P02/P03/P07（K11–K13），共 15 张 JPEG + 2 个官方 SVG language-pack ZIP（E04 + E20）；逐文件 SHA-256 见 inventory | 同一上游，CC BY 4.0 署名条件。配对 SVG 含韩文文本层，但没有完整检测框或 mask；法国原创韩语本地化，不计原生韩漫。 | 15 个 Case 资产 `READY`，仅列入 L1/L2；应用 Pipeline：K11 五段链 `PASS`（M2-TA3-A），其余 Case `NOT_RUN` |
 | Manga109 37 个已选作品（已取消） | 0 张漫画图像 | 用户裁决（2026-09-30）永久取消 Manga109/Manga109-s 前置；定义保留为历史证据，不再取得或导入。 | `removed_from_scope_2026-09-30` |
 | COO | 37 份 XML 标注 + CC BY 4.0 许可文本；无配对图像 | 标注可再分发；Manga109 图像不在此源中。 | `PARTIAL`：标注已本地解析，图像视觉验证未执行 |
 | Manga109Dialog | 37 份 XML + CC BY 4.0 许可文本；无配对图像或独立对白转录 | 数据是 speaker/text ID 关联；基础文本及图像仍需 Manga109 资源。 | `PARTIAL` |

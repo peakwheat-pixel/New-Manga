@@ -2,7 +2,7 @@
   "schema_version": 1,
   "generated_at": "2026-09-29",
   "task_id": "M2-TA2A",
-  "asset_ready_semantics": "Local files exist and source-appropriate integrity checks passed; application pipeline verification is tracked separately and currently NOT_RUN.",
+  "asset_ready_semantics": "Local files exist and source-appropriate integrity checks passed; application pipeline verification is tracked per case in cases.json pipeline_status (M2-TA3-A 2026-09-30: BJ02/BJ06/K01/K02/K11 exercised stages PASS with deterministic mock OCR/translate; all other cases NOT_RUN).",
   "assets": [
     {
       "asset_id": "peppercarrot_e04_ja",
