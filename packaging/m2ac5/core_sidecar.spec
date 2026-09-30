@@ -80,6 +80,31 @@ ML_HIDDENIMPORTS = [
     "transformers.models.rt_detr_v2",
 ]
 
+#: M2-PROD-DETECT-3 (frozen in-process detect evidence): torchvision 0.29's
+#: C++ ops live in stable-ABI extensions (`_C_stable` / `image_stable`) that
+#: load DYNAMICALLY through `torchvision.extension._load_library` — and the
+#: stock hook-torchvision still pins the pre-0.29 name `torchvision._C`, so
+#: the real binaries NEVER reached the closure: the first frozen in-process
+#: detect (this Task's AC4 probe) failed with
+#: `RuntimeError: operator torchvision::nms does not exist` wrapped by
+#: transformers' _LazyModule as "Could not import module
+#: 'RTDetrImageProcessor'". `RTDetrImageProcessor` imports
+#: `torchvision.transforms.v2.functional`, whose import finishes the
+#: torchvision init and hits the missing ops. Pin the two stable-ABI
+#: extensions here (EXTENSION modules land in a.binaries, not a.pure —
+#: hence the separate binaries assertion below).
+ML_BINARY_IMPORT_MODULES = [
+    "torchvision._C_stable",
+    "torchvision.image_stable",
+]
+
+#: What the binaries assertion looks for: the dotted module names as they
+#: appear as EXTENSION TOC entries inside the `torchvision/` bundle dir.
+ML_BINARY_IMPORTS = [
+    "torchvision/_C_stable.pyd",
+    "torchvision/image_stable.pyd",
+]
+
 
 def _archive_warn_file(exe_name: str) -> None:
     """DSH r1 R1 review-fix: PyInstaller writes ONE shared warn file
@@ -106,7 +131,9 @@ def _archive_warn_file(exe_name: str) -> None:
 def _assert_ml_closure(analysis, exe_name: str) -> None:
     """DSH r1 R3 review-fix: fail the BUILD (not the release) if the ML
     runtime is not actually in the analyzed graph. `analysis.pure` is the
-    TOC of pure-Python modules that will land in this entry's PYZ."""
+    TOC of pure-Python modules that will land in this entry's PYZ;
+    `analysis.binaries` carries the EXTENSION modules (M2-PROD-DETECT-3:
+    torchvision's stable-ABI .pyd pair, see ML_BINARY_IMPORTS)."""
     pure_names = {entry[0] for entry in analysis.pure}
     missing = [m for m in ML_HIDDENIMPORTS if m not in pure_names]
     if missing:
@@ -116,10 +143,25 @@ def _assert_ml_closure(analysis, exe_name: str) -> None:
             "silently degrade to PROVIDER_DEPENDENCY_MISSING. Do NOT relax "
             "this check; fix the hiddenimports/analysis instead."
         )
+    binary_names = {entry[0].replace("\\", "/") for entry in analysis.binaries}
+    missing_binaries = [
+        m for m in ML_BINARY_IMPORTS if not any(
+            name == m or name.endswith("/" + m) for name in binary_names
+        )
+    ]
+    if missing_binaries:
+        raise SystemExit(
+            f"ML closure assertion FAILED for {exe_name}: extension(s) "
+            f"{missing_binaries} not collected into the bundle binaries — "
+            "the frozen detect chain would fail at model load with the "
+            "missing torchvision C++ ops. Do NOT relax this check; fix the "
+            "hiddenimports/analysis instead."
+        )
     print(
         f"closure assertion: {exe_name} PYZ carries "
         + ", ".join(ML_HIDDENIMPORTS)
-        + f" ({len(pure_names)} pure modules)"
+        + f" ({len(pure_names)} pure modules) + extensions "
+        + ", ".join(ML_BINARY_IMPORTS)
     )
 
 EXCLUDED = [
@@ -146,7 +188,9 @@ for stem, name, is_ml_entry in ENTRIES:
         pathex=[SRC_ROOT],
         binaries=[],
         datas=[],
-        hiddenimports=list(ML_HIDDENIMPORTS) if is_ml_entry else [],
+        hiddenimports=(
+            list(ML_HIDDENIMPORTS) + list(ML_BINARY_IMPORT_MODULES)
+        ) if is_ml_entry else [],
         hookspath=[],
         hooksconfig={},
         runtime_hooks=[],
