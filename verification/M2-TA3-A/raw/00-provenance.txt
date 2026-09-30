@@ -1,0 +1,37 @@
+# M2-TA3-A provenance (DSH r1 P1-1 closure; r2 wording unification) — 2026-09-30T04:11:50Z
+#
+# Evidence layer anchoring:
+#   implementation head  = dc2b9aca (branch agent/zcode/M2-TA3-A-E2E-SMOKE)
+#   base                 = bebcfcde6ded3d20871a2ddeeadba6f8629f50d5
+#   claim                = 1328a766
+# The five raw ac*.log header lines were written by the capture script from the
+# worktree state at each capture moment (HEAD 1328a766 for ac1, b94ebe87 for
+# ac2-ac5; ac1 also carries a run-start note); their stdout bodies are the
+# original captures and are intentionally NOT rewritten. ac3 was recaptured on
+# the repaired assertion per DSH r2 (its header states the capture state).
+# The committed scripts below ARE the scripts that produced the evidence.
+# This file alters no code and no case data. sha256sum -c on this file
+# (comments ignored) must report all lines OK.
+
+f1b5976de517290a294b7ea3b0c804e59c87f45b610ed9d8f4a047ce8c4850d9 *experiments/M2-TA3-A/run_smoke.py
+d7fe86a4b403dc6be8a1800f86cbd8ad6263264036c53c0005aae8d2f1e81aeb *experiments/M2-TA3-A/probe_artifacts.py
+1cd269b38e160963769fef67a7552effe190619129360bd2a3334b648f1478ee *experiments/M2-TA3-A/backfill_pipeline_status.py
+042aa2a6be03125dfba2291d72a9d5ecb5b71befc34616ebd5891cdf8ffc3f6d *verification/M2-TA3-A/summaries/artifact-samples.json
+ee46cbf0cb52724a5ea747f892a827227cafafcb168141192d7186f2b382f7b0 *verification/M2-TA3-A/summaries/smoke-BJ02.json
+6a24f12b382e2fa7ef8e210b95b30da57ffa67c63d38c98c81f369718bf8be8a *verification/M2-TA3-A/summaries/smoke-BJ06.json
+bf07bf43fce775aa3c2abc5252c5ca9fc256747845c62a98ce73d2e60f3e9e61 *verification/M2-TA3-A/summaries/smoke-K01.json
+6a4c401358ea132c5aa356d4a91bbc955235fa59e335e996b0de5814e7b2fe4e *verification/M2-TA3-A/summaries/smoke-K02.json
+99847e6174f595fe124e0ad6eb9b3123f56913b94c09205e550758be97de2908 *verification/M2-TA3-A/summaries/smoke-K11.json
+b345d545d1a505b5f09c514d05d3b203465a2b35dca5097a2b7f4a01b5a2346a *verification/M2-TA3-A/summaries/smoke-report.json
+9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1 *verification/M2-TA3-A/artifacts/BJ02-translated.png
+c5497a499ac80bc86d563e15193bc4f0f447a3ae78b015bbcc36b9d506f7e147 *verification/M2-TA3-A/artifacts/BJ06-translated.png
+02499d71f86f78ae17b1c9f937a455c28fb087c9a29f9352363f10fe1129275f *verification/M2-TA3-A/artifacts/K01-translated.png
+207410cb599acf203e6eb188d94b310d90245c75c8c01a814a2305ec04ce35ee *verification/M2-TA3-A/artifacts/K02-translated.png
+c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2 *verification/M2-TA3-A/artifacts/K11-translated.png
+
+## probe reproducibility note (DSH r1 P1-1 / Task L-6)
+# probe_artifacts.py reads per-case scratch sqlite files under %TEMP%/
+# m2-ta3a-*/library.sqlite. Those are machine-local and may be cleaned by the
+# OS; the probe is NOT reproducible once they are gone. artifact-samples.json
+# is the retained extraction, and its step counts cross-check against the
+# run2.per_region entries in the five smoke-*.json summaries.

@@ -1,0 +1,37 @@
+# shell=Git Bash (Windows)
+# cwd=G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
+# HEAD=b94ebe87c75d2f6fac8b8f50440f8290e740a118
+# date=2026-09-30T03:47:17Z
+# base=bebcfcde6ded3d20871a2ddeeadba6f8629f50d5
+--- git status --short ---
+ M verification/M2-TA3-A/raw/ac2-artifact-samples-probe.log
+ M verification/M2-TA3-A/raw/ac3-pytest-regression.log
+ M verification/M2-TA3-A/raw/ac4-manifest-backfill-integrity.log
+ M verification/M2-TA3-A/raw/ac5-scope-proof.log
+--- git diff --name-status bebcfcde..HEAD (committed scope) ---
+A	doc/handoffs/M2-TA3-A-1328a76.md
+M	doc/tasks/M2-TA3-A.md
+A	experiments/M2-TA3-A/backfill_pipeline_status.py
+A	experiments/M2-TA3-A/probe_artifacts.py
+A	experiments/M2-TA3-A/run_smoke.py
+M	test_assets/comic_golden_suite/manifests/cases.json
+M	tests/m2_test_assets/test_catalog.py
+A	verification/M2-TA3-A/artifacts/.gitignore
+A	verification/M2-TA3-A/raw/ac1-smoke-all-cases.log
+A	verification/M2-TA3-A/raw/ac2-artifact-samples-probe.log
+A	verification/M2-TA3-A/raw/ac3-pytest-regression.log
+A	verification/M2-TA3-A/raw/ac4-manifest-backfill-integrity.log
+A	verification/M2-TA3-A/raw/ac5-scope-proof.log
+A	verification/M2-TA3-A/summaries/artifact-samples.json
+A	verification/M2-TA3-A/summaries/smoke-BJ02.json
+A	verification/M2-TA3-A/summaries/smoke-BJ06.json
+A	verification/M2-TA3-A/summaries/smoke-K01.json
+A	verification/M2-TA3-A/summaries/smoke-K02.json
+A	verification/M2-TA3-A/summaries/smoke-K11.json
+A	verification/M2-TA3-A/summaries/smoke-report.json
+--- check-ignore: smoke artifacts stay out of Git ---
+verification/M2-TA3-A/artifacts/.gitignore:3:*.png	verification/M2-TA3-A/artifacts/K11-translated.png
+check-ignore-exit=0
+--- git diff --check ---
+diff-check-exit=0
+# SCOPE_PROBE_EXIT=0

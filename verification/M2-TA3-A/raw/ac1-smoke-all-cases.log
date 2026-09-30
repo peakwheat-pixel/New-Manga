@@ -1,0 +1,58 @@
+# shell=Git Bash (Windows)
+# cwd=G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
+# HEAD=1328a76619fe9aae99ada0242194b48fa5849098 (worktree state at run start: 1328a766 claim; untracked experiments/M2-TA3-A/run_smoke.py)
+# date=2026-09-30T03:40:57Z
+# cmd=PYTHONPATH=src T1.1.1-impl-py312/Scripts/python.exe experiments/M2-TA3-A/run_smoke.py
+# note=stdout captured live from the background execution (ZCode exec capture); stderr Qt font warnings filtered
+---
+weights: G:\CODEX\New Manga.task-envs\M2-DOCTR-QUAL\weights\fast_base-688a8b34.pt
+weights sha256 ok: 688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace
+[BJ02] source: OK {'width': 2946, 'height': 4167}
+[BJ02] assemble: OK {'mode': 'production', 'detector': 'doctr-fast_base-pinned', 'device': 'cpu'}
+[BJ02] providers: OK {'bindings': {'ocr': 'm2ac1-mock-ocr', 'translate': 'm2ac1-mock-translate'}, 'detect': 'production-doctr'}
+[BJ02] import: OK {'page_id': '394b4a4464634b35ad4a9b58aa1947a5', 'width': 2946, 'height': 4167}
+[BJ02] run1_page_selection: COMPLETED {'elapsed_s': 25.9}
+[BJ02] detect: OK {'region_count': 33}
+[BJ02] run2_region_chain: COMPLETED {'region_runs': 33, 'elapsed_s': 642.17}
+[BJ02] export: OK {'sha256': '9bbd38763fde3a45', 'size': 8736076}
+[BJ02] summary -> G:\CODEX\New Manga.worktrees\M2-TA3-A-E2E-SMOKE-zcode\verification\M2-TA3-A\summaries\smoke-BJ02.json
+[BJ06] source: OK {'width': 2946, 'height': 4167}
+[BJ06] assemble: OK {'mode': 'production', 'detector': 'doctr-fast_base-pinned', 'device': 'cpu'}
+[BJ06] providers: OK {'bindings': {'ocr': 'm2ac1-mock-ocr', 'translate': 'm2ac1-mock-translate'}, 'detect': 'production-doctr'}
+[BJ06] import: OK {'page_id': 'e49c50f3274640d884ff2a1c316b1e66', 'width': 2946, 'height': 4167}
+[BJ06] run1_page_selection: COMPLETED {'elapsed_s': 21.31}
+[BJ06] detect: OK {'region_count': 57}
+[BJ06] run2_region_chain: COMPLETED {'region_runs': 40, 'elapsed_s': 799.13}
+[BJ06] export: OK {'sha256': 'c5497a499ac80bc8', 'size': 8771537}
+[BJ06] summary -> G:\CODEX\New Manga.worktrees\M2-TA3-A-E2E-SMOKE-zcode\verification\M2-TA3-A\summaries\smoke-BJ06.json
+[K01] source: OK {'width': 690, 'height': 62133}
+[K01] assemble: OK {'mode': 'production', 'detector': 'doctr-fast_base-pinned', 'device': 'cpu'}
+[K01] providers: OK {'bindings': {'ocr': 'm2ac1-mock-ocr', 'translate': 'm2ac1-mock-translate'}, 'detect': 'production-doctr'}
+[K01] import: OK {'page_id': 'dfa9147f4a9f4bbc87478e166222233a', 'width': 690, 'height': 62133}
+[K01] run1_page_selection: COMPLETED {'elapsed_s': 67.49}
+[K01] detect: OK {'region_count': 15}
+[K01] run2_region_chain: COMPLETED {'region_runs': 15, 'elapsed_s': 973.59}
+[K01] export: OK {'sha256': '02499d71f86f78ae', 'size': 20408981}
+[K01] summary -> G:\CODEX\New Manga.worktrees\M2-TA3-A-E2E-SMOKE-zcode\verification\M2-TA3-A\summaries\smoke-K01.json
+[K02] source: OK {'width': 600, 'height': 18401}
+[K02] assemble: OK {'mode': 'production', 'detector': 'doctr-fast_base-pinned', 'device': 'cpu'}
+[K02] providers: OK {'bindings': {'ocr': 'm2ac1-mock-ocr', 'translate': 'm2ac1-mock-translate'}, 'detect': 'production-doctr'}
+[K02] import: OK {'page_id': 'b46796e241d74a2b856a97c2afd04028', 'width': 600, 'height': 18401}
+[K02] run1_page_selection: COMPLETED {'elapsed_s': 18.67}
+[K02] detect: OK {'region_count': 7}
+[K02] run2_region_chain: COMPLETED {'region_runs': 7, 'elapsed_s': 118.48}
+[K02] export: OK {'sha256': '207410cb599acf20', 'size': 5984018}
+[K02] summary -> G:\CODEX\New Manga.worktrees\M2-TA3-A-E2E-SMOKE-zcode\verification\M2-TA3-A\summaries\smoke-K02.json
+[K11] source: OK {'width': 1200, 'height': 1660}
+[K11] assemble: OK {'mode': 'production', 'detector': 'doctr-fast_base-pinned', 'device': 'cpu'}
+[K11] providers: OK {'bindings': {'ocr': 'm2ac1-mock-ocr', 'translate': 'm2ac1-mock-translate'}, 'detect': 'production-doctr'}
+[K11] import: OK {'page_id': '0ebe617e8f354a269b86ef17839ea264', 'width': 1200, 'height': 1660}
+[K11] run1_page_selection: COMPLETED {'elapsed_s': 5.15}
+[K11] detect: OK {'region_count': 24}
+[K11] run2_region_chain: COMPLETED {'region_runs': 24, 'elapsed_s': 95.54}
+[K11] export: OK {'sha256': 'c451815727ec24b6', 'size': 3036455}
+[K11] summary -> G:\CODEX\New Manga.worktrees\M2-TA3-A-E2E-SMOKE-zcode\verification\M2-TA3-A\summaries\smoke-K11.json
+report -> G:\CODEX\New Manga.worktrees\M2-TA3-A-E2E-SMOKE-zcode\verification\M2-TA3-A\summaries\smoke-report.json
+SUMMARY cases=5 pipeline_failures=0
+---
+# EXIT=0

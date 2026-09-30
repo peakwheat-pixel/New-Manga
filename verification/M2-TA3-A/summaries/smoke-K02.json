@@ -1,0 +1,273 @@
+{
+  "case_id": "K02",
+  "family": "hf_cleaned_webtoon",
+  "language": "ko",
+  "tags": [
+    "webtoon_long_strip",
+    "color"
+  ],
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K02_651664_112\\base.png",
+  "started_at_utc": "2026-09-30T03:34:38Z",
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 600,
+      "height": 18401
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "doctr-fast_base-pinned",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "bindings": {
+        "ocr": "m2ac1-mock-ocr",
+        "translate": "m2ac1-mock-translate"
+      },
+      "detect": "production-doctr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "b46796e241d74a2b856a97c2afd04028",
+      "width": 600,
+      "height": 18401
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 18.67
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 7
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 7,
+      "elapsed_s": 118.48
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "207410cb599acf20",
+      "size": 5984018
+    }
+  },
+  "run1": {
+    "run_id": "run-abbf315007f04dff813f52c0492c8d1f",
+    "status": "completed",
+    "elapsed_s": 18.67,
+    "steps": [
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "9c9fc63690e94ff8be441c9c1f07d840",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 114,
+        "y": 264,
+        "width": 390,
+        "height": 191
+      }
+    },
+    {
+      "region_id": "523f46cee3234e17aee3325b28e09a63",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 312,
+        "y": 1485,
+        "width": 192,
+        "height": 264
+      }
+    },
+    {
+      "region_id": "6cb3373c88634d96ad421937f5a05fff",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 150,
+        "y": 4361,
+        "width": 192,
+        "height": 155
+      }
+    },
+    {
+      "region_id": "b8061f23abc243efb80f21ef654142c7",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 78,
+        "y": 10506,
+        "width": 480,
+        "height": 426
+      }
+    },
+    {
+      "region_id": "2e989cc8db3b4842bfba7dbd96377fde",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 132,
+        "y": 11369,
+        "width": 246,
+        "height": 263
+      }
+    },
+    {
+      "region_id": "c48ea615e077499fb76f7da0b08569d5",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 420,
+        "y": 12645,
+        "width": 120,
+        "height": 173
+      }
+    },
+    {
+      "region_id": "e722d9cd548643d1a6a9d776645be4ff",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 114,
+        "y": 13417,
+        "width": 408,
+        "height": 354
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 7,
+    "region_runs_executed": 7,
+    "truncated": false,
+    "per_region": [
+      {
+        "region_id": "9c9fc63690e94ff8be441c9c1f07d840",
+        "run_id": "run-f8f2b9142c994dbb87efce791fdcea27",
+        "status": "completed"
+      },
+      {
+        "region_id": "523f46cee3234e17aee3325b28e09a63",
+        "run_id": "run-cd65c43997be42ef96ddb37112d89b27",
+        "status": "completed"
+      },
+      {
+        "region_id": "6cb3373c88634d96ad421937f5a05fff",
+        "run_id": "run-7789103aed864531a98057511e3e4738",
+        "status": "completed"
+      },
+      {
+        "region_id": "b8061f23abc243efb80f21ef654142c7",
+        "run_id": "run-02578c54fca94e508d728c2310f28316",
+        "status": "completed"
+      },
+      {
+        "region_id": "2e989cc8db3b4842bfba7dbd96377fde",
+        "run_id": "run-d4ee3402363a4b5daa3625da5925f145",
+        "status": "completed"
+      },
+      {
+        "region_id": "c48ea615e077499fb76f7da0b08569d5",
+        "run_id": "run-a6c6e1ef2a20413aab0f8a9f15c2752a",
+        "status": "completed"
+      },
+      {
+        "region_id": "e722d9cd548643d1a6a9d776645be4ff",
+        "run_id": "run-2564999ff8c748dc84b8a9f14ceb196f",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 118.48
+  },
+  "ocr_samples": [
+    {
+      "ref_key": "ocr_text",
+      "value": "\"MOCK-OCR-SOURCE-TEXT\""
+    },
+    {
+      "ref_key": "confidence",
+      "value": "1.0"
+    },
+    {
+      "ref_key": "retranslate_hint",
+      "value": "false"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-b5dd32ad49ec",
+    "file": "K02-translated.png",
+    "sha256": "207410cb599acf203e6eb188d94b310d90245c75c8c01a814a2305ec04ce35ee",
+    "size": 5984018,
+    "translated_revision_id": "41b998504e944bfc85f94b01d4cf3578"
+  },
+  "attribution": [],
+  "source_size": [
+    600,
+    18401
+  ],
+  "source_sha256": "b1123355e8c451f99100b153679f126676f616c9715ea6e1cbdbfaeeb3134f50",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-K02-_2i0xj4s",
+  "finished_at_utc": "2026-09-30T03:36:55Z",
+  "wall_s": 137.32,
+  "pipeline_completed": true
+}

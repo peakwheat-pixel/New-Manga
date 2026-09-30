@@ -1,0 +1,544 @@
+{
+  "case_id": "K11",
+  "family": "peppercarrot",
+  "language": "ko",
+  "tags": [
+    "svg_text_layer"
+  ],
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\02_public_ground_truth_peppercarrot\\ep04\\kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+  "started_at_utc": "2026-09-30T03:36:55Z",
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 1200,
+      "height": 1660
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "doctr-fast_base-pinned",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "bindings": {
+        "ocr": "m2ac1-mock-ocr",
+        "translate": "m2ac1-mock-translate"
+      },
+      "detect": "production-doctr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "0ebe617e8f354a269b86ef17839ea264",
+      "width": 1200,
+      "height": 1660
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 5.15
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 24
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 24,
+      "elapsed_s": 95.54
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "c451815727ec24b6",
+      "size": 3036455
+    }
+  },
+  "run1": {
+    "run_id": "run-23a789c01bb94339943b003234e75a4f",
+    "status": "completed",
+    "elapsed_s": 5.15,
+    "steps": [
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "5043222de12e45228047403ac8ada4ef",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 62,
+        "y": 9,
+        "width": 101,
+        "height": 44
+      }
+    },
+    {
+      "region_id": "31aafa89250c493f8484b927358fe3b2",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 539,
+        "y": 15,
+        "width": 85,
+        "height": 41
+      }
+    },
+    {
+      "region_id": "5743c222dabf4e989ad0b2e1de23cd74",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 696,
+        "y": 133,
+        "width": 90,
+        "height": 42
+      }
+    },
+    {
+      "region_id": "14dc1c05d9ea431c81b509bbb1476a89",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 532,
+        "y": 200,
+        "width": 97,
+        "height": 43
+      }
+    },
+    {
+      "region_id": "24ba8cf9b89d44e88ecc6a2f2033ba0f",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1019,
+        "y": 323,
+        "width": 130,
+        "height": 41
+      }
+    },
+    {
+      "region_id": "19dbe25d8e244cbdaab46466d6b9145d",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1004,
+        "y": 349,
+        "width": 121,
+        "height": 53
+      }
+    },
+    {
+      "region_id": "0062aa78a82243608f82c21e295dbb06",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1132,
+        "y": 360,
+        "width": 22,
+        "height": 25
+      }
+    },
+    {
+      "region_id": "8e16b84d81034201addc9894798adb2b",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 615,
+        "y": 365,
+        "width": 116,
+        "height": 43
+      }
+    },
+    {
+      "region_id": "2040e7d6db1541c1af121264cb9b0994",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 297,
+        "y": 370,
+        "width": 186,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "1970cd79ba0b41679be70eba3f7c5efc",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1025,
+        "y": 381,
+        "width": 101,
+        "height": 53
+      }
+    },
+    {
+      "region_id": "0d480ff0f6364464b0e6a1948faee2a6",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 352,
+        "y": 403,
+        "width": 72,
+        "height": 44
+      }
+    },
+    {
+      "region_id": "41bb3c2b54df48b2a4946c03f813d455",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 349,
+        "y": 595,
+        "width": 135,
+        "height": 68
+      }
+    },
+    {
+      "region_id": "0dd97f87287c4977adc484c7926fe1c2",
+      "reading_order": 13,
+      "region_type": "speech",
+      "bbox": {
+        "x": 970,
+        "y": 722,
+        "width": 48,
+        "height": 31
+      }
+    },
+    {
+      "region_id": "79890025e8bc42e2917289c496e299e8",
+      "reading_order": 14,
+      "region_type": "speech",
+      "bbox": {
+        "x": 863,
+        "y": 746,
+        "width": 82,
+        "height": 58
+      }
+    },
+    {
+      "region_id": "4983d218469e49d4888f777f62cd8f8c",
+      "reading_order": 15,
+      "region_type": "speech",
+      "bbox": {
+        "x": 957,
+        "y": 758,
+        "width": 38,
+        "height": 25
+      }
+    },
+    {
+      "region_id": "456fc43363fd4e26b2cd784db7f87214",
+      "reading_order": 16,
+      "region_type": "speech",
+      "bbox": {
+        "x": 56,
+        "y": 1210,
+        "width": 93,
+        "height": 72
+      }
+    },
+    {
+      "region_id": "9b774794a6c24d75a13a86d78890fb83",
+      "reading_order": 17,
+      "region_type": "speech",
+      "bbox": {
+        "x": 64,
+        "y": 1239,
+        "width": 106,
+        "height": 80
+      }
+    },
+    {
+      "region_id": "f2088f8d13fd4728a392eb184e562c94",
+      "reading_order": 18,
+      "region_type": "speech",
+      "bbox": {
+        "x": 453,
+        "y": 1249,
+        "width": 114,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "dbc25c744d754b9caf8f4cc50e66d994",
+      "reading_order": 19,
+      "region_type": "speech",
+      "bbox": {
+        "x": 198,
+        "y": 1254,
+        "width": 84,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "33a758cfb3b345b3915eac1b1b12b9f7",
+      "reading_order": 20,
+      "region_type": "speech",
+      "bbox": {
+        "x": 177,
+        "y": 1280,
+        "width": 126,
+        "height": 72
+      }
+    },
+    {
+      "region_id": "111965645e1e4d518fb4ec4ade5778b1",
+      "reading_order": 21,
+      "region_type": "speech",
+      "bbox": {
+        "x": 578,
+        "y": 1280,
+        "width": 41,
+        "height": 31
+      }
+    },
+    {
+      "region_id": "fda78bb180ad4aa4a3875f402ecccaf4",
+      "reading_order": 22,
+      "region_type": "speech",
+      "bbox": {
+        "x": 588,
+        "y": 1445,
+        "width": 70,
+        "height": 56
+      }
+    },
+    {
+      "region_id": "4d3d3a4d143441fb8f79a591b82920de",
+      "reading_order": 23,
+      "region_type": "speech",
+      "bbox": {
+        "x": 821,
+        "y": 1477,
+        "width": 85,
+        "height": 43
+      }
+    },
+    {
+      "region_id": "f5749e4947df4386bec6ced2cf655a42",
+      "reading_order": 24,
+      "region_type": "speech",
+      "bbox": {
+        "x": 803,
+        "y": 1589,
+        "width": 27,
+        "height": 22
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 24,
+    "region_runs_executed": 24,
+    "truncated": false,
+    "per_region": [
+      {
+        "region_id": "5043222de12e45228047403ac8ada4ef",
+        "run_id": "run-4af98e37ee8441ac8e2703dba8dc99e9",
+        "status": "completed"
+      },
+      {
+        "region_id": "31aafa89250c493f8484b927358fe3b2",
+        "run_id": "run-fd343a2e732045c8a268abbe6bb0b240",
+        "status": "completed"
+      },
+      {
+        "region_id": "5743c222dabf4e989ad0b2e1de23cd74",
+        "run_id": "run-daf7b3b8868848e8b7c41e36a08e0684",
+        "status": "completed"
+      },
+      {
+        "region_id": "14dc1c05d9ea431c81b509bbb1476a89",
+        "run_id": "run-28387617668f4cd4be0685c5956f3046",
+        "status": "completed"
+      },
+      {
+        "region_id": "24ba8cf9b89d44e88ecc6a2f2033ba0f",
+        "run_id": "run-44c60ee865e04dfc9aab981265aba8a6",
+        "status": "completed"
+      },
+      {
+        "region_id": "19dbe25d8e244cbdaab46466d6b9145d",
+        "run_id": "run-051b677666be4dedb80edf5a9ad33bd4",
+        "status": "completed"
+      },
+      {
+        "region_id": "0062aa78a82243608f82c21e295dbb06",
+        "run_id": "run-cea6c09920f14c08991d41959ff1babf",
+        "status": "completed"
+      },
+      {
+        "region_id": "8e16b84d81034201addc9894798adb2b",
+        "run_id": "run-152ebcd23fc646a59cc7498eea975768",
+        "status": "completed"
+      },
+      {
+        "region_id": "2040e7d6db1541c1af121264cb9b0994",
+        "run_id": "run-281c854f611448c793e8c078c3deaa51",
+        "status": "completed"
+      },
+      {
+        "region_id": "1970cd79ba0b41679be70eba3f7c5efc",
+        "run_id": "run-7e75ea6aa8644d40a473e3b888238025",
+        "status": "completed"
+      },
+      {
+        "region_id": "0d480ff0f6364464b0e6a1948faee2a6",
+        "run_id": "run-714c23f5a54644f08e18cd5cae621c0a",
+        "status": "completed"
+      },
+      {
+        "region_id": "41bb3c2b54df48b2a4946c03f813d455",
+        "run_id": "run-7b7b3afc59164a47a8cfd513cdd6efb5",
+        "status": "completed"
+      },
+      {
+        "region_id": "0dd97f87287c4977adc484c7926fe1c2",
+        "run_id": "run-7d2593b049a9456881439bc3cf00a60b",
+        "status": "completed"
+      },
+      {
+        "region_id": "79890025e8bc42e2917289c496e299e8",
+        "run_id": "run-96eaf8bbc2954debb6ad0545b2ed922d",
+        "status": "completed"
+      },
+      {
+        "region_id": "4983d218469e49d4888f777f62cd8f8c",
+        "run_id": "run-f982d4be63e64e50b7ed119c1e8a0cb8",
+        "status": "completed"
+      },
+      {
+        "region_id": "456fc43363fd4e26b2cd784db7f87214",
+        "run_id": "run-8ab3dc7a59094790886983251559af62",
+        "status": "completed"
+      },
+      {
+        "region_id": "9b774794a6c24d75a13a86d78890fb83",
+        "run_id": "run-11239f712bcc400d9452c1dae2437738",
+        "status": "completed"
+      },
+      {
+        "region_id": "f2088f8d13fd4728a392eb184e562c94",
+        "run_id": "run-1b7a71f8afb043c694ab8a8dce6bcae7",
+        "status": "completed"
+      },
+      {
+        "region_id": "dbc25c744d754b9caf8f4cc50e66d994",
+        "run_id": "run-3402db3ab0c14d0f8f32aa9e12c15faa",
+        "status": "completed"
+      },
+      {
+        "region_id": "33a758cfb3b345b3915eac1b1b12b9f7",
+        "run_id": "run-f5d7e5fab0d54a8e8db7cd24476f9bc5",
+        "status": "completed"
+      },
+      {
+        "region_id": "111965645e1e4d518fb4ec4ade5778b1",
+        "run_id": "run-c80943d8bbb943cc999df1d8d1144065",
+        "status": "completed"
+      },
+      {
+        "region_id": "fda78bb180ad4aa4a3875f402ecccaf4",
+        "run_id": "run-52f446c77e0b44b8a7dfd67f0855b174",
+        "status": "completed"
+      },
+      {
+        "region_id": "4d3d3a4d143441fb8f79a591b82920de",
+        "run_id": "run-cf53036460b947e3b31b9e383173969f",
+        "status": "completed"
+      },
+      {
+        "region_id": "f5749e4947df4386bec6ced2cf655a42",
+        "run_id": "run-1a55525a301b4fb69dcf94851fc71eba",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 95.54
+  },
+  "ocr_samples": [
+    {
+      "ref_key": "ocr_text",
+      "value": "\"MOCK-OCR-SOURCE-TEXT\""
+    },
+    {
+      "ref_key": "confidence",
+      "value": "1.0"
+    },
+    {
+      "ref_key": "retranslate_hint",
+      "value": "false"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-43e4d0ff8c1e",
+    "file": "K11-translated.png",
+    "sha256": "c451815727ec24b64bfd7656fd7fe574879de4d9dc1d79013456f89cee22b7a2",
+    "size": 3036455,
+    "translated_revision_id": "92c14f110b274f4ea81ac8ae6d448cfe"
+  },
+  "attribution": [],
+  "source_size": [
+    1200,
+    1660
+  ],
+  "source_sha256": "4bd9b181ac6fc9a041f4e7c82570a0b7792f9840e9cfed0cc88bdbf1d61c70c8",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-K11-erhinxx2",
+  "finished_at_utc": "2026-09-30T03:38:36Z",
+  "wall_s": 100.76,
+  "pipeline_completed": true
+}

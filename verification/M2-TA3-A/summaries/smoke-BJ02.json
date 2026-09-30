@@ -1,0 +1,689 @@
+{
+  "case_id": "BJ02",
+  "family": "black_jack_official_free",
+  "language": "ja",
+  "tags": [
+    "vertical_text",
+    "complex_background"
+  ],
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol01\\pages\\vol01_p0053.png",
+  "started_at_utc": "2026-09-30T02:52:27Z",
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 2946,
+      "height": 4167
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "doctr-fast_base-pinned",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "bindings": {
+        "ocr": "m2ac1-mock-ocr",
+        "translate": "m2ac1-mock-translate"
+      },
+      "detect": "production-doctr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "394b4a4464634b35ad4a9b58aa1947a5",
+      "width": 2946,
+      "height": 4167
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 25.9
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 33
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 33,
+      "elapsed_s": 642.17
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "9bbd38763fde3a45",
+      "size": 8736076
+    }
+  },
+  "run1": {
+    "run_id": "run-8677e4e92b644b8c952a0f6f8aace942",
+    "status": "completed",
+    "elapsed_s": 25.9,
+    "steps": [
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "b765e0139ca94f038453365141bad397",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 572,
+        "y": 1581,
+        "width": 69,
+        "height": 69
+      }
+    },
+    {
+      "region_id": "034bfecbb67e4d62bc2ff273f9faae59",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2313,
+        "y": 1601,
+        "width": 159,
+        "height": 151
+      }
+    },
+    {
+      "region_id": "0264bfec87a14b5d9525936e0ba131d2",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2322,
+        "y": 1601,
+        "width": 60,
+        "height": 73
+      }
+    },
+    {
+      "region_id": "4232e98d0f4d47dd920c6030a26928f6",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 649,
+        "y": 1630,
+        "width": 69,
+        "height": 150
+      }
+    },
+    {
+      "region_id": "cb9e2aadee20417ab1be648af6fc241c",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 564,
+        "y": 1634,
+        "width": 85,
+        "height": 93
+      }
+    },
+    {
+      "region_id": "be979f8764b04bcaa0ccfd43ac744d9b",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 503,
+        "y": 1650,
+        "width": 60,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "23f600a42832440b93fe042a840ea63d",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 576,
+        "y": 1699,
+        "width": 65,
+        "height": 81
+      }
+    },
+    {
+      "region_id": "c8c175df54d1409ab97ac63c50edb896",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 503,
+        "y": 1703,
+        "width": 60,
+        "height": 73
+      }
+    },
+    {
+      "region_id": "d3307b51658e4640a6ea9d7c46a15c8d",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2391,
+        "y": 1719,
+        "width": 65,
+        "height": 134
+      }
+    },
+    {
+      "region_id": "1c969ad7f05642ad92acbf203692abfe",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 649,
+        "y": 1768,
+        "width": 69,
+        "height": 73
+      }
+    },
+    {
+      "region_id": "a0e135f706bb429380576e90df5d10c3",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 503,
+        "y": 1772,
+        "width": 56,
+        "height": 69
+      }
+    },
+    {
+      "region_id": "22b4b5b98bd84b699f1d9c231d7573a1",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 649,
+        "y": 1817,
+        "width": 73,
+        "height": 142
+      }
+    },
+    {
+      "region_id": "957f8ae1839d437d85065a3f7ccfadfc",
+      "reading_order": 13,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2391,
+        "y": 1846,
+        "width": 69,
+        "height": 77
+      }
+    },
+    {
+      "region_id": "ec17d6ccdc394f47b256f3ac96a42832",
+      "reading_order": 14,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2183,
+        "y": 2114,
+        "width": 118,
+        "height": 122
+      }
+    },
+    {
+      "region_id": "d7561764642442288299580ddd353d83",
+      "reading_order": 15,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2309,
+        "y": 2134,
+        "width": 102,
+        "height": 90
+      }
+    },
+    {
+      "region_id": "17a22fc5fd064442b0b6ac05a258c130",
+      "reading_order": 16,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2436,
+        "y": 2134,
+        "width": 93,
+        "height": 94
+      }
+    },
+    {
+      "region_id": "5f77549cf87b420aae7515e67d13c010",
+      "reading_order": 17,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2448,
+        "y": 2216,
+        "width": 77,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "ebba64f673fe4b41be2c88167b781913",
+      "reading_order": 18,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2317,
+        "y": 2228,
+        "width": 94,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "4c0fc3eda9784a61aeb576dec439e671",
+      "reading_order": 19,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2191,
+        "y": 2232,
+        "width": 90,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "9b06f72816d84514bf29dd0022720099",
+      "reading_order": 20,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2204,
+        "y": 2338,
+        "width": 89,
+        "height": 93
+      }
+    },
+    {
+      "region_id": "043b031ed35647ef96ba9fd189f4b7e0",
+      "reading_order": 21,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2436,
+        "y": 2338,
+        "width": 89,
+        "height": 81
+      }
+    },
+    {
+      "region_id": "9a9c6f7442fc4d698305540b8cbc5658",
+      "reading_order": 22,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2195,
+        "y": 2440,
+        "width": 78,
+        "height": 89
+      }
+    },
+    {
+      "region_id": "7aea5bbb42c34d37a8a1c666f1efc2f5",
+      "reading_order": 23,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2183,
+        "y": 2529,
+        "width": 102,
+        "height": 94
+      }
+    },
+    {
+      "region_id": "f560530c99044addb498a71df58e19c2",
+      "reading_order": 24,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2163,
+        "y": 2607,
+        "width": 142,
+        "height": 138
+      }
+    },
+    {
+      "region_id": "59c498a36a474402be2de461ac11477b",
+      "reading_order": 25,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2269,
+        "y": 3091,
+        "width": 101,
+        "height": 199
+      }
+    },
+    {
+      "region_id": "f7418844d67e4c1e95bb6ccbaac546e3",
+      "reading_order": 26,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2403,
+        "y": 3091,
+        "width": 85,
+        "height": 97
+      }
+    },
+    {
+      "region_id": "f85cbc9f3b4b4c31a22e56f4ea2ac9c4",
+      "reading_order": 27,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2399,
+        "y": 3197,
+        "width": 85,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "7e49d30eb05b42c096e44b1aa96148ac",
+      "reading_order": 28,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2387,
+        "y": 3392,
+        "width": 85,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "68f552fa19ae47dca094a155ce50f50d",
+      "reading_order": 29,
+      "region_type": "speech",
+      "bbox": {
+        "x": 551,
+        "y": 3445,
+        "width": 110,
+        "height": 101
+      }
+    },
+    {
+      "region_id": "c8587f007e744413b5e9856e3e755ee2",
+      "reading_order": 30,
+      "region_type": "speech",
+      "bbox": {
+        "x": 673,
+        "y": 3457,
+        "width": 102,
+        "height": 114
+      }
+    },
+    {
+      "region_id": "1a90d5bc747c4637856b090e26c07cc0",
+      "reading_order": 31,
+      "region_type": "speech",
+      "bbox": {
+        "x": 551,
+        "y": 3538,
+        "width": 118,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "63be2e77c69344d7bf13dee1cc66b0a1",
+      "reading_order": 32,
+      "region_type": "speech",
+      "bbox": {
+        "x": 682,
+        "y": 3559,
+        "width": 89,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "775a93fe18c74a71a94496225a39803c",
+      "reading_order": 33,
+      "region_type": "speech",
+      "bbox": {
+        "x": 678,
+        "y": 3754,
+        "width": 85,
+        "height": 102
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 33,
+    "region_runs_executed": 33,
+    "truncated": false,
+    "per_region": [
+      {
+        "region_id": "b765e0139ca94f038453365141bad397",
+        "run_id": "run-44516353ed6b4a8d849d8838c1ee345d",
+        "status": "completed"
+      },
+      {
+        "region_id": "034bfecbb67e4d62bc2ff273f9faae59",
+        "run_id": "run-618d687e3340412093c9b054e7f59993",
+        "status": "completed"
+      },
+      {
+        "region_id": "0264bfec87a14b5d9525936e0ba131d2",
+        "run_id": "run-beb048e484ed454fb3f595c76e8508b2",
+        "status": "completed"
+      },
+      {
+        "region_id": "4232e98d0f4d47dd920c6030a26928f6",
+        "run_id": "run-dbd6495fd12a4f3c8d008816508682e5",
+        "status": "completed"
+      },
+      {
+        "region_id": "cb9e2aadee20417ab1be648af6fc241c",
+        "run_id": "run-877ec062462e415db85698b74b156925",
+        "status": "completed"
+      },
+      {
+        "region_id": "be979f8764b04bcaa0ccfd43ac744d9b",
+        "run_id": "run-37f30bb3b7554999a009eac340df52d1",
+        "status": "completed"
+      },
+      {
+        "region_id": "23f600a42832440b93fe042a840ea63d",
+        "run_id": "run-a17f81c55a1945b5847832e643355a60",
+        "status": "completed"
+      },
+      {
+        "region_id": "c8c175df54d1409ab97ac63c50edb896",
+        "run_id": "run-7c64e74dee1f4bb8acf9dd6a1e1555cc",
+        "status": "completed"
+      },
+      {
+        "region_id": "d3307b51658e4640a6ea9d7c46a15c8d",
+        "run_id": "run-b66629ba79f545bfbe39f460fe8a65f1",
+        "status": "completed"
+      },
+      {
+        "region_id": "1c969ad7f05642ad92acbf203692abfe",
+        "run_id": "run-e0310392bd33432ca4ec24581a09798e",
+        "status": "completed"
+      },
+      {
+        "region_id": "a0e135f706bb429380576e90df5d10c3",
+        "run_id": "run-90bdc27a48a84f6397e0f9e9c8d4c899",
+        "status": "completed"
+      },
+      {
+        "region_id": "22b4b5b98bd84b699f1d9c231d7573a1",
+        "run_id": "run-25956bdfbf3b4864916ca27daca781de",
+        "status": "completed"
+      },
+      {
+        "region_id": "957f8ae1839d437d85065a3f7ccfadfc",
+        "run_id": "run-967ce01cd4ff41a6b467adf65a3dfbe0",
+        "status": "completed"
+      },
+      {
+        "region_id": "ec17d6ccdc394f47b256f3ac96a42832",
+        "run_id": "run-57b4449c65384177baa56048f2cc250f",
+        "status": "completed"
+      },
+      {
+        "region_id": "d7561764642442288299580ddd353d83",
+        "run_id": "run-b33d5ed1e2c64ebf9190c91c4378ef3d",
+        "status": "completed"
+      },
+      {
+        "region_id": "17a22fc5fd064442b0b6ac05a258c130",
+        "run_id": "run-abf8260b6a6e48d89fa34baf9e10ed37",
+        "status": "completed"
+      },
+      {
+        "region_id": "5f77549cf87b420aae7515e67d13c010",
+        "run_id": "run-c87590ba6dd64b92b209ab77532aa2eb",
+        "status": "completed"
+      },
+      {
+        "region_id": "ebba64f673fe4b41be2c88167b781913",
+        "run_id": "run-5eea629ca85d48058fa306969dec15be",
+        "status": "completed"
+      },
+      {
+        "region_id": "4c0fc3eda9784a61aeb576dec439e671",
+        "run_id": "run-b8f6fa265ab544efbf835ad6aa5ecc44",
+        "status": "completed"
+      },
+      {
+        "region_id": "9b06f72816d84514bf29dd0022720099",
+        "run_id": "run-1e1a2c21e8814bfdbd56b65bcb34a834",
+        "status": "completed"
+      },
+      {
+        "region_id": "043b031ed35647ef96ba9fd189f4b7e0",
+        "run_id": "run-da5bef89ef404b4f9b7ce4b52e75bf34",
+        "status": "completed"
+      },
+      {
+        "region_id": "9a9c6f7442fc4d698305540b8cbc5658",
+        "run_id": "run-387c36817b2447958eabc57970c5a1fa",
+        "status": "completed"
+      },
+      {
+        "region_id": "7aea5bbb42c34d37a8a1c666f1efc2f5",
+        "run_id": "run-d8164334dce94f76895e99b4cfd2dbeb",
+        "status": "completed"
+      },
+      {
+        "region_id": "f560530c99044addb498a71df58e19c2",
+        "run_id": "run-8e79256370834697ac7a1d7656b6c668",
+        "status": "completed"
+      },
+      {
+        "region_id": "59c498a36a474402be2de461ac11477b",
+        "run_id": "run-4bb365fdebc44b34a19f51b802175a5e",
+        "status": "completed"
+      },
+      {
+        "region_id": "f7418844d67e4c1e95bb6ccbaac546e3",
+        "run_id": "run-7b95c698c86b41bba228a93c103dc651",
+        "status": "completed"
+      },
+      {
+        "region_id": "f85cbc9f3b4b4c31a22e56f4ea2ac9c4",
+        "run_id": "run-79a44521c5294cce9b9fbc3a827937d7",
+        "status": "completed"
+      },
+      {
+        "region_id": "7e49d30eb05b42c096e44b1aa96148ac",
+        "run_id": "run-47a1485742bd4d5f8c2c9136071e1fda",
+        "status": "completed"
+      },
+      {
+        "region_id": "68f552fa19ae47dca094a155ce50f50d",
+        "run_id": "run-8d222e297f7047f18eb55b48784da638",
+        "status": "completed"
+      },
+      {
+        "region_id": "c8587f007e744413b5e9856e3e755ee2",
+        "run_id": "run-584913acad614a8982a0f102fb917de7",
+        "status": "completed"
+      },
+      {
+        "region_id": "1a90d5bc747c4637856b090e26c07cc0",
+        "run_id": "run-d5586dc91c84486c89abc23a3afa6e57",
+        "status": "completed"
+      },
+      {
+        "region_id": "63be2e77c69344d7bf13dee1cc66b0a1",
+        "run_id": "run-1ff9538845a1496889af557d077246c9",
+        "status": "completed"
+      },
+      {
+        "region_id": "775a93fe18c74a71a94496225a39803c",
+        "run_id": "run-654a29e400e14758ae9c75e145754fc1",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 642.17
+  },
+  "ocr_samples": [
+    {
+      "ref_key": "ocr_text",
+      "value": "\"MOCK-OCR-SOURCE-TEXT\""
+    },
+    {
+      "ref_key": "confidence",
+      "value": "1.0"
+    },
+    {
+      "ref_key": "retranslate_hint",
+      "value": "false"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-abbc9899f32c",
+    "file": "BJ02-translated.png",
+    "sha256": "9bbd38763fde3a45e0dc3af61647ee8097f1345653dce99c32759a58c6c499e1",
+    "size": 8736076,
+    "translated_revision_id": "8148cf01c86c469c855251ae1ece7cab"
+  },
+  "attribution": [],
+  "source_size": [
+    2946,
+    4167
+  ],
+  "source_sha256": "c1ce06205b8e64c1a199f1adbab3bdaa9aff46d67abc8283bd4ef28ea6dd5417",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3a-BJ02-1v1ot28i",
+  "finished_at_utc": "2026-09-30T03:03:35Z",
+  "wall_s": 668.61,
+  "pipeline_completed": true
+}
