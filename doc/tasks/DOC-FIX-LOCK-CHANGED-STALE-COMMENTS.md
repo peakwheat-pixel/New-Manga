@@ -2,7 +2,7 @@
 id: DOC-FIX-LOCK-CHANGED-STALE-COMMENTS
 title: 两处过时「known planner gap」注释的最小 docs 修正（DIAG-002 遗留候选落地）
 kind: docs-minor
-status: ready
+status: in_progress
 approval: released_by_codex_proxy
 suggested_owner: ZCode
 owner: ZCode
