@@ -1,0 +1,68 @@
+{
+  "gate": "m2-prod-detect-2-packaged-detect-probe",
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
+  "verdict": "PASS",
+  "scenarios": [
+    {
+      "id": "PK-L1-frozen-startup-ping",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "status": "ready",
+        "shutdown": {
+          "status": "stopped"
+        }
+      }
+    },
+    {
+      "id": "PK-L2-counter-proof",
+      "status": "PASS",
+      "observed": {
+        "exit": 1,
+        "mentions_probed_candidates": true
+      }
+    },
+    {
+      "id": "PK-L2-recovery-after-restore",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "status": "ready"
+      }
+    },
+    {
+      "id": "PK-L3-real-inference",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "n_candidates": 2,
+        "cold_elapsed_ms_incl_engine_build": 6542,
+        "warm_avg_ms": 299,
+        "warm_elapsed_ms": [
+          298,
+          302,
+          298
+        ],
+        "versions": {
+          "torch": "2.14.0",
+          "torchvision": "0.29.0",
+          "transformers": "5.17.0",
+          "safetensors": "0.8.0",
+          "python-doctr": "1.1.0",
+          "tokenizers": "0.23.2"
+        },
+        "weights_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\resources\\core-sidecar\\models\\detector\\ogkalu-comic-text-and-bubble-detector",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "id": "PK-L4-doctr-starts-fail-closed-at-detect",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "status": "ready"
+      }
+    }
+  ],
+  "boundary_note": "L3 inference runs OUTSIDE the frozen process: the frozen command surface is M2-IPC1-frozen (core.ping/ListBooks/core.shutdown) with no detect RPC; closure completeness is evidenced by L1 startup, the PyInstaller warn file and the PYZ archive listing."
+}

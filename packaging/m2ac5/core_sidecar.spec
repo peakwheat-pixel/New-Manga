@@ -24,9 +24,13 @@ startup, so the closure INCLUDES PySide6. That release-time note ("Qt-free")
 held for the resource-channel and library sidecars only; the acceptance
 bridge's Qt dependence is a frozen M2-AC1 fact, not a packaging choice.
 
-Excluded below: the heavy ML stack (absent from the build venv and never on
-any sidecar path) and build tooling — a stray import of those must fail at
-build analysis time with a visible warning, not ship silently.
+Excluded below: build tooling only. M2-PROD-DETECT-2 (proxy ruling 2,
+reversible): the heavy ML stack (torch/torchvision/doctr/transformers) is now
+IN the build venv and IN the closure — the release-form detect chain ships
+its runtime (the default manga backend lazy-imports torch/transformers on
+first detect, so the frozen process must find them in `_internal`). pandas
+and the build/test tooling stay excluded — a stray import of those must fail
+at build analysis time with a visible warning, not ship silently.
 """
 
 import os
@@ -46,12 +50,12 @@ ENTRIES = [
 ]
 
 EXCLUDED = [
-    # heavy ML stack never on the sidecar path (and absent from the build
-    # venv); excluded so a future stray import fails at build analysis time
-    # with a visible warning instead of growing the bundle.
-    "torch",
-    "torchvision",
-    "doctr",
+    # M2-PROD-DETECT-2 (proxy ruling 2): the ML stack (torch/torchvision/
+    # doctr + their transitive deps) is deliberately NOT excluded anymore —
+    # it is installed into the build venv (requirements-build.txt, versions
+    # verbatim from requirements.txt) and must ship inside the frozen closure
+    # so the release-form detect chain works. Reverting = re-add the three
+    # names here + drop the ML lines from requirements-build.txt.
     "pandas",
     # build/test tooling never belongs in the runtime closure
     "pytest",

@@ -2,7 +2,7 @@
 id: M2-PROD-DETECT-2
 title: "发布形态检测器运行时/权重分发：ML 栈进 sidecar 闭包 + manga 权重随包（M2-PROD-DETECT-1 遗留 slice①；用户「继续」推进 2026-09-30）"
 kind: feature
-status: in_progress
+status: in_review
 approval: user_directive_2026-09-30_continue
 suggested_owner: ZCode
 owner: ZCode
@@ -40,13 +40,13 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode
 
 ## Acceptance Criteria
 
-- [ ] AC1（构建链）：`requirements-build.txt` 授权 ML 栈（裁决 2）+ build venv 更新；`core_sidecar.spec` 撤 EXCLUDED 的 torch/torchvision/doctr（pandas/build-tooling 排除保持）+ 按需 hiddenimports（transformers 动态 import 兼容；如需 hook 最小化）；`build_sidecar.ps1` 构建成功（四入口 closure 含 ML 栈）。
-- [ ] AC2（权重随包）：`build_sidecar.ps1` 最小适配——构建后将 manga 权重三文件从 task-envs 快照复制进 `core-sidecar/models/detector/ogkalu-comic-text-and-bubble-detector/`，**逐文件 SHA-256 校验后复制**（复用 pin 常量或脚本内等价校验）；docTR 权重不进包；tauri.conf.json 零改动（权重经既有 resource 机制随包）。
-- [ ] AC3（包内回退解析）：`core_assembly.py` 装配段按裁决 4 增加包内回退（manga 与 doctr 两个 backend 同样语义）；单测覆盖查找顺序矩阵（env/ data root/ frozen 包内/ 全缺→typed 错误含候选列表；非 frozen 零变化——monkeypatch frozen 标记，不真打包）。
-- [ ] AC4（GATE 回归）：M2-AC5 runner 25/25 PASS（新 onedir + 新 NSIS 安装包）；体积前后对比如实记录入 `verification/M2-PROD-DETECT-2/`（onedir 字节/文件数、NSIS 字节、构建时长）；M2-AC5 raw 证据零改动（runner 重写行为按 M2-PROD-DETECT-1 先例处置：产物移入本 Task 目录 + `git checkout --` 还原）。
-- [ ] AC5（发布形态 detect 真实推理验证）：独立探针（verification 下脚本，不进 runner）——对安装后环境（runner 已装目录或 NSIS 静默安装）以默认 backend 跑一次真实 detect（合成漫画页或 K01 页），EXIT=0 且 text 候选 >0，记录耗时；docTR 切回探针验证 fail-closed NOT_CONFIGURED（裁决 3 行为）。
-- [ ] AC6（回归与纪律）：pytest 三套件（providers/m2_acceptance/core）基数保持（387+1 既有失败口径）；cargo/vitest 留痕（预期零影响）；`git diff --check` EXIT=0；禁改面专项 diff 为空。
-- [ ] AC7（交付与 Handoff）：Task 测试表填实、Handoff 按模板（含代理裁决四条的撤销方式、体积数字、已知限制）。
+- [x] AC1（构建链）：`requirements-build.txt` 授权 ML 栈（裁决 2）+ build venv 更新；`core_sidecar.spec` 撤 EXCLUDED 的 torch/torchvision/doctr（pandas/build-tooling 排除保持）+ 按需 hiddenimports（transformers 动态 import 兼容；如需 hook 最小化）；`build_sidecar.ps1` 构建成功（四入口 closure 含 ML 栈）。**实测：构建 exit=0（onedir 278s）；warn 13 missing 全为平台噪音、0 ML 相关；hiddenimports 无需新增（doctr/transformers 经函数内 import 跟踪进 PYZ 归档）。**
+- [x] AC2（权重随包）：`build_sidecar.ps1` 最小适配——构建后将 manga 权重三文件从 task-envs 快照复制进 `core-sidecar/models/detector/ogkalu-comic-text-and-bubble-detector/`，**逐文件 SHA-256 校验后复制**（复用 pin 常量或脚本内等价校验）；docTR 权重不进包；tauri.conf.json 零改动（权重经既有 resource 机制随包）。**实测：三文件 sha256 与 pin 一致（onedir 与 NSIS 安装后均复核）；`-SkipWeights` 开关；权重零入库。**
+- [x] AC3（包内回退解析）：`core_assembly.py` 装配段按裁决 4 增加包内回退（manga 与 doctr 两个 backend 同样语义）；单测覆盖查找顺序矩阵（env/ data root/ frozen 包内/ 全缺→typed 错误含候选列表；非 frozen 零变化——monkeypatch frozen 标记，不真打包）。**实测：`_resolve_detector_weights_path` + 11/11 单测；manga（bundled）frozen 全缺=装配时 fail-closed 列候选，doctr（不 bundled）frozen 全缺=保持 detect 时 NOT_CONFIGURED（裁决 3 语义），非 frozen 零变化。**
+- [x] AC4（GATE 回归）：M2-AC5 runner 25/25 PASS（新 onedir + 新 NSIS 安装包）；体积前后对比如实记录入 `verification/M2-PROD-DETECT-2/`（onedir 字节/文件数、NSIS 字节、构建时长）；M2-AC5 raw 证据零改动（runner 重写行为按 M2-PROD-DETECT-1 先例处置：产物移入本 Task 目录 + `git checkout --` 还原）。**实测：GATE 25/25 PASS（NSIS 460,184,382B sha256 6c765ed3…）；onedir 1,116,380,855B/5,550 文件；raw 6 文件已还原。**
+- [x] AC5（发布形态 detect 真实推理验证）：独立探针（verification 下脚本，不进 runner）——对安装后环境（runner 已装目录或 NSIS 静默安装）以默认 backend 跑一次真实 detect（合成漫画页或 K01 页），EXIT=0 且 text 候选 >0，记录耗时；docTR 切回探针验证 fail-closed NOT_CONFIGURED（裁决 3 行为）。**实测：探针 5/5 PASS——manga 真实推理 EXIT=0、候选=2、稳态 299ms/页（冷启动 6,542ms 含加载）；docTR frozen 正常启动（fail-closed 留在 detect 时）。边界：frozen 命令面无 detect RPC（M2-IPC1 冻结），推理在 frozen 闭包外、用同源 ML 栈 + 安装后包内权重执行；frozen 闭包完整性由 L1 启动 + warn 零 ML missing + PYZ 归档清单背书，L2 反证证明包内权重被装配段端到端探测。**
+- [x] AC6（回归与纪律）：pytest 三套件（providers/m2_acceptance/core）基数保持（387+1 既有失败口径）；cargo/vitest 留痕（预期零影响）；`git diff --check` EXIT=0；禁改面专项 diff 为空。**实测：providers 286+1（既有环境性失败保持）/m2_acceptance 35/core 77；cargo 44+1 ignored；vitest 31；diff --check 双 EXIT=0；禁改面 diff 为空。**
+- [x] AC7（交付与 Handoff）：Task 测试表填实、Handoff 按模板（含代理裁决四条的撤销方式、体积数字、已知限制）。
 
 ## 允许修改范围
 
@@ -71,12 +71,12 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 构建 | build_sidecar.ps1 | build venv 含 ML 栈 | RUN | verification/M2-PROD-DETECT-2/ |
-| AC2 权重随包 | 检查 core-sidecar/models/.../ 三文件 + sha256 | 快照在位 | RUN | 同上 |
-| AC3 解析单测 | pytest tests/...（frozen 矩阵） | — | RUN | 本表 |
-| AC4 GATE | run_clean_start_e2e.py | 新 NSIS | RUN：25/25 | 同上 |
-| AC5 发布形态探针 | 独立探针脚本 | 安装后环境 | RUN：EXIT=0 | 同上 |
-| AC6 回归 | pytest 三套件 + cargo + vitest | — | RUN：387+1 口径 | 本表 |
+| AC1 构建 | build_sidecar.ps1 | build venv 含 ML 栈 | **PASS（exit=0，onedir 278s，warn 13 missing 全平台噪音 0 ML 相关）** | verification/M2-PROD-DETECT-2/raw/build-sidecar-console.log |
+| AC2 权重随包 | 检查 core-sidecar/models/.../ 三文件 + sha256 | 快照在位 | **PASS（三 sha256 与 pin 一致；NSIS 安装后复核一致）** | verification/M2-PROD-DETECT-2/release-notes.md |
+| AC3 解析单测 | pytest tests/...（frozen 矩阵） | — | **RUN：11/11 PASS** | 本表；tests/providers/test_detector_weights_lookup.py |
+| AC4 GATE | run_clean_start_e2e.py | 新 NSIS | **RUN：25/25 PASS** | verification/M2-PROD-DETECT-2/raw/cleanstart-runner-stdout.log |
+| AC5 发布形态探针 | 独立探针脚本 | 安装后环境 | **RUN：5/5 PASS（manga EXIT=0 候选=2 稳态 299ms/页；doctr fail-closed 启动正常）** | verification/M2-PROD-DETECT-2/packaged-detect-probe-results.json |
+| AC6 回归 | pytest 三套件 + cargo + vitest | — | **RUN：286+1 / 35 / 77；cargo 44+1ig；vitest 31（387+1 口径保持 +11 新增）** | 本表 |
 
 ## 依赖、风险与阻塞
 

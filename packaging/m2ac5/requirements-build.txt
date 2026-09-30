@@ -1,12 +1,22 @@
-# M2-AC5 build venv requirements (build tooling ONLY).
+# M2-AC5 build venv requirements (packager + runtime closure).
 #
 # This file never enters the product runtime dependency list: it is installed
 # into a dedicated build venv (G:/CODEX/New Manga.task-envs/m2ac5-build) used
-# solely to run PyInstaller. The sidecar import closure is stdlib + in-repo
-# packages (verified; see packaging/m2ac5/README.md), so the build venv needs
-# nothing beyond the pinned packager itself.
+# solely to run PyInstaller. The product runtime requirements
+# (../../requirements.txt, repo root) stay untouched. [r2 P3-6 path fix]
 #
-# The product runtime requirements (../../requirements.txt, repo root) stay untouched. [r2 P3-6 path fix]
+# M2-PROD-DETECT-2 (proxy ruling 2, reversible): the build venv positioning
+# flips from "minimal packager" to "packager + runtime closure". The release
+# form of the detect chain must ship the ML stack inside the frozen sidecar
+# closure (torch CPU + transformers + doctr), so the build venv now installs
+# the SAME pinned ML stack as the product runtime requirements. The versions
+# below are VERBATIM copies of the ../../requirements.txt lines (torch /
+# torchvision / python-doctr / transformers / safetensors) — a divergence
+# here would build a closure that differs from the verified runtime stack.
+#
+# The PyPI torch/torchvision wheels ARE the CPU builds — that is the
+# supported configuration (same source as requirements.txt; GPU/CUDA wheels
+# are a separate packaging decision, T3.2.1).
 #
 # PySide6_Essentials/shiboken6 are pinned to the SAME versions as
 # ../../requirements.txt: `bootstrap.acceptance_bridge` hard-requires PySide6
@@ -17,10 +27,15 @@
 # entries (host_bridge / core_service / catalog_loader) remain Qt-free by
 # their import closure.
 #
-# pypdfium2/mobi are NOT in the build venv on purpose (minimal closure): the
+# pypdfium2/mobi are NOT in the build venv on purpose (lazy imports: the
 # PDF/MOBI document rasters import them lazily and no clean-start acceptance
-# scenario touches those commands; a missing-module warning in the PyInstaller
-# warn file documents that boundary.
+# scenario touches those commands); a missing-module warning in the
+# PyInstaller warn file documents that boundary.
 pyinstaller==6.22.3
 PySide6_Essentials==6.11.2
 shiboken6==6.11.2
+python-doctr==1.1.0
+torch==2.14.0
+torchvision==0.29.0
+transformers==5.17.0
+safetensors==0.8.0

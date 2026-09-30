@@ -1,0 +1,5 @@
+$ core_service.exe with NEWMANGA_DETECTOR_BACKEND=doctr (purged PATH)
+exit=0
+{"protocol":"new-manga.core","version":{"major":1,"minor":0},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":0},"capabilities":["library.list_books"]},"error":null}
+{"protocol":"new-manga.core","version":{"major":1,"minor":0},"request_id":"r2","result":{"status":"stopped"},"error":null}
+--- stderr ---
