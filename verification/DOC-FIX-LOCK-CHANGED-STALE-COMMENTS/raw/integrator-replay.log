@@ -1,0 +1,24 @@
+=== shell: Git Bash (win32) / interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe / cwd: main worktree (pre-merge integrator verification) / DSH r2 §四-1: sha256 (blob basis via git show, LF) + probe replay + N-1 stat ===
+$ git show --stat 8b00d199   (N-1: confirm docs-only import)
+8b00d199 review(DOC-FIX-STALE): import DSH non-author r1 (approved_with_conditions, 0xP0/P1, 2xP2 P2-1/P2-2) at tip 768a0933
+
+ ...-LOCK-CHANGED-STALE-COMMENTS-768a0933-dsh-r1.md | 120 +++++++++++++++++++++
+ 1 file changed, 120 insertions(+)
+
+--- sha256 (blob basis, both versions) ---
+run_smoke.py @4ed3c044 (expect f1b5976d...):
+f1b5976de517290a294b7ea3b0c804e59c87f45b610ed9d8f4a047ce8c4850d9 *-
+run_smoke.py @8ab9045b (expect 30d55acd...):
+8493bbe5cd3428336c9e435f30292f309a098de7b6229e79b936760f7b6cd3ff *-
+acceptance_bridge.py @4ed3c044 (expect b2d7b86e...):
+b2d7b86eace8750681fda633537931f8ff49f288f462338de4ce296e732d7b76 *-
+acceptance_bridge.py @8ab9045b (expect 3e4b1fd1...):
+a5def2b15e9eaa6773640145a85d1d4de339717b62077cd9fef095da212fd87c *-
+
+--- bytecode probe @ 8ab9045b bytes (temp checkout of probe + files) ---
+HEAD is now at 8ab9045b review(DOC-FIX-STALE): import DSH non-author r2 (approved, P2-1/P2-2 closed) at tip 8b00d199 — owner branch final tip
+[src/bootstrap/acceptance_bridge.py] objects=37 co_code=EQUAL (py_compile OK both)
+[experiments/M2-TA3-A/run_smoke.py] objects=15 co_code=EQUAL (py_compile OK both)
+BYTECODE-PROBE: ALL-EQUAL (instruction stream unchanged)
+EXIT=0
+temp worktree removed

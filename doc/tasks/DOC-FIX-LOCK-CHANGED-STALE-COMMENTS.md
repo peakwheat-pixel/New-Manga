@@ -2,7 +2,8 @@
 id: DOC-FIX-LOCK-CHANGED-STALE-COMMENTS
 title: 两处过时「known planner gap」注释的最小 docs 修正（DIAG-002 遗留候选落地）
 kind: docs-minor
-status: in_review
+status: done
+approval: integrated
 approval: released_by_codex_proxy
 suggested_owner: ZCode
 owner: ZCode
@@ -12,8 +13,8 @@ depends_on: [DIAG-M2-LOCK-CHANGED-REPRO-002]
 base_commit: d1c56e5d8399e8f03550528c47ee9aa3b34d0fcf
 branch: agent/zcode/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS
 worktree: G:/CODEX/New Manga.worktrees/DOC-FIX-STALE-COMMENTS-zcode
-integration_commit: null
-delivery_head: 768a0933 (r1 被审 tip；本轮 DSH 条件返修后由集成方回填终 tip)
+integration_commit: 1970512d
+delivery_head: 8ab9045b (Owner 终 tip，r2 报告归档；reviewed_head=8b00d199)
 ---
 
 # DOC-FIX-LOCK-CHANGED-STALE-COMMENTS：过时「known planner gap」注释最小修正
@@ -51,9 +52,9 @@ delivery_head: 768a0933 (r1 被审 tip；本轮 DSH 条件返修后由集成方�
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
 | 注释-only diff（AC1） | `git diff 4ed3c044 -- <两文件>` | — | **executed**：变化行全为注释/docstring | [ac1-comment-only-diff.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac1-comment-only-diff.log) |
-| 字节码探针（AC2） | `python` 探针：compile+递归 co_code 对比 | TASK-012-py312 venv | **executed**：52 code object 全等，ALL-EQUAL | [ac2-bytecode-probe.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe.log) |
+| 字节码探针（AC2） | `python verification/.../raw/bytecode_probe.py` | TASK-012-py312 venv | **executed**：52 code object 指令流（co_code）全等，ALL-EQUAL（集成方 tip 级复跑 EXIT=0 见 integrator-replay.log） | [bytecode_probe.py](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/bytecode_probe.py)、[ac2-bytecode-probe-r2.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe-r2.log)、[integrator-replay.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/integrator-replay.log) |
 | 回归（AC2③） | `python -m pytest tests/m2_acceptance/test_acceptance_loop.py -q` | 同上（offscreen） | **executed**：4 passed | [ac2-acceptance-regression.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-acceptance-regression.log) |
-| 范围（AC4） | `git diff --check`；name-status+意外路径 grep | — | **executed**：EXIT=0；意外路径零 | [ac4-scope-proof.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log) |
+| 范围（AC4） | `git diff --check`；name-status+意外路径 grep | — | **executed**：EXIT=0；意外路径零（r2 tip 全量枚举见 [ac4-scope-proof-r2.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof-r2.log)） | [ac4-scope-proof.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log)、[ac4-scope-proof-r2.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof-r2.log) |
 
 ## 依赖、风险与阻塞
 
@@ -65,4 +66,6 @@ delivery_head: 768a0933 (r1 被审 tip；本轮 DSH 条件返修后由集成方�
 
 - **2026-09-30 release（代行 Codex，用户指令批准）**：`proposed → ready / DOC_FIX_LOCK_CHANGED_STALE_COMMENTS_RELEASED`。冻结：base=`d1c56e5d8399e8f03550528c47ee9aa3b34d0fcf`、branch=`agent/zcode/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS`、worktree=`G:/CODEX/New Manga.worktrees/DOC-FIX-STALE-COMMENTS-zcode`（release commit=`4ed3c044`）。Release evidence：[release-d1c56e5d](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/release-d1c56e5d.md)。
 - **2026-09-30 交付（Owner=ZCode，claim `74022cdc`）**：`in_progress → in_review`。两处注释修正 + 全套零逻辑证明（AC1-AC4 全 executed）。Handoff：[DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-zcode-delivery-20260930](../handoffs/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-zcode-delivery-20260930.md)。
-- Review：尚无（待 DSH 非作者静态 Review）。实际测试：见上方测试表。
+- Review：r1 [approved_with_conditions](../../doc/reviews/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-768a0933-dsh-r1.md)（0×P0/P1、2×P2）→ r2 返修 `928b881d` → r1 报告归档 `8b00d199`(=reviewed_head) → r2 [approved（准予集成）](../../doc/reviews/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-8b00d199-dsh-r2.md)（P2-1/P2-2 closed）→ r2 报告归档 `8ab9045b`(Owner 终 tip)。
+- **2026-09-30 集成（代行 Codex）**：merge=`1970512d`（parents `4ed3c044`+`8ab9045b`，无冲突，16 文件全允许路径）。集成复算：sha256 blob 基准四值（N-3 更正：Owner note 原「改后」值为 CRLF 工作区字节，已统一 LF blob 口径）、探针 tip 级重跑 52 全等 EXIT=0、`git show --stat 8b00d199` 纯文档导入确认。集成修正 commit 一次性收口 DSH r2 §四清单（N-3/N-6 更正、链接升级、口径统一、P4-3 重复键、README:7）。**Task `done` @integration `1970512d`**。记录：[integration-1970512d](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/integration-1970512d/integration.md)。
+- 实际测试：见上方测试表。

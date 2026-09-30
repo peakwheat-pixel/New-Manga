@@ -4,7 +4,7 @@
 
 > **Historical ledger after Rebaseline.** TASK-001～065 保留为历史证据；当前任务树和授权以 [REBASELINE_PLAN](../REBASELINE_PLAN.md)、运行状态以 [STATUS](../STATUS.md) 为准。T3.2.1 已 `closed_with_limitations / SUPERSEDED_BY_M2`；其未完成 Legacy AC 不阻塞 M2。
 
-当前无 `in_progress`/`ready` Task。2026-09-30 收口：T-D1 [M2-DOCTR-QUAL-RUN](M2-DOCTR-QUAL-RUN.md)、T-D2 [M2-TA2B](M2-TA2B.md)、T-D3 [M2-TA3-A](M2-TA3-A.md)、上午轮 T1/T2/T3、[DIAG-M2-LOCK-CHANGED-REPRO-002](DIAG-M2-LOCK-CHANGED-REPRO-002.md)（M2-TA3-A L-1 核实：缺口真实、已由 M2-P1 修复，`done` @`1faf6c1b`）全 `done`。TA3-B 暂缓登记于 REBASELINE_PLAN。
+当前无 `in_progress`/`ready` Task。2026-09-30 收口：T-D1 [M2-DOCTR-QUAL-RUN](M2-DOCTR-QUAL-RUN.md)、T-D2 [M2-TA2B](M2-TA2B.md)、T-D3 [M2-TA3-A](M2-TA3-A.md)、上午轮 T1/T2/T3、[DIAG-M2-LOCK-CHANGED-REPRO-002](DIAG-M2-LOCK-CHANGED-REPRO-002.md)（M2-TA3-A L-1 核实：缺口真实、已由 M2-P1 修复，`done` @`1faf6c1b`）、[DOC-FIX-LOCK-CHANGED-STALE-COMMENTS](DOC-FIX-LOCK-CHANGED-STALE-COMMENTS.md)（两处过时 gap 注释最小修正，`done` @`1970512d`）全 `done`。TA3-B 暂缓登记于 REBASELINE_PLAN。
 
 Legacy 诊断家族收口（2026-09-28）：[DIAG-READING-EXPORT-001](DIAG-READING-EXPORT-001.md) `done`（`e0a0e784`），[FIX-A](DIAG-READING-EXPORT-001-FIX-A.md) `done`（`a8b94df1`），[FIX-B](DIAG-READING-EXPORT-001-FIX-B.md) `done`（`9c9c9087`），[FIX-C](DIAG-READING-EXPORT-001-FIX-C.md) `done`（`0f2e9e31`；DSH 六轮 Review R6 `approved`；生产接线零 QML）。诊断集成核验：[integration-e0a0e784](../../verification/DIAG-READING-EXPORT-001/integration-e0a0e784/integration.md)；FIX-A [integration-a8b94df1](../../verification/DIAG-READING-EXPORT-001-FIX-A/integration-a8b94df1/integration.md)；FIX-B [integration-9c9c9087](../../verification/DIAG-READING-EXPORT-001-FIX-B/integration-9c9c9087/integration.md)。M2-RC1/RC2 均已 `done`（integration=`3a246840` / `88f972fe`）。
 

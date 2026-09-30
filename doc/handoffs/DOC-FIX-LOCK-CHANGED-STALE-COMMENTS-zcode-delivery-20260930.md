@@ -3,8 +3,8 @@ task_id: DOC-FIX-LOCK-CHANGED-STALE-COMMENTS
 author: ZCode (Owner)
 recipient: DeepSeek Harness (non-author Review) → Codex proxy (Integrator)
 base_commit: d1c56e5d8399e8f03550528c47ee9aa3b34d0fcf
-delivery_head: 74022cdc + 本 Handoff 文档提交（实现/证据见 worktree tip）
-status: delivered_awaiting_review
+delivery_head: 8ab9045b (Owner 终 tip；reviewed_head=8b00d199；集成=1970512d) —— 集成方回填
+status: integrated (done @1970512d, integrator backfill)
 ---
 
 # Handoff：DOC-FIX-LOCK-CHANGED-STALE-COMMENTS — 两处过时「known planner gap」注释最小修正
@@ -37,7 +37,7 @@ status: delivered_awaiting_review
 | AC | 结果 | 证据 |
 |---|---|---|
 | AC1 注释-only diff | **满足** | [ac1-comment-only-diff.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac1-comment-only-diff.log) |
-| AC2 零逻辑机器证明 | **满足**（52 co_code 全等 + py_compile + 4 passed） | [ac2-bytecode-probe.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe.log)、[ac2-acceptance-regression.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-acceptance-regression.log) |
+| AC2 指令流零变化机器证明 | **满足**（52 co_code 全等 + py_compile + 4 passed；完整零逻辑结论与 AC1 共同支撑） | [bytecode_probe.py](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/bytecode_probe.py)、[ac2-bytecode-probe-r2.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe-r2.log)、[ac2-acceptance-regression.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-acceptance-regression.log) |
 | AC3 文本正确性 | **满足**（M2-P1 @`a174fb9c` 修复、DIAG-002 @`1faf6c1b` 核实；证据边界保留；推断限定未入注释） | 两文件 diff（AC1 log） |
 | AC4 范围纪律 | **满足** | [ac4-scope-proof.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log) |
 
@@ -47,7 +47,7 @@ status: delivered_awaiting_review
 
 | 命令 | 结果 | EXIT |
 |---|---|---|
-| 字节码探针（compile+递归 co_code 对比，见 ac2 log 头部内嵌脚本） | 52 objects ALL-EQUAL | 0 |
+| `bytecode_probe.py`（入库脚本；r2 log 带头+EXIT，集成方 tip 级复跑同结论） | 52 objects ALL-EQUAL | 0 |
 | `python -m pytest tests/m2_acceptance/test_acceptance_loop.py -q` | 4 passed in 3.06s | 0 |
 | `git diff --check 4ed3c044` | 空 | 0 |
 

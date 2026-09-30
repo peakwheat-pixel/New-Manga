@@ -12,7 +12,6 @@ depends_on: [M2-TA3-A]
 base_commit: b9fc977017f101a9731d4cb4bf5d270cc6f65d62
 branch: agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002
 worktree: G:/CODEX/New Manga.worktrees/DIAG-LOCK-CHANGED-REPRO-002-zcode
-integration_commit: null
 delivery_head: 2c13530b (Owner branch tip, r2 review import; implementation+evidence=8d2162c1)
 integration_commit: 1faf6c1b
 ---

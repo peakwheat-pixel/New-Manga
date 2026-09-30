@@ -30,3 +30,18 @@
 原始捕获未单独留存、已不可得。归一化仅压平 raw `git diff` 上下文空行的行尾空白，
 未增删任何 diff 内容行；DSH review 已用 tip 文件字节独立复核 `+`/`-` 两侧与
 交付内容逐字一致（其复核点 (1) verified 项）。
+
+## 更正：字节基准统一（DSH r2 N-3，集成方修正 2026-09-30）
+
+上文「改后」值（30d55acd…/3e4b1fd1…）实为 **CRLF 工作区字节**（本 Task worktree 经
+core.autocrlf checkout），与「改前」值的 LF blob 基准不一致。统一以 **LF blob**（git show）
+为基准的四值：
+
+- run_smoke.py：改前 f1b5976de517290a294b7ea3b0c804e59c87f45b610ed9d8f4a047ce8c4850d9
+  → 改后 8493bbe5cd3428336c9e435f30292f309a098de7b6229e79b936760f7b6cd3ff
+- acceptance_bridge.py：改前 b2d7b86eace8750681fda633537931f8ff49f288f462338de4ce296e732d7b76
+  → 改后 a5def2b15e9eaa6773640145a85d1d4de339717b62077cd9fef095da212fd87c
+
+基准差异不改变任何结论：注释-only diff 由 AC1 支撑、指令流由 52 对象 co_code 全等支撑；
+M2-TA3-A manifest（sha256sum -c 工作区口径）在其交付 worktree（LF）复算时 run_smoke.py
+一行 FAILED 的预测在任一基准下均成立。复算记录：integrator-replay.log。

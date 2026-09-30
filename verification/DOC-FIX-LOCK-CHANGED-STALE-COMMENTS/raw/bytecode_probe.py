@@ -7,8 +7,9 @@ every code object. Comments and docstrings never enter ``co_code``.
 Claim scope (DSH review P2-2): this probe proves **instruction-stream
 (co_code) equality only**. It deliberately does NOT compare ``co_consts``
 (where this task's docstring change legitimately lives), ``co_names``,
-``co_varnames``, ``co_linetable``/``co_firstlineno`` (both files net +2
-lines), or exception tables. The task's full zero-logic-change proof is
+``co_varnames``, ``co_freevars``/``co_cellvars``,
+``co_linetable``/``co_firstlineno`` (both files net +2 lines), or
+exception tables. The task's full zero-logic-change proof is
 AC1's human-readable diff (comment-only hunks) TOGETHER with this probe.
 
 Usage (repo worktree root, TASK-012-py312 venv):
