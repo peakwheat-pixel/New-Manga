@@ -1,0 +1,29 @@
+=== shell: Git Bash (win32) / cwd: main worktree G:/CODEX/New Manga / AC5 scope proof r2 (DSH r2 N-1: at actual integration tip) ===
+$ git rev-parse HEAD
+1faf6c1b0126576017d4758daa29c903c993946a
+
+$ git diff --name-status d69a3e1c..HEAD   (release commit .. integration tip, ALL files)
+A	doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md
+A	doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-57a83485-dsh-r1.md
+A	doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-fb36d21f-dsh-r2.md
+M	doc/tasks/DIAG-M2-LOCK-CHANGED-REPRO-002.md
+A	experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/00-provenance.txt
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/ac5-scope-proof.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/f001-attribution-diff.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-run.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s1-head-verdict.json
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-run.log
+A	verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/s2-prefix-verdict.json
+EXIT=0
+
+$ git diff --check d69a3e1c..HEAD
+EXIT=0
+
+$ git diff --name-only d69a3e1c..HEAD | grep -E '^(src/|apps/|tests/|doc/contracts/|requirements)'   (forbidden-path scan; EXIT 1 = zero hits)
+grep EXIT=1
+
+$ git ls-tree HEAD experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py   (blob id; content hash d71825ff... per 00-provenance.txt)
+100644 blob 721470d30413b6f4c6b9e6bb47145e57f6a950e7	experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py
+
+--- note: working-tree sha256 of the script in this main worktree = 8cccafb1... (CRLF via core.autocrlf on checkout); the committed blob bytes hash d71825ff... as recorded in 00-provenance.txt; the S2 integration replay ran the blob bytes (d71825ff), same as the Owner evidence. ===

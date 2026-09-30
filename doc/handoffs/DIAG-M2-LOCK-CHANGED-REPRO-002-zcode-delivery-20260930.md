@@ -3,7 +3,7 @@ task_id: DIAG-M2-LOCK-CHANGED-REPRO-002
 author: ZCode (Owner)
 recipient: DeepSeek Harness (non-author Review) → Codex proxy (Integrator)
 base_commit: b9fc977017f101a9731d4cb4bf5d270cc6f65d62
-delivery_head: 18975a7a (experiment+evidence) — 本 Handoff 以文档提交追加，引用该 head
+delivery_head: 2c13530b (Owner branch tip: implementation/evidence 8d2162c1 + 文档轮 145b3ed5/fb36d21f + r2 review import 2c13530b) — 本 Handoff 以文档提交追加，引用实现 head
 status: delivered_awaiting_review
 ---
 
@@ -35,8 +35,11 @@ status: delivered_awaiting_review
 | `18975a7a` | r1 实验 + S1/S2 运行证据（v3 脚本，5 文件） |
 | `57a83485` | r1 Task 回填 + 本 Handoff 首版 |
 | `8d2162c1` | r2 返修：v5 脚本（F-003/F-004/F-002 探针/F-010）+ v5 重跑证据 + F-001/F-005/F-006 证据 + DSH r1 报告归档（9 文件） |
+| `145b3ed5` | r2 Handoff/Task 回填（F-001..F-010 闭合映射） |
+| `fb36d21f` | generated diff log whitespace-only 规范化（文件内披露）；Owner 文档/证据终 tip |
+| `2c13530b` | DSH r2 报告原字节归档（Owner branch 尾 commit） |
 
-变更路径（`d69a3e1c..8d2162c1`，全部落允许清单；`src/**`、`apps/**`、`tests/**`、`doc/contracts/**` 零命中——范围证据 [ac5-scope-proof.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/ac5-scope-proof.log)）：Task 文件、`experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py`、`verification/DIAG-M2-LOCK-CHANGED-REPRO-002/**`、`doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-*.md`、`doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-*`（r1 报告归档）。
+变更路径（`d69a3e1c..2c13530b`，全部落允许清单；`src/**`、`apps/**`、`tests/**`、`doc/contracts/**` 零命中——范围证据：r1 区间 [ac5-scope-proof.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/ac5-scope-proof.log)（覆盖至 57a83485）、集成 tip 全区间 [ac5-scope-proof-r2.log](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/raw/ac5-scope-proof-r2.log)（DSH r2 N-1 闭合，标注集成方产物）：Task 文件、`experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py`、`verification/DIAG-M2-LOCK-CHANGED-REPRO-002/**`、`doc/handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-*.md`、`doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-*`（r1 报告归档）。
 
 ## AC 对照
 

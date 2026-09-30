@@ -2,8 +2,8 @@
 id: DIAG-M2-LOCK-CHANGED-REPRO-002
 title: M2-AC1 登记的 regionless LOCK_CHANGED 缺口——mock detect 两段式复现核实（M2-TA3-A L-1）
 kind: diagnosis
-status: in_review
-approval: delivered_awaiting_review
+status: done
+approval: integrated
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness (non-author)
@@ -13,7 +13,8 @@ base_commit: b9fc977017f101a9731d4cb4bf5d270cc6f65d62
 branch: agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002
 worktree: G:/CODEX/New Manga.worktrees/DIAG-LOCK-CHANGED-REPRO-002-zcode
 integration_commit: null
-delivery_head: 18975a7a
+delivery_head: 2c13530b (Owner branch tip, r2 review import; implementation+evidence=8d2162c1)
+integration_commit: 1faf6c1b
 ---
 
 # DIAG-M2-LOCK-CHANGED-REPRO-002：regionless LOCK_CHANGED 缺口 mock detect 两段式复现核实
@@ -84,7 +85,7 @@ delivery_head: 18975a7a
 
 - **2026-09-30 release（代行 Codex）**：`proposed → ready / DIAG_M2_LOCK_CHANGED_REPRO_002_RELEASED`。起草（含登记来源、时间线核实、S1/S2/S3 实验矩阵冻结）与释放同批完成（用户指令授权新建本缺陷核实 Task 并全链交付）。冻结：base=`b9fc977017f101a9731d4cb4bf5d270cc6f65d62`、branch=`agent/zcode/DIAG-M2-LOCK-CHANGED-REPRO-002`、worktree=`G:/CODEX/New Manga.worktrees/DIAG-LOCK-CHANGED-REPRO-002-zcode`。Release evidence：[release-b9fc9770](../../verification/DIAG-M2-LOCK-CHANGED-REPRO-002/release-b9fc9770.md)。
 - **2026-09-30 交付（Owner=ZCode，head=`18975a7a`）**：`in_progress → in_review`。S1（HEAD）`NOT_REPRODUCED` EXIT=0 + S2（`d268a170` 修复前）`REPRODUCED` EXIT=0 判别矩阵闭合；结论=**缺口真实存在过、已由 M2-P1 修复（`a174fb9c`）、机制上非 mock-detect 特有、非未修时序条件性**（M2-TA3-A 未复现根因=修复后 main）。处置建议：L-1 闭为已核实；M2-AC1 handoff 原文不改写；`acceptance_bridge.py:338-340` 过时 docstring 为遗留候选；无需新修复 Task。Handoff：[DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930](../handoffs/DIAG-M2-LOCK-CHANGED-REPRO-002-zcode-delivery-20260930.md)。
-- **2026-09-30 DSH r1 Review**：[approved_with_conditions](../../doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-57a83485-dsh.md)（0×P0/P1、3×P2、4×P3、3×P4；纯静态——沙箱无法执行命令）。条件：F-001 归因 diff 证据、F-002 自愈探针/措辞、F-003 verdict fail-open、F-004~F-007 证据补齐。
+- **2026-09-30 DSH r1 Review**：[approved_with_conditions](../../doc/reviews/DIAG-M2-LOCK-CHANGED-REPRO-002-57a83485-dsh-r1.md)（0×P0/P1、3×P2、4×P3、3×P4；纯静态——沙箱无法执行命令）。条件：F-001 归因 diff 证据、F-002 自愈探针/措辞、F-003 verdict fail-open、F-004~F-007 证据补齐。
 - **2026-09-30 Owner 返修（r2，v5 终版）**：F-001 归因改写+[f001-attribution-diff.log]（src 变更恰 3 文件、本链相关唯一=重绑）；F-002 Run4 `retry_failed_targets` 探针前置实证（S2 轮 retry 驱动 region 链 8 步 COMPLETED）；F-003 `NOT_REPRODUCED` 升级为正向合取+`INCONCLUSIVE` fail-closed；F-004 零写取证（S2 revisions=1）；F-005 [00-provenance.txt]（v5 sha256=`d71825ff…`）；F-006 [ac5-scope-proof.log]；F-007 落地位置写实（本行+集成记录）；F-008 base 双 hash 口径注明；F-009 AC4 限定词；F-010 归一化。v5 重跑：S1 `NOT_REPRODUCED` EXIT=0、S2 `REPRODUCED` EXIT=0，判别矩阵不变、结论不变。
 - Review：r1 approved_with_conditions → r2 返修中（待 DSH r2 复核）。
 - 实际测试：见上方测试表（S1/S2/S3/归因/范围自查全 executed）。

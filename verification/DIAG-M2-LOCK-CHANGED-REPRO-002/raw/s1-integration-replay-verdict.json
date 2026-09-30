@@ -1,0 +1,279 @@
+{
+  "task": "DIAG-M2-LOCK-CHANGED-REPRO-002",
+  "label": "s1-integration-replay",
+  "expect": "not-reproduced",
+  "repo_root": "G:\\CODEX\\New Manga",
+  "code_head_commit": "1faf6c1b0126576017d4758daa29c903c993946a",
+  "started_at_utc": "2026-09-30T05:12:45Z",
+  "assembly": "bootstrap.acceptance_bridge.assemble_acceptance_core (assemble_core_services mock_local_providers=True)",
+  "runs": {
+    "run1": {
+      "run_id": "run-0d4f431a887e4c95b15b72f9af33cb98",
+      "status": "PipelineRunStatus.COMPLETED",
+      "steps": [
+        {
+          "step_run_id": "step-610cb4f3f9f8484bac7c1a7b9eea09f0",
+          "step_type": "detect",
+          "target_id": "780473e2f2984329b8403fe5482e405c",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": null,
+          "status": "completed",
+          "input_refs_keys": [],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-605b81ad58f14aa4a5b4af1d523c8024",
+          "step_type": "ocr",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-cc358186f83343a888b1ef462c5e5bc8",
+          "step_type": "color",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-fc226ab645564f68ad4eefb48eb1d5bd",
+          "step_type": "term_extract",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-67d47b3ba5b249a7bbb2db9cc3c4ccb0",
+          "step_type": "translate",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-2223aaae56e04a00bef0f5523cfba746",
+          "step_type": "segment",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-25db333e6ef743d890d8ddc5fde41d58",
+          "step_type": "mask_refine",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-4b5f60bc2dde4a27892d036252ce54ef",
+          "step_type": "inpaint",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-2d6ec578d1ba4dc69a60f16958d20c7f",
+          "step_type": "render",
+          "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "page_id": "780473e2f2984329b8403fe5482e405c",
+          "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        }
+      ],
+      "ocr_evidence": {
+        "ocr_step_present": true,
+        "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+        "target_id_is_page_id": false,
+        "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+        "target_id_is_region_id": true,
+        "status": "completed",
+        "error_code": null,
+        "error_detail_has_expected_none": false,
+        "input_refs_keys": [
+          "region"
+        ],
+        "region_key_in_input_refs": true
+      }
+    },
+    "run4_retry_failed_targets": {
+      "status": "SKIPPED",
+      "reason": "no LOCK_CHANGED reproduced — no failed page targets to retry"
+    },
+    "run2": {
+      "region_runs": [
+        {
+          "run_id": "run-4fec081a755b460e97be9688969ec6d7",
+          "status": "PipelineRunStatus.COMPLETED",
+          "steps": [
+            {
+              "step_run_id": "step-ae5ac13abe1442c6a61ffc89ab1db323",
+              "step_type": "ocr",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-7e481f9b368040a2953443d04a819805",
+              "step_type": "color",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-2f738641865e4d698c80a871690bc834",
+              "step_type": "term_extract",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-d24d0078756d43048aea4ea0dc31a1d0",
+              "step_type": "translate",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-63504c11541d4257971f7025c2d1c8f8",
+              "step_type": "segment",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-981af7b4bcb94ccfbb6870854885d5fb",
+              "step_type": "mask_refine",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-07a2426aaf3d4b839945e58680e0c26b",
+              "step_type": "inpaint",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-ae354029e06e4486a18528e05c518ec2",
+              "step_type": "render",
+              "target_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "page_id": "780473e2f2984329b8403fe5482e405c",
+              "region_id": "12acc69dbf1f4f4c8d07c44b1af6274a",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            }
+          ],
+          "scope_target": "12acc69dbf1f4f4c8d07c44b1af6274a"
+        }
+      ]
+    },
+    "run3": {
+      "run_id": "run-5abc4d857aab4a118f0d263fef16a5b9",
+      "status": "PipelineRunStatus.COMPLETED",
+      "steps": []
+    }
+  },
+  "attribution": [],
+  "verdict": "NOT_REPRODUCED",
+  "region_ids": [
+    "12acc69dbf1f4f4c8d07c44b1af6274a"
+  ],
+  "region_revisions_count_after_run1": {
+    "12acc69dbf1f4f4c8d07c44b1af6274a": 3
+  },
+  "finished_at_utc": "2026-09-30T05:12:47Z"
+}
