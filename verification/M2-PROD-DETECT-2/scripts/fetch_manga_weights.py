@@ -131,14 +131,18 @@ def resolve_dest(explicit_dest: Path | None) -> Path:
     override = os.environ.get("NEWMANGA_DETECTOR_WEIGHTS")
     if override:
         candidate = Path(override)
-        if candidate.is_file() or candidate.suffix:
-            # docTR-style misconfiguration: NEWMANGA_DETECTOR_WEIGHTS
-            # points at a .pt *file* — the manga adapter needs a directory.
+        # R-A4: reject only values that EXIST and are not a directory (the
+        # docTR-era misconfiguration where the var points at a .pt *file*).
+        # A dotted name like "weights.v2" is a legal directory and must not
+        # be rejected on its suffix; a not-yet-existing path is left to the
+        # normal mkdir/download flow.
+        if candidate.exists() and not candidate.is_dir():
             print(
-                f"ERROR: NEWMANGA_DETECTOR_WEIGHTS={override!r} looks like a "
-                f"file, but the manga detector needs a DIRECTORY snapshot "
-                f"(config.json + model.safetensors + "
-                f"preprocessor_config.json); pass --dest <dir> explicitly "
+                f"ERROR: NEWMANGA_DETECTOR_WEIGHTS={override!r} exists and "
+                f"is not a directory, but the manga detector needs a "
+                f"DIRECTORY snapshot (config.json + model.safetensors + "
+                f"preprocessor_config.json); if it still points at the "
+                f"docTR fast_base .pt file, pass --dest <dir> explicitly "
                 f"or clear the variable",
                 file=sys.stderr,
             )
@@ -151,40 +155,72 @@ def file_url(filename: str, revision: str) -> str:
     return f"https://huggingface.co/{HF_REPO}/resolve/{revision}/{filename}"
 
 
-def download_file(url: str, target: Path) -> None:
-    """Stream one file to ``target`` via a ``.part`` temp file.
+def download_file(url: str, tmp: Path) -> None:
+    """Stream one file into ``tmp`` (a ``.part`` scratch path) — nothing else.
 
     Uses the DEFAULT urllib opener so the HTTP(S)_PROXY environment
     variables stay in charge; redirects (HF resolve 302s to its CDN) are
     followed by the default handler. Raises on any HTTP/network error —
-    the caller reports and exits non-zero.
+    the caller reports and exits non-zero. On ANY failure (including
+    KeyboardInterrupt) the partial ``.part`` is deleted so no multi-MB
+    debris is left in the weights directory; the destination is never
+    touched by this function (R-A1: verification happens on ``tmp`` and
+    only a verified file is promoted by the caller).
     """
-    tmp = target.with_suffix(target.suffix + ".part")
     if tmp.exists():
         tmp.unlink()  # stale partial download from an earlier run
     request = urllib.request.Request(url, headers={"User-Agent": USER_AGENT})
-    with urllib.request.urlopen(  # noqa: S310 - pinned https host
-        request, timeout=DOWNLOAD_TIMEOUT_S
-    ) as response, open(tmp, "wb") as out:
-        while True:
-            chunk = response.read(DOWNLOAD_CHUNK_BYTES)
-            if not chunk:
-                break
-            out.write(chunk)
-    tmp.replace(target)
+    try:
+        with urllib.request.urlopen(  # noqa: S310 - pinned https host
+            request, timeout=DOWNLOAD_TIMEOUT_S
+        ) as response, open(tmp, "wb") as out:
+            while True:
+                chunk = response.read(DOWNLOAD_CHUNK_BYTES)
+                if not chunk:
+                    break
+                out.write(chunk)
+    except BaseException:
+        tmp.unlink(missing_ok=True)
+        raise
 
 
 def download_and_verify(
-    dest: Path, revision: str, pins: tuple[tuple[str, str], ...]
+    dest: Path,
+    revision: str,
+    pins: tuple[tuple[str, str], ...],
+    force: bool = False,
 ) -> int:
     """Fetch each pinned file; skip the ones already verified (idempotent).
 
+    Install discipline (R-A1, mirroring ``fetch_doctr_weights.py``): the
+    fresh bytes land in a ``.part`` scratch file and are SHA-256-verified
+    THERE — ``tmp.replace(target)`` runs only after the pin matches, so no
+    unverified bytes ever reach the destination. On a mismatch the
+    ``.part`` is deleted, the destination keeps its previous content (if
+    any) and the failure is reported with the real on-disk facts.
+
     A file that exists but fails its pin (truncated / corrupted /
-    substituted) is re-downloaded; the replacement only lands after the
-    fresh bytes verify. Any persistent mismatch or network failure exits
-    non-zero with the offending file named.
+    substituted) is re-downloaded the same way. Any persistent mismatch or
+    network failure exits non-zero with the offending file named.
+
+    Drift mode (``revision !=`` pinned, ``expected is None``) has NO pin
+    to verify against, so there it requires an empty (or absent)
+    destination unless ``--force`` is given, and ``--force`` re-downloads
+    EVERY file instead of trusting existing ones — a stale or truncated
+    leftover can never silently pass as a complete fetch (R-A3).
     """
-    dest.mkdir(parents=True, exist_ok=True)
+    try:
+        dest.mkdir(parents=True, exist_ok=True)
+    except (FileExistsError, NotADirectoryError) as error:
+        # R-A7: a file (or unreadable path) at dest is a USAGE error —
+        # exit 2 with guidance, never a bare traceback.
+        print(
+            f"ERROR: destination {dest} cannot be used: {error!r} "
+            "(a file exists there, but the manga weights need a directory); "
+            "pass a different --dest",
+            file=sys.stderr,
+        )
+        return 2
     failures: list[str] = []
     for filename, pin in pins:
         target = dest / filename
@@ -194,7 +230,10 @@ def download_and_verify(
             if expected is not None and actual == expected:
                 print(f"already fetched and verified: {target}")
                 continue
-            if expected is None:
+            if expected is None and not force:
+                # Unreachable via main() (drift mode gates on an empty
+                # destination before reaching this loop) — kept as a
+                # guard for direct callers.
                 print(
                     f"already present (UNVERIFIED revision drift): {target} "
                     f"sha256={actual}"
@@ -202,25 +241,33 @@ def download_and_verify(
                 continue
             print(
                 f"existing file has wrong sha256, re-downloading: {target} "
-                f"(actual {actual}, expected {expected})"
+                + (
+                    f"(actual {actual}, expected {expected})"
+                    if expected is not None
+                    else f"(drift --force: re-fetching, old sha256 {actual})"
+                )
             )
         url = file_url(filename, revision)
         print(f"downloading {url}")
+        tmp = target.with_suffix(target.suffix + ".part")
         try:
-            download_file(url, target)
+            download_file(url, tmp)
         except (urllib.error.URLError, OSError) as error:
             failures.append(f"{filename}: download failed: {error!r}")
             continue
-        actual = sha256_file(target)
+        actual = sha256_file(tmp)
         if expected is not None and actual != expected:
+            tmp.unlink()
             failures.append(
                 f"{filename}: sha256 mismatch after download: {actual} != "
-                f"{expected} (kept nothing; delete {target} and retry, and "
-                f"if this persists treat it as a supply-chain incident — "
-                f"the production pins in detection_manga.py are the "
-                f"authority)"
+                f"{expected}; the mismatched bytes were DELETED and nothing "
+                f"was installed — {target} is unchanged (delete it manually "
+                f"and retry if a stale copy remains); if this persists "
+                f"treat it as a supply-chain incident — the production pins "
+                f"in detection_manga.py are the authority"
             )
             continue
+        tmp.replace(target)  # verified bytes only — never install unverified
         print(
             f"verified and installed: {target} ({actual}"
             + ("" if expected is not None else ", UNVERIFIED revision drift")
@@ -292,7 +339,10 @@ def main() -> int:
     parser.add_argument(
         "--verify-only",
         action="store_true",
-        help="offline mode: verify the pinned SHA-256s without network",
+        help=(
+            "offline mode: verify the pinned SHA-256s without network "
+            "(--source-revision is ignored in this mode)"
+        ),
     )
     parser.add_argument(
         "--source-revision",
@@ -301,10 +351,27 @@ def main() -> int:
             "HuggingFace revision to fetch (default: the pinned "
             f"{HF_REVISION}); a different revision is NEVER installed as "
             "production weights — it requires an explicit --dest outside "
-            "the default production layout and a re-pin slice"
+            "the default production layout, an EMPTY destination (or "
+            "--force), and a re-pin slice"
+        ),
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help=(
+            "drift mode only: allow a NON-EMPTY destination and "
+            "re-download every file instead of trusting existing ones "
+            "(ignored in pinned/verify modes, which verify pins anyway)"
         ),
     )
     args = parser.parse_args()
+
+    if args.verify_only:
+        # R-A6: verify-only never touches the network and always checks
+        # the PINS, so the drift gate/warning below would only produce a
+        # self-contradicting diagnosis — skip it entirely.
+        dest = resolve_dest(args.dest)
+        return verify_only(dest, PINNED_FILES)
 
     revision = args.source_revision.strip()
     unverified_drift = revision != HF_REVISION
@@ -315,6 +382,19 @@ def main() -> int:
                 "requires an explicit --dest: drifted weights must never "
                 "land in the default production layout unverified"
             )
+        dest = resolve_dest(args.dest)
+        existing = [p.name for p in dest.iterdir()] if dest.is_dir() else []
+        if existing and not args.force:
+            # R-A3: without pins to verify against, reusing a directory
+            # could silently accept stale/truncated files — require a
+            # clean target or an explicit --force (which re-downloads
+            # every file).
+            parser.error(
+                f"--source-revision {revision} with a NON-EMPTY destination "
+                f"{dest} ({len(existing)} entry/entries) requires --force: "
+                "drifted revisions have no pin to verify existing files "
+                "against; prefer a fresh empty directory per drift fetch"
+            )
         print(
             f"WARNING: fetching revision {revision}, which is NOT the "
             f"pinned production revision {HF_REVISION}; the per-file SHA-256 "
@@ -323,6 +403,8 @@ def main() -> int:
             "before production use",
             file=sys.stderr,
         )
+    else:
+        dest = resolve_dest(args.dest)
 
     proxies = urllib.request.getproxies()
     if proxies:
@@ -330,11 +412,7 @@ def main() -> int:
     else:
         print("no proxy environment variables detected")
 
-    dest = resolve_dest(args.dest)
-    pins = PINNED_FILES
-    if args.verify_only:
-        return verify_only(dest, pins)
-    return download_and_verify(dest, revision, pins)
+    return download_and_verify(dest, revision, PINNED_FILES, force=args.force)
 
 
 if __name__ == "__main__":

@@ -73,30 +73,53 @@ Gate 内（本交付不触碰任何 Python import 面；脚本仅手工执行验
 
 ## 下一任务建议（必填）
 
-- Task ID / 标题：M2-MANGA-WEIGHTS-SOP 的 DSH 非作者 Review（本 Task 内闭环）；
-- 推荐 Agent / Reviewer：DeepSeek Harness（非作者，符合 Task frontmatter
-  `reviewer: DeepSeek Harness（非作者）`）；
-- 推荐原因与前置依赖：实现已交付（本 Handoff），按「完成实现≠完成集成」需
-  独立审查后才可 integrator 验收；无外部依赖；
+- Task ID / 标题：M2-MANGA-WEIGHTS-SOP 集成（r1 条件已全部闭合，见上文
+  「DSH r1 处置」小节）；可选：DSH r2 快速抽查（非阻塞）；
+- 推荐 Agent / Reviewer：编排会话代行 Codex（集成）；可选抽查=DeepSeek
+  Harness（非作者）；
+- 推荐原因与前置依赖：r1 verdict=approved_with_conditions，三项 P2
+  （R-A1/A2/A3）与全部 P3/P4（R-A4~R-A10）均已闭合并复跑（见处置表）；
+  r1 清单第 9 项的 `.gitignore` 兜底规则由集成方在集成时补（本 Task 无权
+  路径）；无其他前置依赖；
 - Recovery point：仓库 `G:/CODEX/New Manga`，worktree
   `G:/CODEX/New Manga.worktrees/M2-WEIGHTS-SOP-zcode`，branch
-  `agent/zcode/M2-MANGA-WEIGHTS-SOP`，base `46f079e8` / head `1019ed6b`+
-  handoff commit；
-- 允许修改路径：Review 意见按协作协议落在 Review 文档 + 本 Task；若需改码，
-  回本 worktree 本 branch（fix commit 链）；
-- 禁止范围与新增授权条件：不得直接改 `src/**`、`packaging/**`、
-  `requirements*`；pin 数值变更属 re-pin slice，须新 Task 授权；
-- 交付物：REVIEW 文档（模板 `doc/templates/REVIEW.md`）；
-- 验证命令、环境与完成 Gate：上表「接收方式」两行命令 + `git diff --check
-  46f079e8..HEAD` EXIT=0 + 变更范围仅 `verification/M2-PROD-DETECT-2/**` +
-  Task + Handoff；
-- 可直接转发给 Agent 的指令：「对 M2-MANGA-WEIGHTS-SOP 做非作者 Review：
-  读 doc/tasks/M2-MANGA-WEIGHTS-SOP.md 与
-  doc/handoffs/M2-MANGA-WEIGHTS-SOP-1019ed6b.md，按其验证证据表逐项复核
-  verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py 与
-  WEIGHTS-SOP.md（重点：pin 与 detection_manga.py 权威一致性、dest 解析与
-  core_assembly 一致性、fail-closed 纪律、SOP 四场景准确性），产出 REVIEW
-  文档；禁止修改实现与共享契约。」
+  `agent/zcode/M2-MANGA-WEIGHTS-SOP`，base `46f079e8` / head=`1019ed6b`
+  implement + `8fa23edd` handoff + r1 返修 fix + 本文档提交（真实链见
+  `git log`）；
+- 允许修改路径（集成方）：合并入 master + `.gitignore` 窄规则
+  （`*.safetensors`、`*.pt`）+ STATUS 注记；
+- 禁止范围与新增授权条件：pin 数值变更属 re-pin slice，须新 Task 授权；
+- 交付物（集成方）：merge commit + gitignore 兜底 + STATUS 口径；
+- 验证命令、环境与完成 Gate：`--verify-only --dest "G:/CODEX/New
+  Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector"`
+  EXIT=0 + 任一临时目录真实下载一轮 + `git diff --check 46f079e8..HEAD`
+  EXIT=0 + 变更范围仅 `verification/M2-PROD-DETECT-2/**` + Task + Handoff；
+- 可直接转发给 Agent 的指令：「对 M2-MANGA-WEIGHTS-SOP 做集成前复验：
+  读 doc/handoffs/M2-MANGA-WEIGHTS-SOP-1019ed6b.md 的『DSH r1 处置』小节，
+  抽跑其复跑列两条命令（--verify-only 快照 + 临时目录真实下载），确认
+  R-A1/A2/A3 闭合与 R-A9 转办事项，然后按协作协议集成；集成时在根
+  .gitignore 补权重兜底窄规则。禁止修改实现语义。」
+
+## DSH r1 处置（review：G:/CODEX/New Manga.task-envs/M2-WEIGHTS-SOP/dsh-review-r1.md，verdict=approved_with_conditions）
+
+r1 三项 P2 条件全部闭合 + 7 项 P3/P4 顺手闭，返修 commit 为本 Handoff 之前的
+`fix(M2-MANGA-WEIGHTS-SOP): DSH r1 处置` 提交（真实历史续链）。逐条：
+
+| Finding | 处置 | 复跑证据 |
+|---|---|---|
+| R-A1[P2] 校验时机在安装后、mismatch 文案与磁盘事实相反 | `download_file` 只落 `.part`；调用方在 `.part` 上校验，通过才 `tmp.replace(target)`（对照 `fetch_doctr_weights.py:81-90` 先例）；mismatch 分支 `tmp.unlink()` + 文案「mismatched bytes were DELETED and nothing was installed — <target> is unchanged」；docstring/SOP §1 同步 | AC3d 复证：篡改 config.json → 重下恢复 pin EXIT=0；**错 pin 反证**：stub 错 pin 调 `download_and_verify` → EXIT=1、预置旧好文件逐字节原样（`sha256==CONFIG_SHA256`）、无 `.part` 残留 |
+| R-A2[P2] 场景 B 路径错误 | 改 `<安装目录>\resources\core-sidecar\models\detector\<dir>\`（与 `core_service.exe` 同目录，安装根 `%LOCALAPPDATA%\m2rc1-desktop`）；§0 第 3 条同步；§6 加「缺 `resources\core-sidecar` 段 → EXIT=1」行 | 文档级（路径以 `raw/installed-weights-sha256.txt:3` 安装态记录为准） |
+| R-A3[P2] drift 模式静默跳过且 EXIT=0 | 采 `--force` 方案：drift + 非空目录 → EXIT=2；`--force` 放行并**全量重下**（不信任既有文件）；SOP §5 登记 + 「每次 drift 用新目录」建议 | 非空无 --force EXIT=2；空目录 EXIT=0（3 文件 UNVERIFIED）；`--force` 全量重下 3 文件 EXIT=0 |
+| R-A4[P3] `.suffix` 误拒合法目录 | 改 `exists() and not is_dir()` 判定，带点目录名放行，保留 `.pt` 指引 | 文档/代码级 |
+| R-A5[P3] `.part` 残留未登记 | `download_file` 异常（含 KeyboardInterrupt）`tmp.unlink(missing_ok=True)`；SOP §6 加「残留 `.part` 可安全删除 / 重跑收敛」行 | 错 pin 反证中 `.part` 清理同路径验证 |
+| R-A6[P3] `--verify-only` 触发 drift WARNING | drift 判定收进下载路径；`--verify-only` 帮助注明忽略 `--source-revision` | `--verify-only` 复跑 EXIT=0 无 WARNING |
+| R-A7[P4] `dest.mkdir` 裸 traceback | 捕获 `FileExistsError/NotADirectoryError` → stderr 指引 + EXIT=2 | 代码级 |
+| R-A8[P4] 场景 C 未提数据根可变 | 加 `NEWMANGA_DATA_ROOT`/Tauri 用户根派生（`<用户根>\data`）提示 | 文档级 |
+| R-A9[P4] gitignore 护栏缺失 | **不改 `.gitignore`（不在允许路径）**；Task AC4 加注「护栏为过程性，gitignore 兜底由集成方补（窄规则建议 `*.safetensors`、`*.pt`）」 | 已转集成方清单 |
+| R-A10[P4] Task frontmatter base 不一致 | frontmatter 注明「契约编写时基线=095e314d；分支实际 base=46f079e8」 | 文档级 |
+
+r1 NOT_VERIFIED 项的本轮补强：全部运行期结论在本轮**真实复跑**（见上表复跑
+列；环境 Windows / Python 3.14 / 代理 127.0.0.1:7890），不再仅有前轮自报。
 
 ## 风险与遗留
 

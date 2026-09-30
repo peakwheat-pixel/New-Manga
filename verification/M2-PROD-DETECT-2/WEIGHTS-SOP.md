@@ -35,7 +35,8 @@
 
 1. env `NEWMANGA_DETECTOR_WEIGHTS`（目录 override）>
 2. `<数据根>/models/detector/ogkalu-comic-text-and-bubble-detector/` >
-3. 发布形态安装包内置副本（exe 旁 `models/detector/...`，仅 frozen 生效）。
+3. 发布形态安装包内置副本（sidecar exe `core_service.exe` 旁，即
+   `<安装目录>\resources\core-sidecar\models\detector\...`，仅 frozen 生效）。
 
 数据根解析（`bootstrap/core_assembly.py::default_data_root`）：
 `NEWMANGA_DATA_ROOT` > `%LOCALAPPDATA%`（无则 `$HOME`）下的 `New Manga` 目录。
@@ -78,8 +79,10 @@ python "verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py" --verify-o
 行为约定：
 
 - 已存在且 hash 符合 → skip（幂等，重复执行安全）；
-- 已存在但 hash 不符（截断/损坏/被替换）→ 自动重新下载，新字节校验通过才
-  覆盖旧文件；
+- 已存在但 hash 不符（截断/损坏/被替换）→ 自动重新下载：新字节先落在
+  `<file>.part` 临时文件上，**在 `.part` 上校验通过后才**替换目标文件
+  （与 docTR 先例 `fetch_doctr_weights.py` 同款纪律）——校验不过时目标
+  文件保持原样，目标目录永不出现未验证产物；
 - 下载失败或 hash 持续不符 → 退出码非 0 并点名失败文件；hash 持续不符视为
   供应链事件，登记并上报，不得手工放行。
 
@@ -87,17 +90,20 @@ python "verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py" --verify-o
 
 适用：NSIS 安装包/便携发布的最终用户。
 
-- 发布构建把 pinned 权重快照随包打进安装目录
-  （`<安装目录>\models\detector\ogkalu-comic-text-and-bubble-detector\`，
+- 发布构建把 pinned 权重快照随包打进 sidecar 资源目录——真实安装路径为
+  `<安装目录>\resources\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector\`
+  （与 `core_service.exe` **同目录**；当前安装根为
+  `%LOCALAPPDATA%\m2rc1-desktop`，不是 `C:\Program Files`；
   M2-PROD-DETECT-2 集成产物：171MB 权重经 sha256 校验复制 + whole-dir
   Tauri resource + 构建期闭包断言）。
 - frozen 进程的权重解析顺序（`_resolve_detector_weights_path`）：
-  `NEWMANGA_DETECTOR_WEIGHTS` > 数据根 → **安装包内置副本**。数据根没有
-  权重时，应用直接使用包内副本——**最终用户零操作**。
-- 验证方法（可选，离线）：
+  `NEWMANGA_DETECTOR_WEIGHTS` > 数据根 → **sidecar 资源内的包内副本**
+  （bundle 候选 = `Path(sys.executable).parent/models/detector/<name>`，
+  即上路径）。数据根没有权重时，应用直接使用包内副本——**最终用户零操作**。
+- 验证方法（可选，离线；路径必须含 `resources\core-sidecar` 段）：
 
 ```powershell
-python "verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py" --verify-only --dest "C:\Program Files\NewManga\models\detector\ogkalu-comic-text-and-bubble-detector"
+python "verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py" --verify-only --dest "%LOCALAPPDATA%\m2rc1-desktop\resources\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector"
 ```
 
 - 注意：包内副本由构建管线以 pin 校验复制（`verification/M2-PROD-DETECT-2/`
@@ -110,6 +116,12 @@ python "verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py" --verify-o
 离线机房预置），或把源码机已验证的快照搬到发布机。
 
 数据根覆盖法（推荐，优先级高于包内副本）：
+
+> 注意：目标机的数据根由 `NEWMANGA_DATA_ROOT` 决定（`core_service.py` 的
+> `main()`/`assemble_production_core()`）；若 Tauri 侧配置了用户根，派生值
+> 可能是 `<用户根>\data` 而非默认 `%LOCALAPPDATA%\New Manga`。以下命令以
+> 默认布局书写，**目标机设了 `NEWMANGA_DATA_ROOT` 时以该值为准**（可用
+> `echo $env:NEWMANGA_DATA_ROOT` 先确认）。
 
 ```powershell
 # 1) 目标机器上把 pinned 快照放到数据根布局（三文件齐全，目录名固定）
@@ -161,8 +173,15 @@ python "verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py"
 ## 5. pin 漂移 / 换 revision 流程
 
 - `--source-revision` 默认即 pinned `16e8a622`；显式给**其他** revision 时，
-  脚本进入 UNVERIFIED 模式：必须同时给 `--dest`（禁止落入默认生产布局），
-  下载后不做 pin 对比、只报告实际 SHA-256 并全程标注 UNVERIFIED。
+  脚本进入 UNVERIFIED 模式：必须同时给 `--dest`（禁止落入默认生产布局）。
+- **drift 取件目录门（R-A3）**：drift 模式没有 pin 可校验，因此目标目录必须
+  为空（或不存在）；目录非空时脚本 EXIT=2，除非显式给 `--force`——`--force`
+  会**全量重新下载**目录内文件（不信任任何既有文件，避免截断/旧 revision
+  残留被静默接受）。**建议每次 drift 取件都使用全新空目录**：`EXIT=0` 只在
+  「空目录 + 全量下载完成」路径上成立，任何复用目录的取件结果都必须人工核对
+  三个文件的实际 sha256（脚本会逐文件打印）。
+- drift 模式下载后的文件仍标注 UNVERIFIED（无 pin 可对），不得直接放入生产
+  权重目录。
 - 任何 revision 升级 = 一次正式 re-pin slice：在新 revision 快照上重跑验收
   （C4 同款 evidence）→ 更新 `detection_manga.py` 的 `MANGA_HF_REVISION` 与
   三 pin → 同步 fetch 脚本副本常量与本 SOP 表格。绝不允许跳过 re-pin 直接
@@ -172,8 +191,10 @@ python "verification/M2-PROD-DETECT-2/scripts/fetch_manga_weights.py"
 
 | 现象 | 处置 |
 | --- | --- |
-| `--verify-only` 报 `weights directory ... does not exist` | 先跑下载（场景 A），或 `--dest` 指错目录 |
+| `--verify-only` 报 `weights directory ... does not exist` | 先核对场景：源码机跑下载（场景 A）；发布包校验路径必须含 `resources\core-sidecar` 段（场景 B，缺该段 → 必然 EXIT=1），不要误导向场景 A |
 | `MISSING` / `sha256 ... != pinned` | 重跑下载路径自动重下；持续不符按供应链事件登记上报 |
 | 下载 429/403/超时 | 配置场景 D 代理后重试；HF 偶发限流等几分钟 |
-| `NEWMANGA_DETECTOR_WEIGHTS` 报 file/suffix 错误 | 该 env 对 manga 必须是目录；`--dest` 显式指定或清掉该变量 |
+| 权重目录残留 `<file>.part` | 下载失败/中断的临时文件，可安全删除；直接重跑下载路径即可收敛（脚本会先清理再重下） |
+| `NEWMANGA_DETECTOR_WEIGHTS` 报 exists-and-not-a-directory 错误 | 该 env 对 manga 必须是目录；`--dest` 显式指定或清掉该变量 |
+| drift 模式报 NON-EMPTY destination requires `--force` | 换全新空目录（推荐）或确认后加 `--force` 全量重下（见 §5） |
 | 应用报 `PROVIDER_NOT_CONFIGURED`（manga） | 按场景 A/C 安装权重后重启；不要手写部分文件凑数 |
