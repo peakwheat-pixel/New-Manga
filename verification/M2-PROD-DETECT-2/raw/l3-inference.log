@@ -5,5 +5,5 @@ exit=0
 --- stderr ---
 
 Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]
-Loading weights:  55%|█████▌    | 424/770 [00:00<00:00, 4204.60it/s]
-Loading weights: 100%|██████████| 770/770 [00:00<00:00, 7001.07it/s]
+Loading weights:  50%|█████     | 386/770 [00:00<00:00, 3826.03it/s]
+Loading weights: 100%|██████████| 770/770 [00:00<00:00, 5998.81it/s]

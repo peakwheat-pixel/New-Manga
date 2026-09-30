@@ -1,0 +1,11 @@
+$ core_service.exe with the bundle models/ tree moved away
+exit=1
+--- stderr ---
+Traceback (most recent call last):
+  File "entry_core_service.py", line 10, in <module>
+  File "bootstrap\core_service.py", line 373, in main
+  File "bootstrap\core_service.py", line 80, in assemble_production_core
+  File "bootstrap\core_assembly.py", line 791, in assemble_core_services
+  File "bootstrap\core_assembly.py", line 623, in _resolve_detector_weights_path
+ValueError: detector weights not found in the packaged bundle (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\Users\49745\AppData\Local\New Manga\models\detector\ogkalu-comic-text-and-bubble-detector | C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector
+[PYI-46560:ERROR] Failed to execute script 'entry_core_service' due to unhandled exception!

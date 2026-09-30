@@ -2,6 +2,7 @@
   "gate": "m2-prod-detect-2-packaged-detect-probe",
   "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
   "verdict": "PASS",
+  "scenario_count_note": "6 scenarios across 4 layers (L2 = counter-proof + recovery, L4 = frozen start + out-of-closure typed detect)",
   "scenarios": [
     {
       "id": "PK-L1-frozen-startup-ping",
@@ -15,10 +16,11 @@
       }
     },
     {
-      "id": "PK-L2-counter-proof",
+      "id": "PK-L2-weights-absent-assembles-with-warning",
       "status": "PASS",
       "observed": {
-        "exit": 1,
+        "exit": 0,
+        "status": "ready",
         "mentions_probed_candidates": true
       }
     },
@@ -27,7 +29,8 @@
       "status": "PASS",
       "observed": {
         "exit": 0,
-        "status": "ready"
+        "status": "ready",
+        "warning_gone": true
       }
     },
     {
@@ -36,12 +39,12 @@
       "observed": {
         "exit": 0,
         "n_candidates": 2,
-        "cold_elapsed_ms_incl_engine_build": 6542,
-        "warm_avg_ms": 299,
+        "cold_elapsed_ms_incl_engine_build": 17478,
+        "warm_avg_ms": 288,
         "warm_elapsed_ms": [
-          298,
-          302,
-          298
+          279,
+          312,
+          274
         ],
         "versions": {
           "torch": "2.14.0",
@@ -56,13 +59,26 @@
       }
     },
     {
-      "id": "PK-L4-doctr-starts-fail-closed-at-detect",
+      "id": "PK-L4-doctr-starts-without-assembly-error",
       "status": "PASS",
       "observed": {
         "exit": 0,
-        "status": "ready"
+        "status": "ready",
+        "warning_expected_state": "see raw log (stderr line if present)"
+      }
+    },
+    {
+      "id": "PK-L4-doctr-detect-fail-closed-typed",
+      "status": "PASS",
+      "observed": {
+        "driver_exit": 0,
+        "outcome": "typed_not_configured",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "provider_id": "local-doctr",
+        "weights_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\resources\\core-sidecar\\models\\detector\\fast_base-688a8b34.pt",
+        "stderr_tail": ""
       }
     }
   ],
-  "boundary_note": "L3 inference runs OUTSIDE the frozen process: the frozen command surface is M2-IPC1-frozen (core.ping/ListBooks/core.shutdown) with no detect RPC; closure completeness is evidenced by L1 startup, the PyInstaller warn file and the PYZ archive listing."
+  "boundary_note": "L3 inference and the L4(b) detect assertion run OUTSIDE the frozen process: the frozen command surface is M2-IPC1-frozen (core.ping/ListBooks/core.shutdown) with no detect RPC \u2014 frozen in-process ML import/detect stays NOT_RUN until M2-IPC1 extends the command surface (DSH r1 R2: AC5 is PARTIAL). Closure completeness is evidenced by L1 startup, the per-entry warn archives (R1), the build-time ML closure assertion + PYZ listing (R3) and L2."
 }

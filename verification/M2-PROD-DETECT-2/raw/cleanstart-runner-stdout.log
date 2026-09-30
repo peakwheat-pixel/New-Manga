@@ -1,7 +1,7 @@
 
 === phase 0: environment record + PATH purge ===
   [PASS] CS-E1-python-purged-from-path: {"detail": "python not on purged PATH (where exit=1); host_bridge.exe resolves: False", "removed_entries": ["C:\\Python314\\Scripts", "C:\\Python314", "C:\\Users\\49745\\AppData\\Local\\Programs\\Python\\Python310\\Scrip
-  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\M2-PROD-DETECT-2-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "6c765ed3a7decdac5e583aeef1cfa5fad36a130747937
+  [PASS] CS-E2-installer-present: {"installer": "G:\\CODEX\\New Manga.worktrees\\M2-PROD-DETECT-2-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe", "sha256": "ed4015845fcc092d7944f65e67d2575d9c4331e76b167
   [PASS] CS-E3-install-path-no-spaces: {"install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install", "space_free": true}
 
 === phase 0.5: host real %APPDATA% snapshot (P2-4 untouched proof) ===
@@ -18,21 +18,21 @@
   [PASS] CS-L3-packaged-core-shutdown: {"exit": 0, "result": {"status": "stopped"}}
 
 === phase 2: PROBE mode (resource channel matrix, packaged sidecar) ===
-  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-1ma8rex6\\probe\\probe-results.json"}
+  [PASS] CS-P1-probe-results-written: {"path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-qj7_orxi\\probe\\probe-results.json"}
   [PASS] CS-P2-probe-scenarios-all-pass: {"count": 13, "failed": [], "ids": ["E-00-probe-mode-detected", "E-01-issue-fetch-digest", "E-02-img-render", "E-03-unknown-id", "E-04-revoke-after-cached-fetch", "E-05-expired-ttl", "E-06-remount-fresh-references", "E-0
   [PASS] CS-P3-sidecar-roundtrip-digest: {"e01": {"id": "E-01-issue-fetch-digest", "observed": {"bytes": 49363, "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334", "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b
 
 === phase 3: AC1 test mode (acceptance loop, packaged sidecar) ===
   [PASS] CS-A1-run1-completed: {"exit": 0, "phase": "run1"}
   [PASS] CS-A1-run2-completed: {"exit": 0, "phase": "run2"}
-  [PASS] CS-A2-restart-new-pids: {"run1": [49176, 29180], "run2": [38504, 37084]}
+  [PASS] CS-A2-restart-new-pids: {"run1": [40872, 43800], "run2": [42660, 20848]}
   [PASS] CS-A3-saved-summary-complete: {"pages": 2, "providers": {"ocr": "m2ac1-mock-ocr", "translate": "m2ac1-mock-translate"}, "run_status": "completed"}
   [PASS] CS-A4-restored-reader-matches-saved: {"viewed": [{"index": 0, "sha": "f66af60a9846"}, {"index": 1, "sha": "4afc67386c25"}]}
   [PASS] CS-A5-export-png-digest-matches: {"sha": "4afc67386c25", "size": 1122}
 
 === phase 4: PRODUCTION mode (real window, isolated %APPDATA% userData) ===
   [PASS] CS-R1-production-process-alive: {"poll": null}
-  [PASS] CS-R2-userdata-layout-created: {"appdata_isolated": true, "catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-1ma8rex6\\production\\roamin
+  [PASS] CS-R2-userdata-layout-created: {"appdata_isolated": true, "catalog.sqlite": true, "dirs": {"catalog": true, "data": true, "derived": true, "managed": true}, "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-qj7_orxi\\production\\roamin
   [PASS] CS-R3-production-surface-announced: {"announcement": "[m2rc2-allowlist] production:", "present": true}
   [PASS] CS-R4-no-spawn-failures-in-log: {"spawn_failed_mentions": 0}
 
