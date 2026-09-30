@@ -51,7 +51,12 @@ TIMEOUT = 120
 MAX_ARCHIVE_BYTES = 600 * 1024 * 1024  # observed volumes are ~330-370 MB
 MAX_PDF_BYTES = 600 * 1024 * 1024
 LICENSE_CLASS = "commercial_use_permitted_attribution"
-ATTRIBUTION = "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）"
+ATTRIBUTION = "ブラックジャックによろしく　佐藤秀峰"
+ATTRIBUTION_NOTE = (
+    "Source: densho810.com (official free channel by Sato Manga Seisakusho); "
+    "free secondary-use license with mandatory attribution; report to info@densho810.com "
+    "within 1 month of public use."
+)
 JASRAC_VOLUMES = {2, 7, 11}
 DEFAULT_VOLUMES = (1, 3, 5)
 SAMPLE_PAGES_PER_VOLUME = 4
@@ -246,13 +251,17 @@ def verify_pdf(pdf_path: Path) -> int:
 def fetch_volumes(volumes: list[int]) -> int:
     failures = 0
     for volume in volumes:
+        if volume <= 0 or volume > 999:
+            print(f"vol{volume:03d}\tFETCH_FAILED\tinvalid volume number", file=sys.stderr)
+            failures += 1
+            continue
         volume_dir = OUTPUT_DIR / f"vol{volume:02d}"
         volume_dir.mkdir(parents=True, exist_ok=True)
         url = ARCHIVE_URL_TEMPLATE.format(num=volume)
-        if not is_allowed_archive_url(url):
-            raise ValueError(f"generated URL is outside the approved pattern: {url}")
-        print(f"vol{volume:02d}\tFETCH\t{url}")
         try:
+            if not is_allowed_archive_url(url):
+                raise ValueError(f"generated URL is outside the approved pattern: {url}")
+            print(f"vol{volume:02d}\tFETCH\t{url}")
             downloaded, reason, archive_sha, archive_size = download_archive(url, volume_dir / f"{volume:03d}bj.zip")
             pdf_name, pdf_sha, pdf_size = extract_pdf(volume_dir / f"{volume:03d}bj.zip", volume_dir, volume)
             page_count = verify_pdf(volume_dir / pdf_name)
@@ -266,6 +275,7 @@ def fetch_volumes(volumes: list[int]) -> int:
             "archive_url": url,
             "license_class": LICENSE_CLASS,
             "attribution": ATTRIBUTION,
+            "attribution_note": ATTRIBUTION_NOTE,
             "jasrac_volume": volume in JASRAC_VOLUMES,
             "downloaded_at_utc": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),
             "files": [
@@ -299,8 +309,7 @@ def sample_page_indices(page_count: int, count: int) -> list[int]:
     """First / quarter / middle / last sampling over 0-based page indices."""
     if page_count <= count:
         return list(range(page_count))
-    picks = sorted({0, page_count // 4, page_count // 2, page_count - 1})
-    return picks[:count] if len(picks) > count else picks
+    return sorted({0, page_count // 4, page_count // 2, page_count - 1})[:count]
 
 
 def render_volumes(volumes: list[int]) -> int:
@@ -371,6 +380,7 @@ def render_volumes(volumes: list[int]) -> int:
             "source_url": SOURCE_URL,
             "license_class": LICENSE_CLASS,
             "attribution": ATTRIBUTION,
+            "attribution_note": ATTRIBUTION_NOTE,
             "dpi": RENDER_DPI,
             "pdf_page_count": page_count,
             "sampled_pages": [entry["pdf_page_number"] for entry in page_entries],
@@ -394,12 +404,53 @@ def render_volumes(volumes: list[int]) -> int:
     return failures
 
 
+def verify_rendered_pages() -> int:
+    """Recompute page SHA-256 for every BJ case in cases.json (M2-TA2B P2-1 closure).
+
+    The BJ pages live outside the runtime inventory by design (gitignored
+    pixels), so this command is their automated integrity path.
+    """
+    manifest = assets.load_manifest()
+    cases = [c for c in manifest["cases"] if re.fullmatch(r"BJ\d{2}", c.get("case_id", ""))]
+    if not cases:
+        print("VERIFY_FAILED\tno BJ cases found in cases.json", file=sys.stderr)
+        return 1
+    failures = 0
+    for case in cases:
+        page_rel = case.get("page_file")
+        expected = case.get("page_sha256")
+        if not page_rel or not expected:
+            print(f"{case['case_id']}\tVERIFY_FAILED\tmissing page_file/page_sha256 fields", file=sys.stderr)
+            failures += 1
+            continue
+        base = assets.ROOT / case["local_path"]
+        page_path = base / page_rel
+        if not page_path.is_file() and page_rel.startswith(f"{base.name}/"):
+            # cases.json local_path ends with the same segment that prefixes page_file
+            # (…/vol01/pages + pages/vol01_p0001.png); de-duplicate that segment.
+            page_path = base.parent / page_rel
+        if not page_path.is_file():
+            print(f"{case['case_id']}\tVERIFY_FAILED\tmissing file: {page_rel}", file=sys.stderr)
+            failures += 1
+            continue
+        digest, size = sha256_file(page_path)
+        if digest != expected:
+            print(f"{case['case_id']}\tVERIFY_FAILED\tsha256 mismatch: {page_rel}", file=sys.stderr)
+            failures += 1
+        else:
+            print(f"{case['case_id']}\tVERIFY_OK\t{page_rel} sha256={digest[:16]}... size={size}")
+    print(f"SUMMARY\tcommand=verify cases={len(cases)} failures={failures}")
+    return 1 if failures else 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("fetch", "render"))
+    parser.add_argument("command", choices=("fetch", "render", "verify"))
     parser.add_argument("--volumes", type=int, nargs="+", default=list(DEFAULT_VOLUMES),
                         help="volume numbers to process (default: 1 3 5, avoiding JASRAC volumes 2/7/11)")
     args = parser.parse_args()
+    if args.command == "verify":
+        return verify_rendered_pages()
     if any(volume in JASRAC_VOLUMES for volume in args.volumes):
         print("refusing JASRAC-managed volumes (2/7/11) by default policy", file=sys.stderr)
         return 2

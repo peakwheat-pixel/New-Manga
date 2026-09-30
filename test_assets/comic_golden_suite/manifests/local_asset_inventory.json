@@ -630,12 +630,12 @@
       "asset_id": "openmantra_candidate",
       "source": "https://github.com/mantra-inc/open-mantra-dataset",
       "license": "CC BY-NC 4.0",
-      "image_redistribution_status": "Non-commercial only; project use scope not classified as non-commercial, so not acquired.",
-      "local_path": "日漫_JA/05_openmantra_candidate",
-      "status": "MISSING",
-      "file_count": 0,
-      "image_file_count": 0,
-      "byte_size": 0,
+      "image_redistribution_status": "Non-commercial only (CC BY-NC 4.0); acquired into the gitignored isolated directory below for an optional non-commercial baseline only; excluded from Git and from the production licensing baseline.",
+      "local_path": "日漫_JA/99_optional_openmantra",
+      "status": "READY_OPTIONAL_ISOLATED",
+      "file_count": 13,
+      "image_file_count": 10,
+      "byte_size": 2341834,
       "files": [],
       "ground_truth_type": "Japanese manga page images with Japanese/English/Chinese text and bounding boxes per public repository description",
       "pipeline_applicability": [
@@ -644,7 +644,8 @@
         "translation"
       ],
       "pipeline_execution_status": "NOT_RUN",
-      "notes": "Not counted runnable and no data copied. Revisit only if a non-commercial-only use scope is established."
+      "notes": "M2-TA2B AC5: annotation.json + LICENSE.md + README.md + 10 sampled ja pages (2 per title, 5 titles), 2,341,834 bytes total. Per-file SHA-256 evidence in verification/M2-TA2B/raw/ac5b-openmantra-verification.log; the directory is gitignored (日漫_JA/.gitignore) and per-file checksums are deliberately not tracked in this inventory to keep NC material metadata out of the production inventory (tracking marker above).",
+      "inventory_tracking": "excluded_optional_noncommercial_checksums"
     },
     {
       "asset_id": "peppercarrot_e04_ko",

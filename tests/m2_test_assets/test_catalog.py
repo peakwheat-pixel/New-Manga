@@ -58,10 +58,8 @@ def test_black_jack_official_cases_are_registered_with_attribution():
     assert all(case["source_name"] == "Black Jack Official Free (Sato Manga Seisakusho)" for case in bj_cases)
     assert all(case["license_class"] == "commercial_use_permitted_attribution" for case in bj_cases)
     assert all(case["source_url"] == "https://densho810.com/free/" for case in bj_cases)
-    assert all(
-        case["attribution"] == "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）"
-        for case in bj_cases
-    )
+    assert all(case["attribution"] == "ブラックジャックによろしく　佐藤秀峰" for case in bj_cases)
+    assert all("densho810.com" in case["attribution_note"] for case in bj_cases)
     assert all(case["asset_profile"]["kind"] == "manual_source_page" for case in bj_cases)
     assert all(case["levels"] == ["regression", "full"] for case in bj_cases)
     assert all(len(case["page_sha256"]) == 64 and case["render_dpi"] == 150 for case in bj_cases)
@@ -71,8 +69,8 @@ def test_black_jack_official_cases_are_registered_with_attribution():
     # Feature-matrix coverage across the 12 inspected pages.
     tagged = {tag for case in bj_cases for tag in case["tags"]}
     assert {
-        "vertical_text", "normal_dialogue", "dense_dialogue", "tiny_text", "huge_text",
-        "rotated_text", "fragmented_sfx", "complex_background", "low_contrast",
+        "vertical_text", "horizontal_text", "normal_dialogue", "dense_dialogue", "tiny_text",
+        "huge_text", "rotated_text", "fragmented_sfx", "complex_background", "low_contrast",
         "narration", "multi_speaker",
     } <= tagged
 

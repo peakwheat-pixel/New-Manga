@@ -1,0 +1,31 @@
+# ac6-zero-change-diff.log
+# Prove AC6 'zero field-value changes on pre-existing cases/sources' against base 9db2dca8.
+# Expected allowed deltas: (a) new cases BJ01-BJ12/J48-J52/K14-K25 appended;
+# (b) CANCEL_FLAG added on 37 manga109_title cases + 3 sources;
+# (c) sources.peppercarrot ja/ko_local_page_count 10->15 / 3->15 (DSH r1 P2-2 closure, intentional);
+# (d) DSH r1 closures: openmantra P1-1, KO /kr/ P2-3, BJ04 tag P2-6, attribution P3-4 (BJ cases only).
+# new cases (29): BJ01 BJ02 BJ03 BJ04 BJ05 BJ06 BJ07 BJ08 BJ09 BJ10 BJ11 BJ12 J48 J49 J50 J51 J52 K14 K15 K16 K17 K18 K19 K20 K21 K22 K23 K24 K25
+# dropped cases (0):
+# pre-existing cases: 68 | unchanged: 31 | +cancel-flag only: 37
+# source peppercarrot_japanese_localized_pages field local_image_file_count updated (P2-2 closure): 10 -> 15
+# source peppercarrot_japanese_localized_pages field notes updated (P2-2 closure): '10 Japanese-localized page images and two SVG language-pack archives; partial SVG text is available on E20P06/E20P07 only, with no dialogue boxes or masks.' -> '15 Japanese-localized page images (E04 + E20) and two SVG language-pack archives; partial SVG text is available on E20P06/E20P07 only, with no dialogue boxes or masks.'
+# source peppercarrot_japanese_localized_pages field local_file_count updated (P2-2 closure): 12 -> 17
+# source peppercarrot_japanese_localized_pages field byte_size updated (P2-2 closure): 40284868 -> 42126680
+# source openmantra_candidate field status updated (P1-1 closure): registered acquisition state
+# source openmantra_candidate field image_redistribution_status updated (P1-1 closure): registered acquisition state
+# source openmantra_candidate field local_path updated (P1-1 closure): registered acquisition state
+# source openmantra_candidate field local_file_count updated (P1-1 closure): registered acquisition state
+# source openmantra_candidate field reason updated (P1-1 closure): registered acquisition state
+# source openmantra_candidate field notes updated (P1-1 closure): registered acquisition state
+# source openmantra_candidate field byte_size updated (P1-1 closure): registered acquisition state
+# source peppercarrot_korean_localized_pages field local_path updated (P2-2 closure): '韩漫_KO/02_public_ground_truth_peppercarrot/ep04' -> '韩漫_KO/02_public_ground_truth_peppercarrot'
+# source peppercarrot_korean_localized_pages field local_file_count updated (P2-2 closure): 4 -> 17
+# source peppercarrot_korean_localized_pages field local_image_file_count updated (P2-2 closure): 3 -> 15
+# source peppercarrot_korean_localized_pages field local_transcript_archive_count updated (P2-2 closure): 1 -> 2
+# source peppercarrot_korean_localized_pages field byte_size updated (P2-2 closure): 16292579 -> 42097368
+# new sources (1): black_jack_official_free
+# sources.peppercarrot updated (P2-2 closure): {'license': 'CC BY 4.0 with attribution', 'image_redistribution_status': 'Permitted with attribution; local media excluded from Git', 'ja_local_page_count': 10, 'ko_local_page_count': 3, 'shared_upstream': 'https://www.peppercarrot.com/0_sources/', 'notes': 'No full repository clone or duplicate bulk download.'} -> {'license': 'CC BY 4.0 with attribution', 'image_redistribution_status': 'Permitted with attribution; local media excluded from Git', 'ja_local_page_count': 15, 'ko_local_page_count': 15, 'shared_upstream': 'https://www.peppercarrot.com/0_sources/', 'notes': 'No full repository clone or duplicate bulk download.'}
+# top-level generated_from: provenance suffix appended (implementation commit, registered in Handoff)
+# levels.regression: case_count/notes maintained (68 -> 97); structure/status unchanged
+# levels.full: case_count/notes maintained (68 -> 97); structure/status unchanged
+# RESULT: ZERO_CHANGE_VERIFIED (all deltas are registered closures)

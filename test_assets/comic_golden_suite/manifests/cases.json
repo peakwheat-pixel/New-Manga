@@ -2,7 +2,7 @@
   "schema_version": 1,
   "suite_id": "comic_golden_suite",
   "generated_from": "M2-TA1 foundation + M2-TA2A local assets + M2-TA2C no-HF source audit + M2-TA2B open assets (BJ official free volumes + P&C ja/kr additions; Manga109 cancelled 2026-09-30)",
-  "generated_at": "2026-09-29",
+  "generated_at": "2026-09-30",
   "languages": [
     "ja",
     "ko"
@@ -175,7 +175,7 @@
       "license": "CC BY 4.0 with attribution",
       "image_redistribution_status": "redistributable with attribution; raw files remain git-ignored",
       "local_path": "日漫_JA/02_open_ground_truth_peppercarrot",
-      "local_image_file_count": 10,
+      "local_image_file_count": 15,
       "local_transcript_archive_count": 2,
       "ground_truth_type": "partial SVG text layer: E20P06/E20P07; no dialogue boxes or masks",
       "pipeline_applicability": [
@@ -185,9 +185,9 @@
         "manga_page_render"
       ],
       "pipeline_status": "NOT_RUN",
-      "notes": "10 Japanese-localized page images and two SVG language-pack archives; partial SVG text is available on E20P06/E20P07 only, with no dialogue boxes or masks.",
-      "local_file_count": 12,
-      "byte_size": 40284868,
+      "notes": "15 Japanese-localized page images (E04 + E20) and two SVG language-pack archives; partial SVG text is available on E20P06/E20P07 only, with no dialogue boxes or masks.",
+      "local_file_count": 17,
+      "byte_size": 42126680,
       "ground_truth_types": [
         "svg_text_layer_partial"
       ],
@@ -204,7 +204,7 @@
         "text bounding boxes"
       ],
       "license": "CC BY-NC 4.0",
-      "image_redistribution_status": "Non-commercial only; not acquired because project-use scope is not classified as non-commercial.",
+      "image_redistribution_status": "Non-commercial only (CC BY-NC 4.0); acquired into the gitignored isolated directory 日漫_JA/99_optional_openmantra (13 files) for an optional non-commercial baseline only; excluded from Git, from the production licensing baseline, and from smoke/regression/full levels.",
       "local_path": "日漫_JA/99_optional_openmantra",
       "local_file_count": 13,
       "reason": "CC BY-NC 4.0 material fetched into a gitignored isolated directory for optional non-commercial baseline only; excluded from production licensing baseline and ordinary case levels.",
@@ -232,11 +232,11 @@
       "id": "peppercarrot_korean_localized_pages",
       "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
       "status": "READY",
-      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
-      "local_file_count": 4,
-      "local_image_file_count": 3,
-      "local_transcript_archive_count": 1,
-      "byte_size": 16292579,
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot",
+      "local_file_count": 17,
+      "local_image_file_count": 15,
+      "local_transcript_archive_count": 2,
+      "byte_size": 42097368,
       "license": "CC BY 4.0 with attribution",
       "image_redistribution_status": "Permitted with attribution; media excluded from Git",
       "ground_truth_types": [
@@ -249,7 +249,8 @@
       ],
       "checksum_inventory": "test_assets/comic_golden_suite/manifests/local_asset_inventory.json",
       "source_name": "peppercarrot_korean_localized_pages",
-      "pipeline_status": "NOT_RUN"
+      "pipeline_status": "NOT_RUN",
+      "notes": "E04 (K11-K18) and E20 (K19-K25): 15 Korean-localized page images plus the two official SVG language-pack ZIPs; paired SVGs carry Korean text layers, no detection boxes or masks; French original localized into Korean, not native manhwa."
     },
     {
       "id": "ebdtheque",
@@ -323,6 +324,32 @@
       "pipeline_status": "NOT_RUN",
       "checksum_inventory": null,
       "image_redistribution_status": "Raw manga image redistribution not established"
+    },
+    {
+      "id": "black_jack_official_free",
+      "source": "https://densho810.com/free/",
+      "source_name": "black_jack_official_free",
+      "status": "READY",
+      "optional": false,
+      "license": "Free secondary use with mandatory attribution (author's terms, commercial and non-commercial)",
+      "license_class": "commercial_use_permitted_attribution",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "image_redistribution_status": "Redistribution permitted under the author's free-license terms with unchanged attribution (title + author); media files remain git-ignored; public use requires an e-mail report to info@densho810.com within one month (user obligation, Agent never sends).",
+      "local_path": "日漫_JA/01_black_jack_official",
+      "local_file_count": 18,
+      "local_image_file_count": 12,
+      "byte_size": 2251373940,
+      "checksum_inventory": null,
+      "checksum_note": "Per-file SHA-256 in 日漫_JA/01_black_jack_official/vol*/bj_download_manifest.json and bj_pages_manifest.json (gitignored); page integrity verified by tools/fetch_bj.py verify against cases.json page_sha256.",
+      "ground_truth_types": [],
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "translation",
+        "manga_page_render"
+      ],
+      "pipeline_status": "NOT_RUN",
+      "notes": "M2-TA2B AC1-AC3: official free Japanese ZIP editions of ブラックジャックによろしく (volumes 1/3/5; JASRAC volumes 2/7/11 avoided), DRM-free PDFs rendered to 12 PNG pages (DPI 150). Real black-and-white Japanese manga with RTL page flow."
     }
   ],
   "sources": {
@@ -335,8 +362,8 @@
     "peppercarrot": {
       "license": "CC BY 4.0 with attribution",
       "image_redistribution_status": "Permitted with attribution; local media excluded from Git",
-      "ja_local_page_count": 10,
-      "ko_local_page_count": 3,
+      "ja_local_page_count": 15,
+      "ko_local_page_count": 15,
       "shared_upstream": "https://www.peppercarrot.com/0_sources/",
       "notes": "No full repository clone or duplicate bulk download."
     },
@@ -4485,13 +4512,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 1,
       "pdf_page_number": 1,
       "page_file": "pages/vol01_p0001.png",
       "page_sha256": "ff3365868f3402b0c46ac58473bb6f166dd0626bb3bce043587dae0da708f9f1",
       "render_dpi": 150,
-      "feature_notes": "Color volume-1 cover: large vertical JP title + author name, diagonally placed English label stickers, ink-splash art over screentone line art. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Color volume-1 cover: large vertical JP title + author name, diagonally placed English label stickers, ink-splash art over screentone line art. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ02",
@@ -4554,13 +4582,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 1,
       "pdf_page_number": 53,
       "page_file": "pages/vol01_p0053.png",
       "page_sha256": "c1ce06205b8e64c1a199f1adbab3bdaa9aff46d67abc8283bd4ef28ea6dd5417",
       "render_dpi": 150,
-      "feature_notes": "B/W story page: 4 stacked panels, dense bookshelf background, RTL balloon order, vertical dialogue, two speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "B/W story page: 4 stacked panels, dense bookshelf background, RTL balloon order, vertical dialogue, two speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ03",
@@ -4622,13 +4651,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 1,
       "pdf_page_number": 105,
       "page_file": "pages/vol01_p0105.png",
       "page_sha256": "9fe0014994f0aa16078b05c70ac3f4f6f5b5c3bc0b7b6313f5973575ea22ed48",
       "render_dpi": 150,
-      "feature_notes": "Single-panel clock-tower page: handwritten vertical narration text directly over detailed perspective background, no balloons. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Single-panel clock-tower page: handwritten vertical narration text directly over detailed perspective background, no balloons. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ04",
@@ -4644,7 +4674,8 @@
       "tags": [
         "vertical_text",
         "low_contrast",
-        "huge_text"
+        "huge_text",
+        "horizontal_text"
       ],
       "source_category": "01_black_jack_official",
       "local_path": "日漫_JA/01_black_jack_official/vol01/pages",
@@ -4690,13 +4721,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 1,
       "pdf_page_number": 209,
       "page_file": "pages/vol01_p0209.png",
       "page_sha256": "42dabc22dacaa6c811d7583d465c491de67ac7bcf40e997a1cb663119517c3c4",
       "render_dpi": 150,
-      "feature_notes": "Black chapter divider (Part 1): white-on-black text over ink-splash texture, vertical title + horizontal small labels. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Black chapter divider (Part 1): white-on-black text over ink-splash texture, vertical title + horizontal small labels. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ05",
@@ -4759,13 +4791,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 3,
       "pdf_page_number": 1,
       "page_file": "pages/vol03_p0001.png",
       "page_sha256": "7cd1a8e790a76adc70a5f1da9aaa24cf7541304db47d0093bdeaac0b3b10fdf4",
       "render_dpi": 150,
-      "feature_notes": "Color volume-3 cover: same cover family as BJ01 with purple ink splash. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Color volume-3 cover: same cover family as BJ01 with purple ink splash. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ06",
@@ -4831,13 +4864,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 3,
       "pdf_page_number": 56,
       "page_file": "pages/vol03_p0056.png",
       "page_sha256": "b06c9d7ddb0f679abdddeebd959d7b6aaefb5556a1fbdc43cfc0ee594d04569f",
       "render_dpi": 150,
-      "feature_notes": "B/W story page: phone SFX (bell), cry SFX, night street panelling, small furigana-like text, multiple speakers; core SFX/difficulty page. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "B/W story page: phone SFX (bell), cry SFX, night street panelling, small furigana-like text, multiple speakers; core SFX/difficulty page. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ07",
@@ -4895,13 +4929,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 3,
       "pdf_page_number": 111,
       "page_file": "pages/vol03_p0111.png",
       "page_sha256": "cba84cdbfba27f6b697adcc9ebdffc3f84dcee6c029d51b48c31d3ff29a1855c",
       "render_dpi": 150,
-      "feature_notes": "Near-blank ECG line page: single thin waveform line, no text; edge case for detection/OCR false-positive behavior. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Near-blank ECG line page: single thin waveform line, no text; edge case for detection/OCR false-positive behavior. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ08",
@@ -4963,13 +4998,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 3,
       "pdf_page_number": 221,
       "page_file": "pages/vol03_p0221.png",
       "page_sha256": "4e02cb8ec1b1b2f66feffc6f64a18b2c67e11bd6a5d16019fe5fd1bee7acdd3c",
       "render_dpi": 150,
-      "feature_notes": "Black chapter divider (Baby ER arc): white-on-black text over ink-splash texture. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Black chapter divider (Baby ER arc): white-on-black text over ink-splash texture. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ09",
@@ -5032,13 +5068,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 5,
       "pdf_page_number": 1,
       "page_file": "pages/vol05_p0001.png",
       "page_sha256": "efdae38f52635b142e43fb086609a5609be4119103a1fc68c7f6be4180eb593a",
       "render_dpi": 150,
-      "feature_notes": "Color volume-5 cover: same cover family as BJ01 with blue ink splash. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Color volume-5 cover: same cover family as BJ01 with blue ink splash. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ10",
@@ -5104,13 +5141,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 5,
       "pdf_page_number": 61,
       "page_file": "pages/vol05_p0061.png",
       "page_sha256": "4bc8d4845c708edb0be8345b6cfe148fbe02dd93a943a1f260efacef120d51f8",
       "render_dpi": 150,
-      "feature_notes": "B/W story page: ambulance night scene, boxed narration (time), siren SFX, crowded interior panels, multiple speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "B/W story page: ambulance night scene, boxed narration (time), siren SFX, crowded interior panels, multiple speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ11",
@@ -5173,13 +5211,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 5,
       "pdf_page_number": 122,
       "page_file": "pages/vol05_p0122.png",
       "page_sha256": "dab11ab374243873d7c5ff7594dba6a3f5068cd9c6177ca59d7cc42d636bf50f",
       "render_dpi": 150,
-      "feature_notes": "B/W story page: hospital corridor + close-up panels, heavy vertical dialogue, three-plus speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "B/W story page: hospital corridor + close-up panels, heavy vertical dialogue, three-plus speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "BJ12",
@@ -5241,13 +5280,14 @@
       },
       "image_available": true,
       "annotation_available": false,
-      "attribution": "ブラックジャックによろしく © 佐藤秀峰（densho810.com 经由、二次利用フリー）",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
       "volume": 5,
       "pdf_page_number": 243,
       "page_file": "pages/vol05_p0243.png",
       "page_sha256": "a314450f63807b40d636f3f4d6f131053ea5ecdbb06fb2d418a56785f3d9b8de",
       "render_dpi": 150,
-      "feature_notes": "Black chapter divider (Gan medical arc): white-on-black text over ink-splash texture. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields."
+      "feature_notes": "Black chapter divider (Gan medical arc): white-on-black text over ink-splash texture. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
     },
     {
       "case_id": "J48",
@@ -5502,7 +5542,7 @@
     {
       "case_id": "K14",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
       "source_id": "E04P00",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5552,7 +5592,7 @@
     {
       "case_id": "K15",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
       "source_id": "E04P01",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5602,7 +5642,7 @@
     {
       "case_id": "K16",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
       "source_id": "E04P04",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5652,7 +5692,7 @@
     {
       "case_id": "K17",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
       "source_id": "E04P06",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5702,7 +5742,7 @@
     {
       "case_id": "K18",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
       "source_id": "E04P08",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5752,7 +5792,7 @@
     {
       "case_id": "K19",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep20_The-Picnic__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
       "source_id": "E20P01",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5802,7 +5842,7 @@
     {
       "case_id": "K20",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep20_The-Picnic__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
       "source_id": "E20P02",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5852,7 +5892,7 @@
     {
       "case_id": "K21",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep20_The-Picnic__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
       "source_id": "E20P03",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5902,7 +5942,7 @@
     {
       "case_id": "K22",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep20_The-Picnic__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
       "source_id": "E20P04",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -5952,7 +5992,7 @@
     {
       "case_id": "K23",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep20_The-Picnic__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
       "source_id": "E20P05",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -6002,7 +6042,7 @@
     {
       "case_id": "K24",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep20_The-Picnic__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
       "source_id": "E20P06",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
@@ -6052,7 +6092,7 @@
     {
       "case_id": "K25",
       "language": "ko",
-      "source": "https://www.peppercarrot.com/ko/webcomic/ep20_The-Picnic__sources.html",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
       "source_id": "E20P07",
       "source_type": "open_source_korean_localized_webcomic",
       "layout_type": "paged_webcomic",
