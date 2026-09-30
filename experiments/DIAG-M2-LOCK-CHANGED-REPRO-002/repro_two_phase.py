@@ -23,8 +23,16 @@ Verdict (strict, machine-checkable):
   REPRODUCED      iff Run1 has an ocr step_run with status=FAILED and
                   error_code=LOCK_CHANGED (diagnostic triad recorded:
                   target_id, region_id, input_refs keys, "expected None").
-  NOT_REPRODUCED  otherwise (every other failure is recorded verbatim in
-                  ``attribution`` — never papered over).
+  NOT_REPRODUCED  a POSITIVE assertion that the fix is in place: Run1
+                  COMPLETED with the 9-step chain AND its ocr step
+                  completed with target_id==region_id and "region" in
+                  input_refs. Anything else that is not REPRODUCED is
+                  INCONCLUSIVE (never a green exit) — an absent ocr step
+                  or an unrelated failure can NOT masquerade as green.
+  Run4            retry_failed_targets(Run1) self-heal probe (DSH r1
+                  F-002): only exercised when Run1 reproduced the defect
+                  — the replanned run must complete via the region-level
+                  chain (the "first run fails, retry succeeds" symptom).
 
 Exit code: 0 iff the verdict matches ``--expect``; the shell header +
 EXIT tail make the log a self-contained discrimination artefact.
@@ -225,13 +233,82 @@ def main() -> int:
             and str(ocr.get("status", "")).lower() == "failed"
             and ocr.get("error_code") == "LOCK_CHANGED"
         )
+        # DSH r1 F-003: NOT_REPRODUCED is a positive fix assertion, not a
+        # catch-all — any unrelated failure lands in INCONCLUSIVE (EXIT=1).
+        run1_completed = str(run1["status"]).lower() in (
+            "completed",
+            "pipelinerunstatus.completed",
+        )
+        positive_no_defect = (
+            ocr.get("ocr_step_present")
+            and str(ocr.get("status", "")).lower() == "completed"
+            and bool(ocr.get("target_id_is_region_id"))
+            and bool(ocr.get("region_key_in_input_refs"))
+            and run1_completed
+            and len(run1["steps"]) == 9  # detect + the full page-level chain
+        )
+        if reproduced:
+            summary["verdict"] = "REPRODUCED"
+            summary["attribution"].append("run1-ocr-LOCK_CHANGED")
+        elif positive_no_defect:
+            summary["verdict"] = "NOT_REPRODUCED"
+        else:
+            summary["verdict"] = "INCONCLUSIVE"
+            if not ocr.get("ocr_step_present"):
+                summary["attribution"].append("inconclusive:run1-ocr-step-absent")
+            elif not run1_completed:
+                summary["attribution"].append(
+                    f"inconclusive:run1-{str(run1['status']).lower()}"
+                )
+            else:
+                summary["attribution"].append("inconclusive:ocr-shape-mismatch")
 
-        # ---- Run2: region-level chain per produced Region (phase 2) --------
+        # ---- Regions produced by detect + zero-write evidence (DSH r1 F-004)
         regions_repo = SqliteRegionRepository(core.conn)
         region_ids = tuple(r.region_id for r in regions_repo.list_regions(page.page_id))
         summary["region_ids"] = list(region_ids)
+        summary["region_revisions_count_after_run1"] = {
+            region_id: core.conn.execute(
+                "SELECT COUNT(*) FROM region_revisions WHERE region_id = ?",
+                (region_id,),
+            ).fetchone()[0]
+            for region_id in region_ids
+        }
         if not region_ids:
             summary["attribution"].append("no-regions-after-run1")
+
+        # ---- Run4 FIRST (before Run2): retry_failed_targets self-heal probe
+        # (DSH r1 F-002). Only meaningful when Run1 reproduced the defect —
+        # placed before the per-region runs so the replanned region-level
+        # chain actually executes instead of finding every stage completed.
+        if reproduced:
+            try:
+                run4 = core.pipeline.retry_failed_targets(run1["run_id"])
+                core.pipeline.plan_run(run4.run_id)
+                finished4 = core.pipeline.execute_run(run4.run_id)
+                rows4 = step_rows(core.conn, run4.run_id)
+                print(
+                    f"[{args.label}] run4-retry-failed-targets: {finished4.status} "
+                    f"steps={[(r['step_type'], r['status'], r['error_code']) for r in rows4]}",
+                    flush=True,
+                )
+                summary["runs"]["run4_retry_failed_targets"] = {
+                    "run_id": run4.run_id,
+                    "status": str(finished4.status),
+                    "steps": rows4,
+                }
+            except Exception as exc:  # noqa: BLE001 - probe failure is evidence
+                summary["runs"]["run4_retry_failed_targets"] = {
+                    "status": "EXCEPTION",
+                    "error": f"{type(exc).__name__}: {exc}",
+                }
+        else:
+            summary["runs"]["run4_retry_failed_targets"] = {
+                "status": "SKIPPED",
+                "reason": "no LOCK_CHANGED reproduced — no failed page targets to retry",
+            }
+
+        # ---- Run2: region-level chain per produced Region (phase 2) --------
         run2_results = []
         for region_id in region_ids:
             item = execute(
@@ -255,16 +332,6 @@ def main() -> int:
                 "run3-replan-region-level",
             )
             summary["runs"]["run3"] = run3
-
-        summary["verdict"] = "REPRODUCED" if reproduced else "NOT_REPRODUCED"
-        if reproduced:
-            summary["attribution"].append("run1-ocr-LOCK_CHANGED")
-        elif not ocr.get("ocr_step_present"):
-            summary["attribution"].append("run1-ocr-step-absent")
-        elif ocr.get("status") not in (None, "COMPLETED", "completed"):
-            summary["attribution"].append(
-                f"run1-ocr-{ocr.get('status')}-{ocr.get('error_code')}"
-            )
     except Exception as exc:  # noqa: BLE001 - harness failure is evidence too
         summary["verdict"] = "HARNESS_EXCEPTION"
         summary["attribution"].append(f"harness:{type(exc).__name__}: {exc}")

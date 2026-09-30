@@ -1,0 +1,36 @@
+# provenance — DIAG-M2-LOCK-CHANGED-REPRO-002 (DSH r1 F-005)
+
+生成：2026-09-30，Owner=ZCode（返修轮 r2）。
+
+## 入库证据的脚本身份
+
+- 入库脚本：`experiments/DIAG-M2-LOCK-CHANGED-REPRO-002/repro_two_phase.py`
+- sha256（v5 终版，S1/S2 两轮所跑副本逐字节一致，实测双侧同哈希）：
+  `d71825ff44388aac2a6e05821a633c9c1fa3566dee81f33c57a0ed96d42ecaa9`
+- S1 运行时 worktree HEAD：`57a834851acedb7ac786be6bfe8fa5840536645a`
+  （脚本 v5 为未提交工作区状态运行；脚本本体以其 sha256 为准入库）
+- S2 锚点：`d268a170`（M2-P1 merge `a174fb9c` 的 main 侧 parent，detached 临时
+  worktree `/tmp/diag002-s2v5-WJGAfi`，运行后已清理）；S2 副本与 S1 脚本
+  sha256 一致（d71825ff…），运行命令与解释器见 s2-prefix-run.log shell 头。
+
+## 判据说明（字段读法）
+
+- `region_revisions_count_after_run1`：S2（修复前）=1 ⇒ DIAG-001 §3 第 4 项
+  「Region region_revisions 恰 1 条（零写）」成立；S1（修复后）=3 ⇒ 修复后
+  region revision 写入发生（detect 首版 + 后续链步骤提交），与「不再 LOCK_CHANGED」
+  一致。两值均在 run1 结束后、run2/run4 之前读取。
+
+## 脚本版本轨迹（v1–v4 无原始日志/JSON 留存，如实披露）
+
+- v1：无 provider binding → run1 ocr `PROVIDER_NOT_CONFIGURED`（发现 binding 属
+  harness 装配步骤，补齐；该行为两个先例——acceptance_bridge.method_run_pipeline、
+  M2-TA3-A MOCK_BINDINGS——均有显式绑定佐证）。
+- v2：verdict 大小写 bug（DB `"failed"` vs 判定 `"FAILED"`）→ S2 首轮 verdict JSON
+  误标（当轮日志已捕获 ocr failed LOCK_CHANGED）。
+- v3：S1/S2 首个完整入库轮（其日志/JSON 已被 v5 覆盖；v3 的结论与 v5 一致：
+  S1 NOT_REPRODUCED / S2 REPRODUCED）。
+- v4（DSH r1 条件轮）：+INCONCLUSIVE 正向合取（F-003）、+region_revisions 取证
+  （F-004）、+Run4 retry 探针——首版 Run4 排在 Run2 后，retry 只余 0 步幂等，
+  「重新执行」形态未触发，v5 修正排序。
+- v5（终版，sha256 见上）：Run4 移至 Run2 之前；S2 轮 run4 真实驱动 region 级链
+  8 步全执行后 COMPLETED（自愈「首跑失败重试成功」机理实证）。
