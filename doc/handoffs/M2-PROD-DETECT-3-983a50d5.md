@@ -3,7 +3,7 @@ task_id: M2-PROD-DETECT-3
 author: ZCode
 recipient: Codex（integrator）；reviewer=DeepSeek Harness（非作者）
 base_commit: 46f079e8
-delivery_head: 待证据 commit（见提交列表；构建被测输入=983a50d5）
+delivery_head: 9bcfd969（tip；构建被测输入=983a50d5，其后仅 doc/hygiene）
 status: in_review
 ---
 
@@ -71,12 +71,12 @@ M2-PROD-DETECT-2 AC5 的 PARTIAL 判定源头——「frozen 命令面无 detect
 5. 真干净 Windows 覆盖仍为 M2 Release Gate 口径冻结 NOT_RUN（沿用既有边界）。
 6. 上轮 NSIS `07d7daa1…` → 本轮 `ea34041c…`（+632,976 B，torchvision 扩展等闭包增量）。
 
-## 提交列表（branch `agent/zcode/M2-PROD-DETECT-3`，未 push）
+## 提交列表（branch `agent/zcode/M2-PROD-DETECT-3`，未 push；**tip=`9bcfd969`**）
 
 - `9d29a0c9` implement：core_service/core_assembly + 30 新测试 + 既有测试协议断言同步
 - `983a50d5` fix：spec torchvision stable-ABI pin + binaries 断言；GATE CS-L1 协议 1.1 同步（**构建被测输入 commit**）
-- 本证据 commit：verification/M2-PROD-DETECT-3/**（probe + raw + README）+ Task 回填 + 本 Handoff
-- task record commit：frontmatter `delivery_head`→证据 commit、`status`→`in_review`
+- `46d20842` evidence：verification/M2-PROD-DETECT-3/**（probe + raw + README）+ Task 回填 + 本 Handoff
+- `9bcfd969` hygiene（raw 日志 LF 规范化 + EOF 空行剥离；探针脚本写 LF；内容不变；`git diff --check 46f079e8..HEAD` EXIT=0 恢复）+ task record（frontmatter `delivery_head`→tip、`status`→`in_review`，doc-only，随本 tip 在库）
 
 ## 接收方式
 

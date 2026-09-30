@@ -12,7 +12,7 @@ depends_on: [M2-PROD-DETECT-2]
 base_commit: 095e314dad490781ec5d8c1b5b88d53ae0b5d39c
 branch: agent/zcode/M2-PROD-DETECT-3
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-3-zcode
-delivery_head: 46d20842
+delivery_head: 9bcfd969
 ---
 
 # M2-PROD-DETECT-3：core.detect 命令面扩展 + frozen detect 端到端验证
