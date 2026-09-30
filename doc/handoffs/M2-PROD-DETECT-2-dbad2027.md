@@ -109,7 +109,8 @@ DSH r2 定点复审（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-
 - `1c0bc399` hygiene（tauri-build-console.log EOF 空行剥离；内容不变）
 - `a48dbfbd` **集成修正主体（DSH r2 N1-N6 闭合）**：N1 警告文本 join 修复+整行布局断言、N3 rt_detr_v2 闭包钉死、N4 usage 注释、N5 措辞、N2 Task 数字回填（本轮实测）、Handoff「集成修正记录」节、release-notes 本轮数字；含 r2 时点证据归档 `raw-r2/`（本 commit 的 src/spec 即本轮重建输入——构建时工作树状态与之一致，其后未再触碰 `src/`/`packaging/`）
 - 本轮证据 commit `f8a1ee8f`（`raw/` 全量重跑证据：build/tauri console、GATE、探针 L1-L4、pytest tail、pyz listing、`installed-weights-sha256.txt`（N6）、warn 四文件+CLASSIFICATION 复跑、probe results JSON；Task frontmatter delivery_head → `a48dbfbd`、status → integration_fix_delivered）
-- `b34aa4d7` + `01892dfc` hygiene（探针 raw 日志 LF 规范化 + EOF 空行剥离；内容不变，`git diff --check f79203eb..HEAD` EXIT=0 恢复）；**分支 tip=`01892dfc`**
+- `b34aa4d7` + `01892dfc` hygiene（探针 raw 日志 LF 规范化 + EOF 空行剥离；内容不变，`git diff --check f79203eb..HEAD` EXIT=0 恢复）
+- `d5f8b8dd` handoff sync（本提交列表补记 hygiene 与 tip；doc-only）；**分支 tip=`d5f8b8dd`**
 
 ## 接收方式（集成修正后：等待编排会话 merge）
 
