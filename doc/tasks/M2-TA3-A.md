@@ -124,6 +124,6 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- 交付 head：`319a3036`（分支 `agent/zcode/M2-TA3-A-E2E-SMOKE`，claim 1328a766，base=bebcfcde）。amend 轨迹：首commit `b94ebe87`→`319a3036`（仅 raw 日志头对齐交付 head 重生成，无代码/数据变化）。
+- 交付 head：`dc2b9aca`（分支 `agent/zcode/M2-TA3-A-E2E-SMOKE`，claim 1328a766，base=bebcfcde）。amend 轨迹：首commit `b94ebe87`→`319a3036`（仅 raw 日志头对齐交付 head 重生成）→`dc2b9aca`（Task 补披露行）。代码/数据内容自 `b94ebe87` 起零变化。
 - Handoff：`doc/handoffs/M2-TA3-A-1328a76.md`。Review：待派发（DSH 非作者静态）。
 - 实际测试：见 §测试要求 与 `verification/M2-TA3-A/`（summaries 7 份 JSON + raw 5 份日志 + artifacts 5 份 PNG[gitignored]）。
