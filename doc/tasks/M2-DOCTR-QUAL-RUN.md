@@ -11,7 +11,7 @@ depends_on: []
 base_commit: 5b3a477a371a662288998f86d23ae56439179524
 branch: agent/zcode/M2-DOCTR-QUAL-RUN
 worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-RUN-zcode
-integration_commit: null
+integration_commit: e8c9c120a5bb3c71ab3f41c32b4985f7578aef61
 ---
 
 # M2-DOCTR-QUAL-RUN：Real docTR 正式 qualification run
@@ -63,7 +63,12 @@ AC5 owner 自评注记：除上述范围外，另有一个已披露的契约适�
 - 风险：预期结果为 **FAIL**（首跑 Recall ≤0.48 << 0.92）——这正是正式结论，触发"调参/换模型候选流程"，不得为凑 PASS 调整口径或数据。**已按预期发生**（正式 Recall 0.4776，Formal Result: FAIL），候选流程建议已入报告 §7。
 - 阻塞：无。
 
-## 交付与运行记录
+## 交付与运行记录（终态）
+
+- **正式结论（Formal Result: FAIL）**：Gate（block_coverage，生产 pad 6px）：Recall **0.4776** < 0.92 **FAIL**、Mean coverage 0.7531 PASS、severe 0.0385 PASS；Precision 0.1250=受污染观测下界（非 Gate）。附报：pad 抵消 Recall 0.2628、block_strict 0.4515、db_resnet50 0.6085、raw_strict 0.1941。
+- **集成（2026-09-30，Codex 代行）**：merge=`e8c9c120`；[integration record](../../verification/M2-DOCTR-QUAL/qualification/integration-record/integration.md)、[正式报告](../../verification/M2-DOCTR-QUAL/qualification/qualification-report.md)（含 C1-C5 候选流程建议）。
+- Review：DSH r1 APPROVED_WITH_MINOR_ISSUES（[报告](../../doc/reviews/M2-DOCTR-QUAL-RUN-eb01cd76-dsh-r1.md)）；处置：P1-1 接受 f9894184（集成裁定）、P2-1 312→314、P3-1 +9→+5、P3-2/P3-3 落字。
+- 下一 Task 候选（须另行释放）：C1 GT 盲区人工校准（需用户/授权标注者参与）；C2 FAST 阈值扫描；C3 DBNet 评估（Hold）；C4 manga 域检测器（C1 后裁决）。
 
 - Handoff：[M2-DOCTR-QUAL-RUN-f989418](../../doc/handoffs/M2-DOCTR-QUAL-RUN-f989418.md)（delivery_head=实现提交 `3b9cf180`，正式跑执行 HEAD=`f9894184`）。Review：待派发 DeepSeek Harness（非作者静态）。实际测试：上表，2026-09-30。
 - 提交链：claim `6384c807` → 契约适配 `f9894184`（已披露）→ 实现产物 `3b9cf180` → 本回填。
