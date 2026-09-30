@@ -2,7 +2,8 @@
 id: M2-DOCTR-QUAL-C1
 title: "GT 盲区抽检型校准审计（C4 结论真实达标确认；用户裁决释放 2026-09-30）"
 kind: acceptance
-status: in_progress
+status: WAITING_USER_LABELING
+awaiting: user labeling (phase-2)
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode（工具/清单/预览/汇总）；**人工判定=用户本人（标注者）**——agent 不代做人工分类
@@ -64,10 +65,10 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C1-zcode
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 导出 | eval_detection_manga.py --export-frames ... --out spot-audit/frames-export.json | C4 venv + 权重 | RUN： | |
-| AC2 清单 | 抽样脚本（种子 20260930）→ 6 层清单 + 重生成一致自检 | 导出数据 | RUN： | |
-| AC3 预览/工作表 | 预览图生成 + 工作表模板 | 清单 | RUN： | |
-| AC4 R7 | 复现证据文件 + raw log 归档 | — | RUN： | |
+| AC1 导出 | eval_detection_manga.py --export-frames ... --export-pairs ... --out spot-audit/data/frames-rerun.json | C4 venv + 权重 | RUN 2026-09-30：全量 511 region cuda conf 0.5 EXIT=0 elapsed=21.7s；rerun vs 正式 JSON 逐字段（排除 generated_at/elapsed_seconds/reproduce_command/task）**0 diff**（summary/per_region/candidate/manifest_sha256 全等）；行为不变性：--limit 8 带/不带 flag 两遍 out JSON 0 diff、stdout 仅多 2 行 export 行 | spot-audit/repro-evidence.md §3/§4；raw log 外部 `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C1/logs/export-rerun-stdout.txt` |
+| AC2 清单 | build_spot_audit_sample.py（种子 20260930）→ 6 层清单 + 重生成一致自检 | 导出数据 | RUN 2026-09-30：EXIT=0；分母三源 fail-closed 核对全一致（A1=6、A2=2 region/4 框、B1=78/49、B2=30/23、D=78）；**C 层实测 2 对 <20 → fallback 全查触发（协议内）**；50 单元；确定性三重验证（--self-check 同进程重建 + 同参数跨进程重跑 + 异目录重跑）三文件 SHA-256 全部逐字节一致 | spot-audit/spot-audit-sample.json（含 b_layer_stratification_N7 十分位明细）、repro-evidence.md §5/§6 |
+| AC3 预览/工作表 | 预览图生成 + 工作表模板 | 清单 | RUN 2026-09-30：50 张裁剪预览图（GT 绿框/检测红框/单元标签）落 gitignored 外部 `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C1/previews/`；labeling-worksheet.csv 50 行，verdict/rationale 列**全部为空**（agent 不预填）；README 判定指引入库 | spot-audit/labeling-worksheet.csv、spot-audit/README.md |
+| AC4 R7 | 复现证据文件 + raw log 归档 | — | RUN 2026-09-30：repro-evidence.md 入库——C4 三个正式 JSON sha256、集成两次复跑 0 diff 摘引、本次导出重跑命令+EXIT+elapsed+stdout 摘要（raw 全文外部路径） | spot-audit/repro-evidence.md |
 
 ## 依赖、风险与阻塞
 
@@ -77,4 +78,9 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C1-zcode
 
 ## 交付与运行记录（终态）
 
-- （待 Owner 交付后回填）
+- **阶段一（agent 全自动）交付完成 2026-09-30**，交付链：claim `efdc07a0` → implement `7c6aa234` → handoff（见 doc/handoffs/）。
+- AC1-AC4 全部 RUN（见上表）；AC5 范围纪律：diff 仅 `experiments/M2-DOCTR-QUAL/**`（eval_detection_manga.py flag 守卫扩展 + 新增 build_spot_audit_sample.py）+ `verification/M2-DOCTR-QUAL/spot-audit/**` + 本 Task + Handoff + STATUS 流程登记行（AC 尾条明文要求的等待状态登记）；已集成文件与 C4 三个正式 JSON 零改动（专项 diff 为空）。
+- 分母核对（§7.2 预期 vs 实测，三源 fail-closed 交叉）：A1 6/6、A2 2 region 4 框/4 框、B1 78/78、B2 30/30、D 78/78 全一致；**C 层实测 2 对（882 匹配对中 coverage∈[0.5,0.7)），<20 → fallback 全查触发**，C4 报告风险①（meanCov 0.9965 → 贴合对极少）如预期兑现。
+- 清单单元总数 50：A1=6（全查）、A2=2（全查）、B1=15/78（conf 十分位 largest-remainder 分层）、B2=15/30（同）、C=2/2（fallback 全查）、D=10/78（随机）；随机种子 20260930，重生成三重逐字节一致。
+- 诚实登记：fn=35 = A1 6 + A2 GT 2 + **FN-partial 27**（23 个部分命中 region 的残差 GT 框，冻结 6 层协议不含该层，frames 导出标记留证不入清单）；A2 的 4 个检出框按冻结分母同时计入 B1 78 框（框级重叠），抽样命中 B1-U11（K08 r3）已在单元 note 标注。
+- **阶段二启动条件**：用户在会话中交付填写完毕的 `verification/M2-DOCTR-QUAL/spot-audit/labeling-worksheet.csv`（判定指引见 spot-audit/README.md）。Agent 在此之前不做任何汇总，也绝不在工作表填入任何判定。
