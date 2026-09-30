@@ -10,6 +10,8 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权 2026-09-28/30）
 depends_on: [M2-PROD-DETECT-1]
 base_commit: 1d876ef7
+delivery_base: f79203eb
+delivery_head: 1cf731ca
 branch: agent/zcode/M2-PROD-DETECT-2
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode
 ---
