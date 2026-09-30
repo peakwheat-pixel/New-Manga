@@ -1,0 +1,13 @@
+=== shell: Git Bash (win32) / cwd: DOC-FIX-STALE-COMMENTS-zcode worktree / AC4 scope proof ===
+$ git rev-parse HEAD
+74022cdc20a9afb44395a2cc5a954f7134aeb385
+
+$ git diff --name-status 4ed3c044..HEAD   (release commit .. tip, product files staged separately)
+M	doc/tasks/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS.md
+EXIT=0
+
+$ git diff --check 4ed3c044   (worktree vs release commit)
+EXIT=0
+
+$ git diff --name-only 4ed3c044 | grep -vE '^(src/bootstrap/acceptance_bridge.py|experiments/M2-TA3-A/run_smoke.py|doc/tasks/DOC-FIX|verification/DOC-FIX|doc/handoffs/DOC-FIX)'   (unexpected product paths; empty = OK)
+grep EXIT=1 (1 = zero unexpected)

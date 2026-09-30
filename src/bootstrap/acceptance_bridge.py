@@ -335,9 +335,11 @@ class AcceptanceBridge:
         plan/execute pair completes the run. The ``resume_blocked`` branch
         below is kept as a fail-closed safety net for the region-less case;
         it is NOT exercised by the released acceptance evidence (DSH r1
-        F-007), and the region-less detect→backfill chain has a known
-        production planner gap (Handoff §风险与遗留) that must not be
-        reported as covered by this Task. Both phases are the production
+        F-007). The historical region-less detect→backfill ``LOCK_CHANGED``
+        gap (M2-AC1 handoff §风险与遗留) was fixed by M2-P1 (merge
+        ``a174fb9c``) and verified closed by DIAG-M2-LOCK-CHANGED-REPRO-002
+        (merge ``1faf6c1b``: pre-fix anchor reproduces, HEAD does not).
+        Both phases are the production
         service API — no planner logic is reimplemented here.
         """
         state = self._require_state()
