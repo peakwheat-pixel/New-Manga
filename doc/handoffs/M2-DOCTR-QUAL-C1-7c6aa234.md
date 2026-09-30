@@ -4,7 +4,7 @@ author: ZCode（阶段一 Owner）
 recipient: 用户本人（阶段二人工判定）→ 其后 ZCode 汇总、DSH 非作者 Review、代行 Codex 集成
 base_commit: 0d4d07a9
 delivery_head: 7c6aa234
-status: waiting_user_labeling
+status: phase-2 delivered, awaiting DSH non-author review
 ---
 
 # Handoff：M2-DOCTR-QUAL-C1 阶段一（agent 全自动交付）→ 阶段二等待用户人工判定
@@ -73,3 +73,39 @@ status: waiting_user_labeling
 - 参数：conf 0.5、生产 pad（strip_block_pad=0）、生产 merge（MERGE_PAD_PX=6）、iou_match_threshold/severe 定义取冻结 thresholds.json；抽样种子 `20260930`（每层子种子 `f"{SEED}/{layer}[…]"`）。
 - 运行次数：全量导出重跑 ×1（EXIT=0，21.7s）；冒烟 ×2；清单生成 ×3（一致性验证）。
 - 原始结果：`spot-audit/data/{frames-rerun,frames-export,pairs-export}.json`（与 C4 正式 JSON 0 diff 同源证明见 repro-evidence.md §3）。
+
+---
+
+# 阶段二（2026-09-30 追加）：人工判定汇总完成 → 待 DSH 非作者 Review
+
+## 审核结果
+
+用户 50/50 单元逐条人工审核完成（判定权威=用户本人）。执行流程：AI 初判预填（GLM-5.3-flash 视觉直读，草稿留存 `labeling-worksheet-ai-draft.csv` 作对照证据）→ 用户逐单元看图审核 → 编排会话写入正式工作表。**47 确认**（rationale 保留 `[AI]` 前缀）+ **3 人工修订**（`[人工修订]` 前缀，全部朝更严格方向）；用户此前独立判定过的 4 张（A1-U05/A1-U06/A2-U02/B1-U01）与 AI 初判 4/4 一致。流程差异（阶段一契约原定「工作表留空」）已在报告 §2 如实披露，人工审核为最终判定权威。
+
+## 3 处人工修订明细
+
+| 单元 | AI 初判 | 用户终判 | 修订依据（rationale 摘要） |
+|---|---|---|---|
+| B1-U10（K07 r127） | 盲区 FP | **模型幻觉** | T 恤红色标签上无具体形状的小字，判为装饰性假字而非真实印刷文字 |
+| C-U01（K01 r35，coverage 0.5568） | 真匹配 | **粒度不达标** | 检出完整盖住标题行「ART X vol.2」，但 GT 含下方两行小字，检出只盖 GT 的 56%——贴合非伪造，切分不完整 |
+| C-U02（K03 r91，coverage 0.5160） | 真匹配 | **粒度不达标** | GT 两段真实对白，检出只盖上半段（52%），下面画面对话未识别 |
+
+## 汇总统计（脚本 `summarize_c1_spot_audit.py` 计算，EXIT=0）
+
+终版分布（n=50）：盲区 FP 26 / 伪 GT 噪声 7 / GT 盲区帧 5 / 一致帧 5 / 模型幻觉 4 / 粒度不达标 3；**「真实文字漏检」=0**。三条校准结论：①Recall 分母 8 未匹配 GT 全查=7 噪声+1 粒度+0 真实漏检→0.9618 对真实对白是低估（修正估计 0.9692–0.9703）；②Precision 0.8909 确认为污染下界（抽检 30 FP 中 26 个为 GT 盲区真实文字、4 个真幻觉）；③D 层 GT 盲区率 5/10（全部 SFX/屏幕小字，无一对白）。C 层 2/2 粒度不达标——同源性疑虑收窄为「贴合非伪造，但低 coverage 匹配存在系统性切分差异（方向=模型偏细粒度）」。Gate PASS 真实世界重解读：**PASS=对真实对白文字检测能力的保守下界**；反方向限定（粒度短板 3 处、装饰图案误检外推 ~14、n=50 单一来源等 6 条）见报告 §5.2。
+
+## 报告指针
+
+- 核心交付：`verification/M2-DOCTR-QUAL/spot-audit/c1-spot-audit-report.md`
+- 正式判定表：`verification/M2-DOCTR-QUAL/spot-audit/labeling-worksheet.csv`（用户审核后版）；对照证据：同目录 `labeling-worksheet-ai-draft.csv`
+- 汇总脚本：同目录 `summarize_c1_spot_audit.py`（复现：`python verification/M2-DOCTR-QUAL/spot-audit/summarize_c1_spot_audit.py`，EXIT=0 含四项纪律校验）
+
+## 下一步（DSH 非作者 Review → 代行 Codex 集成）
+
+- Task ID / 标题：M2-DOCTR-QUAL-C1 阶段二 Review 与集成（同一 Task，状态已置 `in_review`）
+- 推荐 Agent / Reviewer：Reviewer=DeepSeek Harness（非作者静态审查；ZCode 为汇总作者，不得自审）；Integrator=代行 Codex
+- 推荐原因与前置依赖：阶段二汇总已交付且脚本自检 EXIT=0；Review 对象=报告统计口径、三条校准结论的计算正确性、方法论披露与 C4 只读产物的零触碰
+- Recovery point：仓库 `G:/CODEX/New Manga`；branch=`agent/zcode/M2-DOCTR-QUAL-C1`；worktree=`G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C1-zcode`；delivery head=阶段二 commit（见 git log）
+- 允许修改路径：`verification/M2-DOCTR-QUAL/spot-audit/**`、`doc/tasks/M2-DOCTR-QUAL-C1.md`、本 Handoff（Review 意见按协作协议走独立 Review 产物）
+- 禁止范围与新增授权条件：不得改动用户判定的 verdict/rationale 内容；不得改动 C4 三个正式 JSON 与 c4-manga-domain-report.md、license-evidence.md；不得改动阶段一清单/预览引用/repro-evidence；STATUS 由编排会话统一维护
+- 可直接转发给 DSH 的指令：「对 M2-DOCTR-QUAL-C1 阶段二做非作者 Review：读 doc/tasks/M2-DOCTR-QUAL-C1.md（AC6）、verification/M2-DOCTR-QUAL/spot-audit/c1-spot-audit-report.md，核对报告统计与 labeling-worksheet.csv 一致性（重跑 summarize_c1_spot_audit.py 应 EXIT=0 且数字可复现）、三条校准结论计算、C 层与同源性表述的诚实性、反方向限定完整性；产出 Review 报告后交代行 Codex 集成」

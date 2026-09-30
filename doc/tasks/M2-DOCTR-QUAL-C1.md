@@ -2,8 +2,8 @@
 id: M2-DOCTR-QUAL-C1
 title: "GT 盲区抽检型校准审计（C4 结论真实达标确认；用户裁决释放 2026-09-30）"
 kind: acceptance
-status: WAITING_USER_LABELING
-awaiting: user labeling (phase-2)
+status: in_review
+awaiting: DSH non-author review (phase-2 aggregation delivered)
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode（工具/清单/预览/汇总）；**人工判定=用户本人（标注者）**——agent 不代做人工分类
@@ -50,7 +50,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C1-zcode
 - [ ] AC3（预览图+工作表）：每个抽样单元一张裁剪预览图（region 裁剪 + GT 绿框 + 检测红框，外部 gitignored 路径，清单内引用文件名）；人工判定工作表（CSV：case_id、region_index、layer、layer 单元描述、预览图文件名、分类判定[留空]、依据[留空]）入库 `spot-audit/`；用户判定指引（怎么看图、枚举怎么选）写入工作表同目录 README。
 - [ ] AC4（R7 复现证据归档）：`spot-audit/repro-evidence.md`——C4 正式 JSON sha256、集成两次复跑 0 diff 数据、本 Task 带框级导出的重跑 raw stdout/EXIT 日志归档（外部 raw + committed 摘要）。
 - [ ] AC5（范围纪律）：diff 仅 `experiments/M2-DOCTR-QUAL/**`（eval_detection_manga.py 扩展 + 新增抽样脚本）+ `verification/M2-DOCTR-QUAL/spot-audit/**` + 本 Task + Handoff；生产路径与已集成文件零改动。
-- [ ] AC6（阶段二，用户人工）：用户交付判定完成的工作表；Owner 汇总出 `c1-spot-audit-report.md`（分层统计、盲区率校准、C4 Gate 结论真实目标重解读）；DSH Review + 集成。
+- [x] AC6（阶段二，用户人工）：用户交付判定完成的工作表；Owner 汇总出 `c1-spot-audit-report.md`（分层统计、盲区率校准、C4 Gate 结论真实目标重解读）；DSH Review + 集成。（2026-09-30：用户 50/50 审核完成（47 确认 + 3 人工修订），汇总报告已交付；DSH Review 与集成进行中，见 status=in_review）
 - [ ] 阶段一交付后 Task 状态置 `WAITING_USER_LABELING`（非 done、非 in_review），并在 STATUS 登记"等待用户人工判定"。
 
 ## 禁止范围
@@ -69,6 +69,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C1-zcode
 | AC2 清单 | build_spot_audit_sample.py（种子 20260930）→ 6 层清单 + 重生成一致自检 | 导出数据 | RUN 2026-09-30：EXIT=0；分母三源 fail-closed 核对全一致（A1=6、A2=2 region/4 框、B1=78/49、B2=30/23、D=78）；**C 层实测 2 对 <20 → fallback 全查触发（协议内）**；50 单元；确定性三重验证（--self-check 同进程重建 + 同参数跨进程重跑 + 异目录重跑）三文件 SHA-256 全部逐字节一致 | spot-audit/spot-audit-sample.json（含 b_layer_stratification_N7 十分位明细）、repro-evidence.md §5/§6 |
 | AC3 预览/工作表 | 预览图生成 + 工作表模板 | 清单 | RUN 2026-09-30：50 张裁剪预览图（GT 绿框/检测红框/单元标签）落 gitignored 外部 `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C1/previews/`；labeling-worksheet.csv 50 行，verdict/rationale 列**全部为空**（agent 不预填）；README 判定指引入库 | spot-audit/labeling-worksheet.csv、spot-audit/README.md |
 | AC4 R7 | 复现证据文件 + raw log 归档 | — | RUN 2026-09-30：repro-evidence.md 入库——C4 三个正式 JSON sha256、集成两次复跑 0 diff 摘引、本次导出重跑命令+EXIT+elapsed+stdout 摘要（raw 全文外部路径） | spot-audit/repro-evidence.md |
+| AC6 阶段二汇总 | summarize_c1_spot_audit.py（从用户审核后正式 CSV 重算分层统计 + 枚举/配额纪律校验） | 用户交付填写完毕的工作表 | RUN 2026-09-30：用户 50/50 人工审核（**47 确认 + 3 人工修订**，全部朝更严格方向：B1-U10 盲区FP→模型幻觉、C-U01/C-U02 真匹配→粒度不达标）；脚本 EXIT=0（50 行/分层枚举/冻结配额/draft-diff 四项校验通过）；终版分布：盲区 FP 26 / 伪 GT 噪声 7 / GT 盲区 5 / 一致 5 / 模型幻觉 4 / 粒度不达标 3，**真实文字漏检=0**；三条校准结论：Recall 分母含 7 噪声（修正估计 0.9692–0.9703，真实漏检 0）、Precision 0.8909 确认下界（抽检 FP 86.7% 为 GT 盲区真实文字，保守修正 0.9149）、D 层 GT 盲区率 5/10（全部非对白） | spot-audit/c1-spot-audit-report.md、labeling-worksheet.csv（正式版）、labeling-worksheet-ai-draft.csv（对照证据）、summarize_c1_spot_audit.py |
 
 ## 依赖、风险与阻塞
 
@@ -84,3 +85,4 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C1-zcode
 - 清单单元总数 50：A1=6（全查）、A2=2（全查）、B1=15/78（conf 十分位 largest-remainder 分层）、B2=15/30（同）、C=2/2（fallback 全查）、D=10/78（随机）；随机种子 20260930，重生成三重逐字节一致。
 - 诚实登记：fn=35 = A1 6 + A2 GT 2 + **FN-partial 27**（23 个部分命中 region 的残差 GT 框，冻结 6 层协议不含该层，frames 导出标记留证不入清单）；A2 的 4 个检出框按冻结分母同时计入 B1 78 框（框级重叠），抽样命中 B1-U11（K08 r3）已在单元 note 标注。
 - **阶段二启动条件**：用户在会话中交付填写完毕的 `verification/M2-DOCTR-QUAL/spot-audit/labeling-worksheet.csv`（判定指引见 spot-audit/README.md）。Agent 在此之前不做任何汇总，也绝不在工作表填入任何判定。
+- **阶段二（用户人工 + Owner 汇总）交付完成 2026-09-30**：用户 50/50 逐单元人工审核（流程=AI 初判预填 → 用户逐条审核修订 → 编排会话写入正式表，方法论披露见报告 §2）；47 确认 + 3 人工修订（B1-U10 盲区FP→模型幻觉、C-U01/C-U02 真匹配→粒度不达标，全部朝更严格方向）。Owner 汇总脚本 `summarize_c1_spot_audit.py` EXIT=0（统计全部脚本计算非手抄），报告 `c1-spot-audit-report.md` 交付：三条校准结论（Recall 分母 8 单元全查 0 真实漏检→0.9618 为低估；Precision 0.8909 确认下界→抽检 FP 86.7% 为 GT 盲区真实文字；D 层 GT 盲区率 5/10 全部非对白）+ C 层诚实呈现（2/2 粒度不达标，同源性疑虑收窄为「系统性切分粒度差异，方向=模型偏细」）+ Gate PASS 真实世界重解读（PASS=真实能力的保守下界）+ 反方向限定（粒度短板、装饰图案误检、n=50 单一来源等 6 条）。Task 状态置 `in_review`，待 DSH 非作者 Review 与集成。
