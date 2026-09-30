@@ -127,7 +127,9 @@ integration_commit: null
 ## Review 轨迹
 
 - DSH r1（非作者静态，交付 head=dc2b9aca）：`approved_with_conditions`——1×P1（证据链未锚定交付版本/probe 不可复跑）+2×P2（K11 wall_s 失真 113.0→100.76；Run1「整页链」措辞易误读为覆盖全部 region）+3×P3（94→92 计数、断言判别力弱化、cosmetic/README 漂移登记）。核心六核对点全部独立成立（含主仓库对照证明回填 diff 严格 33 处、K11 PNG 像素级复算一致）。
-- r1 返修（本 commit，仅 doc/verification/test_catalog 单 hunk）：P1-1 → `raw/00-provenance.txt` 新增（原始日志正文不重写）；P2-1/P2-2/P3-1 → Task/Handoff 修正；P3-2 → 断言改显式字面快照（82 passed 保持）；P3-3 → cosmetic 项登记 L-7 不改代码、L-2 扩为 README:7,26-29、L-6 新增。
+- DSH r2（限定复核，head=c522729e）：`approved_with_conditions`——r1 六条件全部 closed；新 P2-1（ac3 仍锚定旧断言）+3×P3（Handoff 遗留范围、local_asset_inventory 漂移、provenance/Task 头行措辞张力）。报告归档 `doc/reviews/M2-TA3-A-dc2b9aca-dsh-r1.md`、`doc/reviews/M2-TA3-A-c522729e-dsh-r2.md`。
+- r2 闭合 commit `49137547`：ac3 于修复后断言重捕获（82 passed EXIT=0）；三处文字闭合；provenance 重建为 sha256sum -c 格式（15/15 OK）。
+- r1 返修（commit c522729e，仅 doc/verification/test_catalog 单 hunk）：P1-1 → `raw/00-provenance.txt` 新增（原始日志正文不重写）；P2-1/P2-2/P3-1 → Task/Handoff 修正；P3-2 → 断言改显式字面快照（82 passed 保持）；P3-3 → cosmetic 项登记 L-7 不改代码、L-2 扩为 README:7,26-29、L-6 新增。
 
 ## 交付与运行记录
 
