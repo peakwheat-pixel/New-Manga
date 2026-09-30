@@ -2,7 +2,7 @@
 id: M2-PROD-DETECT-1
 title: "生产检测器集成第一刀：manga 域 RT-DETR-v2 provider + 装配 backend 选择（用户「继续」推进 2026-09-30）"
 kind: feature
-status: ready
+status: in_progress
 approval: user_directive_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
