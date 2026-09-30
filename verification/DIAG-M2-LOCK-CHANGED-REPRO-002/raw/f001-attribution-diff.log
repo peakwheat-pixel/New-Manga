@@ -16,7 +16,7 @@ index 42306d9a..653cd9ac 100644
 @@ -924,6 +924,18 @@ class PipelineService:
      ) -> None:
          """Bind the task's regionless units to the first detected Region.
- 
+
 +        Invariant:
 +            PlanUnit.target_id ≡ 该步骤的写目标 (Region 步骤 ⇒ Region id; Page 步骤 ⇒ Page id).
 +            _record_step_attempt 以 target_id 作为向 catalog 请求 current 快照的键。
@@ -49,3 +49,5 @@ index 42306d9a..653cd9ac 100644
 EXIT=0
 
 --- attribution note: src/application/export/service.py = M2-AC1 Reader export lineage (read-side export, not on the detect->backfill->ocr write-guard path); src/bootstrap/core_service.py = M2-AC1 stub decoder (bootstrap seam, not planner). All other d268a170..HEAD deltas are tests/apps/docs/experiments and cannot affect planner behaviour. ===
+
+--- provenance note: whitespace-only normalization applied to this generated diff log (trailing-space-only lines from raw git diff context output flattened to empty lines, 2026-09-30 r2; content otherwise byte-identical). ===
