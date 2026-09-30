@@ -2,8 +2,10 @@
 id: M2-DOCTR-QUAL-C4
 title: "manga 域检测器评估（C1-C5 候选流程之 C4；用户裁决释放 2026-09-30）"
 kind: experiment
-status: in_progress
+status: in_review
 claim: ZCode 2026-09-30 at delivery base 2e9f564d (branch agent/zcode/M2-DOCTR-QUAL-C4, worktree M2-DOCTR-QUAL-C4-zcode); scope per frozen AC1-AC5
+delivery_head: 19d1772e2184c1c9286bc3c5f259642a19f8a6f1
+handoff: doc/handoffs/M2-DOCTR-QUAL-C4-19d1772e.md
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -39,11 +41,11 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C4-zcode
 
 ## Acceptance Criteria
 
-- [ ] AC1（选型+受控权重）：至少一个候选完成许可核查、权重获取、SHA-256 pin 登记；或如实交付「全部候选不可用」的 fail-closed 报告（同样满足本 AC）。
-- [ ] AC2（适配评测）：外部模型输出 → 文本框映射 → 生产合并（pad 6px）→ 同一评分管线，在 seg05 全量 511 regions 上跑通；新评测入口为**新增独立脚本**（如 `eval_detection_manga.py`），`eval_detection.py` 等已集成文件零改动（如确需改动即停下登记，不得擅自改）。
-- [ ] AC3（对照报告）：`verification/M2-DOCTR-QUAL/qualification/c4-manga-domain-report.md`——Gate 三项逐项 PASS/FAIL、与 fast_base/db_resnet50 正式结果对照、pad 抵消附报、GT 盲区前提下的「能否逼近 0.92 Gate」可复核结论（含对 C1 必要性/C4 fine-tune 主线是否值得投入的明确建议）。
-- [ ] AC4（可复现）：报告引用的全部 results JSON 带 manifest_sha256 指纹；复现命令入报告/README；GPU 跑不了时的降级路径（CPU）如实标注。
-- [ ] AC5（范围纪律）：diff 仅 `experiments/M2-DOCTR-QUAL/**` 新增文件 + `verification/M2-DOCTR-QUAL/qualification/**` + 本 Task + Handoff；生产 `src/**`、`requirements*.txt`、`apps/**`、`packaging/**`、contracts 零改动。
+- [x] AC1（选型+受控权重）：至少一个候选完成许可核查、权重获取、SHA-256 pin 登记；或如实交付「全部候选不可用」的 fail-closed 报告（同样满足本 AC）。
+- [x] AC2（适配评测）：外部模型输出 → 文本框映射 → 生产合并（pad 6px）→ 同一评分管线，在 seg05 全量 511 regions 上跑通；新评测入口为**新增独立脚本**（如 `eval_detection_manga.py`），`eval_detection.py` 等已集成文件零改动（如确需改动即停下登记，不得擅自改）。
+- [x] AC3（对照报告）：`verification/M2-DOCTR-QUAL/qualification/c4-manga-domain-report.md`——Gate 三项逐项 PASS/FAIL、与 fast_base/db_resnet50 正式结果对照、pad 抵消附报、GT 盲区前提下的「能否逼近 0.92 Gate」可复核结论（含对 C1 必要性/C4 fine-tune 主线是否值得投入的明确建议）。
+- [x] AC4（可复现）：报告引用的全部 results JSON 带 manifest_sha256 指纹；复现命令入报告/README；GPU 跑不了时的降级路径（CPU）如实标注。
+- [x] AC5（范围纪律）：diff 仅 `experiments/M2-DOCTR-QUAL/**` 新增文件 + `verification/M2-DOCTR-QUAL/qualification/**` + 本 Task + Handoff；生产 `src/**`、`requirements*.txt`、`apps/**`、`packaging/**`、contracts 零改动。
 
 ## 禁止范围
 
@@ -56,10 +58,10 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C4-zcode
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 选型+权重 | 许可核查记录 + sha256sum + 加载冒烟 | 网络 | RUN： | |
-| AC2 全量评测 | 新评测入口 --device cuda（seg05 全量 511 regions） | 隔离 venv + 权重 | RUN： | |
-| AC3 对照 | pad 抵消变体 + 报告汇总 | GPU venv | RUN： | |
-| AC4 复现 | 报告复现命令重跑抽样核验 | — | RUN： | |
+| AC1 选型+权重 | 许可核查记录 + sha256sum + 加载冒烟 | 网络 | RUN（2026-09-30）：ogkalu/comic-text-and-bubble-detector 采用（Apache-2.0；GitHub API 核实 dmMaze 为 GPL-3.0 备选未采用）；`model.safetensors` sha256 `037930a8...3df80d`（171,543,900 B，HF API 元数据核对一致）+ config/preprocessor 双 pin；隔离 venv 加载 + 单 region 推理冒烟 EXIT=0，首检框与 K01 R1 GT 重合 | Handoff `doc/handoffs/M2-DOCTR-QUAL-C4-19d1772e.md` §选型表/§权重；报告 `c4-manga-domain-report.md` §1 |
+| AC2 全量评测 | 新评测入口 --device cuda（seg05 全量 511 regions） | 隔离 venv + 权重 | RUN（EXIT=0，38.9 s，conf 0.5，511/511 regions）：**block_coverage Recall 0.9618（882/917）PASS / MeanCov 0.9965 PASS / severe 0.0000 PASS**；precision 0.8909（污染下界，非 Gate）；bubble 类丢弃 903；已集成文件零改动（import 复用） | `verification/M2-DOCTR-QUAL/qualification/results-formal-manga_rt_detr_v2-cuda-seg05.json`（manifest_sha256 `4f16425a...` 与基线一致） |
+| AC3 对照 | pad 抵消变体 + 报告汇总 | GPU venv | RUN（均 EXIT=0）：pad 抵消（strip 6）Recall 0.9597 / meanCov 0.9582 / severe 0（与 docTR 去 pad 崩溃行为相反，框风格贴合伪 GT 证据）；conf 0.3 敏感性 Recall 0.9771；报告 Gate 三项逐项判定 + 基线对照 + 结论（Gate **PASS**，C4 fine-tune 主线不值得投入；C1 缩减为抽检型审计） | `results-formal-manga_rt_detr_v2-cuda-seg05-padoffset.json`、`...-conf03.json`、`c4-manga-domain-report.md` §2/§3/§7 |
+| AC4 复现 | 报告复现命令重跑抽样核验 | — | RUN（EXIT=0）：正式命令 `--limit 24` 重跑，与正式 JSON 前 24 条 per_region 逐字段 0 diff（确定性复现）；三个 results JSON 均带 manifest_sha256 + 权重 sha256 + `reproduce_command`；CPU 降级路径支持但未跑（如实标注，正式结果全为 cuda） | 报告 §8；外部路径 `M2-DOCTR-QUAL-C4/results-repro-check24.json` |
 
 ## 依赖、风险与阻塞
 
@@ -69,4 +71,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C4-zcode
 
 ## 交付与运行记录（终态）
 
-- （待 Owner 交付后回填）
+- 交付（2026-09-30，Owner=ZCode）：commit 链 `ae66fbbd`（claim）→ `19d1772e`（实现：`experiments/M2-DOCTR-QUAL/eval_detection_manga.py` + 3 个 results JSON + 报告）→ handoff/回填 commit。base=`2e9f564d`，delivery_head=`19d1772e`。
+- 正式结果：**Gate 三项全 PASS**（Recall 0.9618 / MeanCov 0.9965 / severe 0.0000，block_coverage 主判定，生产 pad 正式）；对照 fast_base 0.4776 / db_resnet50 0.6085。结论限定（伪 GT 同源性风险 + Precision 污染下界）见报告 §5；建议：C4 fine-tune 主线不投入，C1 缩减为抽检型审计，生产集成另行释放 Task。
+- Handoff：[M2-DOCTR-QUAL-C4-19d1772e](../handoffs/M2-DOCTR-QUAL-C4-19d1772e.md)（status `in_review`，待 DSH 非作者静态 Review）。
+- 权重与环境（gitignored 外部路径）：`G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/`（sha256 pinned）；隔离 venv `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4-gpu-py312`（torch 2.11.0+cu128 / transformers 5.17.0）。
