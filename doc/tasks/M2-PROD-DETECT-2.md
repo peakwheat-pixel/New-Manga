@@ -2,7 +2,7 @@
 id: M2-PROD-DETECT-2
 title: "发布形态检测器运行时/权重分发：ML 栈进 sidecar 闭包 + manga 权重随包（M2-PROD-DETECT-1 遗留 slice①；用户「继续」推进 2026-09-30）"
 kind: feature
-status: ready
+status: in_progress
 approval: user_directive_2026-09-30_continue
 suggested_owner: ZCode
 owner: ZCode
