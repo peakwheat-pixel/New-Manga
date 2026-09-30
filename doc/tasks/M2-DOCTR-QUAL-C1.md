@@ -2,7 +2,7 @@
 id: M2-DOCTR-QUAL-C1
 title: "GT 盲区抽检型校准审计（C4 结论真实达标确认；用户裁决释放 2026-09-30）"
 kind: acceptance
-status: ready
+status: in_progress
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode（工具/清单/预览/汇总）；**人工判定=用户本人（标注者）**——agent 不代做人工分类
