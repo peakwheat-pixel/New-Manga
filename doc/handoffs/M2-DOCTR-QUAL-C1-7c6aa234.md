@@ -99,7 +99,7 @@ status: phase-2 delivered, awaiting DSH non-author review
 
 - 核心交付：`verification/M2-DOCTR-QUAL/spot-audit/c1-spot-audit-report.md`
 - 正式判定表：`verification/M2-DOCTR-QUAL/spot-audit/labeling-worksheet.csv`（用户审核后版）；对照证据：同目录 `labeling-worksheet-ai-draft.csv`
-- 汇总脚本：同目录 `summarize_c1_spot_audit.py`（复现：`python verification/M2-DOCTR-QUAL/spot-audit/summarize_c1_spot_audit.py`，EXIT=0 含四项纪律校验）
+- 汇总脚本：同目录 `summarize_c1_spot_audit.py`（复现：`python verification/M2-DOCTR-QUAL/spot-audit/summarize_c1_spot_audit.py`，EXIT=0 含六项纪律校验（N5 更正：r2 起为六项））
 
 ## 下一步（DSH 非作者 Review → 代行 Codex 集成）
 

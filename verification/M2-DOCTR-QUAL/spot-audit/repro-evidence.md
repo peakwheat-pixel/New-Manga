@@ -79,7 +79,7 @@ committed 产物 SHA-256：
 ```
 deb3814e16f6a178dc9f363382975378231de461c17ea60c4c763df56b493bba  spot-audit-sample.json
 b1ccd6026984c0e6d07b29982cd99456821c0f6e9457b09e8444bcd97beaa673  spot-audit-sample.csv
-96b40e4af7dcb98cf3782e1dc422f7e7691b800dcb7632668160e93641ebb4cf  labeling-worksheet.csv
+96b40e4a（阶段一空表版 hash；正式交付表终版 hash 见 c1-spot-audit-report.md §7：da93f4f9…）f7dcb98cf3782e1dc422f7e7691b800dcb7632668160e93641ebb4cf  labeling-worksheet.csv
 ```
 
 运行日志（外部）：`G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C1/logs/sample-run{1,2,3}-stdout.txt`、`sample-sha-run{1,2,3}.txt`。

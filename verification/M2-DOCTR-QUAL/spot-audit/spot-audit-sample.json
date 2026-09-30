@@ -314,7 +314,7 @@
   },
   "total_units": 50
  },
- "verdict_note": "判定列恒为空：人工判定属阶段二用户本人，agent 不预填（hard discipline）",
+ "verdict_note": "判定列恒为空：人工判定属阶段二用户本人，agent 不预填（hard discipline） [阶段二更新注记 2026-09-30]：判定列已按「AI 预判草稿 → 用户逐条人工审核（用户会话指令授权）→ 编排会话写入」流程填写完毕；本 note 为阶段一冻结文本存档，流程变更已经 DSH r1 R7 核对并登记于 Task 禁止范围条款。",
  "determinism_contract": "same seed + same inputs => byte-identical outputs; payload carries no timestamp and no run-mode metadata; validated by --self-check and by committed run evidence",
  "units": [
   {

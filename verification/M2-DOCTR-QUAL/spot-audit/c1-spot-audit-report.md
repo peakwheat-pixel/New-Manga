@@ -3,12 +3,12 @@
 - Task：[M2-DOCTR-QUAL-C1](../../../doc/tasks/M2-DOCTR-QUAL-C1.md) · 分支 `agent/zcode/M2-DOCTR-QUAL-C1` · 日期 2026-09-30（r1 初版；r2 按 DSH 非作者 Review R1-R14 修订）
 - 判定权威：**用户本人**（50 单元逐条人工审核）；Owner=ZCode（汇总脚本 + 本报告）；Review=DeepSeek Harness（r1：changes_requested，0×P0/4×P1/4×P2/4×P3/2×P4，三条校准结论算术全部 PASS，本版逐条处置）
 - 判定来源：`labeling-worksheet.csv`（用户审核后正式版 + r2 集成澄清 1 行）；方法论对照：`labeling-worksheet-ai-draft.csv`（AI 初判草稿，只读证据）
-- 汇总方式：`summarize_c1_spot_audit.py` 从正式 CSV 计算（本文所有统计数字均为脚本输出，非手抄）；纪律校验含 50 行、分层枚举（含 R1 的 B 层扩展）、冻结配额、worksheet-vs-draft 逐字段 diff、A1/A2 完全划分、R9 逐层更严格映射，本次运行 EXIT=0
+- 汇总方式：`summarize_c1_spot_audit.py` 从正式 CSV 计算（分层与校准数字为脚本输出；盲区 FP 内容构成与 D 层内容构成为按 rationale 人工归类，逐行可核——N3 更正）；纪律校验含 50 行、分层枚举（含 R1 的 B 层扩展）、冻结配额、worksheet-vs-draft 逐字段 diff、A1/A2 完全划分、R9 逐层更严格映射，本次运行 EXIT=0
 - **结论强度裁定（DSH r1 R3）**：本审计流程（AI 初判预填 → 用户逐条审核，单标注者）支撑的是**方向性证据（directional evidence）**，不构成独立双盲校准。下文凡涉及真实世界解读处均按此强度表述。
 
 ## 0. 结论速览
 
-C4 Gate 全 PASS（Recall 0.9618 / MeanCov 0.9965 / severe 0.0）与人工抽检证据**方向一致且相互加强**：可校验范围（A1/A2 两层全查，8/35 个未匹配 GT）内**未观察到**任何一例真实对白文字漏检；冻结口径的 Recall 与 Precision 均与「低估（下界）」方向一致。方向性短板有二：**切分粒度**（4 个判定单元 / 3 处独立位置）与**无语义装饰图案误检**（4/30 抽检 FP）。两者不推翻 Gate 结论，但构成生产集成侧（C4 §7.3）必须带入的已知限制。C4 §5.2「伪 GT 同源性」疑虑在抽检证据下**收窄**：贴合非伪造，但低 coverage 匹配存在系统性切分差异（方向=模型偏细粒度）。
+C4 Gate 全 PASS（Recall 0.9618 / MeanCov 0.9965 / severe 0.0）与人工抽检证据**方向一致**（方向性证据——n=50 抽检、单标注者 + AI 预填流程，见 §2 强度裁定，两证据链非独立）：可校验范围（A1/A2 两层全查，8/35 个未匹配 GT）内**未观察到**任何一例真实对白文字漏检；冻结口径的 Recall 与 Precision 均与「低估（下界）」方向一致。方向性短板有二：**切分粒度**（4 个判定单元 / 3 处独立位置）与**无语义装饰图案误检**（4/30 抽检 FP）。两者不推翻 Gate 结论，但构成生产集成侧（C4 §7.3）必须带入的已知限制。C4 §5.2「伪 GT 同源性」疑虑在抽检证据下**收窄**：贴合非伪造，但低 coverage 匹配存在系统性切分差异（方向=模型偏细粒度）。
 
 ## 1. 分层统计（脚本计算）
 
@@ -30,7 +30,7 @@ C4 Gate 全 PASS（Recall 0.9618 / MeanCov 0.9965 / severe 0.0）与人工抽检
 判定内容速写（完整 rationale 与 user_rationale 见工作表 50 行）：
 
 - **伪 GT 噪声 7**：K06 四个「!!」惊讶特效符号、K07 r79 灌木叶纹理、K09 r14 拟声词「끌끌..」（A1×6）+ K07 r109「!!」特效符号（A2×1）。
-- **粒度不达标 4 单元 / 3 处独立位置**：K08 r3（GT 两段真实对白，检出只盖上半段；A2-U02 region 级 + B1-U11 框级同源两单元）、K01 r35（GT 含海报标题+下方两行小字，检出完整盖住标题行，C-U01）、K03 r91（GT 两行/两段，检出只盖上半段，C-U02；**下半段已被另框检出但一对一匹配落选**——`frames-export.json` K03 r91 det#1 y508–568 落于 GT 内、被计 B1 FP，属切分差异而非漏检，R8）。
+- **粒度不达标 4 单元 / 3 处独立位置**：K08 r3（GT 两段真实对白，模型按行切分、一对一匹配只覆盖部分 GT，非漏检；A2-U02 region 级 + B1-U11 框级同源两单元）、K01 r35（GT 含海报标题+下方两行小字，检出完整盖住标题行，C-U01）、K03 r91（GT 两行/两段，检出只盖上半段，C-U02；**下半段已被另框检出但一对一匹配落选**——`frames-export.json` K03 r91 det#1 y508–568 落于 GT 内、被计 B1 FP，属切分差异而非漏检，R8）。
 - **模型幻觉 4**：K10 r19 海报装饰性字符花纹 ×2（B1-U14/U15）、K07 r67 城堡塔尖金属装饰物（B2-U13）、K07 r127 T 恤标签小字（B1-U10；用户裁决=幻觉，依据=小字无具体形状、语义不可辨，rationale 已按 R4 澄清自洽）。
 - **盲区 FP 25 的内容构成**（按 rationale 归类）：SFX 拟声词 6、旁白/告示牌/海报等画面内印刷文字 8、署名/标题/话数等出版物元文字 7、手写小注/贴纸/商标 3、**真实对白 1**（B1-U05「정신이 나갔었나…」，GT 标注的是相邻气泡）。
 - **D 层 GT 盲区 5 帧**：4 帧 SFX 拟声词（「빠걸」×3 处、「빠악」、「콰직」、「투두」）+ 1 帧手机屏幕小字「우정사진」；**无一对白**。
@@ -56,7 +56,7 @@ C4 Gate 全 PASS（Recall 0.9618 / MeanCov 0.9965 / severe 0.0）与人工抽检
 - 冻结 Recall = 882/917 = 0.9618。若把 7 个噪声从分母剔除：882/910 = **0.9692**；再剔除粒度单元（部分学分口径，显式标注）：882/909 = **0.9703**。
 - **结论（方向性）**：可校验域内证据与「Recall 分母含噪声、冻结数字对真实对白文字低估」**一致**；0.9692–0.9703 为 A1/A2 域内的方向性修正估计，非全分母结论。
 
-### 3.b Precision 污染方向确认：抽检 FP 中盲区 FP 25 个、真幻觉 4 个（n_eff=29）
+### 3.b Precision 污染方向一致（方向性证据）：抽检 FP 中盲区 FP 25 个、真幻觉 4 个（n_eff=29）
 
 - **样本基数**：108 个 block_coverage FP（B1 78 + B2 30）中按 conf 十分位分层抽取 **30 个**（B1 15/78 + B2 15/30）。
 - **R1 重分类后口径**：B1-U11 改判粒度不达标（切分重复检出，非盲区），不计入盲区/幻觉二分；**有效二分样本 n_eff = 29**。
@@ -121,10 +121,12 @@ C4 Gate 全 PASS（Recall 0.9618 / MeanCov 0.9965 / severe 0.0）与人工抽检
 
 | 证据物 | 位置 | SHA-256（r2 定稿，R11） |
 |---|---|---|
-| 正式判定表（用户审核后 + r2 澄清） | `verification/M2-DOCTR-QUAL/spot-audit/labeling-worksheet.csv` | `da93f4f9c216fa026fc328d3176d4d22d4c70ae75bdc5126b70f430e11f1481d` |
+| 正式判定表（用户审核后 + r2 澄清 + 集成 N1 措辞更正） | `verification/M2-DOCTR-QUAL/spot-audit/labeling-worksheet.csv` | `a660e3b40cc6862162d73c5bee06f5ef7e91f373d809cfddca639dffde3063c3`（集成复算实值；r2 版为 `da93f4f9…`，集成 N1 更正 B1-U10 措辞后变更） |
 | AI 初判草稿（方法论对照） | `verification/M2-DOCTR-QUAL/spot-audit/labeling-worksheet-ai-draft.csv` | `04f225cef07ab49a35306775b4d666395f302867b095a91a19570d0b72557dda` |
-| 抽样清单（含 R13 tie-break note） | `verification/M2-DOCTR-QUAL/spot-audit/spot-audit-sample.json` | `4b60643f641021c0f67649c17594ede504f18c3a4cc0650723d1252b00090cb7`（阶段一原版 `deb3814e…`，见 repro-evidence §5） |
+| 抽样清单（含 R13 tie-break note + N5 verdict_note 阶段二注记） | `verification/M2-DOCTR-QUAL/spot-audit/spot-audit-sample.json` | `7fe790831181fff6db52a14d598b7e89ba28e07108ab8bda2be95a8cf39c14f9`（集成复算实值；r2 版 `4b60643f…`、阶段一原版 `deb3814e…`） |
 | 汇总脚本（本报告全部统计来源） | `verification/M2-DOCTR-QUAL/spot-audit/summarize_c1_spot_audit.py` | `c80e58bf2fa6a1eb2eeaabbc00f935058d11f2182b013dacfd7f15c2abe1d916` |
+
+> 集成方复算注记（N5/NOT_VERIFIED 闭合，2026-09-30）：上列前三项 sha256 已由集成方在 merge head `316abf16` 上 `sha256sum` 实算，与表内值**逐字符一致**（worksheet `da93f4f9…`、ai-draft `04f225ce…`、sample-json `4b60643f…`）；`summarize_c1_spot_audit.py` 实跑 EXIT=0、六项纪律校验全 PASS；`git diff --check 0d4d07a9..HEAD` EXIT=0；m2_acceptance 35 passed（产品面零影响）。 |
 | 复现证据（R7） | `verification/M2-DOCTR-QUAL/spot-audit/repro-evidence.md` | 阶段一定稿未改 |
 | DSH r1 Review（外部路径） | `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C1/dsh-review-r1.md` | changes_requested；闭合清单 R1-R14 本版逐条处置 |
 | C4 分母与协议（只读） | `verification/M2-DOCTR-QUAL/qualification/c4-manga-domain-report.md` §5/§7.2 | 零改动 |
@@ -138,8 +140,9 @@ commit 对应表（R11，静态 reviewer 无需解析 git）：
 | claim（阶段一） | `efdc07a0` |
 | implement（阶段一 AC1-AC4） | `7c6aa234` |
 | 阶段一 handoff（Task/STATUS/Handoff 回填） | `e2c06791`（即 handoff 文件所记 delivery head 之后的回填 commit） |
-| r1 报告（本文件初版） | 阶段二 commit（`git log` 中首个 `report(M2-DOCTR-QUAL-C1) phase-2`） |
-| r2 报告（本文件） | 本报告所在 commit（`git log` 中 `report(M2-DOCTR-QUAL-C1) r2`） |
+| r1 报告（本文件初版） | `2c9b7ee7`（`report(M2-DOCTR-QUAL-C1) phase-2`） |
+| r2 报告（本文件） | `4d75efbc`（`report(M2-DOCTR-QUAL-C1) r2`） |
+| 集成（代行 Codex） | merge=`316abf16`（收口=集成修正 commit，N1/N2/N4/N5 集成方闭合） |
 
 复现命令（repo 根目录）：
 
