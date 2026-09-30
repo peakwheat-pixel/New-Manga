@@ -3,7 +3,7 @@ task_id: M2-FIX-REGISTRY-READINESS-ENV
 author: ZCode
 recipient: Codex（转 DeepSeek Harness 非作者 Review）
 base_commit: 46f079e8
-delivery_head: 3e4c3b44
+delivery_head: 59fe3467（review-fix DSH r1 终态；3e4c3b44 为首轮 fix）
 status: delivered
 ---
 
@@ -19,7 +19,7 @@ status: delivered
 - **修复语义**：`torch` 在位（T1.1.1+ 主 venv 标志）→ `pytest.skip` 显式理由
   （引 T1.1.1 用户批准 requirements：`torch==2.14.0`；M2-PROD-DETECT-1：
   `transformers==5.17.0`+`safetensors`；闭包级保证由
-  `packaging/m2ac5/core_sidecar.spec` `_assert_ml_closure` 构建期断言接管，
+  `packaging/m2ac5/core_sidecar.spec` `_assert_ml_closure` 构建期断言（M2-PROD-DETECT-2）系**方向相反的独立保证**（断言 ML 进闭包内，非本测试的「环境无 ML」），TASK-019 环境证据系作废（INVALIDATED）非被替代——r2 P4-1 措辞更正，
   M2-PROD-DETECT-2）。**原断言循环逐字未动**——无 torch 环境走修复前完全
   相同的判别路径（`diffusers`/`paddleocr`/`manga_ocr` 至今未获批，仍断言缺位）。
 - **原始意图判定**（详见 Task「原始意图判定」小节）：该测试是 TASK-019 释放

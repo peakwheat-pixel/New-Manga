@@ -24,7 +24,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-REGISTRY-ENV-zcode
 ## 设计决策（代理裁决）
 
 1. 先读测试原文与 TASK-019/M2-AC3 语境，判定原始意图（大概率=「sidecar 闭包/registry readiness 假设无 ML runtime」的防护）。
-2. 修复采**环境条件化**：ML runtime 在位时 `pytest.skip` 显式原因（「dev venv intentionally carries the ML stack since T1.1.1; closure-level assertion is enforced by packaging/m2ac5 warn/closure evidence (M2-PROD-DETECT-2)」），无 ML 环境保留原断言验证力；若读后发现断言意图已被 DETECT-2 的构建期闭包断言完全取代，也可改写断言语义（二选一，Owner 判断后在 Task 登记理由）。
+2. 修复采**环境条件化**：ML runtime 在位时 `pytest.skip` 显式原因（「dev venv intentionally carries the ML stack since T1.1.1; closure-level assertion is enforced by packaging/m2ac5 warn/closure evidence (M2-PROD-DETECT-2)」（注：该事前表述的方向性已由意图判定第 4 条取代——TASK-019 证据系作废非转移，r2 P4-2 注记）），无 ML 环境保留原断言验证力；若读后发现断言意图已被 DETECT-2 的构建期闭包断言完全取代，也可改写断言语义（二选一，Owner 判断后在 Task 登记理由）。
 3. pytest 三套件恢复全绿口径：**402 passed 0 failed**（401+本测试转 skip/pass——以实跑为准，如实记录计数变化并同步 STATUS 口径注记）。
 
 ## AC
