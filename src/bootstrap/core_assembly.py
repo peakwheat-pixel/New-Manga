@@ -568,8 +568,6 @@ def _resolve_detector_weights_path(
     override: str | None,
     weights_name: str,
     db_path: Path,
-    *,
-    bundled_in_release: bool,
 ) -> Path:
     """M2-PROD-DETECT-2 (proxy ruling 4, reversible): detector weights lookup.
 
@@ -577,7 +575,8 @@ def _resolve_detector_weights_path(
     (existence probe) > frozen in-bundle copy (existence probe, PyInstaller
     ``sys.frozen`` onedir only) > the default data-root path.
 
-    Semantics per form:
+    Semantics per form (DSH r1 R5/R6 review-fix — ONE failure shape for both
+    backends, never an assembly-time crash):
 
     - **override** (any form): used verbatim, no existence probe — the
       released override contract (M2-PROD-DETECT-1, DSH r1 R7: an *empty*
@@ -587,19 +586,22 @@ def _resolve_detector_weights_path(
       the released lookup would already have chosen, so the result is
       byte-identical to the released behavior — with nothing found anywhere,
       the default data-root path is returned and the lazy provider fails
-      closed with the typed ``PROVIDER_NOT_CONFIGURED`` at detect time.
+      closed with the typed ``PROVIDER_NOT_CONFIGURED`` at detect time. No
+      bundle probing, no warning output, no error.
     - **frozen** (packaged onedir): the in-bundle copy
       (``Path(sys.executable).parent/models/detector/<name>``) is probed.
-      For the backend whose weights ARE part of the delivered artifact
-      (``bundled_in_release=True`` — the manga snapshot, proxy ruling 3),
-      finding nothing means a broken install, so this fails closed AT
-      ASSEMBLY with every probed candidate listed. For a backend whose
-      weights deliberately ship OUT of the bundle (doctr — ruling 3), being
-      absent from the bundle is the designed state, not damage: the default
-      path is returned and the lazy provider fails closed
-      ``PROVIDER_NOT_CONFIGURED`` at detect time with the placement pointer
-      (an operator can always outrank the bundle via the data root or the
-      env override).
+      When neither the data root nor the bundle carries the weights the
+      lookup writes ONE diagnostic line to stderr (naming the backend's
+      weights name and every probed candidate) and returns the default
+      data-root path — assembly still succeeds and the lazy provider fails
+      closed ``PROVIDER_NOT_CONFIGURED`` at detect time, exactly like the
+      doctr backend (identical semantics, R6 fork dissolved). An
+      assembly-time crash would take the whole app down (bookshelf, reader,
+      everything) for a weights-tree gap (AV quarantine, half-finished
+      install, a ``-SkipWeights`` debug artifact) — that blast radius is
+      M2-AC3's "assemble, never crash; fail closed at the step" discipline,
+      so the packaged-bundle gap degrades to a detect-time typed failure
+      with the stderr line pointing operators at the placement options.
 
     The probes are existence-level only (directory/file ``exists()``); the
     three-file SHA-256 pins are enforced by the provider's own loader
@@ -618,13 +620,16 @@ def _resolve_detector_weights_path(
     if getattr(sys, "frozen", False):
         if bundle_candidate.exists():
             return bundle_candidate
-        if bundled_in_release:
-            probed = [str(data_root_candidate), str(bundle_candidate)]
-            raise ValueError(
-                "detector weights not found in the packaged bundle "
-                f"(weights name {weights_name!r}); probed candidates, none "
-                "exists: " + " | ".join(probed)
-            )
+        probed = [str(data_root_candidate), str(bundle_candidate)]
+        print(
+            "WARNING: detector weights not found (weights name "
+            f"{weights_name!r}); probed candidates, none exists: "
+            " | ".join(probed)
+            + "; the detect step will fail closed with PROVIDER_NOT_CONFIGURED "
+            "until the weights are placed on the data root or set via "
+            "NEWMANGA_DETECTOR_WEIGHTS",
+            file=sys.stderr,
+        )
     return data_root_candidate
 
 
@@ -764,12 +769,15 @@ def assemble_core_services(
             # probe) >, in the frozen onedir form only, the copy bundled
             # inside the release (manga ships in-bundle; doctr's weights
             # intentionally do NOT — switching to doctr in the release form
-            # fails closed NOT_CONFIGURED at detect with the pointer to
+            # keeps the detect-time NOT_CONFIGURED with the pointer to
             # place them on the data root, proxy ruling 3) > the default
-            # data-root path (non-frozen keeps the released fail-closed
-            # PROVIDER_NOT_CONFIGURED at run time; frozen fails closed at
-            # assembly listing every probed candidate). No download, no
-            # silent fallback.
+            # data-root path. Failure semantics are UNIFORM for both
+            # backends (DSH r1 R5/R6 review-fix): nothing found anywhere ->
+            # one stderr diagnostic line in the frozen form (listing every
+            # probed candidate) and the released detect-time typed
+            # PROVIDER_NOT_CONFIGURED — never an assembly-time crash. The
+            # non-frozen form keeps the released fail-closed at run time
+            # with zero extra output. No download, no silent fallback.
             # Boundary note (DSH r1 R7): an *empty* NEWMANGA_DETECTOR_WEIGHTS
             # falls back to the default path below ("override if override
             # else default"), whereas the pre-Task doctr assembly
@@ -789,26 +797,20 @@ def assemble_core_services(
             # the non-frozen (source venv) form resolves exactly as before.
             if backend == "manga":
                 detector_weights = _resolve_detector_weights_path(
-                    detector_weights_override,
-                    MANGA_WEIGHTS_DIRNAME,
-                    db_path,
-                    bundled_in_release=True,
+                    detector_weights_override, MANGA_WEIGHTS_DIRNAME, db_path
                 )
                 detector = MangaDetectionProvider(
                     weights_dir=detector_weights,
                     device=detector_device_env,
                 )
             elif backend == "doctr":
-                # bundled_in_release=False (proxy ruling 3): the doctr
-                # weights intentionally ship OUT of the bundle, so a frozen
-                # miss is the designed state — the released detect-time
-                # NOT_CONFIGURED (with placement pointer), never an
-                # assembly-time error.
+                # Same lookup, same failure shape (DSH r1 R6 review-fix): the
+                # doctr weights intentionally ship OUT of the bundle (ruling
+                # 3), but a frozen miss degrades to the SAME stderr warning +
+                # detect-time NOT_CONFIGURED as manga — no assembly-time
+                # crash for either backend.
                 detector_weights = _resolve_detector_weights_path(
-                    detector_weights_override,
-                    DOCTR_WEIGHTS_FILENAME,
-                    db_path,
-                    bundled_in_release=False,
+                    detector_weights_override, DOCTR_WEIGHTS_FILENAME, db_path
                 )
                 detector = DoctrDetectionProvider(
                     weights_path=detector_weights,

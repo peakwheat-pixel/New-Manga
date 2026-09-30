@@ -32,9 +32,18 @@ param (
     # M2-AC5-BUILD-FRESH-CHECKOUT: force a full PyInstaller rebuild even when
     # the onedir bundle already exists (default: incremental short-circuit).
     [switch]$Force,
+    # M2-PROD-DETECT-2 DSH r1 R10 review-fix: the weights snapshot location is
+    # no longer hardcoded in the copy step — override it here for a different
+    # machine/checkout. The snapshot files must STILL match the SHA-256 pins
+    # below (the copy fails closed on any mismatch), so this parameter only
+    # relocates the source, never relaxes the verification.
+    [Parameter(Mandatory = $false)]
+    [string]$WeightsSource = "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector",
     # M2-PROD-DETECT-2: skip the manga weights copy step (debug only — the
-    # shipped bundle then has NO in-bundle weights and the frozen detect
-    # chain fails closed NOT_CONFIGURED at run time).
+    # shipped bundle then has NO in-bundle weights; per the DSH r1 R5/R6
+    # review-fix the frozen assembly does NOT crash: it prints one stderr
+    # warning listing the probed candidates and the detect step fails closed
+    # with the typed PROVIDER_NOT_CONFIGURED until the weights are placed).
     [switch]$SkipWeights
 )
 
@@ -50,11 +59,11 @@ $repoRoot = (Resolve-Path "$PSScriptRoot\..\..").Path
 # --------------------------------------------------------------------------
 
 function Copy-MangaWeights {
-    param([Parameter(Mandatory = $true)][string]$Bundle)
+    param(
+        [Parameter(Mandatory = $true)][string]$Bundle,
+        [Parameter(Mandatory = $true)][string]$WeightsSource
+    )
 
-    # Local snapshot of the pinned weights (M2-DOCTR-QUAL-C4 manifest; never
-    # committed — weights live on gitignored task-env paths only).
-    $weightsSource = "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector"
     # Destination INSIDE the onedir bundle: <bundle>/models/detector/<dirname>/
     # — the same layout the frozen assembly probes at
     # Path(sys.executable).parent/models/detector/<dirname> (proxy ruling 4).
@@ -103,7 +112,7 @@ $existingBundle = Join-Path $repoRoot "apps/desktop/src-tauri/target/core-sideca
 if (-not $Force -and (Test-Path -LiteralPath $existingBundle -PathType Container)) {
     Write-Host "build_sidecar: target exists, skipping (use -Force to rebuild)"
     if (-not $SkipWeights) {
-        Copy-MangaWeights -Bundle $existingBundle
+        Copy-MangaWeights -Bundle $existingBundle -WeightsSource $WeightsSource
     }
     exit 0
 }
@@ -140,6 +149,6 @@ foreach ($exe in @("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe
 }
 
 if (-not $SkipWeights) {
-    Copy-MangaWeights -Bundle $bundle
+    Copy-MangaWeights -Bundle $bundle -WeightsSource $WeightsSource
 }
 Write-Host "build_sidecar: OK -> $bundle (HEAD=$gitHead, pyinstaller=$pyinstallerVersion)"

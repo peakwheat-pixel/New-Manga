@@ -15,7 +15,7 @@ C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe -m venv "G:/CO
 "G:/CODEX/New Manga.task-envs/m2ac5-build/Scripts/python.exe" -m pip install -r packaging/m2ac5/requirements-build.txt
 ```
 
-固定版本（`requirements-build.txt`，2026-09-29 实测）：
+固定版本（`requirements-build.txt`）：
 
 - `pyinstaller==6.22.3`（packager 本体）
 - `PySide6_Essentials==6.11.2` + `shiboken6==6.11.2`（与产品 requirements.txt
@@ -24,10 +24,20 @@ C:\Users\49745\AppData\Local\Programs\Python\Python312\python.exe -m venv "G:/CO
   PySide6（QGuiApplication + production Qt 渲染适配器）。Qt 排除时 frozen
   acceptance_bridge.exe 启动即 ModuleNotFoundError（fail-closed 实证）。这是
   M2-AC1 冻结事实而非打包选择；sidecar 闭包因此包含 Qt。
+- **ML 栈五行（M2-PROD-DETECT-2，代理裁决 2）**：`torch==2.14.0` /
+  `torchvision==0.29.0` / `python-doctr==1.1.0` / `transformers==5.17.0` /
+  `safetensors==0.8.0`——与产品 `requirements.txt` **逐字一致**；build venv
+  定位从「minimal packager」翻转为「packager + runtime closure」，发布形态
+  detect 链的运行时随闭包分发。manga 权重三文件（171 MB 级）由
+  `build_sidecar.ps1` 构建后 sha256 校验复制进 onedir（见 §2.b），docTR 权重
+  不进包。安装包体积相应从 26.63 MiB 涨到数百 MiB 级（代理裁决 1，撤销=
+  revert spec/requirements-build 两文件）。
 - 其余 sidecar 入口（host_bridge / core_service / catalog_loader）的 import
   闭包实测为 stdlib + 仓库内包（TASK-012 venv 零 site-packages 模块）。
-- `pypdfium2` / `mobi` **不进**构建 venv：延迟 import（PDF/MOBI 文档 rasters），
-  clean-start 验收场景不触及；PyInstaller warn 留痕该边界。
+- `mobi` **不进**构建 venv（延迟 import，MOBI 文档 raster，clean-start 验收
+  场景不触及）；`pypdfium2` 不手工 pin——由 python-doctr **传递依赖带入**
+  build venv 与闭包（版本 pip 解析，与主 requirements 同为 5.13.0，风险已
+  登记：ML 版本升级后需复核闭包）。
 
 ## 2. 构建步骤
 
@@ -84,12 +94,20 @@ npm install --no-audit --no-fund
 npm run build
 
 # 2b. sidecar onedir（产出 apps/desktop/src-tauri/target/core-sidecar/core-sidecar/）
+#     M2-PROD-DETECT-2：PyInstaller 构建后自动把 pinned manga 权重三文件
+#     （sha256 逐文件校验，失败即 throw）复制进 <bundle>/models/detector/...；
+#     权重快照默认取 G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/
+#     ogkalu-comic-text-and-bubble-detector/，其他机器用 -WeightsSource 指向
+#     本地快照（pin 校验不放宽）；-SkipWeights 跳过复制（debug only：装配期
+#     stderr 警告 + detect 期 typed NOT_CONFIGURED，不崩启动）。
 powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1
 
 # 2c. NSIS 安装包（把 2b 产物打进安装目录 resources/core-sidecar/）
 cd apps/desktop/src-tauri
 npx --yes @tauri-apps/cli@2 build
-# 产物：target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe（26.62 MiB @ r0）
+# 产物：target/release/bundle/nsis/m2rc1-desktop_0.1.0_x64-setup.exe
+#（体积口径：r0=26.62 MiB；M2-PROD-DETECT-2 起为数百 MiB 级，实测见
+#  verification/M2-PROD-DETECT-2/release-notes.md）
 ```
 
 注意：`tauri build` 每次会重写 `gen/schemas/**` 与

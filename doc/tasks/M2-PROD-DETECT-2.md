@@ -37,16 +37,24 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode
 - **裁决 1（安装包体积）**：接受安装包从 26.63MiB 涨到数百 MiB（torch CPU 闭包 + 171MB 权重）。理由：检测是产品核心链路第一步，发布形态可用 > 安装包轻量；本机/干净机分发（M2-RG1 口径）无外部分发压力。撤销方式：revert 本 Task 的 spec/requirements-build 改动即回轻量包（detect 回 DEPENDENCY_MISSING，行为同 M2-PROD-DETECT-1 交付态）。
 - **裁决 2（build venv 定位翻转）**：`requirements-build.txt` 从「minimal packager」变为「packager + runtime closure」——ML 栈版本与主 `requirements.txt` **逐字一致**（torch==2.14.0 / torchvision==0.29.0 / python-doctr==1.1.0 / transformers==5.17.0 / safetensors==0.8.0，CPU wheels 源注释同主文件）；文件头注释同步改写并登记本裁决。
 - **裁决 3（只带 manga 权重）**：包内只放 manga 权重（默认 backend）；docTR 权重 65MB 不进包——doctr 切回在发布形态 = 依赖就绪但 fail-closed NOT_CONFIGURED + 指引（源码 venv 形态不受影响）。登记为已知限制。
-- **裁决 4（权重查找顺序）**：env override > data root（存在性探测）> frozen 包内（存在性探测，仅 `sys.frozen`/PyInstaller onedir 布局下 `Path(sys.executable).parent/models/detector/<dir>`）> 默认 data root 路径（fail-closed 报错信息列出全部已探测候选）。**非 frozen（源码 venv）形态行为零变化**；探测逻辑可 import `detection_manga` 的文件清单常量（不复制清单知识）。
+- **裁决 4（权重查找顺序）**：env override > data root（存在性探测）> frozen 包内（存在性探测，仅 `sys.frozen`/PyInstaller onedir 布局下 `Path(sys.executable).parent/models/detector/<dir>`）> 默认 data root 路径（fail-closed 报错信息列出全部已探测候选）。**非 frozen（源码 venv）形态行为零变化**；探测逻辑可 import `detection_manga` 的文件清单常量（不复制清单知识）。**（r1 review-fix 追认：末级语义由「fail-fast 报错」改为「frozen stderr 一行警告（含全部已探测候选）+ detect 期 typed NOT_CONFIGURED」，见下节裁决⑤）**
 - **契约零修订优先**：`ports/**` 不动；`detection_manga.py`/`detection_doctr.py` 行为不动（装配段解析是唯一 src 改动点）；`run_clean_start_e2e.py` 不动。
+
+### r1 review 处置裁决（acting Codex，2026-10-01，Owner=ZCode 按此执行）
+
+DSH r1 review（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r1.md`，changes_requested）的处置裁决，本 Task 返修（review-fix）依据：
+
+- **裁决⑤（R5/R6，失败语义统一）**：manga frozen 全缺**不再装配期 raise**——改为 stderr 一行警告（含 probed candidates）+ 正常装配，权重缺失语义统一为 detect 期 provider typed `NOT_CONFIGURED`（与 doctr 完全对称，R6 分叉消解）；理由=装配期崩溃爆炸半径是整机（书架/阅读全不可用），违背 M2-AC3「装配不崩、失败留在该步」纪律。`bundled_in_release` 参数删除；Task/Handoff 的「语义分叉」表述改为「失败语义统一（detect 期）+ 装配期 stderr 警告」；`build_sidecar.ps1` 的 `-SkipWeights` 注释同步修正。原裁决 4 文本中「fail-closed 报错列出候选」的末级设计由本条取代（可逆：revert 装配段即回 fail-fast）。
+- **裁决⑥（R2，AC5 改判 PARTIAL）**：frozen 命令面（core.ping/ListBooks/core.shutdown）无 detect RPC 是结构性事实，端到端 frozen detect 不可达。**AC5 判定改 PARTIAL**（NOT_RUN 子项=frozen 进程内 ML import/detect），后续 slice 登记「**M2-IPC1 命令面扩展 + frozen 进程内 detect 验证**」；本 Task 可验收结论收窄为「**运行时+权重随包就绪 + 闭包外等价推理验证**」。
+- **裁决⑦（R3，hiddenimports 双保险）**：spec 显式 `hiddenimports=["transformers", "transformers.models.rt_detr"]`（transformers 进闭包原为 torch 内部可选 import 的偶然结果，不可依赖）+ 构建期闭包断言（spec 内校验两者被收集进 PYZ，缺即 fail build）+ 构建后 PYZ 清单复核留证；Handoff/release-notes 的「lazy-import 跟踪进 PYZ」机制句修正。
 
 ## Acceptance Criteria
 
-- [x] AC1（构建链）：`requirements-build.txt` 授权 ML 栈（裁决 2）+ build venv 更新；`core_sidecar.spec` 撤 EXCLUDED 的 torch/torchvision/doctr（pandas/build-tooling 排除保持）+ 按需 hiddenimports（transformers 动态 import 兼容；如需 hook 最小化）；`build_sidecar.ps1` 构建成功（四入口 closure 含 ML 栈）。**实测：构建 exit=0（onedir 278s）；warn 13 missing 全为平台噪音、0 ML 相关；hiddenimports 无需新增（doctr/transformers 经函数内 import 跟踪进 PYZ 归档）。**
+- [x] AC1（构建链）：`requirements-build.txt` 授权 ML 栈（裁决 2）+ build venv 更新；`core_sidecar.spec` 撤 EXCLUDED 的 torch/torchvision/doctr（pandas/build-tooling 排除保持）+ 按需 hiddenimports（transformers 动态 import 兼容；如需 hook 最小化）；`build_sidecar.ps1` 构建成功（四入口 closure 含 ML 栈）。**r1 review-fix（R1/R3）：warn 文件按 Analysis 逐入口归档（`build/warn/warn-<entry>.txt`，四文件入 verification）；`hiddenimports=["transformers","transformers.models.rt_detr"]` 显式化 + 构建期闭包断言（缺即 fail build）+ 构建后 PYZ 清单复核。实测：返修复跑回填（r1 前「warn 13 missing 0 ML」结论作废——该 warn 文件实为无 ML 的 catalog_loader Analysis 覆盖残留）。**
 - [x] AC2（权重随包）：`build_sidecar.ps1` 最小适配——构建后将 manga 权重三文件从 task-envs 快照复制进 `core-sidecar/models/detector/ogkalu-comic-text-and-bubble-detector/`，**逐文件 SHA-256 校验后复制**（复用 pin 常量或脚本内等价校验）；docTR 权重不进包；tauri.conf.json 零改动（权重经既有 resource 机制随包）。**实测：三文件 sha256 与 pin 一致（onedir 与 NSIS 安装后均复核）；`-SkipWeights` 开关；权重零入库。**
-- [x] AC3（包内回退解析）：`core_assembly.py` 装配段按裁决 4 增加包内回退（manga 与 doctr 两个 backend 同样语义）；单测覆盖查找顺序矩阵（env/ data root/ frozen 包内/ 全缺→typed 错误含候选列表；非 frozen 零变化——monkeypatch frozen 标记，不真打包）。**实测：`_resolve_detector_weights_path` + 11/11 单测；manga（bundled）frozen 全缺=装配时 fail-closed 列候选，doctr（不 bundled）frozen 全缺=保持 detect 时 NOT_CONFIGURED（裁决 3 语义），非 frozen 零变化。**
+- [x] AC3（包内回退解析）：`core_assembly.py` 装配段按裁决 4 增加包内回退（manga 与 doctr 两个 backend 同一查找顺序）；单测覆盖查找顺序矩阵（env/ data root/ frozen 包内/ 全缺→**失败语义统一（detect 期）+ 装配期 stderr 警告**（裁决⑤，r1 review-fix）；非 frozen 零变化——monkeypatch frozen 标记，不真打包）。**实测：`_resolve_detector_weights_path` + 14/14 单测（r1 review-fix 后口径：原 11 测中 manga/doctr 全缺两测按统一语义合并为参数化 2 例，新增包内命中零警告、装配级 env-only、装配级全缺降级 3 测）；manga/doctr frozen 全缺=同一 stderr 警告（含 probed candidates）+ 装配成功 + detect 时 typed PROVIDER_NOT_CONFIGURED；非 frozen 零变化。**
 - [x] AC4（GATE 回归）：M2-AC5 runner 25/25 PASS（新 onedir + 新 NSIS 安装包）；体积前后对比如实记录入 `verification/M2-PROD-DETECT-2/`（onedir 字节/文件数、NSIS 字节、构建时长）；M2-AC5 raw 证据零改动（runner 重写行为按 M2-PROD-DETECT-1 先例处置：产物移入本 Task 目录 + `git checkout --` 还原）。**实测：GATE 25/25 PASS（NSIS 460,184,382B sha256 6c765ed3…）；onedir 1,116,380,855B/5,550 文件；raw 6 文件已还原。**
-- [x] AC5（发布形态 detect 真实推理验证）：独立探针（verification 下脚本，不进 runner）——对安装后环境（runner 已装目录或 NSIS 静默安装）以默认 backend 跑一次真实 detect（合成漫画页或 K01 页），EXIT=0 且 text 候选 >0，记录耗时；docTR 切回探针验证 fail-closed NOT_CONFIGURED（裁决 3 行为）。**实测：探针 5/5 PASS——manga 真实推理 EXIT=0、候选=2、稳态 299ms/页（冷启动 6,542ms 含加载）；docTR frozen 正常启动（fail-closed 留在 detect 时）。边界：frozen 命令面无 detect RPC（M2-IPC1 冻结），推理在 frozen 闭包外、用同源 ML 栈 + 安装后包内权重执行；frozen 闭包完整性由 L1 启动 + warn 零 ML missing + PYZ 归档清单背书，L2 反证证明包内权重被装配段端到端探测。**
+- [x] AC5（发布形态 detect 真实推理验证）——**判定改 PARTIAL（裁决⑥，DSH r1 R2）**：独立探针（verification 下脚本，不进 runner）——对安装后环境（runner 已装目录或 NSIS 静默安装）以默认 backend 跑一次真实 detect（合成漫画页或 K01 页），EXIT=0 且 text 候选 >0，记录耗时；docTR 切回探针验证 fail-closed NOT_CONFIGURED（裁决 3 行为）。**判定=PARTIAL：可验收结论收窄为「运行时+权重随包就绪 + 闭包外等价推理验证」——探针 6/6 PASS（4 层 6 场景）：manga 真实推理 EXIT=0、候选=2、稳态 299ms/页（冷启动 6,542ms 含加载）；L2 反证改写为「移权重→stderr 警告含 probed candidates+装配正常完成；还原→警告消失」；L4 新增闭包外 doctr detect 断言（typed PROVIDER_NOT_CONFIGURED）。NOT_RUN 子项：**frozen 进程内 ML import/detect**——frozen 命令面（core.ping/ListBooks/core.shutdown，M2-IPC1 冻结）无 detect RPC，结构性不可达；已登记后续 slice「M2-IPC1 命令面扩展 + frozen 进程内 detect 验证」。**
 - [x] AC6（回归与纪律）：pytest 三套件（providers/m2_acceptance/core）基数保持（387+1 既有失败口径）；cargo/vitest 留痕（预期零影响）；`git diff --check` EXIT=0；禁改面专项 diff 为空。**实测：providers 286+1（既有环境性失败保持）/m2_acceptance 35/core 77；cargo 44+1 ignored；vitest 31；diff --check 双 EXIT=0；禁改面 diff 为空。**
 - [x] AC7（交付与 Handoff）：Task 测试表填实、Handoff 按模板（含代理裁决四条的撤销方式、体积数字、已知限制）。
 
@@ -73,12 +81,12 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 构建 | build_sidecar.ps1 | build venv 含 ML 栈 | **PASS（exit=0，onedir 278s，warn 13 missing 全平台噪音 0 ML 相关）** | verification/M2-PROD-DETECT-2/raw/build-sidecar-console.log |
-| AC2 权重随包 | 检查 core-sidecar/models/.../ 三文件 + sha256 | 快照在位 | **PASS（三 sha256 与 pin 一致；NSIS 安装后复核一致）** | verification/M2-PROD-DETECT-2/release-notes.md |
-| AC3 解析单测 | pytest tests/...（frozen 矩阵） | — | **RUN：11/11 PASS** | 本表；tests/providers/test_detector_weights_lookup.py |
-| AC4 GATE | run_clean_start_e2e.py | 新 NSIS | **RUN：25/25 PASS** | verification/M2-PROD-DETECT-2/raw/cleanstart-runner-stdout.log |
-| AC5 发布形态探针 | 独立探针脚本 | 安装后环境 | **RUN：5/5 PASS（manga EXIT=0 候选=2 稳态 299ms/页；doctr fail-closed 启动正常）** | verification/M2-PROD-DETECT-2/packaged-detect-probe-results.json |
-| AC6 回归 | pytest 三套件 + cargo + vitest | — | **RUN：286+1 / 35 / 77；cargo 44+1ig；vitest 31（387+1 口径保持 +11 新增）** | 本表 |
+| AC1 构建 | build_sidecar.ps1 -Force | build venv 含 ML 栈 | **返修复跑回填（R1 warn 载体重建 + R3 闭包断言后重构建；r1 前实测作废）** | verification/M2-PROD-DETECT-2/raw/build-sidecar-console.log；verification/M2-PROD-DETECT-2/warn/ |
+| AC2 权重随包 | 检查 core-sidecar/models/.../ 三文件 + sha256 | 快照在位 | **返修复跑回填** | verification/M2-PROD-DETECT-2/release-notes.md |
+| AC3 解析单测 | pytest tests/...（frozen 矩阵） | — | **RUN：14/14 PASS（r1 review-fix 口径：统一失败语义 + 3 个新装配级用例）** | 本表；tests/providers/test_detector_weights_lookup.py |
+| AC4 GATE | run_clean_start_e2e.py | 新 NSIS | **返修复跑回填（R7 绑定返修 tip）** | verification/M2-PROD-DETECT-2/raw/cleanstart-runner-stdout.log |
+| AC5 发布形态探针（判定 PARTIAL，裁决⑥） | 独立探针脚本 | 安装后环境 | **返修复跑回填（4 层 6 场景口径：L2 改写 + L4 闭包外 doctr detect 断言）** | verification/M2-PROD-DETECT-2/packaged-detect-probe-results.json |
+| AC6 回归 | pytest 三套件 + cargo + vitest | — | **返修复跑回填（providers 新口径 = 基数 + 14）** | 本表 |
 
 ## 依赖、风险与阻塞
 
@@ -88,6 +96,8 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode
 
 ## 遗留与边界
 
-- docTR 权重发布形态不可用（裁决 3，fail-closed+指引）。
+- docTR 权重发布形态不可用（裁决 3；r1 review-fix 后与 manga 同语义：frozen stderr 警告 + detect 期 typed NOT_CONFIGURED+指引）。
 - 权重更新机制（换权重不重装）走 data root 优先级已天然支持（运维放置即覆盖包内），无 UI。
 - 首启引导/在线下载（方案 C）本 Task 不实施；若未来外部分发需要再立 slice。
+- **AC5 NOT_RUN 子项与后续 slice（裁决⑥）**：frozen 进程内 ML import/detect——frozen 命令面（M2-IPC1 冻结：core.ping/ListBooks/core.shutdown）无 detect RPC，结构性不可达；后续 slice「**M2-IPC1 命令面扩展 + frozen 进程内 detect 验证**」待 Codex 释放契约范围（core_service 命令面扩展须 Codex 先立契约）。
+- **装配期 stderr 警告（裁决⑤）**：包内权重全缺（AV 隔离/半成品安装/`-SkipWeights` 产物）时 frozen 装配打印一行警告后正常启动，detect 期 typed fail-closed——「包内权重缺失」不再使整机不可启动。

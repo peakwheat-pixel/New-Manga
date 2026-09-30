@@ -1,18 +1,24 @@
 """M2-PROD-DETECT-2 packaged detect probe (AC5) — release-form evidence.
 
 Independent probe (NOT part of the frozen M2-AC5 runner). It verifies the
-NSIS-installed release form's detect chain in four layers:
+NSIS-installed release form's detect chain in FOUR layers / SIX scenarios
+(DSH r1 R12: the count is 6 scenarios across 4 layers — the L2 layer has a
+counter-proof plus its recovery, the L4 layer has a frozen-start scenario
+plus an out-of-closure detect assertion):
 
   L1  frozen startup smoke + assembly end-to-end:
       the INSTALLED core_service.exe (purged PATH, stdio JSON-lines) serves
       core.ping -> status=ready. The production assembly runs at process
       start, so this also proves the frozen weights lookup selects the
-      in-bundle copy (with the bundle weights missing, assembly now fails
-      fast — see L2).
-  L2  in-bundle weights resolution counter-proof:
+      in-bundle copy (with the bundle weights missing, assembly degrades to
+      a stderr warning + detect-time typed failure — see L2).
+  L2  in-bundle weights resolution counter-proof (DSH r1 R5/R6 review-fix:
+      the assembly-time fail-fast is GONE — a missing weights tree must NOT
+      take the whole app down):
       temporarily rename the installed models/ tree away -> the frozen
-      core_service.exe must FAIL to start (assembly-time fail-closed naming
-      the probed candidates) -> restore -> ping again (recovery).
+      core_service.exe must STILL start and answer core.ping (status=ready)
+      with ONE stderr warning line naming every probed candidate -> restore
+      -> ping again AND the warning is gone (recovery).
   L3  real manga inference against the INSTALLED in-bundle weights:
       a synthetic comic page (white background + black bubbles + text, PIL)
       goes through the production adapter (validate -> frame pixels ->
@@ -25,15 +31,21 @@ NSIS-installed release form's detect chain in four layers:
       process — the frozen command surface is M2-IPC1-frozen to
       core.ping/ListBooks/core.shutdown with NO detect RPC, and this probe
       does not extend it. Frozen-process closure completeness is evidenced
-      by L1 (startup), the PyInstaller warn file (no ML-stack missing
-      modules) and the PYZ archive listing (doctr/transformers present).
+      by L1 (startup), the per-entry PyInstaller warn archives (R1), the
+      build-time ML closure assertion in the spec (R3) and the PYZ archive
+      listing (transformers + rt_detr present).
   L4  doctr fail-closed in the release form (proxy ruling 3):
-      the INSTALLED core_service.exe with NEWMANGA_DETECTOR_BACKEND=doctr
-      starts fine (the doctr weights intentionally ship OUT of the bundle —
-      an assembly-time error would violate ruling 3), i.e. the release form
-      fails closed NOT_CONFIGURED at detect time, not at startup; plus a
-      venv-side detect against the absent doctr weights asserting the typed
-      PROVIDER_NOT_CONFIGURED.
+      (a) the INSTALLED core_service.exe with NEWMANGA_DETECTOR_BACKEND=doctr
+      starts fine (an assembly-time error would violate ruling 3; after the
+      R5/R6 review-fix a frozen doctr miss prints the same stderr warning as
+      manga and keeps detect-time NOT_CONFIGURED). This scenario is a frozen
+      STARTUP check only — detect semantics are covered by the unit tests
+      and the out-of-closure detect assertion below (DSH r1 R4).
+      (b) an out-of-closure detect with the doctr weights ABSENT (the
+      designed release state): the production DoctrDetectionProvider raises
+      the typed ProviderNotConfigured (error_code PROVIDER_NOT_CONFIGURED),
+      never an untyped error — run under the build venv, reusing the L3
+      driver shape.
 
 Usage (from the repository root):
   python verification/M2-PROD-DETECT-2/packaged-detect-probe.py \
@@ -228,6 +240,63 @@ Path(out_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
 '''
 
 
+# ---------------------------------------------------------------------------
+# L4(b): out-of-closure doctr detect driver (runs under the build venv,
+# PYTHONPATH=src) — reuses the L3 driver shape (R4)
+# ---------------------------------------------------------------------------
+
+L4_DRIVER = r'''
+import json, sys
+from pathlib import Path
+
+src_root, weights_path, out_path = sys.argv[1:4]
+sys.path.insert(0, src_root)
+
+import importlib.metadata as md
+versions = {}
+for dist in ("torch", "torchvision", "transformers", "safetensors", "python-doctr"):
+    try:
+        versions[dist] = md.version(dist)
+    except Exception:
+        versions[dist] = None
+
+from infrastructure.providers.detection_doctr import DoctrDetectionProvider
+from ports.detection.ports import DetectionRequest
+from ports.providers.errors import ProviderNotConfigured
+
+# A minimal 4x4 rgb24 frame: passes the pure-Python input validate gate so
+# the failure lands on the WEIGHTS check (the thing under test), not on
+# input validation.
+frame = bytes(4 * 4 * 3)
+request = DetectionRequest(page_id="probe-doctr-absent", image_bytes=frame, width=4, height=4)
+
+provider = DoctrDetectionProvider(weights_path=Path(weights_path), device="cpu")
+try:
+    provider.detect(request)
+    payload = {
+        "exit": 1,
+        "outcome": "no_error",
+        "message": "detect did NOT fail closed on the absent doctr weights",
+    }
+except ProviderNotConfigured as error:
+    payload = {
+        "exit": 0,
+        "outcome": "typed_not_configured",
+        "error_code": getattr(error, "error_code", None),
+        "provider_id": getattr(provider, "provider_id", None),
+        "message_head": str(error)[:240],
+    }
+except Exception as error:  # noqa: BLE001 - any other shape is a FAIL
+    payload = {
+        "exit": 1,
+        "outcome": "untyped_error",
+        "error_class": type(error).__name__,
+        "message_head": str(error)[:240],
+    }
+Path(out_path).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+'''
+
+
 def make_synthetic_page(path: Path) -> tuple[int, int]:
     """A white comic page with two black-bordered bubbles containing text."""
     from PIL import Image, ImageDraw, ImageFont
@@ -275,11 +344,14 @@ def run_l1(gate: Gate, exe: Path, env: dict, evidence_dir: Path) -> None:
 
 
 def run_l2(gate: Gate, exe: Path, install_dir: Path, env: dict, evidence_dir: Path) -> None:
-    log("L2: in-bundle weights counter-proof (move away -> assembly fail-fast -> restore)")
+    log(
+        "L2: in-bundle weights counter-proof (move away -> stderr warning + "
+        "assembly still succeeds -> restore -> warning gone)"
+    )
     models_dir = install_dir / "resources" / "core-sidecar" / "models"
     parked = install_dir / "resources" / "core-sidecar" / "models.probe-parked"
     if not models_dir.is_dir():
-        gate.record("PK-L2-counter-proof", "FAIL", {"reason": f"bundle weights tree missing: {models_dir}"})
+        gate.record("PK-L2-weights-absent-assembles-with-warning", "FAIL", {"reason": f"bundle weights tree missing: {models_dir}"})
         return
     try:
         models_dir.rename(parked)
@@ -288,20 +360,36 @@ def run_l2(gate: Gate, exe: Path, install_dir: Path, env: dict, evidence_dir: Pa
             f"$ core_service.exe with the bundle models/ tree moved away\nexit={exit_code}\n{raw}",
             encoding="utf-8",
         )
+        # DSH r1 R5/R6 review-fix: a broken install (weights tree gone) must
+        # NOT crash the assembly — one stderr diagnostic line (naming every
+        # probed candidate), then the app still comes up ready; the detect
+        # step fails closed NOT_CONFIGURED at its own time.
         gate.pass_or(
-            exit_code != 0 and ANNOUNCE_L2 in raw,
-            "PK-L2-counter-proof",
-            {"exit": exit_code, "mentions_probed_candidates": ANNOUNCE_L2 in raw},
+            exit_code == 0
+            and (ping.get("result") or {}).get("status") == "ready"
+            and ANNOUNCE_L2 in raw,
+            "PK-L2-weights-absent-assembles-with-warning",
+            {
+                "exit": exit_code,
+                "status": (ping.get("result") or {}).get("status"),
+                "mentions_probed_candidates": ANNOUNCE_L2 in raw,
+            },
         )
     finally:
         if parked.is_dir():
             parked.rename(models_dir)
-    # recovery proof
+    # recovery proof: weights back in place -> ready AND no warning
     exit_code, ping, _shutdown, raw = stdio_ping(exe, env)
     gate.pass_or(
-        exit_code == 0 and (ping.get("result") or {}).get("status") == "ready",
+        exit_code == 0
+        and (ping.get("result") or {}).get("status") == "ready"
+        and ANNOUNCE_L2 not in raw,
         "PK-L2-recovery-after-restore",
-        {"exit": exit_code, "status": (ping.get("result") or {}).get("status")},
+        {
+            "exit": exit_code,
+            "status": (ping.get("result") or {}).get("status"),
+            "warning_gone": ANNOUNCE_L2 not in raw,
+        },
     )
 
 
@@ -366,8 +454,21 @@ def run_l3(
         )
 
 
-def run_l4(gate: Gate, exe: Path, env: dict, evidence_dir: Path) -> None:
+def run_l4(
+    gate: Gate,
+    exe: Path,
+    env: dict,
+    evidence_dir: Path,
+    install_dir: Path,
+    build_venv_python: Path,
+    src_root: Path,
+) -> None:
     log("L4: doctr fail-closed in the release form (ruling 3)")
+    # (a) frozen STARTUP check only (DSH r1 R4/R12: the scenario name no
+    # longer claims detect coverage): with NEWMANGA_DETECTOR_BACKEND=doctr
+    # the frozen process must start — the doctr weights ship OUT of the
+    # bundle ON PURPOSE, and after the R5/R6 review-fix a frozen miss prints
+    # the same stderr warning as manga instead of any assembly-time error.
     doctr_env = dict(env)
     doctr_env["NEWMANGA_DETECTOR_BACKEND"] = "doctr"
     exit_code, ping, shutdown, raw = stdio_ping(exe, doctr_env)
@@ -375,17 +476,79 @@ def run_l4(gate: Gate, exe: Path, env: dict, evidence_dir: Path) -> None:
         f"$ core_service.exe with NEWMANGA_DETECTOR_BACKEND=doctr (purged PATH)\nexit={exit_code}\n{raw}",
         encoding="utf-8",
     )
-    # ruling 3: the doctr weights ship OUT of the bundle ON PURPOSE, so the
-    # frozen process must still START (NOT_CONFIGURED is a detect-time, not
-    # an assembly-time, failure) — 'dependency ready, fail closed with a
-    # pointer' rather than a broken install.
     gate.pass_or(
         exit_code == 0
         and (ping.get("result") or {}).get("status") == "ready"
         and shutdown.get("result", {}).get("status") == "stopped",
-        "PK-L4-doctr-starts-fail-closed-at-detect",
-        {"exit": exit_code, "status": (ping.get("result") or {}).get("status")},
+        "PK-L4-doctr-starts-without-assembly-error",
+        {
+            "exit": exit_code,
+            "status": (ping.get("result") or {}).get("status"),
+            "warning_expected_state": "see raw log (stderr line if present)",
+        },
     )
+    # (b) out-of-closure DETECT assertion (DSH r1 R4): the doctr weights are
+    # absent from the bundle by design (ruling 3), so the production provider
+    # must raise the TYPED ProviderNotConfigured (error_code
+    # PROVIDER_NOT_CONFIGURED) at detect time — never an untyped error.
+    absent_weights = (
+        install_dir
+        / "resources"
+        / "core-sidecar"
+        / "models"
+        / "detector"
+        / "fast_base-688a8b34.pt"
+    )
+    if absent_weights.exists():
+        gate.record(
+            "PK-L4-doctr-detect-fail-closed-typed",
+            "FAIL",
+            {"reason": f"doctr weights unexpectedly IN the bundle: {absent_weights} (violates ruling 3)"},
+        )
+        return
+    driver_path = evidence_dir / "l4-doctr-detect-driver.py"
+    driver_path.write_text(L4_DRIVER, encoding="utf-8")
+    with tempfile.TemporaryDirectory(prefix="m2pd2-probe-") as tmp:
+        out_path = Path(tmp) / "l4-result.json"
+        proc = subprocess.run(
+            [
+                str(build_venv_python),
+                str(driver_path),
+                str(src_root),
+                str(absent_weights),
+                str(out_path),
+            ],
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            errors="replace",
+            timeout=300,
+        )
+        (evidence_dir / "l4-doctr-detect.log").write_text(
+            f"$ build-venv python l4-doctr-detect-driver.py (weights_path=absent in-bundle candidate)\n"
+            f"exit={proc.returncode}\n--- stdout ---\n{proc.stdout}\n--- stderr ---\n{proc.stderr}",
+            encoding="utf-8",
+        )
+        payload = {}
+        if out_path.is_file():
+            try:
+                payload = json.loads(out_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError:
+                payload = {}
+        gate.pass_or(
+            proc.returncode == 0
+            and payload.get("outcome") == "typed_not_configured"
+            and payload.get("error_code") == "PROVIDER_NOT_CONFIGURED",
+            "PK-L4-doctr-detect-fail-closed-typed",
+            {
+                "driver_exit": proc.returncode,
+                "outcome": payload.get("outcome"),
+                "error_code": payload.get("error_code"),
+                "provider_id": payload.get("provider_id"),
+                "weights_path": str(absent_weights),
+                "stderr_tail": proc.stderr[-300:] if proc.returncode != 0 else "",
+            },
+        )
 
 
 def main() -> int:
@@ -415,18 +578,22 @@ def main() -> int:
     run_l1(gate, exe, env, evidence_dir)
     run_l2(gate, exe, install_dir, env, evidence_dir)
     run_l3(gate, install_dir, args.build_venv_python, args.src_root, evidence_dir)
-    run_l4(gate, exe, env, evidence_dir)
+    run_l4(gate, exe, env, evidence_dir, install_dir, args.build_venv_python, args.src_root)
 
     results = {
         "gate": "m2-prod-detect-2-packaged-detect-probe",
         "install_dir": str(install_dir),
         "verdict": gate.verdict,
+        "scenario_count_note": "6 scenarios across 4 layers (L2 = counter-proof + recovery, L4 = frozen start + out-of-closure typed detect)",
         "scenarios": gate.scenarios,
         "boundary_note": (
-            "L3 inference runs OUTSIDE the frozen process: the frozen command "
-            "surface is M2-IPC1-frozen (core.ping/ListBooks/core.shutdown) with "
-            "no detect RPC; closure completeness is evidenced by L1 startup, "
-            "the PyInstaller warn file and the PYZ archive listing."
+            "L3 inference and the L4(b) detect assertion run OUTSIDE the frozen "
+            "process: the frozen command surface is M2-IPC1-frozen (core.ping/"
+            "ListBooks/core.shutdown) with no detect RPC — frozen in-process ML "
+            "import/detect stays NOT_RUN until M2-IPC1 extends the command "
+            "surface (DSH r1 R2: AC5 is PARTIAL). Closure completeness is "
+            "evidenced by L1 startup, the per-entry warn archives (R1), the "
+            "build-time ML closure assertion + PYZ listing (R3) and L2."
         ),
     }
     RESULTS_PATH.write_text(json.dumps(results, indent=2), encoding="utf-8")

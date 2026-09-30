@@ -27,10 +27,18 @@
 # entries (host_bridge / core_service / catalog_loader) remain Qt-free by
 # their import closure.
 #
-# pypdfium2/mobi are NOT in the build venv on purpose (lazy imports: the
-# PDF/MOBI document rasters import them lazily and no clean-start acceptance
-# scenario touches those commands); a missing-module warning in the
-# PyInstaller warn file documents that boundary.
+# pypdfium2 / mobi and the build venv (DSH r1 R9 review-fix wording):
+# - mobi is NOT in the build venv on purpose (lazy import: the MOBI document
+#   raster imports it lazily and no clean-start acceptance scenario touches
+#   that command); a missing-module warning in the PyInstaller warn file
+#   documents that boundary.
+# - pypdfium2 is NOT pinned here on purpose either — it arrives as a
+#   TRANSITIVE dependency of python-doctr (doctr pulls onnx → pypdfium2), so
+#   it is in the build venv and in the closure anyway. Its version is
+#   resolved by pip, not pinned by hand; RISK REGISTERED (release-notes
+#   known limitation): a doctr update could silently move it off the main
+#   requirements.txt version (5.13.0) — check the closure after any ML
+#   version bump.
 pyinstaller==6.22.3
 PySide6_Essentials==6.11.2
 shiboken6==6.11.2

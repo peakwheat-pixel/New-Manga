@@ -6,7 +6,13 @@ marker and ``sys.executable`` to simulate a PyInstaller onedir layout —
 nothing here really packages anything. The released NON-frozen behavior
 (source venv) must stay byte-identical: env override, else the default
 data-root path (the lazy provider fails closed ``PROVIDER_NOT_CONFIGURED``
-at detect time), no bundle probing, no assembly-time error.
+at detect time), no bundle probing, no warning output, no error.
+
+DSH r1 R5/R6 review-fix: the failure shape is UNIFORM for both backends —
+a frozen all-absent state (broken install / AV quarantine / -SkipWeights
+debug artifact) degrades to ONE stderr diagnostic line + the released
+detect-time typed NOT_CONFIGURED, never an assembly-time crash (M2-AC3:
+assemble, never crash; fail closed at the step).
 """
 
 from __future__ import annotations
@@ -46,6 +52,22 @@ def _bundle_candidate(bundle_dir: Path, weights_name: str) -> Path:
     return bundle_dir / "models" / "detector" / weights_name
 
 
+def _wired_detector(handlers: dict) -> object:
+    """Reach the assembled detector through the ``_typed`` wrapper closure
+    (same technique as tests/providers/test_detector_assembly.py — the
+    bound ``handle_detect`` lives in closure cells, not on ``__self__``)."""
+    for cell in handlers["detect"].__closure__ or ():
+        try:
+            inner = cell.cell_contents
+        except ValueError:  # empty cell
+            continue
+        bound = getattr(inner, "__self__", None)
+        detector = getattr(getattr(bound, "deps", None), "detector", None)
+        if detector is not None:
+            return detector
+    raise AssertionError("detect handler does not expose a wired detector")
+
+
 # ---------------------------------------------------------------------------
 # 1. env override wins over everything (both forms)
 # ---------------------------------------------------------------------------
@@ -66,7 +88,7 @@ def test_env_override_wins_over_probed_candidates(
     _simulate_frozen(monkeypatch, bundle_dir)
 
     resolved = _resolve_detector_weights_path(
-        str(override), MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
+        str(override), MANGA_WEIGHTS_DIRNAME, db_path
     )
     # used verbatim, no probe rewrite
     assert resolved == override == Path(str(override))
@@ -74,7 +96,7 @@ def test_env_override_wins_over_probed_candidates(
     # the same override wins in the non-frozen form too
     monkeypatch.delattr(sys, "frozen")
     resolved = _resolve_detector_weights_path(
-        str(override), MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
+        str(override), MANGA_WEIGHTS_DIRNAME, db_path
     )
     assert resolved == override
 
@@ -88,9 +110,7 @@ def test_empty_override_falls_through_to_candidates(
     data_root_weights = _data_root_candidate(db_path, MANGA_WEIGHTS_DIRNAME)
     data_root_weights.mkdir(parents=True)
 
-    resolved = _resolve_detector_weights_path(
-        "", MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
-    )
+    resolved = _resolve_detector_weights_path("", MANGA_WEIGHTS_DIRNAME, db_path)
     assert resolved == data_root_weights
 
 
@@ -113,9 +133,7 @@ def test_data_root_probe_outranks_bundle(
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
     _simulate_frozen(monkeypatch, bundle_dir)
 
-    resolved = _resolve_detector_weights_path(
-        None, MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
-    )
+    resolved = _resolve_detector_weights_path(None, MANGA_WEIGHTS_DIRNAME, db_path)
     assert resolved == data_root_weights
 
 
@@ -134,9 +152,7 @@ def test_frozen_bundle_fallback_selected_when_data_root_absent(
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
     _simulate_frozen(monkeypatch, bundle_dir)
 
-    resolved = _resolve_detector_weights_path(
-        None, MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
-    )
+    resolved = _resolve_detector_weights_path(None, MANGA_WEIGHTS_DIRNAME, db_path)
     assert resolved == bundle_weights
     # the onedir layout: <bundle root> is sys.executable's parent
     assert resolved == Path(sys.executable).resolve().parent / "models" / "detector" / MANGA_WEIGHTS_DIRNAME
@@ -156,90 +172,94 @@ def test_frozen_bundle_file_probe_for_doctr(
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
     _simulate_frozen(monkeypatch, bundle_dir)
 
-    resolved = _resolve_detector_weights_path(
-        None, DOCTR_WEIGHTS_FILENAME, db_path, bundled_in_release=False
-    )
+    resolved = _resolve_detector_weights_path(None, DOCTR_WEIGHTS_FILENAME, db_path)
     assert resolved == bundle_weights
 
 
-def test_frozen_manga_all_absent_fails_closed_with_candidates(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+# ---------------------------------------------------------------------------
+# 4. frozen all-absent: ONE stderr warning + default path, NO error — for
+#    BOTH backends (DSH r1 R5/R6 review-fix: uniform failure shape)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("weights_name", [MANGA_WEIGHTS_DIRNAME, DOCTR_WEIGHTS_FILENAME])
+def test_frozen_all_absent_warns_and_returns_default(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys, weights_name: str
 ) -> None:
-    """Frozen manga + nothing anywhere = broken install (the weights ARE the
-    delivered artifact, ruling 3): fail closed AT ASSEMBLY with every probed
-    candidate listed."""
+    """Frozen + nothing anywhere: assembly must NOT crash (an assembly-time
+    raise would take bookshelf/reader down with it) — one stderr line with
+    every probed candidate, then the default path whose detect-time failure
+    is the typed PROVIDER_NOT_CONFIGURED."""
     db_path = tmp_path / "roaming" / "data" / "library.db"
     bundle_dir = tmp_path / "install" / "resources" / "core-sidecar"
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
     _simulate_frozen(monkeypatch, bundle_dir)
 
-    with pytest.raises(ValueError) as excinfo:
-        _resolve_detector_weights_path(
-            None, MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
-        )
-    message = str(excinfo.value)
-    assert str(_data_root_candidate(db_path, MANGA_WEIGHTS_DIRNAME)) in message
-    assert str(_bundle_candidate(bundle_dir, MANGA_WEIGHTS_DIRNAME)) in message
-    assert MANGA_WEIGHTS_DIRNAME in message
+    resolved = _resolve_detector_weights_path(None, weights_name, db_path)
+
+    assert resolved == _data_root_candidate(db_path, weights_name)
+    captured = capsys.readouterr()
+    assert "probed candidates" in captured.err
+    assert str(_data_root_candidate(db_path, weights_name)) in captured.err
+    assert str(_bundle_candidate(bundle_dir, weights_name)) in captured.err
+    assert weights_name in captured.err
+    assert "PROVIDER_NOT_CONFIGURED" in captured.err
 
 
-def test_frozen_doctr_all_absent_keeps_detect_time_not_configured(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+def test_frozen_bundle_hit_emits_no_warning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
 ) -> None:
-    """Frozen doctr + nothing anywhere = the DESIGNED release state (ruling
-    3: the doctr weights intentionally ship out of the bundle). No
-    assembly-time error — the default path is returned and the lazy
-    provider fails closed PROVIDER_NOT_CONFIGURED at detect time with the
-    placement pointer."""
-    db_path = tmp_path / "roaming" / "data" / "library.db"
+    db_path = tmp_path / "data" / "library.db"
     bundle_dir = tmp_path / "install" / "resources" / "core-sidecar"
+    bundle_weights = _bundle_candidate(bundle_dir, MANGA_WEIGHTS_DIRNAME)
+    bundle_weights.mkdir(parents=True)
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
     _simulate_frozen(monkeypatch, bundle_dir)
 
-    resolved = _resolve_detector_weights_path(
-        None, DOCTR_WEIGHTS_FILENAME, db_path, bundled_in_release=False
-    )
-    assert resolved == _data_root_candidate(db_path, DOCTR_WEIGHTS_FILENAME)
+    resolved = _resolve_detector_weights_path(None, MANGA_WEIGHTS_DIRNAME, db_path)
+    assert resolved == bundle_weights
+    assert capsys.readouterr().err == ""
 
 
 # ---------------------------------------------------------------------------
-# 4. non-frozen: released behavior, byte-identical
+# 5. non-frozen: released behavior, byte-identical (no probing, no output)
 # ---------------------------------------------------------------------------
 
 
 def test_non_frozen_all_absent_returns_default_path_without_error(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
 ) -> None:
     """Zero change: with no env and nothing on disk the released form keeps
     assembling (the lazy provider fails closed NOT_CONFIGURED at detect) —
-    no bundle probing, no assembly-time error."""
+    no bundle probing, no warning, no assembly-time error."""
     db_path = tmp_path / "data" / "library.db"
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
     assert not hasattr(sys, "frozen")  # the test process is not frozen
 
-    resolved = _resolve_detector_weights_path(
-        None, MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
-    )
+    resolved = _resolve_detector_weights_path(None, MANGA_WEIGHTS_DIRNAME, db_path)
     assert resolved == _released_default(db_path, MANGA_WEIGHTS_DIRNAME)
+    assert capsys.readouterr().err == ""
 
 
 def test_non_frozen_never_probes_a_bundle_layout(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Even when a models/detector tree exists next to the venv python
+    """Even when a models/detector tree exists next to the interpreter
     (sys.executable's parent in the non-frozen form), the released lookup
-    must NOT select it — only the data-root formula. (No file is created:
-    the assertion is about which candidate the lookup selects, and the
-    non-frozen branch must never even look at the executable's tree.)"""
-    db_path = tmp_path / "data" / "library.db"
-    stray = Path(sys.executable).resolve().parent / "models" / "detector" / MANGA_WEIGHTS_DIRNAME
+    must NOT select it — only the data-root formula. R11 review-fix: the
+    stray tree is really created (next to a FAKE interpreter under tmp_path,
+    so no real venv tree is touched) before the assertion."""
+    fake_root = tmp_path / "fake-venv"
+    monkeypatch.setattr(sys, "executable", str(fake_root / "python.exe"))
+    stray = _bundle_candidate(fake_root, MANGA_WEIGHTS_DIRNAME)
+    stray.mkdir(parents=True)
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
+    db_path = tmp_path / "data" / "library.db"
 
-    resolved = _resolve_detector_weights_path(
-        None, MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
-    )
+    resolved = _resolve_detector_weights_path(None, MANGA_WEIGHTS_DIRNAME, db_path)
     assert resolved == _released_default(db_path, MANGA_WEIGHTS_DIRNAME)
     assert resolved != stray
+    assert not resolved.exists()
 
 
 def test_non_frozen_data_root_hit_matches_released_formula(
@@ -251,15 +271,12 @@ def test_non_frozen_data_root_hit_matches_released_formula(
     (weights / MANGA_MODEL_FILENAME).touch()
     monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
 
-    resolved = _resolve_detector_weights_path(
-        None, MANGA_WEIGHTS_DIRNAME, db_path, bundled_in_release=True
-    )
+    resolved = _resolve_detector_weights_path(None, MANGA_WEIGHTS_DIRNAME, db_path)
     assert resolved == weights == _released_default(db_path, MANGA_WEIGHTS_DIRNAME)
 
 
 # ---------------------------------------------------------------------------
-# 5. assembly-level smoke: the frozen form wires the provider to the bundle
-# copy (Qt-free production assembly, no packaging involved)
+# 6. assembly-level smokes (Qt-free production assembly, no packaging)
 # ---------------------------------------------------------------------------
 
 
@@ -268,7 +285,6 @@ def test_assembly_wires_frozen_bundle_weights(
 ) -> None:
     from bootstrap.core_service import assemble_production_core
 
-    db_path = tmp_path / "roaming" / "data" / "library.db"
     bundle_dir = tmp_path / "install" / "resources" / "core-sidecar"
     bundle_weights = _bundle_candidate(bundle_dir, MANGA_WEIGHTS_DIRNAME)
     bundle_weights.mkdir(parents=True)
@@ -278,20 +294,52 @@ def test_assembly_wires_frozen_bundle_weights(
 
     core = assemble_production_core(tmp_path / "roaming" / "data")
     try:
-        handlers = core.pipeline._executor._handlers
-        assert "detect" in handlers
-        detector = None
-        for cell in handlers["detect"].__closure__ or ():
-            try:
-                inner = cell.cell_contents
-            except ValueError:  # empty cell
-                continue
-            bound = getattr(inner, "__self__", None)
-            candidate = getattr(getattr(bound, "deps", None), "detector", None)
-            if candidate is not None:
-                detector = candidate
-                break
-        assert detector is not None, "detect handler must expose a wired detector"
+        detector = _wired_detector(core.pipeline._executor._handlers)
         assert Path(detector.weights_dir) == bundle_weights
+    finally:
+        core.conn.close()
+
+
+def test_assembly_reads_env_override_without_explicit_argument(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """R11 review-fix: cover the ASSEMBLY's own env read path — the override
+    comes only from NEWMANGA_DETECTOR_WEIGHTS, never a call argument."""
+    from bootstrap.core_service import assemble_production_core
+
+    override = tmp_path / "operator" / MANGA_WEIGHTS_DIRNAME
+    override.mkdir(parents=True)
+    monkeypatch.setenv("NEWMANGA_DETECTOR_WEIGHTS", str(override))
+    monkeypatch.delenv("NEWMANGA_DETECTOR_BACKEND", raising=False)
+
+    core = assemble_production_core(tmp_path / "data")
+    try:
+        detector = _wired_detector(core.pipeline._executor._handlers)
+        assert Path(detector.weights_dir) == override
+    finally:
+        core.conn.close()
+
+
+def test_assembly_frozen_all_absent_assembles_with_warning(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
+) -> None:
+    """The product-level R5 fix: a broken install (bundle weights missing)
+    still assembles the whole app; the warning names the candidates."""
+    from bootstrap.core_service import assemble_production_core
+
+    bundle_dir = tmp_path / "install" / "resources" / "core-sidecar"
+    monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
+    monkeypatch.delenv("NEWMANGA_DETECTOR_BACKEND", raising=False)
+    _simulate_frozen(monkeypatch, bundle_dir)
+    data_root = tmp_path / "roaming" / "data"
+
+    core = assemble_production_core(data_root)
+    try:
+        detector = _wired_detector(core.pipeline._executor._handlers)
+        assert Path(detector.weights_dir) == _data_root_candidate(
+            data_root / "library.db", MANGA_WEIGHTS_DIRNAME
+        )
+        captured = capsys.readouterr()
+        assert "probed candidates" in captured.err
     finally:
         core.conn.close()
