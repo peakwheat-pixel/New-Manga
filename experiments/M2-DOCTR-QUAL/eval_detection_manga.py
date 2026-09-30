@@ -11,7 +11,10 @@ script changes zero bytes of them.
 Candidate (AC1 selection, see the C4 report for the full survey):
 
 - ``ogkalu/comic-text-and-bubble-detector`` (HuggingFace) — RT-DETR-v2
-  (r50vd backbone, 42.9M params), license **Apache-2.0**, trained on
+  (backbone ``rt_detr_resnet`` per the pinned ``config.json``; "r50vd,
+  42.9M params" is the model-card wording, corroborated by HF API
+  safetensors metadata ``F32=42,861,209`` — integration note per DSH r2
+  N4/R11), license **Apache-2.0**, trained on
   ~11k manga / webtoon / manhua / western-comic images. Weights are
   downloaded once into the gitignored task-env tree and pinned by SHA-256
   before use (controlled-weight discipline; never committed).
@@ -28,8 +31,12 @@ report):
 - Each kept text box plays the "word" role, exactly like a docTR word box
   in ``eval_detection.py``; the frozen production merge then produces the
   judged block layer. fast_base / db_resnet50 and this candidate thus run
-  the identical merge + scoring path — the comparison is apples-to-apples
-  up to the detector swap.
+  the identical merge + scoring code path (single-variable detector swap),
+  but the actual merge workload is NOT equivalent: this model's raw output
+  is already block-level (1021 raw boxes -> 990 merged vs 917 GT), so the
+  production merge is near a no-op for it, while docTR's word->block merge
+  is load-bearing (DSH r1 R3; see the C4 report §4/§7 for the PASS
+  semantics under the production block-consumption criterion).
 - The model's own ``preprocessor_config.json`` (resize to 640x640) is used
   as-is: this is an off-the-shelf evaluation, no dataset-specific adapter
   tuning. GT boxes are absolute-pixel seg05 windows; ``post_process`` maps

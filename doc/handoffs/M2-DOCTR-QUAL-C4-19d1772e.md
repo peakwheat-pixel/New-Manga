@@ -3,8 +3,8 @@ task_id: M2-DOCTR-QUAL-C4
 author: ZCode
 recipient: Codex
 base_commit: 2e9f564dda7e6f5c10b65af60e1017efd94810df
-delivery_head: 19d1772e2184c1c9286bc3c5f259642a19f8a6f1
-status: in_review
+delivery_head: 76fc593f37e8a5b0243796741c5dc580de72428f
+status: integrated @d5b1831d（集成方修正：本 frontmatter delivery_head 由 19d1772e 更正为 r2 终 tip，DSH r2 N1）
 ---
 
 # Handoff：M2-DOCTR-QUAL-C4（manga 域现成检测器对照评估）
@@ -18,10 +18,10 @@ Commit chain（4 commits on top of delivery base `2e9f564d`）：
 
 1. `ae66fbbd` — claim（Task frontmatter `ready`→`in_progress` + `claim:` 行）。
 2. `19d1772e` — 实现：新增 `experiments/M2-DOCTR-QUAL/eval_detection_manga.py`（评测入口）+ 3 个正式 results JSON（正式 / pad 抵消附报 / conf 敏感性附报）+ `c4-manga-domain-report.md`。
-3. （r2 返修 commit）— DSH r1 R1-R12 处置：报告 §7 条件式口径声明与抽检协议框架（R1/R2）、合并空转量化 1021→990（R3）、数值与版本/许可证据修正（R4-R6、R8、R11、R12）、脚本 R9/R10 小修 + 行为等价全量复跑证明（排除运行元数据后 0 diff）；新增 `license-evidence.md`；三个正式 results JSON 零改动。
-4. （本 commit）— Task 回填（`in_review`、AC 勾选、测试表）+ 本 Handoff。
+3. `a19d2254` — Task 回填（`in_review`、AC 勾选、测试表）+ 本 Handoff（初版，frontmatter 当时误记 delivery_head=19d1772e）。
+4. `76fc593f` = **delivery_head（r2 返修终 tip）** — DSH r1 R1-R12 处置：报告 §7 条件式口径声明与抽检协议框架（R1/R2）、合并空转量化 1021→990（R3）、数值与版本/许可证据修正（R4-R6、R8、R11、R12）、脚本 R9/R10 小修 + 行为等价全量复跑证明（排除运行元数据后 0 diff）；新增 `license-evidence.md`；三个正式 results JSON 零改动。（commit chain 编号与 hash 由集成方按 DSH r2 N1 更正。）
 
-Changed paths（`git diff --name-only 2e9f564d..HEAD` 可复核）：`experiments/M2-DOCTR-QUAL/eval_detection_manga.py`（新增）、`verification/M2-DOCTR-QUAL/qualification/results-formal-manga_rt_detr_v2-cuda-seg05{,-padoffset,-conf03}.json`（新增）、`verification/M2-DOCTR-QUAL/qualification/c4-manga-domain-report.md`（新增）、`doc/tasks/M2-DOCTR-QUAL-C4.md`、`doc/handoffs/`。**已集成评测文件（`eval_detection.py` / `build_eval_manifest.py` / `thresholds.json` / `smoke_adapter_check.py` / `snapshot_weights.py` / `summarize_qualification.py`）零改动；生产 `src/**`、`requirements*.txt`、`apps/**`、`packaging/**`、contracts 零改动**（AC5 干净）。
+Changed paths（`git diff --name-only 2e9f564d..HEAD` 可复核）：`experiments/M2-DOCTR-QUAL/eval_detection_manga.py`（新增）、`verification/M2-DOCTR-QUAL/qualification/results-formal-manga_rt_detr_v2-cuda-seg05{,-padoffset,-conf03}.json`（新增）、`verification/M2-DOCTR-QUAL/qualification/c4-manga-domain-report.md`（新增）、`verification/M2-DOCTR-QUAL/qualification/license-evidence.md`（r2 新增——初版清单漏列，集成方按 DSH r2 N5 补入）、`doc/tasks/M2-DOCTR-QUAL-C4.md`、`doc/handoffs/`。**已集成评测文件（`eval_detection.py` / `build_eval_manifest.py` / `thresholds.json` / `smoke_adapter_check.py` / `snapshot_weights.py` / `summarize_qualification.py`）零改动；生产 `src/**`、`requirements*.txt`、`apps/**`、`packaging/**`、contracts 零改动**（AC5 干净）。
 
 AC 对照：AC1-AC5 全部满足（逐条证据见下表）。
 

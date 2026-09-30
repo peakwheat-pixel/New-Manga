@@ -2,9 +2,10 @@
 id: M2-DOCTR-QUAL-C4
 title: "manga 域检测器评估（C1-C5 候选流程之 C4；用户裁决释放 2026-09-30）"
 kind: experiment
-status: in_review
+status: done
 claim: ZCode 2026-09-30 at delivery base 2e9f564d (branch agent/zcode/M2-DOCTR-QUAL-C4, worktree M2-DOCTR-QUAL-C4-zcode); scope per frozen AC1-AC5
-delivery_head: 19d1772e2184c1c9286bc3c5f259642a19f8a6f1
+delivery_head: 76fc593f37e8a5b0243796741c5dc580de72428f
+integration_commit: d5b1831d
 handoff: doc/handoffs/M2-DOCTR-QUAL-C4-19d1772e.md
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
@@ -35,7 +36,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C4-zcode
 
 - 候选为**现成 manga 域文本检测模型**（非 docTR 标准架构），优先级由 Owner 侦察后冻结并在 Handoff 记录选型理由；参考候选（不限定）：
   1. `dmMaze/comic-text-detector`（GitHub；漫画文本检测社区成熟方案，输出文本/气泡 mask+框）；
-  2. `ogkalu/comic-text-and-bubble-detector`（HuggingFace；YOLO 气泡/文本检测）。
+  2. `ogkalu/comic-text-and-bubble-detector`（HuggingFace；气泡/文本检测。**集成更正注（N6，DSH r2）**：释放时误标「YOLO」——pinned `config.json` 证实为 RT-DETR-v2（`model_type=rt_detr_v2`、backbone `rt_detr_resnet`），Handoff 选型表已写对）。
 - 硬纪律：①**许可核查先行**——许可不明/不可用于评估的候选不采用，如实报告（许可不明导致全部候选不可用=合法 FAIL 交付，不得硬凑）；②权重获取后 **SHA-256 pin 登记**（新增 weights manifest 或并入报告，注明来源 URL/版本/获取日期）；③权重文件**不入库**（落 `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/` 或同类 gitignored 外部路径）；④下载后先验哈希/可加载再使用（吸取 M2-TA2C 附件审计教训）。
 - 环境：优先**新建隔离 venv**（如 `M2-DOCTR-QUAL-C4-gpu-py312`，torch 对齐 cu128 系），不污染 preflight 冻结的 docTR GPU venv；若实测与现有 venv 无依赖冲突亦可复用，选择与理由入 Handoff。
 
@@ -72,8 +73,9 @@ worktree: G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C4-zcode
 
 ## 交付与运行记录（终态）
 
-- 交付（2026-09-30，Owner=ZCode）：commit 链 `ae66fbbd`（claim）→ `19d1772e`（实现：`experiments/M2-DOCTR-QUAL/eval_detection_manga.py` + 3 个 results JSON + 报告）→ handoff/回填 commit → r2 返修 commit（DSH r1 R1-R12 逐条处置：报告 §7 条件式口径声明与抽检协议框架、合并空转量化、revision/许可证据入库、PowerShell 复现双写、脚本 R9/R10 + 行为等价 0 diff 证明；三个正式 results JSON 零改动）。base=`2e9f564d`，delivery_head=`19d1772e`。
+- 交付（2026-09-30，Owner=ZCode）：commit 链 `ae66fbbd`（claim）→ `19d1772e`（实现：`experiments/M2-DOCTR-QUAL/eval_detection_manga.py` + 3 个 results JSON + 报告）→ `a19d2254`（handoff/回填）→ `76fc593f`=**delivery_head**（r2 返修：DSH r1 R1-R12 逐条处置——报告 §7 条件式口径声明与抽检协议框架、合并空转量化、revision/许可证据入库、PowerShell 复现双写、脚本 R9/R10 + 行为等价 0 diff 证明；三个正式 results JSON 零改动）。base=`2e9f564d`。
 - 正式结果：**Gate 三项全 PASS**（Recall 0.9618 / MeanCov 0.9965 / severe 0.0000，block_coverage 主判定，生产 pad 正式）；对照 fast_base 0.4776 / db_resnet50 0.6085。结论限定（伪 GT 同源性风险 + Precision 污染下界 + 合并空转/生产块级消费口径语义）见报告 §4/§5/§7 口径声明；建议：C4 fine-tune 主线冻结口径内不投入（条件式，待 §7.2 抽检确认），C1 缩减为抽检型校准审计（分层协议已冻结于报告 §7.2），生产集成另行释放 Task。
-- Review：DSH r1 **approved_with_conditions**（2026-09-30；0×P0/1×P1/2×P2/6×P3）→ r2 返修逐条处置 R1-R12 后待 DSH 复看。
-- Handoff：[M2-DOCTR-QUAL-C4-19d1772e](../handoffs/M2-DOCTR-QUAL-C4-19d1772e.md)（status `in_review`）。
+- Review：DSH r1 [approved_with_conditions](../reviews/M2-DOCTR-QUAL-C4-76fc593f-dsh-r1.md)（2026-09-30；0×P0/1×P1/2×P2/6×P3，R12/R13 为正面核验）→ Owner r2 返修（R1-R12 逐条处置，行为等价 0 diff）→ DSH r2 [approved_with_conditions](../reviews/M2-DOCTR-QUAL-C4-76fc593f-dsh-r2.md)（**r1 P1/P2 实质闭合**；新增 N1-N7：N1 交付 hash 未登记、N3/N4/N5/N6 文档小修=集成方闭合，N2/N7 框级数据依赖随 C1 抽检 Task 释放冻结）。
+- 集成（2026-09-30，Codex 代行）：merge=`d5b1831d`（parents `840f8b91`+`76fc593f`，无冲突，8 文件全允许路径）；集成复跑：merge head 全量正式口径 EXIT=0 `verdict all_pass=True`、与入库正式 JSON 逐字段比对 **summary 0 diff / per_region 0/511 diff（确定性复现）**、集成修正后脚本 docstring 注释级改动冒烟 EXIT=0；集成修正 commit 一次性闭合 DSH r2 N1/N3/N4/N5/N6（frontmatter hash 链、D 层分母 72、docstring 同源限定、changed-paths 补 license-evidence.md、Task 架构更正注）+ DSH r1/r2 报告原字节 import。N2/N7/R7（复现证据归档、matched-pair 导出开关、B 层分层清单）移交 C1 抽检 Task 释放时冻结。记录：[integration-record-c4](../../verification/M2-DOCTR-QUAL/qualification/integration-record-c4/integration.md)。Owner branch/worktree 保留于 `76fc593f`。
+- Handoff：[M2-DOCTR-QUAL-C4-19d1772e](../handoffs/M2-DOCTR-QUAL-C4-19d1772e.md)。
 - 权重与环境（gitignored 外部路径）：`G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/`（sha256 pinned + HF 服务端 LFS sha256 交叉验证一致 + revision `16e8a622f91fabc6b5b65c96d32d1183f8843546`）；隔离 venv `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4-gpu-py312`（torch 2.11.0+cu128 / transformers 5.17.0）。

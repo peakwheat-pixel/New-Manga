@@ -78,6 +78,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | M2-TA3-A | ZCode | DeepSeek Harness / Codex（代行） | `5dc69d16` |
 | DIAG-M2-LOCK-CHANGED-REPRO-002 | ZCode | DeepSeek Harness / Codex（代行） | `1faf6c1b`（收口 `56edc335`） |
 | DOC-FIX-LOCK-CHANGED-STALE-COMMENTS | ZCode | DeepSeek Harness / Codex（代行） | `1970512d`（集成修正 `e81b4220`） |
+| M2-DOCTR-QUAL-C4 | ZCode | DeepSeek Harness / Codex（代行） | `d5b1831d`（**Gate 全 PASS**：Recall 0.9618 / MeanCov 0.9965 / severe 0.0；fine-tune 主线不投入；C1 缩减为抽检） |
 
 | 已闭环 Task（原「未完成 / 下一阶段」表；新行随收口追加） | 状态 | 建议 Owner / Reviewer | 说明 |
 |---|---|---|---|
@@ -157,7 +158,9 @@ flowchart TD
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
   PRE --> QRUN["DOCTR-QUAL-RUN 正式 qualification（T-D1） · O:ZCode ✓（正式结果 FAIL）"]
-  QRUN -.-> C15["检测器调参/换模型候选 C1-C5 · proposed 待释放（C1 需用户/标注者参与；C4 manga 域检测器=唯一可能逼近 Gate）"]
+  QRUN --> C4["DOCTR-QUAL-C4 manga 域检测器评估 · O:ZCode ✓（Gate 全 PASS 0.9618）"]
+  C4 -.-> C1SPOT["C1 抽检型校准审计 · proposed 待释放（协议冻结于 C4 报告 §7.2；需用户/标注者小时级抽检）"]
+  C4 -.-> PRODINT["docTR→manga 域生产集成 · proposed（wire 变化，须 Codex 范围化释放）"]
 
   %% L-1 缺口核实支线（TA3-A 遗留 → DIAG-002 → DOC-FIX-STALE 全闭）
   TA3A -.-> DG2["DIAG-LOCK-CHANGED-REPRO-002 L-1 核实=已由 M2-P1 修复 · O:ZCode ✓"]
@@ -165,8 +168,8 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF done;
-  class TA3B,C15 proposed;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4 done;
+  class TA3B,C1SPOT,PRODINT proposed;
 ```
 
 上图中绿色节点全部为 `done` 且已集成 main；黄色节点（M2-TA3-B、C1-C5 候选）只是排序与建议分工，不构成释放——实施前须另行登记并释放 Task。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
