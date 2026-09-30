@@ -20,6 +20,8 @@ Task：[M2-DOCTR-QUAL-PREFLIGHT](../../doc/tasks/M2-DOCTR-QUAL-PREFLIGHT.md)（�
 
 ## 阈值（用户默认，thresholds.json）
 
+> 【历史段落（preflight 口径，2026-09-29）】现行正式口径见 M2-DOCTR-QUAL-RUN 正式报告（Precision 非 Gate、Mean coverage、pad 协议）。
+
 IoU≥0.5 匹配；Recall≥92%；Precision≥85%；Mean IoU≥60%；严重整页漏检≤5%（定义：GT≥3 且 0 检出的 region 占含 GT region 比例）。
 
 ## 运行
