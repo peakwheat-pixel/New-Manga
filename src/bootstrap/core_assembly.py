@@ -621,11 +621,16 @@ def _resolve_detector_weights_path(
         if bundle_candidate.exists():
             return bundle_candidate
         probed = [str(data_root_candidate), str(bundle_candidate)]
+        # N1 fix (DSH r2): pre-join the candidates BEFORE interpolation — the
+        # previous form relied on implicit adjacent-literal concatenation with
+        # a bare `" | ".join(probed)` tail, which parses as
+        # `("...none exists:  | ").join(probed)` (the separator became a
+        # prefix of the whole first literal) and garbled the stderr line.
+        probed_str = " | ".join(probed)
         print(
             "WARNING: detector weights not found (weights name "
-            f"{weights_name!r}); probed candidates, none exists: "
-            " | ".join(probed)
-            + "; the detect step will fail closed with PROVIDER_NOT_CONFIGURED "
+            f"{weights_name!r}); probed candidates, none exists: {probed_str}"
+            "; the detect step will fail closed with PROVIDER_NOT_CONFIGURED "
             "until the weights are placed on the data root or set via "
             "NEWMANGA_DETECTOR_WEIGHTS",
             file=sys.stderr,

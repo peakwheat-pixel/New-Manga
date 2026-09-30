@@ -68,12 +68,17 @@ ENTRIES = [
     ("entry_catalog_loader", "catalog_loader", False),
 ]
 
-#: DSH r1 R3 review-fix: the detect chain resolves transformers and its
-#: RT-DETR model module DYNAMICALLY (transformers' own _LazyModule), so
-#: modulegraph cannot be trusted to pull the rt_detr subpackage in on its
-#: own. Both are pinned here; the assertion below fails the build if either
+#: DSH r1 R3 review-fix (N3, DSH r2): the detect chain resolves transformers
+#: and its RT-DETR model modules DYNAMICALLY (transformers' own _LazyModule —
+#: `RTDetrV2ForObjectDetection` resolves through transformers.models.rt_detr_v2,
+#: which modulegraph cannot be trusted to pull in on its own), so all three
+#: names are pinned here; the assertion below fails the build if any of them
 #: is missing from the analyzed graph.
-ML_HIDDENIMPORTS = ["transformers", "transformers.models.rt_detr"]
+ML_HIDDENIMPORTS = [
+    "transformers",
+    "transformers.models.rt_detr",
+    "transformers.models.rt_detr_v2",
+]
 
 
 def _archive_warn_file(exe_name: str) -> None:

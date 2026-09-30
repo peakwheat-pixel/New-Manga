@@ -20,7 +20,7 @@
 # form fails closed NOT_CONFIGURED when switched back to doctr).
 #
 # Usage (from the repository root):
-#   powershell -File packaging/m2ac5/build_sidecar.ps1 [-PythonExe <path>] [-Force] [-SkipWeights]
+#   powershell -File packaging/m2ac5/build_sidecar.ps1 [-PythonExe <path>] [-WeightsSource <path>] [-Force] [-SkipWeights]
 #
 # The default build venv is the dedicated M2-AC5 build env (packager + ML
 # runtime closure; see packaging/m2ac5/requirements-build.txt).

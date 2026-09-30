@@ -29,7 +29,7 @@ DSH r1 review（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r1.md`
 | R4[P2] doctr detect 断言 | closed | `packaged-detect-probe.py` `run_l4` 新增 (b)：闭包外 doctr detect（build venv driver，`DoctrDetectionProvider` + 包内不存在的 `fast_base-688a8b34.pt` 候选）断言 typed `ProviderNotConfigured`（`error_code=PROVIDER_NOT_CONFIGURED`），场景 `PK-L4-doctr-detect-fail-closed-typed`；L4(a) docstring 明示「frozen 启动验证 only，detect 语义由单测+闭包外探针覆盖」 |
 | R5[P2] 裸 ValueError | closed（裁决⑤，前任半成品完成） | `core_assembly.py` `_resolve_detector_weights_path`：删 `bundled_in_release` 参数与 `raise ValueError`，frozen 全缺 → `print(..., file=sys.stderr)` 一行警告（weights name + probed candidates + NOT_CONFIGURED 指引）→ 返回默认路径；装配不崩。「权重目录缺失=整机不可启动」后果随装配期 raise 一并消除（Task 遗留与边界登记） |
 | R6[P2] 语义分叉追认 | closed（裁决⑤） | 分叉消解（两 backend 同一 lookup 同一失败形状）；Task「r1 review 处置裁决」节 + 裁决 4 文本追加追认注记；AC3 措辞改「同一查找顺序 + 失败语义统一（detect 期）+ 装配期 stderr 警告」；`build_sidecar.ps1` `-SkipWeights` 注释修正（stderr 警告 + detect 期 typed NOT_CONFIGURED，非装配期崩溃） |
-| R7[P2] 证据重绑定 | closed | 全部代码/spec 改动完成后重新构建：构建时 `HEAD=dbad2027a196e6d4ae933dc9401037809bd668f2`（构建日志 `build_sidecar: git HEAD=dbad2027…`），构建时工作树=返修 commit 已提交（干净）；新 NSIS sha256/onedir 字节文件数绑定该 tip（见下表）；r1 时点证据整体归档 `raw-r1/`（git mv，保留 review 锚点） |
+| R7[P2] 证据重绑定 | closed | 全部代码/spec 改动完成后重新构建：构建时 `HEAD=dbad2027a196e6d4ae933dc9401037809bd668f2`（构建日志 `build_sidecar: git HEAD=dbad2027…`），构建时工作树=返修 commit 已提交（干净）；新 NSIS sha256/onedir 字节文件数绑定该 tip（见下表）；r1 时点证据整体归档 `raw-r1/`（**等价拷贝归档，非 git rename**——N5 措辞修正：10 个 `raw-r1/**` 文件在 diff 中均为 new file，内容忠实，review 锚点不失效） |
 | R8[P3] README | closed | `packaging/m2ac5/README.md` §1（ML 栈五行+裁决 2 定位翻转+权重随包+体积口径+mobi/pypdfium2）与 §2.b/2.c（权重复制、`-SkipWeights`/`-WeightsSource`、新体积口径指向 release-notes） |
 | R9[P3] requirements 注释 | closed | `requirements-build.txt` pypdfium2/mobi 段改写：「mobi 不进（lazy import）」；「pypdfium2 由 doctr 传递依赖带入（不手工 pin，pip 解析），风险登记（ML 升级后复核闭包）」 |
 | R10[P4] -WeightsSource | closed | `build_sidecar.ps1` param 新增 `[string]$WeightsSource = "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector"`，`Copy-MangaWeights` 参数化，两条调用路径（增量短路+全量）均传参；注释明示「只重定位来源，不放宽 pin 校验」 |
@@ -62,6 +62,43 @@ DSH r1 review（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r1.md`
 | 权重治理 | onedir 内三文件 sha256 与 pin 一致（Copy-MangaWeights 校验 + L3 provider 内 pin 校验传递 NSIS 安装态）；`git ls-files` 零权重 | build-sidecar-console.log + release-notes §AC2 |
 
 未运行项：真干净 Windows 覆盖（M2 Release Gate 口径冻结 NOT_RUN）；**frozen 进程内 ML import/detect（AC5 NOT_RUN 子项，裁决⑥，待 M2-IPC1 命令面扩展）**——不伪造。
+
+## 集成修正记录（DSH r2 N1-N6，acting Codex 授权，全量重建+复跑绑定本轮）
+
+DSH r2 定点复审（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r2.md`，verdict=approved 附 N1-N6）的全部 6 项非阻塞项在集成修正轮闭合。因 N1（src）与 N3（spec）在 exe 内，按 r2 建议随集成重建一并落地：**PyInstaller onedir `-Force` 全量重建 + tauri NSIS 重打包 + GATE 25/25 + 探针 6/6 + pytest 三套件全部重跑并绑定本轮**（r2 轮证据整体归档 `raw-r2/`，本轮新证据在 `raw/`、`warn/`、`packaged-detect-probe-results.json`）。
+
+### N1-N6 逐条闭合
+
+| 项 | 处置 | how（文件:位置，本轮 tip） |
+|---|---|---|
+| N1[P3] 警告文本 join bug | closed | `src/bootstrap/core_assembly.py` `_resolve_detector_weights_path`：先 `probed_str = " | ".join(probed)` 再插值（附注释说明相邻字面量拼接成因）；测试 `tests/providers/test_detector_weights_lookup.py` `test_frozen_all_absent_warns_and_returns_default`（参数化×2）新增**整行布局断言**（恰一行非空输出、`WARNING: ` 开头、`<c1> \| <c2>;` 连接形状、`NEWMANGA_DETECTOR_WEIGHTS` 指引）。exe 内实证：`raw/l2-frozen-weights-absent.log` stderr 现为干净单行（r2 轮乱码形状消除） |
+| N2[P3] Task 内嵌 r1 期数字 | closed | `doc/tasks/M2-PROD-DETECT-2.md` AC1（warn 归档路径改 `pyinstaller-work/<spec>/warn-archive/` → 入库 `verification/M2-PROD-DETECT-2/warn/`）、AC4/AC5/AC6 及测试表全部改为本轮实测（下表） |
+| N3[P4] 断言面少 rt_detr_v2 | closed | `packaging/m2ac5/core_sidecar.spec` `ML_HIDDENIMPORTS` 补 `transformers.models.rt_detr_v2`（provider 解析 `transformers.RTDetrV2ForObjectDetection` 对应子树）；`_assert_ml_closure` 遍历 `ML_HIDDENIMPORTS` 自动覆盖三名字。构建日志 `raw/build-sidecar-console.log:414`：`closure assertion: core_service PYZ carries transformers, transformers.models.rt_detr, transformers.models.rt_detr_v2 (8572 pure modules)`；PYZ 清单 `raw/pyz-core-service-listing.txt:7920-7922` rt_detr_v2 三条 |
+| N4[P4] usage 注释缺 -WeightsSource | closed | `packaging/m2ac5/build_sidecar.ps1:23` usage 行补 `[-WeightsSource <path>]` |
+| N5[P4] git mv 措辞 | closed | `verification/M2-PROD-DETECT-2/release-notes.md` 头注与 `doc/handoffs/M2-PROD-DETECT-2-dbad2027.md` R7 行改「**等价拷贝归档，非 git rename**」准确表述（r1 `raw-r1/**` 在 diff 中均为 new file） |
+| N6[P3] 安装态 hash dump 载体 | closed | GATE runner 本轮安装后对 `resources/core-sidecar/models/detector/ogkalu-comic-text-and-bubble-detector/` 三文件 `Get-FileHash` 实测 dump 入库 `verification/M2-PROD-DETECT-2/raw/installed-weights-sha256.txt`：`037930a8…`/`b6d70793…`/`7e9e2245…` 与 pin 逐字一致；release-notes §AC2 与本表措辞为「显式 dump 已入库」 |
+
+### 集成修正轮新构建数字（绑定本轮）
+
+| 项 | r2（dbad2027，已归档 raw-r2/） | **集成修正轮（本轮）** |
+|---|---|---|
+| onedir | 1,116,381,295 B / 5,550 文件 / PyInstaller 353s | **1,116,381,309 B / 5,550 文件 / PyInstaller 330s**（rt_detr_v2 断言面增量 +14 B） |
+| NSIS | 460,175,852 B / sha256 `ed401584…` / tauri 516s | **460,181,312 B（438.86 MiB）/ sha256 `07d7daa19ac9e3e9e72fbc4b8f2bea708be46805816d9b26f01092a7db1b7b81` / tauri 263s** |
+| closure assertion | `…transformers, transformers.models.rt_detr (8572 pure modules)` | **`…transformers, transformers.models.rt_detr, transformers.models.rt_detr_v2 (8572 pure modules)`**（`raw/build-sidecar-console.log:414`） |
+| warn 面 | 四文件 979/29/979/29 行；958 missing / 12 桶 / 0 unclassified | **逐文件行数与 r2 轮一致**（唯一差异=`missing module named posix` 行 importer 枚举顺序，PyInstaller set 迭序非确定性）；classify_warn.py 复跑 958/12 桶/0，逐桶数字一致 |
+
+### 集成修正轮复跑结果
+
+| 验证 | 结果 | 证据 |
+|---|---|---|
+| GATE | **25/25 PASS，GATE: PASS**（CS-E2 绑 `07d7daa1…`；安装后 5,552 文件） | raw/cleanstart-runner-stdout.log |
+| 探针 | **6/6 PASS**：L1 ready；L2 移权重→ready+stderr **干净单行警告**（N1 实证）、还原→警告消失；L3 EXIT=0 候选=2 冷启动 6,124ms **稳态 273ms/页**；L4 doctr 启动 EXIT=0 + 闭包外 typed PROVIDER_NOT_CONFIGURED | packaged-detect-probe-results.json + raw/l*.log |
+| pytest 三套件 | **providers 289+1 / 35 / 77**（`1 failed, 401 passed in 36.82s`；既有环境性失败保持；N1 布局断言加在既有参数化测试内，14 collected 不变） | raw/pytest-three-suites-tail.log |
+| cargo/vitest | 44+1ig / 31（本轮零 Rust/前端触碰，沿用 r2 轮实测） | r2 轮 Handoff 表 |
+| M2-AC5 raw + gen/schemas 还原 | runner 重写 6 文件 + tauri/cargo 重写 gen/schemas（2）+ permissions/autogenerated（12）`git checkout --` 还原，专项 diff 为空 | git status |
+| N6 dump | 三值=pin（见上表） | raw/installed-weights-sha256.txt |
+
+构建输入绑定说明：构建时 `HEAD=1c0bc399` + 工作树含 N1-N6 修复（`raw/build-sidecar-console.log:1/:418`）；集成 commit 提交的正是该工作树 src/spec 状态，构建后至交付 tip 未再触碰 `src/`/`packaging/`（可静态验证）。
 
 ## 提交列表（branch `agent/zcode/M2-PROD-DETECT-2`，未 push）
 

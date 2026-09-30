@@ -204,6 +204,21 @@ def test_frozen_all_absent_warns_and_returns_default(
     assert str(_bundle_candidate(bundle_dir, weights_name)) in captured.err
     assert weights_name in captured.err
     assert "PROVIDER_NOT_CONFIGURED" in captured.err
+    # N1 layout guard (DSH r2): the pre-fix form relied on implicit
+    # adjacent-literal concatenation with a bare `" | ".join(probed)` tail, so
+    # the separator leaked into a prefix and the stderr line was garbled (the
+    # first candidate landed at column zero). The diagnostic must be exactly
+    # ONE line, starting with "WARNING: ", carrying both candidates in the
+    # correct "c1 | c2;" join shape plus the placement guidance.
+    warning_lines = [ln for ln in captured.err.splitlines() if ln.strip()]
+    assert len(warning_lines) == 1
+    line = warning_lines[0]
+    assert line.startswith("WARNING: ")
+    assert (
+        f"none exists: {_data_root_candidate(db_path, weights_name)}"
+        f" | {_bundle_candidate(bundle_dir, weights_name)};"
+    ) in line
+    assert "NEWMANGA_DETECTOR_WEIGHTS" in line
 
 
 def test_frozen_bundle_hit_emits_no_warning(
