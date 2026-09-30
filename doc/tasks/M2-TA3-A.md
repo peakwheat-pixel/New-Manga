@@ -117,7 +117,7 @@ integration_commit: null
 ## 遗留（不阻断，登记候选）
 
 - L-1：M2-AC1 handoff 登记的 LOCK_CHANGED planner 缺口未复现——需缺陷 Task 以 mock detect 复现核实（或修正该登记的条件描述）。
-- L-2：`test_assets/comic_golden_suite/README.md:7,26-29` 的「应用 Pipeline NOT_RUN」表述回填后失实，待集成方随收口修订（README 不在本 Task 允许路径）。
+- L-2：回填后失实/含混的套件文档表述（均不在本 Task 允许路径，待集成方随收口修订）：`test_assets/comic_golden_suite/README.md:7,26-29`「应用 Pipeline NOT_RUN」；`test_assets/comic_golden_suite/manifests/local_asset_inventory.json:5`（asset_ready_semantics 的 currently NOT_RUN）与 `:713`（peppercarrot_e04_ko 条目）。
 - L-3：region scope 单 region 语义 + TRANSLATE_ALL 拒绝 region scope（`TARGET_NOT_FOUND: page command requires page scope`）为生产 fail-closed 行为，非缺陷；阅读器批量逐格重翻的用户体验优化属产品层后续。
 - L-4：BJ06 57 region 触发 smoke cap 40（truncated 如实记录）；cap 为本 Task smoke 裁剪，非生产限制。
 - L-5：QT_QPA_PLATFORM=offscreen 下 Qt 无字体目录告警（PySide6 不再自带 fonts）；render 仍 committed，导出图文字为占位框/虚线渲染，排版可读性属 TA3-B 范围。
@@ -131,6 +131,6 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- 交付 head：`dc2b9aca`（分支 `agent/zcode/M2-TA3-A-E2E-SMOKE`，claim 1328a766，base=bebcfcde）。amend 轨迹：首commit `b94ebe87`→`319a3036`（仅 raw 日志头对齐交付 head 重生成）→`dc2b9aca`（Task 补披露行）。代码/数据内容自 `b94ebe87` 起零变化。
+- 交付 head：`dc2b9aca`（分支 `agent/zcode/M2-TA3-A-E2E-SMOKE`，claim 1328a766，base=bebcfcde）。amend 轨迹：首commit `b94ebe87`→`319a3036`（raw 日志头按当时工作区态重写；stdout 正文未重写）→`dc2b9aca`（Task 补披露行）。代码/数据内容自 `b94ebe87` 起零变化。
 - Handoff：`doc/handoffs/M2-TA3-A-1328a76.md`。Review：待派发（DSH 非作者静态）。
 - 实际测试：见 §测试要求 与 `verification/M2-TA3-A/`（summaries 7 份 JSON + raw 5 份日志 + artifacts 5 份 PNG[gitignored]）。

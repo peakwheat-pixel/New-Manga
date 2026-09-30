@@ -1,10 +1,11 @@
 # shell=Git Bash (Windows)
 # cwd=G:/CODEX/New Manga.worktrees/M2-TA3-A-E2E-SMOKE-zcode
-# HEAD=b94ebe87c75d2f6fac8b8f50440f8290e740a118
-# date=2026-09-30T03:47:17Z
+# HEAD=worktree state at capture: c522729e + this r2-closure working tree (doc/provenance wordings only; no code or case data)
+# date=2026-09-30T04:11:31Z
 # cmd=T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/m2_test_assets tests/m2_acceptance -q
+# note=recaptured on the repaired assertion (literal TA3-A snapshot) per DSH r2 new P2-1; supersedes the b94ebe87 capture
 ---
 ........................................................................ [ 87%]
 ..........                                                               [100%]
-82 passed in 10.05s
-# EXIT=0
+82 passed in 10.16s
+# EXIT=
