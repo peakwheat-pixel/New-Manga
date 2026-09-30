@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
   "suite_id": "comic_golden_suite",
-  "generated_from": "M2-TA1 foundation + M2-TA2A local assets + M2-TA2C no-HF source audit",
-  "generated_at": "2026-09-29",
+  "generated_from": "M2-TA1 foundation + M2-TA2A local assets + M2-TA2C no-HF source audit + M2-TA2B open assets (BJ official free volumes + P&C ja/kr additions; Manga109 cancelled 2026-09-30)",
+  "generated_at": "2026-09-30",
   "languages": [
     "ja",
     "ko"
@@ -37,16 +37,16 @@
       "notes": "JA smoke selects 10 acquired Japanese-localized open webcomic pages; Manga109 cases remain gated and are not counted as runnable smoke assets."
     },
     "regression": {
-      "case_count": 68,
+      "case_count": 97,
       "target_range": [
         100,
         150
       ],
       "status": "PARTIAL",
-      "notes": "Definition count differs from runnable count; Manga109 optional; expand from verified local assets, not empty cases."
+      "notes": "Definition count differs from runnable count; JA smoke uses 10 acquired P&C pages; BJ pages (manual_source_page) are acquired locally via tools/fetch_bj.py; Manga109 definitions are cancelled (removed_from_scope_2026-09-30)."
     },
     "full": {
-      "case_count": 68,
+      "case_count": 97,
       "status": "PARTIAL",
       "notes": "Selected catalog only; external benchmark corpora never enter ordinary CI."
     }
@@ -70,7 +70,8 @@
       "pipeline_status": "NOT_RUN",
       "checksum_inventory": null,
       "image_redistribution_status": "Raw manga image redistribution not established",
-      "license": "source-specific; see source audit"
+      "license": "source-specific; see source audit",
+      "removed_from_scope_2026-09-30": true
     },
     {
       "id": "jmangabench",
@@ -101,7 +102,8 @@
       "pipeline_applicability": [],
       "pipeline_status": "NOT_RUN",
       "checksum_inventory": null,
-      "license": "source-specific; see source audit"
+      "license": "source-specific; see source audit",
+      "removed_from_scope_2026-09-30": true
     },
     {
       "id": "coo_and_manga109_dialog",
@@ -141,7 +143,8 @@
       "pipeline_applicability": [],
       "pipeline_status": "NOT_RUN",
       "checksum_inventory": null,
-      "image_redistribution_status": "Raw manga image redistribution not established"
+      "image_redistribution_status": "Raw manga image redistribution not established",
+      "removed_from_scope_2026-09-30": true
     },
     {
       "id": "ko_sfx_dialogue_cleaned_webtoon",
@@ -172,7 +175,7 @@
       "license": "CC BY 4.0 with attribution",
       "image_redistribution_status": "redistributable with attribution; raw files remain git-ignored",
       "local_path": "日漫_JA/02_open_ground_truth_peppercarrot",
-      "local_image_file_count": 10,
+      "local_image_file_count": 15,
       "local_transcript_archive_count": 2,
       "ground_truth_type": "partial SVG text layer: E20P06/E20P07; no dialogue boxes or masks",
       "pipeline_applicability": [
@@ -182,9 +185,9 @@
         "manga_page_render"
       ],
       "pipeline_status": "NOT_RUN",
-      "notes": "10 Japanese-localized page images and two SVG language-pack archives; partial SVG text is available on E20P06/E20P07 only, with no dialogue boxes or masks.",
-      "local_file_count": 12,
-      "byte_size": 40284868,
+      "notes": "15 Japanese-localized page images (E04 + E20) and two SVG language-pack archives; partial SVG text is available on E20P06/E20P07 only, with no dialogue boxes or masks.",
+      "local_file_count": 17,
+      "byte_size": 42126680,
       "ground_truth_types": [
         "svg_text_layer_partial"
       ],
@@ -194,20 +197,20 @@
     {
       "id": "openmantra_candidate",
       "source": "https://github.com/mantra-inc/open-mantra-dataset",
-      "status": "MISSING",
+      "status": "READY_OPTIONAL_ISOLATED",
       "provides": [
         "Japanese page images",
         "Japanese/English/Chinese transcription",
         "text bounding boxes"
       ],
       "license": "CC BY-NC 4.0",
-      "image_redistribution_status": "Non-commercial only; not acquired because project-use scope is not classified as non-commercial.",
-      "local_path": "日漫_JA/05_openmantra_candidate",
-      "local_file_count": 0,
-      "reason": "License scope prevents treating it as an unrestricted product test asset; no files copied or counted runnable.",
-      "notes": "Source repository describes five Japanese manga titles and annotations. Revisit only for a non-commercial-only test scope; this does not block M2-TA2A.",
+      "image_redistribution_status": "Non-commercial only (CC BY-NC 4.0); acquired into the gitignored isolated directory 日漫_JA/99_optional_openmantra (13 files) for an optional non-commercial baseline only; excluded from Git, from the production licensing baseline, and from smoke/regression/full levels.",
+      "local_path": "日漫_JA/99_optional_openmantra",
+      "local_file_count": 13,
+      "reason": "CC BY-NC 4.0 material fetched into a gitignored isolated directory for optional non-commercial baseline only; excluded from production licensing baseline and ordinary case levels.",
+      "notes": "M2-TA2B AC5: scripted fetch from https://github.com/mantra-inc/open-mantra-dataset succeeded (annotation.json + LICENSE.md + README.md + 10 sampled ja pages, 2 per title). Never enters production license baseline, smoke/regression/full levels, or Git.",
       "source_name": "openmantra_candidate",
-      "byte_size": 0,
+      "byte_size": 2341834,
       "ground_truth_types": [
         "Japanese page images",
         "Japanese/English/Chinese transcription",
@@ -215,17 +218,25 @@
       ],
       "pipeline_applicability": [],
       "pipeline_status": "NOT_RUN",
-      "checksum_inventory": null
+      "checksum_inventory": null,
+      "sampled_titles": [
+        "tojime_no_siora",
+        "balloon_dream",
+        "tencho_isoro",
+        "boureisougi",
+        "rasetugari"
+      ],
+      "optional_noncommercial_baseline_excluded": true
     },
     {
       "id": "peppercarrot_korean_localized_pages",
       "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
       "status": "READY",
-      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
-      "local_file_count": 4,
-      "local_image_file_count": 3,
-      "local_transcript_archive_count": 1,
-      "byte_size": 16292579,
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot",
+      "local_file_count": 17,
+      "local_image_file_count": 15,
+      "local_transcript_archive_count": 2,
+      "byte_size": 42097368,
       "license": "CC BY 4.0 with attribution",
       "image_redistribution_status": "Permitted with attribution; media excluded from Git",
       "ground_truth_types": [
@@ -238,7 +249,8 @@
       ],
       "checksum_inventory": "test_assets/comic_golden_suite/manifests/local_asset_inventory.json",
       "source_name": "peppercarrot_korean_localized_pages",
-      "pipeline_status": "NOT_RUN"
+      "pipeline_status": "NOT_RUN",
+      "notes": "E04 (K11-K18) and E20 (K19-K25): 15 Korean-localized page images plus the two official SVG language-pack ZIPs; paired SVGs carry Korean text layers, no detection boxes or masks; French original localized into Korean, not native manhwa."
     },
     {
       "id": "ebdtheque",
@@ -312,6 +324,32 @@
       "pipeline_status": "NOT_RUN",
       "checksum_inventory": null,
       "image_redistribution_status": "Raw manga image redistribution not established"
+    },
+    {
+      "id": "black_jack_official_free",
+      "source": "https://densho810.com/free/",
+      "source_name": "black_jack_official_free",
+      "status": "READY",
+      "optional": false,
+      "license": "Free secondary use with mandatory attribution (author's terms, commercial and non-commercial)",
+      "license_class": "commercial_use_permitted_attribution",
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "image_redistribution_status": "Redistribution permitted under the author's free-license terms with unchanged attribution (title + author); media files remain git-ignored; public use requires an e-mail report to info@densho810.com within one month (user obligation, Agent never sends).",
+      "local_path": "日漫_JA/01_black_jack_official",
+      "local_file_count": 18,
+      "local_image_file_count": 12,
+      "byte_size": 2251373940,
+      "checksum_inventory": null,
+      "checksum_note": "Per-file SHA-256 in 日漫_JA/01_black_jack_official/vol*/bj_download_manifest.json and bj_pages_manifest.json (gitignored); page integrity verified by tools/fetch_bj.py verify against cases.json page_sha256.",
+      "ground_truth_types": [],
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "translation",
+        "manga_page_render"
+      ],
+      "pipeline_status": "NOT_RUN",
+      "notes": "M2-TA2B AC1-AC3: official free Japanese ZIP editions of ブラックジャックによろしく (volumes 1/3/5; JASRAC volumes 2/7/11 avoided), DRM-free PDFs rendered to 12 PNG pages (DPI 150). Real black-and-white Japanese manga with RTL page flow."
     }
   ],
   "sources": {
@@ -324,8 +362,8 @@
     "peppercarrot": {
       "license": "CC BY 4.0 with attribution",
       "image_redistribution_status": "Permitted with attribution; local media excluded from Git",
-      "ja_local_page_count": 10,
-      "ko_local_page_count": 3,
+      "ja_local_page_count": 15,
+      "ko_local_page_count": 15,
       "shared_upstream": "https://www.peppercarrot.com/0_sources/",
       "notes": "No full repository clone or duplicate bulk download."
     },
@@ -1572,7 +1610,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J02",
@@ -1631,7 +1670,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J03",
@@ -1690,7 +1730,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J04",
@@ -1749,7 +1790,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J05",
@@ -1808,7 +1850,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J06",
@@ -1867,7 +1910,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J07",
@@ -1926,7 +1970,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J08",
@@ -1985,7 +2030,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J09",
@@ -2044,7 +2090,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J10",
@@ -2103,7 +2150,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J11",
@@ -2162,7 +2210,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J12",
@@ -2221,7 +2270,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J13",
@@ -2280,7 +2330,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J14",
@@ -2339,7 +2390,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J15",
@@ -2398,7 +2450,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J16",
@@ -2457,7 +2510,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J17",
@@ -2516,7 +2570,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J18",
@@ -2575,7 +2630,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J19",
@@ -2634,7 +2690,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J20",
@@ -2693,7 +2750,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J21",
@@ -2752,7 +2810,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J22",
@@ -2811,7 +2870,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J23",
@@ -2870,7 +2930,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J24",
@@ -2929,7 +2990,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J25",
@@ -2988,7 +3050,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J26",
@@ -3047,7 +3110,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J27",
@@ -3106,7 +3170,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J28",
@@ -3165,7 +3230,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J29",
@@ -3224,7 +3290,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J30",
@@ -3283,7 +3350,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J31",
@@ -3342,7 +3410,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J32",
@@ -3401,7 +3470,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J33",
@@ -3460,7 +3530,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J34",
@@ -3519,7 +3590,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J35",
@@ -3578,7 +3650,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J36",
@@ -3637,7 +3710,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J37",
@@ -3696,7 +3770,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": false,
-      "annotation_available": false
+      "annotation_available": false,
+      "removed_from_scope_2026-09-30": true
     },
     {
       "case_id": "J38",
@@ -4363,6 +4438,1706 @@
       "source_name": "Pepper&Carrot",
       "asset_type": "open_public_comic_page",
       "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P07.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "BJ01",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol01_p0001",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "title_and_credits",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "huge_text",
+        "vertical_text",
+        "complex_background",
+        "rotated_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol01/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 1,
+      "pdf_page_number": 1,
+      "page_file": "pages/vol01_p0001.png",
+      "page_sha256": "ff3365868f3402b0c46ac58473bb6f166dd0626bb3bce043587dae0da708f9f1",
+      "render_dpi": 150,
+      "feature_notes": "Color volume-1 cover: large vertical JP title + author name, diagonally placed English label stickers, ink-splash art over screentone line art. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ02",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol01_p0053",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "vertical_text",
+        "normal_dialogue",
+        "multi_speaker",
+        "complex_background"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol01/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 1,
+      "pdf_page_number": 53,
+      "page_file": "pages/vol01_p0053.png",
+      "page_sha256": "c1ce06205b8e64c1a199f1adbab3bdaa9aff46d67abc8283bd4ef28ea6dd5417",
+      "render_dpi": 150,
+      "feature_notes": "B/W story page: 4 stacked panels, dense bookshelf background, RTL balloon order, vertical dialogue, two speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ03",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol01_p0105",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "narration_dominant",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "vertical_text",
+        "narration",
+        "complex_background"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol01/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 1,
+      "pdf_page_number": 105,
+      "page_file": "pages/vol01_p0105.png",
+      "page_sha256": "9fe0014994f0aa16078b05c70ac3f4f6f5b5c3bc0b7b6313f5973575ea22ed48",
+      "render_dpi": 150,
+      "feature_notes": "Single-panel clock-tower page: handwritten vertical narration text directly over detailed perspective background, no balloons. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ04",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol01_p0209",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "title_and_credits",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "vertical_text",
+        "low_contrast",
+        "huge_text",
+        "horizontal_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol01/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 1,
+      "pdf_page_number": 209,
+      "page_file": "pages/vol01_p0209.png",
+      "page_sha256": "42dabc22dacaa6c811d7583d465c491de67ac7bcf40e997a1cb663119517c3c4",
+      "render_dpi": 150,
+      "feature_notes": "Black chapter divider (Part 1): white-on-black text over ink-splash texture, vertical title + horizontal small labels. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ05",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol03_p0001",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "title_and_credits",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "huge_text",
+        "vertical_text",
+        "complex_background",
+        "rotated_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol03/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 3,
+      "pdf_page_number": 1,
+      "page_file": "pages/vol03_p0001.png",
+      "page_sha256": "7cd1a8e790a76adc70a5f1da9aaa24cf7541304db47d0093bdeaac0b3b10fdf4",
+      "render_dpi": 150,
+      "feature_notes": "Color volume-3 cover: same cover family as BJ01 with purple ink splash. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ06",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol03_p0056",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "fragmented_sfx",
+        "dense_dialogue",
+        "vertical_text",
+        "complex_background",
+        "multi_speaker",
+        "huge_text",
+        "tiny_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol03/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 3,
+      "pdf_page_number": 56,
+      "page_file": "pages/vol03_p0056.png",
+      "page_sha256": "b06c9d7ddb0f679abdddeebd959d7b6aaefb5556a1fbdc43cfc0ee594d04569f",
+      "render_dpi": 150,
+      "feature_notes": "B/W story page: phone SFX (bell), cry SFX, night street panelling, small furigana-like text, multiple speakers; core SFX/difficulty page. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ07",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol03_p0111",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "unverified",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol03/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 3,
+      "pdf_page_number": 111,
+      "page_file": "pages/vol03_p0111.png",
+      "page_sha256": "cba84cdbfba27f6b697adcc9ebdffc3f84dcee6c029d51b48c31d3ff29a1855c",
+      "render_dpi": 150,
+      "feature_notes": "Near-blank ECG line page: single thin waveform line, no text; edge case for detection/OCR false-positive behavior. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ08",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol03_p0221",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "title_and_credits",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "vertical_text",
+        "low_contrast",
+        "huge_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol03/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 3,
+      "pdf_page_number": 221,
+      "page_file": "pages/vol03_p0221.png",
+      "page_sha256": "4e02cb8ec1b1b2f66feffc6f64a18b2c67e11bd6a5d16019fe5fd1bee7acdd3c",
+      "render_dpi": 150,
+      "feature_notes": "Black chapter divider (Baby ER arc): white-on-black text over ink-splash texture. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ09",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol05_p0001",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "title_and_credits",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "huge_text",
+        "vertical_text",
+        "complex_background",
+        "rotated_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol05/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 5,
+      "pdf_page_number": 1,
+      "page_file": "pages/vol05_p0001.png",
+      "page_sha256": "efdae38f52635b142e43fb086609a5609be4119103a1fc68c7f6be4180eb593a",
+      "render_dpi": 150,
+      "feature_notes": "Color volume-5 cover: same cover family as BJ01 with blue ink splash. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ10",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol05_p0061",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "fragmented_sfx",
+        "dense_dialogue",
+        "vertical_text",
+        "complex_background",
+        "narration",
+        "multi_speaker",
+        "tiny_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol05/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 5,
+      "pdf_page_number": 61,
+      "page_file": "pages/vol05_p0061.png",
+      "page_sha256": "4bc8d4845c708edb0be8345b6cfe148fbe02dd93a943a1f260efacef120d51f8",
+      "render_dpi": 150,
+      "feature_notes": "B/W story page: ambulance night scene, boxed narration (time), siren SFX, crowded interior panels, multiple speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ11",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol05_p0122",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "mixed_unverified",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "vertical_text",
+        "normal_dialogue",
+        "dense_dialogue",
+        "multi_speaker"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol05/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 5,
+      "pdf_page_number": 122,
+      "page_file": "pages/vol05_p0122.png",
+      "page_sha256": "dab11ab374243873d7c5ff7594dba6a3f5068cd9c6177ca59d7cc42d636bf50f",
+      "render_dpi": 150,
+      "feature_notes": "B/W story page: hospital corridor + close-up panels, heavy vertical dialogue, three-plus speakers. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "BJ12",
+      "language": "ja",
+      "source": "https://densho810.com/free/",
+      "source_id": "vol05_p0243",
+      "source_type": "official_free_manga_page",
+      "layout_type": "paged_manga",
+      "reading_direction": "right_to_left",
+      "text_type": "title_and_credits",
+      "orientation": "vertical",
+      "difficulty": "unassessed",
+      "tags": [
+        "vertical_text",
+        "low_contrast",
+        "huge_text"
+      ],
+      "source_category": "01_black_jack_official",
+      "local_path": "日漫_JA/01_black_jack_official/vol05/pages",
+      "license_class": "commercial_use_permitted_attribution",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "region",
+        "reading_order",
+        "sfx",
+        "speaker_attribution",
+        "translation",
+        "inpainting",
+        "typesetting",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "none",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "manual_source_page"
+      },
+      "source_name": "Black Jack Official Free (Sato Manga Seisakusho)",
+      "asset_type": "manual_source_page",
+      "source_url": "https://densho810.com/free/",
+      "license": "Author's free-use terms: commercial/non-commercial use permitted, attribution mandatory (title + 佐藤秀峰), e-mail report to info@densho810.com within 1 month of public use; no Kindle store distribution",
+      "ground_truth_types": [],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "region": "NOT_RUN",
+        "reading_order": "NOT_RUN",
+        "sfx": "NOT_RUN",
+        "speaker_attribution": "NOT_RUN",
+        "translation": "NOT_RUN",
+        "inpainting": "NOT_RUN",
+        "typesetting": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": false,
+      "attribution": "ブラックジャックによろしく　佐藤秀峰",
+      "volume": 5,
+      "pdf_page_number": 243,
+      "page_file": "pages/vol05_p0243.png",
+      "page_sha256": "a314450f63807b40d636f3f4d6f131053ea5ecdbb06fb2d418a56785f3d9b8de",
+      "render_dpi": 150,
+      "feature_notes": "Black chapter divider (Gan medical arc): white-on-black text over ink-splash texture. Tags reflect human visual inspection 2026-09-30; capabilities not confirmable from the sample stay unverified via text_type/orientation fields.",
+      "attribution_note": "Mandatory attribution per the author's free-license terms (densho810.com): title + author exactly as published; free for commercial and non-commercial use; report to info@densho810.com within 1 month of public use."
+    },
+    {
+      "case_id": "J48",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P00",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P00.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_layout"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true
+    },
+    {
+      "case_id": "J49",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P01",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P01.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_layout"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true
+    },
+    {
+      "case_id": "J50",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P04",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P04.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_layout"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true
+    },
+    {
+      "case_id": "J51",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P07",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P07.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P07.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P07.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P07.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_layout"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true
+    },
+    {
+      "case_id": "J52",
+      "language": "ja",
+      "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P08",
+      "source_type": "open_source_japanese_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_open_ground_truth_peppercarrot",
+      "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "no_text_transcription_in_svg",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+        "image_filename": "ja_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/ja/E04P08.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/ja_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_layout"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true
+    },
+    {
+      "case_id": "K14",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P00",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/kr/E04P00.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K15",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P01",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/kr/E04P01.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K16",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P04",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/kr/E04P04.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K17",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P06",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/kr/E04P06.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K18",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html",
+      "source_id": "E04P08",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/zip/ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_zip_filename": "ep04_Stroke-of-genius_lang-pack.zip",
+        "transcript_member": "lang/kr/E04P08.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep04_Stroke-of-genius/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K19",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P01",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/kr/E20P01.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K20",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P02",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/kr/E20P02.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K21",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P03",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/kr/E20P03.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K22",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P04",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/kr/E20P04.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K23",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P05",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/kr/E20P05.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K24",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P06",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/kr/E20P06.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+      "license": "CC BY 4.0 with attribution",
+      "ground_truth_types": [
+        "svg_text_layer"
+      ],
+      "pipeline_status": {
+        "ocr": "NOT_RUN",
+        "text_detection": "NOT_RUN",
+        "manga_page_render": "NOT_RUN"
+      },
+      "image_available": true,
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
+    },
+    {
+      "case_id": "K25",
+      "language": "ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "source_id": "E20P07",
+      "source_type": "open_source_korean_localized_webcomic",
+      "layout_type": "paged_webcomic",
+      "reading_direction": "left_to_right",
+      "text_type": "unlabeled_or_absent",
+      "orientation": "horizontal",
+      "difficulty": "unassessed",
+      "tags": [],
+      "source_category": "02_public_ground_truth_peppercarrot",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "license_class": "CC-BY-4.0_attribution_required",
+      "redistributable": true,
+      "expected_pipeline": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "ground_truth_available": "svg_text_layer_present_unaligned",
+      "levels": [
+        "regression",
+        "full"
+      ],
+      "asset_status": "READY",
+      "asset_profile": {
+        "kind": "open_public_comic_page",
+        "image_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
+        "image_filename": "kr_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
+        "transcript_zip_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/zip/ep20_The-Picnic_lang-pack.zip",
+        "transcript_zip_filename": "ep20_The-Picnic_lang-pack.zip",
+        "transcript_member": "lang/kr/E20P07.svg"
+      },
+      "source_name": "Pepper&Carrot",
+      "asset_type": "open_public_comic_page",
+      "source_url": "https://www.peppercarrot.com/0_sources/ep20_The-Picnic/low-res/kr_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
       "license": "CC BY 4.0 with attribution",
       "ground_truth_types": [
         "svg_text_layer"

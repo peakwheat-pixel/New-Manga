@@ -30,8 +30,8 @@ def make_webtoon_case(local_path="ko/test"):
 def test_manifest_has_unique_cases_and_exact_taxonomy():
     manifest = assets.load_manifest()
     cases = manifest["cases"]
-    assert len(cases) == 68
-    assert len({case["case_id"] for case in cases}) == 68
+    assert len(cases) == 97
+    assert len({case["case_id"] for case in cases}) == 97
     assert manifest["taxonomy"]["difficulty_tags"] == [
         "normal_dialogue", "dense_dialogue", "tiny_text", "huge_text",
         "vertical_text", "horizontal_text", "rotated_text", "curved_text",
@@ -45,6 +45,88 @@ def test_manifest_has_unique_cases_and_exact_taxonomy():
     assert all(case["pipeline_status"] == {stage: "NOT_RUN" for stage in case["expected_pipeline"]} for case in cases)
 
 
+def test_black_jack_official_cases_are_registered_with_attribution():
+    # M2-TA2B AC3/AC7: 12 BJ cases from the author's official free channel,
+    # Japanese, RTL, attribution-bearing, regression/full only.
+    manifest = assets.load_manifest()
+    cases = {case["case_id"]: case for case in manifest["cases"]}
+    bj_ids = [f"BJ{n:02d}" for n in range(1, 13)]
+    assert all(case_id in cases for case_id in bj_ids)
+    bj_cases = [cases[case_id] for case_id in bj_ids]
+    assert all(case["language"] == "ja" for case in bj_cases)
+    assert all(case["reading_direction"] == "right_to_left" for case in bj_cases)
+    assert all(case["source_name"] == "Black Jack Official Free (Sato Manga Seisakusho)" for case in bj_cases)
+    assert all(case["license_class"] == "commercial_use_permitted_attribution" for case in bj_cases)
+    assert all(case["source_url"] == "https://densho810.com/free/" for case in bj_cases)
+    assert all(case["attribution"] == "ブラックジャックによろしく　佐藤秀峰" for case in bj_cases)
+    assert all("densho810.com" in case["attribution_note"] for case in bj_cases)
+    assert all(case["asset_profile"]["kind"] == "manual_source_page" for case in bj_cases)
+    assert all(case["levels"] == ["regression", "full"] for case in bj_cases)
+    assert all(len(case["page_sha256"]) == 64 and case["render_dpi"] == 150 for case in bj_cases)
+    assert {case["volume"] for case in bj_cases} == {1, 3, 5}
+    # JASRAC volumes must never be selected.
+    assert all(case["volume"] not in {2, 7, 11} for case in bj_cases)
+    # Feature-matrix coverage across the 12 inspected pages.
+    tagged = {tag for case in bj_cases for tag in case["tags"]}
+    assert {
+        "vertical_text", "horizontal_text", "normal_dialogue", "dense_dialogue", "tiny_text",
+        "huge_text", "rotated_text", "fragmented_sfx", "complex_background", "low_contrast",
+        "narration", "multi_speaker",
+    } <= tagged
+
+
+def test_manga109_scope_is_cancelled_by_user_ruling_2026_09_30():
+    # M2-TA2B AC6: the 37 Manga109 title definitions and the related benchmark
+    # sources stay as historical evidence with a cancellation marker; every other
+    # field must remain untouched (frozen definitions).
+    manifest = assets.load_manifest()
+    m109 = [case for case in manifest["cases"] if case["asset_type"] == "manga109_title"]
+    assert len(m109) == 37
+    assert all(case.get("removed_from_scope_2026-09-30") is True for case in m109)
+    assert all(case["asset_status"] == "MISSING_GATED_ASSET" for case in m109)
+    by_id = {source["id"]: source for source in manifest["benchmark_sources"]}
+    for source_id in ("manga109_selected_or_full", "jmangabench", "text_mask"):
+        assert by_id[source_id].get("removed_from_scope_2026-09-30") is True, source_id
+
+
+def test_openmantra_stays_isolated_noncommercial_optional():
+    # M2-TA2B AC5: OpenMantra (CC BY-NC 4.0) may exist locally in an isolated
+    # gitignored directory, but must never join the production licensing
+    # baseline, ordinary levels, or Git.
+    manifest = assets.load_manifest()
+    by_id = {source["id"]: source for source in manifest["benchmark_sources"]}
+    om = by_id["openmantra_candidate"]
+    assert om.get("optional_noncommercial_baseline_excluded") is True
+    assert om["status"] == "READY_OPTIONAL_ISOLATED"
+    assert om["local_path"] == "日漫_JA/99_optional_openmantra"
+    assert om["local_file_count"] > 0
+    assert om["checksum_inventory"] is None
+    assert not any(
+        case["local_path"].startswith("日漫_JA/99_optional_openmantra") for case in manifest["cases"]
+    )
+
+
+def test_peppercarrot_additions_extend_ja_ko_open_pool():
+    # M2-TA2B AC4: previously unregistered language-pack pages are registered
+    # and downloaded through the existing Pepper&Carrot channel.
+    manifest = assets.load_manifest()
+    cases = {case["case_id"]: case for case in manifest["cases"]}
+    ja_new = [f"J{n}" for n in range(48, 53)]
+    ko_new = [f"K{n}" for n in range(14, 26)]
+    assert all(case_id in cases for case_id in ja_new + ko_new)
+    for case_id in ja_new:
+        case = cases[case_id]
+        assert case["language"] == "ja"
+        assert case["asset_profile"]["transcript_member"].startswith("lang/ja/")
+        assert case["asset_status"] == "READY"
+    for case_id in ko_new:
+        case = cases[case_id]
+        assert case["language"] == "ko"
+        assert case["asset_profile"]["transcript_member"].startswith("lang/kr/")
+        assert case["asset_profile"]["image_filename"].startswith("kr_Pepper-and-Carrot")
+        assert case["asset_status"] == "READY"
+
+
 def test_source_registry_does_not_count_code_or_blocked_assets_as_ready():
     manifest = assets.load_manifest()
     sources = manifest["benchmark_sources"]
@@ -53,7 +135,7 @@ def test_source_registry_does_not_count_code_or_blocked_assets_as_ready():
     assert all(case["source_id"] and case["source_url"].startswith("https://") for case in manifest["cases"])
     assert all(source["local_file_count"] > 0 for source in sources if source["status"] == "READY")
     assert all(source["local_file_count"] == 0 for source in sources if source["id"] in {
-        "openmantra_candidate", "jmangabench", "text_mask", "artificial_manga", "ebdtheque", "public_domain_japan"
+        "jmangabench", "text_mask", "artificial_manga", "ebdtheque", "public_domain_japan"
     })
     assert all(not case["image_available"] for case in manifest["cases"] if case["asset_type"] == "manga109_title")
     assert by_id["ko_sfx_dialogue_cleaned_webtoon"]["status"] == "READY"
@@ -84,6 +166,23 @@ def test_manifest_rejects_non_whitelisted_source_url(tmp_path, url):
     with patch.object(assets, "MANIFEST_PATH", manifest_path):
         with pytest.raises(ValueError, match="whitelist"):
             assets.load_manifest()
+
+
+def test_densho810_is_whitelisted_and_lookalikes_stay_rejected():
+    # M2-TA2B AC7: the author's official free channel joined the fail-closed
+    # whitelist. validate_source_url is host-level (path-agnostic), so any
+    # https path on the exact host is accepted, while lookalike hosts, plain
+    # HTTP, and non-standard ports stay rejected.
+    assert "densho810.com" in assets.SOURCE_URL_HOSTS
+    assets.validate_source_url("BJ-test", "https://densho810.com/free/")
+    assets.validate_source_url("BJ-test", "https://densho810.com/free/dl/001bj.zip")
+    for url in (
+        "https://densho810.com.evil.example/free/",
+        "http://densho810.com/free/",
+        "https://densho810.com:8443/free/",
+    ):
+        with pytest.raises(ValueError, match="whitelist"):
+            assets.validate_source_url("BJ-test", url)
 
 
 def benchmark_inventory_params():
@@ -152,7 +251,7 @@ def test_ko_ground_truth_directory_naming_snapshot():
     for case_id in [f"O{n:02d}" for n in range(1, 9)]:
         assert cases[case_id]["local_path"].startswith("韩漫_KO/02_open_ground_truth_peppercarrot/"), case_id
         assert "naming_note" in cases[case_id], case_id
-    for case_id in ("K11", "K12", "K13"):
+    for case_id in [f"K{n}" for n in range(11, 26)]:
         assert cases[case_id]["local_path"].startswith("韩漫_KO/02_public_ground_truth_peppercarrot/"), case_id
         assert "naming_note" in cases[case_id], case_id
     for case_id in ("J38", "J39", "J40"):

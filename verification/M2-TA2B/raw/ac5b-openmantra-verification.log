@@ -1,0 +1,17 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=118b4df3a77456dc148d30cc35e0128b86b69290 date=2026-09-30T02:05:02Z cmd=python (inline sha256 recomputation of the 13 isolated OpenMantra files vs registered declaration)
+OK annotation.json bytes=578293 sha256=0f50ef5d7f28d61000aa20695851aab8604b7beeb3541cb6d2823db5a3b5e9e3
+OK images/balloon_dream/ja/000.jpg bytes=162632 sha256=899d019ef64638c3829da55791bba1e529e12d00723198b0df51c1155ad3fcec
+OK images/balloon_dream/ja/019.jpg bytes=154434 sha256=3811384491adee8ec1572849e2986228fd6509662a8729e8de481e9a72fc874f
+OK images/boureisougi/ja/000.jpg bytes=141129 sha256=bcd14b63a18e66d70510b4fe9ab5df5a1ab86528cf88b786c28f24d454a28883
+OK images/boureisougi/ja/018.jpg bytes=221463 sha256=a4f5bcad0cc926bcebee566b226b052a3c86535617abf5a9a86bd169b3012c06
+OK images/rasetugari/ja/000.jpg bytes=203104 sha256=1343607e7c6aa3309a55d95e97f4fae3aef56df50fdc78fd764cd6caf2566338
+OK images/rasetugari/ja/027.jpg bytes=157860 sha256=871a6ff6c2f7e4ad84dcb0a6fe7171e24ccb47b129f22c837ab51dae80451c65
+OK images/tencho_isoro/ja/000.jpg bytes=164937 sha256=f02f1be87aca991db7abba3bb913d6b26bf03a0ee21b371c8adf13d440ae0324
+OK images/tencho_isoro/ja/020.jpg bytes=165024 sha256=ffa37256d6b7c6af5c64a7d0f06c9c1999ff918b73eb17f6ef75d505b0c7e73a
+OK images/tojime_no_siora/ja/000.jpg bytes=176916 sha256=0bc065c735a36d66ae98d5018548dd8c9f1135e7969ae7c6a56f00ae253d6adf
+OK images/tojime_no_siora/ja/023.jpg bytes=196391 sha256=3ebed878226c09f9781555c20496aa468f93e36b03cf65e5611372ece493fa9e
+OK LICENSE.md bytes=17694 sha256=51f416c76430c3e2b45ea43e184199b7110df8c76c98fa50971e1bae4ae7ea59
+OK README.md bytes=1957 sha256=f2d8fae68b34055c43b6a1db1c53461d0ff97b385209997940220f8e77aac9fa
+SUMMARY files=13 bytes=2341834
+OPENMANTRA_ISOLATED_VERIFY_OK 13 files / 2,341,834 bytes match the registered declaration
+# EXIT=0

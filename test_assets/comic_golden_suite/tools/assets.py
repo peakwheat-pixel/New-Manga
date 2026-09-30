@@ -36,9 +36,11 @@ MAX_PUBLIC_XML_BYTES = 8 * 1024 * 1024
 PUBLIC_COMIC_HOST = "www.peppercarrot.com"
 # Frozen from the set of https hosts actually present in manifests/cases.json
 # source_url values (reconnaissance 2026-09-29: 47 cases on huggingface.co,
-# 21 cases on www.peppercarrot.com). Adding a host requires an explicit change
-# here; unknown hosts fail closed at manifest load time.
-SOURCE_URL_HOSTS = frozenset({"www.peppercarrot.com", "huggingface.co"})
+# 21 cases on www.peppercarrot.com; M2-TA2B 2026-09-30: 12 cases on
+# densho810.com, the author's official free-download channel for "Give My
+# Regards to Black Jack"). Adding a host requires an explicit change here;
+# unknown hosts fail closed at manifest load time.
+SOURCE_URL_HOSTS = frozenset({"www.peppercarrot.com", "huggingface.co", "densho810.com"})
 
 
 def validate_source_url(case_id: str, url: str) -> None:

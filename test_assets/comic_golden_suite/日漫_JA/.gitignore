@@ -20,3 +20,8 @@
 /02_public_annotations/**/*.webp
 /02_public_annotations/**/*.zip
 /02_public_annotations/**/*.cbz
+
+# M2-TA2B: official free BJ volumes and optional OpenMantra stay fully ignored
+# even if the whitelist above is extended later (copyrighted pixels never enter Git).
+/01_black_jack_official/
+/99_optional_openmantra/
