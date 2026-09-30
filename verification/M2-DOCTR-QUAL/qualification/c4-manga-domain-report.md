@@ -16,17 +16,20 @@
 
 | 候选 | 来源 | 许可证 | 核查结论 | 决定 |
 |---|---|---|---|---|
-| **ogkalu/comic-text-and-bubble-detector** | HuggingFace | **Apache-2.0**（HF 模型卡标注） | 商用友好；RT-DETR-v2（r50vd backbone，42.9M params）；训练数据约 11k 张 manga/**webtoon**/manhua/西方漫画（与 KO webtoon 评测集同域）；输出 3 类：`0=bubble`、`1=text_bubble`、`2=text_free` | **采用（主评）** |
+| **ogkalu/comic-text-and-bubble-detector** | HuggingFace | **Apache-2.0**（模型卡标注 + API `tags`/`cardData.license` 一致） | 商用友好；RT-DETR-v2（pinned `config.json`：`RTDetrV2ForObjectDetection` / `model_type=rt_detr_v2` / backbone `rt_detr_resnet`；**r50vd 与 42.9M params 为模型卡口径**，HF API safetensors 元数据 `F32=42,861,209` 佐证）；训练数据约 11k 张 manga/**webtoon**/manhua/西方漫画（与 KO webtoon 评测集同域）；输出 3 类：`0=bubble`、`1=text_bubble`、`2=text_free` | **采用（主评）** |
 | dmMaze/comic-text-detector | GitHub（379 stars） | **GPL-3.0**（GitHub API `license.spdx_id` 核实） | 对本地评估本身可用（不分发），但 copyleft 有传染义务；权重获取依赖 manga-image-translator 第三方 release / Google Drive（无官方校验和直链）；依赖链重（DBNet 文本分割 + YOLOv5 文本块两级系统）；训练集不公开 | **备选未采用**（理由登记如上；AC1 只要求至少一个候选完成全链，ogkalu 已满足） |
+
+许可核查的原始 API 证据快照（抓取内容 + 时间 + 来源 URL + 快照 sha256）已入库：[license-evidence.md](license-evidence.md)。
 
 权重受控纪律（controlled-weight discipline）：
 
-- 获取方式：`hf download ogkalu/comic-text-and-bubble-detector`（2026-09-30，HF CLI，落地 gitignored 外部路径，**不入库**）。
+- 获取方式：`hf download ogkalu/comic-text-and-bubble-detector`（2026-09-30，HF CLI，落地 gitignored 外部路径，**不入库**）。**pinned revision：`16e8a622f91fabc6b5b65c96d32d1183f8843546`**（HF API `sha` 字段；revision `lastModified` 2026-05-15）。
 - 落地：`G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector/`
-- SHA-256 pin（`sha256sum` 实测，文件大小与 HF API `?blobs=true` 元数据逐一核对一致）：
+- SHA-256 pin（`sha256sum` 实测，文件大小与 HF API `?blobs=true` 元数据逐一核对一致；`model.safetensors` 的**服务端 LFS sha256 与本地实测 pin 逐字符一致**，见 license-evidence.md §1）：
   - `model.safetensors`（171,543,900 B）= `037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d`
   - `config.json`（2,320 B）= `b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072`
   - `preprocessor_config.json`（470 B）= `7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca`
+- ONNX 变体存在性（同一 revision 含 `detector.onnx` 168.5 MB / `detector_int8.onnx` 43.8 MB / `detector-v4-s_int8.onnx` 11.1 MB）：**本评估不采用**——评测入口走 transformers `RTDetrV2ForObjectDetection` 检查点，与 docTR 基线的 torch 推理栈同构，避免引入 onnxruntime 额外推理栈变量；v4 量化 ONNX 无 transformers config/checkpoint 配套，无法与 pinned `config.json` 核对结构，不在本评估范围。
 - 加载冒烟：隔离 venv 中 `from_pretrained`（本地目录）+ 单 region GPU 推理成功；首检框 `[155.6, 67.9, 431.0, 109.0]` conf 0.938 与 K01 R1 的 GT `[156, 64, 428, 110]` 基本重合（RUN 记录见 Handoff）。
 
 ## 2. Gate 判定（主判定层 block_coverage，生产 pad 正式口径）
@@ -39,7 +42,7 @@
 | Mean coverage（matched） | ≥ 0.60 | **0.9965** | **PASS** |
 | Severe page-miss rate | ≤ 0.05 | **0.0000**（0 / 416 有 GT regions） | **PASS** |
 
-**Gate 结果：PASS（三项全过）**。这是 C1-C5 候选流程中第一个、也是唯一一个越过 0.92 Gate 的候选：0.92 需要相对 fast_base（0.4776）+48.4 pp 的 recall 提升，现成 manga 域模型一次到位。
+**Gate 结果：PASS（三项全过）**。这是 C1-C5 候选流程中**已实测候选里**第一个、也是唯一越过 0.92 Gate 的候选（C2/C5 从未运行）：0.92 需较 fast_base（0.4776）**+44.2 pp**，本候选实达 **+48.4 pp**——现成 manga 域模型一次到位。该 PASS 的准确含义见 §7 开头的口径声明（生产块级消费口径达标，非 merge 中性的"检测质量高 48 pp"，见 §4 合并空转量化）。
 
 诊断层（不判定，仅披露）：`block_strict`（IoU≥0.5 vs 块 GT）recall 0.9204 / mean IoU 0.7844；`raw_strict`（模型 text 框粒度直接 vs 块 GT，粒度诊断）recall 0.9553——与 docTR 的 raw_strict 0.1941（word 级 vs 块 GT 系统性低估）对照，说明该模型的输出粒度（行/块级 text 框）与块级伪 GT 天然对齐，这是结构性优势的一部分（见 §4、§5）。
 
@@ -67,12 +70,13 @@
 - 模型输出 3 类：`bubble`（气球框）/ `text_bubble`（气球内文字）/ `text_free`（气球外文字）。**仅保留两个 text 类作检测候选**；bubble 类是气球形状而非文字框，若纳入会以非文字面积虚高 coverage 判据（intersection/gt_area）。正式运行共丢弃 903 个 bubble 类检测（每 region 计数在 per_region `n_bubble_dropped`）。
 - 每个 text 框充当**一个合并输入（"word" 角色）**，与 `eval_detection.py` 中 docTR word 框的角色完全一致；之后走**同一**冻结生产合并（`cluster_words_into_blocks`，`MERGE_PAD_PX=6`、页界裁剪、确定性排序）产出被判定的 block 层。三个模型（fast_base / db_resnet50 / 本候选）共享同一 merge+评分路径，对照是 detector 单变量对照。
 - 预处理使用模型自带 `preprocessor_config.json`（resize 640x640），**不做针对本数据集的适配调参**——本评估定位是"现成模型开箱即用"的真实能力测量；manifest region 尺寸 600-690 宽 × 最高 2047 高（57/511 regions 长宽比>2），直接 640x640 resize 未见构成瓶颈（结果见 §6）。
+- **合并近乎空转的量化披露（DSH r1 R3）**：正式运行中原始 text 框 1021 个经生产合并后为 990 个块（−3.0%），对照 GT 917 框——本候选的原始输出**已近块级**、与伪 GT 粒度基本 1:1，生产合并对其近乎空转（对照例证：K04 r1 合并 11→11、K04 r18 13→12）。而 docTR 基线是词级框，必须经过对它们最具破坏性的 word→block 合并环节（fast_base 3505 检测块 / 3067 FP）。**代码路径同一，但实际处理不等价**：候选绕过了 docTR 最具破坏性的环节。因此 +48.4 pp 不是 merge 中性的"检测质量"增量，Gate PASS 的准确含义是"现成模型在**生产块级消费口径**下达标"（§7）。
 
 ## 5. 结论的前提与限定（GT 盲区 + 伪 GT 同源性，必须与 §7 结论一起读）
 
 1. **GT 盲区**：GT 是 `text_seg` score≥0.5 的机器伪 GT，SFX/背景文字未标注。Precision 0.8909 是**受污染下界**：108 个 block_coverage FP 中可能包含落在盲区的真实文字检测，不能区分"模型幻觉"与"GT 盲区"（QUAL-RUN 的 union 层证据已证明此类 FP 无法在无人工复核时归因）。Precision 不参与 Gate（冻结裁决）。
-2. **伪 GT 同源性风险（本报告新增的关键限定）**：本模型在约 11k 张漫画域图像上训练，其标注管线与 KO webtoon 伪 GT（`text_seg`）管线**无已知的同源关系，但也无法排除相似的标注风格偏好**。mean coverage 0.9965（docTR 仅 0.7531）和 pad 抵消几乎无损（docTR 去 pad 崩溃）这两个模式，既可以是"检测框质量高"，也可能部分来自"框风格与伪 GT 标注风格对齐"。**在冻结口径内这是合法 PASS**（Gate 本身就定义在该伪 GT 上），但把"block_coverage PASS"解读为"真实用户体验达标"之前，需要一次小规模人工抽检校验（见 §7 建议）。
-3. 训练数据含 webtoon（与评测集同域、同语言），不排除评测 case 存在于训练分布内的可能（作者未公开训练清单，无法核实去重）。这也是 §7 建议保留人工抽检的原因之一。
+2. **伪 GT 同源性风险（本报告新增的关键限定）**：本模型在约 11k 张漫画域图像上训练，其标注管线与 KO webtoon 伪 GT（`text_seg`）管线**无已知的同源关系，但也无法排除相似的标注风格偏好**。mean coverage 0.9965（docTR 仅 0.7531）和 pad 抵消几乎无损（docTR 去 pad 崩溃）这两个模式，既可以是"检测框质量高"，也可能部分来自"框风格与伪 GT 标注风格对齐"。**在冻结口径内这是合法 PASS**（Gate 本身就定义在该伪 GT 上），但把"block_coverage PASS"解读为"真实用户体验达标"之前，需要一次小规模人工抽检校验（协议见 §7.2，其中层 C 是本限定的直接检验）。
+3. 训练数据含 webtoon（与评测集同域、同语言），不排除评测 case 存在于训练分布内的可能（作者未公开训练清单，无法核实去重）。这也是 §7.2 抽检保留的原因之一。
 
 ## 6. 逐 case 明细（正式口径）
 
@@ -90,26 +94,51 @@
 | K10 | 130 | 127 | 0.9769 | 0.4231 |
 
 - 10/10 case 全部 ≥0.90（8/10 ≥0.94）；基线最佳 case（K04 0.6991）低于本模型最差 case（K03 0.9053）。
-- 有 GT 未命中的 region 仅 **8 个，全部为 n_gt=1 的小 region**：K06 r36/r38/r48/r94、K07 r79/r109、K08 r3、K09 r14。其中 K06 r94 同时出现在 fast_base 的 zero-detection 名单（QUAL-RUN §6）——该 region 的 GT 很可能是伪 GT 噪声（SFX/背景）。
+- 有 GT 未命中的 region 仅 **8 个，全部为 n_gt=1 的小 region**，按失效模式分两类（DSH r1 R12，供 §7.2 抽检分层）：
+  - **真未检出**（`n_det_raw=0`，模型在 region 内零输出，6 个）：K06 r36/r38/r48/r94、K07 r79、K09 r14；
+  - **有检出但 coverage 不达标**（存在检测框但未达 coverage≥0.5，2 个）：K07 r109（1 个检出框）、K08 r3（3 个检出框）——是粒度/边界问题，不是漏检。
+  - 其中 K06 r94 同时出现在 fast_base 的 zero-detection 名单（QUAL-RUN §6）——该 region 的 GT 很可能是伪 GT 噪声（SFX/背景）。
 - severe page-miss（≥3 GT 且 0 TP）为 0/416；基线为 16 处（K10 占 6 处）。
 
 ## 7. 可复核结论与建议
 
-**结论：在冻结口径（block_coverage 主判定、生产 pad、seg05 全量 511 regions、同一伪 GT）下，现成 manga 域检测器 ogkalu/comic-text-and-bubble-detector（Apache-2.0）一次性越过 0.92 Gate（Recall 0.9618 / MeanCov 0.9965 / severe 0.0，三项全 PASS）。「现成模型能否逼近 0.92 Gate」的答案是：不仅能逼近，已经超过，且对 pad 抵消和 conf 阈值两个敏感性方向均稳健。** 全部结果可用 §8 命令与三个 results JSON（带 manifest/权重双指纹）逐字段复核。
+**口径声明（先于一切建议，DSH r1 R1/R3）**：在冻结口径（block_coverage 主判定、生产 pad、seg05 全量 511 regions、同一伪 GT）下，现成 manga 域检测器 ogkalu/comic-text-and-bubble-detector（Apache-2.0）一次性越过 0.92 Gate（Recall 0.9618 / MeanCov 0.9965 / severe 0.0，三项全 PASS），且对 pad 抵消和 conf 阈值两个敏感性方向均稳健。该 PASS 的准确含义是：**现成模型在「生产块级消费口径、对机器伪 GT」下达标**——不是 merge 中性的"检测质量高 48 pp"（§4：本候选绕过了对 docTR 最具破坏性的 word→block 合并环节，合并近乎空转），也不是"真实用户体验达标"（§5.2/5.3 同源性限定）。**§7.1-7.3 全部以 §7.2 抽检协议通过为前提**；抽检未完成前，本节结论只在该口径内有效。全部结果可用 §8 命令与三个 results JSON（带 manifest/权重双指纹）逐字段复核。
 
-对候选流程的明确建议：
+### 7.1 C4 fine-tune 主线：冻结口径内不投入（条件式结论）
 
-1. **C4 fine-tune 主线：不值得投入。** 契约预设的"唯一可能从 ~0.48-0.61 逼近 0.92 的候选类"已由零训练成本的现成模型闭环；微调/数据集策展/训练管线的多 Task 系列没有剩余收益空间（0.9771 的 conf0.3 上限距 1.0 仅 2.3 pp，且残差集中在 8 个单 GT 小 region，fine-tune 无法针对性解决）。
-2. **C1（GT 盲区审计）必要性：降低但转化为更小的抽检型审计。** 原定位"Gate 可测性前提"不再成立（Gate 已 PASS）；但 §5 的伪 GT 同源性限定意味着下一步最有信息量的动作不是全量审计，而是**针对 C4 的 8 个未匹配 region + FP 抽样（~30 框）的人工分类**（真实文字漏检 vs 伪 GT 噪声 vs 盲区 FP），用小时级成本把"口径内 PASS"校验为"用户可见层面的 PASS"。若抽检显示未匹配 GT 多为 SFX/背景噪声，则 0.9618 还是对真实目标的低估。
-3. **真正的后续工作在集成侧，不在检测精度侧**：把该模型替换生产 docTR 栈是生产 wire 行为变化（依赖 transformers 栈、新权重治理、许可合规登记、CPU/GPU 部署 envelope、延迟预算——GPU 38.9 s/511 regions ≈ 76 ms/region，CPU 路径未测），须由 Codex 另行释放范围化 Task；本 Task 不宣称、不启动该集成。
-4. **诚实披露的负结果面**：本评估的 PASS 不构成对生产集成的推荐——精度之外的工程面（部署体积、推理延迟、长图行为、许可与供应链治理）未测；且 §5.2/5.3 的同源性限定在人工抽检完成前保留。
+契约预设的"唯一可能从 ~0.48-0.61 逼近 0.92 的候选类"已由零训练成本的现成模型在冻结口径内闭环：conf 0.3 敏感性上限 0.9771 距 1.0 仅 2.3 pp，且残差集中在 8 个单 GT 小 region（§6），fine-tune 无法针对性解决——**在冻结口径内无剩余收益空间**。**真实目标下的剩余空间待 §7.2 抽检结论后确认**：若抽检显示未匹配 GT 主要是伪 GT 噪声，则 0.9618 对真实目标是低估、"不投入"结论加强；若显示大量真实文字漏检/贴合失真（层 C），再议。在抽检闭合前，"不释放 C4 fine-tune 主线"是安全裁决（不投入的代价只是放弃一个口径内已饱和的方向，机会成本低）。
+
+### 7.2 C1 抽检协议框架（分层定义冻结，执行细节移交 C1 Task）
+
+原 C1"GT 盲区审计"按本评估结果缩减为**抽检型校准审计**，目标：把"口径内 PASS"校验为"用户可见层面的 PASS/FAIL"。分层定义与配额如下（随机种子、抽样执行与双人一致性规则——**移交 C1 抽检 Task 释放时冻结**）：
+
+| 层 | 分母（正式 JSON 实测） | 配额 | 判定问题 |
+|---|---|---|---|
+| **A1 真未检出** | 6 region（K06 r36/r38/r48/r94、K07 r79、K09 r14；`n_det_raw=0`，各 1 个 GT 框） | 全查（6 框） | GT 框是真实文字（→真实漏检）还是伪 GT 噪声（SFX/背景，→伪 GT 噪声） |
+| **A2 coverage 不达标** | 2 region（K07 r109：1 检出框；K08 r3：3 检出框） | 全查（2 region 共 4 框 vs 各自 GT） | 检出框与 GT 的错位是粒度/边界问题（→粒度不达标）还是 GT 本身噪声（→伪 GT 噪声） |
+| **B1 有 GT region 的 FP** | 78 框（分布于 49 region） | 抽 15 框；按 conf 十分位分层比例配额 | FP 落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉） |
+| **B2 无 GT region 的 FP** | 30 框（分布于 23 个 `n_gt=0` region） | 抽 15 框；同上分层 | 同 B1（该层是纯盲区/幻觉判别的最干净样本） |
+| **C mean coverage 贴合样本** | matched coverage ∈ [0.5, 0.7) 的匹配对（区分"真匹配"与"边界对齐"；现有 results JSON 未存 per-pair coverage，需 eval 侧补 matched-pair 导出开关后生成清单——新增导出逻辑，不动已集成文件） | 抽 20 对 | 贴合匹配是真实文字的正确覆盖（→真匹配）还是把 GT 框"擦边盖住"（→粒度不达标）；**本层是 §5.2 同源性限定的直接检验** |
+| **D 零检测/零标注 region 校准** | 95 个 `n_gt=0` region（其中 23 个产生 FP 已入 B2） | 随机抽 10 个零检测 region 全帧复核 | 模型零输出与伪 GT 零标注是否一致（校准 GT 盲区率与"模型幻觉为零"的陈述） |
+
+分类枚举（每个抽样单元判定为且仅为以下之一）：**真实文字漏检 / 伪 GT 噪声 / 盲区 FP / 粒度不达标**（B 层前两类语义替换为"盲区 FP / 模型幻觉"）。
+
+输出字段（每抽样单元）：`case_id`、`region_index`、框坐标（xyxy）、层别（A1/A2/B1/B2/C/D）、分类判定、一句话判定依据、图像证据文件引用（带 GT 绿框/检测红框的裁剪图）。
+
+### 7.3 后续工作在集成侧，不在检测精度侧
+
+把该模型替换生产 docTR 栈是生产 wire 行为变化（依赖 transformers 栈、新权重治理、Apache-2.0 合规登记、CPU/GPU 部署 envelope、延迟预算——GPU 38.9 s/511 regions ≈ 76 ms/region，CPU 路径未测），须由 Codex 另行释放范围化 Task；本 Task 不宣称、不启动该集成。
+
+### 7.4 诚实披露的负结果面
+
+本评估的 PASS 不构成对生产集成的推荐——精度之外的工程面（部署体积、推理延迟、长图行为、许可与供应链治理）未测；§5.2/5.3 的同源性限定在 §7.2 抽检完成前保留。复现核验证据目前部分依赖 gitignored 外部路径与运行自述（DSH r1 R7：committed 复现证据文件 + raw 日志归档列为遗留，随 C1 抽检 Task 一并闭合）。
 
 ## 8. 复现命令与证据物
 
 环境：worktree `G:/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-C4-zcode`，隔离 venv `G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4-gpu-py312`（GPU；`--device cpu` 为降级路径，未用于正式结果——如实标注：正式结果全部为 cuda）。
 
 ```bash
-# 正式（Gate 输入）
+# 正式（Gate 输入）— bash/Git Bash 写法
 PYTHONPATH=src "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4-gpu-py312/Scripts/python.exe" \
   experiments/M2-DOCTR-QUAL/eval_detection_manga.py \
   --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json" \
@@ -120,6 +149,20 @@ PYTHONPATH=src "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4-gpu-py312/Scripts/
 # pad 抵消附报：加 --strip-block-pad 6.0
 # conf 敏感性附报：--conf-threshold 0.3
 ```
+
+PowerShell 写法（等价，DSH r1 R8；在 worktree 根目录执行）：
+
+```powershell
+$env:PYTHONPATH = "src"
+& "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4-gpu-py312/Scripts/python.exe" `
+  experiments/M2-DOCTR-QUAL/eval_detection_manga.py `
+  --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json" `
+  --weights-dir "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector" `
+  --device cuda --conf-threshold 0.5 --task M2-DOCTR-QUAL-C4 `
+  --out verification/M2-DOCTR-QUAL/qualification/results-formal-manga_rt_detr_v2-cuda-seg05.json
+```
+
+（results JSON 内的 `reproduce_command` 字段为 POSIX 形式的正式产物，不重写；本节双写即 AC4 的可执行口径。）
 
 证据物（均在 `verification/M2-DOCTR-QUAL/qualification/`，均带 `manifest_sha256=4f16425a...`、权重 sha256、`reproduce_command` 字段）：
 

@@ -50,7 +50,7 @@ Usage (from the worktree root):
       --manifest "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json" \
       --weights-dir "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector" \
       --device cuda --conf-threshold 0.5 \
-      --out verification/M2-DOCTR-QUAL/qualification/results-c4-manga-rt-detr-cuda-seg05.json
+      --out verification/M2-DOCTR-QUAL/qualification/results-formal-manga_rt_detr_v2-cuda-seg05.json
 
 Variants for the C4 report: ``--strip-block-pad 6`` (pad offset, reported
 as supplementary), ``--conf-threshold 0.3`` (sensitivity, supplementary).
@@ -154,10 +154,12 @@ def main() -> int:
     parser.add_argument("--weights-dir", type=Path, required=True)
     parser.add_argument("--device", choices=["cpu", "cuda"], default="cuda")
     parser.add_argument("--conf-threshold", type=float, default=0.5,
-                        help="post_process score threshold (0.5 = formal, "
-                        "aligned with the docTR detection default; lower "
-                        "values are sensitivity variants, never the formal "
-                        "result)")
+                        help="post_process score threshold (0.5 is a "
+                        "CONSERVATIVE choice for the PASS direction — a "
+                        "lower threshold can only raise recall, so 0.5 "
+                        "understates the recall ceiling; 0.3 is shipped as "
+                        "the sensitivity variant. Lower values are "
+                        "supplementary only, never the formal result)")
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--limit", type=int, default=None, help="first N regions (smoke)")
     parser.add_argument("--previews", type=int, default=12, help="annotated preview count")
@@ -200,7 +202,7 @@ def main() -> int:
 
     manifest = json.loads(args.manifest.read_text(encoding="utf-8"))
     regions = manifest["regions"]
-    if args.limit:
+    if args.limit is not None:
         regions = regions[: args.limit]
 
     model, processor, weights_sha256 = load_model(args.weights_dir, args.device)
@@ -222,7 +224,7 @@ def main() -> int:
         "pure": 0,
         "attribution_available": None,
     }
-    supp_iou_thr = 0.3
+    supp_iou_thr = THRESHOLDS["fp_attribution_iou_threshold"]
     preview_written = 0
     n_bubble_dropped_total = 0
     started = time.perf_counter()
