@@ -24,7 +24,8 @@ status: delivered_for_review
 提交列表（branch `agent/zcode/M2-PROD-DETECT-2`，未 push）：
 - `44e70f66` claim（status ready→in_progress）
 - `1cf731ca` implement（全部实现 + 测试 + verification 证据 + Task 回填）
-- handoff commit（本文件 + Task frontmatter `delivery_head`）
+- `80f7a0cb` handoff（本文件 + Task frontmatter `delivery_head`）
+- `fb943798` hygiene（raw 证据日志统一 LF 行尾，内容不变；保证交付区间 `git diff --check` EXIT=0）
 
 ## 验证证据
 
