@@ -363,6 +363,22 @@ def run_fd3(gate: Gate, exe: Path, install_dir: Path) -> None:
     )
 
 
+def restore_parked_models(models_dir: Path | None, parked: Path | None) -> None:
+    """DSH r1 R17: never leave the install's models tree parked.
+
+    FD-2 parks models/ as models.probe-parked and FD-2b restores it; if
+    anything between (or inside) them raises, this finally-hook puts the
+    tree back so the next probe run starts from a normal install."""
+    if (
+        models_dir is not None
+        and parked is not None
+        and parked.is_dir()
+        and not models_dir.exists()
+    ):
+        parked.rename(models_dir)
+        print(f"  [finally] restored parked models tree -> {models_dir}")
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("--install-dir", type=Path, required=True)
@@ -382,9 +398,16 @@ def main() -> int:
     import PIL  # noqa: F401
 
     run_fd1(gate, exe, install_dir)
-    models_dir, parked = run_fd2(gate, exe, install_dir)
-    run_fd2b(gate, exe, install_dir, parked)
-    run_fd3(gate, exe, install_dir)
+    # DSH r1 R17: FD-2/FD-2b rename+restore the install's models tree; the
+    # finally-hook guarantees restoration even if a scenario raises.
+    models_dir: Path | None = None
+    parked: Path | None = None
+    try:
+        models_dir, parked = run_fd2(gate, exe, install_dir)
+        run_fd2b(gate, exe, install_dir, parked)
+        run_fd3(gate, exe, install_dir)
+    finally:
+        restore_parked_models(models_dir, parked)
 
     results = {
         "gate": "m2-prod-detect-3-frozen-detect-probe",

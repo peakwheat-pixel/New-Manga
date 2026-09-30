@@ -9,10 +9,11 @@ owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权 2026-09-28/30、自治授权 2026-10-01）
 depends_on: [M2-PROD-DETECT-2]
-base_commit: 095e314dad490781ec5d8c1b5b88d53ae0b5d39c
+base_commit: 46f079e83f39ae945c456f8876994ff609a7e0cb
 branch: agent/zcode/M2-PROD-DETECT-3
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-3-zcode
-delivery_head: 9bcfd969
+delivery_head: 9bcfd969（Owner 交付 tip；集成修正后由集成方锚定，见「集成修正记录」）
+base_commit_note: 分支实际 base=46f079e8（release T1/T2/T3 同基分发）；契约（core.detect wire 设计）编写时参考的代码基线为 095e314d（46f079e8 的直接父代，见 git log），集成时已按 DSH r1 R13 更正锚点。
 ---
 
 # M2-PROD-DETECT-3：core.detect 命令面扩展 + frozen detect 端到端验证
@@ -37,7 +38,7 @@ delivery_head: 9bcfd969
 - [x] AC2（单元测试）：core_detect 命令 handler 测试（mock provider：正常输出直通/空页零候选/typed NOT_CONFIGURED/坏 base64/尺寸不符/超大载荷拒绝）+ 既有命令回归。
 - [x] AC3（重建与 GATE）：新 onedir+NSIS 构建；GATE 25/25；M2-AC5 raw 还原（既有先例）。
 - [x] AC4（frozen 端到端探针）：安装后环境 core_service.exe 发 core.detect 真实推理（manga 权重包内）PASS + core.detect 在无权重安装（-SkipWeights 产物或移权重）typed NOT_CONFIGURED PASS + doctr backend 切回语义探针。
-- [x] AC5（回归与纪律）：pytest 三套件基数（401+1 既有失败+新增）；cargo/vitest 留痕；diff --check EXIT=0；禁改面空。
+- [x] AC5（回归与纪律）：pytest 三套件基数（401+1 既有失败+新增）；cargo/vitest 留痕；diff --check EXIT=0；禁改面除经集成追认的 GATE 协议字面量同步（`run_clean_start_e2e.py` CS-L1 1.0→1.1，裁决①必要后承，严格相等断言不变）外为空。
 - [x] AC6（交付）：Task/Handoff/verification 证据回填。
 
 ## 实施记录（Owner=ZCode，2026-10-01）
@@ -70,7 +71,7 @@ delivery_head: 9bcfd969
 - `src/bootstrap/core_service.py`（PROTOCOL_MINOR+docstring+core.detect handler）
 - `src/bootstrap/core_assembly.py`（如 handler 需要 detect provider 解析 helper，仅最小新增）
 - `tests/**`（core_detect 测试）
-- `packaging/m2ac5/**`（如需最小适配——预期不需要）
+- `packaging/m2ac5/**`（如需最小适配——实际用于 GATE 协议字面量同步，见下「禁改面追认」）
 - `doc/tasks/M2-PROD-DETECT-3.md`、`doc/handoffs/M2-PROD-DETECT-3-*.md`、`verification/M2-PROD-DETECT-3/**`
 - M2-PROD-DETECT-2 AC5 注记由集成方在集成 commit 处理（Owner 不改旧 Task）
 
@@ -78,7 +79,7 @@ delivery_head: 9bcfd969
 
 - `src/infrastructure/providers/**` 两 provider 行为、`src/ports/**` 契约、`requirements.txt`
 - acceptance_bridge（其面是 M2-AC1 冻结，本 Task 不触碰）
-- `apps/**`、tauri.conf.json、run_clean_start_e2e.py（GATE 口径）
+- `apps/**`、tauri.conf.json（GATE 口径）；`run_clean_start_e2e.py` 的 GATE 协议字面量同步（CS-L1 1.0→1.1）经集成追认为**唯一例外**（与上节允许清单 `packaging/m2ac5/**` 的字面冲突就此消解）——除该追认项外禁改面为空
 - 权重/模型入库、下载器实现
 
 ## 依赖、风险与阻塞

@@ -1,12 +1,16 @@
-"""Tests for the core.detect command (M2-PROD-DETECT-3).
+"""Tests for the core.detect command (M2-PROD-DETECT-3 + integration round).
 
-Matrix (Task AC2): provider output passthrough / zero candidates / typed
-NOT_CONFIGURED (no detector wired AND a real weights-less manga provider) /
-bad base64 / undecodable bytes / width-height mismatch / missing-or-bad
-dimensions / oversized payload / typed provider error passthrough -- plus the
-mock-mode assembly consistency (the SAME detector instance the pipeline
-``detect`` step uses) and the existing-command regression surface (Unknown
-command stays UNKNOWN_COMMAND, protocol minor carries 1.1).
+Matrix (Task AC2 + DSH r1 R1/R8/R9/R10/R11): provider output passthrough /
+zero candidates / typed NOT_CONFIGURED (no detector wired AND a real
+weights-less manga provider) / bad base64 / undecodable bytes / width-height
+mismatch / missing-or-bad dimensions / oversized payload / typed provider
+error passthrough with a SANITIZED message (fixed safe phrases on the wire,
+detail to stderr -- real provider text embeds local paths) / NON-PNG-JPEG
+format rejection / decoded pixel-cap rejection -- plus the REAL mock-mode
+assembly consistency (``mock_local_providers=True`` wires the mock detector),
+the production wiring pin (core.detector IS the pipeline handler's detector)
+and the existing-command regression surface (Unknown command stays
+UNKNOWN_COMMAND, protocol minor carries 1.1).
 """
 
 from __future__ import annotations
@@ -51,6 +55,31 @@ PROTOCOL_VERSION = {"major": PROTOCOL_MAJOR, "minor": 1}
 def _make_server(tmp_path: Path) -> tuple[CoreServiceServer, object]:
     """One production assembly on a temp data root + its stdio server."""
     core = assemble_production_core(tmp_path / "data")
+    return CoreServiceServer(core), core
+
+
+def _make_mock_server(tmp_path: Path) -> tuple[CoreServiceServer, object]:
+    """A REAL mock-mode assembly (``mock_local_providers=True``) + its server.
+
+    Same adapters ``assemble_production_core`` uses, but through
+    ``assemble_core_services`` so the mock wiring is exercised for real
+    (DSH r1 R8): the assembly itself registers the mock providers and sets
+    THE detector the pipeline detect step and core.detect share.
+    """
+    from application.translation.color.service import SourceStyleService
+    from bootstrap.core_assembly import assemble_core_services
+    from bootstrap.core_service import _PassthroughImageDecoder, _StubStyleAnalyzer
+
+    core = assemble_core_services(
+        tmp_path / "data",
+        tmp_path / "managed",
+        image_decoder=_PassthroughImageDecoder(),
+        font_catalog=object(),  # type: ignore[arg-type]
+        layout_engine=object(),  # type: ignore[arg-type]
+        compositor=object(),  # type: ignore[arg-type]
+        source_styles=SourceStyleService(_StubStyleAnalyzer()),
+        mock_local_providers=True,
+    )
     return CoreServiceServer(core), core
 
 
@@ -193,17 +222,17 @@ def test_detect_zero_candidates_pass_through_untouched(tmp_path: Path) -> None:
 
 
 def test_detect_mock_assembly_provider_naturally_consistent(tmp_path: Path) -> None:
-    """Ruling 3: under the mock assembly the mock provider answers.
+    """Ruling 3 + DSH r1 R8: under the REAL mock assembly the mock answers.
 
-    ``assemble_core_services(mock_local_providers=True)`` wires
-    ``MockLocalDetectionProvider`` as THE detector (the same instance the
-    pipeline detect step gets); ``core.detect`` therefore returns mock output
-    with zero extra wiring -- verified here against the REAL mock provider
-    type the assembly uses.
+    ``assemble_core_services(..., mock_local_providers=True)`` registers the
+    mock providers and wires ``MockLocalDetectionProvider`` as THE detector
+    (the same instance the pipeline detect step gets); ``core.detect``
+    therefore returns mock output with zero extra wiring -- asserted here
+    against the assembled instance itself, not a hand-assigned one.
     """
-    server, core = _make_server(tmp_path)
+    server, core = _make_mock_server(tmp_path)
     try:
-        core.detector = MockLocalDetectionProvider()
+        assert isinstance(core.detector, MockLocalDetectionProvider)
         res, _ = _dispatch(
             server, "d-mock", {"page": _png_page(), "width": 64, "height": 48}
         )
@@ -215,6 +244,34 @@ def test_detect_mock_assembly_provider_naturally_consistent(tmp_path: Path) -> N
         assert candidates[0]["confidence"] == 1.0
         assert candidates[0]["coordinate_space"] == "page-global"
         assert candidates[0]["polygon"] == [[8.0, 6.0], [56.0, 6.0], [56.0, 42.0], [8.0, 42.0]]
+    finally:
+        core.conn.close()
+
+
+def test_production_assembly_wiring_detector_is_the_pipeline_instance(
+    tmp_path: Path,
+) -> None:
+    """DSH r1 R9: production assembly wiring regression pin.
+
+    ``core.detector`` must be non-None AND the SAME object the pipeline
+    detect step's handler deps hold -- ``build_production_handlers`` returns
+    the step mapping whose ``detect`` entry is the ``_typed`` closure over
+    the bound ``ProductionHandlers.handle_detect`` (its single cell), and
+    ``deps`` carries the pipeline-side detector reference. A second detector
+    build would silently fork the weights resolution / backend selection
+    between the two consumers.
+    """
+    server, core = _make_server(tmp_path)
+    try:
+        assert core.detector is not None
+        wrapped = core.pipeline._executor._handlers["detect"]
+        bound = next(
+            cell.cell_contents
+            for cell in (wrapped.__closure__ or [])
+            if hasattr(cell.cell_contents, "__self__")
+        )
+        pipeline_detector = bound.__self__.deps.detector
+        assert pipeline_detector is core.detector
     finally:
         core.conn.close()
 
@@ -241,11 +298,16 @@ def test_detect_no_detector_wired_fails_closed_not_configured(tmp_path: Path) ->
 
 def test_detect_real_weights_less_manga_provider_typed_not_configured(
     tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
 ) -> None:
     """The production shape (ruling 5, M2-PROD-DETECT-2): an install without
     usable weights assembles fine and core.detect fails closed with the
     typed PROVIDER_NOT_CONFIGURED at detect time. The provider probes the
-    weights DIRECTORY with zero heavy dependencies, so this stays fast."""
+    weights DIRECTORY with zero heavy dependencies, so this stays fast.
+
+    DSH r1 R1: the provider's message text embeds the local weights path;
+    the wire carries the fixed safe phrase instead and the full detail goes
+    to stderr only."""
     server, core = _make_server(tmp_path)
     try:
         core.detector = MangaDetectionProvider(
@@ -257,7 +319,99 @@ def test_detect_real_weights_less_manga_provider_typed_not_configured(
         assert res["result"] is None
         assert res["error"]["code"] == "PROVIDER_NOT_CONFIGURED"
         assert res["error"]["retryable"] is False
-        assert "not installed" in res["error"]["message"]
+        assert res["error"]["message"] == (
+            "detector is not configured; install weights or set "
+            "NEWMANGA_DETECTOR_WEIGHTS (see stderr for details)"
+        )
+        # The local path never rides the wire; it went to stderr instead.
+        assert "no-such-weights" not in res["error"]["message"]
+        captured = capsys.readouterr()
+        assert "no-such-weights" in captured.err
+    finally:
+        core.conn.close()
+
+
+def test_detect_provider_error_messages_sanitized_on_the_wire(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    """DSH r1 R1/R14: provider error TEXT never rides the IPC line.
+
+    Real provider messages embed local absolute paths (weights directories),
+    which Contract §8 forbids on the wire: the envelope carries the stable
+    error_code plus one fixed safe phrase, the full detail goes to stderr,
+    and unknown provider codes fall back to the default safe phrase.
+    INVALID_INPUT is the single pass-through (parameter-level text, no paths
+    by construction) and maps to category=validation."""
+    server, core = _make_server(tmp_path)
+    try:
+        # (a) an unknown-to-the-map provider code falls back safely
+        core.detector = FakeDetectionProvider(
+            raises=ProviderNotConfigured(
+                "docTR weights are not installed: "
+                "C:\\Users\\49745\\AppData\\Local\\Temp\\fast_base-688",
+                stage="core.detect",
+            )
+        )
+        res, _ = _dispatch(
+            server, "d-safe", {"page": _png_page(), "width": 64, "height": 48}
+        )
+        error = res["error"]
+        assert error["code"] == "PROVIDER_NOT_CONFIGURED"
+        assert error["category"] == "internal"
+        assert error["message"] == (
+            "detector is not configured; install weights or set "
+            "NEWMANGA_DETECTOR_WEIGHTS (see stderr for details)"
+        )
+        assert "C:" not in error["message"]
+        captured = capsys.readouterr()
+        assert "fast_base-688" in captured.err
+
+        # (b) PROVIDER_FAILED / PROVIDER_DEPENDENCY_MISSING carry their own
+        # fixed phrases, never the provider text
+        core.detector = FakeDetectionProvider(
+            raises=ProviderError(
+                "model crashed at D:\\weights\\snapshot", stage="detection"
+            )
+        )
+        res, _ = _dispatch(
+            server, "d-failed", {"page": _png_page(), "width": 64, "height": 48}
+        )
+        assert res["error"]["code"] == "PROVIDER_FAILED"
+        assert res["error"]["message"] == "detector failed (see stderr for details)"
+        assert "D:" not in res["error"]["message"]
+
+        core.detector = FakeDetectionProvider(
+            raises=ProviderDependencyMissing("numpy", stage="detection")
+        )
+        res, _ = _dispatch(
+            server, "d-dep", {"page": _png_page(), "width": 64, "height": 48}
+        )
+        assert res["error"]["code"] == "PROVIDER_DEPENDENCY_MISSING"
+        assert res["error"]["message"] == (
+            "a detector dependency is missing (see stderr for details)"
+        )
+
+        # (c) INVALID_INPUT keeps the parameter-level message (no paths) and
+        # maps to category=validation (DSH r1 R14)
+        core.detector = FakeDetectionProvider(
+            raises=ProviderInputError(
+                "frame byte count 9216 does not match 64x48 rgb32 or rgb24 "
+                "pixels",
+                stage="detection",
+            )
+        )
+        res, _ = _dispatch(
+            server, "d-input", {"page": _png_page(), "width": 64, "height": 48}
+        )
+        assert res["error"]["code"] == "INVALID_INPUT"
+        assert res["error"]["category"] == "validation"
+        # The provider's parameter-level text passes through (its __str__
+        # prefixes the stable code; no path material by construction).
+        assert "frame byte count 9216 does not match 64x48 rgb32 or rgb24" in (
+            res["error"]["message"]
+        )
+        assert "no-such" not in res["error"]["message"]
     finally:
         core.conn.close()
 
@@ -381,6 +535,58 @@ def test_detect_decoded_length_guard_backs_the_text_guard(tmp_path: Path) -> Non
         assert res["result"] is None
         assert res["error"]["code"] == E_INVALID_REQUEST
         assert "byte limit" in res["error"]["message"]
+        assert core.detector.seen_request is None
+    finally:
+        core.conn.close()
+
+
+def test_detect_decoded_pixel_cap_rejected(tmp_path: Path) -> None:
+    """DSH r1 R10: the 32 MiB file cap does not bound the DECODED buffer.
+
+    A highly compressible (all-white) PNG lands far below the byte cap but
+    decodes past the pixel cap (32 MiB RGB24 = 11,184,810 px) -- rejected
+    typed INVALID_REQUEST before any convert/tobytes allocation."""
+    from bootstrap.core_service import _MAX_DETECT_PAGE_B64_CHARS, MAX_DETECT_PIXELS
+
+    server, core = _make_server(tmp_path)
+    try:
+        core.detector = FakeDetectionProvider(result=_fake_result(()))
+        # 4096x4096 = 16.7 M px: over the cap, and the white PNG encodes to
+        # a few KB (well under the base64-text gate).
+        buffer = io.BytesIO()
+        Image.new("RGB", (4096, 4096), "white").save(buffer, "PNG")
+        page = base64.b64encode(buffer.getvalue()).decode("ascii")
+        assert len(page) < _MAX_DETECT_PAGE_B64_CHARS
+        assert 4096 * 4096 > MAX_DETECT_PIXELS
+        res, _ = _dispatch(
+            server, "d-px", {"page": page, "width": 4096, "height": 4096}
+        )
+        assert res["result"] is None
+        assert res["error"]["code"] == E_INVALID_REQUEST
+        assert "pixel limit" in res["error"]["message"]
+        assert core.detector.seen_request is None
+    finally:
+        core.conn.close()
+
+
+def test_detect_non_png_jpeg_format_rejected_fail_closed(tmp_path: Path) -> None:
+    """DSH r1 R11: the documented PNG/JPEG page surface is enforced.
+
+    Pillow decodes BMP/TIFF/WEBP/GIF too; a perfectly decodable BMP must be
+    rejected typed INVALID_REQUEST (format whitelist fail-closed)."""
+    server, core = _make_server(tmp_path)
+    try:
+        core.detector = FakeDetectionProvider(result=_fake_result(()))
+        buffer = io.BytesIO()
+        Image.new("RGB", (64, 48), "white").save(buffer, "BMP")
+        page = base64.b64encode(buffer.getvalue()).decode("ascii")
+        res, _ = _dispatch(
+            server, "d-bmp", {"page": page, "width": 64, "height": 48}
+        )
+        assert res["result"] is None
+        assert res["error"]["code"] == E_INVALID_REQUEST
+        assert "PNG or JPEG" in res["error"]["message"]
+        assert "BMP" in res["error"]["message"]
         assert core.detector.seen_request is None
     finally:
         core.conn.close()

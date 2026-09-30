@@ -22,7 +22,9 @@ Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3):
         "confidence", "coordinate_space"}...], "elapsed_ms": <int>}
     (M2-PROD-DETECT-3, protocol minor bump 1.0 -> 1.1: a backwards-compatible
     widening per the M2-FIX-LISTBOOKS contract rev 1.2 §5 precedent -- the
-    three pre-existing commands behave byte-identically. The handler resolves
+    three pre-existing commands keep their command semantics (payloads,
+    results, error codes) unchanged; the envelope protocol minor moves 0 -> 1
+    with the bump. The handler resolves
     the SAME detector instance the pipeline ``detect`` step uses (assembly
     wired; never a bypass) and passes the provider output straight through:
     anonymous labels only, no business IDs are invented. A page that fails to
@@ -74,12 +76,53 @@ E_UNKNOWN = "UNKNOWN"
 E_INVALID_REQUEST = "INVALID_REQUEST"
 
 #: M2-PROD-DETECT-3: upper bound for one core.detect page, enforced on the
-#: DECODED image bytes. The base64-text guard below is derived from it (4
+#: base64-decoded FILE bytes; a separate pixel-count cap (below) bounds the
+#: decoded RGB buffer. The base64-text guard below is derived from it (4
 #: base64 chars per 3 bytes) so an oversized request is rejected before any
 #: decoding work. One manga page as PNG is a few MiB; 32 MiB leaves generous
 #: headroom while keeping a hostile payload from pinning the sidecar.
 MAX_DETECT_PAGE_BYTES = 32 * 1024 * 1024
 _MAX_DETECT_PAGE_B64_CHARS = ((MAX_DETECT_PAGE_BYTES + 2) // 3) * 4
+
+#: M2-PROD-DETECT-3 integration (DSH r1 R10): the byte cap above bounds the
+#: encoded file only -- a highly compressed PNG can decode to a far larger
+#: RGB buffer. The decoded pixel count is capped at the 32 MiB RGB24
+#: equivalent (file cap / 3) BEFORE any convert/tobytes allocation; this is
+#: deliberately tighter than Pillow's DecompressionBomb default (89.5 M px)
+#: to stay aligned with the 32 MiB primary limit. A real 900x1300 page is
+#: ~1.2 M px, roughly 9x headroom.
+MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
+
+#: M2-PROD-DETECT-3 integration (DSH r1 R11): the documented PNG/JPEG page
+#: surface is enforced fail-closed -- Pillow also decodes BMP/TIFF/WEBP/multi-
+#: frame GIF, and those must not ride this face.
+_DETECT_PAGE_FORMATS = frozenset({"PNG", "JPEG"})
+
+# M2-PROD-DETECT-3 integration (DSH r1 R1): provider error TEXT never rides
+# the IPC line -- real provider messages embed local absolute paths (weights
+# directories), which Contract §8 forbids on the wire. The envelope carries
+# the stable error_code plus one fixed safe phrase; the full original detail
+# goes to stderr only. INVALID_INPUT is the one pass-through (parameter-level
+# byte-count/frame-size text, no paths by construction -- pinned by tests).
+_PROVIDER_SAFE_MESSAGES: dict[str, str] = {
+    "PROVIDER_NOT_CONFIGURED": (
+        "detector is not configured; install weights or set "
+        "NEWMANGA_DETECTOR_WEIGHTS (see stderr for details)"
+    ),
+    "PROVIDER_DEPENDENCY_MISSING": (
+        "a detector dependency is missing (see stderr for details)"
+    ),
+    "PROVIDER_FAILED": "detector failed (see stderr for details)",
+    "PROVIDER_UNAVAILABLE": "detector is unavailable (see stderr for details)",
+}
+_PROVIDER_SAFE_DEFAULT = "detector failed (see stderr for details)"
+
+# M2-PROD-DETECT-3 integration (DSH r1 R14, Proposal-level annotation): §8
+# category for provider errors. The provider's own input gate polices OUR
+# request shape -> validation; every other provider failure is internal.
+# Final taxonomy alignment stays registered in the contract Revision history
+# (same-source item as M2-IPC1 r2 P3-4).
+_PROVIDER_ERROR_CATEGORY: dict[str, str] = {"INVALID_INPUT": "validation"}
 
 
 class DetectRequestError(ValueError):
@@ -247,10 +290,12 @@ class CoreServiceServer:
 
         Request validation (typed INVALID_REQUEST, fail-closed before any
         provider is touched):
-          - ``page`` must be a base64-encoded PNG/JPEG image;
+          - ``page`` must be a base64-encoded PNG/JPEG image (format
+            whitelist enforced fail-closed after the header sniff);
           - ``width``/``height`` must be positive ints matching the decoded
             pixel size;
-          - the decoded payload must not exceed ``MAX_DETECT_PAGE_BYTES``.
+          - the decoded payload must not exceed ``MAX_DETECT_PAGE_BYTES``
+            (file bytes) nor ``MAX_DETECT_PIXELS`` (decoded RGB buffer).
 
         The providers behind ``ports.detection`` consume a RAW pixel buffer
         (rgb24/rgb32, never an encoded file -- their ``_validate_request``
@@ -267,8 +312,9 @@ class CoreServiceServer:
         The result is a straight passthrough: candidates keep the provider's
         anonymous ``provider_label`` (no business ID is invented), plus the
         result-level ``coordinate_space``; ``elapsed_ms`` is THIS handler's
-        wall-clock (decode + detect), so probes can compare it against the
-        provider-internal timing.
+        detect-only wall-clock (the timer starts after decoding, so it
+        includes the provider's first model load) -- probes compare it
+        against the provider-internal timing on that same basis.
         """
         page_b64 = payload.get("page")
         if not isinstance(page_b64, str) or not page_b64:
@@ -308,6 +354,24 @@ class CoreServiceServer:
             ) from error
         try:
             with Image.open(io.BytesIO(encoded)) as image:
+                # R11 (DSH r1): enforce the documented PNG/JPEG surface,
+                # fail-closed -- Pillow happily decodes BMP/TIFF/WEBP/GIF
+                # too, and those must not ride this face.
+                if image.format not in _DETECT_PAGE_FORMATS:
+                    raise DetectRequestError(
+                        "core.detect 'page' must be a PNG or JPEG image "
+                        f"(got {image.format or 'unknown'})"
+                    )
+                # R10 (DSH r1): the byte cap bounds the encoded file only;
+                # cap the DECODED pixel count before any convert/tobytes
+                # allocation (32 MiB RGB24 equivalent, see MAX_DETECT_PIXELS).
+                if image.width * image.height > MAX_DETECT_PIXELS:
+                    raise DetectRequestError(
+                        "core.detect page exceeds the pixel limit "
+                        f"({image.width}x{image.height} = "
+                        f"{image.width * image.height} px > "
+                        f"{MAX_DETECT_PIXELS} px)"
+                    )
                 rgb = image.convert("RGB")
                 actual_width, actual_height = rgb.size
                 if actual_width != width or actual_height != height:
@@ -516,10 +580,28 @@ class CoreServiceServer:
                     False,
                 )
             except ProviderError as error:
-                # Typed provider failure passthrough: the provider's own
-                # error_code (PROVIDER_NOT_CONFIGURED, PROVIDER_DEPENDENCY_MISSING,
-                # PROVIDER_FAILED, INVALID_INPUT, ...) stays stable on the wire,
-                # with its own retryability ruling.
+                # Typed provider failure, wire-sanitized (DSH r1 R1): the
+                # provider's own error_code (PROVIDER_NOT_CONFIGURED,
+                # PROVIDER_DEPENDENCY_MISSING, PROVIDER_FAILED, INVALID_INPUT,
+                # ...) and its retryability ruling stay stable on the wire,
+                # but real provider MESSAGE text embeds local absolute paths
+                # (weights directories) and Contract §8 forbids paths on the
+                # wire -- so the envelope carries a fixed safe phrase and the
+                # full original detail goes to stderr only. INVALID_INPUT is
+                # the single pass-through (parameter-level byte-count/frame
+                # text, no paths by construction; pinned by tests).
+                if error.error_code == "INVALID_INPUT":
+                    message = str(error)[:500]
+                else:
+                    message = _PROVIDER_SAFE_MESSAGES.get(
+                        error.error_code, _PROVIDER_SAFE_DEFAULT
+                    )
+                print(
+                    f"core.detect provider error [{error.error_code}]: "
+                    f"{error}",
+                    file=sys.stderr,
+                    flush=True,
+                )
                 return (
                     {
                         "protocol": PROTOCOL_NAME,
@@ -528,8 +610,14 @@ class CoreServiceServer:
                         "result": None,
                         "error": make_error_envelope(
                             code=error.error_code,
-                            category="internal",
-                            message=str(error)[:500],
+                            # R14 (DSH r1): provider input-gate errors police
+                            # our request shape -> validation; the rest are
+                            # internal (Proposal-level mapping, contract
+                            # Revision history annotation).
+                            category=_PROVIDER_ERROR_CATEGORY.get(
+                                error.error_code, "internal"
+                            ),
+                            message=message,
                             retryable=bool(error.retryable),
                         ),
                     },

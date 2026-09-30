@@ -1225,7 +1225,11 @@ mod tests {
         let ping = channel.ping().expect("ping");
         assert_eq!(ping.status, "ready");
         assert_eq!(ping.protocol_version.major, 1);
-        assert_eq!(ping.protocol_version.minor, 0);
+        // M2-PROD-DETECT-3 integration (DSH r1 R4): protocol minor bump
+        // 1.0 -> 1.1 (core.detect added); this real-sidecar assertion is the
+        // ruling-1 consequence sync. The MockChannel self-consistency stub
+        // above (:1194) keeps its own minor 0 by design.
+        assert_eq!(ping.protocol_version.minor, 1);
         assert!(ping.capabilities.contains(&"library.list_books".to_string()));
 
         // 2. List books succeeds on empty store

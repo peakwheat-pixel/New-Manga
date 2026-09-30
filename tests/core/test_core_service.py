@@ -190,6 +190,11 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
     src_root = repo_root / "src"
 
     env = os.environ.copy()
+    # DSH r1 R5: keep the e2e hermetic -- a host-level detector env must
+    # never turn this subprocess into a real model load (the NOT_CONFIGURED
+    # assertion below would then fail or hang on weights resolution).
+    env.pop("NEWMANGA_DETECTOR_WEIGHTS", None)
+    env.pop("NEWMANGA_DETECTOR_BACKEND", None)
     env["NEWMANGA_DATA_ROOT"] = str(data_root)
     env["PYTHONPATH"] = str(src_root)
     env["PYTHONDONTWRITEBYTECODE"] = "1"
@@ -256,6 +261,11 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         assert detect_resp["error"] is not None
         assert detect_resp["error"]["code"] == "PROVIDER_NOT_CONFIGURED"
         assert detect_resp["error"]["retryable"] is False
+        # DSH r1 R1: the sanitized wire message carries the fixed safe
+        # phrase -- never the local data-root/weights path, never the
+        # provider's raw text.
+        assert "data_e2e" not in detect_resp["error"]["message"]
+        assert "detector is not configured" in detect_resp["error"]["message"]
 
         # 1c. core.detect payload validation stays fail-closed over the wire
         detect_bad_resp = send_and_recv({
