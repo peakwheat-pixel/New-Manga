@@ -1,0 +1,15 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=118b4df3a77456dc148d30cc35e0128b86b69290 date=2026-09-30T02:05:02Z cmd=python test_assets/comic_golden_suite/tools/fetch_bj.py verify
+BJ01	VERIFY_OK	pages/vol01_p0001.png sha256=ff3365868f3402b0... size=10512311
+BJ02	VERIFY_OK	pages/vol01_p0053.png sha256=c1ce06205b8e64c1... size=7613210
+BJ03	VERIFY_OK	pages/vol01_p0105.png sha256=9fe0014994f0aa16... size=5497730
+BJ04	VERIFY_OK	pages/vol01_p0209.png sha256=42dabc22dacaa6c8... size=2657459
+BJ05	VERIFY_OK	pages/vol03_p0001.png sha256=7cd1a8e790a76adc... size=5354541
+BJ06	VERIFY_OK	pages/vol03_p0056.png sha256=b06c9d7ddb0f679a... size=7841374
+BJ07	VERIFY_OK	pages/vol03_p0111.png sha256=cba84cdbfba27f6b... size=113664
+BJ08	VERIFY_OK	pages/vol03_p0221.png sha256=4e02cb8ec1b1b2f6... size=2602533
+BJ09	VERIFY_OK	pages/vol05_p0001.png sha256=efdae38f52635b14... size=10052178
+BJ10	VERIFY_OK	pages/vol05_p0061.png sha256=4bc8d4845c708edb... size=11600943
+BJ11	VERIFY_OK	pages/vol05_p0122.png sha256=dab11ab374243873... size=7331578
+BJ12	VERIFY_OK	pages/vol05_p0243.png sha256=a314450f63807b40... size=2822828
+SUMMARY	command=verify cases=12 failures=0
+# EXIT=0

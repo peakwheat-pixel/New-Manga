@@ -1,0 +1,31 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=118b4df3a77456dc148d30cc35e0128b86b69290 date=2026-09-30T02:04:41Z cmd=git status --short; git diff --name-status 9db2dca8..HEAD; git check-ignore -v <bj/openmantra paths>; git diff --check
+## git status --short (worktree; the three audit logs land in the follow-up delivery commit)
+?? verification/M2-TA2B/raw/ac5b-openmantra-verification.log
+?? verification/M2-TA2B/raw/ac7b-fetch-bj-verify.log
+?? verification/M2-TA2B/raw/ac8-scope-proof.log
+## git diff --name-status 9db2dca8..HEAD (full delivery range)
+A	doc/handoffs/M2-TA2B-704df9b.md
+M	doc/tasks/M2-TA2B.md
+M	test_assets/comic_golden_suite/README.md
+M	test_assets/comic_golden_suite/manifests/cases.json
+M	test_assets/comic_golden_suite/manifests/local_asset_inventory.json
+M	test_assets/comic_golden_suite/tools/assets.py
+A	test_assets/comic_golden_suite/tools/fetch_bj.py
+M	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore"
+M	tests/m2_test_assets/test_catalog.py
+A	tests/m2_test_assets/test_fetch_bj.py
+A	verification/M2-TA2B/densho810-report-draft.txt
+A	verification/M2-TA2B/raw/ac1-fetch-bj-vol05-retry.log
+A	verification/M2-TA2B/raw/ac1-fetch-bj-volumes.log
+A	verification/M2-TA2B/raw/ac2-render-bj-pages.log
+A	verification/M2-TA2B/raw/ac4-download-pc-additions.log
+A	verification/M2-TA2B/raw/ac5-openmantra-optional-download.log
+A	verification/M2-TA2B/raw/ac6-zero-change-diff.log
+A	verification/M2-TA2B/raw/ac7-pytest-m2-test-assets.log
+A	verification/M2-TA2B/raw/ac7-verify-ja-ko-full.log
+## git check-ignore -v (sample asset pixels)
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":26:/01_black_jack_official/	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/01_black_jack_official/vol01/001bj.zip"
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":26:/01_black_jack_official/	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/01_black_jack_official/vol01/pages/vol01_p0001.png"
+"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/.gitignore":27:/99_optional_openmantra/	"test_assets/comic_golden_suite/\346\227\245\346\274\253_JA/99_optional_openmantra/annotation.json"
+## git diff --check
+# DIFF_CHECK_EXIT=0

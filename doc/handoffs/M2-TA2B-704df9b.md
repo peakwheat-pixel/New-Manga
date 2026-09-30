@@ -5,6 +5,8 @@ recipient: Codex（集成）/ DeepSeek Harness（Review）
 base_commit: 9db2dca892e7fe1db5bf89c0a35501df014e653e
 delivery_head: 704df9bc（实现）；本 Handoff 随交付 commit 入库
 status: delivered_in_review
+review_r1: approved_with_conditions (DSH, tip 4d0e9db8)
+repair_head: 118b4df3
 ---
 
 # Handoff：M2-TA2B（JA/KO 开放素材池）
@@ -26,7 +28,7 @@ status: delivered_in_review
    - `test_assets/comic_golden_suite/README.md`（97 定义总览、BJ 资产表行、白名单说明、`fetch_bj.py` 用法、《ブラックジャックによろしく》署名与许可义务小节、官方来源链接）
    - `test_assets/comic_golden_suite/日漫_JA/.gitignore`（显式忽略 `01_black_jack_official/`、`99_optional_openmantra/`）
    - `tests/m2_test_assets/test_catalog.py`（68→97 断言更新；新增 BJ 注册、Manga109 取消、OpenMantra 隔离、P&C 补充、densho810 白名单 5 个测试）
-   - `verification/M2-TA2B/`（densho810-report-draft.txt + raw/ 下 6 份命令日志）
+   - `verification/M2-TA2B/`（densho810-report-draft.txt + raw/ 下 7 份命令日志（r1 时点））
 
 3. **素材本体（全部 gitignored，零入库）**：BJ 第 1/3/5 卷 ZIP+PDF+12 张渲染 PNG（`日漫_JA/01_black_jack_official/vol*/`）；17 张 P&C 新页 + ep20 kr ZIP（`日漫_JA/02_open_ground_truth_peppercarrot/ep04/`、`韩漫_KO/02_public_ground_truth_peppercarrot/ep04|ep20/`）；OpenMantra annotation/LICENSE/README + 10 张样本页（`日漫_JA/99_optional_openmantra/`，2,341,834 bytes）。
 
@@ -74,6 +76,13 @@ status: delivered_in_review
 - 可直接转发给 Agent 的指令：
 
 > 在 worktree `G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode`（分支 agent/zcode/M2-TA2B-OPEN-ASSETS，head 704df9bc）对 M2-TA2B 做非作者静态 Review：读 `doc/tasks/M2-TA2B.md`（重写版）、`doc/handoffs/M2-TA2B-704df9b.md`、`verification/M2-TA2B/raw/` 日志与 `test_assets/comic_golden_suite/README.md` 署名小节；运行 `python -m pytest tests/m2_test_assets -q` 与 `python test_assets/comic_golden_suite/tools/assets.py verify --language ja --level full`；核对 BJ01–BJ12 的 attribution/tags、37+3 个 `removed_from_scope_2026-09-30` 标注、OpenMantra `optional_noncommercial_baseline_excluded` 隔离与素材 gitignore。产出 REVIEW 模板记录，不修改实现，不合并。
+
+## Review 轨迹与返修（2026-09-30）
+
+- **DSH r1（被审 tip `4d0e9db8`）：`approved_with_conditions`**——P0=0、P1×1 + P2×6 + P3×9；判据为入库日志/实体文件（非 commit 自述），并逐条复核 densho810 官方利用规约。
+- **返修 commit `118b4df3`**（amend 自 `a93a61f3`：仅 ac6 日志尾随空格与元数据，轨迹披露）：P1-1（OpenMantra 三处登记同步 + inventory_tracking 标记）、P2-1（`fetch_bj.py verify` 12/12 + README 绿色门槛）、P2-2（source 计数按 inventory 求和 + `black_jack_official_free` 条目）、P2-3（12 处 /ko/→/kr/）、P2-4（`test_fetch_bj.py` 7 个离线单测）、P2-5（ac6 零变化日志 + ac8 范围审计日志，禁改路径零命中、diff --check EXIT=0）、P2-6（BJ04 补 horizontal_text，编排侧目检确认）、P3-1/3/4/5/6/7 落字（ac5b 复验日志、KO ZIP 3→2、官方署名格式+attribution_note、输入校验进 try+死分支删除、取消语义与 COO 豁免说明）。
+- **与 DSH 建议的偏差**：P2-2 的 ko ep20 未单列新 benchmark_source，而是把既有 `peppercarrot_korean_localized_pages` 条目对齐为与 ja 侧一致的跨 episode 合并口径（E04+E20，2 archives）——与既有 ja 条目结构对称，理由登记于此。
+- **返修后回归**：pytest 46 passed（39+7）、`fetch_bj.py verify` 12/12 EXIT=0、`assets.py verify` ja/ko full EXIT=0（INVENTORY checked=110 missing=0）；日志 `raw/ac6-zero-change-diff.log`、`ac7b-fetch-bj-verify.log`、`ac7c-pytest-after-fix.log`、`ac7d-verify-after-fix.log`、`ac5b-openmantra-verification.log`、`ac8-scope-proof.log`。
 
 ## 风险与遗留
 

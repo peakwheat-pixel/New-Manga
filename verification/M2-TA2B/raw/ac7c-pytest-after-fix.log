@@ -1,0 +1,4 @@
+# shell=bash cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=118b4df3a77456dc148d30cc35e0128b86b69290 date=2026-09-30T02:05:02Z cmd=python -m pytest tests/m2_test_assets -q
+..............................................                           [100%]
+46 passed in 0.70s
+# EXIT=0
