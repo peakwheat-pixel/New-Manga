@@ -2,7 +2,8 @@
 id: M2-DOCTR-QUAL-C4
 title: "manga 域检测器评估（C1-C5 候选流程之 C4；用户裁决释放 2026-09-30）"
 kind: experiment
-status: ready
+status: in_progress
+claim: ZCode 2026-09-30 at delivery base 2e9f564d (branch agent/zcode/M2-DOCTR-QUAL-C4, worktree M2-DOCTR-QUAL-C4-zcode); scope per frozen AC1-AC5
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
