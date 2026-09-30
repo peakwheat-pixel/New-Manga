@@ -2,7 +2,8 @@
 id: M2-FIX-REGISTRY-READINESS-ENV
 title: "test_registry_readiness 环境断言条件化（遗留 slice③；Goal T3，自治执行 2026-10-01）"
 kind: fix
-status: in_review
+status: done
+integration_commit: 52b07438
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -53,3 +54,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-REGISTRY-ENV-zcode
 - **R-B4[P4] 已闭**：`find_spec` 存在性 vs 可导入性盲区（半装 torch 同样触发 skip）登记 docstring Known limitations；与原断言循环同探针，属逐字继承非新回归。
 - **R-B5[P4] 已闭**：判别力模拟固化为同文件参数化测试 `test_environment_assertion_discrimination_probe`（2 用例，stub `find_spec` 驱动真实测试函数，任何机器可复跑）。
 - **修后复跑**：单文件 `-rs` **9 passed, 1 skipped** EXIT=0；三套件 providers **291 passed + 1 skipped** / m2_acceptance **35 passed** / core **77 passed**——合计 **403 passed + 1 skipped，0 failed**（+2 即探针用例）。
+
+## 集成记录（2026-10-01，acting Codex）
+
+DSH r1 approved_with_conditions → review-fix 全闭 → DSH r2 approved → 集成修正（P4 残留）→ merge `52b07438`。集成方复跑：main 三套件 **403 passed + 1 skipped, 0 failed**（EXIT=0，skip 理由逐字符合更正口径）——**历轮「+1 既有环境性失败」口径自此终结**，新基线=providers 291+1 skipped/35/77。详见 [integration.md](../../verification/M2-FIX-REGISTRY-READINESS-ENV/integration.md)。Owner branch/worktree 保留于 `75c72dfa`。

@@ -2,7 +2,8 @@
 id: M2-MANGA-WEIGHTS-SOP
 title: "manga 权重 fetch/verify 脚本与安装 SOP（M2-PROD-DETECT-1 遗留 slice②/DSH r1 R6；Goal T2，自治执行 2026-10-01）"
 kind: feature
-status: in_review
+status: done
+integration_commit: 853fc911
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -46,3 +47,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-WEIGHTS-SOP-zcode
 ## 允许/禁止
 
 允许：`verification/M2-PROD-DETECT-2/scripts/**`、`verification/M2-PROD-DETECT-2/WEIGHTS-SOP.md`、Task/Handoff。禁止：src/**、requirements、packaging/**、权重入库。
+
+## 集成记录（2026-10-01，acting Codex）
+
+DSH r1 approved_with_conditions → review-fix 全闭 → DSH r2 approved → 集成修正（P4 残留）→ merge。集成方复跑门禁全过（--verify-only EXIT=0 3/3、drift EXIT=2、错 pin 反证 rc=1+target 原样+零 .part；git 层 EXIT=0）。gitignore 权重护栏 @d401bed2（R-A9 闭合）。详见 [integration.md](../../verification/M2-MANGA-WEIGHTS-SOP/integration.md)。Owner branch/worktree 保留于 `4723bfb4`。
