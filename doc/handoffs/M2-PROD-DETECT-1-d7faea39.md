@@ -3,7 +3,7 @@ task_id: M2-PROD-DETECT-1
 author: ZCode
 recipient: Codex（集成）
 base_commit: 2fee7d6efe4af8939762cc38f692f3fe8a207339
-delivery_head: d7faea391b18aef1017dfb01d6a498c233a26869（实现；回填/记录 commit 见 Task frontmatter）
+delivery_head: d7faea391b18aef1017dfb01d6a498c233a26869（实现 commit；本 frontmatter 记录的是实现时点，≠ Task frontmatter 的 delivery_head（随 review-fix 前移至 a016d38c）与锚点表语义——见「交付锚点记账」节）
 status: ready_for_review
 ---
 
@@ -13,10 +13,10 @@ status: ready_for_review
 
 C4/C1 双背书的 manga 域检测器（ogkalu/comic-text-and-bubble-detector，RT-DETR-v2，Apache-2.0，HF revision `16e8a622`）接入生产检测路径。commit 链：`2e1d3deb`（claim）→ `d7faea39`（实现）→ 回填/记录 commit（Task frontmatter `delivery_head`）。
 
-- **AC1** `src/infrastructure/providers/detection_manga.py`（新增，418 行）：`MangaDetectionProvider` 实现 `ports.detection` 接口（**契约零修订**，`ports/detection/ports.py` 一行未动）。fail-closed 四纪律与 docTR 姊妹实现完全同款：①零依赖存在性探测（目录+三文件缺失=`PROVIDER_NOT_CONFIGURED`，消息带配置指引，含 "weights are not installed" 措辞以兼容既有 m2_acceptance 断言）；②懒加载 torch/transformers（缺失=`PROVIDER_DEPENDENCY_MISSING`，无重依赖机器照常启动）；③三文件逐文件 SHA-256 pin 在模型构建前校验（不符=`PROVIDER_FAILED`）；④`from_pretrained(..., local_files_only=True)` 即使联网也绝不到 hub。推理序列复刻 C4（processor→model→`post_process_object_detection` 源尺寸回映射，conf 0.5 冻结）；三类过滤保留 1=text_bubble/2=text_free、丢 0=bubble（计数入 options 审计）；text 框以 word 角色进**冻结合并**——`MERGE_*` 常数与 `cluster_words_into_blocks` 从 `detection_doctr` **import 复用**（测试断言对象身份，未复制未改值）；匿名 `manga-<n>` label、coordinate space=page-global、空页=零候选、推理/载荷异常 typed。
+- **AC1** `src/infrastructure/providers/detection_manga.py`（新增，418 行；review-fix 后 436 行）：`MangaDetectionProvider` 实现 `ports.detection` 接口（**契约零修订**，`ports/detection/ports.py` 一行未动）。fail-closed 四纪律与 docTR 姊妹实现完全同款：①零依赖存在性探测（目录+三文件缺失=`PROVIDER_NOT_CONFIGURED`，消息带配置指引，含 "weights are not installed" 措辞以兼容既有 m2_acceptance 断言）；②懒加载 torch/transformers（缺失=`PROVIDER_DEPENDENCY_MISSING`，无重依赖机器照常启动）；③三文件逐文件 SHA-256 pin 在模型构建前校验（不符=`PROVIDER_FAILED`）；④`from_pretrained(..., local_files_only=True)` 即使联网也绝不到 hub。推理序列复刻 C4（processor→model→`post_process_object_detection` 源尺寸回映射，conf 0.5 冻结）；三类过滤保留 1=text_bubble/2=text_free、丢 0=bubble（计数入 options 审计）；text 框以 word 角色进**冻结合并**——`MERGE_*` 常数与 `cluster_words_into_blocks` 从 `detection_doctr` **import 复用**（测试断言对象身份，未复制未改值）；匿名 `manga-<n>` label、coordinate space=page-global、空页=零候选、推理/载荷异常 typed。
 - **AC2** `src/bootstrap/core_assembly.py`（仅检测器装配段 + 对应 import 行）：`NEWMANGA_DETECTOR_BACKEND=manga`（**默认**，代理裁决已登记、可撤销）|`doctr`。doctr 分支代码原样保留（切回后行为零变化）；`NEWMANGA_DETECTOR_WEIGHTS` 覆盖语义保持但按 backend 分义（manga=目录、doctr=文件）；默认路径均为 `<data root>/models/detector/<...>`；未知 backend 装配期 `ValueError`（消息列合法值）；`mock_local_providers` 路径零触碰。装配段之外的其他行零改动（`git diff` 可核）。
 - **AC3** requirements.txt 追加 `transformers==5.17.0` + `safetensors==0.8.0`（pin + 出处注释；torch/doctr 行未动）。**CPU 兼容门 PASS**：torch 2.14.0+cpu × transformers 5.17.0，权重快照三文件 SHA-256 校验 OK，加载 0.4s（770 张量，42,733,137 params），单页真实推理 EXIT=0。未降级 torch、未换模型。
-- **AC4** `tests/providers/test_detection_manga.py`（27 项：fail-closed 矩阵、bubble 过滤纯函数、detect 诚实性、合并常数身份、Qt-free 装配 backend 选择 5 场景）+ `test_detection_manga_real.py`（2 项真实权重推理；权重经 `NEW_MANGA_MANGA_WEIGHTS` env 或已知本地快照，缺失 module-skip 显式原因）。既有 `test_detector_assembly.py` 做**最小适配**：显式 `NEWMANGA_DETECTOR_BACKEND=doctr`（默认 backend 变 manga 后该测试若不适配必然失败；适配后其验证语义——docTR 装配 fail-closed——不变。属允许路径 `tests/providers/**` 内的必要适配，登记给 reviewer）。
+- **AC4** `tests/providers/test_detection_manga.py`（27 项，review-fix 后 28 项——新增 NaN 几何 typed 用例：fail-closed 矩阵、bubble 过滤纯函数、detect 诚实性、合并常数身份、Qt-free 装配 backend 选择 5 场景）+ `test_detection_manga_real.py`（2 项真实权重推理；权重经 `NEW_MANGA_MANGA_WEIGHTS` env 或已知本地快照，缺失 module-skip 显式原因）。既有 `test_detector_assembly.py` 做**最小适配**：显式 `NEWMANGA_DETECTOR_BACKEND=doctr`（默认 backend 变 manga 后该测试若不适配必然失败；适配后其验证语义——docTR 装配 fail-closed——不变。属允许路径 `tests/providers/**` 内的必要适配，登记给 reviewer）。
 - **AC5** `verification/M2-PROD-DETECT-1/envelope.md`：CPU 315.6 ms/页（n=5 真实 manifest region，稳态，310–319）vs C4 GPU 76.1 ms/页（38.9s/511）≈ 4.1×；sidecar 体积前后对比同文件。
 - **AC6** sidecar 构建回归 PASS + runner 25/25 PASS + 体积 +21.6 KB/+0 文件（ML 栈懒加载未进闭包；spec 未动）。口径（DSH r1 R1 措辞更正）：**构建不回退 + ML 栈不进闭包（发布形态需外部运行时）**——build venv 为 pyinstaller-only，+0 文件正说明 transformers/torch 不进闭包；发布包内默认 manga backend 的 detect 会 `PROVIDER_DEPENDENCY_MISSING`（docTR 在 base 同样如此，非本 Task 回归），分发/运行时方式登记为后续 slice 候选（见「风险与遗留」）。
 - **AC7** 回归与纪律全过（见验证证据）。
@@ -25,7 +25,7 @@ C4/C1 双背书的 manga 域检测器（ogkalu/comic-text-and-bubble-detector，
 
 | 锚点 | 值 | 来源 |
 |---|---|---|
-| release base | `c8eefb4b` | Task frontmatter `base_commit`——释放时 main 的 HEAD（见 `doc/tasks/M2-PROD-DETECT-1/release-c8eefb4b.md`） |
+| release base | `c8eefb4b` | Task frontmatter `base_commit`——释放时 main 的 HEAD（见 `verification/M2-PROD-DETECT-1/release-c8eefb4b.md`） |
 | branch base | `2fee7d6e` | release commit 之后创建 `agent/zcode/M2-PROD-DETECT-1` 分支的实际 base；本 Handoff frontmatter `base_commit` 与所有 diff/复跑基线用它 |
 | delivery_head | `40d4ab64` | `0b0c9bc7` 为证据+handoff commit；`40d4ab64` 仅是记录 delivery_head 的 commit（Task frontmatter 以记录 commit 为准） |
 

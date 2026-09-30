@@ -377,8 +377,9 @@ def _text_boxes_from_results(
     """Pure filter: keep TEXT classes, drop the bubble class, clip, validate.
 
     Returns (text_boxes, n_bubble_dropped). Degenerate boxes (post-clip
-    empty) are skipped; a non-finite geometry or an out-of-range confidence
-    is a typed invalid output, never coerced.
+    empty) are skipped; a NaN geometry (±inf is clipped to finite bounds by
+    the existing clip semantics) or an out-of-range confidence is a typed
+    invalid output, never coerced.
     """
     text_boxes: list[tuple[float, float, float, float, float]] = []
     n_bubble = 0
