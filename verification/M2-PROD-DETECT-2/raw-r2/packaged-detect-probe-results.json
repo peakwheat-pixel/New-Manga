@@ -1,0 +1,84 @@
+{
+  "gate": "m2-prod-detect-2-packaged-detect-probe",
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
+  "verdict": "PASS",
+  "scenario_count_note": "6 scenarios across 4 layers (L2 = counter-proof + recovery, L4 = frozen start + out-of-closure typed detect)",
+  "scenarios": [
+    {
+      "id": "PK-L1-frozen-startup-ping",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "status": "ready",
+        "shutdown": {
+          "status": "stopped"
+        }
+      }
+    },
+    {
+      "id": "PK-L2-weights-absent-assembles-with-warning",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "status": "ready",
+        "mentions_probed_candidates": true
+      }
+    },
+    {
+      "id": "PK-L2-recovery-after-restore",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "status": "ready",
+        "warning_gone": true
+      }
+    },
+    {
+      "id": "PK-L3-real-inference",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "n_candidates": 2,
+        "cold_elapsed_ms_incl_engine_build": 17478,
+        "warm_avg_ms": 288,
+        "warm_elapsed_ms": [
+          279,
+          312,
+          274
+        ],
+        "versions": {
+          "torch": "2.14.0",
+          "torchvision": "0.29.0",
+          "transformers": "5.17.0",
+          "safetensors": "0.8.0",
+          "python-doctr": "1.1.0",
+          "tokenizers": "0.23.2"
+        },
+        "weights_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\resources\\core-sidecar\\models\\detector\\ogkalu-comic-text-and-bubble-detector",
+        "stderr_tail": ""
+      }
+    },
+    {
+      "id": "PK-L4-doctr-starts-without-assembly-error",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "status": "ready",
+        "warning_expected_state": "see raw log (stderr line if present)"
+      }
+    },
+    {
+      "id": "PK-L4-doctr-detect-fail-closed-typed",
+      "status": "PASS",
+      "observed": {
+        "driver_exit": 0,
+        "outcome": "typed_not_configured",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "provider_id": "local-doctr",
+        "weights_path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\resources\\core-sidecar\\models\\detector\\fast_base-688a8b34.pt",
+        "stderr_tail": ""
+      }
+    }
+  ],
+  "boundary_note": "L3 inference and the L4(b) detect assertion run OUTSIDE the frozen process: the frozen command surface is M2-IPC1-frozen (core.ping/ListBooks/core.shutdown) with no detect RPC \u2014 frozen in-process ML import/detect stays NOT_RUN until M2-IPC1 extends the command surface (DSH r1 R2: AC5 is PARTIAL). Closure completeness is evidenced by L1 startup, the per-entry warn archives (R1), the build-time ML closure assertion + PYZ listing (R3) and L2."
+}

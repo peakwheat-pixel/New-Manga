@@ -1,0 +1,8 @@
+# N6 (DSH r2): NSIS-installed in-bundle manga weights — explicit Get-FileHash dump
+# install dir: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install (GATE runner install, 2026-10-01T01:34:30+08:00)
+# bundle path: resources\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector
+# pins (detection_manga.py / build_sidecar.ps1): model.safetensors=037930a8..., config.json=b6d70793..., preprocessor_config.json=7e9e2245...
+
+b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072  config.json
+037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d  model.safetensors
+7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca  preprocessor_config.json

@@ -33,6 +33,7 @@ import os
 from pathlib import Path
 import platform
 import sqlite3
+import sys
 
 from application.editing.service import RegionEditingService
 from application.export import ExportService
@@ -563,6 +564,80 @@ class CoreServices:
     tile_factory: Callable[[str], TiledPageRasterizer]
 
 
+def _resolve_detector_weights_path(
+    override: str | None,
+    weights_name: str,
+    db_path: Path,
+) -> Path:
+    """M2-PROD-DETECT-2 (proxy ruling 4, reversible): detector weights lookup.
+
+    Order: env ``NEWMANGA_DETECTOR_WEIGHTS`` override > data root
+    (existence probe) > frozen in-bundle copy (existence probe, PyInstaller
+    ``sys.frozen`` onedir only) > the default data-root path.
+
+    Semantics per form (DSH r1 R5/R6 review-fix — ONE failure shape for both
+    backends, never an assembly-time crash):
+
+    - **override** (any form): used verbatim, no existence probe — the
+      released override contract (M2-PROD-DETECT-1, DSH r1 R7: an *empty*
+      value falls through, a non-empty value is taken as-is) and existing
+      tests pin the wired provider to the exact override path.
+    - **non-frozen** (dev venv / source form): the probes only select paths
+      the released lookup would already have chosen, so the result is
+      byte-identical to the released behavior — with nothing found anywhere,
+      the default data-root path is returned and the lazy provider fails
+      closed with the typed ``PROVIDER_NOT_CONFIGURED`` at detect time. No
+      bundle probing, no warning output, no error.
+    - **frozen** (packaged onedir): the in-bundle copy
+      (``Path(sys.executable).parent/models/detector/<name>``) is probed.
+      When neither the data root nor the bundle carries the weights the
+      lookup writes ONE diagnostic line to stderr (naming the backend's
+      weights name and every probed candidate) and returns the default
+      data-root path — assembly still succeeds and the lazy provider fails
+      closed ``PROVIDER_NOT_CONFIGURED`` at detect time, exactly like the
+      doctr backend (identical semantics, R6 fork dissolved). An
+      assembly-time crash would take the whole app down (bookshelf, reader,
+      everything) for a weights-tree gap (AV quarantine, half-finished
+      install, a ``-SkipWeights`` debug artifact) — that blast radius is
+      M2-AC3's "assemble, never crash; fail closed at the step" discipline,
+      so the packaged-bundle gap degrades to a detect-time typed failure
+      with the stderr line pointing operators at the placement options.
+
+    The probes are existence-level only (directory/file ``exists()``); the
+    three-file SHA-256 pins are enforced by the provider's own loader
+    (``detection_manga`` — imported constants, never duplicated here).
+    """
+    data_root_candidate = (
+        Path(db_path).resolve().parent / "models" / "detector" / weights_name
+    )
+    if override:
+        return Path(override)
+    if data_root_candidate.exists():
+        return data_root_candidate
+    bundle_candidate = (
+        Path(sys.executable).resolve().parent / "models" / "detector" / weights_name
+    )
+    if getattr(sys, "frozen", False):
+        if bundle_candidate.exists():
+            return bundle_candidate
+        probed = [str(data_root_candidate), str(bundle_candidate)]
+        # N1 fix (DSH r2): pre-join the candidates BEFORE interpolation — the
+        # previous form relied on implicit adjacent-literal concatenation with
+        # a bare `" | ".join(probed)` tail, which parses as
+        # `("...none exists:  | ").join(probed)` (the separator became a
+        # prefix of the whole first literal) and garbled the stderr line.
+        probed_str = " | ".join(probed)
+        print(
+            "WARNING: detector weights not found (weights name "
+            f"{weights_name!r}); probed candidates, none exists: {probed_str}"
+            "; the detect step will fail closed with PROVIDER_NOT_CONFIGURED "
+            "until the weights are placed on the data root or set via "
+            "NEWMANGA_DETECTOR_WEIGHTS",
+            file=sys.stderr,
+        )
+    return data_root_candidate
+
+
 def default_data_root() -> Path:
     root = os.environ.get("NEWMANGA_DATA_ROOT")
     if root:
@@ -691,14 +766,23 @@ def assemble_core_services(
             # doc/tasks/M2-PROD-DETECT-1.md, reversible) or "doctr" (the
             # T1.1.1 docTR fast_base path, byte-identical to its released
             # behaviour). Both adapters are lazy and strictly offline:
-            # weights must exist locally (manga: directory, default
-            # <data root>/models/detector/ogkalu-comic-text-and-bubble-detector/;
-            # doctr: file, default <data root>/models/detector/fast_base-688a8b34.pt;
-            # override NEWMANGA_DETECTOR_WEIGHTS per backend — directory for
-            # manga, file for doctr) with pinned SHA-256, or the ``detect``
-            # step fails closed with PROVIDER_NOT_CONFIGURED at run time —
-            # the same diagnosable gap as an unwired detector. No download,
-            # no silent fallback.
+            # weights must exist locally — resolved per backend through the
+            # shared lookup in ``_resolve_detector_weights_path``
+            # (M2-PROD-DETECT-2, proxy ruling 4): env override
+            # (NEWMANGA_DETECTOR_WEIGHTS; directory for manga, file for
+            # doctr) > the data root's models/detector/<name> (existence
+            # probe) >, in the frozen onedir form only, the copy bundled
+            # inside the release (manga ships in-bundle; doctr's weights
+            # intentionally do NOT — switching to doctr in the release form
+            # keeps the detect-time NOT_CONFIGURED with the pointer to
+            # place them on the data root, proxy ruling 3) > the default
+            # data-root path. Failure semantics are UNIFORM for both
+            # backends (DSH r1 R5/R6 review-fix): nothing found anywhere ->
+            # one stderr diagnostic line in the frozen form (listing every
+            # probed candidate) and the released detect-time typed
+            # PROVIDER_NOT_CONFIGURED — never an assembly-time crash. The
+            # non-frozen form keeps the released fail-closed at run time
+            # with zero extra output. No download, no silent fallback.
             # Boundary note (DSH r1 R7): an *empty* NEWMANGA_DETECTOR_WEIGHTS
             # falls back to the default path below ("override if override
             # else default"), whereas the pre-Task doctr assembly
@@ -709,31 +793,29 @@ def assemble_core_services(
             backend = os.environ.get("NEWMANGA_DETECTOR_BACKEND", "manga").strip().lower()
             detector_device_env = os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu")
             detector_weights_override = os.environ.get("NEWMANGA_DETECTOR_WEIGHTS")
+            # M2-PROD-DETECT-2 (proxy ruling 4): the lookup below is shared
+            # verbatim by both backends — env override > data root (probed) >
+            # frozen in-bundle copy (probed, `sys.frozen` onedir only) > the
+            # default data-root path. The in-bundle layer is what makes the
+            # RELEASE-form detect chain work (weights ship inside the
+            # core-sidecar onedir via the whole-directory Tauri resource);
+            # the non-frozen (source venv) form resolves exactly as before.
             if backend == "manga":
-                detector_weights = Path(
-                    detector_weights_override
-                    if detector_weights_override
-                    else str(
-                        Path(db_path).resolve().parent
-                        / "models"
-                        / "detector"
-                        / MANGA_WEIGHTS_DIRNAME
-                    )
+                detector_weights = _resolve_detector_weights_path(
+                    detector_weights_override, MANGA_WEIGHTS_DIRNAME, db_path
                 )
                 detector = MangaDetectionProvider(
                     weights_dir=detector_weights,
                     device=detector_device_env,
                 )
             elif backend == "doctr":
-                detector_weights = Path(
-                    detector_weights_override
-                    if detector_weights_override
-                    else str(
-                        Path(db_path).resolve().parent
-                        / "models"
-                        / "detector"
-                        / DOCTR_WEIGHTS_FILENAME
-                    )
+                # Same lookup, same failure shape (DSH r1 R6 review-fix): the
+                # doctr weights intentionally ship OUT of the bundle (ruling
+                # 3), but a frozen miss degrades to the SAME stderr warning +
+                # detect-time NOT_CONFIGURED as manga — no assembly-time
+                # crash for either backend.
+                detector_weights = _resolve_detector_weights_path(
+                    detector_weights_override, DOCTR_WEIGHTS_FILENAME, db_path
                 )
                 detector = DoctrDetectionProvider(
                     weights_path=detector_weights,

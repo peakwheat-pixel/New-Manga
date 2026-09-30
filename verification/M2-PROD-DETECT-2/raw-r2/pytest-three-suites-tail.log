@@ -1,0 +1,4 @@
+tests\providers\test_registry_readiness.py:193: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/providers/test_registry_readiness.py::test_no_model_runtime_is_installed_in_this_environment
+1 failed, 401 passed in 63.75s (0:01:03)

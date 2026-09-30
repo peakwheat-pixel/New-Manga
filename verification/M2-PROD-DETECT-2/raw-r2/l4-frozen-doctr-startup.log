@@ -1,0 +1,6 @@
+$ core_service.exe with NEWMANGA_DETECTOR_BACKEND=doctr (purged PATH)
+exit=0
+{"protocol":"new-manga.core","version":{"major":1,"minor":0},"request_id":"r1","result":{"status":"ready","protocol_version":{"major":1,"minor":0},"capabilities":["library.list_books"]},"error":null}
+{"protocol":"new-manga.core","version":{"major":1,"minor":0},"request_id":"r2","result":{"status":"stopped"},"error":null}
+--- stderr ---
+C:\Users\49745\AppData\Local\New Manga\models\detector\fast_base-688a8b34.ptWARNING: detector weights not found (weights name 'fast_base-688a8b34.pt'); probed candidates, none exists:  | C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\fast_base-688a8b34.pt; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
