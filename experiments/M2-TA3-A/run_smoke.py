@@ -270,7 +270,9 @@ def run_case(case_id: str, case: dict, artifacts_dir: Path, device: str) -> dict
         summary["attribution"].append("environment:import-failed")
         return summary
 
-    # ---- Run1: PAGE_SELECTION (real detect; ocr hits the known gap) -------
+    # ---- Run1: PAGE_SELECTION (real detect; page-level chain; the historical
+    # LOCK_CHANGED planner gap is FIXED by M2-P1 @a174fb9c, verified by
+    # DIAG-M2-LOCK-CHANGED-REPRO-002 @1faf6c1b) -------
     from domain.tasks.models import CommandType, PipelineScope
 
     run1_started = time.perf_counter()

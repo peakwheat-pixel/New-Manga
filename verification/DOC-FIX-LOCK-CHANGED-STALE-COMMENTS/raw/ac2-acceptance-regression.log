@@ -1,0 +1,4 @@
+=== shell: Git Bash (win32) / interpreter: G:/CODEX/New Manga.task-envs/TASK-012-py312/Scripts/python.exe / worktree @ 74022cdc20a9afb44395a2cc5a954f7134aeb385 / cmd: pytest tests/m2_acceptance/test_acceptance_loop.py -q ===
+....                                                                     [100%]
+4 passed in 3.06s
+EXIT=0

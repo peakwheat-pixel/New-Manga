@@ -30,10 +30,10 @@ delivery_head: null
 
 ## Acceptance Criteria
 
-- [ ] **AC1（注释-only diff 证明）**：`git diff` 逐字显示两文件的变化行**全部**为注释/docstring 文本（无任何代码行增删改）；diff 原文入库。
-- [ ] **AC2（零逻辑变化的机器证据）**：①两文件 `py_compile` 通过；②字节码探针——对两文件在改前/改后分别 `compile()` 并递归对比全部代码对象的 `co_code`（可执行指令序列；docstring/注释不进入 `co_code`），逐对象全等；探针输出入库。③`tests/m2_acceptance/test_acceptance_loop.py` 4 passed（`acceptance_bridge` 直接消费方回归）。
-- [ ] **AC3（文本正确性）**：新注释与 DIAG-002 结论一致（缺口真实存在过、已由 M2-P1 @`a174fb9c` 修复、DIAG-002 @`1faf6c1b` 核实关闭；真 docTR 修复前触发的推断限定不引入注释）。
-- [ ] **AC4（范围纪律）**：Owner delta 仅 2 个目标文件+本 Task/verification/handoff/reviews/导航面；`git diff --check` EXIT=0。
+- [x] **AC1（注释-only diff 证明）**：`git diff` 变化行全部为注释/docstring 文本（无任何代码行增删改）。证据：[ac1-comment-only-diff.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac1-comment-only-diff.log)。
+- [x] **AC2（零逻辑变化的机器证据）**：①`py_compile` 双版通过；②字节码探针 `co_code` 逐对象全等（`acceptance_bridge.py` 37 对象 + `run_smoke.py` 15 对象 = 52 全等，`BYTECODE-PROBE: ALL-EQUAL`）；③`test_acceptance_loop.py` **4 passed** EXIT=0。证据：[ac2-bytecode-probe.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe.log)、[ac2-acceptance-regression.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-acceptance-regression.log)。
+- [x] **AC3（文本正确性）**：新注释与 DIAG-002 结论一致（已由 M2-P1 @`a174fb9c` 修复、DIAG-002 @`1faf6c1b` 核实：修复前锚点复现/HEAD 不复现）；保留 M2-AC1 验收证据边界（resume_blocked 分支 NOT exercised，至今真实）；推断限定未引入注释。
+- [x] **AC4（范围纪律）**：产品面仅 2 个目标文件；`git diff --check` EXIT=0。证据：[ac4-scope-proof.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log)。
 
 ## 允许修改范围
 
@@ -50,10 +50,10 @@ delivery_head: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| 注释-only diff（AC1） | `git diff` 目标区间（planned） | — | NOT_RUN | 无 |
-| 字节码探针（AC2） | `python` 探针：compile+递归 co_code 对比（planned） | TASK-012-py312 venv | NOT_RUN | 无 |
-| 回归（AC2③） | `python -m pytest tests/m2_acceptance/test_acceptance_loop.py -q`（planned） | 同上 | NOT_RUN | 无 |
-| 范围（AC4） | `git diff --check`；name-status（planned） | — | NOT_RUN | 无 |
+| 注释-only diff（AC1） | `git diff 4ed3c044 -- <两文件>` | — | **executed**：变化行全为注释/docstring | [ac1-comment-only-diff.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac1-comment-only-diff.log) |
+| 字节码探针（AC2） | `python` 探针：compile+递归 co_code 对比 | TASK-012-py312 venv | **executed**：52 code object 全等，ALL-EQUAL | [ac2-bytecode-probe.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-bytecode-probe.log) |
+| 回归（AC2③） | `python -m pytest tests/m2_acceptance/test_acceptance_loop.py -q` | 同上（offscreen） | **executed**：4 passed | [ac2-acceptance-regression.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac2-acceptance-regression.log) |
+| 范围（AC4） | `git diff --check`；name-status+意外路径 grep | — | **executed**：EXIT=0；意外路径零 | [ac4-scope-proof.log](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/raw/ac4-scope-proof.log) |
 
 ## 依赖、风险与阻塞
 
@@ -63,5 +63,6 @@ delivery_head: null
 
 ## 交付与运行记录
 
-- **2026-09-30 release（代行 Codex，用户指令批准）**：`proposed → ready / DOC_FIX_LOCK_CHANGED_STALE_COMMENTS_RELEASED`。冻结：base=`d1c56e5d8399e8f03550528c47ee9aa3b34d0fcf`、branch=`agent/zcode/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS`、worktree=`G:/CODEX/New Manga.worktrees/DOC-FIX-STALE-COMMENTS-zcode`。Release evidence：[release-d1c56e5d](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/release-d1c56e5d.md)。
-- Handoff：尚无。Review：尚无。实际测试：尚无。
+- **2026-09-30 release（代行 Codex，用户指令批准）**：`proposed → ready / DOC_FIX_LOCK_CHANGED_STALE_COMMENTS_RELEASED`。冻结：base=`d1c56e5d8399e8f03550528c47ee9aa3b34d0fcf`、branch=`agent/zcode/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS`、worktree=`G:/CODEX/New Manga.worktrees/DOC-FIX-STALE-COMMENTS-zcode`（release commit=`4ed3c044`）。Release evidence：[release-d1c56e5d](../../verification/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS/release-d1c56e5d.md)。
+- **2026-09-30 交付（Owner=ZCode，claim `74022cdc`）**：`in_progress → in_review`。两处注释修正 + 全套零逻辑证明（AC1-AC4 全 executed）。Handoff：[DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-zcode-delivery-20260930](../handoffs/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS-zcode-delivery-20260930.md)。
+- Review：尚无（待 DSH 非作者静态 Review）。实际测试：见上方测试表。

@@ -1,0 +1,37 @@
+=== shell: Git Bash (win32) / worktree DOC-FIX-STALE-COMMENTS-zcode @ 74022cdc20a9afb44395a2cc5a954f7134aeb385 / AC1: comment-only diff proof ===
+$ git diff 4ed3c044 -- src/bootstrap/acceptance_bridge.py experiments/M2-TA3-A/run_smoke.py
+diff --git a/experiments/M2-TA3-A/run_smoke.py b/experiments/M2-TA3-A/run_smoke.py
+index 160386ba..06d72f9a 100644
+--- a/experiments/M2-TA3-A/run_smoke.py
++++ b/experiments/M2-TA3-A/run_smoke.py
+@@ -270,7 +270,9 @@ def run_case(case_id: str, case: dict, artifacts_dir: Path, device: str) -> dict
+         summary["attribution"].append("environment:import-failed")
+         return summary
+ 
+-    # ---- Run1: PAGE_SELECTION (real detect; ocr hits the known gap) -------
++    # ---- Run1: PAGE_SELECTION (real detect; page-level chain; the historical
++    # LOCK_CHANGED planner gap is FIXED by M2-P1 @a174fb9c, verified by
++    # DIAG-M2-LOCK-CHANGED-REPRO-002 @1faf6c1b) -------
+     from domain.tasks.models import CommandType, PipelineScope
+ 
+     run1_started = time.perf_counter()
+diff --git a/src/bootstrap/acceptance_bridge.py b/src/bootstrap/acceptance_bridge.py
+index 186e40e2..4f6abfdb 100644
+--- a/src/bootstrap/acceptance_bridge.py
++++ b/src/bootstrap/acceptance_bridge.py
+@@ -335,9 +335,11 @@ class AcceptanceBridge:
+         plan/execute pair completes the run. The ``resume_blocked`` branch
+         below is kept as a fail-closed safety net for the region-less case;
+         it is NOT exercised by the released acceptance evidence (DSH r1
+-        F-007), and the region-less detect→backfill chain has a known
+-        production planner gap (Handoff §风险与遗留) that must not be
+-        reported as covered by this Task. Both phases are the production
++        F-007). The historical region-less detect→backfill ``LOCK_CHANGED``
++        gap (M2-AC1 handoff §风险与遗留) was fixed by M2-P1 (merge
++        ``a174fb9c``) and verified closed by DIAG-M2-LOCK-CHANGED-REPRO-002
++        (merge ``1faf6c1b``: pre-fix anchor reproduces, HEAD does not).
++        Both phases are the production
+         service API — no planner logic is reimplemented here.
+         """
+         state = self._require_state()
+EXIT=0
