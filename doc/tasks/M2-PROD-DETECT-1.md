@@ -13,7 +13,7 @@ base_commit: c8eefb4b
 branch: agent/zcode/M2-PROD-DETECT-1
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 handoff: doc/handoffs/M2-PROD-DETECT-1-d7faea39.md
-delivery_head: 0b0c9bc7
+delivery_head: a016d38c
 ---
 
 # M2-PROD-DETECT-1：生产检测器集成第一刀
@@ -96,3 +96,4 @@ delivery_head: 0b0c9bc7
 
 - review 输入：`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1/dsh-review-r1.md`（verdict=`approved_with_conditions`，0×P0/P1、2×P2、8×P3/P4）。R1–R10 全部处置，无降级改动：R1/R2 文档口径（AC6 措辞、GPU 对照口径注）；R3 冻结守卫收紧（MERGE_* 四常数 `is` 身份断言 + sha256 pin 全量 hex）；R4 real 测试 docstring 对齐 envelope §AC3；R5 缺目录错误消息追加 `NEWMANGA_DETECTOR_BACKEND=doctr` 指引（含单测断言）；R6/R1 slice 候选登记（见上节）；R7 装配段注释登记空串 env 边界差异（实现保持回落默认语义）；R8 numpy 用例 `pytest.importorskip` + real 测试字体缺失改 `pytest.skip` 显式原因；R9 clip 前 `math.isfinite` 校验（`ProviderInvalidOutput`，新增 NaN 单测）；R10 三值记账（release base/branch base/delivery_head）+ envelope params 口径注 + `cleanstart-gate.json` 补末尾换行。
 - 允许路径纪律：改动仅落 `detection_manga.py`、`core_assembly.py` 装配段注释、`tests/providers/**`、Task/Handoff/`verification/M2-PROD-DETECT-1/**`；`ports/**`、`detection_doctr.py`、requirements、MERGE_* 常数值零触碰。
+- 锚点说明（R10 记账延续）：frontmatter `delivery_head: a016d38c` = review-fix 终态（最后实质 commit）；其后仅存在一个单独更新本行的记录 commit（零内容变化，见 `git log`），不再产生锚点歧义。

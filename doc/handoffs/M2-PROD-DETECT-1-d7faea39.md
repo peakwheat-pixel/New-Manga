@@ -29,6 +29,8 @@ C4/C1 双背书的 manga 域检测器（ogkalu/comic-text-and-bubble-detector，
 | branch base | `2fee7d6e` | release commit 之后创建 `agent/zcode/M2-PROD-DETECT-1` 分支的实际 base；本 Handoff frontmatter `base_commit` 与所有 diff/复跑基线用它 |
 | delivery_head | `40d4ab64` | `0b0c9bc7` 为证据+handoff commit；`40d4ab64` 仅是记录 delivery_head 的 commit（Task frontmatter 以记录 commit 为准） |
 
+review-fix（DSH r1）后：delivery_head 前移至 **`a016d38c`**（review-fix 终态，最后实质 commit；Task frontmatter 已同步，其后仅存在单独更新该行的记录 commit，零内容变化）。
+
 envelope 的 `params=42,733,137`（加载后 tensor 元素计数）与 C4 记录的 safetensors `F32=42,861,209`（文件张量口径）口径不同，非矛盾——注已补入 `verification/M2-PROD-DETECT-1/envelope.md` §AC3。
 
 ## 验证证据
