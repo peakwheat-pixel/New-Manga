@@ -2,7 +2,7 @@
 id: M2-MANGA-WEIGHTS-SOP
 title: "manga 权重 fetch/verify 脚本与安装 SOP（M2-PROD-DETECT-1 遗留 slice②/DSH r1 R6；Goal T2，自治执行 2026-10-01）"
 kind: feature
-status: ready
+status: in_progress
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
