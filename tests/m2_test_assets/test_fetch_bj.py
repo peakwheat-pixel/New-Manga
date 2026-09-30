@@ -85,12 +85,16 @@ def test_missing_content_length_is_rejected(isolated_output, monkeypatch):
 
 
 def test_oversized_declared_size_is_rejected(isolated_output, monkeypatch):
+    # Shrink the limit so the payload itself satisfies the length checks: only the
+    # size-cap guard can reject here (removing it would fail with a different message).
+    monkeypatch.setattr(fetch_bj, "MAX_ARCHIVE_BYTES", 8)
+
     def respond(url):
-        return FakeResponse(url, b"PK", content_length=str(fetch_bj.MAX_ARCHIVE_BYTES + 1))
+        return FakeResponse(url, b"0123456789ABCDEF", content_length="16")
 
     monkeypatch.setattr(fetch_bj.urllib.request, "build_opener", lambda handler: FakeOpener(respond))
     destination = isolated_output / "vol05" / "005bj.zip"
-    with pytest.raises(OSError, match="download failed"):
+    with pytest.raises(OSError, match="outside limits"):
         fetch_bj.download_archive("https://densho810.com/free/dl/005bj.zip", destination)
     assert not destination.exists()
 
@@ -135,6 +139,22 @@ def test_extract_pdf_skips_macosx_appledouble_members(tmp_path):
     assert filename == "volume05.pdf"
     assert size == len(b"%PDF-real-content")
     assert [p.name for p in volume_dir.glob("*")] == ["volume05.pdf"]
+
+
+def test_redirect_guard_rejects_foreign_targets_directly():
+    # Drives RedirectGuard itself (DSH r2 N-3): bypassing the guard must turn this red.
+    guard = fetch_bj.RedirectGuard()
+    request = urllib.request.Request("https://densho810.com/free/dl/005bj.zip")
+    with pytest.raises(urllib.error.HTTPError):
+        guard.redirect_request(
+            request, None, 302, "moved", {"Location": "https://evil.example/x.zip"},
+            "https://evil.example/x.zip",
+        )
+    follow = guard.redirect_request(
+        request, None, 302, "moved", {"Location": "https://densho810.com/free/dl/006bj.zip"},
+        "https://densho810.com/free/dl/006bj.zip",
+    )
+    assert follow is not None and follow.full_url.endswith("006bj.zip")
 
 
 def test_jasrac_volumes_are_refused_by_policy(isolated_output, monkeypatch):

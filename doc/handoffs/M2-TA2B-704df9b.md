@@ -80,9 +80,10 @@ repair_head: 118b4df3
 ## Review 轨迹与返修（2026-09-30）
 
 - **DSH r1（被审 tip `4d0e9db8`）：`approved_with_conditions`**——P0=0、P1×1 + P2×6 + P3×9；判据为入库日志/实体文件（非 commit 自述），并逐条复核 densho810 官方利用规约。
-- **返修 commit `118b4df3`**（amend 自 `a93a61f3`：仅 ac6 日志尾随空格与元数据，轨迹披露）：P1-1（OpenMantra 三处登记同步 + inventory_tracking 标记）、P2-1（`fetch_bj.py verify` 12/12 + README 绿色门槛）、P2-2（source 计数按 inventory 求和 + `black_jack_official_free` 条目）、P2-3（12 处 /ko/→/kr/）、P2-4（`test_fetch_bj.py` 7 个离线单测）、P2-5（ac6 零变化日志 + ac8 范围审计日志，禁改路径零命中、diff --check EXIT=0）、P2-6（BJ04 补 horizontal_text，编排侧目检确认）、P3-1/3/4/5/6/7 落字（ac5b 复验日志、KO ZIP 3→2、官方署名格式+attribution_note、输入校验进 try+死分支删除、取消语义与 COO 豁免说明）。
+- **返修 commit `118b4df3`**（amend 自 `a93a61f3`：仅 ac6 日志尾随空格与元数据，轨迹披露）：P1-1（OpenMantra 三处登记同步 + inventory_tracking 标记）、P2-1（`fetch_bj.py verify` 12/12 + README 绿色门槛）、P2-2（source 计数按 inventory 求和 + `black_jack_official_free` 条目）、P2-3（12 处 /ko/→/kr/）、P2-4（`test_fetch_bj.py` 离线单测，r2 收口后 8 个）、P2-5（ac6 零变化日志 + ac8 范围审计日志，禁改路径零命中、diff --check EXIT=0）、P2-6（BJ04 补 horizontal_text，编排侧目检确认）、P3-1/3/4/5/6/7 落字（ac5b 复验日志、KO ZIP 3→2、官方署名格式+attribution_note、输入校验进 try+死分支删除、取消语义与 COO 豁免说明）。
 - **与 DSH 建议的偏差**：P2-2 的 ko ep20 未单列新 benchmark_source，而是把既有 `peppercarrot_korean_localized_pages` 条目对齐为与 ja 侧一致的跨 episode 合并口径（E04+E20，2 archives）——与既有 ja 条目结构对称，理由登记于此。
-- **返修后回归**：pytest 46 passed（39+7）、`fetch_bj.py verify` 12/12 EXIT=0、`assets.py verify` ja/ko full EXIT=0（INVENTORY checked=110 missing=0）；日志 `raw/ac6-zero-change-diff.log`、`ac7b-fetch-bj-verify.log`、`ac7c-pytest-after-fix.log`、`ac7d-verify-after-fix.log`、`ac5b-openmantra-verification.log`、`ac8-scope-proof.log`。
+- **DSH r2（限定复核，tip `31dcbde0`）：`approved`**——r1 条件全 closed（独立复算），0×P0/P1/P2，8 项 P3 记录；N-1/N-2/N-3/N-6 已随 r2 收口 commit 闭合，N-4/N-5/N-8 登记候选，N-7 随集成归档。
+- **最终回归**：pytest 47 passed、fetch_bj verify 12/12 EXIT=0、assets verify ja/ko full EXIT=0、`fetch_bj.py verify` 12/12 EXIT=0、`assets.py verify` ja/ko full EXIT=0（INVENTORY checked=110 missing=0）；日志 `raw/ac6-zero-change-diff.log`、`ac7b-fetch-bj-verify.log`、`ac7c-pytest-after-fix.log`、`ac7d-verify-after-fix.log`、`ac5b-openmantra-verification.log`、`ac8-scope-proof.log`。
 
 ## 风险与遗留
 

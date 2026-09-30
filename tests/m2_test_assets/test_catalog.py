@@ -251,7 +251,7 @@ def test_ko_ground_truth_directory_naming_snapshot():
     for case_id in [f"O{n:02d}" for n in range(1, 9)]:
         assert cases[case_id]["local_path"].startswith("韩漫_KO/02_open_ground_truth_peppercarrot/"), case_id
         assert "naming_note" in cases[case_id], case_id
-    for case_id in ("K11", "K12", "K13"):
+    for case_id in [f"K{n}" for n in range(11, 26)]:
         assert cases[case_id]["local_path"].startswith("韩漫_KO/02_public_ground_truth_peppercarrot/"), case_id
         assert "naming_note" in cases[case_id], case_id
     for case_id in ("J38", "J39", "J40"):

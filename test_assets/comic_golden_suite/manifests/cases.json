@@ -5587,7 +5587,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K15",
@@ -5637,7 +5638,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K16",
@@ -5687,7 +5689,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K17",
@@ -5737,7 +5740,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K18",
@@ -5787,7 +5791,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K19",
@@ -5837,7 +5842,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K20",
@@ -5887,7 +5893,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K21",
@@ -5937,7 +5944,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K22",
@@ -5987,7 +5995,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K23",
@@ -6037,7 +6046,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K24",
@@ -6087,7 +6097,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     },
     {
       "case_id": "K25",
@@ -6137,7 +6148,8 @@
         "manga_page_render": "NOT_RUN"
       },
       "image_available": true,
-      "annotation_available": true
+      "annotation_available": true,
+      "naming_note": "Known naming divergence observation (TA2C P3-6): KO Pepper&Carrot families use two prefixes, 02_open_ground_truth_peppercarrot (O01-O08 manual source pages) vs 02_public_ground_truth_peppercarrot (K11-K13 localized pages). Kept as-is for local asset path stability; unification deferred to a later task."
     }
   ]
 }
