@@ -46,14 +46,24 @@ def _provider():
 def _comic_page_bytes(width: int = 900, height: int = 1300) -> bytes:
     """rgb32 BGRA pixels of a synthetic manga page — exactly what the
     production page_frame hands over. Same bubble geometry as the released
-    T1.1.1 seam samples; the pinned model detected 3/3 text boxes at
-    conf >= 0.93 in the AC3 gate run."""
+    T1.1.1 seam samples. For the measured record see envelope §AC3
+    (``verification/M2-PROD-DETECT-1/envelope.md``): on the real K01_R001
+    page (690x672, conf 0.5) the pinned model reported **2 text boxes**
+    (scores 0.941 / 0.938) plus **2 dropped bubbles** — this synthetic page
+    asserts ``>= 1`` candidate only."""
     import numpy
     from PIL import Image, ImageDraw, ImageFont
 
     image = Image.new("RGB", (width, height), "white")
     draw = ImageDraw.Draw(image)
-    font = ImageFont.truetype("C:/Windows/Fonts/msgothic.ttc", 44)
+    try:
+        font = ImageFont.truetype("C:/Windows/Fonts/msgothic.ttc", 44)
+    except OSError as error:
+        # a missing font is an environment gap, not a test failure (DSH r1 R8)
+        pytest.skip(
+            f"C:/Windows/Fonts/msgothic.ttc is not available on this machine "
+            f"({error}); the synthetic-page geometry needs it"
+        )
     for cx, cy, rx, ry, text in (
         (450, 300, 240, 130, "これはテストです"),
         (300, 750, 200, 110, "こんにちは"),

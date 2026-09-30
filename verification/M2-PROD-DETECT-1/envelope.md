@@ -18,6 +18,8 @@
 | 单页真实推理（`K01_R001.png` 690x672，conf 0.5） | EXIT=0，2 个 text box（label=1，score 0.941/0.938）+ 2 个 bubble 类被丢弃 |
 | 结论 | **PASS（EXIT=0）**——torch 2.14.0 CPU wheels × transformers 5.17.0 兼容，C4 的 cuda-only 缺口闭合 |
 
+- params 口径注（DSH r1 R10）：42,733,137 为**加载后模型 tensor 的元素计数**（本轮加载时统计）；C4 权重清单记录的 safetensors `F32=42,861,209` 是**文件张量口径**。两者统计口径不同，非矛盾。
+
 复现：`"G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe" "G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1-work/ac3_cpu_gate.py"`（EXIT=0）。
 
 ## AC5 CPU envelope（n=5，稳态，预热 1 页不计入）
@@ -37,6 +39,7 @@
 ### GPU 对照（引用基线，非本轮实测）
 
 - C4 formal（`verification/M2-DOCTR-QUAL/qualification/results-formal-manga_rt_detr_v2-cuda-seg05.json`）：38.9s / 511 页 ≈ **76.1 ms/页**（cuda，conf 0.5）。
+- 口径注（DSH r1 R2）：C4 的 76.1 ms/页为**整轮 eval 循环**口径（含 PIL 解码、merge、计分、preview 落盘），**非纯推理**；本表 315.6 ms/页为 adapter 单页 `detect()`（含合并，不含 handler）。二者不同域，**4.1× 仅作量级参考**（混合口径在方向上把 GPU 侧数字压得更低，比值偏保守）。
 - **CPU/GPU ≈ 4.1×**（315.6 / 76.1）。RT-DETR-v2（42.9M params）CPU 延迟与预期一致地显著高于 GPU；性能优化不在本 Task 范围（Task 风险②如实记录）。detect 为逐页一次性成本，CPU 路径可用性已由本轮 EXIT=0 证明。
 
 ## Sidecar 体积（AC6，实测）
@@ -47,6 +50,7 @@
 | 本 Task `d7faea39`（worktree 构建） | 99,308,142 | 161 | +21,604 B（≈21.1 KiB，+0.02%） |
 
 - 文件数 161→161（+0）：torch/transformers/doctr 依赖懒加载、不进 PyInstaller 闭包（`core_sidecar.spec` EXCLUDED ML 栈纪律保持），增量仅为新增 `detection_manga` 模块与装配段字节码。
+- 发布形态提示（DSH r1 R1，措辞更正）：+0 文件正说明 transformers/torch **不进闭包**（build venv 为 pyinstaller-only，`packaging/m2ac5/requirements-build.txt`）——发布包内默认 manga backend 的 detect 会报 `PROVIDER_DEPENDENCY_MISSING`（docTR 在 base 同样如此，**非本 Task 回归**）；「构建通过（含新依赖）」的早期措辞以本条为准：**构建不回退 + ML 栈不进闭包（发布形态需外部运行时）**。发布形态检测器运行时/权重分发已登记为后续 slice 候选（见 Task/Handoff 遗留段）。
 - NSIS 安装包：本 Task 27,924,371 B（26.63 MiB）vs M2-AC5 r0 记录 26.62 MiB（+0.01 MiB）。
 - sidecar 构建日志：`build_sidecar: OK -> ... (HEAD=d7faea39, pyinstaller=6.22.3)`，见 handoff 验证表。
 

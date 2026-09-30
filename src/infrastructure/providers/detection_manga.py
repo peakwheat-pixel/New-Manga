@@ -46,6 +46,7 @@ from __future__ import annotations
 
 import hashlib
 import importlib
+import math
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -252,7 +253,9 @@ def _build_engine(weights_dir: Path, device: str) -> tuple[Any, Any]:
             f"{MANGA_HF_REVISION} there — {MANGA_MODEL_FILENAME} / "
             f"{MANGA_CONFIG_FILENAME} / {MANGA_PREPROCESSOR_FILENAME}, sha256 "
             f"pinned in src/infrastructure/providers/detection_manga.py; "
-            f"weights are never downloaded at run time)",
+            f"weights are never downloaded at run time; if "
+            f"NEWMANGA_DETECTOR_WEIGHTS still points at the docTR fast_base "
+            f".pt file instead, set NEWMANGA_DETECTOR_BACKEND=doctr)",
             stage="detection",
         )
     pinned = (
@@ -374,8 +377,8 @@ def _text_boxes_from_results(
     """Pure filter: keep TEXT classes, drop the bubble class, clip, validate.
 
     Returns (text_boxes, n_bubble_dropped). Degenerate boxes (post-clip
-    empty) are skipped; an out-of-range confidence is a typed invalid
-    output, never coerced.
+    empty) are skipped; a non-finite geometry or an out-of-range confidence
+    is a typed invalid output, never coerced.
     """
     text_boxes: list[tuple[float, float, float, float, float]] = []
     n_bubble = 0
@@ -401,6 +404,21 @@ def _text_boxes_from_results(
         y0 = min(max(float(box[1]), 0.0), height)
         x1 = min(max(float(box[2]), 0.0), width)
         y1 = min(max(float(box[3]), 0.0), height)
+        if not (
+            math.isfinite(x0)
+            and math.isfinite(y0)
+            and math.isfinite(x1)
+            and math.isfinite(y1)
+        ):
+            # NaN survives min/max clipping (every comparison is False), so
+            # it must be rejected BEFORE the degeneracy check below — a NaN
+            # polygon is malformed model output, never a zero-area box to
+            # silently skip (DSH r1 R9).
+            raise ProviderInvalidOutput(
+                f"manga detector box geometry is not finite: {box!r}",
+                provider_id=PROVIDER_MANGA,
+                stage="detection",
+            )
         if x1 <= x0 or y1 <= y0:
             continue
         text_boxes.append((x0, y0, x1, y1, confidence))

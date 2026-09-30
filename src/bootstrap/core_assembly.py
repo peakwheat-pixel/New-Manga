@@ -699,6 +699,13 @@ def assemble_core_services(
             # step fails closed with PROVIDER_NOT_CONFIGURED at run time —
             # the same diagnosable gap as an unwired detector. No download,
             # no silent fallback.
+            # Boundary note (DSH r1 R7): an *empty* NEWMANGA_DETECTOR_WEIGHTS
+            # falls back to the default path below ("override if override
+            # else default"), whereas the pre-Task doctr assembly
+            # (``os.environ.get(..., str(default))``) yielded Path("") (the
+            # cwd) for the same empty string. Both variants fail closed at
+            # detect; the doctr branch now follows this fallback semantics —
+            # the only env-boundary difference from the released behaviour.
             backend = os.environ.get("NEWMANGA_DETECTOR_BACKEND", "manga").strip().lower()
             detector_device_env = os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu")
             detector_weights_override = os.environ.get("NEWMANGA_DETECTOR_WEIGHTS")

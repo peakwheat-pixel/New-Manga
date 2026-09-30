@@ -3,8 +3,10 @@ heavy runtime.
 
 Every fail-closed rung is exercised here against *lightweight* fixtures —
 no torch, no transformers, no real weights — plus the pure bubble-filter
-and the assembly backend selector. Real-inference behavior is covered by
-``test_detection_manga_real.py``; nothing here pretends to run a model.
+and the assembly backend selector. The full-``detect`` cases additionally
+need numpy for the frame decode (normally a torch dependency; those cases
+skip cleanly without it — DSH r1 R8). Real-inference behavior is covered
+by ``test_detection_manga_real.py``; nothing here pretends to run a model.
 """
 
 from __future__ import annotations
@@ -15,11 +17,11 @@ from pathlib import Path
 import pytest
 
 from infrastructure.providers import detection_doctr
+from infrastructure.providers import detection_manga
 from infrastructure.providers.detection_manga import (
     MANGA_CONFIG_SHA256,
     MANGA_MODEL_SHA256,
     MANGA_PREPROCESSOR_SHA256,
-    MERGE_POLICY_CONSTANTS,
     PROVIDER_MANGA,
     MangaDetectionProvider,
     _text_boxes_from_results,
@@ -78,8 +80,18 @@ class TestMergePolicyImported:
     def test_constants_are_the_doctr_objects_themselves(self):
         # MERGE_* must be shared by identity, not re-declared: the C4/C1
         # evidence numbers were measured against the production merge, so a
-        # copy here could silently diverge.
-        assert MERGE_POLICY_CONSTANTS == (
+        # copy here could silently diverge. ``is`` (not ``==``) is the guard
+        # a copied float literal cannot pass — value equality would keep
+        # passing after a literal copy (DSH r1 R3).
+        assert detection_manga.MERGE_VERTICAL_FACTOR is detection_doctr.MERGE_VERTICAL_FACTOR
+        assert detection_manga.MERGE_MIN_TOLERANCE_PX is detection_doctr.MERGE_MIN_TOLERANCE_PX
+        assert (
+            detection_manga.MERGE_HORIZONTAL_TOLERANCE_PX
+            is detection_doctr.MERGE_HORIZONTAL_TOLERANCE_PX
+        )
+        assert detection_manga.MERGE_PAD_PX is detection_doctr.MERGE_PAD_PX
+        # the frozen tuple keeps the doctr order as well
+        assert detection_manga.MERGE_POLICY_CONSTANTS == (
             detection_doctr.MERGE_VERTICAL_FACTOR,
             detection_doctr.MERGE_MIN_TOLERANCE_PX,
             detection_doctr.MERGE_HORIZONTAL_TOLERANCE_PX,
@@ -87,6 +99,7 @@ class TestMergePolicyImported:
         )
 
     def test_detect_merges_text_boxes_through_the_production_policy(self, monkeypatch):
+        pytest.importorskip("numpy", reason="numpy is not installed")
         # two text boxes on one line (gap 8px <= tolerance) merge into ONE
         # block candidate — proof the production cluster_words_into_blocks
         # runs, not a private re-implementation.
@@ -135,8 +148,13 @@ class TestFailClosedEngine:
     def test_missing_directory_is_not_configured(self, tmp_path: Path):
         provider = _provider(weights_dir=tmp_path / "absent")
         request = _request(_frame_bytes(4, 4), width=4, height=4)
-        with pytest.raises(ProviderNotConfigured, match="weights are not installed"):
+        with pytest.raises(
+            ProviderNotConfigured, match="weights are not installed"
+        ) as excinfo:
             provider.detect(request)
+        # configuration guidance carries the backend hint for the docTR
+        # migration path (DSH r1 R5)
+        assert "NEWMANGA_DETECTOR_BACKEND=doctr" in str(excinfo.value)
 
     def test_directory_missing_one_file_is_not_configured(self, tmp_path: Path):
         directory = _snapshot_files(tmp_path)
@@ -244,6 +262,22 @@ class TestTextBoxesFromResults:
         assert boxes == []
         assert n_bubble == 0
 
+    def test_nan_geometry_is_typed_not_coerced(self):
+        # NaN survives the min/max clip (every comparison is False), so it
+        # must be rejected before the degeneracy skip — a NaN polygon is
+        # malformed model output, never a silently dropped zero-area box
+        # (DSH r1 R9).
+        from ports.providers.errors import ProviderInvalidOutput
+
+        with pytest.raises(ProviderInvalidOutput, match="not finite"):
+            _text_boxes_from_results(
+                scores=[0.9],
+                labels=[1],
+                boxes=[[float("nan"), 10.0, 40.0, 30.0]],
+                width=100.0,
+                height=50.0,
+            )
+
     def test_out_of_range_confidence_is_typed(self):
         from ports.providers.errors import ProviderInvalidOutput
 
@@ -277,6 +311,9 @@ class TestDetectPathHonesty:
     def test_empty_detection_yields_zero_candidates(self, monkeypatch):
         """A text-free page stays honest: zero candidates, no padding boxes.
         The typed INVALID_INPUT lives in the handler (seam-tested)."""
+        # detect() decodes the frame through _frame_pixels, which needs numpy
+        # (a hard torch dependency) — skip, not error, without it (DSH r1 R8)
+        pytest.importorskip("numpy", reason="numpy is not installed")
         monkeypatch.setattr(
             "infrastructure.providers.detection_manga._detect_text_boxes",
             lambda model, processor, rgb, w, h: ([], 0),
@@ -289,6 +326,7 @@ class TestDetectPathHonesty:
     def test_detect_never_returns_polygons_past_the_page(self, monkeypatch):
         """A text box hugging the page edge must come back clipped: the
         padded block polygon stays inside the decoded page bounds."""
+        pytest.importorskip("numpy", reason="numpy is not installed")
         monkeypatch.setattr(
             "infrastructure.providers.detection_manga._detect_text_boxes",
             lambda model, processor, rgb, w, h: (
@@ -305,6 +343,7 @@ class TestDetectPathHonesty:
             assert 0.0 <= y <= 10.0
 
     def test_result_provenance_and_anonymous_labels(self, monkeypatch):
+        pytest.importorskip("numpy", reason="numpy is not installed")
         monkeypatch.setattr(
             "infrastructure.providers.detection_manga._detect_text_boxes",
             lambda model, processor, rgb, w, h: (
@@ -344,10 +383,20 @@ def test_provider_identity_matches_the_contract():
 def test_sha256_pins_match_the_c4_weights_manifest():
     # The three-file pins are the C4 weights-manifest values (HF revision
     # 16e8a622); changing a pin without a new qualification slice is a
-    # contract break.
-    assert MANGA_MODEL_SHA256.startswith("037930a8")
-    assert MANGA_CONFIG_SHA256.startswith("b6d70793")
-    assert MANGA_PREPROCESSOR_SHA256.startswith("7e9e2245")
+    # contract break. Full hex, no prefix — a partial match must not count
+    # as a pin assertion (DSH r1 R3).
+    assert (
+        MANGA_MODEL_SHA256
+        == "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d"
+    )
+    assert (
+        MANGA_CONFIG_SHA256
+        == "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072"
+    )
+    assert (
+        MANGA_PREPROCESSOR_SHA256
+        == "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca"
+    )
 
 
 # ---------------------------------------------------------------------------

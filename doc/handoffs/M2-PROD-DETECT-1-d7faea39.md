@@ -18,8 +18,18 @@ C4/C1 双背书的 manga 域检测器（ogkalu/comic-text-and-bubble-detector，
 - **AC3** requirements.txt 追加 `transformers==5.17.0` + `safetensors==0.8.0`（pin + 出处注释；torch/doctr 行未动）。**CPU 兼容门 PASS**：torch 2.14.0+cpu × transformers 5.17.0，权重快照三文件 SHA-256 校验 OK，加载 0.4s（770 张量，42,733,137 params），单页真实推理 EXIT=0。未降级 torch、未换模型。
 - **AC4** `tests/providers/test_detection_manga.py`（27 项：fail-closed 矩阵、bubble 过滤纯函数、detect 诚实性、合并常数身份、Qt-free 装配 backend 选择 5 场景）+ `test_detection_manga_real.py`（2 项真实权重推理；权重经 `NEW_MANGA_MANGA_WEIGHTS` env 或已知本地快照，缺失 module-skip 显式原因）。既有 `test_detector_assembly.py` 做**最小适配**：显式 `NEWMANGA_DETECTOR_BACKEND=doctr`（默认 backend 变 manga 后该测试若不适配必然失败；适配后其验证语义——docTR 装配 fail-closed——不变。属允许路径 `tests/providers/**` 内的必要适配，登记给 reviewer）。
 - **AC5** `verification/M2-PROD-DETECT-1/envelope.md`：CPU 315.6 ms/页（n=5 真实 manifest region，稳态，310–319）vs C4 GPU 76.1 ms/页（38.9s/511）≈ 4.1×；sidecar 体积前后对比同文件。
-- **AC6** sidecar 构建回归 PASS + runner 25/25 PASS + 体积 +21.6 KB/+0 文件（ML 栈懒加载未进闭包；spec 未动）。
+- **AC6** sidecar 构建回归 PASS + runner 25/25 PASS + 体积 +21.6 KB/+0 文件（ML 栈懒加载未进闭包；spec 未动）。口径（DSH r1 R1 措辞更正）：**构建不回退 + ML 栈不进闭包（发布形态需外部运行时）**——build venv 为 pyinstaller-only，+0 文件正说明 transformers/torch 不进闭包；发布包内默认 manga backend 的 detect 会 `PROVIDER_DEPENDENCY_MISSING`（docTR 在 base 同样如此，非本 Task 回归），分发/运行时方式登记为后续 slice 候选（见「风险与遗留」）。
 - **AC7** 回归与纪律全过（见验证证据）。
+
+## 交付锚点记账（三值统一，DSH r1 R10）
+
+| 锚点 | 值 | 来源 |
+|---|---|---|
+| release base | `c8eefb4b` | Task frontmatter `base_commit`——释放时 main 的 HEAD（见 `doc/tasks/M2-PROD-DETECT-1/release-c8eefb4b.md`） |
+| branch base | `2fee7d6e` | release commit 之后创建 `agent/zcode/M2-PROD-DETECT-1` 分支的实际 base；本 Handoff frontmatter `base_commit` 与所有 diff/复跑基线用它 |
+| delivery_head | `40d4ab64` | `0b0c9bc7` 为证据+handoff commit；`40d4ab64` 仅是记录 delivery_head 的 commit（Task frontmatter 以记录 commit 为准） |
+
+envelope 的 `params=42,733,137`（加载后 tensor 元素计数）与 C4 记录的 safetensors `F32=42,861,209`（文件张量口径）口径不同，非矛盾——注已补入 `verification/M2-PROD-DETECT-1/envelope.md` §AC3。
 
 ## 验证证据
 
@@ -65,7 +75,12 @@ C4/C1 双背书的 manga 域检测器（ogkalu/comic-text-and-bubble-detector，
 - **envelope 外推限制**：n=5 页均来自 K01 案例、690px 宽；长条 webtoon 大页未测（envelope.md §已知边界）。
 - **transformers 依赖面**：5.17.0 引入 typer/rich/tokenizers 等传递依赖进主 venv（requirements 已 pin 主版本）；sidecar 闭包不进（懒加载+EXCLUDED 纪律），分发体积影响 +21.6 KB。
 - **registry_readiness 环境断言遗留**：见上，需另立小 slice 处理（条件化或挪至显式环境门）。
+- **后续 slice 候选（DSH r1 review-fix 登记）**：①发布形态检测器运行时/权重分发（R1：发布包内默认 manga backend 的 detect 报 `PROVIDER_DEPENDENCY_MISSING`，docTR 在 base 同样如此；本 Task 仅源码 venv 形态可用 + 闭包纪律）；②manga 权重 fetch/verify 脚本与部署 SOP（R6：本 Task 仅代码级 pin，仓库内无 docTR 同款 sanctioned 获取+校验路径）。
 - 回退方法：装配段 `NEWMANGA_DETECTOR_BACKEND=doctr` 一键回退（零代码回退）；彻底回退 revert 实现 commit 即可，docTR 路径未动。
+
+## review-fix 记录（DSH r1，2026-09-30）
+
+DSH 非作者 Review r1（`approved_with_conditions`，2×P2+8×P3/P4，报告在 task-env `M2-PROD-DETECT-1/dsh-review-r1.md`）返回后，Owner（ZCode）按裁决完成 R1–R10 处置：文档口径更正（R1/R2）、测试守卫收紧（R3 全量 hex + `is` 身份断言）、docstring 引用对齐（R4）、错误消息 backend 指引（R5）、slice 登记（R6）、空串 env 边界差异注释（R7）、numpy/字体 skip（R8）、NaN 几何 typed 校验（R9）、锚点三值记账（R10）。改动仅落允许路径；行为变化仅 `detection_manga.py` 的 NaN 拒绝（新增 typed 校验）与缺目录消息追加指引，docTR 路径与装配语义零变化。详见 Task「DSH r1 review-fix 记录」与测试表 review-fix 行。
 
 ## 实验附录（不适用）
 
