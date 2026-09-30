@@ -19,3 +19,7 @@
 ## 停止条件
 
 三个 Task 全链闭环（done）或遇不可自行解决的外部阻塞；审查发现的产品级取舍（如协议面语义争议）留裁决记录不阻塞其余 Task。
+
+## 达成记录（2026-10-01）
+
+**Goal 达成（三 Task 全链闭环）**：T1 M2-PROD-DETECT-3 done @`8fe5199c`（集成修正 `7314ad20`：DSH r1 R1-R17 全闭+重建绑定；DETECT-2 AC5 NOT_RUN 转 RUN；torchvision stable-ABI 闭包缺口发现并修复）；T2 M2-MANGA-WEIGHTS-SOP done @`853fc911`；T3 M2-FIX-REGISTRY-READINESS-ENV done @`52b07438`。最终基线：pytest 437 passed + 1 skipped（env-conditioned）**0 failed**、cargo 44+1ig 0 failed、vitest 31。检测器家族（评估→校准→生产集成→发布形态→命令面闭环）全链无遗留缺口；遗留仅 doc-only 小件（ports docstring 修订）登记不释放。

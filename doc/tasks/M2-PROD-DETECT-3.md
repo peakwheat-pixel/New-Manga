@@ -2,7 +2,8 @@
 id: M2-PROD-DETECT-3
 title: "core.detect 命令面扩展 + frozen 进程内真实 detect 端到端验证（M2-PROD-DETECT-2 AC5 PARTIAL 闭合；Goal T1，自治执行 2026-10-01）"
 kind: feature
-status: in_review
+status: done
+integration_commit: 8fe5199c44b06e679a2f0e6ee47767032217eb47
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -110,3 +111,13 @@ Review：DSH r1 `approved_with_conditions`（报告 `G:/CODEX/New Manga.task-env
 - core.detect 仅为验证与工具面；产品 UI 的 detect 走 pipeline（Tauri host 不新增命令注册——apps/** 禁改）。
 - T2（weights SOP）/T3（registry 断言）由并行 Task 处理，非本 Task 范围。
 - **doc-only 后续 slice（登记不释放，DSH r1 R15）**：修订 `src/ports/detection/ports.py` `DetectionRequest` docstring——现文「the image arrives as encoded bytes」与两 provider 的 raw-pixel 契约（`detection_manga.py:191`、`detection_doctr.py:170-172`）相悖；由独立 doc-only slice 修正（本 Task 禁改 ports）。
+
+## 集成记录（2026-10-01，acting Codex）
+
+- Review 轨迹：DSH r1 [approved_with_conditions](../../doc/reviews/M2-PROD-DETECT-3-7314ad20-dsh-r1.md)（0×P0/P1，5×P2+P3/P4；核心实现/frozen 证据/torchvision 修复定性全 PASS，sha256 见入库文件）→ **全部条件由集成方闭合**：集成修正 `7314ad20`（R1 §8 脱敏选 a+重建、R2 §10 契约例外双动作、R3 偏差追认、R4 main.rs:1228、R5-R17 择要全闭）→ 证据 `69a6e4e1`（重建绑定：NSIS 460,795,026B sha256 `61c06973…`、GATE 25/25、探针 4/4（FD-1 frozen 真实推理 2 候选 conf 0.943/0.927=DETECT-2 AC5 NOT_RUN 转 RUN；FD-3 脱敏短句实证）、cargo 44+1ig 0 failed、core 111）→ `0a470407` 记录。
+- **两条偏差裁定（acting Codex 追认）**：①run_clean_start_e2e.py CS-L1 协议字面量 1.0→1.1=裁决①必要后承（严格度不变，25 场景判定标准零变化）；②core.detect=verification-only 面（Tauri host 不注册，契约 Revision history 例外登记）。
+- **torchvision `_C_stable` stable-ABI 缺口（本 Task 新发现并修复）**：动态加载绕过 PyInstaller hook，DETECT-2 轮 frozen 闭包未含——其 integration.md 已加集成后注记（L3 闭包外结论不受影响，强表述收窄；AC5 NOT_RUN 转 RUN）。
+- merge=`8fe5199c`；集成后 main：pytest 三套件 **437 passed + 1 skipped 0 failed**（T3 后新基线：providers 291+1skipped/35/core 111）、cargo **44 passed 0 failed 1 ignored**。git 层 diff --check EXIT=0、禁改面空（providers/ports/bridge/tauri.conf.json/requirements/experiments）、权重零 tracked。
+- 遗留（登记不释放）：ports.detection docstring 修订（R15，doc-only slice）；真实干净 Windows 覆盖维持 M2 Release Gate 冻结口径。
+
+Owner branch/worktree 保留于 `0a470407`。
