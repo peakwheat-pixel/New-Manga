@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.machinery
 import importlib.util
 
 import pytest
@@ -196,15 +197,18 @@ def test_no_model_runtime_is_installed_in_this_environment() -> None:
     the assertion loop below freezes that environment evidence so any drift
     would be flagged.
 
-    That premise was legitimately superseded by user-approved requirements
-    changes: T1.1.1 put torch==2.14.0 into requirements.txt (M2-PROD-DETECT-1
-    added transformers==5.17.0 + safetensors), so the dev/main venv
-    intentionally carries the ML stack and this test would fail there
-    forever. The deployment-level "no unverified ML closure" guarantee this
-    test once symbolised is now enforced at BUILD time by the packaging
-    closure assertions (``packaging/m2ac5/core_sidecar.spec``
-    ``_assert_ml_closure`` + per-entry warn archives, M2-PROD-DETECT-2 GATE
-    evidence), which is the correct layer for it.
+    That premise is INVALIDATED (R-B2: not "superseded and relocated") by
+    user-approved requirements changes: T1.1.1 put torch==2.14.0 into
+    requirements.txt (M2-PROD-DETECT-1 added transformers==5.17.0 +
+    safetensors), so the dev/main venv intentionally carries the ML stack
+    and the TASK-019 environment evidence has nothing left to guard here.
+    Separately — and with the OPPOSITE direction — release-side ML-closure
+    COMPLETENESS is guaranteed independently at BUILD time by
+    ``packaging/m2ac5/core_sidecar.spec`` ``_assert_ml_closure`` (it fails
+    when the ML modules are MISSING from the frozen PYZ; per-entry warn
+    archives, M2-PROD-DETECT-2 GATE evidence). Do not conflate the two:
+    that build gate asserts ML PRESENCE in the shipped closure; this test
+    asserted ML ABSENCE in the dev environment.
 
     Conditioning (M2-FIX-REGISTRY-READINESS-ENV, option a): when torch is
     present (the T1.1.1+ main-venv marker), skip with an explicit reason;
@@ -212,19 +216,86 @@ def test_no_model_runtime_is_installed_in_this_environment() -> None:
     verbatim, keeping the full TASK-019-era discrimination power
     (``diffusers``/``paddleocr``/``manga_ocr`` remain unapproved and are
     still asserted absent).
+
+    Known limitations (DSH r1 R-B3/R-B4):
+
+    - the skip gate probes ONLY ``torch`` (the same probe the loop itself
+      uses): in a torch-free environment all five modules are still asserted
+      verbatim, so a numpy-only environment still FAILS as drift; in an ML
+      venv the absent-module facts for the unapproved providers are covered
+      by ``test_real_environment_reports_optional_providers_as_not_ready``
+      (registry probes) — the narrow gate is intentional, not flakiness;
+    - ``importlib.util.find_spec`` is an EXISTENCE probe, not an
+      importability probe: a half-installed torch (directory present but
+      import broken) also trips the skip. This is the same probe the
+      original assertion loop used, so it is a known blind spot inherited
+      verbatim, not a regression of this conditioning.
     """
+    # Gate intentionally probes only torch (R-B3): see docstring — a
+    # torch-free environment keeps all five verbatim assertions.
     if importlib.util.find_spec("torch") is not None:
         pytest.skip(
             "dev venv intentionally carries the ML stack since T1.1.1 "
             "(user-approved requirements: torch==2.14.0, transformers=="
-            "5.17.0); the TASK-019-era 'no model runtime in this "
-            "environment' premise no longer holds here, and the "
-            "closure-level guarantee is enforced at build time by "
-            "packaging/m2ac5 core_sidecar.spec _assert_ml_closure "
-            "(M2-PROD-DETECT-2)"
+            "5.17.0) — the TASK-019-era 'no model runtime in this "
+            "environment' evidence is INVALIDATED, nothing left to guard "
+            "here; separately, release-side ML-closure completeness is "
+            "independently guaranteed at build time by packaging/m2ac5 "
+            "core_sidecar.spec _assert_ml_closure (M2-PROD-DETECT-2), "
+            "which is the opposite-direction assertion and must not be "
+            "read as this test's replacement"
         )
     for module in ("torch", "diffusers", "numpy", "paddleocr", "manga_ocr"):
         assert importlib.util.find_spec(module) is None, (
             f"{module} unexpectedly present: the BLOCKED classification in "
             "doc/tasks/TASK-019.md assumes it is absent"
         )
+
+
+_ABSENT_ALL = {
+    module: None for module in ("torch", "diffusers", "numpy", "paddleocr", "manga_ocr")
+}
+_FAKE_SPEC = importlib.machinery.ModuleSpec("paddleocr", None)
+
+
+@pytest.mark.parametrize(
+    ("spec_map", "expect"),
+    [
+        pytest.param(
+            _ABSENT_ALL,
+            "pass",
+            id="torch-free-bare-env-runs-verbatim-and-passes",
+        ),
+        pytest.param(
+            _ABSENT_ALL | {"paddleocr": _FAKE_SPEC},
+            "fail",
+            id="torch-free-paddleocr-drift-fails-with-original-message",
+        ),
+    ],
+)
+def test_environment_assertion_discrimination_probe(
+    spec_map: dict, expect: str, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Re-runnable discrimination evidence for the conditioned test (R-B5).
+
+    Stubs ``importlib.util.find_spec`` and drives
+    ``test_no_model_runtime_is_installed_in_this_environment`` directly, so
+    BOTH conditioning paths stay provable on ANY machine — including ML
+    venvs, where the real test would skip and the torch-free branch would
+    otherwise never execute:
+
+    - bare torch-free environment -> the verbatim assertion loop runs and
+      passes (no skip, no fail);
+    - torch-free + a drifted ``paddleocr`` -> the ORIGINAL TASK-019
+      AssertionError fires.
+    """
+    monkeypatch.setattr(
+        importlib.util, "find_spec", lambda name: spec_map.get(name)
+    )
+    if expect == "pass":
+        test_no_model_runtime_is_installed_in_this_environment()
+    else:
+        with pytest.raises(
+            AssertionError, match="paddleocr unexpectedly present"
+        ):
+            test_no_model_runtime_is_installed_in_this_environment()
