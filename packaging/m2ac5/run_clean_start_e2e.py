@@ -433,10 +433,14 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
     lenv["APPDATA"] = str(lab / "library-probe" / "roaming")
 
     def envelope(request_id: str, command: str) -> str:
+        # M2-PROD-DETECT-3: protocol minor 1.0 -> 1.1 (core.detect added; the
+        # server still accepts minor-0 requests -- backwards-compatible
+        # widening). This runner now speaks the current protocol and asserts
+        # the SAME strict equality as before, just against 1.1.
         return json.dumps(
             {
                 "protocol": "new-manga.core",
-                "version": {"major": 1, "minor": 0},
+                "version": {"major": 1, "minor": 1},
                 "request_id": request_id,
                 "command": command,
                 "payload": {},
@@ -488,7 +492,7 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
     gate.pass_or(
         ping.get("error") is None
         and ping_result.get("status") == "ready"
-        and ping_result.get("protocol_version") == {"major": 1, "minor": 0}
+        and ping_result.get("protocol_version") == {"major": 1, "minor": 1}
         and "library.list_books" in (ping_result.get("capabilities") or []),
         "CS-L1-packaged-core-ping",
         {"result": ping_result, "error": ping.get("error")},

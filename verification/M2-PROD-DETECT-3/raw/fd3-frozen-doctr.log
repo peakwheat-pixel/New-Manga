@@ -1,0 +1,5 @@
+$ frozen core_service.exe session (wall 300ms)
+exit=0
+--- stderr ---
+WARNING: detector weights not found (weights name 'fast_base-688a8b34.pt'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\fd3-data-root\models\detector\fast_base-688a8b34.pt | C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\fast_base-688a8b34.pt; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
+core.detect provider error [PROVIDER_NOT_CONFIGURED]: PROVIDER_NOT_CONFIGURED: docTR weights are not installed: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\fd3-data-root\models\detector\fast_base-688a8b34.pt is missing (fetch https://doctr-static.mindee.com/models?id=v0.8.1/fast_base-688a8b34.pt&src=0 and verify sha256 688a8b3489e9f5d0290c476c6272ec3b18de3ee646c8a0dc158203b1a9c62ace)

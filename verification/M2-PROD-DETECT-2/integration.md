@@ -51,3 +51,8 @@ AC1 构建 ✅ / AC2 权重随包 ✅ / AC3 包内回退解析 ✅（失败语�
 4. `test_registry_readiness` 环境断言遗留（M2-PROD-DETECT-1 已登记）。
 
 Owner branch/worktree 保留于 `3bef8a15`。
+
+## 集成后注记（M2-PROD-DETECT-3 集成轮，2026-10-01，acting Codex；不改写上文历史原文）
+
+- **torchvision stable-ABI 闭包缺口——收窄上文「闭包含 ML 运行时」的强表述**：torchvision 0.29 的 C++ 算子扩展改名 `_C_stable`/`image_stable`，且经 `torchvision.extension._load_library` **动态加载**（静态分析不可见），而 PyInstaller `hook-torchvision` 仍 pin 旧名 `torchvision._C`——本轮 frozen 闭包**未包含**这两个扩展（上文 warn 分类 958 missing 中无 `_C_stable` 痕迹，`warn/CLASSIFICATION.md:42` 把 `torchvision._C` 登记为软告警即此盲区的痕迹，属"hook 名单过期"而非"扩展已随闭包收集"）。上文 L3「真实推理」为**闭包外**等价推理（源码 venv 进程、非 frozen 进程内），其结论（推理可用、稳态 273ms/页）不受影响；上文「构建期闭包断言…detect 链硬依赖零 missing」中 torchvision 的覆盖由本注记收窄为「Python 层在闭包、C++ 扩展当时缺失」。修复（spec pin 两扩展 + build 期 binaries 断言）与 frozen 进程内真实推理验证由 M2-PROD-DETECT-3 交付（`verification/M2-PROD-DETECT-3/`）。
+- **AC5 PARTIAL 的 NOT_RUN 子项转 RUN**：frozen 进程内 ML import/detect 已由 M2-PROD-DETECT-3 在 NSIS 安装态验证（`verification/M2-PROD-DETECT-3/frozen-detect-probe-results.json` FD-1：frozen core_service.exe 进程内真实推理 2 候选）——上文 AC5=PARTIAL 的唯一缺口（frozen 命令面无 detect RPC，结构性不可达）由此闭合；PARTIAL 历史判定原文不改写，升级事实以本注记与 M2-PROD-DETECT-3 证据为准。

@@ -7,26 +7,46 @@ then enters a stdio request loop serving typed commands over JSON-lines.
 
 Transport & Envelope (Contract 1.1 §3, §8, §12; Seam 冻结七条):
   Request:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 0},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 1},
      "request_id": "<id>", "command": "<cmd>", "payload": {...}}
   Response:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 0},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 1},
      "request_id": "<id>", "result": {...} | null, "error": ErrorEnvelope | null}
 
-Allowed production commands (M2-IPC1):
-  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 0}, "capabilities": ["library.list_books"]}
+Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3):
+  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 1}, "capabilities": ["library.list_books"]}
   - ListBooks: {} -> BookSummary[]
   - core.shutdown: {} -> {"status": "stopped"} (then exit 0)
+  - core.detect: {"page": "<base64 PNG/JPEG>", "width": <int>, "height": <int>}
+      -> {"candidates": [{"provider_label", "polygon", "reading_order",
+        "confidence", "coordinate_space"}...], "elapsed_ms": <int>}
+    (M2-PROD-DETECT-3, protocol minor bump 1.0 -> 1.1: a backwards-compatible
+    widening per the M2-FIX-LISTBOOKS contract rev 1.2 §5 precedent -- the
+    three pre-existing commands keep their command semantics (payloads,
+    results, error codes) unchanged; the envelope protocol minor moves 0 -> 1
+    with the bump. The handler resolves
+    the SAME detector instance the pipeline ``detect`` step uses (assembly
+    wired; never a bypass) and passes the provider output straight through:
+    anonymous labels only, no business IDs are invented. A page that fails to
+    decode, whose declared width/height do not match the decoded pixels, or
+    whose payload exceeds 32 MiB fails with the typed INVALID_REQUEST
+    envelope; a detector without usable weights fails with the provider's
+    own typed error codes (PROVIDER_NOT_CONFIGURED / PROVIDER_DEPENDENCY_MISSING /
+    PROVIDER_FAILED / ...). Verification/tooling surface only -- the product
+    UI detect path remains the pipeline (apps/** registers nothing new).
 """
 
 from __future__ import annotations
 
+import base64
 from dataclasses import asdict, dataclass
+import io
 import json
 import os
 from pathlib import Path
 import sqlite3
 import sys
+import time
 from typing import Any, Callable, TextIO
 
 from application.importing.images.ports import DecodedImage
@@ -36,16 +56,78 @@ from bootstrap.core_assembly import (
     assemble_core_services,
     default_data_root,
 )
+from ports.detection.ports import DetectionRequest
+from ports.providers.errors import ProviderError, ProviderNotConfigured
 
 PROTOCOL_NAME = "new-manga.core"
 PROTOCOL_MAJOR = 1
-PROTOCOL_MINOR = 0
+# M2-PROD-DETECT-3: 0 -> 1 (minor bump, core.detect command added; backwards
+# compatible widening, see the module docstring).
+PROTOCOL_MINOR = 1
 
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
 E_UNKNOWN_COMMAND = "UNKNOWN_COMMAND"
 E_LIST_BOOKS_FAILED = "LIST_BOOKS_FAILED"
 E_UNKNOWN = "UNKNOWN"
+# M2-PROD-DETECT-3: malformed core.detect payload (bad base64, width/height
+# missing or mismatched with the decoded pixels, oversized payload). Same
+# literal the dispatch loop already uses for a non-object request.
+E_INVALID_REQUEST = "INVALID_REQUEST"
+
+#: M2-PROD-DETECT-3: upper bound for one core.detect page, enforced on the
+#: base64-decoded FILE bytes; a separate pixel-count cap (below) bounds the
+#: decoded RGB buffer. The base64-text guard below is derived from it (4
+#: base64 chars per 3 bytes) so an oversized request is rejected before any
+#: decoding work. One manga page as PNG is a few MiB; 32 MiB leaves generous
+#: headroom while keeping a hostile payload from pinning the sidecar.
+MAX_DETECT_PAGE_BYTES = 32 * 1024 * 1024
+_MAX_DETECT_PAGE_B64_CHARS = ((MAX_DETECT_PAGE_BYTES + 2) // 3) * 4
+
+#: M2-PROD-DETECT-3 integration (DSH r1 R10): the byte cap above bounds the
+#: encoded file only -- a highly compressed PNG can decode to a far larger
+#: RGB buffer. The decoded pixel count is capped at the 32 MiB RGB24
+#: equivalent (file cap / 3) BEFORE any convert/tobytes allocation; this is
+#: deliberately tighter than Pillow's DecompressionBomb default (89.5 M px)
+#: to stay aligned with the 32 MiB primary limit. A real 900x1300 page is
+#: ~1.2 M px, roughly 9x headroom.
+MAX_DETECT_PIXELS = MAX_DETECT_PAGE_BYTES // 3
+
+#: M2-PROD-DETECT-3 integration (DSH r1 R11): the documented PNG/JPEG page
+#: surface is enforced fail-closed -- Pillow also decodes BMP/TIFF/WEBP/multi-
+#: frame GIF, and those must not ride this face.
+_DETECT_PAGE_FORMATS = frozenset({"PNG", "JPEG"})
+
+# M2-PROD-DETECT-3 integration (DSH r1 R1): provider error TEXT never rides
+# the IPC line -- real provider messages embed local absolute paths (weights
+# directories), which Contract §8 forbids on the wire. The envelope carries
+# the stable error_code plus one fixed safe phrase; the full original detail
+# goes to stderr only. INVALID_INPUT is the one pass-through (parameter-level
+# byte-count/frame-size text, no paths by construction -- pinned by tests).
+_PROVIDER_SAFE_MESSAGES: dict[str, str] = {
+    "PROVIDER_NOT_CONFIGURED": (
+        "detector is not configured; install weights or set "
+        "NEWMANGA_DETECTOR_WEIGHTS (see stderr for details)"
+    ),
+    "PROVIDER_DEPENDENCY_MISSING": (
+        "a detector dependency is missing (see stderr for details)"
+    ),
+    "PROVIDER_FAILED": "detector failed (see stderr for details)",
+    "PROVIDER_UNAVAILABLE": "detector is unavailable (see stderr for details)",
+}
+_PROVIDER_SAFE_DEFAULT = "detector failed (see stderr for details)"
+
+# M2-PROD-DETECT-3 integration (DSH r1 R14, Proposal-level annotation): §8
+# category for provider errors. The provider's own input gate polices OUR
+# request shape -> validation; every other provider failure is internal.
+# Final taxonomy alignment stays registered in the contract Revision history
+# (same-source item as M2-IPC1 r2 P3-4).
+_PROVIDER_ERROR_CATEGORY: dict[str, str] = {"INVALID_INPUT": "validation"}
+
+
+class DetectRequestError(ValueError):
+    """A core.detect payload violates the request contract (INVALID_REQUEST)."""
+
 
 
 class _PassthroughImageDecoder:
@@ -191,6 +273,160 @@ class CoreServiceServer:
         ).fetchall()
         return {row["book_id"]: int(row["cnt"]) for row in rows}
 
+    # ------------------------------------------------------------------
+    # core.detect (M2-PROD-DETECT-3)
+    # ------------------------------------------------------------------
+
+    def handle_detect(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Detect text regions on one page; the provider output passes through.
+
+        The detector is the SAME instance the pipeline ``detect`` step uses --
+        the one ``assemble_core_services`` wired into the production handlers
+        (manga/doctr backend selection + weights resolution, or the mock
+        provider behind ``mock_local_providers``). This handler never builds
+        its own provider and never touches the registry directly, so the
+        assembly semantics (in-bundle weights fallback, backend env, mock
+        mode) are shared verbatim.
+
+        Request validation (typed INVALID_REQUEST, fail-closed before any
+        provider is touched):
+          - ``page`` must be a base64-encoded PNG/JPEG image (format
+            whitelist enforced fail-closed after the header sniff);
+          - ``width``/``height`` must be positive ints matching the decoded
+            pixel size;
+          - the decoded payload must not exceed ``MAX_DETECT_PAGE_BYTES``
+            (file bytes) nor ``MAX_DETECT_PIXELS`` (decoded RGB buffer).
+
+        The providers behind ``ports.detection`` consume a RAW pixel buffer
+        (rgb24/rgb32, never an encoded file -- their ``_validate_request``
+        byte-count gate is the second-line defense and stays untouched), so
+        this handler decodes the image (Pillow, a transformers dependency
+        already in the frozen closure) into raw RGB bytes. Failure shapes:
+          - no detector wired at assembly -> ``PROVIDER_NOT_CONFIGURED`` (the
+            same capability-gap slot the pipeline detect step uses);
+          - the provider raises -> its typed ``ProviderError.error_code``
+            passes through verbatim (e.g. the detect-time
+            ``PROVIDER_NOT_CONFIGURED`` of a weights-less install -- ruling 5
+            of M2-PROD-DETECT-2).
+
+        The result is a straight passthrough: candidates keep the provider's
+        anonymous ``provider_label`` (no business ID is invented), plus the
+        result-level ``coordinate_space``; ``elapsed_ms`` is THIS handler's
+        detect-only wall-clock (the timer starts after decoding, so it
+        includes the provider's first model load) -- probes compare it
+        against the provider-internal timing on that same basis.
+        """
+        page_b64 = payload.get("page")
+        if not isinstance(page_b64, str) or not page_b64:
+            raise DetectRequestError(
+                "core.detect requires 'page': a base64-encoded PNG/JPEG image"
+            )
+        width = payload.get("width")
+        height = payload.get("height")
+        for name, value in (("width", width), ("height", height)):
+            if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+                raise DetectRequestError(
+                    f"core.detect requires '{name}': a positive int"
+                )
+        if len(page_b64) > _MAX_DETECT_PAGE_B64_CHARS:
+            raise DetectRequestError(
+                f"core.detect page exceeds the {MAX_DETECT_PAGE_BYTES} byte limit"
+            )
+        try:
+            encoded = base64.b64decode(page_b64, validate=True)
+        except (ValueError, TypeError) as error:
+            raise DetectRequestError(
+                "core.detect 'page' is not valid base64"
+            ) from error
+        if len(encoded) > MAX_DETECT_PAGE_BYTES:
+            raise DetectRequestError(
+                f"core.detect page exceeds the {MAX_DETECT_PAGE_BYTES} byte limit"
+            )
+
+        # Pillow is lazy for the same reason the ML stack is: module import
+        # (and therefore process startup) stays free of heavy dependencies.
+        try:
+            from PIL import Image
+        except ImportError as error:  # pragma: no cover - closure gap, not a test path
+            raise ProviderNotConfigured(
+                "no image decoder is available in this build (Pillow missing)",
+                stage="core.detect",
+            ) from error
+        try:
+            with Image.open(io.BytesIO(encoded)) as image:
+                # R11 (DSH r1): enforce the documented PNG/JPEG surface,
+                # fail-closed -- Pillow happily decodes BMP/TIFF/WEBP/GIF
+                # too, and those must not ride this face.
+                if image.format not in _DETECT_PAGE_FORMATS:
+                    raise DetectRequestError(
+                        "core.detect 'page' must be a PNG or JPEG image "
+                        f"(got {image.format or 'unknown'})"
+                    )
+                # R10 (DSH r1): the byte cap bounds the encoded file only;
+                # cap the DECODED pixel count before any convert/tobytes
+                # allocation (32 MiB RGB24 equivalent, see MAX_DETECT_PIXELS).
+                if image.width * image.height > MAX_DETECT_PIXELS:
+                    raise DetectRequestError(
+                        "core.detect page exceeds the pixel limit "
+                        f"({image.width}x{image.height} = "
+                        f"{image.width * image.height} px > "
+                        f"{MAX_DETECT_PIXELS} px)"
+                    )
+                rgb = image.convert("RGB")
+                actual_width, actual_height = rgb.size
+                if actual_width != width or actual_height != height:
+                    raise DetectRequestError(
+                        "core.detect width/height do not match the decoded "
+                        f"image ({actual_width}x{actual_height} != "
+                        f"{width}x{height})"
+                    )
+                frame = rgb.tobytes()
+        except DetectRequestError:
+            raise
+        except Exception as error:  # noqa: BLE001 - any decode failure is a bad request
+            raise DetectRequestError(
+                "core.detect 'page' is not a decodable PNG/JPEG image"
+            ) from error
+
+        detector = getattr(self._core, "detector", None)
+        if detector is None:
+            # Same capability-gap slot as the pipeline detect step
+            # (handlers.handle_detect): fail closed at NOT_CONFIGURED, never
+            # fabricate output.
+            raise ProviderNotConfigured(
+                "no detection provider is wired at assembly", stage="core.detect"
+            )
+
+        request = DetectionRequest(
+            # The protocol command name as the page identifier: DetectionRequest
+            # requires one (ports contract), the providers only carry it
+            # through into DetectionResult provenance, and no Region row is
+            # written on this surface -- so a stable constant beats a per-run
+            # value (mock determinism keeps holding).
+            page_id="core.detect",
+            image_bytes=frame,
+            width=width,
+            height=height,
+        )
+        started = time.perf_counter()
+        result = detector.detect(request)
+        elapsed_ms = int((time.perf_counter() - started) * 1000)
+        return {
+            "candidates": [
+                {
+                    "provider_label": candidate.provider_label,
+                    "polygon": [
+                        [float(x), float(y)] for x, y in candidate.polygon
+                    ],
+                    "reading_order": candidate.reading_order,
+                    "confidence": candidate.confidence,
+                    "coordinate_space": result.coordinate_space,
+                }
+                for candidate in result.candidates
+            ],
+            "elapsed_ms": elapsed_ms,
+        }
+
     def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.
 
@@ -320,6 +556,99 @@ class CoreServiceServer:
                     },
                     False,
                 )
+
+        # M2-PROD-DETECT-3: real inference over the assembled detector. The
+        # three commands above are untouched; this branch only widens the
+        # surface (protocol minor bump, see the module docstring).
+        if command == "core.detect":
+            try:
+                detect_result = self.handle_detect(payload)
+            except DetectRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except ProviderError as error:
+                # Typed provider failure, wire-sanitized (DSH r1 R1): the
+                # provider's own error_code (PROVIDER_NOT_CONFIGURED,
+                # PROVIDER_DEPENDENCY_MISSING, PROVIDER_FAILED, INVALID_INPUT,
+                # ...) and its retryability ruling stay stable on the wire,
+                # but real provider MESSAGE text embeds local absolute paths
+                # (weights directories) and Contract §8 forbids paths on the
+                # wire -- so the envelope carries a fixed safe phrase and the
+                # full original detail goes to stderr only. INVALID_INPUT is
+                # the single pass-through (parameter-level byte-count/frame
+                # text, no paths by construction; pinned by tests).
+                if error.error_code == "INVALID_INPUT":
+                    message = str(error)[:500]
+                else:
+                    message = _PROVIDER_SAFE_MESSAGES.get(
+                        error.error_code, _PROVIDER_SAFE_DEFAULT
+                    )
+                print(
+                    f"core.detect provider error [{error.error_code}]: "
+                    f"{error}",
+                    file=sys.stderr,
+                    flush=True,
+                )
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=error.error_code,
+                            # R14 (DSH r1): provider input-gate errors police
+                            # our request shape -> validation; the rest are
+                            # internal (Proposal-level mapping, contract
+                            # Revision history annotation).
+                            category=_PROVIDER_ERROR_CATEGORY.get(
+                                error.error_code, "internal"
+                            ),
+                            message=message,
+                            retryable=bool(error.retryable),
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="Detection failed",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request_id,
+                    "result": detect_result,
+                    "error": None,
+                },
+                False,
+            )
 
         if command == "core.shutdown":
             return (

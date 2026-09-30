@@ -1,0 +1,64 @@
+{
+  "gate": "m2-prod-detect-3-frozen-detect-probe",
+  "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
+  "verdict": "PASS",
+  "scenario_count_note": "4 scenarios across 3 semantics (ruling 4): FD-1 frozen in-process real inference (the closed DETECT-2 AC5 NOT_RUN item); FD-2 weights-absent typed NOT_CONFIGURED + FD-2b recovery (one semantics, two proofs); FD-3 doctr switch-back typed NOT_CONFIGURED.",
+  "scenarios": [
+    {
+      "id": "FD1-frozen-inprocess-real-detect",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_status": "ready",
+        "protocol_version": {
+          "major": 1,
+          "minor": 1
+        },
+        "n_candidates": 2,
+        "labels": [
+          "manga-1",
+          "manga-2"
+        ],
+        "confidences": [
+          0.9430127143859863,
+          0.9273876547813416
+        ],
+        "elapsed_ms_incl_model_load": 4645,
+        "page": "900x1300 PNG base64 (22068 chars)",
+        "stderr_head": "\rLoading weights:   0%|          | 0/770 [00:00<?, ?it/s]\rLoading weights:  88%|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd | 675/770 [00:00<00:00, 6684.63it/s]\rLoading weights: 100%|\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd| 770/770 [00:00<00:00"
+      }
+    },
+    {
+      "id": "FD2-weights-absent-typed-not-configured",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_status": "ready",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "retryable": false,
+        "assembly_warning_present": true
+      }
+    },
+    {
+      "id": "FD2b-recovery-after-restore",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_status": "ready",
+        "warning_gone": true
+      }
+    },
+    {
+      "id": "FD3-doctr-backend-typed-not-configured",
+      "status": "PASS",
+      "observed": {
+        "exit": 0,
+        "ping_status": "ready",
+        "error_code": "PROVIDER_NOT_CONFIGURED",
+        "retryable": false,
+        "message_head": "detector is not configured; install weights or set NEWMANGA_DETECTOR_WEIGHTS (see stderr for details)"
+      }
+    }
+  ],
+  "boundary_note": "All four scenarios run INSIDE the frozen process: the detect inference itself executes in core_service.exe (no out-of-closure driver). The host-side PIL usage is limited to generating the synthetic page bytes that travel through the 1.1 wire contract."
+}
