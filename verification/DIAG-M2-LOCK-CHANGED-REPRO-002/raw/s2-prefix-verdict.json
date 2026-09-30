@@ -1,0 +1,179 @@
+{
+  "task": "DIAG-M2-LOCK-CHANGED-REPRO-002",
+  "label": "s2-prefix-d268a170",
+  "expect": "reproduced",
+  "repo_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\diag002-s2-2jWfPm",
+  "code_head_commit": "d268a17082028fb445e2ac3bbb71f265961a2af2",
+  "started_at_utc": "2026-09-30T04:43:30Z",
+  "assembly": "bootstrap.acceptance_bridge.assemble_acceptance_core (assemble_core_services mock_local_providers=True)",
+  "runs": {
+    "run1": {
+      "run_id": "run-9d0c754b31574f89a6234cff8ab6f2d6",
+      "status": "PipelineRunStatus.COMPLETED_WITH_FAILURES",
+      "steps": [
+        {
+          "step_run_id": "step-a5e93d72dad14205b8491db8a52a9239",
+          "step_type": "detect",
+          "target_id": "77a316de26eb4a2783f1a7464cd26a99",
+          "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+          "region_id": null,
+          "status": "completed",
+          "input_refs_keys": [],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-235edd38a9be498e86246249f0d26b04",
+          "step_type": "ocr",
+          "target_id": "77a316de26eb4a2783f1a7464cd26a99",
+          "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+          "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+          "status": "failed",
+          "input_refs_keys": [],
+          "error_code": "LOCK_CHANGED",
+          "error_detail": "region current revision changed during the step (expected None, found 'e8122ce41f5846f69664a2e1aa80fc9f') (provider=m2ac1-mock-ocr) (stage=region-write)"
+        }
+      ],
+      "ocr_evidence": {
+        "ocr_step_present": true,
+        "target_id": "77a316de26eb4a2783f1a7464cd26a99",
+        "target_id_is_page_id": true,
+        "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+        "target_id_is_region_id": false,
+        "status": "failed",
+        "error_code": "LOCK_CHANGED",
+        "error_detail_has_expected_none": true,
+        "input_refs_keys": [],
+        "region_key_in_input_refs": false
+      }
+    },
+    "run2": {
+      "region_runs": [
+        {
+          "run_id": "run-4b300a25a4594968923dd681ab222f90",
+          "status": "PipelineRunStatus.COMPLETED",
+          "steps": [
+            {
+              "step_run_id": "step-9c876e3cb2cb481980601a0ec5dd3752",
+              "step_type": "ocr",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-0e9d139abe184cb7a6512b2573bbb0f8",
+              "step_type": "color",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-0c1ccdc55a164b169ec204967bd0d2e2",
+              "step_type": "term_extract",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-36f82e3441a94273b7427b821c37a7fc",
+              "step_type": "translate",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-e647acd6423f4735a30e72977e4664de",
+              "step_type": "segment",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-7162a1216a6742aa95730b144dd7e330",
+              "step_type": "mask_refine",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-d01c5d9e974f4623be18bc89d1cf421a",
+              "step_type": "inpaint",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-6e32a036f403423da696ace1e6f2a6c7",
+              "step_type": "render",
+              "target_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "page_id": "77a316de26eb4a2783f1a7464cd26a99",
+              "region_id": "d374d179f59146ffa8f923e9ab6f5a35",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            }
+          ],
+          "scope_target": "d374d179f59146ffa8f923e9ab6f5a35"
+        }
+      ]
+    },
+    "run3": {
+      "run_id": "run-ec86399a510d469187561e059e583313",
+      "status": "PipelineRunStatus.COMPLETED",
+      "steps": []
+    }
+  },
+  "attribution": [
+    "run1-ocr-LOCK_CHANGED"
+  ],
+  "region_ids": [
+    "d374d179f59146ffa8f923e9ab6f5a35"
+  ],
+  "verdict": "REPRODUCED",
+  "finished_at_utc": "2026-09-30T04:43:31Z"
+}

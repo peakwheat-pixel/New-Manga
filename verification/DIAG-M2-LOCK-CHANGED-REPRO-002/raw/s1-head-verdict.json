@@ -1,0 +1,272 @@
+{
+  "task": "DIAG-M2-LOCK-CHANGED-REPRO-002",
+  "label": "s1-head",
+  "expect": "not-reproduced",
+  "repo_root": "G:\\CODEX\\New Manga.worktrees\\DIAG-LOCK-CHANGED-REPRO-002-zcode",
+  "code_head_commit": "6cbeafe082992046cf3938c6af60d99674525b81",
+  "started_at_utc": "2026-09-30T04:43:19Z",
+  "assembly": "bootstrap.acceptance_bridge.assemble_acceptance_core (assemble_core_services mock_local_providers=True)",
+  "runs": {
+    "run1": {
+      "run_id": "run-958b0ca2203a4d0cbdb00cdda557815a",
+      "status": "PipelineRunStatus.COMPLETED",
+      "steps": [
+        {
+          "step_run_id": "step-55dc25b76f534739883c43ca6f0edd05",
+          "step_type": "detect",
+          "target_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": null,
+          "status": "completed",
+          "input_refs_keys": [],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-b00de2ff11794980a08e64725a388249",
+          "step_type": "ocr",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-65fe3f8e2a6247d99dcd04fcf0a90827",
+          "step_type": "color",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-86abe8b01c3545a09e5a04cb769203ac",
+          "step_type": "term_extract",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-5f32c4fa0a9a458f8fba516e833b0904",
+          "step_type": "translate",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-14251ae6e0da4733a7831a2ac93de7d5",
+          "step_type": "segment",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-8bb2f02e10b349a783286f14a3635af9",
+          "step_type": "mask_refine",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-129b67da03f0470c81528559ba3e2797",
+          "step_type": "inpaint",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        },
+        {
+          "step_run_id": "step-f63e4aba694b4f9b839cb3985a333172",
+          "step_type": "render",
+          "target_id": "12749a1602d049d4bd42c88ca90cd589",
+          "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+          "region_id": "12749a1602d049d4bd42c88ca90cd589",
+          "status": "completed",
+          "input_refs_keys": [
+            "region"
+          ],
+          "error_code": null,
+          "error_detail": ""
+        }
+      ],
+      "ocr_evidence": {
+        "ocr_step_present": true,
+        "target_id": "12749a1602d049d4bd42c88ca90cd589",
+        "target_id_is_page_id": false,
+        "region_id": "12749a1602d049d4bd42c88ca90cd589",
+        "target_id_is_region_id": true,
+        "status": "completed",
+        "error_code": null,
+        "error_detail_has_expected_none": false,
+        "input_refs_keys": [
+          "region"
+        ],
+        "region_key_in_input_refs": true
+      }
+    },
+    "run2": {
+      "region_runs": [
+        {
+          "run_id": "run-cb65a842230343a28b880d0c582d5391",
+          "status": "PipelineRunStatus.COMPLETED",
+          "steps": [
+            {
+              "step_run_id": "step-80b82d3fd0154a8b8861b4d04544f95a",
+              "step_type": "ocr",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-8d416b2f7df846a280a5bf8e1a7e2d4e",
+              "step_type": "color",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-4e3fef7498a5439b83833945876470da",
+              "step_type": "term_extract",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-3223e53d2f1b4c3ca6d2632deb171904",
+              "step_type": "translate",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-4ed42e8a73894132969aecd53552b494",
+              "step_type": "segment",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-abe0c6b91ad34996a98432c1f0a96c70",
+              "step_type": "mask_refine",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-d677bf2bd44a43dda566e19e5bce35af",
+              "step_type": "inpaint",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            },
+            {
+              "step_run_id": "step-5b466152a77e436e9379f612e100b324",
+              "step_type": "render",
+              "target_id": "12749a1602d049d4bd42c88ca90cd589",
+              "page_id": "15c6aac23bd446938eeb4d0e0c1c3914",
+              "region_id": "12749a1602d049d4bd42c88ca90cd589",
+              "status": "completed",
+              "input_refs_keys": [
+                "region"
+              ],
+              "error_code": null,
+              "error_detail": ""
+            }
+          ],
+          "scope_target": "12749a1602d049d4bd42c88ca90cd589"
+        }
+      ]
+    },
+    "run3": {
+      "run_id": "run-27276e5e83c74699a70f0567af3650a8",
+      "status": "PipelineRunStatus.COMPLETED",
+      "steps": []
+    }
+  },
+  "attribution": [],
+  "region_ids": [
+    "12749a1602d049d4bd42c88ca90cd589"
+  ],
+  "verdict": "NOT_REPRODUCED",
+  "finished_at_utc": "2026-09-30T04:43:20Z"
+}
