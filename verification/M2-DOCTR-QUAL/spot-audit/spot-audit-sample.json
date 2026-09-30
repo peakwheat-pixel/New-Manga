@@ -1,0 +1,1607 @@
+{
+ "schema": "m2-doctr-qual/spot-audit-sample@1",
+ "task": "M2-DOCTR-QUAL-C1",
+ "protocol": "C4 report section 7.2 (DSH r2 N3-corrected denominators), frozen 2026-09-30",
+ "seed": 20260930,
+ "manifest": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\eval-manifest.full.seg05.json",
+ "manifest_sha256": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e",
+ "weights_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+ "conf_threshold": 0.5,
+ "inputs": {
+  "results": {
+   "path": "verification\\M2-DOCTR-QUAL\\spot-audit\\data\\frames-rerun.json",
+   "sha256": "5411b4587c0566a13e42c268dde8192b4cdba546c0fc6e769e12d4b5f23c4fe8"
+  },
+  "frames": {
+   "path": "verification\\M2-DOCTR-QUAL\\spot-audit\\data\\frames-export.json",
+   "sha256": "b843a29fe8407b513eb9e254d0e310075cadcf631ef017781c6ffddf97a4bde7"
+  },
+  "pairs": {
+   "path": "verification\\M2-DOCTR-QUAL\\spot-audit\\data\\pairs-export.json",
+   "sha256": "2e7cbdc9b3539ace01e8befbdac91028f756a1207b941265ecf97ee86c4665eb"
+  },
+  "formal_results": {
+   "path": "verification\\M2-DOCTR-QUAL\\qualification\\results-formal-manga_rt_detr_v2-cuda-seg05.json",
+   "sha256": "745b0f93a43f7936de3ca6391113a13b87a237c5b678ac20bdb41d0b65537409"
+  }
+ },
+ "generate_command": "python experiments/M2-DOCTR-QUAL/build_spot_audit_sample.py --results verification\\M2-DOCTR-QUAL\\spot-audit\\data\\frames-rerun.json --frames verification\\M2-DOCTR-QUAL\\spot-audit\\data\\frames-export.json --pairs verification\\M2-DOCTR-QUAL\\spot-audit\\data\\pairs-export.json --manifest G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\eval-manifest.full.seg05.json --formal-results verification\\M2-DOCTR-QUAL\\qualification\\results-formal-manga_rt_detr_v2-cuda-seg05.json [--out-dir <spot-audit> --previews-out <external> --self-check]",
+ "denominator_audit": {
+  "source_note": "3-source cross-check: rerun results JSON == C4 formal JSON (per_region+summary), frames-export layer_denominators, and the frozen section 7.2 numbers; all must agree or the script aborts",
+  "expected_vs_measured": [
+   {
+    "layer": "A1_frames",
+    "expected": 6,
+    "measured": 6,
+    "match": true
+   },
+   {
+    "layer": "A2_regions",
+    "expected": 2,
+    "measured": 2,
+    "match": true
+   },
+   {
+    "layer": "A2_det_frames_in_region",
+    "expected": 4,
+    "measured": 4,
+    "match": true
+   },
+   {
+    "layer": "B1_frames",
+    "expected": 78,
+    "measured": 78,
+    "match": true
+   },
+   {
+    "layer": "B1_regions",
+    "expected": 49,
+    "measured": 49,
+    "match": true
+   },
+   {
+    "layer": "B2_frames",
+    "expected": 30,
+    "measured": 30,
+    "match": true
+   },
+   {
+    "layer": "B2_regions",
+    "expected": 23,
+    "measured": 23,
+    "match": true
+   },
+   {
+    "layer": "D_zero_det_block_regions",
+    "expected": 78,
+    "measured": 78,
+    "match": true
+   }
+  ],
+  "C_layer": {
+   "quota": 20,
+   "coverage_window": "[0.5,0.7)",
+   "measured_pairs": 2,
+   "fallback_inspect_all_triggered": true,
+   "total_matched_pairs_in_export": 882,
+   "coverage_distribution": {
+    "C_pool_in_[0.5,0.7)": 2,
+    "ge_0.7": 880,
+    "lt_0.5": 0,
+    "min": 0.5159718732586134,
+    "max": 1.0
+   }
+  },
+  "FN_partial_outside_protocol": {
+   "frames": 27,
+   "regions": 23,
+   "note": "未匹配 GT 框中不属于 A1/A2 的部分命中 region 残差；冻结 6 层协议不含该层，仅导出留证，不入清单"
+  }
+ },
+ "b_layer_stratification_N7": {
+  "decile_edges": [
+   0.5,
+   0.55,
+   0.6,
+   0.65,
+   0.7,
+   0.75,
+   0.8,
+   0.85,
+   0.9,
+   0.95,
+   1.0
+  ],
+  "method": "conf value-range deciles, largest-remainder proportional quotas, per-decile seeded random",
+  "B1": [
+   {
+    "decile": "[0.50,0.55)",
+    "denominator": 9,
+    "quota": 2,
+    "selected": [
+     "K01/R101/det#1",
+     "K07/R127/det#3"
+    ]
+   },
+   {
+    "decile": "[0.55,0.60)",
+    "denominator": 9,
+    "quota": 2,
+    "selected": [
+     "K09/R071/det#0",
+     "K01/R035/det#4"
+    ]
+   },
+   {
+    "decile": "[0.60,0.65)",
+    "denominator": 5,
+    "quota": 1,
+    "selected": [
+     "K06/R000/det#5"
+    ]
+   },
+   {
+    "decile": "[0.65,0.70)",
+    "denominator": 13,
+    "quota": 2,
+    "selected": [
+     "K01/R013/det#0",
+     "K06/R000/det#7"
+    ]
+   },
+   {
+    "decile": "[0.70,0.75)",
+    "denominator": 7,
+    "quota": 1,
+    "selected": [
+     "K01/R045/det#2"
+    ]
+   },
+   {
+    "decile": "[0.75,0.80)",
+    "denominator": 6,
+    "quota": 1,
+    "selected": [
+     "K10/R019/det#4"
+    ]
+   },
+   {
+    "decile": "[0.80,0.85)",
+    "denominator": 8,
+    "quota": 2,
+    "selected": [
+     "K10/R019/det#0",
+     "K07/R007/det#2"
+    ]
+   },
+   {
+    "decile": "[0.85,0.90)",
+    "denominator": 10,
+    "quota": 2,
+    "selected": [
+     "K08/R025/det#0",
+     "K06/R000/det#9"
+    ]
+   },
+   {
+    "decile": "[0.90,0.95)",
+    "denominator": 10,
+    "quota": 2,
+    "selected": [
+     "K04/R018/det#7",
+     "K08/R003/det#0"
+    ]
+   },
+   {
+    "decile": "[0.95,1.00)",
+    "denominator": 1,
+    "quota": 0,
+    "selected": []
+   }
+  ],
+  "B2": [
+   {
+    "decile": "[0.50,0.55)",
+    "denominator": 1,
+    "quota": 1,
+    "selected": [
+     "K07/R059/det#0"
+    ]
+   },
+   {
+    "decile": "[0.55,0.60)",
+    "denominator": 2,
+    "quota": 1,
+    "selected": [
+     "K03/R027/det#1"
+    ]
+   },
+   {
+    "decile": "[0.60,0.65)",
+    "denominator": 4,
+    "quota": 2,
+    "selected": [
+     "K07/R107/det#0",
+     "K07/R067/det#1"
+    ]
+   },
+   {
+    "decile": "[0.65,0.70)",
+    "denominator": 1,
+    "quota": 1,
+    "selected": [
+     "K03/R027/det#2"
+    ]
+   },
+   {
+    "decile": "[0.70,0.75)",
+    "denominator": 3,
+    "quota": 2,
+    "selected": [
+     "K03/R153/det#0",
+     "K03/R153/det#1"
+    ]
+   },
+   {
+    "decile": "[0.75,0.80)",
+    "denominator": 3,
+    "quota": 1,
+    "selected": [
+     "K03/R157/det#0"
+    ]
+   },
+   {
+    "decile": "[0.80,0.85)",
+    "denominator": 3,
+    "quota": 1,
+    "selected": [
+     "K01/R023/det#0"
+    ]
+   },
+   {
+    "decile": "[0.85,0.90)",
+    "denominator": 5,
+    "quota": 2,
+    "selected": [
+     "K03/R027/det#3",
+     "K03/R157/det#1"
+    ]
+   },
+   {
+    "decile": "[0.90,0.95)",
+    "denominator": 8,
+    "quota": 4,
+    "selected": [
+     "K01/R079/det#0",
+     "K01/R085/det#0",
+     "K01/R037/det#0",
+     "K07/R123/det#0"
+    ]
+   }
+  ]
+ },
+ "sampling_summary": {
+  "A1": {
+   "denominator": 6,
+   "sampled": 6,
+   "mode": "inspect_all"
+  },
+  "A2": {
+   "denominator": 2,
+   "sampled": 2,
+   "mode": "inspect_all"
+  },
+  "B1": {
+   "denominator": 78,
+   "sampled": 15,
+   "mode": "stratified_random"
+  },
+  "B2": {
+   "denominator": 30,
+   "sampled": 15,
+   "mode": "stratified_random"
+  },
+  "C": {
+   "denominator": 2,
+   "sampled": 2,
+   "mode": "fallback_inspect_all"
+  },
+  "D": {
+   "denominator": 78,
+   "sampled": 10,
+   "mode": "random_sample"
+  },
+  "total_units": 50
+ },
+ "verdict_note": "判定列恒为空：人工判定属阶段二用户本人，agent 不预填（hard discipline）",
+ "determinism_contract": "same seed + same inputs => byte-identical outputs; payload carries no timestamp and no run-mode metadata; validated by --self-check and by committed run evidence",
+ "units": [
+  {
+   "unit_id": "A1-U01",
+   "layer": "A1",
+   "case_id": "K06",
+   "region_index": 36,
+   "unit_kind": "gt_box",
+   "review_box_xyxy": [
+    555.0,
+    112.0,
+    592.0,
+    156.0
+   ],
+   "gt_boxes_xyxy": [
+    [
+     555.0,
+     112.0,
+     592.0,
+     156.0
+    ]
+   ],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "region n_det_raw=0：无红框，绿框=唯一 GT 框",
+   "preview_file": "A1-U01__K06_R036.png",
+   "description": "真未检出（region 无任何原始检测框）：判定该 GT 框是真实文字（→真实文字漏检）还是伪 GT 噪声/SFX/背景（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "A1-U02",
+   "layer": "A1",
+   "case_id": "K06",
+   "region_index": 38,
+   "unit_kind": "gt_box",
+   "review_box_xyxy": [
+    585.0,
+    93.0,
+    624.0,
+    142.0
+   ],
+   "gt_boxes_xyxy": [
+    [
+     585.0,
+     93.0,
+     624.0,
+     142.0
+    ]
+   ],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "region n_det_raw=0：无红框，绿框=唯一 GT 框",
+   "preview_file": "A1-U02__K06_R038.png",
+   "description": "真未检出（region 无任何原始检测框）：判定该 GT 框是真实文字（→真实文字漏检）还是伪 GT 噪声/SFX/背景（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "A1-U03",
+   "layer": "A1",
+   "case_id": "K06",
+   "region_index": 48,
+   "unit_kind": "gt_box",
+   "review_box_xyxy": [
+    546.0,
+    622.0,
+    591.0,
+    674.0
+   ],
+   "gt_boxes_xyxy": [
+    [
+     546.0,
+     622.0,
+     591.0,
+     674.0
+    ]
+   ],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "region n_det_raw=0：无红框，绿框=唯一 GT 框",
+   "preview_file": "A1-U03__K06_R048.png",
+   "description": "真未检出（region 无任何原始检测框）：判定该 GT 框是真实文字（→真实文字漏检）还是伪 GT 噪声/SFX/背景（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "A1-U04",
+   "layer": "A1",
+   "case_id": "K06",
+   "region_index": 94,
+   "unit_kind": "gt_box",
+   "review_box_xyxy": [
+    467.0,
+    276.0,
+    503.0,
+    321.0
+   ],
+   "gt_boxes_xyxy": [
+    [
+     467.0,
+     276.0,
+     503.0,
+     321.0
+    ]
+   ],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "region n_det_raw=0：无红框，绿框=唯一 GT 框",
+   "preview_file": "A1-U04__K06_R094.png",
+   "description": "真未检出（region 无任何原始检测框）：判定该 GT 框是真实文字（→真实文字漏检）还是伪 GT 噪声/SFX/背景（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "A1-U05",
+   "layer": "A1",
+   "case_id": "K07",
+   "region_index": 79,
+   "unit_kind": "gt_box",
+   "review_box_xyxy": [
+    159.0,
+    223.0,
+    196.0,
+    242.0
+   ],
+   "gt_boxes_xyxy": [
+    [
+     159.0,
+     223.0,
+     196.0,
+     242.0
+    ]
+   ],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "region n_det_raw=0：无红框，绿框=唯一 GT 框",
+   "preview_file": "A1-U05__K07_R079.png",
+   "description": "真未检出（region 无任何原始检测框）：判定该 GT 框是真实文字（→真实文字漏检）还是伪 GT 噪声/SFX/背景（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "A1-U06",
+   "layer": "A1",
+   "case_id": "K09",
+   "region_index": 14,
+   "unit_kind": "gt_box",
+   "review_box_xyxy": [
+    147.0,
+    161.0,
+    304.0,
+    239.0
+   ],
+   "gt_boxes_xyxy": [
+    [
+     147.0,
+     161.0,
+     304.0,
+     239.0
+    ]
+   ],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "region n_det_raw=0：无红框，绿框=唯一 GT 框",
+   "preview_file": "A1-U06__K09_R014.png",
+   "description": "真未检出（region 无任何原始检测框）：判定该 GT 框是真实文字（→真实文字漏检）还是伪 GT 噪声/SFX/背景（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "A2-U01",
+   "layer": "A2",
+   "case_id": "K07",
+   "region_index": 109,
+   "unit_kind": "region",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [
+    [
+     492.0,
+     641.0,
+     591.0,
+     800.0
+    ]
+   ],
+   "det_boxes_xyxy": [
+    [
+     92.98506164550781,
+     47.18663024902344,
+     257.28399658203125,
+     209.52716064453125
+    ]
+   ],
+   "conf": null,
+   "coverage": null,
+   "note": "region 全查：1 个检出框（红）vs 1 个 GT（绿）",
+   "preview_file": "A2-U01__K07_R109.png",
+   "description": "coverage 不达标（region 有检出框但 GT 未达 coverage 0.5）：检出框与 GT 的错位是粒度/边界问题（→粒度不达标）还是 GT 本身噪声（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "A2-U02",
+   "layer": "A2",
+   "case_id": "K08",
+   "region_index": 3,
+   "unit_kind": "region",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [
+    [
+     119.0,
+     43.0,
+     293.0,
+     354.0
+    ]
+   ],
+   "det_boxes_xyxy": [
+    [
+     106.29122924804688,
+     36.11185073852539,
+     300.1617431640625,
+     191.75576782226562
+    ],
+    [
+     474.5025939941406,
+     174.490478515625,
+     601.3486328125,
+     230.7181396484375
+    ],
+    [
+     109.787353515625,
+     204.65304565429688,
+     291.925537109375,
+     357.1048278808594
+    ]
+   ],
+   "conf": null,
+   "coverage": null,
+   "note": "region 全查：3 个检出框（红）vs 1 个 GT（绿）",
+   "preview_file": "A2-U02__K08_R003.png",
+   "description": "coverage 不达标（region 有检出框但 GT 未达 coverage 0.5）：检出框与 GT 的错位是粒度/边界问题（→粒度不达标）还是 GT 本身噪声（→伪 GT 噪声）"
+  },
+  {
+   "unit_id": "B1-U01",
+   "layer": "B1",
+   "case_id": "K01",
+   "region_index": 13,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    485.8180236816406,
+    100.21338653564453,
+    561.1090087890625,
+    147.853759765625
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     485.8180236816406,
+     100.21338653564453,
+     561.1090087890625,
+     147.853759765625
+    ]
+   ],
+   "conf": 0.6961008906364441,
+   "coverage": null,
+   "note": "conf=0.6961（十分位 0.65-0.70）",
+   "preview_file": "B1-U01__K01_R013.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U02",
+   "layer": "B1",
+   "case_id": "K01",
+   "region_index": 35,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    295.1586608886719,
+    222.47879028320312,
+    368.05145263671875,
+    272.55029296875
+   ],
+   "gt_boxes_xyxy": [
+    [
+     435.0,
+     251.0,
+     501.0,
+     356.0
+    ]
+   ],
+   "det_boxes_xyxy": [
+    [
+     295.1586608886719,
+     222.47879028320312,
+     368.05145263671875,
+     272.55029296875
+    ]
+   ],
+   "conf": 0.5713832974433899,
+   "coverage": null,
+   "note": "conf=0.5714（十分位 0.55-0.60）",
+   "preview_file": "B1-U02__K01_R035.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U03",
+   "layer": "B1",
+   "case_id": "K01",
+   "region_index": 45,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    100.16960144042969,
+    354.9853515625,
+    229.84567260742188,
+    415.1274108886719
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     100.16960144042969,
+     354.9853515625,
+     229.84567260742188,
+     415.1274108886719
+    ]
+   ],
+   "conf": 0.7407619953155518,
+   "coverage": null,
+   "note": "conf=0.7408（十分位 0.70-0.75）",
+   "preview_file": "B1-U03__K01_R045.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U04",
+   "layer": "B1",
+   "case_id": "K01",
+   "region_index": 101,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    43.65925598144531,
+    203.48089599609375,
+    179.75991821289062,
+    330.64306640625
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     43.65925598144531,
+     203.48089599609375,
+     179.75991821289062,
+     330.64306640625
+    ]
+   ],
+   "conf": 0.5151762962341309,
+   "coverage": null,
+   "note": "conf=0.5152（十分位 0.50-0.55）",
+   "preview_file": "B1-U04__K01_R101.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U05",
+   "layer": "B1",
+   "case_id": "K04",
+   "region_index": 18,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    482.4131164550781,
+    957.1588134765625,
+    636.7031860351562,
+    1044.9935302734375
+   ],
+   "gt_boxes_xyxy": [
+    [
+     390.0,
+     969.0,
+     629.0,
+     1157.0
+    ],
+    [
+     482.0,
+     961.0,
+     633.0,
+     1155.0
+    ]
+   ],
+   "det_boxes_xyxy": [
+    [
+     482.4131164550781,
+     957.1588134765625,
+     636.7031860351562,
+     1044.9935302734375
+    ]
+   ],
+   "conf": 0.9282100200653076,
+   "coverage": null,
+   "note": "conf=0.9282（十分位 0.90-0.95）",
+   "preview_file": "B1-U05__K04_R018.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U06",
+   "layer": "B1",
+   "case_id": "K06",
+   "region_index": 0,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    345.3045959472656,
+    281.8234558105469,
+    425.7897033691406,
+    378.6187744140625
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     345.3045959472656,
+     281.8234558105469,
+     425.7897033691406,
+     378.6187744140625
+    ]
+   ],
+   "conf": 0.6066367626190186,
+   "coverage": null,
+   "note": "conf=0.6066（十分位 0.60-0.65）",
+   "preview_file": "B1-U06__K06_R000.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U07",
+   "layer": "B1",
+   "case_id": "K06",
+   "region_index": 0,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    508.9779052734375,
+    359.8950500488281,
+    681.8604736328125,
+    406.39288330078125
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     508.9779052734375,
+     359.8950500488281,
+     681.8604736328125,
+     406.39288330078125
+    ]
+   ],
+   "conf": 0.671630859375,
+   "coverage": null,
+   "note": "conf=0.6716（十分位 0.65-0.70）",
+   "preview_file": "B1-U07__K06_R000.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U08",
+   "layer": "B1",
+   "case_id": "K06",
+   "region_index": 0,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    254.93984985351562,
+    440.5007019042969,
+    466.23736572265625,
+    517.8485717773438
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     254.93984985351562,
+     440.5007019042969,
+     466.23736572265625,
+     517.8485717773438
+    ]
+   ],
+   "conf": 0.8554760217666626,
+   "coverage": null,
+   "note": "conf=0.8555（十分位 0.85-0.90）",
+   "preview_file": "B1-U08__K06_R000.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U09",
+   "layer": "B1",
+   "case_id": "K07",
+   "region_index": 7,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    67.72611999511719,
+    1082.8897705078125,
+    241.8600311279297,
+    1320.9954833984375
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     67.72611999511719,
+     1082.8897705078125,
+     241.8600311279297,
+     1320.9954833984375
+    ]
+   ],
+   "conf": 0.8043912649154663,
+   "coverage": null,
+   "note": "conf=0.8044（十分位 0.80-0.85）",
+   "preview_file": "B1-U09__K07_R007.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U10",
+   "layer": "B1",
+   "case_id": "K07",
+   "region_index": 127,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    105.58834838867188,
+    713.801513671875,
+    238.18576049804688,
+    767.9655151367188
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     105.58834838867188,
+     713.801513671875,
+     238.18576049804688,
+     767.9655151367188
+    ]
+   ],
+   "conf": 0.509637713432312,
+   "coverage": null,
+   "note": "conf=0.5096（十分位 0.50-0.55）",
+   "preview_file": "B1-U10__K07_R127.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U11",
+   "layer": "B1",
+   "case_id": "K08",
+   "region_index": 3,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    106.29122924804688,
+    36.11185073852539,
+    300.1617431640625,
+    191.75576782226562
+   ],
+   "gt_boxes_xyxy": [
+    [
+     119.0,
+     43.0,
+     293.0,
+     354.0
+    ]
+   ],
+   "det_boxes_xyxy": [
+    [
+     106.29122924804688,
+     36.11185073852539,
+     300.1617431640625,
+     191.75576782226562
+    ]
+   ],
+   "conf": 0.9160609245300293,
+   "coverage": null,
+   "note": "conf=0.9161（十分位 0.90-0.95）；该框属 A2 region（K07 r109/K08 r3 框级重叠，A2 层另有 region 级判定单元）",
+   "preview_file": "B1-U11__K08_R003.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U12",
+   "layer": "B1",
+   "case_id": "K08",
+   "region_index": 25,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    16.041719436645508,
+    27.33420181274414,
+    175.1754150390625,
+    355.5155334472656
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     16.041719436645508,
+     27.33420181274414,
+     175.1754150390625,
+     355.5155334472656
+    ]
+   ],
+   "conf": 0.8545563220977783,
+   "coverage": null,
+   "note": "conf=0.8546（十分位 0.85-0.90）",
+   "preview_file": "B1-U12__K08_R025.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U13",
+   "layer": "B1",
+   "case_id": "K09",
+   "region_index": 71,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    198.29344177246094,
+    0.0,
+    348.53271484375,
+    102.43840789794922
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     198.29344177246094,
+     0.0,
+     348.53271484375,
+     102.43840789794922
+    ]
+   ],
+   "conf": 0.574608325958252,
+   "coverage": null,
+   "note": "conf=0.5746（十分位 0.55-0.60）",
+   "preview_file": "B1-U13__K09_R071.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U14",
+   "layer": "B1",
+   "case_id": "K10",
+   "region_index": 19,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    130.46878051757812,
+    20.71532440185547,
+    547.4550170898438,
+    55.58066177368164
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     130.46878051757812,
+     20.71532440185547,
+     547.4550170898438,
+     55.58066177368164
+    ]
+   ],
+   "conf": 0.8119709491729736,
+   "coverage": null,
+   "note": "conf=0.8120（十分位 0.80-0.85）",
+   "preview_file": "B1-U14__K10_R019.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B1-U15",
+   "layer": "B1",
+   "case_id": "K10",
+   "region_index": 19,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    114.71517181396484,
+    988.1727294921875,
+    544.61572265625,
+    1025.258544921875
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     114.71517181396484,
+     988.1727294921875,
+     544.61572265625,
+     1025.258544921875
+    ]
+   ],
+   "conf": 0.774117648601532,
+   "coverage": null,
+   "note": "conf=0.7741（十分位 0.75-0.80）",
+   "preview_file": "B1-U15__K10_R019.png",
+   "description": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "unit_id": "B2-U01",
+   "layer": "B2",
+   "case_id": "K01",
+   "region_index": 23,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    340.4619445800781,
+    220.12246704101562,
+    400.774169921875,
+    243.4587860107422
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     340.4619445800781,
+     220.12246704101562,
+     400.774169921875,
+     243.4587860107422
+    ]
+   ],
+   "conf": 0.8296896815299988,
+   "coverage": null,
+   "note": "conf=0.8297（十分位 0.80-0.85）",
+   "preview_file": "B2-U01__K01_R023.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U02",
+   "layer": "B2",
+   "case_id": "K01",
+   "region_index": 37,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    63.819000244140625,
+    63.20720672607422,
+    620.982421875,
+    126.25999450683594
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     63.819000244140625,
+     63.20720672607422,
+     620.982421875,
+     126.25999450683594
+    ]
+   ],
+   "conf": 0.9324661493301392,
+   "coverage": null,
+   "note": "conf=0.9325（十分位 0.90-0.95）",
+   "preview_file": "B2-U02__K01_R037.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U03",
+   "layer": "B2",
+   "case_id": "K01",
+   "region_index": 79,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    67.05939483642578,
+    628.8138427734375,
+    618.5860595703125,
+    690.504638671875
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     67.05939483642578,
+     628.8138427734375,
+     618.5860595703125,
+     690.504638671875
+    ]
+   ],
+   "conf": 0.9406789541244507,
+   "coverage": null,
+   "note": "conf=0.9407（十分位 0.90-0.95）",
+   "preview_file": "B2-U03__K01_R079.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U04",
+   "layer": "B2",
+   "case_id": "K01",
+   "region_index": 85,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    53.70683288574219,
+    635.6586303710938,
+    633.7783203125,
+    695.7439575195312
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     53.70683288574219,
+     635.6586303710938,
+     633.7783203125,
+     695.7439575195312
+    ]
+   ],
+   "conf": 0.9349076151847839,
+   "coverage": null,
+   "note": "conf=0.9349（十分位 0.90-0.95）",
+   "preview_file": "B2-U04__K01_R085.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U05",
+   "layer": "B2",
+   "case_id": "K03",
+   "region_index": 27,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    489.9650573730469,
+    401.97979736328125,
+    664.8907470703125,
+    458.55535888671875
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     489.9650573730469,
+     401.97979736328125,
+     664.8907470703125,
+     458.55535888671875
+    ]
+   ],
+   "conf": 0.5922182202339172,
+   "coverage": null,
+   "note": "conf=0.5922（十分位 0.55-0.60）",
+   "preview_file": "B2-U05__K03_R027.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U06",
+   "layer": "B2",
+   "case_id": "K03",
+   "region_index": 27,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    268.2781677246094,
+    423.6070861816406,
+    414.68310546875,
+    508.58624267578125
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     268.2781677246094,
+     423.6070861816406,
+     414.68310546875,
+     508.58624267578125
+    ]
+   ],
+   "conf": 0.6768285036087036,
+   "coverage": null,
+   "note": "conf=0.6768（十分位 0.65-0.70）",
+   "preview_file": "B2-U06__K03_R027.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U07",
+   "layer": "B2",
+   "case_id": "K03",
+   "region_index": 27,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    10.855388641357422,
+    1072.218505859375,
+    483.41766357421875,
+    1221.396484375
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     10.855388641357422,
+     1072.218505859375,
+     483.41766357421875,
+     1221.396484375
+    ]
+   ],
+   "conf": 0.8988643884658813,
+   "coverage": null,
+   "note": "conf=0.8989（十分位 0.85-0.90）",
+   "preview_file": "B2-U07__K03_R027.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U08",
+   "layer": "B2",
+   "case_id": "K03",
+   "region_index": 153,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    152.6138153076172,
+    149.96240234375,
+    512.4698791503906,
+    291.3483581542969
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     152.6138153076172,
+     149.96240234375,
+     512.4698791503906,
+     291.3483581542969
+    ]
+   ],
+   "conf": 0.7379682660102844,
+   "coverage": null,
+   "note": "conf=0.7380（十分位 0.70-0.75）",
+   "preview_file": "B2-U08__K03_R153.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U09",
+   "layer": "B2",
+   "case_id": "K03",
+   "region_index": 153,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    201.82481384277344,
+    320.95355224609375,
+    459.71282958984375,
+    429.11883544921875
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     201.82481384277344,
+     320.95355224609375,
+     459.71282958984375,
+     429.11883544921875
+    ]
+   ],
+   "conf": 0.7034862637519836,
+   "coverage": null,
+   "note": "conf=0.7035（十分位 0.70-0.75）",
+   "preview_file": "B2-U09__K03_R153.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U10",
+   "layer": "B2",
+   "case_id": "K03",
+   "region_index": 157,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    162.59938049316406,
+    160.34288024902344,
+    511.8919677734375,
+    300.9013671875
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     162.59938049316406,
+     160.34288024902344,
+     511.8919677734375,
+     300.9013671875
+    ]
+   ],
+   "conf": 0.758579432964325,
+   "coverage": null,
+   "note": "conf=0.7586（十分位 0.75-0.80）",
+   "preview_file": "B2-U10__K03_R157.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U11",
+   "layer": "B2",
+   "case_id": "K03",
+   "region_index": 157,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    126.30340576171875,
+    329.1159973144531,
+    539.9325561523438,
+    439.8235168457031
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     126.30340576171875,
+     329.1159973144531,
+     539.9325561523438,
+     439.8235168457031
+    ]
+   ],
+   "conf": 0.8836914300918579,
+   "coverage": null,
+   "note": "conf=0.8837（十分位 0.85-0.90）",
+   "preview_file": "B2-U11__K03_R157.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U12",
+   "layer": "B2",
+   "case_id": "K07",
+   "region_index": 59,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    0.892878532409668,
+    0.0,
+    690.0,
+    361.04290771484375
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     0.892878532409668,
+     0.0,
+     690.0,
+     361.04290771484375
+    ]
+   ],
+   "conf": 0.5474756360054016,
+   "coverage": null,
+   "note": "conf=0.5475（十分位 0.50-0.55）",
+   "preview_file": "B2-U12__K07_R059.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U13",
+   "layer": "B2",
+   "case_id": "K07",
+   "region_index": 67,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    109.33187866210938,
+    146.9252166748047,
+    165.9258575439453,
+    228.95111083984375
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     109.33187866210938,
+     146.9252166748047,
+     165.9258575439453,
+     228.95111083984375
+    ]
+   ],
+   "conf": 0.6115835309028625,
+   "coverage": null,
+   "note": "conf=0.6116（十分位 0.60-0.65）",
+   "preview_file": "B2-U13__K07_R067.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U14",
+   "layer": "B2",
+   "case_id": "K07",
+   "region_index": 107,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    82.76410675048828,
+    0.0,
+    323.17523193359375,
+    240.41624450683594
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     82.76410675048828,
+     0.0,
+     323.17523193359375,
+     240.41624450683594
+    ]
+   ],
+   "conf": 0.6248226165771484,
+   "coverage": null,
+   "note": "conf=0.6248（十分位 0.60-0.65）",
+   "preview_file": "B2-U14__K07_R107.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "B2-U15",
+   "layer": "B2",
+   "case_id": "K07",
+   "region_index": 123,
+   "unit_kind": "det_box",
+   "review_box_xyxy": [
+    183.64926147460938,
+    1120.875,
+    395.01202392578125,
+    1354.856689453125
+   ],
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [
+    [
+     183.64926147460938,
+     1120.875,
+     395.01202392578125,
+     1354.856689453125
+    ]
+   ],
+   "conf": 0.9330866932868958,
+   "coverage": null,
+   "note": "conf=0.9331（十分位 0.90-0.95）",
+   "preview_file": "B2-U15__K07_R123.png",
+   "description": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "unit_id": "C-U01",
+   "layer": "C",
+   "case_id": "K01",
+   "region_index": 35,
+   "unit_kind": "pair",
+   "review_box_xyxy": [
+    166.8878631591797,
+    103.42378234863281,
+    355.9679260253906,
+    166.5669403076172
+   ],
+   "gt_boxes_xyxy": [
+    [
+     170.0,
+     112.0,
+     351.0,
+     210.0
+    ]
+   ],
+   "det_boxes_xyxy": [
+    [
+     166.8878631591797,
+     103.42378234863281,
+     355.9679260253906,
+     166.5669403076172
+    ]
+   ],
+   "conf": 0.803534209728241,
+   "coverage": 0.5568055133430325,
+   "note": "matched pair coverage=0.5568∈[0.5,0.7)：绿 GT vs 红 det",
+   "preview_file": "C-U01__K01_R035.png",
+   "description": "贴合匹配对（coverage∈[0.5,0.7)）：判定真实文字被检出框正确覆盖（→真匹配）还是检出框仅擦边盖住 GT（→粒度不达标）"
+  },
+  {
+   "unit_id": "C-U02",
+   "layer": "C",
+   "case_id": "K03",
+   "region_index": 91,
+   "unit_kind": "pair",
+   "review_box_xyxy": [
+    36.75577926635742,
+    447.8543395996094,
+    584.3364868164062,
+    511.31951904296875
+   ],
+   "gt_boxes_xyxy": [
+    [
+     30.0,
+     450.0,
+     591.0,
+     566.0
+    ]
+   ],
+   "det_boxes_xyxy": [
+    [
+     36.75577926635742,
+     447.8543395996094,
+     584.3364868164062,
+     511.31951904296875
+    ]
+   ],
+   "conf": 0.751865804195404,
+   "coverage": 0.5159718732586134,
+   "note": "matched pair coverage=0.5160∈[0.5,0.7)：绿 GT vs 红 det",
+   "preview_file": "C-U02__K03_R091.png",
+   "description": "贴合匹配对（coverage∈[0.5,0.7)）：判定真实文字被检出框正确覆盖（→真匹配）还是检出框仅擦边盖住 GT（→粒度不达标）"
+  },
+  {
+   "unit_id": "D-U01",
+   "layer": "D",
+   "case_id": "K03",
+   "region_index": 135,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U01__K03_R135.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U02",
+   "layer": "D",
+   "case_id": "K05",
+   "region_index": 46,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U02__K05_R046.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U03",
+   "layer": "D",
+   "case_id": "K07",
+   "region_index": 13,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U03__K07_R013.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U04",
+   "layer": "D",
+   "case_id": "K07",
+   "region_index": 93,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U04__K07_R093.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U05",
+   "layer": "D",
+   "case_id": "K07",
+   "region_index": 113,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U05__K07_R113.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U06",
+   "layer": "D",
+   "case_id": "K07",
+   "region_index": 115,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U06__K07_R115.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U07",
+   "layer": "D",
+   "case_id": "K08",
+   "region_index": 41,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U07__K08_R041.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U08",
+   "layer": "D",
+   "case_id": "K08",
+   "region_index": 47,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U08__K08_R047.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U09",
+   "layer": "D",
+   "case_id": "K08",
+   "region_index": 57,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U09__K08_R057.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "unit_id": "D-U10",
+   "layer": "D",
+   "case_id": "K09",
+   "region_index": 122,
+   "unit_kind": "region_full_frame",
+   "review_box_xyxy": null,
+   "gt_boxes_xyxy": [],
+   "det_boxes_xyxy": [],
+   "conf": null,
+   "coverage": null,
+   "note": "零检测 region（n_det_block=0，n_gt=0）全帧复核",
+   "preview_file": "D-U10__K09_R122.png",
+   "description": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  }
+ ]
+}
