@@ -13,6 +13,7 @@ base_commit: c8eefb4b
 branch: agent/zcode/M2-PROD-DETECT-1
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 handoff: doc/handoffs/M2-PROD-DETECT-1-d7faea39.md
+delivery_head: 0b0c9bc7
 ---
 
 # M2-PROD-DETECT-1：生产检测器集成第一刀
