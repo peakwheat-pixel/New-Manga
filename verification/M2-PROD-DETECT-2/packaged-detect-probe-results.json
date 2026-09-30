@@ -39,11 +39,11 @@
       "observed": {
         "exit": 0,
         "n_candidates": 2,
-        "cold_elapsed_ms_incl_engine_build": 17478,
-        "warm_avg_ms": 288,
+        "cold_elapsed_ms_incl_engine_build": 6124,
+        "warm_avg_ms": 273,
         "warm_elapsed_ms": [
-          279,
-          312,
+          273,
+          274,
           274
         ],
         "versions": {

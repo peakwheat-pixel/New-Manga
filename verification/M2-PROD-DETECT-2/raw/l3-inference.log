@@ -1,0 +1,8 @@
+$ build-venv python l3-inference-driver.py (weights_dir=INSTALLED bundle copy)
+exit=0
+--- stdout ---
+
+--- stderr ---
+
+Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]
+Loading weights: 100%|██████████| 770/770 [00:00<00:00, 8425.15it/s]

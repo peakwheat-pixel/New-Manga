@@ -3,8 +3,8 @@ task_id: M2-PROD-DETECT-2
 author: ZCode
 recipient: Codex（integrator）；reviewer=DeepSeek Harness（非作者，r2 定点复审）
 base_commit: f79203eb
-delivery_head: dbad2027（r1 review-fix 主体；证据 commit 紧随其后，见提交列表）
-status: review_fix_delivered
+delivery_head: a48dbfbd（集成修正主体=DSH r2 N1-N6 闭合；本轮证据 commit 紧随其后，见提交列表）
+status: integration_fix_delivered
 supersedes: doc/handoffs/M2-PROD-DETECT-2-1cf731ca.md（r1 交付记录，保留为历史证据）
 review_fix_of: verification/M2-PROD-DETECT-2/raw-r1（r1 时点证据已整体归档于此）
 ---
@@ -106,21 +106,24 @@ DSH r2 定点复审（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-
 - `dbad2027` review-fix 主体（R1-R12 处置 + 前任熔断遗留半成品的完成；构建输入与本表数字的被测 commit）
 - 证据 commit（本 Handoff、release-notes 更新、warn/ 四文件+分类、probe results、raw 重跑日志、raw-r1 归档、Task 测试表实测回填）
 - task record commit（Task frontmatter delivery_head → 证据 commit sha；status 保持 in_review）
+- `1c0bc399` hygiene（tauri-build-console.log EOF 空行剥离；内容不变）
+- `a48dbfbd` **集成修正主体（DSH r2 N1-N6 闭合）**：N1 警告文本 join 修复+整行布局断言、N3 rt_detr_v2 闭包钉死、N4 usage 注释、N5 措辞、N2 Task 数字回填（本轮实测）、Handoff「集成修正记录」节、release-notes 本轮数字；含 r2 时点证据归档 `raw-r2/`（本 commit 的 src/spec 即本轮重建输入——构建时工作树状态与之一致，其后未再触碰 `src/`/`packaging/`）
+- 本轮证据 commit（`raw/` 全量重跑证据：build/tauri console、GATE、探针 L1-L4、pytest tail、pyz listing、`installed-weights-sha256.txt`（N6）、warn 四文件+CLASSIFICATION 复跑、probe results JSON；Task frontmatter delivery_head → `a48dbfbd`、status → integration_fix_delivered）
 
-## 接收方式（r2 定点复审）
+## 接收方式（集成修正后：等待编排会话 merge）
 
-- 复审锚：r1 报告（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r1.md`，锚 1cf731ca/80f7a0cb）+ 返修 tip（见上提交列表）。r1 时点证据在 `verification/M2-PROD-DETECT-2/raw-r1/`（原样保留，行号引用不失效）；返修新证据在 `raw/`、`warn/`、`packaged-detect-probe-results.json`。
-- 复现构建：`powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force`（观察 `closure assertion` 与 `warn-archive:` 输出）→ `cd apps/desktop/src-tauri && npx --yes @tauri-apps/cli@2 build` → `python packaging/m2ac5/run_clean_start_e2e.py` → `python verification/M2-PROD-DETECT-2/packaged-detect-probe.py --install-dir %TEMP%/m2ac5-cleanstart/install`。
+- 复审锚：r1 报告（锚 1cf731ca/80f7a0cb，证据 `raw-r1/`）→ r2 报告（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r2.md`，verdict=approved 附 N1-N6，锚 dbad2027/1c0bc399，证据已归档 `raw-r2/`）→ **集成修正 tip（见上提交列表，`a48dbfbd` + 证据 commit）**。本轮新证据在 `raw/`、`warn/`、`packaged-detect-probe-results.json`；N1-N6 逐条闭合见「集成修正记录」节。
+- 复现构建：`powershell -NoProfile -ExecutionPolicy Bypass -File packaging/m2ac5/build_sidecar.ps1 -Force`（观察 `closure assertion` 三名字与 `warn-archive:` 输出）→ `cd apps/desktop/src-tauri && npx --yes @tauri-apps/cli@2 build` → `python packaging/m2ac5/run_clean_start_e2e.py` → `python verification/M2-PROD-DETECT-2/packaged-detect-probe.py --install-dir %TEMP%/m2ac5-cleanstart/install`。
 - pytest：主 venv `G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312`，`PYTHONPATH=src`，`pytest tests/providers tests/m2_acceptance tests/core`。
-- 重点核查建议（r2）：①warn 分类桶与硬依赖反证（R1 载体）；②L2 降级断言与新装配语义一致性（R5/R6）；③AC5 PARTIAL 判定与 NOT_RUN 子项登记（R2/裁决⑥）；④新 NSIS/onedir 数字与 raw 日志绑定（R7）。
+- 重点核查建议（集成接收）：①本轮 NSIS sha256 `07d7daa1…` 与 GATE CS-E2 绑定；②`closure assertion` 三名字（N3）；③`raw/l2-frozen-weights-absent.log` stderr 干净单行（N1）；④`raw/installed-weights-sha256.txt` 三值=pin（N6）。
 
 ## 下一任务建议（必填）
 
-- Task ID / 标题：无需新立 Task——本返修进入 DSH r2 定点复审；通过后 Codex 集成。**另：裁决⑥登记的后续 slice「M2-IPC1 命令面扩展 + frozen 进程内 detect 验证」待 Codex 释放契约范围（core_service 命令面扩展须 Codex 先立契约）后另行注册。**
-- 推荐 Agent / Reviewer：DSH（非作者 r2 复审）；集成=编排会话代行 Codex。
-- Recovery point：仓库 `G:/CODEX/New Manga`，worktree `G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode`，branch `agent/zcode/M2-PROD-DETECT-2`，base `f79203eb`，返修主体 `dbad2027`。
+- Task ID / 标题：无需新立 Task——本 Task 集成修正（DSH r2 N1-N6 闭合+全量重跑）已交付，**下一步=编排会话代行 Codex 执行 merge（本 worktree branch `agent/zcode/M2-PROD-DETECT-2` tip，未 push；merge 由编排会话做，本会话禁止 push/merge）**。**另：裁决⑥登记的后续 slice「M2-IPC1 命令面扩展 + frozen 进程内 detect 验证」待 Codex 释放契约范围（core_service 命令面扩展须 Codex 先立契约）后另行注册。**
+- 推荐 Agent / Reviewer：编排会话（merge + STATUS 更新）；无需再复审（r2 已 approved，本轮 N1-N6 均为其裁决内闭合，证据绑定本轮 tip）。
+- Recovery point：仓库 `G:/CODEX/New Manga`，worktree `G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode`，branch `agent/zcode/M2-PROD-DETECT-2`，base `f79203eb`，集成修正主体 `a48dbfbd`。
 - 禁止范围不变：`apps/**`、`tauri.conf.json`、`run_clean_start_e2e.py`、`ports/**`、两个 detection provider、`requirements.txt`、`experiments/**`；spec `console=True` FROZEN；权重永不入库。
-- 可直接转发给 Agent 的指令：`「你是 DSH reviewer（非作者）。在 worktree G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode（branch agent/zcode/M2-PROD-DETECT-2）对 M2-PROD-DETECT-2 做 r2 定点复审：先读 doc/tasks/M2-PROD-DETECT-2.md（含 r1 处置裁决⑤⑥⑦）与 doc/handoffs/M2-PROD-DETECT-2-dbad2027.md 的 R1-R12 处置表，对照你在 G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-r1.md 的 12 项 findings 逐项核销；重点①warn 分类载体（verification/M2-PROD-DETECT-2/warn/）②AC5 PARTIAL（裁决⑥）③L2 降级断言④新构建数字绑定 dbad2027；r1 证据已归档 raw-r1/。报告写 verification/M2-PROD-DETECT-2/review-r2-dsh.md。」`
+- 可直接转发给编排会话的指令：`「你是编排会话（代行 Codex integrator）。在 worktree G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode（branch agent/zcode/M2-PROD-DETECT-2）核对 M2-PROD-DETECT-2 集成修正交付：tip=证据 commit（主体 a48dbfbd），对照 doc/handoffs/M2-PROD-DETECT-2-dbad2027.md「集成修正记录（DSH r2 N1-N6）」节逐项核销（N1 stderr 单行=N1；closure assertion 三名字=N3；installed-weights-sha256.txt=N6），确认 `git diff --check f79203eb..HEAD` EXIT=0、禁改面 diff 为空、porcelain 干净后执行 merge 并更新 STATUS.md。」`
 
 ## 风险与遗留
 
@@ -128,4 +131,4 @@ DSH r2 定点复审（`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-2/dsh-review-
 - 用户选择点：安装包体积维持数百 MiB 级（裁决 1，可撤销）；裁决⑤改变了 r1 前的「frozen 全缺=装配期崩溃」行为——若产品反而需要「安装损坏快速可见」，revert 装配段即回 fail-fast（Task 裁决⑤已登记撤销方式）。
 - 破坏性操作：无（无迁移、无宿主 %APPDATA% 写入——GATE CS-Z4 实测 PASS）。
 - 关联：M2-PROD-DETECT-1（done @056617e4）；M2-DOCTR-QUAL-C4（权重快照）；M2-RG1（console=True 冻结）；后续 slice M2-IPC1（frozen 命令面扩展）。
-- 回退方法：revert `dbad2027` + 证据 commit 即回 r1 交付态（1cf731ca 语义）。
+- 回退方法：revert `dbad2027` + 证据 commit 即回 r1 交付态（1cf731ca 语义）；revert `a48dbfbd` + 本轮证据 commit 即回 r2 交付态（N1 乱码警告/N3 双名断言面回归——不建议，r2 裁决=全闭）。

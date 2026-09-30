@@ -2,7 +2,6 @@
 id: M2-PROD-DETECT-2
 title: "发布形态检测器运行时/权重分发：ML 栈进 sidecar 闭包 + manga 权重随包（M2-PROD-DETECT-1 遗留 slice①；用户「继续」推进 2026-09-30）"
 kind: feature
-status: in_review
 approval: user_directive_2026-09-30_continue
 suggested_owner: ZCode
 owner: ZCode
@@ -11,7 +10,8 @@ integrator: 编排会话代行 Codex（用户全权授权 2026-09-28/30）
 depends_on: [M2-PROD-DETECT-1]
 base_commit: 1d876ef7
 delivery_base: f79203eb
-delivery_head: 6b066a9e
+delivery_head: a48dbfbd（集成修正主体=DSH r2 N1-N6 闭合+全量重建输入；本轮证据 commit 紧随其后，见 Task 末与 Handoff「集成修正记录」节）
+status: integration_fix_delivered
 branch: agent/zcode/M2-PROD-DETECT-2
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-2-zcode
 ---

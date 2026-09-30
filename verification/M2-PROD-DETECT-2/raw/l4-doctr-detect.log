@@ -1,0 +1,5 @@
+$ build-venv python l4-doctr-detect-driver.py (weights_path=absent in-bundle candidate)
+exit=0
+--- stdout ---
+
+--- stderr ---
