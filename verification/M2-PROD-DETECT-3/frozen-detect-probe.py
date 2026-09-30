@@ -173,10 +173,14 @@ class FrozenCoreSession:
             self._proc.kill()
         err = self._proc.stderr.read() if self._proc.stderr else b""
         self.stderr_text = err.decode("utf-8", errors="replace")
+        # LF-normalized on purpose: frozen stderr arrives as CRLF, and the
+        # evidence files must stay diff --check clean (repo hygiene precedent).
+        clean_stderr = self.stderr_text.replace("\r\n", "\n").replace("\r", "\n")
         self._log_path.write_text(
             f"$ frozen core_service.exe session (wall {int((time.perf_counter() - self._started) * 1000)}ms)\n"
-            f"exit={self._proc.returncode}\n--- stderr ---\n{self.stderr_text}",
+            f"exit={self._proc.returncode}\n--- stderr ---\n{clean_stderr}",
             encoding="utf-8",
+            newline="\n",
         )
         return self._proc.returncode
 
@@ -401,7 +405,7 @@ def main() -> int:
             "synthetic page bytes that travel through the 1.1 wire contract."
         ),
     }
-    RESULTS_PATH.write_text(json.dumps(results, indent=2), encoding="utf-8")
+    RESULTS_PATH.write_text(json.dumps(results, indent=2), encoding="utf-8", newline="\n")
     print(f"\nPROBE: {gate.verdict} -> {RESULTS_PATH}")
     return 0 if gate.verdict == "PASS" else 1
 

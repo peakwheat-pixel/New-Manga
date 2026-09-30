@@ -1,4 +1,4 @@
 $ frozen core_service.exe session (wall 316ms)
 exit=0
 --- stderr ---
-WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\fd2-data-root\models\detector\ogkalu-comic-text-and-bubble-detector | C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
+WARNING: detector weights not found (weights name 'ogkalu-comic-text-and-bubble-detector'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\fd2-data-root\models\detector\ogkalu-comic-text-and-bubble-detector | C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\ogkalu-comic-text-and-bubble-detector; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS
