@@ -1,0 +1,9 @@
+# shell=powershell cwd=/g/CODEX/New Manga.worktrees/M2-DOCTR-QUAL-RUN-zcode HEAD=f98941845d5140ea697d13a654fe66c1edbeef34 date=2026-09-30T00:02:36Z cmd=$env:PYTHONPATH='src'; & 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-gpu-py312/Scripts/python.exe' experiments/M2-DOCTR-QUAL/eval_detection.py --manifest 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-work/eval-manifest.full.seg05.json' --weights 'G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL/weights/fast_base-688a8b34.pt' --arch fast_base --device cuda --previews 0 --strip-block-pad 6.0 --task M2-DOCTR-QUAL-RUN --out 'verification/M2-DOCTR-QUAL/qualification/results-formal-fast_base-cuda-seg05-padoffset.json'
+arch=fast_base device=cuda regions=511 elapsed=20.9s
+PRIMARY block_coverage: precision=0.0688 recall=0.2628 meanCov=0.6842 severe_miss_rate=0.1034
+diag block_strict:      precision=0.0673 recall=0.2574 meanIoU=0.6684
+diag raw_strict (word granularity, NOT judged): recall=0.1941
+FP attribution: UNAVAILABLE (manifest has no supplementary_boxes; run --gt-mode union manifest for the evidence layer)
+verdict all_pass=False
+results -> verification\M2-DOCTR-QUAL\qualification\results-formal-fast_base-cuda-seg05-padoffset.json
+# EXIT=0
