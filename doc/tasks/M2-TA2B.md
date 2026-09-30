@@ -42,13 +42,13 @@ integration_commit: null
 id: M2-TA2B
 title: "JA/KO 开放素材池（用户方案变更 2026-09-30）：ブラックジャックによろしく官方免费全卷 + Pepper&Carrot 补充；永久取消 Manga109 前置"
 kind: asset
-status: ready
+status: in_progress
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（待派发，非作者静态）
 depends_on: []
-base_commit: PENDING_SET_AT_CLAIM
+base_commit: 9db2dca892e7fe1db5bf89c0a35501df014e653e
 branch: agent/zcode/M2-TA2B-OPEN-ASSETS
 worktree: G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode
 integration_commit: null
