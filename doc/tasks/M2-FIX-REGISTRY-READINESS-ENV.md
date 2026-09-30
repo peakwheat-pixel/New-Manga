@@ -2,7 +2,7 @@
 id: M2-FIX-REGISTRY-READINESS-ENV
 title: "test_registry_readiness 环境断言条件化（遗留 slice③；Goal T3，自治执行 2026-10-01）"
 kind: fix
-status: ready
+status: in_progress
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -36,3 +36,11 @@ worktree: G:/CODEX/New Manga.worktrees/M2-REGISTRY-ENV-zcode
 ## 允许/禁止
 
 允许：`tests/providers/test_registry_readiness.py`、相关 conftest、Task/Handoff。禁止：src/**、packaging/**、其他测试语义。
+
+## 原始意图判定（claim 时登记，Owner=ZCode）
+
+1. **测试原文**：`tests/providers/test_registry_readiness.py::test_no_model_runtime_is_installed_in_this_environment`（190-196 行）——对 `("torch", "diffusers", "numpy", "paddleocr", "manga_ocr")` 逐个 `assert importlib.util.find_spec(module) is None`，失败消息自述「the BLOCKED classification in doc/tasks/TASK-019.md assumes it is absent」。
+2. **语境**：TASK-019 释放时登记缺口第 3 条「本环境无 `torch`/`diffusers`/`numpy`（已实测）……依赖模型权重的本地 OCR/修复质量类 AC 必须按 `BLOCKED` 交付」（`doc/tasks/TASK-019.md`）。该测试即这条**环境证据的测试化固化**：守护「BLOCKED 分类的环境前提=当前 venv 无 ML runtime」。它不是 registry/闭包语义防护（那些由同文件 `test_real_environment_reports_optional_providers_as_not_ready` 等测试与装配 fail-closed 承担，且在主 venv 本就 PASS）。
+3. **前提失效原因**：T1.1.1 起用户批准 `requirements.txt` 携带 `torch==2.14.0`（M2-PROD-DETECT-1 追加 `transformers==5.17.0`+`safetensors`）；主 venv（`G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312`）torch 在位是合法产品事实，TASK-019 前提被合法依赖变化推翻——测试恒红（历轮如实登记「既有环境性失败」，base 同败已复现）。
+4. **防护去向**：无-ML/闭包级部署保证已由构建期断言接管——`packaging/m2ac5/core_sidecar.spec` 的 `_assert_ml_closure`（ML_HIDDENIMPORTS 三 pin，DSH r1 R3）+ 分 entry warn-archive 证据（M2-PROD-DETECT-2 GATE 25/25）。
+5. **裁决：方案 a（环境条件化）**——`torch` 在位（T1.1.1+ 主 venv 标志）→ `pytest.skip` 显式理由（引 T1.1.1 事实 + DETECT-2 构建期闭包断言）；无 torch 环境走与修复前**逐字相同**的断言循环（验证力原样保留）。不选方案 b（改写断言语义）：会连「无 ML 环境漂移报警」的判别力一并删除，且不可逆；方案 a 成本低、两类环境行为明确。注意 `diffusers`/`paddleocr`/`manga_ocr` 至今仍未获批（不在 requirements），无 torch 环境下原断言对它们继续有效。
