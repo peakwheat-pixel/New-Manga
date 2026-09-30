@@ -16,3 +16,14 @@ mobi==0.4.1
 python-doctr==1.1.0
 torch==2.14.0
 torchvision==0.29.0
+# M2-PROD-DETECT-1 production manga-domain detector
+# (ogkalu/comic-text-and-bubble-detector, RT-DETR-v2, Apache-2.0, HF revision
+# 16e8a622; three-file SHA-256 pinned local snapshot, see
+# src/infrastructure/providers/detection_manga.py). transformers is PINNED to
+# the exact version proven by the CPU compatibility gate (torch 2.14.0 CPU
+# wheels, load + inference EXIT=0, verification/M2-PROD-DETECT-1) and by the
+# C4 GPU qualification (torch 2.11.0+cu128). The stack is lazy-imported on
+# first detect: machines without it still boot and fail closed with the typed
+# PROVIDER_DEPENDENCY_MISSING. torch/torchvision lines above are untouched.
+transformers==5.17.0
+safetensors==0.8.0

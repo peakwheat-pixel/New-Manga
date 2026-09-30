@@ -62,6 +62,10 @@ from infrastructure.providers.detection_doctr import (
     DOCTR_WEIGHTS_FILENAME,
     DoctrDetectionProvider,
 )
+from infrastructure.providers.detection_manga import (
+    MANGA_WEIGHTS_DIRNAME,
+    MangaDetectionProvider,
+)
 from infrastructure.providers.handlers import (
     RegionMaskGeometry,
     build_production_handlers,
@@ -681,29 +685,65 @@ def assemble_core_services(
             register_mock_local_providers(provider_runtime.registry)
             detector = MockLocalDetectionProvider()
         else:
-            # T1.1.1: the selected production detector (docTR fast_base, see
-            # doc/research/T1.1.1-detector-evaluation.md) is wired through the
-            # application-layer region_creator below. The provider is lazy and
-            # strictly offline: weights must exist as a local file (default
-            # <data root>/models/detector/, override NEWMANGA_DETECTOR_WEIGHTS)
-            # with the pinned SHA-256, or the ``detect`` step fails closed with
-            # PROVIDER_NOT_CONFIGURED at run time — the same diagnosable gap as
-            # an unwired detector. No download, no fallback.
-            detector_weights = Path(
-                os.environ.get(
-                    "NEWMANGA_DETECTOR_WEIGHTS",
-                    str(
+            # M2-PROD-DETECT-1: the production detector backend is selectable
+            # via NEWMANGA_DETECTOR_BACKEND — "manga" (default; the C4/C1
+            # backed ogkalu RT-DETR-v2 snapshot, proxy ruling recorded in
+            # doc/tasks/M2-PROD-DETECT-1.md, reversible) or "doctr" (the
+            # T1.1.1 docTR fast_base path, byte-identical to its released
+            # behaviour). Both adapters are lazy and strictly offline:
+            # weights must exist locally (manga: directory, default
+            # <data root>/models/detector/ogkalu-comic-text-and-bubble-detector/;
+            # doctr: file, default <data root>/models/detector/fast_base-688a8b34.pt;
+            # override NEWMANGA_DETECTOR_WEIGHTS per backend — directory for
+            # manga, file for doctr) with pinned SHA-256, or the ``detect``
+            # step fails closed with PROVIDER_NOT_CONFIGURED at run time —
+            # the same diagnosable gap as an unwired detector. No download,
+            # no silent fallback.
+            # Boundary note (DSH r1 R7): an *empty* NEWMANGA_DETECTOR_WEIGHTS
+            # falls back to the default path below ("override if override
+            # else default"), whereas the pre-Task doctr assembly
+            # (``os.environ.get(..., str(default))``) yielded Path("") (the
+            # cwd) for the same empty string. Both variants fail closed at
+            # detect; the doctr branch now follows this fallback semantics —
+            # the only env-boundary difference from the released behaviour.
+            backend = os.environ.get("NEWMANGA_DETECTOR_BACKEND", "manga").strip().lower()
+            detector_device_env = os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu")
+            detector_weights_override = os.environ.get("NEWMANGA_DETECTOR_WEIGHTS")
+            if backend == "manga":
+                detector_weights = Path(
+                    detector_weights_override
+                    if detector_weights_override
+                    else str(
+                        Path(db_path).resolve().parent
+                        / "models"
+                        / "detector"
+                        / MANGA_WEIGHTS_DIRNAME
+                    )
+                )
+                detector = MangaDetectionProvider(
+                    weights_dir=detector_weights,
+                    device=detector_device_env,
+                )
+            elif backend == "doctr":
+                detector_weights = Path(
+                    detector_weights_override
+                    if detector_weights_override
+                    else str(
                         Path(db_path).resolve().parent
                         / "models"
                         / "detector"
                         / DOCTR_WEIGHTS_FILENAME
-                    ),
+                    )
                 )
-            )
-            detector = DoctrDetectionProvider(
-                weights_path=detector_weights,
-                device=os.environ.get("NEWMANGA_DETECTOR_DEVICE", "cpu"),
-            )
+                detector = DoctrDetectionProvider(
+                    weights_path=detector_weights,
+                    device=detector_device_env,
+                )
+            else:
+                raise ValueError(
+                    f"unsupported NEWMANGA_DETECTOR_BACKEND {backend!r} "
+                    "(use manga|doctr)"
+                )
         # TASK-033: the render step needs the application-layer RenderService,
         # assembled here from the existing infrastructure/rendering adapters
         # (no adapter implementation is added or modified). The Qt adapters

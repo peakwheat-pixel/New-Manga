@@ -2,7 +2,7 @@
 id: M2-PROD-DETECT-1
 title: "生产检测器集成第一刀：manga 域 RT-DETR-v2 provider + 装配 backend 选择（用户「继续」推进 2026-09-30）"
 kind: feature
-status: ready
+status: in_review
 approval: user_directive_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
@@ -12,6 +12,8 @@ depends_on: []
 base_commit: c8eefb4b
 branch: agent/zcode/M2-PROD-DETECT-1
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
+handoff: doc/handoffs/M2-PROD-DETECT-1-d7faea39.md
+delivery_head: a016d38c
 ---
 
 # M2-PROD-DETECT-1：生产检测器集成第一刀
@@ -31,13 +33,13 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 
 ## Acceptance Criteria
 
-- [ ] AC1（provider 实现）：新增 `src/infrastructure/providers/detection_manga.py`——实现 `ports.detection` 接口；复刻 C4 评测的加载序列（`from_pretrained` 本地目录 + 三文件 SHA-256 逐文件 pin `037930a8…`/`b6d70793…`/`7e9e2245…`）；仅 text 类（1/2）出框、bubble 类丢弃；输出 word 角色框进冻结合并；fail-closed 四纪律（无下载/pin/缺失 typed/无伪造输出）全数落实。
-- [ ] AC2（装配 backend 选择）：`core_assembly.py` 装配段按 `NEWMANGA_DETECTOR_BACKEND` 选择 manga（默认）或 doctr；权重路径解析按 backend 各自默认；docTR 原路径行为零变化（切回 doctr 后现有行为/测试不受影响）；mock_local_providers 验收路径不受影响。
-- [ ] AC3（依赖授权与 CPU 实测）：`requirements.txt` 授权新增 `transformers==5.17.0` + `safetensors`（版本 pin；torch/doctr 不动）；**torch 2.14.0 CPU wheels 上模型加载+单页推理实测 EXIT=0**（C4 全程 GPU，CPU 兼容性是本 Task 必须闭合的缺口）；不兼容即停下登记（不得降级 torch）。
-- [ ] AC4（测试）：`tests/providers/test_detection_manga.py`（mock/单元：fail-closed 矩阵——缺目录/缺文件/hash 错/懒加载缺失依赖/空输出/bubble 丢弃）+ `test_detection_manga_real.py`（真实权重集成，权重缺失时 skip 并显式原因）+ 装配 backend 选择测试；全部先红后绿或与既有测试同风格。
-- [ ] AC5（envelope 实测）：CPU 路径延迟实测（ms/region，n≥3）入 `verification/M2-PROD-DETECT-1/envelope.md`；GPU 对照引用 C4（38.9s/511 regions ≈ 76ms/region）；sidecar 体积膨胀（如可测）如实记录。
-- [ ] AC6（sidecar 构建回归）：`packaging/m2ac5/build_sidecar.ps1` 构建通过（含新依赖）；M2-AC5 clean-start runner 25/25 保持 PASS；体积变化如实记录。
-- [ ] AC7（回归与纪律）：pytest 相关目录全绿（providers/m2_acceptance 35 passed 不回退）；cargo/vitest 留痕（预期零影响）；`git diff --check` EXIT=0；禁改路径零触碰。
+- [x] AC1（provider 实现）：新增 `src/infrastructure/providers/detection_manga.py`——实现 `ports.detection` 接口；复刻 C4 评测的加载序列（`from_pretrained` 本地目录 + 三文件 SHA-256 逐文件 pin `037930a8…`/`b6d70793…`/`7e9e2245…`）；仅 text 类（1/2）出框、bubble 类丢弃；输出 word 角色框进冻结合并；fail-closed 四纪律（无下载/pin/缺失 typed/无伪造输出）全数落实。
+- [x] AC2（装配 backend 选择）：`core_assembly.py` 装配段按 `NEWMANGA_DETECTOR_BACKEND` 选择 manga（默认）或 doctr；权重路径解析按 backend 各自默认；docTR 原路径行为零变化（切回 doctr 后现有行为/测试不受影响）；mock_local_providers 验收路径不受影响。
+- [x] AC3（依赖授权与 CPU 实测）：`requirements.txt` 授权新增 `transformers==5.17.0` + `safetensors`（版本 pin；torch/doctr 不动）；**torch 2.14.0 CPU wheels 上模型加载+单页推理实测 EXIT=0**（C4 全程 GPU，CPU 兼容性是本 Task 必须闭合的缺口）；不兼容即停下登记（不得降级 torch）。
+- [x] AC4（测试）：`tests/providers/test_detection_manga.py`（mock/单元：fail-closed 矩阵——缺目录/缺文件/hash 错/懒加载缺失依赖/空输出/bubble 丢弃）+ `test_detection_manga_real.py`（真实权重集成，权重缺失时 skip 并显式原因）+ 装配 backend 选择测试；全部先红后绿或与既有测试同风格。
+- [x] AC5（envelope 实测）：CPU 路径延迟实测（ms/region，n≥3）入 `verification/M2-PROD-DETECT-1/envelope.md`；GPU 对照引用 C4（38.9s/511 regions ≈ 76ms/region）；sidecar 体积膨胀（如可测）如实记录。
+- [x] AC6（sidecar 构建回归）：`packaging/m2ac5/build_sidecar.ps1` **构建不回退 + ML 栈不进闭包**（build venv 为 pyinstaller-only，`packaging/m2ac5/requirements-build.txt`；发布形态需外部检测器运行时/权重——发布包内默认 manga backend 的 detect 会 `PROVIDER_DEPENDENCY_MISSING`，docTR 在 base 同样如此，非回归；DSH r1 R1 措辞更正）；M2-AC5 clean-start runner 25/25 保持 PASS；体积变化如实记录。
+- [x] AC7（回归与纪律）：pytest 相关目录全绿（providers/m2_acceptance 35 passed 不回退）；cargo/vitest 留痕（预期零影响）；`git diff --check` EXIT=0；禁改路径零触碰。
 
 ## 允许修改范围
 
@@ -61,12 +63,13 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 
 | 场景/AC | 计划命令 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1/AC4 单元 | pytest tests/providers/test_detection_manga.py | 权重可选（mock） | RUN： | |
-| AC4 真实集成 | pytest tests/providers/test_detection_manga_real.py | 本地权重（task-envs C4 快照） | RUN： | |
-| AC3 CPU 实测 | 主 venv（torch 2.14.0 CPU）加载+单页推理 | transformers 安装 | RUN： | |
-| AC5 envelope | CPU n≥3 计时 | 同上 | RUN： | |
-| AC6 sidecar | build_sidecar.ps1 + M2-AC5 runner | 打包链 | RUN： | |
-| AC7 回归 | pytest（providers+m2_acceptance+core）+ cargo + vitest | — | RUN： | |
+| AC1/AC4 单元 | pytest tests/providers/test_detection_manga.py | 权重可选（mock） | RUN：**27 passed**（含装配 backend 选择 5 场景） | implement commit；本表 |
+| AC4 真实集成 | pytest tests/providers/test_detection_manga_real.py | 本地权重（task-envs C4 快照） | RUN：**2 passed**（合成漫画页 ≥1 候选 + 空白页零候选；权重缺失 module-skip 显式原因） | implement commit |
+| AC3 CPU 实测 | 主 venv（torch 2.14.0 CPU）加载+单页推理 | transformers 安装 | RUN：**EXIT=0**（2.14.0+cpu × 5.17.0；加载 0.4s/770 张量；K01_R001 690x672 推理 2 text box + 2 bubble 丢弃） | verification/M2-PROD-DETECT-1/envelope.md |
+| AC5 envelope | CPU n≥3 计时 | 同上 | RUN：**315.6 ms/页平均（n=5，310–319）**；GPU 对照 76.1 ms/页（C4 38.9s/511），CPU/GPU ≈ 4.1× | verification/M2-PROD-DETECT-1/envelope.md |
+| AC6 sidecar | build_sidecar.ps1 + M2-AC5 runner | 打包链 | RUN：**构建 OK**（HEAD=d7faea39，pyinstaller 6.22.3，build venv 零改动）；runner **GATE PASS 25/25**；onedir 99,308,142 B/161 文件 vs base 99,286,538 B/161 文件（**+21.6 KB，+0 文件**）；NSIS 26.63 MiB vs 基线 26.62 MiB。注（DSH r1 R1）：+0 文件正说明 transformers/torch **不进闭包**——发布包内默认 manga backend 的 detect 会 `PROVIDER_DEPENDENCY_MISSING`（docTR 在 base 同样如此，非回归）；见「遗留 slice 候选」 | verification/M2-PROD-DETECT-1/{cleanstart-gate.json,cleanstart-runner-stdout.log}、envelope.md 体积表 |
+| AC7 回归 | pytest（providers+m2_acceptance+core）+ cargo + vitest | — | RUN：providers+m2_acceptance **309 passed + 1 既有环境性失败**（`test_no_model_runtime_is_installed_in_this_environment`：TASK-019 时代断言 venv 无 torch；在 base 2fee7d6e 上同 venv 同样失败，非本 Task 回归）；**m2_acceptance 35 passed 基数保持**；tests/core 77 passed；cargo **44 passed + 1 ignored**；vitest **31 passed**；`git diff --check 2fee7d6e..HEAD` **EXIT=0**；禁改路径专项 diff 为空 | 本表、handoff 验证表 |
+| review-fix（DSH r1） | pytest tests/providers/test_detection_manga.py + _real.py；tests/providers；tests/m2_acceptance；tests/core | 主 venv（torch 2.14.0+cpu），PYTHONPATH=src | RUN：manga 单测 **28 passed**（27 基数 + 新增 NaN 几何用例）；real **2 passed**；providers 全套 **275 passed + 1 既有环境性失败**（同上，与 R8 处理后计数自洽：274+NaN 用例）；m2_acceptance **35 passed 基数保持**；core **77 passed**。real 计数不变（字体存在；skip 处理仅为缺字体环境兜底） | 本表、review-fix commit |
 
 ## 依赖、风险与阻塞
 
@@ -76,4 +79,21 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-1-zcode
 
 ## 交付与运行记录（终态）
 
-- （待 Owner 交付后回填）
+- 交付（2026-09-30，Owner=ZCode）：commit 链 `2e1d3deb`（claim）→ `d7faea39`=**实现**（`src/infrastructure/providers/detection_manga.py` 418 行 + `core_assembly.py` 检测器装配段 backend 选择 + requirements 授权 + 3 个测试文件 + envelope 证据；`test_detector_assembly.py` 显式 pin doctr backend 的最小适配一并登记）→ handoff/回填 commit（见 frontmatter `handoff`；`delivery_head` 由后续记录 commit 固定）。base=`2fee7d6e`。
+- AC3 go/no-go 门：**PASS**——torch 2.14.0+cpu × transformers 5.17.0 兼容（加载 0.4s/770 张量；单页真实推理 EXIT=0），C4 cuda-only 缺口闭合；未降级 torch、未换模型。
+- 装配语义：`NEWMANGA_DETECTOR_BACKEND=manga`（**默认**，代理裁决可撤销）|`doctr`（原路径逐字节保留）；`NEWMANGA_DETECTOR_WEIGHTS` 覆盖语义按 backend 分别指向目录（manga）/文件（doctr）；未知 backend 装配期 `ValueError`；mock 路径零触碰。
+- 冻结合并：MERGE_* 常数与 `cluster_words_into_blocks` 从 `detection_doctr` **import 复用**（测试断言对象身份），未复制未改值。
+- envelope：CPU 315.6 ms/页（n=5）vs C4 GPU 76.1 ms/页（≈4.1×）；sidecar 体积 +21.6 KB/+0 文件（ML 栈懒加载未进闭包）。
+- 既有环境性失败留痕：`tests/providers/test_registry_readiness.py::test_no_model_runtime_is_installed_in_this_environment` 在主 venv（torch 已装）恒失败，base 上复现同样失败——TASK-019 时代的环境断言与 T1.1.1 后的 venv 事实冲突，属前 Task 遗留，非本 Task 回归（修复需另立 slice）。
+- runner 证据卫生：`run_clean_start_e2e.py` 会重写 `verification/M2-AC5/raw/` 下 6 个历史文件；本轮产物已移至 `verification/M2-PROD-DETECT-1/`，历史文件经 `git checkout --` 原样还原（专项 diff 为空）。
+
+## 遗留 slice 候选（DSH r1 review-fix 登记）
+
+- **发布形态检测器运行时/权重分发**（DSH r1 R1）：发布包内默认 manga backend 的 detect 报 `PROVIDER_DEPENDENCY_MISSING`（docTR 在 base 同样如此，非回归）——后续 slice 决定发布形态下检测器运行时与权重的分发/安装方式（外部运行时、安装器携带或首启引导）。本 Task 仅保证源码 venv 形态可用与 PyInstaller 闭包纪律（ML 栈不进包）。
+- **manga 权重 fetch/verify 脚本与部署 SOP**（DSH r1 R6）：本 Task 仅代码级 pin（三文件 SHA-256 常数在 `detection_manga.py`）；仓库内尚无 docTR 同款（`verification/T1.1.1/scripts/fetch_doctr_weights.py`）的 sanctioned 获取+校验路径——后续 slice 补 fetch/verify 脚本，或登记安装 SOP 与 `NEW_MANGA_MANGA_WEIGHTS` 之外的部署约定。
+
+## DSH r1 review-fix 记录（2026-09-30）
+
+- review 输入：`G:/CODEX/New Manga.task-envs/M2-PROD-DETECT-1/dsh-review-r1.md`（verdict=`approved_with_conditions`，0×P0/P1、2×P2、8×P3/P4）。R1–R10 全部处置，无降级改动：R1/R2 文档口径（AC6 措辞、GPU 对照口径注）；R3 冻结守卫收紧（MERGE_* 四常数 `is` 身份断言 + sha256 pin 全量 hex）；R4 real 测试 docstring 对齐 envelope §AC3；R5 缺目录错误消息追加 `NEWMANGA_DETECTOR_BACKEND=doctr` 指引（含单测断言）；R6/R1 slice 候选登记（见上节）；R7 装配段注释登记空串 env 边界差异（实现保持回落默认语义）；R8 numpy 用例 `pytest.importorskip` + real 测试字体缺失改 `pytest.skip` 显式原因；R9 clip 前 `math.isfinite` 校验（`ProviderInvalidOutput`，新增 NaN 单测）；R10 三值记账（release base/branch base/delivery_head）+ envelope params 口径注 + `cleanstart-gate.json` 补末尾换行。
+- 允许路径纪律：改动仅落 `detection_manga.py`、`core_assembly.py` 装配段注释、`tests/providers/**`、Task/Handoff/`verification/M2-PROD-DETECT-1/**`；`ports/**`、`detection_doctr.py`、requirements、MERGE_* 常数值零触碰。
+- 锚点说明（R10 记账延续）：frontmatter `delivery_head: a016d38c` = review-fix 终态（最后实质 commit）；其后仅存在一个单独更新本行的记录 commit（零内容变化，见 `git log`），不再产生锚点歧义。
