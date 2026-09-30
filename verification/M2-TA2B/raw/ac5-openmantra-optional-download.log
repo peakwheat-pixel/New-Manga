@@ -1,0 +1,17 @@
+# shell=powershell cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=f1be5d2a51842bd42cadbbf1f56294d887e591a9 date=2026-09-30T01:05:00Z cmd=curl raw.githubusercontent.com/mantra-inc/open-mantra-dataset main -> 日漫_JA/99_optional_openmantra (annotation.json + LICENSE.md + README.md + 2 sampled ja pages per title)
+0f50ef5d7f28d61000aa20695851aab8604b7beeb3541cb6d2823db5a3b5e9e3  日漫_JA/99_optional_openmantra/annotation.json  578293
+899d019ef64638c3829da55791bba1e529e12d00723198b0df51c1155ad3fcec  日漫_JA/99_optional_openmantra/images/balloon_dream/ja/000.jpg  162632
+3811384491adee8ec1572849e2986228fd6509662a8729e8de481e9a72fc874f  日漫_JA/99_optional_openmantra/images/balloon_dream/ja/019.jpg  154434
+bcd14b63a18e66d70510b4fe9ab5df5a1ab86528cf88b786c28f24d454a28883  日漫_JA/99_optional_openmantra/images/boureisougi/ja/000.jpg  141129
+a4f5bcad0cc926bcebee566b226b052a3c86535617abf5a9a86bd169b3012c06  日漫_JA/99_optional_openmantra/images/boureisougi/ja/018.jpg  221463
+1343607e7c6aa3309a55d95e97f4fae3aef56df50fdc78fd764cd6caf2566338  日漫_JA/99_optional_openmantra/images/rasetugari/ja/000.jpg  203104
+871a6ff6c2f7e4ad84dcb0a6fe7171e24ccb47b129f22c837ab51dae80451c65  日漫_JA/99_optional_openmantra/images/rasetugari/ja/027.jpg  157860
+f02f1be87aca991db7abba3bb913d6b26bf03a0ee21b371c8adf13d440ae0324  日漫_JA/99_optional_openmantra/images/tencho_isoro/ja/000.jpg  164937
+ffa37256d6b7c6af5c64a7d0f06c9c1999ff918b73eb17f6ef75d505b0c7e73a  日漫_JA/99_optional_openmantra/images/tencho_isoro/ja/020.jpg  165024
+0bc065c735a36d66ae98d5018548dd8c9f1135e7969ae7c6a56f00ae253d6adf  日漫_JA/99_optional_openmantra/images/tojime_no_siora/ja/000.jpg  176916
+3ebed878226c09f9781555c20496aa468f93e36b03cf65e5611372ece493fa9e  日漫_JA/99_optional_openmantra/images/tojime_no_siora/ja/023.jpg  196391
+51f416c76430c3e2b45ea43e184199b7110df8c76c98fa50971e1bae4ae7ea59  日漫_JA/99_optional_openmantra/LICENSE.md  17694
+f2d8fae68b34055c43b6a1db1c53461d0ff97b385209997940220f8e77aac9fa  日漫_JA/99_optional_openmantra/README.md  1957
+# TOTAL files=13 bytes=2341834
+# license=CC BY-NC 4.0 optional_noncommercial_baseline_excluded=true
+# EXIT=0

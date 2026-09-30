@@ -1,0 +1,9 @@
+# shell=powershell cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=f1be5d2a51842bd42cadbbf1f56294d887e591a9 date=2026-09-30T00:35:46Z cmd=python test_assets/comic_golden_suite/tools/fetch_bj.py fetch
+vol05	FETCH_FAILED	ValueError: expected exactly one PDF member, found 2
+vol01	FETCH	https://densho810.com/free/dl/001bj.zip
+vol01	FETCH_OK	zip=343497422B sha256=ec7bbb4ce4f71953... pdf_pages=209 downloaded
+vol03	FETCH	https://densho810.com/free/dl/003bj.zip
+vol03	FETCH_OK	zip=338764008B sha256=73aaf85c894554df... pdf_pages=221 downloaded
+vol05	FETCH	https://densho810.com/free/dl/005bj.zip
+SUMMARY	command=fetch volumes=3 failures=1
+# EXIT=1

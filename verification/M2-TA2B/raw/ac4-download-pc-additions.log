@@ -1,0 +1,20 @@
+# shell=powershell cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=f1be5d2a51842bd42cadbbf1f56294d887e591a9 date=2026-09-30T00:49:44Z cmd=python test_assets/comic_golden_suite/tools/assets.py download --level full --case-id J48..J52 K14..K25
+J48	DOWNLOADED	files=1 existing=1
+J49	DOWNLOADED	files=1 existing=1
+J50	DOWNLOADED	files=1 existing=1
+J51	DOWNLOADED	files=1 existing=1
+J52	DOWNLOADED	files=1 existing=1
+K14	DOWNLOADED	files=1 existing=1
+K15	DOWNLOADED	files=1 existing=1
+K16	DOWNLOADED	files=1 existing=1
+K17	DOWNLOADED	files=1 existing=1
+K18	DOWNLOADED	files=1 existing=1
+K19	DOWNLOADED	files=2 existing=0
+K20	DOWNLOADED	files=1 existing=1
+K21	DOWNLOADED	files=1 existing=1
+K22	DOWNLOADED	files=1 existing=1
+K23	DOWNLOADED	files=1 existing=1
+K24	DOWNLOADED	files=1 existing=1
+K25	DOWNLOADED	files=1 existing=1
+SUMMARY	downloaded=18 existing=16 gated_cases=0 failures=0
+# EXIT=0

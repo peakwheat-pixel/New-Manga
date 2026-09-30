@@ -1,0 +1,18 @@
+# shell=powershell cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=f1be5d2a51842bd42cadbbf1f56294d887e591a9 date=2026-09-30T00:40:21Z cmd=python test_assets/comic_golden_suite/tools/fetch_bj.py render --volumes 1 3 5
+vol01	RENDERED	page=1/209 2946x4167
+vol01	RENDERED	page=53/209 2946x4167
+vol01	RENDERED	page=105/209 2946x4167
+vol01	RENDERED	page=209/209 2946x4167
+vol01	RENDER_OK	pages=4 duplicates=0
+vol03	RENDERED	page=1/221 2946x4167
+vol03	RENDERED	page=56/221 2946x4167
+vol03	RENDERED	page=111/221 2946x4167
+vol03	RENDERED	page=221/221 2946x4167
+vol03	RENDER_OK	pages=4 duplicates=0
+vol05	RENDERED	page=1/243 2946x4167
+vol05	RENDERED	page=61/243 2946x4167
+vol05	RENDERED	page=122/243 2946x4167
+vol05	RENDERED	page=243/243 2946x4167
+vol05	RENDER_OK	pages=4 duplicates=0
+SUMMARY	command=render volumes=3 failures=0
+# EXIT=0

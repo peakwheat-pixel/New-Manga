@@ -1,0 +1,5 @@
+# shell=powershell cwd=G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode HEAD=f1be5d2a51842bd42cadbbf1f56294d887e591a9 date=2026-09-30T00:40:04Z cmd=python test_assets/comic_golden_suite/tools/fetch_bj.py fetch --volumes 5
+vol05	FETCH	https://densho810.com/free/dl/005bj.zip
+vol05	FETCH_OK	zip=386575185B sha256=df25c0111cc520eb... pdf_pages=243 reused
+SUMMARY	command=fetch volumes=1 failures=0
+# EXIT=0

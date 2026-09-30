@@ -11,10 +11,35 @@
       "image_redistribution_status": "Images may be redistributed with attribution; kept out of Git by local asset policy",
       "local_path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04",
       "status": "READY",
-      "file_count": 4,
-      "image_file_count": 3,
-      "byte_size": 15940323,
+      "file_count": 9,
+      "image_file_count": 8,
+      "byte_size": 17782135,
       "files": [
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+          "byte_size": 43191,
+          "sha256": "ca59717767bf5b15175f9c0477b2569acf110d31bac76c5cd4e1cb5a9e5fca75"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+          "byte_size": 574697,
+          "sha256": "2ba94c233d18fc9aaa738da29f725328082174fdcda59d982df39a849f4aacdb"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+          "byte_size": 66535,
+          "sha256": "f517dc7bdd71e02a1953ff2cb9cee8f6e1297a8898216830617e5921a48261dc"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P07.jpg",
+          "byte_size": 613669,
+          "sha256": "9a72dbf2170622fb7f7eb5cb98f7b01acba46c8f7acdbe39491ac42af67836f5"
+        },
+        {
+          "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ja_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+          "byte_size": 543720,
+          "sha256": "ac4e67e9245a423fbe5039b2e5a4a49db74265ce16e822a4d86dae7c13e0d6d7"
+        },
         {
           "path": "日漫_JA/02_open_ground_truth_peppercarrot/ep04/ep04_Stroke-of-genius_lang-pack.zip",
           "byte_size": 14428439,
@@ -628,10 +653,35 @@
       "image_redistribution_status": "Images may be redistributed with attribution; kept out of Git by local asset policy",
       "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
       "status": "READY",
-      "file_count": 4,
-      "image_file_count": 3,
-      "byte_size": 16292579,
+      "file_count": 9,
+      "image_file_count": 8,
+      "byte_size": 17757746,
       "files": [
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P00.jpg",
+          "byte_size": 57213,
+          "sha256": "bd5ea2f8aa9febb3f25121b8a59a5ddf9e19ca2c0c7775723bb84f9e85c570e7"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P01.jpg",
+          "byte_size": 570610,
+          "sha256": "ab493bbaace01e961ff59f16e0868f8866b08554c2921c1e2a42ca6ec375f8f8"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P04.jpg",
+          "byte_size": 66535,
+          "sha256": "f517dc7bdd71e02a1953ff2cb9cee8f6e1297a8898216830617e5921a48261dc"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P06.jpg",
+          "byte_size": 252232,
+          "sha256": "52ef35b4bb5ff2f260338ace4ae2e9bdf1154c455fed15844c3ae714238c7d21"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P08.jpg",
+          "byte_size": 518577,
+          "sha256": "8fa65fdb0d34983408ab154cc98a6dafd5904887c3a8fec68ae84524719fadc0"
+        },
         {
           "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04/ep04_Stroke-of-genius_lang-pack.zip",
           "byte_size": 14428439,
@@ -662,7 +712,69 @@
       "pipeline_execution_status": "NOT_RUN",
       "notes": "French-origin open webcomic with Korean localization; not Korean-origin Webtoon. SVG text nodes exist for all three pages.",
       "attribution": "Artwork and episode by David Revoy; follow attribution details on the official Korean E04 source page."
+    },
+    {
+      "asset_id": "peppercarrot_e20_ko",
+      "source": "https://www.peppercarrot.com/kr/webcomic/ep20_The-Picnic__sources.html",
+      "license": "CC BY 4.0 with attribution",
+      "image_redistribution_status": "Images may be redistributed with attribution; kept out of Git by local asset policy",
+      "local_path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+      "status": "READY",
+      "file_count": 8,
+      "image_file_count": 7,
+      "byte_size": 24339622,
+      "files": [
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/ep20_The-Picnic_lang-pack.zip",
+          "byte_size": 20373782,
+          "sha256": "5626914a60654d0fe5fb55cb74489433caf7c52665a825210ab3822f098e2f5a"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/kr_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+          "byte_size": 477560,
+          "sha256": "250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/kr_Pepper-and-Carrot_by-David-Revoy_E20P02.jpg",
+          "byte_size": 512573,
+          "sha256": "e6ea0d306bd353db62275c344e17807d4252d6f5574fc30d7120f28f783878c6"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/kr_Pepper-and-Carrot_by-David-Revoy_E20P03.jpg",
+          "byte_size": 587669,
+          "sha256": "dc23b0f16b02ce14f7d60ad1805dd13b9ce4e0ad5f6ead75cf4b955713d6e638"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/kr_Pepper-and-Carrot_by-David-Revoy_E20P04.jpg",
+          "byte_size": 474212,
+          "sha256": "87a342f78a2b1c387b4edfb8ed3b835f748dc13c1de15fcccea3d273daaf7b26"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/kr_Pepper-and-Carrot_by-David-Revoy_E20P05.jpg",
+          "byte_size": 495759,
+          "sha256": "c50404045f08bdd81001896082ede352bebd938e541ae31b2d119a9f6b5900cc"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/kr_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+          "byte_size": 514165,
+          "sha256": "3c7810ea30f93fc49ac8e9c5588ae14f5513ec4013e5c4ae3aa7b8893bdbca58"
+        },
+        {
+          "path": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20/kr_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
+          "byte_size": 903902,
+          "sha256": "32682007e0da031c284ef2f9f8ee2677265aeaa276373e96bac66b3680dc8c6c"
+        }
+      ],
+      "ground_truth_type": "Official Korean SVG text layer in the E20 language pack; seven selected rendered pages have paired SVG members; no bounding boxes or masks",
+      "pipeline_applicability": [
+        "ocr",
+        "text_detection",
+        "manga_page_render"
+      ],
+      "pipeline_execution_status": "NOT_RUN",
+      "notes": "French-origin open webcomic with Korean localization; not Korean-origin Webtoon. SVG text nodes exist for all seven pages.",
+      "attribution": "Artwork and episode by David Revoy; follow attribution details on the official Korean E20 source page."
     }
   ],
-  "updated_by_task": "M2-TA2C"
+  "updated_by_task": "M2-TA2B"
 }
