@@ -27,7 +27,7 @@ releases a task.
 
 [M2-TA2A](tasks/M2-TA2A.md)「JA Public Assets Bootstrap」已完成并由 Codex 集成于 `ef13a77bedf8bb06ee222113da186c7bfff09714`（delivery=`f8ef48c4079e03e57a7ed0da1e9b79c05e90979c`）；Owner=Codex Desktop，Reviewer=DeepSeek Harness（非作者），Integrator=Codex Desktop。实际取得 10 张 Pepper&Carrot 日语本地化页面图像与 2 个官方 SVG language-pack ZIP，以及 74 个 COO/Manga109Dialog XML 和 2 个 license 文件；JA inventory 为 88 文件 / 47,024,650 bytes。图像与归档留在本地 ignored 路径。该结果提供 10 个可枚举的 JA Smoke Case，但并非日本原创 Manga；E20P06/P07 仅有部分机器可读日文文字层，Open Ground Truth 仍为 `PARTIAL`。Manga109 图像仍为 0，L1 保持 65 个定义 / `PARTIAL`。
 
-~~原文（2026-09-30 用户裁决永久取消）：[M2-TA2B](tasks/M2-TA2B.md)「Manga109 Authorized Import」保留为 gated follow-up~~。**2026-09-30 用户裁决：Manga109/Manga109-s 前置永久取消**；[M2-TA2B](tasks/M2-TA2B.md) 重写为「JA/KO 开放素材池」`ready`（densho810.com 官方《ブラックジャックによろしく》全卷免费直链实证 + P&C 补充 + OpenMantra 隔离 optional；branch=`agent/zcode/M2-TA2B-OPEN-ASSETS`）。
+~~原文（2026-09-30 用户裁决永久取消）：[M2-TA2B](tasks/M2-TA2B.md)「Manga109 Authorized Import」保留为 gated follow-up~~。**2026-09-30 用户裁决：Manga109/Manga109-s 前置永久取消**；[M2-TA2B](tasks/M2-TA2B.md)「JA/KO 开放素材池」**`done` @integration `fae0d8f6`**（2026-09-30；densho810 BJ 官方免费 1/3/5 卷避 JASRAC、BJ01-BJ12 + P&C 17 页 + Manga109 取消标注 + OpenMantra 隔离 optional；DSH r1 approved_with_conditions → r2 approved，0×P0/P1/P2；交付链 tip=`98766fdc`，用户待办=densho810 利用报告邮件）。
 
 ### 2026-09-29 用户授权 Task：M2-TA2C No-HF JA/KO Asset Migration
 
@@ -120,7 +120,7 @@ flowchart TD
   RG --> TA1["M2-TA1 测试素材基础设施 · O:Codex ✓"]
   TA1 --> TA2A["M2-TA2A JA 公开素材引导 · O:Codex ✓"]
   TA2A --> TA2C["M2-TA2C No-HF JA/KO 素材迁移 · O:Codex ✓<br/>（集成=ZCode 代行）"]
-  TA1 -.-> TA2B["M2-TA2B 开放素材池 · ready（densho810 BJ 官方免费）"]
+  TA1 -.-> TA2B["M2-TA2B 开放素材池 · done @fae0d8f6"]
   TA2C -.-> TA3A["M2-TA3-A E2E Smoke · ready（depends_on TA2B）"]
   TA3A -.-> TA3B["M2-TA3-B 质量 qualification · proposed 暂缓"]
   DOC["Real docTR qualification · 正式 run done FAIL；候选 C1-C5 待释放"]
@@ -129,7 +129,7 @@ flowchart TD
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
   classDef backlog fill:#eef1f5,stroke:#697386,color:#123;
   class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C done;
-  class TA2B,TA3 proposed;
+  class TA3 proposed;
   class DOC backlog;
 ```
 

@@ -11,7 +11,7 @@ depends_on: [M2-TA1]
 base_commit: null
 branch: null
 worktree: null
-integration_commit: null
+integration_commit: fae0d8f6f4e2009595993c284f1c3f436c2f12f8
 ---
 
 # M2-TA2B：Manga109 Authorized Import
@@ -42,11 +42,11 @@ integration_commit: null
 id: M2-TA2B
 title: "JA/KO 开放素材池（用户方案变更 2026-09-30）：ブラックジャックによろしく官方免费全卷 + Pepper&Carrot 补充；永久取消 Manga109 前置"
 kind: asset
-status: in_review
+status: done
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
-reviewer: DeepSeek Harness（待派发，非作者静态）
+reviewer: DeepSeek Harness（非作者静态：r1 approved_with_conditions → r2 approved）
 depends_on: []
 base_commit: 9db2dca892e7fe1db5bf89c0a35501df014e653e
 branch: agent/zcode/M2-TA2B-OPEN-ASSETS
@@ -130,3 +130,4 @@ integration_commit: null
 - 2026-09-30 DeepSeek Harness 静态 Review r1（被审 tip `4d0e9db8`）：**`approved_with_conditions`**——P0=0、P1×1（OpenMantra 三处登记与实际状态矛盾）、P2×6（BJ 校验路径缺失/来源计数陈旧/KO URL /ko/、fetch_bj 零测试/AC6+AC8 归档缺失/horizontal_text 覆盖缺口）、P3×9。DSH 以官方一手页面逐条复核了 densho810 许可事实（含 JASRAC 页位 2 卷 p35/54/150/151/153、7 卷 p192、11 卷 p77），确认署名/报告/Kindle 禁令表述准确、报告邮件发送动作留给用户。
 - 2026-09-30 ZCode 返修 commit `118b4df3`（amend 自 `a93a61f3`，仅修 ac6 日志尾随空格与元数据，轨迹如实披露）：闭合 P1-1（README/inventory/cases.json 三处 OpenMantra 登记同步，inventory 加 `inventory_tracking: excluded_optional_noncommercial_checksums`）、P2-1（`fetch_bj.py verify` 子命令对照 cases.json `page_sha256` 重算 12/12 OK + README 登记为绿色门槛）、P2-2（ja/ko source 计数 15 图/17 文件 + byte_size 按 inventory 求和 + 新增 `black_jack_official_free` benchmark_source 18 文件/2,251,373,940 B）、P2-3（K14–K25 溯源 URL 12 处 /ko/→/kr/）、P2-4（新增 `test_fetch_bj.py` 离线单测，最终 8 个：跨 host 重定向拒（r2 N-3 补 RedirectGuard 直接驱动判别用例）/Content-Length 缺失与超限拒（r2 N-3 强化：缩小上限使仅 size-cap 守卫可拒绝）/非 ZIP 不发布/原子发布/__MACOSX 跳过/JASRAC 拒收）、P2-5（`ac6-zero-change-diff.log` 零变化证明 + `ac8-scope-proof.log` 范围审计：diff 仅允许路径、禁改路径零命中、素材 check-ignore 生效、diff --check EXIT=0）、P2-6（BJ04 补 `horizontal_text`，编排侧目检确认「GIVE MY REGARDS TO BLACK JACK」横排标签与横排副题；断言集合同步）、P3-3/P3-4/P3-5/P3-6/P3-7 落字（KO ZIP 3→2、官方署名格式「ブラックジャックによろしく　佐藤秀峰」+attribution_note 另列、fetch --volumes 校验进 try + 死分支删除、README 取消语义与 COO 豁免说明）、P3-1（`ac5b-openmantra-verification.log` 13 文件 SHA-256 复验补齐可复现证据）。P3-2 计数勘误（7 份）。P3-8/P3-9 信息性/越界不处理（P3-9 登记候选任务）。回归：pytest 46 passed（39+7；r2 收口后 47）、fetch_bj verify 12/12、assets verify ja/ko EXIT=0。
 - 2026-09-30 DeepSeek Harness 限定复核 r2（被审 tip `31dcbde0`/返修 `118b4df3`）：**`approved`**——r1 全部条件 closed（独立复算字节求和/哈希/映射），0×P0/P1/P2，新增 8 项 P3 记录（N-1 草稿署名串、N-2 naming_note 范围、N-3 判别力措辞、N-4/N-5/N-8 代码候选、N-6 快照口径说明、N-7 报告归档）。集成收口：N-1/N-2/N-3/N-6 已随 r2 收口 commit 闭合，N-4/N-5/N-8 登记候选，N-7 归档随集成 commit。
+- 2026-09-30 ZCode（代行 Codex）集成：merge `fae0d8f6`（base `9db2dca8`，分支 tip `98766fdc`；交付链 f1be5d2a→704df9bc→4d0e9db8→118b4df3→31dcbde0→98766fdc）。r1/r2 报告归档 `doc/reviews/M2-TA2B-4d0e9db8-dsh-r1.md`（sha256 前 16 `26372181214ecc33`）、`doc/reviews/M2-TA2B-31dcbde0-dsh-r2.md`（`dff840c005038a09`）。post-merge 复跑（main @`fae0d8f6`）：pytest tests/m2_test_assets 47 passed、git diff --check EXIT=0；素材在盘门槛（fetch_bj verify 12/12、assets verify ja/ko full EXIT=0、INVENTORY checked=110 missing=0）以交付链内日志 `raw/ac7b`/`ac7d` 为准（素材本体 gitignored，仅存在于 Owner worktree）。**Task done。**
