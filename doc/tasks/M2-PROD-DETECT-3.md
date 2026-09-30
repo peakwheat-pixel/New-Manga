@@ -2,7 +2,7 @@
 id: M2-PROD-DETECT-3
 title: "core.detect 命令面扩展 + frozen 进程内真实 detect 端到端验证（M2-PROD-DETECT-2 AC5 PARTIAL 闭合；Goal T1，自治执行 2026-10-01）"
 kind: feature
-status: in_progress
+status: in_review
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -12,9 +12,12 @@ depends_on: [M2-PROD-DETECT-2]
 base_commit: 095e314dad490781ec5d8c1b5b88d53ae0b5d39c
 branch: agent/zcode/M2-PROD-DETECT-3
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-3-zcode
+delivery_head: 46d20842
 ---
 
 # M2-PROD-DETECT-3：core.detect 命令面扩展 + frozen detect 端到端验证
+
+> 交付记录：`doc/handoffs/M2-PROD-DETECT-3-983a50d5.md`（实现 9d29a0c9 → 修复 983a50d5 → 证据 46d20842；构建输入绑定 983a50d5）。
 
 ## 来源与目标
 
