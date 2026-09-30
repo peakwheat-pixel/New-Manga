@@ -2,7 +2,7 @@
 id: M2-PROD-DETECT-3
 title: "core.detect 命令面扩展 + frozen 进程内真实 detect 端到端验证（M2-PROD-DETECT-2 AC5 PARTIAL 闭合；Goal T1，自治执行 2026-10-01）"
 kind: feature
-status: ready
+status: in_progress
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -30,12 +30,37 @@ worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-3-zcode
 
 ## Acceptance Criteria
 
-- [ ] AC1（协议与命令）：`PROTOCOL_MINOR` 1→1.1（常量+docstring Allowed commands 列表）；`core.detect` handler（base64 解码 fail-closed/字节计数校验/provider 解析/typed error envelope/elapsed 计时）；既有三命令与 Unknown command 行为零变化。
-- [ ] AC2（单元测试）：core_detect 命令 handler 测试（mock provider：正常输出直通/空页零候选/typed NOT_CONFIGURED/坏 base64/尺寸不符/超大载荷拒绝）+ 既有命令回归。
-- [ ] AC3（重建与 GATE）：新 onedir+NSIS 构建；GATE 25/25；M2-AC5 raw 还原（既有先例）。
-- [ ] AC4（frozen 端到端探针）：安装后环境 core_service.exe 发 core.detect 真实推理（manga 权重包内）PASS + core.detect 在无权重安装（-SkipWeights 产物或移权重）typed NOT_CONFIGURED PASS + doctr backend 切回语义探针。
-- [ ] AC5（回归与纪律）：pytest 三套件基数（401+1 既有失败+新增）；cargo/vitest 留痕；diff --check EXIT=0；禁改面空。
-- [ ] AC6（交付）：Task/Handoff/verification 证据回填。
+- [x] AC1（协议与命令）：`PROTOCOL_MINOR` 1→1.1（常量+docstring Allowed commands 列表）；`core.detect` handler（base64 解码 fail-closed/字节计数校验/provider 解析/typed error envelope/elapsed 计时）；既有三命令与 Unknown command 行为零变化。
+- [x] AC2（单元测试）：core_detect 命令 handler 测试（mock provider：正常输出直通/空页零候选/typed NOT_CONFIGURED/坏 base64/尺寸不符/超大载荷拒绝）+ 既有命令回归。
+- [x] AC3（重建与 GATE）：新 onedir+NSIS 构建；GATE 25/25；M2-AC5 raw 还原（既有先例）。
+- [x] AC4（frozen 端到端探针）：安装后环境 core_service.exe 发 core.detect 真实推理（manga 权重包内）PASS + core.detect 在无权重安装（-SkipWeights 产物或移权重）typed NOT_CONFIGURED PASS + doctr backend 切回语义探针。
+- [x] AC5（回归与纪律）：pytest 三套件基数（401+1 既有失败+新增）；cargo/vitest 留痕；diff --check EXIT=0；禁改面空。
+- [x] AC6（交付）：Task/Handoff/verification 证据回填。
+
+## 实施记录（Owner=ZCode，2026-10-01）
+
+- 实现 commit `9d29a0c9`（core_service/core_assembly + 30 个新测试）；构建/闭包修复 commit `983a50d5`（torchvision stable-ABI 扩展 + GATE 协议 1.1 同步）；证据与交付见 Handoff。
+- **契约-事实偏差（裁决②的落实修正）**：`ports.detection` 的两个 provider（manga/doctr）的 `_validate_request` 只接受 **raw 像素缓冲**（rgb24/rgb32，"never an encoded file"），不接受 PNG/JPEG 编码字节。core.detect 的 wire 契约维持裁决②（base64 PNG/JPEG + 宽高声明），handler 内用 Pillow（transformers 依赖、已在 frozen 闭包）解码为 raw RGB 再构造 `DetectionRequest`；声明宽高 vs 解码尺寸不符 → `INVALID_REQUEST`；provider 的字节计数校验保持为第二道防线（typed `INVALID_INPUT` 直通）。`errors.py`/`ports.py` 零改动。
+- **装配事实修正（侦察登记）**：detector 不在 provider registry（registry 的 detection slot 是远程 `openai-vision-detection`）；pipeline detect step 用的是装配段构造的 detector 实例（`build_production_handlers(detector=…)`)。core_detect 经 `CoreServices.detector`（本次最小新增字段，默认 `None`）拿到**同一实例**——与 pipeline 严格同源、不绕过装配；mock 装配模式自然一致（装配段把 `MockLocalDetectionProvider` 同时注册进 registry 并设为 detector）。
+- **空候选语义**：core.detect 为观测/工具面，provider 零候选直通为空数组（与 pipeline step 的 `INVALID_INPUT` 不同——那是区域后续步骤需要写入目标的产品语义）。
+- **构建期实证修复（AC4 探针暴露）**：首次 frozen 进程内 detect 失败 `operator torchvision::nms does not exist`（transformers `_LazyModule` 包装为 "Could not import module 'RTDetrImageProcessor'"）——torchvision 0.29 的 C++ 算子改为 stable-ABI 扩展（`_C_stable`/`image_stable`）且经 `_load_library` 动态加载，而 PyInstaller `hook-torchvision` 仍 pin 旧名 `torchvision._C`，扩展从未进闭包（M2-PROD-DETECT-2 的 warn 分类曾登记为软告警；当时 frozen detect 结构性不可达故未暴露）。修复=`core_sidecar.spec` `ML_BINARY_IMPORT_MODULES` pin 两个扩展 + `_assert_ml_closure` 增加 binaries 断言（未来改名即 build 失败）。
+- **禁改面登记（唯一偏差）**：`packaging/m2ac5/run_clean_start_e2e.py` CS-L1 断言与请求 envelope 1.0→1.1（严格相等断言保持）——Task 允许范围 `packaging/m2ac5/**` 最小适配条款覆盖；裁决①「core.ping version 自然携带 1.1」的直接后承；不修则 GATE 必然 24/25（断言硬编码 minor=0 过期）。
+- **cargo 遗留（未修，登记）**：`apps/desktop/src-tauri/src/main.rs:1228`（`real_library_sidecar_round_trip_and_eof`）断言 `minor==0` 过期 → 1 failed；`apps/**` 为硬禁改面，产品主路径零影响（请求发 minor 0 被向后兼容接受、`decode_response` 不校验 minor 数值、GATE 含 Rust 宿主真实运行 25/25 PASS）；修复=断言改 `1`，交集成方/后续 slice。
+
+## 验证证据（M2-PROD-DETECT-3）
+
+全部证据在 `verification/M2-PROD-DETECT-3/`（README 有完整索引），构建输入绑定 `983a50d5`：
+
+| 验证 | 结果 |
+|---|---|
+| onedir | 1,118,300,869 B / 5,557 文件 / PyInstaller 238s |
+| NSIS | 460,814,288 B / sha256 `ea34041c…` / tauri 251s |
+| GATE（M2-AC5 runner） | 25/25 PASS（CS-E2 绑 `ea34041c…`；CS-L1 protocol 1.1） |
+| frozen 探针 | 4/4 PASS：FD-1 frozen 进程内真实推理（2 候选，conf 0.943/0.927，cold 21.4s/热 4.7s）+ FD-2 无权重 typed NOT_CONFIGURED + FD-2b 恢复 + FD-3 doctr typed NOT_CONFIGURED —— **M2-PROD-DETECT-2 AC5 的 NOT_RUN 子项（frozen 进程内 ML import/detect）转 RUN** |
+| pytest 三套件 | providers 289+1（既有环境性失败保持）/ m2_acceptance 35 / core 107（基数 77 + 新增 30） |
+| cargo / vitest | 43+1 failed（main.rs:1228 Rust 断言过期，登记）/ 31 passed |
+| diff --check | `46f079e8..HEAD` EXIT=0 |
+| 禁改面 | providers/ports/acceptance_bridge/apps/tauri.conf.json/requirements.txt/experiments 零 diff；唯一偏差=run_clean_start_e2e.py 协议 1.1 同步（上节登记）；权重零 tracked |
 
 ## 允许修改范围
 

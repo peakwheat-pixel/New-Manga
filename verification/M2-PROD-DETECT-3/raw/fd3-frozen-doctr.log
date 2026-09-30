@@ -1,0 +1,4 @@
+$ frozen core_service.exe session (wall 305ms)
+exit=0
+--- stderr ---
+WARNING: detector weights not found (weights name 'fast_base-688a8b34.pt'); probed candidates, none exists: C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\fd3-data-root\models\detector\fast_base-688a8b34.pt | C:\Users\49745\AppData\Local\Temp\m2ac5-cleanstart\install\resources\core-sidecar\models\detector\fast_base-688a8b34.pt; the detect step will fail closed with PROVIDER_NOT_CONFIGURED until the weights are placed on the data root or set via NEWMANGA_DETECTOR_WEIGHTS

@@ -1,0 +1,4 @@
+$ frozen core_service.exe session (wall 5392ms)
+exit=0
+--- stderr ---
+Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]Loading weights:  66%|��������������   | 511/770 [00:00<00:00, 5069.49it/s]Loading weights: 100%|��������������������| 770/770 [00:00<00:00, 7310.46it/s]
