@@ -2,7 +2,7 @@
 id: M2-FIX-REGISTRY-READINESS-ENV
 title: "test_registry_readiness 环境断言条件化（遗留 slice③；Goal T3，自治执行 2026-10-01）"
 kind: fix
-status: in_progress
+status: in_review
 approval: user_autonomous_mode_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -29,9 +29,9 @@ worktree: G:/CODEX/New Manga.worktrees/M2-REGISTRY-ENV-zcode
 
 ## AC
 
-- [ ] AC1 修复：条件化/改写 + 测试在新 venv PASS 或 skip（显式理由）+ 在无 torch 环境的判别力论证（如可低成本模拟）
-- [ ] AC2 回归：pytest 三套件全绿（无 failed）；基数变化如实登记
-- [ ] AC3 纪律：diff --check；仅 tests/**（如需 conftest 最小适配）+ Task/Handoff
+- [x] AC1 修复：条件化/改写 + 测试在新 venv PASS 或 skip（显式理由）+ 在无 torch 环境的判别力论证（如可低成本模拟）—— 方案 a 落地（`tests/providers/test_registry_readiness.py`，fix commit 见 Handoff）：`torch` 在位（T1.1.1+ 主 venv 标志）→ `pytest.skip` 显式理由（引 T1.1.1 用户批准 requirements 事实 + `packaging/m2ac5/core_sidecar.spec` `_assert_ml_closure` 构建期闭包断言接管，M2-PROD-DETECT-2）；断言循环逐字未动。主 venv 实跑：`7 passed, 1 skipped` EXIT=0，skip 理由全文可见（`-rs`）。判别力低成本模拟（受控 stub `find_spec` 直接驱动测试函数，主 venv python）：[1] 全模块缺位（无 torch 环境等价）→ 断言循环逐字执行 PASS（无 skip 无 fail）；[2] 无 torch 但 `paddleocr` 漂移出现 → `AssertionError`（TASK-019 原报警消息）。双路径均符合设计。
+- [x] AC2 回归：pytest 三套件全绿（无 failed）；基数变化如实登记—— 主 venv `G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312`（PYTHONPATH=src）：`tests/providers` **289 passed + 1 skipped**、`tests/m2_acceptance` **35 passed**、`tests/core` **77 passed**——三套件合计 **401 passed + 1 skipped，0 failed**（设计决策预估的「402 passed 0 failed」以实跑为准修正为「401 passed + 1 skipped + 0 failed」；本测试由 failed 转 skipped，不产生 passed）。**口径终结说明**：历轮 Task 测试表登记的「tests/providers +1 既有环境性失败（`test_no_model_runtime_is_installed_in_this_environment`）」自本 Task 交付起终结——后续 Task 测试表不再出现该项；providers 基数口径为「289 passed + 1 skipped（env-conditioned，理由见本 Task）」。
+- [x] AC3 纪律：diff --check；仅 tests/**（如需 conftest 最小适配）+ Task/Handoff—— 变更仅 `tests/providers/test_registry_readiness.py` + 本 Task + Handoff，**零 conftest 改动**；`src/**`、`packaging/**`、`requirements*` 零触碰；base 对照留痕：修复前同 venv 同文件 `1 failed, 7 passed`（`AssertionError: torch unexpectedly present`，fix commit 前实测）。
 
 ## 允许/禁止
 
