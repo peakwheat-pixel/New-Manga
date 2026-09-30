@@ -3,7 +3,7 @@ task_id: M2-PROD-DETECT-3
 author: ZCode
 recipient: Codex（integrator）；reviewer=DeepSeek Harness（非作者）
 base_commit: 46f079e8
-delivery_head: 9bcfd969（tip；构建被测输入=983a50d5，其后仅 doc/hygiene）
+delivery_head: 69a6e4e1（集成轮证据 commit；构建被测输入=7314ad20；Owner 轮构建输入=983a50d5）
 status: in_review
 ---
 
@@ -71,12 +71,14 @@ M2-PROD-DETECT-2 AC5 的 PARTIAL 判定源头——「frozen 命令面无 detect
 5. 真干净 Windows 覆盖仍为 M2 Release Gate 口径冻结 NOT_RUN（沿用既有边界）。
 6. 上轮 NSIS `07d7daa1…` → 本轮 `ea34041c…`（+632,976 B，torchvision 扩展等闭包增量）。
 
-## 提交列表（branch `agent/zcode/M2-PROD-DETECT-3`，未 push；**tip=`9bcfd969`**）
+## 提交列表（branch `agent/zcode/M2-PROD-DETECT-3`，未 push；**tip=69a6e4e1 及其后的本记录 commit**）
 
 - `9d29a0c9` implement：core_service/core_assembly + 30 新测试 + 既有测试协议断言同步
-- `983a50d5` fix：spec torchvision stable-ABI pin + binaries 断言；GATE CS-L1 协议 1.1 同步（**构建被测输入 commit**）
+- `983a50d5` fix：spec torchvision stable-ABI pin + binaries 断言；GATE CS-L1 协议 1.1 同步（**Owner 轮构建被测输入 commit**）
 - `46d20842` evidence：verification/M2-PROD-DETECT-3/**（probe + raw + README）+ Task 回填 + 本 Handoff
 - `9bcfd969` hygiene（raw 日志 LF 规范化 + EOF 空行剥离；探针脚本写 LF；内容不变；`git diff --check 46f079e8..HEAD` EXIT=0 恢复）+ task record（frontmatter `delivery_head`→tip、`status`→`in_review`，doc-only，随本 tip 在库）
+- `7314ad20` **integration（acting Codex）**：DSH r1 R1-R17 处置——§8 脱敏+§10 契约例外+偏差追认+main.rs:1228+像素/格式上限+测试加固（**集成轮构建被测输入 commit**）
+- `69a6e4e1` **evidence（集成轮）**：重建+GATE+探针复跑绑定 7314ad20；README/Task/Handoff 同步（R12/R16 口径更正在库）
 
 ## 集成轮（acting Codex，2026-10-01）——DSH r1 条件全闭 + 全量重建复跑
 

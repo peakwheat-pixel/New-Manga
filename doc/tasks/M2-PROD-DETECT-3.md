@@ -12,7 +12,7 @@ depends_on: [M2-PROD-DETECT-2]
 base_commit: 46f079e83f39ae945c456f8876994ff609a7e0cb
 branch: agent/zcode/M2-PROD-DETECT-3
 worktree: G:/CODEX/New Manga.worktrees/M2-PROD-DETECT-3-zcode
-delivery_head: 9bcfd969（Owner 交付 tip；集成修正后由集成方锚定，见「集成修正记录」）
+delivery_head: 69a6e4e1（集成轮证据 commit；链=9d29a0c9→983a50d5→46d20842→9bcfd969→7314ad20（集成修正/重建输入）→69a6e4e1；status 保持 in_review，merge 由编排会话执行）
 base_commit_note: 分支实际 base=46f079e8（release T1/T2/T3 同基分发）；契约（core.detect wire 设计）编写时参考的代码基线为 095e314d（46f079e8 的直接父代，见 git log），集成时已按 DSH r1 R13 更正锚点。
 ---
 
