@@ -146,7 +146,8 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         assert res["request_id"] == "req-4"
         assert res["error"] is None
         assert res["result"]["status"] == "ready"
-        assert res["result"]["protocol_version"] == {"major": 1, "minor": 0}
+        # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added)
+        assert res["result"]["protocol_version"] == {"major": 1, "minor": 1}
         assert res["result"]["capabilities"] == ["library.list_books"]
 
         # 6. ListBooks on empty repository
@@ -223,8 +224,62 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         assert ping_resp["request_id"] == "p-1"
         assert ping_resp["error"] is None
         assert ping_resp["result"]["status"] == "ready"
-        assert ping_resp["result"]["protocol_version"] == {"major": 1, "minor": 0}
+        # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added)
+        assert ping_resp["result"]["protocol_version"] == {"major": 1, "minor": 1}
         assert ping_resp["result"]["capabilities"] == ["library.list_books"]
+
+        # 1b. core.detect in the REAL production assembly (M2-PROD-DETECT-3):
+        # no weights exist under this temp data root, so the assembled manga
+        # provider must fail closed with the typed PROVIDER_NOT_CONFIGURED
+        # envelope (ruling 5 of M2-PROD-DETECT-2) instead of any untyped
+        # error -- over stdio, in a real subprocess.
+        import base64
+        import io
+
+        from PIL import Image
+
+        buffer = io.BytesIO()
+        Image.new("RGB", (16, 16), "white").save(buffer, "PNG")
+        detect_resp = send_and_recv({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": 1, "minor": 1},
+            "request_id": "d-1",
+            "command": "core.detect",
+            "payload": {
+                "page": base64.b64encode(buffer.getvalue()).decode("ascii"),
+                "width": 16,
+                "height": 16,
+            },
+        })
+        assert detect_resp["request_id"] == "d-1"
+        assert detect_resp["result"] is None
+        assert detect_resp["error"] is not None
+        assert detect_resp["error"]["code"] == "PROVIDER_NOT_CONFIGURED"
+        assert detect_resp["error"]["retryable"] is False
+
+        # 1c. core.detect payload validation stays fail-closed over the wire
+        detect_bad_resp = send_and_recv({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": 1, "minor": 1},
+            "request_id": "d-2",
+            "command": "core.detect",
+            "payload": {"page": "!!!not base64!!!", "width": 16, "height": 16},
+        })
+        assert detect_bad_resp["request_id"] == "d-2"
+        assert detect_bad_resp["result"] is None
+        assert detect_bad_resp["error"]["code"] == "INVALID_REQUEST"
+
+        # The process is still alive and responsive after detect errors
+        alive2_resp = send_and_recv({
+            "protocol": PROTOCOL_NAME,
+            "version": {"major": 1, "minor": 1},
+            "request_id": "d-alive",
+            "command": "core.ping",
+            "payload": {},
+        })
+        assert alive2_resp["request_id"] == "d-alive"
+        assert alive2_resp["error"] is None
+        assert alive2_resp["result"]["status"] == "ready"
 
         # 2. ListBooks when empty
         empty_resp = send_and_recv({

@@ -562,6 +562,16 @@ class CoreServices:
     #: Reader tile factory (Qt-free: stdlib streaming PNG, TASK-020/042);
     #: the cache lives under the managed root.
     tile_factory: Callable[[str], TiledPageRasterizer]
+    #: M2-PROD-DETECT-3: the detection adapter the pipeline ``detect`` step
+    #: uses (manga/doctr backend selection + weights resolution, or the mock
+    #: provider behind ``mock_local_providers``), exposed so the frozen
+    #: command surface's ``core.detect`` resolves the SAME provider instance
+    #: instead of building a second one. ``None`` keeps every existing
+    #: construction valid and makes ``core.detect`` fail closed with the
+    #: typed PROVIDER_NOT_CONFIGURED (same capability-gap slot as the
+    #: pipeline step). Provenance object only -- core_service never writes
+    #: Regions through it.
+    detector: object = None
 
 
 def _resolve_detector_weights_path(
@@ -1019,6 +1029,9 @@ def assemble_core_services(
             transport=transport,
             data_root=data_root,
             tile_factory=tile_factory,
+            # M2-PROD-DETECT-3: expose the pipeline's own detector so
+            # core_service's core.detect resolves the same instance.
+            detector=detector,
         )
     except Exception:
         conn.close()
