@@ -66,6 +66,10 @@ def _wired_detector(handler):
 def test_detector_is_wired_and_fails_closed_without_weights(
     tmp_path: Path, monkeypatch
 ) -> None:
+    # M2-PROD-DETECT-1: the assembly default backend became "manga"; this
+    # test keeps verifying the released doctr wiring, so it selects that
+    # backend explicitly (switching back is byte-identical behaviour).
+    monkeypatch.setenv("NEWMANGA_DETECTOR_BACKEND", "doctr")
     absent_weights = tmp_path / "absent" / "fast_base-688a8b34.pt"
     monkeypatch.setenv("NEWMANGA_DETECTOR_WEIGHTS", str(absent_weights))
     monkeypatch.delenv("NEW_MANGA_DOCTR_WEIGHTS", raising=False)
