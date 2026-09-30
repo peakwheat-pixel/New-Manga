@@ -2,7 +2,7 @@
 id: DIAG-M2-LOCK-CHANGED-REPRO-002
 title: M2-AC1 登记的 regionless LOCK_CHANGED 缺口——mock detect 两段式复现核实（M2-TA3-A L-1）
 kind: diagnosis
-status: ready
+status: in_progress
 approval: released_by_codex_proxy
 suggested_owner: ZCode
 owner: ZCode
