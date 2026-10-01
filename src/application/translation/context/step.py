@@ -49,6 +49,11 @@ class TranslationRequest:
     targets: tuple[TargetSlot, ...]
     options: Mapping = field(default_factory=dict)
     context_provenance: dict = field(default_factory=dict)
+    #: M2-SFX-SEM-1 widening: region_id -> region_type for every entry in the
+    #: request (primary and context roles alike), so a provider adapter can
+    #: specialize SFX onomatopoeia. Empty when the caller omits bundle types.
+    region_types: Mapping[str, str] = field(default_factory=dict)
+    # Reserved provenance field (r2 R5): no production consumer — production type-passing lives in handlers.py::handle_translate.
 
 
 @dataclass(frozen=True)
@@ -128,6 +133,9 @@ def build_provider_request(
         targets=targets,
         options=dict(options or {}),
         context_provenance=bundle.provenance(),
+        region_types={
+            entry.region_id: entry.region_type for entry in bundle.entries
+        },
     )
 
 

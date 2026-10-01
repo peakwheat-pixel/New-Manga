@@ -201,3 +201,32 @@ def test_tm_matches_never_write_final_translation() -> None:
     assert result.translation_for("r1") == "新译文"
     stored = service._store.get(matches[0].entry.tm_id)
     assert stored.usage_count == 0  # usage is recorded by the consumer, if at all
+
+
+def test_provider_request_carries_region_types() -> None:
+    """M2-SFX-SEM-1: build_provider_request maps every bundle entry's
+    region_type (primary and context roles alike) onto the request, so a
+    provider adapter can specialize SFX onomatopoeia."""
+
+    mixed_page = PageContextInput(
+        page_id="p1",
+        sort_order=0,
+        regions=(
+            make_region("r1", 1, ocr_text="目標文", region_type="speech"),
+            make_region("r4", 2, ocr_text="訳すSFX", region_type="sfx", sfx_policy="translate"),
+            make_region("r5", 3, ocr_text="ナレーション", region_type="narration"),
+            make_region("ctx", 4, ocr_text="前のページ", region_type="narration"),
+        ),
+    )
+    request = build_provider_request(
+        bundle=builder.build_single_page(
+            [mixed_page], target_page_id="p1", target_region_ids=["r1", "r4", "r5"]
+        ),
+        snapshot=frozen_snapshot(),
+    )
+    assert request.region_types == {
+        "r1": "speech",
+        "r4": "sfx",
+        "r5": "narration",
+        "ctx": "narration",
+    }

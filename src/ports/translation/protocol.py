@@ -33,10 +33,25 @@ def estimate_tokens(text: str) -> int:
     return max(1, sum(2 if ord(char) > 0x2E80 else 1 for char in text) // 2)
 
 
+#: Widened region-type value set (M2-SFX-SEM-1): mirrors
+#: ``domain.regions.entities.RegionType``. The ports layer never imports the
+#: domain layer (no precedent), so this copy is fail-closed by value and the
+#: two definitions MUST be kept in sync — a new RegionType member added in
+#: the domain without extending this set will be rejected here.
+REGION_TYPE_VALUES = frozenset(
+    {"speech", "narration", "sfx", "title", "note", "other"}
+)
+DEFAULT_REGION_TYPE = "speech"
+
+
 @dataclass(frozen=True)
 class RegionInput:
     region_id: str
     text: str
+    #: Widening with a default (M2-FIX-LISTBOOKS rev-1.2 precedent): existing
+    #: two-argument constructions keep their meaning (= speech). SFX entries
+    #: carry ``"sfx"`` so the provider prompt can specialize onomatopoeia.
+    region_type: str = DEFAULT_REGION_TYPE
 
 
 @dataclass(frozen=True)
@@ -69,12 +84,21 @@ class TranslationRequestPayload:
                     f"invalid region_id in request: {region.region_id!r}",
                     stage="translate",
                 )
+            if region.region_type not in REGION_TYPE_VALUES:
+                raise ProviderInputError(
+                    f"invalid region_type in request: {region.region_type!r}",
+                    stage="translate",
+                )
 
     def payload(self) -> dict:
         return {
             "page_id": self.page_id,
             "regions": [
-                {"region_id": region.region_id, "text": region.text}
+                {
+                    "region_id": region.region_id,
+                    "text": region.text,
+                    "region_type": region.region_type,
+                }
                 for region in self.regions
             ],
             "context": [

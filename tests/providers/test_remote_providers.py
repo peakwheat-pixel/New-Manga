@@ -272,3 +272,64 @@ def test_sakura_translation_runs_against_a_local_double(fake_transport) -> None:
     payload = build_request_payload("page-1", [RegionInput("r1", "こんにちは")])
     assert provider.translate(payload).translations == {"r1": "你好"}
     assert fake_transport.urls == ["http://127.0.0.1:8080/v1/chat/completions"]
+
+
+# --- M2-SFX-SEM-1: SFX semantic specialization ------------------------------
+
+
+def test_system_prompt_carries_sfx_specialization() -> None:
+    """The SFX block pins the semantics: cultural equivalence into the target
+    language's natural onomatopoeia, never syllable transliteration, kept
+    intensity/brevity, dialogue semantics unchanged."""
+    from infrastructure.providers.translation_openai import TRANSLATION_SYSTEM_PROMPT
+
+    for marker in (
+        "onomatopoeia",
+        "CULTURAL EQUIVALENCE",
+        "never transliterate",
+        "at most 6 characters",
+        "intensity",
+        "shortest natural effect word",
+        "semantics unchanged",
+    ):
+        assert marker in TRANSLATION_SYSTEM_PROMPT, marker
+
+
+def test_user_text_carries_region_type(fake_transport) -> None:
+    """The request body's region entries expose region_type, so the model can
+    tell an sfx entry from speech (snapshot assertion on the sfx entry)."""
+    config = _config()
+    provider = OpenAiTranslationProvider(
+        config=config, client=OpenAiCompatibleClient(config, fake_transport)
+    )
+    fake_transport.default = chat_completion(
+        json.dumps(
+            {
+                "translations": [
+                    {"region_id": "sfx-1", "translated_text": "轰"},
+                    {"region_id": "r2", "translated_text": "你好"},
+                ]
+            }
+        )
+    )
+    payload = build_request_payload(
+        "page-1",
+        [
+            RegionInput("sfx-1", "ドガ", region_type="sfx"),
+            RegionInput("r2", "こんにちは"),
+        ],
+    )
+    provider.translate(payload)
+
+    body = json.loads(fake_transport.calls[0].body)
+    regions = json.loads(body["messages"][-1]["content"])["regions"]
+    assert regions[0] == {
+        "region_id": "sfx-1",
+        "text": "ドガ",
+        "region_type": "sfx",
+    }
+    assert regions[1] == {
+        "region_id": "r2",
+        "text": "こんにちは",
+        "region_type": "speech",
+    }
