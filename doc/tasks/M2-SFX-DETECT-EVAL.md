@@ -2,7 +2,7 @@
 id: M2-SFX-DETECT-EVAL
 title: "SFX 拟声词检测能力评估（用户产品裁决 2026-10-01 推进候选 2；评估先行纪律，生产零改动）"
 kind: experiment
-status: in_progress
+status: in_review
 approval: user_directive_2026-10-01_option2
 suggested_owner: ZCode
 owner: ZCode
@@ -12,6 +12,7 @@ depends_on: [M2-PROD-DETECT-3]
 base_commit: a9b054e8
 branch: agent/zcode/M2-SFX-DETECT-EVAL
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-EVAL-zcode
+delivery_head: d5bfd1fe（implement=评估产物+报告；handoff=doc/handoffs/M2-SFX-DETECT-EVAL-d5bfd1fe.md）
 ---
 
 # M2-SFX-DETECT-EVAL：SFX 拟声词检测能力评估
@@ -41,11 +42,19 @@ worktree: G:/CODEX/New Manga.worktrees/M2-SFX-EVAL-zcode
 
 ## Acceptance Criteria
 
-- [ ] AC1（候选调研报告）：≥3 候选登记（comic-text-detector NO-GO 证据链 / Manga-Bubble-YOLO / ogkalu 现状 + 如有其他补充）；每候选：许可/域/类别面/契约适配度/结论。
-- [ ] AC2（现状基线）：ogkalu 在 KO 素材的 SFX 检出对照抽检（≥20 帧，样本+预判+检出坐标入库）；C1/C4 既有证据引用汇总。
-- [ ] AC3（Manga-Bubble-YOLO 评估）：许可核查结论 → 通过则下载权重（sha256 登记）+ KO 素材推理（SFX 类输出）+ 与现状基线对照（检出数/位置合理性抽检）；NO-GO 则登记证据。
-- [ ] AC4（评估报告）：可行性结论（directional 明示）+ 方案对照表 + **集成路径草案**（检测/分类 → region sfx 类型 → SfxPolicy 门；正式 GT 重标注与用户审核列为集成前条件）。
-- [ ] AC5（纪律）：生产面零改动专项 diff；权重零入库；`git diff --check` EXIT=0。
+- [x] AC1（候选调研报告）：≥3 候选登记（comic-text-detector NO-GO 证据链 / Manga-Bubble-YOLO / ogkalu 现状 + 如有其他补充）；每候选：许可/域/类别面/契约适配度/结论。
+- [x] AC2（现状基线）：ogkalu 在 KO 素材的 SFX 检出对照抽检（≥20 帧，样本+预判+检出坐标入库）；C1/C4 既有证据引用汇总。
+- [x] AC3（Manga-Bubble-YOLO 评估）：许可核查结论 → 通过则下载权重（sha256 登记）+ KO 素材推理（SFX 类输出）+ 与现状基线对照（检出数/位置合理性抽检）；NO-GO 则登记证据。
+- [x] AC4（评估报告）：可行性结论（directional 明示）+ 方案对照表 + **集成路径草案**（检测/分类 → region sfx 类型 → SfxPolicy 门；正式 GT 重标注与用户审核列为集成前条件）。
+- [x] AC5（纪律）：生产面零改动专项 diff；权重零入库；`git diff --check` EXIT=0。
+
+### AC 完成记录（2026-10-01，delivery_head=`d5bfd1fe`）
+
+- **AC1**：5 候选登记（报告 §1）：ogkalu=现状基线（Apache-2.0，无 SFX 类）；`Kiuyha/Manga-Bubble-YOLO`=**NO-GO**（ONNX 元数据 `names={0:'text'}` 单类无 SFX + Ultralytics AGPL-3.0 权重许可主张 vs HF apache-2.0 标签冲突；Manga109-s 传导可满足）；`chiqui7/yolo11-manga-seg`=**EVAL**（HF MIT 标签，唯一有独立 sfx 类 `{0:bubble,1:panel,2:sfx,3:text}`，同 AGPL 元数据冲突）；`cozy-creator/manga-sfx-detector`=**NO-GO**（无许可/零来源链）；`dmMaze/comic-text-detector`=**NO-GO** 沿用 T1.1.1 先例（`doc/tasks/T1.1.1.md` L45-57，GPL-3.0+权重无独立 license）。
+- **AC2**：分层候选 44 单元（种子 20261001；A=C1 审定 11 / B=未抽检 FP 框 19 / C=未抽检零检出 14）→ 视觉确认 **23 主样本帧 / 29 实例**（`experiments/M2-SFX-DETECT/sfx-spot-check-verdicts.json`，逐帧依据+检出坐标全入库）。ogkalu（同权重 sha256 `037930a8…`，import C4 基座零改动）帧级检出率 directional：**12/23=52.2% @conf0.5、16/23=69.6% @0.25、硬盲区 7 帧**；C1 六个检出 FP 与四个零检出帧全部复现，阈值边缘不稳定量化（싸—아 0.5475 等）。
+- **AC3**：许可门=Manga-Bubble-YOLO **NO-GO 缩水分支激活**（类别面缺失是主否决项；AGPL 冲突登记为用户裁决项）→ 补充评估 chiqui7（MIT 标签）+ Kiuyha（参考对照）：同 23 帧推理，权重 sha256 pin 在 gitignored task-envs（`yolo11s-seg.onnx`=`d87389af…`、`yolo26n.onnx`=`b45c2e12…`，零入库）。对照（几何 coverage≥0.5）：chiqui7 sfx 类 11/29 实例、9/23 帧；ogkalu 18/29 实例；Kiuyha text 7/29。**ogkalu 7 个硬盲区帧中 6 个被 chiqui7 sfx 类真命中**（directional）；类内混淆与 1 处手部误报如实登记（报告 §3.3）。
+- **AC4**：报告 `verification/M2-SFX-DETECT-EVAL/sfx-detect-eval-report.md`——三问题结论（directional 全程明示）+ 候选表 + 集成路径草案（路径 A 独立 SFX 检测器 / B 现有检测器+后分类 / C 用户手动标记；src/ 只读核实 `RegionType.SFX`+`SfxPolicy`+`decide_sfx_translation` 门就绪，缺口在检测/分类）；集成前条件 5 项（正式 SFX GT 重标注+用户审核+许可裁决+域扩展验证+另行释放）。
+- **AC5**：`git diff --name-only 02bf68a0..HEAD` 仅 `doc/tasks/`+`experiments/M2-SFX-DETECT/**`+`verification/M2-SFX-DETECT-EVAL/sfx-detect-eval-report.md`；禁改路径（src/requirements/contracts/apps/packaging）触碰=0；`git diff --check 02bf68a0..HEAD` EXIT=0；权重文件 tracked=0（`git ls-files` 无 onnx/pt/safetensors）；pytest 三套件 providers **291 passed+1 skipped** / m2_acceptance **35 passed** / core **111 passed**（合计 437+1skipped，基数与 M2-PROD-DETECT-3 后 main 基线一致，生产零改动佐证）。环境披露：C4 GPU venv 内新装 `onnxruntime` 1.30.0（CPU provider，评估用）。
 
 ## 允许/禁止
 
