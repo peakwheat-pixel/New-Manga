@@ -2,7 +2,8 @@
 id: M2-SFX-DETECT-EVAL
 title: "SFX 拟声词检测能力评估（用户产品裁决 2026-10-01 推进候选 2；评估先行纪律，生产零改动）"
 kind: experiment
-status: in_review
+status: done
+integration_commit: cf4e55ec
 approval: user_directive_2026-10-01_option2
 suggested_owner: ZCode
 owner: ZCode
@@ -70,3 +71,12 @@ tip_note: implement=`d5bfd1fe`（评估产物+r1 报告）→ 收尾=`d98bab7e`�
 ## Claim 记录（Owner=ZCode，2026-10-01）
 
 status ready→in_progress；base=`a9b054e8`（delivery base=`02bf68a0`，release 证据 `verification/M2-SFX-DETECT-EVAL/release-a9b054e8.md`）；branch=`agent/zcode/M2-SFX-DETECT-EVAL`，linked worktree `G:/CODEX/New Manga.worktrees/M2-SFX-EVAL-zcode`。范围按 AC1-AC5 冻结：`experiments/M2-SFX-DETECT/**`、`verification/M2-SFX-DETECT/**`、Task/Handoff；`src/**`、requirements、contracts、apps/**、packaging/** 零改动；C4/C1 产物只读；权重不入库。许可门先行：Manga-Bubble-YOLO 许可 NO-GO 即走缩水交付分支（仅现状基线+集成路径建议）。
+
+## 集成记录（2026-10-01，acting Codex）
+
+- Review 轨迹：DSH r1 [changes_requested](../../doc/reviews/M2-SFX-DETECT-EVAL-c6eae9ad-dsh-r1.md)（1×P1 自比污染 + 6×P2）→ Owner review-fix `c6eae9ad`（R1-R14 全 closed：三分 provenance 口径重建、方向反转如实声明、许可一手快照补档、rationale 取值化）→ DSH r2 [approved](../../doc/reviews/M2-SFX-DETECT-EVAL-c6eae9ad-dsh-r2.md)（逐实例重算 11+1+17=29、非自比 7/18 复核一致；N1-N8 账目级转集成方）→ 集成修正 `72586945`（N1-N8 + R7 STATUS 收敛为指针式）。
+- merge=`cf4e55ec`；集成后 main pytest 三套件 **437 passed + 1 skipped 0 failed**（基数不变，生产零改动证实）。
+- **待用户裁决三件**（报告 §4.4 权威）：①SFX 检测可行性认定；②许可路径（chiqui7 HF MIT tag vs ONNX 元数据 AGPL 主张争议）；③集成路径 A（独立 SFX 检测器，+41.2MB）/B（现有检测器+后分类）/C（用户手动标记）。
+- DSH 报告入库 sha256：r1=`8642343055fb9ee4…`/r2=`fceb7aae9a4204fa…`。
+
+Owner branch/worktree 保留于 `72586945`。
