@@ -2,7 +2,7 @@
 id: M2-OCR-PADDLE3X-1
 title: "生产 ocr_local.py PaddleOCR 3.x 适配修复（bytes 静默忽略 + 3.x 输出形状 + 双 region 行为判定）"
 kind: feature
-status: ready
+status: in_review
 approval: ta3b_phase1_finding_registered_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
@@ -10,11 +10,26 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-TA3-B]
 base_commit: 69137837
+delivery_head: 15ef29ab
 branch: agent/zcode/M2-OCR-PADDLE3X-1
 worktree: G:/CODEX/New Manga.worktrees/M2-OCR-PADDLE3X-1-zcode
+handoff: doc/handoffs/M2-OCR-PADDLE3X-1-15ef29ab.md
+evidence: verification/M2-OCR-PADDLE3X-1/
 ---
 
 # M2-OCR-PADDLE3X-1：PaddleOCR 3.x 生产适配修复
+
+## AC 状态（2026-10-01，ZCode 交付，待 DSH review）
+
+| AC | 状态 | 证据 |
+|---|---|---|
+| AC1 诊断先行 | **done** | verdict=ALWAYS_EMPTY（stale-reuse 排除，wrong-text 风险不存在）；探针 `experiments/M2-OCR-PADDLE3X-1/diagnose_bytes_path.py`（隔离 venv 实测 EXIT=0），报告 `verification/M2-OCR-PADDLE3X-1/diagnosis.md` + `diagnosis.json`；结论已写入 module docstring |
+| AC2 输入侧修复 | **done** | recognize 前 bytes→BGR ndarray（`np.frombuffer`+`cv2.imdecode`，不可解码→typed `ProviderInputError`）；默认构造 `enable_mkldnn=False`；`engine_factory` 注入路径与 lazy 探针顺序不变；commit `15ef29ab` |
+| AC3 输出侧修复 | **done** | `_parse_paddle_output` 双形状（legacy 2.x 嵌套 + 3.x `rec_texts/rec_scores/rec_polys|rec_boxes`，dict 与 `.json` 对象两形态）；box 先 `.tolist()` 物化（N6 静默丢弃修复）；`rec_boxes` xyxy→4 点 polygon；缺失/短 scores 记 None 不发明；不可识别形状仍 typed `ProviderInvalidOutput`；`provider_id`/`provider_type`/错误码零变化 |
+| AC4 测试 | **done** | 先红后绿：`tests/providers/test_ocr_local.py` 17 测试（修复前 10 failed 红：3.x 解析抛 ProviderInvalidOutput / engine 收到 bytes / 无 mkldnn kwarg；修复后全绿）；主 venv 全量 490→**507 passed + 1 skipped 0 failed**；真实引擎端到端隔离 venv 手动验证（零注入生产路径页面级 28 行全 polygon 非空 + crop 等价性矩阵 6/6），证据 `verification/M2-OCR-PADDLE3X-1/e2e-real-engine.md` |
+| AC5 文档 | **done（登记替代）** | module docstring 已更新（观测 vs 机制、mkldnn 原因、版本口径）；D06 OCR 环节版本口径与两项引擎限制登记在 handoff（`doc/contracts/**` 与 D06 不在允许面，按任务书以 handoff 登记替代） |
+
+交付限制（如实登记，详见 handoff）：PP-OCRv5 det 对孤立小 crop 常检不出框、默认构造全预处理页面级质量低于精简预处理（conf 0.41 vs 0.69）——均超本 Task 授权面（构造参数授权仅 `enable_mkldnn=False`），待 D06/阶段二质量 Task 决策；TA3-B2 runner wrapper 输入约定需在 merge 本修复后一行适配（`ocr(data)` 将收到 ndarray）。
 
 ## 缺陷（M2-TA3-B 阶段一实证，DSH r1 R6/R10 + r2 N6 确认）
 
