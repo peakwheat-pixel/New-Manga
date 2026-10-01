@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import uuid
 from collections.abc import Callable
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from typing import Any, Mapping, Sequence
 
 from application.tasks.store import (
@@ -650,10 +650,11 @@ class PipelineService:
             if unit.step_type == "detect":
                 # TASK-049 AC ③: the detection step created the page's
                 # Regions; the task's still-regionless units (planned before
-                # any Region existed) now bind to the first one so ``ocr`` et
-                # al. run against a real Region target. Every additional
-                # Region gets a cloned unit chain appended, so a multi-region
-                # page is followed up per Region (M2-TASKS-BACKFILL-MULTIREGION).
+                # any Region existed) are REPLANNED against those live
+                # Regions — primary ``region_ids[0]`` included, so every
+                # region chain (SFX gate, locks, stages) is decided by the
+                # same procedure, wherever the region sits in the reading
+                # order (M2-TASKS-PRIMARY-SFX-GATE).
                 self._backfill_detected_regions(run, task, unit, result)
             self._mark_terminal(run, unit.unit_id)
             self._persist(run)
@@ -923,59 +924,59 @@ class PipelineService:
     def _backfill_detected_regions(
         self, run: PipelineRun, task: PipelineTask, unit: PlanUnit, result: StepResult
     ) -> None:
-        """Bind the task's regionless units to the detected Regions.
+        """Replan the task's regionless units against the detected Regions.
 
         Invariant:
             PlanUnit.target_id ≡ 该步骤的写目标 (Region 步骤 ⇒ Region id; Page 步骤 ⇒ Page id).
             _record_step_attempt 以 target_id 作为向 catalog 请求 current 快照的键。
-            因此当 detect 生成 Region 之后，后续 Region 步骤必须将 target_id 与 region_id
-            一同重绑到 primary Region，确保其 input_refs 与 optimistic lock 守卫比对
-            真实的 Region revision，避免抛出 LOCK_CHANGED (DIAG-M2-REGIONLESS-LOCK-CHANGED-001).
+            因此当 detect 生成 Region 之后，后续 Region 步骤必须以真实 Region 为
+            写目标，确保其 input_refs 与 optimistic lock 守卫比对真实的 Region
+            revision，避免抛出 LOCK_CHANGED
+            (DIAG-M2-REGIONLESS-LOCK-CHANGED-001).
 
-        Why unit_id is NOT changed:
-            PlanUnit.unit_id 保持不变，因为 run.terminal_unit_ids 以 unit_id 为键，
-            且在 plan 阶段已经标记终态。若在 backfill 时更改 unit_id，会导致终态计数丢失
-            或双计。unit_id 内嵌 page id 与真实 target 不一致为已知展示层债务，本处不改。
-
-        Multi-Region pages fan out (M2-TASKS-BACKFILL-MULTIREGION): beyond the
-        primary rebind above, every additional detected Region gets a full
-        unit chain planned by ``_plan_region`` against the live Region
-        snapshot and appended to the task — unit_id
-        ``{task_id}:{region_id}:{step_type}``, the exact shape and the exact
-        decision procedure the recovery path (``plan_run(mode="continue")`` /
+        Primary re-decision (M2-TASKS-PRIMARY-SFX-GATE, user ruling
+        2026-10-02 ②, closing DSH r1 R2): EVERY detected Region —
+        ``region_ids[0]`` included — gets its unit chain planned by
+        ``_plan_region`` against the live Region snapshot: the exact unit_id
+        shape (``{task_id}:{region_id}:{step_type}``) and the exact decision
+        procedure the recovery path (``plan_run(mode="continue")`` /
         ``resume_blocked``) already uses when it re-reads the page's live
         Regions. Initial runs and recovery therefore follow the same
-        per-region semantics, including the plan-level SFX policy gate
-        (``SKIP_POLICY`` and its propagation to the image steps, D06 §85) and
-        lock/stage skips that a verbatim decision copy could not see. The
-        fan-out set is exactly the detect output; Regions appearing mid-run
-        are picked up by the next (re-)plan, not by this run.
-        ``run.planned_step_units`` grows by the appended units; units whose
-        decision is already terminal (``SKIP_*``) enter ``terminal_unit_ids``
-        in the same step — mirroring ``plan_run``'s initial accounting — so
-        progress and the terminal accounting close exactly once the ``RUN``
-        units finish. (DSH r1 R1: without that sync a COMPLETED run with a
-        policy-skipped clone chain, e.g. an SFX region under the default
-        ``skip`` policy, kept ``overall_progress`` below 1.0 forever.)
+        per-region semantics. The former in-place rebind kept the pre-detect
+        page-level decision on the primary, which left the plan-level SFX
+        policy gate invisible to ``region_ids[0]`` (``_decide_step`` only
+        gates with a region): an SFX region detected first under
+        ``policy=manual`` was machine translated in the very same run that
+        correctly SKIP_POLICY'd an identical secondary — D06 §85 violated
+        (DSH r1 R2 counter-example). With the re-decision, any SFX region is
+        gated wherever it sits in the reading order (``SKIP_POLICY`` and its
+        propagation to the image steps included); for a non-SFX region the
+        re-decision is decision-for-decision identical to the old page-level
+        plan — gate never fires, and lock/stage/provider/forced are sourced
+        the same way (pinned by the equivalence tests in
+        tests/pipeline/test_regionless_rebinding.py).
+
+        Why the replaced units' plan-time ids are NOT preserved:
+            被替换的 regionless units（detect 之前的页级决策链）整体退役，代之
+            以 region-id 形态的重决策链——「unit_id 内嵌 target 与真实 target
+            不一致」的展示层债务就此消除，不再有两种 unit_id 形态并存。仅
+            detect unit 保留其 plan 期 id（run.terminal_unit_ids 以 unit_id 为
+            键，detect 的终态在紧随其后的 commit 中标记）。
+
+        The fan-out set is exactly the detect output; Regions appearing
+        mid-run are picked up by the next (re-)plan, not by this run.
+        ``run.planned_step_units`` follows the replacement; the replaced
+        units leave ``terminal_unit_ids`` and replanned units whose decision
+        is already terminal (``SKIP_*``) join it in the same step —
+        mirroring ``plan_run``'s initial accounting — so progress and the
+        terminal accounting close exactly once the ``RUN`` units finish.
+        (DSH r1 R1 ledger, now uniform across primary and clone chains.)
         """
         region_ids = tuple(result.outputs.get("region_ids") or ())
         if not region_ids:
             return
-        primary = region_ids[0]
-        # rebuild the tuple in place on the task: the index-based loop in
-        # ``execute_run`` re-reads ``task.units[index]`` each iteration, so
-        # the units after the detect step see their new region_id and target_id.
-        # PlanUnit.target_id 必须等于该步骤的写目标；不改 unit_id（terminal_unit_ids 以它为键，plan 阶段已标终态）。
-        task.units = tuple(
-            (
-                replace(item, region_id=primary, target_id=primary)
-                if item.unit_id != unit.unit_id and item.region_id is None
-                else item
-            )
-            for item in task.units
-        )
-        extra_units: list[PlanUnit] = []
-        for region_id in region_ids[1:]:
+        replanned: list[PlanUnit] = []
+        for region_id in region_ids:
             # DSH r1 R3: this read sits inside commit_step_result, *after*
             # the detect transaction committed and outside any try/except —
             # an unhandled PipelineError here would escape execute_run and
@@ -994,20 +995,32 @@ class PipelineService:
                 # 以 live Regions 重新拾取。
                 continue
             for region_snapshot in region_view.region_snapshots():
-                extra_units.extend(
+                replanned.extend(
                     self._plan_region(run, task, region_view, region_snapshot)
                 )
-        if extra_units:
-            task.units = task.units + tuple(extra_units)
-            run.planned_step_units += len(extra_units)
-            # DSH r1 R1: mirror plan_run's terminal accounting (service.py
-            # plan_run) — SKIP_* decisions are terminal by ``is_terminal``,
-            # so they must join the terminal set the moment they join the
-            # denominator, or a COMPLETED run's progress never reaches 1.0.
-            run.terminal_unit_ids.update(
-                u.unit_id for u in extra_units if u.decision.is_terminal
-            )
-            run.terminal_step_units = len(run.terminal_unit_ids)
+        # Replace the detect-following regionless units (the pre-detect
+        # page-level decision chain) with the replanned per-region chains;
+        # the detect unit itself stays exactly as planned (its plan-time id
+        # is terminal-accounting keyed).
+        stale_ids = {
+            item.unit_id
+            for item in task.units
+            if item.unit_id != unit.unit_id and item.region_id is None
+        }
+        task.units = tuple(
+            item for item in task.units if item.unit_id not in stale_ids
+        ) + tuple(replanned)
+        run.planned_step_units += len(replanned) - len(stale_ids)
+        # Mirror plan_run's terminal accounting (service.py plan_run): the
+        # replaced units leave the terminal set; replanned units with a
+        # terminal-by-``is_terminal`` decision (``SKIP_*``) join it the
+        # moment they join the denominator, or a COMPLETED run's progress
+        # would never reach 1.0 (DSH r1 R1, now on the primary path too).
+        run.terminal_unit_ids.difference_update(stale_ids)
+        run.terminal_unit_ids.update(
+            u.unit_id for u in replanned if u.decision.is_terminal
+        )
+        run.terminal_step_units = len(run.terminal_unit_ids)
 
     def _cancel_remaining(
         self, run: PipelineRun, task: PipelineTask, current: PlanUnit | None

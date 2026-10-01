@@ -4,14 +4,23 @@
 Verifies the fix for DIAG-M2-REGIONLESS-LOCK-CHANGED-001:
 When a page-scoped pipeline command starts from a regionless page, detect creates
 the page's Regions and commits them. PipelineService._backfill_detected_regions
-must rebind both target_id and region_id of downstream regionless units to the
-first detected Region (primary) while strictly preserving PlanUnit.unit_id.
+replans the downstream regionless units against the live detected Regions.
 
-M2-TASKS-BACKFILL-MULTIREGION extends the backfill to fan out: every
-additional detected Region gets a cloned unit chain (unit_id
-``{task_id}:{region_id}:{step_type}`` — the same shape the recovery path
-``plan_run(mode="continue")`` already plans), so a multi-region page no
+M2-TASKS-BACKFILL-MULTIREGION extended the backfill to fan out: every
+additional detected Region gets a unit chain planned by ``_plan_region``
+(unit_id ``{task_id}:{region_id}:{step_type}`` — the same shape the recovery
+path ``plan_run(mode="continue")`` already plans), so a multi-region page no
 longer leaves its non-primary Regions without any follow-up scheduling.
+
+M2-TASKS-PRIMARY-SFX-GATE (user ruling 2026-10-02 ②, DSH r1 R2) closes the
+last semantic gap: the primary (``region_ids[0]``) is NO LONGER rebound in
+place with its pre-detect page-level decision — it is replanned through the
+same ``_plan_region`` live-Region re-decision as every other region. Any SFX
+region is therefore gated wherever it sits in the reading order (D06 §85);
+for a non-SFX region the re-decision is decision-for-decision identical to
+the old page-level plan (gate/lock/stage/provider/forced all sourced the
+same way). The plan-time page-shaped unit_id survives only on the ``detect``
+unit itself; every region chain uses the recovery-path id shape.
 """
 
 from __future__ import annotations
@@ -336,9 +345,13 @@ def test_r0_regionless_page_reocr_all_completed(workspace):
     assert regions.get_region(secondary.region_id).text.ocr_text == OCR_TEXT
 
 
-def test_r1_backfill_rebinds_target_id_and_preserves_unit_ids(workspace):
-    """R1: backfill sets unit.target_id==region_id per region, preserving all plan unit_ids
-    and appending exactly one cloned unit chain per additional detected Region."""
+def test_r1_backfill_replans_primary_chain_and_clones_secondary(workspace):
+    """R1 (adapted by M2-TASKS-PRIMARY-SFX-GATE, ruling ②): the primary chain
+    is REPLANNED against the live Region (unit_id
+    ``{task_id}:{region_id}:{step_type}`` — the primary no longer keeps its
+    plan-time page-shaped unit_id with the pre-detect page-level decision),
+    and exactly one cloned unit chain is appended per additional detected
+    Region. Only the ``detect`` unit keeps its plan-time id."""
     service, _, _ = _build_service(workspace)
     regions = workspace["regions"]
 
@@ -347,15 +360,12 @@ def test_r1_backfill_rebinds_target_id_and_preserves_unit_ids(workspace):
         PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
     )
     planned = service.plan_run(run.run_id)
-    planned_units = planned.tasks[0].units
-    planned_unit_ids = [u.unit_id for u in planned_units]
+    detect_unit_id = next(
+        u.unit_id for u in planned.tasks[0].units if u.step_type == STEP_DETECT
+    )
 
     executed = service.execute_run(run.run_id)
     executed_units = executed.tasks[0].units
-    executed_unit_ids = [u.unit_id for u in executed_units]
-
-    # Invariant: the planned unit_ids are never mutated across backfill
-    assert executed_unit_ids[: len(planned_unit_ids)] == planned_unit_ids
 
     all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
     primary_id = all_regions[0].region_id
@@ -364,13 +374,17 @@ def test_r1_backfill_rebinds_target_id_and_preserves_unit_ids(workspace):
     detect_unit = [u for u in executed_units if u.step_type == STEP_DETECT][0]
     ocr_units = [u for u in executed_units if u.step_type == STEP_OCR]
 
+    # the detect unit is untouched (its plan-time id survives — terminal
+    # accounting keyed on it at plan time)
     assert detect_unit.target_id == PAGE_ID
     assert detect_unit.region_id is None
+    assert detect_unit.unit_id == detect_unit_id
 
-    # primary unit rebound, secondary unit cloned with the recovery-path id shape
+    # primary chain replanned, secondary unit cloned — both in the
+    # recovery-path id shape; no page-shaped region step unit survives
     assert len(ocr_units) == 2
     primary_unit = next(u for u in ocr_units if u.region_id == primary_id)
-    assert primary_unit.unit_id == planned_unit_ids[-1]
+    assert primary_unit.unit_id == f"{executed.tasks[0].task_id}:{primary_id}:ocr"
     assert primary_unit.target_id == primary_id
     cloned_unit = next(u for u in ocr_units if u.region_id == secondary_id)
     assert cloned_unit.unit_id == f"{executed.tasks[0].task_id}:{secondary_id}:ocr"
@@ -804,14 +818,16 @@ def test_multiregion_backfill_fans_out_to_every_detected_region(workspace):
     assert {s.target_id for s in ocr_steps} == {r.region_id for r in all_regions}
     assert all(s.status is StepRunStatus.COMPLETED for s in ocr_steps)
 
-    # unit ids: the primary keeps its plan-time id (unit_id is never rewritten);
-    # the cloned secondary matches the recovery-path (plan_run "continue") shape
+    # unit ids: every detected region's chain — primary included — uses the
+    # recovery-path shape ``{task_id}:{region_id}:{step_type}`` (ruling ②:
+    # the primary is replanned like any other region; only detect keeps its
+    # plan-time id)
     task_id = executed.tasks[0].task_id
     region_unit_ids = {
         u.unit_id for u in executed.tasks[0].units if u.region_id is not None
     }
     assert region_unit_ids == {
-        f"{task_id}:{PAGE_ID}:{STEP_OCR}",  # rebound in place, plan-time id kept
+        f"{task_id}:{all_regions[0].region_id}:{STEP_OCR}",  # primary, replanned
         f"{task_id}:{all_regions[1].region_id}:{STEP_OCR}",  # cloned
     }
 
@@ -824,9 +840,13 @@ def test_multiregion_backfill_fans_out_to_every_detected_region(workspace):
         assert refreshed.text.ocr_text == OCR_TEXT
 
 
-def test_backfill_single_region_page_unchanged(workspace):
-    """F2 (zero-change guard): a one-Region page behaves exactly as before —
-    no appended units, no accounting drift."""
+def test_backfill_single_region_nonsfx_page_decisions_unchanged(workspace):
+    """F2 (zero-change guard, adapted by M2-TASKS-PRIMARY-SFX-GATE): a
+    one-Region non-SFX page behaves exactly as before — the primary is
+    replanned like any other region, and because that region is not SFX the
+    re-decision is decision-for-decision identical to the pre-detect
+    page-level plan, with no accounting drift. (The unit_id shape change on
+    the region chain is the ruling's direct, intended consequence.)"""
     detector = DeterministicDetector(
         candidates=(
             RegionCandidate(
@@ -844,7 +864,11 @@ def test_backfill_single_region_page_unchanged(workspace):
         PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
     )
     planned = service.plan_run(run.run_id)
-    planned_unit_ids = [u.unit_id for u in planned.tasks[0].units]
+    planned_decisions = [
+        (u.step_type, u.decision, u.reason)
+        for u in planned.tasks[0].units
+        if u.step_type != STEP_DETECT
+    ]
     executed = service.execute_run(run.run_id)
 
     assert executed.status is PipelineRunStatus.COMPLETED
@@ -852,13 +876,22 @@ def test_backfill_single_region_page_unchanged(workspace):
     assert len(all_regions) == 1
     primary = all_regions[0]
 
+    # decision-for-decision equivalence: the live-region replan decides
+    # exactly what the page-level plan decided (gate never fires for a
+    # non-SFX region; lock/stage/provider/forced are sourced identically)
+    replanned_decisions = [
+        (u.step_type, u.decision, u.reason)
+        for u in executed.tasks[0].units
+        if u.step_type != STEP_DETECT
+    ]
+    assert replanned_decisions == planned_decisions
+
     ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
     assert len(ocr_steps) == 1
     assert ocr_steps[0].target_id == primary.region_id
     assert ocr_steps[0].status is StepRunStatus.COMPLETED
 
-    # byte-for-byte plan shape: no units appended, none mutated
-    assert [u.unit_id for u in executed.tasks[0].units] == planned_unit_ids
+    # accounting unchanged: detect + one ocr, nothing appended
     assert executed.planned_step_units == executed.terminal_step_units == 2
 
 
@@ -1049,6 +1082,238 @@ def test_multiregion_backfill_sfx_default_skip_closes_terminal_accounting(worksp
 
     # accounting closes exactly: detect + primary chain (8) + SFX clone chain
     # (8, of which 5 are SKIP_POLICY terminal-by-decision)
+    assert executed.planned_step_units == 1 + 2 * 8
+    assert executed.terminal_step_units == executed.planned_step_units
+    assert service.get_task_progress(run.run_id).overall_progress == 1.0
+
+
+# -----------------------------------------------------------------------------
+# M2-TASKS-PRIMARY-SFX-GATE: primary region re-decision (ruling ②, DSH r1 R2)
+# -----------------------------------------------------------------------------
+
+def test_single_region_nonsfx_redecision_equals_page_level_plan(workspace):
+    """Equivalence guard (ruling ②): for a non-SFX region the live-Region
+    re-decision decides step-for-step what the pre-detect page-level plan
+    decided — the SFX gate never fires (region_type != sfx) and lock/stage/
+    provider/forced inputs are sourced identically, so every decision and
+    reason matches and the full TRANSLATE_ALL chain runs to completion."""
+    detector = DeterministicDetector(
+        candidates=(
+            RegionCandidate(
+                polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+                reading_order=1,
+                provider_label="det-0",
+            ),
+        )
+    )
+
+    def _fake_step_ok(step_run, unit, run):
+        return StepResult(
+            target_id=unit.target_id,
+            step_type=unit.step_type,
+            outputs={"fake": True},
+            output_target_ids=(unit.target_id,),
+            revision_updates={},
+            next_stage_states={unit.step_type: StageState.COMPLETED},
+        )
+
+    service, _, _ = _build_service(
+        workspace,
+        detector=detector,
+        handler_override={
+            step: _fake_step_ok
+            for step in (
+                STEP_COLOR,
+                STEP_TERM_EXTRACT,
+                STEP_TRANSLATE,
+                STEP_SEGMENT,
+                STEP_MASK_REFINE,
+                STEP_INPAINT,
+                STEP_RENDER,
+            )
+        },
+    )
+    regions = workspace["regions"]
+
+    run = service.create_run(
+        CommandType.TRANSLATE_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    planned = service.plan_run(run.run_id)
+    planned_decisions = [
+        (u.step_type, u.decision, u.reason)
+        for u in planned.tasks[0].units
+        if u.step_type != STEP_DETECT
+    ]
+    assert len(planned_decisions) == 8  # the full TRANSLATE_ALL chain
+
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    all_regions = regions.list_regions(PAGE_ID)
+    assert len(all_regions) == 1
+
+    # step-for-step equivalence (order included): no gate/lock/stage/provider
+    # divergence between the page-level plan and the live-Region replan
+    replanned_decisions = [
+        (u.step_type, u.decision, u.reason)
+        for u in executed.tasks[0].units
+        if u.step_type != STEP_DETECT
+    ]
+    assert replanned_decisions == planned_decisions
+    assert all(decision is PlanDecision.RUN for _, decision, _ in replanned_decisions)
+
+    # every step actually ran against the region
+    assert {s.step_type for s in executed.step_runs} == {
+        STEP_DETECT,
+        STEP_OCR,
+        STEP_COLOR,
+        STEP_TERM_EXTRACT,
+        STEP_TRANSLATE,
+        STEP_SEGMENT,
+        STEP_MASK_REFINE,
+        STEP_INPAINT,
+        STEP_RENDER,
+    }
+    # accounting closes: detect + the 8-step chain
+    assert executed.planned_step_units == executed.terminal_step_units == 9
+
+
+def test_sfx_primary_region_gated_by_manual_policy(workspace):
+    """DSH r1 R2 counter-example, fixed by ruling ② (red→green): the detector
+    candidates are swapped so the SFX region is detected FIRST
+    (``region_ids[0]`` == primary) with ``policy=manual`` — the replanned
+    primary chain plans SKIP_POLICY for every gated step (never executed,
+    nothing lands on the region) and the terminal accounting closes exactly
+    (the primary's SKIP units count, same ledger as the clone chains —
+    BACKFILL R1 parity on the primary path). Before this Task the primary
+    kept the pre-detect page-level decision and was machine translated in
+    the very same run — D06 §85 violated, contradicting the gated secondary
+    in the identical situation."""
+    conn = workspace["conn"]
+    detector = DeterministicDetector(
+        candidates=(
+            RegionCandidate(
+                polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+                reading_order=1,
+                provider_label="sfx-1",  # SFX FIRST → primary
+            ),
+            RegionCandidate(
+                polygon=((20.0, 8.0), (30.0, 8.0), (30.0, 12.0)),
+                reading_order=7,
+                provider_label="det-0",
+            ),
+        )
+    )
+
+    def _manual_sfx_after_detect(original_detect):
+        def _wrapped(step_run, unit, run):
+            result = original_detect(step_run, unit, run)
+            # the settings channel has landed by the time detect commits:
+            # flip the freshly created SFX region to manual so the backfill's
+            # live-Region read window sees exactly that policy
+            with conn:
+                conn.execute(
+                    "UPDATE regions SET sfx_policy = 'manual'"
+                    " WHERE region_type = 'sfx' AND page_id = ?",
+                    (PAGE_ID,),
+                )
+            return result
+
+        return _wrapped
+
+    def _fake_step_ok(step_run, unit, run):
+        # 产能占位：本测试只关心规划/账目/门语义；除 detect/ocr 外的产能步骤
+        # 一律成功返回，避免 PROVIDER_NOT_CONFIGURED 截断执行链。
+        return StepResult(
+            target_id=unit.target_id,
+            step_type=unit.step_type,
+            outputs={"fake": True},
+            output_target_ids=(unit.target_id,),
+            revision_updates={},
+            next_stage_states={unit.step_type: StageState.COMPLETED},
+        )
+
+    service, _, _ = _build_service(
+        workspace,
+        detector=detector,
+        handler_override={
+            step: _fake_step_ok
+            for step in (
+                STEP_COLOR,
+                STEP_TERM_EXTRACT,
+                STEP_TRANSLATE,
+                STEP_SEGMENT,
+                STEP_MASK_REFINE,
+                STEP_INPAINT,
+                STEP_RENDER,
+            )
+        },
+    )
+    # wrap the real detect handler (built inside _build_service) so the
+    # policy UPDATE lands inside the detect→backfill window
+    original_detect = service._executor._handlers[STEP_DETECT]
+    service._executor._handlers[STEP_DETECT] = _manual_sfx_after_detect(original_detect)
+
+    regions = workspace["regions"]
+
+    run = service.create_run(
+        CommandType.TRANSLATE_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+    assert len(all_regions) == 2
+    sfx_region = all_regions[0]  # reading_order=1 → detected first → primary
+    assert sfx_region.region_type is RegionType.SFX
+    speech_region = all_regions[1]
+    assert speech_region.region_type is RegionType.SPEECH
+    # the policy really is live on the region the replan reads
+    refreshed = regions.get_region(sfx_region.region_id)
+    assert refreshed.sfx_policy == "manual"
+
+    # the primary chain is gated: ocr runs for the human, the five gated
+    # steps plan SKIP_POLICY (identical to a secondary SFX region's clone)
+    primary_decisions = {
+        u.step_type: u.decision
+        for u in executed.tasks[0].units
+        if u.region_id == sfx_region.region_id
+    }
+    assert primary_decisions[STEP_OCR] is PlanDecision.RUN
+    for gated in (
+        STEP_TRANSLATE,
+        STEP_SEGMENT,
+        STEP_MASK_REFINE,
+        STEP_INPAINT,
+        STEP_RENDER,
+    ):
+        assert primary_decisions[gated] is PlanDecision.SKIP_POLICY
+
+    # only the ungated pre-processing steps ever executed against the SFX
+    # region: ocr (never gated, kept for the human) plus color/term_extract
+    # (not gated steps) — none of the five gated steps ran, so no machine
+    # translation can land (same ledger as a secondary SFX clone)
+    sfx_step_types = {
+        s.step_type
+        for s in executed.step_runs
+        if s.target_id == sfx_region.region_id
+    }
+    assert sfx_step_types == {STEP_OCR, STEP_COLOR, STEP_TERM_EXTRACT}
+
+    # the speech neighbour (secondary clone) still translates normally
+    assert any(
+        s.step_type == STEP_TRANSLATE
+        and s.target_id == speech_region.region_id
+        and s.status is StepRunStatus.COMPLETED
+        for s in executed.step_runs
+    )
+
+    # terminal accounting closes exactly: detect + two 8-step chains, of
+    # which the primary's five SKIP_POLICY units count as terminal the
+    # moment they join the denominator (BACKFILL R1 ledger on the primary)
     assert executed.planned_step_units == 1 + 2 * 8
     assert executed.terminal_step_units == executed.planned_step_units
     assert service.get_task_progress(run.run_id).overall_progress == 1.0
