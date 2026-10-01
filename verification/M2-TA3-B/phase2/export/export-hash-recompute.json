@@ -1,6 +1,6 @@
 {
   "task": "M2-TA3-B2",
-  "generated_at_utc": "2026-10-01T11:08:22Z",
+  "generated_at_utc": "2026-10-01T11:26:08Z",
   "method": "independent recompute (stdlib hashlib) of every OK export recorded by the runner — main pass AND .rerun exports (R7, DSH r1); runner-independent by construction (this script only reads the pixel files and the summaries); generator script checked in at experiments/M2-TA3-B/verify_exports.py",
   "pixel_root": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels",
   "n_ok_exports": 13,

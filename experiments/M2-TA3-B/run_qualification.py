@@ -275,7 +275,7 @@ def run_case(
     def stage(name: str, status: str, **extra) -> None:
         entry = {"status": status, **extra}
         summary["stages"][name] = entry
-        print(f"[{case_id}] {name}: {status} {extra if extra else ''}", flush=True)
+        print(f"[{case_id}] {name}: {status} {scrub_secrets(extra) if extra else ''}", flush=True)
 
     if not source.is_file():
         stage("source", "FAIL", reason="source asset missing", attribution="environment")

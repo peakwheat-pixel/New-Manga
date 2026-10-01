@@ -314,7 +314,7 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001 - honest probe record, no key ever printed
         record["status"] = "FAIL"
         record["error"] = f"{type(exc).__name__}: {exc}"[:400]
-        print(f"probe_status=FAIL error={record['error']}", file=sys.stderr)
+        print(f"probe_status=FAIL error={scrub_secrets(record['error'])}", file=sys.stderr)
         status = 3
 
     out = Path(args.out)

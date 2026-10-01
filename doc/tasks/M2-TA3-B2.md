@@ -2,8 +2,8 @@
 id: M2-TA3-B2
 title: "TA3-B 阶段二：20-case 正式质量 qualification run（翻译=DeepSeek remote，用户裁决 (a) 2026-10-01）"
 kind: qualification
-status: in_review  # owner 完成 @3c8801b7（AC1-AC6 交付，全链 Gate FAIL 如实登记：ja 10/10 OK、ko 9 case 生产域缺口 F1/F2）——待 DSH 非作者 review
-delivery_head: 3c8801b7
+status: done  # 集成收口：DSH r1 changes_requested（1×P1 R1）→ 集成方定案 R1 机制（export=Run1 渲染产物复制）→ Owner 返修 R1-R15（614be825+7922a3fc）→ DSH r2 收敛至 N1 → 集成修正闭合（N1-N4/N7 + paddle wrapper ndarray 适配）
+delivery_head: 7922a3fc  # 返修 tip（614be825+7922a3fc，DSH r1 R1-R15 处置）；3c8801b7=run 产物交付实体；base 线性链 521d0bdd→69137837(release)→…→81e5ad81→7922a3fc（r1 R14 集成方定案：merge-base=521d0bdd，两口径 diff 均 53 文件）
 approval: user_ruling_2026-10-01_option_a_deepseek
 suggested_owner: ZCode
 owner: ZCode
@@ -54,7 +54,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B2-zcode
 |---|---|---|
 | AC1 全链 run | 执行完成；**全链 Gate FAIL 如实登记**：ja 10/10 全链 completed+export OK（56 region、48 翻译=56−8 SFX、无截断；r1 R6 数字勘误：原写 53 无法由任何口径复原）；ko 9/10 fail-closed 于两条生产域缺口（F1 ogkalu 对 webtoon 长条漫 0 候选、F2 Qt 256MB 解码上限拒 K07/K09/K10 导入）；K11 修复后 export OK 但 run2 携带 2 个 typed data 失败；pipeline_failures=10（构成附表见 quality-report §1.1a） | [quality-report.md](../verification/M2-TA3-B/quality-report.md) §1 + `phase2/summaries/`（20 summary+report） |
 | AC2 自动评测 | ko G1 自动子集 n=6 median **0.0556**（提案 ≤0.20 → PASS，directional，对齐抽验 4/4）；ja G1 **NOT_AUTOMATED**（SVG credits 与 detect region 文本族不重合）；SFX n=0<15 只登记分布；G2 待审 50 行 | quality-report §2 + `phase2/ocr/cer-*` + `svg-gt-*` |
-| AC3 渲染确定性 | BJ02 PASS（逐位一致）；K11 FAIL——根因=remote endpoint 译文非逐位确定（OCR 0/13 差异、译文 7/13 浮动，渲染器忠实）；K01 无产物 NOT_ACHIEVABLE；独立复算 11/11 哈希一致 | quality-report §5 + `phase2/summaries/rerun-compare.json` + `phase2/export/export-hash-recompute.json` |
+| AC3 渲染确定性 | **BJ02 PASS（语义=Run1 页面级全链（含 remote 批量翻译）两次独立 run 逐位一致——export 复制 Run1 渲染产物，Run2 的 DB 更新不触发重渲染，r1 R1 集成方定案）**；K11 FAIL——根因在 Run1 内部非确定环节（OCR 已排除 0/13，未逐层隔离）；Run2 译文浮动 7/11（非空口径）为独立 remote 采样观察、不进入 export；K01 无产物 NOT_ACHIEVABLE；独立复算 **13/13**（含两个 .rerun 导出，`verify_exports.py` all_match）；确定性 Gate 在 remote 翻译下的重定义（reading_order 对齐译文相似度）=F5 裁决点移交 | quality-report §5 + `phase2/summaries/rerun-compare.json` + `phase2/export/export-hash-recompute.json` |
 | AC4 对白可读性预填 | 工作表 n=26（ja15+ko11，ko 池受 F1 级联限制，缺口如实登记）；**对 AC4 字面要求的双缺口（r1 R12 并列挂账）：n=26<30 + BJ06/BJ10 SFX 示例=0（生产 SfxPolicy 默认 SKIP，SFX→translate 通路未满足前置）**；DeepSeek 自评 ai_draft + owner 6-crop 抽检校准；用户终审=后续步骤（非本 Task 关闭条件） | `phase2/translate/dialogue-readability-worksheet.*` |
 | AC5 文档精修 | r2 N1/N2/N4/N5/N6 落地 | commit `b7806dac` |
 | AC6 第 0 步探针 | PASS：profile 写入（save_settings_section+make_credential_ref）→binding→同 db re-assemble（vault 通路如实落地 MISSING_CREDENTIAL）→env resolver re-register+invalidate→readiness ready→1 真实 region 翻译 0.45s；零 key 泄漏 | `phase2/translate-probe.json` + `experiments/M2-TA3-B/translate_probe.py` |

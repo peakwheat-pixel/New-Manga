@@ -1,6 +1,6 @@
 {
   "task": "M2-TA3-B2",
-  "generated_at_utc": "2026-10-01T11:08:23Z",
+  "generated_at_utc": "2026-10-01T11:26:08Z",
   "purpose": "audit preconditions for the Git-free pixel tree (R8, DSH r1): the pixel root is a sibling directory of the repository tree (invisible to Git by construction, no .gitignore involved), so this manifest is the only tamper-evidence for the crops and export PNGs cited by the summaries and worksheets",
   "pixel_root": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels",
   "n_files": 126,

@@ -55,7 +55,7 @@ ja 侧 10/10 全链通过（`pipeline_completed=true`）；ko 侧 9 case 失败 
 
 ### 1.1a `pipeline_failures=10` 的构成（r1 R6 附表）
 
-`failures=10` 是 **case 级失败计数 + AC3 复跑集合级计数**的合计（`run_qualification.py:725-726,795-796`），不是 10 个区域级失败。逐条构成：
+`failures=10` 是 **case 级失败计数 + AC3 复跑集合级计数**的合计（`run_qualification.py:764-765,851-852`；r1 时行号 725-726/795-796，R2/R13 插入后偏移），不是 10 个区域级失败。逐条构成：
 
 | # | 计数单位 | 归因 |
 |---|---|---|
