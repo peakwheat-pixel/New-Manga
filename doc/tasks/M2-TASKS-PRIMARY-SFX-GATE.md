@@ -9,7 +9,7 @@ owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-TASKS-BACKFILL-MULTIREGION]
-base_commit: f99a6c55
+base_commit: 1c3ac590  # 3-confirmation release（r1 R6 统一口径）
 branch: agent/zcode/M2-TASKS-PRIMARY-SFX-GATE
 worktree: G:/CODEX/New Manga.worktrees/M2-TASKS-PRIMARY-SFX-GATE-zcode
 delivery_head: 19bf234a（implement=19bf234a → handoff/Task 回填/文档=文档 commit）

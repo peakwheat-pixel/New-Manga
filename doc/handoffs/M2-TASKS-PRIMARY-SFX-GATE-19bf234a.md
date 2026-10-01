@@ -19,7 +19,7 @@ status: in_review
 
 **单 region 非 SFX 页零变化（等价性）**：非 SFX region 的 live 重决策与原页级决策**逐步（step-for-step）decision/reason 全等**——gate 不触发（region_type ≠ sfx）、lock/stage/provider/forced 全同源。由两条测试钉住：`test_backfill_single_region_nonsfx_page_decisions_unchanged`（F2，REOCR_ALL）与 `test_single_region_nonsfx_redecision_equals_page_level_plan`（TRANSLATE_ALL 全链 8 步等价 + 9 unit 账目闭合）。
 
-### 实现要点（单文件 `src/application/tasks/service.py`，net -37 行）
+### 实现要点（单文件 `src/application/tasks/service.py`，net +13 (numstat 73+/60-) 行）
 
 - `_backfill_detected_regions`：primary 与 `region_ids[1:]` 统一进同一 `_plan_region` 循环（DSH r1 R3 的 try/except `PipelineError` → TARGET_DELETED 跳过语义顺带覆盖 primary 读取窗口，原实现 primary 不可读会让 PipelineError 穿透 `execute_run` 滞留 RUNNING——本交付顺带消除该不对称）。
 - 旧链替换：`stale_ids`（detect 之后 region_id is None 的 units）整体移除；`task.units = 未替换部分 + replanned`。index-based 执行循环（TASK-049）天然读取替换后的 units，无需调度层改动。
@@ -49,7 +49,7 @@ status: in_review
 
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
-| 基线（本分支 base） | `QT_QPA_PLATFORM=offscreen PYTHONPATH=src <venv>/python -m pytest tests/core tests/pipeline tests/providers -q` | T1.1.1-impl-py312（py3.12.3，transformers 5.17.0+PySide6）@ 1c3ac590 | **627 passed + 1 skipped + 0 failed**。注：任务书/STATUS 的「575+1sk」文字快照早于 SETTINGS-IPC 批次集成（1c3ac590 已含其测试）；回退口径以本实测为准 | `verification/M2-TASKS-PRIMARY-SFX-GATE/baseline-1c3ac590-three-suites.log` |
+| 基线（本分支 base） | `QT_QPA_PLATFORM=offscreen PYTHONPATH=src <venv>/python -m pytest tests/core tests/pipeline tests/providers -q` | T1.1.1-impl-py312（py3.12.3，transformers 5.17.0+PySide6）@ 1c3ac590 | **627 passed + 1 skipped + 0 failed**。注：任务书/STATUS 的「575+1sk」文字快照早于 三套件 composition 未统一（575 与 627 不可比，集成方主 venv 复跑为准）——r1 R1 更正：原「SETTINGS-IPC 批次集成」归因有误（该 Task 未集成）（1c3ac590 已含其测试）；回退口径以本实测为准 | `verification/M2-TASKS-PRIMARY-SFX-GATE/baseline-1c3ac590-three-suites.log` |
 | AC2 红 | 同环境 @ 1c3ac590 src + 本 tip tests | 同上 | **4 failed / 19 passed**（反例 pipeline：primary translate decision `RUN` ≠ 期望 `SKIP_POLICY`；e2e 对调：decision `run` ≠ `skip_policy`；R1/F1 适配断言） | `verification/M2-TASKS-PRIMARY-SFX-GATE/red-1c3ac590-src-plus-tests.log` |
 | AC2 绿（目标文件） | `pytest tests/pipeline/test_regionless_rebinding.py tests/core/test_sfx_policy_end_to_end.py -q` @ 19bf234a | 同上 | **23 passed**（18+2 适配+3 新增） | `verification/M2-TASKS-PRIMARY-SFX-GATE/green-target-files.log` |
 | AC2 绿（三套件） | `pytest tests/core tests/pipeline tests/providers -q` @ 19bf234a | 同上 | **630 passed + 1 skipped + 0 failed**（= 基线 627 + 新增 3，零回退） | `verification/M2-TASKS-PRIMARY-SFX-GATE/green-three-suites.log` |
