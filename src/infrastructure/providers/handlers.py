@@ -168,7 +168,10 @@ class HandlerDependencies:
     #: construction) keeps the assembly buildable, and ``handle_detect`` then
     #: fails closed with a typed error instead of degrading silently.
     detector: Any = None  # ports.detection.ports.DetectionProvider
-    region_creator: Any = None  # (page_id, polygon, reading_order, provenance) -> region_id
+    # M2-SFX-PROD-1: the 5th argument carries the candidate's anonymous
+    # provider_label so the assembly can dispatch the ``sfx-`` prefix to
+    # RegionType.SFX (contract zero-change: RegionCandidate keeps its slots).
+    region_creator: Any = None  # (page_id, polygon, reading_order, provenance, provider_label) -> region_id
 
 
 class ProductionHandlers:
@@ -286,6 +289,10 @@ class ProductionHandlers:
                 candidate.polygon,
                 candidate.reading_order or index,
                 provenance,
+                # M2-SFX-PROD-1: the label rides along so the assembly's
+                # region creator can dispatch the ``sfx-`` prefix to
+                # RegionType.SFX (labels stay anonymous provider placeholders).
+                candidate.provider_label,
             )
             for index, candidate in enumerate(candidates, start=1)
         )

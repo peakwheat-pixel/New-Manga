@@ -195,7 +195,7 @@ def _build_service(
     if detector is None:
         detector = DeterministicDetector()
 
-    def region_creator(page_id, polygon, reading_order, provenance):
+    def region_creator(page_id, polygon, reading_order, provenance, provider_label=""):
         xs = [int(round(x)) for x, _ in polygon]
         ys = [int(round(y)) for _, y in polygon]
         region = editing.create_region(

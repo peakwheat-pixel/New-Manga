@@ -49,7 +49,7 @@ from application.rendering.service import RenderService
 from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
 from application.translation.knowledge.term_extraction import TermExtractionService
-from domain.regions.entities import BBox, RegionGeometry, RegionOrigin
+from domain.regions.entities import BBox, RegionGeometry, RegionOrigin, RegionType
 from infrastructure.filesystem.bounded_log_store import BoundedLogStore
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
@@ -66,6 +66,13 @@ from infrastructure.providers.detection_doctr import (
 from infrastructure.providers.detection_manga import (
     MANGA_WEIGHTS_DIRNAME,
     MangaDetectionProvider,
+)
+from infrastructure.providers.detection_sfx import (
+    SFX_CONF_THRESHOLD,
+    SFX_LABEL_PREFIX,
+    SFX_WEIGHTS_FILENAME,
+    MangaSfxParallelDetectionProvider,
+    SfxDetectionProvider,
 )
 from infrastructure.providers.handlers import (
     RegionMaskGeometry,
@@ -836,6 +843,44 @@ def assemble_core_services(
                     f"unsupported NEWMANGA_DETECTOR_BACKEND {backend!r} "
                     "(use manga|doctr)"
                 )
+            # M2-SFX-PROD-1: the standalone SFX detector (chiqui7 ONNX over
+            # the onnxruntime lightweight stack) runs BESIDE the selected
+            # primary. Default ON (user ruling 3: route A, release-form
+            # out-of-the-box); NEWMANGA_SFX_DETECTION=off skips the whole sfx
+            # assembly and keeps the pre-SFX behavior byte-identical. The
+            # mock acceptance branch above deliberately does NOT get an sfx
+            # provider (registered decision): the deterministic mock already
+            # stands in for the whole detect surface, so the acceptance
+            # loop's seeded-regions flow stays untouched. Weights resolution
+            # reuses the shared DETECT-2 lookup verbatim (file semantics,
+            # like doctr): env override (NEWMANGA_SFX_WEIGHTS) > data root
+            # (probed) > frozen in-bundle copy (probed, sys.frozen onedir
+            # only) > the default data-root path; the lazy provider fails
+            # closed typed at detect time when nothing exists.
+            sfx_mode = os.environ.get("NEWMANGA_SFX_DETECTION", "on").strip().lower()
+            if sfx_mode not in ("on", "off"):
+                raise ValueError(
+                    f"unsupported NEWMANGA_SFX_DETECTION {sfx_mode!r} "
+                    "(use on|off)"
+                )
+            if sfx_mode == "on":
+                # An unparseable NEWMANGA_SFX_CONF_THRESHOLD fails the
+                # assembly the same way an unsupported backend env does
+                # (fail-fast on configuration errors, never a silent default);
+                # the (0, 1] range is the provider's own __post_init__ gate.
+                sfx_conf_env = os.environ.get("NEWMANGA_SFX_CONF_THRESHOLD")
+                sfx_conf = float(sfx_conf_env) if sfx_conf_env else SFX_CONF_THRESHOLD
+                detector = MangaSfxParallelDetectionProvider(
+                    primary=detector,
+                    sfx=SfxDetectionProvider(
+                        weights_path=_resolve_detector_weights_path(
+                            os.environ.get("NEWMANGA_SFX_WEIGHTS"),
+                            SFX_WEIGHTS_FILENAME,
+                            db_path,
+                        ),
+                        conf_threshold=sfx_conf,
+                    ),
+                )
         # TASK-033: the render step needs the application-layer RenderService,
         # assembled here from the existing infrastructure/rendering adapters
         # (no adapter implementation is added or modified). The Qt adapters
@@ -868,6 +913,12 @@ def assemble_core_services(
             polygon: tuple[tuple[float, float], ...],
             reading_order: int,
             _provenance: dict,
+            # M2-SFX-PROD-1: the candidate's anonymous provider_label; the
+            # ``sfx-`` prefix dispatches RegionType.SFX so the existing
+            # SfxPolicy gate (default SKIP) takes over automatically. Every
+            # other label (manga-<n>, unmapped-<n>, ...) keeps the historical
+            # SPEECH default — zero behavior change for the existing backends.
+            provider_label: str = "",
         ) -> str:
             xs = [int(round(x)) for x, _ in polygon]
             ys = [int(round(y)) for _, y in polygon]
@@ -875,9 +926,15 @@ def assemble_core_services(
                 bbox=BBox(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)),
                 polygon=tuple((int(round(x)), int(round(y))) for x, y in polygon),
             )
+            region_type = (
+                RegionType.SFX
+                if provider_label.startswith(SFX_LABEL_PREFIX)
+                else RegionType.SPEECH
+            )
             region = editing.create_region(
                 page_id,
                 geometry,
+                region_type=region_type,
                 reading_order=reading_order,
                 origin=RegionOrigin.MACHINE,
             )

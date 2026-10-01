@@ -218,7 +218,7 @@ def test_detect_lands_candidates_as_regions_and_ocr_advances(workspace):
     creator_pages: list[str] = []
     creator_orders: list[int] = []
 
-    def creator(page_id, polygon, reading_order, provenance):
+    def creator(page_id, polygon, reading_order, provenance, provider_label=""):
         creator_pages.append(page_id)
         creator_orders.append(reading_order)
         xs = [int(round(x)) for x, _ in polygon]
