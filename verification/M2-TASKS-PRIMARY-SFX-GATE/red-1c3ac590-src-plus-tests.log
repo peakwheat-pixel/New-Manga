@@ -1,0 +1,279 @@
+.F..........F......F..F                                                  [100%]
+================================== FAILURES ===================================
+_________ test_r1_backfill_replans_primary_chain_and_clones_secondary _________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001784A996BA0>, 'storage': <infrastru...t 0x000001784B22CA70>, 'editing': <application.editing.service.RegionEditingService object at 0x000001784B22CA40>, ...}
+
+    def test_r1_backfill_replans_primary_chain_and_clones_secondary(workspace):
+        """R1 (adapted by M2-TASKS-PRIMARY-SFX-GATE, ruling ②): the primary chain
+        is REPLANNED against the live Region (unit_id
+        ``{task_id}:{region_id}:{step_type}`` — the primary no longer keeps its
+        plan-time page-shaped unit_id with the pre-detect page-level decision),
+        and exactly one cloned unit chain is appended per additional detected
+        Region. Only the ``detect`` unit keeps its plan-time id."""
+        service, _, _ = _build_service(workspace)
+        regions = workspace["regions"]
+    
+        run = service.create_run(
+            CommandType.REOCR_ALL,
+            PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+        )
+        planned = service.plan_run(run.run_id)
+        detect_unit_id = next(
+            u.unit_id for u in planned.tasks[0].units if u.step_type == STEP_DETECT
+        )
+    
+        executed = service.execute_run(run.run_id)
+        executed_units = executed.tasks[0].units
+    
+        all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+        primary_id = all_regions[0].region_id
+        secondary_id = all_regions[1].region_id
+    
+        detect_unit = [u for u in executed_units if u.step_type == STEP_DETECT][0]
+        ocr_units = [u for u in executed_units if u.step_type == STEP_OCR]
+    
+        # the detect unit is untouched (its plan-time id survives — terminal
+        # accounting keyed on it at plan time)
+        assert detect_unit.target_id == PAGE_ID
+        assert detect_unit.region_id is None
+        assert detect_unit.unit_id == detect_unit_id
+    
+        # primary chain replanned, secondary unit cloned — both in the
+        # recovery-path id shape; no page-shaped region step unit survives
+        assert len(ocr_units) == 2
+        primary_unit = next(u for u in ocr_units if u.region_id == primary_id)
+>       assert primary_unit.unit_id == f"{executed.tasks[0].task_id}:{primary_id}:ocr"
+E       AssertionError: assert 'run-8ab891d0...:0:page-1:ocr' == 'run-8ab891d0...a776955c7:ocr'
+E         
+E         Skipping 34 identical leading characters in diff, use -v to show
+E         - cc:task:0:fc07006fb1564e988282441a776955c7:ocr
+E         + cc:task:0:page-1:ocr
+
+tests\pipeline\test_regionless_rebinding.py:387: AssertionError
+_________ test_multiregion_backfill_fans_out_to_every_detected_region _________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001784B22D580>, 'storage': <infrastru...t 0x000001784B289C70>, 'editing': <application.editing.service.RegionEditingService object at 0x000001784B28BE00>, ...}
+
+    def test_multiregion_backfill_fans_out_to_every_detected_region(workspace):
+        """F1 (primary red/green): a page task planned before detection follows up on
+        EVERY detected Region, not just the first one.
+    
+        Unit ids of the cloned chain use the recovery-path shape
+        ``{task_id}:{region_id}:{step_type}`` and the run accounting
+        (planned/terminal step units) covers the appended units.
+        """
+        service, _, _ = _build_service(workspace)
+        regions = workspace["regions"]
+    
+        run = service.create_run(
+            CommandType.REOCR_ALL,
+            PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+        )
+        service.plan_run(run.run_id)
+        executed = service.execute_run(run.run_id)
+    
+        assert executed.status is PipelineRunStatus.COMPLETED
+        all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+        assert len(all_regions) == 2
+    
+        ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
+        assert {s.target_id for s in ocr_steps} == {r.region_id for r in all_regions}
+        assert all(s.status is StepRunStatus.COMPLETED for s in ocr_steps)
+    
+        # unit ids: every detected region's chain — primary included — uses the
+        # recovery-path shape ``{task_id}:{region_id}:{step_type}`` (ruling ②:
+        # the primary is replanned like any other region; only detect keeps its
+        # plan-time id)
+        task_id = executed.tasks[0].task_id
+        region_unit_ids = {
+            u.unit_id for u in executed.tasks[0].units if u.region_id is not None
+        }
+>       assert region_unit_ids == {
+            f"{task_id}:{all_regions[0].region_id}:{STEP_OCR}",  # primary, replanned
+            f"{task_id}:{all_regions[1].region_id}:{STEP_OCR}",  # cloned
+        }
+E       AssertionError: assert {'run-bf0ab8a...0:page-1:ocr'} == {'run-bf0ab8a...016b6c1a:ocr'}
+E         
+E         Extra items in the left set:
+E         'run-bf0ab8a733d84d5183e28bea227dd7cd:task:0:page-1:ocr'
+E         Extra items in the right set:
+E         'run-bf0ab8a733d84d5183e28bea227dd7cd:task:0:4d274e4c8f92454e93a597b2016b6c1a:ocr'
+E         Use -v to get more diff
+
+tests\pipeline\test_regionless_rebinding.py:829: AssertionError
+_______________ test_sfx_primary_region_gated_by_manual_policy ________________
+
+workspace = {'conn': <infrastructure.sqlite.connection.ThreadRoutedConnection object at 0x000001784B22FDA0>, 'storage': <infrastru...t 0x000001784B22F200>, 'editing': <application.editing.service.RegionEditingService object at 0x000001784B22F4A0>, ...}
+
+    def test_sfx_primary_region_gated_by_manual_policy(workspace):
+        """DSH r1 R2 counter-example, fixed by ruling ② (red→green): the detector
+        candidates are swapped so the SFX region is detected FIRST
+        (``region_ids[0]`` == primary) with ``policy=manual`` — the replanned
+        primary chain plans SKIP_POLICY for every gated step (never executed,
+        nothing lands on the region) and the terminal accounting closes exactly
+        (the primary's SKIP units count, same ledger as the clone chains —
+        BACKFILL R1 parity on the primary path). Before this Task the primary
+        kept the pre-detect page-level decision and was machine translated in
+        the very same run — D06 §85 violated, contradicting the gated secondary
+        in the identical situation."""
+        conn = workspace["conn"]
+        detector = DeterministicDetector(
+            candidates=(
+                RegionCandidate(
+                    polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+                    reading_order=1,
+                    provider_label="sfx-1",  # SFX FIRST → primary
+                ),
+                RegionCandidate(
+                    polygon=((20.0, 8.0), (30.0, 8.0), (30.0, 12.0)),
+                    reading_order=7,
+                    provider_label="det-0",
+                ),
+            )
+        )
+    
+        def _manual_sfx_after_detect(original_detect):
+            def _wrapped(step_run, unit, run):
+                result = original_detect(step_run, unit, run)
+                # the settings channel has landed by the time detect commits:
+                # flip the freshly created SFX region to manual so the backfill's
+                # live-Region read window sees exactly that policy
+                with conn:
+                    conn.execute(
+                        "UPDATE regions SET sfx_policy = 'manual'"
+                        " WHERE region_type = 'sfx' AND page_id = ?",
+                        (PAGE_ID,),
+                    )
+                return result
+    
+            return _wrapped
+    
+        def _fake_step_ok(step_run, unit, run):
+            # 产能占位：本测试只关心规划/账目/门语义；除 detect/ocr 外的产能步骤
+            # 一律成功返回，避免 PROVIDER_NOT_CONFIGURED 截断执行链。
+            return StepResult(
+                target_id=unit.target_id,
+                step_type=unit.step_type,
+                outputs={"fake": True},
+                output_target_ids=(unit.target_id,),
+                revision_updates={},
+                next_stage_states={unit.step_type: StageState.COMPLETED},
+            )
+    
+        service, _, _ = _build_service(
+            workspace,
+            detector=detector,
+            handler_override={
+                step: _fake_step_ok
+                for step in (
+                    STEP_COLOR,
+                    STEP_TERM_EXTRACT,
+                    STEP_TRANSLATE,
+                    STEP_SEGMENT,
+                    STEP_MASK_REFINE,
+                    STEP_INPAINT,
+                    STEP_RENDER,
+                )
+            },
+        )
+        # wrap the real detect handler (built inside _build_service) so the
+        # policy UPDATE lands inside the detect→backfill window
+        original_detect = service._executor._handlers[STEP_DETECT]
+        service._executor._handlers[STEP_DETECT] = _manual_sfx_after_detect(original_detect)
+    
+        regions = workspace["regions"]
+    
+        run = service.create_run(
+            CommandType.TRANSLATE_ALL,
+            PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+        )
+        service.plan_run(run.run_id)
+        executed = service.execute_run(run.run_id)
+    
+        assert executed.status is PipelineRunStatus.COMPLETED
+        all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+        assert len(all_regions) == 2
+        sfx_region = all_regions[0]  # reading_order=1 → detected first → primary
+        assert sfx_region.region_type is RegionType.SFX
+        speech_region = all_regions[1]
+        assert speech_region.region_type is RegionType.SPEECH
+        # the policy really is live on the region the replan reads
+        refreshed = regions.get_region(sfx_region.region_id)
+        assert refreshed.sfx_policy == "manual"
+    
+        # the primary chain is gated: ocr runs for the human, the five gated
+        # steps plan SKIP_POLICY (identical to a secondary SFX region's clone)
+        primary_decisions = {
+            u.step_type: u.decision
+            for u in executed.tasks[0].units
+            if u.region_id == sfx_region.region_id
+        }
+        assert primary_decisions[STEP_OCR] is PlanDecision.RUN
+        for gated in (
+            STEP_TRANSLATE,
+            STEP_SEGMENT,
+            STEP_MASK_REFINE,
+            STEP_INPAINT,
+            STEP_RENDER,
+        ):
+>           assert primary_decisions[gated] is PlanDecision.SKIP_POLICY
+E           AssertionError: assert <PlanDecision.RUN: 'run'> is <PlanDecision.SKIP_POLICY: 'skip_policy'>
+E            +  where <PlanDecision.SKIP_POLICY: 'skip_policy'> = PlanDecision.SKIP_POLICY
+
+tests\pipeline\test_regionless_rebinding.py:1293: AssertionError
+_________ test_manual_policy_gates_the_sfx_primary_region_end_to_end __________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-741/test_manual_policy_gates_the_s0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001784C4AB650>
+
+    def test_manual_policy_gates_the_sfx_primary_region_end_to_end(tmp_path, monkeypatch):
+        """DSH r1 R2 counter-example at the production seam (user ruling
+        2026-10-02 ②): with the reading orders swapped the SFX region is the
+        PRIMARY (``region_ids[0]``) — the replanned primary chain is gated by
+        ``policy=manual`` exactly like a secondary clone: SKIP_POLICY / sfx_skip,
+        no translate step run, and no machine translation ever lands on the SFX
+        region, while the speech clone still translates and the terminal
+        accounting closes (the primary's SKIP units count). Before this Task the
+        primary kept the pre-detect page-level decision and the production
+        translate handler machine-translated it in the very same run."""
+        from domain.tasks.models import StepRunStatus
+    
+        core, chapter_id, page_id, first_run, _build = _scenario(
+            tmp_path, monkeypatch, "manual", detector=_SfxPrimaryLabeledDetector()
+        )
+        try:
+            # the detection run: detect completed, the SFX policy reached region
+            # creation, and the SFX region really is the primary (lower
+            # reading_order)
+            steps = {step.step_type: step for step in first_run.step_runs}
+            assert steps["detect"].status is StepRunStatus.COMPLETED
+            regions = _regions_by_type(core, page_id)
+            assert set(regions) == {"speech", "sfx"}
+            assert regions["sfx"]["sfx_policy"] == "manual"
+            assert regions["speech"]["sfx_policy"] == "skip"
+    
+            # the primary SFX chain is gated at the plan layer — the identical
+            # registration a secondary SFX clone has always received
+            gated_units = [
+                (unit.decision, unit.reason)
+                for task in first_run.tasks
+                for unit in task.units
+                if unit.region_id == regions["sfx"]["region_id"]
+                and unit.step_type == "translate"
+            ]
+            assert len(gated_units) == 1
+            decision, reason = gated_units[0]
+>           assert decision.value == "skip_policy"
+E           AssertionError: assert 'run' == 'skip_policy'
+E             
+E             - skip_policy
+E             + run
+
+tests\core\test_sfx_policy_end_to_end.py:376: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/pipeline/test_regionless_rebinding.py::test_r1_backfill_replans_primary_chain_and_clones_secondary
+FAILED tests/pipeline/test_regionless_rebinding.py::test_multiregion_backfill_fans_out_to_every_detected_region
+FAILED tests/pipeline/test_regionless_rebinding.py::test_sfx_primary_region_gated_by_manual_policy
+FAILED tests/core/test_sfx_policy_end_to_end.py::test_manual_policy_gates_the_sfx_primary_region_end_to_end
+4 failed, 19 passed in 3.82s

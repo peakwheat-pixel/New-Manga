@@ -9,11 +9,13 @@ offscreen + Mock/Local providers), so a configured policy is proven
 against the production chain, not a parallel fixture.
 
 Chain shape (the executor's registered backfill semantics: a page task
-planned before any Region existed binds its region steps to the detected
+planned before any Region existed is replanned against the detected
 regions — application/tasks/service.py ``_backfill_detected_regions``
-rebinds the primary in place and fans every additional region out with a
-cloned unit chain, M2-TASKS-BACKFILL-MULTIREGION): one TRANSLATE_ALL run
-follows up on every detected region; the SFX policy gate then decides
+plans a unit chain for EVERY detected region through ``_plan_region``,
+primary (``region_ids[0]``) included, since M2-TASKS-PRIMARY-SFX-GATE
+user ruling 2026-10-02 ②; before that ruling the primary kept its
+pre-detect page-level decision and escaped the gate): one TRANSLATE_ALL
+run follows up on every detected region; the SFX policy gate then decides
 per region at the step layer:
 
 - ``translate``: the TRANSLATE_ALL run lands the detected SFX region with
@@ -104,6 +106,24 @@ class _SfxLabeledDetector:
         )
 
 
+class _SfxPrimaryLabeledDetector(_SfxLabeledDetector):
+    """The DSH r1 R2 counter-example shape: the SAME two labelled candidates
+    with the reading orders swapped — the SFX region is now detected FIRST
+    (``region_ids[0]`` == primary), which is exactly where the pre-ruling
+    backfill escaped the SFX gate."""
+
+    def detect(self, request: DetectionRequest) -> DetectionResult:
+        result = super().detect(request)
+        return DetectionResult(
+            page_id=result.page_id,
+            candidates=tuple(reversed(result.candidates)),
+            coordinate_space=result.coordinate_space,
+            provider_id=result.provider_id,
+            provider_type=result.provider_type,
+            model=result.model,
+        )
+
+
 def _png_bytes(width: int = 240, height: int = 320) -> bytes:
     """A minimal valid 8-bit RGB PNG (stdlib-only)."""
 
@@ -156,7 +176,7 @@ def _unit_decisions(finished) -> dict:
     }
 
 
-def _scenario(tmp_path, monkeypatch, policy: str):
+def _scenario(tmp_path, monkeypatch, policy: str, *, detector=None):
     """Assemble -> persist bindings + policy -> RE-ASSEMBLE -> import one
     page -> run TRANSLATE_ALL so detect creates the regions. Returns the
     assembled core plus the ids and a rebuilder for the re-assemble steps."""
@@ -194,7 +214,7 @@ def _scenario(tmp_path, monkeypatch, policy: str):
     page = core.repository.list_pages(chapter.chapter_id)[0]
     # the mock assembly's own detector emits no sfx label; the scripted
     # two-label detector is what the production composite stands in for
-    _detect_deps(core).detector = _SfxLabeledDetector()
+    _detect_deps(core).detector = detector or _SfxLabeledDetector()
 
     from domain.tasks.models import CommandType, PipelineScope, ScopeType
 
@@ -312,5 +332,70 @@ def test_manual_policy_keeps_the_sfx_region_untranslated(tmp_path, monkeypatch):
         # the speech neighbour is untouched by the SFX policy
         speech = _regions_by_type(core, page_id)["speech"]
         assert speech["text"]["machine_translation"] == MOCK_TRANSLATION_TEXT
+    finally:
+        core.conn.close()
+
+
+def test_manual_policy_gates_the_sfx_primary_region_end_to_end(tmp_path, monkeypatch):
+    """DSH r1 R2 counter-example at the production seam (user ruling
+    2026-10-02 ②): with the reading orders swapped the SFX region is the
+    PRIMARY (``region_ids[0]``) — the replanned primary chain is gated by
+    ``policy=manual`` exactly like a secondary clone: SKIP_POLICY / sfx_skip,
+    no translate step run, and no machine translation ever lands on the SFX
+    region, while the speech clone still translates and the terminal
+    accounting closes (the primary's SKIP units count). Before this Task the
+    primary kept the pre-detect page-level decision and the production
+    translate handler machine-translated it in the very same run."""
+    from domain.tasks.models import StepRunStatus
+
+    core, chapter_id, page_id, first_run, _build = _scenario(
+        tmp_path, monkeypatch, "manual", detector=_SfxPrimaryLabeledDetector()
+    )
+    try:
+        # the detection run: detect completed, the SFX policy reached region
+        # creation, and the SFX region really is the primary (lower
+        # reading_order)
+        steps = {step.step_type: step for step in first_run.step_runs}
+        assert steps["detect"].status is StepRunStatus.COMPLETED
+        regions = _regions_by_type(core, page_id)
+        assert set(regions) == {"speech", "sfx"}
+        assert regions["sfx"]["sfx_policy"] == "manual"
+        assert regions["speech"]["sfx_policy"] == "skip"
+
+        # the primary SFX chain is gated at the plan layer — the identical
+        # registration a secondary SFX clone has always received
+        gated_units = [
+            (unit.decision, unit.reason)
+            for task in first_run.tasks
+            for unit in task.units
+            if unit.region_id == regions["sfx"]["region_id"]
+            and unit.step_type == "translate"
+        ]
+        assert len(gated_units) == 1
+        decision, reason = gated_units[0]
+        assert decision.value == "skip_policy"
+        assert reason == "sfx_skip"
+        # no translate step ever ran on the SFX region
+        assert not [
+            s
+            for s in first_run.step_runs
+            if s.region_id == regions["sfx"]["region_id"]
+            and s.step_type == "translate"
+        ]
+
+        # no machine translation landed on the SFX region
+        assert regions["sfx"]["text"]["machine_translation"] == ""
+        # the speech neighbour (now the secondary clone) still translates
+        assert (
+            regions["speech"]["text"]["machine_translation"]
+            == MOCK_TRANSLATION_TEXT
+        )
+
+        # terminal accounting closes exactly (BACKFILL R1 ledger, now on the
+        # primary path too): detect + two full chains, the primary's five
+        # SKIP_POLICY units terminal the moment they join the denominator
+        progress = core.pipeline.get_task_progress(first_run.run_id)
+        assert progress.terminal_step_units == progress.planned_step_units
+        assert progress.overall_progress == 1.0
     finally:
         core.conn.close()
