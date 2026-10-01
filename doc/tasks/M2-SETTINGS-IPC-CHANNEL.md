@@ -12,7 +12,7 @@ depends_on: [M2-SETTINGS-UI-SFX-POLICY, M2-C1]
 base_commit: f99a6c55
 branch: agent/zcode/M2-SETTINGS-IPC-CHANNEL
 worktree: G:/CODEX/New Manga.worktrees/M2-SETTINGS-IPC-CHANNEL-zcode
-delivery_head: 见交付记录（implement 单 commit + merge 依赖分支 4e432fe7；哈希以 git log 为准）
+delivery_head: 45e15524（implement 单 commit；merge 4e432fe7 引入 depends_on 的 SFX-UI 交付；handoff/Task 回填=后续文档 commit）
 ---
 
 # M2-SETTINGS-IPC-CHANNEL：settings 读写 IPC 通道
@@ -53,5 +53,5 @@ delivery_head: 见交付记录（implement 单 commit + merge 依赖分支 4e432
 - [x] **AC3 Rust 命令**——`apps/desktop/src-tauri`：`library_bridge.rs` `LibraryChannel` trait+Stdio（`round_trip("settings.get"/"settings.update_section")`，同一条既有 stdio 桥，零新传输）+Mock 三实现；`main.rs` 两命令（`settings_get(section: Option<String>)` / `settings_update_section(section, values)` → `.map_err(|e| e.code)` typed 映射）+`PRODUCTION_COMMANDS` 5→7+`SETTINGS_PRODUCTION_ONLY_COMMANDS`（probe/ac1 测试模式面保持冻结，沿 M2-IPC1 option-B 先例）+`generate_handler!` production 分支；allowlist 三处同步（常量/`generate_handler!`/`build.rs` app_manifest 12→14）+`capabilities/m2rc1-commands.json`（+`allow-settings-get`/`allow-settings-update-section`，description 修正为 14 命令口径）。
 - [x] **AC4 前端接通**——`client.ts`/`client.test.ts`/`SettingsPanel.tsx`：命令名常量与 invoke 逻辑**零改动**（SFX-UI pin 逐字落地），仅 BLOCKED_ON_CONTRACT/PROPOSED 注释对齐为 RULED 落地口径；`resourceChannel/commandSurface.test.ts` 表面 pin 更新（`SETTINGS_PRODUCTION_ONLY_COMMANDS` 常量+production allow/probe deny CASE）；既有 48 vitest 中 47 条零修改、1 条 describe 名对齐。
 - [x] **AC5 测试**——Python 新增 `tests/core/test_core_service_settings.py` **27 条**（全量/by-section 读取、unset=null≠`{}`、三值合法矩阵、非法 policy/形状 typed 拒绝+持久层未被改写的 R4 核心断言、ocr 透传、minor=2 pin）；既有 `test_core_service.py` 2 处+`test_core_detect.py` 2 处 minor 断言 1→2 后果同步（先例同款）。Rust 新增 2 条（mock 通道投影/typed 透传 + **真实 sidecar 端到端**：合法写→读回、非法值 INVALID_REQUEST 且旧值保留）。**三套件 602 passed + 1 skipped 0 failed**（基线 575+1sk + 27；解释器 `T1.1.1-impl-py312`，`PYTHONPATH=src`）；**cargo 46 passed + 1 ignored**（基线 44+1ig + 2）；**vitest 49 passed**（基线 48 + 1）；`tsc --noEmit` EXIT=0。
-- [x] **AC6 文档**——本节+handoff `doc/handoffs/M2-SETTINGS-IPC-CHANNEL-<head>.md`+`verification/M2-SETTINGS-IPC-CHANNEL/`。**SFX-UI 解除登记**：`M2-SETTINGS-UI-SFX-POLICY` 的 blocked_on_contract 解除前提（本 slice 释放+落地）已满足，解除登记（blocked_on_contract → 状态推进）由集成方在收口时按 PLAN 落（属 PLAN/STATUS 面，本 Task 禁改）。
+- [x] **AC6 文档**——本节+handoff `doc/handoffs/M2-SETTINGS-IPC-CHANNEL-45e15524.md`+`verification/M2-SETTINGS-IPC-CHANNEL/verification.md`。**SFX-UI 解除登记**：`M2-SETTINGS-UI-SFX-POLICY` 的 blocked_on_contract 解除前提（本 slice 释放+落地）已满足，解除登记（blocked_on_contract → 状态推进）由集成方在收口时按 PLAN 落（属 PLAN/STATUS 面，本 Task 禁改）。
 - 纪律自检：`git status --porcelain` 干净（commit 后）、`git diff --check` EXIT=0；禁改面零触碰（其他契约文档、`packaging/**`、既有命令语义——core.ping/ListBooks/core.detect/core.shutdown 与资源通道命令 payload/result/错误码全部原样，minor bump 属 envelope 版本字段沿先例移动、`doc/STATUS.md`、SFX-UI 视觉/交互）。
