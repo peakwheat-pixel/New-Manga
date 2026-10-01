@@ -2,7 +2,8 @@
 id: M2-SFX-PROD-1
 title: "SFX 检测生产集成第一刀：chiqui7 独立 provider + region sfx 分派 + 权重随包（用户三裁决 2026-10-01：做/许可通过/路线 A）"
 kind: feature
-status: in_review
+status: done
+integration_commit: 0a505bab
 approval: user_ruling_2026-10-01_sfx
 suggested_owner: ZCode
 owner: ZCode
@@ -109,3 +110,12 @@ chiqui7/yolo11-manga-seg（ONNX）作为**独立 SFX 检测 provider**接入生�
 - **R11（DSH r1）：hash 门先于 runtime import 的证明依赖环境**：有 onnxruntime 的机器只证明"hash 先于 session build"；建议 monkeypatch `importlib.import_module` 断言未调用。触发条件：下次触碰 `detection_sfx.py` 加载顺序时一并收紧。
 - **R13（DSH r1）：闭包断言未钉 `capi/onnxruntime.dll`**：仅钉 `onnxruntime_pybind11_state.pyd`；DLL 由 PyInstaller 内置 hook 带入，本次 GATE+SF-1 真实推理实证覆盖。触发条件：onnxruntime 升级或 PyInstaller hook 变更时补 pin。
 - **R14（DSH r1）：装配 composite→真 handler→closure 全链无单条端到端测试**：现为两半各自覆盖；建议后续加"真装配 + mock sfx detector"端到端（可与 mock 覆盖探针合并）。触发条件：closure 签名/调用位置漂移导致的两半各自绿但链路红时。
+
+## 集成记录（2026-10-01，acting Codex）
+
+- Review 轨迹：DSH r1 [approved_with_conditions](../../doc/reviews/M2-SFX-PROD-1-0c4afdb1-dsh-r1.md)（0×P0/P1；代码与证据主线全 PASS，条件=账目口径/表述/三裁量追认；sha256 `da2c24d9…`）→ **全部条件由集成方闭合**：集成修正 `0c4afdb1`（R4 imgsz 真实形态解析【两态 provenance】+R9/R10 env 修正+R6/R2/R3/R12 口径修正+三裁量追认+R5/R11/R13/R14 遗留登记+两后续 slice【降级可见性/mock 面 SFX 探针】）→ 证据 `81ff304d`（重建绑定：NSIS 503,238,932B=479.93MiB sha256 `43da4060…`【vs DETECT-2 +41.06MiB=用户路线 A 裁决的体积兑现】、GATE 25/25【全量 stdout 归档】、frozen 探针 4/4【SF-1 conf 0.93127727… 与交付构建逐位一致=R4 修复不改数值实证】）。
+- merge=`0a505bab`；集成后 main 基线口径三套件 **479 passed + 1 skipped 0 failed**（providers 317+1sk/core 127/m2_acceptance 35；vs SFX-EVAL 后 437+1sk 的 delta=+42 由 SFX 33 测试+其他自然增长构成，分解登记于 Task）。
+- **三裁量追认**（DSH 建议采纳）：mock 跳过 SFX / composite 降级语义（SFX 不可用=manga 链继续，`sfx_provider_status` provenance）/helper 穿透不弱化断言。
+- git 层：28 文件全允许路径、禁改面空、`git diff --check` EXIT=0、权重零 tracked。
+
+Owner branch/worktree 保留于 `81ff304d`。
