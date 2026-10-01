@@ -1,0 +1,463 @@
+{
+ "schema": "m2-sfx-detect/external-evidence-inventory@1",
+ "task": "M2-SFX-DETECT-EVAL",
+ "purpose": "R11 (DSH r1): register the gitignored external evidence tree with sha256 so reviewers can verify existence/integrity; WARNING: if previews_* are lost, the per-frame agent verdicts in sfx-spot-check-verdicts.json cannot be independently re-inspected (visual basis gone); geometry remains recomputable from the committed JSON payloads",
+ "worktree_root": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-EVAL-zcode",
+ "task_env_root": "G:\\CODEX\\New Manga.task-envs",
+ "group_file_counts": {
+  "previews_ogkalu_grid": 43,
+  "previews_onnx_grid": 23,
+  "weights_onnx_candidates": 2,
+  "weights_ogkalu_production_pinned": 9,
+  "eval_manifest_frozen": 2,
+  "license_evidence_raw_snapshots": 6,
+  "c4_gpu_venv_interpreter": 1
+ },
+ "total_files": 86,
+ "groups": {
+  "previews_ogkalu_grid": [
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K01_R035.png",
+    "bytes": 221709,
+    "sha256": "5be6782297b2ca2724e46506d0c4e9673ed89cbb6ab8aeb0756fb18f99b64b55"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K01_R047.png",
+    "bytes": 289670,
+    "sha256": "620f724da904952f252e31ad02de98595be0b090548bdaee4964707d17733c82"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K01_R069.png",
+    "bytes": 420107,
+    "sha256": "8967f340c419230b99c7f5a5bbdb69fe3ce5552827f3391d49b3d46327555ae5"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K01_R075.png",
+    "bytes": 363705,
+    "sha256": "56370b3f8ea5a0d18df3361ade4f66eb8dc3e9399405e8111bfd930d07b3ebf8"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K02_R009.png",
+    "bytes": 224418,
+    "sha256": "9cde3ba2a9e7dd0d2c4c8424177259db543a467f45f21209bfb977c1d8adb246"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K03_R027.png",
+    "bytes": 712699,
+    "sha256": "a47f6cef43eeee99e53323ea634f45e6bd0646acf5d71bfeac8a50cff1844842"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K03_R107.png",
+    "bytes": 117490,
+    "sha256": "e2a0cdbdb4af8658a71d7020670e8441fe5a3907b20318f9bcd36e7f1b8a7d97"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K03_R113.png",
+    "bytes": 394367,
+    "sha256": "26909a35499fa697bff517c18f49dcf3a82eed666c613bfecbd03020513a3285"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K03_R135.png",
+    "bytes": 149138,
+    "sha256": "3464209d551d860dfd729963e9c987cc7cf82f351de551a97bdb839d39c6cc5b"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K03_R155.png",
+    "bytes": 109554,
+    "sha256": "9a661f120bcf4258a03e319ef06b982072d52da840e36bc4b06cc6008fdefd77"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K04_R021.png",
+    "bytes": 786240,
+    "sha256": "b6e7b47def88384e7f07fb0f2969cb39b8e124624cde0adf57bbca99dd84e7b0"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K05_R011.png",
+    "bytes": 262707,
+    "sha256": "ac01a555a788325677fe0f3f80e0e70da7823e40f4857610e0d50bad0788bc9a"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K05_R026.png",
+    "bytes": 160382,
+    "sha256": "015fc0a887762aa6d6bb010bb49e88a4125c2035177c5f64b7fc077b1414a2e4"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K05_R034.png",
+    "bytes": 282998,
+    "sha256": "5ad07720c7048c153ba1c40318fb5454da3d347e854463cc1674cecc20f85663"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K06_R000.png",
+    "bytes": 615654,
+    "sha256": "5fdaf3584dc7317c78ac0c90b53c502829e905694990e064f63f8dde97d58411"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K06_R038.png",
+    "bytes": 294518,
+    "sha256": "af22461b4ae36cea2d982b30af3ac4faef4c7cc1907f5ca0fae15f26e5c15a51"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K06_R096.png",
+    "bytes": 340297,
+    "sha256": "d001e6faba92016f676351a1192d3daaf91f004496f71af8d68d31f0e2eabcc2"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R007.png",
+    "bytes": 871363,
+    "sha256": "7c6d3e125cb419c6fb08b8ece609e39b738a91519e2422914ea747a89fc4c90f"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R051.png",
+    "bytes": 689214,
+    "sha256": "453818bb499f62273a6805e26896e1c39a0de579bbbc868ead1272313b5f81c8"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R059.png",
+    "bytes": 451661,
+    "sha256": "57c6dce24f2fcf621d957ba2c06ad5acb60d12c8be2f2319ab051ff9cd934961"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R095.png",
+    "bytes": 386675,
+    "sha256": "8d2b4e65eb07dcdf17c4f7cf2831d21f158ddd21175b882bb0168fb1c87e21bb"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R097.png",
+    "bytes": 399498,
+    "sha256": "9b505e017bd523ab938e96e23aa7097d8a7e42cd586dacbdd1eec8c43a2f0000"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R103.png",
+    "bytes": 952736,
+    "sha256": "b4c1b9c69d6370bc0d87483de698edca359942830cc398168437bf519d1550a6"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R107.png",
+    "bytes": 261606,
+    "sha256": "3b2f18f479a3ffd6fd45d33b705f96c94f19e414d6a4bb0d17a3aae28802d511"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R121.png",
+    "bytes": 599607,
+    "sha256": "8bbee990f3fc722ded50c99722f6f8d49c34aa5dc6dd7a2b7604e86827af8666"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K07_R123.png",
+    "bytes": 1016289,
+    "sha256": "cd4a7d8d0b17f98b122a0807731d3c878250f0303feea96dbed82c1108507ff0"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K08_R003.png",
+    "bytes": 460005,
+    "sha256": "7ddefceae45a68700e9ff7ad71459a5fed1d43ca00786f323aa7b9cfa8cac0ef"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K08_R019.png",
+    "bytes": 2179708,
+    "sha256": "11a87df39450d58f4983689b634231e33376558bd66aacf744b5f59a8135029b"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K08_R025.png",
+    "bytes": 645495,
+    "sha256": "54b8866a0ab2e2abbfccef8cb81b431d67713376bfd3cc7eb8b6b911c7aa7bbe"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K08_R033.png",
+    "bytes": 664256,
+    "sha256": "07111a4a1ef401fb8cb8ac014bd729311604cc1fd8577152593150e339676c6e"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K08_R041.png",
+    "bytes": 643773,
+    "sha256": "c8ef29cc398a7bd85f627810d88f17c6dcf4893a95fe7cc34c7dae85fad677b4"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K08_R047.png",
+    "bytes": 240240,
+    "sha256": "258b355a293f7f3308ae7bfd45f6b05aa6541f603774a4df04604b62106c6764"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K08_R057.png",
+    "bytes": 178442,
+    "sha256": "81a9b5b8e2aed1fc5866476cd1639c9769d1d11a2853109264996162e001afe2"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K09_R001.png",
+    "bytes": 1233408,
+    "sha256": "4f5b9e7df5a4e06f35a9c785cb26bf78407f9bd432bced60754c4ff4d8d42b43"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K09_R014.png",
+    "bytes": 874143,
+    "sha256": "ef12ad9bfa5881f95e4c8ac744fd72e2d75e4c39fcb85ccc480a02d39c1aa8ab"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K09_R024.png",
+    "bytes": 887464,
+    "sha256": "d86870807b1469c71e3f29cd3d945d25fdb2749cc82021593865e1e75c1558ee"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K09_R071.png",
+    "bytes": 441351,
+    "sha256": "7848badd8640048de626217110bd76b466901e7d63276570158e1f88912e494b"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K09_R098.png",
+    "bytes": 441285,
+    "sha256": "da35838a30dbc6f7687c9b4b756cc129e75b23a93e77f28f3c87969f2727c75d"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K09_R112.png",
+    "bytes": 294977,
+    "sha256": "de3442305941b2a9c3db8bae28a970f6ab469c35119fd647f10b8ba6c92ac8b8"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K10_R073.png",
+    "bytes": 468228,
+    "sha256": "ed34bf1ae711a41b0a231b58bcbf2b23f7fb5cec6207821f9a28de3679273e81"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K10_R129.png",
+    "bytes": 281465,
+    "sha256": "fad693301a2191f9e7ae3c72d9d423da3d0814d4a19c85d5d0e63ce966c8c3f6"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K10_R143.png",
+    "bytes": 678959,
+    "sha256": "902d5d09a7d72a9f958b0d54bb0cc87f906e42b1bbe286dd0aee3108bf559647"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews\\ogkalu__K10_R144.png",
+    "bytes": 885669,
+    "sha256": "181159df0a9a32858379f94f830692d05ed61dc75c734dcd4d8090e5c39cecb4"
+   }
+  ],
+  "previews_onnx_grid": [
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K01_R069.png",
+    "bytes": 419137,
+    "sha256": "b39c478362a8d48e0933dc3039bda6a256634aac19dc33409a0bdb7fc4994531"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K03_R113.png",
+    "bytes": 391730,
+    "sha256": "cdfd504633efcb6aa8f6b9de3cde37bf5c62b547c99793ed12b7098be46f96bb"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K03_R135.png",
+    "bytes": 147935,
+    "sha256": "ec0fc9981e511965698da2d2ad9c5714051a3909c04c9feae741f814e49dbc43"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K03_R155.png",
+    "bytes": 108275,
+    "sha256": "1057ad0fc8622d1b6b9ffdeb01483839b231181a0331eb7c5c97e5866dfbeafe"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K06_R096.png",
+    "bytes": 339224,
+    "sha256": "2080c9872e4c69e05f626dd5f3cd283e5d58e3559e230195bd9b123c2d0de5c9"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K07_R007.png",
+    "bytes": 875425,
+    "sha256": "4f79a5af34d92f9b575441024076173410183ec24201944e4a177af1944b68a7"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K07_R059.png",
+    "bytes": 456305,
+    "sha256": "852e45b7cea8fe933426eb36a89e5c5d2bcb62df593c2c16ad2e22150a984961"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K07_R097.png",
+    "bytes": 400118,
+    "sha256": "89abd0b6721bdcbc89393ae28f355bb908fb6f7c7bdcc2fc85b060b0846d8092"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K07_R103.png",
+    "bytes": 953035,
+    "sha256": "83a0d7d218283d0a42d0c3f0feae3810dbcb8be353d66677b7c921fe3b2ede83"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K07_R107.png",
+    "bytes": 261012,
+    "sha256": "2ca8ed544b468ac6c23b6ac4250524d2a69b9cbda8b5f160373c3c14fcc94209"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K07_R121.png",
+    "bytes": 598434,
+    "sha256": "d2394a84f1be104d1248cf4da1e074e81f2bcd98508d22aa1815af295dcb892a"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K07_R123.png",
+    "bytes": 1015412,
+    "sha256": "668f4648a7296806b0f6c3a29f482a23bd84eba497150a0b62d6dde1f0edb544"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K08_R019.png",
+    "bytes": 2168146,
+    "sha256": "9c5957c2d6282ebce44bbc2ea673e8b45d8bcd0b6084ba5f9d225660b6e1f174"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K08_R025.png",
+    "bytes": 643875,
+    "sha256": "f8661005ab4ee9dc81d880ac9564bc0d439a820f1228632a5e76f02c2533ff85"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K08_R033.png",
+    "bytes": 657284,
+    "sha256": "1abba563dff4727de86261cda90b997c1226a86b66a19bdf6ff9baabe0c0c28a"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K08_R041.png",
+    "bytes": 641670,
+    "sha256": "bf3cca7c7cfada22c37aca5ecd0509eac37031c7b04d5a3b58e220b15bf60e4a"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K08_R047.png",
+    "bytes": 241820,
+    "sha256": "b2243b977a3bc012a4b0f292d58d508404d42d8e738d7d8074324cde63b1e796"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K08_R057.png",
+    "bytes": 179667,
+    "sha256": "f905da653f4bd5758cc335a6b08aee13ecdf810fc35dc5c57ba0a85eb98b5226"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K09_R001.png",
+    "bytes": 1230278,
+    "sha256": "42fab666e8e72e8f1a136cc23b3e7374c5aa3d667f40b3446ce23c658624f5be"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K09_R014.png",
+    "bytes": 873415,
+    "sha256": "635aeacf51b40fc1900cb3a05d2ef2a35125580e3cb6765dff8c74430adad7cf"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K09_R071.png",
+    "bytes": 441230,
+    "sha256": "6032b976662f6a3e69d2a12a6a663c8667421de4cfbc5193dcb77d400542205d"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K10_R073.png",
+    "bytes": 472021,
+    "sha256": "cee2b23c2d8db767531d5bc77f683def379d529c361be1587d7feb7f4e927c11"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\previews-onnx\\onnx__K10_R129.png",
+    "bytes": 285485,
+    "sha256": "536fbbbd0e912c60c10e6c39cdf653160da56c921887bc14ec875a79050d18f5"
+   }
+  ],
+  "weights_onnx_candidates": [
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+    "bytes": 41227478,
+    "sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo26n.onnx",
+    "bytes": 6069760,
+    "sha256": "b45c2e12cf0c3c1d2abfbbb9123c9f96f040f2ac36a0842382ecd9d859c851c7"
+   }
+  ],
+  "weights_ogkalu_production_pinned": [
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\.cache\\huggingface\\.gitignore",
+    "bytes": 1,
+    "sha256": "684888c0ebb17f374298b65ee2807526c066094c701bcc7ebbe1c1095f494fc1"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\.cache\\huggingface\\CACHEDIR.TAG",
+    "bytes": 195,
+    "sha256": "e8893e2dcb3f4545ef67a0a5b7b769113d38eef1aa61c7c7ba14659b02af955f"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\.cache\\huggingface\\download\\config.json.metadata",
+    "bytes": 104,
+    "sha256": "634eb02a40fe42250fd7df23cb8854f0a643f360c1c0fbf88e3047cf5d988cc9"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\.cache\\huggingface\\download\\model.safetensors.metadata",
+    "bytes": 128,
+    "sha256": "7731fb72a08c799d620ad95ce527c3b5f84d8d19b674e3b7a7eb51faf9047864"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\.cache\\huggingface\\download\\preprocessor_config.json.metadata",
+    "bytes": 104,
+    "sha256": "1bca82cdae1b0c5a491042a732863f32668b92e7a47be842e41b0b60d912af70"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\.cache\\huggingface\\trees\\16e8a622f91fabc6b5b65c96d32d1183f8843546.json",
+    "bytes": 1702,
+    "sha256": "4060c575f75a8a1e6e031064f207a7b5d7b1f460eba7b8f2d562bfcb81018977"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\config.json",
+    "bytes": 2320,
+    "sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\model.safetensors",
+    "bytes": 171543900,
+    "sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector\\preprocessor_config.json",
+    "bytes": 470,
+    "sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca"
+   }
+  ],
+  "eval_manifest_frozen": [
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\eval-manifest.full.seg05.json",
+    "bytes": 170309,
+    "sha256": "4f16425a8ba72435051ef5f671bf36084a74adc7c4d05800ea2ae2150cf6f11e"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\eval-manifest.full.union.json",
+    "bytes": 202105,
+    "sha256": "c62b70143439bac50e52891bf65b47cf8b1823de7052b87c33f55375f774e499"
+   }
+  ],
+  "license_evidence_raw_snapshots": [
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\license-evidence\\api-chiqui7.json",
+    "bytes": 691,
+    "sha256": "20c520b20a91f375a8087e6d92789be7e3e0b600dda65f8c501dd212384d0651"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\license-evidence\\api-cozy.json",
+    "bytes": 730,
+    "sha256": "aa3d5a5355b09054ac4017613abde278c1bf2a6ee615c9e9a25d9c9015b0585e"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\license-evidence\\api-kiuyha.json",
+    "bytes": 1393,
+    "sha256": "bb78816254b7a489c6433b8158365aed4ef0046e7cefe1ecf95f13391ea73987"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\license-evidence\\api-manga109s-dataset.json",
+    "bytes": 2505,
+    "sha256": "90b4fc48f73ee60c7060307301dd77213c178a3f04d26f23218af5d8908647d6"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\license-evidence\\fetch-timestamp.txt",
+    "bytes": 21,
+    "sha256": "03f65ec760ec32cfc5c63de48764f15f31d7cd424572724f9173a94bb10b68d7"
+   },
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\license-evidence\\manga109s-README.md",
+    "bytes": 131,
+    "sha256": "27b09b8c063ddd1a0c538b346e0da0ae0e76691be8e3c7baf0521d311ecf99cc"
+   }
+  ],
+  "c4_gpu_venv_interpreter": [
+   {
+    "path": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4-gpu-py312\\Scripts\\python.exe",
+    "bytes": 274712,
+    "sha256": "864530d708039551a2c672ddd65e5900fbc08b0981479679723a5b468f8082bc"
+   }
+  ]
+ }
+}

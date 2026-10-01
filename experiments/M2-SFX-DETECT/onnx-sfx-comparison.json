@@ -1,7 +1,12 @@
 {
- "schema": "m2-sfx-detect/onnx-sfx-comparison@1",
+ "schema": "m2-sfx-detect/onnx-sfx-comparison@2",
  "task": "M2-SFX-DETECT-EVAL",
- "evidence_strength": "DIRECTIONAL — instance boxes are agent visual estimates; whether an sfx-class box is a true SFX hit is the agent's visual call (see report comparison table)",
+ "evidence_strength": "DIRECTIONAL — instance boxes are agent visual estimates / C1 user-adjudicated boxes; whether an sfx-class box is a true SFX hit is the agent's visual call (see report comparison table)",
+ "reference_box_provenance_definition": {
+  "ogkalu_self_prior": "reference coords ARE an ogkalu detection box (6 C1-audited blind-spot FP units + 5 stratum-B FP priors) — ogkalu coverage on these is SELF-REFERENTIAL and excluded from the non-self subset",
+  "c1_adjudicated": "reference coords C1-user-adjudicated but NOT an ogkalu detection (A1-U06 pseudo-GT box around 끌끌..)",
+  "agent_estimated": "agent visual estimate on grid previews"
+ },
  "inputs": {
   "verdicts": "experiments\\M2-SFX-DETECT\\sfx-spot-check-verdicts.json",
   "onnx": "experiments\\M2-SFX-DETECT\\onnx-sfx-frames.json",
@@ -9,25 +14,30 @@
  },
  "instance_summary": {
   "n_sfx_instances": 29,
-  "chiqui7_sfx_class_any_conf": {
-   "instances_with_overlap>=0.5": 11,
-   "instances_with_overlap>=0.3": 14,
-   "fraction_ge_0.5": 0.3793,
-   "fraction_ge_0.3": 0.4828
+  "provenance_counts": {
+   "ogkalu_self_prior": 11,
+   "non_self_referential": 18,
+   "c1_adjudicated": 1,
+   "agent_estimated": 17
   },
-  "chiqui7_sfx_class_conf>=0.5_and_overlap>=0.5": {
-   "instances": 7,
-   "fraction": 0.2414
+  "ALL_instances": {
+   "chiqui7_sfx_class_overlap>=0.5": 11,
+   "chiqui7_sfx_class_overlap>=0.3": 14,
+   "chiqui7_sfx_class_conf>=0.5_and_overlap>=0.5": 7,
+   "kiuyha_text_class_overlap>=0.5": 7,
+   "kiuyha_text_class_overlap>=0.3": 7,
+   "ogkalu_overlap>=0.5_SELF_REFERENTIAL": 18,
+   "ogkalu_overlap>=0.3_SELF_REFERENTIAL": 18
   },
-  "kiuyha_text_class_overlap>=0.5": {
-   "instances": 7,
-   "instances_with_overlap>=0.3": 7,
-   "fraction_ge_0.5": 0.2414
-  },
-  "ogkalu_overlap>=0.5": {
-   "instances": 18,
-   "instances_with_overlap>=0.3": 18,
-   "fraction_ge_0.5": 0.6207
+  "NON_SELF_subset (R1)": {
+   "n_instances": 18,
+   "chiqui7_sfx_class_overlap>=0.5": 8,
+   "chiqui7_sfx_class_overlap>=0.3": 11,
+   "kiuyha_text_class_overlap>=0.5": 2,
+   "kiuyha_text_class_overlap>=0.3": 2,
+   "ogkalu_overlap>=0.5": 7,
+   "ogkalu_overlap>=0.3": 7,
+   "note": "fair-comparison subset; ogkalu 7/18 vs chiqui7 11/29 reverses the headline direction (self-referential inflation removed)"
   }
  },
  "frame_summary": {
@@ -46,6 +56,7 @@
    "region_key": "K07_R007",
    "sample_id": "A__B1-U09",
    "stratum": "A",
+   "unit_id": "B1-U09",
    "sfx_desc": "저벅저벅（脚步声，两行手写体）",
    "sfx_box_xyxy": [
     67.72611999511719,
@@ -53,25 +64,31 @@
     241.8600311279297,
     1320.9954833984375
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.706,
+    "iou": 0.706,
     "conf": 0.8057,
-    "cls": "text"
+    "cls": "text",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.885,
+    "iou": 0.885,
     "conf": 0.8044,
     "hit_at_primary_cut": true
    }
@@ -80,6 +97,7 @@
    "region_key": "K08_R025",
    "sample_id": "A__B1-U12",
    "stratum": "A",
+   "unit_id": "B1-U12",
    "sfx_desc": "푸흡（喘气声，竖排）",
    "sfx_box_xyxy": [
     16.041719436645508,
@@ -87,25 +105,31 @@
     175.1754150390625,
     355.5155334472656
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.12,
     "conf": 0.8877,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.891,
+    "iou": 0.891,
     "conf": 0.8546,
     "hit_at_primary_cut": true
    }
@@ -114,6 +138,7 @@
    "region_key": "K09_R071",
    "sample_id": "A__B1-U13",
    "stratum": "A",
+   "unit_id": "B1-U13",
    "sfx_desc": "하하（笑声）",
    "sfx_box_xyxy": [
     198.29344177246094,
@@ -121,25 +146,31 @@
     348.53271484375,
     102.43840789794922
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.103,
     "conf": 0.5225,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.729,
+    "iou": 0.729,
     "conf": 0.7344,
     "conf_ge_primary": true
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.856,
+    "iou": 0.856,
     "conf": 0.5746,
     "hit_at_primary_cut": true
    }
@@ -148,6 +179,7 @@
    "region_key": "K07_R059",
    "sample_id": "A__B2-U12",
    "stratum": "A",
+   "unit_id": "B2-U12",
    "sfx_desc": "싸—아（集体喊/泄气声，超大字）",
    "sfx_box_xyxy": [
     0.892878532409668,
@@ -155,9 +187,11 @@
     690.0,
     361.04290771484375
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.647,
+    "iou": 0.643,
     "conf": 0.392,
     "conf_ge_primary": false,
     "det_box_xyxy": [
@@ -169,16 +203,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.647,
+    "iou": 0.643,
     "conf": 0.392,
-    "cls": "sfx"
+    "cls": "sfx",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.973,
+    "iou": 0.973,
     "conf": 0.5475,
     "hit_at_primary_cut": true
    }
@@ -187,6 +225,7 @@
    "region_key": "K07_R107",
    "sample_id": "A__B2-U14",
    "stratum": "A",
+   "unit_id": "B2-U14",
    "sfx_desc": "덜컹（撞击声，两字斜排）",
    "sfx_box_xyxy": [
     82.76410675048828,
@@ -194,25 +233,31 @@
     323.17523193359375,
     240.41624450683594
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_offset",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.728,
+    "iou": 0.728,
     "conf": 0.708,
-    "cls": "text"
+    "cls": "text",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.926,
+    "iou": 0.926,
     "conf": 0.6248,
     "hit_at_primary_cut": true
    }
@@ -221,6 +266,7 @@
    "region_key": "K07_R123",
    "sample_id": "A__B2-U15",
    "stratum": "A",
+   "unit_id": "B2-U15",
    "sfx_desc": "뒤적뒤적（翻找声，两行）",
    "sfx_box_xyxy": [
     183.64926147460938,
@@ -228,9 +274,11 @@
     395.01202392578125,
     1354.856689453125
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.763,
+    "iou": 0.763,
     "conf": 0.9313,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -242,16 +290,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.763,
+    "iou": 0.763,
     "conf": 0.9313,
-    "cls": "sfx"
+    "cls": "sfx",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.895,
+    "iou": 0.895,
     "conf": 0.9331,
     "hit_at_primary_cut": true
    }
@@ -260,6 +312,7 @@
    "region_key": "K09_R014",
    "sample_id": "A__A1-U06",
    "stratum": "A",
+   "unit_id": "A1-U06",
    "sfx_desc": "끌끌..（坏笑声，伪 GT 框内）",
    "sfx_box_xyxy": [
     147.0,
@@ -267,9 +320,11 @@
     304.0,
     239.0
    ],
+   "reference_box_provenance": "c1_adjudicated",
    "frame_verdict_ogkalu": "detected_low_conf",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.769,
+    "iou": 0.769,
     "conf": 0.8844,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -281,16 +336,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.016,
     "conf": 0.7589,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.839,
+    "iou": 0.833,
     "conf": 0.3872,
     "conf_ge_primary": false
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.965,
+    "iou": 0.96,
     "conf": 0.3279,
     "hit_at_primary_cut": false
    }
@@ -299,6 +358,7 @@
    "region_key": "K03_R135",
    "sample_id": "A__D-U01",
    "stratum": "A",
+   "unit_id": "D-U01",
    "sfx_desc": "빠걸（左上）",
    "sfx_box_xyxy": [
     220,
@@ -306,25 +366,31 @@
     290,
     105
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "detected_low_conf",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.64,
+    "iou": 0.012,
     "conf": 0.6545,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.949,
+    "iou": 0.871,
     "conf": 0.3392,
     "hit_at_primary_cut": false
    }
@@ -333,6 +399,7 @@
    "region_key": "K03_R135",
    "sample_id": "A__D-U01",
    "stratum": "A",
+   "unit_id": "D-U01",
    "sfx_desc": "빠걸（右上）",
    "sfx_box_xyxy": [
     410,
@@ -340,25 +407,31 @@
     475,
     135
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "detected_low_conf",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.02,
     "conf": 0.6545,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.761,
+    "iou": 0.658,
     "conf": 0.4812,
     "hit_at_primary_cut": false
    }
@@ -367,6 +440,7 @@
    "region_key": "K03_R135",
    "sample_id": "A__D-U01",
    "stratum": "A",
+   "unit_id": "D-U01",
    "sfx_desc": "빠걸（中左）",
    "sfx_box_xyxy": [
     215,
@@ -374,25 +448,31 @@
     290,
     205
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "detected_low_conf",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.597,
+    "iou": 0.014,
     "conf": 0.6545,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.654,
+    "iou": 0.567,
     "conf": 0.4609,
     "hit_at_primary_cut": false
    }
@@ -401,6 +481,7 @@
    "region_key": "K08_R041",
    "sample_id": "A__D-U07",
    "stratum": "A",
+   "unit_id": "D-U07",
    "sfx_desc": "빠악",
    "sfx_box_xyxy": [
     90,
@@ -408,9 +489,11 @@
     660,
     530
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.663,
+    "iou": 0.56,
     "conf": 0.2987,
     "conf_ge_primary": false,
     "det_box_xyxy": [
@@ -422,16 +505,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.663,
+    "iou": 0.56,
     "conf": 0.2987,
-    "cls": "sfx"
+    "cls": "sfx",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -440,6 +527,7 @@
    "region_key": "K08_R047",
    "sample_id": "A__D-U08",
    "stratum": "A",
+   "unit_id": "D-U08",
    "sfx_desc": "콰직",
    "sfx_box_xyxy": [
     50,
@@ -447,9 +535,11 @@
     520,
     360
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.461,
+    "iou": 0.456,
     "conf": 0.7552,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -461,16 +551,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.917,
+    "iou": 0.404,
     "conf": 0.7251,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -479,6 +573,7 @@
    "region_key": "K08_R057",
    "sample_id": "A__D-U09",
    "stratum": "A",
+   "unit_id": "D-U09",
    "sfx_desc": "투두",
    "sfx_box_xyxy": [
     20,
@@ -486,9 +581,11 @@
     170,
     260
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.926,
+    "iou": 0.889,
     "conf": 0.9539,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -500,16 +597,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.161,
     "conf": 0.7129,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -518,6 +619,7 @@
    "region_key": "K03_R155",
    "sample_id": "B__K03_R155_d1",
    "stratum": "B",
+   "unit_id": null,
    "sfx_desc": "화——",
    "sfx_box_xyxy": [
     95,
@@ -525,25 +627,31 @@
     290,
     390
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.831,
+    "iou": 0.803,
     "conf": 0.9419,
-    "cls": "text"
+    "cls": "text",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.987,
+    "iou": 0.203,
     "conf": 0.4625,
     "hit_at_primary_cut": true
    }
@@ -552,6 +660,7 @@
    "region_key": "K06_R096",
    "sample_id": "B__K06_R096_d1",
    "stratum": "B",
+   "unit_id": null,
    "sfx_desc": "쭈아앙~",
    "sfx_box_xyxy": [
     25,
@@ -559,25 +668,31 @@
     195,
     440
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.538,
+    "iou": 0.495,
     "conf": 0.9385,
-    "cls": "text"
+    "cls": "text",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.548,
+    "iou": 0.515,
     "conf": 0.8843,
     "conf_ge_primary": true
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.632,
+    "iou": 0.536,
     "conf": 0.7509,
     "hit_at_primary_cut": true
    }
@@ -586,6 +701,7 @@
    "region_key": "K07_R097",
    "sample_id": "B__K07_R097_d2",
    "stratum": "B",
+   "unit_id": null,
    "sfx_desc": "철컥철컥",
    "sfx_box_xyxy": [
     20,
@@ -593,25 +709,31 @@
     160,
     400
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.76,
+    "iou": 0.76,
     "conf": 0.9481,
-    "cls": "text"
+    "cls": "text",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.741,
+    "iou": 0.741,
     "conf": 0.9014,
     "conf_ge_primary": true
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.842,
+    "iou": 0.842,
     "conf": 0.7328,
     "hit_at_primary_cut": true
    }
@@ -620,6 +742,7 @@
    "region_key": "K07_R121",
    "sample_id": "B__K07_R121_d2",
    "stratum": "B",
+   "unit_id": null,
    "sfx_desc": "뒤적뒤적",
    "sfx_box_xyxy": [
     470,
@@ -627,25 +750,31 @@
     635,
     575
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.072,
     "conf": 0.8695,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.713,
+    "iou": 0.495,
     "conf": 0.585,
     "conf_ge_primary": true
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.787,
+    "iou": 0.708,
     "conf": 0.6881,
     "hit_at_primary_cut": true
    }
@@ -654,6 +783,7 @@
    "region_key": "K10_R129",
    "sample_id": "B__K10_R129_d0",
    "stratum": "B",
+   "unit_id": null,
    "sfx_desc": "Rrrrr（大）",
    "sfx_box_xyxy": [
     355,
@@ -661,25 +791,31 @@
     600,
     590
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "detected_low_conf",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.132,
     "conf": 0.6838,
-    "cls": "bubble"
+    "cls": "bubble",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.715,
+    "iou": 0.683,
     "conf": 0.5405,
     "conf_ge_primary": true
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.987,
+    "iou": 0.233,
     "conf": 0.2952,
     "hit_at_primary_cut": false
    }
@@ -688,6 +824,7 @@
    "region_key": "K10_R129",
    "sample_id": "B__K10_R129_d0",
    "stratum": "B",
+   "unit_id": null,
    "sfx_desc": "rRrRr+状态栏图标（小）",
    "sfx_box_xyxy": [
     55,
@@ -695,25 +832,31 @@
     345,
     240
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "detected_low_conf",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.078,
     "conf": 0.6838,
-    "cls": "bubble"
+    "cls": "bubble",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.153,
+    "iou": 0.066,
     "conf": 0.3613,
     "conf_ge_primary": false
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.97,
+    "iou": 0.135,
     "conf": 0.2952,
     "hit_at_primary_cut": false
    }
@@ -722,6 +865,7 @@
    "region_key": "K10_R073",
    "sample_id": "B__K10_R073_d2",
    "stratum": "B",
+   "unit_id": null,
    "sfx_desc": "끼아아악",
    "sfx_box_xyxy": [
     365,
@@ -729,9 +873,11 @@
     620,
     1390
    ],
+   "reference_box_provenance": "ogkalu_self_prior",
    "frame_verdict_ogkalu": "detected_hit",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.89,
+    "iou": 0.865,
     "conf": 0.2715,
     "conf_ge_primary": false,
     "det_box_xyxy": [
@@ -743,16 +889,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.443,
     "conf": 0.7816,
-    "cls": "bubble"
+    "cls": "bubble",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.931,
+    "iou": 0.898,
     "conf": 0.7354,
     "conf_ge_primary": true
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.96,
+    "iou": 0.872,
     "conf": 0.8031,
     "hit_at_primary_cut": true
    }
@@ -761,6 +911,7 @@
    "region_key": "K01_R069",
    "sample_id": "C__K01_R069",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "촬/칼（左）",
    "sfx_box_xyxy": [
     200,
@@ -768,25 +919,31 @@
     275,
     140
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.853,
+    "iou": 0.026,
     "conf": 0.8873,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -795,6 +952,7 @@
    "region_key": "K01_R069",
    "sample_id": "C__K01_R069",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "칼（右）",
    "sfx_box_xyxy": [
     390,
@@ -802,25 +960,31 @@
     465,
     190
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null,
     "det_box_xyxy": null
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.029,
     "conf": 0.8873,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -829,6 +993,7 @@
    "region_key": "K03_R113",
    "sample_id": "C__K03_R113",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "뙇 环（整体范围）",
    "sfx_box_xyxy": [
     55,
@@ -836,9 +1001,11 @@
     610,
     520
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "detected_offset",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.317,
+    "iou": 0.317,
     "conf": 0.8334,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -850,16 +1017,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 0.317,
+    "iou": 0.317,
     "conf": 0.8334,
-    "cls": "sfx"
+    "cls": "sfx",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.202,
+    "iou": 0.201,
     "conf": 0.2651,
     "hit_at_primary_cut": false
    }
@@ -868,6 +1039,7 @@
    "region_key": "K07_R103",
    "sample_id": "C__K07_R103",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "철컹",
    "sfx_box_xyxy": [
     0,
@@ -875,9 +1047,11 @@
     620,
     230
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.339,
+    "iou": 0.337,
     "conf": 0.8192,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -889,16 +1063,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.195,
     "conf": 0.8937,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -907,6 +1085,7 @@
    "region_key": "K08_R033",
    "sample_id": "C__K08_R033",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "수악",
    "sfx_box_xyxy": [
     230,
@@ -914,9 +1093,11 @@
     380,
     580
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "detected_low_conf",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.901,
+    "iou": 0.709,
     "conf": 0.3219,
     "conf_ge_primary": false,
     "det_box_xyxy": [
@@ -928,16 +1109,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.191,
     "conf": 0.8802,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.797,
+    "iou": 0.797,
     "conf": 0.2775,
     "hit_at_primary_cut": false
    }
@@ -946,6 +1131,7 @@
    "region_key": "K08_R019",
    "sample_id": "C__K08_R019",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "빠직（上）",
    "sfx_box_xyxy": [
     30,
@@ -953,9 +1139,11 @@
     330,
     420
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.353,
     "conf": 0.9454,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -967,16 +1155,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.353,
     "conf": 0.9454,
-    "cls": "sfx"
+    "cls": "sfx",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -985,6 +1177,7 @@
    "region_key": "K08_R019",
    "sample_id": "C__K08_R019",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "아（下）",
    "sfx_box_xyxy": [
     60,
@@ -992,9 +1185,11 @@
     330,
     1450
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.56,
+    "iou": 0.184,
     "conf": 0.9574,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -1006,16 +1201,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.106,
     "conf": 0.9122,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -1024,6 +1223,7 @@
    "region_key": "K09_R001",
    "sample_id": "C__K09_R001",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "송송",
    "sfx_box_xyxy": [
     100,
@@ -1031,9 +1231,11 @@
     280,
     840
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.506,
+    "iou": 0.506,
     "conf": 0.683,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -1045,16 +1247,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.053,
     "conf": 0.6936,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }
@@ -1063,6 +1269,7 @@
    "region_key": "K09_R001",
    "sample_id": "C__K09_R001",
    "stratum": "C",
+   "unit_id": null,
    "sfx_desc": "삐직삐직",
    "sfx_box_xyxy": [
     0,
@@ -1070,9 +1277,11 @@
     190,
     1450
    ],
+   "reference_box_provenance": "agent_estimated",
    "frame_verdict_ogkalu": "missed",
    "chiqui7_sfx_class": {
     "coverage_of_sfx": 0.582,
+    "iou": 0.296,
     "conf": 0.7789,
     "conf_ge_primary": true,
     "det_box_xyxy": [
@@ -1084,16 +1293,20 @@
    },
    "chiqui7_any_class": {
     "coverage_of_sfx": 1.0,
+    "iou": 0.047,
     "conf": 0.6936,
-    "cls": "panel"
+    "cls": "panel",
+    "note": "single-side coverage criterion — dominated by panel-class page-size boxes; NOT used for conclusions"
    },
    "kiuyha_text_class": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "conf_ge_primary": null
    },
    "ogkalu_baseline": {
     "coverage_of_sfx": 0.0,
+    "iou": 0.0,
     "conf": null,
     "hit_at_primary_cut": false
    }

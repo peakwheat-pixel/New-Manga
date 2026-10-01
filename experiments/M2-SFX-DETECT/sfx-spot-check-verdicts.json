@@ -10,7 +10,8 @@
  "summary": {
   "n_candidate_units": 44,
   "n_primary_sfx_frames": 23,
-  "n_skipped": 21,
+  "n_skipped_not_sfx": 19,
+  "n_supplementary_excluded": 2,
   "frame_verdict_counts": {
    "detected_hit(conf>=0.5_covers_sfx)": 10,
    "detected_offset(conf>=0.5_partial)": 2,
@@ -39,7 +40,7 @@
    "unit_id": "B1-U09",
    "sfx_summary": "저벅저벅（脚步声，两行手写体）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.84 text_free 框覆盖 C1 审定框（저벅/저벅 两行）；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖 C1 审定框（저벅/저벅 两行，conf/cls 见下方取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.8044 cls=text_free coverage=0.885 box=[73.7, 1088.9, 235.9, 1315.0]",
    "sfx_instances": [
     {
      "desc": "저벅저벅（脚步声，两行手写体）",
@@ -72,7 +73,12 @@
       205,
       365
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     },
     {
      "desc": "걸들（右上）",
@@ -83,7 +89,12 @@
       390
      ],
      "verdict": "detected_low_conf",
-     "note": "0.28 text_free"
+     "note": "conf/cls 见自动取值行",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.957,
+      "conf": 0.2801,
+      "cls": "text_free"
+     }
     },
     {
      "desc": "?!（大特效符号）",
@@ -93,7 +104,12 @@
       205,
       905
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -164,7 +180,7 @@
    "unit_id": "B1-U12",
    "sfx_summary": "푸흡（喘气声，竖排）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.82 text_free 框覆盖竖排 푸흡 全部字母；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖竖排 푸흡 全部字母（conf/cls 见取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.8546 cls=text_bubble coverage=0.891 box=[22.0, 33.3, 169.2, 349.5]",
    "sfx_instances": [
     {
      "desc": "푸흡（喘气声，竖排）",
@@ -235,7 +251,7 @@
    "unit_id": "B1-U13",
    "sfx_summary": "하하（笑声）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.97 text_free 框精确覆盖 하하；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖 하하（conf/cls 见取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5746 cls=text_free coverage=0.856 box=[204.3, 1.1, 342.5, 96.4]",
    "sfx_instances": [
     {
      "desc": "하하（笑声）",
@@ -268,7 +284,12 @@
       285,
       335
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -317,7 +338,7 @@
    "unit_id": "B2-U12",
    "sfx_summary": "싸—아（集体喊/泄气声，超大字）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.5475 text_free 全宽大框 (6.9,0.6,690,355) 覆盖全部字面（框过松但含 SFX）；勉强过 0.5 主阈——阈值边缘样本",
+   "rationale": "ogkalu 全宽大框覆盖全部字面（框过松但含 SFX，conf/cls/坐标见取值行）；阈值边缘样本（C4 正式 block 口径 conf=0.5475）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5475 cls=text_free coverage=0.973 box=[6.9, 0.6, 690.0, 355.0]",
    "sfx_instances": [
     {
      "desc": "싸—아（集体喊/泄气声，超大字）",
@@ -406,7 +427,7 @@
    "unit_id": "B2-U14",
    "sfx_summary": "덜컹（撞击声，两字斜排）",
    "frame_verdict": "detected_offset",
-   "rationale": "ogkalu 0.88 text_free 框覆盖「덜」；「컹」(约 [430,100,620,310]) 无任何检出框——整词部分检出；C1 记录「部分字」一致",
+   "rationale": "ogkalu 检出框覆盖「덜」（conf/cls 见取值行）；「컹」（约 [430,100,620,310]，见 extras）无任何检出框——整词部分检出；C1 记录「部分字」一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6248 cls=text_bubble coverage=0.926 box=[88.8, 0.1, 317.2, 234.4]",
    "sfx_instances": [
     {
      "desc": "덜컹（撞击声，两字斜排）",
@@ -466,7 +487,7 @@
    "unit_id": "B2-U15",
    "sfx_summary": "뒤적뒤적（翻找声，两行）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.99 框精确覆盖两行字面；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖两行字面（conf/cls 见取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.9331 cls=text_free coverage=0.895 box=[189.6, 1126.9, 389.0, 1348.9]",
    "sfx_instances": [
     {
      "desc": "뒤적뒤적（翻找声，两行）",
@@ -515,7 +536,7 @@
    "unit_id": "A1-U06",
    "sfx_summary": "끌끌..（坏笑声，伪 GT 框内）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "C4/C1 口径 (conf 0.5) 零检出；harvest 0.25 下检出 0.3279 text_free，框与 C1 审定框几乎重合——低置信带证据；本次运行与 C4 同权重 hash（037930a8）",
+   "rationale": "C4/C1 口径 (conf 0.5) 零检出；harvest 0.25 下检出（conf/cls 见取值行），框与 C1 审定框几乎重合——低置信带证据；本次运行与 C4 同权重 hash（037930a8）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.3279 cls=text_free coverage=0.965 box=[147.3, 163.0, 304.9, 238.4]",
    "sfx_instances": [
     {
      "desc": "끌끌..（坏笑声，伪 GT 框内）",
@@ -549,7 +570,12 @@
       1179
      ],
      "verdict": "detected_low_conf",
-     "note": "0.257 框部分覆盖"
+     "note": "conf/cls 见自动取值行",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 1.0,
+      "conf": 0.2573,
+      "cls": "text_free"
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -598,7 +624,7 @@
    "unit_id": "D-U01",
    "sfx_summary": "빠걸×3（旋转声，三处）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "C4/C1 口径零检出；harvest 0.25 下三处全部检出（0.34/0.45/0.48，均低于主阈）——「零检出」实为阈值/校准问题",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下三处全部检出（逐实例 conf 见取值行，均低于主阈）——「零检出」实为阈值/校准问题｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.3392 cls=text_free coverage=0.949 box=[220.5, 52.1, 286.9, 106.8]",
    "sfx_instances": [
     {
      "desc": "빠걸（左上）",
@@ -674,7 +700,12 @@
       250
      ],
      "verdict": "hallucination",
-     "note": "0.40 text_free 落在手部"
+     "note": "conf/cls 见自动取值行（框落在手部）",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.633,
+      "conf": 0.3952,
+      "cls": "text_free"
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -734,7 +765,7 @@
    "unit_id": "D-U07",
    "sfx_summary": "빠악（撞击声，超大红字）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——真正的硬盲区（与 C1 D-U07 一致）",
+   "rationale": "harvest 0.25 仍零检出——真正的硬盲区（与 C1 D-U07 一致）｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "빠악",
@@ -766,7 +797,7 @@
    "unit_id": "D-U08",
    "sfx_summary": "콰직（粉碎声，手写刮擦体）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出（与 C1 D-U08 一致）",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U08 一致）｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "콰직",
@@ -798,7 +829,7 @@
    "unit_id": "D-U09",
    "sfx_summary": "투두（坠落声，手写体）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出（与 C1 D-U09 一致）",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U09 一致）｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "투두",
@@ -830,7 +861,7 @@
    "unit_id": null,
    "sfx_summary": "화——（爆发声，拖长音）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.77 text_free 框覆盖「화」+ 拖长线；速度线+模糊漩涡背景，典型 SFX 版式",
+   "rationale": "ogkalu C4 正式 block 层 FP 框覆盖「화」+ 拖长线（conf 见取值行）；速度线+模糊漩涡背景，典型 SFX 版式｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.4625 cls=text_free coverage=0.987 box=[97.5, 145.1, 498.3, 392.7]；[frames-export 取值] C4 正式 block 层 FP conf=0.7720 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "화——",
@@ -901,7 +932,7 @@
    "unit_id": null,
    "sfx_summary": "쭈아앙~（拟声拟态词，白色手写体）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.75 text_free 框覆盖字面",
+   "rationale": "ogkalu 检出框覆盖字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.7509 cls=text_free coverage=0.632 box=[29.6, 339.1, 192.5, 411.1]；[frames-export 取值] C4 正式 block 层 FP conf=0.7509 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "쭈아앙~",
@@ -961,7 +992,7 @@
    "unit_id": null,
    "sfx_summary": "철컥철컥（金属扣具/快门声，两行）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.73 text_free 框覆盖两行字面",
+   "rationale": "ogkalu 检出框覆盖两行字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.7328 cls=text_free coverage=0.842 box=[31.1, 260.5, 156.9, 396.3]；[frames-export 取值] C4 正式 block 层 FP conf=0.7328 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "철컥철컥",
@@ -1032,7 +1063,7 @@
    "unit_id": null,
    "sfx_summary": "뒤적뒤적（翻找声，大字）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.63 text_free 框覆盖字面",
+   "rationale": "ogkalu 检出框覆盖字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6881 cls=text_free coverage=0.787 box=[478.7, 341.1, 657.2, 540.4]；[frames-export 取值] C4 正式 block 层 FP conf=0.6881 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "뒤적뒤적",
@@ -1066,7 +1097,12 @@
       345
      ],
      "verdict": "detected_low_conf",
-     "note": "0.30 text_free"
+     "note": "conf/cls 见自动取值行",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.782,
+      "conf": 0.3006,
+      "cls": "text_free"
+     }
     },
     {
      "desc": "꼬르륵（腹鸣声，画面左下）",
@@ -1076,7 +1112,12 @@
       215,
       900
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -1147,7 +1188,7 @@
    "unit_id": null,
    "sfx_summary": "RrRrrr（手机振动拟声，白色手写体）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "prior 单元本身落在手机屏幕 UI 文字「발신번호 표시제한」（=skip），但画面含振动拟声 Rrrrr：ogkalu 0.45 text_free（低于主阈 0.5）——帧作为额外观察纳入主样本（选样方法披露）",
+   "rationale": "prior 单元本身落在手机屏幕 UI 文字「발신번호 표시제한」（=skip），但画面含振动拟声 Rrrrr：ogkalu 检出低于主阈 0.5（conf 见取值行）——帧作为额外观察纳入主样本（选样方法披露）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.2952 cls=text_free coverage=0.987 box=[48.4, 109.1, 634.0, 586.4]；[frames-export 取值] C4 正式 block 层 FP conf=0.5733 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "Rrrrr（大）",
@@ -1178,7 +1219,6 @@
       345,
       240
      ],
-     "verdict_extra": true,
      "box_provenance": "agent_estimate",
      "best_ogkalu_overlap": {
       "coverage_of_sfx": 0.97,
@@ -1273,7 +1313,7 @@
    "unit_id": null,
    "sfx_summary": "끼아아악（尖叫，斜排手写体）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.86 text_bubb 框覆盖字面（class=text_bubble 但实为自由 SFX 字——类间混淆证据）",
+   "rationale": "ogkalu 检出框覆盖字面（conf/cls 见取值行；class 见取值行——自由 SFX 字被判 text_bubble 属类间混淆证据）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.8031 cls=text_bubble coverage=0.96 box=[369.6, 1158.8, 614.4, 1396.5]；[frames-export 取值] C4 正式 block 层 FP conf=0.8031 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "끼아아악",
@@ -1306,7 +1346,12 @@
       590,
       870
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -1355,7 +1400,7 @@
    "unit_id": null,
    "sfx_summary": "칼칼（傻笑/得意声变体，粉色圆体字，两处）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——C1 抽检之外的新增硬盲区样本",
+   "rationale": "harvest 0.25 仍零检出——C1 抽检之外的新增硬盲区样本｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "촬/칼（左）",
@@ -1403,7 +1448,7 @@
    "unit_id": null,
    "sfx_summary": "뙇×n（坠落撞击声，环形重复字母）",
    "frame_verdict": "detected_offset",
-   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.35 text_free 框仅覆盖左弧部分字母（环形排布的大部分字母未检出）",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下检出框（conf/cls 见取值行）仅覆盖左弧部分字母（环形排布的大部分字母未检出）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.2651 cls=text_free coverage=0.202 box=[51.6, 169.6, 226.3, 497.0]",
    "sfx_instances": [
     {
      "desc": "뙇 环（整体范围）",
@@ -1452,7 +1497,7 @@
    "unit_id": null,
    "sfx_summary": "철컹（坠落巨响，超大字）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 下 SFX 本体零检出；唯一检出框 (0.35) 落在建筑窗户纹理=幻觉",
+   "rationale": "harvest 0.25 下 SFX 本体零检出；唯一检出框（conf 见取值行）落在建筑窗户纹理=幻觉｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "철컹",
@@ -1496,7 +1541,7 @@
    "unit_id": null,
    "sfx_summary": "수악（打击声，竖排白描边）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.30 text_free 框覆盖字面",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下检出框覆盖字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.2775 cls=text_free coverage=0.797 box=[231.1, 159.0, 369.8, 572.9]",
    "sfx_instances": [
     {
      "desc": "수악",
@@ -1545,7 +1590,7 @@
    "unit_id": null,
    "sfx_summary": "빠직 + 아（爆裂/尖叫，两处大字）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "빠직（上）",
@@ -1593,7 +1638,7 @@
    "unit_id": null,
    "sfx_summary": "송송 + 삐직삐직（挖土/电子音，两处）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "송송",
@@ -1655,7 +1700,7 @@
    "unit_id": "B1-U09",
    "sfx_summary": "저벅저벅（脚步声，两行手写体）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.84 text_free 框覆盖 C1 审定框（저벅/저벅 两行）；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖 C1 审定框（저벅/저벅 两行，conf/cls 见下方取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.8044 cls=text_free coverage=0.885 box=[73.7, 1088.9, 235.9, 1315.0]",
    "sfx_instances": [
     {
      "desc": "저벅저벅（脚步声，两行手写体）",
@@ -1688,7 +1733,12 @@
       205,
       365
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     },
     {
      "desc": "걸들（右上）",
@@ -1699,7 +1749,12 @@
       390
      ],
      "verdict": "detected_low_conf",
-     "note": "0.28 text_free"
+     "note": "conf/cls 见自动取值行",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.957,
+      "conf": 0.2801,
+      "cls": "text_free"
+     }
     },
     {
      "desc": "?!（大特效符号）",
@@ -1709,7 +1764,12 @@
       205,
       905
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -1780,7 +1840,7 @@
    "unit_id": "B1-U12",
    "sfx_summary": "푸흡（喘气声，竖排）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.82 text_free 框覆盖竖排 푸흡 全部字母；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖竖排 푸흡 全部字母（conf/cls 见取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.8546 cls=text_bubble coverage=0.891 box=[22.0, 33.3, 169.2, 349.5]",
    "sfx_instances": [
     {
      "desc": "푸흡（喘气声，竖排）",
@@ -1851,7 +1911,7 @@
    "unit_id": "B1-U13",
    "sfx_summary": "하하（笑声）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.97 text_free 框精确覆盖 하하；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖 하하（conf/cls 见取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5746 cls=text_free coverage=0.856 box=[204.3, 1.1, 342.5, 96.4]",
    "sfx_instances": [
     {
      "desc": "하하（笑声）",
@@ -1884,7 +1944,12 @@
       285,
       335
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -1933,7 +1998,7 @@
    "unit_id": "B2-U12",
    "sfx_summary": "싸—아（集体喊/泄气声，超大字）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.5475 text_free 全宽大框 (6.9,0.6,690,355) 覆盖全部字面（框过松但含 SFX）；勉强过 0.5 主阈——阈值边缘样本",
+   "rationale": "ogkalu 全宽大框覆盖全部字面（框过松但含 SFX，conf/cls/坐标见取值行）；阈值边缘样本（C4 正式 block 口径 conf=0.5475）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5475 cls=text_free coverage=0.973 box=[6.9, 0.6, 690.0, 355.0]",
    "sfx_instances": [
     {
      "desc": "싸—아（集体喊/泄气声，超大字）",
@@ -2022,7 +2087,7 @@
    "unit_id": "B2-U14",
    "sfx_summary": "덜컹（撞击声，两字斜排）",
    "frame_verdict": "detected_offset",
-   "rationale": "ogkalu 0.88 text_free 框覆盖「덜」；「컹」(约 [430,100,620,310]) 无任何检出框——整词部分检出；C1 记录「部分字」一致",
+   "rationale": "ogkalu 检出框覆盖「덜」（conf/cls 见取值行）；「컹」（约 [430,100,620,310]，见 extras）无任何检出框——整词部分检出；C1 记录「部分字」一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6248 cls=text_bubble coverage=0.926 box=[88.8, 0.1, 317.2, 234.4]",
    "sfx_instances": [
     {
      "desc": "덜컹（撞击声，两字斜排）",
@@ -2082,7 +2147,7 @@
    "unit_id": "B2-U15",
    "sfx_summary": "뒤적뒤적（翻找声，两行）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.99 框精确覆盖两行字面；C1 盲区 FP 证据一致",
+   "rationale": "ogkalu 检出框覆盖两行字面（conf/cls 见取值行）；C1 盲区 FP 证据一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.9331 cls=text_free coverage=0.895 box=[189.6, 1126.9, 389.0, 1348.9]",
    "sfx_instances": [
     {
      "desc": "뒤적뒤적（翻找声，两行）",
@@ -2131,7 +2196,7 @@
    "unit_id": "A1-U06",
    "sfx_summary": "끌끌..（坏笑声，伪 GT 框内）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "C4/C1 口径 (conf 0.5) 零检出；harvest 0.25 下检出 0.3279 text_free，框与 C1 审定框几乎重合——低置信带证据；本次运行与 C4 同权重 hash（037930a8）",
+   "rationale": "C4/C1 口径 (conf 0.5) 零检出；harvest 0.25 下检出（conf/cls 见取值行），框与 C1 审定框几乎重合——低置信带证据；本次运行与 C4 同权重 hash（037930a8）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.3279 cls=text_free coverage=0.965 box=[147.3, 163.0, 304.9, 238.4]",
    "sfx_instances": [
     {
      "desc": "끌끌..（坏笑声，伪 GT 框内）",
@@ -2165,7 +2230,12 @@
       1179
      ],
      "verdict": "detected_low_conf",
-     "note": "0.257 框部分覆盖"
+     "note": "conf/cls 见自动取值行",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 1.0,
+      "conf": 0.2573,
+      "cls": "text_free"
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -2214,7 +2284,7 @@
    "unit_id": "D-U01",
    "sfx_summary": "빠걸×3（旋转声，三处）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "C4/C1 口径零检出；harvest 0.25 下三处全部检出（0.34/0.45/0.48，均低于主阈）——「零检出」实为阈值/校准问题",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下三处全部检出（逐实例 conf 见取值行，均低于主阈）——「零检出」实为阈值/校准问题｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.3392 cls=text_free coverage=0.949 box=[220.5, 52.1, 286.9, 106.8]",
    "sfx_instances": [
     {
      "desc": "빠걸（左上）",
@@ -2290,7 +2360,12 @@
       250
      ],
      "verdict": "hallucination",
-     "note": "0.40 text_free 落在手部"
+     "note": "conf/cls 见自动取值行（框落在手部）",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.633,
+      "conf": 0.3952,
+      "cls": "text_free"
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -2350,7 +2425,7 @@
    "unit_id": "D-U07",
    "sfx_summary": "빠악（撞击声，超大红字）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——真正的硬盲区（与 C1 D-U07 一致）",
+   "rationale": "harvest 0.25 仍零检出——真正的硬盲区（与 C1 D-U07 一致）｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "빠악",
@@ -2382,7 +2457,7 @@
    "unit_id": "D-U08",
    "sfx_summary": "콰직（粉碎声，手写刮擦体）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出（与 C1 D-U08 一致）",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U08 一致）｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "콰직",
@@ -2414,7 +2489,7 @@
    "unit_id": "D-U09",
    "sfx_summary": "투두（坠落声，手写体）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出（与 C1 D-U09 一致）",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U09 一致）｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "투두",
@@ -2446,7 +2521,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "旁白字幕横幅（黄底「엄무용 미소가…」）——叙事文字非 SFX",
+   "rationale": "旁白字幕横幅（黄底「엄무용 미소가…」）——叙事文字非 SFX｜[frames-export 取值] C4 正式 block 层 FP conf=0.9064 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -2495,7 +2570,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "画面内海报印刷小字（ART X vol.2 海报 credit 区）",
+   "rationale": "画面内海报印刷小字（ART X vol.2 海报 credit 区）｜[frames-export 取值] C4 正式 block 层 FP conf=0.5294 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -2896,7 +2971,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "对白小气泡「내일 봐~」（GT 未标注的真实对白，B1-U05 同类）",
+   "rationale": "对白小气泡「내일 봐~」（GT 未标注的真实对白，B1-U05 同类）｜[frames-export 取值] C4 正式 block 层 FP conf=0.7119 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -2945,7 +3020,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "手写旁注（蓝字「약 과잉섭취는 몸에 안좋아~」）——手写小注非 SFX",
+   "rationale": "手写旁注（蓝字「약 과잉섭취는 몸에 안좋아~」）——手写小注非 SFX｜[frames-export 取值] C4 正式 block 层 FP conf=0.7713 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -3005,7 +3080,7 @@
    "unit_id": null,
    "sfx_summary": "화——（爆发声，拖长音）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.77 text_free 框覆盖「화」+ 拖长线；速度线+模糊漩涡背景，典型 SFX 版式",
+   "rationale": "ogkalu C4 正式 block 层 FP 框覆盖「화」+ 拖长线（conf 见取值行）；速度线+模糊漩涡背景，典型 SFX 版式｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.4625 cls=text_free coverage=0.987 box=[97.5, 145.1, 498.3, 392.7]；[frames-export 取值] C4 正式 block 层 FP conf=0.7720 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "화——",
@@ -3076,7 +3151,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "画面内大字标题「사망 기억」（显示文字/章节文案，非拟声）",
+   "rationale": "画面内大字标题「사망 기억」（显示文字/章节文案，非拟声）｜[frames-export 取值] C4 正式 block 层 FP conf=0.8200 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -3125,7 +3200,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "话数标题横幅「언덕 위의 제임스」+「146」+「글그림 주당빵」——出版物元文字",
+   "rationale": "话数标题横幅「언덕 위의 제임스」+「146」+「글그림 주당빵」——出版物元文字｜[frames-export 取值] C4 正式 block 层 FP conf=0.8599 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -3196,7 +3271,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "对白小气泡「어?」（GT 未标注）",
+   "rationale": "对白小气泡「어?」（GT 未标注）｜[frames-export 取值] C4 正式 block 层 FP conf=0.8793 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -3333,7 +3408,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "风格化语气词「넴??？」（顶部裁切、对白性质，非拟声；borderline 登记）",
+   "rationale": "风格化语气词「넴??？」（顶部裁切、对白性质，非拟声；borderline 登记）｜[frames-export 取值] C4 正式 block 层 FP conf=0.6712 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -3382,7 +3457,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "章节标题艺术字「최강전설/기억호」+ credit——出版物元文字",
+   "rationale": "章节标题艺术字「최강전설/기억호」+ credit——出版物元文字｜[frames-export 取值] C4 正式 block 层 FP conf=0.7659 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -3772,7 +3847,7 @@
    "unit_id": null,
    "sfx_summary": "쭈아앙~（拟声拟态词，白色手写体）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.75 text_free 框覆盖字面",
+   "rationale": "ogkalu 检出框覆盖字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.7509 cls=text_free coverage=0.632 box=[29.6, 339.1, 192.5, 411.1]；[frames-export 取值] C4 正式 block 层 FP conf=0.7509 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "쭈아앙~",
@@ -3832,7 +3907,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "对白（爆裂形气泡内「아나 ㅅㅂ '우리'를!」）",
+   "rationale": "对白（爆裂形气泡内「아나 ㅅㅂ '우리'를!」）｜[frames-export 取值] C4 正式 block 层 FP conf=0.9540 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -3870,7 +3945,7 @@
    "unit_id": null,
    "sfx_summary": "철컥철컥（金属扣具/快门声，两行）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.73 text_free 框覆盖两行字面",
+   "rationale": "ogkalu 检出框覆盖两行字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.7328 cls=text_free coverage=0.842 box=[31.1, 260.5, 156.9, 396.3]；[frames-export 取值] C4 正式 block 层 FP conf=0.7328 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "철컥철컥",
@@ -3941,7 +4016,7 @@
    "unit_id": null,
    "sfx_summary": "뒤적뒤적（翻找声，大字）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.63 text_free 框覆盖字面",
+   "rationale": "ogkalu 检出框覆盖字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6881 cls=text_free coverage=0.787 box=[478.7, 341.1, 657.2, 540.4]；[frames-export 取值] C4 正式 block 层 FP conf=0.6881 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "뒤적뒤적",
@@ -3975,7 +4050,12 @@
       345
      ],
      "verdict": "detected_low_conf",
-     "note": "0.30 text_free"
+     "note": "conf/cls 见自动取值行",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.782,
+      "conf": 0.3006,
+      "cls": "text_free"
+     }
     },
     {
      "desc": "꼬르륵（腹鸣声，画面左下）",
@@ -3985,7 +4065,12 @@
       215,
       900
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -4056,7 +4141,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "省略号沉默气泡「……▪」（非 SFX）",
+   "rationale": "省略号沉默气泡「……▪」（非 SFX）｜[frames-export 取值] C4 正式 block 层 FP conf=0.7298 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -4105,7 +4190,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_hallucination",
-   "rationale": "ogkalu 0.61 框落在建筑窗户纹理上——无文字（模型幻觉）",
+   "rationale": "ogkalu 0.61 框落在建筑窗户纹理上——无文字（模型幻觉）｜[frames-export 取值] C4 正式 block 层 FP conf=0.6120 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -4165,7 +4250,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "skipped_not_sfx",
-   "rationale": "对白气泡（「그게 나든 바야」，被帧边裁切）",
+   "rationale": "对白气泡（「그게 나든 바야」，被帧边裁切）｜[frames-export 取值] C4 正式 block 层 FP conf=0.6264 cls=merged_block",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -4258,7 +4343,7 @@
    "unit_id": null,
    "sfx_summary": "RrRrrr（手机振动拟声，白色手写体）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "prior 单元本身落在手机屏幕 UI 文字「발신번호 표시제한」（=skip），但画面含振动拟声 Rrrrr：ogkalu 0.45 text_free（低于主阈 0.5）——帧作为额外观察纳入主样本（选样方法披露）",
+   "rationale": "prior 单元本身落在手机屏幕 UI 文字「발신번호 표시제한」（=skip），但画面含振动拟声 Rrrrr：ogkalu 检出低于主阈 0.5（conf 见取值行）——帧作为额外观察纳入主样本（选样方法披露）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.2952 cls=text_free coverage=0.987 box=[48.4, 109.1, 634.0, 586.4]；[frames-export 取值] C4 正式 block 层 FP conf=0.5733 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "Rrrrr（大）",
@@ -4289,7 +4374,6 @@
       345,
       240
      ],
-     "verdict_extra": true,
      "box_provenance": "agent_estimate",
      "best_ogkalu_overlap": {
       "coverage_of_sfx": 0.97,
@@ -4384,7 +4468,7 @@
    "unit_id": null,
    "sfx_summary": "끼아아악（尖叫，斜排手写体）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 0.86 text_bubb 框覆盖字面（class=text_bubble 但实为自由 SFX 字——类间混淆证据）",
+   "rationale": "ogkalu 检出框覆盖字面（conf/cls 见取值行；class 见取值行——自由 SFX 字被判 text_bubble 属类间混淆证据）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.8031 cls=text_bubble coverage=0.96 box=[369.6, 1158.8, 614.4, 1396.5]；[frames-export 取值] C4 正式 block 层 FP conf=0.8031 cls=merged_block",
    "sfx_instances": [
     {
      "desc": "끼아아악",
@@ -4417,7 +4501,12 @@
       590,
       870
      ],
-     "verdict": "missed"
+     "verdict": "missed",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "conf": null,
+      "cls": null
+     }
     }
    ],
    "ogkalu_detections_all": [
@@ -4466,7 +4555,7 @@
    "unit_id": null,
    "sfx_summary": "칼칼（傻笑/得意声变体，粉色圆体字，两处）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——C1 抽检之外的新增硬盲区样本",
+   "rationale": "harvest 0.25 仍零检出——C1 抽检之外的新增硬盲区样本｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "촬/칼（左）",
@@ -4529,7 +4618,7 @@
    "unit_id": null,
    "sfx_summary": "뙇×n（坠落撞击声，环形重复字母）",
    "frame_verdict": "detected_offset",
-   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.35 text_free 框仅覆盖左弧部分字母（环形排布的大部分字母未检出）",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下检出框（conf/cls 见取值行）仅覆盖左弧部分字母（环形排布的大部分字母未检出）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.2651 cls=text_free coverage=0.202 box=[51.6, 169.6, 226.3, 497.0]",
    "sfx_instances": [
     {
      "desc": "뙇 环（整体范围）",
@@ -4608,7 +4697,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "supplementary_effect_symbol",
-   "rationale": "「!!」惊讶特效符号（C1 A1-U02 同源）；非拟声词，不入主样本；harvest 0.25 下 0.30 text_bubb 低置信检出（补充观察）",
+   "rationale": "「!!」惊讶特效符号（C1 A1-U02 同源）；非拟声词，不入主样本；harvest 0.25 下低置信检出（conf/cls 见取值行，补充观察）",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -4635,7 +4724,7 @@
    "unit_id": null,
    "sfx_summary": "철컹（坠落巨响，超大字）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 下 SFX 本体零检出；唯一检出框 (0.35) 落在建筑窗户纹理=幻觉",
+   "rationale": "harvest 0.25 下 SFX 本体零检出；唯一检出框（conf 见取值行）落在建筑窗户纹理=幻觉｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "철컹",
@@ -4694,7 +4783,7 @@
    "unit_id": null,
    "sfx_summary": "수악（打击声，竖排白描边）",
    "frame_verdict": "detected_low_conf",
-   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.30 text_free 框覆盖字面",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下检出框覆盖字面（conf/cls 见取值行）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.2775 cls=text_free coverage=0.797 box=[231.1, 159.0, 369.8, 572.9]",
    "sfx_instances": [
     {
      "desc": "수악",
@@ -4743,7 +4832,7 @@
    "unit_id": null,
    "sfx_summary": "빠직 + 아（爆裂/尖叫，两处大字）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "빠직（上）",
@@ -4791,7 +4880,7 @@
    "unit_id": null,
    "sfx_summary": null,
    "frame_verdict": "supplementary_uncertain",
-   "rationale": "单字 swoosh 效果线（疑似「휙/슉」残形，不确定是否拟声）；0.29 text_free 低置信检出——证据不足，不入主样本（补充观察）",
+   "rationale": "单字 swoosh 效果线（疑似「휙/슉」残形，不确定是否拟声）；低置信检出（conf/cls 见取值行）——证据不足，不入主样本（补充观察）",
    "sfx_instances": [],
    "extras": [],
    "ogkalu_detections_all": [
@@ -4818,7 +4907,7 @@
    "unit_id": null,
    "sfx_summary": "송송 + 삐직삐직（挖土/电子音，两处）",
    "frame_verdict": "missed",
-   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本｜[payload 取值] ogkalu 对该实例无任何重叠检出框（harvest 0.25）",
    "sfx_instances": [
     {
      "desc": "송송",

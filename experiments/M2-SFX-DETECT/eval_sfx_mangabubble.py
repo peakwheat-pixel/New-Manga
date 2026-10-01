@@ -105,8 +105,7 @@ def _iou(a, b) -> float:
     return inter / (area_a + area_b - inter)
 
 
-def run_chiqui7(session, rgb: np.ndarray, conf_thr: float, names: dict):
-    inp, scale = letterbox(rgb, 1024)
+def run_chiqui7(session, inp, scale: float, conf_thr: float, names: dict):
     out = session.run(None, {"images": inp})[0]  # (1, 40, N)
     preds = out[0].T  # (N, 40)
     boxes_xywh = preds[:, :4]
@@ -132,8 +131,7 @@ def run_chiqui7(session, rgb: np.ndarray, conf_thr: float, names: dict):
     return dets
 
 
-def run_kiuyha(session, rgb: np.ndarray, conf_thr: float, names: dict):
-    inp, scale = letterbox(rgb, 1280)
+def run_kiuyha(session, inp, scale: float, conf_thr: float, names: dict):
     out = session.run(None, {"images": inp})[0]  # (1, 300, 6), end2end
     dets = []
     for row in out[0]:
@@ -171,6 +169,21 @@ def main() -> int:
     meta_c = sess_c.get_modelmeta().custom_metadata_map
     meta_k = sess_k.get_modelmeta().custom_metadata_map
 
+    def parse_names(meta_names: str) -> dict:
+        # R8 (DSH r1): the hardcoded class maps below are ASSERTED against
+        # the ONNX metadata 'names' string so a silent class-surface drift
+        # fails loudly instead of mislabeling detections.
+        out = {}
+        for part in meta_names.strip("{}").split(","):
+            k, v = part.split(":")
+            out[k.strip().strip("'")] = v.strip().strip("'")
+        return out
+
+    names_meta_c = parse_names(meta_c["names"])
+    names_meta_k = parse_names(meta_k["names"])
+    assert names_meta_c == names_c, f"chiqui7 names drift: {names_meta_c} != {names_c}"
+    assert names_meta_k == names_k, f"kiuyha names drift: {names_meta_k} != {names_k}"
+
     payload_verdicts = json.loads(args.verdicts.read_text(encoding="utf-8"))
     frames = payload_verdicts["primary_frames"]
     regions = sorted({(r["case_id"], r["region_index"], None) for r in frames})
@@ -188,8 +201,10 @@ def main() -> int:
         image_path = img_by_region[(case_id, region_index)]
         img = Image.open(image_path).convert("RGB")
         rgb = np.asarray(img, dtype=np.uint8)
-        dets_c = run_chiqui7(sess_c, rgb, args.harvest_threshold, names_c)
-        dets_k = run_kiuyha(sess_k, rgb, args.harvest_threshold, names_k)
+        inp_c, scale_c = letterbox(rgb, 1024)
+        inp_k, scale_k = letterbox(rgb, 1280)
+        dets_c = run_chiqui7(sess_c, inp_c, scale_c, args.harvest_threshold, names_c)
+        dets_k = run_kiuyha(sess_k, inp_k, scale_k, args.harvest_threshold, names_k)
         key = f"{case_id}_R{region_index:03d}"
         results[key] = {
             "case_id": case_id,
@@ -201,6 +216,8 @@ def main() -> int:
                 "hf_license_tag": "mit",
                 "onnx_metadata_names": meta_c["names"],
                 "onnx_metadata_license": meta_c["license"],
+                "onnx_metadata_imgsz": meta_c.get("imgsz"),
+                "input_shape": list(inp_c.shape),
                 "detections": dets_c,
             },
             "kiuyha_manga_bubble_yolo": {
@@ -209,6 +226,8 @@ def main() -> int:
                 "hf_license_tag": "apache-2.0",
                 "onnx_metadata_names": meta_k["names"],
                 "onnx_metadata_license": meta_k["license"],
+                "onnx_metadata_imgsz": meta_k.get("imgsz"),
+                "input_shape": list(inp_k.shape),
                 "detections": dets_k,
             },
         }
@@ -240,11 +259,18 @@ def main() -> int:
         "nms_iou": NMS_IOU,
         "inference_note": (
             "onnxruntime CPU, letterbox per metadata imgsz (chiqui7=1024, "
-            "kiuyha=1280); no ultralytics package; chiqui7 output0 class "
+            "kiuyha=1280; recorded per-region as onnx_metadata_imgsz + "
+            "input_shape); no ultralytics package; chiqui7 output0 class "
             "scores are post-sigmoid in this export (verified empirically, "
             "no activation applied); detection-only (mask coefficients "
             "ignored); preview colors: green=chiqui7 sfx, orange=chiqui7 "
-            "text/bubble/panel, blue=kiuyha text"
+            "text/bubble/panel, blue=kiuyha text. PREPROCESSING "
+            "DEVIATIONS vs the Ultralytics pretrained pipeline (R8 "
+            "disclosure): letterbox pads top-left instead of centered; "
+            "PIL BILINEAR instead of cv2 INTER_LINEAR; NMS is "
+            "class-agnostic IoU 0.7 instead of Ultralytics default "
+            "class-aware; coordinate mapping itself is self-consistent "
+            "(top-left pad <-> divide by scale)"
         ),
         "license_gate_findings": {
             "chiqui7": {
