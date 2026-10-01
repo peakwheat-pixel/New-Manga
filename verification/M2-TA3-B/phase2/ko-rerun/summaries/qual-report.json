@@ -1,0 +1,42 @@
+{
+  "task": "M2-TA3-B2",
+  "generated_at_utc": "2026-10-01T21:35:07Z",
+  "device": "cpu",
+  "detector_weights_dir": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+  "sfx_weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+  "translate": {
+    "provider_id": "openai-compatible-translation",
+    "base_url_host": "api.deepseek.com",
+    "model": "deepseek-chat",
+    "target_language": "zh",
+    "credential": "env:TA3B_TRANSLATE_API_KEY (never persisted)"
+  },
+  "region_policy": {
+    "truncation": "disabled by default (R7)",
+    "max_regions": null
+  },
+  "sfx_policy": "production default (settings key absent -> SKIP)",
+  "translation_metering": true,
+  "cases": [
+    {
+      "case_id": "K11",
+      "skipped": true,
+      "pipeline_completed": false,
+      "region_count": 13,
+      "export_status": "OK"
+    }
+  ],
+  "rerun": [
+    {
+      "case_id": "K11",
+      "sha256_first": "7aa98484c39b40eedd10ef5fc3858a73586db7afe3272e5676aa284160216f6f",
+      "sha256_second": "ae7452a24e8667bf382f58a4633df5d3de0beb663d0bf7d4ce718335f3244a10",
+      "match": false,
+      "region_count_first": 13,
+      "region_count_second": 13,
+      "wall_s_second": 110.71
+    }
+  ],
+  "failures": 2,
+  "finished_at_utc": "2026-10-01T21:36:58Z"
+}

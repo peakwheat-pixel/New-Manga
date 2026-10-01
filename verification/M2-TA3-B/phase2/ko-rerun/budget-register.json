@@ -1,0 +1,84 @@
+{
+  "task": "M2-TA3-B2-KO-RERUN",
+  "record": "AC1 pilot (K02) measured metering + full-scale extrapolation + STOP ruling registration",
+  "generated_at_utc": "2026-10-01T21:00Z (pilot window 2026-10-01T17:37Z-20:15Z UTC; r1 R9: first version mislabeled these times as local +0800 - attempt-1 17:37Z-~18:35Z killed by harness, attempt-2 18:42:13Z-20:15:25Z per qual-K02.json)",
+  "r1_revision_note": "DSH r1 (approved with conditions) documentation fixes landed in place: R1 stop-line provenance (below), R2 request multiplier downgraded to UPPER-BOUND assumption + K11 Run1 anomaly registered, R6 metering renamed to successful translate() calls, R9 numeric/label precision. Stop decision unchanged.",
+  "pilot_case": {
+    "case_id": "K02",
+    "size_wh": [
+      600,
+      18401
+    ],
+    "regions_detected": 93,
+    "run1_elapsed_s": 1848.5,
+    "run2_elapsed_s": 3741.97,
+    "wall_s": 5591.56,
+    "requests_metered": 140,
+    "note_requests": "140 SUCCESSFUL translate() CALLS (r1 R6: the proxy sits inside the provider; production retry (default max_attempts=2) is outside it, so failed attempts and their re-sent input are NOT metered - HTTP count >= this; attempt_count not persisted = metering blind spot). 140 = Run1 93 region-level calls (93 translate steps, 1:1 with regions) + Run2 47 successful region calls; 46 further Run2 attempts failed during the DeepSeek API outage window (45 PROVIDER_TIMEOUT + 1 PROVIDER_INVALID_OUTPUT, typed fail-closed). KEY FINDING (r1 R2 revised): every request carries exactly ONE target region (n_target_region_calls == requests) and K02's Run1 is NOT batched at the HTTP level; BUT 'full-chain request count ~= 2 x region_count' is an UPPER-BOUND ASSUMPTION (projection of two fully-covering region sweeps), NOT a measured constant - K02 measured 140/93 = 1.51x (Run2 truncated by 46 failures), K11 measured 19/13 = 1.46x, and K11's Run1 issued only 8 calls for 13 regions (11 with text) in all three passes (mechanism unexplained, see extrapolation.k11_run1_anomaly).",
+    "input_est_tokens_total": 77314,
+    "output_est_tokens_total": 7603,
+    "est_tokens_per_request": 607,
+    "token_basis": "estimate_tokens (ports/translation/protocol.py) over system prompt + payload_json / raw completion; ESTIMATES, endpoint usage fields are not exposed by the production client"
+  },
+  "extrapolation": {
+    "known_regions": {
+      "K01": 180,
+      "K02": 93,
+      "K04": 113,
+      "K05": 62,
+      "K08": 60,
+      "source": "verification/M2-DETECT-WEBTOON-TILING/qualification-results.json (production conf 0.5, same weights); K02=93 confirmed identical in this rerun pilot",
+      "K11": 13,
+      "K19": 0,
+      "K07_K09_K10": "UNKNOWN (ALLOC fix landed after the TILING qualification; these three pages never had a detect measurement) - density-based estimate 120-400 regions each"
+    },
+    "region_total_range": [
+      881,
+      1721
+    ],
+    "est_tokens_per_region_fullchain": 1214,
+    "formula": "requests ~= 2 x regions (UPPER-BOUND assumption: one Run1 sweep + one Run2 sweep, both fully covering) x ~607 est tokens/request; r1 R2 sensitivity: at K02's own measured 1.51x (140/93) the known-region estimate drops to ~476k (< 500k) - the 'known pages alone exceed the line' phrasing is multiplier-sensitive; with K07/K09/K10 included every multiplier in 1.46x-2x stays above the line, so the STOP decision is unaffected",
+    "known_only_est_tokens": 632000,
+    "known_only_note": "r1 R9 attribution fix: 632k = 521 regions (five webtoon pages 508 + K11 13); the five webtoon pages ALONE = 508 x 2 x 607 = ~617k. Both above the 500k stop instruction, below the phase2-plan 'tens of thousands' discipline either way.",
+    "k11_run1_anomaly": "OPEN (r1 R2): K11 run1 issued only 8 translate calls for 13 regions (11 with text; still 9 distinct source texts after dedup) in all three passes (main / sfx / rerun) - the mechanism for Run1 issuing FEWER calls than text regions is unexplained; the 2x multiplier is therefore an upper-bound assumption, not a measured law.",
+    "full_range_est_tokens": [
+      1070000,
+      2090000
+    ],
+    "verdict": "EXCEEDS the stop line under EVERY registered caliber (r1 R1): the repo's current discipline (phase2-plan.md:192 '预估总 token 数万 token 量级，超预期即停并登记') and the orchestration-session stop instruction (>500k est-token extrapolation) are both exceeded by a wide margin even before K07/K09/K10 - full-scale rerun STOPPED per discipline, awaiting user ruling"
+  },
+  "stop_line_provenance": {
+    "r1_R1_registration": "The '500k est token' figure is NOT in the task doc: doc/tasks/M2-TA3-B2-KO-RERUN.md AC5 only says '预估请求数/先行一个 case 试算后再全量' and its discipline section carries no number. The repo's current documented discipline is phase2-plan.md:192 ('数万 token 量级，超预期即停并登记'; that line self-documents that an earlier '数十万以内' widening was ruled out-of-scope and reverted). The 500k figure was the ORCHESTRATION SESSION's stop instruction to the Owner - no task-doc or user-ruling text backs it.",
+    "disposition": "The stop decision is valid under both calibers (extrapolation exceeds both by an order of magnitude or more). Whether the user ratifies 500k as the new caliber is an integrator/user ruling item (ko-rerun-report.md §7 item 5): if ratified it must be written into the task discipline or phase2-plan; otherwise phase2-plan.md:192 governs."
+  },
+  "stop_ruling": {
+    "stopped_cases": [
+      "K01",
+      "K04",
+      "K05",
+      "K07",
+      "K08",
+      "K09",
+      "K10"
+    ],
+    "reason": "AC1 pilot extrapolation (1.07M-2.09M est tokens with K07/K09/K10; ~632k known-regions-only at the 2x upper bound) exceeds the phase2-plan.md:192 discipline ('数万 token 量级') and the orchestration stop instruction (>500k; provenance registered above per r1 R1); user ruling required on scope (e.g. reduced region sampling per case, --max-regions escape valve with mandated disclosure, or budget approval)",
+    "minimal_set_still_executed": {
+      "K19": "0 regions (textless page) -> zero translation requests, API-independent; F4 fail-closed re-confirmed",
+      "K11": "13 regions, MEASURED 19 successful calls ~= 11.5k est tokens (r1 R9 fix: first version estimated ~=26 requests ~= 16k from the 2x upper bound; actual metering: run1 8 + run2 11 = 19, see qual-K11.json translation_metering); required for AC2 (K11 comparison), AC3 (ko G1 CER re-measure, SFX stats, sfx.policy=translate probe) and AC4 (similarity-gate rerun pair on K11 - the brief allows K11 OR K02)"
+    },
+    "K02_pilot_summary_caveat": "qual-K02.json carries 46 Run2 region failures from the API outage window (environment, typed PROVIDER_TIMEOUT); the detect/Run1/export layers are complete and prove the F1 unlock (93 regions, full chain reached export OK). Whether to RERUN K02 clean (+186 requests ~= 113k est tokens at the 2x upper bound) is part of the user ruling."
+  },
+  "api_outage_window": {
+    "observed_from": "K02 Run2 region ~47 onward (first PROVIDER_TIMEOUT)",
+    "probe_1": "2026-10-01T20:40Z minimal request -> read timeout after 180 s",
+    "probe_2": "2026-10-01T21:05Z minimal request -> killed at 90 s timeout",
+    "timestamp_note": "r1 R9: first version wrote '20:40Z+0800'/'21:05Z+0800' (illegal mixed labels) and mislabeled the window as local +0800; all times in this file are UTC.",
+    "classification": "environment (remote endpoint unresponsive); production retry/fail-closed semantics behaved as designed, no retry storm",
+    "recovered": "2026-10-01T21:27Z driver probe attempt 1 OK (after ~115 min outage); K11 minimal set (main pass + sfx.policy=translate probe + determinism rerun) executed 21:33-21:37Z, all steps landed"
+  },
+  "executed_cost_actual": {
+    "metered_requests_total": "K02 140 + K11 main 19 + K11 sfx 19 + K11 rerun (see qual-K11.rerun.json) ~= 197 successful translate() calls (r1 R6: calls, not HTTP requests - retries outside the provider are not metered)",
+    "est_tokens_actual": "input ~= 77314 + 3x10409 ~= 108.5k; output ~= 7603 + 3x965 ~= 10.5k; total ~= 119k est tokens (K02 attempt-1 partial ~140 calls additional, UN-METERED estimate, killed by the harness timeout)",
+    "note": "ESTIMATES per the metering proxy basis; far below every stop-line caliber - the line was triggered by the FULL-SCALE extrapolation (7 remaining cases), not by the executed set"
+  }
+}

@@ -184,6 +184,146 @@ def reregister_paddle_wrapper(core) -> None:
     registry.invalidate(PROVIDER_PADDLE_KOREAN)
 
 
+class _MeteredTranslationProvider:
+    """M2-TA3-B2-KO-RERUN AC5: request/token accounting proxy.
+
+    Wraps the production provider instance created by the env-resolver
+    factory; ``translate`` passes through UNCHANGED and only appends a
+    per-request accounting record.  The production client does not expose
+    endpoint usage fields (registered in the first-run report: "token 量无
+    计量证据"), so the budget control runs on this proxy: request counts
+    plus the project's own CJK-aware estimator
+    (``ports/translation/protocol.py::estimate_tokens``) over the system
+    prompt + request payload (input) and the raw completion (output).
+    These are ESTIMATES, never endpoint metering data.
+    """
+
+    def __init__(self, inner, records: list[dict]) -> None:
+        self._inner = inner
+        self._records = records
+
+    def __getattr__(self, name: str):  # passthrough (model, provider_id, ...)
+        return getattr(self._inner, name)
+
+    def translate(self, payload):
+        from infrastructure.providers.translation_openai import (
+            TRANSLATION_SYSTEM_PROMPT,
+        )
+        from ports.translation.protocol import estimate_tokens
+
+        result = self._inner.translate(payload)
+        self._records.append(
+            {
+                "n_target_regions": len(payload.regions),
+                "input_est_tokens": estimate_tokens(TRANSLATION_SYSTEM_PROMPT)
+                + estimate_tokens(payload.payload_json()),
+                "output_est_tokens": estimate_tokens(result.raw_text),
+            }
+        )
+        return result
+
+
+def reregister_env_resolver_metered(core, *, base_url: str, model: str, records: list[dict]) -> None:
+    """``translate_probe.reregister_env_resolver`` + the metering proxy.
+
+    Replicates the probe's re-register verbatim (same descriptor, same
+    env-var credential resolver, same network gate, same invalidate) with
+    one difference: the factory wraps the provider in
+    :class:`_MeteredTranslationProvider`.  Behaviour of every translate
+    call is identical; only the accounting record is added.
+    """
+    from infrastructure.providers.dependencies import KIND_ENDPOINT, Requirement
+    from infrastructure.providers.openai_client import (
+        OpenAiCompatibleClient,
+        OpenAiCompatibleConfig,
+    )
+    from infrastructure.providers.registry import ProviderDescriptor
+    from infrastructure.providers.runtime import _network_gate
+    from infrastructure.providers.translation_openai import (
+        PROVIDER_OPENAI_TRANSLATION as _pid_check,
+    )
+    from infrastructure.providers.translation_openai import OpenAiTranslationProvider
+    from ports.providers.profiles import CAPABILITY_TRANSLATION
+
+    # r1 R10 (DSH): keep the production provider-id drift guard from
+    # translate_probe.reregister_env_resolver — the metered fork previously
+    # dropped it, weakening the metering path's fail-closed strength.
+    if _pid_check != PROVIDER_ID:  # pragma: no cover - pin the production id
+        raise RuntimeError(f"provider id drifted: {_pid_check!r}")
+
+    settings = core.pipeline_defaults.read().settings
+    config = OpenAiCompatibleConfig(
+        provider_id=PROVIDER_ID,
+        provider_type="openai-compatible",
+        base_url=base_url,
+        model=model,
+        credential_ref=ENV_KEY_NAME,
+    )
+    descriptor = ProviderDescriptor(
+        provider_id=PROVIDER_ID,
+        provider_type="openai-compatible",
+        capabilities=frozenset({CAPABILITY_TRANSLATION}),
+        requirements=(
+            Requirement(KIND_ENDPOINT, f"{base_url}|{model}", detail="remote endpoint"),
+        ),
+        note="M2-TA3-B2-KO-RERUN re-register: env resolver + metering proxy",
+    )
+
+    def factory():
+        return _MeteredTranslationProvider(
+            OpenAiTranslationProvider(
+                config=config,
+                client=OpenAiCompatibleClient(
+                    config,
+                    core.transport,
+                    credential_resolver=lambda ref: os.environ.get(ref),
+                ),
+                provider_id=PROVIDER_ID,
+                provider_type="openai-compatible",
+                target_language=TARGET_LANGUAGE,
+            ),
+            records,
+        )
+
+    registry = core.providers.registry
+    registry.register(
+        descriptor,
+        factory,
+        gate=_network_gate(PROVIDER_ID, settings),
+        enabled=True,
+    )
+    registry.invalidate(PROVIDER_ID)
+
+
+# ---- dual-track discrimination (quality-thresholds §5 / CALIB r1 R9) ----
+#: §5 footnote makes the determinism track an executable runner control:
+#: "qualification runner 以 --determinism-track remote|mock 参数显式记录所选
+#: 轨道，声明与 provider 绑定不一致时 fail-closed 报错".  This runner binds
+#: the translate provider itself (translate_probe constants), so the track
+#: is INFERRED from that binding; an explicit --determinism-track
+#: declaration that contradicts the inference fails closed BEFORE any case
+#: runs.  Marker lists follow the CALIB r1 R9 rule verbatim: remote
+#: sampling providers carry a remote sampling service marker (e.g.
+#: deepseek/*); mock/deterministic providers carry a mock marker.
+_REMOTE_BINDING_MARKERS = ("deepseek", "openai-compatible")
+_MOCK_BINDING_MARKERS = ("mock", "deterministic", "stub", "fake")
+
+
+def infer_determinism_track() -> str:
+    """Infer the §5 determinism track from this runner's translate binding.
+
+    Returns "remote" (similarity track), "mock" (export-hash track) or
+    "unknown" (binding carries no marker either way — an explicit
+    --determinism-track declaration is then unverifiable and fails closed).
+    """
+    binding = " ".join((PROVIDER_ID, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL)).lower()
+    if any(marker in binding for marker in _MOCK_BINDING_MARKERS):
+        return "mock"
+    if any(marker in binding for marker in _REMOTE_BINDING_MARKERS):
+        return "remote"
+    return "unknown"
+
+
 def export_region_views(regions_repo, page_id: str) -> list[dict]:
     regions = regions_repo.list_regions(page_id)
     views = []
@@ -235,6 +375,9 @@ def run_case(
     device: str,
     max_regions: int | None,
     rerun_suffix: str = "",
+    sfx_policy: str = "",
+    meter_translation: bool = False,
+    determinism_track: dict | None = None,
 ) -> dict:
     case_id = case["case_id"] + rerun_suffix
     started_wall = time.perf_counter()
@@ -250,6 +393,7 @@ def run_case(
         "source_path": str(source),
         "source_sha256": case.get("page_sha256", ""),
         "started_at_utc": utc_now(),
+        "determinism_track": determinism_track or {},
         "provider_policy": {
             "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
             "ocr": (
@@ -257,7 +401,9 @@ def run_case(
                 if case["language"] == "ja"
                 else PROVIDER_PADDLE_KOREAN + " (engine_factory dual-side wrapper re-register)"
             ),
-            "translate": PROVIDER_ID + " (DeepSeek, env-var credential resolver re-register)",
+            "translate": PROVIDER_ID + " (DeepSeek, env-var credential resolver re-register)"
+            + (" + metering proxy (passthrough)" if meter_translation else ""),
+            "sfx_policy": sfx_policy or "production default (settings key absent -> SKIP)",
             "target_language": TARGET_LANGUAGE,
             "inpaint": "production SimpleFillProvider default",
             "render/export": "production Qt render + ExportService",
@@ -334,10 +480,49 @@ def run_case(
         return summary
     stage("assemble", "OK", mode="production", detector="manga-ogkalu+chiqui7-sfx", device=device)
 
+    # ---- optional sfx.policy (M2-SFX-TRANSLATE-ENTRY production key) ------
+    # core_assembly.py reads settings["sfx"]["policy"] at ASSEMBLE time from
+    # the persisted pipeline-defaults row: "a settings change takes effect
+    # on the NEXT assembly".  The AC6 probe established the production
+    # sequence write -> close -> re-assemble over the SAME db; the empty
+    # default (no --sfx-policy) writes nothing and keeps the SKIP default,
+    # i.e. byte-identical behaviour with the first run.
+    if sfx_policy:
+        try:
+            core.pipeline_defaults.save_settings_section("sfx", {"policy": sfx_policy})
+            core.conn.close()
+            core = assemble_core_services(
+                db_path,
+                case_root / "managed",
+                image_decoder=QtImageDecoder(),
+                font_catalog=font_catalog,
+                layout_engine=QtTextLayoutEngine(font_catalog),
+                compositor=QtImageCompositor(),
+                source_styles=SourceStyleService(PixelSourceStyleAnalyzer()),
+                mock_local_providers=False,
+            )
+            stage("sfx_policy_reassemble", "OK", policy=sfx_policy)
+        except Exception as exc:  # noqa: BLE001
+            stage(
+                "sfx_policy_reassemble", "FAIL",
+                error=f"{type(exc).__name__}: {exc}", attribution="environment",
+            )
+            summary["attribution"].append("environment:sfx-policy-reassemble-failed")
+            summary["finished_at_utc"] = utc_now()
+            summary["wall_s"] = round(time.perf_counter() - started_wall, 2)
+            return summary
+
     # ---- provider bindings (translate = DeepSeek, ocr = per language) -----
+    meter_records: list[dict] = []
     try:
         write_translation_profile(core, base_url=DEEPSEEK_BASE_URL, model=DEEPSEEK_MODEL)
-        reregister_env_resolver(core, base_url=DEEPSEEK_BASE_URL, model=DEEPSEEK_MODEL)
+        if meter_translation:
+            reregister_env_resolver_metered(
+                core, base_url=DEEPSEEK_BASE_URL, model=DEEPSEEK_MODEL,
+                records=meter_records,
+            )
+        else:
+            reregister_env_resolver(core, base_url=DEEPSEEK_BASE_URL, model=DEEPSEEK_MODEL)
         if case["language"] == "ko":
             # The production OCR step reads the script from settings
             # (handlers.py: ``settings.get("script", SCRIPT_JAPANESE)``);
@@ -613,6 +798,21 @@ def run_case(
             stage("export", "FAIL", error=f"{type(exc).__name__}: {exc}", attribution="defect")
             summary["attribution"].append("defect:export-failed")
 
+    if meter_translation:
+        summary["translation_metering"] = {
+            "metered": True,
+            "proxy": "experiments-layer passthrough wrapper around the production provider",
+            "token_basis": (
+                "estimate_tokens (ports/translation/protocol.py, CJK-aware) over "
+                "system prompt + payload_json (input) and raw completion (output); "
+                "ESTIMATES, not endpoint usage (production client exposes none)"
+            ),
+            "requests": len(meter_records),
+            "n_target_region_calls": sum(r["n_target_regions"] for r in meter_records),
+            "input_est_tokens_total": sum(r["input_est_tokens"] for r in meter_records),
+            "output_est_tokens_total": sum(r["output_est_tokens"] for r in meter_records),
+        }
+
     summary["finished_at_utc"] = utc_now()
     summary["wall_s"] = round(time.perf_counter() - started_wall, 2)
     try:
@@ -638,6 +838,23 @@ def main() -> int:
         "--rerun-check", default="",
         help="comma-separated case ids (BJ02,K01,K11) for the AC3 determinism second pass",
     )
+    parser.add_argument(
+        "--sfx-policy", default="",
+        choices=["", "skip", "manual", "translate"],
+        help="optional settings['sfx']['policy'] (M2-SFX-TRANSLATE-ENTRY production key); "
+        "empty default writes nothing (SKIP default, first-run behaviour)",
+    )
+    parser.add_argument(
+        "--meter-translation", action="store_true",
+        help="wrap the production translation provider in a passthrough accounting "
+        "proxy (request count + estimate_tokens); default off",
+    )
+    parser.add_argument(
+        "--determinism-track", default="", choices=["", "remote", "mock"],
+        help="explicit quality-thresholds §5 determinism-track declaration "
+        "(CALIB r1 R9); fails closed when it contradicts the translate "
+        "provider binding; empty default records the inferred track only",
+    )
     parser.add_argument("--force", action="store_true", help="redo cases whose summary already exists")
     parser.add_argument("--suffix", default="", help="extra suffix for this pass (avoids clobbering)")
     parser.add_argument(
@@ -649,6 +866,31 @@ def main() -> int:
         help="Git-free pixel artifact root (crops + exports)",
     )
     args = parser.parse_args()
+
+    # ---- §5 dual-track control (CALIB r1 R9): fail-closed before setup ----
+    # Must sit BEFORE any environment/weights setup so a contradictory
+    # declaration aborts without touching credentials, weights or out-dir.
+    inferred_track = infer_determinism_track()
+    declared_track = args.determinism_track
+    if declared_track and declared_track != inferred_track:
+        print(
+            f"FATAL: --determinism-track {declared_track!r} contradicts the "
+            f"translate provider binding ({PROVIDER_ID} -> {DEEPSEEK_BASE_URL}, "
+            f"{DEEPSEEK_MODEL}) inferred as {inferred_track!r} "
+            "(quality-thresholds §5 dual-track rule, CALIB r1 R9: fail-closed)",
+            file=sys.stderr,
+        )
+        return 2
+    track_record = {
+        "declared": declared_track or None,
+        "inferred": inferred_track,
+        "binding": f"{PROVIDER_ID} -> {DEEPSEEK_BASE_URL} ({DEEPSEEK_MODEL})",
+        "rule": (
+            "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling "
+            "provider -> similarity track; mock/deterministic provider -> "
+            "export sha bitwise track; declaration/binding mismatch -> fail-closed"
+        ),
+    }
 
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     if not os.environ.get(ENV_KEY_NAME):
@@ -708,6 +950,9 @@ def main() -> int:
             "truncation": "disabled by default (R7)",
             "max_regions": args.max_regions,
         },
+        "sfx_policy": args.sfx_policy or "production default (settings key absent -> SKIP)",
+        "determinism_track": track_record,
+        "translation_metering": args.meter_translation,
         "cases": [],
         "rerun": [],
     }
@@ -733,7 +978,9 @@ def main() -> int:
             continue
         try:
             summary = run_case(
-                case, pixel_root=pixel_root, device=args.device, max_regions=args.max_regions
+                case, pixel_root=pixel_root, device=args.device, max_regions=args.max_regions,
+                sfx_policy=args.sfx_policy, meter_translation=args.meter_translation,
+                determinism_track=track_record,
             )
         except Exception as exc:  # noqa: BLE001
             summary = {
@@ -795,6 +1042,9 @@ def main() -> int:
                     device=args.device,
                     max_regions=args.max_regions,
                     rerun_suffix=".rerun",
+                    sfx_policy=args.sfx_policy,
+                    meter_translation=args.meter_translation,
+                    determinism_track=track_record,
                 )
             except Exception as exc:  # noqa: BLE001
                 summary = {

@@ -1,0 +1,41 @@
+{
+  "task": "M2-TA3-B2",
+  "generated_at_utc": "2026-10-01T21:33:02Z",
+  "device": "cpu",
+  "detector_weights_dir": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+  "sfx_weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+  "translate": {
+    "provider_id": "openai-compatible-translation",
+    "base_url_host": "api.deepseek.com",
+    "model": "deepseek-chat",
+    "target_language": "zh",
+    "credential": "env:TA3B_TRANSLATE_API_KEY (never persisted)"
+  },
+  "region_policy": {
+    "truncation": "disabled by default (R7)",
+    "max_regions": null
+  },
+  "sfx_policy": "translate",
+  "translation_metering": true,
+  "cases": [
+    {
+      "case_id": "K11",
+      "pipeline_completed": false,
+      "run1_status": "completed_with_failures",
+      "region_count": 13,
+      "run2_status": "completed_with_failures",
+      "truncated": false,
+      "n_translated": 11,
+      "export": "OK",
+      "export_sha256": "a711701d8e885b897908a2664a7f3917426f6697f1730993334ba6842b764b5e",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "defect:run2-region-chain"
+      ],
+      "wall_s": 124.32
+    }
+  ],
+  "rerun": [],
+  "failures": 1,
+  "finished_at_utc": "2026-10-01T21:35:06Z"
+}
