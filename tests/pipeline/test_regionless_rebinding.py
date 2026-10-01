@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
-"""M2-P1: Regression and negative tests for regionless region rebinding.
+"""Regression and negative tests for regionless region rebinding.
 
 Verifies the fix for DIAG-M2-REGIONLESS-LOCK-CHANGED-001:
 When a page-scoped pipeline command starts from a regionless page, detect creates
 the page's Regions and commits them. PipelineService._backfill_detected_regions
 must rebind both target_id and region_id of downstream regionless units to the
 first detected Region (primary) while strictly preserving PlanUnit.unit_id.
+
+M2-TASKS-BACKFILL-MULTIREGION extends the backfill to fan out: every
+additional detected Region gets a cloned unit chain (unit_id
+``{task_id}:{region_id}:{step_type}`` — the same shape the recovery path
+``plan_run(mode="continue")`` already plans), so a multi-region page no
+longer leaves its non-primary Regions without any follow-up scheduling.
 """
 
 from __future__ import annotations
@@ -255,7 +261,7 @@ def _build_service(
 # -----------------------------------------------------------------------------
 
 def test_r0_regionless_page_reocr_all_completed(workspace):
-    """R0: regionless page + REOCR_ALL => COMPLETED, target_id==region_id==primary, 2 revisions."""
+    """R0: regionless page + REOCR_ALL => COMPLETED, every detected Region re-OCRed."""
     service, detector, ocr = _build_service(workspace)
     conn = workspace["conn"]
     regions = workspace["regions"]
@@ -275,8 +281,9 @@ def test_r0_regionless_page_reocr_all_completed(workspace):
     primary = all_regions[0]
 
     ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
-    assert len(ocr_steps) == 1
-    ocr_step = ocr_steps[0]
+    assert len(ocr_steps) == 2
+    assert {s.target_id for s in ocr_steps} == {r.region_id for r in all_regions}
+    ocr_step = next(s for s in ocr_steps if s.target_id == primary.region_id)
 
     # target_id and region_id both rebound to primary Region
     assert ocr_step.target_id == primary.region_id
@@ -302,9 +309,19 @@ def test_r0_regionless_page_reocr_all_completed(workspace):
     assert refreshed_primary.current_revision_id == second_rev_id
     assert refreshed_primary.text.ocr_text == OCR_TEXT
 
+    # the faned-out secondary Region got the same follow-up
+    secondary = all_regions[1]
+    sec_revs = cur.execute(
+        "SELECT COUNT(*) FROM region_revisions WHERE region_id = ?",
+        (secondary.region_id,),
+    ).fetchone()[0]
+    assert sec_revs == 2
+    assert regions.get_region(secondary.region_id).text.ocr_text == OCR_TEXT
+
 
 def test_r1_backfill_rebinds_target_id_and_preserves_unit_ids(workspace):
-    """R1: backfill sets unit.target_id==region_id==primary, preserving all plan unit_ids."""
+    """R1: backfill sets unit.target_id==region_id per region, preserving all plan unit_ids
+    and appending exactly one cloned unit chain per additional detected Region."""
     service, _, _ = _build_service(workspace)
     regions = workspace["regions"]
 
@@ -320,28 +337,35 @@ def test_r1_backfill_rebinds_target_id_and_preserves_unit_ids(workspace):
     executed_units = executed.tasks[0].units
     executed_unit_ids = [u.unit_id for u in executed_units]
 
-    # Invariant: unit_ids are never mutated across backfill
-    assert executed_unit_ids == planned_unit_ids
+    # Invariant: the planned unit_ids are never mutated across backfill
+    assert executed_unit_ids[: len(planned_unit_ids)] == planned_unit_ids
 
     all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
     primary_id = all_regions[0].region_id
+    secondary_id = all_regions[1].region_id
 
     detect_unit = [u for u in executed_units if u.step_type == STEP_DETECT][0]
-    ocr_unit = [u for u in executed_units if u.step_type == STEP_OCR][0]
+    ocr_units = [u for u in executed_units if u.step_type == STEP_OCR]
 
     assert detect_unit.target_id == PAGE_ID
     assert detect_unit.region_id is None
 
-    # target_id rebound to primary region along with region_id
-    assert ocr_unit.target_id == primary_id
-    assert ocr_unit.region_id == primary_id
+    # primary unit rebound, secondary unit cloned with the recovery-path id shape
+    assert len(ocr_units) == 2
+    primary_unit = next(u for u in ocr_units if u.region_id == primary_id)
+    assert primary_unit.unit_id == planned_unit_ids[-1]
+    assert primary_unit.target_id == primary_id
+    cloned_unit = next(u for u in ocr_units if u.region_id == secondary_id)
+    assert cloned_unit.unit_id == f"{executed.tasks[0].task_id}:{secondary_id}:ocr"
+    assert cloned_unit.target_id == secondary_id
 
-    # Terminal unit set in run accounting matches
-    assert executed.terminal_step_units == executed.planned_step_units == 2
+    # Terminal unit set in run accounting matches (detect + one ocr per region)
+    assert executed.terminal_step_units == executed.planned_step_units == 3
 
 
-def test_r2_multiple_regions_only_primary_reocr_completed(workspace):
-    """R2: 2+ Region page => only primary has OCR, non-primary NOT_STARTED, run COMPLETED."""
+def test_r2_multiple_regions_all_get_reocr_completed(workspace):
+    """R2 (M2-TASKS-BACKFILL-MULTIREGION): 2+ Region page => every detected Region is
+    re-OCRed by the same page run, run COMPLETED (was: primary-only before fan-out)."""
     service, _, _ = _build_service(workspace)
     conn = workspace["conn"]
     regions = workspace["regions"]
@@ -357,28 +381,28 @@ def test_r2_multiple_regions_only_primary_reocr_completed(workspace):
 
     all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
     assert len(all_regions) >= 2
-    primary = all_regions[0]
     secondary = all_regions[1]
 
-    # OCR step runs only on primary
+    # OCR step runs on every detected region
     ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
-    assert len(ocr_steps) == 1
-    assert ocr_steps[0].target_id == primary.region_id
+    assert len(ocr_steps) == len(all_regions)
+    assert {s.target_id for s in ocr_steps} == {r.region_id for r in all_regions}
 
-    # Secondary region remains untouched (1 revision from detect)
+    # Secondary region received its OCR revision on top of the detect revision
     cur = conn.cursor()
     sec_revs = cur.execute(
         "SELECT COUNT(*) FROM region_revisions WHERE region_id = ?",
         (secondary.region_id,),
     ).fetchone()[0]
-    assert sec_revs == 1
+    assert sec_revs == 2
 
-    # terminal_step_units equals planned_step_units (2)
-    assert executed.terminal_step_units == executed.planned_step_units == 2
+    # terminal_step_units equals planned_step_units (detect + one ocr per region)
+    assert executed.terminal_step_units == executed.planned_step_units == 1 + len(all_regions)
 
 
 def test_r3_translate_all_stops_at_capability_gap_not_lock_changed(workspace):
-    """R3: TRANSLATE_ALL (regionless) advances past ocr and fails at next unconfigured provider."""
+    """R3: TRANSLATE_ALL (regionless) advances past ocr on every detected region and
+    fails at the first unconfigured provider — not with LOCK_CHANGED on ocr."""
     # Wire detect and ocr, but do NOT wire translate or subsequent providers
     service, _, _ = _build_service(workspace)
 
@@ -389,13 +413,17 @@ def test_r3_translate_all_stops_at_capability_gap_not_lock_changed(workspace):
     service.plan_run(run.run_id)
     executed = service.execute_run(run.run_id)
 
-    # Must NOT fail with LOCK_CHANGED on ocr
+    # Must NOT fail with LOCK_CHANGED on ocr; the primary region's ocr ran.
+    # Fan-out executes the primary chain first, so the color capability gap
+    # fails the task before the secondary region's cloned chain starts — the
+    # serial page-task atomicity (F5) caps this scenario at one ocr run.
     ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
     assert len(ocr_steps) == 1
     assert ocr_steps[0].status is StepRunStatus.COMPLETED
     assert ocr_steps[0].error_code is None
 
-    # Should fail at the capability gap (e.g. color or translate: PROVIDER_NOT_CONFIGURED)
+    # Should fail at the capability gap (e.g. color or translate: PROVIDER_NOT_CONFIGURED);
+    # the task stops at the first failure, so exactly one step run fails
     failed_steps = [s for s in executed.step_runs if s.status is StepRunStatus.FAILED]
     assert len(failed_steps) == 1
     assert failed_steps[0].error_code == "PROVIDER_NOT_CONFIGURED"
@@ -727,3 +755,189 @@ def test_n7_detect_committed_then_interrupted_then_plan_continue(workspace):
     # No duplicate regions created
     end_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
     assert [r.region_id for r in end_regions] == [r.region_id for r in all_regions]
+
+
+# -----------------------------------------------------------------------------
+# M2-TASKS-BACKFILL-MULTIREGION: backfill fan-out semantics
+# -----------------------------------------------------------------------------
+
+def test_multiregion_backfill_fans_out_to_every_detected_region(workspace):
+    """F1 (primary red/green): a page task planned before detection follows up on
+    EVERY detected Region, not just the first one.
+
+    Unit ids of the cloned chain use the recovery-path shape
+    ``{task_id}:{region_id}:{step_type}`` and the run accounting
+    (planned/terminal step units) covers the appended units.
+    """
+    service, _, _ = _build_service(workspace)
+    regions = workspace["regions"]
+
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+    assert len(all_regions) == 2
+
+    ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
+    assert {s.target_id for s in ocr_steps} == {r.region_id for r in all_regions}
+    assert all(s.status is StepRunStatus.COMPLETED for s in ocr_steps)
+
+    # unit ids: the primary keeps its plan-time id (unit_id is never rewritten);
+    # the cloned secondary matches the recovery-path (plan_run "continue") shape
+    task_id = executed.tasks[0].task_id
+    region_unit_ids = {
+        u.unit_id for u in executed.tasks[0].units if u.region_id is not None
+    }
+    assert region_unit_ids == {
+        f"{task_id}:{PAGE_ID}:{STEP_OCR}",  # rebound in place, plan-time id kept
+        f"{task_id}:{all_regions[1].region_id}:{STEP_OCR}",  # cloned
+    }
+
+    # accounting closes exactly over detect + one ocr per detected region
+    assert executed.planned_step_units == executed.terminal_step_units == 3
+
+    # every region actually received its OCR result
+    for region in all_regions:
+        refreshed = regions.get_region(region.region_id)
+        assert refreshed.text.ocr_text == OCR_TEXT
+
+
+def test_backfill_single_region_page_unchanged(workspace):
+    """F2 (zero-change guard): a one-Region page behaves exactly as before —
+    no appended units, no accounting drift."""
+    detector = DeterministicDetector(
+        candidates=(
+            RegionCandidate(
+                polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+                reading_order=1,
+                provider_label="det-0",
+            ),
+        )
+    )
+    service, _, _ = _build_service(workspace, detector=detector)
+    regions = workspace["regions"]
+
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    planned = service.plan_run(run.run_id)
+    planned_unit_ids = [u.unit_id for u in planned.tasks[0].units]
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    all_regions = regions.list_regions(PAGE_ID)
+    assert len(all_regions) == 1
+    primary = all_regions[0]
+
+    ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
+    assert len(ocr_steps) == 1
+    assert ocr_steps[0].target_id == primary.region_id
+    assert ocr_steps[0].status is StepRunStatus.COMPLETED
+
+    # byte-for-byte plan shape: no units appended, none mutated
+    assert [u.unit_id for u in executed.tasks[0].units] == planned_unit_ids
+    assert executed.planned_step_units == executed.terminal_step_units == 2
+
+
+def test_backfill_zero_detected_regions_leaves_units_regionless(workspace):
+    """F3 (boundary): detect finds zero candidates — nothing to fan out, the
+    backfill never fires and the plan units stay regionless."""
+    detector = DeterministicDetector(candidates=())
+    service, _, _ = _build_service(workspace, detector=detector)
+    regions = workspace["regions"]
+
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED_WITH_FAILURES
+    assert executed.tasks[0].error_code == "INVALID_INPUT"
+    assert len(regions.list_regions(PAGE_ID)) == 0
+    # no unit ever got rebound to a Region
+    assert all(u.region_id is None for u in executed.tasks[0].units)
+    assert not [s for s in executed.step_runs if s.step_type == STEP_OCR]
+
+
+def test_region_added_after_backfill_not_followed_by_current_run(workspace):
+    """F4 (boundary): a Region created mid-run, after the backfill fixed its
+    fan-out set, is not followed up by the current run (snapshot semantics —
+    the run follows up on exactly the detect output; re-planning picks it up)."""
+    service, _, _ = _build_service(workspace)
+    regions = workspace["regions"]
+    editing = workspace["editing"]
+
+    captured = {"added": False}
+    original_ocr = service._executor._handlers[STEP_OCR]
+
+    def _add_region_then_original(step_run, unit, run):
+        if not captured["added"]:
+            captured["added"] = True
+            editing.create_region(
+                PAGE_ID,
+                RegionGeometry(
+                    bbox=BBox(40, 20, 10, 4),
+                    polygon=((40, 20), (50, 20), (50, 24), (40, 24)),
+                ),
+                reading_order=9,
+                origin=RegionOrigin.MACHINE,
+            )
+        return original_ocr(step_run, unit, run)
+
+    service._executor._handlers[STEP_OCR] = _add_region_then_original
+
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+    assert len(all_regions) == 3
+
+    # the current run follows up on the detect output only
+    ocr_targets = {s.target_id for s in executed.step_runs if s.step_type == STEP_OCR}
+    assert ocr_targets == {r.region_id for r in all_regions[:2]}
+
+
+def test_multiregion_backfill_primary_failure_cancels_remaining_regions(workspace):
+    """F5 (failure containment): when the primary region's step fails, the task
+    stops and the remaining regions' cloned units are cancelled without running —
+    the serial page-task atomicity is unchanged by the fan-out."""
+    conn = workspace["conn"]
+    service, _, _ = _build_service(workspace)
+
+    def _tampering_ocr_wrapper(original_ocr_handler):
+        def _wrapped(step_run, unit, run):
+            step_run.input_refs["region"] = "tampered-conflicting-revision-id"
+            return original_ocr_handler(step_run, unit, run)
+
+        return _wrapped
+
+    original_ocr = service._executor._handlers[STEP_OCR]
+    service._executor._handlers[STEP_OCR] = _tampering_ocr_wrapper(original_ocr)
+
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED_WITH_FAILURES
+    ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
+    assert len(ocr_steps) == 1
+    assert ocr_steps[0].status is StepRunStatus.FAILED
+    assert ocr_steps[0].error_code == "LOCK_CHANGED"
+    # detect + failed primary ocr + cancelled secondary ocr unit = fully terminal
+    assert executed.terminal_step_units == executed.planned_step_units == 3
