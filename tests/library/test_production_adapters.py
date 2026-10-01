@@ -77,6 +77,7 @@ def _restore_qt_allocation_limit():
     QImageReader.setAllocationLimit(before)
 
 
+@pytest.mark.slow  # real 289.5 MiB decode (dsh r1 R9)
 def test_qt_image_decoder_imports_webtoon_long_strip_beyond_qt_default_cap():
     from PySide6.QtGui import QImageReader
 
@@ -112,6 +113,23 @@ def test_qt_image_decoder_raises_allocation_limit_above_qt_default(monkeypatch):
     assert limit > 0, "0 disables the check entirely (unbounded OOM risk)"
 
 
+def test_qt_image_decoder_allocation_limit_decides_accept_or_reject(monkeypatch):
+    # Mechanism lock (dsh r1 R1): one complete, valid, small image. The very
+    # same bytes must decode under the production limit and must be rejected
+    # under a 1 MiB limit — the allocation limit itself (not payload
+    # truncation or any other decode failure mode) is the deciding variable.
+    import infrastructure.importing as importing
+
+    data = make_thin_png(690, 4000)  # full payload: 690x4000 RGBA ~= 10.5 MiB
+
+    decoded = QtImageDecoder().decode(data)  # production limit: must pass
+    assert (decoded.width, decoded.height) == (690, 4000)
+
+    monkeypatch.setattr(importing, "_ALLOCATION_LIMIT_MIB", 1)
+    with pytest.raises(ImageDecodeError):  # 1 MiB limit: same bytes, must fail
+        QtImageDecoder().decode(data)
+
+
 def test_qt_image_decoder_fail_closed_above_limit_with_reader_error_text():
     # Declared 8192x65536 RGBA decodes to exactly 2048 MiB: above the
     # decoder's own 2047 MiB bound, so the fix must NOT swallow it — typed
@@ -131,6 +149,8 @@ def test_qt_image_decoder_fail_closed_above_limit_with_reader_error_text():
 
 def test_qt_image_decoder_truncates_very_long_reader_errors(monkeypatch):
     from PySide6.QtGui import QImage
+
+    import infrastructure.importing as importing
 
     class LongErrorReader:
         def __init__(self, device):
@@ -156,7 +176,8 @@ def test_qt_image_decoder_truncates_very_long_reader_errors(monkeypatch):
 
     detail = str(excinfo.value)
     assert detail.startswith("x" * 100)  # carries the reader's own text
-    assert len(detail) <= 400
+    assert detail.endswith("...")  # truncation marker (dsh r1 R8)
+    assert len(detail) == importing._ERROR_DETAIL_MAX_CHARS + 3  # 300 + "..."
 
 
 def test_managed_copy_adapter_publishes_verbatim_d03_original(tmp_path):

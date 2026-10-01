@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "task": "M2-IMPORT-ALLOC-LIMIT",
   "cases": {
     "K07": {
@@ -13,10 +13,11 @@
           "width": 690,
           "height": 131289,
           "source_size_bytes": 57012428,
-          "managed_original_ref": "books/verify-k07/chapters/chapter-k07/original/7410a3a0d7f148b3829563abbc0348b3.png"
+          "managed_original_ref": "books/verify-k07/chapters/chapter-k07/original/f0bf3a2c7bd24214b4881be8a0c7f644.png"
         }
       ],
-      "failed": []
+      "failed": [],
+      "decoded_mib": 345.6
     },
     "K09": {
       "path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K09_717481_124\\base.png",
@@ -29,10 +30,11 @@
           "width": 690,
           "height": 100480,
           "source_size_bytes": 46128749,
-          "managed_original_ref": "books/verify-k09/chapters/chapter-k09/original/508ec7aa24854b14bf655395f37f498b.png"
+          "managed_original_ref": "books/verify-k09/chapters/chapter-k09/original/79d020010eda4b8285b74dabdf416c27.png"
         }
       ],
-      "failed": []
+      "failed": [],
+      "decoded_mib": 264.5
     },
     "K10": {
       "path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K10_730656_11\\base.png",
@@ -45,24 +47,53 @@
           "width": 690,
           "height": 100674,
           "source_size_bytes": 40141409,
-          "managed_original_ref": "books/verify-k10/chapters/chapter-k10/original/a2d8f229a34d4efba69362724b2c75cb.png"
+          "managed_original_ref": "books/verify-k10/chapters/chapter-k10/original/b32ec4c7f03344cfa1465b6bfbd8ad0b.png"
         }
       ],
-      "failed": []
+      "failed": [],
+      "decoded_mib": 265.0
     }
+  },
+  "env": {
+    "python": "3.12.3",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "pyside6": "6.11.2",
+    "qt": "6.11.2",
+    "allocation_limit_mib": 2047
   },
   "control_qt_default_256": {
     "K07": {
       "rejected": true,
-      "detail": "Unable to read image data"
+      "detail": "Unable to read image data",
+      "declared_mib": 345.6,
+      "native_stderr": "qt.gui.imageio: QImageIOHandler: Rejecting image as it exceeds the current allocation limit of 256 megabytes",
+      "at_2047_same_reader_same_bytes": {
+        "decoded": true,
+        "width": 690,
+        "height": 131289
+      }
     },
     "K09": {
       "rejected": true,
-      "detail": "Unable to read image data"
+      "detail": "Unable to read image data",
+      "declared_mib": 264.5,
+      "native_stderr": "qt.gui.imageio: QImageIOHandler: Rejecting image as it exceeds the current allocation limit of 256 megabytes",
+      "at_2047_same_reader_same_bytes": {
+        "decoded": true,
+        "width": 690,
+        "height": 100480
+      }
     },
     "K10": {
       "rejected": true,
-      "detail": "Unable to read image data"
+      "detail": "Unable to read image data",
+      "declared_mib": 265.0,
+      "native_stderr": "qt.gui.imageio: QImageIOHandler: Rejecting image as it exceeds the current allocation limit of 256 megabytes",
+      "at_2047_same_reader_same_bytes": {
+        "decoded": true,
+        "width": 690,
+        "height": 100674
+      }
     }
   },
   "verdict": "PASS"

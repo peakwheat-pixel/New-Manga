@@ -1,0 +1,51 @@
+# M2-IMPORT-ALLOC-LIMIT r1 R9：红态归档（新测试对基线 src 必红）
+
+目的：证明 r1 返修后的新增/收紧用例在**基线 importing.py**（无 setAllocationLimit 断言、
+无 errorString 截断）下确实失败——修复是必要的，测试不是恒绿。
+
+执行位置：worktree `G:/CODEX/New Manga.worktrees/M2-IMPORT-ALLOC-LIMIT-zcode`，
+分支 `agent/zcode/M2-IMPORT-ALLOC-LIMIT`，HEAD=02f306ea + r1 返修工作区改动（tests 为新版本）。
+venv：`G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe`（PySide6 6.11.2）。
+
+命令序列（原 handoff 的 `git stash push src/infrastructure/importing.py` 面向脏工作区；
+交付树已提交，故用等价的「基线 blob 写回工作区 → 跑 → HEAD 恢复」三步，见下）：
+
+    git checkout 8996ca55 -- src/infrastructure/importing.py
+
+# ---- 溯源：pytest 解析到的模块与基线 blob 一致 ------------------------------
+    $ PYTHONPATH=src "$PY" -c "import infrastructure.importing as m; print(m.__file__)"
+    G:\CODEX\New Manga.worktrees\M2-IMPORT-ALLOC-LIMIT-zcode\src\infrastructure\importing.py
+
+    $ git diff 8996ca55 -- src/infrastructure/importing.py; echo "exit=$?"
+    exit=0            # 空输出：git 语义下工作区文件 == 基线 8996ca55 blob
+                      #（raw sha256 因 autocrlf 行尾规范化不可直接比对，以 git diff 为准）
+
+    $ git show 8996ca55:src/infrastructure/importing.py | grep -c "setAllocationLimit"
+    0                 # 基线无 setter 调用（修复不存在）
+
+# ---- 红态运行 ---------------------------------------------------------------
+    $ git checkout 8996ca55 -- src/infrastructure/importing.py
+    $ PYTHONPATH=src "$PY" -m pytest tests/library/test_production_adapters.py \
+          -k "long_strip or allocation_limit or fail_closed or truncates_very_long" \
+          -q -rs -rf
+
+    =========================== short test summary info ===========================
+    FAILED tests/library/test_production_adapters.py::test_qt_image_decoder_imports_webtoon_long_strip_beyond_qt_default_cap
+    FAILED tests/library/test_production_adapters.py::test_qt_image_decoder_raises_allocation_limit_above_qt_default
+    FAILED tests/library/test_production_adapters.py::test_qt_image_decoder_allocation_limit_decides_accept_or_reject
+    FAILED tests/library/test_production_adapters.py::test_qt_image_decoder_truncates_very_long_reader_errors
+    4 failed, 1 passed, 8 deselected in 1.18s
+
+关键失败摘录：
+  - allocation_limit_decides_accept_or_reject（r1 R1 机制锁定）：基线 decode 不断言 limit，
+    进程全局 256 拒绝 690x4000（~10.5 MiB），「@2047 必过」腿失败 -> 红。
+  - imports_webtoon_long_strip_beyond_qt_default_cap：256 上限拒 690x110000（~289.5 MiB）-> 红。
+  - raises_allocation_limit_above_qt_default：基线不调用 setAllocationLimit，calls 为空 -> 红。
+  - truncates_very_long_reader_errors（r1 R8 收紧断言）：基线 5000 字符 detail 不截断，
+    endswith("...") 失败 -> 红。
+  - 唯一 passed = fail_closed_above_limit_with_reader_error_text：保护性回归测试
+    （2048 MiB 声明在 256 上限下同样被拒），基线即绿，与交付 handoff §3 记录一致。
+
+# ---- 恢复 --------------------------------------------------------------------
+    $ git checkout HEAD -- src/infrastructure/importing.py
+    $ git status --porcelain   # importing.py 不再出现（与 HEAD 一致）
