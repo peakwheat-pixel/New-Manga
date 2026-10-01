@@ -34,6 +34,16 @@ recovered on the page that scored 0 end-to-end are the direct feasibility
 evidence for a tiling fix. Tiles are cropped in memory only — nothing is
 written to disk and no pixels enter Git.
 
+Probe schema v2 (DSH review r1 rework, R3a + R9): the tile experiment now
+persists the FULL pre-NMS and post-NMS box coordinates plus every NMS
+removal decision, and adds overlap-band (bottom 128 px of each non-final
+tile) vs non-band detection-density / duplicate-pair statistics, so the
+"226 -> 193, NMS removed overlap duplicates" claim is independently
+recomputable from the JSON alone. The preprocessor keep-list also records
+``shortest_edge`` so its absence is provable from the artifact. Counts are
+at the PRE-MERGE text-box level (``cluster_words_into_blocks`` is not
+applied in the tile path; production regions are post-merge blocks).
+
 Run (main venv, CPU — the device is registered in the output JSON):
 
   "G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe" \
@@ -86,10 +96,12 @@ DEFAULT_WEIGHTS_DIR = Path(
     "/ogkalu-comic-text-and-bubble-detector"
 )
 
-#: AC2 tile geometry: 1024x1024 squares, 128 px overlap (12.5%, inside the
-#: task's 10-20% band, a multiple of the RT-DETR stride 32). Webtoon width
-#: 690 < 1024 -> right/bottom padding with constant 114 gray (the common
-#: detection padding value; it carries no text by construction).
+#: AC2 tile geometry: 1024x1024 squares (mandated by the task AC2), 128 px
+#: vertical overlap — an EXPERIMENT-CHOSEN value (the task doc specifies no
+#: overlap band); rationale: a multiple of the RT-DETR stride 32 and 12.5%
+#: of the tile height. Webtoon width 690 < 1024 -> right/bottom padding with
+#: constant 114 gray (a conventional detection padding constant, no upstream
+#: citation; it carries no text by construction).
 TILE_SIZE = 1024
 TILE_OVERLAP = 128
 TILE_PAD_VALUE = 114
@@ -260,25 +272,123 @@ def _iou(a: tuple, b: tuple) -> float:
     return inter / (area_a + area_b - inter)
 
 
-def greedy_nms(boxes: list, iou_threshold: float = 0.5) -> list:
+def greedy_nms(boxes: list, iou_threshold: float = 0.5) -> tuple:
     """Confidence-ordered greedy NMS over page-global boxes (directional
     de-duplication of the overlap bands only — this is experiment-side
-    accounting, never a production merge)."""
-    order = sorted(boxes, key=lambda b: b[4], reverse=True)
+    accounting, never a production merge).
+
+    Returns ``(kept_indices, removed)`` where ``removed`` records every
+    removal decision as ``(removed_index, kept_index, iou)`` — with the full
+    box coordinates persisted, the 226 -> 193 dedup is independently
+    recomputable (DSH r1 R3a). Keep/drop semantics are unchanged from v1.
+    """
+    order = sorted(range(len(boxes)), key=lambda i: boxes[i][4], reverse=True)
     kept: list = []
-    for candidate in order:
-        if all(_iou(candidate, keeper) <= iou_threshold for keeper in kept):
-            kept.append(candidate)
-    return kept
+    removed: list = []
+    for i in order:
+        best_keeper, best_iou = -1, 0.0
+        for k in kept:
+            iou = _iou(boxes[i], boxes[k])
+            if iou > best_iou:
+                best_keeper, best_iou = k, iou
+        if best_keeper >= 0 and best_iou > iou_threshold:
+            removed.append((i, best_keeper, best_iou))
+        else:
+            kept.append(i)
+    return kept, removed
+
+
+def overlap_band_stats(
+    page_boxes: list, removed: list, bands: list, width: int, height: int
+) -> dict:
+    """DSH r1 R3a evidence: overlap-band vs non-band detection density and
+    duplicate-pair accounting, so "NMS removed overlap duplicates" is a
+    measured statement rather than an assertion.
+
+    - a box belongs to the overlap band when its CENTER y falls inside one of
+      the per-tile bottom bands (``[origin+step, origin+TILE_SIZE)`` of each
+      non-final tile); bands are disjoint because step (896) > band (128);
+    - duplicate pairs = pre-NMS box pairs with IoU > 0.5, split by whether
+      the two boxes come from different tiles (true cross-tile duplication
+      candidates) or the same tile;
+    - removal accounting: how many NMS-removed boxes had their center in a
+      band, how many were removed by a keeper from ANOTHER tile (the classic
+      straddling-object duplicate), and the IoU distribution of removals.
+    """
+
+    def band_of(center_y: float) -> int:
+        for bi, (b0, b1) in enumerate(bands):
+            if b0 <= center_y < b1:
+                return bi
+        return -1
+
+    box_band = [band_of((b[1] + b[3]) / 2.0) for b in page_boxes]
+    band_area = sum(b1 - b0 for b0, b1 in bands) * width
+    non_band_area = width * height - band_area
+    n_in = sum(1 for b in box_band if b >= 0)
+    n_out = len(page_boxes) - n_in
+
+    pairs_total = pairs_cross = pairs_same = pairs_outside = 0
+    n = len(page_boxes)
+    for a in range(n):
+        for b in range(a + 1, n):
+            if _iou(page_boxes[a], page_boxes[b]) > 0.5:
+                pairs_total += 1
+                if page_boxes[a][5] != page_boxes[b][5]:
+                    pairs_cross += 1
+                else:
+                    pairs_same += 1
+                if box_band[a] < 0 and box_band[b] < 0:
+                    pairs_outside += 1
+
+    removed_ious = [r[2] for r in removed]
+    return {
+        "band_height_px": TILE_OVERLAP,
+        "n_bands": len(bands),
+        "band_y_ranges_px": "@@COMPACT:bands@@",
+        "band_area_px2": band_area,
+        "non_band_area_px2": non_band_area,
+        "pre_nms_boxes_in_bands": n_in,
+        "pre_nms_boxes_outside_bands": n_out,
+        "pre_nms_density_per_mpx_in_bands": (
+            round(n_in / band_area * 1e6, 2) if band_area else 0.0
+        ),
+        "pre_nms_density_per_mpx_outside": (
+            round(n_out / non_band_area * 1e6, 2) if non_band_area else 0.0
+        ),
+        "duplicate_pairs_iou_gt_0_5_total": pairs_total,
+        "duplicate_pairs_cross_tile": pairs_cross,
+        "duplicate_pairs_same_tile": pairs_same,
+        "duplicate_pairs_both_centers_outside_bands": pairs_outside,
+        "nms_removed_total": len(removed),
+        "nms_removed_center_in_band": sum(
+            1 for r in removed if box_band[r[0]] >= 0
+        ),
+        "nms_removed_by_cross_tile_keeper": sum(
+            1 for r in removed if page_boxes[r[0]][5] != page_boxes[r[1]][5]
+        ),
+        "nms_removed_iou_min": min(removed_ious) if removed_ious else 0.0,
+        "nms_removed_iou_max": max(removed_ious) if removed_ious else 0.0,
+        "nms_removed_iou_mean": (
+            round(sum(removed_ious) / len(removed_ious), 4) if removed_ious else 0.0
+        ),
+    }
 
 
 def tile_experiment(model, processor, torch, rgb: np.ndarray) -> dict:
     """AC2: cut the page into overlapping tiles, run the production
-    sequence per tile, map detections back to page coordinates."""
+    sequence per tile, map detections back to page coordinates.
+
+    Metric level (DSH r1 R2): the counts here are PRE-MERGE text-class boxes
+    — the production ``cluster_words_into_blocks`` step is deliberately NOT
+    applied in the tile path, so these numbers are not production region
+    counts (post-merge blocks).
+    """
     height, width = int(rgb.shape[0]), int(rgb.shape[1])
     step = TILE_SIZE - TILE_OVERLAP
     tiles: list[dict] = []
-    page_boxes: list = []
+    page_boxes: list = []  # (x0, y0, x1, y1, score, tile_index), page coords
+    bands: list = []  # (y0, y1) overlap band of each non-final tile
     started = time.perf_counter()
     tile_index = 0
     y = 0
@@ -289,7 +399,7 @@ def tile_experiment(model, processor, torch, rgb: np.ndarray) -> dict:
         tile_boxes = run_tile_inference(model, processor, torch, tile_rgb)
         mapped, dropped_in_pad = [], 0
         for x0, y0, x1, y1b, score in tile_boxes:
-            page_box = (x0, y0 + y, x1, y1b + y, score)
+            page_box = (x0, y0 + y, x1, y1b + y, score, tile_index)
             center_x = (page_box[0] + page_box[2]) / 2.0
             if center_x > width:  # center in the right pad band: not page content
                 dropped_in_pad += 1
@@ -307,18 +417,53 @@ def tile_experiment(model, processor, torch, rgb: np.ndarray) -> dict:
                 "confidences": [round(b[4], 4) for b in mapped],
             }
         )
+        if y1 < height:  # non-final tile: its bottom band overlaps the next tile
+            bands.append((y + step, y + TILE_SIZE))
         tile_index += 1
         if y1 >= height:
             break
         y += step
     elapsed_ms = int((time.perf_counter() - started) * 1000)
 
-    deduped = greedy_nms(page_boxes)
+    kept_indices, removed = greedy_nms(page_boxes)
+    deduped = [page_boxes[i] for i in kept_indices]
     confs = [b[4] for b in deduped]
     widths = [b[2] - b[0] for b in deduped]
     heights = [b[3] - b[1] for b in deduped]
     ys = [b[1] for b in deduped]
+    stats = overlap_band_stats(page_boxes, removed, bands, width, height)
+
+    _COMPACT_BLOCKS.clear()
+    _COMPACT_BLOCKS["pre_nms_boxes"] = (
+        [
+            [round(b[0], 1), round(b[1], 1), round(b[2], 1), round(b[3], 1),
+             round(b[4], 4), int(b[5])]
+            for b in page_boxes
+        ],
+        10,
+        8,
+    )
+    _COMPACT_BLOCKS["post_nms_boxes"] = (
+        [
+            [round(b[0], 1), round(b[1], 1), round(b[2], 1), round(b[3], 1),
+             round(b[4], 4), int(b[5])]
+            for b in (page_boxes[i] for i in sorted(kept_indices))
+        ],
+        10,
+        8,
+    )
+    _COMPACT_BLOCKS["nms_removed"] = (
+        [[int(r[0]), int(r[1]), round(r[2], 4)] for r in removed],
+        10,
+        8,
+    )
+    _COMPACT_BLOCKS["bands"] = (
+        [[int(b0), int(b1)] for b0, b1 in bands],
+        12,
+        10,
+    )
     return {
+        "metric_level": "pre-merge text-class boxes (cluster_words_into_blocks NOT applied; production regions are post-merge blocks)",
         "tile_size": TILE_SIZE,
         "overlap_px": TILE_OVERLAP,
         "n_tiles": len(tiles),
@@ -337,11 +482,43 @@ def tile_experiment(model, processor, torch, rgb: np.ndarray) -> dict:
             "y_range": [round(min(ys), 1), round(max(ys), 1)] if ys else [0.0, 0.0],
         },
         "tiles": tiles,
-        "deduped_boxes_sample": [
-            [round(v, 1) for v in box[:4]] + [round(box[4], 4)]
-            for box in sorted(deduped, key=lambda b: b[1])[:40]
-        ],
+        "overlap_band_stats": stats,
+        # Full coordinates (v2, DSH r1 R3a): format per row is
+        # [x0, y0, x1, y1, score, tile_index] in page pixels; nms_removed rows
+        # are [removed_index, kept_index, iou] indexing into pre_nms_boxes.
+        "pre_nms_boxes": "@@COMPACT:pre_nms_boxes@@",
+        "post_nms_boxes": "@@COMPACT:post_nms_boxes@@",
+        "nms_removed": "@@COMPACT:nms_removed@@",
     }
+
+
+#: Large box-coordinate blocks are persisted one-box-per-line (compact JSON)
+#: so the artifact stays reviewable; these placeholders are rendered by
+#: ``dump_report`` at write time (DSH r1 R3a). Values are
+#: ``(rows, element_indent, close_indent)`` to match the json indent=2 depth
+#: each block sits at.
+_COMPACT_BLOCKS: dict[str, tuple] = {}
+
+
+def _render_compact(rows: list, elem_indent: int, close_indent: int) -> str:
+    if not rows:
+        return "[]"
+    pad = " " * elem_indent
+    body = ",\n".join(pad + json.dumps(row) for row in rows)
+    return "[\n" + body + "\n" + " " * close_indent + "]"
+
+
+def dump_report(report: dict, output_path: Path) -> None:
+    text = json.dumps(report, indent=2, ensure_ascii=False)
+    for name, (rows, elem_indent, close_indent) in _COMPACT_BLOCKS.items():
+        marker = f'"@@COMPACT:{name}@@"'
+        if marker not in text:
+            raise ValueError(f"compact block {name} has no placeholder in report")
+        text = text.replace(
+            marker, _render_compact(rows, elem_indent, close_indent)
+        )
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(text + "\n", encoding="utf-8")
 
 
 def load_preprocessor_config(weights_dir: Path) -> dict:
@@ -349,6 +526,7 @@ def load_preprocessor_config(weights_dir: Path) -> dict:
     keep = (
         "image_processor_type",
         "size",
+        "shortest_edge",
         "do_resize",
         "do_rescale",
         "do_normalize",
@@ -425,7 +603,28 @@ def main() -> int:
 
     report: dict = {
         "task": "M2-DETECT-WEBTOON-DIAG",
-        "probe_schema_version": 1,
+        "probe_schema_version": 2,
+        "r1_revision": {
+            "rerun_reason": (
+                "DSH review r1 R3(a): persist full pre/post-NMS box coordinates "
+                "plus NMS removal decisions and overlap-band duplicate statistics "
+                "so '226 -> 193, NMS removed overlap duplicates' is independently "
+                "recomputable; R9: shortest_edge added to the preprocessor "
+                "keep-whitelist (absence of the key below proves absence in the "
+                "config file)."
+            ),
+            "previous_json": (
+                "schema v1 @ git b311f52f "
+                "(verification/M2-DETECT-WEBTOON-DIAG/probe-results.json, "
+                "generated_at_utc=2026-10-01T11:43:32Z)"
+            ),
+            "schema_delta": [
+                "tile_experiment: full pre_nms_boxes / post_nms_boxes / "
+                "nms_removed / overlap_band_stats (deduped_boxes_sample(40) "
+                "replaced by the full post_nms_boxes)",
+                "preprocessor keep-whitelist now records shortest_edge",
+            ],
+        },
         "generated_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "environment": {
             "python": sys.version.split()[0],
@@ -495,10 +694,7 @@ def main() -> int:
         report["pages"][case_id] = page_report
 
     output_path = Path(args.output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(
-        json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8"
-    )
+    dump_report(report, output_path)
     print(f"[probe] wrote {output_path}", flush=True)
 
     # Probe self-check (AC1): the normally-proportioned control page must
