@@ -43,4 +43,4 @@ TA3-B2 定案：export 复制 Run1 渲染产物；remote 翻译采样天然非�
 - AC2：建议 Gate（normalized 口径）= **median ≥ 0.95 且 min ≥ 0.70**。锚：K11/BJ02 实测 18 对，浮动对（normalized）6 对全部 1 编辑差、幅度 [0.75, 0.875]（K11 浮动对 min=median=0.75）；判别力以确定性合成漂移对照演示（实测分布与单字符浮动逐对 PASS；40%/70% 字符替换 FAIL、全 region 浮动 median leg FAIL）。
 - AC3：`quality-thresholds.md` §5 双轨条目 + F5 修订注、§7 总表第 10 行；`phase2-plan.md` §1 交付物/§2.1 确定性复跑/§4 步骤 5——superseded-pending 解除，修订来源「M2-QUAL-DETERM-CALIB + 用户裁决 2026-10-01（全部进行）」，mock 链 export 字节逐位口径保留。
 - AC4：n=2 局限、无自然 FAIL 样本、极短译文粒度边界、Run1 层相似度未测、归一化口径依赖——登记于 calibration.md §6 与 calibration.json `limitations`。
-- 交接：`doc/handoffs/M2-QUAL-DETERM-CALIB-<delivery_head>.md`；review：DeepSeek Harness（非作者）→ Codex 集成。
+- 交接：[doc/handoffs/M2-QUAL-DETERM-CALIB-e3b7c48d.md](../handoffs/M2-QUAL-DETERM-CALIB-e3b7c48d.md)（delivery_head=e3b7c48d）；review：DeepSeek Harness（非作者）→ Codex 集成。
