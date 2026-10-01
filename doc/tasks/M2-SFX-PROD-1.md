@@ -2,7 +2,7 @@
 id: M2-SFX-PROD-1
 title: "SFX 检测生产集成第一刀：chiqui7 独立 provider + region sfx 分派 + 权重随包（用户三裁决 2026-10-01：做/许可通过/路线 A）"
 kind: feature
-status: ready
+status: in_progress
 approval: user_ruling_2026-10-01_sfx
 suggested_owner: ZCode
 owner: ZCode
