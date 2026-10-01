@@ -2,7 +2,7 @@
 id: M2-AC5-BUILD-FRESH-CHECKOUT
 title: "fresh checkout 构建链根治：build.rs 可诊断 sidecar 缺失 + build_sidecar.ps1 增量短路（M2-AC5 候选）"
 kind: fix
-status: in_review
+status: done
 approval: orchestrator_delegated_2026-09-30
 suggested_owner: ZCode
 owner: ZCode

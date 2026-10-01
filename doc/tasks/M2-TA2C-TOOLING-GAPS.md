@@ -2,7 +2,7 @@
 id: M2-TA2C-TOOLING-GAPS
 title: "comic_golden_suite 工具清算：source_url 主机白名单 + checksum_inventory 运行时消费与判别性断言（TA2C P3-6/P3-10）"
 kind: fix
-status: in_review
+status: done
 approval: orchestrator_delegated_2026-09-30
 suggested_owner: ZCode
 owner: ZCode

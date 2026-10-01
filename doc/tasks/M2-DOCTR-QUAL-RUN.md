@@ -2,7 +2,7 @@
 id: M2-DOCTR-QUAL-RUN
 title: "Real docTR 正式 qualification run（用户口径裁决 2026-09-30：coverage 主判定 + 生产 pad 正式 + Precision 下界不作 Gate）"
 kind: acceptance
-status: in_review
+status: done
 approval: user_ruling_2026-09-30
 suggested_owner: ZCode
 owner: ZCode
