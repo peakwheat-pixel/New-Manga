@@ -1,0 +1,49 @@
+{
+  "probe": "translate-step0-ac6",
+  "started_at_utc": "2026-10-01T09:43:16Z",
+  "base_url_host": "api.deepseek.com",
+  "model": "deepseek-chat",
+  "provider_id": "openai-compatible-translation",
+  "target_language": "zh",
+  "sequence": {
+    "assemble": "OK",
+    "profile_write": "OK (save_settings_section + binding)",
+    "reassemble": "OK",
+    "reregister": "OK"
+  },
+  "credential_ref": "NewManga/provider/ta3b-translate-key",
+  "reassemble_readiness": {
+    "provider_id": "openai-compatible-translation",
+    "provider_type": "openai-compatible",
+    "capabilities": [
+      "translation"
+    ],
+    "state": "missing_dependency",
+    "error_code": "MISSING_CREDENTIAL",
+    "detail": "credential 'NewManga/provider/ta3b-translate-key' is empty",
+    "missing_requirements": [
+      "NewManga/provider/ta3b-translate-key"
+    ]
+  },
+  "readiness": {
+    "provider_id": "openai-compatible-translation",
+    "provider_type": "openai-compatible",
+    "capabilities": [
+      "translation"
+    ],
+    "state": "ready",
+    "error_code": "",
+    "detail": "",
+    "missing_requirements": []
+  },
+  "translation": {
+    "region_id": "probe-r1",
+    "source_text": "당근아? 이렇게까지는 할 필요없을줄",
+    "translated_text": "胡萝卜？没必要做到这种程度吧",
+    "elapsed_s": 0.45,
+    "provider_elapsed_ms": 445,
+    "model": "deepseek-chat"
+  },
+  "status": "OK",
+  "finished_at_utc": "2026-10-01T09:43:17Z"
+}
