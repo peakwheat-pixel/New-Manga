@@ -45,7 +45,7 @@ TRANSLATION_SYSTEM_PROMPT = (
     "Return exactly one entry per requested region_id, never rename, omit or "
     "invent an id, and use CONTEXT regions only as context. "
     "Regions whose region_type is \"sfx\" are manga onomatopoeia / sound-"
-    "effect words (e.g. \u30c9\u30ac, \u30b4\u30b7\u30e7\u30fc\u30f3): translate them by CULTURAL "
+    "effect words (e.g. \u30c9\u30ac, \u30d0\u30ad\u30c3): translate them by CULTURAL "
     "EQUIVALENCE into the natural onomatopoeia of the target language that "
     "expresses the same sound or emotion \u2014 never transliterate the source "
     "syllables. Keep the original's intensity and brevity: at most 6 "
