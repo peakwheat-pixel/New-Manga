@@ -1,0 +1,1626 @@
+{
+  "task": "M2-DETECT-WEBTOON-DIAG",
+  "probe_schema_version": 1,
+  "generated_at_utc": "2026-10-01T11:43:32Z",
+  "environment": {
+    "python": "3.12.3",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "torch": "2.14.0+cpu",
+    "cuda_available": false,
+    "device": "cpu",
+    "transformers": "5.17.0",
+    "numpy": "2.5.3"
+  },
+  "weights": {
+    "dir": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+    "all_pins_match": true,
+    "files": {
+      "model.safetensors": {
+        "sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d",
+        "pin_match": true
+      },
+      "config.json": {
+        "sha256": "b6d707933e12e9593a7025604be1c95add70a6db371fdd1532e8854e2256e072",
+        "pin_match": true
+      },
+      "preprocessor_config.json": {
+        "sha256": "7e9e2245806aa3ef068a5321f5eebee3116fa4cec560173231954ffaca930eca",
+        "pin_match": true
+      }
+    }
+  },
+  "preprocessor_config": {
+    "image_processor_type": "RTDetrImageProcessor",
+    "size": {
+      "height": 640,
+      "width": 640
+    },
+    "do_resize": true,
+    "do_rescale": true,
+    "do_normalize": false,
+    "do_pad": false,
+    "resample": 2,
+    "rescale_factor": 0.00392156862745098,
+    "image_mean": [
+      0.485,
+      0.456,
+      0.406
+    ],
+    "image_std": [
+      0.229,
+      0.224,
+      0.225
+    ],
+    "pad_size": null
+  },
+  "conf_threshold_production": 0.5,
+  "case_selection_manifest": "G:\\CODEX\\New Manga.worktrees\\M2-DETECT-WEBTOON-DIAG-zcode\\experiments\\M2-TA3-B\\case-selection.json",
+  "pages": {
+    "K01": {
+      "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K01_724815_1\\base.png",
+      "source_sha256": "600ca7551a186d05e8f6876e66c89e2c44a0ec99c0cc0e53694a67c7622be47b",
+      "source_sha256_matches_manifest": true,
+      "size_wh": [
+        690,
+        62133
+      ],
+      "layout_type": "webtoon_long_strip",
+      "tags": [
+        "normal_dialogue"
+      ],
+      "provider_detect": {
+        "region_count": 0,
+        "elapsed_ms": 574,
+        "provider_id": "local-manga",
+        "model": "manga/ogkalu-comic-text-and-bubble-detector",
+        "conf_threshold": 0.5,
+        "options": {
+          "arch": "rt_detr_v2",
+          "device": "cpu",
+          "conf_threshold": "0.5",
+          "bubble_class_dropped": "0"
+        },
+        "confidences": []
+      },
+      "raw_observability": {
+        "process_ms": 244,
+        "infer_ms": 297,
+        "model_input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "logits_shape": [
+          1,
+          300,
+          3
+        ],
+        "n_queries": 300,
+        "score_max": 0.20449964702129364,
+        "score_top10": [
+          0.20449964702129364,
+          0.18330536782741547,
+          0.16541467607021332,
+          0.13031557202339172,
+          0.11166057735681534,
+          0.1096750870347023,
+          0.10393500328063965,
+          0.09836447983980179,
+          0.07869628071784973,
+          0.06671466678380966
+        ],
+        "counts_ge": {
+          "0.5": 0,
+          "0.3": 0,
+          "0.1": 7,
+          "0.01": 143,
+          "0.0": 300
+        },
+        "official_post_process_ge_0_5": 0,
+        "class_wise": {
+          "0": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 0,
+            "max": 0.0
+          },
+          "1": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 0,
+            "max": 0.0
+          },
+          "2": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 7,
+            "max": 0.20449964702129364
+          }
+        }
+      },
+      "tile_experiment": {
+        "tile_size": 1024,
+        "overlap_px": 128,
+        "n_tiles": 70,
+        "elapsed_ms": 19793,
+        "total_raw_detections": 226,
+        "total_mapped_detections": 226,
+        "deduped_detections": 193,
+        "deduped_conf": {
+          "max": 0.966617226600647,
+          "mean": 0.8503,
+          "min": 0.5009356737136841
+        },
+        "deduped_geometry_px": {
+          "median_box_w": 144.1,
+          "median_box_h": 53.6,
+          "y_range": [
+            156.7,
+            62008.9
+          ]
+        },
+        "tiles": [
+          {
+            "tile_index": 0,
+            "origin_y": 0,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9115,
+              0.8267
+            ]
+          },
+          {
+            "tile_index": 1,
+            "origin_y": 896,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.943,
+              0.9365,
+              0.6356
+            ]
+          },
+          {
+            "tile_index": 2,
+            "origin_y": 1792,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9485,
+              0.9472,
+              0.8974
+            ]
+          },
+          {
+            "tile_index": 3,
+            "origin_y": 2688,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9601,
+              0.9356
+            ]
+          },
+          {
+            "tile_index": 4,
+            "origin_y": 3584,
+            "crop_h": 1024,
+            "n_boxes_raw": 5,
+            "n_boxes_mapped": 5,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9527,
+              0.9524,
+              0.9479,
+              0.9245,
+              0.6958
+            ]
+          },
+          {
+            "tile_index": 5,
+            "origin_y": 4480,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.95,
+              0.9447,
+              0.937
+            ]
+          },
+          {
+            "tile_index": 6,
+            "origin_y": 5376,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9393,
+              0.9381,
+              0.9378
+            ]
+          },
+          {
+            "tile_index": 7,
+            "origin_y": 6272,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.936,
+              0.9098
+            ]
+          },
+          {
+            "tile_index": 8,
+            "origin_y": 7168,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9231,
+              0.9155,
+              0.8929,
+              0.7251
+            ]
+          },
+          {
+            "tile_index": 9,
+            "origin_y": 8064,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9341,
+              0.9124,
+              0.9111
+            ]
+          },
+          {
+            "tile_index": 10,
+            "origin_y": 8960,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9442,
+              0.9348,
+              0.9326
+            ]
+          },
+          {
+            "tile_index": 11,
+            "origin_y": 9856,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9278,
+              0.9024,
+              0.6277
+            ]
+          },
+          {
+            "tile_index": 12,
+            "origin_y": 10752,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9256,
+              0.8348,
+              0.7522
+            ]
+          },
+          {
+            "tile_index": 13,
+            "origin_y": 11648,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.5662
+            ]
+          },
+          {
+            "tile_index": 14,
+            "origin_y": 12544,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9375
+            ]
+          },
+          {
+            "tile_index": 15,
+            "origin_y": 13440,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9519,
+              0.5526
+            ]
+          },
+          {
+            "tile_index": 16,
+            "origin_y": 14336,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9119,
+              0.6847,
+              0.6562
+            ]
+          },
+          {
+            "tile_index": 17,
+            "origin_y": 15232,
+            "crop_h": 1024,
+            "n_boxes_raw": 6,
+            "n_boxes_mapped": 6,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.934,
+              0.8757,
+              0.7318,
+              0.6895,
+              0.5231,
+              0.5013
+            ]
+          },
+          {
+            "tile_index": 18,
+            "origin_y": 16128,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9454,
+              0.9346,
+              0.9032,
+              0.8938
+            ]
+          },
+          {
+            "tile_index": 19,
+            "origin_y": 17024,
+            "crop_h": 1024,
+            "n_boxes_raw": 18,
+            "n_boxes_mapped": 18,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.8399,
+              0.7247,
+              0.7139,
+              0.6892,
+              0.6783,
+              0.6574,
+              0.6408,
+              0.5903,
+              0.5807,
+              0.5804,
+              0.5732,
+              0.5485,
+              0.5458,
+              0.5442,
+              0.5337,
+              0.5199,
+              0.5186,
+              0.5009
+            ]
+          },
+          {
+            "tile_index": 20,
+            "origin_y": 17920,
+            "crop_h": 1024,
+            "n_boxes_raw": 7,
+            "n_boxes_mapped": 7,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9368,
+              0.8813,
+              0.7778,
+              0.7067,
+              0.6151,
+              0.5866,
+              0.5786
+            ]
+          },
+          {
+            "tile_index": 21,
+            "origin_y": 18816,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9316,
+              0.9274
+            ]
+          },
+          {
+            "tile_index": 22,
+            "origin_y": 19712,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9371,
+              0.9057
+            ]
+          },
+          {
+            "tile_index": 23,
+            "origin_y": 20608,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9267,
+              0.9088
+            ]
+          },
+          {
+            "tile_index": 24,
+            "origin_y": 21504,
+            "crop_h": 1024,
+            "n_boxes_raw": 6,
+            "n_boxes_mapped": 6,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9632,
+              0.9424,
+              0.9141,
+              0.7947,
+              0.7375,
+              0.6854
+            ]
+          },
+          {
+            "tile_index": 25,
+            "origin_y": 22400,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9359,
+              0.9071,
+              0.7861,
+              0.523
+            ]
+          },
+          {
+            "tile_index": 26,
+            "origin_y": 23296,
+            "crop_h": 1024,
+            "n_boxes_raw": 5,
+            "n_boxes_mapped": 5,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9628,
+              0.9581,
+              0.9536,
+              0.8806,
+              0.7621
+            ]
+          },
+          {
+            "tile_index": 27,
+            "origin_y": 24192,
+            "crop_h": 1024,
+            "n_boxes_raw": 5,
+            "n_boxes_mapped": 5,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9503,
+              0.9434,
+              0.9324,
+              0.7341,
+              0.5663
+            ]
+          },
+          {
+            "tile_index": 28,
+            "origin_y": 25088,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9112,
+              0.7094
+            ]
+          },
+          {
+            "tile_index": 29,
+            "origin_y": 25984,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9412
+            ]
+          },
+          {
+            "tile_index": 30,
+            "origin_y": 26880,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.949,
+              0.9313,
+              0.7573
+            ]
+          },
+          {
+            "tile_index": 31,
+            "origin_y": 27776,
+            "crop_h": 1024,
+            "n_boxes_raw": 6,
+            "n_boxes_mapped": 6,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9534,
+              0.9473,
+              0.9431,
+              0.7869,
+              0.7622,
+              0.5043
+            ]
+          },
+          {
+            "tile_index": 32,
+            "origin_y": 28672,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9526,
+              0.9442
+            ]
+          },
+          {
+            "tile_index": 33,
+            "origin_y": 29568,
+            "crop_h": 1024,
+            "n_boxes_raw": 6,
+            "n_boxes_mapped": 6,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9647,
+              0.9458,
+              0.9403,
+              0.9346,
+              0.9019,
+              0.8918
+            ]
+          },
+          {
+            "tile_index": 34,
+            "origin_y": 30464,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9464,
+              0.9342,
+              0.9074,
+              0.8948
+            ]
+          },
+          {
+            "tile_index": 35,
+            "origin_y": 31360,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9356,
+              0.9089
+            ]
+          },
+          {
+            "tile_index": 36,
+            "origin_y": 32256,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9423,
+              0.9338
+            ]
+          },
+          {
+            "tile_index": 37,
+            "origin_y": 33152,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9278,
+              0.9196,
+              0.9099
+            ]
+          },
+          {
+            "tile_index": 38,
+            "origin_y": 34048,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9249,
+              0.9233,
+              0.9158,
+              0.9149
+            ]
+          },
+          {
+            "tile_index": 39,
+            "origin_y": 34944,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9366,
+              0.8983,
+              0.8493
+            ]
+          },
+          {
+            "tile_index": 40,
+            "origin_y": 35840,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9479,
+              0.9085
+            ]
+          },
+          {
+            "tile_index": 41,
+            "origin_y": 36736,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9331,
+              0.8863
+            ]
+          },
+          {
+            "tile_index": 42,
+            "origin_y": 37632,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9402,
+              0.8929,
+              0.7549,
+              0.6913
+            ]
+          },
+          {
+            "tile_index": 43,
+            "origin_y": 38528,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9549,
+              0.9403,
+              0.9216,
+              0.6289
+            ]
+          },
+          {
+            "tile_index": 44,
+            "origin_y": 39424,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9371
+            ]
+          },
+          {
+            "tile_index": 45,
+            "origin_y": 40320,
+            "crop_h": 1024,
+            "n_boxes_raw": 8,
+            "n_boxes_mapped": 8,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9631,
+              0.9332,
+              0.8467,
+              0.8073,
+              0.7814,
+              0.7242,
+              0.6175,
+              0.5395
+            ]
+          },
+          {
+            "tile_index": 46,
+            "origin_y": 41216,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9666,
+              0.9369,
+              0.9206,
+              0.6883
+            ]
+          },
+          {
+            "tile_index": 47,
+            "origin_y": 42112,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.958,
+              0.9465,
+              0.9186,
+              0.541
+            ]
+          },
+          {
+            "tile_index": 48,
+            "origin_y": 43008,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9575,
+              0.9502,
+              0.9215
+            ]
+          },
+          {
+            "tile_index": 49,
+            "origin_y": 43904,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9442
+            ]
+          },
+          {
+            "tile_index": 50,
+            "origin_y": 44800,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9264,
+              0.9171
+            ]
+          },
+          {
+            "tile_index": 51,
+            "origin_y": 45696,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9348,
+              0.888
+            ]
+          },
+          {
+            "tile_index": 52,
+            "origin_y": 46592,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9384
+            ]
+          },
+          {
+            "tile_index": 53,
+            "origin_y": 47488,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9633,
+              0.924
+            ]
+          },
+          {
+            "tile_index": 54,
+            "origin_y": 48384,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9614,
+              0.9439,
+              0.9336
+            ]
+          },
+          {
+            "tile_index": 55,
+            "origin_y": 49280,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9517
+            ]
+          },
+          {
+            "tile_index": 56,
+            "origin_y": 50176,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9473
+            ]
+          },
+          {
+            "tile_index": 57,
+            "origin_y": 51072,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9456,
+              0.7583,
+              0.6617
+            ]
+          },
+          {
+            "tile_index": 58,
+            "origin_y": 51968,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9353
+            ]
+          },
+          {
+            "tile_index": 59,
+            "origin_y": 52864,
+            "crop_h": 1024,
+            "n_boxes_raw": 6,
+            "n_boxes_mapped": 6,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9214,
+              0.9108,
+              0.8456,
+              0.5927,
+              0.5521,
+              0.5494
+            ]
+          },
+          {
+            "tile_index": 60,
+            "origin_y": 53760,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9649,
+              0.9587,
+              0.9493
+            ]
+          },
+          {
+            "tile_index": 61,
+            "origin_y": 54656,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9587,
+              0.9422,
+              0.6651,
+              0.5425
+            ]
+          },
+          {
+            "tile_index": 62,
+            "origin_y": 55552,
+            "crop_h": 1024,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9323,
+              0.9259,
+              0.913
+            ]
+          },
+          {
+            "tile_index": 63,
+            "origin_y": 56448,
+            "crop_h": 1024,
+            "n_boxes_raw": 4,
+            "n_boxes_mapped": 4,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9363,
+              0.8868,
+              0.6798,
+              0.513
+            ]
+          },
+          {
+            "tile_index": 64,
+            "origin_y": 57344,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9529,
+              0.9073
+            ]
+          },
+          {
+            "tile_index": 65,
+            "origin_y": 58240,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9569,
+              0.9363
+            ]
+          },
+          {
+            "tile_index": 66,
+            "origin_y": 59136,
+            "crop_h": 1024,
+            "n_boxes_raw": 1,
+            "n_boxes_mapped": 1,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9479
+            ]
+          },
+          {
+            "tile_index": 67,
+            "origin_y": 60032,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9,
+              0.847
+            ]
+          },
+          {
+            "tile_index": 68,
+            "origin_y": 60928,
+            "crop_h": 1024,
+            "n_boxes_raw": 2,
+            "n_boxes_mapped": 2,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.9155,
+              0.6758
+            ]
+          },
+          {
+            "tile_index": 69,
+            "origin_y": 61824,
+            "crop_h": 309,
+            "n_boxes_raw": 3,
+            "n_boxes_mapped": 3,
+            "n_dropped_center_in_pad": 0,
+            "confidences": [
+              0.738,
+              0.616,
+              0.5356
+            ]
+          }
+        ],
+        "deduped_boxes_sample": [
+          [
+            184.6,
+            156.7,
+            509.2,
+            208.3,
+            0.8267
+          ],
+          [
+            177.9,
+            714.7,
+            501.0,
+            760.8,
+            0.9115
+          ],
+          [
+            155.9,
+            1105.4,
+            430.7,
+            1147.7,
+            0.9365
+          ],
+          [
+            94.3,
+            1627.7,
+            602.4,
+            1673.2,
+            0.943
+          ],
+          [
+            85.3,
+            1896.4,
+            473.7,
+            1938.9,
+            0.9485
+          ],
+          [
+            402.0,
+            2266.3,
+            639.9,
+            2305.8,
+            0.8974
+          ],
+          [
+            81.0,
+            2569.6,
+            255.2,
+            2669.4,
+            0.9472
+          ],
+          [
+            219.0,
+            3093.5,
+            505.6,
+            3141.2,
+            0.9356
+          ],
+          [
+            59.2,
+            3363.2,
+            242.3,
+            3467.7,
+            0.9601
+          ],
+          [
+            495.6,
+            3715.7,
+            656.7,
+            3812.2,
+            0.9479
+          ],
+          [
+            35.8,
+            4011.7,
+            193.5,
+            4090.6,
+            0.9527
+          ],
+          [
+            412.2,
+            4060.3,
+            557.9,
+            4137.8,
+            0.9524
+          ],
+          [
+            289.5,
+            4104.0,
+            346.2,
+            4134.5,
+            0.6958
+          ],
+          [
+            574.1,
+            4384.4,
+            671.0,
+            4420.8,
+            0.9245
+          ],
+          [
+            40.5,
+            4649.4,
+            382.0,
+            4692.6,
+            0.937
+          ],
+          [
+            373.2,
+            4993.1,
+            644.8,
+            5032.8,
+            0.9447
+          ],
+          [
+            144.0,
+            5436.0,
+            566.0,
+            5479.8,
+            0.95
+          ],
+          [
+            64.6,
+            5997.6,
+            354.6,
+            6041.5,
+            0.9378
+          ],
+          [
+            390.9,
+            6330.2,
+            668.2,
+            6372.6,
+            0.9393
+          ],
+          [
+            227.2,
+            6662.3,
+            464.7,
+            6704.6,
+            0.9098
+          ],
+          [
+            68.2,
+            7488.5,
+            608.5,
+            7539.5,
+            0.9231
+          ],
+          [
+            490.5,
+            7917.9,
+            556.3,
+            7954.0,
+            0.7251
+          ],
+          [
+            108.6,
+            7976.1,
+            182.2,
+            8022.1,
+            0.8929
+          ],
+          [
+            495.3,
+            8096.0,
+            623.9,
+            8142.9,
+            0.9155
+          ],
+          [
+            91.4,
+            8667.5,
+            334.0,
+            8723.6,
+            0.9124
+          ],
+          [
+            532.7,
+            8878.1,
+            644.1,
+            8962.3,
+            0.9341
+          ],
+          [
+            62.5,
+            9322.6,
+            275.3,
+            9415.2,
+            0.9442
+          ],
+          [
+            522.8,
+            9358.2,
+            636.2,
+            9420.6,
+            0.9326
+          ],
+          [
+            476.1,
+            9694.9,
+            601.6,
+            9787.8,
+            0.9348
+          ],
+          [
+            90.3,
+            10012.9,
+            238.9,
+            10117.8,
+            0.9278
+          ],
+          [
+            438.7,
+            10430.7,
+            581.2,
+            10483.5,
+            0.9024
+          ],
+          [
+            154.0,
+            10842.2,
+            534.0,
+            10896.7,
+            0.9256
+          ],
+          [
+            33.8,
+            11494.1,
+            305.8,
+            11686.7,
+            0.7522
+          ],
+          [
+            426.7,
+            11519.8,
+            633.6,
+            11603.7,
+            0.8348
+          ],
+          [
+            126.6,
+            11647.9,
+            296.9,
+            11684.5,
+            0.5662
+          ],
+          [
+            373.5,
+            13391.5,
+            603.6,
+            13437.6,
+            0.9375
+          ],
+          [
+            72.7,
+            14054.9,
+            296.3,
+            14144.0,
+            0.9519
+          ],
+          [
+            261.7,
+            14263.3,
+            338.0,
+            14319.1,
+            0.5526
+          ],
+          [
+            124.7,
+            14902.9,
+            581.2,
+            14955.5,
+            0.9119
+          ],
+          [
+            124.2,
+            15269.8,
+            210.2,
+            15323.4,
+            0.7318
+          ]
+        ]
+      }
+    },
+    "K02": {
+      "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K02_651664_112\\base.png",
+      "source_sha256": "b1123355e8c451f99100b153679f126676f616c9715ea6e1cbdbfaeeb3134f50",
+      "source_sha256_matches_manifest": true,
+      "size_wh": [
+        600,
+        18401
+      ],
+      "layout_type": "webtoon_long_strip",
+      "tags": [
+        "dense_dialogue",
+        "tiny_text"
+      ],
+      "provider_detect": {
+        "region_count": 0,
+        "elapsed_ms": 346,
+        "provider_id": "local-manga",
+        "model": "manga/ogkalu-comic-text-and-bubble-detector",
+        "conf_threshold": 0.5,
+        "options": {
+          "arch": "rt_detr_v2",
+          "device": "cpu",
+          "conf_threshold": "0.5",
+          "bubble_class_dropped": "0"
+        },
+        "confidences": []
+      },
+      "raw_observability": {
+        "process_ms": 71,
+        "infer_ms": 278,
+        "model_input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "logits_shape": [
+          1,
+          300,
+          3
+        ],
+        "n_queries": 300,
+        "score_max": 0.1665949821472168,
+        "score_top10": [
+          0.1665949821472168,
+          0.14379504323005676,
+          0.1403355896472931,
+          0.1168467253446579,
+          0.09952389448881149,
+          0.09449560940265656,
+          0.09127149730920792,
+          0.08352704346179962,
+          0.07964814454317093,
+          0.07141725718975067
+        ],
+        "counts_ge": {
+          "0.5": 0,
+          "0.3": 0,
+          "0.1": 4,
+          "0.01": 290,
+          "0.0": 300
+        },
+        "official_post_process_ge_0_5": 0,
+        "class_wise": {
+          "0": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 0,
+            "max": 0.024481702595949173
+          },
+          "1": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 0,
+            "max": 0.03491976857185364
+          },
+          "2": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 4,
+            "max": 0.1665949821472168
+          }
+        }
+      }
+    },
+    "K04": {
+      "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K04_670145_145\\base.png",
+      "source_sha256": "8bfad8af8e4f7ca594f8223d1b0fffbc916a8617a64baa1c381f078f0e4c1873",
+      "source_sha256_matches_manifest": true,
+      "size_wh": [
+        690,
+        28156
+      ],
+      "layout_type": "webtoon_long_strip",
+      "tags": [
+        "narration"
+      ],
+      "provider_detect": {
+        "region_count": 0,
+        "elapsed_ms": 413,
+        "provider_id": "local-manga",
+        "model": "manga/ogkalu-comic-text-and-bubble-detector",
+        "conf_threshold": 0.5,
+        "options": {
+          "arch": "rt_detr_v2",
+          "device": "cpu",
+          "conf_threshold": "0.5",
+          "bubble_class_dropped": "0"
+        },
+        "confidences": []
+      },
+      "raw_observability": {
+        "process_ms": 88,
+        "infer_ms": 282,
+        "model_input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "logits_shape": [
+          1,
+          300,
+          3
+        ],
+        "n_queries": 300,
+        "score_max": 0.2835310399532318,
+        "score_top10": [
+          0.2835310399532318,
+          0.22265078127384186,
+          0.22238406538963318,
+          0.1628091186285019,
+          0.12469425052404404,
+          0.118429996073246,
+          0.11290562897920609,
+          0.11126984655857086,
+          0.11001192033290863,
+          0.10817418992519379
+        ],
+        "counts_ge": {
+          "0.5": 0,
+          "0.3": 0,
+          "0.1": 14,
+          "0.01": 298,
+          "0.0": 300
+        },
+        "official_post_process_ge_0_5": 0,
+        "class_wise": {
+          "0": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 0,
+            "max": 0.09255843609571457
+          },
+          "1": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 0,
+            "max": 0.04591952636837959
+          },
+          "2": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 14,
+            "max": 0.2835310399532318
+          }
+        }
+      }
+    },
+    "BJ02": {
+      "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol01\\pages\\vol01_p0053.png",
+      "source_sha256": "c1ce06205b8e64c1a199f1adbab3bdaa9aff46d67abc8283bd4ef28ea6dd5417",
+      "source_sha256_matches_manifest": true,
+      "size_wh": [
+        2946,
+        4167
+      ],
+      "layout_type": "paged_manga",
+      "tags": [
+        "vertical_text",
+        "normal_dialogue",
+        "multi_speaker",
+        "complex_background"
+      ],
+      "provider_detect": {
+        "region_count": 5,
+        "elapsed_ms": 333,
+        "provider_id": "local-manga",
+        "model": "manga/ogkalu-comic-text-and-bubble-detector",
+        "conf_threshold": 0.5,
+        "options": {
+          "arch": "rt_detr_v2",
+          "device": "cpu",
+          "conf_threshold": "0.5",
+          "bubble_class_dropped": "5"
+        },
+        "confidences": [
+          0.9486546516418457,
+          0.9370612502098083,
+          0.9721286296844482,
+          0.9689012169837952,
+          0.9552626013755798
+        ]
+      },
+      "raw_observability": {
+        "process_ms": 48,
+        "infer_ms": 277,
+        "model_input_shape": [
+          1,
+          3,
+          640,
+          640
+        ],
+        "logits_shape": [
+          1,
+          300,
+          3
+        ],
+        "n_queries": 300,
+        "score_max": 0.9721286296844482,
+        "score_top10": [
+          0.9721286296844482,
+          0.9695241451263428,
+          0.9689012169837952,
+          0.9636929631233215,
+          0.9614668488502502,
+          0.9603601694107056,
+          0.9588373303413391,
+          0.9552626013755798,
+          0.9486546516418457,
+          0.9370612502098083
+        ],
+        "counts_ge": {
+          "0.5": 10,
+          "0.3": 10,
+          "0.1": 14,
+          "0.01": 240,
+          "0.0": 300
+        },
+        "official_post_process_ge_0_5": 10,
+        "class_wise": {
+          "0": {
+            "count_ge_0_5": 5,
+            "count_ge_0_1": 5,
+            "max": 0.9695241451263428
+          },
+          "1": {
+            "count_ge_0_5": 5,
+            "count_ge_0_1": 5,
+            "max": 0.9721286296844482
+          },
+          "2": {
+            "count_ge_0_5": 0,
+            "count_ge_0_1": 4,
+            "max": 0.15757976472377777
+          }
+        }
+      }
+    }
+  }
+}
