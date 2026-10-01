@@ -43,7 +43,15 @@ TRANSLATION_SYSTEM_PROMPT = (
     "the requested target language and answer with a single JSON object of "
     'the form {"translations":[{"region_id":"...","translated_text":"..."}]}. '
     "Return exactly one entry per requested region_id, never rename, omit or "
-    "invent an id, and use CONTEXT regions only as context."
+    "invent an id, and use CONTEXT regions only as context. "
+    "Regions whose region_type is \"sfx\" are manga onomatopoeia / sound-"
+    "effect words (e.g. \u30c9\u30ac, \u30b4\u30b7\u30e7\u30fc\u30f3): translate them by CULTURAL "
+    "EQUIVALENCE into the natural onomatopoeia of the target language that "
+    "expresses the same sound or emotion \u2014 never transliterate the source "
+    "syllables. Keep the original's intensity and brevity: at most 6 "
+    "characters unless the source is longer; when no equivalent onomatopoeia "
+    "exists, use the shortest natural effect word. Speech and all other "
+    "region types keep their normal translation semantics unchanged."
 )
 
 
@@ -102,7 +110,11 @@ class OpenAiTranslationProvider:
             "page_id": payload.page_id,
             "target_language": self.target_language,
             "regions": [
-                {"region_id": region.region_id, "text": region.text}
+                {
+                    "region_id": region.region_id,
+                    "text": region.text,
+                    "region_type": region.region_type,
+                }
                 for region in payload.regions
             ],
             "context": [

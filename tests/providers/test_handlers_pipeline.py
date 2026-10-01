@@ -755,3 +755,85 @@ def test_stale_artifact_pointer_is_refused_before_publishing(workspace) -> None:
         ).fetchone()[0]
         == 0
     )
+
+
+def test_sfx_translate_region_carries_type_and_maps_output(workspace) -> None:
+    """M2-SFX-SEM-1 end-to-end: a policy=translate SFX region reaches the
+    translation provider with region_type='sfx' (the type that used to be
+    dropped between the bundle entry and the provider request) and its
+    output maps back onto the region."""
+
+    conn = workspace["conn"]
+    translate_provider = workspace["translate_provider"]
+    with conn:
+        conn.execute(
+            "INSERT INTO regions (region_id, page_id, region_type, geometry_json, text_json,"
+            " style_json, sfx_policy, translation_locked, current_revision_id, created_at, updated_at)"
+            " VALUES (?, ?, ?, ?, ?, ?, ?, 0, NULL, ?, ?)",
+            (
+                "region-sfx",
+                "page-1",
+                "sfx",
+                json.dumps({"bbox": [2, 2, 3, 3], "polygon": []}),
+                json.dumps(
+                    {
+                        "ocr_text": "ドガ",
+                        "machine_translation": "",
+                        "edited_translation": "",
+                        "final_translation": "",
+                        "final_source": "none",
+                        "edited_confirmed": False,
+                        "manual_edited": False,
+                        "translation_locked": False,
+                    }
+                ),
+                "{}",
+                "translate",
+                NOW,
+                NOW,
+            ),
+        )
+        conn.execute(
+            "INSERT INTO region_revisions (region_revision_id, region_id, revision_no,"
+            " snapshot_json, origin, review_state, created_at)"
+            " VALUES ('region-sfx-rev-1', 'region-sfx', 1, '{}', 'imported', 'unreviewed', ?)",
+            (NOW,),
+        )
+        conn.execute(
+            "UPDATE regions SET current_revision_id = 'region-sfx-rev-1'"
+            " WHERE region_id = 'region-sfx'"
+        )
+        # the planner requires a completed ocr stage before translate (D06 §26)
+        conn.execute(
+            "INSERT INTO pipeline_stage_states (target_type, target_id, stage, status, updated_at)"
+            " VALUES ('region', 'region-sfx', 'ocr', 'completed', ?)",
+            (NOW,),
+        )
+
+    service = _pipeline(workspace)
+    run = service.create_run(
+        CommandType.RETRANSLATE_REGION,
+        PipelineScope(ScopeType.REGION, selected_ids=("region-sfx",)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    # a translate-only command leaves render blocked (no Clean Artifact) —
+    # same shape as test_translate_step_commits_but_render_remains_unwired;
+    # the translate step itself must complete.
+    steps = {step.step_type: step for step in executed.step_runs}
+    assert steps["translate"].status is StepRunStatus.COMPLETED
+    decisions = {unit.step_type: unit.decision for unit in executed.tasks[0].units}
+    assert decisions["render"].value == "blocked"
+
+    # the provider request carried the sfx type
+    payload = translate_provider.payloads[-1]
+    assert [(r.region_id, r.region_type) for r in payload.regions] == [
+        ("region-sfx", "sfx")
+    ]
+
+    # output mapped back onto the region (AC-TRANS-003 write scope)
+    assert steps["translate"].output["machine_translation"] == "[en]ドガ"
+    text = _text(conn, "region-sfx")["text"]
+    assert text["machine_translation"] == "[en]ドガ"
+    assert text["final_translation"] == "[en]ドガ"

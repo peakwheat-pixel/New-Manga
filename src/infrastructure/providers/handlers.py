@@ -398,7 +398,14 @@ class ProductionHandlers:
         settings = self._section(run.settings_snapshot, "translate")
         payload = build_request_payload(
             page_id=unit.page_id,
-            regions=[RegionInput(region_id, source_text)],
+            # M2-SFX-SEM-1: carry the region type into the provider request so
+            # the prompt can specialize SFX onomatopoeia (widening default
+            # keeps every other caller unchanged).
+            regions=[
+                RegionInput(
+                    region_id, source_text, region_type=region.region_type.value
+                )
+            ],
             context_pages=self._context_pages(unit.page_id, region_id, run),
             glossary=self._glossary(run),
             token_budget=int(

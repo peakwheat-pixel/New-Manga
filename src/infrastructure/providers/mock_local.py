@@ -37,6 +37,10 @@ _MOCK_DETECT_INSET_DENOMINATOR = 8
 #: independent runs has to compare equal.
 MOCK_OCR_TEXT = "MOCK-OCR-SOURCE-TEXT"
 MOCK_TRANSLATION_TEXT = "MOCK-TRANSLATED-TEXT"
+#: M2-SFX-SEM-1: deterministic SFX counterpart (fixed-text form, chosen over
+#: the ``sfx:<length>`` variant to keep the mock's fixed-texts determinism
+#: contract literal). An sfx-typed region always maps to this text.
+MOCK_SFX_TRANSLATION_TEXT = "MOCK-SFX-TRANSLATED-TEXT"
 
 
 @dataclass
@@ -102,7 +106,12 @@ class MockLocalOcrProvider:
 
 @dataclass
 class MockLocalTranslationProvider:
-    """One fixed translation per requested region id (validated mapping)."""
+    """One fixed translation per requested region id (validated mapping).
+
+    M2-SFX-SEM-1: an sfx-typed region deterministically maps to
+    ``MOCK_SFX_TRANSLATION_TEXT`` — the acceptance loop can assert that the
+    region type survived the request path without breaking per-run digests.
+    """
 
     provider_id: str = "m2ac1-mock-translate"
     provider_type: str = "mock-local"
@@ -112,7 +121,12 @@ class MockLocalTranslationProvider:
     def translate(self, payload: TranslationRequestPayload) -> TranslationCallResult:
         return TranslationCallResult(
             translations={
-                region.region_id: MOCK_TRANSLATION_TEXT for region in payload.regions
+                region.region_id: (
+                    MOCK_SFX_TRANSLATION_TEXT
+                    if region.region_type == "sfx"
+                    else MOCK_TRANSLATION_TEXT
+                )
+                for region in payload.regions
             },
             provider_id=self.provider_id,
             provider_type=self.provider_type,

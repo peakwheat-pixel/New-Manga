@@ -129,6 +129,7 @@ StepRunOutputRef
 - 每条 Ref 必须且只能引用 RegionRevision、ArtifactRevision 中适用的版本；引用的 Revision 必须属于同行 Page/Region。
 - `UNIQUE(step_run_id, input_order)` 与 `UNIQUE(step_run_id, output_order)`。
 - 每个可写目标必须有一条 `role=primary` 输入；Context 只读，不得被该 Step 写回。
+- **`1.1` 修订（M2-SFX-SEM-1）**：发给 Provider 的翻译请求中，每个 region 输入条目必须携带 `region_type`（值域=`speech | narration | sfx | title | note | other`，与 Region 类型枚举一致；缺省按 `speech` 处理以保证既有调用零破坏），并接受枚举之外的值 fail-closed 拒绝（类型化请求错误）。`region_type=sfx` 且 SFX Policy=`translate` 的条目语义为**拟声词/效果词的文化对等转换**（目标语言中表达同一声音/情绪的自然拟声词；保持原词强度与简洁、禁止源语音节直译），其余条目翻译语义不变。Policy=`skip`/`manual` 的 SFX 仍按 §7.2 在进入 Provider 前拦截。
 - Provider 返回的每项必须映射到请求中的 primary Page/Region；未知、重复或缺失映射使 Step 以 `OUTPUT_MAPPING_MISMATCH` 失败，任何 current 指针均不更新。
 
 ## 5. 状态与决定
@@ -341,3 +342,9 @@ Candidate 通过 `CommitStepResult` 的处置变体处理：输入 `candidate_id
 ## 12. 冻结边界
 
 本 Task 冻结枚举、关系、不变量、动作语义、端口载荷和错误分类。以下仍由后续已规划 Task 完成：实际 SQL DDL/迁移、Python/QML 类型、Repository 与事务实现、Provider 版本、性能数值、测试素材及自动化实现。任何实现若要改变本文件语义，必须通过新的已授权 Task、固定 commit Review 与集成记录。
+
+## Revision history
+
+本文原冻结版本未设版本号（M2-C2 先例之前的冻结文档）；修订记录自 `1.1` 起建立。
+
+- `1.1`（M2-SFX-SEM-1，2026-10-01）：**授权契约修订**——§4 翻译请求 region 输入条目新增 `region_type` 携带义务（值域=`speech | narration | sfx | title | note | other`，缺省 `speech` 保证既有调用零破坏；枚举外值 fail-closed 类型化拒绝），并定义 `region_type=sfx`（Policy=`translate`）条目的翻译语义为拟声词/效果词的**文化对等转换**（保持强度与简洁、禁止源语音节直译；详见 §4 修订条目）。§7.2 SFX 安全规则不变——skip/manual 拦截语义与写回保护不受影响；其余条款（§1～§3、§5～§12）语义不变。M2-C1 Typed IPC 契约不受本修订影响（本刀不触 IPC 面）。落地：`src/ports/translation/protocol.py`（`RegionInput.region_type` widening + payload 校验）、`src/infrastructure/providers/translation_openai.py`（system prompt SFX 特化段 + user_text 携带 `region_type`）、`src/infrastructure/providers/handlers.py`（translate handler 传递 region 类型）、`src/infrastructure/providers/mock_local.py`（sfx 确定性输出）。

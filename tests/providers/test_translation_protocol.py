@@ -11,6 +11,7 @@ from ports.translation.protocol import (
     ProtocolReport,
     RETRYABLE_VIOLATIONS,
     ViolationKind,
+    build_request_payload,
     glossary_hits,
     validate_response,
 )
@@ -133,3 +134,53 @@ def test_require_valid_response_maps_retryable_and_non_retryable() -> None:
 def test_glossary_hits_reports_applied_terms() -> None:
     assert glossary_hits({"r1": "Hero 登場"}, {"hero": "Hero"}) == ["hero"]
     assert glossary_hits({"r1": "x"}, {"hero": "Hero"}) == []
+
+
+# --- M2-SFX-SEM-1: RegionInput.region_type widening -------------------------
+
+
+def test_region_input_defaults_to_speech() -> None:
+    """Widening compatibility (M2-FIX-LISTBOOKS rev-1.2 precedent): the old
+    two-argument construction keeps its meaning — it is a speech region."""
+    from ports.translation.protocol import DEFAULT_REGION_TYPE, RegionInput
+
+    legacy = RegionInput("r1", "こんにちは")
+    assert legacy.region_type == DEFAULT_REGION_TYPE == "speech"
+    payload = build_request_payload("page-1", [legacy])
+    assert payload.regions[0].region_type == "speech"
+
+
+def test_payload_accepts_every_region_type_value() -> None:
+    from ports.translation.protocol import REGION_TYPE_VALUES, RegionInput
+
+    regions = [
+        RegionInput(f"r-{value}", "x", region_type=value)
+        for value in sorted(REGION_TYPE_VALUES)
+    ]
+    payload = build_request_payload("page-1", regions)
+    assert {region.region_type for region in payload.regions} == REGION_TYPE_VALUES
+
+
+def test_payload_rejects_unknown_region_type() -> None:
+    """Fail-closed: a region_type outside the value set is a typed request
+    error, never silently forwarded to a provider."""
+    from ports.translation.protocol import RegionInput
+
+    with pytest.raises(ProviderInputError) as excinfo:
+        build_request_payload(
+            "page-1", [RegionInput("r1", "ドガ", region_type="onomatopoeia")]
+        )
+    assert excinfo.value.stage == "translate"
+
+
+def test_payload_serializes_region_type() -> None:
+    from ports.translation.protocol import RegionInput
+
+    payload = build_request_payload(
+        "page-1",
+        [RegionInput("r1", "ドガ", region_type="sfx")],
+    )
+    body = json.loads(payload.payload_json())
+    assert body["regions"] == [
+        {"region_id": "r1", "text": "ドガ", "region_type": "sfx"}
+    ]
