@@ -18,7 +18,8 @@ status: delivered_for_review
 | commit | 内容 |
 |---|---|
 | `0c2e746c` | 实现+测试+契约文档（11 文件，+352/-6）：protocol widening、prompt SFX 段、user_text/生产链/应用层类型传递、mock sfx 输出、+11 测试、TASK-002 §4+Revision history |
-| （本提交） | Task 回填（AC×6 勾选+frontmatter `in_review`+delivery_head）+ 本 Handoff |
+| `80ab3d43` | Task 回填（AC×6 勾选+frontmatter `in_review`+delivery_head）+ 本 Handoff |
+| `1b7303e7` | prompt 拟声词示例「ゴショーン」→常用形「バキッ」（本 Handoff 引文同步；无测试语义变化） |
 
 **变更路径**：
 - `src/ports/translation/protocol.py` — AC1 widening
