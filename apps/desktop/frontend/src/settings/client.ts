@@ -1,25 +1,22 @@
 /**
  * SettingsClient — the React-side consumer of the settings read/write
- * channel (M2-SETTINGS-UI-SFX-POLICY).
+ * channel (M2-SETTINGS-UI-SFX-POLICY UI + M2-SETTINGS-IPC-CHANNEL channel).
  *
- * BLOCKED_ON_CONTRACT (AC1 survey, 2026-10-01): the production Tauri
- * surface (src-tauri/src/main.rs `generate_handler!`, production arm)
- * currently registers exactly five commands — issue_resource_url,
- * revoke_ref, revoke_resource_refs, core_ping, library_list_books — and
- * NONE of them reads or writes settings. There is no generic
- * settings get/update channel and no per-key command. Adding one is a
- * frozen-contract change (doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md owns
- * the React↔Tauri↔Python message boundary), so per the Task's AC1 ruling
- * this Task stops short of any Rust change and runs against a MOCKED
- * invoke channel only.
+ * CHANNEL LANDED (was BLOCKED_ON_CONTRACT): the production Tauri surface now
+ * registers the pinned commands — settings_get / settings_update_section
+ * (contract M2-C1 rev 1.3 §5.3, user ruling ① 2026-10-02) — riding the same
+ * production stdio bridge as core_ping/library_list_books down to the Python
+ * Core. This client's invoke wiring is the REAL channel (an invoke fn can
+ * still be injected for tests); the command names below are the RULED wire
+ * names, previously pinned here as the drift alarm.
  *
- * The command names below are this Task's PROPOSED wire names for the
- * integrator's contract ruling; the Python Core side already has the
- * storage authority with zero changes needed:
+ * Core-side authority (zero UI-side interpretation):
  *   read  → PipelineDefaultsService.read().settings["sfx"]["policy"]
  *   write → PipelineDefaultsService.save_settings_section("sfx", {"policy": ...})
- * (src/application/settings/pipeline_defaults.py:59/105; key semantics
- * from M2-SFX-TRANSLATE-ENTRY).
+ * (src/application/settings/pipeline_defaults.py:59/105; write-side
+ * validation is typed fail-closed BEFORE persistence — the sfx.policy
+ * three-value gate — per the M2-SFX-ENTRY r1 R4 lesson; key semantics from
+ * M2-SFX-TRANSLATE-ENTRY).
  */
 
 import {
@@ -41,10 +38,10 @@ function getTauriInvoke(): InvokeFn {
   return invoke;
 }
 
-/** PROPOSED wire name (BLOCKED_ON_CONTRACT — pending integrator ruling). */
+/** RULED wire name (contract M2-C1 rev 1.3 §5.3; was the pinned proposal). */
 export const SETTINGS_GET_COMMAND = "settings_get";
 
-/** PROPOSED wire name (BLOCKED_ON_CONTRACT — pending integrator ruling). */
+/** RULED wire name (contract M2-C1 rev 1.3 §5.3; was the pinned proposal). */
 export const SETTINGS_UPDATE_SECTION_COMMAND = "settings_update_section";
 
 /** The settings section this Task touches (Python: settings["sfx"]). */
@@ -61,10 +58,10 @@ export class SettingsClientError extends Error {
 }
 
 /**
- * The shape this Task PROPOSES for `settings_get`'s result: the
- * PipelineDefaults.settings projection as JSON (e.g.
- * `{"sfx": {"policy": "skip"}, "ocr": {"script": "..."}}`). Only the
- * `sfx.policy` leaf is consumed here.
+ * The wire shape of `settings_get`'s result (contract M2-C1 rev 1.3 §5.3):
+ * the PipelineDefaults.settings projection as JSON (e.g.
+ * `{"settings": {"sfx": {"policy": "skip"}, "ocr": {"script": "..."}}}`).
+ * Only the `sfx.policy` leaf is consumed here.
  */
 export interface SettingsProjection {
   settings?: Record<string, Record<string, unknown>>;

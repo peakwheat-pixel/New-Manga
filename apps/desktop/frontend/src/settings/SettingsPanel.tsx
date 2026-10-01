@@ -17,8 +17,10 @@ import {
  * 检测 (Translation & Detection)" group hosts the SFX policy control; a future
  * settings-page Task can adopt this component unchanged (client is injected).
  *
- * The save channel is mocked at the client boundary (BLOCKED_ON_CONTRACT —
- * see client.ts); the component itself is channel-agnostic.
+ * The save channel is the real settings IPC pair (settings_get /
+ * settings_update_section — contract M2-C1 rev 1.3 §5.3, wired by
+ * M2-SETTINGS-IPC-CHANNEL; see client.ts); the component itself is
+ * channel-agnostic. Visuals/interaction unchanged from the SFX-UI delivery.
  */
 
 export interface SettingsPanelProps {

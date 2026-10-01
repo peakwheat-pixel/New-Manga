@@ -12,13 +12,17 @@
 //! (Contract 1.1 §10); the WebView never sees an OS path (T5.1).
 //!
 //! RC2 (F-03) command-surface hardening: the WebView-facing invoke surface is
-//! the allowlist in [`command_allowlist`] — three production commands, no
-//! catalog registration (`register_catalog` is gone entirely; the catalog is
-//! Core/SQLite authority), no TTL override on the production issue shape, and
-//! the probe commands exist only in probe mode (host env sets
+//! the allowlist in [`command_allowlist`] — three resource-channel commands,
+//! no catalog registration (`register_catalog` is gone entirely; the catalog
+//! is Core/SQLite authority), no TTL override on the production issue shape,
+//! and the probe commands exist only in probe mode (host env sets
 //! `M2RC1_PROBE_OUT`). `capabilities/m2rc1-commands.json` + the inlined
 //! `m2rc1-commands` plugin put every command behind the Tauri ACL for the
 //! main window; the hardened CSP replaces the RC1 `csp: null`.
+//! M2-IPC1 later added the production-only `core_ping`/`library_list_books`
+//! pair, and M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3) the
+//! production-only `settings_get`/`settings_update_section` pair — the
+//! production surface is pinned at exactly seven commands by unit test.
 
 // console note (updated M2-RG1 r1 rework, P3-1): dev builds keep the console
 // on purpose — probe evidence includes startup stderr. Release builds are
@@ -48,6 +52,10 @@ pub const PRODUCTION_COMMANDS: &[&str] = &[
     "revoke_resource_refs",
     "core_ping",
     "library_list_books",
+    // M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): the settings read/
+    // write pair, production-only like the IPC1 commands below.
+    "settings_get",
+    "settings_update_section",
 ];
 
 /// Commands that exist ONLY in probe mode (`M2RC1_PROBE_OUT` set by the
@@ -77,12 +85,21 @@ pub const AC1_TEST_COMMANDS: &[&str] = &["ac1_request", "ac1_write_results", "ac
 /// in every mode and the runner expectations stay pinned.
 pub const IPC1_PRODUCTION_ONLY_COMMANDS: &[&str] = &["core_ping", "library_list_books"];
 
+/// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): the settings commands
+/// are production-only too — the frozen RC2 probe / AC1 test-mode surfaces
+/// never gain them (option-B precedent of M2-IPC1).
+pub const SETTINGS_PRODUCTION_ONLY_COMMANDS: &[&str] =
+    &["settings_get", "settings_update_section"];
+
 pub fn command_allowlist(probe_mode: bool, ac1_mode: bool) -> Vec<&'static str> {
     let mut commands: Vec<&'static str> = if probe_mode || ac1_mode {
         PRODUCTION_COMMANDS
             .iter()
             .copied()
-            .filter(|command| !IPC1_PRODUCTION_ONLY_COMMANDS.contains(command))
+            .filter(|command| {
+                !IPC1_PRODUCTION_ONLY_COMMANDS.contains(command)
+                    && !SETTINGS_PRODUCTION_ONLY_COMMANDS.contains(command)
+            })
             .collect()
     } else {
         PRODUCTION_COMMANDS.to_vec()
@@ -144,6 +161,45 @@ fn library_list_books(state: tauri::State<'_, AppState>) -> Result<Vec<BookSumma
         .as_ref()
         .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
         .list_books()
+        .map_err(|error| error.code)
+}
+
+/// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): read the pipeline
+/// settings projection. No `section` argument = the full projection;
+/// `section` present = that one section (JSON `null` when unset). The host
+/// is a pass-through: it never interprets or filters keys — the value-domain
+/// authority is the Python Core (write-side validation lives there, BEFORE
+/// persistence).
+#[tauri::command]
+fn settings_get(
+    state: tauri::State<'_, AppState>,
+    section: Option<String>,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .get_settings(section.as_deref())
+        .map_err(|error| error.code)
+}
+
+/// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): upsert one settings
+/// section through the Core's `settings.update_section` (which runs the
+/// typed write-side validation — sfx.policy three-value gate — BEFORE any
+/// persistence, per the M2-SFX-ENTRY r1 R4 lesson). The typed rejection
+/// (`INVALID_REQUEST`) propagates verbatim; the result is the full updated
+/// projection so one round trip re-syncs the caller.
+#[tauri::command]
+fn settings_update_section(
+    state: tauri::State<'_, AppState>,
+    section: String,
+    values: serde_json::Value,
+) -> Result<serde_json::Value, String> {
+    state
+        .library
+        .as_ref()
+        .ok_or_else(|| "CORE_UNAVAILABLE".to_string())?
+        .update_settings_section(&section, &values)
         .map_err(|error| error.code)
 }
 
@@ -559,7 +615,9 @@ fn main() {
             revoke_ref,
             revoke_resource_refs,
             core_ping,
-            library_list_books
+            library_list_books,
+            settings_get,
+            settings_update_section
         ])
     };
 
@@ -694,7 +752,9 @@ mod tests {
     }
 
     #[test]
-    fn production_surface_is_exactly_five_commands() {
+    fn production_surface_is_exactly_seven_commands() {
+        // M2-SETTINGS-IPC-CHANNEL: five -> seven (settings_get +
+        // settings_update_section, contract rev 1.3 §5.3; pinned wire names)
         assert_eq!(
             command_allowlist(false, false),
             vec![
@@ -703,6 +763,8 @@ mod tests {
                 "revoke_resource_refs",
                 "core_ping",
                 "library_list_books",
+                "settings_get",
+                "settings_update_section",
             ]
         );
     }
@@ -718,9 +780,16 @@ mod tests {
         for command in IPC1_PRODUCTION_ONLY_COMMANDS {
             assert!(!probe.contains(command), "{command} must stay production-only");
         }
+        // M2-SETTINGS-IPC-CHANNEL: the settings pair is production-only too
+        for command in SETTINGS_PRODUCTION_ONLY_COMMANDS {
+            assert!(!probe.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             probe.len(),
-            PRODUCTION_COMMANDS.len() - IPC1_PRODUCTION_ONLY_COMMANDS.len() + PROBE_ONLY_COMMANDS.len()
+            PRODUCTION_COMMANDS.len()
+                - IPC1_PRODUCTION_ONLY_COMMANDS.len()
+                - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                + PROBE_ONLY_COMMANDS.len()
         );
     }
 
@@ -737,9 +806,16 @@ mod tests {
         for command in IPC1_PRODUCTION_ONLY_COMMANDS {
             assert!(!ac1.contains(command), "{command} must stay production-only");
         }
+        // M2-SETTINGS-IPC-CHANNEL: the settings pair is production-only too
+        for command in SETTINGS_PRODUCTION_ONLY_COMMANDS {
+            assert!(!ac1.contains(command), "{command} must stay production-only");
+        }
         assert_eq!(
             ac1.len(),
-            PRODUCTION_COMMANDS.len() - IPC1_PRODUCTION_ONLY_COMMANDS.len() + AC1_TEST_COMMANDS.len()
+            PRODUCTION_COMMANDS.len()
+                - IPC1_PRODUCTION_ONLY_COMMANDS.len()
+                - SETTINGS_PRODUCTION_ONLY_COMMANDS.len()
+                + AC1_TEST_COMMANDS.len()
         );
     }
 
@@ -1226,10 +1302,12 @@ mod tests {
         assert_eq!(ping.status, "ready");
         assert_eq!(ping.protocol_version.major, 1);
         // M2-PROD-DETECT-3 integration (DSH r1 R4): protocol minor bump
-        // 1.0 -> 1.1 (core.detect added); this real-sidecar assertion is the
-        // ruling-1 consequence sync. The MockChannel self-consistency stub
-        // above (:1194) keeps its own minor 0 by design.
-        assert_eq!(ping.protocol_version.minor, 1);
+        // 1.0 -> 1.1 (core.detect added); M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2
+        // (settings_get/settings_update_section added). This real-sidecar
+        // assertion is the consequence sync for both widenings. The
+        // MockChannel self-consistency stub above (:1194) keeps its own
+        // minor 0 by design.
+        assert_eq!(ping.protocol_version.minor, 2);
         assert!(ping.capabilities.contains(&"library.list_books".to_string()));
 
         // 2. List books succeeds on empty store
@@ -1243,6 +1321,62 @@ mod tests {
         let err = channel.ping().unwrap_err();
         assert_eq!(err.code, "CORE_UNAVAILABLE");
         assert!(err.retryable);
+    }
+
+    /// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): the settings pair
+    /// end to end over the REAL production Core sidecar — write-side
+    /// validation persists a legal sfx.policy and reads it back, while an
+    /// illegal value is typed-rejected (INVALID_REQUEST) BEFORE persistence
+    /// (the M2-SFX-ENTRY r1 R4 lesson: the store must keep its previous
+    /// state so the next assembly can never hit a startup block).
+    #[test]
+    fn real_core_sidecar_settings_round_trip_and_typed_rejection() {
+        let python = std::env::var("M2RC1_PYTHON").unwrap_or_else(|_| "python".into());
+        let src_root = std::env::var("M2RC1_SRC_ROOT")
+            .map(PathBuf::from)
+            .unwrap_or_else(|_| {
+                let mut path = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+                for _ in 0..3 {
+                    path.pop();
+                }
+                path.join("src")
+            });
+        let dir = tempfile::tempdir().unwrap();
+        let data_root = dir.path().join("data_root");
+        std::fs::create_dir_all(&data_root).unwrap();
+
+        let channel = StdioLibraryChannel::spawn(
+            &python,
+            &src_root,
+            Some(&data_root),
+        )
+        .expect("library sidecar spawn");
+
+        // 1. full projection read on a fresh install
+        let full = channel.get_settings(None).expect("full settings read");
+        assert!(full.get("settings").is_some(), "projection envelope: {full}");
+
+        // 2. unset sfx section reads as JSON null (frozen None channel)
+        let unset = channel.get_settings(Some("sfx")).expect("section read");
+        assert_eq!(unset["settings"]["sfx"], serde_json::Value::Null);
+
+        // 3. legal write persists and the result carries the new value
+        let updated = channel
+            .update_settings_section("sfx", &serde_json::json!({ "policy": "translate" }))
+            .expect("legal update");
+        assert_eq!(updated["settings"]["sfx"]["policy"], "translate");
+        let readback = channel.get_settings(Some("sfx")).expect("readback");
+        assert_eq!(readback["settings"]["sfx"]["policy"], "translate");
+
+        // 4. illegal value: typed INVALID_REQUEST, and the store still holds
+        //    the previous legal value (write rejected BEFORE persistence)
+        let error = channel
+            .update_settings_section("sfx", &serde_json::json!({ "policy": "bogus" }))
+            .unwrap_err();
+        assert_eq!(error.code, "INVALID_REQUEST");
+        assert_eq!(error.category, "validation");
+        let still = channel.get_settings(Some("sfx")).expect("read after reject");
+        assert_eq!(still["settings"]["sfx"]["policy"], "translate");
     }
 
     // ---- M2-AC5: packaged-mode resolution (fail-closed spawn) -------------

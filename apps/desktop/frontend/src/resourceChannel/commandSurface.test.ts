@@ -8,7 +8,11 @@ import { ResourceChannelClient } from "./client";
  * (main.rs `command_allowlist` + capabilities/m2rc1-commands.json):
  *
  * - production surface = issue_resource_url / revoke_ref / revoke_resource_refs
- *   ONLY (issue has no TTL parameter shape);
+ *   ONLY (issue has no TTL parameter shape); the M2-IPC1 production-only
+ *   pair (core_ping / library_list_books) and the M2-SETTINGS-IPC-CHANNEL
+ *   settings pair (settings_get / settings_update_section, contract M2-C1
+ *   rev 1.3 §5.3) ride the same production arm and are likewise absent from
+ *   every test-mode surface;
  * - probe_config / probe_write_results / probe_exit / probe_issue_url exist
  *   only in probe mode;
  * - register_catalog exists in NO mode (catalog is Core/SQLite authority);
@@ -22,13 +26,23 @@ const REMOVED_COMMANDS = ["register_catalog"];
 // configuration (M2AC1_TEST_MODE=1) — never on the production or probe
 // surface, so a page-side ac1 probe is the mode detector (App.tsx).
 const AC1_TEST_COMMANDS = ["ac1_request", "ac1_write_results", "ac1_exit"];
+// M2-SETTINGS-IPC-CHANNEL: the settings read/write pair is production-only
+// (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS; option-B precedent of M2-IPC1).
+const SETTINGS_PRODUCTION_ONLY_COMMANDS = ["settings_get", "settings_update_section"];
 
 type Mode = "production" | "probe";
 
 function makeSurfaceInvoke(mode: Mode) {
   const calls: { command: string; args: Record<string, unknown> }[] = [];
   const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
-    const available = [...PRODUCTION_COMMANDS, ...(mode === "probe" ? PROBE_ONLY_COMMANDS : [])];
+    // production arm = the three resource-channel commands + the settings
+    // pair; the probe arm keeps the frozen RC2 shape (settings pair absent,
+    // four probe commands added) — mirroring main.rs command_allowlist.
+    const available = [
+      ...PRODUCTION_COMMANDS,
+      ...(mode === "production" ? SETTINGS_PRODUCTION_ONLY_COMMANDS : []),
+      ...(mode === "probe" ? PROBE_ONLY_COMMANDS : []),
+    ];
     if (!available.includes(command)) {
       // Tauri 2 rejects invokes for commands that are not registered for the
       // window ("Command X not allowed" / not found) — the deny matrix only
@@ -37,6 +51,13 @@ function makeSurfaceInvoke(mode: Mode) {
     }
     const args_ = args ?? {};
     calls.push({ command, args: args_ });
+    if (command === "settings_get") {
+      // contract M2-C1 rev 1.3 §5.3: the {"settings": ...} projection
+      return { settings: { sfx: { policy: "skip" } } };
+    }
+    if (command === "settings_update_section") {
+      return { settings: {} };
+    }
     if (command === "issue_resource_url") {
       // host-side hardening (compile-time in Rust): an unknown key such as
       // ttlOverride cannot reach the Core; the shape carries two params only
@@ -92,6 +113,24 @@ describe("RC2 command surface allow/deny matrix", () => {
       for (const command of AC1_TEST_COMMANDS) {
         await expect(invoke(command, {})).rejects.toThrow(new RegExp(command));
       }
+    }
+  });
+
+  // M2-SETTINGS-IPC-CHANNEL: the settings pair rides the production arm
+  // (allow) and is absent from the frozen probe surface (deny) — the same
+  // matrix the Rust suite pins via SETTINGS_PRODUCTION_ONLY_COMMANDS.
+  it("settings commands are allowed on production and denied on the probe surface", async () => {
+    expect(SETTINGS_PRODUCTION_ONLY_COMMANDS).toEqual(["settings_get", "settings_update_section"]);
+    const { invoke } = makeSurfaceInvoke("production");
+    await expect(invoke("settings_get")).resolves.toMatchObject({
+      settings: { sfx: { policy: "skip" } },
+    });
+    await expect(
+      invoke("settings_update_section", { section: "sfx", values: { policy: "skip" } }),
+    ).resolves.toMatchObject({ settings: {} });
+    const { invoke: probeInvoke } = makeSurfaceInvoke("probe");
+    for (const command of SETTINGS_PRODUCTION_ONLY_COMMANDS) {
+      await expect(probeInvoke(command, {})).rejects.toThrow(new RegExp(command));
     }
   });
 

@@ -10,11 +10,11 @@ import {
 } from "./client";
 import type { SfxPolicy } from "./types";
 
-describe("SettingsClient command surface (PROPOSED wire names — BLOCKED_ON_CONTRACT)", () => {
+describe("SettingsClient command surface (RULED wire names — M2-SETTINGS-IPC-CHANNEL)", () => {
   it("pins the proposed command names and section key", () => {
-    // These names are this Task's PROPOSAL for the frozen-contract ruling
-    // (production Tauri surface has no settings commands today). If the
-    // integrator's ruling lands different names, this pin is the drift alarm.
+    // These names were the pinned proposal during BLOCKED_ON_CONTRACT and
+    // are now the RULED wire names (contract M2-C1 rev 1.3 §5.3, landed by
+    // M2-SETTINGS-IPC-CHANNEL). The pin stays as the drift alarm.
     expect(SETTINGS_GET_COMMAND).toBe("settings_get");
     expect(SETTINGS_UPDATE_SECTION_COMMAND).toBe("settings_update_section");
     expect(SFX_SECTION).toBe("sfx");
