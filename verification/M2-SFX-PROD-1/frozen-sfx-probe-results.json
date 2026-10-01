@@ -1,0 +1,61 @@
+{
+ "schema": "m2-sfx-prod-1/frozen-sfx-probe@1",
+ "task": "M2-SFX-PROD-1",
+ "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
+ "core_service_exe": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install\\resources\\core-sidecar\\core_service.exe",
+ "probe_frame": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+ "expected_sfx_conf": 0.9313,
+ "scenarios": [
+  {
+   "id": "SF-1",
+   "status": "PASS",
+   "observed": {
+    "ready": true,
+    "candidates": 2,
+    "sfx_labels": [
+     "sfx-1"
+    ],
+    "manga_candidates": 1,
+    "best_sfx_conf": 0.9312772750854492,
+    "elapsed_ms": 5067
+   }
+  },
+  {
+   "id": "SF-1b",
+   "status": "PASS",
+   "observed": {
+    "polygon_bbox": [
+     201.10549926757812,
+     1133.9892883300781,
+     383.4205207824707,
+     1340.9224243164062
+    ],
+    "expected": [
+     201.1,
+     1134.0,
+     383.4,
+     1340.9
+    ]
+   }
+  },
+  {
+   "id": "SF-2",
+   "status": "PASS",
+   "observed": {
+    "candidates": 1,
+    "sfx_labels": [],
+    "manga_candidates": 1
+   }
+  },
+  {
+   "id": "SF-3",
+   "status": "PASS",
+   "observed": {
+    "ready": "ready",
+    "manga_candidates": 1,
+    "stderr_has_degradation": true
+   }
+  }
+ ],
+ "verdict": "PASS"
+}

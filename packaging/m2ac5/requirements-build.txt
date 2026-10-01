@@ -47,3 +47,10 @@ torch==2.14.0
 torchvision==0.29.0
 transformers==5.17.0
 safetensors==0.8.0
+
+# M2-SFX-PROD-1: the standalone SFX detector runtime (chiqui7 ONNX over
+# onnxruntime, CPU EP — the lightweight stack). VERBATIM copy of the
+# ../../requirements.txt line (same pin, eval-proven build); the frozen
+# closure must carry it (spec ML_HIDDENIMPORTS + binaries assertion). PIL
+# arrives transitively via torchvision (hard Requires-Dist: pillow).
+onnxruntime==1.30.0

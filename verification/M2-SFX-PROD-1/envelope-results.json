@@ -1,0 +1,73 @@
+{
+ "schema": "m2-sfx-prod-1/envelope@1",
+ "task": "M2-SFX-PROD-1",
+ "date": "2026-10-01",
+ "python": "3.12.3",
+ "platform": "Windows-11-10.0.26300-SP0",
+ "processor": "AMD64 Family 25 Model 97 Stepping 2, AuthenticAMD",
+ "onnxruntime": "1.30.0",
+ "execution_provider": "CPUExecutionProvider",
+ "weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+ "weights_sha256": "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646",
+ "weights_bytes": 41227478,
+ "conf_threshold": 0.5,
+ "warm_runs": 5,
+ "pages": {
+  "K07_R123": {
+   "page_size": "690x1408",
+   "candidates": 1,
+   "provider_elapsed_ms_cold": 344,
+   "wall_ms_warm": [
+    139.1,
+    138.2,
+    134.1,
+    136.9,
+    136.5
+   ],
+   "wall_ms_warm_median": 136.9,
+   "wall_ms_warm_mean": 136.9
+  },
+  "K07_R121": {
+   "page_size": "690x909",
+   "candidates": 1,
+   "provider_elapsed_ms_cold": 134,
+   "wall_ms_warm": [
+    133.7,
+    135.8,
+    141.9,
+    130.8,
+    135.3
+   ],
+   "wall_ms_warm_median": 135.3,
+   "wall_ms_warm_mean": 135.5
+  },
+  "K08_R019": {
+   "page_size": "690x1990",
+   "candidates": 2,
+   "provider_elapsed_ms_cold": 129,
+   "wall_ms_warm": [
+    137.9,
+    131.9,
+    138.0,
+    126.1,
+    129.3
+   ],
+   "wall_ms_warm_median": 131.9,
+   "wall_ms_warm_mean": 132.6
+  },
+  "synthetic-900x1300": {
+   "page_size": "900x1300",
+   "candidates": 0,
+   "provider_elapsed_ms_cold": 137,
+   "wall_ms_warm": [
+    139.9,
+    139.1,
+    138.9,
+    146.1,
+    140.2
+   ],
+   "wall_ms_warm_median": 139.9,
+   "wall_ms_warm_mean": 140.8
+  }
+ }
+}
