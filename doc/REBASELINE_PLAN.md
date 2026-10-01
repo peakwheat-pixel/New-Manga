@@ -31,7 +31,7 @@ releases a task.
 
 ### 2026-09-29 用户授权 Task：M2-TA2C No-HF JA/KO Asset Migration
 
-[M2-TA2C](tasks/M2-TA2C.md) 在已完成 M2-TA1/TA2A 的同一个 `comic_golden_suite` 上迁移附件来源方案；基线=`d4d3977907bc64177ef85c61da4c95901f135fc6`，Owner=Codex Desktop，非作者 Reviewer=DeepSeek Harness，实现作者交付后由用户指示 ZCode 代行 Codex 集成；**已 `done` @integration `a4cd513d0f7ca6a50e1ae018629b3042612be3bb`**（r2 `approved` @`8cb3a135`，session=`ca1ae6af`）。附件无实物数据，脚本存在自动依赖安装、下载先发布后验哈希、无许可过滤的重打包风险，故不直接运行（静态审计见 `verification/M2-TA2C/attachment-audit.md`）。公开来源按官方访问与许可逐项核定，Manga109 不再是 JA L0/L1 的硬前置。集成后实际覆盖：L0 20/20 READY（JA 10 + KO 10）、L1/L2 68 定义中 23 READY / 8 MISSING / 37 MISSING_GATED_ASSET，inventory 92 文件 / 63,317,229 bytes；KO 新增 Pepper&Carrot E04P02/P03/P07 + language-pack（4 文件 / 16,292,579 bytes，ignored 本地）；应用级 Pipeline 检查仍全部 `NOT_RUN`。**2026-09-30 用户裁决拆阶段**：[M2-TA3-A](tasks/M2-TA3-A.md) **`done` @integration `5dc69d16`**（5 case=BJ02/BJ06/K01/K02/K11 全链 COMPLETED pipeline_failures=0，真 docTR detect+mock OCR/translate+生产 inpaint/render/export，pytest 82 passed，DSH r1→r2 条件全闭；已知 LOCK_CHANGED 缺口真检测下未复现=L-1 候选；TA3-B 维持暂缓）；M2-TA3-B（20-case 正式质量 qualification）`proposed / 暂缓`（待检测器与 OCR/翻译 Provider 稳定，届时单独定义各阶段质量阈值）。
+[M2-TA2C](tasks/M2-TA2C.md) 在已完成 M2-TA1/TA2A 的同一个 `comic_golden_suite` 上迁移附件来源方案；基线=`d4d3977907bc64177ef85c61da4c95901f135fc6`，Owner=Codex Desktop，非作者 Reviewer=DeepSeek Harness，实现作者交付后由用户指示 ZCode 代行 Codex 集成；**已 `done` @integration `a4cd513d0f7ca6a50e1ae018629b3042612be3bb`**（r2 `approved` @`8cb3a135`，session=`ca1ae6af`）。附件无实物数据，脚本存在自动依赖安装、下载先发布后验哈希、无许可过滤的重打包风险，故不直接运行（静态审计见 `verification/M2-TA2C/attachment-audit.md`）。公开来源按官方访问与许可逐项核定，Manga109 不再是 JA L0/L1 的硬前置。集成后实际覆盖：L0 20/20 READY（JA 10 + KO 10）、L1/L2 68 定义中 23 READY / 8 MISSING / 37 MISSING_GATED_ASSET，inventory 92 文件 / 63,317,229 bytes；KO 新增 Pepper&Carrot E04P02/P03/P07 + language-pack（4 文件 / 16,292,579 bytes，ignored 本地）；应用级 Pipeline 检查仍全部 `NOT_RUN`。**2026-09-30 用户裁决拆阶段**：[M2-TA3-A](tasks/M2-TA3-A.md) **`done` @integration `5dc69d16`**（5 case=BJ02/BJ06/K01/K02/K11 全链 COMPLETED pipeline_failures=0，真 docTR detect+mock OCR/translate+生产 inpaint/render/export，pytest 82 passed，DSH r1→r2 条件全闭；已知 LOCK_CHANGED 缺口真检测下未复现=L-1 候选；TA3-B 维持暂缓）；M2-TA3-B **阶段一已 `done` @merge `97450992`**（集成 `81cf5125`，DSH r1 changes_requested→返修 `cad45622`→r2 `approved` 0×P0/P1/P2，2026-10-01；阈值提案/OCR 冒烟/20-case 选取/阶段二计划四件交付，R6 端到端探针 PASS，运行时清单见 `verification/M2-TA3-B/integration.md`）；**阶段二（正式 run）BLOCKED_ON_USER：翻译 endpoint 二选一**（(a) 用户 OpenAI-compatible endpoint+key / (b) 授权 Sakura 本地部署），用户裁决后另行释放。
 
 ### 2026-09-28 任务盘点（当日快照；当前执行状态见 STATUS）
 
@@ -111,6 +111,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-TA3-A](tasks/M2-TA3-A.md) 应用级 E2E Smoke（5 case=BJ02/BJ06/K01/K02/K11） | **done**（integration=`5dc69d16`；DSH r1→r2 条件全闭 approved） | ZCode / DeepSeek Harness | 5 case 全链 COMPLETED pipeline_failures=0（真 docTR detect + mock OCR/translate + 生产 inpaint/render/export）、export 哈希双向复算一致、pytest 82 passed；真 docTR 下 LOCK_CHANGED 未复现=L-1 候选（已由 DIAG-002 核实关闭）；TA3-B 维持暂缓。 |
 | [DIAG-M2-LOCK-CHANGED-REPRO-002](tasks/DIAG-M2-LOCK-CHANGED-REPRO-002.md) M2-TA3-A L-1 缺口核实（mock detect 复现） | **done**（integration=`1faf6c1b`、收口 `56edc335`；DSH r1→r2 `approved_with_conditions` 0×P0/P1/P2） | ZCode / DeepSeek Harness | S2 @`d268a170` 复现 LOCK_CHANGED（DIAG-001 §3 四项预测全对齐）→ 终局结论=缺口真实存在过、已由 M2-P1 修复（S1 HEAD 全链绿）、retry 自愈实证；**L-1 不再保留缺陷候选**；Owner worktree 保留 @`2c13530b`。 |
 | [DOC-FIX-LOCK-CHANGED-STALE-COMMENTS](tasks/DOC-FIX-LOCK-CHANGED-STALE-COMMENTS.md) 两处过时「known planner gap」注释最小修正 | **done**（integration=`1970512d`、集成修正=`e81b4220`；DSH r1 `approved_with_conditions` → r2 `approved`） | ZCode / DeepSeek Harness | 零指令流（co_code）变化+注释-only diff 证明、test_acceptance_loop 4 passed；L-7 ④⑤ 行号换算登记；M2-TA3-A manifest tip 上 14/15 属预期（字节级 15/15 须在其交付 worktree 复算）；Owner worktree 保留 @`8ab9045b`。 |
+| [M2-TA3-B](tasks/M2-TA3-B.md) 20-case 端到端质量验收·阶段一（阈值定义+OCR 冒烟+case 选取+阶段二计划） | **done**（integration=`81cf5125`、merge=`97450992`；DSH r1 `changes_requested` 7×P2 → 返修 `cad45622` R1-R18 全 closed → r2 `approved` 0×P0/P1/P2） | ZCode / DeepSeek Harness | base=`c4039415`、branch_base=`53fdfcc6`、delivery=`b057ec69`、被复核 tip=`cad45622`；阈值提案六阶段（OCR CER 三层 GT/translate SFX≥70% n≥15/对白三维 5 分制/inpaint 无数值 Gate/渲染确定性）、OCR 隔离 venv 双引擎冒烟 OK（paddle 3.x bytes 静默忽略=修复候选）、20 case 确定性选取（SHA256 实算 20/20、TA3-A 超集）、阶段二计划（真实 API 序列）；R6 探针 PASS（生产 adapter+wrapper 单 region conf 0.998）；运行时清单 1-6 全闭；**阶段二 BLOCKED_ON_USER 翻译 endpoint 二选一**；main 490+1skipped 0 failed；[DSH r1](reviews/M2-TA3-B-dsh-r1.md)/[r2](reviews/M2-TA3-B-dsh-r2.md)、[集成记录](../verification/M2-TA3-B/integration.md)。 |
 
 ```mermaid
 flowchart TD
@@ -161,7 +162,7 @@ flowchart TD
   TA2A --> TA2C["M2-TA2C No-HF 素材迁移 · O:Codex ✓（集成=ZCode 代行）"]
   TA1 -.-> TA2B["M2-TA2B 开放素材池（T-D2） · O:ZCode ✓"]
   TA2C -.-> TA3A["M2-TA3-A E2E Smoke 5 case（T-D3） · O:ZCode ✓"]
-  TA3A -.-> TA3B["M2-TA3-B 20-case 质量 qualification · proposed 暂缓（待 Provider 稳定）"]
+  TA3A -.-> TA3B["M2-TA3-B 20-case 质量 qualification 阶段一 · O:ZCode ✓（阈值/冒烟/选样/计划；阶段二 BLOCKED_ON_USER 翻译 endpoint）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
@@ -180,11 +181,11 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP done;
-  class TA3B proposed;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B done;
+  
 ```
 
-上图中绿色节点全部为 `done` 且已集成 main；黄色节点（M2-TA3-B）只是排序与建议分工，不构成释放——实施前须另行登记并释放 Task。C1-C5 检测器候选流程已收官（C4 评估 done、C1 抽检 done、C2/C3/C5 经 C4 裁定无需运行），生产集成 M2-PROD-DETECT-1 已 done。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
+上图中绿色节点全部为 `done` 且已集成 main。M2-TA3-B 阶段一（阈值/冒烟/选样/计划）已 done；其阶段二（正式 qualification run）BLOCKED_ON_USER 翻译 endpoint 二选一，用户裁决后另行释放阶段二 Task。C1-C5 检测器候选流程已收官（C4 评估 done、C1 抽检 done、C2/C3/C5 经 C4 裁定无需运行），生产集成 M2-PROD-DETECT-1 已 done。Legacy TASK-001～065 的详细分类仍在本文件后文保存：`VERIFIED_COMPLETE`、`PARTIAL`、`SUPERSEDED`、`DOC_ONLY` 均为历史迁移盘点，不再生成旧架构工作。
 
 **M2 — Desktop Architecture Migration: FIRST_WAVE_RELEASED / BOUNDED_IMPLEMENTATION.** User authorization on 2026-09-25 releases only the four Tasks below from the verified local `master` base `6a68fdeb92d8a1c7903166a8076d6260bf8fa79a`. [M2-D1 Headless & Qt Coupling Audit](tasks/M2-D1.md) is `done` after Codex non-author [Review](reviews/M2-D1-0a27a54.md) `approved` and integration `100abfb`. Its [report](research/M2-D1_HEADLESS_QT_COUPLING_AUDIT.md) supplies the first-wave evidence. AD-001 remains the fixed React + TypeScript / Tauri / Python Core / SQLite target. Migration is incremental; the existing PySide6/QML application may remain operational during transition, but its PyInstaller Release Gate is retired as the future formal release gate.
 
