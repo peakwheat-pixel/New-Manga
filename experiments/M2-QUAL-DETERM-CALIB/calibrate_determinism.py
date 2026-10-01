@@ -142,27 +142,57 @@ def similarity(a: str, b: str) -> float:
 
 
 def translations_by_reading_order(summary: dict) -> dict[int, dict]:
-    """Join translate_details to regions via region_id -> reading_order."""
+    """Join translate_details to regions via region_id -> reading_order.
+
+    Each entry carries the run's own bbox for that reading_order so the
+    caller can cross-check geometric identity between the two runs
+    (dsh r1 R1: reading_order stability across runs is an *assumption* —
+    the key-set equality check alone cannot detect a permutation).
+    """
     order = {r["region_id"]: r["reading_order"] for r in summary["regions"]}
     types = {r["region_id"]: r.get("region_type", "") for r in summary["regions"]}
+    bboxes = {r["region_id"]: r.get("bbox") for r in summary["regions"]}
     out: dict[int, dict] = {}
     for detail in summary.get("translate_details", []):
-        ro = order[detail["region_id"]]
+        rid = detail["region_id"]
+        if rid not in order:
+            # r1 R7: a translate_detail pointing outside regions[] is a
+            # summary inconsistency — fail-closed with the FATAL channel,
+            # never a bare KeyError traceback.
+            raise SystemExit(
+                f"FATAL: translate_detail region_id {rid!r} not present in "
+                "regions[] — summary is internally inconsistent"
+            )
+        ro = order[rid]
         out[ro] = {
             "reading_order": ro,
-            "region_type": detail.get("region_type", "") or types[detail["region_id"]],
+            "region_type": detail.get("region_type", "") or types[rid],
             "source_text": detail.get("source_text", "") or "",
             "translated_text": detail.get("translated_text", "") or "",
+            "bbox": bboxes.get(rid),
         }
     return out
 
 
 def pair_status(first: str, second: str) -> str:
-    if not first.strip() and not second.strip():
+    # r1 R6: emptiness basis unified with the similarity() empty-pair rule —
+    # a side is empty iff its §0-normalized form is "" (not raw .strip()),
+    # so status and similarity can never disagree on whitespace-only text.
+    # (No behavioral change on the calibration data: the empty pairs are
+    # exactly "" on both sides.) identical/variant remain a raw comparison.
+    nf, ns = normalize(first), normalize(second)
+    if not nf and not ns:
         return "empty_both"
-    if not first.strip() or not second.strip():
+    if not nf or not ns:
         return "empty_one_side"
     return "identical" if first == second else "variant"
+
+
+def is_nonempty(pair: dict) -> bool:
+    """r1 R6: the single non-empty-pair predicate shared by the case-level
+    and aggregate subsets (excludes empty_both AND empty_one_side; a side
+    is empty iff normalized to "")."""
+    return bool(normalize(pair["text_first"]) or normalize(pair["text_second"]))
 
 
 # ---------------------------------------------------------------------------
@@ -270,6 +300,25 @@ def gate_verdict(median: float | None, minimum: float | None) -> str:
 # ---------------------------------------------------------------------------
 
 
+def case_gate_verdict(pairs: list[dict]) -> str:
+    """Gate verdict for one case with the coverage precondition (dsh r1 R2).
+
+    The similarity gate alone would PASS an all-empty rerun pair trivially
+    (every pair empty_both -> 1.0): at least one non-empty pair is required,
+    otherwise NO_DATA — translation *coverage* failures are caught by the
+    §7 translate scoring gate, not here. Zero-pair cases (e.g. a
+    region_count=0 case on both sides, R11 zero-region exemption caliber)
+    land here too: they do not block the overall gate but are registered
+    individually (dsh r1 R3).
+    """
+    if not any(is_nonempty(p) for p in pairs):
+        return "NO_DATA"
+    values = [p["similarity_normalized"] for p in pairs]
+    return gate_verdict(
+        round(statistics.median(values), 4), round(min(values), 4)
+    )
+
+
 def build_pairs(case_id: str) -> dict:
     first = json.loads((SUMMARIES_DIR / f"qual-{case_id}.json").read_text(encoding="utf-8"))
     second = json.loads(
@@ -277,14 +326,36 @@ def build_pairs(case_id: str) -> dict:
     )
     t1 = translations_by_reading_order(first)
     t2 = translations_by_reading_order(second)
+    ros1 = {r["reading_order"] for r in first["regions"]}
+    ros2 = {r["reading_order"] for r in second["regions"]}
     if set(t1) != set(t2):
         raise SystemExit(
             f"FATAL: {case_id} reading_order sets differ between runs "
             f"{sorted(set(t1) ^ set(t2))} — alignment impossible"
         )
+    # r1 R7: every region of a run must have a translate_detail (no silent
+    # pair dropping — a dropped region would shrink n_pairs in the
+    # fail-open direction). The dropped reading_orders are printed in the
+    # FATAL channel.
+    if set(t1) != ros1 or set(t2) != ros2:
+        raise SystemExit(
+            f"FATAL: {case_id} translate_details do not cover all regions — "
+            f"run1 dropped={sorted(ros1 - set(t1))}, "
+            f"run2 dropped={sorted(ros2 - set(t2))}"
+        )
     pairs = []
     for ro in sorted(t1):
         a, b = t1[ro], t2[ro]
+        # r1 R1: geometric cross-check of the alignment assumption. Set
+        # equality of reading_orders cannot detect a permutation; bbox
+        # identity per reading_order can (region geometry is regenerate-
+        # stable across runs — verified 13/13 on K11, 5/5 on BJ02).
+        if a["bbox"] != b["bbox"]:
+            raise SystemExit(
+                f"FATAL: {case_id} reading_order {ro} bbox differs between "
+                f"runs {a['bbox']} != {b['bbox']} — reading_order alignment "
+                "assumption violated, pairs would be silently misaligned"
+            )
         text_first, text_second = a["translated_text"], b["translated_text"]
         status = pair_status(text_first, text_second)
         pairs.append(
@@ -302,7 +373,7 @@ def build_pairs(case_id: str) -> dict:
                 "status": status,
             }
         )
-    nonempty = [p for p in pairs if p["status"] not in ("empty_both",)]
+    nonempty = [p for p in pairs if is_nonempty(p)]
     # floating-pair subsets are defined PER SCALING as similarity < 1.0 —
     # NOT via status=="variant" (that is a raw-string comparison; ro=5/10
     # are raw-variant but normalize to 1.0 and must not enter the
@@ -315,6 +386,14 @@ def build_pairs(case_id: str) -> dict:
         "source_sha256": first.get("source_sha256", ""),
         "n_pairs": len(pairs),
         "n_pairs_nonempty": len(nonempty),
+        # r1 R7: coverage bookkeeping — dropped regions are impossible by
+        # the fail-closed check above, recorded here so the artifact shows
+        # the completeness basis of n_pairs.
+        "n_regions_run1": len(first["regions"]),
+        "n_regions_run2": len(second["regions"]),
+        "n_translate_details_run1": len(first.get("translate_details", [])),
+        "n_translate_details_run2": len(second.get("translate_details", [])),
+        "n_dropped_regions": (len(ros1) - len(t1)) + (len(ros2) - len(t2)),
         "pairs": pairs,
         "stats": {
             "raw_all_pairs": distribution([p["similarity_raw"] for p in pairs]),
@@ -332,10 +411,9 @@ def build_pairs(case_id: str) -> dict:
                 [p["similarity_normalized"] for p in variant_norm]
             ),
         },
-        "gate_verdict_normalized": gate_verdict(
-            distribution([p["similarity_normalized"] for p in pairs])["median"],
-            distribution([p["similarity_normalized"] for p in pairs])["min"],
-        ),
+        # r1 R2: coverage precondition applied — an all-empty case would
+        # otherwise PASS trivially (every pair empty_both -> 1.0).
+        "gate_verdict_normalized": case_gate_verdict(pairs),
     }
 
 
@@ -388,6 +466,10 @@ def render_markdown(payload: dict) -> str:
         "1. **对齐键 = reading_order**（方法学事实，TA3-B2 r1 R1 登记：region_id 每 run 重新生成，"
         "同 bbox 两轮 uuid 不同；region_id 只用于把 translate_details 关联到本 run 的 regions[].reading_order）。"
         "两次 run 的 reading_order 集合不一致时脚本 fail-closed 退出。"
+        "**对齐假设交叉校验（dsh r1 R1）**：逐 reading_order 断言两 run 的 bbox 逐字段一致"
+        "（region 几何跨 run 再生稳定——K11 13/13、BJ02 5/5 实测一致），不一致视为对齐假设被破坏"
+        "（同集合置换无法被键集合相等检查发现），fail-closed 退出；translate_details 覆盖 regions[]"
+        "亦为 fail-closed（缺失 region 的 reading_order 列表落盘于 FATAL 消息）。"
     )
     lines.append(
         "2. **相似度 = 1 − Levenshtein/max_len（字符级，stdlib）**；Levenshtein 与归一化复刻自项目既有 "
@@ -397,11 +479,16 @@ def render_markdown(payload: dict) -> str:
         "3. **双口径**：`raw`（译文原串，复现 quality-report F5 的 K11 \"7/11 非空对浮动\"观察）与 "
         "`normalized`（quality-thresholds §0 归一化：去全部空白、…≡...、casefold——与项目 CER 同口径，"
         "换行/空格级差异不计入翻译不稳定）。**Gate 口径 = normalized**，raw 作附报。"
+        "空对判定基准统一为 normalize 后空串（dsh r1 R6），status 与 similarity 不会在仅空白差异上互相矛盾。"
     )
     lines.append(
         "4. **空译文对规则（登记口径，非临时约定）**：双方空 → 相似度 1.0（`empty_both`，两次 run 行为一致：都无译文）；"
         "单方空 → 相似度 0.0（`empty_one_side`，run 级行为变化=最大不稳定）。"
         "实测数据中仅出现前者（K11 ro=9 OCR 空文本、ro=13 SFX SKIP，两次 run 双侧均空）。"
+        "**覆盖前置（dsh r1 R2）**：非空对 n≥1 方可判定，否则 **NO_DATA**——全空跑（如 provider 整体失效返回空译文）"
+        "在相似度口径下会平凡 PASS（全部 empty_both=1.0），翻译覆盖度由 §7 translate 评分 Gate 兜底，"
+        "相似度 Gate 不对覆盖度负责；region_count=0 的 case（如 K01 两侧均 0 region）贡献 0 对，"
+        "按同一 NO_DATA 口径豁免、不阻断整体 Gate 但单独登记（dsh r1 R3，与 R11 零 region 豁免同口径）。"
     )
     lines.append(
         "5. **语义边界（绑定表述）**：本 Gate 度量的是**翻译稳定性**（同输入同模型重跑下译文的词汇级一致性），"
@@ -484,7 +571,8 @@ def render_markdown(payload: dict) -> str:
     lines.append(
         f"1. **min ≥ {PROPOSED_GATE['min_min']}**：实测最坏浮动对 = {agg['normalized_all_pairs']['min']}"
         "（4 字译文单字替换，K11 ro=1/2/8 与 BJ02 ro=4）。同输入同模型重跑必须 PASS → 阈值须 ≤0.75；"
-        "取 0.75 − 0.05 = **0.70** 留一个字符级测量余量（provider 版本/提示词微调可能带来 ±1 编辑差）。"
+        "取 0.75 − 0.05 = **0.70**，**0.05 为绝对值余量**（dsh r1 R4，与 thresholds 写法统一——"
+        "不是「一个字符」：4 字锚串上 1 编辑差=0.25，0.05 仅为其 1/5；对 20 字译文 1 编辑差才恰为 0.05）。"
         f"反向锚：40% 字符替换的合成漂移相似度 ≈{gate['synthetic_probes']['drift_40']['median']}"
         f"（min {gate['synthetic_probes']['drift_40']['min']}）→ FAIL；"
         "3 字及以下译文的单字浮动（2/3≈0.667）也会 FAIL——fail-closed 方向，见 §6 局限。"
@@ -493,8 +581,11 @@ def render_markdown(payload: dict) -> str:
         f"2. **median ≥ {PROPOSED_GATE['median_min']}**：实测 median = "
         f"{agg['normalized_all_pairs']['median']}（同输入同模型重跑下多数 region 译文逐位相同）。"
         "0.95 的语义 = 允许少量采样浮动存在、但多数 region 浮动（系统性漂移，如 prompt/provider 变更）即 FAIL。"
-        "18 对分布下的精确边界（以实测浮动幅度 [0.75, 0.875] 计）：浮动 ≤8 对（<50%）时 median 恒=1.0（PASS）；"
+        "18 对分布下的精确边界（以实测浮动幅度 [0.75, 0.875] 计，**在本校准样本的译文长度分布下**——"
+        "浮动串长 4–16 字，dsh r1 R5）：浮动 ≤8 对（<50%）时 median 恒=1.0（PASS）；"
         "浮动 ≥9 对（≥50%）时 median ≤(0.875+1)/2=0.9375 <0.95（恒 FAIL）——即约半数 region 浮动即触发 median gate。"
+        "该边界不外推到显著更长的译文：长译文 1 编辑差相似度更高（20 字串 1 编辑=0.95），"
+        "median 腿对低幅系统性漂移的分辨力随译文长度下降（§6 局限）。"
     )
     lines.append(
         "3. **判别力合成对照（无自然 FAIL 样本的替代证据）**：对实测译文施加确定性字符扰动"
@@ -558,8 +649,10 @@ def render_markdown(payload: dict) -> str:
         "（§4.3），不是漂移场景的实证。"
     )
     lines.append(
-        "3. **极短译文粒度边界**：3 字译文单字浮动（≈0.667）会被 min≥0.70 判 FAIL（fail-closed 方向可接受，"
-        "但会把「良性的单字采样差」误报为漂移）；实测最短浮动串为 4 字。"
+        "3. **极短译文粒度边界（长度相关悬崖，dsh r1 R4）**：min 阈值对编辑数的容忍度与译文长度强相关——"
+        "同一「多 1 编辑」在 4 字串上跌 0.25、在 20 字串上只跌 0.05：3 字译文单字浮动（≈0.667）会被 min≥0.70 判 FAIL"
+        "（fail-closed 方向可接受，但会把「良性的单字采样差」误报为漂移）；4 字反例（实测锚串）：2 次编辑即 2/4=0.5 → FAIL，"
+        "即 0.05 的绝对值余量在锚长度上容不下第二个编辑差；实测最短浮动串为 4 字。"
     )
     lines.append(
         "4. **Run1 层相似度未测**：K11 export 差异根因在 Run1（批量翻译/inpaint/render，未逐层隔离，scratch db 已清理）；"
@@ -568,6 +661,26 @@ def render_markdown(payload: dict) -> str:
     lines.append(
         "5. **归一化口径依赖**：normalized 口径吸收换行/空格差异（K11 浮动 7→5）；"
         "若产品语义认为换行位置也是译文的一部分，应引用 raw 口径附报。"
+    )
+    lines.append(
+        "6. **覆盖前置与全空跑盲点（dsh r1 R2/R3）**：空对规则下全空跑（两次 run 译文全空，如 provider 整体失效）"
+        "相似度全部 1.0、可平凡 PASS 相似度 Gate——故 Gate 定义加非空对 n≥1 的覆盖前置（否则 NO_DATA）；"
+        "翻译覆盖度（该译的没译）由 §7 translate 评分 Gate 兜底，相似度 Gate 不对覆盖度负责；"
+        "region_count=0 的 case（本次校准集中的 K01 两侧均 0 region）贡献 0 对、按 NO_DATA 豁免，"
+        "不阻断整体 Gate 但须单独登记——**ko webtoon 家族因此未被本次校准覆盖**（K11=ko P&C、BJ02=ja BJ）。"
+    )
+    lines.append(
+        "7. **median 腿分辨力随译文长度下降（dsh r1 R5）**：§4.2 的「浮动 ≥9 对恒 FAIL」边界以实测浮动幅度 [0.75, 0.875]"
+        "（串长 4–16 字）为条件；更长译文上 1 编辑差的相似度更高（20 字串=0.95≥阈值），"
+        "「全部 region 低幅浮动」的场景 median 腿可能 PASS——结构性漂移仍由 min 腿兜底，"
+        "但 median 腿不是长度无关的系统性漂移检测器。"
+    )
+    lines.append(
+        "8. **词面口径的固有误报方向（dsh r1 R8）**：字符级相似度度量的是词面一致，不是语义等价——"
+        "语义等价的合法重译（同义改写/整段重译）会被判低相似度 FAIL，而 remote 采样漂移的主形态恰是同义改写；"
+        "即本 Gate 在「假 FAIL」（保守）方向系统性偏置，不会漏报词面漂移但会误报合法重译。"
+        "未加同义改写代理探针：词面框架内无法可靠构造语义等价改写的确定性代理（任何字面扰动都改变词面），"
+        "该维度的验证需语义度量（如回译/向量相似度），属后续独立工作、此处仅登记。"
     )
     lines.append("")
     lines.append(f"> **声明**：{DIRECTIONAL_DISCLAIMER}。")
@@ -592,9 +705,7 @@ def main() -> int:
 
     cases = [build_pairs(case_id) for case_id in CALIBRATION_CASES]
     all_pairs = flatten_pairs(cases)
-    nonempty_pairs = [
-        p for p in all_pairs if p["status"] not in ("empty_both", "empty_one_side")
-    ]
+    nonempty_pairs = [p for p in all_pairs if is_nonempty(p)]
     variant_raw_pairs = [p for p in all_pairs if p["similarity_raw"] < 1.0]
     variant_norm_pairs = [p for p in all_pairs if p["similarity_normalized"] < 1.0]
 
@@ -628,15 +739,24 @@ def main() -> int:
         "synthetic_probes_list": probes,
         "synthetic_probes": {p["probe"]: p for p in probes},
         "reasoning": (
-            "min gate = measured floating-pair band [0.75, 0.875] shifted down "
-            "one character-level margin -> 0.70: every observed same-input "
-            "rerun float stays above it (single-char probes: per-pair PASS) "
-            "while 40%+ character drift (probe min 0.5) must FAIL. median "
-            "gate 0.95: with the measured float magnitude, <=8/18 floating "
-            "pairs keeps median=1.0 (PASS), >=9/18 forces median<=0.9375 "
-            "(FAIL) — i.e. systematic change fails, benign sparse sampling "
-            "float passes. Anchored on the measured 18-pair distribution "
-            "(n=2 cases, directional)."
+            "min gate 0.70 = measured floating-pair band [0.75, 0.875] minus "
+            "a 0.05 ABSOLUTE margin (not 'one character': on the 4-char anchor "
+            "strings one edit is 0.25, so the margin is a fifth of an edit; "
+            "r1 R4): every observed same-input rerun float stays above it "
+            "(single-char probes: per-pair PASS) while 40%+ character drift "
+            "(probe min 0.5) must FAIL. median gate 0.95: under THIS "
+            "calibration sample's translation-length distribution (float "
+            "strings 4-16 chars, 1-edit magnitude [0.75, 0.875]), <=8/18 "
+            "floating pairs keeps median=1.0 (PASS), >=9/18 forces "
+            "median<=0.9375 (FAIL) — i.e. systematic change fails, benign "
+            "sparse sampling float passes; on longer translations the "
+            "median leg's resolution of low-magnitude systematic drift "
+            "decreases (1 edit on a 20-char string = 0.95), registered as "
+            "a limitation (r1 R5). Coverage precondition (r1 R2): an "
+            "all-empty rerun pair passes similarity trivially -> NO_DATA "
+            "without >=1 non-empty pair; translation coverage is the §7 "
+            "translate scoring gate's job. Anchored on the measured 18-pair "
+            "distribution (n=2 cases, directional)."
         ),
     }
 
@@ -644,12 +764,18 @@ def main() -> int:
         "task": "M2-QUAL-DETERM-CALIB",
         "measure": "reading_order-aligned translation similarity (F5 determinism gate, redefined per user ruling 2026-10-01)",
         "calibration_source": {
-            "summaries_dir": str(SUMMARIES_DIR),
+            # r1 R13: repo-root-relative so the committed artifact is
+            # reproducible across checkouts (no machine-specific path).
+            "summaries_dir": (
+                str(SUMMARIES_DIR.relative_to(REPO_ROOT))
+                if SUMMARIES_DIR.is_relative_to(REPO_ROOT)
+                else str(SUMMARIES_DIR)
+            ),
             "cases": CALIBRATION_CASES,
             "text_layer": "translate_details.translated_text (Run2-after DB text), joined to regions[].reading_order via region_id",
         },
         "method": {
-            "alignment_key": "reading_order (region_id regenerated every run, TA3-B2 r1 R1)",
+            "alignment_key": "reading_order (region_id regenerated every run, TA3-B2 r1 R1); cross-checked by per-reading_order bbox identity between the two runs, fail-closed on mismatch — key-set equality alone cannot detect a permutation (dsh r1 R1); translate_details must cover all regions (no silent pair dropping, dropped reading_orders in the FATAL message, dsh r1 R7)",
             "similarity": "1 - Levenshtein/max_len (character level, stdlib; replicated from experiments/M2-TA3-B/measure_cer.py)",
             "scalings": {
                 "raw": "translated_text verbatim (reproduces quality-report F5 K11 7/11 observation)",
@@ -658,6 +784,8 @@ def main() -> int:
             "empty_pair_rule": {
                 "both_empty": "similarity 1.0 (status empty_both; runs agree: no translation either time)",
                 "one_side_empty": "similarity 0.0 (status empty_one_side; run-level behaviour change)",
+                "emptiness_basis": "normalized-empty (r1 R6): a side is empty iff its §0-normalized form is \"\" — status and similarity share one basis",
+                "coverage_precondition": ">=1 non-empty pair required, else NO_DATA (an all-empty rerun passes similarity trivially; coverage is the §7 translate scoring gate's job; region_count=0 cases are NO_DATA-exempt and registered individually, r1 R2/R3)",
                 "observed": "only empty_both occurs (K11 ro=9 OCR-empty, ro=13 SFX SKIP)",
             },
             "semantic_boundary": (
@@ -675,9 +803,12 @@ def main() -> int:
         "limitations": [
             "n=2 calibration cases (K11 13 regions, BJ02 5 regions) — thresholds are directional, re-calibrate on future qualification runs which should persist per-pair similarities",
             "no natural FAIL sample: all observed floats are 1-edit differences; discriminative power shown by deterministic synthetic probes only",
-            "very-short-translation granularity: a 1-char float on a 3-char text (~0.667) fails min>=0.70 (fail-closed direction)",
+            "very-short-translation granularity, length-dependent cliff (r1 R4): min-gate edit tolerance scales with length — the same extra edit costs 0.25 on a 4-char anchor but 0.05 on a 20-char text; 3-char single-char float (~0.667) fails min>=0.70 (fail-closed direction), and 2 edits on the 4-char anchor = 0.5 -> FAIL, so the 0.05 absolute margin does not absorb a second edit at anchor length",
             "Run1-stage similarity unmeasured (K11 export root cause not layer-isolated); this gate covers the Run2-after DB text layer only",
             "normalized scaling absorbs line-break/spacing differences (K11 floats 7 raw -> 5 normalized); quote raw if line breaks are part of the product semantics",
+            "coverage precondition / all-empty blind spot (r1 R2/R3): under the empty-pair rule an all-empty rerun (provider down) passes the similarity gate trivially (all empty_both = 1.0), so the gate requires >=1 non-empty pair else NO_DATA; translation COVERAGE is enforced by the §7 translate scoring gate, not here; region_count=0 cases (K01 in this set, both sides 0 regions) contribute 0 pairs and are NO_DATA-exempt — they do not block the overall gate but are registered individually, so the ko webtoon family is NOT covered by this calibration (K11=ko P&C, BJ02=ja BJ)",
+            "median-leg resolution of low-magnitude systematic drift decreases with translation length (r1 R5): the '>=9/18 floats always FAIL' boundary holds for THIS sample's length distribution (float strings 4-16 chars, magnitude [0.75, 0.875]); on longer texts a 1-edit float scores >=0.95 (20-char string), so an all-regions-low-magnitude-float scenario can PASS the median leg — the min leg still catches structural drift, but the median leg is not a length-independent systematic-drift detector",
+            "lexical-caliber false-FAIL direction (r1 R8): character-level similarity measures surface agreement, not semantic equivalence — a legitimate retranslation (synonym rewording / full-paragraph rewrite) is judged low-similarity FAIL, and synonym rewording is exactly the dominant remote-sampling drift morphology; the gate is thus biased in the conservative (false-FAIL) direction. No synonym-rewrite proxy probe is added: within a lexical framework a deterministic semantic-equivalence proxy cannot be constructed faithfully (any literal perturbation changes the surface); validating that dimension needs semantic metrics (back-translation / embedding similarity) as separate future work — registered, not implemented",
         ],
         "directional_disclaimer": DIRECTIONAL_DISCLAIMER,
     }

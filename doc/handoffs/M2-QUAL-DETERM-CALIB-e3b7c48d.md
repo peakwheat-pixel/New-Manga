@@ -38,7 +38,7 @@ status: delivered  # 待 DSH 非作者 review → Codex 集成；集成通过后
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
 | AC1 脚本可运行且确定性 | `python experiments/M2-QUAL-DETERM-CALIB/calibrate_determinism.py`（两次运行输出一致，无网络/无随机源——合成探针 seed=20261001 固定） | Python 3.12 stdlib；worktree HEAD e3b7c48d | PASS | calibration.json / calibration.md |
-| AC1 K11 观察复现 | raw 口径 K11 浮动 7/13（非空 7/11） | 同上 | PASS（与 quality-report F5 已登记观察一致） | calibration.md §2/§3 |
+| AC1 K11 观察复现 | raw 口径 K11 浮动 **7/11 非空对**（quality-report F5 定案分母——dsh r1 R12 对齐：raw 全部对口径 7/13 仅为内部附报，不复引已修正的混用分母） | 同上 | PASS（与 quality-report F5 已登记观察一致） | calibration.md §2/§3 |
 | AC2 实测分布 PASS | K11 → PASS、BJ02 → PASS（normalized median=1.0 ≥0.95，min=0.75 ≥0.70） | 同上 | PASS | calibration.md §2/§4.4 |
 | AC2 判别力对照 | 合成探针：single_char_ge4 逐对 min=0.75 → min-leg PASS、median leg FAIL（全浮动场景）；drift_40 min=0.5、drift_70 min=0.2 → FAIL | 同上 | PASS（演示闭环成立；非自然 FAIL 实证） | calibration.md §4.3 |
 | AC3 superseded-pending 解除 | `grep -n "superseded-pending" verification/M2-TA3-B/quality-thresholds.md` → 仅剩修订注内「解除」表述（历史引用） | 同上 | PASS | thresholds §5/§7 |
@@ -74,3 +74,30 @@ status: delivered  # 待 DSH 非作者 review → Codex 集成；集成通过后
 - **归一化口径依赖**：若产品语义认定换行位置属译文的一部分，应引用 raw 口径附报（§6.5）——此为产品语义取舍，归用户裁决。
 - 回退方法：revert `e3b7c48d` 即回到 base `8e0de8d0` 状态（含 thresholds/plan 修订一并回退）；无数据迁移、无外部副作用。
 - 关联：M2-TA3-B2（数据源与 F5 裁决来源）、M2-TA3-A（mock 链字节逐位口径原出处）。
+
+## r1 返修记录（DSH r1 approved_with_conditions，2026-10-01，R1-R14 逐条落点）
+
+DSH r1 评审：`G:/CODEX/New Manga.task-envs/M2-QUAL-DETERM-CALIB/dsh-review-r1.md`。逐条处置（脚本类条目已重跑校准，**统计量逐值一致**：18 对、cases/aggregate 全部 distribution、三个合成探针、逐对 similarity/status、gate verdicts——与返修前 JSON 程序化对比零差异）：
+
+| # | 级别 | 处置 | 落点 |
+|---|---|---|---|
+| R1 | P2 | **closed**：对齐逐 reading_order 断言两 run bbox 逐字段一致（不一致走同一 SystemExit FATAL 通道）；键集合相等无法检测同集合置换，bbox 是跨 run 唯一可用几何恒等（K11 13/13、BJ02 5/5 实测一致）。calibration.md §1.1 登记该假设与校验 | calibrate_determinism.py（build_pairs）+ calibration.md §1（脚本产物重跑生成） |
+| R2 | P2 | **closed**：Gate 判定加覆盖前置——非空对 n≥1 方可判定，否则 NO_DATA（`case_gate_verdict`）；全空跑在相似度口径下平凡 PASS 的盲点由此闭合。关系句写入 thresholds §5 remote 行：「全空跑可 PASS 相似度 Gate，由 §7 translate 评分 Gate 兜底」；calibration.md §1.4 + §6.6 局限登记 | calibrate_determinism.py + thresholds §5 + calibration.md |
+| R3 | P2 | **closed**：thresholds §5 补「region_count=0 case 贡献 0 对 → 同 NO_DATA 口径豁免（与 §6 R11 零 region 豁免同口径），不阻断整体 Gate 但单独登记」；注明本次校准未覆盖 ko webtoon 家族（K01 两侧均 0 region；K11=ko P&C、BJ02=ja BJ） | thresholds §5 + calibration.md §1.4/§6.6 |
+| R4 | P2 | **closed**：calibration.md §4.1 与脚本 reasoning 的「一个字符级余量」改为「**0.05 绝对值余量**」（与 thresholds 写法统一：4 字锚串 1 编辑差=0.25，0.05 仅为其 1/5）；§6.3 扩「长度相关悬崖」+ 4 字反例（2 编辑 → 2/4=0.5 FAIL） | calibrate_determinism.py（render_markdown + reasoning）+ calibration.md §4.1/§6.3 |
+| R5 | P3 | **closed**：median 边界句限定「**在本校准样本的译文长度分布下**（浮动串长 4–16 字，幅度 [0.75, 0.875]）」；§6.7 局限登记「median 腿对低幅系统性漂移的分辨力随译文长度下降（20 字串 1 编辑差=0.95≥阈值，全 region 低幅浮动场景 median 腿可能 PASS，min 腿兜底）」 | calibrate_determinism.py（render_markdown §4.2）+ calibration.md §4.2/§6.7 |
+| R6 | P3 | **closed**：抽 `is_nonempty(pair)` 供 case 级（build_pairs）与 aggregate（main）非空子集共用；`pair_status` 判空基准与 `similarity` 统一为 **normalize 后空串**（status 与 similarity 不再可能在仅空白差异上矛盾）。重跑零数字变化（当前空对恰为 ""） | calibrate_determinism.py |
+| R7 | P3 | **closed**：①translate_details 必须覆盖全部 regions[]（否则 SystemExit，dropped reading_orders 落盘于 FATAL 消息）；②`order[detail["region_id"]]` 改显式缺失检查走同一 FATAL 通道（不再裸 KeyError）；③case 产物落盘 n_regions/n_translate_details/n_dropped_regions（两 run）——重跑实测 dropped=0 | calibrate_determinism.py + calibration.json |
+| R8 | P3 | **closed（登记，探针不加）**：§6.8 局限登记词面口径固有误报方向——语义等价的合法重译（同义改写/整段重译，即 remote 漂移主形态）会被判低相似度 FAIL，Gate 在保守（假 FAIL）方向系统性偏置；同义改写代理探针**不加**并在局限中登记理由（词面框架内无法可靠构造确定性语义等价代理，需回译/向量相似度等语义度量，属后续独立工作） | calibrate_determinism.py + calibration.md §6.8 |
+| R9 | P3 | **closed**：thresholds §5 尾注补可执行双轨判别规则——按 run 的 translate provider 绑定判轨（remote 采样 `deepseek/*` 等 → 相似度轨；mock/确定性 → 哈希轨），qualification runner 以 `--determinism-track remote|mock` 显式记录，声明与绑定不一致 fail-closed | thresholds §5 尾注 |
+| R10 | P3 | **closed**：quality-report.md :189/:199 两条历史 superseded-pending 引用加关系注「已由 M2-QUAL-DETERM-CALIB + 用户裁决『全部进行』于 2026-10-01 落地解除」（该文件在本 Task 允许面 verification/M2-TA3-B/** 内；:199 注明 F4 部分仍待其自身 Task） | quality-report.md |
+| R11 | P3 | **closed**：Task AC3 行改为实际修订面（thresholds §5 双轨条目+尾注 / §7 总表第 10 行；phase2-plan §1/§2.1/§4）并注明「§1 核对为空（R9 原注不在 §1）」 | doc/tasks/M2-QUAL-DETERM-CALIB.md |
+| R12 | P4 | **closed**：本 handoff 验证证据表 AC1 行分母措辞对齐 quality-report 定案——「raw 口径 K11 浮动 7/11 非空对」（7/13 全部对口径仅作内部附报，不复引已修正的混用分母） | 本 handoff 验证证据表 |
+| R13 | P4 | **closed**：calibration.json `calibration_source.summaries_dir` 改为相对仓库根路径（`verification\M2-TA3-B\phase2\summaries`；跨 checkout 可复现，非 `is_relative_to` 时回退绝对路径）；脚本重跑生成 | calibrate_determinism.py + calibration.json |
+| R14 | P4 | **closed**：Task frontmatter 加 `fork_commit: 8996ca55` 注记（e3b7c48d 父提交=8996ca55，与 Task A 同一拓扑事实） | doc/tasks/M2-QUAL-DETERM-CALIB.md |
+
+返修后验证（Python 3.12 stdlib，worktree 内默认路径）：
+
+- 重跑 `python experiments/M2-QUAL-DETERM-CALIB/calibrate_determinism.py` → 18 对（K11 13 + BJ02 5）、全部分布统计量/探针/verdict 与返修前**逐值一致**（程序化对比零差异）；gate verdicts K11=PASS、BJ02=PASS 不变。
+- JSON 预期结构差异仅三类（均为返修要求）：`summaries_dir` 相对化（R13）、case 级 coverage 字段（R7）、method/limitations 文本增强（R1/R2/R4/R5/R8）。
+- `qual-*.json` 等 TA3-B2 产物零改动（脚本只读，porcelain 复核见返修 commit）。

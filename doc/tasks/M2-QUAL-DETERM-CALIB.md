@@ -10,6 +10,7 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-TA3-B2]
 base_commit: 8e0de8d0
+fork_commit: 8996ca55 # 分支实际 fork 自 release 8996ca55（e3b7c48d 的父提交即 8996ca55，dsh r1 R14 注记）
 branch: agent/zcode/M2-QUAL-DETERM-CALIB
 worktree: G:/CODEX/New Manga.worktrees/M2-QUAL-DETERM-CALIB-zcode
 ---
@@ -24,7 +25,7 @@ TA3-B2 定案：export 复制 Run1 渲染产物；remote 翻译采样天然非�
 
 1. **AC1 校准数据**：`experiments/M2-QUAL-DETERM-CALIB/calibrate_determinism.py`——从 `verification/M2-TA3-B/phase2/summaries/qual-K11{,.rerun}.json` 与 `qual-BJ02{,.rerun}.json` 提取两次 run 的 region 译文（按 reading_order 对齐，方法学事实：region_id 每 run 重生成），计算逐对归一相似度（Levenshtein/字符级）分布：min/median/P10/逐值清单；区分「浮动对」（7/11）与「相同对」。
 2. **AC2 阈值建议**：基于分布给出 Gate 阈值建议（如 median≥0.95 且 min≥0.80——数字以实测分布为据，附推理），明确「相似度 Gate 度量的是翻译稳定性而非逐位复现」的语义边界；BJ02（该样本两次逐位相同）作为上界参照。
-3. **AC3 权威口径修订**：`verification/M2-TA3-B/quality-thresholds.md` §5/§7/§1 的 superseded-pending 条目替换为新口径（相似度阈值+测量方法+语义边界），标注修订来源（本 Task+用户裁决 2026-10-01）；`phase2-plan.md` 对应条目同步。
+3. **AC3 权威口径修订**：`verification/M2-TA3-B/quality-thresholds.md` §5（双轨条目+尾注）/§7（总表第 10 行）的 superseded-pending 条目替换为新口径（相似度阈值+测量方法+语义边界），标注修订来源（本 Task+用户裁决 2026-10-01）；`phase2-plan.md` §1 交付物/§2.1 确定性复跑/§4 步骤 5 对应条目同步。（dsh r1 R11 核对：本 AC 原文「§5/§7/§1」中的 §1 经核对为**空修订面**——R9 原注只落在 §5 行、§5 尾注与 §7 行 10，§1 无 superseded-pending 条目；另 quality-report.md :189/:199 的历史 superseded-pending 引用已于 r1 返修按 R10 加关系注解除。）
 4. **AC4 局限登记**：n=2 case 校准的样本量局限；Run1 层相似度未测（K11 export 差异根因未逐层隔离）；后续 qualification run 应同时落盘逐对相似度。
 
 ## 允许修改面 / 禁改面
