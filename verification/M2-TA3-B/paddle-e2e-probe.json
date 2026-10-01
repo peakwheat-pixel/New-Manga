@@ -1,0 +1,24 @@
+{
+  "probe": "paddle-e2e-step0",
+  "image": "G:/CODEX/New Manga/test_assets/comic_golden_suite/韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+  "started_at_utc": "2026-10-01T08:38:56Z",
+  "status": "OK",
+  "engine_load_s": 6.2,
+  "recognize_s": 0.93,
+  "region_box_xyxy": [
+    62,
+    8,
+    161,
+    50
+  ],
+  "region_bytes": 5582,
+  "n_lines": 1,
+  "line_texts": [
+    "당근아?"
+  ],
+  "mean_confidence": 0.9979385137557983,
+  "lines_with_empty_polygon": [],
+  "page_reference_text_line0": "당근아?",
+  "adapter": "PaddleKoreanOcrProvider(engine_factory=wrapper) — PRODUCTION class",
+  "notes": "3.x->legacy dual-side wrapper; boxes materialised to plain lists (r2 N6)"
+}
