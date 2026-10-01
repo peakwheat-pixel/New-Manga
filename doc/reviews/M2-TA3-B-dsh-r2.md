@@ -1,0 +1,58 @@
+## Verdict
+**approved**（可集成；0×P0、0×P1、0×P2、1×P3 新发现 + 若干 P4 文档精度项，均为文档层且不阻塞）
+
+r1 的 7 条 P2 中，R1/R2/R3/R6/R7 已**实质闭合**；R4/R5 的**方向性更正正确**（我逐条对照 `src` 核实了关键行号与签名），但各残留 1-2 处文档精度缺陷（行号错引；一句关于常量归属的错误陈述），定级 P3/P4，不构成集成阻塞。R9 的「selection 零变化」与 `review-fix.diff` 一致。返修 8 文件全部落在允许面内，无回潮。
+
+**环境限制（与 r1 相同）**：本沙箱 `pwsh` 每次调用均失败（`SetNamedSecurityInfoW failed (Win32 5): grantWrite(...)`），故所有 git 层结论、脚本复跑、SHA256 实算均无法执行；以下结论全部来自 `read`/`grep` 静态核对（含对 `src/**`、`test_assets/.../cases.json` 的只读比对）。
+
+## R1-R18 逐条复核表
+
+| 项 | 结论 | 证据（文件:行）与复核要点 |
+|---|---|---|
+| **R1**[P2] G3 恒空集 | **closed** | `quality-thresholds.md:65`（G2 行增「并扩展覆盖 G1 四 case（J46/J47/K11/K19）的同 region 双源对照」）+ `:66`（G3 重定义，采纳建议①）。**可执行性成立**：操作含义=对 J46/J47/K11/K19 逐 region 同时生成 SVG 侧文本与 AI 预填+用户审核侧文本，再按 region 求交并算一致率；交集不再是空集（四 case 同时属 G1 与扩展后的 G2）。保留 2 点（不改变结论）：① `:66` 的「<50 region」为无推导估计；② K11/K19 的 SVG 侧在权威目录里是「未对齐」（见 N1），逐 region 配对依赖 `:86` 的人工 bbox 对齐工作量，未在本段披露 |
+| **R2**[P2] ja G1 论文锚与文本类型不匹配 / ko 同构缺口 | **closed** | `quality-thresholds.md:81`（新增「G1 子集外推限制」段，明写不得外推到对白气泡/竖排正文/手写体 + 论文锚只约束引擎量级）+ `:105`（O-3 扩写为 ja/ko 共享裁决点）。文本类型与权威字段一致：`cases.json:4192`（`japanese_end_card_and_credits`）、`:4247`（`dense_multilingual_credits`） |
+| **R3**[P2] text_type 分布 / 全池不可得 tag 未登记 | **closed** | `case-selection.json:25-33`（`text_type_distribution`）+ `:34-42`（`pool_unavailable_tags`）+ `select_cases.py:94-108/141/167-181/207-211` + `handoff:64`。逐项复核通过：ja 计数 4/1/3/1/1=10、ko 8/2=10（按 manifest 逐 case `text_type` 重算一致）；`taxonomy.difficulty_tags` 共 16 项（`cases.json:12-27`），其中 4 项仅出现在 taxonomy 块、全池零 case（grep 命中仅 `cases.json:19/21/26/27`）；全池 case 数 = **97**（grep `"case_id"` 97 命中），与 `:41` note 的「97 case」一致 |
+| **R4**[P2] 配置注入 API 不存在 / env 凭证无通路 | **partial**（方向正确，2 处需修正，P3/P4） | **已核实为真的部分**：`CoreServices` 字段表 `core_assembly.py:546-581` **无 `settings`**；settings 读路径 `_load_pipeline_settings` 在 `core_assembly.py:484-498`，消费点 `:781-786`（`build_provider_runtime(settings=_load_pipeline_settings(conn), …)`）✓；`save_provider_binding` 精确在 `pipeline_defaults.py:62` ✓；vault resolver `core_assembly.py:517-532` ✓；`assemble_core_services` 无 resolver 注入参数 `:690-701` ✓；`MissingCredential` `openai_client.py:207-221`（`credential_ref`→Authorization `:174-175`）✓；`OpenAiCompatibleConfig` 字段 `openai_client.py:70-81`、`OpenAiCompatibleClient(config, transport, *, credential_resolver)` `:136-145` ✓；`OpenAiTranslationProvider(config=, client=)` `translation_openai.py:59-67` ✓；`registry.register(descriptor, factory, *, gate, enabled)` `registry.py:105`、`descriptors()` `:128` ✓；`core.providers.registry` 合法（`CoreServices.providers` `core_assembly.py:560` → `ProviderRuntime.registry` `runtime.py:99`）✓；`store_credential` `windows.py:119`、`delete_credential` `:138` ✓；`SecretValue` `ports/providers/credentials.py:40-52` ✓。**缺陷 ①（行号错引）**：`phase2-plan.md:73` 写「`_load_pipeline_settings(conn)` 读 …（core_assembly.py:**763-772**）」——763-772 实为 trash/provider 装配注释块（`core_assembly.py:762-772`），真实位置 484-498 / 调用点 782；同文 `:96-98` 的 781-786 才是对的。**缺陷 ②（隐含提交依赖）**：步骤 1 的裸 `UPDATE`（`:86-89`）无 commit/无 upsert，其持久化**顺带**依赖步骤 2 的 `save_provider_binding` → `SqliteSnapshotProvider.set_defaults` 的 `with self._conn:`（`infrastructure/sqlite/pipeline.py:799-811` + `connection.py:291-295`）在同一连接上提交；现有生产 API `PipelineDefaultsService.save_settings_section`（`pipeline_defaults.py:105`）可一次完成 upsert+commit。附带小项：选项 (i) 未守 `core.credential_store is None`（`core_assembly.py:501-514/779` best-effort 可为 None）；`credential_ref` 用了裸名 `ta3b-translate-key`，而 `ports/providers/credentials.py:6/25-37` 的冻结约定是由 `make_credential_ref` 产出 `NewManga/provider/<name>`；(ii) 在 re-register 后建议 `registry.invalidate(...)`（`registry.py:302`）以免复用旧缓存实例。以上均已同步进「回潮与新问题」的 N4/N8 |
+| **R5**[P2] sakura「默认已内建」错误 | **partial**（实质更正正确，1 句新增陈述为假，P4） | **实质正确**：`runtime.py:583-588` 逐字对上（显式读 settings，`:584` 注释 "No implicit default here"）；`:132-133` 逐字对上「no_base_url configured」（`dependencies.py:130-138`）；新增 profile 写入步骤 `phase2-plan.md:157` 的键路径与 `_provider_settings`（`runtime.py:127-137`，`settings["providers"]["profiles"][provider_id]`）一致，provider id `sakura-local` 与 `translation_openai.py:35` 一致。**缺陷**：`:151` 末句「`SAKURA_DEFAULT_BASE_URL` 常量只在 probe 层使用，不进入 provider 配置」为假——该常量是 `sakura_config` 的默认形参（`translation_openai.py:136-137`），而 `sakura_probe.py` 全仓零引用（grep 仅命中 translation_openai.py 37/38/136/137）。结论句（空 profile→fail-closed）不受影响 |
+| **R6**[P2] wrapper 只修输入侧 | **closed** | `phase2-plan.md:37`（输入 bytes→ndarray+mkldnn off **与** 输出 3.x `rec_texts/rec_scores`→legacy `[[box,(text,score)],…]` 双侧并列）+ `:35`（标题改「三项发现」）+ `:41`/`:174`（第 0 步=1 真实 region 端到端）。代码侧双向对上：输入 `ocr_local.py:169-185`（`engine.ocr(request.image_bytes)` 直传）、输出 `:202-241`（只认 legacy 嵌套，`:211-231` 非该形状即抛 `ProviderInvalidOutput`）；`:149/165-166` `engine_factory` 注入点存在 ✓。**实现提示（P4，见 N6）**：`_polygon_of` `ocr_local.py:265-267` 对非 `Sequence` 的 box **静默返回 `()`**，而 numpy `rec_polys/dt_polys` 不是 `collections.abc.Sequence` → wrapper 必须物化为 Python 序列；第 0 步验收应加「polygon 非空」断言，否则「无异常」通过而 polygon 全丢 |
+| **R7**[P2] `max_regions=40` 截断口径 | **closed** | `phase2-plan.md:31`（默认取消截断 + `--max-regions` 逃生阀必须置 `truncated: true` + 明示抽样集口径 + per-case 登记）+ `quality-thresholds.md:88`（§2.4 第 4 条 CER 分母）+ `:198`（总表 6b）。源侧核实：`experiments/M2-TA3-A/run_smoke.py:325-328` 确为硬编码 40（注释 325/`max_regions = 40` 327/切片 328）。残留 P4：取消上限后未回看估时（见 N6） |
+| **R8**[P3] 472 SVG 无证据物 | **closed** | `quality-thresholds.md:64` 降级为「会话内 zip namelist 计数，**未入证据物**」并明写「正式计数与逐页文本提取以阶段二第 3 步 G1 提取脚本的落盘清单为准」；`:177` 清单第 3 步对应。r1 提到的 472 vs TA2C 615 口径差因此不再承重 |
+| **R9**[P3] `native_ocr_gt` 路径 heuristic | **closed** | `select_cases.py:94-108`（`native_gt_of` 从 `ground_truth_available` 派生三分）+ `:134/141` 调用与 `text_type` 落盘；`case-selection.json` 四 case 重标（J46/J47→`svg_text_layer_official_partial`、K11/K19→`svg_text_layer_present_unaligned`）。**权威字段实测**：`cases.json:4208/4264` = `partial_svg_text_layer`；`:4318/5818` = `svg_text_layer_present_unaligned`；J48-J52 = `no_text_transcription_in_svg`（`:5313` 起）→ 新派生下归 `none`，r1 指出的误分类风险已消除。**重跑声称与 diff 一致**：`review-fix.diff` 中 `case-selection.json` 只有 `generated_at` 变更、逐 case 新增 `text_type`、4 处 `native_ocr_gt` 取值修正、BJ05 `selected_reason`、两个新顶层块；`counts`/`tag_coverage`/`page_path`/`page_sha256`/case 顺序全部为上下文行（未改），与「20/10/10/超集/SHA256/tag 矩阵零变化」相符。小保留：返修记录的「仅新增派生与披露字段」未点明这 4 处**取值重标**（同行已述派生变更，故不单列 finding）。EXIT=0 见 NOT_VERIFIED |
+| **R10**[P3] 发现 3 机制表述超出观测 | **closed** | `ocr-smoke-results.md:36`（观测/机制假设分离 + 明写撤回「复用上一次输入」+ 双 region 判定方式）+ `ocr_smoke.py:112-119`（注释同步）+ `phase2-plan.md:193`（修复 Task 验收条件三件）。观测可复核：`ocr_smoke.py:102-103` 先 `predict(ndarray)` 成功，`:122-135` 再 `ocr(raw_bytes)`，`ocr-smoke-paddleocr.json:10-13` = `EMPTY_RESULT` → 撤回正确 |
+| **R11**[P3] §1/§6 0-region 矛盾 | **closed** | `quality-thresholds.md:182` 增 `data:no-regions-detected` 四件齐豁免，与 `:43` 的 SKIP 口径一致 |
+| **R12**[P3] 5 分制锚点未分维 | **closed** | `quality-thresholds.md:127`：明写「锚点对每个维度独立适用，region 分=三维均值」+ 逐维 1 分反例 + 「禁止先算均值再回填」；`:128` Gate 标注「均基于三维均值」 |
+| **R13**[P3] SFX Gate 无最小 n / 示例含未选中页 | **closed** | `quality-thresholds.md:115`（n≥15 才判 Gate，n<15 只登记分布，示例改 BJ06/BJ10）+ `:138`（T-2 同步）+ `:199`（总表 7）。复核：J38 已从 SFX 示例移除，全仓 TA3-B 产物内 J38 仅剩「排除范围」引用（`case-selection.json:14`、`select_cases.py:196`） |
+| **R14**[P4] AC5 措辞强于 `.gitignore` 实际 | **closed** | `doc/tasks/M2-TA3-B.md:65` + `handoff:81`：「权重全部落在仓库外路径（隔离 venv / HF 缓存 / paddlex 缓存）…护栏 ignore 规则非全部权重后缀」 |
+| **R15**[P4] 抽样种子 vs 固定名单 | **closed** | `quality-thresholds.md:168` + `phase2-plan.md:33` 统一为固定 3 case（BJ02/K01/K11，三家族理由）；全仓已无「抽样种子」表述（grep 零命中）。清单第 5 步（`phase2-plan.md:179`）未复述名单，可接受 |
+| **R16**[P4] 缺依赖冲突检查 | **closed** | `phase2-plan.md:61`（`pip check` EXIT=0 + torch/numpy/opencv/python-docTR/paddlepaddle/paddleocr 六项与生产基线并排落盘 `phase2/env-manifest.txt`）+ `:175`（清单第 1 步） |
+| **R17**[P4] BJ05「唯一覆盖页」越界 | **closed**（事实核对通过；理由偏弱 P4） | `select_cases.py:49` + `case-selection.json` BJ05 `selected_reason` 改为「选中集内唯一 + 三页等价」。三页逐字核对一致：BJ01 `cases.json:4462/4465-4470`、BJ05 `:4741/4744-4749`、BJ09 `:5018/5021-5026` —— tags 同为 `huge_text/vertical_text/complex_background/rotated_text`，`text_type` 同为 `title_and_credits` ✓。P4：新增理由「选 BJ05=vol03 使 vol01/vol03/vol05 三卷都有代表页」**不具区分度**（vol01 有 BJ02-04、vol03 有 BJ06/BJ08、vol05 有 BJ10/BJ11，任选其一三卷均有代表） |
+| **R18**[P4] base 双口径 | **closed** | `doc/tasks/M2-TA3-B.md:14` `branch_base: 53fdfcc6` + R18 注记；`handoff:5` base=`53fdfcc6` 未动 |
+
+## 回潮与新问题
+
+**回潮：无。** 返修 8 文件全部落在允许面（`doc/tasks`、`doc/handoffs`、`experiments/M2-TA3-B/**`、`verification/M2-TA3-B/**`；`review-fix.diff` 的 8 个 `^diff --git` 逐一核对），无 `src/**`/`requirements.txt`/`packaging/**`/`apps/**`/`M2-TA3-A` 改动，无二进制/权重；R1-R18 未见被反向撤销的改动。
+
+**新问题（均不阻塞集成）**
+
+- **N1[P3]｜ko G1「未对齐」标签未贯通到阈值文档**：权威目录对 K11-K25 **全部 15 页**记为 `svg_text_layer_present_unaligned`（`cases.json:4318/4371/4424` 与 `:5563-6124`），返修也据此改了 manifest（`select_cases.py:99-101` 自述「not bbox-aligned transcriptions」）；但 `quality-thresholds.md:64` 仍给 ko G1「可信度 高（原生，非人工誊录）/全页覆盖」且无未对齐限定，`:66` 的 G3 假设 K11/K19 可逐 region 双源，`:195` Gate 4（ko G1 CER ≤0.20）也按「现成 GT」口径书写。`:86` 已把对齐定义为人工 bbox 指认，故这不是假陈述，而是**跨交付物的一致性/披露缺口**——建议 G1 行加一句「ko G1 为 present-but-unaligned，逐 region GT 需人工对齐，Gate 4 的 GT 强度与工作量据此登记」，并同步 O-3/Gate 4 注。
+- **N4[P4]｜R4/R5 的文档残留**：`phase2-plan.md:73` 行号错引（应为 `core_assembly.py:484-498`，调用点 `:782`）；`:86-89` 的裸 `UPDATE` 无 commit/upsert（durability 隐含依赖步骤 2 的 `with conn:`），建议改用 `PipelineDefaultsService.save_settings_section`（`pipeline_defaults.py:105`）或补 `with core.conn:`；`:109` 建议加 `core.credential_store is None → 转 (ii)`；vault ref 建议改用 `make_credential_ref("provider", …)`（`ports/providers/credentials.py:6/25-37`）；`:151` 末句关于 `SAKURA_DEFAULT_BASE_URL` 归属为假（见上表 R5）。
+- **N2[P4]｜旧口径交叉引用未同步**：`handoff:71` 与 `doc/tasks/M2-TA3-B.md:67` 仍写「key 只走环境变量 `TA3B_TRANSLATE_API_KEY`」，与返修后的 §3(a)（vault 为生产通路、env 须 re-register）不一致；`handoff:60`/`Task:62` 仍只描述 ndarray 输入侧绕行（R6 已改双侧）。
+- **N3[P4]｜交付版本可追溯性**：`doc/tasks/M2-TA3-B.md:6` `delivery_head` 与 handoff 文件名仍锚 `b057ec69`，而 r1 返修记录被追加进同名 `doc/handoffs/M2-TA3-B-b057ec69.md`（内容已属 `cad45622`）→ 哈希命名的 handoff 不再描述自身名字，集成方也没有字段指向被复核头。建议 `delivery_head: cad45622…`（或另立 handoff 名），以免集成方按旧头取 diff。
+- **N6[P4]｜取消 region 上限后估时未回看**：`phase2-plan.md:189` 仍写「20 case 估 1-2 小时」，该估时建立在 TA3-A 的 40 region 截断之上（`:31` 已取消），与 `--max-regions` 逃生阀的动机自相矛盾；另 `:167` 选项表仍把 (a) 的凭证写成「交由 runner 环境变量」（与 §3(a) 新口径不一致）。
+- **N5[P4]｜engine_factory 注入机制未点名**：`phase2-plan.md:37/41` 说「runner 组装时给 `PaddleKoreanOcrProvider` 注入 `engine_factory`」，但生产 registry 注册的是裸类（`runtime.py:522-536`，`PaddleKoreanOcrProvider()` 无参 → `engine_factory=None`），实际需 registry re-register／直接构造；§3(a)(ii) 对 translate 写明了 re-register，此处建议补一句同款机制。
+
+## NOT_VERIFIED（集成方运行时项）
+
+沙箱 `pwsh` 全程不可用（`SetNamedSecurityInfoW failed`），以下仅能由集成方复跑（沿用 r1 清单 1-6，并补本轮新增项）：
+
+1. （r1-1）`pip` 三包 EXIT=0 / 166s / py3.12.3 / `pip freeze` 原始输出与 numpy 2.5.3→2.3.5 记录。
+2. （r1-2）权重 424MB（HF）+171MB（`~/.paddlex/official_models`）存在性与体积。
+3. （r1-3）20 case `page_sha256` 独立实算（我只核对 manifest 与 `cases.json` 字段一致、且返修未改哈希行）。
+4. （r1-4）`select_cases.py` / `ocr_smoke.py` 命令 EXIT=0 与 JSON `status=OK`；本轮新增：`select_cases.py` 重跑的**实际 diff 复现**（静态一致性已过：仅新增/重标字段，selection 不变）。
+5. （r1-5）`git diff --check 53fdfcc6..cad45622` EXIT=0、禁改面专项 diff 为空、权重后缀 grep 为空、`status --porcelain` 为空、log 拓扑（`2beca0bb→b057ec69→53811c36→cad45622`）、以及 `review-fix.diff` 的 8 文件与 commit diffstat 逐字一致。
+6. （r1-6）PaddleOCR 3.x 在本环境 `ocr(ndarray)` 的真实返回结构与 `rec_polys` 类型（R6 wrapper 输出侧与 `_polygon_of` 物化要求的判定依赖实跑）；1 个真实 region 端到端 `PaddleKoreanOcrProvider(engine_factory=<wrapper>)`（阶段二第 0 步）。
+7. 新增：R4 步骤 1-3 的最小脚本实跑（同一 `core` 上写 profile → `save_provider_binding` → re-assemble → readiness 为 READY），用于确认 N4 的提交/顺序依赖；以及 Sakura `127.0.0.1:8080` 当前 reachability。
+
+## 推荐下一步
+
+交集成方（Codex/编排会话）按闭合清单第 1-6 条执行运行时复跑并更新 `delivery_head` 指向 `cad45622`，随后把 N1/N4/N6 三条文档修正并入阶段二首个 Task 一并落地（无需再开一轮 r3 复核）。

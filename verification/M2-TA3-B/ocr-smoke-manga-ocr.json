@@ -1,0 +1,13 @@
+{
+  "engine": "manga-ocr",
+  "model": "kha-white/manga-ocr-base",
+  "status": "OK",
+  "weights_load_s": 10.5,
+  "first_inference_s": 0.22,
+  "text_preview": "．．．",
+  "text_length": 3,
+  "image": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol01\\pages\\vol01_p0053.png",
+  "image_sha256": "c1ce06205b8e64c1a199f1adbab3bdaa9aff46d67abc8283bd4ef28ea6dd5417",
+  "started_at_utc": "2026-10-01T07:47:21Z",
+  "wall_s": 10.91
+}
