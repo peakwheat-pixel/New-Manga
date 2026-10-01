@@ -655,6 +655,24 @@ def _resolve_detector_weights_path(
     return data_root_candidate
 
 
+def _detected_region_type(provider_label: str) -> RegionType:
+    """M2-SFX-PROD-1: dispatch a detected candidate's label to its RegionType.
+
+    The ``sfx-`` prefix (the standalone SFX provider's anonymous label form)
+    maps to ``RegionType.SFX`` so the existing SfxPolicy gate (default SKIP)
+    takes over automatically; every other label — the manga backends'
+    ``manga-<n>`` blocks, the doctr/unmapped placeholders — keeps the
+    historical SPEECH default (zero behavior change for the existing
+    providers). Module-level so the dispatch matrix is testable without an
+    assembled service.
+    """
+    return (
+        RegionType.SFX
+        if provider_label.startswith(SFX_LABEL_PREFIX)
+        else RegionType.SPEECH
+    )
+
+
 def default_data_root() -> Path:
     root = os.environ.get("NEWMANGA_DATA_ROOT")
     if root:
@@ -926,15 +944,10 @@ def assemble_core_services(
                 bbox=BBox(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)),
                 polygon=tuple((int(round(x)), int(round(y))) for x, y in polygon),
             )
-            region_type = (
-                RegionType.SFX
-                if provider_label.startswith(SFX_LABEL_PREFIX)
-                else RegionType.SPEECH
-            )
             region = editing.create_region(
                 page_id,
                 geometry,
-                region_type=region_type,
+                region_type=_detected_region_type(provider_label),
                 reading_order=reading_order,
                 origin=RegionOrigin.MACHINE,
             )

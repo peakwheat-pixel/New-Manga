@@ -413,6 +413,12 @@ def _sfx_boxes(
         box, confidence, cls_id = cand[i]
         if cls_id != SFX_CLASS_ID:
             continue
+        if not 0.0 <= confidence <= 1.0:
+            raise ProviderInvalidOutput(
+                f"sfx detector confidence out of range: {confidence}",
+                provider_id=PROVIDER_SFX,
+                stage="detection",
+            )
         x0, y0, x1, y1 = _map_back(box, scale, page_w=page_w, page_h=page_h)
         if x1 <= x0 or y1 <= y0:
             continue  # degenerate after mapping: no polygon to create

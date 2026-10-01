@@ -286,6 +286,70 @@ def test_detect_lands_candidates_as_regions_and_ocr_advances(workspace):
     assert len(detector.requests) == 1
 
 
+def test_detect_passes_provider_label_for_sfx_dispatch(workspace):
+    """M2-SFX-PROD-1 AC3: the handler hands each candidate's anonymous
+    provider_label to the region creator as the 5th argument, and the
+    production dispatch (``_detected_region_type``) turns the ``sfx-`` prefix
+    into ``RegionType.SFX`` — an SFX region lands beside the SPEECH one, with
+    the SfxPolicy default (SKIP) it will be governed by."""
+    from application.editing.service import RegionEditingService
+    from bootstrap.core_assembly import _detected_region_type
+    from domain.regions.entities import BBox, RegionGeometry, RegionOrigin, RegionType
+
+    creator_labels: list[str] = []
+
+    def creator(page_id, polygon, reading_order, provenance, provider_label=""):
+        creator_labels.append(provider_label)
+        xs = [int(round(x)) for x, _ in polygon]
+        ys = [int(round(y)) for _, y in polygon]
+        region = editing.create_region(
+            page_id,
+            RegionGeometry(
+                bbox=BBox(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)),
+                polygon=tuple((int(round(x)), int(round(y))) for x, y in polygon),
+            ),
+            region_type=_detected_region_type(provider_label),
+            reading_order=reading_order,
+            origin=RegionOrigin.MACHINE,
+        )
+        return region.region_id
+
+    editing = RegionEditingService(workspace["regions"])
+    detector = FakeDetector(
+        _detection(
+            RegionCandidate(
+                polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+                provider_label="manga-1",
+            ),
+            RegionCandidate(
+                polygon=((20.0, 8.0), (30.0, 8.0), (30.0, 12.0)),
+                reading_order=2,
+                confidence=0.93,
+                provider_label="sfx-1",
+            ),
+        )
+    )
+    service = _pipeline(workspace, detector=detector, region_creator=creator)
+    run = service.create_run(
+        CommandType.TRANSLATE_ALL,
+        PipelineScope(ScopeType.CHAPTER, chapter_id="chapter-1"),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert creator_labels == ["manga-1", "sfx-1"]
+    regions = sorted(
+        workspace["regions"].list_regions("page-1"),
+        key=lambda region: region.reading_order,
+    )
+    assert [region.region_type for region in regions] == [
+        RegionType.SPEECH,
+        RegionType.SFX,
+    ]
+    assert regions[1].sfx_policy.value == "skip"
+    assert executed.step_runs[0].status is StepRunStatus.COMPLETED
+
+
 def test_detect_reuses_existing_live_regions(workspace):
     """AC ② idempotency: when Regions appear on the page between planning
     and execution (the only way a page-level ``detect`` unit coexists with
