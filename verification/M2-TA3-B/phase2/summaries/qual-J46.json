@@ -1,0 +1,211 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "J46",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "open_public_comic_page",
+  "tags": [
+    "horizontal_text"
+  ],
+  "text_type": "japanese_end_card_and_credits",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\02_open_ground_truth_peppercarrot\\ep20\\ja_Pepper-and-Carrot_by-David-Revoy_E20P06.jpg",
+  "source_sha256": "495a02acf23ac1655ccc7f2e3e8321fd37f31b1d480fec9bee7f44f8ccc9f639",
+  "started_at_utc": "2026-10-01T10:15:37Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 1200,
+      "height": 1660,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "5ee4be8602f041d69e80fe7811be62a9",
+      "width": 1200,
+      "height": 1660
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 13.47
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 1
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 1
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 1,
+      "truncated": false,
+      "elapsed_s": 7.3
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 1,
+      "translated": 1
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "7458110fff6c15e9",
+      "size": 2674954
+    }
+  },
+  "run1": {
+    "run_id": "run-832e6fbc5d0941379c13ce6bd924fec5",
+    "status": "completed",
+    "elapsed_s": 13.47,
+    "steps": [
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "eb4ae7060c1c4710bf94bfc1f7b6b8ef",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 97,
+        "y": 1525,
+        "width": 1006,
+        "height": 90
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 1,
+    "region_runs_executed": 1,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "eb4ae7060c1c4710bf94bfc1f7b6b8ef",
+        "run_id": "run-d185148d0e0147f898c304566d057695",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 7.3
+  },
+  "ocr_details": [
+    {
+      "region_id": "eb4ae7060c1c4710bf94bfc1f7b6b8ef",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 97,
+        "y": 1525,
+        "width": 1006,
+        "height": 90
+      },
+      "ocr_text": "これからはお客様のお客さんのお店でありますので、"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "eb4ae7060c1c4710bf94bfc1f7b6b8ef",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "これからはお客様のお客さんのお店でありますので、",
+      "translated_text": "从现在起，这里是客人您的客人的店铺了，",
+      "final_translation": "从现在起，这里是客人您的客人的店铺了，",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-b669da85bc9d",
+    "file": "J46-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\export\\J46-translated.png",
+    "sha256": "7458110fff6c15e96ed46d2fe50f24cf08362d578c9a1306f8b3af1ee33d2237",
+    "size": 2674954,
+    "translated_revision_id": "12a0e77a4111451fb6b71debccb85e11"
+  },
+  "attribution": [],
+  "source_size": [
+    1200,
+    1660
+  ],
+  "source_sha256_recomputed": "495a02acf23ac1655ccc7f2e3e8321fd37f31b1d480fec9bee7f44f8ccc9f639",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-J46-p46g7ezn",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\ocr\\crops\\J46",
+  "finished_at_utc": "2026-10-01T10:15:58Z",
+  "wall_s": 20.86,
+  "pipeline_completed": true
+}

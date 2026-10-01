@@ -1,0 +1,305 @@
+{
+  "task": "M2-TA3-B2",
+  "generated_at_utc": "2026-10-01",
+  "note": "consolidated re-summary of all qual-*.json (main pass), after the K11 ocr.script fix rerun; K11 run2 carries 2 typed term_extract INVALID_INPUT failures on OCR-empty regions (data attribution, honestly kept)",
+  "failures": 10,
+  "cases": [
+    {
+      "case_id": "BJ02",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 5,
+      "n_translated": 5,
+      "export_status": "OK",
+      "export_sha256": "5c74a4f01e053ee2c6427adf2fe6659687257660c98fc1997d9f56fb15e75528",
+      "attribution": [],
+      "wall_s": 161.5
+    },
+    {
+      "case_id": "BJ03",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 2,
+      "n_translated": 2,
+      "export_status": "OK",
+      "export_sha256": "795112d12718b85a8d434226cf2344104d2b61d9a80ab6e9520d968f97e1c834",
+      "attribution": [],
+      "wall_s": 109.61
+    },
+    {
+      "case_id": "BJ04",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 3,
+      "n_translated": 3,
+      "export_status": "OK",
+      "export_sha256": "f9ff9ac5b34be47d3cfe5df90b304261a756b052b579868bac0f28a5d72c1b94",
+      "attribution": [],
+      "wall_s": 107.44
+    },
+    {
+      "case_id": "BJ05",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 1,
+      "n_translated": 1,
+      "export_status": "OK",
+      "export_sha256": "cf99eff52e07bb603ecad81ec97f86875d4c108880be47a9af29fe100fc22931",
+      "attribution": [],
+      "wall_s": 87.97
+    },
+    {
+      "case_id": "BJ06",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 17,
+      "n_translated": 9,
+      "export_status": "OK",
+      "export_sha256": "fc3f7981df30a4654c7507238c5a301e70eee3a42506f9787a91b2f241898674",
+      "attribution": [],
+      "wall_s": 263.59
+    },
+    {
+      "case_id": "BJ08",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 3,
+      "n_translated": 3,
+      "export_status": "OK",
+      "export_sha256": "40610e2812add78e8021764f0d3d365a6238aca4b88c533c875f09aa0fd471c3",
+      "attribution": [],
+      "wall_s": 99.86
+    },
+    {
+      "case_id": "BJ10",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 11,
+      "n_translated": 11,
+      "export_status": "OK",
+      "export_sha256": "f06888e9a33bd3dcbd05224f6b3ce5bfc8d03172108edaa8155bd0ecd4b79a19",
+      "attribution": [],
+      "wall_s": 315.84
+    },
+    {
+      "case_id": "BJ11",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 8,
+      "n_translated": 8,
+      "export_status": "OK",
+      "export_sha256": "621f4a5eba198df1ad62153edfad54ca1e9c7cb739f17f1929c4900ffcdad14d",
+      "attribution": [],
+      "wall_s": 228.11
+    },
+    {
+      "case_id": "J46",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 1,
+      "n_translated": 1,
+      "export_status": "OK",
+      "export_sha256": "7458110fff6c15e96ed46d2fe50f24cf08362d578c9a1306f8b3af1ee33d2237",
+      "attribution": [],
+      "wall_s": 20.86
+    },
+    {
+      "case_id": "J47",
+      "language": "ja",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "run2_status": "completed",
+      "region_count": 5,
+      "n_translated": 5,
+      "export_status": "OK",
+      "export_sha256": "4d9bc366ed7b80b7614c0498a9b3d4a8b449de4aa9f9795ec7c2c8c17894964a",
+      "attribution": [],
+      "wall_s": 59.98
+    },
+    {
+      "case_id": "K01",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": "completed_with_failures",
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ],
+      "wall_s": 2.78
+    },
+    {
+      "case_id": "K02",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": "completed_with_failures",
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ],
+      "wall_s": 1.46
+    },
+    {
+      "case_id": "K04",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": "completed_with_failures",
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ],
+      "wall_s": 1.9
+    },
+    {
+      "case_id": "K05",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": "completed_with_failures",
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ],
+      "wall_s": 2.29
+    },
+    {
+      "case_id": "K07",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": null,
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "environment:import-failed"
+      ],
+      "wall_s": 0.11
+    },
+    {
+      "case_id": "K08",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": "completed_with_failures",
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ],
+      "wall_s": 2.49
+    },
+    {
+      "case_id": "K09",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": null,
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "environment:import-failed"
+      ],
+      "wall_s": 0.09
+    },
+    {
+      "case_id": "K10",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": null,
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "environment:import-failed"
+      ],
+      "wall_s": 0.08
+    },
+    {
+      "case_id": "K11",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": "completed",
+      "run2_status": "completed_with_failures",
+      "region_count": 13,
+      "n_translated": 11,
+      "export_status": "OK",
+      "export_sha256": "2c5dee05b309e90d021dfdebb124b790274625ff11046c20990d935df1e41b1a",
+      "attribution": [
+        "defect:run2-region-chain"
+      ],
+      "wall_s": 89.42
+    },
+    {
+      "case_id": "K19",
+      "language": "ko",
+      "pipeline_completed": false,
+      "run1_status": "completed_with_failures",
+      "run2_status": null,
+      "region_count": 0,
+      "n_translated": 0,
+      "export_status": null,
+      "export_sha256": "",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ],
+      "wall_s": 1.04
+    }
+  ],
+  "rerun": [
+    {
+      "case_id": "K11",
+      "sha256_first": "2c5dee05b309e90d021dfdebb124b790274625ff11046c20990d935df1e41b1a",
+      "sha256_second": "86ff9aa780350d490d28b147e2399a770014b6fdbef2fecace890ad9b52d2da1",
+      "match": false,
+      "region_count_first": 13,
+      "region_count_second": 13,
+      "wall_s_second": 68.95
+    }
+  ]
+}

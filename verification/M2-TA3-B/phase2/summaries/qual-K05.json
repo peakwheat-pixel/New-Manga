@@ -1,0 +1,91 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K05",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "complex_background"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K05_131385_302\\base.png",
+  "source_sha256": "d944f35ee07544920715671a54bb238b0451be0e5f4c76b6b301f67fbd1c448a",
+  "started_at_utc": "2026-10-01T10:17:04Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 690,
+      "height": 46000,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "39abacdff67f4d578f518b3b5c0a12d8",
+      "width": 690,
+      "height": 46000
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "elapsed_s": 1.86
+    },
+    "detect": {
+      "status": "EMPTY",
+      "region_count": 0
+    },
+    "run2_region_chain": {
+      "status": "SKIPPED",
+      "reason": "no regions detected",
+      "attribution": "data"
+    }
+  },
+  "run1": {
+    "run_id": "run-70d4fe4f254147e893a183d7f566c0ff",
+    "status": "completed_with_failures",
+    "elapsed_s": 1.86,
+    "steps": [
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "detector returned no candidates for page '39abacdff67f4d578f518b3b5c0a12d8' (stage=detect)"
+      }
+    ]
+  },
+  "regions": [],
+  "run2": {},
+  "ocr_details": [],
+  "translate_details": [],
+  "export": {},
+  "attribution": [
+    "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "data:no-regions-detected"
+  ],
+  "source_size": [
+    690,
+    46000
+  ],
+  "source_sha256_recomputed": "d944f35ee07544920715671a54bb238b0451be0e5f4c76b6b301f67fbd1c448a",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K05-3l704t2x",
+  "finished_at_utc": "2026-10-01T10:17:06Z",
+  "wall_s": 2.29,
+  "pipeline_completed": false
+}

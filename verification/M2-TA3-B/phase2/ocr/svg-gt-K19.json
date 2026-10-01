@@ -1,0 +1,15 @@
+{
+  "case_id": "K19",
+  "lang": "kr",
+  "zip": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\韩漫_KO\\02_public_ground_truth_peppercarrot\\ep20\\ep20_The-Picnic_lang-pack.zip",
+  "member": "lang/kr/E20P01.svg",
+  "zip_svg_member_count": 352,
+  "canvas_wh": [
+    "2481",
+    "3503"
+  ],
+  "n_text_elements": 0,
+  "n_text_kind": 0,
+  "n_flowroot_kind": 0,
+  "text_elements": []
+}

@@ -52,8 +52,14 @@ def build_wrapper(image_bytes: bytes):
                 enable_mkldnn=False,
             )
 
-        def ocr(self, data: bytes):  # noqa: A002 - mirror adapter signature
-            arr = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
+        def ocr(self, data):  # noqa: A002 - mirror adapter signature
+            if isinstance(data, np.ndarray):
+                # post-M2-OCR-PADDLE3X-1 adapters hand the decoded BGR array
+                # to injected engines (injection contract, DSH r1 R2 there);
+                # pre-merge checkouts still hand raw crop bytes.
+                arr = data
+            else:
+                arr = cv2.imdecode(np.frombuffer(data, dtype=np.uint8), cv2.IMREAD_COLOR)
             if arr is None:
                 raise ValueError("cannot decode region crop bytes")
             results = self._engine.predict(arr)

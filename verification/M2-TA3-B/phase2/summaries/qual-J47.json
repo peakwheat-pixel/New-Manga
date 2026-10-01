@@ -1,0 +1,364 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "J47",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "open_public_comic_page",
+  "tags": [
+    "horizontal_text",
+    "tiny_text"
+  ],
+  "text_type": "dense_multilingual_credits",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\02_open_ground_truth_peppercarrot\\ep20\\ja_Pepper-and-Carrot_by-David-Revoy_E20P07.jpg",
+  "source_sha256": "79ae6668f8fa2ba97b87f4ce8e8b1b787b2a1c7d982f93f3e0a4ce389480e6cc",
+  "started_at_utc": "2026-10-01T10:15:58Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 1200,
+      "height": 2144,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "fbb3fbd0fd484f00b1d0e57894b3989f",
+      "width": 1200,
+      "height": 2144
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 12.88
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 5
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 5
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 5,
+      "truncated": false,
+      "elapsed_s": 46.87
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 5,
+      "translated": 5
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "4d9bc366ed7b80b7",
+      "size": 3681300
+    }
+  },
+  "run1": {
+    "run_id": "run-343202b6077943fba75cc63e53d2d5dc",
+    "status": "completed",
+    "elapsed_s": 12.88,
+    "steps": [
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "a3ace0089dd6491680448d539032aedc",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 346,
+        "y": 50,
+        "width": 573,
+        "height": 213
+      }
+    },
+    {
+      "region_id": "7ed075cf63834daea19cd93dceb461bd",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 227,
+        "y": 222,
+        "width": 817,
+        "height": 467
+      }
+    },
+    {
+      "region_id": "2e2f9591b4754b4abba74e309b3f165a",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 226,
+        "y": 225,
+        "width": 820,
+        "height": 1636
+      }
+    },
+    {
+      "region_id": "346f4ed8ff8146e09c203f2c9635d2d7",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 224,
+        "y": 1287,
+        "width": 822,
+        "height": 570
+      }
+    },
+    {
+      "region_id": "867b5090d01243ac8d8df06f00462027",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 221,
+        "y": 2011,
+        "width": 757,
+        "height": 53
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 5,
+    "region_runs_executed": 5,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "a3ace0089dd6491680448d539032aedc",
+        "run_id": "run-911eca47369b4dfb83f672dd474512cc",
+        "status": "completed"
+      },
+      {
+        "region_id": "7ed075cf63834daea19cd93dceb461bd",
+        "run_id": "run-71040e1913234e60969734ea8d9c4a5f",
+        "status": "completed"
+      },
+      {
+        "region_id": "2e2f9591b4754b4abba74e309b3f165a",
+        "run_id": "run-cb3929a9b40d43ada629b3f29ca840fa",
+        "status": "completed"
+      },
+      {
+        "region_id": "346f4ed8ff8146e09c203f2c9635d2d7",
+        "run_id": "run-ae1f69266fc4412394a743ed34fd12af",
+        "status": "completed"
+      },
+      {
+        "region_id": "867b5090d01243ac8d8df06f00462027",
+        "run_id": "run-2fb826e625424249bbb0ad154bdba220",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 46.87
+  },
+  "ocr_details": [
+    {
+      "region_id": "a3ace0089dd6491680448d539032aedc",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 346,
+        "y": 50,
+        "width": 573,
+        "height": 213
+      },
+      "ocr_text": "Ａｍａｚｏｎはお金についてオープンツーツで話しているのですが、このセリーがなかったのでしょうか。このような情報は「ＰＣＰＯＰＣＯＭＡ」のＷｅｒＷｅｎｄｅｒｏｎｄｏｎｅｎｅｒｅｄｅｓｅｒａｌｅｓｈｅｒｄｅｎｔｅｒｉｃｈｅｓｔｅｓｓｈｏｒｏｒｅｓａｎｅｓです。ことは、"
+    },
+    {
+      "region_id": "7ed075cf63834daea19cd93dceb461bd",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 227,
+        "y": 222,
+        "width": 817,
+        "height": 467
+      },
+      "ocr_text": "そういえば、"
+    },
+    {
+      "region_id": "2e2f9591b4754b4abba74e309b3f165a",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 226,
+        "y": 225,
+        "width": 820,
+        "height": 1636
+      },
+      "ocr_text": "そういえば、"
+    },
+    {
+      "region_id": "346f4ed8ff8146e09c203f2c9635d2d7",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 224,
+        "y": 1287,
+        "width": 822,
+        "height": 570
+      },
+      "ocr_text": "そういえば、"
+    },
+    {
+      "region_id": "867b5090d01243ac8d8df06f00462027",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 221,
+        "y": 2011,
+        "width": 757,
+        "height": 53
+      },
+      "ocr_text": "おまえの部屋の中には、コメンターネットではなかったのですが、"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "a3ace0089dd6491680448d539032aedc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "Ａｍａｚｏｎはお金についてオープンツーツで話しているのですが、このセリーがなかったのでしょうか。このような情報は「ＰＣＰＯＰＣＯＭＡ」のＷｅｒＷｅｎｄｅｒｏｎｄｏｎｅｎｅｒｅｄｅｓｅｒａｌｅｓｈｅｒｄｅｎｔｅｒｉｃｈｅｓｔｅｓｓｈｏｒｏｒｅｓａｎｅｓです。ことは、",
+      "translated_text": "Amazon 正在用 OpenToots 谈论金钱，但难道没有这个系列吗？这类信息是「PCPOPCOM」的 WerWenderondoneereredeseralesherdent erichtesteshororesanes。事情是，",
+      "final_translation": "Amazon 正在用 OpenToots 谈论金钱，但难道没有这个系列吗？这类信息是「PCPOPCOM」的 WerWenderondoneereredeseralesherdent erichtesteshororesanes。事情是，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7ed075cf63834daea19cd93dceb461bd",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "そういえば、",
+      "translated_text": "说起来，",
+      "final_translation": "说起来，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2e2f9591b4754b4abba74e309b3f165a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "そういえば、",
+      "translated_text": "话说回来，",
+      "final_translation": "话说回来，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "346f4ed8ff8146e09c203f2c9635d2d7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "そういえば、",
+      "translated_text": "说起来，",
+      "final_translation": "说起来，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "867b5090d01243ac8d8df06f00462027",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "おまえの部屋の中には、コメンターネットではなかったのですが、",
+      "translated_text": "你的房间里，虽然没有评论网络，",
+      "final_translation": "你的房间里，虽然没有评论网络，",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-6b7bab579ad7",
+    "file": "J47-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\export\\J47-translated.png",
+    "sha256": "4d9bc366ed7b80b7614c0498a9b3d4a8b449de4aa9f9795ec7c2c8c17894964a",
+    "size": 3681300,
+    "translated_revision_id": "21a28e546e8247d29381b8f9f7d2b4d1"
+  },
+  "attribution": [],
+  "source_size": [
+    1200,
+    2144
+  ],
+  "source_sha256_recomputed": "79ae6668f8fa2ba97b87f4ce8e8b1b787b2a1c7d982f93f3e0a4ce389480e6cc",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-J47-c4ntt5uj",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\ocr\\crops\\J47",
+  "finished_at_utc": "2026-10-01T10:16:58Z",
+  "wall_s": 59.98,
+  "pipeline_completed": true
+}

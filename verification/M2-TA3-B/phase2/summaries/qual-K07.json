@@ -1,0 +1,64 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K07",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "multi_speaker"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K07_641253_141\\base.png",
+  "source_sha256": "95435126bab04dba89d34fa230eb49ff39110e546da982cd407c4a49e3527dea",
+  "started_at_utc": "2026-10-01T10:17:06Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 690,
+      "height": 131289,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "FAIL",
+      "error": "RuntimeError: import failed: 1 failed",
+      "attribution": "environment"
+    }
+  },
+  "run1": {},
+  "regions": [],
+  "run2": {},
+  "ocr_details": [],
+  "translate_details": [],
+  "export": {},
+  "attribution": [
+    "environment:import-failed"
+  ],
+  "source_size": [
+    690,
+    131289
+  ],
+  "source_sha256_recomputed": "95435126bab04dba89d34fa230eb49ff39110e546da982cd407c4a49e3527dea",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K07-8ax55yq_",
+  "finished_at_utc": "2026-10-01T10:17:07Z",
+  "wall_s": 0.11,
+  "pipeline_completed": false
+}

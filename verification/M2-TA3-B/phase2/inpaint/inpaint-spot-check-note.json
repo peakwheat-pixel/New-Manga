@@ -1,0 +1,6 @@
+{
+  "task": "M2-TA3-B2",
+  "note": "SimpleFillProvider = basic fill; this audit checks execution correctness only (region processed, artifact renders) - de-texting quality is OUT of scope by provider selection (thresholds §4, no numeric gate)",
+  "sfx_layer": "not sampled: production SfxPolicy default SKIP means SFX regions have no automatic inpaint artifact this run (honest registration)",
+  "n": 8
+}
