@@ -1,0 +1,9 @@
+unit_id,case_id,region_id,layer,exported_png_path,bbox_in_export,residue_visible,rationale
+"BJ02:87ae84fc","BJ02","87ae84fc5b204fb0a5c2f7b0f542c3d3","complex_background","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ02-translated.png","{""x"": 430, ""y"": 1536, ""width"": 396, ""height"": 459}","",""
+"BJ02:87839793","BJ02","878397930f4f4a75abe84b57d3fc04a0","complex_background","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ02-translated.png","{""x"": 2250, ""y"": 1552, ""width"": 274, ""height"": 430}","",""
+"BJ02:3df2f8e2","BJ02","3df2f8e293be4f4a901dd0c59f2f2a48","complex_background","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ02-translated.png","{""x"": 2139, ""y"": 2108, ""width"": 418, ""height"": 635}","",""
+"BJ04:22f84bbd","BJ04","22f84bbda66147ec9513cd1ef8e28214","plain_balloon","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ04-translated.png","{""x"": 1273, ""y"": 681, ""width"": 400, ""height"": 480}","",""
+"BJ04:83d74b73","BJ04","83d74b73a99b4421bee05aae6b89d0c0","plain_balloon","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ04-translated.png","{""x"": 1174, ""y"": 1207, ""width"": 629, ""height"": 211}","",""
+"BJ04:f412b623","BJ04","f412b6230b2a4795bc160cd98f57fd7d","plain_balloon","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ04-translated.png","{""x"": 919, ""y"": 2572, ""width"": 1155, ""height"": 1132}","",""
+"BJ08:6621c6fa","BJ08","6621c6fad8bd44498211cf518bd3fc1c","plain_balloon","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ08-translated.png","{""x"": 1272, ""y"": 702, ""width"": 454, ""height"": 459}","",""
+"BJ08:ddb81463","BJ08","ddb8146388f240618e3f38a87fe6520e","plain_balloon","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\export\BJ08-translated.png","{""x"": 1164, ""y"": 1207, ""width"": 657, ""height"": 212}","",""

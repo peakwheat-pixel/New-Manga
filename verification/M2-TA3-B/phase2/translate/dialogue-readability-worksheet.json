@@ -1,0 +1,36 @@
+{
+  "task": "M2-TA3-B2",
+  "worksheet": "dialogue readability (thresholds §3.2)",
+  "anchor": "5=professional/4=minor flaws/3=readable-but-rough/2=multiple errors/1=unusable; per-dimension; region score = mean",
+  "gate_proposal": "median >= 3.5 AND share(score>=3) >= 80% (USER to rule; directional)",
+  "ai_prefill": "DeepSeek self-evaluation (self-anchoring risk declared); user audit = only verdict",
+  "n": 26,
+  "per_language": {
+    "ja": 15,
+    "ko": 11
+  },
+  "pool_sizes": {
+    "ja": 48,
+    "ko": 11
+  },
+  "generated_at_utc": "2026-10-01T10:36:08Z",
+  "owner_spot_calibration": {
+    "method": "owner read 6 region crops against source/translation (4 ko K11 alignment checks + 2 ja translation-quality checks)",
+    "k11_alignment": "4/4 crops match their GT text (당근아? / 어라? 침대 밑에도 없네? / 이렇게까지는... / 꼴륵-style onomatopoeia) - automatic ko G1 alignment verified at sample level",
+    "translation_calibration": [
+      {
+        "unit": "BJ02:985b15b0",
+        "crop_text": "悪いって事だ",
+        "ai_draft_mean": 3.0,
+        "owner_note": "ai_draft direction correct: cross-region rhetoric (強い=悪い) is indeed flattened by the translation; faithfulness could arguably be 2"
+      },
+      {
+        "unit": "BJ06:fb648685",
+        "crop_text": "苦しそうに息をしたあとしばらく息が止まるというのをくり返しています!!",
+        "ai_draft_mean": 4.3,
+        "owner_note": "faithfulness 5 slightly generous (added subject, reordered); owner would say 4 - self-evaluation skews mildly high, as declared in thresholds §3.2 anchoring note"
+      }
+    ],
+    "conclusion": "ai_draft is directionally useful with a mild high bias; USER audit remains the only verdict (C1 precedent)"
+  }
+}

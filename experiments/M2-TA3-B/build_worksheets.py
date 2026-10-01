@@ -298,8 +298,56 @@ def main() -> int:
         ocr_rows,
     )
 
-    print(f"dialogue worksheet: n={len(worksheet_rows)} -> translate/dialogue-readability-worksheet.csv")
-    print(f"sfx worksheet: n={len(sfx_rows)} (expected 0 this run)")
+    # ---- 4. inpaint qualitative spot-check skeleton (§4, 10 regions) -------
+    # SimpleFillProvider = basic fill; this sheet audits EXECUTION correctness
+    # (region processed, artifact renders), never de-texting quality.
+    inpaint_rows: list[dict] = []
+    complex_cases = {"BJ02", "BJ03", "BJ05", "BJ06", "BJ10", "K05", "K09"}
+    plain_quota, complex_quota = 5, 3
+    for summary in summaries:
+        export_info = summary.get("export", {})
+        if export_info.get("status") != "OK":
+            continue
+        for detail in summary.get("ocr_details", []):
+            layer = (
+                "complex_background"
+                if summary["case_id"] in complex_cases
+                else "plain_balloon"
+            )
+            cap = complex_quota if layer == "complex_background" else plain_quota
+            current = sum(1 for r in inpaint_rows if r["layer"] == layer)
+            if current >= cap:
+                continue
+            inpaint_rows.append(
+                {
+                    "unit_id": f"{summary['case_id']}:{detail['region_id'][:8]}",
+                    "case_id": summary["case_id"],
+                    "region_id": detail["region_id"],
+                    "layer": layer,
+                    "exported_png_path": export_info.get("pixel_path", ""),
+                    "bbox_in_export": json.dumps(detail.get("bbox", {}), ensure_ascii=False),
+                    "residue_visible": "",  # user: no / slight / yes
+                    "rationale": "",
+                }
+            )
+    write_csv(
+        PHASE2 / "inpaint" / "inpaint-spot-check-worksheet.csv",
+        ["unit_id", "case_id", "region_id", "layer", "exported_png_path", "bbox_in_export", "residue_visible", "rationale"],
+        inpaint_rows,
+    )
+    (PHASE2 / "inpaint" / "inpaint-spot-check-note.json").write_text(
+        json.dumps(
+            {
+                "task": "M2-TA3-B2",
+                "note": "SimpleFillProvider = basic fill; this audit checks execution correctness only (region processed, artifact renders) - de-texting quality is OUT of scope by provider selection (thresholds §4, no numeric gate)",
+                "sfx_layer": "not sampled: production SfxPolicy default SKIP means SFX regions have no automatic inpaint artifact this run (honest registration)",
+                "n": len(inpaint_rows),
+            },
+            ensure_ascii=False, indent=2,
+        ) + "\n",
+        encoding="utf-8",
+    )
+    print(f"inpaint spot-check skeleton: n={len(inpaint_rows)} -> inpaint/inpaint-spot-check-worksheet.csv")
     print(f"ocr spot-check skeleton: n={len(ocr_rows)} -> ocr/ocr-spot-check-worksheet.csv")
     return 0
 

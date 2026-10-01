@@ -1,0 +1,19 @@
+# M2-TA3-B2 phase-2 env manifest (R16: fused single venv, plan §2.4 option A)
+# venv: G:/CODEX/New Manga.task-envs/M2-TA3-B-ocr/ (isolated OCR venv + production requirements installed 2026-10-01)
+# pip check: EXIT=0 (No broken requirements found)
+# imports self-check: manga_ocr, paddleocr, PySide6, doctr, onnxruntime, torch, torchvision all OK
+
+package | fused venv | production baseline (requirements.txt / main venv) | delta note
+torch | 2.14.0 | 2.14.0 (pinned) | downgraded 2.14.1->2.14.0 to match production pin; manga-ocr smoke unchanged
+torchvision | 0.29.0 | 0.29.0 (pinned) | new install (required by python-doctr)
+numpy | 2.3.5 | 2.5.3 (main venv) | stays at the paddle-driven 2.3.5 from stage-1 smoke (known precedent); production chain verified working on it in this run
+opencv | 5.0.0 via opencv-contrib-python==4.10.0.84 opencv-python==5.0.0.93  | opencv-python 5.0.0.93 (main venv, pulled by python-doctr) | DUAL packaging present (opencv-contrib-python 4.10.0.84 from paddleocr + opencv-python 5.0.0.93 from python-doctr); import cv2 resolves to 5.0.0.93; paddle 3.3.1 verified working end-to-end on the K11 region probe with this cv2
+python-doctr | 1.1.0 | 1.1.0 (pinned) | match
+paddlepaddle | 3.3.1 | (not in production requirements) | OCR-stack only, enable_mkldnn=False mandatory (stage-1 finding 1)
+paddleocr | 3.7.0 | (not in production requirements) | OCR-stack only; 3.x bytes/shape gap wrapped via engine_factory wrapper (src untouched)
+transformers | 5.17.0 | 5.17.0 (pinned) | downgraded 5.18.0->5.17.0 to match production pin; manga-ocr verified working
+PySide6 | 6.11.2 (Essentials) | 6.11.2 (pinned) | new install (Qt offscreen assembly + render)
+onnxruntime | 1.30.0 | 1.30.0 (pinned) | new install (chiqui7 SFX detector)
+manga-ocr | 0.1.16 | (OCR-stack only) | ja OCR engine
+
+# full freeze snapshots (Git-external): task-envs/M2-TA3-B/fusion/pre-fusion-freeze.txt + pip-install.log

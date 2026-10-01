@@ -1,0 +1,76 @@
+{
+  "case_id": "J46",
+  "lang": "ja",
+  "zip": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\02_open_ground_truth_peppercarrot\\ep20\\ep20_The-Picnic_lang-pack.zip",
+  "member": "lang/ja/E20P06.svg",
+  "zip_svg_member_count": 352,
+  "canvas_wh": [
+    "2481",
+    "3503"
+  ],
+  "n_text_elements": 4,
+  "n_text_kind": 4,
+  "n_flowroot_kind": 0,
+  "text_elements": [
+    {
+      "kind": "text",
+      "anchor": [
+        1235.22896882273,
+        3256.4664733456198
+      ],
+      "polygon": [
+        [
+          1235.22896882273,
+          3256.4664733456198
+        ]
+      ],
+      "text": "- おしまい -",
+      "transform": "matrix(0.75304346,0,-0.11971288,1.3279446,3e-5,11.481528)"
+    },
+    {
+      "kind": "text",
+      "anchor": [
+        1240.0964,
+        3299.01
+      ],
+      "polygon": [
+        [
+          1240.0964,
+          3299.01
+        ]
+      ],
+      "text": "12/2016 - www.peppercarrot.com - Art & Scenario : David Revoy - Translation : guruguru",
+      "transform": ""
+    },
+    {
+      "kind": "text",
+      "anchor": [
+        1242.353,
+        3335.1028
+      ],
+      "polygon": [
+        [
+          1242.353,
+          3335.1028
+        ]
+      ],
+      "text": "Based on the universe of Hereva created by David Revoy with contributions by Craig Maloney. Corrections by Willem Sonke, Moini, Hali, CGand and Alex Gryson.",
+      "transform": ""
+    },
+    {
+      "kind": "text",
+      "anchor": [
+        1240.6473,
+        3372.8738
+      ],
+      "polygon": [
+        [
+          1240.6473,
+          3372.8738
+        ]
+      ],
+      "text": "License : Creative Commons Attribution 4.0, Software: Krita 3.1, Inkscape 0.91 on Manjaro XFCE",
+      "transform": ""
+    }
+  ]
+}

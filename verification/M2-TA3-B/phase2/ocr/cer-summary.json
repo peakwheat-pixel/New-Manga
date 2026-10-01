@@ -1,0 +1,127 @@
+{
+  "task": "M2-TA3-B2",
+  "measure": "G1 native-GT CER (directional)",
+  "normalization": "strip-all-whitespace; …≡...; latin casefold; ー not folded (thresholds §0)",
+  "denominator": "all detected regions of the G1 cases (R7 no-truncation run)",
+  "languages": {
+    "ja": {
+      "n_regions": 0,
+      "cer_median": null,
+      "cer_p90": null,
+      "cer_zero_share": "n/a",
+      "cer_le_05_share": "n/a",
+      "proposal_gate_median": 0.1,
+      "gate_verdict": "NO_GT_REGIONS"
+    },
+    "ko": {
+      "n_regions": 6,
+      "cer_median": 0.0556,
+      "cer_p90": 0.3333,
+      "cer_zero_share": "50.0%",
+      "cer_le_05_share": "100.0%",
+      "proposal_gate_median": 0.2,
+      "gate_verdict": "PASS"
+    }
+  },
+  "exempt_cases": [
+    {
+      "case_id": "K01",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ]
+    },
+    {
+      "case_id": "K02",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ]
+    },
+    {
+      "case_id": "K04",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ]
+    },
+    {
+      "case_id": "K05",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ]
+    },
+    {
+      "case_id": "K07",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "environment:import-failed"
+      ]
+    },
+    {
+      "case_id": "K08",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ]
+    },
+    {
+      "case_id": "K09",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "environment:import-failed"
+      ]
+    },
+    {
+      "case_id": "K10",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "environment:import-failed"
+      ]
+    },
+    {
+      "case_id": "K19",
+      "reason": "region_count=0 (R11 exemption, data:no-regions-detected)",
+      "attribution": [
+        "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+        "data:no-regions-detected"
+      ]
+    }
+  ],
+  "alignment_notes": {
+    "J46": {
+      "svg_elements_total": 4,
+      "svg_elements_matched": 3,
+      "regions_matched": 1,
+      "regions_total": 1,
+      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)"
+    },
+    "J47": {
+      "svg_elements_total": 2,
+      "svg_elements_matched": 1,
+      "regions_matched": 1,
+      "regions_total": 5,
+      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)"
+    },
+    "K11": {
+      "svg_elements_total": 26,
+      "svg_elements_matched": 20,
+      "regions_matched": 11,
+      "regions_total": 13,
+      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)"
+    }
+  },
+  "sfx_translation_stats": {
+    "n_sfx_regions": 9,
+    "n_translated": 0,
+    "note": "production SfxPolicy default SKIP: every SFX region takes the production gate decision skip_policy/sfx_skip, so the run yields no automatic SFX translations; thresholds §3.1 n<15 rule (R13) applies - distribution registered, no Gate",
+    "examples": []
+  },
+  "directional_disclaimer": "first quality run; single automatic metric on an un-audited alignment; numbers are directional evidence only"
+}

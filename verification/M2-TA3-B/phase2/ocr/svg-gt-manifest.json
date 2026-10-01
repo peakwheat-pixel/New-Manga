@@ -1,0 +1,43 @@
+{
+  "task": "M2-TA3-B2",
+  "step": "G1 svg text-layer extraction (R8 formal count)",
+  "generated_from": "G:\\CODEX\\New Manga.worktrees\\M2-TA3-B2-zcode\\experiments\\M2-TA3-B\\case-selection.json",
+  "cases": {
+    "J46": {
+      "file": "svg-gt-J46.json",
+      "zip_svg_member_count": 352,
+      "n_text_elements": 4,
+      "canvas_wh": [
+        "2481",
+        "3503"
+      ]
+    },
+    "J47": {
+      "file": "svg-gt-J47.json",
+      "zip_svg_member_count": 352,
+      "n_text_elements": 2,
+      "canvas_wh": [
+        "2481",
+        "4503"
+      ]
+    },
+    "K11": {
+      "file": "svg-gt-K11.json",
+      "zip_svg_member_count": 472,
+      "n_text_elements": 26,
+      "canvas_wh": [
+        "2481",
+        "3503"
+      ]
+    },
+    "K19": {
+      "file": "svg-gt-K19.json",
+      "zip_svg_member_count": 352,
+      "n_text_elements": 0,
+      "canvas_wh": [
+        "2481",
+        "3503"
+      ]
+    }
+  }
+}

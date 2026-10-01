@@ -1,0 +1,825 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "BJ06",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "manual_source_page",
+  "tags": [
+    "fragmented_sfx",
+    "dense_dialogue",
+    "vertical_text",
+    "complex_background",
+    "multi_speaker",
+    "huge_text",
+    "tiny_text"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0056.png",
+  "source_sha256": "b06c9d7ddb0f679abdddeebd959d7b6aaefb5556a1fbdc43cfc0ee594d04569f",
+  "started_at_utc": "2026-10-01T10:00:30Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 2946,
+      "height": 4167,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "a34c53d9824b4da099e0633306e08998",
+      "width": 2946,
+      "height": 4167
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 33.46
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 17
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 17
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 17,
+      "truncated": false,
+      "elapsed_s": 229.73
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 17,
+      "translated": 9
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "fc3f7981df30a465",
+      "size": 8753175
+    }
+  },
+  "run1": {
+    "run_id": "run-1945445969864705a4d4487cd2b073f9",
+    "status": "completed",
+    "elapsed_s": 33.46,
+    "steps": [
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "eff33622a220401abad4ca9773aca107",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2251,
+        "y": 152,
+        "width": 242,
+        "height": 575
+      }
+    },
+    {
+      "region_id": "dbfca5fd63a04c549adccaf7596ab114",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 390,
+        "y": 455,
+        "width": 243,
+        "height": 505
+      }
+    },
+    {
+      "region_id": "fb648685976f4c6484c069928d486380",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 418,
+        "y": 1037,
+        "width": 449,
+        "height": 624
+      }
+    },
+    {
+      "region_id": "1622f42f400c43e7848d56697278e3b1",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2343,
+        "y": 1059,
+        "width": 194,
+        "height": 369
+      }
+    },
+    {
+      "region_id": "a686389ae02f4150861c302a164db758",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1306,
+        "y": 1070,
+        "width": 285,
+        "height": 454
+      }
+    },
+    {
+      "region_id": "22cbd17441ec4c3296b17e987ea3d2ce",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1479,
+        "y": 2695,
+        "width": 254,
+        "height": 510
+      }
+    },
+    {
+      "region_id": "ed9ec1be30bf4dbc8e90703fda9f8f19",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 418,
+        "y": 2700,
+        "width": 423,
+        "height": 604
+      }
+    },
+    {
+      "region_id": "90566348bee04401b18a5d467bd37b5d",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 429,
+        "y": 3419,
+        "width": 286,
+        "height": 462
+      }
+    },
+    {
+      "region_id": "21009baf3f7a45358a4e72c76cae4fba",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1540,
+        "y": 3500,
+        "width": 222,
+        "height": 425
+      }
+    },
+    {
+      "region_id": "2e99d206d14b4ff6a6aec889a347770a",
+      "reading_order": 10,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2145,
+        "y": 3084,
+        "width": 161,
+        "height": 309
+      }
+    },
+    {
+      "region_id": "3f3179c45c5840a89a16b23626be080b",
+      "reading_order": 11,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2495,
+        "y": 2907,
+        "width": 157,
+        "height": 409
+      }
+    },
+    {
+      "region_id": "d16d7b65a7c74bbab949d92255cbb164",
+      "reading_order": 12,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1534,
+        "y": 3517,
+        "width": 223,
+        "height": 395
+      }
+    },
+    {
+      "region_id": "23d0a5d5b310437494b4d949148656e2",
+      "reading_order": 13,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 926,
+        "y": 2818,
+        "width": 170,
+        "height": 294
+      }
+    },
+    {
+      "region_id": "f1118148fcbc4a9ca4e3748d46a630ce",
+      "reading_order": 14,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 388,
+        "y": 3402,
+        "width": 340,
+        "height": 534
+      }
+    },
+    {
+      "region_id": "38f63aea4c9e434d94789e96013c119b",
+      "reading_order": 15,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1830,
+        "y": 2969,
+        "width": 162,
+        "height": 297
+      }
+    },
+    {
+      "region_id": "edba04fbf9ce42a793c42ddd6b276464",
+      "reading_order": 16,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 408,
+        "y": 468,
+        "width": 217,
+        "height": 492
+      }
+    },
+    {
+      "region_id": "59b30a5fa93f4e0aa2a00f231c2d3e54",
+      "reading_order": 17,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2494,
+        "y": 1895,
+        "width": 87,
+        "height": 103
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 17,
+    "region_runs_executed": 17,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "eff33622a220401abad4ca9773aca107",
+        "run_id": "run-64963fc3e414445797a1b8a97afa845c",
+        "status": "completed"
+      },
+      {
+        "region_id": "dbfca5fd63a04c549adccaf7596ab114",
+        "run_id": "run-0f5c2fac2f174752b403e2a1f03da5d8",
+        "status": "completed"
+      },
+      {
+        "region_id": "fb648685976f4c6484c069928d486380",
+        "run_id": "run-2b2c1351964a4a7891aef9146324f216",
+        "status": "completed"
+      },
+      {
+        "region_id": "1622f42f400c43e7848d56697278e3b1",
+        "run_id": "run-7b878d9068b84c219d406c4c35b55c2f",
+        "status": "completed"
+      },
+      {
+        "region_id": "a686389ae02f4150861c302a164db758",
+        "run_id": "run-cdf02c0df9554922a5a72813c1b45b22",
+        "status": "completed"
+      },
+      {
+        "region_id": "22cbd17441ec4c3296b17e987ea3d2ce",
+        "run_id": "run-a2688be7470a408aa70ef7c2756a8fb3",
+        "status": "completed"
+      },
+      {
+        "region_id": "ed9ec1be30bf4dbc8e90703fda9f8f19",
+        "run_id": "run-3150ac179c2643c295ae1bf223647593",
+        "status": "completed"
+      },
+      {
+        "region_id": "90566348bee04401b18a5d467bd37b5d",
+        "run_id": "run-9190365dd25a4e9a91b860c080fe2ae8",
+        "status": "completed"
+      },
+      {
+        "region_id": "21009baf3f7a45358a4e72c76cae4fba",
+        "run_id": "run-c150f4a316b64edfb26043ce38250032",
+        "status": "completed"
+      },
+      {
+        "region_id": "2e99d206d14b4ff6a6aec889a347770a",
+        "run_id": "run-6c62067fbbc1444ca046f469a3e2e6d9",
+        "status": "completed"
+      },
+      {
+        "region_id": "3f3179c45c5840a89a16b23626be080b",
+        "run_id": "run-3bbaf34631654b3e8f7614ad143ae2ad",
+        "status": "completed"
+      },
+      {
+        "region_id": "d16d7b65a7c74bbab949d92255cbb164",
+        "run_id": "run-30572855f67f4cb28f8e6cde78239013",
+        "status": "completed"
+      },
+      {
+        "region_id": "23d0a5d5b310437494b4d949148656e2",
+        "run_id": "run-4666cf222e1c4a06bf65182bf59fe36c",
+        "status": "completed"
+      },
+      {
+        "region_id": "f1118148fcbc4a9ca4e3748d46a630ce",
+        "run_id": "run-fe861819515746058568d2598e589e23",
+        "status": "completed"
+      },
+      {
+        "region_id": "38f63aea4c9e434d94789e96013c119b",
+        "run_id": "run-c7c88cbd391949c1b09c4be5df0c2a94",
+        "status": "completed"
+      },
+      {
+        "region_id": "edba04fbf9ce42a793c42ddd6b276464",
+        "run_id": "run-379766488d5d4113b876207eeca4945e",
+        "status": "completed"
+      },
+      {
+        "region_id": "59b30a5fa93f4e0aa2a00f231c2d3e54",
+        "run_id": "run-f512894601784e32a157c41b803fd9b3",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 229.73
+  },
+  "ocr_details": [
+    {
+      "region_id": "eff33622a220401abad4ca9773aca107",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2251,
+        "y": 152,
+        "width": 242,
+        "height": 575
+      },
+      "ocr_text": "しかし、"
+    },
+    {
+      "region_id": "dbfca5fd63a04c549adccaf7596ab114",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 390,
+        "y": 455,
+        "width": 243,
+        "height": 505
+      },
+      "ocr_text": "あいじゃ"
+    },
+    {
+      "region_id": "fb648685976f4c6484c069928d486380",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 418,
+        "y": 1037,
+        "width": 449,
+        "height": 624
+      },
+      "ocr_text": "苦しそうに息をしたあとしばらく息が止まるというのをくり返しています！！"
+    },
+    {
+      "region_id": "1622f42f400c43e7848d56697278e3b1",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2343,
+        "y": 1059,
+        "width": 194,
+        "height": 369
+      },
+      "ocr_text": "もしもし"
+    },
+    {
+      "region_id": "a686389ae02f4150861c302a164db758",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1306,
+        "y": 1070,
+        "width": 285,
+        "height": 454
+      },
+      "ocr_text": "呼吸が変なんです．．．"
+    },
+    {
+      "region_id": "22cbd17441ec4c3296b17e987ea3d2ce",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1479,
+        "y": 2695,
+        "width": 254,
+        "height": 510
+      },
+      "ocr_text": "ちょっとおじいさん！？"
+    },
+    {
+      "region_id": "ed9ec1be30bf4dbc8e90703fda9f8f19",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 418,
+        "y": 2700,
+        "width": 423,
+        "height": 604
+      },
+      "ocr_text": "これって酔っぱらい運転じゃないんですか！？"
+    },
+    {
+      "region_id": "90566348bee04401b18a5d467bd37b5d",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 429,
+        "y": 3419,
+        "width": 286,
+        "height": 462
+      },
+      "ocr_text": "して、"
+    },
+    {
+      "region_id": "21009baf3f7a45358a4e72c76cae4fba",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1540,
+        "y": 3500,
+        "width": 222,
+        "height": 425
+      },
+      "ocr_text": "！！！"
+    },
+    {
+      "region_id": "2e99d206d14b4ff6a6aec889a347770a",
+      "reading_order": 10,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 2145,
+        "y": 3084,
+        "width": 161,
+        "height": 309
+      },
+      "ocr_text": "いいじゃ"
+    },
+    {
+      "region_id": "3f3179c45c5840a89a16b23626be080b",
+      "reading_order": 11,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 2495,
+        "y": 2907,
+        "width": 157,
+        "height": 409
+      },
+      "ocr_text": "いいん"
+    },
+    {
+      "region_id": "d16d7b65a7c74bbab949d92255cbb164",
+      "reading_order": 12,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 1534,
+        "y": 3517,
+        "width": 223,
+        "height": 395
+      },
+      "ocr_text": "！！！"
+    },
+    {
+      "region_id": "23d0a5d5b310437494b4d949148656e2",
+      "reading_order": 13,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 926,
+        "y": 2818,
+        "width": 170,
+        "height": 294
+      },
+      "ocr_text": "．．．"
+    },
+    {
+      "region_id": "f1118148fcbc4a9ca4e3748d46a630ce",
+      "reading_order": 14,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 388,
+        "y": 3402,
+        "width": 340,
+        "height": 534
+      },
+      "ocr_text": "ハチン"
+    },
+    {
+      "region_id": "38f63aea4c9e434d94789e96013c119b",
+      "reading_order": 15,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 1830,
+        "y": 2969,
+        "width": 162,
+        "height": 297
+      },
+      "ocr_text": "．．．"
+    },
+    {
+      "region_id": "edba04fbf9ce42a793c42ddd6b276464",
+      "reading_order": 16,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 408,
+        "y": 468,
+        "width": 217,
+        "height": 492
+      },
+      "ocr_text": "わ．．．"
+    },
+    {
+      "region_id": "59b30a5fa93f4e0aa2a00f231c2d3e54",
+      "reading_order": 17,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 2494,
+        "y": 1895,
+        "width": 87,
+        "height": 103
+      },
+      "ocr_text": "３．"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "eff33622a220401abad4ca9773aca107",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "しかし、",
+      "translated_text": "但是，",
+      "final_translation": "但是，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "dbfca5fd63a04c549adccaf7596ab114",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "あいじゃ",
+      "translated_text": "爱酱",
+      "final_translation": "爱酱",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fb648685976f4c6484c069928d486380",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "苦しそうに息をしたあとしばらく息が止まるというのをくり返しています！！",
+      "translated_text": "他反复出现痛苦地呼吸后，呼吸停止一段时间的情况！！",
+      "final_translation": "他反复出现痛苦地呼吸后，呼吸停止一段时间的情况！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1622f42f400c43e7848d56697278e3b1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "もしもし",
+      "translated_text": "喂喂",
+      "final_translation": "喂喂",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a686389ae02f4150861c302a164db758",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "呼吸が変なんです．．．",
+      "translated_text": "呼吸很奇怪……",
+      "final_translation": "呼吸很奇怪……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "22cbd17441ec4c3296b17e987ea3d2ce",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ちょっとおじいさん！？",
+      "translated_text": "等一下，老爷爷！？",
+      "final_translation": "等一下，老爷爷！？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ed9ec1be30bf4dbc8e90703fda9f8f19",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "これって酔っぱらい運転じゃないんですか！？",
+      "translated_text": "这不是醉驾吗！？",
+      "final_translation": "这不是醉驾吗！？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "90566348bee04401b18a5d467bd37b5d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "して、",
+      "translated_text": "然后，",
+      "final_translation": "然后，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "21009baf3f7a45358a4e72c76cae4fba",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "！！！",
+      "translated_text": "！！！",
+      "final_translation": "！！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2e99d206d14b4ff6a6aec889a347770a",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "いいじゃ",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "3f3179c45c5840a89a16b23626be080b",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "いいん",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "d16d7b65a7c74bbab949d92255cbb164",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "！！！",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "23d0a5d5b310437494b4d949148656e2",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "．．．",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "f1118148fcbc4a9ca4e3748d46a630ce",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "ハチン",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "38f63aea4c9e434d94789e96013c119b",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "．．．",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "edba04fbf9ce42a793c42ddd6b276464",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "わ．．．",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "59b30a5fa93f4e0aa2a00f231c2d3e54",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "３．",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-6ef6f7a631a1",
+    "file": "BJ06-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\export\\BJ06-translated.png",
+    "sha256": "fc3f7981df30a4654c7507238c5a301e70eee3a42506f9787a91b2f241898674",
+    "size": 8753175,
+    "translated_revision_id": "dcb2e80f424f481283742c41e5a38798"
+  },
+  "attribution": [],
+  "source_size": [
+    2946,
+    4167
+  ],
+  "source_sha256_recomputed": "b06c9d7ddb0f679abdddeebd959d7b6aaefb5556a1fbdc43cfc0ee594d04569f",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-BJ06-js80hu3_",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\ocr\\crops\\BJ06",
+  "finished_at_utc": "2026-10-01T10:04:53Z",
+  "wall_s": 263.59,
+  "pipeline_completed": true
+}

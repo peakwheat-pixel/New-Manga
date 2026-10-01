@@ -1,0 +1,37 @@
+unit_id,language,case_id,region_id,layer,crop_preview_file,ocr_output,verdict,ai_draft,rationale
+"BJ03:c7c6718e","ja","BJ03","c7c6718e21c8458fb81cc2fcdd16c93e","vertical_speech","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ03\c7c6718e21c8458fb81cc2fcdd16c93e.png","あなたは．．．","","",""
+"BJ03:fbcfd544","ja","BJ03","fbcfd544924249a8b253dc7318d783f6","vertical_speech","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ03\fbcfd544924249a8b253dc7318d783f6.png","生きたいですか．．．？","","",""
+"BJ04:22f84bbd","ja","BJ04","22f84bbda66147ec9513cd1ef8e28214","vertical_speech","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ04\22f84bbda66147ec9513cd1ef8e28214.png","１","","",""
+"BJ04:83d74b73","ja","BJ04","83d74b73a99b4421bee05aae6b89d0c0","vertical_speech","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ04\83d74b73a99b4421bee05aae6b89d0c0.png","第一外科編","","",""
+"BJ04:f412b623","ja","BJ04","f412b6230b2a4795bc160cd98f57fd7d","vertical_speech","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ04\f412b6230b2a4795bc160cd98f57fd7d.png","ブラックジャックによろしく完全版編集","","",""
+"BJ05:7f4908b0","ja","BJ05","7f4908b0508e4266a0393fc68fd417aa","vertical_speech","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ05\7f4908b0508e4266a0393fc68fd417aa.png","ブラックジャックによろしく完全版佐藤森","","",""
+"BJ02:87ae84fc","ja","BJ02","87ae84fc5b204fb0a5c2f7b0f542c3d3","tiny_text","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ02\87ae84fc5b204fb0a5c2f7b0f542c3d3.png","聞こえのいい正論を口にするな","","",""
+"BJ02:87839793","ja","BJ02","878397930f4f4a75abe84b57d3fc04a0","tiny_text","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ02\878397930f4f4a75abe84b57d3fc04a0.png","必ずオペはしろ．．．","","",""
+"J46:eb4ae706","ja","J46","eb4ae7060c1c4710bf94bfc1f7b6b8ef","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\J46\eb4ae7060c1c4710bf94bfc1f7b6b8ef.png","これからはお客様のお客さんのお店でありますので、","","",""
+"BJ06:2e99d206","ja","BJ06","2e99d206d14b4ff6a6aec889a347770a","sfx_or_decoration","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ06\2e99d206d14b4ff6a6aec889a347770a.png","いいじゃ","","",""
+"BJ06:3f3179c4","ja","BJ06","3f3179c45c5840a89a16b23626be080b","sfx_or_decoration","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ06\3f3179c45c5840a89a16b23626be080b.png","いいん","","",""
+"BJ06:d16d7b65","ja","BJ06","d16d7b65a7c74bbab949d92255cbb164","sfx_or_decoration","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ06\d16d7b65a7c74bbab949d92255cbb164.png","！！！","","",""
+"BJ06:23d0a5d5","ja","BJ06","23d0a5d5b310437494b4d949148656e2","sfx_or_decoration","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ06\23d0a5d5b310437494b4d949148656e2.png","．．．","","",""
+"BJ06:f1118148","ja","BJ06","f1118148fcbc4a9ca4e3748d46a630ce","sfx_or_decoration","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ06\f1118148fcbc4a9ca4e3748d46a630ce.png","ハチン","","",""
+"BJ06:38f63aea","ja","BJ06","38f63aea4c9e434d94789e96013c119b","sfx_or_decoration","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\BJ06\38f63aea4c9e434d94789e96013c119b.png","．．．","","",""
+"K11:eada0f25","ko","K11","eada0f25b89d4a63949c88346ec3ba1d","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\eada0f25b89d4a63949c88346ec3ba1d.png","당근아?","","",""
+"K11:f414d6eb","ko","K11","f414d6eb0b20489099792bf29b35dcfa","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\f414d6eb0b20489099792bf29b35dcfa.png","당근아!","","",""
+"K11:9a30cdf6","ko","K11","9a30cdf6cc5d49a8a606f6d2083a5f5b","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\9a30cdf6cc5d49a8a606f6d2083a5f5b.png","당근아?","","",""
+"K11:1fd86809","ko","K11","1fd868096a3a4e9fb06a7e3e6dd999cd","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\1fd868096a3a4e9fb06a7e3e6dd999cd.png","당근아?!","","",""
+"K11:71a21be8","ko","K11","71a21be8b29540d881af0418d1ad52f3","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\71a21be8b29540d881af0418d1ad52f3.png","이렇게까지는
+할필요없을줄
+알았는데","","",""
+"K11:91a52031","ko","K11","91a520317d5243e884ff037009cb8928","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\91a520317d5243e884ff037009cb8928.png","당근아?!!!","","",""
+"K11:152ac05d","ko","K11","152ac05da29343519dea91eb0eec0299","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\152ac05da29343519dea91eb0eec0299.png","어라? 침대 믿에도
+니?","","",""
+"K11:2b589cf4","ko","K11","2b589cf428ed47479201a040fbab1635","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\2b589cf428ed47479201a040fbab1635.png","당근아!","","",""
+"K11:df871de5","ko","K11","df871de5c37249509ce5299f84e01794","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\df871de5c37249509ce5299f84e01794.png","
+
+","","",""
+"K11:0cab6593","ko","K11","0cab65935cf64d9f992bddfbcad748cf","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\0cab65935cf64d9f992bddfbcad748cf.png","크록브록크록
+크록사각 사각
+사각사각","","",""
+"K11:dadc7e00","ko","K11","dadc7e002fe840ac9347aeb0774f98a8","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\dadc7e002fe840ac9347aeb0774f98a8.png","오 나의
+태야아옹!!","","",""
+"K11:789ed861","ko","K11","789ed86108d843b5a308818dcc3c1e5f","dialogue","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\789ed86108d843b5a308818dcc3c1e5f.png","꼬르를","","",""
+"K11:65069961","ko","K11","6506996124b049869b0c009a7d566ff6","sfx_or_decoration","G:\CODEX\New Manga.task-envs\M2-TA3-B\phase2-pixels\ocr\crops\K11\6506996124b049869b0c009a7d566ff6.png","","","",""

@@ -310,6 +310,13 @@ def run_case(
         write_translation_profile(core, base_url=DEEPSEEK_BASE_URL, model=DEEPSEEK_MODEL)
         reregister_env_resolver(core, base_url=DEEPSEEK_BASE_URL, model=DEEPSEEK_MODEL)
         if case["language"] == "ko":
+            # The production OCR step reads the script from settings
+            # (handlers.py: ``settings.get("script", SCRIPT_JAPANESE)``);
+            # the Japanese default would make the paddleocr-korean slot
+            # reject every ko region with typed INVALID_INPUT.  The
+            # production settings channel is the same
+            # save_settings_section the AC6 probe used.
+            core.pipeline_defaults.save_settings_section("ocr", {"script": "korean"})
             reregister_paddle_wrapper(core)
             core.pipeline_defaults.save_provider_binding("ocr", PROVIDER_PADDLE_KOREAN)
         else:
@@ -347,7 +354,11 @@ def run_case(
             ],
         )
         if report.failed or len(report.imported) != 1:
-            raise RuntimeError(f"import failed: {len(report.failed)} failed")
+            detail = "; ".join(
+                f"{f.filename}: {getattr(f, 'error', None) or getattr(f, 'detail', None) or 'unknown'}"
+                for f in report.failed
+            ) or "imported count != 1"
+            raise RuntimeError(f"import failed: {len(report.failed)} failed ({detail[:200]})")
         pages = core.repository.list_pages(chapter.chapter_id)
         if not pages:
             raise RuntimeError("no page after import")

@@ -1,0 +1,597 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "BJ10",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "manual_source_page",
+  "tags": [
+    "fragmented_sfx",
+    "dense_dialogue",
+    "vertical_text",
+    "complex_background",
+    "narration",
+    "multi_speaker",
+    "tiny_text"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol05\\pages\\vol05_p0061.png",
+  "source_sha256": "4bc8d4845c708edb0be8345b6cfe148fbe02dd93a943a1f260efacef120d51f8",
+  "started_at_utc": "2026-10-01T10:06:33Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 2946,
+      "height": 4167,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "6107ec96648e41e19a2c60dabd9e0e1c",
+      "width": 2946,
+      "height": 4167
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 31.32
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 11
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 11
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 11,
+      "truncated": false,
+      "elapsed_s": 284.15
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 11,
+      "translated": 11
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "f06888e9a33bd3dc",
+      "size": 13175976
+    }
+  },
+  "run1": {
+    "run_id": "run-51fefe2e4a664117bce7ebc216ffded8",
+    "status": "completed",
+    "elapsed_s": 31.32,
+    "steps": [
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "696b5cb7cd8742d1aa3bde5fb2781864",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2156,
+        "y": 260,
+        "width": 233,
+        "height": 517
+      }
+    },
+    {
+      "region_id": "b5955e0b698341d68ec23cc92dd037b9",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1194,
+        "y": 1418,
+        "width": 128,
+        "height": 367
+      }
+    },
+    {
+      "region_id": "202e21c273f346c7a17cf4ad8dd2d967",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2427,
+        "y": 1437,
+        "width": 141,
+        "height": 346
+      }
+    },
+    {
+      "region_id": "8d0d971fcbb24522bc9a3a8fa083ca02",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 345,
+        "y": 1672,
+        "width": 110,
+        "height": 379
+      }
+    },
+    {
+      "region_id": "1aec88d161ad4bd4b8dd73a709e80ef8",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 202,
+        "y": 1805,
+        "width": 105,
+        "height": 364
+      }
+    },
+    {
+      "region_id": "78b09f523d594f18960806b64437a8f7",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 561,
+        "y": 3090,
+        "width": 126,
+        "height": 365
+      }
+    },
+    {
+      "region_id": "a1d591e58e2149c7a255a06eaa1dfa95",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1320,
+        "y": 3096,
+        "width": 214,
+        "height": 339
+      }
+    },
+    {
+      "region_id": "e3a47f7ffd104c9399c0b00242226353",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2210,
+        "y": 3102,
+        "width": 326,
+        "height": 495
+      }
+    },
+    {
+      "region_id": "abbe1d30376f42f3ad9db01968e78752",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1650,
+        "y": 3474,
+        "width": 286,
+        "height": 510
+      }
+    },
+    {
+      "region_id": "638ccbfa376a4b4c9246257f84c560a6",
+      "reading_order": 10,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 837,
+        "y": 3550,
+        "width": 317,
+        "height": 403
+      }
+    },
+    {
+      "region_id": "2601228f14734cb599078bb048cb50fa",
+      "reading_order": 11,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 178,
+        "y": 3588,
+        "width": 100,
+        "height": 369
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 11,
+    "region_runs_executed": 11,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "696b5cb7cd8742d1aa3bde5fb2781864",
+        "run_id": "run-821e633af0ea46beaee5f12a881061d4",
+        "status": "completed"
+      },
+      {
+        "region_id": "b5955e0b698341d68ec23cc92dd037b9",
+        "run_id": "run-9fbf78ee7cf143fcb36f91b09394b303",
+        "status": "completed"
+      },
+      {
+        "region_id": "202e21c273f346c7a17cf4ad8dd2d967",
+        "run_id": "run-aefb3a6be14c44c0887d7abff281c005",
+        "status": "completed"
+      },
+      {
+        "region_id": "8d0d971fcbb24522bc9a3a8fa083ca02",
+        "run_id": "run-0444dc9109a64a0eaf10e7cf7b565cde",
+        "status": "completed"
+      },
+      {
+        "region_id": "1aec88d161ad4bd4b8dd73a709e80ef8",
+        "run_id": "run-728d8ef941584eb5bba8a13f2586e041",
+        "status": "completed"
+      },
+      {
+        "region_id": "78b09f523d594f18960806b64437a8f7",
+        "run_id": "run-c0d2184c5f1741b4a2d340ee5e375514",
+        "status": "completed"
+      },
+      {
+        "region_id": "a1d591e58e2149c7a255a06eaa1dfa95",
+        "run_id": "run-619d74dd2c2847649c06ab0c8e36a3ba",
+        "status": "completed"
+      },
+      {
+        "region_id": "e3a47f7ffd104c9399c0b00242226353",
+        "run_id": "run-2e39f02ec6344ef8a29062694eefe183",
+        "status": "completed"
+      },
+      {
+        "region_id": "abbe1d30376f42f3ad9db01968e78752",
+        "run_id": "run-44dffd0f87444644a1809eafec1ee537",
+        "status": "completed"
+      },
+      {
+        "region_id": "638ccbfa376a4b4c9246257f84c560a6",
+        "run_id": "run-1075922258a14db2a57dd02ca25c6aa9",
+        "status": "completed"
+      },
+      {
+        "region_id": "2601228f14734cb599078bb048cb50fa",
+        "run_id": "run-3634950a2c8e4719af1a3296ae8be957",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 284.15
+  },
+  "ocr_details": [
+    {
+      "region_id": "696b5cb7cd8742d1aa3bde5fb2781864",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2156,
+        "y": 260,
+        "width": 233,
+        "height": 517
+      },
+      "ocr_text": "午前０時３３分――"
+    },
+    {
+      "region_id": "b5955e0b698341d68ec23cc92dd037b9",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1194,
+        "y": 1418,
+        "width": 128,
+        "height": 367
+      },
+      "ocr_text": "慎ちゃん．．．"
+    },
+    {
+      "region_id": "202e21c273f346c7a17cf4ad8dd2d967",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2427,
+        "y": 1437,
+        "width": 141,
+        "height": 346
+      },
+      "ocr_text": "んーーー"
+    },
+    {
+      "region_id": "8d0d971fcbb24522bc9a3a8fa083ca02",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 345,
+        "y": 1672,
+        "width": 110,
+        "height": 379
+      },
+      "ocr_text": "慎ちゃん．．．"
+    },
+    {
+      "region_id": "1aec88d161ad4bd4b8dd73a709e80ef8",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 202,
+        "y": 1805,
+        "width": 105,
+        "height": 364
+      },
+      "ocr_text": "慎ちゃん．．．"
+    },
+    {
+      "region_id": "78b09f523d594f18960806b64437a8f7",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 561,
+        "y": 3090,
+        "width": 126,
+        "height": 365
+      },
+      "ocr_text": "プレルルル"
+    },
+    {
+      "region_id": "a1d591e58e2149c7a255a06eaa1dfa95",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1320,
+        "y": 3096,
+        "width": 214,
+        "height": 339
+      },
+      "ocr_text": "ですから病院が．．．"
+    },
+    {
+      "region_id": "e3a47f7ffd104c9399c0b00242226353",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2210,
+        "y": 3102,
+        "width": 326,
+        "height": 495
+      },
+      "ocr_text": "どうしていつまでもここに止まってるんですか．．．"
+    },
+    {
+      "region_id": "abbe1d30376f42f3ad9db01968e78752",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1650,
+        "y": 3474,
+        "width": 286,
+        "height": 510
+      },
+      "ocr_text": "もう１０分以上たってるんですよ．．．"
+    },
+    {
+      "region_id": "638ccbfa376a4b4c9246257f84c560a6",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 837,
+        "y": 3550,
+        "width": 317,
+        "height": 403
+      },
+      "ocr_text": "病院ならそこら中にあるじゃないか！？"
+    },
+    {
+      "region_id": "2601228f14734cb599078bb048cb50fa",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 178,
+        "y": 3588,
+        "width": 100,
+        "height": 369
+      },
+      "ocr_text": "いついじいじゃ"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "696b5cb7cd8742d1aa3bde5fb2781864",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "午前０時３３分――",
+      "translated_text": "凌晨0点33分——",
+      "final_translation": "凌晨0点33分——",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b5955e0b698341d68ec23cc92dd037b9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "慎ちゃん．．．",
+      "translated_text": "慎酱……",
+      "final_translation": "慎酱……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "202e21c273f346c7a17cf4ad8dd2d967",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "んーーー",
+      "translated_text": "嗯———",
+      "final_translation": "嗯———",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8d0d971fcbb24522bc9a3a8fa083ca02",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "慎ちゃん．．．",
+      "translated_text": "慎酱……",
+      "final_translation": "慎酱……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1aec88d161ad4bd4b8dd73a709e80ef8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "慎ちゃん．．．",
+      "translated_text": "慎酱……",
+      "final_translation": "慎酱……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "78b09f523d594f18960806b64437a8f7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "プレルルル",
+      "translated_text": "噗噜噜噜",
+      "final_translation": "噗噜噜噜",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a1d591e58e2149c7a255a06eaa1dfa95",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ですから病院が．．．",
+      "translated_text": "所以医院……",
+      "final_translation": "所以医院……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e3a47f7ffd104c9399c0b00242226353",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "どうしていつまでもここに止まってるんですか．．．",
+      "translated_text": "为什么一直停在这里啊……",
+      "final_translation": "为什么一直停在这里啊……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "abbe1d30376f42f3ad9db01968e78752",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "もう１０分以上たってるんですよ．．．",
+      "translated_text": "已经过了十分钟以上了哦……",
+      "final_translation": "已经过了十分钟以上了哦……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "638ccbfa376a4b4c9246257f84c560a6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "病院ならそこら中にあるじゃないか！？",
+      "translated_text": "医院的话不是到处都是吗！？",
+      "final_translation": "医院的话不是到处都是吗！？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2601228f14734cb599078bb048cb50fa",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "いついじいじゃ",
+      "translated_text": "什么时候爷爷",
+      "final_translation": "什么时候爷爷",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-df7d7c14cc27",
+    "file": "BJ10-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\export\\BJ10-translated.png",
+    "sha256": "f06888e9a33bd3dcbd05224f6b3ce5bfc8d03172108edaa8155bd0ecd4b79a19",
+    "size": 13175976,
+    "translated_revision_id": "aed0cbd8a5fe4e91ba296cba24e10492"
+  },
+  "attribution": [],
+  "source_size": [
+    2946,
+    4167
+  ],
+  "source_sha256_recomputed": "4bc8d4845c708edb0be8345b6cfe148fbe02dd93a943a1f260efacef120d51f8",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-BJ10-zuwna7an",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\ocr\\crops\\BJ10",
+  "finished_at_utc": "2026-10-01T10:11:49Z",
+  "wall_s": 315.84,
+  "pipeline_completed": true
+}

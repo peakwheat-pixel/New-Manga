@@ -1,0 +1,480 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "BJ11",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "manual_source_page",
+  "tags": [
+    "vertical_text",
+    "normal_dialogue",
+    "dense_dialogue",
+    "multi_speaker"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol05\\pages\\vol05_p0122.png",
+  "source_sha256": "dab11ab374243873d7c5ff7594dba6a3f5068cd9c6177ca59d7cc42d636bf50f",
+  "started_at_utc": "2026-10-01T10:11:49Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 2946,
+      "height": 4167,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "32dbe668e9fe49c9b5c1785d6ecac995",
+      "width": 2946,
+      "height": 4167
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 29.51
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 8
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 8
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 8,
+      "truncated": false,
+      "elapsed_s": 198.27
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 8,
+      "translated": 8
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "621f4a5eba198df1",
+      "size": 8258007
+    }
+  },
+  "run1": {
+    "run_id": "run-be83f91f94dc41f4a915ee86b6f167f5",
+    "status": "completed",
+    "elapsed_s": 29.51,
+    "steps": [
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "076814faa27b48b6aa9af35841ab0a42",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1437,
+        "y": 170,
+        "width": 87,
+        "height": 246
+      }
+    },
+    {
+      "region_id": "e7eb38dabbfa4a17b6f231156bebe7fe",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2608,
+        "y": 321,
+        "width": 114,
+        "height": 279
+      }
+    },
+    {
+      "region_id": "958fb6b9658348a3af078555dec73abe",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1086,
+        "y": 1087,
+        "width": 264,
+        "height": 466
+      }
+    },
+    {
+      "region_id": "529421007cba48c187053adb9e2e6358",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1677,
+        "y": 1241,
+        "width": 114,
+        "height": 275
+      }
+    },
+    {
+      "region_id": "5a4b662df02d4c5ca4662111526e510b",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2177,
+        "y": 1646,
+        "width": 357,
+        "height": 555
+      }
+    },
+    {
+      "region_id": "ddd55d044cec400ab40a0b3cb7265ab9",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1065,
+        "y": 2692,
+        "width": 307,
+        "height": 425
+      }
+    },
+    {
+      "region_id": "91eb6e4c1d184b0c876901335c683eef",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 405,
+        "y": 2693,
+        "width": 346,
+        "height": 509
+      }
+    },
+    {
+      "region_id": "b9776f365bc54c6488c1d83f612ca0b6",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1679,
+        "y": 2698,
+        "width": 368,
+        "height": 430
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 8,
+    "region_runs_executed": 8,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "076814faa27b48b6aa9af35841ab0a42",
+        "run_id": "run-dbde44cabc6542ebbc4bbe2f52a9fb1b",
+        "status": "completed"
+      },
+      {
+        "region_id": "e7eb38dabbfa4a17b6f231156bebe7fe",
+        "run_id": "run-d9d81f45df73462d988e876682e82e9d",
+        "status": "completed"
+      },
+      {
+        "region_id": "958fb6b9658348a3af078555dec73abe",
+        "run_id": "run-35ae1557a7d54ec99a131950f8097a9c",
+        "status": "completed"
+      },
+      {
+        "region_id": "529421007cba48c187053adb9e2e6358",
+        "run_id": "run-49f94eeba3f24f2c8605cc134fc516f6",
+        "status": "completed"
+      },
+      {
+        "region_id": "5a4b662df02d4c5ca4662111526e510b",
+        "run_id": "run-11bf232bb0574d0eb39263ffda1e55ff",
+        "status": "completed"
+      },
+      {
+        "region_id": "ddd55d044cec400ab40a0b3cb7265ab9",
+        "run_id": "run-682ade32e07043a791eec20824090a1f",
+        "status": "completed"
+      },
+      {
+        "region_id": "91eb6e4c1d184b0c876901335c683eef",
+        "run_id": "run-c038798f97b249b1920082d4b6d7bafc",
+        "status": "completed"
+      },
+      {
+        "region_id": "b9776f365bc54c6488c1d83f612ca0b6",
+        "run_id": "run-3ea2687f89004b43acb063dae3e3be03",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 198.27
+  },
+  "ocr_details": [
+    {
+      "region_id": "076814faa27b48b6aa9af35841ab0a42",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1437,
+        "y": 170,
+        "width": 87,
+        "height": 246
+      },
+      "ocr_text": "ついン"
+    },
+    {
+      "region_id": "e7eb38dabbfa4a17b6f231156bebe7fe",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2608,
+        "y": 321,
+        "width": 114,
+        "height": 279
+      },
+      "ocr_text": "つッと"
+    },
+    {
+      "region_id": "958fb6b9658348a3af078555dec73abe",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1086,
+        "y": 1087,
+        "width": 264,
+        "height": 466
+      },
+      "ocr_text": "どこに行くんですか．．．？"
+    },
+    {
+      "region_id": "529421007cba48c187053adb9e2e6358",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1677,
+        "y": 1241,
+        "width": 114,
+        "height": 275
+      },
+      "ocr_text": "フッン"
+    },
+    {
+      "region_id": "5a4b662df02d4c5ca4662111526e510b",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2177,
+        "y": 1646,
+        "width": 357,
+        "height": 555
+      },
+      "ocr_text": "君は自分を非常識な人間だと思うかい．．．！？"
+    },
+    {
+      "region_id": "ddd55d044cec400ab40a0b3cb7265ab9",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1065,
+        "y": 2692,
+        "width": 307,
+        "height": 425
+      },
+      "ocr_text": "多数派が常識人：．．．"
+    },
+    {
+      "region_id": "91eb6e4c1d184b0c876901335c683eef",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 405,
+        "y": 2693,
+        "width": 346,
+        "height": 509
+      },
+      "ocr_text": "つまり常識が正しいとは限らない．．．"
+    },
+    {
+      "region_id": "b9776f365bc54c6488c1d83f612ca0b6",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1679,
+        "y": 2698,
+        "width": 368,
+        "height": 430
+      },
+      "ocr_text": "常識なんて多数決で決まるのさ．．．"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "076814faa27b48b6aa9af35841ab0a42",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ついン",
+      "translated_text": "唔",
+      "final_translation": "唔",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e7eb38dabbfa4a17b6f231156bebe7fe",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "つッと",
+      "translated_text": "嗖地",
+      "final_translation": "嗖地",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "958fb6b9658348a3af078555dec73abe",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "どこに行くんですか．．．？",
+      "translated_text": "你要去哪里……？",
+      "final_translation": "你要去哪里……？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "529421007cba48c187053adb9e2e6358",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "フッン",
+      "translated_text": "哼",
+      "final_translation": "哼",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5a4b662df02d4c5ca4662111526e510b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "君は自分を非常識な人間だと思うかい．．．！？",
+      "translated_text": "你认为自己是个不合常理的人吗……！？",
+      "final_translation": "你认为自己是个不合常理的人吗……！？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ddd55d044cec400ab40a0b3cb7265ab9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "多数派が常識人：．．．",
+      "translated_text": "多数派是常识人：...",
+      "final_translation": "多数派是常识人：...",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "91eb6e4c1d184b0c876901335c683eef",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "つまり常識が正しいとは限らない．．．",
+      "translated_text": "也就是说常识未必正确……",
+      "final_translation": "也就是说常识未必正确……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b9776f365bc54c6488c1d83f612ca0b6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "常識なんて多数決で決まるのさ．．．",
+      "translated_text": "所谓常识，不过是多数人投票决定的罢了……",
+      "final_translation": "所谓常识，不过是多数人投票决定的罢了……",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-bb63d3202c97",
+    "file": "BJ11-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\export\\BJ11-translated.png",
+    "sha256": "621f4a5eba198df1ad62153edfad54ca1e9c7cb739f17f1929c4900ffcdad14d",
+    "size": 8258007,
+    "translated_revision_id": "0e43c9e79101418ba627fbed7821a576"
+  },
+  "attribution": [],
+  "source_size": [
+    2946,
+    4167
+  ],
+  "source_sha256_recomputed": "dab11ab374243873d7c5ff7594dba6a3f5068cd9c6177ca59d7cc42d636bf50f",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-BJ11-gz9_04ws",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\ocr\\crops\\BJ11",
+  "finished_at_utc": "2026-10-01T10:15:37Z",
+  "wall_s": 228.11,
+  "pipeline_completed": true
+}

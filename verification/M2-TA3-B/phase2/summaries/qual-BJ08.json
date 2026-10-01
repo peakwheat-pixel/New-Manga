@@ -1,0 +1,289 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "BJ08",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "manual_source_page",
+  "tags": [
+    "vertical_text",
+    "low_contrast",
+    "huge_text"
+  ],
+  "text_type": "title_and_credits",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0221.png",
+  "source_sha256": "4e02cb8ec1b1b2f66feffc6f64a18b2c67e11bd6a5d16019fe5fd1bee7acdd3c",
+  "started_at_utc": "2026-10-01T10:04:53Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 2946,
+      "height": 4167,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "cb3ea226bf7f4e04b0b05a66b11d7634",
+      "width": 2946,
+      "height": 4167
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 27.32
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 3
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 3
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 3,
+      "truncated": false,
+      "elapsed_s": 72.26
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 3,
+      "translated": 3
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "40610e2812add78e",
+      "size": 2753176
+    }
+  },
+  "run1": {
+    "run_id": "run-b4226a0c981d4270825fba68c1bde27c",
+    "status": "completed",
+    "elapsed_s": 27.32,
+    "steps": [
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "6621c6fad8bd44498211cf518bd3fc1c",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1272,
+        "y": 702,
+        "width": 454,
+        "height": 459
+      }
+    },
+    {
+      "region_id": "ddb8146388f240618e3f38a87fe6520e",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1164,
+        "y": 1207,
+        "width": 657,
+        "height": 212
+      }
+    },
+    {
+      "region_id": "355409b9d6374941a197d35c1fed4d6e",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 928,
+        "y": 2567,
+        "width": 1151,
+        "height": 1136
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 3,
+    "region_runs_executed": 3,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "6621c6fad8bd44498211cf518bd3fc1c",
+        "run_id": "run-90253971500b4b3abe72c32a6adb6b5e",
+        "status": "completed"
+      },
+      {
+        "region_id": "ddb8146388f240618e3f38a87fe6520e",
+        "run_id": "run-b3da0b375dc34abeac79a66fc84539db",
+        "status": "completed"
+      },
+      {
+        "region_id": "355409b9d6374941a197d35c1fed4d6e",
+        "run_id": "run-4700c677f2a04e4eab1372f3e6fce321",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 72.26
+  },
+  "ocr_details": [
+    {
+      "region_id": "6621c6fad8bd44498211cf518bd3fc1c",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1272,
+        "y": 702,
+        "width": 454,
+        "height": 459
+      },
+      "ocr_text": "２０"
+    },
+    {
+      "region_id": "ddb8146388f240618e3f38a87fe6520e",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1164,
+        "y": 1207,
+        "width": 657,
+        "height": 212
+      },
+      "ocr_text": "ベビーＥＲ編１"
+    },
+    {
+      "region_id": "355409b9d6374941a197d35c1fed4d6e",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 928,
+        "y": 2567,
+        "width": 1151,
+        "height": 1136
+      },
+      "ocr_text": "ブラックジャックによろしく完全版『警察"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "6621c6fad8bd44498211cf518bd3fc1c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "２０",
+      "translated_text": "２０",
+      "final_translation": "２０",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ddb8146388f240618e3f38a87fe6520e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ベビーＥＲ編１",
+      "translated_text": "急诊室婴儿篇1",
+      "final_translation": "急诊室婴儿篇1",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "355409b9d6374941a197d35c1fed4d6e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ブラックジャックによろしく完全版『警察",
+      "translated_text": "向黑杰克问好 完全版《警察",
+      "final_translation": "向黑杰克问好 完全版《警察",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-f97f1e813581",
+    "file": "BJ08-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\export\\BJ08-translated.png",
+    "sha256": "40610e2812add78e8021764f0d3d365a6238aca4b88c533c875f09aa0fd471c3",
+    "size": 2753176,
+    "translated_revision_id": "a2e6f57719184f6a839df0d07454698b"
+  },
+  "attribution": [],
+  "source_size": [
+    2946,
+    4167
+  ],
+  "source_sha256_recomputed": "4e02cb8ec1b1b2f66feffc6f64a18b2c67e11bd6a5d16019fe5fd1bee7acdd3c",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-BJ08-cjpg81x8",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\ocr\\crops\\BJ08",
+  "finished_at_utc": "2026-10-01T10:06:33Z",
+  "wall_s": 99.86,
+  "pipeline_completed": true
+}

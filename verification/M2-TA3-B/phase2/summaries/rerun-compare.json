@@ -1,0 +1,11 @@
+[
+  {
+    "case_id": "K11",
+    "sha256_first": "2c5dee05b309e90d021dfdebb124b790274625ff11046c20990d935df1e41b1a",
+    "sha256_second": "86ff9aa780350d490d28b147e2399a770014b6fdbef2fecace890ad9b52d2da1",
+    "match": false,
+    "region_count_first": 13,
+    "region_count_second": 13,
+    "wall_s_second": 68.95
+  }
+]

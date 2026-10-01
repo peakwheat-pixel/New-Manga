@@ -1,0 +1,251 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "BJ03",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "manual_source_page",
+  "tags": [
+    "vertical_text",
+    "narration",
+    "complex_background"
+  ],
+  "text_type": "narration_dominant",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol01\\pages\\vol01_p0105.png",
+  "source_sha256": "9fe0014994f0aa16078b05c70ac3f4f6f5b5c3bc0b7b6313f5973575ea22ed48",
+  "started_at_utc": "2026-10-01T09:55:24Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 2946,
+      "height": 4167,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "e62d0ab510ea49e298325243e20d4dec",
+      "width": 2946,
+      "height": 4167
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 51.43
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 2
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 2
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 2,
+      "truncated": false,
+      "elapsed_s": 57.52
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 2,
+      "translated": 2
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "795112d12718b85a",
+      "size": 6343309
+    }
+  },
+  "run1": {
+    "run_id": "run-309d098edb984ff3ae876356f9fbf253",
+    "status": "completed",
+    "elapsed_s": 51.43,
+    "steps": [
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "c7c6718e21c8458fb81cc2fcdd16c93e",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2024,
+        "y": 222,
+        "width": 506,
+        "height": 1882
+      }
+    },
+    {
+      "region_id": "fbcfd544924249a8b253dc7318d783f6",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 220,
+        "y": 226,
+        "width": 493,
+        "height": 3123
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 2,
+    "region_runs_executed": 2,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "c7c6718e21c8458fb81cc2fcdd16c93e",
+        "run_id": "run-06e190273b5044b49ccf547f3410911a",
+        "status": "completed"
+      },
+      {
+        "region_id": "fbcfd544924249a8b253dc7318d783f6",
+        "run_id": "run-67111920c2ce454fa11fd3e0e09777ca",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 57.52
+  },
+  "ocr_details": [
+    {
+      "region_id": "c7c6718e21c8458fb81cc2fcdd16c93e",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2024,
+        "y": 222,
+        "width": 506,
+        "height": 1882
+      },
+      "ocr_text": "あなたは．．．"
+    },
+    {
+      "region_id": "fbcfd544924249a8b253dc7318d783f6",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 220,
+        "y": 226,
+        "width": 493,
+        "height": 3123
+      },
+      "ocr_text": "生きたいですか．．．？"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "c7c6718e21c8458fb81cc2fcdd16c93e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "あなたは．．．",
+      "translated_text": "你是……",
+      "final_translation": "你是……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fbcfd544924249a8b253dc7318d783f6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "生きたいですか．．．？",
+      "translated_text": "想活下去吗……？",
+      "final_translation": "想活下去吗……？",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-111c2ac945e9",
+    "file": "BJ03-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\export\\BJ03-translated.png",
+    "sha256": "795112d12718b85a8d434226cf2344104d2b61d9a80ab6e9520d968f97e1c834",
+    "size": 6343309,
+    "translated_revision_id": "5dd27a70d3704e9f9cd696e83847ab4d"
+  },
+  "attribution": [],
+  "source_size": [
+    2946,
+    4167
+  ],
+  "source_sha256_recomputed": "9fe0014994f0aa16078b05c70ac3f4f6f5b5c3bc0b7b6313f5973575ea22ed48",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-BJ03-5iz9edxz",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels\\ocr\\crops\\BJ03",
+  "finished_at_utc": "2026-10-01T09:57:14Z",
+  "wall_s": 109.61,
+  "pipeline_completed": true
+}

@@ -1,0 +1,10 @@
+sfx_id,case_id,region_id,source_text,translated_text,verdict,fail_mode,rationale
+"BJ06:2e99d206","BJ06","2e99d206d14b4ff6a6aec889a347770a","いいじゃ","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"BJ06:3f3179c4","BJ06","3f3179c45c5840a89a16b23626be080b","いいん","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"BJ06:d16d7b65","BJ06","d16d7b65a7c74bbab949d92255cbb164","！！！","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"BJ06:23d0a5d5","BJ06","23d0a5d5b310437494b4d949148656e2","．．．","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"BJ06:f1118148","BJ06","f1118148fcbc4a9ca4e3748d46a630ce","ハチン","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"BJ06:38f63aea","BJ06","38f63aea4c9e434d94789e96013c119b","．．．","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"BJ06:edba04fb","BJ06","edba04fbf9ce42a793c42ddd6b276464","わ．．．","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"BJ06:59b30a5f","BJ06","59b30a5fa93f4e0aa2a00f231c2d3e54","３．","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"
+"K11:65069961","K11","6506996124b049869b0c009a7d566ff6","","","","","production SfxPolicy default SKIP - no automatic SFX translation this run (n=0 < 15, R13: distribution only)"

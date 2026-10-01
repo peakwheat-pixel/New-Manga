@@ -145,11 +145,22 @@ def align_svg_to_regions(case_summary: dict, svg_gt: dict) -> tuple[dict, list[d
         )
         if hit_region:
             matched.setdefault(hit_region, []).append(elem["text"])
-    return {k: "\n".join(v) for k, v in matched.items()}, trace
+    return matched, trace
 
 
 def pct(value: float, total: int) -> str:
     return f"{(100.0 * value / total):.1f}%" if total else "n/a"
+
+
+def char_overlap(gt_norm: str, hyp_norm: str) -> float:
+    """Share of GT characters present in the hypothesis (alignment sanity)."""
+    if not gt_norm:
+        return 0.0
+    gt_chars = set(gt_norm)
+    if not gt_chars:
+        return 0.0
+    hyp_chars = set(hyp_norm)
+    return len(gt_chars & hyp_chars) / len(gt_chars)
 
 
 def main() -> int:
@@ -190,15 +201,16 @@ def main() -> int:
                 }
             )
             continue
-        g1_texts: dict[str, str] = {}
+        g1_texts: dict[str, list[str]] = {}
         if case_id in svg_gts:
-            g1_texts, trace = align_svg_to_regions(summary, svg_gts[case_id])
+            aligned, trace = align_svg_to_regions(summary, svg_gts[case_id])
+            g1_texts = {k: v for k, v in aligned.items()}
             alignment_notes[case_id] = {
                 "svg_elements_total": svg_gts[case_id]["n_text_elements"],
                 "svg_elements_matched": sum(1 for t in trace if t["matched_region_id"]),
                 "regions_matched": len(g1_texts),
                 "regions_total": len(details),
-                "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap), human spot-check pending",
+                "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)",
                 "trace": trace,
             }
         for detail in details:
@@ -206,11 +218,25 @@ def main() -> int:
             gt_source = ""
             gt_raw = ""
             if case_id in svg_gts:
-                if detail["region_id"] in g1_texts:
-                    gt_source = "G1:svg_native"
-                    gt_raw = g1_texts[detail["region_id"]]
-                else:
+                hits = g1_texts.get(detail["region_id"], [])
+                n_hits = len(hits)
+                gt_raw = "\n".join(hits)
+                if n_hits == 0:
                     gt_source = "UNALIGNED_G1_CASE"
+                elif n_hits > 1:
+                    # several SVG boxes fell into one region: the mapping is
+                    # ambiguous -> human arbitration, never auto CER
+                    gt_source = f"MANUAL_REVIEW:{n_hits}-svg-elements"
+                elif not hyp_raw.strip():
+                    # single GT element but empty OCR: could be an alignment
+                    # miss or a true OCR miss -> human arbitration
+                    gt_source = "MANUAL_REVIEW:empty-ocr"
+                elif char_overlap(normalize(gt_raw), normalize(hyp_raw)) < 0.3:
+                    # GT text family and OCR text family do not correspond
+                    # (e.g. SVG credits vs balloon dialogue) -> suspect
+                    gt_source = "SUSPECT_MISMATCH:text-family"
+                else:
+                    gt_source = "G1:svg_native"
             else:
                 gt_source = "G2:pending_human_worksheet"
             row = {

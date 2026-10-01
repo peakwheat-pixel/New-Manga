@@ -1,0 +1,64 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K10",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "normal_dialogue"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K10_730656_11\\base.png",
+  "source_sha256": "68024b789ff845e20ed7e69195fc3635c675513b4220ce8a7af941126bdb56a0",
+  "started_at_utc": "2026-10-01T10:17:09Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 690,
+      "height": 100674,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "FAIL",
+      "error": "RuntimeError: import failed: 1 failed",
+      "attribution": "environment"
+    }
+  },
+  "run1": {},
+  "regions": [],
+  "run2": {},
+  "ocr_details": [],
+  "translate_details": [],
+  "export": {},
+  "attribution": [
+    "environment:import-failed"
+  ],
+  "source_size": [
+    690,
+    100674
+  ],
+  "source_sha256_recomputed": "68024b789ff845e20ed7e69195fc3635c675513b4220ce8a7af941126bdb56a0",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K10-0u1lmxs3",
+  "finished_at_utc": "2026-10-01T10:17:09Z",
+  "wall_s": 0.08,
+  "pipeline_completed": false
+}
