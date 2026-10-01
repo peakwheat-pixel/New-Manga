@@ -12,8 +12,8 @@ depends_on: [M2-SFX-DETECT-EVAL, M2-PROD-DETECT-2, M2-PROD-DETECT-3]
 base_commit: 2f37b63a
 branch: agent/zcode/M2-SFX-PROD-1
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-PROD-1-zcode
-delivery_head: 038e8faf（owner 交付 tip；implement=6a346a15 → tests=bedbba69 → build/envelope=63a482fb → 回归修复+纪律留痕=038e8faf；claim=a6b72e8c）
-tip_note: handoff=doc/handoffs/M2-SFX-PROD-1-038e8faf.md；envelope=verification/M2-SFX-PROD-1/envelope.md（warm 132-140ms/页）；GATE 25/25 证据=verification/M2-SFX-PROD-1/gate-cleanstart.json；frozen 探针 PASS=frozen-sfx-probe-results.json（SF-1 conf 0.93128 复现 dev 0.9313）
+delivery_head: 0c4afdb1（integration closure=0c4afdb1：DSH r1 approved_with_conditions C1-C6 闭合 + 重建绑定；owner 交付 tip=038e8faf；implement=6a346a15 → tests=bedbba69 → build/envelope=63a482fb → 回归修复+纪律留痕=038e8faf → 集成修正=0c4afdb1；claim=a6b72e8c）
+tip_note: handoff=doc/handoffs/M2-SFX-PROD-1-038e8faf.md；envelope=verification/M2-SFX-PROD-1/envelope.md（warm 132-140ms/页；集成重建 NSIS 503,238,932 B sha256 43da4060…f62e）；GATE 25/25 证据=verification/M2-SFX-PROD-1/gate-cleanstart.json（CS-E2 绑定 43da4060…f62e）+ 全量 stdout=raw/cleanstart-runner-stdout.log；frozen 探针 PASS=frozen-sfx-probe-results.json（集成复跑 SF-1 conf 0.93128 与交付构建逐位一致）；DSH r1 review=G:/CODEX/New Manga.task-envs/M2-SFX-PROD-1/dsh-review-r1.md；集成修正处置表=Task §集成修正记录
 ---
 
 # M2-SFX-PROD-1：SFX 检测生产集成第一刀

@@ -1,9 +1,9 @@
 {
   "gate": "m2ac5-clean-start",
   "installer": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-PROD-1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
-  "installer_sha256": "1bf31cf814199525d696339adfe0256efa25ce80ddd421a488fc2e407c492d2c",
+  "installer_sha256": "43da4060f82c608ea4b676e6d286351207488f861656ed263eae053c3821f62e",
   "install_dir": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart\\install",
-  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-8p54v9ll",
+  "lab": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-ojsup7ez",
   "appdata_isolation": {
     "app_env_appdata": "pinned into the lab (probe/ac1/production)",
     "host_real_appdata": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop",
@@ -36,7 +36,7 @@
       "status": "PASS",
       "observed": {
         "installer": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-PROD-1-zcode\\apps\\desktop\\src-tauri\\target\\release\\bundle\\nsis\\m2rc1-desktop_0.1.0_x64-setup.exe",
-        "sha256": "1bf31cf814199525d696339adfe0256efa25ce80ddd421a488fc2e407c492d2c"
+        "sha256": "43da4060f82c608ea4b676e6d286351207488f861656ed263eae053c3821f62e"
       }
     },
     {
@@ -101,7 +101,7 @@
       "id": "CS-P1-probe-results-written",
       "status": "PASS",
       "observed": {
-        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-8p54v9ll\\probe\\probe-results.json"
+        "path": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-ojsup7ez\\probe\\probe-results.json"
       }
     },
     {
@@ -136,8 +136,8 @@
           "status": "PASS",
           "observed": {
             "bytes": 49363,
-            "sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3",
-            "expected_sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3"
+            "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334",
+            "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334"
           }
         }
       }
@@ -163,12 +163,12 @@
       "status": "PASS",
       "observed": {
         "run1": [
-          34824,
-          7716
+          38828,
+          45176
         ],
         "run2": [
-          33620,
-          49624
+          45980,
+          51236
         ]
       }
     },
@@ -226,7 +226,7 @@
           "data": true
         },
         "catalog.sqlite": true,
-        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-8p54v9ll\\production\\roaming\\com.newmanga.m2rc1.desktop",
+        "root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2ac5-cleanstart-ojsup7ez\\production\\roaming\\com.newmanga.m2rc1.desktop",
         "appdata_isolated": true
       }
     },
@@ -277,7 +277,7 @@
         "core_service.exe": 0,
         "acceptance_bridge.exe": 0,
         "catalog_loader.exe": 0,
-        "python.exe": 1
+        "python.exe": 2
       }
     }
   ]
