@@ -33,7 +33,7 @@ status: in_review
 
 - `_backfill_detected_regions` 改为实例方法（需 `self._catalog`），签名 `(run, task, unit, result)`；primary 重绑逻辑逐字节保留（单 region 页行为零变化，F2 固化）。
 - fan-out：对 `region_ids[1:]` 每个 region `self._catalog.current(region_id)` 取 live 快照 → `_plan_region(run, task, region_view, region_snapshot)` 生成追加 units（unit_id=`{task_id}:{region_id}:{step_type}`，与恢复路径格式一致）。
-- `run.planned_step_units += len(extra_units)`：progress 分母与 terminal 计数精确闭合（R1/F1 断言）。
+- `run.planned_step_units += len(extra_units)` + `terminal_unit_ids`/`terminal_step_units` 同步（decision 为终态的克隆 unit 与 `plan_run` 同口径计入）：progress 分母与 terminal 计数精确闭合（R1/F1/F5 断言 + r1 返修新增 SFX 默认 skip 断言）。注：f541b2f4 初版只做分母增量、`SKIP_*` 克隆 unit 不进 terminal（DSH r1 R1，COMPLETED run 的 progress 永远 < 1.0），该「精确闭合」声称在初版**不成立**，r1 返修后才成立。
 - fan-out 集合=detect 输出（快照语义）：run 中途新增的 region 不被当前 run 跟进，由下一次（重）规划拾取（F4 固化）。
 - **零协议/schema 变更**：命令协议、`CommandType`、DB schema、store 全部未动。
 
@@ -62,7 +62,7 @@ status: in_review
 - 分支 `agent/zcode/M2-TASKS-BACKFILL-MULTIREGION`，worktree `G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode`，base=`f99a6c55`，delivery_head=`f541b2f4`。
 - 复现命令（红态）：`git checkout f99a6c55 -- src/application/tasks/service.py && PYTHONPATH=src <venv>/python -m pytest tests/pipeline/test_regionless_rebinding.py -q`；绿态：还原后同命令。
 - 测试环境：`G:/CODEX/New Manga.task-envs/T3.2.1-packaging-py312/Scripts/python.exe`（本会话补装 `onnxruntime` CPU 版以复现 0 failed 基线；未装则 `test_detection_sfx.py` 3 条真实权重测试环境性失败——属环境前置，非本任务改动）。
-- Reviewer 检查建议：① `_backfill_detected_regions` 与 `_plan_region` 的复用关系（恢复路径同款决策）；② SFX gate 经 plan 层 SKIP_POLICY 闭环（e2e manual 场景 + N 系）；③ `planned_step_units` 增量与 terminal 闭合（R1/F1/F5 断言）。
+- Reviewer 检查建议：① `_backfill_detected_regions` 与 `_plan_region` 的复用关系（恢复路径同款决策）；② SFX gate 经 plan 层 SKIP_POLICY 闭环（e2e manual 场景 + N 系）；③ `planned_step_units` 增量与 terminal 闭合（R1/F1/F5 断言；r1 返修后含 `SKIP_POLICY` 克隆 unit 的 SFX 默认 skip 断言）。
 
 ## 下一任务建议（必填）
 
@@ -78,8 +78,24 @@ status: in_review
 
 ## 风险与遗留
 
-1. **fan-out 后的 SFX 行为面变化（已按 gate 正确闭环，如实登记）**：多 region 页 TRANSLATE_ALL 现在会跟进所有检出 region——policy=translate 的 SFX region 在同一次 run 内被翻译（SFX e2e translate 场景新断言）；policy=manual/skip 的 SFX region 由 plan 层 SKIP_POLICY 保持不翻译且图像步骤连带跳过（e2e manual 场景原断言不变全绿）。
+1. **fan-out 后的 SFX 行为面变化（非 primary 已按 gate 正确闭环，如实登记）**：多 region 页 TRANSLATE_ALL 现在会跟进所有检出 region——policy=translate 的 SFX region 在同一次 run 内被翻译（SFX e2e translate 场景新断言）；**非 primary** 的 policy=manual/skip SFX region 由 plan 层 SKIP_POLICY 保持不翻译且图像步骤连带跳过（e2e manual 场景原断言不变全绿）。primary（`region_ids[0]`）仍沿用 detect 前页级决策、SFX gate 不可见（DSH r1 R2：既有缺陷、非本 Task 引入；恢复路径会 gate 它，语义不一致在 primary 上存在）——已登记独立 Task 候选并附裁决请求（见下「独立 Task 候选登记」）。
 2. **失败传染语义固化（F5）**：多 region 页 primary 链失败（如 LOCK_CHANGED/provider 缺配）⇒ task FAILED、剩余 region 的克隆 units 被 cancel——页任务串行原子性与单 region 页一致；`retry_failed_targets` 可按页重试（region-level fan-out 在重规划时天然恢复，N7 实证）。
-3. **region 中途新增/删除**：fan-out 集合=detect 输出（快照语义，F4 固化）；run 中途新增 region 由下一次规划拾取。删除场景未新增测试（`_record_step_attempt` 对已删 region 的 `TARGET_DELETED` 传播是**既有路径行为**，primary 与克隆 unit 同构暴露，本任务不扩大范围——如需治理建议另立 Task 登记）。
+3. **region 中途新增/删除**：fan-out 集合=detect 输出（快照语义，F4 固化）；run 中途新增 region 由下一次规划拾取。删除场景未新增测试（`_record_step_attempt` 对已删 region 的 `TARGET_DELETED` 传播是**既有路径行为**，primary 与克隆 unit 同构暴露，本任务不扩大范围——如需治理建议另立 Task 登记）。另据 DSH r1 R3：backfill 的规划期读取 `self._catalog.current(region_id)` 位于 detect commit 之后、`commit_step_result` 内且原先无异常防护——r1 返修已落地 try/except `PipelineError`：读取窗口内被删/不可读（如 `_region_or_error` 额外前置不满足）的 region 按 `TARGET_DELETED` 语义跳过该 region（与恢复路径重读 live Regions 的最终语义一致），异常不再穿透 `execute_run` 使 run 滞留 `RUNNING`（DB 已落 detect、只能靠 `recover_running_runs` 自愈的失配窗口已消除）。
 4. **相邻发现（只登记不修）**：unit_id 内嵌 target 与真实 target 不一致的展示层债务在克隆链上依然存在（primary unit 保留 plan 期 page id 形态 unit_id，克隆 unit 为 region id 形态——两种形态并存；terminal_unit_ids 以 unit_id 为键的正确性不受影响，R1 断言固化）；`get_task_progress` 的 reasons 聚合对 SKIP_POLICY 的展示未验证（非本任务面）。
-5. **回退方法**：`git revert f541b2f4`（单实现 commit，纯 `service.py`+测试；无 schema/数据迁移）。
+5. **回退方法**：`git revert f541b2f4`（单实现 commit，纯 `service.py`+测试；无 schema/数据迁移）。注：r1 返修后回退点顺延至返修 commit（同为纯 `service.py`+测试+文档，无 schema 变更）。
+6. **规模化提示（DSH r1 R7，只登记）**：fan-out 后单页 unit 数 ≈ region 数 × 步数（TRANSLATE_ALL 17 region ≈ 136+ units/page），多页 chapter 选择触发 `ResourceLimits.max_step_runs=1000` 上限的概率显著上升（例如 20 页 × 17 region × 8 步 ≈ 2720 > 1000）。触发为 `RESOURCE_LIMIT_EXCEEDED` fail-closed（run 以 fatal_error 落 FAILED、剩余 cancel），非数据损坏——这是修复后「逐 region 跟进」的正确代价；若 BJ06 级别（17 region/页）多页批量成为常态，后续按需评估限额调高或批处理策略。
+
+### 独立 Task 候选登记（DSH r1 R2，登记不修）
+
+**建议标题**：primary region 重决策——SFX gate 对初始页级决策不可见（`region_ids[0]` 语义不一致）。
+
+**缺陷本体**：`_backfill_detected_regions` 对 primary 只做 in-place 重绑（`src/application/tasks/service.py:964-971`），其 unit decision 仍是 detect 前 `region=None` 的**页级**决策；`_decide_step` 的 SFX gate 要求 `region is not None`（`src/application/tasks/service.py:418-423`），故 primary 永不经 `_sfx_gate_suppresses`；而恢复路径（`plan_run(mode="continue")`）以 live region 重规划并 gate 它——AC1 定义的「初始 vs 恢复语义不一致」在 primary 上原样存在。**既有缺陷、非本 Task 引入也非回归**（fan-out 之前该 region 同样被翻译；fan-out 只是让非 primary 的 gate 闭环与之形成同 run 内对比）。
+
+**DSH 反例（可直接复现）**：将 `tests/core/test_sfx_policy_end_to_end.py` 的 scripted detector 两个 candidate 的 `reading_order` 对调（SFX region 成为 `region_ids[0]`=primary）并设 `policy=manual`——当前实现会给该 SFX region 落 `machine_translation`（production `handle_translate` 无 gate，`src/infrastructure/providers/handlers.py:382-465`）⇒ 违反 D06 §85，且与「非 primary 的 manual/skip SFX region 被 SKIP_POLICY 保持不翻译」在同一 run 内自相矛盾。
+
+**为何不在本 Task 内修**：修复必然改变单 region 页行为（唯一 region=primary 时从「机器翻译」变为「gate 拦截」），与 Task「单 region 页零变化」纪律/AC 冲突，属产品语义取舍，须先裁决。
+
+**裁决请求**：单 region SFX 页（页级命令）是否也对 primary 重决策（以 live region 快照重订其链上 decision）？
+- 裁「是」⇒ 单 region SFX 页行为改变（D06 §85 更彻底闭环），需同步更新相关 e2e 期望与「零变化」口径；
+- 裁「否」⇒ primary 语义不一致登记为已知限制（本节保留为事实源）。
+请用户/集成方裁决后立独立 Task。

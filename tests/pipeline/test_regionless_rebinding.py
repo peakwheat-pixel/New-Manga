@@ -26,7 +26,7 @@ import pytest
 
 from application.editing.service import RegionEditingService
 from application.tasks.service import PipelineService
-from domain.regions.entities import BBox, RegionGeometry, RegionOrigin
+from domain.regions.entities import BBox, RegionGeometry, RegionOrigin, RegionType
 from domain.tasks.models import (
     CommandType,
     PipelineRunStatus,
@@ -34,6 +34,8 @@ from domain.tasks.models import (
     PipelineTaskStatus,
     PlanDecision,
     ScopeType,
+    StageState,
+    StepResult,
     StepRunStatus,
 )
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
@@ -42,8 +44,15 @@ from infrastructure.providers.handlers import (
     HandlerDependencies,
     ProductionHandlers,
     RegionMaskGeometry,
+    STEP_COLOR,
     STEP_DETECT,
+    STEP_INPAINT,
+    STEP_MASK_REFINE,
     STEP_OCR,
+    STEP_RENDER,
+    STEP_SEGMENT,
+    STEP_TERM_EXTRACT,
+    STEP_TRANSLATE,
 )
 from infrastructure.providers.registry import (
     ProviderDescriptor,
@@ -204,12 +213,20 @@ def _build_service(
     def region_creator(page_id, polygon, reading_order, provenance, provider_label=""):
         xs = [int(round(x)) for x, _ in polygon]
         ys = [int(round(y)) for _, y in polygon]
+        # 同一 label 约定（"sfx-" 前缀 ⇒ RegionType.SFX）已在
+        # tests/core/test_sfx_policy_end_to_end.py 的装配闭包中使用；
+        # sfx_policy 保持实体默认 SKIP——正是 DSH r1 R1 断言所需的
+        # "默认策略" 场景。
+        region_type = (
+            RegionType.SFX if provider_label.startswith("sfx") else RegionType.SPEECH
+        )
         region = editing.create_region(
             page_id,
             RegionGeometry(
                 bbox=BBox(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)),
                 polygon=tuple((int(round(x)), int(round(y))) for x, y in polygon),
             ),
+            region_type=region_type,
             reading_order=reading_order,
             origin=RegionOrigin.MACHINE,
         )
@@ -941,3 +958,97 @@ def test_multiregion_backfill_primary_failure_cancels_remaining_regions(workspac
     assert ocr_steps[0].error_code == "LOCK_CHANGED"
     # detect + failed primary ocr + cancelled secondary ocr unit = fully terminal
     assert executed.terminal_step_units == executed.planned_step_units == 3
+
+
+def test_multiregion_backfill_sfx_default_skip_closes_terminal_accounting(workspace):
+    """R1-fix (DSH r1): TRANSLATE_ALL on a multi-region page whose SFX region
+    keeps the DEFAULT ``skip`` policy — the cloned SKIP_POLICY units must join
+    terminal accounting at the same moment they join the denominator (mirroring
+    ``plan_run``'s initial accounting), so the COMPLETED run closes the books
+    (``terminal == planned``) and ``get_task_progress().overall_progress``
+    reaches 1.0. Before the fix the five policy-skipped units
+    (translate/segment/mask_refine/inpaint/render) entered the denominator
+    only and the workbench progress percentage stayed below 100% forever."""
+    detector = DeterministicDetector(
+        candidates=(
+            RegionCandidate(
+                polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+                reading_order=1,
+                provider_label="det-0",
+            ),
+            RegionCandidate(
+                polygon=((20.0, 8.0), (30.0, 8.0), (30.0, 12.0)),
+                reading_order=7,
+                provider_label="sfx-1",
+            ),
+        )
+    )
+
+    def _fake_step_ok(step_run, unit, run):
+        # 产能占位：本测试只关心规划/账目语义；除 detect/ocr 外的产能步骤
+        # 一律成功返回，避免 PROVIDER_NOT_CONFIGURED 截断执行链。
+        return StepResult(
+            target_id=unit.target_id,
+            step_type=unit.step_type,
+            outputs={"fake": True},
+            output_target_ids=(unit.target_id,),
+            revision_updates={},
+            next_stage_states={unit.step_type: StageState.COMPLETED},
+        )
+
+    service, _, _ = _build_service(
+        workspace,
+        detector=detector,
+        handler_override={
+            step: _fake_step_ok
+            for step in (
+                STEP_COLOR,
+                STEP_TERM_EXTRACT,
+                STEP_TRANSLATE,
+                STEP_SEGMENT,
+                STEP_MASK_REFINE,
+                STEP_INPAINT,
+                STEP_RENDER,
+            )
+        },
+    )
+    regions = workspace["regions"]
+
+    run = service.create_run(
+        CommandType.TRANSLATE_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    executed = service.execute_run(run.run_id)
+
+    assert executed.status is PipelineRunStatus.COMPLETED
+    all_regions = sorted(regions.list_regions(PAGE_ID), key=lambda r: r.reading_order)
+    assert len(all_regions) == 2
+    sfx_region = next(r for r in all_regions if r.region_type is RegionType.SFX)
+
+    # the SFX clone chain really is gated by the default policy: ocr runs,
+    # the five gated steps plan SKIP_POLICY (never executed)
+    sfx_decisions = {
+        u.step_type: u.decision
+        for u in executed.tasks[0].units
+        if u.region_id == sfx_region.region_id
+    }
+    assert sfx_decisions[STEP_OCR] is PlanDecision.RUN
+    for gated in (
+        STEP_TRANSLATE,
+        STEP_SEGMENT,
+        STEP_MASK_REFINE,
+        STEP_INPAINT,
+        STEP_RENDER,
+    ):
+        assert sfx_decisions[gated] is PlanDecision.SKIP_POLICY
+    assert not [
+        s for s in executed.step_runs if s.target_id == sfx_region.region_id
+        and s.step_type == STEP_TRANSLATE
+    ]
+
+    # accounting closes exactly: detect + primary chain (8) + SFX clone chain
+    # (8, of which 5 are SKIP_POLICY terminal-by-decision)
+    assert executed.planned_step_units == 1 + 2 * 8
+    assert executed.terminal_step_units == executed.planned_step_units
+    assert service.get_task_progress(run.run_id).overall_progress == 1.0

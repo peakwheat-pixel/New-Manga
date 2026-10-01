@@ -950,8 +950,13 @@ class PipelineService:
         lock/stage skips that a verbatim decision copy could not see. The
         fan-out set is exactly the detect output; Regions appearing mid-run
         are picked up by the next (re-)plan, not by this run.
-        ``run.planned_step_units`` grows by the appended units so progress
-        and the terminal accounting still close exactly.
+        ``run.planned_step_units`` grows by the appended units; units whose
+        decision is already terminal (``SKIP_*``) enter ``terminal_unit_ids``
+        in the same step — mirroring ``plan_run``'s initial accounting — so
+        progress and the terminal accounting close exactly once the ``RUN``
+        units finish. (DSH r1 R1: without that sync a COMPLETED run with a
+        policy-skipped clone chain, e.g. an SFX region under the default
+        ``skip`` policy, kept ``overall_progress`` below 1.0 forever.)
         """
         region_ids = tuple(result.outputs.get("region_ids") or ())
         if not region_ids:
@@ -971,7 +976,23 @@ class PipelineService:
         )
         extra_units: list[PlanUnit] = []
         for region_id in region_ids[1:]:
-            region_view = self._catalog.current(region_id)
+            # DSH r1 R3: this read sits inside commit_step_result, *after*
+            # the detect transaction committed and outside any try/except —
+            # an unhandled PipelineError here would escape execute_run and
+            # strand the run non-terminal (DB already has the detect commit;
+            # only recover_running_runs would self-heal it later). Treat a
+            # vanished/unreadable Region as TARGET_DELETED and skip it: the
+            # next (re-)plan re-reads live Regions anyway (recovery-path
+            # parity), so the run follows up on exactly the readable detect
+            # output.
+            try:
+                region_view = self._catalog.current(region_id)
+            except PipelineError:
+                # TARGET_DELETED / TARGET_NOT_FOUND：规划期读取窗口内该
+                # Region 已不可读（并发删除或 _region_or_error 前置不满足），
+                # 按 TARGET_DELETED 语义跳过该 region，交由下一次（重）规划
+                # 以 live Regions 重新拾取。
+                continue
             for region_snapshot in region_view.region_snapshots():
                 extra_units.extend(
                     self._plan_region(run, task, region_view, region_snapshot)
@@ -979,6 +1000,14 @@ class PipelineService:
         if extra_units:
             task.units = task.units + tuple(extra_units)
             run.planned_step_units += len(extra_units)
+            # DSH r1 R1: mirror plan_run's terminal accounting (service.py
+            # plan_run) — SKIP_* decisions are terminal by ``is_terminal``,
+            # so they must join the terminal set the moment they join the
+            # denominator, or a COMPLETED run's progress never reaches 1.0.
+            run.terminal_unit_ids.update(
+                u.unit_id for u in extra_units if u.decision.is_terminal
+            )
+            run.terminal_step_units = len(run.terminal_unit_ids)
 
     def _cancel_remaining(
         self, run: PipelineRun, task: PipelineTask, current: PlanUnit | None
