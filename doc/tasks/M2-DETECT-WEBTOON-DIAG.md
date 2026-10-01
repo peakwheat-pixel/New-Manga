@@ -2,7 +2,7 @@
 id: M2-DETECT-WEBTOON-DIAG
 title: "webtoon 长条漫 ogkalu 0 候选适配器级诊断（建议 A 第一步：先可观测值再定修法）"
 kind: diagnosis
-status: in_review  # ZCode 交付（续接熔断半成品探针，2026-10-01）：AC1-AC4 全部交付，待 DSH 独立 Review；判定=整页重缩放目标消失成立，块级 0→193 恢复，tiling 为主推修法
+status: in_review  # ZCode 交付（续接熔断半成品探针，2026-10-01）：AC1-AC4 全部交付，待 DSH 独立 Review；判定=整页重缩放目标消失成立，块级 0→193（合并前文本框口径）恢复，tiling 为主推修法；DSH r1 changes_requested（R1-R11 全为文档/口径级）→ owner 返修（schema v2 重跑复现 226/193 + K19 口径更正等）
 approval: user_ruling_2026-10-01_all_four
 suggested_owner: ZCode
 owner: ZCode
@@ -42,9 +42,9 @@ TA3-B2 阶段二实证：生产 detect（manga ogkalu RT-DETR-v2）对 webtoon �
 前置说明：接手时探针脚本与 `probe-results.json` 已由熔断前一轮产出（AC1 四页 + K01 块级实验数据已完整落在 JSON 内）；本轮续接完成结果分析、判定文档、修法对比、Handoff 与提交，未重跑探针（JSON 即原始数据，时间戳 2026-10-01T11:43:32Z）。
 
 - **AC1** ✅ `experiments/M2-DETECT-WEBTOON-DIAG/diagnose_webtoon_detect.py`：生产 provider 逐字节同构造；四页 sha256 对 TA3-B manifest 校验通过；记录 preprocessor config（size 640×640、do_pad=false→无 letterbox）、model_input_shape、raw logits 全分布（含 <0.5）、类内分布；BJ02 对照 10 检出（探针自检 VALID）。
-- **AC2** ✅ 判定=**整页重缩放目标消失成立**（K01 690×62133→640×640 垂直 ~97×；三 webtoon 页 raw max 0.167–0.284 全塌陷，BJ02 对照 0.972 正常）；块级实验 K01 70 块（1024²/重叠 128px）0→**193** 去重检出（conf max 0.967/mean 0.850，y 覆盖全页）——同一权重同一阈值仅改输入分辨率即恢复，tiling 可行性直接证据。证据：[diagnosis.md](../../verification/M2-DETECT-WEBTOON-DIAG/diagnosis.md) + [probe-results.json](../../verification/M2-DETECT-WEBTOON-DIAG/probe-results.json)。
+- **AC2** ✅ 判定=**整页重缩放目标消失成立**（K01 690×62133→640×640 垂直 ~97×；三 webtoon 页 raw max 0.167–0.284 全塌陷，BJ02 对照 0.972 正常）；块级实验 K01 70 块（1024²/重叠 128px）0 个 ≥0.5 文本框→**193** 个跨块去重文本框（**合并前口径**，生产 region 为合并后块数；conf max 0.967/mean 0.850，y 覆盖全页）——同一权重同一阈值仅改单次推理的像素预算即恢复，tiling 可行性直接证据。DSH r1 返修（schema v2）复跑复现 226/193 并落盘 pre/post-NMS 全量框坐标与重叠带统计（33 删框中 30 带内/28 跨块 keeper）。证据：[diagnosis.md](../../verification/M2-DETECT-WEBTOON-DIAG/diagnosis.md) + [probe-results.json](../../verification/M2-DETECT-WEBTOON-DIAG/probe-results.json)。
 - **AC3** ✅ 修法对比（只建议不实施）：A tiling+坐标回映（推荐主线，契约零变更）> B per-layout 路由 docTR（粒度语义成本未知，留作基线）> C processor size 覆盖（证据不支持，排除）。
 - **AC4** ✅ 零 `src/**`/`tests/**` 改动；生产路径缺陷（整页直传 processor 无长条漫处理）已在本文件与 diagnosis.md 登记，修复另行释放。
 - Handoff：`doc/handoffs/M2-DETECT-WEBTOON-DIAG-2d6b7bf6.md`（impl head=2d6b7bf6）；Reviewer：DeepSeek Harness（非作者）。
 
-**下一任务建议（移交 Codex 释放裁决）**：修复 Task「webtoon 长条漫 tiling 检测（方案 A）」——Owner ZCode、Reviewer DSH；验收=ko 6 case（K01/K02/K04/K05/K08/K19）重跑 qualification 关闭 TA3-B2 F1。释放前需 Codex 在 STATUS 登记范围（含 `src/infrastructure/providers/detection_manga.py` 与检测参数配置的授权修改面）。
+**下一任务建议（移交 Codex 释放裁决）**：修复 Task「webtoon 长条漫 tiling 检测（方案 A）」——Owner ZCode、Reviewer DSH；验收=**5 张 `webtoon_long_strip`（K01/K02/K04/K05/K08）**重跑 qualification：以生产 `provider.detect` region 数计量（region>0 且全链可用，附合并后块数对比），关闭 TA3-B2 F1 的长条漫部分；**K19（1200×1660 无字页，TA3-B F4）不在 tiling 验收面**——其 0 候选是正确行为，需修的是「无字页应空成功而生产 step=failed/INVALID_INPUT」的口径缺陷（r1 返修更正：v1 曾把 ko 六 case 一并写入验收）。释放前需 Codex 在 STATUS 登记范围（含 `src/infrastructure/providers/detection_manga.py` 与检测参数配置的授权修改面）。
