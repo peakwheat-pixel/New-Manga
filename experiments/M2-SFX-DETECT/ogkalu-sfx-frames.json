@@ -1,0 +1,2330 @@
+{
+ "schema": "m2-sfx-detect/ogkalu-sfx-frames@1",
+ "task": "M2-SFX-DETECT-EVAL",
+ "candidate_model": {
+  "kind": "ogkalu/comic-text-and-bubble-detector",
+  "arch": "rt_detr_v2_r50vd",
+  "license": "apache-2.0",
+  "source_url": "https://huggingface.co/ogkalu/comic-text-and-bubble-detector",
+  "weights_file": "model.safetensors",
+  "classes": {
+   "0": "bubble",
+   "1": "text_bubble",
+   "2": "text_free"
+  },
+  "text_classes_used": [
+   1,
+   2
+  ],
+  "weights_sha256": "037930a861e67870eb345be01b28cc70d7e2b7956528e48ee0ebdb0c093df80d"
+ },
+ "weights_dir": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+ "device": "cuda",
+ "harvest_threshold": 0.25,
+ "primary_threshold": 0.5,
+ "threshold_note": "harvest=0.25 records 0.25-0.5 boxes as sensitivity evidence; conf_ge_primary marks the C1/C4-formal 0.5 cut; visual verdicts report both (directional evidence, no formal SFX GT)",
+ "preview_note": "previews carry a 100 px coordinate grid; green=sample prior box (C1 evidence or ogkalu FP), red=ogkalu detection with conf+class",
+ "candidates_source": "experiments\\M2-SFX-DETECT\\sfx-sample-candidates.json",
+ "n_regions": 43,
+ "regions": {
+  "K01_R035": {
+   "case_id": "K01",
+   "region_index": 35,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R035.png",
+   "width": 690,
+   "height": 580,
+   "n_text_dets_harvest": 35,
+   "n_bubble_dropped": 1,
+   "detections": [
+    {
+     "box_xyxy": [
+      56.9,
+      463.8,
+      640.3,
+      511.2
+     ],
+     "conf": 0.828,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      172.9,
+      109.4,
+      350.0,
+      160.6
+     ],
+     "conf": 0.8035,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      438.7,
+      207.1,
+      585.0,
+      241.6
+     ],
+     "conf": 0.6878,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      331.4,
+      304.4,
+      360.4,
+      322.8
+     ],
+     "conf": 0.5967,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      301.2,
+      249.5,
+      362.1,
+      266.6
+     ],
+     "conf": 0.5822,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      304.2,
+      189.4,
+      366.4,
+      226.8
+     ],
+     "conf": 0.5721,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      311.9,
+      268.9,
+      355.8,
+      301.5
+     ],
+     "conf": 0.561,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      302.4,
+      228.5,
+      360.4,
+      248.7
+     ],
+     "conf": 0.5606,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      172.8,
+      288.3,
+      242.2,
+      309.8
+     ],
+     "conf": 0.5468,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      172.7,
+      164.2,
+      248.6,
+      205.6
+     ],
+     "conf": 0.5412,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      440.9,
+      252.1,
+      492.9,
+      273.6
+     ],
+     "conf": 0.5363,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      437.6,
+      287.8,
+      498.4,
+      304.3
+     ],
+     "conf": 0.5294,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      439.6,
+      251.8,
+      499.5,
+      287.3
+     ],
+     "conf": 0.5273,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      171.3,
+      249.8,
+      236.7,
+      283.3
+     ],
+     "conf": 0.5132,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      304.4,
+      189.1,
+      362.3,
+      208.1
+     ],
+     "conf": 0.5071,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      439.4,
+      209.6,
+      502.9,
+      233.6
+     ],
+     "conf": 0.478,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      459.4,
+      272.1,
+      499.9,
+      287.5
+     ],
+     "conf": 0.4734,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      281.3,
+      287.1,
+      304.1,
+      311.4
+     ],
+     "conf": 0.4388,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      438.0,
+      305.2,
+      495.0,
+      335.8
+     ],
+     "conf": 0.4192,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      436.7,
+      305.1,
+      499.6,
+      357.4
+     ],
+     "conf": 0.4111,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      307.0,
+      208.0,
+      366.8,
+      226.7
+     ],
+     "conf": 0.4015,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      175.7,
+      185.5,
+      240.0,
+      206.2
+     ],
+     "conf": 0.3867,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      438.7,
+      337.9,
+      499.5,
+      357.5
+     ],
+     "conf": 0.3782,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      174.2,
+      205.1,
+      233.4,
+      246.8
+     ],
+     "conf": 0.3491,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      173.9,
+      163.8,
+      247.9,
+      185.7
+     ],
+     "conf": 0.3435,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      56.6,
+      463.1,
+      642.5,
+      511.3
+     ],
+     "conf": 0.3411,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      499.6,
+      207.1,
+      583.3,
+      242.1
+     ],
+     "conf": 0.3242,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      56.9,
+      463.8,
+      640.3,
+      511.2
+     ],
+     "conf": 0.3111,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      171.7,
+      163.8,
+      247.5,
+      283.7
+     ],
+     "conf": 0.3028,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      437.1,
+      252.0,
+      501.3,
+      357.4
+     ],
+     "conf": 0.3003,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      197.5,
+      309.4,
+      230.4,
+      331.3
+     ],
+     "conf": 0.2995,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      172.4,
+      288.7,
+      242.8,
+      331.2
+     ],
+     "conf": 0.2734,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      436.6,
+      252.8,
+      500.9,
+      357.5
+     ],
+     "conf": 0.2613,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      172.5,
+      288.7,
+      208.4,
+      308.3
+     ],
+     "conf": 0.2547,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      438.1,
+      207.0,
+      585.2,
+      241.8
+     ],
+     "conf": 0.2506,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K01_R047": {
+   "case_id": "K01",
+   "region_index": 47,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R047.png",
+   "width": 690,
+   "height": 544,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 1,
+   "detections": [
+    {
+     "box_xyxy": [
+      67.0,
+      35.2,
+      304.5,
+      112.0
+     ],
+     "conf": 0.9437,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      239.6,
+      143.9,
+      315.8,
+      177.9
+     ],
+     "conf": 0.7119,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      197.8,
+      186.4,
+      233.4,
+      216.8
+     ],
+     "conf": 0.3956,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K01_R069": {
+   "case_id": "K01",
+   "region_index": 69,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R069.png",
+   "width": 690,
+   "height": 618,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K01_R075": {
+   "case_id": "K01",
+   "region_index": 75,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R075.png",
+   "width": 690,
+   "height": 758,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 3,
+   "detections": [
+    {
+     "box_xyxy": [
+      80.4,
+      61.2,
+      283.8,
+      250.8
+     ],
+     "conf": 0.9582,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      48.2,
+      652.9,
+      637.3,
+      706.9
+     ],
+     "conf": 0.9064,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      558.3,
+      207.2,
+      636.6,
+      232.5
+     ],
+     "conf": 0.5791,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K02_R009": {
+   "case_id": "K02",
+   "region_index": 9,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K02_R009.png",
+   "width": 600,
+   "height": 552,
+   "n_text_dets_harvest": 4,
+   "n_bubble_dropped": 2,
+   "detections": [
+    {
+     "box_xyxy": [
+      157.2,
+      34.5,
+      421.8,
+      111.0
+     ],
+     "conf": 0.9573,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      239.0,
+      147.5,
+      487.1,
+      186.8
+     ],
+     "conf": 0.9215,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      145.0,
+      497.1,
+      461.9,
+      538.8
+     ],
+     "conf": 0.8563,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      123.3,
+      191.2,
+      220.5,
+      240.8
+     ],
+     "conf": 0.7713,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K03_R027": {
+   "case_id": "K03",
+   "region_index": 27,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R027.png",
+   "width": 690,
+   "height": 1265,
+   "n_text_dets_harvest": 5,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      16.9,
+      1078.2,
+      477.4,
+      1215.4
+     ],
+     "conf": 0.8989,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      32.9,
+      299.2,
+      642.1,
+      413.3
+     ],
+     "conf": 0.8599,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      274.3,
+      429.6,
+      408.7,
+      502.6
+     ],
+     "conf": 0.6768,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      496.0,
+      408.0,
+      658.9,
+      452.6
+     ],
+     "conf": 0.5922,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      393.3,
+      127.8,
+      449.0,
+      202.3
+     ],
+     "conf": 0.2672,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K03_R107": {
+   "case_id": "K03",
+   "region_index": 107,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R107.png",
+   "width": 690,
+   "height": 558,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K03_R113": {
+   "case_id": "K03",
+   "region_index": 113,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R113.png",
+   "width": 690,
+   "height": 588,
+   "n_text_dets_harvest": 1,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      51.6,
+      169.6,
+      226.3,
+      497.0
+     ],
+     "conf": 0.2651,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K03_R135": {
+   "case_id": "K03",
+   "region_index": 135,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R135.png",
+   "width": 690,
+   "height": 608,
+   "n_text_dets_harvest": 4,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      398.0,
+      83.5,
+      468.4,
+      130.1
+     ],
+     "conf": 0.4812,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      220.5,
+      164.1,
+      286.5,
+      214.6
+     ],
+     "conf": 0.4609,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      425.5,
+      211.4,
+      484.1,
+      252.9
+     ],
+     "conf": 0.3952,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      220.5,
+      52.1,
+      286.9,
+      106.8
+     ],
+     "conf": 0.3392,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K03_R155": {
+   "case_id": "K03",
+   "region_index": 155,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R155.png",
+   "width": 690,
+   "height": 582,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      172.5,
+      148.3,
+      495.9,
+      273.9
+     ],
+     "conf": 0.82,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.1,
+      274.3,
+      287.4,
+      386.4
+     ],
+     "conf": 0.772,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.5,
+      145.1,
+      498.3,
+      392.7
+     ],
+     "conf": 0.4625,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K04_R021": {
+   "case_id": "K04",
+   "region_index": 21,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K04_R021.png",
+   "width": 690,
+   "height": 2032,
+   "n_text_dets_harvest": 11,
+   "n_bubble_dropped": 10,
+   "detections": [
+    {
+     "box_xyxy": [
+      338.2,
+      947.9,
+      647.3,
+      1058.0
+     ],
+     "conf": 0.963,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      55.8,
+      1821.2,
+      286.5,
+      1931.4
+     ],
+     "conf": 0.9582,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      45.9,
+      116.4,
+      202.2,
+      221.6
+     ],
+     "conf": 0.9561,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      205.9,
+      1065.9,
+      406.4,
+      1141.9
+     ],
+     "conf": 0.9504,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      74.5,
+      665.6,
+      242.7,
+      705.8
+     ],
+     "conf": 0.9225,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      51.7,
+      725.3,
+      179.7,
+      798.9
+     ],
+     "conf": 0.9202,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      469.9,
+      1585.5,
+      633.4,
+      1625.3
+     ],
+     "conf": 0.9183,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      224.1,
+      1954.9,
+      344.6,
+      1993.9
+     ],
+     "conf": 0.9142,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      549.9,
+      437.9,
+      659.2,
+      503.8
+     ],
+     "conf": 0.9048,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      170.6,
+      1380.6,
+      220.2,
+      1415.4
+     ],
+     "conf": 0.8793,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      615.6,
+      437.9,
+      658.3,
+      474.0
+     ],
+     "conf": 0.2604,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K05_R011": {
+   "case_id": "K05",
+   "region_index": 11,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K05_R011.png",
+   "width": 690,
+   "height": 848,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K05_R026": {
+   "case_id": "K05",
+   "region_index": 26,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K05_R026.png",
+   "width": 690,
+   "height": 604,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K05_R034": {
+   "case_id": "K05",
+   "region_index": 34,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K05_R034.png",
+   "width": 690,
+   "height": 1128,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 3,
+   "detections": [
+    {
+     "box_xyxy": [
+      224.9,
+      740.4,
+      466.8,
+      782.1
+     ],
+     "conf": 0.9473,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      173.3,
+      422.7,
+      232.9,
+      458.4
+     ],
+     "conf": 0.9237,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      170.8,
+      0.2,
+      227.8,
+      38.5
+     ],
+     "conf": 0.6712,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K06_R000": {
+   "case_id": "K06",
+   "region_index": 0,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K06_R000.png",
+   "width": 690,
+   "height": 580,
+   "n_text_dets_harvest": 34,
+   "n_bubble_dropped": 8,
+   "detections": [
+    {
+     "box_xyxy": [
+      28.4,
+      71.4,
+      454.2,
+      176.3
+     ],
+     "conf": 0.9012,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      516.0,
+      445.0,
+      679.6,
+      514.3
+     ],
+     "conf": 0.8851,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      260.9,
+      446.5,
+      460.2,
+      511.8
+     ],
+     "conf": 0.8555,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      515.3,
+      209.2,
+      678.0,
+      401.1
+     ],
+     "conf": 0.8426,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      432.0,
+      215.3,
+      495.3,
+      410.7
+     ],
+     "conf": 0.8064,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      158.9,
+      207.3,
+      260.5,
+      323.0
+     ],
+     "conf": 0.7659,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      336.8,
+      217.3,
+      429.4,
+      284.7
+     ],
+     "conf": 0.7282,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      220.3,
+      332.7,
+      288.2,
+      421.3
+     ],
+     "conf": 0.6869,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      515.0,
+      365.9,
+      675.9,
+      400.4
+     ],
+     "conf": 0.6716,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      276.3,
+      201.1,
+      307.2,
+      327.7
+     ],
+     "conf": 0.6698,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      351.3,
+      287.8,
+      419.8,
+      372.6
+     ],
+     "conf": 0.6066,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      433.8,
+      217.5,
+      491.3,
+      408.6
+     ],
+     "conf": 0.5424,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      278.7,
+      204.0,
+      304.1,
+      326.2
+     ],
+     "conf": 0.5026,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      347.9,
+      284.9,
+      423.5,
+      375.5
+     ],
+     "conf": 0.457,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      366.6,
+      130.4,
+      448.8,
+      171.6
+     ],
+     "conf": 0.4039,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      158.0,
+      203.8,
+      307.9,
+      326.8
+     ],
+     "conf": 0.374,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      159.8,
+      209.5,
+      259.3,
+      321.8
+     ],
+     "conf": 0.3729,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      338.3,
+      248.0,
+      428.7,
+      283.3
+     ],
+     "conf": 0.3544,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      278.7,
+      204.0,
+      304.1,
+      326.2
+     ],
+     "conf": 0.3485,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      468.2,
+      217.5,
+      492.2,
+      406.9
+     ],
+     "conf": 0.3458,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      351.3,
+      287.8,
+      419.8,
+      372.6
+     ],
+     "conf": 0.3354,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      235.2,
+      217.2,
+      258.4,
+      322.5
+     ],
+     "conf": 0.3331,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      517.8,
+      211.4,
+      673.5,
+      281.4
+     ],
+     "conf": 0.3325,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      517.2,
+      211.5,
+      673.9,
+      333.0
+     ],
+     "conf": 0.3216,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      233.8,
+      214.3,
+      260.9,
+      322.9
+     ],
+     "conf": 0.3036,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      159.3,
+      208.2,
+      255.1,
+      245.5
+     ],
+     "conf": 0.3008,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      434.1,
+      217.5,
+      458.3,
+      408.0
+     ],
+     "conf": 0.3007,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      515.7,
+      210.7,
+      677.5,
+      400.3
+     ],
+     "conf": 0.2906,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      259.4,
+      445.0,
+      680.9,
+      514.3
+     ],
+     "conf": 0.2853,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      276.3,
+      201.1,
+      307.2,
+      327.7
+     ],
+     "conf": 0.2706,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      213.3,
+      327.4,
+      292.9,
+      428.5
+     ],
+     "conf": 0.2685,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      515.7,
+      210.7,
+      677.5,
+      400.3
+     ],
+     "conf": 0.2659,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      161.1,
+      209.4,
+      258.5,
+      321.2
+     ],
+     "conf": 0.2653,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      235.7,
+      28.8,
+      296.1,
+      63.1
+     ],
+     "conf": 0.265,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K06_R038": {
+   "case_id": "K06",
+   "region_index": 38,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K06_R038.png",
+   "width": 690,
+   "height": 658,
+   "n_text_dets_harvest": 1,
+   "n_bubble_dropped": 1,
+   "detections": [
+    {
+     "box_xyxy": [
+      578.4,
+      93.8,
+      628.8,
+      139.7
+     ],
+     "conf": 0.3018,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K06_R096": {
+   "case_id": "K06",
+   "region_index": 96,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K06_R096.png",
+   "width": 690,
+   "height": 522,
+   "n_text_dets_harvest": 2,
+   "n_bubble_dropped": 1,
+   "detections": [
+    {
+     "box_xyxy": [
+      29.6,
+      339.1,
+      192.5,
+      411.1
+     ],
+     "conf": 0.7509,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      50.0,
+      62.9,
+      118.2,
+      79.3
+     ],
+     "conf": 0.7349,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K07_R007": {
+   "case_id": "K07",
+   "region_index": 7,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R007.png",
+   "width": 690,
+   "height": 1842,
+   "n_text_dets_harvest": 5,
+   "n_bubble_dropped": 3,
+   "detections": [
+    {
+     "box_xyxy": [
+      404.0,
+      77.8,
+      647.3,
+      151.8
+     ],
+     "conf": 0.9489,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      98.3,
+      32.8,
+      170.3,
+      100.3
+     ],
+     "conf": 0.9118,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      73.7,
+      1088.9,
+      235.9,
+      1315.0
+     ],
+     "conf": 0.8044,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      453.9,
+      1631.4,
+      646.0,
+      1746.3
+     ],
+     "conf": 0.7637,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      530.6,
+      262.1,
+      674.4,
+      389.8
+     ],
+     "conf": 0.2801,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K07_R051": {
+   "case_id": "K07",
+   "region_index": 51,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R051.png",
+   "width": 690,
+   "height": 1269,
+   "n_text_dets_harvest": 2,
+   "n_bubble_dropped": 2,
+   "detections": [
+    {
+     "box_xyxy": [
+      0.0,
+      108.7,
+      464.2,
+      265.3
+     ],
+     "conf": 0.9544,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      366.5,
+      938.6,
+      630.2,
+      1184.4
+     ],
+     "conf": 0.954,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K07_R059": {
+   "case_id": "K07",
+   "region_index": 59,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R059.png",
+   "width": 690,
+   "height": 752,
+   "n_text_dets_harvest": 4,
+   "n_bubble_dropped": 1,
+   "detections": [
+    {
+     "box_xyxy": [
+      6.9,
+      0.6,
+      690.0,
+      355.0
+     ],
+     "conf": 0.5475,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      9.9,
+      0.0,
+      690.0,
+      354.3
+     ],
+     "conf": 0.2929,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      24.9,
+      0.0,
+      690.0,
+      360.8
+     ],
+     "conf": 0.2867,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      20.4,
+      1.8,
+      689.6,
+      615.0
+     ],
+     "conf": 0.2716,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K07_R095": {
+   "case_id": "K07",
+   "region_index": 95,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R095.png",
+   "width": 690,
+   "height": 680,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K07_R097": {
+   "case_id": "K07",
+   "region_index": 97,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R097.png",
+   "width": 690,
+   "height": 691,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 2,
+   "detections": [
+    {
+     "box_xyxy": [
+      76.3,
+      124.0,
+      252.4,
+      209.9
+     ],
+     "conf": 0.9696,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      110.2,
+      24.4,
+      252.1,
+      65.9
+     ],
+     "conf": 0.9584,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      31.1,
+      260.5,
+      156.9,
+      396.3
+     ],
+     "conf": 0.7328,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K07_R103": {
+   "case_id": "K07",
+   "region_index": 103,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R103.png",
+   "width": 690,
+   "height": 1130,
+   "n_text_dets_harvest": 1,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      481.7,
+      343.7,
+      690.0,
+      435.9
+     ],
+     "conf": 0.3887,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K07_R107": {
+   "case_id": "K07",
+   "region_index": 107,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R107.png",
+   "width": 690,
+   "height": 609,
+   "n_text_dets_harvest": 2,
+   "n_bubble_dropped": 1,
+   "detections": [
+    {
+     "box_xyxy": [
+      88.8,
+      0.1,
+      317.2,
+      234.4
+     ],
+     "conf": 0.6248,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      88.2,
+      1.0,
+      316.6,
+      233.9
+     ],
+     "conf": 0.2879,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K07_R121": {
+   "case_id": "K07",
+   "region_index": 121,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R121.png",
+   "width": 690,
+   "height": 909,
+   "n_text_dets_harvest": 5,
+   "n_bubble_dropped": 3,
+   "detections": [
+    {
+     "box_xyxy": [
+      69.3,
+      19.0,
+      275.2,
+      92.6
+     ],
+     "conf": 0.9699,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      415.0,
+      67.3,
+      599.2,
+      141.8
+     ],
+     "conf": 0.9677,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      591.4,
+      702.2,
+      673.8,
+      726.2
+     ],
+     "conf": 0.9037,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      478.7,
+      341.1,
+      657.2,
+      540.4
+     ],
+     "conf": 0.6881,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      514.4,
+      243.0,
+      642.0,
+      331.2
+     ],
+     "conf": 0.3006,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K07_R123": {
+   "case_id": "K07",
+   "region_index": 123,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+   "width": 690,
+   "height": 1408,
+   "n_text_dets_harvest": 1,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      189.6,
+      1126.9,
+      389.0,
+      1348.9
+     ],
+     "conf": 0.9331,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K08_R003": {
+   "case_id": "K08",
+   "region_index": 3,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R003.png",
+   "width": 690,
+   "height": 790,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 4,
+   "detections": [
+    {
+     "box_xyxy": [
+      115.8,
+      210.7,
+      285.9,
+      351.1
+     ],
+     "conf": 0.9198,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      112.3,
+      42.1,
+      294.2,
+      185.8
+     ],
+     "conf": 0.9161,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      480.5,
+      180.5,
+      595.3,
+      224.7
+     ],
+     "conf": 0.7298,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K08_R019": {
+   "case_id": "K08",
+   "region_index": 19,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R019.png",
+   "width": 690,
+   "height": 1990,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K08_R025": {
+   "case_id": "K08",
+   "region_index": 25,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R025.png",
+   "width": 690,
+   "height": 898,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 3,
+   "detections": [
+    {
+     "box_xyxy": [
+      81.1,
+      639.6,
+      197.4,
+      760.0
+     ],
+     "conf": 0.9283,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      288.8,
+      749.9,
+      507.4,
+      817.6
+     ],
+     "conf": 0.9151,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      22.0,
+      33.3,
+      169.2,
+      349.5
+     ],
+     "conf": 0.8546,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K08_R033": {
+   "case_id": "K08",
+   "region_index": 33,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R033.png",
+   "width": 690,
+   "height": 850,
+   "n_text_dets_harvest": 1,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      231.1,
+      159.0,
+      369.8,
+      572.9
+     ],
+     "conf": 0.2775,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K08_R041": {
+   "case_id": "K08",
+   "region_index": 41,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R041.png",
+   "width": 690,
+   "height": 572,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K08_R047": {
+   "case_id": "K08",
+   "region_index": 47,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R047.png",
+   "width": 690,
+   "height": 692,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K08_R057": {
+   "case_id": "K08",
+   "region_index": 57,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R057.png",
+   "width": 690,
+   "height": 742,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K09_R001": {
+   "case_id": "K09",
+   "region_index": 1,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R001.png",
+   "width": 690,
+   "height": 1651,
+   "n_text_dets_harvest": 1,
+   "n_bubble_dropped": 2,
+   "detections": [
+    {
+     "box_xyxy": [
+      225.4,
+      1635.5,
+      371.0,
+      1651.0
+     ],
+     "conf": 0.4019,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K09_R014": {
+   "case_id": "K09",
+   "region_index": 14,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R014.png",
+   "width": 690,
+   "height": 1216,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      147.3,
+      163.0,
+      304.9,
+      238.4
+     ],
+     "conf": 0.3279,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      291.5,
+      769.4,
+      690.0,
+      1182.5
+     ],
+     "conf": 0.2573,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      300.2,
+      1044.0,
+      689.6,
+      1178.9
+     ],
+     "conf": 0.257,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K09_R024": {
+   "case_id": "K09",
+   "region_index": 24,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R024.png",
+   "width": 690,
+   "height": 1570,
+   "n_text_dets_harvest": 7,
+   "n_bubble_dropped": 6,
+   "detections": [
+    {
+     "box_xyxy": [
+      73.5,
+      77.8,
+      359.5,
+      258.8
+     ],
+     "conf": 0.9664,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      99.1,
+      1107.9,
+      352.6,
+      1266.6
+     ],
+     "conf": 0.9647,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      368.0,
+      316.9,
+      647.7,
+      460.3
+     ],
+     "conf": 0.9625,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      40.9,
+      1473.7,
+      245.7,
+      1519.3
+     ],
+     "conf": 0.7165,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      501.7,
+      1493.3,
+      580.6,
+      1522.3
+     ],
+     "conf": 0.6189,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      38.0,
+      1473.2,
+      247.6,
+      1521.3
+     ],
+     "conf": 0.5363,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      40.9,
+      1473.7,
+      245.7,
+      1519.3
+     ],
+     "conf": 0.2665,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K09_R071": {
+   "case_id": "K09",
+   "region_index": 71,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R071.png",
+   "width": 690,
+   "height": 849,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 2,
+   "detections": [
+    {
+     "box_xyxy": [
+      355.1,
+      90.7,
+      558.6,
+      191.8
+     ],
+     "conf": 0.9601,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      411.2,
+      735.8,
+      478.8,
+      794.8
+     ],
+     "conf": 0.8577,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      204.3,
+      1.1,
+      342.5,
+      96.4
+     ],
+     "conf": 0.5746,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K09_R098": {
+   "case_id": "K09",
+   "region_index": 98,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R098.png",
+   "width": 690,
+   "height": 802,
+   "n_text_dets_harvest": 4,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      50.9,
+      397.1,
+      100.3,
+      773.5
+     ],
+     "conf": 0.612,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      50.9,
+      397.1,
+      100.3,
+      773.5
+     ],
+     "conf": 0.4625,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      51.6,
+      399.7,
+      73.0,
+      771.0
+     ],
+     "conf": 0.3169,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      71.3,
+      397.2,
+      99.8,
+      769.5
+     ],
+     "conf": 0.286,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K09_R112": {
+   "case_id": "K09",
+   "region_index": 112,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R112.png",
+   "width": 690,
+   "height": 578,
+   "n_text_dets_harvest": 1,
+   "n_bubble_dropped": 0,
+   "detections": [
+    {
+     "box_xyxy": [
+      574.5,
+      228.3,
+      656.5,
+      311.5
+     ],
+     "conf": 0.2926,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K10_R073": {
+   "case_id": "K10",
+   "region_index": 73,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R073.png",
+   "width": 690,
+   "height": 1446,
+   "n_text_dets_harvest": 3,
+   "n_bubble_dropped": 4,
+   "detections": [
+    {
+     "box_xyxy": [
+      69.0,
+      332.2,
+      247.5,
+      428.2
+     ],
+     "conf": 0.9411,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      158.3,
+      135.6,
+      351.0,
+      240.8
+     ],
+     "conf": 0.9394,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      369.6,
+      1158.8,
+      614.4,
+      1396.5
+     ],
+     "conf": 0.8031,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ]
+  },
+  "K10_R129": {
+   "case_id": "K10",
+   "region_index": 129,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R129.png",
+   "width": 690,
+   "height": 1015,
+   "n_text_dets_harvest": 6,
+   "n_bubble_dropped": 2,
+   "detections": [
+    {
+     "box_xyxy": [
+      495.4,
+      837.3,
+      566.3,
+      897.9
+     ],
+     "conf": 0.6713,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      129.6,
+      185.0,
+      556.0,
+      379.8
+     ],
+     "conf": 0.5733,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      359.1,
+      327.7,
+      627.3,
+      572.1
+     ],
+     "conf": 0.4549,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      51.1,
+      115.8,
+      344.6,
+      242.9
+     ],
+     "conf": 0.307,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      54.3,
+      182.8,
+      156.0,
+      238.8
+     ],
+     "conf": 0.3033,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      48.4,
+      109.1,
+      634.0,
+      586.4
+     ],
+     "conf": 0.2952,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ]
+  },
+  "K10_R143": {
+   "case_id": "K10",
+   "region_index": 143,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R143.png",
+   "width": 690,
+   "height": 1128,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  },
+  "K10_R144": {
+   "case_id": "K10",
+   "region_index": 144,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R144.png",
+   "width": 690,
+   "height": 1456,
+   "n_text_dets_harvest": 0,
+   "n_bubble_dropped": 0,
+   "detections": []
+  }
+ }
+}
