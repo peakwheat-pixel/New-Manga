@@ -40,6 +40,32 @@ impossible to miss because this module shares the same objects.
 The torch/transformers stack is imported lazily on first use, so a machine
 without the heavy runtime still boots the app; the first ``detect`` reports
 the typed dependency gap instead (same lazy pattern as the docTR adapter).
+
+Webtoon long-strip tiling (M2-DETECT-WEBTOON-TILING): the whole-page path
+above feeds every page through the ``RTDetrImageProcessor`` (size 640x640,
+no letterbox), which anisotropically crushes a 690x62133 webtoon strip
+~97x vertically — the targets vanish and the model scores collapse below
+the production threshold (raw max 0.204 on K01, 0 regions). The frozen
+diagnosis (``verification/M2-DETECT-WEBTOON-DIAG/``) proved the repair:
+the SAME weights, threshold and post-processing on 1024x1024 tiles with a
+128 px overlap recover 193 pre-merge text boxes on that same page (NMS
+dedup evidence: 30/33 removals in the overlap bands, mean IoU 0.848).
+The tiled path therefore triggers on aspect ratio — ``height/max(width,1)``
+strictly above ``TILING_TRIGGER_RATIO`` (4.0 separates the diagnosed long
+strips, h/w 30.7-90.0, from every normal page in the suite, h/w <= 1.41,
+with a ~20x margin) — and cuts the page into overlapping square tiles
+(right/bottom-padded with constant 114 gray to the square, the DIAG
+experiment's exact geometry), runs the per-tile production inference
+sequence on the SAME loaded engine (never a per-tile rebuild), maps each
+text box back to page coordinates (+tile origin, clipped to the tile
+bounds by the shared pure filter), and de-duplicates cross-tile repeats
+with a confidence-ordered greedy NMS (IoU strictly above the threshold
+drops; IoU == threshold is kept). The output is the same absolute-page
+``text_boxes`` the whole-page path feeds into the frozen production merge
+— the DetectionRequest/Response contract is untouched. The parameters are
+env-configurable (``NEWMANGA_DETECTOR_TILING_*``, the SFX conf-threshold
+env precedent): an illegal value fails fast, never a silent default, and
+a page that does not trigger keeps the byte-identical whole-page behavior.
 """
 
 from __future__ import annotations
@@ -47,6 +73,7 @@ from __future__ import annotations
 import hashlib
 import importlib
 import math
+import os
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -115,6 +142,160 @@ MERGE_POLICY_CONSTANTS = (
 )
 
 
+# -- webtoon long-strip tiling (M2-DETECT-WEBTOON-TILING) -------------------
+
+#: Tiling defaults = the DIAG-frozen experiment values
+#: (``verification/M2-DETECT-WEBTOON-DIAG/probe-results.json``,
+#: ``pages.K01.tile_experiment``): 1024 px square tiles with a 128 px
+#: vertical overlap and a page-level NMS at IoU 0.5 recovered 193 pre-merge
+#: text boxes where the whole-page path scored 0. Changing them is a new
+#: slice with re-run evidence.
+TILING_TILE_SIZE = 1024
+TILING_OVERLAP_PX = 128
+TILING_NMS_IOU = 0.5
+
+#: The trigger is the Owner ruling recorded in the task doc: aspect ratio
+#: ``height/max(width, 1)`` STRICTLY above 4.0. The DIAG data fixes the
+#: margins: the diagnosed long strips sit at h/w 30.7 (K02) / 40.8 (K04) /
+#: 90.0 (K01), while every normal page measured (BJ02 2946x4167, K19
+#: 1200x1660) sits at h/w <= 1.41 — a ~20x safety margin on both sides.
+TILING_TRIGGER_RATIO = 4.0
+
+#: Square-input padding: a crop narrower/shorter than the tile is padded
+#: with constant 114 gray (the DIAG experiment's convention; no upstream
+#: citation, carries no text by construction, and its pad bands produced
+#: zero detections across all 70 K01 tiles).
+TILING_PAD_VALUE = 114
+
+#: The env channel (the ``NEWMANGA_SFX_CONF_THRESHOLD`` precedent): absent
+#: variables mean the frozen defaults above; a present-but-illegal value is
+#: a fail-fast ``ValueError`` naming the variable — never a silent default.
+TILING_ENV_TILE_SIZE = "NEWMANGA_DETECTOR_TILING_TILE_SIZE"
+TILING_ENV_OVERLAP = "NEWMANGA_DETECTOR_TILING_OVERLAP"
+TILING_ENV_NMS_IOU = "NEWMANGA_DETECTOR_TILING_NMS_IOU"
+TILING_ENV_TRIGGER_RATIO = "NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO"
+
+
+@dataclass(frozen=True)
+class TilingConfig:
+    """The resolved tiling parameters of one ``detect`` call."""
+
+    trigger_ratio: float = TILING_TRIGGER_RATIO
+    tile_size: int = TILING_TILE_SIZE
+    overlap: int = TILING_OVERLAP_PX
+    nms_iou: float = TILING_NMS_IOU
+
+
+def _tiling_config() -> TilingConfig:
+    """Read the tiling configuration: env overrides or the frozen defaults.
+
+    Fail-fast semantics (the SFX conf env precedent): a non-numeric or
+    out-of-range value raises ``ValueError`` naming the env variable. The
+    overlap is validated against the EFFECTIVE tile size, so a custom tile
+    size below the default overlap must come with its own overlap — the
+    error names both variables.
+    """
+    raw = os.environ.get(TILING_ENV_TRIGGER_RATIO)
+    trigger_ratio = float(TILING_TRIGGER_RATIO)
+    if raw and raw.strip():
+        try:
+            trigger_ratio = float(raw.strip())
+        except ValueError as error:
+            raise ValueError(
+                f"{TILING_ENV_TRIGGER_RATIO}: not a number: {raw!r}"
+            ) from error
+        if not trigger_ratio > 0.0:
+            raise ValueError(
+                f"{TILING_ENV_TRIGGER_RATIO}: must be > 0, got {trigger_ratio!r}"
+            )
+
+    raw = os.environ.get(TILING_ENV_TILE_SIZE)
+    tile_size = TILING_TILE_SIZE
+    if raw and raw.strip():
+        try:
+            tile_size = int(raw.strip())
+        except ValueError as error:
+            raise ValueError(
+                f"{TILING_ENV_TILE_SIZE}: not an integer: {raw!r}"
+            ) from error
+        if tile_size <= 0:
+            raise ValueError(
+                f"{TILING_ENV_TILE_SIZE}: must be a positive integer, got {tile_size!r}"
+            )
+
+    raw = os.environ.get(TILING_ENV_OVERLAP)
+    overlap = TILING_OVERLAP_PX
+    if raw and raw.strip():
+        try:
+            overlap = int(raw.strip())
+        except ValueError as error:
+            raise ValueError(
+                f"{TILING_ENV_OVERLAP}: not an integer: {raw!r}"
+            ) from error
+    if not 0 <= overlap < tile_size:
+        raise ValueError(
+            f"{TILING_ENV_OVERLAP}: must be in [0, tile_size) — got {overlap!r} "
+            f"with {TILING_ENV_TILE_SIZE}={tile_size}"
+        )
+
+    raw = os.environ.get(TILING_ENV_NMS_IOU)
+    nms_iou = float(TILING_NMS_IOU)
+    if raw and raw.strip():
+        try:
+            nms_iou = float(raw.strip())
+        except ValueError as error:
+            raise ValueError(
+                f"{TILING_ENV_NMS_IOU}: not a number: {raw!r}"
+            ) from error
+        if not 0.0 < nms_iou < 1.0:
+            raise ValueError(
+                f"{TILING_ENV_NMS_IOU}: must be in (0, 1), got {nms_iou!r}"
+            )
+
+    return TilingConfig(
+        trigger_ratio=trigger_ratio,
+        tile_size=tile_size,
+        overlap=overlap,
+        nms_iou=nms_iou,
+    )
+
+
+def _tiling_triggered(width: float, height: float, trigger_ratio: float) -> bool:
+    """True for a webtoon long-strip: ``height/max(width, 1)`` STRICTLY
+    above the ratio. The boundary itself (h/w == ratio) stays untiled —
+    strictness keeps the trigger from creeping into tall-but-normal pages.
+    """
+    return height / max(width, 1.0) > trigger_ratio
+
+
+def _tiling_tiles(
+    width: float, height: float, tile_size: int, overlap: int
+) -> list[tuple[float, float, float, float]]:
+    """The overlapping tile grid as ``(x0, y0, x1, y1)`` page-space rects.
+
+    Per axis the origins step by ``tile_size - overlap`` until a tile
+    reaches past the page end, and the last tile is clipped to the page —
+    exactly the DIAG stepping (tile 1024 / overlap 128 on the 690x62133
+    K01 page yields origins 0, 896, ..., 61824 with a 309 px tail = 70
+    tiles). ``tile_size > overlap`` is enforced by ``_tiling_config``, so
+    the step is always positive and coverage always holds (each next tile
+    starts inside the previous one).
+    """
+    step = tile_size - overlap
+
+    def origins(total: float) -> list[float]:
+        found = [0.0]
+        while found[-1] + tile_size < total:
+            found.append(found[-1] + step)
+        return found
+
+    return [
+        (x0, y0, min(x0 + tile_size, width), min(y0 + tile_size, height))
+        for y0 in origins(height)
+        for x0 in origins(width)
+    ]
+
+
 def sha256_file(path: Path) -> str:
     digest = hashlib.sha256()
     with open(path, "rb") as handle:
@@ -142,9 +323,36 @@ class MangaDetectionProvider:
         model, processor = self._engine_or_raise()
         rgb = self._frame_pixels(request)
         width, height = float(rgb.shape[1]), float(rgb.shape[0])
-        boxes, n_bubble = _detect_text_boxes(
-            model, processor, rgb, width, height
-        )
+        tiling_config = _tiling_config()
+        if _tiling_triggered(width, height, tiling_config.trigger_ratio):
+            # webtoon long-strip: tile -> per-tile production inference ->
+            # remap -> cross-tile NMS (the DIAG repair; same engine, same
+            # threshold, same post-processing as the whole-page path)
+            boxes, n_bubble = _detect_text_boxes_tiled(
+                model, processor, rgb, width, height, tiling_config
+            )
+            tiling_options: tuple[tuple[str, str], ...] = (
+                ("tiling", "on"),
+                (
+                    "tiling_tiles",
+                    str(
+                        len(
+                            _tiling_tiles(
+                                width,
+                                height,
+                                tiling_config.tile_size,
+                                tiling_config.overlap,
+                            )
+                        )
+                    ),
+                ),
+            )
+        else:
+            # normal page: the C4 evaluation's inference sequence, verbatim
+            boxes, n_bubble = _detect_text_boxes(
+                model, processor, rgb, width, height
+            )
+            tiling_options = (("tiling", "off"),)
         blocks = cluster_words_into_blocks(
             [(b[0], b[1], b[2], b[3]) for b in boxes],
             [b[4] for b in boxes],
@@ -172,6 +380,8 @@ class MangaDetectionProvider:
                 ("device", self.device),
                 ("conf_threshold", str(MANGA_CONF_THRESHOLD)),
                 ("bubble_class_dropped", str(n_bubble)),
+                ("text_boxes_pre_merge", str(len(boxes))),
+                *tiling_options,
             ),
             elapsed_ms=elapsed_ms,
         )
@@ -328,7 +538,12 @@ def _resolve_device(torch: Any, device: str) -> str:
 def _detect_text_boxes(
     model: Any, processor: Any, rgb: Any, width: float, height: float
 ) -> tuple[list[tuple[float, float, float, float, float]], int]:
-    """Run one page through the pinned model; return (text_boxes, n_bubble).
+    """Run one WHOLE page through the pinned model; return (text_boxes, n_bubble).
+
+    This is the normal-page path (h/w <= trigger ratio) and it is kept
+    byte-identical to the pre-tiling implementation: pages that do not
+    trigger the tiling gate behave exactly as before M2-DETECT-WEBTOON-TILING
+    (long strips go through ``_detect_text_boxes_tiled`` instead).
 
     ``text_boxes`` is the union of the TEXT classes only, in absolute source
     pixels — the "word"-role input of the frozen production merge. The
@@ -365,6 +580,152 @@ def _detect_text_boxes(
             stage="detection",
         ) from error
     return _text_boxes_from_results(scores, labels, boxes, width, height)
+
+
+def _pad_tile(crop: Any, tile_size: int) -> Any:
+    """Right/bottom-pad a crop to the square ``tile_size`` with constant
+    gray (the DIAG experiment's square-input convention; the pad carries no
+    text by construction and produced zero detections there).
+    """
+    numpy = _lazy_import("numpy", "detection")
+    tile = numpy.full(
+        (tile_size, tile_size, 3), TILING_PAD_VALUE, dtype=numpy.uint8
+    )
+    tile[: crop.shape[0], : crop.shape[1]] = crop
+    return tile
+
+
+def _tile_inference(
+    model: Any, processor: Any, tile_rgb: Any, threshold: float
+) -> tuple[list[float], list[int], list[list[float]]]:
+    """One production inference sequence on one tile.
+
+    Identical to the whole-page path (``processor -> model ->
+    post_process_object_detection``), with the PADDED tile as the
+    resize-back target — the raw ``(scores, labels, boxes)`` payload in
+    padded tile-local pixels. Text filtering, clipping and validation stay
+    in the shared pure filter; the threshold is a parameter so the
+    qualification can measure a second curve point without touching the
+    production default.
+    """
+    torch = _lazy_import("torch", "detection")
+    try:
+        inputs = processor(images=tile_rgb, return_tensors="pt")
+        inputs = {key: value.to(model.device) for key, value in inputs.items()}
+        with torch.no_grad():
+            outputs = model(**inputs)
+        target_sizes = torch.tensor(
+            [[int(tile_rgb.shape[0]), int(tile_rgb.shape[1])]]
+        )
+        results = processor.post_process_object_detection(
+            outputs, target_sizes=target_sizes, threshold=threshold
+        )[0]
+    except (ProviderDependencyMissing, ProviderError):
+        raise
+    except Exception as error:  # noqa: BLE001 - inference failures are typed
+        raise ProviderError(
+            f"manga detection tile inference failed: {error!r}",
+            stage="detection",
+        ) from error
+    try:
+        return (
+            results["scores"].tolist(),
+            results["labels"].tolist(),
+            results["boxes"].tolist(),
+        )
+    except Exception as error:  # noqa: BLE001 - malformed payloads are typed
+        raise ProviderInvalidOutput(
+            f"manga detector payload is malformed: {error!r}",
+            provider_id=PROVIDER_MANGA,
+            stage="detection",
+        ) from error
+
+
+def _iou(
+    a: tuple[float, float, float, float, float],
+    b: tuple[float, float, float, float, float],
+) -> float:
+    """Intersection-over-union of two ``(x0, y0, x1, y1, conf)`` boxes."""
+    ix0, iy0 = max(a[0], b[0]), max(a[1], b[1])
+    ix1, iy1 = min(a[2], b[2]), min(a[3], b[3])
+    iw, ih = max(0.0, ix1 - ix0), max(0.0, iy1 - iy0)
+    intersection = iw * ih
+    if intersection <= 0.0:
+        return 0.0
+    area_a = (a[2] - a[0]) * (a[3] - a[1])
+    area_b = (b[2] - b[0]) * (b[3] - b[1])
+    return intersection / (area_a + area_b - intersection)
+
+
+def _greedy_nms(
+    boxes: list[tuple[float, float, float, float, float]], iou_threshold: float
+) -> list[tuple[float, float, float, float, float]]:
+    """Confidence-ordered greedy NMS over page-global boxes.
+
+    A box is dropped when its best IoU against the already-kept set is
+    STRICTLY above the threshold (IoU == threshold is kept) — the DIAG
+    dedup semantics, which measured 30/33 removals inside the overlap
+    bands with a mean removal IoU of 0.848. Pure and deterministic.
+    """
+    kept: list[tuple[float, float, float, float, float]] = []
+    for box in sorted(boxes, key=lambda b: b[4], reverse=True):
+        if any(_iou(box, keeper) > iou_threshold for keeper in kept):
+            continue
+        kept.append(box)
+    return kept
+
+
+def _detect_text_boxes_tiled(
+    model: Any,
+    processor: Any,
+    rgb: Any,
+    width: float,
+    height: float,
+    config: TilingConfig,
+    threshold: float = MANGA_CONF_THRESHOLD,
+) -> tuple[list[tuple[float, float, float, float, float]], int]:
+    """The webtoon long-strip path: tile, infer, remap, de-duplicate.
+
+    The DIAG repair (M2-DETECT-WEBTOON-TILING), on the SAME loaded engine —
+    the model/processor pair is never rebuilt per tile:
+
+    1. cut the page into overlapping tiles (``_tiling_tiles``, the DIAG
+       stepping) and pad each crop to the square tile size (right/bottom,
+       constant gray);
+    2. run the production inference sequence per tile (``_tile_inference``,
+       production threshold by default);
+    3. filter through the SHARED pure filter (``_text_boxes_from_results``)
+       with the tile's real crop size — that clip to the tile bounds is the
+       documented pad-band safety (the DIAG pad bands produced zero
+       detections, so clipping cannot lose a real box);
+    4. remap each box to page coordinates by adding the tile origin;
+    5. de-duplicate cross-tile repeats with the confidence-ordered greedy
+       NMS (IoU strictly above ``config.nms_iou`` drops).
+
+    Returns ``(text_boxes, n_bubble)`` in absolute page pixels — the exact
+    whole-page contract, so the frozen production merge and the
+    DetectionResult contract are untouched.
+    """
+    tiles = _tiling_tiles(width, height, config.tile_size, config.overlap)
+    page_boxes: list[tuple[float, float, float, float, float]] = []
+    n_bubble = 0
+    for (x0, y0, x1, y1) in tiles:
+        crop = rgb[int(y0) : int(y1), int(x0) : int(x1)]
+        crop_h, crop_w = int(crop.shape[0]), int(crop.shape[1])
+        scores, labels, boxes = _tile_inference(
+            model, processor, _pad_tile(crop, config.tile_size), threshold
+        )
+        tile_boxes, tile_bubble = _text_boxes_from_results(
+            scores, labels, boxes, float(crop_w), float(crop_h)
+        )
+        n_bubble += tile_bubble
+        for (bx0, by0, bx1, by1, confidence) in tile_boxes:
+            # tile-local -> page-global (+origin); the boxes are already
+            # clipped to the tile bounds by the shared filter
+            page_boxes.append(
+                (bx0 + x0, by0 + y0, bx1 + x0, by1 + y0, confidence)
+            )
+    return _greedy_nms(page_boxes, config.nms_iou), n_bubble
 
 
 def _text_boxes_from_results(
