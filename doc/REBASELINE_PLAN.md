@@ -119,6 +119,9 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-DETECT-WEBTOON-TILING](tasks/M2-DETECT-WEBTOON-TILING.md) webtoon 长条漫 tiling 检测修复（建议 A 第二步） | **done**（integration=`e1c040bf`+companion、merge=`061fbb60`；DSH r1 **PASS 零阻塞**，9×P3/P4 登记紧邻 follow-up） | ZCode / DeepSeek Harness | fork=`f99a6c55`、delivery=`29a7f5b5`；tiling+坐标回映落 `detection_manga.py`（触发 h/w>4.0、env `NEWMANGA_DETECTOR_TILING_*` 默认 4.0/1024/128/0.5 fail-fast）；qualification **GATE PASS 5/5**（K01 180 region/193 框逐值复现 DIAG、20.1s≤25s；K02/K04/K05/K08 全 >0；阈值曲线+690×690 对照+K19/BJ02 零变化）；+45 测试红 44F→73P；[DSH r1](reviews/M2-DETECT-WEBTOON-TILING-29a7f5b5-dsh-r1.md)、[qualification](../verification/M2-DETECT-WEBTOON-TILING/qualification-report.md)。 |
 | [M2-TASKS-BACKFILL-MULTIREGION](tasks/M2-TASKS-BACKFILL-MULTIREGION.md) executor backfill 逐 region 跟进 | **done**（integration=`27701679`、merge=`fd452f37`；DSH r1 有条件通过 → 返修 R1-R7 全 closed → r2 `approved`） | ZCode / DeepSeek Harness | backfill 逐 region fan-out（与恢复路径同 `_plan_region` 语义；SFX gate plan 层 per-region 生效）；R1 terminal 账目同步（断言红态 terminal 12≠17 独立验证）；R4/R5 证据归档；**R2 裁决请求=单 region SFX 页 primary 重决策**（违反 D06 §85 反例已登记）；主 venv 双侧 530+1sk/575+1sk 0 failed；[DSH r2](reviews/M2-TASKS-BACKFILL-MULTIREGION-95469952-dsh-r2.md)。 |
 | [M2-SETTINGS-UI-SFX-POLICY](tasks/M2-SETTINGS-UI-SFX-POLICY.md) 设置页 SFX 策略键接入 | **blocked_on_contract**（UI/测试已交付 @`efad4b71`：SettingsPanel+SettingsClient+17 新测试 vitest 48 全绿；IPC 勘察=产品无设置页且无任何 settings 通道，触 M2-C1 冻结契约即停） | ZCode / DeepSeek Harness | 解除前提=settings IPC 通道 slice（`settings_get`/`settings_update_section`，形状已 pin handoff）；通道契约裁决待用户确认；[handoff](handoffs/M2-SETTINGS-UI-SFX-POLICY-8c798aed.md)。 |
+| [M2-TASKS-PRIMARY-SFX-GATE](tasks/M2-TASKS-PRIMARY-SFX-GATE.md) primary region 重决策（裁决②） | **done**（integration=`0820d3d5`、merge=`16eb80ce`；DSH r1 有条件通过 0×P0/P1，2×P2 文档/口径级条件闭合） | ZCode / DeepSeek Harness | fork=`1c3ac590`、delivery=`19bf234a`；primary 与 secondaries 统一 `_plan_region` live-Region 重决策（页级决策链退役、SFX 门全域生效 D06 §85、terminal 账目统一 progress 1.0）；DSH 反例红态固化（SFX primary+manual ⇒ RUN≠SKIP_POLICY）；等价性护栏（非 SFX step-for-step 全等）；双侧 627+1sk/630+1sk 精确复现；post-merge 576+1sk；follow-ups：except 收窄/translate-primary 覆盖；[DSH r1](reviews/M2-TASKS-PRIMARY-SFX-GATE-19bf234a-dsh-r1.md)。 |
+| [M2-TA3-B2-KO-RERUN](tasks/M2-TA3-B2-KO-RERUN.md) TA3-B2 ko qualification 重跑（裁决③） | **进行中**（第二波释放；前置=PRIMARY-SFX-GATE 集成已满足） | ZCode / DeepSeek Harness | ko 10 case 重跑（TILING 解锁 F1+ALLOC 解锁 F2）；成本受控（先单 case 试算）；K19/F4 维持登记；[Task](tasks/M2-TA3-B2-KO-RERUN.md)。 |
+| [M2-SETTINGS-IPC-CHANNEL](tasks/M2-SETTINGS-IPC-CHANNEL.md) settings IPC 通道（裁决①） | **进行中**（Owner 执行中：M2-C1 rev+Rust 两命令+core 桥+前端接通） | ZCode / DeepSeek Harness | 解除 SFX-UI blocked_on_contract；写入端前置校验（SFX-ENTRY R4 教训）；[Task](tasks/M2-SETTINGS-IPC-CHANNEL.md)。 |
 | [M2-SFX-TRANSLATE-ENTRY](tasks/M2-SFX-TRANSLATE-ENTRY.md) SFX 翻译策略可配置入口（裁决④） | **done**（integration=`e0ba396a`、merge=`1eccc99d`；DSH r1 `approved_with_conditions` 0×P0/P1，条件由集成方闭合） | ZCode / DeepSeek Harness | `settings["sfx"]["policy"]`（skip/translate/manual，默认 SKIP 零变化+非法值 fail-fast）；缺环修复=装配闭包向 create_region 传参（translate 门生产可达）；**作用域=仅新建 region**（r1 R1 登记）；21 新增测试；post-merge 530+1sk 0 failed；后续=React 设置页（Qoder）/region 级策略入口/backfill 调度片；[集成记录](../verification/M2-SFX-TRANSLATE-ENTRY/integration.md)、[DSH r1](reviews/M2-SFX-TRANSLATE-ENTRY-a377a25a-dsh-r1.md)。 |
 | [M2-OCR-PADDLE3X-1](tasks/M2-OCR-PADDLE3X-1.md) 生产 ocr_local.py PaddleOCR 3.x 适配修复 | **done**（integration=`53326278`、merge=`96cdb297`；DSH r1 `approved_with_conditions` 1×P2+5×P3+3×P4 条件全闭） | ZCode / DeepSeek Harness | base=`69137837`（release `19adf0e0`）、delivery=`15ef29ab`、集成 tip=`53326278`；诊断=**ALWAYS_EMPTY**（bytes 输入校验层拒绝，错误文本风险面不存在）；修复=bytes→BGR ndarray+`enable_mkldnn=False`+双形状解析（numpy box 物化）；R3 fail-closed 收紧+2 回归测试（ocr_local 19 例）；红绿判别 9/9（声称 10/7 实跑 9/8 差异已如实登记）；探针复跑逐位一致；main 509+1skipped 0 failed；遗留台账（TA3-B2 wrapper 适配/mkldnn 性能对照/2.x 实测/det 孤立 crop）见 [integration.md](../verification/M2-OCR-PADDLE3X-1/integration.md)、[DSH r1](reviews/M2-OCR-PADDLE3X-1-15ef29ab-dsh-r1.md)。 |
 
@@ -181,6 +184,9 @@ flowchart TD
   TA3B -.-> TIL["M2-DETECT-WEBTOON-TILING tiling 检测修复 · O:ZCode ✓（GATE PASS 5/5；ko 检测解锁）"]
   TA3B -.-> BKF["M2-TASKS-BACKFILL-MULTIREGION backfill 逐 region · O:ZCode ✓"]
   TA3B -.-> SUI["M2-SETTINGS-UI-SFX-POLICY 设置页接入 · blocked_on_contract（等 settings IPC 通道契约）"]
+  TA3B -.-> PSG["M2-TASKS-PRIMARY-SFX-GATE primary 重决策 · O:ZCode ✓（裁决②；SFX 门全域）"]
+  TA3B -.-> KOR["M2-TA3-B2-KO-RERUN ko qualification 重跑 · 进行中（F1/F2 解锁后）"]
+  TA3B -.-> SIP["M2-SETTINGS-IPC-CHANNEL settings 通道 · O:ZCode（Owner 执行中）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
@@ -199,10 +205,10 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class SUI proposed;
+  class SUI,KOR,SIP proposed;
 
   
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2,TIL,BKF done;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2,TIL,BKF,PSG done;
   
 ```
 
