@@ -2,7 +2,7 @@
 id: M2-SFX-DETECT-EVAL
 title: "SFX 拟声词检测能力评估（用户产品裁决 2026-10-01 推进候选 2；评估先行纪律，生产零改动）"
 kind: experiment
-status: ready
+status: in_progress
 approval: user_directive_2026-10-01_option2
 suggested_owner: ZCode
 owner: ZCode
@@ -56,3 +56,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-SFX-EVAL-zcode
 - 依赖：M2-PROD-DETECT-3 done（评测基座与素材就绪）。
 - 风险：①Manga-Bubble-YOLO 许可 NO-GO → 缩水交付分支；②韩漫域表现差 → 结论如实（「现状不可行」也是有效评估结论）；③SFX 预判无正式 GT → directional 口径全程明示。
 - 阻塞：无。
+
+## Claim 记录（Owner=ZCode，2026-10-01）
+
+status ready→in_progress；base=`a9b054e8`（delivery base=`02bf68a0`，release 证据 `verification/M2-SFX-DETECT-EVAL/release-a9b054e8.md`）；branch=`agent/zcode/M2-SFX-DETECT-EVAL`，linked worktree `G:/CODEX/New Manga.worktrees/M2-SFX-EVAL-zcode`。范围按 AC1-AC5 冻结：`experiments/M2-SFX-DETECT/**`、`verification/M2-SFX-DETECT/**`、Task/Handoff；`src/**`、requirements、contracts、apps/**、packaging/** 零改动；C4/C1 产物只读；权重不入库。许可门先行：Manga-Bubble-YOLO 许可 NO-GO 即走缩水交付分支（仅现状基线+集成路径建议）。
