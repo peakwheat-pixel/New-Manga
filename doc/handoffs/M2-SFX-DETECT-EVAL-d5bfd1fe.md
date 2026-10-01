@@ -3,7 +3,7 @@ task_id: M2-SFX-DETECT-EVAL
 author: ZCode
 recipient: Codex（integrator 代行）；reviewer=DeepSeek Harness（非作者）
 base_commit: a9b054e8
-delivery_head: d5bfd1fe（implement=评估产物+r1 报告；本 handoff 与 Task/STATUS 回填=收尾 d98bab7e）
+delivery_head: c6eae9ad（review-fix DSH r1 R1-R14 终态；本 handoff 的 implement 段=d5bfd1fe、r1 被审 tip=d98bab7e——r2 N2 落档）
 tip: d98bab7e（r1 被审 commit）；r2 返修 tip=见 Task frontmatter（review-fix commit）
 status: in_review（DSH r1=changes_requested；r2 修订已交付待复审）
 ---
@@ -44,9 +44,9 @@ Owner 在收尾 commit `d98bab7e` 改写了 `doc/STATUS.md` 的 Active Task 行�
 
 ## 纪律自检（AC5；按 commit 口径分述，R9）
 
-- `02bf68a0..d5bfd1fe`（implement）：13 文件=Task(claim) + `experiments/M2-SFX-DETECT/**`(10) + report —— 不含 STATUS/Handoff。
+- `02bf68a0..d5bfd1fe`（implement）：12 文件（r2 N1 实测修正）=Task(claim) + `experiments/M2-SFX-DETECT/**`(10) + report —— 不含 STATUS/Handoff。
 - `02bf68a0..d98bab7e`（收尾 tip）：14 文件=上述 + `doc/STATUS.md`（**越界，R7 已登记**）+ `doc/handoffs/…`。
-- `02bf68a0..<返修 tip>`（r2）：Task/handoff 修订 + `experiments/M2-SFX-DETECT/**`（3 脚本修订+2 新增+2 JSON 重生成）+ `verification/M2-SFX-DETECT-EVAL/**`（报告 r2 + license-evidence + inventory 新增）——**STATUS 零触碰**。
+- `02bf68a0..<返修 tip>`（r2）：Task/handoff 修订 + `experiments/M2-SFX-DETECT/**`（3 脚本修订+1 新增脚本 inventory_external_evidence.py+3 JSON 重生成——r2 N8 口径修正）+ `verification/M2-SFX-DETECT-EVAL/**`（报告 r2 + license-evidence + inventory 新增）——**STATUS 零触碰**。
 - `git diff --check 02bf68a0..HEAD` EXIT=0；禁改路径（src/requirements/contracts/apps/packaging/tests）触碰 0；C1/C4 产物零改动；权重零 tracked（`git ls-files` 无 onnx/pt/safetensors/bin）。
 - pytest 三套件（主 venv `T1.1.1-impl-py312`）：providers **291 passed + 1 skipped** / m2_acceptance **35 passed** / core **111 passed** = **437+1skipped 0 failed**（基数不变）。
 - 环境披露：C4 GPU venv 新装 `onnxruntime` 1.30.0（CPU provider，评估专用）。

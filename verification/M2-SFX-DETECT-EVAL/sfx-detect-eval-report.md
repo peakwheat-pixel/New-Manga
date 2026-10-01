@@ -86,7 +86,7 @@ A 层 11 帧（C1 用户审定）**全部复现 C1 结论**：6 个检出盲区 
 
 **公平口径结论（directional，方向较 r1 反转）**：去掉自比后，**ogkalu 对 SFX 的独立检出（7/18）弱于 chiqui7 的专用 sfx 类（子集内 8/18；全量 11/29）**——r1 版「ogkalu 18/29」的表观优势全部来自「检出框既当裁判又当选手」。
 
-**几何口径声明（R12）**：coverage=intersection/SFX 面积是**单侧口径**（recall-like），不约束框精度——大框可平凡「覆盖」（`chiqui7_any_class` 列常被 panel 类页面级大框支配 coverage=1.0，**该列不用于任何结论**）；instance 级 `iou` 字段已补入对照 JSON 供精度侧检验。「保守下界」的说法只对「字母级碎框使 coverage 被低估」这一方向成立，反向（大框虚高）无约束——故 chiqui7 sfx 类的 11/29 同样可能含松框成分，视觉核对（23 张 ONNX 预览逐帧读）是必要的校准：实测 sfx 类框多数紧贴字面（투두 cov=0.93/IoU≈0.87 级），但环形排布 SFX 按字母分别成框会低估整体 coverage（例：뙇环多字母框 conf=0.31-0.93，整体 cov 只计 0.32）。
+**几何口径声明（R12）**：coverage=intersection/SFX 面积是**单侧口径**（recall-like），不约束框精度——大框可平凡「覆盖」（`chiqui7_any_class` 列常被 panel 类页面级大框支配 coverage=1.0，**该列不用于任何结论**）；instance 级 `iou` 字段已补入对照 JSON 供精度侧检验。「保守下界」的说法只对「字母级碎框使 coverage 被低估」这一方向成立，反向（大框虚高）无约束——故 chiqui7 sfx 类的 11/29 同样可能含松框成分，视觉核对（23 张 ONNX 预览逐帧读）是必要的校准：实测 sfx 类框多数紧贴字面（투두 cov=0.93/IoU≈0.89（iou=0.889）），但环形排布 SFX 按字母分别成框会低估整体 coverage（例：뙇环多字母框 conf=0.31-0.93，整体 cov 只计 0.32）。
 
 ### 3.3 视觉核对要点（agent directional 判读；数字标注 conf=/cov=，R3）
 
@@ -159,7 +159,7 @@ A 层 11 帧（C1 用户审定）**全部复现 C1 结论**：6 个检出盲区 
 | 视觉判定 | `experiments/M2-SFX-DETECT/sfx-spot-check-verdicts.json` | 23 主帧逐帧判定+依据（conf/cls 由脚本取值，R6）+29 实例框；44 单元全量留档；provenance 三分 |
 | ONNX 推理 | `experiments/M2-SFX-DETECT/onnx-sfx-frames.json` | chiqui7/Kiuyha 23 帧；names 断言 + `onnx_metadata_imgsz`/`input_shape` 已记录（R8）；许可门发现随载荷登记 |
 | 跨模型对照 | `experiments/M2-SFX-DETECT/onnx-sfx-comparison.json`（schema@2） | 29 实例几何对照：`reference_box_provenance` 三分 + **NON_SELF_subset**（R1）+ instance 级 iou（R12）+ ≥0.3 列（R2 修正 14/7/18） |
-| 脚本 ×7 | `experiments/M2-SFX-DETECT/` | build_sfx_sample / eval_sfx_ogkalu / summarize_sfx_verdicts / eval_sfx_mangabubble / summarize_onnx_comparison / inventory_external_evidence（+C4 基座 import 复用零改动） |
+| 脚本 ×6 | `experiments/M2-SFX-DETECT/` | build_sfx_sample / eval_sfx_ogkalu / summarize_sfx_verdicts / eval_sfx_mangabubble / summarize_onnx_comparison / inventory_external_evidence（+C4 基座 import 复用零改动） |
 | 预览（不入库） | `task-envs/M2-SFX-DETECT/previews*/` | grid 锚定，ogkalu 43 张 + onnx 23 张（sha256 见 inventory） |
 | 释放证据 | `verification/M2-SFX-DETECT-EVAL/release-a9b054e8.md` | 零改动 |
 | DSH r1 review | 外部路径 `task-envs/M2-SFX-DETECT-EVAL/dsh-review-r1.md` | changes_requested；R1-R14 本版逐条处置 |

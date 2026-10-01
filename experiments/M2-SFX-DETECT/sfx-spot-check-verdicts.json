@@ -338,7 +338,7 @@
    "unit_id": "B2-U12",
    "sfx_summary": "싸—아（集体喊/泄气声，超大字）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 全宽大框覆盖全部字面（框过松但含 SFX，conf/cls/坐标见取值行）；阈值边缘样本（C4 正式 block 口径 conf=0.5475）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5475 cls=text_free coverage=0.973 box=[6.9, 0.6, 690.0, 355.0]",
+   "rationale": "ogkalu 全宽大框覆盖全部字面（框过松但含 SFX，conf/cls/坐标见取值行）；阈值边缘样本（raw harvest 口径 conf=0.5475；该帧无 frames-export block 层值——r2 N4 口径更正）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5475 cls=text_free coverage=0.973 box=[6.9, 0.6, 690.0, 355.0]",
    "sfx_instances": [
     {
      "desc": "싸—아（集体喊/泄气声，超大字）",
@@ -427,7 +427,7 @@
    "unit_id": "B2-U14",
    "sfx_summary": "덜컹（撞击声，两字斜排）",
    "frame_verdict": "detected_offset",
-   "rationale": "ogkalu 检出框覆盖「덜」（conf/cls 见取值行）；「컹」（约 [430,100,620,310]，见 extras）无任何检出框——整词部分检出；C1 记录「部分字」一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6248 cls=text_bubble coverage=0.926 box=[88.8, 0.1, 317.2, 234.4]",
+   "rationale": "ogkalu 检出框覆盖「덜」（conf/cls 见取值行）；「컹」（约 [430,100,620,310]，记录于本实例依据与报告 §2.2——该帧 extras 为空，r2 N5 修正）无任何检出框——整词部分检出；C1 记录「部分字」一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6248 cls=text_bubble coverage=0.926 box=[88.8, 0.1, 317.2, 234.4]",
    "sfx_instances": [
     {
      "desc": "덜컹（撞击声，两字斜排）",
@@ -1998,7 +1998,7 @@
    "unit_id": "B2-U12",
    "sfx_summary": "싸—아（集体喊/泄气声，超大字）",
    "frame_verdict": "detected_hit",
-   "rationale": "ogkalu 全宽大框覆盖全部字面（框过松但含 SFX，conf/cls/坐标见取值行）；阈值边缘样本（C4 正式 block 口径 conf=0.5475）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5475 cls=text_free coverage=0.973 box=[6.9, 0.6, 690.0, 355.0]",
+   "rationale": "ogkalu 全宽大框覆盖全部字面（框过松但含 SFX，conf/cls/坐标见取值行）；阈值边缘样本（raw harvest 口径 conf=0.5475；该帧无 frames-export block 层值——r2 N4 口径更正）｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.5475 cls=text_free coverage=0.973 box=[6.9, 0.6, 690.0, 355.0]",
    "sfx_instances": [
     {
      "desc": "싸—아（集体喊/泄气声，超大字）",
@@ -2087,7 +2087,7 @@
    "unit_id": "B2-U14",
    "sfx_summary": "덜컹（撞击声，两字斜排）",
    "frame_verdict": "detected_offset",
-   "rationale": "ogkalu 检出框覆盖「덜」（conf/cls 见取值行）；「컹」（约 [430,100,620,310]，见 extras）无任何检出框——整词部分检出；C1 记录「部分字」一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6248 cls=text_bubble coverage=0.926 box=[88.8, 0.1, 317.2, 234.4]",
+   "rationale": "ogkalu 检出框覆盖「덜」（conf/cls 见取值行）；「컹」（约 [430,100,620,310]，记录于本实例依据与报告 §2.2——该帧 extras 为空，r2 N5 修正）无任何检出框——整词部分检出；C1 记录「部分字」一致｜[payload 取值] ogkalu 最佳重叠检出框 conf=0.6248 cls=text_bubble coverage=0.926 box=[88.8, 0.1, 317.2, 234.4]",
    "sfx_instances": [
     {
      "desc": "덜컹（撞击声，两字斜排）",
