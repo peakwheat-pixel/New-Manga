@@ -2,7 +2,8 @@
 id: M2-TASKS-PRIMARY-SFX-GATE
 title: "primary region 重决策（BACKFILL R2 裁决落地：单 region SFX 页 primary 也经 SFX 门）"
 kind: feature
-status: in_review  # 交付 19bf234a：红 4F/19P → 绿 23P；三套件 630+1sk 0 failed（基线 627+1sk）；待 DSH 非作者 Review → Codex 集成
+status: done  # DSH r1 有条件通过（0×P0/P1，2×P2 文档/口径级由集成方闭合）→ 集成
+
 approval: user_ruling_2026-10-02_three_confirmations
 suggested_owner: ZCode
 owner: ZCode
