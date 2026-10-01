@@ -64,7 +64,12 @@ def _wired_detector(handlers: dict) -> object:
         bound = getattr(inner, "__self__", None)
         detector = getattr(getattr(bound, "deps", None), "detector", None)
         if detector is not None:
-            return detector
+            # M2-SFX-PROD-1: the production assembly (SFX on, the default)
+            # wraps the manga primary in the sfx parallel composite. The
+            # DETECT-2 weights-lookup semantics this file pins live on the
+            # PRIMARY provider, so unwrap the composite when present (the
+            # composite keeps the primary's provenance identity verbatim).
+            return getattr(detector, "primary", detector)
     raise AssertionError("detect handler does not expose a wired detector")
 
 
