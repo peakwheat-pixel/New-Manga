@@ -1,0 +1,15 @@
+infrastructure bootstrap src = base 8996ca55 version (git checkout 8996ca55 -- src/bootstrap/core_assembly.py before run; restored after)
+
+=================================== ERRORS ====================================
+___________ ERROR collecting tests/core/test_sfx_policy_settings.py ___________
+ImportError while importing test module 'G:\CODEX\New Manga.worktrees\M2-SFX-TRANSLATE-ENTRY-zcode\tests\core\test_sfx_policy_settings.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\core\test_sfx_policy_settings.py:44: in <module>
+    from bootstrap.core_assembly import (
+E   ImportError: cannot import name '_sfx_policy_from_settings' from 'bootstrap.core_assembly' (G:\CODEX\New Manga.worktrees\M2-SFX-TRANSLATE-ENTRY-zcode\src\bootstrap\core_assembly.py)
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+1 error in 0.35s

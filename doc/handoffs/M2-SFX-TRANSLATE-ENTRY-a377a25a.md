@@ -22,7 +22,7 @@ status: in_review
 ### 方案落点（AC1 落点自选留痕）
 
 - **配置键（选任务书路线 (a)）**：`settings["sfx"]["policy"]`——与 `ocr.script` 同一 `pipeline_defaults` 行、同一 `save_settings_section` upsert 语义；写入方式 `save_settings_section("sfx", {"policy": "skip" | "translate" | "manual"})`。路线 (b)（detect provider binding 级）被否：policy 是 pipeline 行为策略而非 step→provider 映射，且 binding 校验形状（provider id/mapping）与之不符。
-- **读取时点**：装配期（`assemble_core_services` 内、env 校验之后、mock 分支之外——DSH r1 R10 位置规则）。**re-assemble 语义**：settings 改后下一次 assemble 生效（pipeline_defaults 行是唯一事实源，无 live reload），与其余持久化键一致。
+- **读取时点**：装配期（`assemble_core_services` 内、env 校验之后、mock 分支之外——DSH r1 R10 位置规则）。**re-assemble 语义**：settings 改后下一次 assemble 生效（pipeline_defaults 行是唯一事实源，无 live reload），与其余持久化键一致。**作用域（r1 R1 定案登记）：策略仅对「此后新建」的 region 生效**——`create_region` 只在 detect 新建时被调用，已有 region 被 detect handler 复用（`handlers.py:258-269`）、不回溯；既有手稿库的 SFX→translate 解锁需重新检出（清除后重跑 detect，注意 detect stage 有效性）或使用全新 data root；region 级策略更新入口（`Region.apply_sfx_policy`）暂无消费者，登记为后续候选（含 pinning test 建议：预置 SKIP region + policy=translate 重跑 detect 断言仍 SKIP）。
 - **取值域与 fail-fast**：`SfxPolicy` 枚举三值（skip/translate/manual），strip+lower 规范化（与 env 门一致）；缺 section/缺键/null → 默认 **SKIP**（零行为变化）；存在但非法（未知词/空白/非字符串/section 形状坏）→ 装配期 `ValueError`（消息统一含可检索前缀 `sfx.policy`），mock 验收形态同样 fail-fast。
 - **传递链**：`_sfx_policy_from_settings`（模块级纯函数，仿 `_detected_region_type` 可测先例）→ 装配读出 `sfx_policy_cfg` → `_create_detected_region` 闭包捕获 → **仅当** `_detected_region_type(label) is RegionType.SFX` 时传 `editing.create_region(sfx_policy=sfx_policy_cfg)`，其余 region 类型恒 SKIP（配置不可能泄漏到非 SFX region）。
 - **不动面**：`models.py`（默认值不变）、`gate.py`（三值已实现）、`handlers.py`、`editing/service.py`（参数已贯通）、`detection_sfx.py`（provider 检测语义零触碰）、`src/ports/**`、`doc/contracts/**`。
@@ -35,7 +35,7 @@ status: in_review
 
 | commit | 内容 |
 |---|---|
-| `a377a25a`（delivery_head） | `implement(M2-SFX-TRANSLATE-ENTRY)`：`src/bootstrap/core_assembly.py`（+`_sfx_policy_from_settings` 纯函数+装配读取+闭包传参，+49 净行）+ `tests/core/test_sfx_policy_settings.py`（19 条，Qt-free）+ `tests/core/test_sfx_policy_end_to_end.py`（2 条，Qt offscreen）；红→绿叙述见 commit body |
+| `a377a25a`（delivery_head） | `implement(M2-SFX-TRANSLATE-ENTRY)`：`src/bootstrap/core_assembly.py`（+`_sfx_policy_from_settings` 纯函数+装配读取+闭包传参，+80 净行（r1 R2 更正：hunk 净增 0+1+6+49+13+11，文件 1123→1203 行））+ `tests/core/test_sfx_policy_settings.py`（19 条，Qt-free）+ `tests/core/test_sfx_policy_end_to_end.py`（2 条，Qt offscreen）；红→绿叙述见 commit body |
 | 本 handoff commit | `doc/handoffs/M2-SFX-TRANSLATE-ENTRY-a377a25a.md` + Task frontmatter/AC 回填 |
 
 ## 验证证据
