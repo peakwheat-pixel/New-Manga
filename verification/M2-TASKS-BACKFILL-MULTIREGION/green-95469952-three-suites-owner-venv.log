@@ -1,0 +1,64 @@
+# M2-TASKS-BACKFILL-MULTIREGION DSH r1 R5: remediation-tip three-suite run (Owner venv)
+# command: PYTHONPATH=src <owner-venv python> -m pytest tests/core tests/pipeline tests/providers -q
+# venv: G:/CODEX/New Manga.task-envs/T3.2.1-packaging-py312 (py3.12.3, onnxruntime installed; transformers NOT installed -> 2 env skips)
+# worktree: G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode
+# commit: 95469952 (r1 remediation tip; fa866327 + R1 terminal sync + R3 robustness + 1 new assertion test)
+# date: 2026-10-01
+
+........................................................................ [ 12%]
+........................................................................ [ 24%]
+........................................................................ [ 37%]
+........................................................................ [ 49%]
+........................................................................ [ 61%]
+........................................................................ [ 74%]
+......................................s................................. [ 86%]
+........................................................................ [ 99%]
+.....                                                                    [100%]
+580 passed, 2 skipped in 25.65s
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+
+# pytest exit code: 0

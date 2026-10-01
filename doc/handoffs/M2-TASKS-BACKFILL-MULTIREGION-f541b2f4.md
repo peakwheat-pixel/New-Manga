@@ -4,6 +4,7 @@ author: ZCode
 recipient: Codex（Integrator）；DeepSeek Harness（非作者 Reviewer）
 base_commit: f99a6c55
 delivery_head: f541b2f4
+remediation_head: 95469952
 status: in_review
 ---
 
@@ -48,7 +49,7 @@ status: in_review
 
 | AC/场景 | 实际命令/步骤 | 环境与被测 commit | 结果 | 日志/产物 |
 |---|---|---|---|---|
-| 基线（修复前 f99a6c55） | `pytest tests/core tests/pipeline tests/providers -q` | T3.2.1-packaging-py312（py3.12.3+PySide6 6.11.2+onnxruntime 1.30.0，本会话补装）@ f99a6c55 | 574 passed + 2 skipped + 0 failed（2 skip=transformers 未装的环境性 skip+registry_readiness 历史条件；与 STATUS"530+1sk"差异=f99a6c55 批次新增测试） | 会话记录（未入库） |
+| 基线（修复前 f99a6c55） | `pytest tests/core tests/pipeline tests/providers -q` | T3.2.1-packaging-py312（py3.12.3+PySide6 6.11.2+onnxruntime 1.30.0，本会话补装）@ f99a6c55 | 574 passed + 2 skipped + 0 failed（2 skip=transformers 未装的环境性 skip+registry_readiness 历史条件；与 STATUS"530+1sk"差异=f99a6c55 批次新增测试） | `verification/M2-TASKS-BACKFILL-MULTIREGION/baseline-f99a6c55-three-suites-owner-venv.log`（DSH r1 R5 归档复跑，2026-10-01 精确复现原声称数字，替换原「会话记录（未入库）」） |
 | AC3 红 | `git checkout f99a6c55 -- src/application/tasks/service.py` 后跑 `pytest tests/pipeline/test_regionless_rebinding.py -q` | 同上 @ f541b2f4 tests + f99a6c55 service.py | 6 failed 11 passed（复现命令见上） | `verification/M2-TASKS-BACKFILL-MULTIREGION/red-f99a6c55-src-plus-tests.log` |
 | AC3 绿（目标文件） | `pytest tests/pipeline/test_regionless_rebinding.py tests/core/test_sfx_policy_end_to_end.py -q` | 同上 @ f541b2f4 | 19 passed | `verification/M2-TASKS-BACKFILL-MULTIREGION/green-f541b2f4-target-files.log` |
 | AC3 绿（三套件） | `pytest tests/core tests/pipeline tests/providers -q` | 同上 @ f541b2f4 | 579 passed + 2 skipped + 0 failed | `verification/M2-TASKS-BACKFILL-MULTIREGION/green-f541b2f4-three-suites.log` |
@@ -99,3 +100,36 @@ status: in_review
 - 裁「是」⇒ 单 region SFX 页行为改变（D06 §85 更彻底闭环），需同步更新相关 e2e 期望与「零变化」口径；
 - 裁「否」⇒ primary 语义不一致登记为已知限制（本节保留为事实源）。
 请用户/集成方裁决后立独立 Task。
+
+## r1 返修记录（DSH review round 1 → remediation，2026-10-01）
+
+DSH r1 报告：`G:/CODEX/New Manga.task-envs/M2-TASKS-BACKFILL-MULTIREGION/dsh-review-r1.md`（verdict=**有条件通过**；核心语义修复方向被独立确认为成立）。返修分两刀：`95469952`（R1 就地修 + R3 健壮性 + 断言测试 + handoff 风险/登记文字）与证据归档 commit（本文件所在 commit）。frontmatter `remediation_head=95469952`。
+
+### R1-R7 逐条处置
+
+| Finding | 级别 | 处置 | 落点 |
+|---|---|---|---|
+| R1 克隆链 terminal 账目缺口 | P2 | **就地修**：backfill 追加 units 时按 `decision.is_terminal` 同步 `terminal_unit_ids`/`terminal_step_units`（与 `plan_run` 同口径，`SKIP_*` 克隆 unit 进分母即进终态集）；`service.py` docstring 与本 handoff「账目精确闭合」表述修正为返修后语义（初版声称不成立，已如实标注）；新增断言测试：TRANSLATE_ALL 多 region 页 + SFX region 默认 `skip` ⇒ 5 个被 gate 步骤 `SKIP_POLICY`、`terminal == planned == 17`、`get_task_progress().overall_progress == 1.0` | `src/application/tasks/service.py`、`tests/pipeline/test_regionless_rebinding.py` |
+| R2 primary 链 SFX gate 不可见 | P2 | **登记不修**：风险 #1 加「非 primary」限定；新增「独立 Task 候选登记」节（缺陷本体 + DSH 反例 + 裁决请求），待集成方搬入 STATUS/独立 Task | handoff |
+| R3 规划期 `current()` 异常逃逸 | P3 | **就地修（最小健壮性）**：`self._catalog.current(region_id)` 包 try/except `PipelineError`，detect commit 后读取窗口内被删/不可读 region 按 `TARGET_DELETED` 语义跳过该 region（与恢复路径重读 live Regions 最终语义一致），异常不再穿透 `execute_run` 使 run 滞留 `RUNNING`；风险 #3 补记 | `src/application/tasks/service.py`、handoff |
+| R4 e2e 断言翻转无红证据 | P3 | **已归档**：f99a6c55 src + tip e2e 测试 ⇒ `test_translate_policy_runs_the_sfx_region_end_to_end` FAILED（`assert '' == 'MOCK-SFX-TRANSLATED-TEXT'`，exit 1）——断言翻转的行为变更证据链闭合 | `verification/M2-TASKS-BACKFILL-MULTIREGION/red-e2e-sfx-policy-base-src.txt` |
+| R5 基线日志未入库 | P3 | **已归档（Owner venv 双侧）**：f99a6c55 整树三套件 = **574 passed + 2 skipped**（exit 0，原「会话记录（未入库）」声称数字被精确复现并替换）；返修 tip `95469952` 三套件 = **580 passed + 2 skipped**（exit 0，= 579 + 1 新增）。**主 venv（T1.1.1-impl-py312，transformers 5.17.0，530+1sk 口径）双侧复跑仍由集成方执行** | `verification/M2-TASKS-BACKFILL-MULTIREGION/baseline-f99a6c55-three-suites-owner-venv.log`、`verification/M2-TASKS-BACKFILL-MULTIREGION/green-95469952-three-suites-owner-venv.log` |
+| R6 SFX-ENTRY 记录过时 | P4 | **superseded-by 建议文字已备**（见下），由集成方搬到 M2-SFX-TRANSLATE-ENTRY 的 Task/handoff 记录 | 本节 |
+| R7 max_step_runs 规模化 | P4 | **登记**：风险 #6 补 RESOURCE_LIMIT_EXCEEDED 规模化提示（fail-closed、非数据损坏，后续按需评估限额/批处理） | handoff |
+
+### R6 superseded-by 建议文字（供集成方原样搬运到 M2-SFX-TRANSLATE-ENTRY 的 Task/handoff 记录）
+
+> superseded-by M2-TASKS-BACKFILL-MULTIREGION：本 Task 交付时「multi-region page needs one TRANSLATE_ALL run for detect+creation and per-region follow-up runs」与「the registered scheduling slice」（`tests/core/test_sfx_policy_end_to_end.py` 模块 docstring 及其 handoff 表述）已被取代——executor backfill 已在**同一次 run 内**对全部检出 region fan-out（`_backfill_detected_regions`），e2e translate 场景断言已由「SFX 译文为空」翻转为「SFX region 在同一 run 内被翻译」。
+
+### 返修后测试口径
+
+- 目标文件：`tests/pipeline/test_regionless_rebinding.py` **18 passed**（17+1 新增）+ `tests/core/test_sfx_policy_end_to_end.py` **2 passed** = 20 passed。
+- 三套件（Owner venv T3.2.1-packaging-py312）：返修 tip **580 passed + 2 skipped + 0 failed**；基线 f99a6c55 **574 passed + 2 skipped + 0 failed**。
+- R1 断言有效性红态：f541b2f4 src（无 terminal 同步）+ 新断言 ⇒ 1 failed（`terminal 12 != planned 17`，exit 1）——先红后绿闭环。
+- 主 venv 双侧复跑（集成方）：预期 f99a6c55 ≈ 574 passed + 1 skipped、tip ≈ 580 passed + 1 skipped（transformers 已装少 1 环境性 skip；推算仅供参考，以实测为准）。
+
+### 返修自检（2026-10-01）
+
+- R4/R5 的临时 checkout 均已恢复（`git checkout HEAD -- .`）；恢复后 `git status --porcelain` 仅剩 untracked verification 日志。
+- `git diff --check` EXIT=0；禁改面（domain/ports/providers/bootstrap/sqlite schema/apps/STATUS 等）零 diff——返修改动面 = `src/application/tasks/service.py`、`tests/pipeline/test_regionless_rebinding.py`、本 handoff、`verification/**`，与授权允许面一致。
+- 回退方法更新：revert 返修两 commit 即回到 fa866327 口径（无 schema/数据迁移）。

@@ -1,0 +1,55 @@
+# M2-TASKS-BACKFILL-MULTIREGION DSH r1 R4: e2e red state (f99a6c55 src + tip tests)
+# command: git checkout f99a6c55 -- src/application/tasks/service.py && PYTHONPATH=src <main-venv python> -m pytest tests/core/test_sfx_policy_end_to_end.py -q
+# venv: G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312 (main venv, transformers 5.17.0, pytest 9.1.1)
+# worktree: G:/CODEX/New Manga.worktrees/M2-TASKS-BACKFILL-MULTIREGION-zcode
+# date: 2026-10-01; service.py temporarily checked out from f99a6c55 (pre-fan-out), e2e tests at remediation tip 95469952
+# expectation (DSH r1 R4): the translate-policy assertion flipped by this Task ('' -> MOCK_SFX_TRANSLATION_TEXT)
+#   must be RED against the pre-fan-out src - the SFX region gets no machine translation at all.
+
+F.                                                                       [100%]
+================================== FAILURES ===================================
+____________ test_translate_policy_runs_the_sfx_region_end_to_end _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-733/test_translate_policy_runs_the0')
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000001EBB7C78FB0>
+
+    def test_translate_policy_runs_the_sfx_region_end_to_end(tmp_path, monkeypatch):
+        from domain.tasks.models import CommandType, StepRunStatus
+    
+        core, chapter_id, page_id, first_run, _build = _scenario(
+            tmp_path, monkeypatch, "translate"
+        )
+        try:
+            # the detection run: the settings channel reached region creation
+            steps = {step.step_type: step for step in first_run.step_runs}
+            assert steps["detect"].status is StepRunStatus.COMPLETED
+            regions = _regions_by_type(core, page_id)
+            assert set(regions) == {"speech", "sfx"}
+            assert regions["sfx"]["sfx_policy"] == "translate"
+            assert regions["speech"]["sfx_policy"] == "skip"
+            # the backfilled speech neighbour translates normally: configuring
+            # the SFX policy leaves non-SFX regions untouched
+            assert (
+                regions["speech"]["text"]["machine_translation"]
+                == MOCK_TRANSLATION_TEXT
+            )
+            # the faned-out SFX region is translated in the same run: the policy
+            # (settings channel) reached region creation and the step-layer gate
+            # admits policy=translate
+>           assert (
+                regions["sfx"]["text"]["machine_translation"]
+                == MOCK_SFX_TRANSLATION_TEXT
+            )
+E           AssertionError: assert '' == 'MOCK-SFX-TRANSLATED-TEXT'
+E             
+E             - MOCK-SFX-TRANSLATED-TEXT
+
+tests\core\test_sfx_policy_end_to_end.py:248: AssertionError
+---------------------------- Captured stderr call -----------------------------
+QFontDatabase: Cannot find font directory G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Lib/site-packages/PySide6/lib/fonts.
+Note that Qt no longer ships fonts. Deploy some (from https://dejavu-fonts.github.io/ for example) or switch to fontconfig.
+=========================== short test summary info ===========================
+FAILED tests/core/test_sfx_policy_end_to_end.py::test_translate_policy_runs_the_sfx_region_end_to_end
+1 failed, 1 passed in 1.27s
+
+# pytest exit code: 1 (1 = red as expected; the e2e red evidence chain is now closed)
