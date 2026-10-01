@@ -85,6 +85,8 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | M2-PROD-DETECT-3 | ZCode | DeepSeek Harness / Codex（代行） | `8fe5199c`（core.detect 命令面协议 1.1+frozen 真实 detect 端到端；DETECT-2 AC5 转 RUN；§8 脱敏+§10 契约例外+torchvision 缺口修复；DSH r1 条件→集成方全闭） |
 | M2-MANGA-WEIGHTS-SOP | ZCode | DeepSeek Harness / Codex（代行） | `853fc911`（fetch/verify 脚本+SOP；DSH r1 条件→r2 approved；错 pin 反证 PASS） |
 | M2-FIX-REGISTRY-READINESS-ENV | ZCode | DeepSeek Harness / Codex（代行） | `52b07438`（环境断言条件化；三套件 0 failed 基线确立） |
+| M2-SFX-DETECT-EVAL | ZCode | DeepSeek Harness / Codex（代行） | `cf4e55ec`（SFX 评估：chiqui7 唯一 sfx 类候选；自比修正方向反转 ogkalu 非自比 7/18；DSH r1→r2 approved） |
+| M2-SFX-PROD-1 | ZCode | DeepSeek Harness / Codex（代行） | `0a505bab`（SFX 生产集成：chiqui7 ONNX provider+权重随包 NSIS 479.93MiB；conf≥0.50 冻结；DSH r1 条件→集成方全闭+重建绑定） |
 
 | 已闭环 Task（原「未完成 / 下一阶段」表；新行随收口追加） | 状态 | 建议 Owner / Reviewer | 说明 |
 |---|---|---|---|
@@ -169,6 +171,8 @@ flowchart TD
   C4 --> PRODINT["M2-PROD-DETECT-1 docTR→manga 域生产集成 · O:ZCode ✓（manga 默认/可切回 doctr；CPU 315.6ms/页）"]
   PRODINT --> DET2["M2-PROD-DETECT-2 发布形态运行时/权重分发 · O:ZCode ✓（ML 栈进闭包+权重随包；NSIS 438.86MiB；AC5 PARTIAL→IPC1 slice）"]
   DET2 --> DET3["M2-PROD-DETECT-3 core.detect 命令面+frozen 端到端 · O:ZCode ✓（协议 1.1；AC5 NOT_RUN 转 RUN；torchvision 缺口修复）"]
+  DET3 --> SFXE["M2-SFX-DETECT-EVAL SFX 检测评估 · O:ZCode+用户裁决 ✓（chiqui7 唯一 sfx 类候选；自比修正方向反转）"]
+  SFXE --> SFXP["M2-SFX-PROD-1 SFX 生产集成 · O:ZCode ✓（onnxruntime 轻量栈；权重随包 NSIS 479.93MiB；发布形态开箱可用）"]
 
   %% L-1 缺口核实支线（TA3-A 遗留 → DIAG-002 → DOC-FIX-STALE 全闭）
   TA3A -.-> DG2["DIAG-LOCK-CHANGED-REPRO-002 L-1 核实=已由 M2-P1 修复 · O:ZCode ✓"]
@@ -176,7 +180,7 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3 done;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP done;
   class TA3B proposed;
 ```
 
