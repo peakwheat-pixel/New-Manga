@@ -291,12 +291,18 @@ ALLOWLIST_RE = re.compile(r"\[m2rc2-allowlist\] (probe|production):(.*)")
 #: surface intentionally grows from 3 to 5 commands (core_ping,
 #: library_list_books); this runner's expectations are maintained by the
 #: M2-IPC1 integration, not by the Owner branch.
+#: M2-SETTINGS-IPC-CHANNEL integration (2026-10-02, Codex proxy): 5 -> 7
+#: (settings_get / settings_update_section, M2-C1 rev 1.3 §5.3); this
+#: runner's expectations continue to be maintained by the integrating
+#: slice, not by the Owner branch.
 PRODUCTION_EXPECTED = [
     "issue_resource_url",
     "revoke_ref",
     "revoke_resource_refs",
     "core_ping",
     "library_list_books",
+    "settings_get",
+    "settings_update_section",
 ]
 #: M2-IPC1 ruling (DSH r2 P2-1 option B): test modes keep the frozen RC2
 #: surface — the production-only IPC1 commands are absent from the probe

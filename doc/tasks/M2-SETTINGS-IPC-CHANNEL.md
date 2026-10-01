@@ -2,7 +2,8 @@
 id: M2-SETTINGS-IPC-CHANNEL
 title: "settings IPC 通道（settings_get/settings_update_section）：M2-C1 契约 rev + Rust 命令 + 前端接通（用户裁决①，SFX-UI 解除前提）"
 kind: feature
-status: done  # Owner 交付（实现+测试+契约 rev+handoff）；DSH 非作者 Review 与 Codex 集成收口后终态
+status: in_review  # DSH r1 approved_with_conditions（R1 旁路断言同步/R3-R11 一行项由集成方闭合；集成完成后置 done）
+
 approval: user_ruling_2026-10-02_three_confirmations
 suggested_owner: ZCode
 owner: ZCode
