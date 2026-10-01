@@ -226,6 +226,51 @@ def test_frozen_all_absent_warns_and_returns_default(
     assert "NEWMANGA_DETECTOR_WEIGHTS" in line
 
 
+def test_frozen_sfx_miss_names_the_sfx_override_env(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
+) -> None:
+    """DSH r1 R9 integration fix: the SFX caller passes its OWN env name, so
+    the frozen all-absent diagnostic points operators at
+    ``NEWMANGA_SFX_WEIGHTS`` — not the manga/doctr
+    ``NEWMANGA_DETECTOR_WEIGHTS`` (which the SFX lookup never reads)."""
+    from infrastructure.providers.detection_sfx import SFX_WEIGHTS_FILENAME
+
+    db_path = tmp_path / "roaming" / "data" / "library.db"
+    bundle_dir = tmp_path / "install" / "resources" / "core-sidecar"
+    monkeypatch.delenv("NEWMANGA_SFX_WEIGHTS", raising=False)
+    monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
+    _simulate_frozen(monkeypatch, bundle_dir)
+
+    resolved = _resolve_detector_weights_path(
+        None, SFX_WEIGHTS_FILENAME, db_path, env_name="NEWMANGA_SFX_WEIGHTS"
+    )
+
+    assert resolved == _data_root_candidate(db_path, SFX_WEIGHTS_FILENAME)
+    line = next(
+        ln for ln in capsys.readouterr().err.splitlines() if ln.strip()
+    )
+    assert "NEWMANGA_SFX_WEIGHTS" in line
+    assert "NEWMANGA_DETECTOR_WEIGHTS" not in line
+
+
+def test_frozen_default_env_name_unchanged_for_manga_doctr(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
+) -> None:
+    """DSH r1 R9 is additive: callers that pass no env name keep the released
+    ``NEWMANGA_DETECTOR_WEIGHTS`` diagnostic verbatim."""
+    db_path = tmp_path / "roaming" / "data" / "library.db"
+    bundle_dir = tmp_path / "install" / "resources" / "core-sidecar"
+    monkeypatch.delenv("NEWMANGA_DETECTOR_WEIGHTS", raising=False)
+    _simulate_frozen(monkeypatch, bundle_dir)
+
+    _resolve_detector_weights_path(None, MANGA_WEIGHTS_DIRNAME, db_path)
+
+    line = next(
+        ln for ln in capsys.readouterr().err.splitlines() if ln.strip()
+    )
+    assert "NEWMANGA_DETECTOR_WEIGHTS" in line
+
+
 def test_frozen_bundle_hit_emits_no_warning(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys
 ) -> None:

@@ -124,6 +124,13 @@ SFX_NMS_IOU = 0.7
 SFX_LETTERBOX_GRAY = 114
 SFX_DEFAULT_IMGSZ = 1024
 
+#: Detect-options ``imgsz_source`` states (DSH r1 R4): the letterbox size is
+#: either the parsed ONNX metadata value or the frozen default because the
+#: metadata text was absent/unparseable — provenance keeps the two
+#: distinguishable instead of recording only the final number.
+SFX_IMGSZ_SOURCE_METADATA = "metadata_parsed"
+SFX_IMGSZ_SOURCE_FALLBACK = "fallback"
+
 #: ONNX metadata class surface (asserted at load; drift fails loudly — the
 #: eval script's R8 discipline). sfx = class 2.
 SFX_CLASS_MAP = {0: "bubble", 1: "panel", 2: "sfx", 3: "text"}
@@ -160,7 +167,7 @@ class SfxDetectionProvider:
     def detect(self, request: DetectionRequest) -> DetectionResult:
         started = time.perf_counter()
         self._validate_request(request)
-        session, imgsz = self._engine_or_raise()
+        session, imgsz, imgsz_source, imgsz_raw = self._engine_or_raise()
         numpy = _lazy_import("numpy", "detection")
         rgb = self._frame_pixels(request)
         inp, scale = _letterbox(numpy, rgb, imgsz)
@@ -181,6 +188,16 @@ class SfxDetectionProvider:
             )
             for index, (x0, y0, x1, y1, confidence) in enumerate(boxes, start=1)
         )
+        # DSH r1 R4: the imgsz provenance is two-state (metadata_parsed /
+        # fallback) and a fallback additionally carries the raw metadata text,
+        # so "metadata said 1024" and "metadata unparseable, defaulted 1024"
+        # stay distinguishable in the audit trail.
+        imgsz_options: tuple[tuple[str, str], ...] = (
+            ("imgsz", str(imgsz)),
+            ("imgsz_source", imgsz_source),
+        )
+        if imgsz_source == SFX_IMGSZ_SOURCE_FALLBACK and imgsz_raw:
+            imgsz_options = imgsz_options + (("imgsz_metadata_raw", imgsz_raw),)
         elapsed_ms = int((time.perf_counter() - started) * 1000)
         return DetectionResult(
             page_id=request.page_id,
@@ -194,7 +211,7 @@ class SfxDetectionProvider:
                 ("device", "cpu"),
                 ("conf_threshold", str(self.conf_threshold)),
                 ("nms_iou", str(SFX_NMS_IOU)),
-                ("imgsz", str(imgsz)),
+                *imgsz_options,
                 ("class_filter", "sfx"),
             ),
             elapsed_ms=elapsed_ms,
@@ -248,7 +265,7 @@ class SfxDetectionProvider:
         return raw.reshape(request.height, request.width, 3).copy()
 
 
-def _build_engine(weights_path: Path) -> tuple[Any, int]:
+def _build_engine(weights_path: Path) -> tuple[Any, int, str, str | None]:
     """Load the pinned ONNX without touching the network. Check order matters:
 
     1. the weights *file* must exist — probed first with zero dependencies;
@@ -258,7 +275,9 @@ def _build_engine(weights_path: Path) -> tuple[Any, int]:
     3. onnxruntime must import — the typed dependency gap otherwise;
     4. the session builds (CPU EP — the lightweight-stack ruling);
     5. the metadata ``names`` must equal the asserted class map (R8 discipline)
-       and the metadata ``imgsz`` (when present) drives the letterbox size.
+       and the metadata ``imgsz`` (when parseable) drives the letterbox size —
+       returned as ``(session, imgsz, source, raw_text)`` so the caller can
+       record the two-state provenance (DSH r1 R4).
     """
     if not weights_path.is_file():
         raise ProviderNotConfigured(
@@ -299,7 +318,8 @@ def _build_engine(weights_path: Path) -> tuple[Any, int]:
             provider_id=PROVIDER_SFX,
             stage="detection",
         )
-    return session, _parse_imgsz(meta.get("imgsz"))
+    imgsz, imgsz_source = _parse_imgsz(meta.get("imgsz"))
+    return session, imgsz, imgsz_source, meta.get("imgsz")
 
 
 def _parse_names_metadata(raw: str) -> dict[str, str]:
@@ -330,19 +350,39 @@ def _parse_names_metadata(raw: str) -> dict[str, str]:
     return out
 
 
-def _parse_imgsz(raw: str | None) -> int:
+def _parse_imgsz(raw: str | None) -> tuple[int, str]:
     """Metadata imgsz wins when parseable; otherwise the eval's 1024.
 
-    A missing/unparseable imgsz only degrades letterbox fidelity (recorded in
-    the detect options by the caller), it cannot mislabel a class — hence a
-    default instead of a failure (unlike the ``names`` gate above).
+    Returns ``(size, source)`` — source is ``"metadata_parsed"`` (the
+    metadata value drove the letterbox) or ``"fallback"`` (the metadata text
+    is absent or unparseable and ``SFX_DEFAULT_IMGSZ`` was used). The REAL
+    chiqui7 export records imgsz as a stringified JSON list —
+    ``"[1024, 1024]"`` (the Ultralytics export shape, unlike a bare
+    ``int(raw)``-parseable ``"768"``) — so the list form is parsed element by
+    element and its primary (first) value taken (DSH r1 R4: the previous
+    int-only parse silently fell back on every real export, and the options
+    could not distinguish "metadata said 1024" from "metadata unparseable,
+    defaulted 1024"). A fallback only degrades letterbox fidelity, it cannot
+    mislabel a class — hence a default instead of a failure (unlike the
+    ``names`` gate above); the caller records the source (and, on a fallback,
+    the raw metadata text) in the detect options.
     """
     if raw:
+        text = raw.strip()
         try:
-            return int(raw)
+            return int(text), SFX_IMGSZ_SOURCE_METADATA
         except ValueError:
             pass
-    return SFX_DEFAULT_IMGSZ
+        if text.startswith("[") and text.endswith("]"):
+            values: list[int] = []
+            for part in text[1:-1].split(","):
+                try:
+                    values.append(int(part.strip()))
+                except ValueError:
+                    break
+            if values and len(values) == len(text[1:-1].split(",")):
+                return values[0], SFX_IMGSZ_SOURCE_METADATA
+    return SFX_DEFAULT_IMGSZ, SFX_IMGSZ_SOURCE_FALLBACK
 
 
 # ---------------------------------------------------------------------------

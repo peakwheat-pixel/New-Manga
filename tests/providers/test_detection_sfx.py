@@ -120,7 +120,14 @@ def _fake_session(rows: list[tuple[tuple[float, float, float, float], list[float
 
 def _provider_with_engine(rows, conf_threshold: float = 0.5) -> SfxDetectionProvider:
     provider = SfxDetectionProvider(weights_path=Path("unused.onnx"), conf_threshold=conf_threshold)
-    provider._engine = (_fake_session(rows), SFX_DEFAULT_IMGSZ)
+    # Engine tuple = (session, imgsz, imgsz_source, imgsz_raw) — DSH r1 R4's
+    # two-state provenance rides the engine to the detect options.
+    provider._engine = (
+        _fake_session(rows),
+        SFX_DEFAULT_IMGSZ,
+        "metadata_parsed",
+        "[1024, 1024]",
+    )
     return provider
 
 
@@ -324,6 +331,11 @@ def test_engine_names_drift_fails_loudly(tmp_path, monkeypatch):
 
 
 def test_engine_imgsz_comes_from_metadata(tmp_path, monkeypatch):
+    """The REAL metadata shape is a stringified JSON list — ``"[1024, 1024]"``
+    (Ultralytics export, `experiments/M2-SFX-DETECT/onnx-sfx-frames.json`) —
+    and it must parse to its primary value with the two-state provenance
+    ``imgsz_source=metadata_parsed`` (DSH r1 R4: the previous int-only parse
+    silently fell back on every real export)."""
     junk = tmp_path / "weights.onnx"
     junk.write_bytes(b"junk")
     monkeypatch.setattr(
@@ -332,7 +344,7 @@ def test_engine_imgsz_comes_from_metadata(tmp_path, monkeypatch):
     )
     metadata = {
         "names": ", ".join(f"'{k}': '{v}'" for k, v in SFX_CLASS_MAP.items()),
-        "imgsz": "768",
+        "imgsz": "[1024, 1024]",
     }
     # A session whose run returns an all-zero output0 (no detections).
     zeros = np.zeros((1, 40, 4), dtype=np.float32)
@@ -350,7 +362,48 @@ def test_engine_imgsz_comes_from_metadata(tmp_path, monkeypatch):
     _install_fake_onnxruntime(monkeypatch, metadata, session=_ZeroSession())
     provider = SfxDetectionProvider(weights_path=junk)
     result = provider.detect(_request())
-    assert dict(result.options)["imgsz"] == "768"
+    options = dict(result.options)
+    assert options["imgsz"] == "1024"
+    assert options["imgsz_source"] == "metadata_parsed"
+    assert result.candidates == ()
+
+
+def test_engine_imgsz_unparseable_falls_back_with_options_record(
+    tmp_path, monkeypatch
+):
+    """An unparseable metadata imgsz falls back to the eval's 1024 AND the
+    detect options carry the two-state provenance (``imgsz_source=fallback``)
+    plus the raw metadata text, so the degradation is audit-visible instead
+    of indistinguishable from a metadata-driven 1024 (DSH r1 R4)."""
+    junk = tmp_path / "weights.onnx"
+    junk.write_bytes(b"junk")
+    monkeypatch.setattr(
+        "infrastructure.providers.detection_sfx.sha256_file",
+        lambda _: SFX_WEIGHTS_SHA256,
+    )
+    metadata = {
+        "names": ", ".join(f"'{k}': '{v}'" for k, v in SFX_CLASS_MAP.items()),
+        "imgsz": "not-a-size",
+    }
+    zeros = np.zeros((1, 40, 4), dtype=np.float32)
+
+    class _ZeroSession:
+        def get_modelmeta(self):  # noqa: ANN202
+            class _Meta:
+                custom_metadata_map = metadata
+
+            return _Meta()
+
+        def run(self, _, feeds):  # noqa: ANN001
+            return (zeros,)
+
+    _install_fake_onnxruntime(monkeypatch, metadata, session=_ZeroSession())
+    provider = SfxDetectionProvider(weights_path=junk)
+    result = provider.detect(_request())
+    options = dict(result.options)
+    assert options["imgsz"] == str(SFX_DEFAULT_IMGSZ)
+    assert options["imgsz_source"] == "fallback"
+    assert options["imgsz_metadata_raw"] == "not-a-size"
     assert result.candidates == ()
 
 
@@ -388,10 +441,18 @@ def test_parse_names_metadata_matrix():
 
 
 def test_parse_imgsz_matrix():
-    assert _parse_imgsz(None) == SFX_DEFAULT_IMGSZ
-    assert _parse_imgsz("") == SFX_DEFAULT_IMGSZ
-    assert _parse_imgsz("bogus") == SFX_DEFAULT_IMGSZ
-    assert _parse_imgsz("768") == 768
+    """Two-state provenance (DSH r1 R4): a parseable plain int OR the real
+    stringified-JSON-list shape yields (value, metadata_parsed); anything
+    absent/unparseable yields the frozen default with source=fallback."""
+    assert _parse_imgsz(None) == (SFX_DEFAULT_IMGSZ, "fallback")
+    assert _parse_imgsz("") == (SFX_DEFAULT_IMGSZ, "fallback")
+    assert _parse_imgsz("bogus") == (SFX_DEFAULT_IMGSZ, "fallback")
+    assert _parse_imgsz("not-a-size") == (SFX_DEFAULT_IMGSZ, "fallback")
+    assert _parse_imgsz("[not, numbers]") == (SFX_DEFAULT_IMGSZ, "fallback")
+    assert _parse_imgsz("768") == (768, "metadata_parsed")
+    # The REAL chiqui7 export shape (stringified JSON list, primary value).
+    assert _parse_imgsz("[1024, 1024]") == (1024, "metadata_parsed")
+    assert _parse_imgsz(" [1024,1024] ") == (1024, "metadata_parsed")
 
 
 # ---------------------------------------------------------------------------
@@ -456,12 +517,15 @@ def test_composite_appends_sfx_past_primary_reading_order_max():
     )
     sfx = SfxDetectionProvider(weights_path=Path("x.onnx"))
     composite = MangaSfxParallelDetectionProvider(primary=primary, sfx=sfx)
-    # Inject a fake engine so no weights are touched.
+    # Inject a fake engine so no weights are touched (engine tuple = session,
+    # imgsz, imgsz_source, imgsz_raw — DSH r1 R4's provenance form).
     sfx._engine = (
         _fake_session(
             [((256.0, 256.0, 51.2, 102.4), [0.05, 0.05, 0.93, 0.00])]
         ),
         SFX_DEFAULT_IMGSZ,
+        "metadata_parsed",
+        "[1024, 1024]",
     )
     result = composite.detect(_request())
     assert [c.provider_label for c in result.candidates] == [

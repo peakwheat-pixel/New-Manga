@@ -111,6 +111,25 @@ def test_bad_conf_threshold_fails_the_assembly(assembled, monkeypatch):
         assembled()
 
 
+def test_mock_mode_still_fails_fast_on_bad_sfx_env(assembled, monkeypatch):
+    """DSH r1 R10 integration fix: the SFX env gates are validated OUTSIDE
+    the mock branch, so the mock acceptance form fails fast on an illegal
+    NEWMANGA_SFX_DETECTION too (never a silent default) — while the mock
+    branch itself still assembles no sfx provider (registered decision)."""
+    monkeypatch.setenv("NEWMANGA_SFX_DETECTION", "maybe")
+    with pytest.raises(ValueError, match="NEWMANGA_SFX_DETECTION"):
+        assembled(mock_local_providers=True)
+
+
+def test_mock_mode_still_fails_fast_on_bad_conf_env(assembled, monkeypatch):
+    """DSH r1 R10: an unparseable NEWMANGA_SFX_CONF_THRESHOLD fails the mock
+    assembly as well — fail-fast on configuration errors, never a silent
+    default."""
+    monkeypatch.setenv("NEWMANGA_SFX_CONF_THRESHOLD", "abc")
+    with pytest.raises(ValueError):
+        assembled(mock_local_providers=True)
+
+
 def test_weights_env_override_reaches_the_provider(assembled, monkeypatch, tmp_path):
     override = tmp_path / "custom" / "sfx.onnx"
     monkeypatch.setenv("NEWMANGA_SFX_WEIGHTS", str(override))

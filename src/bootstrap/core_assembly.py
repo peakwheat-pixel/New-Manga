@@ -585,12 +585,17 @@ def _resolve_detector_weights_path(
     override: str | None,
     weights_name: str,
     db_path: Path,
+    *,
+    env_name: str = "NEWMANGA_DETECTOR_WEIGHTS",
 ) -> Path:
     """M2-PROD-DETECT-2 (proxy ruling 4, reversible): detector weights lookup.
 
-    Order: env ``NEWMANGA_DETECTOR_WEIGHTS`` override > data root
-    (existence probe) > frozen in-bundle copy (existence probe, PyInstaller
-    ``sys.frozen`` onedir only) > the default data-root path.
+    Order: env override (the caller names the env — the manga/doctr backends
+    keep the released ``NEWMANGA_DETECTOR_WEIGHTS``, the SFX detector passes
+    ``NEWMANGA_SFX_WEIGHTS`` so the frozen diagnostic points operators at the
+    right override, DSH r1 R9) > data root (existence probe) > frozen
+    in-bundle copy (existence probe, PyInstaller ``sys.frozen`` onedir only)
+    > the default data-root path.
 
     Semantics per form (DSH r1 R5/R6 review-fix — ONE failure shape for both
     backends, never an assembly-time crash):
@@ -649,7 +654,7 @@ def _resolve_detector_weights_path(
             f"{weights_name!r}); probed candidates, none exists: {probed_str}"
             "; the detect step will fail closed with PROVIDER_NOT_CONFIGURED "
             "until the weights are placed on the data root or set via "
-            "NEWMANGA_DETECTOR_WEIGHTS",
+            f"{env_name}",
             file=sys.stderr,
         )
     return data_root_candidate
@@ -785,6 +790,26 @@ def assemble_core_services(
         # the region-level chain and never executes ``detect``; the mock
         # detector exists so a region-less page still fails closed at the
         # detect capability gap instead of a missing handler (DSH r1 F-007).
+        # M2-SFX-PROD-1 integration fix (DSH r1 R10): the SFX configuration
+        # gates are validated OUTSIDE the mock branch — an unsupported
+        # NEWMANGA_SFX_DETECTION or an unparseable NEWMANGA_SFX_CONF_THRESHOLD
+        # fails the assembly fast in the mock acceptance form too ("fail-fast
+        # on configuration errors, never a silent default"). The mock branch
+        # itself still does NOT assemble an sfx provider (registered decision:
+        # the deterministic mock already stands in for the whole detect
+        # surface); `off` skips the whole sfx assembly and keeps the pre-SFX
+        # behavior byte-identical.
+        sfx_mode = os.environ.get("NEWMANGA_SFX_DETECTION", "on").strip().lower()
+        if sfx_mode not in ("on", "off"):
+            raise ValueError(
+                f"unsupported NEWMANGA_SFX_DETECTION {sfx_mode!r} "
+                "(use on|off)"
+            )
+        # An unparseable NEWMANGA_SFX_CONF_THRESHOLD fails the assembly the
+        # same way an unsupported backend env does; the (0, 1] range is the
+        # provider's own __post_init__ gate.
+        sfx_conf_env = os.environ.get("NEWMANGA_SFX_CONF_THRESHOLD")
+        sfx_conf = float(sfx_conf_env) if sfx_conf_env else SFX_CONF_THRESHOLD
         detector: object
         if mock_local_providers:
             from infrastructure.providers.mock_local import (
@@ -864,30 +889,19 @@ def assemble_core_services(
             # M2-SFX-PROD-1: the standalone SFX detector (chiqui7 ONNX over
             # the onnxruntime lightweight stack) runs BESIDE the selected
             # primary. Default ON (user ruling 3: route A, release-form
-            # out-of-the-box); NEWMANGA_SFX_DETECTION=off skips the whole sfx
-            # assembly and keeps the pre-SFX behavior byte-identical. The
-            # mock acceptance branch above deliberately does NOT get an sfx
-            # provider (registered decision): the deterministic mock already
-            # stands in for the whole detect surface, so the acceptance
-            # loop's seeded-regions flow stays untouched. Weights resolution
-            # reuses the shared DETECT-2 lookup verbatim (file semantics,
-            # like doctr): env override (NEWMANGA_SFX_WEIGHTS) > data root
+            # out-of-the-box); the NEWMANGA_SFX_DETECTION / _CONF_THRESHOLD
+            # env gates are validated above, OUTSIDE this branch (DSH r1 R10).
+            # The mock acceptance branch above deliberately does NOT get an
+            # sfx provider (registered decision): the deterministic mock
+            # already stands in for the whole detect surface, so the
+            # acceptance loop's seeded-regions flow stays untouched. Weights
+            # resolution reuses the shared DETECT-2 lookup verbatim (file
+            # semantics, like doctr): env override (NEWMANGA_SFX_WEIGHTS,
+            # also named by the frozen diagnostic — DSH r1 R9) > data root
             # (probed) > frozen in-bundle copy (probed, sys.frozen onedir
             # only) > the default data-root path; the lazy provider fails
             # closed typed at detect time when nothing exists.
-            sfx_mode = os.environ.get("NEWMANGA_SFX_DETECTION", "on").strip().lower()
-            if sfx_mode not in ("on", "off"):
-                raise ValueError(
-                    f"unsupported NEWMANGA_SFX_DETECTION {sfx_mode!r} "
-                    "(use on|off)"
-                )
             if sfx_mode == "on":
-                # An unparseable NEWMANGA_SFX_CONF_THRESHOLD fails the
-                # assembly the same way an unsupported backend env does
-                # (fail-fast on configuration errors, never a silent default);
-                # the (0, 1] range is the provider's own __post_init__ gate.
-                sfx_conf_env = os.environ.get("NEWMANGA_SFX_CONF_THRESHOLD")
-                sfx_conf = float(sfx_conf_env) if sfx_conf_env else SFX_CONF_THRESHOLD
                 detector = MangaSfxParallelDetectionProvider(
                     primary=detector,
                     sfx=SfxDetectionProvider(
@@ -895,6 +909,7 @@ def assemble_core_services(
                             os.environ.get("NEWMANGA_SFX_WEIGHTS"),
                             SFX_WEIGHTS_FILENAME,
                             db_path,
+                            env_name="NEWMANGA_SFX_WEIGHTS",
                         ),
                         conf_threshold=sfx_conf,
                     ),
