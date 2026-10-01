@@ -14,6 +14,9 @@ Both adapters are *fail-closed*:
 The engine is injectable so the adapter's request/response mapping can be
 tested without a model. That tests the *adapter*, never OCR quality: no
 quality number is produced in this environment and none is claimed.
+Injection contract (DSH r1 R2): an injected engine receives the decoded
+BGR ``numpy.ndarray`` crop through ``ocr`` — NOT raw bytes. handing raw
+bytes to the engine is never the caller's job again.
 
 PaddleOCR 3.x adaptation (M2-OCR-PADDLE3X-1, evidence in
 ``verification/M2-OCR-PADDLE3X-1/``):
@@ -339,8 +342,13 @@ def _lines_from_paddle3x(body: dict[str, Any], provider_id: str) -> list[OcrLine
     shorter than ``rec_texts``; missing values stay ``None`` / empty instead
     of being invented (same discipline as the manga-ocr confidence).
     """
-    texts = body.get("rec_texts") or []
-    scores = body.get("rec_scores") or []
+    # explicit None checks (DSH r1 R3): a len>1 ndarray payload would crash
+    # a truthiness test with "truth value of an array is ambiguous" — the
+    # same function already accepts ndarray boxes, so keep one stance.
+    texts = body.get("rec_texts")
+    scores = body.get("rec_scores")
+    texts = [] if texts is None else texts
+    scores = [] if scores is None else scores
     polys = body.get("rec_polys", None)
     if polys is None:
         polys = body.get("rec_boxes", None)
@@ -377,7 +385,7 @@ def _box_at(polys: Any, index: int) -> Any:
         if index >= len(polys):
             return None
         return polys[index]
-    except (TypeError, IndexError):
+    except (TypeError, IndexError, KeyError):
         return None
 
 

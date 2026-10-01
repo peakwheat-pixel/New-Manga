@@ -193,7 +193,7 @@ def main() -> int:
         # ---- engine_prod: EXACT production default construction ----
         engine_prod = PaddleOCR(lang="korean")
         record["engine_prod_construction"] = (
-            "PaddleOCR(lang='korean')  # mirrors ocr_local.py default path exactly"
+            "PaddleOCR(lang='korean')  # pre-fix production default; post-fix default adds enable_mkldnn=False (no effect on the bytes type rejection, which happens at input validation)"
         )
 
         # ---- the actual diagnosis: two DIFFERENT regions, back-to-back bytes ----

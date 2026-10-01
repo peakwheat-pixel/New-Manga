@@ -17,9 +17,11 @@ M2-TA3-B phase 1, plus the AC1 mechanism diagnosis:
   Python point lists first (DSH r2 N6: numpy arrays are not
   ``collections.abc.Sequence`` and were silently dropped to ``()``);
 - engine construction: the default path passes ``enable_mkldnn=False``
-  (paddlepaddle 3.3.1 Windows CPU PIR/oneDNN executor bug), while the
-  ``engine_factory`` injection path stays untouched (TA3-B2 runner
-  wrapper keeps working);
+  (paddlepaddle 3.3.1 Windows CPU PIR/oneDNN executor bug); the
+  ``engine_factory`` injection mechanism is untouched, but the
+  injected-engine input contract changed to a BGR ndarray (handoff risk
+  ①: the TA3-B2 runner wrapper needs a one-line ndarray pass-through
+  adaptation after this merges);
 - typed failures stay closed: missing paddle runtime ->
   ``PROVIDER_DEPENDENCY_MISSING``; undecodable crop -> ``INVALID_INPUT``;
   unrecognised payload shapes -> ``PROVIDER_INVALID_OUTPUT``.
@@ -187,6 +189,36 @@ def test_parse_paddle3x_no_text_lines_yields_empty_tuple() -> None:
     assert _parse_paddle_output([empty_body], PROVIDER_PADDLE_KOREAN) == ()
     # engines may also hand back [None] for an image with no text
     assert _parse_paddle_output([None], PROVIDER_PADDLE_KOREAN) == ()
+
+
+def test_parse_paddle3x_ndarray_texts_and_scores_do_not_crash() -> None:
+    """DSH r1 R3: len>1 ndarray texts/scores must not hit truth-value ambiguity."""
+    body = {
+        "res": {
+            "rec_texts": np.array(["당근", "당근!"]),
+            "rec_scores": np.array([0.9, 0.8]),
+            "rec_polys": np.repeat(_POLY_4PT, 2, axis=0),
+        }
+    }
+    lines = _parse_paddle_output([body], PROVIDER_PADDLE_KOREAN)
+    assert [line.text for line in lines] == ["당근", "당근!"]
+    assert [line.confidence for line in lines] == [pytest.approx(0.9), pytest.approx(0.8)]
+
+
+def test_parse_paddle3x_dict_shaped_polys_missing_index_stays_none() -> None:
+    """DSH r1 R3: dict-shaped polys must not leak a bare KeyError from _box_at."""
+    body = {
+        "res": {
+            "rec_texts": ["당근"],
+            "rec_scores": [0.9],
+            "rec_polys": {"0": [[10.0, 10.0], [50.0, 10.0], [50.0, 30.0], [10.0, 30.0]]},
+        }
+    }
+    lines = _parse_paddle_output([body], PROVIDER_PADDLE_KOREAN)
+    assert len(lines) == 1
+    assert lines[0].text == "당근"
+    # box lookup misses on the string key -> empty polygon, never a crash
+    assert lines[0].polygon == ()
 
 
 def test_parse_still_accepts_legacy_2x_shape() -> None:

@@ -2,14 +2,14 @@
 id: M2-OCR-PADDLE3X-1
 title: "生产 ocr_local.py PaddleOCR 3.x 适配修复（bytes 静默忽略 + 3.x 输出形状 + 双 region 行为判定）"
 kind: feature
-status: in_review
+status: done  # 集成收口：DSH r1 approved_with_conditions 条件全闭（integration.md），merge 进 main 由编排会话执行
 approval: ta3b_phase1_finding_registered_2026-10-01
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-TA3-B]
-base_commit: 69137837
+base_commit: 69137837  # release 父 commit（TA3-B R18 惯例）；分支起点=release commit 19adf0e0，review diff 以 19adf0e0..tip 为界（DSH r1 R6 口径澄清）
 delivery_head: 15ef29ab
 branch: agent/zcode/M2-OCR-PADDLE3X-1
 worktree: G:/CODEX/New Manga.worktrees/M2-OCR-PADDLE3X-1-zcode

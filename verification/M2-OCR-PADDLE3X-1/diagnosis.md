@@ -6,6 +6,10 @@
 
 paddleocr 3.x 对 bytes 输入在**输入类型校验层直接忽略**（引擎日志原话：`Not supported input data type! Only numpy.ndarray and str are supported! So has been ignored: b'\x89PNG...'`），不进入推理执行器，**无异常返回空 list**。历史调用从未产出过任何文本，因此不存在"静默错误文本"风险面；风险性质是**静默空 OCR**（可用性缺陷，非正确性缺陷）。
 
+**stale-reuse 的结构性排除论据（DSH r1 R4）**：`engine_prod` 在两次 bytes 调用前**没有任何先前推理**（构造后直接进入 bytes 路径），结构上不存在可被复用的非空结果；若 bytes 被忽略且复用了某先前输入，第二次调用非空且 ≠ GT_B 会被探针判定矩阵捕获为 `STALE_REUSE`（T2 条件）。机制证据（引擎日志原话）现也可见于复跑 stderr（`task-envs/M2-OCR-PADDLE3X-1/raw/diagnose-rerun-stdout.log`，集成方 2026-10-01 复跑 `probe_verdict=ALWAYS_EMPTY` EXIT=0）。
+
+**构造口径注记（DSH r1 R4）**：`engine_prod` 的 "mirrors ocr_local.py default path exactly" 指**修复前**的生产默认构造；本 Task 修复后生产默认已加 `enable_mkldnn=False`（对 bytes 类型拒绝无影响——忽略发生在输入校验层）。
+
 ## 探针设计
 
 脚本：[diagnose_bytes_path.py](../../experiments/M2-OCR-PADDLE3X-1/diagnose_bytes_path.py)（入仓）；机器可读结果：[diagnosis.json](diagnosis.json)。
