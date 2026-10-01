@@ -223,6 +223,10 @@ def run_fd1(gate: Gate, exe: Path, install_dir: Path) -> None:
         exit_code == 0
         and (ping_resp.get("result") or {}).get("status") == "ready"
         and (ping_resp.get("result") or {}).get("protocol_version") == PROTOCOL_VERSION
+        # M2-SETTINGS-IPC-CHANNEL (2026-10-02): PROTOCOL_VERSION above pins
+        # minor=1 — this probe is FROZEN HISTORICAL EVIDENCE of the
+        # M2-PROD-DETECT-3 gate and is NOT re-run against later tips
+        # (envelope minor bumped to 2 by M2-C1 rev 1.3 §5.3).
         and error is None
         and len(candidates) > 0
         and labels_ok

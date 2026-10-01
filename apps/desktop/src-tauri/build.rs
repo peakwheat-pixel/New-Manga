@@ -34,10 +34,14 @@ fn main() {
     // match bare command invocations, so the ACL layer silently skipped
     // them). With `__app-acl__` present, Tauri enforces the capability for
     // every bare command: `capabilities/m2rc1-commands.json` grants exactly
-    // the ten commands below to the main window (seven RC1/RC2 + three
-    // M2-AC1 acceptance commands), and any other command name (e.g. the
-    // deleted `register_catalog`) is refused by the ACL before the invoke
-    // handler is consulted. The three acceptance commands additionally
+    // the fourteen commands below to the main window (five production
+    // commands — three resource-channel + two IPC1 — plus the two
+    // M2-SETTINGS-IPC-CHANNEL settings commands, the four probe commands
+    // and the three M2-AC1 acceptance commands), and any other command name
+    // (e.g. the deleted `register_catalog`) is refused by the ACL before the invoke
+    // handler is consulted. The settings_* pair (M2-SETTINGS-IPC-CHANNEL,
+    // contract rev 1.3 §5.3) is production-only; the probe commands
+    // additionally require probe mode, and the three acceptance commands
     // require the M2-AC1 test mode at runtime (main.rs).
     //
     // Synchronisation note (R2-04): the command list below, the literal list
@@ -52,6 +56,12 @@ fn main() {
             "revoke_resource_refs",
             "core_ping",
             "library_list_books",
+            // M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): production-
+            // only settings read/write pair; ACL-declared so the capability
+            // file can name them, registered at runtime ONLY in production
+            // mode (main.rs SETTINGS_PRODUCTION_ONLY_COMMANDS).
+            "settings_get",
+            "settings_update_section",
             "probe_config",
             "probe_write_results",
             "probe_exit",

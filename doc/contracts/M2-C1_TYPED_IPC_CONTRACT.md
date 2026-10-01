@@ -1,8 +1,10 @@
 # M2-C1 — Typed IPC Contract
 
-状态：文档冻结候选；独立 Review 前。版本：`1.2`（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN `BookSummary.page_count` widening；不代表已实现协议）。
+状态：文档冻结候选；独立 Review 前。版本：`1.3`（M2-SETTINGS-IPC-CHANNEL 产品 Tauri settings 通道 `settings_get`/`settings_update_section` wire shape 授权登记；不代表更广协议已实现）。
 
 ## Revision history
+
+- `1.3`（M2-SETTINGS-IPC-CHANNEL，2026-10-02）：**授权契约修订**（[Task](../tasks/M2-SETTINGS-IPC-CHANNEL.md)，用户裁决① `user_ruling_2026-10-02_three_confirmations`）——新增 **§5.3 产品 Tauri settings 通道**：`settings_get` / `settings_update_section` 两命令的 wire shape（请求/响应/错误码）与写入端前置校验纪律；§5 表 `GetSettings`/`SaveSettings` 行加 `1.3` 指针（transport-neutral 命令名保持 PROPOSAL 不变，产品 Tauri 面以 §5.3 为准）；§11 "Tauri command names" 行注记该两命令名已由本修订裁决。协议 envelope minor `1` → `2`（Python `core_service` 侧命令面新增，沿 M2-PROD-DETECT-3 `core.detect` 先例：同 major 向后兼容 widening，既有命令 `core.ping`/`ListBooks`/`core.detect`/`core.shutdown` 的 payload、result 与错误码不变）。写入端前置校验（typed fail-closed，持久化前拒绝）是 M2-SFX-ENTRY r1 R4 教训（写入端零校验 → 装配期阻断不可自愈）落约：`sfx.policy` 三值校验为首个实例。
 
 - 集成例外登记（M2-PROD-DETECT-3，2026-10-01，acting Codex 集成裁决；仅登记例外，不改任何既有条款正文）：**§10 例外**——`core.detect`（协议 `new-manga.core` 1.1 新增命令，M2-PROD-DETECT-3 交付）登记为 **verification/tooling surface**：本地 stdio 单进程 spawn（无网络面）、单页 base64 上限 32 MiB（base64 解码后文件字节）+ 解码像素上限（32 MiB RGB24 等效）、provider 输出直通不写库、Tauri host 不注册该命令（产品 UI 的 detect 仍走 pipeline）。不构成 §10 产品大媒体通道先例：任何产品大媒体命令仍须 §10 要求的独立 spike（容量/权限/生命周期/威胁模型）与独立授权。**§8 注记**——core.detect 错误 envelope 的 `category` 采用最小映射（provider 输入门 `INVALID_INPUT` → `validation`，其余 ProviderError → `internal`，未映射异常维持 `internal`/`UNKNOWN` 现状）为 Proposal 级口径，与 §8 分类表的最终对齐沿用既有同源登记（M2-IPC1 r2 P3-4）；`message` 一律为固定安全短句（不得含本地绝对路径——provider 错误原文细节只走 stderr），即 §8 `message` 约束在该面强制生效。
 - `1.2`（M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN，2026-09-29）：**授权契约修订**——§5 `ListBooks` 结果 DTO `BookSummary.page_count` 由 `int` widened 为 `int | null`（[Task 冻结裁决](../tasks/M2-FIX-LISTBOOKS-PAGECOUNT-UNKNOWN.md)：None 通道）。语义：production COUNT 谓词（GROUP BY 仅覆盖有 ≥1 合格页的书）对某书无行的（无章、有章无合格页——含页行损坏被谓词排除的情况）→ `null`（unknown：数据不可用/未统计/导入未完成）；有合格页的书 → 真实计数 int。**known-0 通道保留**：SQL 数出的 0（若有）保持 JSON number `0`，与 `null` 序列化后可区分（单测锁定，三侧：Python/Rust/TS）；当前 production 谓词下无 known-0 场景属语义事实。命令名、payload、错误码与命令面清单不变（仅本字段 widening；§3 版本规则下属类型变化，由本授权 Task 承接，例外指针见 §3.2）。三侧落地：Python `BookSummaryDto.page_count: int | None`、Rust `library_bridge.rs` `BookSummary.page_count: Option<u32>`（serde → `null`）、TS `types.ts` `page_count: number | null`；`LibraryPanel` 对 `null` 渲染非数字占位（`—`），不得渲染为 `0`。
@@ -118,7 +120,7 @@ Event<T> = {
 | `SaveManualTranslation` | `{region_id, text, expected_revision?: RevisionNo}` → `{revision_no: RevisionNo}` | Workbench VM 当前调用编辑 service 保存手工译文。`expected_revision` 是防覆盖 Proposal，精确并发策略 **UNKNOWN**。 |
 | `ListRegionRevisions` / `RestoreRegionRevision` / `SetRevisionPinned` | `{region_id}` / `{region_id, revision_no}` / `{region_id, revision_no, pinned}` → `RevisionSummary[]` / `RegionSnapshot` / `Unit` | `RegionRepository` port 的 `list_revisions` 读取历史；编辑 service 提供 `restore_revision` 与 `set_revision_pinned`。具体 ViewModel/QML 可见性并不完整。锁/Revision 保护要求来自 AD-001；任何操作的资格检查归 Core。 |
 | `GetReaderProjection` / `SaveReadingProgress` | `{chapter_id}` / `{chapter_id, page_id?, scroll_offset?}` → `ReaderProjection` / `Unit` | Reader VM 读取章节页并保存滚动偏移；page navigation、display mode 为 presentation state。 |
-| `GetSettings` / `SaveSettings` | `{section?}` / `{section, values}` → `SettingsProjection` / `SettingsProjection` | AS-IS 仅证明 Settings VM 在进程内调用 profiles/defaults/credentials services；没有已定义的 `CredentialRef` 类型或 IPC exchange。Credential DTO/exchange 为 UNKNOWN / DEFERRED；secret 不得进入普通事件或日志。 |
+| `GetSettings` / `SaveSettings` | `{section?}` / `{section, values}` → `SettingsProjection` / `SettingsProjection` | AS-IS 仅证明 Settings VM 在进程内调用 profiles/defaults/credentials services；没有已定义的 `CredentialRef` 类型或 IPC exchange。Credential DTO/exchange 为 UNKNOWN / DEFERRED；secret 不得进入普通事件或日志。**`1.3` 修订（M2-SETTINGS-IPC-CHANNEL）**：本行 transport-neutral 命令名与其 PROPOSAL 等级不变；产品 Tauri 面落地为 §5.3 的 `settings_get` / `settings_update_section`（请求/响应/错误码与写入端校验以 §5.3 为准）。 |
 | `StartExport` / `CancelExport` | `{export_request: ExportRequestDto}` / `{export_id}` → `ExportAccepted` / `Unit` | ViewModel 调 Export service 与本地 worker；实际输出文件选择/宿主能力需后续 host contract，当前导出 IPC 未实现。 |
 
 ### 5.1 Task command types
@@ -142,6 +144,20 @@ Core 必须验证 command/scope 配对；Task contract 不授权新增命令类�
 ### 5.2 UI-local actions
 
 以下现有交互只改变前端/页面状态，**不单独成为 Core command**：Workbench `selectPage`, `stepPage`, `togglePageSelected`, `selectRangeTo`, `clearSelection`, `setPageFilter`, `filterByStatus`, `locatePipelinePage`, `setViewerMode`, `setInspectorText`, `selectRegion`, `resolveDirtyConfirm`；Bookshelf search/filter/sort/view mode；Reader `nextPage`, `previousPage`, `jumpToPage`, display mode；Export 表单编辑。若未来动作写持久状态，则必须提升为有类型 Core 命令，不得用通用 property bag 隐式写入。
+
+### 5.3 Product Tauri settings channel (M2-SETTINGS-IPC-CHANNEL)
+
+本节 wire shape 由 [M2-SETTINGS-IPC-CHANNEL](../tasks/M2-SETTINGS-IPC-CHANNEL.md)（用户裁决①，`user_ruling_2026-10-02_three_confirmations`）授权并落地；命令名来自 [M2-SETTINGS-UI-SFX-POLICY handoff](../handoffs/M2-SETTINGS-UI-SFX-POLICY-8c798aed.md) 的 pin（前端常量+测试先行锁定，改名即漂移）。范围仅此两命令；不构成其他 settings 键、其他命令面或大媒体通道的先例（§10 与 §10.1 的独立授权要求不变）。两个命令都 riding 同一条既有产品 stdio JSON-lines 通道（React → Tauri `settings_get`/`settings_update_section` → Python `bootstrap.core_service` `settings.get`/`settings.update_section` → `PipelineDefaultsService`）；Core 是设置语义的权威，Tauri/Rust 只转发与映射 typed 错误（§1/§2 不变）。
+
+- **`settings_get`** — 请求 payload `{}`（全量）或 `{"section": "<name>"}`（单节）。响应 result 为 `{"settings": <object>}`：全量形态返回 `PipelineDefaults.settings` 的 JSON 投影（如 `{"sfx": {"policy": "skip"}, "ocr": {"script": "..."}}`）；单节形态返回 `{"settings": {"<name>": <object | null>}}`——节未设置时该节值为 JSON `null`（沿 `1.2` 的 frozen None 通道语义：未设置/未统计可区分于空对象）。`section` 为空串或非 string 时 typed 拒绝（见下）。 `section: null` 同样按非 string typed 拒绝（JSON null 不是合法节名；读取全量请省略该键）。`settings_update_section` 为 upsert 幂等：同参数重复调用结果一致，重复写入同值不产生额外副作用。
+- **`settings_update_section`** — 请求 payload `{"section": "<name>", "values": <object>}`；语义 = `PipelineDefaultsService.save_settings_section(section, values)` upsert（整节替换，非逐键合并；与既有 `ocr.script` 同通道）。响应 result 为更新后的全量投影 `{"settings": <object>}`（调用方一次往返即得最新状态）。
+- **写入端前置校验（RULED，typed fail-closed，持久化之前拒绝）**：M2-SFX-ENTRY r1 R4 教训落约——写入端零校验会让非法值直达持久层，下一次装配 fail-fast 时成为不可自愈的启动阻断。因此：
+  1. `section` 必须为非空 string；
+  2. `values` 必须为 JSON object；
+  3. `section == "sfx"` 且 `values` 携带 `"policy"` 键时，其值必须在 `{"skip", "translate", "manual"}` 内（**首个落地实例**；语义事实源 = M2-SFX-TRANSLATE-ENTRY，默认 `skip`，re-assemble 生效、仅新建 region）；
+  4. 其余 section/键透传（结构校验同 1/2；未列键的值域校验由 Core 装配期语义继续负责，本节不白名单化 settings 键集合）。
+- **错误码（沿 §8 既有枚举，不发明新码）**：请求校验失败（上述 1–4 与空 `section` 读取）→ `INVALID_REQUEST`、`category=validation`、`retryable=false`（`core.detect` payload 校验同码先例）；持久化失败 → `UNKNOWN`、`category=internal`；通道/spawn 失败 → `CORE_UNAVAILABLE`（Rust 侧既有映射不变）。`message` 遵守 §8（安全短句，无路径）。
+- **宿主同步纪律**：Tauri 面三处手工同步视图（`command_allowlist` 常量 / `generate_handler!` 字面清单 / build.rs app-manifest）+ capabilities 声明必须同一 commit 内同步（RC2-AC1 R2-04 既有纪律）；两命令 production-only（probe/ac1 测试模式面保持冻结形状，沿 M2-IPC1 option-B 先例）。前端 commandSurface pin 与 Rust unit test 同时更新。
 
 ## 6. Typed projections 与 events
 
@@ -301,7 +317,7 @@ AS-IS `normalized_to_page_geometry(points, page_w, page_h)` owns conversion in a
 | Page-level `blocked` UI meaning, glyph, copy and behavior | `DEFERRED / USER_DECISION_REQUIRED` | Page projection may carry typed status `blocked`; do not reuse Run `blocked` UI mapping (`⊘`, `⏸`, or any other glyph). No user-visible behavior is selected here. |
 | React UI Owner | `DEFERRED / USER_DECISION_REQUIRED` | This Task does not select an owner. |
 | Large-media transport and import path capability | `PARTIALLY RULED` (M2-C2) | Thresholds (T1–T7, §10.1) and security semantics (§10.2) were ruled at M2-C2 from the M2-S1 §7 ruling and the M2-S1/M2-S2 spikes. The runtime form remains `DEFERRED` to a future runtime Task: transport selection stays conditional (M2-S1 §8.1), the Tauri asset protocol is `NOT_RUN` (S1-B1), and S1-B11 product-level protection is `UNVERIFIED` (S1-B3/S1-B8 outstanding). |
-| Runtime serialization library, Tauri command names, process supervision, auth/permission handshake | `UNKNOWN / NOT_IN_SCOPE` | No implementation claimed; separate runtime Task must decide against this transport-neutral contract. |
+| Runtime serialization library, Tauri command names, process supervision, auth/permission handshake | `UNKNOWN / NOT_IN_SCOPE`（`1.3` 注记：仅 `settings_get`/`settings_update_section` 两命令的 Tauri command name 与 wire shape 已由 §5.3 裁决落地；本行其余决定仍 UNKNOWN/NOT_IN_SCOPE） | No implementation claimed beyond §5.3; separate runtime Tasks must decide the rest against this transport-neutral contract. |
 | Event ordering/replay/retention and idempotency | `UNKNOWN / NOT_FROZEN` | Snapshot resync is the safe proposal; stronger guarantees need runtime tests. |
 | Lock/revision conflict response details and concurrent edit policy | `UNKNOWN` | Core remains authority; later contract may refine typed conflict details without weakening protection. |
 

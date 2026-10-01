@@ -146,8 +146,9 @@ def test_dispatch_pure_functions(tmp_path: Path) -> None:
         assert res["request_id"] == "req-4"
         assert res["error"] is None
         assert res["result"]["status"] == "ready"
-        # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added)
-        assert res["result"]["protocol_version"] == {"major": 1, "minor": 1}
+        # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added);
+        # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
+        assert res["result"]["protocol_version"] == {"major": 1, "minor": 2}
         assert res["result"]["capabilities"] == ["library.list_books"]
 
         # 6. ListBooks on empty repository
@@ -229,8 +230,9 @@ def test_real_subprocess_e2e_round_trip(tmp_path: Path) -> None:
         assert ping_resp["request_id"] == "p-1"
         assert ping_resp["error"] is None
         assert ping_resp["result"]["status"] == "ready"
-        # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added)
-        assert ping_resp["result"]["protocol_version"] == {"major": 1, "minor": 1}
+        # M2-PROD-DETECT-3: protocol minor bump 1.0 -> 1.1 (core.detect added);
+        # M2-SETTINGS-IPC-CHANNEL: 1.1 -> 2 (settings.get/update_section added)
+        assert ping_resp["result"]["protocol_version"] == {"major": 1, "minor": 2}
         assert ping_resp["result"]["capabilities"] == ["library.list_books"]
 
         # 1b. core.detect in the REAL production assembly (M2-PROD-DETECT-3):

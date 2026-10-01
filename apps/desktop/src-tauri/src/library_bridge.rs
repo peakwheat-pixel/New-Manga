@@ -116,6 +116,20 @@ pub fn decode_response(line: &str) -> Result<serde_json::Value, LibraryError> {
 pub trait LibraryChannel: Send + Sync {
     fn ping(&self) -> Result<PingResult, LibraryError>;
     fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError>;
+    /// M2-SETTINGS-IPC-CHANNEL (contract rev 1.3 §5.3): read the pipeline
+    /// settings projection — `{}` (full) or `{"section": name}` (one
+    /// section, JSON `null` when unset). Returns the raw result JSON (the
+    /// `{"settings": ...}` projection); the host never interprets keys.
+    fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError>;
+    /// M2-SETTINGS-IPC-CHANNEL: upsert one section via the Core's
+    /// `settings.update_section` (`settings.update_section`); value-domain
+    /// validation (sfx.policy) lives Core-side BEFORE persistence — the
+    /// typed rejection (INVALID_REQUEST) propagates as `LibraryError.code`.
+    fn update_settings_section(
+        &self,
+        section: &str,
+        values: &serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError>;
 }
 
 /// The command argv pinned for spawning the production Core service.
@@ -283,12 +297,37 @@ impl LibraryChannel for StdioLibraryChannel {
         serde_json::from_value(val)
             .map_err(|e| LibraryError::malformed(&format!("Failed to parse BookSummary list: {e}")))
     }
+
+    fn get_settings(&self, section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+        // contract rev 1.3 §5.3: the full projection ({} payload) or one
+        // section ({"section": name}); the result passes through as raw JSON
+        let payload = match section {
+            Some(name) => serde_json::json!({ "section": name }),
+            None => serde_json::json!({}),
+        };
+        self.round_trip("settings.get", payload)
+    }
+
+    fn update_settings_section(
+        &self,
+        section: &str,
+        values: &serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        // contract rev 1.3 §5.3: value-domain validation (sfx.policy) is
+        // Core-side and pre-persistence; a typed INVALID_REQUEST rejection
+        // arrives through decode_response as a normal LibraryError
+        self.round_trip(
+            "settings.update_section",
+            serde_json::json!({ "section": section, "values": values }),
+        )
+    }
 }
 
 /// In-memory mock channel for testing without spawning Python.
 pub struct MockLibraryChannel {
     ping_result: Mutex<Result<PingResult, LibraryError>>,
     books_result: Mutex<Result<Vec<BookSummary>, LibraryError>>,
+    settings_result: Mutex<Result<serde_json::Value, LibraryError>>,
 }
 
 impl MockLibraryChannel {
@@ -300,6 +339,7 @@ impl MockLibraryChannel {
                 capabilities: vec!["library.list_books".to_string()],
             })),
             books_result: Mutex::new(Ok(Vec::new())),
+            settings_result: Mutex::new(Ok(serde_json::json!({ "settings": {} }))),
         }
     }
 
@@ -309,6 +349,12 @@ impl MockLibraryChannel {
 
     pub fn set_books_error(&self, error: LibraryError) {
         *self.books_result.lock().unwrap() = Err(error);
+    }
+
+    /// M2-SETTINGS-IPC-CHANNEL: pin the mocked settings projection (or a
+    /// typed rejection, e.g. INVALID_REQUEST) for host-level tests.
+    pub fn set_settings_result(&self, result: Result<serde_json::Value, LibraryError>) {
+        *self.settings_result.lock().unwrap() = result;
     }
 
     #[allow(dead_code)]
@@ -330,6 +376,18 @@ impl LibraryChannel for MockLibraryChannel {
 
     fn list_books(&self) -> Result<Vec<BookSummary>, LibraryError> {
         self.books_result.lock().unwrap().clone()
+    }
+
+    fn get_settings(&self, _section: Option<&str>) -> Result<serde_json::Value, LibraryError> {
+        self.settings_result.lock().unwrap().clone()
+    }
+
+    fn update_settings_section(
+        &self,
+        _section: &str,
+        _values: &serde_json::Value,
+    ) -> Result<serde_json::Value, LibraryError> {
+        self.settings_result.lock().unwrap().clone()
     }
 }
 
@@ -424,6 +482,43 @@ mod tests {
         let null_back: BookSummary = serde_json::from_str(&null_json).unwrap();
         assert_eq!(zero_back.page_count, Some(0));
         assert_eq!(null_back.page_count, None);
+    }
+
+    #[test]
+    fn settings_mock_channel_round_trip_and_typed_rejection() {
+        // M2-SETTINGS-IPC-CHANNEL: the host-level settings surface maps 1:1
+        // onto the LibraryChannel methods. The mock is a single preset slot
+        // (no write semantics — the REAL channel round-trips the Core, see
+        // real_core_sidecar_settings_round_trip_and_typed_rejection); what
+        // is pinned here is the projection shape and the typed
+        // INVALID_REQUEST pass-through.
+        let channel = MockLibraryChannel::new();
+        let full = channel.get_settings(None).unwrap();
+        assert_eq!(full["settings"], serde_json::json!({}));
+
+        channel.set_settings_result(Ok(serde_json::json!(
+            { "settings": { "sfx": { "policy": "translate" } } }
+        )));
+        let section = channel.get_settings(Some("sfx")).unwrap();
+        assert_eq!(section["settings"]["sfx"]["policy"], "translate");
+        // both methods surface the same preset slot
+        let updated = channel
+            .update_settings_section("sfx", &serde_json::json!({ "policy": "manual" }))
+            .unwrap();
+        assert_eq!(updated["settings"]["sfx"]["policy"], "translate");
+
+        channel.set_settings_result(Err(LibraryError::new(
+            "INVALID_REQUEST",
+            "validation",
+            false,
+            Some("settings.update_section sfx.policy must be one of ..."),
+        )));
+        let err = channel
+            .update_settings_section("sfx", &serde_json::json!({ "policy": "bogus" }))
+            .unwrap_err();
+        assert_eq!(err.code, "INVALID_REQUEST");
+        assert_eq!(err.category, "validation");
+        assert!(!err.retryable);
     }
 
     #[test]

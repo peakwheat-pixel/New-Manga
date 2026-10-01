@@ -7,14 +7,14 @@ then enters a stdio request loop serving typed commands over JSON-lines.
 
 Transport & Envelope (Contract 1.1 §3, §8, §12; Seam 冻结七条):
   Request:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 1},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 2},
      "request_id": "<id>", "command": "<cmd>", "payload": {...}}
   Response:
-    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 1},
+    {"protocol": "new-manga.core", "version": {"major": 1, "minor": 2},
      "request_id": "<id>", "result": {...} | null, "error": ErrorEnvelope | null}
 
-Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3):
-  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 1}, "capabilities": ["library.list_books"]}
+Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3 + M2-SETTINGS-IPC-CHANNEL):
+  - core.ping: {} -> {"status": "ready", "protocol_version": {"major": 1, "minor": 2}, "capabilities": ["library.list_books"]}
   - ListBooks: {} -> BookSummary[]
   - core.shutdown: {} -> {"status": "stopped"} (then exit 0)
   - core.detect: {"page": "<base64 PNG/JPEG>", "width": <int>, "height": <int>}
@@ -34,6 +34,27 @@ Allowed production commands (M2-IPC1 + M2-PROD-DETECT-3):
     own typed error codes (PROVIDER_NOT_CONFIGURED / PROVIDER_DEPENDENCY_MISSING /
     PROVIDER_FAILED / ...). Verification/tooling surface only -- the product
     UI detect path remains the pipeline (apps/** registers nothing new).
+  - settings.get: {} | {"section": "<name>"}
+      -> {"settings": {...}} | {"settings": {"<name>": {...} | null}}
+    (M2-SETTINGS-IPC-CHANNEL, protocol minor bump 1.1 -> 2: same
+    backwards-compatible widening precedent -- every pre-existing command
+    keeps its payload/result/error codes; only the envelope version moves.
+    Full form returns the ``PipelineDefaults.settings`` projection; the
+    by-section form returns that one section, JSON ``null`` when unset --
+    the frozen None channel stays distinguishable from an empty object.
+    Contract: M2-C1 rev 1.3 §5.3.)
+  - settings.update_section: {"section": "<name>", "values": {...}}
+      -> {"settings": {...}}  (the full updated projection)
+    (M2-SETTINGS-IPC-CHANNEL. Upsert via ``PipelineDefaultsService.
+    save_settings_section`` -- the same channel/row as the ``ocr.script``
+    key. Write-side validation is typed fail-closed BEFORE any persistence
+    (M2-SFX-ENTRY r1 R4 lesson: a write path without validation lets an
+    illegal value reach the store and become an unrecoverable startup
+    block at the next assembly): ``section`` must be a non-empty string,
+    ``values`` a JSON object, and ``settings["sfx"]["policy"]`` -- the
+    first validation instance -- must be one of skip/translate/manual.
+    Everything else passes through; a failure never reaches the store.
+    Contract: M2-C1 rev 1.3 §5.3.)
 """
 
 from __future__ import annotations
@@ -50,12 +71,14 @@ import time
 from typing import Any, Callable, TextIO
 
 from application.importing.images.ports import DecodedImage
+from application.settings.errors import BindingValidationError
 from application.translation.color.service import SourceStyleService
 from bootstrap.core_assembly import (
     CoreServices,
     assemble_core_services,
     default_data_root,
 )
+from domain.regions.entities import SfxPolicy
 from ports.detection.ports import DetectionRequest
 from ports.providers.errors import ProviderError, ProviderNotConfigured
 
@@ -63,7 +86,10 @@ PROTOCOL_NAME = "new-manga.core"
 PROTOCOL_MAJOR = 1
 # M2-PROD-DETECT-3: 0 -> 1 (minor bump, core.detect command added; backwards
 # compatible widening, see the module docstring).
-PROTOCOL_MINOR = 1
+# M2-SETTINGS-IPC-CHANNEL: 1 -> 2 (minor bump, settings.get /
+# settings.update_section commands added; same backwards-compatible widening
+# precedent -- pre-existing command semantics unchanged).
+PROTOCOL_MINOR = 2
 
 # Typed error codes per Contract 1.1 §3, §8
 E_PROTOCOL_VERSION_UNSUPPORTED = "PROTOCOL_VERSION_UNSUPPORTED"
@@ -73,7 +99,17 @@ E_UNKNOWN = "UNKNOWN"
 # M2-PROD-DETECT-3: malformed core.detect payload (bad base64, width/height
 # missing or mismatched with the decoded pixels, oversized payload). Same
 # literal the dispatch loop already uses for a non-object request.
+# M2-SETTINGS-IPC-CHANNEL: the SAME existing literal covers the settings
+# request validation failures (bad section/values shapes, illegal sfx.policy)
+# -- no new error code is invented (contract rev 1.3 §5.3, §8 existing enum).
 E_INVALID_REQUEST = "INVALID_REQUEST"
+
+#: M2-SETTINGS-IPC-CHANNEL: the legal ``settings["sfx"]["policy"]`` values
+#: (contract rev 1.3 §5.3 write-side validation, first instance). The
+#: semantics fact source is M2-SFX-TRANSLATE-ENTRY (default SKIP, re-assemble
+#: per region); the value set is the domain enum itself so the wire gate can
+#: never drift from what the assembly-time reader accepts.
+_SFX_POLICY_VALUES = frozenset(policy.value for policy in SfxPolicy)
 
 #: M2-PROD-DETECT-3: upper bound for one core.detect page, enforced on the
 #: base64-decoded FILE bytes; a separate pixel-count cap (below) bounds the
@@ -127,6 +163,11 @@ _PROVIDER_ERROR_CATEGORY: dict[str, str] = {"INVALID_INPUT": "validation"}
 
 class DetectRequestError(ValueError):
     """A core.detect payload violates the request contract (INVALID_REQUEST)."""
+
+
+class SettingsRequestError(ValueError):
+    """A settings.get/update_section payload violates the request contract
+    (INVALID_REQUEST; M2-SETTINGS-IPC-CHANNEL, contract rev 1.3 §5.3)."""
 
 
 
@@ -427,6 +468,71 @@ class CoreServiceServer:
             "elapsed_ms": elapsed_ms,
         }
 
+    # ------------------------------------------------------------------
+    # settings.get / settings.update_section (M2-SETTINGS-IPC-CHANNEL)
+    # ------------------------------------------------------------------
+
+    def handle_settings_get(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Read the persisted pipeline settings (contract rev 1.3 §5.3).
+
+        Full form (no ``section``): ``{"settings": <projection>}``. The
+        by-section form returns that one section; an unset section reads as
+        JSON ``null`` -- the frozen None channel (unknown/never written)
+        stays distinguishable from a written empty object, mirroring the
+        M2-FIX-LISTBOOKS ``page_count`` precedent. Reading never writes.
+        """
+        section = payload.get("section")
+        settings = dict(self._core.pipeline_defaults.read().settings)
+        if section is None:
+            return {"settings": settings}
+        if not isinstance(section, str) or not section.strip():
+            raise SettingsRequestError(
+                "settings.get 'section' must be a non-empty string when present"
+            )
+        return {"settings": {section: settings.get(section)}}
+
+    def handle_settings_update_section(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Upsert one settings section (contract rev 1.3 §5.3).
+
+        Validation is WRITE-SIDE and typed fail-closed (M2-SFX-ENTRY r1 R4
+        lesson): a value that would fail the assembly-time reader must be
+        rejected here, BEFORE any persistence, so an illegal write can never
+        become an unrecoverable startup block. Shapes:
+          - ``section``: non-empty string (upsert target);
+          - ``values``: JSON object (the whole section is replaced);
+          - ``settings["sfx"]["policy"]``: the first value-domain gate --
+            one of skip/translate/manual (M2-SFX-TRANSLATE-ENTRY; default
+            SKIP stays the assembly reader's concern, not rewritten here).
+        Every other section/key passes through. The result is the full
+        updated projection, so one round trip re-syncs the caller.
+        """
+        section = payload.get("section")
+        values = payload.get("values")
+        if not isinstance(section, str) or not section.strip():
+            raise SettingsRequestError(
+                "settings.update_section requires 'section': a non-empty string"
+            )
+        if not isinstance(values, dict):
+            raise SettingsRequestError(
+                "settings.update_section requires 'values': a JSON object"
+            )
+        if section == "sfx" and "policy" in values:
+            policy = values["policy"]
+            if not (isinstance(policy, str) and policy in _SFX_POLICY_VALUES):
+                raise SettingsRequestError(
+                    "settings.update_section sfx.policy must be one of "
+                    f"{sorted(_SFX_POLICY_VALUES)}"
+                )
+        try:
+            defaults = self._core.pipeline_defaults.save_settings_section(
+                section, values
+            )
+        except BindingValidationError as error:
+            # the service's own structural guard; same typed surface as the
+            # pre-validation above (INVALID_REQUEST, never a raw ValueError)
+            raise SettingsRequestError(str(error)) from error
+        return {"settings": dict(defaults.settings)}
+
     def dispatch_request(self, raw_line: str) -> tuple[dict[str, Any], bool]:
         """Dispatch a single raw json request line.
 
@@ -645,6 +751,60 @@ class CoreServiceServer:
                     "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
                     "request_id": request_id,
                     "result": detect_result,
+                    "error": None,
+                },
+                False,
+            )
+
+        # M2-SETTINGS-IPC-CHANNEL: the settings read/write pair. The five
+        # commands above are untouched; these branches only widen the
+        # surface (protocol minor bump, see the module docstring). Write-side
+        # validation lives in the handler (typed INVALID_REQUEST BEFORE any
+        # persistence); persistence failures surface as UNKNOWN/internal.
+        if command in ("settings.get", "settings.update_section"):
+            try:
+                if command == "settings.get":
+                    result = self.handle_settings_get(payload)
+                else:
+                    result = self.handle_settings_update_section(payload)
+            except SettingsRequestError as error:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_INVALID_REQUEST,
+                            category="validation",
+                            message=str(error),
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            except Exception:
+                return (
+                    {
+                        "protocol": PROTOCOL_NAME,
+                        "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                        "request_id": request_id,
+                        "result": None,
+                        "error": make_error_envelope(
+                            code=E_UNKNOWN,
+                            category="internal",
+                            message="Settings operation failed",
+                            retryable=False,
+                        ),
+                    },
+                    False,
+                )
+            return (
+                {
+                    "protocol": PROTOCOL_NAME,
+                    "version": {"major": PROTOCOL_MAJOR, "minor": PROTOCOL_MINOR},
+                    "request_id": request_id,
+                    "result": result,
                     "error": None,
                 },
                 False,

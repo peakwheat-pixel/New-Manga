@@ -440,7 +440,7 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
         return json.dumps(
             {
                 "protocol": "new-manga.core",
-                "version": {"major": 1, "minor": 1},
+                "version": {"major": 1, "minor": 2},
                 "request_id": request_id,
                 "command": command,
                 "payload": {},
@@ -492,7 +492,7 @@ def run_library_probe(gate: Gate, install_dir: Path, env: dict, lab: Path) -> No
     gate.pass_or(
         ping.get("error") is None
         and ping_result.get("status") == "ready"
-        and ping_result.get("protocol_version") == {"major": 1, "minor": 1}
+        and ping_result.get("protocol_version") == {"major": 1, "minor": 2}
         and "library.list_books" in (ping_result.get("capabilities") or []),
         "CS-L1-packaged-core-ping",
         {"result": ping_result, "error": ping.get("error")},
