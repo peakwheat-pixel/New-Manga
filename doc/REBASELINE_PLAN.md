@@ -116,6 +116,9 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-DETECT-WEBTOON-DIAG](tasks/M2-DETECT-WEBTOON-DIAG.md) webtoon 长条漫 ogkalu 0 候选适配器级诊断（建议 A 第一步） | **done**（integration=`e1d939fa`、merge=`29942c30`；DSH r1 `changes_requested` → 返修 R1-R11 含探针 schema v2 重跑 → r2 `approved`） | ZCode / DeepSeek Harness | base=`8996ca55`、被审头=`b311f52f`/返修 tip=`a867ff49`；**根因=整页无 letterbox 各向异性重缩放**（640×640 垂直压缩 ~97×；决定性证据=同页同权重仅改分辨率块级 0→193 合并前文本框，NMS 数据 30/33 重叠带+IoU mean 0.848）；修法 A tiling 推荐（契约零变更）、B 路由 docTR 基线、C 排除；修复 Task 释放口径已定（5 张 webtoon_long_strip/生产 region Gate/K19 归 F4/CPU 预算）；[diagnosis](../verification/M2-DETECT-WEBTOON-DIAG/diagnosis.md)、[DSH r2](reviews/M2-DETECT-WEBTOON-DIAG-a867ff49-dsh-r2.md)。 |
 | [M2-IMPORT-ALLOC-LIMIT](tasks/M2-IMPORT-ALLOC-LIMIT.md) 大图导入 QImageReader allocation limit（建议 B） | **done**（integration=`499a3da7`、merge=`f9c15e45`；DSH r1 `approved_with_conditions` → 条件返修 R1-R10 全 closed → r2 `approved` 0×新 P0/P1/P2） | ZCode / DeepSeek Harness | fork=`8996ca55`（授权基线 8e0de8d0）、delivery=`a5c8adf1`、返修 tip=`400046ef`；修复=setAllocationLimit(2047MiB) 每 decode 断言（域实测 345.6MiB ×5.9 余量）+MOBI render 重收紧 256MiB+typed 错误（errorString 300+3 字符）；机制锁定用例（同输入仅限值不同）+红态归档 4F/1P；K07/K09/K10 生产通道真图 PASS+对照组（256 拒/2047 过，native_stderr 原文归档）=**TA3-B2 F2 升级一级证据**；五套件含 import_formats 550+1sk（post-merge main 537+1sk 0 failed）；[集成记录](../verification/M2-IMPORT-ALLOC-LIMIT/integration.md)、[DSH r2](reviews/M2-IMPORT-ALLOC-LIMIT-400046ef-dsh-r2.md)。 |
 | [M2-QUAL-DETERM-CALIB](tasks/M2-QUAL-DETERM-CALIB.md) F5 确定性 Gate 重定义校准 | **done**（integration=`7a0286ef`、merge=`20e17d52`；DSH r1 `approved_with_conditions` 4×P2 → R1-R14 全 closed 复跑逐值一致 → r2 `approved`） | ZCode / DeepSeek Harness | 双轨 Gate（remote=相似度 median≥0.95/min≥0.70 normalized+覆盖前置+NO_DATA 豁免；mock=字节逐位；`--determinism-track` fail-closed）；校准=K11/BJ02 复跑对（浮动带 [0.75,0.875]）+合成漂移；[集成记录](../verification/M2-QUAL-DETERM-CALIB/integration.md)、[DSH r2](reviews/M2-QUAL-DETERM-CALIB-8926f49c-dsh-r2.md)。 |
+| [M2-DETECT-WEBTOON-TILING](tasks/M2-DETECT-WEBTOON-TILING.md) webtoon 长条漫 tiling 检测修复（建议 A 第二步） | **done**（integration=`e1c040bf`+companion、merge=`061fbb60`；DSH r1 **PASS 零阻塞**，9×P3/P4 登记紧邻 follow-up） | ZCode / DeepSeek Harness | fork=`f99a6c55`、delivery=`29a7f5b5`；tiling+坐标回映落 `detection_manga.py`（触发 h/w>4.0、env `NEWMANGA_DETECTOR_TILING_*` 默认 4.0/1024/128/0.5 fail-fast）；qualification **GATE PASS 5/5**（K01 180 region/193 框逐值复现 DIAG、20.1s≤25s；K02/K04/K05/K08 全 >0；阈值曲线+690×690 对照+K19/BJ02 零变化）；+45 测试红 44F→73P；[DSH r1](reviews/M2-DETECT-WEBTOON-TILING-29a7f5b5-dsh-r1.md)、[qualification](../verification/M2-DETECT-WEBTOON-TILING/qualification-report.md)。 |
+| [M2-TASKS-BACKFILL-MULTIREGION](tasks/M2-TASKS-BACKFILL-MULTIREGION.md) executor backfill 逐 region 跟进 | **done**（integration=`27701679`、merge=`fd452f37`；DSH r1 有条件通过 → 返修 R1-R7 全 closed → r2 `approved`） | ZCode / DeepSeek Harness | backfill 逐 region fan-out（与恢复路径同 `_plan_region` 语义；SFX gate plan 层 per-region 生效）；R1 terminal 账目同步（断言红态 terminal 12≠17 独立验证）；R4/R5 证据归档；**R2 裁决请求=单 region SFX 页 primary 重决策**（违反 D06 §85 反例已登记）；主 venv 双侧 530+1sk/575+1sk 0 failed；[DSH r2](reviews/M2-TASKS-BACKFILL-MULTIREGION-95469952-dsh-r2.md)。 |
+| [M2-SETTINGS-UI-SFX-POLICY](tasks/M2-SETTINGS-UI-SFX-POLICY.md) 设置页 SFX 策略键接入 | **blocked_on_contract**（UI/测试已交付 @`efad4b71`：SettingsPanel+SettingsClient+17 新测试 vitest 48 全绿；IPC 勘察=产品无设置页且无任何 settings 通道，触 M2-C1 冻结契约即停） | ZCode / DeepSeek Harness | 解除前提=settings IPC 通道 slice（`settings_get`/`settings_update_section`，形状已 pin handoff）；通道契约裁决待用户确认；[handoff](handoffs/M2-SETTINGS-UI-SFX-POLICY-8c798aed.md)。 |
 | [M2-SFX-TRANSLATE-ENTRY](tasks/M2-SFX-TRANSLATE-ENTRY.md) SFX 翻译策略可配置入口（裁决④） | **done**（integration=`e0ba396a`、merge=`1eccc99d`；DSH r1 `approved_with_conditions` 0×P0/P1，条件由集成方闭合） | ZCode / DeepSeek Harness | `settings["sfx"]["policy"]`（skip/translate/manual，默认 SKIP 零变化+非法值 fail-fast）；缺环修复=装配闭包向 create_region 传参（translate 门生产可达）；**作用域=仅新建 region**（r1 R1 登记）；21 新增测试；post-merge 530+1sk 0 failed；后续=React 设置页（Qoder）/region 级策略入口/backfill 调度片；[集成记录](../verification/M2-SFX-TRANSLATE-ENTRY/integration.md)、[DSH r1](reviews/M2-SFX-TRANSLATE-ENTRY-a377a25a-dsh-r1.md)。 |
 | [M2-OCR-PADDLE3X-1](tasks/M2-OCR-PADDLE3X-1.md) 生产 ocr_local.py PaddleOCR 3.x 适配修复 | **done**（integration=`53326278`、merge=`96cdb297`；DSH r1 `approved_with_conditions` 1×P2+5×P3+3×P4 条件全闭） | ZCode / DeepSeek Harness | base=`69137837`（release `19adf0e0`）、delivery=`15ef29ab`、集成 tip=`53326278`；诊断=**ALWAYS_EMPTY**（bytes 输入校验层拒绝，错误文本风险面不存在）；修复=bytes→BGR ndarray+`enable_mkldnn=False`+双形状解析（numpy box 物化）；R3 fail-closed 收紧+2 回归测试（ocr_local 19 例）；红绿判别 9/9（声称 10/7 实跑 9/8 差异已如实登记）；探针复跑逐位一致；main 509+1skipped 0 failed；遗留台账（TA3-B2 wrapper 适配/mkldnn 性能对照/2.x 实测/det 孤立 crop）见 [integration.md](../verification/M2-OCR-PADDLE3X-1/integration.md)、[DSH r1](reviews/M2-OCR-PADDLE3X-1-15ef29ab-dsh-r1.md)。 |
 
@@ -175,6 +178,9 @@ flowchart TD
   TA3B -.-> ALLOC["M2-IMPORT-ALLOC-LIMIT 大图导入上限 · O:ZCode ✓（2047MiB+MOBI 收紧；F2 升一级证据）"]
   TA3B -.-> CALIB["M2-QUAL-DETERM-CALIB F5 确定性校准 · O:ZCode ✓（双轨 Gate：remote=相似度/mock=字节）"]
   TA3B -.-> SFXE2["M2-SFX-TRANSLATE-ENTRY SFX 翻译入口 · O:ZCode ✓（sfx.policy 可配置；默认 SKIP 零变化）"]
+  TA3B -.-> TIL["M2-DETECT-WEBTOON-TILING tiling 检测修复 · O:ZCode ✓（GATE PASS 5/5；ko 检测解锁）"]
+  TA3B -.-> BKF["M2-TASKS-BACKFILL-MULTIREGION backfill 逐 region · O:ZCode ✓"]
+  TA3B -.-> SUI["M2-SETTINGS-UI-SFX-POLICY 设置页接入 · blocked_on_contract（等 settings IPC 通道契约）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
@@ -193,9 +199,10 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
+  class SUI proposed;
 
   
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2 done;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2,TIL,BKF done;
   
 ```
 
