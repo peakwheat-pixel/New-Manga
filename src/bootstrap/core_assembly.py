@@ -25,7 +25,7 @@ separately released M2 slice (M2-D1 M2D1-10/23).
 
 from __future__ import annotations
 
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
 import json
@@ -34,6 +34,7 @@ from pathlib import Path
 import platform
 import sqlite3
 import sys
+from typing import Any
 
 from application.editing.service import RegionEditingService
 from application.export import ExportService
@@ -49,7 +50,13 @@ from application.rendering.service import RenderService
 from application.tasks.service import PipelineService
 from application.translation.color.service import SourceStyleService
 from application.translation.knowledge.term_extraction import TermExtractionService
-from domain.regions.entities import BBox, RegionGeometry, RegionOrigin, RegionType
+from domain.regions.entities import (
+    BBox,
+    RegionGeometry,
+    RegionOrigin,
+    RegionType,
+    SfxPolicy,
+)
 from infrastructure.filesystem.bounded_log_store import BoundedLogStore
 from infrastructure.filesystem.managed_storage import ManagedFileStorage
 from infrastructure.imaging.webtoon_tiles import TileCache, TiledPageRasterizer
@@ -678,6 +685,55 @@ def _detected_region_type(provider_label: str) -> RegionType:
     )
 
 
+#: M2-SFX-TRANSLATE-ENTRY: the persisted pipeline-settings section/key the
+#: assembly-level SFX policy is read from — the same ``pipeline_defaults``
+#: row and ``PipelineDefaultsService.save_settings_section`` bridge the
+#: ``ocr.script`` key rides (user ruling 4; default SKIP unchanged).
+_SFX_SETTINGS_SECTION = "sfx"
+_SFX_POLICY_KEY = "policy"
+_SFX_POLICY_VALUES = tuple(policy.value for policy in SfxPolicy)
+
+
+def _sfx_policy_from_settings(settings: Mapping[str, Any]) -> SfxPolicy:
+    """The assembly-level SFX policy selector (M2-SFX-TRANSLATE-ENTRY AC1).
+
+    Reads ``settings["sfx"]["policy"]``. An absent section or key keeps the
+    historical domain default SKIP — zero behavior change for an
+    unconfigured install; precision-first stands until the user explicitly
+    opts in. A present-but-invalid value (unknown word, blank, non-string,
+    malformed section) raises :class:`ValueError` so the configuration
+    error fails the assembly fast the same way an unsupported
+    ``NEWMANGA_SFX_DETECTION`` does — never a silent fallback. Values are
+    normalized (strip + lower) before validation, mirroring the env-gate
+    precedent. Module-level so the selection matrix is testable without an
+    assembled service (the ``_detected_region_type`` pattern).
+    """
+    section = settings.get(_SFX_SETTINGS_SECTION)
+    if section is None:
+        return SfxPolicy.SKIP
+    if not isinstance(section, Mapping):
+        raise ValueError(
+            f"invalid settings sfx.policy: "
+            f"settings[{_SFX_SETTINGS_SECTION!r}] must be a mapping, got "
+            f"{type(section).__name__}"
+        )
+    raw = section.get(_SFX_POLICY_KEY)
+    if raw is None:
+        return SfxPolicy.SKIP
+    if not isinstance(raw, str):
+        raise ValueError(
+            f"invalid settings sfx.policy: expected a string, got "
+            f"{type(raw).__name__}"
+        )
+    normalized = raw.strip().lower()
+    if normalized not in _SFX_POLICY_VALUES:
+        raise ValueError(
+            f"unsupported settings sfx.policy {raw!r} "
+            f"(use {'|'.join(_SFX_POLICY_VALUES)})"
+        )
+    return SfxPolicy(normalized)
+
+
 def default_data_root() -> Path:
     root = os.environ.get("NEWMANGA_DATA_ROOT")
     if root:
@@ -810,6 +866,19 @@ def assemble_core_services(
         # provider's own __post_init__ gate.
         sfx_conf_env = os.environ.get("NEWMANGA_SFX_CONF_THRESHOLD")
         sfx_conf = float(sfx_conf_env) if sfx_conf_env else SFX_CONF_THRESHOLD
+        # M2-SFX-TRANSLATE-ENTRY: the sfx_policy applied at region creation
+        # is a persisted pipeline-settings key — ``settings["sfx"]["policy"]``
+        # on the same ``pipeline_defaults`` row the ``ocr.script`` key rides
+        # (written through ``PipelineDefaultsService.save_settings_section``),
+        # NOT an env. Read at assembly time, OUTSIDE the mock branch (the
+        # DSH r1 R10 placement rule): an illegal value fails the assembly
+        # fast here, exactly like the env gates above. Re-assemble
+        # semantics: a settings change takes effect on the NEXT assembly —
+        # the pipeline-defaults row is the single source of truth, no live
+        # reload. The default (absent key) is SKIP: zero behavior change.
+        sfx_policy_cfg = _sfx_policy_from_settings(
+            _load_pipeline_defaults(conn)["settings"]
+        )
         detector: object
         if mock_local_providers:
             from infrastructure.providers.mock_local import (
@@ -959,10 +1028,21 @@ def assemble_core_services(
                 bbox=BBox(min(xs), min(ys), max(xs) - min(xs), max(ys) - min(ys)),
                 polygon=tuple((int(round(x)), int(round(y))) for x, y in polygon),
             )
+            region_type = _detected_region_type(provider_label)
             region = editing.create_region(
                 page_id,
                 geometry,
-                region_type=_detected_region_type(provider_label),
+                region_type=region_type,
+                # M2-SFX-TRANSLATE-ENTRY: only SFX-typed candidates carry the
+                # configured policy (the translation gate consumes it); every
+                # other region type keeps the SKIP default regardless of
+                # configuration — the policy can never leak onto non-SFX
+                # regions.
+                sfx_policy=(
+                    sfx_policy_cfg
+                    if region_type is RegionType.SFX
+                    else SfxPolicy.SKIP
+                ),
                 reading_order=reading_order,
                 origin=RegionOrigin.MACHINE,
             )
