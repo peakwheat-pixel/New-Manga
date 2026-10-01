@@ -13,8 +13,8 @@
       "status": "PASS",
       "observed": {
         "bytes": 49363,
-        "sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3",
-        "expected_sha256": "476b6ba12e40daefd37b1baa9089334f8f40081da0e600b15aa207d89195eaf3"
+        "sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334",
+        "expected_sha256": "b9b217bcad1e8cd97fdb0849c5b7058daf8993281e9c47aa41b08339d84fa334"
       }
     },
     {
@@ -44,24 +44,24 @@
       "id": "E-06-remount-fresh-references",
       "status": "PASS",
       "observed": {
-        "first": "Kqhjdzqu78",
-        "second": "p2Ds2LfsRg"
+        "first": "whMP5n_N3I",
+        "second": "SQy37xduZM"
       }
     },
     {
       "id": "E-07-per-reference-first-byte-p95",
       "status": "PASS",
       "observed": {
-        "p95_ms": 70,
+        "p95_ms": 87,
         "timings_ms": [
-          66,
-          66,
-          67,
-          67,
-          67,
-          68,
-          68,
-          70
+          83,
+          85,
+          85,
+          85,
+          86,
+          86,
+          86,
+          87
         ],
         "fixture": "typical.png (11525983 B)",
         "scenario": "per-reference first-byte (cold grant cache, warm OS page cache)"

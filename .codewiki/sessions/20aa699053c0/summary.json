@@ -1,0 +1,33 @@
+{
+  "session_id": "20aa699053c0",
+  "repo_name": "New Manga",
+  "repo_path": "G:\\CODEX\\New Manga",
+  "output_dir": "C:\\Users\\49745\\.repo-knowledge\\staging\\new-manga-codewiki-20260922-mcp",
+  "total_components": 2057,
+  "total_leaf_nodes": 177,
+  "languages": {
+    "null": 2057
+  },
+  "leaf_nodes_preview": [
+    "src\\application\\translation\\color\\service.py::SourceStyleService",
+    "src\\infrastructure\\sqlite\\artifacts.py::SqliteArtifactRepository",
+    "src\\application\\importing\\documents\\ports.py::DocumentDecodeError",
+    "src\\application\\maintenance\\ports.py::RunLedgerMaintenance",
+    "experiments\\TASK-018\\test_route_gating.py::StartupAssertionTests",
+    "src\\application\\translation\\knowledge\\tm.py::TranslationMemoryStore",
+    "src\\application\\export\\ports.py::JsonHistoryDocumentStore",
+    "src\\application\\settings\\pipeline_defaults.py::PipelineDefaultsService",
+    "src\\application\\library\\ports.py::PageRepository",
+    "src\\infrastructure\\imaging\\streaming_png.py::StreamingPngReader",
+    "src\\infrastructure\\sqlite\\pipeline.py::SqliteRunLedgerMaintenance",
+    "src\\infrastructure\\sqlite\\pipeline.py::SqliteTargetCatalog",
+    "src\\ui\\viewmodels\\workbench\\viewmodel.py::WorkbenchViewModel",
+    "src\\application\\reading\\ports.py::JsonProgressDocumentStore",
+    "src\\infrastructure\\sqlite\\pipeline.py::SqlitePipelineStore",
+    "src\\application\\translation\\knowledge\\term_extraction.py::TermExtractionService",
+    "src\\application\\reading\\ports.py::ReaderPageCatalog",
+    "src\\application\\maintenance\\diagnostics.py::DiagnosticsBundleSink",
+    "src\\application\\importing\\images\\service.py::DuplicatePolicy",
+    "src\\infrastructure\\imaging\\webtoon_tiles.py::TileCache"
+  ]
+}

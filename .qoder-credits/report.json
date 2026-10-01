@@ -1,0 +1,2449 @@
+{
+  "schemaVersion": 3.2,
+  "generatedAt": "2026-09-26T03:54:02.972Z",
+  "source": "desktop-rich",
+  "usageSource": "transcript-ratio",
+  "availability": {
+    "credits": "measured",
+    "roundTrips": "measured",
+    "contextRatio": "measured",
+    "tokens": "derived",
+    "outputTokens": "unavailable",
+    "cachedTokens": "unavailable",
+    "categoryShare": "derived",
+    "toolShare": "derived",
+    "fileShare": "derived",
+    "systemPrompt": "derived",
+    "contextWindow": "measured",
+    "compactions": "measured",
+    "compactionCost": "measured",
+    "model": "measured",
+    "title": "measured",
+    "toolCalls": "measured",
+    "fileReads": "measured",
+    "userTurns": "measured",
+    "userContextLimit": "fallback"
+  },
+  "session": {
+    "id": "b2989089-1903-4ba9-9f97-0625773cd391",
+    "title": "任务：New Manga / M2-C1 — T",
+    "titleSource": "first-user",
+    "model": "qfmodel",
+    "modelSource": "runtime-config",
+    "cwd": "G:\\CODEX\\New Manga",
+    "turns": 2,
+    "roundTrips": 133,
+    "compactions": 0,
+    "startedAt": "2026-09-25T18:43:41.787Z",
+    "endedAt": "2026-09-26T03:53:08.463Z"
+  },
+  "context": {
+    "contextWindow": 400000,
+    "contextWindowSource": "runtime-config",
+    "systemPromptTokens": 20918,
+    "netContextTokens": 253979,
+    "peakContextTokens": 253979,
+    "peakContextRatio": 0.6349475,
+    "peakSessionTokens": 253979,
+    "peakSessionRatio": 0.6349475,
+    "peakSessionNotable": false,
+    "peakAdvice": {
+      "level": "mid",
+      "tone": "info",
+      "text": "已过盈亏线（39%）但还没进性价比区间，压缩有净收益但不大；不急着压"
+    },
+    "userContextLimit": 200000,
+    "userContextLimitSource": "default",
+    "peakUserRatio": 1.269895,
+    "peakUserAdvice": {
+      "level": "over",
+      "tone": "danger",
+      "text": "已经超过上下文窗口本身，随时可能被截断或由客户端在最糟的时机自动压缩，立刻手动压一次"
+    },
+    "currentContextTokens": 253979,
+    "netUserRatio": 1.269895,
+    "netUserAdvice": {
+      "level": "over",
+      "tone": "danger",
+      "text": "已经超过上下文窗口本身，随时可能被截断或由客户端在最糟的时机自动压缩，立刻手动压一次"
+    },
+    "netWindowRatio": 0.6349475,
+    "observedAutoCompactions": 0,
+    "observedAutoTriggerTokens": null,
+    "autoTriggerRatio": null,
+    "thresholdNotEnforced": true
+  },
+  "totals": {
+    "billedInputTokens": 21727640,
+    "netContextTokens": 253979,
+    "peakContextTokens": 253979,
+    "amplification": 85.55,
+    "attributedTokens": 21727640,
+    "coverage": 1,
+    "credits": 65.832,
+    "originalCredits": 65.832,
+    "outputTokens": 0,
+    "cachedTokens": 0,
+    "cachedTrips": 0,
+    "cachedShare": 0,
+    "toolCalls": 157,
+    "fileReads": 36
+  },
+  "creditsCoverage": {
+    "trips": 133,
+    "roundTrips": 133,
+    "tokens": 21727640,
+    "tokenShare": 1,
+    "full": true
+  },
+  "compactionCost": {
+    "count": 0,
+    "items": [],
+    "totals": {
+      "preTokens": 0,
+      "postTokens": 0,
+      "savedTokens": 0,
+      "measured": 0
+    }
+  },
+  "proxy": {
+    "matched": 0,
+    "requests": 133,
+    "breakdown": {
+      "proxy": 0,
+      "transcriptTokens": 0,
+      "transcriptRatio": 133
+    },
+    "logPath": "C:\\Users\\49745\\.qoder-credits-proxy\\usage.jsonl",
+    "logExists": false,
+    "logRecords": 0,
+    "configured": false,
+    "enabled": true,
+    "port": 49787,
+    "lastRecordAt": null,
+    "dormant": false,
+    "status": null,
+    "statusSuperseded": false
+  },
+  "byCategory": [
+    {
+      "key": "tool_result",
+      "label": "工具返回",
+      "tokens": 8152033,
+      "share": 0.37519182796877654
+    },
+    {
+      "key": "system",
+      "label": "系统提示词",
+      "tokens": 2782094,
+      "share": 0.128044002938193
+    },
+    {
+      "key": "assistant_thinking",
+      "label": "模型思考",
+      "tokens": 3477360,
+      "share": 0.16004314189718638
+    },
+    {
+      "key": "assistant_tool_use",
+      "label": "工具调用",
+      "tokens": 3912036,
+      "share": 0.1800488345299579
+    },
+    {
+      "key": "assistant_text",
+      "label": "模型回复",
+      "tokens": 419373,
+      "share": 0.019301341346881655
+    },
+    {
+      "key": "user_input",
+      "label": "用户输入",
+      "tokens": 250831,
+      "share": 0.011544321460393686
+    },
+    {
+      "key": "attachment",
+      "label": "附件/技能",
+      "tokens": 2733914,
+      "share": 0.12582652985861276
+    }
+  ],
+  "byCategoryDetail": [
+    {
+      "key": "tool_result",
+      "label": "工具返回",
+      "tokens": 8152033,
+      "share": 0.37519182796877654,
+      "children": [
+        {
+          "tool": "Bash",
+          "label": "（无路径）",
+          "kind": "shell",
+          "tokens": 6297480,
+          "share": 0.2898372881391722,
+          "catShare": 0.7725042672392439,
+          "trips": 7339
+        },
+        {
+          "tool": "Read",
+          "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+          "kind": "read",
+          "tokens": 1072748,
+          "share": 0.04937251597568384,
+          "catShare": 0.13159272749350132,
+          "trips": 118
+        },
+        {
+          "tool": "Read",
+          "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/handoffs/M2-C1-4d66523.md",
+          "kind": "read",
+          "tokens": 240841,
+          "share": 0.011084535563919995,
+          "catShare": 0.029543648708794508,
+          "trips": 102
+        },
+        {
+          "tool": "Read",
+          "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/verification/M2-C1/review-remediation-r3.md",
+          "kind": "read",
+          "tokens": 186750,
+          "share": 0.008595041755341313,
+          "catShare": 0.022908392759707425,
+          "trips": 110
+        },
+        {
+          "tool": "Read",
+          "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/templates/REVIEW.md",
+          "kind": "read",
+          "tokens": 157705,
+          "share": 0.007258286940751233,
+          "catShare": 0.019345535802435622,
+          "trips": 97
+        },
+        {
+          "tool": "Read",
+          "label": "C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/MEMORY.md",
+          "kind": "read",
+          "tokens": 56038,
+          "share": 0.002579097576211404,
+          "catShare": 0.006874077162538936,
+          "trips": 74
+        },
+        {
+          "tool": "TaskCreate",
+          "label": "（无路径）",
+          "kind": "other",
+          "tokens": 23230,
+          "share": 0.0010691622858356232,
+          "catShare": 0.0028496417196074934,
+          "trips": 817
+        },
+        {
+          "tool": "mcp_call",
+          "label": "（无路径）",
+          "kind": "other",
+          "tokens": 21937,
+          "share": 0.001009634961520595,
+          "catShare": 0.0026909833484022923,
+          "trips": 59
+        },
+        {
+          "tool": "mcp_get",
+          "label": "（无路径）",
+          "kind": "other",
+          "tokens": 20012,
+          "share": 0.0009210195189916149,
+          "catShare": 0.002454796321065559,
+          "trips": 60
+        },
+        {
+          "tool": "Edit",
+          "label": "G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md",
+          "kind": "write",
+          "tokens": 14050,
+          "share": 0.000646658160157348,
+          "catShare": 0.0017235400985630286,
+          "trips": 235
+        },
+        {
+          "tool": "AskUserQuestion",
+          "label": "（无路径）",
+          "kind": "other",
+          "tokens": 9014,
+          "share": 0.0004148469712373429,
+          "catShare": 0.0011056929823958384,
+          "trips": 99
+        },
+        {
+          "tool": "Edit",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh",
+          "kind": "write",
+          "tokens": 8054,
+          "share": 0.0003706758806480653,
+          "catShare": 0.000987963630910727,
+          "trips": 177
+        },
+        {
+          "tool": "TaskUpdate",
+          "label": "（无路径）",
+          "kind": "other",
+          "tokens": 6594,
+          "share": 0.0003034850275494769,
+          "catShare": 0.0008088796315007504,
+          "trips": 918
+        },
+        {
+          "tool": "Edit",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part2.sh",
+          "kind": "write",
+          "tokens": 5627,
+          "share": 0.00025897354051561346,
+          "catShare": 0.0006902430202641973,
+          "trips": 101
+        },
+        {
+          "tool": "Edit",
+          "label": "C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/MEMORY.md",
+          "kind": "write",
+          "tokens": 3955,
+          "share": 0.00018204385109241034,
+          "catShare": 0.0004852020687069976,
+          "trips": 72
+        },
+        {
+          "tool": null,
+          "label": "其他 18 项",
+          "kind": null,
+          "tokens": 27997,
+          "share": 0.0012885618201470372,
+          "catShare": 0.0034344080123575376,
+          "trips": 936
+        }
+      ]
+    },
+    {
+      "key": "system",
+      "label": "系统提示词",
+      "tokens": 2782094,
+      "share": 0.128044002938193,
+      "children": []
+    },
+    {
+      "key": "assistant_thinking",
+      "label": "模型思考",
+      "tokens": 3477360,
+      "share": 0.16004314189718638,
+      "children": []
+    },
+    {
+      "key": "assistant_tool_use",
+      "label": "工具调用",
+      "tokens": 3912036,
+      "share": 0.1800488345299579,
+      "children": [
+        {
+          "tool": "Bash",
+          "label": "（无路径）",
+          "kind": "shell",
+          "tokens": 1665459,
+          "share": 0.07665162065774554,
+          "catShare": 0.4257268360434272,
+          "trips": 7339
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md",
+          "kind": "write",
+          "tokens": 593296,
+          "share": 0.027306030354107055,
+          "catShare": 0.15165902309444645,
+          "trips": 84
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh",
+          "kind": "write",
+          "tokens": 246257,
+          "share": 0.011333826140770146,
+          "catShare": 0.06294862263540138,
+          "trips": 93
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part3.sh",
+          "kind": "write",
+          "tokens": 152885,
+          "share": 0.007036440612220252,
+          "catShare": 0.03908073401635641,
+          "trips": 46
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part1.sh",
+          "kind": "write",
+          "tokens": 141953,
+          "share": 0.006533276007890469,
+          "catShare": 0.03628613328681898,
+          "trips": 58
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-r3-4d66523/doc/reviews/M2-C1-4d66523-r3.md",
+          "kind": "write",
+          "tokens": 135328,
+          "share": 0.006228397713339967,
+          "catShare": 0.03459282438345158,
+          "trips": 16
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part2.sh",
+          "kind": "write",
+          "tokens": 128679,
+          "share": 0.005922341557491728,
+          "catShare": 0.03289297358104433,
+          "trips": 52
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/README.md",
+          "kind": "write",
+          "tokens": 123548,
+          "share": 0.005686227925338111,
+          "catShare": 0.031581586963241315,
+          "trips": 75
+        },
+        {
+          "tool": "TaskCreate",
+          "label": "（无路径）",
+          "kind": "other",
+          "tokens": 114452,
+          "share": 0.005267580058730693,
+          "catShare": 0.029256396313158208,
+          "trips": 817
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/genlogs3.sh",
+          "kind": "write",
+          "tokens": 92987,
+          "share": 0.004279672717963667,
+          "catShare": 0.023769510805978483,
+          "trips": 77
+        },
+        {
+          "tool": "Edit",
+          "label": "G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md",
+          "kind": "write",
+          "tokens": 85052,
+          "share": 0.0039144648054127386,
+          "catShare": 0.021741128264628783,
+          "trips": 235
+        },
+        {
+          "tool": "Write",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part4.sh",
+          "kind": "write",
+          "tokens": 70323,
+          "share": 0.0032365851875156807,
+          "catShare": 0.01797615183661271,
+          "trips": 31
+        },
+        {
+          "tool": "Edit",
+          "label": "G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh",
+          "kind": "write",
+          "tokens": 66189,
+          "share": 0.0030463058070038912,
+          "catShare": 0.016919330885738243,
+          "trips": 177
+        },
+        {
+          "tool": "AskUserQuestion",
+          "label": "（无路径）",
+          "kind": "other",
+          "tokens": 56572,
+          "share": 0.002603710595792271,
+          "catShare": 0.014461135516870262,
+          "trips": 99
+        },
+        {
+          "tool": "Write",
+          "label": "C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/m2c1-r3-review-state.md",
+          "kind": "write",
+          "tokens": 51957,
+          "share": 0.0023912935734168137,
+          "catShare": 0.013281361024411029,
+          "trips": 76
+        },
+        {
+          "tool": null,
+          "label": "其他 18 项",
+          "kind": null,
+          "tokens": 187098,
+          "share": 0.008611060815218397,
+          "catShare": 0.04782625134841194,
+          "trips": 2039
+        }
+      ]
+    },
+    {
+      "key": "assistant_text",
+      "label": "模型回复",
+      "tokens": 419373,
+      "share": 0.019301341346881655,
+      "children": []
+    },
+    {
+      "key": "user_input",
+      "label": "用户输入",
+      "tokens": 250831,
+      "share": 0.011544321460393686,
+      "children": []
+    },
+    {
+      "key": "attachment",
+      "label": "附件/技能",
+      "tokens": 2733914,
+      "share": 0.12582652985861276,
+      "children": []
+    }
+  ],
+  "byTool": [
+    {
+      "tool": "Bash",
+      "tokens": 7962939,
+      "calls": 97,
+      "perCall": 82092,
+      "share": 0.36648890879691715
+    },
+    {
+      "tool": "Write",
+      "tokens": 1844236,
+      "calls": 15,
+      "perCall": 122949,
+      "share": 0.08487973648034071
+    },
+    {
+      "tool": "Read",
+      "tokens": 1730075,
+      "calls": 6,
+      "perCall": 288346,
+      "share": 0.0796255171464535
+    },
+    {
+      "tool": "Edit",
+      "tokens": 262987,
+      "calls": 15,
+      "perCall": 17532,
+      "share": 0.012103783907275558
+    },
+    {
+      "tool": "TaskCreate",
+      "tokens": 137682,
+      "calls": 8,
+      "perCall": 17210,
+      "share": 0.006336742344566315
+    },
+    {
+      "tool": "AskUserQuestion",
+      "tokens": 65586,
+      "calls": 1,
+      "perCall": 65586,
+      "share": 0.0030185575670296123
+    },
+    {
+      "tool": "mcp_call",
+      "tokens": 23207,
+      "calls": 1,
+      "perCall": 23207,
+      "share": 0.0010680704255314336
+    },
+    {
+      "tool": "mcp_get",
+      "tokens": 20872,
+      "calls": 1,
+      "perCall": 20872,
+      "share": 0.0009606332617439421
+    },
+    {
+      "tool": "TaskUpdate",
+      "tokens": 16485,
+      "calls": 13,
+      "perCall": 1268,
+      "share": 0.0007587125688736904
+    }
+  ],
+  "byFile": [
+    {
+      "attr": "file:G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md",
+      "kind": "read",
+      "tool": "Read",
+      "selfTokens": 7616,
+      "reads": 1,
+      "trips": 236,
+      "billed": 1076849,
+      "perRead": 1076849,
+      "share": 0.04956123390942508
+    },
+    {
+      "attr": "file:G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md",
+      "label": "G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/M2-C1-4d66523-r3-qoder.md",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 7004,
+      "reads": 4,
+      "trips": 638,
+      "billed": 695312,
+      "perRead": 173828,
+      "share": 0.03200127846877418
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/genlogs2.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 2927,
+      "reads": 3,
+      "trips": 540,
+      "billed": 322395,
+      "perRead": 107465,
+      "share": 0.014837991106428009
+    },
+    {
+      "attr": "file:G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/handoffs/M2-C1-4d66523.md",
+      "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/handoffs/M2-C1-4d66523.md",
+      "kind": "read",
+      "tool": "Read",
+      "selfTokens": 1997,
+      "reads": 1,
+      "trips": 204,
+      "billed": 244018,
+      "perRead": 244018,
+      "share": 0.01123075470377891
+    },
+    {
+      "attr": "file:G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/verification/M2-C1/review-remediation-r3.md",
+      "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/verification/M2-C1/review-remediation-r3.md",
+      "kind": "read",
+      "tool": "Read",
+      "selfTokens": 1447,
+      "reads": 1,
+      "trips": 220,
+      "billed": 190704,
+      "perRead": 190704,
+      "share": 0.00877701158784677
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/r3part1.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part1.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 2471,
+      "reads": 2,
+      "trips": 230,
+      "billed": 170870,
+      "perRead": 85435,
+      "share": 0.007864177811472492
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/r3part3.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part3.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 2931,
+      "reads": 2,
+      "trips": 182,
+      "billed": 161028,
+      "perRead": 80514,
+      "share": 0.007411216977669967
+    },
+    {
+      "attr": "file:G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/templates/REVIEW.md",
+      "label": "G:/CODEX/New Manga.worktrees/M2-C1-codex-typed-ipc-contract/doc/templates/REVIEW.md",
+      "kind": "read",
+      "tool": "Read",
+      "selfTokens": 1382,
+      "reads": 1,
+      "trips": 194,
+      "billed": 160611,
+      "perRead": 160611,
+      "share": 0.007392006302224175
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/r3part2.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part2.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 2342,
+      "reads": 3,
+      "trips": 306,
+      "billed": 145199,
+      "perRead": 48400,
+      "share": 0.0066826947262708025
+    },
+    {
+      "attr": "file:G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-r3-4d66523/doc/reviews/M2-C1-4d66523-r3.md",
+      "label": "G:/CODEX/New Manga.worktrees/M2-C1-qoder-review-r3-4d66523/doc/reviews/M2-C1-4d66523-r3.md",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 7151,
+      "reads": 1,
+      "trips": 32,
+      "billed": 135899,
+      "perRead": 135899,
+      "share": 0.006254637276800183
+    },
+    {
+      "attr": "file:G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/README.md",
+      "label": "G:/CODEX/New Manga.qoder-output/M2-C1-R3-REVIEW-2026-09-26/README.md",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 1403,
+      "reads": 1,
+      "trips": 150,
+      "billed": 125790,
+      "perRead": 125790,
+      "share": 0.00578938880932465
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/genlogs3.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/genlogs3.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 1027,
+      "reads": 1,
+      "trips": 154,
+      "billed": 94552,
+      "perRead": 94552,
+      "share": 0.0043517068132165205
+    },
+    {
+      "attr": "file:C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/MEMORY.md",
+      "label": "C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/MEMORY.md",
+      "kind": "read",
+      "tool": "Read",
+      "selfTokens": 1890,
+      "reads": 4,
+      "trips": 292,
+      "billed": 83573,
+      "perRead": 20893,
+      "share": 0.003846373542388709
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/r3part4.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part4.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 2291,
+      "reads": 4,
+      "trips": 224,
+      "billed": 82851,
+      "perRead": 20713,
+      "share": 0.0038131414156388
+    },
+    {
+      "attr": "file:C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/m2c1-r3-review-state.md",
+      "label": "C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/m2c1-r3-review-state.md",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 1330,
+      "reads": 2,
+      "trips": 152,
+      "billed": 54516,
+      "perRead": 27258,
+      "share": 0.0025090727928095036
+    },
+    {
+      "attr": "file:C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/reviewer-routing-before-review.md",
+      "label": "C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/reviewer-routing-before-review.md",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 1276,
+      "reads": 2,
+      "trips": 146,
+      "billed": 50519,
+      "perRead": 25259,
+      "share": 0.002325100878200407
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/r3part5.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/r3part5.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 850,
+      "reads": 1,
+      "trips": 44,
+      "billed": 22261,
+      "perRead": 22261,
+      "share": 0.0010245633053225795
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/fix06.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/fix06.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 250,
+      "reads": 1,
+      "trips": 72,
+      "billed": 10744,
+      "perRead": 10744,
+      "share": 0.0004944639227087932
+    },
+    {
+      "attr": "file:G:/CODEX/qoder-tmp/m2c1-r3/fixws.sh",
+      "label": "G:/CODEX/qoder-tmp/m2c1-r3/fixws.sh",
+      "kind": "write",
+      "tool": "Write",
+      "selfTokens": 578,
+      "reads": 1,
+      "trips": 28,
+      "billed": 9608,
+      "perRead": 9608,
+      "share": 0.00044222318376921485
+    }
+  ],
+  "byAttr": [
+    {
+      "attr": "tool_result|Bash",
+      "tokens": 6297480,
+      "share": 0.2898372881391722
+    },
+    {
+      "attr": "assistant_thinking",
+      "tokens": 3477360,
+      "share": 0.16004314189718638
+    },
+    {
+      "attr": "system",
+      "tokens": 2782094,
+      "share": 0.128044002938193
+    },
+    {
+      "attr": "attachment",
+      "tokens": 2733914,
+      "share": 0.12582652985861276
+    },
+    {
+      "attr": "tool_use|Write",
+      "tokens": 1824664,
+      "share": 0.08397892019254967
+    },
+    {
+      "attr": "tool_result|Read",
+      "tokens": 1714082,
+      "share": 0.07888947781190775
+    },
+    {
+      "attr": "tool_use|Bash",
+      "tokens": 1665459,
+      "share": 0.07665162065774554
+    },
+    {
+      "attr": "assistant_text",
+      "tokens": 419373,
+      "share": 0.019301341346881655
+    },
+    {
+      "attr": "user_input",
+      "tokens": 250831,
+      "share": 0.011544321460393686
+    },
+    {
+      "attr": "tool_use|Edit",
+      "tokens": 222875,
+      "share": 0.010257686942506058
+    },
+    {
+      "attr": "tool_use|TaskCreate",
+      "tokens": 114452,
+      "share": 0.005267580058730693
+    },
+    {
+      "attr": "tool_use|AskUserQuestion",
+      "tokens": 56572,
+      "share": 0.002603710595792271
+    },
+    {
+      "attr": "tool_result|Edit",
+      "tokens": 40111,
+      "share": 0.0018460969647694982
+    },
+    {
+      "attr": "tool_result|TaskCreate",
+      "tokens": 23230,
+      "share": 0.0010691622858356232
+    },
+    {
+      "attr": "tool_result|mcp_call",
+      "tokens": 21937,
+      "share": 0.001009634961520595
+    },
+    {
+      "attr": "tool_result|mcp_get",
+      "tokens": 20012,
+      "share": 0.0009210195189916149
+    },
+    {
+      "attr": "tool_result|Write",
+      "tokens": 19573,
+      "share": 0.0009008162877909715
+    },
+    {
+      "attr": "tool_use|Read",
+      "tokens": 15992,
+      "share": 0.0007360393345457837
+    },
+    {
+      "attr": "tool_use|TaskUpdate",
+      "tokens": 9891,
+      "share": 0.00045522754132421375
+    },
+    {
+      "attr": "tool_result|AskUserQuestion",
+      "tokens": 9014,
+      "share": 0.0004148469712373429
+    },
+    {
+      "attr": "tool_result|TaskUpdate",
+      "tokens": 6594,
+      "share": 0.0003034850275494769
+    },
+    {
+      "attr": "tool_use|mcp_call",
+      "tokens": 1270,
+      "share": 0.0000584354640108383
+    },
+    {
+      "attr": "tool_use|mcp_get",
+      "tokens": 861,
+      "share": 0.00003961374275232752
+    }
+  ],
+  "byRequest": [
+    {
+      "index": 1,
+      "time": "02:43",
+      "ratio": 0.080665,
+      "inputTokens": 32266,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.96,
+      "originalCredits": 0.96,
+      "afterCompact": false
+    },
+    {
+      "index": 2,
+      "time": "02:44",
+      "ratio": 0.101358,
+      "inputTokens": 40543,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.359,
+      "originalCredits": 0.359,
+      "afterCompact": false
+    },
+    {
+      "index": 3,
+      "time": "02:44",
+      "ratio": 0.105197,
+      "inputTokens": 42079,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.169,
+      "originalCredits": 0.169,
+      "afterCompact": false
+    },
+    {
+      "index": 4,
+      "time": "02:44",
+      "ratio": 0.10743,
+      "inputTokens": 42972,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.141,
+      "originalCredits": 0.141,
+      "afterCompact": false
+    },
+    {
+      "index": 5,
+      "time": "02:44",
+      "ratio": 0.109272,
+      "inputTokens": 43709,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.139,
+      "originalCredits": 0.139,
+      "afterCompact": false
+    },
+    {
+      "index": 6,
+      "time": "02:44",
+      "ratio": 0.119182,
+      "inputTokens": 47673,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.235,
+      "originalCredits": 0.235,
+      "afterCompact": false
+    },
+    {
+      "index": 7,
+      "time": "02:45",
+      "ratio": 0.133095,
+      "inputTokens": 53238,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.307,
+      "originalCredits": 0.307,
+      "afterCompact": false
+    },
+    {
+      "index": 8,
+      "time": "02:45",
+      "ratio": 0.145162,
+      "inputTokens": 58065,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.389,
+      "originalCredits": 0.389,
+      "afterCompact": false
+    },
+    {
+      "index": 9,
+      "time": "02:46",
+      "ratio": 0.151218,
+      "inputTokens": 60487,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.27,
+      "originalCredits": 0.27,
+      "afterCompact": false
+    },
+    {
+      "index": 10,
+      "time": "02:46",
+      "ratio": 0.155938,
+      "inputTokens": 62375,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.212,
+      "originalCredits": 0.212,
+      "afterCompact": false
+    },
+    {
+      "index": 11,
+      "time": "02:46",
+      "ratio": 0.161675,
+      "inputTokens": 64670,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.274,
+      "originalCredits": 0.274,
+      "afterCompact": false
+    },
+    {
+      "index": 12,
+      "time": "02:47",
+      "ratio": 0.16986,
+      "inputTokens": 67944,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.326,
+      "originalCredits": 0.326,
+      "afterCompact": false
+    },
+    {
+      "index": 13,
+      "time": "02:47",
+      "ratio": 0.17459,
+      "inputTokens": 69836,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.264,
+      "originalCredits": 0.264,
+      "afterCompact": false
+    },
+    {
+      "index": 14,
+      "time": "02:47",
+      "ratio": 0.177783,
+      "inputTokens": 71113,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.204,
+      "originalCredits": 0.204,
+      "afterCompact": false
+    },
+    {
+      "index": 15,
+      "time": "02:47",
+      "ratio": 0.178457,
+      "inputTokens": 71383,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.172,
+      "originalCredits": 0.172,
+      "afterCompact": false
+    },
+    {
+      "index": 16,
+      "time": "02:47",
+      "ratio": 0.19697,
+      "inputTokens": 78788,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.386,
+      "originalCredits": 0.386,
+      "afterCompact": false
+    },
+    {
+      "index": 17,
+      "time": "02:47",
+      "ratio": 0.20009,
+      "inputTokens": 80036,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.256,
+      "originalCredits": 0.256,
+      "afterCompact": false
+    },
+    {
+      "index": 18,
+      "time": "02:48",
+      "ratio": 0.209728,
+      "inputTokens": 83891,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.345,
+      "originalCredits": 0.345,
+      "afterCompact": false
+    },
+    {
+      "index": 19,
+      "time": "02:48",
+      "ratio": 0.214463,
+      "inputTokens": 85785,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.325,
+      "originalCredits": 0.325,
+      "afterCompact": false
+    },
+    {
+      "index": 20,
+      "time": "02:48",
+      "ratio": 0.21873,
+      "inputTokens": 87492,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.292,
+      "originalCredits": 0.292,
+      "afterCompact": false
+    },
+    {
+      "index": 21,
+      "time": "02:49",
+      "ratio": 0.2212,
+      "inputTokens": 88480,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.281,
+      "originalCredits": 0.281,
+      "afterCompact": false
+    },
+    {
+      "index": 22,
+      "time": "02:49",
+      "ratio": 0.223928,
+      "inputTokens": 89571,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.255,
+      "originalCredits": 0.255,
+      "afterCompact": false
+    },
+    {
+      "index": 23,
+      "time": "02:49",
+      "ratio": 0.227967,
+      "inputTokens": 91187,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.313,
+      "originalCredits": 0.313,
+      "afterCompact": false
+    },
+    {
+      "index": 24,
+      "time": "02:50",
+      "ratio": 0.24568,
+      "inputTokens": 98272,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.478,
+      "originalCredits": 0.478,
+      "afterCompact": false
+    },
+    {
+      "index": 25,
+      "time": "02:50",
+      "ratio": 0.249105,
+      "inputTokens": 99642,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.294,
+      "originalCredits": 0.294,
+      "afterCompact": false
+    },
+    {
+      "index": 26,
+      "time": "02:50",
+      "ratio": 0.254575,
+      "inputTokens": 101830,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.338,
+      "originalCredits": 0.338,
+      "afterCompact": false
+    },
+    {
+      "index": 27,
+      "time": "02:50",
+      "ratio": 0.259433,
+      "inputTokens": 103773,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.315,
+      "originalCredits": 0.315,
+      "afterCompact": false
+    },
+    {
+      "index": 28,
+      "time": "02:51",
+      "ratio": 0.26445,
+      "inputTokens": 105780,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.395,
+      "originalCredits": 0.395,
+      "afterCompact": false
+    },
+    {
+      "index": 29,
+      "time": "02:51",
+      "ratio": 0.272832,
+      "inputTokens": 109133,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.399,
+      "originalCredits": 0.399,
+      "afterCompact": false
+    },
+    {
+      "index": 30,
+      "time": "02:51",
+      "ratio": 0.276065,
+      "inputTokens": 110426,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.311,
+      "originalCredits": 0.311,
+      "afterCompact": false
+    },
+    {
+      "index": 31,
+      "time": "02:51",
+      "ratio": 0.2797,
+      "inputTokens": 111880,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.312,
+      "originalCredits": 0.312,
+      "afterCompact": false
+    },
+    {
+      "index": 32,
+      "time": "02:52",
+      "ratio": 0.286605,
+      "inputTokens": 114642,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.393,
+      "originalCredits": 0.393,
+      "afterCompact": false
+    },
+    {
+      "index": 33,
+      "time": "02:52",
+      "ratio": 0.291117,
+      "inputTokens": 116447,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.34,
+      "originalCredits": 0.34,
+      "afterCompact": false
+    },
+    {
+      "index": 34,
+      "time": "02:52",
+      "ratio": 0.2927,
+      "inputTokens": 117080,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.312,
+      "originalCredits": 0.312,
+      "afterCompact": false
+    },
+    {
+      "index": 35,
+      "time": "02:53",
+      "ratio": 0.294357,
+      "inputTokens": 117743,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.29,
+      "originalCredits": 0.29,
+      "afterCompact": false
+    },
+    {
+      "index": 36,
+      "time": "02:53",
+      "ratio": 0.295393,
+      "inputTokens": 118157,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.284,
+      "originalCredits": 0.284,
+      "afterCompact": false
+    },
+    {
+      "index": 37,
+      "time": "02:53",
+      "ratio": 0.299418,
+      "inputTokens": 119767,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.475,
+      "originalCredits": 0.475,
+      "afterCompact": false
+    },
+    {
+      "index": 38,
+      "time": "02:54",
+      "ratio": 0.307198,
+      "inputTokens": 122879,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.361,
+      "originalCredits": 0.361,
+      "afterCompact": false
+    },
+    {
+      "index": 39,
+      "time": "02:54",
+      "ratio": 0.311443,
+      "inputTokens": 124577,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.51,
+      "originalCredits": 0.51,
+      "afterCompact": false
+    },
+    {
+      "index": 40,
+      "time": "02:55",
+      "ratio": 0.319997,
+      "inputTokens": 127999,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.575,
+      "originalCredits": 0.575,
+      "afterCompact": false
+    },
+    {
+      "index": 41,
+      "time": "02:55",
+      "ratio": 0.328562,
+      "inputTokens": 131425,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.389,
+      "originalCredits": 0.389,
+      "afterCompact": false
+    },
+    {
+      "index": 42,
+      "time": "02:55",
+      "ratio": 0.329943,
+      "inputTokens": 131977,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.316,
+      "originalCredits": 0.316,
+      "afterCompact": false
+    },
+    {
+      "index": 43,
+      "time": "02:55",
+      "ratio": 0.337282,
+      "inputTokens": 134913,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.391,
+      "originalCredits": 0.391,
+      "afterCompact": false
+    },
+    {
+      "index": 44,
+      "time": "02:55",
+      "ratio": 0.34366,
+      "inputTokens": 137464,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.442,
+      "originalCredits": 0.442,
+      "afterCompact": false
+    },
+    {
+      "index": 45,
+      "time": "02:56",
+      "ratio": 0.346788,
+      "inputTokens": 138715,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.374,
+      "originalCredits": 0.374,
+      "afterCompact": false
+    },
+    {
+      "index": 46,
+      "time": "02:56",
+      "ratio": 0.348347,
+      "inputTokens": 139339,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.339,
+      "originalCredits": 0.339,
+      "afterCompact": false
+    },
+    {
+      "index": 47,
+      "time": "02:56",
+      "ratio": 0.350482,
+      "inputTokens": 140193,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.344,
+      "originalCredits": 0.344,
+      "afterCompact": false
+    },
+    {
+      "index": 48,
+      "time": "02:56",
+      "ratio": 0.352498,
+      "inputTokens": 140999,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.399,
+      "originalCredits": 0.399,
+      "afterCompact": false
+    },
+    {
+      "index": 49,
+      "time": "02:58",
+      "ratio": 0.355287,
+      "inputTokens": 142115,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.755,
+      "originalCredits": 0.755,
+      "afterCompact": false
+    },
+    {
+      "index": 50,
+      "time": "02:58",
+      "ratio": 0.372553,
+      "inputTokens": 149021,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.582,
+      "originalCredits": 0.582,
+      "afterCompact": false
+    },
+    {
+      "index": 51,
+      "time": "02:58",
+      "ratio": 0.376085,
+      "inputTokens": 150434,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.397,
+      "originalCredits": 0.397,
+      "afterCompact": false
+    },
+    {
+      "index": 52,
+      "time": "02:58",
+      "ratio": 0.378022,
+      "inputTokens": 151209,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.376,
+      "originalCredits": 0.376,
+      "afterCompact": false
+    },
+    {
+      "index": 53,
+      "time": "02:58",
+      "ratio": 0.379088,
+      "inputTokens": 151635,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.372,
+      "originalCredits": 0.372,
+      "afterCompact": false
+    },
+    {
+      "index": 54,
+      "time": "02:58",
+      "ratio": 0.38029,
+      "inputTokens": 152116,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.399,
+      "originalCredits": 0.399,
+      "afterCompact": false
+    },
+    {
+      "index": 55,
+      "time": "02:59",
+      "ratio": 0.383155,
+      "inputTokens": 153262,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.404,
+      "originalCredits": 0.404,
+      "afterCompact": false
+    },
+    {
+      "index": 56,
+      "time": "02:59",
+      "ratio": 0.384777,
+      "inputTokens": 153911,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.45,
+      "originalCredits": 0.45,
+      "afterCompact": false
+    },
+    {
+      "index": 57,
+      "time": "02:59",
+      "ratio": 0.38869,
+      "inputTokens": 155476,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.405,
+      "originalCredits": 0.405,
+      "afterCompact": false
+    },
+    {
+      "index": 58,
+      "time": "03:00",
+      "ratio": 0.391672,
+      "inputTokens": 156669,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.485,
+      "originalCredits": 0.485,
+      "afterCompact": false
+    },
+    {
+      "index": 59,
+      "time": "03:00",
+      "ratio": 0.39623,
+      "inputTokens": 158492,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.443,
+      "originalCredits": 0.443,
+      "afterCompact": false
+    },
+    {
+      "index": 60,
+      "time": "03:00",
+      "ratio": 0.39829,
+      "inputTokens": 159316,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.391,
+      "originalCredits": 0.391,
+      "afterCompact": false
+    },
+    {
+      "index": 61,
+      "time": "03:00",
+      "ratio": 0.400058,
+      "inputTokens": 160023,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.393,
+      "originalCredits": 0.393,
+      "afterCompact": false
+    },
+    {
+      "index": 62,
+      "time": "03:00",
+      "ratio": 0.402635,
+      "inputTokens": 161054,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.46,
+      "originalCredits": 0.46,
+      "afterCompact": false
+    },
+    {
+      "index": 63,
+      "time": "03:00",
+      "ratio": 0.406552,
+      "inputTokens": 162621,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.41,
+      "originalCredits": 0.41,
+      "afterCompact": false
+    },
+    {
+      "index": 64,
+      "time": "03:00",
+      "ratio": 0.408465,
+      "inputTokens": 163386,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.407,
+      "originalCredits": 0.407,
+      "afterCompact": false
+    },
+    {
+      "index": 65,
+      "time": "03:01",
+      "ratio": 0.410815,
+      "inputTokens": 164326,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.399,
+      "originalCredits": 0.399,
+      "afterCompact": false
+    },
+    {
+      "index": 66,
+      "time": "03:01",
+      "ratio": 0.41166,
+      "inputTokens": 164664,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.503,
+      "originalCredits": 0.503,
+      "afterCompact": false
+    },
+    {
+      "index": 67,
+      "time": "11:37",
+      "ratio": 0.426893,
+      "inputTokens": 170757,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 4.804,
+      "originalCredits": 4.804,
+      "afterCompact": false
+    },
+    {
+      "index": 68,
+      "time": "11:37",
+      "ratio": 0.429907,
+      "inputTokens": 171963,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.445,
+      "originalCredits": 0.445,
+      "afterCompact": false
+    },
+    {
+      "index": 69,
+      "time": "11:38",
+      "ratio": 0.437412,
+      "inputTokens": 174965,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.533,
+      "originalCredits": 0.533,
+      "afterCompact": false
+    },
+    {
+      "index": 70,
+      "time": "11:38",
+      "ratio": 0.440468,
+      "inputTokens": 176187,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.448,
+      "originalCredits": 0.448,
+      "afterCompact": false
+    },
+    {
+      "index": 71,
+      "time": "11:38",
+      "ratio": 0.442873,
+      "inputTokens": 177149,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.443,
+      "originalCredits": 0.443,
+      "afterCompact": false
+    },
+    {
+      "index": 72,
+      "time": "11:38",
+      "ratio": 0.450185,
+      "inputTokens": 180074,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.523,
+      "originalCredits": 0.523,
+      "afterCompact": false
+    },
+    {
+      "index": 73,
+      "time": "11:38",
+      "ratio": 0.452263,
+      "inputTokens": 180905,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.435,
+      "originalCredits": 0.435,
+      "afterCompact": false
+    },
+    {
+      "index": 74,
+      "time": "11:39",
+      "ratio": 0.453365,
+      "inputTokens": 181346,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.42,
+      "originalCredits": 0.42,
+      "afterCompact": false
+    },
+    {
+      "index": 75,
+      "time": "11:39",
+      "ratio": 0.454867,
+      "inputTokens": 181947,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.604,
+      "originalCredits": 0.604,
+      "afterCompact": false
+    },
+    {
+      "index": 76,
+      "time": "11:39",
+      "ratio": 0.462655,
+      "inputTokens": 185062,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.536,
+      "originalCredits": 0.536,
+      "afterCompact": false
+    },
+    {
+      "index": 77,
+      "time": "11:40",
+      "ratio": 0.465377,
+      "inputTokens": 186151,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.449,
+      "originalCredits": 0.449,
+      "afterCompact": false
+    },
+    {
+      "index": 78,
+      "time": "11:40",
+      "ratio": 0.46636,
+      "inputTokens": 186544,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.433,
+      "originalCredits": 0.433,
+      "afterCompact": false
+    },
+    {
+      "index": 79,
+      "time": "11:40",
+      "ratio": 0.471905,
+      "inputTokens": 188762,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.496,
+      "originalCredits": 0.496,
+      "afterCompact": false
+    },
+    {
+      "index": 80,
+      "time": "11:40",
+      "ratio": 0.476428,
+      "inputTokens": 190571,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.507,
+      "originalCredits": 0.507,
+      "afterCompact": false
+    },
+    {
+      "index": 81,
+      "time": "11:41",
+      "ratio": 0.479475,
+      "inputTokens": 191790,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.629,
+      "originalCredits": 0.629,
+      "afterCompact": false
+    },
+    {
+      "index": 82,
+      "time": "11:41",
+      "ratio": 0.486768,
+      "inputTokens": 194707,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.52,
+      "originalCredits": 0.52,
+      "afterCompact": false
+    },
+    {
+      "index": 83,
+      "time": "11:41",
+      "ratio": 0.487463,
+      "inputTokens": 194985,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.458,
+      "originalCredits": 0.458,
+      "afterCompact": false
+    },
+    {
+      "index": 84,
+      "time": "11:41",
+      "ratio": 0.488345,
+      "inputTokens": 195338,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.456,
+      "originalCredits": 0.456,
+      "afterCompact": false
+    },
+    {
+      "index": 85,
+      "time": "11:41",
+      "ratio": 0.489088,
+      "inputTokens": 195635,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.457,
+      "originalCredits": 0.457,
+      "afterCompact": false
+    },
+    {
+      "index": 86,
+      "time": "11:41",
+      "ratio": 0.49474,
+      "inputTokens": 197896,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.524,
+      "originalCredits": 0.524,
+      "afterCompact": false
+    },
+    {
+      "index": 87,
+      "time": "11:42",
+      "ratio": 0.496895,
+      "inputTokens": 198758,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.698,
+      "originalCredits": 0.698,
+      "afterCompact": false
+    },
+    {
+      "index": 88,
+      "time": "11:42",
+      "ratio": 0.506777,
+      "inputTokens": 202711,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.633,
+      "originalCredits": 0.633,
+      "afterCompact": false
+    },
+    {
+      "index": 89,
+      "time": "11:42",
+      "ratio": 0.510345,
+      "inputTokens": 204138,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.496,
+      "originalCredits": 0.496,
+      "afterCompact": false
+    },
+    {
+      "index": 90,
+      "time": "11:43",
+      "ratio": 0.511685,
+      "inputTokens": 204674,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.482,
+      "originalCredits": 0.482,
+      "afterCompact": false
+    },
+    {
+      "index": 91,
+      "time": "11:43",
+      "ratio": 0.51316,
+      "inputTokens": 205264,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.503,
+      "originalCredits": 0.503,
+      "afterCompact": false
+    },
+    {
+      "index": 92,
+      "time": "11:43",
+      "ratio": 0.517678,
+      "inputTokens": 207071,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.543,
+      "originalCredits": 0.543,
+      "afterCompact": false
+    },
+    {
+      "index": 93,
+      "time": "11:43",
+      "ratio": 0.522153,
+      "inputTokens": 208861,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.569,
+      "originalCredits": 0.569,
+      "afterCompact": false
+    },
+    {
+      "index": 94,
+      "time": "11:43",
+      "ratio": 0.52571,
+      "inputTokens": 210284,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.524,
+      "originalCredits": 0.524,
+      "afterCompact": false
+    },
+    {
+      "index": 95,
+      "time": "11:44",
+      "ratio": 0.528872,
+      "inputTokens": 211549,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.548,
+      "originalCredits": 0.548,
+      "afterCompact": false
+    },
+    {
+      "index": 96,
+      "time": "11:44",
+      "ratio": 0.531915,
+      "inputTokens": 212766,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.521,
+      "originalCredits": 0.521,
+      "afterCompact": false
+    },
+    {
+      "index": 97,
+      "time": "11:44",
+      "ratio": 0.533258,
+      "inputTokens": 213303,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.51,
+      "originalCredits": 0.51,
+      "afterCompact": false
+    },
+    {
+      "index": 98,
+      "time": "11:44",
+      "ratio": 0.534273,
+      "inputTokens": 213709,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.492,
+      "originalCredits": 0.492,
+      "afterCompact": false
+    },
+    {
+      "index": 99,
+      "time": "11:44",
+      "ratio": 0.536795,
+      "inputTokens": 214718,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.516,
+      "originalCredits": 0.516,
+      "afterCompact": false
+    },
+    {
+      "index": 100,
+      "time": "11:44",
+      "ratio": 0.538547,
+      "inputTokens": 215419,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.527,
+      "originalCredits": 0.527,
+      "afterCompact": false
+    },
+    {
+      "index": 101,
+      "time": "11:44",
+      "ratio": 0.54048,
+      "inputTokens": 216192,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.515,
+      "originalCredits": 0.515,
+      "afterCompact": false
+    },
+    {
+      "index": 102,
+      "time": "11:45",
+      "ratio": 0.541802,
+      "inputTokens": 216721,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.659,
+      "originalCredits": 0.659,
+      "afterCompact": false
+    },
+    {
+      "index": 103,
+      "time": "11:45",
+      "ratio": 0.548745,
+      "inputTokens": 219498,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.582,
+      "originalCredits": 0.582,
+      "afterCompact": false
+    },
+    {
+      "index": 104,
+      "time": "11:45",
+      "ratio": 0.551385,
+      "inputTokens": 220554,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.549,
+      "originalCredits": 0.549,
+      "afterCompact": false
+    },
+    {
+      "index": 105,
+      "time": "11:45",
+      "ratio": 0.552952,
+      "inputTokens": 221181,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.515,
+      "originalCredits": 0.515,
+      "afterCompact": false
+    },
+    {
+      "index": 106,
+      "time": "11:46",
+      "ratio": 0.55343,
+      "inputTokens": 221372,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.514,
+      "originalCredits": 0.514,
+      "afterCompact": false
+    },
+    {
+      "index": 107,
+      "time": "11:46",
+      "ratio": 0.555005,
+      "inputTokens": 222002,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.528,
+      "originalCredits": 0.528,
+      "afterCompact": false
+    },
+    {
+      "index": 108,
+      "time": "11:46",
+      "ratio": 0.55593,
+      "inputTokens": 222372,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.512,
+      "originalCredits": 0.512,
+      "afterCompact": false
+    },
+    {
+      "index": 109,
+      "time": "11:46",
+      "ratio": 0.55666,
+      "inputTokens": 222664,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.51,
+      "originalCredits": 0.51,
+      "afterCompact": false
+    },
+    {
+      "index": 110,
+      "time": "11:46",
+      "ratio": 0.560137,
+      "inputTokens": 224055,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.577,
+      "originalCredits": 0.577,
+      "afterCompact": false
+    },
+    {
+      "index": 111,
+      "time": "11:47",
+      "ratio": 0.564248,
+      "inputTokens": 225699,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.634,
+      "originalCredits": 0.634,
+      "afterCompact": false
+    },
+    {
+      "index": 112,
+      "time": "11:47",
+      "ratio": 0.568102,
+      "inputTokens": 227241,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.556,
+      "originalCredits": 0.556,
+      "afterCompact": false
+    },
+    {
+      "index": 113,
+      "time": "11:47",
+      "ratio": 0.568765,
+      "inputTokens": 227506,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.522,
+      "originalCredits": 0.522,
+      "afterCompact": false
+    },
+    {
+      "index": 114,
+      "time": "11:47",
+      "ratio": 0.569518,
+      "inputTokens": 227807,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.527,
+      "originalCredits": 0.527,
+      "afterCompact": false
+    },
+    {
+      "index": 115,
+      "time": "11:47",
+      "ratio": 0.574603,
+      "inputTokens": 229841,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.587,
+      "originalCredits": 0.587,
+      "afterCompact": false
+    },
+    {
+      "index": 116,
+      "time": "11:47",
+      "ratio": 0.57659,
+      "inputTokens": 230636,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.55,
+      "originalCredits": 0.55,
+      "afterCompact": false
+    },
+    {
+      "index": 117,
+      "time": "11:49",
+      "ratio": 0.577388,
+      "inputTokens": 230955,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.98,
+      "originalCredits": 0.98,
+      "afterCompact": false
+    },
+    {
+      "index": 118,
+      "time": "11:49",
+      "ratio": 0.59666,
+      "inputTokens": 238664,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.785,
+      "originalCredits": 0.785,
+      "afterCompact": false
+    },
+    {
+      "index": 119,
+      "time": "11:50",
+      "ratio": 0.602167,
+      "inputTokens": 240867,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.686,
+      "originalCredits": 0.686,
+      "afterCompact": false
+    },
+    {
+      "index": 120,
+      "time": "11:50",
+      "ratio": 0.606222,
+      "inputTokens": 242489,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.603,
+      "originalCredits": 0.603,
+      "afterCompact": false
+    },
+    {
+      "index": 121,
+      "time": "11:50",
+      "ratio": 0.608225,
+      "inputTokens": 243290,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.585,
+      "originalCredits": 0.585,
+      "afterCompact": false
+    },
+    {
+      "index": 122,
+      "time": "11:50",
+      "ratio": 0.609783,
+      "inputTokens": 243913,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.575,
+      "originalCredits": 0.575,
+      "afterCompact": false
+    },
+    {
+      "index": 123,
+      "time": "11:50",
+      "ratio": 0.61117,
+      "inputTokens": 244468,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.601,
+      "originalCredits": 0.601,
+      "afterCompact": false
+    },
+    {
+      "index": 124,
+      "time": "11:51",
+      "ratio": 0.61391,
+      "inputTokens": 245564,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.598,
+      "originalCredits": 0.598,
+      "afterCompact": false
+    },
+    {
+      "index": 125,
+      "time": "11:51",
+      "ratio": 0.616683,
+      "inputTokens": 246673,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.611,
+      "originalCredits": 0.611,
+      "afterCompact": false
+    },
+    {
+      "index": 126,
+      "time": "11:51",
+      "ratio": 0.619483,
+      "inputTokens": 247793,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.629,
+      "originalCredits": 0.629,
+      "afterCompact": false
+    },
+    {
+      "index": 127,
+      "time": "11:51",
+      "ratio": 0.62317,
+      "inputTokens": 249268,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.619,
+      "originalCredits": 0.619,
+      "afterCompact": false
+    },
+    {
+      "index": 128,
+      "time": "11:52",
+      "ratio": 0.624947,
+      "inputTokens": 249979,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.637,
+      "originalCredits": 0.637,
+      "afterCompact": false
+    },
+    {
+      "index": 129,
+      "time": "11:52",
+      "ratio": 0.627737,
+      "inputTokens": 251095,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.598,
+      "originalCredits": 0.598,
+      "afterCompact": false
+    },
+    {
+      "index": 130,
+      "time": "11:52",
+      "ratio": 0.630065,
+      "inputTokens": 252026,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.604,
+      "originalCredits": 0.604,
+      "afterCompact": false
+    },
+    {
+      "index": 131,
+      "time": "11:52",
+      "ratio": 0.632888,
+      "inputTokens": 253155,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.626,
+      "originalCredits": 0.626,
+      "afterCompact": false
+    },
+    {
+      "index": 132,
+      "time": "11:52",
+      "ratio": 0.634493,
+      "inputTokens": 253797,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.59,
+      "originalCredits": 0.59,
+      "afterCompact": false
+    },
+    {
+      "index": 133,
+      "time": "11:53",
+      "ratio": 0.634947,
+      "inputTokens": 253979,
+      "outputTokens": null,
+      "usageSource": "transcript-ratio",
+      "credits": 0.7,
+      "originalCredits": 0.7,
+      "afterCompact": false
+    }
+  ],
+  "identity": {
+    "sumAttributed": 21727640,
+    "billedInputTokens": 21727640,
+    "absDiff": 0,
+    "ok": true
+  },
+  "pluginVersion": "2.7.4",
+  "selfCmd": "\"C:\\Users\\49745\\.qoder-cn\\plugins\\cache\\qoder-marketplace\\qoder-credits-inspector\\2.7.4\\bin\\credits-inspector.cmd\" cli",
+  "linkHealth": {
+    "matched": 0,
+    "requests": 133,
+    "coverage": 0,
+    "usageSource": "transcript-ratio",
+    "breakdown": {
+      "proxy": 0,
+      "transcriptTokens": 0,
+      "transcriptRatio": 133
+    },
+    "logRecords": 0,
+    "lastRecordAt": null,
+    "recentRequests": 0,
+    "proxyErrors": null,
+    "clientAbort": null,
+    "clientAbortMaxMs": null,
+    "upstreamRejected": null,
+    "aborted": null,
+    "truncated": null,
+    "noUsage": null,
+    "slowestMs": null,
+    "supersededFailure": null
+  },
+  "subagents": {
+    "scanned": false,
+    "dir": null,
+    "probedPaths": [
+      "C:\\Users\\49745\\.qoder-cn\\projects\\G--CODEX-New-Manga\\781b04f4-4f2d-4e23-8cd1-38da35646197\\subagents",
+      "C:\\Users\\49745\\.qoder-cn\\projects\\781b04f4-4f2d-4e23-8cd1-38da35646197\\subagents"
+    ],
+    "reason": "no-dir",
+    "count": 0,
+    "items": [],
+    "totals": {
+      "roundTrips": 0,
+      "billedInputTokens": 0,
+      "credits": 0,
+      "originalCredits": 0
+    },
+    "combined": {
+      "roundTrips": 133,
+      "billedInputTokens": 21727640,
+      "credits": 65.832,
+      "originalCredits": 65.832
+    }
+  },
+  "manual": null,
+  "artifacts": {
+    "report": "report.json",
+    "canvas": "任务：New Manga _ M2-C1 — T__b2989089.canvas.tsx"
+  }
+}

@@ -1,0 +1,16 @@
+你是 DeepSeek Harness，续任 M2-IPC1 的独立非作者 Reviewer。你此前对 delivery a2f8d6b8 给出 changes_requested（2×P1、5×P2、8×P3）。Owner=Antigravity 已返修至新 tip 5556fc8e7a184da25af0f082a3d53f0bd84c56dc（单 commit，7 路径：library_bridge.rs、main.rs、core_service.py、tests/core/test_core_service.py、LibraryPanel.test.tsx、handoff、verification-results）。本会话为返修复核：只读静态审查，不要执行命令或写文件，session workspace 是 Owner worktree（相对路径直读）。
+
+集成方已独立实跑确认（采信不重复执行）：pytest 9 passed EXIT 0；cargo test 32 passed EXIT 0；vitest 29 passed EXIT 0；git diff --check EXIT 0。集成方已另行裁决并落地 DSH P1-2 的 runner 部分：verification/M2-RC2/run_e2e.py 与 verification/M2-AC1/run_e2_e.py 的自报串期望值已按 production=5/probe=9/ac1=8 更新（commit c0fe679a，集成方治理 commit）——你不用检查这两个 runner 的修改本身，只需确认 Owner 侧披露与该裁决一致。
+
+逐条复核（每条给 verified / not_verified / partially_verified + path:line 证据）：
+- R1（原 P1-1）：library_bridge.rs 的 Drop 是否实现 wait_timeout_or_kill（try_wait 轮询、5s 超时 kill、kill 后 wait）；是否补了覆盖 kill 路径的单测。
+- R2（原 P1-2 Owner 侧）：main.rs 是否改为仅 production 模式 spawn library sidecar（probe/ac1 模式 AppState.library 为 None、invoke 返回 CORE_UNAVAILABLE）；确认 probe/ac1 的注册命令面本身零变化。
+- R3（原 P2-1）：core_service.py 对 version 非 dict/缺失/major 非 int（含 bool）是否 typed 拒绝 PROTOCOL_VERSION_UNSUPPORTED 且进程不崩溃；测试覆盖。
+- R4（原 P2-2）：_fetch_page_counts 是否不再静默吞 sqlite3.Error；ListBooks 是否返回 LIST_BOOKS_FAILED typed 错误；测试覆盖。
+- R5（原 P2-3）：是否新增 Rust 真实 spawn bootstrap.core_service 的通道测试（ping/list_books 成功 + kill 后 EOF→CORE_UNAVAILABLE）；page_count 过滤判别用例（软删 page/软删 chapter/不完整 page 不计入、无章节书=0）。
+- R6（原 P2-4）：LibraryPanel.test.tsx 是否新增真实 mount + client 拒绝→不可用态的组件测试。
+- R7：Handoff 与 verification-results 是否增补「跨 Task 影响」小节（自报串变化、仅 production spawn、runner 归属、R3/R4 修复披露）。
+
+同时检查返修是否引入新问题（回归扫描：返修 7 路径的 diff 语义，重点 main.rs 模式分支与 library_bridge.rs 的 Drop 语义——例如 probe/ac1 模式下 invoke 前即返回 CORE_UNAVAILABLE 是否可能掩盖其他错误、wait_timeout_or_kill 是否会在正常退出路径误 kill）。
+
+输出格式：结论行 decision: approved | approved_with_conditions | changes_requested；R1-R7 逐条判定表；新增问题分级列表（P0-P3，无则 none）；明确回答是否达到可集成标准。

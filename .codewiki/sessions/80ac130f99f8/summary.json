@@ -1,0 +1,33 @@
+{
+  "session_id": "80ac130f99f8",
+  "repo_name": "New Manga",
+  "repo_path": "G:\\CODEX\\New Manga",
+  "output_dir": "C:\\Users\\49745\\.repo-knowledge\\staging\\new-manga-codewiki-20260922-mcp",
+  "total_components": 2057,
+  "total_leaf_nodes": 177,
+  "languages": {
+    "null": 2057
+  },
+  "leaf_nodes_preview": [
+    "src\\ports\\ocr\\ports.py::OcrProvider",
+    "src\\ports\\translation\\ports.py::TranslationProvider",
+    "src\\infrastructure\\providers\\step_writes.py::_Unchecked",
+    "src\\infrastructure\\sqlite\\migrator.py::MigrationRunner",
+    "src\\ports\\providers\\credentials.py::SecretValue",
+    "src\\ports\\ocr\\ports.py::OcrTextWriter",
+    "src\\application\\maintenance\\diagnostics.py::DiagnosticsBundleSink",
+    "src\\ports\\repositories\\storage.py::ManagedFileStoragePort",
+    "src\\application\\maintenance\\backup.py::BackupLedger",
+    "src\\application\\importing\\documents\\ports.py::DocumentRaster",
+    "src\\infrastructure\\imaging\\webtoon_tiles.py::TileCache",
+    "src\\infrastructure\\importing.py::_MobiDocumentHandle",
+    "src\\application\\maintenance\\diagnostics.py::RecentError",
+    "src\\ports\\repositories\\database.py::SchemaMigrationPort",
+    "src\\infrastructure\\filesystem\\managed_storage.py::ManagedFileStorage",
+    "src\\application\\editing\\ports.py::RegionRevisionCommitter",
+    "src\\application\\settings\\network.py::DangerousSettingError",
+    "experiments\\TASK-016\\test_protocol.py::ProtocolTests",
+    "src\\infrastructure\\importing.py::PdfiumDocumentRaster",
+    "src\\ports\\translation\\protocol.py::ViolationKind"
+  ]
+}

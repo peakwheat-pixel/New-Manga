@@ -1,0 +1,34 @@
+你是 Antigravity，担任 M2-IPC1（Production Core Lifecycle + Read-only Library Vertical Slice）的 Owner。工作副本（worktree）：G:/CODEX/New Manga.worktrees/M2-IPC1-agy（分支 agent/antigravity/M2-IPC1-production-core-library，fixed base=a54bb8c92faefa90f4077e7ac2bb000f6b6712fd，当前干净）。一切读写与提交只在 worktree 内，从 worktree 根目录执行命令。解释器：G:\CODEX\New Manga.task-envs\TASK-012-py312\Scripts\python.exe（下称 $py）。
+
+第一步必做：完整阅读 worktree 内 doc/tasks/M2-IPC1.md（Seam 冻结七条是宪法，实现偏离即失败）与 doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md 的 §3（envelope）§5（ListBooks 行）§8（ErrorEnvelope）§12。参考既有实现风格：apps/desktop/src-tauri/src/core_bridge.rs 与 ac1_bridge.rs（stdio JSON-lines sidecar 模式）、src/infrastructure/resource_channel/host_bridge.py、src/bootstrap/acceptance_bridge.py、main.rs 的三视图命令面（constants/generate_handler/build.rs manifest，注释 R2-04）、frontend/src/resourceChannel/。
+
+实现分三层：
+
+【Python 层】新增 src/bootstrap/core_service.py + tests/core/test_core_service.py：
+- main：完成应用装配（复用既有 bootstrap 装配机制，参考 acceptance_bridge.py 怎么装配与拿 catalog/service——只读部分；数据根继承 NEWMANGA_DATA_ROOT 环境变量）后进入 stdio 请求循环（逐行读 stdin，写 stdout，flush）。
+- envelope：Request={protocol:"new-manga.core",version:{major:1,minor:0},request_id,command,payload}；Response 同 protocol/version+request_id+result+error。version major!=1 → error PROTOCOL_VERSION_UNSUPPORTED（category=validation,retryable=false）；未知 command → UNKNOWN_COMMAND（validation）；result/error 互斥（成功 error=null，失败 result=null）。protocol 名不匹配同样拒绝。
+- 三命令：core.ping → {status:"ready",protocol_version:{major:1,minor:0},capabilities:["library.list_books"]}；ListBooks → BookSummary 数组（DTO 字段：book_id,title,original_title,is_favorite,is_archived,page_count,created_at,updated_at——以 Core 现有 Library/bookshelf service 实际字段语义为准，如实映射并在 Handoff 记录差异；从 SQLite 只读查询，不暴露 OS 路径）；core.shutdown → {status:"stopped"} 后 exit 0。
+- 错误：ErrorEnvelope={code,category,message?,retryable,details?}，message 安全短句，无 traceback/绝对路径；未捕获异常 → code=UNKNOWN,category=internal。
+- 测试（真实进程链判别）：用 subprocess 真实 spawn "$py -m bootstrap.core_service"（env 设 NEWMANGA_DATA_ROOT 指向临时目录）做 round-trip：ping 成功；空库 ListBooks=[]；seed 1 本书（用既有 bookshelf service 或直接 SQLite 插入最小行——参考既有测试的 seed 手法）后 ListBooks 返回 1 条且字段完整；坏 version → PROTOCOL_VERSION_UNSUPPORTED；未知命令 → UNKNOWN_COMMAND；shutdown 后进程 exit 0。再加纯函数级单测（envelope 解析/错误构造）。测试放 tests/core/test_core_service.py。
+
+【Rust 层】apps/desktop/src-tauri/src/ 新增 library_bridge.rs（CoreChannel 同构：MockLibraryChannel + StdioLibraryChannel）+ main.rs 集成：
+- production invoke 新增 core_ping 与 library_list_books（仅 production 分支；probe/ac1 分支零变化）。
+- spawn：<python> -m bootstrap.core_service（解释器定位沿用 core_bridge 的既有机制/环境）；EOF 或非零退出 → CORE_UNAVAILABLE（unavailable,retryable=true）返回给 invoke；不自动重启；core_shutdown 不需要单独 invoke（shutdown 由 host drop 时处理或后续 Task）。
+- 三视图同步（同一 commit）：main.rs 常量 allowlist、generate_handler! 字面量、build.rs 的 app-manifest（若 build.rs 含命令清单则更新；capabilities/permissions 仅当 invoke 扩展需要）。新增 invoke 命名冻结：core_ping、library_list_books。
+- cargo test：Mock channel round-trip、allowlist pin 测试更新（production 常量数组加入两命令后全部既有 pin 测试保持绿）、spawn_args pin。
+
+【React 层】apps/desktop/frontend/src/ 新增 library/ 模块 + App.tsx 挂载：
+- library/client.ts：invoke 封装（core_ping、library_list_books）+ typed BookSummary DTO。
+- library/LibraryPanel.tsx：只读书目面板——成功态渲染列表（title/original_title/page_count/created_at 等展示字段）、空态明确文案、CORE_UNAVAILABLE/调用失败态明确 UI（不自动重试）。
+- App.tsx 挂载（保持既有验收页结构不动，新增一节或 tab）。
+- vitest：client 单测 + LibraryPanel 组件测试至少覆盖 成功/空/不可用 三态（mock invoke）。frontend 测试命令：npm test --prefix apps/desktop/frontend。
+
+范围红线：只许新增/修改上述三层文件 + doc/tasks/M2-IPC1.md（状态推进）+ verification/M2-IPC1/** + doc/handoffs/M2-IPC1-*.md。禁止：写入类命令（CreateBook 等）、事件通道、doc/contracts/**、core_bridge.rs 的资源语义、resource_protocol.rs、ac1_bridge.rs、acceptance_bridge.py、SQLite schema/migration、既有依赖升级、打包、Legacy QML、自动监督循环。若某层在沙箱里无法完成（如 cargo 工具链不可用），如实标 BLOCKED 并交付其余两层 + 该层的完整代码与测试（集成方代跑）。
+
+验证（全记录 shell、工具链、HEAD、EXIT 到 verification/M2-IPC1/）：
+1. $py -m pytest tests/core/test_core_service.py tests/core/test_bootstrap_providers.py -q
+2. cargo test --manifest-path apps/desktop/src-tauri/Cargo.toml
+3. npm test --prefix apps/desktop/frontend
+4. git diff --check a54bb8c92faefa90f4077e7ac2bb000f6b6712fd..HEAD
+
+交付：worktree 内 git 提交（建议 Python/Rust/React 分 commit）；最终回答必须含 (a) delivery head 完整 SHA；(b) AC1-AC5 逐条状态与依据；(c) 每条验证命令 EXIT 与测试计数；(d) 完整改动文件清单；(e) BLOCKED/NOT_RUN 项及理由；(f) 若 BookSummary 字段与冻结 DTO 有差异，逐字段映射说明。若沙箱无法写文件或执行命令，不要伪造 PASS：记录实际错误、标 BLOCKED、把全部交付内容放进最终回答由集成方落盘。

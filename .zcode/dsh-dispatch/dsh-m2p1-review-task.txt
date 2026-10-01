@@ -1,0 +1,23 @@
+你是 DeepSeek Harness，担任 M2-P1（Regionless Detection Fan-out and Guard Rebinding）的独立非作者 Reviewer。Owner=Antigravity，与你和集成方均无作者关系。这是一次只读静态 Review：你的沙箱没有可用 shell（预期内），不要尝试执行命令或写文件；用 read/grep/glob 读代码，把全部 Review 结论放进最终回答。
+
+审查对象（session workspace 就是 Owner worktree，直接相对路径读取）：
+- 分支 agent/antigravity/M2-P1-regionless-region-rebinding，fixed base=338266417437e3007345aaa8496c5e936745dfd6，delivery head=59acb340318359b6c94278c968edcafb125268c1
+- Task 文件：doc/tasks/M2-P1.md（冻结 AC、允许/禁止范围、验证命令）
+- 权威依据：doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md（诊断报告，§5.1 修复语义、§5.4/§6 测试矩阵）
+- 修复 diff（集成方已核对：base..delivery 仅 5 路径，全部在允许清单内）：
+  1. src/application/tasks/service.py：仅 _backfill_detected_regions —— replace(item, region_id=primary) 改为 replace(item, region_id=primary, target_id=primary)，+docstring 不变式说明（target_id≡写目标）与不改 unit_id 原因（terminal_unit_ids 以其为键）
+  2. tests/pipeline/test_regionless_rebinding.py（新增，729 行）：R0-R5 + N1/N2/N3/N5/N6/N7
+  3. doc/tasks/M2-P1.md（状态推进）、doc/handoffs/M2-P1-78e9637f.md、verification/M2-P1/evidence-78e9637f.md
+- 集成方已独立实跑并确认（你无需执行）：pytest 三文件 21 passed EXIT=0；诊断 reproduce.py = NOT_REPRODUCED + EXIT=1（缺陷消除强判别）；git diff --check EXIT=0。
+
+你的审查轴（逐轴给出结论与 path:line 证据）：
+1. 修复语义轴：读 src/application/tasks/service.py 的 _backfill_detected_regions 当前实现，对照诊断报告 §5.1，判断：重绑条件（item.unit_id != unit.unit_id and item.region_id is None）在同时重绑 target_id 后是否仍正确（不会误改 detect unit 自身、不会把已 region-scoped 的 unit 改掉）；docstring 声明与实现是否一致；时序（backfill 发生在 detect 提交后、_record_step_attempt(ocr) 前）是否如诊断所述。
+2. 测试判别力轴：读 tests/pipeline/test_regionless_rebinding.py，抽查至少 4 条测试（建议 R0、R1、N1、N7），判断断言是否真的固定了诊断报告要求的语义（如 R1 断言 unit_id 不变、N1 断言 LOCK_CHANGED 且零写、N1 注释是否说明半修=TARGET_NOT_FOUND 判别）；找出任何"假绿"风险（断言过弱、fixture 构造与生产装配不一致等）。
+3. 范围与文档轴：修复是否只动了允许范围；docstring/注释技术表述是否准确（有没有过度声明）；Handoff 与 evidence 记录是否与集成方实跑结果一致。
+4. 回归风险轴：同时重绑 target_id 是否可能影响其他消费者（grep target_id 在 src/ 的使用点，判断 region-scoped plan、commit_step_result 的 mapping 校验、持久化 _unit_dict 往返是否与重绑后形状兼容——诊断报告 §5.1 曾警告半修会导致 commit_step 用 Page target 走 TARGET_NOT_FOUND，验证本修复走的是完整重绑路径而非半修）。
+
+输出格式（Markdown）：
+- 结论行：decision: approved | approved_with_conditions | changes_requested
+- 四轴小结（每轴 2-4 句，附 path:line 证据）
+- Findings 分级列表（P0 阻断 / P1 必须 / P2 建议 / P3 观察），没有就写 none
+- 明确回答：是否达到可集成标准

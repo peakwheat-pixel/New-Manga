@@ -1,0 +1,33 @@
+{
+  "session_id": "d0c936e9d700",
+  "repo_name": "New Manga",
+  "repo_path": "G:\\CODEX\\New Manga",
+  "output_dir": "C:\\Users\\49745\\.repo-knowledge\\staging\\new-manga-codewiki-20260922-mcp",
+  "total_components": 2057,
+  "total_leaf_nodes": 177,
+  "languages": {
+    "null": 2057
+  },
+  "leaf_nodes_preview": [
+    "src\\application\\translation\\pipeline\\executor.py::StepExecutionError",
+    "src\\application\\export\\service.py::ExportService",
+    "src\\bootstrap\\app.py::_RegionGeometrySource",
+    "src\\application\\settings\\errors.py::UnresolvedCapabilityError",
+    "src\\ports\\providers\\errors.py::ProviderError",
+    "src\\application\\settings\\bindings.py::ProviderBinding",
+    "src\\infrastructure\\providers\\handlers.py::RegionGeometrySource",
+    "src\\domain\\constraints\\candidates.py::AutoTermProposal",
+    "src\\ports\\providers\\credentials.py::CredentialStore",
+    "src\\infrastructure\\providers\\models.py::ModelDownloader",
+    "experiments\\TASK-018\\test_mask_protocol.py::RouteGateTests",
+    "src\\application\\translation\\context\\builder.py::PageContextInput",
+    "src\\infrastructure\\providers\\ocr_local.py::MangaOcrProvider",
+    "src\\infrastructure\\transport\\stdlib.py::StdlibTransport",
+    "src\\ports\\network\\transport.py::Transport",
+    "src\\ports\\providers\\profiles.py::ProxyPolicy",
+    "src\\ports\\repositories\\database.py::DatabaseBackupPort",
+    "src\\ports\\providers\\errors.py::ProviderState",
+    "src\\domain\\tasks\\models.py::PipelineError",
+    "src\\ports\\rendering\\ports.py::PageArtifactLocator"
+  ]
+}

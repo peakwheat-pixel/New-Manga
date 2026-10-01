@@ -1,0 +1,21 @@
+{
+  "unmatched_ids": [],
+  "unmatched_count": 0,
+  "leftover_component_ids": [
+    "experiments\\TASK-016\\test_protocol.py::ProtocolTests",
+    "experiments\\TASK-017\\mock_provider.py::MockProvider",
+    "experiments\\TASK-017\\mock_provider.py::ProtocolClient",
+    "experiments\\TASK-017\\protocol.py::ContextPage",
+    "experiments\\TASK-017\\protocol.py::RegionInput",
+    "experiments\\TASK-017\\protocol.py::ViolationKind",
+    "experiments\\TASK-018\\test_mask_protocol.py::MaskGeometryTests",
+    "experiments\\TASK-018\\test_mask_protocol.py::NonTargetProtectionTests",
+    "experiments\\TASK-018\\test_mask_protocol.py::RouteGateTests",
+    "experiments\\TASK-018\\test_route_gating.py::FailClosedTests",
+    "experiments\\TASK-018\\test_route_gating.py::LabelTests",
+    "experiments\\TASK-018\\test_route_gating.py::OutOfRootTests",
+    "experiments\\TASK-018\\test_route_gating.py::ProbingTests",
+    "experiments\\TASK-018\\test_route_gating.py::StartupAssertionTests"
+  ],
+  "leftover_component_count": 14
+}

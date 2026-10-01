@@ -133,3 +133,7 @@ DSH r1 报告：`G:/CODEX/New Manga.task-envs/M2-TASKS-BACKFILL-MULTIREGION/dsh-
 - R4/R5 的临时 checkout 均已恢复（`git checkout HEAD -- .`）；恢复后 `git status --porcelain` 仅剩 untracked verification 日志。
 - `git diff --check` EXIT=0；禁改面（domain/ports/providers/bootstrap/sqlite schema/apps/STATUS 等）零 diff——返修改动面 = `src/application/tasks/service.py`、`tests/pipeline/test_regionless_rebinding.py`、本 handoff、`verification/**`，与授权允许面一致。
 - 回退方法更新：revert 返修两 commit 即回到 fa866327 口径（无 schema/数据迁移）。
+
+## 登记节关闭（superseded-by，M2-TASKS-PRIMARY-SFX-GATE 集成时搬运 2026-10-02）
+
+本 handoff「独立 Task 候选登记」节（primary 链 SFX gate 不可见=初始/恢复语义不一致在 primary 上存在）已由 [M2-TASKS-PRIMARY-SFX-GATE](M2-TASKS-PRIMARY-SFX-GATE-19bf234a.md) 落地关闭（用户裁决②采纳重决策）：primary 现与 region_ids[1:] 统一走 `_plan_region` live-Region 重决策，DSH 反例场景（SFX 为 primary+manual）已固化为测试（红→绿）。

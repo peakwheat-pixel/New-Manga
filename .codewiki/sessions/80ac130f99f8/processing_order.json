@@ -1,0 +1,822 @@
+[
+  {
+    "module": "bookshelf_ui",
+    "path": [
+      "user_facing_interface",
+      "bookshelf_ui"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ui\\models\\library\\models.py::BookListModel",
+      "src\\ui\\models\\library\\models.py::ChapterListModel",
+      "src\\ui\\viewmodels\\bookshelf\\viewmodel.py::BookshelfViewModel"
+    ]
+  },
+  {
+    "module": "workbench_ui",
+    "path": [
+      "user_facing_interface",
+      "workbench_ui"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ui\\models\\tasks\\page_list_model.py::WorkbenchPageListModel",
+      "src\\ui\\viewmodels\\workbench\\region_canvas.py::RegionCanvasError",
+      "src\\ui\\viewmodels\\workbench\\run_controller.py::RunController",
+      "src\\ui\\viewmodels\\workbench\\viewmodel.py::WorkbenchViewModel"
+    ]
+  },
+  {
+    "module": "reader_ui",
+    "path": [
+      "user_facing_interface",
+      "reader_ui"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ui\\viewmodels\\reader\\viewmodel.py::ReaderViewModel"
+    ]
+  },
+  {
+    "module": "export_ui",
+    "path": [
+      "user_facing_interface",
+      "export_ui"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ui\\viewmodels\\export\\viewmodel.py::ExportViewModel"
+    ]
+  },
+  {
+    "module": "navigation_ui",
+    "path": [
+      "user_facing_interface",
+      "navigation_ui"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ui\\viewmodels\\navigation\\viewmodel.py::NavigationViewModel"
+    ]
+  },
+  {
+    "module": "user_facing_interface",
+    "path": [
+      "user_facing_interface"
+    ],
+    "is_leaf": false,
+    "children": [
+      "bookshelf_ui",
+      "workbench_ui",
+      "reader_ui",
+      "export_ui",
+      "navigation_ui"
+    ],
+    "components": [
+      "src\\ui\\models\\library\\models.py::BookListModel",
+      "src\\ui\\models\\library\\models.py::ChapterListModel",
+      "src\\ui\\viewmodels\\bookshelf\\viewmodel.py::BookshelfViewModel",
+      "src\\ui\\models\\tasks\\page_list_model.py::WorkbenchPageListModel",
+      "src\\ui\\viewmodels\\workbench\\region_canvas.py::RegionCanvasError",
+      "src\\ui\\viewmodels\\workbench\\run_controller.py::RunController",
+      "src\\ui\\viewmodels\\workbench\\viewmodel.py::WorkbenchViewModel",
+      "src\\ui\\viewmodels\\reader\\viewmodel.py::ReaderViewModel",
+      "src\\ui\\viewmodels\\export\\viewmodel.py::ExportViewModel",
+      "src\\ui\\viewmodels\\navigation\\viewmodel.py::NavigationViewModel"
+    ]
+  },
+  {
+    "module": "region_editing",
+    "path": [
+      "product_workflow_application_services",
+      "region_editing"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\editing\\errors.py::GuardStatus",
+      "src\\application\\editing\\errors.py::RegionNotFound",
+      "src\\application\\editing\\ports.py::RegionCommitStatus",
+      "src\\application\\editing\\ports.py::RegionRepository",
+      "src\\application\\editing\\ports.py::RegionRevisionCommitter",
+      "src\\application\\editing\\service.py::EditingSession",
+      "src\\application\\editing\\service.py::InMemoryRegionCommitter",
+      "src\\application\\editing\\service.py::RegionEditingService"
+    ]
+  },
+  {
+    "module": "export",
+    "path": [
+      "product_workflow_application_services",
+      "export"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\export\\pdf_qt.py::QtImagePdfComposer",
+      "src\\application\\export\\ports.py::HistoryDocumentStore",
+      "src\\application\\export\\ports.py::JsonHistoryDocumentStore",
+      "src\\application\\export\\ports.py::PdfComposer",
+      "src\\application\\export\\service.py::ExportService",
+      "src\\application\\export\\service.py::ExportStatus",
+      "src\\application\\export\\service.py::StaleExportError"
+    ]
+  },
+  {
+    "module": "importing",
+    "path": [
+      "product_workflow_application_services",
+      "importing"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\importing\\documents\\ports.py::DocumentDecodeError",
+      "src\\application\\importing\\documents\\ports.py::DocumentHandle",
+      "src\\application\\importing\\documents\\ports.py::DocumentRaster",
+      "src\\application\\importing\\documents\\service.py::ImportDocumentsUseCase",
+      "src\\application\\importing\\images\\ports.py::ImageDecoder",
+      "src\\application\\importing\\images\\ports.py::ImportPageSink",
+      "src\\application\\importing\\images\\ports.py::ManagedCopyStore",
+      "src\\application\\importing\\images\\service.py::DuplicatePolicy",
+      "src\\application\\importing\\images\\service.py::ImportImagesUseCase"
+    ]
+  },
+  {
+    "module": "library",
+    "path": [
+      "product_workflow_application_services",
+      "library"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\library\\errors.py::BookNotFound",
+      "src\\application\\library\\errors.py::ChapterNotFound",
+      "src\\application\\library\\errors.py::DuplicateTagName",
+      "src\\application\\library\\errors.py::TagNotFound",
+      "src\\application\\library\\ports.py::LibraryRepository",
+      "src\\application\\library\\ports.py::PageRepository",
+      "src\\application\\library\\service.py::LibraryService"
+    ]
+  },
+  {
+    "module": "maintenance_and_recovery",
+    "path": [
+      "product_workflow_application_services",
+      "maintenance_and_recovery"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\maintenance\\backup.py::BackupLedger",
+      "src\\application\\maintenance\\cleanup.py::CacheInventorySource",
+      "src\\application\\maintenance\\cleanup.py::CleanupService",
+      "src\\application\\maintenance\\diagnostics.py::BoundedErrorLog",
+      "src\\application\\maintenance\\diagnostics.py::DiagnosticsBundleSink",
+      "src\\application\\maintenance\\diagnostics.py::DiagnosticsSnapshotProvider",
+      "src\\application\\maintenance\\diagnostics.py::RecentError",
+      "src\\application\\maintenance\\ports.py::ControlledFileRemover",
+      "src\\application\\maintenance\\ports.py::PageTrashStore",
+      "src\\application\\maintenance\\ports.py::RunLedgerMaintenance",
+      "src\\application\\maintenance\\ports.py::TrashManifestStore",
+      "src\\application\\maintenance\\trash.py::TrashService",
+      "src\\application\\maintenance\\trash.py::_JsonTrashManifest"
+    ]
+  },
+  {
+    "module": "navigation",
+    "path": [
+      "product_workflow_application_services",
+      "navigation"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\navigation\\service.py::NavigationService"
+    ]
+  },
+  {
+    "module": "reading",
+    "path": [
+      "product_workflow_application_services",
+      "reading"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\reading\\ports.py::JsonProgressDocumentStore",
+      "src\\application\\reading\\ports.py::ProgressDocumentStore",
+      "src\\application\\reading\\ports.py::ReaderPageCatalog",
+      "src\\application\\reading\\service.py::ReadingMode",
+      "src\\application\\reading\\service.py::ReadingService"
+    ]
+  },
+  {
+    "module": "settings_and_configuration",
+    "path": [
+      "product_workflow_application_services",
+      "settings_and_configuration"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\settings\\bindings.py::ProviderBinding",
+      "src\\application\\settings\\bindings.py::ProviderBindingResolver",
+      "src\\application\\settings\\errors.py::UnresolvedCapabilityError",
+      "src\\application\\settings\\models.py::SettingOverride",
+      "src\\application\\settings\\network.py::DangerousSettingError",
+      "src\\application\\settings\\network.py::NetworkProfileService",
+      "src\\application\\settings\\network.py::ProviderNetworkResolver",
+      "src\\application\\settings\\pipeline_defaults.py::PipelineDefaultsService",
+      "src\\application\\settings\\resolution.py::SettingsResolutionService"
+    ]
+  },
+  {
+    "module": "product_workflow_application_services",
+    "path": [
+      "product_workflow_application_services"
+    ],
+    "is_leaf": false,
+    "children": [
+      "region_editing",
+      "export",
+      "importing",
+      "library",
+      "maintenance_and_recovery",
+      "navigation",
+      "reading",
+      "settings_and_configuration"
+    ],
+    "components": [
+      "src\\application\\editing\\errors.py::GuardStatus",
+      "src\\application\\editing\\errors.py::RegionNotFound",
+      "src\\application\\editing\\ports.py::RegionCommitStatus",
+      "src\\application\\editing\\ports.py::RegionRepository",
+      "src\\application\\editing\\ports.py::RegionRevisionCommitter",
+      "src\\application\\editing\\service.py::EditingSession",
+      "src\\application\\editing\\service.py::InMemoryRegionCommitter",
+      "src\\application\\editing\\service.py::RegionEditingService",
+      "src\\application\\export\\pdf_qt.py::QtImagePdfComposer",
+      "src\\application\\export\\ports.py::HistoryDocumentStore",
+      "src\\application\\export\\ports.py::JsonHistoryDocumentStore",
+      "src\\application\\export\\ports.py::PdfComposer",
+      "src\\application\\export\\service.py::ExportService",
+      "src\\application\\export\\service.py::ExportStatus",
+      "src\\application\\export\\service.py::StaleExportError",
+      "src\\application\\importing\\documents\\ports.py::DocumentDecodeError",
+      "src\\application\\importing\\documents\\ports.py::DocumentHandle",
+      "src\\application\\importing\\documents\\ports.py::DocumentRaster",
+      "src\\application\\importing\\documents\\service.py::ImportDocumentsUseCase",
+      "src\\application\\importing\\images\\ports.py::ImageDecoder",
+      "src\\application\\importing\\images\\ports.py::ImportPageSink",
+      "src\\application\\importing\\images\\ports.py::ManagedCopyStore",
+      "src\\application\\importing\\images\\service.py::DuplicatePolicy",
+      "src\\application\\importing\\images\\service.py::ImportImagesUseCase",
+      "src\\application\\library\\errors.py::BookNotFound",
+      "src\\application\\library\\errors.py::ChapterNotFound",
+      "src\\application\\library\\errors.py::DuplicateTagName",
+      "src\\application\\library\\errors.py::TagNotFound",
+      "src\\application\\library\\ports.py::LibraryRepository",
+      "src\\application\\library\\ports.py::PageRepository",
+      "src\\application\\library\\service.py::LibraryService",
+      "src\\application\\maintenance\\backup.py::BackupLedger",
+      "src\\application\\maintenance\\cleanup.py::CacheInventorySource",
+      "src\\application\\maintenance\\cleanup.py::CleanupService",
+      "src\\application\\maintenance\\diagnostics.py::BoundedErrorLog",
+      "src\\application\\maintenance\\diagnostics.py::DiagnosticsBundleSink",
+      "src\\application\\maintenance\\diagnostics.py::DiagnosticsSnapshotProvider",
+      "src\\application\\maintenance\\diagnostics.py::RecentError",
+      "src\\application\\maintenance\\ports.py::ControlledFileRemover",
+      "src\\application\\maintenance\\ports.py::PageTrashStore",
+      "src\\application\\maintenance\\ports.py::RunLedgerMaintenance",
+      "src\\application\\maintenance\\ports.py::TrashManifestStore",
+      "src\\application\\maintenance\\trash.py::TrashService",
+      "src\\application\\maintenance\\trash.py::_JsonTrashManifest",
+      "src\\application\\navigation\\service.py::NavigationService",
+      "src\\application\\reading\\ports.py::JsonProgressDocumentStore",
+      "src\\application\\reading\\ports.py::ProgressDocumentStore",
+      "src\\application\\reading\\ports.py::ReaderPageCatalog",
+      "src\\application\\reading\\service.py::ReadingMode",
+      "src\\application\\reading\\service.py::ReadingService",
+      "src\\application\\settings\\bindings.py::ProviderBinding",
+      "src\\application\\settings\\bindings.py::ProviderBindingResolver",
+      "src\\application\\settings\\errors.py::UnresolvedCapabilityError",
+      "src\\application\\settings\\models.py::SettingOverride",
+      "src\\application\\settings\\network.py::DangerousSettingError",
+      "src\\application\\settings\\network.py::NetworkProfileService",
+      "src\\application\\settings\\network.py::ProviderNetworkResolver",
+      "src\\application\\settings\\pipeline_defaults.py::PipelineDefaultsService",
+      "src\\application\\settings\\resolution.py::SettingsResolutionService"
+    ]
+  },
+  {
+    "module": "application_rendering",
+    "path": [
+      "processing_pipeline_orchestration",
+      "application_rendering"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\rendering\\service.py::RenderService",
+      "src\\application\\rendering\\service.py::RenderStatus"
+    ]
+  },
+  {
+    "module": "pipeline_orchestration",
+    "path": [
+      "processing_pipeline_orchestration",
+      "pipeline_orchestration"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\tasks\\service.py::PipelineService",
+      "src\\application\\tasks\\store.py::InMemoryPipelineStore",
+      "src\\application\\tasks\\store.py::InMemorySnapshotProvider",
+      "src\\application\\tasks\\store.py::InMemoryTargetCatalog"
+    ]
+  },
+  {
+    "module": "translation_application_services",
+    "path": [
+      "processing_pipeline_orchestration",
+      "translation_application_services"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\application\\translation\\color\\service.py::SourceStyleService",
+      "src\\application\\translation\\context\\builder.py::ContextBuilder",
+      "src\\application\\translation\\context\\builder.py::PageContextInput",
+      "src\\application\\translation\\knowledge\\term_extraction.py::TermExtractionService",
+      "src\\application\\translation\\knowledge\\term_extraction.py::_ReadOnlyTmStore",
+      "src\\application\\translation\\knowledge\\tm.py::TranslationMemoryService",
+      "src\\application\\translation\\knowledge\\tm.py::TranslationMemoryStore",
+      "src\\application\\translation\\pipeline\\executor.py::DeterministicStepExecutor",
+      "src\\application\\translation\\pipeline\\executor.py::StepExecutionError"
+    ]
+  },
+  {
+    "module": "processing_pipeline_orchestration",
+    "path": [
+      "processing_pipeline_orchestration"
+    ],
+    "is_leaf": false,
+    "children": [
+      "application_rendering",
+      "pipeline_orchestration",
+      "translation_application_services"
+    ],
+    "components": [
+      "src\\application\\rendering\\service.py::RenderService",
+      "src\\application\\rendering\\service.py::RenderStatus",
+      "src\\application\\tasks\\service.py::PipelineService",
+      "src\\application\\tasks\\store.py::InMemoryPipelineStore",
+      "src\\application\\tasks\\store.py::InMemorySnapshotProvider",
+      "src\\application\\tasks\\store.py::InMemoryTargetCatalog",
+      "src\\application\\translation\\color\\service.py::SourceStyleService",
+      "src\\application\\translation\\context\\builder.py::ContextBuilder",
+      "src\\application\\translation\\context\\builder.py::PageContextInput",
+      "src\\application\\translation\\knowledge\\term_extraction.py::TermExtractionService",
+      "src\\application\\translation\\knowledge\\term_extraction.py::_ReadOnlyTmStore",
+      "src\\application\\translation\\knowledge\\tm.py::TranslationMemoryService",
+      "src\\application\\translation\\knowledge\\tm.py::TranslationMemoryStore",
+      "src\\application\\translation\\pipeline\\executor.py::DeterministicStepExecutor",
+      "src\\application\\translation\\pipeline\\executor.py::StepExecutionError"
+    ]
+  },
+  {
+    "module": "domain_constraints",
+    "path": [
+      "domain_model_and_constraints",
+      "domain_constraints"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\domain\\constraints\\candidates.py::AutoTermProposal",
+      "src\\domain\\constraints\\candidates.py::CandidateDecisionKind"
+    ]
+  },
+  {
+    "module": "domain_tasks",
+    "path": [
+      "domain_model_and_constraints",
+      "domain_tasks"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\domain\\tasks\\models.py::PipelineError"
+    ]
+  },
+  {
+    "module": "domain_model_and_constraints",
+    "path": [
+      "domain_model_and_constraints"
+    ],
+    "is_leaf": false,
+    "children": [
+      "domain_constraints",
+      "domain_tasks"
+    ],
+    "components": [
+      "src\\domain\\constraints\\candidates.py::AutoTermProposal",
+      "src\\domain\\constraints\\candidates.py::CandidateDecisionKind",
+      "src\\domain\\tasks\\models.py::PipelineError"
+    ]
+  },
+  {
+    "module": "detection_and_provider_contracts",
+    "path": [
+      "application_and_infrastructure_contracts",
+      "detection_and_provider_contracts"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ports\\detection\\ports.py::DetectionProvider",
+      "src\\ports\\detection\\ports.py::DetectionResult",
+      "src\\ports\\inpaint\\ports.py::InpaintProvider",
+      "src\\ports\\ocr\\ports.py::OcrProvider",
+      "src\\ports\\ocr\\ports.py::OcrTextWriter",
+      "src\\ports\\providers\\credentials.py::CredentialStore",
+      "src\\ports\\providers\\credentials.py::SecretValue",
+      "src\\ports\\providers\\errors.py::OutputMappingViolation",
+      "src\\ports\\providers\\errors.py::ProviderAuthenticationError",
+      "src\\ports\\providers\\errors.py::ProviderError",
+      "src\\ports\\providers\\errors.py::ProviderState",
+      "src\\ports\\providers\\profiles.py::ProviderProfile",
+      "src\\ports\\providers\\profiles.py::ProviderProfileStore",
+      "src\\ports\\providers\\profiles.py::ProxyPolicy"
+    ]
+  },
+  {
+    "module": "network_contracts",
+    "path": [
+      "application_and_infrastructure_contracts",
+      "network_contracts"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ports\\network\\profiles.py::NetworkProfileStore",
+      "src\\ports\\network\\transport.py::ProviderAuthenticationError",
+      "src\\ports\\network\\transport.py::Transport"
+    ]
+  },
+  {
+    "module": "rendering_contracts",
+    "path": [
+      "application_and_infrastructure_contracts",
+      "rendering_contracts"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ports\\rendering\\ports.py::PageArtifactLocator",
+      "src\\ports\\rendering\\ports.py::TextLayoutEngine"
+    ]
+  },
+  {
+    "module": "repository_contracts",
+    "path": [
+      "application_and_infrastructure_contracts",
+      "repository_contracts"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ports\\repositories\\artifacts.py::CommitStatus",
+      "src\\ports\\repositories\\database.py::DatabaseBackupPort",
+      "src\\ports\\repositories\\database.py::SchemaMigrationPort",
+      "src\\ports\\repositories\\database.py::SchemaState",
+      "src\\ports\\repositories\\storage.py::ManagedFileStoragePort"
+    ]
+  },
+  {
+    "module": "translation_contracts",
+    "path": [
+      "application_and_infrastructure_contracts",
+      "translation_contracts"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\ports\\translation\\ports.py::TranslationProvider",
+      "src\\ports\\translation\\ports.py::TranslationWriter",
+      "src\\ports\\translation\\protocol.py::ContextPage",
+      "src\\ports\\translation\\protocol.py::RegionInput",
+      "src\\ports\\translation\\protocol.py::ViolationKind"
+    ]
+  },
+  {
+    "module": "application_and_infrastructure_contracts",
+    "path": [
+      "application_and_infrastructure_contracts"
+    ],
+    "is_leaf": false,
+    "children": [
+      "detection_and_provider_contracts",
+      "network_contracts",
+      "rendering_contracts",
+      "repository_contracts",
+      "translation_contracts"
+    ],
+    "components": [
+      "src\\ports\\detection\\ports.py::DetectionProvider",
+      "src\\ports\\detection\\ports.py::DetectionResult",
+      "src\\ports\\inpaint\\ports.py::InpaintProvider",
+      "src\\ports\\ocr\\ports.py::OcrProvider",
+      "src\\ports\\ocr\\ports.py::OcrTextWriter",
+      "src\\ports\\providers\\credentials.py::CredentialStore",
+      "src\\ports\\providers\\credentials.py::SecretValue",
+      "src\\ports\\providers\\errors.py::OutputMappingViolation",
+      "src\\ports\\providers\\errors.py::ProviderAuthenticationError",
+      "src\\ports\\providers\\errors.py::ProviderError",
+      "src\\ports\\providers\\errors.py::ProviderState",
+      "src\\ports\\providers\\profiles.py::ProviderProfile",
+      "src\\ports\\providers\\profiles.py::ProviderProfileStore",
+      "src\\ports\\providers\\profiles.py::ProxyPolicy",
+      "src\\ports\\network\\profiles.py::NetworkProfileStore",
+      "src\\ports\\network\\transport.py::ProviderAuthenticationError",
+      "src\\ports\\network\\transport.py::Transport",
+      "src\\ports\\rendering\\ports.py::PageArtifactLocator",
+      "src\\ports\\rendering\\ports.py::TextLayoutEngine",
+      "src\\ports\\repositories\\artifacts.py::CommitStatus",
+      "src\\ports\\repositories\\database.py::DatabaseBackupPort",
+      "src\\ports\\repositories\\database.py::SchemaMigrationPort",
+      "src\\ports\\repositories\\database.py::SchemaState",
+      "src\\ports\\repositories\\storage.py::ManagedFileStoragePort",
+      "src\\ports\\translation\\ports.py::TranslationProvider",
+      "src\\ports\\translation\\ports.py::TranslationWriter",
+      "src\\ports\\translation\\protocol.py::ContextPage",
+      "src\\ports\\translation\\protocol.py::RegionInput",
+      "src\\ports\\translation\\protocol.py::ViolationKind"
+    ]
+  },
+  {
+    "module": "managed_filesystem",
+    "path": [
+      "persistence_and_managed_storage",
+      "managed_filesystem"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\filesystem\\bounded_log_store.py::BoundedLogStore",
+      "src\\infrastructure\\filesystem\\managed_storage.py::ManagedFileStorage"
+    ]
+  },
+  {
+    "module": "sqlite_persistence",
+    "path": [
+      "persistence_and_managed_storage",
+      "sqlite_persistence"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\sqlite\\artifacts.py::SqliteArtifactRepository",
+      "src\\infrastructure\\sqlite\\backup.py::BackupVerificationError",
+      "src\\infrastructure\\sqlite\\backup.py::SqliteBackupService",
+      "src\\infrastructure\\sqlite\\connection.py::ThreadRoutedConnection",
+      "src\\infrastructure\\sqlite\\library.py::SqliteLibraryRepository",
+      "src\\infrastructure\\sqlite\\migrator.py::MigrationRunner",
+      "src\\infrastructure\\sqlite\\migrator.py::_BackupProvider",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqlitePipelineStore",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqliteRunLedgerMaintenance",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqliteSnapshotProvider",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqliteTargetCatalog",
+      "src\\infrastructure\\sqlite\\regions.py::SqliteRegionRepository"
+    ]
+  },
+  {
+    "module": "persistence_and_managed_storage",
+    "path": [
+      "persistence_and_managed_storage"
+    ],
+    "is_leaf": false,
+    "children": [
+      "managed_filesystem",
+      "sqlite_persistence"
+    ],
+    "components": [
+      "src\\infrastructure\\filesystem\\bounded_log_store.py::BoundedLogStore",
+      "src\\infrastructure\\filesystem\\managed_storage.py::ManagedFileStorage",
+      "src\\infrastructure\\sqlite\\artifacts.py::SqliteArtifactRepository",
+      "src\\infrastructure\\sqlite\\backup.py::BackupVerificationError",
+      "src\\infrastructure\\sqlite\\backup.py::SqliteBackupService",
+      "src\\infrastructure\\sqlite\\connection.py::ThreadRoutedConnection",
+      "src\\infrastructure\\sqlite\\library.py::SqliteLibraryRepository",
+      "src\\infrastructure\\sqlite\\migrator.py::MigrationRunner",
+      "src\\infrastructure\\sqlite\\migrator.py::_BackupProvider",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqlitePipelineStore",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqliteRunLedgerMaintenance",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqliteSnapshotProvider",
+      "src\\infrastructure\\sqlite\\pipeline.py::SqliteTargetCatalog",
+      "src\\infrastructure\\sqlite\\regions.py::SqliteRegionRepository"
+    ]
+  },
+  {
+    "module": "document_import_adapters",
+    "path": [
+      "media_ingestion_imaging_and_rendering_adapters",
+      "document_import_adapters"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\importing.py::ManagedCopyStoreAdapter",
+      "src\\infrastructure\\importing.py::PdfiumDocumentRaster",
+      "src\\infrastructure\\importing.py::_MobiDocumentHandle",
+      "src\\infrastructure\\importing.py::_PdfiumDocumentHandle"
+    ]
+  },
+  {
+    "module": "imaging_and_webtoon_tiles",
+    "path": [
+      "media_ingestion_imaging_and_rendering_adapters",
+      "imaging_and_webtoon_tiles"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\imaging\\streaming_png.py::StreamingPngError",
+      "src\\infrastructure\\imaging\\streaming_png.py::StreamingPngReader",
+      "src\\infrastructure\\imaging\\tile_cache_sweep.py::WebtoonTileCacheSweeper",
+      "src\\infrastructure\\imaging\\webtoon_tiles.py::TileCache",
+      "src\\infrastructure\\imaging\\webtoon_tiles.py::TileGrid",
+      "src\\infrastructure\\imaging\\webtoon_tiles.py::TiledPageRasterizer"
+    ]
+  },
+  {
+    "module": "rendering_adapters",
+    "path": [
+      "media_ingestion_imaging_and_rendering_adapters",
+      "rendering_adapters"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\rendering\\locator.py::SqlitePageArtifactLocator",
+      "src\\infrastructure\\rendering\\qt_layout.py::QtTextLayoutEngine"
+    ]
+  },
+  {
+    "module": "media_ingestion_imaging_and_rendering_adapters",
+    "path": [
+      "media_ingestion_imaging_and_rendering_adapters"
+    ],
+    "is_leaf": false,
+    "children": [
+      "document_import_adapters",
+      "imaging_and_webtoon_tiles",
+      "rendering_adapters"
+    ],
+    "components": [
+      "src\\infrastructure\\importing.py::ManagedCopyStoreAdapter",
+      "src\\infrastructure\\importing.py::PdfiumDocumentRaster",
+      "src\\infrastructure\\importing.py::_MobiDocumentHandle",
+      "src\\infrastructure\\importing.py::_PdfiumDocumentHandle",
+      "src\\infrastructure\\imaging\\streaming_png.py::StreamingPngError",
+      "src\\infrastructure\\imaging\\streaming_png.py::StreamingPngReader",
+      "src\\infrastructure\\imaging\\tile_cache_sweep.py::WebtoonTileCacheSweeper",
+      "src\\infrastructure\\imaging\\webtoon_tiles.py::TileCache",
+      "src\\infrastructure\\imaging\\webtoon_tiles.py::TileGrid",
+      "src\\infrastructure\\imaging\\webtoon_tiles.py::TiledPageRasterizer",
+      "src\\infrastructure\\rendering\\locator.py::SqlitePageArtifactLocator",
+      "src\\infrastructure\\rendering\\qt_layout.py::QtTextLayoutEngine"
+    ]
+  },
+  {
+    "module": "windows_credentials",
+    "path": [
+      "provider_execution_network_and_device_runtime",
+      "windows_credentials"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\credentials\\windows.py::WindowsCredentialStore"
+    ]
+  },
+  {
+    "module": "device_and_job_control",
+    "path": [
+      "provider_execution_network_and_device_runtime",
+      "device_and_job_control"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\devices\\manager.py::HeavyJobGate",
+      "src\\infrastructure\\devices\\manager.py::HeavyJobGate._Lease"
+    ]
+  },
+  {
+    "module": "network_diagnostics",
+    "path": [
+      "provider_execution_network_and_device_runtime",
+      "network_diagnostics"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\network\\diagnostics.py::ConnectionTester"
+    ]
+  },
+  {
+    "module": "stdlib_transport",
+    "path": [
+      "provider_execution_network_and_device_runtime",
+      "stdlib_transport"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\transport\\stdlib.py::StdlibTransport"
+    ]
+  },
+  {
+    "module": "pipeline_execution",
+    "path": [
+      "provider_execution_network_and_device_runtime",
+      "pipeline_execution"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\pipeline\\executor.py::ProductionStepExecutor"
+    ]
+  },
+  {
+    "module": "provider_adapters",
+    "path": [
+      "provider_execution_network_and_device_runtime",
+      "provider_adapters"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\infrastructure\\providers\\handlers.py::PageImageSource",
+      "src\\infrastructure\\providers\\handlers.py::ProductionHandlers",
+      "src\\infrastructure\\providers\\handlers.py::RegionGeometrySource",
+      "src\\infrastructure\\providers\\models.py::HttpModelDownloader",
+      "src\\infrastructure\\providers\\models.py::ModelDownloader",
+      "src\\infrastructure\\providers\\ocr_local.py::MangaOcrProvider",
+      "src\\infrastructure\\providers\\ocr_local.py::PaddleKoreanOcrProvider",
+      "src\\infrastructure\\providers\\openai_client.py::OpenAiCompatibleClient",
+      "src\\infrastructure\\providers\\retry.py::StepAttemptState",
+      "src\\infrastructure\\providers\\step_writes.py::_Unchecked"
+    ]
+  },
+  {
+    "module": "provider_execution_network_and_device_runtime",
+    "path": [
+      "provider_execution_network_and_device_runtime"
+    ],
+    "is_leaf": false,
+    "children": [
+      "windows_credentials",
+      "device_and_job_control",
+      "network_diagnostics",
+      "stdlib_transport",
+      "pipeline_execution",
+      "provider_adapters"
+    ],
+    "components": [
+      "src\\infrastructure\\credentials\\windows.py::WindowsCredentialStore",
+      "src\\infrastructure\\devices\\manager.py::HeavyJobGate",
+      "src\\infrastructure\\devices\\manager.py::HeavyJobGate._Lease",
+      "src\\infrastructure\\network\\diagnostics.py::ConnectionTester",
+      "src\\infrastructure\\transport\\stdlib.py::StdlibTransport",
+      "src\\infrastructure\\pipeline\\executor.py::ProductionStepExecutor",
+      "src\\infrastructure\\providers\\handlers.py::PageImageSource",
+      "src\\infrastructure\\providers\\handlers.py::ProductionHandlers",
+      "src\\infrastructure\\providers\\handlers.py::RegionGeometrySource",
+      "src\\infrastructure\\providers\\models.py::HttpModelDownloader",
+      "src\\infrastructure\\providers\\models.py::ModelDownloader",
+      "src\\infrastructure\\providers\\ocr_local.py::MangaOcrProvider",
+      "src\\infrastructure\\providers\\ocr_local.py::PaddleKoreanOcrProvider",
+      "src\\infrastructure\\providers\\openai_client.py::OpenAiCompatibleClient",
+      "src\\infrastructure\\providers\\retry.py::StepAttemptState",
+      "src\\infrastructure\\providers\\step_writes.py::_Unchecked"
+    ]
+  },
+  {
+    "module": "production_bootstrap",
+    "path": [
+      "runtime_composition_and_verification",
+      "production_bootstrap"
+    ],
+    "is_leaf": true,
+    "components": [
+      "src\\bootstrap\\app.py::_BoundedDiagnosticsSink",
+      "src\\bootstrap\\app.py::_ManagedPageCatalog",
+      "src\\bootstrap\\app.py::_ManagedPageImageSource",
+      "src\\bootstrap\\app.py::_ManagedReaderCatalog",
+      "src\\bootstrap\\app.py::_RegionGeometrySource"
+    ]
+  },
+  {
+    "module": "build_test_configuration",
+    "path": [
+      "runtime_composition_and_verification",
+      "build_test_configuration"
+    ],
+    "is_leaf": true,
+    "components": []
+  },
+  {
+    "module": "runtime_composition_and_verification",
+    "path": [
+      "runtime_composition_and_verification"
+    ],
+    "is_leaf": false,
+    "children": [
+      "production_bootstrap",
+      "build_test_configuration"
+    ],
+    "components": [
+      "src\\bootstrap\\app.py::_BoundedDiagnosticsSink",
+      "src\\bootstrap\\app.py::_ManagedPageCatalog",
+      "src\\bootstrap\\app.py::_ManagedPageImageSource",
+      "src\\bootstrap\\app.py::_ManagedReaderCatalog",
+      "src\\bootstrap\\app.py::_RegionGeometrySource"
+    ]
+  }
+]

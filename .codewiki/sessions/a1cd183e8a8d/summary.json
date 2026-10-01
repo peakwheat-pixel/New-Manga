@@ -1,0 +1,33 @@
+{
+  "session_id": "a1cd183e8a8d",
+  "repo_name": "New Manga",
+  "repo_path": "G:\\CODEX\\New Manga",
+  "output_dir": "G:\\Qoder\\1\\.audit\\cw-work",
+  "total_components": 2250,
+  "total_leaf_nodes": 196,
+  "languages": {
+    "null": 2250
+  },
+  "leaf_nodes_preview": [
+    "src\\application\\reading\\ports.py::ProgressDocumentStore",
+    "src\\application\\export\\service.py::ExportStatus",
+    "src\\application\\settings\\network.py::NetworkProfileService",
+    "src\\application\\maintenance\\diagnostics.py::DiagnosticsBundleSink",
+    "verification/TASK-054/run_suite.ps1::run_suite.ps1",
+    "src\\infrastructure\\importing.py::_PdfiumDocumentHandle",
+    "src\\infrastructure\\providers\\ocr_local.py::PaddleKoreanOcrProvider",
+    "src\\ports\\translation\\protocol.py::ViolationKind",
+    "src\\application\\export\\service.py::ExportService",
+    "src\\application\\importing\\images\\service.py::ImportImagesUseCase",
+    "src\\infrastructure\\sqlite\\backup.py::SqliteBackupService",
+    "src\\application\\reading\\ports.py::JsonProgressDocumentStore",
+    "src\\infrastructure\\sqlite\\backup.py::BackupVerificationError",
+    "experiments\\TASK-018\\test_route_gating.py::OutOfRootTests",
+    "verification\\TASK-050\\bindings_probe.py::EchoOcr",
+    "src\\application\\navigation\\service.py::NavigationService",
+    "src\\application\\maintenance\\ports.py::ControlledFileRemover",
+    "src\\infrastructure\\rendering\\locator.py::SqlitePageArtifactLocator",
+    "src\\application\\importing\\images\\ports.py::ImportPageSink",
+    "src\\infrastructure\\importing.py::PdfiumDocumentRaster"
+  ]
+}

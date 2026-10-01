@@ -1,0 +1,681 @@
+dsh: reasoning:
+Let me start by reading the relevant files. The task is a read-only static review. Let me read the task file, diagnostic report, and the fix.
+
+Let me plan: read doc/tasks/M2-P1.md, doc/research/DIAG-M2-REGIONLESS-LOCK-CHANGED-001.md, src/application/tasks/service.py (_backfill_detected_regions), tests/pipeline/test_regionless_rebinding.py, handoff, evidence.
+
+Let me start with parallel reads.
+dsh: reasoning:
+The pwsh tool failed (no shell expected). Good — task says sandbox has no shell. So use read/grep/glob only.
+
+Let me read the diagnostic report and the service.py.
+dsh: reasoning:
+Now let me read the current implementation in service.py around _backfill_detected_regions, and the surrounding commit_step_result.
+dsh: reasoning:
+Now the fix. The condition: `item.unit_id != unit.unit_id and item.region_id is None`. Note that this includes ALL units of the task with region_id None, including the detect unit? No, detect unit excluded by unit_id. But what about other units that remain in the task with region_id None — e.g., a second detect unit? Only one detect per task. What about the units planned BEFORE detect? detect is prepended so detect is first. What about units for other steps that are not region-targeted, e.g., a page-scoped step that legitimately should target the Page? Hmm — let's think. In regionless plan, all units have region_id None and target page. After backfill, ALL of them get target_id=region, including e.g. "detect"? excluded. What about other page-scoped steps? For a regionless page, the plan chain is detect → ocr → translate → inpaint etc. Are all of those region-scoped? In the planner, for regionless page, target_id = page_id and region_id = None. But some steps might be page-scoped by design? Let me check the planner. Also potential issue: units with decision SKIP (SKIP_LOCK/SKIP_POLICY/SKIP_VALID) also get region_id None and would be rebound — that's pre-existing behavior (base already rebound region_id for all regionless units regardless of decision). The fix adds target_id rebinding for the same set. Is that a risk? Those units are terminal already; but the persisted unit shape changes... Actually persisted PlanUnit target_id would now be the region for SKIP units. Does anything consume unit.target_id for SKIP units? `commit_step_result` uses unit.target_id for RUN units. For SKIP units no step_run. Progress counting uses planned_step_units counts. Re-planning? Let's check plan_run(mode="continue") to see if it recomputes units from DB state — then it'd re-plan fresh units. Let me examine plan logic.
+
+Also need to check: does the rebind of target_id for units that are page-scoped break anything, e.g., a "page-level" step like "finalize"? Let me read the planner section of service.py (around 300-420).
+
+Let's read lines 280-440 and also 440-590.
+dsh: reasoning:
+Now I should check the diff for the fix (window) — I can't run git. But I can read the test file to see what's covered. Also check the handoff and evidence files.
+
+Key semantic analysis:
+
+Condition `item.unit_id != unit.unit_id and item.region_id is None` — this is unchanged from base except the target_id add. Question: does it correctly avoid changing "detect unit itself"? Yes, unit_id check. Does it avoid changing already region-scoped units? Yes, region_id is None guard.
+
+But wait: are there units in the task with region_id None that are legitimately Page-scoped and shouldn't be rebound? In a regionless page plan, `_plan_region(..., region=None)` produces units for steps = ("detect", *steps) with all target_id=page_id. After backfill all subsequent units (ocr, translate, ...) rebind. That's the intent. All those steps' handlers require a Region target (ocr requires region; translate etc. region). Actually some steps might be page-scoped? For page commands, e.g., REOCR_ALL page scope: steps include ocr, translate, ... all region-scoped after detection. Hmm, but what about RERENDER page scope? steps = ("render", ...) probably; if "ocr" not in steps, then no detect prepended, so no backfill. Fine.
+
+What about a regionless page where detection happens for a command whose steps include "ocr" — mandatory since detect only prepended when "ocr" in steps.
+
+Potential subtlety: could a task contain units for a *different* page? No, one task per run_target.
+
+Now, does the rebind condition include units whose decision is BLOCKED/SKIP? Yes, pre-existing. Those units are terminal (decision.is_terminal) so skipped by execute_run. But the persisted shape after backfill changes target_id for those too. Is that a problem? Possibly for `_cancel_remaining` (uses unit_id only) and `_mark_terminal` (unit_id). For progress aggregate uses counts. So OK.
+
+But now the interesting regression risk: after backfill, unit_id still embeds page id (`{task.task_id}:{page_id}:{step_type}`), while target_id is region id. Is unit_id used anywhere as a key to derive the target? Let me grep unit_id usages. Also `_find_step` uses step_run.unit_id to locate unit — let me check: `_find_step(step_run_id)` returns unit by matching run.tasks[...] units. If it matches by unit_id, then having duplicate unit_ids? After backfill, units have distinct step types so unit_ids unique still. But careful: the unit_id for region-scoped plans embeds region id → `{task_id}:{region_id}:{step_type}`. For regionless, `{task_id}:{page_id}:{step_type}`. Fine, unique.
+
+Let me look at _find_step and persistence _unit_dict.
+
+Also check whether step_run store round-trips unit_id/target_id (pipeline store). And check `commit_step_result` mapping: unit.target_id used for catalog commit and result.target_id comparison. After fix, unit.target_id == region, and OCR handler StepResult target_id should be region (handlers use unit/step_run target). And the region-scoped commit path in sqlite pipeline — need to verify region branch exists.
+
+Let me grep for target_id in src/ to find consumers.
+
+Let me spawn subagents? The task is read-only static review; I could use subagents for parallel evidence gathering but I can also do it myself. Given the axes, maybe delegate the regression-risk grep sweep to a subagent while I read the tests. But careful—subagents have the same sandbox issue; read-only is fine.
+
+Actually, let me just do it directly—it's manageable. Let me read the test file (729 lines) and the handoff/evidence.
+
+Let me first grep the test file's test function names, then read relevant chunks.
+dsh: reasoning:
+Now read the test file. 729 lines. Let's read in chunks. Also read evidence.
+
+Let me also check R4: handoff says R4 = existing tests (test_detect_handler.py, test_bootstrap_providers.py) - fine, AC says R4 为既有文件保持绿.
+
+Let me read test file lines 1-260 and 260-470 and 470-729.
+dsh: reasoning:
+The task description says delivery head = 59acb340318359b6c94278c968edcafb125268c1, but task file says delivery_head 78e9637f. Hmm — the review prompt says "delivery head=59acb340318359b6c94278c968edcafb125268c1". The task file (current, status advanced) says delivery_head: 78e9637fab8aa456b03f15bc1c632e6966b21a22. Interesting discrepancy. Maybe M2-P1.md was updated to 78e9637f but the actual delivered head with doc updates is 59acb340? Let me check whether there's an evidence file for 59acb340, and check doc/tasks/M2-P1.md delivery_head field. The read shows 78e9637f at line 15. Hmm, but the task says the fix diff paths include doc/tasks/M2-P1.md, handoffs, verification. The delivery head after adding docs would be a new commit. Let me glob for verification/M2-P1/* and doc/handoffs/M2-P1-*.
+
+Note also: evidence for 59acb340 may exist. Let me check.
+
+Also of note: the reproduce output in evidence shows "[MISS] run ends COMPLETED_WITH_FAILURES -- status=completed" etc. That's expected for NOT_REPRODUCED.
+
+Wait — one concern for AC4: reproduce.py "NOT_REPRODUCED + EXIT=1". The strong discriminator claim: script exits 1 when not reproduced. But is it a *strong* discriminator? It checks the first-red prediction. Fine, as integration already confirmed.
+
+Now, an important reviewer question: AC2 says R4 = existing files keep green — covered by running other test files. Test file itself has 12 tests; N4 exists though AC said N4 "确认既有覆盖即可" — they added one anyway, fine.
+
+Let me now read the rest of the test file (260-729) to evaluate assertion strength.
+
+Also check the discrepancy about the deliver head; glob verification dir.
+dsh: reasoning:
+Interesting: no evidence file for 59acb340. But the prompt says delivery head=59acb340. The task file says 78e9637f. Mismatch: the review target says delivery head 59acb340. Possibly the Owner added an extra commit (59acb340) which updated doc/tasks/M2-P1.md status and handoff — but evidence filename is still 78e9637f. Since I can't run git, I can't confirm which commits exist. But this is a potential finding: the delivery head referenced in the review request (59acb340...) doesn't match `delivery_head` in doc/tasks/M2-P1.md (78e9637f) nor the evidence file name. Actually maybe the integration prompt's head is the branch tip after doc updates; the task's front-matter delivery_head field normally records the code delivery head. Let me check other artifacts: maybe the handoff was updated to reference 59acb340? The handoff front matter says 78e9637f. evidence says implementation head 78e9637f.
+
+Hmm. Wait, the task prompt from the user (my dispatcher, presumably ZCode/Codex integrator) says "delivery head=59acb340318359b6c94278c968edcafb125268c1". This might be the actual branch tip including doc updates, whereas M2-P1.md front matter wasn't updated to it (only status/AC checkboxes). That could be a P3 observation: doc front matter delivery_head stale/inconsistent with the reviewed head. But careful — maybe 59acb340 is the commit that updated M2-P1.md (status推进), and the task file wasn't updated with its own hash (impossible to self-reference). So the front-matter delivery_head remains 78e9637f = last code commit. That's plausible and arguably fine but worth noting as an observation: the reviewed head differs from the recorded delivery_head; integrator should align.
+
+Let me check other doc files: does anything mention 59acb340? Let me grep.
+
+Also need to check remaining test file lines 510-729.
+
+And the regression risk axis: grep target_id usage in src/. Let's do these in parallel.
+dsh: reasoning:
+So no file mentions 59acb340. The review request's delivery head 59acb340 is presumably the branch tip commit that updated doc/tasks/M2-P1.md (status/AC ticks) — but M2-P1.md front-matter delivery_head wasn't updated to it (can't self-reference; and the task file itself is inside the commit). This is a documentation inconsistency worth flagging as P3/P2: recorded delivery_head (78e9637f) ≠ reviewed head (59acb340); the evidence's "HEAD=78e9637f" was captured before the doc commit. But since the doc commit only touches docs, the code evidence remains valid. Also the delivery head given to me (59acb340) is what the integrator "已核对 base..delivery 仅 5 路径" — 5 paths: service.py, test file, M2-P1.md, handoff, evidence. That matches: the docs+test+src = 5 paths. So 59acb340 is the tip after doc updates. Fine.
+
+Now the regression risk axis: grep target_id in src/.
+
+Let me grep target_id in src to find consumers.
+dsh: reasoning:
+Key consumer: handlers.py uses unit.target_id for StepResult target_id and output_target_ids. So after rebind, the OCR handler returns target_id = region → commit_step_result mapping passes and catalog commits to region. Good — full rebind path.
+
+Now check pipeline.py commit_step: region branch vs page branch (line ~562-620 and 640-700). Let me read pipeline.py 555-745 to verify region-scoped commit works with the new unit shape and revision_updates {"region": rev}.
+
+Also check handlers.py lines 280-380 (detect and ocr handlers) to verify ocr handler uses unit.region_id / target_id and _require_region.
+
+Also check `_find_step` in service.py to see how unit is located (by unit_id in step_run). Let me read service.py 240-280 and 1050-1083 maybe.
+
+Let me also check the persistence round-trip `_unit_dict` in pipeline.py (~170-200) and `_plan_unit_from` (~195).
+
+Let me read pipeline.py 100-330 and 555-760.
+dsh: reasoning:
+Good: commit_step region branch exists (line 588-600), and `_region_from_id` sets current_revisions = {"region": current_revision_id}. So full rebind works: `_record_step_attempt` uses unit.target_id = region → `current()` → `_region_or_error` → input_refs {"region": rev}, lock region lock. OCR handler uses unit.region_id → region → writes; commit_step target_id=region → region branch. Complete rebind path confirmed; no half-fix.
+
+Now the important check for the regression-risk axis: does the fix leave `_record_step_attempt`'s lock/expected consistent? For units after backfill, unit.expected_revisions / expected_lock are NOT updated (still page-level). But per diagnostic, expected_* are audit-only (never used for guard). commit_step uses step_run.input_refs/lock_snapshot captured at record time from catalog. So the stale `expected_revisions`/`expected_lock` on the PlanUnit are persisted but unused. Is `expected_*` consumed anywhere? grep.
+
+Also verify `_find_step` (how unit resolved).
+
+Let me grep for `expected_revisions` and `expected_lock` usage in src.
+
+Also check handlers.py ocr handler around 330-370 for `_require_region`.
+dsh: reasoning:
+Confirmed: unit.expected_revisions/expected_lock are never used as guards — only persisted (audit). commit_step uses step_run.input_refs/lock_snapshot. So stale expected_* on rebound units is harmless (and pre-existing).
+
+Now _find_step: read 1040-1083.
+dsh: reasoning:
+Confirmed: handler uses unit.target_id for StepResult target_id and unit.region_id for region; with full rebind both equal primary region ⇒ consistent.
+
+Detection handler `_detect_result` uses unit.target_id = page (detect unit untouched) → commit_step page target, stage stats page-level. Fine.
+
+Now, one thing to check for the "detect unit must not be changed": verify the detect unit's unit_id differs from the other units. unit_id = f"{task_id}:{target_id}:{step_type}" → detect unit id = task:page:detect; ocr unit = task:page:ocr. Different. So `item.unit_id != unit.unit_id` excludes exactly the detect unit. But wait — what if the task is a region-scoped task? Then backfill doesn't apply because region_id is not None for all units; but detect is only prepended for regionless. OK.
+
+Subtle question: the condition uses `item.unit_id != unit.unit_id`. Since unit_id contains step_type, and there could be a second unit with same unit_id? No.
+
+Now axis 1: "重绑条件在同时重绑 target_id 后是否仍正确（不会误改 detect unit 自身、不会把已 region-scoped 的 unit 改掉）" — yes.
+
+"时序" — backfill happens at commit_step_result line 650-655, before `_record_step_attempt(ocr)` in execute_run loop line 787. And index-based loop re-reads task.units each iteration (lines 760-763). Confirmed. Note that in the commit-time case, `_persist(run)` at 657 stores the rebound units, so a persisted mid-run run carries region target. Good.
+
+One potential concern: `_record_step_attempt` at line 605 `self._catalog.current(unit.target_id)` — if the region was created but detection committed; yes exists.
+
+Another regression consideration: units AFTER detect that were already terminal (SKIP decisions) get target_id=region too; `_cancel_remaining` sets terminal for RUN units after current. `_mark_terminal` uses unit_id. Nothing uses target_id for skip accounting. But what about `pipeline_tasks.units_json` roundtrip: `_unit` reads target_id → fine. Also `commit_step_result` uses `unit.target_id` for failed candidates and `region_id` for result_kind. Fine.
+
+Another consideration: `_decide_step`/planning for the SECOND run R5: the page now has regions → region-scoped plan → units have region_id set → backfill won't apply (no detect in chain). Fine.
+
+Now the target-scoped consumers: translation pipeline executor uses unit.target_id — separate architecture (translation pipeline), not affected by tasks service.
+
+What about `application/translation/pipeline` — a different pipeline service. Not relevant.
+
+Are there other consumers of PlanUnit.target_id outside service/handlers/pipeline store? `handlers.py` line 727 uses `target.target_id == unit.target_id` — let's check which handler that is. Let me read handlers.py 700-760.
+
+Also there might be a `RegionStepWriter` guard comparing expected vs current. Already known.
+
+Let me check handlers.py 700-760 and also the detect handler top (200-270) for unit target usage.
+
+Also, need to check the test file uses the production assembly (`build_production_pipeline`) — yes line 244. And handler injection via `service._executor._handlers` (private access) in N1/N2/N6/N7 — that's a test-only coupling to executor internals; flag as P3 (brittle private access) but acceptable.
+
+Potential "假绿" risks to evaluate:
+
+1. R1: asserts executed_unit_ids == planned_unit_ids (unit_id preserved) and ocr_unit.target_id == primary_id. But does R1 actually verify that the units snapshot was captured after backfill? `executed.tasks[0].units` — executed is the same run object (or persisted?) returned by execute_run. execute_run returns `run` from `_require_run` which loads from store (SqlitePipelineStore.get). Is `service._store` a Sqlite store (persisted) or in-memory? build_production_pipeline → uses SqlitePipelineStore presumably. `executed.tasks[0].units` → loaded from DB, i.e., persisted post-backfill units. Since `_persist` is called at commit, units_json has the new target_id. So R1 does verify persistence round-trip too. Good—actually strong: it proves the persisted shape carries region target_id (regression axis R-a from DIAG).
+
+Wait—does `get` return fresh object from DB or cached? Let me check SqlitePipelineStore.get. If it's a fresh deserialization each time, then R1's `executed.tasks[0].units` reflects the DB round trip. And `planned` was the object from plan_run (in-memory? plan_run returns run loaded from store too, or the same object?). Both go through store. Let's check quickly: pipeline.py store get/put.
+
+2. R0 asserts region_revisions 2 rows and current_revision_id advanced and text. Strong.
+
+3. N1: tampering input_refs["region"] in the OCR handler wrapper *before* the original handler runs. The handler passes expected_current_revision_id=step_run.input_refs.get("region") → tampered. RegionStepWriter.prepare_ocr_text raises LockBlocked? Let's check step_writes: prepare_ocr_text probably performs the guard inside a transaction and raises LockBlocked. The test asserts LOCK_CHANGED + rev_count == 1 (zero write). Actually stronger would be asserting the tampered value appears in error_detail, and asserting that the *step_run* target is region (i.e., that the failure came from the region guard, not from something else). Also the comment in the docstring mentions the half-fix discrimination but doesn't explain that under half-fix the tampering path would produce TARGET_NOT_FOUND — actually it says "the writer or commit handler would fail with TARGET_NOT_FOUND or target type mismatch". Hmm, the AC requires N1's test comment to explain the half-fix ⇒ TARGET_NOT_FOUND discrimination. The comment does mention it (lines 453-460), somewhat loosely ("or target type mismatch"). Partial satisfaction: it states the discrimination but not precisely. Note the docstring says "changing snapshot source but leaving target_id as Page" → then input_refs snapshot would be region revision (if snapshot source changed to region), and writer guard would pass, then commit_step_result: result.target_id (region, since handler's unit.target_id = page? wait under half-fix "only snapshot source" — ambiguous). Under the actual half-fix the diagnostic described (fix input_refs source only, keep target_id=page): handler's StepResult target_id=unit.target_id=page → mapping ok → commit_step(target_id=page) with revision key "region" → page branch → UPDATE media_artifacts artifact_type='region' → rowcount 0 → TARGET_NOT_FOUND. N1 as written wouldn't exercise that half-fix path; its tamper is on input_refs to a wrong value under the *full* fix. That's a legit negative test for guard semantics, but the AC's half-fix discrimination claim is only documented in a comment, not fixed by a test. The AC only required the comment. So AC3 satisfied letter-wise; I can flag as P2/P3: the "半修判别" is only prose; no test pins TARGET_NOT_FOUND for a page-targeted region commit. Actually there's a question: does any test pin that commit routing to region? R0 pins it implicitly (OCR succeeds & writes). Yes—R0 proves the full path works, thus half-fix would fail R0. Good.
+
+4. N7: asserts step_runs == 4 and both regions get OCR after continue. This is a real semantics test of DIAG §4 "restart self-heals". But careful: N7 asserts resumed run completes both regions — the fan-out on recovery. Fine.
+
+Potential false-green: N2 mutated `regions SET region_locked=1` in a wrapper *before* the original OCR handler; assert LOCK_CHANGED. But does the region lock change cause catalog lock compare (commit_step) or writer guard? `_record_step_attempt` captured lock_snapshot before the wrapper ran (lock was unlocked). The writer's prepare_ocr_text may check region lock? Actually lock change should be detected at commit_step `current.lock != expected_lock` → lock_changed. Either way LOCK_CHANGED and zero writes. Reasonable.
+
+Hmm, but N2's assertion `primary.text.ocr_text == ""` after failure — fine.
+
+5. R3: asserts exactly one failed step with PROVIDER_NOT_CONFIGURED and run COMPLETED_WITH_FAILURES. Reasonable.
+
+Let me check whether R3's command TRANSLATE_ALL steps chain: `_COMMAND_STEPS[TRANSLATE_ALL]`. Check `_COMMAND_STEPS` to see if steps include ocr, translate, render etc. and whether the failure is at "color" or "translate". Test asserts error_code == PROVIDER_NOT_CONFIGURED, not which step. Weak-ish but matches AC.
+
+6. R0 asserts primary = all_regions[0] sorted by reading_order: detector candidates reading_order 1 and 7, but region_creator is called with reading_order = candidate.reading_order or index → 1 and 7. And region_ids[0] returned in candidate order — the detector's `page_global_candidates()` may sort by reading order. So primary (region_ids[0]) == reading_order 1 == all_regions[0]. Consistent. Fine.
+
+Now, potential concern about R0's `assert len(ocr_steps) == 1`: after full rebind only one ocr unit (the page chain). Good.
+
+Now, a deeper question on correctness of the fix: is rebinding target_id for ALL regionless units correct for steps that are page-scoped? Consider command with steps including "ocr" → chain detect, ocr, translate, segment, mask_refine, inpaint, render. All these handlers are region-based (each calls _require_region?). Let's check: handle_render? render may be page-scoped (writes page artifact). If render is page-scoped, then rebinding render's target_id to region would break it (commit_step region branch requires revision key "region"; render handler's StepResult target_id=unit.target_id → region; revision_updates maybe {} or page artifact). Hmm! This is a real regression risk: which steps are region-targeted vs page-targeted?
+
+Let's check handlers: handlers call `self._require_region(unit)` for ocr, translate, segment, mask_refine, inpaint? And render? Let me grep `_require_region` usage in handlers.py and look at handle_render.
+
+Pre-existing behavior: before the fix, region_id was already rebound to primary for all these units, so `_require_region` passed for all of them (region_id set). The only new thing is target_id. For a step whose handler uses unit.target_id + region_id inconsistently (e.g., returns target_id=region but writes page artifact), the change affects commit routing. Let's inspect each handler.
+
+Steps list: let me check `_COMMAND_STEPS` and CommandType members. And handlers for render: probably writes Clean/page artifact and uses page_id. Let's grep.
+
+This is the key regression-risk axis. Let me look at handlers.py broadly: grep `def handle_` and `_require_region`, and `page_id=` in StepResult/revision_updates.
+
+Let me read handlers.py sections.
+dsh: reasoning:
+All handlers use `_require_region(unit)` — including render, color, term_extract. So every step in a regionless page chain is region-targeted. Let me confirm _require_region and handle_render: line 963.
+
+Let me read handlers.py 960-975 and 760-820.
+
+Also `_COMMAND_STEPS` values: _REOCR, _FULL_TRANSLATION, _RERENDER, _REINPAINT — read service.py 60-100. And note: detect only prepended when "ocr" in steps. For RERENDER_* / REINPAINT_* page-scope chains, is "ocr" in steps? _RERENDER likely ("render",) and _REINPAINT ("segment","mask_refine","inpaint","render")? If no ocr, no detect, no backfill → those page-scope commands on regionless page would plan region_id=None units with `_require_region` failing... pre-existing. Not our concern.
+
+Let me read service.py 60-100 and handlers 760-830, 955-975.
+dsh: reasoning:
+All region steps require region. So rebinding target_id to region for all post-detect regionless units is consistent: every one of them is region-targeted.
+
+BUT: the `_FULL_TRANSLATION` chain includes "color" and "term_extract" — handle_color revision_updates={} and uses region; fine.
+
+Now a critical subtlety for `commit_step`: For region target with revision_updates={} (color, term_extract, render), the region branch skips the UPDATE and applies stage_updates with target_type=region, target_id=region_id. Good [pipeline.py:588-598, 612-618].
+
+Now another risk: detect unit's `_detect_result` target_id = unit.target_id = page. commit_step(target_id=page) → page branch with revision_updates={} → no update → stage_updates target_type='page', target_id=page_id. Wait: `stage_updates=result.next_stage_states or {unit.step_type: COMPLETED}` — detect's StepResult next_stage_states? `_detect_result` doesn't set next_stage_states → commit_step_result uses `{unit.step_type: COMPLETED}` → stage 'detect' state on page. Fine.
+
+Hmm, but note: after backfill, the ocr unit has target_id=region, region_id=region, but `stage_states` snapshot in decision was page-level at plan time; `_decide_step` for ocr ran with region=None so checks page stages. Fine — decision already made.
+
+One more: `expected_revisions`/`expected_lock` on the rebound PlanUnits remain page-shaped (audit only). The DIAG §5.1 says these are audit-only. Verified via grep: only used at pipeline.py:186-187 persistence and plan-time; commit uses step_run.input_refs. So no functional issue. Could flag as P3 observation: rebound units carry stale expected_* (page-shaped) fields, inconsistent with new target_id; harmless today but a latent trap for future consumers. That's a decent P2/P3 finding. The task's allowed scope is only the function body; updating expected_* within the function is allowed (it's inside function) but they chose not to. Since AC doesn't require it, it's a P3 observation.
+
+Now, let me double check the fix diff is only in that function. I can't run git diff. But I can check whether service.py has anything else suspicious. The review request says integrator verified only 5 paths, base..delivery. I should do a sanity check on the function body vs "base L921-946" description — the current function spans 921-959 including docstring; the code change is exactly the replace call + comment. I can also check for other modified regions... Without git, I can rely on integration cross-check plus code reading. Maybe compare against the base version via .git? I can read files in .git? No—can't run git. But maybe there's a copy of the base file in another worktree (e.g., G:\CODEX\New Manga.worktrees\...). The workspace instructions say other worktrees exist. Reading files outside the session workspace may be blocked by sandbox (read-only allowed? policy is workspace-write for writes; reads may be permitted). Let me try reading the base service.py from another worktree to diff manually. Which worktree? The DIAG worktree: G:\CODEX\New Manga.worktrees\DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh at base 5789b30b — that's a different base (5789b30b vs 33826641). Hmm, but for the function, the DIAG worktree version at 5789b30b was the base for diagnosis; M2-P1 base is 33826641. If nothing else changed the function between 5789b30b and 33826641, the diff reading is meaningful.
+
+Alternatively, maybe the main repo checkout G:\CODEX\New Manga has the pre-fix file. Let me try reading a couple of candidate paths for _backfill_detected_regions. Actually the file exists in DIAG worktree. Let me try reading it (outside session workspace). If sandbox denies, that's fine — I'll note reliance on integrator's diff verification.
+
+Let me attempt: read "G:\CODEX\New Manga.worktrees\DIAG-M2-REGIONLESS-LOCK-CHANGED-001-dsh\src\application\tasks\service.py" lines 915-950.
+
+Also read the reproduce.py to assess the AC4 strong discriminator (does it actually assert the full defect chain and exit 1 when not reproduced?).
+
+Also read release-33826641.md to check allowed scope list.
+
+Let me do these reads in parallel.
+dsh: reasoning:
+Excellent — I can read outside the workspace. Base (5789b30b) version confirms the only change to the function is `replace(item, region_id=primary)` → `replace(item, region_id=primary, target_id=primary)` plus docstring/comments. Note the base comment at 936-938 says "see their new region_id" — the new comment also mentions target_id. That's consistent with allowed scope.
+
+Now, one important check: the fix at M2-P1 base is 33826641, and the DIAG worktree is at 5789b30b. To verify the M2-P1 base content of the function, I'd want the version at 33826641. If other commits between 5789b30b and 33826641 changed the function... unlikely. I could look for another worktree at 33826641. Let me glob worktrees? I can list directories via glob on the parent path? glob tool searches in a path. Let me try glob pattern "*" with path "G:\CODEX\New Manga.worktrees". Actually glob returns files, not directories. Hmm. Could use grep on parent, but that's heavy.
+
+Alternative: the main repo G:\CODEX\New Manga\src\application\tasks\service.py — main branch HEAD may be at 33826641 or later (M2-AC1 integrated at f162193b...). The base 33826641 is described as "fixed base"; main might be at 33826641 + integration. If main hasn't integrated M2-P1 yet, main's service.py == base version. Let me read that file's function to compare with the delivery version. That gives me an independent check of the exact diff (only within function).
+
+Let me read G:\CODEX\New Manga\src\application\tasks\service.py around 900-960.
+
+Also check whether other parts of that file differ from the M2-P1 worktree version — comparing whole files would be heavy; but I can grep for a few things. Actually, a decent approach: read main's version of the function region and compare. Since integration isn't done, main should be base-identical.
+
+Let me do that. Also check main's test file absence (glob tests/pipeline/test_regionless_rebinding.py in main) to confirm it's new.
+
+Also, to verify the "5 paths only" claim independently, I could compare file lists... hard without git. But I can check whether any other file in the worktree differs from main in a suspicious way. That's a big diff; not feasible. I'll rely on the integrator's verification + targeted checks (the doc/test/src files claimed).
+
+Actually, I can do a stronger independent check: compare mtimes? Not reliable. Hmm. Let me at least check whether the worktree contains obviously modified files elsewhere by checking for the M2-P1 changes' fingerprints. Not feasible. The integrator already ran `git diff --stat` and confirmed 5 paths; my role's scope axis can verify the *content* of allowed paths and check that no unallowed path has M2-P1-related edits (e.g., grep for edits to step_writes.py? unchanged). I'll note reliance.
+
+Let me read main's service.py function plus main's step_writes.py to confirm no changes needed there (the guard). Compare worktree step_writes.py vs main? The guard file should be unchanged; can't diff easily. But I can read the worktree's step_writes.py 200-240 for the guard semantics to verify N1's claim (raise LockBlocked with "expected None" detail).
+
+Let me read step_writes.py 180-290.
+dsh: reasoning:
+Main repo (not yet integrated M2-P1) has the pre-fix version — confirming base content and that the only change in the function is region_id→region_id+target_id plus docstring/comments. Good independent confirmation of the fix diff for the *function*.
+
+Note: main's line numbers 921-946 == base described. Worktree's function 921-959. Diff: docstring additions, comment additions, replace args. Only within function. 
+
+Now, does the worktree differ from main in other src files? Since the integrator verified 5 paths, I'll accept. But I could do a quick sanity check: grep the worktree's step_writes.py vs main's for some recent-modification marker... not useful. Alternatively, check that the worktree's handlers.py, pipeline.py match main by comparing a checksum-ish sample? I can't hash files (no shell; read-only pwsh unavailable). I'll rely on the integrator's diff verification, noting I couldn't independently re-run git.
+
+Hmm, actually I might be able to compare file sizes via glob? glob doesn't return sizes. Read whole files and compare mentally is infeasible for large files. Fine.
+
+Now let me consider the reproduce.py "EXIT=1 NOT_REPRODUCED" as strong discriminator. Checks: all 8 checks include "no Region write happened" etc. When fixed, several MISS and verdict NOT_REPRODUCED, exit 1. But note: exit 1 also occurs if the analysis is wrong in unrelated ways (e.g., detect never runs). The script's docstring acknowledges that. The claim "缺陷消除强判别" is a bit overstated because NOT_REPRODUCED is the *else* branch, which also fires if harness setup partially breaks (though setup failure returns 2). Actually if the pipeline were broken such that detect didn't run, check 1 would MISS too and verdict NOT_REPRODUCED with exit 1 — false positive. So AC4's discriminator is not fully "strong" standalone; but combined with the pytest suite (R0 fully asserts the completed happy path), the risk is mitigated. This is a legitimate P3 observation (or P2?) — the evidence class claim in AC4 says "强判别". The reproduce output in evidence shows detect PASS and other checks MISS with the exact fixed shapes (ocr completed, target_id/region_id primary, 1→2 revisions), so the fixed state is confirmed by output, not just the verdict. Good. So P3: AC4's "strong" wording is fine given logs show the positive fixed shape; but note the exit-1 path is generic.
+
+Actually wait — there's something more interesting: evidence §2 output summary says:
+
+```
+===== AC2-I region revisions =====
+primary: 2, secondary: 1
+```
+and
+```
+[MISS] no Region write happened (1 revision = detect first revision)  -- region_ids=[...]
+```
+Fine.
+
+Now — the check "ocr step is FAILED with LOCK_CHANGED" MISS with "ocr=None"? Evidence line 84 says `ocr=None`. Hmm, `ocr=None` means `next((s for s in steps if s["step_type"] == "ocr"), None)` returned None?? But line 74 of evidence says `ocr: status=completed ... input_refs={'region': ...}`. Contradiction?
+
+Look at evidence lines 83-90:
+```
+[PASS] detect step ran and committed  -- detect=completed
+[MISS] ocr step is FAILED with LOCK_CHANGED  -- ocr=None
+[MISS] failure is the writer guard on a None expectation  -- detail=None
+[MISS] smoking gun... -- target_id=<primary> region_id=<primary>
+[MISS] ocr input_refs carries no 'region' key  -- input_refs={'region': '<first_rev>'}
+```
+`ocr=None` in the detail string is from `f"ocr={ocr_step and ocr_step['error_code']}"`. If ocr_step exists but error_code is None, then `ocr_step and ocr_step['error_code']` → None (falsy value of the dict access), printing `ocr=None`. Yes! Because Python's `and` returns the second operand: error_code is None → prints None. So `ocr=None` means error_code is None, and it exists. Consistent. Same for `detail=None`. OK, not a contradiction.
+
+Now: is R0 covering AC2 exactly? AC2 R0 requires run COMPLETED, ocr target_id==region_id==primary, primary region_revisions==2, regions.current_revision_id advanced. All asserted (lines 270-302). ✓
+
+R1: unit snapshot target_id==region_id==primary; all unit_ids unchanged. ✓ (lines 324-340)
+
+R2: 2+ regions, only primary ocr, non-primary NOT_STARTED, terminal==planned, run COMPLETED. Hmm — AC says "非 primary NOT_STARTED". The test asserts secondary has exactly 1 revision (untouched) and only one ocr step. Does it assert the *stage state* of secondary is NOT_STARTED? It doesn't directly check stage states. The DIAG says non-primary regions remain NOT_STARTED. The test's proxy: no ocr step targeting secondary, 1 revision. That's reasonably equivalent but not a literal stage-state check. Slight weakness → P3 observation (assertion is proxy-level; a stage_state assertion would pin AC wording better).
+
+R3: only asserts one failed step with PROVIDER_NOT_CONFIGURED and task error code and run status. AC: "TRANSLATE_ALL(page scope, regionless) 走到下一个真实能力缺口（如缺 translate provider 的 PROVIDER_NOT_CONFIGURED）而不是 LOCK_CHANGED". Covered: asserts ocr completed with no error, and one failed step PROVIDER_NOT_CONFIGURED. Does it assert the failed step is a specific step type (e.g., color/translate)? No. Minor.
+
+R4: existing files green — pytest run covers.
+
+R5: second run region-scoped no duplicate regions. Asserts detect not in planned step types, region ids unchanged, detector not invoked again, run2 COMPLETED. ✓
+
+N1: asserts LOCK_CHANGED + rev_count==1. Note it doesn't assert the step_run target_id is region or that error_detail mentions the tampered value. But since under half-fix... hmm. Actually a subtle false-green risk for N1: could `LOCK_CHANGED` arise from somewhere other than the writer guard on the tampered region expectation? Under the tampering wrapper, input_refs["region"] = "tampered...". The writer guard compares expected vs current → mismatch → LockBlocked → PROVIDER error code LOCK_CHANGED. Alternatively, commit_step would also compare: step_run.input_refs has "region"→tampered, current region revision = first rev → mismatch → input_revision_changed → code INPUT_REVISION_CHANGED, not LOCK_CHANGED. So asserting LOCK_CHANGED pins the writer-guard path (since the handler raises first). Good discrimination.
+
+But: does the test verify that the tampering actually reached the guard? rev_count==1 confirms no write. And status FAILED LOCK_CHANGED. Reasonable. Could strengthen by asserting "region" in input_refs under full fix... not needed.
+
+One thing: N1 asserts `executed.status is COMPLETED_WITH_FAILURES`. Fine.
+
+Now the AC3 requirement: "N1（把 input_refs["region"] 设为错误值 ⇒ 必须 LOCK_CHANGED 且零写——守卫语义仍在；并在测试注释中说明"只改 snapshot 来源的半修 ⇒ TARGET_NOT_FOUND"判别依据）". The test docstring lines 453-460 explains half-fix → TARGET_NOT_FOUND/target type mismatch. It does mention it. But it does NOT mention `commit_step_result` route (Page target → media_artifacts update rowcount 0 → TARGET_NOT_FOUND). It says "the writer or commit handler would fail with TARGET_NOT_FOUND or target type mismatch". Acceptable, slightly loose. P3.
+
+N2: region_locked between detect and ocr → LOCK_CHANGED, text/revisions unchanged. ✓ asserts rev_count==1 and ocr_text == "". Note: does it assert the lock actually got set? The wrapper sets region_locked=1 before the handler. The handler calls prepare_ocr_text with expected = step_run.input_refs["region"] (region current rev, unchanged) → writer guard passes (lock isn't checked by writer!) → writes text... then commit_step_result compares current.lock (region_locked=True) vs step_run.lock_snapshot (captured before, region_locked=False) → lock_changed → LOCK_CHANGED. But wait — the writer's _persist already INSERTED a region_revision and updated text before commit_step_result detected the lock change! Then the test asserts rev_count == 1 and ocr_text == "" ... Would that fail?
+
+Let's look at prepare_ocr_text: does it stage + persist, or does it stage and leave pointer? The docstring at line 267-268: "Text state is region-owned; the *pointer* stays behind for the pipeline seam so its optimistic guard remains authoritative." `_persist` inserts a region_revision and updates text_json. So after the OCR handler, there IS a new revision row and text. If commit_step_result then fails with lock_changed, the revision write has already happened → test asserting rev_count==1 would FAIL... but integration says 21 passed. So either prepare_ocr_text doesn't persist (stages), or the lock check happens earlier.
+
+Let me examine prepare_ocr_text in step_writes.py. Maybe it checks region lock first (region lock guard) and raises LockBlocked before writing. Let me read the beginning of step_writes.py (1-180) and the RegionStepWriter.prepare_ocr_text.
+
+This matters for judging whether N2 is a meaningful "zero write" test or accidentally passing for another reason. Let me read.
+dsh: reasoning:
+`prepare_ocr_text` line 117: `_staged_region` reads the region fresh from the repository. Line 118: if staged.region_locked → raise LockBlocked("region is locked"). So N2's mutation of region_locked=1 causes the guard at 118-121 to raise LockBlocked **before** any write, with stage="ocr". So zero writes asserted at 543/544 hold. Good — N2 is a meaningful zero-write test, though it exercises the *pre-write region lock check* rather than the commit-seam lock compare (`commit_step` line 583). Either way error_code maps to LOCK_CHANGED? Let's check handlers.py error mapping: LockBlocked → error_code "LOCK_CHANGED" (ports/providers/errors.py 152-155). The `_executor.execute` catches ProviderError and raises StepExecutionError with code = error.error_code. So LOCK_CHANGED. ✓
+
+But hmm, N2's docstring says "Locking primary region before OCR execution triggers LOCK_CHANGED without writes" — accurate.
+
+Note the executor's error mapping: need to verify LockBlocked.error_code == "LOCK_CHANGED". Let me check ports/providers/errors.py ~140-160 and the executor mapping in infrastructure/providers (executor?). Actually service `_executor.execute` raising StepExecutionError. Let me grep for error_code property and the mapping. Quick grep.
+
+Also, a key semantic point for N1's discrimination claim: the writer guard raises LockBlocked before persist, so zero writes. ✓ (step_writes 219-231 happens inside `_persist` after BEGIN IMMEDIATE but before INSERT; rollback in except). ✓
+
+Now let me double-check the DIAG's predicted half-fix path (TARGET_NOT_FOUND) is really excluded: the fix rebinds target_id, so ocr StepResult.target_id = region → mapping passes → commit to region branch → applied. ✓ Confirmed by reading handlers 362-369 and pipeline 588-600.
+
+Now, are there other consumers of PlanUnit.target_id that could break with a region-valued target_id for a unit whose unit_id embeds page id? Grep showed handlers (all use unit.target_id consistently), service, pipeline store. Also `application/translation/pipeline/executor.py` uses unit.target_id (separate translation pipeline; likely not the same PlanUnit? it's a different domain). Let me check what PlanUnit that is — `src/application/translation/pipeline/executor.py` imports from domain.translation? It's a different pipeline (translation pipeline), unrelated to tasks service. Its PlanUnit may be a different class. Let me verify quickly to avoid a false claim. grep import in that file.
+
+Also check `src/infrastructure/providers/handlers.py:727` `if target.target_id == unit.target_id` — that's handle_term_extract or handle_color; uses target from where? Let me read 697-760.
+
+Let me also verify `_require_region`.
+dsh: reasoning:
+Interesting finding candidate: `handle_term_extract` looks up `book_id` by matching `run.targets` entries with `target.target_id == unit.target_id`. For a regionless page task, `run.targets` contains a RunTarget with target_id = page_id (created in create_run from snapshot.target_id). After the fix, the term_extract unit's target_id = region_id → no run.target matches → book_id = None. Before the fix, target_id = page_id → matched → book_id set.
+
+So the fix changes behavior of term_extract book_id lookup: from book_id to None for regionless-first-run chains. Is that a regression? Consequence: `self.deps.terms.extract(source_text, glossary=..., book_id=None)` — glossary/TM scoping by book may be skipped. This is a real behavior change not covered by the tests (R3 stops at provider gap before term_extract; the TRANSLATE_ALL chain includes color, term_extract after ocr — in R3 they stop at the first failing provider, which is likely color or translate; the test only asserts one failed step).
+
+Hmm wait, which step fails in R3? providers wired: only ocr. Plan: detect→ocr→color→term_extract→translate→segment→mask_refine→inpaint→render. `_decide_step` returns BLOCKED "PROVIDER_UNAVAILABLE" if `_provider_available` false. provider_bindings only has "ocr". `_provider_available`: binding = run.provider_binding_snapshot.get(step_type); if None → True. So color (no binding) → available → RUN. Then executor handles color: handle_color needs... let's see: handle_color raises ProviderNotConfigured if deps.color? Let's check handle_color at 642-695. It probably needs a service/registry. In the test, registry only has OCR; `_invoke_provider` would raise ProviderNotConfigured when no provider registered for the capability → error_code PROVIDER_NOT_CONFIGURED at first step after ocr = "color". So R3 fails at color. term_extract not reached. So R3 doesn't cover the term_extract book_id regression.
+
+Is the book_id lookup issue real? Let's check `RunTarget`: create_run builds run.targets from snapshots; for a page-scoped regionless run, target_id = page_id. So `unit.target_id == target.target_id` matching relies on unit target being the page — which only holds for regionless plans. For region-scoped plans, units have target_id=region and run.targets have target_id=region (create_run with region scope) — matched. But in the regionless-then-backfilled case, run.targets still holds the PAGE target while unit.target_id becomes region → no match → book_id None.
+
+However: how does this affect the *previous* behavior at base? At base, term_extract unit target_id = page → matched → book_id = book. So the fix introduces a behavior change for term_extract's book_id in the regionless first run. Is it harmful? book_id is used for glossary/TM scoping; None means possibly no book-scoped glossary. That's a functional (maybe minor) deviation, and it's outside the tested matrix. Notably, for region-scoped plans (the self-healed second run), term_extract would get region target_id and run.targets target_id = region → matched. So only the first-run regionless path loses book_id.
+
+Hmm, but wait: is `run.targets` in the regionless page run a RunTarget with target_id=page? Let's confirm create_run lines 230-260. Line 246-247: run_target_id, target_id=snapshot.target_id. And snapshot comes from catalog.current(page) → target_id=page. Yes.
+
+So this is a genuine P2/P3 regression observation: after rebinding target_id, `handle_term_extract`'s book_id lookup by target_id no longer matches for units whose run target is the Page; book_id becomes None during the first regionless run (TRANSLATE_ALL/TRANSLATE_* chains include term_extract). Not covered by R0–R5/N1–N7 (R3 halts at color before term_extract).
+
+How severe? The term_extract handler requires `deps.terms` service; in production assembly it's presumably wired. The impact: glossary/TM lookup scoped to book lost → possibly different term candidates. This is a real (if narrow) behavior change. Is it "expected"/acceptable per the invariant? The invariant says target_id ≡ write target; but some code uses unit.target_id as a *scope* key rather than a write target — that's a pre-existing design smell. The AC didn't require handling it. The Task's allowed scope is only _backfill_detected_regions, so fixing requires a decision by Codex. Since the fix's stated invariant conflicts with this consumer's assumption, I should flag it. Severity: P2 (建议) or P1 (必须)? It's a legitimate functional regression risk not covered by tests. But is it truly a behavior change that matters? book_id=None → `self.deps.terms.extract(source_text, glossary=glossary or None, book_id=None)`. Let me check what the terms service does with book_id — if None, maybe it still works but without book-scoped TM. Could degrade translation glossary application. In M2's first run of a regionless page, previously book_id was set. So yes, a regression.
+
+Let me verify handle_color and whether other steps have similar target_id-based lookups. grep showed only line 727 in handlers uses target.target_id comparison. Let me also grep `unit.target_id` usages beyond handlers/service — already have the grep list. In handlers all `target_id=unit.target_id` for StepResult. Only term_extract has the run.targets lookup.
+
+Also check `handlers.py:942 page_id=target.page_id` — which function? Let me read 920-955.
+
+Also — I should double check whether there are other consumers of PlanUnit.target_id in application/translation or elsewhere (the grep list includes translation/pipeline/executor.py — likely a different PlanUnit; let's check its import).
+
+Let me read those.
+dsh: reasoning:
+handle_color raises ProviderNotConfigured (deps.source_styles None) at color → R3 fails there with PROVIDER_NOT_CONFIGURED. Consistent.
+
+Now let's confirm the term_extract book_id concern by checking `ProductionHandlers` deps and the terms service behavior. But even before that — is `book_id` behavior worth a P2? Let's assess impact: `handle_term_extract` at 723-730:
+```python
+book_id = next((target.snapshot.book_id for target in run.targets if target.target_id == unit.target_id), None)
+```
+After the fix, for a regionless-first-run term_extract unit, unit.target_id = region_id, run.targets target_id = page_id → no match → book_id=None. So terms.extract gets book_id=None.
+
+Let's check the terms service `extract(source_text, glossary, book_id)` to see what book_id does — maybe it selects TM from that book; None → empty TM. This is a functional degradation in the first run only. And after the self-heal second run it's region-scoped so run.targets have region target? Wait, for a *page-scoped* command on a page WITH regions (R5 second run), `create_run` still creates RunTarget with target_id = page_id? Let's check create_run: it iterates snapshots from scope expansion. For a page scope, transitions are pages → run target target_id = page_id, regardless of regions. So in R5's second run, planned units are region-scoped (target_id=region) but run.targets still have target_id=page_id → term_extract's book_id lookup fails there TOO. So this mismatch is pre-existing for region-scoped plans of page-scope commands (not introduced by M2-P1)! Indeed, at base, a page-scoped TRANSLATE_ALL on a page that already has regions plans region units with target_id=region and run.targets page → book_id None. So the fix merely extends that pre-existing (already broken for region-scoped page runs) behavior to the first regionless run. That downgrades my finding: the "regression" makes the first-run behave like the already-existing region-scoped page-run path, i.e., it converges to existing behavior rather than introducing a new class of bug.
+
+Hmm, is that right? At base, regionless first run gave book_id=book (matching page). Now it gives None. So relative to base-first-run it IS a change; but relative to the region-scoped page-run path (the majority/second-run), it's consistent with the existing (arguably buggy) behavior. So this is a P3 observation: a target_id-as-scope-key consumer (`handle_term_extract` book_id at handlers.py:723-730) now sees the Region id for the first regionless run, so book-scoped glossary/TM is no longer looked up on that path — same as existing region-scoped page runs; not covered by the test matrix; pre-existing inconsistency, worth recording for the fan-out slice. Good — P3, maybe P2 because it's an actual behavior delta introduced by the fix on a path that previously worked. I'll call it P2 (建议) with clear explanation that it's bounded/pre-existing in the region-scoped path and not blocker.
+
+Hmm, let me double check: does `run.targets` include the page for a page-scope run? Let me read create_run 230-260.
+
+Also check whether terms service is wired in production assembly (deps.terms) — if never wired in production, the impact is nil. `build_production_pipeline` — let's check infrastructure/pipeline/assembly.py for terms/term_extract wiring. If terms is None in production, handle_term_extract always raises ProviderNotConfigured. Let me grep.
+
+Let me also verify adapter: `handle_term_extract` requires deps.terms; if production assembly doesn't wire it, no impact at all (P3).
+
+Let me read service.py create_run 225-260 and grep for `terms=` in src.
+dsh: reasoning:
+`terms=TermExtractionService()` is wired in bootstrap/core_assembly.py:765, and source_styles too. So in production, term_extract does run with book_id. Let me check TermExtractionService.extract signature and what book_id does — if book_id=None just means no book-scoped TM data, impact is real but modest.
+
+Let me check the terms service. grep for class TermExtractionService.
+
+Actually, keep the review focused. I'll flag it as P2 with the caveat that it's a pre-existing target_id-as-scope-key assumption also present for region-scoped page runs. Let me quickly confirm TermExtractionService uses book_id meaningfully.
+dsh: reasoning:
+`TermExtractionService()` in core_assembly is constructed with no tm_store → `self._tm_store is None` → book_id unused (line 103 gate). So in the current production assembly, book_id has zero effect. Therefore the term_extract target_id/lookup delta is currently inert. Great — that downgrades to P3 (observation / latent trap): if a TM store is ever wired, the regionless first run would lose book-scoped TM, but that inconsistency already exists for region-scoped page runs.
+
+Wait, does `handle_term_extract` even get reached in production? It requires `deps.terms`; wired. And handle_color requires source_styles; wired in core_assembly. OK.
+
+Now, let me consider another regression axis: `run.targets` lookup by target_id — any other consumer? Only handlers:727. Also `_context_pages` uses target.page_id, fine.
+
+What about the aggregate/status summary at service.py:1040ish (get_progress) — uses pages from run.targets. Fine.
+
+Another key regression check: `commit_step_result` line 635 `expected_targets = {unit.target_id}` and result.output_target_ids. Handlers return output_target_ids=(unit.target_id,) → match. ✓
+
+Also `_candidate` for failures uses region_id → result_kind "region". Fine.
+
+Now let me also examine whether the rebind should skip units *before* the detect unit (there are none) or units whose decision is BLOCKED/SKIP. Pre-existing behavior rebinds all region_id-None units. With the added target_id, SKIP units' persisted shape gets region target too. Does any consumer treat a SKIP unit's target_id as write target? No step_runs are created for SKIP units (skipped in execute_run). Planning on `continue` re-plans from catalog. So harmless. But there's one consumer: `_cancel_remaining` and `terminal_unit_ids` use unit_id. Fine.
+
+Hmm — one more: `pipeline_tasks.units_json` persisted shape; any UI/reader consuming units_json and assuming target_id==page for SKIP units? Let me grep for units_json consumers.
+
+Also there's `verification` of progress: `get_progress` uses planned/terminal counts. Fine.
+
+Let me grep units_json.
+
+Then I think I have enough for the four axes. Let me also check the release task file (verification/M2-P1/release-33826641.md) for the allowed scope and frozen AC, and doc/tasks/M2-P1.md status transitions consistency. And check for review template compliance? Not required.
+
+Also verify the handoff vs integration results: handoff says pytest 21 passed in 1.03s EXIT 0, reproduce EXIT=1 NOT_REPRODUCED, diff --check exit 0 — matches integrator's independent run as stated. Evidence records the same. One inconsistency: handoff N6/N7 "no NOT_RUN" claim vs AC says N6/N7 may be NOT_RUN — fine, they're implemented. Handoff line 43 says "负向用例 N6 与 N7 均在...完整实现并验证通过" — but wait, handoff AC3 row says N6 (primary 软删 => PROVIDER_UNAVAILABLE). The diagnostic's N6 was "primary 软删 ⇒ LOCK_CHANGED、text/revisions 不变"? Let me re-read AC3: "N6（primary 软删）与 N7（detect 后中断 + continue 恢复）实现或如实标 NOT_RUN 并给理由." The AC doesn't specify N6's expected code; the test asserts PROVIDER_UNAVAILABLE (raise ProviderUnavailable from `_staged_region` when region.deleted). That's consistent with the code: `_staged_region` raises ProviderUnavailable("region ... is not available") when deleted. So PROVIDER_UNAVAILABLE is right. Note the handoff AC3 row describes it correctly. But the test N6's docstring asserts no writes? It asserts only status/error_code; doesn't assert zero writes. AC for N6 didn't demand zero write. Fine.
+
+Hmm, but under half-fix, would N6 differ? Not needed.
+
+Now, one more check on N6: it soft-deletes the region in the OCR wrapper, then the original handler runs: `_staged_region` → repository.get_region returns deleted region → raise ProviderUnavailable. But wait: it soft-deletes the PRIMARY region, then `handle_ocr` calls `_require_region` (ok) then `images.region_crop` (fake) then run_chain with the OCR provider (registry has OCR) → provider returns text; then prepare_ocr_text → `_staged_region` → deleted → ProviderUnavailable. So error code PROVIDER_UNAVAILABLE. ✓ (test asserts exactly that.) Good.
+
+Now let me check units_json consumers and then the release file. Also maybe check that tests/pipeline/__init__.py or conftest exists for imports (test file imports `application...` directly, meaning pytest config sets src on path). It passed, fine.
+
+Let me grep units_json.
+dsh: reasoning:
+Good. Main is at 33826641 → my comparison of main's service.py with the worktree IS a true base-vs-delivery comparison for that file. Excellent: I independently confirmed the function diff (base vs delivery) is exactly the intended change, plus docstring/comments, nothing else in that function. But I can't confirm no other hunks in service.py. Hmm — can I? I could compare the two files fully by reading both and diffing... 1083 vs 1070 lines. The worktree service.py has 1083 lines, main 1070 → 13 extra lines, all plausibly the docstring/comment additions (function went from 921-946 (26 lines) to 921-959 (39 lines) = +13 lines). That's a strong signal: total line delta = +13 exactly matches the function's growth. Great — that's essentially proof that only that function changed (in terms of line count). To be safer, I could compare a few regions but the +13 exact match is compelling. I can also state: main file total 1070 lines, worktree 1083 (+13 lines), and the function region grew by exactly 13 lines (921-946 → 921-959).
+
+Wait: base function 921-946 inclusive = 26 lines; delivery 921-959 = 39 lines; +13. And file 1070 → 1083 = +13. Perfect. Also check that the surrounding lines after the function are unchanged: base line 948 `def _cancel_remaining(` == delivery line 961 `def _cancel_remaining(` (offset +13). Yes from my reads: base 948 vs worktree 961. And base 915-920 == worktree 915-920 identical. So the insertion is confined to the function. Actually this proves the *net* line delta equals the net insertion inside the function; a change elsewhere with a compensating deletion could hide, but extremely unlikely and integrator's git diff covers it.
+
+For the test file: new file (main has no tests/pipeline/test_regionless_rebinding.py) — let me verify via glob on main. And the doc files: task file modified (status/AC), handoff/evidence new. Fine.
+
+Let me glob main's tests/pipeline for the file to confirm "new".
+
+Also I want to check the executor's error mapping for LockBlocked → LOCK_CHANGED, to fully validate N1/N2 assertions route. Let me grep in src/infrastructure/providers/executor.py or wherever StepExecutionError is raised.
+
+Let me do both.
+dsh: reasoning:
+Let me read src/infrastructure/pipeline/executor.py (lines 1-60) and handlers.py 190-220 to confirm ProviderError → StepExecutionError(code=error.error_code) mapping (LockBlocked → LOCK_CHANGED).
+dsh: reasoning:
+Important! Note: handlers are wrapped by `_typed` — but only when accessed via `ProductionHandlers.as_mapping()`? Let's check: `as_mapping` at line 219 returns `dict(self._handlers)` — the `_handlers` dict built in `__init__` (line ~180-192) — are the handlers wrapped with `_typed`? Let me check the constructor lines 170-192. If `self._handlers` holds raw handlers and as_mapping returns raw, then ProviderError wouldn't be converted... The docstring says handlers convert themselves. Let me read the constructor.
+
+Critical for N1/N2: does the tampering wrapper inject before or after `_typed`? In the test:
+```python
+service, _, _ = _build_service(workspace)
+original_ocr = service._executor._handlers[STEP_OCR]
+service._executor._handlers[STEP_OCR] = _tampering_ocr_wrapper(original_ocr)
+```
+`service._executor._handlers[STEP_OCR]` is whatever build_production_pipeline put there — likely the `_typed`-wrapped handler if as_mapping wraps. The wrapper calls the wrapped original within, so ProviderError conversion still occurs inside → StepExecutionError("LOCK_CHANGED"). Good either way.
+
+Let me read handler constructor 160-195.
+
+Then: another point — N1 asserts error_code == "LOCK_CHANGED"; since the wrapper chain preserves typed conversion, fine.
+
+Now let's finalize the review. But first, let me check a couple of remaining risk items:
+
+(a) `expected_revisions`/`expected_lock` staleness — verified unused. P3.
+
+(b) The rebind condition includes SKIP/BLOCKED units → persisted shape change; harmless. Verify nothing consumes `unit.target_id` for SKIP accounting... e.g., `get_progress` might map units to pages via target_id? Let me check get_progress (service.py ~990-1050). It counted pages from run.targets, not units. Let me quickly read 980-1040 to be sure.
+
+(c) unit_id contains page id while target_id is region → any code that *derives* target from unit_id? `_find_step` matches unit by unit_id (fine). `_record_step_attempt` uses unit.target_id (fine). Any UI parsing unit_id? grep for `unit_id.split(` or `":".join`. Let me grep `unit_id.split` in src.
+
+Let me do these.
+dsh: reasoning:
+No unit_id parsing. Good.
+
+Now let me check projection.py 200-230 (progress) to see if anything uses units' target_id for page mapping.
+
+Actually grep for `unit.target_id` in projection: none found earlier (grep target_id in src listed no projection.py matches). Good.
+
+Now let me reconsider the R2 AC wording "非 primary NOT_STARTED" — the test doesn't check stage states. Let me check whether the region stage states for secondary would be NOT_STARTED; test doesn't assert. Minor P3.
+
+Now let me consider whether the test suite could be "假绿" in a specific way: it overrides `service._executor._handlers[STEP_OCR]` — for N1/N2/N6/N7. If `_executor` were a different attribute or the patch silently didn't apply, the tests would fail (assertions expect failure). So no false green there. But there is a subtle risk: patching `_handlers` directly, whereas the executor's `_resolve` may consult bindings; the direct handler lookup by step_type takes precedence (line 45-46). Fine.
+
+Another false-green check: R0 asserts `ocr_step.target_id == primary.region_id` where primary = all_regions[0] sorted by reading_order. If the fix rebound to region_ids[0] which might be the second candidate (reading_order 7) while all_regions[0] is reading_order 1, then the assert would fail. Detector returns candidates det-0 (no reading_order → defaults?) and det-1 (reading_order=7). In the test's DeterministicDetector, candidates: first RegionCandidate has no explicit reading_order in the new test file (lines 78-82: polygon, reading_order=1? Let me re-check: test file lines 78-88 — first candidate `RegionCandidate(polygon=..., reading_order=1, provider_label="det-0")`? I read lines 78-82: 
+```
+RegionCandidate(
+    polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+    reading_order=1,
+    provider_label="det-0",
+),
+RegionCandidate(
+    polygon=((20.0, 8.0), (30.0, 8.0), (30.0, 12.0)),
+    reading_order=7,
+    provider_label="det-1",
+),
+```
+Yes reading_order=1 and 7 (my earlier read showed line 81 `reading_order=1`? Let me re-check the actual text: lines 78-88 from output:
+```
+78:                 RegionCandidate(
+79:                     polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+80:                     reading_order=1,
+81:                     provider_label="det-0",
+82:                 ),
+83:                 RegionCandidate(
+84:                     polygon=((20.0, 8.0), (30.0, 8.0), (30.0, 12.0)),
+85:                     reading_order=7,
+86:                     provider_label="det-1",
+87:                 ),
+```
+Hmm the grep output for the test file showed lines 74, 92 for the class; and my read of lines 70-100 (first read of test file, lines 77-88 shown as):
+```
+77:                 RegionCandidate(
+78:                     polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+79:                     reading_order=1,
+```
+Wait, in the first read output I see:
+```
+77:                 RegionCandidate(
+78:                     polygon=((0.0, 0.0), (10.0, 0.0), (10.0, 5.0)),
+79:                     reading_order=1,
+80:                     provider_label="det-0",
+81:                 ),
+82:                 RegionCandidate(
+83:                     polygon=((20.0, 8.0), (30.0, 8.0), (30.0, 12.0)),
+84:                     reading_order=7,
+85:                     provider_label="det-1",
+86:                 ),
+```
+Yes. Good; so region_ids order = candidate order = reading_order 1,7. primary = region_ids[0] = reading_order 1 = all_regions[0]. Consistent, no circularity problem. Though note: primary is defined as "first detected" which equals reading_order 1 in fixture; the docstring says primary = reading_order 1. The implementation docstring says "against the first Region (``reading_order`` 1)" — that's an overclaim: `region_ids[0]` is the first *candidate* order from the detector output, not necessarily reading_order 1. Since fixture sorts consistently, the claim happens to hold, but the docstring states a semantic (reading_order 1) that isn't enforced by the code. That was pre-existing in base docstring too ("first Region (``reading_order`` 1)"). Since the fix's added comment repeats "primary" without that claim... The added comment says "该步骤的写目标" etc. The multi-region docstring paragraph is unchanged from base. So it's pre-existing wording, not an over-declaration introduced. Could note as P3 (pre-existing docstring inaccuracy retained; changed file so it's in scope of review). Actually the AC1 requires the docstring to state the invariant - it does.
+
+Also check detection candidates ordering: `detection.page_global_candidates()` may sort. Either way fixture is fine.
+
+Now, let me examine one more possible "假绿": N7 asserts `len(continued_run.terminal_unit_ids) == 0`. Is that a meaningful assertion of "reset"? plan_run mode=continue sets terminal_ids from newly planned units' decisions; if all units are RUN (ocr was not yet done), terminal_unit_ids would be empty — yes 0. But careful: after continue, planned regions = 2 → two ocr units, both RUN → terminal empty. Good.
+
+And final assertion: final_run has 4 step_runs: detect, ocr(interrupted), ocr(primary), ocr(secondary). But wait: does execute_run after continue re-run ocr for both regions even though primary's stage "ocr"? The stage for region is NOT_STARTED since the interrupted attempt never committed. Both RUN. Fine. And it asserts completed_ocrs target_ids == both regions. This validates the self-heal path from DIAG §4.
+
+However: N7 asserts `len(final_run.step_runs) == 4` — assumes the interrupted ocr step_run stays in run.step_runs after plan_run(continue) (service.py:312 `run.step_runs = [] if mode == "initial" else run.step_runs`). Good.
+
+Now, N7 uses `raise SimulatedCrash(BaseException)` — execute_run doesn't catch BaseException, so it propagates, leaving sqlite conn open; test then calls recover_running_runs. Fine. But note: the run object in memory was persisted with RUNNING status before crash. And the crashing wrapper raised inside `self._executor.execute` → propagates out of execute_run (not caught since only Exception is caught at line 793). Wait — line 793 `except Exception as error` would catch it if SimulatedCrash were an Exception; it's BaseException so it escapes. Correct, intentional.
+
+Now think about whether the fix has any issue with `_persist` ordering: commit_step_result: commits catalog (region revision update), then backfill, then `_mark_terminal(run, unit.unit_id)`, then `_persist(run)`. Backfill mutates task.units before persist → persisted units carry region target. Good (R1 verifies via DB round-trip since executed comes from store).
+
+Hold on — is `executed` from the store or the same in-memory object? `execute_run` does `run = self._require_run(run_id)` → store.get → for SqlitePipelineStore, get probably reads DB and reconstructs. So `executed.tasks[0].units` are freshly deserialized from units_json → R1 truly verifies persistence round-trip (DIAG R-a/c risk). Let me confirm SqlitePipelineStore.get reconstructs (line ~360-400). Let me read pipeline.py 340-430.
+
+That strengthens R1. Let me verify quickly.
+dsh: reasoning:
+Need to see `get` — does it read from `run_json` with `_run` or use `_cache`? Let me read further (440-540).
+
+If get uses the cache, then R1 would read the same in-memory object and wouldn't test persistence. Important for judging R1's strength (DIAG's persistence risk R-a/R-c).
+dsh: reasoning:
+Line 500-507: `get` reads run_json from DB and reconstructs — no cache shortcut. So R1's `executed.tasks[0].units` is a true DB round-trip. Strong.
+
+Now I have enough. Let me also quickly consider the AC coverage claim in handoff: "AC2 ... R0, R1, R2, R3, R5" — yes R4 = other files. The evidence lists 12 tests in the new file. Good.
+
+Let me double check the executor's step handler injection for N1: `service._executor` — does PipelineService store `_executor`? In _build_service, build_production_pipeline returns PipelineService. Tests access `service._executor`. Since 21 tests pass per integration and the tests would fail if the attribute didn't exist, fine. Let me verify attribute name quickly (grep `_executor` in service.py) — earlier grep for `_executor|_handlers` returned only 2 matches (def _find_step etc.) — wait, my grep pattern was `def _find_step|def _require_run|def _executor|_handlers` and it returned only lines 1052 and 1072. That means `_executor` does NOT appear in service.py?! Then `service._executor` in tests would be an AttributeError → tests would error. Unless Python's grep only matched those patterns... `_executor` should match `self._executor` if present. It returned 2 matches for `def _find_step` and `def _require_run` only. So service.py has no `_executor` attribute! Hmm. But `execute_run` line 789 calls `self._executor.execute(...)`. So it must exist. Why didn't grep match?
+
+Oh — my grep pattern included alternation with `def _executor` (not `_executor` alone) and `_handlers`. `self._executor` would not match `def _executor`. And `_handlers` — would match `self._executor._handlers`? No, service.py doesn't have that. So the grep was fine; it just didn't include bare `_executor`. My mistake. Let me confirm `self._executor` exists in service.py — line 789 shows it. ✓ And tests patched `service._executor._handlers` — ProductionStepExecutor has `_handlers`. ✓
+
+Now, N1's patch: `service._executor._handlers[STEP_OCR]` replaced with wrapper. `_resolve` returns handler for step_type "ocr" → wrapper → calls original (the `_typed`-wrapped handler) → ProviderError converted inside to StepExecutionError("LOCK_CHANGED"). ✓
+
+Let me now also spot-check that pytest path config makes `tests/pipeline` imports work — not needed.
+
+One more thing for the docs axis: check doc/tasks/M2-P1.md status "in_review" and dispatch_state DELIVERED_FOR_REVIEW; ACs all [x]; delivery_head 78e9637f vs review head 59acb340 — as discussed. Also check whether M2-P1.md's front-matter `delivery_head` should be updated post-integration (Codex's job). I'll flag as P3/P2 observation: recorded delivery_head doesn't equal the reviewed branch tip (59acb340) that the integrator diffed; evidence/logs are pinned to 78e9637f. Recommend the integrator record both (code head + doc head) at integration so the delivery chain is unambiguous. Is that a P2? It's a documentation/evidence-traceability issue, not code. Given the review request explicitly gives 59acb340 as delivery head while repo docs say 78e9637f, I should flag it clearly (P2 建议) — the mismatch could confuse the integration commit and the evidence's "fixed HEAD" claim (evidence states HEAD=78e9637f, but the tested HEAD per integrator is 59acb340 which includes docs-only change; code identical). Recommend: on integration, record that the 5-path tip is 59acb340 while code+test evidence was captured at 78e9637f, and confirm no src/test changes exist in the docs-only commit. Since I cannot run git, I state it as a condition/observation.
+
+Hmm — do I know that 59acb340 is docs-only? The task prompt says integrator verified base..delivery covers 5 paths; and repo docs pin 78e9637f as the test commit. So the delta 78e9637f..59acb340 should be doc-only (M2-P1.md status/AC + handoff + evidence). But I couldn't verify. That's precisely a P2 to confirm at integration (low risk).
+
+Should the decision be approved_with_conditions? Let's weigh:
+- Fix semantics: correct, minimal, matches DIAG §5.1. ✓
+- Tests: 12 tests covering R0-R3,R5,N1-N7 with meaningful assertions; a few proxy-level assertions (R2 stage state, R3 failing step identity) — P3.
+- Scope: function-only change confirmed by line-count delta + base comparison; 5 paths per integrator. ✓
+- Docs/evidence: consistent with integrator's independent run; delivery_head mismatch (P2/P3).
+- Regression: full rebind path confirmed (region branch in commit_step, handler uses unit.target_id for StepResult, region-scoped snapshot). Latent consistency issues: expected_* stale (unused), unit_id embeds page id (documented debt), term_extract book_id lookup inert today (P3). No blocker.
+
+Findings: no P0/P1. P2: (1) delivery head/doc alignment; (2) maybe the "reading_order 1" docstring claim? That's pre-existing. (3) N1 docstring half-fix rationale is prose-only and does not literally pin TARGET_NOT_FOUND; but AC only asked for the comment. I'd put as P3 to avoid inflating.
+
+Hmm, should I add a P2 about "N6/N7 与 DIAG 矩阵的一致性"? DIAG §5.4 asked N6 (primary 软删) — the test asserts PROVIDER_UNAVAILABLE, handoff calls it PASS. Fine.
+
+Let me reconsider one thing more carefully for the "不会误改 detect unit 自身" axis: the condition `item.unit_id != unit.unit_id`. What if there are multiple detect units (page has multiple... no, one task per page). But what about a task whose units include a *region-scoped* plan prefix? Not applicable.
+
+But here's a subtle scenario: What if the detect unit itself has region_id None and a *different* unit shares the same unit_id? unit_id = f"{task_id}:{target_id}:{step_type}" — unique per step. ✓
+
+What about the case where detect produces regions and the task also has units for OTHER pages? No.
+
+One more: the rebind applies to `item.region_id is None` even for units *before* the detect unit in the tuple. detect is always first (prepended). If somehow a non-detect unit precedes detect (not possible), it would be rebound before execution. Pre-existing.
+
+Now let me consider whether the added docstring's claim "在 plan 阶段已经标记终态" (Why unit_id is NOT changed: "...且在 plan 阶段已经标记终态") is accurate. In plan_run, `terminal_ids.update(unit.unit_id for unit in units if unit.decision.is_terminal)` — only terminal-decision units are marked. The docstring says "unit_id 保持不变，因为 run.terminal_unit_ids 以 unit_id 为键，且在 plan 阶段已经标记终态" — this could read as "all units are already marked terminal at plan time", which is inaccurate (only SKIP/BLOCKED ones are). The intended meaning is presumably "the already-terminal units were marked by unit_id at plan stage". Minor over/loose claim → P3 (documentation precision). Also `_backfill` changes regionless units which are typically RUN (not terminal). The reasoning for not changing unit_id: terminal_unit_ids keys + identity; holds for SKIP units. Slightly imprecise but not a functional over-claim. I'll mention as P3.
+
+Another check: docstring says "Multi-Region pages still run their pipeline steps against the first Region (``reading_order`` 1)". As noted, `region_ids[0]` = first detector candidate order (page_global_candidates may sort by reading_order — let me check `page_global_candidates` to see if it sorts!). If it sorts by reading order, then the claim is accurate. Let me check ports/detection/ports.py page_global_candidates.
+
+Let me grep.
+dsh: reasoning:
+`page_global_candidates()` preserves the detector's candidate order (no sort). So `region_ids[0]` = first candidate as returned by the detector, not necessarily reading_order 1. The docstring's "(``reading_order`` 1)" is an inaccuracy (pre-existing in base, retained/rewritten in the new docstring paragraph? The multi-Region paragraph is unchanged from base). The new docstring adds "Multi-Region pages still run their pipeline steps against the first Region" — wait, that paragraph is base-identical. So it's pre-existing wording. I'll note P3.
+
+Now, is the fixture's assumption (primary == all_regions sorted by reading_order first) safe? In the test fixture, candidates are in reading order 1,7 so it holds. But if a detector returned out-of-order candidates, primary != reading_order 1. Test doesn't create that scenario. Fine.
+
+Should I test/check one more possible false-green: R0's assertion `sorted(regions.list_regions(PAGE_ID), key=reading_order)[0]` is used to define primary, and the test asserts ocr target == that. If implementation rebound to region_ids[0] which in fixture == reading_order 1, pass. If a future regression rebound to region_ids[-1], test fails. Good.
+
+Now let me think about whether there's any P1 issue I might be missing regarding the fix's completeness.
+
+Scenario: regionless page, command REOCR_ALL, multiple regions detected. Task's units: detect, ocr. Backfill: ocr → region primary. Great. What about the case where detect returns regions and the task's units include a step whose decision was SKIP_VALID... unaffected.
+
+Scenario: `commit_step_result` for the detect step at line 650: `if unit.step_type == "detect": self._backfill_detected_regions(task, unit, result)`. `result` is the detect StepResult with outputs region_ids. ✓
+
+Scenario: what if detect commits but `result.outputs["region_ids"]` contains ids for regions created by detect in this run — yes.
+
+Potential concern: `_backfill_detected_regions` uses `unit` param (the detect unit as passed to commit_step_result) — `_find_step` reconstructs `unit` from the persisted run (task.units). Since the run was persisted at plan and at `_record_step_attempt`, the unit's unit_id matches the detect unit's id in task.units → exclusion works. But note: `commit_step_result` is called with the in-memory `step_run`/`unit` from `_find_step`, which is a *freshly loaded* copy from the store (since execute_run loads run at start; _find_step reloads from store!). Both `unit` and `task.units` come from the same loaded run → consistent. ✓
+
+Another potential trap: `_find_step` reloads run from store; `commit_step_result` mutates that reloaded run and persists. Meanwhile `execute_run`'s local `run` object is a *different* instance. So after commit_step_result, the backfill modified the reloaded run's task.units and persisted. Then execute_run continues its own in-memory loop with ITS OWN `task.units` tuple — which is the pre-backfill tuple! Wait, this is important.
+
+Let's trace: execute_run line 734: `run = self._require_run(run_id)` → object A (from store). Loop: `unit = task.units[unit_index]` from A. `step_run = self._record_step_attempt(run, task, unit)` → creates StepRun, persists A. Then `self._executor.execute(...)`. Then `self.commit_step_result(step_run.step_run_id, result)` → `_find_step` (line 1072) iterates `self._store.list_ids()`, `run = self._store.get(run_id)` → returns a NEW object B loaded from DB (get always re-reads). commit_step_result on B: calls `_backfill_detected_regions(B.task, B_unit, result)` → B.task.units replaced with rebound tuple; `_persist(B)` writes to DB. Returns. Back in execute_run, object A's `task.units` is STILL the old tuple with region_id=None and target_id=page!
+
+Then the loop continues: `while unit_index < len(task.units)` using A's task — A's units are unrebound! Next iteration: `unit = task.units[1]` = ocr unit with target_id=page_id, region_id=None. Then `step_run = self._record_step_attempt(run=A, task, unit)` → `catalog.current(unit.target_id)` = catalog.current(PAGE) → input_refs = page revisions (no "region") → the ORIGINAL DEFECT would still occur!
+
+Wait — but the test passes (21 passed) and reproduce.py shows ocr target_id=<primary>. So my trace must be wrong somewhere. Let me look again at `SqlitePipelineStore.get` — line 500-507 reads from DB unconditionally? Let me check lines 480-507 for a cache-hit branch before line 500. The read I did started at 500; maybe there's a `cached = self._cache.get(run_id)` branch above that returns a cached object. Let me read 470-510.
+
+Actually line 506 `self._cache[run_id] = run` suggests caching; maybe get() returns the *same* cached object if present. Let me read.
+
+This is crucial: if get() returns the cached object (same instance A), then `_find_step` returns the SAME run object A → backfill mutates A.task.units → index loop sees rebound units. That's consistent with the tests passing. Let me verify.
+dsh: reasoning:
+Confirmed: `get` returns the cached instance when present, and `put` populates the cache with the same instance. So within one process, `execute_run`'s run object A and `_find_step`'s run are the SAME object → backfill's mutation of `task.units` is visible to the execute_run loop. That's what makes the fix effective in-process.
+
+Now the crucial regression consideration: **persistence round-trip on restart / separate process**. The comment in `_backfill_detected_regions` says the in-memory tuple rebuild is needed because execute_run's index loop re-reads task.units. That works only because of the identity/cached store. In production, is the store the same SqlitePipelineStore instance across calls? Yes, within a process (PipelineService holds one store). So fine.
+
+But careful: the cached-instance semantics means our earlier conclusion that R1 tests the DB round-trip is WRONG in-process: `execute_run` returns the same object A (cached), so `executed.tasks[0].units` is the in-memory rebound tuple, not necessarily a DB round-trip read. Hmm — but `put` also writes run_json; the cached object is the same instance. So R1 does NOT prove the DB round-trip of the new target_id (though `_unit_dict` does serialize target_id and `_unit` reads it, so round-trip is trivially compatible anyway).
+
+Wait — but does `put` serialize `task.units`? `_task_dict` includes units → yes. And `_run` reconstructs. So round-trip compatibility is evident from code (target_id is a plain field). R1 asserting `executed.tasks[0].units` proves the *in-memory* snapshot after backfill. That's what AC R1 asks ("backfill 后 unit 快照"). Fine. I should not overclaim that R1 verifies persistence. Actually, hmm: does the test ever exercise a real reload? N7 does: `persisted_run = service._store.get(run.run_id)` — but cache hit again (same instance). So no test covers a *cold* reload (new process / new store) with rebound units. That's the DIAG's persistence risk R-a/R-c. Is a cold reload risky? `_unit_dict`/`_unit` handle target_id/region_id symmetrically; no derived fields. So low risk. But a test could construct a fresh store instance over the same conn to force the round-trip. I'll note as P3: no test forces a cold store reload of mid-run rebound units; code inspection shows `_unit_dict`/`_unit` round-trip target_id (pipeline.py:176-203), so risk is low.
+
+Hmm, actually let me double check: does anything after a cold reload re-derive unit.target_id? No.
+
+Another consideration: since the store caches instances, R1's `planned` (from plan_run) is the same object as `executed`?? `planned = service.plan_run(...)` returns run (object A cached). `planned_units = planned.tasks[0].units` → tuple of PlanUnit objects (pre-backfill). Then `executed = service.execute_run(...)` returns the same run object A, but `task.units` was REPLACED by a new tuple (backfill creates new objects for rebound units, keeping detect unit object). So `planned_units` still holds the pre-backfill PlanUnit objects — the test's `planned_unit_ids` list is fine (ids strings). And `executed_units` is the new tuple. So R1 compares ids across the replacement: `executed_unit_ids == planned_unit_ids`. This genuinely tests unit_id preservation. ✓
+
+One more: since backfill uses `replace(item, ...)`, the detect unit object is shared; other units replaced. OK.
+
+Now — is there a risk that the in-memory mutation only works because of the cached store, and in a *different* deployment (e.g., a store implementation without caching, like InMemoryPipelineStore) the fix wouldn't take effect? Let's check `_backfill_detected_regions`'s effect path: even if `_find_step` returned a different instance, commit_step_result mutates its own run B and persists B. Then execute_run's A loop would read unrebound units and the defect would persist. So the fix's efficacy depends on store identity semantics! With `SqlitePipelineStore.get` caching, A and B are identical. With an in-memory store (application/tasks/store.py) — let me check its get/put: it might also return the same object. Tests use production assembly (sqlite). So AC tests use the caching store.
+
+Is this a latent fragility worth a finding? The base behavior (region_id rebind) had the same dependency, and the DIAG/TASK-049 comment at service.py:755-759 explicitly documents the index-loop re-read dependency. Under a non-caching store, the whole backfill mechanism (both base and fix) would be ineffective — a pre-existing architectural coupling, not introduced by M2-P1. Worth a P3 observation (out of scope to fix; document).
+
+Actually wait, let me double check whether it's really the same object. `_record_step_attempt` calls `self._persist(run)` → `store.put(run.run_id, run)` → cache[run_id] = run (the passed run). So A is cached. `_find_step` → `store.get` → cache hit → A. ✓ Same object. Good.
+
+Now, is there a scenario where `execute_run`'s loop variable `task` is a stale task object while `task.units` was replaced on a *different* task object? In execute_run, `for task in run.tasks` → A's tasks. `_find_step` finds `task = next(task for task in run.tasks if task.task_id == step.task_id)` from the same run A → same object. ✓
+
+OK. Now the review is basically complete. Let me also spot-check the AC2 R4 claim: "tests/providers/test_detect_handler.py、tests/providers/test_bootstrap_providers.py 全部保持绿" — evidence lists 5+4 tests. OK.
+
+One last verification: the task file says delivery_head 78e9637f and status in_review; the review prompt says delivery head 59acb340. Let me check if there's any file mentioning the 5 paths of the 59acb340 commit (e.g., a dispatch record) — grep for "59acb" found nothing. So the only source is the integrator's message. I'll flag.
+
+Let me also confirm the handoff/evidence files are in the allowed list: doc/handoffs/M2-P1-*.md ✓, verification/M2-P1/** ✓.
+
+Let me write the review now. I should also give the four-axis summary with path:line evidence, findings graded, and a clear integration verdict. Decision: approved_with_conditions? Or approved?
+
+Considering the fix is correct, minimal, well-tested; the discrepancies are minor documentation/traceability items and a couple of test-assertion precision items. Per the review template, typical decisions: approved / approved_with_conditions / changes_requested. Given (a) delivery-head mismatch between the reviewed tip and the recorded delivery_head, and (b) AC4's evidence was captured at 78e9637f while the reviewed tip is 59acb340 — integration should pin and re-verify at the merge head (the Task itself requires "集成时在集成 head 复跑上述命令"). I can approve with conditions that integration (1) confirms 78e9637f..59acb340 contains only the three doc paths, and (2) re-runs the three commands at the integrated head (already the frozen AC5/integration requirement). That's a real condition, so `approved_with_conditions`.
+
+Hmm, or is that just standard integration procedure, making plain "approved" fine? The mismatch is a factual inconsistency in the repo record (task front-matter delivery_head ≠ reviewed head). I'd rather be precise: approved_with_conditions with 2 conditions (P2 items), no P0/P1.
+
+Let me make sure I'm right that AC2's R4/R1 etc. are satisfied; yes.
+
+Also, I should mention the term_extract observation with code evidence and note it's inert today because TermExtractionService() is constructed without a TM store (core_assembly.py:765 + term_extraction.py:103), and that the same mismatch already exists for region-scoped page-scope runs. That's a genuinely valuable independent finding for the regression axis → P3 (or P2?). I'll put it as P3 with clear reasoning: no current functional impact (tm_store None), converges with existing region-scoped behavior. Actually, hmm — P2 vs P3: the DIAG's regression axis R-a..R-c asked about persistence; the term_extract book_id lookup is a *behavior delta* introduced by the fix in a code path not in the matrix, currently inert. Since it's inert, P3 is right but I'll describe the trigger condition clearly.
+
+Also the stale expected_revisions/expected_lock → P3.
+
+And unit_id/page-id debt → already documented by Owner (P3, acknowledged).
+
+Test precision items:
+- R2 doesn't assert secondary stage NOT_STARTED (proxy: 1 revision, no ocr step) → P3.
+- R3 doesn't assert which step failed (only error_code) → P3.
+- N1's half-fix rationale is prose, not a pinned assertion; AC only required the comment → P3.
+- No cold-store reload test → P3.
+
+Doc precision:
+- docstring "reading_order 1" vs actual detector order (pre-existing) → P3.
+- "plan 阶段已经标记终态" phrasing imprecise (only terminal-decision units) → P3.
+
+Delivery head mismatch → P2.
+
+Evidence consistency: evidence says Python 3.12.3, exit codes; matches integrator's report. Handoff AC table matches tests implemented. One nuance: handoff AC2 says "全部 21 passed" and lists R0-R3,R5 — correct.
+
+Also should I verify the claim "R4 是既有文件保持绿"? Evidence lists the two files' tests. Fine.
+
+Let me now also double-check the count of paths in the fix: 1 src, 1 test, 3 doc/verification = 5 ✓ (as the prompt says; and release allowed list includes those doc paths).
+
+Now let me write the final answer in Chinese, Markdown, with decision line, four-axis summaries with path:line evidence, findings by severity, and the integration verdict. Also per repo AGENTS.md, end with a recommended next step (直接转发指令 for next task). The task instructions say output the review; AGENTS.md says final reply must give a recommended next step. I'll add a short "下一步" section: integrator Codex (代行) 集成 + 在集成 head 复跑 + 记录 delivery head 对齐; no new task needed. I'll phrase a forwardable instruction.
+
+Let me be careful about claims:
+- "base 上 L921-946" — confirmed via G:\CODEX\New Manga (main@33826641) read: function at 921-946, 26 lines; delivery function 921-959, 39 lines; file 1070 → 1083 lines. I should note I read the main worktree copy as the base proxy and got the exact +13 delta. I should be transparent that I could not run git; I used the main checkout (main@33826641, per release record) as the base proxy.
+
+Also note: `git diff --check` not re-run by me (no shell) — rely on integrator.
+
+Line references to use:
+- service.py:921-959 (delivery function), 944-959 loop, 947 primary, 952-958 replace condition, 954 target_id rebind.
+- service.py:605-620 (_record_step_attempt snapshot from unit.target_id), 635-646 (mapping + catalog commit use unit.target_id), 650-656 (detect → backfill before terminal marking), 760-763 (index loop), 764 (terminal skip).
+- DIAG §5.1 (doc/research/...md:63-69).
+- pipeline.py:562-566 (current dispatches region/page), 588-600 (region branch), 733-738 (page revisions no region key), 701-725 (region current_revisions {"region": ...}), 176-203 (unit dict round-trip), 497-507 (store cache identity).
+- handlers.py:312/349 (ocr require region, expected from input_refs), 362-369 (StepResult target_id=unit.target_id, revision_updates region), 727 (term_extract book_id lookup), 963-969 (_require_region).
+- step_writes.py:117-129 (staged + region_locked guard → LockBlocked), 219-231 (guard), 278-280 rollback.
+- tests file lines for each test.
+- evidence lines 21-27, 30-42, 64, 92, 102.
+- handoff lines 18-21, 27-31.
+- task file lines 14-16 (delivery_head/base), 38-48.
+
+Let me write it. Keep it organized but not bloated. Use Chinese.
+
+Decision: approved_with_conditions.
+
+Findings:
+P0: none
+P1: none
+P2:
+ 1. 交付 head 记录不一致：review 面向的 delivery head=59acb340…，但 doc/tasks/M2-P1.md:15、doc/handoffs/M2-P1-78e9637f.md:7/51、verification/M2-P1/evidence-78e9637f.md:8 全部固定为 78e9637f；仓库内 grep 无 59acb340 任何记录。集成前需确认 78e9637f..59acb340 仅含 3 个文档/证据路径（无 src/tests 改动），并在集成记录中同时登记 code head=78e9637f、tip=59acb340；否则证据链的 HEAD 归属不明。
+P3:
+ 1. term_extract book_id lookup (handlers.py:723-730) now misses for regionless-first-run; inert today (core_assembly.py:765 TermExtractionService() with no tm_store; term_extraction.py:103-107). Same mismatch already exists for region-scoped page runs. Record for fan-out slice.
+ 2. rebind units' expected_revisions/expected_lock remain page-shaped (service.py:952-958 doesn't update them; persisted pipeline.py:186-187) — audit-only today (only commit uses step_run.input_refs/lock_snapshot, service.py:642-643; pipeline.py:580-583). Latent trap; could assert/document.
+ 3. unit_id embeds page id while target_id=region (documented debt, service.py:934-937) — matches handoff risk 1; fine.
+ 4. R2 proxy assertions (test:369-377) don't assert secondary region stage_state == NOT_STARTED as AC wording says.
+ 5. R3 (test:399-403) asserts error_code only, not the failing step identity (color/translate); failure at color is implied by providers wired (handlers.py:652-657).
+ 6. N1 half-fix rationale is prose only (test:453-460); no assertion pins the Page-target region-commit → TARGET_NOT_FOUND path (pipeline.py:601-610). AC only required the comment → acceptable.
+ 7. No cold-store reload test: store.get caches identity (pipeline.py:497-507), so the backfill's efficacy and R1/N7 snapshots rely on the same in-process object; round-trip is code-evident (pipeline.py:176-203) but untested for a mid-run rebound unit.
+ 8. Docstring precision: "reading_order 1" (service.py:939-942) vs region_ids[0]=detector candidate order (ports/detection/ports.py:99-103, no sort); "plan 阶段已经标记终态" (service.py:934-937) imprecise (only decision.is_terminal units marked, service.py:305).
+
+Axis 1 conclusion: correct.
+Axis 2: strong overall, 4+ tests sampled.
+Axis 3: allowed scope respected; docs consistent; P2 head mismatch.
+Axis 4: full-rebind path verified end-to-end; no blocker.
+
+Also mention: I verified AC4 reproducer semantics: reproduce.py returns 1 on NOT_REPRODUCED, and the logged output shows the fixed shape (ocr completed, target_id/region_id=primary, primary 2 revisions, terminal=planned=2) — evidence-78e9637f.md:64-92 — so the "strong discriminator" rests on the positive shape in the log, not merely exit 1 (exit 1 alone could also fire if detect never ran: reproduce.py:381-430). Good to mention as P3? It's an observation about AC4's strength claim. I'll fold it into axis 3 / P3 list maybe as combined with "AC4 的 exit=1 分支是通用 else". Let me include as P3 item.
+
+I'll write the final answer now. Also include the "是否达到可集成标准" explicit answer.
+
+One more thing: the conditions must be actionable. Condition A (P2 #1) and Condition B: integration head re-run is already mandated by AC5/Task line 80 — mention as standard.
+
+Write it.

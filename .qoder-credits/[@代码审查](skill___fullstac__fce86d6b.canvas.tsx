@@ -1,0 +1,1035 @@
+import {
+  BarChart,
+  Callout,
+  ChartComparisonGrid,
+  ChartContainer,
+  H1,
+  LineChart,
+  MetricsGrid,
+  PieChart,
+  ReportSection,
+  ReportShell,
+  Stack,
+  Table,
+  Text,
+  type MetricItem,
+} from "qoder/canvas";
+
+// —— 报告数据契约（由 scripts/lib/breakdown.mjs 产出，plugin 注入）——
+interface CatRow {
+  key: string;
+  label: string;
+  tokens: number;
+  share: number;
+}
+interface ToolRow {
+  tool: string;
+  tokens: number;
+  calls: number;
+  /** 平均每次调用带来的重发 token；无调用记录时 null（不给 0） */
+  perCall?: number | null;
+  share: number;
+}
+interface FileRow {
+  attr: string;
+  label: string;
+  kind: string;
+  tool: string | null;
+  selfTokens: number;
+  reads: number;
+  trips: number;
+  billed: number;
+  /** 单次读取的总代价（含此后每一程重发）；reads=0 时 null */
+  perRead?: number | null;
+  share: number;
+}
+interface ReqRow {
+  index: number;
+  time: string | null;
+  ratio: number;
+  inputTokens: number;
+  /** 代理或转录任一有真值即非 null；两者都没则 null（不写 0） */
+  outputTokens?: number | null;
+  /** proxy=代理实测 / transcript-tokens=转录 input_tokens / transcript-ratio=转录 ratio×window */
+  usageSource?: "proxy" | "transcript-tokens" | "transcript-ratio" | "transcript";
+  credits: number;
+  originalCredits: number;
+  afterCompact: boolean;
+}
+interface CatChild {
+  tool: string | null;
+  label: string;
+  kind: string | null;
+  tokens: number;
+  share: number;
+  catShare: number;
+  trips: number;
+}
+interface CatDetail {
+  key: string;
+  label: string;
+  tokens: number;
+  share: number;
+  children: CatChild[];
+}
+interface SubagentRow {
+  agentId: string;
+  agentType: string | null;
+  description: string | null;
+  toolUseId: string | null;
+  roundTrips: number;
+  billedInputTokens: number;
+  peakContextRatio: number;
+  credits: number;
+  originalCredits: number;
+  error: string | null;
+}
+interface SubagentTotals {
+  roundTrips: number;
+  billedInputTokens: number;
+  credits: number;
+  originalCredits: number;
+}
+interface Subagents {
+  scanned: boolean;
+  dir: string | null;
+  /** 试过的候选目录；用于区分「真没子代理」与「路径没找对」。 */
+  probedPaths?: string[];
+  /** ok=已汇总 / no-dir=无子代理目录 / dir-empty=目录在但无 agent 文件 / no-usage=有文件但转录无 usage / error=读取抛错 */
+  reason?: string;
+  count: number;
+  items: SubagentRow[];
+  totals: SubagentTotals;
+  combined: SubagentTotals;
+}
+/** 逐项可用性：报告里每个数字到底是模型上报的真值、按真值推导、回退默认、手工录入，还是本地根本没有。
+ *  v2 旧报告没这个对象，故全部字段可选，读取时一律走默认值（旧报告只可能来自桌面端富转录）。 */
+type Avail = "measured" | "derived" | "fallback" | "manual" | "unavailable";
+interface Availability {
+  credits?: Avail;
+  roundTrips?: Avail;
+  contextRatio?: Avail;
+  tokens?: Avail;
+  /** 输出 token：代理或转录 output_tokens 任一有真值即 measured */
+  outputTokens?: Avail;
+  /** 缓存命中 token：代理或转录 cache_read_input_tokens 任一有真值即 measured */
+  cachedTokens?: Avail;
+  categoryShare?: Avail;
+  toolShare?: Avail;
+  fileShare?: Avail;
+  systemPrompt?: Avail;
+  contextWindow?: Avail;
+  compactions?: Avail;
+  compactionCost?: Avail;
+  model?: Avail;
+  title?: Avail;
+  toolCalls?: Avail;
+  fileReads?: Avail;
+  userTurns?: Avail;
+  /** 用户压缩阈值：manual 覆盖 → manual；默认 200K → fallback */
+  userContextLimit?: Avail;
+}
+/** 官方 UI 真值（手工录入，来自 .qoder-credits/overrides/<sessionId>.json）。
+ *  IDE 端转录不含 usage，本地算不出 Credits，这是唯一的真值通道；绝不覆盖 totals，只并列展示。 */
+interface ManualTruth {
+  file?: string;
+  credits: number | null;
+  originalCredits: number | null;
+  model: string | null;
+  startedAt: string | null;
+  endedAt: string | null;
+  durationMin: number | null;
+  note: string | null;
+  /** 手工锁定模型窗口（如 qwen3-max=1000000），优先于 runtime-config / 反推 / fallback */
+  contextWindow?: number | null;
+  /** 手工指定 Qoder 压缩触发阈值（默认 200000），驱动 peakUserAdvice */
+  userContextLimit?: number | null;
+  /** 本地 credits ÷ 官方真值。有子代理时拿 combined 比（官方 UI 扣费 = 主链 + 子代理），
+   *  否则覆盖率会被系统性低估（实测 ca2f7834：主链比 0.46、combined 比 0.89）。 */
+  localCoverage?: number | null;
+  /** main=只比主链 / combined=比主链+子代理 */
+  localScope?: "main" | "combined";
+  /** 参与对账的本地 credits（按 localScope 取 totals.credits 或 subagents.combined.credits） */
+  localCredits?: number | null;
+}
+/** 峰值占比的「该不该压」结论。阈值算在数据层（breakdown.mjs peakAdvice），
+ *  这里只管展示——否则 Canvas 与终端各持一套阈值迟早走偏。tone 直接喂 Callout。 */
+interface PeakAdvice {
+  level: "low" | "mid" | "sweet" | "high" | "over";
+  tone: "info" | "success" | "warning" | "danger";
+  text: string;
+}
+/** 一次压缩 = 一笔普通模型调用（整份上下文当 prompt、摘要当 completion），是会话里单笔最贵的开销。
+ *  pre/post 是客户端自估口径；proxy 是能在代理日志里唯一对上时回填的供应商实测值，对不上就 null。 */
+interface CompactionEvent {
+  index: number;
+  at: string | null;
+  trigger: string | null;
+  preTokens: number | null;
+  postTokens: number | null;
+  messagesSummarized: number | null;
+  /** 压缩后首轮的往返序号与实测输入 = 压缩把上下文压到的地板 */
+  nextRequestIndex: number | null;
+  nextInputTokens: number | null;
+  savedTokens: number | null;
+  /** 数据层归一后的生效值：有代理实测就用实测，否则是客户端自估。
+   *  渲染端直接取这两个，别自己按 proxy 分支——否则会与合计的口径分叉。 */
+  effectiveInputTokens?: number | null;
+  effectiveOutputTokens?: number | null;
+  proxy?: {
+    promptTokens: number;
+    completionTokens: number;
+    cachedTokens: number | null;
+    ms: number | null;
+    matchedBy: string;
+  } | null;
+}
+interface CompactionCost {
+  count: number;
+  items: CompactionEvent[];
+  /** measured = items 里有几笔拿到了供应商实测（其余为客户端自估） */
+  totals: { preTokens: number; postTokens: number; savedTokens: number; measured?: number };
+}
+/** 链路健康度：代理覆盖率 + 最近记录时间 + 最近若干笔的三方归因计数。
+ *  逐笔明细属于排障（CLI --request-log），报告只给一行结论。 */
+interface LinkHealth {
+  matched: number;
+  requests: number;
+  coverage: number;
+  /** proxy / transcript-tokens / transcript-ratio / mixed / transcript（v3 旧报告）/ null */
+  usageSource?: "proxy" | "transcript-tokens" | "transcript-ratio" | "mixed" | "transcript" | null;
+  /** 三档拆分：代理实测 / 转录 input_tokens / 转录 ratio×window */
+  breakdown?: { proxy: number; transcriptTokens: number; transcriptRatio: number };
+  logRecords?: number;
+  lastRecordAt?: string | null;
+  /** 参与归因的最近笔数；0 = 运行中的代理是旧版或还没记到诊断 */
+  recentRequests?: number;
+  proxyErrors?: number | null;
+  upstreamRejected?: number | null;
+  aborted?: number | null;
+  truncated?: number | null;
+  noUsage?: number | null;
+  slowestMs?: number | null;
+  /** 被更新流量推翻的那条陈旧拉起失败记录；null = 没有 */
+  supersededFailure?: { error: string; port?: number; at?: string | null } | null;
+}
+interface Report {
+  schemaVersion: number;
+  generatedAt: string;
+  pluginVersion?: string;
+  /** 转录来自哪一代客户端：桌面端富转录有 usage 真值，IDE 端精简转录没有。v2 旧报告无此字段。 */
+  source?: "desktop-rich" | "ide-lite" | "unknown";
+  /** usage 数字的来源：proxy=代理实测 / transcript-tokens=转录 input_tokens 真值 /
+   *  transcript-ratio=转录 ratio×window 推导 / mixed=多档混合 / transcript=v3 旧报告兼容。无 usage 时 null。 */
+  usageSource?: "proxy" | "transcript-tokens" | "transcript-ratio" | "mixed" | "transcript" | null;
+  /** 可直接粘贴执行的插件入口命令（generate.mjs 用 proxy.mjs 的 selfCmd() 注入）。
+   *  Windows 上是插件自带启动器的绝对路径，不要求用户装 Node；模板是静态文本，拿不到就只能硬编码。 */
+  selfCmd?: string | null;
+  /** 链路健康度一行结论（逐笔明细留给 CLI --request-log） */
+  linkHealth?: LinkHealth | null;
+  /** 代理 join 诊断（lib/proxylog.mjs）+ 配置/状态（generate.mjs 注入） */
+  proxy?: {
+    matched: number;
+    requests: number;
+    /** 三档拆分：代理实测 / 转录 input_tokens / 转录 ratio×window */
+    breakdown?: { proxy: number; transcriptTokens: number; transcriptRatio: number };
+    logPath?: string;
+    logExists?: boolean;
+    logRecords?: number;
+    /** config.json 里 upstream 合法 = 用户已配置代理 */
+    configured?: boolean;
+    enabled?: boolean;
+    port?: number;
+    /** 最近一条代理记录的时间；null = 从无流量 */
+    lastRecordAt?: string | null;
+    /** 已配置但长期零流量（多半已改回官方模型）——软提示可 --stop-proxy */
+    dormant?: boolean;
+    /** 最近一次自动拉起失败（如端口被占）；ok 时为 null */
+    status?: { error: string; port?: number; at?: string | null } | null;
+    /** status 那条失败记录是否已被更新的流量推翻（代理在它之后还记到了流量）。
+     *  status.json 只写不清，陈旧失败会把用户推去改本来正确的 Base URL，故必须判掉。 */
+    statusSuperseded?: boolean;
+  };
+  availability?: Availability;
+  manual?: ManualTruth | null;
+  session: {
+    id: string | null;
+    title: string | null;
+    /** custom-title / first-user / session-id —— 令产物文件名可解释 */
+    titleSource?: string;
+    model: string | null;
+    /** runtime-config / manual / unavailable */
+    modelSource?: string;
+    cwd: string | null;
+    turns: number;
+    roundTrips: number;
+    compactions: number;
+    startedAt: string | null;
+    endedAt: string | null;
+  };
+  context: {
+    contextWindow: number;
+    /** runtime-config=实测 / derived-from-usage=从 usage 反推 / manual=ManualTruth 手工锁定 /
+     *  fallback=读不到静默回退 200000 / caller=调用方传入（旧枚举，兼容）。
+     *  报告里每个 token 数字都要乘它，回退时必须标出来。 */
+    contextWindowSource?: string;
+    systemPromptTokens: number;
+    netContextTokens: number;
+    /** 峰值 = 当前窗口口径：自最近一次压缩起算，压缩边界处归零重新累积 */
+    peakContextTokens: number;
+    peakContextRatio: number;
+    /** 本场历史峰值（跨压缩）；整场没压缩过时与上面相等 */
+    peakSessionTokens?: number;
+    peakSessionRatio?: number;
+    /** 历史峰值是否值得单独交代（与当前窗口峰值相差 ≥1 个百分点），渲染端直接取用不再自判 */
+    peakSessionNotable?: boolean;
+    /** 峰值占比的「该不该压」结论（对模型窗口）；无有效占比时 null */
+    peakAdvice?: PeakAdvice | null;
+    /** 用户压缩阈值（Qoder 自动触发点），与模型窗口独立。默认 200000，ManualTruth 可覆盖 */
+    userContextLimit?: number;
+    /** default=内置 200K / manual=overrides 手写 / config=插件配置 / derived=实测反推 */
+    userContextLimitSource?: "default" | "manual" | "config" | "derived";
+    /** peakContextTokens ÷ userContextLimit */
+    peakUserRatio?: number;
+    /** 对用户阈值的「快自动压缩了吗」结论；与 peakAdvice 可矛盾（模型窗口未满但用户阈值已超） */
+    peakUserAdvice?: PeakAdvice | null;
+    /** v3.2 当前占用头条口径：段内单调递增 ⇒ 峰值≡当前，故以 netContextTokens 作头条，peak 退灰字 */
+    currentContextTokens?: number;
+    netUserRatio?: number;
+    netUserAdvice?: PeakAdvice | null;
+    netWindowRatio?: number;
+    /** v3.2 自动压缩自校准：本场 trigger=auto 的实际触发点（无需外部配置）与「阈值是否被强制」判定 */
+    observedAutoCompactions?: number;
+    observedAutoTriggerTokens?: number | null;
+    autoTriggerRatio?: number | null;
+    thresholdNotEnforced?: boolean;
+  };
+  totals: {
+    billedInputTokens: number;
+    netContextTokens: number;
+    peakContextTokens: number;
+    amplification: number;
+    attributedTokens: number;
+    coverage: number;
+    credits: number;
+    originalCredits: number;
+    /** 输出 token 总量：仅代理路径有真值，否则 0 且 availability.outputTokens=unavailable */
+    outputTokens?: number;
+    /** 供应商上下文缓存命中的那部分 prompt：仅代理路径有真值 */
+    cachedTokens?: number;
+    cachedTrips?: number;
+    /** 缓存命中 ÷ 计费输入总量（全局实测约 91.5%：重复叠加的前缀正是缓存的命中对象） */
+    cachedShare?: number;
+    /** 两个不依赖 usage 的计数，IDE 端占比全缺时仍有可展示的真值 */
+    toolCalls?: number;
+    fileReads?: number;
+  };
+  /** credits 的分子到底覆盖了多少：与计费输入总量并排展示时，部分覆盖不说就等于把局部真值当全量。 */
+  creditsCoverage?: {
+    /** 真正累加进 totals.credits 的往返数 */
+    trips: number;
+    roundTrips: number;
+    /** 这些往返的计费输入之和 */
+    tokens: number;
+    tokenShare: number;
+    /** trips === roundTrips：全覆盖时不必再啰嗦覆盖范围 */
+    full: boolean;
+  };
+  /** 压缩单笔成本（此前只显示「压缩 N 次」，而它是会话里单笔最贵的调用） */
+  compactionCost?: CompactionCost;
+  byCategory: CatRow[];
+  byCategoryDetail: CatDetail[];
+  byTool: ToolRow[];
+  byFile: FileRow[];
+  byRequest: ReqRow[];
+  subagents?: Subagents;
+  identity: { sumAttributed: number; billedInputTokens: number; absDiff: number; ok: boolean | null };
+}
+
+// 注入点：下一行的 REPORT 初值会被 render-canvas.mjs 按整行替换为真实报告 JSON。
+const REPORT = {"schemaVersion":3.2,"generatedAt":"2026-09-19T16:16:43.894Z","source":"desktop-rich","usageSource":"transcript-ratio","availability":{"credits":"measured","roundTrips":"measured","contextRatio":"measured","tokens":"derived","outputTokens":"unavailable","cachedTokens":"unavailable","categoryShare":"derived","toolShare":"derived","fileShare":"derived","systemPrompt":"derived","contextWindow":"measured","compactions":"measured","compactionCost":"measured","model":"measured","title":"measured","toolCalls":"measured","fileReads":"measured","userTurns":"measured","userContextLimit":"fallback"},"session":{"id":"fce86d6b-f85f-4736-a80a-45022e23fe16","title":"[@代码审查](skill://fullstac","titleSource":"first-user","model":"qfmodel","modelSource":"runtime-config","cwd":"G:\\CODEX\\New Manga","turns":27,"roundTrips":663,"compactions":3,"startedAt":"2026-09-18T16:52:54.794Z","endedAt":"2026-09-19T16:15:50.208Z"},"context":{"contextWindow":400000,"contextWindowSource":"runtime-config","systemPromptTokens":21155,"netContextTokens":202241,"peakContextTokens":202241,"peakContextRatio":0.5056025,"peakSessionTokens":358843,"peakSessionRatio":0.8971075,"peakSessionNotable":true,"peakAdvice":{"level":"mid","tone":"info","text":"已过盈亏线（39%）但还没进性价比区间，压缩有净收益但不大；不急着压"},"userContextLimit":200000,"userContextLimitSource":"default","peakUserRatio":1.011205,"peakUserAdvice":{"level":"over","tone":"danger","text":"已经超过上下文窗口本身，随时可能被截断或由客户端在最糟的时机自动压缩，立刻手动压一次"},"currentContextTokens":202241,"netUserRatio":1.011205,"netUserAdvice":{"level":"over","tone":"danger","text":"已经超过上下文窗口本身，随时可能被截断或由客户端在最糟的时机自动压缩，立刻手动压一次"},"netWindowRatio":0.5056025,"observedAutoCompactions":2,"observedAutoTriggerTokens":364652,"autoTriggerRatio":0.91163,"thresholdNotEnforced":true},"totals":{"billedInputTokens":121129026,"netContextTokens":202241,"peakContextTokens":202241,"amplification":598.93,"attributedTokens":121129026,"coverage":1,"credits":382.772,"originalCredits":382.772,"outputTokens":0,"cachedTokens":0,"cachedTrips":0,"cachedShare":0,"toolCalls":730,"fileReads":218},"creditsCoverage":{"trips":663,"roundTrips":663,"tokens":121129026,"tokenShare":1,"full":true},"compactionCost":{"count":3,"items":[{"index":1,"at":"2026-09-19T01:55:49.906Z","trigger":"manual","preTokens":343960,"postTokens":5524,"messagesSummarized":629,"nextRequestIndex":159,"nextInputTokens":43153,"savedTokens":300807,"proxy":null,"effectiveInputTokens":343960,"effectiveOutputTokens":5524},{"index":2,"at":"2026-09-19T10:23:06.964Z","trigger":"auto","preTokens":364652,"postTokens":6252,"messagesSummarized":749,"nextRequestIndex":369,"nextInputTokens":48727,"savedTokens":315925,"proxy":null,"effectiveInputTokens":364652,"effectiveOutputTokens":6252},{"index":3,"at":"2026-09-19T14:01:23.483Z","trigger":"auto","preTokens":361151,"postTokens":5580,"messagesSummarized":640,"nextRequestIndex":554,"nextInputTokens":39136,"savedTokens":322015,"proxy":null,"effectiveInputTokens":361151,"effectiveOutputTokens":5580}],"totals":{"preTokens":1069763,"postTokens":17356,"savedTokens":938747,"measured":0}},"proxy":{"matched":0,"requests":663,"breakdown":{"proxy":0,"transcriptTokens":0,"transcriptRatio":663},"logPath":"C:\\Users\\49745\\.qoder-credits-proxy\\usage.jsonl","logExists":false,"logRecords":0,"configured":false,"enabled":true,"port":49787,"lastRecordAt":null,"dormant":false,"status":null,"statusSuperseded":false},"byCategory":[{"key":"tool_result","label":"工具返回","tokens":37578989,"share":0.3102393386456711},{"key":"system","label":"系统提示词","tokens":14025765,"share":0.11579194073598842},{"key":"compact_summary","label":"压缩摘要","tokens":2906212,"share":0.02399269588531468},{"key":"assistant_thinking","label":"模型思考","tokens":23921055,"share":0.19748408672386417},{"key":"assistant_tool_use","label":"工具调用","tokens":15957660,"share":0.13174100692045276},{"key":"assistant_text","label":"模型回复","tokens":764831,"share":0.006314180490203733},{"key":"user_input","label":"用户输入","tokens":3852892,"share":0.03180816714329338},{"key":"attachment","label":"附件/技能","tokens":22121622,"share":0.1826285834552107}],"byCategoryDetail":[{"key":"tool_result","label":"工具返回","tokens":37578989,"share":0.3102393386456711,"children":[{"tool":"Bash","label":"（无路径）","kind":"shell","tokens":16852895,"share":0.13913176563836144,"catShare":0.44846590456816915,"trips":37557},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md","kind":"write","tokens":3713166,"share":0.030654633036806517,"catShare":0.09880962604751302,"trips":4565},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/doc/reviews/TASK-061-067e432.md","kind":"write","tokens":1260174,"share":0.010403566673427464,"catShare":0.03353400222822655,"trips":1072},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/reviews/TASK-046-7bf476b.md","kind":"write","tokens":1053642,"share":0.008698511081584835,"catShare":0.028038066092964224,"trips":1053},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/doc/reviews/TASK-057-b0e4cb1.md","kind":"read","tokens":880439,"share":0.007268608348606631,"catShare":0.023429035080906407,"trips":108},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/src/infrastructure/imaging/webtoon_tiles.py","kind":"read","tokens":868419,"share":0.00716936786620785,"catShare":0.023109151461917245,"trips":146},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/doc/reviews/TASK-057-b0e4cb1.md","kind":"write","tokens":836778,"share":0.006908156496231984,"catShare":0.022267184188791388,"trips":670},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/src/infrastructure/imaging/streaming_png.py","kind":"read","tokens":659342,"share":0.005443299201045239,"catShare":0.01754548351220575,"trips":147},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/handoffs/TASK-046-a40e228.md","kind":"read","tokens":648211,"share":0.005351412540102453,"catShare":0.01724930359722814,"trips":155},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/tasks/TASK-046.md","kind":"read","tokens":648211,"share":0.005351412540102453,"catShare":0.01724930359722814,"trips":155},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/doc/handoffs/TASK-060-zcode-handoff.md","kind":"read","tokens":542419,"share":0.004478027711768478,"catShare":0.014434106684590697,"trips":146},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t060_review_probe.py","kind":"read","tokens":528352,"share":0.004361896298605097,"catShare":0.014059778226857566,"trips":173},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/doc/reviews/TASK-060-b28c615.md","kind":"read","tokens":526884,"share":0.0043497753668623245,"catShare":0.01402070861113544,"trips":136},{"tool":"Read","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/tests/core/test_connection_ownership.py","kind":"read","tokens":502058,"share":0.004144822548648867,"catShare":0.01336008053247796,"trips":183},{"tool":"Agent","label":"（无路径）","kind":"other","tokens":454091,"share":0.0037488190633931016,"catShare":0.012083635427274692,"trips":428},{"tool":null,"label":"其他 101 项","kind":null,"tokens":7603907,"share":0.0627752642339167,"catShare":0.20234463014251478,"trips":18693}]},{"key":"system","label":"系统提示词","tokens":14025765,"share":0.11579194073598842,"children":[]},{"key":"compact_summary","label":"压缩摘要","tokens":2906212,"share":0.02399269588531468,"children":[]},{"key":"assistant_thinking","label":"模型思考","tokens":23921055,"share":0.19748408672386417,"children":[]},{"key":"assistant_tool_use","label":"工具调用","tokens":15957660,"share":0.13174100692045276,"children":[{"tool":"Bash","label":"（无路径）","kind":"shell","tokens":4638366,"share":0.03829276886069215,"catShare":0.29066704252392656,"trips":37557},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md","kind":"write","tokens":1277356,"share":0.010545413748607938,"catShare":0.08004655494226957,"trips":4565},{"tool":"Write","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/doc/reviews/TASK-061-067e432.md","kind":"write","tokens":953040,"share":0.007867975126723395,"catShare":0.059723052909973574,"trips":95},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/doc/reviews/TASK-061-067e432.md","kind":"write","tokens":899919,"share":0.007429428595660352,"catShare":0.05639419926512597,"trips":1072},{"tool":"Write","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t061_review_probe.py","kind":"write","tokens":819793,"share":0.0067679322790539795,"catShare":0.051373011617715666,"trips":168},{"tool":"Write","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/reviews/TASK-046-7bf476b.md","kind":"write","tokens":796548,"share":0.006576028731737584,"catShare":0.049916338773000966,"trips":99},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/reviews/TASK-046-7bf476b.md","kind":"write","tokens":651360,"share":0.005377407271822154,"catShare":0.04081802164355033,"trips":1053},{"tool":"Write","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/doc/reviews/TASK-060-b28c615.md","kind":"write","tokens":607646,"share":0.005016521353484024,"catShare":0.03807866260285286,"trips":83},{"tool":"Agent","label":"（无路径）","kind":"other","tokens":484770,"share":0.004002099802724398,"catShare":0.030378542689755872,"trips":428},{"tool":"Write","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t061_second_writer_probe.py","kind":"write","tokens":358975,"share":0.0029635785988166167,"catShare":0.022495490721473464,"trips":144},{"tool":"Write","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/verification/TASK-060/review-b28c615/t060_review_probe.py","kind":"write","tokens":356330,"share":0.002941742550936132,"catShare":0.022329740903774944,"trips":118},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t061_review_probe.py","kind":"write","tokens":307391,"share":0.0025377116182385908,"catShare":0.01926288311862456,"trips":962},{"tool":"Write","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/verification/TASK-046/review-7bf476b/ac2_work_accounting_probe.py","kind":"write","tokens":299595,"share":0.0024733582228412022,"catShare":0.018774398956390652,"trips":129},{"tool":"TaskCreate","label":"（无路径）","kind":"other","tokens":288128,"share":0.002378684884740396,"catShare":0.018055766692117985,"trips":2829},{"tool":"Edit","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/doc/reviews/TASK-057-b0e4cb1.md","kind":"write","tokens":256344,"share":0.002116290428352958,"catShare":0.01606402196114082,"trips":670},{"tool":null,"label":"其他 101 项","kind":null,"tokens":2962097,"share":0.024454064846021622,"catShare":0.18562227067831175,"trips":15415}]},{"key":"assistant_text","label":"模型回复","tokens":764831,"share":0.006314180490203733,"children":[]},{"key":"user_input","label":"用户输入","tokens":3852892,"share":0.03180816714329338,"children":[]},{"key":"attachment","label":"附件/技能","tokens":22121622,"share":0.1826285834552107,"children":[]}],"byTool":[{"tool":"Bash","tokens":21491261,"calls":447,"perCall":48079,"share":0.17742453449905435},{"tool":"Edit","tokens":12246633,"calls":113,"perCall":108377,"share":0.10110403371902228},{"tool":"Read","tokens":12163813,"calls":65,"perCall":187136,"share":0.10042029725853246},{"tool":"Write","tokens":6144166,"calls":37,"perCall":166059,"share":0.05072413932767107},{"tool":"Agent","tokens":938861,"calls":6,"perCall":156477,"share":0.007750918866117503},{"tool":"TaskCreate","tokens":357223,"calls":24,"perCall":14884,"share":0.0029491120069633906},{"tool":"Grep","tokens":117557,"calls":3,"perCall":39186,"share":0.0009705125611370103},{"tool":"Skill","tokens":46292,"calls":6,"perCall":7715,"share":0.00038217336068859117},{"tool":"TaskUpdate","tokens":30842,"calls":29,"perCall":1064,"share":0.0002546239669390347}],"byFile":[{"attr":"file:G:\\CODEX\\New Manga.worktrees\\POSTHOC-WINDOW-2026-09-19-qoder\\doc\\reviews\\POSTHOC-WINDOW-2026-09-19-Qoder.md","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/doc/reviews/POSTHOC-WINDOW-2026-09-19-Qoder.md","kind":"write","tool":"Write","selfTokens":38920,"reads":32,"trips":10664,"billed":5426117,"perRead":169566,"share":0.04479617272181683},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\doc\\reviews\\TASK-061-067e432.md","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/doc/reviews/TASK-061-067e432.md","kind":"write","tool":"Write","selfTokens":41954,"reads":16,"trips":2446,"billed":3156347,"perRead":197272,"share":0.026057728892799416},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\doc\\reviews\\TASK-046-7bf476b.md","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/reviews/TASK-046-7bf476b.md","kind":"write","tool":"Write","selfTokens":29051,"reads":15,"trips":2612,"billed":2945833,"perRead":196389,"share":0.024319795733953556},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\doc\\reviews\\TASK-057-b0e4cb1.md","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/doc/reviews/TASK-057-b0e4cb1.md","kind":"write","tool":"Write","selfTokens":32412,"reads":13,"trips":1780,"billed":2079201,"perRead":159939,"share":0.017165175857532897},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\doc\\reviews\\TASK-060-b28c615.md","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/doc/reviews/TASK-060-b28c615.md","kind":"write","tool":"Write","selfTokens":18794,"reads":6,"trips":896,"billed":1443281,"perRead":240547,"share":0.011915237830759153},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\t061_review_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t061_review_probe.py","kind":"write","tool":"Write","selfTokens":8536,"reads":7,"trips":2260,"billed":1372153,"perRead":196022,"share":0.011328031507348537},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\src\\infrastructure\\imaging\\webtoon_tiles.py","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/src/infrastructure/imaging/webtoon_tiles.py","kind":"read","tool":"Read","selfTokens":5161,"reads":1,"trips":292,"billed":873156,"perRead":873156,"share":0.007208476048606809},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\src\\infrastructure\\imaging\\streaming_png.py","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/src/infrastructure/imaging/streaming_png.py","kind":"read","tool":"Read","selfTokens":3899,"reads":1,"trips":294,"billed":664111,"perRead":664111,"share":0.005482672070492226},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\doc\\handoffs\\TASK-046-a40e228.md","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/handoffs/TASK-046-a40e228.md","kind":"read","tool":"Read","selfTokens":3639,"reads":1,"trips":310,"billed":652695,"perRead":652695,"share":0.005388431165864091},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\doc\\tasks\\TASK-046.md","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/tasks/TASK-046.md","kind":"read","tool":"Read","selfTokens":3636,"reads":1,"trips":310,"billed":652157,"perRead":652157,"share":0.005383988930772697},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\doc\\handoffs\\TASK-060-zcode-handoff.md","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/doc/handoffs/TASK-060-zcode-handoff.md","kind":"read","tool":"Read","selfTokens":3667,"reads":1,"trips":292,"billed":546593,"perRead":546593,"share":0.004512483544670242},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\t060_review_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t060_review_probe.py","kind":"read","tool":"Read","selfTokens":3172,"reads":1,"trips":346,"billed":533907,"perRead":533907,"share":0.004407752487790814},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-zcode\\tests\\core\\test_connection_ownership.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/tests/core/test_connection_ownership.py","kind":"read","tool":"Read","selfTokens":2848,"reads":1,"trips":366,"billed":506684,"perRead":506684,"share":0.004183010141230324},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\t061_second_writer_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/t061_second_writer_probe.py","kind":"write","tool":"Write","selfTokens":3777,"reads":5,"trips":1202,"billed":504568,"perRead":100914,"share":0.004165542159775415},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\verification\\TASK-060\\review-b28c615\\t060_review_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/verification/TASK-060/review-b28c615/t060_review_probe.py","kind":"write","tool":"Write","selfTokens":4128,"reads":4,"trips":794,"billed":467207,"perRead":116802,"share":0.003857103140011411},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\doc\\tasks\\TASK-060.md","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/doc/tasks/TASK-060.md","kind":"read","tool":"Read","selfTokens":2944,"reads":1,"trips":294,"billed":441879,"perRead":441879,"share":0.00364800651282651},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\POSTHOC-WINDOW-2026-09-19-qoder\\verification\\POSTHOC-WINDOW-2026-09-19\\Qoder\\w1_thread_collision_probe.py","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/verification/POSTHOC-WINDOW-2026-09-19/Qoder/w1_thread_collision_probe.py","kind":"write","tool":"Write","selfTokens":12640,"reads":10,"trips":764,"billed":424969,"perRead":42497,"share":0.0035084009400739528},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-zcode\\src\\infrastructure\\filesystem\\managed_storage.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/src/infrastructure/filesystem/managed_storage.py","kind":"read","tool":"Read","selfTokens":2026,"reads":1,"trips":368,"billed":362262,"perRead":362262,"share":0.002990712031988082},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\verification\\TASK-046\\review-7bf476b\\ac1_filtered_pages_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/verification/TASK-046/review-7bf476b/ac1_filtered_pages_probe.py","kind":"write","tool":"Write","selfTokens":2456,"reads":3,"trips":750,"billed":357434,"perRead":119145,"share":0.0029508501115503983},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\verification\\TASK-046\\review-7bf476b\\ac2_work_accounting_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/verification/TASK-046/review-7bf476b/ac2_work_accounting_probe.py","kind":"write","tool":"Write","selfTokens":2310,"reads":2,"trips":514,"billed":344681,"perRead":172341,"share":0.0028455706783960307},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\src\\infrastructure\\sqlite\\connection.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/src/infrastructure/sqlite/connection.py","kind":"read","tool":"Read","selfTokens":2229,"reads":1,"trips":282,"billed":320652,"perRead":320652,"share":0.002647192545655449},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-zcode\\src\\infrastructure\\sqlite\\connection.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/src/infrastructure/sqlite/connection.py","kind":"read","tool":"Read","selfTokens":4274,"reads":3,"trips":366,"billed":319515,"perRead":106505,"share":0.0026378031770819027},{"attr":"file:C:\\Users\\49745\\.qoder-cn\\projects\\G--CODEX-New-Manga\\memory\\review-evidence-discoverability.md","label":"C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/review-evidence-discoverability.md","kind":"write","tool":"Write","selfTokens":2663,"reads":4,"trips":998,"billed":308991,"perRead":77248,"share":0.00255092220944414},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\src\\ui\\viewmodels\\workbench\\run_controller.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/src/ui/viewmodels/workbench/run_controller.py","kind":"read","tool":"Read","selfTokens":1749,"reads":1,"trips":344,"billed":292670,"perRead":292670,"share":0.0024161858041035515},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\doc\\09_COLLABORATION.md","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/09_COLLABORATION.md","kind":"search","tool":"Grep","selfTokens":1610,"reads":2,"trips":614,"billed":285252,"perRead":142626,"share":0.0023549435190874275},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\tests\\core\\test_connection_ownership.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/tests/core/test_connection_ownership.py","kind":"read","tool":"Read","selfTokens":2014,"reads":1,"trips":268,"billed":274978,"perRead":274978,"share":0.002270124527201733},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\run_hang_check.ps1","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/run_hang_check.ps1","kind":"write","tool":"Write","selfTokens":2333,"reads":5,"trips":1174,"billed":268286,"perRead":53657,"share":0.0022148798974084387},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\verification\\TASK-060\\review-b28c615\\run_suite.ps1","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/verification/TASK-060/review-b28c615/run_suite.ps1","kind":"write","tool":"Write","selfTokens":2192,"reads":5,"trips":1146,"billed":255561,"perRead":51112,"share":0.0021098216608561498},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-zcode\\tests\\workbench\\test_connection_eviction.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/tests/workbench/test_connection_eviction.py","kind":"read","tool":"Read","selfTokens":1293,"reads":1,"trips":368,"billed":231197,"perRead":231197,"share":0.0019086824567426438},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\doc\\templates\\REVIEW.md","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/doc/templates/REVIEW.md","kind":"read","tool":"Read","selfTokens":1277,"reads":1,"trips":306,"billed":226126,"perRead":226126,"share":0.001866818902363502},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\probe-postfix-067e432-run2.log","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/probe-postfix-067e432-run2.log","kind":"read","tool":"Read","selfTokens":1515,"reads":1,"trips":294,"billed":216628,"perRead":216628,"share":0.0017884051241828928},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\verification\\TASK-046\\rewind_cost_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/verification/TASK-046/rewind_cost_probe.py","kind":"read","tool":"Read","selfTokens":1253,"reads":1,"trips":288,"billed":209105,"perRead":209105,"share":0.0017262996471452533},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-zcode\\tests\\storage\\test_managed_storage.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/tests/storage/test_managed_storage.py","kind":"read","tool":"Read","selfTokens":1167,"reads":1,"trips":364,"billed":206542,"perRead":206542,"share":0.001705139308902832},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\verification\\TASK-046\\review-7bf476b\\run_suite.ps1","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/verification/TASK-046/review-7bf476b/run_suite.ps1","kind":"write","tool":"Write","selfTokens":1293,"reads":4,"trips":1092,"billed":204899,"perRead":51225,"share":0.0016915769812537247},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\tests\\workbench\\test_gui_write_during_run.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/tests/workbench/test_gui_write_during_run.py","kind":"read","tool":"Read","selfTokens":1345,"reads":1,"trips":264,"billed":180855,"perRead":180855,"share":0.0014930793879312431},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\run_probe.ps1","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/run_probe.ps1","kind":"write","tool":"Write","selfTokens":1017,"reads":3,"trips":944,"billed":157316,"perRead":52439,"share":0.001298745305460719},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\doc\\templates\\REVIEW.md","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/doc/templates/REVIEW.md","kind":"read","tool":"Read","selfTokens":1381,"reads":1,"trips":230,"billed":154619,"perRead":154619,"share":0.0012764777146551886},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\verification\\TASK-046\\review-7bf476b\\ac5_behaviour_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/verification/TASK-046/review-7bf476b/ac5_behaviour_probe.py","kind":"write","tool":"Write","selfTokens":1080,"reads":2,"trips":474,"billed":148347,"perRead":74174,"share":0.0012247054681272652},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\probe-postfix-067e432-run1.log","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/probe-postfix-067e432-run1.log","kind":"read","tool":"Read","selfTokens":941,"reads":1,"trips":320,"billed":146438,"perRead":146438,"share":0.0012089416588072887},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\tests\\workbench\\test_drain_shutdown.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/tests/workbench/test_drain_shutdown.py","kind":"read","tool":"Read","selfTokens":1049,"reads":1,"trips":262,"billed":139969,"perRead":139969,"share":0.0011555379674528378},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\verification\\TASK-057\\review-b0e4cb1\\t057_gate_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-b0e4cb1/t057_gate_probe.py","kind":"write","tool":"Write","selfTokens":5265,"reads":4,"trips":196,"billed":127619,"perRead":31905,"share":0.0010535789020283072},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\POSTHOC-WINDOW-2026-09-19-qoder\\doc\\tasks\\TASK-048.md","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/doc/tasks/TASK-048.md","kind":"read","tool":"Read","selfTokens":2221,"reads":1,"trips":96,"billed":121702,"perRead":121702,"share":0.0010047289338074054},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\run.ps1","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/run.ps1","kind":"write","tool":"Write","selfTokens":710,"reads":1,"trips":350,"billed":120875,"perRead":120875,"share":0.0009979011982395476},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\POSTHOC-WINDOW-2026-09-19-qoder\\doc\\handoffs\\TASK-048-011ee16.md","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/doc/handoffs/TASK-048-011ee16.md","kind":"read","tool":"Read","selfTokens":2193,"reads":1,"trips":94,"billed":117610,"perRead":117610,"share":0.0009709450679142161},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-062-codex\\doc\\tasks\\TASK-062.md","label":"G:/CODEX/New Manga.worktrees/TASK-062-codex/doc/tasks/TASK-062.md","kind":"read","tool":"Read","selfTokens":3016,"reads":1,"trips":74,"billed":113787,"perRead":113787,"share":0.0009393904567434243},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\doc\\templates\\REVIEW.md","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/doc/templates/REVIEW.md","kind":"read","tool":"Read","selfTokens":1279,"reads":1,"trips":170,"billed":110584,"perRead":110584,"share":0.000912940992780431},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\probe-second-writer-postfix-run1.log","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/probe-second-writer-postfix-run1.log","kind":"read","tool":"Read","selfTokens":1032,"reads":1,"trips":218,"billed":109547,"perRead":109547,"share":0.0009043825220502352},{"attr":"file:C:\\Users\\49745\\AppData\\Local\\Temp\\t057_round2_body.md","label":"C:/Users/49745/AppData/Local/Temp/t057_round2_body.md","kind":"write","tool":"Write","selfTokens":6838,"reads":5,"trips":138,"billed":106486,"perRead":21297,"share":0.0008791141305605683},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\POSTHOC-WINDOW-2026-09-19-qoder\\tests\\workbench\\test_run_thread_e2e.py","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/tests/workbench/test_run_thread_e2e.py","kind":"read","tool":"Read","selfTokens":2217,"reads":1,"trips":84,"billed":106010,"perRead":106010,"share":0.0008751794911447057},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\verification\\TASK-060\\review-b28c615\\t060_q007_pre_post.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/verification/TASK-060/review-b28c615/t060_q007_pre_post.py","kind":"write","tool":"Write","selfTokens":1129,"reads":2,"trips":362,"billed":104046,"perRead":52023,"share":0.0008589682481699615},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-zcode\\doc\\handoffs\\TASK-057-unfreeze.md","label":"G:/CODEX/New Manga.worktrees/TASK-057-zcode/doc/handoffs/TASK-057-unfreeze.md","kind":"read","tool":"Read","selfTokens":2747,"reads":1,"trips":76,"billed":101743,"perRead":101743,"share":0.0008399532839135544},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\verification\\TASK-061\\review-067e432\\run_suite.ps1","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/verification/TASK-061/review-067e432/run_suite.ps1","kind":"read","tool":"Read","selfTokens":517,"reads":1,"trips":354,"billed":89013,"perRead":89013,"share":0.0007348576941916051},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\src\\infrastructure\\sqlite\\connection.py","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/src/infrastructure/sqlite/connection.py","kind":"read","tool":"Read","selfTokens":605,"reads":1,"trips":296,"billed":87095,"perRead":87095,"share":0.0007190240910485414},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\verification\\TASK-057\\review-29546f7\\t057_chokepoint_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-29546f7/t057_chokepoint_probe.py","kind":"write","tool":"Write","selfTokens":2882,"reads":5,"trips":278,"billed":84665,"perRead":16933,"share":0.0006989647716236014},{"attr":"file:C:\\Users\\49745\\.qoder-cn\\projects\\G--CODEX-New-Manga\\memory\\MEMORY.md","label":"C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/MEMORY.md","kind":"read","tool":"Read","selfTokens":668,"reads":4,"trips":770,"billed":84636,"perRead":21159,"share":0.000698727126391722},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-062-qoder-review\\doc\\reviews\\TASK-062-9ba21f8.md","label":"G:/CODEX/New Manga.worktrees/TASK-062-qoder-review/doc/reviews/TASK-062-9ba21f8.md","kind":"write","tool":"Write","selfTokens":6217,"reads":1,"trips":26,"billed":82306,"perRead":82306,"share":0.0006794939018466153},{"attr":"file:C:\\Users\\49745\\.qoder-cn\\projects\\G--CODEX-New-Manga\\memory\\verification-environment.md","label":"C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/verification-environment.md","kind":"read","tool":"Read","selfTokens":477,"reads":1,"trips":286,"billed":79053,"perRead":79053,"share":0.0006526352424727255},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\src\\infrastructure\\filesystem\\managed_storage.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/src/infrastructure/filesystem/managed_storage.py","kind":"read","tool":"Read","selfTokens":581,"reads":1,"trips":258,"billed":76320,"perRead":76320,"share":0.000630073595526202},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\verification\\TASK-060\\review-b28c615\\t060_r001_recheck_probe.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/verification/TASK-060/review-b28c615/t060_r001_recheck_probe.py","kind":"write","tool":"Write","selfTokens":1305,"reads":2,"trips":216,"billed":72627,"perRead":36313,"share":0.0005995829349085936},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\verification\\TASK-057\\review-29546f7\\gate-probe-29546f7.log","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-29546f7/gate-probe-29546f7.log","kind":"read","tool":"Read","selfTokens":1038,"reads":1,"trips":120,"billed":61218,"perRead":61218,"share":0.000505392246777548},{"attr":"file:C:\\Users\\49745\\.qoder-cn\\projects\\G--CODEX-New-Manga\\memory\\shared-worktree-overwrite-hazard.md","label":"C:/Users/49745/.qoder-cn/projects/G--CODEX-New-Manga/memory/shared-worktree-overwrite-hazard.md","kind":"write","tool":"Write","selfTokens":602,"reads":1,"trips":150,"billed":51879,"perRead":51879,"share":0.00042829163946464386},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-qoder-review\\doc\\templates\\HANDOFF.md","label":"G:/CODEX/New Manga.worktrees/TASK-061-qoder-review/doc/templates/HANDOFF.md","kind":"read","tool":"Read","selfTokens":476,"reads":1,"trips":212,"billed":49136,"perRead":49136,"share":0.0004056541807580928},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\POSTHOC-WINDOW-2026-09-19-qoder\\verification\\POSTHOC-WINDOW-2026-09-19\\Qoder\\run_suite.ps1","label":"G:/CODEX/New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/verification/POSTHOC-WINDOW-2026-09-19/Qoder/run_suite.ps1","kind":"write","tool":"Write","selfTokens":787,"reads":2,"trips":206,"billed":46355,"perRead":23178,"share":0.0003826923926763673},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\verification\\TASK-046\\review-7bf476b\\run_suite_at.ps1","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/verification/TASK-046/review-7bf476b/run_suite_at.ps1","kind":"write","tool":"Write","selfTokens":608,"reads":2,"trips":258,"billed":45001,"perRead":22501,"share":0.00037151544278396417},{"attr":"file:C:\\Users\\49745\\AppData\\Local\\Temp\\t062-evidence\\t062_redaction_probe.py","label":"C:/Users/49745/AppData/Local/Temp/t062-evidence/t062_redaction_probe.py","kind":"write","tool":"Write","selfTokens":1533,"reads":1,"trips":54,"billed":42199,"perRead":42199,"share":0.00034837873612627023},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\src\\ui\\viewmodels\\workbench\\viewmodel.py","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/src/ui/viewmodels/workbench/viewmodel.py","kind":"read","tool":"Read","selfTokens":1017,"reads":1,"trips":64,"billed":31705,"perRead":31705,"share":0.0002617454229424651},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-046-zcode\\tests\\reading_export\\test_webtoon_tiles.py","label":"G:/CODEX/New Manga.worktrees/TASK-046-zcode/tests/reading_export/test_webtoon_tiles.py","kind":"search","tool":"Grep","selfTokens":187,"reads":1,"trips":290,"billed":31422,"perRead":31422,"share":0.00025940776386841857},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\tests\\workbench\\test_restore_gate.py","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/tests/workbench/test_restore_gate.py","kind":"read","tool":"Read","selfTokens":807,"reads":1,"trips":62,"billed":24372,"perRead":24372,"share":0.0002012102420244569},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-060-qoder-review\\verification\\TASK-060\\review-b28c615\\_fix_escapes.py","label":"G:/CODEX/New Manga.worktrees/TASK-060-qoder-review/verification/TASK-060/review-b28c615/_fix_escapes.py","kind":"write","tool":"Write","selfTokens":482,"reads":2,"trips":178,"billed":21905,"perRead":10952,"share":0.00018083686230497238},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-zcode\\src\\ui\\viewmodels\\workbench\\viewmodel.py","label":"G:/CODEX/New Manga.worktrees/TASK-057-zcode/src/ui/viewmodels/workbench/viewmodel.py","kind":"read","tool":"Read","selfTokens":1051,"reads":1,"trips":40,"billed":20516,"perRead":20516,"share":0.00016937415352924153},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\verification\\TASK-057\\review-29546f7\\chokepoint-probe-29546f7.log","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-29546f7/chokepoint-probe-29546f7.log","kind":"read","tool":"Read","selfTokens":566,"reads":1,"trips":44,"billed":12166,"perRead":12166,"share":0.00010044188002829565},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\verification\\TASK-057\\review-29546f7\\discrim-gate-on-b0e4cb1.log","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/verification/TASK-057/review-29546f7/discrim-gate-on-b0e4cb1.log","kind":"read","tool":"Read","selfTokens":183,"reads":1,"trips":108,"billed":9717,"perRead":9717,"share":0.00008021744124220047},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-zcode\\doc\\tasks\\TASK-061.md","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/doc/tasks/TASK-061.md","kind":"read","tool":"Read","selfTokens":2847,"reads":1,"trips":6,"billed":8708,"perRead":8708,"share":0.0000718943912117851},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-061-zcode\\doc\\handoffs\\TASK-061-zcode-handoff.md","label":"G:/CODEX/New Manga.worktrees/TASK-061-zcode/doc/handoffs/TASK-061-zcode-handoff.md","kind":"read","tool":"Read","selfTokens":2834,"reads":1,"trips":4,"billed":5780,"perRead":5780,"share":0.00004771985624752179},{"attr":"file:G:\\CODEX\\New Manga.worktrees\\TASK-057-qoder-review\\src\\application\\maintenance\\backup.py","label":"G:/CODEX/New Manga.worktrees/TASK-057-qoder-review/src/application/maintenance/backup.py","kind":"read","tool":"Read","selfTokens":380,"reads":1,"trips":26,"billed":4807,"perRead":4807,"share":0.00003968194292575559},{"attr":"file:C:\\Users\\49745\\AppData\\Local\\Temp\\t057_append_round2.py","label":"C:/Users/49745/AppData/Local/Temp/t057_append_round2.py","kind":"write","tool":"Write","selfTokens":444,"reads":1,"trips":20,"billed":4332,"perRead":4332,"share":0.00003576686909834464},{"attr":"file:G:\\CODEX.New Manga.worktrees\\POSTHOC-WINDOW-2026-09-19-qoder\\verification\\TASK-048\\thread_probe_pre.py","label":"G:/CODEX.New Manga.worktrees/POSTHOC-WINDOW-2026-09-19-qoder/verification/TASK-048/thread_probe_pre.py","kind":"read","tool":"Read","selfTokens":53,"reads":1,"trips":68,"billed":2046,"perRead":2046,"share":0.000016893044866936185}],"byAttr":[{"attr":"assistant_thinking","tokens":23921055,"share":0.19748408672386417},{"attr":"attachment","tokens":22121622,"share":0.1826285834552107},{"attr":"tool_result|Bash","tokens":16852895,"share":0.13913176563836144},{"attr":"system","tokens":14025765,"share":0.11579194073598842},{"attr":"tool_result|Read","tokens":11955068,"share":0.09869696750059621},{"attr":"tool_result|Edit","tokens":8033365,"share":0.06632072477801518},{"attr":"tool_use|Write","tokens":6041457,"share":0.049876211570075615},{"attr":"tool_use|Bash","tokens":4638366,"share":0.03829276886069215},{"attr":"tool_use|Edit","tokens":4213268,"share":0.03478330894100631},{"attr":"user_input","tokens":3852892,"share":0.03180816714329338},{"attr":"compact_summary","tokens":2906212,"share":0.02399269588531468},{"attr":"assistant_text","tokens":764831,"share":0.006314180490203733},{"attr":"tool_use|Agent","tokens":484770,"share":0.004002099802724398},{"attr":"tool_result|Agent","tokens":454091,"share":0.0037488190633931016},{"attr":"tool_use|TaskCreate","tokens":288128,"share":0.002378684884740396},{"attr":"tool_use|Read","tokens":208745,"share":0.001723329757936618},{"attr":"tool_result|Write","tokens":102709,"share":0.000847927757595381},{"attr":"tool_result|Grep","tokens":92159,"share":0.0007608336872068453},{"attr":"tool_result|TaskCreate","tokens":69095,"share":0.000570427122222991},{"attr":"tool_use|Skill","tokens":38916,"share":0.00032127447542930386},{"attr":"tool_use|Grep","tokens":25398,"share":0.00020967887393016425},{"attr":"tool_use|TaskUpdate","tokens":18611,"share":0.00015364975391821936},{"attr":"tool_result|TaskUpdate","tokens":12231,"share":0.00010097421302081592},{"attr":"tool_result|Skill","tokens":7377,"share":0.000060898885259287484}],"byRequest":[{"index":1,"time":"00:52","ratio":0.066047,"inputTokens":26419,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.221,"originalCredits":0.221,"afterCompact":false},{"index":2,"time":"00:53","ratio":0.070248,"inputTokens":28099,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.133,"originalCredits":0.133,"afterCompact":false},{"index":3,"time":"00:53","ratio":0.077433,"inputTokens":30973,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.151,"originalCredits":0.151,"afterCompact":false},{"index":4,"time":"00:53","ratio":0.098342,"inputTokens":39337,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.317,"originalCredits":0.317,"afterCompact":false},{"index":5,"time":"00:53","ratio":0.099682,"inputTokens":39873,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.112,"originalCredits":0.112,"afterCompact":false},{"index":6,"time":"00:53","ratio":0.105675,"inputTokens":42270,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.196,"originalCredits":0.196,"afterCompact":false},{"index":7,"time":"00:53","ratio":0.107728,"inputTokens":43091,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.138,"originalCredits":0.138,"afterCompact":false},{"index":8,"time":"00:53","ratio":0.110658,"inputTokens":44263,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.145,"originalCredits":0.145,"afterCompact":false},{"index":9,"time":"00:53","ratio":0.113787,"inputTokens":45515,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.149,"originalCredits":0.149,"afterCompact":false},{"index":10,"time":"00:54","ratio":0.11982,"inputTokens":47928,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.199,"originalCredits":0.199,"afterCompact":false},{"index":11,"time":"00:55","ratio":0.125917,"inputTokens":50367,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.325,"originalCredits":0.325,"afterCompact":false},{"index":12,"time":"00:55","ratio":0.143693,"inputTokens":57477,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.339,"originalCredits":0.339,"afterCompact":false},{"index":13,"time":"00:55","ratio":0.16023,"inputTokens":64092,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.425,"originalCredits":0.425,"afterCompact":false},{"index":14,"time":"00:56","ratio":0.167302,"inputTokens":66921,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.246,"originalCredits":0.246,"afterCompact":false},{"index":15,"time":"00:56","ratio":0.175305,"inputTokens":70122,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.38,"originalCredits":0.38,"afterCompact":false},{"index":16,"time":"00:57","ratio":0.186163,"inputTokens":74465,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.327,"originalCredits":0.327,"afterCompact":false},{"index":17,"time":"00:57","ratio":0.188625,"inputTokens":75450,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.233,"originalCredits":0.233,"afterCompact":false},{"index":18,"time":"00:57","ratio":0.19052,"inputTokens":76208,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.219,"originalCredits":0.219,"afterCompact":false},{"index":19,"time":"00:57","ratio":0.191913,"inputTokens":76765,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.213,"originalCredits":0.213,"afterCompact":false},{"index":20,"time":"00:57","ratio":0.193233,"inputTokens":77293,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.209,"originalCredits":0.209,"afterCompact":false},{"index":21,"time":"00:58","ratio":0.198265,"inputTokens":79306,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.326,"originalCredits":0.326,"afterCompact":false},{"index":22,"time":"00:58","ratio":0.209063,"inputTokens":83625,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.347,"originalCredits":0.347,"afterCompact":false},{"index":23,"time":"00:59","ratio":0.213583,"inputTokens":85433,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.319,"originalCredits":0.319,"afterCompact":false},{"index":24,"time":"00:59","ratio":0.217585,"inputTokens":87034,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.26,"originalCredits":0.26,"afterCompact":false},{"index":25,"time":"00:59","ratio":0.21916,"inputTokens":87664,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.217,"originalCredits":0.217,"afterCompact":false},{"index":26,"time":"00:59","ratio":0.220493,"inputTokens":88197,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.246,"originalCredits":0.246,"afterCompact":false},{"index":27,"time":"01:00","ratio":0.222537,"inputTokens":89015,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.35,"originalCredits":0.35,"afterCompact":false},{"index":28,"time":"01:00","ratio":0.233263,"inputTokens":93305,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.376,"originalCredits":0.376,"afterCompact":false},{"index":29,"time":"01:01","ratio":0.23578,"inputTokens":94312,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.394,"originalCredits":0.394,"afterCompact":false},{"index":30,"time":"01:01","ratio":0.242558,"inputTokens":97023,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.297,"originalCredits":0.297,"afterCompact":false},{"index":31,"time":"01:01","ratio":0.24357,"inputTokens":97428,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.336,"originalCredits":0.336,"afterCompact":false},{"index":32,"time":"01:01","ratio":0.248273,"inputTokens":99309,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.283,"originalCredits":0.283,"afterCompact":false},{"index":33,"time":"01:01","ratio":0.249443,"inputTokens":99777,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.287,"originalCredits":0.287,"afterCompact":false},{"index":34,"time":"01:01","ratio":0.25319,"inputTokens":101276,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.277,"originalCredits":0.277,"afterCompact":false},{"index":35,"time":"01:02","ratio":0.25416,"inputTokens":101664,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.257,"originalCredits":0.257,"afterCompact":false},{"index":36,"time":"01:02","ratio":0.255563,"inputTokens":102225,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.276,"originalCredits":0.276,"afterCompact":false},{"index":37,"time":"01:02","ratio":0.257323,"inputTokens":102929,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.261,"originalCredits":0.261,"afterCompact":false},{"index":38,"time":"01:03","ratio":0.259015,"inputTokens":103606,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.269,"originalCredits":0.269,"afterCompact":false},{"index":39,"time":"01:04","ratio":0.261852,"inputTokens":104741,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.377,"originalCredits":0.377,"afterCompact":false},{"index":40,"time":"01:04","ratio":0.266823,"inputTokens":106729,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.3,"originalCredits":0.3,"afterCompact":false},{"index":41,"time":"01:05","ratio":0.267792,"inputTokens":107117,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.283,"originalCredits":0.283,"afterCompact":false},{"index":42,"time":"01:05","ratio":0.269987,"inputTokens":107995,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.287,"originalCredits":0.287,"afterCompact":false},{"index":43,"time":"01:06","ratio":0.272993,"inputTokens":109197,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.371,"originalCredits":0.371,"afterCompact":false},{"index":44,"time":"01:07","ratio":0.277373,"inputTokens":110949,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.355,"originalCredits":0.355,"afterCompact":false},{"index":45,"time":"01:10","ratio":0.3,"inputTokens":120000,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.541,"originalCredits":0.541,"afterCompact":false},{"index":46,"time":"01:11","ratio":0.3053,"inputTokens":122120,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.46,"originalCredits":0.46,"afterCompact":false},{"index":47,"time":"01:11","ratio":0.316972,"inputTokens":126789,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.453,"originalCredits":0.453,"afterCompact":false},{"index":48,"time":"01:12","ratio":0.323852,"inputTokens":129541,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.412,"originalCredits":0.412,"afterCompact":false},{"index":49,"time":"01:12","ratio":0.329338,"inputTokens":131735,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.418,"originalCredits":0.418,"afterCompact":false},{"index":50,"time":"01:12","ratio":0.334807,"inputTokens":133923,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.438,"originalCredits":0.438,"afterCompact":false},{"index":51,"time":"01:13","ratio":0.346477,"inputTokens":138591,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.55,"originalCredits":0.55,"afterCompact":false},{"index":52,"time":"01:13","ratio":0.352228,"inputTokens":140891,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.383,"originalCredits":0.383,"afterCompact":false},{"index":53,"time":"01:13","ratio":0.35315,"inputTokens":141260,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.345,"originalCredits":0.345,"afterCompact":false},{"index":54,"time":"01:13","ratio":0.354685,"inputTokens":141874,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.444,"originalCredits":0.444,"afterCompact":false},{"index":55,"time":"01:14","ratio":0.35942,"inputTokens":143768,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.382,"originalCredits":0.382,"afterCompact":false},{"index":56,"time":"01:14","ratio":0.360308,"inputTokens":144123,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.347,"originalCredits":0.347,"afterCompact":false},{"index":57,"time":"01:14","ratio":0.361907,"inputTokens":144763,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.366,"originalCredits":0.366,"afterCompact":false},{"index":58,"time":"01:15","ratio":0.365088,"inputTokens":146035,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.418,"originalCredits":0.418,"afterCompact":false},{"index":59,"time":"01:16","ratio":0.36781,"inputTokens":147124,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.803,"originalCredits":0.803,"afterCompact":false},{"index":60,"time":"01:17","ratio":0.387165,"inputTokens":154866,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.754,"originalCredits":0.754,"afterCompact":false},{"index":61,"time":"01:17","ratio":0.397232,"inputTokens":158893,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.473,"originalCredits":0.473,"afterCompact":false},{"index":62,"time":"01:17","ratio":0.39948,"inputTokens":159792,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.413,"originalCredits":0.413,"afterCompact":false},{"index":63,"time":"01:18","ratio":0.402365,"inputTokens":160946,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.414,"originalCredits":0.414,"afterCompact":false},{"index":64,"time":"01:18","ratio":0.404662,"inputTokens":161865,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.443,"originalCredits":0.443,"afterCompact":false},{"index":65,"time":"01:18","ratio":0.40735,"inputTokens":162940,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.42,"originalCredits":0.42,"afterCompact":false},{"index":66,"time":"01:18","ratio":0.409813,"inputTokens":163925,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.402,"originalCredits":0.402,"afterCompact":false},{"index":67,"time":"01:18","ratio":0.42016,"inputTokens":168064,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.523,"originalCredits":0.523,"afterCompact":false},{"index":68,"time":"01:19","ratio":0.426353,"inputTokens":170541,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.497,"originalCredits":0.497,"afterCompact":false},{"index":69,"time":"01:19","ratio":0.433518,"inputTokens":173407,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.511,"originalCredits":0.511,"afterCompact":false},{"index":70,"time":"01:19","ratio":0.440038,"inputTokens":176015,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.513,"originalCredits":0.513,"afterCompact":false},{"index":71,"time":"01:19","ratio":0.443993,"inputTokens":177597,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.452,"originalCredits":0.452,"afterCompact":false},{"index":72,"time":"01:19","ratio":0.44516,"inputTokens":178064,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.451,"originalCredits":0.451,"afterCompact":false},{"index":73,"time":"01:20","ratio":0.448628,"inputTokens":179451,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.482,"originalCredits":0.482,"afterCompact":false},{"index":74,"time":"01:20","ratio":0.45365,"inputTokens":181460,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.533,"originalCredits":0.533,"afterCompact":false},{"index":75,"time":"01:20","ratio":0.460185,"inputTokens":184074,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.523,"originalCredits":0.523,"afterCompact":false},{"index":76,"time":"01:20","ratio":0.463615,"inputTokens":185446,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.477,"originalCredits":0.477,"afterCompact":false},{"index":77,"time":"01:20","ratio":0.46503,"inputTokens":186012,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.439,"originalCredits":0.439,"afterCompact":false},{"index":78,"time":"01:21","ratio":0.46638,"inputTokens":186552,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.489,"originalCredits":0.489,"afterCompact":false},{"index":79,"time":"01:21","ratio":0.469425,"inputTokens":187770,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.472,"originalCredits":0.472,"afterCompact":false},{"index":80,"time":"01:21","ratio":0.47077,"inputTokens":188308,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.531,"originalCredits":0.531,"afterCompact":false},{"index":81,"time":"01:22","ratio":0.477768,"inputTokens":191107,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.511,"originalCredits":0.511,"afterCompact":false},{"index":82,"time":"01:22","ratio":0.479502,"inputTokens":191801,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.484,"originalCredits":0.484,"afterCompact":false},{"index":83,"time":"01:22","ratio":0.481403,"inputTokens":192561,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.48,"originalCredits":0.48,"afterCompact":false},{"index":84,"time":"01:22","ratio":0.482885,"inputTokens":193154,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.449,"originalCredits":0.449,"afterCompact":false},{"index":85,"time":"01:22","ratio":0.483233,"inputTokens":193293,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.444,"originalCredits":0.444,"afterCompact":false},{"index":86,"time":"01:22","ratio":0.484158,"inputTokens":193663,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.453,"originalCredits":0.453,"afterCompact":false},{"index":87,"time":"01:23","ratio":0.484925,"inputTokens":193970,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.549,"originalCredits":0.549,"afterCompact":false},{"index":88,"time":"03:03","ratio":0.493878,"inputTokens":197551,"outputTokens":null,"usageSource":"transcript-ratio","credits":5.568,"originalCredits":5.568,"afterCompact":false},{"index":89,"time":"03:03","ratio":0.498497,"inputTokens":199399,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.526,"originalCredits":0.526,"afterCompact":false},{"index":90,"time":"03:04","ratio":0.502795,"inputTokens":201118,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.524,"originalCredits":0.524,"afterCompact":false},{"index":91,"time":"03:04","ratio":0.505387,"inputTokens":202155,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.5,"originalCredits":0.5,"afterCompact":false},{"index":92,"time":"03:04","ratio":0.508877,"inputTokens":203551,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.597,"originalCredits":0.597,"afterCompact":false},{"index":93,"time":"03:05","ratio":0.514188,"inputTokens":205675,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.558,"originalCredits":0.558,"afterCompact":false},{"index":94,"time":"03:05","ratio":0.516273,"inputTokens":206509,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.485,"originalCredits":0.485,"afterCompact":false},{"index":95,"time":"03:05","ratio":0.517437,"inputTokens":206975,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.502,"originalCredits":0.502,"afterCompact":false},{"index":96,"time":"03:06","ratio":0.519473,"inputTokens":207789,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.537,"originalCredits":0.537,"afterCompact":false},{"index":97,"time":"03:06","ratio":0.5247,"inputTokens":209880,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.65,"originalCredits":0.65,"afterCompact":false},{"index":98,"time":"03:06","ratio":0.533602,"inputTokens":213441,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.59,"originalCredits":0.59,"afterCompact":false},{"index":99,"time":"03:07","ratio":0.53477,"inputTokens":213908,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.501,"originalCredits":0.501,"afterCompact":false},{"index":100,"time":"03:07","ratio":0.535682,"inputTokens":214273,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.518,"originalCredits":0.518,"afterCompact":false},{"index":101,"time":"03:07","ratio":0.53735,"inputTokens":214940,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.556,"originalCredits":0.556,"afterCompact":false},{"index":102,"time":"08:59","ratio":0.547755,"inputTokens":219102,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.595,"originalCredits":0.595,"afterCompact":false},{"index":103,"time":"09:00","ratio":0.550767,"inputTokens":220307,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.571,"originalCredits":0.571,"afterCompact":false},{"index":104,"time":"09:00","ratio":0.574435,"inputTokens":229774,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.848,"originalCredits":0.848,"afterCompact":false},{"index":105,"time":"09:00","ratio":0.583398,"inputTokens":233359,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.659,"originalCredits":0.659,"afterCompact":false},{"index":106,"time":"09:01","ratio":0.585677,"inputTokens":234271,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.624,"originalCredits":0.624,"afterCompact":false},{"index":107,"time":"09:01","ratio":0.58922,"inputTokens":235688,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.567,"originalCredits":0.567,"afterCompact":false},{"index":108,"time":"09:01","ratio":0.590843,"inputTokens":236337,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.574,"originalCredits":0.574,"afterCompact":false},{"index":109,"time":"09:02","ratio":0.592485,"inputTokens":236994,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.6,"originalCredits":0.6,"afterCompact":false},{"index":110,"time":"09:02","ratio":0.595255,"inputTokens":238102,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.571,"originalCredits":0.571,"afterCompact":false},{"index":111,"time":"09:02","ratio":0.602102,"inputTokens":240841,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.625,"originalCredits":0.625,"afterCompact":false},{"index":112,"time":"09:03","ratio":0.61275,"inputTokens":245100,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.723,"originalCredits":0.723,"afterCompact":false},{"index":113,"time":"09:03","ratio":0.619035,"inputTokens":247614,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.663,"originalCredits":0.663,"afterCompact":false},{"index":114,"time":"09:03","ratio":0.622237,"inputTokens":248895,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.62,"originalCredits":0.62,"afterCompact":false},{"index":115,"time":"09:05","ratio":0.626245,"inputTokens":250498,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.967,"originalCredits":0.967,"afterCompact":false},{"index":116,"time":"09:05","ratio":0.644678,"inputTokens":257871,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.789,"originalCredits":0.789,"afterCompact":false},{"index":117,"time":"09:05","ratio":0.652343,"inputTokens":260937,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.713,"originalCredits":0.713,"afterCompact":false},{"index":118,"time":"09:05","ratio":0.656663,"inputTokens":262665,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.69,"originalCredits":0.69,"afterCompact":false},{"index":119,"time":"09:06","ratio":0.661658,"inputTokens":264663,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.718,"originalCredits":0.718,"afterCompact":false},{"index":120,"time":"09:07","ratio":0.667693,"inputTokens":267077,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.766,"originalCredits":0.766,"afterCompact":false},{"index":121,"time":"09:07","ratio":0.67402,"inputTokens":269608,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.744,"originalCredits":0.744,"afterCompact":false},{"index":122,"time":"09:07","ratio":0.678205,"inputTokens":271282,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.664,"originalCredits":0.664,"afterCompact":false},{"index":123,"time":"09:07","ratio":0.680103,"inputTokens":272041,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.642,"originalCredits":0.642,"afterCompact":false},{"index":124,"time":"09:08","ratio":0.681565,"inputTokens":272626,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.671,"originalCredits":0.671,"afterCompact":false},{"index":125,"time":"09:08","ratio":0.684615,"inputTokens":273846,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.651,"originalCredits":0.651,"afterCompact":false},{"index":126,"time":"09:08","ratio":0.68537,"inputTokens":274148,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.637,"originalCredits":0.637,"afterCompact":false},{"index":127,"time":"09:09","ratio":0.68841,"inputTokens":275364,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.975,"originalCredits":0.975,"afterCompact":false},{"index":128,"time":"09:09","ratio":0.702455,"inputTokens":280982,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.803,"originalCredits":0.803,"afterCompact":false},{"index":129,"time":"09:09","ratio":0.703963,"inputTokens":281585,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.664,"originalCredits":0.664,"afterCompact":false},{"index":130,"time":"09:10","ratio":0.70603,"inputTokens":282412,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.724,"originalCredits":0.724,"afterCompact":false},{"index":131,"time":"09:11","ratio":0.710198,"inputTokens":284079,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.974,"originalCredits":0.974,"afterCompact":false},{"index":132,"time":"09:11","ratio":0.722917,"inputTokens":289167,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.79,"originalCredits":0.79,"afterCompact":false},{"index":133,"time":"09:11","ratio":0.724158,"inputTokens":289663,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.67,"originalCredits":0.67,"afterCompact":false},{"index":134,"time":"09:12","ratio":0.726215,"inputTokens":290486,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.684,"originalCredits":0.684,"afterCompact":false},{"index":135,"time":"09:12","ratio":0.72749,"inputTokens":290996,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.678,"originalCredits":0.678,"afterCompact":false},{"index":136,"time":"09:12","ratio":0.736078,"inputTokens":294431,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.771,"originalCredits":0.771,"afterCompact":false},{"index":137,"time":"09:13","ratio":0.73841,"inputTokens":295364,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.823,"originalCredits":0.823,"afterCompact":false},{"index":138,"time":"09:15","ratio":0.758023,"inputTokens":303209,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.983,"originalCredits":0.983,"afterCompact":false},{"index":139,"time":"09:15","ratio":0.76367,"inputTokens":305468,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.762,"originalCredits":0.762,"afterCompact":false},{"index":140,"time":"09:16","ratio":0.768432,"inputTokens":307373,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.781,"originalCredits":0.781,"afterCompact":false},{"index":141,"time":"09:16","ratio":0.772265,"inputTokens":308906,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.752,"originalCredits":0.752,"afterCompact":false},{"index":142,"time":"09:16","ratio":0.774147,"inputTokens":309659,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.733,"originalCredits":0.733,"afterCompact":false},{"index":143,"time":"09:18","ratio":0.77623,"inputTokens":310492,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.812,"originalCredits":0.812,"afterCompact":false},{"index":144,"time":"09:18","ratio":0.781005,"inputTokens":312402,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.825,"originalCredits":0.825,"afterCompact":false},{"index":145,"time":"09:18","ratio":0.784687,"inputTokens":313875,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.744,"originalCredits":0.744,"afterCompact":false},{"index":146,"time":"09:18","ratio":0.79518,"inputTokens":318072,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.887,"originalCredits":0.887,"afterCompact":false},{"index":147,"time":"09:19","ratio":0.799772,"inputTokens":319909,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.801,"originalCredits":0.801,"afterCompact":false},{"index":148,"time":"09:19","ratio":0.804238,"inputTokens":321695,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.809,"originalCredits":0.809,"afterCompact":false},{"index":149,"time":"09:20","ratio":0.808365,"inputTokens":323346,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.826,"originalCredits":0.826,"afterCompact":false},{"index":150,"time":"09:21","ratio":0.81269,"inputTokens":325076,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.862,"originalCredits":0.862,"afterCompact":false},{"index":151,"time":"09:24","ratio":0.817958,"inputTokens":327183,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.42,"originalCredits":1.42,"afterCompact":false},{"index":152,"time":"09:25","ratio":0.844753,"inputTokens":337901,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.06,"originalCredits":1.06,"afterCompact":false},{"index":153,"time":"09:25","ratio":0.847298,"inputTokens":338919,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.825,"originalCredits":0.825,"afterCompact":false},{"index":154,"time":"09:26","ratio":0.849955,"inputTokens":339982,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.813,"originalCredits":0.813,"afterCompact":false},{"index":155,"time":"09:26","ratio":0.851267,"inputTokens":340507,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.795,"originalCredits":0.795,"afterCompact":false},{"index":156,"time":"09:26","ratio":0.852893,"inputTokens":341157,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.792,"originalCredits":0.792,"afterCompact":false},{"index":157,"time":"09:28","ratio":0.854633,"inputTokens":341853,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.824,"originalCredits":0.824,"afterCompact":false},{"index":158,"time":"09:28","ratio":0.85673,"inputTokens":342692,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.859,"originalCredits":0.859,"afterCompact":false},{"index":159,"time":"10:14","ratio":0.107883,"inputTokens":43153,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.698,"originalCredits":0.698,"afterCompact":true},{"index":160,"time":"10:14","ratio":0.110278,"inputTokens":44111,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.146,"originalCredits":0.146,"afterCompact":false},{"index":161,"time":"10:14","ratio":0.115125,"inputTokens":46050,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.202,"originalCredits":0.202,"afterCompact":false},{"index":162,"time":"10:15","ratio":0.12687,"inputTokens":50748,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.264,"originalCredits":0.264,"afterCompact":false},{"index":163,"time":"10:15","ratio":0.131162,"inputTokens":52465,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.184,"originalCredits":0.184,"afterCompact":false},{"index":164,"time":"10:15","ratio":0.132937,"inputTokens":53175,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.198,"originalCredits":0.198,"afterCompact":false},{"index":165,"time":"10:16","ratio":0.137433,"inputTokens":54973,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.253,"originalCredits":0.253,"afterCompact":false},{"index":166,"time":"10:16","ratio":0.14195,"inputTokens":56780,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.191,"originalCredits":0.191,"afterCompact":false},{"index":167,"time":"10:16","ratio":0.14352,"inputTokens":57408,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.154,"originalCredits":0.154,"afterCompact":false},{"index":168,"time":"10:16","ratio":0.145778,"inputTokens":58311,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.195,"originalCredits":0.195,"afterCompact":false},{"index":169,"time":"10:16","ratio":0.147858,"inputTokens":59143,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.174,"originalCredits":0.174,"afterCompact":false},{"index":170,"time":"10:16","ratio":0.150948,"inputTokens":60379,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.219,"originalCredits":0.219,"afterCompact":false},{"index":171,"time":"10:17","ratio":0.15525,"inputTokens":62100,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.21,"originalCredits":0.21,"afterCompact":false},{"index":172,"time":"10:17","ratio":0.160515,"inputTokens":64206,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.205,"originalCredits":0.205,"afterCompact":false},{"index":173,"time":"10:17","ratio":0.161823,"inputTokens":64729,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.176,"originalCredits":0.176,"afterCompact":false},{"index":174,"time":"10:17","ratio":0.162848,"inputTokens":65139,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.194,"originalCredits":0.194,"afterCompact":false},{"index":175,"time":"10:17","ratio":0.166153,"inputTokens":66461,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.192,"originalCredits":0.192,"afterCompact":false},{"index":176,"time":"10:20","ratio":0.167577,"inputTokens":67031,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.193,"originalCredits":0.193,"afterCompact":false},{"index":177,"time":"10:20","ratio":0.172077,"inputTokens":68831,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.27,"originalCredits":0.27,"afterCompact":false},{"index":178,"time":"10:20","ratio":0.176012,"inputTokens":70405,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.22,"originalCredits":0.22,"afterCompact":false},{"index":179,"time":"10:20","ratio":0.177825,"inputTokens":71130,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.195,"originalCredits":0.195,"afterCompact":false},{"index":180,"time":"10:21","ratio":0.17916,"inputTokens":71664,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.193,"originalCredits":0.193,"afterCompact":false},{"index":181,"time":"10:21","ratio":0.181815,"inputTokens":72726,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.202,"originalCredits":0.202,"afterCompact":false},{"index":182,"time":"10:21","ratio":0.182982,"inputTokens":73193,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.236,"originalCredits":0.236,"afterCompact":false},{"index":183,"time":"10:22","ratio":0.187848,"inputTokens":75139,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.265,"originalCredits":0.265,"afterCompact":false},{"index":184,"time":"10:22","ratio":0.192455,"inputTokens":76982,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.291,"originalCredits":0.291,"afterCompact":false},{"index":185,"time":"10:22","ratio":0.199887,"inputTokens":79955,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.273,"originalCredits":0.273,"afterCompact":false},{"index":186,"time":"10:22","ratio":0.205105,"inputTokens":82042,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.249,"originalCredits":0.249,"afterCompact":false},{"index":187,"time":"10:22","ratio":0.21013,"inputTokens":84052,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.26,"originalCredits":0.26,"afterCompact":false},{"index":188,"time":"10:22","ratio":0.213955,"inputTokens":85582,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.262,"originalCredits":0.262,"afterCompact":false},{"index":189,"time":"10:23","ratio":0.216778,"inputTokens":86711,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.237,"originalCredits":0.237,"afterCompact":false},{"index":190,"time":"10:23","ratio":0.21893,"inputTokens":87572,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.241,"originalCredits":0.241,"afterCompact":false},{"index":191,"time":"10:23","ratio":0.221452,"inputTokens":88581,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.236,"originalCredits":0.236,"afterCompact":false},{"index":192,"time":"10:23","ratio":0.223087,"inputTokens":89235,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.239,"originalCredits":0.239,"afterCompact":false},{"index":193,"time":"10:23","ratio":0.22525,"inputTokens":90100,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.236,"originalCredits":0.236,"afterCompact":false},{"index":194,"time":"10:23","ratio":0.226765,"inputTokens":90706,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.236,"originalCredits":0.236,"afterCompact":false},{"index":195,"time":"10:23","ratio":0.228543,"inputTokens":91417,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.237,"originalCredits":0.237,"afterCompact":false},{"index":196,"time":"10:23","ratio":0.230453,"inputTokens":92181,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.273,"originalCredits":0.273,"afterCompact":false},{"index":197,"time":"10:23","ratio":0.236915,"inputTokens":94766,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.29,"originalCredits":0.29,"afterCompact":false},{"index":198,"time":"10:24","ratio":0.239157,"inputTokens":95663,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.256,"originalCredits":0.256,"afterCompact":false},{"index":199,"time":"10:24","ratio":0.24024,"inputTokens":96096,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.278,"originalCredits":0.278,"afterCompact":false},{"index":200,"time":"10:24","ratio":0.24541,"inputTokens":98164,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.296,"originalCredits":0.296,"afterCompact":false},{"index":201,"time":"10:24","ratio":0.248447,"inputTokens":99379,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.269,"originalCredits":0.269,"afterCompact":false},{"index":202,"time":"10:24","ratio":0.249865,"inputTokens":99946,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.257,"originalCredits":0.257,"afterCompact":false},{"index":203,"time":"10:24","ratio":0.251323,"inputTokens":100529,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.276,"originalCredits":0.276,"afterCompact":false},{"index":204,"time":"10:24","ratio":0.253035,"inputTokens":101214,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.258,"originalCredits":0.258,"afterCompact":false},{"index":205,"time":"10:25","ratio":0.254335,"inputTokens":101734,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.256,"originalCredits":0.256,"afterCompact":false},{"index":206,"time":"10:25","ratio":0.255775,"inputTokens":102310,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.263,"originalCredits":0.263,"afterCompact":false},{"index":207,"time":"10:25","ratio":0.257485,"inputTokens":102994,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.264,"originalCredits":0.264,"afterCompact":false},{"index":208,"time":"10:25","ratio":0.258368,"inputTokens":103347,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.278,"originalCredits":0.278,"afterCompact":false},{"index":209,"time":"10:25","ratio":0.263282,"inputTokens":105313,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.314,"originalCredits":0.314,"afterCompact":false},{"index":210,"time":"10:25","ratio":0.266533,"inputTokens":106613,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.283,"originalCredits":0.283,"afterCompact":false},{"index":211,"time":"10:25","ratio":0.268578,"inputTokens":107431,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.273,"originalCredits":0.273,"afterCompact":false},{"index":212,"time":"10:25","ratio":0.273608,"inputTokens":109443,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.315,"originalCredits":0.315,"afterCompact":false},{"index":213,"time":"10:25","ratio":0.278915,"inputTokens":111566,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.319,"originalCredits":0.319,"afterCompact":false},{"index":214,"time":"10:26","ratio":0.28069,"inputTokens":112276,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.313,"originalCredits":0.313,"afterCompact":false},{"index":215,"time":"10:26","ratio":0.28384,"inputTokens":113536,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.299,"originalCredits":0.299,"afterCompact":false},{"index":216,"time":"10:26","ratio":0.286867,"inputTokens":114747,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.314,"originalCredits":0.314,"afterCompact":false},{"index":217,"time":"10:26","ratio":0.289035,"inputTokens":115614,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.335,"originalCredits":0.335,"afterCompact":false},{"index":218,"time":"11:48","ratio":0.296545,"inputTokens":118618,"outputTokens":null,"usageSource":"transcript-ratio","credits":3.389,"originalCredits":3.389,"afterCompact":false},{"index":219,"time":"11:48","ratio":0.302947,"inputTokens":121179,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.364,"originalCredits":0.364,"afterCompact":false},{"index":220,"time":"11:48","ratio":0.308482,"inputTokens":123393,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.353,"originalCredits":0.353,"afterCompact":false},{"index":221,"time":"11:49","ratio":0.309607,"inputTokens":123843,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.292,"originalCredits":0.292,"afterCompact":false},{"index":222,"time":"11:49","ratio":0.317788,"inputTokens":127115,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.377,"originalCredits":0.377,"afterCompact":false},{"index":223,"time":"11:49","ratio":0.32772,"inputTokens":131088,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.428,"originalCredits":0.428,"afterCompact":false},{"index":224,"time":"11:49","ratio":0.329355,"inputTokens":131742,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.331,"originalCredits":0.331,"afterCompact":false},{"index":225,"time":"11:49","ratio":0.330417,"inputTokens":132167,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.342,"originalCredits":0.342,"afterCompact":false},{"index":226,"time":"11:50","ratio":0.332215,"inputTokens":132886,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.402,"originalCredits":0.402,"afterCompact":false},{"index":227,"time":"11:55","ratio":0.342417,"inputTokens":136967,"outputTokens":null,"usageSource":"transcript-ratio","credits":3.825,"originalCredits":3.825,"afterCompact":false},{"index":228,"time":"11:56","ratio":0.349705,"inputTokens":139882,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.527,"originalCredits":0.527,"afterCompact":false},{"index":229,"time":"11:56","ratio":0.357755,"inputTokens":143102,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.43,"originalCredits":0.43,"afterCompact":false},{"index":230,"time":"11:57","ratio":0.36007,"inputTokens":144028,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.364,"originalCredits":0.364,"afterCompact":false},{"index":231,"time":"11:57","ratio":0.362523,"inputTokens":145009,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.393,"originalCredits":0.393,"afterCompact":false},{"index":232,"time":"11:57","ratio":0.368723,"inputTokens":147489,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.454,"originalCredits":0.454,"afterCompact":false},{"index":233,"time":"11:57","ratio":0.372818,"inputTokens":149127,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.391,"originalCredits":0.391,"afterCompact":false},{"index":234,"time":"11:58","ratio":0.377478,"inputTokens":150991,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.483,"originalCredits":0.483,"afterCompact":false},{"index":235,"time":"11:59","ratio":0.387643,"inputTokens":155057,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.54,"originalCredits":0.54,"afterCompact":false},{"index":236,"time":"11:59","ratio":0.391845,"inputTokens":156738,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.513,"originalCredits":0.513,"afterCompact":false},{"index":237,"time":"12:00","ratio":0.40075,"inputTokens":160300,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.483,"originalCredits":0.483,"afterCompact":false},{"index":238,"time":"12:00","ratio":0.405432,"inputTokens":162173,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.468,"originalCredits":0.468,"afterCompact":false},{"index":239,"time":"12:01","ratio":0.416325,"inputTokens":166530,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.539,"originalCredits":0.539,"afterCompact":false},{"index":240,"time":"12:01","ratio":0.420215,"inputTokens":168086,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.457,"originalCredits":0.457,"afterCompact":false},{"index":241,"time":"12:01","ratio":0.42449,"inputTokens":169796,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.471,"originalCredits":0.471,"afterCompact":false},{"index":242,"time":"12:02","ratio":0.42861,"inputTokens":171444,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.473,"originalCredits":0.473,"afterCompact":false},{"index":243,"time":"12:02","ratio":0.431405,"inputTokens":172562,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.493,"originalCredits":0.493,"afterCompact":false},{"index":244,"time":"12:03","ratio":0.435005,"inputTokens":174002,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.504,"originalCredits":0.504,"afterCompact":false},{"index":245,"time":"12:03","ratio":0.43853,"inputTokens":175412,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.485,"originalCredits":0.485,"afterCompact":false},{"index":246,"time":"12:03","ratio":0.44133,"inputTokens":176532,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.481,"originalCredits":0.481,"afterCompact":false},{"index":247,"time":"12:03","ratio":0.4463,"inputTokens":178520,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.468,"originalCredits":0.468,"afterCompact":false},{"index":248,"time":"12:04","ratio":0.448425,"inputTokens":179370,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.442,"originalCredits":0.442,"afterCompact":false},{"index":249,"time":"12:04","ratio":0.450927,"inputTokens":180371,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.458,"originalCredits":0.458,"afterCompact":false},{"index":250,"time":"12:05","ratio":0.45536,"inputTokens":182144,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.643,"originalCredits":0.643,"afterCompact":false},{"index":251,"time":"12:05","ratio":0.464118,"inputTokens":185647,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.51,"originalCredits":0.51,"afterCompact":false},{"index":252,"time":"12:05","ratio":0.464907,"inputTokens":185963,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.455,"originalCredits":0.455,"afterCompact":false},{"index":253,"time":"12:06","ratio":0.46679,"inputTokens":186716,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.482,"originalCredits":0.482,"afterCompact":false},{"index":254,"time":"12:06","ratio":0.469917,"inputTokens":187967,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.458,"originalCredits":0.458,"afterCompact":false},{"index":255,"time":"12:06","ratio":0.47075,"inputTokens":188300,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.479,"originalCredits":0.479,"afterCompact":false},{"index":256,"time":"12:06","ratio":0.4732,"inputTokens":189280,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.482,"originalCredits":0.482,"afterCompact":false},{"index":257,"time":"12:07","ratio":0.475025,"inputTokens":190010,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.538,"originalCredits":0.538,"afterCompact":false},{"index":258,"time":"12:07","ratio":0.480363,"inputTokens":192145,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.509,"originalCredits":0.509,"afterCompact":false},{"index":259,"time":"12:07","ratio":0.484145,"inputTokens":193658,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.507,"originalCredits":0.507,"afterCompact":false},{"index":260,"time":"12:08","ratio":0.486938,"inputTokens":194775,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.49,"originalCredits":0.49,"afterCompact":false},{"index":261,"time":"12:08","ratio":0.48896,"inputTokens":195584,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.479,"originalCredits":0.479,"afterCompact":false},{"index":262,"time":"12:08","ratio":0.490595,"inputTokens":196238,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.467,"originalCredits":0.467,"afterCompact":false},{"index":263,"time":"12:08","ratio":0.49226,"inputTokens":196904,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.494,"originalCredits":0.494,"afterCompact":false},{"index":264,"time":"12:08","ratio":0.494495,"inputTokens":197798,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.49,"originalCredits":0.49,"afterCompact":false},{"index":265,"time":"12:09","ratio":0.496503,"inputTokens":198601,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.494,"originalCredits":0.494,"afterCompact":false},{"index":266,"time":"12:09","ratio":0.498245,"inputTokens":199298,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.506,"originalCredits":0.506,"afterCompact":false},{"index":267,"time":"12:09","ratio":0.500443,"inputTokens":200177,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.507,"originalCredits":0.507,"afterCompact":false},{"index":268,"time":"12:10","ratio":0.50315,"inputTokens":201260,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.514,"originalCredits":0.514,"afterCompact":false},{"index":269,"time":"12:10","ratio":0.507092,"inputTokens":202837,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.5,"originalCredits":0.5,"afterCompact":false},{"index":270,"time":"12:10","ratio":0.50754,"inputTokens":203016,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.468,"originalCredits":0.468,"afterCompact":false},{"index":271,"time":"12:10","ratio":0.508345,"inputTokens":203338,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.492,"originalCredits":0.492,"afterCompact":false},{"index":272,"time":"12:10","ratio":0.512625,"inputTokens":205050,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.535,"originalCredits":0.535,"afterCompact":false},{"index":273,"time":"12:11","ratio":0.515253,"inputTokens":206101,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.511,"originalCredits":0.511,"afterCompact":false},{"index":274,"time":"12:12","ratio":0.519693,"inputTokens":207877,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.585,"originalCredits":0.585,"afterCompact":false},{"index":275,"time":"12:13","ratio":0.523582,"inputTokens":209433,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.532,"originalCredits":0.532,"afterCompact":false},{"index":276,"time":"12:13","ratio":0.525288,"inputTokens":210115,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.503,"originalCredits":0.503,"afterCompact":false},{"index":277,"time":"12:14","ratio":0.52655,"inputTokens":210620,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.559,"originalCredits":0.559,"afterCompact":false},{"index":278,"time":"12:14","ratio":0.529968,"inputTokens":211987,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.526,"originalCredits":0.526,"afterCompact":false},{"index":279,"time":"12:14","ratio":0.53264,"inputTokens":213056,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.539,"originalCredits":0.539,"afterCompact":false},{"index":280,"time":"12:14","ratio":0.534555,"inputTokens":213822,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.6,"originalCredits":0.6,"afterCompact":false},{"index":281,"time":"12:15","ratio":0.540945,"inputTokens":216378,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.568,"originalCredits":0.568,"afterCompact":false},{"index":282,"time":"12:15","ratio":0.543122,"inputTokens":217249,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.553,"originalCredits":0.553,"afterCompact":false},{"index":283,"time":"12:15","ratio":0.546165,"inputTokens":218466,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.66,"originalCredits":0.66,"afterCompact":false},{"index":284,"time":"12:16","ratio":0.555028,"inputTokens":222011,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.618,"originalCredits":0.618,"afterCompact":false},{"index":285,"time":"12:18","ratio":0.557245,"inputTokens":222898,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.073,"originalCredits":1.073,"afterCompact":false},{"index":286,"time":"12:18","ratio":0.580497,"inputTokens":232199,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.828,"originalCredits":0.828,"afterCompact":false},{"index":287,"time":"12:19","ratio":0.585635,"inputTokens":234254,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.614,"originalCredits":0.614,"afterCompact":false},{"index":288,"time":"12:20","ratio":0.587817,"inputTokens":235127,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.579,"originalCredits":0.579,"afterCompact":false},{"index":289,"time":"12:20","ratio":0.589348,"inputTokens":235739,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.589,"originalCredits":0.589,"afterCompact":false},{"index":290,"time":"12:21","ratio":0.595187,"inputTokens":238075,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.626,"originalCredits":0.626,"afterCompact":false},{"index":291,"time":"12:22","ratio":0.598805,"inputTokens":239522,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.605,"originalCredits":0.605,"afterCompact":false},{"index":292,"time":"12:22","ratio":0.600515,"inputTokens":240206,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.583,"originalCredits":0.583,"afterCompact":false},{"index":293,"time":"12:22","ratio":0.602067,"inputTokens":240827,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.573,"originalCredits":0.573,"afterCompact":false},{"index":294,"time":"12:22","ratio":0.6031,"inputTokens":241240,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.563,"originalCredits":0.563,"afterCompact":false},{"index":295,"time":"12:23","ratio":0.604235,"inputTokens":241694,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.578,"originalCredits":0.578,"afterCompact":false},{"index":296,"time":"12:24","ratio":0.60566,"inputTokens":242264,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.584,"originalCredits":0.584,"afterCompact":false},{"index":297,"time":"12:24","ratio":0.609355,"inputTokens":243742,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.596,"originalCredits":0.596,"afterCompact":false},{"index":298,"time":"12:24","ratio":0.610158,"inputTokens":244063,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.569,"originalCredits":0.569,"afterCompact":false},{"index":299,"time":"12:24","ratio":0.61111,"inputTokens":244444,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.56,"originalCredits":0.56,"afterCompact":false},{"index":300,"time":"12:25","ratio":0.618535,"inputTokens":247414,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.688,"originalCredits":0.688,"afterCompact":false},{"index":301,"time":"12:25","ratio":0.621202,"inputTokens":248481,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.59,"originalCredits":0.59,"afterCompact":false},{"index":302,"time":"12:25","ratio":0.634815,"inputTokens":253926,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.725,"originalCredits":0.725,"afterCompact":false},{"index":303,"time":"12:25","ratio":0.635997,"inputTokens":254399,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.609,"originalCredits":0.609,"afterCompact":false},{"index":304,"time":"12:25","ratio":0.63739,"inputTokens":254956,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.599,"originalCredits":0.599,"afterCompact":false},{"index":305,"time":"12:25","ratio":0.638352,"inputTokens":255341,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.59,"originalCredits":0.59,"afterCompact":false},{"index":306,"time":"12:26","ratio":0.639015,"inputTokens":255606,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.583,"originalCredits":0.583,"afterCompact":false},{"index":307,"time":"12:26","ratio":0.639445,"inputTokens":255778,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.638,"originalCredits":0.638,"afterCompact":false},{"index":308,"time":"12:37","ratio":0.650655,"inputTokens":260262,"outputTokens":null,"usageSource":"transcript-ratio","credits":7.32,"originalCredits":7.32,"afterCompact":false},{"index":309,"time":"12:37","ratio":0.655022,"inputTokens":262009,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.637,"originalCredits":0.637,"afterCompact":false},{"index":310,"time":"12:38","ratio":0.656915,"inputTokens":262766,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.703,"originalCredits":0.703,"afterCompact":false},{"index":311,"time":"12:38","ratio":0.661665,"inputTokens":264666,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.645,"originalCredits":0.645,"afterCompact":false},{"index":312,"time":"12:38","ratio":0.663517,"inputTokens":265407,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.661,"originalCredits":0.661,"afterCompact":false},{"index":313,"time":"12:39","ratio":0.66599,"inputTokens":266396,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.702,"originalCredits":0.702,"afterCompact":false},{"index":314,"time":"12:44","ratio":0.670933,"inputTokens":268373,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.658,"originalCredits":0.658,"afterCompact":false},{"index":315,"time":"12:44","ratio":0.672122,"inputTokens":268849,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.622,"originalCredits":0.622,"afterCompact":false},{"index":316,"time":"12:44","ratio":0.67302,"inputTokens":269208,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.622,"originalCredits":0.622,"afterCompact":false},{"index":317,"time":"12:44","ratio":0.674447,"inputTokens":269779,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.645,"originalCredits":0.645,"afterCompact":false},{"index":318,"time":"12:45","ratio":0.676608,"inputTokens":270643,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.774,"originalCredits":0.774,"afterCompact":false},{"index":319,"time":"12:46","ratio":0.68291,"inputTokens":273164,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.871,"originalCredits":0.871,"afterCompact":false},{"index":320,"time":"12:46","ratio":0.691412,"inputTokens":276565,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.719,"originalCredits":0.719,"afterCompact":false},{"index":321,"time":"12:46","ratio":0.693093,"inputTokens":277237,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.708,"originalCredits":0.708,"afterCompact":false},{"index":322,"time":"12:47","ratio":0.697987,"inputTokens":279195,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.732,"originalCredits":0.732,"afterCompact":false},{"index":323,"time":"12:47","ratio":0.701065,"inputTokens":280426,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.684,"originalCredits":0.684,"afterCompact":false},{"index":324,"time":"12:48","ratio":0.70246,"inputTokens":280984,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.727,"originalCredits":0.727,"afterCompact":false},{"index":325,"time":"12:48","ratio":0.706283,"inputTokens":282513,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.683,"originalCredits":0.683,"afterCompact":false},{"index":326,"time":"12:48","ratio":0.707215,"inputTokens":282886,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.673,"originalCredits":0.673,"afterCompact":false},{"index":327,"time":"12:48","ratio":0.709013,"inputTokens":283605,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.66,"originalCredits":0.66,"afterCompact":false},{"index":328,"time":"12:49","ratio":0.70956,"inputTokens":283824,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.705,"originalCredits":0.705,"afterCompact":false},{"index":329,"time":"17:25","ratio":0.717538,"inputTokens":287015,"outputTokens":null,"usageSource":"transcript-ratio","credits":8.034,"originalCredits":8.034,"afterCompact":false},{"index":330,"time":"17:25","ratio":0.721387,"inputTokens":288555,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.701,"originalCredits":0.701,"afterCompact":false},{"index":331,"time":"17:25","ratio":0.724615,"inputTokens":289846,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.724,"originalCredits":0.724,"afterCompact":false},{"index":332,"time":"17:26","ratio":0.73555,"inputTokens":294220,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.81,"originalCredits":0.81,"afterCompact":false},{"index":333,"time":"17:26","ratio":0.73801,"inputTokens":295204,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.713,"originalCredits":0.713,"afterCompact":false},{"index":334,"time":"17:26","ratio":0.73955,"inputTokens":295820,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.701,"originalCredits":0.701,"afterCompact":false},{"index":335,"time":"17:26","ratio":0.741613,"inputTokens":296645,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.7,"originalCredits":0.7,"afterCompact":false},{"index":336,"time":"17:27","ratio":0.745945,"inputTokens":298378,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.826,"originalCredits":0.826,"afterCompact":false},{"index":337,"time":"17:27","ratio":0.753957,"inputTokens":301583,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.806,"originalCredits":0.806,"afterCompact":false},{"index":338,"time":"17:28","ratio":0.758933,"inputTokens":303573,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.789,"originalCredits":0.789,"afterCompact":false},{"index":339,"time":"17:28","ratio":0.762988,"inputTokens":305195,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.784,"originalCredits":0.784,"afterCompact":false},{"index":340,"time":"17:28","ratio":0.767232,"inputTokens":306893,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.747,"originalCredits":0.747,"afterCompact":false},{"index":341,"time":"17:29","ratio":0.768302,"inputTokens":307321,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.842,"originalCredits":0.842,"afterCompact":false},{"index":342,"time":"17:29","ratio":0.775153,"inputTokens":310061,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.767,"originalCredits":0.767,"afterCompact":false},{"index":343,"time":"17:30","ratio":0.776235,"inputTokens":310494,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.783,"originalCredits":0.783,"afterCompact":false},{"index":344,"time":"17:30","ratio":0.780393,"inputTokens":312157,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.761,"originalCredits":0.761,"afterCompact":false},{"index":345,"time":"17:31","ratio":0.783013,"inputTokens":313205,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.802,"originalCredits":0.802,"afterCompact":false},{"index":346,"time":"17:31","ratio":0.786623,"inputTokens":314649,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.753,"originalCredits":0.753,"afterCompact":false},{"index":347,"time":"17:31","ratio":0.793188,"inputTokens":317275,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.789,"originalCredits":0.789,"afterCompact":false},{"index":348,"time":"17:32","ratio":0.797965,"inputTokens":319186,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.795,"originalCredits":0.795,"afterCompact":false},{"index":349,"time":"17:32","ratio":0.8098,"inputTokens":323920,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.884,"originalCredits":0.884,"afterCompact":false},{"index":350,"time":"17:33","ratio":0.814532,"inputTokens":325813,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.789,"originalCredits":0.789,"afterCompact":false},{"index":351,"time":"17:33","ratio":0.81677,"inputTokens":326708,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.771,"originalCredits":0.771,"afterCompact":false},{"index":352,"time":"17:33","ratio":0.817732,"inputTokens":327093,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.757,"originalCredits":0.757,"afterCompact":false},{"index":353,"time":"17:34","ratio":0.81994,"inputTokens":327976,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.844,"originalCredits":0.844,"afterCompact":false},{"index":354,"time":"17:34","ratio":0.82524,"inputTokens":330096,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.868,"originalCredits":0.868,"afterCompact":false},{"index":355,"time":"17:37","ratio":0.82887,"inputTokens":331548,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.235,"originalCredits":1.235,"afterCompact":false},{"index":356,"time":"17:37","ratio":0.848235,"inputTokens":339294,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.994,"originalCredits":0.994,"afterCompact":false},{"index":357,"time":"17:37","ratio":0.851075,"inputTokens":340430,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.836,"originalCredits":0.836,"afterCompact":false},{"index":358,"time":"17:37","ratio":0.854662,"inputTokens":341865,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.821,"originalCredits":0.821,"afterCompact":false},{"index":359,"time":"17:38","ratio":0.85581,"inputTokens":342324,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.796,"originalCredits":0.796,"afterCompact":false},{"index":360,"time":"17:38","ratio":0.85709,"inputTokens":342836,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.816,"originalCredits":0.816,"afterCompact":false},{"index":361,"time":"17:38","ratio":0.859465,"inputTokens":343786,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.836,"originalCredits":0.836,"afterCompact":false},{"index":362,"time":"17:39","ratio":0.861585,"inputTokens":344634,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.796,"originalCredits":0.796,"afterCompact":false},{"index":363,"time":"17:39","ratio":0.862032,"inputTokens":344813,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.852,"originalCredits":0.852,"afterCompact":false},{"index":364,"time":"18:19","ratio":0.87047,"inputTokens":348188,"outputTokens":null,"usageSource":"transcript-ratio","credits":9.731,"originalCredits":9.731,"afterCompact":false},{"index":365,"time":"18:19","ratio":0.874077,"inputTokens":349631,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.831,"originalCredits":0.831,"afterCompact":false},{"index":366,"time":"18:19","ratio":0.882343,"inputTokens":352937,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.886,"originalCredits":0.886,"afterCompact":false},{"index":367,"time":"18:20","ratio":0.890413,"inputTokens":356165,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.882,"originalCredits":0.882,"afterCompact":false},{"index":368,"time":"18:21","ratio":0.895555,"inputTokens":358222,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.002,"originalCredits":1.002,"afterCompact":false},{"index":369,"time":"18:23","ratio":0.121817,"inputTokens":48727,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.84,"originalCredits":0.84,"afterCompact":true},{"index":370,"time":"18:23","ratio":0.131615,"inputTokens":52646,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.282,"originalCredits":0.282,"afterCompact":false},{"index":371,"time":"18:24","ratio":0.143052,"inputTokens":57221,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.315,"originalCredits":0.315,"afterCompact":false},{"index":372,"time":"18:25","ratio":0.15424,"inputTokens":61696,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.438,"originalCredits":0.438,"afterCompact":false},{"index":373,"time":"18:25","ratio":0.173143,"inputTokens":69257,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.389,"originalCredits":0.389,"afterCompact":false},{"index":374,"time":"18:25","ratio":0.175162,"inputTokens":70065,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.19,"originalCredits":0.19,"afterCompact":false},{"index":375,"time":"18:25","ratio":0.177687,"inputTokens":71075,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.217,"originalCredits":0.217,"afterCompact":false},{"index":376,"time":"18:26","ratio":0.17943,"inputTokens":71772,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.185,"originalCredits":0.185,"afterCompact":false},{"index":377,"time":"18:26","ratio":0.181495,"inputTokens":72598,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.197,"originalCredits":0.197,"afterCompact":false},{"index":378,"time":"18:26","ratio":0.182578,"inputTokens":73031,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.244,"originalCredits":0.244,"afterCompact":false},{"index":379,"time":"18:26","ratio":0.193702,"inputTokens":77481,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.321,"originalCredits":0.321,"afterCompact":false},{"index":380,"time":"18:26","ratio":0.195603,"inputTokens":78241,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.208,"originalCredits":0.208,"afterCompact":false},{"index":381,"time":"18:27","ratio":0.206347,"inputTokens":82539,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.339,"originalCredits":0.339,"afterCompact":false},{"index":382,"time":"18:27","ratio":0.213105,"inputTokens":85242,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.393,"originalCredits":0.393,"afterCompact":false},{"index":383,"time":"18:28","ratio":0.220532,"inputTokens":88213,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.298,"originalCredits":0.298,"afterCompact":false},{"index":384,"time":"18:28","ratio":0.223892,"inputTokens":89557,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.262,"originalCredits":0.262,"afterCompact":false},{"index":385,"time":"18:29","ratio":0.22565,"inputTokens":90260,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.639,"originalCredits":0.639,"afterCompact":false},{"index":386,"time":"18:29","ratio":0.243867,"inputTokens":97547,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.458,"originalCredits":0.458,"afterCompact":false},{"index":387,"time":"18:30","ratio":0.246902,"inputTokens":98761,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.32,"originalCredits":0.32,"afterCompact":false},{"index":388,"time":"18:30","ratio":0.25089,"inputTokens":100356,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.319,"originalCredits":0.319,"afterCompact":false},{"index":389,"time":"18:30","ratio":0.2535,"inputTokens":101400,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.314,"originalCredits":0.314,"afterCompact":false},{"index":390,"time":"18:30","ratio":0.256723,"inputTokens":102689,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.272,"originalCredits":0.272,"afterCompact":false},{"index":391,"time":"18:31","ratio":0.257585,"inputTokens":103034,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.253,"originalCredits":0.253,"afterCompact":false},{"index":392,"time":"18:32","ratio":0.260163,"inputTokens":104065,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.432,"originalCredits":0.432,"afterCompact":false},{"index":393,"time":"18:32","ratio":0.268742,"inputTokens":107497,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.332,"originalCredits":0.332,"afterCompact":false},{"index":394,"time":"18:33","ratio":0.272238,"inputTokens":108895,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.367,"originalCredits":0.367,"afterCompact":false},{"index":395,"time":"18:33","ratio":0.278168,"inputTokens":111267,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.332,"originalCredits":0.332,"afterCompact":false},{"index":396,"time":"18:33","ratio":0.280162,"inputTokens":112065,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.281,"originalCredits":0.281,"afterCompact":false},{"index":397,"time":"18:33","ratio":0.280735,"inputTokens":112294,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.264,"originalCredits":0.264,"afterCompact":false},{"index":398,"time":"18:33","ratio":0.28132,"inputTokens":112528,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.267,"originalCredits":0.267,"afterCompact":false},{"index":399,"time":"18:33","ratio":0.282278,"inputTokens":112911,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.337,"originalCredits":0.337,"afterCompact":false},{"index":400,"time":"18:34","ratio":0.286125,"inputTokens":114450,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.309,"originalCredits":0.309,"afterCompact":false},{"index":401,"time":"18:34","ratio":0.288872,"inputTokens":115549,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.321,"originalCredits":0.321,"afterCompact":false},{"index":402,"time":"18:34","ratio":0.29165,"inputTokens":116660,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.311,"originalCredits":0.311,"afterCompact":false},{"index":403,"time":"18:34","ratio":0.29287,"inputTokens":117148,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.283,"originalCredits":0.283,"afterCompact":false},{"index":404,"time":"18:35","ratio":0.293705,"inputTokens":117482,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.29,"originalCredits":0.29,"afterCompact":false},{"index":405,"time":"18:35","ratio":0.294853,"inputTokens":117941,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.291,"originalCredits":0.291,"afterCompact":false},{"index":406,"time":"18:36","ratio":0.29777,"inputTokens":119108,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.306,"originalCredits":0.306,"afterCompact":false},{"index":407,"time":"18:36","ratio":0.302928,"inputTokens":121171,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.426,"originalCredits":0.426,"afterCompact":false},{"index":408,"time":"18:37","ratio":0.307453,"inputTokens":122981,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.337,"originalCredits":0.337,"afterCompact":false},{"index":409,"time":"18:37","ratio":0.3085,"inputTokens":123400,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.49,"originalCredits":0.49,"afterCompact":false},{"index":410,"time":"18:38","ratio":0.317202,"inputTokens":126881,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.396,"originalCredits":0.396,"afterCompact":false},{"index":411,"time":"18:38","ratio":0.320682,"inputTokens":128273,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.329,"originalCredits":0.329,"afterCompact":false},{"index":412,"time":"18:38","ratio":0.32108,"inputTokens":128432,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.318,"originalCredits":0.318,"afterCompact":false},{"index":413,"time":"18:38","ratio":0.323383,"inputTokens":129353,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.375,"originalCredits":0.375,"afterCompact":false},{"index":414,"time":"18:39","ratio":0.326125,"inputTokens":130450,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.339,"originalCredits":0.339,"afterCompact":false},{"index":415,"time":"18:39","ratio":0.327265,"inputTokens":130906,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.329,"originalCredits":0.329,"afterCompact":false},{"index":416,"time":"18:41","ratio":0.328587,"inputTokens":131435,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.33,"originalCredits":0.33,"afterCompact":false},{"index":417,"time":"18:41","ratio":0.331355,"inputTokens":132542,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.334,"originalCredits":0.334,"afterCompact":false},{"index":418,"time":"18:41","ratio":0.331883,"inputTokens":132753,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.322,"originalCredits":0.322,"afterCompact":false},{"index":419,"time":"18:41","ratio":0.3334,"inputTokens":133360,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.318,"originalCredits":0.318,"afterCompact":false},{"index":420,"time":"18:41","ratio":0.33418,"inputTokens":133672,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.335,"originalCredits":0.335,"afterCompact":false},{"index":421,"time":"18:44","ratio":0.33712,"inputTokens":134848,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.355,"originalCredits":0.355,"afterCompact":false},{"index":422,"time":"18:44","ratio":0.338935,"inputTokens":135574,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.346,"originalCredits":0.346,"afterCompact":false},{"index":423,"time":"18:47","ratio":0.340305,"inputTokens":136122,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.401,"originalCredits":0.401,"afterCompact":false},{"index":424,"time":"18:48","ratio":0.34405,"inputTokens":137620,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.365,"originalCredits":0.365,"afterCompact":false},{"index":425,"time":"18:48","ratio":0.346158,"inputTokens":138463,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.345,"originalCredits":0.345,"afterCompact":false},{"index":426,"time":"18:49","ratio":0.346872,"inputTokens":138749,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.331,"originalCredits":0.331,"afterCompact":false},{"index":427,"time":"18:49","ratio":0.347685,"inputTokens":139074,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.353,"originalCredits":0.353,"afterCompact":false},{"index":428,"time":"18:50","ratio":0.349645,"inputTokens":139858,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.413,"originalCredits":0.413,"afterCompact":false},{"index":429,"time":"18:52","ratio":0.35321,"inputTokens":141284,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.408,"originalCredits":0.408,"afterCompact":false},{"index":430,"time":"18:52","ratio":0.356325,"inputTokens":142530,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.404,"originalCredits":0.404,"afterCompact":false},{"index":431,"time":"18:52","ratio":0.360803,"inputTokens":144321,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.394,"originalCredits":0.394,"afterCompact":false},{"index":432,"time":"18:53","ratio":0.362445,"inputTokens":144978,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.458,"originalCredits":0.458,"afterCompact":false},{"index":433,"time":"18:53","ratio":0.367548,"inputTokens":147019,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.414,"originalCredits":0.414,"afterCompact":false},{"index":434,"time":"18:54","ratio":0.3698,"inputTokens":147920,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.404,"originalCredits":0.404,"afterCompact":false},{"index":435,"time":"18:55","ratio":0.372885,"inputTokens":149154,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.431,"originalCredits":0.431,"afterCompact":false},{"index":436,"time":"18:55","ratio":0.37656,"inputTokens":150624,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.385,"originalCredits":0.385,"afterCompact":false},{"index":437,"time":"18:55","ratio":0.377565,"inputTokens":151026,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.412,"originalCredits":0.412,"afterCompact":false},{"index":438,"time":"18:56","ratio":0.380642,"inputTokens":152257,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.397,"originalCredits":0.397,"afterCompact":false},{"index":439,"time":"18:57","ratio":0.384905,"inputTokens":153962,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.593,"originalCredits":0.593,"afterCompact":false},{"index":440,"time":"18:57","ratio":0.39422,"inputTokens":157688,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.457,"originalCredits":0.457,"afterCompact":false},{"index":441,"time":"18:57","ratio":0.39715,"inputTokens":158860,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.461,"originalCredits":0.461,"afterCompact":false},{"index":442,"time":"18:58","ratio":0.404822,"inputTokens":161929,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.494,"originalCredits":0.494,"afterCompact":false},{"index":443,"time":"18:58","ratio":0.407845,"inputTokens":163138,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.444,"originalCredits":0.444,"afterCompact":false},{"index":444,"time":"18:58","ratio":0.410262,"inputTokens":164105,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.395,"originalCredits":0.395,"afterCompact":false},{"index":445,"time":"18:58","ratio":0.414118,"inputTokens":165647,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.447,"originalCredits":0.447,"afterCompact":false},{"index":446,"time":"18:58","ratio":0.41631,"inputTokens":166524,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.408,"originalCredits":0.408,"afterCompact":false},{"index":447,"time":"18:58","ratio":0.417353,"inputTokens":166941,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.388,"originalCredits":0.388,"afterCompact":false},{"index":448,"time":"18:58","ratio":0.418673,"inputTokens":167469,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.396,"originalCredits":0.396,"afterCompact":false},{"index":449,"time":"18:59","ratio":0.41932,"inputTokens":167728,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.486,"originalCredits":0.486,"afterCompact":false},{"index":450,"time":"19:00","ratio":0.425248,"inputTokens":170099,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.454,"originalCredits":0.454,"afterCompact":false},{"index":451,"time":"19:01","ratio":0.429978,"inputTokens":171991,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.534,"originalCredits":0.534,"afterCompact":false},{"index":452,"time":"19:01","ratio":0.43554,"inputTokens":174216,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.46,"originalCredits":0.46,"afterCompact":false},{"index":453,"time":"19:01","ratio":0.437225,"inputTokens":174890,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.452,"originalCredits":0.452,"afterCompact":false},{"index":454,"time":"19:02","ratio":0.440167,"inputTokens":176067,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.444,"originalCredits":0.444,"afterCompact":false},{"index":455,"time":"19:02","ratio":0.44149,"inputTokens":176596,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.422,"originalCredits":0.422,"afterCompact":false},{"index":456,"time":"19:03","ratio":0.442795,"inputTokens":177118,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.619,"originalCredits":0.619,"afterCompact":false},{"index":457,"time":"19:03","ratio":0.452515,"inputTokens":181006,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.529,"originalCredits":0.529,"afterCompact":false},{"index":458,"time":"19:06","ratio":0.453852,"inputTokens":181541,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.114,"originalCredits":1.114,"afterCompact":false},{"index":459,"time":"19:07","ratio":0.483048,"inputTokens":193219,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.743,"originalCredits":0.743,"afterCompact":false},{"index":460,"time":"19:07","ratio":0.48584,"inputTokens":194336,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.489,"originalCredits":0.489,"afterCompact":false},{"index":461,"time":"19:07","ratio":0.487223,"inputTokens":194889,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.493,"originalCredits":0.493,"afterCompact":false},{"index":462,"time":"19:07","ratio":0.49131,"inputTokens":196524,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.502,"originalCredits":0.502,"afterCompact":false},{"index":463,"time":"19:08","ratio":0.495908,"inputTokens":198363,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.543,"originalCredits":0.543,"afterCompact":false},{"index":464,"time":"19:08","ratio":0.499513,"inputTokens":199805,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.507,"originalCredits":0.507,"afterCompact":false},{"index":465,"time":"19:08","ratio":0.504373,"inputTokens":201749,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.53,"originalCredits":0.53,"afterCompact":false},{"index":466,"time":"19:08","ratio":0.50594,"inputTokens":202376,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.493,"originalCredits":0.493,"afterCompact":false},{"index":467,"time":"19:08","ratio":0.507563,"inputTokens":203025,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.496,"originalCredits":0.496,"afterCompact":false},{"index":468,"time":"19:09","ratio":0.511583,"inputTokens":204633,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.518,"originalCredits":0.518,"afterCompact":false},{"index":469,"time":"19:09","ratio":0.515667,"inputTokens":206267,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.644,"originalCredits":0.644,"afterCompact":false},{"index":470,"time":"19:09","ratio":0.53025,"inputTokens":212100,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.651,"originalCredits":0.651,"afterCompact":false},{"index":471,"time":"19:10","ratio":0.531737,"inputTokens":212695,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.524,"originalCredits":0.524,"afterCompact":false},{"index":472,"time":"19:10","ratio":0.533347,"inputTokens":213339,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.503,"originalCredits":0.503,"afterCompact":false},{"index":473,"time":"19:10","ratio":0.53401,"inputTokens":213604,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.522,"originalCredits":0.522,"afterCompact":false},{"index":474,"time":"19:11","ratio":0.536987,"inputTokens":214795,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.547,"originalCredits":0.547,"afterCompact":false},{"index":475,"time":"19:12","ratio":0.538745,"inputTokens":215498,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.565,"originalCredits":0.565,"afterCompact":false},{"index":476,"time":"19:12","ratio":0.544292,"inputTokens":217717,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.578,"originalCredits":0.578,"afterCompact":false},{"index":477,"time":"19:12","ratio":0.549385,"inputTokens":219754,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.572,"originalCredits":0.572,"afterCompact":false},{"index":478,"time":"19:12","ratio":0.554477,"inputTokens":221791,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.574,"originalCredits":0.574,"afterCompact":false},{"index":479,"time":"19:12","ratio":0.55585,"inputTokens":222340,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.518,"originalCredits":0.518,"afterCompact":false},{"index":480,"time":"19:13","ratio":0.556603,"inputTokens":222641,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.575,"originalCredits":0.575,"afterCompact":false},{"index":481,"time":"20:18","ratio":0.564325,"inputTokens":225730,"outputTokens":null,"usageSource":"transcript-ratio","credits":6.4,"originalCredits":6.4,"afterCompact":false},{"index":482,"time":"20:18","ratio":0.57212,"inputTokens":228848,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.612,"originalCredits":0.612,"afterCompact":false},{"index":483,"time":"20:18","ratio":0.576917,"inputTokens":230767,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.595,"originalCredits":0.595,"afterCompact":false},{"index":484,"time":"20:18","ratio":0.581592,"inputTokens":232637,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.624,"originalCredits":0.624,"afterCompact":false},{"index":485,"time":"20:19","ratio":0.585125,"inputTokens":234050,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.597,"originalCredits":0.597,"afterCompact":false},{"index":486,"time":"20:19","ratio":0.587882,"inputTokens":235153,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.561,"originalCredits":0.561,"afterCompact":false},{"index":487,"time":"20:19","ratio":0.600468,"inputTokens":240187,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.731,"originalCredits":0.731,"afterCompact":false},{"index":488,"time":"20:19","ratio":0.603585,"inputTokens":241434,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.586,"originalCredits":0.586,"afterCompact":false},{"index":489,"time":"20:20","ratio":0.60452,"inputTokens":241808,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.647,"originalCredits":0.647,"afterCompact":false},{"index":490,"time":"20:20","ratio":0.609025,"inputTokens":243610,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.619,"originalCredits":0.619,"afterCompact":false},{"index":491,"time":"20:22","ratio":0.611513,"inputTokens":244605,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.592,"originalCredits":0.592,"afterCompact":false},{"index":492,"time":"20:22","ratio":0.61428,"inputTokens":245712,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.617,"originalCredits":0.617,"afterCompact":false},{"index":493,"time":"20:23","ratio":0.620358,"inputTokens":248143,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.691,"originalCredits":0.691,"afterCompact":false},{"index":494,"time":"20:24","ratio":0.624545,"inputTokens":249818,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.762,"originalCredits":0.762,"afterCompact":false},{"index":495,"time":"20:24","ratio":0.633203,"inputTokens":253281,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.659,"originalCredits":0.659,"afterCompact":false},{"index":496,"time":"20:25","ratio":0.634472,"inputTokens":253789,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.809,"originalCredits":0.809,"afterCompact":false},{"index":497,"time":"20:26","ratio":0.644358,"inputTokens":257743,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.685,"originalCredits":0.685,"afterCompact":false},{"index":498,"time":"20:27","ratio":0.646842,"inputTokens":258737,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.854,"originalCredits":0.854,"afterCompact":false},{"index":499,"time":"20:27","ratio":0.66793,"inputTokens":267172,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.827,"originalCredits":0.827,"afterCompact":false},{"index":500,"time":"20:28","ratio":0.668732,"inputTokens":267493,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.627,"originalCredits":0.627,"afterCompact":false},{"index":501,"time":"20:28","ratio":0.670787,"inputTokens":268315,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.65,"originalCredits":0.65,"afterCompact":false},{"index":502,"time":"20:28","ratio":0.672782,"inputTokens":269113,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.653,"originalCredits":0.653,"afterCompact":false},{"index":503,"time":"20:28","ratio":0.676103,"inputTokens":270441,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.669,"originalCredits":0.669,"afterCompact":false},{"index":504,"time":"20:28","ratio":0.677955,"inputTokens":271182,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.645,"originalCredits":0.645,"afterCompact":false},{"index":505,"time":"20:29","ratio":0.679288,"inputTokens":271715,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.683,"originalCredits":0.683,"afterCompact":false},{"index":506,"time":"20:30","ratio":0.685915,"inputTokens":274366,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.767,"originalCredits":0.767,"afterCompact":false},{"index":507,"time":"20:30","ratio":0.691145,"inputTokens":276458,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.704,"originalCredits":0.704,"afterCompact":false},{"index":508,"time":"20:30","ratio":0.693532,"inputTokens":277413,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.666,"originalCredits":0.666,"afterCompact":false},{"index":509,"time":"20:30","ratio":0.694897,"inputTokens":277959,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.646,"originalCredits":0.646,"afterCompact":false},{"index":510,"time":"20:31","ratio":0.695963,"inputTokens":278385,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.65,"originalCredits":0.65,"afterCompact":false},{"index":511,"time":"20:32","ratio":0.6976,"inputTokens":279040,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.678,"originalCredits":0.678,"afterCompact":false},{"index":512,"time":"20:32","ratio":0.701762,"inputTokens":280705,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.732,"originalCredits":0.732,"afterCompact":false},{"index":513,"time":"21:40","ratio":0.709058,"inputTokens":283623,"outputTokens":null,"usageSource":"transcript-ratio","credits":7.934,"originalCredits":7.934,"afterCompact":false},{"index":514,"time":"21:40","ratio":0.720155,"inputTokens":288062,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.785,"originalCredits":0.785,"afterCompact":false},{"index":515,"time":"21:40","ratio":0.72323,"inputTokens":289292,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.685,"originalCredits":0.685,"afterCompact":false},{"index":516,"time":"21:41","ratio":0.73102,"inputTokens":292408,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.873,"originalCredits":0.873,"afterCompact":false},{"index":517,"time":"21:41","ratio":0.737378,"inputTokens":294951,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.741,"originalCredits":0.741,"afterCompact":false},{"index":518,"time":"21:42","ratio":0.738873,"inputTokens":295549,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.707,"originalCredits":0.707,"afterCompact":false},{"index":519,"time":"21:42","ratio":0.742498,"inputTokens":296999,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.707,"originalCredits":0.707,"afterCompact":false},{"index":520,"time":"21:42","ratio":0.746792,"inputTokens":298717,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.742,"originalCredits":0.742,"afterCompact":false},{"index":521,"time":"21:42","ratio":0.750833,"inputTokens":300333,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.758,"originalCredits":0.758,"afterCompact":false},{"index":522,"time":"21:42","ratio":0.755655,"inputTokens":302262,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.75,"originalCredits":0.75,"afterCompact":false},{"index":523,"time":"21:43","ratio":0.75921,"inputTokens":303684,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.798,"originalCredits":0.798,"afterCompact":false},{"index":524,"time":"21:43","ratio":0.768115,"inputTokens":307246,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.811,"originalCredits":0.811,"afterCompact":false},{"index":525,"time":"21:44","ratio":0.771617,"inputTokens":308647,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.918,"originalCredits":0.918,"afterCompact":false},{"index":526,"time":"21:44","ratio":0.77997,"inputTokens":311988,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.788,"originalCredits":0.788,"afterCompact":false},{"index":527,"time":"21:44","ratio":0.781857,"inputTokens":312743,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.723,"originalCredits":0.723,"afterCompact":false},{"index":528,"time":"21:45","ratio":0.78386,"inputTokens":313544,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.885,"originalCredits":0.885,"afterCompact":false},{"index":529,"time":"21:45","ratio":0.791005,"inputTokens":316402,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.79,"originalCredits":0.79,"afterCompact":false},{"index":530,"time":"21:46","ratio":0.794945,"inputTokens":317978,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.824,"originalCredits":0.824,"afterCompact":false},{"index":531,"time":"21:46","ratio":0.798655,"inputTokens":319462,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.809,"originalCredits":0.809,"afterCompact":false},{"index":532,"time":"21:46","ratio":0.8024,"inputTokens":320960,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.775,"originalCredits":0.775,"afterCompact":false},{"index":533,"time":"21:46","ratio":0.803488,"inputTokens":321395,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.783,"originalCredits":0.783,"afterCompact":false},{"index":534,"time":"21:47","ratio":0.806142,"inputTokens":322457,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.822,"originalCredits":0.822,"afterCompact":false},{"index":535,"time":"21:47","ratio":0.809728,"inputTokens":323891,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.764,"originalCredits":0.764,"afterCompact":false},{"index":536,"time":"21:47","ratio":0.813163,"inputTokens":325265,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.782,"originalCredits":0.782,"afterCompact":false},{"index":537,"time":"21:48","ratio":0.81726,"inputTokens":326904,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.832,"originalCredits":0.832,"afterCompact":false},{"index":538,"time":"21:48","ratio":0.820105,"inputTokens":328042,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.766,"originalCredits":0.766,"afterCompact":false},{"index":539,"time":"21:48","ratio":0.822117,"inputTokens":328847,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.791,"originalCredits":0.791,"afterCompact":false},{"index":540,"time":"21:48","ratio":0.826065,"inputTokens":330426,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.786,"originalCredits":0.786,"afterCompact":false},{"index":541,"time":"21:49","ratio":0.82759,"inputTokens":331036,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.781,"originalCredits":0.781,"afterCompact":false},{"index":542,"time":"21:50","ratio":0.829545,"inputTokens":331818,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.77,"originalCredits":0.77,"afterCompact":false},{"index":543,"time":"21:50","ratio":0.830222,"inputTokens":332089,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.766,"originalCredits":0.766,"afterCompact":false},{"index":544,"time":"21:50","ratio":0.832485,"inputTokens":332994,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.845,"originalCredits":0.845,"afterCompact":false},{"index":545,"time":"21:51","ratio":0.836335,"inputTokens":334534,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.801,"originalCredits":0.801,"afterCompact":false},{"index":546,"time":"21:51","ratio":0.83724,"inputTokens":334896,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.88,"originalCredits":0.88,"afterCompact":false},{"index":547,"time":"21:52","ratio":0.845067,"inputTokens":338027,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.91,"originalCredits":0.91,"afterCompact":false},{"index":548,"time":"21:53","ratio":0.850795,"inputTokens":340318,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.384,"originalCredits":1.384,"afterCompact":false},{"index":549,"time":"21:53","ratio":0.876297,"inputTokens":350519,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.064,"originalCredits":1.064,"afterCompact":false},{"index":550,"time":"21:54","ratio":0.878247,"inputTokens":351299,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.831,"originalCredits":0.831,"afterCompact":false},{"index":551,"time":"21:54","ratio":0.879807,"inputTokens":351923,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.815,"originalCredits":0.815,"afterCompact":false},{"index":552,"time":"21:58","ratio":0.881803,"inputTokens":352721,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.95,"originalCredits":0.95,"afterCompact":false},{"index":553,"time":"21:59","ratio":0.897107,"inputTokens":358843,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.087,"originalCredits":1.087,"afterCompact":false},{"index":554,"time":"22:01","ratio":0.09784,"inputTokens":39136,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.574,"originalCredits":0.574,"afterCompact":true},{"index":555,"time":"22:01","ratio":0.101085,"inputTokens":40434,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.134,"originalCredits":0.134,"afterCompact":false},{"index":556,"time":"22:01","ratio":0.102275,"inputTokens":40910,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.114,"originalCredits":0.114,"afterCompact":false},{"index":557,"time":"22:01","ratio":0.104097,"inputTokens":41639,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.135,"originalCredits":0.135,"afterCompact":false},{"index":558,"time":"22:01","ratio":0.107345,"inputTokens":42938,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.147,"originalCredits":0.147,"afterCompact":false},{"index":559,"time":"22:01","ratio":0.108808,"inputTokens":43523,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.142,"originalCredits":0.142,"afterCompact":false},{"index":560,"time":"22:02","ratio":0.111132,"inputTokens":44453,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.142,"originalCredits":0.142,"afterCompact":false},{"index":561,"time":"22:02","ratio":0.113007,"inputTokens":45203,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.138,"originalCredits":0.138,"afterCompact":false},{"index":562,"time":"22:02","ratio":0.13681,"inputTokens":54724,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.443,"originalCredits":0.443,"afterCompact":false},{"index":563,"time":"22:02","ratio":0.143528,"inputTokens":57411,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.231,"originalCredits":0.231,"afterCompact":false},{"index":564,"time":"22:03","ratio":0.148175,"inputTokens":59270,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.229,"originalCredits":0.229,"afterCompact":false},{"index":565,"time":"22:03","ratio":0.155963,"inputTokens":62385,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.266,"originalCredits":0.266,"afterCompact":false},{"index":566,"time":"22:03","ratio":0.161095,"inputTokens":64438,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.207,"originalCredits":0.207,"afterCompact":false},{"index":567,"time":"22:03","ratio":0.162257,"inputTokens":64903,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.166,"originalCredits":0.166,"afterCompact":false},{"index":568,"time":"22:03","ratio":0.164337,"inputTokens":65735,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.191,"originalCredits":0.191,"afterCompact":false},{"index":569,"time":"22:03","ratio":0.16687,"inputTokens":66748,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.207,"originalCredits":0.207,"afterCompact":false},{"index":570,"time":"22:03","ratio":0.168462,"inputTokens":67385,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.18,"originalCredits":0.18,"afterCompact":false},{"index":571,"time":"22:03","ratio":0.169385,"inputTokens":67754,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.18,"originalCredits":0.18,"afterCompact":false},{"index":572,"time":"22:03","ratio":0.17088,"inputTokens":68352,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.177,"originalCredits":0.177,"afterCompact":false},{"index":573,"time":"22:04","ratio":0.171995,"inputTokens":68798,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.204,"originalCredits":0.204,"afterCompact":false},{"index":574,"time":"22:04","ratio":0.181095,"inputTokens":72438,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.289,"originalCredits":0.289,"afterCompact":false},{"index":575,"time":"22:04","ratio":0.1826,"inputTokens":73040,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.193,"originalCredits":0.193,"afterCompact":false},{"index":576,"time":"22:04","ratio":0.18348,"inputTokens":73392,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.188,"originalCredits":0.188,"afterCompact":false},{"index":577,"time":"22:04","ratio":0.184638,"inputTokens":73855,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.198,"originalCredits":0.198,"afterCompact":false},{"index":578,"time":"22:04","ratio":0.187262,"inputTokens":74905,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.215,"originalCredits":0.215,"afterCompact":false},{"index":579,"time":"22:05","ratio":0.19005,"inputTokens":76020,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.221,"originalCredits":0.221,"afterCompact":false},{"index":580,"time":"22:05","ratio":0.191165,"inputTokens":76466,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.205,"originalCredits":0.205,"afterCompact":false},{"index":581,"time":"22:05","ratio":0.192218,"inputTokens":76887,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.201,"originalCredits":0.201,"afterCompact":false},{"index":582,"time":"22:05","ratio":0.193422,"inputTokens":77369,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.224,"originalCredits":0.224,"afterCompact":false},{"index":583,"time":"22:05","ratio":0.197933,"inputTokens":79173,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.243,"originalCredits":0.243,"afterCompact":false},{"index":584,"time":"22:05","ratio":0.203332,"inputTokens":81333,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.267,"originalCredits":0.267,"afterCompact":false},{"index":585,"time":"22:05","ratio":0.204682,"inputTokens":81873,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.211,"originalCredits":0.211,"afterCompact":false},{"index":586,"time":"22:06","ratio":0.205827,"inputTokens":82331,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.236,"originalCredits":0.236,"afterCompact":false},{"index":587,"time":"22:06","ratio":0.207615,"inputTokens":83046,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.226,"originalCredits":0.226,"afterCompact":false},{"index":588,"time":"22:06","ratio":0.208723,"inputTokens":83489,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.217,"originalCredits":0.217,"afterCompact":false},{"index":589,"time":"22:06","ratio":0.21126,"inputTokens":84504,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.226,"originalCredits":0.226,"afterCompact":false},{"index":590,"time":"22:06","ratio":0.214572,"inputTokens":85829,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.236,"originalCredits":0.236,"afterCompact":false},{"index":591,"time":"22:06","ratio":0.233857,"inputTokens":93543,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.431,"originalCredits":0.431,"afterCompact":false},{"index":592,"time":"22:07","ratio":0.235088,"inputTokens":94035,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.298,"originalCredits":0.298,"afterCompact":false},{"index":593,"time":"23:50","ratio":0.24718,"inputTokens":98872,"outputTokens":null,"usageSource":"transcript-ratio","credits":2.759,"originalCredits":2.759,"afterCompact":false},{"index":594,"time":"23:51","ratio":0.25117,"inputTokens":100468,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.359,"originalCredits":0.359,"afterCompact":false},{"index":595,"time":"23:51","ratio":0.257022,"inputTokens":102809,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.311,"originalCredits":0.311,"afterCompact":false},{"index":596,"time":"23:52","ratio":0.266005,"inputTokens":106402,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.44,"originalCredits":0.44,"afterCompact":false},{"index":597,"time":"23:52","ratio":0.274245,"inputTokens":109698,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.345,"originalCredits":0.345,"afterCompact":false},{"index":598,"time":"23:52","ratio":0.282243,"inputTokens":112897,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.406,"originalCredits":0.406,"afterCompact":false},{"index":599,"time":"23:52","ratio":0.286055,"inputTokens":114422,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.306,"originalCredits":0.306,"afterCompact":false},{"index":600,"time":"23:52","ratio":0.286963,"inputTokens":114785,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.276,"originalCredits":0.276,"afterCompact":false},{"index":601,"time":"23:53","ratio":0.289247,"inputTokens":115699,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.335,"originalCredits":0.335,"afterCompact":false},{"index":602,"time":"23:53","ratio":0.291552,"inputTokens":116621,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.303,"originalCredits":0.303,"afterCompact":false},{"index":603,"time":"23:53","ratio":0.29283,"inputTokens":117132,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.284,"originalCredits":0.284,"afterCompact":false},{"index":604,"time":"23:54","ratio":0.297775,"inputTokens":119110,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.379,"originalCredits":0.379,"afterCompact":false},{"index":605,"time":"23:54","ratio":0.30091,"inputTokens":120364,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.341,"originalCredits":0.341,"afterCompact":false},{"index":606,"time":"23:54","ratio":0.304063,"inputTokens":121625,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.347,"originalCredits":0.347,"afterCompact":false},{"index":607,"time":"23:55","ratio":0.306397,"inputTokens":122559,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.321,"originalCredits":0.321,"afterCompact":false},{"index":608,"time":"23:56","ratio":0.30774,"inputTokens":123096,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.328,"originalCredits":0.328,"afterCompact":false},{"index":609,"time":"23:56","ratio":0.309657,"inputTokens":123863,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.328,"originalCredits":0.328,"afterCompact":false},{"index":610,"time":"23:57","ratio":0.31168,"inputTokens":124672,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.322,"originalCredits":0.322,"afterCompact":false},{"index":611,"time":"23:57","ratio":0.316763,"inputTokens":126705,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.393,"originalCredits":0.393,"afterCompact":false},{"index":612,"time":"23:57","ratio":0.320927,"inputTokens":128371,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.394,"originalCredits":0.394,"afterCompact":false},{"index":613,"time":"23:58","ratio":0.32665,"inputTokens":130660,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.38,"originalCredits":0.38,"afterCompact":false},{"index":614,"time":"23:58","ratio":0.329835,"inputTokens":131934,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.354,"originalCredits":0.354,"afterCompact":false},{"index":615,"time":"23:58","ratio":0.3312,"inputTokens":132480,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.336,"originalCredits":0.336,"afterCompact":false},{"index":616,"time":"23:58","ratio":0.33267,"inputTokens":133068,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.329,"originalCredits":0.329,"afterCompact":false},{"index":617,"time":"23:59","ratio":0.333628,"inputTokens":133451,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.359,"originalCredits":0.359,"afterCompact":false},{"index":618,"time":"23:59","ratio":0.341405,"inputTokens":136562,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.437,"originalCredits":0.437,"afterCompact":false},{"index":619,"time":"23:59","ratio":0.352262,"inputTokens":140905,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.482,"originalCredits":0.482,"afterCompact":false},{"index":620,"time":"23:59","ratio":0.35509,"inputTokens":142036,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.39,"originalCredits":0.39,"afterCompact":false},{"index":621,"time":"00:00","ratio":0.357588,"inputTokens":143035,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.374,"originalCredits":0.374,"afterCompact":false},{"index":622,"time":"00:00","ratio":0.35956,"inputTokens":143824,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.378,"originalCredits":0.378,"afterCompact":false},{"index":623,"time":"00:00","ratio":0.361972,"inputTokens":144789,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.38,"originalCredits":0.38,"afterCompact":false},{"index":624,"time":"00:00","ratio":0.365175,"inputTokens":146070,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.465,"originalCredits":0.465,"afterCompact":false},{"index":625,"time":"00:01","ratio":0.371723,"inputTokens":148689,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.448,"originalCredits":0.448,"afterCompact":false},{"index":626,"time":"00:01","ratio":0.375358,"inputTokens":150143,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.392,"originalCredits":0.392,"afterCompact":false},{"index":627,"time":"00:01","ratio":0.377213,"inputTokens":150885,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.394,"originalCredits":0.394,"afterCompact":false},{"index":628,"time":"00:02","ratio":0.379057,"inputTokens":151623,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.388,"originalCredits":0.388,"afterCompact":false},{"index":629,"time":"00:02","ratio":0.381132,"inputTokens":152453,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.391,"originalCredits":0.391,"afterCompact":false},{"index":630,"time":"00:03","ratio":0.3831,"inputTokens":153240,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.492,"originalCredits":0.492,"afterCompact":false},{"index":631,"time":"00:03","ratio":0.388738,"inputTokens":155495,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.425,"originalCredits":0.425,"afterCompact":false},{"index":632,"time":"00:03","ratio":0.390717,"inputTokens":156287,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.381,"originalCredits":0.381,"afterCompact":false},{"index":633,"time":"00:04","ratio":0.391365,"inputTokens":156546,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.386,"originalCredits":0.386,"afterCompact":false},{"index":634,"time":"00:04","ratio":0.395345,"inputTokens":158138,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.416,"originalCredits":0.416,"afterCompact":false},{"index":635,"time":"00:04","ratio":0.397103,"inputTokens":158841,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.413,"originalCredits":0.413,"afterCompact":false},{"index":636,"time":"00:05","ratio":0.39907,"inputTokens":159628,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.424,"originalCredits":0.424,"afterCompact":false},{"index":637,"time":"00:05","ratio":0.401345,"inputTokens":160538,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.395,"originalCredits":0.395,"afterCompact":false},{"index":638,"time":"00:05","ratio":0.402195,"inputTokens":160878,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.377,"originalCredits":0.377,"afterCompact":false},{"index":639,"time":"00:05","ratio":0.402875,"inputTokens":161150,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.382,"originalCredits":0.382,"afterCompact":false},{"index":640,"time":"00:06","ratio":0.403878,"inputTokens":161551,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.386,"originalCredits":0.386,"afterCompact":false},{"index":641,"time":"00:06","ratio":0.404643,"inputTokens":161857,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.376,"originalCredits":0.376,"afterCompact":false},{"index":642,"time":"00:06","ratio":0.406732,"inputTokens":162693,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.501,"originalCredits":0.501,"afterCompact":false},{"index":643,"time":"00:07","ratio":0.41235,"inputTokens":164940,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.458,"originalCredits":0.458,"afterCompact":false},{"index":644,"time":"00:08","ratio":0.418123,"inputTokens":167249,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.608,"originalCredits":0.608,"afterCompact":false},{"index":645,"time":"00:09","ratio":0.42624,"inputTokens":170496,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.833,"originalCredits":0.833,"afterCompact":false},{"index":646,"time":"00:11","ratio":0.458203,"inputTokens":183281,"outputTokens":null,"usageSource":"transcript-ratio","credits":1.122,"originalCredits":1.122,"afterCompact":false},{"index":647,"time":"00:11","ratio":0.474482,"inputTokens":189793,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.623,"originalCredits":0.623,"afterCompact":false},{"index":648,"time":"00:11","ratio":0.47624,"inputTokens":190496,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.464,"originalCredits":0.464,"afterCompact":false},{"index":649,"time":"00:11","ratio":0.47734,"inputTokens":190936,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.459,"originalCredits":0.459,"afterCompact":false},{"index":650,"time":"00:12","ratio":0.478473,"inputTokens":191389,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.45,"originalCredits":0.45,"afterCompact":false},{"index":651,"time":"00:13","ratio":0.479652,"inputTokens":191861,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.484,"originalCredits":0.484,"afterCompact":false},{"index":652,"time":"00:13","ratio":0.481685,"inputTokens":192674,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.501,"originalCredits":0.501,"afterCompact":false},{"index":653,"time":"00:13","ratio":0.485637,"inputTokens":194255,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.513,"originalCredits":0.513,"afterCompact":false},{"index":654,"time":"00:13","ratio":0.487465,"inputTokens":194986,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.461,"originalCredits":0.461,"afterCompact":false},{"index":655,"time":"00:14","ratio":0.487982,"inputTokens":195193,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.478,"originalCredits":0.478,"afterCompact":false},{"index":656,"time":"00:14","ratio":0.489717,"inputTokens":195887,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.471,"originalCredits":0.471,"afterCompact":false},{"index":657,"time":"00:14","ratio":0.491138,"inputTokens":196455,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.464,"originalCredits":0.464,"afterCompact":false},{"index":658,"time":"00:14","ratio":0.493627,"inputTokens":197451,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.483,"originalCredits":0.483,"afterCompact":false},{"index":659,"time":"00:14","ratio":0.494567,"inputTokens":197827,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.479,"originalCredits":0.479,"afterCompact":false},{"index":660,"time":"00:14","ratio":0.49956,"inputTokens":199824,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.523,"originalCredits":0.523,"afterCompact":false},{"index":661,"time":"00:15","ratio":0.500868,"inputTokens":200347,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.484,"originalCredits":0.484,"afterCompact":false},{"index":662,"time":"00:15","ratio":0.502543,"inputTokens":201017,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.492,"originalCredits":0.492,"afterCompact":false},{"index":663,"time":"00:15","ratio":0.505602,"inputTokens":202241,"outputTokens":null,"usageSource":"transcript-ratio","credits":0.606,"originalCredits":0.606,"afterCompact":false}],"identity":{"sumAttributed":121129026,"billedInputTokens":121129026,"absDiff":0,"ok":true},"pluginVersion":"2.7.4","selfCmd":"\"C:\\Users\\49745\\.qoder-cn\\plugins\\cache\\qoder-marketplace\\qoder-credits-inspector\\2.7.4\\bin\\credits-inspector.cmd\" cli","linkHealth":{"matched":0,"requests":663,"coverage":0,"usageSource":"transcript-ratio","breakdown":{"proxy":0,"transcriptTokens":0,"transcriptRatio":663},"logRecords":0,"lastRecordAt":null,"recentRequests":0,"proxyErrors":null,"clientAbort":null,"clientAbortMaxMs":null,"upstreamRejected":null,"aborted":null,"truncated":null,"noUsage":null,"slowestMs":null,"supersededFailure":null},"subagents":{"scanned":true,"dir":"C:\\Users\\49745\\.qoder-cn\\projects\\G--CODEX-New-Manga\\f77fdd01-d1c3-43ae-b91a-547397fa60fd\\subagents","probedPaths":["C:\\Users\\49745\\.qoder-cn\\projects\\G--CODEX-New-Manga\\f77fdd01-d1c3-43ae-b91a-547397fa60fd\\subagents","C:\\Users\\49745\\.qoder-cn\\projects\\f77fdd01-d1c3-43ae-b91a-547397fa60fd\\subagents"],"reason":"ok","count":6,"items":[{"agentId":"ageneral-purpose-978ba8768ee0c4e7","agentType":"general-purpose","description":"Audit window evidence discipline","toolUseId":"call_d546bb73e1124a1f8b12e02c","roundTrips":37,"billedInputTokens":1380201,"peakContextRatio":0.3344,"credits":11.121,"originalCredits":11.121,"error":null},{"agentId":"ageneral-purpose-078b21e5544b41df","agentType":"general-purpose","description":"Audit W6/W9/W10 cleanup slices","toolUseId":"call_850cf29b0a98446d8508d89f","roundTrips":38,"billedInputTokens":1253918,"peakContextRatio":0.2811,"credits":10.681,"originalCredits":10.681,"error":null},{"agentId":"ageneral-purpose-79637029fd2d7b37","agentType":"general-purpose","description":"Audit W2/W3 slices","toolUseId":"call_a396bdbd86fa43dc904f5101","roundTrips":26,"billedInputTokens":863958,"peakContextRatio":0.2563,"credits":8.134,"originalCredits":8.134,"error":null},{"agentId":"ageneral-purpose-0e6146d0b602c83c","agentType":"general-purpose","description":"Audit W5/W7/W8/W11 slices","toolUseId":"call_f1abd831b895476baabe7de9","roundTrips":26,"billedInputTokens":693832,"peakContextRatio":0.2255,"credits":6.817,"originalCredits":6.817,"error":null},{"agentId":"ageneral-purpose-68a236c4da126071","agentType":"general-purpose","description":"Audit TASK-060 evidence logs","toolUseId":"call_d22f87d607cf4ea192e19672","roundTrips":24,"billedInputTokens":595918,"peakContextRatio":0.1932,"credits":5.632,"originalCredits":5.632,"error":null},{"agentId":"aExplore-501162bef8df4521","agentType":"Explore","description":"Sweep docs for stale overlap claims","toolUseId":"call_c0d491b9a97c4cc2918e8268","roundTrips":10,"billedInputTokens":293627,"peakContextRatio":0.224,"credits":4.237,"originalCredits":4.237,"error":null}],"totals":{"roundTrips":161,"billedInputTokens":5081454,"credits":46.622,"originalCredits":46.622},"combined":{"roundTrips":824,"billedInputTokens":126210480,"credits":429.394,"originalCredits":429.394}},"manual":null,"artifacts":{"report":"report.json","canvas":"[@代码审查](skill___fullstac__fce86d6b.canvas.tsx"}} as unknown as Report;
+
+function human(n: number): string {
+  if (!isFinite(n)) return "—";
+  const abs = Math.abs(n);
+  if (abs >= 1e9) return (n / 1e9).toFixed(2) + "B";
+  if (abs >= 1e6) return (n / 1e6).toFixed(2) + "M";
+  if (abs >= 1e3) return (n / 1e3).toFixed(1) + "K";
+  return String(Math.round(n));
+}
+
+function pct(x: number): string {
+  return (x * 100).toFixed(1) + "%";
+}
+
+// —— 可用性口径：把 report.availability 翻成人话，并决定某个数字该显示值、「≈」还是「—」——
+const AVAIL_LABEL: Record<string, string> = {
+  measured: "实测",
+  derived: "推导",
+  fallback: "回退",
+  manual: "手工",
+  unavailable: "不可用",
+};
+
+const SOURCE_LABEL: Record<string, string> = {
+  "desktop-rich": "桌面端富转录",
+  "ide-lite": "IDE 端精简转录",
+  unknown: "来源未知",
+};
+
+function availOf(av: Availability | undefined, key: keyof Availability, dflt: Avail = "measured"): Avail {
+  return (av?.[key] as Avail | undefined) ?? dflt;
+}
+
+/** 段标题旁的性质标注：实测不标（默认就是实测），其余标出来。 */
+function availTag(av: Availability | undefined, key: keyof Availability, dflt: Avail = "measured"): string {
+  const v = availOf(av, key, dflt);
+  return v === "measured" ? "" : `（${AVAIL_LABEL[v]}）`;
+}
+
+/** 不可用的量显示「—」而不是 0：IDE 端的 0 是「读不到」，不是「没发生」。 */
+function orDash(
+  v: number,
+  av: Availability | undefined,
+  key: keyof Availability,
+  fmt: (n: number) => string = String
+): string {
+  return availOf(av, key) === "unavailable" ? "—" : fmt(v);
+}
+
+function kindLabel(kind: string): string {
+  switch (kind) {
+    case "read":
+      return "读取";
+    case "write":
+      return "写入";
+    case "search":
+      return "搜索";
+    case "shell":
+      return "命令";
+    default:
+      return "其他";
+  }
+}
+
+function shortTime(iso: string | null): string {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return String(iso);
+  const p = (v: number) => String(v).padStart(2, "0");
+  return `${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+}
+
+export default function SessionTokensReport() {
+  if (!REPORT) {
+    return (
+      <ReportShell width="wide" ariaLabel="会话 token 消耗截析">
+        <Stack gap="component">
+          <H1>会话 token 消耗截析</H1>
+          <Text tone="secondary">报告数据尚未注入。请在会话中触发一次 Stop 钩子，或运行 CLI 生成 report.json。</Text>
+        </Stack>
+      </ReportShell>
+    );
+  }
+
+  const r = REPORT;
+  const s = r.session;
+  const c = r.context;
+  const t = r.totals;
+  const av = r.availability;
+  const manual = r.manual ?? null;
+  const sourceLabel = SOURCE_LABEL[r.source ?? "unknown"] ?? "来源未知";
+  // 有没有 usage 决定整份报告是「真值/推导」还是「一律 —」。手工回填的 credits 不算有 usage，
+  // 否则下面按 ratio 推导的图表会照画一堆 0。
+  const hasUsage = availOf(av, "roundTrips") === "measured";
+  const manualCredits = manual?.credits ?? null;
+
+  // 报告里出现的命令一律用数据层注入的插件入口（Windows 上是自带启动器的绝对路径，免装 Node）。
+  // 旧报告没有这个字段时回退原写法，不比改动前更差。
+  const CLI = r.selfCmd || "node scripts/cli.mjs";
+
+  // credits 覆盖范围：credits 与「计费输入总量」并排放在头部，读者一除就得到单价。
+  // 混合会话里 credits 只来自转录路径的那几笔（实测某会话 413 笔里只有 1 笔带 credits），
+  // 部分覆盖不说出来 = 把局部真值当全量展示。
+  const cov = r.creditsCoverage ?? null;
+  const covPartial = !!(cov && !cov.full && cov.roundTrips > 0);
+  const covNote = covPartial ? ` · 仅覆盖 ${cov!.trips}/${cov!.roundTrips} 笔往返（占计费输入 ${pct(cov!.tokenShare)}）` : "";
+
+  // 缓存命中：代理记录里一直带着 cachedTokens，此前采集了却从不呈现。
+  const cachedMeasured = availOf(av, "cachedTokens") === "measured";
+  const cachedText = cachedMeasured
+    ? `输入 ${human(t.billedInputTokens)}，其中缓存命中 ${human(t.cachedTokens ?? 0)}（${pct(t.cachedShare ?? 0)}，${t.cachedTrips ?? 0} 笔往返带缓存）——供应商对重复叠加的前缀打折，故按 token 数的节省大于按计费的节省。`
+    : "";
+
+  // 代理告警只在「失败记录仍然成立」时才报：status.json 只写不清，陈旧失败会把用户推去改
+  // 本来正确的 Base URL，越修越坏；而同一份报告里的 lastRecordAt / matched 是它在跑的硬证据。
+  const proxyAlarm = r.proxy?.status && !r.proxy.statusSuperseded ? r.proxy.status : null;
+  const proxyAlive = !proxyAlarm && (r.proxy?.logRecords ?? 0) > 0;
+
+  // 官方 UI 一场会话扣费 = 主链 + 子代理，故有子代理时 headline 必须给 combined，否则比 UI 少一截
+  const creditScope =
+    r.subagents && r.subagents.count > 0
+      ? {
+          credits: r.subagents.combined.credits,
+          note: `主链 ${t.credits} + 子代理 ${r.subagents.totals.credits} · 原始 ${r.subagents.combined.originalCredits}`,
+        }
+      : { credits: t.credits, note: `原始 ${t.originalCredits}（实测）` };
+
+  const headline: MetricItem[] = [
+    {
+      label: "计费输入总量",
+      value: hasUsage ? human(t.billedInputTokens) : "—",
+      description: hasUsage
+        ? availOf(av, "tokens") === "measured"
+          ? `Σ prompt_tokens（实测真值）${covPartial ? ` · 覆盖全部 ${cov!.roundTrips} 笔往返` : ""}`
+          : `Σ 上下文 × 往返${availTag(av, "tokens", "derived")}${covPartial ? ` · 覆盖全部 ${cov!.roundTrips} 笔往返` : ""}`
+        : "转录无 usage",
+    },
+    {
+      label: "当前上下文",
+      value: hasUsage ? human(t.netContextTokens) : "—",
+      description: hasUsage
+        ? `峰值 ${pct(c.peakContextRatio)}${s.compactions ? "（压缩后起算）" : ""}`
+        : "转录无 usage",
+    },
+    {
+      label: "重发放大",
+      value: hasUsage ? `${t.amplification}×` : "—",
+      description: `往返 ${hasUsage ? `${s.roundTrips} 次` : "—"}`,
+    },
+    {
+      label: "Credits",
+      // 代理路径（自定义模型）token 是实测真值但 credits 无来源：hasUsage 为真也要显示「—」，
+      // 否则 t.credits=0 会被读成「这次没花钱」。
+      value:
+        manualCredits != null
+          ? `${manualCredits}`
+          : hasUsage && availOf(av, "credits") !== "unavailable"
+            ? `${creditScope.credits}`
+            : "—",
+      description:
+        manualCredits != null
+          ? `官方 UI 手工录入 · 本地 ${creditScope.credits}`
+          : hasUsage && availOf(av, "credits") !== "unavailable"
+            ? `${creditScope.note}${covNote}`
+            : r.usageSource === "proxy" || r.usageSource === "transcript-tokens" || r.usageSource === "mixed"
+              ? "自定义模型（BYOK）不经 Qoder 计费网关，无 credits 真值"
+              : hasUsage
+                ? "转录带 usage 但没有 credits 字段，本地无计费真值"
+                : "本地不可用，见下方告警",
+    },
+  ];
+
+  const pieData = r.byCategory.map((x) => ({ label: x.label, value: x.tokens }));
+
+  // 系统提示词是报告里少数「用户能直接动」的一项：它每轮被完整重发，总量 = 每请求规模 × 往返数，
+  // 而它的大小由装了多少插件与技能决定。占比小时不必啰嗦。
+  const sysCat = r.byCategory.find((x) => x.key === "system");
+  const sysNote =
+    hasUsage && sysCat && sysCat.share >= 0.1
+      ? ` 系统提示词占 ${pct(sysCat.share)}（${human(c.systemPromptTokens)}/请求 × ${s.roundTrips} 次往返 = ${human(sysCat.tokens)}）：它每轮都被完整重发，大小由你装了多少插件与技能决定，精简技能能直接压低这一项——本插件自己的技能描述也常驻在里面（约 170 token）。`
+      : "";
+
+  const tools = r.byTool.slice(0, 8);
+  const toolCategories = tools.map((x) => x.tool);
+  const toolSeries = [{ name: "重发 tokens", data: tools.map((x) => x.tokens) }];
+  // 「单次」= 平均每次调用带来的重发 token。总量榜会埋掉次数少但每次极贵的工具：
+  // 实测 Read 只 29 次却吃 335 万，单次是 Edit 的 2.6 倍。
+  const toolRows = tools.map((x) => [
+    x.tool,
+    human(x.tokens),
+    pct(x.share),
+    String(x.calls),
+    x.perCall == null ? "—" : human(x.perCall),
+  ]);
+
+  const files = r.byFile.slice(0, 20);
+  const fileRows = files.map((f) => [
+    f.label,
+    kindLabel(f.kind),
+    human(f.billed),
+    pct(f.share),
+    f.perRead == null ? "—" : human(f.perRead),
+    String(f.trips),
+    String(f.reads),
+  ]);
+
+  const byReq = r.byRequest ?? [];
+  const reqLabels = byReq.map((x, i) => x.time || `#${x.index ?? i + 1}`);
+  const reqInputs = byReq.map((x) => x.inputTokens);
+  const reqCredits = byReq.map((x) => x.credits);
+  // credits 只在覆盖全部往返时才画曲线：部分覆盖（BYOK 混合会话实测 413 笔里 1 笔有 credits）
+  // 画出来是一地零，既读不出形状，还会暗示「其余往返没花钱」。
+  const showCreditsChart = hasUsage && !covPartial && availOf(av, "credits") !== "unavailable";
+
+  // 按类别下钻：类别小计行（accent/neutral）+ 其工具/文件明细行（default），用 rowTone 分组着色。
+  const catDetail = r.byCategoryDetail ?? [];
+  const detailRows: string[][] = [];
+  const detailTones: ("accent" | "neutral" | "default")[] = [];
+  for (const cc of catDetail) {
+    const hasKids = cc.children.length > 0;
+    detailRows.push([cc.label, "—", hasKids ? "小计" : "（整体，无工具/文件归属）", human(cc.tokens), pct(cc.share), "100%", "—"]);
+    detailTones.push(hasKids ? "accent" : "neutral");
+    for (const k of cc.children) {
+      detailRows.push(["", k.tool || "—", k.label, human(k.tokens), pct(k.share), pct(k.catShare), String(k.trips)]);
+      detailTones.push("default");
+    }
+  }
+
+  // 子代理账：Agent 派发的子代理消耗不在主链里，单独一段呈现（无子代理则整段不渲染）。
+  const sub = r.subagents;
+  const subItems = sub?.items ?? [];
+  const subRows: string[][] = [];
+  const subTones: ("accent" | "default")[] = [];
+  for (const a of subItems) {
+    subRows.push([
+      a.description || a.agentId,
+      a.agentType || "—",
+      String(a.roundTrips),
+      human(a.billedInputTokens),
+      pct(a.peakContextRatio),
+      String(a.credits),
+      String(a.originalCredits),
+      a.error || "—",
+    ]);
+    subTones.push("default");
+  }
+  if (sub && subItems.length > 0) {
+    subRows.push([
+      "合计（主链 + 子代理）",
+      "—",
+      String(sub.combined.roundTrips),
+      human(sub.combined.billedInputTokens),
+      "—",
+      String(sub.combined.credits),
+      String(sub.combined.originalCredits),
+      `主链 ${t.credits} / 子代理 ${sub.totals.credits}`,
+    ]);
+    subTones.push("accent");
+  }
+
+  // 压缩单笔成本：输入/摘要一律取数据层归一后的生效值（有代理实测就是实测，否则是客户端自估），
+  // 并用「口径」列把两者分开——混着显示会让自估值被当成实测。
+  const ccost = r.compactionCost;
+  const ccItems = ccost?.items ?? [];
+  const compactRows: string[][] = ccItems.map((e) => [
+    `#${e.index}`,
+    shortTime(e.at),
+    e.trigger || "—",
+    e.effectiveInputTokens == null ? "—" : human(e.effectiveInputTokens),
+    e.effectiveOutputTokens == null ? "—" : human(e.effectiveOutputTokens),
+    e.nextInputTokens == null ? "—" : human(e.nextInputTokens),
+    e.savedTokens == null ? "—" : human(e.savedTokens),
+    e.proxy && e.proxy.ms != null ? `${Math.round(e.proxy.ms / 1000)}s` : "—",
+    e.proxy ? "实测" : "自估",
+  ]);
+
+  // IDE 端仅剩的真值：工具调用次数与文件读取次数（不依赖 usage，两种转录都写 tool_use 块）。
+  const residueRows: string[][] = [];
+  if (!hasUsage) {
+    for (const x of r.byTool.filter((v) => v.calls > 0).sort((a, b) => b.calls - a.calls).slice(0, 15)) {
+      residueRows.push([x.tool, "工具", String(x.calls), "—", "—"]);
+    }
+    for (const f of r.byFile.filter((v) => v.reads > 0).sort((a, b) => b.reads - a.reads).slice(0, 15)) {
+      residueRows.push([f.label, kindLabel(f.kind), "—", String(f.reads), String(f.trips)]);
+    }
+  }
+
+  // A1 三值：一次带 usage 的往返都没有时 0 <= max(2,0) 恒成立，会把「没数据」判成「校验通过」，
+  // 故 breakdown.mjs 在 reqCount===0 时给 null；这里必须显示「不适用」而不是绿色通过。
+  const identityText =
+    r.identity.ok == null
+      ? "恒等式 A1 不适用（本转录没有一次带 usage 的往返）。"
+      : r.identity.ok
+        ? `归因覆盖 ${pct(t.coverage)}${availTag(av, "categoryShare", "derived")}，恒等式 A1 通过（|Δ|=${r.identity.absDiff}）。`
+        : `归因覆盖 ${pct(t.coverage)}，恒等式 A1 未通过（|Δ|=${r.identity.absDiff}）。`;
+  // 窗口读不到时是静默回退的 200000，而所有 token 数字都乘它 —— 必须显式标 ≈ 与来源。
+  const cwIsFallback = availOf(av, "contextWindow") === "fallback";
+  const cwText = cwIsFallback ? `≈${human(c.contextWindow)}（回退值）` : human(c.contextWindow);
+  // 当前占用头条：以最新上下文（currentContextTokens）为准；段内单调递增 ⇒ 旧版峰值与当前恒等，故合并为一条。
+  const curCtx = c.currentContextTokens ?? c.peakContextTokens;
+  const netAdv = c.netUserAdvice || c.peakUserAdvice || c.peakAdvice || null;
+  const limitSrcLabel =
+    c.userContextLimitSource === "manual" ? "手工"
+    : c.userContextLimitSource === "config" ? "配置"
+    : c.userContextLimitSource === "derived" ? "实测反推"
+    : "默认";
+  // 阈值来源非 manual/config/derived ⇒ 用的是内置兜底 200K，不是用户在 Qoder 设的真值，需显式提示如何改。
+  const limitIsDefault = c.userContextLimitSource !== "manual" && c.userContextLimitSource !== "config" && c.userContextLimitSource !== "derived";
+  // 上下文对比表：把旧版挤成一段小字的「界面显示 / 自动压缩实况 / 历史高点」拆成可扫读的行，无数据不占位。
+  const ctxRows: string[][] = [];
+  if (c.userContextLimit != null && Number.isFinite(c.contextWindow)) {
+    ctxRows.push(
+      c.contextWindow > c.userContextLimit
+        ? ["Qoder 界面进度条", pct(c.netWindowRatio ?? c.peakContextRatio), `按模型物理窗口 ${cwText} 算，比你真实占比低约 ${(c.contextWindow / c.userContextLimit).toFixed(1)} 倍——界面显得偏空、有迷惑性，别信它`]
+        : ["Qoder 界面进度条", pct(c.netWindowRatio ?? c.peakContextRatio), `按模型窗口 ${cwText} 算，与你实设上限一致，显示无偏差`],
+    );
+  }
+  if (c.observedAutoCompactions != null && c.observedAutoCompactions > 0 && c.observedAutoTriggerTokens != null) {
+    ctxRows.push(["自动压缩实况", `自动 ${c.observedAutoCompactions} 次`, `触发点在 ~${human(c.observedAutoTriggerTokens)}（窗口的 ${pct(c.autoTriggerRatio ?? 0)}）`]);
+  } else if (s.compactions > 0) {
+    ctxRows.push(["压缩实况", `手动 ${s.compactions} 次`, "本场未见自动压缩，均为你手动触发"]);
+  }
+  if (c.peakSessionNotable) {
+    ctxRows.push(["压缩前历史高点", `${pct(c.peakSessionRatio ?? 0)}（${human(c.peakSessionTokens ?? 0)}）`, "本场曾达到的最高占用"]);
+  }
+
+  // 链路健康度：把 --request-log 的逐笔归因压成一行结论（明细属于排障，留在 CLI）。
+  // 分两档：本会话确实走在代理链路上（proxy/mixed）才印「最近 N 笔」的失败统计与排障命令；
+  // token 全来自转录的会话里，那些统计说的是别的会话，印成 warning + 命令是噪音，只留覆盖率与最近记录时间。
+  // 纯官方模型用户从没配过代理，整行不渲染。
+  const lhRaw = r.linkHealth ?? null;
+  const lh = lhRaw && (r.proxy?.configured || lhRaw.matched > 0) ? lhRaw : null;
+  const lhOnPath = !!lh && (lh.matched > 0 || lh.usageSource === "proxy" || lh.usageSource === "mixed");
+  const lhErrors = lh ? lh.proxyErrors ?? 0 : 0;
+  const lhBad = lhOnPath && lhErrors > 0;
+  const lhTone: "info" | "warning" = lhBad ? "warning" : "info";
+  // 三档拆分一行说清：代理实测 / 转录 input_tokens / 转录 ratio×window 各多少笔。
+  // 旧报告（v3）无 breakdown 字段时退回到只报 matched。
+  const lhBd = lh?.breakdown ?? null;
+  const lhBdText = lhBd
+    ? `拆分：代理 ${lhBd.proxy} 笔 · 转录 input_tokens ${lhBd.transcriptTokens} 笔 · 转录 ratio×窗口 ${lhBd.transcriptRatio} 笔`
+    : "";
+  const lhSrcNote = !lh
+    ? ""
+    : lh.usageSource === "proxy"
+      ? "：全部为供应商实测"
+      : lh.usageSource === "transcript-tokens"
+        ? "：本会话 token 全来自转录 input_tokens（BYOK，代理未在链路上）"
+        : lh.usageSource === "transcript-ratio"
+          ? "：本会话 token 由 ratio×窗口推导（官方模型）"
+          : lh.usageSource === "mixed"
+            ? "：多源混合，以下拆分列为准"
+            : lh.usageSource === "transcript"
+              ? "：本会话 token 全部来自转录，代理不在链路上"
+              : "";
+  const lhText = !lh
+    ? ""
+    : [
+        lh.requests > 0
+          ? `代理覆盖 ${lh.matched}/${lh.requests} 笔往返（${pct(lh.coverage)}）${lhSrcNote}`
+          : "本会话没有带 usage 的往返，代理无从覆盖",
+        lhBdText,
+        lh.lastRecordAt ? `代理最近记录 ${shortTime(lh.lastRecordAt)}` : proxyAlive ? "代理有记录但无时间戳" : "代理从未记到流量",
+        lhOnPath && lh.recentRequests
+          ? `最近 ${lh.recentRequests} 笔：代理失败 ${lh.proxyErrors} · 上游报错 ${lh.upstreamRejected} · 客户端提前断开 ${lh.aborted} · 成功但无 usage ${lh.noUsage}${
+              lh.slowestMs != null ? ` · 最慢 ${Math.round(lh.slowestMs / 1000)}s` : ""
+            }`
+          : lhOnPath
+            ? "请求诊断日志为空（运行中的代理是旧版，或还没记到）"
+            : "",
+        lhBad ? `有「代理失败」= 请求没出得去或代理自己抛了，跑 ${CLI} --request-log 看归因` : "",
+        !lhOnPath && lhErrors > 0 ? `代理另有 ${lhErrors} 笔失败，属于走代理的那些会话` : "",
+        lh.supersededFailure
+          ? `${shortTime(lh.supersededFailure.at ?? null)} 那条「拉起失败（${lh.supersededFailure.error}）」已被之后的流量推翻，无需处理`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("。") + "。";
+
+  return (
+    <ReportShell width="wide" ariaLabel="会话 token 消耗截析">
+      <Stack gap="sectionCompact">
+        <header>
+          <Stack gap="component">
+            <H1>会话 token 消耗截析</H1>
+            <Text tone="secondary">
+              {s.model || "未知模型"}
+              {s.modelSource === "manual" ? "（手工录入）" : ""} · {sourceLabel} · 会话{" "}
+              {String(s.id || "").slice(0, 8)}
+              {s.title ? `「${s.title}」` : ""} · {shortTime(s.startedAt)} →{" "}
+              {shortTime(s.endedAt)} · 压缩{" "}
+              {availOf(av, "compactions") === "unavailable" ? "—" : `${s.compactions} 次`}
+              {r.usageSource ? ` · usage 来源 ${
+                r.usageSource === "proxy"
+                  ? "代理实测"
+                  : r.usageSource === "transcript-tokens"
+                    ? "转录 input_tokens"
+                    : r.usageSource === "transcript-ratio"
+                      ? "转录 ratio×窗口"
+                      : r.usageSource === "mixed"
+                        ? "多源混合"
+                        : "转录"
+              }` : ""}
+              {r.pluginVersion ? ` · v${r.pluginVersion}` : ""} · schema v{r.schemaVersion}
+            </Text>
+            <MetricsGrid variant="header" columns={4} items={headline} />
+          </Stack>
+        </header>
+
+        {!hasUsage && r.source === "desktop-rich" && (
+          <Callout tone="danger" title="本报告数值不可用：自定义模型（BYOK）不经 Qoder 计费网关">
+            转录是桌面端富布局，但 assistant entry 里没有 message.usage——自定义模型（如千问
+            tokenplan）的响应不经 Qoder 计费网关，credits / context_usage_ratio 无来源，提供商返回的
+            usage 客户端也不落盘（已实测扫过 ~/.qoder-cn、~/.qoder、~/.qoder-cli 与 %APPDATA%\QoderCN）。
+            本地补救（改一个配置文件即可，免装 Node、之后全自动）：编辑 {"`~/.qoder-credits-proxy/config.json`"}，
+            把 {"`upstream`"} 填成你的供应商根地址（= Base URL 去掉结尾 /v1），再把自定义模型 Base URL 的 host:port
+            换成 {`127.0.0.1:${r.proxy?.port ?? 49787}`}（路径保留），新开一个会话即自动拉起代理、按 message.id
+            精确 join 出实测 token（credits 仍无真值）。装了 Node 也可用 {"`--setup-proxy`"} / {"`--check-proxy`"} 一步到位。
+            手工回填通道同样可用：
+            {"`.qoder-credits/overrides/<sessionId>.json`"}。
+          </Callout>
+        )}
+
+        {!hasUsage && r.source !== "desktop-rich" && (
+          <Callout tone="danger" title="本报告数值不可用：转录不含 message.usage">
+            这是 {sourceLabel}（IDE 端客户端）。它的转录只写 session_meta / user / assistant / progress 四种 entry，
+            message.usage 整个字段不存在，也不落到本地任何其它文件（已实测扫过 ~/.qoder-cn、~/.qoder、
+            ~/.qoder-cli 与 %APPDATA%\QoderCN）。因此 Credits、token 与各类占比一律显示「—」而不是 0 ——
+            0 会被误读成「这次没花钱」。真值只有官方 UI 有：把它填进{" "}
+            {"`.qoder-credits/overrides/<sessionId>.json`"} 后重跑，上方会出现「官方 UI 真值」一段并与本地并列对账。
+          </Callout>
+        )}
+
+        {manual && (
+          <Callout tone="success" title="官方 UI 真值（手工录入，未覆盖任何本地数字）">
+            Credits {manual.credits ?? "—"} · 原价 {manual.originalCredits ?? "—"}
+            {manual.model ? ` · 模型 ${manual.model}` : ""}
+            {manual.durationMin != null ? ` · 时长 ${manual.durationMin} min` : ""}
+            {manual.startedAt ? ` · ${shortTime(manual.startedAt)}` : ""}
+            {manual.localCoverage != null
+              ? ` · 本地${manual.localScope === "combined" ? "合计（主链+子代理）" : "主链"} ${manual.localCredits ?? t.credits}，覆盖 ${pct(manual.localCoverage)}`
+              : " · 本地无 usage，无法对账"}
+            {manual.note ? `。备注：${manual.note}` : ""}
+          </Callout>
+        )}
+
+        {sub && sub.count === 0 && sub.reason && sub.reason !== "no-dir" && (
+          <Callout tone="warning" title={`子代理账未汇总（${sub.reason}）`}>
+            探测过的候选目录：{(sub.probedPaths ?? []).join("  |  ") || "（无）"}
+          </Callout>
+        )}
+
+        {proxyAlarm && (
+          <Callout tone="warning" title={`代理自动启动失败（${proxyAlarm.error}）`}>
+            {proxyAlarm.error === "EADDRINUSE"
+              ? `端口 ${proxyAlarm.port ?? "—"} 被占用，自定义模型将无法对话。请换一个空闲端口重启代理：${CLI} --setup-proxy --port <新端口>，并把模型 Base URL 改成新端口。`
+              : `代理未就绪（${proxyAlarm.error}），自定义模型可能无法对话。请运行 ${CLI} --check-proxy 查看链路状态。`}
+          </Callout>
+        )}
+
+        {r.proxy?.dormant && !proxyAlarm && (
+          <Callout tone="info" title="代理长期空闲">
+            代理已配置但超过 14 天没有记录到流量（可能你已改回官方模型）。如不再使用自定义模型，可运行{" "}
+            {CLI} --stop-proxy 停用代理；保留也不影响官方模型。
+          </Callout>
+        )}
+
+        {cwIsFallback && (
+          <Callout tone="warning" title="上下文窗口为回退值 200K（未从 runtime-config / usage 反推 / ManualTruth 拿到真值）">
+            本会话所有以窗口为分母的占比与「峰值建议」都可能偏大，而绝对 token 数（已改以 S 真值为底）不受影响。
+            建议在 {"`.qoder-credits/overrides/<sessionId>.json`"} 里手工填 {"`contextWindow`"}（如 qwen3-max=1000000），或等一笔带 input_tokens+ratio 的往返写入转录后自动反推生效。
+          </Callout>
+        )}
+
+        {hasUsage && netAdv && c.userContextLimit != null && (
+          <Stack gap="component">
+            <Callout
+              tone={netAdv.tone}
+              title={`你真实的上下文占用 ${pct(c.netUserRatio ?? c.peakUserRatio ?? 0)}（${human(curCtx)} / 阈值 ${human(c.userContextLimit)}・${limitSrcLabel}）`}
+            >
+              {netAdv.text}
+              {limitIsDefault && (
+                <Text tone="secondary">
+                  {` ⚙ 这里的 ${human(c.userContextLimit)} 是插件内置默认值，不是你在 Qoder「模型管理」里设的真实上限（插件读不到那个设置）。想按真实阈值算：在 ~/.qoder-credits-proxy/config.json 填 "userContextLimit": <你的上限>（对所有会话生效），或对本会话在 .qoder-credits/overrides/<会话id>.json 填同名字段，重跑报告即生效。`}
+                </Text>
+              )}
+            </Callout>
+            {ctxRows.length > 0 && (
+              <Table
+                headers={["对比口径", "数值", "说明"]}
+                rows={ctxRows}
+                density="compact"
+              />
+            )}
+          </Stack>
+        )}
+
+        {c.thresholdNotEnforced && (
+          <Callout tone="warning" title="⚠ 自动压缩不会在你设的阈值触发（本条最重要）">
+            你的模型物理窗口是 {cwText}，Qoder 的自动压缩要等上下文涨到窗口 ~85%（≈{human(Math.round(c.contextWindow * 0.85))}）才触发；
+            你在模型管理里设的 {human(c.userContextLimit)} 上限远在其下，永远不会触发自动压缩。
+            请照上面「你真实的上下文占用」那条，到点自己手动压缩，别等它自动压。
+          </Callout>
+        )}
+
+        {lh && (
+          <Callout tone={lhTone} title="链路健康度">
+            {lhText}
+          </Callout>
+        )}
+
+        <Callout tone="info" title="度量口径">
+          计费输入总量逐笔锁定真值（优先级：代理 promptTokens &gt; 转录 usage.input_tokens &gt; ratio{availTag(av, "contextRatio")} × {cwText}
+          {cwIsFallback ? "，未拿到真窗口、全部 token 数字随之带 ≈" : ""}）；各类别/文件按块估算规模比例分摊
+          {availTag(av, "categoryShare", "derived")}。{identityText}
+          {cachedText ? ` ${cachedText}` : ""}
+          {covPartial
+            ? ` Credits 只来自 ${cov!.trips}/${cov!.roundTrips} 笔往返（占计费输入 ${pct(cov!.tokenShare)}），其余往返走代理实测、不经 Qoder 计费，故不要拿 Credits 去除以计费输入总量算单价。`
+            : ""}
+        </Callout>
+
+        {byReq.length > 0 && (
+          <ReportSection
+            title="逐请求明细（每一次往返）"
+            description={
+              showCreditsChart
+                ? "每个 round-trip 的真实输入规模与 credits；曲线骤降处为上下文压缩重置（顶部四项为会话累计，此处为每一次）"
+                : `每个 round-trip 的真实输入规模；曲线骤降处为上下文压缩重置。credits 曲线未画：本会话只有 ${cov?.trips ?? 0}/${cov?.roundTrips ?? byReq.length} 笔往返带 credits（其余走代理实测、不经 Qoder 计费），画出来是一地零。`
+            }
+            meta={`${byReq.length} 次往返 · 压缩 ${orDash(s.compactions, av, "compactions")} 次`}
+            divided
+          >
+            {showCreditsChart ? (
+              <ChartComparisonGrid>
+                <ChartContainer title="每次输入 tokens" ariaLabel="每次输入 tokens">
+                  <LineChart
+                    categories={reqLabels}
+                    series={[{ name: "输入 tokens", data: reqInputs, tone: "info" }]}
+                    height={220}
+                    valueFormatter={human}
+                    ariaLabel="每次请求输入 tokens"
+                  />
+                </ChartContainer>
+                <ChartContainer title="每次 credits" ariaLabel="每次 credits">
+                  <LineChart
+                    categories={reqLabels}
+                    series={[{ name: "credits", data: reqCredits, tone: "warning" }]}
+                    height={220}
+                    ariaLabel="每次请求 credits"
+                  />
+                </ChartContainer>
+              </ChartComparisonGrid>
+            ) : (
+              <ChartContainer title="每次输入 tokens" ariaLabel="每次输入 tokens">
+                <LineChart
+                  categories={reqLabels}
+                  series={[{ name: "输入 tokens", data: reqInputs, tone: "info" }]}
+                  height={220}
+                  valueFormatter={human}
+                  ariaLabel="每次请求输入 tokens"
+                />
+              </ChartContainer>
+            )}
+          </ReportSection>
+        )}
+
+        {hasUsage && ccItems.length > 0 && (
+          <ReportSection
+            title="压缩单笔成本（会话里最贵的那几笔调用）"
+            description="每次压缩本身就是一笔普通模型调用：整份上下文当 prompt 进去、摘要当 completion 出来。此前报告只显示「压缩 N 次」，把单笔最贵的开销藏成了一个计数。「省下」= 压缩前规模 − 压缩后首轮实测输入（地板）。口径列：实测=能在代理日志里唯一对上的供应商真值；自估=客户端在压缩边界里写的前后规模。"
+            meta={`${ccItems.length} 次 · 输入累计 ${human(ccost?.totals.preTokens ?? 0)} · 摘要累计 ${human(ccost?.totals.postTokens ?? 0)} · 累计省下 ${human(ccost?.totals.savedTokens ?? 0)} · 其中 ${ccost?.totals.measured ?? 0} 笔为供应商实测`}
+            divided
+          >
+            <Table
+              headers={["第几次", "时刻", "触发", "输入", "摘要输出", "压缩后首轮", "省下", "耗时", "口径"]}
+              rows={compactRows}
+              density="compact"
+              stickyHeader
+            />
+          </ReportSection>
+        )}
+
+        {sub && subItems.length > 0 && (
+          <ReportSection
+            title="子代理账（Agent 派发）"
+            description="子代理的每次往返只写进它自己的独立转录，不计入上方主链任何数字；官方 UI 的一场会话扣费 = 主链 + 各子代理。"
+            meta={`${subItems.length} 个子代理 · 主链 ${t.credits} + 子代理 ${sub.totals.credits} = 合计 ${sub.combined.credits} Credits`}
+            divided
+          >
+            <Table
+              headers={["子代理", "类型", "往返", "计费输入", "峰值占比", "Credits", "原价", "备注"]}
+              rows={subRows}
+              rowTone={subTones}
+              density="compact"
+              stickyHeader
+            />
+          </ReportSection>
+        )}
+
+        {hasUsage && r.byCategory.length > 0 && (
+          <ReportSection
+            title="按类别占比"
+            description={`会话计费输入 token 在各来源间的分布（完整划分，占比之和 = 100%）${sysNote}`}
+            meta={human(t.billedInputTokens) + ` tokens${availTag(av, "categoryShare", "derived")}`}
+            divided
+          >
+            <ChartContainer ariaLabel="按类别占比">
+              <PieChart donut data={pieData} centerLabel="计费输入" valueFormatter={human} />
+            </ChartContainer>
+          </ReportSection>
+        )}
+
+        {hasUsage && catDetail.length > 0 && (
+          <ReportSection
+            title="按类别下钻（工具 / 文件路径）"
+            description="每个类别的消耗再拆到工具与具体文件/路径：工具返回、工具调用可精确到路径，其余类别为整体（无文件归属）。数值均为重发计费 token。"
+            meta={`占总额=占计费输入总量 · 占本类=占该类别 · 程数=存活往返累计${availTag(av, "fileShare", "derived")}`}
+            divided
+          >
+            <Table
+              headers={["类别", "工具", "文件 / 路径", "重发 tokens", "占总额", "占本类", "程数"]}
+              rows={detailRows}
+              rowTone={detailTones}
+              density="compact"
+              stickyHeader
+            />
+          </ReportSection>
+        )}
+
+        {hasUsage && tools.length > 0 && (
+          <ReportSection
+            title="按工具占比"
+            description="各工具相关内容（调用参数 + 返回）重发累计的计费 token 占比（仅工具相关块，非完整划分，占比之和 < 100%）。「单次」= 平均每次调用带来的重发 token：总量榜会把「次数少但每次极贵」的工具埋掉，这一列专门把它捞出来。"
+            meta={`token 占比${availTag(av, "toolShare", "derived")} · 调用次数为实测`}
+            divided
+          >
+            <Stack gap="component">
+              <ChartContainer ariaLabel="按工具占比">
+                <BarChart horizontal categories={toolCategories} series={toolSeries} valueFormatter={human} ariaLabel="按工具占比" />
+              </ChartContainer>
+              <Table
+                headers={["工具", "重发 tokens", "占比", "调用", "单次"]}
+                rows={toolRows}
+                density="compact"
+                stickyHeader
+              />
+            </Stack>
+          </ReportSection>
+        )}
+
+        {hasUsage && fileRows.length > 0 && (
+          <ReportSection
+            title="按文件占比"
+            description="精确到路径/文件名：内容随上下文被重复发送累计的计费 token 占比（Top 20，仅可归因文件的块）。「单次读取」= 这个文件平均每次被读取最终烧掉多少（含此后每一程的重发）——读一次就烧掉十几万的文件，在按总量排序的榜上毫不起眼。"
+            meta={`程数=存活往返累计 · 读取=返回次数（实测）${availTag(av, "fileShare", "derived")}`}
+            divided
+          >
+            <Table
+              headers={["文件", "种类", "重发 tokens", "占比", "单次读取", "程数", "读取"]}
+              rows={fileRows}
+              density="compact"
+              stickyHeader
+            />
+          </ReportSection>
+        )}
+
+        {!hasUsage && residueRows.length > 0 && (
+          <ReportSection
+            title="工具调用与文件读取（计数为实测）"
+            description="占比与 token 一律不可用，但 tool_use 块两种转录都写，所以「谁被调了几次、谁被读了几次」仍是真值 —— IDE 端不是一无所有。"
+            meta={`${t.toolCalls ?? 0} 次工具调用${availTag(av, "toolCalls")} · ${t.fileReads ?? 0} 次文件读取${availTag(av, "fileReads")} · ${s.turns} 轮对话`}
+            divided
+          >
+            <Table
+              headers={["工具 / 文件", "种类", "调用", "读取", "程数"]}
+              rows={residueRows}
+              density="compact"
+              stickyHeader
+            />
+          </ReportSection>
+        )}
+      </Stack>
+    </ReportShell>
+  );
+}
