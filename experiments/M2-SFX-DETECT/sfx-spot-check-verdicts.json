@@ -1,0 +1,4903 @@
+{
+ "schema": "m2-sfx-detect/sfx-spot-check-verdicts@1",
+ "task": "M2-SFX-DETECT-EVAL",
+ "evidence_strength": "DIRECTIONAL — single AI annotator (agent visual pass on grid previews), no formal SFX GT exists; formal user review is a pre-integration condition (Task contract / C1 precedent)",
+ "sample_method": "stratified candidates (A=C1 user-audited SFX frames, B=unaudited FP boxes seeded quota, C=unaudited zero-det regions seeded quota); primary sample = frames where the agent visually confirmed onomatopoeia SFX; skipped units keep reasons",
+ "inputs": {
+  "candidates": "experiments\\M2-SFX-DETECT\\sfx-sample-candidates.json",
+  "detections": "experiments\\M2-SFX-DETECT\\ogkalu-sfx-frames.json"
+ },
+ "summary": {
+  "n_candidate_units": 44,
+  "n_primary_sfx_frames": 23,
+  "n_skipped": 21,
+  "frame_verdict_counts": {
+   "detected_hit(conf>=0.5_covers_sfx)": 10,
+   "detected_offset(conf>=0.5_partial)": 2,
+   "detected_low_conf(0.25-0.5_band_only)": 4,
+   "missed(zero_even_at_0.25)": 7
+  },
+  "frame_detection_rate": {
+   "at_primary_conf_0.5": {
+    "value": 0.5217,
+    "fraction": "12/23"
+   },
+   "at_harvest_conf_0.25": {
+    "value": 0.6957,
+    "fraction": "16/23"
+   }
+  },
+  "in_frame_extra_sfx_observations": 10
+ },
+ "primary_frames": [
+  {
+   "sample_id": "A__B1-U09",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 7,
+   "region_key": "K07_R007",
+   "unit_id": "B1-U09",
+   "sfx_summary": "저벅저벅（脚步声，两行手写体）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.84 text_free 框覆盖 C1 审定框（저벅/저벅 两行）；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "저벅저벅（脚步声，两行手写体）",
+     "box_xyxy": [
+      67.72611999511719,
+      1082.8897705078125,
+      241.8600311279297,
+      1320.9954833984375
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.885,
+      "det_box_xyxy": [
+       73.7,
+       1088.9,
+       235.9,
+       1315.0
+      ],
+      "conf": 0.8044,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "걸들（左上）",
+     "box_xyxy": [
+      55,
+      285,
+      205,
+      365
+     ],
+     "verdict": "missed"
+    },
+    {
+     "desc": "걸들（右上）",
+     "box_xyxy": [
+      530,
+      265,
+      680,
+      390
+     ],
+     "verdict": "detected_low_conf",
+     "note": "0.28 text_free"
+    },
+    {
+     "desc": "?!（大特效符号）",
+     "box_xyxy": [
+      0,
+      645,
+      205,
+      905
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      404.0,
+      77.8,
+      647.3,
+      151.8
+     ],
+     "conf": 0.9489,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      98.3,
+      32.8,
+      170.3,
+      100.3
+     ],
+     "conf": 0.9118,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      73.7,
+      1088.9,
+      235.9,
+      1315.0
+     ],
+     "conf": 0.8044,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      453.9,
+      1631.4,
+      646.0,
+      1746.3
+     ],
+     "conf": 0.7637,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      530.6,
+      262.1,
+      674.4,
+      389.8
+     ],
+     "conf": 0.2801,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R007.png"
+  },
+  {
+   "sample_id": "A__B1-U12",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 25,
+   "region_key": "K08_R025",
+   "unit_id": "B1-U12",
+   "sfx_summary": "푸흡（喘气声，竖排）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.82 text_free 框覆盖竖排 푸흡 全部字母；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "푸흡（喘气声，竖排）",
+     "box_xyxy": [
+      16.041719436645508,
+      27.33420181274414,
+      175.1754150390625,
+      355.5155334472656
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.891,
+      "det_box_xyxy": [
+       22.0,
+       33.3,
+       169.2,
+       349.5
+      ],
+      "conf": 0.8546,
+      "cls": "text_bubble"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      81.1,
+      639.6,
+      197.4,
+      760.0
+     ],
+     "conf": 0.9283,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      288.8,
+      749.9,
+      507.4,
+      817.6
+     ],
+     "conf": 0.9151,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      22.0,
+      33.3,
+      169.2,
+      349.5
+     ],
+     "conf": 0.8546,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K08_R025.png"
+  },
+  {
+   "sample_id": "A__B1-U13",
+   "stratum": "A",
+   "case_id": "K09",
+   "region_index": 71,
+   "region_key": "K09_R071",
+   "unit_id": "B1-U13",
+   "sfx_summary": "하하（笑声）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.97 text_free 框精确覆盖 하하；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "하하（笑声）",
+     "box_xyxy": [
+      198.29344177246094,
+      0.0,
+      348.53271484375,
+      102.43840789794922
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.856,
+      "det_box_xyxy": [
+       204.3,
+       1.1,
+       342.5,
+       96.4
+      ],
+      "conf": 0.5746,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "빠─（旋转声，画面中部）",
+     "box_xyxy": [
+      180,
+      215,
+      285,
+      335
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      355.1,
+      90.7,
+      558.6,
+      191.8
+     ],
+     "conf": 0.9601,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      411.2,
+      735.8,
+      478.8,
+      794.8
+     ],
+     "conf": 0.8577,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      204.3,
+      1.1,
+      342.5,
+      96.4
+     ],
+     "conf": 0.5746,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K09_R071.png"
+  },
+  {
+   "sample_id": "A__B2-U12",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 59,
+   "region_key": "K07_R059",
+   "unit_id": "B2-U12",
+   "sfx_summary": "싸—아（集体喊/泄气声，超大字）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.5475 text_free 全宽大框 (6.9,0.6,690,355) 覆盖全部字面（框过松但含 SFX）；勉强过 0.5 主阈——阈值边缘样本",
+   "sfx_instances": [
+    {
+     "desc": "싸—아（集体喊/泄气声，超大字）",
+     "box_xyxy": [
+      0.892878532409668,
+      0.0,
+      690.0,
+      361.04290771484375
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.973,
+      "det_box_xyxy": [
+       6.9,
+       0.6,
+       690.0,
+       355.0
+      ],
+      "conf": 0.5475,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "同区域 3 个 text_bubble 收获带框 (0.27-0.29)",
+     "box_xyxy": null,
+     "verdict": "detected_low_conf",
+     "note": "重复检出同一 SFX 区域"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      6.9,
+      0.6,
+      690.0,
+      355.0
+     ],
+     "conf": 0.5475,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      9.9,
+      0.0,
+      690.0,
+      354.3
+     ],
+     "conf": 0.2929,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      24.9,
+      0.0,
+      690.0,
+      360.8
+     ],
+     "conf": 0.2867,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      20.4,
+      1.8,
+      689.6,
+      615.0
+     ],
+     "conf": 0.2716,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R059.png"
+  },
+  {
+   "sample_id": "A__B2-U14",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 107,
+   "region_key": "K07_R107",
+   "unit_id": "B2-U14",
+   "sfx_summary": "덜컹（撞击声，两字斜排）",
+   "frame_verdict": "detected_offset",
+   "rationale": "ogkalu 0.88 text_free 框覆盖「덜」；「컹」(约 [430,100,620,310]) 无任何检出框——整词部分检出；C1 记录「部分字」一致",
+   "sfx_instances": [
+    {
+     "desc": "덜컹（撞击声，两字斜排）",
+     "box_xyxy": [
+      82.76410675048828,
+      0.0,
+      323.17523193359375,
+      240.41624450683594
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.926,
+      "det_box_xyxy": [
+       88.8,
+       0.1,
+       317.2,
+       234.4
+      ],
+      "conf": 0.6248,
+      "cls": "text_bubble"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      88.8,
+      0.1,
+      317.2,
+      234.4
+     ],
+     "conf": 0.6248,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      88.2,
+      1.0,
+      316.6,
+      233.9
+     ],
+     "conf": 0.2879,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R107.png"
+  },
+  {
+   "sample_id": "A__B2-U15",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 123,
+   "region_key": "K07_R123",
+   "unit_id": "B2-U15",
+   "sfx_summary": "뒤적뒤적（翻找声，两行）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.99 框精确覆盖两行字面；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "뒤적뒤적（翻找声，两行）",
+     "box_xyxy": [
+      183.64926147460938,
+      1120.875,
+      395.01202392578125,
+      1354.856689453125
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.895,
+      "det_box_xyxy": [
+       189.6,
+       1126.9,
+       389.0,
+       1348.9
+      ],
+      "conf": 0.9331,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      189.6,
+      1126.9,
+      389.0,
+      1348.9
+     ],
+     "conf": 0.9331,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K07_R123.png"
+  },
+  {
+   "sample_id": "A__A1-U06",
+   "stratum": "A",
+   "case_id": "K09",
+   "region_index": 14,
+   "region_key": "K09_R014",
+   "unit_id": "A1-U06",
+   "sfx_summary": "끌끌..（坏笑声，伪 GT 框内）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "C4/C1 口径 (conf 0.5) 零检出；harvest 0.25 下检出 0.3279 text_free，框与 C1 审定框几乎重合——低置信带证据；本次运行与 C4 同权重 hash（037930a8）",
+   "sfx_instances": [
+    {
+     "desc": "끌끌..（坏笑声，伪 GT 框内）",
+     "box_xyxy": [
+      147.0,
+      161.0,
+      304.0,
+      239.0
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.965,
+      "det_box_xyxy": [
+       147.3,
+       163.0,
+       304.9,
+       238.4
+      ],
+      "conf": 0.3279,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "악ㄹㄹ~（底部手写拟声）",
+     "box_xyxy": [
+      300,
+      1044,
+      690,
+      1179
+     ],
+     "verdict": "detected_low_conf",
+     "note": "0.257 框部分覆盖"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      147.3,
+      163.0,
+      304.9,
+      238.4
+     ],
+     "conf": 0.3279,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      291.5,
+      769.4,
+      690.0,
+      1182.5
+     ],
+     "conf": 0.2573,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      300.2,
+      1044.0,
+      689.6,
+      1178.9
+     ],
+     "conf": 0.257,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K09_R014.png"
+  },
+  {
+   "sample_id": "A__D-U01",
+   "stratum": "A",
+   "case_id": "K03",
+   "region_index": 135,
+   "region_key": "K03_R135",
+   "unit_id": "D-U01",
+   "sfx_summary": "빠걸×3（旋转声，三处）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下三处全部检出（0.34/0.45/0.48，均低于主阈）——「零检出」实为阈值/校准问题",
+   "sfx_instances": [
+    {
+     "desc": "빠걸（左上）",
+     "box_xyxy": [
+      220,
+      55,
+      290,
+      105
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.949,
+      "det_box_xyxy": [
+       220.5,
+       52.1,
+       286.9,
+       106.8
+      ],
+      "conf": 0.3392,
+      "cls": "text_free"
+     }
+    },
+    {
+     "desc": "빠걸（右上）",
+     "box_xyxy": [
+      410,
+      80,
+      475,
+      135
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.761,
+      "det_box_xyxy": [
+       398.0,
+       83.5,
+       468.4,
+       130.1
+      ],
+      "conf": 0.4812,
+      "cls": "text_free"
+     }
+    },
+    {
+     "desc": "빠걸（中左）",
+     "box_xyxy": [
+      215,
+      150,
+      290,
+      205
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.654,
+      "det_box_xyxy": [
+       220.5,
+       164.1,
+       286.5,
+       214.6
+      ],
+      "conf": 0.4609,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "拳头幻觉框（无文字）",
+     "box_xyxy": [
+      430,
+      195,
+      490,
+      250
+     ],
+     "verdict": "hallucination",
+     "note": "0.40 text_free 落在手部"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      398.0,
+      83.5,
+      468.4,
+      130.1
+     ],
+     "conf": 0.4812,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      220.5,
+      164.1,
+      286.5,
+      214.6
+     ],
+     "conf": 0.4609,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      425.5,
+      211.4,
+      484.1,
+      252.9
+     ],
+     "conf": 0.3952,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      220.5,
+      52.1,
+      286.9,
+      106.8
+     ],
+     "conf": 0.3392,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R135.png"
+  },
+  {
+   "sample_id": "A__D-U07",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 41,
+   "region_key": "K08_R041",
+   "unit_id": "D-U07",
+   "sfx_summary": "빠악（撞击声，超大红字）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——真正的硬盲区（与 C1 D-U07 一致）",
+   "sfx_instances": [
+    {
+     "desc": "빠악",
+     "box_xyxy": [
+      90,
+      30,
+      660,
+      530
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R041.png"
+  },
+  {
+   "sample_id": "A__D-U08",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 47,
+   "region_key": "K08_R047",
+   "unit_id": "D-U08",
+   "sfx_summary": "콰직（粉碎声，手写刮擦体）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U08 一致）",
+   "sfx_instances": [
+    {
+     "desc": "콰직",
+     "box_xyxy": [
+      50,
+      30,
+      520,
+      360
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R047.png"
+  },
+  {
+   "sample_id": "A__D-U09",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 57,
+   "region_key": "K08_R057",
+   "unit_id": "D-U09",
+   "sfx_summary": "투두（坠落声，手写体）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U09 一致）",
+   "sfx_instances": [
+    {
+     "desc": "투두",
+     "box_xyxy": [
+      20,
+      40,
+      170,
+      260
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R057.png"
+  },
+  {
+   "sample_id": "B__K03_R155_d1",
+   "stratum": "B",
+   "case_id": "K03",
+   "region_index": 155,
+   "region_key": "K03_R155",
+   "unit_id": null,
+   "sfx_summary": "화——（爆发声，拖长音）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.77 text_free 框覆盖「화」+ 拖长线；速度线+模糊漩涡背景，典型 SFX 版式",
+   "sfx_instances": [
+    {
+     "desc": "화——",
+     "box_xyxy": [
+      95,
+      285,
+      290,
+      390
+     ],
+     "box_provenance": "ogkalu FP prior (=SFX 字面)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.987,
+      "det_box_xyxy": [
+       97.5,
+       145.1,
+       498.3,
+       392.7
+      ],
+      "conf": 0.4625,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      172.5,
+      148.3,
+      495.9,
+      273.9
+     ],
+     "conf": 0.82,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.1,
+      274.3,
+      287.4,
+      386.4
+     ],
+     "conf": 0.772,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.5,
+      145.1,
+      498.3,
+      392.7
+     ],
+     "conf": 0.4625,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R155.png"
+  },
+  {
+   "sample_id": "B__K06_R096_d1",
+   "stratum": "B",
+   "case_id": "K06",
+   "region_index": 96,
+   "region_key": "K06_R096",
+   "unit_id": null,
+   "sfx_summary": "쭈아앙~（拟声拟态词，白色手写体）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.75 text_free 框覆盖字面",
+   "sfx_instances": [
+    {
+     "desc": "쭈아앙~",
+     "box_xyxy": [
+      25,
+      355,
+      195,
+      440
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.632,
+      "det_box_xyxy": [
+       29.6,
+       339.1,
+       192.5,
+       411.1
+      ],
+      "conf": 0.7509,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      29.6,
+      339.1,
+      192.5,
+      411.1
+     ],
+     "conf": 0.7509,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      50.0,
+      62.9,
+      118.2,
+      79.3
+     ],
+     "conf": 0.7349,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K06_R096.png"
+  },
+  {
+   "sample_id": "B__K07_R097_d2",
+   "stratum": "B",
+   "case_id": "K07",
+   "region_index": 97,
+   "region_key": "K07_R097",
+   "unit_id": null,
+   "sfx_summary": "철컥철컥（金属扣具/快门声，两行）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.73 text_free 框覆盖两行字面",
+   "sfx_instances": [
+    {
+     "desc": "철컥철컥",
+     "box_xyxy": [
+      20,
+      255,
+      160,
+      400
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.842,
+      "det_box_xyxy": [
+       31.1,
+       260.5,
+       156.9,
+       396.3
+      ],
+      "conf": 0.7328,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      76.3,
+      124.0,
+      252.4,
+      209.9
+     ],
+     "conf": 0.9696,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      110.2,
+      24.4,
+      252.1,
+      65.9
+     ],
+     "conf": 0.9584,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      31.1,
+      260.5,
+      156.9,
+      396.3
+     ],
+     "conf": 0.7328,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K07_R097.png"
+  },
+  {
+   "sample_id": "B__K07_R121_d2",
+   "stratum": "B",
+   "case_id": "K07",
+   "region_index": 121,
+   "region_key": "K07_R121",
+   "unit_id": null,
+   "sfx_summary": "뒤적뒤적（翻找声，大字）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.63 text_free 框覆盖字面",
+   "sfx_instances": [
+    {
+     "desc": "뒤적뒤적",
+     "box_xyxy": [
+      470,
+      335,
+      635,
+      575
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.787,
+      "det_box_xyxy": [
+       478.7,
+       341.1,
+       657.2,
+       540.4
+      ],
+      "conf": 0.6881,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "ㅋㅋㅋ（笑声字母）",
+     "box_xyxy": [
+      505,
+      240,
+      640,
+      345
+     ],
+     "verdict": "detected_low_conf",
+     "note": "0.30 text_free"
+    },
+    {
+     "desc": "꼬르륵（腹鸣声，画面左下）",
+     "box_xyxy": [
+      0,
+      785,
+      215,
+      900
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      69.3,
+      19.0,
+      275.2,
+      92.6
+     ],
+     "conf": 0.9699,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      415.0,
+      67.3,
+      599.2,
+      141.8
+     ],
+     "conf": 0.9677,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      591.4,
+      702.2,
+      673.8,
+      726.2
+     ],
+     "conf": 0.9037,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      478.7,
+      341.1,
+      657.2,
+      540.4
+     ],
+     "conf": 0.6881,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      514.4,
+      243.0,
+      642.0,
+      331.2
+     ],
+     "conf": 0.3006,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R121.png"
+  },
+  {
+   "sample_id": "B__K10_R129_d0",
+   "stratum": "B",
+   "case_id": "K10",
+   "region_index": 129,
+   "region_key": "K10_R129",
+   "unit_id": null,
+   "sfx_summary": "RrRrrr（手机振动拟声，白色手写体）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "prior 单元本身落在手机屏幕 UI 文字「발신번호 표시제한」（=skip），但画面含振动拟声 Rrrrr：ogkalu 0.45 text_free（低于主阈 0.5）——帧作为额外观察纳入主样本（选样方法披露）",
+   "sfx_instances": [
+    {
+     "desc": "Rrrrr（大）",
+     "box_xyxy": [
+      355,
+      320,
+      600,
+      590
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.987,
+      "det_box_xyxy": [
+       48.4,
+       109.1,
+       634.0,
+       586.4
+      ],
+      "conf": 0.2952,
+      "cls": "text_free"
+     }
+    },
+    {
+     "desc": "rRrRr+状态栏图标（小）",
+     "box_xyxy": [
+      55,
+      105,
+      345,
+      240
+     ],
+     "verdict_extra": true,
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.97,
+      "det_box_xyxy": [
+       48.4,
+       109.1,
+       634.0,
+       586.4
+      ],
+      "conf": 0.2952,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      495.4,
+      837.3,
+      566.3,
+      897.9
+     ],
+     "conf": 0.6713,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      129.6,
+      185.0,
+      556.0,
+      379.8
+     ],
+     "conf": 0.5733,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      359.1,
+      327.7,
+      627.3,
+      572.1
+     ],
+     "conf": 0.4549,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      51.1,
+      115.8,
+      344.6,
+      242.9
+     ],
+     "conf": 0.307,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      54.3,
+      182.8,
+      156.0,
+      238.8
+     ],
+     "conf": 0.3033,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      48.4,
+      109.1,
+      634.0,
+      586.4
+     ],
+     "conf": 0.2952,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K10_R129.png"
+  },
+  {
+   "sample_id": "B__K10_R073_d2",
+   "stratum": "B",
+   "case_id": "K10",
+   "region_index": 73,
+   "region_key": "K10_R073",
+   "unit_id": null,
+   "sfx_summary": "끼아아악（尖叫，斜排手写体）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.86 text_bubb 框覆盖字面（class=text_bubble 但实为自由 SFX 字——类间混淆证据）",
+   "sfx_instances": [
+    {
+     "desc": "끼아아악",
+     "box_xyxy": [
+      365,
+      1175,
+      620,
+      1390
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.96,
+      "det_box_xyxy": [
+       369.6,
+       1158.8,
+       614.4,
+       1396.5
+      ],
+      "conf": 0.8031,
+      "cls": "text_bubble"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "꺘약（中景拟声）",
+     "box_xyxy": [
+      380,
+      490,
+      590,
+      870
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      69.0,
+      332.2,
+      247.5,
+      428.2
+     ],
+     "conf": 0.9411,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      158.3,
+      135.6,
+      351.0,
+      240.8
+     ],
+     "conf": 0.9394,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      369.6,
+      1158.8,
+      614.4,
+      1396.5
+     ],
+     "conf": 0.8031,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K10_R073.png"
+  },
+  {
+   "sample_id": "C__K01_R069",
+   "stratum": "C",
+   "case_id": "K01",
+   "region_index": 69,
+   "region_key": "K01_R069",
+   "unit_id": null,
+   "sfx_summary": "칼칼（傻笑/得意声变体，粉色圆体字，两处）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——C1 抽检之外的新增硬盲区样本",
+   "sfx_instances": [
+    {
+     "desc": "촬/칼（左）",
+     "box_xyxy": [
+      200,
+      35,
+      275,
+      140
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    },
+    {
+     "desc": "칼（右）",
+     "box_xyxy": [
+      390,
+      90,
+      465,
+      190
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K01_R069.png"
+  },
+  {
+   "sample_id": "C__K03_R113",
+   "stratum": "C",
+   "case_id": "K03",
+   "region_index": 113,
+   "region_key": "K03_R113",
+   "unit_id": null,
+   "sfx_summary": "뙇×n（坠落撞击声，环形重复字母）",
+   "frame_verdict": "detected_offset",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.35 text_free 框仅覆盖左弧部分字母（环形排布的大部分字母未检出）",
+   "sfx_instances": [
+    {
+     "desc": "뙇 环（整体范围）",
+     "box_xyxy": [
+      55,
+      20,
+      610,
+      520
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.202,
+      "det_box_xyxy": [
+       51.6,
+       169.6,
+       226.3,
+       497.0
+      ],
+      "conf": 0.2651,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      51.6,
+      169.6,
+      226.3,
+      497.0
+     ],
+     "conf": 0.2651,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R113.png"
+  },
+  {
+   "sample_id": "C__K07_R103",
+   "stratum": "C",
+   "case_id": "K07",
+   "region_index": 103,
+   "region_key": "K07_R103",
+   "unit_id": null,
+   "sfx_summary": "철컹（坠落巨响，超大字）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 下 SFX 本体零检出；唯一检出框 (0.35) 落在建筑窗户纹理=幻觉",
+   "sfx_instances": [
+    {
+     "desc": "철컹",
+     "box_xyxy": [
+      0,
+      0,
+      620,
+      230
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      481.7,
+      343.7,
+      690.0,
+      435.9
+     ],
+     "conf": 0.3887,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R103.png"
+  },
+  {
+   "sample_id": "C__K08_R033",
+   "stratum": "C",
+   "case_id": "K08",
+   "region_index": 33,
+   "region_key": "K08_R033",
+   "unit_id": null,
+   "sfx_summary": "수악（打击声，竖排白描边）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.30 text_free 框覆盖字面",
+   "sfx_instances": [
+    {
+     "desc": "수악",
+     "box_xyxy": [
+      230,
+      100,
+      380,
+      580
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.797,
+      "det_box_xyxy": [
+       231.1,
+       159.0,
+       369.8,
+       572.9
+      ],
+      "conf": 0.2775,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      231.1,
+      159.0,
+      369.8,
+      572.9
+     ],
+     "conf": 0.2775,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K08_R033.png"
+  },
+  {
+   "sample_id": "C__K08_R019",
+   "stratum": "C",
+   "case_id": "K08",
+   "region_index": 19,
+   "region_key": "K08_R019",
+   "unit_id": null,
+   "sfx_summary": "빠직 + 아（爆裂/尖叫，两处大字）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "sfx_instances": [
+    {
+     "desc": "빠직（上）",
+     "box_xyxy": [
+      30,
+      40,
+      330,
+      420
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    },
+    {
+     "desc": "아（下）",
+     "box_xyxy": [
+      60,
+      950,
+      330,
+      1450
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R019.png"
+  },
+  {
+   "sample_id": "C__K09_R001",
+   "stratum": "C",
+   "case_id": "K09",
+   "region_index": 1,
+   "region_key": "K09_R001",
+   "unit_id": null,
+   "sfx_summary": "송송 + 삐직삐직（挖土/电子音，两处）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "sfx_instances": [
+    {
+     "desc": "송송",
+     "box_xyxy": [
+      100,
+      640,
+      280,
+      840
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    },
+    {
+     "desc": "삐직삐직",
+     "box_xyxy": [
+      0,
+      1280,
+      190,
+      1450
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      225.4,
+      1635.5,
+      371.0,
+      1651.0
+     ],
+     "conf": 0.4019,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K09_R001.png"
+  }
+ ],
+ "all_candidate_rows": [
+  {
+   "sample_id": "A__B1-U09",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 7,
+   "region_key": "K07_R007",
+   "unit_id": "B1-U09",
+   "sfx_summary": "저벅저벅（脚步声，两行手写体）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.84 text_free 框覆盖 C1 审定框（저벅/저벅 两行）；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "저벅저벅（脚步声，两行手写体）",
+     "box_xyxy": [
+      67.72611999511719,
+      1082.8897705078125,
+      241.8600311279297,
+      1320.9954833984375
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.885,
+      "det_box_xyxy": [
+       73.7,
+       1088.9,
+       235.9,
+       1315.0
+      ],
+      "conf": 0.8044,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "걸들（左上）",
+     "box_xyxy": [
+      55,
+      285,
+      205,
+      365
+     ],
+     "verdict": "missed"
+    },
+    {
+     "desc": "걸들（右上）",
+     "box_xyxy": [
+      530,
+      265,
+      680,
+      390
+     ],
+     "verdict": "detected_low_conf",
+     "note": "0.28 text_free"
+    },
+    {
+     "desc": "?!（大特效符号）",
+     "box_xyxy": [
+      0,
+      645,
+      205,
+      905
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      404.0,
+      77.8,
+      647.3,
+      151.8
+     ],
+     "conf": 0.9489,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      98.3,
+      32.8,
+      170.3,
+      100.3
+     ],
+     "conf": 0.9118,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      73.7,
+      1088.9,
+      235.9,
+      1315.0
+     ],
+     "conf": 0.8044,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      453.9,
+      1631.4,
+      646.0,
+      1746.3
+     ],
+     "conf": 0.7637,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      530.6,
+      262.1,
+      674.4,
+      389.8
+     ],
+     "conf": 0.2801,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R007.png"
+  },
+  {
+   "sample_id": "A__B1-U12",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 25,
+   "region_key": "K08_R025",
+   "unit_id": "B1-U12",
+   "sfx_summary": "푸흡（喘气声，竖排）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.82 text_free 框覆盖竖排 푸흡 全部字母；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "푸흡（喘气声，竖排）",
+     "box_xyxy": [
+      16.041719436645508,
+      27.33420181274414,
+      175.1754150390625,
+      355.5155334472656
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.891,
+      "det_box_xyxy": [
+       22.0,
+       33.3,
+       169.2,
+       349.5
+      ],
+      "conf": 0.8546,
+      "cls": "text_bubble"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      81.1,
+      639.6,
+      197.4,
+      760.0
+     ],
+     "conf": 0.9283,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      288.8,
+      749.9,
+      507.4,
+      817.6
+     ],
+     "conf": 0.9151,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      22.0,
+      33.3,
+      169.2,
+      349.5
+     ],
+     "conf": 0.8546,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K08_R025.png"
+  },
+  {
+   "sample_id": "A__B1-U13",
+   "stratum": "A",
+   "case_id": "K09",
+   "region_index": 71,
+   "region_key": "K09_R071",
+   "unit_id": "B1-U13",
+   "sfx_summary": "하하（笑声）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.97 text_free 框精确覆盖 하하；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "하하（笑声）",
+     "box_xyxy": [
+      198.29344177246094,
+      0.0,
+      348.53271484375,
+      102.43840789794922
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.856,
+      "det_box_xyxy": [
+       204.3,
+       1.1,
+       342.5,
+       96.4
+      ],
+      "conf": 0.5746,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "빠─（旋转声，画面中部）",
+     "box_xyxy": [
+      180,
+      215,
+      285,
+      335
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      355.1,
+      90.7,
+      558.6,
+      191.8
+     ],
+     "conf": 0.9601,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      411.2,
+      735.8,
+      478.8,
+      794.8
+     ],
+     "conf": 0.8577,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      204.3,
+      1.1,
+      342.5,
+      96.4
+     ],
+     "conf": 0.5746,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K09_R071.png"
+  },
+  {
+   "sample_id": "A__B2-U12",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 59,
+   "region_key": "K07_R059",
+   "unit_id": "B2-U12",
+   "sfx_summary": "싸—아（集体喊/泄气声，超大字）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.5475 text_free 全宽大框 (6.9,0.6,690,355) 覆盖全部字面（框过松但含 SFX）；勉强过 0.5 主阈——阈值边缘样本",
+   "sfx_instances": [
+    {
+     "desc": "싸—아（集体喊/泄气声，超大字）",
+     "box_xyxy": [
+      0.892878532409668,
+      0.0,
+      690.0,
+      361.04290771484375
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.973,
+      "det_box_xyxy": [
+       6.9,
+       0.6,
+       690.0,
+       355.0
+      ],
+      "conf": 0.5475,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "同区域 3 个 text_bubble 收获带框 (0.27-0.29)",
+     "box_xyxy": null,
+     "verdict": "detected_low_conf",
+     "note": "重复检出同一 SFX 区域"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      6.9,
+      0.6,
+      690.0,
+      355.0
+     ],
+     "conf": 0.5475,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      9.9,
+      0.0,
+      690.0,
+      354.3
+     ],
+     "conf": 0.2929,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      24.9,
+      0.0,
+      690.0,
+      360.8
+     ],
+     "conf": 0.2867,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      20.4,
+      1.8,
+      689.6,
+      615.0
+     ],
+     "conf": 0.2716,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R059.png"
+  },
+  {
+   "sample_id": "A__B2-U14",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 107,
+   "region_key": "K07_R107",
+   "unit_id": "B2-U14",
+   "sfx_summary": "덜컹（撞击声，两字斜排）",
+   "frame_verdict": "detected_offset",
+   "rationale": "ogkalu 0.88 text_free 框覆盖「덜」；「컹」(约 [430,100,620,310]) 无任何检出框——整词部分检出；C1 记录「部分字」一致",
+   "sfx_instances": [
+    {
+     "desc": "덜컹（撞击声，两字斜排）",
+     "box_xyxy": [
+      82.76410675048828,
+      0.0,
+      323.17523193359375,
+      240.41624450683594
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.926,
+      "det_box_xyxy": [
+       88.8,
+       0.1,
+       317.2,
+       234.4
+      ],
+      "conf": 0.6248,
+      "cls": "text_bubble"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      88.8,
+      0.1,
+      317.2,
+      234.4
+     ],
+     "conf": 0.6248,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      88.2,
+      1.0,
+      316.6,
+      233.9
+     ],
+     "conf": 0.2879,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R107.png"
+  },
+  {
+   "sample_id": "A__B2-U15",
+   "stratum": "A",
+   "case_id": "K07",
+   "region_index": 123,
+   "region_key": "K07_R123",
+   "unit_id": "B2-U15",
+   "sfx_summary": "뒤적뒤적（翻找声，两行）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.99 框精确覆盖两行字面；C1 盲区 FP 证据一致",
+   "sfx_instances": [
+    {
+     "desc": "뒤적뒤적（翻找声，两行）",
+     "box_xyxy": [
+      183.64926147460938,
+      1120.875,
+      395.01202392578125,
+      1354.856689453125
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.895,
+      "det_box_xyxy": [
+       189.6,
+       1126.9,
+       389.0,
+       1348.9
+      ],
+      "conf": 0.9331,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      189.6,
+      1126.9,
+      389.0,
+      1348.9
+     ],
+     "conf": 0.9331,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K07_R123.png"
+  },
+  {
+   "sample_id": "A__A1-U06",
+   "stratum": "A",
+   "case_id": "K09",
+   "region_index": 14,
+   "region_key": "K09_R014",
+   "unit_id": "A1-U06",
+   "sfx_summary": "끌끌..（坏笑声，伪 GT 框内）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "C4/C1 口径 (conf 0.5) 零检出；harvest 0.25 下检出 0.3279 text_free，框与 C1 审定框几乎重合——低置信带证据；本次运行与 C4 同权重 hash（037930a8）",
+   "sfx_instances": [
+    {
+     "desc": "끌끌..（坏笑声，伪 GT 框内）",
+     "box_xyxy": [
+      147.0,
+      161.0,
+      304.0,
+      239.0
+     ],
+     "box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.965,
+      "det_box_xyxy": [
+       147.3,
+       163.0,
+       304.9,
+       238.4
+      ],
+      "conf": 0.3279,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "악ㄹㄹ~（底部手写拟声）",
+     "box_xyxy": [
+      300,
+      1044,
+      690,
+      1179
+     ],
+     "verdict": "detected_low_conf",
+     "note": "0.257 框部分覆盖"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      147.3,
+      163.0,
+      304.9,
+      238.4
+     ],
+     "conf": 0.3279,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      291.5,
+      769.4,
+      690.0,
+      1182.5
+     ],
+     "conf": 0.2573,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      300.2,
+      1044.0,
+      689.6,
+      1178.9
+     ],
+     "conf": 0.257,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K09_R014.png"
+  },
+  {
+   "sample_id": "A__D-U01",
+   "stratum": "A",
+   "case_id": "K03",
+   "region_index": 135,
+   "region_key": "K03_R135",
+   "unit_id": "D-U01",
+   "sfx_summary": "빠걸×3（旋转声，三处）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下三处全部检出（0.34/0.45/0.48，均低于主阈）——「零检出」实为阈值/校准问题",
+   "sfx_instances": [
+    {
+     "desc": "빠걸（左上）",
+     "box_xyxy": [
+      220,
+      55,
+      290,
+      105
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.949,
+      "det_box_xyxy": [
+       220.5,
+       52.1,
+       286.9,
+       106.8
+      ],
+      "conf": 0.3392,
+      "cls": "text_free"
+     }
+    },
+    {
+     "desc": "빠걸（右上）",
+     "box_xyxy": [
+      410,
+      80,
+      475,
+      135
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.761,
+      "det_box_xyxy": [
+       398.0,
+       83.5,
+       468.4,
+       130.1
+      ],
+      "conf": 0.4812,
+      "cls": "text_free"
+     }
+    },
+    {
+     "desc": "빠걸（中左）",
+     "box_xyxy": [
+      215,
+      150,
+      290,
+      205
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.654,
+      "det_box_xyxy": [
+       220.5,
+       164.1,
+       286.5,
+       214.6
+      ],
+      "conf": 0.4609,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "拳头幻觉框（无文字）",
+     "box_xyxy": [
+      430,
+      195,
+      490,
+      250
+     ],
+     "verdict": "hallucination",
+     "note": "0.40 text_free 落在手部"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      398.0,
+      83.5,
+      468.4,
+      130.1
+     ],
+     "conf": 0.4812,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      220.5,
+      164.1,
+      286.5,
+      214.6
+     ],
+     "conf": 0.4609,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      425.5,
+      211.4,
+      484.1,
+      252.9
+     ],
+     "conf": 0.3952,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      220.5,
+      52.1,
+      286.9,
+      106.8
+     ],
+     "conf": 0.3392,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R135.png"
+  },
+  {
+   "sample_id": "A__D-U07",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 41,
+   "region_key": "K08_R041",
+   "unit_id": "D-U07",
+   "sfx_summary": "빠악（撞击声，超大红字）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——真正的硬盲区（与 C1 D-U07 一致）",
+   "sfx_instances": [
+    {
+     "desc": "빠악",
+     "box_xyxy": [
+      90,
+      30,
+      660,
+      530
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R041.png"
+  },
+  {
+   "sample_id": "A__D-U08",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 47,
+   "region_key": "K08_R047",
+   "unit_id": "D-U08",
+   "sfx_summary": "콰직（粉碎声，手写刮擦体）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U08 一致）",
+   "sfx_instances": [
+    {
+     "desc": "콰직",
+     "box_xyxy": [
+      50,
+      30,
+      520,
+      360
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R047.png"
+  },
+  {
+   "sample_id": "A__D-U09",
+   "stratum": "A",
+   "case_id": "K08",
+   "region_index": 57,
+   "region_key": "K08_R057",
+   "unit_id": "D-U09",
+   "sfx_summary": "투두（坠落声，手写体）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出（与 C1 D-U09 一致）",
+   "sfx_instances": [
+    {
+     "desc": "투두",
+     "box_xyxy": [
+      20,
+      40,
+      170,
+      260
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R057.png"
+  },
+  {
+   "sample_id": "B__K01_R075_d2",
+   "stratum": "B",
+   "case_id": "K01",
+   "region_index": 75,
+   "region_key": "K01_R075",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "旁白字幕横幅（黄底「엄무용 미소가…」）——叙事文字非 SFX",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      80.4,
+      61.2,
+      283.8,
+      250.8
+     ],
+     "conf": 0.9582,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      48.2,
+      652.9,
+      637.3,
+      706.9
+     ],
+     "conf": 0.9064,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      558.3,
+      207.2,
+      636.6,
+      232.5
+     ],
+     "conf": 0.5791,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K01_R075.png"
+  },
+  {
+   "sample_id": "B__K01_R035_d8",
+   "stratum": "B",
+   "case_id": "K01",
+   "region_index": 35,
+   "region_key": "K01_R035",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "画面内海报印刷小字（ART X vol.2 海报 credit 区）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      56.9,
+      463.8,
+      640.3,
+      511.2
+     ],
+     "conf": 0.828,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      172.9,
+      109.4,
+      350.0,
+      160.6
+     ],
+     "conf": 0.8035,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      438.7,
+      207.1,
+      585.0,
+      241.6
+     ],
+     "conf": 0.6878,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      331.4,
+      304.4,
+      360.4,
+      322.8
+     ],
+     "conf": 0.5967,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      301.2,
+      249.5,
+      362.1,
+      266.6
+     ],
+     "conf": 0.5822,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      304.2,
+      189.4,
+      366.4,
+      226.8
+     ],
+     "conf": 0.5721,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      311.9,
+      268.9,
+      355.8,
+      301.5
+     ],
+     "conf": 0.561,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      302.4,
+      228.5,
+      360.4,
+      248.7
+     ],
+     "conf": 0.5606,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      172.8,
+      288.3,
+      242.2,
+      309.8
+     ],
+     "conf": 0.5468,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      172.7,
+      164.2,
+      248.6,
+      205.6
+     ],
+     "conf": 0.5412,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      440.9,
+      252.1,
+      492.9,
+      273.6
+     ],
+     "conf": 0.5363,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      437.6,
+      287.8,
+      498.4,
+      304.3
+     ],
+     "conf": 0.5294,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      439.6,
+      251.8,
+      499.5,
+      287.3
+     ],
+     "conf": 0.5273,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      171.3,
+      249.8,
+      236.7,
+      283.3
+     ],
+     "conf": 0.5132,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      304.4,
+      189.1,
+      362.3,
+      208.1
+     ],
+     "conf": 0.5071,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      439.4,
+      209.6,
+      502.9,
+      233.6
+     ],
+     "conf": 0.478,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      459.4,
+      272.1,
+      499.9,
+      287.5
+     ],
+     "conf": 0.4734,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      281.3,
+      287.1,
+      304.1,
+      311.4
+     ],
+     "conf": 0.4388,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      438.0,
+      305.2,
+      495.0,
+      335.8
+     ],
+     "conf": 0.4192,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      436.7,
+      305.1,
+      499.6,
+      357.4
+     ],
+     "conf": 0.4111,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      307.0,
+      208.0,
+      366.8,
+      226.7
+     ],
+     "conf": 0.4015,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      175.7,
+      185.5,
+      240.0,
+      206.2
+     ],
+     "conf": 0.3867,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      438.7,
+      337.9,
+      499.5,
+      357.5
+     ],
+     "conf": 0.3782,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      174.2,
+      205.1,
+      233.4,
+      246.8
+     ],
+     "conf": 0.3491,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      173.9,
+      163.8,
+      247.9,
+      185.7
+     ],
+     "conf": 0.3435,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      56.6,
+      463.1,
+      642.5,
+      511.3
+     ],
+     "conf": 0.3411,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      499.6,
+      207.1,
+      583.3,
+      242.1
+     ],
+     "conf": 0.3242,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      56.9,
+      463.8,
+      640.3,
+      511.2
+     ],
+     "conf": 0.3111,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      171.7,
+      163.8,
+      247.5,
+      283.7
+     ],
+     "conf": 0.3028,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      437.1,
+      252.0,
+      501.3,
+      357.4
+     ],
+     "conf": 0.3003,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      197.5,
+      309.4,
+      230.4,
+      331.3
+     ],
+     "conf": 0.2995,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      172.4,
+      288.7,
+      242.8,
+      331.2
+     ],
+     "conf": 0.2734,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      436.6,
+      252.8,
+      500.9,
+      357.5
+     ],
+     "conf": 0.2613,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      172.5,
+      288.7,
+      208.4,
+      308.3
+     ],
+     "conf": 0.2547,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      438.1,
+      207.0,
+      585.2,
+      241.8
+     ],
+     "conf": 0.2506,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K01_R035.png"
+  },
+  {
+   "sample_id": "B__K01_R047_d1",
+   "stratum": "B",
+   "case_id": "K01",
+   "region_index": 47,
+   "region_key": "K01_R047",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "对白小气泡「내일 봐~」（GT 未标注的真实对白，B1-U05 同类）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      67.0,
+      35.2,
+      304.5,
+      112.0
+     ],
+     "conf": 0.9437,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      239.6,
+      143.9,
+      315.8,
+      177.9
+     ],
+     "conf": 0.7119,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      197.8,
+      186.4,
+      233.4,
+      216.8
+     ],
+     "conf": 0.3956,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K01_R047.png"
+  },
+  {
+   "sample_id": "B__K02_R009_d2",
+   "stratum": "B",
+   "case_id": "K02",
+   "region_index": 9,
+   "region_key": "K02_R009",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "手写旁注（蓝字「약 과잉섭취는 몸에 안좋아~」）——手写小注非 SFX",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      157.2,
+      34.5,
+      421.8,
+      111.0
+     ],
+     "conf": 0.9573,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      239.0,
+      147.5,
+      487.1,
+      186.8
+     ],
+     "conf": 0.9215,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      145.0,
+      497.1,
+      461.9,
+      538.8
+     ],
+     "conf": 0.8563,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      123.3,
+      191.2,
+      220.5,
+      240.8
+     ],
+     "conf": 0.7713,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K02_R009.png"
+  },
+  {
+   "sample_id": "B__K03_R155_d1",
+   "stratum": "B",
+   "case_id": "K03",
+   "region_index": 155,
+   "region_key": "K03_R155",
+   "unit_id": null,
+   "sfx_summary": "화——（爆发声，拖长音）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.77 text_free 框覆盖「화」+ 拖长线；速度线+模糊漩涡背景，典型 SFX 版式",
+   "sfx_instances": [
+    {
+     "desc": "화——",
+     "box_xyxy": [
+      95,
+      285,
+      290,
+      390
+     ],
+     "box_provenance": "ogkalu FP prior (=SFX 字面)",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.987,
+      "det_box_xyxy": [
+       97.5,
+       145.1,
+       498.3,
+       392.7
+      ],
+      "conf": 0.4625,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      172.5,
+      148.3,
+      495.9,
+      273.9
+     ],
+     "conf": 0.82,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.1,
+      274.3,
+      287.4,
+      386.4
+     ],
+     "conf": 0.772,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.5,
+      145.1,
+      498.3,
+      392.7
+     ],
+     "conf": 0.4625,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R155.png"
+  },
+  {
+   "sample_id": "B__K03_R155_d0",
+   "stratum": "B",
+   "case_id": "K03",
+   "region_index": 155,
+   "region_key": "K03_R155",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "画面内大字标题「사망 기억」（显示文字/章节文案，非拟声）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      172.5,
+      148.3,
+      495.9,
+      273.9
+     ],
+     "conf": 0.82,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.1,
+      274.3,
+      287.4,
+      386.4
+     ],
+     "conf": 0.772,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      97.5,
+      145.1,
+      498.3,
+      392.7
+     ],
+     "conf": 0.4625,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R155.png"
+  },
+  {
+   "sample_id": "B__K03_R027_d0",
+   "stratum": "B",
+   "case_id": "K03",
+   "region_index": 27,
+   "region_key": "K03_R027",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "话数标题横幅「언덕 위의 제임스」+「146」+「글그림 주당빵」——出版物元文字",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      16.9,
+      1078.2,
+      477.4,
+      1215.4
+     ],
+     "conf": 0.8989,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      32.9,
+      299.2,
+      642.1,
+      413.3
+     ],
+     "conf": 0.8599,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      274.3,
+      429.6,
+      408.7,
+      502.6
+     ],
+     "conf": 0.6768,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      496.0,
+      408.0,
+      658.9,
+      452.6
+     ],
+     "conf": 0.5922,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      393.3,
+      127.8,
+      449.0,
+      202.3
+     ],
+     "conf": 0.2672,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R027.png"
+  },
+  {
+   "sample_id": "B__K04_R021_d6",
+   "stratum": "B",
+   "case_id": "K04",
+   "region_index": 21,
+   "region_key": "K04_R021",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "对白小气泡「어?」（GT 未标注）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      338.2,
+      947.9,
+      647.3,
+      1058.0
+     ],
+     "conf": 0.963,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      55.8,
+      1821.2,
+      286.5,
+      1931.4
+     ],
+     "conf": 0.9582,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      45.9,
+      116.4,
+      202.2,
+      221.6
+     ],
+     "conf": 0.9561,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      205.9,
+      1065.9,
+      406.4,
+      1141.9
+     ],
+     "conf": 0.9504,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      74.5,
+      665.6,
+      242.7,
+      705.8
+     ],
+     "conf": 0.9225,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      51.7,
+      725.3,
+      179.7,
+      798.9
+     ],
+     "conf": 0.9202,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      469.9,
+      1585.5,
+      633.4,
+      1625.3
+     ],
+     "conf": 0.9183,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      224.1,
+      1954.9,
+      344.6,
+      1993.9
+     ],
+     "conf": 0.9142,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      549.9,
+      437.9,
+      659.2,
+      503.8
+     ],
+     "conf": 0.9048,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      170.6,
+      1380.6,
+      220.2,
+      1415.4
+     ],
+     "conf": 0.8793,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      615.6,
+      437.9,
+      658.3,
+      474.0
+     ],
+     "conf": 0.2604,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K04_R021.png"
+  },
+  {
+   "sample_id": "B__K05_R034_d0",
+   "stratum": "B",
+   "case_id": "K05",
+   "region_index": 34,
+   "region_key": "K05_R034",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "风格化语气词「넴??？」（顶部裁切、对白性质，非拟声；borderline 登记）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      224.9,
+      740.4,
+      466.8,
+      782.1
+     ],
+     "conf": 0.9473,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      173.3,
+      422.7,
+      232.9,
+      458.4
+     ],
+     "conf": 0.9237,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      170.8,
+      0.2,
+      227.8,
+      38.5
+     ],
+     "conf": 0.6712,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K05_R034.png"
+  },
+  {
+   "sample_id": "B__K06_R000_d2",
+   "stratum": "B",
+   "case_id": "K06",
+   "region_index": 0,
+   "region_key": "K06_R000",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "章节标题艺术字「최강전설/기억호」+ credit——出版物元文字",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      28.4,
+      71.4,
+      454.2,
+      176.3
+     ],
+     "conf": 0.9012,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      516.0,
+      445.0,
+      679.6,
+      514.3
+     ],
+     "conf": 0.8851,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      260.9,
+      446.5,
+      460.2,
+      511.8
+     ],
+     "conf": 0.8555,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      515.3,
+      209.2,
+      678.0,
+      401.1
+     ],
+     "conf": 0.8426,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      432.0,
+      215.3,
+      495.3,
+      410.7
+     ],
+     "conf": 0.8064,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      158.9,
+      207.3,
+      260.5,
+      323.0
+     ],
+     "conf": 0.7659,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      336.8,
+      217.3,
+      429.4,
+      284.7
+     ],
+     "conf": 0.7282,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      220.3,
+      332.7,
+      288.2,
+      421.3
+     ],
+     "conf": 0.6869,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      515.0,
+      365.9,
+      675.9,
+      400.4
+     ],
+     "conf": 0.6716,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      276.3,
+      201.1,
+      307.2,
+      327.7
+     ],
+     "conf": 0.6698,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      351.3,
+      287.8,
+      419.8,
+      372.6
+     ],
+     "conf": 0.6066,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      433.8,
+      217.5,
+      491.3,
+      408.6
+     ],
+     "conf": 0.5424,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      278.7,
+      204.0,
+      304.1,
+      326.2
+     ],
+     "conf": 0.5026,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      347.9,
+      284.9,
+      423.5,
+      375.5
+     ],
+     "conf": 0.457,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      366.6,
+      130.4,
+      448.8,
+      171.6
+     ],
+     "conf": 0.4039,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      158.0,
+      203.8,
+      307.9,
+      326.8
+     ],
+     "conf": 0.374,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      159.8,
+      209.5,
+      259.3,
+      321.8
+     ],
+     "conf": 0.3729,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      338.3,
+      248.0,
+      428.7,
+      283.3
+     ],
+     "conf": 0.3544,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      278.7,
+      204.0,
+      304.1,
+      326.2
+     ],
+     "conf": 0.3485,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      468.2,
+      217.5,
+      492.2,
+      406.9
+     ],
+     "conf": 0.3458,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      351.3,
+      287.8,
+      419.8,
+      372.6
+     ],
+     "conf": 0.3354,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      235.2,
+      217.2,
+      258.4,
+      322.5
+     ],
+     "conf": 0.3331,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      517.8,
+      211.4,
+      673.5,
+      281.4
+     ],
+     "conf": 0.3325,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      517.2,
+      211.5,
+      673.9,
+      333.0
+     ],
+     "conf": 0.3216,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      233.8,
+      214.3,
+      260.9,
+      322.9
+     ],
+     "conf": 0.3036,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      159.3,
+      208.2,
+      255.1,
+      245.5
+     ],
+     "conf": 0.3008,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      434.1,
+      217.5,
+      458.3,
+      408.0
+     ],
+     "conf": 0.3007,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      515.7,
+      210.7,
+      677.5,
+      400.3
+     ],
+     "conf": 0.2906,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      259.4,
+      445.0,
+      680.9,
+      514.3
+     ],
+     "conf": 0.2853,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      276.3,
+      201.1,
+      307.2,
+      327.7
+     ],
+     "conf": 0.2706,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      213.3,
+      327.4,
+      292.9,
+      428.5
+     ],
+     "conf": 0.2685,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      515.7,
+      210.7,
+      677.5,
+      400.3
+     ],
+     "conf": 0.2659,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      161.1,
+      209.4,
+      258.5,
+      321.2
+     ],
+     "conf": 0.2653,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      235.7,
+      28.8,
+      296.1,
+      63.1
+     ],
+     "conf": 0.265,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K06_R000.png"
+  },
+  {
+   "sample_id": "B__K06_R096_d1",
+   "stratum": "B",
+   "case_id": "K06",
+   "region_index": 96,
+   "region_key": "K06_R096",
+   "unit_id": null,
+   "sfx_summary": "쭈아앙~（拟声拟态词，白色手写体）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.75 text_free 框覆盖字面",
+   "sfx_instances": [
+    {
+     "desc": "쭈아앙~",
+     "box_xyxy": [
+      25,
+      355,
+      195,
+      440
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.632,
+      "det_box_xyxy": [
+       29.6,
+       339.1,
+       192.5,
+       411.1
+      ],
+      "conf": 0.7509,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      29.6,
+      339.1,
+      192.5,
+      411.1
+     ],
+     "conf": 0.7509,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      50.0,
+      62.9,
+      118.2,
+      79.3
+     ],
+     "conf": 0.7349,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K06_R096.png"
+  },
+  {
+   "sample_id": "B__K07_R051_d1",
+   "stratum": "B",
+   "case_id": "K07",
+   "region_index": 51,
+   "region_key": "K07_R051",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "对白（爆裂形气泡内「아나 ㅅㅂ '우리'를!」）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      0.0,
+      108.7,
+      464.2,
+      265.3
+     ],
+     "conf": 0.9544,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      366.5,
+      938.6,
+      630.2,
+      1184.4
+     ],
+     "conf": 0.954,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K07_R051.png"
+  },
+  {
+   "sample_id": "B__K07_R097_d2",
+   "stratum": "B",
+   "case_id": "K07",
+   "region_index": 97,
+   "region_key": "K07_R097",
+   "unit_id": null,
+   "sfx_summary": "철컥철컥（金属扣具/快门声，两行）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.73 text_free 框覆盖两行字面",
+   "sfx_instances": [
+    {
+     "desc": "철컥철컥",
+     "box_xyxy": [
+      20,
+      255,
+      160,
+      400
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.842,
+      "det_box_xyxy": [
+       31.1,
+       260.5,
+       156.9,
+       396.3
+      ],
+      "conf": 0.7328,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      76.3,
+      124.0,
+      252.4,
+      209.9
+     ],
+     "conf": 0.9696,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      110.2,
+      24.4,
+      252.1,
+      65.9
+     ],
+     "conf": 0.9584,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      31.1,
+      260.5,
+      156.9,
+      396.3
+     ],
+     "conf": 0.7328,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K07_R097.png"
+  },
+  {
+   "sample_id": "B__K07_R121_d2",
+   "stratum": "B",
+   "case_id": "K07",
+   "region_index": 121,
+   "region_key": "K07_R121",
+   "unit_id": null,
+   "sfx_summary": "뒤적뒤적（翻找声，大字）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.63 text_free 框覆盖字面",
+   "sfx_instances": [
+    {
+     "desc": "뒤적뒤적",
+     "box_xyxy": [
+      470,
+      335,
+      635,
+      575
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.787,
+      "det_box_xyxy": [
+       478.7,
+       341.1,
+       657.2,
+       540.4
+      ],
+      "conf": 0.6881,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "ㅋㅋㅋ（笑声字母）",
+     "box_xyxy": [
+      505,
+      240,
+      640,
+      345
+     ],
+     "verdict": "detected_low_conf",
+     "note": "0.30 text_free"
+    },
+    {
+     "desc": "꼬르륵（腹鸣声，画面左下）",
+     "box_xyxy": [
+      0,
+      785,
+      215,
+      900
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      69.3,
+      19.0,
+      275.2,
+      92.6
+     ],
+     "conf": 0.9699,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      415.0,
+      67.3,
+      599.2,
+      141.8
+     ],
+     "conf": 0.9677,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      591.4,
+      702.2,
+      673.8,
+      726.2
+     ],
+     "conf": 0.9037,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      478.7,
+      341.1,
+      657.2,
+      540.4
+     ],
+     "conf": 0.6881,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      514.4,
+      243.0,
+      642.0,
+      331.2
+     ],
+     "conf": 0.3006,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R121.png"
+  },
+  {
+   "sample_id": "B__K08_R003_d1",
+   "stratum": "B",
+   "case_id": "K08",
+   "region_index": 3,
+   "region_key": "K08_R003",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "省略号沉默气泡「……▪」（非 SFX）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      115.8,
+      210.7,
+      285.9,
+      351.1
+     ],
+     "conf": 0.9198,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      112.3,
+      42.1,
+      294.2,
+      185.8
+     ],
+     "conf": 0.9161,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      480.5,
+      180.5,
+      595.3,
+      224.7
+     ],
+     "conf": 0.7298,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K08_R003.png"
+  },
+  {
+   "sample_id": "B__K09_R098_d0",
+   "stratum": "B",
+   "case_id": "K09",
+   "region_index": 98,
+   "region_key": "K09_R098",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_hallucination",
+   "rationale": "ogkalu 0.61 框落在建筑窗户纹理上——无文字（模型幻觉）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      50.9,
+      397.1,
+      100.3,
+      773.5
+     ],
+     "conf": 0.612,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      50.9,
+      397.1,
+      100.3,
+      773.5
+     ],
+     "conf": 0.4625,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      51.6,
+      399.7,
+      73.0,
+      771.0
+     ],
+     "conf": 0.3169,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      71.3,
+      397.2,
+      99.8,
+      769.5
+     ],
+     "conf": 0.286,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K09_R098.png"
+  },
+  {
+   "sample_id": "B__K09_R024_d3",
+   "stratum": "B",
+   "case_id": "K09",
+   "region_index": 24,
+   "region_key": "K09_R024",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_not_sfx",
+   "rationale": "对白气泡（「그게 나든 바야」，被帧边裁切）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      73.5,
+      77.8,
+      359.5,
+      258.8
+     ],
+     "conf": 0.9664,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      99.1,
+      1107.9,
+      352.6,
+      1266.6
+     ],
+     "conf": 0.9647,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      368.0,
+      316.9,
+      647.7,
+      460.3
+     ],
+     "conf": 0.9625,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      40.9,
+      1473.7,
+      245.7,
+      1519.3
+     ],
+     "conf": 0.7165,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      501.7,
+      1493.3,
+      580.6,
+      1522.3
+     ],
+     "conf": 0.6189,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      38.0,
+      1473.2,
+      247.6,
+      1521.3
+     ],
+     "conf": 0.5363,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      40.9,
+      1473.7,
+      245.7,
+      1519.3
+     ],
+     "conf": 0.2665,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K09_R024.png"
+  },
+  {
+   "sample_id": "B__K10_R129_d0",
+   "stratum": "B",
+   "case_id": "K10",
+   "region_index": 129,
+   "region_key": "K10_R129",
+   "unit_id": null,
+   "sfx_summary": "RrRrrr（手机振动拟声，白色手写体）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "prior 单元本身落在手机屏幕 UI 文字「발신번호 표시제한」（=skip），但画面含振动拟声 Rrrrr：ogkalu 0.45 text_free（低于主阈 0.5）——帧作为额外观察纳入主样本（选样方法披露）",
+   "sfx_instances": [
+    {
+     "desc": "Rrrrr（大）",
+     "box_xyxy": [
+      355,
+      320,
+      600,
+      590
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.987,
+      "det_box_xyxy": [
+       48.4,
+       109.1,
+       634.0,
+       586.4
+      ],
+      "conf": 0.2952,
+      "cls": "text_free"
+     }
+    },
+    {
+     "desc": "rRrRr+状态栏图标（小）",
+     "box_xyxy": [
+      55,
+      105,
+      345,
+      240
+     ],
+     "verdict_extra": true,
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.97,
+      "det_box_xyxy": [
+       48.4,
+       109.1,
+       634.0,
+       586.4
+      ],
+      "conf": 0.2952,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      495.4,
+      837.3,
+      566.3,
+      897.9
+     ],
+     "conf": 0.6713,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      129.6,
+      185.0,
+      556.0,
+      379.8
+     ],
+     "conf": 0.5733,
+     "cls": "text_free",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      359.1,
+      327.7,
+      627.3,
+      572.1
+     ],
+     "conf": 0.4549,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      51.1,
+      115.8,
+      344.6,
+      242.9
+     ],
+     "conf": 0.307,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      54.3,
+      182.8,
+      156.0,
+      238.8
+     ],
+     "conf": 0.3033,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    },
+    {
+     "box_xyxy": [
+      48.4,
+      109.1,
+      634.0,
+      586.4
+     ],
+     "conf": 0.2952,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K10_R129.png"
+  },
+  {
+   "sample_id": "B__K10_R073_d2",
+   "stratum": "B",
+   "case_id": "K10",
+   "region_index": 73,
+   "region_key": "K10_R073",
+   "unit_id": null,
+   "sfx_summary": "끼아아악（尖叫，斜排手写体）",
+   "frame_verdict": "detected_hit",
+   "rationale": "ogkalu 0.86 text_bubb 框覆盖字面（class=text_bubble 但实为自由 SFX 字——类间混淆证据）",
+   "sfx_instances": [
+    {
+     "desc": "끼아아악",
+     "box_xyxy": [
+      365,
+      1175,
+      620,
+      1390
+     ],
+     "box_provenance": "ogkalu FP prior",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.96,
+      "det_box_xyxy": [
+       369.6,
+       1158.8,
+       614.4,
+       1396.5
+      ],
+      "conf": 0.8031,
+      "cls": "text_bubble"
+     }
+    }
+   ],
+   "extras": [
+    {
+     "desc": "꺘약（中景拟声）",
+     "box_xyxy": [
+      380,
+      490,
+      590,
+      870
+     ],
+     "verdict": "missed"
+    }
+   ],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      69.0,
+      332.2,
+      247.5,
+      428.2
+     ],
+     "conf": 0.9411,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      158.3,
+      135.6,
+      351.0,
+      240.8
+     ],
+     "conf": 0.9394,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    },
+    {
+     "box_xyxy": [
+      369.6,
+      1158.8,
+      614.4,
+      1396.5
+     ],
+     "conf": 0.8031,
+     "cls": "text_bubble",
+     "conf_ge_primary": true
+    }
+   ],
+   "preview": "ogkalu__K10_R073.png"
+  },
+  {
+   "sample_id": "C__K01_R069",
+   "stratum": "C",
+   "case_id": "K01",
+   "region_index": 69,
+   "region_key": "K01_R069",
+   "unit_id": null,
+   "sfx_summary": "칼칼（傻笑/得意声变体，粉色圆体字，两处）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——C1 抽检之外的新增硬盲区样本",
+   "sfx_instances": [
+    {
+     "desc": "촬/칼（左）",
+     "box_xyxy": [
+      200,
+      35,
+      275,
+      140
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    },
+    {
+     "desc": "칼（右）",
+     "box_xyxy": [
+      390,
+      90,
+      465,
+      190
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K01_R069.png"
+  },
+  {
+   "sample_id": "C__K03_R107",
+   "stratum": "C",
+   "case_id": "K03",
+   "region_index": 107,
+   "region_key": "K03_R107",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_no_text",
+   "rationale": "画面无任何文字（人物特写）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K03_R107.png"
+  },
+  {
+   "sample_id": "C__K03_R113",
+   "stratum": "C",
+   "case_id": "K03",
+   "region_index": 113,
+   "region_key": "K03_R113",
+   "unit_id": null,
+   "sfx_summary": "뙇×n（坠落撞击声，环形重复字母）",
+   "frame_verdict": "detected_offset",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.35 text_free 框仅覆盖左弧部分字母（环形排布的大部分字母未检出）",
+   "sfx_instances": [
+    {
+     "desc": "뙇 环（整体范围）",
+     "box_xyxy": [
+      55,
+      20,
+      610,
+      520
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.202,
+      "det_box_xyxy": [
+       51.6,
+       169.6,
+       226.3,
+       497.0
+      ],
+      "conf": 0.2651,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      51.6,
+      169.6,
+      226.3,
+      497.0
+     ],
+     "conf": 0.2651,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K03_R113.png"
+  },
+  {
+   "sample_id": "C__K05_R011",
+   "stratum": "C",
+   "case_id": "K05",
+   "region_index": 11,
+   "region_key": "K05_R011",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_no_text",
+   "rationale": "画面无任何文字（怪物嘴部特写）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K05_R011.png"
+  },
+  {
+   "sample_id": "C__K05_R026",
+   "stratum": "C",
+   "case_id": "K05",
+   "region_index": 26,
+   "region_key": "K05_R026",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_no_text",
+   "rationale": "画面无任何文字（背影）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K05_R026.png"
+  },
+  {
+   "sample_id": "C__K06_R038",
+   "stratum": "C",
+   "case_id": "K06",
+   "region_index": 38,
+   "region_key": "K06_R038",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "supplementary_effect_symbol",
+   "rationale": "「!!」惊讶特效符号（C1 A1-U02 同源）；非拟声词，不入主样本；harvest 0.25 下 0.30 text_bubb 低置信检出（补充观察）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      578.4,
+      93.8,
+      628.8,
+      139.7
+     ],
+     "conf": 0.3018,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K06_R038.png"
+  },
+  {
+   "sample_id": "C__K07_R103",
+   "stratum": "C",
+   "case_id": "K07",
+   "region_index": 103,
+   "region_key": "K07_R103",
+   "unit_id": null,
+   "sfx_summary": "철컹（坠落巨响，超大字）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 下 SFX 本体零检出；唯一检出框 (0.35) 落在建筑窗户纹理=幻觉",
+   "sfx_instances": [
+    {
+     "desc": "철컹",
+     "box_xyxy": [
+      0,
+      0,
+      620,
+      230
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      481.7,
+      343.7,
+      690.0,
+      435.9
+     ],
+     "conf": 0.3887,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K07_R103.png"
+  },
+  {
+   "sample_id": "C__K07_R095",
+   "stratum": "C",
+   "case_id": "K07",
+   "region_index": 95,
+   "region_key": "K07_R095",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_no_text",
+   "rationale": "画面无任何文字（塔顶游客）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K07_R095.png"
+  },
+  {
+   "sample_id": "C__K08_R033",
+   "stratum": "C",
+   "case_id": "K08",
+   "region_index": 33,
+   "region_key": "K08_R033",
+   "unit_id": null,
+   "sfx_summary": "수악（打击声，竖排白描边）",
+   "frame_verdict": "detected_low_conf",
+   "rationale": "C4/C1 口径零检出；harvest 0.25 下 0.30 text_free 框覆盖字面",
+   "sfx_instances": [
+    {
+     "desc": "수악",
+     "box_xyxy": [
+      230,
+      100,
+      380,
+      580
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.797,
+      "det_box_xyxy": [
+       231.1,
+       159.0,
+       369.8,
+       572.9
+      ],
+      "conf": 0.2775,
+      "cls": "text_free"
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      231.1,
+      159.0,
+      369.8,
+      572.9
+     ],
+     "conf": 0.2775,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K08_R033.png"
+  },
+  {
+   "sample_id": "C__K08_R019",
+   "stratum": "C",
+   "case_id": "K08",
+   "region_index": 19,
+   "region_key": "K08_R019",
+   "unit_id": null,
+   "sfx_summary": "빠직 + 아（爆裂/尖叫，两处大字）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "sfx_instances": [
+    {
+     "desc": "빠직（上）",
+     "box_xyxy": [
+      30,
+      40,
+      330,
+      420
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    },
+    {
+     "desc": "아（下）",
+     "box_xyxy": [
+      60,
+      950,
+      330,
+      1450
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K08_R019.png"
+  },
+  {
+   "sample_id": "C__K09_R112",
+   "stratum": "C",
+   "case_id": "K09",
+   "region_index": 112,
+   "region_key": "K09_R112",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "supplementary_uncertain",
+   "rationale": "单字 swoosh 效果线（疑似「휙/슉」残形，不确定是否拟声）；0.29 text_free 低置信检出——证据不足，不入主样本（补充观察）",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      574.5,
+      228.3,
+      656.5,
+      311.5
+     ],
+     "conf": 0.2926,
+     "cls": "text_free",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K09_R112.png"
+  },
+  {
+   "sample_id": "C__K09_R001",
+   "stratum": "C",
+   "case_id": "K09",
+   "region_index": 1,
+   "region_key": "K09_R001",
+   "unit_id": null,
+   "sfx_summary": "송송 + 삐직삐직（挖土/电子音，两处）",
+   "frame_verdict": "missed",
+   "rationale": "harvest 0.25 仍零检出——新增硬盲区样本",
+   "sfx_instances": [
+    {
+     "desc": "송송",
+     "box_xyxy": [
+      100,
+      640,
+      280,
+      840
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    },
+    {
+     "desc": "삐직삐직",
+     "box_xyxy": [
+      0,
+      1280,
+      190,
+      1450
+     ],
+     "box_provenance": "agent_estimate",
+     "best_ogkalu_overlap": {
+      "coverage_of_sfx": 0.0,
+      "det_box_xyxy": null,
+      "conf": null,
+      "cls": null
+     }
+    }
+   ],
+   "extras": [],
+   "ogkalu_detections_all": [
+    {
+     "box_xyxy": [
+      225.4,
+      1635.5,
+      371.0,
+      1651.0
+     ],
+     "conf": 0.4019,
+     "cls": "text_bubble",
+     "conf_ge_primary": false
+    }
+   ],
+   "preview": "ogkalu__K09_R001.png"
+  },
+  {
+   "sample_id": "C__K10_R144",
+   "stratum": "C",
+   "case_id": "K10",
+   "region_index": 144,
+   "region_key": "K10_R144",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_no_text",
+   "rationale": "画面无任何文字",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K10_R144.png"
+  },
+  {
+   "sample_id": "C__K10_R143",
+   "stratum": "C",
+   "case_id": "K10",
+   "region_index": 143,
+   "region_key": "K10_R143",
+   "unit_id": null,
+   "sfx_summary": null,
+   "frame_verdict": "skipped_no_text",
+   "rationale": "画面无任何文字",
+   "sfx_instances": [],
+   "extras": [],
+   "ogkalu_detections_all": [],
+   "preview": "ogkalu__K10_R143.png"
+  }
+ ]
+}

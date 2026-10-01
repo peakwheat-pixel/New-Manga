@@ -1,0 +1,739 @@
+{
+ "schema": "m2-sfx-detect/sample-candidates@1",
+ "task": "M2-SFX-DETECT-EVAL",
+ "seed": 20261001,
+ "stratum_definition": {
+  "A": "C1 user-audited SFX frames (11, exact evidence boxes)",
+  "B": "unaudited block-layer FP boxes, seeded per-case quota",
+  "C": "unaudited zero-detection regions, seeded per-case quota"
+ },
+ "quotas": {
+  "B": {
+   "K01": 3,
+   "K02": 1,
+   "K03": 3,
+   "K04": 1,
+   "K05": 1,
+   "K06": 2,
+   "K07": 3,
+   "K08": 1,
+   "K09": 2,
+   "K10": 2
+  },
+  "C": {
+   "K01": 1,
+   "K03": 2,
+   "K05": 2,
+   "K06": 1,
+   "K07": 2,
+   "K08": 2,
+   "K09": 2,
+   "K10": 2
+  }
+ },
+ "inputs": {
+  "frames_export": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-EVAL-zcode\\verification\\M2-DOCTR-QUAL\\spot-audit\\data\\frames-export.json",
+  "audit_sample": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-EVAL-zcode\\verification\\M2-DOCTR-QUAL\\spot-audit\\spot-audit-sample.json",
+  "c4_results": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-EVAL-zcode\\verification\\M2-DOCTR-QUAL\\qualification\\results-formal-manga_rt_detr_v2-cuda-seg05.json",
+  "manifest": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\eval-manifest.full.seg05.json"
+ },
+ "note": "candidate superset; final >=20-frame SFX sample frozen after the agent visual confirmation pass; directional evidence only",
+ "candidates": [
+  {
+   "sample_id": "A__B1-U09",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "B1-U09",
+   "case_id": "K07",
+   "region_index": 7,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R007.png",
+   "sfx_prior_box_xyxy": [
+    67.72611999511719,
+    1082.8897705078125,
+    241.8600311279297,
+    1320.9954833984375
+   ],
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "sample_id": "A__B1-U12",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "B1-U12",
+   "case_id": "K08",
+   "region_index": 25,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R025.png",
+   "sfx_prior_box_xyxy": [
+    16.041719436645508,
+    27.33420181274414,
+    175.1754150390625,
+    355.5155334472656
+   ],
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "sample_id": "A__B1-U13",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "B1-U13",
+   "case_id": "K09",
+   "region_index": 71,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R071.png",
+   "sfx_prior_box_xyxy": [
+    198.29344177246094,
+    0.0,
+    348.53271484375,
+    102.43840789794922
+   ],
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "有 GT region 的 FP：红框=待判定检出框；判定其落在真实但未标注的文字上（→盲区 FP）还是无文字处（→模型幻觉）；绿框=该 region 的 GT（上下文）"
+  },
+  {
+   "sample_id": "A__B2-U12",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "B2-U12",
+   "case_id": "K07",
+   "region_index": 59,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R059.png",
+   "sfx_prior_box_xyxy": [
+    0.892878532409668,
+    0.0,
+    690.0,
+    361.04290771484375
+   ],
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "sample_id": "A__B2-U14",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "B2-U14",
+   "case_id": "K07",
+   "region_index": 107,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R107.png",
+   "sfx_prior_box_xyxy": [
+    82.76410675048828,
+    0.0,
+    323.17523193359375,
+    240.41624450683594
+   ],
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "sample_id": "A__B2-U15",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "B2-U15",
+   "case_id": "K07",
+   "region_index": 123,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R123.png",
+   "sfx_prior_box_xyxy": [
+    183.64926147460938,
+    1120.875,
+    395.01202392578125,
+    1354.856689453125
+   ],
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "无 GT region 的 FP：同 B1 语义（该层是纯盲区/幻觉判别的最干净样本）：落在真实但未标注文字上（→盲区 FP）还是无文字处（→模型幻觉）"
+  },
+  {
+   "sample_id": "A__A1-U06",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "A1-U06",
+   "case_id": "K09",
+   "region_index": 14,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R014.png",
+   "sfx_prior_box_xyxy": [
+    147.0,
+    161.0,
+    304.0,
+    239.0
+   ],
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "真未检出（region 无任何原始检测框）：判定该 GT 框是真实文字（→真实文字漏检）还是伪 GT 噪声/SFX/背景（→伪 GT 噪声）"
+  },
+  {
+   "sample_id": "A__D-U01",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "D-U01",
+   "case_id": "K03",
+   "region_index": 135,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R135.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "sample_id": "A__D-U07",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "D-U07",
+   "case_id": "K08",
+   "region_index": 41,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R041.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "sample_id": "A__D-U08",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "D-U08",
+   "case_id": "K08",
+   "region_index": 47,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R047.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "sample_id": "A__D-U09",
+   "stratum": "A",
+   "stratum_note": "C1 user-audited SFX frame (formal verdict in labeling-worksheet.csv; directional evidence per C1 r2)",
+   "unit_id": "D-U09",
+   "case_id": "K08",
+   "region_index": 57,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R057.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": "C1 spot-audit-sample.json review_box (user-audited)",
+   "c1_expected": "零检测 region 全帧复核：模型零输出与伪 GT 零标注是否一致；若帧内存在可见真实文字（未检出且未标注）即为 GT 盲区证据"
+  },
+  {
+   "sample_id": "B__K01_R075_d2",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K01",
+   "region_index": 75,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R075.png",
+   "sfx_prior_box_xyxy": [
+    42.184879302978516,
+    646.8690795898438,
+    643.3005981445312,
+    712.8541870117188
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.906439483165741,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K01_R035_d8",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K01",
+   "region_index": 35,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R035.png",
+   "sfx_prior_box_xyxy": [
+    431.63372802734375,
+    281.7819519042969,
+    504.4383239746094,
+    310.25250244140625
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.5294157862663269,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K01_R047_d1",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K01",
+   "region_index": 47,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R047.png",
+   "sfx_prior_box_xyxy": [
+    233.55764770507812,
+    137.88771057128906,
+    321.7998962402344,
+    183.8566131591797
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.7118743658065796,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K02_R009_d2",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K02",
+   "region_index": 9,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K02_R009.png",
+   "sfx_prior_box_xyxy": [
+    117.3488540649414,
+    185.20974731445312,
+    226.4882049560547,
+    246.8040008544922
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.7712671160697937,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K03_R155_d1",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K03",
+   "region_index": 155,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R155.png",
+   "sfx_prior_box_xyxy": [
+    91.07682800292969,
+    268.2936706542969,
+    293.3724060058594,
+    392.3868408203125
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.7719655632972717,
+   "fp_layer": "B2"
+  },
+  {
+   "sample_id": "B__K03_R155_d0",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K03",
+   "region_index": 155,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R155.png",
+   "sfx_prior_box_xyxy": [
+    166.46661376953125,
+    142.3134307861328,
+    501.884765625,
+    279.8526306152344
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.8199564814567566,
+   "fp_layer": "B2"
+  },
+  {
+   "sample_id": "B__K03_R027_d0",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K03",
+   "region_index": 27,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R027.png",
+   "sfx_prior_box_xyxy": [
+    26.858909606933594,
+    293.2095947265625,
+    648.1073608398438,
+    419.27044677734375
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.8599228262901306,
+   "fp_layer": "B2"
+  },
+  {
+   "sample_id": "B__K04_R021_d6",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K04",
+   "region_index": 21,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K04_R021.png",
+   "sfx_prior_box_xyxy": [
+    164.55197143554688,
+    1374.5831298828125,
+    226.20553588867188,
+    1421.420166015625
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.8793051242828369,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K05_R034_d0",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K05",
+   "region_index": 34,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K05_R034.png",
+   "sfx_prior_box_xyxy": [
+    164.7998046875,
+    0.0,
+    233.8190460205078,
+    44.48045349121094
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.6711922883987427,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K06_R000_d2",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K06",
+   "region_index": 0,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K06_R000.png",
+   "sfx_prior_box_xyxy": [
+    152.85165405273438,
+    201.2760772705078,
+    266.5470886230469,
+    328.9843444824219
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.7658989429473877,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K06_R096_d1",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K06",
+   "region_index": 96,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K06_R096.png",
+   "sfx_prior_box_xyxy": [
+    23.644468307495117,
+    333.0754089355469,
+    198.52919006347656,
+    417.09442138671875
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.7509470582008362,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K07_R051_d1",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K07",
+   "region_index": 51,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R051.png",
+   "sfx_prior_box_xyxy": [
+    360.4595947265625,
+    932.588623046875,
+    636.2337646484375,
+    1190.436279296875
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.9539976119995117,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K07_R097_d2",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K07",
+   "region_index": 97,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R097.png",
+   "sfx_prior_box_xyxy": [
+    25.135047912597656,
+    254.50604248046875,
+    162.85809326171875,
+    402.3411560058594
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.7327675223350525,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K07_R121_d2",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K07",
+   "region_index": 121,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R121.png",
+   "sfx_prior_box_xyxy": [
+    472.725341796875,
+    335.10113525390625,
+    663.1589965820312,
+    546.363037109375
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.688137948513031,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K08_R003_d1",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K08",
+   "region_index": 3,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R003.png",
+   "sfx_prior_box_xyxy": [
+    474.5025939941406,
+    174.490478515625,
+    601.3486328125,
+    230.7181396484375
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.7298010587692261,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K09_R098_d0",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K09",
+   "region_index": 98,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R098.png",
+   "sfx_prior_box_xyxy": [
+    44.85187530517578,
+    391.11346435546875,
+    106.28783416748047,
+    779.5418701171875
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.6119511127471924,
+   "fp_layer": "B2"
+  },
+  {
+   "sample_id": "B__K09_R024_d3",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K09",
+   "region_index": 24,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R024.png",
+   "sfx_prior_box_xyxy": [
+    31.98419189453125,
+    1467.211181640625,
+    253.63294982910156,
+    1527.2880859375
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.6263817846775055,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K10_R129_d0",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K10",
+   "region_index": 129,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R129.png",
+   "sfx_prior_box_xyxy": [
+    123.57379150390625,
+    179.0178680419922,
+    562.0091552734375,
+    385.7516174316406
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.5733242034912109,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "B__K10_R073_d2",
+   "stratum": "B",
+   "stratum_note": "unaudited block-layer FP box (frames-export.json); if the box lands on SFX lettering visually -> blind-spot SFX detection sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K10",
+   "region_index": 73,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R073.png",
+   "sfx_prior_box_xyxy": [
+    363.6125793457031,
+    1152.84228515625,
+    620.3967895507812,
+    1402.47216796875
+   ],
+   "prior_box_provenance": "ogkalu FP box (block layer, C4 formal run conf=0.5); prior only, visual pass decides",
+   "c1_expected": null,
+   "fp_conf": 0.8030531406402588,
+   "fp_layer": "B1"
+  },
+  {
+   "sample_id": "C__K01_R069",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K01",
+   "region_index": 69,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K01_R069.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K03_R107",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K03",
+   "region_index": 107,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R107.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K03_R113",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K03",
+   "region_index": 113,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K03_R113.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K05_R011",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K05",
+   "region_index": 11,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K05_R011.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K05_R026",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K05",
+   "region_index": 26,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K05_R026.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K06_R038",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K06",
+   "region_index": 38,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K06_R038.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K07_R103",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K07",
+   "region_index": 103,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R103.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K07_R095",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K07",
+   "region_index": 95,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K07_R095.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K08_R033",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K08",
+   "region_index": 33,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R033.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K08_R019",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K08",
+   "region_index": 19,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K08_R019.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K09_R112",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K09",
+   "region_index": 112,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R112.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K09_R001",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K09",
+   "region_index": 1,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K09_R001.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K10_R144",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K10",
+   "region_index": 144,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R144.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  },
+  {
+   "sample_id": "C__K10_R143",
+   "stratum": "C",
+   "stratum_note": "unaudited zero-detection region (C4 formal run n_det_block==0); if visible SFX lettering exists -> status-quo miss sample; otherwise skipped with reason",
+   "unit_id": null,
+   "case_id": "K10",
+   "region_index": 143,
+   "image": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-work\\regions\\K10_R143.png",
+   "sfx_prior_box_xyxy": null,
+   "prior_box_provenance": null,
+   "c1_expected": null
+  }
+ ]
+}
