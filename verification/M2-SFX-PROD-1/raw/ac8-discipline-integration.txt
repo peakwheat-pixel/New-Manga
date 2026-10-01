@@ -1,0 +1,63 @@
+# AC8 discipline — raw command outputs (DSH r1 C6/R7 integration evidence re-strengthening)
+# Generated: 2026-10-01T13:06:55+08:00  worktree: agent/zcode/M2-SFX-PROD-1  base=60f18d0d  checked-range=60f18d0d..0ec02ea3 (owner delivery tip; the integration commits land after this archive)
+# The delivery-time raw/ac8-discipline.txt is a conclusion-style summary; this file
+# archives the RAW command lines and their verbatim outputs (reviewer R7).
+
+==============================================================
+$ git diff --check 60f18d0d..HEAD
+--- output (empty = clean) ---
+--- EXIT=0 ---
+
+==============================================================
+$ git diff --name-only 60f18d0d..HEAD -- src/ports/ src/infrastructure/providers/detection_manga.py src/infrastructure/providers/detection_doctr.py experiments/ apps/desktop/src-tauri/tauri.conf.json packaging/m2ac5/run_clean_start_e2e.py apps/
+--- output (EMPTY = forbidden surfaces untouched) ---
+--- EXIT=0 (empty diff => exit 0, zero lines) ---
+
+==============================================================
+$ git diff --name-only 60f18d0d..HEAD -- "*yolo11s-seg.onnx" "*onnx" "*.weights" "*.pt" "*.pth"
+--- output (EMPTY = zero weights tracked) ---
+--- EXIT=0 ---
+
+==============================================================
+$ git grep -n "MERGE_" -- 60f18d0d..HEAD  (via diff)
+$ git diff 60f18d0d..HEAD -- src/domain  src/application | grep -c "MERGE_"
+--- output: 0 (0 = MERGE_* constants untouched) ---
+
+==============================================================
+$ git diff --name-only 60f18d0d..HEAD   (full changed-file inventory, the reviewer basis for scope discipline)
+--- output (N lines = N changed files) ---
+doc/STATUS.md
+doc/handoffs/M2-SFX-PROD-1-038e8faf.md
+doc/tasks/M2-SFX-PROD-1.md
+packaging/m2ac5/build_sidecar.ps1
+packaging/m2ac5/core_sidecar.spec
+packaging/m2ac5/requirements-build.txt
+requirements.txt
+src/bootstrap/core_assembly.py
+src/infrastructure/providers/detection_sfx.py
+src/infrastructure/providers/handlers.py
+tests/core/test_sfx_assembly.py
+tests/pipeline/test_regionless_rebinding.py
+tests/providers/t111_support.py
+tests/providers/test_detect_handler.py
+tests/providers/test_detection_manga.py
+tests/providers/test_detection_sfx.py
+tests/providers/test_detector_assembly.py
+tests/providers/test_detector_weights_lookup.py
+verification/M2-SFX-PROD-1/envelope-results.json
+verification/M2-SFX-PROD-1/envelope.md
+verification/M2-SFX-PROD-1/envelope_run.py
+verification/M2-SFX-PROD-1/frozen-sfx-probe-results.json
+verification/M2-SFX-PROD-1/frozen-sfx-probe.py
+verification/M2-SFX-PROD-1/gate-cleanstart.json
+verification/M2-SFX-PROD-1/gate-production-stdout.log
+verification/M2-SFX-PROD-1/raw/ac8-discipline.txt
+
+==============================================================
+$ git log --oneline 60f18d0d..HEAD
+0ec02ea3 handoff(M2-SFX-PROD-1): owner delivery — AC1-AC8 backfilled, status in_review, delivery_head=038e8faf
+038e8faf fix(M2-SFX-PROD-1): AC8 — regression repair: DETECT-2/3 assembly tests unwrap the sfx composite to reach the primary (provenance semantics live there)
+63a482fb build(M2-SFX-PROD-1): AC6/AC7 — envelope + onnxruntime closure + sfx weights bundled + GATE 25/25 + frozen sfx probe PASS
+bedbba69 test(M2-SFX-PROD-1): AC5 — sfx provider fail-closed matrix + eval-caliber fake-session tests + engine gate + composite + assembly three-state + sfx dispatch
+6a346a15 feat(M2-SFX-PROD-1): AC1/AC2/AC3/AC4 — standalone chiqui7 sfx provider + parallel assembly + sfx- prefix dispatch + onnxruntime pin
+a6b72e8c claim(M2-SFX-PROD-1): ZCode owner starts implementation (ready -> in_progress) — AC1 provider first; base=60f18d0d

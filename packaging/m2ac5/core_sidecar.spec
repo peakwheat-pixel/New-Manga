@@ -78,6 +78,11 @@ ML_HIDDENIMPORTS = [
     "transformers",
     "transformers.models.rt_detr",
     "transformers.models.rt_detr_v2",
+    # M2-SFX-PROD-1: the standalone SFX provider resolves onnxruntime through
+    # importlib at detect time (same lazy pattern as transformers), so
+    # modulegraph never tracks it — pin it explicitly or the frozen sfx chain
+    # would silently degrade to PROVIDER_DEPENDENCY_MISSING.
+    "onnxruntime",
 ]
 
 #: M2-PROD-DETECT-3 (frozen in-process detect evidence): torchvision 0.29's
@@ -103,6 +108,17 @@ ML_BINARY_IMPORT_MODULES = [
 ML_BINARY_IMPORTS = [
     "torchvision/_C_stable.pyd",
     "torchvision/image_stable.pyd",
+]
+
+#: M2-SFX-PROD-1: the onnxruntime C-extension pair — the pyd that
+#: ``import onnxruntime`` loads and (like torchvision above, EXTENSION TOC
+#: entries inside the bundle dir) the native engine DLL it needs. The pyd
+#: pull-in is what the assertion below checks; the DLL ships beside it in
+#: onnxruntime/capi/. The check is the SFX counterpart of the torchvision
+#: binaries assertion: build venv has the runtime but a shrink here must
+#: fail the BUILD, not the release detect.
+SFX_BINARY_IMPORTS = [
+    "onnxruntime_pybind11_state.pyd",
 ]
 
 
@@ -149,19 +165,27 @@ def _assert_ml_closure(analysis, exe_name: str) -> None:
             name == m or name.endswith("/" + m) for name in binary_names
         )
     ]
+    # M2-SFX-PROD-1: the onnxruntime C-extension rides the same assertion —
+    # a closure that lost it would break the frozen sfx detect chain only.
+    missing_binaries += [
+        m for m in SFX_BINARY_IMPORTS if not any(
+            name == m or name.endswith("/" + m) for name in binary_names
+        )
+    ]
     if missing_binaries:
         raise SystemExit(
             f"ML closure assertion FAILED for {exe_name}: extension(s) "
             f"{missing_binaries} not collected into the bundle binaries — "
             "the frozen detect chain would fail at model load with the "
-            "missing torchvision C++ ops. Do NOT relax this check; fix the "
-            "hiddenimports/analysis instead."
+            "missing torchvision C++ ops (or the missing onnxruntime "
+            "engine). Do NOT relax this check; fix the hiddenimports/"
+            "analysis instead."
         )
     print(
         f"closure assertion: {exe_name} PYZ carries "
         + ", ".join(ML_HIDDENIMPORTS)
         + f" ({len(pure_names)} pure modules) + extensions "
-        + ", ".join(ML_BINARY_IMPORTS)
+        + ", ".join(ML_BINARY_IMPORTS + SFX_BINARY_IMPORTS)
     )
 
 EXCLUDED = [

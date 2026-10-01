@@ -39,11 +39,19 @@ param (
     # relocates the source, never relaxes the verification.
     [Parameter(Mandatory = $false)]
     [string]$WeightsSource = "G:/CODEX/New Manga.task-envs/M2-DOCTR-QUAL-C4/weights/ogkalu-comic-text-and-bubble-detector",
+    # M2-SFX-PROD-1: source directory holding the pinned chiqui7 ONNX export
+    # (yolo11s-seg.onnx). Same relocation-only semantics as -WeightsSource:
+    # the file must STILL match the SHA-256 pin below or the build fails.
+    [Parameter(Mandatory = $false)]
+    [string]$SfxWeightsSource = "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights",
     # M2-PROD-DETECT-2: skip the manga weights copy step (debug only — the
     # shipped bundle then has NO in-bundle weights; per the DSH r1 R5/R6
     # review-fix the frozen assembly does NOT crash: it prints one stderr
     # warning listing the probed candidates and the detect step fails closed
     # with the typed PROVIDER_NOT_CONFIGURED until the weights are placed).
+    # M2-SFX-PROD-1: also skips the sfx weights copy (same debug semantics —
+    # the sfx provider fails closed NOT_CONFIGURED at detect time, the app
+    # assembles and the manga chain lives on).
     [switch]$SkipWeights
 )
 
@@ -100,6 +108,53 @@ function Copy-MangaWeights {
     Write-Host "build_sidecar: manga weights bundled (3 files, sha256 verified) -> $destDir"
 }
 
+# --------------------------------------------------------------------------
+# M2-SFX-PROD-1 (AC7): pinned chiqui7 ONNX into the bundle.
+# Same discipline as Copy-MangaWeights: sha256-verified copy into
+# <bundle>/models/detector/ (a FILE this time, not a directory — the frozen
+# assembly resolves it through the same shared lookup, file semantics like
+# doctr). A missing file or hash mismatch FAILS the build — never a silent
+# skip. The user ruling 2026-10-01 (route A: chiqui7 MIT accepted) is what
+# makes this bundling step legitimate.
+# --------------------------------------------------------------------------
+
+function Copy-SfxWeights {
+    param(
+        [Parameter(Mandatory = $true)][string]$Bundle,
+        [Parameter(Mandatory = $true)][string]$WeightsSource
+    )
+
+    # Destination INSIDE the onedir bundle: <bundle>/models/detector/<file>.
+    $destDir = Join-Path $Bundle "models/detector"
+
+    # SHA-256 pin, duplicated verbatim from
+    # src/infrastructure/providers/detection_sfx.py (SFX_WEIGHTS_SHA256;
+    # chiqui7/yolo11-manga-seg @ 7f5f5c04). A build script cannot import
+    # src/**, so the value is a literal here — if the provider pin ever
+    # changes, these MUST be updated in lockstep (the copy step fails closed
+    # on any mismatch, so a stale literal cannot ship silently).
+    $pins = [ordered]@{
+        "yolo11s-seg.onnx" = "d87389af4350954143a216bcfe40fd2ad93312cb136534e6073c9c740d98b646"
+    }
+
+    foreach ($name in $pins.Keys) {
+        $src = Join-Path $weightsSource $name
+        if (-not (Test-Path -LiteralPath $src -PathType Leaf)) {
+            throw "sfx weights file missing: $src (place the pinned ONNX export of chiqui7/yolo11-manga-seg there, or rebuild with -SkipWeights for a debug-only bundle)"
+        }
+        $actual = (Get-FileHash -LiteralPath $src -Algorithm SHA256).Hash.ToLowerInvariant()
+        if ($actual -ne $pins[$name]) {
+            throw "sfx weights sha256 mismatch for $name : got $actual, expected $($pins[$name]) — refusing to bundle"
+        }
+    }
+
+    New-Item -ItemType Directory -Force -Path $destDir | Out-Null
+    foreach ($name in $pins.Keys) {
+        Copy-Item -LiteralPath (Join-Path $weightsSource $name) -Destination (Join-Path $destDir $name) -Force
+    }
+    Write-Host "build_sidecar: sfx weights bundled (yolo11s-seg.onnx, sha256 verified) -> $destDir"
+}
+
 # M2-AC5-BUILD-FRESH-CHECKOUT: incremental short-circuit. When the target
 # onedir bundle is already present, skip the (expensive) PyInstaller rebuild
 # and exit 0 so automated callers can invoke this unconditionally. The check
@@ -113,6 +168,7 @@ if (-not $Force -and (Test-Path -LiteralPath $existingBundle -PathType Container
     Write-Host "build_sidecar: target exists, skipping (use -Force to rebuild)"
     if (-not $SkipWeights) {
         Copy-MangaWeights -Bundle $existingBundle -WeightsSource $WeightsSource
+        Copy-SfxWeights -Bundle $existingBundle -WeightsSource $SfxWeightsSource
     }
     exit 0
 }
@@ -150,5 +206,6 @@ foreach ($exe in @("host_bridge.exe", "core_service.exe", "acceptance_bridge.exe
 
 if (-not $SkipWeights) {
     Copy-MangaWeights -Bundle $bundle -WeightsSource $WeightsSource
+    Copy-SfxWeights -Bundle $bundle -WeightsSource $SfxWeightsSource
 }
 Write-Host "build_sidecar: OK -> $bundle (HEAD=$gitHead, pyinstaller=$pyinstallerVersion)"

@@ -59,7 +59,12 @@ def _wired_detector(handler):
         bound = getattr(inner, "__self__", None)
         detector = getattr(getattr(bound, "deps", None), "detector", None)
         if detector is not None:
-            return detector
+            # M2-SFX-PROD-1: the production assembly (SFX on, the default)
+            # wraps the selected primary in the sfx parallel composite; the
+            # backend-selection semantics this file pins live on the PRIMARY,
+            # so unwrap the composite when present.
+            return getattr(detector, "primary", detector)
+
     raise AssertionError("detect handler does not expose a wired detector")
 
 

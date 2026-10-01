@@ -1,0 +1,12 @@
+diff-check EXIT=0
+=== git diff --check 60f18d0d..HEAD ===
+EXIT=0
+
+=== forbidden-surface diff (must be EMPTY) ===
+(end of forbidden-surface diff)
+
+=== weights tracked check ===
+weights-grep EXIT=1 (1 = zero tracked)
+
+=== MERGE_* untouched ===
+(empty = untouched)

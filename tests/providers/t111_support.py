@@ -221,7 +221,7 @@ def run_seam_case(provider, work_root: Path, sample_name: str) -> dict:
     editing = RegionEditingService(SqliteRegionRepository(conn))
     created: list[dict] = []
 
-    def region_creator(page_id, polygon, reading_order, provenance):
+    def region_creator(page_id, polygon, reading_order, provenance, provider_label=""):
         xs = [int(round(x)) for x, _ in polygon]
         ys = [int(round(y)) for _, y in polygon]
         region = editing.create_region(
