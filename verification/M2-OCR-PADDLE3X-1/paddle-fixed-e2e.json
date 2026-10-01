@@ -1,0 +1,44 @@
+{
+  "probe": "M2-OCR-PADDLE3X-1-paddle-fixed-e2e",
+  "image": "G:/CODEX/New Manga/test_assets/comic_golden_suite/韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+  "started_at_utc": "2026-10-01T09:57:23Z",
+  "adapter": "PaddleKoreanOcrProvider() — PRODUCTION class, ZERO injection, default construction path (enable_mkldnn=False), crop handed over as PNG bytes",
+  "versions": {
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1"
+  },
+  "status": "OK",
+  "engine_load_and_page_ocr_s": 26.5,
+  "recognize_s": 1.71,
+  "page_level_n_lines": 28,
+  "page_level_mean_confidence": 0.4085950159600803,
+  "page_level_lines_with_empty_polygon": [],
+  "page_preview": [
+    "8아HOH",
+    "늘",
+    "원여ㅐ크",
+    "$4_4",
+    "",
+    "는E",
+    "tp",
+    "뉴는",
+    "허영",
+    "t  f"
+  ],
+  "region_box_xyxy": [
+    570,
+    1429,
+    677,
+    1478
+  ],
+  "region_bytes": 9943,
+  "page_reference_line": "당근아?!",
+  "n_lines": 0,
+  "line_texts": [],
+  "mean_confidence": null,
+  "lines_with_empty_polygon": [],
+  "crop_text_matches_page_reference": false,
+  "provider_id": "paddleocr-korean",
+  "provider_type": "local-paddleocr",
+  "notes": "page-level run is the acceptance gate; the standalone crop re-run is observational only — PP-OCRv5 det often returns no box for a lone small crop (see crop_matrix_probe evidence), an engine quality/configuration concern registered in the handoff, not an adapter defect"
+}

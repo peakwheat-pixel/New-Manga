@@ -1,0 +1,67 @@
+{
+  "probe": "M2-OCR-PADDLE3X-1-diagnose-bytes-path",
+  "image": "G:/CODEX/New Manga/test_assets/comic_golden_suite/韩漫_KO/02_public_ground_truth_peppercarrot/ep04/kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+  "started_at_utc": "2026-10-01T09:42:22Z",
+  "versions": {
+    "paddleocr": "3.7.0",
+    "paddlepaddle": "3.3.1",
+    "numpy": "2.3.5",
+    "opencv": "5.0.0"
+  },
+  "engine_ref_construction": "PaddleOCR(lang='korean', use_doc_orientation_classify=False, use_doc_unwarping=False, use_textline_orientation=False, enable_mkldnn=False)",
+  "regions": {
+    "A": {
+      "page_line_index": 0,
+      "box_xyxy": [
+        62,
+        8,
+        161,
+        50
+      ],
+      "page_line_text": "당근아?",
+      "gt_texts_ndarray_crop": [
+        "당근아?"
+      ]
+    },
+    "B": {
+      "page_line_index": 1,
+      "box_xyxy": [
+        544,
+        17,
+        620,
+        52
+      ],
+      "page_line_text": "당근아!",
+      "gt_texts_ndarray_crop": [
+        "당근아!"
+      ]
+    }
+  },
+  "engine_prod_construction": "PaddleOCR(lang='korean')  # mirrors ocr_local.py default path exactly",
+  "bytes_path_steps": [
+    {
+      "step_region": "A",
+      "input": "bytes",
+      "input_len": 5582,
+      "raw_type": "list",
+      "raw_len": 0,
+      "extracted_texts": [],
+      "n_texts": 0,
+      "empty": true
+    },
+    {
+      "step_region": "B",
+      "input": "bytes",
+      "input_len": 3884,
+      "raw_type": "list",
+      "raw_len": 0,
+      "extracted_texts": [],
+      "n_texts": 0,
+      "empty": true
+    }
+  ],
+  "verdict": "ALWAYS_EMPTY",
+  "t2_matches_gt_a": null,
+  "wrong_text_risk": false,
+  "notes": "bytes input silently ignored; empty OCR without exception"
+}

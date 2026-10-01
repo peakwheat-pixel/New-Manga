@@ -14,6 +14,37 @@ Both adapters are *fail-closed*:
 The engine is injectable so the adapter's request/response mapping can be
 tested without a model. That tests the *adapter*, never OCR quality: no
 quality number is produced in this environment and none is claimed.
+Injection contract (DSH r1 R2): an injected engine receives the decoded
+BGR ``numpy.ndarray`` crop through ``ocr`` — NOT raw bytes. handing raw
+bytes to the engine is never the caller's job again.
+
+PaddleOCR 3.x adaptation (M2-OCR-PADDLE3X-1, evidence in
+``verification/M2-OCR-PADDLE3X-1/``):
+
+- OBSERVATION (M2-TA3-B phase 1): paddleocr 3.x returned an exception-free
+  EMPTY result for ``engine.ocr(<raw bytes>)``.
+- MECHANISM (AC1 diagnosis, settled with two different regions back-to-back
+  on the production-default construction): ALWAYS_EMPTY, not stale-reuse —
+  3.x rejects bytes at the INPUT-TYPE CHECK layer (engine log: "Not
+  supported input data type! Only `numpy.ndarray` and `str` are supported!
+  So has been ignored"), never invokes an executor, and returns an empty
+  list. No wrong-text surface ever existed; the risk was silent empty OCR.
+  Hence the adapter decodes the encoded crop to a BGR ndarray (numpy +
+  OpenCV, in-memory ``np.frombuffer`` — no CJK filesystem round-trip) and
+  hands the ndarray to the engine.
+- The default engine construction pins ``enable_mkldnn=False``:
+  paddlepaddle 3.3.1 Windows CPU crashes on the default MKLDNN path with a
+  PIR/oneDNN executor bug (``ConvertPirAttribute2RuntimeAttribute``
+  NotImplementedError). The flag is accepted by 2.x as well, so the
+  default path stays version-agnostic.
+- OUTPUT shape: both documented shapes are normalised — the 2.x legacy
+  ``[[ [box, (text, score)], ... ]]`` nesting AND the 3.x payload
+  (``rec_texts`` / ``rec_scores`` / ``rec_polys`` | ``rec_boxes``, reached
+  via the result object's ``.json`` under the ``res`` key). Boxes are
+  materialised to plain Python point lists first: numpy arrays are NOT
+  ``collections.abc.Sequence`` and were silently dropped to ``()`` (DSH r2
+  N6). Anything still unrecognised raises :class:`ProviderInvalidOutput` —
+  fail-closed semantics are unchanged, nothing is guessed.
 """
 
 from __future__ import annotations
@@ -163,7 +194,11 @@ class PaddleKoreanOcrProvider:
                     "paddleocr exposes no PaddleOCR class", stage="ocr"
                 )
             factory = self.engine_factory
-            self._engine = factory() if factory is not None else engine_class(lang="korean")
+            self._engine = (
+                factory()
+                if factory is not None
+                else engine_class(lang="korean", enable_mkldnn=False)
+            )
         return self._engine
 
     def recognize(self, request: OcrRequest) -> OcrResult:
@@ -180,9 +215,10 @@ class PaddleKoreanOcrProvider:
                 stage="ocr",
             )
         engine = self._engine_or_raise()
-        lines = _parse_paddle_output(
-            engine.ocr(request.image_bytes), self.provider_id
-        )
+        # paddleocr 3.x silently ignores bytes input (diagnosed ALWAYS_EMPTY,
+        # verification/M2-OCR-PADDLE3X-1): decode to a BGR ndarray first.
+        image = _ndarray_from_bytes(request.image_bytes, self.provider_id)
+        lines = _parse_paddle_output(engine.ocr(image), self.provider_id)
         text = "\n".join(line.text for line in lines)
         confidences = [line.confidence for line in lines if line.confidence is not None]
         return OcrResult(
@@ -199,12 +235,66 @@ class PaddleKoreanOcrProvider:
         )
 
 
+def _ndarray_from_bytes(image_bytes: bytes, provider_id: str) -> Any:
+    """Decode an encoded region crop into the BGR ndarray the engine reads.
+
+    PaddleOCR 3.x accepts only ``str`` paths and ndarrays and SILENTLY
+    ignores everything else (ALWAYS_EMPTY diagnosis,
+    ``verification/M2-OCR-PADDLE3X-1/diagnosis.json``). The crop is decoded
+    in memory (``np.frombuffer`` + ``cv2.imdecode``) — no filesystem
+    round-trip, so the Windows CJK path caveat of ``np.fromfile`` does not
+    even apply. numpy/OpenCV are hard transitive dependencies of paddleocr,
+    but a broken environment fails typed, never with a bare ImportError.
+    """
+    numpy = _lazy_import("numpy")
+    cv2 = _lazy_import("cv2")
+    try:
+        buffer = numpy.frombuffer(image_bytes, dtype=numpy.uint8)
+        image = cv2.imdecode(buffer, cv2.IMREAD_COLOR)
+    except Exception as error:  # noqa: BLE001 - reported as typed provider input
+        raise ProviderInputError(
+            f"region crop is not a decodable image: {error!r}",
+            provider_id=provider_id,
+            stage="ocr",
+        ) from error
+    if image is None:
+        raise ProviderInputError(
+            "region crop is not a decodable image",
+            provider_id=provider_id,
+            stage="ocr",
+        )
+    return image
+
+
+def _paddle3x_payload(page: Any) -> dict[str, Any] | None:
+    """Return the ``rec_*`` body of a 3.x result page, else None (legacy).
+
+    A 3.x page is either a plain dict or a result object exposing ``.json``;
+    the recognition body lives under the ``res`` key (M2-TA3-B wrapper,
+    end-to-end verified). Legacy 2.x pages are lists and never carry
+    ``rec_texts``.
+    """
+    payload = page if isinstance(page, dict) else getattr(page, "json", None)
+    if not isinstance(payload, dict):
+        return None
+    body = payload.get("res", payload)
+    if isinstance(body, dict) and "rec_texts" in body:
+        return body
+    return None
+
+
 def _parse_paddle_output(raw: Any, provider_id: str) -> tuple[OcrLine, ...]:
     """Normalise PaddleOCR output; anything unrecognised is a typed failure.
 
-    PaddleOCR's return shape differs between versions, so the adapter accepts
-    the documented ``[[ [box, (text, score)], ... ]]`` nesting and refuses
-    everything else rather than guessing (TASK-016 protocol discipline).
+    PaddleOCR's return shape differs between versions and BOTH documented
+    shapes are accepted:
+
+    - 2.x legacy: ``[[ [box, (text, score)], ... ]]`` nesting;
+    - 3.x: one result object/dict per image whose payload carries
+      ``rec_texts`` / ``rec_scores`` and ``rec_polys`` (or ``rec_boxes``).
+
+    Everything else is refused rather than guessed (TASK-016 protocol
+    discipline; fail-closed semantics unchanged by the 3.x adaptation).
     """
     if raw is None:
         return ()
@@ -217,6 +307,10 @@ def _parse_paddle_output(raw: Any, provider_id: str) -> tuple[OcrLine, ...]:
     lines: list[OcrLine] = []
     for page in raw:
         if page is None:
+            continue
+        body = _paddle3x_payload(page)
+        if body is not None:
+            lines.extend(_lines_from_paddle3x(body, provider_id))
             continue
         if not isinstance(page, Sequence) or isinstance(page, (str, bytes)):
             raise ProviderInvalidOutput(
@@ -241,6 +335,60 @@ def _parse_paddle_output(raw: Any, provider_id: str) -> tuple[OcrLine, ...]:
     return tuple(lines)
 
 
+def _lines_from_paddle3x(body: dict[str, Any], provider_id: str) -> list[OcrLine]:
+    """Map one 3.x ``rec_*`` body onto legacy-equivalent OcrLine entries.
+
+    ``rec_scores`` and ``rec_polys``/``rec_boxes`` are optional and may be
+    shorter than ``rec_texts``; missing values stay ``None`` / empty instead
+    of being invented (same discipline as the manga-ocr confidence).
+    """
+    # explicit None checks (DSH r1 R3): a len>1 ndarray payload would crash
+    # a truthiness test with "truth value of an array is ambiguous" — the
+    # same function already accepts ndarray boxes, so keep one stance.
+    texts = body.get("rec_texts")
+    scores = body.get("rec_scores")
+    texts = [] if texts is None else texts
+    scores = [] if scores is None else scores
+    polys = body.get("rec_polys", None)
+    if polys is None:
+        polys = body.get("rec_boxes", None)
+    lines: list[OcrLine] = []
+    for index, text in enumerate(texts):
+        if not isinstance(text, str):
+            raise ProviderInvalidOutput(
+                "paddleocr text is not a string", provider_id=provider_id, stage="ocr"
+            )
+        score = _float_or_none(scores[index]) if index < len(scores) else None
+        box = _box_at(polys, index)
+        lines.append(
+            OcrLine(
+                text=text,
+                confidence=score,
+                polygon=_polygon_of(box, provider_id),
+            )
+        )
+    return lines
+
+
+def _float_or_none(value: Any) -> float | None:
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _box_at(polys: Any, index: int) -> Any:
+    """One box of the 3.x batch (whole-batch ndarray or per-line sequence)."""
+    if polys is None or isinstance(polys, (str, bytes)):
+        return None
+    try:
+        if index >= len(polys):
+            return None
+        return polys[index]
+    except (TypeError, IndexError, KeyError):
+        return None
+
+
 def _split_recognition(recognition: Any, provider_id: str) -> tuple[str, float | None]:
     if isinstance(recognition, (list, tuple)) and len(recognition) >= 2:
         text, score = recognition[0], recognition[1]
@@ -263,10 +411,18 @@ def _split_recognition(recognition: Any, provider_id: str) -> tuple[str, float |
 
 
 def _polygon_of(box: Any, provider_id: str) -> tuple[tuple[float, float], ...]:
+    if hasattr(box, "tolist"):
+        # numpy arrays (3.x rec_polys rows, whole rec_boxes batches) are NOT
+        # collections.abc.Sequence — without materialisation the polygon
+        # would be silently dropped to () below (DSH r2 N6).
+        box = box.tolist()
     if not isinstance(box, Sequence) or isinstance(box, (str, bytes)):
         return ()
     points: list[tuple[float, float]] = []
     try:
+        if len(box) == 4 and all(isinstance(v, (int, float)) for v in box):
+            x1, y1, x2, y2 = box  # rec_boxes xyxy rectangle -> 4-point polygon
+            box = [[x1, y1], [x2, y1], [x2, y2], [x1, y2]]
         for point in box:
             x, y = point[0], point[1]
             points.append((float(x), float(y)))
