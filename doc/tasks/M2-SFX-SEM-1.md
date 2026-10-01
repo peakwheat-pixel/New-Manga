@@ -2,7 +2,8 @@
 id: M2-SFX-SEM-1
 title: "SFX 翻译语义第一刀：拟声词文化对等转换（userselect 2026-10-01「SFX OCR/翻译语义」；协议 widening 先例落地）"
 kind: feature
-status: in_review
+status: done
+integration_commit: abf30a1a
 approval: user_select_2026-10-01_sfx_sem
 suggested_owner: ZCode
 owner: ZCode
@@ -95,3 +96,12 @@ Claim：worktree `G:/CODEX/New Manga.worktrees/M2-SFX-SEM-1-zcode`，branch `age
    - `step.py` 应用层 `TranslationRequest` 增 `region_types: Mapping[str, str]`（region_id→region_type，覆盖全部 entries 含 context 角色；默认空映射零破坏），`build_provider_request` 从 entry.region_type 填充（满足裁决 2③ 应用层意图与 AC4⑤）。prompt 行 `[TARGET]/[CONTEXT]` 格式不动（既有测试断言与契约形态保持）。
 5. **AC3**：mock sfx 输出形态=固定常量 `MOCK_SFX_TRANSLATION_TEXT = "MOCK-SFX-TRANSLATED-TEXT"`（任务建议 `sfx:<长度>`；选固定常量因更符合 mock 模块 determinism contract 的 fixed-texts 注释模式，验收 digest 稳定性最强，同输入恒同输出）。判定=`region.region_type == "sfx"`。
 6. **AC5**：TASK-002 契约文档无既有修订记录节（grep 确认）→ 文末新增「Revision history」节（参照 M2-C1 先例风格）；region_type 语义修订落在 §4（多目标输入与输出映射，翻译请求结构在本契约的对应节；D06 §18.1 为概念输入列表无字段结构）。
+
+## 集成记录（2026-10-01，acting Codex）
+
+- Review 轨迹：DSH r1 [approved_with_conditions](../../doc/reviews/M2-SFX-SEM-1-0349be25-dsh-r1.md)（0×P0/P1；2×P2 放行条件+3×P3+3×P4；sha256 `da2c24d9` 前缀核对见入库文件）→ **全部条件由集成方闭合**（集成修正 `0349be25`+`da780b7d`）：C1 复跑（pipeline+knowledge **160 passed**、三套件 489+1sk）；C2 计数口径修正（三套件内 +10=489，knowledge +1 单列）；C3 handlers.py 单行传参**追认**（登记先例）；C5 唯一校验点补注；**R3 跨层一致性断言采纳**（`REGION_TYPE_VALUES == domain RegionType`——落地前抓到集成方自己的类型错误 frozenset-vs-tuple，值集逐值一致）；R4 TASK-002 版本行 1.1+措辞+端口载荷澄清；R5 region_types 预留字段注释；C4 锚点复算实测 +486/-13（DSH 静态点算偏差，实测为准）。
+- merge=`abf30a1a`；集成后 main **490 passed + 1 skipped 0 failed**（三套件，含新跨层断言测试）；五套件（+pipeline+knowledge）**650+1skipped 0 failed**。
+- git 层：diff --check EXIT=0、禁改面空、handlers.py 追认登记。
+- 遗留：翻译质量 directional（待真实 LLM 实测反馈）；SFX OCR/重绘 out of scope；R8 prompt 版本入 provenance（后续候选）；D06 §85 指针（后续可改 D06 的 Task）。
+
+Owner branch/worktree 保留于 `da780b7d`。
