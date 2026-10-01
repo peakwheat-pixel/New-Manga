@@ -38,13 +38,60 @@ _PAGE_IMAGE_RE = re.compile(
     r"image(\d{5})\.(?:bmp|gif|jpe?g|png)", re.IGNORECASE
 )
 
+# M2-IMPORT-ALLOC-LIMIT (TA3-B2 F2): Qt caps decoded images at a built-in
+# 256 MiB allocation limit (Qt 6.5+). Webtoon long-strips in the product
+# domain exceed it and were rejected at import (K07 690x131289 decodes to
+# ~345.6 MiB; K09/K10 ~264.5/265.0 MiB), so the decoder asserts its own,
+# documented ceiling before every read. The value is 2047 MiB because:
+#   - Domain anchor (r1 R6): the largest *measured* webtoon page decodes to
+#     ~345.6 MiB, so 2047 keeps a ~5.9x margin over observed reality; even
+#     an unmeasured extrapolation (690 x ~350k px x 4 B ~ 921 MiB — the
+#     ~350k-px figure has no measured source in the domain, it is a
+#     hypothetical upper tail) still leaves ~2.2x margin.
+#   - NOT 0: the point is a bounded fail-closed ceiling, anchored on the
+#     measured domain above — ``setAllocationLimit(0)`` disables the check
+#     entirely, so a corrupt/declared-huge header could OOM the process
+#     (AC1 rationale, M2-IMPORT-ALLOC-LIMIT).
+#   - 2047 is inside Qt's ``int`` megabyte parameter and keeps any single
+#     decode well below realistic 64-bit desktop memory budgets.
+#   - Qt checks the bound *before* allocating, so the limit is an upper
+#     bound on one decode, never a preallocation.
+# The static setter is process-global; re-asserting it per decode is
+# idempotent and cheap, and keeps the bound correct even if unrelated code
+# mutates the global later. Import runs on the application thread today;
+# worst case under concurrency is two idempotent writes of the same value.
+_ALLOCATION_LIMIT_MIB = 2047
+
+# r1 R4 (M2-TA3-B2): a per-file failure detail must stay diagnosable but
+# bounded — it surfaces in reports, UI and logs.
+_ERROR_DETAIL_MAX_CHARS = 300
+
+
+def _reader_error_detail(reader) -> str:
+    """Carry the reader's own error text, truncated to a bounded length."""
+    text = (reader.errorString() or "").strip()
+    if not text:
+        text = "bytes are not a decodable image"
+    if len(text) > _ERROR_DETAIL_MAX_CHARS:
+        text = text[:_ERROR_DETAIL_MAX_CHARS] + "..."
+    return text
+
 
 class QtImageDecoder:
-    """Decode image bytes with the Qt image plugins available to the app."""
+    """Decode image bytes with the Qt image plugins available to the app.
+
+    Asserts the module's documented decode allocation ceiling
+    (``_ALLOCATION_LIMIT_MIB``) before every read: Qt's built-in 256 MiB
+    default rejected webtoon long-strips in the product domain
+    (M2-IMPORT-ALLOC-LIMIT). Payloads above the ceiling stay fail-closed
+    with the reader's own error text as the typed detail.
+    """
 
     def decode(self, data: bytes) -> DecodedImage:
         from PySide6.QtCore import QByteArray, QBuffer, QIODevice
         from PySide6.QtGui import QImageReader
+
+        QImageReader.setAllocationLimit(_ALLOCATION_LIMIT_MIB)
 
         buffer = QBuffer()
         buffer.setData(QByteArray(data))
@@ -55,8 +102,7 @@ class QtImageDecoder:
         format_name = bytes(reader.format()).decode("ascii", errors="ignore").lower()
         image = reader.read()
         if image.isNull():
-            detail = reader.errorString() or "bytes are not a decodable image"
-            raise ImageDecodeError(detail)
+            raise ImageDecodeError(_reader_error_detail(reader))
 
         return DecodedImage(
             width=image.width(),
@@ -352,7 +398,7 @@ class _MobiDocumentHandle:
         )
 
         from PySide6.QtCore import QBuffer, QIODevice
-        from PySide6.QtGui import QImage
+        from PySide6.QtGui import QImage, QImageReader
 
         path = self._images[index]
         try:
@@ -361,6 +407,15 @@ class _MobiDocumentHandle:
             raise DocumentDecodeError(
                 "INVALID_DOCUMENT", f"page image could not be read: {error}"
             ) from error
+        # r1 R7 (M2-IMPORT-ALLOC-LIMIT): QtImageDecoder raises the
+        # process-global allocation limit to 2047 MiB for webtoon long-strips,
+        # and that global persists for the process lifetime. MOBI embedded
+        # page images are untrusted input, so re-tighten the built-in 256 MiB
+        # fail-closed bound before this decode: QImage.loadFromData routes
+        # through QImageReader and would otherwise inherit the widened limit.
+        # (QtImageDecoder re-asserts its own bound before every decode, so
+        # this tightening never starves the webtoon path.)
+        QImageReader.setAllocationLimit(256)
         image = QImage()
         if not image.loadFromData(raw):
             raise DocumentDecodeError(
