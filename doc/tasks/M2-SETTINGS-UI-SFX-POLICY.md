@@ -2,7 +2,8 @@
 id: M2-SETTINGS-UI-SFX-POLICY
 title: "React 设置页接入 sfx.policy 配置（SFX-ENTRY 后续；UI 协议说明：最小键接入，视觉审查可后补 Qoder）"
 kind: feature
-status: blocked_on_contract  # AC1 判定=需新 Tauri 命令→触 M2-C1 冻结契约面，即停登记移交集成方；AC2/AC3 已 mock 通道先行落地（48 vitest 全绿）
+status: done  # DSH r1（SETTINGS-IPC 连带 review）approved_with_conditions 条件闭合+通道集成 @fab3ca56：UI 即插即用（接通在本分支已完成，命令名零漂移）
+
 
 approval: user_ruling_2026-10-01_three_followups_all
 suggested_owner: ZCode
