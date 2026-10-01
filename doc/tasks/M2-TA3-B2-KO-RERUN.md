@@ -2,7 +2,7 @@
 id: M2-TA3-B2-KO-RERUN
 title: "TA3-B2 ko qualification 重跑（用户裁决③：TILING+ALLOC 解锁后关闭 F1/F2）"
 kind: qualification
-status: ready
+status: in_review
 approval: user_ruling_2026-10-02_three_confirmations
 suggested_owner: ZCode
 owner: ZCode
@@ -41,3 +41,12 @@ TA3-B2 首跑 ko 9 case fail-closed 于 F1（ogkalu webtoon 0 候选）与 F2（
 - 依赖序：**等 M2-TASKS-PRIMARY-SFX-GATE 集成 main 后启动**（编排会话负责时序，本 Task Owner 启动前自查 main HEAD 含该 Task）。
 - directional 口径延续；阈值实测 vs 提案对照沿 quality-thresholds 双轨口径（确定性=相似度 Gate for remote）。
 - 环境：融合 venv 方案 A 先例（phase2/env-manifest.txt）；TILING 语义下 detect 延迟预算 awareness（K01 ~20s/页 detect+全链）。
+
+## 执行记录（ZCode，2026-10-02，status=in_review）
+
+- **AC1 部分执行（纪律停跑）**：K02 试算全链完成（93 region=TILING qualification 同值、Run1 completed、export OK；Run2 46 region 携带 DeepSeek API 故障窗口 ~115 分钟的 typed PROVIDER_TIMEOUT，environment）+ K19（F4 预期 fail-closed 维持）+ K11 最小对照集（主 pass/sfx 对照/确定性复跑）。**K01/K04/K05/K07/K08/K09/K10 共 7 case 停跑**：试算实测每请求恰 1 target region（请求数≈2×region 数、≈607 est token/请求）→ 全量外推 63 万–209 万 est token > 50 万红线，按 AC5 纪律停止登记等裁决（`verification/M2-TA3-B/phase2/ko-rerun/budget-register.json`）。F2/ALLOC 的页级解锁确认（K07/K09/K10）因此仍无实测。
+- **AC2**：逐 case 对照表见 [ko-rerun-report.md §2](../../verification/M2-TA3-B/ko-rerun-report.md)；K02=F1 解锁实证；K11 行为对照一致（2 空 OCR region typed 同型；run1 状态 completed→completed_with_failures=PRIMARY 语义定稿的预期差异，N3 登记）；K19 F4 维持。
+- **AC3**：ko G1 CER 重算 n=6/median 0.0556/gate PASS，**6 行与首跑逐位一致**（OCR 层跨 run 确定性再证实）；SFX 主 pass n=1 SKIP 同首跑；`sfx.policy=translate` 对照=配置语义验证成功（生产 settings 键→region.sfx_policy skip→translate→gate 放行），但 K11 唯一 sfx region OCR 空、端到端不可达（素材缺口 N6）；可读性工作表 ko 增量预填 n=15（ai_mean 4.31，自评预填待用户终审）。
+- **AC4**：K11 相似度 Gate（remote 轨）**FAIL——12/13 对逐位一致（median=1.0）、1 对语义等价合法重译 min=0.4615<0.70 触发 min 腿**；归因=CALIB 局限 8 的"词面口径保守误报"形态首次自然实测，Gate 口径是否修订移交用户裁决（ko-rerun-report §4/§7.3）。export sha 为 mock 轨口径仅附报。
+- **AC5**：实际消耗 ≈347 次成功请求 ≈20.4 万 est token（估算口径计量 proxy；红线由外推触发非实际消耗）；key 零明文（dump_json scrub 沿用）；src/tests/contracts/packaging/apps/首跑产物/thresholds/STATUS 零改动。
+- 产物：`verification/M2-TA3-B/ko-rerun-report.md` + `verification/M2-TA3-B/phase2/ko-rerun/**`（summaries ×5、summaries-sfx、determinism、ocr、translate、budget-register.json）+ `experiments/M2-TA3-B/{run_qualification.py 微调, ko_rerun_similarity.py, ko_rerun_k11_driver.py, ko_rerun_readability_increment.py}`。Handoff：`doc/handoffs/M2-TA3-B2-KO-RERUN-<head>.md`。
