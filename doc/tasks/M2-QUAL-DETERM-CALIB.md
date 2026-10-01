@@ -1,0 +1,37 @@
+---
+id: M2-QUAL-DETERM-CALIB
+title: "F5 确定性 Gate 重定义落地：reading_order 对齐译文相似度口径校准（用户裁决采纳候选方案）"
+kind: qualification
+status: ready
+approval: user_ruling_2026-10-01_all_four
+suggested_owner: ZCode
+owner: ZCode
+reviewer: DeepSeek Harness（非作者）
+integrator: 编排会话代行 Codex（用户全权授权+自治授权）
+depends_on: [M2-TA3-B2]
+base_commit: 8e0de8d0
+branch: agent/zcode/M2-QUAL-DETERM-CALIB
+worktree: G:/CODEX/New Manga.worktrees/M2-QUAL-DETERM-CALIB-zcode
+---
+
+# M2-QUAL-DETERM-CALIB：确定性口径重定义与阈值校准
+
+## 背景（M2-TA3-B2 F5 + 用户裁决）
+
+TA3-B2 定案：export 复制 Run1 渲染产物；remote 翻译采样天然非逐位确定（K11 Run2 译文浮动 7/11）。「export 字节逐位一致」口径在 remote 翻译下被证伪（thresholds §5 已标 superseded-pending）。用户裁决采纳候选方案：**按 reading_order 对齐的译文相似度**重定义确定性 Gate。本 Task 落地：用已有产物校准数值+修订权威口径。
+
+## 交付（AC）
+
+1. **AC1 校准数据**：`experiments/M2-QUAL-DETERM-CALIB/calibrate_determinism.py`——从 `verification/M2-TA3-B/phase2/summaries/qual-K11{,.rerun}.json` 与 `qual-BJ02{,.rerun}.json` 提取两次 run 的 region 译文（按 reading_order 对齐，方法学事实：region_id 每 run 重生成），计算逐对归一相似度（Levenshtein/字符级）分布：min/median/P10/逐值清单；区分「浮动对」（7/11）与「相同对」。
+2. **AC2 阈值建议**：基于分布给出 Gate 阈值建议（如 median≥0.95 且 min≥0.80——数字以实测分布为据，附推理），明确「相似度 Gate 度量的是翻译稳定性而非逐位复现」的语义边界；BJ02（该样本两次逐位相同）作为上界参照。
+3. **AC3 权威口径修订**：`verification/M2-TA3-B/quality-thresholds.md` §5/§7/§1 的 superseded-pending 条目替换为新口径（相似度阈值+测量方法+语义边界），标注修订来源（本 Task+用户裁决 2026-10-01）；`phase2-plan.md` 对应条目同步。
+4. **AC4 局限登记**：n=2 case 校准的样本量局限；Run1 层相似度未测（K11 export 差异根因未逐层隔离）；后续 qualification run 应同时落盘逐对相似度。
+
+## 允许修改面 / 禁改面
+
+允许：`experiments/M2-QUAL-DETERM-CALIB/**`、`verification/M2-TA3-B/**`（thresholds/plan 修订+本 Task 产物）、Task/Handoff。
+禁改：`src/**`、`tests/**`、`doc/contracts/**`、`experiments/M2-TA3-A/**`、`doc/STATUS.md`、TA3-B2 已交付 run 产物 JSON（qual-*.json 等，只读）。
+
+## 纪律
+
+- 阈值建议必须附实测分布（不拍脑袋）；修订不动其他阶段阈值；directional 口径保留。
