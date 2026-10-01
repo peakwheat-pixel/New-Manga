@@ -80,3 +80,7 @@ status: in_review
 2. **设置 UI/IPC 入口未做**：核心写通道 `save_settings_section("sfx", {...})` 已可用（测试往返覆盖），但 React 设置页尚无该键的界面；用户配置当前经 IPC/开发者路径。建议后续由 Qoder 在设置页 Task 中接入（键语义见本 handoff「方案落点」）。
 3. **默认仍是 SKIP**：precision-first 裁决不变；translate 路径生产可达但需用户显式配置。SFX 翻译质量评测（TA3-B2 的 n=0 缺口）须在用户真实配置 translate 后重新计量，本 Task 不预设质量结论。
 4. **回退方法**：单 commit 代码面（+2 测试文件、core_assembly 局部段），revert `a377a25a` 即完整回退；无数据/ schema 迁移，已落库的 `sfx_policy` 值由既有 CHECK 约束与门语义自洽。
+
+## superseded-by（M2-TASKS-BACKFILL-MULTIREGION 集成时搬运，2026-10-02）
+
+本文「multi-region page needs one TRANSLATE_ALL run for detect+creation and per-region follow-up runs」与「the registered scheduling slice」两处表述已被取代：executor backfill 的多 region 逐 region fan-out 已由 [M2-TASKS-BACKFILL-MULTIREGION](M2-TASKS-BACKFILL-MULTIREGION-f541b2f4.md) 落地（同 run 内 fan-out，e2e 断言同步翻转）；「registered scheduling slice」不再是待办。
