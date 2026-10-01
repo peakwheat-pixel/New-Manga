@@ -149,6 +149,58 @@ def make_corrupt_png() -> bytes:
     return valid[: len(valid) // 2]
 
 
+def make_thin_png(width: int, height: int, rows: int | None = None) -> bytes:
+    """A PNG whose declared size decodes to ``width*height*4`` bytes while
+    the file itself stays tiny (uniform transparent pixels).
+
+    M2-IMPORT-ALLOC-LIMIT: webtoon long-strips are small on disk but huge
+    decoded; ``make_png`` would have to allocate the full QImage to build
+    one, so this hand-rolls IHDR/IDAT/IEND with zlib-compressed empty rows
+    instead. No full-size allocation happens in the factory: rows are fed
+    to a streaming compressor in bounded batches (~8 MiB), so the peak
+    intermediate memory stays independent of ``height``.
+
+    ``rows`` (default: ``height``) caps how many scanlines the IDAT stream
+    actually carries. Qt checks the allocation limit against the *declared*
+    IHDR size before allocating, so a single scanline is enough to exercise
+    a fail-closed oversize decode without compressing gigabytes of pixel
+    data. With fewer rows than ``height`` the payload is truncated by
+    design — only use it for paths where Qt rejects before reading data.
+    """
+    import struct
+    import zlib
+
+    def chunk(tag: bytes, payload: bytes) -> bytes:
+        return (
+            struct.pack(">I", len(payload))
+            + tag
+            + payload
+            + struct.pack(">I", zlib.crc32(tag + payload) & 0xFFFFFFFF)
+        )
+
+    # IHDR: bit depth 8, colour type 6 (RGBA), no interlace.
+    header = struct.pack(">IIBBBBB", width, height, 8, 6, 0, 0, 0)
+    row = b"\x00" + b"\x00" * (width * 4)  # filter type 0 + zero scanline
+    data_rows = height if rows is None else min(rows, height)
+    compressor = zlib.compressobj(9)
+    idat_parts = []
+    rows_per_batch = max(1, (8 * 1024 * 1024) // len(row))
+    for start in range(0, data_rows, rows_per_batch):
+        batch = row * min(rows_per_batch, data_rows - start)
+        compressed = compressor.compress(batch)
+        if compressed:
+            idat_parts.append(compressed)
+    tail = compressor.flush()
+    if tail:
+        idat_parts.append(tail)
+    return (
+        b"\x89PNG\r\n\x1a\n"
+        + chunk(b"IHDR", header)
+        + chunk(b"IDAT", b"".join(idat_parts))
+        + chunk(b"IEND", b"")
+    )
+
+
 def make_source(filename: str, data: bytes):
     from application.importing.images.ports import ImportSource
 

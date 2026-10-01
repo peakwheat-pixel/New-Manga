@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "task": "M2-IMPORT-ALLOC-LIMIT",
+  "cases": {
+    "K07": {
+      "path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K07_641253_141\\base.png",
+      "source_size_bytes": 57012428,
+      "sha256": "95435126bab04dba89d34fa230eb49ff39110e546da982cd407c4a49e3527dea",
+      "allocation_limit_mib": 2047,
+      "imported": [
+        {
+          "filename": "base.png",
+          "width": 690,
+          "height": 131289,
+          "source_size_bytes": 57012428,
+          "managed_original_ref": "books/verify-k07/chapters/chapter-k07/original/7410a3a0d7f148b3829563abbc0348b3.png"
+        }
+      ],
+      "failed": []
+    },
+    "K09": {
+      "path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K09_717481_124\\base.png",
+      "source_size_bytes": 46128749,
+      "sha256": "9c78dc58f1684da2ad0847edc0f7bc7329bbc4c175fe6cab5b9f8b6667a59764",
+      "allocation_limit_mib": 2047,
+      "imported": [
+        {
+          "filename": "base.png",
+          "width": 690,
+          "height": 100480,
+          "source_size_bytes": 46128749,
+          "managed_original_ref": "books/verify-k09/chapters/chapter-k09/original/508ec7aa24854b14bf655395f37f498b.png"
+        }
+      ],
+      "failed": []
+    },
+    "K10": {
+      "path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K10_730656_11\\base.png",
+      "source_size_bytes": 40141409,
+      "sha256": "68024b789ff845e20ed7e69195fc3635c675513b4220ce8a7af941126bdb56a0",
+      "allocation_limit_mib": 2047,
+      "imported": [
+        {
+          "filename": "base.png",
+          "width": 690,
+          "height": 100674,
+          "source_size_bytes": 40141409,
+          "managed_original_ref": "books/verify-k10/chapters/chapter-k10/original/a2d8f229a34d4efba69362724b2c75cb.png"
+        }
+      ],
+      "failed": []
+    }
+  },
+  "control_qt_default_256": {
+    "K07": {
+      "rejected": true,
+      "detail": "Unable to read image data"
+    },
+    "K09": {
+      "rejected": true,
+      "detail": "Unable to read image data"
+    },
+    "K10": {
+      "rejected": true,
+      "detail": "Unable to read image data"
+    }
+  },
+  "verdict": "PASS"
+}
