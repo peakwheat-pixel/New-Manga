@@ -651,8 +651,10 @@ class PipelineService:
                 # TASK-049 AC ③: the detection step created the page's
                 # Regions; the task's still-regionless units (planned before
                 # any Region existed) now bind to the first one so ``ocr`` et
-                # al. run against a real Region target.
-                self._backfill_detected_regions(task, unit, result)
+                # al. run against a real Region target. Every additional
+                # Region gets a cloned unit chain appended, so a multi-region
+                # page is followed up per Region (M2-TASKS-BACKFILL-MULTIREGION).
+                self._backfill_detected_regions(run, task, unit, result)
             self._mark_terminal(run, unit.unit_id)
             self._persist(run)
             return CommitStepOutcome("committed", step_run.step_run_id)
@@ -918,11 +920,10 @@ class PipelineService:
             retry_reason="retry_failed_targets",
         )
 
-    @staticmethod
     def _backfill_detected_regions(
-        task: PipelineTask, unit: PlanUnit, result: StepResult
+        self, run: PipelineRun, task: PipelineTask, unit: PlanUnit, result: StepResult
     ) -> None:
-        """Bind the task's regionless units to the first detected Region.
+        """Bind the task's regionless units to the detected Regions.
 
         Invariant:
             PlanUnit.target_id ≡ 该步骤的写目标 (Region 步骤 ⇒ Region id; Page 步骤 ⇒ Page id).
@@ -936,10 +937,26 @@ class PipelineService:
             且在 plan 阶段已经标记终态。若在 backfill 时更改 unit_id，会导致终态计数丢失
             或双计。unit_id 内嵌 page id 与真实 target 不一致为已知展示层债务，本处不改。
 
-        Multi-Region pages still run their pipeline steps against the first
-        Region (``reading_order`` 1); fanning a page task out over every
-        detected Region is a later scheduling slice — the full id list stays
-        in the step's ``outputs`` for audit either way.
+        Multi-Region pages fan out (M2-TASKS-BACKFILL-MULTIREGION): beyond the
+        primary rebind above, every additional detected Region gets a full
+        unit chain planned by ``_plan_region`` against the live Region
+        snapshot and appended to the task — unit_id
+        ``{task_id}:{region_id}:{step_type}``, the exact shape and the exact
+        decision procedure the recovery path (``plan_run(mode="continue")`` /
+        ``resume_blocked``) already uses when it re-reads the page's live
+        Regions. Initial runs and recovery therefore follow the same
+        per-region semantics, including the plan-level SFX policy gate
+        (``SKIP_POLICY`` and its propagation to the image steps, D06 §85) and
+        lock/stage skips that a verbatim decision copy could not see. The
+        fan-out set is exactly the detect output; Regions appearing mid-run
+        are picked up by the next (re-)plan, not by this run.
+        ``run.planned_step_units`` grows by the appended units; units whose
+        decision is already terminal (``SKIP_*``) enter ``terminal_unit_ids``
+        in the same step — mirroring ``plan_run``'s initial accounting — so
+        progress and the terminal accounting close exactly once the ``RUN``
+        units finish. (DSH r1 R1: without that sync a COMPLETED run with a
+        policy-skipped clone chain, e.g. an SFX region under the default
+        ``skip`` policy, kept ``overall_progress`` below 1.0 forever.)
         """
         region_ids = tuple(result.outputs.get("region_ids") or ())
         if not region_ids:
@@ -957,6 +974,40 @@ class PipelineService:
             )
             for item in task.units
         )
+        extra_units: list[PlanUnit] = []
+        for region_id in region_ids[1:]:
+            # DSH r1 R3: this read sits inside commit_step_result, *after*
+            # the detect transaction committed and outside any try/except —
+            # an unhandled PipelineError here would escape execute_run and
+            # strand the run non-terminal (DB already has the detect commit;
+            # only recover_running_runs would self-heal it later). Treat a
+            # vanished/unreadable Region as TARGET_DELETED and skip it: the
+            # next (re-)plan re-reads live Regions anyway (recovery-path
+            # parity), so the run follows up on exactly the readable detect
+            # output.
+            try:
+                region_view = self._catalog.current(region_id)
+            except PipelineError:
+                # TARGET_DELETED / TARGET_NOT_FOUND：规划期读取窗口内该
+                # Region 已不可读（并发删除或 _region_or_error 前置不满足），
+                # 按 TARGET_DELETED 语义跳过该 region，交由下一次（重）规划
+                # 以 live Regions 重新拾取。
+                continue
+            for region_snapshot in region_view.region_snapshots():
+                extra_units.extend(
+                    self._plan_region(run, task, region_view, region_snapshot)
+                )
+        if extra_units:
+            task.units = task.units + tuple(extra_units)
+            run.planned_step_units += len(extra_units)
+            # DSH r1 R1: mirror plan_run's terminal accounting (service.py
+            # plan_run) — SKIP_* decisions are terminal by ``is_terminal``,
+            # so they must join the terminal set the moment they join the
+            # denominator, or a COMPLETED run's progress never reaches 1.0.
+            run.terminal_unit_ids.update(
+                u.unit_id for u in extra_units if u.decision.is_terminal
+            )
+            run.terminal_step_units = len(run.terminal_unit_ids)
 
     def _cancel_remaining(
         self, run: PipelineRun, task: PipelineTask, current: PlanUnit | None

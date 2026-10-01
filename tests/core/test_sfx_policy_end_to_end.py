@@ -9,20 +9,23 @@ offscreen + Mock/Local providers), so a configured policy is proven
 against the production chain, not a parallel fixture.
 
 Chain shape (the executor's registered backfill semantics: a page task
-planned before any Region existed binds its region steps to the FIRST
-detected region — application/tasks/service.py
-``_backfill_detected_regions`` — so a multi-region page needs one
-TRANSLATE_ALL run for detect+creation and per-region follow-up runs):
+planned before any Region existed binds its region steps to the detected
+regions — application/tasks/service.py ``_backfill_detected_regions``
+rebinds the primary in place and fans every additional region out with a
+cloned unit chain, M2-TASKS-BACKFILL-MULTIREGION): one TRANSLATE_ALL run
+follows up on every detected region; the SFX policy gate then decides
+per region at the step layer:
 
 - ``translate``: the TRANSLATE_ALL run lands the detected SFX region with
   ``sfx_policy=translate`` (the settings channel reached region creation)
-  while the backfilled speech neighbour translates normally (non-SFX
-  untouched). ``OCR_REGION`` then gives the SFX region its OCR stage
-  (Detect/OCR are never policy-gated) and ``RETRANSLATE_REGION`` — the
-  M2-SFX-SEM-1 end-to-end shape — proves the gate admits the region: the
-  mock provider only returns ``MOCK_SFX_TRANSLATION_TEXT`` for a
-  ``region_type == "sfx"`` request, so the persisted hit doubles as the
-  type-passthrough proof, and the translate unit plans RUN.
+  and translates it (the gate admits policy=translate), while the
+  backfilled speech neighbour translates normally (non-SFX untouched).
+  ``OCR_REGION`` then re-runs the SFX region's OCR stage (Detect/OCR are
+  never policy-gated) and ``RETRANSLATE_REGION`` — the M2-SFX-SEM-1
+  end-to-end shape — proves the gate admits the region: the mock provider
+  only returns ``MOCK_SFX_TRANSLATION_TEXT`` for a ``region_type == "sfx"``
+  request, so the persisted hit doubles as the type-passthrough proof, and
+  the translate unit plans RUN.
 - ``manual``: the same creation path lands ``sfx_policy=manual``; OCR
   still runs (manual keeps Detect/OCR for the human), but
   ``RETRANSLATE_REGION`` plans the documented registration
@@ -239,9 +242,13 @@ def test_translate_policy_runs_the_sfx_region_end_to_end(tmp_path, monkeypatch):
             regions["speech"]["text"]["machine_translation"]
             == MOCK_TRANSLATION_TEXT
         )
-        # the SFX region has no translation yet: the page task's backfill
-        # binds the first region only (the registered scheduling slice)
-        assert regions["sfx"]["text"]["machine_translation"] == ""
+        # the faned-out SFX region is translated in the same run: the policy
+        # (settings channel) reached region creation and the step-layer gate
+        # admits policy=translate
+        assert (
+            regions["sfx"]["text"]["machine_translation"]
+            == MOCK_SFX_TRANSLATION_TEXT
+        )
 
         # give the SFX region its OCR stage (Detect/OCR are never gated)…
         ocr_run = _run_region_command(core, CommandType.OCR_REGION, regions["sfx"]["region_id"])
