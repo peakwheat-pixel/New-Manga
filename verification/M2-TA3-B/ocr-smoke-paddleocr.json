@@ -1,0 +1,18 @@
+{
+  "engine": "paddleocr",
+  "model": "korean_PP-OCRv5_mobile_rec (PP-OCRv5 mobile det+rec)",
+  "status": "OK",
+  "weights_load_s": 5.5,
+  "first_inference_s": 20.04,
+  "text_lines": 28,
+  "mean_confidence": 0.6871,
+  "text_preview": "당근아? | 당근아! | 당근아? | 당근아?! | (EA | 이렇게까지는 | 할 필요없을줄 | 어라? 침대 믿에도 | 당근아?!!! | 알았는데",
+  "adapter_seam_ocr_bytes": {
+    "status": "EMPTY_RESULT",
+    "error": ""
+  },
+  "image": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\02_public_ground_truth_peppercarrot\\ep04\\kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+  "image_sha256": "4bd9b181ac6fc9a041f4e7c82570a0b7792f9840e9cfed0cc88bdbf1d61c70c8",
+  "started_at_utc": "2026-10-01T07:50:54Z",
+  "wall_s": 25.63
+}
