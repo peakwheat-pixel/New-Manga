@@ -2,7 +2,8 @@
 id: M2-QUAL-DETERM-CALIB
 title: "F5 确定性 Gate 重定义落地：reading_order 对齐译文相似度口径校准（用户裁决采纳候选方案）"
 kind: qualification
-status: delivered  # 实现交付（ZCode，续接熔断半成品完成）：校准脚本+calibration 产物+thresholds §5/§7 与 phase2-plan 口径修订落地，待 DSH 非作者 review → Codex 集成后方可 done；delivery_head 见 doc/handoffs/M2-QUAL-DETERM-CALIB-*.md
+status: done  # DSH r1 approved_with_conditions（4×P2 Gate 定义完备性）→ 条件返修 R1-R14 全 closed（复跑逐值一致）→ r2 approved 0×新 P0/P1/P2
+
 approval: user_ruling_2026-10-01_all_four
 suggested_owner: ZCode
 owner: ZCode
