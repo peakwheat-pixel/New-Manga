@@ -1,0 +1,171 @@
+{
+  "task": "M2-TA3-B2-KO-RERUN",
+  "measure": "reading_order-aligned translation similarity (remote-chain determinism gate, quality-thresholds §5 dual-track)",
+  "case_id": "K11",
+  "language": "ko",
+  "gate": {
+    "metric": "similarity_normalized",
+    "median_min": 0.95,
+    "min_min": 0.7
+  },
+  "n_pairs": 13,
+  "n_pairs_nonempty": 11,
+  "pairs": [
+    {
+      "reading_order": 1,
+      "region_type": "speech",
+      "source_text": "당근아?",
+      "text_first": "胡萝卜？",
+      "text_second": "胡萝卜？",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 2,
+      "region_type": "speech",
+      "source_text": "당근아!",
+      "text_first": "胡萝卜！",
+      "text_second": "胡萝卜！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 3,
+      "region_type": "speech",
+      "source_text": "당근아?",
+      "text_first": "胡萝卜？",
+      "text_second": "胡萝卜？",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 4,
+      "region_type": "speech",
+      "source_text": "당근아?!",
+      "text_first": "胡萝卜？！",
+      "text_second": "胡萝卜？！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 5,
+      "region_type": "speech",
+      "source_text": "이렇게까지는\n할필요없을줄\n알았는데",
+      "text_first": "没想到\n会做到\n这种地步",
+      "text_second": "我本以为\n没必要做到\n这种地步",
+      "similarity_raw": 0.5333,
+      "similarity_normalized": 0.4615,
+      "status": "variant"
+    },
+    {
+      "reading_order": 6,
+      "region_type": "speech",
+      "source_text": "당근아?!!!",
+      "text_first": "胡萝卜？！！！",
+      "text_second": "胡萝卜？！！！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 7,
+      "region_type": "speech",
+      "source_text": "어라? 침대 믿에도\n니?",
+      "text_first": "咦？床底下也有\n你？",
+      "text_second": "咦？床底下也有\n你？",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 8,
+      "region_type": "speech",
+      "source_text": "당근아!",
+      "text_first": "胡萝卜！",
+      "text_second": "胡萝卜！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 9,
+      "region_type": "speech",
+      "source_text": "\n\n",
+      "text_first": "",
+      "text_second": "",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "empty_both"
+    },
+    {
+      "reading_order": 10,
+      "region_type": "speech",
+      "source_text": "크록브록크록\n크록사각 사각\n사각사각",
+      "text_first": "咔咯咔咯咔咯\n咔咯沙沙沙沙\n沙沙沙沙",
+      "text_second": "咔咯咔咯咔咯\n咔咯沙沙 沙沙\n沙沙沙沙",
+      "similarity_raw": 0.9474,
+      "similarity_normalized": 1.0,
+      "status": "variant"
+    },
+    {
+      "reading_order": 11,
+      "region_type": "speech",
+      "source_text": "오 나의\n태야아옹!!",
+      "text_first": "哦 我的\n泰阳！！",
+      "text_second": "哦 我的\n泰阳！！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 12,
+      "region_type": "speech",
+      "source_text": "꼬르를",
+      "text_first": "咕噜噜",
+      "text_second": "咕噜噜",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 13,
+      "region_type": "sfx",
+      "source_text": "",
+      "text_first": "",
+      "text_second": "",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "empty_both"
+    }
+  ],
+  "stats": {
+    "normalized_all_pairs": {
+      "n": 13,
+      "n_identical": 12,
+      "n_variant": 1,
+      "min": 0.4615,
+      "median": 1.0,
+      "p10": 1.0,
+      "max": 1.0
+    },
+    "normalized_nonempty": {
+      "n": 11,
+      "n_identical": 10,
+      "n_variant": 1,
+      "min": 0.4615,
+      "median": 1.0,
+      "p10": 1.0,
+      "max": 1.0
+    }
+  },
+  "gate_verdict_normalized": "FAIL",
+  "export_sha_first": "7aa98484c39b40eedd10ef5fc3858a73586db7afe3272e5676aa284160216f6f",
+  "export_sha_second": "ae7452a24e8667bf382f58a4633df5d3de0beb663d0bf7d4ce718335f3244a10",
+  "export_sha_match": false,
+  "note_export_track": "export sha bitwise equality is the MOCK/DETERMINISTIC-track caliber; this run binds the REMOTE track (DeepSeek) so the similarity gate above is the gate caliber and the export sha is recorded as supplementary data only",
+  "directional_disclaimer": "directional evidence: one rerun pair, remote DeepSeek provider, M2-TA3-B2-KO-RERUN; not a production determinism conclusion"
+}

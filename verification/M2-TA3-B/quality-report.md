@@ -197,3 +197,14 @@ export 哈希独立复算（§5 口径，runner 之外）：**13 个 OK export�
 3. **Task 建议 B（新）**：导入大图支持（QImageReader allocation limit 可配置）——影响 3 case。
 4. （登记）SFX→translate 策略的产品入口（SFX 语义评测前置条件）。
 5. （口径）F4 的 detect 冒烟口径修订 + F5 的确定性口径重定义（r1 R1：从"export 哈希逐位一致"改为 remote 翻译下的新口径，候选=reading_order 对齐译文相似度；重定义前按 superseded-pending 引用）。（关系注 2026-10-01：F5 部分的 superseded-pending 已由 M2-QUAL-DETERM-CALIB 落地解除——双轨口径见 quality-thresholds.md §5，校准证据=`verification/M2-QUAL-DETERM-CALIB/`；F4 部分仍待其自身 Task。）
+
+---
+
+## 10. ko-rerun 增补节（M2-TA3-B2-KO-RERUN，2026-10-02）
+
+首跑 ko 9 case fail-closed（F1/F2）后的重跑（用户裁决③）已在独立 Task 执行，**本节只作索引，正文以 [ko-rerun-report.md](ko-rerun-report.md) 为准**：
+
+- **F1 解锁实证（K02）**：首跑 0 region → 重跑 93 region 全链 export OK（Run2 46 region 携带 DeepSeek API 故障窗口的 typed PROVIDER_TIMEOUT，environment；Run1 与 export 层完整）。
+- **预算红线触发（纪律停跑）**：AC1 试算实测每请求恰 1 个 target region（请求数≈2×region 数、≈607 est token/请求）→ 全量外推 63 万–209 万 est token > 50 万红线 → K01/K04/K05/K07/K08/K09/K10 共 7 case 停跑等裁决（K07/K09/K10 亦因此 **F2/ALLOC 解锁仍无页级实测**）。
+- **最小对照集**：K19 F4 预期 fail-closed 维持；K11 行为对照一致（2 空 OCR region typed 同型）、ko G1 CER 6 行与首跑逐位一致（median 0.0556 PASS directional）、`sfx.policy=translate` 配置语义走通（素材缺口登记）、K11 相似度 Gate FAIL（1/13 合法重译误报，min 0.4615——CALIB 局限 8 形态首次实测）。
+- 首跑 §1.1 per-case 表、§2.3 ko G1 数字、§4 F1/F2/F3/F4 归因**维持有效**；F1 的"Task 建议 A"已被 M2-DETECT-WEBTOON-TILING 落地并由本重跑 K02 实证。

@@ -1,0 +1,99 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K19",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "open_public_comic_page",
+  "tags": [],
+  "text_type": "unlabeled_or_absent",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\韩漫_KO\\02_public_ground_truth_peppercarrot\\ep20\\kr_Pepper-and-Carrot_by-David-Revoy_E20P01.jpg",
+  "source_sha256": "250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1",
+  "started_at_utc": "2026-10-01T20:21:11Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "production default (settings key absent -> SKIP)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 1200,
+      "height": 1660,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "ee60e560fc844eb3b142f149853ba900",
+      "width": 1200,
+      "height": 1660
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "elapsed_s": 7.76
+    },
+    "detect": {
+      "status": "EMPTY",
+      "region_count": 0
+    },
+    "run2_region_chain": {
+      "status": "SKIPPED",
+      "reason": "no regions detected",
+      "attribution": "data"
+    }
+  },
+  "run1": {
+    "run_id": "run-a6b08e4328914bd5a82a267fbabeb6f9",
+    "status": "completed_with_failures",
+    "elapsed_s": 7.76,
+    "steps": [
+      {
+        "step_type": "detect",
+        "status": "failed",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "detector returned no candidates for page 'ee60e560fc844eb3b142f149853ba900' (stage=detect)"
+      }
+    ]
+  },
+  "regions": [],
+  "run2": {},
+  "ocr_details": [],
+  "translate_details": [],
+  "export": {},
+  "attribution": [
+    "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "data:no-regions-detected"
+  ],
+  "source_size": [
+    1200,
+    1660
+  ],
+  "source_sha256_recomputed": "250e56239e6ceb4b7edad4171fcf290b1002976baefe606f5a3bdfe5cea792a1",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K19-apk588ak",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 0,
+    "n_target_region_calls": 0,
+    "input_est_tokens_total": 0,
+    "output_est_tokens_total": 0
+  },
+  "finished_at_utc": "2026-10-01T20:21:19Z",
+  "wall_s": 8.15,
+  "pipeline_completed": false
+}

@@ -1,0 +1,1074 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K11",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "open_public_comic_page",
+  "tags": [
+    "normal_dialogue"
+  ],
+  "text_type": "unlabeled_or_absent",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\02_public_ground_truth_peppercarrot\\ep04\\kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+  "source_sha256": "4bd9b181ac6fc9a041f4e7c82570a0b7792f9840e9cfed0cc88bdbf1d61c70c8",
+  "started_at_utc": "2026-10-01T21:30:47Z",
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "production default (settings key absent -> SKIP)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 1200,
+      "height": 1660,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "e3515ab2ec2e4526b3b72de78d276088",
+      "width": 1200,
+      "height": 1660
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "elapsed_s": 61.49
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 13
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 13
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "region_runs": 13,
+      "truncated": false,
+      "elapsed_s": 71.75
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 13,
+      "translated": 11
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "7aa98484c39b40ee",
+      "size": 3064947
+    }
+  },
+  "run1": {
+    "run_id": "run-b8aebf413d184c05add557370501817e",
+    "status": "completed_with_failures",
+    "elapsed_s": 61.49,
+    "steps": [
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "failed",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "beade011e77c4435a659a670632af2e3",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 45,
+        "y": 6,
+        "width": 123,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "54f008984f3f492f849b2d581b3db742",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 535,
+        "y": 13,
+        "width": 93,
+        "height": 45
+      }
+    },
+    {
+      "region_id": "7860be01631147fc9653453ea14a0fe3",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 694,
+        "y": 132,
+        "width": 93,
+        "height": 44
+      }
+    },
+    {
+      "region_id": "80226052af9d4c9b8bb3d4eaf35c0107",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 528,
+        "y": 199,
+        "width": 101,
+        "height": 44
+      }
+    },
+    {
+      "region_id": "d38c906e509c45dbbe8fa7ceb7cfc66c",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1006,
+        "y": 320,
+        "width": 153,
+        "height": 112
+      }
+    },
+    {
+      "region_id": "85aa3e14bf8544238b3afb3ba2675677",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 613,
+        "y": 365,
+        "width": 121,
+        "height": 45
+      }
+    },
+    {
+      "region_id": "b6f6148c9a5e40dd827239ef2cd84383",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 292,
+        "y": 370,
+        "width": 190,
+        "height": 75
+      }
+    },
+    {
+      "region_id": "3f1b7fe3fdff4cb28f81d60ae24dec2d",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 344,
+        "y": 592,
+        "width": 144,
+        "height": 70
+      }
+    },
+    {
+      "region_id": "9d7500d0d7a94b37a4a2c22fcd38a230",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 858,
+        "y": 713,
+        "width": 168,
+        "height": 92
+      }
+    },
+    {
+      "region_id": "313c50a21e894429937ca0805de267a2",
+      "reading_order": 10,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 448,
+        "y": 1250,
+        "width": 188,
+        "height": 69
+      }
+    },
+    {
+      "region_id": "362277d359734d1ab217ecc7b5e41fb0",
+      "reading_order": 11,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 174,
+        "y": 1252,
+        "width": 135,
+        "height": 101
+      }
+    },
+    {
+      "region_id": "7c10bc7cf48844138ebd4c625b82cfbb",
+      "reading_order": 12,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 595,
+        "y": 1458,
+        "width": 68,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "e762169f3b184b5fa968f789a50c2619",
+      "reading_order": 13,
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 805,
+        "y": 564,
+        "width": 173,
+        "height": 197
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed_with_failures",
+    "region_target_count": 13,
+    "region_runs_executed": 13,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "beade011e77c4435a659a670632af2e3",
+        "run_id": "run-e35c1fdb4299410caa782c55ed4de29a",
+        "status": "completed"
+      },
+      {
+        "region_id": "54f008984f3f492f849b2d581b3db742",
+        "run_id": "run-8caf1adaa3604a7b93940179df4f9cac",
+        "status": "completed"
+      },
+      {
+        "region_id": "7860be01631147fc9653453ea14a0fe3",
+        "run_id": "run-dfbc6173dd82475fb1fb9675974656b4",
+        "status": "completed"
+      },
+      {
+        "region_id": "80226052af9d4c9b8bb3d4eaf35c0107",
+        "run_id": "run-54fc12e1cabd40569492088e90098e35",
+        "status": "completed"
+      },
+      {
+        "region_id": "d38c906e509c45dbbe8fa7ceb7cfc66c",
+        "run_id": "run-f9c133e2ac5c43cb82b40e56dcf9f1d5",
+        "status": "completed"
+      },
+      {
+        "region_id": "85aa3e14bf8544238b3afb3ba2675677",
+        "run_id": "run-36f711374e6a4db587ee76012d73a268",
+        "status": "completed"
+      },
+      {
+        "region_id": "b6f6148c9a5e40dd827239ef2cd84383",
+        "run_id": "run-5de347b2a73e4523a849ef0d1074e0b0",
+        "status": "completed"
+      },
+      {
+        "region_id": "3f1b7fe3fdff4cb28f81d60ae24dec2d",
+        "run_id": "run-39f09b6f52434bf39166697fdb21687c",
+        "status": "completed"
+      },
+      {
+        "region_id": "9d7500d0d7a94b37a4a2c22fcd38a230",
+        "run_id": "run-b028dde78f3947d0b76ac03569eec7ad",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "313c50a21e894429937ca0805de267a2",
+        "run_id": "run-9e69cbcfc7894a9cbcd7baedbbb36886",
+        "status": "completed"
+      },
+      {
+        "region_id": "362277d359734d1ab217ecc7b5e41fb0",
+        "run_id": "run-ca7ee0e619c14c08aef4eef476658b31",
+        "status": "completed"
+      },
+      {
+        "region_id": "7c10bc7cf48844138ebd4c625b82cfbb",
+        "run_id": "run-33c9a3408c42435d954f4177ff4e8cc5",
+        "status": "completed"
+      },
+      {
+        "region_id": "e762169f3b184b5fa968f789a50c2619",
+        "run_id": "run-d34c8f35500741719556fa3d0fbbca77",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      }
+    ],
+    "elapsed_s": 71.75
+  },
+  "ocr_details": [
+    {
+      "region_id": "beade011e77c4435a659a670632af2e3",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 45,
+        "y": 6,
+        "width": 123,
+        "height": 48
+      },
+      "ocr_text": "당근아?"
+    },
+    {
+      "region_id": "54f008984f3f492f849b2d581b3db742",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 535,
+        "y": 13,
+        "width": 93,
+        "height": 45
+      },
+      "ocr_text": "당근아!"
+    },
+    {
+      "region_id": "7860be01631147fc9653453ea14a0fe3",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 694,
+        "y": 132,
+        "width": 93,
+        "height": 44
+      },
+      "ocr_text": "당근아?"
+    },
+    {
+      "region_id": "80226052af9d4c9b8bb3d4eaf35c0107",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 528,
+        "y": 199,
+        "width": 101,
+        "height": 44
+      },
+      "ocr_text": "당근아?!"
+    },
+    {
+      "region_id": "d38c906e509c45dbbe8fa7ceb7cfc66c",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1006,
+        "y": 320,
+        "width": 153,
+        "height": 112
+      },
+      "ocr_text": "이렇게까지는\n할필요없을줄\n알았는데"
+    },
+    {
+      "region_id": "85aa3e14bf8544238b3afb3ba2675677",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 613,
+        "y": 365,
+        "width": 121,
+        "height": 45
+      },
+      "ocr_text": "당근아?!!!"
+    },
+    {
+      "region_id": "b6f6148c9a5e40dd827239ef2cd84383",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 292,
+        "y": 370,
+        "width": 190,
+        "height": 75
+      },
+      "ocr_text": "어라? 침대 믿에도\n니?"
+    },
+    {
+      "region_id": "3f1b7fe3fdff4cb28f81d60ae24dec2d",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 344,
+        "y": 592,
+        "width": 144,
+        "height": 70
+      },
+      "ocr_text": "당근아!"
+    },
+    {
+      "region_id": "9d7500d0d7a94b37a4a2c22fcd38a230",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 858,
+        "y": 713,
+        "width": 168,
+        "height": 92
+      },
+      "ocr_text": "\n\n"
+    },
+    {
+      "region_id": "313c50a21e894429937ca0805de267a2",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 448,
+        "y": 1250,
+        "width": 188,
+        "height": 69
+      },
+      "ocr_text": "크록브록크록\n크록사각 사각\n사각사각"
+    },
+    {
+      "region_id": "362277d359734d1ab217ecc7b5e41fb0",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 174,
+        "y": 1252,
+        "width": 135,
+        "height": 101
+      },
+      "ocr_text": "오 나의\n태야아옹!!"
+    },
+    {
+      "region_id": "7c10bc7cf48844138ebd4c625b82cfbb",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 595,
+        "y": 1458,
+        "width": 68,
+        "height": 46
+      },
+      "ocr_text": "꼬르를"
+    },
+    {
+      "region_id": "e762169f3b184b5fa968f789a50c2619",
+      "reading_order": 13,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 805,
+        "y": 564,
+        "width": 173,
+        "height": 197
+      },
+      "ocr_text": ""
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "beade011e77c4435a659a670632af2e3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "당근아?",
+      "translated_text": "胡萝卜？",
+      "final_translation": "胡萝卜？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "54f008984f3f492f849b2d581b3db742",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "당근아!",
+      "translated_text": "胡萝卜！",
+      "final_translation": "胡萝卜！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7860be01631147fc9653453ea14a0fe3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "당근아?",
+      "translated_text": "胡萝卜？",
+      "final_translation": "胡萝卜？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "80226052af9d4c9b8bb3d4eaf35c0107",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "당근아?!",
+      "translated_text": "胡萝卜？！",
+      "final_translation": "胡萝卜？！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d38c906e509c45dbbe8fa7ceb7cfc66c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이렇게까지는\n할필요없을줄\n알았는데",
+      "translated_text": "没想到\n会做到\n这种地步",
+      "final_translation": "没想到\n会做到\n这种地步",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "85aa3e14bf8544238b3afb3ba2675677",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "당근아?!!!",
+      "translated_text": "胡萝卜？！！！",
+      "final_translation": "胡萝卜？！！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b6f6148c9a5e40dd827239ef2cd84383",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어라? 침대 믿에도\n니?",
+      "translated_text": "咦？床底下也有\n你？",
+      "final_translation": "咦？床底下也有\n你？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3f1b7fe3fdff4cb28f81d60ae24dec2d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "당근아!",
+      "translated_text": "胡萝卜！",
+      "final_translation": "胡萝卜！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9d7500d0d7a94b37a4a2c22fcd38a230",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "\n\n",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "313c50a21e894429937ca0805de267a2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "크록브록크록\n크록사각 사각\n사각사각",
+      "translated_text": "咔咯咔咯咔咯\n咔咯沙沙沙沙\n沙沙沙沙",
+      "final_translation": "咔咯咔咯咔咯\n咔咯沙沙沙沙\n沙沙沙沙",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "362277d359734d1ab217ecc7b5e41fb0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오 나의\n태야아옹!!",
+      "translated_text": "哦 我的\n泰阳！！",
+      "final_translation": "哦 我的\n泰阳！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7c10bc7cf48844138ebd4c625b82cfbb",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "꼬르를",
+      "translated_text": "咕噜噜",
+      "final_translation": "咕噜噜",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e762169f3b184b5fa968f789a50c2619",
+      "region_type": "sfx",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-cbd677c3043e",
+    "file": "K11-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-rerun-pixels\\export\\K11-translated.png",
+    "sha256": "7aa98484c39b40eedd10ef5fc3858a73586db7afe3272e5676aa284160216f6f",
+    "size": 3064947,
+    "translated_revision_id": "d981fccab2824ec4a11ab159f3ec9478"
+  },
+  "attribution": [
+    "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "defect:run2-region-chain"
+  ],
+  "source_size": [
+    1200,
+    1660
+  ],
+  "source_sha256_recomputed": "4bd9b181ac6fc9a041f4e7c82570a0b7792f9840e9cfed0cc88bdbf1d61c70c8",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K11-i6e5lk98",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-rerun-pixels\\ocr\\crops\\K11",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 19,
+    "n_target_region_calls": 19,
+    "input_est_tokens_total": 10409,
+    "output_est_tokens_total": 965
+  },
+  "finished_at_utc": "2026-10-01T21:33:01Z",
+  "wall_s": 133.69,
+  "pipeline_completed": false
+}

@@ -1,0 +1,76 @@
+{
+  "task": "M2-TA3-B2-KO-RERUN",
+  "record": "AC1 pilot (K02) measured metering + full-scale extrapolation + STOP ruling registration",
+  "generated_at_utc": "2026-10-01T21:00Z (pilot window 2026-10-01T17:37-20:10 local +0800)",
+  "pilot_case": {
+    "case_id": "K02",
+    "size_wh": [
+      600,
+      18401
+    ],
+    "regions_detected": 93,
+    "run1_elapsed_s": 1848.5,
+    "run2_elapsed_s": 3741.97,
+    "wall_s": 5591.56,
+    "requests_metered": 140,
+    "note_requests": "140 = Run1 93 region-level requests + Run2 47 successful region requests; 46 further Run2 requests failed during the DeepSeek API outage window (45 PROVIDER_TIMEOUT + 1 PROVIDER_INVALID_OUTPUT, typed fail-closed) and are not counted by the metering proxy (it records successful translate() calls only). KEY FINDING: every request carries exactly ONE target region (n_target_region_calls == requests) - Run1 is NOT batched at the HTTP level, so full-chain request count ~= 2 x region_count (one Run1 sweep + one Run2 sweep).",
+    "input_est_tokens_total": 77314,
+    "output_est_tokens_total": 7603,
+    "est_tokens_per_request": 607,
+    "token_basis": "estimate_tokens (ports/translation/protocol.py) over system prompt + payload_json / raw completion; ESTIMATES, endpoint usage fields are not exposed by the production client"
+  },
+  "extrapolation": {
+    "known_regions": {
+      "K01": 180,
+      "K02": 93,
+      "K04": 113,
+      "K05": 62,
+      "K08": 60,
+      "source": "verification/M2-DETECT-WEBTOON-TILING/qualification-results.json (production conf 0.5, same weights); K02=93 confirmed identical in this rerun pilot",
+      "K11": 13,
+      "K19": 0,
+      "K07_K09_K10": "UNKNOWN (ALLOC fix landed after the TILING qualification; these three pages never had a detect measurement) - density-based estimate 120-400 regions each"
+    },
+    "region_total_range": [
+      881,
+      1721
+    ],
+    "est_tokens_per_region_fullchain": 1214,
+    "formula": "requests ~= 2 x regions (Run1 sweep + Run2 sweep) x ~607 est tokens/request",
+    "known_only_est_tokens": 632000,
+    "full_range_est_tokens": [
+      1070000,
+      2090000
+    ],
+    "verdict": "EXCEEDS the 500k est-token stop line from the task brief even counting ONLY the five TILING-cleared webtoon pages (632k) - full-scale rerun STOPPED per discipline, awaiting user ruling"
+  },
+  "stop_ruling": {
+    "stopped_cases": [
+      "K01",
+      "K04",
+      "K05",
+      "K07",
+      "K08",
+      "K09",
+      "K10"
+    ],
+    "reason": "AC1 pilot extrapolation >500k est tokens (task brief discipline); user ruling required on scope (e.g. reduced region sampling per case, --max-regions escape valve with mandated disclosure, or budget approval)",
+    "minimal_set_still_executed": {
+      "K19": "0 regions (textless page) -> zero translation requests, API-independent; F4 fail-closed re-confirmed",
+      "K11": "13 regions ~= 26 requests ~= 16k est tokens; required for AC2 (K11 comparison), AC3 (ko G1 CER re-measure, SFX stats, sfx.policy=translate probe) and AC4 (similarity-gate rerun pair on K11 - the brief allows K11 OR K02)"
+    },
+    "K02_pilot_summary_caveat": "qual-K02.json carries 46 Run2 region failures from the API outage window (environment, typed PROVIDER_TIMEOUT); the detect/Run1/export layers are complete and prove the F1 unlock (93 regions, full chain reached export OK). Whether to RERUN K02 clean (+186 requests ~= 113k est tokens) is part of the user ruling."
+  },
+  "api_outage_window": {
+    "observed_from": "K02 Run2 region ~47 onward (first PROVIDER_TIMEOUT)",
+    "probe_1": "2026-10-01T20:40Z+0800 minimal request -> read timeout after 180 s",
+    "probe_2": "2026-10-01T21:05Z+0800 minimal request -> killed at 90 s timeout",
+    "classification": "environment (remote endpoint unresponsive); production retry/fail-closed semantics behaved as designed, no retry storm",
+    "recovered": "2026-10-01T21:27Z driver probe attempt 1 OK (after ~115 min outage); K11 minimal set (main pass + sfx.policy=translate probe + determinism rerun) executed 21:33-21:37Z, all steps landed"
+  },
+  "executed_cost_actual": {
+    "metered_requests_total": "K02 140 + K11 main 19 + K11 sfx 19 + K11 rerun (see qual-K11.rerun.json) ~= 197 successful requests",
+    "est_tokens_actual": "input ~= 77314 + 3x10409 ~= 108.5k; output ~= 7603 + 3x965 ~= 10.5k; total ~= 119k est tokens (K02 attempt-1 partial ~140 requests additional, un-metered, killed by the harness timeout)",
+    "note": "ESTIMATES per the metering proxy basis; far below the 500k line - the line was triggered by the FULL-SCALE extrapolation (7 remaining cases), not by the executed set"
+  }
+}

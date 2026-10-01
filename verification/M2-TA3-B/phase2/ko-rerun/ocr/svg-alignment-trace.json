@@ -1,0 +1,245 @@
+{
+  "K11": {
+    "svg_elements_total": 26,
+    "svg_elements_matched": 20,
+    "regions_matched": 11,
+    "regions_total": 13,
+    "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)",
+    "trace": [
+      {
+        "text": "고양이 사료",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          2026.241334323469,
+          1527.6427776154674
+        ],
+        "matched_region_id": "9d7500d0d7a94b37a4a2c22fcd38a230"
+      },
+      {
+        "text": "당근아?",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          518.6988195907526,
+          215.44522850857203
+        ],
+        "matched_region_id": "beade011e77c4435a659a670632af2e3"
+      },
+      {
+        "text": "어라? 침대 밑에도없네?",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          801.3489045331035,
+          982.7011750086165
+        ],
+        "matched_region_id": "b6f6148c9a5e40dd827239ef2cd84383"
+      },
+      {
+        "text": "당근아!",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1438.8509066236525,
+          210.898805540092
+        ],
+        "matched_region_id": "7860be01631147fc9653453ea14a0fe3"
+      },
+      {
+        "text": "이렇게까지는할 필요 없을 줄알았는데..",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          2239.7016433633453,
+          1009.1155053208565
+        ],
+        "matched_region_id": "d38c906e509c45dbbe8fa7ceb7cfc66c"
+      },
+      {
+        "text": "당근아!",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1283.2382913239,
+          1495.7740149441797
+        ],
+        "matched_region_id": "e762169f3b184b5fa968f789a50c2619"
+      },
+      {
+        "text": "크륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1075.799397664686,
+          1785.188207099985
+        ],
+        "matched_region_id": null
+      },
+      {
+        "text": "사각",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1982.3704511527799,
+          1640.034243694031
+        ],
+        "matched_region_id": "9d7500d0d7a94b37a4a2c22fcd38a230"
+      },
+      {
+        "text": "크륵  크륵  크륵 크륵  크륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1042.4558374233661,
+          2760.2411783705847
+        ],
+        "matched_region_id": "313c50a21e894429937ca0805de267a2"
+      },
+      {
+        "text": "사각  사각  사각사각  사각",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1204.9929185972778,
+          2770.150183154449
+        ],
+        "matched_region_id": "313c50a21e894429937ca0805de267a2"
+      },
+      {
+        "text": "꼬르륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1545.10997381949,
+          3200.5800080674317
+        ],
+        "matched_region_id": "7c10bc7cf48844138ebd4c625b82cfbb"
+      },
+      {
+        "text": "쌔애앵!",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1948.736909089975,
+          3173.485289466042
+        ],
+        "matched_region_id": null
+      },
+      {
+        "text": "오 나의태야아옹!!",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          499.70201925450687,
+          2801.9646709029516
+        ],
+        "matched_region_id": "362277d359734d1ab217ecc7b5e41fb0"
+      },
+      {
+        "text": "크륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1199.498257664686,
+          1754.136507099985
+        ],
+        "matched_region_id": null
+      },
+      {
+        "text": "크륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1311.100587664686,
+          1727.449007099985
+        ],
+        "matched_region_id": null
+      },
+      {
+        "text": "크륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1153.4016476646862,
+          1836.625207099985
+        ],
+        "matched_region_id": null
+      },
+      {
+        "text": "크륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1262.5778376646858,
+          1800.2332070999848
+        ],
+        "matched_region_id": null
+      },
+      {
+        "text": "당근아?",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1764.8924135000002,
+          456.57045300000004
+        ],
+        "matched_region_id": "7860be01631147fc9653453ea14a0fe3"
+      },
+      {
+        "text": "당근아?!",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1422.8470135000002,
+          595.206823
+        ],
+        "matched_region_id": "80226052af9d4c9b8bb3d4eaf35c0107"
+      },
+      {
+        "text": "당근아?!!!",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          1596.9888135,
+          939.525003
+        ],
+        "matched_region_id": "85aa3e14bf8544238b3afb3ba2675677"
+      },
+      {
+        "text": "사각",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          2092.21285115278,
+          1609.532143694031
+        ],
+        "matched_region_id": "9d7500d0d7a94b37a4a2c22fcd38a230"
+      },
+      {
+        "text": "사각",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          2199.74875115278,
+          1582.618243694031
+        ],
+        "matched_region_id": "9d7500d0d7a94b37a4a2c22fcd38a230"
+      },
+      {
+        "text": "사각",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          2048.61245115278,
+          1681.4818436940309
+        ],
+        "matched_region_id": "9d7500d0d7a94b37a4a2c22fcd38a230"
+      },
+      {
+        "text": "사각",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          2152.02145115278,
+          1648.5273436940308
+        ],
+        "matched_region_id": "9d7500d0d7a94b37a4a2c22fcd38a230"
+      },
+      {
+        "text": "크륵  크륵  크륵 크륵  크륵",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          212.94559175240923,
+          2673.744471600473
+        ],
+        "matched_region_id": "362277d359734d1ab217ecc7b5e41fb0"
+      },
+      {
+        "text": "사각  사각  사각사각  사각",
+        "kind": "flowRoot",
+        "anchor_canvas": [
+          245.4316633970792,
+          2741.9707962063485
+        ],
+        "matched_region_id": "362277d359734d1ab217ecc7b5e41fb0"
+      }
+    ]
+  }
+}
