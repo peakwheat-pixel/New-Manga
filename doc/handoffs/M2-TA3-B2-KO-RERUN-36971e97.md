@@ -68,3 +68,23 @@
 - 运行次数：K02 全链×2（一次被宿主强杀 + 一次完成）、K19×1、K11×3（主/sfx/rerun）+ 自评 3 请求 + 探针 ~7 次。
 - 失败样例：K02 Run2 46 region（45×PROVIDER_TIMEOUT+1×INVALID_OUTPUT）；K11 2 region（空 OCR term_extract INVALID_INPUT=F3 同型）。
 - Secret：无（key 仅 env，零明文入库）。
+
+## r1 返修记录（DSH r1 = approved 有条件：0×P0/P1 + 3×P2 + R4-R11 精度；纯文档修订 + R3/R10 runner 微调，原 head `0001d68c` 之上）
+
+DSH r1 报告：`G:/CODEX/New Manga.task-envs/M2-TA3-B2-KO-RERUN/dsh-review-r1.md`（DSH 独立复算全部数字成立、停跑方向保守成立）。返修=在原分支追加分诊 commit，禁改面（src/tests/contracts/packaging/apps/首跑产物/thresholds/STATUS）零 diff；**停跑决策与全部 Gate 判定不变**。逐条落点：
+
+| ID | 级别 | 处置 | 落点 |
+|---|---|---|---|
+| R1 | P2 | 红线口径出处落盘：「50 万 est token」登记为**编排会话停跑指令数值、无任务书/用户裁决原文背书**（任务书 AC5 只写"预估请求数/先行一个 case 试算"）；仓库现行纪律=phase2-plan.md:192「数万 token 量级，超预期即停并登记」。停跑依据按现行口径重述（外推 63 万–209 万对两种口径均远超线，决策不变）；「50 万是否追认为新口径」列为 §7 裁决项 | ko-rerun-report.md §1.2（红线口径出处段）/§0 AC1/§6 N2/§7.5；budget-register.json `stop_line_provenance`+`extrapolation.verdict`+`stop_ruling.reason`；quality-report.md §10 |
+| R2 | P2 | 「请求数≈2×region 数」改**上界假设**（K02 实测 140/93=1.51×、K11 实测 19/13=1.46×）；补敏感性一行（1.51× → 已知 region ≈47.6 万 < 50 万——「仅已知页即超线」表态不稳健，含 K07-10 时任何乘数仍超线、停跑不变）；K11 Run1 仅 8 次调用（13 region/11 有文本，三 pass 一致）登记为 **open 异常**（duplicate-text 不能完全解释） | ko-rerun-report.md §1.2 模型行+敏感性/§6 N4/§8；budget-register.json `note_requests`+`formula`+`k11_run1_anomaly`；quality-report.md §10 |
+| R3 | P2 | **控件落地（推荐项执行）**：`run_qualification.py` 新增 `--determinism-track remote|mock`（装配前 fail-closed 校验：声明与 provider 绑定推断不一致 → exit 2）+ report/summary 落 `determinism_track` 字段；`ko_rerun_similarity.py` 计分前按两份 summary 的 provider 绑定判轨（unknown/双轨不一致/声明矛盾均 fail-closed）+ JSON 落 `determinism_track` 字段。干跑验证：`--determinism-track mock` → FATAL exit 2（不触 key/weights）；`remote` 通过；K11-similarity.json 已带判轨字段重新落盘（**全部数值逐位不变**） | experiments/M2-TA3-B/run_qualification.py（`infer_determinism_track`+CLI+main 校验+run_case 传参）；ko_rerun_similarity.py（判轨校验+payload 字段）；phase2/ko-rerun/determinism/K11-similarity.json；ko-rerun-report.md §4/§8 |
+| R4 | P3 | N3 归因改 **BACKFILL→PRIMARY 两步定稿链**（BACKFILL R1 账目统一 → PRIMARY primary 纳入+页级决策链退役），补判别指纹（首跑 run1 步表页级 9 步 → 重跑 region 级 ~66 步）与终态计算路径 `service.py:1054`/`projection.py:336` | ko-rerun-report.md §2 注/§6 N3 |
+| R5 | P3 | §3.1 补限定：K11 1200×1660（h/w=1.383）**未触发 tiling 阈值 4.0**、与首跑同路径，逐位一致属同路径复现预期；tiling 路径 OCR 稳定性本 run 未覆盖（K02 无 GT）；§5 表同步 | ko-rerun-report.md §3.1/§5 |
+| R6 | P3 | 计量口径全文改「成功 `translate()` 调用数」（HTTP 数 ≥ 该值）；补 retry 盲点（production retry 在 provider 之外、默认 max_attempts=2，失败尝试与重发 input 未落计量，attempt_count 未落盘）；"无重试风暴"量级证据按调用数口径改述（≈92 次尝试/~115 分钟，方向保守） | ko-rerun-report.md §0 AC5/§1.1/§1.3；budget-register.json `note_requests`/`metered_requests_total` |
+| R7 | P3 | §7 裁决清单逐项补**成本/覆盖/Gate 后果**（①107–209 万 ②随 N 线性 ③44–146 万 ④0；K02 +113k；F1 四页全链若必须 ≈50.4 万 @2×/37.8 万 @1.5×），并把 **F1 关闭口径**（detect 5/5+全链 1/5 是否足够）与 **F2 页级必要性**拆为独立决策点（§7.3/§7.4），新增**红线口径追认**裁决项（§7.5）与 Gate 三候选的后果（§7.6） | ko-rerun-report.md §7 |
+| R8 | P3 | N7 证据标注**仓库外仅登记**（ko-rerun-logs/K02-rerun-attempt*.log 与 K11-driver-result.json 在 task-envs，仓库内不可复核）；`qual-report.json` 覆盖行为登记为新 **N8**（现内容=最后一次调用 K11 rerun-check pass，非 run 级 roll-up）+ §8 补产物索引 | ko-rerun-report.md §6 N7/N8/§8 |
+| R9 | P4 | 精度修补五处：63.2 万归属（=521 region 含 K11；五页 508→61.7 万）；「≈347 次请求 ≈20.4 万」标**估计**（含未计量 attempt-1 ~140 次；metered=197/119k）；时间戳 UTC 更正（首版误标 +0800、`20:40Z+0800` 类非法标签修正）；「12/13 逐位一致」改 raw 口径 **11/13+1 对仅空白差**（ro10 raw=0.9474/normalized=1.0，JSON 已附 raw、正文补注）；sfx「gate 放行」改**语义推断**（无该 region translate step 实证） | ko-rerun-report.md §0/§1.2/§1.3/§3.2/§4；budget-register.json `generated_at_utc`/`probe_*`/`timestamp_note`/`minimal_set_still_executed.K11`/`known_only_note` |
+| R10 | P4 | metered fork 补回 production provider-id 漂移守卫（`PROVIDER_OPENAI_TRANSLATION != PROVIDER_ID` → RuntimeError，与 translate_probe.reregister_env_resolver 同一断言）；不做 probe 帮助函数签名重构（避免扩大行为面） | experiments/M2-TA3-B/run_qualification.py `reregister_env_resolver_metered` |
+| R11 | P3 | §4 补语义等价判定依据：Owner 对源文逐句对照两版译文（均完整传达"本以为没必要做到这种程度"，差异仅语气/自谦显隐），判定人=Owner 单标注者 directional 自评、**无独立第二审**，两版原文见 K11-similarity.json reading_order=5 对，列 §7 裁决附件供用户复核 | ko-rerun-report.md §4/§7.6 |
+
+DSH NOT_VERIFIED 运行时项（1-9：git 拓扑/首跑产物哈希/key 全库扫描/离线复算/三套件集成门等）留集成方执行；R3 干跑（矛盾声明 exit 2）与 K11-similarity.json 离线再生成（数值逐位不变）已在本返修完成并记录于上表。
