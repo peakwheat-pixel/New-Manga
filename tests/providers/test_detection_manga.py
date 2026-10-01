@@ -368,6 +368,458 @@ class TestDetectPathHonesty:
 
 
 # ---------------------------------------------------------------------------
+# M2-DETECT-WEBTOON-TILING: webtoon long-strip tiling path
+# ---------------------------------------------------------------------------
+
+_TILING_ENV_VARS = (
+    "NEWMANGA_DETECTOR_TILING_TILE_SIZE",
+    "NEWMANGA_DETECTOR_TILING_OVERLAP",
+    "NEWMANGA_DETECTOR_TILING_NMS_IOU",
+    "NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO",
+)
+
+
+def _clean_tiling_env(monkeypatch) -> None:
+    for name in _TILING_ENV_VARS:
+        monkeypatch.delenv(name, raising=False)
+
+
+class TestTilingConfig:
+    """The tiling parameters are env-configurable with DIAG-frozen defaults
+    (``NEWMANGA_DETECTOR_TILING_*``, the SFX conf-threshold env precedent);
+    an illegal value fails fast — never a silent default."""
+
+    def test_defaults_match_the_diagnosed_experiment(self, monkeypatch):
+        _clean_tiling_env(monkeypatch)
+        config = detection_manga._tiling_config()
+        assert config.tile_size == 1024  # the DIAG tile experiment size
+        assert config.overlap == 128  # the DIAG overlap band
+        assert config.nms_iou == 0.5  # the DIAG cross-tile dedup IoU
+        assert config.trigger_ratio == 4.0  # Owner ruling, see task doc
+
+    def test_env_overrides_each_parameter(self, monkeypatch):
+        _clean_tiling_env(monkeypatch)
+        monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_TILE_SIZE", "512")
+        monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_OVERLAP", "64")
+        monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_NMS_IOU", "0.6")
+        monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "8")
+        config = detection_manga._tiling_config()
+        assert config.tile_size == 512
+        assert config.overlap == 64
+        assert config.nms_iou == 0.6
+        assert config.trigger_ratio == 8.0
+
+    @pytest.mark.parametrize(
+        ("env_name", "value"),
+        [
+            ("NEWMANGA_DETECTOR_TILING_TILE_SIZE", "0"),
+            ("NEWMANGA_DETECTOR_TILING_TILE_SIZE", "-1024"),
+            ("NEWMANGA_DETECTOR_TILING_TILE_SIZE", "10.5"),
+            ("NEWMANGA_DETECTOR_TILING_TILE_SIZE", "abc"),
+            ("NEWMANGA_DETECTOR_TILING_OVERLAP", "-1"),
+            ("NEWMANGA_DETECTOR_TILING_OVERLAP", "1024"),  # >= tile size
+            ("NEWMANGA_DETECTOR_TILING_OVERLAP", "abc"),
+            ("NEWMANGA_DETECTOR_TILING_NMS_IOU", "0.0"),
+            ("NEWMANGA_DETECTOR_TILING_NMS_IOU", "-0.1"),
+            ("NEWMANGA_DETECTOR_TILING_NMS_IOU", "1.0"),
+            ("NEWMANGA_DETECTOR_TILING_NMS_IOU", "abc"),
+            ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "0"),
+            ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "-4"),
+            ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "abc"),
+        ],
+    )
+    def test_illegal_values_fail_fast(self, monkeypatch, env_name, value):
+        _clean_tiling_env(monkeypatch)
+        monkeypatch.setenv(env_name, value)
+        with pytest.raises(ValueError, match=env_name):
+            detection_manga._tiling_config()
+
+    def test_unrelated_env_has_no_effect(self, monkeypatch):
+        _clean_tiling_env(monkeypatch)
+        monkeypatch.setenv("NEWMANGA_SFX_CONF_THRESHOLD", "0.75")
+        config = detection_manga._tiling_config()
+        assert config.tile_size == 1024
+
+
+class TestTilingTrigger:
+    """Trigger = height/max(width, 1) > trigger_ratio (strict)."""
+
+    def test_k01_long_strip_triggers(self):
+        assert detection_manga._tiling_triggered(690.0, 62133.0, 4.0) is True
+
+    def test_k02_and_k04_trigger(self):
+        assert detection_manga._tiling_triggered(600.0, 18401.0, 4.0) is True
+        assert detection_manga._tiling_triggered(690.0, 28156.0, 4.0) is True
+
+    def test_bj02_normal_page_does_not_trigger(self):
+        # 2946x4167 -> h/w = 1.41; the DIAG control page must stay on the
+        # byte-identical untiled path.
+        assert detection_manga._tiling_triggered(2946.0, 4167.0, 4.0) is False
+
+    def test_boundary_is_strict_greater_than(self):
+        # h/w == ratio exactly -> NOT triggered (documented semantics).
+        assert detection_manga._tiling_triggered(100.0, 400.0, 4.0) is False
+        assert detection_manga._tiling_triggered(100.0, 400.4, 4.0) is True
+
+    def test_zero_width_is_defended(self):
+        # max(width, 1) guards the division; request validation rejects
+        # width<=0 earlier — this is the pure function's own defence.
+        assert detection_manga._tiling_triggered(0.0, 10.0, 4.0) is True
+
+    def test_trigger_follows_the_configured_ratio(self):
+        assert detection_manga._tiling_triggered(1000.0, 3999.0, 4.0) is False
+        assert detection_manga._tiling_triggered(1000.0, 3999.0, 3.0) is True
+
+
+class TestTilingTiles:
+    """Pure tile geometry: overlapping grid, the DIAG experiment's exact
+    stepping (step = tile - overlap, last tile clipped to the page)."""
+
+    def test_k01_geometry_matches_the_diagnosed_experiment(self):
+        # DIAG probe-results.json K01.tile_experiment: n_tiles=70, origins
+        # 0..61824 step 896, final tile crop_h=309 — the production default
+        # config must reproduce this grid exactly.
+        tiles = detection_manga._tiling_tiles(690.0, 62133.0, 1024, 128)
+        assert len(tiles) == 70
+        assert tiles[0] == (0.0, 0.0, 690.0, 1024.0)
+        assert tiles[-1] == (0.0, 61824.0, 690.0, 62133.0)
+        assert [t[1] for t in tiles] == [float(k * 896) for k in range(70)]
+
+    def test_page_smaller_than_tile_is_one_tile(self):
+        tiles = detection_manga._tiling_tiles(690.0, 800.0, 1024, 128)
+        assert tiles == [(0.0, 0.0, 690.0, 800.0)]
+
+    def test_exact_fit_does_not_spawn_an_empty_tail_tile(self):
+        # height 1792 = 896 + 896: origins 0 and 896 cover it exactly.
+        tiles = detection_manga._tiling_tiles(1024.0, 1792.0, 1024, 128)
+        assert len(tiles) == 2
+        assert tiles[-1] == (0.0, 896.0, 1024.0, 1792.0)
+
+    def test_wide_page_cuts_a_two_dimensional_grid(self):
+        # 2000x2000 with tile 1024 overlap 128 -> step 896 -> 3 cols x 3 rows
+        # (edge tiles clipped to the page).
+        tiles = detection_manga._tiling_tiles(2000.0, 2000.0, 1024, 128)
+        assert len(tiles) == 9
+        assert sorted({t[0] for t in tiles}) == [0.0, 896.0, 1792.0]
+        assert sorted({t[1] for t in tiles}) == [0.0, 896.0, 1792.0]
+        for (x0, y0, x1, y1) in tiles:
+            assert x1 <= 2000.0 and y1 <= 2000.0
+
+    def test_tiles_cover_the_whole_page_height(self):
+        # No uncovered gap between consecutive tiles — the property the DIAG
+        # full-page y coverage (156.7..62008.9 over 62133 px) relied on.
+        tiles = detection_manga._tiling_tiles(690.0, 5000.0, 1024, 128)
+        assert max(t[3] for t in tiles) == 5000.0
+        previous_y1 = 0.0
+        for (_x0, y0, _x1, y1) in tiles:
+            assert y0 <= previous_y1
+            previous_y1 = y1
+
+
+class TestGreedyNms:
+    """Confidence-ordered greedy NMS — the DIAG dedup semantics (IoU > t
+    drops, IoU == t is kept), as a pure importable function."""
+
+    def test_iou_exactly_at_threshold_is_kept(self):
+        # A=(0,0,10,60) and B=(0,20,10,80): intersection 10x40=400, union
+        # 600+600-400=800 -> IoU exactly 0.5. At threshold 0.5 both survive.
+        boxes = [(0.0, 0.0, 10.0, 60.0, 0.9), (0.0, 20.0, 10.0, 80.0, 0.8)]
+        assert detection_manga._iou(boxes[0], boxes[1]) == pytest.approx(0.5)
+        kept = detection_manga._greedy_nms(boxes, 0.5)
+        assert len(kept) == 2
+
+    def test_iou_above_threshold_drops_the_lower_confidence(self):
+        boxes = [(0.0, 0.0, 10.0, 60.0, 0.9), (0.0, 20.0, 10.0, 80.0, 0.8)]
+        kept = detection_manga._greedy_nms(boxes, 0.4999)
+        assert kept == [(0.0, 0.0, 10.0, 60.0, 0.9)]
+
+    def test_keeper_is_always_the_higher_confidence_box(self):
+        # IoU 0.5 (see the exact-0.5 geometry above) with a 0.4 threshold:
+        # the drop decision must remove the LOWER-confidence box.
+        boxes = [(0.0, 0.0, 10.0, 60.0, 0.7), (0.0, 20.0, 10.0, 80.0, 0.95)]
+        kept = detection_manga._greedy_nms(boxes, 0.4)
+        assert kept == [(0.0, 20.0, 10.0, 80.0, 0.95)]
+
+    def test_disjoint_boxes_are_never_dropped(self):
+        boxes = [
+            (0.0, 0.0, 10.0, 20.0, 0.9),
+            (100.0, 200.0, 110.0, 220.0, 0.8),
+        ]
+        assert len(detection_manga._greedy_nms(boxes, 0.0)) == 2
+
+    def test_empty_and_single(self):
+        assert detection_manga._greedy_nms([], 0.5) == []
+        assert len(detection_manga._greedy_nms([(1.0, 1.0, 2.0, 2.0, 0.5)], 0.5)) == 1
+
+
+def _stub_tile_inference(per_tile_outputs):
+    """A ``_tile_inference`` stand-in yielding one preset payload per tile.
+
+    Each payload is ``(scores, labels, boxes)`` in PADDED tile-local pixels —
+    the raw post_process output, before text filtering (the production
+    ``_text_boxes_from_results`` still runs per tile inside the tiled path).
+    """
+    outputs = iter(per_tile_outputs)
+    calls = []
+
+    def stub(model, processor, tile_rgb, threshold):
+        calls.append(tuple(tile_rgb.shape))
+        return next(outputs)
+
+    stub.calls = calls
+    return stub
+
+
+class TestTiledDetectionPath:
+    """The tiled orchestration with a stubbed per-tile inference: remap,
+    cross-tile NMS dedup, clipping and bubble accounting — no torch.
+
+    Fixture geometry: page 50x400 (h/w = 8, triggers), tile 100 overlap 20
+    -> step 80 -> tile origins y = 0, 80, 160, 240, 320 (5 tiles).
+    """
+
+    PAGE_W, PAGE_H = 50, 400
+
+    def _run_tiled(self, monkeypatch, per_tile_outputs, config=None, threshold=None):
+        pytest.importorskip("numpy", reason="numpy is not installed")
+        numpy = pytest.importorskip("numpy")
+        _clean_tiling_env(monkeypatch)
+        if config is None:
+            config = detection_manga.TilingConfig(4.0, 100, 20, 0.5)
+        stub = _stub_tile_inference(per_tile_outputs)
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_manga._tile_inference", stub
+        )
+        rgb = numpy.zeros((self.PAGE_H, self.PAGE_W, 3), dtype=numpy.uint8)
+        kwargs = {}
+        if threshold is not None:
+            kwargs["threshold"] = threshold
+        boxes, n_bubble = detection_manga._detect_text_boxes_tiled(
+            model=object(),
+            processor=object(),
+            rgb=rgb,
+            width=float(self.PAGE_W),
+            height=float(self.PAGE_H),
+            config=config,
+            **kwargs,
+        )
+        return boxes, n_bubble, stub
+
+    def test_tiles_are_padded_to_the_square_tile_size(self, monkeypatch):
+        # every tile handed to inference is tile_size x tile_size x 3 — the
+        # 50-wide page is right/bottom-padded with the constant gray, like
+        # the DIAG experiment's square-input assumption.
+        _boxes, _n_bubble, stub = self._run_tiled(monkeypatch, [([], [], [])] * 5)
+        assert len(stub.calls) == 5
+        for shape in stub.calls:
+            assert shape == (100, 100, 3)
+
+    def test_boxes_are_remapped_to_page_coordinates(self, monkeypatch):
+        # Tile 1 has origin y=80; its local box (5,10,45,30) must land at
+        # page (5,90,45,110).
+        boxes, n_bubble, _ = self._run_tiled(
+            monkeypatch,
+            [([], [], [])] + [([0.9], [1], [[5.0, 10.0, 45.0, 30.0]])] + [([], [], [])] * 3,
+        )
+        assert boxes == [(5.0, 90.0, 45.0, 110.0, pytest.approx(0.9))]
+        assert n_bubble == 0
+
+    def test_cross_tile_duplicate_is_deduped_to_the_higher_confidence(self, monkeypatch):
+        # The DIAG textbook duplicate: the same balloon detected once per
+        # tile in the overlap band. The balloon spans page y 78..98 — fully
+        # inside tile 0 (crops 0..100, so no clip: local (5,78,45,98)) and
+        # clipped at tile 1's top (origin 80, crops 80..180: local
+        # (5,-2,..) clips to 0 -> page (5,80,45,98)). IoU = (40x18) /
+        # (2x(40x20)-720) = 720/880 = 0.818 > 0.5 -> the 0.90 one drops.
+        boxes, _, _ = self._run_tiled(
+            monkeypatch,
+            [
+                ([0.95], [1], [[5.0, 78.0, 45.0, 98.0]]),
+                ([0.90], [1], [[5.0, 0.0, 45.0, 18.0]]),
+                ([], [], []),
+                ([], [], []),
+                ([], [], []),
+            ],
+        )
+        assert boxes == [(5.0, 78.0, 45.0, 98.0, pytest.approx(0.95))]
+
+    def test_distinct_boxes_from_different_tiles_all_survive(self, monkeypatch):
+        boxes, _, _ = self._run_tiled(
+            monkeypatch,
+            [
+                ([0.9], [1], [[5.0, 10.0, 45.0, 30.0]]),    # page y 10..30
+                ([0.8], [1], [[5.0, 50.0, 45.0, 70.0]]),    # page y 130..150
+                ([], [], []),
+                ([], [], []),
+                ([], [], []),
+            ],
+        )
+        assert len(boxes) == 2
+        assert sorted(b[1] for b in boxes) == [pytest.approx(10.0), pytest.approx(130.0)]
+
+    def test_tile_boxes_are_clipped_to_the_tile_bounds(self, monkeypatch):
+        # Tile 0 crops 50x100; a box hanging below the tile edge (local
+        # y0=90, y1=130) is clipped to the tile bound before remapping —
+        # page y 90..100, never past the cropped region.
+        boxes, _, _ = self._run_tiled(
+            monkeypatch,
+            [([0.9], [1], [[5.0, 90.0, 45.0, 130.0]])] + [([], [], [])] * 4,
+        )
+        assert boxes == [(5.0, 90.0, 45.0, 100.0, pytest.approx(0.9))]
+
+    def test_bubble_count_accumulates_across_tiles(self, monkeypatch):
+        # Tile 0: 1 text + 1 bubble; tile 1: 5 texts + 3 bubbles — but all
+        # five tile-1 texts are the SAME page box (identical after remap),
+        # so the cross-tile NMS keeps one. Bubble counting is untouched by
+        # the NMS: 1 + 3 = 4 across tiles.
+        boxes, n_bubble, _ = self._run_tiled(
+            monkeypatch,
+            [
+                ([0.9, 0.85], [1, 0], [[5.0, 10.0, 45.0, 30.0], [5.0, 40.0, 45.0, 60.0]]),
+                ([0.8, 0.7, 0.6, 0.5, 0.4], [1, 1, 0, 0, 0], [[5.0, 10.0, 45.0, 30.0]] * 5),
+                ([], [], []),
+                ([], [], []),
+                ([], [], []),
+            ],
+        )
+        assert n_bubble == 4
+        assert len(boxes) == 2
+
+    def test_production_text_filter_runs_per_tile(self, monkeypatch):
+        # The tiled path shares the exact pure filter: a NaN geometry is the
+        # typed invalid output, never coerced (DSH r1 R9 semantics).
+        from ports.providers.errors import ProviderInvalidOutput
+
+        with pytest.raises(ProviderInvalidOutput, match="not finite"):
+            self._run_tiled(
+                monkeypatch,
+                [([0.9], [1], [[float("nan"), 10.0, 45.0, 30.0]])],
+            )
+
+    def test_threshold_is_passed_through_to_tile_inference(self, monkeypatch):
+        # The qualification's second curve point (conf 0.4) reuses the same
+        # code with a lower threshold — the default stays the production 0.5.
+        pytest.importorskip("numpy")
+        _clean_tiling_env(monkeypatch)
+        seen = []
+        numpy = pytest.importorskip("numpy")
+
+        def spy(model, processor, tile_rgb, threshold):
+            seen.append(threshold)
+            return ([], [], [])
+
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_manga._tile_inference", spy
+        )
+        rgb = numpy.zeros((400, 50, 3), dtype=numpy.uint8)
+        detection_manga._detect_text_boxes_tiled(
+            object(), object(), rgb, 50.0, 400.0, detection_manga.TilingConfig(4.0, 100, 20, 0.5)
+        )
+        assert seen == [detection_manga.MANGA_CONF_THRESHOLD] * 5
+
+
+class TestDetectEndToEndTiled:
+    """``detect`` wiring: a long-strip page enters the tiled path, and the
+    frozen production merge consumes the deduped page-space boxes."""
+
+    def test_long_strip_page_flows_through_merge_with_tiling_provenance(
+        self, monkeypatch
+    ):
+        pytest.importorskip("numpy", reason="numpy is not installed")
+        _clean_tiling_env(monkeypatch)
+        monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_TILE_SIZE", "100")
+        monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_OVERLAP", "20")
+
+        def forbidden_untiled(*args, **kwargs):
+            raise AssertionError("long-strip page must not enter the untiled path")
+
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_manga._detect_text_boxes",
+            forbidden_untiled,
+        )
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_manga._tile_inference",
+            _stub_tile_inference(
+                [([0.9], [1], [[5.0, 10.0, 45.0, 30.0]])] + [([], [], [])] * 4
+            ),
+        )
+        provider = _provider()
+        provider._engine = (object(), object())
+        result = provider.detect(
+            _request(_frame_bytes(50, 400), width=50, height=400)  # h/w = 8
+        )
+        options = dict(result.options)
+        assert options["tiling"] == "on"
+        assert int(options["tiling_tiles"]) == 5  # origins 0,80,160,240,320
+        assert options["conf_threshold"] == "0.5"  # production default unchanged
+        assert options["text_boxes_pre_merge"] == "1"
+        # the single box went through the frozen production merge (pad grown
+        # by MERGE_PAD_PX, then clipped to the page: x0 = 5-6 < 0 -> 0)
+        assert len(result.candidates) == 1
+        polygon = result.candidates[0].polygon
+        assert min(x for x, _ in polygon) == pytest.approx(0.0)
+        assert min(y for _x, y in polygon) == pytest.approx(
+            10.0 - detection_doctr.MERGE_PAD_PX
+        )
+
+    def test_normal_page_records_tiling_off(self, monkeypatch):
+        pytest.importorskip("numpy", reason="numpy is not installed")
+        _clean_tiling_env(monkeypatch)
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_manga._detect_text_boxes",
+            lambda model, processor, rgb, w, h: ([(10.0, 10.0, 40.0, 30.0, 0.9)], 0),
+        )
+        provider = _provider()
+        provider._engine = (object(), object())
+        result = provider.detect(_request(_frame_bytes(100, 100), width=100, height=100))
+        assert dict(result.options)["tiling"] == "off"
+        assert dict(result.options)["text_boxes_pre_merge"] == "1"
+
+
+class TestNormalPagePathUnchanged:
+    """Ordinary pages must take the byte-identical untiled path."""
+
+    def test_normal_page_never_enters_the_tiled_branch(self, monkeypatch):
+        pytest.importorskip("numpy", reason="numpy is not installed")
+        _clean_tiling_env(monkeypatch)
+
+        untiled_calls = []
+
+        def fake_untiled(model, processor, rgb, w, h):
+            untiled_calls.append((w, h))
+            return [(10.0, 10.0, 40.0, 30.0, 0.9)], 0
+
+        def forbidden_tiled(*args, **kwargs):
+            raise AssertionError("normal page must not enter the tiled path")
+
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_manga._detect_text_boxes", fake_untiled
+        )
+        monkeypatch.setattr(
+            "infrastructure.providers.detection_manga._detect_text_boxes_tiled",
+            forbidden_tiled,
+        )
+        provider = _provider()
+        provider._engine = (object(), object())
+        # BJ02 proportions scaled 100x: 2946x4167 -> h/w = 1.41.
+        result = provider.detect(_request(_frame_bytes(30, 42), width=30, height=42))
+        assert untiled_calls == [(30.0, 42.0)]
+        assert dict(result.options)["tiling"] == "off"
+
+    def test_missing_weights_fails_closed_before_tiling(self, tmp_path: Path):
+        # The fail-closed order is untouched: a long-strip page without a
+        # weights directory still gets the typed PROVIDER_NOT_CONFIGURED —
+        # tiling never bypasses the engine gate.
+        provider = _provider(weights_dir=tmp_path / "absent")
+        request = _request(_frame_bytes(50, 400), width=50, height=400)
+        with pytest.raises(ProviderNotConfigured, match="weights are not installed"):
+            provider.detect(request)
+
+
+# ---------------------------------------------------------------------------
+# identity
+# ---------------------------------------------------------------------------
+
 # identity
 # ---------------------------------------------------------------------------
 
