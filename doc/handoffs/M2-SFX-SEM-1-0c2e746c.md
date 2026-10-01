@@ -57,14 +57,14 @@ status: delivered_for_review
 | AC2 应用层 region_types 传递 | `pytest tests/knowledge/test_translate_step.py::test_provider_request_carries_region_types`（speech/narration/sfx 混合 primary+context entries） | PASS |
 | AC3 mock sfx 确定性 | `pytest tests/providers/test_mock_local.py`（3 例：sfx 固定文本/speech 默认/混合两次调用相同） | PASS |
 | AC4 端到端 | `pytest tests/providers/test_handlers_pipeline.py::test_sfx_translate_region_carries_type_and_maps_output`：sfx region policy=translate → provider 收到 `region_type='sfx'` → 输出映射回 region 写 machine/final translation（render blocked 形态与既有 RETRANSLATE 测试一致） | PASS |
-| AC6 回归 providers | `pytest tests/providers -q` → **327 passed, 1 skipped**（基线 317+1sk，新增 11） | PASS |
+| AC6 回归 providers | `pytest tests/providers -q` → **327 passed, 1 skipped**（基线 317+1sk，新增 10——r2 C2 口径修正：第 11 例落 tests/knowledge 不在三套件口径） | PASS |
 | AC6 回归 core | `pytest tests/core -q` → **127 passed**（基线持平） | PASS |
 | AC6 回归 m2_acceptance | `pytest tests/m2_acceptance -q` → **35 passed**（基线持平；QML TypeError stderr 为既有测试无害噪音） | PASS |
 | AC6 diff --check | `git diff --check 86ce44b4` → **EXIT=0** | PASS |
 | AC6 禁改面 | `git diff --stat 86ce44b4 -- detection_{sfx,manga,doctr}* ports/detection ports/providers core_assembly.py MERGE_* experiments apps packaging tauri.conf.json run_clean_start_e2e.py requirements.txt` → **空**；`.rs/.ts/.tsx/.qml/.toml` diff=0 行 | PASS |
 | cargo/vitest | 本刀零触碰 Rust/TS 面（上行为证）→ 零需求，声明留痕 | N/A |
 
-合计 **489 passed + 1 skipped, 0 failed**（基线 479+1skipped 不回退，新增 11 如实）。
+合计 **489 passed + 1 skipped, 0 failed**（基线 479+1skipped 不回退，三套件内新增 10=489；另有 1 例 tests/knowledge——r2 C2 口径修正）。
 
 ## 接收方式
 

@@ -150,6 +150,13 @@ def test_region_input_defaults_to_speech() -> None:
     assert payload.regions[0].region_type == "speech"
 
 
+def test_region_type_values_match_domain_enum():
+    """Cross-layer consistency (r2 R3): the local value set must track the domain enum."""
+    from domain.regions.entities import RegionType
+
+    assert set(REGION_TYPE_VALUES) == {t.value for t in RegionType}
+
+
 def test_payload_accepts_every_region_type_value() -> None:
     from ports.translation.protocol import REGION_TYPE_VALUES, RegionInput
 

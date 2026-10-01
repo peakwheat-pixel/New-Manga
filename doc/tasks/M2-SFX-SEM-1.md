@@ -57,7 +57,7 @@ delivery_head: 0c2e746cbf284099d4d7709f59f414135f97a6e8
 - AC3：`mock_local.py` — sfx 条目 → 固定常量 `MOCK_SFX_TRANSLATION_TEXT`（形态决策登记：fixed-text 形态优于 `sfx:<长度>`，与 mock determinism contract 的 fixed-texts 模式一致）；m2_acceptance 35 passed 不回退。
 - AC4：+11 测试（protocol 4 / remote 2 / step 1 / handlers 端到端 1 / mock 3 新文件）；端到端=sfx region policy=translate → payload 带 `sfx` → 输出映射回 region（render blocked 形态与既有 RETRANSLATE 测试一致）。
 - AC5：TASK-002 §4 约束增 `region_type` 携带义务+sfx 文化对等语义条目；文末新增「Revision history」节（`1.1`，参照 M2-C1 格式；原文未版本化基线已注明）；M2-C1 TYPED_IPC 零触碰。
-- AC6：pytest providers 327+1skipped / core 127 / m2_acceptance 35（基线 479+1skipped+新增 11=489+1skipped，0 failed）；cargo/vitest 零需求（`.rs/.ts/.tsx/.qml/.toml` diff=0 行，声明留痕）；`git diff --check` EXIT=0；禁改面专项 diff 空。
+- AC6：pytest providers 327+1skipped / core 127 / m2_acceptance 35（**r2 C2 口径修正：三套件内新增 10，489=479+10**、providers 327=317+10，0 failed；另有 1 例落 `tests/knowledge` 不在三套件口径，集成方复跑 160 passed）；cargo/vitest 零需求（`.rs/.ts/.tsx/.qml/.toml` diff=0 行，声明留痕）；`git diff --check` EXIT=0；禁改面专项 diff 空。
 
 ## 允许/禁止
 

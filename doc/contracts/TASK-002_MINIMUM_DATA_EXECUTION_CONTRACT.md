@@ -129,7 +129,7 @@ StepRunOutputRef
 - 每条 Ref 必须且只能引用 RegionRevision、ArtifactRevision 中适用的版本；引用的 Revision 必须属于同行 Page/Region。
 - `UNIQUE(step_run_id, input_order)` 与 `UNIQUE(step_run_id, output_order)`。
 - 每个可写目标必须有一条 `role=primary` 输入；Context 只读，不得被该 Step 写回。
-- **`1.1` 修订（M2-SFX-SEM-1）**：发给 Provider 的翻译请求中，每个 region 输入条目必须携带 `region_type`（值域=`speech | narration | sfx | title | note | other`，与 Region 类型枚举一致；缺省按 `speech` 处理以保证既有调用零破坏），并接受枚举之外的值 fail-closed 拒绝（类型化请求错误）。`region_type=sfx` 且 SFX Policy=`translate` 的条目语义为**拟声词/效果词的文化对等转换**（目标语言中表达同一声音/情绪的自然拟声词；保持原词强度与简洁、禁止源语音节直译），其余条目翻译语义不变。Policy=`skip`/`manual` 的 SFX 仍按 §7.2 在进入 Provider 前拦截。
+- **`1.1` 修订（M2-SFX-SEM-1）**：发给 Provider 的翻译请求中，每个 region 输入条目必须携带 `region_type`（值域=`speech | narration | sfx | title | note | other`，与 Region 类型枚举一致；缺省按 `speech` 处理以保证既有调用零破坏），枚举之外的值一律 fail-closed 拒绝（类型化请求错误）。`region_type=sfx` 且 SFX Policy=`translate` 的条目语义为**拟声词/效果词的文化对等转换**（目标语言中表达同一声音/情绪的自然拟声词；保持原词强度与简洁、禁止源语音节直译），其余条目翻译语义不变。Policy=`skip`/`manual` 的 SFX 仍按 §7.2 在进入 Provider 前拦截。
 - Provider 返回的每项必须映射到请求中的 primary Page/Region；未知、重复或缺失映射使 Step 以 `OUTPUT_MAPPING_MISMATCH` 失败，任何 current 指针均不更新。
 
 ## 5. 状态与决定
