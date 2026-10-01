@@ -2,7 +2,8 @@
 id: M2-TA3-B2-KO-RERUN
 title: "TA3-B2 ko qualification 重跑（用户裁决③：TILING+ALLOC 解锁后关闭 F1/F2）"
 kind: qualification
-status: in_review
+status: done  # DSH r1 approved（有条件）→ 纯文档返修 R1-R11 全 closed @0ba046b8（50 万红线出处落盘/乘数上界化/--determinism-track 控件落地）→ 集成；§7 七项裁决移交用户
+
 approval: user_ruling_2026-10-02_three_confirmations
 suggested_owner: ZCode
 owner: ZCode
