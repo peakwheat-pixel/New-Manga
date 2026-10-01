@@ -163,9 +163,16 @@
     }
   },
   "gate_verdict_normalized": "FAIL",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding_first": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "binding_second": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
   "export_sha_first": "7aa98484c39b40eedd10ef5fc3858a73586db7afe3272e5676aa284160216f6f",
   "export_sha_second": "ae7452a24e8667bf382f58a4633df5d3de0beb663d0bf7d4ce718335f3244a10",
   "export_sha_match": false,
-  "note_export_track": "export sha bitwise equality is the MOCK/DETERMINISTIC-track caliber; this run binds the REMOTE track (DeepSeek) so the similarity gate above is the gate caliber and the export sha is recorded as supplementary data only",
+  "note_export_track": "export sha bitwise equality is the MOCK/DETERMINISTIC-track caliber; this run binds the REMOTE track (see determinism_track above, checked fail-closed against the provider binding) so the similarity gate above is the gate caliber and the export sha is recorded as supplementary data only",
   "directional_disclaimer": "directional evidence: one rerun pair, remote DeepSeek provider, M2-TA3-B2-KO-RERUN; not a production determinism conclusion"
 }

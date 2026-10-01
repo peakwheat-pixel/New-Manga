@@ -37,6 +37,23 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 GATE = {"metric": "similarity_normalized", "median_min": 0.95, "min_min": 0.70}
 
+# §5 dual-track discrimination (CALIB r1 R9): the track is inferred from the
+# summaries' translate provider binding; an explicit --determinism-track
+# declaration that contradicts it fails closed.  Markers mirror the runner
+# (run_qualification.py::infer_determinism_track).
+_REMOTE_BINDING_MARKERS = ("deepseek", "openai-compatible")
+_MOCK_BINDING_MARKERS = ("mock", "deterministic", "stub", "fake")
+
+
+def infer_track_from_summary(binding_text: str) -> str:
+    """Infer the §5 track from a summary's provider_policy.translate text."""
+    lowered = (binding_text or "").lower()
+    if any(marker in lowered for marker in _MOCK_BINDING_MARKERS):
+        return "mock"
+    if any(marker in lowered for marker in _REMOTE_BINDING_MARKERS):
+        return "remote"
+    return "unknown"
+
 
 def normalize(text: str) -> str:
     """quality-thresholds §0 normalization (identical to measure_cer.py)."""
@@ -141,6 +158,12 @@ def main() -> int:
         "--out-dir",
         default=str(REPO_ROOT / "verification/M2-TA3-B/phase2/ko-rerun/determinism"),
     )
+    parser.add_argument(
+        "--determinism-track", default="", choices=["", "remote", "mock"],
+        help="explicit quality-thresholds §5 track declaration (CALIB r1 R9); "
+        "fails closed when it contradicts the summaries' translate provider "
+        "binding; empty default records the inferred track only",
+    )
     args = parser.parse_args()
 
     summaries_dir = Path(args.summaries_dir)
@@ -148,6 +171,26 @@ def main() -> int:
     second = json.loads(
         (summaries_dir / f"qual-{args.case}.rerun.json").read_text(encoding="utf-8")
     )
+    # §5 dual-track control (CALIB r1 R9): fail-closed track check BEFORE any
+    # scoring.  The gate caliber below is only valid when both runs bound the
+    # same, remotely-sampling translate provider.
+    binding_first = (first.get("provider_policy", {}) or {}).get("translate", "")
+    binding_second = (second.get("provider_policy", {}) or {}).get("translate", "")
+    inferred_first = infer_track_from_summary(binding_first)
+    inferred_second = infer_track_from_summary(binding_second)
+    if inferred_first == "unknown" or inferred_first != inferred_second:
+        raise SystemExit(
+            f"FATAL: {args.case} determinism track not determinable from the "
+            f"summaries' translate bindings (first={inferred_first!r}, "
+            f"second={inferred_second!r}) - refusing to score "
+            "(quality-thresholds §5 dual-track rule: fail-closed)"
+        )
+    if args.determinism_track and args.determinism_track != inferred_first:
+        raise SystemExit(
+            f"FATAL: --determinism-track {args.determinism_track!r} contradicts "
+            f"the summaries' translate binding (inferred {inferred_first!r}) "
+            "(quality-thresholds §5 dual-track rule, CALIB r1 R9: fail-closed)"
+        )
     t1 = translations_by_reading_order(first)
     t2 = translations_by_reading_order(second)
     ros1 = {r["reading_order"] for r in first["regions"]}
@@ -212,6 +255,17 @@ def main() -> int:
             "normalized_nonempty": stats_norm_ne,
         },
         "gate_verdict_normalized": verdict,
+        "determinism_track": {
+            "declared": args.determinism_track or None,
+            "inferred": inferred_first,
+            "binding_first": binding_first,
+            "binding_second": binding_second,
+            "rule": (
+                "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling "
+                "provider -> similarity track; mock/deterministic provider -> "
+                "export sha bitwise track; declaration/binding mismatch -> fail-closed"
+            ),
+        },
         "export_sha_first": (first.get("export", {}) or {}).get("sha256", ""),
         "export_sha_second": (second.get("export", {}) or {}).get("sha256", ""),
         "export_sha_match": (
@@ -221,7 +275,8 @@ def main() -> int:
         ),
         "note_export_track": (
             "export sha bitwise equality is the MOCK/DETERMINISTIC-track caliber; "
-            "this run binds the REMOTE track (DeepSeek) so the similarity gate above "
+            "this run binds the REMOTE track (see determinism_track above, checked "
+            "fail-closed against the provider binding) so the similarity gate above "
             "is the gate caliber and the export sha is recorded as supplementary data only"
         ),
         "directional_disclaimer": (

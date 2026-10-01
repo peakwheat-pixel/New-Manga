@@ -239,8 +239,17 @@ def reregister_env_resolver_metered(core, *, base_url: str, model: str, records:
     )
     from infrastructure.providers.registry import ProviderDescriptor
     from infrastructure.providers.runtime import _network_gate
+    from infrastructure.providers.translation_openai import (
+        PROVIDER_OPENAI_TRANSLATION as _pid_check,
+    )
     from infrastructure.providers.translation_openai import OpenAiTranslationProvider
     from ports.providers.profiles import CAPABILITY_TRANSLATION
+
+    # r1 R10 (DSH): keep the production provider-id drift guard from
+    # translate_probe.reregister_env_resolver — the metered fork previously
+    # dropped it, weakening the metering path's fail-closed strength.
+    if _pid_check != PROVIDER_ID:  # pragma: no cover - pin the production id
+        raise RuntimeError(f"provider id drifted: {_pid_check!r}")
 
     settings = core.pipeline_defaults.read().settings
     config = OpenAiCompatibleConfig(
@@ -284,6 +293,35 @@ def reregister_env_resolver_metered(core, *, base_url: str, model: str, records:
         enabled=True,
     )
     registry.invalidate(PROVIDER_ID)
+
+
+# ---- dual-track discrimination (quality-thresholds §5 / CALIB r1 R9) ----
+#: §5 footnote makes the determinism track an executable runner control:
+#: "qualification runner 以 --determinism-track remote|mock 参数显式记录所选
+#: 轨道，声明与 provider 绑定不一致时 fail-closed 报错".  This runner binds
+#: the translate provider itself (translate_probe constants), so the track
+#: is INFERRED from that binding; an explicit --determinism-track
+#: declaration that contradicts the inference fails closed BEFORE any case
+#: runs.  Marker lists follow the CALIB r1 R9 rule verbatim: remote
+#: sampling providers carry a remote sampling service marker (e.g.
+#: deepseek/*); mock/deterministic providers carry a mock marker.
+_REMOTE_BINDING_MARKERS = ("deepseek", "openai-compatible")
+_MOCK_BINDING_MARKERS = ("mock", "deterministic", "stub", "fake")
+
+
+def infer_determinism_track() -> str:
+    """Infer the §5 determinism track from this runner's translate binding.
+
+    Returns "remote" (similarity track), "mock" (export-hash track) or
+    "unknown" (binding carries no marker either way — an explicit
+    --determinism-track declaration is then unverifiable and fails closed).
+    """
+    binding = " ".join((PROVIDER_ID, DEEPSEEK_BASE_URL, DEEPSEEK_MODEL)).lower()
+    if any(marker in binding for marker in _MOCK_BINDING_MARKERS):
+        return "mock"
+    if any(marker in binding for marker in _REMOTE_BINDING_MARKERS):
+        return "remote"
+    return "unknown"
 
 
 def export_region_views(regions_repo, page_id: str) -> list[dict]:
@@ -339,6 +377,7 @@ def run_case(
     rerun_suffix: str = "",
     sfx_policy: str = "",
     meter_translation: bool = False,
+    determinism_track: dict | None = None,
 ) -> dict:
     case_id = case["case_id"] + rerun_suffix
     started_wall = time.perf_counter()
@@ -354,6 +393,7 @@ def run_case(
         "source_path": str(source),
         "source_sha256": case.get("page_sha256", ""),
         "started_at_utc": utc_now(),
+        "determinism_track": determinism_track or {},
         "provider_policy": {
             "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
             "ocr": (
@@ -809,6 +849,12 @@ def main() -> int:
         help="wrap the production translation provider in a passthrough accounting "
         "proxy (request count + estimate_tokens); default off",
     )
+    parser.add_argument(
+        "--determinism-track", default="", choices=["", "remote", "mock"],
+        help="explicit quality-thresholds §5 determinism-track declaration "
+        "(CALIB r1 R9); fails closed when it contradicts the translate "
+        "provider binding; empty default records the inferred track only",
+    )
     parser.add_argument("--force", action="store_true", help="redo cases whose summary already exists")
     parser.add_argument("--suffix", default="", help="extra suffix for this pass (avoids clobbering)")
     parser.add_argument(
@@ -820,6 +866,31 @@ def main() -> int:
         help="Git-free pixel artifact root (crops + exports)",
     )
     args = parser.parse_args()
+
+    # ---- §5 dual-track control (CALIB r1 R9): fail-closed before setup ----
+    # Must sit BEFORE any environment/weights setup so a contradictory
+    # declaration aborts without touching credentials, weights or out-dir.
+    inferred_track = infer_determinism_track()
+    declared_track = args.determinism_track
+    if declared_track and declared_track != inferred_track:
+        print(
+            f"FATAL: --determinism-track {declared_track!r} contradicts the "
+            f"translate provider binding ({PROVIDER_ID} -> {DEEPSEEK_BASE_URL}, "
+            f"{DEEPSEEK_MODEL}) inferred as {inferred_track!r} "
+            "(quality-thresholds §5 dual-track rule, CALIB r1 R9: fail-closed)",
+            file=sys.stderr,
+        )
+        return 2
+    track_record = {
+        "declared": declared_track or None,
+        "inferred": inferred_track,
+        "binding": f"{PROVIDER_ID} -> {DEEPSEEK_BASE_URL} ({DEEPSEEK_MODEL})",
+        "rule": (
+            "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling "
+            "provider -> similarity track; mock/deterministic provider -> "
+            "export sha bitwise track; declaration/binding mismatch -> fail-closed"
+        ),
+    }
 
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     if not os.environ.get(ENV_KEY_NAME):
@@ -880,6 +951,7 @@ def main() -> int:
             "max_regions": args.max_regions,
         },
         "sfx_policy": args.sfx_policy or "production default (settings key absent -> SKIP)",
+        "determinism_track": track_record,
         "translation_metering": args.meter_translation,
         "cases": [],
         "rerun": [],
@@ -908,6 +980,7 @@ def main() -> int:
             summary = run_case(
                 case, pixel_root=pixel_root, device=args.device, max_regions=args.max_regions,
                 sfx_policy=args.sfx_policy, meter_translation=args.meter_translation,
+                determinism_track=track_record,
             )
         except Exception as exc:  # noqa: BLE001
             summary = {
@@ -971,6 +1044,7 @@ def main() -> int:
                     rerun_suffix=".rerun",
                     sfx_policy=args.sfx_policy,
                     meter_translation=args.meter_translation,
+                    determinism_track=track_record,
                 )
             except Exception as exc:  # noqa: BLE001
                 summary = {
