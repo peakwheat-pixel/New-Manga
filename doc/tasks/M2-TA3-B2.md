@@ -2,7 +2,8 @@
 id: M2-TA3-B2
 title: "TA3-B 阶段二：20-case 正式质量 qualification run（翻译=DeepSeek remote，用户裁决 (a) 2026-10-01）"
 kind: qualification
-status: ready
+status: in_review  # owner 完成 @3c8801b7（AC1-AC6 交付，全链 Gate FAIL 如实登记：ja 10/10 OK、ko 9 case 生产域缺口 F1/F2）——待 DSH 非作者 review
+delivery_head: 3c8801b7
 approval: user_ruling_2026-10-01_option_a_deepseek
 suggested_owner: ZCode
 owner: ZCode
@@ -46,3 +47,16 @@ worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B2-zcode
 - 成本控制：单 region 单请求、无重试风暴（fail-closed typed，重试只走生产 retry 语义）；预估 ≤ 数万 token 量级，超预期即停并登记。
 - Not 验收的：ja G1 CER 阈值判定若 FAIL，如实登记数字与方向，修复属后续 Task（本 Task 是 qualification 不是 gate 强制）。
 - worktree 独立分支；Owner 完成后 handoff → DSH 非作者 review → 编排会话集成。
+
+## 阶段二交付证据（owner 回填 2026-10-01，delivery_head=`3c8801b7`）
+
+| AC | 结果 | 证据 |
+|---|---|---|
+| AC1 全链 run | 执行完成；**全链 Gate FAIL 如实登记**：ja 10/10 全链 completed+export OK（53 region、48 翻译、无截断）；ko 9/10 fail-closed 于两条生产域缺口（F1 ogkalu 对 webtoon 长条漫 0 候选、F2 Qt 256MB 解码上限拒 K07/K09/K10 导入）；K11 修复后 export OK 但 run2 携带 2 个 typed data 失败；pipeline_failures=10 | [quality-report.md](../verification/M2-TA3-B/quality-report.md) §1 + `phase2/summaries/`（20 summary+report） |
+| AC2 自动评测 | ko G1 自动子集 n=6 median **0.0556**（提案 ≤0.20 → PASS，directional，对齐抽验 4/4）；ja G1 **NOT_AUTOMATED**（SVG credits 与 detect region 文本族不重合）；SFX n=0<15 只登记分布；G2 待审 50 行 | quality-report §2 + `phase2/ocr/cer-*` + `svg-gt-*` |
+| AC3 渲染确定性 | BJ02 PASS（逐位一致）；K11 FAIL——根因=remote endpoint 译文非逐位确定（OCR 0/13 差异、译文 7/13 浮动，渲染器忠实）；K01 无产物 NOT_ACHIEVABLE；独立复算 11/11 哈希一致 | quality-report §5 + `phase2/summaries/rerun-compare.json` + `phase2/export/export-hash-recompute.json` |
+| AC4 对白可读性预填 | 工作表 n=26（ja15+ko11，ko 池受 F1 级联限制，缺口如实登记）；DeepSeek 自评 ai_draft + owner 6-crop 抽检校准；用户终审=后续步骤（非本 Task 关闭条件） | `phase2/translate/dialogue-readability-worksheet.*` |
+| AC5 文档精修 | r2 N1/N2/N4/N5/N6 落地 | commit `b7806dac` |
+| AC6 第 0 步探针 | PASS：profile 写入（save_settings_section+make_credential_ref）→binding→同 db re-assemble（vault 通路如实落地 MISSING_CREDENTIAL）→env resolver re-register+invalidate→readiness ready→1 真实 region 翻译 0.45s；零 key 泄漏 | `phase2/translate-probe.json` + `experiments/M2-TA3-B/translate_probe.py` |
+
+后续步骤（非本 Task 关闭条件）：用户审核三份工作表（对白 n=26 / OCR 抽检骨架 n=28 / inpaint n=8）+ G2 GT 50 行；F1/F2 修复 Task 建议 A/B 与 F4/F5 口径修订交 Codex 裁决（quality-report §8/§9）。
