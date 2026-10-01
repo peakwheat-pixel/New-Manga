@@ -61,9 +61,9 @@
 
 | 类 | 适用 case | 来源 | 可信度 |
 |---|---|---|---|
-| G1 原生文本层 | ja：J46/J47（E20P06/E20P07——P&C 官方声明仅这两页含 partial SVG text layer）；ko：K11-K25 全部（ep04+ep20 语言包） | 官方 lang-pack ZIP 内 SVG text layer（已验证：ep04/ep20 语言包各 472 个 SVG，`lang/<lang>/E\d\dP\d\d.svg` 全页覆盖；JA/KR zip 实测存在） | 高（原生，非人工誊录）。注意：SVG 文本=排版源文本，与页面渲染字形可能有空格/换行差异——归一化规则（§0）吸收 |
-| G2 AI 预判 GT（C1 模式） | BJ01-BJ12（无任何文本 GT）、webtoon K01-K10（dataset 仅 cleaned/mask/conf 辅助标注，**无文本转写**） | GLM 视觉直读 region crop 预填 `ocr-gt-ai-draft.csv` → 用户逐条审核 → 正式 `ocr-gt.csv` | 中（方向性证据，C1 §2 强度裁定适用） |
-| G3 双源交叉 | G1 与 G2 同时可用的 region | 两源对照：不一致处人工仲裁 | 最高，量小 |
+| G1 原生文本层 | ja：J46/J47（E20P06/E20P07——P&C 官方声明仅这两页含 partial SVG text layer）；ko：K11-K25 全部（ep04+ep20 语言包） | 官方 lang-pack ZIP 内 SVG text layer。本 Task 侦察实测：ep04/ep20 语言包 zip 内 `.svg` 成员计数各 472（会话内 zip namelist 计数，未入证据物）——**正式计数与逐页文本提取以阶段二第 3 步 G1 提取脚本的落盘清单为准**（R8） | 高（原生，非人工誊录）。注意：SVG 文本=排版源文本，与页面渲染字形可能有空格/换行差异——归一化规则（§0）吸收 |
+| G2 AI 预判 GT（C1 模式） | BJ01-BJ12（无任何文本 GT）、webtoon K01-K10（dataset 仅 cleaned/mask/conf 辅助标注，**无文本转写**）；**并扩展覆盖 G1 四 case（J46/J47/K11/K19）的同 region 双源对照**（R1） | GLM 视觉直读 region crop 预填 `ocr-gt-ai-draft.csv` → 用户逐条审核 → 正式 `ocr-gt.csv` | 中（方向性证据，C1 §2 强度裁定适用） |
+| G3 双源交叉 | **G2 预填扩展到 G1 四 case 后**，J46/J47/K11/K19 中同一 region 同时具备 SVG 原生文本与人工誊录两源，逐 region 对照；不一致处人工仲裁，一致率作为人工 GT 流程质量的旁证指标（R1 采纳建议①） | 同 crop 双源（SVG 提取 vs 用户审核誊录） | 最高，量小（预计 <50 region），全部登记 |
 
 **设计要点**：G2 的 AI 预判**必须**先于用户审核生成并整体存档（`labeling-worksheet-ai-draft.csv` 先例），用户审核记录采纳/修订（`[AI]` / `[人工修订]` rationale 前缀先例）。**禁止**生成未经用户逐条审核的"最终 GT"。
 
@@ -78,12 +78,15 @@
 
 **依据链的诚实声明**：ja 两档有论文公开数字作锚（放宽理由=自产 region crop 的切分/竖排/字体分布与论文评测集差异）；ko 两档**没有**可引用的公开基线，数值纯属提案（登记为"初版猜测"），阶段二实测分布出来后由用户裁决是否调整——这正是"阈值由本 Task 提案、用户可撤销"契约的主场景。
 
+**G1 子集外推限制（R2，引用本子集数字时必须携带）**：ja G1 子集仅 J46/J47 两页，文本类型为 `japanese_end_card_and_credits` / `dense_multilingual_credits`（P&C credits/结束卡与多语言版权文本）——**该子集的 CER 结论只对 P&C 风格排版与 credits 类文本成立，不得外推到对白气泡、竖排正文或手写体**；manga-ocr 论文锚（Manga109 对白域）与该子集文本类型不重合，锚定链只约束"引擎量级"而非子集代表性。ko G1（K11/K19=P&C kr 印刷体）对 ko 生产主域（webtoon 手写体气泡字）存在同构缺口，webtoon 域结论依赖 G2 人工 GT 子集（K01-K10）。
+
 ### 2.4 测量方法（阶段二执行）
 
 1. 阶段二 runner 逐 case 导出每 region 的 `(case_id, region_id, region_type, bbox, ocr_provider, ocr_text)`；
 2. GT 工作表（G1 脚本提取 SVG 文本 + G2 人工审核表）按 region 对齐（对齐键=bbox 人工指认，阶段二工作表含 crop 预览图）；
 3. CER 计算脚本（阶段二交付，标准库实现 Levenshtein，不引入新依赖）输出 per-region CSV + 语言级汇总 JSON；
-4. 全部中间产物（crop 预览、ai-draft、正式 GT、CER 明细）入 `verification/M2-TA3-B/phase2/`（gitignore 像素、保留 CSV/JSON）。
+4. **CER 分母口径（R7）**：默认=**全部检出 region**（run_qualification.py 无截断时）；若某 case 启用 region 上限（§quality-thresholds 与 phase2-plan §2.1 的 `--max-regions` 逃生阀），则 Gate 按**明示抽样集**计算且质量报告必须披露 `region_target_count`/`region_runs_executed`/抽样规则，禁止把抽样集数字表述为"全量"；
+5. 全部中间产物（crop 预览、ai-draft、正式 GT、CER 明细）入 `verification/M2-TA3-B/phase2/`（gitignore 像素、保留 CSV/JSON）。
 
 ### 2.5 人工抽检设计（OCR 补充校准）
 
@@ -99,7 +102,7 @@
 
 - O-1：ko 阈值数值（≤0.20/≤0.25）为初版提案，实测后确认或调整。
 - O-2：G2 审核工作量（预计 20 case × 平均 8-15 region 的 GT 审核一次 + 30 region 抽检一次）是否接受；不接受则缩为"G1 子集 CER + 30 region 抽检"降配方案（届时全量 CER 附报但无 Gate）。
-- O-3：ja G1 子集仅 **2 个 case**（J46/J47=E20P06/E20P07，P&C 官方声明仅这两页含 partial SVG text layer）是否足以代表 ja 生产分布——P&C 为圆体 webcomic 风格，与 BJ 印刷漫字形有差异；如需 BJ 字形专项结论，需 G2 全量 GT（回到 O-2 工作量）。20 case 选取已把这两个 case 全部纳入（见 [case-selection.json](../../experiments/M2-TA3-B/case-selection.json)）。
+- O-3：**ja/ko 两侧共享的 G1 代表性裁决点（R2 扩写）**。ja 侧：G1 子集仅 2 case（J46/J47=E20P06/E20P07），且文本类型为 credits/结束卡与多语言版权文本（非对白、非竖排正文）——G1 子集结论只对 P&C 风格排版/credits 文本成立，是否接受"该子集仅用于引擎量级校验、对白/竖排结论依赖 G2 人工 GT"；ko 侧同构：G1（K11/K19）为 P&C kr 印刷体，而 ko 生产主域是 webtoon 手写体气泡字——是否接受"ko G1 仅作 native 交叉源、webtoon 域 Gate 由 G2 子集承担"。两问任一不接受时的替代=扩大 G2 人工 GT 审核量（回到 O-2 工作量）。20 case 选取已把 ja 两个 native GT case 全部纳入（见 [case-selection.json](../../experiments/M2-TA3-B/case-selection.json)）。
 
 ---
 
@@ -109,7 +112,7 @@
 
 | 项 | 定义 |
 |---|---|
-| 对象 | 阶段二 run 中 `region_type=sfx` 且完成翻译的全部 region（20 case 预计 SFX region 有限——BJ06/BJ10/J38 附近；**不足 15 条则全量并如实登记 n**） |
+| 对象 | 阶段二 run 中 `region_type=sfx` 且完成翻译的全部 region（20 case 内 SFX region 集中在 BJ06/BJ10 附近）。**最小样本量（R13）：n ≥ 15 才判 Gate；n < 15 时只登记分布与逐条判定，不判 Gate**（Gate 延后至素材扩充，是否接受此规则见裁决点 T-2） |
 | 核对规则（SFX-SEM-1 system prompt 特化的直接落地） | ①文化对等：译文是目标语言自然拟声词/效果词，**不是源语音节转写**；②强度保留：译文表达的声响强度与原文相当；③简洁：译文 ≤6 字符（源更长则可放宽）；④无对等时=最短自然效果词 |
 | 评分 3 档 | `cultural_equivalent`（4 项全满足）/ `acceptable`（对等但强度或简洁 1 项偏差）/ `fail`（音节转写、语义错误或 region_type 未按 SFX 语义处理） |
 | 提案 Gate | `non-fail 占比 ≥ 70%`（directional 首版；fail 中"音节转写"出现即视为 prompt 特化未落地，单独计数强制登记） |
@@ -121,8 +124,8 @@
 |---|---|
 | 对象 | n ≥ **30 region**（20 case 中完成翻译的 `speech`/`narration` region 按语言分层抽：ja 15 + ko 15；分层规则同 §2.5） |
 | 维度（每 region 三维各 1-5 分，region 分=三维均值） | **忠实度 faithfulness**：译文语义与原文一致，无增删反转；**流畅度 fluency**：目标语（默认 zh）自然可读，无翻译腔硬伤；**语境适切 register**：符合漫画语境与说话人语气（敬语/语气词/省略处理得当） |
-| 锚点定义 | 5=专业出版级；4=少量瑕疵不影响理解；3=可读但有明显生硬/轻微不准；2=多处错误影响理解；1=不可用（误译/乱码） |
-| 提案 Gate | region 分**中位数 ≥ 3.5** 且 `region 分 ≥3 占比 ≥ 80%` |
+| 锚点定义（**锚点对每个维度独立适用，region 分=三维均值**——R12） | 每维共用一档 5 分制锚：5=专业出版级（该维无可挑剔）；4=少量瑕疵不影响理解；3=可读/可接受但有明显生硬或轻微不准；2=多处错误影响理解；1=不可用（该维失效，如忠实度 1=误译反转、流畅度 1=乱码不可读、语境 1=语气完全错位）。评分时三维独立打分，禁止先算均值再回填 |
+| 提案 Gate | region 分**中位数 ≥ 3.5** 且 `region 分 ≥3 占比 ≥ 80%`（均基于三维均值） |
 | 测量 | 评分表 CSV（`unit_id,language,case_id,region_id,source_text,translated_text,faithfulness,fluency,register,region_score,rationale`）；AI 预填评分 + 用户终审（C1 模式；锚定效应如实登记） |
 
 ### 3.3 口径 C：回译一致性（可选附报，不设 Gate）
@@ -132,7 +135,7 @@
 ### 3.4 用户裁决点
 
 - T-1：§3.1/§3.2 Gate 数值（70% / 3.5 / 80%）。
-- T-2：SFX region 数量不足 15 时"全量+如实登记"是否接受（或推迟 Gate 至素材扩充）。
+- T-2：SFX 最小样本量规则（R13：n≥15 才判 Gate，n<15 只登记分布、Gate 延后至素材扩充）是否接受。
 - T-3：目标语言默认 zh 是否正确（见 §0）。
 - T-4：translate 评测依赖阶段二启动（用户翻译 endpoint 二选一）——评测样本只能来自真实翻译产出，mock 译文不参与质量判定。
 
@@ -162,7 +165,7 @@
 |---|---|---|
 | export 状态 | 每 case `export status=OK` | TA3-A runner 既有 fail-closed 口径（`run_smoke.py` export 段） |
 | 哈希一致性 | summary 记录的 `sha256` 与产物文件实算一致（复算脚本独立于 runner） | TA3-A AC4 确定性框架（export 哈希双向复算一致先例） |
-| 确定性复跑 | 20 case 中抽 **3 case** 同环境重跑，export 哈希逐位一致（抽样而非全量，避免双倍耗时；抽样种子登记） | TA3-A 已验证确定性；阶段二只需防回归 |
+| 确定性复跑 | **固定 3 case（BJ02/K01/K11，理由：覆盖 ja BJ 印刷漫 / ko webtoon / ko P&C 三家族，非抽样——R15）**同环境重跑，export 哈希逐位一致 | TA3-A 已验证确定性；阶段二只需防回归 |
 | 渲染产物 | 每 case 产出 `translated` render 且 reader_catalog 可解析（run2 完成的隐含条件） | 生产 seam |
 
 ### 用户裁决点
@@ -176,7 +179,7 @@
 | 项 | 提案阈值 |
 |---|---|
 | pipeline_failures | **0**（TA3-A 口径：每 case run2 REGION 全链 completed + export OK；任何 case 失败即全链 Gate FAIL，fail-closed 不豁免） |
-| 产物存在性 | 每 case：detect regions 导出存在、OCR 明细存在、translate 明细存在、export PNG 存在（四件齐） |
+| 产物存在性 | 每 case：detect regions 导出存在、OCR 明细存在、translate 明细存在、export PNG 存在（四件齐）。**豁免条款（R11）：`attribution=data:no-regions-detected`（region_count=0）的 case 不适用"OCR/translate 明细存在"，其 SKIP 为协议内结果，不构成全链 Gate FAIL**（§1 口径的一致延伸） |
 | 耗时记录 | per-case `wall_s` + per-stage `elapsed_s` 全量登记（不设阈值，供后续性能工作取数） |
 | attribution 纪律 | 沿用 TA3-A 三向归因（environment/data/defect）；`defect` 归因条目必须在质量报告逐条列出并给出复现信息 |
 
@@ -192,7 +195,8 @@
 | 4 | OCR ko G1 子集 | CER 中位数 ≤ 0.20 | **初版猜测**（无公开基线） | O-1 |
 | 5 | OCR ko 全量 | CER 中位数 ≤ 0.25 | **初版猜测** | O-1 |
 | 6 | OCR 人工抽检 | n=30 分层、correct/partial/wrong 三档 | 方法设计 | O-2 |
-| 7 | translate SFX | non-fail ≥ 70%（音节转写单独强制登记） | directional 首版 | T-1/T-2 |
+| 6b | OCR CER 分母 | 默认=全部检出 region；启用 region 上限时=明示抽样集+报告披露（R7） | 口径定义 | 无 |
+| 7 | translate SFX | **n≥15 才判 Gate**；non-fail ≥ 70%（音节转写单独强制登记）；n<15 只登记分布 | directional 首版 | T-1/T-2 |
 | 8 | translate 对白 | 中位数 ≥ 3.5 且 ≥3 分占比 ≥ 80%（5 分制三维） | directional 首版 | T-1/T-3/T-4 |
 | 9 | inpaint | 无数值 Gate，定性 100% 登记 | 上限如实界定 | I-1 |
 | 10 | render/export | OK + 哈希复算 + 3 case 确定性复跑 | TA3-A 框架引用 | 无 |

@@ -11,6 +11,7 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-TA3-A, M2-TA2B, M2-PROD-DETECT-1, M2-SFX-PROD-1]
 base_commit: c403941560c5094c088b0ea8ba1b707f30e2ea51
+branch_base: 53fdfcc6  # R18: 本 Task 分支的实际 diff 基点（release commit 之后）；AC5 自检与 review diff 均以此为界
 branch: agent/zcode/M2-TA3-B
 worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B-zcode
 ---
@@ -61,6 +62,6 @@ worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B-zcode
 | AC2 | [ocr-smoke-results.md](../verification/M2-TA3-B/ocr-smoke-results.md) + 两结果 JSON + `experiments/M2-TA3-B/ocr_smoke.py` | 隔离 venv `M2-TA3-B-ocr`（py3.12.3）：manga-ocr 0.1.16/paddlepaddle 3.3.1/paddleocr 3.7.0 安装 EXIT=0；两模型各 1 页真实 OCR EXIT=0（manga-ocr BJ02 推理 0.22s；PaddleOCR K11 28 行 conf 0.6871）；权重 424MB+171MB 全部 Git 外；3 项发现如实登记（onednn 缺陷已修/webtoon 长图 OpenCV 上限/**生产 adapter bytes 被 paddleocr 3.x 静默忽略=修复候选**） |
 | AC3 | [case-selection.json](../experiments/M2-TA3-B/case-selection.json) + `select_cases.py` | 20 case（ja 10=BJ×8+J46/J47、ko 10=webtoon×8+K11/K19）；**TA3-A 5 case 全包含（超集）**；SHA256 与 cases.json 交叉验证零失败；native OCR GT case 4 个；tags 覆盖：vertical 8/complex 7/normal 5/speaker 5/huge 4/dense 4/tiny 4/narr 3/horiz 3/lowcon 2/rot 2/sfx 2 |
 | AC4 | [phase2-plan.md](../verification/M2-TA3-B/phase2-plan.md) | run_qualification.py 设计（读 manifest+engine_factory 绕行 paddle bytes 缺口+CER 测量挂点+venv 融合方案 A）+ 翻译两选项操作手册（(a) env-var 凭证纪律+fail-closed 探针/(b) Sakura GGUF+llama-server+probe）+ 13 步执行清单 |
-| AC5 | 纪律自检 | `git diff --check 53fdfcc6..HEAD` EXIT=0；禁改面（src/**、packaging/**、apps/**、experiments/M2-TA3-A/**、requirements.txt）专项 diff 空；权重零入库（task-envs 在仓库外+`.gitignore` 护栏）；生产代码零改动 |
+| AC5 | 纪律自检 | `git diff --check 53fdfcc6..HEAD` EXIT=0；禁改面（src/**、packaging/**、apps/**、experiments/M2-TA3-A/**、requirements.txt）专项 diff 空；权重全部落在仓库外路径（隔离 venv / HF 缓存 / paddlex 缓存，R14 措辞修正——护栏 ignore 规则非全部权重后缀）；生产代码零改动 |
 
 **阶段二启动条件（BLOCKED_ON_USER）**：翻译 endpoint 二选一——(a) 提供 OpenAI-compatible endpoint（base_url+model+key，key 走环境变量）或 (b) 授权本地 Sakura 部署（GGUF 下载 8-16GB+llama-server 127.0.0.1:8080）。二选一后按 phase2-plan.md §4 清单直接执行，无需再释放。

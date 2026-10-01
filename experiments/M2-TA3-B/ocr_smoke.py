@@ -111,9 +111,12 @@ def smoke_paddleocr(image_path: Path) -> dict:
         scores.extend(data_obj.get("rec_scores", []) or [])
     # adapter seam probe: engine.ocr on raw bytes (production ocr_local.py
     # passes image_bytes straight through) — an exception-free return is NOT
-    # proof: PaddleOCR 3.x logs "Not supported input data type ... ignored"
-    # and silently reuses the previous input. Verify the semantics by
-    # comparing the extracted text against the ndarray run.
+    # proof of a working seam. OBSERVED (R10): 3.x logs "Not supported input
+    # data type ... ignored" and the probe extracts an EMPTY result even
+    # right after a successful ndarray inference; the underlying mechanism
+    # (always-empty vs stale-reuse) is UNVERIFIED and must be settled by a
+    # dedicated fix task with two consecutive different regions on the bytes
+    # path. Verify the observable here: extracted text vs the ndarray run.
     seam_status = "NOT_PROBED"
     seam_error = ""
     try:

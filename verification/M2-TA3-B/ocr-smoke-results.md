@@ -33,7 +33,7 @@
 
 1. **[已修，environment] paddlepaddle 3.3.1 Windows CPU oneDNN/PIR 缺陷**：默认 MKLDNN 路径推理即抛 `NotImplementedError: ConvertPirAttribute2RuntimeAttribute not support [pir::ArrayAttribute<pir::DoubleAttribute>]`（`onednn_instruction.cc`）。标准解法 `PaddleOCR(..., enable_mkldnn=False)` 后通过。阶段二 runner 必须携带该参数。
 2. **[data 形态限制，如实登记] webtoon 长条漫整图超 OpenCV 上限**：K01 base.png 为 690x62133 长条图，PaddleOCR 3.x 预处理后触发 `cv::remap` 断言（`dst.rows < SHRT_MAX`）。生产链路不受影响（`PaddleKoreanOcrProvider` 收的是 detect 后的 region crop，尺寸有限）；阶段二测量脚本的 lesson：**webtoon case 的 OCR 测量必须在 region crop 级做，不能整图喂**。
-3. **[适配器兼容性风险，登记为修复候选] 生产 adapter 的 bytes 直传在 PaddleOCR 3.x 下被静默忽略**：`PaddleKoreanOcrProvider.recognize` 把 `image_bytes` 直传 `engine.ocr(...)`；3.x 对 bytes 输入记日志 "Not supported input data type ... ignored" 并返回**空结果且不抛异常**（冒烟 seam probe 实测 `EMPTY_RESULT`）。这是静默退化而非 fail-closed。本 Task 禁改 `src/**`，不修复；阶段二测量脚本绕行（`np.fromfile`+`cv2.imdecode` → ndarray 直传）。**建议后续立小 Task**：`ocr_local.py` 适配 3.x 输入契约（ndarray 化或输入校验 fail-closed）。
+3. **[适配器兼容性风险，登记为修复候选] 生产 adapter 的 bytes 直传在 PaddleOCR 3.x 下返回空结果且无异常**。**观测**（R10：仅陈述实测）：`engine.ocr(raw_bytes)` 无异常返回，seam probe 提取文本为空（`EMPTY_RESULT`）；3.x 侧日志记 "Not supported input data type ... ignored"。**机制为假设，未验证**：r1 版"静默复用上一次输入"的表述与本次观测（成功 ndarray 推理之后 bytes 调用仍返回空）不相容，已撤回——是"恒空"还是"错位复用"由修复 Task 用连续 2 个不同 region 走 bytes 路径判定（错位复用=静默错误文本，严重度更高）。这是静默退化而非 fail-closed。本 Task 禁改 `src/**`，不修复；阶段二测量脚本绕行（`np.fromfile`+`cv2.imdecode` → ndarray 直传 + 输出形状适配，见 phase2-plan §2.2）。**建议后续立小 Task**（验收条件三件：输入契约 fail-closed/ndarray 化、输出形状 3.x→legacy 适配、双 region bytes 行为判定）。
 
 ## 5. 复现
 

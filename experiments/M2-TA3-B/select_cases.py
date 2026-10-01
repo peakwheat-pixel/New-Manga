@@ -46,7 +46,7 @@ SELECTION: list[tuple[str, Path, str]] = [
     ("BJ04", TA2B_SUITE / "日漫_JA/01_black_jack_official/vol01/pages/vol01_p0209.png",
      "low_contrast+huge_text+horizontal_text; 唯一 BJ 横排 tag 页"),
     ("BJ05", TA2B_SUITE / "日漫_JA/01_black_jack_official/vol03/pages/vol03_p0001.png",
-     "rotated_text 唯一覆盖页+huge_text+complex_background"),
+     "rotated_text：选中集内唯一覆盖页（BJ01/BJ05/BJ09 三页 tags 完全相同且均为 title_and_credits，任取其一等价；选 BJ05=vol03 使 vol01/vol03/vol05 三卷都有代表页）+huge_text+complex_background"),
     ("BJ06", TA2B_SUITE / "日漫_JA/01_black_jack_official/vol03/pages/vol03_p0056.png",
      "TA3-A case (superset); fragmented_sfx+dense_dialogue+tiny_text — ja 侧 SFX/小字核心 case"),
     ("BJ08", TA2B_SUITE / "日漫_JA/01_black_jack_official/vol03/pages/vol03_p0221.png",
@@ -91,6 +91,23 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
+def native_gt_of(meta: dict) -> str:
+    """Derive the native-OCR-GT tier from the catalog's authoritative field.
+
+    R9 (DSH r1): derive from ``ground_truth_available`` — a path heuristic
+    ("peppercarrot" in path) would misclassify J48-J52 (whose SVG layer has
+    no text transcription) as native GT. Three tiers, honestly distinct:
+    partial (ja E20P06/E20P07 carry real text) vs present-but-unaligned
+    (ko P&C SVG layers exist yet are not bbox-aligned transcriptions).
+    """
+    gta = meta.get("ground_truth_available", "")
+    if gta == "partial_svg_text_layer":
+        return "svg_text_layer_official_partial"
+    if gta == "svg_text_layer_present_unaligned":
+        return "svg_text_layer_present_unaligned"
+    return "none"
+
+
 def main() -> int:
     catalog = json.loads(CASES_JSON.read_text(encoding="utf-8"))
     by_id = {c["case_id"]: c for c in catalog["cases"]}
@@ -114,17 +131,14 @@ def main() -> int:
             failures.append(f"{case_id}: sha256 mismatch vs cases.json")
         language = meta["language"]
         family = meta.get("asset_type", "")
-        native_gt = (
-            "svg_text_layer_official"
-            if "peppercarrot" in str(page_path).lower() or case_id in ("J46", "J47", "K11", "K19")
-            else "none"
-        )
+        native_gt = native_gt_of(meta)
         entries.append(
             {
                 "case_id": case_id,
                 "language": language,
                 "family": family,
                 "source_id": meta.get("source_id", ""),
+                "text_type": meta.get("text_type", ""),
                 "page_path": str(page_path),
                 "page_sha256": actual_sha,
                 "sha256_matches_cases_json": sha_match,
@@ -150,6 +164,22 @@ def main() -> int:
         for tag in e["tags"]:
             tag_matrix[tag] = tag_matrix.get(tag, 0) + 1
 
+    # R3 (DSH r1): disclose text-type distribution (title/credits pages must
+    # not be read as dialogue coverage) and the taxonomy tags that are
+    # unavailable in the ENTIRE pool (zero cases across all 97), so the
+    # selection matrix is not misread as exhaustive coverage.
+    text_type_dist: dict[str, int] = {}
+    for e in entries:
+        key = f"{e['language']}:{e['text_type'] or '(unlabeled)'}"
+        text_type_dist[key] = text_type_dist.get(key, 0) + 1
+    pool_tag_counts: dict[str, int] = {}
+    for c in catalog["cases"]:
+        for tag in c.get("tags", []):
+            pool_tag_counts[tag] = pool_tag_counts.get(tag, 0) + 1
+    pool_unavailable_tags = [
+        t for t in catalog["taxonomy"]["difficulty_tags"] if pool_tag_counts.get(t, 0) == 0
+    ]
+
     report = {
         "schema_version": 1,
         "task": "M2-TA3-B",
@@ -173,6 +203,11 @@ def main() -> int:
             "ko": len(ko),
             "ta3a_superset_included": superset_ok,
             "native_ocr_gt_cases": sum(1 for e in entries if e["native_ocr_gt"] != "none"),
+        },
+        "text_type_distribution": dict(sorted(text_type_dist.items())),
+        "pool_unavailable_tags": {
+            "tags": pool_unavailable_tags,
+            "note": "taxonomy 16 项中以下 4 项在 cases.json 全池 97 case 中零出现，20 case 选取无法覆盖（R3 登记，非本批选取缺陷）",
         },
         "tag_coverage": dict(sorted(tag_matrix.items(), key=lambda kv: -kv[1])),
         "cases": entries,
