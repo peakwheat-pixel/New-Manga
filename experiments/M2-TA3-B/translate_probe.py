@@ -31,6 +31,10 @@ Credential discipline: the API key enters this process ONLY through the
 environment variable ``TA3B_TRANSLATE_API_KEY`` (injected by the caller);
 it is never printed, never written to the record, never logged.  The
 record keeps provider_id + base_url HOST + model + latency + translation.
+As a hardening (DSH r1 R13) the record is additionally scrubbed against
+the env key value right before it is written to disk, closing the
+low-probability path where an endpoint error echoes the Authorization
+header back into ``record["error"]``.
 
 Exit codes: 0 = probe OK; 2 = configuration/precondition failure;
 3 = probe failed (any step).
@@ -74,6 +78,26 @@ DETECTOR_WEIGHTS_DEFAULT = (
 
 def _now_utc() -> str:
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def scrub_secrets(obj):
+    """R13 (DSH r1): replace the env-injected key value with ``[REDACTED]``.
+
+    Applied to the record right before it is written: exception text (the
+    ``record["error"]`` path truncates to 400 chars but could in principle
+    echo the endpoint's view of the Authorization header) must never carry
+    the raw key to disk.
+    """
+    key = os.environ.get(ENV_KEY_NAME)
+    if not key:
+        return obj
+    if isinstance(obj, str):
+        return obj.replace(key, "[REDACTED]")
+    if isinstance(obj, dict):
+        return {k: scrub_secrets(v) for k, v in obj.items()}
+    if isinstance(obj, (list, tuple)):
+        return [scrub_secrets(v) for v in obj]
+    return obj
 
 
 def write_translation_profile(core, *, base_url: str, model: str) -> str:
@@ -295,7 +319,10 @@ def main() -> int:
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    out.write_text(
+        json.dumps(scrub_secrets(record), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
     print(f"record -> {out}")
     return status
 

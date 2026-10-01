@@ -4,7 +4,7 @@
     "svg_elements_matched": 3,
     "regions_matched": 1,
     "regions_total": 1,
-    "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)",
+    "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)",
     "trace": [
       {
         "text": "- おしまい -",
@@ -49,7 +49,7 @@
     "svg_elements_matched": 1,
     "regions_matched": 1,
     "regions_total": 5,
-    "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)",
+    "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)",
     "trace": [
       {
         "text": "Pepper&Carrotは完全にフリーでオープンソースで読者からのパトロン支援に支えられていますこのエピソードの825",
@@ -76,7 +76,7 @@
     "svg_elements_matched": 20,
     "regions_matched": 11,
     "regions_total": 13,
-    "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)",
+    "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)",
     "trace": [
       {
         "text": "고양이 사료",

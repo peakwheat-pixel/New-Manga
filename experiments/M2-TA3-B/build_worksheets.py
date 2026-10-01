@@ -19,7 +19,9 @@ Outputs (CSV into ``verification/M2-TA3-B/phase2/translate/`` and
 Credential discipline: the DeepSeek self-evaluation reads the key from the
 environment (``TA3B_TRANSLATE_API_KEY``) and never logs or persists it.
 This evaluation traffic is separate from the translation chain and tiny
-(30 short requests).
+(short JSON requests in batches of 10; this run n=26 -> 3 batches).
+(R15, DSH r1: the earlier "30 short requests" wording did not match the
+delivered worksheet n=26.)
 """
 
 from __future__ import annotations

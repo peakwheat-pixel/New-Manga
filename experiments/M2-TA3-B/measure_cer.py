@@ -1,5 +1,4 @@
-"""M2-TA3-B2 phase-2: automatic CER measurement (AC2) + SFX stats + n=30
-spot-check worksheet skeleton (quality-thresholds §0/§2.4/§2.5/§3.1).
+"""M2-TA3-B2 phase-2: automatic CER measurement (AC2) + SFX stats.
 
 Inputs (all produced by run_qualification.py / extract_svg_gt.py):
   - phase2/summaries/qual-<case>.json  (per-region ``ocr_details``/``translate_details``)
@@ -14,16 +13,24 @@ What this script does (standard library only, no new dependencies):
      spot-check of the alignment stays mandatory (thresholds §5 risk 2).
   2. region-level CER with the §0 normalization (strip ALL whitespace,
      ``…`` ≡ ``...``, latin casefold; ``ー`` is NOT folded into ``-``) and
-     a stdlib Levenshtein; denominator = all detected regions of the G1
-     cases (R7: no truncation in this run).
+     a stdlib Levenshtein; auto-scored denominator = the G1 regions that
+     survive the §5 risk-2 exclusions (NOT all detected regions — R5,
+     DSH r1); every excluded row is recorded in ``excluded[]`` with its
+     reason and, where computable, the hypothetical CER if it had been
+     scored (multi-element GT rows are concatenations, not true text, so
+     treat those numbers as bounds, not measurements).
   3. Per-language G1 summary (median / P90 / CER=0 share / CER<=0.5 share).
   4. SFX translation stats across the 20 cases (thresholds §3.1): with the
      production default ``SfxPolicy.SKIP`` every SFX region takes the
      production ``skip_policy`` gate, so n is expected to be 0 and the
      n<15 rule (R13) applies — distribution only, no Gate.
   5. region_count=0 cases are exempted (R11) and recorded as such.
-  6. Emits the n=30 layered OCR spot-check worksheet skeleton
-     (``ai_draft`` column left for the pre-fill pass).
+
+NOT produced here (R15, DSH r1): the layered OCR spot-check worksheet
+skeleton and the dialogue/SFX human worksheets are built by
+``build_worksheets.py`` (the earlier docstring wrongly claimed this script
+emitted an n=30 worksheet, and the layered-tag constants below were dead
+code copied from it — both removed).
 
 All numbers are DIRECTIONAL (DeepSeek/first quality run; no production
 conclusions may be drawn from them).
@@ -39,12 +46,6 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 PHASE2 = REPO_ROOT / "verification" / "M2-TA3-B" / "phase2"
-
-#: text-type tags used for the layered n=30 worksheet (thresholds §2.5)
-TINY_TAG_CASES = {"BJ06", "BJ10", "BJ02", "J47", "K02"}
-VERTICAL_TAG_CASES = {"BJ02", "BJ03", "BJ04", "BJ05", "BJ06", "BJ08", "BJ10", "BJ11"}
-COMPLEX_TAG_CASES = {"BJ02", "BJ03", "BJ05", "BJ06", "BJ10", "K05", "K09"}
-SFX_CASES = {"BJ06", "BJ10"}
 
 
 def normalize(text: str) -> str:
@@ -163,6 +164,42 @@ def char_overlap(gt_norm: str, hyp_norm: str) -> float:
     return len(gt_chars & hyp_chars) / len(gt_chars)
 
 
+#: rows with these gt_source values never enter the automatic CER denominator
+#: (thresholds §5 risk 2); R5 (DSH r1) requires them recorded with a reason and
+#: the hypothetical CER they would have contributed.
+AUTO_SCORED_SOURCES = {"G1:svg_native", "G2:pending_human_worksheet"}
+
+
+def reason_category(gt_source: str) -> str:
+    if gt_source == "UNALIGNED_G1_CASE":
+        return "unaligned"
+    if gt_source == "MANUAL_REVIEW:empty-ocr":
+        return "empty-ocr"
+    if gt_source.startswith("MANUAL_REVIEW:") and gt_source.endswith("-svg-elements"):
+        return "multi-element"
+    return "low-char-overlap"  # SUSPECT_MISMATCH:text-family
+
+
+def excluded_entry(row: dict, gt_raw: str, hyp_raw: str) -> dict:
+    gt_norm, hyp_norm = normalize(gt_raw), normalize(hyp_raw)
+    hypothetical = None
+    if gt_norm:
+        # meaningful whenever the GT side exists; an empty OCR side yields
+        # 1.0 (a true full miss — R5: the exclusion rule must not hide these)
+        hypothetical = round(cer(gt_norm, hyp_norm), 4)
+    return {
+        "unit_id": row["unit_id"],
+        "language": row["language"],
+        "case_id": row["case_id"],
+        "region_id": row["region_id"],
+        "reason": row["gt_source"],
+        "reason_category": reason_category(row["gt_source"]),
+        "gt_text": row["gt_text"],
+        "ocr_text": row["ocr_text"],
+        "hypothetical_cer_if_scored": hypothetical,
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--summaries-dir", default=str(PHASE2 / "summaries"))
@@ -184,6 +221,7 @@ def main() -> int:
             svg_gts[case_id] = json.loads(path.read_text(encoding="utf-8"))
 
     rows: list[dict] = []
+    excluded_rows: list[dict] = []
     exempt_cases: list[dict] = []
     per_language: dict[str, list[float]] = {"ja": [], "ko": []}
     alignment_notes: dict[str, dict] = {}
@@ -210,7 +248,7 @@ def main() -> int:
                 "svg_elements_matched": sum(1 for t in trace if t["matched_region_id"]),
                 "regions_matched": len(g1_texts),
                 "regions_total": len(details),
-                "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)",
+                "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)",
                 "trace": trace,
             }
         for detail in details:
@@ -254,6 +292,8 @@ def main() -> int:
                 value = cer(normalize(gt_raw), normalize(hyp_raw))
                 row["cer"] = f"{value:.4f}"
                 per_language.setdefault(language, []).append(value)
+            if gt_source not in AUTO_SCORED_SOURCES:
+                excluded_rows.append(excluded_entry(row, gt_raw, hyp_raw))
             rows.append(row)
 
     # ---- language-level G1 summaries ---------------------------------------
@@ -261,9 +301,18 @@ def main() -> int:
         "task": "M2-TA3-B2",
         "measure": "G1 native-GT CER (directional)",
         "normalization": "strip-all-whitespace; …≡...; latin casefold; ー not folded (thresholds §0)",
-        "denominator": "all detected regions of the G1 cases (R7 no-truncation run)",
+        "denominator": (
+            "auto-scored subset of G1-case regions AFTER the thresholds §5 "
+            "risk-2 exclusions (R5, DSH r1): ko K11 13 regions -> 6 "
+            "auto-scored + 7 excluded; ja J46/J47 -> 0 auto-scored + 6 "
+            "excluded; every excluded row is listed in excluded[] with its "
+            "reason and (where computable) the hypothetical CER it would "
+            "have contributed. The earlier wording 'all detected regions of "
+            "the G1 cases' was wrong."
+        ),
         "languages": {},
         "exempt_cases": exempt_cases,
+        "excluded": excluded_rows,
         "alignment_notes": {
             k: {kk: vv for kk, vv in v.items() if kk != "trace"} for k, v in alignment_notes.items()
         },
@@ -352,6 +401,7 @@ def main() -> int:
             f"gate({entry['proposal_gate_median']})={entry['gate_verdict']}"
         )
     print(f"SFX: n={sfx_total} translated={sfx_translated}")
+    print(f"excluded from auto CER: {len(excluded_rows)} rows (see cer-summary.json excluded[])")
     print(f"summary -> {summary_path}")
     return 0
 

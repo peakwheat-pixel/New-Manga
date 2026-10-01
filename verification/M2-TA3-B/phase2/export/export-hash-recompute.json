@@ -1,11 +1,28 @@
 {
   "task": "M2-TA3-B2",
-  "method": "independent recompute (stdlib hashlib) of every OK export recorded by the runner; runner-independent by construction (this script only reads the pixel files and the summaries)",
-  "n_ok_exports": 11,
+  "generated_at_utc": "2026-10-01T11:08:22Z",
+  "method": "independent recompute (stdlib hashlib) of every OK export recorded by the runner — main pass AND .rerun exports (R7, DSH r1); runner-independent by construction (this script only reads the pixel files and the summaries); generator script checked in at experiments/M2-TA3-B/verify_exports.py",
+  "pixel_root": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\phase2-pixels",
+  "n_ok_exports": 13,
   "all_match": true,
   "records": [
     {
       "case_id": "BJ02",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ02.json",
+      "pixel_relative_path": "export/BJ02-translated.png",
+      "summary_sha256": "5c74a4f01e053ee2c6427adf2fe6659687257660c98fc1997d9f56fb15e75528",
+      "recomputed_sha256": "5c74a4f01e053ee2c6427adf2fe6659687257660c98fc1997d9f56fb15e75528",
+      "match": true,
+      "size_bytes_recorded": 8759037,
+      "size_bytes_actual": 8759037,
+      "size_match": true
+    },
+    {
+      "case_id": "BJ02",
+      "rerun": true,
+      "summary_file": "summaries/qual-BJ02.rerun.json",
+      "pixel_relative_path": "export/BJ02.rerun-translated.png",
       "summary_sha256": "5c74a4f01e053ee2c6427adf2fe6659687257660c98fc1997d9f56fb15e75528",
       "recomputed_sha256": "5c74a4f01e053ee2c6427adf2fe6659687257660c98fc1997d9f56fb15e75528",
       "match": true,
@@ -15,6 +32,9 @@
     },
     {
       "case_id": "BJ03",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ03.json",
+      "pixel_relative_path": "export/BJ03-translated.png",
       "summary_sha256": "795112d12718b85a8d434226cf2344104d2b61d9a80ab6e9520d968f97e1c834",
       "recomputed_sha256": "795112d12718b85a8d434226cf2344104d2b61d9a80ab6e9520d968f97e1c834",
       "match": true,
@@ -24,6 +44,9 @@
     },
     {
       "case_id": "BJ04",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ04.json",
+      "pixel_relative_path": "export/BJ04-translated.png",
       "summary_sha256": "f9ff9ac5b34be47d3cfe5df90b304261a756b052b579868bac0f28a5d72c1b94",
       "recomputed_sha256": "f9ff9ac5b34be47d3cfe5df90b304261a756b052b579868bac0f28a5d72c1b94",
       "match": true,
@@ -33,6 +56,9 @@
     },
     {
       "case_id": "BJ05",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ05.json",
+      "pixel_relative_path": "export/BJ05-translated.png",
       "summary_sha256": "cf99eff52e07bb603ecad81ec97f86875d4c108880be47a9af29fe100fc22931",
       "recomputed_sha256": "cf99eff52e07bb603ecad81ec97f86875d4c108880be47a9af29fe100fc22931",
       "match": true,
@@ -42,6 +68,9 @@
     },
     {
       "case_id": "BJ06",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ06.json",
+      "pixel_relative_path": "export/BJ06-translated.png",
       "summary_sha256": "fc3f7981df30a4654c7507238c5a301e70eee3a42506f9787a91b2f241898674",
       "recomputed_sha256": "fc3f7981df30a4654c7507238c5a301e70eee3a42506f9787a91b2f241898674",
       "match": true,
@@ -51,6 +80,9 @@
     },
     {
       "case_id": "BJ08",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ08.json",
+      "pixel_relative_path": "export/BJ08-translated.png",
       "summary_sha256": "40610e2812add78e8021764f0d3d365a6238aca4b88c533c875f09aa0fd471c3",
       "recomputed_sha256": "40610e2812add78e8021764f0d3d365a6238aca4b88c533c875f09aa0fd471c3",
       "match": true,
@@ -60,6 +92,9 @@
     },
     {
       "case_id": "BJ10",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ10.json",
+      "pixel_relative_path": "export/BJ10-translated.png",
       "summary_sha256": "f06888e9a33bd3dcbd05224f6b3ce5bfc8d03172108edaa8155bd0ecd4b79a19",
       "recomputed_sha256": "f06888e9a33bd3dcbd05224f6b3ce5bfc8d03172108edaa8155bd0ecd4b79a19",
       "match": true,
@@ -69,6 +104,9 @@
     },
     {
       "case_id": "BJ11",
+      "rerun": false,
+      "summary_file": "summaries/qual-BJ11.json",
+      "pixel_relative_path": "export/BJ11-translated.png",
       "summary_sha256": "621f4a5eba198df1ad62153edfad54ca1e9c7cb739f17f1929c4900ffcdad14d",
       "recomputed_sha256": "621f4a5eba198df1ad62153edfad54ca1e9c7cb739f17f1929c4900ffcdad14d",
       "match": true,
@@ -78,6 +116,9 @@
     },
     {
       "case_id": "J46",
+      "rerun": false,
+      "summary_file": "summaries/qual-J46.json",
+      "pixel_relative_path": "export/J46-translated.png",
       "summary_sha256": "7458110fff6c15e96ed46d2fe50f24cf08362d578c9a1306f8b3af1ee33d2237",
       "recomputed_sha256": "7458110fff6c15e96ed46d2fe50f24cf08362d578c9a1306f8b3af1ee33d2237",
       "match": true,
@@ -87,6 +128,9 @@
     },
     {
       "case_id": "J47",
+      "rerun": false,
+      "summary_file": "summaries/qual-J47.json",
+      "pixel_relative_path": "export/J47-translated.png",
       "summary_sha256": "4d9bc366ed7b80b7614c0498a9b3d4a8b449de4aa9f9795ec7c2c8c17894964a",
       "recomputed_sha256": "4d9bc366ed7b80b7614c0498a9b3d4a8b449de4aa9f9795ec7c2c8c17894964a",
       "match": true,
@@ -96,11 +140,26 @@
     },
     {
       "case_id": "K11",
+      "rerun": false,
+      "summary_file": "summaries/qual-K11.json",
+      "pixel_relative_path": "export/K11-translated.png",
       "summary_sha256": "2c5dee05b309e90d021dfdebb124b790274625ff11046c20990d935df1e41b1a",
       "recomputed_sha256": "2c5dee05b309e90d021dfdebb124b790274625ff11046c20990d935df1e41b1a",
       "match": true,
       "size_bytes_recorded": 3064835,
       "size_bytes_actual": 3064835,
+      "size_match": true
+    },
+    {
+      "case_id": "K11",
+      "rerun": true,
+      "summary_file": "summaries/qual-K11.rerun.json",
+      "pixel_relative_path": "export/K11.rerun-translated.png",
+      "summary_sha256": "86ff9aa780350d490d28b147e2399a770014b6fdbef2fecace890ad9b52d2da1",
+      "recomputed_sha256": "86ff9aa780350d490d28b147e2399a770014b6fdbef2fecace890ad9b52d2da1",
+      "match": true,
+      "size_bytes_recorded": 3064842,
+      "size_bytes_actual": 3064842,
       "size_match": true
     }
   ]

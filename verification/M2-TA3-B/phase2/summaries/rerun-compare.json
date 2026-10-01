@@ -1,11 +1,51 @@
-[
-  {
-    "case_id": "K11",
-    "sha256_first": "2c5dee05b309e90d021dfdebb124b790274625ff11046c20990d935df1e41b1a",
-    "sha256_second": "86ff9aa780350d490d28b147e2399a770014b6fdbef2fecace890ad9b52d2da1",
-    "match": false,
-    "region_count_first": 13,
-    "region_count_second": 13,
-    "wall_s_second": 68.95
-  }
-]
+{
+  "task": "M2-TA3-B2",
+  "updated_at_utc": "2026-10-01T11:08:37Z",
+  "note": "R2 (DSH r1): the original runner overwrote rerun-compare.json per case and the delivered artifact retained only K11. This 3-case compare (phase2-plan fixed set BJ02/K01/K11) is REBUILT from the qual-<case>.json and qual-<case>.rerun.json summaries — no rerun was executed for this rebuild; runner now merges per case (run_qualification.py). Methodology note (R1): region_id is regenerated every run, so comparisons align by reading_order, not region_id; the export hash reflects the Run1 page-level render (Run2 does not re-render).",
+  "cases": [
+    {
+      "case_id": "BJ02",
+      "sha256_first": "5c74a4f01e053ee2c6427adf2fe6659687257660c98fc1997d9f56fb15e75528",
+      "sha256_second": "5c74a4f01e053ee2c6427adf2fe6659687257660c98fc1997d9f56fb15e75528",
+      "match": true,
+      "region_count_first": 5,
+      "region_count_second": 5,
+      "wall_s_second": 158.09,
+      "verdict": "MATCH",
+      "export_relative_path_first": "export/BJ02-translated.png",
+      "export_relative_path_second": "export/BJ02.rerun-translated.png",
+      "size_first": 8759037,
+      "size_second": 8759037,
+      "translated_revision_id_first": "7f7626c07cec4c2ab2f284ec23c1ab2e",
+      "translated_revision_id_second": "d7adba5887c0485d860f1446a57d974e"
+    },
+    {
+      "case_id": "K01",
+      "sha256_first": "",
+      "sha256_second": "",
+      "match": false,
+      "region_count_first": 0,
+      "region_count_second": 0,
+      "wall_s_second": 2.43,
+      "verdict": "NOT_ACHIEVABLE",
+      "not_achievable_reason": "no export on either side (F1: detect returned no candidates -> data:no-regions-detected)"
+    },
+    {
+      "case_id": "K11",
+      "sha256_first": "2c5dee05b309e90d021dfdebb124b790274625ff11046c20990d935df1e41b1a",
+      "sha256_second": "86ff9aa780350d490d28b147e2399a770014b6fdbef2fecace890ad9b52d2da1",
+      "match": false,
+      "region_count_first": 13,
+      "region_count_second": 13,
+      "wall_s_second": 68.95,
+      "verdict": "MISMATCH",
+      "export_relative_path_first": "export/K11-translated.png",
+      "export_relative_path_second": "export/K11.rerun-translated.png",
+      "size_first": 3064835,
+      "size_second": 3064842,
+      "translated_revision_id_first": "17095606d8ac4be0a57c3809a13c1b4d",
+      "translated_revision_id_second": "0c8ee003beff4bc39e2cfbe0307d2b0a",
+      "wall_s_first": 89.42
+    }
+  ]
+}

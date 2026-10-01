@@ -2,7 +2,7 @@
   "task": "M2-TA3-B2",
   "measure": "G1 native-GT CER (directional)",
   "normalization": "strip-all-whitespace; …≡...; latin casefold; ー not folded (thresholds §0)",
-  "denominator": "all detected regions of the G1 cases (R7 no-truncation run)",
+  "denominator": "auto-scored subset of G1-case regions AFTER the thresholds §5 risk-2 exclusions (R5, DSH r1): ko K11 13 regions -> 6 auto-scored + 7 excluded; ja J46/J47 -> 0 auto-scored + 6 excluded; every excluded row is listed in excluded[] with its reason and (where computable) the hypothetical CER it would have contributed. The earlier wording 'all detected regions of the G1 cases' was wrong.",
   "languages": {
     "ja": {
       "n_regions": 0,
@@ -94,27 +94,172 @@
       ]
     }
   ],
+  "excluded": [
+    {
+      "unit_id": "J46:eb4ae706",
+      "language": "ja",
+      "case_id": "J46",
+      "region_id": "eb4ae7060c1c4710bf94bfc1f7b6b8ef",
+      "reason": "MANUAL_REVIEW:3-svg-elements",
+      "reason_category": "multi-element",
+      "gt_text": "- おしまい - 12/2016 - www.peppercarrot.com - Art & Scenario : David Revoy - Translation : guruguru Based on the universe of Hereva created by David Revoy with contributions by Craig Maloney. Corrections by Willem Sonke, Moini, Hali, CGand and Alex Gryson.",
+      "ocr_text": "これからはお客様のお客さんのお店でありますので、",
+      "hypothetical_cer_if_scored": 1.0
+    },
+    {
+      "unit_id": "J47:a3ace008",
+      "language": "ja",
+      "case_id": "J47",
+      "region_id": "a3ace0089dd6491680448d539032aedc",
+      "reason": "UNALIGNED_G1_CASE",
+      "reason_category": "unaligned",
+      "gt_text": "",
+      "ocr_text": "Ａｍａｚｏｎはお金についてオープンツーツで話しているのですが、このセリーがなかったのでしょうか。このような情報は「ＰＣＰＯＰＣＯＭＡ」のＷｅｒＷｅｎｄｅｒｏｎｄｏｎｅｎｅｒｅｄｅｓｅｒａｌｅｓｈｅｒｄｅｎｔｅｒｉｃｈｅｓｔｅｓｓｈｏｒｏｒｅｓａｎｅｓです。ことは、",
+      "hypothetical_cer_if_scored": null
+    },
+    {
+      "unit_id": "J47:7ed075cf",
+      "language": "ja",
+      "case_id": "J47",
+      "region_id": "7ed075cf63834daea19cd93dceb461bd",
+      "reason": "UNALIGNED_G1_CASE",
+      "reason_category": "unaligned",
+      "gt_text": "",
+      "ocr_text": "そういえば、",
+      "hypothetical_cer_if_scored": null
+    },
+    {
+      "unit_id": "J47:2e2f9591",
+      "language": "ja",
+      "case_id": "J47",
+      "region_id": "2e2f9591b4754b4abba74e309b3f165a",
+      "reason": "SUSPECT_MISMATCH:text-family",
+      "reason_category": "low-char-overlap",
+      "gt_text": "あなたもPepper&Carrotのパトロンになりましょう www.patreon.com/davidrevoy",
+      "ocr_text": "そういえば、",
+      "hypothetical_cer_if_scored": 0.9818
+    },
+    {
+      "unit_id": "J47:346f4ed8",
+      "language": "ja",
+      "case_id": "J47",
+      "region_id": "346f4ed8ff8146e09c203f2c9635d2d7",
+      "reason": "UNALIGNED_G1_CASE",
+      "reason_category": "unaligned",
+      "gt_text": "",
+      "ocr_text": "そういえば、",
+      "hypothetical_cer_if_scored": null
+    },
+    {
+      "unit_id": "J47:867b5090",
+      "language": "ja",
+      "case_id": "J47",
+      "region_id": "867b5090d01243ac8d8df06f00462027",
+      "reason": "UNALIGNED_G1_CASE",
+      "reason_category": "unaligned",
+      "gt_text": "",
+      "ocr_text": "おまえの部屋の中には、コメンターネットではなかったのですが、",
+      "hypothetical_cer_if_scored": null
+    },
+    {
+      "unit_id": "K11:f414d6eb",
+      "language": "ko",
+      "case_id": "K11",
+      "region_id": "f414d6eb0b20489099792bf29b35dcfa",
+      "reason": "UNALIGNED_G1_CASE",
+      "reason_category": "unaligned",
+      "gt_text": "",
+      "ocr_text": "당근아!",
+      "hypothetical_cer_if_scored": null
+    },
+    {
+      "unit_id": "K11:9a30cdf6",
+      "language": "ko",
+      "case_id": "K11",
+      "region_id": "9a30cdf6cc5d49a8a606f6d2083a5f5b",
+      "reason": "MANUAL_REVIEW:2-svg-elements",
+      "reason_category": "multi-element",
+      "gt_text": "당근아! 당근아?",
+      "ocr_text": "당근아?",
+      "hypothetical_cer_if_scored": 0.5
+    },
+    {
+      "unit_id": "K11:2b589cf4",
+      "language": "ko",
+      "case_id": "K11",
+      "region_id": "2b589cf428ed47479201a040fbab1635",
+      "reason": "UNALIGNED_G1_CASE",
+      "reason_category": "unaligned",
+      "gt_text": "",
+      "ocr_text": "당근아!",
+      "hypothetical_cer_if_scored": null
+    },
+    {
+      "unit_id": "K11:df871de5",
+      "language": "ko",
+      "case_id": "K11",
+      "region_id": "df871de5c37249509ce5299f84e01794",
+      "reason": "MANUAL_REVIEW:6-svg-elements",
+      "reason_category": "multi-element",
+      "gt_text": "고양이 사료 사각 사각 사각 사각 사각",
+      "ocr_text": "  ",
+      "hypothetical_cer_if_scored": 1.0
+    },
+    {
+      "unit_id": "K11:0cab6593",
+      "language": "ko",
+      "case_id": "K11",
+      "region_id": "0cab65935cf64d9f992bddfbcad748cf",
+      "reason": "MANUAL_REVIEW:2-svg-elements",
+      "reason_category": "multi-element",
+      "gt_text": "크륵  크륵  크륵 크륵  크륵 사각  사각  사각사각  사각",
+      "ocr_text": "크록브록크록 크록사각 사각 사각사각",
+      "hypothetical_cer_if_scored": 0.45
+    },
+    {
+      "unit_id": "K11:dadc7e00",
+      "language": "ko",
+      "case_id": "K11",
+      "region_id": "dadc7e002fe840ac9347aeb0774f98a8",
+      "reason": "MANUAL_REVIEW:3-svg-elements",
+      "reason_category": "multi-element",
+      "gt_text": "오 나의태야아옹!! 크륵  크륵  크륵 크륵  크륵 사각  사각  사각사각  사각",
+      "ocr_text": "오 나의 태야아옹!!",
+      "hypothetical_cer_if_scored": 0.6897
+    },
+    {
+      "unit_id": "K11:65069961",
+      "language": "ko",
+      "case_id": "K11",
+      "region_id": "6506996124b049869b0c009a7d566ff6",
+      "reason": "MANUAL_REVIEW:empty-ocr",
+      "reason_category": "empty-ocr",
+      "gt_text": "당근아!",
+      "ocr_text": "",
+      "hypothetical_cer_if_scored": 1.0
+    }
+  ],
   "alignment_notes": {
     "J46": {
       "svg_elements_total": 4,
       "svg_elements_matched": 3,
       "regions_matched": 1,
       "regions_total": 1,
-      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)"
+      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)"
     },
     "J47": {
       "svg_elements_total": 2,
       "svg_elements_matched": 1,
       "regions_matched": 1,
       "regions_total": 5,
-      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)"
+      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)"
     },
     "K11": {
       "svg_elements_total": 26,
       "svg_elements_matched": 20,
       "regions_matched": 11,
       "regions_total": 13,
-      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); multi-element and low-overlap matches are excluded from automatic CER and left to the human worksheet (thresholds §5 risk 2 / §2.2)"
+      "alignment_method": "geometric (anchor-in-bbox / flowRoot-polygon-overlap); excluded from automatic CER: multi-element matches, low char_overlap (<0.3) matches, UNALIGNED (0-element) regions and empty-OCR regions — all left to the human worksheet (thresholds §5 risk 2 / §2.2; R5, DSH r1: the two UNALIGNED/empty-OCR classes are now named explicitly)"
     }
   },
   "sfx_translation_stats": {
