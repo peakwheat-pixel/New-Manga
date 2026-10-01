@@ -21,7 +21,7 @@
 
 ### 2.1 形态
 
-新增 `experiments/M2-TA3-B/run_qualification.py`（**不改动** `experiments/M2-TA3-A/run_smoke.py`，后者保持只读基座），复用其经过验证的骨架：production assembly（`assemble_core_services`，Qt offscreen、真实 docTR detect）→ Run1 PAGE_SELECTION/TRANSLATE_ALL → region 级 Run2 RETRANSLATE_REGION_FULL → 单图 export → 三向归因 fail-closed summary。差异：
+新增 `experiments/M2-TA3-B/run_qualification.py`（**不改动** `experiments/M2-TA3-A/run_smoke.py`，后者保持只读基座），复用其经过验证的骨架：production assembly（`assemble_core_services`，Qt offscreen、真实 manga ogkalu detect（+chiqui7 SFX 并行）——r1 R3/AC5 修正：本行原文「真实 docTR detect」与 runner 实际 provider（`run_qualification.py` ogkalu+chiqui7）不符，docTR fast_base 仅属 TA3-A 基座）→ Run1 PAGE_SELECTION/TRANSLATE_ALL → region 级 Run2 RETRANSLATE_REGION_FULL → 单图 export → 三向归因 fail-closed summary。差异：
 
 | 扩展点 | 设计 |
 |---|---|
@@ -189,7 +189,7 @@ core = assemble_core_services(...)  # 同参数重跑
 | 12 | `quality-report.md`（实测 vs 提案阈值对照 + 裁决登记） | 质量报告 | 8-11 |
 | 13 | 独立 Review（DSH 非作者）→ Codex 集成 | review/integration | 12 |
 
-预计总量（r2 N6 回看：原「20 case 估 1-2 小时」建立在 TA3-A 的 40 region 截断之上，§2.1 已默认取消截断，估时按无截断口径上修）：单 case wall ≈ detect+Run1（TA3-A 实测 2-5 分钟）+ Run2 每 region 数秒×region 数（K01 等长条漫 region 数远超 40，CPU OCR+每 region 一次 DeepSeek 请求线性增长）——20 case 全链估 **2-4 小时以上**，以 runner 落盘的 per-case `wall_s` 实测回填 quality-report；翻译请求量级=Σ(1+region 数)（Run1 整页一次 + Run2 每 region 一次），预估总 token 数十万以内，超预期即停并登记。
+预计总量（r2 N6 回看：原「20 case 估 1-2 小时」建立在 TA3-A 的 40 region 截断之上，§2.1 已默认取消截断，估时按无截断口径上修）：单 case wall ≈ detect+Run1（TA3-A 实测 2-5 分钟）+ Run2 每 region 数秒×region 数（K01 等长条漫 region 数远超 40，CPU OCR+每 region 一次 DeepSeek 请求线性增长）——20 case 全链估 **2-4 小时以上**，以 runner 落盘的 per-case `wall_s` 实测回填 quality-report；翻译请求量级=Σ(1+region 数)（Run1 整页一次 + Run2 每 region 一次），预估总 token **数万 token 量级，超预期即停并登记**（r1 R10 修正：本行在 r2 N6 落地时曾被写成「预估总 token 数十万以内」——该放宽超出 N6「估时回看」的授权范围且未登记，属越界改写，现回退 Task 纪律原文「≤ 数万 token 量级」；实际用量见 quality-report §0 成本行的 estimated 口径——token 量无计量证据，已登记为 runner 增强候选）。
 
 ## 5. 风险与如实登记义务
 

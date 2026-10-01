@@ -61,7 +61,7 @@
 
 | 类 | 适用 case | 来源 | 可信度 |
 |---|---|---|---|
-| G1 原生文本层 | ja：J46/J47（E20P06/E20P07——P&C 官方声明仅这两页含 partial SVG text layer）；ko：K11-K25 全部（ep04+ep20 语言包） | 官方 lang-pack ZIP 内 SVG text layer。本 Task 侦察实测：ep04/ep20 语言包 zip 内 `.svg` 成员计数各 472（会话内 zip namelist 计数，未入证据物）——**正式计数与逐页文本提取以阶段二第 3 步 G1 提取脚本的落盘清单为准**（R8）。**ko G1 对齐披露（r2 N1）**：权威目录对 K11-K25 **全部 15 页**记 `svg_text_layer_present_unaligned`（manifest K11/K19 同值）——SVG 文本存在但**无 bbox 对齐**，逐 region GT 需人工对齐（对齐键=bbox 人工指认，§2.4 第 2 条）；Gate 4（ko G1 CER）的 GT 强度=人工对齐后的子集、对齐工作量据此登记，无法自动对齐的部分在阶段二按 `NOT_AUTOMATED` 如实登记 | ja=高（原生，非人工誊录；SVG 文本=排版源文本，与页面渲染字形可能有空格/换行差异——归一化规则（§0）吸收）；ko=中（原生文本但未对齐，GT 强度受人工对齐质量约束，见左列披露） |
+| G1 原生文本层 | ja：J46/J47（E20P06/E20P07——P&C 官方声明仅这两页含 partial SVG text layer）；ko：K11-K25 全部（ep04+ep20 语言包） | 官方 lang-pack ZIP 内 SVG text layer。本 Task 侦察实测：ep04/ep20 语言包 zip 内 `.svg` 成员计数各 472（会话内 zip namelist 计数，未入证据物）——**正式计数与逐页文本提取以阶段二第 3 步 G1 提取脚本的落盘清单为准**（R8）。**【阶段二正式计数修正注（r1 R10）】已落盘 `phase2/ocr/svg-gt-manifest.json`：ep20=352、ep04=472——上句「各 472」实为 ko ep04 侧口径，勿再引用**。**ko G1 对齐披露（r2 N1）**：权威目录对 K11-K25 **全部 15 页**记 `svg_text_layer_present_unaligned`（manifest K11/K19 同值）——SVG 文本存在但**无 bbox 对齐**，逐 region GT 需人工对齐（对齐键=bbox 人工指认，§2.4 第 2 条）；Gate 4（ko G1 CER）的 GT 强度=人工对齐后的子集、对齐工作量据此登记，无法自动对齐的部分在阶段二按 `NOT_AUTOMATED` 如实登记 | ja=高（原生，非人工誊录；SVG 文本=排版源文本，与页面渲染字形可能有空格/换行差异——归一化规则（§0）吸收）；ko=中（原生文本但未对齐，GT 强度受人工对齐质量约束，见左列披露） |
 | G2 AI 预判 GT（C1 模式） | BJ01-BJ12（无任何文本 GT）、webtoon K01-K10（dataset 仅 cleaned/mask/conf 辅助标注，**无文本转写**）；**并扩展覆盖 G1 四 case（J46/J47/K11/K19）的同 region 双源对照**（R1） | GLM 视觉直读 region crop 预填 `ocr-gt-ai-draft.csv` → 用户逐条审核 → 正式 `ocr-gt.csv` | 中（方向性证据，C1 §2 强度裁定适用） |
 | G3 双源交叉 | **G2 预填扩展到 G1 四 case 后**，J46/J47/K11/K19 中同一 region 同时具备 SVG 原生文本与人工誊录两源，逐 region 对照；不一致处人工仲裁，一致率作为人工 GT 流程质量的旁证指标（R1 采纳建议①）。**ko 侧前提（r2 N1）**：K11/K19 的 SVG 侧为 present-but-unaligned，逐 region 配对依赖 §2.4 的人工 bbox 对齐先行完成；对齐未成立（NOT_AUTOMATED）的 region 不进入 G3 交叉，如实登记 | 同 crop 双源（SVG 提取 vs 用户审核誊录） | 最高，量小（预计 <50 region，为无推导估计），全部登记 |
 
@@ -73,7 +73,7 @@
 |---|---|---|---|
 | ja（manga-ocr） | G1 原生 GT 子集 | region 级 **CER 中位数 ≤ 0.10** | manga-ocr 论文（Kaczmarczyk & Trzciński 2021，arXiv:2107.12922）公开报告 Manga109 测试上字符级准确率 ≈0.95（CER≈0.05）量级；原生 GT 剔除誊录噪声后，取论文量级 2 倍作为生产初版上限 |
 | ja | 全量（G1+G2） | region 级 **CER 中位数 ≤ 0.15** | G2 人工 GT 引入誊录主观性（竖排断行/标点取舍），在全量子集上放宽一档 |
-| ko（PaddleOCR） | G1 原生 GT 子集 | region 级 **CER 中位数 ≤ 0.20**（注，r2 N1：本行 GT=K11/K19 的 **present-but-unaligned** SVG 文本经人工 bbox 对齐后的子集，非"现成 GT"——对齐质量与覆盖直接进入本 Gate 的不确定度；对齐未成立的 region 按 NOT_AUTOMATED 剔除并登记） | **无 manga/webtoon 域公开基准数字**（PP-OCRv5 公开评测为通用印刷场景）——此数值为初版提案而非证据推定，实测后校准 |
+| ko（PaddleOCR） | G1 原生 GT 子集 | region 级 **CER 中位数 ≤ 0.20**（注，r2 N1：本行 GT=K11/K19 的 **present-but-unaligned** SVG 文本经人工 bbox 对齐后的子集，非"现成 GT"——对齐质量与覆盖直接进入本 Gate 的不确定度；对齐未成立的 region 按 NOT_AUTOMATED 剔除并登记）。**【阶段二实测同步（r1 R5）】首跑自动子集 n=6、median=0.0556——PASS 判定必须携带：①分母=§5 风险 2 排除规则后的幸存集（13 region 剔 7，排除明细与"若计分 CER"见 `cer-summary.json` excluded[]）；②剔除方向系统性偏低（被剔集含 1 条 CER=1.0 真 OCR 失败），0.0556 为**下偏统计量**；③6 行中 3 行为同一 4 字短串（有效独立文本 4 种）** | **无 manga/webtoon 域公开基准数字**（PP-OCRv5 公开评测为通用印刷场景）——此数值为初版提案而非证据推定，实测后校准 |
 | ko | 全量（G1+G2） | region 级 **CER 中位数 ≤ 0.25** | 同上，再放宽一档容纳 webtoon 手写体气泡字 |
 
 **依据链的诚实声明**：ja 两档有论文公开数字作锚（放宽理由=自产 region crop 的切分/竖排/字体分布与论文评测集差异）；ko 两档**没有**可引用的公开基线，数值纯属提案（登记为"初版猜测"），阶段二实测分布出来后由用户裁决是否调整——这正是"阈值由本 Task 提案、用户可撤销"契约的主场景。
@@ -165,8 +165,10 @@
 |---|---|---|
 | export 状态 | 每 case `export status=OK` | TA3-A runner 既有 fail-closed 口径（`run_smoke.py` export 段） |
 | 哈希一致性 | summary 记录的 `sha256` 与产物文件实算一致（复算脚本独立于 runner） | TA3-A AC4 确定性框架（export 哈希双向复算一致先例） |
-| 确定性复跑 | **固定 3 case（BJ02/K01/K11，理由：覆盖 ja BJ 印刷漫 / ko webtoon / ko P&C 三家族，非抽样——R15）**同环境重跑，export 哈希逐位一致 | TA3-A 已验证确定性；阶段二只需防回归 |
+| 确定性复跑 | **固定 3 case（BJ02/K01/K11，理由：覆盖 ja BJ 印刷漫 / ko webtoon / ko P&C 三家族，非抽样——R15）**同环境重跑，export 哈希逐位一致 **`superseded-pending`（r1 R9/R1）：remote 翻译下"字节逐位"口径待重新定义（候选=按 reading_order 对齐的译文相似度）——见 quality-report §5/F5 裁决点；重定义前本行勿作为执行口径引用** | TA3-A 已验证确定性；阶段二只需防回归。**阶段二实测（r1 R1）：该口径对 Run2 region 链是空转（export 只反映 Run1 渲染产物），且 Run1 内部即存在未隔离的非确定环节（K11 MISMATCH）** |
 | 渲染产物 | 每 case 产出 `translated` render 且 reader_catalog 可解析（run2 完成的隐含条件） | 生产 seam |
+
+> **本节 superseded-pending 注（r1 R9）**：§5 与 §7 中 render/export 的"确定性复跑=export 哈希逐位一致"条目在 remote 翻译（DeepSeek）链路下待重新定义（quality-report §5/F5，Codex/用户裁决点）。阈值**数值本身未改**；F4/F5 的口径修订仍在裁决流程中，本文档不做单方改写。
 
 ### 用户裁决点
 
@@ -192,14 +194,14 @@
 | 1 | detect | 冻结口径引用 + region_count≥1 冒烟 | 引用（无新数值） | 无 |
 | 2 | OCR ja G1 子集 | CER 中位数 ≤ 0.10 | 论文锚定提案 | O-3 |
 | 3 | OCR ja 全量 | CER 中位数 ≤ 0.15 | 论文锚定提案 | O-1 |
-| 4 | OCR ko G1 子集 | CER 中位数 ≤ 0.20（GT=K11/K19 present-but-unaligned SVG 经人工对齐后的子集，r2 N1） | **初版猜测**（无公开基线） | O-1/O-3 |
+| 4 | OCR ko G1 子集 | CER 中位数 ≤ 0.20（GT=K11/K19 present-but-unaligned SVG 经人工对齐后的子集，r2 N1；**实测首跑 n=6/median=0.0556 为下偏统计量，r1 R5，详见 §2.3 ko 行注**） | **初版猜测**（无公开基线） | O-1/O-3 |
 | 5 | OCR ko 全量 | CER 中位数 ≤ 0.25 | **初版猜测** | O-1 |
 | 6 | OCR 人工抽检 | n=30 分层、correct/partial/wrong 三档 | 方法设计 | O-2 |
 | 6b | OCR CER 分母 | 默认=全部检出 region；启用 region 上限时=明示抽样集+报告披露（R7） | 口径定义 | 无 |
 | 7 | translate SFX | **n≥15 才判 Gate**；non-fail ≥ 70%（音节转写单独强制登记）；n<15 只登记分布 | directional 首版 | T-1/T-2 |
 | 8 | translate 对白 | 中位数 ≥ 3.5 且 ≥3 分占比 ≥ 80%（5 分制三维） | directional 首版 | T-1/T-3/T-4 |
 | 9 | inpaint | 无数值 Gate，定性 100% 登记 | 上限如实界定 | I-1 |
-| 10 | render/export | OK + 哈希复算 + 3 case 确定性复跑 | TA3-A 框架引用 | 无 |
+| 10 | render/export | OK + 哈希复算 + 3 case 确定性复跑 **`superseded-pending`（r1 R9）：确定性逐位口径待 F5 裁决重定义，见 §5 注** | TA3-A 框架引用 | 无 |
 | 11 | 全链 | pipeline_failures=0 + 四件产物存在性 + 耗时登记 | TA3-A 口径 | 无 |
 
 **校准规则**：阶段二实测完成后，任何提案数值的调整（含"实测后 ko 阈值明显不合理的改判"）一律走用户裁决登记，不允许 owner 单方修改已裁决数值。
