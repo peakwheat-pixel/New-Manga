@@ -34,7 +34,7 @@
 
 ### 2.2 OCR provider 适配（阶段二必须处理的三项冒烟发现）
 
-1. **PaddleOCR bytes 静默忽略 + 输出形状不兼容（R6，双侧适配）**：生产 `PaddleKoreanOcrProvider` 直传 `image_bytes` 在 paddleocr 3.x 下得到**空结果且不报错**（输入侧）；同时 adapter 的 `_parse_paddle_output`（`ocr_local.py:202-241`）只接受 3.x 之前的 `[[box,(text,score)],…]` 嵌套形状，而 3.x 返回 `res.rec_texts/rec_scores` 结构（冒烟脚本即按 3.x 形状解析）——**只修输入侧不修输出侧，adapter 会抛 `ProviderInvalidOutput`（fail-closed，ko CER 无法产出）**。绕行方案（`src/` 零改动）：runner 组装时给 `PaddleKoreanOcrProvider` 注入 `engine_factory`——工厂返回 wrapper 对象，**双侧适配**：输入侧 `np.frombuffer`+`cv2.imdecode` 成 ndarray 转调真 engine（固定携带 `enable_mkldnn=False`）；输出侧把 3.x 结果映射回 legacy 嵌套形状 `[[box,(text,score)],…]` 再返回（box 用 3.x `rec_polys`/`dt_polys`，score 用 `rec_scores`）。
+1. **PaddleOCR bytes 静默忽略 + 输出形状不兼容（R6，双侧适配）**：生产 `PaddleKoreanOcrProvider` 直传 `image_bytes` 在 paddleocr 3.x 下得到**空结果且不报错**（输入侧）；同时 adapter 的 `_parse_paddle_output`（`ocr_local.py:202-241`）只接受 3.x 之前的 `[[box,(text,score)],…]` 嵌套形状，而 3.x 返回 `res.rec_texts/rec_scores` 结构（冒烟脚本即按 3.x 形状解析）——**只修输入侧不修输出侧，adapter 会抛 `ProviderInvalidOutput`（fail-closed，ko CER 无法产出）**。绕行方案（`src/` 零改动）：runner 组装时给 `PaddleKoreanOcrProvider` 注入 `engine_factory`——工厂返回 wrapper 对象，**双侧适配**：输入侧 `np.frombuffer`+`cv2.imdecode` 成 ndarray 转调真 engine（固定携带 `enable_mkldnn=False`）；输出侧把 3.x 结果映射回 legacy 嵌套形状 `[[box,(text,score)],…]` 再返回（box 用 3.x `rec_polys`/`dt_polys`，score 用 `rec_scores`）。**注入机制点名（r2 N5）**：生产 registry 注册的是裸类（`runtime.py` OCR 段，`factory=PaddleKoreanOcrProvider` 无参构造 → `engine_factory=None`），"注入"的实际机制=与 §3(a)(ii) 同款的 **registry re-register**——`registry.register(<同 id descriptor>, factory=lambda: PaddleKoreanOcrProvider(engine_factory=build_wrapper))` 后 `registry.invalidate("paddleocr-korean")`；box 必须物化为 Python list/tuple（numpy array 不是 `collections.abc.Sequence`，`_polygon_of` 会静默返回空 polygon）。
 2. **oneDNN/PIR 缺陷**（发现 1）：`PaddleOCR(..., enable_mkldnn=False, ...)` 固定写进 wrapper。
 3. **webtoon 长图**（发现 2）：生产链天然在 region crop 级喂 OCR，无 `SHRT_MAX` 风险；禁止整图直喂 PaddleOCR（冒烟教训写死在 runner 注释）。
 
@@ -70,23 +70,24 @@
 
 ```python
 # 步骤 1：profile 写入 SQLite settings（与 assemble 读路径严格对齐）
-#   _load_pipeline_settings(conn) 读 pipeline_defaults 表 settings_json（core_assembly.py:763-772）
-row = core.conn.execute(
-    "SELECT settings_json FROM pipeline_defaults WHERE defaults_id = 1"
-).fetchone()
-settings = json.loads(row[0]) if row and row[0] else {}
-settings.setdefault("providers", {}).setdefault("profiles", {})[
-    "openai-compatible-translation"
-] = {
+#   _load_pipeline_settings(conn) 读 pipeline_defaults 表 settings_json
+#   （core_assembly.py:484-498；装配消费点 = build_provider_runtime 调用 :782）
+#   （r2 N4 修正：上文 r1 版的 763-772 行号错引、裸 UPDATE 无 commit 均已更正——
+#   写入走生产 API save_settings_section（pipeline_defaults.py:105），upsert+commit
+#   一次完成；注意它按 section 整节覆盖，嵌套键须先 read() 取现值改写后整节写回）
+from ports.providers.credentials import make_credential_ref  # 冻结约定 NewManga/provider/<name>
+
+defaults = core.pipeline_defaults.read()
+providers_section = dict(defaults.settings.get("providers", {}))
+profiles = dict(providers_section.get("profiles", {}))
+profiles["openai-compatible-translation"] = {
     "base_url": <user_base_url>,
     "model": <user_model>,
-    "credential_ref": "ta3b-translate-key",
+    "credential_ref": make_credential_ref("provider", "ta3b-translate-key"),
     "enabled": True,
 }
-core.conn.execute(
-    "UPDATE pipeline_defaults SET settings_json = ? WHERE defaults_id = 1",
-    (json.dumps(settings),),
-)
+providers_section["profiles"] = profiles
+core.pipeline_defaults.save_settings_section("providers", providers_section)
 
 # 步骤 2：binding（run_smoke.py 同款 API）
 core.pipeline_defaults.save_provider_binding(
@@ -112,6 +113,7 @@ core = assemble_core_services(...)  # 同参数重跑
   # SecretValue 防泄漏：repr/str 只打印 redaction 标记（ports/providers/credentials.py:40-52）
   ```
   key 只在 runner 进程内存中出现，可由用户现场输入或环境变量读入后立即写入 vault——**env 变量本身不进任何日志/落盘**。
+  前置检查（r2 N4）：`core.credential_store` 是 best-effort 装配、**可为 None**（`core_assembly.py:501-514` + `:779`）——为 None 时本通路不可用，转方案 (ii)。
 - **(ii) 自定义 env resolver（re-register，vault 不可用时）**：`assemble_core_services` 没有 credential resolver 注入参数（`core_assembly.py:690-701`），vault 缺失时 resolver=None → `MissingCredential` fail-closed（`openai_client.py:207-215`）。此时 runner 在 `core.providers.registry` 上 **re-register** 该 provider，factory 内自带 env resolver：
   ```python
   from infrastructure.providers.openai_client import (
@@ -139,8 +141,9 @@ core = assemble_core_services(...)  # 同参数重跑
           ),
       ),
   )  # registry.register(descriptor, factory, *, gate, enabled) — registry.py:105
+  core.providers.registry.invalidate(PROVIDER_OPENAI_TRANSLATION)  # registry.py:302（r2 N4：丢弃可能存在的旧缓存实例）
   ```
-  re-register 后步骤 1-3 的 profile/binding 序列照常（binding 解析按 provider_id 命中 re-registered factory）。**两方案不得混用**：选 (ii) 时 profile 的 `credential_ref` 仅为占位、实际解析走 env。
+  re-register 后步骤 1-3 的 profile/binding 序列照常（binding 解析按 provider_id 命中 re-registered factory）。**两方案不得混用**：选 (ii) 时 profile 的 `credential_ref` 仅为占位、实际解析走 env。re-register 覆盖了同 id slot 的 descriptor+factory，但 registry 的实例缓存按 id 键控——若该 id 在 re-register 前已被 resolve 过，必须 `registry.invalidate("openai-compatible-translation")`（`registry.py:302`）丢弃旧缓存实例（r2 N4）。
 
 **凭证纪律**：key 不入仓、不入日志、不入 summary JSON（summary 只记 provider_id+base_url host+model 名）；方案 (i) 落 vault（可删除：`delete_credential`，windows.py:138）、方案 (ii) 只存在于进程环境。
 
@@ -148,7 +151,7 @@ core = assemble_core_services(...)  # 同参数重跑
 
 生产 provider 已内建：`sakura-local`（provider id 见 `translation_openai.py`，`SAKURA_DEFAULT_BASE_URL = http://127.0.0.1:8080/v1`、模型名默认 `sakura`），探针 `sakura_probe.py` 已在位（`/v1/models` readiness + `/health` liveness，typed reason codes）。
 
-**r1 版更正（R5）：「默认 base_url 已内建、无需配置」不成立**——registry 构造 sakura provider 时**显式读 settings**（`runtime.py:583-588`，注释原文 "No implicit default here"），空 profile 使 endpoint requirement 未满足（`dependencies.py:132-133` "no base_url configured"）→ readiness fail-closed。`SAKURA_DEFAULT_BASE_URL` 常量只在 probe 层使用，不进入 provider 配置。
+**r1 版更正（R5）+ r2 N4 归属句更正：「默认 base_url 已内建、无需配置」不成立**——registry 构造 sakura provider 时**显式读 settings**（`runtime.py:583-588`，注释原文 "No implicit default here"），空 profile 使 endpoint requirement 未满足（`dependencies.py:132-133` "no base_url configured"）→ readiness fail-closed。`SAKURA_DEFAULT_BASE_URL` 常量的真实归属：它是 `sakura_config()` 的**默认形参值**（`translation_openai.py:136-137`），`sakura_probe.py` 对其零引用——probe 层不接受该常量，provider 配置也不经它（只经 settings profile）。
 
 部署步骤（用户授权后 agent 可代执行，磁盘与耗时预估在每步标注）：
 
@@ -164,7 +167,7 @@ core = assemble_core_services(...)  # 同参数重跑
 |---|---|---|
 | 用户准备成本 | 提供 base_url/model/key（5 分钟） | 授权下载 8-16GB + 部署（0.5-1 小时） |
 | 翻译质量 | 取决于所选模型（通用 LLM 对漫画语域无特化） | 漫画翻译特化模型，语域适配预期更好 |
-| 凭证/隐私 | key 交由 runner 环境变量（不落盘） | 无外部凭证，全本地 |
+| 凭证/隐私 | key 交由 runner 环境变量注入（不落盘）；**env 通路须显式搭建**（vault `store_credential` 或 registry re-register env resolver，二选一，见 §3(a)） | 无外部凭证，全本地 |
 | 可复现性 | endpoint 侧模型更新可能改变结果 | 本地权重固定，确定性最好 |
 
 ## 4. 执行清单（二选一解锁后按序执行）
@@ -186,7 +189,7 @@ core = assemble_core_services(...)  # 同参数重跑
 | 12 | `quality-report.md`（实测 vs 提案阈值对照 + 裁决登记） | 质量报告 | 8-11 |
 | 13 | 独立 Review（DSH 非作者）→ Codex 集成 | review/integration | 12 |
 
-预计总量：正式 run 20 case（TA3-A 5 case 单 case wall 2-5 分钟，20 case 估 1-2 小时含 CPU OCR）+ 人工审核两轮（用户侧）。
+预计总量（r2 N6 回看：原「20 case 估 1-2 小时」建立在 TA3-A 的 40 region 截断之上，§2.1 已默认取消截断，估时按无截断口径上修）：单 case wall ≈ detect+Run1（TA3-A 实测 2-5 分钟）+ Run2 每 region 数秒×region 数（K01 等长条漫 region 数远超 40，CPU OCR+每 region 一次 DeepSeek 请求线性增长）——20 case 全链估 **2-4 小时以上**，以 runner 落盘的 per-case `wall_s` 实测回填 quality-report；翻译请求量级=Σ(1+region 数)（Run1 整页一次 + Run2 每 region 一次），预估总 token 数十万以内，超预期即停并登记。
 
 ## 5. 风险与如实登记义务
 

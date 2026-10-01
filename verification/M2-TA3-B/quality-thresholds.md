@@ -61,9 +61,9 @@
 
 | 类 | 适用 case | 来源 | 可信度 |
 |---|---|---|---|
-| G1 原生文本层 | ja：J46/J47（E20P06/E20P07——P&C 官方声明仅这两页含 partial SVG text layer）；ko：K11-K25 全部（ep04+ep20 语言包） | 官方 lang-pack ZIP 内 SVG text layer。本 Task 侦察实测：ep04/ep20 语言包 zip 内 `.svg` 成员计数各 472（会话内 zip namelist 计数，未入证据物）——**正式计数与逐页文本提取以阶段二第 3 步 G1 提取脚本的落盘清单为准**（R8） | 高（原生，非人工誊录）。注意：SVG 文本=排版源文本，与页面渲染字形可能有空格/换行差异——归一化规则（§0）吸收 |
+| G1 原生文本层 | ja：J46/J47（E20P06/E20P07——P&C 官方声明仅这两页含 partial SVG text layer）；ko：K11-K25 全部（ep04+ep20 语言包） | 官方 lang-pack ZIP 内 SVG text layer。本 Task 侦察实测：ep04/ep20 语言包 zip 内 `.svg` 成员计数各 472（会话内 zip namelist 计数，未入证据物）——**正式计数与逐页文本提取以阶段二第 3 步 G1 提取脚本的落盘清单为准**（R8）。**ko G1 对齐披露（r2 N1）**：权威目录对 K11-K25 **全部 15 页**记 `svg_text_layer_present_unaligned`（manifest K11/K19 同值）——SVG 文本存在但**无 bbox 对齐**，逐 region GT 需人工对齐（对齐键=bbox 人工指认，§2.4 第 2 条）；Gate 4（ko G1 CER）的 GT 强度=人工对齐后的子集、对齐工作量据此登记，无法自动对齐的部分在阶段二按 `NOT_AUTOMATED` 如实登记 | ja=高（原生，非人工誊录；SVG 文本=排版源文本，与页面渲染字形可能有空格/换行差异——归一化规则（§0）吸收）；ko=中（原生文本但未对齐，GT 强度受人工对齐质量约束，见左列披露） |
 | G2 AI 预判 GT（C1 模式） | BJ01-BJ12（无任何文本 GT）、webtoon K01-K10（dataset 仅 cleaned/mask/conf 辅助标注，**无文本转写**）；**并扩展覆盖 G1 四 case（J46/J47/K11/K19）的同 region 双源对照**（R1） | GLM 视觉直读 region crop 预填 `ocr-gt-ai-draft.csv` → 用户逐条审核 → 正式 `ocr-gt.csv` | 中（方向性证据，C1 §2 强度裁定适用） |
-| G3 双源交叉 | **G2 预填扩展到 G1 四 case 后**，J46/J47/K11/K19 中同一 region 同时具备 SVG 原生文本与人工誊录两源，逐 region 对照；不一致处人工仲裁，一致率作为人工 GT 流程质量的旁证指标（R1 采纳建议①） | 同 crop 双源（SVG 提取 vs 用户审核誊录） | 最高，量小（预计 <50 region），全部登记 |
+| G3 双源交叉 | **G2 预填扩展到 G1 四 case 后**，J46/J47/K11/K19 中同一 region 同时具备 SVG 原生文本与人工誊录两源，逐 region 对照；不一致处人工仲裁，一致率作为人工 GT 流程质量的旁证指标（R1 采纳建议①）。**ko 侧前提（r2 N1）**：K11/K19 的 SVG 侧为 present-but-unaligned，逐 region 配对依赖 §2.4 的人工 bbox 对齐先行完成；对齐未成立（NOT_AUTOMATED）的 region 不进入 G3 交叉，如实登记 | 同 crop 双源（SVG 提取 vs 用户审核誊录） | 最高，量小（预计 <50 region，为无推导估计），全部登记 |
 
 **设计要点**：G2 的 AI 预判**必须**先于用户审核生成并整体存档（`labeling-worksheet-ai-draft.csv` 先例），用户审核记录采纳/修订（`[AI]` / `[人工修订]` rationale 前缀先例）。**禁止**生成未经用户逐条审核的"最终 GT"。
 
@@ -73,7 +73,7 @@
 |---|---|---|---|
 | ja（manga-ocr） | G1 原生 GT 子集 | region 级 **CER 中位数 ≤ 0.10** | manga-ocr 论文（Kaczmarczyk & Trzciński 2021，arXiv:2107.12922）公开报告 Manga109 测试上字符级准确率 ≈0.95（CER≈0.05）量级；原生 GT 剔除誊录噪声后，取论文量级 2 倍作为生产初版上限 |
 | ja | 全量（G1+G2） | region 级 **CER 中位数 ≤ 0.15** | G2 人工 GT 引入誊录主观性（竖排断行/标点取舍），在全量子集上放宽一档 |
-| ko（PaddleOCR） | G1 原生 GT 子集 | region 级 **CER 中位数 ≤ 0.20** | **无 manga/webtoon 域公开基准数字**（PP-OCRv5 公开评测为通用印刷场景）——此数值为初版提案而非证据推定，实测后校准 |
+| ko（PaddleOCR） | G1 原生 GT 子集 | region 级 **CER 中位数 ≤ 0.20**（注，r2 N1：本行 GT=K11/K19 的 **present-but-unaligned** SVG 文本经人工 bbox 对齐后的子集，非"现成 GT"——对齐质量与覆盖直接进入本 Gate 的不确定度；对齐未成立的 region 按 NOT_AUTOMATED 剔除并登记） | **无 manga/webtoon 域公开基准数字**（PP-OCRv5 公开评测为通用印刷场景）——此数值为初版提案而非证据推定，实测后校准 |
 | ko | 全量（G1+G2） | region 级 **CER 中位数 ≤ 0.25** | 同上，再放宽一档容纳 webtoon 手写体气泡字 |
 
 **依据链的诚实声明**：ja 两档有论文公开数字作锚（放宽理由=自产 region crop 的切分/竖排/字体分布与论文评测集差异）；ko 两档**没有**可引用的公开基线，数值纯属提案（登记为"初版猜测"），阶段二实测分布出来后由用户裁决是否调整——这正是"阈值由本 Task 提案、用户可撤销"契约的主场景。
@@ -102,7 +102,7 @@
 
 - O-1：ko 阈值数值（≤0.20/≤0.25）为初版提案，实测后确认或调整。
 - O-2：G2 审核工作量（预计 20 case × 平均 8-15 region 的 GT 审核一次 + 30 region 抽检一次）是否接受；不接受则缩为"G1 子集 CER + 30 region 抽检"降配方案（届时全量 CER 附报但无 Gate）。
-- O-3：**ja/ko 两侧共享的 G1 代表性裁决点（R2 扩写）**。ja 侧：G1 子集仅 2 case（J46/J47=E20P06/E20P07），且文本类型为 credits/结束卡与多语言版权文本（非对白、非竖排正文）——G1 子集结论只对 P&C 风格排版/credits 文本成立，是否接受"该子集仅用于引擎量级校验、对白/竖排结论依赖 G2 人工 GT"；ko 侧同构：G1（K11/K19）为 P&C kr 印刷体，而 ko 生产主域是 webtoon 手写体气泡字——是否接受"ko G1 仅作 native 交叉源、webtoon 域 Gate 由 G2 子集承担"。两问任一不接受时的替代=扩大 G2 人工 GT 审核量（回到 O-2 工作量）。20 case 选取已把 ja 两个 native GT case 全部纳入（见 [case-selection.json](../../experiments/M2-TA3-B/case-selection.json)）。
+- O-3：**ja/ko 两侧共享的 G1 代表性裁决点（R2 扩写）**。ja 侧：G1 子集仅 2 case（J46/J47=E20P06/E20P07），且文本类型为 credits/结束卡与多语言版权文本（非对白、非竖排正文）——G1 子集结论只对 P&C 风格排版/credits 文本成立，是否接受"该子集仅用于引擎量级校验、对白/竖排结论依赖 G2 人工 GT"；ko 侧同构：G1（K11/K19）为 P&C kr 印刷体，而 ko 生产主域是 webtoon 手写体气泡字——是否接受"ko G1 仅作 native 交叉源、webtoon 域 Gate 由 G2 子集承担"。**ko 附加披露（r2 N1）**：K11/K19 的 SVG GT 为 present-but-unaligned，ko G1 的逐 region 对齐是人工工作量且对齐质量进入 Gate 4 不确定度（§2.2/§2.3 已同步）。两问任一不接受时的替代=扩大 G2 人工 GT 审核量（回到 O-2 工作量）。20 case 选取已把 ja 两个 native GT case 全部纳入（见 [case-selection.json](../../experiments/M2-TA3-B/case-selection.json)）。
 
 ---
 
@@ -192,7 +192,7 @@
 | 1 | detect | 冻结口径引用 + region_count≥1 冒烟 | 引用（无新数值） | 无 |
 | 2 | OCR ja G1 子集 | CER 中位数 ≤ 0.10 | 论文锚定提案 | O-3 |
 | 3 | OCR ja 全量 | CER 中位数 ≤ 0.15 | 论文锚定提案 | O-1 |
-| 4 | OCR ko G1 子集 | CER 中位数 ≤ 0.20 | **初版猜测**（无公开基线） | O-1 |
+| 4 | OCR ko G1 子集 | CER 中位数 ≤ 0.20（GT=K11/K19 present-but-unaligned SVG 经人工对齐后的子集，r2 N1） | **初版猜测**（无公开基线） | O-1/O-3 |
 | 5 | OCR ko 全量 | CER 中位数 ≤ 0.25 | **初版猜测** | O-1 |
 | 6 | OCR 人工抽检 | n=30 分层、correct/partial/wrong 三档 | 方法设计 | O-2 |
 | 6b | OCR CER 分母 | 默认=全部检出 region；启用 region 上限时=明示抽样集+报告披露（R7） | 口径定义 | 无 |

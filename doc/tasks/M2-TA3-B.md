@@ -64,4 +64,4 @@ worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B-zcode
 | AC4 | [phase2-plan.md](../verification/M2-TA3-B/phase2-plan.md) | run_qualification.py 设计（读 manifest+engine_factory 绕行 paddle bytes 缺口+CER 测量挂点+venv 融合方案 A）+ 翻译两选项操作手册（(a) env-var 凭证纪律+fail-closed 探针/(b) Sakura GGUF+llama-server+probe）+ 13 步执行清单 |
 | AC5 | 纪律自检 | `git diff --check 53fdfcc6..HEAD` EXIT=0；禁改面（src/**、packaging/**、apps/**、experiments/M2-TA3-A/**、requirements.txt）专项 diff 空；权重全部落在仓库外路径（隔离 venv / HF 缓存 / paddlex 缓存，R14 措辞修正——护栏 ignore 规则非全部权重后缀）；生产代码零改动 |
 
-**阶段二启动条件（BLOCKED_ON_USER）**：翻译 endpoint 二选一——(a) 提供 OpenAI-compatible endpoint（base_url+model+key，key 走环境变量）或 (b) 授权本地 Sakura 部署（GGUF 下载 8-16GB+llama-server 127.0.0.1:8080）。二选一后按 phase2-plan.md §4 清单直接执行，无需再释放。
+**阶段二启动条件（BLOCKED_ON_USER）**：翻译 endpoint 二选一——(a) 提供 OpenAI-compatible endpoint（base_url+model+key；key 不落盘不入日志，凭证通路按 phase2-plan §3(a) 二选一显式搭建：vault `store_credential`（生产默认，`credential_store` 非 None 时）或 registry re-register env resolver（`TA3B_TRANSLATE_API_KEY`）——r2 N2 口径同步）或 (b) 授权本地 Sakura 部署（GGUF 下载 8-16GB+llama-server 127.0.0.1:8080）。二选一后按 phase2-plan.md §4 清单直接执行，无需再释放。
