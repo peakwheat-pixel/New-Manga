@@ -45,6 +45,6 @@ TA3-B2 阶段二实证：生产 detect（manga ogkalu RT-DETR-v2）对 webtoon �
 - **AC2** ✅ 判定=**整页重缩放目标消失成立**（K01 690×62133→640×640 垂直 ~97×；三 webtoon 页 raw max 0.167–0.284 全塌陷，BJ02 对照 0.972 正常）；块级实验 K01 70 块（1024²/重叠 128px）0→**193** 去重检出（conf max 0.967/mean 0.850，y 覆盖全页）——同一权重同一阈值仅改输入分辨率即恢复，tiling 可行性直接证据。证据：[diagnosis.md](../../verification/M2-DETECT-WEBTOON-DIAG/diagnosis.md) + [probe-results.json](../../verification/M2-DETECT-WEBTOON-DIAG/probe-results.json)。
 - **AC3** ✅ 修法对比（只建议不实施）：A tiling+坐标回映（推荐主线，契约零变更）> B per-layout 路由 docTR（粒度语义成本未知，留作基线）> C processor size 覆盖（证据不支持，排除）。
 - **AC4** ✅ 零 `src/**`/`tests/**` 改动；生产路径缺陷（整页直传 processor 无长条漫处理）已在本文件与 diagnosis.md 登记，修复另行释放。
-- Handoff：`doc/handoffs/M2-DETECT-WEBTOON-DIAG-<impl-head>.md`（交付后回填 hash）；Reviewer：DeepSeek Harness（非作者）。
+- Handoff：`doc/handoffs/M2-DETECT-WEBTOON-DIAG-2d6b7bf6.md`（impl head=2d6b7bf6）；Reviewer：DeepSeek Harness（非作者）。
 
 **下一任务建议（移交 Codex 释放裁决）**：修复 Task「webtoon 长条漫 tiling 检测（方案 A）」——Owner ZCode、Reviewer DSH；验收=ko 6 case（K01/K02/K04/K05/K08/K19）重跑 qualification 关闭 TA3-B2 F1。释放前需 Codex 在 STATUS 登记范围（含 `src/infrastructure/providers/detection_manga.py` 与检测参数配置的授权修改面）。
