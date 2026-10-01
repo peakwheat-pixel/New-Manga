@@ -2,7 +2,7 @@
 id: M2-QUAL-DETERM-CALIB
 title: "F5 确定性 Gate 重定义落地：reading_order 对齐译文相似度口径校准（用户裁决采纳候选方案）"
 kind: qualification
-status: ready
+status: delivered  # 实现交付（ZCode，续接熔断半成品完成）：校准脚本+calibration 产物+thresholds §5/§7 与 phase2-plan 口径修订落地，待 DSH 非作者 review → Codex 集成后方可 done；delivery_head 见 doc/handoffs/M2-QUAL-DETERM-CALIB-*.md
 approval: user_ruling_2026-10-01_all_four
 suggested_owner: ZCode
 owner: ZCode
@@ -35,3 +35,12 @@ TA3-B2 定案：export 复制 Run1 渲染产物；remote 翻译采样天然非�
 ## 纪律
 
 - 阈值建议必须附实测分布（不拍脑袋）；修订不动其他阶段阈值；directional 口径保留。
+
+## 交付记录（2026-10-01，ZCode）
+
+- 本 Task 由 ZCode 续接前一个熔断 agent 的半成品完成（半成品=未跟踪的 `experiments/M2-QUAL-DETERM-CALIB/calibrate_determinism.py` 草稿；本轮修复其 `global` 声明 SyntaxError、补浮动对子集统计（按各口径 similarity<1.0 定义）、修正合成探针判定语义（min-leg / 完整 gate 双维度）与报告推导数学）。
+- AC1：`experiments/M2-QUAL-DETERM-CALIB/calibrate_determinism.py`（stdlib、确定性、fail-closed）→ `verification/M2-QUAL-DETERM-CALIB/calibration.json` + `calibration.md`。数据源只读复用 TA3-B2 产物 `qual-K11{,.rerun}.json`、`qual-BJ02{,.rerun}.json`（零改动）。
+- AC2：建议 Gate（normalized 口径）= **median ≥ 0.95 且 min ≥ 0.70**。锚：K11/BJ02 实测 18 对，浮动对（normalized）6 对全部 1 编辑差、幅度 [0.75, 0.875]（K11 浮动对 min=median=0.75）；判别力以确定性合成漂移对照演示（实测分布与单字符浮动逐对 PASS；40%/70% 字符替换 FAIL、全 region 浮动 median leg FAIL）。
+- AC3：`quality-thresholds.md` §5 双轨条目 + F5 修订注、§7 总表第 10 行；`phase2-plan.md` §1 交付物/§2.1 确定性复跑/§4 步骤 5——superseded-pending 解除，修订来源「M2-QUAL-DETERM-CALIB + 用户裁决 2026-10-01（全部进行）」，mock 链 export 字节逐位口径保留。
+- AC4：n=2 局限、无自然 FAIL 样本、极短译文粒度边界、Run1 层相似度未测、归一化口径依赖——登记于 calibration.md §6 与 calibration.json `limitations`。
+- 交接：`doc/handoffs/M2-QUAL-DETERM-CALIB-<delivery_head>.md`；review：DeepSeek Harness（非作者）→ Codex 集成。

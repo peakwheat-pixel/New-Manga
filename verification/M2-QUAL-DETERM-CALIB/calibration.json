@@ -1,0 +1,512 @@
+{
+  "task": "M2-QUAL-DETERM-CALIB",
+  "measure": "reading_order-aligned translation similarity (F5 determinism gate, redefined per user ruling 2026-10-01)",
+  "calibration_source": {
+    "summaries_dir": "G:\\CODEX\\New Manga.worktrees\\M2-QUAL-DETERM-CALIB-zcode\\verification\\M2-TA3-B\\phase2\\summaries",
+    "cases": [
+      "K11",
+      "BJ02"
+    ],
+    "text_layer": "translate_details.translated_text (Run2-after DB text), joined to regions[].reading_order via region_id"
+  },
+  "method": {
+    "alignment_key": "reading_order (region_id regenerated every run, TA3-B2 r1 R1)",
+    "similarity": "1 - Levenshtein/max_len (character level, stdlib; replicated from experiments/M2-TA3-B/measure_cer.py)",
+    "scalings": {
+      "raw": "translated_text verbatim (reproduces quality-report F5 K11 7/11 observation)",
+      "normalized": "quality-thresholds §0: strip all whitespace, …≡..., casefold (same as project CER normalization); GATE SCALING"
+    },
+    "empty_pair_rule": {
+      "both_empty": "similarity 1.0 (status empty_both; runs agree: no translation either time)",
+      "one_side_empty": "similarity 0.0 (status empty_one_side; run-level behaviour change)",
+      "observed": "only empty_both occurs (K11 ro=9 OCR-empty, ro=13 SFX SKIP)"
+    },
+    "semantic_boundary": "gate measures TRANSLATION STABILITY under rerun with a stochastic remote provider; NOT render/export reproducibility. 'export bytes bitwise equal' remains valid for mock/deterministic provider chains (BJ02 Run1 page render = upper-bound reference). K11 export mismatch root cause sits in the Run1 stage (never layer-isolated) and is out of scope."
+  },
+  "cases": [
+    {
+      "case_id": "K11",
+      "language": "ko",
+      "source_sha256": "4bd9b181ac6fc9a041f4e7c82570a0b7792f9840e9cfed0cc88bdbf1d61c70c8",
+      "n_pairs": 13,
+      "n_pairs_nonempty": 11,
+      "pairs": [
+        {
+          "case_id": "K11",
+          "reading_order": 1,
+          "region_type": "speech",
+          "source_text": "당근아?",
+          "text_first": "胡萝卜？",
+          "text_second": "小萝卜？",
+          "similarity_raw": 0.75,
+          "similarity_normalized": 0.75,
+          "status": "variant"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 2,
+          "region_type": "speech",
+          "source_text": "당근아!",
+          "text_first": "小萝卜！",
+          "text_second": "胡萝卜！",
+          "similarity_raw": 0.75,
+          "similarity_normalized": 0.75,
+          "status": "variant"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 3,
+          "region_type": "speech",
+          "source_text": "당근아?",
+          "text_first": "胡萝卜？",
+          "text_second": "胡萝卜？",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 4,
+          "region_type": "speech",
+          "source_text": "당근아?!",
+          "text_first": "胡萝卜？！",
+          "text_second": "胡萝卜？！",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 5,
+          "region_type": "speech",
+          "source_text": "이렇게까지는\n할필요없을줄\n알았는데",
+          "text_first": "本以为\n没必要做到\n这种地步",
+          "text_second": "本以为\n没必要\n做到这种地步",
+          "similarity_raw": 0.8571,
+          "similarity_normalized": 1.0,
+          "status": "variant"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 6,
+          "region_type": "speech",
+          "source_text": "당근아?!!!",
+          "text_first": "胡萝卜？！！！",
+          "text_second": "小萝卜？！！！",
+          "similarity_raw": 0.8571,
+          "similarity_normalized": 0.8571,
+          "status": "variant"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 7,
+          "region_type": "speech",
+          "source_text": "어라? 침대 믿에도\n니?",
+          "text_first": "咦？床底下也有\n你？",
+          "text_second": "咦？床底下也有\n你？",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 8,
+          "region_type": "speech",
+          "source_text": "당근아!",
+          "text_first": "胡萝卜！",
+          "text_second": "小萝卜！",
+          "similarity_raw": 0.75,
+          "similarity_normalized": 0.75,
+          "status": "variant"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 9,
+          "region_type": "speech",
+          "source_text": "\n\n",
+          "text_first": "",
+          "text_second": "",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "empty_both"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 10,
+          "region_type": "speech",
+          "source_text": "크록브록크록\n크록사각 사각\n사각사각",
+          "text_first": "咔咯咔咯咔咯\n咔咯沙沙沙沙\n沙沙沙沙",
+          "text_second": "咔咯咔咯咔咯\n咔咯沙沙 沙沙\n沙沙沙沙",
+          "similarity_raw": 0.9474,
+          "similarity_normalized": 1.0,
+          "status": "variant"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 11,
+          "region_type": "speech",
+          "source_text": "오 나의\n태야아옹!!",
+          "text_first": "哦 我的\n泰阳！！",
+          "text_second": "哦 我的\n泰阳阳！！",
+          "similarity_raw": 0.9,
+          "similarity_normalized": 0.875,
+          "status": "variant"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 12,
+          "region_type": "speech",
+          "source_text": "꼬르를",
+          "text_first": "咕噜噜",
+          "text_second": "咕噜噜",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        },
+        {
+          "case_id": "K11",
+          "reading_order": 13,
+          "region_type": "sfx",
+          "source_text": "",
+          "text_first": "",
+          "text_second": "",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "empty_both"
+        }
+      ],
+      "stats": {
+        "raw_all_pairs": {
+          "n": 13,
+          "n_identical": 6,
+          "n_variant": 7,
+          "min": 0.75,
+          "median": 0.9474,
+          "p10": 0.75,
+          "max": 1.0
+        },
+        "raw_nonempty": {
+          "n": 11,
+          "n_identical": 4,
+          "n_variant": 7,
+          "min": 0.75,
+          "median": 0.9,
+          "p10": 0.75,
+          "max": 1.0
+        },
+        "normalized_all_pairs": {
+          "n": 13,
+          "n_identical": 8,
+          "n_variant": 5,
+          "min": 0.75,
+          "median": 1.0,
+          "p10": 0.75,
+          "max": 1.0
+        },
+        "normalized_nonempty": {
+          "n": 11,
+          "n_identical": 6,
+          "n_variant": 5,
+          "min": 0.75,
+          "median": 1.0,
+          "p10": 0.75,
+          "max": 1.0
+        },
+        "raw_variant_only": {
+          "n": 7,
+          "n_identical": 0,
+          "n_variant": 7,
+          "min": 0.75,
+          "median": 0.8571,
+          "p10": 0.75,
+          "max": 0.9474
+        },
+        "normalized_variant_only": {
+          "n": 5,
+          "n_identical": 0,
+          "n_variant": 5,
+          "min": 0.75,
+          "median": 0.75,
+          "p10": 0.75,
+          "max": 0.875
+        }
+      },
+      "gate_verdict_normalized": "PASS"
+    },
+    {
+      "case_id": "BJ02",
+      "language": "ja",
+      "source_sha256": "c1ce06205b8e64c1a199f1adbab3bdaa9aff46d67abc8283bd4ef28ea6dd5417",
+      "n_pairs": 5,
+      "n_pairs_nonempty": 5,
+      "pairs": [
+        {
+          "case_id": "BJ02",
+          "reading_order": 1,
+          "region_type": "speech",
+          "source_text": "聞こえのいい正論を口にするな",
+          "text_first": "别说得那么冠冕堂皇",
+          "text_second": "别说得那么冠冕堂皇",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        },
+        {
+          "case_id": "BJ02",
+          "reading_order": 2,
+          "region_type": "speech",
+          "source_text": "必ずオペはしろ．．．",
+          "text_first": "一定要做手术……",
+          "text_second": "一定要做手术……",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        },
+        {
+          "case_id": "BJ02",
+          "reading_order": 3,
+          "region_type": "speech",
+          "source_text": "正しいってのは弱いっそ事だ",
+          "text_first": "所谓正确，就是软弱",
+          "text_second": "所谓正确，就是软弱",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        },
+        {
+          "case_id": "BJ02",
+          "reading_order": 4,
+          "region_type": "speech",
+          "source_text": "強いってのは",
+          "text_first": "所谓强大",
+          "text_second": "所谓强啊",
+          "similarity_raw": 0.75,
+          "similarity_normalized": 0.75,
+          "status": "variant"
+        },
+        {
+          "case_id": "BJ02",
+          "reading_order": 5,
+          "region_type": "speech",
+          "source_text": "悪いって事だ",
+          "text_first": "就是说不行",
+          "text_second": "就是说不行",
+          "similarity_raw": 1.0,
+          "similarity_normalized": 1.0,
+          "status": "identical"
+        }
+      ],
+      "stats": {
+        "raw_all_pairs": {
+          "n": 5,
+          "n_identical": 4,
+          "n_variant": 1,
+          "min": 0.75,
+          "median": 1.0,
+          "p10": 0.85,
+          "max": 1.0
+        },
+        "raw_nonempty": {
+          "n": 5,
+          "n_identical": 4,
+          "n_variant": 1,
+          "min": 0.75,
+          "median": 1.0,
+          "p10": 0.85,
+          "max": 1.0
+        },
+        "normalized_all_pairs": {
+          "n": 5,
+          "n_identical": 4,
+          "n_variant": 1,
+          "min": 0.75,
+          "median": 1.0,
+          "p10": 0.85,
+          "max": 1.0
+        },
+        "normalized_nonempty": {
+          "n": 5,
+          "n_identical": 4,
+          "n_variant": 1,
+          "min": 0.75,
+          "median": 1.0,
+          "p10": 0.85,
+          "max": 1.0
+        },
+        "raw_variant_only": {
+          "n": 1,
+          "n_identical": 0,
+          "n_variant": 1,
+          "min": 0.75,
+          "median": 0.75,
+          "p10": 0.75,
+          "max": 0.75
+        },
+        "normalized_variant_only": {
+          "n": 1,
+          "n_identical": 0,
+          "n_variant": 1,
+          "min": 0.75,
+          "median": 0.75,
+          "p10": 0.75,
+          "max": 0.75
+        }
+      },
+      "gate_verdict_normalized": "PASS"
+    }
+  ],
+  "aggregate": {
+    "n_pairs": 18,
+    "n_pairs_nonempty": 16,
+    "raw_all_pairs": {
+      "n": 18,
+      "n_identical": 10,
+      "n_variant": 8,
+      "min": 0.75,
+      "median": 1.0,
+      "p10": 0.75,
+      "max": 1.0
+    },
+    "raw_nonempty": {
+      "n": 16,
+      "n_identical": 8,
+      "n_variant": 8,
+      "min": 0.75,
+      "median": 0.9737,
+      "p10": 0.75,
+      "max": 1.0
+    },
+    "normalized_all_pairs": {
+      "n": 18,
+      "n_identical": 12,
+      "n_variant": 6,
+      "min": 0.75,
+      "median": 1.0,
+      "p10": 0.75,
+      "max": 1.0
+    },
+    "normalized_nonempty": {
+      "n": 16,
+      "n_identical": 10,
+      "n_variant": 6,
+      "min": 0.75,
+      "median": 1.0,
+      "p10": 0.75,
+      "max": 1.0
+    },
+    "raw_variant_only": {
+      "n": 8,
+      "n_identical": 0,
+      "n_variant": 8,
+      "min": 0.75,
+      "median": 0.8035,
+      "p10": 0.75,
+      "max": 0.9474
+    },
+    "normalized_variant_only": {
+      "n": 6,
+      "n_identical": 0,
+      "n_variant": 6,
+      "min": 0.75,
+      "median": 0.75,
+      "p10": 0.75,
+      "max": 0.875
+    }
+  },
+  "threshold_evaluation": {
+    "gate": {
+      "metric": "similarity_normalized",
+      "median_min": 0.95,
+      "min_min": 0.7
+    },
+    "observed": {
+      "K11": "PASS",
+      "BJ02": "PASS"
+    },
+    "synthetic_probes_list": [
+      {
+        "probe": "single_char_ge4",
+        "n": 15,
+        "n_identical": 0,
+        "n_variant": 15,
+        "min": 0.75,
+        "median": 0.8571,
+        "p10": 0.75,
+        "max": 0.9375,
+        "min_gate_verdict": "PASS",
+        "gate_verdict": "FAIL"
+      },
+      {
+        "probe": "drift_40",
+        "n": 16,
+        "n_identical": 0,
+        "n_variant": 16,
+        "min": 0.5,
+        "median": 0.5635,
+        "p10": 0.5,
+        "max": 0.6667,
+        "min_gate_verdict": "FAIL",
+        "gate_verdict": "FAIL"
+      },
+      {
+        "probe": "drift_70",
+        "n": 16,
+        "n_identical": 0,
+        "n_variant": 16,
+        "min": 0.2,
+        "median": 0.2857,
+        "p10": 0.225,
+        "max": 0.3333,
+        "min_gate_verdict": "FAIL",
+        "gate_verdict": "FAIL"
+      }
+    ],
+    "synthetic_probes": {
+      "single_char_ge4": {
+        "probe": "single_char_ge4",
+        "n": 15,
+        "n_identical": 0,
+        "n_variant": 15,
+        "min": 0.75,
+        "median": 0.8571,
+        "p10": 0.75,
+        "max": 0.9375,
+        "min_gate_verdict": "PASS",
+        "gate_verdict": "FAIL"
+      },
+      "drift_40": {
+        "probe": "drift_40",
+        "n": 16,
+        "n_identical": 0,
+        "n_variant": 16,
+        "min": 0.5,
+        "median": 0.5635,
+        "p10": 0.5,
+        "max": 0.6667,
+        "min_gate_verdict": "FAIL",
+        "gate_verdict": "FAIL"
+      },
+      "drift_70": {
+        "probe": "drift_70",
+        "n": 16,
+        "n_identical": 0,
+        "n_variant": 16,
+        "min": 0.2,
+        "median": 0.2857,
+        "p10": 0.225,
+        "max": 0.3333,
+        "min_gate_verdict": "FAIL",
+        "gate_verdict": "FAIL"
+      }
+    },
+    "reasoning": "min gate = measured floating-pair band [0.75, 0.875] shifted down one character-level margin -> 0.70: every observed same-input rerun float stays above it (single-char probes: per-pair PASS) while 40%+ character drift (probe min 0.5) must FAIL. median gate 0.95: with the measured float magnitude, <=8/18 floating pairs keeps median=1.0 (PASS), >=9/18 forces median<=0.9375 (FAIL) — i.e. systematic change fails, benign sparse sampling float passes. Anchored on the measured 18-pair distribution (n=2 cases, directional)."
+  },
+  "limitations": [
+    "n=2 calibration cases (K11 13 regions, BJ02 5 regions) — thresholds are directional, re-calibrate on future qualification runs which should persist per-pair similarities",
+    "no natural FAIL sample: all observed floats are 1-edit differences; discriminative power shown by deterministic synthetic probes only",
+    "very-short-translation granularity: a 1-char float on a 3-char text (~0.667) fails min>=0.70 (fail-closed direction)",
+    "Run1-stage similarity unmeasured (K11 export root cause not layer-isolated); this gate covers the Run2-after DB text layer only",
+    "normalized scaling absorbs line-break/spacing differences (K11 floats 7 raw -> 5 normalized); quote raw if line breaks are part of the product semantics"
+  ],
+  "directional_disclaimer": "directional evidence only: n=2 calibration cases from the first quality run (M2-TA3-B2), remote DeepSeek provider, 2026-10-01; not a production determinism conclusion"
+}

@@ -14,7 +14,7 @@
 | OCR 明细 + GT 工作表 + CER 报告 | `verification/M2-TA3-B/phase2/ocr/` | OCR CER 四档阈值（§2.3） |
 | 翻译评分工作表（SFX+对白） | `verification/M2-TA3-B/phase2/translate/` | SFX non-fail ≥70%、对白中位数 ≥3.5 且 ≥3 占比 ≥80% |
 | inpaint 定性抽检表 | `verification/M2-TA3-B/phase2/inpaint/` | 无数值 Gate，100% 登记 |
-| export 哈希复算 + 3 case 复跑 | `verification/M2-TA3-B/phase2/export/` | 哈希一致、确定性复跑一致 |
+| export 哈希复算 + 3 case 复跑 | `verification/M2-TA3-B/phase2/export/` | 哈希一致；确定性复跑**双轨（F5 修订 2026-10-01，M2-QUAL-DETERM-CALIB + 用户裁决）：remote 翻译链 = reading_order 对齐译文相似度（median ≥ 0.95 且 min ≥ 0.70，normalized）；mock/deterministic 链 = export 哈希逐位一致**——见 [quality-thresholds.md](quality-thresholds.md) §5 注与 `verification/M2-QUAL-DETERM-CALIB/calibration.md` |
 | 质量报告（含阈值实测 vs 提案对照） | `verification/M2-TA3-B/quality-report.md` | 全部 |
 
 ## 2. runner 扩展设计（基于 TA3-A `run_smoke.py`）
@@ -30,7 +30,7 @@
 | OCR 明细导出 | 每 case 新增 `ocr_details` 段：每 region 的 `region_id/region_type/bbox/text/elapsed_ms` + **region crop PNG 落盘**（`phase2/ocr/crops/`，gitignored）——这是 CER 测量与人工抽检的共同底料 |
 | **region 策略（R7）** | **默认取消** TA3-A `run_smoke.py:325-328` 的 `max_regions=40` 截断：全部检出 region 逐一执行 Run2（K01 等长条漫 region 数远超 40，截断会破坏 CER"全量"档分母）；per-case 登记 `region_target_count`/`region_runs_executed`/耗时。性能逃生阀 `--max-regions N`（默认关闭）：启用时 summary 必须置 `truncated: true`，且该 case 的 CER 按**明示抽样集**口径计算并在质量报告披露（quality-thresholds §2.4 第 4 条），禁止表述为"全量" |
 | translate 明细导出 | 每 region `source_text/translated_text/region_type` 落 JSON（评分工作表的输入） |
-| 确定性复跑 | `--rerun-check BJ02,K01,K11`：固定 3 case（覆盖 ja BJ/ko webtoon/ko P&C 三家族，R15）同环境第二次 run，export sha256 逐位比对 |
+| 确定性复跑 | `--rerun-check BJ02,K01,K11`：固定 3 case（覆盖 ja BJ/ko webtoon/ko P&C 三家族，R15）同环境第二次 run。**口径 F5 修订（2026-10-01，M2-QUAL-DETERM-CALIB + 用户裁决）**：remote 翻译链不再比对 export sha256 逐位（r1 R1 实测其对 Run2 链空转），改为 reading_order 对齐译文相似度 Gate（normalized 口径 median ≥ 0.95 且 min ≥ 0.70，空对规则双方空=1.0/单方空=0.0）；mock/deterministic 链维持 export sha256 逐位比对——见 quality-thresholds §5 注与 `verification/M2-QUAL-DETERM-CALIB/calibration.md` |
 
 ### 2.2 OCR provider 适配（阶段二必须处理的三项冒烟发现）
 
@@ -179,7 +179,7 @@ core = assemble_core_services(...)  # 同参数重跑
 | 2 | 翻译 endpoint 接入 + 1-region 探针 | 探针记录（无 key 泄漏） | 用户二选一 |
 | 3 | GT 前置：G1 SVG 提取脚本跑通（K11 页人工比对） | `svg-gt-*.json` | - |
 | 4 | 20 case 正式 run（`run_qualification.py`，detect→OCR→translate→inpaint→render/export；region 策略见 §2.1——默认无截断） | summaries + crops + 明细 | 0/1/2 |
-| 5 | 3 case 确定性复跑 | 复跑哈希对照 | 4 |
+| 5 | 3 case 确定性复跑 | 复跑哈希对照 + **译文相似度 Gate 计算（F5 双轨口径，2026-10-01 修订；校准落地=`verification/M2-QUAL-DETERM-CALIB/`）** | 4 |
 | 6 | export 哈希独立复算 | 复算记录 | 4 |
 | 7 | G2 AI 预判 GT 预填（BJ/webtoon crop）→ 交用户审核 | ai-draft + 正式 `ocr-gt.csv` | 4 |
 | 8 | `measure_cer.py`：CER 汇总（G1/G2 分列） | CER 报告 | 7 |
