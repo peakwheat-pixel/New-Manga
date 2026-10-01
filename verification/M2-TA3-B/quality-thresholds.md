@@ -165,10 +165,11 @@
 |---|---|---|
 | export 状态 | 每 case `export status=OK` | TA3-A runner 既有 fail-closed 口径（`run_smoke.py` export 段） |
 | 哈希一致性 | summary 记录的 `sha256` 与产物文件实算一致（复算脚本独立于 runner） | TA3-A AC4 确定性框架（export 哈希双向复算一致先例） |
-| 确定性复跑 | **固定 3 case（BJ02/K01/K11，理由：覆盖 ja BJ 印刷漫 / ko webtoon / ko P&C 三家族，非抽样——R15）**同环境重跑，export 哈希逐位一致 **`superseded-pending`（r1 R9/R1）：remote 翻译下"字节逐位"口径待重新定义（候选=按 reading_order 对齐的译文相似度）——见 quality-report §5/F5 裁决点；重定义前本行勿作为执行口径引用** | TA3-A 已验证确定性；阶段二只需防回归。**阶段二实测（r1 R1）：该口径对 Run2 region 链是空转（export 只反映 Run1 渲染产物），且 Run1 内部即存在未隔离的非确定环节（K11 MISMATCH）** |
+| 确定性复跑——remote 翻译链（F5 修订轨） | **固定 3 case（BJ02/K01/K11，理由：覆盖 ja BJ 印刷漫 / ko webtoon / ko P&C 三家族，非抽样——R15）**同环境重跑，**译文相似度 Gate（2026-10-01 由 M2-QUAL-DETERM-CALIB + 用户裁决「全部进行」落地，取代本行原「export 哈希逐位一致」口径）**：region 译文按 **reading_order** 对齐（方法学事实 r1 R1：region_id 每 run 重新生成，不可作对齐键；两 run 逐 reading_order bbox 交叉校验，不一致 fail-closed——CALIB r1 R1），取 quality-thresholds §0 归一化（normalized）相似度 = 1 − Levenshtein/max_len（字符级），全部对齐对（含空译文对规则：双方空=1.0、单方空=0.0）满足 **median ≥ 0.95 且 min ≥ 0.70** 方为 PASS。**覆盖前置（CALIB r1 R2/R3）**：非空对 n≥1 方可判定，否则 **NO_DATA**——全空跑（两次 run 译文全空）在相似度口径下可平凡 PASS，由 §7 translate 评分 Gate 兜底，本 Gate 不对翻译覆盖度负责；region_count=0 的 case 贡献 0 对 → 同 NO_DATA 口径豁免（与 §6 R11 零 region 豁免同口径），不阻断整体 Gate 但单独登记（本次校准的 K01 即此情形，**ko webtoon 家族因此未被本次校准覆盖**）。**语义边界：本 Gate 度量翻译稳定性，非渲染/导出复现性**；校准依据、判别力对照与局限（n=2 directional）见 `verification/M2-QUAL-DETERM-CALIB/calibration.md` | 校准=K11/BJ02 重跑对实测分布（M2-TA3-B2 产物复用）：浮动对全部为 1 编辑差、幅度 [0.75, 0.875]（K11 normalized 浮动 5/13，min=median=0.75）——同输入重跑必须 PASS → min 阈值锚在实测最坏浮动 0.75 下留 **0.05 绝对值余量**=0.70（CALIB r1 R4：非「一个字符」，4 字锚串 1 编辑差=0.25）；median 阈值 0.95 = 以实测浮动幅度计、**在本校准样本译文长度分布下**约半数 region 浮动即 FAIL 的系统性漂移红线（更长译文上 median 腿分辨力下降，min 腿兜底——CALIB r1 R5）。判别力由确定性合成漂移对照演示（单字符浮动逐对 PASS；40%/70% 字符替换 FAIL），非自然 FAIL 实证 |
+| 确定性复跑——mock/deterministic provider 链（原轨保留） | export 哈希逐位一致（TA3-A 原口径**不变**，双轨另一轨）；BJ02 两次 Run1 页面渲染产物逐位一致为该口径的实际先例与相似度度量的上界参照（**Run1 渲染逐位 ≠ Run2 译文逐位**——BJ02 自身 Run2 译文仍有 1 对浮动） | TA3-A 已验证确定性；阶段二实测（r1 R1）：原单一逐位口径对 Run2 region 链空转（export 只反映 Run1 渲染产物），且 Run1 内部存在未隔离的非确定环节（K11 MISMATCH）——**该 Run1 层根因不在相似度 Gate 范围，属后续独立问题** |
 | 渲染产物 | 每 case 产出 `translated` render 且 reader_catalog 可解析（run2 完成的隐含条件） | 生产 seam |
 
-> **本节 superseded-pending 注（r1 R9）**：§5 与 §7 中 render/export 的"确定性复跑=export 哈希逐位一致"条目在 remote 翻译（DeepSeek）链路下待重新定义（quality-report §5/F5，Codex/用户裁决点）。阈值**数值本身未改**；F4/F5 的口径修订仍在裁决流程中，本文档不做单方改写。
+> **本节 F5 修订注（2026-10-01，M2-QUAL-DETERM-CALIB + 用户裁决「全部进行」）**：r1 R9 登记的 superseded-pending 状态就此解除——§5 与 §7 的"确定性复跑"口径落地为**双轨**：remote/随机采样翻译链 = reading_order 对齐译文相似度 Gate（median ≥ 0.95 且 min ≥ 0.70，normalized 口径；校准数据、测量方法与 n=2 局限见 `verification/M2-QUAL-DETERM-CALIB/`）；mock/deterministic provider 链 = export 哈希逐位一致（TA3-A 原口径）。**双轨判别规则（可执行，CALIB r1 R9）**：按本次 run 的 translate provider 绑定判定轨道——remote 采样 provider（provider id 含 remote 采样服务标识，如 `deepseek/*`）走相似度轨，mock/确定性 provider 走哈希轨；qualification runner 以 `--determinism-track remote|mock` 参数显式记录所选轨道，声明与 provider 绑定不一致时 fail-closed 报错。本节其余阈值数值未动；directional 证据强度口径保留。
 
 ### 用户裁决点
 
@@ -201,7 +202,7 @@
 | 7 | translate SFX | **n≥15 才判 Gate**；non-fail ≥ 70%（音节转写单独强制登记）；n<15 只登记分布 | directional 首版 | T-1/T-2 |
 | 8 | translate 对白 | 中位数 ≥ 3.5 且 ≥3 分占比 ≥ 80%（5 分制三维） | directional 首版 | T-1/T-3/T-4 |
 | 9 | inpaint | 无数值 Gate，定性 100% 登记 | 上限如实界定 | I-1 |
-| 10 | render/export | OK + 哈希复算 + 3 case 确定性复跑 **`superseded-pending`（r1 R9）：确定性逐位口径待 F5 裁决重定义，见 §5 注** | TA3-A 框架引用 | 无 |
+| 10 | render/export | OK + 哈希复算；确定性复跑**双轨（F5 修订 2026-10-01，M2-QUAL-DETERM-CALIB + 用户裁决「全部进行」，superseded-pending 解除）**：remote 翻译链 = reading_order 对齐译文相似度 Gate（normalized 口径 median ≥ 0.95 且 min ≥ 0.70）；mock/deterministic 链 = export 哈希逐位一致（原口径）。详见 §5 注与 `verification/M2-QUAL-DETERM-CALIB/calibration.md` | TA3-A 框架引用 + CALIB 实测校准 | 无 |
 | 11 | 全链 | pipeline_failures=0 + 四件产物存在性 + 耗时登记 | TA3-A 口径 | 无 |
 
 **校准规则**：阶段二实测完成后，任何提案数值的调整（含"实测后 ko 阈值明显不合理的改判"）一律走用户裁决登记，不允许 owner 单方修改已裁决数值。

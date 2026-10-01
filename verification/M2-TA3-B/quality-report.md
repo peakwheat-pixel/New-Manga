@@ -186,7 +186,7 @@ export 哈希独立复算（§5 口径，runner 之外）：**13 个 OK export�
 | T-1/T-2（translate Gate 数值/最小 n） | SFX n=0（生产 SKIP 语义），Gate 未触发；T-2 的"素材扩充"路径需先解决 SFX→translate 产品入口 |
 | T-3（目标语言 zh） | 已按 zh 执行 |
 | T-4（endpoint 选择） | 已裁决 (a) DeepSeek 并执行 |
-| 新裁决点（建议） | F1/F2 修复 Task 的释放与优先级；F4 口径修订；**F5 确定性 Gate 口径重定义（r1 R1：字节逐位口径在 remote 翻译下失效——候选方向=按 reading_order 对齐的译文相似度阈值，需 Codex/用户裁决；重定义前 thresholds §5/§7 的对应条目按 superseded-pending 引用，见 quality-thresholds.md 交叉注）** |
+| 新裁决点（建议） | F1/F2 修复 Task 的释放与优先级；F4 口径修订；**F5 确定性 Gate 口径重定义（r1 R1：字节逐位口径在 remote 翻译下失效——候选方向=按 reading_order 对齐的译文相似度阈值，需 Codex/用户裁决；重定义前 thresholds §5/§7 的对应条目按 superseded-pending 引用，见 quality-thresholds.md 交叉注）（关系注 2026-10-01：该 superseded-pending 已由 M2-QUAL-DETERM-CALIB + 用户裁决「全部进行」落地解除，现行口径=quality-thresholds.md §5 双轨条目与 §5 尾注，证据=`verification/M2-QUAL-DETERM-CALIB/`）** |
 
 ---
 
@@ -196,4 +196,4 @@ export 哈希独立复算（§5 口径，runner 之外）：**13 个 OK export�
 2. **Task 建议 A（新）**：webtoon 长条漫检测支持（分块检测或 backend 路由）——影响 AC1 全链 Gate 的最大单因（6 case）。
 3. **Task 建议 B（新）**：导入大图支持（QImageReader allocation limit 可配置）——影响 3 case。
 4. （登记）SFX→translate 策略的产品入口（SFX 语义评测前置条件）。
-5. （口径）F4 的 detect 冒烟口径修订 + F5 的确定性口径重定义（r1 R1：从"export 哈希逐位一致"改为 remote 翻译下的新口径，候选=reading_order 对齐译文相似度；重定义前按 superseded-pending 引用）。
+5. （口径）F4 的 detect 冒烟口径修订 + F5 的确定性口径重定义（r1 R1：从"export 哈希逐位一致"改为 remote 翻译下的新口径，候选=reading_order 对齐译文相似度；重定义前按 superseded-pending 引用）。（关系注 2026-10-01：F5 部分的 superseded-pending 已由 M2-QUAL-DETERM-CALIB 落地解除——双轨口径见 quality-thresholds.md §5，校准证据=`verification/M2-QUAL-DETERM-CALIB/`；F4 部分仍待其自身 Task。）
