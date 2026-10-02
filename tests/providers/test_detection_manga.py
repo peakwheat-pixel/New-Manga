@@ -391,7 +391,7 @@ class TestTilingConfig:
 
     def test_defaults_match_the_diagnosed_experiment(self, monkeypatch):
         _clean_tiling_env(monkeypatch)
-        config = detection_manga._tiling_config()
+        config = detection_manga._tiling_config(detection_manga._tiling_trigger_ratio())
         assert config.tile_size == 1024  # the DIAG tile experiment size
         assert config.overlap == 128  # the DIAG overlap band
         assert config.nms_iou == 0.5  # the DIAG cross-tile dedup IoU
@@ -403,7 +403,7 @@ class TestTilingConfig:
         monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_OVERLAP", "64")
         monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_NMS_IOU", "0.6")
         monkeypatch.setenv("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "8")
-        config = detection_manga._tiling_config()
+        config = detection_manga._tiling_config(detection_manga._tiling_trigger_ratio())
         assert config.tile_size == 512
         assert config.overlap == 64
         assert config.nms_iou == 0.6
@@ -442,13 +442,20 @@ class TestTilingConfig:
     def test_illegal_values_fail_fast(self, monkeypatch, env_name, value):
         _clean_tiling_env(monkeypatch)
         monkeypatch.setenv(env_name, value)
-        with pytest.raises(ValueError, match=env_name):
-            detection_manga._tiling_config()
+        if env_name == "NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO":
+            # parsed eagerly before the trigger test (r1 R1 lazy split)
+            with pytest.raises(ValueError, match=env_name):
+                detection_manga._tiling_trigger_ratio()
+        else:
+            with pytest.raises(ValueError, match=env_name):
+                detection_manga._tiling_config(
+                    detection_manga._tiling_trigger_ratio()
+                )
 
     def test_unrelated_env_has_no_effect(self, monkeypatch):
         _clean_tiling_env(monkeypatch)
         monkeypatch.setenv("NEWMANGA_SFX_CONF_THRESHOLD", "0.75")
-        config = detection_manga._tiling_config()
+        config = detection_manga._tiling_config(detection_manga._tiling_trigger_ratio())
         assert config.tile_size == 1024
 
 

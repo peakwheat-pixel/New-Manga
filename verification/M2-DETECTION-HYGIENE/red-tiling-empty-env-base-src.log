@@ -1,0 +1,4 @@
+BEHAVIOURAL red-state: base src 24a89d7d (env-parse falls back silently on empty/whitespace)
+command: set NEWMANGA_DETECTOR_TILING_TILE_SIZE='' then _tiling_config() (old signature) — observe NO raise, silent default
+venv=T1.1.1-impl-py312; date=2026-10-02
+RESULT: no raise; tile_size fell back to 1024 (silent default — the r1 R3 gap)

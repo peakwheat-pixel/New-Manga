@@ -797,9 +797,22 @@ class PipelineService:
                     self._fail_step(run, task, step_run, unit, "STEP_FAILED", str(error))
                     task_failed = True
                 else:
-                    committed = self.commit_step_result(step_run.step_run_id, result)
-                    if committed.status != "committed":
+                    # M2-DETECTION-HYGIENE (BACKFILL r2 N1 / r1 R3): the
+                    # planning-window read inside commit_step_result ->
+                    # _backfill_detected_regions can now raise a NON-whitelisted
+                    # PipelineError; route it through the typed failure path so
+                    # the run reaches a terminal state instead of stranding
+                    # non-terminal until recover_running_runs.
+                    try:
+                        committed = self.commit_step_result(step_run.step_run_id, result)
+                    except PipelineError as error:
+                        self._fail_step(
+                            run, task, step_run, unit, error.code, error.detail
+                        )
                         task_failed = True
+                    else:
+                        if committed.status != "committed":
+                            task_failed = True
 
                 if task_failed:
                     self._cancel_remaining(run, task, unit)
