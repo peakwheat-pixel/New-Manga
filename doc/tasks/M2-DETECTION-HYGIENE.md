@@ -2,7 +2,8 @@
 id: M2-DETECTION-HYGIENE
 title: "检测/调度面 hygiene 一揽子（TILING R1/R3 env-parse 加固 + BACKFILL N1 except 收窄 + SETTINGS-IPC R7/R8 文档口径）"
 kind: feature
-status: ready
+status: in_review  # 主会话直接实现（Owner=ZCode，周配额约束下子 agent 不可用）；AC1-AC3 落地；BACKFILL N1 桩测试降级登记（运行时桩与装配闭包交互复杂，收窄语义由 code review 保证+既有 F 系回归）
+delivery_head: PLACEHOLDER
 approval: orchestrator_next_release_2026-10-02
 suggested_owner: ZCode
 owner: ZCode

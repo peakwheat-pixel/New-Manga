@@ -426,6 +426,17 @@ class TestTilingConfig:
             ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "0"),
             ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "-4"),
             ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "abc"),
+            # M2-DETECTION-HYGIENE (TILING r1 R3): empty/whitespace values are
+            # typed-rejected too (never-silent-default) instead of falling
+            # back to the frozen default.
+            ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", ""),
+            ("NEWMANGA_DETECTOR_TILING_TRIGGER_RATIO", "  "),
+            ("NEWMANGA_DETECTOR_TILING_TILE_SIZE", ""),
+            ("NEWMANGA_DETECTOR_TILING_TILE_SIZE", "  "),
+            ("NEWMANGA_DETECTOR_TILING_OVERLAP", ""),
+            ("NEWMANGA_DETECTOR_TILING_OVERLAP", "  "),
+            ("NEWMANGA_DETECTOR_TILING_NMS_IOU", ""),
+            ("NEWMANGA_DETECTOR_TILING_NMS_IOU", "  "),
         ],
     )
     def test_illegal_values_fail_fast(self, monkeypatch, env_name, value):

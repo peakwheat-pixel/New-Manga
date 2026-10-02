@@ -194,10 +194,22 @@ def _tiling_config() -> TilingConfig:
     overlap is validated against the EFFECTIVE tile size, so a custom tile
     size below the default overlap must come with its own overlap — the
     error names both variables.
+
+    M2-DETECTION-HYGIENE (TILING r1 R3): an empty or whitespace-only value
+    is ALSO rejected (never-silent-default) — ``if raw is not None`` lets
+    ``float("")`` fail into the same typed path instead of silently
+    falling back to the default.
+
+    M2-DETECTION-HYGIENE (TILING r1 R1): the config is read on EVERY
+    ``detect`` call (before the trigger test, which needs the trigger
+    ratio), so an ILLEGAL env value fails fast for ordinary pages too —
+    the same provider-level semantics as ``NEWMANGA_SFX_CONF_THRESHOLD``.
+    The "ordinary pages unchanged" claim is therefore scoped to: env
+    unset OR set to legal values.
     """
     raw = os.environ.get(TILING_ENV_TRIGGER_RATIO)
     trigger_ratio = float(TILING_TRIGGER_RATIO)
-    if raw and raw.strip():
+    if raw is not None:
         try:
             trigger_ratio = float(raw.strip())
         except ValueError as error:
@@ -211,7 +223,7 @@ def _tiling_config() -> TilingConfig:
 
     raw = os.environ.get(TILING_ENV_TILE_SIZE)
     tile_size = TILING_TILE_SIZE
-    if raw and raw.strip():
+    if raw is not None:
         try:
             tile_size = int(raw.strip())
         except ValueError as error:
@@ -225,7 +237,7 @@ def _tiling_config() -> TilingConfig:
 
     raw = os.environ.get(TILING_ENV_OVERLAP)
     overlap = TILING_OVERLAP_PX
-    if raw and raw.strip():
+    if raw is not None:
         try:
             overlap = int(raw.strip())
         except ValueError as error:
@@ -240,7 +252,7 @@ def _tiling_config() -> TilingConfig:
 
     raw = os.environ.get(TILING_ENV_NMS_IOU)
     nms_iou = float(TILING_NMS_IOU)
-    if raw and raw.strip():
+    if raw is not None:
         try:
             nms_iou = float(raw.strip())
         except ValueError as error:
