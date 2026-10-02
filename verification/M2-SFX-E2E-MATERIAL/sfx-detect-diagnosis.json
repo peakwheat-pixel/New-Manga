@@ -1,11 +1,11 @@
 {
   "tool": "experiments/M2-SFX-E2E-MATERIAL/diagnose_sfx_detect.py",
-  "generated_at_utc": "2026-10-02T00:35:46Z",
+  "generated_at_utc": "2026-10-02T00:57:53Z",
   "weights": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights/yolo11s-seg.onnx",
   "conf_threshold_diagnostic": 0.25,
   "production_threshold": 0.5,
   "nms_iou": 0.7,
-  "note": "diagnostic replay of the production inference sequence with all classes kept after NMS; production keeps only cls=sfx at conf>=0.5",
+  "note": "diagnostic replay of the production inference sequence with all classes kept after NMS; production keeps only cls=sfx at conf>=0.5. r1 R2 revision: every intersecting box is enumerated per reference (class/conf/ref_coverage/box_coverage/iou) instead of reporting a single best-coverage box on the single-sided coverage metric (DETECT-EVAL R12 disqualified that metric for conclusions); class attribution for the sfx-class misses is left open",
   "pages": {
     "BJ13": {
       "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-E2E-MATERIAL-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0048.png",
@@ -82,7 +82,35 @@
               1000
             ]
           },
-          "verdict": "class confusion: picked up as best_cov=0.83 cls=panel conf=0.9431"
+          "verdict": "sfx-class 0 hit (production-semantic miss); 2 intersecting non-sfx box(es) [panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "text",
+              "conf": 0.7436,
+              "xyxy": [
+                2122.1,
+                282.9,
+                2480.0,
+                1278.2
+              ],
+              "ref_coverage": 0.73,
+              "box_coverage": 0.54,
+              "iou": 0.452
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9431,
+              "xyxy": [
+                375.1,
+                370.3,
+                2612.3,
+                3802.0
+              ],
+              "ref_coverage": 0.83,
+              "box_coverage": 0.03,
+              "iou": 0.029
+            }
+          ]
         },
         {
           "ref": {
@@ -94,7 +122,35 @@
               3400
             ]
           },
-          "verdict": "class confusion: picked up as best_cov=1.00 cls=panel conf=0.9431"
+          "verdict": "sfx-class 0 hit (production-semantic miss); 2 intersecting non-sfx box(es) [panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "text",
+              "conf": 0.8437,
+              "xyxy": [
+                493.9,
+                2682.8,
+                761.3,
+                3640.2
+              ],
+              "ref_coverage": 0.67,
+              "box_coverage": 0.75,
+              "iou": 0.544
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9431,
+              "xyxy": [
+                375.1,
+                370.3,
+                2612.3,
+                3802.0
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.04,
+              "iou": 0.037
+            }
+          ]
         }
       ],
       "preview": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\detect-diag-previews\\BJ13-detect-diag.jpg"
@@ -304,7 +360,35 @@
               950
             ]
           },
-          "verdict": "class confusion: picked up as best_cov=0.89 cls=panel conf=0.9668"
+          "verdict": "sfx-class 0 hit (production-semantic miss); 2 intersecting non-sfx box(es) [panel] enumerated below",
+          "intersecting_boxes": [
+            {
+              "cls": "panel",
+              "conf": 0.9668,
+              "xyxy": [
+                372.0,
+                0.9,
+                1489.1,
+                1586.4
+              ],
+              "ref_coverage": 0.89,
+              "box_coverage": 0.1,
+              "iou": 0.094
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9503,
+              "xyxy": [
+                1501.7,
+                0.0,
+                1968.5,
+                1582.6
+              ],
+              "ref_coverage": 0.06,
+              "box_coverage": 0.02,
+              "iou": 0.013
+            }
+          ]
         },
         {
           "ref": {
@@ -316,7 +400,48 @@
               2560
             ]
           },
-          "verdict": "class confusion: picked up as best_cov=1.00 cls=panel conf=0.9687"
+          "verdict": "sfx-class 0 hit (production-semantic miss); 3 intersecting non-sfx box(es) [bubble, panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "bubble",
+              "conf": 0.9665,
+              "xyxy": [
+                373.0,
+                2364.9,
+                883.6,
+                3034.5
+              ],
+              "ref_coverage": 0.3,
+              "box_coverage": 0.17,
+              "iou": 0.122
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9687,
+              "xyxy": [
+                374.5,
+                1633.5,
+                1864.2,
+                3041.2
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.09,
+              "iou": 0.094
+            },
+            {
+              "cls": "text",
+              "conf": 0.9412,
+              "xyxy": [
+                471.1,
+                2441.2,
+                741.3,
+                2980.1
+              ],
+              "ref_coverage": 0.14,
+              "box_coverage": 0.19,
+              "iou": 0.086
+            }
+          ]
         },
         {
           "ref": {
@@ -328,7 +453,48 @@
               2900
             ]
           },
-          "verdict": "class confusion: picked up as best_cov=1.00 cls=panel conf=0.9721"
+          "verdict": "sfx-class 0 hit (production-semantic miss); 3 intersecting non-sfx box(es) [bubble, panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "bubble",
+              "conf": 0.9642,
+              "xyxy": [
+                1880.2,
+                2462.2,
+                2347.2,
+                3037.3
+              ],
+              "ref_coverage": 0.68,
+              "box_coverage": 0.49,
+              "iou": 0.399
+            },
+            {
+              "cls": "text",
+              "conf": 0.92,
+              "xyxy": [
+                2008.8,
+                2528.1,
+                2160.0,
+                2986.4
+              ],
+              "ref_coverage": 0.29,
+              "box_coverage": 0.81,
+              "iou": 0.274
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9721,
+              "xyxy": [
+                1866.6,
+                1632.5,
+                2946,
+                3040.0
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.13,
+              "iou": 0.126
+            }
+          ]
         }
       ],
       "preview": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\detect-diag-previews\\BJ14-detect-diag.jpg"
@@ -588,7 +754,22 @@
               800
             ]
           },
-          "verdict": "class confusion: picked up as best_cov=1.00 cls=panel conf=0.9552"
+          "verdict": "sfx-class 0 hit (production-semantic miss); 1 intersecting non-sfx box(es) [panel] enumerated below",
+          "intersecting_boxes": [
+            {
+              "cls": "panel",
+              "conf": 0.9552,
+              "xyxy": [
+                359.0,
+                0.0,
+                2594.5,
+                1447.1
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.06,
+              "iou": 0.056
+            }
+          ]
         },
         {
           "ref": {
@@ -600,7 +781,22 @@
               2200
             ]
           },
-          "verdict": "class confusion: picked up as best_cov=1.00 cls=panel conf=0.9188"
+          "verdict": "sfx-class 0 hit (production-semantic miss); 1 intersecting non-sfx box(es) [panel] enumerated below",
+          "intersecting_boxes": [
+            {
+              "cls": "panel",
+              "conf": 0.9188,
+              "xyxy": [
+                8.1,
+                1498.3,
+                1682.1,
+                2588.9
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.08,
+              "iou": 0.075
+            }
+          ]
         }
       ],
       "preview": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\detect-diag-previews\\BJ15-detect-diag.jpg"

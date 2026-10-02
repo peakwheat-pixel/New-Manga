@@ -1,7 +1,9 @@
 {
   "task": "M2-SFX-E2E-MATERIAL",
   "deliverable": "AC2 SFX-rich material search, license adjudication, pool entry",
-  "generated_at_utc": "2026-10-02T08:20:00Z",
+  "generated_at_utc": "2026-10-02T00:20:00Z",
+  "generated_at_local": "2026-10-02T08:20:00+08:00",
+  "timestamp_basis": "r1 R5 correction: the previous values (08:20Z / 08:07Z) were local times (UTC+8) mislabeled with a Z suffix; true UTC = local minus 8h. Cross-check: run.log local 08:07:10 <-> qual-BJ06.json started_at_utc 00:07:01Z. The license-first ordering is additionally supported by file mtime: the snapshot file is the oldest entry of the task-envs tree (predates thumbs/render artifacts).",
   "selection_policy": {
     "priority_a": "densho810 BJ official volumes already in the pool (license framework ready from M2-TA2B; SFX-rich pages inside the already-downloaded vol01/03/05 PDFs) — SELECTED",
     "priority_b": "Pepper&Carrot other languages/pages (CC-BY 4.0) — evaluated, NOT selected: the comic's visual style contains no standalone onomatopoeia lettering (dialogue/narration only), so its SFX density is structurally ~0; existing P&C cases in the pool (K11 first-run finding) already demonstrated the single-SFX-region gap this task closes",
@@ -12,20 +14,21 @@
     "snapshot_file_git_external": "G:/CODEX/New Manga.task-envs/M2-SFX-E2E-MATERIAL/license-evidence/densho810-free-snapshot-2026-10-02.html",
     "snapshot_sha256": "2bb1dc9f1a06de8ca66705af93b772f00633cd85c644bd7835025008d43b6da1",
     "snapshot_bytes": 32843,
-    "snapshot_captured_at": "2026-10-02T08:07Z",
+    "snapshot_captured_at_utc": "2026-10-02T00:07:00Z",
+    "snapshot_captured_at_local": "2026-10-02T08:07:00+08:00",
     "terms_verified_in_snapshot": [
       "二次利用フリー (free secondary use, commercial/non-commercial alike, no prior permission)",
       "attribution mandatory: 「ブラックジャックによろしく 佐藤秀峰」 (EN: Give My Regards to Black Jack / SHUHO SATO)",
       "e-mail report to info@densho810.com within 1 month of public use",
       "no Amazon Kindle store distribution; e-book store distribution requires paid (>=1 yen) listing",
-      "JASRAC-managed music pages: vol2 p35/54/150/151/153, vol7 p192 — this selection uses vol03 only (JASRAC-free volume)"
+      "JASRAC-managed music pages (the three lists transcribed from the snapshot, r1 R4): vol2 p35/54/150/151/153, vol7 p192, vol11 p77 (『ジョーンジェットの犬』, JASRAC work code 066-3777-9) — this selection uses vol03 only, absent from all three lists"
     ],
     "framework_precedent": "doc/tasks/M2-TA2B.md (densho810 license framework, attribution obligation registered; public-use report e-mail = user to-do, draft at verification/M2-TA2B/densho810-report-draft.txt)"
   },
   "source_pdf": {
     "file_git_external_read_only": "G:/CODEX/New Manga.worktrees/M2-TA2B-OPEN-ASSETS-zcode/test_assets/comic_golden_suite/日漫_JA/01_black_jack_official/vol03/volume03.pdf",
     "sha256": "31c37c85fdf314ccb73c278b384e8ca1eaba010b32c7b9673b0214458f58da69",
-    "note": "TA2B-downloaded official volume03.pdf, referenced READ-ONLY (no file outside this worktree was written); pages rendered into THIS worktree's gitignored suite directory"
+    "note": "TA2B-downloaded official volume03.pdf, referenced READ-ONLY (r1 R6 wording: zero writes to other Tasks' worktrees or existing artifacts; the git-external task-env tree does receive this task's own pixel/preview outputs); pages rendered into THIS worktree's gitignored suite directory"
   },
   "visual_scan": {
     "method": "full-volume 40dpi thumbnails (221 pages) -> 7 contact sheets (5x7) agent visual inspection -> 9 candidate pages re-rendered at 100dpi -> SFX text confirmed per page",

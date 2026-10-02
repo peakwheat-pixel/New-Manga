@@ -4,12 +4,21 @@ Diagnostic-only replay of the PRODUCTION chiqui7 inference sequence
 (``src/infrastructure/providers/detection_sfx.py`` internals, imported
 read-only — zero src changes) with ONE difference: after the identical
 conf-filter + all-class NMS, this keeps ALL FOUR classes (bubble/panel/sfx/
-text) at conf>=0.25 instead of filtering to the sfx class, so the detection
-behaviour AT THE VISUAL SFX LOCATIONS can be classified:
+text) at conf>=0.25 instead of filtering to the sfx class.  For each
+reference SFX location the report lists EVERY intersecting box (class +
+conf + ref_coverage + box_coverage + IoU) instead of a single best-coverage
+box — r1 R2 (DSH review): the single-sided coverage + best-box-only verdict
+hid co-located text-class boxes behind page-level panel boxes, and
+DETECT-EVAL R12 explicitly disqualified that metric for conclusions.
 
-  - no box at all            -> detector blind spot (recall gap);
-  - boxes of text/bubble cls -> class confusion (the DETECT-EVAL §3.3 form);
-  - sfx box below 0.5        -> sub-threshold hit (frozen-threshold effect).
+Verdict semantics (r1 R2 revision):
+
+  - no intersecting box at all -> detector blind spot (recall gap);
+  - intersecting sfx-class box -> sfx hit, split by the production 0.5
+    threshold (sub-threshold = frozen-threshold effect);
+  - otherwise -> "sfx-class 0 hit", with ALL intersecting non-sfx boxes
+    enumerated; class attribution is left OPEN (a page-level panel box and
+    a co-located text box are both consistent with the miss).
 
 Reference locations are the AC2 visual SFX inventory (zoom-confirmed);
 per-page crops with the drawn boxes are written to the git-external tree
@@ -98,13 +107,33 @@ def all_class_boxes(session, inp, scale, conf_threshold, page_w, page_h):
 
 
 def coverage(box_a, box_b) -> float:
-    """intersection area / area of box_a (single-side, DETECT-EVAL caliber)."""
+    """intersection area / area of box_a (single-side, DETECT-EVAL caliber).
+
+    Kept for the ref_coverage column; conclusions must not rest on this
+    single-sided number alone (DETECT-EVAL R12) — box_coverage and IoU are
+    reported alongside for every intersecting box.
+    """
     ax0, ay0, ax1, ay1 = box_a
     bx0, by0, bx1, by1 = box_b
     ix = max(0.0, min(ax1, bx1) - max(ax0, bx0))
     iy = max(0.0, min(ay1, by1) - max(ay0, by0))
     area = max(0.0, (ax1 - ax0) * (ay1 - ay0))
     return (ix * iy / area) if area > 0 else 0.0
+
+
+def iou(box_a, box_b) -> float:
+    """intersection-over-union (size-fair counterpart to the single-side coverage)."""
+    ax0, ay0, ax1, ay1 = box_a
+    bx0, by0, bx1, by1 = box_b
+    ix = max(0.0, min(ax1, bx1) - max(ax0, bx0))
+    iy = max(0.0, min(ay1, by1) - max(ay0, by0))
+    inter = ix * iy
+    if inter <= 0.0:
+        return 0.0
+    area_a = max(0.0, (ax1 - ax0) * (ay1 - ay0))
+    area_b = max(0.0, (bx1 - bx0) * (by1 - by0))
+    union = area_a + area_b - inter
+    return inter / union if union > 0 else 0.0
 
 
 def main() -> int:
@@ -142,7 +171,12 @@ def main() -> int:
         "nms_iou": NMS_IOU,
         "note": (
             "diagnostic replay of the production inference sequence with all "
-            "classes kept after NMS; production keeps only cls=sfx at conf>=0.5"
+            "classes kept after NMS; production keeps only cls=sfx at conf>=0.5. "
+            "r1 R2 revision: every intersecting box is enumerated per reference "
+            "(class/conf/ref_coverage/box_coverage/iou) instead of reporting a "
+            "single best-coverage box on the single-sided coverage metric "
+            "(DETECT-EVAL R12 disqualified that metric for conclusions); "
+            "class attribution for the sfx-class misses is left open"
         ),
         "pages": {},
     }
@@ -156,27 +190,48 @@ def main() -> int:
         inp, scale = _letterbox(mod, array, imgsz)
         boxes = all_class_boxes(session, inp, scale, args.conf, page_w, page_h)
 
-        # classify each reference SFX location against the detected boxes
+        # classify each reference SFX location against the detected boxes:
+        # enumerate EVERY intersecting box (r1 R2) instead of best-only
         refs = []
         for ref in REFERENCE_SFX[case_id]:
-            scored = sorted(
-                ((b, coverage(ref["approx_xyxy"], [b["xyxy"][0], b["xyxy"][1], b["xyxy"][2], b["xyxy"][3]])) for b in boxes),
-                key=lambda t: t[1],
-                reverse=True,
-            )
-            best, best_cov = (scored[0] if scored else (None, 0.0))
-            if best is None or best_cov <= 0.0:
-                verdict = "no_box_at_all (detector blind spot)"
+            ref_box = ref["approx_xyxy"]
+            hits = []
+            for b in boxes:
+                ref_cov = coverage(ref_box, b["xyxy"])
+                if ref_cov <= 0.0:
+                    continue
+                hits.append(
+                    {
+                        "cls": b["cls"],
+                        "conf": b["conf"],
+                        "xyxy": b["xyxy"],
+                        "ref_coverage": round(ref_cov, 2),
+                        "box_coverage": round(coverage(b["xyxy"], ref_box), 2),
+                        "iou": round(iou(ref_box, b["xyxy"]), 3),
+                    }
+                )
+            hits.sort(key=lambda h: h["iou"], reverse=True)
+            sfx_hits = [h for h in hits if h["cls"] == "sfx"]
+            if not hits:
+                verdict = "no intersecting box at all (detector blind spot)"
+            elif sfx_hits:
+                top = max(sfx_hits, key=lambda h: h["conf"])
+                verdict = (
+                    f"sfx-class box {'ABOVE' if top['conf'] >= 0.5 else 'BELOW production 0.5 threshold'}"
+                    f" (best sfx conf={top['conf']} ref_coverage={top['ref_coverage']:.2f} iou={top['iou']:.2f})"
+                )
             else:
-                cov_txt = f"best_cov={best_cov:.2f} cls={best['cls']} conf={best['conf']}"
-                if best["cls"] == "sfx":
-                    verdict = (
-                        f"sfx-class box {'ABOVE' if best['conf'] >= 0.5 else 'BELOW production 0.5 threshold'}"
-                        f" ({cov_txt})"
+                classes = sorted({h["cls"] for h in hits})
+                verdict = (
+                    f"sfx-class 0 hit (production-semantic miss); {len(hits)} intersecting non-sfx"
+                    f" box(es) [{', '.join(classes)}] enumerated below"
+                )
+                if "panel" in classes and "text" in classes:
+                    verdict += (
+                        " — attribution open (page-level panel box and co-located"
+                        " text box are both consistent with the miss)"
                     )
-                else:
-                    verdict = f"class confusion: picked up as {cov_txt}"
-            refs.append({"ref": ref, "verdict": verdict})
+            refs.append({"ref": ref, "verdict": verdict, "intersecting_boxes": hits})
 
         draw_target = rgb.copy()
         draw = ImageDraw.Draw(draw_target)

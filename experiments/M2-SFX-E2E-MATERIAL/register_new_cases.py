@@ -83,7 +83,13 @@ ATTRIBUTION_NOTE = (
 
 
 def pipeline_status_of(summary: dict) -> dict[str, str]:
-    """Derive the honest per-stage status from the AC3 run summary."""
+    """Derive the honest per-stage status from the AC3 run summary.
+
+    Status semantics (r1 R10 revision — outcome-based, not policy-presence):
+    PASS = the stage measurably succeeded in THIS run; NOT_RUN = the stage had
+    nothing to act on (e.g. no sfx region / gate never released); FAIL = the
+    stage ran and did not produce its output.
+    """
     run1_ok = summary.get("run1", {}).get("status") == "completed"
     run2 = summary.get("run2", {})
     run2_ok = run2.get("status") == "completed"
@@ -92,15 +98,28 @@ def pipeline_status_of(summary: dict) -> dict[str, str]:
         1 for d in summary.get("translate_details", []) if (d.get("translated_text") or "").strip()
     )
     translated = n_translated > 0 and export_ok
+
+    translated_region_ids = {
+        d.get("region_id")
+        for d in summary.get("translate_details", [])
+        if (d.get("translated_text") or "").strip()
+    }
+    sfx_regions = [r for r in summary.get("regions", []) if r.get("region_type") == "sfx"]
+    sfx_released = [r for r in sfx_regions if r.get("sfx_policy") == "translate"]
+    if not sfx_released:
+        # no sfx region on the page, or none released by the gate
+        sfx_status = "NOT_RUN"
+    elif any(r.get("region_id") in translated_region_ids for r in sfx_released):
+        sfx_status = "PASS"  # gate released AND the released region has a non-empty translation
+    else:
+        sfx_status = "FAIL" if run2_ok else "NOT_RUN"
+
     status = {
-        "ocr": "PASS" if (run2_ok and n_translated > 0) or run2_ok else "FAIL",
+        "ocr": "PASS" if run2_ok else "NOT_RUN",
         "text_detection": "PASS" if summary.get("regions") else "FAIL",
         "region": "PASS" if summary.get("regions") else "FAIL",
         "reading_order": "PASS" if run1_ok else "NOT_RUN",
-        "sfx": "PASS" if any(
-            r.get("region_type") == "sfx" and (r.get("sfx_policy") == "translate")
-            for r in summary.get("regions", [])
-        ) else "NOT_RUN",
+        "sfx": sfx_status,
         "speaker_attribution": "NOT_RUN",
         "translation": "PASS" if translated else ("FAIL" if run2_ok else "NOT_RUN"),
         "inpainting": "PASS" if run2_ok else "NOT_RUN",
