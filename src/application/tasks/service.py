@@ -797,9 +797,22 @@ class PipelineService:
                     self._fail_step(run, task, step_run, unit, "STEP_FAILED", str(error))
                     task_failed = True
                 else:
-                    committed = self.commit_step_result(step_run.step_run_id, result)
-                    if committed.status != "committed":
+                    # M2-DETECTION-HYGIENE (BACKFILL r2 N1 / r1 R3): the
+                    # planning-window read inside commit_step_result ->
+                    # _backfill_detected_regions can now raise a NON-whitelisted
+                    # PipelineError; route it through the typed failure path so
+                    # the run reaches a terminal state instead of stranding
+                    # non-terminal until recover_running_runs.
+                    try:
+                        committed = self.commit_step_result(step_run.step_run_id, result)
+                    except PipelineError as error:
+                        self._fail_step(
+                            run, task, step_run, unit, error.code, error.detail
+                        )
                         task_failed = True
+                    else:
+                        if committed.status != "committed":
+                            task_failed = True
 
                 if task_failed:
                     self._cancel_remaining(run, task, unit)
@@ -988,11 +1001,15 @@ class PipelineService:
             # output.
             try:
                 region_view = self._catalog.current(region_id)
-            except PipelineError:
-                # TARGET_DELETED / TARGET_NOT_FOUND：规划期读取窗口内该
-                # Region 已不可读（并发删除或 _region_or_error 前置不满足），
-                # 按 TARGET_DELETED 语义跳过该 region，交由下一次（重）规划
-                # 以 live Regions 重新拾取。
+            except PipelineError as error:
+                # M2-DETECTION-HYGIENE (BACKFILL r2 N1)：收窄到跳过语义实际
+                # 覆盖的两个码——其他 PipelineError 不再被静默吞掉（否则该
+                # 调用路径未来新增任何错误码都会无声丢 region）。
+                if error.code not in {"TARGET_DELETED", "TARGET_NOT_FOUND"}:
+                    raise
+                # 规划期读取窗口内该 Region 已不可读（并发删除或
+                # _region_or_error 前置不满足），按 TARGET_DELETED 语义跳过
+                # 该 region，交由下一次（重）规划以 live Regions 重新拾取。
                 continue
             for region_snapshot in region_view.region_snapshots():
                 replanned.extend(

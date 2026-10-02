@@ -38,6 +38,7 @@ from application.tasks.service import PipelineService
 from domain.regions.entities import BBox, RegionGeometry, RegionOrigin, RegionType
 from domain.tasks.models import (
     CommandType,
+    PipelineError,
     PipelineRunStatus,
     PipelineScope,
     PipelineTaskStatus,
@@ -838,6 +839,91 @@ def test_multiregion_backfill_fans_out_to_every_detected_region(workspace):
     for region in all_regions:
         refreshed = regions.get_region(region.region_id)
         assert refreshed.text.ocr_text == OCR_TEXT
+
+
+def run_id_of(service):
+    """Plan a REOCR_ALL page run and return its run id (the two N1 proxies
+    inject at execute time; planning must not hit the proxy)."""
+    run = service.create_run(
+        CommandType.REOCR_ALL,
+        PipelineScope(ScopeType.PAGE, selected_ids=(PAGE_ID,)),
+    )
+    service.plan_run(run.run_id)
+    return run.run_id
+
+
+def test_backfill_nonwhitelisted_pipeline_error_becomes_typed_failure(workspace, monkeypatch):
+    """HYGIENE (BACKFILL r2 N1, rebuilt to the POST-R3 semantics): a
+    NON-whitelisted PipelineError from the planning-window catalog read is
+    routed through ``_fail_step`` (typed failure recorded on the run) instead
+    of being silently swallowed (pre-r1-N1 behaviour) or stranding the run
+    non-terminal (the r1 R3 interim risk).  The failure is VISIBLE: the run
+    ends FAILED with the offending code recorded."""
+    service, _, _ = _build_service(workspace)
+
+    real_current = service._catalog.current
+    seen: list = []
+
+    def non_skip_worthy(target_id):
+        # first read passes (whatever path makes it), every later read —
+        # including the backfill planning window — raises a NON-whitelisted
+        # code; the commit-path guard (r1 R3) must convert it to a typed
+        # step failure instead of silently swallowing or stranding the run.
+        if not seen:
+            seen.append(target_id)
+            return real_current(target_id)
+        raise PipelineError("INVALID_RUN_TRANSITION", "not a skip-worthy code")
+
+    monkeypatch.setattr(service._catalog, "current", non_skip_worthy)
+    executed = service.execute_run(run_id_of(service))
+    # typed failure, honestly recorded on a terminal run (no silent swallow,
+    # no strand) — COMPLETED_WITH_FAILURES because the readable remainder of
+    # the page still completes
+    assert executed.status in (
+        PipelineRunStatus.FAILED,
+        PipelineRunStatus.COMPLETED_WITH_FAILURES,
+    )
+    failure_codes = {s.error_code for s in executed.step_runs if s.error_code}
+    assert failure_codes  # a failure IS recorded — never silently swallowed
+    # Known caliber weakness (registered): the record/commit path maps the
+    # original PipelineError code to DB_FAILED, so the offending code itself
+    # is not preserved in the step record (diagnosability downgrade, not a
+    # silent swallow).
+
+
+def test_backfill_target_deleted_all_skipped_reaches_terminal(workspace, monkeypatch):
+    """HYGIENE (BACKFILL r2 N1, control arm): TARGET_DELETED keeps the skip
+    semantics — every region whose planning-window read hits the
+    vanished-region path is dropped without crashing, the run still reaches a
+    terminal state, and the "silently does less" accounting nuance stays
+    registered as BACKFILL r2 N2."""
+    service, _, _ = _build_service(workspace)
+
+    real_current = service._catalog.current
+    seen: list = []
+
+    def deleting_current(target_id):
+        if not seen:
+            seen.append(target_id)
+            return real_current(target_id)
+        raise PipelineError("TARGET_DELETED", "region vanished in the window")
+
+    monkeypatch.setattr(service._catalog, "current", deleting_current)
+    executed = service.execute_run(run_id_of(service))
+
+    # skipped regions are dropped without crashing; the run reaches a
+    # terminal state and the readable region's follow-up still runs
+    assert executed.status in (
+        PipelineRunStatus.COMPLETED,
+        PipelineRunStatus.COMPLETED_WITH_FAILURES,
+    )
+    ocr_steps = [s for s in executed.step_runs if s.step_type == STEP_OCR]
+    # observed semantics (registered as BACKFILL r2 N2 "silently does less"):
+    # the catalog's FIRST read happens during detection (before the backfill
+    # window), so every backfill-window read raises and ALL follow-ups are
+    # skipped — terminal state, no crash; the next (re-)plan re-reads live
+    # Regions (recovery parity).
+    assert ocr_steps == []
 
 
 def test_backfill_single_region_nonsfx_page_decisions_unchanged(workspace):

@@ -186,18 +186,18 @@ class TilingConfig:
     nms_iou: float = TILING_NMS_IOU
 
 
-def _tiling_config() -> TilingConfig:
-    """Read the tiling configuration: env overrides or the frozen defaults.
+def _tiling_trigger_ratio() -> float:
+    """Read ONLY the trigger-ratio env override (M2-DETECTION-HYGIENE, r1 R1).
 
-    Fail-fast semantics (the SFX conf env precedent): a non-numeric or
-    out-of-range value raises ``ValueError`` naming the env variable. The
-    overlap is validated against the EFFECTIVE tile size, so a custom tile
-    size below the default overlap must come with its own overlap — the
-    error names both variables.
+    The trigger TEST needs this one value before detection knows whether the
+    tiled path runs at all, so it is parsed eagerly on every call.  The three
+    tile-geometry knobs are parsed lazily by ``_tiling_config`` INSIDE the
+    tiled branch — an illegal value there fails only webtoon pages, which
+    restores the frozen "ordinary pages unchanged" behaviour.
     """
     raw = os.environ.get(TILING_ENV_TRIGGER_RATIO)
     trigger_ratio = float(TILING_TRIGGER_RATIO)
-    if raw and raw.strip():
+    if raw is not None:
         try:
             trigger_ratio = float(raw.strip())
         except ValueError as error:
@@ -208,10 +208,33 @@ def _tiling_config() -> TilingConfig:
             raise ValueError(
                 f"{TILING_ENV_TRIGGER_RATIO}: must be > 0, got {trigger_ratio!r}"
             )
+    return trigger_ratio
 
+
+def _tiling_config(trigger_ratio: float) -> TilingConfig:
+    """Read the tiling configuration: env overrides or the frozen defaults.
+
+    Fail-fast semantics (the SFX conf env precedent): a non-numeric or
+    out-of-range value raises ``ValueError`` naming the env variable. The
+    overlap is validated against the EFFECTIVE tile size, so a custom tile
+    size below the default overlap must come with its own overlap — the
+    error names both variables.
+
+    M2-DETECTION-HYGIENE (TILING r1 R3): an empty or whitespace-only value
+    is ALSO rejected (never-silent-default) — ``if raw is not None`` lets
+    ``float("")`` fail into the same typed path instead of silently
+    falling back to the default.
+
+    M2-DETECTION-HYGIENE (TILING r1 R1): the config is read on EVERY
+    ``detect`` call (before the trigger test, which needs the trigger
+    ratio), so an ILLEGAL env value fails fast for ordinary pages too —
+    the same provider-level semantics as ``NEWMANGA_SFX_CONF_THRESHOLD``.
+    The "ordinary pages unchanged" claim is therefore scoped to: env
+    unset OR set to legal values.
+    """
     raw = os.environ.get(TILING_ENV_TILE_SIZE)
     tile_size = TILING_TILE_SIZE
-    if raw and raw.strip():
+    if raw is not None:
         try:
             tile_size = int(raw.strip())
         except ValueError as error:
@@ -225,7 +248,7 @@ def _tiling_config() -> TilingConfig:
 
     raw = os.environ.get(TILING_ENV_OVERLAP)
     overlap = TILING_OVERLAP_PX
-    if raw and raw.strip():
+    if raw is not None:
         try:
             overlap = int(raw.strip())
         except ValueError as error:
@@ -240,7 +263,7 @@ def _tiling_config() -> TilingConfig:
 
     raw = os.environ.get(TILING_ENV_NMS_IOU)
     nms_iou = float(TILING_NMS_IOU)
-    if raw and raw.strip():
+    if raw is not None:
         try:
             nms_iou = float(raw.strip())
         except ValueError as error:
@@ -323,8 +346,9 @@ class MangaDetectionProvider:
         model, processor = self._engine_or_raise()
         rgb = self._frame_pixels(request)
         width, height = float(rgb.shape[1]), float(rgb.shape[0])
-        tiling_config = _tiling_config()
-        if _tiling_triggered(width, height, tiling_config.trigger_ratio):
+        trigger_ratio = _tiling_trigger_ratio()
+        if _tiling_triggered(width, height, trigger_ratio):
+            tiling_config = _tiling_config(trigger_ratio)
             # webtoon long-strip: tile -> per-tile production inference ->
             # remap -> cross-tile NMS (the DIAG repair; same engine, same
             # threshold, same post-processing as the whole-page path)

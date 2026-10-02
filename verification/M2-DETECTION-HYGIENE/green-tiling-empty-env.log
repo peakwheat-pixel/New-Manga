@@ -1,0 +1,2 @@
+GREEN re-archive (post r2-P0 fix): lazy split REAPPLIED after being clobbered by the red-state checkout restore — same mistake as BACKFILL R9, now registered; command=pytest tests/providers/test_detection_manga.py -q; venv=T1.1.1-impl-py312; date=2026-10-02
+81 passed in 1.60s

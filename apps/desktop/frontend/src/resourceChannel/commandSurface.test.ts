@@ -35,9 +35,11 @@ type Mode = "production" | "probe";
 function makeSurfaceInvoke(mode: Mode) {
   const calls: { command: string; args: Record<string, unknown> }[] = [];
   const invoke = vi.fn(async (command: string, args?: Record<string, unknown>) => {
-    // production arm = the three resource-channel commands + the settings
-    // pair; the probe arm keeps the frozen RC2 shape (settings pair absent,
-    // four probe commands added) — mirroring main.rs command_allowlist.
+    // production arm = the three resource-channel commands + the M2-IPC1
+    // pair (core_ping / library_list_books) + the M2-SETTINGS-IPC-CHANNEL
+    // settings pair (settings_get / settings_update_section); the probe arm
+    // keeps the frozen RC2 shape (settings pair absent, four probe commands
+    // added) — mirroring main.rs command_allowlist.
     const available = [
       ...PRODUCTION_COMMANDS,
       ...(mode === "production" ? SETTINGS_PRODUCTION_ONLY_COMMANDS : []),
@@ -134,7 +136,7 @@ describe("RC2 command surface allow/deny matrix", () => {
     }
   });
 
-  it("production mode allows exactly the three product commands", async () => {
+  it("production mode allows the product commands (resources + IPC1 pair + settings pair)", async () => {
     const { invoke } = makeSurfaceInvoke("production");
     const issued = (await invoke("issue_resource_url", {
       resourceId: "res-a",
