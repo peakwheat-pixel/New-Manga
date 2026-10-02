@@ -186,7 +186,32 @@ class TilingConfig:
     nms_iou: float = TILING_NMS_IOU
 
 
-def _tiling_config() -> TilingConfig:
+def _tiling_trigger_ratio() -> float:
+    """Read ONLY the trigger-ratio env override (M2-DETECTION-HYGIENE, r1 R1).
+
+    The trigger TEST needs this one value before detection knows whether the
+    tiled path runs at all, so it is parsed eagerly on every call.  The three
+    tile-geometry knobs are parsed lazily by ``_tiling_config`` INSIDE the
+    tiled branch — an illegal value there fails only webtoon pages, which
+    restores the frozen "ordinary pages unchanged" behaviour.
+    """
+    raw = os.environ.get(TILING_ENV_TRIGGER_RATIO)
+    trigger_ratio = float(TILING_TRIGGER_RATIO)
+    if raw is not None:
+        try:
+            trigger_ratio = float(raw.strip())
+        except ValueError as error:
+            raise ValueError(
+                f"{TILING_ENV_TRIGGER_RATIO}: not a number: {raw!r}"
+            ) from error
+        if not trigger_ratio > 0.0:
+            raise ValueError(
+                f"{TILING_ENV_TRIGGER_RATIO}: must be > 0, got {trigger_ratio!r}"
+            )
+    return trigger_ratio
+
+
+def _tiling_config(trigger_ratio: float) -> TilingConfig:
     """Read the tiling configuration: env overrides or the frozen defaults.
 
     Fail-fast semantics (the SFX conf env precedent): a non-numeric or
@@ -207,20 +232,6 @@ def _tiling_config() -> TilingConfig:
     The "ordinary pages unchanged" claim is therefore scoped to: env
     unset OR set to legal values.
     """
-    raw = os.environ.get(TILING_ENV_TRIGGER_RATIO)
-    trigger_ratio = float(TILING_TRIGGER_RATIO)
-    if raw is not None:
-        try:
-            trigger_ratio = float(raw.strip())
-        except ValueError as error:
-            raise ValueError(
-                f"{TILING_ENV_TRIGGER_RATIO}: not a number: {raw!r}"
-            ) from error
-        if not trigger_ratio > 0.0:
-            raise ValueError(
-                f"{TILING_ENV_TRIGGER_RATIO}: must be > 0, got {trigger_ratio!r}"
-            )
-
     raw = os.environ.get(TILING_ENV_TILE_SIZE)
     tile_size = TILING_TILE_SIZE
     if raw is not None:
@@ -335,8 +346,9 @@ class MangaDetectionProvider:
         model, processor = self._engine_or_raise()
         rgb = self._frame_pixels(request)
         width, height = float(rgb.shape[1]), float(rgb.shape[0])
-        tiling_config = _tiling_config()
-        if _tiling_triggered(width, height, tiling_config.trigger_ratio):
+        trigger_ratio = _tiling_trigger_ratio()
+        if _tiling_triggered(width, height, trigger_ratio):
+            tiling_config = _tiling_config(trigger_ratio)
             # webtoon long-strip: tile -> per-tile production inference ->
             # remap -> cross-tile NMS (the DIAG repair; same engine, same
             # threshold, same post-processing as the whole-page path)
