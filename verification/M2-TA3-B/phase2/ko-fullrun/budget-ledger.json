@@ -33,6 +33,17 @@
       "input_est_tokens": 33503,
       "output_est_tokens": 3155,
       "est_tokens": 36658
+    },
+    {
+      "case_id": "K09",
+      "phase": "main",
+      "finished_at_utc": "2026-10-02T06:19:49Z",
+      "runner_exit_code": 4294967295,
+      "requests": 0,
+      "input_est_tokens": 0,
+      "output_est_tokens": 0,
+      "est_tokens": 0,
+      "note": "no metering record in summary"
     }
   ],
   "stop": null,
