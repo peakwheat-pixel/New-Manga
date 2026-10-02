@@ -2,9 +2,10 @@
 id: M2-DETECTION-HYGIENE
 title: "检测/调度面 hygiene 一揽子（TILING R1/R3 env-parse 加固 + BACKFILL N1 except 收窄 + SETTINGS-IPC R7/R8 文档口径）"
 kind: feature
-status: in_review  # r1 有条件通过（5×P2）→ 返修中：R1 lazy 拆分/R2 桩重建（post-R3 语义）/R3 :800 包护/R4 行为级红态归档/R5 commandSurface 补 IPC1 对/R6 handoff
+status: in_review  # r1 有条件通过（5×P2）→ 返修完成 R1-R6 @02b6d2a2（R1 lazy 拆分恢复冻结 AC/R2 桩重建 post-R3 语义/R3 :800 包护/R4 行为级红态/R5 commandSurface 校准/R6 handoff）
+reviewed_head_r1: 561a79cd
 
-delivery_head: PLACEHOLDER
+delivery_head: 02b6d2a2  # 返修 tip（handoff=verification/M2-DETECTION-HYGIENE/implementation.md）
 approval: orchestrator_next_release_2026-10-02
 suggested_owner: ZCode
 owner: ZCode
