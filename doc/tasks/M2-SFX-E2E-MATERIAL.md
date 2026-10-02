@@ -2,7 +2,7 @@
 id: M2-SFX-E2E-MATERIAL
 title: "SFX 端到端素材路线（用户裁决④全权授权）：ja BJ06 policy=translate 端到端验证 + SFX-rich 素材搜寻/下载/入池"
 kind: feature
-status: ready
+status: delivered_in_review
 approval: user_ruling_2026-10-02_seven_items_full_authority_material
 suggested_owner: ZCode
 owner: ZCode
@@ -18,7 +18,7 @@ worktree: G:/CODEX/New Manga.worktrees/M2-SFX-E2E-MATERIAL-zcode
 
 ## 背景（用户裁决④：全权授权寻找、下载、测试）
 
-KO-RERUN §7.7：K11 唯一 SFX region OCR 空=素材缺口。推荐路线=**ja BJ06 先行**（已有 9 个 SFX region，`dialogue-readability-worksheet` SFX 骨架引用过，零新素材）+ 新素材扩展。用户全权授权素材的寻找/下载/测试。
+KO-RERUN §7.7：K11 唯一 SFX region OCR 空=素材缺口。推荐路线=**ja BJ06 先行**（已有 9 个 SFX region，`dialogue-readiness-worksheet` SFX 骨架引用过，零新素材）+ 新素材扩展。用户全权授权素材的寻找/下载/测试。
 
 ## 交付（AC）
 
@@ -40,3 +40,12 @@ KO-RERUN §7.7：K11 唯一 SFX region OCR 空=素材缺口。推荐路线=**ja 
 - **许可纪律最高优先**：来源许可一手快照先行、无许可即排除、署名义务登记（densho810 报告义务先例）。
 - BJ06 跑用生产语义（policy=translate 是用户裁决④的配置选择——该对照跑本身登记为 directional）。
 - 与 M2-TA3-B3-KO-FULLRUN 并行无文件交集（BJ06 是 ja case、FULLRUN 是 ko）。
+
+## 交付与运行记录（2026-10-02 ZCode 实现）
+
+- 交付：`verification/M2-SFX-E2E-MATERIAL/sfx-e2e-report.md`（主报告）+ `bj06-run/**` + `new-assets-run/**` + `material-inventory.json` + `sfx-detect-diagnosis.json`；工具 ×4 入 `experiments/M2-SFX-E2E-MATERIAL/`；cases.json 97→100（BJ13/BJ14/BJ15，+214/-0 只增）。
+- **AC1 PASS（闭环达成）**：BJ06 `--sfx-policy translate --determinism-track remote --meter-translation`——pipeline_completed=True（run1+run2 completed、17/17 region 零 defect、export OK）；chiqui7 检出 8 sfx + 9 speech（与首跑同分布——任务书背景「9 个 SFX region」实测为 8，登记笔误级偏差）；SFX gate 放行 8/8、**译文落库 8/8 非空**（final_source=machine）；质量抽检 ≤6 字符 8/8、无音节直译、`ハチン→啪` 为文化对等典型（directional）；speech 9/9 不受扰（8/9 与首跑逐位一致、1/9 语义等价合法重译）；K11 裁决项 7 正面关闭（首跑 BJ06 sfx region OCR 全非空——素材缺口不在 BJ06）。
+- **AC2 PASS**：densho810 路线（优先级 a）——许可一手快照（sha256 `2bb1dc9f…`，条款逐条复证）+ vol03 全卷 221 页目检（9 候选→3 页）；P&C（b）SFX 密度结构性≈0 未选、其他来源（c）未启用；BJ13（p0048 ピ一一ーン！×2）/BJ14（p0060 オギャァ×3）/BJ15（p0159 オギャァ×2+对白同页）入池：DPI 150 渲染、逐页 sha256、像素入本 worktree gitignored 套件目录、源 PDF 只读引用（本 worktree 以外零写入）、署名/报告义务沿 TA2B 框架。
+- **AC3 PASS（链路）+ 检测域缺口如实登记**：BJ13/14/15 全链 3/3 pipeline_completed、export OK、speech 16 region 翻译正常、BJ13 sfx region 1/1 端到端落库；但 chiqui7 sfx 类对 BJ 大型毛笔竖排 SFX 召回为盲区（7 目检实例：sfx 类 0 命中、6 个被 panel 类 0.92-0.97 高置信覆盖、BJ13 唯一 sfx region=T 恤印花误报）——检测段=SFX 端到端覆盖的真实瓶颈（directional，与 DETECT-EVAL §4「检出+分类两层」结论收敛），域扩展属后续 Task+用户裁决，本 Task 零生产改动。
+- **AC4 PASS**：合计 68 请求 ≈40.7k est token（预算 10 万的 40.7%）；key 零明文（env 注入+scrub_secrets）；禁改面零 diff（src/tests/contracts/packaging/apps/既有 case 产物/STATUS）；manifests 只增不改。
+- Handoff：`doc/handoffs/M2-SFX-E2E-MATERIAL-<delivery_head>.md`。遗留：densho810 报告邮件=用户待办（TA2B 草稿覆盖同源新增）；SFX 检测域扩展与正式 SFX 质量 Gate=候选后续 Task。

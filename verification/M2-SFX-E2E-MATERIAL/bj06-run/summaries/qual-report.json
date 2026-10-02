@@ -1,0 +1,44 @@
+{
+  "task": "M2-TA3-B2",
+  "generated_at_utc": "2026-10-02T00:07:01Z",
+  "device": "cpu",
+  "detector_weights_dir": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+  "sfx_weights": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx",
+  "translate": {
+    "provider_id": "openai-compatible-translation",
+    "base_url_host": "api.deepseek.com",
+    "model": "deepseek-chat",
+    "target_language": "zh",
+    "credential": "env:TA3B_TRANSLATE_API_KEY (never persisted)"
+  },
+  "region_policy": {
+    "truncation": "disabled by default (R7)",
+    "max_regions": null
+  },
+  "sfx_policy": "translate",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding": "openai-compatible-translation -> https://api.deepseek.com/v1 (deepseek-chat)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "translation_metering": true,
+  "cases": [
+    {
+      "case_id": "BJ06",
+      "pipeline_completed": true,
+      "run1_status": "completed",
+      "region_count": 17,
+      "run2_status": "completed",
+      "truncated": false,
+      "n_translated": 17,
+      "export": "OK",
+      "export_sha256": "c1d503f49a341ade33fd2e9d8c4f632e793df9aaf8e6d5630ec08cc0d6dfa8ea",
+      "attribution": [],
+      "wall_s": 695.83
+    }
+  ],
+  "rerun": [],
+  "failures": 0,
+  "finished_at_utc": "2026-10-02T00:18:37Z"
+}

@@ -1,0 +1,47 @@
+{
+  "task": "M2-SFX-E2E-MATERIAL",
+  "deliverable": "AC3 new-asset end-to-end (chiqui7 detect -> sfx gate translate -> DeepSeek -> DB)",
+  "generated_at_utc": "2026-10-02T00:18:50Z",
+  "device": "cpu",
+  "sfx_policy": "translate (forced; user ruling 2026-10-02 item 4)",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9 (fail-closed)"
+  },
+  "harness": "experiments/M2-TA3-B/run_qualification.py::run_case (reused verbatim)",
+  "cases": [
+    {
+      "case_id": "BJ13",
+      "pipeline_completed": true,
+      "region_count": 4,
+      "sfx_region_count": 1,
+      "n_translated": 4,
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 217.92
+    },
+    {
+      "case_id": "BJ14",
+      "pipeline_completed": true,
+      "region_count": 6,
+      "sfx_region_count": 0,
+      "n_translated": 6,
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 309.38
+    },
+    {
+      "case_id": "BJ15",
+      "pipeline_completed": true,
+      "region_count": 7,
+      "sfx_region_count": 0,
+      "n_translated": 7,
+      "export": "OK",
+      "attribution": [],
+      "wall_s": 358.16
+    }
+  ],
+  "failures": 0,
+  "finished_at_utc": "2026-10-02T00:33:35Z"
+}
