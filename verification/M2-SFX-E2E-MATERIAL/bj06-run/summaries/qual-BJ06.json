@@ -1,0 +1,1613 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "BJ06",
+  "rerun_suffix": "",
+  "language": "ja",
+  "family": "manual_source_page",
+  "tags": [
+    "fragmented_sfx",
+    "dense_dialogue",
+    "vertical_text",
+    "complex_background",
+    "multi_speaker",
+    "huge_text",
+    "tiny_text"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga.worktrees\\M2-TA2B-OPEN-ASSETS-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0056.png",
+  "source_sha256": "b06c9d7ddb0f679abdddeebd959d7b6aaefb5556a1fbdc43cfc0ee594d04569f",
+  "started_at_utc": "2026-10-02T00:07:01Z",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding": "openai-compatible-translation -> https://api.deepseek.com/v1 (deepseek-chat)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "manga-ocr",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "translate",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 2946,
+      "height": 4167,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "sfx_policy_reassemble": {
+      "status": "OK",
+      "policy": "translate"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "manga-ocr"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "03cca1efd293476facadcf55bd574cff",
+      "width": 2946,
+      "height": 4167
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 357.62
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 17
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 17
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 17,
+      "truncated": false,
+      "elapsed_s": 336.92
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 17,
+      "translated": 17
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "c1d503f49a341ade",
+      "size": 8423418
+    }
+  },
+  "run1": {
+    "run_id": "run-ac7c5826167f40aabe2421551376ce2b",
+    "status": "completed",
+    "elapsed_s": 357.62,
+    "steps": [
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "9339028245da4a6d94f362b8dcb719f5",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2251,
+        "y": 152,
+        "width": 242,
+        "height": 575
+      }
+    },
+    {
+      "region_id": "51fbf3ca336c4acdb30157bcd06c8e55",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 390,
+        "y": 455,
+        "width": 243,
+        "height": 505
+      }
+    },
+    {
+      "region_id": "218f674e1b0a4573810cb146b328eb28",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 418,
+        "y": 1037,
+        "width": 449,
+        "height": 624
+      }
+    },
+    {
+      "region_id": "d33724dbd1da49ba924f9f8554865593",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 2343,
+        "y": 1059,
+        "width": 194,
+        "height": 369
+      }
+    },
+    {
+      "region_id": "a7caa78297e744ad8d544de17d85e0f7",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1306,
+        "y": 1070,
+        "width": 285,
+        "height": 454
+      }
+    },
+    {
+      "region_id": "3f7a15cffcfd4c11a1b0c374e8cd099c",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1479,
+        "y": 2695,
+        "width": 254,
+        "height": 510
+      }
+    },
+    {
+      "region_id": "af341b37297b47019669354f1faa9272",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 418,
+        "y": 2700,
+        "width": 423,
+        "height": 604
+      }
+    },
+    {
+      "region_id": "f5e8622c158045428551c664e59cafc6",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 429,
+        "y": 3419,
+        "width": 286,
+        "height": 462
+      }
+    },
+    {
+      "region_id": "5b76a907a9c04eeba7e538b1d47e293d",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 1540,
+        "y": 3500,
+        "width": 222,
+        "height": 425
+      }
+    },
+    {
+      "region_id": "3ca2446544644ceeb2768bebf61789bf",
+      "reading_order": 10,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 2145,
+        "y": 3084,
+        "width": 161,
+        "height": 309
+      }
+    },
+    {
+      "region_id": "dab09d6b4e24438cb2dc6b2ea4d18af3",
+      "reading_order": 11,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 2495,
+        "y": 2907,
+        "width": 157,
+        "height": 409
+      }
+    },
+    {
+      "region_id": "2eeaa2c4d2a747f59bd7cf52b8d12e30",
+      "reading_order": 12,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 1534,
+        "y": 3517,
+        "width": 223,
+        "height": 395
+      }
+    },
+    {
+      "region_id": "ab8974e10c0b476ab26366798668de53",
+      "reading_order": 13,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 926,
+        "y": 2818,
+        "width": 170,
+        "height": 294
+      }
+    },
+    {
+      "region_id": "eac72dfd7b834871a1cec081153b560e",
+      "reading_order": 14,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 388,
+        "y": 3402,
+        "width": 340,
+        "height": 534
+      }
+    },
+    {
+      "region_id": "ea4cbed9134c428ab3804944055449ce",
+      "reading_order": 15,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 1830,
+        "y": 2969,
+        "width": 162,
+        "height": 297
+      }
+    },
+    {
+      "region_id": "c3781c28a8e14d648560dcf03418b44b",
+      "reading_order": 16,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 408,
+        "y": 468,
+        "width": 217,
+        "height": 492
+      }
+    },
+    {
+      "region_id": "b5b747d0919542a4adf781a9f3eaa841",
+      "reading_order": 17,
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "bbox": {
+        "x": 2494,
+        "y": 1895,
+        "width": 87,
+        "height": 103
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 17,
+    "region_runs_executed": 17,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "9339028245da4a6d94f362b8dcb719f5",
+        "run_id": "run-dfc741f473fd4c37936efcd1531bea15",
+        "status": "completed"
+      },
+      {
+        "region_id": "51fbf3ca336c4acdb30157bcd06c8e55",
+        "run_id": "run-fe6933d5476e41ce81de6e25d0e66e97",
+        "status": "completed"
+      },
+      {
+        "region_id": "218f674e1b0a4573810cb146b328eb28",
+        "run_id": "run-45dbc2fb0100430890db020bd725a40c",
+        "status": "completed"
+      },
+      {
+        "region_id": "d33724dbd1da49ba924f9f8554865593",
+        "run_id": "run-364f1f0a800b49909d45ef6b3b1d36c9",
+        "status": "completed"
+      },
+      {
+        "region_id": "a7caa78297e744ad8d544de17d85e0f7",
+        "run_id": "run-f163737244fc42949c0450df66fb9e5a",
+        "status": "completed"
+      },
+      {
+        "region_id": "3f7a15cffcfd4c11a1b0c374e8cd099c",
+        "run_id": "run-81ce1d071702441498c56a639506b3ba",
+        "status": "completed"
+      },
+      {
+        "region_id": "af341b37297b47019669354f1faa9272",
+        "run_id": "run-95a3fe8d036042e7b1c02281656a8a83",
+        "status": "completed"
+      },
+      {
+        "region_id": "f5e8622c158045428551c664e59cafc6",
+        "run_id": "run-8680401470c346e39b83c83429463317",
+        "status": "completed"
+      },
+      {
+        "region_id": "5b76a907a9c04eeba7e538b1d47e293d",
+        "run_id": "run-0de670e2361949c78c2ec5f978e58990",
+        "status": "completed"
+      },
+      {
+        "region_id": "3ca2446544644ceeb2768bebf61789bf",
+        "run_id": "run-1536dcfef9374316bd14ce1bad910086",
+        "status": "completed"
+      },
+      {
+        "region_id": "dab09d6b4e24438cb2dc6b2ea4d18af3",
+        "run_id": "run-ee9ed43e07544e17be8125a75fc877fd",
+        "status": "completed"
+      },
+      {
+        "region_id": "2eeaa2c4d2a747f59bd7cf52b8d12e30",
+        "run_id": "run-d992ec6960f4497f855631eb52670510",
+        "status": "completed"
+      },
+      {
+        "region_id": "ab8974e10c0b476ab26366798668de53",
+        "run_id": "run-8f7775f8a150479184230bd1e177e7b8",
+        "status": "completed"
+      },
+      {
+        "region_id": "eac72dfd7b834871a1cec081153b560e",
+        "run_id": "run-5e29dd6299394dc49df444a262b8de73",
+        "status": "completed"
+      },
+      {
+        "region_id": "ea4cbed9134c428ab3804944055449ce",
+        "run_id": "run-9e3bbcf877e449288eb4b55bc380de87",
+        "status": "completed"
+      },
+      {
+        "region_id": "c3781c28a8e14d648560dcf03418b44b",
+        "run_id": "run-1b2e2d6d114b4a349c7809c4b4f861d7",
+        "status": "completed"
+      },
+      {
+        "region_id": "b5b747d0919542a4adf781a9f3eaa841",
+        "run_id": "run-b390a6b10cd04b1f9fee0e66b30677ef",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 336.92
+  },
+  "ocr_details": [
+    {
+      "region_id": "9339028245da4a6d94f362b8dcb719f5",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2251,
+        "y": 152,
+        "width": 242,
+        "height": 575
+      },
+      "ocr_text": "しかし、"
+    },
+    {
+      "region_id": "51fbf3ca336c4acdb30157bcd06c8e55",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 390,
+        "y": 455,
+        "width": 243,
+        "height": 505
+      },
+      "ocr_text": "あいじゃ"
+    },
+    {
+      "region_id": "218f674e1b0a4573810cb146b328eb28",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 418,
+        "y": 1037,
+        "width": 449,
+        "height": 624
+      },
+      "ocr_text": "苦しそうに息をしたあとしばらく息が止まるというのをくり返しています！！"
+    },
+    {
+      "region_id": "d33724dbd1da49ba924f9f8554865593",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 2343,
+        "y": 1059,
+        "width": 194,
+        "height": 369
+      },
+      "ocr_text": "もしもし"
+    },
+    {
+      "region_id": "a7caa78297e744ad8d544de17d85e0f7",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1306,
+        "y": 1070,
+        "width": 285,
+        "height": 454
+      },
+      "ocr_text": "呼吸が変なんです．．．"
+    },
+    {
+      "region_id": "3f7a15cffcfd4c11a1b0c374e8cd099c",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1479,
+        "y": 2695,
+        "width": 254,
+        "height": 510
+      },
+      "ocr_text": "ちょっとおじいさん！？"
+    },
+    {
+      "region_id": "af341b37297b47019669354f1faa9272",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 418,
+        "y": 2700,
+        "width": 423,
+        "height": 604
+      },
+      "ocr_text": "これって酔っぱらい運転じゃないんですか！？"
+    },
+    {
+      "region_id": "f5e8622c158045428551c664e59cafc6",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 429,
+        "y": 3419,
+        "width": 286,
+        "height": 462
+      },
+      "ocr_text": "して、"
+    },
+    {
+      "region_id": "5b76a907a9c04eeba7e538b1d47e293d",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 1540,
+        "y": 3500,
+        "width": 222,
+        "height": 425
+      },
+      "ocr_text": "！！！"
+    },
+    {
+      "region_id": "3ca2446544644ceeb2768bebf61789bf",
+      "reading_order": 10,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 2145,
+        "y": 3084,
+        "width": 161,
+        "height": 309
+      },
+      "ocr_text": "いいじゃ"
+    },
+    {
+      "region_id": "dab09d6b4e24438cb2dc6b2ea4d18af3",
+      "reading_order": 11,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 2495,
+        "y": 2907,
+        "width": 157,
+        "height": 409
+      },
+      "ocr_text": "いいん"
+    },
+    {
+      "region_id": "2eeaa2c4d2a747f59bd7cf52b8d12e30",
+      "reading_order": 12,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 1534,
+        "y": 3517,
+        "width": 223,
+        "height": 395
+      },
+      "ocr_text": "！！！"
+    },
+    {
+      "region_id": "ab8974e10c0b476ab26366798668de53",
+      "reading_order": 13,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 926,
+        "y": 2818,
+        "width": 170,
+        "height": 294
+      },
+      "ocr_text": "．．．"
+    },
+    {
+      "region_id": "eac72dfd7b834871a1cec081153b560e",
+      "reading_order": 14,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 388,
+        "y": 3402,
+        "width": 340,
+        "height": 534
+      },
+      "ocr_text": "ハチン"
+    },
+    {
+      "region_id": "ea4cbed9134c428ab3804944055449ce",
+      "reading_order": 15,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 1830,
+        "y": 2969,
+        "width": 162,
+        "height": 297
+      },
+      "ocr_text": "．．．"
+    },
+    {
+      "region_id": "c3781c28a8e14d648560dcf03418b44b",
+      "reading_order": 16,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 408,
+        "y": 468,
+        "width": 217,
+        "height": 492
+      },
+      "ocr_text": "わ．．．"
+    },
+    {
+      "region_id": "b5b747d0919542a4adf781a9f3eaa841",
+      "reading_order": 17,
+      "region_type": "sfx",
+      "bbox": {
+        "x": 2494,
+        "y": 1895,
+        "width": 87,
+        "height": 103
+      },
+      "ocr_text": "３．"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "9339028245da4a6d94f362b8dcb719f5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "しかし、",
+      "translated_text": "但是，",
+      "final_translation": "但是，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "51fbf3ca336c4acdb30157bcd06c8e55",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "あいじゃ",
+      "translated_text": "爱酱",
+      "final_translation": "爱酱",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "218f674e1b0a4573810cb146b328eb28",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "苦しそうに息をしたあとしばらく息が止まるというのをくり返しています！！",
+      "translated_text": "他反复出现痛苦地呼吸后，呼吸停止一段时间的情况！！",
+      "final_translation": "他反复出现痛苦地呼吸后，呼吸停止一段时间的情况！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d33724dbd1da49ba924f9f8554865593",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "もしもし",
+      "translated_text": "喂喂",
+      "final_translation": "喂喂",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a7caa78297e744ad8d544de17d85e0f7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "呼吸が変なんです．．．",
+      "translated_text": "呼吸很奇怪……",
+      "final_translation": "呼吸很奇怪……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3f7a15cffcfd4c11a1b0c374e8cd099c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ちょっとおじいさん！？",
+      "translated_text": "喂，老爷爷！？",
+      "final_translation": "喂，老爷爷！？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "af341b37297b47019669354f1faa9272",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "これって酔っぱらい運転じゃないんですか！？",
+      "translated_text": "这不是醉驾吗！？",
+      "final_translation": "这不是醉驾吗！？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f5e8622c158045428551c664e59cafc6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "して、",
+      "translated_text": "然后，",
+      "final_translation": "然后，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5b76a907a9c04eeba7e538b1d47e293d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "！！！",
+      "translated_text": "！！！",
+      "final_translation": "！！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3ca2446544644ceeb2768bebf61789bf",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "いいじゃ",
+      "translated_text": "好啊",
+      "final_translation": "好啊",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "dab09d6b4e24438cb2dc6b2ea4d18af3",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "いいん",
+      "translated_text": "嗯嗯",
+      "final_translation": "嗯嗯",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2eeaa2c4d2a747f59bd7cf52b8d12e30",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "！！！",
+      "translated_text": "！！！",
+      "final_translation": "！！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ab8974e10c0b476ab26366798668de53",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "．．．",
+      "translated_text": "……",
+      "final_translation": "……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "eac72dfd7b834871a1cec081153b560e",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "ハチン",
+      "translated_text": "啪",
+      "final_translation": "啪",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ea4cbed9134c428ab3804944055449ce",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "．．．",
+      "translated_text": "……",
+      "final_translation": "……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c3781c28a8e14d648560dcf03418b44b",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "わ．．．",
+      "translated_text": "哇……",
+      "final_translation": "哇……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b5b747d0919542a4adf781a9f3eaa841",
+      "region_type": "sfx",
+      "sfx_policy": "translate",
+      "source_text": "３．",
+      "translated_text": "3.",
+      "final_translation": "3.",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-7113b4d18546",
+    "file": "BJ06-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\pixels\\export\\BJ06-translated.png",
+    "sha256": "c1d503f49a341ade33fd2e9d8c4f632e793df9aaf8e6d5630ec08cc0d6dfa8ea",
+    "size": 8423418,
+    "translated_revision_id": "58450b03c74e4cf989abf798fab12900"
+  },
+  "attribution": [],
+  "source_size": [
+    2946,
+    4167
+  ],
+  "source_sha256_recomputed": "b06c9d7ddb0f679abdddeebd959d7b6aaefb5556a1fbdc43cfc0ee594d04569f",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-BJ06-c5zd4pgr",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\pixels\\ocr\\crops\\BJ06",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 34,
+    "n_target_region_calls": 34,
+    "input_est_tokens_total": 18604,
+    "output_est_tokens_total": 1642
+  },
+  "finished_at_utc": "2026-10-02T00:18:36Z",
+  "wall_s": 695.83,
+  "pipeline_completed": true
+}

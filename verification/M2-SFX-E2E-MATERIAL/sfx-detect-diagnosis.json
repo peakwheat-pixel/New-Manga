@@ -1,0 +1,805 @@
+{
+  "tool": "experiments/M2-SFX-E2E-MATERIAL/diagnose_sfx_detect.py",
+  "generated_at_utc": "2026-10-02T00:57:53Z",
+  "weights": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights/yolo11s-seg.onnx",
+  "conf_threshold_diagnostic": 0.25,
+  "production_threshold": 0.5,
+  "nms_iou": 0.7,
+  "note": "diagnostic replay of the production inference sequence with all classes kept after NMS; production keeps only cls=sfx at conf>=0.5. r1 R2 revision: every intersecting box is enumerated per reference (class/conf/ref_coverage/box_coverage/iou) instead of reporting a single best-coverage box on the single-sided coverage metric (DETECT-EVAL R12 disqualified that metric for conclusions); class attribution for the sfx-class misses is left open",
+  "pages": {
+    "BJ13": {
+      "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-E2E-MATERIAL-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0048.png",
+      "page_size": [
+        2946,
+        4167
+      ],
+      "boxes_all_classes": [
+        {
+          "cls": "panel",
+          "conf": 0.9431,
+          "xyxy": [
+            375.1,
+            370.3,
+            2612.3,
+            3802.0
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8895,
+          "xyxy": [
+            384.9,
+            413.7,
+            1638.0,
+            813.3
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8437,
+          "xyxy": [
+            493.9,
+            2682.8,
+            761.3,
+            3640.2
+          ]
+        },
+        {
+          "cls": "sfx",
+          "conf": 0.8222,
+          "xyxy": [
+            1561.5,
+            2608.5,
+            1775.4,
+            2906.9
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.7436,
+          "xyxy": [
+            2122.1,
+            282.9,
+            2480.0,
+            1278.2
+          ]
+        }
+      ],
+      "box_count_by_class": {
+        "bubble": 0,
+        "panel": 1,
+        "sfx": 1,
+        "text": 3
+      },
+      "reference_sfx_verdicts": [
+        {
+          "ref": {
+            "text": "ピ一一ーン！",
+            "approx_xyxy": [
+              2210,
+              240,
+              2560,
+              1000
+            ]
+          },
+          "verdict": "sfx-class 0 hit (production-semantic miss); 2 intersecting non-sfx box(es) [panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "text",
+              "conf": 0.7436,
+              "xyxy": [
+                2122.1,
+                282.9,
+                2480.0,
+                1278.2
+              ],
+              "ref_coverage": 0.73,
+              "box_coverage": 0.54,
+              "iou": 0.452
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9431,
+              "xyxy": [
+                375.1,
+                370.3,
+                2612.3,
+                3802.0
+              ],
+              "ref_coverage": 0.83,
+              "box_coverage": 0.03,
+              "iou": 0.029
+            }
+          ]
+        },
+        {
+          "ref": {
+            "text": "ピ一一ーン！",
+            "approx_xyxy": [
+              420,
+              2560,
+              760,
+              3400
+            ]
+          },
+          "verdict": "sfx-class 0 hit (production-semantic miss); 2 intersecting non-sfx box(es) [panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "text",
+              "conf": 0.8437,
+              "xyxy": [
+                493.9,
+                2682.8,
+                761.3,
+                3640.2
+              ],
+              "ref_coverage": 0.67,
+              "box_coverage": 0.75,
+              "iou": 0.544
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9431,
+              "xyxy": [
+                375.1,
+                370.3,
+                2612.3,
+                3802.0
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.04,
+              "iou": 0.037
+            }
+          ]
+        }
+      ],
+      "preview": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\detect-diag-previews\\BJ13-detect-diag.jpg"
+    },
+    "BJ14": {
+      "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-E2E-MATERIAL-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0060.png",
+      "page_size": [
+        2946,
+        4167
+      ],
+      "boxes_all_classes": [
+        {
+          "cls": "panel",
+          "conf": 0.9721,
+          "xyxy": [
+            1866.6,
+            1632.5,
+            2946,
+            3040.0
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9697,
+          "xyxy": [
+            351.1,
+            3087.2,
+            2929.8,
+            4167
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9692,
+          "xyxy": [
+            1361.4,
+            1646.5,
+            1850.0,
+            2264.3
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9687,
+          "xyxy": [
+            374.5,
+            1633.5,
+            1864.2,
+            3041.2
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9681,
+          "xyxy": [
+            404.9,
+            3230.9,
+            1018.5,
+            4022.5
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9673,
+          "xyxy": [
+            2208.2,
+            3066.1,
+            2744.0,
+            3738.6
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9668,
+          "xyxy": [
+            372.0,
+            0.9,
+            1489.1,
+            1586.4
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9665,
+          "xyxy": [
+            373.0,
+            2364.9,
+            883.6,
+            3034.5
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9652,
+          "xyxy": [
+            1974.6,
+            0.0,
+            2946,
+            1586.2
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9642,
+          "xyxy": [
+            1880.2,
+            2462.2,
+            2347.2,
+            3037.3
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9528,
+          "xyxy": [
+            2517.1,
+            1599.9,
+            2772.0,
+            2042.4
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9503,
+          "xyxy": [
+            1501.7,
+            0.0,
+            1968.5,
+            1582.6
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.9476,
+          "xyxy": [
+            505.6,
+            3344.4,
+            867.1,
+            3883.7
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.9452,
+          "xyxy": [
+            2334.2,
+            3138.8,
+            2605.8,
+            3686.0
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.9412,
+          "xyxy": [
+            471.1,
+            2441.2,
+            741.3,
+            2980.1
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.9314,
+          "xyxy": [
+            1519.6,
+            1735.5,
+            1723.4,
+            2052.2
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.92,
+          "xyxy": [
+            2008.8,
+            2528.1,
+            2160.0,
+            2986.4
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8804,
+          "xyxy": [
+            2603.4,
+            1676.1,
+            2676.4,
+            1943.3
+          ]
+        }
+      ],
+      "box_count_by_class": {
+        "bubble": 6,
+        "panel": 6,
+        "sfx": 0,
+        "text": 6
+      },
+      "reference_sfx_verdicts": [
+        {
+          "ref": {
+            "text": "オギャァ",
+            "approx_xyxy": [
+              1230,
+              300,
+              1520,
+              950
+            ]
+          },
+          "verdict": "sfx-class 0 hit (production-semantic miss); 2 intersecting non-sfx box(es) [panel] enumerated below",
+          "intersecting_boxes": [
+            {
+              "cls": "panel",
+              "conf": 0.9668,
+              "xyxy": [
+                372.0,
+                0.9,
+                1489.1,
+                1586.4
+              ],
+              "ref_coverage": 0.89,
+              "box_coverage": 0.1,
+              "iou": 0.094
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9503,
+              "xyxy": [
+                1501.7,
+                0.0,
+                1968.5,
+                1582.6
+              ],
+              "ref_coverage": 0.06,
+              "box_coverage": 0.02,
+              "iou": 0.013
+            }
+          ]
+        },
+        {
+          "ref": {
+            "text": "オギャァ",
+            "approx_xyxy": [
+              400,
+              1900,
+              700,
+              2560
+            ]
+          },
+          "verdict": "sfx-class 0 hit (production-semantic miss); 3 intersecting non-sfx box(es) [bubble, panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "bubble",
+              "conf": 0.9665,
+              "xyxy": [
+                373.0,
+                2364.9,
+                883.6,
+                3034.5
+              ],
+              "ref_coverage": 0.3,
+              "box_coverage": 0.17,
+              "iou": 0.122
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9687,
+              "xyxy": [
+                374.5,
+                1633.5,
+                1864.2,
+                3041.2
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.09,
+              "iou": 0.094
+            },
+            {
+              "cls": "text",
+              "conf": 0.9412,
+              "xyxy": [
+                471.1,
+                2441.2,
+                741.3,
+                2980.1
+              ],
+              "ref_coverage": 0.14,
+              "box_coverage": 0.19,
+              "iou": 0.086
+            }
+          ]
+        },
+        {
+          "ref": {
+            "text": "オギャァ",
+            "approx_xyxy": [
+              1900,
+              2260,
+              2200,
+              2900
+            ]
+          },
+          "verdict": "sfx-class 0 hit (production-semantic miss); 3 intersecting non-sfx box(es) [bubble, panel, text] enumerated below — attribution open (page-level panel box and co-located text box are both consistent with the miss)",
+          "intersecting_boxes": [
+            {
+              "cls": "bubble",
+              "conf": 0.9642,
+              "xyxy": [
+                1880.2,
+                2462.2,
+                2347.2,
+                3037.3
+              ],
+              "ref_coverage": 0.68,
+              "box_coverage": 0.49,
+              "iou": 0.399
+            },
+            {
+              "cls": "text",
+              "conf": 0.92,
+              "xyxy": [
+                2008.8,
+                2528.1,
+                2160.0,
+                2986.4
+              ],
+              "ref_coverage": 0.29,
+              "box_coverage": 0.81,
+              "iou": 0.274
+            },
+            {
+              "cls": "panel",
+              "conf": 0.9721,
+              "xyxy": [
+                1866.6,
+                1632.5,
+                2946,
+                3040.0
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.13,
+              "iou": 0.126
+            }
+          ]
+        }
+      ],
+      "preview": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\detect-diag-previews\\BJ14-detect-diag.jpg"
+    },
+    "BJ15": {
+      "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-E2E-MATERIAL-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol03\\pages\\vol03_p0159.png",
+      "page_size": [
+        2946,
+        4167
+      ],
+      "boxes_all_classes": [
+        {
+          "cls": "panel",
+          "conf": 0.9626,
+          "xyxy": [
+            1698.5,
+            1500.0,
+            2579.0,
+            2582.1
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9616,
+          "xyxy": [
+            358.5,
+            2635.8,
+            1213.5,
+            4167
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9585,
+          "xyxy": [
+            400.4,
+            2725.7,
+            809.0,
+            3304.9
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9579,
+          "xyxy": [
+            1255.0,
+            3380.0,
+            1668.7,
+            4009.1
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9573,
+          "xyxy": [
+            1813.3,
+            3390.2,
+            2234.0,
+            3981.9
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9563,
+          "xyxy": [
+            1794.8,
+            2640.1,
+            2587.1,
+            4158.4
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9552,
+          "xyxy": [
+            359.0,
+            0.0,
+            2594.5,
+            1447.1
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9517,
+          "xyxy": [
+            2362.0,
+            2648.8,
+            2577.0,
+            3044.7
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9484,
+          "xyxy": [
+            2311.5,
+            1548.9,
+            2551.2,
+            1992.5
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9479,
+          "xyxy": [
+            1227.9,
+            2632.0,
+            1795.8,
+            4094.8
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9423,
+          "xyxy": [
+            962.5,
+            2677.0,
+            1160.5,
+            3031.3
+          ]
+        },
+        {
+          "cls": "bubble",
+          "conf": 0.9396,
+          "xyxy": [
+            1566.8,
+            2646.8,
+            1777.2,
+            3015.0
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.9391,
+          "xyxy": [
+            1341.6,
+            3515.9,
+            1567.6,
+            3908.9
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.9344,
+          "xyxy": [
+            504.0,
+            2799.7,
+            733.1,
+            3248.6
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.9228,
+          "xyxy": [
+            1926.5,
+            3516.8,
+            2124.2,
+            3841.1
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.9188,
+          "xyxy": [
+            8.1,
+            1498.3,
+            1682.1,
+            2588.9
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8968,
+          "xyxy": [
+            2389.4,
+            1635.6,
+            2492.4,
+            1894.9
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8955,
+          "xyxy": [
+            1647.9,
+            2684.9,
+            1715.5,
+            2950.2
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8714,
+          "xyxy": [
+            2446.1,
+            2692.4,
+            2517.6,
+            2958.1
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8599,
+          "xyxy": [
+            1041.3,
+            2722.4,
+            1105.5,
+            2984.2
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.8397,
+          "xyxy": [
+            819.4,
+            943.1,
+            911.4,
+            1291.0
+          ]
+        },
+        {
+          "cls": "text",
+          "conf": 0.6609,
+          "xyxy": [
+            1430.8,
+            226.2,
+            1534.4,
+            564.6
+          ]
+        },
+        {
+          "cls": "panel",
+          "conf": 0.295,
+          "xyxy": [
+            2484.0,
+            0.0,
+            2946,
+            3838.3
+          ]
+        }
+      ],
+      "box_count_by_class": {
+        "bubble": 7,
+        "panel": 7,
+        "sfx": 0,
+        "text": 9
+      },
+      "reference_sfx_verdicts": [
+        {
+          "ref": {
+            "text": "オギャァ",
+            "approx_xyxy": [
+              1600,
+              200,
+              1900,
+              800
+            ]
+          },
+          "verdict": "sfx-class 0 hit (production-semantic miss); 1 intersecting non-sfx box(es) [panel] enumerated below",
+          "intersecting_boxes": [
+            {
+              "cls": "panel",
+              "conf": 0.9552,
+              "xyxy": [
+                359.0,
+                0.0,
+                2594.5,
+                1447.1
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.06,
+              "iou": 0.056
+            }
+          ]
+        },
+        {
+          "ref": {
+            "text": "オギャァ",
+            "approx_xyxy": [
+              900,
+              1650,
+              1150,
+              2200
+            ]
+          },
+          "verdict": "sfx-class 0 hit (production-semantic miss); 1 intersecting non-sfx box(es) [panel] enumerated below",
+          "intersecting_boxes": [
+            {
+              "cls": "panel",
+              "conf": 0.9188,
+              "xyxy": [
+                8.1,
+                1498.3,
+                1682.1,
+                2588.9
+              ],
+              "ref_coverage": 1.0,
+              "box_coverage": 0.08,
+              "iou": 0.075
+            }
+          ]
+        }
+      ],
+      "preview": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-E2E-MATERIAL\\detect-diag-previews\\BJ15-detect-diag.jpg"
+    }
+  }
+}
