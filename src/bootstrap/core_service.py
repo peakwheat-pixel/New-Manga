@@ -756,7 +756,7 @@ class CoreServiceServer:
                 False,
             )
 
-        # M2-SETTINGS-IPC-CHANNEL: the settings read/write pair. The five
+        # M2-SETTINGS-IPC-CHANNEL: the settings read/write pair. The seven
         # commands above are untouched; these branches only widen the
         # surface (protocol minor bump, see the module docstring). Write-side
         # validation lives in the handler (typed INVALID_REQUEST BEFORE any
