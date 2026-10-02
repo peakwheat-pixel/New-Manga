@@ -1,0 +1,2762 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K08",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "rotated_text"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K08_701535_160\\base.png",
+  "source_sha256": "ee1e8dab35bb55098fd0685e30c6f895eeb55601813b63f5947ea696c52b23c0",
+  "started_at_utc": "2026-10-02T02:47:37Z",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding": "openai-compatible-translation -> https://api.deepseek.com/v1 (deepseek-chat)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "production default (settings key absent -> SKIP)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 690,
+      "height": 51971,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "7b84a821679a405485d26711bbc13f84",
+      "width": 690,
+      "height": 51971
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "elapsed_s": 328.92
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 60
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 60
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "region_runs": 60,
+      "truncated": false,
+      "elapsed_s": 2948.99
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 60,
+      "translated": 56
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "a5318a0a68752ae5",
+      "size": 24550087
+    }
+  },
+  "run1": {
+    "run_id": "run-573e55dcf1674f64a9993da3a721184a",
+    "status": "completed_with_failures",
+    "elapsed_s": 328.92,
+    "steps": [
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "failed",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "44a8a89812744f1595837f8dcbc198be",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 481,
+        "y": 535,
+        "width": 201,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "c8e4d87834dd4c55937ac786567153a1",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 260,
+        "y": 710,
+        "width": 196,
+        "height": 55
+      }
+    },
+    {
+      "region_id": "96d05e97dbfc4eaa84b29554e6bf3164",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 236,
+        "y": 826,
+        "width": 227,
+        "height": 77
+      }
+    },
+    {
+      "region_id": "548b918bd81d445b80702e970953bcef",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 153,
+        "y": 1361,
+        "width": 380,
+        "height": 159
+      }
+    },
+    {
+      "region_id": "f05cc46d595149b19dd499e3722d75be",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 107,
+        "y": 2518,
+        "width": 192,
+        "height": 154
+      }
+    },
+    {
+      "region_id": "3faed90da382455aa5b8db6aa4f699fa",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 472,
+        "y": 2652,
+        "width": 130,
+        "height": 62
+      }
+    },
+    {
+      "region_id": "10dac58a47a4407fb2805184cfcf623e",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 112,
+        "y": 2688,
+        "width": 177,
+        "height": 151
+      }
+    },
+    {
+      "region_id": "951a04bedb6948559edd36958ed2f143",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 58,
+        "y": 5211,
+        "width": 91,
+        "height": 78
+      }
+    },
+    {
+      "region_id": "91c517d4160749099e58cbda20e252f0",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 278,
+        "y": 5736,
+        "width": 176,
+        "height": 114
+      }
+    },
+    {
+      "region_id": "fbf6ec7cf7b44b36b3b2ad634e8dbed9",
+      "reading_order": 10,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 235,
+        "y": 7834,
+        "width": 315,
+        "height": 111
+      }
+    },
+    {
+      "region_id": "a908349757dc430fad4c90f88c7c7c72",
+      "reading_order": 11,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 106,
+        "y": 9599,
+        "width": 221,
+        "height": 53
+      }
+    },
+    {
+      "region_id": "85b3c13559044b749863322f0e43f068",
+      "reading_order": 12,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 97,
+        "y": 11319,
+        "width": 132,
+        "height": 132
+      }
+    },
+    {
+      "region_id": "d2e3b74e616b41e3b5985c0a9d77bbe1",
+      "reading_order": 13,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 469,
+        "y": 11370,
+        "width": 137,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "b00dc93c32524161a60a97628f8a122b",
+      "reading_order": 14,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 76,
+        "y": 11801,
+        "width": 153,
+        "height": 112
+      }
+    },
+    {
+      "region_id": "453569ca58344fa2b0fd95492ee39f43",
+      "reading_order": 15,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 352,
+        "y": 12201,
+        "width": 268,
+        "height": 162
+      }
+    },
+    {
+      "region_id": "d59ff96d7f9f440db3e042d26fa7077a",
+      "reading_order": 16,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 587,
+        "y": 12847,
+        "width": 72,
+        "height": 99
+      }
+    },
+    {
+      "region_id": "082c489db5e141cb933d8201a9aa6d83",
+      "reading_order": 17,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 421,
+        "y": 16122,
+        "width": 65,
+        "height": 273
+      }
+    },
+    {
+      "region_id": "f9a06f47a4f8406f9c5f1c9efb98d886",
+      "reading_order": 18,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 127,
+        "y": 17826,
+        "width": 170,
+        "height": 59
+      }
+    },
+    {
+      "region_id": "ed324139e1a7405ca3e83981f78d3b3e",
+      "reading_order": 19,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 80,
+        "y": 18411,
+        "width": 195,
+        "height": 142
+      }
+    },
+    {
+      "region_id": "87bc9bf57014488ca1dd8a4dad19e380",
+      "reading_order": 20,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 46,
+        "y": 19139,
+        "width": 321,
+        "height": 131
+      }
+    },
+    {
+      "region_id": "e8cf1bfa5a4940dfad2b21bccfd75464",
+      "reading_order": 21,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 442,
+        "y": 19157,
+        "width": 200,
+        "height": 148
+      }
+    },
+    {
+      "region_id": "a3f64954644a43d8a472334bb65785ae",
+      "reading_order": 22,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 46,
+        "y": 19941,
+        "width": 227,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "37a293144a344212a2dbafd791f14ff9",
+      "reading_order": 23,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 268,
+        "y": 20440,
+        "width": 389,
+        "height": 169
+      }
+    },
+    {
+      "region_id": "65b7acfb8fdc4685937ae6f7907c2d59",
+      "reading_order": 24,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 17,
+        "y": 21000,
+        "width": 162,
+        "height": 325
+      }
+    },
+    {
+      "region_id": "bbf6323929574e6ab580cd561d845227",
+      "reading_order": 25,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 74,
+        "y": 21605,
+        "width": 129,
+        "height": 133
+      }
+    },
+    {
+      "region_id": "d0e8ee26640b4a85a1f2f5f1e1ba4914",
+      "reading_order": 26,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 282,
+        "y": 21714,
+        "width": 232,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "0a5a14d4cab64393a8caa36140e0d3a5",
+      "reading_order": 27,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 201,
+        "y": 22405,
+        "width": 185,
+        "height": 78
+      }
+    },
+    {
+      "region_id": "9a8d378f584b41d1bc74da428570f753",
+      "reading_order": 28,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 430,
+        "y": 23158,
+        "width": 226,
+        "height": 167
+      }
+    },
+    {
+      "region_id": "fed06a912db64cd2b68e0a8e8e9b9005",
+      "reading_order": 29,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 37,
+        "y": 23886,
+        "width": 290,
+        "height": 120
+      }
+    },
+    {
+      "region_id": "e0465b46c11d48bf97b32cd0e989c9c0",
+      "reading_order": 30,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 517,
+        "y": 23909,
+        "width": 150,
+        "height": 133
+      }
+    },
+    {
+      "region_id": "d36bcccf5b7b466fb2d48143684e8600",
+      "reading_order": 31,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 391,
+        "y": 24281,
+        "width": 265,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "4b47bc1ddf2f42c68b8543a2ed5b6c96",
+      "reading_order": 32,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 47,
+        "y": 24949,
+        "width": 204,
+        "height": 116
+      }
+    },
+    {
+      "region_id": "8ccaae4ce3c2438fafc6c982be4f8546",
+      "reading_order": 33,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 69,
+        "y": 25115,
+        "width": 186,
+        "height": 169
+      }
+    },
+    {
+      "region_id": "eee74d3b004d45f3b81a551b975219e6",
+      "reading_order": 34,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 0,
+        "y": 25877,
+        "width": 175,
+        "height": 126
+      }
+    },
+    {
+      "region_id": "31f563b8693b432cab3cfaaaf9e5b35e",
+      "reading_order": 35,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 0,
+        "y": 26430,
+        "width": 195,
+        "height": 131
+      }
+    },
+    {
+      "region_id": "b55a8bdce931423a914eec29e3f5c515",
+      "reading_order": 36,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 393,
+        "y": 32585,
+        "width": 121,
+        "height": 69
+      }
+    },
+    {
+      "region_id": "8f2c2b19a001470f897c674764efee9f",
+      "reading_order": 37,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 33,
+        "y": 34265,
+        "width": 133,
+        "height": 116
+      }
+    },
+    {
+      "region_id": "0d64837d19134aa0ba4c6dbd311aae37",
+      "reading_order": 38,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 210,
+        "y": 36794,
+        "width": 60,
+        "height": 51
+      }
+    },
+    {
+      "region_id": "86b38154187b4ff1bb4c8559b1c9f698",
+      "reading_order": 39,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 451,
+        "y": 37311,
+        "width": 145,
+        "height": 147
+      }
+    },
+    {
+      "region_id": "616380590b9d415990afd1e070ec54c1",
+      "reading_order": 40,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 451,
+        "y": 38571,
+        "width": 107,
+        "height": 63
+      }
+    },
+    {
+      "region_id": "33705b4c16bf471389bb77dc26684b27",
+      "reading_order": 41,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 152,
+        "y": 41680,
+        "width": 109,
+        "height": 67
+      }
+    },
+    {
+      "region_id": "9a497c6b5021495f88c5629b0bed7337",
+      "reading_order": 42,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 348,
+        "y": 42084,
+        "width": 165,
+        "height": 60
+      }
+    },
+    {
+      "region_id": "52f5d52bda2c4ef7b27ffea3828b4945",
+      "reading_order": 43,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 240,
+        "y": 43125,
+        "width": 98,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "b773fe16bb454703adb49ea4aa0cc960",
+      "reading_order": 44,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 500,
+        "y": 43619,
+        "width": 139,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "3b241a1efbdf45759d8fe0c08014eeca",
+      "reading_order": 45,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 386,
+        "y": 44475,
+        "width": 258,
+        "height": 71
+      }
+    },
+    {
+      "region_id": "0e05764de1c741efb430622106c63262",
+      "reading_order": 46,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 6,
+        "y": 44960,
+        "width": 110,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "e781f31467414efca7c44b618965c8ff",
+      "reading_order": 47,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 556,
+        "y": 45002,
+        "width": 127,
+        "height": 112
+      }
+    },
+    {
+      "region_id": "3b96f1dc0b104887b3aa9a21b8f2d6a0",
+      "reading_order": 48,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 536,
+        "y": 45186,
+        "width": 147,
+        "height": 101
+      }
+    },
+    {
+      "region_id": "48c78371ba3c40d49c30484b7796c74e",
+      "reading_order": 49,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 42,
+        "y": 46466,
+        "width": 182,
+        "height": 114
+      }
+    },
+    {
+      "region_id": "3cd60faecfa5417188a5c50ee897ed96",
+      "reading_order": 50,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 30,
+        "y": 46670,
+        "width": 222,
+        "height": 150
+      }
+    },
+    {
+      "region_id": "51347458fea84035afd2210075944226",
+      "reading_order": 51,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 470,
+        "y": 47851,
+        "width": 108,
+        "height": 96
+      }
+    },
+    {
+      "region_id": "0a2ded55f09046358cc9e3edc14bb2d9",
+      "reading_order": 52,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 116,
+        "y": 48996,
+        "width": 258,
+        "height": 114
+      }
+    },
+    {
+      "region_id": "848f7235c7b9424aa056a7ae62d98e38",
+      "reading_order": 53,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 349,
+        "y": 49441,
+        "width": 177,
+        "height": 111
+      }
+    },
+    {
+      "region_id": "e2b2dc561a3244fa9d2a8f0efd1bbbd2",
+      "reading_order": 54,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 488,
+        "y": 49556,
+        "width": 142,
+        "height": 156
+      }
+    },
+    {
+      "region_id": "81e78cc6f7044b29b38163d29800ab6f",
+      "reading_order": 55,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 365,
+        "y": 50027,
+        "width": 215,
+        "height": 127
+      }
+    },
+    {
+      "region_id": "aa7de4214fa241f9a4b8a437f3a4dab4",
+      "reading_order": 56,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 76,
+        "y": 50603,
+        "width": 154,
+        "height": 70
+      }
+    },
+    {
+      "region_id": "aa715bc321954d37a43bfa323283c35f",
+      "reading_order": 57,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 107,
+        "y": 50722,
+        "width": 280,
+        "height": 223
+      }
+    },
+    {
+      "region_id": "e2ef96fb8c09498ebab2d55d00bcb9b8",
+      "reading_order": 58,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 539,
+        "y": 51311,
+        "width": 135,
+        "height": 110
+      }
+    },
+    {
+      "region_id": "d3120100e03c417f89380161ad950958",
+      "reading_order": 59,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 525,
+        "y": 51739,
+        "width": 138,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "8e4ff5d7d6bc40e2bb9c5a6f7a325018",
+      "reading_order": 60,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 427,
+        "y": 51830,
+        "width": 243,
+        "height": 116
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed_with_failures",
+    "region_target_count": 60,
+    "region_runs_executed": 60,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "44a8a89812744f1595837f8dcbc198be",
+        "run_id": "run-05fcae5fe2bd4858b7c2283de6b1f9c5",
+        "status": "completed"
+      },
+      {
+        "region_id": "c8e4d87834dd4c55937ac786567153a1",
+        "run_id": "run-3f012fae12fd473c9de3cc70bbd1c4e2",
+        "status": "completed"
+      },
+      {
+        "region_id": "96d05e97dbfc4eaa84b29554e6bf3164",
+        "run_id": "run-9a853095bb0d404384ce19eac849b76a",
+        "status": "completed"
+      },
+      {
+        "region_id": "548b918bd81d445b80702e970953bcef",
+        "run_id": "run-e08bff0ea3d14fe380f095a67c085d90",
+        "status": "completed"
+      },
+      {
+        "region_id": "f05cc46d595149b19dd499e3722d75be",
+        "run_id": "run-f7b4f724686243709c3bdbc5633db1a5",
+        "status": "completed"
+      },
+      {
+        "region_id": "3faed90da382455aa5b8db6aa4f699fa",
+        "run_id": "run-0c447dc3464a432189ecc1b4ba59fe3a",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "10dac58a47a4407fb2805184cfcf623e",
+        "run_id": "run-63c321503bc7400d87179847105d94d6",
+        "status": "completed"
+      },
+      {
+        "region_id": "951a04bedb6948559edd36958ed2f143",
+        "run_id": "run-24c29338da324247ac6d21682afad127",
+        "status": "completed"
+      },
+      {
+        "region_id": "91c517d4160749099e58cbda20e252f0",
+        "run_id": "run-ca02dca5dc454522b87b619f743ef049",
+        "status": "completed"
+      },
+      {
+        "region_id": "fbf6ec7cf7b44b36b3b2ad634e8dbed9",
+        "run_id": "run-31033cdf5df34c90b42d7211ae933e47",
+        "status": "completed"
+      },
+      {
+        "region_id": "a908349757dc430fad4c90f88c7c7c72",
+        "run_id": "run-55d9a3d8a6f8405098f696bde0043ab6",
+        "status": "completed"
+      },
+      {
+        "region_id": "85b3c13559044b749863322f0e43f068",
+        "run_id": "run-121b01d2375e461ca58ec4c0d5bc9b77",
+        "status": "completed"
+      },
+      {
+        "region_id": "d2e3b74e616b41e3b5985c0a9d77bbe1",
+        "run_id": "run-caa42f55cb6145c0bbf4152069120693",
+        "status": "completed"
+      },
+      {
+        "region_id": "b00dc93c32524161a60a97628f8a122b",
+        "run_id": "run-17e7b45e9a5e43cb98db955d58b6ddfe",
+        "status": "completed"
+      },
+      {
+        "region_id": "453569ca58344fa2b0fd95492ee39f43",
+        "run_id": "run-95f6afff26b04c42b13a66ebc2b00845",
+        "status": "completed"
+      },
+      {
+        "region_id": "d59ff96d7f9f440db3e042d26fa7077a",
+        "run_id": "run-1940166a11604e4b89e33850bfa7caa6",
+        "status": "completed"
+      },
+      {
+        "region_id": "082c489db5e141cb933d8201a9aa6d83",
+        "run_id": "run-0812441f97a24c009b8518430b9eb946",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "f9a06f47a4f8406f9c5f1c9efb98d886",
+        "run_id": "run-fd13117ef49e463eaa8a53e22f466641",
+        "status": "completed"
+      },
+      {
+        "region_id": "ed324139e1a7405ca3e83981f78d3b3e",
+        "run_id": "run-24fd746db318495cbde3ef04fcbc5925",
+        "status": "completed"
+      },
+      {
+        "region_id": "87bc9bf57014488ca1dd8a4dad19e380",
+        "run_id": "run-6a0ed2862abb4dd1a0029e50670e64c5",
+        "status": "completed"
+      },
+      {
+        "region_id": "e8cf1bfa5a4940dfad2b21bccfd75464",
+        "run_id": "run-3d56f5c5876f4f9488e5bbf2fc9a1aba",
+        "status": "completed"
+      },
+      {
+        "region_id": "a3f64954644a43d8a472334bb65785ae",
+        "run_id": "run-4d77fff2c7a44367b84475954483e66d",
+        "status": "completed"
+      },
+      {
+        "region_id": "37a293144a344212a2dbafd791f14ff9",
+        "run_id": "run-ef47d0416bf6411bba169a837fd09146",
+        "status": "completed"
+      },
+      {
+        "region_id": "65b7acfb8fdc4685937ae6f7907c2d59",
+        "run_id": "run-0e09a2cccde54c4490625ddaee12d124",
+        "status": "completed"
+      },
+      {
+        "region_id": "bbf6323929574e6ab580cd561d845227",
+        "run_id": "run-a178d648fe664c6b971138d548b93474",
+        "status": "completed"
+      },
+      {
+        "region_id": "d0e8ee26640b4a85a1f2f5f1e1ba4914",
+        "run_id": "run-7c96fb507be747ceb8f1c8d16d833877",
+        "status": "completed"
+      },
+      {
+        "region_id": "0a5a14d4cab64393a8caa36140e0d3a5",
+        "run_id": "run-bf8e4c5d3803483bab0a22e718ea747d",
+        "status": "completed"
+      },
+      {
+        "region_id": "9a8d378f584b41d1bc74da428570f753",
+        "run_id": "run-01add25acc3f4392bb34be7fe2bc1707",
+        "status": "completed"
+      },
+      {
+        "region_id": "fed06a912db64cd2b68e0a8e8e9b9005",
+        "run_id": "run-21b44b3c2f7442ce9262e923e0719e28",
+        "status": "completed"
+      },
+      {
+        "region_id": "e0465b46c11d48bf97b32cd0e989c9c0",
+        "run_id": "run-13f7f9bab665467a822461cc4bca90c2",
+        "status": "completed"
+      },
+      {
+        "region_id": "d36bcccf5b7b466fb2d48143684e8600",
+        "run_id": "run-9bf6930fc1f249ac8b927c7f0dad75f0",
+        "status": "completed"
+      },
+      {
+        "region_id": "4b47bc1ddf2f42c68b8543a2ed5b6c96",
+        "run_id": "run-1390be53810249c6873236c6d24b2ad8",
+        "status": "completed"
+      },
+      {
+        "region_id": "8ccaae4ce3c2438fafc6c982be4f8546",
+        "run_id": "run-d6174aebb4cf4a658b5023d8956b8c6c",
+        "status": "completed"
+      },
+      {
+        "region_id": "eee74d3b004d45f3b81a551b975219e6",
+        "run_id": "run-89959e9d0bbc4ca8a3bfdcac5f1fb791",
+        "status": "completed"
+      },
+      {
+        "region_id": "31f563b8693b432cab3cfaaaf9e5b35e",
+        "run_id": "run-264e9c1f595641c4bc59d9f152015a4c",
+        "status": "completed"
+      },
+      {
+        "region_id": "b55a8bdce931423a914eec29e3f5c515",
+        "run_id": "run-514b34cfd52e4bbfadffd58abc0e6af1",
+        "status": "completed"
+      },
+      {
+        "region_id": "8f2c2b19a001470f897c674764efee9f",
+        "run_id": "run-60431bb5d9034ba19eab06ebd1e15f18",
+        "status": "completed"
+      },
+      {
+        "region_id": "0d64837d19134aa0ba4c6dbd311aae37",
+        "run_id": "run-d41384a63c9c4bf58029e07f4c70ae4c",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "86b38154187b4ff1bb4c8559b1c9f698",
+        "run_id": "run-1b0170723ad04b40a27f6520c6d8a331",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "616380590b9d415990afd1e070ec54c1",
+        "run_id": "run-567dd53417544e10894a3ebc6b9d07b6",
+        "status": "completed"
+      },
+      {
+        "region_id": "33705b4c16bf471389bb77dc26684b27",
+        "run_id": "run-c4a608689a794e7ba918b11277ccd5d3",
+        "status": "completed"
+      },
+      {
+        "region_id": "9a497c6b5021495f88c5629b0bed7337",
+        "run_id": "run-8d0894ecdc71478cb3ac2e50bcb488bd",
+        "status": "completed"
+      },
+      {
+        "region_id": "52f5d52bda2c4ef7b27ffea3828b4945",
+        "run_id": "run-19f69088c27f4bc2ac112e0c62eee732",
+        "status": "completed"
+      },
+      {
+        "region_id": "b773fe16bb454703adb49ea4aa0cc960",
+        "run_id": "run-9b9c2ebb0ce442c6b583f679dda42b91",
+        "status": "completed"
+      },
+      {
+        "region_id": "3b241a1efbdf45759d8fe0c08014eeca",
+        "run_id": "run-3c84db596502402ca01f40c5aa557fdb",
+        "status": "completed"
+      },
+      {
+        "region_id": "0e05764de1c741efb430622106c63262",
+        "run_id": "run-ecc4c57300174307a0494b227b3f631f",
+        "status": "completed"
+      },
+      {
+        "region_id": "e781f31467414efca7c44b618965c8ff",
+        "run_id": "run-5eec63cfb01648f4b6037af417737bbd",
+        "status": "completed"
+      },
+      {
+        "region_id": "3b96f1dc0b104887b3aa9a21b8f2d6a0",
+        "run_id": "run-5cf06f4a82a94cbd86b89b48787bd37c",
+        "status": "completed"
+      },
+      {
+        "region_id": "48c78371ba3c40d49c30484b7796c74e",
+        "run_id": "run-19cf13bbbcb64b46a41b0b6a7215c6f0",
+        "status": "completed"
+      },
+      {
+        "region_id": "3cd60faecfa5417188a5c50ee897ed96",
+        "run_id": "run-c5bd8233f0b94d24a43741f79f3bed80",
+        "status": "completed"
+      },
+      {
+        "region_id": "51347458fea84035afd2210075944226",
+        "run_id": "run-b831c368825d47979952104eee3afdb2",
+        "status": "completed"
+      },
+      {
+        "region_id": "0a2ded55f09046358cc9e3edc14bb2d9",
+        "run_id": "run-151f8956777e4c24b22ea2bed09bc49e",
+        "status": "completed"
+      },
+      {
+        "region_id": "848f7235c7b9424aa056a7ae62d98e38",
+        "run_id": "run-c77af7eeb2da42378efa681ba8c6007b",
+        "status": "completed"
+      },
+      {
+        "region_id": "e2b2dc561a3244fa9d2a8f0efd1bbbd2",
+        "run_id": "run-2d1136178dea456eaac96529ebe90b73",
+        "status": "completed"
+      },
+      {
+        "region_id": "81e78cc6f7044b29b38163d29800ab6f",
+        "run_id": "run-c357432b1db74cbdafe720f43bb81823",
+        "status": "completed"
+      },
+      {
+        "region_id": "aa7de4214fa241f9a4b8a437f3a4dab4",
+        "run_id": "run-57ffe858af5641d6b8650aab12145830",
+        "status": "completed"
+      },
+      {
+        "region_id": "aa715bc321954d37a43bfa323283c35f",
+        "run_id": "run-3bae25ddc5564449a0058db66e7c51de",
+        "status": "completed"
+      },
+      {
+        "region_id": "e2ef96fb8c09498ebab2d55d00bcb9b8",
+        "run_id": "run-18549d84d6534a6f9bf010568cf65742",
+        "status": "completed"
+      },
+      {
+        "region_id": "d3120100e03c417f89380161ad950958",
+        "run_id": "run-fd3a1d26137b479a98a3129ce439b870",
+        "status": "completed"
+      },
+      {
+        "region_id": "8e4ff5d7d6bc40e2bb9c5a6f7a325018",
+        "run_id": "run-d001da56c8f6466ea7c78f2abd86f02a",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 2948.99
+  },
+  "ocr_details": [
+    {
+      "region_id": "44a8a89812744f1595837f8dcbc198be",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 481,
+        "y": 535,
+        "width": 201,
+        "height": 64
+      },
+      "ocr_text": "글/그림 이학"
+    },
+    {
+      "region_id": "c8e4d87834dd4c55937ac786567153a1",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 260,
+        "y": 710,
+        "width": 196,
+        "height": 55
+      },
+      "ocr_text": "ROUND\n84"
+    },
+    {
+      "region_id": "96d05e97dbfc4eaa84b29554e6bf3164",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 236,
+        "y": 826,
+        "width": 227,
+        "height": 77
+      },
+      "ocr_text": "약자 멸시(2)"
+    },
+    {
+      "region_id": "548b918bd81d445b80702e970953bcef",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 153,
+        "y": 1361,
+        "width": 380,
+        "height": 159
+      },
+      "ocr_text": "흥.\n넌 이제 죽었어!"
+    },
+    {
+      "region_id": "f05cc46d595149b19dd499e3722d75be",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 107,
+        "y": 2518,
+        "width": 192,
+        "height": 154
+      },
+      "ocr_text": "언니,\n저자식\n봐주지 마."
+    },
+    {
+      "region_id": "3faed90da382455aa5b8db6aa4f699fa",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 472,
+        "y": 2652,
+        "width": 130,
+        "height": 62
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "10dac58a47a4407fb2805184cfcf623e",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 112,
+        "y": 2688,
+        "width": 177,
+        "height": 151
+      },
+      "ocr_text": "무슨 짓을\n할지\n모르니까"
+    },
+    {
+      "region_id": "951a04bedb6948559edd36958ed2f143",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 58,
+        "y": 5211,
+        "width": 91,
+        "height": 78
+      },
+      "ocr_text": "야."
+    },
+    {
+      "region_id": "91c517d4160749099e58cbda20e252f0",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 278,
+        "y": 5736,
+        "width": 176,
+        "height": 114
+      },
+      "ocr_text": "너는방금\n내가"
+    },
+    {
+      "region_id": "fbf6ec7cf7b44b36b3b2ad634e8dbed9",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 235,
+        "y": 7834,
+        "width": 315,
+        "height": 111
+      },
+      "ocr_text": "어디다 손을 대려고,\n사이코 자식."
+    },
+    {
+      "region_id": "a908349757dc430fad4c90f88c7c7c72",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 106,
+        "y": 9599,
+        "width": 221,
+        "height": 53
+      },
+      "ocr_text": "다혜, 물러나 있어."
+    },
+    {
+      "region_id": "85b3c13559044b749863322f0e43f068",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 97,
+        "y": 11319,
+        "width": 132,
+        "height": 132
+      },
+      "ocr_text": "어\n언니!"
+    },
+    {
+      "region_id": "d2e3b74e616b41e3b5985c0a9d77bbe1",
+      "reading_order": 13,
+      "region_type": "speech",
+      "bbox": {
+        "x": 469,
+        "y": 11370,
+        "width": 137,
+        "height": 105
+      },
+      "ocr_text": "ㅋ!"
+    },
+    {
+      "region_id": "b00dc93c32524161a60a97628f8a122b",
+      "reading_order": 14,
+      "region_type": "speech",
+      "bbox": {
+        "x": 76,
+        "y": 11801,
+        "width": 153,
+        "height": 112
+      },
+      "ocr_text": "사이코는\n너지."
+    },
+    {
+      "region_id": "453569ca58344fa2b0fd95492ee39f43",
+      "reading_order": 15,
+      "region_type": "speech",
+      "bbox": {
+        "x": 352,
+        "y": 12201,
+        "width": 268,
+        "height": 162
+      },
+      "ocr_text": "저딴 등신 같은\n×때문에 목숨을\n걸었으니까."
+    },
+    {
+      "region_id": "d59ff96d7f9f440db3e042d26fa7077a",
+      "reading_order": 16,
+      "region_type": "speech",
+      "bbox": {
+        "x": 587,
+        "y": 12847,
+        "width": 72,
+        "height": 99
+      },
+      "ocr_text": "-"
+    },
+    {
+      "region_id": "082c489db5e141cb933d8201a9aa6d83",
+      "reading_order": 17,
+      "region_type": "speech",
+      "bbox": {
+        "x": 421,
+        "y": 16122,
+        "width": 65,
+        "height": 273
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "f9a06f47a4f8406f9c5f1c9efb98d886",
+      "reading_order": 18,
+      "region_type": "speech",
+      "bbox": {
+        "x": 127,
+        "y": 17826,
+        "width": 170,
+        "height": 59
+      },
+      "ocr_text": "ㅋㅋㅋ"
+    },
+    {
+      "region_id": "ed324139e1a7405ca3e83981f78d3b3e",
+      "reading_order": 19,
+      "region_type": "speech",
+      "bbox": {
+        "x": 80,
+        "y": 18411,
+        "width": 195,
+        "height": 142
+      },
+      "ocr_text": "야,\n나 봐봐."
+    },
+    {
+      "region_id": "87bc9bf57014488ca1dd8a4dad19e380",
+      "reading_order": 20,
+      "region_type": "speech",
+      "bbox": {
+        "x": 46,
+        "y": 19139,
+        "width": 321,
+        "height": 131
+      },
+      "ocr_text": "으듸다\n손을 대려고~?"
+    },
+    {
+      "region_id": "e8cf1bfa5a4940dfad2b21bccfd75464",
+      "reading_order": 21,
+      "region_type": "speech",
+      "bbox": {
+        "x": 442,
+        "y": 19157,
+        "width": 200,
+        "height": 148
+      },
+      "ocr_text": "사이코\n자쉭~!"
+    },
+    {
+      "region_id": "a3f64954644a43d8a472334bb65785ae",
+      "reading_order": 22,
+      "region_type": "speech",
+      "bbox": {
+        "x": 46,
+        "y": 19941,
+        "width": 227,
+        "height": 118
+      },
+      "ocr_text": "다혜야,\n물러나 있져."
+    },
+    {
+      "region_id": "37a293144a344212a2dbafd791f14ff9",
+      "reading_order": 23,
+      "region_type": "speech",
+      "bbox": {
+        "x": 268,
+        "y": 20440,
+        "width": 389,
+        "height": 169
+      },
+      "ocr_text": "내가 얼마나\n개쩌는 인간인지\n똑똑히 보라구릇! 흐힛!"
+    },
+    {
+      "region_id": "65b7acfb8fdc4685937ae6f7907c2d59",
+      "reading_order": 24,
+      "region_type": "speech",
+      "bbox": {
+        "x": 17,
+        "y": 21000,
+        "width": 162,
+        "height": 325
+      },
+      "ocr_text": "바이요"
+    },
+    {
+      "region_id": "bbf6323929574e6ab580cd561d845227",
+      "reading_order": 25,
+      "region_type": "speech",
+      "bbox": {
+        "x": 74,
+        "y": 21605,
+        "width": 129,
+        "height": 133
+      },
+      "ocr_text": "아\n안돼!"
+    },
+    {
+      "region_id": "d0e8ee26640b4a85a1f2f5f1e1ba4914",
+      "reading_order": 26,
+      "region_type": "speech",
+      "bbox": {
+        "x": 282,
+        "y": 21714,
+        "width": 232,
+        "height": 82
+      },
+      "ocr_text": "웃으면!"
+    },
+    {
+      "region_id": "0a5a14d4cab64393a8caa36140e0d3a5",
+      "reading_order": 27,
+      "region_type": "speech",
+      "bbox": {
+        "x": 201,
+        "y": 22405,
+        "width": 185,
+        "height": 78
+      },
+      "ocr_text": "재있냐?"
+    },
+    {
+      "region_id": "9a8d378f584b41d1bc74da428570f753",
+      "reading_order": 28,
+      "region_type": "speech",
+      "bbox": {
+        "x": 430,
+        "y": 23158,
+        "width": 226,
+        "height": 167
+      },
+      "ocr_text": "넌재미\n없겠지.\n\n니 욕이니까."
+    },
+    {
+      "region_id": "fed06a912db64cd2b68e0a8e8e9b9005",
+      "reading_order": 29,
+      "region_type": "speech",
+      "bbox": {
+        "x": 37,
+        "y": 23886,
+        "width": 290,
+        "height": 120
+      },
+      "ocr_text": "저봐\n둬질라 그러잖아."
+    },
+    {
+      "region_id": "e0465b46c11d48bf97b32cd0e989c9c0",
+      "reading_order": 30,
+      "region_type": "speech",
+      "bbox": {
+        "x": 517,
+        "y": 23909,
+        "width": 150,
+        "height": 133
+      },
+      "ocr_text": "그그게\n아니라\n품!"
+    },
+    {
+      "region_id": "d36bcccf5b7b466fb2d48143684e8600",
+      "reading_order": 31,
+      "region_type": "speech",
+      "bbox": {
+        "x": 391,
+        "y": 24281,
+        "width": 265,
+        "height": 65
+      },
+      "ocr_text": "네 얼굴이 푸흡!!"
+    },
+    {
+      "region_id": "4b47bc1ddf2f42c68b8543a2ed5b6c96",
+      "reading_order": 32,
+      "region_type": "speech",
+      "bbox": {
+        "x": 47,
+        "y": 24949,
+        "width": 204,
+        "height": 116
+      },
+      "ocr_text": "다혜는 원래\n웃음이 많아"
+    },
+    {
+      "region_id": "8ccaae4ce3c2438fafc6c982be4f8546",
+      "reading_order": 33,
+      "region_type": "speech",
+      "bbox": {
+        "x": 69,
+        "y": 25115,
+        "width": 186,
+        "height": 169
+      },
+      "ocr_text": "맑고\n명랑한 게\n매력이지."
+    },
+    {
+      "region_id": "eee74d3b004d45f3b81a551b975219e6",
+      "reading_order": 34,
+      "region_type": "speech",
+      "bbox": {
+        "x": 0,
+        "y": 25877,
+        "width": 175,
+        "height": 126
+      },
+      "ocr_text": "너는\n빡대가리인 게\n분명해"
+    },
+    {
+      "region_id": "31f563b8693b432cab3cfaaaf9e5b35e",
+      "reading_order": 35,
+      "region_type": "speech",
+      "bbox": {
+        "x": 0,
+        "y": 26430,
+        "width": 195,
+        "height": 131
+      },
+      "ocr_text": "좋을 대로\n생각해."
+    },
+    {
+      "region_id": "b55a8bdce931423a914eec29e3f5c515",
+      "reading_order": 36,
+      "region_type": "speech",
+      "bbox": {
+        "x": 393,
+        "y": 32585,
+        "width": 121,
+        "height": 69
+      },
+      "ocr_text": "커헉."
+    },
+    {
+      "region_id": "8f2c2b19a001470f897c674764efee9f",
+      "reading_order": 37,
+      "region_type": "speech",
+      "bbox": {
+        "x": 33,
+        "y": 34265,
+        "width": 133,
+        "height": 116
+      },
+      "ocr_text": "성미\n언니!!"
+    },
+    {
+      "region_id": "0d64837d19134aa0ba4c6dbd311aae37",
+      "reading_order": 38,
+      "region_type": "speech",
+      "bbox": {
+        "x": 210,
+        "y": 36794,
+        "width": 60,
+        "height": 51
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "86b38154187b4ff1bb4c8559b1c9f698",
+      "reading_order": 39,
+      "region_type": "speech",
+      "bbox": {
+        "x": 451,
+        "y": 37311,
+        "width": 145,
+        "height": 147
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "616380590b9d415990afd1e070ec54c1",
+      "reading_order": 40,
+      "region_type": "speech",
+      "bbox": {
+        "x": 451,
+        "y": 38571,
+        "width": 107,
+        "height": 63
+      },
+      "ocr_text": "후읍."
+    },
+    {
+      "region_id": "33705b4c16bf471389bb77dc26684b27",
+      "reading_order": 41,
+      "region_type": "speech",
+      "bbox": {
+        "x": 152,
+        "y": 41680,
+        "width": 109,
+        "height": 67
+      },
+      "ocr_text": "안돼."
+    },
+    {
+      "region_id": "9a497c6b5021495f88c5629b0bed7337",
+      "reading_order": 42,
+      "region_type": "speech",
+      "bbox": {
+        "x": 348,
+        "y": 42084,
+        "width": 165,
+        "height": 60
+      },
+      "ocr_text": "그만해!"
+    },
+    {
+      "region_id": "52f5d52bda2c4ef7b27ffea3828b4945",
+      "reading_order": 43,
+      "region_type": "speech",
+      "bbox": {
+        "x": 240,
+        "y": 43125,
+        "width": 98,
+        "height": 64
+      },
+      "ocr_text": "아…"
+    },
+    {
+      "region_id": "b773fe16bb454703adb49ea4aa0cc960",
+      "reading_order": 44,
+      "region_type": "speech",
+      "bbox": {
+        "x": 500,
+        "y": 43619,
+        "width": 139,
+        "height": 65
+      },
+      "ocr_text": "아아…"
+    },
+    {
+      "region_id": "3b241a1efbdf45759d8fe0c08014eeca",
+      "reading_order": 45,
+      "region_type": "speech",
+      "bbox": {
+        "x": 386,
+        "y": 44475,
+        "width": 258,
+        "height": 71
+      },
+      "ocr_text": "그만하라고!!"
+    },
+    {
+      "region_id": "0e05764de1c741efb430622106c63262",
+      "reading_order": 46,
+      "region_type": "speech",
+      "bbox": {
+        "x": 6,
+        "y": 44960,
+        "width": 110,
+        "height": 64
+      },
+      "ocr_text": "졌어!"
+    },
+    {
+      "region_id": "e781f31467414efca7c44b618965c8ff",
+      "reading_order": 47,
+      "region_type": "speech",
+      "bbox": {
+        "x": 556,
+        "y": 45002,
+        "width": 127,
+        "height": 112
+      },
+      "ocr_text": "우리가\n졌어!"
+    },
+    {
+      "region_id": "3b96f1dc0b104887b3aa9a21b8f2d6a0",
+      "reading_order": 48,
+      "region_type": "speech",
+      "bbox": {
+        "x": 536,
+        "y": 45186,
+        "width": 147,
+        "height": 101
+      },
+      "ocr_text": "까불어서\n미안해!"
+    },
+    {
+      "region_id": "48c78371ba3c40d49c30484b7796c74e",
+      "reading_order": 49,
+      "region_type": "speech",
+      "bbox": {
+        "x": 42,
+        "y": 46466,
+        "width": 182,
+        "height": 114
+      },
+      "ocr_text": "다신\n안 그럴게!"
+    },
+    {
+      "region_id": "3cd60faecfa5417188a5c50ee897ed96",
+      "reading_order": 50,
+      "region_type": "speech",
+      "bbox": {
+        "x": 30,
+        "y": 46670,
+        "width": 222,
+        "height": 150
+      },
+      "ocr_text": "다신 똥폼\n안 잡을테니까\n그만하란 말야!"
+    },
+    {
+      "region_id": "51347458fea84035afd2210075944226",
+      "reading_order": 51,
+      "region_type": "speech",
+      "bbox": {
+        "x": 470,
+        "y": 47851,
+        "width": 108,
+        "height": 96
+      },
+      "ocr_text": "꽤!"
+    },
+    {
+      "region_id": "0a2ded55f09046358cc9e3edc14bb2d9",
+      "reading_order": 52,
+      "region_type": "speech",
+      "bbox": {
+        "x": 116,
+        "y": 48996,
+        "width": 258,
+        "height": 114
+      },
+      "ocr_text": "그러게 봐줄 때\n잘했어야지."
+    },
+    {
+      "region_id": "848f7235c7b9424aa056a7ae62d98e38",
+      "reading_order": 53,
+      "region_type": "speech",
+      "bbox": {
+        "x": 349,
+        "y": 49441,
+        "width": 177,
+        "height": 111
+      },
+      "ocr_text": "다음 타자\n데려와."
+    },
+    {
+      "region_id": "e2b2dc561a3244fa9d2a8f0efd1bbbd2",
+      "reading_order": 54,
+      "region_type": "speech",
+      "bbox": {
+        "x": 488,
+        "y": 49556,
+        "width": 142,
+        "height": 156
+      },
+      "ocr_text": "너 대신\n또둬질\n사람"
+    },
+    {
+      "region_id": "81e78cc6f7044b29b38163d29800ab6f",
+      "reading_order": 55,
+      "region_type": "speech",
+      "bbox": {
+        "x": 365,
+        "y": 50027,
+        "width": 215,
+        "height": 127
+      },
+      "ocr_text": "왜,\n이제 없어?"
+    },
+    {
+      "region_id": "aa7de4214fa241f9a4b8a437f3a4dab4",
+      "reading_order": 56,
+      "region_type": "speech",
+      "bbox": {
+        "x": 76,
+        "y": 50603,
+        "width": 154,
+        "height": 70
+      },
+      "ocr_text": "ㅋ극극."
+    },
+    {
+      "region_id": "aa715bc321954d37a43bfa323283c35f",
+      "reading_order": 57,
+      "region_type": "speech",
+      "bbox": {
+        "x": 107,
+        "y": 50722,
+        "width": 280,
+        "height": 223
+      },
+      "ocr_text": "상황이\n불리해지니\n돌변하는 꼬라지\n하고는."
+    },
+    {
+      "region_id": "e2ef96fb8c09498ebab2d55d00bcb9b8",
+      "reading_order": 58,
+      "region_type": "speech",
+      "bbox": {
+        "x": 539,
+        "y": 51311,
+        "width": 135,
+        "height": 110
+      },
+      "ocr_text": "너도\n똑같아."
+    },
+    {
+      "region_id": "d3120100e03c417f89380161ad950958",
+      "reading_order": 59,
+      "region_type": "speech",
+      "bbox": {
+        "x": 525,
+        "y": 51739,
+        "width": 138,
+        "height": 48
+      },
+      "ocr_text": "제작대원씨아이"
+    },
+    {
+      "region_id": "8e4ff5d7d6bc40e2bb9c5a6f7a325018",
+      "reading_order": 60,
+      "region_type": "speech",
+      "bbox": {
+        "x": 427,
+        "y": 51830,
+        "width": 243,
+        "height": 116
+      },
+      "ocr_text": "이 작품은 픽션입니다\n실존 인물 및 단체\n사건과는관련이 없습니다.\nS2HAKKK"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "44a8a89812744f1595837f8dcbc198be",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "글/그림 이학",
+      "translated_text": "文/图 李学",
+      "final_translation": "文/图 李学",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c8e4d87834dd4c55937ac786567153a1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ROUND\n84",
+      "translated_text": "第84回合",
+      "final_translation": "第84回合",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "96d05e97dbfc4eaa84b29554e6bf3164",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "약자 멸시(2)",
+      "translated_text": "蔑视弱者(2)",
+      "final_translation": "蔑视弱者(2)",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "548b918bd81d445b80702e970953bcef",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "흥.\n넌 이제 죽었어!",
+      "translated_text": "哼。\n你已经死了！",
+      "final_translation": "哼。\n你已经死了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f05cc46d595149b19dd499e3722d75be",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "언니,\n저자식\n봐주지 마.",
+      "translated_text": "姐姐，\n别放过\n那家伙。",
+      "final_translation": "姐姐，\n别放过\n那家伙。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3faed90da382455aa5b8db6aa4f699fa",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "10dac58a47a4407fb2805184cfcf623e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "무슨 짓을\n할지\n모르니까",
+      "translated_text": "不知道会\n做出\n什么事",
+      "final_translation": "不知道会\n做出\n什么事",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "951a04bedb6948559edd36958ed2f143",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "야.",
+      "translated_text": "喂。",
+      "final_translation": "喂。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "91c517d4160749099e58cbda20e252f0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "너는방금\n내가",
+      "translated_text": "你刚才\n我",
+      "final_translation": "你刚才\n我",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fbf6ec7cf7b44b36b3b2ad634e8dbed9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어디다 손을 대려고,\n사이코 자식.",
+      "translated_text": "你想往哪儿碰，\n疯子混蛋。",
+      "final_translation": "你想往哪儿碰，\n疯子混蛋。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a908349757dc430fad4c90f88c7c7c72",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다혜, 물러나 있어.",
+      "translated_text": "多惠，退后。",
+      "final_translation": "多惠，退后。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "85b3c13559044b749863322f0e43f068",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어\n언니!",
+      "translated_text": "啊\n姐姐！",
+      "final_translation": "啊\n姐姐！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d2e3b74e616b41e3b5985c0a9d77bbe1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ㅋ!",
+      "translated_text": "呵！",
+      "final_translation": "呵！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b00dc93c32524161a60a97628f8a122b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "사이코는\n너지.",
+      "translated_text": "赛可就是你。",
+      "final_translation": "赛可就是你。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "453569ca58344fa2b0fd95492ee39f43",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "저딴 등신 같은\n×때문에 목숨을\n걸었으니까.",
+      "translated_text": "就因为那种蠢货\n×，我才赌上了\n性命。",
+      "final_translation": "就因为那种蠢货\n×，我才赌上了\n性命。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d59ff96d7f9f440db3e042d26fa7077a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "-",
+      "translated_text": "-",
+      "final_translation": "-",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "082c489db5e141cb933d8201a9aa6d83",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "f9a06f47a4f8406f9c5f1c9efb98d886",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ㅋㅋㅋ",
+      "translated_text": "哈哈哈",
+      "final_translation": "哈哈哈",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ed324139e1a7405ca3e83981f78d3b3e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "야,\n나 봐봐.",
+      "translated_text": "喂，\n看看我。",
+      "final_translation": "喂，\n看看我。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "87bc9bf57014488ca1dd8a4dad19e380",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "으듸다\n손을 대려고~?",
+      "translated_text": "哎呀\n你还想动手~？",
+      "final_translation": "哎呀\n你还想动手~？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e8cf1bfa5a4940dfad2b21bccfd75464",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "사이코\n자쉭~!",
+      "translated_text": "神经病\n去死吧~！",
+      "final_translation": "神经病\n去死吧~！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a3f64954644a43d8a472334bb65785ae",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다혜야,\n물러나 있져.",
+      "translated_text": "多惠，\n退后一点。",
+      "final_translation": "多惠，\n退后一点。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "37a293144a344212a2dbafd791f14ff9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "내가 얼마나\n개쩌는 인간인지\n똑똑히 보라구릇! 흐힛!",
+      "translated_text": "好好看看我\n是多么牛逼的人吧！\n嘻嘻！",
+      "final_translation": "好好看看我\n是多么牛逼的人吧！\n嘻嘻！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "65b7acfb8fdc4685937ae6f7907c2d59",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "바이요",
+      "translated_text": "再见",
+      "final_translation": "再见",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "bbf6323929574e6ab580cd561d845227",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아\n안돼!",
+      "translated_text": "啊\n不行！",
+      "final_translation": "啊\n不行！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d0e8ee26640b4a85a1f2f5f1e1ba4914",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "웃으면!",
+      "translated_text": "笑的话！",
+      "final_translation": "笑的话！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0a5a14d4cab64393a8caa36140e0d3a5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "재있냐?",
+      "translated_text": "有意思吗？",
+      "final_translation": "有意思吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9a8d378f584b41d1bc74da428570f753",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "넌재미\n없겠지.\n\n니 욕이니까.",
+      "translated_text": "你会很无聊吧。\n\n因为那是你的欲望。",
+      "final_translation": "你会很无聊吧。\n\n因为那是你的欲望。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fed06a912db64cd2b68e0a8e8e9b9005",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "저봐\n둬질라 그러잖아.",
+      "translated_text": "你看\n都说了会挨揍的。",
+      "final_translation": "你看\n都说了会挨揍的。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e0465b46c11d48bf97b32cd0e989c9c0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그그게\n아니라\n품!",
+      "translated_text": "那、那个\n不是\n噗！",
+      "final_translation": "那、那个\n不是\n噗！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d36bcccf5b7b466fb2d48143684e8600",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네 얼굴이 푸흡!!",
+      "translated_text": "你的脸噗嗤！！",
+      "final_translation": "你的脸噗嗤！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4b47bc1ddf2f42c68b8543a2ed5b6c96",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다혜는 원래\n웃음이 많아",
+      "translated_text": "多惠本来\n就很爱笑",
+      "final_translation": "多惠本来\n就很爱笑",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8ccaae4ce3c2438fafc6c982be4f8546",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "맑고\n명랑한 게\n매력이지.",
+      "translated_text": "开朗\n活泼\n就是魅力所在。",
+      "final_translation": "开朗\n活泼\n就是魅力所在。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "eee74d3b004d45f3b81a551b975219e6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "너는\n빡대가리인 게\n분명해",
+      "translated_text": "你\n肯定是个\n笨蛋",
+      "final_translation": "你\n肯定是个\n笨蛋",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "31f563b8693b432cab3cfaaaf9e5b35e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "좋을 대로\n생각해.",
+      "translated_text": "随你怎么想。",
+      "final_translation": "随你怎么想。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b55a8bdce931423a914eec29e3f5c515",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "커헉.",
+      "translated_text": "咳呃。",
+      "final_translation": "咳呃。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8f2c2b19a001470f897c674764efee9f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "성미\n언니!!",
+      "translated_text": "成美姐姐！！",
+      "final_translation": "成美姐姐！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0d64837d19134aa0ba4c6dbd311aae37",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "86b38154187b4ff1bb4c8559b1c9f698",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "616380590b9d415990afd1e070ec54c1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "후읍.",
+      "translated_text": "呼。",
+      "final_translation": "呼。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "33705b4c16bf471389bb77dc26684b27",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "안돼.",
+      "translated_text": "不行。",
+      "final_translation": "不行。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9a497c6b5021495f88c5629b0bed7337",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그만해!",
+      "translated_text": "住手！",
+      "final_translation": "住手！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "52f5d52bda2c4ef7b27ffea3828b4945",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아…",
+      "translated_text": "啊…",
+      "final_translation": "啊…",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b773fe16bb454703adb49ea4aa0cc960",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아아…",
+      "translated_text": "啊啊…",
+      "final_translation": "啊啊…",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3b241a1efbdf45759d8fe0c08014eeca",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그만하라고!!",
+      "translated_text": "住手！！",
+      "final_translation": "住手！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0e05764de1c741efb430622106c63262",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "졌어!",
+      "translated_text": "输了！",
+      "final_translation": "输了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e781f31467414efca7c44b618965c8ff",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "우리가\n졌어!",
+      "translated_text": "我们\n输了！",
+      "final_translation": "我们\n输了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3b96f1dc0b104887b3aa9a21b8f2d6a0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "까불어서\n미안해!",
+      "translated_text": "对不起，我太放肆了！",
+      "final_translation": "对不起，我太放肆了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "48c78371ba3c40d49c30484b7796c74e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다신\n안 그럴게!",
+      "translated_text": "我不会再那样了！",
+      "final_translation": "我不会再那样了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3cd60faecfa5417188a5c50ee897ed96",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다신 똥폼\n안 잡을테니까\n그만하란 말야!",
+      "translated_text": "我不会再摆架子了\n所以别再说了！",
+      "final_translation": "我不会再摆架子了\n所以别再说了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "51347458fea84035afd2210075944226",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "꽤!",
+      "translated_text": "挺！",
+      "final_translation": "挺！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0a2ded55f09046358cc9e3edc14bb2d9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그러게 봐줄 때\n잘했어야지.",
+      "translated_text": "所以说，该收敛的时候就该好好收敛。",
+      "final_translation": "所以说，该收敛的时候就该好好收敛。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "848f7235c7b9424aa056a7ae62d98e38",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다음 타자\n데려와.",
+      "translated_text": "带下一个打字员来。",
+      "final_translation": "带下一个打字员来。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e2b2dc561a3244fa9d2a8f0efd1bbbd2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "너 대신\n또둬질\n사람",
+      "translated_text": "能代替你的人\n多的是",
+      "final_translation": "能代替你的人\n多的是",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "81e78cc6f7044b29b38163d29800ab6f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "왜,\n이제 없어?",
+      "translated_text": "怎么，\n现在没了？",
+      "final_translation": "怎么，\n现在没了？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "aa7de4214fa241f9a4b8a437f3a4dab4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "ㅋ극극.",
+      "translated_text": "噗嗤嗤。",
+      "final_translation": "噗嗤嗤。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "aa715bc321954d37a43bfa323283c35f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "상황이\n불리해지니\n돌변하는 꼬라지\n하고는.",
+      "translated_text": "局势一不利\n就翻脸不认人\n这副嘴脸真是。",
+      "final_translation": "局势一不利\n就翻脸不认人\n这副嘴脸真是。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e2ef96fb8c09498ebab2d55d00bcb9b8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "너도\n똑같아.",
+      "translated_text": "你也\n一样。",
+      "final_translation": "你也\n一样。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d3120100e03c417f89380161ad950958",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "제작대원씨아이",
+      "translated_text": "制作 大元C.I",
+      "final_translation": "制作 大元C.I",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8e4ff5d7d6bc40e2bb9c5a6f7a325018",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이 작품은 픽션입니다\n실존 인물 및 단체\n사건과는관련이 없습니다.\nS2HAKKK",
+      "translated_text": "本作品为虚构。\n与真实人物、团体\n及事件无关。\nS2HAKKK",
+      "final_translation": "本作品为虚构。\n与真实人物、团体\n及事件无关。\nS2HAKKK",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-b8a1c472df12",
+    "file": "K08-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\export\\K08-translated.png",
+    "sha256": "a5318a0a68752ae55d075aa1a9c054b4347a3bfec569ba49083d41c3ff37c461",
+    "size": 24550087,
+    "translated_revision_id": "ddb591b482cc41f5884622dbffde6544"
+  },
+  "attribution": [
+    "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "defect:run2-region-chain"
+  ],
+  "source_size": [
+    690,
+    51971
+  ],
+  "source_sha256_recomputed": "ee1e8dab35bb55098fd0685e30c6f895eeb55601813b63f5947ea696c52b23c0",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K08-8a6bshcg",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\ocr\\crops\\K08",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 61,
+    "n_target_region_calls": 61,
+    "input_est_tokens_total": 33503,
+    "output_est_tokens_total": 3155
+  },
+  "finished_at_utc": "2026-10-02T03:42:17Z",
+  "wall_s": 3279.55,
+  "pipeline_completed": false
+}

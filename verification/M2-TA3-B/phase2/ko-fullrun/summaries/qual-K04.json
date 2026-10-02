@@ -1,0 +1,4632 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K04",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "narration"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K04_670145_145\\base.png",
+  "source_sha256": "8bfad8af8e4f7ca594f8223d1b0fffbc916a8617a64baa1c381f078f0e4c1873",
+  "started_at_utc": "2026-10-02T00:10:53Z",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding": "openai-compatible-translation -> https://api.deepseek.com/v1 (deepseek-chat)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "production default (settings key absent -> SKIP)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 690,
+      "height": 28156,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "89b484d2c689485da906b38a8c2c768f",
+      "width": 690,
+      "height": 28156
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "elapsed_s": 80.58
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 113
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 113
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "region_runs": 113,
+      "truncated": false,
+      "elapsed_s": 3322.12
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 113,
+      "translated": 109
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "1fbf427f7361c2a9",
+      "size": 10735589
+    }
+  },
+  "run1": {
+    "run_id": "run-a53aa6060af145c5b5a4e5d6a3469427",
+    "status": "completed_with_failures",
+    "elapsed_s": 80.58,
+    "steps": [
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "failed",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "54e673917d674ee39611d03eb3622122",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 486,
+        "y": 344,
+        "width": 153,
+        "height": 45
+      }
+    },
+    {
+      "region_id": "1e0718d52c4c4ed4bc3a53b4e74cf81d",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 204,
+        "y": 619,
+        "width": 123,
+        "height": 47
+      }
+    },
+    {
+      "region_id": "1f849333c57f47a7b3974d83076062f1",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 117,
+        "y": 884,
+        "width": 83,
+        "height": 34
+      }
+    },
+    {
+      "region_id": "47beeeaf6a4742f4a89e090cfd82daf5",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 251,
+        "y": 1172,
+        "width": 147,
+        "height": 51
+      }
+    },
+    {
+      "region_id": "75dd3e670a9544c894ed34ff7f44a930",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 312,
+        "y": 1338,
+        "width": 116,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "fb25adab7dca47f1a389eb7f08299e7c",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 162,
+        "y": 1547,
+        "width": 210,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "994f107c7c3e439fa9df533368789b48",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 55,
+        "y": 1730,
+        "width": 188,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "8c34eb40c6c342838e73462adef63fdb",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 109,
+        "y": 1831,
+        "width": 156,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "d4b6e92b923d4d958e2448ca6834b5a8",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 347,
+        "y": 1860,
+        "width": 118,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "a69e5aa6573f4700bd70f21c612d1363",
+      "reading_order": 10,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 274,
+        "y": 1980,
+        "width": 71,
+        "height": 41
+      }
+    },
+    {
+      "region_id": "3cf24d426535406885335f30e0b285a2",
+      "reading_order": 11,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 392,
+        "y": 1987,
+        "width": 206,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "ac5193aa48844185bdcc3d61eb9d0943",
+      "reading_order": 12,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 302,
+        "y": 2093,
+        "width": 208,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "6346cb7ccb894c24be02c0dcae16834c",
+      "reading_order": 13,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 267,
+        "y": 2349,
+        "width": 203,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "04b3e7ddef6041c89ec0bc2df6785652",
+      "reading_order": 14,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 198,
+        "y": 2722,
+        "width": 204,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "e3b0cf86bc7b444fa9db0c2cae13bdd3",
+      "reading_order": 15,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 252,
+        "y": 2959,
+        "width": 206,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "2470d8605df94729a6a3a4c355c967c9",
+      "reading_order": 16,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 46,
+        "y": 3155,
+        "width": 258,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "76b697a43be74e0cb7c3183a2d870572",
+      "reading_order": 17,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 353,
+        "y": 3546,
+        "width": 180,
+        "height": 121
+      }
+    },
+    {
+      "region_id": "82281bfd25a442e5bcebe5e7972cb640",
+      "reading_order": 18,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 418,
+        "y": 3697,
+        "width": 209,
+        "height": 120
+      }
+    },
+    {
+      "region_id": "b49717217fb14924b774f783ec211974",
+      "reading_order": 19,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 188,
+        "y": 3890,
+        "width": 179,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "7ad2bdc348d9431f946eae46aceac4fa",
+      "reading_order": 20,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 279,
+        "y": 4163,
+        "width": 79,
+        "height": 33
+      }
+    },
+    {
+      "region_id": "10dd8c5daa994127bd5fd3df3f571cbe",
+      "reading_order": 21,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 362,
+        "y": 4555,
+        "width": 222,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "3f06cd4ff0c341fdac25aeef4afde34c",
+      "reading_order": 22,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 422,
+        "y": 4647,
+        "width": 194,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "18f09d99e78e4e2884a0a23eb37f64a5",
+      "reading_order": 23,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 250,
+        "y": 4954,
+        "width": 160,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "3546ab17ac524e888bf03d33dcd89504",
+      "reading_order": 24,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 156,
+        "y": 5062,
+        "width": 185,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "de066c13379f4c30b8b690cbb41da78a",
+      "reading_order": 25,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 360,
+        "y": 5709,
+        "width": 180,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "82fe65a98e724f63aa694bd299b8c689",
+      "reading_order": 26,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 413,
+        "y": 6057,
+        "width": 111,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "8d73dfe0f600409986369c92018c5158",
+      "reading_order": 27,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 363,
+        "y": 6511,
+        "width": 245,
+        "height": 119
+      }
+    },
+    {
+      "region_id": "f3852b5f36004460b26346788dba6eeb",
+      "reading_order": 28,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 56,
+        "y": 6770,
+        "width": 257,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "c5595c63ea8749098b5f8612dc103483",
+      "reading_order": 29,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 235,
+        "y": 6894,
+        "width": 198,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "ba06fa63950044758d5f6a2f3ebd25e5",
+      "reading_order": 30,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 233,
+        "y": 7801,
+        "width": 91,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "108eddef826a4263983fdb056ed229f6",
+      "reading_order": 31,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 78,
+        "y": 8943,
+        "width": 148,
+        "height": 76
+      }
+    },
+    {
+      "region_id": "943ae05e58724e87932d476c28d45451",
+      "reading_order": 32,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 373,
+        "y": 9286,
+        "width": 259,
+        "height": 88
+      }
+    },
+    {
+      "region_id": "f44232757c3547cb9c2a46497c94db01",
+      "reading_order": 33,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 426,
+        "y": 9379,
+        "width": 241,
+        "height": 121
+      }
+    },
+    {
+      "region_id": "7703c65f70ff48e2bd067d9aa6dae35e",
+      "reading_order": 34,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 31,
+        "y": 9731,
+        "width": 230,
+        "height": 119
+      }
+    },
+    {
+      "region_id": "1d91a83d7f094bb8ac223e9b86d90bd2",
+      "reading_order": 35,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 59,
+        "y": 10273,
+        "width": 134,
+        "height": 87
+      }
+    },
+    {
+      "region_id": "84afd64610ff4b87bd1dae172ffe4454",
+      "reading_order": 36,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 28,
+        "y": 10762,
+        "width": 259,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "ef52d00e00be4521892eae25a4b6a0fe",
+      "reading_order": 37,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 186,
+        "y": 10851,
+        "width": 163,
+        "height": 117
+      }
+    },
+    {
+      "region_id": "92764837a92545d2b9a8f9b987b91bea",
+      "reading_order": 38,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 151,
+        "y": 11130,
+        "width": 129,
+        "height": 116
+      }
+    },
+    {
+      "region_id": "14bb53ae31b74b18b02997f6e7cb2181",
+      "reading_order": 39,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 407,
+        "y": 11321,
+        "width": 125,
+        "height": 85
+      }
+    },
+    {
+      "region_id": "d2e6a8389f9e4cacadbf18ef06f83e97",
+      "reading_order": 40,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 454,
+        "y": 11427,
+        "width": 201,
+        "height": 120
+      }
+    },
+    {
+      "region_id": "df573741005344deb083c908d0d0874a",
+      "reading_order": 41,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 34,
+        "y": 11652,
+        "width": 215,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "d502048f80d94bcdafd36b498dac310a",
+      "reading_order": 42,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 366,
+        "y": 11837,
+        "width": 247,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "94a9b10db0144136ae8e20e290c337bc",
+      "reading_order": 43,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 454,
+        "y": 11944,
+        "width": 187,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "a1b71b4efbe1416ba55782512838e775",
+      "reading_order": 44,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 214,
+        "y": 12230,
+        "width": 129,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "1eaeb6d35a9a4775a06f6214fe83dcd9",
+      "reading_order": 45,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 75,
+        "y": 12402,
+        "width": 190,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "0f2920f651f64b748841aa607d42533b",
+      "reading_order": 46,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 46,
+        "y": 12476,
+        "width": 183,
+        "height": 86
+      }
+    },
+    {
+      "region_id": "1f2477248b924c35b128d2f95e87dfe0",
+      "reading_order": 47,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 164,
+        "y": 12844,
+        "width": 79,
+        "height": 31
+      }
+    },
+    {
+      "region_id": "8da753f24e354677a498f5a5bab16369",
+      "reading_order": 48,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 45,
+        "y": 13174,
+        "width": 174,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "0cdc19d7a970479fb317ecd156639db3",
+      "reading_order": 49,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 381,
+        "y": 13529,
+        "width": 103,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "561b6ee1d4b341e0bf91c10170675b7f",
+      "reading_order": 50,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 476,
+        "y": 13744,
+        "width": 140,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "a4be3f640d1941efa8d0c0e37063932a",
+      "reading_order": 51,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 146,
+        "y": 14079,
+        "width": 63,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "5cbde05ff3aa43e6b7db6b5bd977b08d",
+      "reading_order": 52,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 203,
+        "y": 14194,
+        "width": 82,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "d81b7e1f321a42b5828b09a1cf3dfcd4",
+      "reading_order": 53,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 71,
+        "y": 14377,
+        "width": 115,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "4eca9d3c4ce34a1cac1df9af73623758",
+      "reading_order": 54,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 376,
+        "y": 14699,
+        "width": 75,
+        "height": 31
+      }
+    },
+    {
+      "region_id": "8aa94f25debd49a7b975b98a77ec1b7e",
+      "reading_order": 55,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 107,
+        "y": 14925,
+        "width": 81,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "be4ed658d5904a06b4414f89d2c45846",
+      "reading_order": 56,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 28,
+        "y": 15250,
+        "width": 124,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "9b43d9acf2e548d1ba64b8f4c73eb365",
+      "reading_order": 57,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 26,
+        "y": 15357,
+        "width": 193,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "0673042b789d49b29455621c60534e24",
+      "reading_order": 58,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 490,
+        "y": 15489,
+        "width": 112,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "825c694220774d609834c7bdf00b96a2",
+      "reading_order": 59,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 55,
+        "y": 15679,
+        "width": 233,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "79d6cbe005164d1796ba25f3343b2b08",
+      "reading_order": 60,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 512,
+        "y": 15925,
+        "width": 156,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "5176cde7b77e49ae84899dccd7883a87",
+      "reading_order": 61,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 37,
+        "y": 16197,
+        "width": 232,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "25df35c566164716a00e34efc70f8607",
+      "reading_order": 62,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 349,
+        "y": 16466,
+        "width": 150,
+        "height": 80
+      }
+    },
+    {
+      "region_id": "345af07c12c74535a73d2a34fce71372",
+      "reading_order": 63,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 134,
+        "y": 16660,
+        "width": 237,
+        "height": 120
+      }
+    },
+    {
+      "region_id": "3a5b6998b80347cda90ae28887041166",
+      "reading_order": 64,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 38,
+        "y": 16800,
+        "width": 244,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "d41991e7657c4001af716c7615f5b487",
+      "reading_order": 65,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 377,
+        "y": 17056,
+        "width": 193,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "bdcaaec30a1e4b7e8dcd2ed82af6fc4f",
+      "reading_order": 66,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 312,
+        "y": 17206,
+        "width": 40,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "5d2bccd45c8643a4a663b293afb32fd3",
+      "reading_order": 67,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 87,
+        "y": 17914,
+        "width": 82,
+        "height": 45
+      }
+    },
+    {
+      "region_id": "c05adf9fd5fa489197768acff27a8e5c",
+      "reading_order": 68,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 164,
+        "y": 18059,
+        "width": 159,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "73d5813197eb435fb8b32b834b2984a2",
+      "reading_order": 69,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 454,
+        "y": 18227,
+        "width": 218,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "308307a9461e4096917cc89a9f267633",
+      "reading_order": 70,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 83,
+        "y": 18489,
+        "width": 65,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "bc95dcac6cf74f6696f81576438693f1",
+      "reading_order": 71,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 378,
+        "y": 18617,
+        "width": 185,
+        "height": 81
+      }
+    },
+    {
+      "region_id": "3eb698b9e42146a38e12295315ea8c79",
+      "reading_order": 72,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 43,
+        "y": 19561,
+        "width": 101,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "9a081eeda776434db45f2844d3574688",
+      "reading_order": 73,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 277,
+        "y": 19647,
+        "width": 213,
+        "height": 180
+      }
+    },
+    {
+      "region_id": "f39ffea6f8834c2fa991225b2e302ffd",
+      "reading_order": 74,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 336,
+        "y": 20029,
+        "width": 143,
+        "height": 43
+      }
+    },
+    {
+      "region_id": "8b195e43a8d44fad9041ee4093c07dd6",
+      "reading_order": 75,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 406,
+        "y": 20066,
+        "width": 187,
+        "height": 72
+      }
+    },
+    {
+      "region_id": "8c8e9691a7f343438493c27e6e4dd426",
+      "reading_order": 76,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 27,
+        "y": 20291,
+        "width": 104,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "f714a9dbd7954053a4d11132b953ce2b",
+      "reading_order": 77,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 89,
+        "y": 20378,
+        "width": 193,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "b00a02cfa55d4651aed68589905cf0eb",
+      "reading_order": 78,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 484,
+        "y": 20521,
+        "width": 164,
+        "height": 79
+      }
+    },
+    {
+      "region_id": "fe4f99780b6a4f598b7ceb8fedb11023",
+      "reading_order": 79,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 438,
+        "y": 20643,
+        "width": 105,
+        "height": 47
+      }
+    },
+    {
+      "region_id": "f55c8969fc694aa78bad0e2304fd0caf",
+      "reading_order": 80,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 54,
+        "y": 20786,
+        "width": 198,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "ef610feb08c34a29accca4326d9e0c63",
+      "reading_order": 81,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 38,
+        "y": 20856,
+        "width": 103,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "c8420f3e6f034337b3128c5e2e094fa3",
+      "reading_order": 82,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 484,
+        "y": 21231,
+        "width": 153,
+        "height": 87
+      }
+    },
+    {
+      "region_id": "a1147d2cc5f147f4bf8e605d4bea8cb3",
+      "reading_order": 83,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 385,
+        "y": 21315,
+        "width": 245,
+        "height": 120
+      }
+    },
+    {
+      "region_id": "4cbc96d9f9f3403e93d1cc48714a9ba3",
+      "reading_order": 84,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 81,
+        "y": 21592,
+        "width": 188,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "0de43af4f56b41c088701731ce2e5991",
+      "reading_order": 85,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 34,
+        "y": 21687,
+        "width": 104,
+        "height": 40
+      }
+    },
+    {
+      "region_id": "62b2d2a27cf0406a8506c16bc1a1b78e",
+      "reading_order": 86,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 407,
+        "y": 21942,
+        "width": 175,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "9c7426d97e594f71bc97fdfe193e08d3",
+      "reading_order": 87,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 61,
+        "y": 22137,
+        "width": 54,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "d1eafc0608cd4539b094fc64e6cfc9be",
+      "reading_order": 88,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 43,
+        "y": 22298,
+        "width": 263,
+        "height": 121
+      }
+    },
+    {
+      "region_id": "df232c4829fc4f4faaea7d369b74904a",
+      "reading_order": 89,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 392,
+        "y": 22764,
+        "width": 61,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "b535c6ce3f284b0192732de5deb2d367",
+      "reading_order": 90,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 115,
+        "y": 23055,
+        "width": 247,
+        "height": 119
+      }
+    },
+    {
+      "region_id": "4026895add444577beb2c168ff695fd9",
+      "reading_order": 91,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 397,
+        "y": 23377,
+        "width": 145,
+        "height": 47
+      }
+    },
+    {
+      "region_id": "2c41d872de0e48e7ba319ec0d8d1a646",
+      "reading_order": 92,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 37,
+        "y": 23510,
+        "width": 186,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "fbf6149a628c4fb886d0f19182afdf55",
+      "reading_order": 93,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 26,
+        "y": 23885,
+        "width": 209,
+        "height": 115
+      }
+    },
+    {
+      "region_id": "d7c271e348ad4128bb1fa1d022320341",
+      "reading_order": 94,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 473,
+        "y": 23953,
+        "width": 153,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "0ff0138109be46b09f1200aa8a57af5d",
+      "reading_order": 95,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 37,
+        "y": 24186,
+        "width": 172,
+        "height": 115
+      }
+    },
+    {
+      "region_id": "ec1d88fabb4a4e2bbd77edfa21cbbd34",
+      "reading_order": 96,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 544,
+        "y": 24504,
+        "width": 121,
+        "height": 81
+      }
+    },
+    {
+      "region_id": "da626a422ccb4f15b2d309372ae79c17",
+      "reading_order": 97,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 69,
+        "y": 24733,
+        "width": 180,
+        "height": 51
+      }
+    },
+    {
+      "region_id": "1202214cd754461ea9c15f5931fb34e6",
+      "reading_order": 98,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 47,
+        "y": 24793,
+        "width": 138,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "cc9610d163744395a061736212754a81",
+      "reading_order": 99,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 331,
+        "y": 25016,
+        "width": 322,
+        "height": 120
+      }
+    },
+    {
+      "region_id": "8babd84efb634a5cb2b62906d971a07a",
+      "reading_order": 100,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 202,
+        "y": 25136,
+        "width": 207,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "20f0ea3287374478bac726fdf999e3e1",
+      "reading_order": 101,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 165,
+        "y": 25447,
+        "width": 60,
+        "height": 47
+      }
+    },
+    {
+      "region_id": "031482490fe14d8fa1ec2e0f7a26051a",
+      "reading_order": 102,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 465,
+        "y": 25654,
+        "width": 172,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "26c665e74552402582f0c27d07814530",
+      "reading_order": 103,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 49,
+        "y": 25890,
+        "width": 240,
+        "height": 119
+      }
+    },
+    {
+      "region_id": "765274a3c29b40eaaffe7fb6e75d8c83",
+      "reading_order": 104,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 218,
+        "y": 26023,
+        "width": 131,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "485cdf7323d54a10954d5fa88260b8b2",
+      "reading_order": 105,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 111,
+        "y": 26176,
+        "width": 155,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "ac22a1d7a2c4447f94af614b0c11894c",
+      "reading_order": 106,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 189,
+        "y": 26283,
+        "width": 185,
+        "height": 117
+      }
+    },
+    {
+      "region_id": "d28760bf35614287931f45547703e321",
+      "reading_order": 107,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 354,
+        "y": 26447,
+        "width": 260,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "008ecf8aa6474f69b38860cbad9110f1",
+      "reading_order": 108,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 67,
+        "y": 26677,
+        "width": 154,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "1490b2acaebc4fa7871c707d3c981ce8",
+      "reading_order": 109,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 150,
+        "y": 26774,
+        "width": 143,
+        "height": 81
+      }
+    },
+    {
+      "region_id": "9d260bf7bbe149eeb7749089b4c5c0d3",
+      "reading_order": 110,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 378,
+        "y": 27048,
+        "width": 144,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "6640982d02dd4b7c9de65e4518e6c7dc",
+      "reading_order": 111,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 346,
+        "y": 27438,
+        "width": 101,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "74c9f9eb9b014200bc0e9735af1c139b",
+      "reading_order": 112,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 29,
+        "y": 27559,
+        "width": 193,
+        "height": 120
+      }
+    },
+    {
+      "region_id": "6f2e9272857444a186187d8f67b9d7a9",
+      "reading_order": 113,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 553,
+        "y": 27995,
+        "width": 101,
+        "height": 47
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed_with_failures",
+    "region_target_count": 113,
+    "region_runs_executed": 113,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "54e673917d674ee39611d03eb3622122",
+        "run_id": "run-1ac9b904de5d4118b723a33d057f0940",
+        "status": "completed"
+      },
+      {
+        "region_id": "1e0718d52c4c4ed4bc3a53b4e74cf81d",
+        "run_id": "run-66c77ff780f748acac86a51615d0a781",
+        "status": "completed"
+      },
+      {
+        "region_id": "1f849333c57f47a7b3974d83076062f1",
+        "run_id": "run-3a3e466ef6ea492b9392fc103a78bc39",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          }
+        ]
+      },
+      {
+        "region_id": "47beeeaf6a4742f4a89e090cfd82daf5",
+        "run_id": "run-b7a34fc70e04410c8052b6f46fb66333",
+        "status": "completed"
+      },
+      {
+        "region_id": "75dd3e670a9544c894ed34ff7f44a930",
+        "run_id": "run-0e417374c6024850b6f3b5427d052937",
+        "status": "completed"
+      },
+      {
+        "region_id": "fb25adab7dca47f1a389eb7f08299e7c",
+        "run_id": "run-eadbe7659f5f4b8a86c345f81c2b1605",
+        "status": "completed"
+      },
+      {
+        "region_id": "994f107c7c3e439fa9df533368789b48",
+        "run_id": "run-744d642a87824d129fd57b0255567d29",
+        "status": "completed"
+      },
+      {
+        "region_id": "8c34eb40c6c342838e73462adef63fdb",
+        "run_id": "run-9651e84ba4f246af88cb8bbc63c9e71b",
+        "status": "completed"
+      },
+      {
+        "region_id": "d4b6e92b923d4d958e2448ca6834b5a8",
+        "run_id": "run-59316068bcb34778aaa938ae1bcededc",
+        "status": "completed"
+      },
+      {
+        "region_id": "a69e5aa6573f4700bd70f21c612d1363",
+        "run_id": "run-fc25332598234d0aa0ffecfd9fff2d7b",
+        "status": "completed"
+      },
+      {
+        "region_id": "3cf24d426535406885335f30e0b285a2",
+        "run_id": "run-5aca4d923c3b4473967c14b56ea6b1f3",
+        "status": "completed"
+      },
+      {
+        "region_id": "ac5193aa48844185bdcc3d61eb9d0943",
+        "run_id": "run-990e2f80b8104dc3a0eefc0b18648f63",
+        "status": "completed"
+      },
+      {
+        "region_id": "6346cb7ccb894c24be02c0dcae16834c",
+        "run_id": "run-379cd4f28ed047919280a1be24ebecb8",
+        "status": "completed"
+      },
+      {
+        "region_id": "04b3e7ddef6041c89ec0bc2df6785652",
+        "run_id": "run-c9bd1281879e485c814353ff7b5fc065",
+        "status": "completed"
+      },
+      {
+        "region_id": "e3b0cf86bc7b444fa9db0c2cae13bdd3",
+        "run_id": "run-48f0c91bdfec41d7b3a9a19a5cc48263",
+        "status": "completed"
+      },
+      {
+        "region_id": "2470d8605df94729a6a3a4c355c967c9",
+        "run_id": "run-73b6df7483be45879dcb504c2df95315",
+        "status": "completed"
+      },
+      {
+        "region_id": "76b697a43be74e0cb7c3183a2d870572",
+        "run_id": "run-245604273e1b4128af1f141e575e11c4",
+        "status": "completed"
+      },
+      {
+        "region_id": "82281bfd25a442e5bcebe5e7972cb640",
+        "run_id": "run-fb9758717747473db22153b511b91466",
+        "status": "completed"
+      },
+      {
+        "region_id": "b49717217fb14924b774f783ec211974",
+        "run_id": "run-8411da9e984945ac9f4bf43c6f3bfe1f",
+        "status": "completed"
+      },
+      {
+        "region_id": "7ad2bdc348d9431f946eae46aceac4fa",
+        "run_id": "run-a8ca7da89d9b480789ae635d5ea14de1",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          }
+        ]
+      },
+      {
+        "region_id": "10dd8c5daa994127bd5fd3df3f571cbe",
+        "run_id": "run-8c0f0d39635c424ba69f61384b59b107",
+        "status": "completed"
+      },
+      {
+        "region_id": "3f06cd4ff0c341fdac25aeef4afde34c",
+        "run_id": "run-24268dd888c144c783207fcc3d6c3f13",
+        "status": "completed"
+      },
+      {
+        "region_id": "18f09d99e78e4e2884a0a23eb37f64a5",
+        "run_id": "run-dbe410d6d98948eb940e256f4e601331",
+        "status": "completed"
+      },
+      {
+        "region_id": "3546ab17ac524e888bf03d33dcd89504",
+        "run_id": "run-3637f549e3b94c62bf7ea01945531653",
+        "status": "completed"
+      },
+      {
+        "region_id": "de066c13379f4c30b8b690cbb41da78a",
+        "run_id": "run-b0d3c47bb5984f4f96a02f1194ce5167",
+        "status": "completed"
+      },
+      {
+        "region_id": "82fe65a98e724f63aa694bd299b8c689",
+        "run_id": "run-60bc4af9a30d42c0b843440646df9a7e",
+        "status": "completed"
+      },
+      {
+        "region_id": "8d73dfe0f600409986369c92018c5158",
+        "run_id": "run-a56c83a8dfe74055b7aba3cb674b3828",
+        "status": "completed"
+      },
+      {
+        "region_id": "f3852b5f36004460b26346788dba6eeb",
+        "run_id": "run-49e5579c41de464f970f283602046f99",
+        "status": "completed"
+      },
+      {
+        "region_id": "c5595c63ea8749098b5f8612dc103483",
+        "run_id": "run-d9b593167f1849a6abaa312a02900c1e",
+        "status": "completed"
+      },
+      {
+        "region_id": "ba06fa63950044758d5f6a2f3ebd25e5",
+        "run_id": "run-b1928cd29cc64817bc5cc76778a03913",
+        "status": "completed"
+      },
+      {
+        "region_id": "108eddef826a4263983fdb056ed229f6",
+        "run_id": "run-99638c5762d24825bd37c60ffc03e221",
+        "status": "completed"
+      },
+      {
+        "region_id": "943ae05e58724e87932d476c28d45451",
+        "run_id": "run-30403d1fd0f3430bb7e15b72d4a194b6",
+        "status": "completed"
+      },
+      {
+        "region_id": "f44232757c3547cb9c2a46497c94db01",
+        "run_id": "run-4b73ab7d47a84f438ae019be0e0b2436",
+        "status": "completed"
+      },
+      {
+        "region_id": "7703c65f70ff48e2bd067d9aa6dae35e",
+        "run_id": "run-14a86b8cc11641e6a43b1bf45bc9c74f",
+        "status": "completed"
+      },
+      {
+        "region_id": "1d91a83d7f094bb8ac223e9b86d90bd2",
+        "run_id": "run-dff4e6776dfb45da89570f379e2ee415",
+        "status": "completed"
+      },
+      {
+        "region_id": "84afd64610ff4b87bd1dae172ffe4454",
+        "run_id": "run-7a2fa7658bbc481e846ba4698ae620da",
+        "status": "completed"
+      },
+      {
+        "region_id": "ef52d00e00be4521892eae25a4b6a0fe",
+        "run_id": "run-965038253c28471790fbc0fbd4bd6653",
+        "status": "completed"
+      },
+      {
+        "region_id": "92764837a92545d2b9a8f9b987b91bea",
+        "run_id": "run-d17d9cd522b9491198d12b46e160e715",
+        "status": "completed"
+      },
+      {
+        "region_id": "14bb53ae31b74b18b02997f6e7cb2181",
+        "run_id": "run-e065495553bd4a34861f7b6e79fe5540",
+        "status": "completed"
+      },
+      {
+        "region_id": "d2e6a8389f9e4cacadbf18ef06f83e97",
+        "run_id": "run-1f6d69e8a9404ed597ba12cc36ec9eac",
+        "status": "completed"
+      },
+      {
+        "region_id": "df573741005344deb083c908d0d0874a",
+        "run_id": "run-279dfd2941274f3d877bde215cdff632",
+        "status": "completed"
+      },
+      {
+        "region_id": "d502048f80d94bcdafd36b498dac310a",
+        "run_id": "run-b5c97d1b71ac470797bbefaab30c4991",
+        "status": "completed"
+      },
+      {
+        "region_id": "94a9b10db0144136ae8e20e290c337bc",
+        "run_id": "run-597c1d3f6d8c47038483ab4f5c328ead",
+        "status": "completed"
+      },
+      {
+        "region_id": "a1b71b4efbe1416ba55782512838e775",
+        "run_id": "run-34d90677f9f0485ab7e62ec1940dec69",
+        "status": "completed"
+      },
+      {
+        "region_id": "1eaeb6d35a9a4775a06f6214fe83dcd9",
+        "run_id": "run-d10dfc2aa86d45bf940e0df23688c5bd",
+        "status": "completed"
+      },
+      {
+        "region_id": "0f2920f651f64b748841aa607d42533b",
+        "run_id": "run-e39efa5e2f954ef48186262beb93500a",
+        "status": "completed"
+      },
+      {
+        "region_id": "1f2477248b924c35b128d2f95e87dfe0",
+        "run_id": "run-0d2550fcf5db409f9e7bacae8717ba4b",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "8da753f24e354677a498f5a5bab16369",
+        "run_id": "run-9fc33e509fd64b94b1d2846b2a652970",
+        "status": "completed"
+      },
+      {
+        "region_id": "0cdc19d7a970479fb317ecd156639db3",
+        "run_id": "run-4bd41a828fa044e49366c15b698da2a0",
+        "status": "completed"
+      },
+      {
+        "region_id": "561b6ee1d4b341e0bf91c10170675b7f",
+        "run_id": "run-6828f5e466b44ebab29af31e3cb80a32",
+        "status": "completed"
+      },
+      {
+        "region_id": "a4be3f640d1941efa8d0c0e37063932a",
+        "run_id": "run-c8d6c951b8b44a91b7a478179e3f1400",
+        "status": "completed"
+      },
+      {
+        "region_id": "5cbde05ff3aa43e6b7db6b5bd977b08d",
+        "run_id": "run-243b13f0046b42e3a7510ac16ce497a0",
+        "status": "completed"
+      },
+      {
+        "region_id": "d81b7e1f321a42b5828b09a1cf3dfcd4",
+        "run_id": "run-28d53e7eca68423e858a9990a08bab5e",
+        "status": "completed"
+      },
+      {
+        "region_id": "4eca9d3c4ce34a1cac1df9af73623758",
+        "run_id": "run-d428a8e5ae954c4e9b6583df09510017",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          }
+        ]
+      },
+      {
+        "region_id": "8aa94f25debd49a7b975b98a77ec1b7e",
+        "run_id": "run-a710ed4696f94974b0b38f016bc373b0",
+        "status": "completed"
+      },
+      {
+        "region_id": "be4ed658d5904a06b4414f89d2c45846",
+        "run_id": "run-7ea4e2ed8b0f4df9864bf771b210a5e6",
+        "status": "completed"
+      },
+      {
+        "region_id": "9b43d9acf2e548d1ba64b8f4c73eb365",
+        "run_id": "run-18eef396d9da473faf123bc81301f416",
+        "status": "completed"
+      },
+      {
+        "region_id": "0673042b789d49b29455621c60534e24",
+        "run_id": "run-1598f91154a44c0da8b72a1978c90858",
+        "status": "completed"
+      },
+      {
+        "region_id": "825c694220774d609834c7bdf00b96a2",
+        "run_id": "run-1a0d51ecf0e647f7b19517cd024d2be6",
+        "status": "completed"
+      },
+      {
+        "region_id": "79d6cbe005164d1796ba25f3343b2b08",
+        "run_id": "run-7cfb51c4fc254b2a96401c654e22b8de",
+        "status": "completed"
+      },
+      {
+        "region_id": "5176cde7b77e49ae84899dccd7883a87",
+        "run_id": "run-32ef31b0a0c54b30bd5c467f5d8abdd5",
+        "status": "completed"
+      },
+      {
+        "region_id": "25df35c566164716a00e34efc70f8607",
+        "run_id": "run-801820d23a1442afb390721c02590b65",
+        "status": "completed"
+      },
+      {
+        "region_id": "345af07c12c74535a73d2a34fce71372",
+        "run_id": "run-ae8b61eea2904de0970e3333d8cd9330",
+        "status": "completed"
+      },
+      {
+        "region_id": "3a5b6998b80347cda90ae28887041166",
+        "run_id": "run-817cbbe341f84494a468c62820183a4d",
+        "status": "completed"
+      },
+      {
+        "region_id": "d41991e7657c4001af716c7615f5b487",
+        "run_id": "run-671a58648b124863ae5318a0c6de3291",
+        "status": "completed"
+      },
+      {
+        "region_id": "bdcaaec30a1e4b7e8dcd2ed82af6fc4f",
+        "run_id": "run-10f3400c22f449fbad0deb2db96382e1",
+        "status": "completed"
+      },
+      {
+        "region_id": "5d2bccd45c8643a4a663b293afb32fd3",
+        "run_id": "run-aa8c317fccd64f57be25b86652c21bf7",
+        "status": "completed"
+      },
+      {
+        "region_id": "c05adf9fd5fa489197768acff27a8e5c",
+        "run_id": "run-118249e8dde5470bbcd9ad44e0b6ae48",
+        "status": "completed"
+      },
+      {
+        "region_id": "73d5813197eb435fb8b32b834b2984a2",
+        "run_id": "run-6bd0910c35b1439dbc17575ce00ca729",
+        "status": "completed"
+      },
+      {
+        "region_id": "308307a9461e4096917cc89a9f267633",
+        "run_id": "run-2e6815e5ee1d4679aad64c2a32335bcf",
+        "status": "completed"
+      },
+      {
+        "region_id": "bc95dcac6cf74f6696f81576438693f1",
+        "run_id": "run-32f0097ea4c5488499c19ccf166b3a79",
+        "status": "completed"
+      },
+      {
+        "region_id": "3eb698b9e42146a38e12295315ea8c79",
+        "run_id": "run-38af2b82dff641faa40c92d151e5f32e",
+        "status": "completed"
+      },
+      {
+        "region_id": "9a081eeda776434db45f2844d3574688",
+        "run_id": "run-5653b9a037784212a7b836a7b0da682c",
+        "status": "completed"
+      },
+      {
+        "region_id": "f39ffea6f8834c2fa991225b2e302ffd",
+        "run_id": "run-0959d6cb96a34048a52339973eed6351",
+        "status": "completed"
+      },
+      {
+        "region_id": "8b195e43a8d44fad9041ee4093c07dd6",
+        "run_id": "run-31b771abca0e4e8d943afc1f7d4d72c0",
+        "status": "completed"
+      },
+      {
+        "region_id": "8c8e9691a7f343438493c27e6e4dd426",
+        "run_id": "run-7f0d23c69a0e40d99dc910d4fdd604d6",
+        "status": "completed"
+      },
+      {
+        "region_id": "f714a9dbd7954053a4d11132b953ce2b",
+        "run_id": "run-1cc7adeb46d744fc8d16c4a14b3f1b12",
+        "status": "completed"
+      },
+      {
+        "region_id": "b00a02cfa55d4651aed68589905cf0eb",
+        "run_id": "run-a62f45da03754944badacaa9e335eabb",
+        "status": "completed"
+      },
+      {
+        "region_id": "fe4f99780b6a4f598b7ceb8fedb11023",
+        "run_id": "run-7a8cba072952467fa6c623e496a1f8d6",
+        "status": "completed"
+      },
+      {
+        "region_id": "f55c8969fc694aa78bad0e2304fd0caf",
+        "run_id": "run-d910ba008f394bfeaafbcdf71d171db3",
+        "status": "completed"
+      },
+      {
+        "region_id": "ef610feb08c34a29accca4326d9e0c63",
+        "run_id": "run-f93dd2f8b51649a1ad4bf2405fefc50d",
+        "status": "completed"
+      },
+      {
+        "region_id": "c8420f3e6f034337b3128c5e2e094fa3",
+        "run_id": "run-61b9cdf32da243e0a3012090f665c1cf",
+        "status": "completed"
+      },
+      {
+        "region_id": "a1147d2cc5f147f4bf8e605d4bea8cb3",
+        "run_id": "run-4ea0238d032a4e06aabc9f03693c8337",
+        "status": "completed"
+      },
+      {
+        "region_id": "4cbc96d9f9f3403e93d1cc48714a9ba3",
+        "run_id": "run-fc6e4f30317e4f1a829b8f114aa00ae0",
+        "status": "completed"
+      },
+      {
+        "region_id": "0de43af4f56b41c088701731ce2e5991",
+        "run_id": "run-861af99f334342d39400dc08bffd3505",
+        "status": "completed"
+      },
+      {
+        "region_id": "62b2d2a27cf0406a8506c16bc1a1b78e",
+        "run_id": "run-0ca64cab10c040c893b54583389396a5",
+        "status": "completed"
+      },
+      {
+        "region_id": "9c7426d97e594f71bc97fdfe193e08d3",
+        "run_id": "run-e1486133696f4843a8afcb22cf63ad85",
+        "status": "completed"
+      },
+      {
+        "region_id": "d1eafc0608cd4539b094fc64e6cfc9be",
+        "run_id": "run-38ea29d051cb4fc483c40e4701e9f1e5",
+        "status": "completed"
+      },
+      {
+        "region_id": "df232c4829fc4f4faaea7d369b74904a",
+        "run_id": "run-e81a6cca87d1471abab49c2d4d927903",
+        "status": "completed"
+      },
+      {
+        "region_id": "b535c6ce3f284b0192732de5deb2d367",
+        "run_id": "run-ddccb8ad60474f10b95647107cd2793b",
+        "status": "completed"
+      },
+      {
+        "region_id": "4026895add444577beb2c168ff695fd9",
+        "run_id": "run-ec6c35d966144a868a5e697d4de23fab",
+        "status": "completed"
+      },
+      {
+        "region_id": "2c41d872de0e48e7ba319ec0d8d1a646",
+        "run_id": "run-8a0801ad92e045819cb3121e96a4032b",
+        "status": "completed"
+      },
+      {
+        "region_id": "fbf6149a628c4fb886d0f19182afdf55",
+        "run_id": "run-cdb248f8fdb647559d0c5d93c698b7c6",
+        "status": "completed"
+      },
+      {
+        "region_id": "d7c271e348ad4128bb1fa1d022320341",
+        "run_id": "run-dcc9e4c61acb437dab807fb03c7776da",
+        "status": "completed"
+      },
+      {
+        "region_id": "0ff0138109be46b09f1200aa8a57af5d",
+        "run_id": "run-f9f4b2ca600040418cb7e891931bd889",
+        "status": "completed"
+      },
+      {
+        "region_id": "ec1d88fabb4a4e2bbd77edfa21cbbd34",
+        "run_id": "run-2f9d028784b243bc97d05c313e62a274",
+        "status": "completed"
+      },
+      {
+        "region_id": "da626a422ccb4f15b2d309372ae79c17",
+        "run_id": "run-8a8049b1e0d84a68aa7710cf08d19c59",
+        "status": "completed"
+      },
+      {
+        "region_id": "1202214cd754461ea9c15f5931fb34e6",
+        "run_id": "run-e410cdd2613b4eb6b54e22501e4aaa12",
+        "status": "completed"
+      },
+      {
+        "region_id": "cc9610d163744395a061736212754a81",
+        "run_id": "run-e04b1f4d06784e42929e3ca05fb9c489",
+        "status": "completed"
+      },
+      {
+        "region_id": "8babd84efb634a5cb2b62906d971a07a",
+        "run_id": "run-be7506f6b9fa4e2ea4abb8d27fb0e3fd",
+        "status": "completed"
+      },
+      {
+        "region_id": "20f0ea3287374478bac726fdf999e3e1",
+        "run_id": "run-b016d74c40fa4dfca4a53166191f1895",
+        "status": "completed"
+      },
+      {
+        "region_id": "031482490fe14d8fa1ec2e0f7a26051a",
+        "run_id": "run-78202d7b6b7446c490b0c80f05260223",
+        "status": "completed"
+      },
+      {
+        "region_id": "26c665e74552402582f0c27d07814530",
+        "run_id": "run-5028e9e150b6491eb7e2e5d9be95f209",
+        "status": "completed"
+      },
+      {
+        "region_id": "765274a3c29b40eaaffe7fb6e75d8c83",
+        "run_id": "run-db98d9782e5b4dc992b83b2e0d73f14f",
+        "status": "completed"
+      },
+      {
+        "region_id": "485cdf7323d54a10954d5fa88260b8b2",
+        "run_id": "run-f5595f4e0af841d79753b7c34704002f",
+        "status": "completed"
+      },
+      {
+        "region_id": "ac22a1d7a2c4447f94af614b0c11894c",
+        "run_id": "run-c3a94b04b47d453b89a6d6f2fb58f8a3",
+        "status": "completed"
+      },
+      {
+        "region_id": "d28760bf35614287931f45547703e321",
+        "run_id": "run-cfc54b70ebfd463ca84e330e6db40eb2",
+        "status": "completed"
+      },
+      {
+        "region_id": "008ecf8aa6474f69b38860cbad9110f1",
+        "run_id": "run-1c3f9158153f4a40824b26c442f24bbc",
+        "status": "completed"
+      },
+      {
+        "region_id": "1490b2acaebc4fa7871c707d3c981ce8",
+        "run_id": "run-8a64fdceac9d49dda71fe66e5472c930",
+        "status": "completed"
+      },
+      {
+        "region_id": "9d260bf7bbe149eeb7749089b4c5c0d3",
+        "run_id": "run-18e2ba07f2da4525aafad043a6953cf3",
+        "status": "completed"
+      },
+      {
+        "region_id": "6640982d02dd4b7c9de65e4518e6c7dc",
+        "run_id": "run-772e9edaeb1748a99050a0f2c7f17f21",
+        "status": "completed"
+      },
+      {
+        "region_id": "74c9f9eb9b014200bc0e9735af1c139b",
+        "run_id": "run-51d7fb613fd9463faa0d94d33b661fd7",
+        "status": "completed"
+      },
+      {
+        "region_id": "6f2e9272857444a186187d8f67b9d7a9",
+        "run_id": "run-10e5f7b6f30b448ab88accd34ac8ce9a",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 3322.12
+  },
+  "ocr_details": [
+    {
+      "region_id": "54e673917d674ee39611d03eb3622122",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 486,
+        "y": 344,
+        "width": 153,
+        "height": 45
+      },
+      "ocr_text": "©마사토끼/joana"
+    },
+    {
+      "region_id": "1e0718d52c4c4ed4bc3a53b4e74cf81d",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 204,
+        "y": 619,
+        "width": 123,
+        "height": 47
+      },
+      "ocr_text": "다시 한번!"
+    },
+    {
+      "region_id": "1f849333c57f47a7b3974d83076062f1",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 117,
+        "y": 884,
+        "width": 83,
+        "height": 34
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "47beeeaf6a4742f4a89e090cfd82daf5",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 251,
+        "y": 1172,
+        "width": 147,
+        "height": 51
+      },
+      "ocr_text": "다읽었어?"
+    },
+    {
+      "region_id": "75dd3e670a9544c894ed34ff7f44a930",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 312,
+        "y": 1338,
+        "width": 116,
+        "height": 49
+      },
+      "ocr_text": "으,응…."
+    },
+    {
+      "region_id": "fb25adab7dca47f1a389eb7f08299e7c",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 162,
+        "y": 1547,
+        "width": 210,
+        "height": 82
+      },
+      "ocr_text": "신경쓰이는 게\n많기도 하지만."
+    },
+    {
+      "region_id": "994f107c7c3e439fa9df533368789b48",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 55,
+        "y": 1730,
+        "width": 188,
+        "height": 85
+      },
+      "ocr_text": "기수 선배는\n왜이걸이렇게"
+    },
+    {
+      "region_id": "8c34eb40c6c342838e73462adef63fdb",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 109,
+        "y": 1831,
+        "width": 156,
+        "height": 82
+      },
+      "ocr_text": "멋있게써온\n거지?"
+    },
+    {
+      "region_id": "d4b6e92b923d4d958e2448ca6834b5a8",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 347,
+        "y": 1860,
+        "width": 118,
+        "height": 48
+      },
+      "ocr_text": "신입생도 학생회 활동에\n제약이 없는 공으로"
+    },
+    {
+      "region_id": "a69e5aa6573f4700bd70f21c612d1363",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 274,
+        "y": 1980,
+        "width": 71,
+        "height": 41
+      },
+      "ocr_text": "그러면 한번\n더가능해"
+    },
+    {
+      "region_id": "3cf24d426535406885335f30e0b285a2",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 392,
+        "y": 1987,
+        "width": 206,
+        "height": 84
+      },
+      "ocr_text": "독백까지 대사로\n만들어서"
+    },
+    {
+      "region_id": "ac5193aa48844185bdcc3d61eb9d0943",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 302,
+        "y": 2093,
+        "width": 208,
+        "height": 82
+      },
+      "ocr_text": "풀컬러로 출력한\n웹툰 같잖아."
+    },
+    {
+      "region_id": "6346cb7ccb894c24be02c0dcae16834c",
+      "reading_order": 13,
+      "region_type": "speech",
+      "bbox": {
+        "x": 267,
+        "y": 2349,
+        "width": 203,
+        "height": 82
+      },
+      "ocr_text": "쓰다보니 그렇게\n됐다던데."
+    },
+    {
+      "region_id": "04b3e7ddef6041c89ec0bc2df6785652",
+      "reading_order": 14,
+      "region_type": "speech",
+      "bbox": {
+        "x": 198,
+        "y": 2722,
+        "width": 204,
+        "height": 84
+      },
+      "ocr_text": "증언을 취합하는\n형식이었고"
+    },
+    {
+      "region_id": "e3b0cf86bc7b444fa9db0c2cae13bdd3",
+      "reading_order": 15,
+      "region_type": "speech",
+      "bbox": {
+        "x": 252,
+        "y": 2959,
+        "width": 206,
+        "height": 85
+      },
+      "ocr_text": "지나간얘기가\n워낙인상깊어서"
+    },
+    {
+      "region_id": "2470d8605df94729a6a3a4c355c967c9",
+      "reading_order": 16,
+      "region_type": "speech",
+      "bbox": {
+        "x": 46,
+        "y": 3155,
+        "width": 258,
+        "height": 85
+      },
+      "ocr_text": "정리하다보니 어느덧\n위인전같아졌다고."
+    },
+    {
+      "region_id": "76b697a43be74e0cb7c3183a2d870572",
+      "reading_order": 17,
+      "region_type": "speech",
+      "bbox": {
+        "x": 353,
+        "y": 3546,
+        "width": 180,
+        "height": 121
+      },
+      "ocr_text": "아,아까버린\n부분은 미래의\n내용이야"
+    },
+    {
+      "region_id": "82281bfd25a442e5bcebe5e7972cb640",
+      "reading_order": 18,
+      "region_type": "speech",
+      "bbox": {
+        "x": 418,
+        "y": 3697,
+        "width": 209,
+        "height": 120
+      },
+      "ocr_text": "오미현이정계에\n나타나지금이\n나라를개혁하고"
+    },
+    {
+      "region_id": "b49717217fb14924b774f783ec211974",
+      "reading_order": 19,
+      "region_type": "speech",
+      "bbox": {
+        "x": 188,
+        "y": 3890,
+        "width": 179,
+        "height": 118
+      },
+      "ocr_text": "세계의평화를\n이룩한다는\n이야긴데."
+    },
+    {
+      "region_id": "7ad2bdc348d9431f946eae46aceac4fa",
+      "reading_order": 20,
+      "region_type": "speech",
+      "bbox": {
+        "x": 279,
+        "y": 4163,
+        "width": 79,
+        "height": 33
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "10dd8c5daa994127bd5fd3df3f571cbe",
+      "reading_order": 21,
+      "region_type": "speech",
+      "bbox": {
+        "x": 362,
+        "y": 4555,
+        "width": 222,
+        "height": 85
+      },
+      "ocr_text": "오미현도 킹 카드\n얘기를 들었겠지?"
+    },
+    {
+      "region_id": "3f06cd4ff0c341fdac25aeef4afde34c",
+      "reading_order": 22,
+      "region_type": "speech",
+      "bbox": {
+        "x": 422,
+        "y": 4647,
+        "width": 194,
+        "height": 50
+      },
+      "ocr_text": "무슨 생각일까?"
+    },
+    {
+      "region_id": "18f09d99e78e4e2884a0a23eb37f64a5",
+      "reading_order": 23,
+      "region_type": "speech",
+      "bbox": {
+        "x": 250,
+        "y": 4954,
+        "width": 160,
+        "height": 83
+      },
+      "ocr_text": "글쎄,만나\n보면 알겠지."
+    },
+    {
+      "region_id": "3546ab17ac524e888bf03d33dcd89504",
+      "reading_order": 24,
+      "region_type": "speech",
+      "bbox": {
+        "x": 156,
+        "y": 5062,
+        "width": 185,
+        "height": 83
+      },
+      "ocr_text": "영후가 약속을\n잡겠다고 했어."
+    },
+    {
+      "region_id": "de066c13379f4c30b8b690cbb41da78a",
+      "reading_order": 25,
+      "region_type": "speech",
+      "bbox": {
+        "x": 360,
+        "y": 5709,
+        "width": 180,
+        "height": 84
+      },
+      "ocr_text": "마침…양반은\n못 되는군."
+    },
+    {
+      "region_id": "82fe65a98e724f63aa694bd299b8c689",
+      "reading_order": 26,
+      "region_type": "speech",
+      "bbox": {
+        "x": 413,
+        "y": 6057,
+        "width": 111,
+        "height": 48
+      },
+      "ocr_text": "영후야?"
+    },
+    {
+      "region_id": "8d73dfe0f600409986369c92018c5158",
+      "reading_order": 27,
+      "region_type": "speech",
+      "bbox": {
+        "x": 363,
+        "y": 6511,
+        "width": 245,
+        "height": 119
+      },
+      "ocr_text": "오미현에게 카드와\n보육원대표인\n우리 이야기를했대."
+    },
+    {
+      "region_id": "f3852b5f36004460b26346788dba6eeb",
+      "reading_order": 28,
+      "region_type": "speech",
+      "bbox": {
+        "x": 56,
+        "y": 6770,
+        "width": 257,
+        "height": 118
+      },
+      "ocr_text": "만나고 싶다고했더니\n그쪽도 당장 관심을\n갖더라는군."
+    },
+    {
+      "region_id": "c5595c63ea8749098b5f8612dc103483",
+      "reading_order": 29,
+      "region_type": "speech",
+      "bbox": {
+        "x": 235,
+        "y": 6894,
+        "width": 198,
+        "height": 46
+      },
+      "ocr_text": "오늘 오후네 시."
+    },
+    {
+      "region_id": "ba06fa63950044758d5f6a2f3ebd25e5",
+      "reading_order": 30,
+      "region_type": "speech",
+      "bbox": {
+        "x": 233,
+        "y": 7801,
+        "width": 91,
+        "height": 50
+      },
+      "ocr_text": "응…?"
+    },
+    {
+      "region_id": "108eddef826a4263983fdb056ed229f6",
+      "reading_order": 31,
+      "region_type": "speech",
+      "bbox": {
+        "x": 78,
+        "y": 8943,
+        "width": 148,
+        "height": 76
+      },
+      "ocr_text": "저…,분들은\n누구셔?"
+    },
+    {
+      "region_id": "943ae05e58724e87932d476c28d45451",
+      "reading_order": 32,
+      "region_type": "speech",
+      "bbox": {
+        "x": 373,
+        "y": 9286,
+        "width": 259,
+        "height": 88
+      },
+      "ocr_text": "오미현의 선거운동원\n이었던 애들이야."
+    },
+    {
+      "region_id": "f44232757c3547cb9c2a46497c94db01",
+      "reading_order": 33,
+      "region_type": "speech",
+      "bbox": {
+        "x": 426,
+        "y": 9379,
+        "width": 241,
+        "height": 121
+      },
+      "ocr_text": "선거는 끝났지만\n오미현을도울일이\n있을까 하고"
+    },
+    {
+      "region_id": "7703c65f70ff48e2bd067d9aa6dae35e",
+      "reading_order": 34,
+      "region_type": "speech",
+      "bbox": {
+        "x": 31,
+        "y": 9731,
+        "width": 230,
+        "height": 119
+      },
+      "ocr_text": "수업없을때\n자원봉사처럼모여\n있기로했나봐"
+    },
+    {
+      "region_id": "1d91a83d7f094bb8ac223e9b86d90bd2",
+      "reading_order": 35,
+      "region_type": "speech",
+      "bbox": {
+        "x": 59,
+        "y": 10273,
+        "width": 134,
+        "height": 87
+      },
+      "ocr_text": "믿기힘든\n얘기였어"
+    },
+    {
+      "region_id": "84afd64610ff4b87bd1dae172ffe4454",
+      "reading_order": 36,
+      "region_type": "speech",
+      "bbox": {
+        "x": 28,
+        "y": 10762,
+        "width": 259,
+        "height": 83
+      },
+      "ocr_text": "학생회장이 되고 나서\n받은 카드 한장."
+    },
+    {
+      "region_id": "ef52d00e00be4521892eae25a4b6a0fe",
+      "reading_order": 37,
+      "region_type": "speech",
+      "bbox": {
+        "x": 186,
+        "y": 10851,
+        "width": 163,
+        "height": 117
+      },
+      "ocr_text": "이게학교를\n지배한다는\n상징이라니?"
+    },
+    {
+      "region_id": "92764837a92545d2b9a8f9b987b91bea",
+      "reading_order": 38,
+      "region_type": "speech",
+      "bbox": {
+        "x": 151,
+        "y": 11130,
+        "width": 129,
+        "height": 116
+      },
+      "ocr_text": "나,나도\n처음엔….\n헤헤"
+    },
+    {
+      "region_id": "14bb53ae31b74b18b02997f6e7cb2181",
+      "reading_order": 39,
+      "region_type": "speech",
+      "bbox": {
+        "x": 407,
+        "y": 11321,
+        "width": 125,
+        "height": 85
+      },
+      "ocr_text": "영후한테\n들었는데"
+    },
+    {
+      "region_id": "d2e6a8389f9e4cacadbf18ef06f83e97",
+      "reading_order": 40,
+      "region_type": "speech",
+      "bbox": {
+        "x": 454,
+        "y": 11427,
+        "width": 201,
+        "height": 120
+      },
+      "ocr_text": "보육원은 무슨\n게임같은 걸\n몇 주씩 했다며?"
+    },
+    {
+      "region_id": "df573741005344deb083c908d0d0874a",
+      "reading_order": 41,
+      "region_type": "speech",
+      "bbox": {
+        "x": 34,
+        "y": 11652,
+        "width": 215,
+        "height": 83
+      },
+      "ocr_text": "거기서 결국\n우승한 게 너라고."
+    },
+    {
+      "region_id": "d502048f80d94bcdafd36b498dac310a",
+      "reading_order": 42,
+      "region_type": "speech",
+      "bbox": {
+        "x": 366,
+        "y": 11837,
+        "width": 247,
+        "height": 84
+      },
+      "ocr_text": "우승한 건 맞는데\n딱히한 건 없었고."
+    },
+    {
+      "region_id": "94a9b10db0144136ae8e20e290c337bc",
+      "reading_order": 43,
+      "region_type": "speech",
+      "bbox": {
+        "x": 454,
+        "y": 11944,
+        "width": 187,
+        "height": 50
+      },
+      "ocr_text": "운이 좋아서."
+    },
+    {
+      "region_id": "a1b71b4efbe1416ba55782512838e775",
+      "reading_order": 44,
+      "region_type": "speech",
+      "bbox": {
+        "x": 214,
+        "y": 12230,
+        "width": 129,
+        "height": 49
+      },
+      "ocr_text": "겸손하네."
+    },
+    {
+      "region_id": "1eaeb6d35a9a4775a06f6214fe83dcd9",
+      "reading_order": 45,
+      "region_type": "speech",
+      "bbox": {
+        "x": 75,
+        "y": 12402,
+        "width": 190,
+        "height": 52
+      },
+      "ocr_text": "운도실력이야"
+    },
+    {
+      "region_id": "0f2920f651f64b748841aa607d42533b",
+      "reading_order": 46,
+      "region_type": "speech",
+      "bbox": {
+        "x": 46,
+        "y": 12476,
+        "width": 183,
+        "height": 86
+      },
+      "ocr_text": "그만한 자격이\n있었겠지."
+    },
+    {
+      "region_id": "1f2477248b924c35b128d2f95e87dfe0",
+      "reading_order": 47,
+      "region_type": "speech",
+      "bbox": {
+        "x": 164,
+        "y": 12844,
+        "width": 79,
+        "height": 31
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "8da753f24e354677a498f5a5bab16369",
+      "reading_order": 48,
+      "region_type": "speech",
+      "bbox": {
+        "x": 45,
+        "y": 13174,
+        "width": 174,
+        "height": 52
+      },
+      "ocr_text": "차 더 마실래?"
+    },
+    {
+      "region_id": "0cdc19d7a970479fb317ecd156639db3",
+      "reading_order": 49,
+      "region_type": "speech",
+      "bbox": {
+        "x": 381,
+        "y": 13529,
+        "width": 103,
+        "height": 48
+      },
+      "ocr_text": "앗!응!"
+    },
+    {
+      "region_id": "561b6ee1d4b341e0bf91c10170675b7f",
+      "reading_order": 50,
+      "region_type": "speech",
+      "bbox": {
+        "x": 476,
+        "y": 13744,
+        "width": 140,
+        "height": 118
+      },
+      "ocr_text": "자…,그럼\n보육원의\n카드는?"
+    },
+    {
+      "region_id": "a4be3f640d1941efa8d0c0e37063932a",
+      "reading_order": 51,
+      "region_type": "speech",
+      "bbox": {
+        "x": 146,
+        "y": 14079,
+        "width": 63,
+        "height": 48
+      },
+      "ocr_text": "아?"
+    },
+    {
+      "region_id": "5cbde05ff3aa43e6b7db6b5bd977b08d",
+      "reading_order": 52,
+      "region_type": "speech",
+      "bbox": {
+        "x": 203,
+        "y": 14194,
+        "width": 82,
+        "height": 84
+      },
+      "ocr_text": "어…\n없어."
+    },
+    {
+      "region_id": "d81b7e1f321a42b5828b09a1cf3dfcd4",
+      "reading_order": 53,
+      "region_type": "speech",
+      "bbox": {
+        "x": 71,
+        "y": 14377,
+        "width": 115,
+        "height": 84
+      },
+      "ocr_text": "안가져\n왔는데?"
+    },
+    {
+      "region_id": "4eca9d3c4ce34a1cac1df9af73623758",
+      "reading_order": 54,
+      "region_type": "speech",
+      "bbox": {
+        "x": 376,
+        "y": 14699,
+        "width": 75,
+        "height": 31
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "8aa94f25debd49a7b975b98a77ec1b7e",
+      "reading_order": 55,
+      "region_type": "speech",
+      "bbox": {
+        "x": 107,
+        "y": 14925,
+        "width": 81,
+        "height": 46
+      },
+      "ocr_text": "어…."
+    },
+    {
+      "region_id": "be4ed658d5904a06b4414f89d2c45846",
+      "reading_order": 56,
+      "region_type": "speech",
+      "bbox": {
+        "x": 28,
+        "y": 15250,
+        "width": 124,
+        "height": 82
+      },
+      "ocr_text": "깜박했나\nJ\nㅆ\n보구나."
+    },
+    {
+      "region_id": "9b43d9acf2e548d1ba64b8f4c73eb365",
+      "reading_order": 57,
+      "region_type": "speech",
+      "bbox": {
+        "x": 26,
+        "y": 15357,
+        "width": 193,
+        "height": 83
+      },
+      "ocr_text": "하긴,나도 가끔\n그럴때 있어."
+    },
+    {
+      "region_id": "0673042b789d49b29455621c60534e24",
+      "reading_order": 58,
+      "region_type": "speech",
+      "bbox": {
+        "x": 490,
+        "y": 15489,
+        "width": 112,
+        "height": 49
+      },
+      "ocr_text": "응? 뭘?"
+    },
+    {
+      "region_id": "825c694220774d609834c7bdf00b96a2",
+      "reading_order": 59,
+      "region_type": "speech",
+      "bbox": {
+        "x": 55,
+        "y": 15679,
+        "width": 233,
+        "height": 84
+      },
+      "ocr_text": "카드.보육원까지\n10분 정도 걸리지?"
+    },
+    {
+      "region_id": "79d6cbe005164d1796ba25f3343b2b08",
+      "reading_order": 60,
+      "region_type": "speech",
+      "bbox": {
+        "x": 512,
+        "y": 15925,
+        "width": 156,
+        "height": 118
+      },
+      "ocr_text": "차다시\n데울테니까\n다녀와"
+    },
+    {
+      "region_id": "5176cde7b77e49ae84899dccd7883a87",
+      "reading_order": 61,
+      "region_type": "speech",
+      "bbox": {
+        "x": 37,
+        "y": 16197,
+        "width": 232,
+        "height": 82
+      },
+      "ocr_text": "응? 카드 가져와야\n하는 거였어?"
+    },
+    {
+      "region_id": "25df35c566164716a00e34efc70f8607",
+      "reading_order": 62,
+      "region_type": "speech",
+      "bbox": {
+        "x": 349,
+        "y": 16466,
+        "width": 150,
+        "height": 80
+      },
+      "ocr_text": "그럼 다음에\n주려고?"
+    },
+    {
+      "region_id": "345af07c12c74535a73d2a34fce71372",
+      "reading_order": 63,
+      "region_type": "speech",
+      "bbox": {
+        "x": 134,
+        "y": 16660,
+        "width": 237,
+        "height": 120
+      },
+      "ocr_text": "오래 쥐고 있어봤자\n쓸데없는 생각만\n들테니까."
+    },
+    {
+      "region_id": "3a5b6998b80347cda90ae28887041166",
+      "reading_order": 64,
+      "region_type": "speech",
+      "bbox": {
+        "x": 38,
+        "y": 16800,
+        "width": 244,
+        "height": 118
+      },
+      "ocr_text": "내뜻을 이해했다면\n빨리 넘기는게\n너로서도 좋을텐데?"
+    },
+    {
+      "region_id": "d41991e7657c4001af716c7615f5b487",
+      "reading_order": 65,
+      "region_type": "speech",
+      "bbox": {
+        "x": 377,
+        "y": 17056,
+        "width": 193,
+        "height": 83
+      },
+      "ocr_text": "고마워,날 믿고\n공감해줘서."
+    },
+    {
+      "region_id": "bdcaaec30a1e4b7e8dcd2ed82af6fc4f",
+      "reading_order": 66,
+      "region_type": "speech",
+      "bbox": {
+        "x": 312,
+        "y": 17206,
+        "width": 40,
+        "height": 46
+      },
+      "ocr_text": "?"
+    },
+    {
+      "region_id": "5d2bccd45c8643a4a663b293afb32fd3",
+      "reading_order": 67,
+      "region_type": "speech",
+      "bbox": {
+        "x": 87,
+        "y": 17914,
+        "width": 82,
+        "height": 45
+      },
+      "ocr_text": "어흠"
+    },
+    {
+      "region_id": "c05adf9fd5fa489197768acff27a8e5c",
+      "reading_order": 68,
+      "region_type": "speech",
+      "bbox": {
+        "x": 164,
+        "y": 18059,
+        "width": 159,
+        "height": 83
+      },
+      "ocr_text": "오해가있는\n것 같은데."
+    },
+    {
+      "region_id": "73d5813197eb435fb8b32b834b2984a2",
+      "reading_order": 69,
+      "region_type": "speech",
+      "bbox": {
+        "x": 454,
+        "y": 18227,
+        "width": 218,
+        "height": 118
+      },
+      "ocr_text": "아리가 만나자고\n한건 카드를 주고\n싶어서가 아냐"
+    },
+    {
+      "region_id": "308307a9461e4096917cc89a9f267633",
+      "reading_order": 70,
+      "region_type": "speech",
+      "bbox": {
+        "x": 83,
+        "y": 18489,
+        "width": 65,
+        "height": 50
+      },
+      "ocr_text": "응?"
+    },
+    {
+      "region_id": "bc95dcac6cf74f6696f81576438693f1",
+      "reading_order": 71,
+      "region_type": "speech",
+      "bbox": {
+        "x": 378,
+        "y": 18617,
+        "width": 185,
+        "height": 81
+      },
+      "ocr_text": "대전상대를\n확인하는 거지."
+    },
+    {
+      "region_id": "3eb698b9e42146a38e12295315ea8c79",
+      "reading_order": 72,
+      "region_type": "speech",
+      "bbox": {
+        "x": 43,
+        "y": 19561,
+        "width": 101,
+        "height": 102
+      },
+      "ocr_text": "아\n아악!"
+    },
+    {
+      "region_id": "9a081eeda776434db45f2844d3574688",
+      "reading_order": 73,
+      "region_type": "speech",
+      "bbox": {
+        "x": 277,
+        "y": 19647,
+        "width": 213,
+        "height": 180
+      },
+      "ocr_text": "미,미안!\n내가 무슨.\n막 당선돼서\n들떴었나봐!"
+    },
+    {
+      "region_id": "f39ffea6f8834c2fa991225b2e302ffd",
+      "reading_order": 74,
+      "region_type": "speech",
+      "bbox": {
+        "x": 336,
+        "y": 20029,
+        "width": 143,
+        "height": 43
+      },
+      "ocr_text": "괜…,괜찮아"
+    },
+    {
+      "region_id": "8b195e43a8d44fad9041ee4093c07dd6",
+      "reading_order": 75,
+      "region_type": "speech",
+      "bbox": {
+        "x": 406,
+        "y": 20066,
+        "width": 187,
+        "height": 72
+      },
+      "ocr_text": "나야말로확실히\n설명을 안해서"
+    },
+    {
+      "region_id": "8c8e9691a7f343438493c27e6e4dd426",
+      "reading_order": 76,
+      "region_type": "speech",
+      "bbox": {
+        "x": 27,
+        "y": 20291,
+        "width": 104,
+        "height": 83
+      },
+      "ocr_text": "아아…\n미안해."
+    },
+    {
+      "region_id": "f714a9dbd7954053a4d11132b953ce2b",
+      "reading_order": 77,
+      "region_type": "speech",
+      "bbox": {
+        "x": 89,
+        "y": 20378,
+        "width": 193,
+        "height": 82
+      },
+      "ocr_text": "금방우쭐\n해져서, 자꾸."
+    },
+    {
+      "region_id": "b00a02cfa55d4651aed68589905cf0eb",
+      "reading_order": 78,
+      "region_type": "speech",
+      "bbox": {
+        "x": 484,
+        "y": 20521,
+        "width": 164,
+        "height": 79
+      },
+      "ocr_text": "아우이 성격,\n무심코…."
+    },
+    {
+      "region_id": "fe4f99780b6a4f598b7ceb8fedb11023",
+      "reading_order": 79,
+      "region_type": "speech",
+      "bbox": {
+        "x": 438,
+        "y": 20643,
+        "width": 105,
+        "height": 47
+      },
+      "ocr_text": "미안해!"
+    },
+    {
+      "region_id": "f55c8969fc694aa78bad0e2304fd0caf",
+      "reading_order": 80,
+      "region_type": "speech",
+      "bbox": {
+        "x": 54,
+        "y": 20786,
+        "width": 198,
+        "height": 48
+      },
+      "ocr_text": "괜,괜찮다니까!"
+    },
+    {
+      "region_id": "ef610feb08c34a29accca4326d9e0c63",
+      "reading_order": 81,
+      "region_type": "speech",
+      "bbox": {
+        "x": 38,
+        "y": 20856,
+        "width": 103,
+        "height": 82
+      },
+      "ocr_text": "내가더\n미안!"
+    },
+    {
+      "region_id": "c8420f3e6f034337b3128c5e2e094fa3",
+      "reading_order": 82,
+      "region_type": "speech",
+      "bbox": {
+        "x": 484,
+        "y": 21231,
+        "width": 153,
+        "height": 87
+      },
+      "ocr_text": "정신이\n나갔었나"
+    },
+    {
+      "region_id": "a1147d2cc5f147f4bf8e605d4bea8cb3",
+      "reading_order": 83,
+      "region_type": "speech",
+      "bbox": {
+        "x": 385,
+        "y": 21315,
+        "width": 245,
+        "height": 120
+      },
+      "ocr_text": "사람들이다 내 말에\n동의해줄거라고\n생각하면 안되는데."
+    },
+    {
+      "region_id": "4cbc96d9f9f3403e93d1cc48714a9ba3",
+      "reading_order": 84,
+      "region_type": "speech",
+      "bbox": {
+        "x": 81,
+        "y": 21592,
+        "width": 188,
+        "height": 84
+      },
+      "ocr_text": "정말미안.\n내가좀이래."
+    },
+    {
+      "region_id": "0de43af4f56b41c088701731ce2e5991",
+      "reading_order": 85,
+      "region_type": "speech",
+      "bbox": {
+        "x": 34,
+        "y": 21687,
+        "width": 104,
+        "height": 40
+      },
+      "ocr_text": "OO"
+    },
+    {
+      "region_id": "62b2d2a27cf0406a8506c16bc1a1b78e",
+      "reading_order": 86,
+      "region_type": "speech",
+      "bbox": {
+        "x": 407,
+        "y": 21942,
+        "width": 175,
+        "height": 46
+      },
+      "ocr_text": "괜찮다니까"
+    },
+    {
+      "region_id": "9c7426d97e594f71bc97fdfe193e08d3",
+      "reading_order": 87,
+      "region_type": "speech",
+      "bbox": {
+        "x": 61,
+        "y": 22137,
+        "width": 54,
+        "height": 48
+      },
+      "ocr_text": "아."
+    },
+    {
+      "region_id": "d1eafc0608cd4539b094fc64e6cfc9be",
+      "reading_order": 88,
+      "region_type": "speech",
+      "bbox": {
+        "x": 43,
+        "y": 22298,
+        "width": 263,
+        "height": 121
+      },
+      "ocr_text": "하지만 대전 상대로서\n찾아온거라면\n방심할 수가 없겠네."
+    },
+    {
+      "region_id": "df232c4829fc4f4faaea7d369b74904a",
+      "reading_order": 89,
+      "region_type": "speech",
+      "bbox": {
+        "x": 392,
+        "y": 22764,
+        "width": 61,
+        "height": 49
+      },
+      "ocr_text": "응?"
+    },
+    {
+      "region_id": "b535c6ce3f284b0192732de5deb2d367",
+      "reading_order": 90,
+      "region_type": "speech",
+      "bbox": {
+        "x": 115,
+        "y": 23055,
+        "width": 247,
+        "height": 119
+      },
+      "ocr_text": "내 카드를 빼앗아서\n더높은위치로\n올라가려는 거잖아?"
+    },
+    {
+      "region_id": "4026895add444577beb2c168ff695fd9",
+      "reading_order": 91,
+      "region_type": "speech",
+      "bbox": {
+        "x": 397,
+        "y": 23377,
+        "width": 145,
+        "height": 47
+      },
+      "ocr_text": "그…렇지?"
+    },
+    {
+      "region_id": "2c41d872de0e48e7ba319ec0d8d1a646",
+      "reading_order": 92,
+      "region_type": "speech",
+      "bbox": {
+        "x": 37,
+        "y": 23510,
+        "width": 186,
+        "height": 118
+      },
+      "ocr_text": "나를이긴다면,\n그럴수있다면\n말이지만,"
+    },
+    {
+      "region_id": "fbf6149a628c4fb886d0f19182afdf55",
+      "reading_order": 93,
+      "region_type": "speech",
+      "bbox": {
+        "x": 26,
+        "y": 23885,
+        "width": 209,
+        "height": 115
+      },
+      "ocr_text": "계속 승리해서\n정점에 오르는 게\n목적이고?"
+    },
+    {
+      "region_id": "d7c271e348ad4128bb1fa1d022320341",
+      "reading_order": 94,
+      "region_type": "speech",
+      "bbox": {
+        "x": 473,
+        "y": 23953,
+        "width": 153,
+        "height": 83
+      },
+      "ocr_text": "그럴…수\n있다면야."
+    },
+    {
+      "region_id": "0ff0138109be46b09f1200aa8a57af5d",
+      "reading_order": 95,
+      "region_type": "speech",
+      "bbox": {
+        "x": 37,
+        "y": 24186,
+        "width": 172,
+        "height": 115
+      },
+      "ocr_text": "결국…\n'왕'이라는게\n되겠네?"
+    },
+    {
+      "region_id": "ec1d88fabb4a4e2bbd77edfa21cbbd34",
+      "reading_order": 96,
+      "region_type": "speech",
+      "bbox": {
+        "x": 544,
+        "y": 24504,
+        "width": 121,
+        "height": 81
+      },
+      "ocr_text": "그…·,\n어,\n음\n.··"
+    },
+    {
+      "region_id": "da626a422ccb4f15b2d309372ae79c17",
+      "reading_order": 97,
+      "region_type": "speech",
+      "bbox": {
+        "x": 69,
+        "y": 24733,
+        "width": 180,
+        "height": 51
+      },
+      "ocr_text": "이상하잖아."
+    },
+    {
+      "region_id": "1202214cd754461ea9c15f5931fb34e6",
+      "reading_order": 98,
+      "region_type": "speech",
+      "bbox": {
+        "x": 47,
+        "y": 24793,
+        "width": 138,
+        "height": 82
+      },
+      "ocr_text": "때가\n어느땐데,"
+    },
+    {
+      "region_id": "cc9610d163744395a061736212754a81",
+      "reading_order": 99,
+      "region_type": "speech",
+      "bbox": {
+        "x": 331,
+        "y": 25016,
+        "width": 322,
+        "height": 120
+      },
+      "ocr_text": "권력자들이 토너먼트\n형식으로 다튀서 한 사람을\n왕으로 만든다니."
+    },
+    {
+      "region_id": "8babd84efb634a5cb2b62906d971a07a",
+      "reading_order": 100,
+      "region_type": "speech",
+      "bbox": {
+        "x": 202,
+        "y": 25136,
+        "width": 207,
+        "height": 84
+      },
+      "ocr_text": "그런얘기가말이\n된다고 생각해?"
+    },
+    {
+      "region_id": "20f0ea3287374478bac726fdf999e3e1",
+      "reading_order": 101,
+      "region_type": "speech",
+      "bbox": {
+        "x": 165,
+        "y": 25447,
+        "width": 60,
+        "height": 47
+      },
+      "ocr_text": "어?"
+    },
+    {
+      "region_id": "031482490fe14d8fa1ec2e0f7a26051a",
+      "reading_order": 102,
+      "region_type": "speech",
+      "bbox": {
+        "x": 465,
+        "y": 25654,
+        "width": 172,
+        "height": 48
+      },
+      "ocr_text": "뭐,믿는다쳐."
+    },
+    {
+      "region_id": "26c665e74552402582f0c27d07814530",
+      "reading_order": 103,
+      "region_type": "speech",
+      "bbox": {
+        "x": 49,
+        "y": 25890,
+        "width": 240,
+        "height": 119
+      },
+      "ocr_text": "사립 재단이고.\n비공개로 운영되는\n부분도있을테니까"
+    },
+    {
+      "region_id": "765274a3c29b40eaaffe7fb6e75d8c83",
+      "reading_order": 104,
+      "region_type": "speech",
+      "bbox": {
+        "x": 218,
+        "y": 26023,
+        "width": 131,
+        "height": 49
+      },
+      "ocr_text": "하지만,"
+    },
+    {
+      "region_id": "485cdf7323d54a10954d5fa88260b8b2",
+      "reading_order": 105,
+      "region_type": "speech",
+      "bbox": {
+        "x": 111,
+        "y": 26176,
+        "width": 155,
+        "height": 84
+      },
+      "ocr_text": "민중의 뜻을\n무시하고,"
+    },
+    {
+      "region_id": "ac22a1d7a2c4447f94af614b0c11894c",
+      "reading_order": 106,
+      "region_type": "speech",
+      "bbox": {
+        "x": 189,
+        "y": 26283,
+        "width": 185,
+        "height": 117
+      },
+      "ocr_text": "베일 뒤에서\n돈과 인맥으로\n사람을조종해"
+    },
+    {
+      "region_id": "d28760bf35614287931f45547703e321",
+      "reading_order": 107,
+      "region_type": "speech",
+      "bbox": {
+        "x": 354,
+        "y": 26447,
+        "width": 260,
+        "height": 82
+      },
+      "ocr_text": "숨은 권력을 휘두르는\n어둠 속의 존재가."
+    },
+    {
+      "region_id": "008ecf8aa6474f69b38860cbad9110f1",
+      "reading_order": 108,
+      "region_type": "speech",
+      "bbox": {
+        "x": 67,
+        "y": 26677,
+        "width": 154,
+        "height": 82
+      },
+      "ocr_text": "…되고싶은\n거야?"
+    },
+    {
+      "region_id": "1490b2acaebc4fa7871c707d3c981ce8",
+      "reading_order": 109,
+      "region_type": "speech",
+      "bbox": {
+        "x": 150,
+        "y": 26774,
+        "width": 143,
+        "height": 81
+      },
+      "ocr_text": "그런게\n되고싶어?"
+    },
+    {
+      "region_id": "9d260bf7bbe149eeb7749089b4c5c0d3",
+      "reading_order": 110,
+      "region_type": "speech",
+      "bbox": {
+        "x": 378,
+        "y": 27048,
+        "width": 144,
+        "height": 84
+      },
+      "ocr_text": "생각해보지\n않았어?"
+    },
+    {
+      "region_id": "6640982d02dd4b7c9de65e4518e6c7dc",
+      "reading_order": 111,
+      "region_type": "speech",
+      "bbox": {
+        "x": 346,
+        "y": 27438,
+        "width": 101,
+        "height": 46
+      },
+      "ocr_text": "그건…."
+    },
+    {
+      "region_id": "74c9f9eb9b014200bc0e9735af1c139b",
+      "reading_order": 112,
+      "region_type": "speech",
+      "bbox": {
+        "x": 29,
+        "y": 27559,
+        "width": 193,
+        "height": 120
+      },
+      "ocr_text": "그럼넌\n왜내 킹 카드를\n달라는 건데?"
+    },
+    {
+      "region_id": "6f2e9272857444a186187d8f67b9d7a9",
+      "reading_order": 113,
+      "region_type": "speech",
+      "bbox": {
+        "x": 553,
+        "y": 27995,
+        "width": 101,
+        "height": 47
+      },
+      "ocr_text": "물론…."
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "54e673917d674ee39611d03eb3622122",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "©마사토끼/joana",
+      "translated_text": "©마사토끼/joana",
+      "final_translation": "©마사토끼/joana",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1e0718d52c4c4ed4bc3a53b4e74cf81d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다시 한번!",
+      "translated_text": "再来一次！",
+      "final_translation": "再来一次！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1f849333c57f47a7b3974d83076062f1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "47beeeaf6a4742f4a89e090cfd82daf5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다읽었어?",
+      "translated_text": "读完了吗？",
+      "final_translation": "读完了吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "75dd3e670a9544c894ed34ff7f44a930",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "으,응….",
+      "translated_text": "嗯，嗯……",
+      "final_translation": "嗯，嗯……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fb25adab7dca47f1a389eb7f08299e7c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "신경쓰이는 게\n많기도 하지만.",
+      "translated_text": "虽然在意的事情\n也很多。",
+      "final_translation": "虽然在意的事情\n也很多。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "994f107c7c3e439fa9df533368789b48",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "기수 선배는\n왜이걸이렇게",
+      "translated_text": "骑手前辈\n为什么把这个这样",
+      "final_translation": "骑手前辈\n为什么把这个这样",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8c34eb40c6c342838e73462adef63fdb",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "멋있게써온\n거지?",
+      "translated_text": "写得很帅吧？",
+      "final_translation": "写得很帅吧？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d4b6e92b923d4d958e2448ca6834b5a8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "신입생도 학생회 활동에\n제약이 없는 공으로",
+      "translated_text": "以新生也能不受限制地\n参与学生会活动的名义",
+      "final_translation": "以新生也能不受限制地\n参与学生会活动的名义",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a69e5aa6573f4700bd70f21c612d1363",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그러면 한번\n더가능해",
+      "translated_text": "那么再试一次\n看看能不能行",
+      "final_translation": "那么再试一次\n看看能不能行",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3cf24d426535406885335f30e0b285a2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "독백까지 대사로\n만들어서",
+      "translated_text": "连独白都改成台词",
+      "final_translation": "连独白都改成台词",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ac5193aa48844185bdcc3d61eb9d0943",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "풀컬러로 출력한\n웹툰 같잖아.",
+      "translated_text": "简直就像全彩打印的\n网漫一样。",
+      "final_translation": "简直就像全彩打印的\n网漫一样。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6346cb7ccb894c24be02c0dcae16834c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "쓰다보니 그렇게\n됐다던데.",
+      "translated_text": "写着写着就变成那样了。",
+      "final_translation": "写着写着就变成那样了。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "04b3e7ddef6041c89ec0bc2df6785652",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "증언을 취합하는\n형식이었고",
+      "translated_text": "是汇总证词的形式",
+      "final_translation": "是汇总证词的形式",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e3b0cf86bc7b444fa9db0c2cae13bdd3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "지나간얘기가\n워낙인상깊어서",
+      "translated_text": "过去的故事\n印象太深刻了",
+      "final_translation": "过去的故事\n印象太深刻了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2470d8605df94729a6a3a4c355c967c9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "정리하다보니 어느덧\n위인전같아졌다고.",
+      "translated_text": "整理着整理着，不知不觉\n就变得像伟人传记了。",
+      "final_translation": "整理着整理着，不知不觉\n就变得像伟人传记了。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "76b697a43be74e0cb7c3183a2d870572",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아,아까버린\n부분은 미래의\n내용이야",
+      "translated_text": "啊，刚才\n丢掉的部分\n是未来的内容",
+      "final_translation": "啊，刚才\n丢掉的部分\n是未来的内容",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "82281bfd25a442e5bcebe5e7972cb640",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오미현이정계에\n나타나지금이\n나라를개혁하고",
+      "translated_text": "吴美贤出现在政界\n如今\n改革这个国家",
+      "final_translation": "吴美贤出现在政界\n如今\n改革这个国家",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b49717217fb14924b774f783ec211974",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "세계의평화를\n이룩한다는\n이야긴데.",
+      "translated_text": "说是要实现\n世界和平\n来着。",
+      "final_translation": "说是要实现\n世界和平\n来着。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7ad2bdc348d9431f946eae46aceac4fa",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "10dd8c5daa994127bd5fd3df3f571cbe",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오미현도 킹 카드\n얘기를 들었겠지?",
+      "translated_text": "吴美贤也听说过\nKing Card的事了吧？",
+      "final_translation": "吴美贤也听说过\nKing Card的事了吧？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3f06cd4ff0c341fdac25aeef4afde34c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "무슨 생각일까?",
+      "translated_text": "在想什么呢？",
+      "final_translation": "在想什么呢？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "18f09d99e78e4e2884a0a23eb37f64a5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "글쎄,만나\n보면 알겠지.",
+      "translated_text": "嗯，见了面就知道了。",
+      "final_translation": "嗯，见了面就知道了。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3546ab17ac524e888bf03d33dcd89504",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "영후가 약속을\n잡겠다고 했어.",
+      "translated_text": "英厚说会约个时间。",
+      "final_translation": "英厚说会约个时间。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "de066c13379f4c30b8b690cbb41da78a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "마침…양반은\n못 되는군.",
+      "translated_text": "正好……看来是\n当不成两班了。",
+      "final_translation": "正好……看来是\n当不成两班了。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "82fe65a98e724f63aa694bd299b8c689",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "영후야?",
+      "translated_text": "英侯？",
+      "final_translation": "英侯？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8d73dfe0f600409986369c92018c5158",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오미현에게 카드와\n보육원대표인\n우리 이야기를했대.",
+      "translated_text": "听说跟吴美贤说了\n关于卡片和\n身为保育院代表的\n我们的事。",
+      "final_translation": "听说跟吴美贤说了\n关于卡片和\n身为保育院代表的\n我们的事。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f3852b5f36004460b26346788dba6eeb",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "만나고 싶다고했더니\n그쪽도 당장 관심을\n갖더라는군.",
+      "translated_text": "我说想见你，结果对方也立刻产生了兴趣。",
+      "final_translation": "我说想见你，结果对方也立刻产生了兴趣。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c5595c63ea8749098b5f8612dc103483",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오늘 오후네 시.",
+      "translated_text": "今天下午四点。",
+      "final_translation": "今天下午四点。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ba06fa63950044758d5f6a2f3ebd25e5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "응…?",
+      "translated_text": "嗯…？",
+      "final_translation": "嗯…？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "108eddef826a4263983fdb056ed229f6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "저…,분들은\n누구셔?",
+      "translated_text": "那…你们是谁？",
+      "final_translation": "那…你们是谁？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "943ae05e58724e87932d476c28d45451",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오미현의 선거운동원\n이었던 애들이야.",
+      "translated_text": "他们曾是吴美贤的竞选团队成员。",
+      "final_translation": "他们曾是吴美贤的竞选团队成员。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f44232757c3547cb9c2a46497c94db01",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "선거는 끝났지만\n오미현을도울일이\n있을까 하고",
+      "translated_text": "选举虽然结束了\n但想着会不会有\n能帮到吴美贤的事",
+      "final_translation": "选举虽然结束了\n但想着会不会有\n能帮到吴美贤的事",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7703c65f70ff48e2bd067d9aa6dae35e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "수업없을때\n자원봉사처럼모여\n있기로했나봐",
+      "translated_text": "看来是约好了没课的时候\n像做志愿服务一样聚在一起",
+      "final_translation": "看来是约好了没课的时候\n像做志愿服务一样聚在一起",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1d91a83d7f094bb8ac223e9b86d90bd2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "믿기힘든\n얘기였어",
+      "translated_text": "真是难以置信的事",
+      "final_translation": "真是难以置信的事",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "84afd64610ff4b87bd1dae172ffe4454",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "학생회장이 되고 나서\n받은 카드 한장.",
+      "translated_text": "当上学生会会长后\n收到的一张卡片。",
+      "final_translation": "当上学生会会长后\n收到的一张卡片。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ef52d00e00be4521892eae25a4b6a0fe",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이게학교를\n지배한다는\n상징이라니?",
+      "translated_text": "这就是统治学校的象征吗？",
+      "final_translation": "这就是统治学校的象征吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "92764837a92545d2b9a8f9b987b91bea",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나,나도\n처음엔….\n헤헤",
+      "translated_text": "我、我也是\n一开始……\n嘿嘿",
+      "final_translation": "我、我也是\n一开始……\n嘿嘿",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "14bb53ae31b74b18b02997f6e7cb2181",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "영후한테\n들었는데",
+      "translated_text": "听英厚说",
+      "final_translation": "听英厚说",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d2e6a8389f9e4cacadbf18ef06f83e97",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "보육원은 무슨\n게임같은 걸\n몇 주씩 했다며?",
+      "translated_text": "听说保育院\n玩什么游戏\n一玩就是好几周？",
+      "final_translation": "听说保育院\n玩什么游戏\n一玩就是好几周？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "df573741005344deb083c908d0d0874a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "거기서 결국\n우승한 게 너라고.",
+      "translated_text": "结果在那里夺冠的人就是你。",
+      "final_translation": "结果在那里夺冠的人就是你。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d502048f80d94bcdafd36b498dac310a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "우승한 건 맞는데\n딱히한 건 없었고.",
+      "translated_text": "虽然确实赢了\n但也没做什么特别的事。",
+      "final_translation": "虽然确实赢了\n但也没做什么特别的事。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "94a9b10db0144136ae8e20e290c337bc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "운이 좋아서.",
+      "translated_text": "因为运气好。",
+      "final_translation": "因为运气好。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a1b71b4efbe1416ba55782512838e775",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "겸손하네.",
+      "translated_text": "真谦虚啊。",
+      "final_translation": "真谦虚啊。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1eaeb6d35a9a4775a06f6214fe83dcd9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "운도실력이야",
+      "translated_text": "是运气和实力",
+      "final_translation": "是运气和实力",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0f2920f651f64b748841aa607d42533b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그만한 자격이\n있었겠지.",
+      "translated_text": "应该有相应的资格吧。",
+      "final_translation": "应该有相应的资格吧。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1f2477248b924c35b128d2f95e87dfe0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "8da753f24e354677a498f5a5bab16369",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "차 더 마실래?",
+      "translated_text": "要再喝点茶吗？",
+      "final_translation": "要再喝点茶吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0cdc19d7a970479fb317ecd156639db3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "앗!응!",
+      "translated_text": "啊！嗯！",
+      "final_translation": "啊！嗯！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "561b6ee1d4b341e0bf91c10170675b7f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "자…,그럼\n보육원의\n카드는?",
+      "translated_text": "那…那么\n保育院的\n卡片呢？",
+      "final_translation": "那…那么\n保育院的\n卡片呢？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a4be3f640d1941efa8d0c0e37063932a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아?",
+      "translated_text": "啊？",
+      "final_translation": "啊？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5cbde05ff3aa43e6b7db6b5bd977b08d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어…\n없어.",
+      "translated_text": "呃…\n没有。",
+      "final_translation": "呃…\n没有。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d81b7e1f321a42b5828b09a1cf3dfcd4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "안가져\n왔는데?",
+      "translated_text": "没带\n来吗？",
+      "final_translation": "没带\n来吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4eca9d3c4ce34a1cac1df9af73623758",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "8aa94f25debd49a7b975b98a77ec1b7e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어….",
+      "translated_text": "呃…。",
+      "final_translation": "呃…。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "be4ed658d5904a06b4414f89d2c45846",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "깜박했나\nJ\nㅆ\n보구나.",
+      "translated_text": "忘了吗\nJ\nㅆ\n看来是。",
+      "final_translation": "忘了吗\nJ\nㅆ\n看来是。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9b43d9acf2e548d1ba64b8f4c73eb365",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "하긴,나도 가끔\n그럴때 있어.",
+      "translated_text": "话说回来，我偶尔也会有那种时候。",
+      "final_translation": "话说回来，我偶尔也会有那种时候。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0673042b789d49b29455621c60534e24",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "응? 뭘?",
+      "translated_text": "嗯？什么？",
+      "final_translation": "嗯？什么？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "825c694220774d609834c7bdf00b96a2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "카드.보육원까지\n10분 정도 걸리지?",
+      "translated_text": "卡德。到保育院\n大概要10分钟吧？",
+      "final_translation": "卡德。到保育院\n大概要10分钟吧？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "79d6cbe005164d1796ba25f3343b2b08",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "차다시\n데울테니까\n다녀와",
+      "translated_text": "我会再热一下\n所以去吧",
+      "final_translation": "我会再热一下\n所以去吧",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5176cde7b77e49ae84899dccd7883a87",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "응? 카드 가져와야\n하는 거였어?",
+      "translated_text": "嗯？原来是要拿卡的吗？",
+      "final_translation": "嗯？原来是要拿卡的吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "25df35c566164716a00e34efc70f8607",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그럼 다음에\n주려고?",
+      "translated_text": "那下次\n再给你？",
+      "final_translation": "那下次\n再给你？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "345af07c12c74535a73d2a34fce71372",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오래 쥐고 있어봤자\n쓸데없는 생각만\n들테니까.",
+      "translated_text": "握久了也只会\n胡思乱想而已。",
+      "final_translation": "握久了也只会\n胡思乱想而已。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3a5b6998b80347cda90ae28887041166",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "내뜻을 이해했다면\n빨리 넘기는게\n너로서도 좋을텐데?",
+      "translated_text": "既然明白了我的意思\n快点翻过去\n对你来说也更好吧？",
+      "final_translation": "既然明白了我的意思\n快点翻过去\n对你来说也更好吧？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d41991e7657c4001af716c7615f5b487",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "고마워,날 믿고\n공감해줘서.",
+      "translated_text": "谢谢你，愿意相信我\n并产生共鸣。",
+      "final_translation": "谢谢你，愿意相信我\n并产生共鸣。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "bdcaaec30a1e4b7e8dcd2ed82af6fc4f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "?",
+      "translated_text": "？",
+      "final_translation": "？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5d2bccd45c8643a4a663b293afb32fd3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어흠",
+      "translated_text": "咳咳",
+      "final_translation": "咳咳",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c05adf9fd5fa489197768acff27a8e5c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "오해가있는\n것 같은데.",
+      "translated_text": "好像有误会。",
+      "final_translation": "好像有误会。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "73d5813197eb435fb8b32b834b2984a2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아리가 만나자고\n한건 카드를 주고\n싶어서가 아냐",
+      "translated_text": "有里说要见面\n并不是因为\n想把卡给你",
+      "final_translation": "有里说要见面\n并不是因为\n想把卡给你",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "308307a9461e4096917cc89a9f267633",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "응?",
+      "translated_text": "嗯？",
+      "final_translation": "嗯？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "bc95dcac6cf74f6696f81576438693f1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "대전상대를\n확인하는 거지.",
+      "translated_text": "确认对战对手。",
+      "final_translation": "确认对战对手。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3eb698b9e42146a38e12295315ea8c79",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아\n아악!",
+      "translated_text": "啊\n啊啊！",
+      "final_translation": "啊\n啊啊！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9a081eeda776434db45f2844d3574688",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "미,미안!\n내가 무슨.\n막 당선돼서\n들떴었나봐!",
+      "translated_text": "对、对不起！\n我不知怎么的。\n刚当选\n有点得意忘形了！",
+      "final_translation": "对、对不起！\n我不知怎么的。\n刚当选\n有点得意忘形了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f39ffea6f8834c2fa991225b2e302ffd",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "괜…,괜찮아",
+      "translated_text": "没…没事",
+      "final_translation": "没…没事",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8b195e43a8d44fad9041ee4093c07dd6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나야말로확실히\n설명을 안해서",
+      "translated_text": "我才确实\n没有解释",
+      "final_translation": "我才确实\n没有解释",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8c8e9691a7f343438493c27e6e4dd426",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아아…\n미안해.",
+      "translated_text": "啊啊…\n对不起。",
+      "final_translation": "啊啊…\n对不起。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f714a9dbd7954053a4d11132b953ce2b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "금방우쭐\n해져서, 자꾸.",
+      "translated_text": "马上就得意忘形，老是。",
+      "final_translation": "马上就得意忘形，老是。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b00a02cfa55d4651aed68589905cf0eb",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아우이 성격,\n무심코….",
+      "translated_text": "哎呀这性格，\n不小心……",
+      "final_translation": "哎呀这性格，\n不小心……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fe4f99780b6a4f598b7ceb8fedb11023",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "미안해!",
+      "translated_text": "对不起！",
+      "final_translation": "对不起！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f55c8969fc694aa78bad0e2304fd0caf",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "괜,괜찮다니까!",
+      "translated_text": "没、没事啦！",
+      "final_translation": "没、没事啦！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ef610feb08c34a29accca4326d9e0c63",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "내가더\n미안!",
+      "translated_text": "我更\n抱歉！",
+      "final_translation": "我更\n抱歉！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c8420f3e6f034337b3128c5e2e094fa3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "정신이\n나갔었나",
+      "translated_text": "我疯了吗",
+      "final_translation": "我疯了吗",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a1147d2cc5f147f4bf8e605d4bea8cb3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "사람들이다 내 말에\n동의해줄거라고\n생각하면 안되는데.",
+      "translated_text": "不能以为人们会同意我的话。",
+      "final_translation": "不能以为人们会同意我的话。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4cbc96d9f9f3403e93d1cc48714a9ba3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "정말미안.\n내가좀이래.",
+      "translated_text": "真的很抱歉。\n我有点这样。",
+      "final_translation": "真的很抱歉。\n我有点这样。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0de43af4f56b41c088701731ce2e5991",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "OO",
+      "translated_text": "哦哦",
+      "final_translation": "哦哦",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "62b2d2a27cf0406a8506c16bc1a1b78e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "괜찮다니까",
+      "translated_text": "我说了没事",
+      "final_translation": "我说了没事",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9c7426d97e594f71bc97fdfe193e08d3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아.",
+      "translated_text": "啊。",
+      "final_translation": "啊。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d1eafc0608cd4539b094fc64e6cfc9be",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "하지만 대전 상대로서\n찾아온거라면\n방심할 수가 없겠네.",
+      "translated_text": "但如果是作为对战对手\n找上门来的话\n那就不能掉以轻心了。",
+      "final_translation": "但如果是作为对战对手\n找上门来的话\n那就不能掉以轻心了。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "df232c4829fc4f4faaea7d369b74904a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "응?",
+      "translated_text": "嗯？",
+      "final_translation": "嗯？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b535c6ce3f284b0192732de5deb2d367",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "내 카드를 빼앗아서\n더높은위치로\n올라가려는 거잖아?",
+      "translated_text": "抢走我的卡\n想爬到\n更高的位置上去，对吧？",
+      "final_translation": "抢走我的卡\n想爬到\n更高的位置上去，对吧？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4026895add444577beb2c168ff695fd9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그…렇지?",
+      "translated_text": "是…这样吧？",
+      "final_translation": "是…这样吧？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2c41d872de0e48e7ba319ec0d8d1a646",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나를이긴다면,\n그럴수있다면\n말이지만,",
+      "translated_text": "如果能赢过我，\n如果真能做到的话\n倒也不是不行，",
+      "final_translation": "如果能赢过我，\n如果真能做到的话\n倒也不是不行，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fbf6149a628c4fb886d0f19182afdf55",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "계속 승리해서\n정점에 오르는 게\n목적이고?",
+      "translated_text": "不断获胜\n登上顶峰\n就是目的吗？",
+      "final_translation": "不断获胜\n登上顶峰\n就是目的吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d7c271e348ad4128bb1fa1d022320341",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그럴…수\n있다면야.",
+      "translated_text": "如果……\n可以的话。",
+      "final_translation": "如果……\n可以的话。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0ff0138109be46b09f1200aa8a57af5d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "결국…\n'왕'이라는게\n되겠네?",
+      "translated_text": "结果…\n还是成了\n'王'吗？",
+      "final_translation": "结果…\n还是成了\n'王'吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ec1d88fabb4a4e2bbd77edfa21cbbd34",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그…·,\n어,\n음\n.··",
+      "translated_text": "那…、\n呃、\n嗯\n.··",
+      "final_translation": "那…、\n呃、\n嗯\n.··",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "da626a422ccb4f15b2d309372ae79c17",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이상하잖아.",
+      "translated_text": "很奇怪啊。",
+      "final_translation": "很奇怪啊。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1202214cd754461ea9c15f5931fb34e6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "때가\n어느땐데,",
+      "translated_text": "都什么时候了，",
+      "final_translation": "都什么时候了，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "cc9610d163744395a061736212754a81",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "권력자들이 토너먼트\n형식으로 다튀서 한 사람을\n왕으로 만든다니.",
+      "translated_text": "掌权者们以淘汰赛的形式对决，最终让一个人成为国王。",
+      "final_translation": "掌权者们以淘汰赛的形式对决，最终让一个人成为国王。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8babd84efb634a5cb2b62906d971a07a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그런얘기가말이\n된다고 생각해?",
+      "translated_text": "你觉得那种话\n说得通吗？",
+      "final_translation": "你觉得那种话\n说得通吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "20f0ea3287374478bac726fdf999e3e1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어?",
+      "translated_text": "嗯？",
+      "final_translation": "嗯？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "031482490fe14d8fa1ec2e0f7a26051a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭐,믿는다쳐.",
+      "translated_text": "嘛，就算信你吧。",
+      "final_translation": "嘛，就算信你吧。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "26c665e74552402582f0c27d07814530",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "사립 재단이고.\n비공개로 운영되는\n부분도있을테니까",
+      "translated_text": "是私立财团。\n应该也有非公开运营的部分。",
+      "final_translation": "是私立财团。\n应该也有非公开运营的部分。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "765274a3c29b40eaaffe7fb6e75d8c83",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "하지만,",
+      "translated_text": "但是，",
+      "final_translation": "但是，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "485cdf7323d54a10954d5fa88260b8b2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "민중의 뜻을\n무시하고,",
+      "translated_text": "无视民众的意愿，",
+      "final_translation": "无视民众的意愿，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ac22a1d7a2c4447f94af614b0c11894c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "베일 뒤에서\n돈과 인맥으로\n사람을조종해",
+      "translated_text": "在面纱背后\n用金钱和人脉\n操纵他人",
+      "final_translation": "在面纱背后\n用金钱和人脉\n操纵他人",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d28760bf35614287931f45547703e321",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "숨은 권력을 휘두르는\n어둠 속의 존재가.",
+      "translated_text": "在暗中操纵隐藏权力的\n黑暗中的存在。",
+      "final_translation": "在暗中操纵隐藏权力的\n黑暗中的存在。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "008ecf8aa6474f69b38860cbad9110f1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "…되고싶은\n거야?",
+      "translated_text": "……想变成\n那样吗？",
+      "final_translation": "……想变成\n那样吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1490b2acaebc4fa7871c707d3c981ce8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그런게\n되고싶어?",
+      "translated_text": "你想变成\n那样吗？",
+      "final_translation": "你想变成\n那样吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9d260bf7bbe149eeb7749089b4c5c0d3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "생각해보지\n않았어?",
+      "translated_text": "没想过吗？",
+      "final_translation": "没想过吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6640982d02dd4b7c9de65e4518e6c7dc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그건….",
+      "translated_text": "那个……",
+      "final_translation": "那个……",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "74c9f9eb9b014200bc0e9735af1c139b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그럼넌\n왜내 킹 카드를\n달라는 건데?",
+      "translated_text": "那你\n为什么要我的\n国王卡？",
+      "final_translation": "那你\n为什么要我的\n国王卡？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6f2e9272857444a186187d8f67b9d7a9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "물론….",
+      "translated_text": "当然……",
+      "final_translation": "当然……",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-dc477235bb2a",
+    "file": "K04-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\export\\K04-translated.png",
+    "sha256": "1fbf427f7361c2a9cfd8d1d651024e2a829a71dc9c46a30ee29f5aa4e7883b7d",
+    "size": 10735589,
+    "translated_revision_id": "2fd47e007e6640bfabef45cb22350976"
+  },
+  "attribution": [
+    "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "defect:run2-region-chain"
+  ],
+  "source_size": [
+    690,
+    28156
+  ],
+  "source_sha256_recomputed": "8bfad8af8e4f7ca594f8223d1b0fffbc916a8617a64baa1c381f078f0e4c1873",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K04-_snm1jo_",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\ocr\\crops\\K04",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 111,
+    "n_target_region_calls": 111,
+    "input_est_tokens_total": 61329,
+    "output_est_tokens_total": 6055
+  },
+  "finished_at_utc": "2026-10-02T01:07:37Z",
+  "wall_s": 3403.98,
+  "pipeline_completed": false
+}
