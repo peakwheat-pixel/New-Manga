@@ -122,6 +122,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-TASKS-PRIMARY-SFX-GATE](tasks/M2-TASKS-PRIMARY-SFX-GATE.md) primary region 重决策（裁决②） | **done**（integration=`0820d3d5`、merge=`16eb80ce`；DSH r1 有条件通过 0×P0/P1，2×P2 文档/口径级条件闭合） | ZCode / DeepSeek Harness | fork=`1c3ac590`、delivery=`19bf234a`；primary 与 secondaries 统一 `_plan_region` live-Region 重决策（页级决策链退役、SFX 门全域生效 D06 §85、terminal 账目统一 progress 1.0）；DSH 反例红态固化（SFX primary+manual ⇒ RUN≠SKIP_POLICY）；等价性护栏（非 SFX step-for-step 全等）；双侧 627+1sk/630+1sk 精确复现；post-merge 576+1sk；follow-ups：except 收窄/translate-primary 覆盖；[DSH r1](reviews/M2-TASKS-PRIMARY-SFX-GATE-19bf234a-dsh-r1.md)。 |
 | [M2-TA3-B2-KO-RERUN](tasks/M2-TA3-B2-KO-RERUN.md) TA3-B2 ko qualification 重跑（裁决③） | **进行中**（第二波释放；前置=PRIMARY-SFX-GATE 集成已满足） | ZCode / DeepSeek Harness | ko 10 case 重跑（TILING 解锁 F1+ALLOC 解锁 F2）；成本受控（先单 case 试算）；K19/F4 维持登记；[Task](tasks/M2-TA3-B2-KO-RERUN.md)。 |
 | [M2-SFX-E2E-MATERIAL](tasks/M2-SFX-E2E-MATERIAL.md) SFX 端到端验证+素材扩展（裁决④全权授权） | **done**（merge=`68b351ad`；DSH r1 有条件通过 1×P1 → 返修 R1-R10 全 closed → r2 `approved`） | ZCode / DeepSeek Harness | **SFX 翻译链端到端闭环实证**（BJ06：gate 放行 8/8/译文落库 8/8 非空/ハチン→啪 文化对等/speech 零扰动）；素材许可先行（densho810 vol03 三条 JASRAC 清单复证）+3 页入池（cases.json 97→100）；**检测段=真实瓶颈**（chiqui7 BJ 毛笔竖排 0 命中+误路由 speech 乱译进渲染损害形态=域扩展优先级输入）；成本 68 请求 40.7k est token；[sfx-e2e-report](../verification/M2-SFX-E2E-MATERIAL/sfx-e2e-report.md)、[DSH r2](reviews/M2-SFX-E2E-MATERIAL-f53dd445-dsh-r2.md)。 |
+| [M2-DETECTION-HYGIENE](tasks/M2-DETECTION-HYGIENE.md) 检测/调度面 hygiene 一揽子 | **done**（merge=`45bae782`；r1 有条件 5×P2 → 返修 → **r2 抓 P0**（R1 lazy split 被红态归档 checkout-恢复抹除——BACKFILL R9 同款第二次）→ 修复+事故登记+流程修正 → r3 P0 closed） | ZCode（主会话直接实现，周配额约束） / DeepSeek Harness | TILING R1/R3（`_tiling_trigger_ratio` eager+几何旋钮 lazy 于 tiled 分支=普通页零变化恢复；空/空白 env typed 拒绝 +10 用例红→绿+行为级红态归档）；BACKFILL N1（except 收窄白名单+commit 路径包护+桩测试按 DSH 配方重建钉 post-R3 语义含 DB_FAILED 码弱点登记）；SETTINGS-IPC R7/R8 集成方闭合；三套件 **611+1sk**/cargo 46+1ig/vitest 49；[DSH r2](reviews/M2-DETECTION-HYGIENE-02b6d2a2-dsh-r2.md)、[r3](reviews/M2-DETECTION-HYGIENE-52585b64-dsh-r3.md)、[集成记录](../verification/M2-DETECTION-HYGIENE/integration.md)。 |
 | [M2-TA3-B3-KO-FULLRUN](tasks/M2-TA3-B3-KO-FULLRUN.md) ko 全量补跑（裁决①②③⑥⑦） | **进行中**（Owner 长跑执行中；预算 220 万 est token 用户背书=案例级豁免记录） | ZCode / DeepSeek Harness | 8 case=7 停跑+K02 干净版；F1/F2 关闭确认+相似度 known-limitation 落 thresholds；[Task](tasks/M2-TA3-B3-KO-FULLRUN.md)。 |
 | [M2-SETTINGS-IPC-CHANNEL](tasks/M2-SETTINGS-IPC-CHANNEL.md) settings IPC 通道（裁决①） | **进行中**（Owner 执行中：M2-C1 rev+Rust 两命令+core 桥+前端接通） | ZCode / DeepSeek Harness | 解除 SFX-UI blocked_on_contract；写入端前置校验（SFX-ENTRY R4 教训）；[Task](tasks/M2-SETTINGS-IPC-CHANNEL.md)。 |
 | [M2-TA3-B2-KO-RERUN](tasks/M2-TA3-B2-KO-RERUN.md) TA3-B2 ko qualification 重跑（裁决③） | **done**（交付 @`60a04ba3`；DSH r1 `approved` 有条件 0×P0/P1——纯文档返修 R1-R11 全 closed @`0ba046b8`） | ZCode / DeepSeek Harness | **事件驱动停跑**：K02 试算实证 F1 解锁（93 region 全链 export OK、93/93 译文）；外推 63.2-209 万 est token 超停跑口径→7 case 停等 §7 裁决（实际 ≈347 请求 ≈20.4 万）；CER 0.0556 6/6 逐位复现；K11 相似度 Gate 自然 FAIL（min 0.4615=CALIB 局限 8 首测）；sfx.policy=translate 语义验证（素材缺口）；DeepSeek 故障窗 115 分钟 typed fail-closed 韧性实证；三控件落地（--determinism-track/--sfx-policy/--meter-translation）；**§7 七项裁决移交用户**（含 50 万红线追认 §7.5）；[ko-rerun-report](../verification/M2-TA3-B/ko-rerun-report.md)、[DSH r1](reviews/M2-TA3-B2-KO-RERUN-36971e97-dsh-r1.md)。 |
@@ -193,6 +194,7 @@ flowchart TD
   TA3B -.-> KOR["M2-TA3-B2-KO-RERUN ko 重跑 · O:ZCode ✓（F1 解锁实证 K02；7 case 停等 §7 裁决；CER 0.0556 复现）"]
   TA3B -.-> SIP["M2-SETTINGS-IPC-CHANNEL settings 通道 · O:ZCode ✓（M2-C1 1.3；GATE 重跑 PASS 25/25）"]
   TA3B -.-> FULL["M2-TA3-B3-KO-FULLRUN ko 全量补跑 · 进行中（用户预算背书 2.2M）"]
+  TA3B -.-> HYG["M2-DETECTION-HYGIENE hygiene 一揽子 · O:ZCode ✓（r2 抓 P0 checkout-restore 抹除；事故登记+流程修正）"]
   TA3B -.-> SMAT["M2-SFX-E2E-MATERIAL SFX 端到端+素材 · O:ZCode ✓（BJ06 8/8 闭环；检测盲区=域扩展优先级输入）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
@@ -216,7 +218,7 @@ flowchart TD
 
 
   
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2,TIL,BKF,PSG,SIP,SUI,KOR,SMAT done;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2,TIL,BKF,PSG,SIP,SUI,KOR,SMAT,HYG done;
   
 ```
 
