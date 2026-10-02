@@ -15,3 +15,12 @@
 ## 环境（fresh worktree 搭建记录）
 
 build_sidecar.ps1（sidecar）+ npm install + npm run build（frontend/dist）——README §2.0 两前置；build.rs fail-closed 与 generate_context! 编译期检查均按设计工作。
+
+
+## r2 P0 事故登记（同款错误第二次发生，流程修正）
+
+r2 抓住 P0：r1-R1 的 lazy split 被红态归档的 `git checkout HEAD -- <file>` 恢复操作**抹掉**（HEAD 此刻=implement commit，恢复即回到无修复版本），且 `git add -A` 时该文件与 HEAD 零 diff → 修复从 02b6d2a2 **零痕迹消失**——与 BACKFILL R9 红态归档抹掉 R6/R7 修改是**同一失败模式第二次发生**。
+
+流程修正（已生效）：
+1. 红态归档的 checkout-恢复后，**必须重新核对当时工作区的全部未提交修改**（`git status`+逐文件 diff 对照修改清单），而非仅确认目标文件恢复。
+2. 红态归档前**先 commit 已完成的修改**（红态 checkout 只应发生在干净树上）——本 Task 修复已按此重做：lazy split 重新应用（ed86cc46 前刀）→ 绿态重归档（tiling 82/82）→ 三套件 611+1sk 复跑。
