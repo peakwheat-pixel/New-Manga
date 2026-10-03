@@ -2,7 +2,7 @@
 id: M2-TA3-B3-KO-FULLRUN
 title: "ko 全量补跑（用户裁决④⑦⑧：7 case 全量+K02 干净重跑；F1/F2 关闭确认；相似度 known-limitation 落地）"
 kind: qualification
-status: delivered
+status: done
 approval: user_ruling_2026-10-02_seven_items
 suggested_owner: ZCode
 owner: ZCode
@@ -10,7 +10,7 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-TA3-B2-KO-RERUN]
 base_commit: 73252798
-delivery_head: 见 handoff（owner 分支 tip）
+delivery_head: bb4b16bc（owner 分支 tip；integration merge=0f872d1b）
 branch: agent/zcode/M2-TA3-B3-KO-FULLRUN
 worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B3-KO-FULLRUN-zcode
 ---
