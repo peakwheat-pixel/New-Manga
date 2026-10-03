@@ -1,0 +1,26 @@
+{
+ "case_id": "K11",
+ "page": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\02_public_ground_truth_peppercarrot\\ep04\\kr_Pepper-and-Carrot_by-David-Revoy_E04P02.jpg",
+ "page_sha256_match": true,
+ "page_size": [
+  1200,
+  1660
+ ],
+ "tiling": "off",
+ "tiling_tiles": null,
+ "elapsed_off_s": 7.0,
+ "elapsed_on_s": 0.5,
+ "candidates_off": 13,
+ "candidates_on": 13,
+ "bit_identical": true,
+ "primary_count": 12,
+ "sfx_count": 1,
+ "sfx_x_primary_max_iou": 0.1325,
+ "sfx_x_primary_top5": [
+  0.1325
+ ],
+ "sfx_x_primary_intersecting_pairs": 1,
+ "threshold_violation_ge_090": false,
+ "options_on_sfx_arbitration": "on",
+ "options_on_relabels": null
+}

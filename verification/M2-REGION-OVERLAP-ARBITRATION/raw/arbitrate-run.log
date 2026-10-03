@@ -1,0 +1,7 @@
+Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]Loading weights:  42%|████▏     | 320/770 [00:00<00:00, 3163.83it/s]Loading weights: 100%|██████████| 770/770 [00:00<00:00, 5910.93it/s]
+[BJ13] primary=3 sfx=1 arb=on relabels=None partial=None (9.4s)
+[BJ14] primary=6 sfx=0 arb=on relabels=None partial=None (0.6s)
+[BJ15] primary=7 sfx=0 arb=on relabels=None partial=None (0.6s)
+[BJ06] primary=9 sfx=8 arb=on relabels=None partial=0.8865 (0.5s)
+[BJ06 zero-change] off=17 on=17 identical=True
+manifest -> G:\CODEX\New Manga.worktrees\M2-REGION-OVERLAP-ARBITRATION-zcode\verification\M2-REGION-OVERLAP-ARBITRATION\raw\arbitrate-manifest.json

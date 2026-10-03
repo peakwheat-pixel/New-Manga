@@ -82,6 +82,7 @@ from __future__ import annotations
 
 import importlib
 import math
+import os
 import sys
 import time
 from dataclasses import dataclass, field, replace
@@ -140,6 +141,128 @@ SFX_CLASS_ID = 2
 #: zero-change ruling; the assembly dispatches this prefix to
 #: ``RegionType.SFX``).
 SFX_LABEL_PREFIX = "sfx-"
+
+
+# ---------------------------------------------------------------------------
+# Cross-provider overlap arbitration (M2-REGION-OVERLAP-ARBITRATION)
+#
+# The structural gap (DOMAIN-EXT-DIAG report §4/§5, user ruling 3): the
+# composite CONCATENATES the two candidate sets and region creation treats
+# every candidate independently, so an SFX shape that the primary detector
+# mislabels as text still flows into the dialogue chain and its OCR garbage
+# is translated into the rendered page (BJ13 regions #1/#3).
+#
+# Arbitration semantics (frozen here): when an sfx-provider candidate
+# near-duplicates a primary candidate — bbox IoU >= the frozen threshold —
+# that primary candidate is RELABELED to the ``sfx-arb-`` prefix. The prefix
+# deliberately reuses the ``sfx-`` startswith contract, so the assembly's
+# ``_detected_region_type`` dispatches it to ``RegionType.SFX`` with ZERO
+# core_assembly changes and the SfxPolicy gate (default SKIP) takes over.
+# Geometry, reading order and confidence stay verbatim: the relabel is a
+# type decision, not a re-detection.
+#
+# Frozen default threshold — AC1 calibration over the committed raw data
+# (``verification/M2-SFX-E2E-MATERIAL/``, ``verification/M2-SFX-E2E-MATERIAL/
+# bj06-run/summaries/qual-BJ06.json``):
+#
+# - BJ06 (in-domain control, 8 sfx x 9 speech candidate pairs): the WORST
+#   in-domain overlap is the '！！！' double-detection pair (sfx 2eeaa2c4 x
+#   speech 5b76a907) at IoU = 0.8862; the other intersecting pairs are
+#   0.870 / 0.728. In-domain SFX art text and neighbouring dialogue overlap
+#   MORE than the misroute shape does — a naive "catch BJ13" threshold
+#   would relabel real dialogue first. The default therefore sits ABOVE the
+#   in-domain maximum: every BJ06 pair stays untouched (AC3 zero-change by
+#   construction).
+# - BJ13 (the misroute case): ogkalu text regions vs the visual SFX
+#   reference boxes measure IoU 0.452/0.544 (E2E diagnosis caliber) /
+#   0.490/0.550 (production-region caliber). With today's weights the sfx
+#   channel has ZERO response there (pre-NMS peak 0.0855, DOMAIN-EXT-DIAG
+#   L1), so there is no sfx candidate to arbitrate with at all — the
+#   misroute is UNREACHABLE for any overlap arbitration and this Task does
+#   not fabricate coverage: the near-miss overlap is recorded in the detect
+#   options (``sfx_arbitration_partial_overlap``) so the unreachable shape
+#   is typed-diagnosable (AC4). A future recall-restoring slice (e.g. a
+#   fine-tuned sfx detector) produces real sfx candidates; near-duplicate
+#   double detections (the shape this rule closes) then relabel into the
+#   SFX gate instead of leaving both a translated dialogue region AND an
+#   sfx region on the same artwork.
+#
+# The env channel follows the TILING precedent (``NEWMANGA_DETECTOR_TILING_*``):
+# absent variables mean the frozen defaults; an empty or illegal value is a
+# fail-fast ``ValueError`` naming the variable — never a silent default.
+ARBITRATION_ENV_MODE = "NEWMANGA_SFX_ARBITRATION"
+ARBITRATION_ENV_IOU = "NEWMANGA_SFX_ARBITRATION_IOU"
+
+#: Frozen default threshold: BJ06 in-domain worst pair (0.8862) + margin.
+ARBITRATION_IOU = 0.9
+
+#: The arbitrated label prefix. ``startswith("sfx-")`` holds BY CONSTRUCTION
+#: (the assembly dispatch matrix is prefix-based), so a relabeled candidate
+#: lands in ``RegionType.SFX`` without touching core_assembly.
+ARBITRATED_LABEL_PREFIX = "sfx-arb-"
+
+
+def _arbitration_config() -> tuple[bool, float]:
+    """Read ONLY the arbitration env overrides (module-level, the
+    ``_detected_region_type`` testability pattern; the TILING fail-fast
+    discipline).
+
+    Returns ``(enabled, threshold)``. An absent ``NEWMANGA_SFX_ARBITRATION``
+    means ON (the ruling that authorized this Task); ``off`` restores the
+    pre-arbitration composite byte-for-byte. An empty or non-enumerated mode
+    and an empty / non-numeric / out-of-(0, 1]-range threshold raise
+    ``ValueError`` naming the variable.
+    """
+    raw_mode = os.environ.get(ARBITRATION_ENV_MODE)
+    if raw_mode is not None:
+        mode = raw_mode.strip().lower()
+        if mode not in ("on", "off"):
+            raise ValueError(
+                f"{ARBITRATION_ENV_MODE}: unsupported value {raw_mode!r} "
+                "(use on|off)"
+            )
+        enabled = mode == "on"
+    else:
+        enabled = True
+    raw_iou = os.environ.get(ARBITRATION_ENV_IOU)
+    threshold = float(ARBITRATION_IOU)
+    if raw_iou is not None:
+        try:
+            threshold = float(raw_iou.strip())
+        except ValueError as error:
+            raise ValueError(
+                f"{ARBITRATION_ENV_IOU}: not a number: {raw_iou!r}"
+            ) from error
+        if not 0.0 < threshold <= 1.0:
+            raise ValueError(
+                f"{ARBITRATION_ENV_IOU}: must be in (0, 1], got {threshold!r}"
+            )
+    return enabled, threshold
+
+
+def _bbox(polygon: tuple[tuple[float, float], ...]) -> tuple[float, float, float, float]:
+    """The candidate's bbox as ``(x0, y0, x1, y1)`` — the same min/max
+    caliber the assembly's ``RegionGeometry`` uses, so the arbitration sees
+    the geometry the region will be created with."""
+    xs = [point[0] for point in polygon]
+    ys = [point[1] for point in polygon]
+    return (min(xs), min(ys), max(xs), max(ys))
+
+
+def _bbox_iou(
+    a: tuple[tuple[float, float], ...], b: tuple[tuple[float, float], ...]
+) -> float:
+    """IoU of two candidates' bboxes (the E2E/DOMAIN-EXT-DIAG caliber the
+    threshold was calibrated against)."""
+    ax0, ay0, ax1, ay1 = _bbox(a)
+    bx0, by0, bx1, by1 = _bbox(b)
+    inter_w = max(0.0, min(ax1, bx1) - max(ax0, bx0))
+    inter_h = max(0.0, min(ay1, by1) - max(ay0, by0))
+    inter = inter_w * inter_h
+    area_a = (ax1 - ax0) * (ay1 - ay0)
+    area_b = (bx1 - bx0) * (by1 - by0)
+    union = area_a + area_b - inter
+    return inter / union if union > 0.0 else 0.0
 
 
 @dataclass
@@ -567,6 +690,9 @@ class MangaSfxParallelDetectionProvider:
         return self.primary.model
 
     def detect(self, request: DetectionRequest) -> DetectionResult:
+        # Fail-fast BEFORE any inference (the TILING env discipline): an
+        # illegal arbitration env must not produce a half-detected page.
+        arb_enabled, arb_threshold = _arbitration_config()
         result = self.primary.detect(request)
         try:
             sfx_result = self.sfx.detect(request)
@@ -594,12 +720,63 @@ class MangaSfxParallelDetectionProvider:
             )
             for candidate in sfx_result.candidates
         )
+        # Overlap arbitration: relabel primary candidates near-duplicated by
+        # an sfx candidate into the ``sfx-arb-`` prefix (RegionType.SFX via
+        # the existing prefix dispatch -> SfxPolicy gate). Directional by
+        # design — the sfx provider is the SFX-specialist signal; the
+        # sfx candidates themselves are never touched. Below-threshold
+        # overlaps are diagnosed, not applied (the BJ13 misroute shape is
+        # honestly unreachable until sfx recall exists).
+        arbitration_options: tuple[tuple[str, str], ...] = (
+            ("sfx_arbitration", "on" if arb_enabled else "off"),
+        )
+        primary_candidates = result.candidates
+        if arb_enabled and sfx_candidates and primary_candidates:
+            relabeled_count = 0
+            max_partial = 0.0
+            arbitrated_candidates: list[RegionCandidate] = []
+            for candidate in primary_candidates:
+                overlap = max(
+                    _bbox_iou(candidate.polygon, sfx.polygon)
+                    for sfx in sfx_candidates
+                )
+                if overlap >= arb_threshold:
+                    relabeled_count += 1
+                    arbitrated_candidates.append(
+                        replace(
+                            candidate,
+                            provider_label=(
+                                f"{ARBITRATED_LABEL_PREFIX}"
+                                f"{candidate.provider_label}"
+                            ),
+                        )
+                    )
+                else:
+                    if overlap > 0.0:
+                        max_partial = max(max_partial, overlap)
+                    arbitrated_candidates.append(candidate)
+            arbitration_options = arbitration_options + (
+                ("sfx_arbitration_threshold", str(arb_threshold)),
+            )
+            if relabeled_count:
+                primary_candidates = tuple(arbitrated_candidates)
+                arbitration_options = arbitration_options + (
+                    ("sfx_arbitration_relabels", str(relabeled_count)),
+                )
+            elif max_partial > 0.0:
+                arbitration_options = arbitration_options + (
+                    (
+                        "sfx_arbitration_partial_overlap",
+                        f"{max_partial:.4f}",
+                    ),
+                )
         primary_elapsed = result.elapsed_ms or 0
         sfx_elapsed = sfx_result.elapsed_ms or 0
         return replace(
             result,
-            candidates=result.candidates + sfx_candidates,
+            candidates=primary_candidates + sfx_candidates,
             options=result.options
+            + arbitration_options
             + (
                 ("sfx_provider", sfx_result.provider_id),
                 ("sfx_candidates", str(len(sfx_candidates))),
