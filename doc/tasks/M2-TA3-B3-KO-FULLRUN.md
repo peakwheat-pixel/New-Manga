@@ -2,7 +2,7 @@
 id: M2-TA3-B3-KO-FULLRUN
 title: "ko 全量补跑（用户裁决④⑦⑧：7 case 全量+K02 干净重跑；F1/F2 关闭确认；相似度 known-limitation 落地）"
 kind: qualification
-status: ready
+status: delivered
 approval: user_ruling_2026-10-02_seven_items
 suggested_owner: ZCode
 owner: ZCode
@@ -10,6 +10,7 @@ reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-TA3-B2-KO-RERUN]
 base_commit: 73252798
+delivery_head: 见 handoff（owner 分支 tip）
 branch: agent/zcode/M2-TA3-B3-KO-FULLRUN
 worktree: G:/CODEX/New Manga.worktrees/M2-TA3-B3-KO-FULLRUN-zcode
 ---
@@ -40,3 +41,19 @@ KO-RERUN 事件驱动停跑后，用户裁决：**7 case 全量补跑**（选项
 
 - 长跑：逐 case 落盘断点续跑；失败 typed 后继续；预计总时长数小时（K01 detect ~20s+全链 region 数百）。
 - directional 延续；阈值实测 vs 提案对照沿双轨口径。
+
+## 交付记录（Owner 回填，2026-10-03）
+
+**全部 AC 交付，逐项判定见 [ko-fullrun-report.md §10](../../verification/M2-TA3-B/ko-fullrun-report.md)**：
+
+- **AC1 PASS**：9 pass 全落盘（8 case 主 pass + K02 rerun + similarity）；K02 干净双 pass 全绿（首例 ko webtoon pipeline_failures=0 样本）。
+- **AC2 PASS**：F1 关闭（detect 5/5 与 TILING qualification 逐 case 同值 ×全链 8/8 export OK 组合）；F2 关闭（K07 362MB/K09 277MB/K10 278MB 页级全链 export OK）；Gate 新状态 §7 如实（K02/K02.rerun/K05 三 pass 全绿；其余 case 含预期内 F3 同型 typed 登记；**K01 run1=FAILED steps 全绿待归因缺陷新登记**）。
+- **AC3 PASS（CER 部分 NOT_AUTOMATED 如实登记）**：K01–K10 无 SVG GT 物→NOT_AUTOMATED（AC3 预留口径）；K02 干净版相似度 93 对全非空（median=1.0 达标/min=0.0→FAIL，合法重译形态大样本再证实）。
+- **AC4 PASS**：thresholds §5 known-limitation 注（2026-10-03）；ko-rerun-report §7 逐项裁决记录回填。
+- **AC5 PASS**：实测 **950,954 est tokens = 上界 43.2%**（未触熔断，stop=null）；请求 1,568≈1.41×region 数；key 零明文；diff 面仅允许修改面（driver 硬化两 commit 属 `experiments/M2-TA3-B/**` 微调授权）。
+
+**执行环境事件（Reviewer 必读）**：run 跨越两次已处置事故——①invalid-env 无效轮（唤醒续接 shell 丢失 OCR venv `PYTHONPATH`→6 case OCR 全 `PROVIDER_DEPENDENCY_MISSING` 静默无效；已归档 `summaries/invalid-env-2026-10-02-ocr-dep-missing/` + ledger 污染条目清除 + driver 硬化 `runner_env()`/`ocr_stack_ok()`，commit `cd76cac0`）；②双 driver 并行（原初 driver 未死+重启同秒双副本撞车；进程审计后收敛原初 driver A 独跑，commit `7aee808d`）。**最终有效数据全部来自原初 driver A**；有效轮判别基线（引擎初始化日志+OCR 速度+run1.steps 无依赖失败）见报告 §1.1。
+
+**新增运行时特性登记**：逐 region 全链耗时 ∝ 页高（~1ms/px 行，R²≈0.99）——BACKFILL fan-out 后 region 渲染作用于整页画布（webtoon 页 277–362MB），region 局部贴图化=优化候选（报告 §6，非本 Task 范围）。
+
+**新登记缺陷（非阻塞）**：K01 run1 pipeline=FAILED 而 step 表全绿（归因未定，planner 聚合层嫌疑）；K10 单 region translate typed 失败保空（fail-closed 正确）。

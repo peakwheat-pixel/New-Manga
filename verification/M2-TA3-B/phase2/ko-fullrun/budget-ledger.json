@@ -35,17 +35,65 @@
       "est_tokens": 36658
     },
     {
+      "case_id": "K07",
+      "phase": "main",
+      "finished_at_utc": "2026-10-02T12:54:02Z",
+      "runner_exit_code": 1,
+      "requests": 235,
+      "input_est_tokens": 128684,
+      "output_est_tokens": 11904,
+      "est_tokens": 140588
+    },
+    {
       "case_id": "K09",
       "phase": "main",
-      "finished_at_utc": "2026-10-02T06:19:49Z",
-      "runner_exit_code": 4294967295,
-      "requests": 0,
-      "input_est_tokens": 0,
-      "output_est_tokens": 0,
-      "est_tokens": 0,
-      "note": "no metering record in summary"
+      "finished_at_utc": "2026-10-02T19:23:45Z",
+      "runner_exit_code": 1,
+      "requests": 206,
+      "input_est_tokens": 114151,
+      "output_est_tokens": 11541,
+      "est_tokens": 125692
+    },
+    {
+      "case_id": "K10",
+      "phase": "main",
+      "finished_at_utc": "2026-10-03T00:13:27Z",
+      "runner_exit_code": 1,
+      "requests": 155,
+      "input_est_tokens": 85812,
+      "output_est_tokens": 8467,
+      "est_tokens": 94279
+    },
+    {
+      "case_id": "K01",
+      "phase": "main",
+      "finished_at_utc": "2026-10-03T05:36:51Z",
+      "runner_exit_code": 1,
+      "requests": 304,
+      "input_est_tokens": 167521,
+      "output_est_tokens": 16101,
+      "est_tokens": 183622
+    },
+    {
+      "case_id": "K02",
+      "phase": "main",
+      "finished_at_utc": "2026-10-03T06:35:53Z",
+      "runner_exit_code": 0,
+      "requests": 186,
+      "input_est_tokens": 102714,
+      "output_est_tokens": 10164,
+      "est_tokens": 112878
+    },
+    {
+      "case_id": "K02",
+      "phase": "rerun",
+      "finished_at_utc": "2026-10-03T07:34:34Z",
+      "runner_exit_code": 1,
+      "requests": 186,
+      "input_est_tokens": 102714,
+      "output_est_tokens": 10134,
+      "est_tokens": 112848
     }
   ],
-  "stop": null,
-  "invalidated_entries_note": "2026-10-02: the restart leg of the driver ran WITHOUT the OCR venv (M2-TA3-B-ocr) site-packages on PYTHONPATH, so 6 cases (K07/K09/K10/K01/K02/K02.rerun) produced summaries where every OCR step failed PROVIDER_DEPENDENCY_MISSING with empty text and zero translation. Those 6 ledger entries (all zeros) and the invalid summaries were removed; the summaries are archived under summaries/invalid-env-2026-10-02-ocr-dep-missing/. Driver hardened (runner_env PYTHONPATH injection + ocr_stack_ok fail fast) and the 6 cases re-queued."
+  "stop": null
 }

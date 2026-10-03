@@ -1,0 +1,978 @@
+{
+  "task": "M2-TA3-B2-KO-RERUN",
+  "measure": "reading_order-aligned translation similarity (remote-chain determinism gate, quality-thresholds §5 dual-track)",
+  "case_id": "K02",
+  "language": "ko",
+  "gate": {
+    "metric": "similarity_normalized",
+    "median_min": 0.95,
+    "min_min": 0.7
+  },
+  "n_pairs": 93,
+  "n_pairs_nonempty": 93,
+  "pairs": [
+    {
+      "reading_order": 1,
+      "region_type": "speech",
+      "source_text": "폰에서 한 컷 씩, 넘겨보는 컷툰",
+      "text_first": "在手机上逐格翻阅的条漫",
+      "text_second": "在手机上逐格翻阅的条漫",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 2,
+      "region_type": "speech",
+      "source_text": "\n우리집에서\ntleke\n밥먹고갈래요?\nOLDIL",
+      "text_first": "要来我家\n吃了饭再走吗？\nOLDIL",
+      "text_second": "\n要来我家\nleke\n吃饭再走吗？\nOLDIL",
+      "similarity_raw": 0.6957,
+      "similarity_normalized": 0.7368,
+      "status": "variant"
+    },
+    {
+      "reading_order": 3,
+      "region_type": "speech",
+      "source_text": "<\n우리집에서\neee",
+      "text_first": "在我家\neee",
+      "text_second": "到我家\n嗯",
+      "similarity_raw": 0.4286,
+      "similarity_normalized": 0.3333,
+      "status": "variant"
+    },
+    {
+      "reading_order": 4,
+      "region_type": "speech",
+      "source_text": "아이스크림의 심장화",
+      "text_first": "冰淇淋的心脏化",
+      "text_second": "冰淇淋的心脏化",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 5,
+      "region_type": "speech",
+      "source_text": "오빠를\n풍아한다고\n생각해\nU",
+      "text_first": "我觉得\n我喜欢\n哥哥\nU",
+      "text_second": "我觉得\n我喜欢\n哥哥\nU",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 6,
+      "region_type": "speech",
+      "source_text": "어",
+      "text_first": "呃",
+      "text_second": "呃",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 7,
+      "region_type": "speech",
+      "source_text": "그",
+      "text_first": "那",
+      "text_second": "那",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 8,
+      "region_type": "speech",
+      "source_text": "그래구나",
+      "text_first": "原来如此",
+      "text_second": "原来如此",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 9,
+      "region_type": "speech",
+      "source_text": "콜록",
+      "text_first": "咳咳",
+      "text_second": "咳咳",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 10,
+      "region_type": "speech",
+      "source_text": "어",
+      "text_first": "呃",
+      "text_second": "呃",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 11,
+      "region_type": "speech",
+      "source_text": "너무\n놀라는데?",
+      "text_first": "太让人吃惊了吧？",
+      "text_second": "太\n惊讶了吧？",
+      "similarity_raw": 0.5,
+      "similarity_normalized": 0.5,
+      "status": "variant"
+    },
+    {
+      "reading_order": 12,
+      "region_type": "speech",
+      "source_text": "생각지도 못해서",
+      "text_first": "完全没想到",
+      "text_second": "完全没想到",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 13,
+      "region_type": "speech",
+      "source_text": "나상처받는다",
+      "text_first": "我受伤了",
+      "text_second": "我受伤了",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 14,
+      "region_type": "speech",
+      "source_text": "미안아..아니고맙다",
+      "text_first": "对不起..不，谢谢你",
+      "text_second": "对不起..不，谢谢你",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 15,
+      "region_type": "speech",
+      "source_text": "고마울건\n뭐람\n일단알고있으라고\n미안할것도\n고~",
+      "text_first": "有什么好\n感谢的\n总之先记着\n也没什么\n好抱歉的~",
+      "text_second": "要谢的\n是什么呀\n总之先记着\n也没什么好\n抱歉的~",
+      "similarity_raw": 0.6,
+      "similarity_normalized": 0.6667,
+      "status": "variant"
+    },
+    {
+      "reading_order": 16,
+      "region_type": "speech",
+      "source_text": "O\n그래 그래\n0",
+      "text_first": "O\n好 好\n0",
+      "text_second": "哦\n好好好\n0",
+      "similarity_raw": 0.7143,
+      "similarity_normalized": 0.6,
+      "status": "variant"
+    },
+    {
+      "reading_order": 17,
+      "region_type": "speech",
+      "source_text": "너..너는\n괜찮은\n애야\n렌찮은",
+      "text_first": "你……你是\n个好\n孩子\n好孩子",
+      "text_second": "你……你是个好孩子，没事的",
+      "similarity_raw": 0.6,
+      "similarity_normalized": 0.7647,
+      "status": "variant"
+    },
+    {
+      "reading_order": 18,
+      "region_type": "speech",
+      "source_text": "??",
+      "text_first": "??",
+      "text_second": "??",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 19,
+      "region_type": "speech",
+      "source_text": "내 친구라서 하는 말이 아니고\n년.그.자기관리도잘하고\n성격도 뜰걱하고그리고",
+      "text_first": "不是因为我朋友才这么说\n那.家.伙自我管理也做得好\n性格也温柔，而且",
+      "text_second": "不是因为我朋友才这么说\n那家伙。自我管理也做得很好\n性格也很开朗，而且",
+      "similarity_raw": 0.8,
+      "similarity_normalized": 0.7879,
+      "status": "variant"
+    },
+    {
+      "reading_order": 20,
+      "region_type": "speech",
+      "source_text": "뭔데\n갑차기",
+      "text_first": "什么啊\n突然",
+      "text_second": "什么啊\n突然",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 21,
+      "region_type": "speech",
+      "source_text": "아무튼\n설명은\n잘못하겠지만!",
+      "text_first": "总之\n虽然我\n不太会解释！",
+      "text_second": "总之\n虽然我\n不太会解释！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 22,
+      "region_type": "speech",
+      "source_text": "슬이년정말로좋은사람이야!",
+      "text_first": "瑟伊这丫头真是个好人！",
+      "text_second": "瑟儿这丫头真是个好人！",
+      "similarity_raw": 0.9091,
+      "similarity_normalized": 0.9091,
+      "status": "variant"
+    },
+    {
+      "reading_order": 23,
+      "region_type": "speech",
+      "source_text": "와학",
+      "text_first": "哇啊",
+      "text_second": "哇啊",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 24,
+      "region_type": "speech",
+      "source_text": "진정해!!\n여기 카페라고!!",
+      "text_first": "冷静点！！\n这里是咖啡馆！！",
+      "text_second": "冷静点！！\n这里是咖啡馆！！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 25,
+      "region_type": "speech",
+      "source_text": "얼굴은\n뭐하는거야",
+      "text_first": "脸\n在干什么呢",
+      "text_second": "脸\n在干什么",
+      "similarity_raw": 0.8571,
+      "similarity_normalized": 0.8333,
+      "status": "variant"
+    },
+    {
+      "reading_order": 26,
+      "region_type": "speech",
+      "source_text": "하지만너도용기내서\n말해준거잖아",
+      "text_first": "但你也鼓起勇气说出来了啊",
+      "text_second": "但你也鼓起勇气说出来了啊",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 27,
+      "region_type": "speech",
+      "source_text": "근데 알다시피 난..증아하는사람이\n있아 네가날풍아하는 마음은\n알겠지만정말미안하게",
+      "text_first": "但是你也知道，我……有喜欢的人了。虽然我明白你喜欢我的心意，但真的很抱歉。",
+      "text_second": "不过你也知道，我……有喜欢的人了。虽然我明白你对我的心意，但真的很抱歉。",
+      "similarity_raw": 0.8919,
+      "similarity_normalized": 0.9024,
+      "status": "variant"
+    },
+    {
+      "reading_order": 28,
+      "region_type": "speech",
+      "source_text": "자자자자",
+      "text_first": "来来来来",
+      "text_second": "来来来来",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 29,
+      "region_type": "speech",
+      "source_text": "잠까안!!",
+      "text_first": "安静点！！",
+      "text_second": "稍等一下！！",
+      "similarity_raw": 0.3333,
+      "similarity_normalized": 0.3333,
+      "status": "variant"
+    },
+    {
+      "reading_order": 30,
+      "region_type": "speech",
+      "source_text": "~\n뭔가 이상하다했어",
+      "text_first": "~\n我就觉得有点奇怪",
+      "text_second": "~\n我就觉得有点奇怪",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 31,
+      "region_type": "speech",
+      "source_text": "하.",
+      "text_first": "哈。",
+      "text_second": "哈。",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 32,
+      "region_type": "speech",
+      "source_text": "괜찮아?\n",
+      "text_first": "没事吧？",
+      "text_second": "没事吧？",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 33,
+      "region_type": "speech",
+      "source_text": "혹시다른사람에게 말할까\n걱정되는거면 걱정마!\n절대 말 안탈게",
+      "text_first": "如果你担心我会告诉别人，那就别担心！我绝对不会说出去的",
+      "text_second": "如果你担心我会告诉别人，那就别担心！我绝对不会说出去的",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 34,
+      "region_type": "speech",
+      "source_text": "아악!!\n끔\n모르면\n닥쳐봐!!!",
+      "text_first": "啊啊！！\n唔\n不懂就\n闭嘴！！！",
+      "text_second": "啊啊！！\n唔\n不懂就\n闭嘴！！！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 35,
+      "region_type": "speech",
+      "source_text": "끄금만조용히!!",
+      "text_first": "呃呃 安静点！！",
+      "text_second": "呃啊给我安静点！！",
+      "similarity_raw": 0.6667,
+      "similarity_normalized": 0.6667,
+      "status": "variant"
+    },
+    {
+      "reading_order": 36,
+      "region_type": "speech",
+      "source_text": "결국\n반\n나옵님\n왔다",
+      "text_first": "结果\n半\n那家伙\n来了",
+      "text_second": "结果\n半\n罗密欧\n来了",
+      "similarity_raw": 0.7273,
+      "similarity_normalized": 0.625,
+      "status": "variant"
+    },
+    {
+      "reading_order": 37,
+      "region_type": "speech",
+      "source_text": "(꽃거나용)",
+      "text_first": "（花龙）",
+      "text_second": "（花龙龙）",
+      "similarity_raw": 0.8,
+      "similarity_normalized": 0.8,
+      "status": "variant"
+    },
+    {
+      "reading_order": 38,
+      "region_type": "speech",
+      "source_text": "니가 앞에\n설명을\n잘안해서그아!",
+      "text_first": "还不是因为你前面\n解释得\n太差了嘛！",
+      "text_second": "都是因为你前面\n解释得\n不好啊！",
+      "similarity_raw": 0.6667,
+      "similarity_normalized": 0.625,
+      "status": "variant"
+    },
+    {
+      "reading_order": 39,
+      "region_type": "speech",
+      "source_text": "제대3\n설영들음",
+      "text_first": "第3梯队\n雪影聆听",
+      "text_second": "第3次\n雪影聆听",
+      "similarity_raw": 0.7778,
+      "similarity_normalized": 0.75,
+      "status": "variant"
+    },
+    {
+      "reading_order": 40,
+      "region_type": "speech",
+      "source_text": "설기가\n내가오빠를\n좋아한다고\n오해하고있어\n라고 하던가",
+      "text_first": "雪茄\n误会我\n喜欢哥哥\n是这么说的吧",
+      "text_second": "雪茄\n误会我\n喜欢哥哥\n是这样说的吗",
+      "similarity_raw": 0.8889,
+      "similarity_normalized": 0.8667,
+      "status": "variant"
+    },
+    {
+      "reading_order": 41,
+      "region_type": "speech",
+      "source_text": "내가? 그다고??\n그럼미만",
+      "text_first": "我吗？那样？？\n那未满",
+      "text_second": "我吗？那样？？\n那未满",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 42,
+      "region_type": "speech",
+      "source_text": "듬트스어이\nR",
+      "text_first": "噔特斯诶\nR",
+      "text_second": "噔特斯伊\nR",
+      "similarity_raw": 0.8333,
+      "similarity_normalized": 0.8,
+      "status": "variant"
+    },
+    {
+      "reading_order": 43,
+      "region_type": "speech",
+      "source_text": "그리고 네가 상처받는다고\n말하니까 더 그렸지",
+      "text_first": "而且你说你会受伤\n所以我才画得更多",
+      "text_second": "而且你说你会受伤\n所以我才画得更多",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 44,
+      "region_type": "speech",
+      "source_text": "그건\n나랑엮인걸로\n너무 놀라니까.",
+      "text_first": "那是因为\n和我扯上关系\n太让人吃惊了。",
+      "text_second": "那是因为\n和我扯上关系\n太让人吃惊了。",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 45,
+      "region_type": "speech",
+      "source_text": "자존심\n상해서",
+      "text_first": "伤自尊",
+      "text_second": "伤自尊",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 46,
+      "region_type": "speech",
+      "source_text": "그런거 아냐",
+      "text_first": "不是那样的",
+      "text_second": "不是那样的",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 47,
+      "region_type": "speech",
+      "source_text": "뭐",
+      "text_first": "什么",
+      "text_second": "什么",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 48,
+      "region_type": "speech",
+      "source_text": "빈말이래도\n좋은사람소리들으니\n기분은풍더라",
+      "text_first": "虽说是客套话\n但听到别人说我是好人\n心情还是变好了",
+      "text_second": "就算是客套话\n听到别人说我是好人\n心情还是变好了",
+      "similarity_raw": 0.88,
+      "similarity_normalized": 0.8696,
+      "status": "variant"
+    },
+    {
+      "reading_order": 49,
+      "region_type": "speech",
+      "source_text": "빈말아냐",
+      "text_first": "不是空话",
+      "text_second": "不是空话",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 50,
+      "region_type": "speech",
+      "source_text": "어휴 어휴알았다",
+      "text_first": "唉唉，知道了",
+      "text_second": "唉哟唉哟知道了",
+      "similarity_raw": 0.7143,
+      "similarity_normalized": 0.7143,
+      "status": "variant"
+    },
+    {
+      "reading_order": 51,
+      "region_type": "speech",
+      "source_text": "진까야\n정말\n그렇게\n생각해\n02",
+      "text_first": "真子啊\n真的\n那样\n想\n02",
+      "text_second": "珍卡呀\n真的\n那样\n想\n02",
+      "similarity_raw": 0.7857,
+      "similarity_normalized": 0.7,
+      "status": "variant"
+    },
+    {
+      "reading_order": 52,
+      "region_type": "speech",
+      "source_text": "이거 꾸면 믿어줄래?",
+      "text_first": "如果我打扮的话，你会相信我吗？",
+      "text_second": "如果我做到这个，你会相信我吗？",
+      "similarity_raw": 0.7333,
+      "similarity_normalized": 0.7333,
+      "status": "variant"
+    },
+    {
+      "reading_order": 53,
+      "region_type": "speech",
+      "source_text": "이걸로내긴심이\n어느정돈지 알겠",
+      "text_first": "用这个就能知道\n我的耐心到什么程度了",
+      "text_second": "这下就知道我的耐心到什么程度了",
+      "similarity_raw": 0.7778,
+      "similarity_normalized": 0.8235,
+      "status": "variant"
+    },
+    {
+      "reading_order": 54,
+      "region_type": "speech",
+      "source_text": "뭐야그\n표정은..?!",
+      "text_first": "什么啊那\n表情是..？！",
+      "text_second": "什么啊那\n表情是..?!",
+      "similarity_raw": 0.8333,
+      "similarity_normalized": 0.8182,
+      "status": "variant"
+    },
+    {
+      "reading_order": 55,
+      "region_type": "speech",
+      "source_text": "더믿기\n힘들어졌어",
+      "text_first": "越来越难以相信了",
+      "text_second": "越来越难以相信了",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 56,
+      "region_type": "speech",
+      "source_text": "이작고소동한걸\n주는데??",
+      "text_first": "竟然给我这么小气的东西？？",
+      "text_second": "这么小的骚动\n也给我？",
+      "similarity_raw": 0.1538,
+      "similarity_normalized": 0.2308,
+      "status": "variant"
+    },
+    {
+      "reading_order": 57,
+      "region_type": "speech",
+      "source_text": "다른손에\n크고소동한걸꾸던가",
+      "text_first": "另一只手\n拿着很大的骚动的东西",
+      "text_second": "另一只手\n拿着很大的东西",
+      "similarity_raw": 0.8,
+      "similarity_normalized": 0.7857,
+      "status": "variant"
+    },
+    {
+      "reading_order": 58,
+      "region_type": "speech",
+      "source_text": "아\n긴짜\n뭘모르네",
+      "text_first": "啊\n长家伙\n你什么都不懂",
+      "text_second": "啊\n长条\n你什么都不懂",
+      "similarity_raw": 0.8333,
+      "similarity_normalized": 0.8,
+      "status": "variant"
+    },
+    {
+      "reading_order": 59,
+      "region_type": "speech",
+      "source_text": "네\n한테는\n메인보다\n중요한\n심장부분이\n끈새한다고!!",
+      "text_first": "对你来说\n比主线更重要的\n心脏部分\n断掉了啊！！",
+      "text_second": "对你来说\n比主线更重要的\n心脏部分\n断掉了啊！！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 60,
+      "region_type": "speech",
+      "source_text": "네\n한테는\n메인보다\n중요한",
+      "text_first": "对你来说\n比主线\n更重要的",
+      "text_second": "对你来说\n比主线\n更重要",
+      "similarity_raw": 0.9231,
+      "similarity_normalized": 0.9091,
+      "status": "variant"
+    },
+    {
+      "reading_order": 61,
+      "region_type": "speech",
+      "source_text": "이부분",
+      "text_first": "这部分",
+      "text_second": "这部分",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 62,
+      "region_type": "speech",
+      "source_text": "이부분",
+      "text_first": "这部分",
+      "text_second": "这部分",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 63,
+      "region_type": "speech",
+      "source_text": "이\nㅂㅂ",
+      "text_first": "这\nㅂㅂ",
+      "text_second": "这\nㅂㅂ",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 64,
+      "region_type": "speech",
+      "source_text": "그심장을\n주겠다는 거.",
+      "text_first": "是说要把那颗心脏\n交出来。",
+      "text_second": "是说要把那颗心脏\n交出来。",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 65,
+      "region_type": "speech",
+      "source_text": "저기요?\n제말 듣고있나요?",
+      "text_first": "喂？\n你在听我说话吗？",
+      "text_second": "喂？\n你在听我说话吗？",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 66,
+      "region_type": "speech",
+      "source_text": "와니그래?정말~?진짜로",
+      "text_first": "什么嘛？真的~？真的吗",
+      "text_second": "哇，真的吗？真的~？真的假的",
+      "similarity_raw": 0.5,
+      "similarity_normalized": 0.5,
+      "status": "variant"
+    },
+    {
+      "reading_order": 67,
+      "region_type": "speech",
+      "source_text": "됐다\n됐어\nH\n2\n다\n필요없어",
+      "text_first": "行了\n好了\nH\n2\n了\n不需要",
+      "text_second": "行了\n好了\nH\n2\n了\n不需要",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 68,
+      "region_type": "speech",
+      "source_text": "우리찬\n삐쳤어요",
+      "text_first": "我们灿\n生气了",
+      "text_second": "我们灿\n生气了",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 69,
+      "region_type": "speech",
+      "source_text": "친건아니고\n좀상처받았어",
+      "text_first": "不是亲了\n只是有点受伤",
+      "text_second": "不是亲了\n只是有点受伤",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 70,
+      "region_type": "speech",
+      "source_text": "에이ㅣ미안해\n농담이었어",
+      "text_first": "哎呀，对不起\n开玩笑的",
+      "text_second": "哎呀，对不起\n开玩笑的",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 71,
+      "region_type": "speech",
+      "source_text": "충격이야",
+      "text_first": "太震惊了",
+      "text_second": "震惊",
+      "similarity_raw": 0.5,
+      "similarity_normalized": 0.5,
+      "status": "variant"
+    },
+    {
+      "reading_order": 72,
+      "region_type": "speech",
+      "source_text": "아까네가\n내가 착박하는\n너무싫어 했던게",
+      "text_first": "刚才你\n我拍掌\n非常讨厌的那件事",
+      "text_second": "刚才你\n那么讨厌\n我拍你",
+      "similarity_raw": 0.375,
+      "similarity_normalized": 0.3571,
+      "status": "variant"
+    },
+    {
+      "reading_order": 73,
+      "region_type": "speech",
+      "source_text": "뭐야\n금없이",
+      "text_first": "什么啊\n突然",
+      "text_second": "什么啊\n突然",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 74,
+      "region_type": "speech",
+      "source_text": "아니그많은\n나도 알치만",
+      "text_first": "不是 那么多\n我也知道啊",
+      "text_second": "不是 那么多\n我也知道",
+      "similarity_raw": 0.9167,
+      "similarity_normalized": 0.9,
+      "status": "variant"
+    },
+    {
+      "reading_order": 75,
+      "region_type": "speech",
+      "source_text": "그거는 말이인되는\n소리를하까",
+      "text_first": "那话说得也太不像话了",
+      "text_second": "那也太说不过去了吧",
+      "similarity_raw": 0.3,
+      "similarity_normalized": 0.3,
+      "status": "variant"
+    },
+    {
+      "reading_order": 76,
+      "region_type": "speech",
+      "source_text": "마\n안돼.,?\n20",
+      "text_first": "别\n不行。，？\n20",
+      "text_second": "别\n不行.,?\n20",
+      "similarity_raw": 0.7,
+      "similarity_normalized": 0.625,
+      "status": "variant"
+    },
+    {
+      "reading_order": 77,
+      "region_type": "speech",
+      "source_text": "설기도\n끄게\n2",
+      "text_first": "雪祈也\n关掉\n2",
+      "text_second": "雪기도\n关掉\n2",
+      "similarity_raw": 0.75,
+      "similarity_normalized": 0.6667,
+      "status": "variant"
+    },
+    {
+      "reading_order": 78,
+      "region_type": "speech",
+      "source_text": "아니나랑오빠얘기잖아\n설기는 어떨지모르는거야",
+      "text_first": "不是，这是我和哥之间的事\n谁知道雪儿会怎么想",
+      "text_second": "不是，这是我和哥哥的事\n不知道雪基会怎么想",
+      "similarity_raw": 0.8182,
+      "similarity_normalized": 0.8095,
+      "status": "variant"
+    },
+    {
+      "reading_order": 79,
+      "region_type": "speech",
+      "source_text": "내가\n그렇게\n별로야?",
+      "text_first": "我就\n那么\n差劲吗？",
+      "text_second": "我就\n那么\n差劲吗？",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 80,
+      "region_type": "speech",
+      "source_text": "이렇게 끼질거릴때는 별론데\n그 외엔 괜찮은 놈이지",
+      "text_first": "像这样闹别扭的时候不怎么样，但除此之外是个不错的家伙",
+      "text_second": "像这样闹别扭的时候是不太行，\n但除此之外是个不错的家伙",
+      "similarity_raw": 0.8148,
+      "similarity_normalized": 0.8462,
+      "status": "variant"
+    },
+    {
+      "reading_order": 81,
+      "region_type": "speech",
+      "source_text": "빈말위로따위\n필요없어!",
+      "text_first": "空洞的安慰什么的\n我才不需要！",
+      "text_second": "空洞的安慰什么的\n我才不需要！",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 82,
+      "region_type": "speech",
+      "source_text": "아n이2\n기분이구나~\n복수하는거야?",
+      "text_first": "哎呀~\n心情是这样啊~\n是要复仇吗？",
+      "text_second": "啊哈\n心情不错嘛~\n是要复仇吗？",
+      "similarity_raw": 0.6111,
+      "similarity_normalized": 0.5625,
+      "status": "variant"
+    },
+    {
+      "reading_order": 83,
+      "region_type": "speech",
+      "source_text": "아이전",
+      "text_first": "孩子",
+      "text_second": "孩子",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 84,
+      "region_type": "speech",
+      "source_text": "자.그럼이거구면빈말아닌거\n믿어 줄래?\n먹던거지",
+      "text_first": "好。那这样的话，这可不是空话了\n你愿意相信我吗？\n你之前吃的那个吧",
+      "text_second": "来。那这样的话，这可不是空话了\n你愿意相信我吗？\n继续吃吧",
+      "similarity_raw": 0.7879,
+      "similarity_normalized": 0.7742,
+      "status": "variant"
+    },
+    {
+      "reading_order": 85,
+      "region_type": "speech",
+      "source_text": "먹던거지만",
+      "text_first": "虽然是吃过的",
+      "text_second": "虽然是吃过的",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 86,
+      "region_type": "speech",
+      "source_text": "콘아이스크링\n끝부분 초코",
+      "text_first": "甜筒冰淇淋\n末端巧克力",
+      "text_second": "甜筒冰淇淋\n末端巧克力",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 87,
+      "region_type": "speech",
+      "source_text": "헉뜰아",
+      "text_first": "呃啊",
+      "text_second": "吓我一跳",
+      "similarity_raw": 0.0,
+      "similarity_normalized": 0.0,
+      "status": "variant"
+    },
+    {
+      "reading_order": 88,
+      "region_type": "speech",
+      "source_text": "너만\n눈치못찮지\n년날 풍아하다고생각",
+      "text_first": "只有你\n没察觉到\n以为我在追你吧",
+      "text_second": "只有你\n没察觉到\n以为我在追你吧",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 89,
+      "region_type": "speech",
+      "source_text": "그런무서운소리하지를\n말어",
+      "text_first": "别说那种吓人的话",
+      "text_second": "别说那种吓人的话",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 90,
+      "region_type": "speech",
+      "source_text": "이건\n그냥줄수있는게\n아니야",
+      "text_first": "这个\n可不是随便\n能给你的",
+      "text_second": "这个\n不是能随便\n给你的",
+      "similarity_raw": 0.7692,
+      "similarity_normalized": 0.7273,
+      "status": "variant"
+    },
+    {
+      "reading_order": 91,
+      "region_type": "speech",
+      "source_text": "무서문이야기가 당는여름입니다",
+      "text_first": "恐怖故事盛行的夏天",
+      "text_second": "这是恐怖故事纷至沓来的夏天",
+      "similarity_raw": 0.5385,
+      "similarity_normalized": 0.5385,
+      "status": "variant"
+    },
+    {
+      "reading_order": 92,
+      "region_type": "speech",
+      "source_text": "OD",
+      "text_first": "OD",
+      "text_second": "OD",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    },
+    {
+      "reading_order": 93,
+      "region_type": "speech",
+      "source_text": "ca+myo@naver.com\nca+myo.blog.me",
+      "text_first": "ca+myo@naver.com\nca+myo.blog.me",
+      "text_second": "ca+myo@naver.com\nca+myo.blog.me",
+      "similarity_raw": 1.0,
+      "similarity_normalized": 1.0,
+      "status": "identical"
+    }
+  ],
+  "stats": {
+    "normalized_all_pairs": {
+      "n": 93,
+      "n_identical": 51,
+      "n_variant": 42,
+      "min": 0.0,
+      "median": 1.0,
+      "p10": 0.5433,
+      "max": 1.0
+    },
+    "normalized_nonempty": {
+      "n": 93,
+      "n_identical": 51,
+      "n_variant": 42,
+      "min": 0.0,
+      "median": 1.0,
+      "p10": 0.5433,
+      "max": 1.0
+    }
+  },
+  "gate_verdict_normalized": "FAIL",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding_first": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "binding_second": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "export_sha_first": "69fac4f8964a01fa69e615109f7c490b84e09a6017f27bdfacccac7830c495d3",
+  "export_sha_second": "830d542b3885100c7b6174a075765eb44b9c4d6afab75e7600214dddce55d4bf",
+  "export_sha_match": false,
+  "note_export_track": "export sha bitwise equality is the MOCK/DETERMINISTIC-track caliber; this run binds the REMOTE track (see determinism_track above, checked fail-closed against the provider binding) so the similarity gate above is the gate caliber and the export sha is recorded as supplementary data only",
+  "directional_disclaimer": "directional evidence: one rerun pair, remote DeepSeek provider, M2-TA3-B2-KO-RERUN; not a production determinism conclusion"
+}

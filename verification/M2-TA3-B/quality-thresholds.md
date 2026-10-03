@@ -171,6 +171,8 @@
 
 > **本节 F5 修订注（2026-10-01，M2-QUAL-DETERM-CALIB + 用户裁决「全部进行」）**：r1 R9 登记的 superseded-pending 状态就此解除——§5 与 §7 的"确定性复跑"口径落地为**双轨**：remote/随机采样翻译链 = reading_order 对齐译文相似度 Gate（median ≥ 0.95 且 min ≥ 0.70，normalized 口径；校准数据、测量方法与 n=2 局限见 `verification/M2-QUAL-DETERM-CALIB/`）；mock/deterministic provider 链 = export 哈希逐位一致（TA3-A 原口径）。**双轨判别规则（可执行，CALIB r1 R9）**：按本次 run 的 translate provider 绑定判定轨道——remote 采样 provider（provider id 含 remote 采样服务标识，如 `deepseek/*`）走相似度轨，mock/确定性 provider 走哈希轨；qualification runner 以 `--determinism-track remote|mock` 参数显式记录所选轨道，声明与 provider 绑定不一致时 fail-closed 报错。本节其余阈值数值未动；directional 证据强度口径保留。
 
+> **known-limitation 注（2026-10-03 追加，M2-TA3-B3-KO-FULLRUN；用户裁决 ko-rerun-report §7.6-③「同意」）**：词面口径对**语义等价合法重译**系统性保守误报——remote 采样下两次 run 对同一短文本产生措辞重构（非漂移），字符 Levenshtein 归一化后触发 min 腿 FAIL。实测形态两例：K11 单对 0.4615（KO-RERUN，n=13）首次发现；K02 干净重跑（KO-FULLRUN，n=93，51 逐位一致/42 variant/median=1.0 达标/min=0.0）大样本再证实——最差对「헉뜰아」→「呃啊」/「吓我一跳」为语义等价感叹词重译。**方向安全**（误报侧=把合法重译判 FAIL，不会放过真实漂移）；Gate 记录维持 FAIL 按 directional 接受。语义度量（embedding 相似度等）为候选方向，引入需新 Task + 校准集（K02 93 对与 K11 浮动对可作种子校准集）；本注不改变任何阈值数值。
+
 ### 用户裁决点
 
 - R-1：无（框架为 TA3-A 已验证引用）。
