@@ -2,17 +2,18 @@
 id: M2-REGION-OVERLAP-ARBITRATION
 title: "region 创建跨 provider 重叠仲裁（裁决③授权：sfx/speech 检出并存时改标/抑制语义，闭合误路由乱译损害的结构性缺口）"
 kind: feature
-status: ready
+status: in_progress
 approval: user_ruling_2026-10-04_按推荐_裁决3_重叠仲裁契约授权
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-SFX-DETECT-DOMAIN-EXT-DIAG, M2-SFX-PROD-1]
-base_commit: null
+base_commit: eb7cd15e
 branch: agent/zcode/M2-REGION-OVERLAP-ARBITRATION
 worktree: G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode
 integration_commit: null
+owner_claim: 2026-10-03T16:27:36Z
 ---
 
 # M2-REGION-OVERLAP-ARBITRATION：region 创建跨 provider 重叠仲裁
