@@ -198,7 +198,7 @@ flowchart TD
   TA3B --> FULL["M2-TA3-B3-KO-FULLRUN ko 全量补跑 · done @0f872d1b（8/8 全链 export OK；F1/F2 关闭；950954/2.2M）"]
   TA3B -.-> HYG["M2-DETECTION-HYGIENE hygiene 一揽子 · O:ZCode ✓（r2 抓 P0 checkout-restore 抹除；事故登记+流程修正）"]
   TA3B -.-> SMAT["M2-SFX-E2E-MATERIAL SFX 端到端+素材 · O:ZCode ✓（BJ06 8/8 闭环；检测盲区=域扩展优先级输入）"]
-  SFXE -.-> DEXT["M2-SFX-DETECT-DOMAIN-EXT-DIAG BJ 域缺口诊断+方案评估 · ready @497621df（零 src 只评估；唯一已释放待执行）"]
+  SFXE -.-> DEXT["M2-SFX-DETECT-DOMAIN-EXT-DIAG BJ 域缺口诊断+方案评估 · done @7dd5e5ff（域外=主根因；五方案+裁决三问移交）"]
   SMAT -.-> DEXT
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
@@ -219,7 +219,7 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class DEXT proposed;
+  class DEXT done;
 
 
   

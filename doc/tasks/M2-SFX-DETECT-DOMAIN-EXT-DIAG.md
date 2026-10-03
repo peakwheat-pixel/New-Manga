@@ -2,12 +2,13 @@
 id: M2-SFX-DETECT-DOMAIN-EXT-DIAG
 title: "SFX 检测域扩展第一步：BJ 域缺口诊断与扩展方案评估（误路由损害形态=优先级输入；只评估不实施）"
 kind: diagnosis
-status: in_progress
+status: done
+integration_commit: 7dd5e5ff
 owner_claim: 2026-10-03T23:12+08:00 by zcode subagent @497621df
 delivery_head: 87a8bc34
 rework_head: d849c967
-reviewed_head: DSH r1=changes_requested @87a8bc34（2026-10-03）；r2 返修 @d849c967 待复核（Reviewer=DeepSeek Harness 非作者）
-completion_note: 2026-10-03 AC1-AC4 全部交付（只评估不实施）；三假设 DETERMINED：(a) 域外=成立主根因 (b) 类映射分层（BJ13 text 捡走、BJ14 bubble 主导+text 并存；阈值救否定） (c) 预处理=不成立（「目标太大」替代假设明示未单独排除）；实验 L1/L2/L3 跑成（BJ06 对照+BJ13/14/15，sfx 通道 0.0000-0.0109 vs 域内 0.72-0.94）；结构性发现=region 创建无跨 provider 重叠仲裁，召回修复不闭合误路由损害；DSH r1 changes_requested 11 条已闭合（报告 r2）；status 保持 in_progress 待复核+集成流转
+reviewed_head: 双链并存（2026-10-04 裁决=r1-independent-crosscheck 顶部）：链A=DSH r1 changes_requested @87a8bc34（1×P1+4×P2+3×P3+3×P4）→ 返修 d849c967/3952a00f → DSH r2 approved（定点 10/10 闭合，报告=reviews/M2-SFX-DETECT-DOMAIN-EXT-DIAG-d849c967-dsh-r2.md）；链B=DSH r1 independent crosscheck approved_with_conditions @3952a00f（P1-1 两链并存裁决即其条件闭合）
+completion_note: 2026-10-03 AC1-AC4 全部交付（只评估不实施）；三假设 DETERMINED：(a) 域外=成立主根因 (b) 类映射分层（BJ13 text 捡走、BJ14 bubble 主导+text 并存；阈值救否定） (c) 预处理=不成立（「目标太大」替代假设明示未单独排除）；实验 L1/L2/L3 跑成（BJ06 对照+BJ13/14/15，sfx 通道 0.0000-0.0109 vs 域内 0.72-0.94）；结构性发现=region 创建无跨 provider 重叠仲裁，召回修复不闭合误路由损害；集成 @7dd5e5ff（编排会话，post-merge 三套件 611+1skipped 0 failed）；**集成方补充验证 @补登 commit：conf_scan_diag.py 运行级复现 EXIT=0、三层判定字段（L1 各页各档 sfx_count、L2/L3 各参照框 sfx_box+best_sfx_score）与入库 raw 逐值一致、权重 sha256 pin 运行时校验通过——闭合 crosscheck NOT_VERIFIED 1/2**；收口遗漏补登（frontmatter 流转 done+PLAN mermaid 同步+r1/r2 报告原字节 import，SHA256 记录于 integration-supplement.md）；**移交裁决三问：用户×2（⑤维持现状+产品侧缓解与否 / ③fine-tune AGPL 衍生许可）+ Codex×1（重叠仲裁契约授权）**
 approval: orchestrator_next_release_2026-10-02_priority_input_registered
 suggested_owner: ZCode
 owner: ZCode
