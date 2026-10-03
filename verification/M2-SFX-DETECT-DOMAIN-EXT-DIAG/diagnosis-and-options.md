@@ -1,7 +1,8 @@
-# M2-SFX-DETECT-DOMAIN-EXT-DIAG：BJ 域 SFX 检测缺口诊断与扩展方案评估报告
+# M2-SFX-DETECT-DOMAIN-EXT-DIAG：BJ 域 SFX 检测缺口诊断与扩展方案评估报告（r2）
 
-- Task：[M2-SFX-DETECT-DOMAIN-EXT-DIAG](../../doc/tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md) · 分支 `agent/zcode/M2-SFX-DETECT-DOMAIN-EXT-DIAG` · base=`497621df`（claim=`303d7e14`）· 日期 2026-10-03
-- Owner=ZCode · Reviewer=DeepSeek Harness（非作者，待 review）· Integrator=编排会话代行 Codex（用户全权授权+自治授权）
+- Task：[M2-SFX-DETECT-DOMAIN-EXT-DIAG](../../doc/tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md) · 分支 `agent/zcode/M2-SFX-DETECT-DOMAIN-EXT-DIAG` · base=`497621df`（claim=`303d7e14`，交付主体=`87a8bc34`）· 日期 2026-10-03
+- **r2 修订声明**：DSH r1（2026-10-03，Reviewer=DeepSeek Harness 非作者）verdict=`changes_requested`（0×P0，1×P1+4×P2+3×P3+3×P4）——主根因判语、五方案评估、AC3 排序、结构性发现均被确认成立且未越权；本版为纯文字/数字返修（11 条全部闭合，逐条处置见文末 §8「DSH r1 闭合对照」），零实验重跑，`experiments/**` 与 `raw/**` 零触碰。
+- Owner=ZCode · Reviewer=DeepSeek Harness（非作者，r1=`changes_requested`，本版逐条处置）· Integrator=编排会话代行 Codex（用户全权授权+自治授权）
 - **证据强度裁定（全程适用）**：全部结论为 **directional**——单模型（chiqui7 ONNX pinned）+ 3 盲区页（7 目检 SFX 实例）+ 1 域内对照页（BJ06，8 生产 sfx region）；无 SFX GT、单 AI 标注者目检参照框；方案成本估计为静态分析+既有证据推导，未跑任何训练/集成实验。沿 [M2-SFX-DETECT-EVAL](../M2-SFX-DETECT-EVAL/sfx-detect-eval-report.md) 与 [M2-SFX-E2E-MATERIAL](../M2-SFX-E2E-MATERIAL/sfx-e2e-report.md) 的证据强度口径。
 - 生产面零改动：`src/**`、`tests/**`、`doc/contracts/**`、`packaging/**`、`apps/**`、`doc/STATUS.md`、既有 Task 产物（SFX-E2E/KO-RERUN/TILING）零 diff；实验脚本仅 import 生产代码（只读），raw 输出全部落 `raw/`。
 
@@ -40,9 +41,9 @@
 
 | 层 | 形态 | 判定目标 |
 |---|---|---|
-| L1 整页 conf 扫描 | 生产序列逐档复放（conf filter→全类 NMS IoU 0.7），conf 档 0.01/0.05/0.10/0.15/0.20/0.25/0.30/0.40/0.50，4 页（BJ06 对照+BJ13/14/15），全类 dump+**每框 4 类分数向量** | 阈值切分 vs 无信号；text/panel 在 SFX 位置的分数形态 |
-| L2 60% tile | 每页 4 tile（TL/TR/BL/BR，相邻 40% 重叠），各 letterbox 1024 → 等效整页 ~1.67× 分辨率，conf 0.01 | 分辨率恢复实验（WEBTOON-DIAG 探针形态；chiqui7 等比 letterbox 下只探分辨率、无各向异性） |
-| L3 参照框 crop | 每参照框外扩 20% 裁剪（等效 2.4–3.4× 分辨率），conf 0.01 | 最强形态下「该形状本身是否被认作 sfx」 |
+| L1 整页 conf 扫描 | 生产序列复放（conf filter→全类 NMS IoU 0.7），conf 档 0.01/0.05/0.10/0.15/0.20/0.25/0.30/0.40/0.50，4 页（BJ06 对照+BJ13/14/15），全类 dump+**每框 4 类分数向量**。分档实现注记（DSH r1 P4-1）：每页只做一次 conf≥0.01 的 filter→NMS，各档结果=同一 conf≥0.01 全集 NMS 后按 conf 重筛；与「逐档 filter→NMS」的等价性依赖 `_nms` 贪心按 conf 降序（`src/infrastructure/providers/detection_sfx.py:469-477`，`np.argsort(scores)[::-1]`——高 conf 候选先处理，低 conf 候选不可能抑制高 conf 候选），故 §2.2「0.50 档 8 个 sfx 框=生产 run 的 8 个 sfx region」成立 | 阈值切分 vs 无信号；text/panel 在 SFX 位置的分数形态 |
+| L2 60% tile | 每页 4 tile（TL/TR/BL/BR，相邻 40% 重叠），各 letterbox 1024 → 等效整页 ~1.67× 分辨率（=page_h/tile_h=1/0.6），conf 0.01 | 分辨率恢复实验（WEBTOON-DIAG 探针形态；chiqui7 等比 letterbox 下只探分辨率、无各向异性） |
+| L3 参照框 crop | 每参照框外扩 20% 裁剪（等效 3.5–5.4× 分辨率，=page_h/crop_h=1/0.282–1/0.185，与 L2 同公式），conf 0.01 | 最强形态下「该形状本身是否被认作 sfx」 |
 | 附加 | L1 的 raw pre-NMS 查询：letterbox 空间中心落入参照框的全部候选（conf≥0.01）及 4 类分数 | NMS 前的干净「此处是否存在任何 sfx 信号」探针 |
 
 环境：`G:/CODEX/New Manga.task-envs/M2-TA3-B-ocr/Scripts/python.exe`（onnxruntime 1.30.0 CPU，与生产 lightweight 栈一致）；weights sha256 校验由 `_build_engine` 强制（pinned 值匹配后加载）。
@@ -63,29 +64,31 @@
 
 | 页 | conf≥0.01 全类框 | 参照框处 sfx 信号（raw pre-NMS 最高） | 参照框处 NMS 后紧贴混淆框 |
 |---|---|---|---|
-| BJ13 | 9（sfx 1=T 恤印花 0.8222，与参照框不相交） | ref1：16 候选，最高 sfx **0.0855**（同框 text 0.5195）；ref2：19 候选，最高 sfx **0.0043** | text conf 0.7436（sfx 0.0004）/ 0.8437（sfx 0.0010）+ panel 大框（平凡覆盖） |
-| BJ14 | 18（sfx **0**） | ref1：**0 候选**；ref2：**0 候选**；ref3：20 候选，最高 sfx **0.0001** | ref2/ref3 bubble+text 并存（与 E2E 诊断一致）；ref1 仅 panel |
+| BJ13 | 9（sfx 1=T 恤印花 0.8222，与参照框不相交） | ref1：16 候选，最高 sfx **0.0855**（同框 text 0.5195）；ref2：19 候选，最高 sfx **0.0043**。两列口径注记（DSH r1 P4-3）：pre-NMS 候选（如 text 0.5195）与右侧 NMS 后保留框（text 0.7436）**不是同一候选对象**，两侧数字不得互推 | text conf 0.7436（sfx 0.0004）/ 0.8437（sfx 0.0010）+ panel 大框（平凡覆盖） |
+| BJ14 | 18（sfx **0**） | ref1：**0 候选**；ref2：**0 候选**；ref3：≥20 候选（探针上限 20，按 sfx 降序截断；最高 sfx 0.0001 为截断前首位，判定不受影响——DSH r1 P2-4） | ref2/ref3 bubble+text 并存（与 E2E 诊断一致）；ref1 仅 panel |
 | BJ15 | 27（sfx **0**） | ref1：**0 候选**；ref2：3 候选，最高 sfx **0.0000** | 仅 panel 大框（IoU 0.056/0.075，平凡覆盖） |
 
 要点：①BJ14 ref1/ref2、BJ15 ref1 的 letterbox 空间中心区**连 conf≥0.01 的任何类别候选都没有**——比「被判 text」更彻底的盲；②BJ13 参照框处 sfx 分数峰值 0.0855 与同框 text 0.5195 相差 6 倍，与 BJ06 域内形态（sfx 0.72+ 支配）完全不同——**不是贴阈竞争，是通道近乎无响应**；③对照 BJ06，0.01–0.50 扫描不改变任何判定（域内稳定、域外零信号），「类敏感阈值」方案对 BJ 盲区无效的直接证据。
 
 ### 2.3 L2 结果（60% tile，~1.67× 有效分辨率）
 
-BJ13/14/15 各 4 tile、conf 0.01：tile 层 sfx 类偶有检出（BJ13 BL/BR 共 3 框、BJ15 TR 1 框），**均不落在任何参照框位置**（BJ13 参照框处 best sfx 0.0001–0.0003；BJ14 0.0000–0.0003；BJ15 0.0000）。1.67× 分辨率不恢复 sfx 信号。
+BJ13/14/15 各 4 tile、conf 0.01：tile 层 sfx 类偶有检出（BJ13 BL/BR 共 3 框、BJ15 TR 1 框），**均不落在任何参照框位置**（BJ13 参照框处 best sfx 0.0001–0.0002；BJ14 0.0000–0.0003；BJ15 0.0000——DSH r1 P3-1 更正：0.0003 属 BJ14 而非 BJ13）。1.67× 分辨率不恢复 sfx 信号。
 
 ### 2.4 L3 结果（参照框 crop，最强形态）
 
-7/7 参照框 crop（外扩 20%，等效分辨率 2.4–3.4×）下 **sfx 类 0 检出**：
+7/7 参照框 crop（外扩 20%，等效分辨率 3.5–5.4×）下 **sfx 类 0 检出**：
 
-| 参照框 | crop 后等效占比 | best sfx 分数 | 模型实际判定（crop 内最高 conf 框） |
+| 参照框 | crop_h/page_h | best sfx 分数 | 模型实际判定（crop 内最高 conf 框） |
 |---|---|---|---|
 | BJ13 ref1 | 0.255 | 0.0074 | bubble 0.6533 + text 0.1296 |
 | BJ13 ref2 | 0.282 | 0.0109 | **text 0.735**（sfx 0.0109） |
 | BJ14 ref1 | 0.218 | 0.0008 | panel 0.9167 |
-| BJ14 ref2 | 0.222 | 0.0000 | **text 0.9046** |
+| BJ14 ref2 | 0.222 | 0.0000 | **bubble 0.9151 + text 0.9046（并存）**（DSH r1 P2-3 更正：最高 conf 框是 bubble，text 第二） |
 | BJ14 ref3 | 0.215 | 0.0041 | bubble 0.9113 + **text 0.8707** |
 | BJ15 ref1 | 0.202 | 0.0001 | bubble 0.0164（近零） |
 | BJ15 ref2 | 0.185 | 0.0000 | **0 框** |
+
+（列头口径：`crop_h/page_h` 为 raw JSON `effective_scale_vs_fullpage` 字段原值=crop 相对页面的占比；**等效分辨率倍数=page_h/crop_h=1/0.185–1/0.282≈3.5–5.4×**，与 L2 的 1/0.6=1.67× 同公式——DSH r1 P2-1。）
 
 画面里几乎只剩单个 SFX 时，模型仍把它判为 text/bubble/panel 或干脆无检出——「给足像素模型就认得出」不成立。**该形状本身在 chiqui7 的 sfx 语义之外**。
 
@@ -96,7 +99,7 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 - BJ06 域内正例（8 框）：21–84 宽 × 25–131 高；
 - BJ13-15 参照框（7 框）：61–86 宽 × 135–206 高。
 
-盲区目标**不小于**域内正例（反而系统性更大）——「目标太小在 1024 letterbox 下消失」不成立；「目标太大超出训练尺寸分布」被 L3 否定（crop 后目标只占输入高度 ~19–28%，与常规目标量级相当）。chiqui7 letterbox 为等比缩放+左上贴图（`detection_sfx.py` `_letterbox`），不存在 WEBTOON-DIAG 的各向异性压缩机理（该先例是 ogkalu/RT-DETR 690×62133→640×640 的 97× 垂直压缩，形态完全不同，不可套用）。
+盲区目标**不小于**域内正例（反而系统性更大）——「目标太小在 1024 letterbox 下消失」不成立。L3 crop 形态下目标占模型输入高约 **71%**（参照框高/外扩后 crop 高=1/1.4，上下各外扩 20%；DSH r1 P2-2 更正：r1 版误读 raw 字段把 crop_h/page_h 当成了目标占比）——比域内正例更大，「尺度过大」在 crop 形态下更极端；L3 的 7/7 零检出因此说明「形状语义×尺度」的联合形态处于训练分布外。**必须明示的残余开放项：「目标太大」作为单独的替代假设未被本次实验单独排除**——L3 同时改变了目标占比与像素预算两个变量，没有「同占比、更高分辨率」的对照形态。该开放项不影响主根因判语：无论「形状域外」还是「尺度过大」，处置指向一致（域内标注/训练=方案③），且 (c) 的预处理机理（像素预算不足/各向异性）已由 L2（1.67× 不恢复）与等比 letterbox 独立排除。chiqui7 letterbox 为等比缩放+左上贴图（`detection_sfx.py` `_letterbox`），不存在 WEBTOON-DIAG 的各向异性压缩机理（该先例是 ogkalu/RT-DETR 690×62133→640×640 的 97× 垂直压缩，形态完全不同，不可套用）。
 
 ## 3. AC1：三假设定判（证据汇总与根因分层）
 
@@ -115,14 +118,14 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 
 ### 假设 (c) 预处理（分辨率/letterbox）对大型竖排字不利 —— **DETERMINED：不成立**
 
-- L2（1.67×）与 L3（2.4–3.4×）分辨率提升均不恢复 sfx 信号（§2.3/§2.4）——与 WEBTOON-DIAG「0→193 恢复」的分辨率根因形态完全相反。
+- L2（1.67×）与 L3（3.5–5.4×）分辨率提升均不恢复 sfx 信号（§2.3/§2.4）——与 WEBTOON-DIAG「0→193 恢复」的分辨率根因形态完全相反。
 - 尺寸对照：盲区目标在模型输入空间不小于域内正例（§2.5）。
 - 机理排除：等比 letterbox，无各向异性（§2.5）。
-- 保留注记：L2/L3 均为单次单形态探针，未穷举 imgsz 本身（ONNX 输入形状固定 1024，无法变 imgsz 直接验证）；但 L3 的 crop 形态已覆盖「像素预算充足」的判定需求，残余不确定性不影响判语。
+- 保留注记：L2/L3 均为单次单形态探针，未穷举 imgsz 本身（ONNX 输入形状固定 1024，无法变 imgsz 直接验证）；但 L3 的 crop 形态已覆盖「像素预算充足」的判定需求，残余不确定性不影响判语。另一残余开放项（DSH r1 P2-2）：**「目标太大」替代假设未被单独排除**——L3 crop 下目标占输入高 ~71%（更大而非更小，§2.5），L3 零检出说明「形状语义×尺度」联合形态处于训练分布外；该形态不属预处理机理（管线无各向异性、像素预算已 3.5–5.4×），处置指向与 (a) 域外一致（域内标注/训练=方案③），不影响本判语。
 
 ### 汇总判语（一行 each）
 
-- **(a) 域外 = DETERMINED 成立（主根因）**；**(b) 类别映射歧义 = DETERMINED 分层（text 捡走=成立；sfx 信号被压制可阈值救=否定）**；**(c) 预处理 = DETERMINED 不成立**。E2E r1 R2 遗留的「panel/text 混淆归属未定」由本实验收敛：BJ13/14 的紧贴混淆候选是 **text**（与 ko 域形态同型），panel 大框在所有页均为平凡覆盖（IoU 0.013–0.126），不构成独立根因。
+- **(a) 域外 = DETERMINED 成立（主根因）**；**(b) 类别映射歧义 = DETERMINED 分层（SFX 像素被其他类捡走=成立；sfx 信号被压制可阈值救=否定）**；**(c) 预处理 = DETERMINED 不成立**。E2E r1 R2 遗留的「panel/text 混淆归属未定」由本实验收敛（DSH r1 P1-1 更正：BJ14 并非 text 主导）：**BJ13 的紧贴混淆候选=text**（与 ko 域形态同型）；**BJ14=bubble 主导＋text 并存**（紧贴候选 IoU：ref2 bubble 0.122 > panel 0.094 > text 0.086，ref3 bubble 0.399 > text 0.274 > panel 0.126，上游 `sfx-detect-diagnosis.json`）；panel 大框在 BJ13/14/15 均为平凡覆盖（IoU 0.013–0.126），不构成独立根因。
 
 ## 4. AC2：五方案评估（只评估不实施）
 
@@ -136,7 +139,7 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 | 成本 | SFX 二分类 GT（BJ 域正例：官方免费 3 卷约 600 页中人工框选；KO 侧 29 实例可复用）+ 训练 Task + 评估 Task；推理成本轻量（分类器 << 检测器） |
 | 预期收益 | **只救 BJ13/14 形态**：BJ13 两个参照框有紧贴 text 框（0.744/0.844）可送分类；BJ14 ref2/ref3 有 bubble/text 部分相交框。**BJ15 结构性救不了**：参照框处无紧贴 text/bubble 载体（仅 panel 大框平凡覆盖，对 panel 大框跑分类=整页级误报面，裁剪子区域则引入未解的子窗口问题） |
 | 风险 | 分类器自身域外风险（训练集若不含 BJ 毛笔形态则同样失效——本实验的教训直接传导）；panel 大框分类语义混乱；重叠仲裁的 region 语义变更是共享契约面 |
-| SfxPolicy 交互 | 命中改标后 policy 门生效：SKIP 默认下该 region 不翻译（静默无译文，但不再乱译）；translate 下进 SFX 翻译链（BJ06 已实证闭环）。注意 SKIP 默认下**原 speech region 若未被仲裁掉，乱译损害仍在** |
+| SfxPolicy 交互 | 命中改标后 policy 门生效：SKIP 默认下该 region 不翻译（静默无译文，但不再乱译）；translate 下进 SFX 翻译链（BJ06 已实证闭环）；**manual 与 skip 同判 SKIP**（`decide_sfx_translation`：sfx+skip/manual→SKIP，DETECT-EVAL §4.1——DSH r1 P4-2）。注意 SKIP 默认下**原 speech region 若未被仲裁掉，乱译损害仍在** |
 
 ### ② 类敏感阈值（sfx/text 差异化 conf）
 
@@ -146,7 +149,7 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 | 成本 | 近零（静态） |
 | 预期收益 | **对 BJ 盲区无效（本实验直接否决）**：conf 0.5→0.01 九档扫描，BJ14/15 参照框处 sfx 类框数恒 0、BJ13 参照框处亦 0（唯一 sfx 框是 T 恤印花误报）；raw pre-NMS sfx 峰值 0.0855 仍需阈值 <0.09 才能吃到，且该框 argmax=text、生产序列下先被 conf filter 以 text 身份处理——差异化阈值救不出一个 argmax 都不是 sfx 的框 |
 | 风险 | 负收益：0.01–0.09 带会放进 BJ06 的 0.0114 弱框等误报；对误报 T 恤印花型（0.8222）无任何抑制 |
-| SfxPolicy 交互 | sfx 候选误报增加 → SKIP 下并存 region 增多（无损害但噪声）；translate 下误报进翻译链 |
+| SfxPolicy 交互 | sfx 候选误报增加 → SKIP 下并存 region 增多（无损害但噪声）；translate 下误报进翻译链；manual 与 skip 同判 SKIP（同①，DSH r1 P4-2） |
 
 ### ③ chiqui7 fine-tune（BJ 域标注，沿 C4 条件式先例）
 
@@ -156,7 +159,7 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 | 成本 | **最高**：BJ 域 SFX 框标注（正例数百级才稳，官方免费 3 卷可标注但要人工逐页）+ 训练基础设施（Ultralytics 生态）+ 训练/评估/回归 Task 链；训练数据登记义务（chiqui7 原训练集未登记，衍生训练需从零建立来源链） |
 | 预期收益 | **自动化覆盖的对症路径**：本实验判定的主根因是域外——fine-tune 是唯一直接修复 sfx 通道对 BJ 形态响应的方案；L3 的 crop 形态可直接转为增强/训练素材裁片 |
 | 风险 | ①Ultralytics AGPL 权重争议在**衍生训练权重**下更尖锐（AGPL 传导主张覆盖 fine-tune 产物，比直接分发原权重的争议更难辩护）——用户裁决前置；②灾难性遗忘：BJ06 域内 0.72+ 信号可能退化，回归基线必须冻结（BJ06 8 region + KO 域 11/29 双口径）；③标注质量依赖人工目检（无 GT 体系） |
-| SfxPolicy 交互 | 无直接交互（检测层修复）；召回提升后 SKIP/translate 语义照常 |
+| SfxPolicy 交互 | 无直接交互（检测层修复）；召回提升后 SKIP/translate/manual 语义照常（manual 与 skip 同判 SKIP——DSH r1 P4-2） |
 
 ### ④ 路由（BJ 家族 detect 走 docTR+后处理）
 
@@ -166,7 +169,7 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 | 成本 | 中：路由分支维护 + BJ 家族行为分歧的测试面 + docTR 词/行级粒度到 region 粒度的语义桥接 |
 | 预期收益 | **未验证且存疑**：docTR 对 BJ 毛笔竖排 SFX 的检出能力没有任何评估记录；C4 基线报告反登记 docTR 在 KO 域对 SFX 的形态是「误检源」（`verification/M2-DOCTR-QUAL/baseline-summary.md` §6 gap ①：SFX/人脸误检）——检出≠可用 |
 | 风险 | 把「检出后判 sfx」问题原样带回（docTR 无 SFX 类，后处理仍需①的分类器）→ 方案④实质是①的次形态叠加路由成本；BJ 家族单独路由造成双管线行为分歧 |
-| SfxPolicy 交互 | docTR 检出的 SFX 若仍标 text/speech → 对话链乱译照旧，与现状损害相同 |
+| SfxPolicy 交互 | docTR 检出的 SFX 若仍标 text/speech → 对话链乱译照旧，与现状损害相同；若后处理改标 sfx，policy 门语义同①（manual 与 skip 同判 SKIP——DSH r1 P4-2） |
 
 ### ⑤ 维持现状 + 产品侧缓解
 
@@ -176,7 +179,7 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 | 成本 | 最低（零模型、零检测层改动）；UI Task 属既有人机面 |
 | 预期收益 | **不恢复自动化召回**；但把已实证的损害形态（「误路由→乱译→静默进渲染」）变为「可发现/可修正」——是**唯一直接处置误路由损害**的短期方案（①②③在不配合重叠仲裁时都不触碰 speech 侧损害） |
 | 风险 | 无自动化收益；用户负担（逐页人工）；「疑似 SFX」启发式若做自动化误标本身有误报面 |
-| SfxPolicy 交互 | 手动改标后 SKIP/translate 门语义立即生效（SKIP=停止乱译改静默、translate=进 SFX 翻译链）——产品语义完全复用 |
+| SfxPolicy 交互 | 手动改标后 policy 门语义立即生效：SKIP（默认）与 manual（与 skip 同判 SKIP，`decide_sfx_translation`——DSH r1 P4-2）=停止乱译改静默、translate=进 SFX 翻译链——产品语义完全复用 |
 
 ### 交叉要点（对所有实施型方案生效）
 
@@ -205,7 +208,7 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 
 1. **directional**：3 盲区页 7 实例 + 1 对照页；无 SFX GT（参照框为 100dpi 目检 zoom 确认的近似框，同 E2E AC2 口径）；单 AI 标注者；未做多 seed（推理确定性由同权重单次前向保证，前向本身确定性）。
 2. 参照框近似性：目检 approx bbox（±10-20px 级）影响 IoU/相交判定的边缘个案，不影响本报告的量级判定（sfx 分数 0.000x vs 0.72+ 的对比跨 2-3 个数量级）。
-3. L2/L3 是单形态探针：未穷举 tile 布局/crop 外扩比例/imgsz（ONNX 固定 1024 输入不可变）；L3 结论「给足像素仍不识别」对 crop 外扩 20% 这一律成立。
+3. L2/L3 是单形态探针：未穷举 tile 布局/crop 外扩比例/imgsz（ONNX 固定 1024 输入不可变）；L3 结论「给足像素仍不识别」对 crop 外扩 20% 这一律成立；且 L3 同时改变目标占比（~71% 输入高，§2.5）与像素预算，「目标太大」替代假设未被单独排除（DSH r1 P2-2）——该开放项不影响域外主根因判语与 §5 方案排序（两条路径的处置指向一致）。
 4. raw pre-NMS 查询的几何口径是「letterbox 空间中心点落入参照框」——覆盖框（如 panel 大框）中心在外不被计入；NMS 后相交口径已并列报告，两口径结论一致。
 5. 方案成本为静态分析+既有证据推导（directional），未做任何训练/集成实验；收益估计以本实验的通道响应证据为界。
 6. BJ06 对照的正例身份来自生产 run 检出（chiqui7 自证）——「BJ06 域内」的独立 GT 佐证不存在；若 BJ06 的 8 region 本身含误报，域内/域外对比的分母有残余不确定性（但 8 region 均通过 OCR+翻译+渲染全链且人工抽检方向正确，E2E §1.3）。
@@ -231,3 +234,21 @@ letterbox 空间（scale=1024/4167≈0.2457）下的目标尺寸：
 # BJ06 @0.01 sfx=9；BJ13/14/15 参照框 sfx_box=False ×7；
 # L2 tile 参照框 sfx_box=False ×7；L3 crop best_sfx ≤0.0109 ×7
 ```
+
+## 8. DSH r1 闭合对照（r2 返修记录）
+
+DSH r1：verdict=`changes_requested`（0×P0，1×P1 + 4×P2 + 3×P3 + 3×P4）。**主根因判语、五方案评估、AC3 排序、结构性发现均被确认成立且未越权，不需重跑实验**——本版为纯文字/数字返修，返修 commit 只触碰本报告、Task、Handoff 三个文件，`experiments/**` 与 `raw/**` 零改动。逐条处置：
+
+| 编号 | 发现 | 处置 | 落点 |
+|---|---|---|---|
+| P1-1 | §3 收敛判语「BJ13/14 的紧贴混淆候选是 text」错误——BJ14 实为 bubble 主导（上游 `sfx-detect-diagnosis.json`：ref2 bubble IoU 0.122 > panel 0.094 > text 0.086；ref3 bubble 0.399 > text 0.274 > panel 0.126） | 改为「BJ13 的紧贴混淆候选=text（与 ko 域同型）；BJ14=bubble 主导＋text 并存（bubble IoU 0.122/0.399）；panel 大框在 BJ13/14/15 均为平凡覆盖（IoU 0.013–0.126）非独立根因」；同步 Task 交付记录与 Handoff 交付结果表 | 本报告 §3 汇总判语；Task 交付记录；Handoff AC1 行 |
+| P2-1 | L3「等效 2.4–3.4×」错（误把 crop/page 占比当倍数） | 三处改 **3.5–5.4×**（=page_h/crop_h=1/0.282–1/0.185，与 L2 的 1/0.6=1.67× 同公式）；§2.4 表列头改 `crop_h/page_h` 并加公式注 | 本报告 §2.1/§2.4/§3(c)；Task 交付记录 |
+| P2-2 | §2.5「crop 后目标只占输入高 ~19–28%」误读字段（那是 crop 高占页面高比例） | 改写：目标占模型输入高≈**71%**（1/1.4）——比域内正例更大，故「目标太小」不成立；「尺度过大」在 crop 下更极端；明示**「目标太大」替代假设未被单独排除**（L3 同时改占比与像素预算，无同占比对照）；不影响主根因「域外」 | 本报告 §2.5/§3(c)/§6 limitation 3 |
+| P2-3 | §2.4 表 BJ14 ref2 行「text 0.9046」填错最高 conf 框 | 改「**bubble 0.9151 + text 0.9046（并存）**」（其余 6 行 DSH 已核对正确，不动） | 本报告 §2.4 表 |
+| P2-4 | §2.2 表 BJ14 ref3「20 候选」恰为探针截断上限未标注 | 标注「≥20（探针上限 20，按 sfx 降序截断；最高 sfx 0.0001 为截断前首位，判定不受影响）」 | 本报告 §2.2 表 |
+| P3-1 | §2.3「BJ13 参照框处 best sfx 0.0001–0.0003」错（0.0003 属 BJ14） | 改「BJ13 0.0001–0.0002；BJ14 0.0000–0.0003；BJ15 0.0000」 | 本报告 §2.3 |
+| P3-2 | base 二义（Task frontmatter base_commit=24a89d7d vs claim @497621df） | Task 交付记录加基线口径注明：「任务基线=24a89d7d；claim 时仓头=497621df；本 Task 全部 diff 固定点=497621df」 | Task 交付记录 |
+| P3-3 | Handoff 提交清单缺收尾 commit hash | Handoff 提交清单补返修主体 commit hash 与收尾 commit 说明；Task frontmatter 增 `rework_head` 与 reviewed 口径对齐 | Handoff 提交清单；Task frontmatter |
+| P4-1 | §2.1 分档实现口径未注（脚本为一次推理多档重筛，非逐档 filter→NMS） | L1 行加注：分档实现=「同一 conf≥0.01 全集 NMS 后按 conf 重筛」，与「逐档 filter→NMS」的等价性依赖 `_nms` 贪心按 conf 降序（`detection_sfx.py:469-477` `np.argsort(scores)[::-1]`，高 conf 候选先处理、低 conf 候选不可能抑制高 conf 候选），故 §2.2「0.50 档 8=生产 run 8 个 sfx region」成立 | 本报告 §2.1 |
+| P4-2 | §4 五方案「SfxPolicy 交互」行未显式覆盖 manual 值 | 五行全部补「manual 与 skip 同判 SKIP」（`decide_sfx_translation`：sfx+skip/manual→SKIP，DETECT-EVAL §4.1） | 本报告 §4 各方案 |
+| P4-3 | raw pre-NMS「同框 text 0.5195」与 NMS 后保留框 text 0.7436 易被误读为同一候选 | 加注「pre-NMS 候选与 NMS 后保留框不是同一候选对象，两侧数字不得互推」 | 本报告 §2.2 表 |

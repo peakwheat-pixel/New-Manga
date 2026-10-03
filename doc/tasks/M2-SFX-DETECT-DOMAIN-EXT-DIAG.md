@@ -6,7 +6,7 @@ status: in_progress
 owner_claim: 2026-10-03T23:12+08:00 by zcode subagent @497621df
 delivery_head: 87a8bc34
 reviewed_head: 待 Review 后回填（Reviewer=DeepSeek Harness 非作者）
-completion_note: 2026-10-03 AC1-AC4 全部交付（只评估不实施）；三假设 DETERMINED：(a) 域外=成立主根因 (b) 类映射分层（text 捡走成立/阈值救否定） (c) 预处理=不成立；实验 L1/L2/L3 跑成（BJ06 对照+BJ13/14/15，sfx 通道 0.0000-0.0109 vs 域内 0.72-0.94）；结构性发现=region 创建无跨 provider 重叠仲裁，召回修复不闭合误路由损害；status 保持 in_progress 待 Review+集成流转
+completion_note: 2026-10-03 AC1-AC4 全部交付（只评估不实施）；三假设 DETERMINED：(a) 域外=成立主根因 (b) 类映射分层（BJ13 text 捡走、BJ14 bubble 主导+text 并存；阈值救否定） (c) 预处理=不成立（「目标太大」替代假设明示未单独排除）；实验 L1/L2/L3 跑成（BJ06 对照+BJ13/14/15，sfx 通道 0.0000-0.0109 vs 域内 0.72-0.94）；结构性发现=region 创建无跨 provider 重叠仲裁，召回修复不闭合误路由损害；DSH r1 changes_requested 11 条已闭合（报告 r2）；status 保持 in_progress 待复核+集成流转
 approval: orchestrator_next_release_2026-10-02_priority_input_registered
 suggested_owner: ZCode
 owner: ZCode
@@ -46,10 +46,16 @@ SFX-E2E 实证：①chiqui7 sfx 类对 BJ 大型毛笔竖排 SFX **0 命中**（
 
 ## 交付记录（2026-10-03，Owner=ZCode subagent）
 
-AC1-AC4 全部交付，delivery_head=`87a8bc34`，主报告 `verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/diagnosis-and-options.md`，Handoff `doc/handoffs/M2-SFX-DETECT-DOMAIN-EXT-DIAG-87a8bc34.md`。要点：
+基线口径（DSH r1 P3-2）：任务基线=24a89d7d（frontmatter `base_commit`）；claim 时仓头=497621df；本 Task 全部 diff 固定点=497621df（claim commit 303d7e14 的 parent）。
 
-- **AC1 三假设全部 DETERMINED**：(a) 域外=**成立（主根因）**——L3 参照框 crop（等效 2.4-3.4× 分辨率）7/7 sfx 分数仅 0.0000-0.0109，域内对照 BJ06 同管线 0.721-0.9355（跨 2-3 个数量级）；(b) 类别映射歧义=**分层**——「SFX 像素被 text 类高 conf 捡走」成立（BJ13 text 0.744/0.844，L3 crop 中 text 0.735/0.9046/0.8707；E2E r1 R2 的「归属未定」收敛为 text，panel 大框全页平凡覆盖 IoU 0.013-0.126 非独立根因），「sfx 信号被 argmax 竞争压制、可差异化阈值救」**否定**（同框 sfx 分数比 text 低 1-2 个数量级，raw pre-NMS 峰值仅 0.0855）；(c) 预处理=**不成立**——L2 tile（1.67×）与 L3 crop 均不恢复 sfx 信号，盲区目标在 letterbox 空间（61-86×135-206px）反而大于域内正例（21-84×25-131px），且等比 letterbox 无 WEBTOON-DIAG 各向异性机理。
+AC1-AC4 全部交付，delivery_head=`87a8bc34`，主报告 `verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/diagnosis-and-options.md`（r2），Handoff `doc/handoffs/M2-SFX-DETECT-DOMAIN-EXT-DIAG-87a8bc34.md`。要点：
+
+- **AC1 三假设全部 DETERMINED**：(a) 域外=**成立（主根因）**——L3 参照框 crop（等效 3.5-5.4× 分辨率）7/7 sfx 分数仅 0.0000-0.0109，域内对照 BJ06 同管线 0.721-0.9355（跨 2-3 个数量级）；(b) 类别映射歧义=**分层**——「SFX 像素被其他类高 conf 捡走」成立，紧贴混淆候选逐页分型：**BJ13=text**（conf 0.744/0.844，与 ko 域同型）、**BJ14=bubble 主导＋text 并存**（bubble IoU 0.122/0.399，上游 sfx-detect-diagnosis.json）、L3 crop 中 text 0.735/0.9046/0.8707；panel 大框全页平凡覆盖 IoU 0.013-0.126 非独立根因——「sfx 信号被 argmax 竞争压制、可差异化阈值救」**否定**（同框 sfx 分数比 text 低 1-2 个数量级，raw pre-NMS 峰值仅 0.0855）；(c) 预处理=**不成立**——L2 tile（1.67×）与 L3 crop 均不恢复 sfx 信号，盲区目标在 letterbox 空间（61-86×135-206px）反而大于域内正例（21-84×25-131px），且等比 letterbox 无 WEBTOON-DIAG 各向异性机理；残余开放项（明示）：「目标太大」替代假设未被单独排除（L3 crop 下目标占输入高 ~71%，形状语义与尺度不可分离），不影响域外主根因。
 - **AC2 五方案**：①后分类器（只救 BJ13/14，BJ15 参照框处无紧贴 text/bubble 载体=结构性救不了）；②类敏感阈值（九档扫描直接否决）；③fine-tune（唯一对症自动化路径，前置=AGPL 衍生权重许可裁决+BJ 域 GT 标注+回归基线，沿 C4 §7.1 条件式形态）；④路由（不推荐独立立项：docTR 无 SFX 类面且 C4 反登记其为 SFX 误检源）；⑤维持现状+产品侧缓解（短期首选，唯一直接处置误路由损害的方案）。
 - **AC3 排序**：⑤＞③（条件式）＞①（条件性次优）＞④＞②（否决）；「不实施」合法；移交用户三个裁决问题（是否接受不实施+UI 缓解 / AGPL 衍生许可 / 重叠仲裁契约授权）。
 - **结构性新发现**：`src/bootstrap/core_assembly.py` `_create_detected_region` 按候选独立建 region、无跨 provider 重叠仲裁——召回修复（①②③）后 ogkalu speech region 仍并存走对话链，误路由乱译损害不消失；重叠仲裁属共享契约面，须 Codex 范围裁决（DETECT-EVAL §4.4 条件 5 具体化）。
 - **AC4 实验**：`experiments/M2-SFX-DETECT-DOMAIN-EXT-DIAG/conf_scan_diag.py`（零 src，只读 import 生产 `_build_engine/_letterbox/_map_back/_nms`）；三层探针 L1 conf 九档扫描（BJ06 对照+BJ13/14/15，全类+4 类分数向量）/L2 60% tile/L3 参照框 crop + raw pre-NMS 干净探针；raw 落 `verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/raw/`；环境 onnxruntime 1.30.0 CPU，权重 pin 校验通过（sha256 `d87389af…`）。禁改面零触碰，逐文件 add，无 `git add -A`。
+
+### r1 返修记录（2026-10-03，DSH changes_requested 闭合）
+
+DSH r1 verdict=`changes_requested`（0×P0，1×P1+4×P2+3×P3+3×P4）：主根因判语、五方案评估、AC3 排序、结构性发现均被确认成立且未越权，不需重跑实验。11 条纯文字/数字返修全部闭合（P1-1 收敛判语 BJ14 限定为 bubble 主导＋text 并存、P2-1 L3 等效倍数改 3.5-5.4×、P2-2 目标占比 71%+「目标太大」明示未单独排除、P2-3 BJ14 ref2 最高框补 bubble 0.9151、P2-4 探针截断标注、P3-1 BJ13 best sfx 0.0001-0.0002、P3-2 基线口径注明、P3-3 提交清单补 hash+frontmatter 对齐、P4-1 分档实现口径注、P4-2 manual 同判 SKIP 显式覆盖、P4-3 pre-NMS/NMS 后非同一候选注）——逐条落点=报告 §8「DSH r1 闭合对照」，同步修正本文件与 Handoff 的复制句。返修零实验重跑，`experiments/**` 与 `raw/**` 零触碰，禁改面零触碰。
