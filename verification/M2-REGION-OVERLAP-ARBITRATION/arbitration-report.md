@@ -10,7 +10,7 @@
 | AC | 判定 | 一行结论 |
 |---|---|---|
 | AC1 仲裁语义提案 | **PASS（DSH r1 确认）** | 层位=provider 拼接层（composite）；度量=bbox IoU；规则=sfx 候选驱动的 directional 改标（`sfx-`→`sfx-arb-<原label>`）；冻结阈值 **0.90**；env `NEWMANGA_SFX_ARBITRATION[_IOU]` typed 旋钮 |
-| AC2 红绿判别 | **DELIVERED（按 2026-10-04 编排裁决 (a) 修订口径）** | ①结构性不可达登记：BJ13 红态真实对位（manga-1/manga-3=qual region#1/#3 乱译路径），现状权重下 sfx 通道零候选、召回恢复后参照框口径重叠 0.49-0.55 仍在 0.90 域外——双层不可达 typed 可诊断，本仲裁在召回恢复前对 BJ13 形态 **no-op**（显式挂 sfx 召回恢复 Task 依赖链）；②近重复双检出形态级闭环：0.90+ 形态的实现路径验证（代码级，合成口径 3/3 改标落 RegionType.SFX）；**真实 0.90+ 形态至今 0 观测**（本 Task 全部真实样本面：BJ 4 页 22 sfx×25 primary 候选对 + KO 10 case，合计 0 对 ≥0.90） |
+| AC2 红绿判别 | **DELIVERED（按 2026-10-04 编排裁决 (a) 修订口径）** | ①结构性不可达登记：BJ13 红态真实对位（manga-1/manga-3=qual region#1/#3 乱译路径），现状权重下 sfx 通道零候选、召回恢复后参照框口径重叠 0.49-0.55 仍在 0.90 域外——双层不可达 typed 可诊断，本仲裁在召回恢复前对 BJ13 形态 **no-op**（显式挂 sfx 召回恢复 Task 依赖链）；②近重复双检出形态级闭环：0.90+ 形态的实现路径验证（代码级，合成口径 3/3 改标落 RegionType.SFX）；**真实 0.90+ 形态至今 0 观测**（本 Task 全部真实样本面：BJ 4 页 9 个 sfx 候选×25 primary 候选对（BJ13=1/BJ14=0/BJ15=0/BJ06=8） + KO 10 case，合计 0 对 ≥0.90） |
 | AC3 零变化回归 | **DELIVERED（KO 补证后完整）** | BJ06 仲裁 off/on 候选逐位一致（17=17，bit-identical=True）+ **KO 10 case off/on 全部逐位一致**（合计 1034 候选；sfx×primary 相交对最高 IoU=0.1325（K11 唯一 sfx 检出样本），全族 0 对 ≥0.90——P1-2，无 STOP 条件）；真实 rerun 与 qual-BJ06 生产基线对位；BJ13/14/15 计数对位；pytest 三套件 **627 passed + 1 skipped，0 failed，EXIT=0**（r2 重跑确认，日志显式落 EXIT 码）；cargo/vitest 零改动面（集成方复跑） |
 | AC4 边界与 fail-closed | **PASS（DSH r1 确认）** | 双 env 空值/非法值 fail-fast `ValueError` naming the variable（TILING 先例，detect 入口解析，非法时 primary 不运行）；默认冻结（on + 0.90）并记录依据；不可达形态 typed 可诊断（`sfx_arbitration_partial_overlap` / `sfx_candidates=0`） |
 | AC5 契约边界 | **PASS（DSH r1 确认）** | `doc/contracts/**`、RegionInput wire shape、handlers `region_creator` 签名、core_assembly 分发矩阵全部零改动；detect options 新键经消费方审计确认非 wire（§3.4）；改标仅复用既有 `startswith("sfx-")` label 契约 |
@@ -107,7 +107,7 @@ BJ13 真实 detect：primary=3 block 候选 + sfx=1 候选（T 恤印花 0.8222�
 
 ### 2.2 形态级闭环（实现路径验证，代码级）+ 绿态成立条件
 
-按编排裁决 (a)，本节是 **0.90+ 近重复双检出形态的实现路径验证（代码级）**，不是真实世界发生的观测——**真实 0.90+ 形态至今 0 观测**（本 Task 全部真实样本面 = BJ 4 页 22 个 sfx 候选 × 25 个 primary 候选的全部候选对 + KO 10 case 全族，合计 0 对 IoU≥0.90，§3.2）。合成 sfx 候选口径验证的是「该形态一旦出现（例如召回恢复 Task 之后），仲裁的改标-分发-门控链路正确闭合」：
+按编排裁决 (a)，本节是 **0.90+ 近重复双检出形态的实现路径验证（代码级）**，不是真实世界发生的观测——**真实 0.90+ 形态至今 0 观测**（本 Task 全部真实样本面 = BJ 4 页 9 个 sfx 候选 × 25 个 primary 候选的全部候选对（BJ13=1/BJ14=0/BJ15=0/BJ06=8） + KO 10 case 全族，合计 0 对 IoU≥0.90，§3.2）。合成 sfx 候选口径验证的是「该形态一旦出现（例如召回恢复 Task 之后），仲裁的改标-分发-门控链路正确闭合」：
 
 | 口径 | 注入 | 结果 | 判定 |
 |---|---|---|---|
@@ -133,7 +133,7 @@ BJ13 真实 detect：primary=3 block 候选 + sfx=1 候选（T 恤印花 0.8222�
 
 ### 3.2 KO 域证据（r2 P1-2）
 
-DSH r1 要求的 KO qualification 家族（M2-TA3-B case-selection 的 10 个 KO case：K01 K02 K04 K05 K07 K08 K09 K10 K11 K19）detect 层全量扫描：production composite（ogkalu+chiqui7）每 case **off/on 各一次真实推理**（K01-K10 webtoon 长条走生产 tiling 路径，合计 ~700 tiles×2；K11/K19 paged）。**结果：10/10 off/on 候选指纹逐位一致（bit-identical=True）；全族 sfx×primary 相交对最高 IoU = 0.1325；0 对 ≥0.90——无 STOP 条件**。合计 1034 候选（off/on 各 1034），sfx 候选仅 1 个（K11，Pepper&Carrot 页），该 sfx 候选与同页 12 个 primary 候选的最高相交 IoU=0.1325——远低于 0.90 域（KO 域唯一的有 sfx 检出样本，其重叠形态落在保守域外，与 BJ13 同为部分重叠形）。
+DSH r1 要求的 KO qualification 家族（M2-TA3-B case-selection 的 10 个 KO case：K01 K02 K04 K05 K07 K08 K09 K10 K11 K19）detect 层全量扫描：production composite（ogkalu+chiqui7）每 case **off/on 各一次真实推理**（K01-K10 webtoon 长条走生产 tiling 路径，合计 605 tiles×2；K11/K19 paged）。**结果：10/10 off/on 候选指纹逐位一致（bit-identical=True）；全族 sfx×primary 相交对最高 IoU = 0.1325；0 对 ≥0.90——无 STOP 条件**。合计 1034 候选（off/on 各 1034），sfx 候选仅 1 个（K11，Pepper&Carrot 页），该 sfx 候选与同页 12 个 primary 候选的最高相交 IoU=0.1325——远低于 0.90 域（KO 域唯一的有 sfx 检出样本，其重叠形态落在保守域外，与 BJ13 同为部分重叠形）。
 
 | case | tiling/tiles | off 候选 | on 候选 | 逐位一致 | sfx 候选 | sfx×primary 最高 IoU |
 |---|---|---|---|---|---|---|
@@ -182,7 +182,7 @@ r2 对 src（P4-1 重命名）与 experiments（P4-2/P4-4）改动后全量重�
 | 套件 | 命令 | 环境 | 结果 |
 |---|---|---|---|
 | 受影响面（P4-1 复验） | `python -m pytest tests/providers/test_detection_sfx.py -q -p no:cacheprovider` | 系统 python 3.14 | **38 passed**（含 15 仲裁用例） |
-| providers + core + m2_acceptance | `"G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe" -m pytest tests/providers tests/core tests/m2_acceptance -q -p no:cacheprovider -rs`（bash `echo EXIT=$?` 显式落日志首行） | `G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312`（依赖矩阵全齐：pytest/numpy/PIL/cv2/onnxruntime/torch-CUDA不可用/PySide6） | **627 passed, 1 skipped, 0 failed, EXIT=0**（`raw/pytest-three-suites-r2.log`，首行 `EXIT=0`） |
+| providers + core + m2_acceptance | `"G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe" -m pytest tests/providers tests/core tests/m2_acceptance -q -p no:cacheprovider -rs`（bash `echo EXIT=$?` 显式落日志末行） | `G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312`（依赖矩阵全齐：pytest/numpy/PIL/cv2/onnxruntime/torch-CUDA不可用/PySide6） | **627 passed, 1 skipped, 0 failed, EXIT=0**（`raw/pytest-three-suites-r2.log`，末行 `EXIT=0`） |
 | 全量 tests/ | 同 venv，`-m pytest tests -q -p no:cacheprovider -rs` | 同上 | 1731 passed, 1 skipped, **1 failed, EXIT=1**（`raw/pytest-full-suite-r2.log`）——唯一失败 `tests/m2_test_assets/test_catalog.py::test_manifest_has_unique_cases_and_exact_taxonomy` 断言本地 gitignored 素材 manifest 的 case 计数 97 vs 实际 100，纯本地素材状态（前序素材 Task 在本机注册过新增 case），与本 Task 改动面（`detection_sfx.py` + `tests/providers|core`）零交集，且该目录不属于三套件基线口径 |
 
 - 基线口径：611 passed + 1 skipped（Task 合同基线）；本次 627+1 = 628 collected，差 **+16 恰为本 Task 新增用例**（P4-3 口径：15 个仲裁用例 = 14 红 + 1 现状锚点绿（实现前即 passed 的降级路径锚点），含 7 组 env 参数化；另有 1 个 `sfx-arb-` 分发矩阵参数化行）——零既有用例回退。
@@ -190,7 +190,7 @@ r2 对 src（P4-1 重命名）与 experiments（P4-2/P4-4）改动后全量重�
 - 环境注记：`T1.1.1-gpu-py312`（带 CUDA torch）跑同三套件为 6 failed/619 passed——6 个失败逐名与分类（P3-3）：
   | # | 失败测试 | 原因分类 |
   |---|---|---|
-  | 1 | `tests/providers/test_bootstrap_providers.py::test_production_stack_starts_without_heavy_runtimes` | 环境依赖面：该 venv 装有 manga-ocr 等 heavy 依赖 → provider registry 状态非 `missing_dependency`，断言（按「无 heavy runtime」环境写定）失效 |
+  | 1 | `tests/providers/test_bootstrap_providers.py::test_production_stack_starts_without_heavy_runtimes` | 环境依赖面：该 venv 带 CUDA torch → `status["gpu"]["state"]` 实测 `available` 而断言期望 `unavailable`（`:31`）；registry heavy-runtimes 断言本身全部通过——与第 5/6 项同类，均属「该 venv 依赖面与测试环境假设不匹配」 |
   | 2 | `tests/providers/test_detection_sfx.py::test_real_weights_reproduce_eval_payload[rgb24]` | 环境依赖面：venv 缺 onnxruntime（REAL_SKIP 守卫只查权重/帧文件存在，不查 runtime 可导入），真实推理无法启动 |
   | 3 | `tests/providers/test_detection_sfx.py::test_real_weights_reproduce_eval_payload[rgb32]` | 同上 |
   | 4 | `tests/providers/test_detection_sfx.py::test_real_weights_blank_page_structurally_valid` | 同上 |
@@ -229,7 +229,7 @@ r2 对 src（P4-1 重命名）与 experiments（P4-2/P4-4）改动后全量重�
 | BJ/KO rerun 运行日志 | `raw/arbitrate-run.log`、`raw/ko-scan-run.log` |
 | KO 逐 case 明细（r2 P1-2） | `raw/ko-scan/<case>.json` ×10、`raw/ko-scan/summary.json` |
 | 红态测试日志（14 failed，实现前） | `raw/red-phase-arbitration-tests.log` |
-| 三套件日志（r2 重跑，显式 EXIT=0） | `raw/pytest-three-suites-r2.log`；全量 `raw/pytest-full-suite-r2.log`；环境对照 `raw/pytest-t111-py312.log`、r1 版 `raw/pytest-three-suites.log`/`raw/pytest-full-suite.log` |
+| 三套件日志（r2 重跑，显式 EXIT=0 于末行） | `raw/pytest-three-suites-r2.log`（头行标注 `@4d8aaee0`＝P4-1 重命名前 HEAD，重命名行为中性由 `38 passed` 用例级复验覆盖）；全量 `raw/pytest-full-suite-r2.log`；环境对照 `raw/pytest-t111-py312.log`、r1 版 `raw/pytest-three-suites.log`/`raw/pytest-full-suite.log` |
 | 实现主体 | `src/infrastructure/providers/detection_sfx.py`（`_arbitration_config`/`_bbox_iou`/composite 仲裁段）@ `b27c826f`，r2 重命名收尾 commit |
 | 测试 | `tests/providers/test_detection_sfx.py`（仲裁段）、`tests/core/test_sfx_assembly.py`（分发矩阵锚定行） |
 | 上游证据输入（只读引用） | `verification/M2-SFX-E2E-MATERIAL/sfx-detect-diagnosis.json`、`bj06-run/summaries/qual-BJ06.json`、`new-assets-run/summaries/qual-BJ1{3,4,5}.json`、`verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/{diagnosis-and-options.md,raw/l1-fullpage-conf-scan.json}`、`experiments/M2-TA3-B/case-selection.json`（KO page_path 解析先例） |

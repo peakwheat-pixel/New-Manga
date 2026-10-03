@@ -2,7 +2,8 @@
 id: M2-REGION-OVERLAP-ARBITRATION
 title: "region 创建跨 provider 重叠仲裁（裁决③授权：sfx/speech 检出并存时改标/抑制语义，闭合误路由乱译损害的结构性缺口）"
 kind: feature
-status: in_progress
+status: done
+integration_commit: 38e4e487
 approval: user_ruling_2026-10-04_按推荐_裁决3_重叠仲裁契约授权
 suggested_owner: ZCode
 owner: ZCode
@@ -70,7 +71,7 @@ delivery_head: b27c826f
 
 - **AC1 提案定案（DSH r1 确认）**：层位=provider 拼接层（`MangaSfxParallelDetectionProvider.detect` 拼接前，两端候选只在此层同时可见、零契约面、降级路径天然隔离）；度量=bbox IoU（与上游证据同口径）；规则=sfx 候选驱动的 directional 改标 `sfx-arb-<原label>`（复用 `startswith("sfx-")` 分发契约 → RegionType.SFX → SfxPolicy 门，core_assembly 零改动）；冻结阈值 **0.90**；env `NEWMANGA_SFX_ARBITRATION`（on|off）/`NEWMANGA_SFX_ARBITRATION_IOU`（(0,1]）typed 拒绝沿 TILING 先例。
 - **结构性定案（Review 必读）**：纯几何重叠在域内对照与误路由 case 间**反向不可分离**——BJ06 域内 sfx×speech 最高 IoU **0.8862/0.8865**（「！！！」双检出对）> BJ13 误路由 **0.4902/0.5501**；「误路由高、域内低」分离前提不成立（DSH r1 手算复核确认物理成立），任何捕获 BJ13 的阈值必先改标 BJ06 真对白（违反 AC3）。0.90 = 域内最高之上的保守域（语义=近重复双检出的类型仲裁）；margin 薄弱性（0.0135/0.0138）、内含形敏感性（域内已观测完全包含形，IoU 理论上界 1.0）、参照框不确定度传播（±0.03-0.05 > 任何 margin）三项已登记（P2-4/P3-4）——0.90 的安全性=观测经验+AC3 经验回归，非几何保证。
-- **AC2（按 2026-10-04 编排裁决 (a) 修订口径）**：①BJ13 结构性不可达登记——真实 rerun 红态对位（manga-1/manga-3 = qual region#1/#3 乱译路径；现状 sfx 仅 T 恤印花且零相交=第一层不可达）；口径 A（参照框=召回恢复）partial 0.5501 诊断不迁移（第二层不可达）；本仲裁在召回恢复前对 BJ13 **no-op**（挂依赖链）。②口径 B（近重复双检出，0.90 域设计目标形态）实现路径验证（代码级）——relabels=3 全部落 RegionType.SFX；**真实 0.90+ 形态至今 0 观测**（BJ 4 页 22×25 候选对 + KO 10 case 全部真实候选对，0 对 ≥0.90）。绿态成立条件=`sfx.policy=skip`（默认），qual-BJ06 在 translate 配置下的 8 个 sfx region 全走 SFX 翻译链实测背书门消费；translate 配置下改标 region 会进 SFX 翻译链（残余损害与域内现状一致，翻译质量未评估——禁改面）。BJ14（sfx=0 + 0.123/0.4287 双层不可达）、BJ15（与全部 ogkalu 候选零相交=结构性无载体）如实登记。
+- **AC2（按 2026-10-04 编排裁决 (a) 修订口径）**：①BJ13 结构性不可达登记——真实 rerun 红态对位（manga-1/manga-3 = qual region#1/#3 乱译路径；现状 sfx 仅 T 恤印花且零相交=第一层不可达）；口径 A（参照框=召回恢复）partial 0.5501 诊断不迁移（第二层不可达）；本仲裁在召回恢复前对 BJ13 **no-op**（挂依赖链）。②口径 B（近重复双检出，0.90 域设计目标形态）实现路径验证（代码级）——relabels=3 全部落 RegionType.SFX；**真实 0.90+ 形态至今 0 观测**（BJ 4 页 9×25 候选对（sfx：BJ13=1/BJ14=0/BJ15=0/BJ06=8） + KO 10 case 全部真实候选对，0 对 ≥0.90）。绿态成立条件=`sfx.policy=skip`（默认），qual-BJ06 在 translate 配置下的 8 个 sfx region 全走 SFX 翻译链实测背书门消费；translate 配置下改标 region 会进 SFX 翻译链（残余损害与域内现状一致，翻译质量未评估——禁改面）。BJ14（sfx=0 + 0.123/0.4287 双层不可达）、BJ15（与全部 ogkalu 候选零相交=结构性无载体）如实登记。
 - **AC3（r2 补 KO 后完整）**：BJ06 off/on 逐位一致（17=17）+ qual 基线对位（17 region、9 speech+8 sfx）；**KO 10 case（r2 P1-2）off/on 全部逐位一致**（合计 1034 候选；sfx 候选 1 个 @K11，sfx×primary 最高 IoU 0.1325，0 对 ≥0.90，无 STOP 条件）；BJ13/14/15 计数 4/6/7 对位；三套件 r2 重跑 **627+1sk EXIT=0**（显式落码）；cargo/vitest 零改动面。
 - **AC4（DSH r1 确认）**：env typed 拒绝（14 红态用例）；不可达 typed 诊断（`sfx_arbitration_partial_overlap`）；off 回退语义经 BJ06+KO 11 次真实 off 跑复验。
 - **AC5（DSH r1 确认）**：contracts/wire/签名/分发逻辑零改动，未触发停等；options 新键消费方审计（r2 P3-2）证明非 wire（唯一功能性读取=`outputs.get("region_ids")`）。

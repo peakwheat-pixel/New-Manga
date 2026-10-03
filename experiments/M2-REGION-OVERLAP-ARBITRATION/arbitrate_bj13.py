@@ -149,10 +149,10 @@ class _ReplayPrimary:
 
 
 class _ReplaySfx:
-    """Replays a cached real sfx result merged with EXTRA synthetic
-    candidates (stand-in for a restored sfx channel; zero inference)."""
+    """Replays a cached real sfx result (stand-in for a restored sfx
+    channel; zero inference)."""
 
-    def __init__(self, result, extra):
+    def __init__(self, result):
         self.result = result
         self.provider_id = result.provider_id
         self.provider_type = result.provider_type

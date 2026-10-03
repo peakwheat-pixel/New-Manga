@@ -132,7 +132,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-OCR-PADDLE3X-1](tasks/M2-OCR-PADDLE3X-1.md) 生产 ocr_local.py PaddleOCR 3.x 适配修复 | **done**（integration=`53326278`、merge=`96cdb297`；DSH r1 `approved_with_conditions` 1×P2+5×P3+3×P4 条件全闭） | ZCode / DeepSeek Harness | base=`69137837`（release `19adf0e0`）、delivery=`15ef29ab`、集成 tip=`53326278`；诊断=**ALWAYS_EMPTY**（bytes 输入校验层拒绝，错误文本风险面不存在）；修复=bytes→BGR ndarray+`enable_mkldnn=False`+双形状解析（numpy box 物化）；R3 fail-closed 收紧+2 回归测试（ocr_local 19 例）；红绿判别 9/9（声称 10/7 实跑 9/8 差异已如实登记）；探针复跑逐位一致；main 509+1skipped 0 failed；遗留台账（TA3-B2 wrapper 适配/mkldnn 性能对照/2.x 实测/det 孤立 crop）见 [integration.md](../verification/M2-OCR-PADDLE3X-1/integration.md)、[DSH r1](reviews/M2-OCR-PADDLE3X-1-15ef29ab-dsh-r1.md)。 |
 | [M2-SFX-SEM-1](tasks/M2-SFX-SEM-1.md) SFX 翻译语义第一刀：拟声词文化对等转换 | **done**（integration=`abf30a1a`、集成修正=`0349be25`+`da780b7d`；DSH r1 `approved_with_conditions` 0×P0/P1，条件由集成方闭合） | ZCode / DeepSeek Harness | `RegionInput.region_type` widening（默认 speech+枚举 fail-closed）、prompt SFX 特化段（≤6 字符禁直译）、user_text 携带类型、TASK-002 契约 rev 1.1；根因=region_type 在 bundle→provider 请求间丢失；跨层 REGION_TYPE_VALUES 断言落地前抓到集成方自身类型 bug；SFX OCR/重绘 out of scope。 |
 | [M2-SFX-DETECT-DOMAIN-EXT-DIAG](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md) SFX 检测域扩展诊断（BJ 域缺口+五方案） | **done @merge `7dd5e5ff`**（零 src；双 DSH r1 交叉验证；根因=域外+结构性发现=无重叠仲裁；排序⑤＞③＞①＞④＞②移交三件裁决；**裁决回执 2026-10-04：①维持现状+UI 缓解 / ②fine-tune 暂不投入 / ③重叠仲裁授权**） | ZCode / DeepSeek Harness | [报告](verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/diagnosis-and-options.md)、[Task](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md)。 |
-| [M2-REGION-OVERLAP-ARBITRATION](tasks/M2-REGION-OVERLAP-ARBITRATION.md) region 创建跨 provider 重叠仲裁（裁决③） | **ready**（2026-10-04 释放；Owner=ZCode 子 agent 待 claim；BJ13 误路由红转绿+域内/KO 零变化；触契约即停） | ZCode / DeepSeek Harness | 闭合「召回修复不误路由损害闭合」结构性缺口；[Task](tasks/M2-REGION-OVERLAP-ARBITRATION.md)。 |
+| [M2-REGION-OVERLAP-ARBITRATION](tasks/M2-REGION-OVERLAP-ARBITRATION.md) region 创建跨 provider 重叠仲裁（裁决③） | **done @merge `38e4e487`**（DSH r1 changes_requested 3×P1→编排裁决 (a) 修订 AC2→r2 approved_with_conditions，4 项文本条件集成方闭合；composite 层 sfx 驱动定向改标 IoU 0.90 保守域+`NEWMANGA_SFX_ARBITRATION[_IOU]` typed 旋钮；**结构性定案（双独立复算确认）=纯几何重叠反向不可分离**（域内 0.8865 vs BJ13 误路由 0.490/0.550）→BJ13 自动闭合挂召回恢复依赖链（此前 no-op）；KO 10 case off/on 逐位一致（最高 IoU 0.1325）+BJ06 逐位一致；三套件 627+1sk） | ZCode / DeepSeek Harness | [报告](verification/M2-REGION-OVERLAP-ARBITRATION/arbitration-report.md)、[Task](tasks/M2-REGION-OVERLAP-ARBITRATION.md)、[r1](reviews/M2-REGION-OVERLAP-ARBITRATION-b27c826f-dsh-r1.md)/[r2](reviews/M2-REGION-OVERLAP-ARBITRATION-e43cc5db-dsh-r2.md)。 |
 | [M2-SFX-MISROUTE-UI-MITIGATION](tasks/M2-SFX-MISROUTE-UI-MITIGATION.md) SFX 误路由缓解 UI 设计切片（裁决①） | **ready**（2026-10-04 释放；Owner=Qoder 待认领；设计交付形态沿 M2-UI1 先例；产品实现 blocked_on Workbench React 页+region 通道） | Qoder / DeepSeek Harness | sfx 疑似警示+手动改标视觉/交互契约；[Task](tasks/M2-SFX-MISROUTE-UI-MITIGATION.md)。 |
 
 ```mermaid
@@ -202,7 +202,7 @@ flowchart TD
   TA3B -.-> SMAT["M2-SFX-E2E-MATERIAL SFX 端到端+素材 · O:ZCode ✓（BJ06 8/8 闭环；检测盲区=域扩展优先级输入）"]
   SFXE -.-> DEXT["M2-SFX-DETECT-DOMAIN-EXT-DIAG BJ 域缺口诊断+方案评估 · done @7dd5e5ff（域外=主根因；裁决回执 10-04）"]
   SMAT -.-> DEXT
-  DEXT -.-> ARBIT["M2-REGION-OVERLAP-ARBITRATION 重叠仲裁 · ready（裁决③；BJ13 红转绿+零变化回归）"]
+  DEXT -.-> ARBIT["M2-REGION-OVERLAP-ARBITRATION 重叠仲裁 · done @38e4e487（裁决③；几何反向不可分离定案；BJ13 闭合挂召回恢复链）"]
   DEXT -.-> UIM["M2-SFX-MISROUTE-UI-MITIGATION 缓解 UI 设计 · ready（裁决①；Qoder 设计交付；实现 blocked_on Workbench）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
@@ -223,8 +223,8 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class DEXT done;
-  class ARBIT,UIM proposed;
+  class DEXT,ARBIT done;
+  class UIM proposed;
 
 
   
