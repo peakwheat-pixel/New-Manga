@@ -1,21 +1,23 @@
 ---
 id: M2-SFX-MISROUTE-UI-MITIGATION
-title: "SFX 误路由缓解 UI 设计切片：region 手动改标 sfx + speech 疑似警示（裁决①授权；Qoder 设计交付，产品实现 blocked_on Workbench React 页）"
+title: "SFX 误路由缓解 UI 设计切片：region 手动改标 sfx + speech 疑似警示（裁决①授权；设计交付，产品实现 blocked_on Workbench React 页）"
 kind: design
 status: ready
 approval: user_ruling_2026-10-04_按推荐_裁决1_维持现状+UI缓解
-suggested_owner: Qoder
-owner: null
+suggested_owner: ZCode
+owner: ZCode
 reviewer: DeepSeek Harness（非作者；集成核验=编排会话代行 Codex）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-SFX-DETECT-DOMAIN-EXT-DIAG, M2-REGION-OVERLAP-ARBITRATION]
 base_commit: null
-branch: agent/qoder/M2-SFX-MISROUTE-UI-MITIGATION
-worktree: G:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-MITIGATION-qoder
+branch: agent/zcode/M2-SFX-MISROUTE-UI-MITIGATION
+worktree: G:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-MITIGATION-zcode
 integration_commit: null
 ---
 
 # M2-SFX-MISROUTE-UI-MITIGATION：SFX 误路由缓解 UI 设计切片
+
+> **改派记录（2026-10-04，用户指令）**：原分配 Owner=Qoder（UI/UX 设计责任方默认）；用户裁决改派 Owner=**ZCode**（AGENTS.md「除非 Task 另行明确分配」条款+M2-S3/M2-C2 改派先例）。交付形态不变（设计文档，零产品代码）；非作者 Reviewer=DeepSeek Harness 不变。原 Qoder 分配 branch/worktree 命名作废，未创建过现场。
 
 ## 来源与目标
 
