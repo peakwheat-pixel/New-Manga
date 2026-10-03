@@ -172,7 +172,7 @@ ReaderView 的目标形态（M2-UI1 §2.2 `<ReaderPage>`）无 region 数据通�
 对比度断言按元素分两档（对应 AC4 断言 A13 的 (a)/(b) 两子句）：
 
 - **E2/E3/E4 徽标/文字（≥4.5:1，徽标真实底口径）**：按 UI 契约 §7.2 徽标合成底口径（`*-soft` 以 alpha 叠 panel 合成后与文字令牌比较）。warn 族（E2）两主题已过既有 60 组合审计；**E3 的 `skip-soft` 底 × `st-skip` 字 × `♪` 字形 × 文本组合是本设计新增组合，无既有 24 对审计证据**——既有审计不覆盖不构成豁免，实现 Task 交付时按 A13(a) 口径**首次取证**并留证据。
-- **E1 警示边框（≥3:1，非文字图形口径）**：2px 边框叠加对象是页图（内容任意、不可控），对页图内容不做对比度断言（不可测）；可测口径为与画布衬底 `bg-canvas` 的非文字图形对比 ≥3:1（WCAG 1.4.11 non-text contrast 口径）。警示**必须双载体呈现**（E1 边框 + E2 徽标 pill 自带 `bg-raised` 衬底），不得仅边框——页图极端同色内容下警示仍经 E2 可达。
+- **E1 警示边框（≥3:1，非文字图形口径）**：2px 边框叠加对象是页图（内容任意、不可控），对页图内容不做对比度断言（不可测）；可测口径为与画布衬底 `bg-canvas` 的非文字图形对比 ≥3:1（WCAG 1.4.11 non-text contrast 口径）。警示**必须双载体呈现**（E1 边框 + E2 徽标 pill），不得仅边框——页图极端同色内容下警示仍经 E2 可达（E2 对比度唯一合成基=§3.5(a) 的 panel 口径，r2 N-3）。
 
 ---
 
@@ -211,6 +211,7 @@ stateDiagram-v2
     CONFIRM_X2S --> SPEECH_PLAIN : APPLIED（新 revision。原态为 sfx 无警示，反向后即干净 speech——守卫②来源无关）
     CONFIRM_X2S --> SFX_TYPE : 取消或失败（守卫②来源回退：自 SFX_TYPE 触发）
     CONFIRM_X2S --> SFX_ARB : 取消或失败（守卫②来源回退：自 SFX_ARB 触发，机器来源态保留，见 A7）
+    CONFIRM_X2S --> SFX_ARB_RELABEL : 取消或失败（守卫②来源回退：自 SFX_ARB_RELABEL 触发，人工笔保留——r2 N-1）
 
     SFX_ARB --> SFX_ARB_RELABEL : 人工再次改标（新 revision origin=user 覆盖为当前态，机器笔保留在历史）
     SFX_ARB_RELABEL --> SFX_ARB : 撤销（restore 至机器改标笔，机器来源语义恢复）

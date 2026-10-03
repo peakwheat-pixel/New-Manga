@@ -2,7 +2,8 @@
 id: M2-SFX-MISROUTE-UI-MITIGATION
 title: "SFX 误路由缓解 UI 设计切片：region 手动改标 sfx + speech 疑似警示（裁决①授权；设计交付，产品实现 blocked_on Workbench React 页）"
 kind: design
-status: in_review
+status: done
+integration_commit: 4d77a778
 approval: user_ruling_2026-10-04_按推荐_裁决1_维持现状+UI缓解
 suggested_owner: ZCode
 owner: ZCode
@@ -51,7 +52,7 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1-AC4 | planned：设计评审（DSH 非作者静态 review）+AC4 断言清单逐条自检 | 无需运行环境 | owner 自检 PASS（2026-10-03）；DSH review NOT_RUN（待派发） | `verification/M2-SFX-MISROUTE-UI-MITIGATION/ac-self-check.md` |
+| AC1-AC4 | planned：设计评审（DSH 非作者静态 review）+AC4 断言清单逐条自检 | 无需运行环境 | owner 自检 PASS（2026-10-03）；DSH r1=approved_with_conditions（0×P0/P1，4×P2+6×P3+7×P4→18 条全闭合 @42be3c11）；DSH r2=approved_with_conditions（18/18 闭合，N-1..N-4 集成方闭合） | `verification/M2-SFX-MISROUTE-UI-MITIGATION/ac-self-check.md` |
 | AC5 零产品代码 | `git diff fb5d56c6..HEAD --name-only` 面核对 + `git diff --check` | `c92eaddd` | PASS（改动面仅 design/verification/handoffs/Task 四处；EXIT=0） | Handoff 验证表 |
 
 ## 依赖、风险与阻塞
