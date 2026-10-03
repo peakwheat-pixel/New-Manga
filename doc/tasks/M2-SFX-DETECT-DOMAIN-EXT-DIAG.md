@@ -61,3 +61,7 @@ AC1-AC4 全部交付，delivery_head=`87a8bc34`，主报告 `verification/M2-SFX
 ### r1 返修记录（2026-10-03，DSH changes_requested 闭合）
 
 DSH r1 verdict=`changes_requested`（0×P0，1×P1+4×P2+3×P3+3×P4）：主根因判语、五方案评估、AC3 排序、结构性发现均被确认成立且未越权，不需重跑实验。11 条纯文字/数字返修全部闭合（P1-1 收敛判语 BJ14 限定为 bubble 主导＋text 并存、P2-1 L3 等效倍数改 3.5-5.4×、P2-2 目标占比 71%+「目标太大」明示未单独排除、P2-3 BJ14 ref2 最高框补 bubble 0.9151、P2-4 探针截断标注、P3-1 BJ13 best sfx 0.0001-0.0002、P3-2 基线口径注明、P3-3 提交清单补 hash+frontmatter 对齐、P4-1 分档实现口径注、P4-2 manual 同判 SKIP 显式覆盖、P4-3 pre-NMS/NMS 后非同一候选注）——逐条落点=报告 §8「DSH r1 闭合对照」，同步修正本文件与 Handoff 的复制句。返修零实验重跑，`experiments/**` 与 `raw/**` 零触碰，禁改面零触碰。
+
+## 裁决回执（2026-10-04，用户「按推荐」）
+
+§5 移交三问处置：①**维持现状+UI 缓解采纳**（方案⑤）→ [M2-SFX-MISROUTE-UI-MITIGATION](M2-SFX-MISROUTE-UI-MITIGATION.md) `ready`（Qoder 设计交付；产品实现 blocked_on Workbench React 页）；②**fine-tune（方案③）暂不投入**——AGPL 衍生许可风险未接受，翻案条件=用户明确接受 Ultralytics AGPL 衍生权重许可+承诺 BJ 域 GT 标注投入（沿 C4 条件式先例反向登记），不释放；③**重叠仲裁授权采纳**→ [M2-REGION-OVERLAP-ARBITRATION](M2-REGION-OVERLAP-ARBITRATION.md) `ready`（ZCode，契约切片+实施混合形态）。方案②类敏感阈值维持否决、方案④路由维持不推荐。

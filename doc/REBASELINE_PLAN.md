@@ -131,7 +131,9 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-TRANSLATE-ENTRY](tasks/M2-SFX-TRANSLATE-ENTRY.md) SFX 翻译策略可配置入口（裁决④） | **done**（integration=`e0ba396a`、merge=`1eccc99d`；DSH r1 `approved_with_conditions` 0×P0/P1，条件由集成方闭合） | ZCode / DeepSeek Harness | `settings["sfx"]["policy"]`（skip/translate/manual，默认 SKIP 零变化+非法值 fail-fast）；缺环修复=装配闭包向 create_region 传参（translate 门生产可达）；**作用域=仅新建 region**（r1 R1 登记）；21 新增测试；post-merge 530+1sk 0 failed；后续=React 设置页（Qoder）/region 级策略入口/backfill 调度片；[集成记录](../verification/M2-SFX-TRANSLATE-ENTRY/integration.md)、[DSH r1](reviews/M2-SFX-TRANSLATE-ENTRY-a377a25a-dsh-r1.md)。 |
 | [M2-OCR-PADDLE3X-1](tasks/M2-OCR-PADDLE3X-1.md) 生产 ocr_local.py PaddleOCR 3.x 适配修复 | **done**（integration=`53326278`、merge=`96cdb297`；DSH r1 `approved_with_conditions` 1×P2+5×P3+3×P4 条件全闭） | ZCode / DeepSeek Harness | base=`69137837`（release `19adf0e0`）、delivery=`15ef29ab`、集成 tip=`53326278`；诊断=**ALWAYS_EMPTY**（bytes 输入校验层拒绝，错误文本风险面不存在）；修复=bytes→BGR ndarray+`enable_mkldnn=False`+双形状解析（numpy box 物化）；R3 fail-closed 收紧+2 回归测试（ocr_local 19 例）；红绿判别 9/9（声称 10/7 实跑 9/8 差异已如实登记）；探针复跑逐位一致；main 509+1skipped 0 failed；遗留台账（TA3-B2 wrapper 适配/mkldnn 性能对照/2.x 实测/det 孤立 crop）见 [integration.md](../verification/M2-OCR-PADDLE3X-1/integration.md)、[DSH r1](reviews/M2-OCR-PADDLE3X-1-15ef29ab-dsh-r1.md)。 |
 | [M2-SFX-SEM-1](tasks/M2-SFX-SEM-1.md) SFX 翻译语义第一刀：拟声词文化对等转换 | **done**（integration=`abf30a1a`、集成修正=`0349be25`+`da780b7d`；DSH r1 `approved_with_conditions` 0×P0/P1，条件由集成方闭合） | ZCode / DeepSeek Harness | `RegionInput.region_type` widening（默认 speech+枚举 fail-closed）、prompt SFX 特化段（≤6 字符禁直译）、user_text 携带类型、TASK-002 契约 rev 1.1；根因=region_type 在 bundle→provider 请求间丢失；跨层 REGION_TYPE_VALUES 断言落地前抓到集成方自身类型 bug；SFX OCR/重绘 out of scope。 |
-| [M2-SFX-DETECT-DOMAIN-EXT-DIAG](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md) SFX 检测域扩展诊断（BJ 域缺口+五方案） | **done @merge `7dd5e5ff`**（零 src；双 DSH r1 交叉验证；根因=域外+结构性发现=无重叠仲裁；排序⑤＞③＞①＞④＞②移交三件裁决） | ZCode / DeepSeek Harness | [报告](verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/diagnosis-and-options.md)、[Task](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md)。 |
+| [M2-SFX-DETECT-DOMAIN-EXT-DIAG](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md) SFX 检测域扩展诊断（BJ 域缺口+五方案） | **done @merge `7dd5e5ff`**（零 src；双 DSH r1 交叉验证；根因=域外+结构性发现=无重叠仲裁；排序⑤＞③＞①＞④＞②移交三件裁决；**裁决回执 2026-10-04：①维持现状+UI 缓解 / ②fine-tune 暂不投入 / ③重叠仲裁授权**） | ZCode / DeepSeek Harness | [报告](verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/diagnosis-and-options.md)、[Task](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md)。 |
+| [M2-REGION-OVERLAP-ARBITRATION](tasks/M2-REGION-OVERLAP-ARBITRATION.md) region 创建跨 provider 重叠仲裁（裁决③） | **ready**（2026-10-04 释放；Owner=ZCode 子 agent 待 claim；BJ13 误路由红转绿+域内/KO 零变化；触契约即停） | ZCode / DeepSeek Harness | 闭合「召回修复不误路由损害闭合」结构性缺口；[Task](tasks/M2-REGION-OVERLAP-ARBITRATION.md)。 |
+| [M2-SFX-MISROUTE-UI-MITIGATION](tasks/M2-SFX-MISROUTE-UI-MITIGATION.md) SFX 误路由缓解 UI 设计切片（裁决①） | **ready**（2026-10-04 释放；Owner=Qoder 待认领；设计交付形态沿 M2-UI1 先例；产品实现 blocked_on Workbench React 页+region 通道） | Qoder / DeepSeek Harness | sfx 疑似警示+手动改标视觉/交互契约；[Task](tasks/M2-SFX-MISROUTE-UI-MITIGATION.md)。 |
 
 ```mermaid
 flowchart TD
@@ -198,8 +200,10 @@ flowchart TD
   TA3B --> FULL["M2-TA3-B3-KO-FULLRUN ko 全量补跑 · done @0f872d1b（8/8 全链 export OK；F1/F2 关闭；950954/2.2M）"]
   TA3B -.-> HYG["M2-DETECTION-HYGIENE hygiene 一揽子 · O:ZCode ✓（r2 抓 P0 checkout-restore 抹除；事故登记+流程修正）"]
   TA3B -.-> SMAT["M2-SFX-E2E-MATERIAL SFX 端到端+素材 · O:ZCode ✓（BJ06 8/8 闭环；检测盲区=域扩展优先级输入）"]
-  SFXE -.-> DEXT["M2-SFX-DETECT-DOMAIN-EXT-DIAG BJ 域缺口诊断+方案评估 · done @7dd5e5ff（域外=主根因；五方案+裁决三问移交）"]
+  SFXE -.-> DEXT["M2-SFX-DETECT-DOMAIN-EXT-DIAG BJ 域缺口诊断+方案评估 · done @7dd5e5ff（域外=主根因；裁决回执 10-04）"]
   SMAT -.-> DEXT
+  DEXT -.-> ARBIT["M2-REGION-OVERLAP-ARBITRATION 重叠仲裁 · ready（裁决③；BJ13 红转绿+零变化回归）"]
+  DEXT -.-> UIM["M2-SFX-MISROUTE-UI-MITIGATION 缓解 UI 设计 · ready（裁决①；Qoder 设计交付；实现 blocked_on Workbench）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
@@ -220,6 +224,7 @@ flowchart TD
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
   class DEXT done;
+  class ARBIT,UIM proposed;
 
 
   
