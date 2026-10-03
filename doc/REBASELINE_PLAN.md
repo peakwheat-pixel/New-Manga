@@ -1,8 +1,8 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED; Goal「M2 遗留技术债清算」达成（T1/T2/T3 done，2026-09-30）；2026-09-30 用户三项裁决（docTR 口径 / TA2B 开放素材池 / TA3 拆阶段）全链闭环 done：QUAL-RUN 正式结论 FAIL（候选 C1-C5 产出待释放）、M2-TA2B done @`fae0d8f6`、M2-TA3-A done @`5dc69d16`；L-1 核实（DIAG-002）与 DOC-FIX-STALE 亦闭环 @`1970512d`；当前无 Active Task（2026-09-30 REBASELINE 刷新）**
+Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED; Goal「M2 遗留技术债清算」达成（T1/T2/T3 done，2026-09-30）；2026-09-30 用户三项裁决（docTR 口径 / TA2B 开放素材池 / TA3 拆阶段）全链闭环 done：QUAL-RUN 正式结论 FAIL（候选 C1-C5 产出待释放）、M2-TA2B done @`fae0d8f6`、M2-TA3-A done @`5dc69d16`；L-1 核实（DIAG-002）与 DOC-FIX-STALE 亦闭环 @`1970512d`；当前无 Active Task（2026-09-30 REBASELINE 刷新）；2026-10-03 REBASELINE 刷新：TA3-B 家族（B2 阶段二/KO-RERUN/B3-KO-FULLRUN）与 SFX 家族（SEM-1/ENTRY/E2E-MATERIAL/DETECTION-HYGIENE）全部 done @main `3b8b7aa0`；唯一已释放待执行=M2-SFX-DETECT-DOMAIN-EXT-DIAG（ready @`497621df`，零 src 诊断）**
 
-Audit date: 2026-09-30 (Asia/Shanghai)（本日 REBASELINE 刷新；上一轮 2026-09-29）
+Audit date: 2026-10-03 (Asia/Shanghai)（本日 REBASELINE 刷新：补登 M2-SFX-SEM-1 done 与 M2-SFX-DETECT-DOMAIN-EXT-DIAG ready；上一轮 2026-09-30）
 
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
@@ -130,6 +130,8 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SETTINGS-IPC-CHANNEL](tasks/M2-SETTINGS-IPC-CHANNEL.md) settings IPC 通道（裁决①） | **done**（integration merge=`fab3ca56`；DSH r1 `approved_with_conditions` 0×P0/P1，R1 旁路同步/R2/R3/R10 集成闭合+**M2-AC5 GATE 重跑 PASS 25/25**） | ZCode / DeepSeek Harness | M2-C1 rev 1.2→1.3（§5.3 两命令 wire shape，错误码零新码）；stdio 既有桥 envelope minor 1→2（DETECT-3 先例）；Python handler+写入端 typed fail-closed（sfx.policy enum 门）；Rust production-only 两命令+allowlist 三视图同步；前端零漂移接通；测试 pytest 602+1sk/cargo 46+1ig（含真实 sidecar e2e）/vitest 49；旁路同步=packaging 门 CS-L1 minor 2+RC2 EXPECTED 5→7+frozen-probe 历史证据标注；[DSH r1](reviews/…)、[handoff](handoffs/M2-SETTINGS-IPC-CHANNEL-45e15524.md)。 |
 | [M2-SFX-TRANSLATE-ENTRY](tasks/M2-SFX-TRANSLATE-ENTRY.md) SFX 翻译策略可配置入口（裁决④） | **done**（integration=`e0ba396a`、merge=`1eccc99d`；DSH r1 `approved_with_conditions` 0×P0/P1，条件由集成方闭合） | ZCode / DeepSeek Harness | `settings["sfx"]["policy"]`（skip/translate/manual，默认 SKIP 零变化+非法值 fail-fast）；缺环修复=装配闭包向 create_region 传参（translate 门生产可达）；**作用域=仅新建 region**（r1 R1 登记）；21 新增测试；post-merge 530+1sk 0 failed；后续=React 设置页（Qoder）/region 级策略入口/backfill 调度片；[集成记录](../verification/M2-SFX-TRANSLATE-ENTRY/integration.md)、[DSH r1](reviews/M2-SFX-TRANSLATE-ENTRY-a377a25a-dsh-r1.md)。 |
 | [M2-OCR-PADDLE3X-1](tasks/M2-OCR-PADDLE3X-1.md) 生产 ocr_local.py PaddleOCR 3.x 适配修复 | **done**（integration=`53326278`、merge=`96cdb297`；DSH r1 `approved_with_conditions` 1×P2+5×P3+3×P4 条件全闭） | ZCode / DeepSeek Harness | base=`69137837`（release `19adf0e0`）、delivery=`15ef29ab`、集成 tip=`53326278`；诊断=**ALWAYS_EMPTY**（bytes 输入校验层拒绝，错误文本风险面不存在）；修复=bytes→BGR ndarray+`enable_mkldnn=False`+双形状解析（numpy box 物化）；R3 fail-closed 收紧+2 回归测试（ocr_local 19 例）；红绿判别 9/9（声称 10/7 实跑 9/8 差异已如实登记）；探针复跑逐位一致；main 509+1skipped 0 failed；遗留台账（TA3-B2 wrapper 适配/mkldnn 性能对照/2.x 实测/det 孤立 crop）见 [integration.md](../verification/M2-OCR-PADDLE3X-1/integration.md)、[DSH r1](reviews/M2-OCR-PADDLE3X-1-15ef29ab-dsh-r1.md)。 |
+| [M2-SFX-SEM-1](tasks/M2-SFX-SEM-1.md) SFX 翻译语义第一刀：拟声词文化对等转换 | **done**（integration=`abf30a1a`、集成修正=`0349be25`+`da780b7d`；DSH r1 `approved_with_conditions` 0×P0/P1，条件由集成方闭合） | ZCode / DeepSeek Harness | `RegionInput.region_type` widening（默认 speech+枚举 fail-closed）、prompt SFX 特化段（≤6 字符禁直译）、user_text 携带类型、TASK-002 契约 rev 1.1；根因=region_type 在 bundle→provider 请求间丢失；跨层 REGION_TYPE_VALUES 断言落地前抓到集成方自身类型 bug；SFX OCR/重绘 out of scope。 |
+| [M2-SFX-DETECT-DOMAIN-EXT-DIAG](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md) SFX 检测域扩展第一步：BJ 域缺口诊断+扩展方案评估（只评估不实施） | **ready**（2026-10-02 释放 @`497621df` 2-task batch，queued for quota recovery；base=`24a89d7d`，Owner worktree 已建；待执行=当前唯一已释放未完成 Task） | ZCode / DeepSeek Harness | 零 src、experiments-only；AC1 根因分层（域外/类别映射歧义/预处理）+AC2 五方案评估（后分类器/类敏感阈值/fine-tune/路由/维持现状）+AC3 裁决建议；误路由损害形态=优先级输入；实施另行释放；[Task](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md)。 |
 
 ```mermaid
 flowchart TD
@@ -196,6 +198,8 @@ flowchart TD
   TA3B --> FULL["M2-TA3-B3-KO-FULLRUN ko 全量补跑 · done @0f872d1b（8/8 全链 export OK；F1/F2 关闭；950954/2.2M）"]
   TA3B -.-> HYG["M2-DETECTION-HYGIENE hygiene 一揽子 · O:ZCode ✓（r2 抓 P0 checkout-restore 抹除；事故登记+流程修正）"]
   TA3B -.-> SMAT["M2-SFX-E2E-MATERIAL SFX 端到端+素材 · O:ZCode ✓（BJ06 8/8 闭环；检测盲区=域扩展优先级输入）"]
+  SFXE -.-> DEXT["M2-SFX-DETECT-DOMAIN-EXT-DIAG BJ 域缺口诊断+方案评估 · ready @497621df（零 src 只评估；唯一已释放待执行）"]
+  SMAT -.-> DEXT
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
@@ -207,6 +211,7 @@ flowchart TD
   DET2 --> DET3["M2-PROD-DETECT-3 core.detect 命令面+frozen 端到端 · O:ZCode ✓（协议 1.1；AC5 NOT_RUN 转 RUN；torchvision 缺口修复）"]
   DET3 --> SFXE["M2-SFX-DETECT-EVAL SFX 检测评估 · O:ZCode+用户裁决 ✓（chiqui7 唯一 sfx 类候选；自比修正方向反转）"]
   SFXE --> SFXP["M2-SFX-PROD-1 SFX 生产集成 · O:ZCode ✓（onnxruntime 轻量栈；权重随包 NSIS 479.93MiB；发布形态开箱可用）"]
+  SFXP --> SEM1["M2-SFX-SEM-1 SFX 语义第一刀 · O:ZCode ✓（region_type widening+拟声词文化对等；TASK-002 rev 1.1）"]
 
   %% L-1 缺口核实支线（TA3-A 遗留 → DIAG-002 → DOC-FIX-STALE 全闭）
   TA3A -.-> DG2["DIAG-LOCK-CHANGED-REPRO-002 L-1 核实=已由 M2-P1 修复 · O:ZCode ✓"]
@@ -214,11 +219,11 @@ flowchart TD
 
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
-  class FULL proposed;
+  class DEXT proposed;
 
 
   
-  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2,TIL,BKF,PSG,SIP,SUI,KOR,SMAT,HYG done;
+  class GOV,D1,I1,I2,R1,UI1,C1,S1,S2,C2,S3,RC1,RC2,AC1,DGR,P1,IPC1,AC2,AC3,AC4,FXE,FXL,FXS,FXF,DIO,FXA,FXB,FXC,DP,PKG,RG,TA1,TA2A,TA2C,TA2B,TA3A,T1,T2,T3,PRE,QRUN,DG2,DOCF,C4,C1SPOT,PRODINT,DET2,DET3,SFXE,SFXP,TA3B,OCRFIX,TA3B2,WDIAG,ALLOC,CALIB,SFXE2,TIL,BKF,PSG,SIP,SUI,KOR,SMAT,HYG,FULL,SEM1 done;
   
 ```
 
