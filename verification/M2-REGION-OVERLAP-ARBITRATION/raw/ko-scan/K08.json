@@ -1,0 +1,24 @@
+{
+ "case_id": "K08",
+ "page": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K08_701535_160\\base.png",
+ "page_sha256_match": true,
+ "page_size": [
+  690,
+  51971
+ ],
+ "tiling": "on",
+ "tiling_tiles": "58",
+ "elapsed_off_s": 16.7,
+ "elapsed_on_s": 16.6,
+ "candidates_off": 60,
+ "candidates_on": 60,
+ "bit_identical": true,
+ "primary_count": 60,
+ "sfx_count": 0,
+ "sfx_x_primary_max_iou": 0.0,
+ "sfx_x_primary_top5": [],
+ "sfx_x_primary_intersecting_pairs": 0,
+ "threshold_violation_ge_090": false,
+ "options_on_sfx_arbitration": "on",
+ "options_on_relabels": null
+}

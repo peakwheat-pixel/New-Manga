@@ -149,11 +149,11 @@ class _ReplayPrimary:
 
 
 class _ReplaySfx:
-    """Replays a cached real sfx result plus EXTRA synthetic candidates."""
+    """Replays a cached real sfx result merged with EXTRA synthetic
+    candidates (stand-in for a restored sfx channel; zero inference)."""
 
     def __init__(self, result, extra):
         self.result = result
-        self.extra = extra
         self.provider_id = result.provider_id
         self.provider_type = result.provider_type
         self.model = result.model
@@ -240,7 +240,10 @@ def main() -> int:
                 {
                     "ref_index": ri,
                     "ref_xyxy": list(ref),
-                    "best_primary_label": best[0] and best[1],
+                    # P4-4: a zero-intersection reference box carries an
+                    # explicit null label (no best candidate exists), not a
+                    # falsy-value coercion of the IoU float.
+                    "best_primary_label": best[1] if best and best[0] > 0.0 else None,
                     "best_iou": round(best[0], 4) if best else 0.0,
                 }
             )
@@ -334,11 +337,13 @@ def main() -> int:
         options=(("replay", "real-bj13-primary"),),
         elapsed_ms=0,
     )
-    replayed = MangaSfxParallelDetectionProvider(
+    # Two INDEPENDENT composite instances (P4-2): each caliber gets its own
+    # stand-in sfx provider; no shared mutable replay state.
+    caliber_a_composite = MangaSfxParallelDetectionProvider(
         primary=_ReplayPrimary(replay_primary),
         sfx=_replay_sfx_with(ref_cands),
     )
-    result_a = replayed.detect(
+    result_a = caliber_a_composite.detect(
         DetectionRequest(page_id="BJ13", image_bytes=b"", width=2946, height=4167)
     )
     a_labels = [c.provider_label for c in result_a.candidates]
@@ -375,8 +380,11 @@ def main() -> int:
                 provider_label=f"sfx-near{i}",
             )
         )
-    replayed.sfx = _replay_sfx_with(near_cands)
-    result_b = replayed.detect(
+    caliber_b_composite = MangaSfxParallelDetectionProvider(
+        primary=_ReplayPrimary(replay_primary),
+        sfx=_replay_sfx_with(near_cands),
+    )
+    result_b = caliber_b_composite.detect(
         DetectionRequest(page_id="BJ13", image_bytes=b"", width=2946, height=4167)
     )
     b_labels = [c.provider_label for c in result_b.candidates]

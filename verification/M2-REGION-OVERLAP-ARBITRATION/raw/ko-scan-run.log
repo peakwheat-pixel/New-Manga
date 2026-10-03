@@ -1,0 +1,12 @@
+Loading weights:   0%|          | 0/770 [00:00<?, ?it/s]Loading weights:  73%|███████▎  | 560/770 [00:00<00:00, 5585.95it/s]Loading weights: 100%|██████████| 770/770 [00:00<00:00, 7455.25it/s]
+[K11] off=13 on=13 identical=True sfx=1 primary=12 max_iou=0.1325 tiling=off/None (7.0s/0.5s)
+[K19] off=0 on=0 identical=True sfx=0 primary=0 max_iou=0.0 tiling=off/None (0.5s/0.5s)
+[K01] off=180 on=180 identical=True sfx=0 primary=180 max_iou=0.0 tiling=on/70 (20.2s/20.1s)
+[K02] off=93 on=93 identical=True sfx=0 primary=93 max_iou=0.0 tiling=on/21 (6.1s/6.1s)
+[K04] off=113 on=113 identical=True sfx=0 primary=113 max_iou=0.0 tiling=on/32 (9.4s/9.3s)
+[K05] off=62 on=62 identical=True sfx=0 primary=62 max_iou=0.0 tiling=on/52 (15.1s/15.1s)
+[K07] off=247 on=247 identical=True sfx=0 primary=247 max_iou=0.0 tiling=on/147 (42.3s/42.3s)
+[K08] off=60 on=60 identical=True sfx=0 primary=60 max_iou=0.0 tiling=on/58 (16.7s/16.6s)
+[K09] off=119 on=119 identical=True sfx=0 primary=119 max_iou=0.0 tiling=on/112 (32.0s/32.1s)
+[K10] off=147 on=147 identical=True sfx=0 primary=147 max_iou=0.0 tiling=on/113 (32.5s/32.4s)
+ko-scan complete -> G:\CODEX\New Manga.worktrees\M2-REGION-OVERLAP-ARBITRATION-zcode\verification\M2-REGION-OVERLAP-ARBITRATION\raw\ko-scan

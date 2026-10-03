@@ -734,7 +734,7 @@ class MangaSfxParallelDetectionProvider:
         if arb_enabled and sfx_candidates and primary_candidates:
             relabeled_count = 0
             max_partial = 0.0
-            arbitratedRoute: list[RegionCandidate] = []
+            arbitrated_candidates: list[RegionCandidate] = []
             for candidate in primary_candidates:
                 overlap = max(
                     _bbox_iou(candidate.polygon, sfx.polygon)
@@ -742,7 +742,7 @@ class MangaSfxParallelDetectionProvider:
                 )
                 if overlap >= arb_threshold:
                     relabeled_count += 1
-                    arbitratedRoute.append(
+                    arbitrated_candidates.append(
                         replace(
                             candidate,
                             provider_label=(
@@ -754,12 +754,12 @@ class MangaSfxParallelDetectionProvider:
                 else:
                     if overlap > 0.0:
                         max_partial = max(max_partial, overlap)
-                    arbitratedRoute.append(candidate)
+                    arbitrated_candidates.append(candidate)
             arbitration_options = arbitration_options + (
                 ("sfx_arbitration_threshold", str(arb_threshold)),
             )
             if relabeled_count:
-                primary_candidates = tuple(arbitratedRoute)
+                primary_candidates = tuple(arbitrated_candidates)
                 arbitration_options = arbitration_options + (
                     ("sfx_arbitration_relabels", str(relabeled_count)),
                 )
