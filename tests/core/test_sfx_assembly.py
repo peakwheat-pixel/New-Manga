@@ -153,6 +153,11 @@ def test_conf_threshold_env_reaches_the_provider(assembled, monkeypatch):
     [
         ("sfx-1", RegionType.SFX),
         ("sfx-12", RegionType.SFX),
+        # M2-REGION-OVERLAP-ARBITRATION: the arbitration relabel prefix rides
+        # the same startswith("sfx-") contract — a near-duplicate primary
+        # candidate relabeled by the composite lands in RegionType.SFX (the
+        # SfxPolicy gate takes over) with ZERO dispatch-matrix changes.
+        ("sfx-arb-manga-3", RegionType.SFX),
         ("manga-3", RegionType.SPEECH),
         ("unmapped-0", RegionType.SPEECH),
         ("", RegionType.SPEECH),

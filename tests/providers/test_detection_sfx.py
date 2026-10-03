@@ -573,6 +573,334 @@ def test_composite_propagates_non_typed_errors():
 
 
 # ---------------------------------------------------------------------------
+# overlap arbitration (M2-REGION-OVERLAP-ARBITRATION)
+#
+# The composite is the ONE place both provider candidate sets coexist, so the
+# arbitrated relabel lives here (AC1 placement): an sfx-provider candidate
+# near-duplicating a primary candidate (bbox IoU >= the frozen threshold)
+# flips that primary candidate's label to the ``sfx-arb-`` prefix — which the
+# assembly's ``_detected_region_type`` startswith("sfx-") contract already
+# dispatches to RegionType.SFX, so the SfxPolicy gate (default SKIP) takes
+# over. Threshold evidence (AC1 calibration over the committed raw):
+#   - BJ06 in-domain worst case (the '！！！' double-detection pair,
+#     qual-BJ06 speech 5b76a907 x sfx 2eeaa2c4) IoU = 0.8862 — MUST stay
+#     untouched (AC3 zero-change), so the frozen default sits ABOVE it;
+#   - BJ13 misroute shape IoU 0.490-0.550 (region caliber) / 0.452-0.544
+#     (E2E diagnosis caliber) — BELOW the frozen domain, i.e. NOT reachable
+#     until sfx recall is restored (registered honestly, never fabricated).
+# ---------------------------------------------------------------------------
+
+
+def _rect(x0, y0, x1, y1):
+    return ((x0, y0), (x1, y0), (x1, y1), (x0, y1))
+
+
+class _FakeSfxProvider:
+    """A stand-in sfx provider emitting the given candidates (no engine)."""
+
+    def __init__(self, candidates):
+        self.candidates = candidates
+        self.provider_id = "local-sfx"
+        self.provider_type = "local-sfx"
+        self.model = "sfx/fake"
+        self.conf_threshold = 0.5
+
+    def detect(self, request):  # noqa: ANN001
+        return DetectionResult(
+            page_id=request.page_id,
+            candidates=tuple(self.candidates),
+            coordinate_space="page-global",
+            provider_id=self.provider_id,
+            provider_type=self.provider_type,
+            model=self.model,
+            options=(("conf_threshold", "0.5"),),
+            elapsed_ms=5,
+        )
+
+
+def test_arbitration_relabels_near_duplicate_primary_candidate(monkeypatch):
+    """AC2 green semantics: a primary candidate near-duplicated by an sfx
+    candidate (IoU >= threshold) is relabeled into the SFX gate; a
+    non-overlapping primary candidate is untouched."""
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+    primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 10.0),
+                reading_order=1,
+                confidence=0.9,
+                provider_label="manga-1",
+            ),
+            RegionCandidate(
+                polygon=_rect(50.0, 0.0, 60.0, 10.0),
+                reading_order=2,
+                confidence=0.8,
+                provider_label="manga-2",
+            ),
+        ]
+    )
+    sfx = _FakeSfxProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 10.0),  # IoU 1.0 with manga-1
+                reading_order=1,
+                confidence=0.93,
+                provider_label="sfx-1",
+            )
+        ]
+    )
+    result = MangaSfxParallelDetectionProvider(
+        primary=primary, sfx=sfx
+    ).detect(_request())
+    labels = [c.provider_label for c in result.candidates]
+    assert labels == ["sfx-arb-manga-1", "manga-2", "sfx-1"]
+    # The relabel flips ONLY the label: geometry, order, confidence verbatim
+    # (the region creator consumes the same polygon either way).
+    arb = result.candidates[0]
+    assert arb.polygon == _rect(0.0, 0.0, 10.0, 10.0)
+    assert arb.reading_order == 1
+    assert arb.confidence == 0.9
+    options = dict(result.options)
+    assert options["sfx_arbitration"] == "on"
+    assert options["sfx_arbitration_relabels"] == "1"
+
+
+def test_arbitration_partial_overlap_below_threshold_is_diagnosed_not_applied(
+    monkeypatch,
+):
+    """The BJ13 misroute shape (IoU ~0.55): below the frozen conservative
+    domain the relabel must NOT fire, and the near-miss overlap is recorded
+    as a typed diagnostic (AC4 — the arbitration-unreachable face)."""
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+    primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 20.0),  # area 200
+                reading_order=1,
+                confidence=0.744,
+                provider_label="manga-1",
+            )
+        ]
+    )
+    sfx = _FakeSfxProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 11.0),  # area 110, inside
+                reading_order=1,
+                confidence=0.93,
+                provider_label="sfx-1",
+            )
+        ]
+    )
+    result = MangaSfxParallelDetectionProvider(
+        primary=primary, sfx=sfx
+    ).detect(_request())
+    # IoU = 110/200 = 0.55 < 0.9 -> untouched, diagnosed. (result.candidates
+    # carries the appended sfx candidate after the primary slice.)
+    assert [c.provider_label for c in result.candidates] == ["manga-1", "sfx-1"]
+    options = dict(result.options)
+    assert "sfx_arbitration_relabels" not in options
+    assert options["sfx_arbitration_partial_overlap"] == "0.5500"
+
+
+def test_arbitration_bj06_in_domain_worst_pair_stays_untouched(monkeypatch):
+    """AC3 anchor, replicating the committed BJ06 numbers: the worst
+    in-domain sfx x speech pair (qual-BJ06 sfx 2eeaa2c4 bbox (1534,3517,
+    223,395) x speech 5b76a907 bbox (1540,3500,222,425)) has IoU 0.8862 —
+    the frozen default 0.9 sits above every in-domain pair, so the domain
+    run is bit-identical (the '！！！' dialogue region is NOT relabeled)."""
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+    primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(1540.0, 3500.0, 1762.0, 3925.0),
+                reading_order=9,
+                confidence=0.9,
+                provider_label="manga-9",
+            )
+        ]
+    )
+    sfx = _FakeSfxProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(1534.0, 3517.0, 1757.0, 3912.0),
+                reading_order=1,
+                confidence=0.93,
+                provider_label="sfx-1",
+            )
+        ]
+    )
+    result = MangaSfxParallelDetectionProvider(
+        primary=primary, sfx=sfx
+    ).detect(_request())
+    assert [c.provider_label for c in result.candidates] == ["manga-9", "sfx-1"]
+    options = dict(result.options)
+    assert options["sfx_arbitration_partial_overlap"] == "0.8862"
+    assert "sfx_arbitration_relabels" not in options
+
+
+def test_arbitration_env_off_disables_the_semantics(monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_ARBITRATION", "off")
+    primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 10.0),
+                reading_order=1,
+                confidence=0.9,
+                provider_label="manga-1",
+            )
+        ]
+    )
+    sfx = _FakeSfxProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 10.0),
+                reading_order=1,
+                confidence=0.93,
+                provider_label="sfx-1",
+            )
+        ]
+    )
+    result = MangaSfxParallelDetectionProvider(
+        primary=primary, sfx=sfx
+    ).detect(_request())
+    assert [c.provider_label for c in result.candidates] == ["manga-1", "sfx-1"]
+    assert dict(result.options)["sfx_arbitration"] == "off"
+
+
+def test_arbitration_env_threshold_override_expands_the_domain(monkeypatch):
+    monkeypatch.setenv("NEWMANGA_SFX_ARBITRATION_IOU", "0.3")
+    primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 20.0),
+                reading_order=1,
+                confidence=0.744,
+                provider_label="manga-1",
+            )
+        ]
+    )
+    sfx = _FakeSfxProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 11.0),  # IoU 0.55 >= 0.3
+                reading_order=1,
+                confidence=0.93,
+                provider_label="sfx-1",
+            )
+        ]
+    )
+    result = MangaSfxParallelDetectionProvider(
+        primary=primary, sfx=sfx
+    ).detect(_request())
+    assert [c.provider_label for c in result.candidates] == [
+        "sfx-arb-manga-1",
+        "sfx-1",
+    ]
+    options = dict(result.options)
+    assert options["sfx_arbitration_threshold"] == "0.3"
+    assert options["sfx_arbitration_relabels"] == "1"
+
+
+@pytest.mark.parametrize(
+    ("name", "value"),
+    [
+        ("NEWMANGA_SFX_ARBITRATION", ""),
+        ("NEWMANGA_SFX_ARBITRATION", "auto"),
+        ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+        ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+        ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+        ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+        ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+    ],
+)
+def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+    monkeypatch, name, value
+):
+    """AC4, the TILING discipline: an empty or illegal arbitration env is a
+    fail-fast ValueError naming the variable — raised BEFORE the primary
+    runs, never a silent default (an illegal config must not produce a
+    half-detected page)."""
+    sentinel_primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                reading_order=1,
+                provider_label="manga-1",
+            )
+        ]
+    )
+    composite = MangaSfxParallelDetectionProvider(
+        primary=sentinel_primary, sfx=_FakeSfxProvider([])
+    )
+    monkeypatch.setenv(name, value)
+    with pytest.raises(ValueError, match=name):
+        composite.detect(_request())
+    # The sentinel primary produced no detect call: its fake detect would
+    # have appended candidates/options regardless of the env — the typed
+    # rejection happens before any inference (asserted in depth by the
+    # dedicated probe test below).
+
+
+def test_arbitration_env_illegal_value_never_runs_the_primary(monkeypatch):
+    """The explicit fail-fast face of the test above: the primary detect is
+    not invoked at all when the arbitration env is illegal."""
+    calls = []
+
+    class _ProbePrimary:
+        provider_id = "local-manga"
+        provider_type = "local-manga"
+        model = "manga/fake"
+
+        def detect(self, request):  # noqa: ANN001
+            calls.append(request.page_id)
+            raise AssertionError("primary must not run on an illegal env")
+
+    composite = MangaSfxParallelDetectionProvider(
+        primary=_ProbePrimary(), sfx=_FakeSfxProvider([])
+    )
+    monkeypatch.setenv("NEWMANGA_SFX_ARBITRATION_IOU", "abc")
+    with pytest.raises(ValueError, match="NEWMANGA_SFX_ARBITRATION_IOU"):
+        composite.detect(_request())
+    assert calls == []
+
+
+def test_arbitration_config_defaults_are_frozen(monkeypatch):
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+    from infrastructure.providers.detection_sfx import _arbitration_config
+
+    assert _arbitration_config() == (True, 0.9)
+
+
+def test_arbitration_degraded_sfx_provider_skips_arbitration(monkeypatch):
+    """The typed-degradation path keeps its pre-arbitration shape verbatim:
+    no sfx candidates -> nothing to arbitrate against, no arbitration
+    options, manga candidates live on."""
+    monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+    primary = _FakeProvider(
+        [
+            RegionCandidate(
+                polygon=_rect(0.0, 0.0, 10.0, 10.0),
+                reading_order=1,
+                confidence=0.9,
+                provider_label="manga-1",
+            )
+        ]
+    )
+    broken = SfxDetectionProvider(weights_path=Path("x.onnx"))
+    composite = MangaSfxParallelDetectionProvider(primary=primary, sfx=broken)
+    result = composite.detect(_request())
+    assert [c.provider_label for c in result.candidates] == ["manga-1"]
+    options = dict(result.options)
+    assert options["sfx_provider_status"] == "degraded: PROVIDER_NOT_CONFIGURED"
+    assert "sfx_arbitration" not in options
+
+
+# ---------------------------------------------------------------------------
 # real weights (conditional)
 # ---------------------------------------------------------------------------
 
