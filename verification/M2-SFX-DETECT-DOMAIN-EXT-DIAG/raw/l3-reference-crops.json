@@ -1,0 +1,668 @@
+{
+ "layer": "L3_reference_crops",
+ "inflate": 0.2,
+ "note": "each reference SFX box inflated 20% on all sides, cropped and letterboxed to the same imgsz — the strongest 'given enough pixels, is THIS shape recognized as sfx' probe; conf 0.01; full score vectors",
+ "crops": {
+  "BJ13": [
+   {
+    "ref": {
+     "text": "ピ一一ーン！",
+     "approx_xyxy": [
+      2210,
+      240,
+      2560,
+      1000
+     ]
+    },
+    "crop_xyxy_page": [
+     2140,
+     88,
+     2630,
+     1152
+    ],
+    "crop_size": [
+     490,
+     1064
+    ],
+    "effective_scale_vs_fullpage": 0.255,
+    "inference_s": 0.1,
+    "count_by_class": {
+     "bubble": 2,
+     "panel": 0,
+     "sfx": 0,
+     "text": 1
+    },
+    "best_sfx_class_score_any_box": 0.0074,
+    "boxes_top": [
+     {
+      "cls": "bubble",
+      "conf": 0.6533,
+      "xyxy": [
+       0.0,
+       120.1,
+       454.3,
+       1064.0
+      ],
+      "scores": {
+       "bubble": 0.6533,
+       "panel": 0.0028,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "text",
+      "conf": 0.1296,
+      "xyxy": [
+       4.8,
+       156.8,
+       340.3,
+       1053.6
+      ],
+      "scores": {
+       "bubble": 0.0002,
+       "panel": 0.0004,
+       "sfx": 0.0074,
+       "text": 0.1296
+      }
+     },
+     {
+      "cls": "bubble",
+      "conf": 0.0247,
+      "xyxy": [
+       0.0,
+       181.8,
+       80.2,
+       1062.9
+      ],
+      "scores": {
+       "bubble": 0.0247,
+       "panel": 0.0,
+       "sfx": 0.0002,
+       "text": 0.0003
+      }
+     }
+    ]
+   },
+   {
+    "ref": {
+     "text": "ピ一一ーン！",
+     "approx_xyxy": [
+      420,
+      2560,
+      760,
+      3400
+     ]
+    },
+    "crop_xyxy_page": [
+     352,
+     2392,
+     828,
+     3568
+    ],
+    "crop_size": [
+     476,
+     1176
+    ],
+    "effective_scale_vs_fullpage": 0.282,
+    "inference_s": 0.1,
+    "count_by_class": {
+     "bubble": 2,
+     "panel": 0,
+     "sfx": 0,
+     "text": 1
+    },
+    "best_sfx_class_score_any_box": 0.0109,
+    "boxes_top": [
+     {
+      "cls": "text",
+      "conf": 0.735,
+      "xyxy": [
+       147.9,
+       56.1,
+       409.4,
+       1149.3
+      ],
+      "scores": {
+       "bubble": 0.0002,
+       "panel": 0.0003,
+       "sfx": 0.0109,
+       "text": 0.735
+      }
+     },
+     {
+      "cls": "bubble",
+      "conf": 0.5172,
+      "xyxy": [
+       9.0,
+       59.2,
+       476.0,
+       1156.4
+      ],
+      "scores": {
+       "bubble": 0.5172,
+       "panel": 0.1079,
+       "sfx": 0.0004,
+       "text": 0.0001
+      }
+     },
+     {
+      "cls": "bubble",
+      "conf": 0.2981,
+      "xyxy": [
+       52.2,
+       22.3,
+       444.2,
+       1119.7
+      ],
+      "scores": {
+       "bubble": 0.2981,
+       "panel": 0.0111,
+       "sfx": 0.0013,
+       "text": 0.0005
+      }
+     }
+    ]
+   }
+  ],
+  "BJ14": [
+   {
+    "ref": {
+     "text": "オギャァ",
+     "approx_xyxy": [
+      1230,
+      300,
+      1520,
+      950
+     ]
+    },
+    "crop_xyxy_page": [
+     1172,
+     170,
+     1578,
+     1080
+    ],
+    "crop_size": [
+     406,
+     910
+    ],
+    "effective_scale_vs_fullpage": 0.218,
+    "inference_s": 0.1,
+    "count_by_class": {
+     "bubble": 0,
+     "panel": 5,
+     "sfx": 0,
+     "text": 0
+    },
+    "best_sfx_class_score_any_box": 0.0008,
+    "boxes_top": [
+     {
+      "cls": "panel",
+      "conf": 0.9167,
+      "xyxy": [
+       0.4,
+       43.4,
+       323.4,
+       895.3
+      ],
+      "scores": {
+       "bubble": 0.0,
+       "panel": 0.9167,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.8265,
+      "xyxy": [
+       0.4,
+       0.0,
+       313.8,
+       221.9
+      ],
+      "scores": {
+       "bubble": 0.0,
+       "panel": 0.8265,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.5301,
+      "xyxy": [
+       319.0,
+       43.4,
+       406.0,
+       895.5
+      ],
+      "scores": {
+       "bubble": 0.0002,
+       "panel": 0.5301,
+       "sfx": 0.0004,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.3987,
+      "xyxy": [
+       327.9,
+       21.5,
+       406.0,
+       866.7
+      ],
+      "scores": {
+       "bubble": 0.0007,
+       "panel": 0.3987,
+       "sfx": 0.0008,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.0148,
+      "xyxy": [
+       1.1,
+       61.0,
+       299.9,
+       220.2
+      ],
+      "scores": {
+       "bubble": 0.0,
+       "panel": 0.0148,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     }
+    ]
+   },
+   {
+    "ref": {
+     "text": "オギャァ",
+     "approx_xyxy": [
+      400,
+      1900,
+      700,
+      2560
+     ]
+    },
+    "crop_xyxy_page": [
+     340,
+     1768,
+     760,
+     2692
+    ],
+    "crop_size": [
+     420,
+     924
+    ],
+    "effective_scale_vs_fullpage": 0.222,
+    "inference_s": 0.1,
+    "count_by_class": {
+     "bubble": 1,
+     "panel": 1,
+     "sfx": 0,
+     "text": 1
+    },
+    "best_sfx_class_score_any_box": 0.0,
+    "boxes_top": [
+     {
+      "cls": "bubble",
+      "conf": 0.9151,
+      "xyxy": [
+       29.5,
+       602.9,
+       420.0,
+       923.7
+      ],
+      "scores": {
+       "bubble": 0.9151,
+       "panel": 0.0,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "text",
+      "conf": 0.9046,
+      "xyxy": [
+       132.9,
+       676.1,
+       401.6,
+       924.0
+      ],
+      "scores": {
+       "bubble": 0.0001,
+       "panel": 0.0,
+       "sfx": 0.0,
+       "text": 0.9046
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.0603,
+      "xyxy": [
+       22.2,
+       17.5,
+       420.0,
+       879.8
+      ],
+      "scores": {
+       "bubble": 0.0,
+       "panel": 0.0603,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     }
+    ]
+   },
+   {
+    "ref": {
+     "text": "オギャァ",
+     "approx_xyxy": [
+      1900,
+      2260,
+      2200,
+      2900
+     ]
+    },
+    "crop_xyxy_page": [
+     1840,
+     2132,
+     2260,
+     3028
+    ],
+    "crop_size": [
+     420,
+     896
+    ],
+    "effective_scale_vs_fullpage": 0.215,
+    "inference_s": 0.1,
+    "count_by_class": {
+     "bubble": 6,
+     "panel": 7,
+     "sfx": 0,
+     "text": 3
+    },
+    "best_sfx_class_score_any_box": 0.0041,
+    "boxes_top": [
+     {
+      "cls": "bubble",
+      "conf": 0.9113,
+      "xyxy": [
+       23.0,
+       334.5,
+       420.0,
+       893.9
+      ],
+      "scores": {
+       "bubble": 0.9113,
+       "panel": 0.0,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "text",
+      "conf": 0.8707,
+      "xyxy": [
+       172.7,
+       388.1,
+       317.0,
+       851.3
+      ],
+      "scores": {
+       "bubble": 0.0,
+       "panel": 0.0,
+       "sfx": 0.0,
+       "text": 0.8707
+      }
+     },
+     {
+      "cls": "text",
+      "conf": 0.6069,
+      "xyxy": [
+       389.2,
+       0.2,
+       420.0,
+       85.4
+      ],
+      "scores": {
+       "bubble": 0.0001,
+       "panel": 0.0,
+       "sfx": 0.0001,
+       "text": 0.6069
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.424,
+      "xyxy": [
+       28.8,
+       0.0,
+       420.0,
+       796.9
+      ],
+      "scores": {
+       "bubble": 0.0,
+       "panel": 0.424,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.2372,
+      "xyxy": [
+       0.1,
+       0.0,
+       18.1,
+       301.7
+      ],
+      "scores": {
+       "bubble": 0.0009,
+       "panel": 0.2372,
+       "sfx": 0.0,
+       "text": 0.0006
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.2178,
+      "xyxy": [
+       0.0,
+       0.0,
+       16.6,
+       244.0
+      ],
+      "scores": {
+       "bubble": 0.0016,
+       "panel": 0.2178,
+       "sfx": 0.0,
+       "text": 0.0001
+      }
+     },
+     {
+      "cls": "bubble",
+      "conf": 0.1859,
+      "xyxy": [
+       0.2,
+       73.1,
+       19.4,
+       896.0
+      ],
+      "scores": {
+       "bubble": 0.1859,
+       "panel": 0.0155,
+       "sfx": 0.0008,
+       "text": 0.0038
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.1094,
+      "xyxy": [
+       0.0,
+       0.0,
+       13.2,
+       34.0
+      ],
+      "scores": {
+       "bubble": 0.0382,
+       "panel": 0.1094,
+       "sfx": 0.0009,
+       "text": 0.0002
+      }
+     },
+     {
+      "cls": "panel",
+      "conf": 0.1064,
+      "xyxy": [
+       0.0,
+       0.8,
+       14.1,
+       83.6
+      ],
+      "scores": {
+       "bubble": 0.0018,
+       "panel": 0.1064,
+       "sfx": 0.0001,
+       "text": 0.0001
+      }
+     },
+     {
+      "cls": "bubble",
+      "conf": 0.0878,
+      "xyxy": [
+       0.2,
+       0.0,
+       18.2,
+       623.5
+      ],
+      "scores": {
+       "bubble": 0.0878,
+       "panel": 0.049,
+       "sfx": 0.0012,
+       "text": 0.0231
+      }
+     },
+     {
+      "cls": "bubble",
+      "conf": 0.04,
+      "xyxy": [
+       295.6,
+       0.0,
+       420.0,
+       214.4
+      ],
+      "scores": {
+       "bubble": 0.04,
+       "panel": 0.0,
+       "sfx": 0.0,
+       "text": 0.0
+      }
+     },
+     {
+      "cls": "bubble",
+      "conf": 0.0271,
+      "xyxy": [
+       22.6,
+       44.6,
+       285.6,
+       880.6
+      ],
+      "scores": {
+       "bubble": 0.0271,
+       "panel": 0.0003,
+       "sfx": 0.0041,
+       "text": 0.0
+      }
+     }
+    ]
+   }
+  ],
+  "BJ15": [
+   {
+    "ref": {
+     "text": "オギャァ",
+     "approx_xyxy": [
+      1600,
+      200,
+      1900,
+      800
+     ]
+    },
+    "crop_xyxy_page": [
+     1540,
+     80,
+     1960,
+     920
+    ],
+    "crop_size": [
+     420,
+     840
+    ],
+    "effective_scale_vs_fullpage": 0.202,
+    "inference_s": 0.1,
+    "count_by_class": {
+     "bubble": 1,
+     "panel": 0,
+     "sfx": 0,
+     "text": 0
+    },
+    "best_sfx_class_score_any_box": 0.0001,
+    "boxes_top": [
+     {
+      "cls": "bubble",
+      "conf": 0.0164,
+      "xyxy": [
+       0.0,
+       537.2,
+       37.4,
+       587.0
+      ],
+      "scores": {
+       "bubble": 0.0164,
+       "panel": 0.0003,
+       "sfx": 0.0001,
+       "text": 0.0
+      }
+     }
+    ]
+   },
+   {
+    "ref": {
+     "text": "オギャァ",
+     "approx_xyxy": [
+      900,
+      1650,
+      1150,
+      2200
+     ]
+    },
+    "crop_xyxy_page": [
+     850,
+     1540,
+     1200,
+     2310
+    ],
+    "crop_size": [
+     350,
+     770
+    ],
+    "effective_scale_vs_fullpage": 0.185,
+    "inference_s": 0.1,
+    "count_by_class": {
+     "bubble": 0,
+     "panel": 0,
+     "sfx": 0,
+     "text": 0
+    },
+    "best_sfx_class_score_any_box": 0.0,
+    "boxes_top": []
+   }
+  ]
+ }
+}

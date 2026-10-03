@@ -1,0 +1,849 @@
+{
+ "layer": "L2_tiles_60pct",
+ "tile_frac": 0.6,
+ "note": "four 60%-size tiles per page (TL/TR/BL/BR, 40% overlap between neighbours), each letterboxed to the same imgsz — effective full-page resolution ~1.67x the L1 form; WEBTOON-DIAG probe form adapted to aspect-preserving letterbox (resolution probe ONLY, no anisotropy involved); conf 0.01",
+ "pages": {
+  "BJ13": {
+   "tiles": [
+    {
+     "tile": "TL",
+     "anchor_xy": [
+      0,
+      0
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 1,
+      "panel": 2,
+      "sfx": 0,
+      "text": 1
+     }
+    },
+    {
+     "tile": "TR",
+     "anchor_xy": [
+      1179,
+      0
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.2,
+     "count_by_class": {
+      "bubble": 2,
+      "panel": 4,
+      "sfx": 0,
+      "text": 6
+     }
+    },
+    {
+     "tile": "BL",
+     "anchor_xy": [
+      0,
+      1667
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 0,
+      "panel": 3,
+      "sfx": 1,
+      "text": 1
+     }
+    },
+    {
+     "tile": "BR",
+     "anchor_xy": [
+      1179,
+      1667
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.2,
+     "count_by_class": {
+      "bubble": 3,
+      "panel": 1,
+      "sfx": 2,
+      "text": 13
+     }
+    }
+   ],
+   "reference_verdicts": [
+    {
+     "ref": {
+      "text": "ピ一一ーン！",
+      "approx_xyxy": [
+       2210,
+       240,
+       2560,
+       1000
+      ]
+     },
+     "n_intersecting": 5,
+     "best_sfx_class_score_among_intersecting": 0.0002,
+     "sfx_class_box": false,
+     "intersecting_boxes": [
+      {
+       "cls": "text",
+       "conf": 0.9205,
+       "xyxy": [
+        2126.4,
+        270.0,
+        2485.3,
+        1297.9
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0002,
+        "text": 0.9205
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.8874,
+       "xyxy": [
+        1188.6,
+        372.5,
+        2592.5,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.8874,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "bubble",
+       "conf": 0.2729,
+       "xyxy": [
+        1984.9,
+        384.8,
+        2543.0,
+        1318.3
+       ],
+       "scores": {
+        "bubble": 0.2729,
+        "panel": 0.0,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.2671,
+       "xyxy": [
+        1739.7,
+        199.6,
+        2946.0,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.2671,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.0125,
+       "xyxy": [
+        1181.3,
+        0.0,
+        2946.0,
+        370.7
+       ],
+       "scores": {
+        "bubble": 0.0003,
+        "panel": 0.0125,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "ref": {
+      "text": "ピ一一ーン！",
+      "approx_xyxy": [
+       420,
+       2560,
+       760,
+       3400
+      ]
+     },
+     "n_intersecting": 3,
+     "best_sfx_class_score_among_intersecting": 0.0001,
+     "sfx_class_box": false,
+     "intersecting_boxes": [
+      {
+       "cls": "text",
+       "conf": 0.9261,
+       "xyxy": [
+        496.7,
+        2647.2,
+        760.3,
+        3675.8
+       ],
+       "scores": {
+        "bubble": 0.0001,
+        "panel": 0.0,
+        "sfx": 0.0001,
+        "text": 0.9261
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9277,
+       "xyxy": [
+        357.8,
+        1675.1,
+        1767.0,
+        3796.3
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9277,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.0242,
+       "xyxy": [
+        0.0,
+        1667.0,
+        1118.7,
+        3831.7
+       ],
+       "scores": {
+        "bubble": 0.0014,
+        "panel": 0.0242,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "BJ14": {
+   "tiles": [
+    {
+     "tile": "TL",
+     "anchor_xy": [
+      0,
+      0
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 2,
+      "panel": 4,
+      "sfx": 0,
+      "text": 2
+     }
+    },
+    {
+     "tile": "TR",
+     "anchor_xy": [
+      1179,
+      0
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 4,
+      "panel": 6,
+      "sfx": 0,
+      "text": 2
+     }
+    },
+    {
+     "tile": "BL",
+     "anchor_xy": [
+      0,
+      1667
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.2,
+     "count_by_class": {
+      "bubble": 3,
+      "panel": 5,
+      "sfx": 0,
+      "text": 3
+     }
+    },
+    {
+     "tile": "BR",
+     "anchor_xy": [
+      1179,
+      1667
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 5,
+      "panel": 3,
+      "sfx": 0,
+      "text": 5
+     }
+    }
+   ],
+   "reference_verdicts": [
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       1230,
+       300,
+       1520,
+       950
+      ]
+     },
+     "n_intersecting": 4,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "sfx_class_box": false,
+     "intersecting_boxes": [
+      {
+       "cls": "panel",
+       "conf": 0.9513,
+       "xyxy": [
+        1500.8,
+        18.4,
+        1967.2,
+        1571.7
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9513,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9499,
+       "xyxy": [
+        363.9,
+        0.0,
+        1493.2,
+        1581.3
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9499,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9283,
+       "xyxy": [
+        1179.0,
+        11.2,
+        1491.2,
+        1568.4
+       ],
+       "scores": {
+        "bubble": 0.0002,
+        "panel": 0.9283,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9035,
+       "xyxy": [
+        1502.9,
+        19.8,
+        1767.0,
+        1571.4
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9035,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       400,
+       1900,
+       700,
+       2560
+      ]
+     },
+     "n_intersecting": 8,
+     "best_sfx_class_score_among_intersecting": 0.0003,
+     "sfx_class_box": false,
+     "intersecting_boxes": [
+      {
+       "cls": "panel",
+       "conf": 0.4392,
+       "xyxy": [
+        0.0,
+        118.8,
+        515.5,
+        2459.7
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.4392,
+        "sfx": 0.0003,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "bubble",
+       "conf": 0.9682,
+       "xyxy": [
+        374.3,
+        2364.2,
+        883.5,
+        3033.5
+       ],
+       "scores": {
+        "bubble": 0.9682,
+        "panel": 0.0,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9652,
+       "xyxy": [
+        361.5,
+        1637.7,
+        1767.0,
+        2499.0
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9652,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9531,
+       "xyxy": [
+        363.8,
+        1667.0,
+        1767.0,
+        3045.7
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9531,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "bubble",
+       "conf": 0.9446,
+       "xyxy": [
+        374.5,
+        2365.8,
+        839.0,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.9446,
+        "panel": 0.0,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "text",
+       "conf": 0.9374,
+       "xyxy": [
+        468.5,
+        2435.6,
+        741.6,
+        2982.5
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0,
+        "text": 0.9374
+       }
+      },
+      {
+       "cls": "text",
+       "conf": 0.8585,
+       "xyxy": [
+        469.1,
+        2441.5,
+        733.1,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0,
+        "text": 0.8585
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.2503,
+       "xyxy": [
+        0.0,
+        1667.0,
+        514.5,
+        3969.3
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.2503,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       1900,
+       2260,
+       2200,
+       2900
+      ]
+     },
+     "n_intersecting": 6,
+     "best_sfx_class_score_among_intersecting": 0.0001,
+     "sfx_class_box": false,
+     "intersecting_boxes": [
+      {
+       "cls": "bubble",
+       "conf": 0.0106,
+       "xyxy": [
+        1939.0,
+        2464.3,
+        2175.2,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.0106,
+        "panel": 0.0002,
+        "sfx": 0.0001,
+        "text": 0.0002
+       }
+      },
+      {
+       "cls": "bubble",
+       "conf": 0.9668,
+       "xyxy": [
+        1878.3,
+        2461.8,
+        2347.1,
+        3033.7
+       ],
+       "scores": {
+        "bubble": 0.9668,
+        "panel": 0.0,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9613,
+       "xyxy": [
+        1877.1,
+        1634.0,
+        2946.0,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9613,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9535,
+       "xyxy": [
+        1863.7,
+        1667.0,
+        2946.0,
+        3036.9
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9535,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "text",
+       "conf": 0.9267,
+       "xyxy": [
+        2008.3,
+        2532.5,
+        2160.3,
+        2988.1
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0,
+        "sfx": 0.0,
+        "text": 0.9267
+       }
+      },
+      {
+       "cls": "bubble",
+       "conf": 0.6776,
+       "xyxy": [
+        1927.7,
+        2460.3,
+        2230.3,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.6776,
+        "panel": 0.0013,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      }
+     ]
+    }
+   ]
+  },
+  "BJ15": {
+   "tiles": [
+    {
+     "tile": "TL",
+     "anchor_xy": [
+      0,
+      0
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 1,
+      "panel": 3,
+      "sfx": 0,
+      "text": 4
+     }
+    },
+    {
+     "tile": "TR",
+     "anchor_xy": [
+      1179,
+      0
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 1,
+      "panel": 7,
+      "sfx": 1,
+      "text": 3
+     }
+    },
+    {
+     "tile": "BL",
+     "anchor_xy": [
+      0,
+      1667
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.2,
+     "count_by_class": {
+      "bubble": 4,
+      "panel": 4,
+      "sfx": 0,
+      "text": 8
+     }
+    },
+    {
+     "tile": "BR",
+     "anchor_xy": [
+      1179,
+      1667
+     ],
+     "tile_size": [
+      1767,
+      2500
+     ],
+     "inference_s": 0.1,
+     "count_by_class": {
+      "bubble": 6,
+      "panel": 15,
+      "sfx": 0,
+      "text": 6
+     }
+    }
+   ],
+   "reference_verdicts": [
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       1600,
+       200,
+       1900,
+       800
+      ]
+     },
+     "n_intersecting": 3,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "sfx_class_box": false,
+     "intersecting_boxes": [
+      {
+       "cls": "panel",
+       "conf": 0.955,
+       "xyxy": [
+        1179.0,
+        2.0,
+        2596.2,
+        1449.3
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.955,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.928,
+       "xyxy": [
+        368.8,
+        114.2,
+        1767.0,
+        1452.5
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.928,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.0163,
+       "xyxy": [
+        1179.0,
+        240.7,
+        1941.6,
+        1447.1
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.0163,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      }
+     ]
+    },
+    {
+     "ref": {
+      "text": "オギャァ",
+      "approx_xyxy": [
+       900,
+       1650,
+       1150,
+       2200
+      ]
+     },
+     "n_intersecting": 2,
+     "best_sfx_class_score_among_intersecting": 0.0,
+     "sfx_class_box": false,
+     "intersecting_boxes": [
+      {
+       "cls": "panel",
+       "conf": 0.9791,
+       "xyxy": [
+        0.3,
+        1500.8,
+        1709.8,
+        2500.0
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9791,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      },
+      {
+       "cls": "panel",
+       "conf": 0.9548,
+       "xyxy": [
+        8.3,
+        1667.0,
+        1701.9,
+        2599.3
+       ],
+       "scores": {
+        "bubble": 0.0,
+        "panel": 0.9548,
+        "sfx": 0.0,
+        "text": 0.0
+       }
+      }
+     ]
+    }
+   ]
+  }
+ }
+}

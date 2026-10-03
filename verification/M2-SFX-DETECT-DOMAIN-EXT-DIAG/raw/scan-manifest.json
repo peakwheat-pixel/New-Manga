@@ -1,0 +1,98 @@
+{
+  "tool": "experiments/M2-SFX-DETECT-DOMAIN-EXT-DIAG/conf_scan_diag.py",
+  "generated_at_utc": "2026-10-03T15:20:26Z",
+  "weights": "G:/CODEX/New Manga.task-envs/M2-SFX-DETECT/weights/yolo11s-seg.onnx",
+  "imgsz": 1024,
+  "imgsz_source": "metadata_parsed",
+  "nms_iou": 0.7,
+  "conf_ladder": [
+    0.01,
+    0.05,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.4,
+    0.5
+  ],
+  "bj06_control_regions": [
+    {
+      "region_id": "3ca2446544644ceeb2768bebf61789bf",
+      "xywh": [
+        2145,
+        3084,
+        161,
+        309
+      ]
+    },
+    {
+      "region_id": "dab09d6b4e24438cb2dc6b2ea4d18af3",
+      "xywh": [
+        2495,
+        2907,
+        157,
+        409
+      ]
+    },
+    {
+      "region_id": "2eeaa2c4d2a747f59bd7cf52b8d12e30",
+      "xywh": [
+        1534,
+        3517,
+        223,
+        395
+      ]
+    },
+    {
+      "region_id": "ab8974e10c0b476ab26366798668de53",
+      "xywh": [
+        926,
+        2818,
+        170,
+        294
+      ]
+    },
+    {
+      "region_id": "eac72dfd7b834871a1cec081153b560e",
+      "xywh": [
+        388,
+        3402,
+        340,
+        534
+      ]
+    },
+    {
+      "region_id": "ea4cbed9134c428ab3804944055449ce",
+      "xywh": [
+        1830,
+        2969,
+        162,
+        297
+      ]
+    },
+    {
+      "region_id": "c3781c28a8e14d648560dcf03418b44b",
+      "xywh": [
+        408,
+        468,
+        217,
+        492
+      ]
+    },
+    {
+      "region_id": "b5b747d0919542a4adf781a9f3eaa841",
+      "xywh": [
+        2494,
+        1895,
+        87,
+        103
+      ]
+    }
+  ],
+  "outputs": [
+    "l1-fullpage-conf-scan.json",
+    "l2-tiles-resolution-probe.json",
+    "l3-reference-crops.json"
+  ]
+}
