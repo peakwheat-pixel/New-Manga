@@ -14,6 +14,7 @@ branch: agent/zcode/M2-REGION-OVERLAP-ARBITRATION
 worktree: G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode
 integration_commit: null
 owner_claim: 2026-10-03T16:27:36Z
+delivery_head: b27c826f
 ---
 
 # M2-REGION-OVERLAP-ARBITRATION：region 创建跨 provider 重叠仲裁
@@ -47,10 +48,10 @@ owner_claim: 2026-10-03T16:27:36Z
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC2 误路由红转绿 | planned：BJ13 页 detect→region 创建 rerun，断言原乱译 region 进 SfxPolicy 门 | dev venv + 权重（task-envs/M2-SFX-DETECT） | NOT_RUN | 无 |
-| AC3 域内零变化 | planned：BJ06 detect region 集合逐位对照 | 同上 | NOT_RUN | 无 |
-| AC3 套件基线 | planned：pytest 三套件 / cargo / vitest | dev venv | NOT_RUN | 无 |
-| AC4 env 校验 | planned：空/非法 env typed 拒绝用例（先红后绿） | dev venv | NOT_RUN | 无 |
+| AC2 误路由红转绿 | `arbitrate_bj13.py`：BJ13 页 ogkalu+chiqui7 真实 rerun（红态）+ 合成召回恢复口径（口径 A 不可达诊断 / 口径 B 近重复改标闭环）+ 生产分发函数逐候选判定 | dev venv（M2-TA3-B-ocr）+ 权重（ogkalu @M2-DOCTR-QUAL-C4 pin 校验通过、chiqui7 @M2-SFX-DETECT） | PASS（红态真实对位 region#1/#3；口径 B relabels=3 全落 RegionType.SFX；口径 A/BJ13 现状/BJ14/BJ15 不可达如实登记不伪造） | `verification/M2-REGION-OVERLAP-ARBITRATION/raw/{arbitrate-pages,arbitrate-manifest}.json`、`raw/arbitrate-run.log` |
+| AC3 域内零变化 | BJ06 composite 仲裁 off vs on 候选逐位对照 + 与 qual-BJ06 基线对位 | 同上 | PASS（off/on 17=17 bit-identical=True；rerun 17=qual 17（9 speech+8 sfx）；域内最高 IoU 0.8865<0.90；BJ13/14/15 计数 4/6/7 对位） | `raw/bj06-on-off-candidates.json`、`raw/arbitrate-manifest.json`（bj06_zero_change） |
+| AC3 套件基线 | `T1.1.1-impl-py312/Scripts/python.exe -m pytest tests/providers tests/core tests/m2_acceptance -q -p no:cacheprovider -rs`（cargo/vitest 零改动面，集成方复跑） | T1.1.1-impl-py312（依赖矩阵全齐，无 CUDA） | PASS（627 passed + 1 skipped, 0 failed, EXIT=0；基线 611+1sk + 本 Task 16 新用例 = 628 精确吻合；全量 tests/ 1731+1sk + 1 个本地素材计数环境性失败与本 Task 零交集） | `raw/pytest-three-suites.log`、`raw/pytest-full-suite.log`、环境对照 `raw/pytest-t111-py312.log` |
+| AC4 env 校验 | 7 组参数化（两 env 空串/未知词/非数字/0/1.5/负数）+「primary 未被调用」探针（先红后绿） | dev venv | PASS（14 仲裁测试实现前全红 EXIT=1，实现后转绿） | `raw/red-phase-arbitration-tests.log`；`tests/providers/test_detection_sfx.py` 仲裁段 |
 
 ## 依赖、风险与阻塞
 
@@ -60,6 +61,16 @@ owner_claim: 2026-10-03T16:27:36Z
 
 ## 交付与运行记录
 
-- Handoff：尚无。
+- Handoff：[M2-REGION-OVERLAP-ARBITRATION-b27c826f](../handoffs/M2-REGION-OVERLAP-ARBITRATION-b27c826f.md)（待 Review）
 - Review：尚无。
 - 集成：尚无。
+
+### 交付记录（Owner=ZCode，2026-10-03，@b27c826f）
+
+- **AC1 提案定案**：层位=provider 拼接层（`MangaSfxParallelDetectionProvider.detect` 拼接前，两端候选只在此层同时可见、零契约面、降级路径天然隔离）；度量=bbox IoU（与上游证据同口径）；规则=sfx 候选驱动的 directional 改标 `sfx-arb-<原label>`（复用 `startswith("sfx-")` 分发契约 → RegionType.SFX → SfxPolicy 门，core_assembly 零改动）；冻结阈值 **0.90**；env `NEWMANGA_SFX_ARBITRATION`（on|off）/`NEWMANGA_SFX_ARBITRATION_IOU`（(0,1]）typed 拒绝沿 TILING 先例。
+- **结构性定案（Review 必读）**：纯几何重叠在域内对照与误路由 case 间**反向不可分离**——BJ06 域内 sfx×speech 最高 IoU **0.8862/0.8865**（「！！！」双检出对）> BJ13 误路由 **0.4902/0.5501**；「误路由高、域内低」分离前提不成立，任何捕获 BJ13 的阈值必先改标 BJ06 真对白（违反 AC3）。0.90 = 域内最高之上的保守域（语义=近重复双检出的类型仲裁），BJ13 现状闭合依赖 sfx 召回恢复（域外根因另行 Task），不可达面已按 AC4 typed 诊断（`sfx_arbitration_partial_overlap`）如实登记。
+- **AC2 红绿**：BJ13 真实 rerun 红态对位（manga-1/manga-3 = qual region#1/#3 乱译路径；现状 sfx 仅 T 恤印花且零相交=第一层不可达）；口径 B（近重复双检出，0.90 域设计目标形态）relabels=3 全部落 RegionType.SFX（绿态闭环）；口径 A（参照框=召回恢复）partial 0.5501 诊断不迁移（诚实不可达）；BJ14（sfx=0 + 0.123/0.4287 双层不可达）、BJ15（与全部 ogkalu 候选零相交=结构性无载体）如实登记。
+- **AC3**：BJ06 off/on 逐位一致（17=17）+ qual 基线对位（17 region、9 speech+8 sfx）；三套件 **627+1sk EXIT=0**（+16 恰为本 Task 新用例）；cargo/vitest 零改动面。
+- **AC5**：`doc/contracts/**`、RegionInput wire、`region_creator` 签名、分发矩阵逻辑零改动——**未触发停等**。
+- **UI-MITIGATION 对齐注记（Task 风险②）**：本仲裁只产生确定态改标，不新增 region 级「疑似」字段（零契约面）；「改标前疑似警示」所需 region 级信号本 Task 无产出（不可达形态仅 detect options 审计字段），UI 侧若需属未来契约修订候选。建议 Codex 将本注记转写入 M2-SFX-MISROUTE-UI-MITIGATION Task 文件（他人 Task 产物，本 Task 不直接改写）。
+- 证据：[arbitration-report.md](../../verification/M2-REGION-OVERLAP-ARBITRATION/arbitration-report.md) + `raw/` 全量落盘。
