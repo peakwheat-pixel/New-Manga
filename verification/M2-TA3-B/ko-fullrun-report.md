@@ -22,10 +22,10 @@
 
 ### 1.1 invalid-env 无效轮（2026-10-02 UTC 04:17–04:29）
 
-- **现象**：6 个 case（K07/K09/K10/K01/K02/K02.rerun）summary 全部落盘但 OCR 非空率 0/958、翻译 0 请求、export FAIL；单 case wall 仅 24–265s（有效轮 ~16s/region OCR vs 无效轮 ~1s/region 空跑）。
-- **第一现场**：归档副本的 `run1.steps` 首条 = `ocr / failed / PROVIDER_DEPENDENCY_MISSING / "module 'paddleocr' is not installed (provider=paddleocr-korean)"`——runner 主 venv（T1.1.1-impl-py312）不含 paddleocr，paddleocr 3.7.0 + paddle 3.3.1 在专用 OCR venv（`M2-TA3-B-ocr`），原初轮靠**启动 shell 的 `PYTHONPATH`** 注入。
+- **现象**：6 个 case（K07/K09/K10/K01/K02/K02.rerun）summary 全部落盘但 OCR 非空率 0/879、翻译 0 请求、export FAIL；单 case wall 仅 24–265s（有效轮 ~16s/region OCR vs 无效轮 ~1s/region 空跑）。
+- **第一现场**：归档副本的 `run1.steps` 中 OCR step 全部为 `failed / PROVIDER_DEPENDENCY_MISSING / "module 'paddleocr' is not installed (provider=paddleocr-korean)"`（run2 per-region OCR steps 同码 879/879——DSH r1 R-B 逐份扫描证实；F3 措辞修正：部分 case 的 steps 首条为 detect/completed，非 OCR）——runner 主 venv（T1.1.1-impl-py312）不含 paddleocr，paddleocr 3.7.0 + paddle 3.3.1 在专用 OCR venv（`M2-TA3-B-ocr`），原初轮靠**启动 shell 的 `PYTHONPATH`** 注入。
 - **根因**：熔断唤醒续接的新 shell 无 `PYTHONPATH` → `_lazy_import("paddleocr")` typed 失败 → 空 OCR 文本被链路继续消费；driver 把 `exit=1` 视为「pipeline failures, EXPECTED, must NOT abort」（driver 文档原话），一错到底跑完 6 case。
-- **处置**：6 份无效 summary + 坏轮 `qual-report.json`/`rerun-compare.json` 移入 `summaries/invalid-env-2026-10-02-ocr-dep-missing/`（`run1.steps` 错误码在案）；budget-ledger 六条全零条目删除（`invalidated_entries_note` 登记）。
+- **处置**：6 份无效 summary + 坏轮 `qual-report.json`/`rerun-compare.json` 移入 `summaries/invalid-env-2026-10-02-ocr-dep-missing/`（`run1.steps` 错误码在案）；budget-ledger 六条全零条目删除（`invalidated_entries_note` 登记；该 note 曾被 driver A 内存态重写覆盖——driver 启动时单次 `ledger_load()`、逐 phase 全量重写文件，DSH r1 F1——已在返修中按 cd76cac0 原文回填并附 provenance）。
 - **硬化（worktree `cd76cac0`）**：driver 增 `runner_env()`（OCR site-packages 注入写成代码内不变量，不再依赖启动 shell）+ `ocr_stack_ok()` 启动自检（fail-fast exit 2，烧 case 前拦截）。
 - **有效轮的判别基线**（供 Reviewer 复核）：引擎初始化日志（PaddleOCR `Creating model: PP-OCRv5_server_det` + `korean_PP-OCRv5_mobile_rec`）+ OCR 速度（~16s/region）+ `run1.steps` 无 OCR 依赖失败。本轮全部有效 summary 满足三条。
 
@@ -33,6 +33,10 @@
 
 - 进程审计发现：原初 driver A（UTC 00:10 启动，好环境）**从未死**——阻塞在 K07 runner 上（OCR venv python，真实推理）；§1.1 的无效轮是**第三个**短命唤醒续接者所写；编排会话 05:56 的硬化重启产生**同秒两个 driver 副本**，与 driver A 的队列必然同 case 撞车（summary 写冲突 + DeepSeek 双倍调用）。
 - **处置**：终止副本两棵进程树，driver A 独跑至完成；副本写下的假 K07 ledger 条目删除（worktree `7aee808d`）。driver A 队列 K07→K09→K10→K01→K02 main→K02 rerun→similarity 于 2026-10-03 07:34:35Z 全部完成（`driver-result.json` status=DONE，坏轮同名残留已改名 `driver-result.invalid-env-leg.json` 归档）。
+
+### 1.2b DSH r1 message 级瑕疵登记（不改写 git 历史，以正文为准）
+
+r1 F4/F5/F6 指出三处 commit message 瑕疵：`7aee808d` 的「12:17-12:29Z」为 local 时间误标（UTC 应为 04:22-04:29，本报告 §1.1 正确）；`7aee808d` message 只提删假 K07 未提副本假 K09 条目（该条随 driver A 内存态重写自然清除，最终 9 条干净，本报告 §1.2 已述）；`cd76cac0` 的「227/286 OCR non-empty」分母应为 235（分子 227 正确）。F9：`ko_fullrun_driver.py` 在 `cd76cac0` 为首次入库（原初 driver A 以未提交工作树形态运行，硬化版首次提交）。F8：逐 case summary 顶层 `task` 字段为 runner 既有常量 `"M2-TA3-B2"`（budget-ledger 正确），未来参数化候选。以上均不改正文证据链，登记备查。
 
 ### 1.3 endpoint 可用性
 
@@ -54,7 +58,7 @@
 | K09 | 100,480 | 119 | 115/119 | 115 | OK | 206 | 125,692 | completed_with_failures ×2 |
 | K10 | 100,674 | 147 | 141/147 | 140 | OK | 155 | 94,279 | completed_with_failures ×2 |
 
-合计：detect 1,248 region；OCR 非空 1,070/1,112（96.2%）；翻译非空 1,069；export 9/9 OK；请求 1,568；**950,954 est tokens**。
+合计：detect 1,114 region；OCR 非空 1,074/1,114（96.4%）；翻译非空 1,073；export 9/9 OK；请求 1,568；**950,954 est tokens**。（r1 F2 修正：首版合计行手算误，逐 case 行值经 DSH 独立复算无误。）
 
 ### 逐 case 对照（vs 首跑 / KO-RERUN / TILING 先例）
 
@@ -91,7 +95,7 @@ K01–K10 在 `phase2/ocr/` **无 SVG GT 物**（现仅 J46/J47/K11/K19 四件�
 
 ### 4.2 OCR/翻译覆盖度增量（directional）
 
-- OCR 非空率 96.2%（1,070/1,112）；42 个空 OCR region 全部 typed 走 F3 同型路径（空 OCR → term_extract INVALID_INPUT 计入 run 终态——语义定稿链预期行为，ko-rerun-report §2 注先例）。
+- OCR 非空率 96.4%（1,074/1,114）；40 个空 OCR region（K01 1+K04 4+K07 21+K08 4+K09 4+K10 6）全部 typed 走 F3 同型路径（空 OCR → term_extract INVALID_INPUT 计入 run 终态——语义定稿链预期行为，ko-rerun-report §2 注先例）。
 - 翻译非空 1,069/1,070；唯一例外 K10 一个 region（`집이 엄청\n고급스럽네`）translate typed 失败保空（fail-closed 正确）。
 - SFX：生产默认 `sfx.policy` 缺省 → SKIP 口径（与首跑/KO-RERUN 同），本轮无 SFX 增量（SFX 端到端由 M2-SFX-E2E-MATERIAL 承载并已闭环）。
 
@@ -117,7 +121,7 @@ K01–K10 在 `phase2/ocr/` **无 SVG GT 物**（现仅 J46/J47/K11/K19 四件�
 ## 8. 预算与计量（AC5）
 
 - **实测 950,954 est tokens = 用户批准上界 2,200,000 的 43.2%**；预算熔断未触发（`budget-ledger.json` stop=null）。上界口径：7-case 全量外推 ~2.09M + K02 干净重跑 ~113k（ko-rerun-report §7 项 1/2；case 级豁免记录落 `CEILING_BASIS`）。
-- 实测成本密度 **853 est token/region**（950,954/1,115 主+rerun region），对上界模型 2×607=1,214/region：**实测为上界的 70%**——上界假设保守方向正确；请求数实测 1,568 ≈ 1.41×region 数（模型 2×，K02 双 pass 186=2×93 精确、K04 111≈0.98×113 下偏）。
+- 实测成本密度 **854 est token/region**（950,954/1,114 主+rerun region），对上界模型 2×607=1,214/region：**实测为上界的 70%**——上界假设保守方向正确；请求数实测 1,568 ≈ 1.41×region 数（模型 2×，K02 双 pass 186=2×93 精确、K04 111≈0.98×113 下偏）。
 - key 零明文：driver 从 key 文件读入 env、`dump_json` scrub 覆盖全部落盘物、本报告与 summaries/ledger 无 key 内容。
 
 ## 9. 复现命令

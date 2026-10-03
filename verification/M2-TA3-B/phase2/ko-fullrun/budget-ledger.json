@@ -95,5 +95,6 @@
       "est_tokens": 112848
     }
   ],
-  "stop": null
+  "stop": null,
+  "invalidated_entries_note": "2026-10-02: the restart leg of the driver ran WITHOUT the OCR venv (M2-TA3-B-ocr) site-packages on PYTHONPATH, so 6 cases (K07/K09/K10/K01/K02/K02.rerun) produced summaries where every OCR step failed PROVIDER_DEPENDENCY_MISSING with empty text and zero translation. Those 6 ledger entries (all zeros) and the invalid summaries were removed; the summaries are archived under summaries/invalid-env-2026-10-02-ocr-dep-missing/. Driver hardened (runner_env PYTHONPATH injection + ocr_stack_ok fail fast) and the 6 cases re-queued. PROVENANCE (DSH r1 F1): this note was first written at cd76cac0/7aee808d, then overwritten by driver A's in-memory ledger state during its final ledger_append (driver loads the ledger once at startup and rewrites the file wholesale); restored verbatim at review-fix with an extra 7aee808d-era spurious duplicate-driver K09 entry also having been purged (DSH r1 F5)."
 }
