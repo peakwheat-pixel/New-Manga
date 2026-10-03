@@ -2,7 +2,8 @@
 id: M2-SFX-DETECT-DOMAIN-EXT-DIAG
 title: "SFX 检测域扩展第一步：BJ 域缺口诊断与扩展方案评估（误路由损害形态=优先级输入；只评估不实施）"
 kind: diagnosis
-status: ready
+status: in_progress
+owner_claim: 2026-10-03T23:12+08:00 by zcode subagent @497621df
 approval: orchestrator_next_release_2026-10-02_priority_input_registered
 suggested_owner: ZCode
 owner: ZCode
