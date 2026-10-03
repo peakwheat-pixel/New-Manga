@@ -2,16 +2,17 @@
 id: M2-SFX-MISROUTE-UI-MITIGATION
 title: "SFX 误路由缓解 UI 设计切片：region 手动改标 sfx + speech 疑似警示（裁决①授权；设计交付，产品实现 blocked_on Workbench React 页）"
 kind: design
-status: ready
+status: in_progress
 approval: user_ruling_2026-10-04_按推荐_裁决1_维持现状+UI缓解
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者；集成核验=编排会话代行 Codex）
 integrator: 编排会话代行 Codex（用户全权授权+自治授权）
 depends_on: [M2-SFX-DETECT-DOMAIN-EXT-DIAG, M2-REGION-OVERLAP-ARBITRATION]
-base_commit: null
+base_commit: fb5d56c6
 branch: agent/zcode/M2-SFX-MISROUTE-UI-MITIGATION
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-MITIGATION-zcode
+owner_claim: 2026-10-03T22:26:03Z
 integration_commit: null
 ---
 
