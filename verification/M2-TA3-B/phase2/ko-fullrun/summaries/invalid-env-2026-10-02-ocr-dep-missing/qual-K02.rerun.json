@@ -1,0 +1,4425 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K02",
+  "rerun_suffix": ".rerun",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "dense_dialogue",
+    "tiny_text"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K02_651664_112\\base.png",
+  "source_sha256": "b1123355e8c451f99100b153679f126676f616c9715ea6e1cbdbfaeeb3134f50",
+  "started_at_utc": "2026-10-02T04:28:44Z",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding": "openai-compatible-translation -> https://api.deepseek.com/v1 (deepseek-chat)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "production default (settings key absent -> SKIP)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 600,
+      "height": 18401,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "89e7aaf483474c6d9b0f97f476d81aae",
+      "width": 600,
+      "height": 18401
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "elapsed_s": 13.52
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 93
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 93
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "region_runs": 93,
+      "truncated": false,
+      "elapsed_s": 10.71
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 93,
+      "translated": 0
+    },
+    "export": {
+      "status": "FAIL",
+      "error": "RuntimeError: no translated render on disk (the page render happens during Run1; the export copies that artifact)",
+      "attribution": "defect"
+    }
+  },
+  "run1": {
+    "run_id": "run-3fb8a0fee11c4f18bee5f1e42efe3ab4",
+    "status": "completed_with_failures",
+    "elapsed_s": 13.52,
+    "steps": [
+      {
+        "step_type": "ocr",
+        "status": "failed",
+        "error_code": "PROVIDER_DEPENDENCY_MISSING",
+        "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "a422e399c56c4fe1a4a4f51b95ab2936",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 177,
+        "y": 56,
+        "width": 318,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "0edb7df033f344c3bfa46394daad6040",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 94,
+        "y": 275,
+        "width": 412,
+        "height": 168
+      }
+    },
+    {
+      "region_id": "423395c16bd64cf4a8db10758dedad8b",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 105,
+        "y": 280,
+        "width": 390,
+        "height": 57
+      }
+    },
+    {
+      "region_id": "0f659982eb384c9693639ec20f58d0b4",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 209,
+        "y": 514,
+        "width": 166,
+        "height": 43
+      }
+    },
+    {
+      "region_id": "1164b4b79b1e430988b727bd969c099a",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 172,
+        "y": 900,
+        "width": 272,
+        "height": 54
+      }
+    },
+    {
+      "region_id": "9d5373d906f64f4fa8f204539785b644",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 164,
+        "y": 1538,
+        "width": 80,
+        "height": 34
+      }
+    },
+    {
+      "region_id": "30ffd7ccf18b41c3882d9c38a61b7b7d",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 202,
+        "y": 1587,
+        "width": 105,
+        "height": 42
+      }
+    },
+    {
+      "region_id": "e77dc183f9954a59b1fe87a2c58a270d",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 322,
+        "y": 1866,
+        "width": 120,
+        "height": 53
+      }
+    },
+    {
+      "region_id": "145ec1a12b734275a14ca35a6edec7ef",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 274,
+        "y": 1933,
+        "width": 51,
+        "height": 43
+      }
+    },
+    {
+      "region_id": "74587da1e9c54b789d0014ddef7fe16b",
+      "reading_order": 10,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 392,
+        "y": 1960,
+        "width": 49,
+        "height": 37
+      }
+    },
+    {
+      "region_id": "c69594dccfab4989a95c0019bb4779a5",
+      "reading_order": 11,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 175,
+        "y": 2301,
+        "width": 181,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "be04757ccb0f42918241caf2264bd334",
+      "reading_order": 12,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 289,
+        "y": 2385,
+        "width": 186,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "ee39e4fc19e04487a556e75c1fe0a1a4",
+      "reading_order": 13,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 264,
+        "y": 2621,
+        "width": 162,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "02dd95d1a5d1482aac57638021514a70",
+      "reading_order": 14,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 144,
+        "y": 2981,
+        "width": 247,
+        "height": 51
+      }
+    },
+    {
+      "region_id": "4987f85da07a4329a838f05a7601052f",
+      "reading_order": 15,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 281,
+        "y": 3086,
+        "width": 196,
+        "height": 118
+      }
+    },
+    {
+      "region_id": "743c6e69362a49e1acc8061c4df62d19",
+      "reading_order": 16,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 156,
+        "y": 3260,
+        "width": 193,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "0b69f6831722451685ae561f5717f801",
+      "reading_order": 17,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 160,
+        "y": 3577,
+        "width": 248,
+        "height": 51
+      }
+    },
+    {
+      "region_id": "aa22d567df644bffb1192dfb899c916e",
+      "reading_order": 18,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 185,
+        "y": 3781,
+        "width": 52,
+        "height": 51
+      }
+    },
+    {
+      "region_id": "6ff7e66786b84b27b863d172286fb4a1",
+      "reading_order": 19,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 172,
+        "y": 4211,
+        "width": 298,
+        "height": 113
+      }
+    },
+    {
+      "region_id": "7f92174ec58c40dcb015467f4b6378a3",
+      "reading_order": 20,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 349,
+        "y": 4330,
+        "width": 130,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "fd671a1314424da2ac839a36327abcc6",
+      "reading_order": 21,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 246,
+        "y": 4529,
+        "width": 181,
+        "height": 78
+      }
+    },
+    {
+      "region_id": "816b1ad63ba54d3cb345f25198058301",
+      "reading_order": 22,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 163,
+        "y": 4883,
+        "width": 291,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "de4249c1fb354e58abf2507a37993269",
+      "reading_order": 23,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 259,
+        "y": 4995,
+        "width": 112,
+        "height": 94
+      }
+    },
+    {
+      "region_id": "fce6df7103614e308e8ff1a7e1501160",
+      "reading_order": 24,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 185,
+        "y": 5143,
+        "width": 191,
+        "height": 75
+      }
+    },
+    {
+      "region_id": "bf3e6c23d40445f3a20e73e5b9ff3d30",
+      "reading_order": 25,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 307,
+        "y": 5563,
+        "width": 165,
+        "height": 74
+      }
+    },
+    {
+      "region_id": "8ea434842cc4477dbc7a10d08ebc6ec2",
+      "reading_order": 26,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 147,
+        "y": 5886,
+        "width": 186,
+        "height": 75
+      }
+    },
+    {
+      "region_id": "ab63009f18cd41259dc925784c832f18",
+      "reading_order": 27,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 136,
+        "y": 6267,
+        "width": 357,
+        "height": 129
+      }
+    },
+    {
+      "region_id": "56b3b485d45f4f97a1c3ea78a6073956",
+      "reading_order": 28,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 224,
+        "y": 6397,
+        "width": 176,
+        "height": 80
+      }
+    },
+    {
+      "region_id": "b88a1634b68248558b7bce570c9d6d0a",
+      "reading_order": 29,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 248,
+        "y": 6608,
+        "width": 262,
+        "height": 112
+      }
+    },
+    {
+      "region_id": "81b43bdc96ed4621b19e449f8307f9a6",
+      "reading_order": 30,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 139,
+        "y": 6951,
+        "width": 337,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "74ba50ff074e4aaba8c29158c90e83b6",
+      "reading_order": 31,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 415,
+        "y": 7050,
+        "width": 68,
+        "height": 41
+      }
+    },
+    {
+      "region_id": "db505bb065b44d329a72165952a0b13d",
+      "reading_order": 32,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 247,
+        "y": 7083,
+        "width": 106,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "9697abbe64074397b913ba1f514a7145",
+      "reading_order": 33,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 177,
+        "y": 7220,
+        "width": 271,
+        "height": 122
+      }
+    },
+    {
+      "region_id": "7b9910d2fde743f3be5622b39da51b06",
+      "reading_order": 34,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 125,
+        "y": 7559,
+        "width": 373,
+        "height": 128
+      }
+    },
+    {
+      "region_id": "dc9a0fbd7a9448409fa34173eb030a5d",
+      "reading_order": 35,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 309,
+        "y": 7886,
+        "width": 171,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "84919cef20574f3d80550b11a95ae42a",
+      "reading_order": 36,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 215,
+        "y": 8313,
+        "width": 183,
+        "height": 44
+      }
+    },
+    {
+      "region_id": "d37a84b3b42743f2b72a0c4cdf8604a4",
+      "reading_order": 37,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 396,
+        "y": 8324,
+        "width": 81,
+        "height": 39
+      }
+    },
+    {
+      "region_id": "9cd94db1e5de40a4a8f9d90ddcbf6ec6",
+      "reading_order": 38,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 112,
+        "y": 8447,
+        "width": 222,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "20892266f212468daedd008599a75c07",
+      "reading_order": 39,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 368,
+        "y": 8466,
+        "width": 135,
+        "height": 36
+      }
+    },
+    {
+      "region_id": "f1c19b6f332f44be9258abc9729fab70",
+      "reading_order": 40,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 165,
+        "y": 8547,
+        "width": 101,
+        "height": 93
+      }
+    },
+    {
+      "region_id": "af2ae59b4a984c65abe6f61ffdd5d3e0",
+      "reading_order": 41,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 270,
+        "y": 8737,
+        "width": 192,
+        "height": 76
+      }
+    },
+    {
+      "region_id": "c745c2f26677494593c4923b22d18b3e",
+      "reading_order": 42,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 97,
+        "y": 8751,
+        "width": 119,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "e656eefbb4d84228a46cc0ca52e629ed",
+      "reading_order": 43,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 175,
+        "y": 9102,
+        "width": 245,
+        "height": 76
+      }
+    },
+    {
+      "region_id": "b4e7ea75400e43438e3933dd352e789b",
+      "reading_order": 44,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 150,
+        "y": 9236,
+        "width": 152,
+        "height": 107
+      }
+    },
+    {
+      "region_id": "99694f03791b4530940dd984441698be",
+      "reading_order": 45,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 185,
+        "y": 9354,
+        "width": 66,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "5f353fdaba5541e69bef22b30f032a76",
+      "reading_order": 46,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 359,
+        "y": 9433,
+        "width": 131,
+        "height": 42
+      }
+    },
+    {
+      "region_id": "9651f92cc255453d87acbb7f8a86a8f8",
+      "reading_order": 47,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 178,
+        "y": 9732,
+        "width": 46,
+        "height": 45
+      }
+    },
+    {
+      "region_id": "16d348893ce04f479b95f3c84f434258",
+      "reading_order": 48,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 268,
+        "y": 9758,
+        "width": 188,
+        "height": 108
+      }
+    },
+    {
+      "region_id": "7a32c1f18d1d48d389cf0c77013d9485",
+      "reading_order": 49,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 384,
+        "y": 9934,
+        "width": 101,
+        "height": 45
+      }
+    },
+    {
+      "region_id": "9a1658105c134ef8ba8f4807b5f465a2",
+      "reading_order": 50,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 307,
+        "y": 10057,
+        "width": 164,
+        "height": 43
+      }
+    },
+    {
+      "region_id": "eb0e5ce172bd402e82baab93e7f031b2",
+      "reading_order": 51,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 148,
+        "y": 10430,
+        "width": 304,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "e49e2f74cbc14730a175d13865206ca2",
+      "reading_order": 52,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 240,
+        "y": 10493,
+        "width": 217,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "ddc2d108baa94914b9aa6b3f203224cc",
+      "reading_order": 53,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 150,
+        "y": 11135,
+        "width": 164,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "e218f8f81a494fe09558a8cc459e32a4",
+      "reading_order": 54,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 328,
+        "y": 11431,
+        "width": 102,
+        "height": 70
+      }
+    },
+    {
+      "region_id": "e636e2bd7f59461a939df42dd49a5b52",
+      "reading_order": 55,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 356,
+        "y": 11507,
+        "width": 110,
+        "height": 68
+      }
+    },
+    {
+      "region_id": "f5ad3ddeb21e4c728333c852c4723bca",
+      "reading_order": 56,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 141,
+        "y": 11868,
+        "width": 174,
+        "height": 72
+      }
+    },
+    {
+      "region_id": "fd474acd57ac488da2b50d131a7c68ff",
+      "reading_order": 57,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 295,
+        "y": 11920,
+        "width": 202,
+        "height": 79
+      }
+    },
+    {
+      "region_id": "1d7814db56f24f39b5c0670d092e01e8",
+      "reading_order": 58,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 241,
+        "y": 12222,
+        "width": 210,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "b524defa9fc44dfb883bce8afb06a69a",
+      "reading_order": 59,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 212,
+        "y": 12588,
+        "width": 199,
+        "height": 174
+      }
+    },
+    {
+      "region_id": "d5bf67a1d8e7427a9865b6791f4088b6",
+      "reading_order": 60,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 213,
+        "y": 12590,
+        "width": 197,
+        "height": 88
+      }
+    },
+    {
+      "region_id": "3bf3079f27a240948f97e15b314fa387",
+      "reading_order": 61,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 449,
+        "y": 12755,
+        "width": 85,
+        "height": 46
+      }
+    },
+    {
+      "region_id": "c52137bd3d8a401cbbed8701725f3a4b",
+      "reading_order": 62,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 88,
+        "y": 12827,
+        "width": 86,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "5f761bdc516d4907af678b9397c1af79",
+      "reading_order": 63,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 212,
+        "y": 13052,
+        "width": 89,
+        "height": 47
+      }
+    },
+    {
+      "region_id": "00d97c0d251841b594926706e0ede118",
+      "reading_order": 64,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 135,
+        "y": 13372,
+        "width": 143,
+        "height": 74
+      }
+    },
+    {
+      "region_id": "0e107ce75cb5450c8e64b0d15e8b923c",
+      "reading_order": 65,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 274,
+        "y": 13406,
+        "width": 189,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "638ac6a90ef7470fb271946cb1cbd835",
+      "reading_order": 66,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 163,
+        "y": 13716,
+        "width": 304,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "49b9a2af591c4a8cb4cc3b4e5f3d33aa",
+      "reading_order": 67,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 150,
+        "y": 14026,
+        "width": 145,
+        "height": 81
+      }
+    },
+    {
+      "region_id": "5b89198803774821b294bd2324e4c65d",
+      "reading_order": 68,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 306,
+        "y": 14104,
+        "width": 137,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "e2428fcc38244c15bffcf0d6c3f94362",
+      "reading_order": 69,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 159,
+        "y": 14222,
+        "width": 157,
+        "height": 76
+      }
+    },
+    {
+      "region_id": "dce94fdad7894d77824290264378f2f7",
+      "reading_order": 70,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 331,
+        "y": 14293,
+        "width": 159,
+        "height": 78
+      }
+    },
+    {
+      "region_id": "030967d11d364d2f884742b58e5bc8e7",
+      "reading_order": 71,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 257,
+        "y": 14397,
+        "width": 111,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "07518f213a8b445abb2f8a5a722b743a",
+      "reading_order": 72,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 265,
+        "y": 14760,
+        "width": 225,
+        "height": 109
+      }
+    },
+    {
+      "region_id": "60a9a4e7b56040e9a59ede77fb3692c4",
+      "reading_order": 73,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 146,
+        "y": 15071,
+        "width": 153,
+        "height": 41
+      }
+    },
+    {
+      "region_id": "c95fcaf71ef14ab4984a9eea09701ca7",
+      "reading_order": 74,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 262,
+        "y": 15114,
+        "width": 164,
+        "height": 33
+      }
+    },
+    {
+      "region_id": "22d4342bac20427192bc65267da14897",
+      "reading_order": 75,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 124,
+        "y": 15405,
+        "width": 196,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "8d867c3e881444a896bcec5b4e7abadd",
+      "reading_order": 76,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 298,
+        "y": 15477,
+        "width": 143,
+        "height": 44
+      }
+    },
+    {
+      "region_id": "e18a098e5a264a8999fa816dd3c4756e",
+      "reading_order": 77,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 145,
+        "y": 15530,
+        "width": 159,
+        "height": 82
+      }
+    },
+    {
+      "region_id": "78f0b8612ce541f58a6061fe40ffdebe",
+      "reading_order": 78,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 129,
+        "y": 15695,
+        "width": 281,
+        "height": 84
+      }
+    },
+    {
+      "region_id": "46e01ead60ed41d38c377d33979f44e7",
+      "reading_order": 79,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 299,
+        "y": 15783,
+        "width": 203,
+        "height": 44
+      }
+    },
+    {
+      "region_id": "ce0ac82ef29e4f2d8e735bea673f348b",
+      "reading_order": 80,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 128,
+        "y": 16041,
+        "width": 291,
+        "height": 83
+      }
+    },
+    {
+      "region_id": "fe51ff52328a4582ba30c14861980a75",
+      "reading_order": 81,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 304,
+        "y": 16142,
+        "width": 160,
+        "height": 74
+      }
+    },
+    {
+      "region_id": "390a5b5d8f4949e6a109c2b88826a648",
+      "reading_order": 82,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 375,
+        "y": 16232,
+        "width": 140,
+        "height": 101
+      }
+    },
+    {
+      "region_id": "b8b9a112fbb64b89855f1f1b46553c1c",
+      "reading_order": 83,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 381,
+        "y": 16233,
+        "width": 117,
+        "height": 29
+      }
+    },
+    {
+      "region_id": "bbec0cd029c5437bbd78aa6448b51653",
+      "reading_order": 84,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 138,
+        "y": 16807,
+        "width": 329,
+        "height": 88
+      }
+    },
+    {
+      "region_id": "7fe6ce0da7334942ba5749f74d0d19bb",
+      "reading_order": 85,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 413,
+        "y": 16864,
+        "width": 87,
+        "height": 39
+      }
+    },
+    {
+      "region_id": "6b4cad86a905485586d9682902b2a43c",
+      "reading_order": 86,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 366,
+        "y": 16972,
+        "width": 92,
+        "height": 61
+      }
+    },
+    {
+      "region_id": "51f123ad8f5b4c9199d5d94afce14108",
+      "reading_order": 87,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 309,
+        "y": 17116,
+        "width": 136,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "0d219b0cc02d41b4be028980d80c0f84",
+      "reading_order": 88,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 153,
+        "y": 17466,
+        "width": 275,
+        "height": 86
+      }
+    },
+    {
+      "region_id": "888af1c4f21f46a5a8a76a4689bfa361",
+      "reading_order": 89,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 234,
+        "y": 17579,
+        "width": 258,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "75c35894df5a4b31b41644481b80ca01",
+      "reading_order": 90,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 117,
+        "y": 17621,
+        "width": 108,
+        "height": 61
+      }
+    },
+    {
+      "region_id": "ae44a2812e9d480ba56085eac8ce8e32",
+      "reading_order": 91,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 134,
+        "y": 17926,
+        "width": 339,
+        "height": 56
+      }
+    },
+    {
+      "region_id": "ed292008b83a486f9f3268320147fe2d",
+      "reading_order": 92,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 284,
+        "y": 18228,
+        "width": 89,
+        "height": 36
+      }
+    },
+    {
+      "region_id": "159057197593427fa91bf450f65ffc42",
+      "reading_order": 93,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 154,
+        "y": 18261,
+        "width": 319,
+        "height": 73
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed_with_failures",
+    "region_target_count": 93,
+    "region_runs_executed": 93,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "a422e399c56c4fe1a4a4f51b95ab2936",
+        "run_id": "run-2dcbb87a581347d7b4dabee5e51ffab2",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "0edb7df033f344c3bfa46394daad6040",
+        "run_id": "run-6b3d2316434640d0b6ff395eb740cf6e",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "423395c16bd64cf4a8db10758dedad8b",
+        "run_id": "run-44af7066bd8948c284d9c2dbd95cd39e",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "0f659982eb384c9693639ec20f58d0b4",
+        "run_id": "run-3b9df616b7b14141a8be4e4cad47c25d",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "1164b4b79b1e430988b727bd969c099a",
+        "run_id": "run-fdf940bcdd6f4b888cdbd3f4ca7cb365",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "9d5373d906f64f4fa8f204539785b644",
+        "run_id": "run-fd317750485f47449d3bf8a9fa1b1c65",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "30ffd7ccf18b41c3882d9c38a61b7b7d",
+        "run_id": "run-411fc5f6491549688d50ca967d80b23f",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "e77dc183f9954a59b1fe87a2c58a270d",
+        "run_id": "run-fdc5126d84014fbba3d3bda958fb20df",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "145ec1a12b734275a14ca35a6edec7ef",
+        "run_id": "run-7a035f1e5d2142278910b08b1f71e5c0",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "74587da1e9c54b789d0014ddef7fe16b",
+        "run_id": "run-4ccd332a22c5419198560e8861ec0abf",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "c69594dccfab4989a95c0019bb4779a5",
+        "run_id": "run-07f4678ea30246b3b767d0a0bc901b2f",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "be04757ccb0f42918241caf2264bd334",
+        "run_id": "run-f456424482214ef7a64ef0899050644c",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "ee39e4fc19e04487a556e75c1fe0a1a4",
+        "run_id": "run-61662e7b4e2c41d9b45595bed140c8d9",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "02dd95d1a5d1482aac57638021514a70",
+        "run_id": "run-38fa0d35d6d545688b18a5bd44cd4f50",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "4987f85da07a4329a838f05a7601052f",
+        "run_id": "run-af3198791b7b4e5bb0101336e4e29722",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "743c6e69362a49e1acc8061c4df62d19",
+        "run_id": "run-13bb07e6c0ec4dbeba46269214f16fe2",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "0b69f6831722451685ae561f5717f801",
+        "run_id": "run-e6b7fc7eff854729bbe5e5ac2243aef4",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "aa22d567df644bffb1192dfb899c916e",
+        "run_id": "run-bc91acfd845c4d90bbc0892faecd45ca",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "6ff7e66786b84b27b863d172286fb4a1",
+        "run_id": "run-1139adbbc2ad430d807a56210537d318",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "7f92174ec58c40dcb015467f4b6378a3",
+        "run_id": "run-e3831ff0cde44ea799261b8e60e766ff",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "fd671a1314424da2ac839a36327abcc6",
+        "run_id": "run-d04314236a6e4c2f8a8ce782cc3e84f4",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "816b1ad63ba54d3cb345f25198058301",
+        "run_id": "run-944e6ecffee04b90be8e42290e9f8084",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "de4249c1fb354e58abf2507a37993269",
+        "run_id": "run-8afafb8b86674f08821c4f468b5f4316",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "fce6df7103614e308e8ff1a7e1501160",
+        "run_id": "run-b7fc96051ece4e879d37cc2796280c54",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "bf3e6c23d40445f3a20e73e5b9ff3d30",
+        "run_id": "run-6a33275f35704dc3bc320f87c6e1071a",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "8ea434842cc4477dbc7a10d08ebc6ec2",
+        "run_id": "run-4c3715b0a4e94f1c89e4e629c940ec71",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "ab63009f18cd41259dc925784c832f18",
+        "run_id": "run-065cc1ea61944c919592d6d02a44e9af",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "56b3b485d45f4f97a1c3ea78a6073956",
+        "run_id": "run-8a61e315a3ac4d4b9c5227b531575a2d",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "b88a1634b68248558b7bce570c9d6d0a",
+        "run_id": "run-f63437329ea245e5b8135c31226fef30",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "81b43bdc96ed4621b19e449f8307f9a6",
+        "run_id": "run-76178aaca7f2494091e53fe9f2e182e0",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "74ba50ff074e4aaba8c29158c90e83b6",
+        "run_id": "run-3a307a72aeba4f4bac6379288e34febf",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "db505bb065b44d329a72165952a0b13d",
+        "run_id": "run-b4fe7bd2d52f45378fb1e9625b0dfb62",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "9697abbe64074397b913ba1f514a7145",
+        "run_id": "run-6d543ed995d34f4f8cd1b2a29b46b1bb",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "7b9910d2fde743f3be5622b39da51b06",
+        "run_id": "run-232a9bf39e9f449eb524589621670aa9",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "dc9a0fbd7a9448409fa34173eb030a5d",
+        "run_id": "run-f7b91d5c67fd4a20a2fc238f2445dd77",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "84919cef20574f3d80550b11a95ae42a",
+        "run_id": "run-e798897f5f73458f8062be6c51d1c30d",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "d37a84b3b42743f2b72a0c4cdf8604a4",
+        "run_id": "run-81bbe4c139d54d55afe6b77409ed1cf9",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "9cd94db1e5de40a4a8f9d90ddcbf6ec6",
+        "run_id": "run-6b2b09e95c8a44fbaea9cc29d6cd0024",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "20892266f212468daedd008599a75c07",
+        "run_id": "run-b48dee1dd5d948f7b4e2033acbc01ea8",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "f1c19b6f332f44be9258abc9729fab70",
+        "run_id": "run-682df1e834c641c0a5bcff9ed57cab49",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "af2ae59b4a984c65abe6f61ffdd5d3e0",
+        "run_id": "run-d3e35bd026674d4b9be0e591a1540265",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "c745c2f26677494593c4923b22d18b3e",
+        "run_id": "run-5135b19383d04499934322957edea6c0",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "e656eefbb4d84228a46cc0ca52e629ed",
+        "run_id": "run-e669f091de1b470bb5da23d346abc04d",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "b4e7ea75400e43438e3933dd352e789b",
+        "run_id": "run-d51b3b509a494d8894994f847f5ce192",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "99694f03791b4530940dd984441698be",
+        "run_id": "run-3b452672ba3d4cfb8cdfd25bcc08bc38",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "5f353fdaba5541e69bef22b30f032a76",
+        "run_id": "run-8ec84aa2eb074503ab472b2982033240",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "9651f92cc255453d87acbb7f8a86a8f8",
+        "run_id": "run-594ef9c0639544fbb083ad7295ad56b8",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "16d348893ce04f479b95f3c84f434258",
+        "run_id": "run-1193aa9d281d416fa863f8aa27c83fe5",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "7a32c1f18d1d48d389cf0c77013d9485",
+        "run_id": "run-8069b530e05e424a87d047021748e1aa",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "9a1658105c134ef8ba8f4807b5f465a2",
+        "run_id": "run-b8a20e9912b34ea69fe8a522e8b8b293",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "eb0e5ce172bd402e82baab93e7f031b2",
+        "run_id": "run-5eeacae93f404a37ab0f4804e5375d0e",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "e49e2f74cbc14730a175d13865206ca2",
+        "run_id": "run-4c24a42bd1484c51b4cb371eac231db5",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "ddc2d108baa94914b9aa6b3f203224cc",
+        "run_id": "run-df03495f1c0143129a0317476e5ba027",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "e218f8f81a494fe09558a8cc459e32a4",
+        "run_id": "run-746e767171894ceab417ac60d72630d4",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "e636e2bd7f59461a939df42dd49a5b52",
+        "run_id": "run-a63fbd07c84c418699e921e9c463351e",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "f5ad3ddeb21e4c728333c852c4723bca",
+        "run_id": "run-1fb76882c39742898fcfa9957f2cd587",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "fd474acd57ac488da2b50d131a7c68ff",
+        "run_id": "run-85d7d1d5ba924f8fa205d0ae2af0f585",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "1d7814db56f24f39b5c0670d092e01e8",
+        "run_id": "run-31ec2dbe4b874a7c9b8393c3296348dc",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "b524defa9fc44dfb883bce8afb06a69a",
+        "run_id": "run-9b05101d60384ce2a76c565fc070aa8a",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "d5bf67a1d8e7427a9865b6791f4088b6",
+        "run_id": "run-5fa1d2adcedd4aefadd004f7a7d073f2",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "3bf3079f27a240948f97e15b314fa387",
+        "run_id": "run-4ef904372e3f476da4fdfcf2beee983f",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "c52137bd3d8a401cbbed8701725f3a4b",
+        "run_id": "run-b5125a4622214148b76e7c293a979623",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "5f761bdc516d4907af678b9397c1af79",
+        "run_id": "run-cdbb60021c8f46efbf39f610c83bd626",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "00d97c0d251841b594926706e0ede118",
+        "run_id": "run-0f9304d333ad4be9925e67283350302b",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "0e107ce75cb5450c8e64b0d15e8b923c",
+        "run_id": "run-eea2707f8f2f4454a40396a4f9d61248",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "638ac6a90ef7470fb271946cb1cbd835",
+        "run_id": "run-3c62552041a440759c54cfa5156ce976",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "49b9a2af591c4a8cb4cc3b4e5f3d33aa",
+        "run_id": "run-fe451b8194aa447ea68f25fa9a88c44d",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "5b89198803774821b294bd2324e4c65d",
+        "run_id": "run-2162342fe0c741698c43ff41764a16ad",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "e2428fcc38244c15bffcf0d6c3f94362",
+        "run_id": "run-a2f28c2848b541aca9d762ef972ff81c",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "dce94fdad7894d77824290264378f2f7",
+        "run_id": "run-3c0696657de94409ae9d4d6003e6da15",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "030967d11d364d2f884742b58e5bc8e7",
+        "run_id": "run-43823608cf4a486aadb7986157b4dc92",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "07518f213a8b445abb2f8a5a722b743a",
+        "run_id": "run-f937177d8e724bbe90addcfc43d1dae7",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "60a9a4e7b56040e9a59ede77fb3692c4",
+        "run_id": "run-d7aba3a36e33494b8257f9b69a7d9ccf",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "c95fcaf71ef14ab4984a9eea09701ca7",
+        "run_id": "run-a43f5728d5fe46269ec165b4e332eb08",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "22d4342bac20427192bc65267da14897",
+        "run_id": "run-16e5f701f57a42469364e0cc4e6abbc4",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "8d867c3e881444a896bcec5b4e7abadd",
+        "run_id": "run-33ac75bc59c34b52ab07fbe0d3913a07",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "e18a098e5a264a8999fa816dd3c4756e",
+        "run_id": "run-3779d75680464b28bcdd72320f3214f3",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "78f0b8612ce541f58a6061fe40ffdebe",
+        "run_id": "run-2967e8fe4d6f4ae48b689361628f8dca",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "46e01ead60ed41d38c377d33979f44e7",
+        "run_id": "run-2d1682b02df945a2addf815468f34df1",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "ce0ac82ef29e4f2d8e735bea673f348b",
+        "run_id": "run-dadcde3032f24b4198a74d5b270e13b7",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "fe51ff52328a4582ba30c14861980a75",
+        "run_id": "run-19daa4723fd64ea9808e4b319d7d91ad",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "390a5b5d8f4949e6a109c2b88826a648",
+        "run_id": "run-315e0059ed7647ceacb4059f8c6d99ef",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "b8b9a112fbb64b89855f1f1b46553c1c",
+        "run_id": "run-dfcc4721ce3342a6a424e04270b6550d",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "bbec0cd029c5437bbd78aa6448b51653",
+        "run_id": "run-8d26006d409e468081821220c323aa4f",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "7fe6ce0da7334942ba5749f74d0d19bb",
+        "run_id": "run-b3d5db8b18f44eeaa2df7a84df19136a",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "6b4cad86a905485586d9682902b2a43c",
+        "run_id": "run-7a090ff9fbe94e80bc9ad28fbbe84652",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "51f123ad8f5b4c9199d5d94afce14108",
+        "run_id": "run-c662fd0f79d74e6db5c49b7f963a00f4",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "0d219b0cc02d41b4be028980d80c0f84",
+        "run_id": "run-c613d5d686b543259b487044f564130c",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "888af1c4f21f46a5a8a76a4689bfa361",
+        "run_id": "run-3a07ffcb69be4979bbf2138d38a350d3",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "75c35894df5a4b31b41644481b80ca01",
+        "run_id": "run-c79b65dfc76546319ad5dde1b88518b9",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "ae44a2812e9d480ba56085eac8ce8e32",
+        "run_id": "run-b88452791891404786aa1d1acc104f78",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "ed292008b83a486f9f3268320147fe2d",
+        "run_id": "run-8df61d42f4a44ef6b281803e4ea272bc",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      },
+      {
+        "region_id": "159057197593427fa91bf450f65ffc42",
+        "run_id": "run-37e736bdbf6943a0ba1af0ca828cb8e4",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "failed",
+            "error_code": "PROVIDER_DEPENDENCY_MISSING",
+            "error_detail": "module 'paddleocr' is not installed (provider=paddleocr-korean) (stage=resolve)"
+          }
+        ]
+      }
+    ],
+    "elapsed_s": 10.71
+  },
+  "ocr_details": [
+    {
+      "region_id": "a422e399c56c4fe1a4a4f51b95ab2936",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 177,
+        "y": 56,
+        "width": 318,
+        "height": 52
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "0edb7df033f344c3bfa46394daad6040",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 94,
+        "y": 275,
+        "width": 412,
+        "height": 168
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "423395c16bd64cf4a8db10758dedad8b",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 105,
+        "y": 280,
+        "width": 390,
+        "height": 57
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "0f659982eb384c9693639ec20f58d0b4",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 209,
+        "y": 514,
+        "width": 166,
+        "height": 43
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "1164b4b79b1e430988b727bd969c099a",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 172,
+        "y": 900,
+        "width": 272,
+        "height": 54
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "9d5373d906f64f4fa8f204539785b644",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 164,
+        "y": 1538,
+        "width": 80,
+        "height": 34
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "30ffd7ccf18b41c3882d9c38a61b7b7d",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 202,
+        "y": 1587,
+        "width": 105,
+        "height": 42
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "e77dc183f9954a59b1fe87a2c58a270d",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 322,
+        "y": 1866,
+        "width": 120,
+        "height": 53
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "145ec1a12b734275a14ca35a6edec7ef",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 274,
+        "y": 1933,
+        "width": 51,
+        "height": 43
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "74587da1e9c54b789d0014ddef7fe16b",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 392,
+        "y": 1960,
+        "width": 49,
+        "height": 37
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "c69594dccfab4989a95c0019bb4779a5",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 175,
+        "y": 2301,
+        "width": 181,
+        "height": 50
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "be04757ccb0f42918241caf2264bd334",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 289,
+        "y": 2385,
+        "width": 186,
+        "height": 49
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "ee39e4fc19e04487a556e75c1fe0a1a4",
+      "reading_order": 13,
+      "region_type": "speech",
+      "bbox": {
+        "x": 264,
+        "y": 2621,
+        "width": 162,
+        "height": 49
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "02dd95d1a5d1482aac57638021514a70",
+      "reading_order": 14,
+      "region_type": "speech",
+      "bbox": {
+        "x": 144,
+        "y": 2981,
+        "width": 247,
+        "height": 51
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "4987f85da07a4329a838f05a7601052f",
+      "reading_order": 15,
+      "region_type": "speech",
+      "bbox": {
+        "x": 281,
+        "y": 3086,
+        "width": 196,
+        "height": 118
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "743c6e69362a49e1acc8061c4df62d19",
+      "reading_order": 16,
+      "region_type": "speech",
+      "bbox": {
+        "x": 156,
+        "y": 3260,
+        "width": 193,
+        "height": 52
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "0b69f6831722451685ae561f5717f801",
+      "reading_order": 17,
+      "region_type": "speech",
+      "bbox": {
+        "x": 160,
+        "y": 3577,
+        "width": 248,
+        "height": 51
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "aa22d567df644bffb1192dfb899c916e",
+      "reading_order": 18,
+      "region_type": "speech",
+      "bbox": {
+        "x": 185,
+        "y": 3781,
+        "width": 52,
+        "height": 51
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "6ff7e66786b84b27b863d172286fb4a1",
+      "reading_order": 19,
+      "region_type": "speech",
+      "bbox": {
+        "x": 172,
+        "y": 4211,
+        "width": 298,
+        "height": 113
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "7f92174ec58c40dcb015467f4b6378a3",
+      "reading_order": 20,
+      "region_type": "speech",
+      "bbox": {
+        "x": 349,
+        "y": 4330,
+        "width": 130,
+        "height": 46
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "fd671a1314424da2ac839a36327abcc6",
+      "reading_order": 21,
+      "region_type": "speech",
+      "bbox": {
+        "x": 246,
+        "y": 4529,
+        "width": 181,
+        "height": 78
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "816b1ad63ba54d3cb345f25198058301",
+      "reading_order": 22,
+      "region_type": "speech",
+      "bbox": {
+        "x": 163,
+        "y": 4883,
+        "width": 291,
+        "height": 52
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "de4249c1fb354e58abf2507a37993269",
+      "reading_order": 23,
+      "region_type": "speech",
+      "bbox": {
+        "x": 259,
+        "y": 4995,
+        "width": 112,
+        "height": 94
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "fce6df7103614e308e8ff1a7e1501160",
+      "reading_order": 24,
+      "region_type": "speech",
+      "bbox": {
+        "x": 185,
+        "y": 5143,
+        "width": 191,
+        "height": 75
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "bf3e6c23d40445f3a20e73e5b9ff3d30",
+      "reading_order": 25,
+      "region_type": "speech",
+      "bbox": {
+        "x": 307,
+        "y": 5563,
+        "width": 165,
+        "height": 74
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "8ea434842cc4477dbc7a10d08ebc6ec2",
+      "reading_order": 26,
+      "region_type": "speech",
+      "bbox": {
+        "x": 147,
+        "y": 5886,
+        "width": 186,
+        "height": 75
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "ab63009f18cd41259dc925784c832f18",
+      "reading_order": 27,
+      "region_type": "speech",
+      "bbox": {
+        "x": 136,
+        "y": 6267,
+        "width": 357,
+        "height": 129
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "56b3b485d45f4f97a1c3ea78a6073956",
+      "reading_order": 28,
+      "region_type": "speech",
+      "bbox": {
+        "x": 224,
+        "y": 6397,
+        "width": 176,
+        "height": 80
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "b88a1634b68248558b7bce570c9d6d0a",
+      "reading_order": 29,
+      "region_type": "speech",
+      "bbox": {
+        "x": 248,
+        "y": 6608,
+        "width": 262,
+        "height": 112
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "81b43bdc96ed4621b19e449f8307f9a6",
+      "reading_order": 30,
+      "region_type": "speech",
+      "bbox": {
+        "x": 139,
+        "y": 6951,
+        "width": 337,
+        "height": 52
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "74ba50ff074e4aaba8c29158c90e83b6",
+      "reading_order": 31,
+      "region_type": "speech",
+      "bbox": {
+        "x": 415,
+        "y": 7050,
+        "width": 68,
+        "height": 41
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "db505bb065b44d329a72165952a0b13d",
+      "reading_order": 32,
+      "region_type": "speech",
+      "bbox": {
+        "x": 247,
+        "y": 7083,
+        "width": 106,
+        "height": 50
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "9697abbe64074397b913ba1f514a7145",
+      "reading_order": 33,
+      "region_type": "speech",
+      "bbox": {
+        "x": 177,
+        "y": 7220,
+        "width": 271,
+        "height": 122
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "7b9910d2fde743f3be5622b39da51b06",
+      "reading_order": 34,
+      "region_type": "speech",
+      "bbox": {
+        "x": 125,
+        "y": 7559,
+        "width": 373,
+        "height": 128
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "dc9a0fbd7a9448409fa34173eb030a5d",
+      "reading_order": 35,
+      "region_type": "speech",
+      "bbox": {
+        "x": 309,
+        "y": 7886,
+        "width": 171,
+        "height": 82
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "84919cef20574f3d80550b11a95ae42a",
+      "reading_order": 36,
+      "region_type": "speech",
+      "bbox": {
+        "x": 215,
+        "y": 8313,
+        "width": 183,
+        "height": 44
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "d37a84b3b42743f2b72a0c4cdf8604a4",
+      "reading_order": 37,
+      "region_type": "speech",
+      "bbox": {
+        "x": 396,
+        "y": 8324,
+        "width": 81,
+        "height": 39
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "9cd94db1e5de40a4a8f9d90ddcbf6ec6",
+      "reading_order": 38,
+      "region_type": "speech",
+      "bbox": {
+        "x": 112,
+        "y": 8447,
+        "width": 222,
+        "height": 83
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "20892266f212468daedd008599a75c07",
+      "reading_order": 39,
+      "region_type": "speech",
+      "bbox": {
+        "x": 368,
+        "y": 8466,
+        "width": 135,
+        "height": 36
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "f1c19b6f332f44be9258abc9729fab70",
+      "reading_order": 40,
+      "region_type": "speech",
+      "bbox": {
+        "x": 165,
+        "y": 8547,
+        "width": 101,
+        "height": 93
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "af2ae59b4a984c65abe6f61ffdd5d3e0",
+      "reading_order": 41,
+      "region_type": "speech",
+      "bbox": {
+        "x": 270,
+        "y": 8737,
+        "width": 192,
+        "height": 76
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "c745c2f26677494593c4923b22d18b3e",
+      "reading_order": 42,
+      "region_type": "speech",
+      "bbox": {
+        "x": 97,
+        "y": 8751,
+        "width": 119,
+        "height": 46
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "e656eefbb4d84228a46cc0ca52e629ed",
+      "reading_order": 43,
+      "region_type": "speech",
+      "bbox": {
+        "x": 175,
+        "y": 9102,
+        "width": 245,
+        "height": 76
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "b4e7ea75400e43438e3933dd352e789b",
+      "reading_order": 44,
+      "region_type": "speech",
+      "bbox": {
+        "x": 150,
+        "y": 9236,
+        "width": 152,
+        "height": 107
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "99694f03791b4530940dd984441698be",
+      "reading_order": 45,
+      "region_type": "speech",
+      "bbox": {
+        "x": 185,
+        "y": 9354,
+        "width": 66,
+        "height": 50
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "5f353fdaba5541e69bef22b30f032a76",
+      "reading_order": 46,
+      "region_type": "speech",
+      "bbox": {
+        "x": 359,
+        "y": 9433,
+        "width": 131,
+        "height": 42
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "9651f92cc255453d87acbb7f8a86a8f8",
+      "reading_order": 47,
+      "region_type": "speech",
+      "bbox": {
+        "x": 178,
+        "y": 9732,
+        "width": 46,
+        "height": 45
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "16d348893ce04f479b95f3c84f434258",
+      "reading_order": 48,
+      "region_type": "speech",
+      "bbox": {
+        "x": 268,
+        "y": 9758,
+        "width": 188,
+        "height": 108
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "7a32c1f18d1d48d389cf0c77013d9485",
+      "reading_order": 49,
+      "region_type": "speech",
+      "bbox": {
+        "x": 384,
+        "y": 9934,
+        "width": 101,
+        "height": 45
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "9a1658105c134ef8ba8f4807b5f465a2",
+      "reading_order": 50,
+      "region_type": "speech",
+      "bbox": {
+        "x": 307,
+        "y": 10057,
+        "width": 164,
+        "height": 43
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "eb0e5ce172bd402e82baab93e7f031b2",
+      "reading_order": 51,
+      "region_type": "speech",
+      "bbox": {
+        "x": 148,
+        "y": 10430,
+        "width": 304,
+        "height": 48
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "e49e2f74cbc14730a175d13865206ca2",
+      "reading_order": 52,
+      "region_type": "speech",
+      "bbox": {
+        "x": 240,
+        "y": 10493,
+        "width": 217,
+        "height": 46
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "ddc2d108baa94914b9aa6b3f203224cc",
+      "reading_order": 53,
+      "region_type": "speech",
+      "bbox": {
+        "x": 150,
+        "y": 11135,
+        "width": 164,
+        "height": 65
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "e218f8f81a494fe09558a8cc459e32a4",
+      "reading_order": 54,
+      "region_type": "speech",
+      "bbox": {
+        "x": 328,
+        "y": 11431,
+        "width": 102,
+        "height": 70
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "e636e2bd7f59461a939df42dd49a5b52",
+      "reading_order": 55,
+      "region_type": "speech",
+      "bbox": {
+        "x": 356,
+        "y": 11507,
+        "width": 110,
+        "height": 68
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "f5ad3ddeb21e4c728333c852c4723bca",
+      "reading_order": 56,
+      "region_type": "speech",
+      "bbox": {
+        "x": 141,
+        "y": 11868,
+        "width": 174,
+        "height": 72
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "fd474acd57ac488da2b50d131a7c68ff",
+      "reading_order": 57,
+      "region_type": "speech",
+      "bbox": {
+        "x": 295,
+        "y": 11920,
+        "width": 202,
+        "height": 79
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "1d7814db56f24f39b5c0670d092e01e8",
+      "reading_order": 58,
+      "region_type": "speech",
+      "bbox": {
+        "x": 241,
+        "y": 12222,
+        "width": 210,
+        "height": 48
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "b524defa9fc44dfb883bce8afb06a69a",
+      "reading_order": 59,
+      "region_type": "speech",
+      "bbox": {
+        "x": 212,
+        "y": 12588,
+        "width": 199,
+        "height": 174
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "d5bf67a1d8e7427a9865b6791f4088b6",
+      "reading_order": 60,
+      "region_type": "speech",
+      "bbox": {
+        "x": 213,
+        "y": 12590,
+        "width": 197,
+        "height": 88
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "3bf3079f27a240948f97e15b314fa387",
+      "reading_order": 61,
+      "region_type": "speech",
+      "bbox": {
+        "x": 449,
+        "y": 12755,
+        "width": 85,
+        "height": 46
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "c52137bd3d8a401cbbed8701725f3a4b",
+      "reading_order": 62,
+      "region_type": "speech",
+      "bbox": {
+        "x": 88,
+        "y": 12827,
+        "width": 86,
+        "height": 48
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "5f761bdc516d4907af678b9397c1af79",
+      "reading_order": 63,
+      "region_type": "speech",
+      "bbox": {
+        "x": 212,
+        "y": 13052,
+        "width": 89,
+        "height": 47
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "00d97c0d251841b594926706e0ede118",
+      "reading_order": 64,
+      "region_type": "speech",
+      "bbox": {
+        "x": 135,
+        "y": 13372,
+        "width": 143,
+        "height": 74
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "0e107ce75cb5450c8e64b0d15e8b923c",
+      "reading_order": 65,
+      "region_type": "speech",
+      "bbox": {
+        "x": 274,
+        "y": 13406,
+        "width": 189,
+        "height": 82
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "638ac6a90ef7470fb271946cb1cbd835",
+      "reading_order": 66,
+      "region_type": "speech",
+      "bbox": {
+        "x": 163,
+        "y": 13716,
+        "width": 304,
+        "height": 50
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "49b9a2af591c4a8cb4cc3b4e5f3d33aa",
+      "reading_order": 67,
+      "region_type": "speech",
+      "bbox": {
+        "x": 150,
+        "y": 14026,
+        "width": 145,
+        "height": 81
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "5b89198803774821b294bd2324e4c65d",
+      "reading_order": 68,
+      "region_type": "speech",
+      "bbox": {
+        "x": 306,
+        "y": 14104,
+        "width": 137,
+        "height": 83
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "e2428fcc38244c15bffcf0d6c3f94362",
+      "reading_order": 69,
+      "region_type": "speech",
+      "bbox": {
+        "x": 159,
+        "y": 14222,
+        "width": 157,
+        "height": 76
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "dce94fdad7894d77824290264378f2f7",
+      "reading_order": 70,
+      "region_type": "speech",
+      "bbox": {
+        "x": 331,
+        "y": 14293,
+        "width": 159,
+        "height": 78
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "030967d11d364d2f884742b58e5bc8e7",
+      "reading_order": 71,
+      "region_type": "speech",
+      "bbox": {
+        "x": 257,
+        "y": 14397,
+        "width": 111,
+        "height": 48
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "07518f213a8b445abb2f8a5a722b743a",
+      "reading_order": 72,
+      "region_type": "speech",
+      "bbox": {
+        "x": 265,
+        "y": 14760,
+        "width": 225,
+        "height": 109
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "60a9a4e7b56040e9a59ede77fb3692c4",
+      "reading_order": 73,
+      "region_type": "speech",
+      "bbox": {
+        "x": 146,
+        "y": 15071,
+        "width": 153,
+        "height": 41
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "c95fcaf71ef14ab4984a9eea09701ca7",
+      "reading_order": 74,
+      "region_type": "speech",
+      "bbox": {
+        "x": 262,
+        "y": 15114,
+        "width": 164,
+        "height": 33
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "22d4342bac20427192bc65267da14897",
+      "reading_order": 75,
+      "region_type": "speech",
+      "bbox": {
+        "x": 124,
+        "y": 15405,
+        "width": 196,
+        "height": 84
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "8d867c3e881444a896bcec5b4e7abadd",
+      "reading_order": 76,
+      "region_type": "speech",
+      "bbox": {
+        "x": 298,
+        "y": 15477,
+        "width": 143,
+        "height": 44
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "e18a098e5a264a8999fa816dd3c4756e",
+      "reading_order": 77,
+      "region_type": "speech",
+      "bbox": {
+        "x": 145,
+        "y": 15530,
+        "width": 159,
+        "height": 82
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "78f0b8612ce541f58a6061fe40ffdebe",
+      "reading_order": 78,
+      "region_type": "speech",
+      "bbox": {
+        "x": 129,
+        "y": 15695,
+        "width": 281,
+        "height": 84
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "46e01ead60ed41d38c377d33979f44e7",
+      "reading_order": 79,
+      "region_type": "speech",
+      "bbox": {
+        "x": 299,
+        "y": 15783,
+        "width": 203,
+        "height": 44
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "ce0ac82ef29e4f2d8e735bea673f348b",
+      "reading_order": 80,
+      "region_type": "speech",
+      "bbox": {
+        "x": 128,
+        "y": 16041,
+        "width": 291,
+        "height": 83
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "fe51ff52328a4582ba30c14861980a75",
+      "reading_order": 81,
+      "region_type": "speech",
+      "bbox": {
+        "x": 304,
+        "y": 16142,
+        "width": 160,
+        "height": 74
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "390a5b5d8f4949e6a109c2b88826a648",
+      "reading_order": 82,
+      "region_type": "speech",
+      "bbox": {
+        "x": 375,
+        "y": 16232,
+        "width": 140,
+        "height": 101
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "b8b9a112fbb64b89855f1f1b46553c1c",
+      "reading_order": 83,
+      "region_type": "speech",
+      "bbox": {
+        "x": 381,
+        "y": 16233,
+        "width": 117,
+        "height": 29
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "bbec0cd029c5437bbd78aa6448b51653",
+      "reading_order": 84,
+      "region_type": "speech",
+      "bbox": {
+        "x": 138,
+        "y": 16807,
+        "width": 329,
+        "height": 88
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "7fe6ce0da7334942ba5749f74d0d19bb",
+      "reading_order": 85,
+      "region_type": "speech",
+      "bbox": {
+        "x": 413,
+        "y": 16864,
+        "width": 87,
+        "height": 39
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "6b4cad86a905485586d9682902b2a43c",
+      "reading_order": 86,
+      "region_type": "speech",
+      "bbox": {
+        "x": 366,
+        "y": 16972,
+        "width": 92,
+        "height": 61
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "51f123ad8f5b4c9199d5d94afce14108",
+      "reading_order": 87,
+      "region_type": "speech",
+      "bbox": {
+        "x": 309,
+        "y": 17116,
+        "width": 136,
+        "height": 50
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "0d219b0cc02d41b4be028980d80c0f84",
+      "reading_order": 88,
+      "region_type": "speech",
+      "bbox": {
+        "x": 153,
+        "y": 17466,
+        "width": 275,
+        "height": 86
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "888af1c4f21f46a5a8a76a4689bfa361",
+      "reading_order": 89,
+      "region_type": "speech",
+      "bbox": {
+        "x": 234,
+        "y": 17579,
+        "width": 258,
+        "height": 48
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "75c35894df5a4b31b41644481b80ca01",
+      "reading_order": 90,
+      "region_type": "speech",
+      "bbox": {
+        "x": 117,
+        "y": 17621,
+        "width": 108,
+        "height": 61
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "ae44a2812e9d480ba56085eac8ce8e32",
+      "reading_order": 91,
+      "region_type": "speech",
+      "bbox": {
+        "x": 134,
+        "y": 17926,
+        "width": 339,
+        "height": 56
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "ed292008b83a486f9f3268320147fe2d",
+      "reading_order": 92,
+      "region_type": "speech",
+      "bbox": {
+        "x": 284,
+        "y": 18228,
+        "width": 89,
+        "height": 36
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "159057197593427fa91bf450f65ffc42",
+      "reading_order": 93,
+      "region_type": "speech",
+      "bbox": {
+        "x": 154,
+        "y": 18261,
+        "width": 319,
+        "height": 73
+      },
+      "ocr_text": ""
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "a422e399c56c4fe1a4a4f51b95ab2936",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "0edb7df033f344c3bfa46394daad6040",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "423395c16bd64cf4a8db10758dedad8b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "0f659982eb384c9693639ec20f58d0b4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "1164b4b79b1e430988b727bd969c099a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "9d5373d906f64f4fa8f204539785b644",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "30ffd7ccf18b41c3882d9c38a61b7b7d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e77dc183f9954a59b1fe87a2c58a270d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "145ec1a12b734275a14ca35a6edec7ef",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "74587da1e9c54b789d0014ddef7fe16b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "c69594dccfab4989a95c0019bb4779a5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "be04757ccb0f42918241caf2264bd334",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ee39e4fc19e04487a556e75c1fe0a1a4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "02dd95d1a5d1482aac57638021514a70",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "4987f85da07a4329a838f05a7601052f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "743c6e69362a49e1acc8061c4df62d19",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "0b69f6831722451685ae561f5717f801",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "aa22d567df644bffb1192dfb899c916e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "6ff7e66786b84b27b863d172286fb4a1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "7f92174ec58c40dcb015467f4b6378a3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "fd671a1314424da2ac839a36327abcc6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "816b1ad63ba54d3cb345f25198058301",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "de4249c1fb354e58abf2507a37993269",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "fce6df7103614e308e8ff1a7e1501160",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "bf3e6c23d40445f3a20e73e5b9ff3d30",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "8ea434842cc4477dbc7a10d08ebc6ec2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ab63009f18cd41259dc925784c832f18",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "56b3b485d45f4f97a1c3ea78a6073956",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "b88a1634b68248558b7bce570c9d6d0a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "81b43bdc96ed4621b19e449f8307f9a6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "74ba50ff074e4aaba8c29158c90e83b6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "db505bb065b44d329a72165952a0b13d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "9697abbe64074397b913ba1f514a7145",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "7b9910d2fde743f3be5622b39da51b06",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "dc9a0fbd7a9448409fa34173eb030a5d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "84919cef20574f3d80550b11a95ae42a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "d37a84b3b42743f2b72a0c4cdf8604a4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "9cd94db1e5de40a4a8f9d90ddcbf6ec6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "20892266f212468daedd008599a75c07",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "f1c19b6f332f44be9258abc9729fab70",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "af2ae59b4a984c65abe6f61ffdd5d3e0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "c745c2f26677494593c4923b22d18b3e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e656eefbb4d84228a46cc0ca52e629ed",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "b4e7ea75400e43438e3933dd352e789b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "99694f03791b4530940dd984441698be",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "5f353fdaba5541e69bef22b30f032a76",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "9651f92cc255453d87acbb7f8a86a8f8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "16d348893ce04f479b95f3c84f434258",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "7a32c1f18d1d48d389cf0c77013d9485",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "9a1658105c134ef8ba8f4807b5f465a2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "eb0e5ce172bd402e82baab93e7f031b2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e49e2f74cbc14730a175d13865206ca2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ddc2d108baa94914b9aa6b3f203224cc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e218f8f81a494fe09558a8cc459e32a4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e636e2bd7f59461a939df42dd49a5b52",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "f5ad3ddeb21e4c728333c852c4723bca",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "fd474acd57ac488da2b50d131a7c68ff",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "1d7814db56f24f39b5c0670d092e01e8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "b524defa9fc44dfb883bce8afb06a69a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "d5bf67a1d8e7427a9865b6791f4088b6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "3bf3079f27a240948f97e15b314fa387",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "c52137bd3d8a401cbbed8701725f3a4b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "5f761bdc516d4907af678b9397c1af79",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "00d97c0d251841b594926706e0ede118",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "0e107ce75cb5450c8e64b0d15e8b923c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "638ac6a90ef7470fb271946cb1cbd835",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "49b9a2af591c4a8cb4cc3b4e5f3d33aa",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "5b89198803774821b294bd2324e4c65d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e2428fcc38244c15bffcf0d6c3f94362",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "dce94fdad7894d77824290264378f2f7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "030967d11d364d2f884742b58e5bc8e7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "07518f213a8b445abb2f8a5a722b743a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "60a9a4e7b56040e9a59ede77fb3692c4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "c95fcaf71ef14ab4984a9eea09701ca7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "22d4342bac20427192bc65267da14897",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "8d867c3e881444a896bcec5b4e7abadd",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "e18a098e5a264a8999fa816dd3c4756e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "78f0b8612ce541f58a6061fe40ffdebe",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "46e01ead60ed41d38c377d33979f44e7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ce0ac82ef29e4f2d8e735bea673f348b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "fe51ff52328a4582ba30c14861980a75",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "390a5b5d8f4949e6a109c2b88826a648",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "b8b9a112fbb64b89855f1f1b46553c1c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "bbec0cd029c5437bbd78aa6448b51653",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "7fe6ce0da7334942ba5749f74d0d19bb",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "6b4cad86a905485586d9682902b2a43c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "51f123ad8f5b4c9199d5d94afce14108",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "0d219b0cc02d41b4be028980d80c0f84",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "888af1c4f21f46a5a8a76a4689bfa361",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "75c35894df5a4b31b41644481b80ca01",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ae44a2812e9d480ba56085eac8ce8e32",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "ed292008b83a486f9f3268320147fe2d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "159057197593427fa91bf450f65ffc42",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    }
+  ],
+  "export": {
+    "status": "FAIL",
+    "error": "RuntimeError: no translated render on disk (the page render happens during Run1; the export copies that artifact)",
+    "traceback": "Traceback (most recent call last):\n  File \"G:\\CODEX\\New Manga.worktrees\\M2-TA3-B3-KO-FULLRUN-zcode\\experiments\\M2-TA3-B\\run_qualification.py\", line 734, in run_case\n    raise RuntimeError(\nRuntimeError: no translated render on disk (the page render happens during Run1; the export copies that artifact)\n"
+  },
+  "attribution": [
+    "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "defect:run2-region-chain",
+    "defect:export-failed"
+  ],
+  "source_size": [
+    600,
+    18401
+  ],
+  "source_sha256_recomputed": "b1123355e8c451f99100b153679f126676f616c9715ea6e1cbdbfaeeb3134f50",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K02.rerun-qm0727m9",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\ocr\\crops\\K02.rerun",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 0,
+    "n_target_region_calls": 0,
+    "input_est_tokens_total": 0,
+    "output_est_tokens_total": 0
+  },
+  "finished_at_utc": "2026-10-02T04:29:09Z",
+  "wall_s": 24.87
+}

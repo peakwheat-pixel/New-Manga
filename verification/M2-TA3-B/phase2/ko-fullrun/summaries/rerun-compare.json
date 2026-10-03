@@ -1,0 +1,15 @@
+{
+  "task": "M2-TA3-B2",
+  "updated_at_utc": "2026-10-03T07:34:34Z",
+  "cases": [
+    {
+      "case_id": "K02",
+      "sha256_first": "69fac4f8964a01fa69e615109f7c490b84e09a6017f27bdfacccac7830c495d3",
+      "sha256_second": "830d542b3885100c7b6174a075765eb44b9c4d6afab75e7600214dddce55d4bf",
+      "match": false,
+      "region_count_first": 93,
+      "region_count_second": 93,
+      "wall_s_second": 3519.13
+    }
+  ]
+}

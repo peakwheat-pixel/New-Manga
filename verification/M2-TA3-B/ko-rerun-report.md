@@ -164,6 +164,15 @@
 
 ## 7. 待裁决清单（移交用户/编排；r1 R7：逐项补成本/覆盖/Gate 后果，F1/F2 拆独立决策点）
 
+> **裁决记录回填（2026-10-03，M2-TA3-B3-KO-FULLRUN 交付时）**：用户七项裁决（2026-10-02）已全部下达并执行完毕，逐项结论如下（执行证据见 [ko-fullrun-report.md](ko-fullrun-report.md)）：
+> - **项 1 = 裁决「1 全量」（选项①）**：220 万 est token 上界获用户背书（case 级豁免记录落 budget-ledger `CEILING_BASIS`）；实测 950,954（43.2%），8/8 case 全链 export OK。
+> - **项 2 = 裁决「2 重跑」**：K02 干净重跑完成（双 pass 全绿，首例 ko webtoon pipeline_failures=0 样本如预言产生）。
+> - **项 3 = 裁决「3 按推荐」**：F1 关闭采组合口径（detect 5/5 + 全链 8/8），已在 ko-fullrun-report §3 落地关闭。
+> - **项 4 = 裁决「4 按推荐」+「SFX 素材全权」**：F2 页级实测由项 1 全量自然覆盖（K07/K09/K10 export OK，F2 关闭）；SFX 素材路线另行释放为 M2-SFX-E2E-MATERIAL 并已闭环。
+> - **项 5 = 裁决「5 按推荐」**：50 万红线追认为编排口径（与 phase2-plan.md:192 并行登记）；本次全量运行受 220 万 case 级豁免上界约束（用户背书）。
+> - **项 6 = 裁决「6 同意」（选项③）**：known-limitation 登记落地 `quality-thresholds.md` §5（2026-10-03 注）；K02 干净重跑 93 对形态（min=0.0 合法重译）再证实，Gate 维持 FAIL 按 directional 接受。
+> - **项 7 = 裁决「7 按推荐」**：SFX 端到端素材路线由 M2-SFX-E2E-MATERIAL 执行（BJ06 ja 先行端到端闭环 + densho810 vol03 素材入池），ko 侧 0 增量。
+
 1. **7 个停跑 case 的范围与预算**（§1.2 选项①–④）。成本/覆盖（按 §1.2 的 2× 上界模型，1.5× 敏感性见该节）：①预算批准全量 ≈107 万–209 万 est token（881–1721 region），覆盖=F1 系四页 + F2 系三页全部页级实测；②`--max-regions` 逃生阀明示抽样，成本随 N 线性、Gate 分母变为抽样集（R7 披露义务随之触发）；③仅 F2 系 K07/K09/K10 ≈44 万–146 万（估计 360–1200 region），兼收 ALLOC 解锁确认；④维持停跑=0 增量成本、覆盖不变。Gate 后果：①/②/③均可推进 ko 全链 Gate 的 case 覆盖，④维持 §5 FAIL 构成现状。
 2. **是否干净重跑 K02**（+186 请求 ≈113k est token，2× 上界口径）：当前 K02 summary 的 Run2 带 46 region environment 失败。覆盖：ko webtoon 家族相似度 Gate（CALIB 登记的盲区家族）+ AC1 完整样本。Gate 后果：可产生首个 ko webtoon 全链 pipeline_failures=0 样本（现不存在）；不跑则 K02 维持 environment 失败登记。
 3. **F1 关闭口径（独立决策点，r1 R7 拆出）**：是否仅凭 TILING detect 层 5/5（K01=180/K02=93/K04=113/K05=62/K08=60 region，独立 Task GATE PASS）+ K02 全链 1/5 关闭 F1，还是必须补 K01/K04/K05/K08 页级全链实测。若必须：四页合计 415 region，按 2× 上界 ≈ K01 218k + K04 137k + K05 75k + K08 73k ≈ **50.4 万 est token**（1.51× 敏感性 ≈ 37.9 万）。Gate 后果：前者 F1 就此关闭（detect 级+页级组合证据，本报告 §2 现表述）；后者追加四页全链行为证据后关闭。

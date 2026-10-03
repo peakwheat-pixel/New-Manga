@@ -1,0 +1,6614 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K10",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "normal_dialogue"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K10_730656_11\\base.png",
+  "source_sha256": "68024b789ff845e20ed7e69195fc3635c675513b4220ce8a7af941126bdb56a0",
+  "started_at_utc": "2026-10-02T19:23:45Z",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding": "openai-compatible-translation -> https://api.deepseek.com/v1 (deepseek-chat)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "production default (settings key absent -> SKIP)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 690,
+      "height": 100674,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "a2b4355cdb164840919cdd2b07b00a20",
+      "width": 690,
+      "height": 100674
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "elapsed_s": 1764.2
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 147
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 147
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED_WITH_FAILURES",
+      "region_runs": 147,
+      "truncated": false,
+      "elapsed_s": 15612.26
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 147,
+      "translated": 140
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "a49c439db5f6dbbd",
+      "size": 33873799
+    }
+  },
+  "run1": {
+    "run_id": "run-cbd451c3bcf2415ea65cfba7d1df5af3",
+    "status": "completed_with_failures",
+    "elapsed_s": 1764.2,
+    "steps": [
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "failed",
+        "error_code": "INVALID_INPUT",
+        "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "6bb75152e2ca466a9926687f8b01e594",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 88,
+        "y": 3344,
+        "width": 202,
+        "height": 101
+      }
+    },
+    {
+      "region_id": "7371fd928bf34914ad9165218308ba4a",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 493,
+        "y": 3993,
+        "width": 80,
+        "height": 56
+      }
+    },
+    {
+      "region_id": "505c105091b14b77ae3970d93a6ab027",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 154,
+        "y": 4296,
+        "width": 272,
+        "height": 103
+      }
+    },
+    {
+      "region_id": "6f1d36302c4a49bc844fdadb5951442e",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 64,
+        "y": 4475,
+        "width": 192,
+        "height": 99
+      }
+    },
+    {
+      "region_id": "7d0ddf42531a48beb9acaf3155da2c3b",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 369,
+        "y": 5052,
+        "width": 203,
+        "height": 99
+      }
+    },
+    {
+      "region_id": "17d2a7a70fae4f79ba84032ce5d7d13b",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 492,
+        "y": 5206,
+        "width": 157,
+        "height": 58
+      }
+    },
+    {
+      "region_id": "38bdbbc170e44211bddce7c78abe7b91",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 150,
+        "y": 5976,
+        "width": 150,
+        "height": 58
+      }
+    },
+    {
+      "region_id": "42b1540bbab14207a528e09b22b9932e",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 99,
+        "y": 6547,
+        "width": 175,
+        "height": 61
+      }
+    },
+    {
+      "region_id": "d1eef81f46874981adf5c82bdca73283",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 457,
+        "y": 7456,
+        "width": 165,
+        "height": 59
+      }
+    },
+    {
+      "region_id": "cc16e7d91d43434689011bcf02042c2f",
+      "reading_order": 10,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 386,
+        "y": 8484,
+        "width": 75,
+        "height": 57
+      }
+    },
+    {
+      "region_id": "d8fdfaa3b5244ce9a2982024823902a4",
+      "reading_order": 11,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 462,
+        "y": 8592,
+        "width": 81,
+        "height": 61
+      }
+    },
+    {
+      "region_id": "ecdb7698b1c34977b8ef17163ea66a90",
+      "reading_order": 12,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 59,
+        "y": 9535,
+        "width": 135,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "67fe8db8aeb540dea39ccf538517e0d0",
+      "reading_order": 13,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 444,
+        "y": 11970,
+        "width": 188,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "66d4109a7f954769a245065b75f2b645",
+      "reading_order": 14,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 125,
+        "y": 13323,
+        "width": 423,
+        "height": 122
+      }
+    },
+    {
+      "region_id": "e0bf12ecc2804783b01f26e61ba5a69b",
+      "reading_order": 15,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 113,
+        "y": 13332,
+        "width": 31,
+        "height": 242
+      }
+    },
+    {
+      "region_id": "59653297c5a949d8a1a9bf7402ae8da2",
+      "reading_order": 16,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 520,
+        "y": 13337,
+        "width": 33,
+        "height": 236
+      }
+    },
+    {
+      "region_id": "28cf389b09bd43e1bfcb74332b99216c",
+      "reading_order": 17,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 108,
+        "y": 13434,
+        "width": 39,
+        "height": 889
+      }
+    },
+    {
+      "region_id": "8d864954369c497789adfa711b6091ec",
+      "reading_order": 18,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 112,
+        "y": 13434,
+        "width": 32,
+        "height": 274
+      }
+    },
+    {
+      "region_id": "6308a30d23e84d9f804e82c8e0bb664d",
+      "reading_order": 19,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 520,
+        "y": 13434,
+        "width": 33,
+        "height": 265
+      }
+    },
+    {
+      "region_id": "45e82158953f4b81a4617ac1cc45fbe2",
+      "reading_order": 20,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 112,
+        "y": 13763,
+        "width": 32,
+        "height": 559
+      }
+    },
+    {
+      "region_id": "88b81391b5e44c47a641cc896e07ee5b",
+      "reading_order": 21,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 519,
+        "y": 13784,
+        "width": 34,
+        "height": 540
+      }
+    },
+    {
+      "region_id": "51a60a5027fc461795c2ba4005c21c09",
+      "reading_order": 22,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 233,
+        "y": 13795,
+        "width": 239,
+        "height": 58
+      }
+    },
+    {
+      "region_id": "74e624f321d24eaca0286cede362929c",
+      "reading_order": 23,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 197,
+        "y": 14081,
+        "width": 260,
+        "height": 180
+      }
+    },
+    {
+      "region_id": "ba1e074c9b8d42beb73e0728ec8196b5",
+      "reading_order": 24,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 116,
+        "y": 14290,
+        "width": 430,
+        "height": 40
+      }
+    },
+    {
+      "region_id": "d4907f04cce847c1ac8a9a10ba53a402",
+      "reading_order": 25,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 214,
+        "y": 14427,
+        "width": 237,
+        "height": 60
+      }
+    },
+    {
+      "region_id": "aeebdac74acc46aab5a46f6f9a271039",
+      "reading_order": 26,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 99,
+        "y": 16128,
+        "width": 161,
+        "height": 141
+      }
+    },
+    {
+      "region_id": "0b1463ab01de42cfa0760a1e51fee37f",
+      "reading_order": 27,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 427,
+        "y": 17018,
+        "width": 180,
+        "height": 100
+      }
+    },
+    {
+      "region_id": "35012ef6c3e44e509a204362502f9228",
+      "reading_order": 28,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 112,
+        "y": 17493,
+        "width": 225,
+        "height": 106
+      }
+    },
+    {
+      "region_id": "83f7a5478edb49d3999862a44634924e",
+      "reading_order": 29,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 405,
+        "y": 18058,
+        "width": 205,
+        "height": 103
+      }
+    },
+    {
+      "region_id": "c1c4184606bc47c1b51bd750da98beaa",
+      "reading_order": 30,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 69,
+        "y": 19331,
+        "width": 230,
+        "height": 152
+      }
+    },
+    {
+      "region_id": "1bd4d8671907443094497cdb627f7774",
+      "reading_order": 31,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 393,
+        "y": 20043,
+        "width": 179,
+        "height": 111
+      }
+    },
+    {
+      "region_id": "508d69daf2d840eeb4f553c75b29c763",
+      "reading_order": 32,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 309,
+        "y": 21229,
+        "width": 299,
+        "height": 146
+      }
+    },
+    {
+      "region_id": "7b34c8f9bb054adf974de81ea99e3ddc",
+      "reading_order": 33,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 327,
+        "y": 22114,
+        "width": 330,
+        "height": 147
+      }
+    },
+    {
+      "region_id": "1bf6ed9d75ea4119a9d058bfcd0fe2e0",
+      "reading_order": 34,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 70,
+        "y": 23271,
+        "width": 243,
+        "height": 144
+      }
+    },
+    {
+      "region_id": "a763e12861854c549da698fe747dab1d",
+      "reading_order": 35,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 291,
+        "y": 24066,
+        "width": 334,
+        "height": 145
+      }
+    },
+    {
+      "region_id": "240bd8ac8d2543279093b66f1dcdca71",
+      "reading_order": 36,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 413,
+        "y": 24315,
+        "width": 227,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "7c2319b56eac42828030ceef4428cec0",
+      "reading_order": 37,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 56,
+        "y": 24695,
+        "width": 210,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "65d4c931221542a2a95f8c9c074e4477",
+      "reading_order": 38,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 377,
+        "y": 25384,
+        "width": 285,
+        "height": 103
+      }
+    },
+    {
+      "region_id": "12b9550b85844d9b8345a4c0b211903e",
+      "reading_order": 39,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 368,
+        "y": 26028,
+        "width": 261,
+        "height": 109
+      }
+    },
+    {
+      "region_id": "120a107368d649e097b3f56ad9cc5c4f",
+      "reading_order": 40,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 320,
+        "y": 27063,
+        "width": 313,
+        "height": 146
+      }
+    },
+    {
+      "region_id": "be83bec71b1646e3baf8e663d887cc36",
+      "reading_order": 41,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 72,
+        "y": 27707,
+        "width": 255,
+        "height": 107
+      }
+    },
+    {
+      "region_id": "7a32af1f602f44cb81d0c627a9bc9258",
+      "reading_order": 42,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 285,
+        "y": 28579,
+        "width": 359,
+        "height": 147
+      }
+    },
+    {
+      "region_id": "b18e4aa293a74b05a2bf2d38f71013f5",
+      "reading_order": 43,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 445,
+        "y": 28861,
+        "width": 200,
+        "height": 63
+      }
+    },
+    {
+      "region_id": "fc73879ffcbe4c57a6e88b5a935ce4f6",
+      "reading_order": 44,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 116,
+        "y": 29190,
+        "width": 172,
+        "height": 104
+      }
+    },
+    {
+      "region_id": "5ac8b7fc1a1e442cb47b2c052c074550",
+      "reading_order": 45,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 395,
+        "y": 30082,
+        "width": 217,
+        "height": 106
+      }
+    },
+    {
+      "region_id": "7353d155e2244e2a92736f989f99f0a8",
+      "reading_order": 46,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 323,
+        "y": 30233,
+        "width": 302,
+        "height": 187
+      }
+    },
+    {
+      "region_id": "27becfca98ac4c01b8d14900c948225e",
+      "reading_order": 47,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 82,
+        "y": 30756,
+        "width": 255,
+        "height": 147
+      }
+    },
+    {
+      "region_id": "4ad050912c94486b9af139f2f32d101c",
+      "reading_order": 48,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 389,
+        "y": 31463,
+        "width": 247,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "3765802eace44f30b9a367f4ea091412",
+      "reading_order": 49,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 323,
+        "y": 31660,
+        "width": 231,
+        "height": 103
+      }
+    },
+    {
+      "region_id": "d7d59060e24b4de0a252b7907e5cf321",
+      "reading_order": 50,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 394,
+        "y": 32632,
+        "width": 222,
+        "height": 148
+      }
+    },
+    {
+      "region_id": "6cdeb1875eb242499b7f3f9ac0187272",
+      "reading_order": 51,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 83,
+        "y": 35280,
+        "width": 135,
+        "height": 103
+      }
+    },
+    {
+      "region_id": "280b8e7172d343e7beae2f36a04b5997",
+      "reading_order": 52,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 441,
+        "y": 36101,
+        "width": 220,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "07851e6017a64fed8152236c8f97e5b1",
+      "reading_order": 53,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 57,
+        "y": 36443,
+        "width": 227,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "fb95e7f7ee604d6f86cdd3de2de27675",
+      "reading_order": 54,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 386,
+        "y": 37063,
+        "width": 262,
+        "height": 107
+      }
+    },
+    {
+      "region_id": "899b6d8a52aa4cafba55125167b1c75c",
+      "reading_order": 55,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 493,
+        "y": 38202,
+        "width": 105,
+        "height": 69
+      }
+    },
+    {
+      "region_id": "2ec61c73510b45b198f0b43822002022",
+      "reading_order": 56,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 84,
+        "y": 38801,
+        "width": 140,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "6b7858b211a543cb9caecc5730c5af12",
+      "reading_order": 57,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 457,
+        "y": 39822,
+        "width": 160,
+        "height": 63
+      }
+    },
+    {
+      "region_id": "b09daadb5f2049759b9d994ea989ff4e",
+      "reading_order": 58,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 137,
+        "y": 40572,
+        "width": 89,
+        "height": 63
+      }
+    },
+    {
+      "region_id": "a229166b5e444b89a1f6de1ab4747fc8",
+      "reading_order": 59,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 64,
+        "y": 41023,
+        "width": 192,
+        "height": 67
+      }
+    },
+    {
+      "region_id": "8919e30e1c8b4c268bbe5d2f4f39285a",
+      "reading_order": 60,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 496,
+        "y": 41979,
+        "width": 89,
+        "height": 61
+      }
+    },
+    {
+      "region_id": "79c9f5680eeb4238b950a5aa2eec8361",
+      "reading_order": 61,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 98,
+        "y": 42409,
+        "width": 170,
+        "height": 107
+      }
+    },
+    {
+      "region_id": "f920b80a961449f98e60a6c105eba2ef",
+      "reading_order": 62,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 422,
+        "y": 43178,
+        "width": 216,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "faac2362b6c64af58796799c6f93f6ec",
+      "reading_order": 63,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 422,
+        "y": 43600,
+        "width": 238,
+        "height": 141
+      }
+    },
+    {
+      "region_id": "460a830efb9f46108c7215132528da62",
+      "reading_order": 64,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 34,
+        "y": 44298,
+        "width": 272,
+        "height": 107
+      }
+    },
+    {
+      "region_id": "3427429409e04f4cbd54f635f900592a",
+      "reading_order": 65,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 140,
+        "y": 44515,
+        "width": 259,
+        "height": 106
+      }
+    },
+    {
+      "region_id": "1b6d31e9207e4a51b9b73f3393e232b9",
+      "reading_order": 66,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 321,
+        "y": 45142,
+        "width": 301,
+        "height": 150
+      }
+    },
+    {
+      "region_id": "51ed99e5cd1b44f893b37b4ea3903371",
+      "reading_order": 67,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 72,
+        "y": 45749,
+        "width": 95,
+        "height": 62
+      }
+    },
+    {
+      "region_id": "1032724406dd4b1fa1679e565cb0769b",
+      "reading_order": 68,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 105,
+        "y": 46115,
+        "width": 242,
+        "height": 145
+      }
+    },
+    {
+      "region_id": "ccf1afd019324ed09a3b1ad23dd6fde1",
+      "reading_order": 69,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 67,
+        "y": 46469,
+        "width": 186,
+        "height": 67
+      }
+    },
+    {
+      "region_id": "662ca46e01ea4333af4acde11affc476",
+      "reading_order": 70,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 407,
+        "y": 47152,
+        "width": 222,
+        "height": 101
+      }
+    },
+    {
+      "region_id": "206c7c00e90e44b5bf715a61fbb64fe6",
+      "reading_order": 71,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 55,
+        "y": 48091,
+        "width": 172,
+        "height": 207
+      }
+    },
+    {
+      "region_id": "e85ee1846f784feab8c15e1892a4e90a",
+      "reading_order": 72,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 30,
+        "y": 49186,
+        "width": 306,
+        "height": 209
+      }
+    },
+    {
+      "region_id": "760c07e3077a411eb8e5259af0921513",
+      "reading_order": 73,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 30,
+        "y": 49275,
+        "width": 305,
+        "height": 301
+      }
+    },
+    {
+      "region_id": "c531cb25640a447caee4b13a5b831f9f",
+      "reading_order": 74,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 61,
+        "y": 49414,
+        "width": 229,
+        "height": 159
+      }
+    },
+    {
+      "region_id": "ab86b8efa22347419117244ee786599e",
+      "reading_order": 75,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 361,
+        "y": 49694,
+        "width": 277,
+        "height": 145
+      }
+    },
+    {
+      "region_id": "023da2fd5995410ba0da3284d2e28d77",
+      "reading_order": 76,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 67,
+        "y": 50662,
+        "width": 144,
+        "height": 60
+      }
+    },
+    {
+      "region_id": "7049036895a34d8b80b8c234ae164e2b",
+      "reading_order": 77,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 349,
+        "y": 51289,
+        "width": 278,
+        "height": 109
+      }
+    },
+    {
+      "region_id": "080062835a604c23828d98ec737daa57",
+      "reading_order": 78,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 75,
+        "y": 51781,
+        "width": 154,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "db8722c35f054430899d2b7cafc7fef0",
+      "reading_order": 79,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 152,
+        "y": 52903,
+        "width": 204,
+        "height": 115
+      }
+    },
+    {
+      "region_id": "38ddcb5c63444d2dbeea00c0d019facc",
+      "reading_order": 80,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 61,
+        "y": 53099,
+        "width": 192,
+        "height": 108
+      }
+    },
+    {
+      "region_id": "439b703807a542e0aefbaf7eb04c1cb5",
+      "reading_order": 81,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 363,
+        "y": 53926,
+        "width": 256,
+        "height": 248
+      }
+    },
+    {
+      "region_id": "962050b71d8d45a6a5147dbc25e59757",
+      "reading_order": 82,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 42,
+        "y": 54484,
+        "width": 283,
+        "height": 109
+      }
+    },
+    {
+      "region_id": "d6d5fb581ba94b6dbf3ce1d479bf974c",
+      "reading_order": 83,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 388,
+        "y": 55193,
+        "width": 252,
+        "height": 142
+      }
+    },
+    {
+      "region_id": "001d0be4220640a0806c360b919510d1",
+      "reading_order": 84,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 228,
+        "y": 55351,
+        "width": 212,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "1481501c390e4e31a20443967c9712c4",
+      "reading_order": 85,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 53,
+        "y": 55745,
+        "width": 251,
+        "height": 146
+      }
+    },
+    {
+      "region_id": "75f7f7f547fb493ab61f7efe02a6c324",
+      "reading_order": 86,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 430,
+        "y": 56419,
+        "width": 184,
+        "height": 104
+      }
+    },
+    {
+      "region_id": "764753c741794cc8a274510f8f9d4909",
+      "reading_order": 87,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 168,
+        "y": 56576,
+        "width": 279,
+        "height": 145
+      }
+    },
+    {
+      "region_id": "9f7ce594b50345f28a735613a7b88677",
+      "reading_order": 88,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 86,
+        "y": 58133,
+        "width": 202,
+        "height": 181
+      }
+    },
+    {
+      "region_id": "51156578cdb84a6b99b6ae97f1b1b7b1",
+      "reading_order": 89,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 18,
+        "y": 58931,
+        "width": 275,
+        "height": 268
+      }
+    },
+    {
+      "region_id": "4bdb8f61ad4a4128aff8f7266dc3f437",
+      "reading_order": 90,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 19,
+        "y": 59096,
+        "width": 275,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "91ef50bc2c5f4262a236cc97819d6190",
+      "reading_order": 91,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 382,
+        "y": 59231,
+        "width": 243,
+        "height": 143
+      }
+    },
+    {
+      "region_id": "b22631edf2aa473f8a0d20d9328ec667",
+      "reading_order": 92,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 68,
+        "y": 59759,
+        "width": 208,
+        "height": 61
+      }
+    },
+    {
+      "region_id": "2595449d5578448d9a4fa0ef71d3a2c3",
+      "reading_order": 93,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 522,
+        "y": 60349,
+        "width": 80,
+        "height": 62
+      }
+    },
+    {
+      "region_id": "61227835806b426580d0125bf6d30d23",
+      "reading_order": 94,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 115,
+        "y": 60862,
+        "width": 88,
+        "height": 45
+      }
+    },
+    {
+      "region_id": "08506fb1c0804c8293b157d0c71a251c",
+      "reading_order": 95,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 366,
+        "y": 61465,
+        "width": 253,
+        "height": 221
+      }
+    },
+    {
+      "region_id": "759cdcb5823e4137ad11e48e3ddd1a39",
+      "reading_order": 96,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 368,
+        "y": 61466,
+        "width": 248,
+        "height": 57
+      }
+    },
+    {
+      "region_id": "92c1ba9835cd4427a748b8940b1234ff",
+      "reading_order": 97,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 61,
+        "y": 62469,
+        "width": 184,
+        "height": 139
+      }
+    },
+    {
+      "region_id": "92d80abfdfc14eadb3e38c0d4116295f",
+      "reading_order": 98,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 434,
+        "y": 62510,
+        "width": 171,
+        "height": 104
+      }
+    },
+    {
+      "region_id": "81b66325db124d6e941a72e8a8f1238a",
+      "reading_order": 99,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 417,
+        "y": 62979,
+        "width": 217,
+        "height": 144
+      }
+    },
+    {
+      "region_id": "d413dc60d093403aad0671fcc79482c1",
+      "reading_order": 100,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 63,
+        "y": 63723,
+        "width": 233,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "9c921e7344ee4b74877d033455518da7",
+      "reading_order": 101,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 66,
+        "y": 64265,
+        "width": 264,
+        "height": 107
+      }
+    },
+    {
+      "region_id": "45f03738fa6f4e7dac66365ecb63e860",
+      "reading_order": 102,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 8,
+        "y": 64507,
+        "width": 243,
+        "height": 186
+      }
+    },
+    {
+      "region_id": "5632f4b016f9417f8bc06630ab5ea981",
+      "reading_order": 103,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 406,
+        "y": 64639,
+        "width": 269,
+        "height": 71
+      }
+    },
+    {
+      "region_id": "b3f5826be041401999109282e70a1178",
+      "reading_order": 104,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 53,
+        "y": 65887,
+        "width": 237,
+        "height": 144
+      }
+    },
+    {
+      "region_id": "78f1ff8e6ddc4e2186fb958dc059ab47",
+      "reading_order": 105,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 360,
+        "y": 65991,
+        "width": 251,
+        "height": 142
+      }
+    },
+    {
+      "region_id": "e2c8a86ed103489ab9b83d74f355a804",
+      "reading_order": 106,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 482,
+        "y": 66703,
+        "width": 78,
+        "height": 37
+      }
+    },
+    {
+      "region_id": "24a1082939e242539f69162f246b4261",
+      "reading_order": 107,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 69,
+        "y": 67241,
+        "width": 202,
+        "height": 103
+      }
+    },
+    {
+      "region_id": "67c55d4bbf304e3c9ba86419266924c0",
+      "reading_order": 108,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 505,
+        "y": 67937,
+        "width": 71,
+        "height": 61
+      }
+    },
+    {
+      "region_id": "729e388fc7424c96b6fbbcfcbba2cc57",
+      "reading_order": 109,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 65,
+        "y": 68254,
+        "width": 257,
+        "height": 109
+      }
+    },
+    {
+      "region_id": "19730b79d2b34b01834f822c7070023a",
+      "reading_order": 110,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 427,
+        "y": 68869,
+        "width": 205,
+        "height": 104
+      }
+    },
+    {
+      "region_id": "ac523095e0554b629d308ef58149fbcc",
+      "reading_order": 111,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 73,
+        "y": 69365,
+        "width": 296,
+        "height": 184
+      }
+    },
+    {
+      "region_id": "a8776570c14741b09573d44072f65f7a",
+      "reading_order": 112,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 443,
+        "y": 70146,
+        "width": 182,
+        "height": 66
+      }
+    },
+    {
+      "region_id": "294d77d4e56b4b489b5f0e70c9e55c36",
+      "reading_order": 113,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 52,
+        "y": 70541,
+        "width": 248,
+        "height": 144
+      }
+    },
+    {
+      "region_id": "0f661200bc7c4a02988c46aabdf4ed34",
+      "reading_order": 114,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 347,
+        "y": 71677,
+        "width": 276,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "18dd49ccc4ed42169234b43a50a3e828",
+      "reading_order": 115,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 352,
+        "y": 72416,
+        "width": 260,
+        "height": 145
+      }
+    },
+    {
+      "region_id": "b1d1bdf1a2d74a89997371368f1c9a8d",
+      "reading_order": 116,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 65,
+        "y": 72909,
+        "width": 259,
+        "height": 149
+      }
+    },
+    {
+      "region_id": "4e4b8adccea6474e9cf094a096a0c6f2",
+      "reading_order": 117,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 504,
+        "y": 74131,
+        "width": 83,
+        "height": 59
+      }
+    },
+    {
+      "region_id": "abbfb21d202e404abe5e7da2ec4a7090",
+      "reading_order": 118,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 377,
+        "y": 75833,
+        "width": 200,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "0aca6133f2fd4e4c911f890b651a7372",
+      "reading_order": 119,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 505,
+        "y": 76231,
+        "width": 161,
+        "height": 63
+      }
+    },
+    {
+      "region_id": "c8c986d5912d447284f6ab3b5a50da0d",
+      "reading_order": 120,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 454,
+        "y": 76397,
+        "width": 160,
+        "height": 56
+      }
+    },
+    {
+      "region_id": "ef4eabf1ed0744429d4efd019f199f99",
+      "reading_order": 121,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 106,
+        "y": 76956,
+        "width": 199,
+        "height": 142
+      }
+    },
+    {
+      "region_id": "d668d7c66e414fe1bbcc934ab623354d",
+      "reading_order": 122,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 240,
+        "y": 77397,
+        "width": 199,
+        "height": 66
+      }
+    },
+    {
+      "region_id": "5987e269a70747499cbb49440e654628",
+      "reading_order": 123,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 484,
+        "y": 77449,
+        "width": 163,
+        "height": 63
+      }
+    },
+    {
+      "region_id": "6b05e12df6e2450aa97ea4632d80be20",
+      "reading_order": 124,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 323,
+        "y": 77694,
+        "width": 197,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "21cb514efa434364b0857bf29a0135d6",
+      "reading_order": 125,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 62,
+        "y": 78498,
+        "width": 181,
+        "height": 67
+      }
+    },
+    {
+      "region_id": "092595aa76d040ac8dd3b70fe85bef81",
+      "reading_order": 126,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 345,
+        "y": 79185,
+        "width": 276,
+        "height": 104
+      }
+    },
+    {
+      "region_id": "44293d7173494807a94a5ffac5b23e72",
+      "reading_order": 127,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 83,
+        "y": 79844,
+        "width": 170,
+        "height": 110
+      }
+    },
+    {
+      "region_id": "da47fb1d32ec4f18b3a8cd2708defe28",
+      "reading_order": 128,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 204,
+        "y": 80087,
+        "width": 228,
+        "height": 94
+      }
+    },
+    {
+      "region_id": "492ab3b810c54647a61aea5ba7e12f94",
+      "reading_order": 129,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 444,
+        "y": 80860,
+        "width": 179,
+        "height": 90
+      }
+    },
+    {
+      "region_id": "edd261f1f2eb495cac00b0897f701a6d",
+      "reading_order": 130,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 233,
+        "y": 82189,
+        "width": 273,
+        "height": 81
+      }
+    },
+    {
+      "region_id": "b3d69cb451bb455180262a360fcbbbdc",
+      "reading_order": 131,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 65,
+        "y": 84853,
+        "width": 188,
+        "height": 103
+      }
+    },
+    {
+      "region_id": "e3c014e92fac408a95ac6ca8422d056f",
+      "reading_order": 132,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 53,
+        "y": 85705,
+        "width": 267,
+        "height": 147
+      }
+    },
+    {
+      "region_id": "2778af5a544f47aab660256e32bb2f5f",
+      "reading_order": 133,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 35,
+        "y": 87013,
+        "width": 88,
+        "height": 33
+      }
+    },
+    {
+      "region_id": "29ad0993eb694cf5944dfd90e0f58de5",
+      "reading_order": 134,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 123,
+        "y": 87210,
+        "width": 437,
+        "height": 202
+      }
+    },
+    {
+      "region_id": "40f19759b4a643c39e8a917a27b29e55",
+      "reading_order": 135,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 491,
+        "y": 87861,
+        "width": 82,
+        "height": 71
+      }
+    },
+    {
+      "region_id": "e6a189792b224b0382394ce1b4b969e4",
+      "reading_order": 136,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 87,
+        "y": 88467,
+        "width": 102,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "0159895d793f493d89d16ee97390815b",
+      "reading_order": 137,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 459,
+        "y": 89033,
+        "width": 159,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "00ca3f836e0f4092a9b77c5315707e1a",
+      "reading_order": 138,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 55,
+        "y": 89421,
+        "width": 185,
+        "height": 62
+      }
+    },
+    {
+      "region_id": "17f44172c8a3487e99bcb68adf21db2b",
+      "reading_order": 139,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 101,
+        "y": 90358,
+        "width": 191,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "91b11faa80304648963ee826bdba6bbc",
+      "reading_order": 140,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 361,
+        "y": 91056,
+        "width": 279,
+        "height": 187
+      }
+    },
+    {
+      "region_id": "0bc57df19302488d9eaf78679304be7a",
+      "reading_order": 141,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 68,
+        "y": 91676,
+        "width": 259,
+        "height": 148
+      }
+    },
+    {
+      "region_id": "e5bcd702e161466683dc29f3f867e73b",
+      "reading_order": 142,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 401,
+        "y": 92842,
+        "width": 239,
+        "height": 102
+      }
+    },
+    {
+      "region_id": "91211c1ed2fc4c8cb8766c891d2fc5dc",
+      "reading_order": 143,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 80,
+        "y": 93388,
+        "width": 150,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "e1873cbec8114f8bae3c6155e13458d6",
+      "reading_order": 144,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 248,
+        "y": 94970,
+        "width": 229,
+        "height": 99
+      }
+    },
+    {
+      "region_id": "3f342627bbc14d80a11f1abf442b1cd6",
+      "reading_order": 145,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 227,
+        "y": 99821,
+        "width": 231,
+        "height": 70
+      }
+    },
+    {
+      "region_id": "f3b76252e6d244a78f611ec337a5f27f",
+      "reading_order": 146,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 262,
+        "y": 100203,
+        "width": 159,
+        "height": 56
+      }
+    },
+    {
+      "region_id": "717571c252d8424bae46023b1c0f4a8b",
+      "reading_order": 147,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 465,
+        "y": 100393,
+        "width": 186,
+        "height": 178
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed_with_failures",
+    "region_target_count": 147,
+    "region_runs_executed": 147,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "6bb75152e2ca466a9926687f8b01e594",
+        "run_id": "run-2cbf85d67b5f4658821b1d3f088c4e0f",
+        "status": "completed"
+      },
+      {
+        "region_id": "7371fd928bf34914ad9165218308ba4a",
+        "run_id": "run-835251b169c64bff8ba567ee488a6095",
+        "status": "completed"
+      },
+      {
+        "region_id": "505c105091b14b77ae3970d93a6ab027",
+        "run_id": "run-fb236b8bda554fce8aef5e5e377b637c",
+        "status": "completed"
+      },
+      {
+        "region_id": "6f1d36302c4a49bc844fdadb5951442e",
+        "run_id": "run-c3a38520e6b84c5bbc695ddb8a5826b8",
+        "status": "completed"
+      },
+      {
+        "region_id": "7d0ddf42531a48beb9acaf3155da2c3b",
+        "run_id": "run-3f7597de244640de82f84936a3b04261",
+        "status": "completed"
+      },
+      {
+        "region_id": "17d2a7a70fae4f79ba84032ce5d7d13b",
+        "run_id": "run-ac424ffbef564f4a98dca5c868edee4c",
+        "status": "completed"
+      },
+      {
+        "region_id": "38bdbbc170e44211bddce7c78abe7b91",
+        "run_id": "run-065fffd325d4401f9519541767891058",
+        "status": "completed"
+      },
+      {
+        "region_id": "42b1540bbab14207a528e09b22b9932e",
+        "run_id": "run-57341f77e316460ba5b49d5116a8c150",
+        "status": "completed"
+      },
+      {
+        "region_id": "d1eef81f46874981adf5c82bdca73283",
+        "run_id": "run-793cb69633d54d538347a16a9e06c47a",
+        "status": "completed"
+      },
+      {
+        "region_id": "cc16e7d91d43434689011bcf02042c2f",
+        "run_id": "run-49e67495cfa044f982954548f1c65cd7",
+        "status": "completed"
+      },
+      {
+        "region_id": "d8fdfaa3b5244ce9a2982024823902a4",
+        "run_id": "run-1df8a8372d32493d8ed0d862a9a8f538",
+        "status": "completed"
+      },
+      {
+        "region_id": "ecdb7698b1c34977b8ef17163ea66a90",
+        "run_id": "run-be740c9df0244a61a0082e0f10a03fbd",
+        "status": "completed"
+      },
+      {
+        "region_id": "67fe8db8aeb540dea39ccf538517e0d0",
+        "run_id": "run-ace4220e3de1430aa1c37aa6e7251f1b",
+        "status": "completed"
+      },
+      {
+        "region_id": "66d4109a7f954769a245065b75f2b645",
+        "run_id": "run-f1531e7d15994aa6989959d53d41a4ec",
+        "status": "completed"
+      },
+      {
+        "region_id": "e0bf12ecc2804783b01f26e61ba5a69b",
+        "run_id": "run-90e4eee1772b4fd29992e9292b44fedd",
+        "status": "completed"
+      },
+      {
+        "region_id": "59653297c5a949d8a1a9bf7402ae8da2",
+        "run_id": "run-9ed2d977197d4bc4875c18ba620caa51",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          }
+        ]
+      },
+      {
+        "region_id": "28cf389b09bd43e1bfcb74332b99216c",
+        "run_id": "run-d62f25dce9d7490bbe95e5846c33a0fa",
+        "status": "completed"
+      },
+      {
+        "region_id": "8d864954369c497789adfa711b6091ec",
+        "run_id": "run-73308724c85144d884c2a97b2db021cd",
+        "status": "completed"
+      },
+      {
+        "region_id": "6308a30d23e84d9f804e82c8e0bb664d",
+        "run_id": "run-94a440a5deeb457688f0dba44fdd8394",
+        "status": "completed"
+      },
+      {
+        "region_id": "45e82158953f4b81a4617ac1cc45fbe2",
+        "run_id": "run-89a24e2e994744c2ae60eb42dbf671f7",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "88b81391b5e44c47a641cc896e07ee5b",
+        "run_id": "run-f9a9781b75b64f77be14fd9016c8de96",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "51a60a5027fc461795c2ba4005c21c09",
+        "run_id": "run-2b703322086c4276a37260b2ef910233",
+        "status": "completed"
+      },
+      {
+        "region_id": "74e624f321d24eaca0286cede362929c",
+        "run_id": "run-e2ec8058a90c44a190cb9f189fb978bd",
+        "status": "completed"
+      },
+      {
+        "region_id": "ba1e074c9b8d42beb73e0728ec8196b5",
+        "run_id": "run-a747fd65cd7247aebf9c9b9caa8bc28e",
+        "status": "completed"
+      },
+      {
+        "region_id": "d4907f04cce847c1ac8a9a10ba53a402",
+        "run_id": "run-bf68dfc8b92a4e95ac27fe6de6ba6646",
+        "status": "completed"
+      },
+      {
+        "region_id": "aeebdac74acc46aab5a46f6f9a271039",
+        "run_id": "run-ee9ed36ba84a46cc8122a43be6b26bb9",
+        "status": "completed"
+      },
+      {
+        "region_id": "0b1463ab01de42cfa0760a1e51fee37f",
+        "run_id": "run-ff8bc63af769435db153499c80802792",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "translate",
+            "status": "failed",
+            "error_code": "PROVIDER_INVALID_OUTPUT",
+            "error_detail": "malformed_json: response is not valid JSON (provider=openai-compatible-translation) (stage=translate)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "term_extract",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "35012ef6c3e44e509a204362502f9228",
+        "run_id": "run-51d633f6e26f4863869e42aadcbb0fe4",
+        "status": "completed"
+      },
+      {
+        "region_id": "83f7a5478edb49d3999862a44634924e",
+        "run_id": "run-5bc0246383c14390a0038f37891c42e7",
+        "status": "completed"
+      },
+      {
+        "region_id": "c1c4184606bc47c1b51bd750da98beaa",
+        "run_id": "run-01653787cd3e49e398fd3cc5b4463f5d",
+        "status": "completed"
+      },
+      {
+        "region_id": "1bd4d8671907443094497cdb627f7774",
+        "run_id": "run-4d08ccabc3d94fc7891bae11f99ebe87",
+        "status": "completed"
+      },
+      {
+        "region_id": "508d69daf2d840eeb4f553c75b29c763",
+        "run_id": "run-a1212013a1ac444fa52316e29cd640f3",
+        "status": "completed"
+      },
+      {
+        "region_id": "7b34c8f9bb054adf974de81ea99e3ddc",
+        "run_id": "run-d0a395c485674b7a978bd265eb7331ed",
+        "status": "completed"
+      },
+      {
+        "region_id": "1bf6ed9d75ea4119a9d058bfcd0fe2e0",
+        "run_id": "run-c472a5765f6645c9968c1e8058f774db",
+        "status": "completed"
+      },
+      {
+        "region_id": "a763e12861854c549da698fe747dab1d",
+        "run_id": "run-e9c2b6d1975a4b3a98b147f90b9c4578",
+        "status": "completed"
+      },
+      {
+        "region_id": "240bd8ac8d2543279093b66f1dcdca71",
+        "run_id": "run-4c97306df89c4cffa8675fb8a8ecf386",
+        "status": "completed"
+      },
+      {
+        "region_id": "7c2319b56eac42828030ceef4428cec0",
+        "run_id": "run-4927ea7756644e30bd60ddd2abc914b6",
+        "status": "completed"
+      },
+      {
+        "region_id": "65d4c931221542a2a95f8c9c074e4477",
+        "run_id": "run-e715202f27c146938a63026e232fbe2d",
+        "status": "completed"
+      },
+      {
+        "region_id": "12b9550b85844d9b8345a4c0b211903e",
+        "run_id": "run-bfe4fc61078c40eabf17393d9a15dc00",
+        "status": "completed"
+      },
+      {
+        "region_id": "120a107368d649e097b3f56ad9cc5c4f",
+        "run_id": "run-2b1a8f8343334259ae9dbcaa0c9e09a1",
+        "status": "completed"
+      },
+      {
+        "region_id": "be83bec71b1646e3baf8e663d887cc36",
+        "run_id": "run-486bb42e293247a098bf116af3229654",
+        "status": "completed"
+      },
+      {
+        "region_id": "7a32af1f602f44cb81d0c627a9bc9258",
+        "run_id": "run-e24d541b9c12497eb0a1f5a82377324b",
+        "status": "completed"
+      },
+      {
+        "region_id": "b18e4aa293a74b05a2bf2d38f71013f5",
+        "run_id": "run-b440b3d100404df4b538a6284d0e02f3",
+        "status": "completed"
+      },
+      {
+        "region_id": "fc73879ffcbe4c57a6e88b5a935ce4f6",
+        "run_id": "run-408c04673da04e12bd4e4c1df5f4c63d",
+        "status": "completed"
+      },
+      {
+        "region_id": "5ac8b7fc1a1e442cb47b2c052c074550",
+        "run_id": "run-a52c6af19af049599ce0a548281d3c69",
+        "status": "completed"
+      },
+      {
+        "region_id": "7353d155e2244e2a92736f989f99f0a8",
+        "run_id": "run-1bb4e100efcd4671af1c38597d4d27bb",
+        "status": "completed"
+      },
+      {
+        "region_id": "27becfca98ac4c01b8d14900c948225e",
+        "run_id": "run-e3957db63c5444189cdcbb97462bdff4",
+        "status": "completed"
+      },
+      {
+        "region_id": "4ad050912c94486b9af139f2f32d101c",
+        "run_id": "run-048bcfb80f1b4b748a51ae442a4abd63",
+        "status": "completed"
+      },
+      {
+        "region_id": "3765802eace44f30b9a367f4ea091412",
+        "run_id": "run-3f953573c665476c964cb08e5b07204a",
+        "status": "completed"
+      },
+      {
+        "region_id": "d7d59060e24b4de0a252b7907e5cf321",
+        "run_id": "run-2e7e6d890fd8463aacc6db7d1a2ea9eb",
+        "status": "completed"
+      },
+      {
+        "region_id": "6cdeb1875eb242499b7f3f9ac0187272",
+        "run_id": "run-792ca3698cdb4408812b9a04bd300a1d",
+        "status": "completed"
+      },
+      {
+        "region_id": "280b8e7172d343e7beae2f36a04b5997",
+        "run_id": "run-ae0f93eb44ca480f90372d6e70cd48d1",
+        "status": "completed"
+      },
+      {
+        "region_id": "07851e6017a64fed8152236c8f97e5b1",
+        "run_id": "run-d85c8e5da7d94991acb11dfb969a8f5d",
+        "status": "completed"
+      },
+      {
+        "region_id": "fb95e7f7ee604d6f86cdd3de2de27675",
+        "run_id": "run-e201e12394494adfb974a7dc37ccc6d5",
+        "status": "completed"
+      },
+      {
+        "region_id": "899b6d8a52aa4cafba55125167b1c75c",
+        "run_id": "run-78e80cf328a944ceaf528c6fa1c355d3",
+        "status": "completed"
+      },
+      {
+        "region_id": "2ec61c73510b45b198f0b43822002022",
+        "run_id": "run-0f865e004d2f4aa792dbd50ce46c2be7",
+        "status": "completed"
+      },
+      {
+        "region_id": "6b7858b211a543cb9caecc5730c5af12",
+        "run_id": "run-59f30e9717394e3da8856a28439232ee",
+        "status": "completed"
+      },
+      {
+        "region_id": "b09daadb5f2049759b9d994ea989ff4e",
+        "run_id": "run-c8abb27c180c4851abc8a77189d5ca9d",
+        "status": "completed"
+      },
+      {
+        "region_id": "a229166b5e444b89a1f6de1ab4747fc8",
+        "run_id": "run-1110f1c911e4419abead91da8d3bd149",
+        "status": "completed"
+      },
+      {
+        "region_id": "8919e30e1c8b4c268bbe5d2f4f39285a",
+        "run_id": "run-16971ffdc8db46a2bea3d7f3fc6dd58a",
+        "status": "completed"
+      },
+      {
+        "region_id": "79c9f5680eeb4238b950a5aa2eec8361",
+        "run_id": "run-d9b0e3455dfc48e28806c387582030b1",
+        "status": "completed"
+      },
+      {
+        "region_id": "f920b80a961449f98e60a6c105eba2ef",
+        "run_id": "run-ff6537c299154e25b2a169a107dcd4a7",
+        "status": "completed"
+      },
+      {
+        "region_id": "faac2362b6c64af58796799c6f93f6ec",
+        "run_id": "run-b72d79ecbb774c6aba4b1d809b8afc15",
+        "status": "completed"
+      },
+      {
+        "region_id": "460a830efb9f46108c7215132528da62",
+        "run_id": "run-de283d255cfb4e4a9e95075321934c9d",
+        "status": "completed"
+      },
+      {
+        "region_id": "3427429409e04f4cbd54f635f900592a",
+        "run_id": "run-a9f2d4989e814b63bf7696615bdd8aec",
+        "status": "completed"
+      },
+      {
+        "region_id": "1b6d31e9207e4a51b9b73f3393e232b9",
+        "run_id": "run-b2f252458a214e0088ca1228f1c73539",
+        "status": "completed"
+      },
+      {
+        "region_id": "51ed99e5cd1b44f893b37b4ea3903371",
+        "run_id": "run-d0bd4e1c53504ce1995d4ec11dfd4708",
+        "status": "completed"
+      },
+      {
+        "region_id": "1032724406dd4b1fa1679e565cb0769b",
+        "run_id": "run-a997bc3c91eb40a7a22a42d7b789c6ef",
+        "status": "completed"
+      },
+      {
+        "region_id": "ccf1afd019324ed09a3b1ad23dd6fde1",
+        "run_id": "run-d3645a018104437ea72057cab8fe0e27",
+        "status": "completed"
+      },
+      {
+        "region_id": "662ca46e01ea4333af4acde11affc476",
+        "run_id": "run-fe811c57e90c486f9ccbfaf895413013",
+        "status": "completed"
+      },
+      {
+        "region_id": "206c7c00e90e44b5bf715a61fbb64fe6",
+        "run_id": "run-d3535f582457453caa9b033be83e285a",
+        "status": "completed"
+      },
+      {
+        "region_id": "e85ee1846f784feab8c15e1892a4e90a",
+        "run_id": "run-ac329f1167fb4102ac15abd6ef96229a",
+        "status": "completed"
+      },
+      {
+        "region_id": "760c07e3077a411eb8e5259af0921513",
+        "run_id": "run-27ad17485a7c4ffebf6af171e98d958d",
+        "status": "completed"
+      },
+      {
+        "region_id": "c531cb25640a447caee4b13a5b831f9f",
+        "run_id": "run-a26f6f3d10364c16b26416e28c311de2",
+        "status": "completed"
+      },
+      {
+        "region_id": "ab86b8efa22347419117244ee786599e",
+        "run_id": "run-77eb14b7d82f42ec8571e3dac9b6cdb7",
+        "status": "completed"
+      },
+      {
+        "region_id": "023da2fd5995410ba0da3284d2e28d77",
+        "run_id": "run-f70f345344484a07941ba221fe91673e",
+        "status": "completed"
+      },
+      {
+        "region_id": "7049036895a34d8b80b8c234ae164e2b",
+        "run_id": "run-e06ef1b911384e8f97ae76bb526f609a",
+        "status": "completed"
+      },
+      {
+        "region_id": "080062835a604c23828d98ec737daa57",
+        "run_id": "run-f65e18d5309142789f85b8547271bb18",
+        "status": "completed"
+      },
+      {
+        "region_id": "db8722c35f054430899d2b7cafc7fef0",
+        "run_id": "run-ba06e97073d84f02bc435032f49dd21d",
+        "status": "completed"
+      },
+      {
+        "region_id": "38ddcb5c63444d2dbeea00c0d019facc",
+        "run_id": "run-ba953ecaab2d40bba73d8dff0f676c25",
+        "status": "completed"
+      },
+      {
+        "region_id": "439b703807a542e0aefbaf7eb04c1cb5",
+        "run_id": "run-54caad58731b4cac90d067967941b34f",
+        "status": "completed"
+      },
+      {
+        "region_id": "962050b71d8d45a6a5147dbc25e59757",
+        "run_id": "run-c71dcfe85f494f00b863db124ac22ec3",
+        "status": "completed"
+      },
+      {
+        "region_id": "d6d5fb581ba94b6dbf3ce1d479bf974c",
+        "run_id": "run-e7a51bc7ee1e4a1ea76f0fbf7f49c454",
+        "status": "completed"
+      },
+      {
+        "region_id": "001d0be4220640a0806c360b919510d1",
+        "run_id": "run-d2bf6f1f63d74280a071cbb794e03729",
+        "status": "completed"
+      },
+      {
+        "region_id": "1481501c390e4e31a20443967c9712c4",
+        "run_id": "run-2364cddd3cad498ba196cbdff748ee21",
+        "status": "completed"
+      },
+      {
+        "region_id": "75f7f7f547fb493ab61f7efe02a6c324",
+        "run_id": "run-ea793aa50c6c453db185d99615f8686d",
+        "status": "completed"
+      },
+      {
+        "region_id": "764753c741794cc8a274510f8f9d4909",
+        "run_id": "run-3cd5df85f6644e4291ce106af89e40ee",
+        "status": "completed"
+      },
+      {
+        "region_id": "9f7ce594b50345f28a735613a7b88677",
+        "run_id": "run-6840e79e74894e8ca2b979e57c9641f6",
+        "status": "completed"
+      },
+      {
+        "region_id": "51156578cdb84a6b99b6ae97f1b1b7b1",
+        "run_id": "run-bbbadbf9eca24b18a9d262de54f914db",
+        "status": "completed"
+      },
+      {
+        "region_id": "4bdb8f61ad4a4128aff8f7266dc3f437",
+        "run_id": "run-c8a39a50bc5c4efb97f6beb615030b3d",
+        "status": "completed"
+      },
+      {
+        "region_id": "91ef50bc2c5f4262a236cc97819d6190",
+        "run_id": "run-de533126bfb44ee4af13e35ab823471a",
+        "status": "completed"
+      },
+      {
+        "region_id": "b22631edf2aa473f8a0d20d9328ec667",
+        "run_id": "run-369855bf500645e398f9411d2544f9ac",
+        "status": "completed"
+      },
+      {
+        "region_id": "2595449d5578448d9a4fa0ef71d3a2c3",
+        "run_id": "run-5f8bde77b64d422b9e5cafbe10fac3a8",
+        "status": "completed"
+      },
+      {
+        "region_id": "61227835806b426580d0125bf6d30d23",
+        "run_id": "run-2aa7fb5adaa44590969fce3c3c4e0f00",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "08506fb1c0804c8293b157d0c71a251c",
+        "run_id": "run-5d590741076747b2aa2aafee29065d12",
+        "status": "completed"
+      },
+      {
+        "region_id": "759cdcb5823e4137ad11e48e3ddd1a39",
+        "run_id": "run-0bdcf5c0b9ce4accac4bfe2bf1d83039",
+        "status": "completed"
+      },
+      {
+        "region_id": "92c1ba9835cd4427a748b8940b1234ff",
+        "run_id": "run-31fe3efe176b4c23b99cc2a631f0f06a",
+        "status": "completed"
+      },
+      {
+        "region_id": "92d80abfdfc14eadb3e38c0d4116295f",
+        "run_id": "run-93b5cdadc19b4419bc2c206014696b5c",
+        "status": "completed"
+      },
+      {
+        "region_id": "81b66325db124d6e941a72e8a8f1238a",
+        "run_id": "run-60f30313294b4c00a4663e78085d58a1",
+        "status": "completed"
+      },
+      {
+        "region_id": "d413dc60d093403aad0671fcc79482c1",
+        "run_id": "run-3392455699c34e8a8aa1de370e259d8a",
+        "status": "completed"
+      },
+      {
+        "region_id": "9c921e7344ee4b74877d033455518da7",
+        "run_id": "run-ade5adbd3ffd4cd28ee0aa46da2661d9",
+        "status": "completed"
+      },
+      {
+        "region_id": "45f03738fa6f4e7dac66365ecb63e860",
+        "run_id": "run-314ec445af3148e78655cdba58226239",
+        "status": "completed"
+      },
+      {
+        "region_id": "5632f4b016f9417f8bc06630ab5ea981",
+        "run_id": "run-b326afce1e70429fb23c15ce8ba0aa80",
+        "status": "completed"
+      },
+      {
+        "region_id": "b3f5826be041401999109282e70a1178",
+        "run_id": "run-8f22dd586b2341b1ac74f301cc3b649e",
+        "status": "completed"
+      },
+      {
+        "region_id": "78f1ff8e6ddc4e2186fb958dc059ab47",
+        "run_id": "run-85f6b6d587aa4bf79071427bc5a1e112",
+        "status": "completed"
+      },
+      {
+        "region_id": "e2c8a86ed103489ab9b83d74f355a804",
+        "run_id": "run-5ac9e2c253694e03b412e47ea416b07a",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "24a1082939e242539f69162f246b4261",
+        "run_id": "run-67929ec52c8c4342bf9096f03ca5d9f4",
+        "status": "completed"
+      },
+      {
+        "region_id": "67c55d4bbf304e3c9ba86419266924c0",
+        "run_id": "run-7f6fd5c2a19a4e449a721485fe3c047d",
+        "status": "completed"
+      },
+      {
+        "region_id": "729e388fc7424c96b6fbbcfcbba2cc57",
+        "run_id": "run-3758d3c497ba4ccab312dd2012d9730e",
+        "status": "completed"
+      },
+      {
+        "region_id": "19730b79d2b34b01834f822c7070023a",
+        "run_id": "run-5d1159d186704f8da388616ebe6d72f0",
+        "status": "completed"
+      },
+      {
+        "region_id": "ac523095e0554b629d308ef58149fbcc",
+        "run_id": "run-a87d4b9c18234aa6b7c61749cfe0b853",
+        "status": "completed"
+      },
+      {
+        "region_id": "a8776570c14741b09573d44072f65f7a",
+        "run_id": "run-83d5e743f85e4192868b963a33d8045b",
+        "status": "completed"
+      },
+      {
+        "region_id": "294d77d4e56b4b489b5f0e70c9e55c36",
+        "run_id": "run-be13071fa59c454fbd0f0c31723f0c7f",
+        "status": "completed"
+      },
+      {
+        "region_id": "0f661200bc7c4a02988c46aabdf4ed34",
+        "run_id": "run-2a4107bb31754c7990f44db42d60e6e6",
+        "status": "completed"
+      },
+      {
+        "region_id": "18dd49ccc4ed42169234b43a50a3e828",
+        "run_id": "run-93f8f0e28d7f472ea0da5d41d91eb7a9",
+        "status": "completed"
+      },
+      {
+        "region_id": "b1d1bdf1a2d74a89997371368f1c9a8d",
+        "run_id": "run-8049b86bcdf5407599e9d85c3f3614e7",
+        "status": "completed"
+      },
+      {
+        "region_id": "4e4b8adccea6474e9cf094a096a0c6f2",
+        "run_id": "run-5c0ca013d9a4422cb77a29bac74dfb2d",
+        "status": "completed"
+      },
+      {
+        "region_id": "abbfb21d202e404abe5e7da2ec4a7090",
+        "run_id": "run-8619208430bb4123a65932f24f45a5a3",
+        "status": "completed"
+      },
+      {
+        "region_id": "0aca6133f2fd4e4c911f890b651a7372",
+        "run_id": "run-c889ac7a53cd47559062baf1597483c0",
+        "status": "completed"
+      },
+      {
+        "region_id": "c8c986d5912d447284f6ab3b5a50da0d",
+        "run_id": "run-684aa34a40cf4fcc9cea59d38c4467fe",
+        "status": "completed"
+      },
+      {
+        "region_id": "ef4eabf1ed0744429d4efd019f199f99",
+        "run_id": "run-da25f45ca58a46bb8f0160b66291c048",
+        "status": "completed"
+      },
+      {
+        "region_id": "d668d7c66e414fe1bbcc934ab623354d",
+        "run_id": "run-48ade37e546b46df97de9837ec28e1e3",
+        "status": "completed"
+      },
+      {
+        "region_id": "5987e269a70747499cbb49440e654628",
+        "run_id": "run-e493321ebee74f9e9ab7ae5e684f4499",
+        "status": "completed"
+      },
+      {
+        "region_id": "6b05e12df6e2450aa97ea4632d80be20",
+        "run_id": "run-4f011bf9226c47dea0665b067ab68e3f",
+        "status": "completed"
+      },
+      {
+        "region_id": "21cb514efa434364b0857bf29a0135d6",
+        "run_id": "run-92b25c48655a43f0957b6bf5f07e01c1",
+        "status": "completed"
+      },
+      {
+        "region_id": "092595aa76d040ac8dd3b70fe85bef81",
+        "run_id": "run-36f32de23680497f9a650b1c5e10c943",
+        "status": "completed"
+      },
+      {
+        "region_id": "44293d7173494807a94a5ffac5b23e72",
+        "run_id": "run-610383feb187448ca599e0355915b0c3",
+        "status": "completed"
+      },
+      {
+        "region_id": "da47fb1d32ec4f18b3a8cd2708defe28",
+        "run_id": "run-5787f97fe2074cc588b50a1efb2df2b0",
+        "status": "completed"
+      },
+      {
+        "region_id": "492ab3b810c54647a61aea5ba7e12f94",
+        "run_id": "run-b2155f0c06f04a1a909d81cc06d2fe79",
+        "status": "completed"
+      },
+      {
+        "region_id": "edd261f1f2eb495cac00b0897f701a6d",
+        "run_id": "run-77247655e3f54e798f2aa98f926688f4",
+        "status": "completed"
+      },
+      {
+        "region_id": "b3d69cb451bb455180262a360fcbbbdc",
+        "run_id": "run-cd0eafef97f84b31ab88f245e925e5c2",
+        "status": "completed"
+      },
+      {
+        "region_id": "e3c014e92fac408a95ac6ca8422d056f",
+        "run_id": "run-18197b2de73447c9b8088b1a0bd9158d",
+        "status": "completed"
+      },
+      {
+        "region_id": "2778af5a544f47aab660256e32bb2f5f",
+        "run_id": "run-dd17f9c7dd9243dd9caf07ee71a6bce8",
+        "status": "completed_with_failures",
+        "steps": [
+          {
+            "step_type": "term_extract",
+            "status": "failed",
+            "error_code": "INVALID_INPUT",
+            "error_detail": "region has no OCR text to extract terms from (stage=term_extract)"
+          },
+          {
+            "step_type": "ocr",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          },
+          {
+            "step_type": "color",
+            "status": "completed",
+            "error_code": null,
+            "error_detail": ""
+          }
+        ]
+      },
+      {
+        "region_id": "29ad0993eb694cf5944dfd90e0f58de5",
+        "run_id": "run-be96392ba03143bba8b0cd4e72769d3f",
+        "status": "completed"
+      },
+      {
+        "region_id": "40f19759b4a643c39e8a917a27b29e55",
+        "run_id": "run-df45ce0a68744a2a9fbeccab21579f83",
+        "status": "completed"
+      },
+      {
+        "region_id": "e6a189792b224b0382394ce1b4b969e4",
+        "run_id": "run-7332f69f3aa048aa871e437fb353a725",
+        "status": "completed"
+      },
+      {
+        "region_id": "0159895d793f493d89d16ee97390815b",
+        "run_id": "run-d74ec8f33a1842a0a9c3ffc2ff94ed91",
+        "status": "completed"
+      },
+      {
+        "region_id": "00ca3f836e0f4092a9b77c5315707e1a",
+        "run_id": "run-ed449377420e47648f5c996ce333d6e7",
+        "status": "completed"
+      },
+      {
+        "region_id": "17f44172c8a3487e99bcb68adf21db2b",
+        "run_id": "run-46be95b9f207430aa5db7f70083eee6f",
+        "status": "completed"
+      },
+      {
+        "region_id": "91b11faa80304648963ee826bdba6bbc",
+        "run_id": "run-b02643b60b724aaba033ddb8062840f1",
+        "status": "completed"
+      },
+      {
+        "region_id": "0bc57df19302488d9eaf78679304be7a",
+        "run_id": "run-480eaab8b748410d8a3be5ae02d6aeda",
+        "status": "completed"
+      },
+      {
+        "region_id": "e5bcd702e161466683dc29f3f867e73b",
+        "run_id": "run-51c9b03178fe44b294bacd92c0b84a4c",
+        "status": "completed"
+      },
+      {
+        "region_id": "91211c1ed2fc4c8cb8766c891d2fc5dc",
+        "run_id": "run-14d48e9dd7fb405fbab7b867275577d3",
+        "status": "completed"
+      },
+      {
+        "region_id": "e1873cbec8114f8bae3c6155e13458d6",
+        "run_id": "run-22bb8bc010514fb0aedeb573f5fff84a",
+        "status": "completed"
+      },
+      {
+        "region_id": "3f342627bbc14d80a11f1abf442b1cd6",
+        "run_id": "run-b3df94a3d72444d4979843b3ec82b232",
+        "status": "completed"
+      },
+      {
+        "region_id": "f3b76252e6d244a78f611ec337a5f27f",
+        "run_id": "run-47e9f9b03dbc43c4a78bf2447c815826",
+        "status": "completed"
+      },
+      {
+        "region_id": "717571c252d8424bae46023b1c0f4a8b",
+        "run_id": "run-7ce18a347b15452eae122b8ee18d8962",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 15612.26
+  },
+  "ocr_details": [
+    {
+      "region_id": "6bb75152e2ca466a9926687f8b01e594",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 88,
+        "y": 3344,
+        "width": 202,
+        "height": 101
+      },
+      "ocr_text": "새로운\n경호원인가요?"
+    },
+    {
+      "region_id": "7371fd928bf34914ad9165218308ba4a",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 493,
+        "y": 3993,
+        "width": 80,
+        "height": 56
+      },
+      "ocr_text": "네"
+    },
+    {
+      "region_id": "505c105091b14b77ae3970d93a6ab027",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 154,
+        "y": 4296,
+        "width": 272,
+        "height": 103
+      },
+      "ocr_text": "되게 어려 보이시는데\n대단해요~"
+    },
+    {
+      "region_id": "6f1d36302c4a49bc844fdadb5951442e",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 64,
+        "y": 4475,
+        "width": 192,
+        "height": 99
+      },
+      "ocr_text": "여기 경호원들\n전부 30대인데"
+    },
+    {
+      "region_id": "7d0ddf42531a48beb9acaf3155da2c3b",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 369,
+        "y": 5052,
+        "width": 203,
+        "height": 99
+      },
+      "ocr_text": "나이가\n어떻게 되세요?"
+    },
+    {
+      "region_id": "17d2a7a70fae4f79ba84032ce5d7d13b",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 492,
+        "y": 5206,
+        "width": 157,
+        "height": 58
+      },
+      "ocr_text": "20대 중반?"
+    },
+    {
+      "region_id": "38bdbbc170e44211bddce7c78abe7b91",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 150,
+        "y": 5976,
+        "width": 150,
+        "height": 58
+      },
+      "ocr_text": "아…아니요"
+    },
+    {
+      "region_id": "42b1540bbab14207a528e09b22b9932e",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 99,
+        "y": 6547,
+        "width": 175,
+        "height": 61
+      },
+      "ocr_text": "17살인데요"
+    },
+    {
+      "region_id": "d1eef81f46874981adf5c82bdca73283",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 457,
+        "y": 7456,
+        "width": 165,
+        "height": 59
+      },
+      "ocr_text": "여기야, 여기"
+    },
+    {
+      "region_id": "cc16e7d91d43434689011bcf02042c2f",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 386,
+        "y": 8484,
+        "width": 75,
+        "height": 57
+      },
+      "ocr_text": "어…"
+    },
+    {
+      "region_id": "d8fdfaa3b5244ce9a2982024823902a4",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 462,
+        "y": 8592,
+        "width": 81,
+        "height": 61
+      },
+      "ocr_text": "안녕"
+    },
+    {
+      "region_id": "ecdb7698b1c34977b8ef17163ea66a90",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 59,
+        "y": 9535,
+        "width": 135,
+        "height": 64
+      },
+      "ocr_text": "방가방가"
+    },
+    {
+      "region_id": "67fe8db8aeb540dea39ccf538517e0d0",
+      "reading_order": 13,
+      "region_type": "speech",
+      "bbox": {
+        "x": 444,
+        "y": 11970,
+        "width": 188,
+        "height": 102
+      },
+      "ocr_text": "비실이 경호원\n영입완료"
+    },
+    {
+      "region_id": "66d4109a7f954769a245065b75f2b645",
+      "reading_order": 14,
+      "region_type": "speech",
+      "bbox": {
+        "x": 125,
+        "y": 13323,
+        "width": 423,
+        "height": 122
+      },
+      "ocr_text": "MUIAYMACIKPAYYTAELHALMIALAMPBEZYEPPIMMSK<IPIS\nDead\nrs1x2sx"
+    },
+    {
+      "region_id": "e0bf12ecc2804783b01f26e61ba5a69b",
+      "reading_order": 15,
+      "region_type": "speech",
+      "bbox": {
+        "x": 113,
+        "y": 13332,
+        "width": 31,
+        "height": 242
+      },
+      "ocr_text": "YSIALINUNAMMA"
+    },
+    {
+      "region_id": "59653297c5a949d8a1a9bf7402ae8da2",
+      "reading_order": 16,
+      "region_type": "speech",
+      "bbox": {
+        "x": 520,
+        "y": 13337,
+        "width": 33,
+        "height": 236
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "28cf389b09bd43e1bfcb74332b99216c",
+      "reading_order": 17,
+      "region_type": "speech",
+      "bbox": {
+        "x": 108,
+        "y": 13434,
+        "width": 39,
+        "height": 889
+      },
+      "ocr_text": "MPAOAN\nPSAYK"
+    },
+    {
+      "region_id": "8d864954369c497789adfa711b6091ec",
+      "reading_order": 18,
+      "region_type": "speech",
+      "bbox": {
+        "x": 112,
+        "y": 13434,
+        "width": 32,
+        "height": 274
+      },
+      "ocr_text": "AAEMLSK"
+    },
+    {
+      "region_id": "6308a30d23e84d9f804e82c8e0bb664d",
+      "reading_order": 19,
+      "region_type": "speech",
+      "bbox": {
+        "x": 520,
+        "y": 13434,
+        "width": 33,
+        "height": 265
+      },
+      "ocr_text": "기"
+    },
+    {
+      "region_id": "45e82158953f4b81a4617ac1cc45fbe2",
+      "reading_order": 20,
+      "region_type": "speech",
+      "bbox": {
+        "x": 112,
+        "y": 13763,
+        "width": 32,
+        "height": 559
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "88b81391b5e44c47a641cc896e07ee5b",
+      "reading_order": 21,
+      "region_type": "speech",
+      "bbox": {
+        "x": 519,
+        "y": 13784,
+        "width": 34,
+        "height": 540
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "51a60a5027fc461795c2ba4005c21c09",
+      "reading_order": 22,
+      "region_type": "speech",
+      "bbox": {
+        "x": 233,
+        "y": 13795,
+        "width": 239,
+        "height": 58
+      },
+      "ocr_text": "the Boy of Death"
+    },
+    {
+      "region_id": "74e624f321d24eaca0286cede362929c",
+      "reading_order": 23,
+      "region_type": "speech",
+      "bbox": {
+        "x": 197,
+        "y": 14081,
+        "width": 260,
+        "height": 180
+      },
+      "ocr_text": "TICKET"
+    },
+    {
+      "region_id": "ba1e074c9b8d42beb73e0728ec8196b5",
+      "reading_order": 24,
+      "region_type": "speech",
+      "bbox": {
+        "x": 116,
+        "y": 14290,
+        "width": 430,
+        "height": 40
+      },
+      "ocr_text": "FAHNMSLMASAMYLELABINSEMIPPBKMPSLPPZIALMAUUM"
+    },
+    {
+      "region_id": "d4907f04cce847c1ac8a9a10ba53a402",
+      "reading_order": 25,
+      "region_type": "speech",
+      "bbox": {
+        "x": 214,
+        "y": 14427,
+        "width": 237,
+        "height": 60
+      },
+      "ocr_text": "-11화 창과 방패-"
+    },
+    {
+      "region_id": "aeebdac74acc46aab5a46f6f9a271039",
+      "reading_order": 26,
+      "region_type": "speech",
+      "bbox": {
+        "x": 99,
+        "y": 16128,
+        "width": 161,
+        "height": 141
+      },
+      "ocr_text": "이제부터\n여기가\n내방인가…"
+    },
+    {
+      "region_id": "0b1463ab01de42cfa0760a1e51fee37f",
+      "reading_order": 27,
+      "region_type": "speech",
+      "bbox": {
+        "x": 427,
+        "y": 17018,
+        "width": 180,
+        "height": 100
+      },
+      "ocr_text": "집이 엄청\n고급스럽네"
+    },
+    {
+      "region_id": "35012ef6c3e44e509a204362502f9228",
+      "reading_order": 28,
+      "region_type": "speech",
+      "bbox": {
+        "x": 112,
+        "y": 17493,
+        "width": 225,
+        "height": 106
+      },
+      "ocr_text": "학교도\n이제 안 나가고"
+    },
+    {
+      "region_id": "83f7a5478edb49d3999862a44634924e",
+      "reading_order": 29,
+      "region_type": "speech",
+      "bbox": {
+        "x": 405,
+        "y": 18058,
+        "width": 205,
+        "height": 103
+      },
+      "ocr_text": "드디어 가족을\n찾을 수 있구나"
+    },
+    {
+      "region_id": "c1c4184606bc47c1b51bd750da98beaa",
+      "reading_order": 30,
+      "region_type": "speech",
+      "bbox": {
+        "x": 69,
+        "y": 19331,
+        "width": 230,
+        "height": 152
+      },
+      "ocr_text": "마지막엔\n정말 떨어지는 줄\n알았는데"
+    },
+    {
+      "region_id": "1bd4d8671907443094497cdb627f7774",
+      "reading_order": 31,
+      "region_type": "speech",
+      "bbox": {
+        "x": 393,
+        "y": 20043,
+        "width": 179,
+        "height": 111
+      },
+      "ocr_text": "그 애 덕분에\n운이 좋았어"
+    },
+    {
+      "region_id": "508d69daf2d840eeb4f553c75b29c763",
+      "reading_order": 32,
+      "region_type": "speech",
+      "bbox": {
+        "x": 309,
+        "y": 21229,
+        "width": 299,
+        "height": 146
+      },
+      "ocr_text": "회장님 아무리\n생각해도 아가씨 부탁이\n이해 안 갑니다!"
+    },
+    {
+      "region_id": "7b34c8f9bb054adf974de81ea99e3ddc",
+      "reading_order": 33,
+      "region_type": "speech",
+      "bbox": {
+        "x": 327,
+        "y": 22114,
+        "width": 330,
+        "height": 147
+      },
+      "ocr_text": "나이도 속이고\n실력도 의심스러운 사람을\n채용하는 건 위험합니다"
+    },
+    {
+      "region_id": "1bf6ed9d75ea4119a9d058bfcd0fe2e0",
+      "reading_order": 34,
+      "region_type": "speech",
+      "bbox": {
+        "x": 70,
+        "y": 23271,
+        "width": 243,
+        "height": 144
+      },
+      "ocr_text": "이경호나이 17세\n고등학교 자퇴\n거주지역 경기도"
+    },
+    {
+      "region_id": "a763e12861854c549da698fe747dab1d",
+      "reading_order": 35,
+      "region_type": "speech",
+      "bbox": {
+        "x": 291,
+        "y": 24066,
+        "width": 334,
+        "height": 145
+      },
+      "ocr_text": "최범을 한 방에 기절\n시켰다는 게 조금 걸리지만\n위험 요소는없어"
+    },
+    {
+      "region_id": "240bd8ac8d2543279093b66f1dcdca71",
+      "reading_order": 36,
+      "region_type": "speech",
+      "bbox": {
+        "x": 413,
+        "y": 24315,
+        "width": 227,
+        "height": 65
+      },
+      "ocr_text": "그냥 평범한 애야"
+    },
+    {
+      "region_id": "7c2319b56eac42828030ceef4428cec0",
+      "reading_order": 37,
+      "region_type": "speech",
+      "bbox": {
+        "x": 56,
+        "y": 24695,
+        "width": 210,
+        "height": 64
+      },
+      "ocr_text": "그렇다고 해도"
+    },
+    {
+      "region_id": "65d4c931221542a2a95f8c9c074e4477",
+      "reading_order": 38,
+      "region_type": "speech",
+      "bbox": {
+        "x": 377,
+        "y": 25384,
+        "width": 285,
+        "height": 103
+      },
+      "ocr_text": "혹시 특별한\n이유라도 있으십니까?"
+    },
+    {
+      "region_id": "12b9550b85844d9b8345a4c0b211903e",
+      "reading_order": 39,
+      "region_type": "speech",
+      "bbox": {
+        "x": 368,
+        "y": 26028,
+        "width": 261,
+        "height": 109
+      },
+      "ocr_text": "채연이가\n납치된 횟수는 두 번"
+    },
+    {
+      "region_id": "120a107368d649e097b3f56ad9cc5c4f",
+      "reading_order": 40,
+      "region_type": "speech",
+      "bbox": {
+        "x": 320,
+        "y": 27063,
+        "width": 313,
+        "height": 146
+      },
+      "ocr_text": "주변에 수상한 자가\n미행을 하고 있다고 보고\n받은 건이27건"
+    },
+    {
+      "region_id": "be83bec71b1646e3baf8e663d887cc36",
+      "reading_order": 41,
+      "region_type": "speech",
+      "bbox": {
+        "x": 72,
+        "y": 27707,
+        "width": 255,
+        "height": 107
+      },
+      "ocr_text": "전부 평범한 놈들이\n아니었어"
+    },
+    {
+      "region_id": "7a32af1f602f44cb81d0c627a9bc9258",
+      "reading_order": 42,
+      "region_type": "speech",
+      "bbox": {
+        "x": 285,
+        "y": 28579,
+        "width": 359,
+        "height": 147
+      },
+      "ocr_text": "놈들은 용의주도해서\n이쪽에서 조금만 움직여도\n눈치채서 바로 도주해버리지"
+    },
+    {
+      "region_id": "b18e4aa293a74b05a2bf2d38f71013f5",
+      "reading_order": 43,
+      "region_type": "speech",
+      "bbox": {
+        "x": 445,
+        "y": 28861,
+        "width": 200,
+        "height": 63
+      },
+      "ocr_text": "잡을 수가없어"
+    },
+    {
+      "region_id": "fc73879ffcbe4c57a6e88b5a935ce4f6",
+      "reading_order": 44,
+      "region_type": "speech",
+      "bbox": {
+        "x": 116,
+        "y": 29190,
+        "width": 172,
+        "height": 104
+      },
+      "ocr_text": "그렇다면\n그 꼬마는"
+    },
+    {
+      "region_id": "5ac8b7fc1a1e442cb47b2c052c074550",
+      "reading_order": 45,
+      "region_type": "speech",
+      "bbox": {
+        "x": 395,
+        "y": 30082,
+        "width": 217,
+        "height": 106
+      },
+      "ocr_text": "채연이 동갑내기\n경호원…"
+    },
+    {
+      "region_id": "7353d155e2244e2a92736f989f99f0a8",
+      "reading_order": 46,
+      "region_type": "speech",
+      "bbox": {
+        "x": 323,
+        "y": 30233,
+        "width": 302,
+        "height": 187
+      },
+      "ocr_text": "밖에서는 아무도\n경호원이라고 생각하지\n않을 거야 놈들도 쉽게\n접근해오겠지"
+    },
+    {
+      "region_id": "27becfca98ac4c01b8d14900c948225e",
+      "reading_order": 47,
+      "region_type": "speech",
+      "bbox": {
+        "x": 82,
+        "y": 30756,
+        "width": 255,
+        "height": 147
+      },
+      "ocr_text": "이방법은채연이가\n위험해질 수 있어서\n쓰고 싶지 않지만"
+    },
+    {
+      "region_id": "4ad050912c94486b9af139f2f32d101c",
+      "reading_order": 48,
+      "region_type": "speech",
+      "bbox": {
+        "x": 389,
+        "y": 31463,
+        "width": 247,
+        "height": 105
+      },
+      "ocr_text": "놈들은 계획적으로\n움직이고 있다"
+    },
+    {
+      "region_id": "3765802eace44f30b9a367f4ea091412",
+      "reading_order": 49,
+      "region_type": "speech",
+      "bbox": {
+        "x": 323,
+        "y": 31660,
+        "width": 231,
+        "height": 103
+      },
+      "ocr_text": "계속해서 내 눈에\n걸리적거린다면"
+    },
+    {
+      "region_id": "d7d59060e24b4de0a252b7907e5cf321",
+      "reading_order": 50,
+      "region_type": "speech",
+      "bbox": {
+        "x": 394,
+        "y": 32632,
+        "width": 222,
+        "height": 148
+      },
+      "ocr_text": "어떻게든\n잡아 끄집어내고\n박멸해야지"
+    },
+    {
+      "region_id": "6cdeb1875eb242499b7f3f9ac0187272",
+      "reading_order": 51,
+      "region_type": "speech",
+      "bbox": {
+        "x": 83,
+        "y": 35280,
+        "width": 135,
+        "height": 103
+      },
+      "ocr_text": "여기에도\n없네…"
+    },
+    {
+      "region_id": "280b8e7172d343e7beae2f36a04b5997",
+      "reading_order": 52,
+      "region_type": "speech",
+      "bbox": {
+        "x": 441,
+        "y": 36101,
+        "width": 220,
+        "height": 102
+      },
+      "ocr_text": "한채연은\n어디 있는 거지"
+    },
+    {
+      "region_id": "07851e6017a64fed8152236c8f97e5b1",
+      "reading_order": 53,
+      "region_type": "speech",
+      "bbox": {
+        "x": 57,
+        "y": 36443,
+        "width": 227,
+        "height": 105
+      },
+      "ocr_text": "넓어서\n찾을 수가 없잖아"
+    },
+    {
+      "region_id": "fb95e7f7ee604d6f86cdd3de2de27675",
+      "reading_order": 54,
+      "region_type": "speech",
+      "bbox": {
+        "x": 386,
+        "y": 37063,
+        "width": 262,
+        "height": 107
+      },
+      "ocr_text": "방도 몇 갠지 세다가\n까먹었어"
+    },
+    {
+      "region_id": "899b6d8a52aa4cafba55125167b1c75c",
+      "reading_order": 55,
+      "region_type": "speech",
+      "bbox": {
+        "x": 493,
+        "y": 38202,
+        "width": 105,
+        "height": 69
+      },
+      "ocr_text": "어…?"
+    },
+    {
+      "region_id": "2ec61c73510b45b198f0b43822002022",
+      "reading_order": 56,
+      "region_type": "speech",
+      "bbox": {
+        "x": 84,
+        "y": 38801,
+        "width": 140,
+        "height": 65
+      },
+      "ocr_text": "한채연…!"
+    },
+    {
+      "region_id": "6b7858b211a543cb9caecc5730c5af12",
+      "reading_order": 57,
+      "region_type": "speech",
+      "bbox": {
+        "x": 457,
+        "y": 39822,
+        "width": 160,
+        "height": 63
+      },
+      "ocr_text": "잠깐기다"
+    },
+    {
+      "region_id": "b09daadb5f2049759b9d994ea989ff4e",
+      "reading_order": 58,
+      "region_type": "speech",
+      "bbox": {
+        "x": 137,
+        "y": 40572,
+        "width": 89,
+        "height": 63
+      },
+      "ocr_text": "멈춰"
+    },
+    {
+      "region_id": "a229166b5e444b89a1f6de1ab4747fc8",
+      "reading_order": 59,
+      "region_type": "speech",
+      "bbox": {
+        "x": 64,
+        "y": 41023,
+        "width": 192,
+        "height": 67
+      },
+      "ocr_text": "뭐 하는 거지?"
+    },
+    {
+      "region_id": "8919e30e1c8b4c268bbe5d2f4f39285a",
+      "reading_order": 60,
+      "region_type": "speech",
+      "bbox": {
+        "x": 496,
+        "y": 41979,
+        "width": 89,
+        "height": 61
+      },
+      "ocr_text": "……!"
+    },
+    {
+      "region_id": "79c9f5680eeb4238b950a5aa2eec8361",
+      "reading_order": 61,
+      "region_type": "speech",
+      "bbox": {
+        "x": 98,
+        "y": 42409,
+        "width": 170,
+        "height": 107
+      },
+      "ocr_text": "아…잠깐\n한채연 한테"
+    },
+    {
+      "region_id": "f920b80a961449f98e60a6c105eba2ef",
+      "reading_order": 62,
+      "region_type": "speech",
+      "bbox": {
+        "x": 422,
+        "y": 43178,
+        "width": 216,
+        "height": 102
+      },
+      "ocr_text": "한채연이 아니라\n아.가.씨"
+    },
+    {
+      "region_id": "faac2362b6c64af58796799c6f93f6ec",
+      "reading_order": 63,
+      "region_type": "speech",
+      "bbox": {
+        "x": 422,
+        "y": 43600,
+        "width": 238,
+        "height": 141
+      },
+      "ocr_text": "죄송해요\n아가씨한테\n인사라도 하려고"
+    },
+    {
+      "region_id": "460a830efb9f46108c7215132528da62",
+      "reading_order": 64,
+      "region_type": "speech",
+      "bbox": {
+        "x": 34,
+        "y": 44298,
+        "width": 272,
+        "height": 107
+      },
+      "ocr_text": "네가뭔데 아가씨한테\n인사를해"
+    },
+    {
+      "region_id": "3427429409e04f4cbd54f635f900592a",
+      "reading_order": 65,
+      "region_type": "speech",
+      "bbox": {
+        "x": 140,
+        "y": 44515,
+        "width": 259,
+        "height": 106
+      },
+      "ocr_text": "경호원에게\n사적인 건 필요 없어"
+    },
+    {
+      "region_id": "1b6d31e9207e4a51b9b73f3393e232b9",
+      "reading_order": 66,
+      "region_type": "speech",
+      "bbox": {
+        "x": 321,
+        "y": 45142,
+        "width": 301,
+        "height": 150
+      },
+      "ocr_text": "그리고 신원이\n불분명한 신참은 아가씨\n가까이에 있을 수 없다"
+    },
+    {
+      "region_id": "51ed99e5cd1b44f893b37b4ea3903371",
+      "reading_order": 67,
+      "region_type": "speech",
+      "bbox": {
+        "x": 72,
+        "y": 45749,
+        "width": 95,
+        "height": 62
+      },
+      "ocr_text": "네…?"
+    },
+    {
+      "region_id": "1032724406dd4b1fa1679e565cb0769b",
+      "reading_order": 68,
+      "region_type": "speech",
+      "bbox": {
+        "x": 105,
+        "y": 46115,
+        "width": 242,
+        "height": 145
+      },
+      "ocr_text": "일단 정신교육부터\n시켜줄 테니까\n따라와"
+    },
+    {
+      "region_id": "ccf1afd019324ed09a3b1ad23dd6fde1",
+      "reading_order": 69,
+      "region_type": "speech",
+      "bbox": {
+        "x": 67,
+        "y": 46469,
+        "width": 186,
+        "height": 67
+      },
+      "ocr_text": "되게 무섭네"
+    },
+    {
+      "region_id": "662ca46e01ea4333af4acde11affc476",
+      "reading_order": 70,
+      "region_type": "speech",
+      "bbox": {
+        "x": 407,
+        "y": 47152,
+        "width": 222,
+        "height": 101
+      },
+      "ocr_text": "근데 정신교육?\n뭐 하는거지"
+    },
+    {
+      "region_id": "206c7c00e90e44b5bf715a61fbb64fe6",
+      "reading_order": 71,
+      "region_type": "speech",
+      "bbox": {
+        "x": 55,
+        "y": 48091,
+        "width": 172,
+        "height": 207
+      },
+      "ocr_text": "뭐?"
+    },
+    {
+      "region_id": "e85ee1846f784feab8c15e1892a4e90a",
+      "reading_order": 72,
+      "region_type": "speech",
+      "bbox": {
+        "x": 30,
+        "y": 49186,
+        "width": 306,
+        "height": 209
+      },
+      "ocr_text": "강용만(제2팀장)\n주특기 -역도 220kg\n막싸움"
+    },
+    {
+      "region_id": "760c07e3077a411eb8e5259af0921513",
+      "reading_order": 73,
+      "region_type": "speech",
+      "bbox": {
+        "x": 30,
+        "y": 49275,
+        "width": 305,
+        "height": 301
+      },
+      "ocr_text": "주특기-역도 220kg\n막싸움\n특징-말이\n통해도힘으로\n해결"
+    },
+    {
+      "region_id": "c531cb25640a447caee4b13a5b831f9f",
+      "reading_order": 74,
+      "region_type": "speech",
+      "bbox": {
+        "x": 61,
+        "y": 49414,
+        "width": 229,
+        "height": 159
+      },
+      "ocr_text": "특징-말이\n통해도 힘으로\n해결"
+    },
+    {
+      "region_id": "ab86b8efa22347419117244ee786599e",
+      "reading_order": 75,
+      "region_type": "speech",
+      "bbox": {
+        "x": 361,
+        "y": 49694,
+        "width": 277,
+        "height": 145
+      },
+      "ocr_text": "네가\n경호원이라고?"
+    },
+    {
+      "region_id": "023da2fd5995410ba0da3284d2e28d77",
+      "reading_order": 76,
+      "region_type": "speech",
+      "bbox": {
+        "x": 67,
+        "y": 50662,
+        "width": 144,
+        "height": 60
+      },
+      "ocr_text": "아아네"
+    },
+    {
+      "region_id": "7049036895a34d8b80b8c234ae164e2b",
+      "reading_order": 77,
+      "region_type": "speech",
+      "bbox": {
+        "x": 349,
+        "y": 51289,
+        "width": 278,
+        "height": 109
+      },
+      "ocr_text": "14\n정신 교육받다가\n죽을 수도 있겠는데?"
+    },
+    {
+      "region_id": "080062835a604c23828d98ec737daa57",
+      "reading_order": 78,
+      "region_type": "speech",
+      "bbox": {
+        "x": 75,
+        "y": 51781,
+        "width": 154,
+        "height": 64
+      },
+      "ocr_text": "반갑습니"
+    },
+    {
+      "region_id": "db8722c35f054430899d2b7cafc7fef0",
+      "reading_order": 79,
+      "region_type": "speech",
+      "bbox": {
+        "x": 152,
+        "y": 52903,
+        "width": 204,
+        "height": 115
+      },
+      "ocr_text": "이게\n남자의 인사지!"
+    },
+    {
+      "region_id": "38ddcb5c63444d2dbeea00c0d019facc",
+      "reading_order": 80,
+      "region_type": "speech",
+      "bbox": {
+        "x": 61,
+        "y": 53099,
+        "width": 192,
+        "height": 108
+      },
+      "ocr_text": "난 강용만이다\n반갑다!"
+    },
+    {
+      "region_id": "439b703807a542e0aefbaf7eb04c1cb5",
+      "reading_order": 81,
+      "region_type": "speech",
+      "bbox": {
+        "x": 363,
+        "y": 53926,
+        "width": 256,
+        "height": 248
+      },
+      "ocr_text": "yoo"
+    },
+    {
+      "region_id": "962050b71d8d45a6a5147dbc25e59757",
+      "reading_order": 82,
+      "region_type": "speech",
+      "bbox": {
+        "x": 42,
+        "y": 54484,
+        "width": 283,
+        "height": 109
+      },
+      "ocr_text": "석아,얘 좀봐봐\n콩알만 한 게 들어왔어"
+    },
+    {
+      "region_id": "d6d5fb581ba94b6dbf3ce1d479bf974c",
+      "reading_order": 83,
+      "region_type": "speech",
+      "bbox": {
+        "x": 388,
+        "y": 55193,
+        "width": 252,
+        "height": 142
+      },
+      "ocr_text": "강용만\n아직 그 꼬맹이한테\n정 주지마"
+    },
+    {
+      "region_id": "001d0be4220640a0806c360b919510d1",
+      "reading_order": 84,
+      "region_type": "speech",
+      "bbox": {
+        "x": 228,
+        "y": 55351,
+        "width": 212,
+        "height": 102
+      },
+      "ocr_text": "단순히 인사하러\n온 게 아니니까"
+    },
+    {
+      "region_id": "1481501c390e4e31a20443967c9712c4",
+      "reading_order": 85,
+      "region_type": "speech",
+      "bbox": {
+        "x": 53,
+        "y": 55745,
+        "width": 251,
+        "height": 146
+      },
+      "ocr_text": "어이 꼬맹이 나는\n아직 널 경호원으로\n생각하지 않아"
+    },
+    {
+      "region_id": "75f7f7f547fb493ab61f7efe02a6c324",
+      "reading_order": 86,
+      "region_type": "speech",
+      "bbox": {
+        "x": 430,
+        "y": 56419,
+        "width": 184,
+        "height": 104
+      },
+      "ocr_text": "낙하산이라는\n말이 있는데"
+    },
+    {
+      "region_id": "764753c741794cc8a274510f8f9d4909",
+      "reading_order": 87,
+      "region_type": "speech",
+      "bbox": {
+        "x": 168,
+        "y": 56576,
+        "width": 279,
+        "height": 145
+      },
+      "ocr_text": "이런 중요한 일에\n왜너같은 애송이를\n뽑았는지 납득이 안 돼"
+    },
+    {
+      "region_id": "9f7ce594b50345f28a735613a7b88677",
+      "reading_order": 88,
+      "region_type": "speech",
+      "bbox": {
+        "x": 86,
+        "y": 58133,
+        "width": 202,
+        "height": 181
+      },
+      "ocr_text": "제대로된\n사람 취급받고\n싶으면 실력을\n키워라"
+    },
+    {
+      "region_id": "51156578cdb84a6b99b6ae97f1b1b7b1",
+      "reading_order": 89,
+      "region_type": "speech",
+      "bbox": {
+        "x": 18,
+        "y": 58931,
+        "width": 275,
+        "height": 268
+      },
+      "ocr_text": "이지석(제1 팀장)\n주특기-검도\n특징-흠을 싫어하는\n완벽주의"
+    },
+    {
+      "region_id": "4bdb8f61ad4a4128aff8f7266dc3f437",
+      "reading_order": 90,
+      "region_type": "speech",
+      "bbox": {
+        "x": 19,
+        "y": 59096,
+        "width": 275,
+        "height": 102
+      },
+      "ocr_text": "특징-흠을 싫어하는\n완벽주의"
+    },
+    {
+      "region_id": "91ef50bc2c5f4262a236cc97819d6190",
+      "reading_order": 91,
+      "region_type": "speech",
+      "bbox": {
+        "x": 382,
+        "y": 59231,
+        "width": 243,
+        "height": 143
+      },
+      "ocr_text": "가볍게 생각하고\n온 거면그냥\n나가줬으면 좋겠다"
+    },
+    {
+      "region_id": "b22631edf2aa473f8a0d20d9328ec667",
+      "reading_order": 92,
+      "region_type": "speech",
+      "bbox": {
+        "x": 68,
+        "y": 59759,
+        "width": 208,
+        "height": 61
+      },
+      "ocr_text": "그렇지 Shane?"
+    },
+    {
+      "region_id": "2595449d5578448d9a4fa0ef71d3a2c3",
+      "reading_order": 93,
+      "region_type": "speech",
+      "bbox": {
+        "x": 522,
+        "y": 60349,
+        "width": 80,
+        "height": 62
+      },
+      "ocr_text": "2."
+    },
+    {
+      "region_id": "61227835806b426580d0125bf6d30d23",
+      "reading_order": 94,
+      "region_type": "speech",
+      "bbox": {
+        "x": 115,
+        "y": 60862,
+        "width": 88,
+        "height": 45
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "08506fb1c0804c8293b157d0c71a251c",
+      "reading_order": 95,
+      "region_type": "speech",
+      "bbox": {
+        "x": 366,
+        "y": 61465,
+        "width": 253,
+        "height": 221
+      },
+      "ocr_text": "Shane Dwatswell\n주특기-?\n특징 :?"
+    },
+    {
+      "region_id": "759cdcb5823e4137ad11e48e3ddd1a39",
+      "reading_order": 96,
+      "region_type": "speech",
+      "bbox": {
+        "x": 368,
+        "y": 61466,
+        "width": 248,
+        "height": 57
+      },
+      "ocr_text": "Shane Dwatswell"
+    },
+    {
+      "region_id": "92c1ba9835cd4427a748b8940b1234ff",
+      "reading_order": 97,
+      "region_type": "speech",
+      "bbox": {
+        "x": 61,
+        "y": 62469,
+        "width": 184,
+        "height": 139
+      },
+      "ocr_text": "봤지?\n세명다같은\n의견이다"
+    },
+    {
+      "region_id": "92d80abfdfc14eadb3e38c0d4116295f",
+      "reading_order": 98,
+      "region_type": "speech",
+      "bbox": {
+        "x": 434,
+        "y": 62510,
+        "width": 171,
+        "height": 104
+      },
+      "ocr_text": "못알아들은\n거 같은데.?"
+    },
+    {
+      "region_id": "81b66325db124d6e941a72e8a8f1238a",
+      "reading_order": 99,
+      "region_type": "speech",
+      "bbox": {
+        "x": 417,
+        "y": 62979,
+        "width": 217,
+        "height": 144
+      },
+      "ocr_text": "이지석\n너무 꼬맹이한테\n뭐라 하지마"
+    },
+    {
+      "region_id": "d413dc60d093403aad0671fcc79482c1",
+      "reading_order": 100,
+      "region_type": "speech",
+      "bbox": {
+        "x": 63,
+        "y": 63723,
+        "width": 233,
+        "height": 65
+      },
+      "ocr_text": "착하신 분이구나"
+    },
+    {
+      "region_id": "9c921e7344ee4b74877d033455518da7",
+      "reading_order": 101,
+      "region_type": "speech",
+      "bbox": {
+        "x": 66,
+        "y": 64265,
+        "width": 264,
+        "height": 107
+      },
+      "ocr_text": "말 안 들으면 몸으로\n교육시키면 되지"
+    },
+    {
+      "region_id": "45f03738fa6f4e7dac66365ecb63e860",
+      "reading_order": 102,
+      "region_type": "speech",
+      "bbox": {
+        "x": 8,
+        "y": 64507,
+        "width": 243,
+        "height": 186
+      },
+      "ocr_text": "야간경계때\n즐면어떻게\n된다고?"
+    },
+    {
+      "region_id": "5632f4b016f9417f8bc06630ab5ea981",
+      "reading_order": 103,
+      "region_type": "speech",
+      "bbox": {
+        "x": 406,
+        "y": 64639,
+        "width": 269,
+        "height": 71
+      },
+      "ocr_text": "죄송합니다0008"
+    },
+    {
+      "region_id": "b3f5826be041401999109282e70a1178",
+      "reading_order": 104,
+      "region_type": "speech",
+      "bbox": {
+        "x": 53,
+        "y": 65887,
+        "width": 237,
+        "height": 144
+      },
+      "ocr_text": "그때 이후로\n야간 경계 때 조는\n녀석들이 없던데!"
+    },
+    {
+      "region_id": "78f1ff8e6ddc4e2186fb958dc059ab47",
+      "reading_order": 105,
+      "region_type": "speech",
+      "bbox": {
+        "x": 360,
+        "y": 65991,
+        "width": 251,
+        "height": 142
+      },
+      "ocr_text": "네가 나서면\n안 되니까내가\n경고부터 하는 거야"
+    },
+    {
+      "region_id": "e2c8a86ed103489ab9b83d74f355a804",
+      "reading_order": 106,
+      "region_type": "speech",
+      "bbox": {
+        "x": 482,
+        "y": 66703,
+        "width": 78,
+        "height": 37
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "24a1082939e242539f69162f246b4261",
+      "reading_order": 107,
+      "region_type": "speech",
+      "bbox": {
+        "x": 69,
+        "y": 67241,
+        "width": 202,
+        "height": 103
+      },
+      "ocr_text": "아그리고\n신참이거받아"
+    },
+    {
+      "region_id": "67c55d4bbf304e3c9ba86419266924c0",
+      "reading_order": 108,
+      "region_type": "speech",
+      "bbox": {
+        "x": 505,
+        "y": 67937,
+        "width": 71,
+        "height": 61
+      },
+      "ocr_text": "넵!"
+    },
+    {
+      "region_id": "729e388fc7424c96b6fbbcfcbba2cc57",
+      "reading_order": 109,
+      "region_type": "speech",
+      "bbox": {
+        "x": 65,
+        "y": 68254,
+        "width": 257,
+        "height": 109
+      },
+      "ocr_text": "이건\n위치 추적기 펜이야"
+    },
+    {
+      "region_id": "19730b79d2b34b01834f822c7070023a",
+      "reading_order": 110,
+      "region_type": "speech",
+      "bbox": {
+        "x": 427,
+        "y": 68869,
+        "width": 205,
+        "height": 104
+      },
+      "ocr_text": "경호원들은\n다가지고 있어"
+    },
+    {
+      "region_id": "ac523095e0554b629d308ef58149fbcc",
+      "reading_order": 111,
+      "region_type": "speech",
+      "bbox": {
+        "x": 73,
+        "y": 69365,
+        "width": 296,
+        "height": 184
+      },
+      "ocr_text": "위급한 상황이나\n급한 상황에 바로바로\n위치를 알 수 있게 항상\n소지하고 있어야 돼"
+    },
+    {
+      "region_id": "a8776570c14741b09573d44072f65f7a",
+      "reading_order": 112,
+      "region_type": "speech",
+      "bbox": {
+        "x": 443,
+        "y": 70146,
+        "width": 182,
+        "height": 66
+      },
+      "ocr_text": "감사합니다"
+    },
+    {
+      "region_id": "294d77d4e56b4b489b5f0e70c9e55c36",
+      "reading_order": 113,
+      "region_type": "speech",
+      "bbox": {
+        "x": 52,
+        "y": 70541,
+        "width": 248,
+        "height": 144
+      },
+      "ocr_text": "저 혹시\n아가씨는 언제\n만날 수 있는 거죠?"
+    },
+    {
+      "region_id": "0f661200bc7c4a02988c46aabdf4ed34",
+      "reading_order": 114,
+      "region_type": "speech",
+      "bbox": {
+        "x": 347,
+        "y": 71677,
+        "width": 276,
+        "height": 102
+      },
+      "ocr_text": "왜 계속 쓸데\n없는 걸 알려고 하지?"
+    },
+    {
+      "region_id": "18dd49ccc4ed42169234b43a50a3e828",
+      "reading_order": 115,
+      "region_type": "speech",
+      "bbox": {
+        "x": 352,
+        "y": 72416,
+        "width": 260,
+        "height": 145
+      },
+      "ocr_text": "넌 그냥 시키는 데로\n명령받고 움직이면\n되는 거야"
+    },
+    {
+      "region_id": "b1d1bdf1a2d74a89997371368f1c9a8d",
+      "reading_order": 116,
+      "region_type": "speech",
+      "bbox": {
+        "x": 65,
+        "y": 72909,
+        "width": 259,
+        "height": 149
+      },
+      "ocr_text": "그리고 최소 한 달은\n내가 지켜보면서 널\n감시할 거다"
+    },
+    {
+      "region_id": "4e4b8adccea6474e9cf094a096a0c6f2",
+      "reading_order": 117,
+      "region_type": "speech",
+      "bbox": {
+        "x": 504,
+        "y": 74131,
+        "width": 83,
+        "height": 59
+      },
+      "ocr_text": "넵…\nb"
+    },
+    {
+      "region_id": "abbfb21d202e404abe5e7da2ec4a7090",
+      "reading_order": 118,
+      "region_type": "speech",
+      "bbox": {
+        "x": 377,
+        "y": 75833,
+        "width": 200,
+        "height": 105
+      },
+      "ocr_text": "뭐야 어떤 놈이\n이 시간에"
+    },
+    {
+      "region_id": "0aca6133f2fd4e4c911f890b651a7372",
+      "reading_order": 119,
+      "region_type": "speech",
+      "bbox": {
+        "x": 505,
+        "y": 76231,
+        "width": 161,
+        "height": 63
+      },
+      "ocr_text": "똥똑똑"
+    },
+    {
+      "region_id": "c8c986d5912d447284f6ab3b5a50da0d",
+      "reading_order": 120,
+      "region_type": "speech",
+      "bbox": {
+        "x": 454,
+        "y": 76397,
+        "width": 160,
+        "height": 56
+      },
+      "ocr_text": "작작 두둘"
+    },
+    {
+      "region_id": "ef4eabf1ed0744429d4efd019f199f99",
+      "reading_order": 121,
+      "region_type": "speech",
+      "bbox": {
+        "x": 106,
+        "y": 76956,
+        "width": 199,
+        "height": 142
+      },
+      "ocr_text": "살벌하네\n무서워서말도\n걸기 힘들어"
+    },
+    {
+      "region_id": "d668d7c66e414fe1bbcc934ab623354d",
+      "reading_order": 122,
+      "region_type": "speech",
+      "bbox": {
+        "x": 240,
+        "y": 77397,
+        "width": 199,
+        "height": 66
+      },
+      "ocr_text": "나!가!고 싶!어!"
+    },
+    {
+      "region_id": "5987e269a70747499cbb49440e654628",
+      "reading_order": 123,
+      "region_type": "speech",
+      "bbox": {
+        "x": 484,
+        "y": 77449,
+        "width": 163,
+        "height": 63
+      },
+      "ocr_text": "나!갈!거!야!"
+    },
+    {
+      "region_id": "6b05e12df6e2450aa97ea4632d80be20",
+      "reading_order": 124,
+      "region_type": "speech",
+      "bbox": {
+        "x": 323,
+        "y": 77694,
+        "width": 197,
+        "height": 65
+      },
+      "ocr_text": "내!보!내!줘!요!"
+    },
+    {
+      "region_id": "21cb514efa434364b0857bf29a0135d6",
+      "reading_order": 125,
+      "region_type": "speech",
+      "bbox": {
+        "x": 62,
+        "y": 78498,
+        "width": 181,
+        "height": 67
+      },
+      "ocr_text": "한채연인가"
+    },
+    {
+      "region_id": "092595aa76d040ac8dd3b70fe85bef81",
+      "reading_order": 126,
+      "region_type": "speech",
+      "bbox": {
+        "x": 345,
+        "y": 79185,
+        "width": 276,
+        "height": 104
+      },
+      "ocr_text": "경호원으로 들어오면\n다 끝날 줄 알았는데"
+    },
+    {
+      "region_id": "44293d7173494807a94a5ffac5b23e72",
+      "reading_order": 127,
+      "region_type": "speech",
+      "bbox": {
+        "x": 83,
+        "y": 79844,
+        "width": 170,
+        "height": 110
+      },
+      "ocr_text": "일이 어려워\n지겠는데?"
+    },
+    {
+      "region_id": "da47fb1d32ec4f18b3a8cd2708defe28",
+      "reading_order": 128,
+      "region_type": "speech",
+      "bbox": {
+        "x": 204,
+        "y": 80087,
+        "width": 228,
+        "height": 94
+      },
+      "ocr_text": "아가씨…\n회장님이 엄격하게"
+    },
+    {
+      "region_id": "492ab3b810c54647a61aea5ba7e12f94",
+      "reading_order": 129,
+      "region_type": "speech",
+      "bbox": {
+        "x": 444,
+        "y": 80860,
+        "width": 179,
+        "height": 90
+      },
+      "ocr_text": "하늘공원\n가고 싶다구요!"
+    },
+    {
+      "region_id": "edd261f1f2eb495cac00b0897f701a6d",
+      "reading_order": 130,
+      "region_type": "speech",
+      "bbox": {
+        "x": 233,
+        "y": 82189,
+        "width": 273,
+        "height": 81
+      },
+      "ocr_text": "나가고 싶다고!!!!"
+    },
+    {
+      "region_id": "b3d69cb451bb455180262a360fcbbbdc",
+      "reading_order": 131,
+      "region_type": "speech",
+      "bbox": {
+        "x": 65,
+        "y": 84853,
+        "width": 188,
+        "height": 103
+      },
+      "ocr_text": "제기랄\n쓸모없는 새X"
+    },
+    {
+      "region_id": "e3c014e92fac408a95ac6ca8422d056f",
+      "reading_order": 132,
+      "region_type": "speech",
+      "bbox": {
+        "x": 53,
+        "y": 85705,
+        "width": 267,
+        "height": 147
+      },
+      "ocr_text": "회장 입맛에\n겨우 맞춰났는데\n그런 같잖은 실수를"
+    },
+    {
+      "region_id": "2778af5a544f47aab660256e32bb2f5f",
+      "reading_order": 133,
+      "region_type": "speech",
+      "bbox": {
+        "x": 35,
+        "y": 87013,
+        "width": 88,
+        "height": 33
+      },
+      "ocr_text": ""
+    },
+    {
+      "region_id": "29ad0993eb694cf5944dfd90e0f58de5",
+      "reading_order": 134,
+      "region_type": "speech",
+      "bbox": {
+        "x": 123,
+        "y": 87210,
+        "width": 437,
+        "height": 202
+      },
+      "ocr_text": "표시제한\n발신번호"
+    },
+    {
+      "region_id": "40f19759b4a643c39e8a917a27b29e55",
+      "reading_order": 135,
+      "region_type": "speech",
+      "bbox": {
+        "x": 491,
+        "y": 87861,
+        "width": 82,
+        "height": 71
+      },
+      "ocr_text": "!!!!"
+    },
+    {
+      "region_id": "e6a189792b224b0382394ce1b4b969e4",
+      "reading_order": 136,
+      "region_type": "speech",
+      "bbox": {
+        "x": 87,
+        "y": 88467,
+        "width": 102,
+        "height": 64
+      },
+      "ocr_text": "예,예!"
+    },
+    {
+      "region_id": "0159895d793f493d89d16ee97390815b",
+      "reading_order": 137,
+      "region_type": "speech",
+      "bbox": {
+        "x": 459,
+        "y": 89033,
+        "width": 159,
+        "height": 102
+      },
+      "ocr_text": "말씀하셔도\n됩니다!"
+    },
+    {
+      "region_id": "00ca3f836e0f4092a9b77c5315707e1a",
+      "reading_order": 138,
+      "region_type": "speech",
+      "bbox": {
+        "x": 55,
+        "y": 89421,
+        "width": 185,
+        "height": 62
+      },
+      "ocr_text": "그래, 결과는?"
+    },
+    {
+      "region_id": "17f44172c8a3487e99bcb68adf21db2b",
+      "reading_order": 139,
+      "region_type": "speech",
+      "bbox": {
+        "x": 101,
+        "y": 90358,
+        "width": 191,
+        "height": 105
+      },
+      "ocr_text": "죄송합니다\n실패했습니다"
+    },
+    {
+      "region_id": "91b11faa80304648963ee826bdba6bbc",
+      "reading_order": 140,
+      "region_type": "speech",
+      "bbox": {
+        "x": 361,
+        "y": 91056,
+        "width": 279,
+        "height": 187
+      },
+      "ocr_text": "이번에 정체를 알 수\n없는 녀석이 의뢰인을\n한 번에 쓰러트리는\n바람에"
+    },
+    {
+      "region_id": "0bc57df19302488d9eaf78679304be7a",
+      "reading_order": 141,
+      "region_type": "speech",
+      "bbox": {
+        "x": 68,
+        "y": 91676,
+        "width": 259,
+        "height": 148
+      },
+      "ocr_text": "하지만 이번엔\n믿을만한 사람으로\n대기 시켜났습니다"
+    },
+    {
+      "region_id": "e5bcd702e161466683dc29f3f867e73b",
+      "reading_order": 142,
+      "region_type": "speech",
+      "bbox": {
+        "x": 401,
+        "y": 92842,
+        "width": 239,
+        "height": 102
+      },
+      "ocr_text": "절대로 실망시키지\n않겠습니다"
+    },
+    {
+      "region_id": "91211c1ed2fc4c8cb8766c891d2fc5dc",
+      "reading_order": 143,
+      "region_type": "speech",
+      "bbox": {
+        "x": 80,
+        "y": 93388,
+        "width": 150,
+        "height": 65
+      },
+      "ocr_text": "기한은?"
+    },
+    {
+      "region_id": "e1873cbec8114f8bae3c6155e13458d6",
+      "reading_order": 144,
+      "region_type": "speech",
+      "bbox": {
+        "x": 248,
+        "y": 94970,
+        "width": 229,
+        "height": 99
+      },
+      "ocr_text": "바로\n시작하겠습니다"
+    },
+    {
+      "region_id": "3f342627bbc14d80a11f1abf442b1cd6",
+      "reading_order": 145,
+      "region_type": "speech",
+      "bbox": {
+        "x": 227,
+        "y": 99821,
+        "width": 231,
+        "height": 70
+      },
+      "ocr_text": "기대가 되는 군"
+    },
+    {
+      "region_id": "f3b76252e6d244a78f611ec337a5f27f",
+      "reading_order": 146,
+      "region_type": "speech",
+      "bbox": {
+        "x": 262,
+        "y": 100203,
+        "width": 159,
+        "height": 56
+      },
+      "ocr_text": "-창과방패-"
+    },
+    {
+      "region_id": "717571c252d8424bae46023b1c0f4a8b",
+      "reading_order": 147,
+      "region_type": "speech",
+      "bbox": {
+        "x": 465,
+        "y": 100393,
+        "width": 186,
+        "height": 178
+      },
+      "ocr_text": "the Boy of Death\n\\그림류\n채색 도움 김지효\n펜터치도움MADPOOL\ngyeonghun0617@naver.com"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "6bb75152e2ca466a9926687f8b01e594",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "새로운\n경호원인가요?",
+      "translated_text": "是新来的保镖吗？",
+      "final_translation": "是新来的保镖吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7371fd928bf34914ad9165218308ba4a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네",
+      "translated_text": "嗯",
+      "final_translation": "嗯",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "505c105091b14b77ae3970d93a6ab027",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "되게 어려 보이시는데\n대단해요~",
+      "translated_text": "看起来好年轻啊\n真厉害~",
+      "final_translation": "看起来好年轻啊\n真厉害~",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6f1d36302c4a49bc844fdadb5951442e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "여기 경호원들\n전부 30대인데",
+      "translated_text": "这里的保镖\n全都是30多岁的",
+      "final_translation": "这里的保镖\n全都是30多岁的",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7d0ddf42531a48beb9acaf3155da2c3b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나이가\n어떻게 되세요?",
+      "translated_text": "您多大年纪了？",
+      "final_translation": "您多大年纪了？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "17d2a7a70fae4f79ba84032ce5d7d13b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "20대 중반?",
+      "translated_text": "二十多岁中期？",
+      "final_translation": "二十多岁中期？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "38bdbbc170e44211bddce7c78abe7b91",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아…아니요",
+      "translated_text": "啊…不是",
+      "final_translation": "啊…不是",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "42b1540bbab14207a528e09b22b9932e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "17살인데요",
+      "translated_text": "17岁",
+      "final_translation": "17岁",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d1eef81f46874981adf5c82bdca73283",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "여기야, 여기",
+      "translated_text": "这里，这里",
+      "final_translation": "这里，这里",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "cc16e7d91d43434689011bcf02042c2f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어…",
+      "translated_text": "呃…",
+      "final_translation": "呃…",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d8fdfaa3b5244ce9a2982024823902a4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "안녕",
+      "translated_text": "你好",
+      "final_translation": "你好",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ecdb7698b1c34977b8ef17163ea66a90",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "방가방가",
+      "translated_text": "欢迎欢迎",
+      "final_translation": "欢迎欢迎",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "67fe8db8aeb540dea39ccf538517e0d0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "비실이 경호원\n영입완료",
+      "translated_text": "小夫 保镖\n招募完成",
+      "final_translation": "小夫 保镖\n招募完成",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "66d4109a7f954769a245065b75f2b645",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "MUIAYMACIKPAYYTAELHALMIALAMPBEZYEPPIMMSK<IPIS\nDead\nrs1x2sx",
+      "translated_text": "MUIAYMACIKPAYYTAELHALMIALAMPBEZYEPPIMMSK<IPIS\n死\nrs1x2sx",
+      "final_translation": "MUIAYMACIKPAYYTAELHALMIALAMPBEZYEPPIMMSK<IPIS\n死\nrs1x2sx",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e0bf12ecc2804783b01f26e61ba5a69b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "YSIALINUNAMMA",
+      "translated_text": "YSIALINUNAMMA",
+      "final_translation": "YSIALINUNAMMA",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "59653297c5a949d8a1a9bf7402ae8da2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "28cf389b09bd43e1bfcb74332b99216c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "MPAOAN\nPSAYK",
+      "translated_text": "MPAOAN\nPSAYK",
+      "final_translation": "MPAOAN\nPSAYK",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8d864954369c497789adfa711b6091ec",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "AAEMLSK",
+      "translated_text": "AAEMLSK",
+      "final_translation": "AAEMLSK",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6308a30d23e84d9f804e82c8e0bb664d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "기",
+      "translated_text": "起",
+      "final_translation": "起",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "45e82158953f4b81a4617ac1cc45fbe2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "88b81391b5e44c47a641cc896e07ee5b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "51a60a5027fc461795c2ba4005c21c09",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "the Boy of Death",
+      "translated_text": "死亡男孩",
+      "final_translation": "死亡男孩",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "74e624f321d24eaca0286cede362929c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "TICKET",
+      "translated_text": "票",
+      "final_translation": "票",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ba1e074c9b8d42beb73e0728ec8196b5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "FAHNMSLMASAMYLELABINSEMIPPBKMPSLPPZIALMAUUM",
+      "translated_text": "法恩姆斯尔马萨米尔拉宾塞米普布克姆普斯尔普普齐阿尔马乌姆",
+      "final_translation": "法恩姆斯尔马萨米尔拉宾塞米普布克姆普斯尔普普齐阿尔马乌姆",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d4907f04cce847c1ac8a9a10ba53a402",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "-11화 창과 방패-",
+      "translated_text": "-第11话 矛与盾-",
+      "final_translation": "-第11话 矛与盾-",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "aeebdac74acc46aab5a46f6f9a271039",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이제부터\n여기가\n내방인가…",
+      "translated_text": "从现在起\n这里\n就是我的房间吗…",
+      "final_translation": "从现在起\n这里\n就是我的房间吗…",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0b1463ab01de42cfa0760a1e51fee37f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "집이 엄청\n고급스럽네",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "35012ef6c3e44e509a204362502f9228",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "학교도\n이제 안 나가고",
+      "translated_text": "学校也\n现在不去了",
+      "final_translation": "学校也\n现在不去了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "83f7a5478edb49d3999862a44634924e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "드디어 가족을\n찾을 수 있구나",
+      "translated_text": "终于能找到家人了",
+      "final_translation": "终于能找到家人了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c1c4184606bc47c1b51bd750da98beaa",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "마지막엔\n정말 떨어지는 줄\n알았는데",
+      "translated_text": "最后\n真的以为\n要掉下去了",
+      "final_translation": "最后\n真的以为\n要掉下去了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1bd4d8671907443094497cdb627f7774",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그 애 덕분에\n운이 좋았어",
+      "translated_text": "多亏了那孩子\n运气真好",
+      "final_translation": "多亏了那孩子\n运气真好",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "508d69daf2d840eeb4f553c75b29c763",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "회장님 아무리\n생각해도 아가씨 부탁이\n이해 안 갑니다!",
+      "translated_text": "会长，不管怎么想，我都无法理解小姐的请求！",
+      "final_translation": "会长，不管怎么想，我都无法理解小姐的请求！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7b34c8f9bb054adf974de81ea99e3ddc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나이도 속이고\n실력도 의심스러운 사람을\n채용하는 건 위험합니다",
+      "translated_text": "隐瞒年龄\n实力也可疑的人\n录用是很危险的",
+      "final_translation": "隐瞒年龄\n实力也可疑的人\n录用是很危险的",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1bf6ed9d75ea4119a9d058bfcd0fe2e0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이경호나이 17세\n고등학교 자퇴\n거주지역 경기도",
+      "translated_text": "李京浩 年龄17岁\n高中退学\n居住地 京畿道",
+      "final_translation": "李京浩 年龄17岁\n高中退学\n居住地 京畿道",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a763e12861854c549da698fe747dab1d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "최범을 한 방에 기절\n시켰다는 게 조금 걸리지만\n위험 요소는없어",
+      "translated_text": "虽然有点在意他一击就打晕了崔范\n但没有危险因素",
+      "final_translation": "虽然有点在意他一击就打晕了崔范\n但没有危险因素",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "240bd8ac8d2543279093b66f1dcdca71",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그냥 평범한 애야",
+      "translated_text": "只是个普通的孩子",
+      "final_translation": "只是个普通的孩子",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7c2319b56eac42828030ceef4428cec0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그렇다고 해도",
+      "translated_text": "话虽如此",
+      "final_translation": "话虽如此",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "65d4c931221542a2a95f8c9c074e4477",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "혹시 특별한\n이유라도 있으십니까?",
+      "translated_text": "请问有什么特别的原因吗？",
+      "final_translation": "请问有什么特别的原因吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "12b9550b85844d9b8345a4c0b211903e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "채연이가\n납치된 횟수는 두 번",
+      "translated_text": "彩妍被绑架的次数是两次",
+      "final_translation": "彩妍被绑架的次数是两次",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "120a107368d649e097b3f56ad9cc5c4f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "주변에 수상한 자가\n미행을 하고 있다고 보고\n받은 건이27건",
+      "translated_text": "接到报告称周围有可疑人物\n正在尾随的案件\n共有27起",
+      "final_translation": "接到报告称周围有可疑人物\n正在尾随的案件\n共有27起",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "be83bec71b1646e3baf8e663d887cc36",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "전부 평범한 놈들이\n아니었어",
+      "translated_text": "全都不是普通的家伙",
+      "final_translation": "全都不是普通的家伙",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7a32af1f602f44cb81d0c627a9bc9258",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "놈들은 용의주도해서\n이쪽에서 조금만 움직여도\n눈치채서 바로 도주해버리지",
+      "translated_text": "那些家伙很谨慎，这边稍微一动，他们就会察觉，立刻逃走。",
+      "final_translation": "那些家伙很谨慎，这边稍微一动，他们就会察觉，立刻逃走。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b18e4aa293a74b05a2bf2d38f71013f5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "잡을 수가없어",
+      "translated_text": "抓不住",
+      "final_translation": "抓不住",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fc73879ffcbe4c57a6e88b5a935ce4f6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그렇다면\n그 꼬마는",
+      "translated_text": "那么\n那个小鬼",
+      "final_translation": "那么\n那个小鬼",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5ac8b7fc1a1e442cb47b2c052c074550",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "채연이 동갑내기\n경호원…",
+      "translated_text": "彩妍的同龄\n保镖…",
+      "final_translation": "彩妍的同龄\n保镖…",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7353d155e2244e2a92736f989f99f0a8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "밖에서는 아무도\n경호원이라고 생각하지\n않을 거야 놈들도 쉽게\n접근해오겠지",
+      "translated_text": "在外面没人会\n想到是保镖\n那些家伙也会轻易\n靠近过来吧",
+      "final_translation": "在外面没人会\n想到是保镖\n那些家伙也会轻易\n靠近过来吧",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "27becfca98ac4c01b8d14900c948225e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이방법은채연이가\n위험해질 수 있어서\n쓰고 싶지 않지만",
+      "translated_text": "这个方法可能会让彩妍陷入危险\n虽然我不想用",
+      "final_translation": "这个方法可能会让彩妍陷入危险\n虽然我不想用",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4ad050912c94486b9af139f2f32d101c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "놈들은 계획적으로\n움직이고 있다",
+      "translated_text": "那些家伙在有计划地行动",
+      "final_translation": "那些家伙在有计划地行动",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3765802eace44f30b9a367f4ea091412",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "계속해서 내 눈에\n걸리적거린다면",
+      "translated_text": "要是继续在我眼前\n碍事的话",
+      "final_translation": "要是继续在我眼前\n碍事的话",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d7d59060e24b4de0a252b7907e5cf321",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어떻게든\n잡아 끄집어내고\n박멸해야지",
+      "translated_text": "无论如何\n都要抓住揪出来\n彻底消灭",
+      "final_translation": "无论如何\n都要抓住揪出来\n彻底消灭",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6cdeb1875eb242499b7f3f9ac0187272",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "여기에도\n없네…",
+      "translated_text": "这里也没有…",
+      "final_translation": "这里也没有…",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "280b8e7172d343e7beae2f36a04b5997",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "한채연은\n어디 있는 거지",
+      "translated_text": "韩彩妍\n在哪里呢",
+      "final_translation": "韩彩妍\n在哪里呢",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "07851e6017a64fed8152236c8f97e5b1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "넓어서\n찾을 수가 없잖아",
+      "translated_text": "太大了\n根本找不到啊",
+      "final_translation": "太大了\n根本找不到啊",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fb95e7f7ee604d6f86cdd3de2de27675",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "방도 몇 갠지 세다가\n까먹었어",
+      "translated_text": "数着有几个房间\n数着数着就忘了",
+      "final_translation": "数着有几个房间\n数着数着就忘了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "899b6d8a52aa4cafba55125167b1c75c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어…?",
+      "translated_text": "呃…？",
+      "final_translation": "呃…？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2ec61c73510b45b198f0b43822002022",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "한채연…!",
+      "translated_text": "韩彩妍…！",
+      "final_translation": "韩彩妍…！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6b7858b211a543cb9caecc5730c5af12",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "잠깐기다",
+      "translated_text": "等一下",
+      "final_translation": "等一下",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b09daadb5f2049759b9d994ea989ff4e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "멈춰",
+      "translated_text": "住手",
+      "final_translation": "住手",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a229166b5e444b89a1f6de1ab4747fc8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭐 하는 거지?",
+      "translated_text": "在干什么呢？",
+      "final_translation": "在干什么呢？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8919e30e1c8b4c268bbe5d2f4f39285a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "……!",
+      "translated_text": "……！",
+      "final_translation": "……！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "79c9f5680eeb4238b950a5aa2eec8361",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아…잠깐\n한채연 한테",
+      "translated_text": "啊…等等\n韩彩妍她",
+      "final_translation": "啊…等等\n韩彩妍她",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f920b80a961449f98e60a6c105eba2ef",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "한채연이 아니라\n아.가.씨",
+      "translated_text": "不是韩彩妍\n而是阿·加·西",
+      "final_translation": "不是韩彩妍\n而是阿·加·西",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "faac2362b6c64af58796799c6f93f6ec",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "죄송해요\n아가씨한테\n인사라도 하려고",
+      "translated_text": "抱歉\n我只是想\n跟小姐打个招呼",
+      "final_translation": "抱歉\n我只是想\n跟小姐打个招呼",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "460a830efb9f46108c7215132528da62",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네가뭔데 아가씨한테\n인사를해",
+      "translated_text": "你算什么东西，竟敢对小姐\n打招呼",
+      "final_translation": "你算什么东西，竟敢对小姐\n打招呼",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3427429409e04f4cbd54f635f900592a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "경호원에게\n사적인 건 필요 없어",
+      "translated_text": "保镖不需要\n私人感情",
+      "final_translation": "保镖不需要\n私人感情",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1b6d31e9207e4a51b9b73f3393e232b9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그리고 신원이\n불분명한 신참은 아가씨\n가까이에 있을 수 없다",
+      "translated_text": "而且身份不明的\n新人不能待在\n小姐身边",
+      "final_translation": "而且身份不明的\n新人不能待在\n小姐身边",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "51ed99e5cd1b44f893b37b4ea3903371",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네…?",
+      "translated_text": "嗯……？",
+      "final_translation": "嗯……？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1032724406dd4b1fa1679e565cb0769b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "일단 정신교육부터\n시켜줄 테니까\n따라와",
+      "translated_text": "先让我给你做做思想教育\n跟我来",
+      "final_translation": "先让我给你做做思想教育\n跟我来",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ccf1afd019324ed09a3b1ad23dd6fde1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "되게 무섭네",
+      "translated_text": "好可怕啊",
+      "final_translation": "好可怕啊",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "662ca46e01ea4333af4acde11affc476",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "근데 정신교육?\n뭐 하는거지",
+      "translated_text": "不过精神教育？\n是做什么的",
+      "final_translation": "不过精神教育？\n是做什么的",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "206c7c00e90e44b5bf715a61fbb64fe6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭐?",
+      "translated_text": "什么？",
+      "final_translation": "什么？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e85ee1846f784feab8c15e1892a4e90a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "강용만(제2팀장)\n주특기 -역도 220kg\n막싸움",
+      "translated_text": "姜龙万（第2组组长）\n特长 - 举重 220kg\n近身搏斗",
+      "final_translation": "姜龙万（第2组组长）\n特长 - 举重 220kg\n近身搏斗",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "760c07e3077a411eb8e5259af0921513",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "주특기-역도 220kg\n막싸움\n특징-말이\n통해도힘으로\n해결",
+      "translated_text": "特长-举重220kg\n乱斗\n特点-说不通\n就用力量\n解决",
+      "final_translation": "特长-举重220kg\n乱斗\n特点-说不通\n就用力量\n解决",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c531cb25640a447caee4b13a5b831f9f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "특징-말이\n통해도 힘으로\n해결",
+      "translated_text": "特点——就算\n用说的也\n靠力量\n解决",
+      "final_translation": "特点——就算\n用说的也\n靠力量\n解决",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ab86b8efa22347419117244ee786599e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네가\n경호원이라고?",
+      "translated_text": "你就是\n保镖？",
+      "final_translation": "你就是\n保镖？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "023da2fd5995410ba0da3284d2e28d77",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아아네",
+      "translated_text": "啊，是的",
+      "final_translation": "啊，是的",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7049036895a34d8b80b8c234ae164e2b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "14\n정신 교육받다가\n죽을 수도 있겠는데?",
+      "translated_text": "14\n接受精神教育\n说不定会死掉呢？",
+      "final_translation": "14\n接受精神教育\n说不定会死掉呢？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "080062835a604c23828d98ec737daa57",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "반갑습니",
+      "translated_text": "很高兴",
+      "final_translation": "很高兴",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "db8722c35f054430899d2b7cafc7fef0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이게\n남자의 인사지!",
+      "translated_text": "这才是\n男人的问候！",
+      "final_translation": "这才是\n男人的问候！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "38ddcb5c63444d2dbeea00c0d019facc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "난 강용만이다\n반갑다!",
+      "translated_text": "我是姜龙万\n很高兴见到你！",
+      "final_translation": "我是姜龙万\n很高兴见到你！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "439b703807a542e0aefbaf7eb04c1cb5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "yoo",
+      "translated_text": "哟",
+      "final_translation": "哟",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "962050b71d8d45a6a5147dbc25e59757",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "석아,얘 좀봐봐\n콩알만 한 게 들어왔어",
+      "translated_text": "石啊，你看看这个\n有个豆粒大的东西进来了",
+      "final_translation": "石啊，你看看这个\n有个豆粒大的东西进来了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d6d5fb581ba94b6dbf3ce1d479bf974c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "강용만\n아직 그 꼬맹이한테\n정 주지마",
+      "translated_text": "姜龙万\n还别对那个小鬼\n动感情",
+      "final_translation": "姜龙万\n还别对那个小鬼\n动感情",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "001d0be4220640a0806c360b919510d1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "단순히 인사하러\n온 게 아니니까",
+      "translated_text": "不是单纯来打招呼的",
+      "final_translation": "不是单纯来打招呼的",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1481501c390e4e31a20443967c9712c4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어이 꼬맹이 나는\n아직 널 경호원으로\n생각하지 않아",
+      "translated_text": "喂 小鬼 我\n还没把你\n当成保镖",
+      "final_translation": "喂 小鬼 我\n还没把你\n当成保镖",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "75f7f7f547fb493ab61f7efe02a6c324",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "낙하산이라는\n말이 있는데",
+      "translated_text": "有\"降落伞\"这个词",
+      "final_translation": "有\"降落伞\"这个词",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "764753c741794cc8a274510f8f9d4909",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이런 중요한 일에\n왜너같은 애송이를\n뽑았는지 납득이 안 돼",
+      "translated_text": "这么重要的事\n为什么选了你这种\n毛头小子 我真想不通",
+      "final_translation": "这么重要的事\n为什么选了你这种\n毛头小子 我真想不通",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9f7ce594b50345f28a735613a7b88677",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "제대로된\n사람 취급받고\n싶으면 실력을\n키워라",
+      "translated_text": "想被当成\n正经人对待\n就提升实力吧",
+      "final_translation": "想被当成\n正经人对待\n就提升实力吧",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "51156578cdb84a6b99b6ae97f1b1b7b1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이지석(제1 팀장)\n주특기-검도\n특징-흠을 싫어하는\n완벽주의",
+      "translated_text": "李智锡（第一组组长）\n特长-剑道\n特征-讨厌瑕疵的\n完美主义者",
+      "final_translation": "李智锡（第一组组长）\n特长-剑道\n特征-讨厌瑕疵的\n完美主义者",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4bdb8f61ad4a4128aff8f7266dc3f437",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "특징-흠을 싫어하는\n완벽주의",
+      "translated_text": "讨厌-哼的\n完美主义",
+      "final_translation": "讨厌-哼的\n完美主义",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "91ef50bc2c5f4262a236cc97819d6190",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "가볍게 생각하고\n온 거면그냥\n나가줬으면 좋겠다",
+      "translated_text": "如果你是抱着轻松的心态来的\n那希望你\n直接出去吧",
+      "final_translation": "如果你是抱着轻松的心态来的\n那希望你\n直接出去吧",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b22631edf2aa473f8a0d20d9328ec667",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그렇지 Shane?",
+      "translated_text": "对吧，Shane？",
+      "final_translation": "对吧，Shane？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2595449d5578448d9a4fa0ef71d3a2c3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "2.",
+      "translated_text": "2.",
+      "final_translation": "2.",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "61227835806b426580d0125bf6d30d23",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "08506fb1c0804c8293b157d0c71a251c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "Shane Dwatswell\n주특기-?\n특징 :?",
+      "translated_text": "Shane Dwatswell\n专长-？\n特征：？",
+      "final_translation": "Shane Dwatswell\n专长-？\n特征：？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "759cdcb5823e4137ad11e48e3ddd1a39",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "Shane Dwatswell",
+      "translated_text": "Shane Dwatswell",
+      "final_translation": "Shane Dwatswell",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "92c1ba9835cd4427a748b8940b1234ff",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "봤지?\n세명다같은\n의견이다",
+      "translated_text": "看到了吧？\n三个人都是\n同样的意见",
+      "final_translation": "看到了吧？\n三个人都是\n同样的意见",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "92d80abfdfc14eadb3e38c0d4116295f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "못알아들은\n거 같은데.?",
+      "translated_text": "好像没听懂\n的样子。？",
+      "final_translation": "好像没听懂\n的样子。？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "81b66325db124d6e941a72e8a8f1238a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이지석\n너무 꼬맹이한테\n뭐라 하지마",
+      "translated_text": "李智锡\n别对小孩子\n说太多",
+      "final_translation": "李智锡\n别对小孩子\n说太多",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d413dc60d093403aad0671fcc79482c1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "착하신 분이구나",
+      "translated_text": "真是个好人啊",
+      "final_translation": "真是个好人啊",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9c921e7344ee4b74877d033455518da7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "말 안 들으면 몸으로\n교육시키면 되지",
+      "translated_text": "不听话的话\n用身体来教育就行了",
+      "final_translation": "不听话的话\n用身体来教育就行了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "45f03738fa6f4e7dac66365ecb63e860",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "야간경계때\n즐면어떻게\n된다고?",
+      "translated_text": "夜間警戒时\n偷懒的话\n会怎么样？",
+      "final_translation": "夜間警戒时\n偷懒的话\n会怎么样？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5632f4b016f9417f8bc06630ab5ea981",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "죄송합니다0008",
+      "translated_text": "对不起0008",
+      "final_translation": "对不起0008",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b3f5826be041401999109282e70a1178",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그때 이후로\n야간 경계 때 조는\n녀석들이 없던데!",
+      "translated_text": "从那之后\n夜间警戒时\n就没人打瞌睡了！",
+      "final_translation": "从那之后\n夜间警戒时\n就没人打瞌睡了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "78f1ff8e6ddc4e2186fb958dc059ab47",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네가 나서면\n안 되니까내가\n경고부터 하는 거야",
+      "translated_text": "你要是插手的话\n可不行，所以我\n先给你个警告",
+      "final_translation": "你要是插手的话\n可不行，所以我\n先给你个警告",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e2c8a86ed103489ab9b83d74f355a804",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "24a1082939e242539f69162f246b4261",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아그리고\n신참이거받아",
+      "translated_text": "啊，还有\n新人，收下这个",
+      "final_translation": "啊，还有\n新人，收下这个",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "67c55d4bbf304e3c9ba86419266924c0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "넵!",
+      "translated_text": "是！",
+      "final_translation": "是！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "729e388fc7424c96b6fbbcfcbba2cc57",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이건\n위치 추적기 펜이야",
+      "translated_text": "这是\n定位追踪笔",
+      "final_translation": "这是\n定位追踪笔",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "19730b79d2b34b01834f822c7070023a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "경호원들은\n다가지고 있어",
+      "translated_text": "保镖们\n都带着呢",
+      "final_translation": "保镖们\n都带着呢",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ac523095e0554b629d308ef58149fbcc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "위급한 상황이나\n급한 상황에 바로바로\n위치를 알 수 있게 항상\n소지하고 있어야 돼",
+      "translated_text": "在危急或紧急情况下\n为了能立刻知道位置\n必须随时随身携带",
+      "final_translation": "在危急或紧急情况下\n为了能立刻知道位置\n必须随时随身携带",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a8776570c14741b09573d44072f65f7a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "감사합니다",
+      "translated_text": "谢谢",
+      "final_translation": "谢谢",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "294d77d4e56b4b489b5f0e70c9e55c36",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "저 혹시\n아가씨는 언제\n만날 수 있는 거죠?",
+      "translated_text": "请问我什么时候\n能见到\n那位小姐呢？",
+      "final_translation": "请问我什么时候\n能见到\n那位小姐呢？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0f661200bc7c4a02988c46aabdf4ed34",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "왜 계속 쓸데\n없는 걸 알려고 하지?",
+      "translated_text": "为什么总是想知道些没用的东西？",
+      "final_translation": "为什么总是想知道些没用的东西？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "18dd49ccc4ed42169234b43a50a3e828",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "넌 그냥 시키는 데로\n명령받고 움직이면\n되는 거야",
+      "translated_text": "你只要按照吩咐\n接受命令行动\n就行了",
+      "final_translation": "你只要按照吩咐\n接受命令行动\n就行了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b1d1bdf1a2d74a89997371368f1c9a8d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그리고 최소 한 달은\n내가 지켜보면서 널\n감시할 거다",
+      "translated_text": "而且至少一个月\n我会亲自盯着\n监视你",
+      "final_translation": "而且至少一个月\n我会亲自盯着\n监视你",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4e4b8adccea6474e9cf094a096a0c6f2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "넵…\nb",
+      "translated_text": "嗯…\nb",
+      "final_translation": "嗯…\nb",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "abbfb21d202e404abe5e7da2ec4a7090",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭐야 어떤 놈이\n이 시간에",
+      "translated_text": "什么啊 哪个家伙\n这个时间",
+      "final_translation": "什么啊 哪个家伙\n这个时间",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0aca6133f2fd4e4c911f890b651a7372",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "똥똑똑",
+      "translated_text": "咚咚咚",
+      "final_translation": "咚咚咚",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c8c986d5912d447284f6ab3b5a50da0d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "작작 두둘",
+      "translated_text": "适可而止",
+      "final_translation": "适可而止",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ef4eabf1ed0744429d4efd019f199f99",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "살벌하네\n무서워서말도\n걸기 힘들어",
+      "translated_text": "好可怕\n吓得我\n都不敢搭话",
+      "final_translation": "好可怕\n吓得我\n都不敢搭话",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d668d7c66e414fe1bbcc934ab623354d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나!가!고 싶!어!",
+      "translated_text": "我！想！去！",
+      "final_translation": "我！想！去！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5987e269a70747499cbb49440e654628",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나!갈!거!야!",
+      "translated_text": "我！要！去！",
+      "final_translation": "我！要！去！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6b05e12df6e2450aa97ea4632d80be20",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "내!보!내!줘!요!",
+      "translated_text": "还！给！我！啊！",
+      "final_translation": "还！给！我！啊！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "21cb514efa434364b0857bf29a0135d6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "한채연인가",
+      "translated_text": "是韩彩妍吗",
+      "final_translation": "是韩彩妍吗",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "092595aa76d040ac8dd3b70fe85bef81",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "경호원으로 들어오면\n다 끝날 줄 알았는데",
+      "translated_text": "本以为当上保镖\n一切就都结束了",
+      "final_translation": "本以为当上保镖\n一切就都结束了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "44293d7173494807a94a5ffac5b23e72",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "일이 어려워\n지겠는데?",
+      "translated_text": "事情好像会变得很棘手？",
+      "final_translation": "事情好像会变得很棘手？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "da47fb1d32ec4f18b3a8cd2708defe28",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아가씨…\n회장님이 엄격하게",
+      "translated_text": "小姐…\n会长严格地",
+      "final_translation": "小姐…\n会长严格地",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "492ab3b810c54647a61aea5ba7e12f94",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "하늘공원\n가고 싶다구요!",
+      "translated_text": "天空公园\n我想去！",
+      "final_translation": "天空公园\n我想去！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "edd261f1f2eb495cac00b0897f701a6d",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나가고 싶다고!!!!",
+      "translated_text": "我想出去啊！！！！",
+      "final_translation": "我想出去啊！！！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b3d69cb451bb455180262a360fcbbbdc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "제기랄\n쓸모없는 새X",
+      "translated_text": "该死\n没用的贱人",
+      "final_translation": "该死\n没用的贱人",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e3c014e92fac408a95ac6ca8422d056f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "회장 입맛에\n겨우 맞춰났는데\n그런 같잖은 실수를",
+      "translated_text": "好不容易才\n迎合了会长的口味\n却犯下那种不像话的失误",
+      "final_translation": "好不容易才\n迎合了会长的口味\n却犯下那种不像话的失误",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "2778af5a544f47aab660256e32bb2f5f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "",
+      "translated_text": "",
+      "final_translation": "",
+      "final_source": "none"
+    },
+    {
+      "region_id": "29ad0993eb694cf5944dfd90e0f58de5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "표시제한\n발신번호",
+      "translated_text": "显示限制\n发信号码",
+      "final_translation": "显示限制\n发信号码",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "40f19759b4a643c39e8a917a27b29e55",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "!!!!",
+      "translated_text": "！！！！",
+      "final_translation": "！！！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e6a189792b224b0382394ce1b4b969e4",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "예,예!",
+      "translated_text": "是，是！",
+      "final_translation": "是，是！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0159895d793f493d89d16ee97390815b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "말씀하셔도\n됩니다!",
+      "translated_text": "您说也可以！",
+      "final_translation": "您说也可以！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "00ca3f836e0f4092a9b77c5315707e1a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그래, 결과는?",
+      "translated_text": "嗯，结果呢？",
+      "final_translation": "嗯，结果呢？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "17f44172c8a3487e99bcb68adf21db2b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "죄송합니다\n실패했습니다",
+      "translated_text": "对不起\n失败了",
+      "final_translation": "对不起\n失败了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "91b11faa80304648963ee826bdba6bbc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이번에 정체를 알 수\n없는 녀석이 의뢰인을\n한 번에 쓰러트리는\n바람에",
+      "translated_text": "这次因为一个身份不明的家伙\n一下子就把委托人打倒了",
+      "final_translation": "这次因为一个身份不明的家伙\n一下子就把委托人打倒了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "0bc57df19302488d9eaf78679304be7a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "하지만 이번엔\n믿을만한 사람으로\n대기 시켜났습니다",
+      "translated_text": "但这次\n我安排了\n可靠的人待命",
+      "final_translation": "但这次\n我安排了\n可靠的人待命",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e5bcd702e161466683dc29f3f867e73b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "절대로 실망시키지\n않겠습니다",
+      "translated_text": "绝对不会让您失望的",
+      "final_translation": "绝对不会让您失望的",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "91211c1ed2fc4c8cb8766c891d2fc5dc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "기한은?",
+      "translated_text": "期限是？",
+      "final_translation": "期限是？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e1873cbec8114f8bae3c6155e13458d6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "바로\n시작하겠습니다",
+      "translated_text": "马上开始",
+      "final_translation": "马上开始",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "3f342627bbc14d80a11f1abf442b1cd6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "기대가 되는 군",
+      "translated_text": "真令人期待啊",
+      "final_translation": "真令人期待啊",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f3b76252e6d244a78f611ec337a5f27f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "-창과방패-",
+      "translated_text": "-矛与盾-",
+      "final_translation": "-矛与盾-",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "717571c252d8424bae46023b1c0f4a8b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "the Boy of Death\n\\그림류\n채색 도움 김지효\n펜터치도움MADPOOL\ngyeonghun0617@naver.com",
+      "translated_text": "死亡少年\n\\그림류\n上色协助 金智孝\n钢笔协助MADPOOL\ngyeonghun0617@naver.com",
+      "final_translation": "死亡少年\n\\그림류\n上色协助 金智孝\n钢笔协助MADPOOL\ngyeonghun0617@naver.com",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-06acdb6dcc53",
+    "file": "K10-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\export\\K10-translated.png",
+    "sha256": "a49c439db5f6dbbdf44159598f4b5a06733d503f64f3c83de98e87b2315c3e04",
+    "size": 33873799,
+    "translated_revision_id": "062ed55e6bdc456cae76fdc9e0805137"
+  },
+  "attribution": [
+    "defect:run1-PipelineRunStatus.COMPLETED_WITH_FAILURES",
+    "defect:run2-region-chain"
+  ],
+  "source_size": [
+    690,
+    100674
+  ],
+  "source_sha256_recomputed": "68024b789ff845e20ed7e69195fc3635c675513b4220ce8a7af941126bdb56a0",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K10-kzz2hcaf",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\ocr\\crops\\K10",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 155,
+    "n_target_region_calls": 155,
+    "input_est_tokens_total": 85812,
+    "output_est_tokens_total": 8467
+  },
+  "finished_at_utc": "2026-10-03T00:13:25Z",
+  "wall_s": 17379.5,
+  "pipeline_completed": false
+}

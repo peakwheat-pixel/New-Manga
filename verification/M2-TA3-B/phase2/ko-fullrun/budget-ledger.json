@@ -1,0 +1,100 @@
+{
+  "task": "M2-TA3-B3-KO-FULLRUN",
+  "ceiling_est_tokens": 2200000,
+  "ceiling_basis": "user-approved 2026-10-02: 7-case full extrapolation upper bound ~2.09M est tokens + K02 clean rerun ~113k = 2.2M ceiling (ko-rerun-report §7 items 1+2; case-level exemption record for phase2-plan.md:192)",
+  "metering_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) via the runner's --meter-translation passthrough proxy; ESTIMATES, and production retries outside the provider are NOT metered (KO-RERUN r1 R6)",
+  "entries": [
+    {
+      "case_id": "K04",
+      "phase": "main",
+      "finished_at_utc": "2026-10-02T01:07:39Z",
+      "runner_exit_code": 1,
+      "requests": 111,
+      "input_est_tokens": 61329,
+      "output_est_tokens": 6055,
+      "est_tokens": 67384
+    },
+    {
+      "case_id": "K05",
+      "phase": "main",
+      "finished_at_utc": "2026-10-02T02:47:36Z",
+      "runner_exit_code": 0,
+      "requests": 124,
+      "input_est_tokens": 69486,
+      "output_est_tokens": 7519,
+      "est_tokens": 77005
+    },
+    {
+      "case_id": "K08",
+      "phase": "main",
+      "finished_at_utc": "2026-10-02T03:42:18Z",
+      "runner_exit_code": 1,
+      "requests": 61,
+      "input_est_tokens": 33503,
+      "output_est_tokens": 3155,
+      "est_tokens": 36658
+    },
+    {
+      "case_id": "K07",
+      "phase": "main",
+      "finished_at_utc": "2026-10-02T12:54:02Z",
+      "runner_exit_code": 1,
+      "requests": 235,
+      "input_est_tokens": 128684,
+      "output_est_tokens": 11904,
+      "est_tokens": 140588
+    },
+    {
+      "case_id": "K09",
+      "phase": "main",
+      "finished_at_utc": "2026-10-02T19:23:45Z",
+      "runner_exit_code": 1,
+      "requests": 206,
+      "input_est_tokens": 114151,
+      "output_est_tokens": 11541,
+      "est_tokens": 125692
+    },
+    {
+      "case_id": "K10",
+      "phase": "main",
+      "finished_at_utc": "2026-10-03T00:13:27Z",
+      "runner_exit_code": 1,
+      "requests": 155,
+      "input_est_tokens": 85812,
+      "output_est_tokens": 8467,
+      "est_tokens": 94279
+    },
+    {
+      "case_id": "K01",
+      "phase": "main",
+      "finished_at_utc": "2026-10-03T05:36:51Z",
+      "runner_exit_code": 1,
+      "requests": 304,
+      "input_est_tokens": 167521,
+      "output_est_tokens": 16101,
+      "est_tokens": 183622
+    },
+    {
+      "case_id": "K02",
+      "phase": "main",
+      "finished_at_utc": "2026-10-03T06:35:53Z",
+      "runner_exit_code": 0,
+      "requests": 186,
+      "input_est_tokens": 102714,
+      "output_est_tokens": 10164,
+      "est_tokens": 112878
+    },
+    {
+      "case_id": "K02",
+      "phase": "rerun",
+      "finished_at_utc": "2026-10-03T07:34:34Z",
+      "runner_exit_code": 1,
+      "requests": 186,
+      "input_est_tokens": 102714,
+      "output_est_tokens": 10134,
+      "est_tokens": 112848
+    }
+  ],
+  "stop": null,
+  "invalidated_entries_note": "2026-10-02: the restart leg of the driver ran WITHOUT the OCR venv (M2-TA3-B-ocr) site-packages on PYTHONPATH, so 6 cases (K07/K09/K10/K01/K02/K02.rerun) produced summaries where every OCR step failed PROVIDER_DEPENDENCY_MISSING with empty text and zero translation. Those 6 ledger entries (all zeros) and the invalid summaries were removed; the summaries are archived under summaries/invalid-env-2026-10-02-ocr-dep-missing/. Driver hardened (runner_env PYTHONPATH injection + ocr_stack_ok fail fast) and the 6 cases re-queued. PROVENANCE (DSH r1 F1): this note was first written at cd76cac0/7aee808d, then overwritten by driver A's in-memory ledger state during its final ledger_append (driver loads the ledger once at startup and rewrites the file wholesale); restored verbatim at review-fix with an extra 7aee808d-era spurious duplicate-driver K09 entry also having been purged (DSH r1 F5)."
+}

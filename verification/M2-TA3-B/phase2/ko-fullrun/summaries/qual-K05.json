@@ -1,0 +1,5473 @@
+{
+  "task": "M2-TA3-B2",
+  "case_id": "K05",
+  "rerun_suffix": "",
+  "language": "ko",
+  "family": "hf_cleaned_webtoon",
+  "tags": [
+    "complex_background"
+  ],
+  "text_type": "mixed_unverified",
+  "source_path": "G:\\CODEX\\New Manga\\test_assets\\comic_golden_suite\\韩漫_KO\\01_real_webtoon_cleaned_dataset\\K05_131385_302\\base.png",
+  "source_sha256": "d944f35ee07544920715671a54bb238b0451be0e5f4c76b6b301f67fbd1c448a",
+  "started_at_utc": "2026-10-02T01:07:40Z",
+  "determinism_track": {
+    "declared": "remote",
+    "inferred": "remote",
+    "binding": "openai-compatible-translation -> https://api.deepseek.com/v1 (deepseek-chat)",
+    "rule": "quality-thresholds §5 footnote / CALIB r1 R9: remote sampling provider -> similarity track; mock/deterministic provider -> export sha bitwise track; declaration/binding mismatch -> fail-closed"
+  },
+  "provider_policy": {
+    "detect": "production manga ogkalu (+ chiqui7 SFX, SfxPolicy default SKIP gate)",
+    "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)",
+    "translate": "openai-compatible-translation (DeepSeek, env-var credential resolver re-register) + metering proxy (passthrough)",
+    "sfx_policy": "production default (settings key absent -> SKIP)",
+    "target_language": "zh",
+    "inpaint": "production SimpleFillProvider default",
+    "render/export": "production Qt render + ExportService"
+  },
+  "stages": {
+    "source": {
+      "status": "OK",
+      "width": 690,
+      "height": 46000,
+      "sha256_match": true
+    },
+    "assemble": {
+      "status": "OK",
+      "mode": "production",
+      "detector": "manga-ogkalu+chiqui7-sfx",
+      "device": "cpu"
+    },
+    "providers": {
+      "status": "OK",
+      "translate_readiness": "ready",
+      "ocr": "paddleocr-korean (engine_factory dual-side wrapper re-register)"
+    },
+    "import": {
+      "status": "OK",
+      "page_id": "0ad91bdba2694b81a30a94cbbc58d7aa",
+      "width": 690,
+      "height": 46000
+    },
+    "run1_page_selection": {
+      "status": "COMPLETED",
+      "elapsed_s": 3009.46
+    },
+    "detect": {
+      "status": "OK",
+      "region_count": 62
+    },
+    "crops": {
+      "status": "OK",
+      "saved": 62
+    },
+    "run2_region_chain": {
+      "status": "COMPLETED",
+      "region_runs": 62,
+      "truncated": false,
+      "elapsed_s": 2984.46
+    },
+    "details": {
+      "status": "OK",
+      "ocr": 62,
+      "translated": 62
+    },
+    "export": {
+      "status": "OK",
+      "sha256": "b2950af6b548b543",
+      "size": 14086299
+    }
+  },
+  "run1": {
+    "run_id": "run-957405c90011408482b359a3e1757c74",
+    "status": "completed",
+    "elapsed_s": 3009.46,
+    "steps": [
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "detect",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "render",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "inpaint",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "mask_refine",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "segment",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "color",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "term_extract",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "translate",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      },
+      {
+        "step_type": "ocr",
+        "status": "completed",
+        "error_code": null,
+        "error_detail": ""
+      }
+    ]
+  },
+  "regions": [
+    {
+      "region_id": "2319dc4e5c1c4c7593045ee0a741fca1",
+      "reading_order": 1,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 71,
+        "y": 205,
+        "width": 549,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "c9efcc2859f3440d864d02c16c196b3e",
+      "reading_order": 2,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 285,
+        "y": 750,
+        "width": 342,
+        "height": 108
+      }
+    },
+    {
+      "region_id": "727a61abb63b494991dee3a7e30f7117",
+      "reading_order": 3,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 59,
+        "y": 1143,
+        "width": 335,
+        "height": 56
+      }
+    },
+    {
+      "region_id": "1cf1974c15a748a9a4376dd63cc10c28",
+      "reading_order": 4,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 216,
+        "y": 1241,
+        "width": 377,
+        "height": 173
+      }
+    },
+    {
+      "region_id": "83f8120018ed40d69ec3163527834b08",
+      "reading_order": 5,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 329,
+        "y": 1943,
+        "width": 287,
+        "height": 92
+      }
+    },
+    {
+      "region_id": "4b476b4e5dfd476d8b6c2ccdcbd75492",
+      "reading_order": 6,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 49,
+        "y": 2287,
+        "width": 340,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "f68dd4e7ac404364ad7f527f80f121b5",
+      "reading_order": 7,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 32,
+        "y": 2600,
+        "width": 412,
+        "height": 91
+      }
+    },
+    {
+      "region_id": "cb0335a9900340abaf2d60bca2f69040",
+      "reading_order": 8,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 111,
+        "y": 2751,
+        "width": 309,
+        "height": 51
+      }
+    },
+    {
+      "region_id": "116ecb80c515403d8da1c11e5900df1c",
+      "reading_order": 9,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 335,
+        "y": 3135,
+        "width": 346,
+        "height": 58
+      }
+    },
+    {
+      "region_id": "83cd2b3035c648c19a5ae2e0d9c6173a",
+      "reading_order": 10,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 216,
+        "y": 3536,
+        "width": 332,
+        "height": 132
+      }
+    },
+    {
+      "region_id": "5a8ac2c5aa0b4ed2b82ba89df9e675ab",
+      "reading_order": 11,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 375,
+        "y": 3823,
+        "width": 156,
+        "height": 53
+      }
+    },
+    {
+      "region_id": "74808fa9cd58441886295ab636e32d57",
+      "reading_order": 12,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 116,
+        "y": 4217,
+        "width": 475,
+        "height": 108
+      }
+    },
+    {
+      "region_id": "79c2f382b0da4255a44dcfaf69b922af",
+      "reading_order": 13,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 83,
+        "y": 4976,
+        "width": 326,
+        "height": 58
+      }
+    },
+    {
+      "region_id": "dc55a1186beb47999fa170e495815ee3",
+      "reading_order": 14,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 402,
+        "y": 5195,
+        "width": 69,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "afb27ad427e347a58d1cb2ce066f23bf",
+      "reading_order": 15,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 264,
+        "y": 5652,
+        "width": 325,
+        "height": 93
+      }
+    },
+    {
+      "region_id": "7b203bfe3a8643e0bc5938899a868933",
+      "reading_order": 16,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 201,
+        "y": 5839,
+        "width": 184,
+        "height": 50
+      }
+    },
+    {
+      "region_id": "8e914d6b09074722a4392617cd59690e",
+      "reading_order": 17,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 253,
+        "y": 5972,
+        "width": 185,
+        "height": 49
+      }
+    },
+    {
+      "region_id": "dab4a6b9614e42c9ad4d840f710bfd64",
+      "reading_order": 18,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 389,
+        "y": 6243,
+        "width": 187,
+        "height": 55
+      }
+    },
+    {
+      "region_id": "a1897cb3da5e4640ae688139b9a70533",
+      "reading_order": 19,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 138,
+        "y": 6682,
+        "width": 287,
+        "height": 59
+      }
+    },
+    {
+      "region_id": "27113043be1c43968ef81fcf73048fac",
+      "reading_order": 20,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 6,
+        "y": 11355,
+        "width": 668,
+        "height": 306
+      }
+    },
+    {
+      "region_id": "ccddf549d6664f188e31a72c72c267c8",
+      "reading_order": 21,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 122,
+        "y": 11618,
+        "width": 442,
+        "height": 75
+      }
+    },
+    {
+      "region_id": "9dbdd179336b4608bd8c24fca41634d1",
+      "reading_order": 22,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 163,
+        "y": 11976,
+        "width": 351,
+        "height": 205
+      }
+    },
+    {
+      "region_id": "6707f4870a434319a5f770efcb1ec9aa",
+      "reading_order": 23,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 247,
+        "y": 11984,
+        "width": 185,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "47f09daf287649b7b4ab43e308adff05",
+      "reading_order": 24,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 167,
+        "y": 12078,
+        "width": 343,
+        "height": 92
+      }
+    },
+    {
+      "region_id": "6031e55c85214674b73b8e0a86c28d73",
+      "reading_order": 25,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 99,
+        "y": 13046,
+        "width": 322,
+        "height": 62
+      }
+    },
+    {
+      "region_id": "1ed00919ab544b9793b90b04c0561b8f",
+      "reading_order": 26,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 243,
+        "y": 13388,
+        "width": 433,
+        "height": 99
+      }
+    },
+    {
+      "region_id": "f1e64fe69c0d492294e53a2e2e038b9b",
+      "reading_order": 27,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 45,
+        "y": 16079,
+        "width": 626,
+        "height": 183
+      }
+    },
+    {
+      "region_id": "e80e37591b1b4e40b9d2037120156265",
+      "reading_order": 28,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 169,
+        "y": 19010,
+        "width": 366,
+        "height": 106
+      }
+    },
+    {
+      "region_id": "242effdfb2c142abbc2754b0c48b4560",
+      "reading_order": 29,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 134,
+        "y": 21658,
+        "width": 72,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "849c4e4d587b4520914a274c3064baa8",
+      "reading_order": 30,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 301,
+        "y": 22035,
+        "width": 165,
+        "height": 52
+      }
+    },
+    {
+      "region_id": "5b0090cb96904cf491e6173e898739af",
+      "reading_order": 31,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 83,
+        "y": 23330,
+        "width": 231,
+        "height": 57
+      }
+    },
+    {
+      "region_id": "d44fd545737d41ec8a37c829149c0df2",
+      "reading_order": 32,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 176,
+        "y": 23944,
+        "width": 339,
+        "height": 59
+      }
+    },
+    {
+      "region_id": "de0b85c251254990a46b25dcecbb51a0",
+      "reading_order": 33,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 178,
+        "y": 24892,
+        "width": 392,
+        "height": 108
+      }
+    },
+    {
+      "region_id": "4246f551d89c4f16881c8a4254ecfd07",
+      "reading_order": 34,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 97,
+        "y": 25634,
+        "width": 372,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "97c0f67aa37d42c6992c98e778456470",
+      "reading_order": 35,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 164,
+        "y": 26227,
+        "width": 71,
+        "height": 58
+      }
+    },
+    {
+      "region_id": "e42aee47db9247c793e80b4a1750612c",
+      "reading_order": 36,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 167,
+        "y": 26657,
+        "width": 72,
+        "height": 48
+      }
+    },
+    {
+      "region_id": "9d15194fd8c042f692ca9faf12134f10",
+      "reading_order": 37,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 218,
+        "y": 26974,
+        "width": 255,
+        "height": 54
+      }
+    },
+    {
+      "region_id": "db2ae92a3309454cb963d3a8a1baa351",
+      "reading_order": 38,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 229,
+        "y": 27532,
+        "width": 407,
+        "height": 174
+      }
+    },
+    {
+      "region_id": "68449f8670db4783a4c430ac8748ffa6",
+      "reading_order": 39,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 81,
+        "y": 28363,
+        "width": 541,
+        "height": 60
+      }
+    },
+    {
+      "region_id": "c29cc1c33d7e4805aff13ead4c1f1462",
+      "reading_order": 40,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 38,
+        "y": 28680,
+        "width": 375,
+        "height": 67
+      }
+    },
+    {
+      "region_id": "78c8bbc369704e0e9788b4f0b4b8545c",
+      "reading_order": 41,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 182,
+        "y": 29257,
+        "width": 337,
+        "height": 69
+      }
+    },
+    {
+      "region_id": "c450b3b910ca46bca7dc1d5cfa750ddc",
+      "reading_order": 42,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 202,
+        "y": 29799,
+        "width": 456,
+        "height": 115
+      }
+    },
+    {
+      "region_id": "8aafac6c59f54a2da1a161ceea99d4ae",
+      "reading_order": 43,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 98,
+        "y": 30053,
+        "width": 557,
+        "height": 108
+      }
+    },
+    {
+      "region_id": "7a4317fe76d04c32bec9932f31f63b86",
+      "reading_order": 44,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 316,
+        "y": 31608,
+        "width": 286,
+        "height": 92
+      }
+    },
+    {
+      "region_id": "82cd8ed118994232ae1a44bff0a3f374",
+      "reading_order": 45,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 86,
+        "y": 32547,
+        "width": 306,
+        "height": 73
+      }
+    },
+    {
+      "region_id": "ad19eeb0305749499584ac9922b2a2fd",
+      "reading_order": 46,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 185,
+        "y": 38637,
+        "width": 356,
+        "height": 107
+      }
+    },
+    {
+      "region_id": "8dc6164626f44aa1a683bbada7a56646",
+      "reading_order": 47,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 44,
+        "y": 39329,
+        "width": 298,
+        "height": 72
+      }
+    },
+    {
+      "region_id": "9b079245528d44e290c803a60dd63582",
+      "reading_order": 48,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 259,
+        "y": 39517,
+        "width": 412,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "4eeb1b395ab64d13a48d791f7107621c",
+      "reading_order": 49,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 63,
+        "y": 40142,
+        "width": 379,
+        "height": 101
+      }
+    },
+    {
+      "region_id": "eeb9e916459a4ae8a72ba92383052b6b",
+      "reading_order": 50,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 451,
+        "y": 40360,
+        "width": 96,
+        "height": 64
+      }
+    },
+    {
+      "region_id": "fc868e0e8f4346a5aacf9ace46bd1eb8",
+      "reading_order": 51,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 124,
+        "y": 40539,
+        "width": 452,
+        "height": 150
+      }
+    },
+    {
+      "region_id": "979384dc74944a6b91040eecf4bf511b",
+      "reading_order": 52,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 63,
+        "y": 40697,
+        "width": 435,
+        "height": 115
+      }
+    },
+    {
+      "region_id": "b76e54ca57d64ecea5c6e330d4dbd28c",
+      "reading_order": 53,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 138,
+        "y": 41305,
+        "width": 269,
+        "height": 65
+      }
+    },
+    {
+      "region_id": "a34b584ee4334d5392ea4563e89e6de9",
+      "reading_order": 54,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 202,
+        "y": 41657,
+        "width": 438,
+        "height": 105
+      }
+    },
+    {
+      "region_id": "14b2e113c50847b5a8b5acbdbb113b2b",
+      "reading_order": 55,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 138,
+        "y": 42132,
+        "width": 417,
+        "height": 73
+      }
+    },
+    {
+      "region_id": "16109257055d421d99842a45632ee7f1",
+      "reading_order": 56,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 92,
+        "y": 42569,
+        "width": 498,
+        "height": 111
+      }
+    },
+    {
+      "region_id": "45eb4c2dcc8e49bdb7d4c7ae836f7fb7",
+      "reading_order": 57,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 46,
+        "y": 43295,
+        "width": 423,
+        "height": 145
+      }
+    },
+    {
+      "region_id": "62aba55a18084da691e3c8b4d1113e20",
+      "reading_order": 58,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 177,
+        "y": 43464,
+        "width": 375,
+        "height": 109
+      }
+    },
+    {
+      "region_id": "7f08ed78a53b435b8e64f82bc8baeafd",
+      "reading_order": 59,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 107,
+        "y": 44928,
+        "width": 486,
+        "height": 71
+      }
+    },
+    {
+      "region_id": "ee274876c3814945a2e603a98c6ce391",
+      "reading_order": 60,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 235,
+        "y": 45465,
+        "width": 229,
+        "height": 55
+      }
+    },
+    {
+      "region_id": "4462ad2cc24043c6b166bd032216bba3",
+      "reading_order": 61,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 219,
+        "y": 45789,
+        "width": 463,
+        "height": 193
+      }
+    },
+    {
+      "region_id": "43aac7231f32465bab5a672cf1dc7fbf",
+      "reading_order": 62,
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "bbox": {
+        "x": 314,
+        "y": 45791,
+        "width": 362,
+        "height": 39
+      }
+    }
+  ],
+  "run2": {
+    "command": "RETRANSLATE_REGION_FULL",
+    "status": "completed",
+    "region_target_count": 62,
+    "region_runs_executed": 62,
+    "truncated": false,
+    "max_regions": null,
+    "per_region": [
+      {
+        "region_id": "2319dc4e5c1c4c7593045ee0a741fca1",
+        "run_id": "run-b64667825fa8429ab36ce573647845d3",
+        "status": "completed"
+      },
+      {
+        "region_id": "c9efcc2859f3440d864d02c16c196b3e",
+        "run_id": "run-3f1c6ce319ec4db19f37d3c894b77afe",
+        "status": "completed"
+      },
+      {
+        "region_id": "727a61abb63b494991dee3a7e30f7117",
+        "run_id": "run-7a4ac33e91c2439cac393f17dd4124d7",
+        "status": "completed"
+      },
+      {
+        "region_id": "1cf1974c15a748a9a4376dd63cc10c28",
+        "run_id": "run-3e5b457784bf42ddb37725972c25b17a",
+        "status": "completed"
+      },
+      {
+        "region_id": "83f8120018ed40d69ec3163527834b08",
+        "run_id": "run-3d34d235fcce41f4af41e761321aca73",
+        "status": "completed"
+      },
+      {
+        "region_id": "4b476b4e5dfd476d8b6c2ccdcbd75492",
+        "run_id": "run-190efcbc0a5d431ea74bb47a0ab0b4c0",
+        "status": "completed"
+      },
+      {
+        "region_id": "f68dd4e7ac404364ad7f527f80f121b5",
+        "run_id": "run-4c599681ec0b43949e3075e3052f071b",
+        "status": "completed"
+      },
+      {
+        "region_id": "cb0335a9900340abaf2d60bca2f69040",
+        "run_id": "run-d34d191f137f4e118e4faaf0729515ad",
+        "status": "completed"
+      },
+      {
+        "region_id": "116ecb80c515403d8da1c11e5900df1c",
+        "run_id": "run-4dc63244c06c4113ac8a5c39d5018ba7",
+        "status": "completed"
+      },
+      {
+        "region_id": "83cd2b3035c648c19a5ae2e0d9c6173a",
+        "run_id": "run-c15af0f4e2064b938bc4ab3fc99c0b42",
+        "status": "completed"
+      },
+      {
+        "region_id": "5a8ac2c5aa0b4ed2b82ba89df9e675ab",
+        "run_id": "run-271adc0e70ca4523a99faa0636f9ad9a",
+        "status": "completed"
+      },
+      {
+        "region_id": "74808fa9cd58441886295ab636e32d57",
+        "run_id": "run-acc5960b9e064e89a42bce981a298b92",
+        "status": "completed"
+      },
+      {
+        "region_id": "79c2f382b0da4255a44dcfaf69b922af",
+        "run_id": "run-0b996c619f674b76996a48b78470fcf1",
+        "status": "completed"
+      },
+      {
+        "region_id": "dc55a1186beb47999fa170e495815ee3",
+        "run_id": "run-2fe924e2146041e9b659684d6e81ad25",
+        "status": "completed"
+      },
+      {
+        "region_id": "afb27ad427e347a58d1cb2ce066f23bf",
+        "run_id": "run-21cabf2324cb461fb22e43f55e335b6a",
+        "status": "completed"
+      },
+      {
+        "region_id": "7b203bfe3a8643e0bc5938899a868933",
+        "run_id": "run-641b6bde467b4a8aad50d1afdc8294fc",
+        "status": "completed"
+      },
+      {
+        "region_id": "8e914d6b09074722a4392617cd59690e",
+        "run_id": "run-0d5cfadeda7e477595f2c8a241bd44f0",
+        "status": "completed"
+      },
+      {
+        "region_id": "dab4a6b9614e42c9ad4d840f710bfd64",
+        "run_id": "run-49c8387778af406c9d259962db5603c4",
+        "status": "completed"
+      },
+      {
+        "region_id": "a1897cb3da5e4640ae688139b9a70533",
+        "run_id": "run-d93a4d827b34461f9df2daf3df13af9f",
+        "status": "completed"
+      },
+      {
+        "region_id": "27113043be1c43968ef81fcf73048fac",
+        "run_id": "run-618e17a761e14b7ca808bc096d978be6",
+        "status": "completed"
+      },
+      {
+        "region_id": "ccddf549d6664f188e31a72c72c267c8",
+        "run_id": "run-182bd6021b034f4e91a51deec24e47aa",
+        "status": "completed"
+      },
+      {
+        "region_id": "9dbdd179336b4608bd8c24fca41634d1",
+        "run_id": "run-8a77d26ff7bc45ebb3010e985bf6d67a",
+        "status": "completed"
+      },
+      {
+        "region_id": "6707f4870a434319a5f770efcb1ec9aa",
+        "run_id": "run-039f8a21574246dfb479a79715825cb0",
+        "status": "completed"
+      },
+      {
+        "region_id": "47f09daf287649b7b4ab43e308adff05",
+        "run_id": "run-7b26001552f94a85b54a75b0379edbd1",
+        "status": "completed"
+      },
+      {
+        "region_id": "6031e55c85214674b73b8e0a86c28d73",
+        "run_id": "run-aa10ceb1ab7e45f2989f1638e87b3864",
+        "status": "completed"
+      },
+      {
+        "region_id": "1ed00919ab544b9793b90b04c0561b8f",
+        "run_id": "run-145f37d4b6fb42aaa05aab50a5533fc7",
+        "status": "completed"
+      },
+      {
+        "region_id": "f1e64fe69c0d492294e53a2e2e038b9b",
+        "run_id": "run-f51291c60ea54f09b27e9386624e0b82",
+        "status": "completed"
+      },
+      {
+        "region_id": "e80e37591b1b4e40b9d2037120156265",
+        "run_id": "run-4b1cd6897732401bb0527a1063e2b170",
+        "status": "completed"
+      },
+      {
+        "region_id": "242effdfb2c142abbc2754b0c48b4560",
+        "run_id": "run-95f8d3408f224815a832bd2d0052032d",
+        "status": "completed"
+      },
+      {
+        "region_id": "849c4e4d587b4520914a274c3064baa8",
+        "run_id": "run-90fb0cb6a9f74989b0a811d82fd4edbf",
+        "status": "completed"
+      },
+      {
+        "region_id": "5b0090cb96904cf491e6173e898739af",
+        "run_id": "run-8e7de2b2c8b1412ca3a0260798d2b03d",
+        "status": "completed"
+      },
+      {
+        "region_id": "d44fd545737d41ec8a37c829149c0df2",
+        "run_id": "run-7550f5d782e64aff822c166facd029fd",
+        "status": "completed"
+      },
+      {
+        "region_id": "de0b85c251254990a46b25dcecbb51a0",
+        "run_id": "run-13d2a37f82454a56963f2b6bd66f84b5",
+        "status": "completed"
+      },
+      {
+        "region_id": "4246f551d89c4f16881c8a4254ecfd07",
+        "run_id": "run-a6502e6a15974d2f80debaf5d6709ec4",
+        "status": "completed"
+      },
+      {
+        "region_id": "97c0f67aa37d42c6992c98e778456470",
+        "run_id": "run-b76e2d90dbe04c5984c2cfe99ab003b9",
+        "status": "completed"
+      },
+      {
+        "region_id": "e42aee47db9247c793e80b4a1750612c",
+        "run_id": "run-9f278692417d42a4ba445533a8f8e756",
+        "status": "completed"
+      },
+      {
+        "region_id": "9d15194fd8c042f692ca9faf12134f10",
+        "run_id": "run-d09b65bd35854ef9ba1305d0caacea23",
+        "status": "completed"
+      },
+      {
+        "region_id": "db2ae92a3309454cb963d3a8a1baa351",
+        "run_id": "run-20bfebeafe21488481fcdaced5b54564",
+        "status": "completed"
+      },
+      {
+        "region_id": "68449f8670db4783a4c430ac8748ffa6",
+        "run_id": "run-4bd3b8b682d9423ab459510a4d9f73f1",
+        "status": "completed"
+      },
+      {
+        "region_id": "c29cc1c33d7e4805aff13ead4c1f1462",
+        "run_id": "run-33165794d5e145b5a860a87892e6dd6e",
+        "status": "completed"
+      },
+      {
+        "region_id": "78c8bbc369704e0e9788b4f0b4b8545c",
+        "run_id": "run-90f796a5adb94c18a1e73dfaf3ac6188",
+        "status": "completed"
+      },
+      {
+        "region_id": "c450b3b910ca46bca7dc1d5cfa750ddc",
+        "run_id": "run-ffd3642de3724a4a8ea6d89d8ddb1377",
+        "status": "completed"
+      },
+      {
+        "region_id": "8aafac6c59f54a2da1a161ceea99d4ae",
+        "run_id": "run-b5c329abd984486891ddc5e581bdda7e",
+        "status": "completed"
+      },
+      {
+        "region_id": "7a4317fe76d04c32bec9932f31f63b86",
+        "run_id": "run-453b3c9efc5546b2aa53b1a89c925cad",
+        "status": "completed"
+      },
+      {
+        "region_id": "82cd8ed118994232ae1a44bff0a3f374",
+        "run_id": "run-df1251130de34d31bc2a2f319bca91d2",
+        "status": "completed"
+      },
+      {
+        "region_id": "ad19eeb0305749499584ac9922b2a2fd",
+        "run_id": "run-fbb0a3b50d5c4289a8c6a55342b7719d",
+        "status": "completed"
+      },
+      {
+        "region_id": "8dc6164626f44aa1a683bbada7a56646",
+        "run_id": "run-469e949189aa4796b230569d7468a555",
+        "status": "completed"
+      },
+      {
+        "region_id": "9b079245528d44e290c803a60dd63582",
+        "run_id": "run-6e9e748817ea4aac80683f5c2daef7cc",
+        "status": "completed"
+      },
+      {
+        "region_id": "4eeb1b395ab64d13a48d791f7107621c",
+        "run_id": "run-59b73e4a8cc24901a90c2bf80b718a39",
+        "status": "completed"
+      },
+      {
+        "region_id": "eeb9e916459a4ae8a72ba92383052b6b",
+        "run_id": "run-c9f51ef80219406596660f489fc6c3ba",
+        "status": "completed"
+      },
+      {
+        "region_id": "fc868e0e8f4346a5aacf9ace46bd1eb8",
+        "run_id": "run-775d2d380103473386466a8634d83018",
+        "status": "completed"
+      },
+      {
+        "region_id": "979384dc74944a6b91040eecf4bf511b",
+        "run_id": "run-a80eb537f7ca4ab6a57d31275287f6d3",
+        "status": "completed"
+      },
+      {
+        "region_id": "b76e54ca57d64ecea5c6e330d4dbd28c",
+        "run_id": "run-66b44fba8be2489eae4d01865be91776",
+        "status": "completed"
+      },
+      {
+        "region_id": "a34b584ee4334d5392ea4563e89e6de9",
+        "run_id": "run-a73d249238c24774b9f68c743df2d5ab",
+        "status": "completed"
+      },
+      {
+        "region_id": "14b2e113c50847b5a8b5acbdbb113b2b",
+        "run_id": "run-3a5fcef1bfe74f3fbb1186abff4fc539",
+        "status": "completed"
+      },
+      {
+        "region_id": "16109257055d421d99842a45632ee7f1",
+        "run_id": "run-c924b4fc893a473fb85705a51921621c",
+        "status": "completed"
+      },
+      {
+        "region_id": "45eb4c2dcc8e49bdb7d4c7ae836f7fb7",
+        "run_id": "run-251a141ac9eb4af0a22908ea526eed38",
+        "status": "completed"
+      },
+      {
+        "region_id": "62aba55a18084da691e3c8b4d1113e20",
+        "run_id": "run-85ba6617c9b945de9766c5e9fc91578f",
+        "status": "completed"
+      },
+      {
+        "region_id": "7f08ed78a53b435b8e64f82bc8baeafd",
+        "run_id": "run-74035f9825b84a26820d0840b11abd6a",
+        "status": "completed"
+      },
+      {
+        "region_id": "ee274876c3814945a2e603a98c6ce391",
+        "run_id": "run-cfbd90b2d5354c0fbb3b06709dfa7707",
+        "status": "completed"
+      },
+      {
+        "region_id": "4462ad2cc24043c6b166bd032216bba3",
+        "run_id": "run-e524c93a2499442583dbcb9cf89db320",
+        "status": "completed"
+      },
+      {
+        "region_id": "43aac7231f32465bab5a672cf1dc7fbf",
+        "run_id": "run-0ecab72c557f41719600e51e2b35e465",
+        "status": "completed"
+      }
+    ],
+    "elapsed_s": 2984.46
+  },
+  "ocr_details": [
+    {
+      "region_id": "2319dc4e5c1c4c7593045ee0a741fca1",
+      "reading_order": 1,
+      "region_type": "speech",
+      "bbox": {
+        "x": 71,
+        "y": 205,
+        "width": 549,
+        "height": 65
+      },
+      "ocr_text": "하프인 척 하려면 그냥 이대로 버티는 게 최선이다."
+    },
+    {
+      "region_id": "c9efcc2859f3440d864d02c16c196b3e",
+      "reading_order": 2,
+      "region_type": "speech",
+      "bbox": {
+        "x": 285,
+        "y": 750,
+        "width": 342,
+        "height": 108
+      },
+      "ocr_text": "다른 놈들이 다같이 공격해서\n빨리 처치해주길 바랄 수밖에."
+    },
+    {
+      "region_id": "727a61abb63b494991dee3a7e30f7117",
+      "reading_order": 3,
+      "region_type": "speech",
+      "bbox": {
+        "x": 59,
+        "y": 1143,
+        "width": 335,
+        "height": 56
+      },
+      "ocr_text": "사체 안에서 또 다른 수라가"
+    },
+    {
+      "region_id": "1cf1974c15a748a9a4376dd63cc10c28",
+      "reading_order": 4,
+      "region_type": "speech",
+      "bbox": {
+        "x": 216,
+        "y": 1241,
+        "width": 377,
+        "height": 173
+      },
+      "ocr_text": "다들,그냥 놔두면\n또 다른 놈들이 튀어나올지 모르니\n나머지 사체를 태우든가\n완전히 조각내!"
+    },
+    {
+      "region_id": "83f8120018ed40d69ec3163527834b08",
+      "reading_order": 5,
+      "region_type": "speech",
+      "bbox": {
+        "x": 329,
+        "y": 1943,
+        "width": 287,
+        "height": 92
+      },
+      "ocr_text": "이 놈은 나 혼자 공격해도\n충분해 보이니까!"
+    },
+    {
+      "region_id": "4b476b4e5dfd476d8b6c2ccdcbd75492",
+      "reading_order": 6,
+      "region_type": "speech",
+      "bbox": {
+        "x": 49,
+        "y": 2287,
+        "width": 340,
+        "height": 52
+      },
+      "ocr_text": "미쳤나?이걸 혼자 잡겠다고?"
+    },
+    {
+      "region_id": "f68dd4e7ac404364ad7f527f80f121b5",
+      "reading_order": 7,
+      "region_type": "speech",
+      "bbox": {
+        "x": 32,
+        "y": 2600,
+        "width": 412,
+        "height": 91
+      },
+      "ocr_text": "하긴,하프 혼자 막아낼 정도면\n테오님 혼자서도 충분히 잡으실 거야."
+    },
+    {
+      "region_id": "cb0335a9900340abaf2d60bca2f69040",
+      "reading_order": 8,
+      "region_type": "speech",
+      "bbox": {
+        "x": 111,
+        "y": 2751,
+        "width": 309,
+        "height": 51
+      },
+      "ocr_text": "우린 다른 시체들 처리하자."
+    },
+    {
+      "region_id": "116ecb80c515403d8da1c11e5900df1c",
+      "reading_order": 9,
+      "region_type": "speech",
+      "bbox": {
+        "x": 335,
+        "y": 3135,
+        "width": 346,
+        "height": 58
+      },
+      "ocr_text": "아니야.그거 아니라고!젠장!!"
+    },
+    {
+      "region_id": "83cd2b3035c648c19a5ae2e0d9c6173a",
+      "reading_order": 10,
+      "region_type": "speech",
+      "bbox": {
+        "x": 216,
+        "y": 3536,
+        "width": 332,
+        "height": 132
+      },
+      "ocr_text": "뭘 멍하니 있는 거야?파르!\n다른 사체들 처리할 거 아니면\n테오님이라도 도와드려."
+    },
+    {
+      "region_id": "5a8ac2c5aa0b4ed2b82ba89df9e675ab",
+      "reading_order": 11,
+      "region_type": "speech",
+      "bbox": {
+        "x": 375,
+        "y": 3823,
+        "width": 156,
+        "height": 53
+      },
+      "ocr_text": "아알았어"
+    },
+    {
+      "region_id": "74808fa9cd58441886295ab636e32d57",
+      "reading_order": 12,
+      "region_type": "speech",
+      "bbox": {
+        "x": 116,
+        "y": 4217,
+        "width": 475,
+        "height": 108
+      },
+      "ocr_text": "그냥 털색깔만 비슷한 정도겠지?\n그런 놈이여기서 하프들과 살고 있을 리가."
+    },
+    {
+      "region_id": "79c2f382b0da4255a44dcfaf69b922af",
+      "reading_order": 13,
+      "region_type": "speech",
+      "bbox": {
+        "x": 83,
+        "y": 4976,
+        "width": 326,
+        "height": 58
+      },
+      "ocr_text": "호티 쿠베라(hoti kubera)!"
+    },
+    {
+      "region_id": "dc55a1186beb47999fa170e495815ee3",
+      "reading_order": 14,
+      "region_type": "speech",
+      "bbox": {
+        "x": 402,
+        "y": 5195,
+        "width": 69,
+        "height": 52
+      },
+      "ocr_text": "?"
+    },
+    {
+      "region_id": "afb27ad427e347a58d1cb2ce066f23bf",
+      "reading_order": 15,
+      "region_type": "speech",
+      "bbox": {
+        "x": 264,
+        "y": 5652,
+        "width": 325,
+        "height": 93
+      },
+      "ocr_text": "호티 쿠베라(hoti kubera)!\n호티 쿠베라(hoti kubera)!"
+    },
+    {
+      "region_id": "7b203bfe3a8643e0bc5938899a868933",
+      "reading_order": 16,
+      "region_type": "speech",
+      "bbox": {
+        "x": 201,
+        "y": 5839,
+        "width": 184,
+        "height": 50
+      },
+      "ocr_text": "??마법이"
+    },
+    {
+      "region_id": "8e914d6b09074722a4392617cd59690e",
+      "reading_order": 17,
+      "region_type": "speech",
+      "bbox": {
+        "x": 253,
+        "y": 5972,
+        "width": 185,
+        "height": 49
+      },
+      "ocr_text": "초월기도 안 돼."
+    },
+    {
+      "region_id": "dab4a6b9614e42c9ad4d840f710bfd64",
+      "reading_order": 18,
+      "region_type": "speech",
+      "bbox": {
+        "x": 389,
+        "y": 6243,
+        "width": 187,
+        "height": 55
+      },
+      "ocr_text": "뭐야. 왜 이래?"
+    },
+    {
+      "region_id": "a1897cb3da5e4640ae688139b9a70533",
+      "reading_order": 19,
+      "region_type": "speech",
+      "bbox": {
+        "x": 138,
+        "y": 6682,
+        "width": 287,
+        "height": 59
+      },
+      "ocr_text": "마법이 안 된다고?설마."
+    },
+    {
+      "region_id": "27113043be1c43968ef81fcf73048fac",
+      "reading_order": 20,
+      "region_type": "speech",
+      "bbox": {
+        "x": 6,
+        "y": 11355,
+        "width": 668,
+        "height": 306
+      },
+      "ocr_text": "KOBRA\nOne Last\nt God"
+    },
+    {
+      "region_id": "ccddf549d6664f188e31a72c72c267c8",
+      "reading_order": 21,
+      "region_type": "speech",
+      "bbox": {
+        "x": 122,
+        "y": 11618,
+        "width": 442,
+        "height": 75
+      },
+      "ocr_text": "Story & Art by currygom"
+    },
+    {
+      "region_id": "9dbdd179336b4608bd8c24fca41634d1",
+      "reading_order": 22,
+      "region_type": "speech",
+      "bbox": {
+        "x": 163,
+        "y": 11976,
+        "width": 351,
+        "height": 205
+      },
+      "ocr_text": "3부11화\n시작, 또 다시(6)"
+    },
+    {
+      "region_id": "6707f4870a434319a5f770efcb1ec9aa",
+      "reading_order": 23,
+      "region_type": "speech",
+      "bbox": {
+        "x": 247,
+        "y": 11984,
+        "width": 185,
+        "height": 65
+      },
+      "ocr_text": "3부11화"
+    },
+    {
+      "region_id": "47f09daf287649b7b4ab43e308adff05",
+      "reading_order": 24,
+      "region_type": "speech",
+      "bbox": {
+        "x": 167,
+        "y": 12078,
+        "width": 343,
+        "height": 92
+      },
+      "ocr_text": "시작, 또다시(6)"
+    },
+    {
+      "region_id": "6031e55c85214674b73b8e0a86c28d73",
+      "reading_order": 25,
+      "region_type": "speech",
+      "bbox": {
+        "x": 99,
+        "y": 13046,
+        "width": 322,
+        "height": 62
+      },
+      "ocr_text": "저 놈날 일부러지나쳤어."
+    },
+    {
+      "region_id": "1ed00919ab544b9793b90b04c0561b8f",
+      "reading_order": 26,
+      "region_type": "speech",
+      "bbox": {
+        "x": 243,
+        "y": 13388,
+        "width": 433,
+        "height": 99
+      },
+      "ocr_text": "라크샤사인 걸 알아보고 피하는 건가?\n그게 아니면"
+    },
+    {
+      "region_id": "f1e64fe69c0d492294e53a2e2e038b9b",
+      "reading_order": 27,
+      "region_type": "speech",
+      "bbox": {
+        "x": 45,
+        "y": 16079,
+        "width": 626,
+        "height": 183
+      },
+      "ocr_text": "칸\n코"
+    },
+    {
+      "region_id": "e80e37591b1b4e40b9d2037120156265",
+      "reading_order": 28,
+      "region_type": "speech",
+      "bbox": {
+        "x": 169,
+        "y": 19010,
+        "width": 366,
+        "height": 106
+      },
+      "ocr_text": "가까이서보니까 더 비슷하잖아\n우연히 저렇게 닭을 수가있나?"
+    },
+    {
+      "region_id": "242effdfb2c142abbc2754b0c48b4560",
+      "reading_order": 29,
+      "region_type": "speech",
+      "bbox": {
+        "x": 134,
+        "y": 21658,
+        "width": 72,
+        "height": 48
+      },
+      "ocr_text": "테"
+    },
+    {
+      "region_id": "849c4e4d587b4520914a274c3064baa8",
+      "reading_order": 30,
+      "region_type": "speech",
+      "bbox": {
+        "x": 301,
+        "y": 22035,
+        "width": 165,
+        "height": 52
+      },
+      "ocr_text": "피해,꼬마야."
+    },
+    {
+      "region_id": "5b0090cb96904cf491e6173e898739af",
+      "reading_order": 31,
+      "region_type": "speech",
+      "bbox": {
+        "x": 83,
+        "y": 23330,
+        "width": 231,
+        "height": 57
+      },
+      "ocr_text": "거치적 거리지 말고"
+    },
+    {
+      "region_id": "d44fd545737d41ec8a37c829149c0df2",
+      "reading_order": 32,
+      "region_type": "speech",
+      "bbox": {
+        "x": 176,
+        "y": 23944,
+        "width": 339,
+        "height": 59
+      },
+      "ocr_text": "네가있어야 할 자리로 가라고."
+    },
+    {
+      "region_id": "de0b85c251254990a46b25dcecbb51a0",
+      "reading_order": 33,
+      "region_type": "speech",
+      "bbox": {
+        "x": 178,
+        "y": 24892,
+        "width": 392,
+        "height": 108
+      },
+      "ocr_text": "맞습니다 피하십시오\n이 높은 당신을 노리는 것 같으니"
+    },
+    {
+      "region_id": "4246f551d89c4f16881c8a4254ecfd07",
+      "reading_order": 34,
+      "region_type": "speech",
+      "bbox": {
+        "x": 97,
+        "y": 25634,
+        "width": 372,
+        "height": 64
+      },
+      "ocr_text": "나보단 인간들이 먼저 피해야해."
+    },
+    {
+      "region_id": "97c0f67aa37d42c6992c98e778456470",
+      "reading_order": 35,
+      "region_type": "speech",
+      "bbox": {
+        "x": 164,
+        "y": 26227,
+        "width": 71,
+        "height": 58
+      },
+      "ocr_text": "네?"
+    },
+    {
+      "region_id": "e42aee47db9247c793e80b4a1750612c",
+      "reading_order": 36,
+      "region_type": "speech",
+      "bbox": {
+        "x": 167,
+        "y": 26657,
+        "width": 72,
+        "height": 48
+      },
+      "ocr_text": "테.."
+    },
+    {
+      "region_id": "9d15194fd8c042f692ca9faf12134f10",
+      "reading_order": 37,
+      "region_type": "speech",
+      "bbox": {
+        "x": 218,
+        "y": 26974,
+        "width": 255,
+        "height": 54
+      },
+      "ocr_text": "테오님부터 피하세요!"
+    },
+    {
+      "region_id": "db2ae92a3309454cb963d3a8a1baa351",
+      "reading_order": 38,
+      "region_type": "speech",
+      "bbox": {
+        "x": 229,
+        "y": 27532,
+        "width": 407,
+        "height": 174
+      },
+      "ocr_text": "전 옛날에 봐서 알아요.\n저렇게 생긴 수라는\n마법과 초월기를 무효화하기 때문에\n지금 이 인원만으론 잡을 수 없어요."
+    },
+    {
+      "region_id": "68449f8670db4783a4c430ac8748ffa6",
+      "reading_order": 39,
+      "region_type": "speech",
+      "bbox": {
+        "x": 81,
+        "y": 28363,
+        "width": 541,
+        "height": 60
+      },
+      "ocr_text": "일단 도시로 가서 재정비한 후에 다시 잡더라도"
+    },
+    {
+      "region_id": "c29cc1c33d7e4805aff13ead4c1f1462",
+      "reading_order": 40,
+      "region_type": "speech",
+      "bbox": {
+        "x": 38,
+        "y": 28680,
+        "width": 375,
+        "height": 67
+      },
+      "ocr_text": "지금뭐하는겁니까 간다르바"
+    },
+    {
+      "region_id": "78c8bbc369704e0e9788b4f0b4b8545c",
+      "reading_order": 41,
+      "region_type": "speech",
+      "bbox": {
+        "x": 182,
+        "y": 29257,
+        "width": 337,
+        "height": 69
+      },
+      "ocr_text": "보면 몰라?설득하는 거잖아."
+    },
+    {
+      "region_id": "c450b3b910ca46bca7dc1d5cfa750ddc",
+      "reading_order": 42,
+      "region_type": "speech",
+      "bbox": {
+        "x": 202,
+        "y": 29799,
+        "width": 456,
+        "height": 115
+      },
+      "ocr_text": "내가인간들을 도시로 가게 할 테니\n그다음에 마루나 네가수라화해서 잡아."
+    },
+    {
+      "region_id": "8aafac6c59f54a2da1a161ceea99d4ae",
+      "reading_order": 43,
+      "region_type": "speech",
+      "bbox": {
+        "x": 98,
+        "y": 30053,
+        "width": 557,
+        "height": 108
+      },
+      "ocr_text": "그방법밖에 없다.초월기가안 통하는놈을 상대로\n이인간들을 모두 보호하려면"
+    },
+    {
+      "region_id": "7a4317fe76d04c32bec9932f31f63b86",
+      "reading_order": 44,
+      "region_type": "speech",
+      "bbox": {
+        "x": 316,
+        "y": 31608,
+        "width": 286,
+        "height": 92
+      },
+      "ocr_text": "!떨어져!\n촉수로 변이하는 형태다!"
+    },
+    {
+      "region_id": "82cd8ed118994232ae1a44bff0a3f374",
+      "reading_order": 45,
+      "region_type": "speech",
+      "bbox": {
+        "x": 86,
+        "y": 32547,
+        "width": 306,
+        "height": 73
+      },
+      "ocr_text": "거기 너도,피해!!"
+    },
+    {
+      "region_id": "ad19eeb0305749499584ac9922b2a2fd",
+      "reading_order": 46,
+      "region_type": "speech",
+      "bbox": {
+        "x": 185,
+        "y": 38637,
+        "width": 356,
+        "height": 107
+      },
+      "ocr_text": "뭐.뭐하는짓이야?\n여기서 날개를 드러내 버리면"
+    },
+    {
+      "region_id": "8dc6164626f44aa1a683bbada7a56646",
+      "reading_order": 47,
+      "region_type": "speech",
+      "bbox": {
+        "x": 44,
+        "y": 39329,
+        "width": 298,
+        "height": 72
+      },
+      "ocr_text": "날개가 뭐가중요합니까."
+    },
+    {
+      "region_id": "9b079245528d44e290c803a60dd63582",
+      "reading_order": 48,
+      "region_type": "speech",
+      "bbox": {
+        "x": 259,
+        "y": 39517,
+        "width": 412,
+        "height": 105
+      },
+      "ocr_text": "중요하지!\n날개 있는 하프는 거의 없을뿐더러"
+    },
+    {
+      "region_id": "4eeb1b395ab64d13a48d791f7107621c",
+      "reading_order": 49,
+      "region_type": "speech",
+      "bbox": {
+        "x": 63,
+        "y": 40142,
+        "width": 379,
+        "height": 101
+      },
+      "ocr_text": "그래봤자당신의 인간놀이보다는\n덜중요한문제겠죠"
+    },
+    {
+      "region_id": "eeb9e916459a4ae8a72ba92383052b6b",
+      "reading_order": 50,
+      "region_type": "speech",
+      "bbox": {
+        "x": 451,
+        "y": 40360,
+        "width": 96,
+        "height": 64
+      },
+      "ocr_text": "뭐o?"
+    },
+    {
+      "region_id": "fc868e0e8f4346a5aacf9ace46bd1eb8",
+      "reading_order": 51,
+      "region_type": "speech",
+      "bbox": {
+        "x": 124,
+        "y": 40539,
+        "width": 452,
+        "height": 150
+      },
+      "ocr_text": "간다르바 당신은지금\n삶의 우선순위가굉장히 이상해져 있고,\n나는거기에 동조할수 없습니다."
+    },
+    {
+      "region_id": "979384dc74944a6b91040eecf4bf511b",
+      "reading_order": 52,
+      "region_type": "speech",
+      "bbox": {
+        "x": 63,
+        "y": 40697,
+        "width": 435,
+        "height": 115
+      },
+      "ocr_text": "인간놀이에 심취해서 노는건\n당신 혼자 하십시오.전 빠지겠습니다."
+    },
+    {
+      "region_id": "b76e54ca57d64ecea5c6e330d4dbd28c",
+      "reading_order": 53,
+      "region_type": "speech",
+      "bbox": {
+        "x": 138,
+        "y": 41305,
+        "width": 269,
+        "height": 65
+      },
+      "ocr_text": "아니..무슨 고집이야?"
+    },
+    {
+      "region_id": "a34b584ee4334d5392ea4563e89e6de9",
+      "reading_order": 54,
+      "region_type": "speech",
+      "bbox": {
+        "x": 202,
+        "y": 41657,
+        "width": 438,
+        "height": 105
+      },
+      "ocr_text": "잊었어? 여긴 아그니와 찬드라가 있고,\n네가수라의 힘을 드러냈다간"
+    },
+    {
+      "region_id": "14b2e113c50847b5a8b5acbdbb113b2b",
+      "reading_order": 55,
+      "region_type": "speech",
+      "bbox": {
+        "x": 138,
+        "y": 42132,
+        "width": 417,
+        "height": 73
+      },
+      "ocr_text": "여기 있지 않으면 되는 거 아님니까?"
+    },
+    {
+      "region_id": "16109257055d421d99842a45632ee7f1",
+      "reading_order": 56,
+      "region_type": "speech",
+      "bbox": {
+        "x": 92,
+        "y": 42569,
+        "width": 498,
+        "height": 111
+      },
+      "ocr_text": "어차피 통로도 열렸겠다\n전 이 놈을잡고 나서수라도로가면 됩니다."
+    },
+    {
+      "region_id": "45eb4c2dcc8e49bdb7d4c7ae836f7fb7",
+      "reading_order": 57,
+      "region_type": "speech",
+      "bbox": {
+        "x": 46,
+        "y": 43295,
+        "width": 423,
+        "height": 145
+      },
+      "ocr_text": "삼파티를 도와주신 적도 있고\n지금까지의정을생각해서\n원만하면 당신을 보필하려고 했는데,"
+    },
+    {
+      "region_id": "62aba55a18084da691e3c8b4d1113e20",
+      "reading_order": 58,
+      "region_type": "speech",
+      "bbox": {
+        "x": 177,
+        "y": 43464,
+        "width": 375,
+        "height": 109
+      },
+      "ocr_text": "이제 보니 도거히 참아줄 수 있는\n수준이아니네요"
+    },
+    {
+      "region_id": "7f08ed78a53b435b8e64f82bc8baeafd",
+      "reading_order": 59,
+      "region_type": "speech",
+      "bbox": {
+        "x": 107,
+        "y": 44928,
+        "width": 486,
+        "height": 71
+      },
+      "ocr_text": "당신은 이제 왕이라불릴 자격도 없습니다."
+    },
+    {
+      "region_id": "ee274876c3814945a2e603a98c6ce391",
+      "reading_order": 60,
+      "region_type": "speech",
+      "bbox": {
+        "x": 235,
+        "y": 45465,
+        "width": 229,
+        "height": 55
+      },
+      "ocr_text": "to be continued."
+    },
+    {
+      "region_id": "4462ad2cc24043c6b166bd032216bba3",
+      "reading_order": 61,
+      "region_type": "speech",
+      "bbox": {
+        "x": 219,
+        "y": 45789,
+        "width": 463,
+        "height": 193
+      },
+      "ocr_text": "카레공블로그http://currygom.blog.me\n쿠베라팬카페http://cafe.naver.com/currykubera\nThe Official Global Website : www.webtoons.com\nThe Official Global Fan Page :\nf\n/linewebtoon\nRIGHT WAY TO ENJOY YOUR WEBTOON."
+    },
+    {
+      "region_id": "43aac7231f32465bab5a672cf1dc7fbf",
+      "reading_order": 62,
+      "region_type": "speech",
+      "bbox": {
+        "x": 314,
+        "y": 45791,
+        "width": 362,
+        "height": 39
+      },
+      "ocr_text": "카레곰블로그http://currygom.blog.me"
+    }
+  ],
+  "translate_details": [
+    {
+      "region_id": "2319dc4e5c1c4c7593045ee0a741fca1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "하프인 척 하려면 그냥 이대로 버티는 게 최선이다.",
+      "translated_text": "要装作半精灵的话，就这样硬撑下去是最好的办法。",
+      "final_translation": "要装作半精灵的话，就这样硬撑下去是最好的办法。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c9efcc2859f3440d864d02c16c196b3e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다른 놈들이 다같이 공격해서\n빨리 처치해주길 바랄 수밖에.",
+      "translated_text": "只能寄希望于其他家伙一起攻击，快点解决掉。",
+      "final_translation": "只能寄希望于其他家伙一起攻击，快点解决掉。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "727a61abb63b494991dee3a7e30f7117",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "사체 안에서 또 다른 수라가",
+      "translated_text": "尸体里还有另一个修罗",
+      "final_translation": "尸体里还有另一个修罗",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1cf1974c15a748a9a4376dd63cc10c28",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "다들,그냥 놔두면\n또 다른 놈들이 튀어나올지 모르니\n나머지 사체를 태우든가\n완전히 조각내!",
+      "translated_text": "大家，就这样放着不管的话\n可能还会有别的家伙冒出来\n把剩下的尸体烧掉\n或者彻底剁碎！",
+      "final_translation": "大家，就这样放着不管的话\n可能还会有别的家伙冒出来\n把剩下的尸体烧掉\n或者彻底剁碎！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "83f8120018ed40d69ec3163527834b08",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이 놈은 나 혼자 공격해도\n충분해 보이니까!",
+      "translated_text": "这家伙我一个人攻击\n也足够了！",
+      "final_translation": "这家伙我一个人攻击\n也足够了！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4b476b4e5dfd476d8b6c2ccdcbd75492",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "미쳤나?이걸 혼자 잡겠다고?",
+      "translated_text": "疯了吗？想一个人抓住这个？",
+      "final_translation": "疯了吗？想一个人抓住这个？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f68dd4e7ac404364ad7f527f80f121b5",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "하긴,하프 혼자 막아낼 정도면\n테오님 혼자서도 충분히 잡으실 거야.",
+      "translated_text": "也是，既然哈芙一个人都能挡住，\n那提奥大人一个人也足够抓住他了。",
+      "final_translation": "也是，既然哈芙一个人都能挡住，\n那提奥大人一个人也足够抓住他了。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "cb0335a9900340abaf2d60bca2f69040",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "우린 다른 시체들 처리하자.",
+      "translated_text": "我们先处理其他尸体吧。",
+      "final_translation": "我们先处理其他尸体吧。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "116ecb80c515403d8da1c11e5900df1c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아니야.그거 아니라고!젠장!!",
+      "translated_text": "不是的。不是那个！该死！！",
+      "final_translation": "不是的。不是那个！该死！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "83cd2b3035c648c19a5ae2e0d9c6173a",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭘 멍하니 있는 거야?파르!\n다른 사체들 처리할 거 아니면\n테오님이라도 도와드려.",
+      "translated_text": "你在发什么呆呢？啪！\n不去处理其他尸体的话，\n至少去帮帮特奥大人吧。",
+      "final_translation": "你在发什么呆呢？啪！\n不去处理其他尸体的话，\n至少去帮帮特奥大人吧。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5a8ac2c5aa0b4ed2b82ba89df9e675ab",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아알았어",
+      "translated_text": "知、知道了",
+      "final_translation": "知、知道了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "74808fa9cd58441886295ab636e32d57",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그냥 털색깔만 비슷한 정도겠지?\n그런 놈이여기서 하프들과 살고 있을 리가.",
+      "translated_text": "只是毛色有点像而已吧？\n那种家伙不可能和半精灵们住在这里。",
+      "final_translation": "只是毛色有点像而已吧？\n那种家伙不可能和半精灵们住在这里。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "79c2f382b0da4255a44dcfaf69b922af",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "호티 쿠베라(hoti kubera)!",
+      "translated_text": "霍蒂·库贝拉(hoti kubera)！",
+      "final_translation": "霍蒂·库贝拉(hoti kubera)！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "dc55a1186beb47999fa170e495815ee3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "?",
+      "translated_text": "？",
+      "final_translation": "？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "afb27ad427e347a58d1cb2ce066f23bf",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "호티 쿠베라(hoti kubera)!\n호티 쿠베라(hoti kubera)!",
+      "translated_text": "霍蒂·库贝拉(hoti kubera)！\n霍蒂·库贝拉(hoti kubera)！",
+      "final_translation": "霍蒂·库贝拉(hoti kubera)！\n霍蒂·库贝拉(hoti kubera)！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7b203bfe3a8643e0bc5938899a868933",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "??마법이",
+      "translated_text": "??魔法",
+      "final_translation": "??魔法",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8e914d6b09074722a4392617cd59690e",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "초월기도 안 돼.",
+      "translated_text": "连超越也不行。",
+      "final_translation": "连超越也不行。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "dab4a6b9614e42c9ad4d840f710bfd64",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭐야. 왜 이래?",
+      "translated_text": "什么啊。怎么了？",
+      "final_translation": "什么啊。怎么了？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a1897cb3da5e4640ae688139b9a70533",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "마법이 안 된다고?설마.",
+      "translated_text": "魔法不管用？不会吧。",
+      "final_translation": "魔法不管用？不会吧。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "27113043be1c43968ef81fcf73048fac",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "KOBRA\nOne Last\nt God",
+      "translated_text": "眼镜蛇\n最后一次\n上帝",
+      "final_translation": "眼镜蛇\n最后一次\n上帝",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ccddf549d6664f188e31a72c72c267c8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "Story & Art by currygom",
+      "translated_text": "故事与作画：currygom",
+      "final_translation": "故事与作画：currygom",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9dbdd179336b4608bd8c24fca41634d1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "3부11화\n시작, 또 다시(6)",
+      "translated_text": "第三部 第11话\n开始，再次(6)",
+      "final_translation": "第三部 第11话\n开始，再次(6)",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6707f4870a434319a5f770efcb1ec9aa",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "3부11화",
+      "translated_text": "第三部 第11话",
+      "final_translation": "第三部 第11话",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "47f09daf287649b7b4ab43e308adff05",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "시작, 또다시(6)",
+      "translated_text": "开始，再次(6)",
+      "final_translation": "开始，再次(6)",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "6031e55c85214674b73b8e0a86c28d73",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "저 놈날 일부러지나쳤어.",
+      "translated_text": "那家伙故意撞了我。",
+      "final_translation": "那家伙故意撞了我。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "1ed00919ab544b9793b90b04c0561b8f",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "라크샤사인 걸 알아보고 피하는 건가?\n그게 아니면",
+      "translated_text": "是认出我是罗刹然后躲开了吗？\n如果不是的话",
+      "final_translation": "是认出我是罗刹然后躲开了吗？\n如果不是的话",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "f1e64fe69c0d492294e53a2e2e038b9b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "칸\n코",
+      "translated_text": "看\n咳",
+      "final_translation": "看\n咳",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e80e37591b1b4e40b9d2037120156265",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "가까이서보니까 더 비슷하잖아\n우연히 저렇게 닭을 수가있나?",
+      "translated_text": "近距离一看更像了啊\n怎么可能那么巧长得像鸡？",
+      "final_translation": "近距离一看更像了啊\n怎么可能那么巧长得像鸡？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "242effdfb2c142abbc2754b0c48b4560",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "테",
+      "translated_text": "테",
+      "final_translation": "테",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "849c4e4d587b4520914a274c3064baa8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "피해,꼬마야.",
+      "translated_text": "快躲开，小鬼。",
+      "final_translation": "快躲开，小鬼。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "5b0090cb96904cf491e6173e898739af",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "거치적 거리지 말고",
+      "translated_text": "别碍手碍脚的",
+      "final_translation": "别碍手碍脚的",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "d44fd545737d41ec8a37c829149c0df2",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네가있어야 할 자리로 가라고.",
+      "translated_text": "回到你该待的地方去。",
+      "final_translation": "回到你该待的地方去。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "de0b85c251254990a46b25dcecbb51a0",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "맞습니다 피하십시오\n이 높은 당신을 노리는 것 같으니",
+      "translated_text": "没错，请躲开\n这高的，似乎盯上你了",
+      "final_translation": "没错，请躲开\n这高的，似乎盯上你了",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4246f551d89c4f16881c8a4254ecfd07",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "나보단 인간들이 먼저 피해야해.",
+      "translated_text": "比起我，人类更应该先避开。",
+      "final_translation": "比起我，人类更应该先避开。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "97c0f67aa37d42c6992c98e778456470",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "네?",
+      "translated_text": "嗯？",
+      "final_translation": "嗯？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "e42aee47db9247c793e80b4a1750612c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "테..",
+      "translated_text": "呃..",
+      "final_translation": "呃..",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9d15194fd8c042f692ca9faf12134f10",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "테오님부터 피하세요!",
+      "translated_text": "请先避开泰奥大人！",
+      "final_translation": "请先避开泰奥大人！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "db2ae92a3309454cb963d3a8a1baa351",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "전 옛날에 봐서 알아요.\n저렇게 생긴 수라는\n마법과 초월기를 무효화하기 때문에\n지금 이 인원만으론 잡을 수 없어요.",
+      "translated_text": "我以前见过，所以知道。\n那种样子的修拉\n因为能无效化魔法和超越技\n光靠现在这些人手是抓不住的。",
+      "final_translation": "我以前见过，所以知道。\n那种样子的修拉\n因为能无效化魔法和超越技\n光靠现在这些人手是抓不住的。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "68449f8670db4783a4c430ac8748ffa6",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "일단 도시로 가서 재정비한 후에 다시 잡더라도",
+      "translated_text": "总之先去城里重整旗鼓，之后再抓也行",
+      "final_translation": "总之先去城里重整旗鼓，之后再抓也行",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c29cc1c33d7e4805aff13ead4c1f1462",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "지금뭐하는겁니까 간다르바",
+      "translated_text": "你现在在做什么 甘达尔巴",
+      "final_translation": "你现在在做什么 甘达尔巴",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "78c8bbc369704e0e9788b4f0b4b8545c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "보면 몰라?설득하는 거잖아.",
+      "translated_text": "看不出来吗？我在说服你啊。",
+      "final_translation": "看不出来吗？我在说服你啊。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "c450b3b910ca46bca7dc1d5cfa750ddc",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "내가인간들을 도시로 가게 할 테니\n그다음에 마루나 네가수라화해서 잡아.",
+      "translated_text": "我会让人类们去城市\n之后丸那你就水化后抓住他们。",
+      "final_translation": "我会让人类们去城市\n之后丸那你就水化后抓住他们。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8aafac6c59f54a2da1a161ceea99d4ae",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그방법밖에 없다.초월기가안 통하는놈을 상대로\n이인간들을 모두 보호하려면",
+      "translated_text": "只能那么做了。要对付超位魔法都无效的家伙，还要保护所有这些人",
+      "final_translation": "只能那么做了。要对付超位魔法都无效的家伙，还要保护所有这些人",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7a4317fe76d04c32bec9932f31f63b86",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "!떨어져!\n촉수로 변이하는 형태다!",
+      "translated_text": "！离远点！\n那是会变异成触手的形态！",
+      "final_translation": "！离远点！\n那是会变异成触手的形态！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "82cd8ed118994232ae1a44bff0a3f374",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "거기 너도,피해!!",
+      "translated_text": "那边的你也是，快逃！！",
+      "final_translation": "那边的你也是，快逃！！",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ad19eeb0305749499584ac9922b2a2fd",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭐.뭐하는짓이야?\n여기서 날개를 드러내 버리면",
+      "translated_text": "你、你在干什么？\n要是在这里露出翅膀的话",
+      "final_translation": "你、你在干什么？\n要是在这里露出翅膀的话",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "8dc6164626f44aa1a683bbada7a56646",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "날개가 뭐가중요합니까.",
+      "translated_text": "翅膀有什么重要的。",
+      "final_translation": "翅膀有什么重要的。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "9b079245528d44e290c803a60dd63582",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "중요하지!\n날개 있는 하프는 거의 없을뿐더러",
+      "translated_text": "不重要！\n而且有翅膀的半精灵几乎没有",
+      "final_translation": "不重要！\n而且有翅膀的半精灵几乎没有",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4eeb1b395ab64d13a48d791f7107621c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "그래봤자당신의 인간놀이보다는\n덜중요한문제겠죠",
+      "translated_text": "就算那样，也比您的人类游戏\n要不重要得多吧",
+      "final_translation": "就算那样，也比您的人类游戏\n要不重要得多吧",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "eeb9e916459a4ae8a72ba92383052b6b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "뭐o?",
+      "translated_text": "什么o？",
+      "final_translation": "什么o？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "fc868e0e8f4346a5aacf9ace46bd1eb8",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "간다르바 당신은지금\n삶의 우선순위가굉장히 이상해져 있고,\n나는거기에 동조할수 없습니다.",
+      "translated_text": "乾闥婆，你现在的\n人生优先顺序变得非常奇怪，\n我无法认同这一点。",
+      "final_translation": "乾闥婆，你现在的\n人生优先顺序变得非常奇怪，\n我无法认同这一点。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "979384dc74944a6b91040eecf4bf511b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "인간놀이에 심취해서 노는건\n당신 혼자 하십시오.전 빠지겠습니다.",
+      "translated_text": "沉迷于人类游戏这种事，您一个人玩吧。我退出。",
+      "final_translation": "沉迷于人类游戏这种事，您一个人玩吧。我退出。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "b76e54ca57d64ecea5c6e330d4dbd28c",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "아니..무슨 고집이야?",
+      "translated_text": "不是……你这是什么固执啊？",
+      "final_translation": "不是……你这是什么固执啊？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "a34b584ee4334d5392ea4563e89e6de9",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "잊었어? 여긴 아그니와 찬드라가 있고,\n네가수라의 힘을 드러냈다간",
+      "translated_text": "忘了吗？这里有阿耆尼和旃陀罗，\n一旦你展现出修罗之力的话",
+      "final_translation": "忘了吗？这里有阿耆尼和旃陀罗，\n一旦你展现出修罗之力的话",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "14b2e113c50847b5a8b5acbdbb113b2b",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "여기 있지 않으면 되는 거 아님니까?",
+      "translated_text": "只要不在这里不就行了吗？",
+      "final_translation": "只要不在这里不就行了吗？",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "16109257055d421d99842a45632ee7f1",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "어차피 통로도 열렸겠다\n전 이 놈을잡고 나서수라도로가면 됩니다.",
+      "translated_text": "反正通道也打开了\n我先抓住这家伙，然后再去修羅都就行了。",
+      "final_translation": "反正通道也打开了\n我先抓住这家伙，然后再去修羅都就行了。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "45eb4c2dcc8e49bdb7d4c7ae836f7fb7",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "삼파티를 도와주신 적도 있고\n지금까지의정을생각해서\n원만하면 당신을 보필하려고 했는데,",
+      "translated_text": "您也曾帮助过三派提，\n念及至今的情分，\n我本想尽量辅佐您的，",
+      "final_translation": "您也曾帮助过三派提，\n念及至今的情分，\n我本想尽量辅佐您的，",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "62aba55a18084da691e3c8b4d1113e20",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "이제 보니 도거히 참아줄 수 있는\n수준이아니네요",
+      "translated_text": "现在看来，这可不是能一直忍下去的程度啊",
+      "final_translation": "现在看来，这可不是能一直忍下去的程度啊",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "7f08ed78a53b435b8e64f82bc8baeafd",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "당신은 이제 왕이라불릴 자격도 없습니다.",
+      "translated_text": "你现在连被称为王的资格都没有。",
+      "final_translation": "你现在连被称为王的资格都没有。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "ee274876c3814945a2e603a98c6ce391",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "to be continued.",
+      "translated_text": "未完待续。",
+      "final_translation": "未完待续。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "4462ad2cc24043c6b166bd032216bba3",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "카레공블로그http://currygom.blog.me\n쿠베라팬카페http://cafe.naver.com/currykubera\nThe Official Global Website : www.webtoons.com\nThe Official Global Fan Page :\nf\n/linewebtoon\nRIGHT WAY TO ENJOY YOUR WEBTOON.",
+      "translated_text": "咖喱公博客http://currygom.blog.me\n库贝拉粉丝咖啡厅http://cafe.naver.com/currykubera\n官方全球网站：www.webtoons.com\n官方全球粉丝专页：\nf\n/linewebtoon\n正确享受你的网络漫画的方式。",
+      "final_translation": "咖喱公博客http://currygom.blog.me\n库贝拉粉丝咖啡厅http://cafe.naver.com/currykubera\n官方全球网站：www.webtoons.com\n官方全球粉丝专页：\nf\n/linewebtoon\n正确享受你的网络漫画的方式。",
+      "final_source": "machine"
+    },
+    {
+      "region_id": "43aac7231f32465bab5a672cf1dc7fbf",
+      "region_type": "speech",
+      "sfx_policy": "skip",
+      "source_text": "카레곰블로그http://currygom.blog.me",
+      "translated_text": "咖喱熊博客http://currygom.blog.me",
+      "final_translation": "咖喱熊博客http://currygom.blog.me",
+      "final_source": "machine"
+    }
+  ],
+  "export": {
+    "status": "OK",
+    "export_id": "exp-a641af7806e0",
+    "file": "K05-translated.png",
+    "pixel_path": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\export\\K05-translated.png",
+    "sha256": "b2950af6b548b5430c93ab7a090878edf98b425c3091f002d1f33e7e111846d4",
+    "size": 14086299,
+    "translated_revision_id": "bae26daaee0b419bbc1ea317e7bebc4f"
+  },
+  "attribution": [],
+  "source_size": [
+    690,
+    46000
+  ],
+  "source_sha256_recomputed": "d944f35ee07544920715671a54bb238b0451be0e5f4c76b6b301f67fbd1c448a",
+  "scratch_root": "C:\\Users\\49745\\AppData\\Local\\Temp\\m2-ta3b2-K05-1mbxw5b4",
+  "crops_dir": "G:\\CODEX\\New Manga.task-envs\\M2-TA3-B\\ko-fullrun-pixels\\ocr\\crops\\K05",
+  "translation_metering": {
+    "metered": true,
+    "proxy": "experiments-layer passthrough wrapper around the production provider",
+    "token_basis": "estimate_tokens (ports/translation/protocol.py, CJK-aware) over system prompt + payload_json (input) and raw completion (output); ESTIMATES, not endpoint usage (production client exposes none)",
+    "requests": 124,
+    "n_target_region_calls": 124,
+    "input_est_tokens_total": 69486,
+    "output_est_tokens_total": 7519
+  },
+  "finished_at_utc": "2026-10-02T02:47:35Z",
+  "wall_s": 5994.98,
+  "pipeline_completed": true
+}
