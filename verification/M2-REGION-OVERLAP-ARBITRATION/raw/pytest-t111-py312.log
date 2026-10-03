@@ -1,0 +1,384 @@
+F....................................................................... [ 11%]
+........................................................................ [ 23%]
+...........................FFF.................FF....................... [ 34%]
+........................................................................ [ 46%]
+...............s........................................................ [ 57%]
+........................................................................ [ 69%]
+........................................................................ [ 80%]
+........................................................................ [ 92%]
+..................................................                       [100%]
+================================== FAILURES ===================================
+_____________ test_production_stack_starts_without_heavy_runtimes _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-814/test_production_stack_starts_w0')
+
+    def test_production_stack_starts_without_heavy_runtimes(tmp_path: Path) -> None:
+        """AC-OPTIONAL-001/002: missing models must not stop the application."""
+        from bootstrap.app import assemble_services
+
+        services = assemble_services(tmp_path / "library.db", tmp_path / "managed")
+        try:
+            status = services.providers.status()
+            states = {
+                entry["provider_id"]: entry["state"] for entry in status["providers"]
+            }
+            assert states["manga-ocr"] == "missing_dependency"
+            assert states["paddleocr-korean"] == "missing_dependency"
+            assert states["openai-vision-ocr"] == "not_configured"
+            assert states["inpaint-simple-fill"] == "ready"
+            assert states["inpaint-edge-bleed"] == "ready"
+            assert states["inpaint-manga-lama"] == "not_ready"
+>           assert status["gpu"]["state"] == "unavailable"
+E           AssertionError: assert 'available' == 'unavailable'
+E
+E             - unavailable
+E             ? --
+E             + available
+
+tests\providers\test_bootstrap_providers.py:59: AssertionError
+_______________ test_real_weights_reproduce_eval_payload[rgb24] _______________
+
+module_name = 'onnxruntime', stage = 'detection'
+
+    def _lazy_import(module_name: str, stage: str) -> Any:
+        try:
+>           return importlib.import_module(module_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\infrastructure\providers\detection_sfx.py:641:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'onnxruntime', package = None
+
+    def import_module(name, package=None):
+        """Import a module.
+
+        The 'package' argument is required when performing a relative import. It
+        specifies the package to use as the anchor point from which to resolve the
+        relative import to an absolute import.
+
+        """
+        level = 0
+        if name.startswith('.'):
+            if not package:
+                raise TypeError("the 'package' argument is required to perform a "
+                                f"relative import for {name!r}")
+            for character in name:
+                if character != '.':
+                    break
+                level += 1
+>       return _bootstrap._gcd_import(name[level:], package, level)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ModuleNotFoundError: No module named 'onnxruntime'
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: ModuleNotFoundError
+
+The above exception was the direct cause of the following exception:
+
+rgb32 = False
+
+    @REAL_SKIP
+    @pytest.mark.parametrize("rgb32", [False, True], ids=["rgb24", "rgb32"])
+    def test_real_weights_reproduce_eval_payload(rgb32):
+        """The production provider reproduces the M2-SFX-DETECT-EVAL K07_R123
+        sfx detection (conf 0.9313) — the eval-caliber replication, end to end."""
+        payload = json.loads(EVAL_PAYLOAD.read_text(encoding="utf-8"))
+        region = payload["regions"]["K07_R123"]
+        expected = [
+            detection
+            for detection in region["chiqui7_yolo11s_seg"]["detections"]
+            if detection["cls"] == "sfx" and detection["conf"] >= 0.5
+        ]
+        assert expected, "eval payload lost its K07_R123 sfx anchor"
+
+        with Image.open(REAL_FRAME) as image:
+            rgb = image.convert("RGB")
+            width, height = rgb.size
+            if rgb32:
+                arr = np.asarray(rgb, dtype=np.uint8)
+                bgra = np.dstack(
+                    [arr[:, :, ::-1], np.full((height, width, 1), 255, dtype=np.uint8)]
+                )
+                frame_bytes = bgra.tobytes()
+            else:
+                frame_bytes = rgb.tobytes()
+
+        provider = SfxDetectionProvider(weights_path=REAL_WEIGHTS)
+>       result = provider.detect(_request(frame_bytes, width, height))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_detection_sfx.py:935:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_sfx.py:293: in detect
+    session, imgsz, imgsz_source, imgsz_raw = self._engine_or_raise()
+                                              ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_sfx.py:347: in _engine_or_raise
+    self._engine = _build_engine(self.weights_path)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_sfx.py:423: in _build_engine
+    onnxruntime = _lazy_import("onnxruntime", "detection")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+module_name = 'onnxruntime', stage = 'detection'
+
+    def _lazy_import(module_name: str, stage: str) -> Any:
+        try:
+            return importlib.import_module(module_name)
+        except ImportError as error:
+>           raise ProviderDependencyMissing(
+                f"sfx detector runtime {module_name!r} is not installed: {error}",
+                provider_id=PROVIDER_SFX,
+                stage=stage,
+            ) from error
+E           ports.providers.errors.ProviderDependencyMissing: PROVIDER_DEPENDENCY_MISSING: sfx detector runtime 'onnxruntime' is not installed: No module named 'onnxruntime'
+
+src\infrastructure\providers\detection_sfx.py:643: ProviderDependencyMissing
+_______________ test_real_weights_reproduce_eval_payload[rgb32] _______________
+
+module_name = 'onnxruntime', stage = 'detection'
+
+    def _lazy_import(module_name: str, stage: str) -> Any:
+        try:
+>           return importlib.import_module(module_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\infrastructure\providers\detection_sfx.py:641:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'onnxruntime', package = None
+
+    def import_module(name, package=None):
+        """Import a module.
+
+        The 'package' argument is required when performing a relative import. It
+        specifies the package to use as the anchor point from which to resolve the
+        relative import to an absolute import.
+
+        """
+        level = 0
+        if name.startswith('.'):
+            if not package:
+                raise TypeError("the 'package' argument is required to perform a "
+                                f"relative import for {name!r}")
+            for character in name:
+                if character != '.':
+                    break
+                level += 1
+>       return _bootstrap._gcd_import(name[level:], package, level)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ModuleNotFoundError: No module named 'onnxruntime'
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: ModuleNotFoundError
+
+The above exception was the direct cause of the following exception:
+
+rgb32 = True
+
+    @REAL_SKIP
+    @pytest.mark.parametrize("rgb32", [False, True], ids=["rgb24", "rgb32"])
+    def test_real_weights_reproduce_eval_payload(rgb32):
+        """The production provider reproduces the M2-SFX-DETECT-EVAL K07_R123
+        sfx detection (conf 0.9313) — the eval-caliber replication, end to end."""
+        payload = json.loads(EVAL_PAYLOAD.read_text(encoding="utf-8"))
+        region = payload["regions"]["K07_R123"]
+        expected = [
+            detection
+            for detection in region["chiqui7_yolo11s_seg"]["detections"]
+            if detection["cls"] == "sfx" and detection["conf"] >= 0.5
+        ]
+        assert expected, "eval payload lost its K07_R123 sfx anchor"
+
+        with Image.open(REAL_FRAME) as image:
+            rgb = image.convert("RGB")
+            width, height = rgb.size
+            if rgb32:
+                arr = np.asarray(rgb, dtype=np.uint8)
+                bgra = np.dstack(
+                    [arr[:, :, ::-1], np.full((height, width, 1), 255, dtype=np.uint8)]
+                )
+                frame_bytes = bgra.tobytes()
+            else:
+                frame_bytes = rgb.tobytes()
+
+        provider = SfxDetectionProvider(weights_path=REAL_WEIGHTS)
+>       result = provider.detect(_request(frame_bytes, width, height))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_detection_sfx.py:935:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_sfx.py:293: in detect
+    session, imgsz, imgsz_source, imgsz_raw = self._engine_or_raise()
+                                              ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_sfx.py:347: in _engine_or_raise
+    self._engine = _build_engine(self.weights_path)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_sfx.py:423: in _build_engine
+    onnxruntime = _lazy_import("onnxruntime", "detection")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+module_name = 'onnxruntime', stage = 'detection'
+
+    def _lazy_import(module_name: str, stage: str) -> Any:
+        try:
+            return importlib.import_module(module_name)
+        except ImportError as error:
+>           raise ProviderDependencyMissing(
+                f"sfx detector runtime {module_name!r} is not installed: {error}",
+                provider_id=PROVIDER_SFX,
+                stage=stage,
+            ) from error
+E           ports.providers.errors.ProviderDependencyMissing: PROVIDER_DEPENDENCY_MISSING: sfx detector runtime 'onnxruntime' is not installed: No module named 'onnxruntime'
+
+src\infrastructure\providers\detection_sfx.py:643: ProviderDependencyMissing
+_______________ test_real_weights_blank_page_structurally_valid _______________
+
+module_name = 'onnxruntime', stage = 'detection'
+
+    def _lazy_import(module_name: str, stage: str) -> Any:
+        try:
+>           return importlib.import_module(module_name)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src\infrastructure\providers\detection_sfx.py:641:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+name = 'onnxruntime', package = None
+
+    def import_module(name, package=None):
+        """Import a module.
+
+        The 'package' argument is required when performing a relative import. It
+        specifies the package to use as the anchor point from which to resolve the
+        relative import to an absolute import.
+
+        """
+        level = 0
+        if name.startswith('.'):
+            if not package:
+                raise TypeError("the 'package' argument is required to perform a "
+                                f"relative import for {name!r}")
+            for character in name:
+                if character != '.':
+                    break
+                level += 1
+>       return _bootstrap._gcd_import(name[level:], package, level)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       ModuleNotFoundError: No module named 'onnxruntime'
+
+C:\Users\49745\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: ModuleNotFoundError
+
+The above exception was the direct cause of the following exception:
+
+    @REAL_SKIP
+    def test_real_weights_blank_page_structurally_valid():
+        """A blank page must run the real engine without crashing; every emitted
+        candidate keeps the anonymous label/geometry contract (zero candidates is
+        the expected outcome, the structure assertion is the fail-closed face)."""
+        image = Image.new("RGB", (800, 1200), (255, 255, 255))
+        provider = SfxDetectionProvider(weights_path=REAL_WEIGHTS)
+>       result = provider.detect(_request(image.tobytes(), 800, 1200))
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\providers\test_detection_sfx.py:957:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_sfx.py:293: in detect
+    session, imgsz, imgsz_source, imgsz_raw = self._engine_or_raise()
+                                              ^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_sfx.py:347: in _engine_or_raise
+    self._engine = _build_engine(self.weights_path)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src\infrastructure\providers\detection_sfx.py:423: in _build_engine
+    onnxruntime = _lazy_import("onnxruntime", "detection")
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+module_name = 'onnxruntime', stage = 'detection'
+
+    def _lazy_import(module_name: str, stage: str) -> Any:
+        try:
+            return importlib.import_module(module_name)
+        except ImportError as error:
+>           raise ProviderDependencyMissing(
+                f"sfx detector runtime {module_name!r} is not installed: {error}",
+                provider_id=PROVIDER_SFX,
+                stage=stage,
+            ) from error
+E           ports.providers.errors.ProviderDependencyMissing: PROVIDER_DEPENDENCY_MISSING: sfx detector runtime 'onnxruntime' is not installed: No module named 'onnxruntime'
+
+src\infrastructure\providers\detection_sfx.py:643: ProviderDependencyMissing
+_____ test_gpu_is_unavailable_without_a_runtime_but_reported_not_invented _____
+
+    def test_gpu_is_unavailable_without_a_runtime_but_reported_not_invented() -> None:
+        manager = DeviceManager()
+        info = manager.gpu_info()
+>       assert info.state == GPU_UNAVAILABLE
+E       AssertionError: assert 'available' == 'unavailable'
+E
+E         - unavailable
+E         ? --
+E         + available
+
+tests\providers\test_devices.py:24: AssertionError
+____________ test_cpu_fallback_only_when_the_provider_declares_it _____________
+
+    def test_cpu_fallback_only_when_the_provider_declares_it() -> None:
+        manager = DeviceManager()
+        plan = manager.plan(requires_gpu=True, supports_cpu_fallback=True)
+>       assert plan.device == DEVICE_CPU
+E       AssertionError: assert 'gpu' == 'cpu'
+E
+E         - cpu
+E         + gpu
+
+tests\providers\test_devices.py:35: AssertionError
+=========================== short test summary info ===========================
+SKIPPED [1] tests\providers\test_detection_manga_real.py:19: transformers is not installed
+SKIPPED [1] tests\providers\test_registry_readiness.py:237: dev venv intentionally carries the ML stack since T1.1.1 (user-approved requirements: torch==2.14.0, transformers==5.17.0) — the TASK-019-era 'no model runtime in this environment' evidence is INVALIDATED, nothing left to guard here; separately, release-side ML-closure completeness is independently guaranteed at build time by packaging/m2ac5 core_sidecar.spec _assert_ml_closure (M2-PROD-DETECT-2), which is the opposite-direction assertion and must not be read as this test's replacement
+6 failed, 619 passed, 2 skipped in 32.72s
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/reader/ReaderView.qml:204: TypeError: Cannot read property 'sourcePath' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:56: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:51: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:46: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/AppShell.qml:41: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:21: TypeError: Cannot read property 'pages' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:37: TypeError: Cannot read property 'workbenchRunning' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:38: TypeError: Cannot read property 'workbenchBadge' of null
+file:///G:/CODEX/New Manga.worktrees/M2-REGION-OVERLAP-ARBITRATION-zcode/src/ui/qml/shell/PrimaryNavigationRail.qml:30: TypeError: Cannot read property 'currentPage' of null

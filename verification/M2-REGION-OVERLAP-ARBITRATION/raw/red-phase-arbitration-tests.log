@@ -1,0 +1,570 @@
+FFFFFFFFFFFFFF.                                                          [100%]
+================================== FAILURES ===================================
+_________ test_arbitration_relabels_near_duplicate_primary_candidate __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002635472C770>
+
+    def test_arbitration_relabels_near_duplicate_primary_candidate(monkeypatch):
+        """AC2 green semantics: a primary candidate near-duplicated by an sfx
+        candidate (IoU >= threshold) is relabeled into the SFX gate; a
+        non-overlapping primary candidate is untouched."""
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+        primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 10.0),
+                    reading_order=1,
+                    confidence=0.9,
+                    provider_label="manga-1",
+                ),
+                RegionCandidate(
+                    polygon=_rect(50.0, 0.0, 60.0, 10.0),
+                    reading_order=2,
+                    confidence=0.8,
+                    provider_label="manga-2",
+                ),
+            ]
+        )
+        sfx = _FakeSfxProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 10.0),  # IoU 1.0 with manga-1
+                    reading_order=1,
+                    confidence=0.93,
+                    provider_label="sfx-1",
+                )
+            ]
+        )
+        result = MangaSfxParallelDetectionProvider(
+            primary=primary, sfx=sfx
+        ).detect(_request())
+        labels = [c.provider_label for c in result.candidates]
+>       assert labels == ["sfx-arb-manga-1", "manga-2", "sfx-1"]
+E       AssertionError: assert ['manga-1', '...a-2', 'sfx-1'] == ['sfx-arb-man...a-2', 'sfx-1']
+E
+E         At index 0 diff: 'manga-1' != 'sfx-arb-manga-1'
+E         Use -v to get more diff
+
+tests\providers\test_detection_sfx.py:657: AssertionError
+__ test_arbitration_partial_overlap_below_threshold_is_diagnosed_not_applied __
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002635458EB10>
+
+    def test_arbitration_partial_overlap_below_threshold_is_diagnosed_not_applied(
+        monkeypatch,
+    ):
+        """The BJ13 misroute shape (IoU ~0.55): below the frozen conservative
+        domain the relabel must NOT fire, and the near-miss overlap is recorded
+        as a typed diagnostic (AC4 — the arbitration-unreachable face)."""
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+        primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 20.0),  # area 200
+                    reading_order=1,
+                    confidence=0.744,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        sfx = _FakeSfxProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 11.0),  # area 110, inside
+                    reading_order=1,
+                    confidence=0.93,
+                    provider_label="sfx-1",
+                )
+            ]
+        )
+        result = MangaSfxParallelDetectionProvider(
+            primary=primary, sfx=sfx
+        ).detect(_request())
+        # IoU = 110/200 = 0.55 < 0.9 -> untouched, diagnosed.
+>       assert [c.provider_label for c in result.candidates] == ["manga-1"]
+E       AssertionError: assert ['manga-1', 'sfx-1'] == ['manga-1']
+E
+E         Left contains one more item: 'sfx-1'
+E         Use -v to get more diff
+
+tests\providers\test_detection_sfx.py:701: AssertionError
+_________ test_arbitration_bj06_in_domain_worst_pair_stays_untouched __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000263546AF9B0>
+
+    def test_arbitration_bj06_in_domain_worst_pair_stays_untouched(monkeypatch):
+        """AC3 anchor, replicating the committed BJ06 numbers: the worst
+        in-domain sfx x speech pair (qual-BJ06 sfx 2eeaa2c4 bbox (1534,3517,
+        223,395) x speech 5b76a907 bbox (1540,3500,222,425)) has IoU 0.8862 —
+        the frozen default 0.9 sits above every in-domain pair, so the domain
+        run is bit-identical (the '！！！' dialogue region is NOT relabeled)."""
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+        primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(1540.0, 3500.0, 1762.0, 3925.0),
+                    reading_order=9,
+                    confidence=0.9,
+                    provider_label="manga-9",
+                )
+            ]
+        )
+        sfx = _FakeSfxProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(1534.0, 3517.0, 1757.0, 3912.0),
+                    reading_order=1,
+                    confidence=0.93,
+                    provider_label="sfx-1",
+                )
+            ]
+        )
+        result = MangaSfxParallelDetectionProvider(
+            primary=primary, sfx=sfx
+        ).detect(_request())
+>       assert [c.provider_label for c in result.candidates] == ["manga-9"]
+E       AssertionError: assert ['manga-9', 'sfx-1'] == ['manga-9']
+E
+E         Left contains one more item: 'sfx-1'
+E         Use -v to get more diff
+
+tests\providers\test_detection_sfx.py:738: AssertionError
+_______________ test_arbitration_env_off_disables_the_semantics _______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000263546E1AE0>
+
+    def test_arbitration_env_off_disables_the_semantics(monkeypatch):
+        monkeypatch.setenv("NEWMANGA_SFX_ARBITRATION", "off")
+        primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 10.0),
+                    reading_order=1,
+                    confidence=0.9,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        sfx = _FakeSfxProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 10.0),
+                    reading_order=1,
+                    confidence=0.93,
+                    provider_label="sfx-1",
+                )
+            ]
+        )
+        result = MangaSfxParallelDetectionProvider(
+            primary=primary, sfx=sfx
+        ).detect(_request())
+        assert [c.provider_label for c in result.candidates] == ["manga-1", "sfx-1"]
+>       assert dict(result.options)["sfx_arbitration"] == "off"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'sfx_arbitration'
+
+tests\providers\test_detection_sfx.py:770: KeyError
+_________ test_arbitration_env_threshold_override_expands_the_domain __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x00000263546E2030>
+
+    def test_arbitration_env_threshold_override_expands_the_domain(monkeypatch):
+        monkeypatch.setenv("NEWMANGA_SFX_ARBITRATION_IOU", "0.3")
+        primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 20.0),
+                    reading_order=1,
+                    confidence=0.744,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        sfx = _FakeSfxProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 10.0, 11.0),  # IoU 0.55 >= 0.3
+                    reading_order=1,
+                    confidence=0.93,
+                    provider_label="sfx-1",
+                )
+            ]
+        )
+        result = MangaSfxParallelDetectionProvider(
+            primary=primary, sfx=sfx
+        ).detect(_request())
+>       assert [c.provider_label for c in result.candidates] == [
+            "sfx-arb-manga-1"
+        ]
+E       AssertionError: assert ['manga-1', 'sfx-1'] == ['sfx-arb-manga-1']
+E
+E         At index 0 diff: 'manga-1' != 'sfx-arb-manga-1'
+E         Left contains one more item: 'sfx-1'
+E         Use -v to get more diff
+
+tests\providers\test_detection_sfx.py:798: AssertionError
+_ test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION-] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026354789F50>
+name = 'NEWMANGA_SFX_ARBITRATION', value = ''
+
+    @pytest.mark.parametrize(
+        ("name", "value"),
+        [
+            ("NEWMANGA_SFX_ARBITRATION", ""),
+            ("NEWMANGA_SFX_ARBITRATION", "auto"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+        ],
+    )
+    def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+        monkeypatch, name, value
+    ):
+        """AC4, the TILING discipline: an empty or illegal arbitration env is a
+        fail-fast ValueError naming the variable — raised BEFORE the primary
+        runs, never a silent default (an illegal config must not produce a
+        half-detected page)."""
+        sentinel_primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        composite = MangaSfxParallelDetectionProvider(
+            primary=sentinel_primary, sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv(name, value)
+>       with pytest.raises(ValueError, match=name):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\providers\test_detection_sfx.py:838: Failed
+_ test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION-auto] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002635478A650>
+name = 'NEWMANGA_SFX_ARBITRATION', value = 'auto'
+
+    @pytest.mark.parametrize(
+        ("name", "value"),
+        [
+            ("NEWMANGA_SFX_ARBITRATION", ""),
+            ("NEWMANGA_SFX_ARBITRATION", "auto"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+        ],
+    )
+    def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+        monkeypatch, name, value
+    ):
+        """AC4, the TILING discipline: an empty or illegal arbitration env is a
+        fail-fast ValueError naming the variable — raised BEFORE the primary
+        runs, never a silent default (an illegal config must not produce a
+        half-detected page)."""
+        sentinel_primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        composite = MangaSfxParallelDetectionProvider(
+            primary=sentinel_primary, sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv(name, value)
+>       with pytest.raises(ValueError, match=name):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\providers\test_detection_sfx.py:838: Failed
+_ test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026354819B80>
+name = 'NEWMANGA_SFX_ARBITRATION_IOU', value = ''
+
+    @pytest.mark.parametrize(
+        ("name", "value"),
+        [
+            ("NEWMANGA_SFX_ARBITRATION", ""),
+            ("NEWMANGA_SFX_ARBITRATION", "auto"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+        ],
+    )
+    def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+        monkeypatch, name, value
+    ):
+        """AC4, the TILING discipline: an empty or illegal arbitration env is a
+        fail-fast ValueError naming the variable — raised BEFORE the primary
+        runs, never a silent default (an illegal config must not produce a
+        half-detected page)."""
+        sentinel_primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        composite = MangaSfxParallelDetectionProvider(
+            primary=sentinel_primary, sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv(name, value)
+>       with pytest.raises(ValueError, match=name):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\providers\test_detection_sfx.py:838: Failed
+_ test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-abc] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002635481A8A0>
+name = 'NEWMANGA_SFX_ARBITRATION_IOU', value = 'abc'
+
+    @pytest.mark.parametrize(
+        ("name", "value"),
+        [
+            ("NEWMANGA_SFX_ARBITRATION", ""),
+            ("NEWMANGA_SFX_ARBITRATION", "auto"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+        ],
+    )
+    def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+        monkeypatch, name, value
+    ):
+        """AC4, the TILING discipline: an empty or illegal arbitration env is a
+        fail-fast ValueError naming the variable — raised BEFORE the primary
+        runs, never a silent default (an illegal config must not produce a
+        half-detected page)."""
+        sentinel_primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        composite = MangaSfxParallelDetectionProvider(
+            primary=sentinel_primary, sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv(name, value)
+>       with pytest.raises(ValueError, match=name):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\providers\test_detection_sfx.py:838: Failed
+_ test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-0] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002635473D550>
+name = 'NEWMANGA_SFX_ARBITRATION_IOU', value = '0'
+
+    @pytest.mark.parametrize(
+        ("name", "value"),
+        [
+            ("NEWMANGA_SFX_ARBITRATION", ""),
+            ("NEWMANGA_SFX_ARBITRATION", "auto"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+        ],
+    )
+    def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+        monkeypatch, name, value
+    ):
+        """AC4, the TILING discipline: an empty or illegal arbitration env is a
+        fail-fast ValueError naming the variable — raised BEFORE the primary
+        runs, never a silent default (an illegal config must not produce a
+        half-detected page)."""
+        sentinel_primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        composite = MangaSfxParallelDetectionProvider(
+            primary=sentinel_primary, sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv(name, value)
+>       with pytest.raises(ValueError, match=name):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\providers\test_detection_sfx.py:838: Failed
+_ test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-1.5] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026354728130>
+name = 'NEWMANGA_SFX_ARBITRATION_IOU', value = '1.5'
+
+    @pytest.mark.parametrize(
+        ("name", "value"),
+        [
+            ("NEWMANGA_SFX_ARBITRATION", ""),
+            ("NEWMANGA_SFX_ARBITRATION", "auto"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+        ],
+    )
+    def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+        monkeypatch, name, value
+    ):
+        """AC4, the TILING discipline: an empty or illegal arbitration env is a
+        fail-fast ValueError naming the variable — raised BEFORE the primary
+        runs, never a silent default (an illegal config must not produce a
+        half-detected page)."""
+        sentinel_primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        composite = MangaSfxParallelDetectionProvider(
+            primary=sentinel_primary, sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv(name, value)
+>       with pytest.raises(ValueError, match=name):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\providers\test_detection_sfx.py:838: Failed
+_ test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU--0.1] _
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x0000026354643EE0>
+name = 'NEWMANGA_SFX_ARBITRATION_IOU', value = '-0.1'
+
+    @pytest.mark.parametrize(
+        ("name", "value"),
+        [
+            ("NEWMANGA_SFX_ARBITRATION", ""),
+            ("NEWMANGA_SFX_ARBITRATION", "auto"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", ""),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "abc"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "0"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "1.5"),
+            ("NEWMANGA_SFX_ARBITRATION_IOU", "-0.1"),
+        ],
+    )
+    def test_arbitration_env_illegal_value_fails_fast_before_any_detect(
+        monkeypatch, name, value
+    ):
+        """AC4, the TILING discipline: an empty or illegal arbitration env is a
+        fail-fast ValueError naming the variable — raised BEFORE the primary
+        runs, never a silent default (an illegal config must not produce a
+        half-detected page)."""
+        sentinel_primary = _FakeProvider(
+            [
+                RegionCandidate(
+                    polygon=_rect(0.0, 0.0, 1.0, 1.0),
+                    reading_order=1,
+                    provider_label="manga-1",
+                )
+            ]
+        )
+        composite = MangaSfxParallelDetectionProvider(
+            primary=sentinel_primary, sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv(name, value)
+>       with pytest.raises(ValueError, match=name):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE ValueError
+
+tests\providers\test_detection_sfx.py:838: Failed
+__________ test_arbitration_env_illegal_value_never_runs_the_primary __________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002635462E390>
+
+    def test_arbitration_env_illegal_value_never_runs_the_primary(monkeypatch):
+        """The explicit fail-fast face of the test above: the primary detect is
+        not invoked at all when the arbitration env is illegal."""
+        calls = []
+
+        class _ProbePrimary:
+            provider_id = "local-manga"
+            provider_type = "local-manga"
+            model = "manga/fake"
+
+            def detect(self, request):  # noqa: ANN001
+                calls.append(request.page_id)
+                raise AssertionError("primary must not run on an illegal env")
+
+        composite = MangaSfxParallelDetectionProvider(
+            primary=_ProbePrimary(), sfx=_FakeSfxProvider([])
+        )
+        monkeypatch.setenv("NEWMANGA_SFX_ARBITRATION_IOU", "abc")
+        with pytest.raises(ValueError, match="NEWMANGA_SFX_ARBITRATION_IOU"):
+>           composite.detect(_request())
+
+tests\providers\test_detection_sfx.py:865:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+src\infrastructure\providers\detection_sfx.py:570: in detect
+    result = self.primary.detect(request)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <test_detection_sfx.test_arbitration_env_illegal_value_never_runs_the_primary.<locals>._ProbePrimary object at 0x0000026326259010>
+request = DetectionRequest(page_id='page-1', width=1000, height=2000, options=())
+
+    def detect(self, request):  # noqa: ANN001
+        calls.append(request.page_id)
+>       raise AssertionError("primary must not run on an illegal env")
+E       AssertionError: primary must not run on an illegal env
+
+tests\providers\test_detection_sfx.py:858: AssertionError
+_________________ test_arbitration_config_defaults_are_frozen _________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x000002635462E450>
+
+    def test_arbitration_config_defaults_are_frozen(monkeypatch):
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION", raising=False)
+        monkeypatch.delenv("NEWMANGA_SFX_ARBITRATION_IOU", raising=False)
+>       from infrastructure.providers.detection_sfx import _arbitration_config
+E       ImportError: cannot import name '_arbitration_config' from 'infrastructure.providers.detection_sfx' (G:\CODEX\New Manga.worktrees\M2-REGION-OVERLAP-ARBITRATION-zcode\src\infrastructure\providers\detection_sfx.py)
+
+tests\providers\test_detection_sfx.py:872: ImportError
+=========================== short test summary info ===========================
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_relabels_near_duplicate_primary_candidate
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_partial_overlap_below_threshold_is_diagnosed_not_applied
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_bj06_in_domain_worst_pair_stays_untouched
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_off_disables_the_semantics
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_threshold_override_expands_the_domain
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION-]
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION-auto]
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-]
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-abc]
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-0]
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU-1.5]
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_fails_fast_before_any_detect[NEWMANGA_SFX_ARBITRATION_IOU--0.1]
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_env_illegal_value_never_runs_the_primary
+FAILED tests/providers/test_detection_sfx.py::test_arbitration_config_defaults_are_frozen
+14 failed, 1 passed, 23 deselected in 0.33s

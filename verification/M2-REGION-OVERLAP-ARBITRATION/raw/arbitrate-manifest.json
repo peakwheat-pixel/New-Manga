@@ -1,0 +1,122 @@
+{
+ "task": "M2-REGION-OVERLAP-ARBITRATION",
+ "script": "experiments/M2-REGION-OVERLAP-ARBITRATION/arbitrate_bj13.py",
+ "started_at_utc": "2026-10-03T16:58:11.773932+00:00",
+ "frozen_arbitration_iou": 0.9,
+ "arbitration_config_default": [
+  true,
+  0.9
+ ],
+ "weights": {
+  "ogkalu_dir": "G:\\CODEX\\New Manga.task-envs\\M2-DOCTR-QUAL-C4\\weights\\ogkalu-comic-text-and-bubble-detector",
+  "chiqui7": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-DETECT\\weights\\yolo11s-seg.onnx"
+ },
+ "pages": {
+  "BJ13": {
+   "detect_elapsed_s": 9.4,
+   "primary": 3,
+   "sfx": 1,
+   "sfx_arbitration": "on",
+   "sfx_arbitration_relabels": null,
+   "sfx_arbitration_partial_overlap": null
+  },
+  "BJ14": {
+   "detect_elapsed_s": 0.6,
+   "primary": 6,
+   "sfx": 0,
+   "sfx_arbitration": "on",
+   "sfx_arbitration_relabels": null,
+   "sfx_arbitration_partial_overlap": null
+  },
+  "BJ15": {
+   "detect_elapsed_s": 0.6,
+   "primary": 7,
+   "sfx": 0,
+   "sfx_arbitration": "on",
+   "sfx_arbitration_relabels": null,
+   "sfx_arbitration_partial_overlap": null
+  },
+  "BJ06": {
+   "detect_elapsed_s": 0.5,
+   "primary": 9,
+   "sfx": 8,
+   "sfx_arbitration": "on",
+   "sfx_arbitration_relabels": null,
+   "sfx_arbitration_partial_overlap": "0.8865"
+  }
+ },
+ "bj13_synthetic_calibers": {
+  "caliber_A_reference_boxes": {
+   "note": "visual reference boxes as restored sfx candidates: the honest partial-overlap outcome (IoU 0.49-0.55 below the frozen 0.9)",
+   "labels": [
+    "manga-1",
+    "manga-2",
+    "manga-3",
+    "sfx-1",
+    "sfx-ref1",
+    "sfx-ref2"
+   ],
+   "relabels": null,
+   "partial_overlap": "0.5501"
+  },
+  "caliber_B_near_duplicate": {
+   "note": "near-duplicate double detections (IoU ~0.9+): the GREEN face — relabeled into the sfx- prefix, dispatched RegionType.SFX",
+   "labels": [
+    "sfx-arb-manga-1",
+    "sfx-arb-manga-2",
+    "sfx-arb-manga-3",
+    "sfx-1",
+    "sfx-near1",
+    "sfx-near2",
+    "sfx-near3"
+   ],
+   "relabels": "3",
+   "partial_overlap": null,
+   "region_types": [
+    {
+     "label": "sfx-arb-manga-1",
+     "region_type": "sfx"
+    },
+    {
+     "label": "sfx-arb-manga-2",
+     "region_type": "sfx"
+    },
+    {
+     "label": "sfx-arb-manga-3",
+     "region_type": "sfx"
+    },
+    {
+     "label": "sfx-1",
+     "region_type": "sfx"
+    },
+    {
+     "label": "sfx-near1",
+     "region_type": "sfx"
+    },
+    {
+     "label": "sfx-near2",
+     "region_type": "sfx"
+    },
+    {
+     "label": "sfx-near3",
+     "region_type": "sfx"
+    }
+   ]
+  }
+ },
+ "bj06_zero_change": {
+  "off_elapsed_s": 0.5,
+  "candidates_off": 17,
+  "candidates_on": 17,
+  "bit_identical_candidates": true,
+  "options_off_sfx_arbitration": "off",
+  "options_on_sfx_arbitration": "on",
+  "options_on_partial_overlap": "0.8865",
+  "qual_alignment": {
+   "qual_count": 17,
+   "rerun_candidates": 17
+  }
+ },
+ "finished_at_utc": "2026-10-03T16:58:24.851161+00:00",
+ "wall_s": 13.1
+}
