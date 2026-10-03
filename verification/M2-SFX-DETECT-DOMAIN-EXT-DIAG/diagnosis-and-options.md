@@ -12,7 +12,7 @@
 |---|---|
 | 假设 (a) 域外（chiqui7 训练域不含 BJ 毛笔竖排形态） | **DETERMINED — 成立（主根因）**：L3 最强形态下 7/7 参照框 sfx 类分数仅 0.0000–0.0109（域内对照 BJ06 为 0.72–0.94，相差 2–3 个数量级）；L1 raw pre-NMS 参照框内最高 sfx 分数 BJ13 ref1=0.0855 / ref2=0.0043 / BJ14=0.0001 / BJ15=0.0000 |
 | 假设 (b) 类别映射歧义（sfx 被判 text/panel） | **DETERMINED — 分层成立**：「SFX 像素被 text 类高 conf 捡走」成立（BJ13 text 0.744/0.844；L3 crop 中 BJ13 ref2 text 0.735、BJ14 text 0.87–0.90）；「sfx 信号存在但被 argmax 竞争压制（可差异化阈值救）」**不成立**——sfx 分数比同框 text 分数低 1–2 个数量级，非贴阈竞争 |
-| 假设 (c) 预处理（分辨率/letterbox）对大型竖排字不利 | **DETERMINED — 不成立**：L2 tile（1.67× 有效分辨率）与 L3 crop（2.4–3.4×）均不恢复 sfx 信号；BJ13-15 参照框在 letterbox 空间（61–86×135–206 px）**大于** BJ06 域内正例（21–84×25–131 px）；chiqui7 letterbox 为等比缩放，无 WEBTOON-DIAG 的各向异性机理 |
+| 假设 (c) 预处理（分辨率/letterbox）对大型竖排字不利 | **DETERMINED — 不成立**：L2 tile（1.67× 有效分辨率）与 L3 crop（3.5–5.4×）均不恢复 sfx 信号；BJ13-15 参照框在 letterbox 空间（61–86×135–206 px）**大于** BJ06 域内正例（21–84×25–131 px）；chiqui7 letterbox 为等比缩放，无 WEBTOON-DIAG 的各向异性机理（「目标太大」替代假设未单独排除，明示见 §2.5——不影响本判语） |
 | 结构性新发现 | 生产 region 创建**无跨 provider 重叠仲裁**（`src/bootstrap/core_assembly.py` `_create_detected_region` 按候选独立建 region，`sfx-` 前缀→SFX、`manga-`→SPEECH）：**任何提升 chiqui7 召回的方案（①②③）都不会自动消除「SFX 误路由 speech→乱译→渲染」损害**——speech region 仍并存走对话链。误路由闭合需另行设计重叠仲裁（DETECT-EVAL §4.4 条件 5 的具体化，共享契约面，须 Codex 范围裁决） |
 | AC3 推荐 | ①类敏感阈值：**否决（实验无效）**；④路由：**不推荐独立立项**；②后分类器：**条件性次优**（只救 BJ13/14，BJ15 结构性无载体）；③fine-tune：**自动化覆盖的对症路径但前置条件重（条件式）**；⑤维持现状+产品侧缓解：**短期首选**。完整排序见 §5 |
 

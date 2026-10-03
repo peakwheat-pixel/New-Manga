@@ -4,7 +4,8 @@ author: ZCode（owner subagent）
 recipient: Codex（integrator）；Reviewer=DeepSeek Harness（非作者）
 base_commit: 497621df
 delivery_head: 87a8bc34
-status: delivered_pending_review
+rework_head: d849c967
+status: rework_delivered_pending_recheck
 ---
 
 # Handoff：M2-SFX-DETECT-DOMAIN-EXT-DIAG（BJ 域 SFX 检测缺口诊断与扩展方案评估）
@@ -15,10 +16,10 @@ status: delivered_pending_review
 
 | AC | 交付 | 落点 |
 |---|---|---|
-| AC1 证据汇总与根因分层 | 三假设全部 **DETERMINED**：(a) 域外=成立（主根因）；(b) 类别映射歧义=分层（text 捡走成立 / argmax 竞争可阈值救=否定）；(c) 预处理=不成立。E2E r1 R2 遗留「panel/text 归属未定」收敛为 **text**（与 ko 域同型）；panel 大框全页平凡覆盖（IoU 0.013–0.126）非独立根因 | 报告 §3 |
+| AC1 证据汇总与根因分层 | 三假设全部 **DETERMINED**：(a) 域外=成立（主根因）；(b) 类别映射歧义=分层（SFX 像素被其他类捡走成立 / argmax 竞争可阈值救=否定）；(c) 预处理=不成立。E2E r1 R2 遗留「panel/text 归属未定」收敛（DSH r1 P1-1 更正后口径）：**BJ13=text**（与 ko 域同型）；**BJ14=bubble 主导＋text 并存**（bubble IoU 0.122/0.399）；panel 大框全页平凡覆盖（IoU 0.013–0.126）非独立根因 | 报告 §3 |
 | AC2 五方案评估 | ①后分类器（只救 BJ13/14，BJ15 结构性无载体）②类敏感阈值（实验否决）③fine-tune（对症但前置重，沿 C4 §7.1 条件式形态）④路由（不推荐独立立项）⑤维持现状+产品侧缓解（短期首选）；每方案列改动面/成本/收益/风险/SfxPolicy 交互 | 报告 §4 |
 | AC3 裁决建议 | 排序 ⑤＞③（条件式）＞①（条件性次优）＞④＞②（否决）；含「不实施」合法选项；移交用户三个具体裁决问题 | 报告 §5 |
-| AC4 零 src 佐证实验 | 三层探针实验跑成：L1 整页 conf 九档扫描（BJ06 对照+BJ13/14/15，全类+4 类分数向量 dump）、L2 60% tile（1.67×）、L3 参照框 crop（2.4–3.4×）+ raw pre-NMS 参照框查询 | `experiments/M2-SFX-DETECT-DOMAIN-EXT-DIAG/conf_scan_diag.py` + `raw/*.json` |
+| AC4 零 src 佐证实验 | 三层探针实验跑成：L1 整页 conf 九档扫描（BJ06 对照+BJ13/14/15，全类+4 类分数向量 dump）、L2 60% tile（1.67×）、L3 参照框 crop（等效 3.5–5.4×，=page_h/crop_h——DSH r1 P2-1 更正）+ raw pre-NMS 参照框查询 | `experiments/M2-SFX-DETECT-DOMAIN-EXT-DIAG/conf_scan_diag.py` + `raw/*.json` |
 
 **结构性新发现（本 Task 新增，超出三假设框架）**：生产 region 创建无跨 provider 重叠仲裁（`src/bootstrap/core_assembly.py` `_create_detected_region` L1013-1049 按候选独立建 region）——chiqui7 召回修复（方案①②③任一）后 ogkalu speech region 仍并存走对话链，**误路由乱译损害不消失**。重叠仲裁属 region 语义/共享契约面，须 Codex 范围裁决（DETECT-EVAL §4.4 条件 5 的具体化）。
 
@@ -28,7 +29,13 @@ status: delivered_pending_review
 |---|---|
 | `303d7e14` | claim（Task frontmatter status→in_progress + owner_claim） |
 | `87a8bc34` | 交付主体：实验脚本 1 + raw JSON 4 + 主报告 1（6 文件，14796 行） |
-| （本 Handoff+Task 回填所在 commit） | 文档收尾 |
+| `cc2109ac` | 文档收尾：本 Handoff 初版 + Task 回填 |
+| `d849c967` | **DSH r1 返修主体**（报告 r2 + Task：P1-1/P2-1/P2-2/P2-3/P2-4/P3-1/P3-2/P4-1/P4-2/P4-3，含报告 §8 闭合对照表） |
+| （收尾 docs commit） | 本 Handoff 返修（P1-1/P2-1/P3-3 同步 + 本清单补 hash）与 Task frontmatter `rework_head=d849c967` 对齐——即本文件当前所在 commit（tip，hash 见 `git log --oneline -1` 与 Owner 回报；commit 无法在其自身内容中记录自身 hash——DSH r1 P3-3 口径注记） |
+
+### r1 返修记录（2026-10-03）
+
+DSH r1 verdict=`changes_requested`（0×P0，1×P1+4×P2+3×P3+3×P4）：主根因判语、五方案评估、AC3 排序、结构性发现均被确认成立且未越权，**不需重跑实验**。11 条纯文字/数字返修全部闭合，逐条处置与落点=报告 §8「DSH r1 闭合对照」；本文件同步修正的复制句：AC1 行收敛口径（P1-1 限定 BJ13=text、BJ14=bubble 主导＋text 并存）、AC4 行 L3 等效倍数（P2-1 改 3.5–5.4×）、本提交清单（P3-3）。返修 commit 只触碰报告/Task/Handoff 三个文件，`experiments/**` 与 `raw/**` 零触碰。
 
 ## 验证证据
 
@@ -39,6 +46,7 @@ status: delivered_pending_review
 | AC1 判语数字溯源 | 报告 §2.2/§2.4 每个数字对应 raw JSON 字段（`by_rung`/`reference_verdicts`/`raw_pre_nms_candidates_in_reference`/`best_sfx_class_score_any_box`） | @87a8bc34 | PASS | raw JSON ×3 |
 | AC2/AC3 静态评估 | 报告 §4/§5（directional，静态分析+既有证据推导） | @87a8bc34 | N/A（评估性交付） | 报告 |
 | 禁改面零触碰 | 逐文件 add（无 `git add -A`）；SFX-E2E/KO-RERUN/TILING 既有产物只读引用 | @87a8bc34 | PASS | git log |
+| DSH r1 返修闭合（11 条） | 对照报告 §8 闭合表逐条核对报告/Task/Handoff 三处一致性（复制句同步）；`git diff --stat 87a8bc34..<tip> -- experiments verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/raw` 应为空 | 返修链 `d849c967`+收尾 docs commit | PASS（纯文字/数字返修，零实验重跑） | 报告 §8 |
 
 未运行项：方案②③④的训练/集成实验（本 Task 合同「只评估不实施」）；imgsz 变档（ONNX 输入形状固定 1024，物理不可变，已由 L3 覆盖判定需求）。
 
@@ -46,7 +54,7 @@ status: delivered_pending_review
 
 - 分支 `agent/zcode/M2-SFX-DETECT-DOMAIN-EXT-DIAG`，worktree `G:/CODEX/New Manga.worktrees/M2-SFX-DETECT-DOMAIN-EXT-DIAG-zcode`，base=`497621df`，delivery_head=`87a8bc34`。
 - 复现命令见报告 §7（单命令，输出全落本 Task 目录）；页面图像为 gitignored 跨 worktree 只读引用（路径记录在 raw JSON `page` 字段：BJ13-15 在 `M2-SFX-E2E-MATERIAL-zcode`、BJ06 在 `M2-TA2B-OPEN-ASSETS-zcode`）。
-- Reviewer 检查建议：①抽查 raw JSON 与报告 §2 数字的一致性（尤其 `reference_verdicts[*].best_sfx_class_score_among_intersecting` 与 `raw_pre_nms_candidates_in_reference[*][0].scores.sfx`）；②核对 §3 三假设判语与数字的对应；③§4/§5 评估的 directional 口径是否越界（不得被读成实施 Gate）。
+- Reviewer 检查建议：①抽查 raw JSON 与报告 §2 数字的一致性（尤其 `reference_verdicts[*].best_sfx_class_score_among_intersecting` 与 `raw_pre_nms_candidates_in_reference[*][0].scores.sfx`）；②核对 §3 三假设判语与数字的对应；③§4/§5 评估的 directional 口径是否越界（不得被读成实施 Gate）；④r1 返修改为 r2 后：复核报告 §8 闭合表 11 条的落点与报告/Task/Handoff 三处复制句一致性（P1-1 收敛口径、P2-1 倍数、P3-2 基线口径）。
 
 ## 下一任务建议（必填）
 

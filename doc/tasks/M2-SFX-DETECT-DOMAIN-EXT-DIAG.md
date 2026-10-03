@@ -5,7 +5,8 @@ kind: diagnosis
 status: in_progress
 owner_claim: 2026-10-03T23:12+08:00 by zcode subagent @497621df
 delivery_head: 87a8bc34
-reviewed_head: 待 Review 后回填（Reviewer=DeepSeek Harness 非作者）
+rework_head: d849c967
+reviewed_head: DSH r1=changes_requested @87a8bc34（2026-10-03）；r2 返修 @d849c967 待复核（Reviewer=DeepSeek Harness 非作者）
 completion_note: 2026-10-03 AC1-AC4 全部交付（只评估不实施）；三假设 DETERMINED：(a) 域外=成立主根因 (b) 类映射分层（BJ13 text 捡走、BJ14 bubble 主导+text 并存；阈值救否定） (c) 预处理=不成立（「目标太大」替代假设明示未单独排除）；实验 L1/L2/L3 跑成（BJ06 对照+BJ13/14/15，sfx 通道 0.0000-0.0109 vs 域内 0.72-0.94）；结构性发现=region 创建无跨 provider 重叠仲裁，召回修复不闭合误路由损害；DSH r1 changes_requested 11 条已闭合（报告 r2）；status 保持 in_progress 待复核+集成流转
 approval: orchestrator_next_release_2026-10-02_priority_input_registered
 suggested_owner: ZCode
