@@ -30,7 +30,7 @@
 | A10 | Reader 零写操作 | 可测 | Reader 组件无写命令调用静态断言 |
 | A11 | SfxPolicy 三值零改动 | 可测 | types.ts/设置页测试零 diff（既有 48 条测试保持绿） |
 | A12 | 改标入口限 speech↔sfx | 可测 | 其余四类型入口 disabled + 原因文案断言 |
-| A13 | 双主题对比度 ≥4.5:1 | 可测 | §7.2 徽标合成底审计口径复跑（实现 Task 交付物） |
+| A13 | 双主题对比度（r1 R-004 拆分双口径） | 可测 | (a) E2/E3/E4 徽标合成底 ≥4.5:1（E3 新增组合首次取证，R-005）；(b) E1 与 `bg-canvas` 非文字图形 ≥3:1 + 双载体强制——两口径均可测（实现 Task 交付物） |
 
 ## 3. diff 面核对
 
@@ -39,3 +39,16 @@
 | 工作区干净 | `git status --porcelain` | 仅本 Task 允许面文件（见 Handoff 提交清单） |
 | 尾随空白 | `git diff --check` | EXIT=0（收尾 commit 后复核，见 Handoff 验证表） |
 | 禁改面 | `git diff --name-only` 核对 | `apps/desktop/frontend/src/**`、`src/**`、`src-tauri/**`、`doc/contracts/**`、`doc/STATUS.md`、token 真值文件零命中 |
+
+## 4. DSH r1 闭合复核（2026-10-04，verdict=`approved_with_conditions`，0×P0/P1；4×P2+6×P3+7×P4 全文档级）
+
+r1 返修后受影响自检行复核结果（处置对照全表见 Handoff「DSH r1 修订段」）：
+
+| 自检行 | r1 变更 | 复核结果 |
+|---|---|---|
+| §1 AC2 行 | 状态机三处转换缺陷修复（R-002）：反向取消按来源守卫回退、SFX_ARB_RELABEL 补 undo/反向出边、撤销回触发态（警示保留守卫①） | PASS——mermaid 与 R5/R6 规约一致，无死态、无来源丢失 |
+| §1 AC2 行 | 联动表键改 region 快照值（R-001），translate 行加 RC-2/EV-8 前置 | PASS——对 core_assembly 非 SFX 强制 SKIP 事实的两种 EV-8 分支均不再产生错误断言 |
+| §1 AC3 行 | D2 source 收缩 `human\|heuristic`（R-003）、D3 响应含 revision_no+undo 来源注记（R-009）、D7 origin 四值口径（R-013）、D8「DTO 结构未定义」口径（R-014） | PASS——零 widening 边界不变 |
+| §1 AC4 行 | A13 拆双口径 (a)/(b)（R-004）、E3 首次取证义务（R-005）、A9 映射/决策分界（R-006）、A2 理由 BJ15 ref1 限定（R-012） | PASS——13 条编号稳定，无豁免口 |
+| §1 AC1 行 | 警示范围收窄 speech（R-015）、E3/八态/toolbar 同位优先级（R-008）、hex 改对照参考（R-011）、几何字面量登记义务（R-016）、Reader 数据来源 D6→D8/RC-5 更正（R-007）、mermaid 标点（R-017）、依据链表述（R-018） | PASS——三重编码/叠加不合并/虚线保留三规则不受影响 |
+| §3 diff 面 | r1 返修零产品代码复核 | PASS——改动面仍仅 design/verification/handoffs/Task 四处 |
