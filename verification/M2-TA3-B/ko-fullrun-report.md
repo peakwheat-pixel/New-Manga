@@ -36,7 +36,7 @@
 
 ### 1.2b DSH r1 message 级瑕疵登记（不改写 git 历史，以正文为准）
 
-r1 F4/F5/F6 指出三处 commit message 瑕疵：`7aee808d` 的「12:17-12:29Z」为 local 时间误标（UTC 应为 04:22-04:29，本报告 §1.1 正确）；`7aee808d` message 只提删假 K07 未提副本假 K09 条目（该条随 driver A 内存态重写自然清除，最终 9 条干净，本报告 §1.2 已述）；`cd76cac0` 的「227/286 OCR non-empty」分母应为 235（分子 227 正确）。F9：`ko_fullrun_driver.py` 在 `cd76cac0` 为首次入库（原初 driver A 以未提交工作树形态运行，硬化版首次提交）。F8：逐 case summary 顶层 `task` 字段为 runner 既有常量 `"M2-TA3-B2"`（budget-ledger 正确），未来参数化候选。以上均不改正文证据链，登记备查。
+r1 F4/F5/F6 指出三处 commit message 瑕疵：`7aee808d` 的「12:17-12:29Z」为 local 时间误标（正文 §1.1 事件窗 UTC 04:17–04:29 为准）；`7aee808d` message 只提删假 K07 未提副本假 K09 条目（该条随 driver A 内存态重写自然清除、最终 9 条干净——本节首次登记）；`cd76cac0` 的「227/286 OCR non-empty」分母应为 235（分子 227 正确）。F9：`ko_fullrun_driver.py` 在 `cd76cac0` 为首次入库（原初 driver A 以未提交工作树形态运行，硬化版首次提交）。F8：逐 case summary 顶层 `task` 字段为 runner 既有常量 `"M2-TA3-B2"`（budget-ledger 正确），未来参数化候选。以上均不改正文证据链，登记备查。
 
 ### 1.3 endpoint 可用性
 
@@ -96,7 +96,7 @@ K01–K10 在 `phase2/ocr/` **无 SVG GT 物**（现仅 J46/J47/K11/K19 四件�
 ### 4.2 OCR/翻译覆盖度增量（directional）
 
 - OCR 非空率 96.4%（1,074/1,114）；40 个空 OCR region（K01 1+K04 4+K07 21+K08 4+K09 4+K10 6）全部 typed 走 F3 同型路径（空 OCR → term_extract INVALID_INPUT 计入 run 终态——语义定稿链预期行为，ko-rerun-report §2 注先例）。
-- 翻译非空 1,069/1,070；唯一例外 K10 一个 region（`집이 엄청\n고급스럽네`）translate typed 失败保空（fail-closed 正确）。
+- 翻译非空 1,073/1,074；唯一例外 K10 一个 region（`집이 엄청\n고급스럽네`）translate typed 失败保空（fail-closed 正确）。
 - SFX：生产默认 `sfx.policy` 缺省 → SKIP 口径（与首跑/KO-RERUN 同），本轮无 SFX 增量（SFX 端到端由 M2-SFX-E2E-MATERIAL 承载并已闭环）。
 
 ## 5. 确定性复跑（K02 干净版相似度 Gate，remote 轨）
