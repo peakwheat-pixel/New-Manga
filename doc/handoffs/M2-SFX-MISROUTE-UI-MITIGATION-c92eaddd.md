@@ -4,6 +4,7 @@ author: ZCode
 recipient: DeepSeek Harness（非作者 Reviewer）；集成核验=编排会话代行 Codex
 base_commit: fb5d56c6
 delivery_head: c92eaddd
+rework_head: 42be3c11
 status: in_review
 ---
 
@@ -83,3 +84,30 @@ status: in_review
 ## 实验附录
 
 不适用（纯设计交付，零实验、零运行）。
+
+## DSH r1 修订段（2026-10-04 返修，rework=`42be3c11`；r1 verdict=`approved_with_conditions`：0×P0/P1，4×P2+6×P3+7×P4，全文档级）
+
+r1 确认设计核心语义全部成立（损害链、改标语义、SfxPolicy 门、零 widening、token 真实性、13 断言思路）；以下 18 条全部闭合于 design.md，返修零产品代码、零语义翻转（R-001/R-003 为**事实修正**，其余为精确化/登记）。逐条处置对照：
+
+| 编号 | 级别 | 处置方式 | 处置内容 | 落点（design.md） |
+|---|---|---|---|---|
+| R-001 | P2 | 修订 | 联动表键「全局 sfx.policy」→「region 快照值」；translate 行加显式前置「仅当 RC-2/EV-8 裁决为改标重快照」；全局设置降为不一致辅助解释（规则 1/2 同步）；§1.3 补快照口径注记——对 core_assembly 非 SFX 强制 SKIP 事实的两种 EV-8 分支均不再产生错误行为断言 | §1.3/§4.2 |
+| R-002 | P2 | 修订 | 状态机三处：①反向取消/失败按**来源守卫②**回退（自 SFX_TYPE 回 SFX_TYPE、自 SFX_ARB 回 SFX_ARB——机器来源态不因取消丢失，对齐 A7）；②SFX_ARB_RELABEL 补撤销出边（restore 至机器改标笔）与反向出边（原死态消除）；③撤销按**守卫①**回触发态（触发前 SPEECH_SUSPECT 则警示保留）；R5/R6 规约同步守卫明文 | §4.1 mermaid + R5/R6 |
+| R-003 | P2 | 修订 | D2 source 枚举收缩 `human\|heuristic`（移除 arbitration——上游仲裁只产生确定态改标不新增疑似字段）；D2/R1/EV-1 三处注明机器改标以 `sfx-arb-` 前缀 + revision origin=machine 追溯 | §4.1 R1/§5 D2/§7.2 EV-1 |
+| R-004 | P2 | 修订 | A13 拆双口径：(a) E2/E3/E4 徽标合成底 ≥4.5:1；(b) E1 与 `bg-canvas` 非文字图形 ≥3:1 + 双载体（边框+徽标）强制、对页图内容不设断言（任意像素不可测）；§3.5 同步重写 | §3.5/§6 A13 |
+| R-005 | P3 | 修订（含登记） | E3 新增组合取证义务落 A13(a)：§3.1/§3.5 明示 skip-soft×st-skip×`♪`×文本无既有 24 对审计证据，实现 Task 首次取证，既有审计不覆盖不构成豁免 | §3.1/§3.5/§6 A13(a) |
+| R-006 | P3 | 修订 | A9 限定为「不得前端**决定**是否翻译/如何渲染」；明示映射（Core 快照值的查找表）与决策的分界，避免把「显示 policy 标签」误读为违例 | §6 A9 |
+| R-007 | P3 | 修订 | Reader 提示条数据来源 D6→**D8/RC-5**（D6 是 policy 生效态非疑似信号），并注明两者区别 | §3.3 |
+| R-008 | P3 | 修订 | §3.2 新增同位共存优先级（左上角 E2>E3 独占；Region 八态徽标右下角、工具 pill 在工具条内，独立锚位不合并）；§2.6 层数改「三层既有+本设计两层=五层，禁止单徽标合并」 | §2.6/§3.2 |
+| R-009 | P3 | 修订 | D3 补「响应含 `revision_no`（沿 SaveManualTranslation result 先例）+ undo 来源注记（undo=restore 到改标前 revision，非二次改标）」 | §5 D3 |
+| R-010 | P3 | 修订 | Task frontmatter `status: in_progress→in_review`（r1 verdict 已出、待 r2 闭合复核），交付记录补段；Task/Handoff frontmatter 补 `rework_head: 42be3c11` | Task 文件 + 本文件 frontmatter |
+| R-011 | P4 | 修订 | §3.1 hex 值改述「仅写作时点对照参考，非定义来源，真值链冲突以 token 真值链为准」 | §3.1 |
+| R-012 | P4 | 修订 | BJ15「0 候选」收窄为 ref1（ref2 仅 3 候选且最高 sfx 0.0000） | §1.1/§6 A2 |
+| R-013 | P4 | 修订 | D7 origin 写全 RegionOrigin 四值（machine/user/imported/restored），注明本设计涉及 user/machine | §5 D7 |
+| R-014 | P4 | 修订 | D8 契约现状口径改「GetReaderProjection 结果 DTO 结构未定义（契约仅列命令名与 AS-IS 证据），无 region 摘要面」 | §5 D8 |
+| R-015 | P4 | 修订+登记（采纳收窄推荐） | 警示范围收窄为**限 speech region**（§0/§3.2/R1）；非 speech 类型的疑似处置出口登记 EV-1（未来扩展另行释放） | §0/§3.2/§4.1 R1/§7.2 EV-1 |
+| R-016 | P4 | 修订 | 20px/3px 8px 几何字面量登记义务：实现时组件常量化（沿 M2-UI1 D-2 先例），升令牌归实现 Task 裁决 | §3.1 |
+| R-017 | P4 | 修订 | mermaid 标签内半角分号换中文标点（状态机重写时一并处理） | §4.1 |
+| R-018 | P4 | 修订 | 依据链 M2-C1 描述改「§5.3 settings 通道 = 与 region policy 相关的唯一已落地 IPC 面」 | 头部依据链 |
+
+统计：**修订 17 条 + 登记 1 项**（R-015 收窄采纳；其非 speech 出口登记为 EV-1——18 条全部落在文档修订内，登记项指其中不需要即时规格、留待未来 Task 的部分）。自检复核见 `verification/M2-SFX-MISROUTE-UI-MITIGATION/ac-self-check.md` §4。**待办：DSH r2 条件闭合复核由编排方派发；r2 通过后集成方流转 status。**
