@@ -13,6 +13,7 @@ base_commit: fb5d56c6
 branch: agent/zcode/M2-SFX-MISROUTE-UI-MITIGATION
 worktree: G:/CODEX/New Manga.worktrees/M2-SFX-MISROUTE-UI-MITIGATION-zcode
 owner_claim: 2026-10-03T22:26:03Z
+delivery_head: c92eaddd
 integration_commit: null
 ---
 
@@ -49,7 +50,8 @@ integration_commit: null
 
 | 场景/AC | 计划命令或手工步骤 | 前提/环境 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1-AC4 | planned：设计评审（DSH 非作者静态 review）+AC4 断言清单逐条自检 | 无需运行环境 | NOT_RUN | 无 |
+| AC1-AC4 | planned：设计评审（DSH 非作者静态 review）+AC4 断言清单逐条自检 | 无需运行环境 | owner 自检 PASS（2026-10-03）；DSH review NOT_RUN（待派发） | `verification/M2-SFX-MISROUTE-UI-MITIGATION/ac-self-check.md` |
+| AC5 零产品代码 | `git diff fb5d56c6..HEAD --name-only` 面核对 + `git diff --check` | `c92eaddd` | PASS（改动面仅 design/verification/handoffs/Task 四处；EXIT=0） | Handoff 验证表 |
 
 ## 依赖、风险与阻塞
 
@@ -59,5 +61,17 @@ integration_commit: null
 
 ## 交付与运行记录
 
-- Handoff：尚无。
+- Handoff：[M2-SFX-MISROUTE-UI-MITIGATION-c92eaddd](../handoffs/M2-SFX-MISROUTE-UI-MITIGATION-c92eaddd.md)（2026-10-03 交付，待 DSH 非作者 review）。
 - Review：尚无。
+- 集成：尚无。
+
+### 交付记录（Owner=ZCode；设计交付 2026-10-03，base=`fb5d56c6`，claim=`8d844726`，delivery=`c92eaddd`）
+
+- **交付物**：主设计契约 `doc/design/M2-SFX-MISROUTE-UI-MITIGATION/design.md`（新增目录；§0 速览/§1 损害与改标语义/§2 领域事实六条/§3 AC1/§4 AC2/§5 AC3/§6 AC4/§7 AC5/§8 边界自证）+ 自检 `verification/M2-SFX-MISROUTE-UI-MITIGATION/ac-self-check.md`。**零产品代码**：`apps/desktop/frontend/src/**`、`src/**`、`src-tauri/**`、`doc/contracts/**`、`doc/STATUS.md`、token 真值文件零 diff；静态原型验证页诚实省略（Workbench React 页不存在，原型页无两场景数据流可验证）。
+- **AC1 视觉契约（PASS）**：警示=叠加层 E1（warn 色 2px **实线**边框，虚线保留给「需校对」）+ E2 徽标 pill（`♪?` + warn-soft/st-warn-t + 文本，三重编码）；改标成功态 E3 类型徽标（skip 色 `♪`，文案按 **region policy 快照**分档）；反馈条 E4。Workbench 双入口（RegionOverlay 右键菜单——与草稿多边形右键闭合按草稿态互斥——+ RegionInspector 按钮组）；Reader=页级提示条+跳转（诚实于 `GetReaderProjection` 无 region 面）；机器改标（`sfx-arb-`）加 `⧉` 字形区分。token 全部引用 Graphite Atelier（`tokens-cand-f.json`），零复制零新增定义。
+- **AC2 交互契约（PASS）**：不对称状态机（mermaid + R1–R6 规约）——speech→sfx 即时执行+undo 窗（默认 skip 下只减害）；sfx→speech 显式确认框（反向=重新进入对白翻译链，须明示乱译回归风险）；撤销=`restore_revision`（禁止反向改标模拟）；与设置页联动三硬规则（只读不写、region 快照显示优先、三值零改动）；已渲染损害闭环=反馈条 `[重渲染本页]`（`rerender_single` 语义，改标不抹除已贴译文、不得静默清空历史译文）。
+- **AC3 数据需求（PASS，登记不改约）**：D1–D10 逐项对照 M2-C1 rev 1.3——已承载 D1/D9/D10，部分承载 D6/D7，缺失 D2（疑似信号字段）/D3（改标命令；Core `RegionEditingService` 现无 `set_region_type`）/D4/D5（region 读取面；`RegionSummary` 结构未定义）/D8（Reader 疑似计数）→ **RC-1…RC-5 契约修订候选登记，零 widening**。仲裁 Task 交付记录的「UI-MITIGATION 对齐注记」（疑似字段无产出、属未来契约修订候选）由本表承接闭环。
+- **AC4 硬性断言（PASS）**：A1–A13 十三条红线，每条带理由与证据锚点（`gate.py:32-42`、`detection_sfx.py:202`、M2-C1 §10、UI 契约 §7.2、DOMAIN-EXT-DIAG BJ15 深盲 0 候选等）；可测性自查 13/13。
+- **AC5 零产品代码（PASS）**：见交付物行；EV-1…EV-8 演进项 + 冻结面小结（§7.3：断言/改标语义表/领域事实/状态机拓扑/三条视觉规则不可演进）。
+- **遗留（预期内）**：EV-8 改标后 policy 快照语义（OPEN，归 RC-2 裁决，UI 两侧兼容）；警示信号初始仅人工来源（检测器 BJ 零响应，方案⑤「可发现/可修正」非「自动发现」边界）。
+- 证据：[design.md](../design/M2-SFX-MISROUTE-UI-MITIGATION/design.md) + [ac-self-check.md](../../verification/M2-SFX-MISROUTE-UI-MITIGATION/ac-self-check.md) + [Handoff](../handoffs/M2-SFX-MISROUTE-UI-MITIGATION-c92eaddd.md)。status 保持 in_progress，待 DSH review 后由集成方流转。
