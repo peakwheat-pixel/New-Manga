@@ -13,9 +13,11 @@
 前笔 snapshot.region_type（首笔是创建不是纠错；revision_no 由
 service.py:130-134 max+1 单调分配，链为线性全快照序列）。
 
-存活判定（撤销链解析，冻结于 fixture 断言）：
+存活判定（撤销链解析，冻结于 fixture 断言；登记于 eligibility.CONSTANTS）：
   (a) 未被撤销：链上其后不存在 origin=`restored` 且 snapshot.region_type ==
-      type_before 的 revision（显式回退到改标前类型即撤销；RESTORED 本身不是事件）；
+      type_before 的 revision（显式回退到改标前类型即撤销；RESTORED 本身不是事件）。
+      保守读法（DSH r1 P3-1，SURVIVAL_UNDONE_RULE）：其后任一回退即判撤销——
+      撤销后再 restore 复活已改标 revision 的终态纠错被保守丢弃（rgO2 钉住）；
   (b) 未被改判：链末笔 snapshot.region_type == type_after（用户 settled 终判与
       该事件一致；否则该中间判断已被后续改标取代，不得作为 GT 入册）。
 排除项：origin=machine/imported 的类型变化（计数上报）；纯几何/文本/reading_order

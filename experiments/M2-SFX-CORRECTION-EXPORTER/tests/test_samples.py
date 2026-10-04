@@ -4,7 +4,7 @@
 - sfx 向存活事件才建样本；非 sfx 向（rgK/rgF-r3）不进样本构建；
 - 图引用 = 页面真实图像文件 sha256+尺寸（与 T1a ImageRef 同构）；
 - 框/多边形 = 链末笔 settled 几何（标签=存活事件 type_after，与终态类型一致）；
-  空 polygon 回退 bbox 四角并登记 quality_note；
+  polygon<4 点（空/三点）按生产 xywh bbox 回退四角并登记 quality_note（DSH r1 P1-1）；
 - annotation_status：complete（用户自建/用户几何编辑）vs partial（纯机器几何）；
 - provenance.type=asset_case + source=revision_chain_correction + correction.chain
   全链 trace（region_id/revision_no/event 序列可溯源可回放）。
@@ -17,11 +17,12 @@ import pytest
 from sfx_correction_exporter import fixture
 from sfx_correction_exporter.db import open_readonly
 from sfx_correction_exporter.samples import (
+    _polygon_from_geometry,
     build_sample,
     geometry_confidence,
     load_pages,
 )
-from sfx_correction_exporter.scanner import scan_corrections
+from sfx_correction_exporter.scanner import RevisionRow, scan_corrections
 
 
 @pytest.fixture(scope="module")
@@ -59,6 +60,24 @@ def test_geometry_confidence_gate(ctx):
     assert geometry_confidence(_chain(ctx, "rgB"))[0] == "partial"
 
 
+def test_geometry_gate_restore_endorsement_readout_pinned():
+    """P3-2 判别用例（DSH r1）：restore 至已改标 revision（无先撤销、无用户几何编辑）。
+
+    现读法（钉住）：restore 背书不单独触发 complete → partial/machine_only。
+    「restore 至改标 revision = 用户背书该 revision 几何」的读法已登记于
+    CONSTANTS["GEOMETRY_CONFIRM_RULE"]；按背书读法本例会判 complete——语义重裁定留 T2。
+    """
+    chain = [
+        RevisionRow("rgX", "pg1", 1, "rgX-r001", {"region_type": "speech", "geometry": {"bbox": [1, 1, 2, 2]}},
+                    "machine", "unreviewed", "t", None),
+        RevisionRow("rgX", "pg1", 2, "rgX-r002", {"region_type": "sfx", "geometry": {"bbox": [1, 1, 2, 2]}},
+                    "user", "unreviewed", "t", None),
+        RevisionRow("rgX", "pg1", 3, "rgX-r003", {"region_type": "sfx", "geometry": {"bbox": [1, 1, 2, 2]}},
+                    "restored", "needs_review", "t", "rgX-r002"),  # restore 至改标笔 r2
+    ]
+    assert geometry_confidence(chain) == ("partial", "machine_only")
+
+
 def test_build_sample_A_partial_with_full_provenance(ctx):
     fx, _, pages = ctx
     e = _event(ctx, "rgA")
@@ -77,9 +96,10 @@ def test_build_sample_A_partial_with_full_provenance(ctx):
     assert sample.image.sha256 == hashlib.sha256(raw).hexdigest()
     assert (sample.image.width, sample.image.height) == (64, 48)
     # 框：cls 恒 sfx（T1a schema.py:15 BOX_CLASSES）；多边形=链末笔 settled 几何
+    # （gA=geom(10,10,40,28)：bbox xywh 生产语义 → 四角 (10,10)-(50,38)，页内）
     assert len(sample.boxes) == 1
     assert sample.boxes[0].cls == "sfx"
-    assert sample.boxes[0].polygon == [[10.0, 10.0], [60.0, 10.0], [60.0, 50.0], [10.0, 50.0]]
+    assert sample.boxes[0].polygon == [[10.0, 10.0], [50.0, 10.0], [50.0, 38.0], [10.0, 38.0]]
     assert sample.annotation_status == "partial"
     # 样本自身逐条校验通过（T1a 冻结字段集）
     assert sample.validate() == []
@@ -96,12 +116,18 @@ def test_build_sample_A_partial_with_full_provenance(ctx):
     assert prov["correction"]["type_before"] == "speech"
     assert prov["correction"]["type_after"] == "sfx"
     assert prov["geometry_provenance"] == "machine_only"
+    assert prov["geometry_from_revision_no"] == 2  # P4-5：settled 几何=链末笔 r2
     assert prov["license"]["blocking"] is False  # 二次裁决：全备案不阻断
     assert sample.sample_id.startswith("corr-") and sample.sample_id.endswith("-r002")
 
 
 def test_build_sample_N_bbox_fallback(ctx):
-    """空 polygon（纯 bbox region）→ 回退 bbox 四角，quality_note 登记。"""
+    """空 polygon（纯 bbox region）→ 按生产 xywh bbox 回退四角，quality_note 登记。
+
+    rgN 几何 = geom(6, 8, 40, 28, polygon=[]) → bbox=[6,8,40,28]（xywh 生产语义，
+    DSH r1 P1-1：w=40/h=28 而非右下角坐标）；期望四角 (6,8)-(46,36) 为 x+w/y+h 推导。
+    旧 xyxy 读法会得出 (6,8)-(40,28) 的错误框——本期望值即判别锚。
+    """
     fx, _, pages = ctx
     e = _event(ctx, "rgN")
     sample = build_sample(
@@ -111,8 +137,30 @@ def test_build_sample_N_bbox_fallback(ctx):
         case=None, license_info=fixture.USER_LIBRARY_LICENSE,
         now_iso="2026-10-04T00:00:00Z",
     )
-    assert sample.boxes[0].polygon == [[20.0, 20.0], [50.0, 20.0], [50.0, 40.0], [20.0, 40.0]]
+    assert sample.boxes[0].polygon == [[6.0, 8.0], [46.0, 8.0], [46.0, 36.0], [6.0, 36.0]]
     assert "bbox" in sample.provenance["quality_note"]
+    assert "xywh" in sample.provenance["quality_note"]
+
+
+def test_polygon_from_geometry_xywh_discriminator():
+    """rgO 判别用例（DSH r1 P1-1）：生产形态 bbox+不足 4 点 polygon 的两种形态。
+
+    生产 bbox=(x, y, width, height)（entities.py:72-73）；旧实现把 xywh 当 xyxy 读，
+    对本组数值会得出不同的错误四角——期望值以 x+w/y+h 推导，旧代码下必红。
+    """
+    # 形态一：三点 polygon（缺左下角）→ 回退 bbox 四角
+    poly, note = _polygon_from_geometry(
+        {"bbox": [4, 6, 36, 24], "polygon": [[4, 6], [40, 6], [40, 30]]}
+    )
+    assert poly == [[4.0, 6.0], [40.0, 6.0], [40.0, 30.0], [4.0, 30.0]]  # x+w=40, y+h=30
+    assert "bbox" in note
+    # 形态二：空 polygon → 同一 bbox 同一回退
+    poly2, note2 = _polygon_from_geometry({"bbox": [4, 6, 36, 24], "polygon": []})
+    assert poly2 == poly and note2 == note
+    # 非法 bbox（宽/高非正——生产 BBox.__post_init__ 禁止）fail-closed
+    import pytest
+    with pytest.raises(ValueError):
+        _polygon_from_geometry({"bbox": [4, 6, 0, 24], "polygon": []})
 
 
 def test_build_sample_M_case_mapped_group(ctx):

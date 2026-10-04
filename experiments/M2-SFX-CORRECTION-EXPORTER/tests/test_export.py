@@ -54,12 +54,18 @@ def test_manifest_files_are_t1a_format(exported):
 
 
 def test_yolo_seg_labels(exported):
-    """YOLO seg：类别 id=sfx（SFX_CLASS_MAP 值反查=2），多边形归一化到 [0,1]。"""
+    """YOLO seg（默认 --yolo-scope main，DSH r1 P2-1）：仅正集入树。
+
+    类别 id=sfx（SFX_CLASS_MAP 值反查=2），多边形归一化到 [0,1]；
+    辅助集（partial）样本不出现在 YOLO 树（显式 all 才混入）。
+    """
     from infrastructure.providers.detection_sfx import SFX_CLASS_MAP
-    _, out, _ = exported
+    _, out, summary = exported
+    assert summary["export"]["yolo_scope"] == "main"
     sfx_id = next(k for k, v in SFX_CLASS_MAP.items() if v == "sfx")
     labels = sorted((out / "labels" / "train").glob("*.txt"))
-    assert labels, "train labels 目录非空"
+    # 正集 complete 仅 rgH/rgI（split=train）→ train 恰 2 个标签
+    assert len(labels) == 2
     for lp in labels:
         for line in lp.read_text(encoding="utf-8").strip().splitlines():
             parts = line.split()
@@ -67,9 +73,28 @@ def test_yolo_seg_labels(exported):
             coords = [float(v) for v in parts[1:]]
             assert len(coords) >= 8 and len(coords) % 2 == 0
             assert all(0.0 <= v <= 1.0 for v in coords)
-    # challenge 样本（rgM→BJ13）单列 challenge 目录
-    challenge_labels = list((out / "labels" / "challenge").glob("*.txt"))
-    assert len(challenge_labels) == 1
+    # 辅助集样本不入 YOLO 树：无 challenge 标签（rgM=partial）、无 partial train 标签
+    assert list((out / "labels" / "challenge").glob("*.txt")) == []
+    all_label_ids = {lp.stem for lp in (out / "labels").rglob("*.txt")}
+    assert all(sid.startswith("corr-") for sid in all_label_ids)
+    assert len(all_label_ids) == 2
+
+
+def test_yolo_scope_all_includes_auxiliary(tmp_path_factory):
+    """--yolo-scope all（DSH r1 P2-1）：显式把辅助集混入 YOLO seg 树并登记 scope。"""
+    root = tmp_path_factory.mktemp("scope-all")
+    fx = fixture.build_fixture_db(root / "fx")
+    out = root / "sfx-corrections"
+    summary = run_export(
+        db_path=fx["db_path"], out_dir=out, registry_path=None,
+        cases_path=fixture.repo_cases_json(), managed_root=None,
+        seed=20261004, yolo_scope="all", summary_out=root / "summary.json",
+    )
+    assert summary["export"]["yolo_scope"] == "all"
+    assert summary["export"]["yolo_labels"] == 6  # main 2 + auxiliary 4（含 challenge rgM）
+    train_ids = {lp.stem for lp in (out / "labels" / "train").glob("*.txt")}
+    challenge_ids = {lp.stem for lp in (out / "labels" / "challenge").glob("*.txt")}
+    assert len(train_ids) == 5 and len(challenge_ids) == 1  # 旧默认行为的全量形态
 
 
 def test_dataset_yaml_names_order(exported):
@@ -81,9 +106,10 @@ def test_dataset_yaml_names_order(exported):
 
 
 def test_images_copied_per_split(exported):
+    """图像副本随 YOLO 树走（scope=main 默认 → 仅正集 2 张，辅助集不复制）。"""
     _, out, _ = exported
-    assert len(list((out / "images" / "train").glob("*"))) == 5   # A,G,H,I,N
-    assert len(list((out / "images" / "challenge").glob("*"))) == 1  # M
+    assert len(list((out / "images" / "train").glob("*"))) == 2   # H,I（complete→正集）
+    assert len(list((out / "images" / "challenge").glob("*"))) == 0  # M=partial，scope=main 不入树
 
 
 def test_ac6_training_set_builder_consumes(exported):

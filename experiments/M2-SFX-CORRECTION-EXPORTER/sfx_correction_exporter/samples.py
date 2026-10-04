@@ -4,12 +4,15 @@
   importers.py:91-97；sha256 复用 sfx_data_infra.hash.sha256_file）。
 - 框/多边形：链末笔 settled 几何（存活事件 type_after == 终态类型，标签与
   settled 状态一致）；polygon>=4 点直用，不足（含空/三点）回退 bbox 四角并
-  在 quality_note 登记。cls 恒 "sfx"（T1a schema.py:15 BOX_CLASSES）。
+  在 quality_note 登记。生产 bbox 语义 = BBox.as_tuple()=(x, y, width, height)
+  （entities.py:72-73），回退四角复用 T1a importers.bbox_to_polygon（xywh 语义，
+  importers.py:54-55）。cls 恒 "sfx"（T1a schema.py:15 BOX_CLASSES）。
 - 标注状态：complete（用户自建 region 或链上有用户几何编辑）/
   partial（几何为机器检出且未被用户触碰）——AC3 几何确认度门的落地值。
 - provenance：type=asset_case（PROVENANCE_TYPES 四值内；user library 页即素材
   案例，derived 会触发 split 继承语义故不用）+ source=revision_chain_correction
-  + correction.chain 全链 trace（revision_no/origin/region_type 序列，可溯源可回放）。
+  + correction.chain 全链 trace（revision_no/origin/region_type 序列，可溯源可回放）
+  + geometry_from_revision_no（settled 几何来源 revision）。
 """
 
 from __future__ import annotations
@@ -85,16 +88,24 @@ def _page_field(page: Any, name: str) -> Any:
 
 
 def _polygon_from_geometry(geo: dict) -> tuple[list[list[float]], str]:
-    """settled 几何 → T1a 多边形；不足 4 点回退 bbox 四角（返回值含登记注记）。"""
+    """settled 几何 → T1a 多边形；不足 4 点回退 bbox 四角（返回值含登记注记）。
+
+    bbox 生产语义 = BBox.as_tuple()=(x, y, width, height)（entities.py:72-73），
+    回退四角用 T1a 现成 helper importers.bbox_to_polygon(x, y, w, h)
+    （importers.py:54-55）——DSH r1 P1-1：不得把 xywh 当 xyxy 读。
+    """
     polygon = geo.get("polygon") or []
     if len(polygon) >= 4:
         return [[float(x), float(y)] for x, y in polygon], ""
     bbox = geo.get("bbox")
     if not bbox or len(bbox) != 4:
         raise ValueError(f"settled 几何既无 >=4 点 polygon 也无合法 bbox: {geo!r}")
-    x0, y0, x1, y1 = (float(v) for v in bbox)
-    fallback = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]
-    return fallback, "polygon<4 点，回退 bbox 四角包络"
+    from sfx_data_infra.importers import bbox_to_polygon
+
+    x, y, w, h = (float(v) for v in bbox)
+    if w <= 0 or h <= 0:
+        raise ValueError(f"bbox 须为生产 xywh 语义且 width/height 为正: {geo!r}")
+    return bbox_to_polygon(x, y, w, h), "polygon<4 点（空/三点），按生产 xywh bbox 回退四角包络"
 
 
 def _image_ref(image_path: Path) -> ImageRef:
@@ -154,6 +165,7 @@ def build_sample(
             ],
         },
         "geometry_provenance": geom_prov,
+        "geometry_from_revision_no": final.revision_no,  # P4-5：settled 几何来源链末笔
         "license": dict(license_info),
     }
     quality_note = "revision 链类型纠错（改标后类型框；几何为链末笔 settled 状态）"

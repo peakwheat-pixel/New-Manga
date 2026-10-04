@@ -12,6 +12,10 @@ YOLO seg：labels/<split>/<sample_id>.txt 每行
   "<sfx_class_id> x1 y1 x2 y2 ..."（像素多边形按图宽高归一化，截断到 [0,1]）；
 类别 id 从生产 SFX_CLASS_MAP（src/infrastructure/providers/detection_sfx.py:137）
 按值反查 sfx，dataset.yaml names 顺序逐字 = SFX_CLASS_MAP（T0 P3-6 硬约束）。
+
+YOLO 范围（--yolo-scope，DSH r1 P2-1）：默认 main=仅正集（complete 样本）进
+YOLO seg 树；all=正集+辅助集混入（partial 仅在显式 all 时入树，避免辅助集
+静默混入训练直读树）。manifest 双册与 scope 无关（始终双册输出）。
 """
 
 from __future__ import annotations
@@ -39,6 +43,8 @@ from sfx_correction_exporter.scanner import scan_corrections
 
 MANIFEST_MAIN = "manifest.json"
 MANIFEST_AUXILIARY = "manifest-auxiliary.json"
+YOLO_SCOPES = ("main", "all")
+YOLO_SCOPE_DEFAULT = "main"
 
 
 def _now_iso() -> str:
@@ -169,9 +175,12 @@ def run_export(
     cases_path: str | Path | None = None,
     managed_root: str | Path | None = None,
     seed: int = SEED_DEFAULT,
+    yolo_scope: str = YOLO_SCOPE_DEFAULT,
     summary_out: str | Path | None = None,
 ) -> dict:
     """全流程：只读扫描 → 样本构建 → 资格判定 → 拆分 → 双形态落盘 → 摘要。"""
+    if yolo_scope not in YOLO_SCOPES:
+        raise ValueError(f"yolo_scope 须为 {YOLO_SCOPES} 之一，得 {yolo_scope!r}")
     db_path = Path(db_path)
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -247,7 +256,11 @@ def run_export(
 
     sfx_map = _sfx_class_map()
     sfx_class_id = next(k for k, v in sfx_map.items() if v == "sfx")
-    yolo_written = write_yolo_export(out_dir, kept, image_path_of, sfx_class_id) if kept else 0
+    # YOLO seg 范围（DSH r1 P2-1）：默认 main=仅正集；all=显式混入辅助集
+    yolo_samples = main if yolo_scope == "main" else kept
+    yolo_written = (
+        write_yolo_export(out_dir, yolo_samples, image_path_of, sfx_class_id) if yolo_samples else 0
+    )
     splits_present = sorted({s.split for s in kept})
     write_dataset_yaml(out_dir, splits_present)
 
@@ -292,6 +305,7 @@ def run_export(
             "by_split": by_split,
             "by_group": by_group,
             "yolo_labels": yolo_written,
+            "yolo_scope": yolo_scope,
             "splits_present": splits_present,
             "split_inheritance": split_info,
             "fingerprint": split_fingerprint(kept, seed) if kept else "",

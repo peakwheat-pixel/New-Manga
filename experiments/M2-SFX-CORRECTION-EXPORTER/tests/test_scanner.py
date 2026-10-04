@@ -15,6 +15,11 @@ fixture 链矩阵（fixture.build_fixture_db，schema=生产 v1+v2 冻结 DDL）
   L  deleted           m(speech) → u(sfx)，region 软删除        → 跳过并计数
   M  challenge-corr    p2(BJ13 映射): m(speech) → u(sfx)       → 事件存活（partial；challenge 路线）
   N  bbox-fallback     m(speech, 空 polygon) → u(sfx)          → 事件存活；多边形回退 bbox 四角
+                       （生产 xywh bbox 语义，DSH r1 P1-1）
+  O2 undo-then-restore m(speech) → u(sfx) → restored(r1,speech) → restored(r2,sfx)
+                       撤销后 restore 复活已改标 revision → 判据 (a) 保守误杀：
+                       事件 undone 不存活（DSH r1 P3-1 显式钉住保守读法，
+                       非契约 §5.4 唯一读法；登记 CONSTANTS.SURVIVAL_UNDONE_RULE）
 
 判据引用：doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md rev1.4 §5.4（改标=新 revision
 origin 恒 user；撤销=RestoreRegionRevision 产生 origin=restored；机器改标 origin=machine
@@ -148,8 +153,23 @@ def test_region_N_bbox_only_correction(scan):
     assert len(evs) == 1 and evs[0].survives is True
 
 
+def test_region_O2_restore_rehide_after_undo_conservative_misdrop(scan):
+    """P3-1 保守读法显式钉住（DSH r1）：撤销后经 restore 复活已改标 revision 的终态纠错。
+
+    链 = m(speech) → u(sfx) → restored(r1, speech) → restored(r2, sfx)。判据 (a) 按
+    「其后任一 restored 回退 type_before 即撤销」判 undone——尽管链末笔又 restore 回
+    已改标 revision（纠错态复活）。保守不采（survives=False），此为保守误杀、非契约
+    §5.4 唯一读法；登记见 eligibility.CONSTANTS["SURVIVAL_UNDONE_RULE"]，重裁定留 T2。
+    """
+    evs = events_of(scan, "rgO2")
+    assert len(evs) == 1
+    e = evs[0]
+    assert (e.revision_no, e.type_before, e.type_after) == (2, "speech", "sfx")
+    assert e.undone is True and e.superseded is False and e.survives is False
+
+
 def test_totals(scan):
-    assert scan.regions_scanned == 13  # 14 - 1 软删除
+    assert scan.regions_scanned == 14  # 15 - 1 软删除
     surviving = [e for e in scan.events if e.survives]
     # 存活 8：A、F-r3、G-r4、H、I、K、M、N
     assert sorted(

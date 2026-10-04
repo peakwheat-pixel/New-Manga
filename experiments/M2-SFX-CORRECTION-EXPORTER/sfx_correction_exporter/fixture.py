@@ -5,7 +5,7 @@ MIGRATION_V1..V4 SQL（只读导入，零 src 修改）并登记 schema_migratio
 链形态按生产写路径构造：全快照 revision、origin ∈ {machine,user,restored}、
 restored_from_revision_id 溯源（service.py:550-572 restore 语义）。
 
-14 个 region 的场景矩阵与期望见 tests/test_scanner.py 模块 docstring。
+15 个 region 的场景矩阵与期望见 tests/test_scanner.py 模块 docstring。
 """
 
 from __future__ import annotations
@@ -90,10 +90,17 @@ def snap(
     }
 
 
-def geom(x0: int, y0: int, x1: int, y1: int, polygon: list | None = None) -> dict:
+def geom(x: int, y: int, w: int, h: int, polygon: list | None = None) -> dict:
+    """生产 RegionGeometry.as_jsonable 形态（entities.py:98-102）。
+
+    bbox=[x, y, width, height]——BBox.as_tuple() xywh 语义（entities.py:72-73，
+    DSH r1 P1-1 同步修正：fixture 必须按生产形态造数，旧实现误用 xyxy）；
+    polygon 缺省=bbox 派生四角（与生产 BBox→polygon 包络一致）。
+    全部矩形保持页内（页 64x48，DSH r1 P4-4）。
+    """
     return {
-        "bbox": [x0, y0, x1, y1],
-        "polygon": polygon if polygon is not None else [[x0, y0], [x1, y0], [x1, y1], [x0, y1]],
+        "bbox": [x, y, w, h],
+        "polygon": polygon if polygon is not None else [[x, y], [x + w, y], [x + w, y + h], [x, y + h]],
     }
 
 
@@ -195,14 +202,16 @@ def write_tiny_png(path: Path, width: int = 64, height: int = 48) -> Path:
 # ---------------------------------------------------------------------------
 
 def _chains() -> dict[str, dict]:
-    gA = geom(10, 10, 60, 50)
-    gB = geom(70, 10, 120, 50)
-    gC0 = geom(130, 10, 180, 50)
-    gC1 = geom(130, 10, 180, 50, polygon=[[130, 10], [180, 14], [176, 50], [132, 46]])
-    gH = geom(190, 10, 240, 50)
-    gI = geom(250, 10, 300, 50)
-    gI2 = geom(250, 12, 300, 52, polygon=[[250, 12], [300, 12], [300, 52], [250, 52]])
-    gN = geom(20, 20, 50, 40, polygon=[])
+    # 全部矩形页内（64x48）；bbox=生产 xywh 语义（DSH r1 P1-1/P4-4）
+    gA = geom(10, 10, 40, 28)          # (10,10)-(50,38)
+    gB = geom(4, 4, 24, 16)            # (4,4)-(28,20)
+    gC0 = geom(34, 4, 24, 16)          # (34,4)-(58,20)
+    gC1 = geom(34, 4, 24, 16, polygon=[[34, 4], [58, 8], [54, 20], [36, 18]])
+    gH = geom(4, 24, 24, 16)           # (4,24)-(28,40)
+    gI = geom(34, 24, 24, 16)          # (34,24)-(58,40)
+    gI2 = geom(34, 26, 24, 16, polygon=[[34, 26], [58, 26], [58, 42], [34, 42]])
+    gN = geom(6, 8, 40, 28, polygon=[])  # bbox=[6,8,40,28]（xywh）；空 polygon → 回退四角
+    gO2 = geom(8, 6, 30, 20)           # (8,6)-(38,26)
     return {
         "rgA": {  # 基本纠错：m(speech) → u(sfx)，存活，partial
             "page": PAGE_MAIN,
@@ -309,6 +318,16 @@ def _chains() -> dict[str, dict]:
                 ("user", snap("sfx", gN), "unreviewed", None),
             ],
         },
+        "rgO2": {  # 撤销后 restore 复活已改标 revision：判据 (a) 保守误杀角例（DSH r1 P3-1，
+            #          期望=不存活被丢，显式钉住保守读法；非契约 §5.4 唯一读法）
+            "page": PAGE_MAIN,
+            "chain": [
+                ("machine", snap("speech", gO2), "unreviewed", None),
+                ("user", snap("sfx", gO2), "unreviewed", None),
+                ("restored", snap("speech", gO2), "needs_review", 1),  # 撤销：回退 r1（speech）
+                ("restored", snap("sfx", gO2), "needs_review", 2),     # 复活：回退 r2（已改标 sfx）
+            ],
+        },
     }
 
 
@@ -397,7 +416,7 @@ def make_registry_manifest(
                 sample_id="reg-dup-000",
                 image=ImageRef(path="dup.png", sha256=sha256_file(pg1), width=64, height=48),
                 # 与 rgA settled 几何（gA 四角，float 化后）完全一致 → 精确重复
-                boxes=[BoxAnnotation(polygon=[[10.0, 10.0], [60.0, 10.0], [60.0, 50.0], [10.0, 50.0]], cls="sfx")],
+                boxes=[BoxAnnotation(polygon=[[10.0, 10.0], [50.0, 10.0], [50.0, 38.0], [10.0, 38.0]], cls="sfx")],
                 annotation_status="partial",
                 provenance={"type": "asset_case", "source": "registry_fixture"},
                 group=group,

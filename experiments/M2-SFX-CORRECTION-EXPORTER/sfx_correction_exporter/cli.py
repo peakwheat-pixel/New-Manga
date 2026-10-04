@@ -35,6 +35,11 @@ def build_parser() -> argparse.ArgumentParser:
     pe.add_argument("--cases", default=None, help="cases.json 路径（许可继承+组键映射；缺省=仓库 test_assets）")
     pe.add_argument("--managed-root", default=None, help="相对 managed_original_ref 的解析根")
     pe.add_argument("--seed", type=int, default=SEED_DEFAULT, help="拆分 seed（默认同 T1a 20261004）")
+    pe.add_argument(
+        "--yolo-scope", choices=("main", "all"), default="main",
+        help="YOLO seg 范围（DSH r1 P2-1）：main=仅正集 complete（默认）；"
+             "all=正集+辅助集混入（partial 显式 opt-in 才入训练直读树）",
+    )
     pe.add_argument("--summary-out", default=None, help="摘要 JSON 输出路径（缺省 <out>/export-summary.json）")
     return parser
 
@@ -86,7 +91,7 @@ def cmd_selfcheck(_args: argparse.Namespace) -> int:
             assert scan.regions_skipped_deleted == 1
             non_sfx = [e for e in scan.events if e.survives and not e.sfx_directed]
             assert {e.region_id for e in non_sfx} == {"rgF", "rgK"}
-            return f"14-region fixture 矩阵不变量成立（surviving={sum(1 for e in scan.events if e.survives)}）"
+            return f"15-region fixture 矩阵不变量成立（surviving={sum(1 for e in scan.events if e.survives)}）"
 
     def _schema_interop() -> str:
         from sfx_data_infra.schema import SampleRecord
@@ -186,6 +191,7 @@ def cmd_export(args: argparse.Namespace) -> int:
             cases_path=cases_path,
             managed_root=args.managed_root,
             seed=args.seed,
+            yolo_scope=args.yolo_scope,
             summary_out=args.summary_out,
         )
     except Exception as e:  # noqa: BLE001 — CLI 层 fail-closed
