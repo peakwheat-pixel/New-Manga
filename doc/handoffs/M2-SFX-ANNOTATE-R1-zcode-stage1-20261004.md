@@ -3,7 +3,7 @@ task_id: M2-SFX-ANNOTATE-R1
 author: ZCode（本工作区 subagent）
 recipient: 用户（阶段二审核）→ ZCode（阶段二实施）→ DeepSeek Harness（审查）
 base_commit: 1b765007
-delivery_head: 待本次文档提交后回填
+delivery_head: 79e8dfad
 status: stage1_complete_WAITING_USER_LABELING
 ---
 
