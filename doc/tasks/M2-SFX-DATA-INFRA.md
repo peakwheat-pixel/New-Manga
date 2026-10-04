@@ -42,14 +42,18 @@ V1 训练的数据层地基（Codex 方案第 4/5 点落地）：不管底座选
 
 | 场景/AC | 计划步骤 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC2 派生同集合 | 构造同底图派生样本断言 split 键一致 | venv | NOT_RUN | 无 |
-| AC3 中断恢复 | kill 后重跑 manifest 完整 | venv | NOT_RUN | 无 |
-| AC4 GT 互算 | 渲染参数↔标注往返一致断言 | venv | NOT_RUN | 无 |
+| AC2 派生同集合 | 构造同底图派生样本断言 split 键一致 | venv | PASS（9 tests，含挑战集单列/builder 禁 test/组键规则） | red-run.log（先行红）→ green-run.log |
+| AC3 中断恢复 | kill 后重跑 manifest 完整 | venv | PASS（4 tests，子进程 replace 前 `os._exit(1)` 注入：旧版完好+重跑完整+tmp 清理） | red-run.log → green-run.log |
+| AC4 GT 互算 | 渲染参数↔标注往返一致断言 | venv | PASS（6 tests；forward∘inverse max err 2.27e-13 px；遮挡不裁包络；渲染逐像素确定） | red-run.log → green-run.log |
 
 ## 依赖、风险与阻塞
 
-无硬依赖（与 T0/T5a 并行）。风险：合成分布与真实域差距→PoC 阶段做 BJ13 真图对照目检登记（不阻塞，登记差距）。
+无硬依赖（与 T0/T5a 并行）。风险：合成分布与真实域差距→PoC 阶段做 BJ13 真图对照目检登记（不阻塞，登记差距）。**已登记**：合成横排 AR 2.3–4.5 vs BJ13/14/15 真竖排 0.4–0.5，系统字体非毛笔体——PoC 只声明管线正确性；批量生产需竖排+艺术字体源+页级尺度（见 data-infra-report.md §BJ13 对照）。
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。
+- delivery_head：`ecb39e67ff8eba63bf0586beaa00291b76bc29fc`（链：claim 339f11a0 → red 037a44cf → green 673c3c1f → data ecb39e67；status 保持 in_progress 待 Review）
+- 数据产出：82 样本/71 图/206 框入册（导入 7+8+43、合成 24；拆分 challenge 7/train 39/val 31/test 5 @seed 20261004，fingerprint a02fed3d…）；数据本体在 gitignored `training_data/sfx-v1/`，Git 只进摘要 `experiments/M2-SFX-DATA-INFRA/manifest_summary.json`
+- 遗留：ogkalu 11/43 空框负证据以 pseudo 空框入册（schema 冻结允许，review 待确认）；val 组样本级不均（12 组切片 8/2/2）
+- Handoff：`doc/handoffs/M2-SFX-DATA-INFRA-zcode-delivery-20261004.md`。Review：尚无（待 DeepSeek Harness r1）
+- 报告：`verification/M2-SFX-DATA-INFRA/data-infra-report.md`（含 AC 证据、红绿记录、BJ13 对照、验证记录）
