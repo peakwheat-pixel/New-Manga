@@ -1,0 +1,38 @@
+[
+  {
+    "batch": 2,
+    "imgsz": 1024,
+    "iters_recorded": 40,
+    "per_iter_median_s": 0.0548,
+    "it_s": 18.25,
+    "per_iter_all_median_s": 0.0548,
+    "peak_vram_reserved_MiB": 1940.0,
+    "peak_vram_allocated_MiB": 1722.6,
+    "epoch_wall_s": 43.3,
+    "amp": true
+  },
+  {
+    "batch": 4,
+    "imgsz": 1024,
+    "iters_recorded": 40,
+    "per_iter_median_s": 0.0698,
+    "it_s": 14.32,
+    "per_iter_all_median_s": 0.0698,
+    "peak_vram_reserved_MiB": 4030.0,
+    "peak_vram_allocated_MiB": 3343.1,
+    "epoch_wall_s": 25.9,
+    "amp": true
+  },
+  {
+    "batch": 8,
+    "imgsz": 1024,
+    "iters_recorded": 40,
+    "per_iter_median_s": 0.1194,
+    "it_s": 8.38,
+    "per_iter_all_median_s": 0.1194,
+    "peak_vram_reserved_MiB": 7488.0,
+    "peak_vram_allocated_MiB": 6039.4,
+    "epoch_wall_s": 34.3,
+    "amp": true
+  }
+]

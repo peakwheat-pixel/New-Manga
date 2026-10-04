@@ -1,0 +1,38 @@
+[smoke] {"step": "input", "t": 311940.664, "best_pt": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.pt"}
+[smoke] {"step": "export.start", "t": 311942.07, "imgsz": 1024, "format": "onnx"}
+Ultralytics 8.4.172  Python-3.12.3 torch-2.11.0+cu128 CPU (AMD Ryzen 9 7950X3D 16-Core Processor)
+YOLO11s-seg summary (fused): 113 layers, 10,068,364 parameters, 0 gradients, 84.7 GFLOPs
+
+[34m[1mPyTorch:[0m starting from 'G:\CODEX\New Manga.task-envs\M2-SFX-FINETUNE-gpu-py312\runs\vram-probe\b2\weights\best.pt' with input shape (1, 3, 1024, 1024) BCHW and output shape(s) ((1, 40, 21504), (1, 32, 256, 256)) (19.6 MB)
+[31m[1mrequirements:[0m Ultralytics requirement ['onnxslim>=0.1.82'] not found, attempting AutoUpdate...
+Using Python 3.12.3 environment at: G:\CODEX\New Manga.task-envs\M2-SFX-FINETUNE-gpu-py312
+Resolved 10 packages in 1.07s
+Prepared 2 packages in 326ms
+warning: Failed to hardlink files; falling back to full copy. This may lead to degraded performance.
+         If the cache and target directories are on different filesystems, hardlinking may not be supported.
+         If this is intentional, set `export UV_LINK_MODE=copy` or use `--link-mode=copy` to suppress this warning.
+Installed 2 packages in 201ms
+ + colorama==0.4.6
+ + onnxslim==0.1.97
+
+[31m[1mrequirements:[0m AutoUpdate success  1.8s
+WARNING [31m[1mrequirements:[0m [1mRestart runtime or rerun command for updates to take effect[0m
+
+
+[34m[1mONNX:[0m starting export with onnx 1.23.1 opset 18...
+[34m[1mONNX:[0m slimming with onnxslim 0.1.97...
+[34m[1mONNX:[0m export success  4.4s, saved as 'G:\CODEX\New Manga.task-envs\M2-SFX-FINETUNE-gpu-py312\runs\vram-probe\b2\weights\best.onnx' (38.9 MB)
+
+Export complete (4.7s)
+Results saved to [1mG:\CODEX\New Manga.task-envs\M2-SFX-FINETUNE-gpu-py312\runs\vram-probe\b2\weights\best.onnx[0m
+Predict:         yolo predict task=segment model=G:\CODEX\New Manga.task-envs\M2-SFX-FINETUNE-gpu-py312\runs\vram-probe\b2\weights\best.onnx imgsz=1024 
+Validate:        yolo val task=segment model=G:\CODEX\New Manga.task-envs\M2-SFX-FINETUNE-gpu-py312\runs\vram-probe\b2\weights\best.onnx imgsz=1024 data=G:\CODEX\New Manga.task-envs\M2-SFX-FINETUNE-gpu-py312\datasets\sfx-smoke-4cls-b2\dataset.yaml  
+Visualize:       https://netron.app
+[smoke] {"step": "export.done", "t": 311946.83, "onnx": "G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.onnx", "size_bytes": 40824248, "sha256": "b1bb877fc2b331ddc843cf0783dbd9b325470eee44314846d78be70af8933d7e"}
+[smoke] {"step": "sha_gate.fired", "t": 311946.854, "error_code": "PROVIDER_FAILED", "detail": "PROVIDER_FAILED: sfx detector weights file G:\\CODEX\\New Manga.task-envs\\M2-SFX-FINETUNE-gpu-py312\\runs\\vram-probe\\b2\\weights\\best.onnx has sha256 b1bb877fc2b331ddc843cf0783dbd9b325470eee44314846d78be7"}
+[smoke] {"step": "sha_gate.ok", "t": 311946.854, "pinned": "d87389af4350", "actual": "b1bb877fc2b3"}
+[smoke] {"step": "build_engine.full_chain_ok", "t": 311946.946, "names_metadata": "{0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}", "class_map_asserted": {"0": "bubble", "1": "panel", "2": "sfx", "3": "text"}, "imgsz": 1024, "imgsz_source": "metadata_parsed", "imgsz_metadata_raw": "[1024, 1024]"}
+[smoke] {"step": "detect.conf_0.5", "t": 311947.187, "candidates": 0, "elapsed_ms": 236, "provider_id": "local-sfx", "coordinate_space": "page-global", "imgsz": "1024", "imgsz_source": "metadata_parsed", "arch": "yolo11s_seg_onnx", "class_filter": "sfx", "first_candidate": null}
+[smoke] {"step": "detect.conf_0.01", "t": 311947.496, "candidates": 0, "elapsed_ms": 291, "provider_id": "local-sfx", "coordinate_space": "page-global", "imgsz": "1024", "imgsz_source": "metadata_parsed", "arch": "yolo11s_seg_onnx", "class_filter": "sfx", "first_candidate": null}
+[smoke] {"step": "output_tensor", "t": 311947.626, "shape": [1, 40, 21504], "expect": "1x40xN (4+4cls+32mask)"}
+[smoke] EXIT=0 — full chain: .pt -> onnx -> production sequence OK

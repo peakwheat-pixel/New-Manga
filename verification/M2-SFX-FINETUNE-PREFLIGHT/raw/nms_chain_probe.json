@@ -1,0 +1,38 @@
+{
+  "probe": "production _sfx_boxes with injected (1,40,N) tensor",
+  "got": [
+    {
+      "x0": 200.0,
+      "y0": 200.0,
+      "x1": 400.0,
+      "y1": 400.0,
+      "conf": 0.9
+    },
+    {
+      "x0": 1000.0,
+      "y0": 1000.0,
+      "x1": 1200.0,
+      "y1": 1200.0,
+      "conf": 0.6
+    }
+  ],
+  "expected": [
+    {
+      "x0": 200.0,
+      "y0": 200.0,
+      "x1": 400.0,
+      "y1": 400.0,
+      "conf": 0.9
+    },
+    {
+      "x0": 1000.0,
+      "y0": 1000.0,
+      "x1": 1200.0,
+      "y1": 1200.0,
+      "conf": 0.6
+    }
+  ],
+  "assertions": "nms_suppression=True, class_filter=True, scale_map_x2=True",
+  "elapsed_ms": 60,
+  "exit": 0
+}
