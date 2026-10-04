@@ -2,8 +2,8 @@
 id: M2-SFX-TRAIN-V1
 title: "SFX 训练 V1（T2）：A′ 路线首训——challenge 划拨重切+yolo11s-seg 微调+导出冒烟+directional 评测"
 kind: feature
-status: ready
-owner_claim: —
+status: in_review
+owner_claim: 2026-10-04 by zcode subagent @45ae05a4（AC1）+ @5fe62a91（AC2）+ @c89c85e2（AC3/AC4；docs 收尾轮报告/Handoff/本回填随 docs 提交）
 approval: user_ruling_2026-10-04_按推荐_直接训V1+划拨challenge
 suggested_owner: ZCode
 owner: ZCode
@@ -54,12 +54,12 @@ AC5：三文档齐+T3/T4 呈报材料。
 
 ## Acceptance Criteria
 
-- [ ] AC1 challenge 划拨重切（vol05 组整组+组隔离 0 违例+names 双通道+challenge 键可扫描）
-- [ ] AC2 训练 V1（A′ 基座+seed 冻结+曲线完整）
-- [ ] AC3 导出+生产序列冒烟（零 src+_build_engine 重指+BJ17 推理演示）
-- [ ] AC4 directional 评测（BJ challenge 双口径召回+chiqui7 对照+KO 不回退检查）
-- [ ] AC5 报告+Handoff+Task 回填+T3/T4 呈报材料
-- [ ] AC6 零 src；训练数据/权重 gitignored 外部树；Git 只进摘要
+- [x] AC1 challenge 划拨重切（vol05 组整组+组隔离 0 违例+names 双通道+challenge 键可扫描）——底册=R2 final 351 只读重切：densho810/vol05 组整组 train→challenge（pre-bj17 竖排主攻 2 框+pre-bj18 粗毛笔 3 框=5 框考卷，逐框溯源 R2 判定链 conf 0.8333–0.932 全 confirm、BJ17-B02 仲裁 delete 排除留痕核对），其余逐样本保持 R2 出厂 split；train 345→343（324 合成+19 真实，剩 BJ 6 框=BJ16×3+BJ23×2+BJ24×1）/val 4/53、test 2/5 逐样本不变；组隔离全量 351 group→split 重算 0 违例；names=SFX_CLASS_MAP 双通道 PASS（detection_sfx.py:137）+ultralytics 8.4.172 check_det_dataset 扫描 PASS（challenge 键在位 2 图可扫描）；指纹 badb0605…（seed=20261004 冻结，T1a 工具零重写复用）复现一致；label 351 全量与 R2 树逐字节一致+sha256 三方抽验 13 张（BJ 5 页必验）@45ae05a4
+- [x] AC2 训练 V1（A′ 基座+seed 冻结+曲线完整）——官方 yolo11s-seg.pt 基座 sha256 1caa81c0…257c3（T0 指路在盘复用未下载，训练前自检通过）+kwargs 全沿 T0 口径（imgsz 1024/batch 8/workers 2/epochs 150/patience 30/seed 20261004/device 0）；EXIT=0 单次运行无 OOM（6.45G，T0 7488MiB 口径内，减半重试未触发）；实际 116/150 epochs patience=30 早停（best epoch 86）、耗时 868.8s @RTX 5070 Ti；best.pt（epoch 86，20,585,636 B）sha256 f212bfc6…26740 登记；results.csv 末行 box P 0.24725/R 0.03774/mAP50 0.00875/mAP50-95 0.00535（seg 同值）；final val（4 图 53 sfx）Box/Mask P 0.482/R 0.0189/mAP50 0.0158/mAP50-95 0.0123；小数据预期管理：数字仅作 V1↔V2 基线不作门判定，低数字如实登记不凑数 @5fe62a91
+- [x] AC3 导出+生产序列冒烟（零 src+_build_engine 重指+BJ17 推理演示）——best.onnx fb60b460…329f6（40,824,255 B）；SHA 门先证在位（直载=PROVIDER_FAILED 正确命中）→进程内重指全链 EXIT=0（names metadata 逐字 SFX_CLASS_MAP+imgsz 1024 metadata_parsed+(1,40,21504) 张量+合成页双档 conf 结构合法）；零 src、生产 pin d87389af…（detection_sfx.py:110）零改动；BJ17 真实页推理演示落 raw/bj17-demo.json（conf 0.5=0 检出/conf 0.2=1 检出 0.2049）@c89c85e2
+- [x] AC4 directional 评测（BJ challenge 双口径召回+chiqui7 对照+KO 不回退检查）——BJ challenge 考卷（5 框，IoU≥0.5 贪心）：新模型严格 conf≥0.50=0/5（0 检出，BJ17 竖排主攻形态零检出）/宽松 conf≥0.20=1/5（3 检出 P=0.333，唯一匹配 R2-BJ18-B00 IoU 0.606@conf 0.343）vs chiqui7 双口径 5/5（6 检出 P=0.833，唯一 FP=仲裁 delete 的 B02 气泡框）；KO 不回退：KO 页 4 样本 56 框新模型严格/宽松均 0/56（零检出）vs chiqui7 严格 56/56（P=0.824）/宽松 56/56（P=0.667），全 6 样本 58 框新模型宽松 0/58——**回退如实登记**；imp-ogkalu-* 2 样本（2 框）chiqui7 预标注不可得（预标注源=ogkalu rt-detr）如实登记；统计功效低禁用「显著」，结论与 343 样本+COCO 基座无 manga 先验+欠拟合（val R=0.019）一致 @c89c85e2
+- [x] AC5 报告+Handoff+Task 回填+T3/T4 呈报材料——verification/M2-SFX-TRAIN-V1/train-v1-report.md（数据/训练/评测/DSH 独立复核 PASS 四项+3 条非阻塞观察项/诚实边界：BJ train 剩 6 框量级小+KO val 功效低 directional+V1 不承诺 G1-G8 Gate+AGPL 备案在案；§7=T3 前置 BJ 深度扩标候选（conf<0.2 层 16 单元+44 张 BJ 候选池页+10 张 KO 候选）与 T4 生产切换条件清单（含 best.onnx 与生产 pin 替换语义））+doc/handoffs/M2-SFX-TRAIN-V1-zcode-20261004.md（DSH 审查入口）+本 Task 回填（docs 提交）
+- [x] AC6 零 src；训练数据/权重 gitignored 外部树；Git 只进摘要——git diff --name-status a85d8853..HEAD 仅 11 文件全在 Task 允许范围；`-- src/` 空 diff 0 提交；生产 pin d87389af… 在 HEAD/base/main 三处 git show 同值；dataset.yaml/best.pt/best.onnx 均命中 .gitignore:13 '/training_data/'（*.pt/*.onnx 8-10 行双保险）；Git 只进摘要+日志（DSH 独立复核四项 PASS 实证，报告 §5）
 
 ## 允许修改范围
 
@@ -76,4 +76,14 @@ AC5：三文档齐+T3/T4 呈报材料。
 
 ## 交付与运行记录
 
--（待 Owner 回填）
+- **AC1 数据准备轮（2026-10-04，@45ae05a4）**：challenge 划拨重切+train-v1 数据集重建（零 src）。densho810/vol05 组整组 train→challenge（用户裁决 ②(a)），train 345→343/val 4/test 2/challenge 2 页 5 框；组隔离 0 违例、指纹 badb0605… 复现一致、names 双通道+ultralytics 扫描 PASS、label 351 全量与 R2 树逐字节一致；honest note：BJ22=pseudo 候选 2 框未入判定（非零框）/BJ25=pseudo 零框负证据，均不入 351。证据：prepare-summary.json+manifest.train-v1.json（artifacts sha256 e454429a…）。
+- **AC2 训练轮（2026-10-04，@5fe62a91）**：yolo11s-seg 微调，116/150 epochs 早停（best epoch 86），868.8s @RTX 5070 Ti，EXIT=0 无 OOM；best.pt sha256 f212bfc6…26740；final val Box/Mask P 0.482/R 0.0189/mAP50 0.0158/mAP50-95 0.0123（results.csv 末行 P 0.24725/R 0.03774/mAP50 0.00875/mAP50-95 0.00535）；train-log.txt 923KB 全程 stdout 入 Git。数字仅作 V1↔V2 基线不作门判定。
+- **AC3/AC4 评测轮（2026-10-04，@c89c85e2）**：ONNX 导出+SHA 门（PROVIDER_FAILED 正确命中）+进程内重指生产序列冒烟 EXIT=0（零 src，pin d87389af… 零改动）+BJ17 真实页演示；BJ challenge 考卷新模型 0/5（严格）·1/5（宽松）vs chiqui7 5/5 双口径；KO 页 4 样本 56 框新模型 0/56 双口径 vs chiqui7 56/56——回退如实登记，V1=管线验证，全面低于 chiqui7 现役为 343 样本小数据的预期结果。
+- **文档收尾轮（2026-10-04，docs 提交）**：`verification/M2-SFX-TRAIN-V1/train-v1-report.md`（全部数字从盘上产物复算）+ `doc/handoffs/M2-SFX-TRAIN-V1-zcode-20261004.md` + 本 Task 回填（status=in_review，AC1-AC6 勾选）。
+- **独立复核**：DSH = **PASS**（重切正确性/训练真实性/评测复算/零 src 实证四项全过；3 条非阻塞观察项：.bak 残留可清理、EXIT 证据在 export-smoke-v1.json 的脚本设计差异、本报告补齐 AC5 时点缺项）——见报告 §5。
+- 报告：[verification/M2-SFX-TRAIN-V1/train-v1-report.md](../../verification/M2-SFX-TRAIN-V1/train-v1-report.md)；Handoff：[doc/handoffs/M2-SFX-TRAIN-V1-zcode-20261004.md](../handoffs/M2-SFX-TRAIN-V1-zcode-20261004.md)；摘要：verification/M2-SFX-TRAIN-V1/prepare-summary.json；raw：train-log.txt/export-smoke-v1.json/bj17-demo.json/eval-challenge.json/eval-kodelta.json。
+- **T3/T4 呈报（交编排/用户裁决，不随本 Task 释放）**：T3 前置=BJ 深度扩标候选（conf<0.2 层 16 单元+44 张 BJ 候选池页+10 张 KO 候选；V1 失败形态佐证=竖排主攻形态零检出而粗毛笔有低置信响应，样本量为首要瓶颈）；T4=生产切换条件清单（质量门/正式 Gate/链路门/生产 pin 替换语义/AGPL 复核/用户裁决）——报告 §7。
+
+## Review
+
+-（待 DSH review 轮回填）
