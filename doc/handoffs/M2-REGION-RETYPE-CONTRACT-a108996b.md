@@ -4,6 +4,7 @@ author: ZCode（subagent，契约冻结 Owner）
 recipient: Codex（integrator，编排会话代行，用户全权授权）；Review：DeepSeek Harness（非作者）
 base_commit: 4c12e8af
 delivery_head: a108996b
+r1_revision: 同分支 `r1(RETYPE-CONTRACT):` commit（DSH r1 changes_requested 返修，见文末「DSH r1 修订段」）
 status: delivered_pending_review
 ---
 
@@ -11,9 +12,9 @@ status: delivered_pending_review
 
 ## 交付结果
 
-M2-C1 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` rev `1.3` → `1.4` **草案**（delivery_head=`a108996b`，1 file，+59/−3），**零代码零 runtime**。提交链：claim `8d41d8ef` → 契约修订 `a108996b` → 本文档 commit（Handoff/Task 回填/verification）。
+M2-C1 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` rev `1.3` → `1.4` **草案**（delivery_head=`a108996b`，1 file，+59/−3），**零代码零 runtime**。提交链：claim `8d41d8ef` → 契约修订 `a108996b` → 本文档 commit（Handoff/Task 回填/verification）→ r1 返修 commit。**r1 追记**：DSH 独立 Review r1=`changes_requested`（全部文本级），返修已按下方「DSH r1 修订段」闭合（裁定内容零变更），复核以 r1 后文本为准。
 
-与 AC 逐项对照（自检证据全文：[verification/M2-REGION-RETYPE-CONTRACT/contract-freeze-report.md](../../verification/M2-REGION-RETYPE-CONTRACT/contract-freeze-report.md)）：
+与 AC 逐项对照（自检证据全文：[verification/M2-REGION-RETYPE-CONTRACT/contract-freeze-report.md](../../verification/M2-REGION-RETYPE-CONTRACT/contract-freeze-report.md)）。**r1 注记**：下表为原始交付 `a108996b` 时点的自检；r1 返修后 AC1 行「错误码零新码」表述收紧为「零新错误语义」、AC2 行读取面 DTO 定名 `RegionListSummary`、AC4 依据改 Task 合同语境、AC5 继承分支表述修正（对照见文末「DSH r1 修订段」，AC 结论全部维持 PASS）：
 
 | AC | 交付 | 结论 |
 |---|---|---|
@@ -36,7 +37,7 @@ M2-C1 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` rev `1.3` → `1.4` **草案**
 
 ## 接收方式
 
-- 分支：`agent/zcode/M2-REGION-RETYPE-CONTRACT`；worktree：`G:/CODEX/New Manga.worktrees/M2-REGION-RETYPE-CONTRACT-zcode`；base=`4c12e8af`，delivery_head=`a108996b`。
+- 分支：`agent/zcode/M2-REGION-RETYPE-CONTRACT`；worktree：`G:/CODEX/New Manga.worktrees/M2-REGION-RETYPE-CONTRACT-zcode`；base=`4c12e8af`，delivery_head=`a108996b`，r1 返修=同分支 `r1(RETYPE-CONTRACT):` commit（复核以 r1 后文本为准）。
 - 复核入口：读 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` 头部/Revision history `1.4`/§5 表两行/§5.4 全文/§11 两行，对照 [verification 报告](../../verification/M2-REGION-RETYPE-CONTRACT/contract-freeze-report.md) 与 Task 合同 AC1–AC6。
 - 接收者具体检查建议：①EV-8 理由链的技术事实三锚点（`gate.py:32-42`/`core_assembly.py:1036-1045`/`service.py:521-529`）逐行复核；②错误码映射表「零新码」逐码核对既有字面量出处；③确认 §1–§4/§6–§10/§12 无语义漂移（diff 仅 5 处落点）。
 
@@ -64,3 +65,25 @@ M2-C1 `doc/contracts/M2-C1_TYPED_IPC_CONTRACT.md` rev `1.3` → `1.4` **草案**
 ## 实验附录（仅实验任务）
 
 不适用（契约冻结 Task，无实验）。
+
+## DSH r1 修订段（R 编号 → 处置对照，2026-10-04）
+
+DSH 独立 Review r1=`changes_requested`（1×P1+3×P2+6×P3+3×P4，全部文本级）。返修 commit 前缀 `r1(RETYPE-CONTRACT):`；**裁定内容零变更**（EV-8/「忽略」/错误码复用集/C1–C7/P1–P4 断言语义不变），r1 diff 面仅本 Task 允许的四文件（契约/报告/本 Handoff/Task）。逐条处置（详证见 [contract-freeze-report.md §6](../../verification/M2-REGION-RETYPE-CONTRACT/contract-freeze-report.md)）：
+
+| R 编号 | 处置 |
+|---|---|
+| P1-1 | 已修——§5 表 `ListRegions` 行统一包装对象 `{"regions": RegionListSummary[]}`，加「result 包装形状以 §5.4 为准」注记 |
+| P2-1 | 已修——EV-8 理由链继承分支改为「无 region 级自愈路径（除软删除后重新检出），如需恢复须新授权修订」（原「唯一恢复手段是再改标一次」与继承语义矛盾） |
+| P2-2 | 已修——「忽略」定案依据改「Task 合同 AC4（编排方案第 8 点）」语境；明示「设计稿全文无『忽略』表述」（近义 design.md:41/236）；R-015 限定为「同属 RegionType 闭集纪律」；裁定内容不变（契约 §5.4+报告 §3.2 差异 3） |
+| P2-3 | 已修——机器改标溯源锚点改「`origin` 字段（+ 检测步 provenance/StepResult 记录）」，A7 可追溯落点限定为 `origin`；`source_run_id` 不在 region 创建写路径的源码事实（`service.py:247-256`/`222-241`、`handlers.py:354/439`）落契约 §5.4+报告 §3.2 差异 1 |
+| P3-1 | 已闭合——改标 revision `review_state=UNREVIEWED` 定案且不触发需校对变化（理由：类型/几何类用户写既有先例 `service.py:272/302/363/402/429`；snapshot 仅两字段变化、校对标志原样保留 `entities.py:273-282`） |
+| P3-2 | 已闭合（采纳推荐）——读取面 DTO 更名 `RegionListSummary`，契约内全部引用同步；`CreateRegion` result 保持 `RegionSummary` 原名解耦 |
+| P3-3 | 已闭合——①「零新码」收紧为「零新错误语义（wire `code` 字面量全部复用既有导出）」；②脚注 c 明文 SCREAMING_SNAKE_CASE（对齐 `core_service.py:105/98`、`errors.py:19-20` 成员名；小写枚举值禁作 wire code）；③脚注 b 消歧 `LOCK_CHANGED` 为机器写守卫内部结果值、非本两命令 wire 错误码 |
+| P3-4 | 已闭合——选定「空列表+脚注 a」：`page_id` 不存在/不属于任何 book 与无存活 region 同判空列表（非错误），沿既有 `list_regions` 语义（`service.py:279-281`）；严格存在性校验属扩容须新授权修订 |
+| P3-5 | 已闭合——Task :22 改「RC-2 改标命令 / RC-3 读取面」、:27 改「（RC-3；RC-1 suspect 不在本 Task 范围）」（对齐设计稿 design.md:271-275 口径） |
+| P3-6 | 已闭合——报告 §2 明示 C2/C3 需覆盖 service guard 层（`service.py:483-496`）+管线候选持久化层（StepResultCandidate）两层，T5b 用例表两层各设断言 |
+| P4-1 | 已修——`SetRegionType` 条目加与 `SaveManualTranslation` 的 `expected_revision` 双向交叉指针；后行 UNKNOWN 边界注记不变 |
+| P4-2 | 登记不修（按返修授权清单） |
+| P4-3 | 已修——错误码表头注记覆盖范围（`ListRegions` 仅 `INVALID_REQUEST`/空列表/`UNKNOWN`；乐观冲突与目标缺失为 `SetRegionType` 专属） |
+
+r1 复验：`git diff --check` EXIT=0；`src/**`/`tests/**`/`apps/**`/`packaging/**`/`doc/STATUS.md`/既有设计稿零 diff。
