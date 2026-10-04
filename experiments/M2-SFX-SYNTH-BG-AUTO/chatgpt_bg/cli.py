@@ -100,16 +100,14 @@ def cmd_generate(args: argparse.Namespace) -> int:
         )
     except BGGenerationError as e:
         print(f"[generate] FAIL-CLOSED [{e.state}] {e.detail}", file=sys.stderr)
-        driver.close()
         return 4
     except Exception as e:
         # r2 P1-2：环境异常（playwright 缺失/Chrome 不存在/启动失败）同样 fail-closed
         print(f"[generate] FAIL-CLOSED [ENV_ERROR] {type(e).__name__}: {e}", file=sys.stderr)
         print("[generate] 人工处置：检查 playwright 安装与本机 Chrome；重跑 login", file=sys.stderr)
-        driver.close()
         return 4
     finally:
-        driver.close()
+        driver.close()  # r2 N3：唯一 close 点（幂等），except 分支不再重复
     print(f"[generate] 完成：{len(written)} 张落盘 {bg_dir}")
     return 0
 
@@ -139,6 +137,12 @@ def cmd_check_gap(args: argparse.Namespace) -> int:
         print(json.dumps({"fail_closed": {"state": e.state, "detail": e.detail}},
                          ensure_ascii=False))
         return 4
+    except Exception as e:
+        # r2 N2：ENV_ERROR（playwright 缺失/Chrome 不存在）同结构化，不再裸 traceback
+        print(json.dumps({"fail_closed": {"state": "ENV_ERROR",
+                                          "detail": f"{type(e).__name__}: {e}"}},
+                         ensure_ascii=False))
+        return 4
     print(json.dumps({
         "gap": {"current": report.current, "required": report.required,
                 "missing": report.missing, "has_gap": report.has_gap},
@@ -159,7 +163,10 @@ def cmd_selfcheck(_args: argparse.Namespace) -> int:
     with tempfile.TemporaryDirectory() as td:
         d = Path(td)
         checks.append(("gap_empty", gap_mod.check_gap(d, 5).missing == 5, "空目录缺口=5"))
-        (d / "bg_001.png").write_bytes(b"x")
+        from chatgpt_bg.gap import PNG_MAGIC_HEX
+
+        real_png = bytes.fromhex(PNG_MAGIC_HEX) + b"x"
+        (d / "bg_001.png").write_bytes(real_png)
         checks.append(("gap_partial", gap_mod.check_gap(d, 5).missing == 4, "1 张缺口=4"))
         rep, fired = gap_mod.trigger_if_gap(d, 1, generate_fn=lambda n: None)
         checks.append(("gap_satisfied", not rep.has_gap and not fired, "足量不触发"))
@@ -169,7 +176,7 @@ def cmd_selfcheck(_args: argparse.Namespace) -> int:
         d = Path(td)
         gap_mod.append_manifest(d, {"file": "bg_001.png"})
         gap_mod.append_manifest(d, {"file": "bg_002.png"})
-        entries = json.loads((d / "manifest.json").read_text(encoding="utf-8"))
+        entries = json.loads((d / "bg_index.json").read_text(encoding="utf-8"))
         checks.append(("manifest_append", [e["file"] for e in entries] == ["bg_001.png", "bg_002.png"],
                        "两次追加有序"))
     all_ok = all(ok for _, ok, _ in checks)
@@ -180,27 +187,32 @@ def cmd_selfcheck(_args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
+    # r2 N6：全局参数走 parent parser 且挂到 subparsers——子命令前后置均可
+    common = argparse.ArgumentParser(add_help=False)
+    common.add_argument("--bg-dir", default=str(DEFAULT_BG_DIR), help="底图库目录（gitignored 外部树）")
+    common.add_argument("--profile", default=None, help="Chrome persistent profile 目录（默认外部树）")
+    common.add_argument("--headless", action="store_true", help="无头模式（默认有头：降低风控面+可人工介入）")
+    common.add_argument("--min-backgrounds", type=int, default=20, help="底图库余量阈值（缺口触发用）")
+    # r3 注意：common 只挂子 parser——同名参数主/子双份时子 default 会覆盖主解析值
+    # （argparse 已知行为，--min-backgrounds 0 会被子侧 default 20 静默覆盖）。
+    # 代价：全局参数必须写在子命令之后（README 用法示例已按此口径）。
     ap = argparse.ArgumentParser(
         prog="chatgpt_bg",
         description="SFX 合成底图自动 provider（M2-SFX-SYNTH-BG-AUTO）：ChatGPT 网页全自动生成+缺口触发",
     )
-    ap.add_argument("--bg-dir", default=str(DEFAULT_BG_DIR), help="底图库目录（gitignored 外部树）")
-    ap.add_argument("--profile", default=None, help="Chrome persistent profile 目录（默认外部树）")
-    ap.add_argument("--headless", action="store_true", help="无头模式（默认有头：降低风控面+可人工介入）")
-    ap.add_argument("--min-backgrounds", type=int, default=20, help="底图库余量阈值（缺口触发用）")
     sub = ap.add_subparsers(dest="command")
 
-    sub.add_parser("selfcheck", help="离线自检 EXIT=0").set_defaults(func=cmd_selfcheck)
-    sub.add_parser("login", help="人工登录一次（登录态持久化 profile）").set_defaults(func=cmd_login)
-    sub.add_parser("status", help="底图库余量与缺口报告").set_defaults(func=cmd_status)
+    sub.add_parser("selfcheck", help="离线自检 EXIT=0", parents=[common]).set_defaults(func=cmd_selfcheck)
+    sub.add_parser("login", help="人工登录一次（登录态持久化 profile）", parents=[common]).set_defaults(func=cmd_login)
+    sub.add_parser("status", help="底图库余量与缺口报告", parents=[common]).set_defaults(func=cmd_status)
 
-    p_gen = sub.add_parser("generate", aliases=["backgrounds"], help="批量生成（默认补齐缺口；AC1 名 backgrounds 为别名）")
+    p_gen = sub.add_parser("generate", aliases=["backgrounds"], help="批量生成（默认补齐缺口；AC1 名 backgrounds 为别名）", parents=[common])
     p_gen.add_argument("--count", type=int, default=0, help="指定张数（默认=缺口数）")
     p_gen.add_argument("--poll-s", type=int, default=5)
     p_gen.add_argument("--timeout-s", type=int, default=150)
     p_gen.set_defaults(func=cmd_generate)
 
-    p_gap = sub.add_parser("check-gap", help="缺口检查钩子（0=充足 2=已触发 3=dry-run 缺口）")
+    p_gap = sub.add_parser("check-gap", help="缺口检查钩子（0=充足 2=已触发 3=dry-run 缺口 4=fail-closed）", parents=[common])
     p_gap.add_argument("--dry-run", action="store_true")
     p_gap.set_defaults(func=cmd_check_gap)
     return ap

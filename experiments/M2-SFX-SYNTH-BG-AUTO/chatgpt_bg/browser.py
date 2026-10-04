@@ -12,8 +12,6 @@ import time
 from typing import Protocol, runtime_checkable
 
 BLOB_PREFIX = "blob:"
-# 生成中/阻塞态标记（快照子串判定；任一出现=本轮未完成）
-BUSY_MARKERS = ("停止", "微调", "思考中")
 
 
 class BGGenerationError(RuntimeError):

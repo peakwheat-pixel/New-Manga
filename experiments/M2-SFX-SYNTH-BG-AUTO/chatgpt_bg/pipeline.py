@@ -84,6 +84,11 @@ def generate_backgrounds(
                 if attempt < MAX_RELOAD_RETRY:
                     print(f"[bg:{style}] 等待超时，reload 重发（实测坑④：思考卡死不自愈）")
                     driver.reload()
+                    # r2 N7：reload 后复检阻塞态（登录态可能随 reload 丢失）
+                    state = driver.blocking_state()
+                    if state is not None:
+                        code, _, detail = state.partition("：")
+                        raise BGGenerationError(code or "BLOCKED", detail or state)
                     # r2 P1-1：reload 重挂载后历史图会拿到全新 blob URL——旧基准作废，
                     # 必须重取，否则"旧图新 URL"会被判为新图静默落盘
                     prev_src = driver.latest_image_src()

@@ -3,8 +3,8 @@ task_id: M2-SFX-SYNTH-BG-AUTO
 author: ZCode（Owner）
 recipient: Codex（Integrator，编排会话代行）
 base_commit: 6f1117d6
-delivery_head: 97ccf78d（本文件经 amend 随实现提交）
-status: r2-delivered（r1 changes_requested 已返修，待 DSH r2 复核；r1 报告 doc/reviews/ 入库随集成）
+delivery_head: efc56e4a（r1 评审基线；r2=72506d36、r3=见 §r3 返修轮 commit）
+status: r3-delivered（r2 changes_requested 已返修，待 DSH r3 定向复核）
 ---
 
 # Handoff：M2-SFX-SYNTH-BG-AUTO（SFX 合成底图自动 provider）
@@ -84,3 +84,30 @@ help EXIT=0；**CLI 契约矩阵**（cli-contract-r2.log）：dry-run→3、足�
 Task=M2-SFX-DATA-INFRA 后续批量生产切片（T1b 或独立）；Agent=ZCode；Scope=竖排
 prompt+真实底图与 T1a 合成渲染打通（端到端样册）；Verification=目检+GT 互算；
 Forwardable instruction=待用户对真实冒烟样张目检通过后释放。
+
+
+---
+
+## r3 返修轮（2026-10-04，DSH r2 changes_requested → 返修，commit 见 §r3_head）
+
+**r2 结论**：changes_requested（N1 P0 selfcheck 回归 + N2 P1 + N3 P2 + N4-N8 P3）。
+
+**r3 修复**（DSH 五点清单逐条）：
+1. **N1/P2-5**：`cmd_selfcheck` 的 manifest.json → `bg_index.json` 同名修正（r2 改名漏
+   引用点的回归）；selfcheck-run.log 重录为真实 EXIT=0（r2 期实物 EXIT=1 与交付声明
+   相反的失效证据已替换，教训同 T1a r3：**声称值必须来自重录后的实物**）。
+2. **N2**：`cmd_check_gap` 补 `except Exception` → ENV_ERROR 结构化 JSON + EXIT 4。
+3. **N3**：`cmd_generate` 去掉 except 分支内冗余 close，finally 唯一 close 点。
+4. **N4**：死常量 BUSY_MARKERS 删除。**N6**：全局参数 parent parser 且每个子 parser
+   单独挂（add_subparsers 不支持 parents 级联）——子命令前后置均可。
+5. **N7**：reload 后复检 blocking_state（登录态丢失报 NOT_LOGGED_IN 而非连续失败）。
+   **N5/N8**：README/handoff 计数更新 12+1skipped、green-run 引用改 r3 日志、
+   Task/STATUS 回填随集成收口。
+
+**r3 验证**：tests **12 passed + 1 skipped**（green-run-r3.log 完整命令行+真实 EXIT）；
+selfcheck EXIT=0（重录实物）；**CLI 契约矩阵 cli-contract-r3.log**（完整命令行+前后置
+双验证）：selfcheck=0、check-gap 空目录 dry-run=3（后置+前置式）、真触发未登录=4+
+结构化 fail_closed JSON、min=0 足量=0。
+
+**下一接收者**：DSH r3 定向复核（N1/N2/N3/P2-10 + r1 P2 表残留）→ Codex 集成
+（真实冒烟 manual 保留给用户登录后代跑留证）。

@@ -1,0 +1,10 @@
+# r3 CLI 契约矩阵终版（参数后置为唯一口径；r3 补格：同名参数主/子双份 default 覆盖坑）
+$ check-gap --bg-dir /tmp/n6f --min-backgrounds 0 (足量)
+EXIT=0 ✓
+$ check-gap --bg-dir /tmp/n6f --min-backgrounds 5 --dry-run (缺5)
+EXIT=3 ✓
+$ check-gap --bg-dir /tmp/n6f --min-backgrounds 1 (真触发未登录 → 结构化 fail_closed)
+{"fail_closed": {"state": "NOT_LOGGED_IN", "detail": "ChatGPT 未登录。先跑一次人工登录：python -m chatgpt_bg login （浏览器窗口内完成登录后回车确认，登录态持久化在 profile）"}}
+EXIT=4 ✓
+$ -m chatgpt_bg selfcheck
+EXIT=0 ✓
