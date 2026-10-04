@@ -51,8 +51,8 @@
 
 ## 验证记录（本会话实际执行）
 
-- `pytest tests/ -q`：29 passed（`verification/M2-SFX-DATA-INFRA/green-run.log`）
-- `python -m sfx_data_infra --help` EXIT=0；`python -m sfx_data_infra selfcheck` EXIT=0
+- `pytest tests/ -q`：29 passed，EXIT=0（`green-run.log`，终态复跑）
+- `python -m sfx_data_infra --help` EXIT=0（`help-run.log`）；`python -m sfx_data_infra selfcheck` EXIT=0（`selfcheck-run.log`：schema 往返/枚举一致/dhash/框哈希/几何互算 5.7e-14/原子写恢复 全 OK）
 - `python -m sfx_data_infra pipeline` EXIT=0（`pipeline-run.log`）
 - `git check-ignore training_data/sfx-v1/manifest.full.json` → `.gitignore:13:/training_data/`
 - 拆分重放：盘上 manifest 重跑 `assign_splits` fingerprint 与 lock 一致
