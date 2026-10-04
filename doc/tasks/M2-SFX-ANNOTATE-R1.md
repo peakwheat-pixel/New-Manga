@@ -2,7 +2,8 @@
 id: M2-SFX-ANNOTATE-R1
 title: "SFX 标注轮 R1：AI 预标注+用户审核工作表+三集隔离产出（T1b 两阶段；阶段二含用户逐条审核）"
 kind: feature
-status: ready
+status: in_progress
+owner_claim: 2026-10-04 14:55 +0800 by zcode subagent @1b765007（stage-1：AC1+AC2；AC3-AC5 阶段二停点后）
 approval: user_ruling_2026-10-04_释放T1b_T5b_T5c
 suggested_owner: ZCode
 owner: ZCode
