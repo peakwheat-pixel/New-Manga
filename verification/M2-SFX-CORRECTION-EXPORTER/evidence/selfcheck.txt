@@ -1,0 +1,9 @@
+  [PASS] readonly_enforcement: mode=ro + query_only=ON，写尝试被拒
+  [PASS] scanner_semantics: 15-region fixture 矩阵不变量成立（surviving=8）
+  [PASS] schema_interop: SampleRecord to_dict/from_dict/validate 往返一致
+  [PASS] class_map_anchor: SFX_CLASS_MAP={0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}（sfx id=2，names 顺序逐字锚定）
+  [PASS] dedup_sanity: find_duplicates 精确层级（同图同框）sanity 成立
+  [PASS] manifest_roundtrip: write_manifest/load_manifest 往返一致（原子写）
+  rules: {"DEDUP_LEVEL": "exact+box-exact（T1a find_duplicates, image_loader=None；感知层级不启用）", "EXPORTABLE_TARGET": "sfx", "GEOMETRY_CONFIRM_RULE": "v1: complete iff 链首笔 origin=user（用户自建）或链上存在用户几何编辑；否则 partial（机器检出几何未被用户触碰）。读法登记（DSH r1 P3-2）：restore 至已改标 revision 读作用户背书该 revision 几何（用户在 restore 选项中主动回退到该状态），但现实现不单独以 restore 背书触发 complete（rgO3 判别用例钉住现读法=partial；按背书读法会判 complete——语义重裁定留 T2）", "LICENSE_RULE": "user_ruling_2026-10-04_训练质量效率优先_许可降权备案: 全备案不阻断", "PARTIAL_ROUTING": "auxiliary manifest（不入正集，可选入辅助集）", "SURVIVAL_UNDONE_RULE": "v1 保守读法（DSH r1 P3-1）：链上其后任一 origin=restored 且 region_type==type_before 即判撤销；撤销后经 restore 复活已改标 revision 的终态纠错因此被保守丢弃（保守误杀，非契约 §5.4 唯一读法；fixture rgO2 显式钉住该期望，语义重裁定留 T2）"}
+SELFCHECK PASS (6 checks)
+selfcheck EXIT=0

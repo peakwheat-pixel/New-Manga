@@ -1,0 +1,319 @@
+"""AC4：双形态导出（T1a manifest + YOLO seg）→ training_data/sfx-corrections/，
+及全流程管道 run_export（扫描→样本→资格→拆分→落盘）。
+
+拆分（分组隔离继承，冻结规则）：
+  1) challenge 优先：provenance.case_id ∈ T1a CHALLENGE_CASE_IDS（或 challenge 标记）
+     → challenge（与 T1a splits.assign_splits 同规则，splits.py:107-111）；
+  2) 注册表组继承：组已出现在 --registry 已册 manifest → 继承该组非 challenge
+     样本 split 的众数（组原子性使同组单 split；challenge 样本组不参与，防污染）；
+  3) 其余未分配样本 → T1a assign_splits（seed 同 T1a SEED_DEFAULT，组排序切片）。
+
+YOLO seg：labels/<split>/<sample_id>.txt 每行
+  "<sfx_class_id> x1 y1 x2 y2 ..."（像素多边形按图宽高归一化，截断到 [0,1]）；
+类别 id 从生产 SFX_CLASS_MAP（src/infrastructure/providers/detection_sfx.py:137）
+按值反查 sfx，dataset.yaml names 顺序逐字 = SFX_CLASS_MAP（T0 P3-6 硬约束）。
+
+YOLO 范围（--yolo-scope，DSH r1 P2-1）：默认 main=仅正集（complete 样本）进
+YOLO seg 树；all=正集+辅助集混入（partial 仅在显式 all 时入树，避免辅助集
+静默混入训练直读树）。manifest 双册与 scope 无关（始终双册输出）。
+"""
+
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+
+from sfx_data_infra.splits import SEED_DEFAULT, assign_splits, split_fingerprint
+from sfx_data_infra.atomicio import write_manifest
+from sfx_data_infra.schema import SampleRecord
+
+from sfx_correction_exporter import TASK_ID, __version__
+from sfx_correction_exporter.db import open_readonly
+from sfx_correction_exporter.eligibility import (
+    CONSTANTS,
+    dedup_against_registry,
+    filter_sfx_directed,
+    load_registry,
+    match_case,
+    resolve_license,
+)
+from sfx_correction_exporter.samples import build_sample, load_pages
+from sfx_correction_exporter.scanner import scan_corrections
+
+MANIFEST_MAIN = "manifest.json"
+MANIFEST_AUXILIARY = "manifest-auxiliary.json"
+YOLO_SCOPES = ("main", "all")
+YOLO_SCOPE_DEFAULT = "main"
+
+
+def _now_iso() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def _sfx_class_map() -> dict[int, str]:
+    """生产 SFX_CLASS_MAP 只读导入（src 事实源；延迟导入保 CLI 轻启动）。"""
+    from infrastructure.providers.detection_sfx import SFX_CLASS_MAP
+
+    return dict(SFX_CLASS_MAP)
+
+
+def assign_splits_corrections(
+    samples: list[SampleRecord], registry_records: list[SampleRecord], seed: int
+) -> dict:
+    """就地分配 split；返回 {"inherited_groups": [...], "seed": seed}。"""
+    from sfx_data_infra.splits import CHALLENGE_CASE_IDS
+
+    # 1) challenge 单列（优先级最高，先于组继承）
+    for s in samples:
+        cid = s.provenance.get("case_id")
+        if cid in CHALLENGE_CASE_IDS or s.provenance.get("challenge") is True:
+            s.split = "challenge"
+
+    # 2) 注册表组继承（非 challenge 众数）
+    registry_group_split: dict[str, str] = {}
+    group_votes: dict[str, dict[str, int]] = {}
+    for r in registry_records:
+        if r.split == "challenge":
+            continue
+        votes = group_votes.setdefault(r.group, {})
+        votes[r.split] = votes.get(r.split, 0) + 1
+    for g, votes in group_votes.items():
+        registry_group_split[g] = max(votes.items(), key=lambda kv: kv[1])[0]
+
+    inherited_groups: list[str] = []
+    remaining: list[SampleRecord] = []
+    for s in samples:
+        if s.split != "unassigned":
+            continue
+        g = registry_group_split.get(s.group)
+        if g is not None:
+            s.split = g
+            if s.group not in inherited_groups:
+                inherited_groups.append(s.group)
+        else:
+            remaining.append(s)
+
+    # 3) 其余走 T1a 组排序切片（子集内全部 unassigned，满足其 locked 检查）
+    if remaining:
+        assign_splits(remaining, seed=seed)
+    return {"inherited_groups": sorted(inherited_groups), "seed": seed}
+
+
+def _yolo_label_line(polygon: list[list[float]], width: int, height: int, class_id: int) -> str:
+    coords: list[str] = []
+    for x, y in polygon:
+        coords.append(f"{min(max(x / width, 0.0), 1.0):.6f}")
+        coords.append(f"{min(max(y / height, 0.0), 1.0):.6f}")
+    return f"{class_id} " + " ".join(coords)
+
+
+def write_yolo_export(
+    out_dir: Path, samples: list[SampleRecord], image_path_of: dict[str, Path], class_id: int
+) -> int:
+    """复制图像 + 写归一化 seg 标签；返回写出的标签数。"""
+    import shutil
+
+    count = 0
+    for s in samples:
+        split_dir_img = out_dir / "images" / s.split
+        split_dir_lbl = out_dir / "labels" / s.split
+        split_dir_img.mkdir(parents=True, exist_ok=True)
+        split_dir_lbl.mkdir(parents=True, exist_ok=True)
+        src = image_path_of[s.sample_id]
+        shutil.copy2(src, split_dir_img / (s.sample_id + src.suffix.lower()))
+        lines = [
+            _yolo_label_line(b.polygon, s.image.width, s.image.height, class_id)
+            for b in s.boxes
+        ]
+        (split_dir_lbl / f"{s.sample_id}.txt").write_text(
+            "\n".join(lines) + "\n", encoding="utf-8", newline="\n"
+        )
+        count += 1
+    return count
+
+
+def write_dataset_yaml(out_dir: Path, splits_present: list[str]) -> Path:
+    names = _sfx_class_map()
+    ordered = [names[i] for i in sorted(names)]
+    lines = [
+        f"# generated by {TASK_ID} exporter v{__version__}",
+        "# names order MUST equal SFX_CLASS_MAP verbatim (T0 P3-6 hard constraint)",
+        "path: .",
+    ]
+    for sp in splits_present:
+        lines.append(f"{sp}: images/{sp}")
+    lines.append("names:")
+    lines.extend(f"- {n}" for n in ordered)
+    path = out_dir / "dataset.yaml"
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+    return path
+
+
+def parse_dataset_yaml_names(path: Path) -> list[str]:
+    """极小解析器（零 pyyaml 依赖）：只取 names: 下的 '- x' 序列。"""
+    names: list[str] = []
+    in_names = False
+    for line in Path(path).read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if stripped == "names:":
+            in_names = True
+            continue
+        if in_names:
+            if stripped.startswith("- "):
+                names.append(stripped[2:].strip())
+            elif stripped:
+                break
+    return names
+
+
+def run_export(
+    *,
+    db_path: str | Path,
+    out_dir: str | Path,
+    registry_path: str | Path | None = None,
+    cases_path: str | Path | None = None,
+    managed_root: str | Path | None = None,
+    seed: int = SEED_DEFAULT,
+    yolo_scope: str = YOLO_SCOPE_DEFAULT,
+    summary_out: str | Path | None = None,
+) -> dict:
+    """全流程：只读扫描 → 样本构建 → 资格判定 → 拆分 → 双形态落盘 → 摘要。"""
+    if yolo_scope not in YOLO_SCOPES:
+        raise ValueError(f"yolo_scope 须为 {YOLO_SCOPES} 之一，得 {yolo_scope!r}")
+    db_path = Path(db_path)
+    out_dir = Path(out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    conn = open_readonly(db_path)  # 只读铁律：mode=ro + query_only
+    try:
+        scan = scan_corrections(conn)
+        pages = load_pages(conn)
+        db_readonly = conn.execute("PRAGMA query_only").fetchone()[0] == 1
+    finally:
+        conn.close()
+
+    cases_index: dict[str, dict] = {}
+    if cases_path is not None and Path(cases_path).exists():
+        raw = json.loads(Path(cases_path).read_text(encoding="utf-8"))
+        cases_index = {c["case_id"]: c for c in raw.get("cases", [])}
+
+    keep_events, non_sfx_dropped = filter_sfx_directed(scan.events)
+
+    registry_status, registry_records = load_registry(registry_path)
+
+    now_iso = _now_iso()
+    samples: list[SampleRecord] = []
+    image_path_of: dict[str, Path] = {}
+    skipped: list[dict] = []
+    for event in keep_events:
+        page = pages.get(event.page_id)
+        if page is None or page.deleted_at is not None:
+            skipped.append({"event": f"{event.region_id}@r{event.revision_no}", "reason": "page_missing_or_deleted"})
+            continue
+        image_raw = page.managed_original_ref
+        if not image_raw:
+            skipped.append({"event": f"{event.region_id}@r{event.revision_no}", "reason": "image_ref_missing"})
+            continue
+        image_path = Path(image_raw)
+        if not image_path.is_absolute() and managed_root:
+            image_path = Path(managed_root) / image_path
+        if not image_path.exists():
+            skipped.append({"event": f"{event.region_id}@r{event.revision_no}", "reason": "image_missing"})
+            continue
+        case, _basis = match_case(page, cases_index)
+        if case is not None:
+            from sfx_data_infra.splits import derive_group_key_from_case
+
+            group = derive_group_key_from_case(case)
+        else:
+            group = f"user-library/{page.book_id}"
+        sample = build_sample(
+            event, scan.chains[event.region_id], page,
+            image_path=image_path, group=group, case=case,
+            license_info=resolve_license(case, page), now_iso=now_iso,
+        )
+        samples.append(sample)
+        image_path_of[sample.sample_id] = image_path
+
+    kept, duplicates = dedup_against_registry(samples, registry_records)
+    kept_ids = {s.sample_id for s in kept}
+    image_path_of = {sid: p for sid, p in image_path_of.items() if sid in kept_ids}
+
+    split_info = assign_splits_corrections(kept, registry_records, seed)
+
+    main = [s for s in kept if s.annotation_status == "complete"]
+    auxiliary = [s for s in kept if s.annotation_status == "partial"]
+
+    write_manifest(
+        out_dir / MANIFEST_MAIN, main, seed=seed,
+        extra={"manifest_set": "main", "task": TASK_ID, "exporter": __version__},
+    )
+    write_manifest(
+        out_dir / MANIFEST_AUXILIARY, auxiliary, seed=seed,
+        extra={"manifest_set": "auxiliary", "task": TASK_ID, "exporter": __version__},
+    )
+
+    sfx_map = _sfx_class_map()
+    sfx_class_id = next(k for k, v in sfx_map.items() if v == "sfx")
+    # YOLO seg 范围（DSH r1 P2-1）：默认 main=仅正集；all=显式混入辅助集
+    yolo_samples = main if yolo_scope == "main" else kept
+    yolo_written = (
+        write_yolo_export(out_dir, yolo_samples, image_path_of, sfx_class_id) if yolo_samples else 0
+    )
+    splits_present = sorted({s.split for s in kept})
+    write_dataset_yaml(out_dir, splits_present)
+
+    by_status: dict[str, int] = {}
+    by_split: dict[str, int] = {}
+    by_group: dict[str, int] = {}
+    for s in kept:
+        by_status[s.annotation_status] = by_status.get(s.annotation_status, 0) + 1
+        by_split[s.split] = by_split.get(s.split, 0) + 1
+        by_group[s.group] = by_group.get(s.group, 0) + 1
+
+    summary = {
+        "task": TASK_ID,
+        "exporter": __version__,
+        "generated_at": now_iso,
+        "db": str(db_path),
+        "db_readonly": bool(db_readonly),
+        "seed": seed,
+        "scan": {
+            "regions_scanned": scan.regions_scanned,
+            "regions_skipped_deleted": scan.regions_skipped_deleted,
+            "revisions_scanned": scan.revisions_scanned,
+            "machine_type_changes_excluded": scan.machine_type_changes_excluded,
+            "events_total": len(scan.events),
+            "events_surviving": sum(1 for e in scan.events if e.survives),
+            "events_sfx_directed": len(keep_events),
+            "events_non_sfx_excluded": len(non_sfx_dropped),
+        },
+        "eligibility": {
+            "rules": CONSTANTS,
+            "registry_status": registry_status,
+            "registry_samples": len(registry_records),
+            "duplicates_dropped": len(duplicates),
+            "duplicates": duplicates,
+            "samples_skipped": skipped,
+        },
+        "export": {
+            "out_dir": str(out_dir),
+            "main_samples": len(main),
+            "auxiliary_samples": len(auxiliary),
+            "by_status": by_status,
+            "by_split": by_split,
+            "by_group": by_group,
+            "yolo_labels": yolo_written,
+            "yolo_scope": yolo_scope,
+            "splits_present": splits_present,
+            "split_inheritance": split_info,
+            "fingerprint": split_fingerprint(kept, seed) if kept else "",
+            "manifest_files": {"main": MANIFEST_MAIN, "auxiliary": MANIFEST_AUXILIARY},
+        },
+        "corrections_empty": len(kept) == 0,
+    }
+    target = Path(summary_out) if summary_out else out_dir / "export-summary.json"
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(summary, ensure_ascii=False, indent=1) + "\n", encoding="utf-8", newline="\n")
+    return summary
