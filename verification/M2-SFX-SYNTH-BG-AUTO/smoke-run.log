@@ -1,0 +1,5 @@
+# r5 真实冒烟留证（AC5 manual：用户人工登录 peakwheat 后集成方代跑）
+# cmd: cd experiments/M2-SFX-SYNTH-BG-AUTO && PYTHONPATH=../ <py> -m chatgpt_bg generate --count 2
+# 输出: bg_001.png(radial_speed_lines,2289KB) + bg_002.png(explosion_smoke,2947KB) 落盘主仓底图库
+# 两次 send 超时被重试机制兜住(连续失败计数未达阈值); EXIT=0
+# bg_index 快照见 bg-index-smoke.json (src 互异=P1-1 不复现; PNG 魔数=原子写完整)
