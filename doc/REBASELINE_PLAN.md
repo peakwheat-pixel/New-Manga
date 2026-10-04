@@ -139,6 +139,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-SYNTH-BG-AUTO](tasks/M2-SFX-SYNTH-BG-AUTO.md) SFX 合成底图自动 provider | **done**（2026-10-04 全 AC 闭合含真实冒烟留证；全自动内嵌=Playwright 持久登录态+缺口自动触发+fail-closed；DSH r1/r2 changes_requested→r3 approved_with_conditions→r4 docfix） | ZCode / DeepSeek Harness | T1a 底图来源工具化；端到端样册=T1b 输入。 |
 | [M2-REGION-RETYPE-CONTRACT](tasks/M2-REGION-RETYPE-CONTRACT.md) Region 改标契约冻结（T5a） | **done @merge `b4b995ab`**（DSH r1 changes_requested P1-1+3×P2→返修 7f390ca6→r2 **approved** 12/12 闭合零新发现；SetRegionType wire+RegionListSummary 读取 DTO+C1-C7 并发/P1-P4 持久化 11 条断言+「忽略」RULED 处理动作/EV-8 RULED 按全局配置重快照；零新错误语义；**runtime 未实现，T5b 另行释放**；EV-8 转 CLOSED 集成注记已落设计稿） | ZCode / DeepSeek Harness | T5 线第一环收官；T5b Core 实现/T5c 样本导出器就绪待释放。 |
 | [M2-SFX-ANNOTATE-R1](tasks/M2-SFX-ANNOTATE-R1.md) SFX 标注轮 R1（T1b 两阶段） | **done**（2026-10-04 @merge 6bfa1cde；DSH r1+r2 approved_with_conditions；AI 代审 413 单元=共识 397（96.1%）+仲裁 16 残留 0；三集+合成 324+YOLO 导出；**BJ 域正集 0=A′ 输入条件未满足，§8.1 对照表+T2 处置选项交裁决**） | ZCode+用户 / DeepSeek Harness | 下游 T2 训练（释放待用户裁决，BJ 正集 0 前置）。 |
+| [M2-SFX-ANNOTATE-R2](tasks/M2-SFX-ANNOTATE-R2.md) SFX 标注轮 R2（T1b-R2 扩标轮） | **done**（2026-10-04 @merge 84f952b3；DSH r1 approved_with_conditions 条件全闭；素材 KO+5/BJ+10 入池 25/25+15/15 达标；扩审 19 单元双 AI；三集 train 345/571；**BJ 正集 0→5 页 11 框毛笔竖排首批正样本**；challenge 空集明许分支） | ZCode / DeepSeek Harness | T2 训练释放待用户裁决（challenge 空集处置+量级确认）。 |
 | [M2-REGION-RETYPE-CORE](tasks/M2-REGION-RETYPE-CORE.md) Region 改标 Core 实现（T5b） | **done @merge `d8019810`**（DSH r1 approved_with_conditions（Q1 追认 runner 同步）→返修 `0f88cbcd`→r2 **approved** 12/12；rev 1.4 全链+11 断言两层红绿+real-sidecar 测试+PROTOCOL_MINOR 2→3 旁路追认+GATE 25/25 重跑（M2-AC5/raw 还原+自有 raw 副本 retype-m2ac5-*）；五目录 793 passed；test_catalog 100vs97 pre-existing 实证转登记） | ZCode / DeepSeek Harness | Workbench UI 实现前置就绪；test_catalog 断言更新小切片登记。 |
 | [M2-SFX-CORRECTION-EXPORTER](tasks/M2-SFX-CORRECTION-EXPORTER.md) 纠错样本导出器（T5c） | **done @merge `66871d5d`**（DSH r1 changes_requested（P1-1 bbox xywh 误读静默产错框，被测试钉死）→返修 `669146a1`（T1a helper 修复+rgO 判别+判别力数值验证）→r2 approved_with_conditions 条件全闭；scanner 按 rev 1.4 语义+资格判定+双形态导出+--yolo-scope；50 tests 红绿；真库冒烟 CORRECTIONS_EMPTY=expected 补跑） | ZCode / DeepSeek Harness | 纠错积累链采集端就绪；T5 线全收官（契约+Core+导出器）。 |
 
@@ -214,7 +215,9 @@ flowchart TD
   DEXT -.-> T0["M2-SFX-FINETUNE-PREFLIGHT 技术预检 · done @dedb97b2（A′ 裁决：官方基座+四类全标）"]
   DEXT -.-> T1A["M2-SFX-DATA-INFRA 数据基础设施 · done @71a9a84e（T1a 并行）"]
   UIM -.-> T5A["M2-REGION-RETYPE-CONTRACT 改标契约 · done @b4b995ab（rev1.4 冻结；T5b/T5c 待释放）"]
-  T0 -.-> T1B["M2-SFX-ANNOTATE-R1 标注轮 R1 · done @6bfa1cde（AI 代审 413 单元；BJ 域正集 0=A′ 条件未满足交裁决）"]
+  T0 -.-> T1B["M2-SFX-ANNOTATE-R1 标注轮 R1 · done @6bfa1cde（AI 代审 413 单元）"]
+  T1B -.-> T1BR2["M2-SFX-ANNOTATE-R2 扩标轮 · done @84f952b3（BJ 正集 0→5 页 11 框；challenge 空集交裁决）"]
+  T1BR2 -.-> T2["M2-SFX-TRAIN-V1 训练 · 待释放（R2 闭合后）"]
   T5A -.-> T5B["M2-REGION-RETYPE-CORE 改标 Core 实现 · done @d8019810（rev1.4 全链+GATE 25/25）"]
   T5A -.-> T5C["M2-SFX-CORRECTION-EXPORTER 纠错导出器 · done @66871d5d（scanner+双形态导出）"]
 
