@@ -1,0 +1,33 @@
+{
+ "page": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R2-zcode\\test_assets\\comic_golden_suite\\日漫_JA\\01_black_jack_official\\vol05\\pages\\vol05_p0167.png",
+ "width": 2946,
+ "height": 4167,
+ "sha256": "7bee7f055e1167f1c04acf4388312d8f8058bcb77eea4c6437cbaac519958fdb",
+ "inference": {
+  "0.5": {
+   "conf_threshold": 0.5,
+   "n_candidates": 0,
+   "boxes": [],
+   "elapsed_ms": 312,
+   "imgsz_source": "metadata_parsed"
+  },
+  "0.2": {
+   "conf_threshold": 0.2,
+   "n_candidates": 1,
+   "boxes": [
+    {
+     "xyxy": [
+      2413.7868168354034,
+      2914.175055027008,
+      2502.74293756485,
+      3096.8202838897705
+     ],
+     "conf": 0.2049,
+     "provider_label": "sfx-1"
+    }
+   ],
+   "elapsed_ms": 313,
+   "imgsz_source": "metadata_parsed"
+  }
+ }
+}
