@@ -171,3 +171,12 @@ status: in_review
 - **限制**：见「风险与遗留」1-7。
 - **建议**：集成轮补录 2 个 untracked 脚本；T2 释放裁决以 report §7 复核表为准；
   densho810 报告义务（2026-11-02 前）由素材责任方跟踪。
+
+## DSH r1 审查记录（2026-10-04，approved_with_conditions）
+
+- **Verdict=approved_with_conditions（0×P0/P1、5×P2、6×P3、2×P4）**；AC1-AC6 实质全 PASS（AC5=PASS WITH DEVIATION 合同明许分支）。
+- **Q1 空集属实**（DSH 三重复算：user-residual BJ 11 单元=conf<0.2×4+ref_no_conf×7，worksheet BJ 全量 20 单元无 conf∈[0.2,0.5)，124 层 BJ 贡献=0）。
+- **Q2 判定质量方向正确**（8/11 confirm 裁切图目视核验一致；BJ17-B02 仲裁裁 delete 方向正确）。
+- **Q3 漂移须固定切分**（组级迁移已补入 export-summary `group_split_migration_vs_r1`：717481 train→val 25 框、651664 val→test 3 框）。
+- 返修落实：P2-1 计数更正/P2-2 组级迁移+声明/P2-3 BJ held-out 缺失登记/P2-4 框粒度口径+编排原页对照实证（BJ17 双框合并、BJ18/23 独立实例）/P3-1 扩标池位置/P3-2 cases_json_note 更正并重跑 assemble+finalize 全链（指纹不变 564498e1…）/P3-3 列举补全/P3-4 pixel_size 登记/P3-5 .bak 删除/P4-1/P4-2 措辞。
+- 集成轮：P3-6 两 untracked 脚本补录；merge→Task done。

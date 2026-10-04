@@ -1,6 +1,6 @@
 {
  "task": "M2-SFX-ANNOTATE-R2 stage-2（AC5：R2 判定并入 + 三集扩集重导出 + YOLO + 验证）",
- "generated_at_utc": "2026-10-04T13:17:15Z",
+ "generated_at_utc": "2026-10-04T14:00:26Z",
  "tool": "experiments/M2-SFX-ANNOTATE-R2/stage2_finalize_r2.py --step summary",
  "mode": "ai-review-backfill（沿 R1 口径：codex+agy 共识 + 分歧仲裁；human_review=false，不谎称人工；provenance.stage2r2 留判定链）",
  "r2_judgments": {
@@ -339,6 +339,35 @@
    "replay_pages": "R1 C4 偏差部分闭合：回放 6 单元本轮全判 delete（判定链留痕 stage2r2）——回放页仍无训练正例，按判定如实排除（delete 框已出框列表）"
   }
  },
+ "group_split_migration_vs_r1": {
+  "note": "R2 组池 10→13（+densho810/vol01,vol03,vol05），同算法同 seed 重切边界；真实样本成员级迁移如下——跨轮指标对比须固定切分或限定 R1∩R2 交集样本，不得直比（DSH r1 P2-2）",
+  "moved_groups": [
+   {
+    "group": "vasyanator2/717481",
+    "case": "K09",
+    "r1_split": "train",
+    "r2_split": "val",
+    "boxes": 25
+   },
+   {
+    "group": "vasyanator2/651664",
+    "case": "K02",
+    "r1_split": "val",
+    "r2_split": "test",
+    "boxes": 3
+   }
+  ],
+  "r1_real_split": {
+   "train": 18,
+   "val": 3,
+   "test": 1
+  },
+  "r2_real_split": {
+   "train": 21,
+   "val": 4,
+   "test": 2
+  }
+ },
  "r1_baseline_for_diff": {
   "export_summary_file": "annotate-r1/final/export-summary.json",
   "r1_by_split": {
@@ -392,14 +421,14 @@
   "r1_fingerprint": "f9ea1c801e53f705c9ab68c1cac55ff736af926f64108bf71d2aa95af6009271"
  },
  "artifacts_sha256": {
-  "preannotate/manifest.r2.json": "02c4c9036d20993795f4d1fb3c6487fb64f00fcd6f951d632c3391e96cc0a253",
-  "final/manifest.r2.json": "e7f1a1a7c1f3cd271a12cf60425e95a7dc7d000a3d7240b20aa7e512793741c8",
-  "final/manifest.train.json": "30bf1a6c33c788c4d40a5dc42ca03bd8f4503f17d105e957173f75451c8cf9e5",
-  "final/manifest.val.json": "43ad1904a235761436c3a27820a336940d89172ed1a4b37852a036bc8200e3fa",
-  "final/manifest.test.json": "e5c48295a119d755beba850fd6e7ad86c8d3892704ec0dbabf1318948077b24d",
-  "final/manifest.challenge.json": "6555a38729f8c5ae88089384b998e3f4522eaaaaaa873d16db4e11d0471e2723",
-  "final/yolo/dataset.yaml": "ca8830a813d9a326b42886e6ada2c8387fa77d5bd8f2ff628e07f4323e619188",
-  "final/yolo/_export_stats.json": "84e382fac49c5ed2bb817fa254b5d0b98ed49a990fb3b24345cf9a0e59ac3911"
+  "preannotate/manifest.r2.json": "680a8d61d0cd5855983ea7ae899a13f49657c521a8a5b36b505e141d8aab5105",
+  "final/manifest.r2.json": "882c1590712883046d08feaabac0dbd78e66375a138ed8235e2b3346ae238aab",
+  "final/manifest.train.json": "a03ab8ca091224aa0bb420e44671d51a54ae3c0b94e9f78ed8b1dc85048219e2",
+  "final/manifest.val.json": "69c9110ecfed9f9fc8115df7c297c596c213cdd457daccd99b6402563671219e",
+  "final/manifest.test.json": "b28f60022b4a76cf2d4403e0d05bfffc940fc8cba32a69cc08efd0bb728e76a8",
+  "final/manifest.challenge.json": "f49682bae8060698ba823aacbe8636aac30b42d2dab55efebb3e0accf886d4bc",
+  "final/yolo/dataset.yaml": "9f3cc234854bf31db988fd62ec49e4c1adf4f131070f5c3a3d39220d9e098afb",
+  "final/yolo/_export_stats.json": "4af5249c39909cf6e376184173134f833951bd6125c25fc34c8601a4a5e7e3f1"
  },
  "honest_notes": [
   "AC2 BJ 低置信层为空集（R1 残留 BJ 单元无一落在 conf 0.2-0.5），未产生新正样本",

@@ -42,6 +42,8 @@ conf_lt_0.2 4，无一落在 [0.2,0.5)，§4.1 复算）——本轮如实登记
 
 ## 2. 执行记录
 
+> DSH r1 P3-5：本目录曾存在 `stage-r2-final-summary.json.bak`（atomicio 有意恢复位），已随返修删除；现 summary 为注记更正后重跑产物（指纹与三集数字不变）。
+
 ### 2.1 交付轮命令（Owner，产物在盘 + `stage-r2-final-summary.json` generated_at=2026-10-04T13:17:15Z）
 
 ```text
@@ -150,7 +152,9 @@ SampleRecord.from_dict+validate（experiments/M2-SFX-DATA-INFRA/sfx_data_infra/s
   vol03_p0047(2) / vol03_p0186(1) / vol05_p0077(1)**（其中密度 2 的四页、密度 1 的两页
   均由 sha256 决胜定序）→ 登记为 **cases.json BJ16-BJ25**。
 
-### 3.3 BJ16-BJ25 登记口径（BJ13 字段同构）
+### 3.3 BJ16-BJ25 登记口径（BJ13 字段同构 + `pixel_size`）
+
+> DSH r1 P3-4：BJ16-25 比 BJ13 多一个 `pixel_size` 字段（渲染 DPI 元数据）；无 cases.json 专用 schema，消费方 fetch_bj.py verify 10/10 VERIFY_OK 实证容忍额外字段。
 
 本轮复算逐条核对 BJ16 条目与 BJ13 字段：`text_type=sfx_dominant_unverified`、
 `orientation=vertical`、`difficulty=unassessed`、`tags` 4 项同构
@@ -244,6 +248,8 @@ manifest.r2.json stage2r2 为准）。
 
 ### 5.2 三集数字（seed=20261004 冻结沿 R1，group-hash-rank-v2）
 
+> **DSH r1 P2-2 补充登记**：真实样本 split 漂移是**组级成员迁移**而非仅计数——`vasyanator2/717481`（K09，25 框）train→val、`vasyanator2/651664`（K02，3 框）val→test；清单见 `final/export-summary.json` 的 `group_split_migration_vs_r1`。**R1↔R2 分集指标不可直比**：跨轮对比须固定切分或限定 R1∩R2 交集样本，否则只能作同口径重新基线、不得宣称改进。
+
 | split | 样本 | 框 | 真实/合成 | 作品组 |
 |---|---|---|---|---|
 | train | 345 | 571 | **21 真实（含 BJ 正集 5 页 11 框）**+ 324 合成 | synthetic/annotate-r1（pinned）+ densho810/vol01·vol03·vol05 + vasyanator2×6 |
@@ -302,6 +308,8 @@ arbiter/batch-0.json）。R1 22 个 complete 样本的 `provenance.stage2` 判�
 **本 GT 不声称人工标注质量等级**；用户抽检/翻案通道（R1 user-residual.json）仍开放。
 
 ## 7. A′ 采纳输入条件复核表（对照 R1 stage2-report.md §8.1 五行，交编排/用户——T2 释放判定依据）
+
+> **DSH r1 P2-3/P2-4 补充登记（T2/Gate 前必读）**：① **BJ 正样本 100% 在 train**——val/test 全为 KO 样本，BJ 域当前无任何 held-out 参照；BJ 域指标**禁止在 train 上做门判定**，G1 BJ 门在 challenge 补齐或另设 BJ 留出前不可达。② **框粒度口径=一检测框一框**（chiqui7 检测单元）；编排对照原页复核（2026-10-04）：`BJ17-B00/B01` 为**同字形列双框**（预览同形、坐标相邻 x 差 43px 纵列摇摆），按实例合并计 BJ17=1；`BJ18-B00/B01` 与 `BJ23-B00/B01` 为**独立实例**（页内两处、气泡与背景处理不同，原页裁切对照 `_p2_4_bj18_b00/b01.png` 留 previews/）。按实例口径 BJ 正集=**约 10 实例 11 框**；seg GT 两框坐标不相交、mask 无冲突，训练可直接消费。
 
 对照 `verification/M2-SFX-ANNOTATE-R1/stage2-report.md:177`（§8.1）与
 `verification/M2-SFX-FINETUNE-PREFLIGHT/preflight-report.md:61` 输入条件，R2 交付后状态

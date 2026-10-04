@@ -76,3 +76,7 @@ BJ 域在册 ≥25 页（15 既有+10 新增）、KO 域在册 ≥15 页（10 �
 - **文档收尾轮（2026-10-04，docs 提交）**：`verification/M2-SFX-ANNOTATE-R2/stage-r2-report.md`（全部数字从盘上产物复算：素材链/双审统计/三集/YOLO/schema/对账复算命令与输出见其 §2.2；§7=A′ 输入条件复核表对照 R1 §8.1 五行逐项回填——BJ 在册 25/25 页数口径满足+KO 在册 15/15 满足+BJ 正集 5 页 11 框首批满足+challenge 仍空集交裁决+合成 324 满足）+ `doc/handoffs/M2-SFX-ANNOTATE-R2-zcode-20261004.md`（DSH 审查可转发指令）+ 本 Task 回填（status=in_review）。
 - 报告：[verification/M2-SFX-ANNOTATE-R2/stage-r2-report.md](../../verification/M2-SFX-ANNOTATE-R2/stage-r2-report.md)；摘要：verification/M2-SFX-ANNOTATE-R2/stage-r2-final-summary.json；Handoff：[doc/handoffs/M2-SFX-ANNOTATE-R2-zcode-20261004.md](../handoffs/M2-SFX-ANNOTATE-R2-zcode-20261004.md)。
 - **A′ 输入条件结论（T2 释放判定依据，交编排/用户）**：BJ 正集 0→5 页 11 框（主攻毛笔竖排形态首批真实正样本，量级仍小）；BJ/KO 在册页数双满足（25/25、15/15，判定覆盖口径见报告 §7 如实细分）；challenge 仍空集（未满足，交裁决）；合成 324 满足。是否释放 T2 由编排/用户按对照表裁决。
+
+## Review
+
+- **DSH r1（2026-10-04）=approved_with_conditions（0×P0/P1、5×P2、6×P3、2×P4）**：AC1-AC6 实质全 PASS（AC5=PASS WITH DEVIATION 明许分支）；Q1 AC2 空集属实（三重复算）、Q2 BJ 正集判定方向正确（目视核验 8/11）、Q3 漂移须固定切分。全部条件已由 Owner 返修落实（P2-4 含编排原页对照实证：BJ17 双框合并/BJ18·BJ23 独立实例）+数据链重跑（P3-2 注记更正，指纹不变）；P3-6 两 untracked 脚本随集成补录。status 待集成置 done。

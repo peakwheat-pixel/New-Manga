@@ -809,6 +809,15 @@ def cmd_summary() -> int:
             "excluded_negative_ids": yolo_stats.get("builder_excluded_negative_ids", []),
         },
         "section81_vs_r1": section81,
+        "group_split_migration_vs_r1": {
+            "note": "R2 组池 10→13（+densho810/vol01,vol03,vol05），同算法同 seed 重切边界；真实样本成员级迁移如下——跨轮指标对比须固定切分或限定 R1∩R2 交集样本，不得直比（DSH r1 P2-2）",
+            "moved_groups": [
+                {"group": "vasyanator2/717481", "case": "K09", "r1_split": "train", "r2_split": "val", "boxes": 25},
+                {"group": "vasyanator2/651664", "case": "K02", "r1_split": "val", "r2_split": "test", "boxes": 3}
+            ],
+            "r1_real_split": {"train": 18, "val": 3, "test": 1},
+            "r2_real_split": {"train": 21, "val": 4, "test": 2}
+        },
         "r1_baseline_for_diff": {
             "export_summary_file": "annotate-r1/final/export-summary.json",
             "r1_by_split": (r1_final.get("ac4_splits") or {}).get("by_split"),
