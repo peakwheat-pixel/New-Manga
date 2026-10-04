@@ -137,7 +137,7 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-FINETUNE-PREFLIGHT](tasks/M2-SFX-FINETUNE-PREFLIGHT.md) SFX 微调 V1 技术预检（T0） | **done @merge `dedb97b2`**（DSH r1 approved_with_conditions→r2 approved_with_conditions 12/12 闭合；**关键实证：chiqui7 无 .pt 训练权重，续训受阻**（五端点 raw+usedStorage 全 revision 排除）；**编排裁决=采纳 A′**：Ultralytics 官方 yolo11s-seg.pt 基座+四类全标+合成数据；显存实测 b8=7488MiB/67 img/s；导出链冒烟 EXIT=0；四类监督选项3 不可行定案） | ZCode / DeepSeek Harness | 训练线第一环收官；T1b 标注轮待释放（schema 已由 T1a 冻结）。 |
 | [M2-SFX-DATA-INFRA](tasks/M2-SFX-DATA-INFRA.md) 训练数据基础设施（T1a） | **done @merge `71a9a84e`**（2026-10-04；schema 冻结+分组隔离 pinned+双去重+可恢复+合成渲染 24 样本精确 GT 1.71e-13px+导入 58；DSH r1/r2 changes_requested→r3 approved_with_conditions→r4 条件闭合，报告入 doc/reviews/；38 tests） | ZCode / DeepSeek Harness | 数据线地基；批量生成=T1b（弱负样本策略/竖排/底图来源输入已备）。 |
 | [M2-SFX-SYNTH-BG-AUTO](tasks/M2-SFX-SYNTH-BG-AUTO.md) SFX 合成底图自动 provider | **done**（2026-10-04 全 AC 闭合含真实冒烟留证；全自动内嵌=Playwright 持久登录态+缺口自动触发+fail-closed；DSH r1/r2 changes_requested→r3 approved_with_conditions→r4 docfix） | ZCode / DeepSeek Harness | T1a 底图来源工具化；端到端样册=T1b 输入。 |
-| [M2-REGION-RETYPE-CONTRACT](tasks/M2-REGION-RETYPE-CONTRACT.md) Region 改标契约冻结（T5a） | **ready**（同批释放；SetRegionType+读取 DTO+并发/人工覆盖语义+「忽略」定义+EV-8 裁决；M2-C1 rev 1.3→1.4 草案；只修契约不实现） | ZCode / DeepSeek Harness | T5 线第一环；T5b Core 实现/T5c 样本导出器待其冻结。 |
+| [M2-REGION-RETYPE-CONTRACT](tasks/M2-REGION-RETYPE-CONTRACT.md) Region 改标契约冻结（T5a） | **done @merge `b4b995ab`**（DSH r1 changes_requested P1-1+3×P2→返修 7f390ca6→r2 **approved** 12/12 闭合零新发现；SetRegionType wire+RegionListSummary 读取 DTO+C1-C7 并发/P1-P4 持久化 11 条断言+「忽略」RULED 处理动作/EV-8 RULED 按全局配置重快照；零新错误语义；**runtime 未实现，T5b 另行释放**；EV-8 转 CLOSED 集成注记已落设计稿） | ZCode / DeepSeek Harness | T5 线第一环收官；T5b Core 实现/T5c 样本导出器就绪待释放。 |
 
 ```mermaid
 flowchart TD
@@ -210,7 +210,7 @@ flowchart TD
   DEXT -.-> UIM["M2-SFX-MISROUTE-UI-MITIGATION 缓解 UI 设计 · done @4d77a778（设计契约；实现 blocked_on Workbench）"]
   DEXT -.-> T0["M2-SFX-FINETUNE-PREFLIGHT 技术预检 · done @dedb97b2（A′ 裁决：官方基座+四类全标）"]
   DEXT -.-> T1A["M2-SFX-DATA-INFRA 数据基础设施 · done @71a9a84e（T1a 并行）"]
-  UIM -.-> T5A["M2-REGION-RETYPE-CONTRACT 改标契约 · ready（T5a rev1.4 草案）"]
+  UIM -.-> T5A["M2-REGION-RETYPE-CONTRACT 改标契约 · done @b4b995ab（rev1.4 冻结；T5b/T5c 待释放）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
@@ -231,7 +231,8 @@ flowchart TD
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
   class DEXT,ARBIT,UIM done;
-  class T1A,T5A proposed;
+  class T5A proposed;
+  class T1A done;
   class T0 done;
 
 

@@ -335,3 +335,6 @@ stateDiagram-v2
 - token 真值零复制：本文只引用 token 名与既有审计结论，未新增/修改任何 token 定义（`tokens-cand-f.json` 等零 diff）。
 - 契约零 widening：RC-1…RC-5 候选登记不构成 M2-C1 变更。
 - 自检证据：`verification/M2-SFX-MISROUTE-UI-MITIGATION/ac-self-check.md`（AC1–AC5 逐条自检表 + A1–A13 断言自查 + diff 面核对）。
+
+
+> **2026-10-04 集成注记（EV-8 转 CLOSED）**：EV-8（改标后 policy 快照语义）已由 M2-REGION-RETYPE-CONTRACT 裁决：「按改标时全局配置重快照」（sfx 方向）/非 sfx 强制 skip（leak 不变量），落 M2-C1 rev 1.4 §5.4。本设计 §4.2 联动表 translate 行前置条件（「仅当 RC-2 裁决为改标重快照」）就此满足，UI 两侧兼容设计经集成核对零返工。本注记由集成方添加（Task 合同分工：设计稿不回改原文，集成注记追加于文尾）。
