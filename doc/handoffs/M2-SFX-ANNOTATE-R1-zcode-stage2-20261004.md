@@ -3,7 +3,7 @@ task_id: M2-SFX-ANNOTATE-R1
 author: ZCode（本工作区 subagent）
 recipient: DeepSeek Harness（审查，非作者）→ Codex/编排会话（集成裁定）
 base_commit: 1b765007
-delivery_head: 7273c2d1
+delivery_head: 67172ed6（r1 返修）；r2 文本级收尾 commit 见提交链末
 status: stage2_complete_IN_REVIEW
 ---
 
@@ -11,7 +11,7 @@ status: stage2_complete_IN_REVIEW
 
 ## 交付结果
 
-**阶段一+阶段二全链交付完毕，Task 置 in_review 待 DSH 审查。**
+**阶段一+阶段二全链交付完毕；DSH r1=approved_with_conditions（2026-10-04）、r2=approved_with_conditions（0×新 P0/P1/P2，C1/C2/C4/C5 全闭、C3 残项本轮收尾），文本级收尾后交编排集成。**
 阶段一（AC1+AC2，@79e8dfad）交付三源预标注+审核工作表并在 WAITING_USER_LABELING 停点；
 阶段二按**编排裁定（2026-10-04，用户全权授权）以 AI 代审落地 AC3**，AC4 三集+YOLO seg 导出、
 AC5 合成并入、AC6 零 src 纪律全部完成。提交链：
@@ -23,7 +23,7 @@ synthetic-summary.json, stage2-final-summary.json, stage2-report.md}`、Task 回
 数据本体在 gitignored 树 `training_data/sfx-v1/annotate-r1/`（preannotate/worksheet/judgments/
 final/{manifest.*.json, yolo/}），Git 只进摘要。
 
-**核心数字**（全部可由盘上原始数据独立复算，stage2-report.md rev2 已复算一轮）：
+**核心数字**（全部可由盘上原始数据内部复算，stage2-report.md rev3 已复算一轮）：
 
 - AC3：conf>=0.5 共 413 单元全覆盖——codex 判 413（confirm 304/correct 1/delete 108）、
   agy 判 413（confirm 297/correct 3/delete 113）；共识 397 + 分歧仲裁 16，共识∪分歧=413
@@ -31,10 +31,10 @@ final/{manifest.*.json, yolo/}），Git 只进摘要。
   revision 链留痕（坐标未动）；**GT 性质=ai-consensus（用户 2026-10-04 裁决转移质量责任），
   `human_review=false` 全量留痕不谎称人工**；806−413=393 未判定单元 + 回放 5 页 pseudo
   交用户（`judgments/user-residual.json`）。
-- AC4：T1a `assign_splits` 组隔离（组不跨集独立复核 0 违例；seed=20261004 冻结；五份 manifest
+- AC4：T1a `assign_splits` 组隔离（组不跨集内部复算 0 违例；seed=20261004 冻结；五份 manifest
   指纹同值 `f9ea1c801e53…9271`）→ train 342 样本/585 框（324 合成 pinned train + 18 真实 261 框）/
   val 3 样本/31 框（组 651664/701535）/ test 1 样本/2 框（K01，组 724815，对 TrainingSetBuilder
-  不可见）/ **challenge 0/0 穯集如实登记**（BJ13 唯一判定=delete、BJ14/15 无判定，不凑数）；
+  不可见）/ **challenge 0/0 空集如实登记**（BJ13 唯一判定=delete、BJ14/15 无判定，不凑数）；
   YOLO seg 导出 `final/yolo/{images,labels}/{train,val,test}/`（challenge 空集未导出；
   dataset.yaml 不写 challenge 键）；names 顺序逐字=SFX_CLASS_MAP 双通道校验 PASS
   （脚本读回断言 `stage2_finalize.py:572` ≡ 生产 `detection_sfx.py:436` 形态 + pyyaml 独立解析）；
@@ -50,20 +50,20 @@ final/{manifest.*.json, yolo/}），Git 只进摘要。
 |---|---|---|---|---|
 | AC1 三源合并 | `stage1_preannotate.py --step assemble` + T1a schema 全量校验 | T1.1.1-impl-py312 @79e8dfad | PASS（72 样本/806 框/0 错误/全 pseudo） | `preannotate/manifest.json`；stage1-report.md |
 | AC2 密度扫描+工作表 | `stage1_preannotate.py --step scan/worksheet`（seed=20261004 冻结） | C4-gpu-py312 / T1.1.1 @79e8dfad | PASS（BJ 15p+KO 10p+回放 5p；806 单元/808 预览） | `selection/selection.json`、`worksheet/worksheet.{json,md}` |
-| AC3 回填（AI 代审） | `stage2_finalize.py --step backfill/manifest`；文档收尾轮独立复算 `judgments/{codex,agy}/batch-*.json`+consensus/divergence/arbiter 覆盖并集 | T1.1.1-impl-py312 @7273c2d1 | PASS（413 回填；双审分布与共识/分歧/仲裁覆盖逐数复核一致，uncovered=0） | `worksheet/worksheet.{json,md}` backfill 块；`judgments/user-residual.json`；stage2-report.md §3 |
+| AC3 回填（AI 代审） | `stage2_finalize.py --step backfill/manifest`；文档收尾轮内部复算 `judgments/{codex,agy}/batch-*.json`+consensus/divergence/arbiter 覆盖并集 | T1.1.1-impl-py312 @7273c2d1 | PASS（413 回填；双审分布与共识/分歧/仲裁覆盖逐数复核一致，uncovered=0） | `worksheet/worksheet.{json,md}` backfill 块；`judgments/user-residual.json`；stage2-report.md §3 |
 | AC4 三集+组隔离 | `stage2_finalize.py --step split`；文档收尾轮从盘上 manifest 重算 group→splits + 指纹比对 | T1.1.1-impl-py312 @7273c2d1 | PASS（342/3/1/0；跨集违例=0；五指纹同值） | `final/manifest.{r1,train,val,test,challenge}.json`；stage2-final-summary.json |
 | AC4 YOLO+names | `stage2_finalize.py --step yolo`；文档收尾轮 pyyaml 解析+labels 行级重算+sha256 三方抽查 | T1.1.1-impl-py312 @7273c2d1 | PASS（names 双通道；cls 恒 2；stem 0 失配；抽查 4/4 一致） | `final/yolo/`（dataset.yaml、_export_stats.json）；stage2-report.md §5 |
 | AC5 合成并入 | `stage2_synth_batch.py`（e85c546a）+ `--step split` 并入断言 | T1.1.1-impl-py312 @7273c2d1 | PASS（324 全落 train，in_test=0） | `synthetic/manifest.json`；`final/manifest.train.json` |
 | AC6 零 src | `git diff 1b765007..HEAD --stat -- src/ tests/` | 本分支 | PASS（零变更） | Git |
-| DSH 审查 | — | — | **NOT_RUN（待审，Task in_review）** | — |
+| DSH 审查 | r1+r2 报告纪要 | — | **r1=approved_with_conditions（0×P0、2×P1、3×P2、8×P3、5×P4）；r2=approved_with_conditions（0×新 P0/P1/P2，C1/C2/C4/C5 全闭，C3 残项收尾）** | verification/M2-SFX-ANNOTATE-R1/dsh-r{1,2}-verdict-summary.md |
 
-未运行项与原因：DSH 审查未运行——阶段二交付刚收口，按协作协议由非作者 DSH 审查；
+未运行项：无（DSH r1 于 2026-10-04 完成=approved_with_conditions，必闭条件 C1-C5 返修落实；r2 复核同日完成=approved_with_conditions 0×新 P0/P1/P2，残项文本级已收尾；r1 主报告全文因 headless stdout 截断未保留、纪要落盘有披露）。
 用户抽检/翻案通道（user-residual.json）未运行——属用户后续扩标轮，编排裁定范围外。
 
 ## 接收方式
 
 - 分支/工作区：`agent/zcode/M2-SFX-ANNOTATE-R1` @ `G:/CODEX/New Manga.worktrees/M2-SFX-ANNOTATE-R1-zcode`
-- 入口文档：`verification/M2-SFX-ANNOTATE-R1/stage2-report.md`（rev2，含全部数字与独立复核记录）+
+- 入口文档：`verification/M2-SFX-ANNOTATE-R1/stage2-report.md`（rev3，含全部数字与内部复算记录）+
   `stage2-final-summary.json`（机器可读摘要+产物 sha256）；阶段一背景见 stage1-report.md 与
   stage1 handoff
 - 数据复算入口（审查建议路径）：`training_data/sfx-v1/annotate-r1/judgments/`（判定原始数据）→
@@ -76,7 +76,7 @@ final/{manifest.*.json, yolo/}），Git 只进摘要。
 
 ## 下一任务建议（必填）
 
-- Task ID / 标题：M2-SFX-ANNOTATE-R1 **阶段二 DSH 审查**（阶段一+二全链，非作者）
+- Task ID / 标题：M2-SFX-ANNOTATE-R1 **集成收口**（编排/ZCode 代行 Codex；r2 已明示无需再开 DSH 轮）
 - 推荐 Agent / Reviewer：DeepSeek Harness（非作者，协作协议要求）
 - 推荐原因与前置依赖：Task 已置 in_review；前置=本 Handoff + stage2-report.md rev2 已入库
 - Recovery point：仓库 `G:/CODEX/New Manga`，branch `agent/zcode/M2-SFX-ANNOTATE-R1`，
@@ -137,3 +137,11 @@ final/{manifest.*.json, yolo/}），Git 只进摘要。
 - **编排代验补充**：agy 判定 413 行 id 唯一性校验 PASS（r1 补充说明 1 的数学闭包前提）。
 - **未动**：数据本体、experiments 工具、零 src——纯文档/登记返修。
 - **待 DSH r2**：复核 C1-C5 闭合+重列 P3/P4 明细（r1 全文截断项）。
+
+## r2 复核记录（2026-10-04，approved_with_conditions，0×新 P0/P1/P2）
+
+- **实质层全部自洽**（r2 独立重算：共识 397=294 confirm+103 delete、分歧 16 逐条、仲裁 16=confirm 3/correct 5/delete 8、回填 297/111/5、残留 393=262+7+124、三集 342/3/1/0、五指纹同值、names 逐字约束）——数字与导出物无新发现。
+- **C1/C2/C4/C5 全闭**；C3 残项=Handoff 措辞（r1 返修脚本 git 还原重做时遗漏本文件），本轮收尾统一为「内部复算」。
+- P3×8/P4×5（重列+新发现）全部文本级，本轮逐项落实：措辞统一、版本号 rev3、验证证据表回填、提交链/delivery_head 补齐、下一任务建议改集成收口、「穯集」错字、§8.1 承诺列标注推定性质、纪要括注标注、agy id 校验留证 raw/、units.json 代理复算口径注记。
+- **r2 明示：残项收尾后即可回填 integration_commit 进 done，无需再开 DSH 复审。**
+- r2 结论纪要：`verification/M2-SFX-ANNOTATE-R1/dsh-r2-verdict-summary.md`。

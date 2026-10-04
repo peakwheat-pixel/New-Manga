@@ -4,7 +4,10 @@
 - 基线：stage-1 @79e8dfad / AC5 合成 @e85c546a（本分支）；finalize 实现+数据 @7273c2d1；工具 `experiments/M2-SFX-ANNOTATE-R1/stage2_finalize.py`
 - 生成：2026-10-04T11:03Z 前后（finalize 五步）；**rev2（stage2-docs 修订轮，2026-10-04）**——§3 增补双审各自 verdict 分布与「残留 0」覆盖口径，§0 增补 GT 性质登记，§8 增补承诺缺口数字；rev2 全部统计经文档收尾轮从盘上原始数据内部复算（见 §3/§4/§5 各「内部复算」条）。**措辞澄清（DSH r1 C3，rev3）**：本文各处「内部复算」均指同 workflow 内文档收尾 agent 的复算，属 Owner 自核、非独立第三方 Review；独立 Review 由 DSH 另行执行（r1=approved_with_conditions，2026-10-04）
 - 判定输入：`training_data/sfx-v1/annotate-r1/judgments/{units,consensus,divergence}.json + arbiter/batch-*.json`
-  （codex+agy 双评审 + 第三方仲裁，由编排会话按用户全权授权组织；本 Task 代理只消费判定、不生产判定）
+  （codex+agy 双评审 + 第三方仲裁，由编排会话按用户全权授权组织；本 Task 代理只消费判定、不生产判定）。
+  复算口径注记（DSH r1 补充说明 2）：`units.json` 本体为单行超大 JSON（工具不可逐行复算），806/413/
+  分层数字由同一语料的格式化副本 `worksheet.json` 代理复算得同值（两文件同源）。
+  停点裁定链哈希 61fe5cd5/de1b7bf9 位于主仓库 `main` 分支。
 
 ## 0. 模式与边界（先读）
 
@@ -38,7 +41,7 @@ unjudged 逐框清单与 correction_notes，不将 AI 共识标注表述为人�
 | AC3 manifest | 判定保留框入正集、样本 pseudo→complete（22 个）；delete 框排除留痕；correct 框 revision 链留痕 | **PASS** | `preannotate/manifest.json`（`provenance.stage2`，schema 全量校验 0 错误） |
 | AC4 三集 | T1a 拆分器组隔离（组不跨集 + seed=20261004 冻结）→ train/val/test+challenge manifest + 指纹 | **PASS**（challenge 空集如实登记，见 §4） | `final/manifest.{r1,train,val,test,challenge}.json`，指纹 `f9ea1c80…9271` |
 | AC4 YOLO seg | dataset.yaml names 顺序逐字=SFX_CLASS_MAP + 归一化多边形导出 + 写后读回断言 | **PASS** | `final/yolo/`（`dataset.yaml`；names 断言 PASS，pyyaml 交叉解析 PASS） |
-| AC5 合成并入 | synthetic 324 读 manifest 并入，pinned train、不入 test | **PASS** | `ac5`：`splits_landed={"train":324}`、`in_test=0` |
+| AC5 合成并入 | synthetic 324 读 manifest 并入，pinned train、不入 test | **PASS** | `stage2-final-summary.json` 的 `ac5` 键：`splits_landed={"train":324}`、`in_test=0` |
 | AC6 零 src | 零 src 修改；数据本体 gitignored；Git 只进摘要 | **PASS** | `git status`（仅 experiments/M2-SFX-ANNOTATE-R1 + verification/M2-SFX-ANNOTATE-R1 + gitignored 树） |
 
 ## 2. 执行记录（实际命令）
@@ -133,7 +136,7 @@ challenge 0/0 逐一相符；五份 manifest fingerprint 同值 `f9ea1c801e53f70
   自生产模块 `detection_sfx.py:137` 只读 import，零复制）；② 内部复算（本修订轮）pyyaml
   `safe_load` 解析得 `{0:'bubble',1:'panel',2:'sfx',3:'text'}` 相等，且字面逐行在文件中。
 - labels 口径：`cls x1 y1 …`（归一化 6 位小数，clip [0,1]）；cls 恒 `2=sfx`（本轮唯一 GT 类；
-  独立重算（本修订轮）train 585 / val 31 / test 2 行**全部 cls=2**，坐标越界 0 行，点数 <4
+  内部复算（本修订轮）train 585 / val 31 / test 2 行**全部 cls=2**，坐标越界 0 行，点数 <4
   0 行，images/labels stem 失配 0；challenge 目录未导出）。多边形 = T1a 实例包络口径
   （非字形像素 mask）。
 - 图像拷贝保真抽查（synth 1 + K 页 3，本修订轮复跑）：`pre-k03`(train)、`imp-ogkalu-k08-r025`(val)、
@@ -180,7 +183,7 @@ challenge 0/0 逐一相符；五份 manifest fingerprint 同值 `f9ea1c801e53f70
 |---|---|---|---|
 | BJ 域真实页标注 | ≥25 页 | 15 页（素材仅 BJ01-15 在盘） | **未满足** |
 | KO 域真实页标注 | ≥15 页 | 10 页（K11-25 路径缺失） | **未满足** |
-| BJ 域正集样本 | 主攻形态覆盖 | **0**（BJ06 8 confirm 属回放页被排除出训练集；BJ13 唯一 conf≥0.5 判定=delete；BJ01-05/07-12 候选框全部 conf<0.5 未判定） | **未满足（最关键）** |
+| BJ 域正集样本 | 主攻形态覆盖（由 A′ 主攻目标推定，非 preflight 明文阈值） | **0**（BJ06 8 confirm 属回放页被排除出训练集；BJ13 唯一 conf≥0.5 判定=delete；BJ01-05/07-12 候选框全部 conf<0.5 未判定） | **未满足（最关键）** |
 | challenge 集（BJ13/14/15） | 有正样本可评 | 空集（如实登记不凑数） | **未满足** |
 | 合成样本 | ≥200 | 324 | 满足 |
 
