@@ -1,8 +1,8 @@
 # Project Rebaseline Plan
 
-Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED; Goal「M2 遗留技术债清算」达成（T1/T2/T3 done，2026-09-30）；2026-09-30 用户三项裁决（docTR 口径 / TA2B 开放素材池 / TA3 拆阶段）全链闭环 done：QUAL-RUN 正式结论 FAIL（候选 C1-C5 产出待释放）、M2-TA2B done @`fae0d8f6`、M2-TA3-A done @`5dc69d16`；L-1 核实（DIAG-002）与 DOC-FIX-STALE 亦闭环 @`1970512d`；当前无 Active Task（2026-09-30 REBASELINE 刷新）；2026-10-03 REBASELINE 刷新：TA3-B 家族（B2 阶段二/KO-RERUN/B3-KO-FULLRUN）与 SFX 家族（SEM-1/ENTRY/E2E-MATERIAL/DETECTION-HYGIENE）全部 done @main `3b8b7aa0`；唯一已释放待执行=M2-SFX-DETECT-DOMAIN-EXT-DIAG（ready @`497621df`，零 src 诊断）**
+Status: **ACTIVE DEVELOPMENT BASELINE — GOAL 2026-09-28/29 ACHIEVED; Goal「M2 遗留技术债清算」达成（T1/T2/T3 done，2026-09-30）；2026-09-30 用户三项裁决（docTR 口径 / TA2B 开放素材池 / TA3 拆阶段）全链闭环 done：QUAL-RUN 正式结论 FAIL（候选 C1-C5 产出待释放）、M2-TA2B done @`fae0d8f6`、M2-TA3-A done @`5dc69d16`；L-1 核实（DIAG-002）与 DOC-FIX-STALE 亦闭环 @`1970512d`；当前无 Active Task（2026-09-30 REBASELINE 刷新）；2026-10-03 REBASELINE 刷新：TA3-B 家族（B2 阶段二/KO-RERUN/B3-KO-FULLRUN）与 SFX 家族（SEM-1/ENTRY/E2E-MATERIAL/DETECTION-HYGIENE）全部 done @main `3b8b7aa0`；2026-10-04 收口刷新：DOMAIN-EXT-DIAG done @`7dd5e5ff`（用户「按推荐」裁决回执：①维持现状+UI 缓解 / ②fine-tune 暂不投入 / ③重叠仲裁授权）→ REGION-OVERLAP-ARBITRATION done @merge `38e4e487`（收口 `435284a1`）与 SFX-MISROUTE-UI-MITIGATION done @merge `4d77a778`（收口 `6a104bea`，用户改派 Qoder→ZCode，设计契约零产品代码）；**当前无 Active Task、无已释放待执行**；UI-MITIGATION 产品实现 blocked_on Workbench React 页+region 通道（均未登记，UI 实现与 RC 契约 Task 须另行释放）**
 
-Audit date: 2026-10-03 (Asia/Shanghai)（本日 REBASELINE 刷新：补登 M2-SFX-SEM-1 done 与 M2-SFX-DETECT-DOMAIN-EXT-DIAG ready；上一轮 2026-09-30）
+Audit date: 2026-10-04 (Asia/Shanghai)（本日 REBASELINE 刷新：头部 Status 行同步 2026-10-04 裁决线全闭环口径（DOMAIN-EXT-DIAG/ARBITRATION/UI-MITIGATION done @main `6a104bea`，无 Active/无已释放）；上一轮 2026-10-03）
 
 Initial rebaseline code audit: `master` @ `ce21ff9ea5738970bbda9a86079b673918c76048`
 
