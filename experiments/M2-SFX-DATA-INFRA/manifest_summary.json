@@ -2,8 +2,8 @@
  "task": "M2-SFX-DATA-INFRA",
  "schema_version": "sfx-data-infra/sample@1",
  "manifest_kind": "sfx-data-infra/manifest@1",
- "generated_at": "2026-10-04T02:05:21Z",
- "data_root_gitignored": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-DATA-INFRA-zcode\\training_data\\sfx-v1",
+ "generated_at": "2026-10-04T03:23:43Z",
+ "data_root_gitignored": "training_data/sfx-v1（repo 同级 gitignored 外部树）",
  "totals": {
   "samples": 82,
   "images": 71,
@@ -15,9 +15,9 @@
   },
   "by_split": {
    "challenge": 7,
-   "train": 39,
-   "test": 5,
-   "val": 31
+   "train": 63,
+   "test": 4,
+   "val": 8
   },
   "by_group": {
    "densho810/vol03": 15,
@@ -39,21 +39,27 @@
   "bj06_selfcheck_boxes": 8,
   "ogkalu_regions": 43,
   "ogkalu_regions_negative_empty_boxes": 11,
-  "ogkalu_boxes_total": 167,
-  "imported": 58,
-  "boxes": 182,
-  "assets_copied": 47
+  "ogkalu_boxes_total": 167
  },
  "synthetic_poc": {
   "count": 24,
-  "gt_roundtrip_max_err_px": 2.2737367544323206e-13,
+  "gt_roundtrip_max_err_px": null,
   "annotation_status": "synthetic",
-  "ai_fullpage_generation": "not_used（若引入必标 pseudo 不入 GT）"
+  "ai_fullpage_generation": "not_used（若引入必标 pseudo 不入 GT）",
+  "by_split": {
+   "train": 24
+  },
+  "fonts": [
+   "G:\\CODEX\\New Manga.worktrees\\M2-SFX-DATA-INFRA-zcode\\training_data\\sfx-v1\\fonts\\TanukiMagic.ttf"
+  ]
  },
  "split_lock": {
   "seed": 20261004,
   "method": "group-hash-rank-v2",
-  "fingerprint": "a02fed3da3a8aba11d6e718985633a81b341aca373e70e8dcf07a6a7a431da1e",
+  "pinned_groups": {
+   "synthetic/poc": "train"
+  },
+  "fingerprint": "de3787c6c34abb46b9c5d77f7c8fe56276706824daf23546a30778654c74ee28",
   "challenge_single_bucket": [
    "BJ13",
    "BJ14",
@@ -68,22 +74,17 @@
  },
  "train_builder": {
   "train_builder_counts": {
-   "train": 39,
-   "val": 31
-  },
-  "excluded_splits": [
-   "test",
-   "challenge"
-  ]
+   "note": "见 manifest.train.json"
+  }
  },
  "manifest_files": {
   "manifest.full.json": {
-   "sha256": "095a3c590c29f9c5617edaa57fd959459e3ee16dd515873d3cc367ad4380b56b",
-   "bytes": 234334
+   "sha256": "872e8aabbc3081abc75e282932ffb35dab37268c9787bc09ae8b6c88608c9af0",
+   "bytes": 253295
   },
   "manifest.train.json": {
-   "sha256": "17129854061a9ba83b17d04715d527dbb09bbbef62cbb031f4128e7f35acf399",
-   "bytes": 209372
+   "sha256": "ebf71b06c49fa250f06e4e058d7db5bdfeeea5a72e717e36157b86ac5c8f0651",
+   "bytes": 216280
   }
  }
 }

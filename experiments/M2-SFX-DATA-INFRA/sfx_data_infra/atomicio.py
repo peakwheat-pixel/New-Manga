@@ -3,7 +3,11 @@
 KO-FULLRUN env 事故教训：绝不允许半写状态。策略：
 - 写入先落同目录 tmp（pid 后缀），flush+fsync 后 os.replace 原子生效；
 - 已有文件先移 .bak 保留上一完整版本；
-- 写后立即读回 json+schema 校验，失败抛 ManifestValidationError；
+- 读回校验：写后立即 json 解析校验；load_manifest 逐样本 schema 校验，
+  失败抛 ManifestValidationError；
+- 中断恢复三态（r1 P2-6 修正表述）：崩溃点若在 tmp 阶段→主路径仍是旧完整版；
+  若在 os.replace(path→bak) 与 os.replace(tmp→path) 之间→主路径短暂缺失，
+  load_manifest 自动回退 .bak 上一完整版本；两个 replace 均不可部分生效。
 - 中断残留 tmp 由 cleanup_stale_tmp 在下次写入前清理。
 """
 
@@ -75,8 +79,16 @@ def write_manifest(
 
 
 def load_manifest(path: str | os.PathLike) -> tuple[dict, list[SampleRecord]]:
-    """读 manifest 并逐样本校验；任何损坏/结构不符抛 ManifestValidationError。"""
+    """读 manifest 并逐样本校验；任何损坏/结构不符抛 ManifestValidationError。
+
+    主路径缺失但存在 .bak（写入中途崩溃的第三态，r1 P2-6）：自动回退读
+    .bak 上一完整版本——恢复语义与 write 的 bak 保留设计闭环。
+    """
     path = Path(path)
+    if not path.exists():
+        bak = path.with_name(f"{path.name}.bak")
+        if bak.exists():
+            path = bak
     try:
         raw = path.read_text(encoding="utf-8")
         container = json.loads(raw)

@@ -7,7 +7,7 @@ Python：`G:/CODEX/New Manga.task-envs/T1.1.1-impl-py312/Scripts/python.exe`。
 cd experiments/M2-SFX-DATA-INFRA
 <python> -m sfx_data_infra --help        # EXIT=0
 <python> -m sfx_data_infra selfcheck     # 自检 EXIT=0
-<python> -m pytest tests/ -q             # 27 tests
+<python> -m pytest tests/ -q             # 37 tests（r1 返修后含 8 个回归测试）
 <python> -m sfx_data_infra pipeline      # 导入+合成+拆分+去重+训练构建+摘要
 ```
 
@@ -29,8 +29,14 @@ Git 只进代码+schema+`manifest_summary.json`（摘要与哈希）。
 4. **遮挡推断语义一致**：人工框被对话框/效果线遮住一半的 sfx 时习惯框全实例；
    合成渲染的遮挡贴片不裁 GT 包络，训练信号与人工习惯一致。
 
-扩展位：schema 保留 `boxes[].occluded` 标记遮挡实例；若未来引入像素级 mask
-（合成可产），以 `glyph_mask_ref` 字段扩展，不破坏包络 GT 口径。
+扩展位：schema 保留 `boxes[].occluded` 标记遮挡实例（**r1 P1-4 后已落地**：
+合成遮挡样本 `occluded=True`，8 框实测）；若未来引入像素级 mask（合成可产），
+以 `glyph_mask_ref` 字段扩展，不破坏包络 GT 口径。
+
+**字体（r1 P2-12 已闭合）**：PoC 接入 TanukiMagic（たぬき油性マジック，OFL 许可，
+tanukifont.com）毛笔/手写风字体——放 `training_data/sfx-v1/fonts/`（或 env
+`NEWMANGA_SFX_SYNTH_FONTS`），`discover_fonts` 按文件名关键词（tanuki/brush/fude
+等）优先选用；毛笔字体在盘时 PoC 独占使用，否则回退系统字体（差距登记）。
 
 **标注状态语义**（冻结）：
 `complete`=人工像素级精确；`partial`=人工核验但近似框（l3 参照框/BJ06 自证框）；
@@ -47,18 +53,30 @@ AI 整图生成若后续引入，必须标 `pseudo` 且不入 GT。
 | peppercarrot | `peppercarrot/<E番号>`（E04P02→E04） | **同 ep 的 ja/kr 语言版共享图像底图，强制同组防泄漏** |
 | 其他 | `other/<sha1(url)[:10]>` | 兜底 |
 
-拆分：BJ13/14/15 无条件单列 `challenge`（挑战集，对训练不可读）；其余组按
-`sha256(seed:group)` 前 8 字节映射 [0,1) 分桶：<0.70 train、<0.85 val、否则 test。
-派生样本（`provenance.type=derived`，`parent_sample_id`）fixpoint 继承父 split。
-划分 lock（seed+method+fingerprint）写入 manifest；重划需 force。
+拆分（method=group-hash-rank-v2）：BJ13/14/15 无条件单列 `challenge`（挑战集，
+对训练不可读）；其余组按 `sha256(seed:group)` **排序后按比例切片**（70%/15%/15%，
+r1 P2-7 更正：是排序切片，非阈值分桶）。**组级钉扎 pinned**：`synthetic/poc` 显式
+钉入 train（r1 P1-3——单一大合成组参与切片会被整组切进 val，train 零合成）。
+派生样本（`provenance.type=derived`，`parent_sample_id`）fixpoint 继承父 split；
+孤儿 derived（父不在集内）按单组切片，n<4 恒返 train。
+划分 lock（seed+method+pinned+fingerprint）写入 manifest；重划需 force=True
+（r1 P2-4 修复后 force 真正按新 seed 重划）。
 `TrainingSetBuilder` 构造期丢弃 test/challenge 且禁止其进入 allowlist——API 表面
-不存在任何取回 test/challenge 的通道。
+不存在任何取回 test/challenge 的通道；并默认排除 `provenance.negative=true` 的
+空框负样本（r1 P1-2：是否使用弱负样本由 T1b 显式决策，`exclude_negative=False`
+为显式开启通道）。
+**登记（r1 P2-10 裁定）**：challenge 单列优先于组原子性，同组余量照常分桶
+（densho810/vol03 余量在 train）——challenge 评测存在同卷上下文泄漏风险，仅用于
+挑战对照，不得用于泛化声明。**登记（r1 P2-11）**：当前 test 集为 4 个 ogkalu
+pseudo 样本，无人工 GT，评估价值有限；引入人工可核验 test 来源属 T1b。
 
 ## 中断恢复纪律（AC3，KO-FULLRUN env 事故教训）
 
 manifest 写入=同目录 tmp（pid 后缀）→flush+fsync→旧文件移 .bak→os.replace 原子生效
-→读回 json+schema 校验。中断点只可能在 tmp/bak，主路径非旧即新；残留 tmp 由
-`cleanup_stale_tmp` 在重跑前清理。
+→读回 json 校验（load_manifest 再逐样本 schema 校验）。三态恢复（r1 P2-6 修正）：
+崩溃在 tmp 阶段→主路径仍是旧完整版；崩溃在两次 replace 之间→主路径短暂缺失，
+`load_manifest` 自动回退 .bak 上一完整版本；残留 tmp 由 `cleanup_stale_tmp` 在
+重跑前清理。
 
 ## 资产与素材根（AC5，只读）
 

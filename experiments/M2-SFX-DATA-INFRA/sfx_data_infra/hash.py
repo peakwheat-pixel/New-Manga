@@ -25,16 +25,33 @@ def hamming_distance(a: int, b: int) -> int:
     return bin(a ^ b).count("1")
 
 
-def box_exact_hash(polygon, cls: str, text, image_sha256: str) -> str:
-    """框级精确哈希：坐标规范化到 0.1px + 类 + 文本 + 图 sha256 → sha256 hex。"""
+def _box_hash_payload(polygon, cls: str, text, image_sha256: str | None) -> str:
     norm = [[round(float(x), 1), round(float(y), 1)] for x, y in polygon]
-    payload = json.dumps(
-        {"polygon": norm, "cls": cls, "text": text, "image": image_sha256},
+    return json.dumps(
+        {
+            "polygon": norm,
+            "cls": cls,
+            "text": text,
+            **({} if image_sha256 is None else {"image": image_sha256}),
+        },
         sort_keys=True,
         ensure_ascii=False,
         separators=(",", ":"),
     )
-    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
+
+
+def box_exact_hash(polygon, cls: str, text, image_sha256: str) -> str:
+    """框级精确哈希：坐标规范化到 0.1px + 类 + 文本 + 图 sha256 → sha256 hex。"""
+    return hashlib.sha256(_box_hash_payload(polygon, cls, text, image_sha256).encode("utf-8")).hexdigest()
+
+
+def box_geometry_hash(polygon, cls: str, text) -> str:
+    """框几何哈希：同 box_exact_hash 但不含图 sha256。
+
+    dedup 的框集合指纹用它——感知去重需要"跨图（不同 sha）+相同标注几何"可比，
+    图 sha 织进指纹会让 perceptual 分支在图不同时永不匹配（r1 P1-1）。
+    """
+    return hashlib.sha256(_box_hash_payload(polygon, cls, text, None).encode("utf-8")).hexdigest()
 
 
 def sha256_file(path, chunk_size: int = 1 << 20) -> str:

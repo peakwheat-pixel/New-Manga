@@ -140,3 +140,56 @@ def test_group_key_rules():
     # vasyanator2：按数据集作品 id 前缀分组
     k1 = {"case_id": "K01", "source": "https://huggingface.co/datasets/Vasyanator2/cleaned_webtoon_dataset", "source_id": "724815_1"}
     assert derive_group_key_from_case(k1) == "vasyanator2/724815"
+
+
+# ---------------------------------------------------------------- r1 返修回归
+
+def test_force_resplits_with_new_seed():
+    """r1 P2-4 回归：force=True 必须真正重划（旧 split 不残留）。"""
+    samples = base_samples()
+    assign_splits(samples, seed=SEED_DEFAULT)
+    before = {s.sample_id: s.split for s in samples}
+    # 换一个必然改变分桶顺序的 seed；至少验证所有非 challenge 样本被重新计算过
+    assign_splits(samples, seed=SEED_DEFAULT + 1, force=True)
+    after = {s.sample_id: s.split for s in samples}
+    for sid, sp in after.items():
+        assert sp in ("train", "val", "test", "challenge")
+        if before[sid] == "challenge":
+            assert sp == "challenge", "challenge 不受 force 影响"
+    # force 后 fingerprint 应与"从头用新 seed 划分"一致（可复现重划语义）
+    fresh = base_samples()
+    assign_splits(fresh, seed=SEED_DEFAULT + 1, force=True)
+    assert split_fingerprint(samples, SEED_DEFAULT + 1) == split_fingerprint(fresh, SEED_DEFAULT + 1)
+
+
+def test_pinned_group_goes_where_told():
+    """r1 P1-3 回归：钉扎组必须整组落在指定 split，不参与比例切片。"""
+    samples = base_samples()
+    samples.append(make_sample("syn-0", "synthetic/poc", {"type": "synthetic_render", "render_seed": 1}))
+    samples.append(make_sample("syn-1", "synthetic/poc", {"type": "synthetic_render", "render_seed": 2}))
+    assign_splits(samples, seed=SEED_DEFAULT, pinned={"synthetic/poc": "train"})
+    syn = [s for s in samples if s.group == "synthetic/poc"]
+    assert {s.split for s in syn} == {"train"}, "合成组必须整组钉在 train"
+
+
+def test_builder_excludes_negative_by_default():
+    """r1 P1-2 回归：空框负样本（provenance.negative=true）默认不进训练集。"""
+    samples = base_samples()
+    neg = make_sample("ogk-neg", "vasyanator2/724815", {"type": "external_model", "case_id": "K01", "negative": True})
+    neg.boxes = []
+    neg.annotation_status = "pseudo"
+    neg.split = "train"
+    samples.append(neg)
+    builder = TrainingSetBuilder(samples, allowed_splits=("train", "val"))
+    ids = {s.sample_id for s in builder.samples}
+    assert "ogk-neg" not in ids
+    assert builder.excluded_negative_ids == ["ogk-neg"]
+
+    builder_keep = TrainingSetBuilder(samples, allowed_splits=("train", "val"), exclude_negative=False)
+    assert "ogk-neg" in {s.sample_id for s in builder_keep.samples}, "显式关闭排除时应保留（T1b 决策通道）"
+
+
+def test_builder_rejects_challenge_allowlist_still_holds():
+    samples = base_samples()
+    with pytest.raises(SplitAccessError):
+        TrainingSetBuilder(samples, allowed_splits=("train", "challenge"))

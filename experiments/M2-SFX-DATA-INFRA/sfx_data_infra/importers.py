@@ -196,6 +196,7 @@ def import_ogkalu(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
         case = cases_index.get(case_id)
         group = derive_group_key_from_case(case) if case else f"ogkalu-crop/{case_id}"
         boxes = []
+        det_conf_stats = []
         for det in r.get("detections", []):
             boxes.append(
                 BoxAnnotation(
@@ -203,6 +204,10 @@ def import_ogkalu(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
                     cls="sfx",
                     text=None,
                 )
+            )
+            # r1 P2-9：harvest(0.25) vs primary(0.5) 的质量分级依据必须留痕
+            det_conf_stats.append(
+                {"conf": det.get("conf"), "cls": det.get("cls"), "conf_ge_primary": det.get("conf_ge_primary")}
             )
         if not boxes:
             # detections 为空 = 模型在该 crop 无检出（harvest 0.25 灵敏度下）：
@@ -230,6 +235,7 @@ def import_ogkalu(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
                     "harvest_threshold": data.get("harvest_threshold"),
                     "evidence": "experiments/M2-SFX-DETECT/ogkalu-sfx-frames.json",
                     "original_classes": sorted({d["cls"] for d in r.get("detections", [])}),
+                    "detection_conf_stats": det_conf_stats,
                     "negative": not boxes,
                     "quality_note": "模型 harvest 灵敏度产出（0.25 阈值），无人工确认；仅伪 GT"
                     + ("；该 crop 无检出框（负证据样本）" if not boxes else ""),

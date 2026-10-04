@@ -11,3 +11,6 @@ dist/
 
 # SFX training data body (M2-SFX-DATA-INFRA): rendered PNGs / asset copies / full manifests stay out of Git; only code+schema+manifest_summary.json enter the repo.
 /training_data/
+
+# atomic_write_json 的 .bak 备份不进 Git（r2）
+experiments/M2-SFX-DATA-INFRA/*.bak

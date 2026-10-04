@@ -14,7 +14,6 @@
 from __future__ import annotations
 
 import argparse
-import copy
 import json
 import shutil
 import sys
@@ -57,6 +56,9 @@ PKG_PARENT = Path(__file__).resolve().parents[1]
 REPO_ROOT = PKG_PARENT.parents[1]
 DEFAULT_DATA_ROOT = REPO_ROOT / "training_data" / "sfx-v1"
 CHALLENGE_IDS = ("BJ13", "BJ14", "BJ15")
+# r1 P1-3：合成 PoC 是单一大组，参与比例切片会被整组切进 val（train 零合成、
+# val 77% 合成，与"辅助监督"声明矛盾）。显式钉入 train，val 保持真实来源。
+PINNED_GROUPS = {"synthetic/poc": "train"}
 
 
 def _now_iso() -> str:
@@ -186,9 +188,17 @@ def step_synth(data_root: Path, now_iso: str, count: int = 24) -> tuple[list[Sam
     """合成渲染 PoC：PNG 落 synthetic/，synthetic 状态，精确 GT+互算复核。"""
     out_dir = data_root / "synthetic"
     out_dir.mkdir(parents=True, exist_ok=True)
+    all_fonts = discover_fonts(extra_dirs=[data_root / "fonts"])
+    # AC4 毛笔域聚焦：data_root/fonts 下命中的手写/毛笔风字体（如 TanukiMagic）
+    # 存在时 PoC 独占使用；否则回退系统字体（差距登记见报告）
+    import os as _os
+    from sfx_data_infra.synth import _BRUSHY_NAME_HINTS
+
+    brushy = [f for f in all_fonts if any(h in Path(f).stem.lower() for h in _BRUSHY_NAME_HINTS)]
+    fonts = brushy or all_fonts
     samples: list[SampleRecord] = []
     roundtrip_worst = 0.0
-    for p in default_poc_params(count=count):
+    for p in default_poc_params(count=count, fonts=fonts):
         result: RenderResult = render_sample(p)
         png_name = f"{p.sample_name}.png"
         png_path = out_dir / png_name
@@ -201,7 +211,10 @@ def step_synth(data_root: Path, now_iso: str, count: int = 24) -> tuple[list[Sam
             SampleRecord(
                 sample_id=f"synth-{p.sample_name}",
                 image=ImageRef(path=f"synthetic/{png_name}", sha256=sha256_file(png_path), width=w, height=h),
-                boxes=[BoxAnnotation(polygon=result.gt_polygon, cls="sfx", text=p.text)],
+                boxes=[BoxAnnotation(
+                    polygon=result.gt_polygon, cls="sfx", text=p.text,
+                    occluded=p.occlusion is not None,  # r1 P1-4：遮挡标记落地，口径非仅 README
+                )],
                 annotation_status="synthetic",
                 provenance={
                     "type": "synthetic_render",
@@ -227,10 +240,10 @@ def step_synth(data_root: Path, now_iso: str, count: int = 24) -> tuple[list[Sam
 
 
 def step_split(samples: list[SampleRecord], seed: int) -> tuple[list[SampleRecord], dict]:
-    assign_splits(samples, seed=seed, force=True)
+    assign_splits(samples, seed=seed, force=True, pinned=PINNED_GROUPS)
     info = {
         "seed": seed,
-        "fingerprint": split_fingerprint(samples, seed),
+        "pinned_groups": dict(PINNED_GROUPS),
         "by_split": dict(Counter(s.split for s in samples)),
     }
     print(f"[split] {json.dumps(info, ensure_ascii=False)}")
@@ -239,7 +252,8 @@ def step_split(samples: list[SampleRecord], seed: int) -> tuple[list[SampleRecor
 
 def step_dedup(samples: list[SampleRecord], data_root: Path) -> tuple[list[SampleRecord], DedupReport]:
     def loader(rel: str):
-        return Image.open(data_root / rel).convert("RGB")
+        with Image.open(data_root / rel) as im:
+            return im.convert("RGB")
 
     report = find_duplicates(samples, image_loader=loader)
     kept = drop_duplicates(samples, report)
@@ -256,7 +270,13 @@ def step_dedup(samples: list[SampleRecord], data_root: Path) -> tuple[list[Sampl
 
 def step_build_train(samples: list[SampleRecord]) -> tuple[list[SampleRecord], dict]:
     builder = TrainingSetBuilder(samples, allowed_splits=("train", "val"))
-    info = {"train_builder_counts": builder.counts(), "excluded_splits": ["test", "challenge"]}
+    info = {
+        "train_builder_counts": builder.counts(),
+        "excluded_splits": ["test", "challenge"],
+        # r1 P1-2：负样本（ogkalu 空框）默认排除出训练集；是否使用弱负样本由 T1b 显式决策
+        "excluded_negative_ids": builder.excluded_negative_ids,
+        "status_distribution": builder.status_distribution(),
+    }
     print(f"[build-train] {json.dumps(info, ensure_ascii=False)}")
     return builder.samples, info
 
@@ -268,13 +288,15 @@ def build_summary(
     dedup_report: DedupReport,
     train_info: dict,
     import_info: dict,
-    synth_info: dict,
+    synth_info: dict | None,
     now_iso: str,
 ) -> dict:
     full_path = data_root / "manifest.full.json"
     train_path = data_root / "manifest.train.json"
     ogkalu = [s for s in samples if s.sample_id.startswith("imp-ogkalu-")]
     ogkalu_negative = [s for s in ogkalu if not s.boxes]
+    synth_samples = [s for s in samples if s.annotation_status == "synthetic"]
+    synth_by_split = dict(Counter(s.split for s in synth_samples))
 
     def fsha(p: Path) -> dict:
         return {"sha256": sha256_file(p), "bytes": p.stat().st_size}
@@ -284,7 +306,8 @@ def build_summary(
         "schema_version": SCHEMA_VERSION,
         "manifest_kind": MANIFEST_KIND,
         "generated_at": now_iso,
-        "data_root_gitignored": str(data_root),
+        # r1 P2-13：入库摘要不写本机绝对路径，只记相对约定
+        "data_root_gitignored": "training_data/sfx-v1（repo 同级 gitignored 外部树）",
         "totals": {
             "samples": len(samples),
             "images": len({s.image.sha256 for s in samples}),
@@ -299,18 +322,22 @@ def build_summary(
             "ogkalu_regions": len(ogkalu),
             "ogkalu_regions_negative_empty_boxes": len(ogkalu_negative),
             "ogkalu_boxes_total": sum(len(s.boxes) for s in ogkalu),
-            **import_info,
+            **(import_info or {}),
         },
         "synthetic_poc": {
-            "count": synth_info["synth_count"],
-            "gt_roundtrip_max_err_px": synth_info["roundtrip_max_err_px"],
+            "count": (synth_info or {}).get("synth_count", len(synth_samples)),
+            "gt_roundtrip_max_err_px": (synth_info or {}).get("roundtrip_max_err_px"),
             "annotation_status": "synthetic",
             "ai_fullpage_generation": "not_used（若引入必标 pseudo 不入 GT）",
+            # r1 P1-3：合成样本落点必须如实呈现（pinned 后应全部在 train）
+            "by_split": synth_by_split,
+            "fonts": sorted({s.provenance.get("font_path", "") for s in synth_samples}),
         },
         "split_lock": {
             "seed": split_info["seed"],
             "method": "group-hash-rank-v2",
-            "fingerprint": split_info["fingerprint"],
+            "pinned_groups": dict(PINNED_GROUPS),
+            "fingerprint": split_info.get("fingerprint", ""),
             "challenge_single_bucket": list(CHALLENGE_IDS),
         },
         "dedup": {
@@ -346,6 +373,11 @@ def cmd_pipeline(args: argparse.Namespace) -> int:
     kept, dedup_report = step_dedup(all_samples, data_root)
     train_samples, train_info = step_build_train(kept)
 
+    # r1 P2-5：fingerprint 以去重后的最终 kept 集计算——lock 描述的必须是
+    # 实际落盘产物，而非去重前的中间态
+    fingerprint = split_fingerprint(kept, seed)
+    split_info["fingerprint"] = fingerprint
+
     write_manifest(
         data_root / "manifest.full.json",
         kept,
@@ -354,7 +386,8 @@ def cmd_pipeline(args: argparse.Namespace) -> int:
             "lock": {
                 "seed": seed,
                 "method": "group-hash-rank-v2",
-                "fingerprint": split_info["fingerprint"],
+                "pinned_groups": dict(PINNED_GROUPS),
+                "fingerprint": fingerprint,
                 "frozen_at": now_iso,
                 "challenge_case_ids": list(CHALLENGE_IDS),
             }
@@ -364,7 +397,7 @@ def cmd_pipeline(args: argparse.Namespace) -> int:
         data_root / "manifest.train.json",
         train_samples,
         seed=seed,
-        extra={"note": "train/val only — test/challenge 由 TrainingSetBuilder 构造期剔除"},
+        extra={"note": "train/val only — test/challenge 与负样本由 TrainingSetBuilder 构造期剔除"},
     )
 
     summary = build_summary(data_root, kept, split_info, dedup_report, train_info, import_info, synth_info, now_iso)
@@ -394,31 +427,45 @@ def cmd_synth(args: argparse.Namespace) -> int:
 
 def cmd_split(args: argparse.Namespace) -> int:
     data_root = Path(args.data_root)
-    _, records = load_manifest(data_root / "manifest.full.json")
+    container, records = load_manifest(data_root / "manifest.full.json")
     records, info = step_split(records, int(args.seed))
+    fingerprint = split_fingerprint(records, int(args.seed))
+    info["fingerprint"] = fingerprint
     write_manifest(
         data_root / "manifest.full.json",
         records,
         seed=int(args.seed),
         extra={"lock": {"seed": int(args.seed), "method": "group-hash-rank-v2",
-                        "fingerprint": info["fingerprint"], "frozen_at": _now_iso()}},
+                        "pinned_groups": dict(PINNED_GROUPS),
+                        "fingerprint": fingerprint, "frozen_at": _now_iso()}},
     )
     return 0
 
 
 def cmd_dedup(args: argparse.Namespace) -> int:
     data_root = Path(args.data_root)
-    _, records = load_manifest(data_root / "manifest.full.json")
+    container, records = load_manifest(data_root / "manifest.full.json")
     kept, _report = step_dedup(records, data_root)
-    write_manifest(data_root / "manifest.full.json", kept)
+    # r1 P2-3：回写必须透传 seed/lock，否则"划分一次冻结"被抹掉
+    write_manifest(
+        data_root / "manifest.full.json",
+        kept,
+        seed=container.get("seed"),
+        extra={k: container[k] for k in ("lock",) if k in container},
+    )
     return 0
 
 
 def cmd_build_train(args: argparse.Namespace) -> int:
     data_root = Path(args.data_root)
-    _, records = load_manifest(data_root / "manifest.full.json")
+    container, records = load_manifest(data_root / "manifest.full.json")
     train_samples, info = step_build_train(records)
-    write_manifest(data_root / "manifest.train.json", train_samples)
+    write_manifest(
+        data_root / "manifest.train.json",
+        train_samples,
+        seed=container.get("seed"),
+        extra={"note": "train/val only — test/challenge 与负样本由 TrainingSetBuilder 构造期剔除"},
+    )
     return 0
 
 
@@ -429,9 +476,12 @@ def cmd_summary(args: argparse.Namespace) -> int:
         "seed": container.get("seed", SEED_DEFAULT),
         "fingerprint": (container.get("lock") or {}).get("fingerprint", ""),
     }
+    synth_from_disk = {
+        "synth_count": sum(1 for s in records if s.annotation_status == "synthetic"),
+    }
     summary = build_summary(
         data_root, records, split_info, DedupReport(),
-        {"train_builder_counts": {"note": "见 manifest.train.json"}}, {}, {}, _now_iso(),
+        {"train_builder_counts": {"note": "见 manifest.train.json"}}, {}, synth_from_disk, _now_iso(),
     )
     summary_path = Path(args.summary_out)
     atomic_write_json(summary_path, summary)

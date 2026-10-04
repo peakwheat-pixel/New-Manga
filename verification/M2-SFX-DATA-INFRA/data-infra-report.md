@@ -17,7 +17,40 @@
 | AC5 存量导入器 | **完成** | `importers.py` 一键 7+8+43=58：l3 七参照框→`partial`（页图 BJ13/14/15 在 E2E-MATERIAL worktree）；BJ06 八自证框→`partial`（页图在 TA2B worktree，**导入时对账 qual 记录 source_sha256 `b06c9d7d…` 一致**）；ogkalu 43 region→`pseudo`（crop 图 43/43 在盘，原始 cls/conf/harvest 阈值入 provenance；其中 11 region detections 为空→空框 pseudo 负证据样本，schema 冻结允许且 43 全量入册） |
 | AC6 零 src+CLI | **完成** | `git diff 4c12e8af..HEAD --stat` 零 src/tests/contracts/packaging/apps/STATUS/test_assets 变更；`python -m sfx_data_infra --help` EXIT=0；`selfcheck` EXIT=0（schema 往返/dhash/几何互算 5.7e-14/原子写恢复 4 项自检全 OK）；数据本体落 `training_data/sfx-v1/`（`.gitignore` 加 `/training_data/`，check-ignore 验证） |
 
-## 数据产出（真实管线 `pipeline`，EXIT=0）
+## r2 修订（DSH r1 changes_requested 返修后重跑——本节覆盖下方 r1 历史数字）
+
+r1 结论：changes_requested（4 P1 / 12 P2 / 11 P3，无 P0）。r2 修复与重跑结果：
+
+**P1 全修**：
+- P1-1 感知去重死代码→框指纹改 `box_geometry_hash`（不含图 sha），跨图可达；
+  新增跨图重压缩触发回归测试（`test_find_duplicates_perceptual_across_images`）
+- P1-2 负样本无过滤进训练→`TrainingSetBuilder` 默认排除 `provenance.negative`
+  （10 个 ogkalu 空框已排除；`exclude_negative=False` 为 T1b 显式决策通道）
+- P1-3 合成全落 val→组级钉扎 `pinned={"synthetic/poc": "train"}`，24 合成全在 train
+- P1-4 `occluded` 未落地→`BoxAnnotation(occluded=occlusion is not None)`，8 框 True
+
+**P2/P3 处置**：summary KeyError 修复（P2-2）；dedup 回写透传 seed/lock（P2-3）；
+force 真重划（P2-4）；fingerprint 以 dedup 后 kept 集计算（P2-5）；atomicio 主路径
+缺失回退 .bak（P2-6）；README 分桶描述改排序切片（P2-7）；conf 留痕
+`detection_conf_stats`（P2-9）；challenge 优先组原子性 README 明文登记（P2-10）；
+test 集弱登记转 T1b（P2-11）；**AC4 毛笔字体接入 TanukiMagic（OFL）独占使用，
+P2-12 闭合**；摘要去绝对路径（P2-13）；`.gitignore` 越界由 Codex 追认（P2-1）。
+P3：测试计数/文件数/未用 import/loader close/孤儿 train 语义登记等已修或登记。
+
+**r2 产物数字（`pipeline` EXIT=0，seed=20261004）**：
+- 全集 82 样本 / 71 图 / 206 框；拆分：challenge 7 / **train 63（含合成 24）** / val 8 / test 4
+- 训练构建器：train 57 + val 4 = 61 可读；**排除负样本 10**；状态分布 partial 8 / pseudo 29 / synthetic 24
+- 合成 GT 互算 max err **1.71e-13 px**；字体 **TanukiMagic 独占**（`training_data/sfx-v1/fonts/`）
+- lock fingerprint `de3787c6c34abb46…`（pinned 后新值）；manifest.full sha `2f8cdc1f…`、
+  manifest.train sha `3e08c1be…`；tests **37 passed**（新增 8 回归）；selfcheck/help/
+  pipeline/summary/dedup/split(force)/build-train 全 EXIT=0（`green-run-r2.log`/
+  `subcommands-r2-run.log`）
+- 新 fingerprint 与 pinned 语义写进 lock：`{seed, method, pinned_groups, fingerprint,
+  frozen_at, challenge_case_ids}`
+
+## r1 历史数字（被上节覆盖，留证）
+
+### 数据产出（真实管线 `pipeline`，EXIT=0）
 
 - 导入 58 样本 / 182 框 / 素材副本 47 文件；合成 24 样本（PNG 落 `training_data/sfx-v1/synthetic/`）
 - 全集 82 样本 / 71 独立图 / 206 框；by_status: partial 15 / pseudo 43 / synthetic 24
@@ -58,14 +91,16 @@
 - 拆分重放：盘上 manifest 重跑 `assign_splits` fingerprint 与 lock 一致
 - builder 泄漏检查：`[s for s in builder.samples if s.split not in ('train','val')]` = []
 
-## 遗留与风险
+## 遗留与风险（r2 刷新）
 
-1. **val 组仅 2 组但含 31 样本**（synthetic/poc 22+vasyanator2/641253 9）：切片按组数比例
-   （12 组→8/2/2），样本级分布不均。批量数据入册后组数上升会自然缓解；若需样本级均衡
-   需改分层策略（新决策，不擅动）。
-2. **ogkalu 11/43 空框负证据样本**：schema 冻结允许 pseudo 空框；若 DeepSeek review 认为
-   负样本不应入 manifest，可加 `provenance.negative` 过滤开关（一行），43 入册口径不变。
-3. **域差距**见上表：合成样本不用于域内评估，只入 train/val 作辅助监督。
+1. **val 现为 8 样本/1-2 组**（r1 P1-3 修复后合成组移出 val）：批量数据入册后组数上升
+   会自然缓解；若需样本级均衡需改分层策略（新决策，不擅动）。
+2. **弱负样本使用策略**（r1 裁决②）：10 个空框负样本保留在 manifest（`negative=true`
+   可追溯），builder 默认排除；是否作为训练弱负样本由 T1b 显式决策。
+3. **域差距**：合成样本（毛笔体 TanukiMagic）现全部在 train 作辅助监督；域内评估不使用
+   合成样本。合成分布与真实域差距仍需 T1b BJ13 真图对照目检登记。
 4. **素材根硬编码**本机 worktree 路径（`importers.DEFAULT_ASSET_ROOTS`），env
-   `SFX_DATA_ASSET_ROOTS` 可覆盖；跨机器复现需先配素材根。
+   `SFX_DATA_ASSET_ROOTS` 可覆盖；跨机器复现需先配素材根（r1 P3 登记）。
 5. BJ06 对账依赖 qual-BJ06.json 内嵌 sha256；素材被替换时会 fail-fast（本次一致）。
+6. **test 集弱**（r1 P2-11）：4 个 ogkalu pseudo 无人工 GT，评估价值有限；人工可核验
+   test 来源属 T1b。

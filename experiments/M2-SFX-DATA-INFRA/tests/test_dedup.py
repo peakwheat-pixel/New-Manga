@@ -87,3 +87,37 @@ def test_ogkalu_key_and_polygons():
 def test_page_filename_from_cases_index():
     cases_index = {"BJ13": {"case_id": "BJ13", "source_id": "vol03_p0048"}}
     assert page_filename_for_case("BJ13", cases_index) == "vol03_p0048.png"
+
+
+def test_find_duplicates_perceptual_across_images(tmp_path):
+    """r1 P1-1 回归：感知去重必须对"近似图（不同 sha）+相同框集合"真正可达。
+
+    修复前框指纹内嵌图 sha，bkey 恒不同 → perceptual_pairs 恒空（死代码）。
+    """
+    from sfx_data_infra.schema import BoxAnnotation, ImageRef, SampleRecord
+    from sfx_data_infra.hash import sha256_file as _sha256_file
+
+    img = _noise_img(11)
+    p1 = tmp_path / "orig.png"
+    p2 = tmp_path / "recompressed.jpg"
+    img.save(p1)
+    img.save(p2, quality=62)  # 重压缩 → sha 不同但 dhash 近似
+    assert _sha256_file(p1) != _sha256_file(p2), "前置：两图 sha 必须不同"
+
+    def mk(i, path):
+        return SampleRecord(
+            sample_id=f"p{i}",
+            image=ImageRef(path=str(path), sha256=_sha256_file(path), width=64, height=64),
+            boxes=[BoxAnnotation(polygon=[[0, 0], [8, 0], [8, 8], [0, 8]])],
+            annotation_status="synthetic",
+            provenance={"type": "synthetic_render", "render_seed": i},
+            group="synthetic/poc",
+            created_at="2026-10-04T00:00:00+00:00",
+        )
+
+    samples = [mk(0, p1), mk(1, p2)]
+    report = find_duplicates(samples, image_loader=lambda p: Image.open(p).convert("RGB"))
+    assert report.perceptual_pairs, "跨图近似重复必须命中 perceptual 分支（r1 P1-1 修复）"
+    assert report.duplicate_of.get("p1") == "p0"
+    kept = drop_duplicates(samples, report)
+    assert [s.sample_id for s in kept] == ["p0"]

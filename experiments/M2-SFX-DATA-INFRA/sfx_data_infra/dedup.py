@@ -10,7 +10,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Callable, Iterable, Optional
 
-from sfx_data_infra.hash import box_exact_hash, dhash_image, hamming_distance
+from sfx_data_infra.hash import box_geometry_hash, dhash_image, hamming_distance
 from sfx_data_infra.schema import SampleRecord
 
 
@@ -24,22 +24,22 @@ class DedupReport:
 
 
 def _box_set_key(s: SampleRecord) -> tuple[str, ...]:
-    """样本的框集合指纹（排序后的框精确哈希；含图 sha，天然区分不同图）。"""
-    return tuple(sorted(box_exact_hash(b.polygon, b.cls, b.text, s.image.sha256) for b in s.boxes))
+    """样本的框集合指纹（排序后的框几何哈希，不含图 sha——感知去重跨图可比）。"""
+    return tuple(sorted(box_geometry_hash(b.polygon, b.cls, b.text) for b in s.boxes))
 
 
 def find_duplicates(
     samples: Iterable[SampleRecord],
-    image_sha_by_sample: Optional[dict[str, str]] = None,
     dhash_threshold: int = 8,
     image_loader: Optional[Callable] = None,
 ) -> DedupReport:
     """双去重扫描。
 
     判重语义：**同图+同框集合**才是重复样本（一页多实例=同图不同框=合法多样本）。
-      1) exact：图 sha 相同 且 框集合指纹相同；
-      2) perceptual：dhash 汉明距离 ≤阈值 且 框集合指纹相同且非空
-         （重压缩/缩放的近似重复图+相同标注）。
+      1) exact：图 sha 相同 且 框几何集合相同（最强证据，短路）；
+      2) perceptual：跨图（sha 不同）但 dhash 汉明距离 ≤阈值 且 框几何集合相同且非空
+         （重压缩/缩放的近似重复图+相同标注）。r1 P1-1 修复：框指纹改用
+         box_geometry_hash（不含图 sha），本分支对"图不同"真正可达。
     image_loader(path)->PIL.Image 提供时启用感知比对；缺图记 dhash_errors 不中断。
     """
     report = DedupReport()

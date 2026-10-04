@@ -114,3 +114,18 @@ def test_load_rejects_wrong_kind(tmp_path):
     path.write_text(json.dumps({"kind": "something/else", "samples": []}), encoding="utf-8")
     with pytest.raises(ManifestValidationError):
         load_manifest(path)
+
+
+def test_load_manifest_falls_back_to_bak_when_main_missing(tmp_path):
+    """r1 P2-6 回归：主路径缺失（写入中途崩溃第三态）时自动回退 .bak 上一完整版本。"""
+    path = tmp_path / "manifest.json"
+    write_manifest(path, make_samples(1), seed=6)  # 首写无旧版，不产 bak
+    write_manifest(path, make_samples(2), seed=7)  # 二写保留首版为 .bak
+    bak = path.with_name("manifest.json.bak")
+    assert bak.exists(), "前置：重写已保留上一版 .bak"
+    # 模拟 os.replace(path→bak) 完成、os.replace(tmp→path) 未执行的崩溃现场
+    path.unlink()
+    container, records = load_manifest(path)
+    # 回退读的是"上一完整版本"（首版），非最后一次写入——崩溃现场的正确恢复语义
+    assert len(records) == 1
+    assert container["seed"] == 6

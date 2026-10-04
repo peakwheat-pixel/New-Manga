@@ -1,3 +1,4 @@
+# r2 selfcheck
 selfcheck @ sfx-data-infra/sample@1: PASS
   [OK] schema_roundtrip: dataclass↔dict 往返一致
   [OK] schema_json_enums: JSON Schema 标注状态枚举与 dataclass 一致
@@ -5,3 +6,4 @@ selfcheck @ sfx-data-infra/sample@1: PASS
   [OK] box_hash: 文本变化→框哈希变化
   [OK] geometry_roundtrip: forward∘inverse max err=5.68e-14
   [OK] atomic_write_recover: roundtrip=True corrupt_rejected=True stale_tmp_removed=1
+EXIT=0

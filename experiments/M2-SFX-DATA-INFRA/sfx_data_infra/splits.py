@@ -4,11 +4,20 @@
 - 组键 = 来源作品组：densho810/<卷>、manga109/<作品名>、vasyanator2/<作品id>、
   peppercarrot/<E番号>（同 ep 的 ja/kr 语言版共享图像底图，强制同组防泄漏）。
 - 挑战集优先：BJ13/14/15（provenance.case_id 命中）无条件单列 challenge。
-- 组级哈希分桶：sha256(f"{seed}:{group}") 前 8 字节映射 [0,1)，<0.70 train、
-  <0.85 val、否则 test——不依赖随机模块状态，seed 冻结即可复现。
-- 派生样本（provenance.type=derived）继承 parent 的 split（fixpoint 传播）。
-- TrainingSetBuilder 在构造期把 test/challenge 丢弃且禁止其进入 allowlist：
-  API 表面不存在任何取回 test/challenge 的通道。
+  **登记（r1 P2-10 裁定）**：challenge 单列优先于组原子性——同组其余样本仍按组
+  分桶（当前 densho810/vol03 余量落 train），challenge 评测分数存在同卷上下文
+  泄漏风险，仅用于挑战对照，不得用于泛化声明。
+- 组级排序切片分桶（method=group-hash-rank-v2）：组按 sha256(seed:group) 排序后
+  按比例切 train/val/test——确定性可复现，组数足够时保证各集合非空（不依赖随机
+  模块状态，seed 冻结即可复现）。**注意**：这是排序切片，不是阈值分桶。
+- 组级钉扎（pinned）：显式指定 group→split（如合成组钉 train，r1 P1-3）；
+  被钉的组不参与比例切片。
+- 派生样本（provenance.type=derived）继承 parent 的 split（fixpoint 传播）；
+  **登记**：孤儿 derived（parent 不在集内）按自身单组走 `_ranked_group_split`，
+  因 n<4 恒返 train——语义即"孤儿派生一律 train"。
+- TrainingSetBuilder 在构造期把 test/challenge 丢弃且禁止其进入 allowlist；
+  并默认排除 provenance.negative=true 的空框负样本（r1 P1-2：是否使用弱负样本
+  由 T1b 显式决策，builder 默认不送训练）。
 """
 
 from __future__ import annotations
@@ -74,23 +83,51 @@ def _ranked_group_split(groups: list[str], seed: int) -> dict[str, str]:
     return out
 
 
-def assign_splits(samples: Iterable[SampleRecord], seed: int = SEED_DEFAULT, force: bool = False):
-    """就地写 sample.split，返回 {group: split}（挑战集组除外）。"""
+def assign_splits(
+    samples: Iterable[SampleRecord],
+    seed: int = SEED_DEFAULT,
+    force: bool = False,
+    pinned: dict[str, str] | None = None,
+):
+    """就地写 sample.split，返回 {group: split}（挑战集与钉扎组除外）。
+
+    force=True：先按挑战集规则重判 challenge，其余样本全部重置为 unassigned
+    再重新分配——即真正允许换 seed 重划（r1 P2-4 修复：此前 force 只补划
+    unassigned，旧 split 原样保留导致重划失效）。
+    pinned：组级钉扎 {group: split}，优先级仅次于 challenge（r1 P1-3：合成组
+    钉 train，避免单一大合成组被整组切进 val）。
+    """
     samples = list(samples)
     if not force:
         locked = [s for s in samples if s.split != "unassigned"]
         if locked:
             raise ValueError(f"{len(locked)} 个样本已有 split；重划需 force=True")
+    pinned = dict(pinned or {})
 
-    # 1) 挑战集单列
+    # 1) 挑战集单列（优先级最高）
     for s in samples:
         cid = s.provenance.get("case_id")
         if cid in CHALLENGE_CASE_IDS or s.provenance.get("challenge") is True:
             s.split = "challenge"
 
-    # 2) 基础样本按组排序切片分桶
+    # 1b) force：非 challenge 样本全部重置后重划
+    if force:
+        for s in samples:
+            if s.split != "challenge":
+                s.split = "unassigned"
+
+    # 2) 钉扎组（不参与比例切片）
     group_split: dict[str, str] = {}
-    base_groups = sorted({s.group for s in samples if s.split == "unassigned" and s.provenance.get("type") != "derived"})
+    for g, sp in pinned.items():
+        group_split[g] = sp
+
+    # 3) 基础样本按组排序切片分桶（跳过 challenge/已钉组）
+    base_groups = sorted({
+        s.group for s in samples
+        if s.split == "unassigned"
+        and s.provenance.get("type") != "derived"
+        and s.group not in group_split
+    })
     if base_groups:
         group_split.update(_ranked_group_split(base_groups, seed))
     for s in samples:
@@ -137,7 +174,12 @@ class TrainingSetBuilder:
 
     FORBIDDEN_SPLITS = ("test", "challenge")
 
-    def __init__(self, samples: Iterable[SampleRecord], allowed_splits=("train", "val")):
+    def __init__(
+        self,
+        samples: Iterable[SampleRecord],
+        allowed_splits=("train", "val"),
+        exclude_negative: bool = True,
+    ):
         bad = [sp for sp in allowed_splits if sp in self.FORBIDDEN_SPLITS]
         if bad:
             raise SplitAccessError(
@@ -146,7 +188,17 @@ class TrainingSetBuilder:
             )
         allowed = tuple(allowed_splits)
         self.allowed_splits = allowed
-        self._samples = [s for s in samples if s.split in allowed]
+        self.exclude_negative = exclude_negative
+        self.excluded_negative_ids: list[str] = []
+        picked: list[SampleRecord] = []
+        for s in samples:
+            if s.split not in allowed:
+                continue
+            if exclude_negative and s.provenance.get("negative") is True:
+                self.excluded_negative_ids.append(s.sample_id)
+                continue
+            picked.append(s)
+        self._samples = picked
 
     @property
     def samples(self) -> list[SampleRecord]:
@@ -156,4 +208,10 @@ class TrainingSetBuilder:
         out: dict[str, int] = {}
         for s in self._samples:
             out[s.split] = out.get(s.split, 0) + 1
+        return out
+
+    def status_distribution(self) -> dict[str, int]:
+        out: dict[str, int] = {}
+        for s in self._samples:
+            out[s.annotation_status] = out.get(s.annotation_status, 0) + 1
         return out

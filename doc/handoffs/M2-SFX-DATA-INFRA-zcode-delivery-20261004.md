@@ -1,10 +1,11 @@
 ---
 task_id: M2-SFX-DATA-INFRA
-author: ZCode（subagent，Owner 实现）
+author: ZCode（subagent，Owner 实现；r2 返修=编排会话 ZCode Owner）
 recipient: Codex（Integrator，编排会话代行）
 base_commit: 4c12e8af
 delivery_head: ecb39e67ff8eba63bf0586beaa00291b76bc29fc
-status: delivered（待 Review，Task status 保持 in_progress）
+r2_head: 见交付记录 §r2
+status: r2-delivered（r1 changes_requested 已返修，待 DSH r2 复核）
 ---
 
 # Handoff：M2-SFX-DATA-INFRA（T1a，SFX 训练数据基础设施）
@@ -93,3 +94,47 @@ fingerprint `a02fed3d…` 重放一致）；去重 0 误杀；训练构建器可
 - 失败样例：开发期发现并修复 4 处（forward 漏前段变换/anchor 点列自交/measure_anchor_box 四元组误用/dedup 同图误杀）——过程见 red→green diff
 - 限制：合成样本非域内数据；本 Task 不产出模型或质量结论
 - 建议：T1b（批量数据生产）从竖排渲染+真实底图合成切入；组数≥30 后复核 val 分布
+
+
+---
+
+## r2 返修轮（2026-10-04，DSH r1 changes_requested → 返修）
+
+**r1 结论**：changes_requested（4 P1 / 12 P2 / 11 P3，无 P0；AC5 数量、fingerprint、
+BJ06 sha 对账等核心声明静态核实成立）。
+
+**Codex 裁决（ZCode 代行，r1 三悬案）**：
+1. `.gitignore` 越界（P2-1）→ **追认**：AC6"数据本体出 Git"的最小必要变更；
+2. AC4 毛笔字体（P2-12）→ **不降级**：接入 TanukiMagic（たぬき油性マジック，OFL，
+   tanukifont.com）并使 PoC 独占使用，AC4 原文满足；
+3. 弱负样本（裁决②延伸）→ manifest 保留 43 全量入册（negative=true 可追溯），
+   `TrainingSetBuilder` 默认排除，使用权留 T1b 显式决策。
+
+**P1 全修**（各含回归测试）：
+- P1-1 dedup 感知分支死代码 → `box_geometry_hash`（框指纹不含图 sha）跨图可达；
+- P1-2 负样本过滤 → builder `exclude_negative=True` 默认排除 10 个空框负样本；
+- P1-3 合成落 val → 组级钉扎 `PINNED_GROUPS={"synthetic/poc": "train"}`；
+- P1-4 occluded 未落地 → `occluded=occlusion is not None`，8 框 True。
+
+**P2/P3**：summary KeyError（P2-2）/dedup 透传 lock（P2-3）/force 真重划（P2-4）/
+fingerprint 后移 kept 集（P2-5）/atomicio .bak 回退第三态（P2-6）/README 排序切片
+描述（P2-7）/conf 留痕 detection_conf_stats（P2-9）/challenge 优先声明（P2-10）/
+test 弓登记转 T1b（P2-11）/摘要去绝对路径（P2-13）；P3 测试计数 27→37、文件数 29、
+未用 import、loader close、孤儿 train 登记等已修或登记。
+
+**r2 验证（DSH 执行缺口清单代跑）**：
+- `pytest tests/ -q` → **37 passed**（新增 8 回归：perceptual 跨图/force 重划/pinned/
+  负样本排除/bak 回退/occluded/端到端管线×2）
+- `selfcheck` / `--help` EXIT=0；`pipeline` 真实重跑 EXIT=0（challenge 7/train 63
+  （含合成 24）/val 8/test 4；负样本排除 10；GT 互算 1.71e-13px；TanukiMagic 独占）
+- `summary`/`dedup`/`split --seed 20261005(force)`/`split --seed 20261004(恢复)`/
+  `build-train` 全 EXIT=0；恢复后 fingerprint `de3787c6…` 与 pipeline 产物一致
+- manifest.full sha `2f8cdc1f…`、manifest.train sha `3e08c1be…` 与摘要一致；
+  `git check-ignore training_data/sfx-v1/manifest.full.json` 通过；禁改路径零触碰复验
+- 日志：`verification/M2-SFX-DATA-INFRA/{green-run-r2,selfcheck-run,help-run,pipeline-run,subcommands-r2-run}.log`
+
+**r2 后仍开放（登记，不阻塞集成）**：跨机器素材根/字体路径可复现性（env 通道已有）；
+synth 渲染逐点性能（P3）；粒度口径文档化（一框一样本 vs 一样本多框并存，T1b schema
+细化时冻结）。
+
+**下一接收者**：DSH r2 复核（核对 r1 问题清单逐条关闭）→ Codex 集成。

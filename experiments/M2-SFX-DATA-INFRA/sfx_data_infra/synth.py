@@ -18,7 +18,6 @@ AI 整图生成不在本 PoC 内；若后续引入，annotation_status 必须标
 
 from __future__ import annotations
 
-import copy
 import math
 import random
 from dataclasses import dataclass
@@ -30,7 +29,9 @@ from PIL import Image, ImageDraw, ImageFont
 SYNTH_SEED = 20261004
 POC_SAMPLE_COUNT = 24
 
-# 字体候选：毛笔体/艺术字本机不可得，退级为系统黑体/明朝体+几何变形（差距登记见报告）
+# 系统字体候选（回退位）。毛笔/手写风字体经 discover_fonts 的 extra_dirs /
+# NEWMANGA_SFX_SYNTH_FONTS 提供（r2 接入 TanukiMagic=たぬき油性マジック，OFL），
+# 名字命中关键词者优先级高于系统字体——AC4"毛笔体/艺术字字体"由此满足。
 _FONT_CANDIDATES = (
     r"C:\Windows\Fonts\meiryo.ttc",
     r"C:\Windows\Fonts\msgothic.ttc",
@@ -41,6 +42,8 @@ _FONT_CANDIDATES = (
     r"C:\Windows\Fonts\ariblk.ttf",
 )
 
+_BRUSHY_NAME_HINTS = ("tanuki", "brush", "fude", "pen", "kouzan", "hand", "magic")
+
 _POC_TEXTS = ("ドン", "ゴゴゴ", "バーン", "ザッ", "オギャァ", "メキメキ", "ズシャア", "ビシッ")
 
 # anchor 边界采样密度：每边 15 个中间点（arc 大曲率下折线弦差 <<1px）
@@ -49,18 +52,41 @@ _EDGE_SAMPLES = 15
 ANCHOR_CORNER_IDX = (0, _EDGE_SAMPLES + 1, 2 * (_EDGE_SAMPLES + 1), 3 * (_EDGE_SAMPLES + 1))
 
 
-def discover_fonts(limit: int = 4) -> list[str]:
+def discover_fonts(limit: int = 4, extra_dirs: Optional[list] = None) -> list[str]:
+    """返回可用字体路径：毛笔/手写风优先，回退系统字体。
+
+    extra_dirs 与环境变量 NEWMANGA_SFX_SYNTH_FONTS（os.pathsep 分隔）目录下的
+    .ttf/.otf/.ttc，文件名命中 _BRUSHY_NAME_HINTS 者排到系统字体之前。
+    """
+    import os
     from pathlib import Path
 
-    out = []
+    dirs = list(extra_dirs or [])
+    env = os.environ.get("NEWMANGA_SFX_SYNTH_FONTS", "")
+    if env:
+        dirs.extend(s for s in env.split(os.pathsep) if s)
+
+    brushy: list[str] = []
+    plain: list[str] = []
+    for d in dirs:
+        try:
+            dp = Path(d)
+            if not dp.is_dir():
+                continue
+            for f in sorted(dp.iterdir()):
+                if f.suffix.lower() not in (".ttf", ".otf", ".ttc"):
+                    continue
+                target = brushy if any(h in f.stem.lower() for h in _BRUSHY_NAME_HINTS) else plain
+                target.append(str(f))
+        except OSError:
+            continue
     for p in _FONT_CANDIDATES:
         try:
             if Path(p).exists():
-                out.append(p)
+                plain.append(p)
         except OSError:
             continue
-        if len(out) >= limit:
-            break
+    out = (brushy + plain)[:limit]
     if not out:
         raise RuntimeError("系统字体目录无可字体，无法渲染 PoC")
     return out
@@ -313,10 +339,16 @@ def render_sample(params: RenderParams) -> RenderResult:
 # ---------------------------------------------------------------- 参数集
 
 
-def default_poc_params(seed: int = SYNTH_SEED, count: int = POC_SAMPLE_COUNT) -> list[RenderParams]:
-    """冻结 seed 的 PoC 参数组合（1/3 含遮挡贴片）。"""
+def default_poc_params(
+    seed: int = SYNTH_SEED, count: int = POC_SAMPLE_COUNT, fonts: Optional[list] = None
+) -> list[RenderParams]:
+    """冻结 seed 的 PoC 参数组合（1/3 含遮挡贴片）。
+
+    fonts 不传时自动发现（毛笔/手写风优先）；cli 传入 data_root/fonts 的发现
+    结果以保证管线调用与字体目录约定一致。
+    """
     rng = random.Random(seed)
-    fonts = discover_fonts()
+    fonts = fonts if fonts is not None else discover_fonts()
     out: list[RenderParams] = []
     for i in range(count):
         text = _POC_TEXTS[i % len(_POC_TEXTS)]
