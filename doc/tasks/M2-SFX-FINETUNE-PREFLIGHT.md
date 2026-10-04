@@ -2,7 +2,8 @@
 id: M2-SFX-FINETUNE-PREFLIGHT
 title: "SFX fine-tune V1 技术预检：训练路线可行性实证+训练环境就绪+许可备案（T0；零 src）"
 kind: spike
-status: in_progress
+status: done
+integration_commit: dedb97b2
 owner_claim: 2026-10-04 09:09 +0800
 approval: user_ruling_2026-10-04_训练质量效率优先_许可降权备案
 suggested_owner: ZCode
@@ -51,6 +52,10 @@ delivery_head: 6b73c92a
 ## 依赖、风险与阻塞
 
 depends_on 均已 done。风险：路线 A 若无 .pt 原生权重→升级 B/C 深评（停点=交编排裁决）；HF 下载走用户代理。GPU 独占注意与其它任务错峰。
+
+## 编排裁决（2026-10-04，合同停点处置）
+
+路线定案=**采纳 A′**（Ultralytics 官方 yolo11s-seg.pt 基座+BJ/KO 四类 GT+合成数据微调）。理由：路线 A 续训被五端点实证阻断（chiqui7 无 .pt，usedStorage 全 revision 排除）；B 实证无第二带 sfx 类模型；C 与 sfx 生产链不同构且无 sfx 面——A′ 为唯一可执行路径。采纳输入条件（按报告 §2/P3-8）：T1b 承诺最小标注量（页数下限）与召回基线回归口径；训练 dataset.yaml names 顺序逐字等于 SFX_CLASS_MAP（硬约束）。许可=用户 2026-10-04 降权备案已覆盖。T1b 标注轮待 schema（T1a 已冻结）+本裁决就绪，另行释放。
 
 ## 交付与运行记录
 

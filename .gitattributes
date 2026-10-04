@@ -3,3 +3,6 @@ doc/reviews/M2-RC2-FIX-eac5cb3e.md -text
 verification/M2-RC2/review-dsh-a8fb17ca/** -text
 verification/M2-RC2/review-dsh-eac5cb3e/** -text
 verification/M2-RC2/review-dsh-import-sha256.txt -text
+
+# M2-SFX-FINETUNE-PREFLIGHT r2: HF upstream README snapshot keeps its native hard-break trailing space (DSH r2 confirmed substantive-free); exempt from whitespace check
+verification/M2-SFX-FINETUNE-PREFLIGHT/raw/** -whitespace
