@@ -123,3 +123,17 @@ cli.py 注释统一后置唯一口径 / handoff 计数与引用修正（13 收�
 cli-contract-r3.log 加 SUPERSEDED 头 / README 补 ENV_ERROR 行与 13 计数 / Task 文件回填
 status=in_review+AC 勾选+测试表实跑数字 / N7 回归测试补（reload 后 blocking_state 复检）。
 真实冒烟（AC5 manual）保留给用户人工登录后由集成方代跑留证。
+
+
+---
+
+## 真实冒烟留证（2026-10-04，AC5 manual 闭合）
+
+用户人工登录 peakwheat（去自动化参数窗口，Google OAuth 放行）→ 集成方代跑
+`generate --count 2` EXIT=0：bg_001（radial_speed_lines, 2289KB）+ bg_002
+（explosion_smoke, 2947KB）落**主仓**底图库（r2 P2-3 共享路径设计实战生效）。
+取证（bg-index-smoke.json）：PNG 魔数完整、blob src 互异（r2 P1-1 修复不复现）、
+count_backgrounds=2。两次 send 定位器超时被重试机制兜住（连续失败计数未达阈值，
+实战验证 fail-closed 设计）。首登风控：去自动化参数（ignore --enable-automation +
+disable AutomationControlled）实测放行 Google OAuth——r1 P3-6 的"待验证"声明转正。
+产物 gitignored 确认（check-ignore 通过）。

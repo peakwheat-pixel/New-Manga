@@ -63,7 +63,7 @@ ZCode 会话人工驱动。本 Task 把它工具化：**项目需要合成底图
 | AC1 发送/判据/落盘 | mock 浏览器单测 | venv | PASS（7 tests 含 reload 基准重取回归） | green-run-r3.log |
 | AC2 缺口触发 | mock 余量检查单测 | venv | PASS（5 tests 含 dry-run/足量不触发） | green-run-r3.log |
 | AC3 fail-closed | mock 异常路径单测 | venv | PASS（NOT_LOGGED_IN/子类码/CONSECUTIVE_FAILURES/non-PNG） | green-run-r3.log |
-| AC5 真实冒烟 | ChatGPT 真生成 2 张 | 人工登录态 | NOT_RUN（manual：需人工登录，集成方代跑留证） | test_smoke_real_chatgpt.py（slow+env 闸门） |
+| AC5 真实冒烟 | ChatGPT 真生成 2 张 | 人工登录态 | PASS（用户人工登录→集成方代跑：bg_001/002 落盘 2289/2947KB、src 互异、EXIT=0；两次 send 超时被重试兜住） | smoke-run.log + bg-index-smoke.json |
 
 ## 依赖、风险与阻塞
 

@@ -1,0 +1,18 @@
+[
+  {
+    "file": "bg_001.png",
+    "style": "radial_speed_lines",
+    "prompt": "Generate an image: dramatic radial speed lines converging from the edges toward the center, rough ink brush texture, a large empty white space in the center, black and white manga comic style, no text, no letters, no characters, no people, no speech bubbles, no onomatopoeia",
+    "source": "chatgpt-web-auto",
+    "chatgpt_blob_src": "blob:https://chatgpt.com/2c337252-53bc-48e2-98c4-e9747f8d4a16",
+    "created_at": "2026-10-04T05:14:01Z"
+  },
+  {
+    "file": "bg_002.png",
+    "style": "explosion_smoke",
+    "prompt": "Generate an image: billowing explosion smoke clouds, dark cumulus clouds with white highlights filling the frame edges, an empty bright gap in the center, black and white manga comic style, no text, no letters, no characters, no people, no speech bubbles, no onomatopoeia",
+    "source": "chatgpt-web-auto",
+    "chatgpt_blob_src": "blob:https://chatgpt.com/8443869a-7af3-4103-b78d-f5938fce53d2",
+    "created_at": "2026-10-04T05:14:55Z"
+  }
+]

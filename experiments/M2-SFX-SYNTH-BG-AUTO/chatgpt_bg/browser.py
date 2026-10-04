@@ -79,11 +79,16 @@ class PlaywrightChatGPTDriver:
         from playwright.sync_api import sync_playwright
 
         self._pw = sync_playwright().start()
+        # r2 首登实测：Google OAuth 拦自动化浏览器（"此浏览器或应用可能不安全"）。
+        # 移除自动化旗帜（navigator.webdriver / --enable-automation banner）以放行
+        # 首次 Google 登录；社区标准手法，效果需首跑验证（README 已登记待验证）。
         self._ctx = self._pw.chromium.launch_persistent_context(
             self.user_data_dir,
             channel="chrome",
             headless=self.headless,
             viewport={"width": 1440, "height": 900},
+            ignore_default_args=["--enable-automation"],
+            args=["--disable-blink-features=AutomationControlled"],
         )
         self._page = self._ctx.pages[0] if self._ctx.pages else self._ctx.new_page()
         self._page.goto("https://chatgpt.com/", wait_until="domcontentloaded")
