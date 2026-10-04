@@ -1,3 +1,6 @@
+# [SUPERSEDED by cli-contract-r3-final.log] r3 期前置式写法记录——同名参数
+# 主/子双份 default 覆盖坑导致部分格子失真；终版矩阵见 cli-contract-r3-final.log。
+
 # r3 CLI 契约矩阵（完整命令行；全局参数前/后置双验证）
 $ -m chatgpt_bg selfcheck
 EXIT=0 (期望 0)

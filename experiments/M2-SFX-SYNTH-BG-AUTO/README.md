@@ -8,7 +8,7 @@ Chrome（channel=chrome 真实指纹），底图库缺量自动补齐；**fail-c
 cd experiments/M2-SFX-SYNTH-BG-AUTO
 <python> -m chatgpt_bg --help        # EXIT=0
 <python> -m chatgpt_bg selfcheck     # 离线自检 EXIT=0
-<python> -m pytest tests/ -q         # 10 tests（mock，不联网）
+<python> -m pytest tests/ -q         # 13 收集项（12 passed + 1 slow-skip；mock 不联网）
 
 # 首次使用（一次性人工登录，登录态持久化在外部树 profile）：
 <python> -m chatgpt_bg login
@@ -37,6 +37,7 @@ cd experiments/M2-SFX-SYNTH-BG-AUTO
 | CLOUDFLARE_CHALLENGE | 人机验证页 | 浏览器窗口人工通过后重跑 |
 | RATE_LIMITED | ChatGPT 限额/风控 | 等待窗口重置或降频 |
 | CONSECUTIVE_FAILURES | 连续 3 张失败 | 检查页面状态后重跑（编号断点续跑） |
+| ENV_ERROR | playwright 缺失/Chrome 不存在/启动失败（EXIT 4 结构化） | 安装依赖/确认本机 Chrome |
 
 ## 实测四坑（已固化进实现）
 

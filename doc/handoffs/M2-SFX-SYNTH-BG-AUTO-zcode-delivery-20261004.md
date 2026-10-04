@@ -3,8 +3,8 @@ task_id: M2-SFX-SYNTH-BG-AUTO
 author: ZCode（Owner）
 recipient: Codex（Integrator，编排会话代行）
 base_commit: 6f1117d6
-delivery_head: efc56e4a（r1 评审基线；r2=72506d36、r3=见 §r3 返修轮 commit）
-status: r3-delivered（r2 changes_requested 已返修，待 DSH r3 定向复核）
+delivery_head: efc56e4a（r1 基线）；r2=72506d36；r3=b1baa24f；r4 doc-fix=见 §r4（集成时最终 tip）
+status: r4-docfix-delivered（DSH r3 approved_with_conditions 条件 1-7 已闭合，集成修正 commit 一次性收口）
 ---
 
 # Handoff：M2-SFX-SYNTH-BG-AUTO（SFX 合成底图自动 provider）
@@ -66,11 +66,12 @@ P2-7 残留登记（调用方接线属 T1b）；P2-8 EXIT 4 契约；P2-9 CLI �
 **P3**：死参数清理/__main__ 保护/CHALLENGE 单源（引 splits）复核+README 风险声明
 降级为待验证/命名纪律登记。
 
-**r2 验证**：`pytest tests/ -q` → **12 passed, 1 skipped**（新增 reload 回归/non-PNG
+**r2 验证**：`pytest tests/ -q` → **13 收集项=12 passed+1 slow-skip**（新增 reload 回归/non-PNG
 丢弃/CLI 契约等；green-run-r2.log 含完整命令行与真实 EXIT）；selfcheck EXIT=0；
 help EXIT=0；**CLI 契约矩阵**（cli-contract-r2.log）：dry-run→3、足量→0、未登录
 真实触发→4+结构化 fail_closed JSON（r1 P1-2 的裸 traceback 已消除）。
 
+**r3 期 cli-contract-r3.log 已 SUPERSEDED**（同名参数 default 覆盖坑，终版见 cli-contract-r3-final.log）。
 **下一接收者**：DSH r2 复核 → Codex 集成（真实冒烟 manual 步骤保留给用户人工登录后
 由集成方代跑留证）。
 
@@ -111,3 +112,14 @@ selfcheck EXIT=0（重录实物）；**CLI 契约矩阵 cli-contract-r3.log**（
 
 **下一接收者**：DSH r3 定向复核（N1/N2/N3/P2-10 + r1 P2 表残留）→ Codex 集成
 （真实冒烟 manual 保留给用户登录后代跑留证）。
+
+
+---
+
+## r4 doc-fix 轮（2026-10-04，DSH r3 approved_with_conditions 条件 1-7 集成修正 commit 闭合）
+
+DSH r3：代码层四项修复全部正确、无新代码缺陷。本 commit 按 r3 返修清单闭合文档/证据层：
+cli.py 注释统一后置唯一口径 / handoff 计数与引用修正（13 收集项、cli-contract-r3-final.log）/ 
+cli-contract-r3.log 加 SUPERSEDED 头 / README 补 ENV_ERROR 行与 13 计数 / Task 文件回填
+status=in_review+AC 勾选+测试表实跑数字 / N7 回归测试补（reload 后 blocking_state 复检）。
+真实冒烟（AC5 manual）保留给用户人工登录后由集成方代跑留证。

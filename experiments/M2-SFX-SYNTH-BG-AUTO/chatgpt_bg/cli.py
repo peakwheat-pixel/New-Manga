@@ -187,7 +187,8 @@ def cmd_selfcheck(_args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    # r2 N6：全局参数走 parent parser 且挂到 subparsers——子命令前后置均可
+    # r2 N6/r3 收口：全局参数唯一口径=后置于子命令（argparse 同名参数主/子双份时
+    # 子侧 default 会静默覆盖主解析值，故 common 只挂子 parser）
     common = argparse.ArgumentParser(add_help=False)
     common.add_argument("--bg-dir", default=str(DEFAULT_BG_DIR), help="底图库目录（gitignored 外部树）")
     common.add_argument("--profile", default=None, help="Chrome persistent profile 目录（默认外部树）")

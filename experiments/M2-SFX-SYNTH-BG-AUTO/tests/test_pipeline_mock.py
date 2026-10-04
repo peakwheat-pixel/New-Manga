@@ -116,3 +116,26 @@ def test_resume_numbering(tmp_path):
     d = MockDriver(script=[None, "blob:s8"])
     written = generate_backgrounds(d, tmp_path, count=1, poll_s=0)
     assert written[0].name == "bg_008.png", "断点续跑按既有最大编号续"
+
+
+def test_reload_rechecks_blocking_state(tmp_path):
+    """r3 P3-4 回归：reload 后登录态丢失应报 NOT_LOGGED_IN 而非计入连续失败。"""
+    class ReloadLostLogin(MockDriver):
+        def __init__(self):
+            super().__init__(script=[])
+            self.reloaded = 0
+        def reload(self):
+            self.reloaded += 1
+        def is_logged_in(self):
+            return self.reloaded == 0
+        def latest_image_src(self):
+            return None  # 卡死：永远等不到新图（触发超时→reload）
+        def blocking_state(self):
+            if self.reloaded:
+                return "NOT_LOGGED_IN：登录态丢失（跑 chatgpt_bg login 重新登录）"
+            return None
+
+    d = ReloadLostLogin()
+    with pytest.raises(BGGenerationError) as ei:
+        generate_backgrounds(d, tmp_path, count=1, poll_s=0, timeout_s=1)
+    assert ei.value.state == "NOT_LOGGED_IN"
