@@ -1,0 +1,236 @@
+{
+ "task": "M2-SFX-ANNOTATE-R1 stage-1",
+ "generated_at_utc": "2026-10-04T07:08:18Z",
+ "seed": 20261004,
+ "pages_selected": {
+  "bj": [
+   "BJ06",
+   "BJ13",
+   "BJ14",
+   "BJ15",
+   "BJ11",
+   "BJ01",
+   "BJ09",
+   "BJ05",
+   "BJ12",
+   "BJ10",
+   "BJ07",
+   "BJ02",
+   "BJ04",
+   "BJ03",
+   "BJ08"
+  ],
+  "ko": [
+   "K03",
+   "K10",
+   "K09",
+   "K08",
+   "K07",
+   "K06",
+   "K01",
+   "K02",
+   "K04",
+   "K05"
+  ],
+  "replay": [
+   "BJ06",
+   "J38",
+   "J41",
+   "J43",
+   "J51"
+  ]
+ },
+ "page_box_counts": {
+  "BJ01": 1,
+  "BJ02": 0,
+  "BJ03": 0,
+  "BJ04": 0,
+  "BJ05": 0,
+  "BJ06": 9,
+  "BJ07": 0,
+  "BJ08": 0,
+  "BJ09": 1,
+  "BJ10": 0,
+  "BJ11": 1,
+  "BJ12": 0,
+  "BJ13": 3,
+  "BJ14": 3,
+  "BJ15": 2,
+  "J38": 2,
+  "J39": 0,
+  "J40": 0,
+  "J41": 1,
+  "J42": 0,
+  "J43": 2,
+  "J44": 0,
+  "J45": 0,
+  "J46": 0,
+  "J47": 1,
+  "J48": 0,
+  "J49": 0,
+  "J50": 0,
+  "J51": 1,
+  "J52": 1,
+  "K01": 21,
+  "K02": 19,
+  "K03": 231,
+  "K04": 11,
+  "K05": 10,
+  "K06": 32,
+  "K07": 66,
+  "K08": 68,
+  "K09": 74,
+  "K10": 81
+ },
+ "commitment_gaps": {
+  "bj": {
+   "selected": 15,
+   "committed": 25,
+   "note": "cases.json BJ 组仅 15 case 在盘（BJ01-15），素材树无更多 BJ 页，缺口 10 页待素材扩充"
+  },
+  "ko": {
+   "selected": 10,
+   "committed": 15,
+   "note": "cases.json K 组 25 case，在盘 10（K01-K10，base.png 布局）；K11-K25 的 local_path 韩漫_KO/02_public_ground_truth_peppercarrot 三个素材根均不存在，缺口 5 页 MISSING"
+  }
+ },
+ "missing_pages": {
+  "J01": "日漫_JA/01_manga109_real/01_dialogue_romance/AisazuNihaIrarenai",
+  "J02": "日漫_JA/01_manga109_real/01_dialogue_romance/AosugiruHaru",
+  "J03": "日漫_JA/01_manga109_real/01_dialogue_romance/KimiHaBokuNoTaiyouDa",
+  "J04": "日漫_JA/01_manga109_real/01_dialogue_romance/YukiNoFuruMachi",
+  "J05": "日漫_JA/01_manga109_real/01_dialogue_romance/YumeiroCooking",
+  "J06": "日漫_JA/01_manga109_real/02_battle_sfx/AkkeraKanjinchou",
+  "J07": "日漫_JA/01_manga109_real/02_battle_sfx/DollGun",
+  "J08": "日漫_JA/01_manga109_real/02_battle_sfx/DualJustice",
+  "J09": "日漫_JA/01_manga109_real/02_battle_sfx/MAD_STONE",
+  "J10": "日漫_JA/01_manga109_real/02_battle_sfx/SeisinkiVulnus",
+  "J11": "日漫_JA/01_manga109_real/03_fantasy_sf/ARMS",
+  "J12": "日漫_JA/01_manga109_real/03_fantasy_sf/BEMADER_P",
+  "J13": "日漫_JA/01_manga109_real/03_fantasy_sf/PLANET7",
+  "J14": "日漫_JA/01_manga109_real/03_fantasy_sf/ParaisoRoad",
+  "J15": "日漫_JA/01_manga109_real/03_fantasy_sf/MagicStarGakuin",
+  "J16": "日漫_JA/01_manga109_real/04_yonkoma/Akuhamu",
+  "J17": "日漫_JA/01_manga109_real/04_yonkoma/OL_Lunch",
+  "J18": "日漫_JA/01_manga109_real/04_yonkoma/KoukouNoHitotachi",
+  "J19": "日漫_JA/01_manga109_real/04_yonkoma/YouchienBoueigumi",
+  "J20": "日漫_JA/01_manga109_real/05_horror_suspense/MayaNoAkaiKutsu",
+  "J21": "日漫_JA/01_manga109_real/05_horror_suspense/KuroidoGanka",
+  "J22": "日漫_JA/01_manga109_real/05_horror_suspense/Ningyoushi",
+  "J23": "日漫_JA/01_manga109_real/05_horror_suspense/PlatinumJungle",
+  "J24": "日漫_JA/01_manga109_real/05_horror_suspense/SyabondamaKieta",
+  "J25": "日漫_JA/01_manga109_real/06_sports/Count3DeKimeteAgeru",
+  "J26": "日漫_JA/01_manga109_real/06_sports/Jyovolley",
+  "J27": "日漫_JA/01_manga109_real/06_sports/KyokugenCyclone",
+  "J28": "日漫_JA/01_manga109_real/06_sports/RisingGirl",
+  "J29": "日漫_JA/01_manga109_real/06_sports/YamatoNoHane",
+  "J30": "日漫_JA/01_manga109_real/07_comedy/GarakutayaManta",
+  "J31": "日漫_JA/01_manga109_real/07_comedy/JijiBabaFight",
+  "J32": "日漫_JA/01_manga109_real/07_comedy/LancelotFullThrottle",
+  "J33": "日漫_JA/01_manga109_real/07_comedy/Nekodama",
+  "J34": "日漫_JA/01_manga109_real/08_historical/BurariTessenTorimonocho",
+  "J35": "日漫_JA/01_manga109_real/08_historical/JangiriPonpon",
+  "J36": "日漫_JA/01_manga109_real/08_historical/MomoyamaHaikagura",
+  "J37": "日漫_JA/01_manga109_real/08_historical/RinToSiteSippuNoNaka",
+  "K11": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K12": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K13": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K14": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K15": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K16": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K17": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K18": "韩漫_KO/02_public_ground_truth_peppercarrot/ep04",
+  "K19": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+  "K20": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+  "K21": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+  "K22": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+  "K23": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+  "K24": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+  "K25": "韩漫_KO/02_public_ground_truth_peppercarrot/ep20",
+  "O01": "韩漫_KO/02_open_ground_truth_peppercarrot/O01_E06",
+  "O02": "韩漫_KO/02_open_ground_truth_peppercarrot/O02_E12",
+  "O03": "韩漫_KO/02_open_ground_truth_peppercarrot/O03_E16",
+  "O04": "韩漫_KO/02_open_ground_truth_peppercarrot/O04_E19",
+  "O05": "韩漫_KO/02_open_ground_truth_peppercarrot/O05_E22",
+  "O06": "韩漫_KO/02_open_ground_truth_peppercarrot/O06_E24",
+  "O07": "韩漫_KO/02_open_ground_truth_peppercarrot/O07_E28",
+  "O08": "韩漫_KO/02_open_ground_truth_peppercarrot/O08_E29"
+ },
+ "units_total": 806,
+ "units_by_domain": {
+  "bj": 20,
+  "replay-j": 6,
+  "ko": 613,
+  "ko-ogkalu-crop": 167
+ },
+ "conf_tiers_all_units": {
+  "conf_ge_0.5": 413,
+  "conf_0.2_to_0.5": 124,
+  "conf_lt_0.2": 262,
+  "ref_no_conf": 7
+ },
+ "zero_box_pages": [
+  {
+   "case_id": "BJ02",
+   "domain": "bj",
+   "page_file": "vol01_p0053.png"
+  },
+  {
+   "case_id": "BJ03",
+   "domain": "bj",
+   "page_file": "vol01_p0105.png"
+  },
+  {
+   "case_id": "BJ04",
+   "domain": "bj",
+   "page_file": "vol01_p0209.png"
+  },
+  {
+   "case_id": "BJ05",
+   "domain": "bj",
+   "page_file": "vol03_p0001.png"
+  },
+  {
+   "case_id": "BJ07",
+   "domain": "bj",
+   "page_file": "vol03_p0111.png"
+  },
+  {
+   "case_id": "BJ08",
+   "domain": "bj",
+   "page_file": "vol03_p0221.png"
+  },
+  {
+   "case_id": "BJ10",
+   "domain": "bj",
+   "page_file": "vol05_p0061.png"
+  },
+  {
+   "case_id": "BJ12",
+   "domain": "bj",
+   "page_file": "vol05_p0243.png"
+  }
+ ],
+ "duration_estimate": {
+  "basis": "C1 先例 n=50 单元=小时级（doc/tasks/M2-DOCTR-QUAL-C1.md:25）→ 1-2 分钟/单元",
+  "units": 806,
+  "minutes_low": 806,
+  "minutes_high": 1612,
+  "hours_low": 13.4,
+  "hours_high": 26.9
+ },
+ "artifacts": {
+  "preannotate_manifest": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\preannotate\\manifest.json",
+  "selection": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\selection\\selection.json",
+  "worksheet_json": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\worksheet\\worksheet.json",
+  "worksheet_md": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\worksheet\\worksheet.md",
+  "preview_dir": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\previews",
+  "scan_raw": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\scan\\density-scan.json"
+ },
+ "artifact_sha256": {
+  "preannotate_manifest": "8f89d50d9f5eb586e8be867932b754c6d5092f3f58f8e36088a55dacaf407c79",
+  "worksheet_json": "45dd5715f633b2cb414bd974f9cd69f673e1f242c52d7db6b2e349dcc5d87791",
+  "worksheet_md": "76bbb91253aecf7523d643ee4e9d57f8fc1c7996ffa111c01d1087af983c62ba",
+  "selection": "4d915bb50291fc13d5ef11af846b4bc8a9563132441e2ae14a17a46fce3188e6"
+ }
+}

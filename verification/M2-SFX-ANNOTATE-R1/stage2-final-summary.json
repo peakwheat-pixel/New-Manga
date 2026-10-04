@@ -1,0 +1,200 @@
+{
+ "task": "M2-SFX-ANNOTATE-R1 stage-2（AC3 回填 + AC4 三集导出 + AC5 合成并入）",
+ "generated_at_utc": "2026-10-04T11:04:09Z",
+ "tool": "experiments/M2-SFX-ANNOTATE-R1/stage2_finalize.py --step summary",
+ "mode": "ai-review-backfill（编排裁定 2026-10-04：codex+agy 共识 + 分歧仲裁替代用户逐条审核；human_review=false，不谎称人工）",
+ "ac3_backfill": {
+  "units_conf_ge_0p5": 413,
+  "consensus_units": 397,
+  "arbitrated_units": 16,
+  "final_verdict_dist": {
+   "confirm": 297,
+   "delete": 111,
+   "correct": 5
+  },
+  "worksheet_backfilled": true,
+  "correct_units_revision_notes": [
+   "R1-K07-B37",
+   "R1-K08-B26",
+   "R1-K09-B26",
+   "R1-K10-B43",
+   "R1-OGK-K05_R034-B02"
+  ],
+  "residual": {
+   "file": "judgments/user-residual.json",
+   "total": 393,
+   "by_tier": {
+    "conf_lt_0.2": 262,
+    "ref_no_conf": 7,
+    "conf_0.2_to_0.5": 124
+   },
+   "by_domain": {
+    "bj": 11,
+    "replay-j": 5,
+    "ko": 305,
+    "ko-ogkalu-crop": 72
+   },
+   "disposition": "交用户后续扩标（编排裁定范围外）；回放页与其余 conf 层保持 pseudo 不入本轮训练集"
+  }
+ },
+ "manifest": {
+  "file": "preannotate/manifest.json",
+  "samples_total": 72,
+  "units_total_worksheet": 806
+ },
+ "ac4_splits": {
+  "seed": 20261004,
+  "method": "group-hash-rank-v2（T1a splits.assign_splits）",
+  "pinned_groups": {
+   "synthetic/annotate-r1": "train"
+  },
+  "fingerprint": "f9ea1c801e53f705c9ab68c1cac55ff736af926f64108bf71d2aa95af6009271",
+  "by_split": {
+   "train": {
+    "samples": 342,
+    "boxes": 585,
+    "real": 18,
+    "synthetic": 324,
+    "groups": [
+     "synthetic/annotate-r1",
+     "vasyanator2/131385",
+     "vasyanator2/570506",
+     "vasyanator2/641253",
+     "vasyanator2/670145",
+     "vasyanator2/671421",
+     "vasyanator2/717481",
+     "vasyanator2/730656"
+    ],
+    "images": 342
+   },
+   "val": {
+    "samples": 3,
+    "boxes": 31,
+    "real": 3,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/651664",
+     "vasyanator2/701535"
+    ],
+    "images": 3
+   },
+   "test": {
+    "samples": 1,
+    "boxes": 2,
+    "real": 1,
+    "synthetic": 0,
+    "groups": [
+     "vasyanator2/724815"
+    ],
+    "images": 1
+   },
+   "challenge": {
+    "samples": 0,
+    "boxes": 0,
+    "real": 0,
+    "synthetic": 0,
+    "groups": [],
+    "images": 0
+   }
+  },
+  "manifest_files": [
+   "manifest.r1.json",
+   "manifest.train.json",
+   "manifest.val.json",
+   "manifest.test.json",
+   "manifest.challenge.json"
+  ],
+  "challenge_empty_reason": "本轮正集无 BJ13/14/15 complete 样本：BJ13 唯一 conf>=0.5 判定单元被判 delete、BJ14/BJ15 无 conf>=0.5 判定单元（三页框均 conf<0.5 未判定，编排裁定不入本轮正集），故 challenge split 空集；BJ13/14/15 页级样本保持 pseudo 留待用户扩标。挑战集正框补齐后重跑 split+yolo 即自动单列。",
+  "group_isolation_verified": "assign_splits 组不跨集断言通过（split 步内硬校验）"
+ },
+ "ac5_synthetic": {
+  "source": "synthetic/manifest.json（stage2_synth_batch.py 产物，T1a 渲染管线只读复用）",
+  "samples": 324,
+  "pinned_group": "synthetic/annotate-r1",
+  "splits_landed": {
+   "train": 324
+  },
+  "in_test": 0
+ },
+ "ac4_yolo": {
+  "root": "final/yolo",
+  "dataset_yaml": "final/yolo/dataset.yaml",
+  "names_literal_check": {
+   "parsed": {
+    "0": "bubble",
+    "1": "panel",
+    "2": "sfx",
+    "3": "text"
+   },
+   "expected_literal": {
+    "0": "bubble",
+    "1": "panel",
+    "2": "sfx",
+    "3": "text"
+   },
+   "order": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "assert": "PASS"
+  },
+  "per_split": [
+   {
+    "split": "train",
+    "images": 342,
+    "boxes": 585
+   },
+   {
+    "split": "val",
+    "images": 3,
+    "boxes": 31
+   },
+   {
+    "split": "test",
+    "images": 1,
+    "boxes": 2
+   },
+   {
+    "split": "challenge",
+    "images": 0,
+    "boxes": 0,
+    "note": "空集（见 lock.challenge_note）"
+   }
+  ],
+  "polygon_caliber": "T1a 实例包络（归一化，cls 恒 2=sfx）",
+  "train_builder": "train/val 经 TrainingSetBuilder（不可读 test/challenge）；test/challenge 独立导出路径",
+  "excluded_negative_ids": []
+ },
+ "kept_pseudo_dispositions": {
+  "replay_pages": [
+   "BJ06",
+   "J38",
+   "J41",
+   "J43",
+   "J51"
+  ],
+  "negative_evidence_zero_box": "保持 pseudo（T1a schema 负证据样本）",
+  "no_positive_verdict": "保持 pseudo 不入正集"
+ },
+ "artifacts_sha256": {
+  "preannotate/manifest.json": "1296aaa0d5a22cbf660a4ccbba72f5c694a7c3abea4190639e80d88405c41e60",
+  "worksheet/worksheet.json": "94bd337ee5efb56839da105ff3b6aeb817ba27c0c2b6e96bb2cb8102327343d9",
+  "worksheet/worksheet.md": "5bfeb2ee8a04d2201aecbd125c4e94028008f8d050622a933de73b8b93090b22",
+  "judgments/user-residual.json": "6f528b7539ea154a63c5d60b4d9d17c6cfb85ba7c8063086dee144c0cbfaea8f",
+  "final/manifest.r1.json": "2ad56ef7ba5748d82178bc63692f49c14cc89e6b9c0ed3e829b676d47ac36f9e",
+  "final/manifest.train.json": "5213b3fce4b04156d951147bfffabb9b1b3847e29a8b55565805916a87c0d4f7",
+  "final/manifest.val.json": "edbed77658a60dece658aff144ea50eaa25fd604b52fa305a9e5e6d6c5d574f9",
+  "final/manifest.test.json": "47f8bc6a0ffe6554e1797eb5310808843fbae5b1166e49895714970ae9d3791e",
+  "final/manifest.challenge.json": "b8f561f4b4842cc768a02df512d284022911033d143ba3cc6adc394354f26434",
+  "final/yolo/dataset.yaml": "704d3642cccb979e5138c95e010ffc594d10597461579ca8e2cd6a8cbc0fe9e0",
+  "final/yolo/_export_stats.json": "7e60db2bbbfd062ed2f1f2c258f5b40bb0fc6776190658835d36d450ce22b127"
+ },
+ "data_root_gitignored": "training_data/sfx-v1/annotate-r1/（repo 同级 gitignored 外部树；本摘要内路径均相对该根）",
+ "yolo_layout": {
+  "images": "final/yolo/images/{train,val,test}/（challenge 空集未导出）",
+  "labels": "final/yolo/labels/{train,val,test}/（YOLO seg 归一化多边形，cls=2）",
+  "stem_rule": "sample_id 中 '/' 替换为 '__'（synth-r1/synth-… → synth-r1__synth-…）"
+ }
+}

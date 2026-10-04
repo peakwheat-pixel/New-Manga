@@ -1,0 +1,19 @@
+# agy 判定 id 唯一性编排代验留证
+# 命令（DSH r1 补充说明 1 的数学闭包前提；P3-7 留证）
+# python -c "import json,glob; ids=[u.get(chr(117)+chr(110)+chr(105)+chr(116)+chr(95)+chr(105)+chr(100)) or u.get(chr(105)+chr(100)) for f in sorted(glob.glob(chr(116)+chr(114)+chr(97)+chr(105)+chr(110)+chr(105)+chr(110)+chr(103)+chr(95)+chr(100)+chr(97)+chr(116)+chr(97)+/sfx-v1/annotate-r1/judgments/agy/batch-*.json)) for u in (json.load(open(f,encoding=utf-8)).get(units) or json.load(open(f,encoding=utf-8)).get(judgments) or [])]; print(len(ids),len(set(ids)))"
+# 实际执行脚本（等价，2026-10-04 编排会话）
+import json, glob
+ids=[]
+for f in sorted(glob.glob('training_data/sfx-v1/annotate-r1/judgments/agy/batch-*.json')):
+    d=json.load(open(f,encoding='utf-8'))
+    units=d.get('units') or d.get('judgments') or d
+    if isinstance(units,dict): units=list(units.values())
+    for u in units:
+        ids.append(u.get('unit_id') or u.get('id'))
+print('total rows:',len(ids))
+print('unique ids:',len(set(ids)))
+print('dup check:','PASS (no dup)' if len(ids)==len(set(ids)) else 'FAIL')
+# 输出（重放 2026-10-04）
+total rows: 413
+unique ids: 413
+dup check: PASS (no dup)
