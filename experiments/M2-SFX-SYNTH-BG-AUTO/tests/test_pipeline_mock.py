@@ -28,17 +28,20 @@ class MockDriver:
     def blocking_state(self): return self.blocking
     def is_busy(self): return False
     def send_prompt(self, text): self.sent.append(text)
-    def latest_image_src(self): return self.script.pop(0) if self.script else self.sent and ("blob:last",)
+    def latest_image_src(self):
+        if self.script:
+            return self.script.pop(0)
+        return "blob:last" if self.sent else None
     def fetch_image_bytes(self, src): self.fetched.append(src); return PNG
 
 
 def test_generates_and_persists_each(tmp_path):
     d = MockDriver(script=[None, "blob:s1", None, "blob:s2"])
-    written = generate_backgrounds(d, tmp_path, count=2, poll_s=0)
+    written = generate_backgrounds(d, tmp_path, count=2, poll_s=0)  # r2: 签名去 min_backgrounds
     assert len(written) == 2 and all(p.exists() for p in written)
     assert all(p.read_bytes().startswith(PNG) for p in written)
     import json
-    entries = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
+    entries = json.loads((tmp_path / "bg_index.json").read_text(encoding="utf-8"))
     assert [e["file"] for e in entries] == ["bg_001.png", "bg_002.png"]
     assert entries[0]["source"] == "chatgpt-web-auto" and entries[0]["style"]
 
@@ -54,7 +57,7 @@ def test_fail_closed_blocking_state(tmp_path):
     d = MockDriver(script=[], blocking="CLOUDFLARE_CHALLENGE：验证")
     with pytest.raises(BGGenerationError) as ei:
         generate_backgrounds(d, tmp_path, count=1, poll_s=0, timeout_s=1)
-    assert ei.value.state == "BLOCKED"
+    assert ei.value.state == "CLOUDFLARE_CHALLENGE", "r2 P2-2：子类状态码不再折叠"
 
 
 def test_fail_closed_consecutive_failures(tmp_path):
@@ -66,6 +69,46 @@ def test_fail_closed_consecutive_failures(tmp_path):
         generate_backgrounds(d, tmp_path, count=2, poll_s=0, timeout_s=1)
     assert ei.value.state == "CONSECUTIVE_FAILURES"
     assert d.reloaded >= 2, "每张超时应 reload 重发一次（实测坑④）"
+
+
+def test_non_png_dropped_counts_as_failure(tmp_path):
+    class BadPng(MockDriver):
+        def fetch_image_bytes(self, src): return b"NOTPNG" + b"0" * 16
+    d = BadPng(script=[None] * 9)
+    with pytest.raises(BGGenerationError) as ei:
+        generate_backgrounds(d, tmp_path, count=1, poll_s=0, timeout_s=1)
+    assert ei.value.state == "CONSECUTIVE_FAILURES"
+    assert not list(tmp_path.glob("bg_*.png")), "坏图不得落盘"
+
+
+def test_reload_then_success(tmp_path):
+    # r2 P1-1 回归：超时→reload→重取基准→重发后出新图成功续跑
+    # 状态驱动 mock：reload 前 latest 恒 None（卡死触发超时）；reload 后首读返回
+    # "旧图新 URL"（stale），后续返回真新图——pipeline 未重取基准时会误判 stale 落盘。
+    class ReloadOk(MockDriver):
+        def __init__(self):
+            super().__init__(script=[])
+            self.reloaded = 0
+            self.post_reload_reads = 0
+
+        def reload(self):
+            self.reloaded += 1
+
+        def latest_image_src(self):
+            if self.reloaded == 0:
+                return None
+            self.post_reload_reads += 1
+            if self.post_reload_reads == 1:
+                return "blob:stale-new-url-after-reload"
+            return "blob:real-new-image"
+
+    d = ReloadOk()
+    written = generate_backgrounds(d, tmp_path, count=1, poll_s=0, timeout_s=1)
+    assert d.reloaded == 1, "应触发一次 reload 重发"
+    assert len(written) == 1
+    import json
+    e = json.loads((tmp_path / "bg_index.json").read_text(encoding="utf-8"))[0]
+    assert e["chatgpt_blob_src"] == "blob:real-new-image", "落盘的必须是真新图而非 stale 旧图"
 
 
 def test_resume_numbering(tmp_path):

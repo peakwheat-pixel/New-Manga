@@ -20,8 +20,14 @@ cd experiments/M2-SFX-SYNTH-BG-AUTO
 <python> -m chatgpt_bg check-gap --dry-run          # 只报告缺口（EXIT 3=有缺口）
 ```
 
-数据落位：底图 `training_data/sfx-v1/backgrounds/bg_NNN.png`（gitignored 外部树），
-manifest 同目录 `manifest.json`（source=chatgpt-web-auto + prompt 原文，与 T1a 摘要口径兼容）。
+数据落位：底图 `training_data/sfx-v1/backgrounds/bg_NNN.png`（gitignored 外部树，PNG
+魔数校验+tmp/replace 原子写），索引同目录 `bg_index.json`（r2 P2-5：**旁路索引**，
+非 T1a manifest container 口径；T1a 对接属 T1b）。**命名纪律**：人工入库也必须叫
+`bg_NNN.png`（否则缺口计数数不到）。路径可用 env `CHATGPT_BG_DATA_ROOT` /
+`CHATGPT_BG_PROFILE` / `CHATGPT_BG_REPO_ROOT` 覆盖（worktree/主仓共享底图库与登录态）。
+
+**check-gap 退出码契约**（数据构建钩子用）：`0`=充足 / `2`=已触发补齐 / `3`=dry-run
+缺口 / `4`=fail-closed（stdout 仍输出结构化 JSON：`{"fail_closed": {state, detail}}`）。
 
 ## fail-closed 状态（AC3）
 
@@ -42,6 +48,10 @@ manifest 同目录 `manifest.json`（source=chatgpt-web-auto + prompt 原文，�
 ## 风险与边界
 
 - ChatGPT UI 改版会使定位器失效（维护点集中在 `browser.py` 一个文件）；
-- Playwright 自动化特征比人工浏览敏感——channel=chrome + 持久 profile 已降低检测面，
-  首次真实跑建议有头模式观察；
-- 极端情况可退回"半自动"：底图由 ZCode 会话人工生成入库（`gap.py` 消费者无感）。
+- Playwright 连接下 `navigator.webdriver` 仍为 true——channel=chrome+持久 profile+
+  默认有头是**降低检测面的待验证手段**而非已证结论；**全新 profile 首次登录
+  ChatGPT 可能触发风控**（这正是 AC5 真实冒烟要回答的问题，首跑建议人工盯着）；
+- 极端情况可退回"半自动"：底图由 ZCode 会话人工生成入库（命名仍须 `bg_NNN.png`，
+  `gap.py` 消费者无感）。
+- AC2 残留登记：`check-gap` 钩子已就绪，但"render/数据构建入口自动调用"的调用方
+  尚不存在（受"T1a 已集成代码零触碰"限制）——接线属 T1b/后续 Task，需 Codex 释放。

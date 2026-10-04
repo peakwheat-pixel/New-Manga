@@ -7,6 +7,9 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Callable
 
+# r2 P2-4：读侧魔数校验兜底（写侧原子写已保证不落半写文件）
+PNG_MAGIC_HEX = "89 50 4e 47 0d 0a 1a 0a"
+
 
 @dataclass
 class GapReport:
@@ -20,10 +23,22 @@ class GapReport:
 
 
 def count_backgrounds(bg_dir: Path) -> int:
-    """底图库余量：bg_*.png 计数（目录不存在=0）。"""
+    """底图库余量：bg_*.png 计数（目录不存在=0）。
+
+    r2 P2-4：只数 PNG 魔数完整的文件——半写/坏文件不计入余量。
+    """
     if not bg_dir.is_dir():
         return 0
-    return sum(1 for p in bg_dir.glob("bg_*.png") if p.is_file())
+    magic = bytes.fromhex(PNG_MAGIC_HEX)
+    n = 0
+    for p in bg_dir.glob("bg_*.png"):
+        try:
+            with open(p, "rb") as f:
+                if f.read(8) == magic:
+                    n += 1
+        except OSError:
+            continue
+    return n
 
 
 def check_gap(bg_dir: Path, min_backgrounds: int) -> GapReport:
@@ -52,8 +67,12 @@ def trigger_if_gap(
 
 
 def append_manifest(bg_dir: Path, entry: dict) -> Path:
-    """底图 manifest 追加（临时文件+replace 原子语义；AC1 provenance 纪律）。"""
-    manifest_path = bg_dir / "manifest.json"
+    """底图索引追加（临时文件+replace 原子语义）。
+
+    r2 P2-5：文件名 bg_index.json——旁路索引（非 T1a manifest container 口径），
+    消费方为 gap 检查与人工审阅；T1a manifest 口径对接属 T1b。
+    """
+    manifest_path = bg_dir / "bg_index.json"
     entries: list[dict] = []
     if manifest_path.exists():
         entries = json.loads(manifest_path.read_text(encoding="utf-8"))

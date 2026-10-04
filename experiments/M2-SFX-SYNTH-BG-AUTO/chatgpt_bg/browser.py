@@ -55,7 +55,8 @@ def wait_new_image(
     while time.monotonic() < deadline:
         state = driver.blocking_state()
         if state is not None:
-            raise BGGenerationError("BLOCKED", state)
+            code, _, detail = state.partition("：")
+            raise BGGenerationError(code or "BLOCKED", detail or state)
         if not driver.is_busy():
             src = driver.latest_image_src()
             if src and src.startswith(BLOB_PREFIX) and src != prev_src:
@@ -105,20 +106,31 @@ class PlaywrightChatGPTDriver:
                 or page.locator('[data-testid="profile-button"]').count() > 0)
 
     def blocking_state(self) -> str | None:
+        """返回机器可读状态码|人工处置说明（r2 P2-2：状态码不再折叠为 BLOCKED）。"""
         page = self._page
-        if "请稍候" in (page.title() or ""):
+        title = page.title() or ""
+        if "请稍候" in title or "Just a moment" in title:
             return "CLOUDFLARE_CHALLENGE：人机验证页未通过（等待人工或稍后重试）"
         if page.get_by_text("登录或注册").count() > 0 and not self.is_logged_in():
             return "NOT_LOGGED_IN：登录态丢失（跑 chatgpt_bg login 重新登录）"
-        for marker in ("您已达到使用上限", "usage cap", "rate limit"):
+        for marker in ("您已达到使用上限", "usage cap", "rate limit", "请求过于频繁", "稍后再试"):
             if page.get_by_text(marker, exact=False).count() > 0:
                 return "RATE_LIMITED：触发 ChatGPT 限额/风控（等待或换账号）"
         return None
 
     def is_busy(self) -> bool:
-        main = self._page.locator("main")
-        content = main.inner_text() if main.count() else ""
-        return any(m in content for m in BUSY_MARKERS)
+        """生成中判定（r2 P2-1）：停止按钮定位器优先（inner_text 取不到 aria-label），
+        文本兜底只扫最后一条 assistant 消息（历史消息的旧文本不参与）。"""
+        page = self._page
+        if page.locator('[data-testid="stop-button"]').count() > 0:
+            return True
+        if page.locator('button[aria-label*="Stop" i]').count() > 0:
+            return True
+        turns = page.locator('main [data-message-author-role="assistant"]')
+        if turns.count() == 0:
+            return False
+        tail = turns.last.inner_text() if turns.last.count() else ""
+        return ("微调" in tail) or ("思考中" in tail) or ("98%" in tail)
 
     # -- 动作 --
     def send_prompt(self, text: str) -> None:

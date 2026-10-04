@@ -1,1 +1,25 @@
+# r2 help（完整输出）
+# cmd: PYTHONPATH=../ <py> -m chatgpt_bg --help
+usage: chatgpt_bg [-h] [--bg-dir BG_DIR] [--profile PROFILE] [--headless]
+                  [--min-backgrounds MIN_BACKGROUNDS]
+                  {selfcheck,login,status,generate,backgrounds,check-gap} ...
+
+SFX 合成底图自动 provider（M2-SFX-SYNTH-BG-AUTO）：ChatGPT 网页全自动生成+缺口触发
+
+positional arguments:
+  {selfcheck,login,status,generate,backgrounds,check-gap}
+    selfcheck           离线自检 EXIT=0
+    login               人工登录一次（登录态持久化 profile）
+    status              底图库余量与缺口报告
+    generate (backgrounds)
+                        批量生成（默认补齐缺口；AC1 名 backgrounds 为别名）
+    check-gap           缺口检查钩子（0=充足 2=已触发 3=dry-run 缺口）
+
+options:
+  -h, --help            show this help message and exit
+  --bg-dir BG_DIR       底图库目录（gitignored 外部树）
+  --profile PROFILE     Chrome persistent profile 目录（默认外部树）
+  --headless            无头模式（默认有头：降低风控面+可人工介入）
+  --min-backgrounds MIN_BACKGROUNDS
+                        底图库余量阈值（缺口触发用）
 EXIT=0

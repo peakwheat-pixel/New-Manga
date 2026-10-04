@@ -1,0 +1,5 @@
+# r2 green-run（DSH r1 changes_requested 返修后，12 tests + 1 slow-skip）
+# cmd: cd experiments/M2-SFX-SYNTH-BG-AUTO && PYTHONPATH=../ <T1.1.1-impl-py312 python> -m pytest tests/ -q
+............s                                                            [100%]
+12 passed, 1 skipped in 11.06s
+EXIT=0

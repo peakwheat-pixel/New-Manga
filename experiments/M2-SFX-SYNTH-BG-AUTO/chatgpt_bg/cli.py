@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -13,11 +14,35 @@ from chatgpt_bg.pipeline import generate_backgrounds
 from chatgpt_bg.prompts import BG_STYLES, build_prompt
 
 PKG_PARENT = Path(__file__).resolve().parents[1]
-REPO_ROOT = PKG_PARENT.parents[1]
-DEFAULT_DATA_ROOT = REPO_ROOT / "training_data" / "sfx-v1"
+
+
+def _resolve_repo_root() -> Path:
+    """主仓根（worktree 安全）：env 覆盖 > git common dir 推断 > 路径回退。"""
+    import os
+    import subprocess
+
+    env = os.environ.get("CHATGPT_BG_REPO_ROOT")
+    if env:
+        return Path(env)
+    try:
+        common = subprocess.run(
+            ["git", "rev-parse", "--git-common-dir"],
+            capture_output=True, text=True, timeout=10,
+            cwd=PKG_PARENT,
+        ).stdout.strip()
+        if common:
+            return Path(common).resolve().parent
+    except Exception:
+        pass
+    return PKG_PARENT.parents[1]
+
+
+REPO_ROOT = _resolve_repo_root()
+# r2 P2-3：路径全部 env 可覆盖（worktree/主仓/换机共享底图库与登录态）
+DEFAULT_DATA_ROOT = Path(os.environ.get("CHATGPT_BG_DATA_ROOT") or (REPO_ROOT / "training_data" / "sfx-v1"))
 DEFAULT_BG_DIR = DEFAULT_DATA_ROOT / "backgrounds"
-# 持久登录态 profile（外部树；会话本地数据不入 Git）
-DEFAULT_PROFILE_DIR = str(REPO_ROOT.parent / "New Manga.task-envs" / "M2-SFX-SYNTH-BG-AUTO" / "chrome-profile")
+DEFAULT_PROFILE_DIR = os.environ.get("CHATGPT_BG_PROFILE") or str(
+    REPO_ROOT.parent / "New Manga.task-envs" / "M2-SFX-SYNTH-BG-AUTO" / "chrome-profile")
 
 
 def _open_driver(args) -> PlaywrightChatGPTDriver:
@@ -71,15 +96,20 @@ def cmd_generate(args: argparse.Namespace) -> int:
         driver.open_chat()
         written = generate_backgrounds(
             driver, bg_dir, count=count,
-            min_backgrounds=int(args.min_backgrounds),
             poll_s=int(args.poll_s), timeout_s=int(args.timeout_s),
         )
     except BGGenerationError as e:
-        print(f"[generate] FAIL-CLOSED {e}", file=sys.stderr)
-        print(f"[generate] 人工处置：{e.detail}", file=sys.stderr)
+        print(f"[generate] FAIL-CLOSED [{e.state}] {e.detail}", file=sys.stderr)
         driver.close()
-        return 2
-    driver.close()
+        return 4
+    except Exception as e:
+        # r2 P1-2：环境异常（playwright 缺失/Chrome 不存在/启动失败）同样 fail-closed
+        print(f"[generate] FAIL-CLOSED [ENV_ERROR] {type(e).__name__}: {e}", file=sys.stderr)
+        print("[generate] 人工处置：检查 playwright 安装与本机 Chrome；重跑 login", file=sys.stderr)
+        driver.close()
+        return 4
+    finally:
+        driver.close()
     print(f"[generate] 完成：{len(written)} 张落盘 {bg_dir}")
     return 0
 
@@ -88,7 +118,9 @@ def _auto_generate(args, missing: int) -> None:
     driver = _open_driver(args)
     try:
         driver.open_chat()
-        generate_backgrounds(driver, Path(args.bg_dir), count=missing)
+        generate_backgrounds(driver, Path(args.bg_dir), count=missing,
+                             poll_s=int(args.poll_s) if hasattr(args, "poll_s") else 5,
+                             timeout_s=int(args.timeout_s) if hasattr(args, "timeout_s") else 150)
     finally:
         driver.close()
 
@@ -96,11 +128,17 @@ def _auto_generate(args, missing: int) -> None:
 def cmd_check_gap(args: argparse.Namespace) -> int:
     """入口钩子：供数据构建脚本调用。返回码 0=充足，2=已触发生成，3=dry-run 缺口。"""
     bg_dir = Path(args.bg_dir)
-    report, triggered = gap_mod.trigger_if_gap(
-        bg_dir, int(args.min_backgrounds),
-        generate_fn=lambda n: _auto_generate(args, n),
-        dry_run=bool(args.dry_run),
-    )
+    try:
+        report, triggered = gap_mod.trigger_if_gap(
+            bg_dir, int(args.min_backgrounds),
+            generate_fn=lambda n: _auto_generate(args, n),
+            dry_run=bool(args.dry_run),
+        )
+    except BGGenerationError as e:
+        # r2 P1-2/P2-8：自动入口失败同样结构化输出（EXIT 4=fail-closed）
+        print(json.dumps({"fail_closed": {"state": e.state, "detail": e.detail}},
+                         ensure_ascii=False))
+        return 4
     print(json.dumps({
         "gap": {"current": report.current, "required": report.required,
                 "missing": report.missing, "has_gap": report.has_gap},
@@ -156,7 +194,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("login", help="人工登录一次（登录态持久化 profile）").set_defaults(func=cmd_login)
     sub.add_parser("status", help="底图库余量与缺口报告").set_defaults(func=cmd_status)
 
-    p_gen = sub.add_parser("generate", help="批量生成（默认补齐缺口）")
+    p_gen = sub.add_parser("generate", aliases=["backgrounds"], help="批量生成（默认补齐缺口；AC1 名 backgrounds 为别名）")
     p_gen.add_argument("--count", type=int, default=0, help="指定张数（默认=缺口数）")
     p_gen.add_argument("--poll-s", type=int, default=5)
     p_gen.add_argument("--timeout-s", type=int, default=150)

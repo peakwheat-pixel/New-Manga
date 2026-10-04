@@ -1,0 +1,11 @@
+# r2 CLI 契约矩阵（DSH §4-4：0=充足/2=触发/3=dry-run/4=fail-closed）
+$ check-gap --dry-run (空目录, 期望 3)
+{"gap": {"current": 0, "required": 5, "missing": 5, "has_gap": true}, "triggered": false, "dry_run": true}
+EXIT=3
+$ check-gap (足量, 期望 0)
+mkdir: cannot create directory ‘’: No such file or directory
+{"gap": {"current": 0, "required": 0, "missing": 0, "has_gap": false}, "triggered": false, "dry_run": false}
+EXIT=0
+$ check-gap (空目录真实触发, 未登录 → 期望 4=fail-closed 结构化)
+{"fail_closed": {"state": "NOT_LOGGED_IN", "detail": "ChatGPT 未登录。先跑一次人工登录：python -m chatgpt_bg login （浏览器窗口内完成登录后回车确认，登录态持久化在 profile）"}}
+EXIT=4

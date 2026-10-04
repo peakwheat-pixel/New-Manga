@@ -32,7 +32,6 @@ def generate_backgrounds(
     driver: ChatGPTDriver,
     bg_dir: Path,
     count: int,
-    min_backgrounds: int = 0,
     poll_s: int = 5,
     timeout_s: int = 150,
 ) -> list[Path]:
@@ -85,21 +84,32 @@ def generate_backgrounds(
                 if attempt < MAX_RELOAD_RETRY:
                     print(f"[bg:{style}] 等待超时，reload 重发（实测坑④：思考卡死不自愈）")
                     driver.reload()
+                    # r2 P1-1：reload 重挂载后历史图会拿到全新 blob URL——旧基准作废，
+                    # 必须重取，否则"旧图新 URL"会被判为新图静默落盘
+                    prev_src = driver.latest_image_src()
                     driver.send_prompt(prompt)
         if new_src is None:
             consecutive_failures += 1
             print(f"[bg:{style}] 重试耗尽仍超时")
             continue
 
-        png_bytes = driver.fetch_image_bytes(new_src)
+        try:
+            png_bytes = driver.fetch_image_bytes(new_src)
+        except Exception as e:
+            consecutive_failures += 1
+            print(f"[bg:{style}] 提取失败: {type(e).__name__}: {e}")
+            continue
         if not png_bytes.startswith(PNG_MAGIC):
             consecutive_failures += 1
             print(f"[bg:{style}] 非 PNG 魔数，丢弃")
             continue
         bg_dir.mkdir(parents=True, exist_ok=True)
         out = _next_bg_path(bg_dir)
-        out.write_bytes(png_bytes)
-        gap_mod.append_manifest(bg_dir, {
+        # r2 P2-4：PNG 同样原子落盘（tmp+replace），半写不进底图库计数
+        out.with_suffix(".png.tmp").write_bytes(png_bytes)
+        out.with_suffix(".png.tmp").replace(out)
+        try:
+            gap_mod.append_manifest(bg_dir, {
             "file": out.name,
             "style": style,
             "prompt": prompt,
@@ -107,6 +117,12 @@ def generate_backgrounds(
             "chatgpt_blob_src": new_src,
             "created_at": _now_iso(),
         })
+        except Exception as e:
+            # manifest 失败：回滚刚落的 PNG（避免"图在册不在"的半写）
+            out.unlink(missing_ok=True)
+            consecutive_failures += 1
+            print(f"[bg:{style}] manifest 写入失败已回滚: {type(e).__name__}: {e}")
+            continue
         written.append(out)
         produced += 1
         consecutive_failures = 0
