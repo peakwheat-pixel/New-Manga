@@ -2,13 +2,14 @@
 id: M2-SFX-TRAIN-V1
 title: "SFX 训练 V1（T2）：A′ 路线首训——challenge 划拨重切+yolo11s-seg 微调+导出冒烟+directional 评测"
 kind: feature
-status: in_review
+status: done
 owner_claim: 2026-10-04 by zcode subagent @45ae05a4（AC1）+ @5fe62a91（AC2）+ @c89c85e2（AC3/AC4；docs 收尾轮报告/Handoff/本回填随 docs 提交）
 approval: user_ruling_2026-10-04_按推荐_直接训V1+划拨challenge
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
+integration_commit: 由编排 merge 后回填（分支顶 dd0d2231=DSH r1 返修+集成验证）
 depends_on: [M2-SFX-ANNOTATE-R2, M2-SFX-DATA-INFRA, M2-SFX-FINETUNE-PREFLIGHT]
 base_commit: a85d8853
 branch: agent/zcode/M2-SFX-TRAIN-V1
