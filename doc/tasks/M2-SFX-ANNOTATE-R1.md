@@ -2,13 +2,14 @@
 id: M2-SFX-ANNOTATE-R1
 title: "SFX 标注轮 R1：AI 预标注+用户审核工作表+三集隔离产出（T1b 两阶段；阶段二含用户逐条审核）"
 kind: feature
-status: in_review
+status: done
 owner_claim: 2026-10-04 14:55 +0800 by zcode subagent @1b765007（stage-1：AC1+AC2；AC3-AC5 阶段二停点后）
 approval: user_ruling_2026-10-04_释放T1b_T5b_T5c
 suggested_owner: ZCode
 owner: ZCode
 reviewer: DeepSeek Harness（非作者）
 integrator: 编排会话代行 Codex（用户全权授权）
+integration_commit: 由编排会话 merge 后回填至 main（merge of a14fce36）
 depends_on: [M2-SFX-FINETUNE-PREFLIGHT, M2-SFX-DATA-INFRA]
 base_commit: 69321db7
 branch: agent/zcode/M2-SFX-ANNOTATE-R1
@@ -33,17 +34,17 @@ A′ 路线裁决（T0 收口）的采纳输入条件=「T1b 承诺最小标注�
 
 ## Acceptance Criteria
 
-> 勾选留待集成收口时统一勾选（协议：done 由集成后收口）。
+> 集成收口统一勾选（2026-10-04，DSH r2 后集成）：AC1-AC6 全 PASS（AC3=PASS WITH DEVIATION AI 代审已裁决登记）。
 
-- [ ] AC1 预标注（阶段一）：三源合并草稿——①chiqui7 低 conf dump（复用 DOMAIN-EXT L1 九档 raw：BJ13/14/15/BJ06 现成）②ogkalu text/panel 类候选（SFX 位置先验）③既有 pseudo 43 region+7 参照框。全部标 `pseudo` 入 T1a schema。
-- [ ] AC2 审核工作表导出（阶段一）：沿 C1 形态——每候选预览裁切图+页级清单（AI 预判列/用户裁决列/user_rationale 列）；页面选取：BJ SFX 密集页 ≥25、KO ≥15、域内回放 ≥5（cases.json source 组内选取，seed 冻结）；工具+预览产物齐备后**停点**，回报用户预估审核量（框数×页数）。
-- [ ] AC3 用户审核（阶段二，WAITING_USER_LABELING 解除后）：用户逐条裁决（确认/修正/删除+漏标补画）；user_rationale 留痕；审核完成标注状态 pseudo→complete（修正行记 revision 链）。
+- [x] AC1 预标注（阶段一）：三源合并草稿——①chiqui7 低 conf dump（复用 DOMAIN-EXT L1 九档 raw：BJ13/14/15/BJ06 现成）②ogkalu text/panel 类候选（SFX 位置先验）③既有 pseudo 43 region+7 参照框。全部标 `pseudo` 入 T1a schema。
+- [x] AC2 审核工作表导出（阶段一）：沿 C1 形态——每候选预览裁切图+页级清单（AI 预判列/用户裁决列/user_rationale 列）；页面选取：BJ SFX 密集页 ≥25、KO ≥15、域内回放 ≥5（cases.json source 组内选取，seed 冻结）；工具+预览产物齐备后**停点**，回报用户预估审核量（框数×页数）。
+- [x] AC3 用户审核（阶段二，WAITING_USER_LABELING 解除后）：用户逐条裁决（确认/修正/删除+漏标补画）；user_rationale 留痕；审核完成标注状态 pseudo→complete（修正行记 revision 链）。
   **判据修订（2026-10-04，DSH r1 C2 落档）**：用户裁决原文"T1b交给codex和antigravity同时进行审核，
   减少人工工作量"——AC3 执行形态由"用户逐条裁决"修订为"codex+agy 双 AI 交叉审核+分歧第三方仲裁，
   共识∪仲裁=全覆盖，`human_review=false` 保真不谎称人工，残留/翻案走 user-residual.json 交用户"。
-- [ ] AC4 三集产出（阶段二）：经 T1a 拆分器组隔离（作品组不跨集、test 对训练不可见）→train/val/test+challenge(BJ13/14/15) manifest+sha256；**YOLO seg 训练格式导出**（dataset.yaml names 顺序逐字=SFX_CLASS_MAP——T0 P3-6 硬约束；多边形 mask 沿 T1a 包络口径）。
-- [ ] AC5 合成批量（阶段二）：T1a 渲染管线 ≥200 样本（毛笔体/艺术字字体×旋转/透视/弯曲/遮挡参数网格），标 synthetic 入 train/val 不入 test。
-- [ ] AC6 零 src；数据本体外部树，Git 只进 manifest 摘要。
+- [x] AC4 三集产出（阶段二）：经 T1a 拆分器组隔离（作品组不跨集、test 对训练不可见）→train/val/test+challenge(BJ13/14/15) manifest+sha256；**YOLO seg 训练格式导出**（dataset.yaml names 顺序逐字=SFX_CLASS_MAP——T0 P3-6 硬约束；多边形 mask 沿 T1a 包络口径）。
+- [x] AC5 合成批量（阶段二）：T1a 渲染管线 ≥200 样本（毛笔体/艺术字字体×旋转/透视/弯曲/遮挡参数网格），标 synthetic 入 train/val 不入 test。
+- [x] AC6 零 src；数据本体外部树，Git 只进 manifest 摘要。
 
 ## 允许修改范围
 
