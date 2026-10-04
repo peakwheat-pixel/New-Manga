@@ -59,7 +59,7 @@ AC5：三文档齐+T3/T4 呈报材料。
 - [x] AC3 导出+生产序列冒烟（零 src+_build_engine 重指+BJ17 推理演示）——best.onnx fb60b460…329f6（40,824,255 B）；SHA 门先证在位（直载=PROVIDER_FAILED 正确命中）→进程内重指全链 EXIT=0（names metadata 逐字 SFX_CLASS_MAP+imgsz 1024 metadata_parsed+(1,40,21504) 张量+合成页双档 conf 结构合法）；零 src、生产 pin d87389af…（detection_sfx.py:110）零改动；BJ17 真实页推理演示落 raw/bj17-demo.json（conf 0.5=0 检出/conf 0.2=1 检出 0.2049）@c89c85e2
 - [x] AC4 directional 评测（BJ challenge 双口径召回+chiqui7 对照+KO 不回退检查）——BJ challenge 考卷（5 框，IoU≥0.5 贪心）：新模型严格 conf≥0.50=0/5（0 检出，BJ17 竖排主攻形态零检出）/宽松 conf≥0.20=1/5（3 检出 P=0.333，唯一匹配 R2-BJ18-B00 IoU 0.606@conf 0.343）vs chiqui7 双口径 5/5（6 检出 P=0.833，唯一 FP=仲裁 delete 的 B02 气泡框）；KO 不回退：KO 页 4 样本 56 框新模型严格/宽松均 0/56（零检出）vs chiqui7 严格 56/56（P=0.824）/宽松 56/56（P=0.667），全 6 样本 58 框新模型宽松 0/58——**回退如实登记**；imp-ogkalu-* 2 样本（2 框）chiqui7 预标注不可得（预标注源=ogkalu rt-detr）如实登记；统计功效低禁用「显著」，结论与 343 样本+COCO 基座无 manga 先验+欠拟合（val R=0.019）一致 @c89c85e2
 - [x] AC5 报告+Handoff+Task 回填+T3/T4 呈报材料——verification/M2-SFX-TRAIN-V1/train-v1-report.md（数据/训练/评测/DSH 独立复核 PASS 四项+3 条非阻塞观察项/诚实边界：BJ train 剩 6 框量级小+KO val 功效低 directional+V1 不承诺 G1-G8 Gate+AGPL 备案在案；§7=T3 前置 BJ 深度扩标候选（conf<0.2 层 16 单元+44 张 BJ 候选池页+10 张 KO 候选）与 T4 生产切换条件清单（含 best.onnx 与生产 pin 替换语义））+doc/handoffs/M2-SFX-TRAIN-V1-zcode-20261004.md（DSH 审查入口）+本 Task 回填（docs 提交）
-- [x] AC6 零 src；训练数据/权重 gitignored 外部树；Git 只进摘要——git diff --name-status a85d8853..HEAD 仅 11 文件全在 Task 允许范围；`-- src/` 空 diff 0 提交；生产 pin d87389af… 在 HEAD/base/main 三处 git show 同值；dataset.yaml/best.pt/best.onnx 均命中 .gitignore:13 '/training_data/'（*.pt/*.onnx 8-10 行双保险）；Git 只进摘要+日志（DSH 独立复核四项 PASS 实证，报告 §5）
+- [x] AC6 零 src；训练数据/权重 gitignored 外部树；Git 只进摘要——git diff --name-status a85d8853..HEAD 仅 11 文件全在 Task 允许范围；`-- src/` 空 diff 0 提交；生产 pin d87389af… 在 HEAD/base/main 三处 git show 同值；dataset.yaml/best.pt/best.onnx 均命中 .gitignore:13 '/training_data/'（*.pt/*.onnx 9-10 行（DSH r1 P4-3 更正）双保险）；Git 只进摘要+日志（DSH 独立复核四项 PASS 实证，报告 §5）
 
 ## 允许修改范围
 
@@ -87,3 +87,7 @@ AC5：三文档齐+T3/T4 呈报材料。
 ## Review
 
 -（待 DSH review 轮回填）
+
+## Review
+
+- **DSH r1（2026-10-04）=approved_with_conditions（0×P0/P1、1×P2、4×P3、4×P4）**，报告落 doc/reviews/M2-SFX-TRAIN-V1-d5ea34af-dsh-r1.md。核心裁定：Q1 chiqui7 对照=GT 来源模型的自洽上界（IoU 结构性 1.0，双口径对 chiqui7 同值）——差值幅度不可定量，「回退」方向不反转（C1 已闭合：§4 定性注）；Q2 欠拟合归因成立、「样本量首要瓶颈」降级为方向性假设（P3-3 已补并列解释）；Q3 管线验证证据链实质完整（EXIT 口径已标注）。**集成运行级验证 5/5 实测通过**（13 文件允许面/src 空 diff/pin d87389af 三处同值/check-ignore 3 命中/best.pt·onnx·基座 sha256 逐位+指纹 badb0605 重算一致——DSH 无 shell 空白全闭）。P4-4 eval 脚本 KO 池 case_id 索引混池风险登记交 T3。status=done（集成收口）。

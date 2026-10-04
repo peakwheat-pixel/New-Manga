@@ -64,6 +64,8 @@ independent_review: DeepSeek Harness 独立复核 = PASS（四项全过，3 条�
 
 ## 2. 训练 V1（AC2）
 
+> DSH r1 P3-2 证据口径注：本文「EXIT=0」=「脚本完成即返回 0」的推断口径——训练无字面退出码行（以 TRAIN_RESULT_JSON 结构化摘要收尾=正常走完），冒烟 `"exit": 0` 为脚本断言链走完后自写（export_smoke_v1.py:187）；两者均为「断言链走到末尾」语义。冒烟/评测无控制台原始日志（单点证据源=自产 JSON），T3 轮补 console 捕获。
+
 证据：`verification/M2-SFX-TRAIN-V1/raw/train-log.txt`（923KB 全程 stdout，已入 Git @5fe62a91）；run 产物 `training_data/sfx-v1/train-v1/runs/train_v1/`（gitignored）。提交 5fe62a91。
 
 - **基座**：Ultralytics 官方 `yolo11s-seg.pt`，sha256 `1caa81c0195412efa411b632bcfb8c184939dddb6ae41f6a80c41b211ff257c3`（20,669,228 B，与 T0 §8 一致）——T0 preflight 指路 `G:/CODEX/New Manga.task-envs/M2-SFX-FINETUNE-gpu-py312/weights/yolo11s-seg.pt` 在盘复用未下载，训练前 sha 自检通过（train-log.txt 首行）。
@@ -92,6 +94,8 @@ independent_review: DeepSeek Harness 独立复核 = PASS（四项全过，3 条�
 ---
 
 ## 4. directional 评测（AC4）
+
+> **DSH r1 C1（P2-1）对照口径定性注（必读）**：chiqui7 对照=**GT 来源模型的自洽上界，非同链路独立复跑**——challenge 5 个 GT 框源自 chiqui7 预标注候选（R2 判定链 confirm），故其 IoU 结构性=1.0、recall=5/5 是「GT ⊂ 该模型候选池」的数学必然；且双口径对 chiqui7 逐值同值（池内低置信候选 conf<0.2 被两档阈值同排除），实为一次测量。**新模型 0/5、0/56 是绝对量、方向性结论不反转；但差值幅度不可作定量比较**。T3/V2 正式评测须改为同链路独立复跑 chiqui7（复用 eval_challenge.py，成本≈一次推理）以消除循环性。
 
 证据：`raw/eval-challenge.json`（BJ challenge）+ `raw/eval-kodelta.json`（KO 不回退）。口径：生产 `SfxDetectionProvider.detect` 全序列（letterbox 1024 / 类无关 NMS 0.7 / sfx 过滤）；GT=manifest polygon 原页坐标（2946×4167）；匹配=box IoU≥0.5、pred conf 降序贪心。**统计功效低，仅 directional，结论禁用「显著」；0 也如实。**
 
@@ -127,7 +131,7 @@ V1 = 管线验证（训练/导出/生产链路全通 EXIT=0）；质量数字作
 1. **重切正确性 PASS**：4 个 manifest + yolo 树全量重算——challenge 恰 2 图 5 框（labels cls 全=2）；train 无 vol05 组（组集合 9 组不含 densho810/vol05）；组隔离两种口径全量重算 0 违例、无跨集样本；与 prepare-summary.json 逐数字对照全一致；深度校验 351 label 与 R2 只读树（M2-SFX-ANNOTATE-R2-zcode/training_data/sfx-v1/annotate-r2/final/yolo）sha256 逐字节全等、底册 manifest 框数 vs yolo label 0 mismatch、cls {2:629} 恒一；names 双通道实测（dataset.yaml 逐字等于 `src/infrastructure/providers/detection_sfx.py:137`）；指纹按 `splits.py:160` 算法重算复现=badb0605…，artifacts_sha256 全 7 文件逐一匹配。
 2. **训练真实性 PASS**：train-log.txt 651 行，epoch 进度行覆盖 1..116 连续无缺口；第 639 行 `116 epochs completed in 0.233 hours.`；尾行 TRAIN_RESULT_JSON（actual_epochs=116、early_stopped=true、best_epoch=86、train_sec=868.8）——早停自洽（116−86=30=patience）；results.csv 117 行=表头+116 epochs，末行与汇报逐值一致；sha256 盘上重算（hashlib 分块）vs 登记四方一致（best.pt/last.pt/best.onnx/基座）。
 3. **评测复算 PASS**：GT 取 manifest.challenge.json polygon（原页 2946×4167），独立实现 IoU≥0.5 贪心重算——BJ17 页（new@0.5 无 pred→0/2；@0.2 唯一 pred 与 2 GT IoU 均<0.5→matched 0；chiqui7 B00/B01 IoU=1.0→2/2、P=2/3）、BJ18 页（new@0.2 2 pred 中 1 个 IoU=0.6058→1/3；chiqui7 3/3）逐框一致；汇总四组一致。KO val 抽 pre-k08（27 GT）从 R1 worksheet（68 单元）独立重算 @0.5 = 30 pred/27 matched/P=0.9、@0.2 = 38 pred/P=0.7105、top5 conf 逐一相同——与 eval-kodelta.json 一致；汇总算术自洽（56/68=0.8235、56/84=0.6667）。
-4. **零 src 实证 PASS**：`git diff --name-status a85d8853..HEAD`（merge-base 实测=a85d8853）共 11 文件，全在 Task 允许范围（doc/tasks/M2-SFX-TRAIN-V1.md + experiments/M2-SFX-TRAIN-V1/ 四脚本 + verification/M2-SFX-TRAIN-V1/ 摘要+raw×5）；`git diff a85d8853..HEAD -- src/` 空、src 相关提交 0；生产 pin d87389af… 在 HEAD/base/main 三处 `git show` 同值；dataset.yaml/best.pt/best.onnx 均 `git check-ignore` 命中 `.gitignore:13 '/training_data/'`（另有 `*.pt`/`*.onnx` 第 8–10 行双保险）。
+4. **零 src 实证 PASS**：`git diff --name-status a85d8853..HEAD`（merge-base 实测=a85d8853）共 13 文件（集成实测；Owner 计 11 为 c89c85e2 时点——DSH r1 P3-1），全在 Task 允许范围（doc/tasks/M2-SFX-TRAIN-V1.md + experiments/M2-SFX-TRAIN-V1/ 四脚本 + verification/M2-SFX-TRAIN-V1/ 摘要+raw×5）；`git diff a85d8853..HEAD -- src/` 空、src 相关提交 0；生产 pin d87389af… 在 HEAD/base/main 三处 `git show` 同值；dataset.yaml/best.pt/best.onnx 均 `git check-ignore` 命中 `.gitignore:13 '/training_data/'`（另有 `*.pt`/`*.onnx` 第 8–10 行双保险）。
 
 **非阻塞观察项（3 条，如实登记）**：
 
@@ -138,6 +142,8 @@ V1 = 管线验证（训练/导出/生产链路全通 EXIT=0）；质量数字作
 ---
 
 ## 6. 诚实边界
+
+> **DSH r1 P3-3 归因强度注**：「样本量不足为首要瓶颈」系 5 框/56 框单点 directional 观测推得的**方向性假设**；未排除的并列解释：①合成:真实=324:19 的域差（val 全真实页，synth→real 迁移失败可独立解释 val R≈2%）；②nc=4 单类监督（labels cls 恒 2，三类零监督的负类行为未评估）。V2 可选杠杆（交 T3 裁决）：近域基座初始化（T0 已登记 anonimkaq4 manga yolo11s-seg .pt 作 A/B 选项）/配比调整/单类 nc=1 训练/更长 epochs+增广。
 
 - **BJ train 剩 6 框真实正样本**（BJ16×3+BJ23×2+BJ24×1），量级仍小——BJ 深度靠 T3 扩标轮补，V1 不解决主攻形态学习问题。
 - **KO val/test 功效低**（4 样本 53 框 + 2 样本 5 框），directional 措辞纪律，禁用「显著」；imp-ogkalu-* 2 样本 chiqui7 对照不可得如实登记。

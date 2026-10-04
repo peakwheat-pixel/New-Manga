@@ -94,3 +94,10 @@ status: in_review
 - **失败样例**：BJ17 竖排主攻形态 2 框零检出（conf 0.5/0.2 双档）；BJ18 仅 B00 低置信响应（0.343，IoU 0.606）；KO 全 6 样本宽松 0/58。
 - **限制**：343 样本小数据欠拟合（val R=0.019）；KO 评测统计功效低；V1 不承诺 G1-G8 Gate；数字仅作 V1↔V2 基线。
 - **建议**：见报告 §7.1（T3 扩标优先级：竖排毛笔假名形态样本量为首要瓶颈）与 §7.2（T4 切换条件清单）。
+
+## DSH r1 审查记录（2026-10-04，approved_with_conditions）
+
+- Verdict=approved_with_conditions（0×P0/P1、1×P2、4×P3、4×P4）；全文落 doc/reviews/M2-SFX-TRAIN-V1-d5ea34af-dsh-r1.md。
+- **C1（P2-1，必做已闭）**：chiqui7 对照=GT 来源模型自洽上界，非独立同口径测量；双口径对 chiqui7 同值；差值不可定量、方向不反转——报告 §4 定性注+Handoff 本注。
+- **集成运行级验证（DSH 委托，5/5 实测通过）**：git diff 13 文件全允许面/src 空 diff/pin d87389af4350 HEAD·base·main 三处同值/git check-ignore dataset.yaml·best.pt·best.onnx 全命中/best.pt f212bfc6…·best.onnx fb60b460…·基座 1caa81c0… sha256 逐位一致+指纹 badb0605 按 splits.py split_fingerprint 算法重算一致。
+- 其余闭合：P3-1 文件数 13/P3-2 EXIT 口径标注/P3-3 归因并列解释+V2 杠杆/P3-4 同源说明/P4-1 Review 落盘/P4-3 行号；P4-2 docs hash=d5ea34af（返修 commit 见链尾）；P4-4 eval KO 池混池风险登记交 T3。
