@@ -1,0 +1,18 @@
+# r2/r3 回归测试 red 留证的替代证明（r4 增强：带命令与原始输出）
+# 方法：8 个回归测试依赖 r2 新增接口（box_geometry_hash/pinned/exclude_negative/bak 回退），
+# 在 r1 交付 head ecb39e67 上这些符号不存在。取证命令与原始输出：
+$ git show ecb39e67:experiments/M2-SFX-DATA-INFRA/sfx_data_infra/hash.py | grep -cE 'box_geometry_hash|pinned|exclude_negative|回退 .bak|回退\$'
+count=0
+
+$ git show ecb39e67:experiments/M2-SFX-DATA-INFRA/sfx_data_infra/splits.py | grep -cE 'box_geometry_hash|pinned|exclude_negative|回退 .bak|回退\$'
+count=0
+
+$ git show ecb39e67:experiments/M2-SFX-DATA-INFRA/sfx_data_infra/dedup.py | grep -cE 'box_geometry_hash|pinned|exclude_negative|回退 .bak|回退\$'
+count=0
+
+$ git show ecb39e67:experiments/M2-SFX-DATA-INFRA/sfx_data_infra/atomicio.py | grep -cE 'box_geometry_hash|pinned|exclude_negative|回退 .bak|回退\$'
+count=0
+
+$ git show ecb39e67:experiments/M2-SFX-DATA-INFRA/sfx_data_infra/splits.py | grep -c 'pinned: dict'
+count=0
+(全部为 0 = 符号在 r1 代码不存在，r2 回归测试 import/断言必然失败 = red)

@@ -1,0 +1,13 @@
+# r2 子命令缺口验证：summary（P2-2）/dedup 透传 lock（P2-3）/split force（P2-4）
+[summary] experiments\M2-SFX-DATA-INFRA\manifest_summary.json
+summary EXIT=0
+[dedup] {"exact_pairs": 0, "box_exact_pairs": 0, "perceptual_pairs": 0, "dropped": 0, "dhash_errors": []}
+dedup EXIT=0
+[split] {"seed": 20261005, "pinned_groups": {"synthetic/poc": "train"}, "by_split": {"challenge": 7, "test": 8, "train": 57, "val": 10}}
+split(force new seed) EXIT=0
+[split] {"seed": 20261004, "pinned_groups": {"synthetic/poc": "train"}, "by_split": {"challenge": 7, "train": 63, "test": 4, "val": 8}}
+split(restamp default seed) EXIT=0
+[build-train] {"train_builder_counts": {"train": 57, "val": 4}, "excluded_splits": ["test", "challenge"], "excluded_negative_ids": ["imp-ogkalu-k03-r107", "imp-ogkalu-k05-r011", "imp-ogkalu-k05-r026", "imp-ogkalu-k07-r095", "imp-ogkalu-k08-r019", "imp-ogkalu-k08-r041", "imp-ogkalu-k08-r047", "imp-ogkalu-k08-r057", "imp-ogkalu-k10-r143", "imp-ogkalu-k10-r144"], "status_distribution": {"partial": 8, "pseudo": 29, "synthetic": 24}}
+build-train EXIT=0
+[summary] experiments\M2-SFX-DATA-INFRA\manifest_summary.json
+summary(final) EXIT=0

@@ -1,0 +1,487 @@
+FFFFFFFFFF....FFFFFFFFEEEEF                                              [100%]
+=================================== ERRORS ====================================
+_______________ ERROR at setup of test_at_least_20_poc_samples ________________
+
+    @pytest.fixture(scope="module")
+    def poc():
+>       params = default_poc_params()
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests\test_synth_gt_roundtrip.py:54:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 20261004, count = 24
+
+    def default_poc_params(seed: int = SYNTH_SEED, count: int = POC_SAMPLE_COUNT):
+        """冻结 seed 的 ≥count 个 PoC 参数组合。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\synth.py:31: NotImplementedError
+_______ ERROR at setup of test_forward_glyph_pixels_inside_gt_envelope ________
+
+    @pytest.fixture(scope="module")
+    def poc():
+>       params = default_poc_params()
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests\test_synth_gt_roundtrip.py:54:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 20261004, count = 24
+
+    def default_poc_params(seed: int = SYNTH_SEED, count: int = POC_SAMPLE_COUNT):
+        """冻结 seed 的 ≥count 个 PoC 参数组合。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\synth.py:31: NotImplementedError
+________ ERROR at setup of test_inverse_transform_recovers_anchor_box _________
+
+    @pytest.fixture(scope="module")
+    def poc():
+>       params = default_poc_params()
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests\test_synth_gt_roundtrip.py:54:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 20261004, count = 24
+
+    def default_poc_params(seed: int = SYNTH_SEED, count: int = POC_SAMPLE_COUNT):
+        """冻结 seed 的 ≥count 个 PoC 参数组合。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\synth.py:31: NotImplementedError
+_________ ERROR at setup of test_occluded_samples_keep_full_envelope __________
+
+    @pytest.fixture(scope="module")
+    def poc():
+>       params = default_poc_params()
+                 ^^^^^^^^^^^^^^^^^^^^
+
+tests\test_synth_gt_roundtrip.py:54:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 20261004, count = 24
+
+    def default_poc_params(seed: int = SYNTH_SEED, count: int = POC_SAMPLE_COUNT):
+        """冻结 seed 的 ≥count 个 PoC 参数组合。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\synth.py:31: NotImplementedError
+================================== FAILURES ===================================
+_______________________ test_write_then_load_roundtrip ________________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_write_then_load_roundtrip0')
+
+    def test_write_then_load_roundtrip(tmp_path):
+        path = tmp_path / "manifest.json"
+        samples = make_samples(10)
+>       write_manifest(path, samples, seed=20261004)
+
+tests\test_atomic_recovery.py:48:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_write_then_load_roundtrip0/manifest.json')
+samples = [SampleRecord(sample_id='s-000', image=ImageRef(path='img/0.png', sha256='00000000000000000000000000000000000000000000..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+seed = 20261004, extra = None
+
+    def write_manifest(path, samples, seed=None, extra=None):
+        """写 manifest 容器文件（kind/schema_version/samples/lock）。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\atomicio.py:19: NotImplementedError
+_________________________ test_corrupt_file_rejected __________________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_corrupt_file_rejected0')
+
+    def test_corrupt_file_rejected(tmp_path):
+        path = tmp_path / "manifest.json"
+>       write_manifest(path, make_samples(3))
+
+tests\test_atomic_recovery.py:57:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_corrupt_file_rejected0/manifest.json')
+samples = [SampleRecord(sample_id='s-000', image=ImageRef(path='img/0.png', sha256='00000000000000000000000000000000000000000000.../poc', split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes='')]
+seed = None, extra = None
+
+    def write_manifest(path, samples, seed=None, extra=None):
+        """写 manifest 容器文件（kind/schema_version/samples/lock）。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\atomicio.py:19: NotImplementedError
+____________ test_crash_before_replace_leaves_old_manifest_intact _____________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_crash_before_replace_leav0')
+
+    def test_crash_before_replace_leaves_old_manifest_intact(tmp_path):
+        """写 v2 中途崩溃（os.replace 前 os._exit）→ 磁盘上仍是完整 v1。"""
+        path = tmp_path / "manifest.json"
+>       write_manifest(path, make_samples(3), seed=1)
+
+tests\test_atomic_recovery.py:67:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_crash_before_replace_leav0/manifest.json')
+samples = [SampleRecord(sample_id='s-000', image=ImageRef(path='img/0.png', sha256='00000000000000000000000000000000000000000000.../poc', split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes='')]
+seed = 1, extra = None
+
+    def write_manifest(path, samples, seed=None, extra=None):
+        """写 manifest 容器文件（kind/schema_version/samples/lock）。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\atomicio.py:19: NotImplementedError
+________________________ test_load_rejects_wrong_kind _________________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_load_rejects_wrong_kind0')
+
+    def test_load_rejects_wrong_kind(tmp_path):
+        path = tmp_path / "manifest.json"
+        path.write_text(json.dumps({"kind": "something/else", "samples": []}), encoding="utf-8")
+        with pytest.raises(ManifestValidationError):
+>           load_manifest(path)
+
+tests\test_atomic_recovery.py:118:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_load_rejects_wrong_kind0/manifest.json')
+
+    def load_manifest(path):
+        """读 manifest 并逐样本校验，返回 (container_dict, [SampleRecord])。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\atomicio.py:24: NotImplementedError
+____________________ test_dhash_stable_and_discriminative _____________________
+
+    def test_dhash_stable_and_discriminative():
+>       a = _noise_img(1)
+            ^^^^^^^^^^^^^
+
+tests\test_dedup.py:24:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 1, size = (64, 64)
+
+    def _noise_img(seed: int, size=(64, 64)):
+        rng = np.random.default_rng(seed)
+>       return Image.fromarray(rng.integers(0, 256, size=size, dtype=np.uint8).repeat(3, axis=2)[:, :, :3], "RGB")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       numpy.exceptions.AxisError: axis 2 is out of bounds for array of dimension 2
+
+tests\test_dedup.py:20: AxisError
+_________________________ test_dhash_robust_to_resize _________________________
+
+    def test_dhash_robust_to_resize():
+>       a = _noise_img(7).resize((256, 256))
+            ^^^^^^^^^^^^^
+
+tests\test_dedup.py:32:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 7, size = (64, 64)
+
+    def _noise_img(seed: int, size=(64, 64)):
+        rng = np.random.default_rng(seed)
+>       return Image.fromarray(rng.integers(0, 256, size=size, dtype=np.uint8).repeat(3, axis=2)[:, :, :3], "RGB")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       numpy.exceptions.AxisError: axis 2 is out of bounds for array of dimension 2
+
+tests\test_dedup.py:20: AxisError
+__________________ test_box_exact_hash_stable_and_sensitive ___________________
+
+    def test_box_exact_hash_stable_and_sensitive():
+        poly = [[10.0, 20.0], [110.0, 20.0], [110.0, 90.0], [10.0, 90.0]]
+>       h1 = box_exact_hash(poly, "sfx", "ドン", "a" * 64)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_dedup.py:39:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+polygon = [[10.0, 20.0], [110.0, 20.0], [110.0, 90.0], [10.0, 90.0]]
+cls = 'sfx', text = 'ドン'
+image_sha256 = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+
+    def box_exact_hash(polygon, cls: str, text, image_sha256: str) -> str:
+        """框级精确哈希：规范化多边形+类+文本+图 sha256 → sha256 hex。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\hash.py:17: NotImplementedError
+__________________ test_find_duplicates_exact_and_perceptual __________________
+
+tmp_path = WindowsPath('C:/Users/49745/AppData/Local/Temp/pytest-of-49745/pytest-826/test_find_duplicates_exact_and0')
+
+    def test_find_duplicates_exact_and_perceptual(tmp_path):
+        from sfx_data_infra.schema import BoxAnnotation, ImageRef, SampleRecord
+
+>       img = _noise_img(9)
+              ^^^^^^^^^^^^^
+
+tests\test_dedup.py:50:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 9, size = (64, 64)
+
+    def _noise_img(seed: int, size=(64, 64)):
+        rng = np.random.default_rng(seed)
+>       return Image.fromarray(rng.integers(0, 256, size=size, dtype=np.uint8).repeat(3, axis=2)[:, :, :3], "RGB")
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       numpy.exceptions.AxisError: axis 2 is out of bounds for array of dimension 2
+
+tests\test_dedup.py:20: AxisError
+________________________ test_ogkalu_key_and_polygons _________________________
+
+    def test_ogkalu_key_and_polygons():
+>       assert parse_ogkalu_region_key("K01_R035") == "K01"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_dedup.py:80:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+key = 'K01_R035'
+
+    def parse_ogkalu_region_key(key: str) -> str:
+        """'K01_R035' -> 'K01'。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\importers.py:21: NotImplementedError
+_____________________ test_page_filename_from_cases_index _____________________
+
+    def test_page_filename_from_cases_index():
+        cases_index = {"BJ13": {"case_id": "BJ13", "source_id": "vol03_p0048"}}
+>       assert page_filename_for_case("BJ13", cases_index) == "vol03_p0048.png"
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_dedup.py:88:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+case_id = 'BJ13'
+cases_index = {'BJ13': {'case_id': 'BJ13', 'source_id': 'vol03_p0048'}}
+
+    def page_filename_for_case(case_id: str, cases_index: dict) -> str:
+        """BJ13 -> 'vol03_p0048.png'（由 cases.json source_id 推）。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\importers.py:34: NotImplementedError
+________________ test_groups_are_atomic_no_split_within_group _________________
+
+    def test_groups_are_atomic_no_split_within_group():
+        samples = base_samples()
+>       assign_splits(samples, seed=SEED_DEFAULT)
+
+tests\test_splits_derived_same_set.py:58:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+samples = [SampleRecord(sample_id='g1-a', image=ImageRef(path='g1-a.png', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+seed = 20261004, force = False
+
+    def assign_splits(samples, seed: int = SEED_DEFAULT, force: bool = False):
+        """按组哈希分桶 train/val/test；挑战集单列；派生样本继承父 split。
+
+        返回 {group: split} 映射，并就地写 sample.split。
+        """
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:25: NotImplementedError
+_____________________ test_derived_inherits_parent_split ______________________
+
+    def test_derived_inherits_parent_split():
+        samples = base_samples()
+>       assign_splits(samples, seed=SEED_DEFAULT)
+
+tests\test_splits_derived_same_set.py:70:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+samples = [SampleRecord(sample_id='g1-a', image=ImageRef(path='g1-a.png', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+seed = 20261004, force = False
+
+    def assign_splits(samples, seed: int = SEED_DEFAULT, force: bool = False):
+        """按组哈希分桶 train/val/test；挑战集单列；派生样本继承父 split。
+
+        返回 {group: split} 映射，并就地写 sample.split。
+        """
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:25: NotImplementedError
+_____________________ test_challenge_cases_single_bucket ______________________
+
+    def test_challenge_cases_single_bucket():
+        samples = base_samples()
+>       assign_splits(samples, seed=SEED_DEFAULT)
+
+tests\test_splits_derived_same_set.py:79:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+samples = [SampleRecord(sample_id='g1-a', image=ImageRef(path='g1-a.png', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+seed = 20261004, force = False
+
+    def assign_splits(samples, seed: int = SEED_DEFAULT, force: bool = False):
+        """按组哈希分桶 train/val/test；挑战集单列；派生样本继承父 split。
+
+        返回 {group: split} 映射，并就地写 sample.split。
+        """
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:25: NotImplementedError
+________________________ test_seed_frozen_reproducible ________________________
+
+    def test_seed_frozen_reproducible():
+        s1 = base_samples()
+        s2 = base_samples()
+>       m1 = assign_splits(s1, seed=SEED_DEFAULT)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_splits_derived_same_set.py:90:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+samples = [SampleRecord(sample_id='g1-a', image=ImageRef(path='g1-a.png', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+seed = 20261004, force = False
+
+    def assign_splits(samples, seed: int = SEED_DEFAULT, force: bool = False):
+        """按组哈希分桶 train/val/test；挑战集单列；派生样本继承父 split。
+
+        返回 {group: split} 映射，并就地写 sample.split。
+        """
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:25: NotImplementedError
+________________ test_all_three_splits_reachable_or_documented ________________
+
+    def test_all_three_splits_reachable_or_documented():
+        """分桶覆盖性冒烟：多组输入下 train 必然非空（比例 70%）。"""
+        samples = [make_sample(f"g{i}", f"grp/{i:03d}", {"type": "asset_case", "case_id": f"X{i}"}) for i in range(30)]
+>       assign_splits(samples, seed=SEED_DEFAULT)
+
+tests\test_splits_derived_same_set.py:100:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+samples = [SampleRecord(sample_id='g0', image=ImageRef(path='g0.png', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+seed = 20261004, force = False
+
+    def assign_splits(samples, seed: int = SEED_DEFAULT, force: bool = False):
+        """按组哈希分桶 train/val/test；挑战集单列；派生样本继承父 split。
+
+        返回 {group: split} 映射，并就地写 sample.split。
+        """
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:25: NotImplementedError
+_____________ test_training_builder_cannot_read_test_or_challenge _____________
+
+    def test_training_builder_cannot_read_test_or_challenge():
+        samples = base_samples()
+>       assign_splits(samples, seed=SEED_DEFAULT)
+
+tests\test_splits_derived_same_set.py:107:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+samples = [SampleRecord(sample_id='g1-a', image=ImageRef(path='g1-a.png', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+seed = 20261004, force = False
+
+    def assign_splits(samples, seed: int = SEED_DEFAULT, force: bool = False):
+        """按组哈希分桶 train/val/test；挑战集单列；派生样本继承父 split。
+
+        返回 {group: split} 映射，并就地写 sample.split。
+        """
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:25: NotImplementedError
+_______________ test_training_builder_rejects_test_in_allowlist _______________
+
+    def test_training_builder_rejects_test_in_allowlist():
+        samples = base_samples()
+        with pytest.raises(SplitAccessError):
+>           TrainingSetBuilder(samples, allowed_splits=("train", "test"))
+
+tests\test_splits_derived_same_set.py:121:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <sfx_data_infra.splits.TrainingSetBuilder object at 0x000001957FEE1010>
+samples = [SampleRecord(sample_id='g1-a', image=ImageRef(path='g1-a.png', sha256='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa..., split='unassigned', created_at='2026-10-04T00:00:00+00:00', schema_version='sfx-data-infra/sample@1', notes=''), ...]
+allowed_splits = ('train', 'test')
+
+    def __init__(self, samples, allowed_splits=("train", "val")):
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:37: NotImplementedError
+____________________________ test_group_key_rules _____________________________
+
+    def test_group_key_rules():
+        # peppercarrot：同 ep 的 ja/kr 共享图像底图 → 同组（防泄漏关键）
+        ja = {"case_id": "K11", "language": "ja", "source": "https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html", "source_id": "E04P02"}
+        kr = {"case_id": "O09", "language": "kr", "source": "https://www.peppercarrot.com/kr/webcomic/ep04_Stroke-of-genius__sources.html", "source_id": "E04P05"}
+>       assert derive_group_key_from_case(ja) == derive_group_key_from_case(kr)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_splits_derived_same_set.py:130:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+case = {'case_id': 'K11', 'language': 'ja', 'source': 'https://www.peppercarrot.com/ja/webcomic/ep04_Stroke-of-genius__sources.html', 'source_id': 'E04P02'}
+
+    def derive_group_key_from_case(case: dict) -> str:
+        """从 cases.json 记录推导来源作品组键（规则见 README §组键）。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\splits.py:17: NotImplementedError
+_____________________ test_render_deterministic_same_seed _____________________
+
+    def test_render_deterministic_same_seed():
+        from sfx_data_infra.synth import default_poc_params, render_sample
+
+>       p = default_poc_params(count=1)[0]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_synth_gt_roundtrip.py:111:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+seed = 20261004, count = 1
+
+    def default_poc_params(seed: int = SYNTH_SEED, count: int = POC_SAMPLE_COUNT):
+        """冻结 seed 的 ≥count 个 PoC 参数组合。"""
+>       raise NotImplementedError
+E       NotImplementedError
+
+sfx_data_infra\synth.py:31: NotImplementedError
+=========================== short test summary info ===========================
+FAILED tests\test_atomic_recovery.py::test_write_then_load_roundtrip - NotImp...
+FAILED tests\test_atomic_recovery.py::test_corrupt_file_rejected - NotImpleme...
+FAILED tests\test_atomic_recovery.py::test_crash_before_replace_leaves_old_manifest_intact
+FAILED tests\test_atomic_recovery.py::test_load_rejects_wrong_kind - NotImple...
+FAILED tests\test_dedup.py::test_dhash_stable_and_discriminative - numpy.exce...
+FAILED tests\test_dedup.py::test_dhash_robust_to_resize - numpy.exceptions.Ax...
+FAILED tests\test_dedup.py::test_box_exact_hash_stable_and_sensitive - NotImp...
+FAILED tests\test_dedup.py::test_find_duplicates_exact_and_perceptual - numpy...
+FAILED tests\test_dedup.py::test_ogkalu_key_and_polygons - NotImplementedError
+FAILED tests\test_dedup.py::test_page_filename_from_cases_index - NotImplemen...
+FAILED tests\test_splits_derived_same_set.py::test_groups_are_atomic_no_split_within_group
+FAILED tests\test_splits_derived_same_set.py::test_derived_inherits_parent_split
+FAILED tests\test_splits_derived_same_set.py::test_challenge_cases_single_bucket
+FAILED tests\test_splits_derived_same_set.py::test_seed_frozen_reproducible
+FAILED tests\test_splits_derived_same_set.py::test_all_three_splits_reachable_or_documented
+FAILED tests\test_splits_derived_same_set.py::test_training_builder_cannot_read_test_or_challenge
+FAILED tests\test_splits_derived_same_set.py::test_training_builder_rejects_test_in_allowlist
+FAILED tests\test_splits_derived_same_set.py::test_group_key_rules - NotImple...
+FAILED tests\test_synth_gt_roundtrip.py::test_render_deterministic_same_seed
+ERROR tests\test_synth_gt_roundtrip.py::test_at_least_20_poc_samples - NotImp...
+ERROR tests\test_synth_gt_roundtrip.py::test_forward_glyph_pixels_inside_gt_envelope
+ERROR tests\test_synth_gt_roundtrip.py::test_inverse_transform_recovers_anchor_box
+ERROR tests\test_synth_gt_roundtrip.py::test_occluded_samples_keep_full_envelope
+19 failed, 4 passed, 4 errors in 0.65s
