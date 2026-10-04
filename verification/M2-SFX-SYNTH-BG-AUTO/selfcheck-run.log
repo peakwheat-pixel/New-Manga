@@ -1,0 +1,9 @@
+selfcheck: PASS
+  [OK] prompt_styles_count: 20 styles
+  [OK] prompt_constraints: 公共约束缺失风格=[]
+  [OK] gap_empty: 空目录缺口=5
+  [OK] gap_partial: 1 张缺口=4
+  [OK] gap_satisfied: 足量不触发
+  [OK] gap_dryrun: dry-run 报缺口不触发
+  [OK] manifest_append: 两次追加有序
+EXIT=0
