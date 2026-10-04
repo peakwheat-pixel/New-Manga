@@ -124,3 +124,16 @@ final/{manifest.*.json, yolo/}），Git 只进摘要。
 - 运行次数：各一步（确定性管线，seed 冻结可复现）；失败样例：无（五步 EXIT=0）
 - 限制：GT=ai-consensus 非人工；部分覆盖页未判定区域训练中作背景（既定噪声口径）；
   BJ 域承诺缺口
+
+## r1 返修记录（2026-10-04，DSH approved_with_conditions → 本轮文档返修）
+
+- **DSH r1 结论**：approved_with_conditions（0×P0、2×P1、3×P2、8×P3、5×P4）；完整报告全文因
+  headless stdout 截断未保留，结论以最终输出（补充说明+结论重申）为准，纪要落
+  `verification/M2-SFX-ANNOTATE-R1/dsh-r1-verdict-summary.md`。
+- **本轮落实**：C1=stage2-report.md §8.1「A′ 采纳输入条件未满足」对照表（BJ 15/25、KO 10/15、
+  **BJ 域正集 0**、challenge 空、回放未产正例）+T2 处置选项 (a)/(b)/(c) 交裁决；C2=用户裁决原文
+  落档（Task AC3 修订注记+报告 §0）；C3=全文「独立复核/独立复算」→「内部复算」+rev3 措辞澄清；
+  C4=回放 5 页目的偏差登记（§8.1）；C5=ai-consensus 证据强度上限声明（§0）。
+- **编排代验补充**：agy 判定 413 行 id 唯一性校验 PASS（r1 补充说明 1 的数学闭包前提）。
+- **未动**：数据本体、experiments 工具、零 src——纯文档/登记返修。
+- **待 DSH r2**：复核 C1-C5 闭合+重列 P3/P4 明细（r1 全文截断项）。
