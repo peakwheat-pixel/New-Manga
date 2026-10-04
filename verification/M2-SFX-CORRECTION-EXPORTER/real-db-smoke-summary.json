@@ -1,0 +1,52 @@
+{
+ "task": "M2-SFX-CORRECTION-EXPORTER",
+ "exporter": "0.1.0",
+ "generated_at": "2026-10-04T07:34:43Z",
+ "db": "C:\\Users\\49745\\AppData\\Roaming\\com.newmanga.m2rc1.desktop\\data\\library.db",
+ "db_readonly": true,
+ "seed": 20261004,
+ "scan": {
+  "regions_scanned": 0,
+  "regions_skipped_deleted": 0,
+  "revisions_scanned": 0,
+  "machine_type_changes_excluded": 0,
+  "events_total": 0,
+  "events_surviving": 0,
+  "events_sfx_directed": 0,
+  "events_non_sfx_excluded": 0
+ },
+ "eligibility": {
+  "rules": {
+   "GEOMETRY_CONFIRM_RULE": "v1: complete iff 链首笔 origin=user（用户自建）或链上存在用户几何编辑；否则 partial（机器检出几何未被用户触碰）",
+   "PARTIAL_ROUTING": "auxiliary manifest（不入正集，可选入辅助集）",
+   "DEDUP_LEVEL": "exact+box-exact（T1a find_duplicates, image_loader=None；感知层级不启用）",
+   "LICENSE_RULE": "user_ruling_2026-10-04_训练质量效率优先_许可降权备案: 全备案不阻断",
+   "EXPORTABLE_TARGET": "sfx"
+  },
+  "registry_status": "not_provided",
+  "registry_samples": 0,
+  "duplicates_dropped": 0,
+  "duplicates": [],
+  "samples_skipped": []
+ },
+ "export": {
+  "out_dir": "training_data\\sfx-corrections-real-smoke",
+  "main_samples": 0,
+  "auxiliary_samples": 0,
+  "by_status": {},
+  "by_split": {},
+  "by_group": {},
+  "yolo_labels": 0,
+  "splits_present": [],
+  "split_inheritance": {
+   "inherited_groups": [],
+   "seed": 20261004
+  },
+  "fingerprint": "",
+  "manifest_files": {
+   "main": "manifest.json",
+   "auxiliary": "manifest-auxiliary.json"
+  }
+ },
+ "corrections_empty": true
+}

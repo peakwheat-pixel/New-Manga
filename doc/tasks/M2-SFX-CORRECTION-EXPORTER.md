@@ -42,14 +42,21 @@ integration_commit: null
 
 | 场景/AC | 计划步骤 | 前提 | 实际结果 | 证据 |
 |---|---|---|---|---|
-| AC1 事件识别 | fixture 链（纠错+撤销+几何编辑混合）断言 | dev venv | NOT_RUN | 无 |
-| AC5 CLI | --help/selfcheck | dev venv | NOT_RUN | 无 |
-| AC6 互操作 | 导出物过 T1a builder | 同上 | NOT_RUN | 无 |
+| AC1 事件识别 | fixture 链（纠错+撤销+几何编辑混合）断言 | dev venv T1.1.1-impl-py312 @ 9c7cf7bc | PASS：14 region 矩阵 12 测试逐条断言；红态 5×ModuleNotFoundError→绿态 46/46 | verification/M2-SFX-CORRECTION-EXPORTER/evidence/red-run.txt + green-run.txt |
+| AC2 样本构建 | T1a schema 逐条 validate+provenance 链 trace | 同上 | PASS（5 测试） | 同上 green-run.txt |
+| AC3 资格判定 | 许可继承/几何门/去重 | 同上 | PASS（8 测试；阈值冻结 eligibility.CONSTANTS） | 同上 |
+| AC4 双形态导出 | manifest main+auxiliary + YOLO seg + dataset.yaml names 锚定 | 同上 | PASS（10 测试含确定性指纹） | 同上 |
+| AC5 CLI | --help/selfcheck/只读铁律 | 同上 | PASS：EXIT=0/0，selfcheck 6/6；UPDATE/DELETE 只读连接被拒 | evidence/selfcheck.txt |
+| AC6 互操作 | 导出物过 T1a load_manifest+TrainingSetBuilder | 同上 | PASS（challenge 隔离+组原子性+SplitAccessError+注册表组继承） | green-run.txt |
+| fixture 全流程冒烟 | fixture 库（生产 v1–v4 DDL）→ 导出 | 同上 | EXIT=0：13 region/32 rev→11 事件（8 存活/6 sfx 向）→ main2+aux4→train5+challenge1 | fixture-smoke-summary.json |
+| 真库冒烟（空结果） | export --db 主仓库 library.db | 同上 | EXIT=0，CORRECTIONS_EMPTY=expected（T5b 未集成真库 0 region；集成后由集成方补跑） | real-db-smoke-summary.json |
 
 ## 依赖、风险与阻塞
 
-depends_on 均 done（T5b 是运行时数据来源而非本 Task 硬依赖——fixture 先行，T5b 集成后跑一次真库冒烟登记）。风险：revision 链语义误读→单测 fixture 按 T5a 契约断言逐条构造，DSH review 核对。
+depends_on 均 done（T5b 是运行时数据来源而非本 Task 硬依赖——fixture 先行，T5b 集成后跑一次真库冒烟登记）。风险：revision 链语义误读→单测 fixture 按 T5a 契约断言逐条构造，DSH review 核对。**实现后登记**：识别规则已按契约 §5.4 钉死于 fixture 矩阵（rgB/rgF/rgG/rgI 判别用例）；T5b 集成后真库链形态若与本规则偏差会红态暴露。
 
 ## 交付与运行记录
 
-- Handoff：尚无。Review：尚无。
+- Handoff：[M2-SFX-CORRECTION-EXPORTER-zcode-delivery-9c7cf7bc.md](../handoffs/M2-SFX-CORRECTION-EXPORTER-zcode-delivery-9c7cf7bc.md)（delivery_head=9c7cf7bc；提交链 1b765007→df0e05c4 claim→9c7cf7bc 实现→文档回填）。
+- Review：尚无（建议 DSH 非作者审查；核对冻结语义+资格阈值登记）。
+- 实现：`experiments/M2-SFX-CORRECTION-EXPORTER/`（scanner/samples/eligibility/export/fixture/cli + 46 测试 + README）；报告 [exporter-report.md](../verification/M2-SFX-CORRECTION-EXPORTER/exporter-report.md)；导出物 training_data/sfx-corrections/（gitignored，Git 只进摘要）。

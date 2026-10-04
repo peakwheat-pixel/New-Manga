@@ -1,0 +1,9 @@
+  [PASS] readonly_enforcement: mode=ro + query_only=ON，写尝试被拒
+  [PASS] scanner_semantics: 14-region fixture 矩阵不变量成立（surviving=8）
+  [PASS] schema_interop: SampleRecord to_dict/from_dict/validate 往返一致
+  [PASS] class_map_anchor: SFX_CLASS_MAP={0: 'bubble', 1: 'panel', 2: 'sfx', 3: 'text'}（sfx id=2，names 顺序逐字锚定）
+  [PASS] dedup_sanity: find_duplicates 精确层级（同图同框）sanity 成立
+  [PASS] manifest_roundtrip: write_manifest/load_manifest 往返一致（原子写）
+  rules: {"DEDUP_LEVEL": "exact+box-exact（T1a find_duplicates, image_loader=None；感知层级不启用）", "EXPORTABLE_TARGET": "sfx", "GEOMETRY_CONFIRM_RULE": "v1: complete iff 链首笔 origin=user（用户自建）或链上存在用户几何编辑；否则 partial（机器检出几何未被用户触碰）", "LICENSE_RULE": "user_ruling_2026-10-04_训练质量效率优先_许可降权备案: 全备案不阻断", "PARTIAL_ROUTING": "auxiliary manifest（不入正集，可选入辅助集）"}
+SELFCHECK PASS (6 checks)
+selfcheck EXIT=0
