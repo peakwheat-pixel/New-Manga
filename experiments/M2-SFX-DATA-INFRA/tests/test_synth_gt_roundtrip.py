@@ -14,6 +14,7 @@ import pytest
 
 from sfx_data_infra.synth import (
     POC_SAMPLE_COUNT,
+    anchor_points,
     default_poc_params,
     forward_transform_points,
     inverse_transform_points,
@@ -22,31 +23,24 @@ from sfx_data_infra.synth import (
 )
 
 
-def polygon_mask_contains(polygon, xy, tol=2.0):
-    """射线法+外扩容差：判断点集是否都在多边形内（含 tol px 缓冲）。"""
-    poly = np.asarray(polygon, dtype=np.float64)
-    cx, cy = poly[:, 0].mean(), poly[:, 1].mean()
-    # 外扩：顶点沿远离质心方向推 tol
-    vec = poly - np.array([cx, cy])
-    norm = np.linalg.norm(vec, axis=1, keepdims=True)
-    norm[norm == 0] = 1.0
-    grown = poly + vec / norm * tol
-    inside = np.ones(len(xy), dtype=bool)
-    n = len(grown)
-    for i in range(n):
-        x1, y1 = grown[i]
-        x2, y2 = grown[(i + 1) % n]
-        cond = ((x2 - x1) * (xy[:, 1] - y1) - (y2 - y1) * (xy[:, 0] - x1)) > 0
-        # 统一环绕方向
-        if i == 0 and cond.sum() < len(cond) / 2:
-            cond = ~cond
-            flip = True
-        elif i == 0:
-            flip = False
-        if flip:
-            cond = ~cond
-        inside &= cond
-    return inside
+def polygon_mask_contains(polygon, xy, tol=2.0, canvas=(640, 640)):
+    """PIL polygon fill raster + tol px 邻域膨胀：字形像素是否都在多边形内。"""
+    from PIL import Image, ImageDraw
+
+    w = int(max(x for x, _ in polygon) + canvas[0])
+    h = int(max(y for _, y in polygon) + canvas[1])
+    mask = Image.new("L", (w, h), 0)
+    ImageDraw.Draw(mask).polygon([tuple(pt) for pt in polygon], fill=1)
+    m = np.asarray(mask, dtype=bool)
+    ys, xs = xy[:, 1].astype(int), xy[:, 0].astype(int)
+    if tol > 0:
+        # 容差：邻域 (2*tol+1)^2 内任一像素在多边形内即算覆盖
+        acc = m.copy()
+        for dy in range(-int(tol), int(tol) + 1):
+            for dx in range(-int(tol), int(tol) + 1):
+                acc |= np.roll(np.roll(m, dy, axis=0), dx, axis=1)
+        m = acc
+    return m[ys, xs]
 
 
 @pytest.fixture(scope="module")
@@ -76,33 +70,39 @@ def test_forward_glyph_pixels_inside_gt_envelope(poc):
 
 
 def test_inverse_transform_recovers_anchor_box(poc):
-    """断言 B：GT 包络逆变换 → anchor box（标注↔参数互算，≤1.5px）。"""
+    """断言 B：GT 包络全部采样点逆变换 → anchor 点列（标注↔参数互算，≤1.5px）。"""
     params, results = poc
     for p, r in zip(params, results):
-        anchor = np.asarray(measure_anchor_box(p), dtype=np.float64)  # 4 角
-        corners = np.asarray(r.gt_polygon[:4], dtype=np.float64)
-        recovered = inverse_transform_points(p, corners)
+        anchor = anchor_points(p)
+        assert len(r.gt_polygon) == len(anchor), "GT 包络点数必须与 anchor 采样点数一致"
+        recovered = inverse_transform_points(p, np.asarray(r.gt_polygon, dtype=np.float64))
         err = np.abs(recovered - anchor).max()
-        assert err <= 1.5, f"样本 {p.sample_name}: 逆变换角点误差 {err:.3f}px > 1.5px"
+        assert err <= 1.5, f"样本 {p.sample_name}: 逆变换点列误差 {err:.3f}px > 1.5px"
 
 
 def test_occluded_samples_keep_full_envelope(poc):
-    """断言 C：遮挡样本 GT 包络面积 > 可见字形 bbox 面积（遮挡推断）。"""
+    """断言 C（包络含遮挡推断口径）：
+    C1 遮挡确实削减可见字形（可见 px < 遮挡前 px，且仍有剩余）；
+    C2 GT 包络与无遮挡 forward 逐点一致——标注不因遮挡改变，完整覆盖真实字形。
+    """
+    import copy as _copy
+
+    from sfx_data_infra.synth import forward_transform_points, anchor_points
+
     params, results = poc
     occ_pairs = [(p, r) for p, r in zip(params, results) if p.occlusion is not None]
     assert occ_pairs, "参数集必须包含遮挡样本"
     for p, r in occ_pairs:
-        mask = r.visible_glyph_mask
-        ys, xs = np.nonzero(mask)
-        assert len(xs) > 0, f"样本 {p.sample_name} 遮挡后应仍有可见字形"
-        vis_bbox_area = (xs.max() - xs.min() + 1) * (ys.max() - ys.min() + 1)
-        poly = np.asarray(r.gt_polygon, dtype=np.float64)
-        gt_area = 0.5 * abs(
-            np.dot(poly[:, 0], np.roll(poly[:, 1], -1)) - np.dot(poly[:, 1], np.roll(poly[:, 0], -1))
-        )
-        assert gt_area > vis_bbox_area, (
-            f"样本 {p.sample_name}: GT 面积 {gt_area:.0f} 应大于可见字形 bbox 面积 {vis_bbox_area}"
-        )
+        pre_px = int(r.glyph_mask_pre_occlusion.sum())
+        vis_px = int(r.visible_glyph_mask.sum())
+        assert vis_px < pre_px, f"样本 {p.sample_name}: 遮挡未削减可见字形 ({vis_px}/{pre_px})"
+        assert vis_px > 0, f"样本 {p.sample_name}: 遮挡后应仍有可见字形"
+        # C2：包络不依赖遮挡（同参数 occlusion=None 的 forward 逐点一致）
+        q = _copy.deepcopy(p)
+        q.occlusion = None
+        expect = forward_transform_points(q, anchor_points(q))
+        got = np.asarray(r.gt_polygon, dtype=np.float64)
+        assert np.abs(got - expect).max() <= 1e-9, f"样本 {p.sample_name}: GT 包络被遮挡改变（违反包络口径）"
 
 
 def test_render_deterministic_same_seed():

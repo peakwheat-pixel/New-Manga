@@ -1,0 +1,139 @@
+{
+ "$schema": "http://json-schema.org/draft-07/schema#",
+ "$id": "sfx-data-infra/sample@1",
+ "title": "SFX sample manifest record",
+ "type": "object",
+ "required": [
+  "schema_version",
+  "sample_id",
+  "image",
+  "boxes",
+  "annotation_status",
+  "provenance",
+  "group",
+  "split",
+  "created_at"
+ ],
+ "properties": {
+  "schema_version": {
+   "const": "sfx-data-infra/sample@1"
+  },
+  "sample_id": {
+   "type": "string",
+   "minLength": 1
+  },
+  "image": {
+   "type": "object",
+   "required": [
+    "path",
+    "sha256",
+    "width",
+    "height"
+   ],
+   "properties": {
+    "path": {
+     "type": "string"
+    },
+    "sha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "width": {
+     "type": "integer",
+     "minimum": 1
+    },
+    "height": {
+     "type": "integer",
+     "minimum": 1
+    }
+   },
+   "additionalProperties": false
+  },
+  "boxes": {
+   "type": "array",
+   "minItems": 1,
+   "items": {
+    "type": "object",
+    "required": [
+     "polygon",
+     "cls"
+    ],
+    "properties": {
+     "polygon": {
+      "type": "array",
+      "minItems": 4,
+      "items": {
+       "type": "array",
+       "minItems": 2,
+       "maxItems": 2,
+       "items": {
+        "type": "number"
+       }
+      }
+     },
+     "cls": {
+      "enum": [
+       "sfx"
+      ]
+     },
+     "text": {
+      "type": [
+       "string",
+       "null"
+      ]
+     },
+     "occluded": {
+      "type": "boolean"
+     }
+    },
+    "additionalProperties": false
+   }
+  },
+  "annotation_status": {
+   "enum": [
+    "complete",
+    "partial",
+    "pseudo",
+    "synthetic"
+   ],
+   "description": "complete=人工精确; partial=人工核验但近似框; pseudo=模型产出未经人工确认; synthetic=程序合成精确 GT"
+  },
+  "provenance": {
+   "type": "object",
+   "required": [
+    "type"
+   ],
+   "properties": {
+    "type": {
+     "enum": [
+      "asset_case",
+      "synthetic_render",
+      "derived",
+      "external_model"
+     ]
+    }
+   }
+  },
+  "group": {
+   "type": "string",
+   "minLength": 1
+  },
+  "split": {
+   "enum": [
+    "train",
+    "val",
+    "test",
+    "challenge",
+    "unassigned"
+   ]
+  },
+  "created_at": {
+   "type": "string",
+   "format": "date-time"
+  },
+  "notes": {
+   "type": "string"
+  }
+ },
+ "additionalProperties": false
+}

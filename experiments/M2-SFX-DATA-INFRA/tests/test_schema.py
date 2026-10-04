@@ -51,6 +51,16 @@ def test_json_schema_matches_dataclass_enums():
     assert js["properties"]["boxes"]["items"]["properties"]["cls"]["enum"] == ["sfx"]
 
 
+def test_schema_json_file_matches_generator():
+    """AC1 双落地：盘上 schema.json 与 make_json_schema() 生成物一致。"""
+    import json
+    from pathlib import Path
+
+    schema_file = Path(__file__).resolve().parents[1] / "schema.json"
+    on_disk = json.loads(schema_file.read_text(encoding="utf-8"))
+    assert on_disk == make_json_schema()
+
+
 def test_empty_boxes_rejected():
     from sfx_data_infra.schema import SampleRecord as SR
 

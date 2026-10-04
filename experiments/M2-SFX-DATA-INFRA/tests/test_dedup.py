@@ -17,7 +17,8 @@ from sfx_data_infra.importers import (
 
 def _noise_img(seed: int, size=(64, 64)):
     rng = np.random.default_rng(seed)
-    return Image.fromarray(rng.integers(0, 256, size=size, dtype=np.uint8).repeat(3, axis=2)[:, :, :3], "RGB")
+    arr = rng.integers(0, 256, size=(size[1], size[0], 3), dtype=np.uint8)
+    return Image.fromarray(arr, "RGB")
 
 
 def test_dhash_stable_and_discriminative():
@@ -52,7 +53,7 @@ def test_find_duplicates_exact_and_perceptual(tmp_path):
     p2 = tmp_path / "b.png"
     img.save(p1)
     img.save(p2)  # 完全相同字节 → exact
-    from sfx_data_infra.hash import _sha256_file
+    from sfx_data_infra.hash import sha256_file as _sha256_file
 
     def mk(i, path, sha):
         return SampleRecord(

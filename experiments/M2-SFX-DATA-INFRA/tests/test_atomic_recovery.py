@@ -67,22 +67,20 @@ def test_crash_before_replace_leaves_old_manifest_intact(tmp_path):
     write_manifest(path, make_samples(3), seed=1)
     old_raw = path.read_bytes()
 
-    crash_script = (
-        "import os, sys;"
-        "sys.path.insert(0, r'%s');"
-        "real_replace = os.replace;"
-        "def crash_replace(src, dst): os._exit(1);"
-        "os.replace = crash_replace;"
-        "from sfx_data_infra.atomicio import write_manifest;"
-        "from sfx_data_infra.schema import SampleRecord;"
-        "import json;"
-        "samples = [json.loads(open(r'%s', encoding='utf-8').read())];"
-        "write_manifest(r'%s', [SampleRecord.from_dict(s) for s in samples], seed=2)"
-        % (
-            str(REPOTests),
-            str(_one_sample_json(tmp_path)),
-            str(path),
-        )
+    crash_script = """
+import os, sys, json
+sys.path.insert(0, r'{pkgparent}')
+def crash_replace(src, dst):
+    os._exit(1)
+os.replace = crash_replace
+from sfx_data_infra.atomicio import write_manifest
+from sfx_data_infra.schema import SampleRecord
+sample = json.loads(open(r'{onesample}', encoding='utf-8').read())
+write_manifest(r'{mpath}', [SampleRecord.from_dict(sample)], seed=2)
+""".format(
+        pkgparent=str(REPOTests),
+        onesample=str(_one_sample_json(tmp_path)),
+        mpath=str(path),
     )
     proc = subprocess.run([sys.executable, "-c", crash_script], capture_output=True)
     assert proc.returncode != 0, "子进程应模拟崩溃退出"
