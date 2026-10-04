@@ -1,0 +1,136 @@
+{
+ "task": "M2-SFX-ANNOTATE-R1 AC5 合成批量（T1b stage-2）",
+ "generated_at_utc": "2026-10-04T08:47:07Z",
+ "tool": "experiments/M2-SFX-ANNOTATE-R1/stage2_synth_batch.py",
+ "pipeline_source": "experiments/M2-SFX-DATA-INFRA/sfx_data_infra/synth.py（T1a 渲染管线，只读复用）",
+ "counts": {
+  "samples_total": 324,
+  "committed_min": 200,
+  "commitment_met": true,
+  "boxes_total": 324,
+  "occluded_samples": 162,
+  "by_font_file": {
+   "TanukiMagic.ttf": 108,
+   "meiryob.ttc": 108,
+   "YuGothB.ttc": 108
+  },
+  "by_text": {
+   "ドン": 41,
+   "ゴゴゴ": 41,
+   "バーン": 41,
+   "ザッ": 41,
+   "オギャァ": 40,
+   "メキメキ": 40,
+   "ズシャア": 40,
+   "ビシッ": 40
+  },
+  "annotation_status": "synthetic",
+  "provenance_type": "synthetic_render"
+ },
+ "grid": {
+  "definition": "字体(3) × rotation(3) × perspective(3) × arc(3) × occlusion(2) = 162 组合 × 每组合 2 样本（T1a 冻结文本集 8 词轮换 + font_size 60/84 与 stroke_width 0/2 交替）",
+  "full_combinations": 162,
+  "samples_per_combination": 2,
+  "occlusion_placement": "数据驱动：先渲染无遮挡基线，贴片=字形像素 bbox 中央 0.5×0.5 方块（T1a default_poc_params 固定左下贴片在旋转组合下落包络空白角、盖不到字形，已弃用）；贴片定位源=渲染纯函数输出，确定性保持",
+  "axes": {
+   "fonts": [
+    {
+     "role": "brush",
+     "file": "TanukiMagic.ttf"
+    },
+    {
+     "role": "system",
+     "file": "meiryob.ttc"
+    },
+    {
+     "role": "system",
+     "file": "YuGothB.ttc"
+    }
+   ],
+   "rotation_deg": [
+    -20.0,
+    0.0,
+    20.0
+   ],
+   "perspective_shift_px": [
+    0.0,
+    24.0,
+    48.0
+   ],
+   "arc_curvature_px": [
+    -30.0,
+    0.0,
+    30.0
+   ],
+   "occlusion": [
+    "none",
+    "rect_patch"
+   ],
+   "text_set": [
+    "ドン",
+    "ゴゴゴ",
+    "バーン",
+    "ザッ",
+    "オギャァ",
+    "メキメキ",
+    "ズシャア",
+    "ビシッ"
+   ],
+   "font_size_alternating": [
+    60,
+    84
+   ],
+   "stroke_width_alternating": [
+    0,
+    2
+   ]
+  }
+ },
+ "fonts": [
+  {
+   "role": "brush",
+   "path": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\fonts\\TanukiMagic.ttf",
+   "file": "TanukiMagic.ttf",
+   "sha256": "e4a1be7078036ba7482b1102e0a720f4e2848716f6a4862607a2c69d44d43278",
+   "pin_verified": true
+  },
+  {
+   "role": "system",
+   "path": "C:\\Windows\\Fonts\\meiryob.ttc",
+   "file": "meiryob.ttc",
+   "sha256": null,
+   "pin_verified": null
+  },
+  {
+   "role": "system",
+   "path": "C:\\Windows\\Fonts\\YuGothB.ttc",
+   "file": "YuGothB.ttc",
+   "sha256": null,
+   "pin_verified": null
+  }
+ ],
+ "gt_verification": {
+  "mode": "全量逐样本（非抽查）",
+  "forward_inverse_max_err_px": 1.7053025658242404e-13,
+  "assert_a_glyph_pixels_inside_envelope_tol3px": "PASS (324/324)；tol=3px（T1a 测试基线 2px +1：本网格复合位移下 arc 离散 roll ≤0.5px 与 BICUBIC/抗锯齿边缘扩散复合最坏 ~3px，synth-r1-0192 实测 2.4px 且逆变换核实为光栅化近似非几何错误；参数↔GT 一致性由断言 B 1e-6px 独立保证）",
+  "assert_b_inverse_recovers_anchor_1p5px": "PASS",
+  "assert_c1_occlusion_reduces_visible": "PASS (162/162 遮挡样本)",
+  "assert_c2_envelope_unchanged_by_occlusion": "PASS (162/162 遮挡样本，≤1e-9px)",
+  "assert_d_same_seed_pixel_identical": "PASS",
+  "envelope_coverage_violations": 0
+ },
+ "split_plan": {
+  "current_split": "unassigned",
+  "note": "split 冻结留给 AC4 组隔离拆分：synthetic/annotate-r1 为单一组不跨集，沿 T1a cli.PINNED_GROUPS 先例 pin train；synthetic 不入 test/challenge（AC5 硬约束）"
+ },
+ "artifacts": {
+  "synthetic_dir_gitignored": "training_data/sfx-v1/annotate-r1/synthetic/",
+  "manifest": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\synthetic\\manifest.json",
+  "fonts_dir": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-ANNOTATE-R1-zcode\\training_data\\sfx-v1\\annotate-r1\\fonts"
+ },
+ "artifact_sha256": {
+  "manifest.json": "99d275b63a775c475be4e8848900de770ace479297ff21e55c89246d2b97d875",
+  "fonts/TanukiMagic.ttf": "e4a1be7078036ba7482b1102e0a720f4e2848716f6a4862607a2c69d44d43278"
+ },
+ "zero_src_note": "本任务零 src：git diff 仅 experiments/M2-SFX-ANNOTATE-R1/** 与 verification/M2-SFX-ANNOTATE-R1/**（+数据本体 gitignored 树）"
+}
