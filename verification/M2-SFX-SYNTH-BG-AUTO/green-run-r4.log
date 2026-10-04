@@ -1,0 +1,4 @@
+# r4 doc-fix 后重录（N7 回归测试补 + 13 收集项=12 passed+1 slow-skip）
+# cmd: cd experiments/M2-SFX-SYNTH-BG-AUTO && PYTHONPATH=../ T1.1.1-impl-py312/python -m pytest tests/ -q
+13 passed, 1 skipped in 12.08s
+EXIT=0

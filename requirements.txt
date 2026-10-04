@@ -39,3 +39,6 @@ safetensors==0.8.0
 # uses PIL, which is already guaranteed by the torchvision dependency above
 # (hard Requires-Dist: pillow) — deliberately NOT re-pinned here.
 onnxruntime==1.30.0
+
+# M2-SFX-SYNTH-BG-AUTO: playwright = ChatGPT 网页底图自动 provider 的浏览器驱动（channel=chrome 用系统浏览器，无需下载内核）
+playwright==1.63.0

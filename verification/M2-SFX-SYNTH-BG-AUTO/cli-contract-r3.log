@@ -1,0 +1,18 @@
+# [SUPERSEDED by cli-contract-r3-final.log] r3 期前置式写法记录——同名参数
+# 主/子双份 default 覆盖坑导致部分格子失真；终版矩阵见 cli-contract-r3-final.log。
+
+# r3 CLI 契约矩阵（完整命令行；全局参数前/后置双验证）
+$ -m chatgpt_bg selfcheck
+EXIT=0 (期望 0)
+$ -m chatgpt_bg check-gap --min-backgrounds 5 --bg-dir /tmp/n6r3 --dry-run (空目录)
+EXIT=3 (期望 3)
+$ -m chatgpt_bg --min-backgrounds 5 check-gap --bg-dir /tmp/n6r3 --dry-run (前置式, 同期望 3)
+EXIT=3 (期望 3)
+$ -m chatgpt_bg --bg-dir /tmp/n6r3 --min-backgrounds 1 check-gap (空目录真触发, 未登录 → 结构化 fail_closed)
+{"fail_closed": {"state": "NOT_LOGGED_IN", "detail": "ChatGPT 未登录。先跑一次人工登录：python -m chatgpt_bg login （浏览器窗口内完成登录后回车确认，登录态持久化在 profile）"}}
+EXIT=4 (期望 4)
+$ -m chatgpt_bg --bg-dir /tmp/n6r3 check-gap (min=0 足量)
+EXIT=4 (期望 0)
+# 补格：min=0 足量（上格漏带 --min-backgrounds 0 触发了默认 20 的真生成路径）
+{"fail_closed": {"state": "NOT_LOGGED_IN", "detail": "ChatGPT 未登录。先跑一次人工登录：python -m chatgpt_bg login （浏览器窗口内完成登录后回车确认，登录态持久化在 profile）"}}
+EXIT=4 (期望 0)
