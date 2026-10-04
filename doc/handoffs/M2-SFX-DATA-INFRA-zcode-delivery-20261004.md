@@ -5,7 +5,7 @@ recipient: Codex（Integrator，编排会话代行）
 base_commit: 4c12e8af
 delivery_head: ecb39e67ff8eba63bf0586beaa00291b76bc29fc
 r2_head: 2838d690（r1→r2 返修；被 r3 取代）
-r3_head: 89872c03（r2→r3 返修，当前 tip）
+r3_head: 89872c03（r2→r3 返修；r4 收口后以集成时实际 tip 为准）
 status: r3-delivered（r2 changes_requested 已返修，待 DSH r3 复核）
 ---
 
@@ -130,7 +130,7 @@ test 弓登记转 T1b（P2-11）/摘要去绝对路径（P2-13）；P3 测试计
   （含合成 24）/val 8/test 4；负样本排除 10；GT 互算 1.71e-13px；TanukiMagic 独占）
 - `summary`/`dedup`/`split --seed 20261005(force)`/`split --seed 20261004(恢复)`/
   `build-train` 全 EXIT=0；恢复后 fingerprint `de3787c6…` 与 pipeline 产物一致
-- manifest.full sha `2f8cdc1f…`、manifest.train sha `3e08c1be…` 与摘要一致；
+- manifest.full sha `2f8cdc1f…`、manifest.train sha `3e08c1be…`（r2 期值；r3 最终 `a48d616e…`/`e0d2981a…`，与摘要同源单次运行，集成方独立复算取证 C5）；
   `git check-ignore training_data/sfx-v1/manifest.full.json` 通过；禁改路径零触碰复验
 - 日志：`verification/M2-SFX-DATA-INFRA/{green-run-r2,selfcheck-run,help-run,pipeline-run,subcommands-r2-run}.log`
 

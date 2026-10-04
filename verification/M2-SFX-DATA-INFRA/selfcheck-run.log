@@ -1,4 +1,4 @@
-# r3 selfcheck
+# r4 selfcheck
 selfcheck @ sfx-data-infra/sample@1: PASS
   [OK] schema_roundtrip: dataclass↔dict 往返一致
   [OK] schema_json_enums: JSON Schema 标注状态枚举与 dataclass 一致

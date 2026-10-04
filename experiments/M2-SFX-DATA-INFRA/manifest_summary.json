@@ -2,7 +2,7 @@
  "task": "M2-SFX-DATA-INFRA",
  "schema_version": "sfx-data-infra/sample@1",
  "manifest_kind": "sfx-data-infra/manifest@1",
- "generated_at": "2026-10-04T03:38:17Z",
+ "generated_at": "2026-10-04T03:48:59Z",
  "data_root_gitignored": "training_data/sfx-v1（repo 同级 gitignored 外部树）",
  "totals": {
   "samples": 82,
@@ -104,11 +104,11 @@
  },
  "manifest_files": {
   "manifest.full.json": {
-   "sha256": "a48d616eae59ee848a30f2902df6101f5765898e5471265557e481d5bc15878a",
+   "sha256": "25601a23e61454068191017712026f43dcd22e56f0b1cfa9bb99b4197f91140e",
    "bytes": 253363
   },
   "manifest.train.json": {
-   "sha256": "e0d2981a054145e1532bdf2f31610aba50fee9845ee3c9c74aac1f85116b36e8",
+   "sha256": "241454da0ec4b62698ff0f2ca3a9533b9c9247aa15ffc1b5b089762fbc6941d7",
    "bytes": 216280
   }
  }

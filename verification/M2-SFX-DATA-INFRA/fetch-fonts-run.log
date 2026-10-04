@@ -1,0 +1,7 @@
+# r4 fetch-fonts 执行留证（C3：在盘字体 sha 与 pin 一致的快路径校验 + LICENSE-NOTE 生成）
+[fetch-fonts] already present & verified: training_data\sfx-v1\fonts\TanukiMagic.ttf
+EXIT=0
+--- LICENSE-NOTE.txt ---
+TanukiMagic（たぬき油性マジック）© たぬき侍 / tanukifont.com — SIL Open Font License；sha256 pin 见本脚本 FONT_SHA256。--- 在盘 ttf sha 复算 ---
+on-disk ttf: e4a1be7078036ba7482b1102e0a720f4e2848716f6a4862607a2c69d44d43278
+pin        : e4a1be7078036ba7482b1102e0a720f4e2848716f6a4862607a2c69d44d43278

@@ -66,6 +66,12 @@ def test_pipeline_end_to_end_r1_fixes(tmp_path):
     assert summary["dedup"]["exact_pairs"] == 0 and "perceptual_pairs" in summary["dedup"]
     assert summary["train_builder"]["excluded_negative_ids"] is not None
     assert summary["import_assets"]["imported"] == 58
+    # r3 C1 回归：import_assets 的 boxes/assets_copied 必须重算而非丢失
+    assert summary["import_assets"]["boxes"] == sum(
+        len(s.boxes) for s in records if s.provenance.get("type") != "synthetic_render")
+    assert summary["import_assets"]["assets_copied"] >= 1
+    assert "not_recomputable_by_summary" in str(
+        summary["synthetic_poc"]["gt_roundtrip_max_err_px"])
     # r2 新-2 回归：摘要内字体只记基名，无本机绝对路径
     for f in summary["synthetic_poc"]["fonts"]:
         assert "\\" not in f and "/" not in f, f"字体应为基名: {f}"
@@ -77,3 +83,34 @@ def test_pipeline_end_to_end_r1_fixes(tmp_path):
     container2, records2 = load_manifest(data_root / "manifest.full.json")
     from sfx_data_infra.splits import split_fingerprint as _sf
     assert container2["lock"]["fingerprint"] == _sf(records2, int(container2["seed"]))
+
+
+def test_cmd_dedup_recomputes_fingerprint_on_real_drop(tmp_path):
+    """r2 新-6 回归：真丢弃样本时 cmd_dedup 必须重算 lock.fingerprint（非透传旧值）。"""
+    from sfx_data_infra.atomicio import load_manifest, write_manifest
+    from sfx_data_infra.schema import BoxAnnotation, ImageRef, SampleRecord
+    from sfx_data_infra.splits import split_fingerprint
+
+    data_root = tmp_path / "data"
+    data_root.mkdir()
+    def mk(sid, sha):
+        return SampleRecord(
+            sample_id=sid,
+            image=ImageRef(path=f"{sid}.png", sha256=sha, width=64, height=64),
+            boxes=[BoxAnnotation(polygon=[[0, 0], [8, 0], [8, 8], [0, 8]])],
+            annotation_status="synthetic",
+            provenance={"type": "synthetic_render", "render_seed": 1},
+            group="synthetic/poc",
+            split="train",
+            created_at="2026-10-04T00:00:00+00:00",
+        )
+    samples = [mk("dup-a", "a" * 64), mk("dup-b", "a" * 64), mk("keep", "b" * 64)]
+    write_manifest(data_root / "manifest.full.json", samples, seed=7,
+                   extra={"lock": {"seed": 7, "method": "group-hash-rank-v2",
+                                   "fingerprint": "stale-value", "frozen_at": "2026-10-04T00:00:00Z"}})
+    rc = cli.main(["--data-root", str(data_root), "dedup"])
+    assert rc == 0
+    container, records = load_manifest(data_root / "manifest.full.json")
+    assert len(records) == 2, "同图同框副本应被剔除"
+    assert container["lock"]["fingerprint"] != "stale-value"
+    assert container["lock"]["fingerprint"] == split_fingerprint(records, 7)

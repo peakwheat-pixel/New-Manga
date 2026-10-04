@@ -11,9 +11,9 @@
 | AC | 结论 | 关键证据 |
 |---|---|---|
 | AC1 schema 冻结 | **完成** | `sfx_data_infra/schema.py` dataclass + `schema.json`（draft-07，由 `make_json_schema()` 生成，`test_schema_json_file_matches_generator` 断言双落地一致）；字段=图引用(path+sha256+w+h)/框(多边形+cls+text+occluded)/`annotation_status complete\|partial\|pseudo\|synthetic`/provenance(type=asset_case\|synthetic_render\|derived\|external_model)/group/split/created_at。**口径冻结：GT=sfx 实例包络（含遮挡推断），理由 4 条写入 README §口径冻结** |
-| AC2 分组隔离拆分器 | **完成** | `splits.py`：组键规则（README §组键；peppercarrot ja/kr 同 ep 强制同组防泄漏）；BJ13/14/15 单列 challenge；`group-hash-rank-v2` 排序切片（seed=20261004 冻结+fingerprint `a02fed3d…`）；派生 fixpoint 继承父 split；`TrainingSetBuilder` 构造期丢弃 test/challenge 且 allowlist 含即抛 `SplitAccessError`（API 无取回通道）。真实数据重放 fingerprint 一致 |
+| AC2 分组隔离拆分器 | **完成** | `splits.py`：组键规则（README §组键；peppercarrot ja/kr 同 ep 强制同组防泄漏）；BJ13/14/15 单列 challenge；`group-hash-rank-v2` 排序切片（seed=20261004 冻结；r1 fingerprint `a02fed3d…`，r3 现行 `de3787c6…` 见 r3 修订段——pinned 语义加入所致）；派生 fixpoint 继承父 split；`TrainingSetBuilder` 构造期丢弃 test/challenge 且 allowlist 含即抛 `SplitAccessError`（API 无取回通道）。真实数据重放 fingerprint 一致 |
 | AC3 去重+原子写 | **完成** | dhash 自实现（PIL+numpy，64bit 横向梯度）+框级精确哈希（规范化坐标 0.1px+cls+text+图 sha）；判重语义=同图+同框集合（一页多实例合法，首版误杀已修）；manifest 原子写=tmp+fsync+os.replace+读回校验+残留 tmp 清理；子进程 `os.replace` 前注入 `os._exit(1)` 的 crash 测试通过 |
-| AC4 合成渲染 PoC | **完成** | 24 样本（≥20），`annotation_status=synthetic`；arc→rotate→perspective+translate 点与像素走同一几何函数；GT 包络=forward(anchor 路径序 64 采样点)；**互算断言**：A 字形像素⊆包络（容差 2px）/B forward∘inverse 全点还原（max err 2.27e-13 px）/C 遮挡只作用图像层不改变 GT 包络；AI 整图生成未引入（schema 语义已冻结 pseudo 不入 GT） |
+| AC4 合成渲染 PoC | **完成** | 24 样本（≥20），`annotation_status=synthetic`；arc→rotate→perspective+translate 点与像素走同一几何函数；GT 包络=forward(anchor 路径序 64 采样点)；**互算断言**：A 字形像素⊆包络（容差 2px）/B forward∘inverse 全点还原（max err 2.27e-13 px，r1 值；r3 现行 1.71e-13 见 r3 修订段）/C 遮挡只作用图像层不改变 GT 包络；AI 整图生成未引入（schema 语义已冻结 pseudo 不入 GT） |
 | AC5 存量导入器 | **完成** | `importers.py` 一键 7+8+43=58：l3 七参照框→`partial`（页图 BJ13/14/15 在 E2E-MATERIAL worktree）；BJ06 八自证框→`partial`（页图在 TA2B worktree，**导入时对账 qual 记录 source_sha256 `b06c9d7d…` 一致**）；ogkalu 43 region→`pseudo`（crop 图 43/43 在盘，原始 cls/conf/harvest 阈值入 provenance；其中 11 region detections 为空→空框 pseudo 负证据样本，schema 冻结允许且 43 全量入册） |
 | AC6 零 src+CLI | **完成** | `git diff 4c12e8af..HEAD --stat` 零 src/tests/contracts/packaging/apps/STATUS/test_assets 变更；`python -m sfx_data_infra --help` EXIT=0；`selfcheck` EXIT=0（schema 往返/dhash/几何互算 5.7e-14/原子写恢复 4 项自检全 OK）；数据本体落 `training_data/sfx-v1/`（`.gitignore` 加 `/training_data/`，check-ignore 验证） |
 
@@ -25,8 +25,9 @@ r3 修复：
 - **新-1（P1）摘要覆写降级**：`cmd_summary` 改为从盘上 manifest **重算全部统计**
   （dedup/build-train/import 全算，不再传空报告）；验证流程改为"官方 data_root 只跑
   pipeline、子命令在临时副本验证"——Git 摘要不再被子命令回写污染。
-  **最终产物 sha：manifest.full `a48d616eae59ee84…`、manifest.train `e0d2981a054145e1…`
-  （与 manifest_summary.json 逐字节核对一致）**；报告与 handoff 引用同值。
+  **最终产物 sha：manifest.full `a48d616eae59ee84…`、manifest.train `e0d2981a054145e1…`**
+  （由 pipeline 同一运行经 build_summary.fsha 写入摘要——报告与摘要同源单次运行，
+  集成方须独立 sha256sum 复算取证，r3 C5）。
 - **新-2（P2-13 真闭合）**：摘要 `fonts` 只记文件名（TanukiMagic.ttf），无本机绝对路径。
 - 新-3 未用 `import os as _os` 清除；新-4 importers 空 pass 分支删除、`det.get("cls")`。
 - **新-5 字体可复现通道**：新增 `fetch_fonts.py`（上游 zip+ttf 双 sha256 pin 校验，

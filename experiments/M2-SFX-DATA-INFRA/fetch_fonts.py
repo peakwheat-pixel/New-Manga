@@ -61,7 +61,14 @@ def fetch_fonts(data_root: Path) -> Path:
             )
         with zipfile.ZipFile(zpath) as z:
             z.extract(FONT_MEMBER, tdp)
-        shutil.copy2(tdp / FONT_MEMBER, dst)
+        extracted = tdp / FONT_MEMBER
+        # r3 C3：解出的 TTF 也必须命中 pin（r2 新-5 残项——此前只在快路径校验）
+        got_ttf = sha256_file(extracted)
+        if got_ttf != FONT_SHA256:
+            raise RuntimeError(
+                f"解出的 {FONT_MEMBER} sha256 不符：got {got_ttf} != pin {FONT_SHA256}"
+            )
+        shutil.copy2(extracted, dst)
 
     (fonts_dir / "LICENSE-NOTE.txt").write_text(LICENSE_NOTE, encoding="utf-8")
     print(f"[fetch-fonts] verified & installed: {dst}")

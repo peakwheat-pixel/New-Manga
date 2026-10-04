@@ -34,9 +34,12 @@ Git 只进代码+schema+`manifest_summary.json`（摘要与哈希）。
 以 `glyph_mask_ref` 字段扩展，不破坏包络 GT 口径。
 
 **字体（r1 P2-12 已闭合）**：PoC 接入 TanukiMagic（たぬき油性マジック，OFL 许可，
-tanukifont.com）毛笔/手写风字体——放 `training_data/sfx-v1/fonts/`（或 env
-`NEWMANGA_SFX_SYNTH_FONTS`），`discover_fonts` 按文件名关键词（tanuki/brush/fude
-等）优先选用；毛笔字体在盘时 PoC 独占使用，否则回退系统字体（差距登记）。
+tanukifont.com）毛笔/手写风字体。获取：`<python> -m sfx_data_infra fetch-fonts`
+（= `fetch_fonts.py`，下载 zip→**双 sha256 pin 校验**（zip+解出 ttf，fail-closed 不
+静默换源）→落 `training_data/sfx-v1/fonts/` 并写 LICENSE-NOTE.txt；也可手工放字体
+或用 env `NEWMANGA_SFX_SYNTH_FONTS` 指目录）。`discover_fonts` 按文件名关键词
+（tanuki/brush/fude/kouzan）优先选用；毛笔字体在盘时 PoC 独占使用，否则回退系统
+字体（差距登记）。
 
 **标注状态语义**（冻结）：
 `complete`=人工像素级精确；`partial`=人工核验但近似框（l3 参照框/BJ06 自证框）；

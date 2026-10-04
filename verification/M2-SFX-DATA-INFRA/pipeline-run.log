@@ -1,4 +1,4 @@
-# r3 pipeline（官方 data_root 最终跑，challenge_single_bucket 统一后）
+# r4 pipeline（官方 data_root 最终跑：挑战清单排序定序后）
 [import] {"imported": 58, "boxes": 182, "assets_copied": 47}
 [synth] {"synth_count": 24, "roundtrip_max_err_px": 1.7053025658242404e-13}
 [split] {"seed": 20261004, "pinned_groups": {"synthetic/poc": "train"}, "by_split": {"challenge": 7, "train": 63, "test": 4, "val": 8}}
