@@ -213,6 +213,12 @@
           "markdownDescription": "Enables the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Enables the list_regions command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-list-regions",
+          "markdownDescription": "Enables the list_regions command without any pre-configured scope."
+        },
+        {
           "description": "Enables the probe_config command without any pre-configured scope.",
           "type": "string",
           "const": "allow-probe-config",
@@ -247,6 +253,12 @@
           "type": "string",
           "const": "allow-revoke-resource-refs",
           "markdownDescription": "Enables the revoke_resource_refs command without any pre-configured scope."
+        },
+        {
+          "description": "Enables the set_region_type command without any pre-configured scope.",
+          "type": "string",
+          "const": "allow-set-region-type",
+          "markdownDescription": "Enables the set_region_type command without any pre-configured scope."
         },
         {
           "description": "Enables the settings_get command without any pre-configured scope.",
@@ -297,6 +309,12 @@
           "markdownDescription": "Denies the library_list_books command without any pre-configured scope."
         },
         {
+          "description": "Denies the list_regions command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-list-regions",
+          "markdownDescription": "Denies the list_regions command without any pre-configured scope."
+        },
+        {
           "description": "Denies the probe_config command without any pre-configured scope.",
           "type": "string",
           "const": "deny-probe-config",
@@ -331,6 +349,12 @@
           "type": "string",
           "const": "deny-revoke-resource-refs",
           "markdownDescription": "Denies the revoke_resource_refs command without any pre-configured scope."
+        },
+        {
+          "description": "Denies the set_region_type command without any pre-configured scope.",
+          "type": "string",
+          "const": "deny-set-region-type",
+          "markdownDescription": "Denies the set_region_type command without any pre-configured scope."
         },
         {
           "description": "Denies the settings_get command without any pre-configured scope.",
