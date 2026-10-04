@@ -2,7 +2,8 @@
 id: M2-SFX-CORRECTION-EXPORTER
 title: "纠错样本导出器：revision 链扫描→训练样本资格判定→T1a schema 导出（T5c；命令式零生产写路径）"
 kind: feature
-status: in_review
+status: done
+integration_commit: 66871d5d
 approval: user_ruling_2026-10-04_释放T1b_T5b_T5c
 suggested_owner: ZCode
 owner: ZCode
@@ -65,3 +66,11 @@ depends_on 均 done（T5b 是运行时数据来源而非本 Task 硬依赖——
 - Handoff：[M2-SFX-CORRECTION-EXPORTER-zcode-delivery-9c7cf7bc.md](../handoffs/M2-SFX-CORRECTION-EXPORTER-zcode-delivery-9c7cf7bc.md)（delivery_head=9c7cf7bc；提交链 1b765007→df0e05c4 claim→9c7cf7bc 实现→文档回填；尾部附 DSH r1 修订段）。
 - Review：DSH r1=changes_requested（P1-1 必修 + P2-1 + P3×5 + P4×10），已于 r1 返修 commit 全量处置（对照见 Handoff「DSH r1 修订段」findings_disposition）；待 DSH r2。
 - 实现：`experiments/M2-SFX-CORRECTION-EXPORTER/`（scanner/samples/eligibility/export/fixture/cli + 50 测试（r1 返修后）+ README）；报告 [exporter-report.md](../verification/M2-SFX-CORRECTION-EXPORTER/exporter-report.md)；导出物 training_data/sfx-corrections/（gitignored，Git 只进摘要）。
+
+
+## 集成收口（2026-10-04，编排会话代行 Codex）
+
+- **integration_commit=`66871d5d`**（merge，无冲突）；**r1 返修 commit=`669146a1`（链顶）**。
+- 集成复跑：pytest experiments/…/tests = **50 passed**；selfcheck 6/6 EXIT=0；真库冒烟补跑（T5b 集成后）EXIT=0 `CORRECTIONS_EMPTY=expected`（真库尚无改标事实，T5b @`d8019810` 刚集成；首个真实改标链出现后 export 即产出非空样本）。
+- r2 条件闭合：**P4-a** 幽灵标识符 rgO3→实际用例名（eligibility.py CONSTANTS 1 处+README 1 处+四处证据文件重生成/替换并 JSON 校验，rgO3 全仓残留 0）；**P4-b** dataset.yaml split 集合与 scope 差异登记于 README 集成注记（语义对齐留 T2）；P4-c 红态性质报告 §8 已登记。
+- 语义重裁定项（P3-1 保守误杀/P3-2 restore 背书读法）已在 CONSTANTS/README/报告三处登记，留 T2 训练接入前复核。

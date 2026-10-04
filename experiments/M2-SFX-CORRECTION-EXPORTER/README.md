@@ -97,7 +97,7 @@ complete；与 `pseudo`（连类型都无人工背书）保持分界。
 - **已登记的保守角例**：撤销后经 restore 复活已改标 revision 的终态纠错——
   判据 (a) 保守误杀（见 `SURVIVAL_UNDONE_RULE`，fixture rgO2 显式钉住期望=
   不存活）；DSH r1 P3-2 的 restore 背书几何读法登记见 `GEOMETRY_CONFIRM_RULE`
-  （rgO3 判别用例钉住现读法）。T5b 集成后的真库冒烟由集成方补跑。
+  （test_geometry_gate_restore_endorsement_readout_pinned (rgX) 判别用例钉住现读法）。T5b 集成后的真库冒烟由集成方补跑。
 
 ## fixture（15 region 矩阵）
 
@@ -107,3 +107,8 @@ restore/纯顺序/非 sfx 向/软删除/BJ13 映射页/纯 bbox/撤销后 restor
 几何全部页内（64×48，DSH r1 P4-4）且 bbox 为生产 xywh 语义。场景与逐条期望见
 `tests/test_scanner.py` 模块 docstring；红绿证据在
 `verification/M2-SFX-CORRECTION-EXPORTER/evidence/`。
+
+
+## 集成注记（2026-10-04，r2 P4-b）
+
+`--yolo-scope` 默认 `main` 时，`dataset.yaml` 声明的 split 集合（train/val/challenge）以 `splits_present`（全部 kept 样本）为准，与 YOLO 树实际落盘（仅正集）可能不一致——scope=all 时两者一致。消费方以 `export.yolo_scope` 摘要字段判断树内容；语义对齐（splits_present 由 yolo_samples 推导）留 T2 训练接入时一并处理。

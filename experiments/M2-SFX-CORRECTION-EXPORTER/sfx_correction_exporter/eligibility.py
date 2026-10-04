@@ -24,7 +24,7 @@ CONSTANTS: dict[str, str] = {
         "v1: complete iff 链首笔 origin=user（用户自建）或链上存在用户几何编辑；"
         "否则 partial（机器检出几何未被用户触碰）。读法登记（DSH r1 P3-2）：restore 至"
         "已改标 revision 读作用户背书该 revision 几何（用户在 restore 选项中主动回退到"
-        "该状态），但现实现不单独以 restore 背书触发 complete（rgO3 判别用例钉住现读法"
+        "该状态），但现实现不单独以 restore 背书触发 complete（test_geometry_gate_restore_endorsement_readout_pinned (rgX) 判别用例钉住现读法"
         "=partial；按背书读法会判 complete——语义重裁定留 T2）"
     ),
     "PARTIAL_ROUTING": "auxiliary manifest（不入正集，可选入辅助集）",
