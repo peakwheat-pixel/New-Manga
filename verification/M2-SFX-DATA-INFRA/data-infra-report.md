@@ -25,9 +25,10 @@ r3 修复：
 - **新-1（P1）摘要覆写降级**：`cmd_summary` 改为从盘上 manifest **重算全部统计**
   （dedup/build-train/import 全算，不再传空报告）；验证流程改为"官方 data_root 只跑
   pipeline、子命令在临时副本验证"——Git 摘要不再被子命令回写污染。
-  **最终产物 sha：manifest.full `a48d616eae59ee84…`、manifest.train `e0d2981a054145e1…`**
-  （由 pipeline 同一运行经 build_summary.fsha 写入摘要——报告与摘要同源单次运行，
-  集成方须独立 sha256sum 复算取证，r3 C5）。
+  **最终产物 sha（r4 定序后现行值）：manifest.full `25601a23e6145406…`、
+  manifest.train `241454da0ec4b626…`**（由 pipeline 同一运行经 build_summary.fsha
+  写入摘要——报告与摘要同源单次运行，集成方须独立 sha256sum 复算取证，r3 C5；
+  r3 期值 a48d616e/e0d2981a 因挑战清单排序定序被本值取代）。
 - **新-2（P2-13 真闭合）**：摘要 `fonts` 只记文件名（TanukiMagic.ttf），无本机绝对路径。
 - 新-3 未用 `import os as _os` 清除；新-4 importers 空 pass 分支删除、`det.get("cls")`。
 - **新-5 字体可复现通道**：新增 `fetch_fonts.py`（上游 zip+ttf 双 sha256 pin 校验，

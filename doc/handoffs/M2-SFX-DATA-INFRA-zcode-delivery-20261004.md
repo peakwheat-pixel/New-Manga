@@ -130,7 +130,7 @@ test 弓登记转 T1b（P2-11）/摘要去绝对路径（P2-13）；P3 测试计
   （含合成 24）/val 8/test 4；负样本排除 10；GT 互算 1.71e-13px；TanukiMagic 独占）
 - `summary`/`dedup`/`split --seed 20261005(force)`/`split --seed 20261004(恢复)`/
   `build-train` 全 EXIT=0；恢复后 fingerprint `de3787c6…` 与 pipeline 产物一致
-- manifest.full sha `2f8cdc1f…`、manifest.train sha `3e08c1be…`（r2 期值；r3 最终 `a48d616e…`/`e0d2981a…`，与摘要同源单次运行，集成方独立复算取证 C5）；
+- manifest.full sha `2f8cdc1f…`、manifest.train sha `3e08c1be…`（r2 期值；r4 现行 `25601a23…`/`241454da…`，与摘要同源单次运行，集成方独立复算取证 C5）；
   `git check-ignore training_data/sfx-v1/manifest.full.json` 通过；禁改路径零触碰复验
 - 日志：`verification/M2-SFX-DATA-INFRA/{green-run-r2,selfcheck-run,help-run,pipeline-run,subcommands-r2-run}.log`
 
