@@ -134,6 +134,9 @@ Live Git=`main@f6f22b67`（2026-09-29 REBASELINE 审计基线，未 push）。�
 | [M2-SFX-DETECT-DOMAIN-EXT-DIAG](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md) SFX 检测域扩展诊断（BJ 域缺口+五方案） | **done @merge `7dd5e5ff`**（零 src；双 DSH r1 交叉验证；根因=域外+结构性发现=无重叠仲裁；排序⑤＞③＞①＞④＞②移交三件裁决；**裁决回执 2026-10-04：①维持现状+UI 缓解 / ②fine-tune 暂不投入 / ③重叠仲裁授权**） | ZCode / DeepSeek Harness | [报告](verification/M2-SFX-DETECT-DOMAIN-EXT-DIAG/diagnosis-and-options.md)、[Task](tasks/M2-SFX-DETECT-DOMAIN-EXT-DIAG.md)。 |
 | [M2-REGION-OVERLAP-ARBITRATION](tasks/M2-REGION-OVERLAP-ARBITRATION.md) region 创建跨 provider 重叠仲裁（裁决③） | **done @merge `38e4e487`**（DSH r1 changes_requested 3×P1→编排裁决 (a) 修订 AC2→r2 approved_with_conditions，4 项文本条件集成方闭合；composite 层 sfx 驱动定向改标 IoU 0.90 保守域+`NEWMANGA_SFX_ARBITRATION[_IOU]` typed 旋钮；**结构性定案（双独立复算确认）=纯几何重叠反向不可分离**（域内 0.8865 vs BJ13 误路由 0.490/0.550）→BJ13 自动闭合挂召回恢复依赖链（此前 no-op）；KO 10 case off/on 逐位一致（最高 IoU 0.1325）+BJ06 逐位一致；三套件 627+1sk） | ZCode / DeepSeek Harness | [报告](verification/M2-REGION-OVERLAP-ARBITRATION/arbitration-report.md)、[Task](tasks/M2-REGION-OVERLAP-ARBITRATION.md)、[r1](reviews/M2-REGION-OVERLAP-ARBITRATION-b27c826f-dsh-r1.md)/[r2](reviews/M2-REGION-OVERLAP-ARBITRATION-e43cc5db-dsh-r2.md)。 |
 | [M2-SFX-MISROUTE-UI-MITIGATION](tasks/M2-SFX-MISROUTE-UI-MITIGATION.md) SFX 误路由缓解 UI 设计切片（裁决①） | **done @merge `4d77a778`**（用户改派 Qoder→ZCode @`fb5d56c6`；DSH r1 approved_with_conditions 4×P2+6×P3+7×P4→18 条全闭合 @`42be3c11`→r2 approved_with_conditions（N-1..N-4 集成方闭合）；E1-E4 视觉+不对称状态机+D1-D10 数据缺口表（RC-1..RC-5 登记零 widening）+13 断言；零产品代码；**产品实现 blocked_on Workbench React 页+region 通道**） | ZCode / DeepSeek Harness | [设计](doc/design/M2-SFX-MISROUTE-UI-MITIGATION/design.md)、[Task](tasks/M2-SFX-MISROUTE-UI-MITIGATION.md)、[r1](reviews/M2-SFX-MISROUTE-UI-MITIGATION-c92eaddd-dsh-r1.md)/[r2](reviews/M2-SFX-MISROUTE-UI-MITIGATION-3f589a0b-dsh-r2.md)。 |
+| [M2-SFX-FINETUNE-PREFLIGHT](tasks/M2-SFX-FINETUNE-PREFLIGHT.md) SFX 微调 V1 技术预检（T0） | **ready**（2026-10-04 二次裁决释放：撤销 SFX fine-tune 不投入、许可降权备案、质量效率优先；路线 A 实证 .pt 可得性/四类监督策略/显存摸底/ONNX 导出链冒烟；零 src） | ZCode / DeepSeek Harness | 训练线第一环；后续 T1b 标注轮/T2 训练/T3 Gate/T4 切换待其结论。 |
+| [M2-SFX-DATA-INFRA](tasks/M2-SFX-DATA-INFRA.md) 训练数据基础设施（T1a） | **ready**（同批释放；manifest schema/分组隔离/去重/可恢复+合成渲染 PoC；不等底座；零 src） | ZCode / DeepSeek Harness | 数据线地基；批量生成后续 Task。 |
+| [M2-REGION-RETYPE-CONTRACT](tasks/M2-REGION-RETYPE-CONTRACT.md) Region 改标契约冻结（T5a） | **ready**（同批释放；SetRegionType+读取 DTO+并发/人工覆盖语义+「忽略」定义+EV-8 裁决；M2-C1 rev 1.3→1.4 草案；只修契约不实现） | ZCode / DeepSeek Harness | T5 线第一环；T5b Core 实现/T5c 样本导出器待其冻结。 |
 
 ```mermaid
 flowchart TD
@@ -204,6 +207,9 @@ flowchart TD
   SMAT -.-> DEXT
   DEXT -.-> ARBIT["M2-REGION-OVERLAP-ARBITRATION 重叠仲裁 · done @38e4e487（裁决③；几何反向不可分离定案；BJ13 闭合挂召回恢复链）"]
   DEXT -.-> UIM["M2-SFX-MISROUTE-UI-MITIGATION 缓解 UI 设计 · done @4d77a778（设计契约；实现 blocked_on Workbench）"]
+  DEXT -.-> T0["M2-SFX-FINETUNE-PREFLIGHT 技术预检 · ready（二次裁决；训练线 T0）"]
+  DEXT -.-> T1A["M2-SFX-DATA-INFRA 数据基础设施 · ready（T1a 并行）"]
+  UIM -.-> T5A["M2-REGION-RETYPE-CONTRACT 改标契约 · ready（T5a rev1.4 草案）"]
 
   %% docTR qualification 主线（2026-09-30 口径裁决后闭环，正式结论 FAIL）
   TA1 -.-> PRE["DOCTR-QUAL-PREFLIGHT 权重/环境/评测基座 · O:ZCode ✓"]
@@ -224,6 +230,7 @@ flowchart TD
   classDef done fill:#d7f5df,stroke:#237a3b,color:#123;
   classDef proposed fill:#fff0b3,stroke:#8a6d00,color:#123;
   class DEXT,ARBIT,UIM done;
+  class T0,T1A,T5A proposed;
 
 
   

@@ -65,3 +65,10 @@ DSH r1 verdict=`changes_requested`（0×P0，1×P1+4×P2+3×P3+3×P4）：主根
 ## 裁决回执（2026-10-04，用户「按推荐」）
 
 §5 移交三问处置：①**维持现状+UI 缓解采纳**（方案⑤）→ [M2-SFX-MISROUTE-UI-MITIGATION](M2-SFX-MISROUTE-UI-MITIGATION.md) `ready`（Qoder 设计交付；产品实现 blocked_on Workbench React 页）；②**fine-tune（方案③）暂不投入**——AGPL 衍生许可风险未接受，翻案条件=用户明确接受 Ultralytics AGPL 衍生权重许可+承诺 BJ 域 GT 标注投入（沿 C4 条件式先例反向登记），不释放；③**重叠仲裁授权采纳**→ [M2-REGION-OVERLAP-ARBITRATION](M2-REGION-OVERLAP-ARBITRATION.md) `ready`（ZCode，契约切片+实施混合形态）。方案②类敏感阈值维持否决、方案④路由维持不推荐。
+
+## 二次裁决（2026-10-04，用户指令「不用考虑原漫画版权归权利人……最重要原则：提高训练质量和效率」）
+
+- **撤销裁决②**：仅撤销「SFX fine-tune 暂不投入」（本裁决项）；docTR C4「fine-tune 主线不投入」不受影响、维持原判。
+- **许可降权**：素材来源（HF webtoon/densho810/P&C）与底座模型（chiqui7 AGPL）的版权/许可风险由用户明示接受，降级为登记备案项，**不作为训练流程阻断门**；T0 保留技术预检（训练权重可得性/显存/ONNX 导出/四类监督策略——直接影响质量效率）。事实性风险描述保留于文档（不伪造无风险结论），流程地位改为备案。
+- **最高原则**：训练质量与效率优先，尽量减少版权问题导致的任务修改与中断。
+- 数据策略随裁决更新：KO HF 素材恢复训练资格；V1=BJ+KO 双域真实标注+合成数据（程序渲染产精确 GT）辅助。
