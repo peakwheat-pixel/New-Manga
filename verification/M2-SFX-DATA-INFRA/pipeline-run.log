@@ -1,0 +1,6 @@
+[import] {"imported": 58, "boxes": 182, "assets_copied": 47}
+[synth] {"synth_count": 24, "roundtrip_max_err_px": 2.2737367544323206e-13}
+[split] {"seed": 20261004, "fingerprint": "a02fed3da3a8aba11d6e718985633a81b341aca373e70e8dcf07a6a7a431da1e", "by_split": {"challenge": 7, "train": 39, "test": 5, "val": 31}}
+[dedup] {"exact_pairs": 0, "box_exact_pairs": 0, "perceptual_pairs": 0, "dropped": 0, "dhash_errors": []}
+[build-train] {"train_builder_counts": {"train": 39, "val": 31}, "excluded_splits": ["test", "challenge"]}
+[summary] G:\CODEX\New Manga.worktrees\M2-SFX-DATA-INFRA-zcode\experiments\M2-SFX-DATA-INFRA\manifest_summary.json

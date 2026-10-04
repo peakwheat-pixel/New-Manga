@@ -1,0 +1,89 @@
+{
+ "task": "M2-SFX-DATA-INFRA",
+ "schema_version": "sfx-data-infra/sample@1",
+ "manifest_kind": "sfx-data-infra/manifest@1",
+ "generated_at": "2026-10-04T02:05:21Z",
+ "data_root_gitignored": "G:\\CODEX\\New Manga.worktrees\\M2-SFX-DATA-INFRA-zcode\\training_data\\sfx-v1",
+ "totals": {
+  "samples": 82,
+  "images": 71,
+  "boxes": 206,
+  "by_status": {
+   "partial": 15,
+   "pseudo": 43,
+   "synthetic": 24
+  },
+  "by_split": {
+   "challenge": 7,
+   "train": 39,
+   "test": 5,
+   "val": 31
+  },
+  "by_group": {
+   "densho810/vol03": 15,
+   "vasyanator2/724815": 4,
+   "vasyanator2/651664": 1,
+   "vasyanator2/671421": 5,
+   "vasyanator2/670145": 1,
+   "vasyanator2/131385": 3,
+   "vasyanator2/570506": 3,
+   "vasyanator2/641253": 9,
+   "vasyanator2/701535": 7,
+   "vasyanator2/717481": 6,
+   "vasyanator2/730656": 4,
+   "synthetic/poc": 24
+  }
+ },
+ "import_assets": {
+  "l3_reference_boxes": 7,
+  "bj06_selfcheck_boxes": 8,
+  "ogkalu_regions": 43,
+  "ogkalu_regions_negative_empty_boxes": 11,
+  "ogkalu_boxes_total": 167,
+  "imported": 58,
+  "boxes": 182,
+  "assets_copied": 47
+ },
+ "synthetic_poc": {
+  "count": 24,
+  "gt_roundtrip_max_err_px": 2.2737367544323206e-13,
+  "annotation_status": "synthetic",
+  "ai_fullpage_generation": "not_used（若引入必标 pseudo 不入 GT）"
+ },
+ "split_lock": {
+  "seed": 20261004,
+  "method": "group-hash-rank-v2",
+  "fingerprint": "a02fed3da3a8aba11d6e718985633a81b341aca373e70e8dcf07a6a7a431da1e",
+  "challenge_single_bucket": [
+   "BJ13",
+   "BJ14",
+   "BJ15"
+  ]
+ },
+ "dedup": {
+  "exact_pairs": 0,
+  "box_exact_pairs": 0,
+  "perceptual_pairs": 0,
+  "dhash_errors": []
+ },
+ "train_builder": {
+  "train_builder_counts": {
+   "train": 39,
+   "val": 31
+  },
+  "excluded_splits": [
+   "test",
+   "challenge"
+  ]
+ },
+ "manifest_files": {
+  "manifest.full.json": {
+   "sha256": "095a3c590c29f9c5617edaa57fd959459e3ee16dd515873d3cc367ad4380b56b",
+   "bytes": 234334
+  },
+  "manifest.train.json": {
+   "sha256": "17129854061a9ba83b17d04715d527dbb09bbbef62cbb031f4128e7f35acf399",
+   "bytes": 209372
+  }
+ }
+}

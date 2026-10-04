@@ -158,14 +158,19 @@ def _copy_into_assets(src: Path, data_root: Path, bucket: str) -> str:
 def step_import(data_root: Path, now_iso: str) -> tuple[list[SampleRecord], dict]:
     """导入三资产：7+8+43=58；素材复制进 assets/，图引用转 data_root 相对路径。"""
     raw = import_all(now_iso)
+    # 先收集源路径再改 path：同页多框样本共享 ImageRef 实例，改写须一次完成
+    src_by_sha: dict[str, Path] = {}
+    for s in raw:
+        src_by_sha.setdefault(s.image.sha256, Path(s.image.path))
     rel_names: dict[str, str] = {}
     for s in raw:
-        src = Path(s.image.path)
+        src = src_by_sha[s.image.sha256]
         if s.sample_id.startswith("imp-ogkalu-"):
             bucket = "ogkalu-crops"
         else:
             bucket = f"pages-{s.provenance['case_id'].lower()}"
         rel_names[s.sample_id] = _copy_into_assets(src, data_root, bucket)
+    for s in raw:
         s.image.path = rel_names[s.sample_id]
     for s in raw:
         errors = s.validate()
@@ -269,6 +274,7 @@ def build_summary(
     full_path = data_root / "manifest.full.json"
     train_path = data_root / "manifest.train.json"
     ogkalu = [s for s in samples if s.sample_id.startswith("imp-ogkalu-")]
+    ogkalu_negative = [s for s in ogkalu if not s.boxes]
 
     def fsha(p: Path) -> dict:
         return {"sha256": sha256_file(p), "bytes": p.stat().st_size}
@@ -291,6 +297,7 @@ def build_summary(
             "l3_reference_boxes": 7,
             "bj06_selfcheck_boxes": 8,
             "ogkalu_regions": len(ogkalu),
+            "ogkalu_regions_negative_empty_boxes": len(ogkalu_negative),
             "ogkalu_boxes_total": sum(len(s.boxes) for s in ogkalu),
             **import_info,
         },
@@ -302,7 +309,7 @@ def build_summary(
         },
         "split_lock": {
             "seed": split_info["seed"],
-            "method": "group-hash-bucket-v1",
+            "method": "group-hash-rank-v2",
             "fingerprint": split_info["fingerprint"],
             "challenge_single_bucket": list(CHALLENGE_IDS),
         },
@@ -346,7 +353,7 @@ def cmd_pipeline(args: argparse.Namespace) -> int:
         extra={
             "lock": {
                 "seed": seed,
-                "method": "group-hash-bucket-v1",
+                "method": "group-hash-rank-v2",
                 "fingerprint": split_info["fingerprint"],
                 "frozen_at": now_iso,
                 "challenge_case_ids": list(CHALLENGE_IDS),
@@ -393,7 +400,7 @@ def cmd_split(args: argparse.Namespace) -> int:
         data_root / "manifest.full.json",
         records,
         seed=int(args.seed),
-        extra={"lock": {"seed": int(args.seed), "method": "group-hash-bucket-v1",
+        extra={"lock": {"seed": int(args.seed), "method": "group-hash-rank-v2",
                         "fingerprint": info["fingerprint"], "frozen_at": _now_iso()}},
     )
     return 0

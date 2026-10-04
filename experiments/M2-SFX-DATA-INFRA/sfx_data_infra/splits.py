@@ -51,14 +51,27 @@ def derive_group_key_from_case(case: dict) -> str:
     return f"other/{digest}"
 
 
-def _bucket_for_group(group: str, seed: int) -> str:
-    digest = hashlib.sha256(f"{seed}:{group}".encode("utf-8")).digest()
-    u = int.from_bytes(digest[:8], "big") / float(1 << 64)
-    if u < TRAIN_RATIO:
-        return "train"
-    if u < TRAIN_RATIO + VAL_RATIO:
-        return "val"
-    return "test"
+def _ranked_group_split(groups: list[str], seed: int) -> dict[str, str]:
+    """组级排序切片分桶（method=group-hash-rank-v2）。
+
+    组按 sha256(seed:group) 排序后按比例切 train/val/test——确定性可复现，
+    且组数足够时保证各集合非空（纯阈值哈希在小组数下可能 val 空集）。
+    """
+    ranked = sorted(groups, key=lambda g: hashlib.sha256(f"{seed}:{g}".encode("utf-8")).digest())
+    n = len(ranked)
+    if n < 4:
+        return {g: "train" for g in ranked}
+    n_train = max(1, round(TRAIN_RATIO * n))
+    n_val = max(1, round(VAL_RATIO * n))
+    out: dict[str, str] = {}
+    for i, g in enumerate(ranked):
+        if i < n_train:
+            out[g] = "train"
+        elif i < n_train + n_val:
+            out[g] = "val"
+        else:
+            out[g] = "test"
+    return out
 
 
 def assign_splits(samples: Iterable[SampleRecord], seed: int = SEED_DEFAULT, force: bool = False):
@@ -75,13 +88,14 @@ def assign_splits(samples: Iterable[SampleRecord], seed: int = SEED_DEFAULT, for
         if cid in CHALLENGE_CASE_IDS or s.provenance.get("challenge") is True:
             s.split = "challenge"
 
-    # 2) 基础样本按组哈希分桶
+    # 2) 基础样本按组排序切片分桶
     group_split: dict[str, str] = {}
+    base_groups = sorted({s.group for s in samples if s.split == "unassigned" and s.provenance.get("type") != "derived"})
+    if base_groups:
+        group_split.update(_ranked_group_split(base_groups, seed))
     for s in samples:
         if s.split != "unassigned" or s.provenance.get("type") == "derived":
             continue
-        if s.group not in group_split:
-            group_split[s.group] = _bucket_for_group(s.group, seed)
         s.split = group_split[s.group]
 
     # 3) 派生继承（fixpoint：链式 derived 逐层传播）
@@ -101,7 +115,7 @@ def assign_splits(samples: Iterable[SampleRecord], seed: int = SEED_DEFAULT, for
     for s in samples:
         if s.split == "unassigned":
             if s.group not in group_split:
-                group_split[s.group] = _bucket_for_group(s.group, seed)
+                group_split.update(_ranked_group_split([s.group], seed))
             s.split = group_split[s.group]
     return group_split
 

@@ -68,3 +68,14 @@ def test_empty_boxes_rejected():
     s.boxes = []
     with pytest.raises(SchemaError):
         SR.from_dict(s.to_dict())
+
+
+def test_pseudo_empty_boxes_allowed_as_negative_evidence():
+    """ogkalu 无检出 crop（负证据）以空框 pseudo 入册；其余状态仍拒绝空框。"""
+    s = _sample(annotation_status="pseudo", provenance={"type": "external_model", "negative": True})
+    s.boxes = []
+    assert SampleRecord.from_dict(s.to_dict()) == s
+    s2 = _sample(annotation_status="partial")
+    s2.boxes = []
+    with pytest.raises(SchemaError):
+        SampleRecord.from_dict(s2.to_dict())

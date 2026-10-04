@@ -95,11 +95,11 @@ def test_seed_frozen_reproducible():
 
 
 def test_all_three_splits_reachable_or_documented():
-    """分桶覆盖性冒烟：多组输入下 train 必然非空（比例 70%）。"""
+    """分桶覆盖性：组数充足（≥4）时 train/val/test 全部非空（排序切片保证）。"""
     samples = [make_sample(f"g{i}", f"grp/{i:03d}", {"type": "asset_case", "case_id": f"X{i}"}) for i in range(30)]
     assign_splits(samples, seed=SEED_DEFAULT)
     splits = {s.split for s in samples}
-    assert "train" in splits
+    assert {"train", "val", "test"} <= splits, f"30 组下三集合应全非空: {splits}"
 
 
 def test_training_builder_cannot_read_test_or_challenge():

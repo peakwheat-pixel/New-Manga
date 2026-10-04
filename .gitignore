@@ -8,3 +8,6 @@ dist/
 *.safetensors
 *.pt
 *.onnx
+
+# SFX training data body (M2-SFX-DATA-INFRA): rendered PNGs / asset copies / full manifests stay out of Git; only code+schema+manifest_summary.json enter the repo.
+/training_data/

@@ -105,7 +105,7 @@ def import_reference_crops(cases_index: dict, roots, now_iso: str) -> list[Sampl
         page = find_page_image(cid, cases_index, roots)
         if page is None:
             raise FileNotFoundError(f"{cid} 页图像未在素材根候选中找到（cases.json local_path={case['local_path']}）")
-        img_ref, _ = _image_ref(page, page.name)
+        img_ref, _ = _image_ref(page, str(page))
         group = derive_group_key_from_case(case)
         for i, entry in enumerate(data["crops"][cid]):
             ref = entry["ref"]
@@ -143,7 +143,7 @@ def import_bj06(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
     page = find_page_image(cid, cases_index, roots)
     if page is None:
         raise FileNotFoundError(f"{cid} 页图像未在素材根候选中找到")
-    img_ref, _ = _image_ref(page, page.name)
+    img_ref, _ = _image_ref(page, str(page))
     # 对账：qual 记录的 source_sha256 与当前素材一致（素材未被替换）
     if img_ref.sha256 != data.get("source_sha256"):
         raise ValueError(
@@ -205,7 +205,9 @@ def import_ogkalu(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
                 )
             )
         if not boxes:
-            continue
+            # detections 为空 = 模型在该 crop 无检出（harvest 0.25 灵敏度下）：
+            # 以空框 pseudo 负证据样本入册（schema 冻结允许 pseudo 空框），43 region 全量对齐 AC5。
+            pass
         img_ref = ImageRef(
             path=str(crop_path),
             sha256=sha256_file(crop_path),
@@ -228,7 +230,9 @@ def import_ogkalu(cases_index: dict, roots, now_iso: str) -> list[SampleRecord]:
                     "harvest_threshold": data.get("harvest_threshold"),
                     "evidence": "experiments/M2-SFX-DETECT/ogkalu-sfx-frames.json",
                     "original_classes": sorted({d["cls"] for d in r.get("detections", [])}),
-                    "quality_note": "模型 harvest 灵敏度产出（0.25 阈值），无人工确认；仅伪 GT",
+                    "negative": not boxes,
+                    "quality_note": "模型 harvest 灵敏度产出（0.25 阈值），无人工确认；仅伪 GT"
+                    + ("；该 crop 无检出框（负证据样本）" if not boxes else ""),
                 },
                 group=group,
                 created_at=now_iso,

@@ -85,8 +85,8 @@ class SampleRecord:
             errors.append(f"image.sha256 非合法 sha256 hex: {self.image.sha256!r}")
         if self.image.width <= 0 or self.image.height <= 0:
             errors.append(f"image 尺寸非法: {self.image.width}x{self.image.height}")
-        if not self.boxes:
-            errors.append("boxes 为空（v1 manifest 只收正样本）")
+        if not self.boxes and self.annotation_status != "pseudo":
+            errors.append("boxes 为空（仅 pseudo 负证据样本允许空框：模型在该图无检出）")
         for i, box in enumerate(self.boxes):
             for e in box.validate():
                 errors.append(f"boxes[{i}].{e}")
@@ -190,7 +190,7 @@ def make_json_schema() -> dict[str, Any]:
             },
             "boxes": {
                 "type": "array",
-                "minItems": 1,
+                "description": "GT 框列表（实例包络多边形）。空数组仅当 annotation_status=pseudo（负证据样本：模型在该图无检出）；complete/partial/synthetic 必须非空（运行时 dataclass 强制）。",
                 "items": {
                     "type": "object",
                     "required": ["polygon", "cls"],
